@@ -1,0 +1,12 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "node server.js"
+healthcheckPath = "/"
+healthcheckTimeout = 10
+restartPolicyType = "on_failure"
+
+# Mount a volume at /app/data for persistent user data.
+# In Railway dashboard: Add Volume → Mount Path: /app/data
+# Then set env var: DATA_DIR=/app/data

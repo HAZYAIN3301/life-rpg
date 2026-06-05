@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Life-RPG</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header id="topbar">
+      <div class="brand">
+        <span class="logo">⚔️</span>
+        <h1 id="appName">Life-RPG</h1>
+      </div>
+      <div id="charSummary" class="char-summary"></div>
+      <nav id="nav">
+        <button data-view="today" class="active">Сегодня</button>
+        <button data-view="goals">Цели</button>
+        <button data-view="tree">Навыки</button>
+        <button data-view="rewards">Награды</button>
+        <button data-view="weekly">Неделя</button>
+        <button data-view="stats">Статистика</button>
+        <button data-view="settings">Настройки</button>
+      </nav>
+    </header>
+    <main id="main"></main>
+    <div id="toasts"></div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

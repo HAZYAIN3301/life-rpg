@@ -1,0 +1,14 @@
+{
+  "name": "life-rpg",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Self-hosted gamified life planner — RPG mechanics + daily planning. Zero npm dependencies.",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "lan": "HOST=0.0.0.0 node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

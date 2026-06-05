@@ -1,0 +1,13 @@
+# Personal user data — never commit this (stays on your machine / server volume)
+data/*.json
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Runtime launcher (machine-specific)
+Запустить.command
