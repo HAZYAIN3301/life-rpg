@@ -1229,6 +1229,8 @@ function render() {
   if (!document.getElementById('main')) document.getElementById('app').innerHTML = APP_SHELL;
   renderHeader();
   document.querySelectorAll('#nav button').forEach((b) => b.classList.toggle('active', b.dataset.view === State.view));
+  const activeNav = document.querySelector('#nav button.active');
+  if (activeNav && activeNav.scrollIntoView) activeNav.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
   document.getElementById('main').innerHTML = (VIEWS[State.view] || renderToday)();
 }
 
