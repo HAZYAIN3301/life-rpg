@@ -220,6 +220,7 @@ const State = {
   lootbox: null,
   leaderboard: null, _lbLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all',
+  aveCat: 'hair', // активная категория в редакторе аватара
 };
 
 // ============================================================
@@ -406,6 +407,120 @@ function figureSVG() {
     <line x1="${cx - wa + 4}" y1="132" x2="${cx - wa - 2}" y2="206" stroke="${c}" stroke-width="${limb + 2}" stroke-linecap="round"/>
     <line x1="${cx + wa - 4}" y1="132" x2="${cx + wa + 2}" y2="206" stroke="${c}" stroke-width="${limb + 2}" stroke-linecap="round"/>
   </svg>`;
+}
+// ============================================================
+//  Кастомизируемый аватар — послойный flat-vector SVG.
+//  Каждая часть = генератор. Арт-наборы художника подключаются как новые варианты/слои.
+// ============================================================
+const AV_SKINS  = ['#f7d4b6', '#eebd95', '#dca579', '#c08a5e', '#9c6a45', '#6e482e'];
+const AV_HAIRC  = ['#15110f', '#3b2a1d', '#5e3f25', '#8a5a2b', '#b6863f', '#dcc06a', '#9aa3ad', '#d65a5a', '#7c5cff', '#f0f0f0'];
+const AV_CLOTH  = ['#6c8cff', '#46c46b', '#e0526a', '#e0a23e', '#b06ff0', '#22c1a4', '#39414f'];
+const AV_PARTS  = {
+  face:      { label: 'Лицо',       n: 3 },
+  skin:      { label: 'Кожа',       colors: AV_SKINS },
+  hair:      { label: 'Причёска',   n: 7 },
+  hairColor: { label: 'Цвет волос', colors: AV_HAIRC },
+  brows:     { label: 'Брови',      n: 3 },
+  eyes:      { label: 'Глаза',      n: 4 },
+  mouth:     { label: 'Рот',        n: 4 },
+  beard:     { label: 'Борода',     n: 3 },
+  glasses:   { label: 'Очки',       n: 3 },
+  cloth:     { label: 'Одежда',     colors: AV_CLOTH },
+};
+const AV_CAT_ORDER = ['hair', 'hairColor', 'face', 'skin', 'eyes', 'brows', 'mouth', 'beard', 'glasses', 'cloth'];
+function defaultAvatar() { return { face: 0, skin: 1, hair: 1, hairColor: 1, brows: 0, eyes: 0, mouth: 0, beard: 0, glasses: 0, cloth: 0 }; }
+function avCfg() { return Object.assign(defaultAvatar(), (State.settings && State.settings.avatar) || {}); }
+function shade(hex, amt) { // amt -100..100 (минус = темнее)
+  const n = parseInt(hex.slice(1), 16); let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  const t = amt < 0 ? 0 : 255, p = Math.abs(amt) / 100;
+  r = Math.round((t - r) * p + r); g = Math.round((t - g) * p + g); b = Math.round((t - b) * p + b);
+  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+function avatarSVG(cfg, opts = {}) {
+  cfg = Object.assign(defaultAvatar(), cfg);
+  const skin = AV_SKINS[cfg.skin] || AV_SKINS[1];
+  const sd = shade(skin, -14), hair = AV_HAIRC[cfg.hairColor] || AV_HAIRC[1];
+  const cloth = AV_CLOTH[cfg.cloth] || AV_CLOTH[0];
+  const cx = 120;
+  const faces = [{ rx: 56, ry: 62, cy: 116 }, { rx: 50, ry: 65, cy: 118 }, { rx: 60, ry: 57, cy: 114 }];
+  const F = faces[cfg.face] || faces[0], cy = F.cy, rx = F.rx, ry = F.ry;
+  const eyeY = cy + 2, eyeDX = rx * 0.44, browY = eyeY - 15, mouthY = cy + ry * 0.52;
+  // ---- части ----
+  const ear = `<ellipse cx="${cx - rx + 3}" cy="${cy + 8}" rx="9" ry="12" fill="${skin}"/><ellipse cx="${cx + rx - 3}" cy="${cy + 8}" rx="9" ry="12" fill="${skin}"/>`;
+  const neck = `<path d="M${cx - 15} ${cy + ry - 14} h30 v22 q0 8 -15 8 q-15 0 -15 -8 z" fill="${sd}"/>`;
+  const shoulders = `<path d="M${cx - 78} 240 Q ${cx - 70} 184 ${cx} 182 Q ${cx + 70} 184 ${cx + 78} 240 Z" fill="${cloth}"/><path d="M${cx - 16} 184 Q ${cx} 200 ${cx + 16} 184 L ${cx + 16} 196 Q ${cx} 206 ${cx - 16} 196 Z" fill="${shade(cloth, -16)}"/>`;
+  const head = `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${skin}"/>`;
+  // глаза
+  const eye = (ex) => {
+    const E = cfg.eyes;
+    if (E === 1) return `<path d="M${ex - 8} ${eyeY} Q ${ex} ${eyeY - 6} ${ex + 8} ${eyeY} Q ${ex} ${eyeY + 5} ${ex - 8} ${eyeY} Z" fill="#fff"/><circle cx="${ex}" cy="${eyeY}" r="4" fill="#3a2a20"/>`;
+    if (E === 2) return `<circle cx="${ex}" cy="${eyeY}" r="8" fill="#fff"/><circle cx="${ex}" cy="${eyeY}" r="5.5" fill="#3a2a20"/><circle cx="${ex + 2}" cy="${eyeY - 2}" r="1.6" fill="#fff"/>`;
+    if (E === 3) return `<path d="M${ex - 8} ${eyeY} q 8 7 16 0" stroke="#3a2a20" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    return `<ellipse cx="${ex}" cy="${eyeY}" rx="6.5" ry="7.5" fill="#fff"/><circle cx="${ex}" cy="${eyeY + 0.5}" r="4" fill="#3a2a20"/><circle cx="${ex + 1.5}" cy="${eyeY - 1.5}" r="1.4" fill="#fff"/>`;
+  };
+  const eyes = eye(cx - eyeDX) + eye(cx + eyeDX);
+  // брови
+  const brow = (bx, dir) => {
+    const B = cfg.brows;
+    if (B === 1) return `<path d="M${bx - 9} ${browY + 2} Q ${bx} ${browY - 4} ${bx + 9} ${browY + 2}" stroke="${shade(hair, -10)}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+    if (B === 2) return `<rect x="${bx - 9}" y="${browY - 2}" width="18" height="4.5" rx="2.2" fill="${shade(hair, -10)}"/>`;
+    return `<path d="M${bx - 9} ${browY} L ${bx + 9} ${browY - (dir * 2)}" stroke="${shade(hair, -10)}" stroke-width="3.2" fill="none" stroke-linecap="round"/>`;
+  };
+  const brows = brow(cx - eyeDX, 1) + brow(cx + eyeDX, -1);
+  // нос
+  const nose = `<path d="M${cx} ${cy + 4} q -4 12 -1 15 q 2 1.5 5 0.5" stroke="${sd}" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+  // рот
+  let mouth;
+  if (cfg.mouth === 1) mouth = `<line x1="${cx - 12}" y1="${mouthY}" x2="${cx + 12}" y2="${mouthY}" stroke="#9c5247" stroke-width="3" stroke-linecap="round"/>`;
+  else if (cfg.mouth === 2) mouth = `<path d="M${cx - 15} ${mouthY - 2} Q ${cx} ${mouthY + 14} ${cx + 15} ${mouthY - 2} Z" fill="#8e4038"/><path d="M${cx - 12} ${mouthY} Q ${cx} ${mouthY + 4} ${cx + 12} ${mouthY}" fill="#fff"/>`;
+  else if (cfg.mouth === 3) mouth = `<path d="M${cx - 9} ${mouthY} Q ${cx} ${mouthY + 7} ${cx + 9} ${mouthY}" stroke="#9c5247" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  else mouth = `<path d="M${cx - 15} ${mouthY - 1} Q ${cx} ${mouthY + 13} ${cx + 15} ${mouthY - 1}" stroke="#9c5247" stroke-width="3.2" fill="none" stroke-linecap="round"/>`;
+  // борода
+  let beard = '';
+  if (cfg.beard === 1) beard = `<path d="M${cx - rx + 4} ${cy} Q ${cx - rx} ${cy + ry} ${cx} ${cy + ry + 1} Q ${cx + rx} ${cy + ry} ${cx + rx - 4} ${cy} Q ${cx} ${cy + ry * 0.5} ${cx - rx + 4} ${cy} Z" fill="${hair}" opacity="0.32"/>`;
+  else if (cfg.beard === 2) beard = `<path d="M${cx - rx + 2} ${cy - 4} Q ${cx - rx} ${cy + ry + 4} ${cx} ${cy + ry + 6} Q ${cx + rx} ${cy + ry + 4} ${cx + rx - 2} ${cy - 4} Q ${cx} ${cy + ry * 0.62} ${cx - rx + 2} ${cy - 4} Z" fill="${hair}"/>`;
+  // волосы (back + front)
+  const hairParts = avHair(cfg.hair, cx, cy, rx, ry, hair);
+  // очки
+  let glasses = '';
+  if (cfg.glasses) {
+    const lens = cfg.glasses === 1
+      ? `<circle cx="${cx - eyeDX}" cy="${eyeY}" r="11" fill="none" stroke="#2a3250" stroke-width="2.6"/><circle cx="${cx + eyeDX}" cy="${eyeY}" r="11" fill="none" stroke="#2a3250" stroke-width="2.6"/>`
+      : `<rect x="${cx - eyeDX - 11}" y="${eyeY - 9}" width="22" height="18" rx="4" fill="none" stroke="#2a3250" stroke-width="2.6"/><rect x="${cx + eyeDX - 11}" y="${eyeY - 9}" width="22" height="18" rx="4" fill="none" stroke="#2a3250" stroke-width="2.6"/>`;
+    glasses = lens + `<line x1="${cx - eyeDX + 11}" y1="${eyeY}" x2="${cx + eyeDX - 11}" y2="${eyeY}" stroke="#2a3250" stroke-width="2.6"/>`;
+  }
+  const bg = opts.bg ? `<rect x="0" y="0" width="240" height="240" fill="${opts.bg}"/>` : '';
+  return `<svg viewBox="0 0 240 240" class="avatar-svg" preserveAspectRatio="xMidYMid slice">${bg}${hairParts.back}${shoulders}${neck}${ear}${head}${beard}${hairParts.front}${brows}${eyes}${nose}${mouth}${glasses}</svg>`;
+}
+function avHair(style, cx, cy, rx, ry, hair) {
+  if (!style) return { back: '', front: '' };
+  const topY = cy - ry, R = rx * 1.06;
+  // базовая «шапка»: дуга поверх головы + линия волос
+  const cap = (lineY, extra = '') => `<path d="M${cx - R} ${cy - ry * 0.1} A ${R} ${ry * 1.05} 0 0 1 ${cx + R} ${cy - ry * 0.1} Q ${cx + rx * 0.55} ${lineY} ${cx} ${lineY + 2} Q ${cx - rx * 0.55} ${lineY} ${cx - R} ${cy - ry * 0.1} Z" fill="${hair}"/>${extra}`;
+  switch (style) {
+    case 1: // короткая
+      return { back: '', front: cap(cy - ry * 0.42) };
+    case 2: // ёжик/buzz
+      return { back: '', front: cap(cy - ry * 0.58) };
+    case 3: { // квифф (зачёс наверх)
+      const tuft = `<path d="M${cx - 6} ${topY + 4} Q ${cx + 4} ${topY - 18} ${cx + 22} ${topY + 2} Q ${cx + 6} ${topY + 2} ${cx - 6} ${topY + 4} Z" fill="${hair}"/>`;
+      return { back: '', front: cap(cy - ry * 0.4, tuft) };
+    }
+    case 4: { // длинные
+      const back = `<path d="M${cx - rx - 6} ${cy - ry * 0.2} Q ${cx - rx - 14} ${cy + ry + 30} ${cx - rx + 8} ${cy + ry + 36} L ${cx + rx - 8} ${cy + ry + 36} Q ${cx + rx + 14} ${cy + ry + 30} ${cx + rx + 6} ${cy - ry * 0.2} Z" fill="${hair}"/>`;
+      return { back, front: cap(cy - ry * 0.3) };
+    }
+    case 5: { // пучок
+      const bun = `<circle cx="${cx}" cy="${topY - 6}" r="16" fill="${hair}"/>`;
+      return { back: bun, front: cap(cy - ry * 0.48) };
+    }
+    case 6: { // кудри
+      let curls = '';
+      for (let i = -3; i <= 3; i++) curls += `<circle cx="${cx + i * (rx / 3.2)}" cy="${cy - ry * 0.78 + Math.abs(i) * 4}" r="13" fill="${hair}"/>`;
+      return { back: '', front: curls + cap(cy - ry * 0.46) };
+    }
+    default: return { back: '', front: cap(cy - ry * 0.42) };
+  }
 }
 function currentStreak() {
   const set = new Set(xpEvents().map((e) => e.date));
@@ -987,6 +1102,26 @@ function renderTree() {
 // ============================================================
 //  Вид «Персонаж» — живой аватар, атрибуты, телосложение
 // ============================================================
+function avatarEditor() {
+  const cfg = avCfg(), cat = AV_PARTS[State.aveCat] ? State.aveCat : 'hair', meta = AV_PARTS[cat];
+  const cats = AV_CAT_ORDER.map((k) => `<button class="ave-cat ${k === cat ? 'sel' : ''}" data-action="av-cat" data-cat="${k}">${AV_PARTS[k].label}</button>`).join('');
+  let options;
+  if (meta.colors) {
+    options = meta.colors.map((col, i) => `<button class="ave-opt ave-color ${cfg[cat] === i ? 'sel' : ''}" data-action="av-set" data-part="${cat}" data-idx="${i}" style="background:${col}" title="${meta.label} ${i + 1}"></button>`).join('');
+  } else {
+    options = Array.from({ length: meta.n }, (_, i) => {
+      const preview = avatarSVG(Object.assign({}, cfg, { [cat]: i }));
+      return `<button class="ave-opt ${cfg[cat] === i ? 'sel' : ''}" data-action="av-set" data-part="${cat}" data-idx="${i}" title="${meta.label} ${i + 1}"><span class="ave-mini">${preview}</span></button>`;
+    }).join('');
+  }
+  return `<div class="card avatar-editor">
+    <h3>🪞 Твой персонаж</h3>
+    <div class="ave-stage">${avatarSVG(cfg)}</div>
+    <div class="ave-cats">${cats}</div>
+    <div class="ave-options ${meta.colors ? 'is-colors' : ''}">${options}</div>
+    <p class="muted" style="font-size:12px;margin:10px 0 0">Собери свой облик. Скоро добавим больше стилей — в том числе нарисованные художником наборы.</p>
+  </div>`;
+}
 function renderCharacter() {
   const c = State.settings.curve, oi = levelInfo(overallXp(), c.base, c.growth), cr = charRank();
   const scores = attrScores(), arch = archetype(), b = State.settings.body || {}, bmi = bodyBMI();
@@ -1002,7 +1137,7 @@ function renderCharacter() {
       <button type="submit" class="btn">Сохранить</button></form>`;
   return `
     <div class="card char-hero">
-      <div class="ch-avatar" style="--rc:${cr.color};--p:${oi.pct}"><span class="ch-emoji">${esc((State.me && State.me.avatar) || '🧝')}</span></div>
+      <div class="ch-avatar ch-avatar-img" style="--rc:${cr.color};--p:${oi.pct}">${avatarSVG(avCfg())}</div>
       <div class="ch-meta">
         <h2>${esc((State.me && State.me.name) || 'Герой')}</h2>
         <div class="ch-rank" style="--rc:${cr.color}">${cr.icon} ${cr.name} · ур.${charLevel()}</div>
@@ -1010,6 +1145,7 @@ function renderCharacter() {
         <div class="xp-bar" style="max-width:340px"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
       </div>
     </div>
+    ${avatarEditor()}
     <div class="char-grid">
       <div class="card"><h3>🎯 Атрибуты — твой билд</h3>
         <div class="radar-wrap">${radarSVG(scores)}</div>
@@ -1592,6 +1728,8 @@ function onClick(e) {
   if (action === 'close-guide') { const g = document.getElementById('guide'); if (g) g.remove(); return; }
   if (action === 'goto-rewards') { State.view = 'rewards'; render(); return; }
   if (action === 'goto-import') { State.view = 'settings'; render(); return; }
+  if (action === 'av-cat') { State.aveCat = el.dataset.cat; render(); return; }
+  if (action === 'av-set') { State.settings.avatar = Object.assign(avCfg(), { [el.dataset.part]: Number(el.dataset.idx) }); Store.save('settings', State.settings); render(); return; }
   if (action === 'start-trial') {
     fetch('/api/auth/start-trial', { method: 'POST' }).then(async (r) => {
       const d = await r.json();
@@ -1749,6 +1887,7 @@ async function initApp() {
   State.settings.focus = Object.assign({}, DEFAULT_SETTINGS.focus, State.settings.focus);
   State.settings.body = State.settings.body || {};
   State.settings.imported = State.settings.imported || {};
+  State.settings.avatar = State.settings.avatar || defaultAvatar();
 
   // Если нет навыков → онбординг
   if (State.settings.skills.length === 0) {

@@ -365,6 +365,31 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .eq-title { font-size: 10px; color: var(--warn); font-weight: 600; }
 .logout-btn { font-size: 12px; padding: 5px 10px; }
 
+/* ---------- Аватар + редактор ---------- */
+.ch-avatar-img { overflow: hidden; }
+.ch-avatar-img .avatar-svg { width: 100%; height: 100%; border-radius: 50%; display: block; }
+.avatar-svg { display: block; }
+
+.avatar-editor h3 { margin-bottom: 12px; }
+.ave-stage { width: 168px; height: 168px; margin: 0 auto 14px; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 50% 35%, var(--panel2), var(--panel)); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.ave-stage .avatar-svg { width: 100%; height: 100%; }
+.ave-cats { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 14px; }
+.ave-cat { background: var(--panel2); border: 1px solid var(--line); color: var(--muted); padding: 6px 12px; border-radius: 999px; cursor: pointer; font-size: 13px; font-weight: 600; }
+.ave-cat:hover { color: var(--text); }
+.ave-cat.sel { background: var(--accent); border-color: var(--accent); color: #fff; }
+.ave-options { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 10px; }
+.ave-options.is-colors { grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); }
+.ave-opt { padding: 0; border: 2px solid var(--line); background: var(--panel2); border-radius: 12px; cursor: pointer; overflow: hidden; aspect-ratio: 1; display: grid; place-items: center; transition: border-color .15s, transform .12s; }
+.ave-opt:hover { transform: translateY(-2px); border-color: var(--muted); }
+.ave-opt.sel { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+.ave-mini { width: 100%; height: 100%; display: block; border-radius: 10px; overflow: hidden; background: radial-gradient(circle at 50% 35%, var(--panel), var(--panel2)); }
+.ave-mini .avatar-svg { width: 100%; height: 100%; }
+.ave-opt.ave-color { aspect-ratio: 1; border-radius: 50%; }
+@media (max-width: 560px) {
+  .ave-stage { width: 140px; height: 140px; }
+  .ave-options { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; }
+}
+
 /* ---------- Импорт достижений ---------- */
 .import-list { display: flex; flex-direction: column; gap: 8px; }
 .import-row { display: grid; grid-template-columns: 12px 1fr minmax(0, 1.5fr) 52px; align-items: center; gap: 10px; }
