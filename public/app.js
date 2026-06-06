@@ -1332,6 +1332,7 @@ function onClick(e) {
 
   // --- Auth actions ---
   if (action === 'select-profile') {
+    if (e.target.closest('#pin-form')) return; // клик внутри формы — не схлопываем
     State.selectedProfile = State.selectedProfile === id ? null : id;
     renderLoginScreen(); return;
   }
