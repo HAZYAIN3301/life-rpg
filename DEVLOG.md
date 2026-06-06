@@ -113,6 +113,29 @@
 - После правок `server.js` — **stop→start превью** (node не watch). `preview_start` сам не перезапускает.
 - Тестировал на профиле `albert` → XP/квесты/Хайп/Чтение налипли. Очищено фильтром по `createdAt` (всё за 2026-06-06 удалено), `pub`/`leaderboardOptOut` сняты с users.json, lootbox сброшен. Профиль = pristine (level 1, 6 сфер, 3 квеста, 3 привычки), Pro сохранён.
 
+---
+
+## Сессия 2026-06-06 (вечер) — ребренд Gojo + импорт достижений
+
+Модель: Opus/Sonnet. Прогнано в живом браузере (desktop+mobile, 0 ошибок).
+
+### 1. 🏷 Ребренд Life-RPG → Gojo
+- `perl -pi -e 's/Life-RPG/Gojo/g'` по index.html, app.js, manifest.webmanifest, server.js. Логотип ⚔️ сохранён (не аниме). Albert settings.appName → Gojo.
+- **Юр.:** для публичного бренда — проверка EUIPO/DPMA. Коллизии: **GoJoe** (wellness-приложение, та же ниша!), **GOJO Industries** (Purell, зарег. марка, есть софт). Аниме-имя само по себе низкий риск, но НИКОГДА не использовать облик персонажа JJK. Для альфы — ок.
+
+### 2. 🎖 Импорт достижений (стартовый уровень) — фундаментальная фича онбординга
+Полный разбор дизайна — в `ROADMAP.md` → «Дизайн-решение: Импорт достижений». Суть: честная самооценка по коарс-лестницам, не точная математика.
+- **Данные:** `IMPORT_LADDERS` (бег, силовые=отн.веса, единоборства=пояса, велосипед, плавание, английский/язык=CEFR, учёба=ступени, программирование=грейды, музыка, чтение) + `GENERIC_LADDER`. `ladderFor(name)` матчит по ключевому слову в имени сферы. `tierLevels(ladder)` → целевой уровень на тир (tier 0 = ур.1).
+- **Кривая:** `xpForLevel(L, base, growth)` = Σ needForLevel — инверсия уровня в XP.
+- **Интеграция:** `settings.imported{skillId:{tier,xp,label,at}}`. `importedXp(id)` + `totalImportedXp()` входят в `skillXp`/`overallXp`. Новая `earnedXp()` = только заработанное (для будущей честности лидерборда).
+- **UI:** `importCard()` в Настройках (select тиров на сферу), `applyImport(skillId,tier)`. Делегированный **`onChange`-хендлер** (новый, для select-ов вне форм; зарегистрирован в init рядом с click/submit) → `data-action="set-import"`. Today-нудж новичку (`goto-import`, условие: нет импорта и `earnedXp()<200`).
+- **Философия:** импорт = «доказанное мастерство», НЕ сгорает. Атрофия (слой «Форма») — Фаза 2 (см. ROADMAP).
+- Проверено: Учёба→Бакалавриат (ур.11), Здоровье→Продвинутый (ур.12), char-level→12, персист в settings.json, мобайл 0-overflow.
+
+### ⚠️ Грабли
+- Для select-ов вне `<form>` нужен **отдельный `change`-листенер** (click/submit не ловят). Добавлен `onChange` + `document.addEventListener('change', onChange)`.
+- Тест-импорты Albert (study/health) — почистить в финале (как и раньше, по дате/ключам).
+
 ## Как запустить и протестировать
 ```
 cd life-rpg && npm start          # http://127.0.0.1:4317
@@ -129,4 +152,4 @@ Smoke-тест: вход albert/1234 → добавить квест → ▶ ф�
 - Серверу нужен рестарт после правок `server.js` (node не watch). Превью: stop→start.
 
 ## Карта ключевых функций (app.js)
-`Store` (`_put` = немедленный awaitable PUT, `save` = дебаунс 250мс) · `DEFAULT_SETTINGS` · `State` (+`leaderboard/_lbLoading`) · уровни: `levelInfo/charLevel/skillLevelOf` · ранги: `RANKS/rankFor/rankProgress/charRank` · баланс: `balanceIndex` · Pro: `ent/isPro/trialDaysLeft` · атрибуты/аватар: `ATTRIBUTES/guessAttr/ensureSkillAttrs/attrScore/attrScores/archetype/bodyBMI/radarSVG/figureSVG` · экономика: `itemXp(+boost+hype)/goldEarned(+loot)/lootBoostPct` · **Хайп: `hypeState/hypePct/hypeMinLeft/activateHype`** · лут: `ensureLootbox/lootChestsAvailable/rollLoot/lootResolve/applyLoot/lootboxCard/openChest` · **программы: `DUNGEON_PROGRAMS/programSkillMap/programHabits/programTasks/applyProgramFresh/applyProgramMerge/programCard`** · **лидерборд: `publishLeaderboard/renderLeaderboard` (+ server `/api/leaderboard[/publish]`)** · Pro-UI: `subscriptionCard/securityCard/adminCard/showPaywall` · гайд/фидбек: `GUIDE_SECTIONS/showGuide` (+ server `/api/feedback`) · виды: `renderHeader/renderToday/renderCharacter/renderGoals/renderTree/renderRewards/renderWeekly/renderStats/renderLeaderboard/renderSettings` · `render()` диспатчер (+авто-центр активного таба) · `onClick/onSubmit` · `initApp/init`. **Nav дублирован в index.html + APP_SHELL — править оба.**
+`Store` (`_put` = немедленный awaitable PUT, `save` = дебаунс 250мс) · `DEFAULT_SETTINGS` (+`imported`) · `State` (+`leaderboard/_lbLoading`) · уровни: `levelInfo/needForLevel/xpForLevel/charLevel/skillLevelOf` · **импорт: `IMPORT_LADDERS/GENERIC_LADDER/ladderFor/tierLevels/importedXp/totalImportedXp/earnedXp/applyImport/importCard`** · `onChange`-делегат (set-import) · ранги: `RANKS/rankFor/rankProgress/charRank` · баланс: `balanceIndex` · Pro: `ent/isPro/trialDaysLeft` · атрибуты/аватар: `ATTRIBUTES/guessAttr/ensureSkillAttrs/attrScore/attrScores/archetype/bodyBMI/radarSVG/figureSVG` · экономика: `itemXp(+boost+hype)/goldEarned(+loot)/lootBoostPct` · **Хайп: `hypeState/hypePct/hypeMinLeft/activateHype`** · лут: `ensureLootbox/lootChestsAvailable/rollLoot/lootResolve/applyLoot/lootboxCard/openChest` · **программы: `DUNGEON_PROGRAMS/programSkillMap/programHabits/programTasks/applyProgramFresh/applyProgramMerge/programCard`** · **лидерборд: `publishLeaderboard/renderLeaderboard` (+ server `/api/leaderboard[/publish]`)** · Pro-UI: `subscriptionCard/securityCard/adminCard/showPaywall` · гайд/фидбек: `GUIDE_SECTIONS/showGuide` (+ server `/api/feedback`) · виды: `renderHeader/renderToday/renderCharacter/renderGoals/renderTree/renderRewards/renderWeekly/renderStats/renderLeaderboard/renderSettings` · `render()` диспатчер (+авто-центр активного таба) · `onClick/onSubmit` · `initApp/init`. **Nav дублирован в index.html + APP_SHELL — править оба.**
