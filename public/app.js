@@ -94,6 +94,88 @@ const SKILL_TEMPLATES = [
   { name: 'Музыка',         color: '#d8a44b' }, { name: 'Чтение',         color: '#22c1a4' },
 ];
 
+// ── Программы-данжи (идея 25): готовые наборы сфер + привычек + стартовых квестов.
+//    Дают новичку структуру в один тап вместо чистого листа. Можно добавить и позже (Настройки).
+const DUNGEON_PROGRAMS = [
+  { id: 'athlete', icon: '🏃', name: 'Спортсмен', tagline: 'Тело как проект: сила, выносливость, режим.',
+    skills: [ { name: 'Спорт', color: '#5fbf5f', attr: 'str' }, { name: 'Здоровье', color: '#22c1a4', attr: 'end' } ],
+    habits: [ { skill: 'Спорт', title: 'Силовая / зарядка', estimateMin: 30, difficulty: 'normal', days: [1,3,5] },
+              { skill: 'Спорт', title: 'Растяжка', estimateMin: 10, difficulty: 'easy', days: [1,2,3,4,5,6,0] },
+              { skill: 'Здоровье', title: 'Выпить 8 стаканов воды', estimateMin: 5, difficulty: 'easy', days: [1,2,3,4,5,6,0] } ],
+    quests: [ { skill: 'Спорт', title: 'Пробежка 20 минут', estimateMin: 20, difficulty: 'normal' },
+              { skill: 'Здоровье', title: 'Лечь спать до 23:00', estimateMin: 5, difficulty: 'easy' } ] },
+  { id: 'student', icon: '🎓', name: 'Студент', tagline: 'Учёба без аврала: регулярность и глубина.',
+    skills: [ { name: 'Учёба', color: '#4f86f7', attr: 'int' }, { name: 'Чтение', color: '#22c1a4', attr: 'int' } ],
+    habits: [ { skill: 'Учёба', title: 'Учить лексику / карточки', estimateMin: 15, difficulty: 'easy', days: [1,2,3,4,5] },
+              { skill: 'Чтение', title: 'Прочитать 10 страниц', estimateMin: 20, difficulty: 'easy', days: [1,2,3,4,5,6,0] },
+              { skill: 'Учёба', title: 'Конспект / повторение', estimateMin: 30, difficulty: 'normal', days: [2,4] } ],
+    quests: [ { skill: 'Учёба', title: 'Разобрать сложную тему', estimateMin: 45, difficulty: 'hard' },
+              { skill: 'Учёба', title: 'Сделать домашку', estimateMin: 30, difficulty: 'normal' } ] },
+  { id: 'creator', icon: '🎬', name: 'Креатор', tagline: 'Создавай и публикуй регулярно.',
+    skills: [ { name: 'Творчество', color: '#b06ff0', attr: 'cha' }, { name: 'Блогинг', color: '#e87d3e', attr: 'cha' } ],
+    habits: [ { skill: 'Творчество', title: 'Идеи в копилку (3 шт)', estimateMin: 10, difficulty: 'easy', days: [1,2,3,4,5,6,0] },
+              { skill: 'Блогинг', title: 'Поработать над контентом', estimateMin: 45, difficulty: 'normal', days: [1,3,5] } ],
+    quests: [ { skill: 'Блогинг', title: 'Выпустить пост / ролик', estimateMin: 60, difficulty: 'hard' },
+              { skill: 'Творчество', title: 'Изучить работу кумира', estimateMin: 30, difficulty: 'easy' } ] },
+  { id: 'zen', icon: '🧘', name: 'Дзен', tagline: 'Внутренняя опора: спокойствие и осознанность.',
+    skills: [ { name: 'Саморазвитие', color: '#b06ff0', attr: 'spr' }, { name: 'Здоровье', color: '#22c1a4', attr: 'spr' } ],
+    habits: [ { skill: 'Саморазвитие', title: 'Медитация', estimateMin: 10, difficulty: 'easy', days: [1,2,3,4,5,6,0] },
+              { skill: 'Саморазвитие', title: 'Дневник благодарности', estimateMin: 5, difficulty: 'easy', days: [1,2,3,4,5,6,0] },
+              { skill: 'Здоровье', title: 'Прогулка без телефона', estimateMin: 20, difficulty: 'easy', days: [2,4,6] } ],
+    quests: [ { skill: 'Саморазвитие', title: 'Цифровой детокс 2 часа', estimateMin: 120, difficulty: 'normal' } ] },
+  { id: 'pro', icon: '💼', name: 'Профи', tagline: 'Карьера и деньги под контролем.',
+    skills: [ { name: 'Работа', color: '#e0526a', attr: 'dis' }, { name: 'Финансы', color: '#d8a44b', attr: 'int' } ],
+    habits: [ { skill: 'Работа', title: 'Глубокая работа 90 мин', estimateMin: 90, difficulty: 'hard', days: [1,2,3,4,5] },
+              { skill: 'Финансы', title: 'Записать траты', estimateMin: 5, difficulty: 'easy', days: [1,2,3,4,5,6,0] } ],
+    quests: [ { skill: 'Работа', title: 'Закрыть ключевую задачу недели', estimateMin: 90, difficulty: 'hard' },
+              { skill: 'Финансы', title: 'Свести бюджет за неделю', estimateMin: 30, difficulty: 'normal' } ] },
+  { id: 'coder', icon: '💻', name: 'Кодер', tagline: 'Прокачка в разработке шаг за шагом.',
+    skills: [ { name: 'Программирование', color: '#4f86f7', attr: 'int' }, { name: 'Английский', color: '#22c1a4', attr: 'int' } ],
+    habits: [ { skill: 'Программирование', title: 'Кодить / pet-проект', estimateMin: 45, difficulty: 'normal', days: [1,2,3,4,5] },
+              { skill: 'Программирование', title: 'Решить задачу (LeetCode)', estimateMin: 30, difficulty: 'hard', days: [2,4] },
+              { skill: 'Английский', title: 'Английский 15 мин', estimateMin: 15, difficulty: 'easy', days: [1,2,3,4,5] } ],
+    quests: [ { skill: 'Программирование', title: 'Разобрать новую технологию', estimateMin: 60, difficulty: 'hard' } ] },
+];
+
+function programSkillMap(prog, existingSkills) {
+  const map = {}, skills = (existingSkills || []).slice();
+  skills.forEach((sk) => { map[sk.name.toLowerCase()] = sk.id; });
+  prog.skills.forEach((ps) => {
+    const k = ps.name.toLowerCase();
+    if (!map[k]) { const id = 'sk_' + k.replace(/[^a-z0-9]/g, '') + '_' + Math.random().toString(36).slice(2, 7); skills.push({ id, name: ps.name, color: ps.color, attr: ps.attr }); map[k] = id; }
+  });
+  return { skills, map };
+}
+function programHabits(prog, map) { return (prog.habits || []).map((ph) => ({ id: 'h_' + uid(), title: ph.title, skillId: map[ph.skill.toLowerCase()], difficulty: ph.difficulty || 'normal', estimateMin: ph.estimateMin || 10, days: ph.days || [1, 2, 3, 4, 5], archived: false, createdAt: new Date().toISOString() })); }
+function programTasks(prog, map) { return (prog.quests || []).map((pq) => ({ id: uid(), title: pq.title, skillId: map[pq.skill.toLowerCase()], estimateMin: pq.estimateMin || 20, difficulty: pq.difficulty || 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() })); }
+
+// Онбординг: чистый профиль из программы. Пишем файлы НАПРЯМУЮ (await), чтобы initApp их загрузил без гонки.
+async function applyProgramFresh(prog) {
+  const { skills, map } = programSkillMap(prog, []);
+  const settings = Object.assign(structuredClone(DEFAULT_SETTINGS), { skills });
+  await Promise.all([ Store._put('settings', settings), Store._put('habits', programHabits(prog, map)), Store._put('tasks', programTasks(prog, map)) ]);
+  State.phase = 'app'; initApp();
+}
+// В приложении: домерживаем программу к существующим данным (не затирая их).
+function applyProgramMerge(prog) {
+  const { skills, map } = programSkillMap(prog, State.settings.skills);
+  State.settings.skills = skills;
+  State.habits.push(...programHabits(prog, map));
+  State.tasks.push(...programTasks(prog, map));
+  ensureSkillAttrs();
+  Store.save('settings', State.settings); Store.save('habits', State.habits); Store.save('tasks', State.tasks);
+  toast(`📦 Программа «${prog.name}» добавлена`); render();
+}
+function programCard(p, action) {
+  return `<button type="button" class="prog-card" data-action="${action}" data-prog="${p.id}">
+    <span class="pc-ic">${p.icon}</span>
+    <span class="pc-body">
+      <span class="pc-name">${esc(p.name)}</span>
+      <span class="pc-tag">${esc(p.tagline)}</span>
+      <span class="pc-meta">${p.skills.map((s) => esc(s.name)).join(' · ')} · ${(p.habits || []).length} прив. · ${(p.quests || []).length} квест.</span>
+    </span></button>`;
+}
+
 const AVATARS = ['⚡','⚔️','🔥','🌟','🎯','🚀','💎','🐉','🦊','🐺','🌙','☀️','🎭','🎸','🏆','🦁'];
 
 const State = {
@@ -610,6 +692,9 @@ function renderOnboardingScreen() {
         <p>Выбери свои сферы развития — их всегда можно изменить</p>
       </div>
       <div class="auth-box">
+        <div class="ob-section">📦 Быстрый старт — готовая программа</div>
+        <div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'ob-program')).join('')}</div>
+        <div class="ob-or">— или собери вручную —</div>
         <div class="ob-chips">${chips}</div>
         <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
           <input id="ob-custom" placeholder="Своя сфера…" style="flex:1" />
@@ -1192,6 +1277,7 @@ function renderSettings() {
     <div class="card"><h3>Название</h3><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></div>
     <div class="card"><h3>Навыки / сферы жизни</h3><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">+ Добавить навык</button></div>
     <div class="card"><h3>🔁 Привычки (повторяющиеся)</h3><div id="habits-list">${habits || '<p class="muted">Пока нет привычек.</p>'}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">+ Добавить привычку</button></div>
+    <div class="card"><h3>📦 Программы-данжи</h3><p class="muted" style="margin:0 0 12px">Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
     <div class="card"><h3>Формула опыта</h3><div class="knobs">
         <div class="knob"><label>XP за минуту</label><input id="k-perMinute" type="number" step="0.1" value="${s.xp.perMinute}" /></div>
         <div class="knob"><label>Бонус за выполнение</label><input id="k-bonus" type="number" step="1" value="${s.xp.completionBonus}" /></div>
@@ -1375,6 +1461,8 @@ function onClick(e) {
     if (name) { State.obSkills.add(name + '|' + (col ? col.value : '#6c8cff')); render(); }
     return;
   }
+  if (action === 'ob-program') { const p = DUNGEON_PROGRAMS.find((x) => x.id === el.dataset.prog); if (p) applyProgramFresh(p); return; }
+  if (action === 'add-program') { const p = DUNGEON_PROGRAMS.find((x) => x.id === el.dataset.prog); if (p) applyProgramMerge(p); return; }
   if (action === 'ob-finish') {
     if (State.obSkills.size === 0) return;
     const skills = [...State.obSkills].map((entry) => {
