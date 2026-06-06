@@ -237,6 +237,21 @@ function dmShort(s) { return s.slice(8) + '.' + s.slice(5, 7); }
 function fmtClock(ms) { const t = Math.max(0, Math.floor(ms / 1000)); const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60; return h ? `${h}:${pad2(m)}:${pad2(s)}` : `${m}:${pad2(s)}`; }
 function plural(n, one, few, many) { const a = Math.abs(n) % 100, b = a % 10; if (a > 10 && a < 20) return many; if (b > 1 && b < 5) return few; if (b === 1) return one; return many; }
 function skillById(id) { return State.settings.skills.find((s) => s.id === id) || { id, name: id || '—', color: '#888' }; }
+// ── Иерархия сфер (импорт v2.2): под-навыки через parentId. 2 уровня: столб → под-навык.
+function childSkills(id) { return State.settings.skills.filter((s) => s.parentId === id); }
+function isPillar(id) { return childSkills(id).length > 0; }            // столб = есть под-навыки
+function topSkills() { return State.settings.skills.filter((s) => !s.parentId); } // верхний уровень
+function leafSkills() { return State.settings.skills.filter((s) => !isPillar(s.id)); } // листья (для атрибутов/формы)
+function skillLabel(id) { const s = skillById(id); if (s && s.parentId) { const p = skillById(s.parentId); return (p ? p.name + ' › ' : '') + s.name; } return s ? s.name : id; }
+// Опции <select> в иерархическом порядке: столб, затем его под-навыки («Столб › Под»)
+function skillOptionsHTML(sel) {
+  let html = '';
+  for (const p of topSkills()) {
+    html += `<option value="${p.id}" ${p.id === sel ? 'selected' : ''}>${esc(p.name)}${isPillar(p.id) ? ' (общее)' : ''}</option>`;
+    for (const c of childSkills(p.id)) html += `<option value="${c.id}" ${c.id === sel ? 'selected' : ''}>${esc(p.name)} › ${esc(c.name)}</option>`;
+  }
+  return html;
+}
 function questById(id) { return State.tasks.find((t) => t.id === id); }
 function habitById(id) { return State.habits.find((h) => h.id === id); }
 function goalById(id) { return State.goals.find((g) => g.id === id); }
@@ -291,7 +306,9 @@ function importedXp(id) { const im = State.settings && State.settings.imported; 
 function totalImportedXp() { const im = (State.settings && State.settings.imported) || {}; return Object.keys(im).reduce((s, k) => s + (im[k].xp || 0), 0); }
 function earnedXp() { return xpEvents().reduce((s, e) => s + e.xp, 0); } // только заработанное в приложении (для честного лидерборда)
 function overallXp() { return earnedXp() + totalImportedXp(); }
-function skillXp(id) { return xpEvents().reduce((s, e) => s + (e.skillId === id ? e.xp : 0), 0) + importedXp(id); }
+function ownSkillXp(id) { return xpEvents().reduce((s, e) => s + (e.skillId === id ? e.xp : 0), 0) + importedXp(id); }
+// XP сферы. Для столба = собственный + сумма под-навыков (агрегация в столб).
+function skillXp(id) { let xp = ownSkillXp(id); for (const c of childSkills(id)) xp += ownSkillXp(c.id); return xp; }
 function goldEarned() { return xpEvents().reduce((s, e) => s + e.gold, 0) + (State.lootbox ? (State.lootbox.goldWon || 0) : 0); }
 function goldSpent() { return (State.purchases || []).reduce((s, p) => s + (p.cost || 0), 0); }
 function goldBalance() { return Math.round(goldEarned() - goldSpent()); }
@@ -307,7 +324,7 @@ function skillForm(id) {
   if (ds <= FORM_FRESH) return 100;
   return Math.round(Math.max(FORM_FLOOR, Math.min(100, 100 - ((ds - FORM_FRESH) / FORM_DECAY) * (100 - FORM_FLOOR))));
 }
-function overallForm() { const v = State.settings.skills.map((s) => skillForm(s.id)).filter((x) => x != null); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : null; }
+function overallForm() { const v = leafSkills().map((s) => skillForm(s.id)).filter((x) => x != null); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : null; }
 function formMeta(f) {
   if (f == null) return { text: 'разогрей', color: 'var(--muted)' };
   if (f >= 80) return { text: 'в форме', color: 'var(--good)' };
@@ -341,7 +358,7 @@ function charRank() { return rankFor(charLevel()); }
 
 // ---- Индекс баланса (философия десятиборья: ценим композицию, а не одну вертикаль) ----
 function balanceIndex() {
-  const skills = State.settings.skills || [];
+  const skills = topSkills(); // баланс по крупным жизненным сферам (столбы агрегируют под-навыки)
   const xps = skills.map((s) => skillXp(s.id));
   const active = xps.filter((x) => x > 0);
   if (active.length < 2) return { index: 0, active: active.length, total: skills.length, weakest: null, strongest: null };
@@ -382,7 +399,8 @@ function guessAttr(name) {
   return 'dis';
 }
 function ensureSkillAttrs() { for (const s of State.settings.skills) if (!s.attr) s.attr = guessAttr(s.name); }
-function attrScore(attrId) { return State.settings.skills.filter((s) => (s.attr || guessAttr(s.name)) === attrId).reduce((sum, s) => sum + skillLevelOf(s.id), 0); }
+// Атрибуты считаем по листьям (под-навыки + одиночные), чтобы не дублировать со столбами
+function attrScore(attrId) { return leafSkills().filter((s) => (s.attr || guessAttr(s.name)) === attrId).reduce((sum, s) => sum + skillLevelOf(s.id), 0); }
 function attrScores() { return ATTRIBUTES.map((a) => Object.assign({}, a, { value: attrScore(a.id) })); }
 function archetype() {
   const sorted = attrScores().filter((a) => a.value > 0).sort((a, b) => b.value - a.value);
@@ -892,11 +910,12 @@ function showAuthScreen() {
 function renderHeader() {
   const c = State.settings.curve, oi = levelInfo(overallXp(), c.base, c.growth), streak = currentStreak();
   const cr = charRank(), eqTitle = State.lootbox && State.lootbox.equipped, e = ent();
-  const skills = State.settings.skills.map((s) => {
-    const si = levelInfo(skillXp(s.id), c.skillBase, c.growth), sr = rankFor(si.level);
-    return `<div class="skill-chip" title="${esc(s.name)} — ${sr.name} (ур.${si.level}, ${skillXp(s.id)} XP)">
+  const skills = topSkills().map((s) => {
+    const si = levelInfo(skillXp(s.id), c.skillBase, c.growth), sr = rankFor(si.level), pillar = isPillar(s.id);
+    const subInfo = pillar ? ` · ${childSkills(s.id).length} под-навыков` : '';
+    return `<div class="skill-chip" title="${esc(s.name)} — ${sr.name} (ур.${si.level}, ${skillXp(s.id)} XP)${subInfo}">
       <span class="dot" style="background:${esc(s.color)}"></span>
-      <span class="sk-name">${esc(s.name)}</span><span class="sk-lvl">ур.${si.level}</span>
+      <span class="sk-name">${esc(s.name)}${pillar ? ' ▾' : ''}</span><span class="sk-lvl">ур.${si.level}</span>
       <span class="sk-bar"><span style="width:${si.pct}%;background:${esc(s.color)}"></span></span></div>`;
   }).join('');
   const proBadge = e.tier === 'pro' ? '<span class="plan-badge pro" title="Pro активен">PRO</span>'
@@ -981,7 +1000,7 @@ function renderToday() {
   const doneCount = todays.filter((t) => t.done).length;
   const todayEv = xpEvents().filter((e) => e.date === today);
   const xpToday = todayEv.reduce((s, e) => s + e.xp, 0), goldToday = todayEv.reduce((s, e) => s + e.gold, 0), minToday = todayEv.reduce((s, e) => s + e.min, 0);
-  const skillOpts = State.settings.skills.map((s) => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  const skillOpts = skillOptionsHTML();
   const tm = State.timer, tmTask = tm ? questById(tm.taskId) : null;
 
   const timerCard = `<div class="card timer-card">
@@ -1054,7 +1073,7 @@ function renderGoals() {
   const completed = State.goals.filter((g) => g.completedAt && !g.archived);
   const archived = State.goals.filter((g) => g.archived);
   const nearest = active.filter((g) => g.targetDate).sort((a, b) => (a.targetDate < b.targetDate ? -1 : 1))[0];
-  const skillOpts = State.settings.skills.map((s) => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  const skillOpts = skillOptionsHTML();
   const typeOpts = GOAL_TYPES.map((t) => `<option value="${t.id}" ${t.id === 'short' ? 'selected' : ''}>${t.label}</option>`).join('');
   const parentOpts = '<option value="">— без родителя —</option>' + active.map((g) => `<option value="${g.id}">${esc(g.title)}</option>`).join('');
 
@@ -1367,7 +1386,7 @@ function rangeStats(start, end) {
   const xp = ev.reduce((s, e) => s + e.xp, 0), gold = ev.reduce((s, e) => s + e.gold, 0), min = ev.reduce((s, e) => s + e.min, 0);
   const quests = State.tasks.filter((t) => t.done && dayOf(t) >= start && dayOf(t) <= end).length;
   let habitsC = 0; for (const d in State.habitlog) if (d >= start && d <= end) habitsC += Object.keys(State.habitlog[d]).length;
-  const byArea = State.settings.skills.map((s) => ({ label: s.name, value: ev.filter((e) => e.skillId === s.id).reduce((a, e) => a + e.min, 0), color: s.color }));
+  const byArea = leafSkills().map((s) => ({ label: skillLabel(s.id), value: ev.filter((e) => e.skillId === s.id).reduce((a, e) => a + e.min, 0), color: s.color }));
   return { xp, gold, min, quests, habitsC, byArea };
 }
 function renderWeekly() {
@@ -1422,16 +1441,17 @@ function renderStats() {
   const reflections = Object.entries(State.days).filter(([, v]) => v.reflection && v.reflection.trim()).sort((a, b) => (a[0] < b[0] ? 1 : -1)).slice(0, 7).map(([d, v]) => `<li><span class="date">${d}</span><br>${esc(v.reflection)}</li>`).join('');
   const cr = charRank(), bal = balanceIndex();
   const balColor = bal.index >= 70 ? '#5fbf7a' : bal.index >= 40 ? '#e0a23e' : '#e0526a';
-  const skillRanksRows = State.settings.skills.map((s) => {
+  const rankRow = (s, sub) => {
     const lvl = skillLevelOf(s.id), r = rankFor(lvl), rp = rankProgress(lvl);
-    return `<div class="rank-row">
+    return `<div class="rank-row ${sub ? 'sub' : ''}">
       <span class="rr-dot" style="background:${esc(s.color)}"></span>
-      <span class="rr-name">${esc(s.name)}</span>
+      <span class="rr-name">${sub ? '↳ ' : ''}${esc(s.name)}</span>
       <span class="rr-rank" style="--rc:${r.color}">${r.icon} ${r.name}</span>
       <span class="rr-lvl">ур.${lvl}</span>
       <span class="rr-bar"><span style="width:${rp.pct}%;background:${r.color}"></span></span>
       <span class="rr-next muted">${rp.next ? `+${rp.toNext} до «${rp.next.name}»` : 'макс'}</span></div>`;
-  }).join('');
+  };
+  const skillRanksRows = topSkills().map((s) => rankRow(s, false) + childSkills(s.id).map((c) => rankRow(c, true)).join('')).join('');
   const advanced = isPro()
     ? `<div class="card"><h3>Время по сферам — эта неделя</h3>${barChartSVG(timeByAreaThisWeek())}</div>`
     : `<div class="card locked-card" data-action="show-paywall" data-feature="Расширенная аналитика">
@@ -1475,17 +1495,18 @@ function applyImport(skillId, tierIdx) {
 }
 function importCard() {
   const s = State.settings, im = s.imported || {};
-  const rows = s.skills.map((sk) => {
+  const row = (sk, sub) => {
     const ladder = ladderFor(sk.name), levels = tierLevels(ladder);
     const curTier = (im[sk.id] && im[sk.id].tier) || 0;
     const opts = ladder.tiers.map((t, i) => `<option value="${i}" ${i === curTier ? 'selected' : ''}>${i === 0 ? '— с нуля' : esc(t) + ' · ур.' + levels[i]}</option>`).join('');
-    return `<div class="import-row">
+    return `<div class="import-row ${sub ? 'sub' : ''}">
       <span class="imp-dot" style="background:${esc(sk.color)}"></span>
-      <span class="imp-name">${esc(sk.name)}</span>
+      <span class="imp-name">${sub ? '↳ ' : ''}${esc(sk.name)}</span>
       <select data-action="set-import" data-skill="${esc(sk.id)}" title="${esc(ladder.hint)}">${opts}</select>
       <span class="imp-lvl ${curTier > 0 ? '' : 'muted'}">${curTier > 0 ? 'ур.' + levels[curTier] : '—'}</span>
     </div>`;
-  }).join('');
+  };
+  const rows = topSkills().map((sk) => row(sk, false) + childSkills(sk.id).map((c) => row(c, true)).join('')).join('');
   return `<div class="card">
     <h3>🎖 Импорт достижений</h3>
     <p class="muted" style="margin:0 0 12px">Ты не начинаешь с нуля. Отметь честно свой реальный уровень в каждой сфере — стартовый опыт начислится. Это «доказанное мастерство», оно не сгорает. Менять можно в любой момент.</p>
@@ -1495,8 +1516,15 @@ function importCard() {
 function renderSettings() {
   const s = State.settings;
   const f = s.focus || DEFAULT_SETTINGS.focus;
-  const skillOpts = (sel) => s.skills.map((sk) => `<option value="${sk.id}" ${sk.id === sel ? 'selected' : ''}>${esc(sk.name)}</option>`).join('');
-  const skills = s.skills.map((sk) => `<div class="skill-edit" data-id="${sk.id}"><input type="color" value="${esc(sk.color)}" data-field="color" /><input type="text" value="${esc(sk.name)}" data-field="name" /><select data-field="attr" title="Какой атрибут персонажа качает эта сфера">${ATTRIBUTES.map((a) => `<option value="${a.id}" ${(sk.attr || guessAttr(sk.name)) === a.id ? 'selected' : ''}>${a.icon} ${a.name}</option>`).join('')}</select><button class="del" data-action="delete-skill" data-id="${sk.id}">✕</button></div>`).join('');
+  const skillOpts = (sel) => skillOptionsHTML(sel);
+  // допустимые родители для сферы sk: верхнеуровневые сферы (не она сама), и только если сама не столб (2 уровня)
+  const parentOptions = (sk) => {
+    if (isPillar(sk.id)) return `<option value="" selected>— столб</option>`; // у столба не может быть родителя
+    let html = `<option value="" ${!sk.parentId ? 'selected' : ''}>— верхний уровень</option>`;
+    for (const p of topSkills()) if (p.id !== sk.id) html += `<option value="${p.id}" ${sk.parentId === p.id ? 'selected' : ''}>↳ ${esc(p.name)}</option>`;
+    return html;
+  };
+  const skills = s.skills.map((sk) => `<div class="skill-edit" data-id="${sk.id}"><input type="color" value="${esc(sk.color)}" data-field="color" /><input type="text" value="${esc(sk.name)}" data-field="name" /><select data-field="attr" title="Какой атрибут персонажа качает эта сфера">${ATTRIBUTES.map((a) => `<option value="${a.id}" ${(sk.attr || guessAttr(sk.name)) === a.id ? 'selected' : ''}>${a.icon} ${a.name}</option>`).join('')}</select><select data-field="parentId" title="Вложить в столб (под-навык)">${parentOptions(sk)}</select><button class="del" data-action="delete-skill" data-id="${sk.id}">✕</button></div>`).join('');
   const habits = State.habits.map((h) => `<div class="habit-edit" data-id="${h.id}">
       <input type="text" value="${esc(h.title)}" data-field="title" />
       <select data-field="skillId">${skillOpts(h.skillId)}</select>
@@ -1849,7 +1877,7 @@ function onClick(e) {
   } else if (action === 'add-skill') {
     State.settings.skills.push({ id: 'sk_' + uid(), name: 'Новый навык', color: '#6c8cff' }); ensureTrees(); Store.save('settings', State.settings); Store.save('skilltree', State.tree); render();
   } else if (action === 'delete-skill') {
-    if (!confirm('Удалить навык?')) return; State.settings.skills = State.settings.skills.filter((x) => x.id !== id); Store.save('settings', State.settings); render();
+    if (!confirm('Удалить навык?')) return; State.settings.skills = State.settings.skills.filter((x) => x.id !== id); for (const sk of State.settings.skills) if (sk.parentId === id) sk.parentId = null; Store.save('settings', State.settings); render();
   } else if (action === 'add-habit') {
     const first = State.settings.skills[0];
     State.habits.push({ id: 'h_' + uid(), title: 'Новая привычка', skillId: first ? first.id : 'life', difficulty: 'easy', estimateMin: 10, days: [1, 2, 3, 4, 5], archived: false, createdAt: new Date().toISOString() });
@@ -1866,7 +1894,12 @@ function onClick(e) {
 function saveSettingsFromForm() {
   const s = State.settings, num = (id, fb) => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? fb : v; };
   s.appName = document.getElementById('set-appName').value.trim() || 'Gojo';
-  s.skills = [...document.querySelectorAll('#skills-list .skill-edit')].map((row) => ({ id: row.dataset.id, name: row.querySelector('[data-field="name"]').value.trim() || 'Без названия', color: row.querySelector('[data-field="color"]').value, attr: row.querySelector('[data-field="attr"]') ? row.querySelector('[data-field="attr"]').value : guessAttr(row.querySelector('[data-field="name"]').value) }));
+  s.skills = [...document.querySelectorAll('#skills-list .skill-edit')].map((row) => {
+    const psel = row.querySelector('[data-field="parentId"]');
+    return { id: row.dataset.id, name: row.querySelector('[data-field="name"]').value.trim() || 'Без названия', color: row.querySelector('[data-field="color"]').value, attr: row.querySelector('[data-field="attr"]') ? row.querySelector('[data-field="attr"]').value : guessAttr(row.querySelector('[data-field="name"]').value), parentId: psel && psel.value ? psel.value : null };
+  });
+  // нормализация parentId: убрать ссылки на несуществующих и 3-й уровень (оставляем строго 2 уровня)
+  for (const sk of s.skills) { if (sk.parentId) { const p = s.skills.find((x) => x.id === sk.parentId); if (!p || p.parentId) sk.parentId = null; } }
   const oldHabits = State.habits;
   State.habits = [...document.querySelectorAll('#habits-list .habit-edit')].map((row) => {
     const old = oldHabits.find((h) => h.id === row.dataset.id);
