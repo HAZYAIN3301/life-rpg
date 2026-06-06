@@ -1,5 +1,8 @@
-# Personal user data — never commit this (stays on your machine / server volume)
+# Personal user data + session secret — never commit (stays on machine / server volume,
+# recreated fresh on Railway/new instance at first run)
 data/*.json
+data/users/
+data/feedback.json
 
 # macOS
 .DS_Store
