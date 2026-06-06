@@ -138,10 +138,23 @@ function levelInfo(totalXp, base, growth) {
 }
 function skillPerkBonus(id) { const t = State.tree && State.tree[id]; if (!t) return 0; return t.nodes.filter((n) => n.unlocked).reduce((s, n) => s + (n.perkXpPct || 0), 0); }
 function lootBoostPct() { const b = State.lootbox && State.lootbox.boost; if (b && new Date(b.until).getTime() > Date.now()) return b.pct || 0; return 0; }
+
+// ── Хайп: временный XP-бафф за ДОБРОВОЛЬНЫЙ выбор сложных квестов (идея 26).
+//    Философия «лезь в сложное» — челлендж компаундится. Хранится в lootbox (уже персист).
+const HYPE_PER_STACK = 15, HYPE_MAX_STACKS = 3, HYPE_DURATION_MS = 2 * 3600 * 1000;
+function hypeState() { const h = State.lootbox && State.lootbox.hype; if (h && h.stacks > 0 && new Date(h.until).getTime() > Date.now()) return h; return null; }
+function hypePct() { const h = hypeState(); return h ? Math.min(HYPE_MAX_STACKS, h.stacks) * HYPE_PER_STACK : 0; }
+function hypeMinLeft() { const h = hypeState(); return h ? Math.max(0, Math.ceil((new Date(h.until).getTime() - Date.now()) / 60000)) : 0; }
+function activateHype() {
+  const lb = ensureLootbox(), cur = hypeState();
+  lb.hype = { stacks: Math.min(HYPE_MAX_STACKS, (cur ? cur.stacks : 0) + 1), until: new Date(Date.now() + HYPE_DURATION_MS).toISOString() };
+  Store.save('lootbox', lb); return lb.hype;
+}
+
 function itemXp(it) {
   const xp = State.settings.xp, mult = xp.difficulty[it.difficulty] ?? 1;
   const base = (Number(it.estimateMin) || 0) * xp.perMinute * mult + xp.completionBonus;
-  return Math.max(1, Math.round(base * (1 + skillPerkBonus(it.skillId) / 100) * (1 + lootBoostPct() / 100)));
+  return Math.max(1, Math.round(base * (1 + skillPerkBonus(it.skillId) / 100) * (1 + lootBoostPct() / 100) * (1 + hypePct() / 100)));
 }
 function itemGold(it) {
   const g = State.settings.gold || DEFAULT_SETTINGS.gold, mult = State.settings.xp.difficulty[it.difficulty] ?? 1;
@@ -644,6 +657,7 @@ function renderHeader() {
       <div class="xp-bar"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
       <div class="gold-pill" title="Золото">🪙 ${goldBalance()}</div>
       <div class="streak" title="Рекорд: ${longestStreak()} ${plural(longestStreak(), 'день', 'дня', 'дней')}">🔥 ${streak} ${plural(streak, 'день', 'дня', 'дней')}</div>
+      ${hypePct() > 0 ? `<div class="hype-chip" title="Хайп ×${hypeState().stacks}: бонус XP за добровольный выбор сложных квестов. Осталось ${hypeMinLeft()} мин.">🔥 Хайп +${hypePct()}%</div>` : ''}
       <button class="help-btn" data-action="show-guide" title="Как играть">?</button>
       ${proBadge}
       <button class="btn ghost logout-btn" data-action="logout" title="Сменить профиль">⇦ Выйти</button>
@@ -719,8 +733,8 @@ function renderToday() {
         <div class="timer-task">${tm ? (tmTask ? '🎯 ' + esc(tmTask.title) : '(задача удалена)') : 'Таймер фокуса — нажми ▶ у квеста'}</div></div>
       <div class="timer-controls">${tm ? `${tm.running ? '<button class="btn ghost" data-action="timer-pause">⏸ Пауза</button>' : '<button class="btn" data-action="timer-resume">▶ Продолжить</button>'}<button class="btn" data-action="timer-stop">⏹ Стоп · записать</button><button class="btn ghost" data-action="open-pip" title="Плавающее окно поверх всех приложений">↗ Окно</button>` : ''}</div></div>`;
 
-  const chestsAvail = lootChestsAvailable(), activeBoost = lootBoostPct();
-  const nudgeCard = (chestsAvail > 0 || activeBoost > 0) ? `<div class="card nudge-card">${chestsAvail > 0 ? `<button class="nudge" data-action="goto-rewards">🎁 ${chestsAvail} ${plural(chestsAvail, 'сундук', 'сундука', 'сундуков')} ждёт — открыть</button>` : ''}${activeBoost > 0 ? `<span class="nudge-boost">⚡ +${activeBoost}% XP активен</span>` : ''}</div>` : '';
+  const chestsAvail = lootChestsAvailable(), activeBoost = lootBoostPct(), hp = hypePct();
+  const nudgeCard = (chestsAvail > 0 || activeBoost > 0 || hp > 0) ? `<div class="card nudge-card">${chestsAvail > 0 ? `<button class="nudge" data-action="goto-rewards">🎁 ${chestsAvail} ${plural(chestsAvail, 'сундук', 'сундука', 'сундуков')} ждёт — открыть</button>` : ''}${activeBoost > 0 ? `<span class="nudge-boost">⚡ +${activeBoost}% XP активен</span>` : ''}${hp > 0 ? `<span class="nudge-boost">🔥 Хайп ×${hypeState().stacks} · +${hp}% XP · ${hypeMinLeft()}м</span>` : ''}</div>` : '';
 
   const overdueCard = overdue.length ? `<div class="card overdue"><h3>⏳ Просрочено (${overdue.length})</h3>
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
@@ -1002,6 +1016,7 @@ const GUIDE_SECTIONS = [
   { icon: '🎯', title: 'Цели', text: 'Большие цели 4 горизонтов: повторяющиеся, кратко-, средне-, долгосрочные. Разбивай на чек-лист, ставь дедлайн и «зачем». Все пункты закрыл — цель засчитана с бонусом.' },
   { icon: '🌳', title: 'Навыки', text: 'У каждой сферы — дерево. За уровни навыка копятся очки, открывай узлы: они дают пассивный бонус к опыту этой сферы.' },
   { icon: '🎁', title: 'Награды', text: 'Трать золото в магазине наград (придумай свои!). За активность дня падают сундуки — открывай рулеткой: золото, XP-бусты, титулы. Тут же ачивки.' },
+  { icon: '🔥', title: 'Хайп', text: 'Выполни «Сложный» квест — включается Хайп: временный бонус к XP (+15% за стак, до +45%, на 2 часа). Каждый следующий сложный квест усиливает и продлевает его. Награда за то, что лезешь в трудное, а не фармишь лёгкое.' },
   { icon: '📊', title: 'Статистика', text: 'Ранг, Индекс баланса (ровно ли развиты сферы — это и есть десятиборье), ранги по сферам, графики опыта и времени.' },
   { icon: '💎', title: 'Free и Pro', text: 'Ядро бесплатно навсегда. Pro добавляет глубину: расширенная аналитика, 3 сундука в день, состав тела, скоро — ИИ-ассистент и темы. 7-дневный триал без карты.' },
 ];
@@ -1397,7 +1412,8 @@ function onClick(e) {
 
   if (action === 'toggle-task') {
     const t = questById(id); if (!t) return;
-    if (!t.done) { if (State.timer && State.timer.taskId === id) stopFocus(true, true); t.done = true; t.completedAt = new Date().toISOString(); t.xpAwarded = itemXp(t); t.goldAwarded = itemGold(t); toast(`+${t.xpAwarded} XP · +${t.goldAwarded} 🪙 · ${skillById(t.skillId).name}`); }
+    if (!t.done) { if (State.timer && State.timer.taskId === id) stopFocus(true, true); t.done = true; t.completedAt = new Date().toISOString(); t.xpAwarded = itemXp(t); t.goldAwarded = itemGold(t); toast(`+${t.xpAwarded} XP · +${t.goldAwarded} 🪙 · ${skillById(t.skillId).name}`);
+      if (t.difficulty === 'hard') { const h = activateHype(); toast(`🔥 Хайп ×${h.stacks} · +${hypePct()}% XP ${hypeMinLeft()} мин — ты выбрал сложное!`); } }
     else { t.done = false; t.completedAt = null; t.xpAwarded = 0; t.goldAwarded = 0; }
     Store.save('tasks', State.tasks); checkAchievements(); render();
   } else if (action === 'toggle-habit') {
