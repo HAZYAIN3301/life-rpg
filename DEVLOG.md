@@ -192,6 +192,18 @@
 - Драг сделан без библиотек (pointer events). Полный render во время драга НЕ дёргаем (ломал бы перетаскивание) — двигаем DOM напрямую, коммит в State на отпускании.
 - Тест-правки дерева Albert сброшены: `skilltree.json` → `{}` (регенерит дефолтные деревья).
 
+---
+
+## Сессия 2026-06-06 (ночь, ч.4) — репорты с фото/видео + админ-вьюер
+
+Цель Альберта: репортить баги самому, без траты токенов LLM; всё в одном месте.
+- **Форма фидбека** (в гайде): тип/текст + `<input type=file accept=image/*,video/*  multiple>` + живое превью (`onChange` по `name=files`). Фото ужимаются на клиенте (`downscaleImage` через canvas, ≤1280px, JPEG q0.82) → лёгкие; видео ≤25 МБ как есть (`readAttachment`/`fileToDataURL`). Submit шлёт `attachments:[{name,type,dataUrl}]`, кнопка дизейблится на время.
+- **Сервер:** `POST /api/feedback` принимает base64-вложения, декодит → `data/feedback/<id>_<i>.<ext>`, метаданные в `data/feedback.json` (`{id,at,userId,kind,text,attachments:[{file,type,name}]}`). `readBody(req, 30MB)` для этого роута. `FB_EXT` маппинг mime→ext, лимит 26МБ/файл, до 6 вложений.
+- `GET /api/feedback` (админ) — список (новые сверху). `GET /api/feedback/file/<name>` (админ) — отдаёт файл (защита от `..`). MIME расширен (jpg/webp/gif/mp4/webm/mov).
+- **Вьюер** `showReports()` (кнопка в гайде, только админ): модалка со всеми репортами, фото как `<img>`, видео как `<video controls>`.
+- **Безопасность:** `.gitignore` += `data/feedback/` (личные фото/видео НЕ коммитятся).
+- Проверено вживую: POST PNG → сохранение → GET файла (content-type image/png) → отрисовка во вьюере; форма имеет file-input + админ-кнопку; 0 ошибок.
+
 ## Как запустить и протестировать
 ```
 cd life-rpg && npm start          # http://127.0.0.1:4317
