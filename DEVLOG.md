@@ -171,6 +171,27 @@
 - **CSS:** `.skill-edit` → flex-wrap (вместила доп. select); `.rank-row.sub/.import-row.sub` — отступ.
 - Проверено: Здоровье▾ агрегирует Бег(ур.10 из импорта)+Зал; Выносливость=10 (только Бег, столб не задвоился); сохранение parentId round-trip; 0 overflow на всех видах.
 
+---
+
+## Сессия 2026-06-06 (ночь, ч.3) — визуальный редактор дерева навыков + гайд
+
+Модель: Opus. Прогнано вживую (драг, добавл./удал., правка, связи, unlock, мобайл, 0 ошибок).
+
+### 🌳 Редактор дерева навыков
+- Позиции узлов: миграция `col/row` → свободные `x/y` (в `ensureTrees`, обратносовместимо). Константы `TREE_SX/SY/NW/NH`.
+- Режим редактора: `State.treeEdit` (кнопка «✏️ Редактор»/«✓ Готово»), `State.treeSelNode`.
+- **Перетаскивание:** делегированный `onTreePointerDown` на document (pointer events, тач-friendly через `touch-action:none`). Во время драга — прямое обновление `style.left/top` + `updateTreeLines()` (живая перерисовка SVG-связей) без полного render; на pointerup — `Store.save` + render. Различение клик/драг по порогу 3px (клик без движения → выбор узла).
+- **Панель узла** `treeNodePanel`: поля `tree-field` (title/desc/cost/perkXpPct, через onChange), чекбоксы `tree-toggle-req` (пререквизиты → рисуют линии), `tree-add-node`, `tree-del-node` (чистит висящие requires).
+- Обычный режим без изменений: `unlock-node`. В режиме редактора у узлов нет `data-action` (клики идут в pointer-логику).
+- Хелперы: `treeNodeCenter/treeLinesHTML/treeBounds`. CSS: `.tree.edit`, `.tree-node.editing/.sel`, `.tree-panel/.tp-*`.
+
+### 📖 Гайд
+- Раздел «Навыки» описывает редактор (перетаскивай/добавляй/настраивай). «Что это» — про кастом-аватар и импорт.
+
+### ⚠️ Заметки
+- Драг сделан без библиотек (pointer events). Полный render во время драга НЕ дёргаем (ломал бы перетаскивание) — двигаем DOM напрямую, коммит в State на отпускании.
+- Тест-правки дерева Albert сброшены: `skilltree.json` → `{}` (регенерит дефолтные деревья).
+
 ## Как запустить и протестировать
 ```
 cd life-rpg && npm start          # http://127.0.0.1:4317
@@ -187,4 +208,4 @@ Smoke-тест: вход albert/1234 → добавить квест → ▶ ф�
 - Серверу нужен рестарт после правок `server.js` (node не watch). Превью: stop→start.
 
 ## Карта ключевых функций (app.js)
-`Store` (`_put` = немедленный awaitable PUT, `save` = дебаунс 250мс) · `DEFAULT_SETTINGS` (+`imported`) · `State` (+`leaderboard/_lbLoading`) · уровни: `levelInfo/needForLevel/xpForLevel/charLevel/skillLevelOf` · **импорт: `IMPORT_LADDERS/GENERIC_LADDER/ladderFor/tierLevels/importedXp/totalImportedXp/earnedXp/applyImport/importCard`** · **иерархия: `childSkills/isPillar/topSkills/leafSkills/skillLabel/skillOptionsHTML/ownSkillXp` (parentId на skill, 2 уровня)** · **Форма: `skillForm/overallForm/formMeta/skillLastActive/daysSinceDate`** · **аватар: `AV_*/avatarSVG/avHair/shade/defaultAvatar/avCfg/avatarEditor` (хендлеры `av-cat`/`av-set`, `State.aveCat`, `settings.avatar`)** · `onChange`-делегат (set-import) · ранги: `RANKS/rankFor/rankProgress/charRank` · баланс: `balanceIndex` · Pro: `ent/isPro/trialDaysLeft` · атрибуты/аватар: `ATTRIBUTES/guessAttr/ensureSkillAttrs/attrScore/attrScores/archetype/bodyBMI/radarSVG/figureSVG` · экономика: `itemXp(+boost+hype)/goldEarned(+loot)/lootBoostPct` · **Хайп: `hypeState/hypePct/hypeMinLeft/activateHype`** · лут: `ensureLootbox/lootChestsAvailable/rollLoot/lootResolve/applyLoot/lootboxCard/openChest` · **программы: `DUNGEON_PROGRAMS/programSkillMap/programHabits/programTasks/applyProgramFresh/applyProgramMerge/programCard`** · **лидерборд: `publishLeaderboard/renderLeaderboard` (+ server `/api/leaderboard[/publish]`)** · Pro-UI: `subscriptionCard/securityCard/adminCard/showPaywall` · гайд/фидбек: `GUIDE_SECTIONS/showGuide` (+ server `/api/feedback`) · виды: `renderHeader/renderToday/renderCharacter/renderGoals/renderTree/renderRewards/renderWeekly/renderStats/renderLeaderboard/renderSettings` · `render()` диспатчер (+авто-центр активного таба) · `onClick/onSubmit` · `initApp/init`. **Nav дублирован в index.html + APP_SHELL — править оба.**
+`Store` (`_put` = немедленный awaitable PUT, `save` = дебаунс 250мс) · `DEFAULT_SETTINGS` (+`imported`) · `State` (+`leaderboard/_lbLoading`) · уровни: `levelInfo/needForLevel/xpForLevel/charLevel/skillLevelOf` · **импорт: `IMPORT_LADDERS/GENERIC_LADDER/ladderFor/tierLevels/importedXp/totalImportedXp/earnedXp/applyImport/importCard`** · **иерархия: `childSkills/isPillar/topSkills/leafSkills/skillLabel/skillOptionsHTML/ownSkillXp` (parentId на skill, 2 уровня)** · **дерево-редактор: `renderTree/treeNodePanel/treeNodeCenter/treeLinesHTML/treeBounds/updateTreeLines/onTreePointerDown` (`State.treeEdit/treeSelNode`, узлы x/y, хендлеры toggle-tree-edit/tree-add-node/tree-del-node/tree-sel-node/tree-field/tree-toggle-req)** · **Форма: `skillForm/overallForm/formMeta/skillLastActive/daysSinceDate`** · **аватар: `AV_*/avatarSVG/avHair/shade/defaultAvatar/avCfg/avatarEditor` (хендлеры `av-cat`/`av-set`, `State.aveCat`, `settings.avatar`)** · `onChange`-делегат (set-import) · ранги: `RANKS/rankFor/rankProgress/charRank` · баланс: `balanceIndex` · Pro: `ent/isPro/trialDaysLeft` · атрибуты/аватар: `ATTRIBUTES/guessAttr/ensureSkillAttrs/attrScore/attrScores/archetype/bodyBMI/radarSVG/figureSVG` · экономика: `itemXp(+boost+hype)/goldEarned(+loot)/lootBoostPct` · **Хайп: `hypeState/hypePct/hypeMinLeft/activateHype`** · лут: `ensureLootbox/lootChestsAvailable/rollLoot/lootResolve/applyLoot/lootboxCard/openChest` · **программы: `DUNGEON_PROGRAMS/programSkillMap/programHabits/programTasks/applyProgramFresh/applyProgramMerge/programCard`** · **лидерборд: `publishLeaderboard/renderLeaderboard` (+ server `/api/leaderboard[/publish]`)** · Pro-UI: `subscriptionCard/securityCard/adminCard/showPaywall` · гайд/фидбек: `GUIDE_SECTIONS/showGuide` (+ server `/api/feedback`) · виды: `renderHeader/renderToday/renderCharacter/renderGoals/renderTree/renderRewards/renderWeekly/renderStats/renderLeaderboard/renderSettings` · `render()` диспатчер (+авто-центр активного таба) · `onClick/onSubmit` · `initApp/init`. **Nav дублирован в index.html + APP_SHELL — править оба.**
