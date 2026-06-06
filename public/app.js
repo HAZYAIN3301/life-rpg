@@ -36,7 +36,7 @@ const Store = {
 // Generic defaults — shown to brand-new users who have no data/settings.json yet.
 // Existing users see their own settings.json instead (your personal skills are safe there).
 const DEFAULT_SETTINGS = {
-  appName: 'Life-RPG',
+  appName: 'Gojo',
   skills: [
     { id: 'study', name: 'Учёба', color: '#4f86f7' },
     { id: 'work', name: 'Работа', color: '#22c1a4' },
@@ -647,7 +647,7 @@ function renderLoginScreen() {
   }).join('');
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
-      <div class="auth-logo"><span>⚔️</span><h1>Life-RPG</h1><p>Превращаем жизнь в игру</p></div>
+      <div class="auth-logo"><span>⚔️</span><h1>Gojo</h1><p>Превращаем жизнь в игру</p></div>
       <div class="profiles-grid">${profileCards}
         <div class="profile-card new-card" data-action="go-register">
           <div class="profile-avatar add-avatar">+</div>
@@ -662,7 +662,7 @@ function renderRegisterScreen() {
   const avatarPicker = AVATARS.map((a) => `<button type="button" class="av-btn ${a === State.regAvatar ? 'sel' : ''}" data-action="pick-avatar" data-av="${a}">${a}</button>`).join('');
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
-      <div class="auth-logo"><span>⚔️</span><h1>Life-RPG</h1><p>Создай свой профиль</p></div>
+      <div class="auth-logo"><span>⚔️</span><h1>Gojo</h1><p>Создай свой профиль</p></div>
       <div class="auth-box">
         <form id="register-form">
           <label>Твоё имя</label>
@@ -732,7 +732,7 @@ function renderHeader() {
   const proBadge = e.tier === 'pro' ? '<span class="plan-badge pro" title="Pro активен">PRO</span>'
     : e.tier === 'trial' ? `<span class="plan-badge trial" title="Pro-триал">PRO ${trialDaysLeft()}д</span>`
     : '<button class="plan-badge free" data-action="show-paywall" data-feature="Pro" title="Открыть Pro">PRO</button>';
-  document.getElementById('appName').textContent = State.settings.appName || 'Life-RPG';
+  document.getElementById('appName').textContent = State.settings.appName || 'Gojo';
   document.getElementById('charSummary').innerHTML = `
     <div class="char-main">
       ${State.me ? `<div class="user-pill" title="Профиль">
@@ -1079,7 +1079,7 @@ function showPaywall(feature) {
   ov.innerHTML = `<div class="paywall-box">
     <button class="modal-x" data-action="close-paywall">✕</button>
     <div class="pw-crown">💎</div>
-    <h2>${feature && feature !== 'Pro' ? esc(feature) + ' — в Pro' : 'Life-RPG Pro'}</h2>
+    <h2>${feature && feature !== 'Pro' ? esc(feature) + ' — в Pro' : 'Gojo Pro'}</h2>
     <p class="muted">Открой глубину игры. Ядро всегда бесплатно — Pro добавляет силу.</p>
     <ul class="pro-feats">
       <li>📊 Расширенная аналитика и Индекс баланса</li>
@@ -1096,7 +1096,7 @@ function showPaywall(feature) {
 //  Гайд «Как играть» + форма обратной связи
 // ============================================================
 const GUIDE_SECTIONS = [
-  { icon: '⚔️', title: 'Что это', text: 'Life-RPG превращает жизнь в игру. Дела дают опыт и золото, ты растёшь в уровне и рангах, персонаж отражает прогресс. Философия — «жизнь как десятиборье»: ценится баланс многих сфер, а не одна вертикаль.' },
+  { icon: '⚔️', title: 'Что это', text: 'Gojo превращает жизнь в игру. Дела дают опыт и золото, ты растёшь в уровне и рангах, персонаж отражает прогресс. Философия — «жизнь как десятиборье»: ценится баланс многих сфер, а не одна вертикаль.' },
   { icon: '📅', title: 'Сегодня', text: 'Добавляй квесты (разовые дела) на день. ▶ запускает фокус-таймер (помодоро + плавающее окно поверх всех окон). Галочка — получаешь XP и золото. Ниже — привычки и итог дня с рефлексией.' },
   { icon: '🧍', title: 'Персонаж', text: 'Живой аватар. Атрибуты (Сила, Интеллект, Дух…) растут из твоих сфер и рисуют радар-билд. Архетип = твои сильнейшие атрибуты. Силуэт телосложения меняется от тренировок и веса.' },
   { icon: '🎯', title: 'Цели', text: 'Большие цели 4 горизонтов: повторяющиеся, кратко-, средне-, долгосрочные. Разбивай на чек-лист, ставь дедлайн и «зачем». Все пункты закрыл — цель засчитана с бонусом.' },
@@ -1113,7 +1113,7 @@ function showGuide() {
   const ov = document.createElement('div'); ov.id = 'guide'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="guide-box">
     <button class="modal-x" data-action="close-guide">✕</button>
-    <h2>📖 Как играть в Life-RPG</h2>
+    <h2>📖 Как играть в Gojo</h2>
     <p class="muted">Коротко по разделам. Лучший способ понять — добавить первый квест и выполнить его.</p>
     <div class="guide-list">${secs}</div>
     <h3 style="margin:6px 0 8px">💬 Нашёл баг или есть идея?</h3>
@@ -1309,7 +1309,7 @@ function renderSettings() {
 // ============================================================
 const APP_SHELL = `
   <header id="topbar">
-    <div class="brand"><span class="logo">⚔️</span><h1 id="appName">Life-RPG</h1></div>
+    <div class="brand"><span class="logo">⚔️</span><h1 id="appName">Gojo</h1></div>
     <div id="charSummary" class="char-summary"></div>
     <nav id="nav">
       <button data-view="today">Сегодня</button>
@@ -1629,7 +1629,7 @@ function onClick(e) {
 
 function saveSettingsFromForm() {
   const s = State.settings, num = (id, fb) => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? fb : v; };
-  s.appName = document.getElementById('set-appName').value.trim() || 'Life-RPG';
+  s.appName = document.getElementById('set-appName').value.trim() || 'Gojo';
   s.skills = [...document.querySelectorAll('#skills-list .skill-edit')].map((row) => ({ id: row.dataset.id, name: row.querySelector('[data-field="name"]').value.trim() || 'Без названия', color: row.querySelector('[data-field="color"]').value, attr: row.querySelector('[data-field="attr"]') ? row.querySelector('[data-field="attr"]').value : guessAttr(row.querySelector('[data-field="name"]').value) }));
   const oldHabits = State.habits;
   State.habits = [...document.querySelectorAll('#habits-list .habit-edit')].map((row) => {

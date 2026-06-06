@@ -1,6 +1,6 @@
 'use strict';
 
-// Life-RPG — self-hosted multi-user gamified life planner.
+// Gojo — self-hosted multi-user gamified life planner.
 // Auth: PIN profiles + HMAC-signed session cookies. Zero npm deps (Node stdlib only).
 // Data layout: DATA_DIR/users/<userId>/*.json  (one dir per user)
 //              DATA_DIR/users.json             (user registry, no PINs in plain text)
@@ -437,7 +437,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`\n  ⚔️  Life-RPG запущен:  http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
+  console.log(`\n  ⚔️  Gojo запущен:  http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
   console.log(`  📁  Данные:            ${DATA_DIR}`);
   if (HOST === '0.0.0.0') console.log('  🌐  Многопользовательский режим — доступен по сети.');
   console.log('');
