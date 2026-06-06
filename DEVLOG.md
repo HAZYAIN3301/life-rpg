@@ -74,6 +74,45 @@
 - Nav продублирован: в `public/index.html` (основной) И в `APP_SHELL` (фолбэк после auth-экранов). **При добавлении вкладки править оба.**
 - После правок `server.js` (фидбек-эндпоинт) нужен рестарт превью (stop→start).
 
+---
+
+## Сессия 2026-06-06 (день) — мобайл + Хайп + программы + лидерборд + фикс логина
+
+Модель: Sonnet/Opus. Всё построено и **протестировано в живом браузере** (preview MCP, desktop+mobile, 0 ошибок консоли). Деплой одним финальным push.
+
+### 0. 🐞 Критфикс: вход был сломан в проде
+- PIN-форма `#pin-form` лежит внутри `.profile-card[data-action="select-profile"]`. Любой клик в форме всплывал к карточке → `renderLoginScreen()` → форма пересоздавалась и схлопывалась. Войти было физически невозможно.
+- Фикс: `if (e.target.closest('#pin-form')) return;` в обработчике `select-profile`. Одна строка. (commit 01a3768)
+- **Урок:** «протестировано в превью» в прошлой сессии не покрыло auth-флоу в живом DOM. Теперь весь auth-флоу прогнан кликами.
+
+### 1. 📱 Мобильная/адаптивная версия (`styles.css` + `app.js`)
+- `@media (max-width:720px)`: nav становится горизонтально-скроллящейся лентой (устойчиво к любому числу вкладок), `margin: 14px -18px 0` (на ≤560 → `-12px` под padding #app), скрыт скроллбар, scroll-snap. Активный таб авто-центрируется (`scrollIntoView` в `render()`).
+- `@media (max-width:560px)`: инпуты 16px (фикс iOS zoom-on-focus), крупнее тач-таргеты, компактные hero/модалки, `.rank-row` → 4 колонки (скрыты lvl+next), `.lb-row` без колонки уровня.
+- **🐞 grid-blowout:** grid/flex-дети форм имеют `min-width:auto` → не дают колонкам сжиматься → 20px горизонтального скролла. Фикс: `.add-row>*,.goal-form>*,… { min-width:0 }`.
+- Проверено: 0 overflow на 375/673/1100px, все 9 видов; десктоп без регрессий.
+
+### 2. 🔥 Хайп — XP-бафф за сложные квесты (идея 26)
+- Выполнил «Сложный» квест → `activateHype()`: стак +15% XP (×1→×3, до +45%), таймер 2ч, продлевается каждым hard-квестом. Хранится в `lootbox.hype` (уже персист).
+- `hypeState/hypePct/hypeMinLeft/activateHype`; множитель в `itemXp()` рядом с `lootBoostPct`. Триггер в `toggle-task` ПОСЛЕ расчёта xpAwarded (буст для будущих, не самобуст).
+- Показ: пульс-чип `.hype-chip` в шапке + строка в нудже «Сегодня» + тост. Раздел в гайде.
+- Проверено: активация, эскалация ×2 (+30%), буст XP 50→57.
+
+### 3. 📦 Программы-данжи (идея 25)
+- `DUNGEON_PROGRAMS[]` — 6 пресетов (Спортсмен/Студент/Креатор/Дзен/Профи/Кодер): сферы + привычки + стартовые квесты.
+- `programSkillMap` (дедуп сфер по имени) + `programHabits` + `programTasks`. Два пути: `applyProgramFresh` (онбординг — пишет файлы напрямую `await Store._put` чтобы initApp загрузил без гонки) и `applyProgramMerge` (в приложении — домерж к существующему).
+- Показ: «Быстрый старт» в онбординге + карточка в Настройках (`programCard`, `.prog-grid/.prog-card`).
+- Проверено (merge): дедуп Учёба, +Чтение, +3 привычки, +2 квеста.
+
+### 4. 🏆 Лидерборд (`server.js` + клиент)
+- **Сервер:** `POST /api/leaderboard/publish` (снапшот `{totalXp,level,rank}` в `user.pub`, + `leaderboardOptOut`) и `GET /api/leaderboard` (сортировка по XP, фильтр opt-out, поле `me`). **Приватные данные не уходят** — на сервере только агрегат.
+- **Клиент:** вид `renderLeaderboard()` (медали топ-3, подсветка «ты»), `publishLeaderboard()` в `initApp` + после каждого выполнения, галочка opt-out (`toggle-lb-optout`). Refetch при входе в таб (`State.leaderboard=null` в nav-клике).
+- Проверено: публикация, рейтинг, opt-out скрывает/возвращает, мобайл без overflow.
+
+### ⚠️ Грабли этой сессии
+- **Nav продублирован** (index.html + APP_SHELL) — «Рейтинг» добавлен в ОБА. Не забывать при новых вкладках.
+- После правок `server.js` — **stop→start превью** (node не watch). `preview_start` сам не перезапускает.
+- Тестировал на профиле `albert` → XP/квесты/Хайп/Чтение налипли. Очищено фильтром по `createdAt` (всё за 2026-06-06 удалено), `pub`/`leaderboardOptOut` сняты с users.json, lootbox сброшен. Профиль = pristine (level 1, 6 сфер, 3 квеста, 3 привычки), Pro сохранён.
+
 ## Как запустить и протестировать
 ```
 cd life-rpg && npm start          # http://127.0.0.1:4317
@@ -85,8 +124,9 @@ Smoke-тест: вход albert/1234 → добавить квест → ▶ ф�
 - **Платежи не реальны.** `upgrade` — заглушка. Перед публичным запуском: Stripe/Paddle + **серверная защита Pro-эндпоинтов** (сейчас гейтинг честный/клиентский — ок для альфы с друзьями, нельзя для денег).
 - Гейтинг данных не enforced на сервере (любой может слать `/api/data/*` своего юзера — это его данные, ок; но Pro-only вычисления только на клиенте).
 - Не сделано из шаблона: **визуальный редактор дерева навыков** (draggable-ноды) — крупная задача, отложена.
-- ✅ Живой 2D-персонаж (идея 3) — СДЕЛАН (вид «Персонаж»). Дальше по ROADMAP: **анти-Duolingo стрик с заморозками** (28, ценно+дёшево, но трогает core-стрик — делать аккуратно) + **режим траура** (29, подпись продукта) + статус «Хайп» (26) + готовые программы-данжи (25).
+- ✅ Живой 2D-персонаж (идея 3), ✅ Хайп (26), ✅ программы-данжи (25), ✅ лидерборд, ✅ мобайл. Дальше по ROADMAP: **анти-Duolingo стрик с заморозками** (28, ценно+дёшево, но трогает core-стрик — делать аккуратно) + **режим траура** (29, подпись продукта, чувствительная).
+- **Лидерборд = honor-system:** клиент сам публикует свой XP-снапшот. Можно «накрутить» подменой запроса. Для альфы с друзьями ок; для денег/публички — серверная валидация XP (как и Pro-гейтинг).
 - Серверу нужен рестарт после правок `server.js` (node не watch). Превью: stop→start.
 
 ## Карта ключевых функций (app.js)
-`Store` · `DEFAULT_SETTINGS` · `State` · уровни: `levelInfo/charLevel/skillLevelOf` · ранги: `RANKS/rankFor/rankProgress/charRank` · баланс: `balanceIndex` · Pro: `ent/isPro/trialDaysLeft` · атрибуты/аватар: `ATTRIBUTES/guessAttr/ensureSkillAttrs/attrScore/attrScores/archetype/bodyBMI/radarSVG/figureSVG` · экономика: `itemXp(+boost)/goldEarned(+loot)/lootBoostPct` · лут: `ensureLootbox/lootChestsAvailable/rollLoot/lootResolve/applyLoot/lootboxCard/openChest` · Pro-UI: `subscriptionCard/securityCard/adminCard/showPaywall` · гайд/фидбек: `GUIDE_SECTIONS/showGuide` (+ server `/api/feedback`) · виды: `renderHeader/renderToday/renderCharacter/renderGoals/renderTree/renderRewards/renderWeekly/renderStats/renderSettings` · `render()` диспатчер · `onClick/onSubmit` · `initApp/init`. **Nav дублирован в index.html + APP_SHELL.**
+`Store` (`_put` = немедленный awaitable PUT, `save` = дебаунс 250мс) · `DEFAULT_SETTINGS` · `State` (+`leaderboard/_lbLoading`) · уровни: `levelInfo/charLevel/skillLevelOf` · ранги: `RANKS/rankFor/rankProgress/charRank` · баланс: `balanceIndex` · Pro: `ent/isPro/trialDaysLeft` · атрибуты/аватар: `ATTRIBUTES/guessAttr/ensureSkillAttrs/attrScore/attrScores/archetype/bodyBMI/radarSVG/figureSVG` · экономика: `itemXp(+boost+hype)/goldEarned(+loot)/lootBoostPct` · **Хайп: `hypeState/hypePct/hypeMinLeft/activateHype`** · лут: `ensureLootbox/lootChestsAvailable/rollLoot/lootResolve/applyLoot/lootboxCard/openChest` · **программы: `DUNGEON_PROGRAMS/programSkillMap/programHabits/programTasks/applyProgramFresh/applyProgramMerge/programCard`** · **лидерборд: `publishLeaderboard/renderLeaderboard` (+ server `/api/leaderboard[/publish]`)** · Pro-UI: `subscriptionCard/securityCard/adminCard/showPaywall` · гайд/фидбек: `GUIDE_SECTIONS/showGuide` (+ server `/api/feedback`) · виды: `renderHeader/renderToday/renderCharacter/renderGoals/renderTree/renderRewards/renderWeekly/renderStats/renderLeaderboard/renderSettings` · `render()` диспатчер (+авто-центр активного таба) · `onClick/onSubmit` · `initApp/init`. **Nav дублирован в index.html + APP_SHELL — править оба.**
