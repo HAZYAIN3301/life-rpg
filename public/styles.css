@@ -274,6 +274,23 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .tn-desc { font-size: 11px; color: var(--muted); }
 .tn-cost { font-size: 11px; font-weight: 600; }
 
+/* Редактор дерева */
+.tree-ctrls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tree.edit { cursor: default; }
+.tree.edit .tree-node { cursor: grab; touch-action: none; animation: none; opacity: 1; border-style: dashed; }
+.tree.edit .tree-node:active { cursor: grabbing; }
+.tree-node.editing { border-color: color-mix(in srgb, var(--c) 60%, var(--line)); background: var(--panel2); }
+.tree-node.sel { border-style: solid !important; border-color: var(--accent) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); }
+.tree-panel { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 14px; }
+.tp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tp-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+.tp-grid input { width: 100%; }
+.tp-reqs { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 13px; }
+.tp-req { display: inline-flex; align-items: center; gap: 5px; background: var(--panel2); border: 1px solid var(--line); padding: 4px 10px; border-radius: 999px; cursor: pointer; }
+.tp-req input { width: auto; }
+.tp-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+@media (max-width: 560px) { .tp-grid { grid-template-columns: 1fr; } }
+
 /* ---------- Rewards & achievements ---------- */
 .rewards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-bottom: 14px; }
 .reward { position: relative; background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; padding: 14px; text-align: center; }

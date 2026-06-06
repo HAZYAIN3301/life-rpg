@@ -221,6 +221,7 @@ const State = {
   leaderboard: null, _lbLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all',
   aveCat: 'hair', // активная категория в редакторе аватара
+  treeEdit: false, treeSelNode: null, // редактор дерева навыков
 };
 
 // ============================================================
@@ -611,7 +612,15 @@ function defaultTreeForSkill(skillId) {
     ],
   };
 }
-function ensureTrees() { for (const s of State.settings.skills) if (!State.tree[s.id]) State.tree[s.id] = defaultTreeForSkill(s.id); }
+const TREE_SX = 194, TREE_SY = 112, TREE_NW = 150, TREE_NH = 70;
+function ensureTrees() {
+  for (const s of State.settings.skills) if (!State.tree[s.id]) State.tree[s.id] = defaultTreeForSkill(s.id);
+  // миграция: позиции col/row → свободные x/y (для перетаскивания)
+  for (const id in State.tree) for (const n of State.tree[id].nodes || []) {
+    if (n.x == null) n.x = (n.col || 0) * TREE_SX;
+    if (n.y == null) n.y = (n.row || 0) * TREE_SY;
+  }
+}
 function treePointsEarned(id) { return skillLevelOf(id); }
 function treePointsSpent(id) { const t = State.tree[id]; return t ? t.nodes.filter((n) => n.unlocked).reduce((s, n) => s + (n.cost || 0), 0) : 0; }
 function treePointsAvailable(id) { return treePointsEarned(id) - treePointsSpent(id); }
@@ -1108,34 +1117,92 @@ function renderGoals() {
 // ============================================================
 //  Вид «Навыки» (деревья навыков)
 // ============================================================
+function treeNodeCenter(n) { return { x: (n.x || 0) + TREE_NW / 2, y: (n.y || 0) + TREE_NH / 2 }; }
+function treeLinesHTML(t, color) {
+  return t.nodes.flatMap((n) => (n.requires || []).map((rid) => {
+    const r = t.nodes.find((x) => x.id === rid); if (!r) return '';
+    const a = treeNodeCenter(r), b = treeNodeCenter(n), on = r.unlocked && n.unlocked;
+    return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${on ? color : 'var(--line)'}" stroke-width="${on ? 3 : 2}"/>`;
+  })).join('');
+}
+function treeBounds(t) {
+  const xs = t.nodes.map((n) => n.x || 0), ys = t.nodes.map((n) => n.y || 0);
+  return { width: Math.max(TREE_SX * 2 + TREE_NW, Math.max(0, ...xs) + TREE_NW + 40), height: Math.max(TREE_SY * 2, Math.max(0, ...ys) + TREE_NH + 40) };
+}
+function treeNodePanel(id, t) {
+  const n = t.nodes.find((x) => x.id === State.treeSelNode); if (!n) return '';
+  const reqs = t.nodes.filter((x) => x.id !== n.id).map((o) => `<label class="tp-req"><input type="checkbox" data-action="tree-toggle-req" data-node="${n.id}" data-req="${o.id}" ${(n.requires || []).includes(o.id) ? 'checked' : ''}/> ${esc(o.title)}</label>`).join('') || '<span class="muted">других узлов нет</span>';
+  return `<div class="tree-panel">
+    <div class="tp-grid">
+      <label>Название<input data-action="tree-field" data-node="${n.id}" data-field="title" value="${esc(n.title)}" /></label>
+      <label>Описание<input data-action="tree-field" data-node="${n.id}" data-field="desc" value="${esc(n.desc || '')}" /></label>
+      <label>Цена (очки)<input type="number" min="0" step="1" data-action="tree-field" data-node="${n.id}" data-field="cost" value="${n.cost || 0}" /></label>
+      <label>Бонус XP, %<input type="number" min="0" step="1" data-action="tree-field" data-node="${n.id}" data-field="perkXpPct" value="${n.perkXpPct || 0}" /></label>
+    </div>
+    <div class="tp-reqs"><span class="muted">Требует узлы:</span> ${reqs}</div>
+    <div class="tp-actions">
+      <button class="btn danger sm" data-action="tree-del-node" data-node="${n.id}">🗑 Удалить</button>
+      <button class="btn ghost sm" data-action="tree-sel-node" data-node="">Закрыть</button>
+    </div>
+  </div>`;
+}
 function renderTree() {
   if (!State.treeSkill || !State.tree[State.treeSkill]) State.treeSkill = State.settings.skills[0] && State.settings.skills[0].id;
   const id = State.treeSkill, sk = skillById(id), t = State.tree[id];
-  const tabs = State.settings.skills.map((s) => `<button class="tree-tab ${s.id === id ? 'active' : ''}" data-action="select-tree" data-skill="${s.id}" style="--c:${esc(s.color)}">${esc(s.name)} <span class="muted">ур.${skillLevelOf(s.id)}</span></button>`).join('');
+  const tabs = State.settings.skills.map((s) => `<button class="tree-tab ${s.id === id ? 'active' : ''}" data-action="select-tree" data-skill="${s.id}" style="--c:${esc(s.color)}">${esc(skillLabel(s.id))} <span class="muted">ур.${skillLevelOf(s.id)}</span></button>`).join('');
   if (!t) return `<div class="card">${tabs}</div>`;
-  const avail = treePointsAvailable(id), NW = 150, NH = 70, SX = 194, SY = 112;
-  const maxRow = Math.max(0, ...t.nodes.map((n) => n.row));
-  const width = 2 * SX + NW, height = (maxRow + 1) * SY;
-  const center = (n) => ({ x: n.col * SX + NW / 2, y: n.row * SY + NH / 2 });
-  const lines = t.nodes.flatMap((n) => (n.requires || []).map((rid) => {
-    const r = t.nodes.find((x) => x.id === rid); if (!r) return '';
-    const a = center(r), b = center(n), on = r.unlocked && n.unlocked;
-    return `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${on ? esc(sk.color) : 'var(--line)'}" stroke-width="${on ? 3 : 2}"/>`;
-  })).join('');
+  const edit = State.treeEdit, avail = treePointsAvailable(id), { width, height } = treeBounds(t);
+  const lines = treeLinesHTML(t, sk.color);
   const nodes = t.nodes.map((n) => {
     const st = n.unlocked ? 'unlocked' : nodeUnlockable(id, n) ? 'available' : 'locked';
-    return `<div class="tree-node ${st}" style="left:${n.col * SX}px;top:${n.row * SY}px;--c:${esc(sk.color)}" data-action="unlock-node" data-node="${n.id}">
-      <div class="tn-title">${esc(n.title)}</div><div class="tn-desc">+${n.perkXpPct}% XP</div>
-      <div class="tn-cost">${n.unlocked ? '✓ открыто' : '◈ ' + n.cost}</div></div>`;
+    const sel = State.treeSelNode === n.id;
+    return `<div class="tree-node ${edit ? 'editing' : st} ${sel ? 'sel' : ''}" style="left:${n.x}px;top:${n.y}px;--c:${esc(sk.color)}" data-node="${n.id}" ${edit ? '' : 'data-action="unlock-node"'}>
+      <div class="tn-title">${esc(n.title)}</div><div class="tn-desc">+${n.perkXpPct || 0}% XP</div>
+      <div class="tn-cost">${n.unlocked && !edit ? '✓ открыто' : '◈ ' + (n.cost || 0)}</div></div>`;
   }).join('');
+  const controls = `<div class="tree-ctrls">
+      <div class="tree-points">Очков: <b>${avail}</b></div>
+      ${edit ? '<button class="btn ghost sm" data-action="tree-add-node">+ Узел</button>' : ''}
+      <button class="btn ${edit ? '' : 'ghost'} sm" data-action="toggle-tree-edit">${edit ? '✓ Готово' : '✏️ Редактор'}</button>
+    </div>`;
   return `
     <div class="card"><div class="tree-tabs">${tabs}</div></div>
     <div class="card">
-      <div class="tree-head"><h3 style="margin:0">Дерево: ${esc(sk.name)}</h3>
-        <div class="tree-points">Очков навыка: <b>${avail}</b> <span class="muted">(уровень навыка ${skillLevelOf(id)})</span></div></div>
-      <p class="muted" style="font-size:12px">Открытые узлы дают пассивный бонус к опыту этой сферы. Очко даётся за каждый уровень навыка.</p>
-      <div class="tree-scroll"><div class="tree" style="width:${width}px;height:${height}px">
-        <svg class="tree-lines" width="${width}" height="${height}">${lines}</svg>${nodes}</div></div></div>`;
+      <div class="tree-head"><h3 style="margin:0">Дерево: ${esc(sk.name)}</h3>${controls}</div>
+      <p class="muted" style="font-size:12px">${edit ? '✏️ Перетаскивай узлы мышкой/пальцем. Клик по узлу — настроить (название, цена, бонус, что требует). «+ Узел» добавит новый.' : 'Открытые узлы дают пассивный бонус к опыту сферы. Очко — за каждый уровень навыка.'}</p>
+      <div class="tree-scroll"><div class="tree ${edit ? 'edit' : ''}" style="width:${width}px;height:${height}px">
+        <svg class="tree-lines" width="${width}" height="${height}">${lines}</svg>${nodes}</div></div>
+      ${edit && State.treeSelNode ? treeNodePanel(id, t) : ''}
+    </div>`;
+}
+// Живая перерисовка линий при перетаскивании (без полного render)
+function updateTreeLines() {
+  const t = State.tree[State.treeSkill]; if (!t) return;
+  const svg = document.querySelector('.tree-lines'); if (svg) svg.innerHTML = treeLinesHTML(t, skillById(State.treeSkill).color);
+}
+// Перетаскивание узлов в режиме редактора (pointer; делегировано на document)
+let _treeDrag = null;
+function onTreePointerDown(e) {
+  if (State.view !== 'tree' || !State.treeEdit) return;
+  const el = e.target.closest('.tree-node'); if (!el) return;
+  const t = State.tree[State.treeSkill]; if (!t) return;
+  const node = t.nodes.find((n) => n.id === el.dataset.node); if (!node) return;
+  e.preventDefault();
+  const startX = e.clientX, startY = e.clientY, ox = node.x || 0, oy = node.y || 0;
+  let moved = false;
+  const onMove = (ev) => {
+    const dx = ev.clientX - startX, dy = ev.clientY - startY;
+    if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
+    node.x = Math.max(0, Math.round(ox + dx)); node.y = Math.max(0, Math.round(oy + dy));
+    el.style.left = node.x + 'px'; el.style.top = node.y + 'px';
+    updateTreeLines();
+  };
+  const onUp = () => {
+    document.removeEventListener('pointermove', onMove); document.removeEventListener('pointerup', onUp);
+    if (moved) { Store.save('skilltree', State.tree); render(); }
+    else { State.treeSelNode = State.treeSelNode === node.id ? null : node.id; render(); }
+  };
+  document.addEventListener('pointermove', onMove); document.addEventListener('pointerup', onUp);
 }
 
 // ============================================================
@@ -1314,12 +1381,12 @@ function showPaywall(feature) {
 //  Гайд «Как играть» + форма обратной связи
 // ============================================================
 const GUIDE_SECTIONS = [
-  { icon: '⚔️', title: 'Что это', text: 'Gojo превращает жизнь в игру. Дела дают опыт и золото, ты растёшь в уровне и рангах, персонаж отражает прогресс. Философия — «жизнь как десятиборье»: ценится баланс многих сфер, а не одна вертикаль.' },
+  { icon: '⚔️', title: 'Что это', text: 'Gojo превращает жизнь в игру. Дела дают опыт и золото, ты растёшь в уровне и рангах, а кастомизируемый персонаж отражает прогресс. Не начинаешь с нуля — импортируй реальный опыт (Настройки → Импорт). Философия — «жизнь как десятиборье»: ценится баланс многих сфер, а не одна вертикаль.' },
   { icon: '📅', title: 'Сегодня', text: 'Добавляй квесты (разовые дела) на день. ▶ запускает фокус-таймер (помодоро + плавающее окно поверх всех окон). Галочка — получаешь XP и золото. Ниже — привычки и итог дня с рефлексией.' },
   { icon: '🧍', title: 'Персонаж', text: 'Настраиваемый аватар (собери лицо/причёску/цвета). Атрибуты (Сила, Интеллект, Дух…) растут из твоих сфер и рисуют радар-билд. Архетип = твои сильнейшие атрибуты. Силуэт телосложения меняется от тренировок и веса.' },
   { icon: '🎖', title: 'Уровень vs Форма', text: 'Импортируй реальный опыт в Настройках — не начинаешь с нуля. Уровень = доказанное мастерство, оно НЕ сгорает (как чёрный пояс). Форма — отдельный показатель свежести: мягко падает, если забросил сферу, и быстро возвращается. Так жизнь не наказывает тебя за паузу.' },
   { icon: '🎯', title: 'Цели', text: 'Большие цели 4 горизонтов: повторяющиеся, кратко-, средне-, долгосрочные. Разбивай на чек-лист, ставь дедлайн и «зачем». Все пункты закрыл — цель засчитана с бонусом.' },
-  { icon: '🌳', title: 'Навыки', text: 'У каждой сферы — дерево. За уровни навыка копятся очки, открывай узлы: они дают пассивный бонус к опыту этой сферы.' },
+  { icon: '🌳', title: 'Навыки', text: 'У каждой сферы — дерево. За уровни навыка копятся очки, открывай узлы — они дают пассивный бонус к опыту сферы. Кнопка «✏️ Редактор» включает конструктор: перетаскивай узлы, добавляй свои, задавай название/цену/бонус и что требует. Сделай дерево под себя.' },
   { icon: '🎁', title: 'Награды', text: 'Трать золото в магазине наград (придумай свои!). За активность дня падают сундуки — открывай рулеткой: золото, XP-бусты, титулы. Тут же ачивки.' },
   { icon: '🔥', title: 'Хайп', text: 'Выполни «Сложный» квест — включается Хайп: временный бонус к XP (+15% за стак, до +45%, на 2 часа). Каждый следующий сложный квест усиливает и продлевает его. Награда за то, что лезешь в трудное, а не фармишь лёгкое.' },
   { icon: '📊', title: 'Статистика', text: 'Ранг, Индекс баланса (ровно ли развиты сферы — это и есть десятиборье), ранги по сферам, графики опыта и времени.' },
@@ -1849,11 +1916,25 @@ function onClick(e) {
     State.goalFilter = el.dataset.type; render();
 
   // --- Дерево ---
-  } else if (action === 'select-tree') { State.treeSkill = el.dataset.skill; render();
+  } else if (action === 'select-tree') { State.treeSkill = el.dataset.skill; State.treeSelNode = null; render();
   } else if (action === 'unlock-node') {
     const sid = State.treeSkill, node = State.tree[sid] && State.tree[sid].nodes.find((n) => n.id === el.dataset.node); if (!node) return;
     if (!nodeUnlockable(sid, node)) { toast('Не хватает очков или закрыты предыдущие узлы'); return; }
     node.unlocked = true; Store.save('skilltree', State.tree); toast(`Открыто: ${node.title} (+${node.perkXpPct}% XP)`); render();
+
+  // --- Редактор дерева навыков ---
+  } else if (action === 'toggle-tree-edit') { State.treeEdit = !State.treeEdit; State.treeSelNode = null; render();
+  } else if (action === 'tree-sel-node') { State.treeSelNode = el.dataset.node || null; render();
+  } else if (action === 'tree-add-node') {
+    const t = State.tree[State.treeSkill]; if (!t) return;
+    const k = t.nodes.length, nn = { id: 'nd_' + uid(), title: 'Новый узел', desc: '', cost: 1, requires: [], perkXpPct: 5, unlocked: false, x: 40 + (k % 4) * 46, y: 40 + (k % 4) * 46 };
+    t.nodes.push(nn); State.treeSelNode = nn.id; Store.save('skilltree', State.tree); render();
+  } else if (action === 'tree-del-node') {
+    const t = State.tree[State.treeSkill]; if (!t) return;
+    const nid = el.dataset.node;
+    t.nodes = t.nodes.filter((n) => n.id !== nid);
+    for (const n of t.nodes) n.requires = (n.requires || []).filter((r) => r !== nid); // снять висящие связи
+    State.treeSelNode = null; Store.save('skilltree', State.tree); render();
 
   // --- Награды ---
   } else if (action === 'buy-reward') {
@@ -1995,7 +2076,22 @@ function publishLeaderboard() {
 function onChange(e) {
   const el = e.target.closest('[data-action]');
   if (!el) return;
-  if (el.dataset.action === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
+  const a = el.dataset.action;
+  if (a === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
+  if (a === 'tree-field') {
+    const t = State.tree[State.treeSkill], n = t && t.nodes.find((x) => x.id === el.dataset.node); if (!n) return;
+    const f = el.dataset.field;
+    if (f === 'cost' || f === 'perkXpPct') n[f] = Math.max(0, Math.round(Number(el.value) || 0));
+    else n[f] = el.value.trim() || (f === 'title' ? 'Узел' : '');
+    Store.save('skilltree', State.tree); render(); return;
+  }
+  if (a === 'tree-toggle-req') {
+    const t = State.tree[State.treeSkill], n = t && t.nodes.find((x) => x.id === el.dataset.node); if (!n) return;
+    const req = el.dataset.req; n.requires = n.requires || [];
+    if (el.checked) { if (!n.requires.includes(req)) n.requires.push(req); }
+    else n.requires = n.requires.filter((r) => r !== req);
+    Store.save('skilltree', State.tree); render(); return;
+  }
 }
 
 // Точка входа — проверяем сессию, потом грузим нужный экран
@@ -2003,6 +2099,7 @@ async function init() {
   document.addEventListener('submit', onSubmit);
   document.addEventListener('click', onClick);
   document.addEventListener('change', onChange);
+  document.addEventListener('pointerdown', onTreePointerDown);
 
   // Проверяем текущую сессию
   try {
