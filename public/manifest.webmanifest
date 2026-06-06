@@ -1,0 +1,15 @@
+{
+  "name": "Life-RPG",
+  "short_name": "Life-RPG",
+  "description": "Превращаем жизнь в игру: квесты, привычки, цели и живой персонаж.",
+  "lang": "ru",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f1320",
+  "theme_color": "#0f1320",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

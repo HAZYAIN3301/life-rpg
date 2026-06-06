@@ -26,6 +26,8 @@ const MIME = {
   '.json': 'application/json; charset=utf-8',
   '.svg':  'image/svg+xml',
   '.ico':  'image/x-icon',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
+  '.png':  'image/png',
 };
 
 const USER_DATA_FILES = [

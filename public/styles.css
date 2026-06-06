@@ -580,8 +580,9 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 
 /* Телефоны */
 @media (max-width: 560px) {
-  #app { padding: 0 12px 72px; }
-  #topbar { padding: 12px 0 8px; margin-bottom: 16px; }
+  /* Учитываем «безопасные зоны» (вырез/home-индикатор) в standalone-режиме на iPhone */
+  #app { padding: 0 max(12px, env(safe-area-inset-left)) calc(72px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-right)); }
+  #topbar { padding: max(12px, env(safe-area-inset-top)) 0 8px; margin-bottom: 16px; }
   .brand .logo { font-size: 22px; }
   .brand h1 { font-size: 18px; }
 
