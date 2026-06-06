@@ -295,6 +295,26 @@ function skillXp(id) { return xpEvents().reduce((s, e) => s + (e.skillId === id 
 function goldEarned() { return xpEvents().reduce((s, e) => s + e.gold, 0) + (State.lootbox ? (State.lootbox.goldWon || 0) : 0); }
 function goldSpent() { return (State.purchases || []).reduce((s, p) => s + (p.cost || 0), 0); }
 function goldBalance() { return Math.round(goldEarned() - goldSpent()); }
+// ── Форма / Momentum (импорт v2): «свежесть» по активности. НЕ трогает уровень (Proven).
+//    Уровень — доказанное мастерство (не сгорает). Форма мягко падает без тренировок и легко возвращается.
+const FORM_FLOOR = 25, FORM_FRESH = 3, FORM_DECAY = 21;
+function skillLastActive(id) { let last = null; for (const e of xpEvents()) if (e.skillId === id && e.date && (!last || e.date > last)) last = e.date; return last; }
+function daysSinceDate(dateStr) { if (!dateStr) return Infinity; const d = new Date(dateStr + 'T00:00:00'); return Math.max(0, Math.floor((Date.now() - d.getTime()) / 86400000)); }
+function skillForm(id) {
+  const last = skillLastActive(id);
+  if (!last) return null; // ещё не тренировалось в приложении
+  const ds = daysSinceDate(last);
+  if (ds <= FORM_FRESH) return 100;
+  return Math.round(Math.max(FORM_FLOOR, Math.min(100, 100 - ((ds - FORM_FRESH) / FORM_DECAY) * (100 - FORM_FLOOR))));
+}
+function overallForm() { const v = State.settings.skills.map((s) => skillForm(s.id)).filter((x) => x != null); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : null; }
+function formMeta(f) {
+  if (f == null) return { text: 'разогрей', color: 'var(--muted)' };
+  if (f >= 80) return { text: 'в форме', color: 'var(--good)' };
+  if (f >= 55) return { text: 'в тонусе', color: 'var(--accent)' };
+  if (f >= 38) return { text: 'расслабленно', color: 'var(--warn)' };
+  return { text: 'подзаржавел', color: 'var(--bad)' };
+}
 function charLevel() { const c = State.settings.curve; return levelInfo(overallXp(), c.base, c.growth).level; }
 function skillLevelOf(id) { const c = State.settings.curve; return levelInfo(skillXp(id), c.skillBase, c.growth).level; }
 
@@ -1143,6 +1163,11 @@ function renderCharacter() {
         <div class="ch-rank" style="--rc:${cr.color}">${cr.icon} ${cr.name} · ур.${charLevel()}</div>
         <div class="ch-arch">🎭 <b>${arch.name}</b> <span class="muted">— ${arch.desc}</span></div>
         <div class="xp-bar" style="max-width:340px"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
+        ${(() => { const of = overallForm(), fm = formMeta(of); return `<div class="ch-form" title="Форма — текущая «свежесть» по активности. В отличие от уровня (доказанное мастерство — не сгорает), форма мягко падает без тренировок и легко возвращается.">
+          <span class="cf-label">Форма</span>
+          <span class="cf-bar"><span style="width:${of == null ? 0 : of}%;background:${fm.color}"></span></span>
+          <span class="cf-val" style="color:${fm.color}">${of == null ? '—' : of + '%'} · ${fm.text}</span>
+        </div>`; })()}
       </div>
     </div>
     ${avatarEditor()}
@@ -1272,7 +1297,8 @@ function showPaywall(feature) {
 const GUIDE_SECTIONS = [
   { icon: '⚔️', title: 'Что это', text: 'Gojo превращает жизнь в игру. Дела дают опыт и золото, ты растёшь в уровне и рангах, персонаж отражает прогресс. Философия — «жизнь как десятиборье»: ценится баланс многих сфер, а не одна вертикаль.' },
   { icon: '📅', title: 'Сегодня', text: 'Добавляй квесты (разовые дела) на день. ▶ запускает фокус-таймер (помодоро + плавающее окно поверх всех окон). Галочка — получаешь XP и золото. Ниже — привычки и итог дня с рефлексией.' },
-  { icon: '🧍', title: 'Персонаж', text: 'Живой аватар. Атрибуты (Сила, Интеллект, Дух…) растут из твоих сфер и рисуют радар-билд. Архетип = твои сильнейшие атрибуты. Силуэт телосложения меняется от тренировок и веса.' },
+  { icon: '🧍', title: 'Персонаж', text: 'Настраиваемый аватар (собери лицо/причёску/цвета). Атрибуты (Сила, Интеллект, Дух…) растут из твоих сфер и рисуют радар-билд. Архетип = твои сильнейшие атрибуты. Силуэт телосложения меняется от тренировок и веса.' },
+  { icon: '🎖', title: 'Уровень vs Форма', text: 'Импортируй реальный опыт в Настройках — не начинаешь с нуля. Уровень = доказанное мастерство, оно НЕ сгорает (как чёрный пояс). Форма — отдельный показатель свежести: мягко падает, если забросил сферу, и быстро возвращается. Так жизнь не наказывает тебя за паузу.' },
   { icon: '🎯', title: 'Цели', text: 'Большие цели 4 горизонтов: повторяющиеся, кратко-, средне-, долгосрочные. Разбивай на чек-лист, ставь дедлайн и «зачем». Все пункты закрыл — цель засчитана с бонусом.' },
   { icon: '🌳', title: 'Навыки', text: 'У каждой сферы — дерево. За уровни навыка копятся очки, открывай узлы: они дают пассивный бонус к опыту этой сферы.' },
   { icon: '🎁', title: 'Награды', text: 'Трать золото в магазине наград (придумай свои!). За активность дня падают сундуки — открывай рулеткой: золото, XP-бусты, титулы. Тут же ачивки.' },
