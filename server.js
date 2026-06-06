@@ -28,6 +28,8 @@ const MIME = {
   '.ico':  'image/x-icon',
   '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.png':  'image/png',
+  '.jpg':  'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.gif': 'image/gif',
+  '.mp4':  'video/mp4', '.webm': 'video/webm', '.mov': 'video/quicktime',
 };
 
 const USER_DATA_FILES = [
@@ -47,17 +49,19 @@ function sendJson(res, status, obj) {
 }
 function safeName(n) { return /^[a-z0-9_-]+$/.test(n) ? n : null; }
 function safeId(n)   { return /^[a-z0-9_-]{1,32}$/.test(n) ? n : null; }
-function readBody(req) {
+function readBody(req, maxBytes) {
+  const cap = maxBytes || 5 * 1024 * 1024;
   return new Promise((resolve, reject) => {
     let data = '';
     req.on('data', c => {
       data += c;
-      if (data.length > 5 * 1024 * 1024) { req.destroy(); reject(new Error('payload too large')); }
+      if (data.length > cap) { req.destroy(); reject(new Error('payload too large')); }
     });
     req.on('end', () => resolve(data));
     req.on('error', reject);
   });
 }
+const FB_EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'video/mp4': 'mp4', 'video/webm': 'webm', 'video/quicktime': 'mov' };
 function serveStatic(req, res, urlPath, headOnly) {
   let rel = decodeURIComponent(urlPath.split('?')[0]);
   if (rel === '/' || rel === '') rel = '/index.html';
@@ -357,18 +361,51 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, loadUsers().map(x => ({ id: x.id, name: x.name, avatar: x.avatar })));
   }
 
-  // ---- Feedback (баги/идеи от друзей) → data/feedback.json ----
+  // ---- Feedback (баги/идеи/предложения + фото/видео) → data/feedback.json + data/feedback/ ----
   if (u === '/api/feedback' && req.method === 'POST') {
     const uid = sessionUserId(req);
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
-    let fb = {}; try { fb = JSON.parse(await readBody(req)); } catch {}
+    let fb = {}; try { fb = JSON.parse(await readBody(req, 30 * 1024 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json / слишком большой файл' }); }
     const text = String(fb.text || '').slice(0, 4000).trim();
-    if (!text) return sendJson(res, 400, { error: 'пусто' });
+    if (!text && !(fb.attachments && fb.attachments.length)) return sendJson(res, 400, { error: 'пусто' });
+    const id = 'fb_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    const fdir = path.join(DATA_DIR, 'feedback');
+    const attachments = [];
+    for (const [i, a] of (Array.isArray(fb.attachments) ? fb.attachments : []).slice(0, 6).entries()) {
+      const m = /^data:([\w/.+-]+);base64,(.+)$/.exec(a && a.dataUrl || '');
+      if (!m) continue;
+      const mime = m[1], ext = FB_EXT[mime]; if (!ext) continue;
+      const buf = Buffer.from(m[2], 'base64');
+      if (buf.length > 26 * 1024 * 1024) continue;
+      const fname = `${id}_${i}.${ext}`;
+      try { fs.mkdirSync(fdir, { recursive: true }); fs.writeFileSync(path.join(fdir, fname), buf); attachments.push({ file: fname, type: mime, name: String(a.name || '').slice(0, 80) }); } catch {}
+    }
     const file = path.join(DATA_DIR, 'feedback.json');
     let list = []; try { list = JSON.parse(fs.readFileSync(file, 'utf8')); } catch {}
-    list.push({ at: new Date().toISOString(), userId: uid, kind: String(fb.kind || 'other').slice(0, 20), text });
+    list.push({ id, at: new Date().toISOString(), userId: uid, kind: String(fb.kind || 'other').slice(0, 20), text, attachments });
     try { fs.writeFileSync(file, JSON.stringify(list, null, 2)); } catch (e) { return sendJson(res, 500, { error: 'save failed' }); }
-    return sendJson(res, 200, { ok: true });
+    return sendJson(res, 200, { ok: true, attachments: attachments.length });
+  }
+  // ---- Список репортов (только админ) ----
+  if (u === '/api/feedback' && req.method === 'GET') {
+    const me = loadUsers().find(x => x.id === sessionUserId(req));
+    if (!me || !me.isAdmin) return sendJson(res, 403, { error: 'только админ' });
+    let list = []; try { list = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'feedback.json'), 'utf8')); } catch {}
+    return sendJson(res, 200, list.slice().reverse());
+  }
+  // ---- Файл-вложение репорта (только админ) ----
+  {
+    const fm = u.match(/^\/api\/feedback\/file\/([A-Za-z0-9_.-]+)$/);
+    if (fm && req.method === 'GET') {
+      const me = loadUsers().find(x => x.id === sessionUserId(req));
+      if (!me || !me.isAdmin) return sendJson(res, 403, { error: 'только админ' });
+      const name = fm[1];
+      if (name.includes('..')) return sendJson(res, 400, { error: 'bad name' });
+      const fp = path.join(DATA_DIR, 'feedback', name);
+      const ext = path.extname(fp).toLowerCase();
+      fs.readFile(fp, (err, buf) => err ? send(res, 404, 'Not found') : send(res, 200, buf, { 'Content-Type': MIME[ext] || 'application/octet-stream' }));
+      return;
+    }
   }
 
   // ---- Лидерборд (соцфича) ----

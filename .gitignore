@@ -3,6 +3,7 @@
 data/*.json
 data/users/
 data/feedback.json
+data/feedback/
 
 # macOS
 .DS_Store

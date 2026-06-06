@@ -1393,6 +1393,49 @@ const GUIDE_SECTIONS = [
   { icon: '🏆', title: 'Рейтинг', text: 'Соревнование по опыту со всеми на сервере — позови друзей! Видны только имя, аватар, уровень и ранг; задачи и личные данные приватны. В рейтинге можно скрыться галочкой.' },
   { icon: '💎', title: 'Free и Pro', text: 'Ядро бесплатно навсегда. Pro добавляет глубину: расширенная аналитика, 3 сундука в день, состав тела, скоро — ИИ-ассистент и темы. 7-дневный триал без карты.' },
 ];
+// ── Вложения к репортам: фото ужимаем (canvas), видео — как есть с лимитом ──
+function fileToDataURL(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); }); }
+function downscaleImage(file, maxDim = 1280, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h); URL.revokeObjectURL(url);
+      resolve(c.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Не удалось прочитать изображение')); };
+    img.src = url;
+  });
+}
+async function readAttachment(file) {
+  if (file.type.startsWith('image/')) return { name: file.name, type: 'image/jpeg', dataUrl: await downscaleImage(file) };
+  if (file.type.startsWith('video/')) { if (file.size > 25 * 1024 * 1024) throw new Error('Видео > 25 МБ — сократи или сожми'); return { name: file.name, type: file.type, dataUrl: await fileToDataURL(file) }; }
+  throw new Error('Только фото или видео');
+}
+// Админ-вид всех репортов с вложениями
+async function showReports() {
+  if (document.getElementById('reports')) return;
+  let list = [];
+  try { const r = await fetch('/api/feedback'); if (!r.ok) throw 0; list = await r.json(); } catch { toast('Не удалось загрузить (нужен админ)'); return; }
+  const KIND = { bug: '🐞 Баг', idea: '💡 Идея', other: '💬 Другое' };
+  const items = list.length ? list.map((f) => {
+    const media = (f.attachments || []).map((a) => a.type && a.type.startsWith('video/')
+      ? `<video class="rep-media" controls preload="metadata" src="/api/feedback/file/${esc(a.file)}"></video>`
+      : `<a href="/api/feedback/file/${esc(a.file)}" target="_blank"><img class="rep-media" src="/api/feedback/file/${esc(a.file)}" alt=""/></a>`).join('');
+    return `<div class="rep-item">
+      <div class="rep-head"><span class="rep-kind">${KIND[f.kind] || f.kind}</span><span class="muted">${esc((f.at || '').slice(0, 16).replace('T', ' '))} · ${esc(f.userId || '')}</span></div>
+      ${f.text ? `<div class="rep-text">${esc(f.text)}</div>` : ''}
+      ${media ? `<div class="rep-medias">${media}</div>` : ''}</div>`;
+  }).join('') : '<p class="muted">Репортов пока нет.</p>';
+  const ov = document.createElement('div'); ov.id = 'reports'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="guide-box"><button class="modal-x" data-action="close-reports">✕</button>
+    <h2>🐞 Репорты (${list.length})</h2>
+    <p class="muted">Все баги/идеи с вложениями. Файлы — в <code>data/feedback/</code>, список — в <code>data/feedback.json</code>.</p>
+    <div class="rep-list">${items}</div></div>`;
+  document.body.appendChild(ov);
+}
 function showGuide() {
   if (document.getElementById('guide')) return;
   const secs = GUIDE_SECTIONS.map((s) => `<div class="guide-sec"><div class="gs-ic">${s.icon}</div><div><h4>${esc(s.title)}</h4><p>${esc(s.text)}</p></div></div>`).join('');
@@ -1405,9 +1448,15 @@ function showGuide() {
     <h3 style="margin:6px 0 8px">💬 Нашёл баг или есть идея?</h3>
     <form id="feedback-form" class="feedback-form">
       <select name="kind"><option value="bug">🐞 Баг</option><option value="idea">💡 Идея</option><option value="other">💬 Другое</option></select>
-      <textarea name="text" placeholder="Опиши, что случилось или что предлагаешь…" required></textarea>
+      <textarea name="text" placeholder="Опиши, что случилось или что предлагаешь…"></textarea>
+      <label class="fb-file">📎 Прикрепить фото/видео
+        <input type="file" name="files" accept="image/*,video/*" multiple />
+      </label>
+      <div id="fb-previews" class="fb-previews"></div>
       <div class="fb-actions"><button type="submit" class="btn">Отправить</button><span id="fb-msg" class="muted"></span></div>
-    </form></div>`;
+    </form>
+    ${State.me && State.me.isAdmin ? '<button class="btn ghost" data-action="show-reports" style="margin-top:10px">🐞 Смотреть все репорты (админ)</button>' : ''}
+    </div>`;
   document.body.appendChild(ov);
 }
 
@@ -1750,10 +1799,23 @@ function onSubmit(e) {
   // --- Обратная связь ---
   if (f.id === 'feedback-form') {
     e.preventDefault();
-    const msg = f.querySelector('#fb-msg');
-    fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: f.kind.value, text: f.text.value }) })
-      .then(async (r) => { const d = await r.json(); if (r.ok) { msg.textContent = '✓ Спасибо! Отправлено.'; msg.style.color = '#5fbf7a'; f.text.value = ''; } else { msg.textContent = d.error || 'Ошибка'; msg.style.color = '#e0526a'; } })
-      .catch(() => { msg.textContent = 'Ошибка сети'; msg.style.color = '#e0526a'; });
+    const msg = f.querySelector('#fb-msg'), btn = f.querySelector('button[type="submit"]');
+    const files = [...(f.files.files || [])];
+    if (!f.text.value.trim() && !files.length) { msg.textContent = 'Опиши или приложи файл'; msg.style.color = '#e0526a'; return; }
+    btn.disabled = true; msg.style.color = 'var(--muted)'; msg.textContent = files.length ? 'Обрабатываю файлы…' : 'Отправляю…';
+    (async () => {
+      let attachments = [];
+      try { attachments = await Promise.all(files.map(readAttachment)); }
+      catch (err) { msg.textContent = err.message || 'Файл не подошёл'; msg.style.color = '#e0526a'; btn.disabled = false; return; }
+      msg.textContent = 'Отправляю…';
+      try {
+        const r = await fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: f.kind.value, text: f.text.value, attachments }) });
+        const d = await r.json();
+        if (r.ok) { msg.textContent = `✓ Спасибо! Отправлено${d.attachments ? ` (вложений: ${d.attachments})` : ''}.`; msg.style.color = '#5fbf7a'; f.text.value = ''; f.files.value = ''; const pv = f.querySelector('#fb-previews'); if (pv) pv.innerHTML = ''; }
+        else { msg.textContent = d.error || 'Ошибка'; msg.style.color = '#e0526a'; }
+      } catch { msg.textContent = 'Ошибка сети'; msg.style.color = '#e0526a'; }
+      btn.disabled = false;
+    })();
     return;
   }
 
@@ -1847,6 +1909,8 @@ function onClick(e) {
   if (action === 'close-paywall') { const p = document.getElementById('paywall'); if (p) p.remove(); return; }
   if (action === 'show-guide') { showGuide(); return; }
   if (action === 'close-guide') { const g = document.getElementById('guide'); if (g) g.remove(); return; }
+  if (action === 'show-reports') { showReports(); return; }
+  if (action === 'close-reports') { const r = document.getElementById('reports'); if (r) r.remove(); return; }
   if (action === 'goto-rewards') { State.view = 'rewards'; render(); return; }
   if (action === 'goto-import') { State.view = 'settings'; render(); return; }
   if (action === 'av-cat') { State.aveCat = el.dataset.cat; render(); return; }
@@ -2074,6 +2138,18 @@ function publishLeaderboard() {
 
 // Делегированный обработчик change (для select-ов вне форм — напр. импорт достижений)
 function onChange(e) {
+  // превью выбранных фото/видео в форме фидбека
+  if (e.target.name === 'files' && e.target.closest('#feedback-form')) {
+    const pv = document.getElementById('fb-previews'); if (!pv) return;
+    pv.innerHTML = '';
+    for (const file of e.target.files) {
+      const url = URL.createObjectURL(file);
+      pv.insertAdjacentHTML('beforeend', file.type.startsWith('video/')
+        ? `<video class="fb-thumb" src="${url}" muted></video>`
+        : `<img class="fb-thumb" src="${url}" alt=""/>`);
+    }
+    return;
+  }
   const el = e.target.closest('[data-action]');
   if (!el) return;
   const a = el.dataset.action;
