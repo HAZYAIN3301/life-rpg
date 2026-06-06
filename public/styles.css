@@ -365,6 +365,19 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .eq-title { font-size: 10px; color: var(--warn); font-weight: 600; }
 .logout-btn { font-size: 12px; padding: 5px 10px; }
 
+/* ---------- Импорт достижений ---------- */
+.import-list { display: flex; flex-direction: column; gap: 8px; }
+.import-row { display: grid; grid-template-columns: 12px 1fr minmax(0, 1.5fr) 52px; align-items: center; gap: 10px; }
+.imp-dot { width: 12px; height: 12px; border-radius: 50%; }
+.imp-name { font-weight: 600; font-size: 14px; }
+.import-row select { width: 100%; min-width: 0; }
+.imp-lvl { font-size: 12px; font-weight: 700; color: var(--accent); white-space: nowrap; text-align: right; }
+.imp-lvl.muted { color: var(--muted); font-weight: 500; }
+@media (max-width: 560px) {
+  .import-row { grid-template-columns: 12px 1fr 48px; gap: 8px; }
+  .import-row select { grid-column: 1 / -1; }
+}
+
 /* ---------- Лидерборд ---------- */
 .lb-table { display: flex; flex-direction: column; gap: 2px; }
 .lb-row { display: grid; grid-template-columns: 40px 32px 1fr auto auto; align-items: center; gap: 12px; padding: 10px 8px; border-bottom: 1px solid var(--line); border-radius: 8px; }

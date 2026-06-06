@@ -49,6 +49,7 @@ const DEFAULT_SETTINGS = {
   gold: { perMinute: 0.4, completionBonus: 3 },
   curve: { base: 100, growth: 1.3, skillBase: 60 },
   focus: { pomodoro: true, workMin: 25, breakMin: 5, sound: true, notify: true },
+  imported: {}, // { skillId: { tier, xp, label, at } } — импортированный стартовый уровень
 };
 
 const DIFF = { easy: 'Лёгкая', normal: 'Обычная', hard: 'Сложная' };
@@ -176,6 +177,34 @@ function programCard(p, action) {
     </span></button>`;
 }
 
+// ── Импорт достижений (стартовый уровень): честные лестницы-вехи, НЕ точная математика.
+//    Каждый тир → целевой уровень сферы. tier 0 = «с нуля» (xp 0). Завязка по ключевому слову в имени сферы.
+const IMPORT_LADDERS = {
+  'бег':          { hint: 'дистанция + темп', top: 20, tiers: ['Не бегаю', 'Иногда, до 5 км', 'Регулярно 5–10 км', 'Полумарафон', 'Марафон', 'Марафон <3:30 / ультра'] },
+  'сил':          { hint: 'жим относительно своего веса (честно при любом весе)', top: 18, tiers: ['Не тренируюсь', 'Жим < 0.75× веса', 'Жим ≈ вес тела', 'Жим 1.25× веса', 'Жим 1.5×+ веса'] },
+  'зал':          { hint: 'жим относительно своего веса', top: 18, tiers: ['Не тренируюсь', 'Жим < 0.75× веса', 'Жим ≈ вес тела', 'Жим 1.25× веса', 'Жим 1.5×+ веса'] },
+  'качал':        { hint: 'жим относительно своего веса', top: 18, tiers: ['Не тренируюсь', 'Жим < 0.75× веса', 'Жим ≈ вес тела', 'Жим 1.25× веса', 'Жим 1.5×+ веса'] },
+  'единоборств':  { hint: 'пояс / разряд', top: 20, tiers: ['Не занимаюсь', 'Белый–жёлтый пояс', 'Оранжевый–зелёный', 'Синий–коричневый', 'Чёрный пояс / разряд'] },
+  'велосипед':    { hint: 'дистанция', top: 18, tiers: ['Не катаюсь', 'До 20 км', '20–50 км регулярно', 'Сенчури 100 км', 'Бревет 200 км+ / гонки'] },
+  'плаван':       { hint: 'дистанция без остановки', top: 18, tiers: ['Не плаваю', 'Держусь на воде', '500 м', '1.5 км', 'Триатлон / 3 км+'] },
+  'английск':     { hint: 'CEFR', top: 18, tiers: ['A1 — начальный', 'A2 — базовый', 'B1 — средний', 'B2 — выше среднего', 'C1 — продвинутый', 'C2 — владение'] },
+  'язык':         { hint: 'CEFR', top: 18, tiers: ['A1 — начальный', 'A2 — базовый', 'B1 — средний', 'B2 — выше среднего', 'C1 — продвинутый', 'C2 — владение'] },
+  'учёб':         { hint: 'ступень', top: 20, tiers: ['Школа', 'Старшие классы / Abitur', 'Бакалавриат', 'Магистратура', 'Аспирантура / PhD'] },
+  'программир':   { hint: 'грейд', top: 20, tiers: ['Не программирую', 'Учу основы', 'Junior', 'Middle', 'Senior', 'Lead / архитектор'] },
+  'код':          { hint: 'грейд', top: 20, tiers: ['Не программирую', 'Учу основы', 'Junior', 'Middle', 'Senior', 'Lead / архитектор'] },
+  'музык':        { hint: 'инструмент', top: 18, tiers: ['Не играю', 'Базовые аккорды/ноты', 'Играю любимое', 'Сложный репертуар', 'Концертный уровень'] },
+  'гитар':        { hint: 'инструмент', top: 18, tiers: ['Не играю', 'Базовые аккорды', 'Играю любимое', 'Сложный репертуар', 'Концертный уровень'] },
+  'чтени':        { hint: 'книг в год', top: 16, tiers: ['Почти не читаю', '5–10 книг/год', '1–2 в месяц', 'Книга в неделю', 'Запойный читатель'] },
+};
+const GENERIC_LADDER = { hint: 'честная самооценка', top: 16, tiers: ['Новичок', 'Любитель', 'Опытный', 'Продвинутый', 'Эксперт'] };
+function ladderFor(skillName) {
+  const n = (skillName || '').toLowerCase();
+  for (const key in IMPORT_LADDERS) if (n.includes(key)) return IMPORT_LADDERS[key];
+  return GENERIC_LADDER;
+}
+// Целевой уровень для каждого тира (tier 0 → ур.1; верхний → ladder.top)
+function tierLevels(ladder) { const n = ladder.tiers.length, top = ladder.top || 16; return ladder.tiers.map((_, i) => (i === 0 ? 1 : Math.round(1 + (top - 1) * i / (n - 1)))); }
+
 const AVATARS = ['⚡','⚔️','🔥','🌟','🎯','🚀','💎','🐉','🦊','🐺','🌙','☀️','🎭','🎸','🏆','🦁'];
 
 const State = {
@@ -214,6 +243,8 @@ function dayOf(t) { return t.completedAt ? fmtDate(new Date(t.completedAt)) : t.
 
 // ---- Опыт, золото, уровни, перки ----
 function needForLevel(level, base, growth) { return Math.round(base * Math.pow(growth, level - 1)); }
+// Сколько суммарного XP нужно, чтобы достичь уровня L (старт уровня L)
+function xpForLevel(L, base, growth) { let xp = 0; for (let k = 1; k < L; k++) xp += needForLevel(k, base, growth); return xp; }
 function levelInfo(totalXp, base, growth) {
   let level = 1, remaining = Math.max(0, Math.floor(totalXp)), need = needForLevel(level, base, growth);
   while (remaining >= need) { remaining -= need; level++; need = needForLevel(level, base, growth); }
@@ -254,8 +285,12 @@ function xpEvents() {
   return ev;
 }
 function doneTasks() { return State.tasks.filter((t) => t.done); }
-function overallXp() { return xpEvents().reduce((s, e) => s + e.xp, 0); }
-function skillXp(id) { return xpEvents().reduce((s, e) => s + (e.skillId === id ? e.xp : 0), 0); }
+// Импортированный «стартовый» XP (доказанное мастерство) — добавляется к заработанному
+function importedXp(id) { const im = State.settings && State.settings.imported; return (im && im[id] && im[id].xp) || 0; }
+function totalImportedXp() { const im = (State.settings && State.settings.imported) || {}; return Object.keys(im).reduce((s, k) => s + (im[k].xp || 0), 0); }
+function earnedXp() { return xpEvents().reduce((s, e) => s + e.xp, 0); } // только заработанное в приложении (для честного лидерборда)
+function overallXp() { return earnedXp() + totalImportedXp(); }
+function skillXp(id) { return xpEvents().reduce((s, e) => s + (e.skillId === id ? e.xp : 0), 0) + importedXp(id); }
 function goldEarned() { return xpEvents().reduce((s, e) => s + e.gold, 0) + (State.lootbox ? (State.lootbox.goldWon || 0) : 0); }
 function goldSpent() { return (State.purchases || []).reduce((s, p) => s + (p.cost || 0), 0); }
 function goldBalance() { return Math.round(goldEarned() - goldSpent()); }
@@ -821,12 +856,15 @@ function renderToday() {
 
   const chestsAvail = lootChestsAvailable(), activeBoost = lootBoostPct(), hp = hypePct();
   const nudgeCard = (chestsAvail > 0 || activeBoost > 0 || hp > 0) ? `<div class="card nudge-card">${chestsAvail > 0 ? `<button class="nudge" data-action="goto-rewards">🎁 ${chestsAvail} ${plural(chestsAvail, 'сундук', 'сундука', 'сундуков')} ждёт — открыть</button>` : ''}${activeBoost > 0 ? `<span class="nudge-boost">⚡ +${activeBoost}% XP активен</span>` : ''}${hp > 0 ? `<span class="nudge-boost">🔥 Хайп ×${hypeState().stacks} · +${hp}% XP · ${hypeMinLeft()}м</span>` : ''}</div>` : '';
+  // Нудж новичку: не начинай с нуля — импортируй реальный опыт
+  const noImports = !Object.keys((State.settings && State.settings.imported) || {}).length;
+  const importNudge = (noImports && earnedXp() < 200) ? `<div class="card nudge-card"><button class="nudge" data-action="goto-import">🎖 Не начинай с нуля — импортируй свой реальный опыт</button><span class="nudge-boost">отметь свой уровень в сферах → стартовый опыт</span></div>` : '';
 
   const overdueCard = overdue.length ? `<div class="card overdue"><h3>⏳ Просрочено (${overdue.length})</h3>
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">↪ Перенести всё на сегодня</button></div>` : '';
 
-  return `${timerCard}${nudgeCard}
+  return `${timerCard}${nudgeCard}${importNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="Новый квест на сегодня…" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
@@ -1260,6 +1298,38 @@ function renderStats() {
 // ============================================================
 //  Вид «Настройки»
 // ============================================================
+// Импорт: начислить/снять стартовый XP сферы по выбранному тиру
+function applyImport(skillId, tierIdx) {
+  const sk = skillById(skillId); if (!sk) return;
+  const ladder = ladderFor(sk.name), levels = tierLevels(ladder), c = State.settings.curve;
+  State.settings.imported = State.settings.imported || {};
+  if (tierIdx <= 0) { delete State.settings.imported[skillId]; toast(`${sk.name}: импорт снят`); }
+  else {
+    const lvl = levels[tierIdx];
+    State.settings.imported[skillId] = { tier: tierIdx, xp: xpForLevel(lvl, c.skillBase, c.growth), label: ladder.tiers[tierIdx], at: new Date().toISOString() };
+    toast(`🎖 ${sk.name}: старт с ур.${lvl}`);
+  }
+  Store.save('settings', State.settings); render(); publishLeaderboard();
+}
+function importCard() {
+  const s = State.settings, im = s.imported || {};
+  const rows = s.skills.map((sk) => {
+    const ladder = ladderFor(sk.name), levels = tierLevels(ladder);
+    const curTier = (im[sk.id] && im[sk.id].tier) || 0;
+    const opts = ladder.tiers.map((t, i) => `<option value="${i}" ${i === curTier ? 'selected' : ''}>${i === 0 ? '— с нуля' : esc(t) + ' · ур.' + levels[i]}</option>`).join('');
+    return `<div class="import-row">
+      <span class="imp-dot" style="background:${esc(sk.color)}"></span>
+      <span class="imp-name">${esc(sk.name)}</span>
+      <select data-action="set-import" data-skill="${esc(sk.id)}" title="${esc(ladder.hint)}">${opts}</select>
+      <span class="imp-lvl ${curTier > 0 ? '' : 'muted'}">${curTier > 0 ? 'ур.' + levels[curTier] : '—'}</span>
+    </div>`;
+  }).join('');
+  return `<div class="card">
+    <h3>🎖 Импорт достижений</h3>
+    <p class="muted" style="margin:0 0 12px">Ты не начинаешь с нуля. Отметь честно свой реальный уровень в каждой сфере — стартовый опыт начислится. Это «доказанное мастерство», оно не сгорает. Менять можно в любой момент.</p>
+    <div class="import-list">${rows}</div>
+  </div>`;
+}
 function renderSettings() {
   const s = State.settings;
   const f = s.focus || DEFAULT_SETTINGS.focus;
@@ -1278,6 +1348,7 @@ function renderSettings() {
     ${adminCard()}
     <div class="card"><h3>Название</h3><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></div>
     <div class="card"><h3>Навыки / сферы жизни</h3><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">+ Добавить навык</button></div>
+    ${importCard()}
     <div class="card"><h3>🔁 Привычки (повторяющиеся)</h3><div id="habits-list">${habits || '<p class="muted">Пока нет привычек.</p>'}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">+ Добавить привычку</button></div>
     <div class="card"><h3>📦 Программы-данжи</h3><p class="muted" style="margin:0 0 12px">Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
     <div class="card"><h3>Формула опыта</h3><div class="knobs">
@@ -1520,6 +1591,7 @@ function onClick(e) {
   if (action === 'show-guide') { showGuide(); return; }
   if (action === 'close-guide') { const g = document.getElementById('guide'); if (g) g.remove(); return; }
   if (action === 'goto-rewards') { State.view = 'rewards'; render(); return; }
+  if (action === 'goto-import') { State.view = 'settings'; render(); return; }
   if (action === 'start-trial') {
     fetch('/api/auth/start-trial', { method: 'POST' }).then(async (r) => {
       const d = await r.json();
@@ -1676,6 +1748,7 @@ async function initApp() {
   State.settings.curve = Object.assign({}, DEFAULT_SETTINGS.curve, State.settings.curve);
   State.settings.focus = Object.assign({}, DEFAULT_SETTINGS.focus, State.settings.focus);
   State.settings.body = State.settings.body || {};
+  State.settings.imported = State.settings.imported || {};
 
   // Если нет навыков → онбординг
   if (State.settings.skills.length === 0) {
@@ -1720,10 +1793,18 @@ function publishLeaderboard() {
   } catch (e) {}
 }
 
+// Делегированный обработчик change (для select-ов вне форм — напр. импорт достижений)
+function onChange(e) {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  if (el.dataset.action === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
+}
+
 // Точка входа — проверяем сессию, потом грузим нужный экран
 async function init() {
   document.addEventListener('submit', onSubmit);
   document.addEventListener('click', onClick);
+  document.addEventListener('change', onChange);
 
   // Проверяем текущую сессию
   try {
