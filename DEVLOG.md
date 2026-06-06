@@ -136,6 +136,27 @@
 - Для select-ов вне `<form>` нужен **отдельный `change`-листенер** (click/submit не ловят). Добавлен `onChange` + `document.addEventListener('change', onChange)`.
 - Тест-импорты Albert (study/health) — почистить в финале (как и раньше, по дате/ключам).
 
+---
+
+## Сессия 2026-06-06 (ночь) — аватар-редактор + слой «Форма»
+
+Модель: Opus. Прогнано в живом браузере со скриншотами (desktop+mobile, 0 ошибок).
+
+### 1. 🪞 Кастомизируемый аватар (замена «палочек»)
+- `avatarSVG(cfg)` — послойный flat-vector SVG (viewBox 240×240): причёска(`avHair`, 7 стилей)/цвет волос/лицо(3 эллипса)/кожа(6 тонов)/глаза(4)/брови(3)/рот(4)/борода(3)/очки(3)/одежда(7 цветов). `shade(hex,amt)` для теней. `AV_*` палитры, `AV_PARTS` мета, `defaultAvatar/avCfg`.
+- Редактор `avatarEditor()` в виде «Персонаж»: круглое превью + чипы категорий (`av-cat`) + сетка опций с **живыми мини-превью** (`avatarSVG` с переопределением одной части), для цветов — свотчи. `State.aveCat`, хендлер `av-set` → `settings.avatar`.
+- Hero `.ch-avatar` теперь рендерит `avatarSVG` (внутри XP-кольца, `overflow:hidden`), эмодзи-аватар убран оттуда (но остался в шапке-пилюле/лидерборде/профилях как быстрый идентификатор).
+- **Под арт художника:** каждая часть — отдельный генератор/индекс, новые варианты добавляются без переписывания (Pro-косметика позже).
+
+### 2. 📊 Слой «Форма / Momentum» (импорт v2, часть 1)
+- Решает «уровни падают» по-доброму: уровень (Proven) не сгорает; **Форма** — отдельный recency-показатель. `skillForm(id)`: 100% при активности ≤3 дн → линейно до пола 25% за 21 день → легко возвращается. `overallForm`, `formMeta` (в форме/тонусе/расслабленно/подзаржавел). `skillLastActive/daysSinceDate`.
+- Показ: бар `.ch-form` в hero «Персонаж» + раздел гайда «Уровень vs Форма».
+- Полный дизайн (расщепление Proven/Form, агрегация, честность лидерборда) — в `ROADMAP.md`.
+
+### ⚠️ Грабли / заметки
+- Аватар-геометрию проверял скриншотами (вслепую пути рисовать рискованно) — все 7 причёсок + слои ок с первого прохода.
+- Тест-данные Albert (avatar.hair, __formtest__ квест) — почищены по `createdAt`/сбросом `avatar`.
+
 ## Как запустить и протестировать
 ```
 cd life-rpg && npm start          # http://127.0.0.1:4317
@@ -152,4 +173,4 @@ Smoke-тест: вход albert/1234 → добавить квест → ▶ ф�
 - Серверу нужен рестарт после правок `server.js` (node не watch). Превью: stop→start.
 
 ## Карта ключевых функций (app.js)
-`Store` (`_put` = немедленный awaitable PUT, `save` = дебаунс 250мс) · `DEFAULT_SETTINGS` (+`imported`) · `State` (+`leaderboard/_lbLoading`) · уровни: `levelInfo/needForLevel/xpForLevel/charLevel/skillLevelOf` · **импорт: `IMPORT_LADDERS/GENERIC_LADDER/ladderFor/tierLevels/importedXp/totalImportedXp/earnedXp/applyImport/importCard`** · `onChange`-делегат (set-import) · ранги: `RANKS/rankFor/rankProgress/charRank` · баланс: `balanceIndex` · Pro: `ent/isPro/trialDaysLeft` · атрибуты/аватар: `ATTRIBUTES/guessAttr/ensureSkillAttrs/attrScore/attrScores/archetype/bodyBMI/radarSVG/figureSVG` · экономика: `itemXp(+boost+hype)/goldEarned(+loot)/lootBoostPct` · **Хайп: `hypeState/hypePct/hypeMinLeft/activateHype`** · лут: `ensureLootbox/lootChestsAvailable/rollLoot/lootResolve/applyLoot/lootboxCard/openChest` · **программы: `DUNGEON_PROGRAMS/programSkillMap/programHabits/programTasks/applyProgramFresh/applyProgramMerge/programCard`** · **лидерборд: `publishLeaderboard/renderLeaderboard` (+ server `/api/leaderboard[/publish]`)** · Pro-UI: `subscriptionCard/securityCard/adminCard/showPaywall` · гайд/фидбек: `GUIDE_SECTIONS/showGuide` (+ server `/api/feedback`) · виды: `renderHeader/renderToday/renderCharacter/renderGoals/renderTree/renderRewards/renderWeekly/renderStats/renderLeaderboard/renderSettings` · `render()` диспатчер (+авто-центр активного таба) · `onClick/onSubmit` · `initApp/init`. **Nav дублирован в index.html + APP_SHELL — править оба.**
+`Store` (`_put` = немедленный awaitable PUT, `save` = дебаунс 250мс) · `DEFAULT_SETTINGS` (+`imported`) · `State` (+`leaderboard/_lbLoading`) · уровни: `levelInfo/needForLevel/xpForLevel/charLevel/skillLevelOf` · **импорт: `IMPORT_LADDERS/GENERIC_LADDER/ladderFor/tierLevels/importedXp/totalImportedXp/earnedXp/applyImport/importCard`** · **Форма: `skillForm/overallForm/formMeta/skillLastActive/daysSinceDate`** · **аватар: `AV_*/avatarSVG/avHair/shade/defaultAvatar/avCfg/avatarEditor` (хендлеры `av-cat`/`av-set`, `State.aveCat`, `settings.avatar`)** · `onChange`-делегат (set-import) · ранги: `RANKS/rankFor/rankProgress/charRank` · баланс: `balanceIndex` · Pro: `ent/isPro/trialDaysLeft` · атрибуты/аватар: `ATTRIBUTES/guessAttr/ensureSkillAttrs/attrScore/attrScores/archetype/bodyBMI/radarSVG/figureSVG` · экономика: `itemXp(+boost+hype)/goldEarned(+loot)/lootBoostPct` · **Хайп: `hypeState/hypePct/hypeMinLeft/activateHype`** · лут: `ensureLootbox/lootChestsAvailable/rollLoot/lootResolve/applyLoot/lootboxCard/openChest` · **программы: `DUNGEON_PROGRAMS/programSkillMap/programHabits/programTasks/applyProgramFresh/applyProgramMerge/programCard`** · **лидерборд: `publishLeaderboard/renderLeaderboard` (+ server `/api/leaderboard[/publish]`)** · Pro-UI: `subscriptionCard/securityCard/adminCard/showPaywall` · гайд/фидбек: `GUIDE_SECTIONS/showGuide` (+ server `/api/feedback`) · виды: `renderHeader/renderToday/renderCharacter/renderGoals/renderTree/renderRewards/renderWeekly/renderStats/renderLeaderboard/renderSettings` · `render()` диспатчер (+авто-центр активного таба) · `onClick/onSubmit` · `initApp/init`. **Nav дублирован в index.html + APP_SHELL — править оба.**
