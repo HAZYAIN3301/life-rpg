@@ -189,6 +189,7 @@ const State = {
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
   goals: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
   lootbox: null,
+  leaderboard: null, _lbLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all',
 };
 
@@ -1103,6 +1104,7 @@ const GUIDE_SECTIONS = [
   { icon: '🎁', title: 'Награды', text: 'Трать золото в магазине наград (придумай свои!). За активность дня падают сундуки — открывай рулеткой: золото, XP-бусты, титулы. Тут же ачивки.' },
   { icon: '🔥', title: 'Хайп', text: 'Выполни «Сложный» квест — включается Хайп: временный бонус к XP (+15% за стак, до +45%, на 2 часа). Каждый следующий сложный квест усиливает и продлевает его. Награда за то, что лезешь в трудное, а не фармишь лёгкое.' },
   { icon: '📊', title: 'Статистика', text: 'Ранг, Индекс баланса (ровно ли развиты сферы — это и есть десятиборье), ранги по сферам, графики опыта и времени.' },
+  { icon: '🏆', title: 'Рейтинг', text: 'Соревнование по опыту со всеми на сервере — позови друзей! Видны только имя, аватар, уровень и ранг; задачи и личные данные приватны. В рейтинге можно скрыться галочкой.' },
   { icon: '💎', title: 'Free и Pro', text: 'Ядро бесплатно навсегда. Pro добавляет глубину: расширенная аналитика, 3 сундука в день, состав тела, скоро — ИИ-ассистент и темы. 7-дневный триал без карты.' },
 ];
 function showGuide() {
@@ -1317,13 +1319,45 @@ const APP_SHELL = `
       <button data-view="rewards">Награды</button>
       <button data-view="weekly">Неделя</button>
       <button data-view="stats">Статистика</button>
+      <button data-view="leaderboard">Рейтинг</button>
       <button data-view="settings">Настройки</button>
     </nav>
   </header>
   <main id="main"></main>
   <div id="toasts"></div>`;
 
-const VIEWS = { today: renderToday, character: renderCharacter, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, settings: renderSettings };
+function renderLeaderboard() {
+  if (State.leaderboard === null) {
+    if (!State._lbLoading) {
+      State._lbLoading = true;
+      fetch('/api/leaderboard').then((r) => r.json()).then((d) => { State.leaderboard = Array.isArray(d) ? d : []; State._lbLoading = false; if (State.view === 'leaderboard') render(); })
+        .catch(() => { State.leaderboard = []; State._lbLoading = false; if (State.view === 'leaderboard') render(); });
+    }
+    return `<div class="card"><p class="muted">Загрузка рейтинга…</p></div>`;
+  }
+  const rows = State.leaderboard;
+  const optOut = !!(State.settings && State.settings.leaderboardOptOut);
+  const medals = ['🥇', '🥈', '🥉'];
+  const list = rows.length ? rows.map((r, i) => `
+    <div class="lb-row ${r.me ? 'me' : ''}">
+      <div class="lb-pos">${i < 3 ? medals[i] : '#' + (i + 1)}</div>
+      <div class="lb-av">${esc(r.avatar || '👤')}</div>
+      <div class="lb-name">${esc(r.name)}${r.me ? ' <span class="lb-you">ты</span>' : ''}<span class="lb-rank">${esc(r.rank || '')}</span></div>
+      <div class="lb-lvl">ур.${r.level}</div>
+      <div class="lb-xp">${r.totalXp.toLocaleString('ru')} XP</div>
+    </div>`).join('') : '<p class="muted">Пока пусто. Выполняй квесты — и попадёшь в рейтинг. Позови друзей!</p>';
+  return `
+    <div class="card">
+      <h3>🏆 Рейтинг</h3>
+      <p class="muted" style="margin:0 0 14px">Соревнование по суммарному опыту среди всех игроков на этом сервере. Видны только имя, аватар, уровень и ранг — твои задачи и личные данные приватны.</p>
+      <div class="lb-table">${list}</div>
+    </div>
+    <div class="card">
+      <label class="lb-optout"><input type="checkbox" data-action="toggle-lb-optout" ${optOut ? 'checked' : ''}/> Скрыть меня из рейтинга</label>
+    </div>`;
+}
+
+const VIEWS = { today: renderToday, character: renderCharacter, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, leaderboard: renderLeaderboard, settings: renderSettings };
 function render() {
   if (State.phase !== 'app') { showAuthScreen(); return; }
   // Восстановить app shell если auth-экран его перезаписал
@@ -1428,7 +1462,7 @@ function onSubmit(e) {
 
 function onClick(e) {
   const navBtn = e.target.closest('#nav button[data-view]');
-  if (navBtn) { State.view = navBtn.dataset.view; render(); return; }
+  if (navBtn) { State.view = navBtn.dataset.view; if (State.view === 'leaderboard') State.leaderboard = null; render(); return; }
   const el = e.target.closest('[data-action]');
   if (!el) return;
   const action = el.dataset.action, id = el.dataset.id, today = todayStr();
@@ -1463,6 +1497,7 @@ function onClick(e) {
   }
   if (action === 'ob-program') { const p = DUNGEON_PROGRAMS.find((x) => x.id === el.dataset.prog); if (p) applyProgramFresh(p); return; }
   if (action === 'add-program') { const p = DUNGEON_PROGRAMS.find((x) => x.id === el.dataset.prog); if (p) applyProgramMerge(p); return; }
+  if (action === 'toggle-lb-optout') { State.settings.leaderboardOptOut = !State.settings.leaderboardOptOut; Store.save('settings', State.settings); publishLeaderboard(); State.leaderboard = null; render(); return; }
   if (action === 'ob-finish') {
     if (State.obSkills.size === 0) return;
     const skills = [...State.obSkills].map((entry) => {
@@ -1503,13 +1538,13 @@ function onClick(e) {
     if (!t.done) { if (State.timer && State.timer.taskId === id) stopFocus(true, true); t.done = true; t.completedAt = new Date().toISOString(); t.xpAwarded = itemXp(t); t.goldAwarded = itemGold(t); toast(`+${t.xpAwarded} XP · +${t.goldAwarded} 🪙 · ${skillById(t.skillId).name}`);
       if (t.difficulty === 'hard') { const h = activateHype(); toast(`🔥 Хайп ×${h.stacks} · +${hypePct()}% XP ${hypeMinLeft()} мин — ты выбрал сложное!`); } }
     else { t.done = false; t.completedAt = null; t.xpAwarded = 0; t.goldAwarded = 0; }
-    Store.save('tasks', State.tasks); checkAchievements(); render();
+    Store.save('tasks', State.tasks); checkAchievements(); render(); publishLeaderboard();
   } else if (action === 'toggle-habit') {
     const h = habitById(id); if (!h) return;
     State.habitlog[today] = State.habitlog[today] || {};
     if (State.habitlog[today][id]) { delete State.habitlog[today][id]; if (!Object.keys(State.habitlog[today]).length) delete State.habitlog[today]; }
     else { State.habitlog[today][id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() }; toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${skillById(h.skillId).name}`); }
-    Store.save('habitlog', State.habitlog); checkAchievements(); render();
+    Store.save('habitlog', State.habitlog); checkAchievements(); render(); publishLeaderboard();
   } else if (action === 'focus-task') { const t = questById(id); if (t && !t.done) startFocus(id);
   } else if (action === 'timer-pause') { pauseFocus();
   } else if (action === 'timer-resume') { resumeFocus();
@@ -1671,7 +1706,18 @@ async function initApp() {
   checkAchievements(true);
   State.phase = 'app';
   render();
+  publishLeaderboard();
   if (!localStorage.getItem('liferpg_seen_guide')) { localStorage.setItem('liferpg_seen_guide', '1'); setTimeout(showGuide, 500); }
+}
+
+// Публикует публичный снапшот прогресса в лидерборд (приватные данные не уходят)
+function publishLeaderboard() {
+  if (!State.settings) return;
+  try {
+    const c = State.settings.curve, oi = levelInfo(overallXp(), c.base, c.growth);
+    fetch('/api/leaderboard/publish', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ totalXp: overallXp(), level: oi.level, rank: charRank().name, optOut: !!State.settings.leaderboardOptOut }) }).catch(() => {});
+  } catch (e) {}
 }
 
 // Точка входа — проверяем сессию, потом грузим нужный экран

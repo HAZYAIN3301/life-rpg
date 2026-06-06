@@ -369,6 +369,37 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, { ok: true });
   }
 
+  // ---- Лидерборд (соцфича) ----
+  // Клиент публикует ПУБЛИЧНЫЙ снапшот прогресса (XP/уровень/ранг). Приватные данные
+  // (задачи, рефлексия, тело и т.д.) НЕ покидают клиента — на сервере только агрегат.
+  if (u === '/api/leaderboard/publish' && req.method === 'POST') {
+    const uid = sessionUserId(req);
+    if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let b = {}; try { b = JSON.parse(await readBody(req)); } catch {}
+    const users = loadUsers();
+    const user = users.find(x => x.id === uid);
+    if (!user) return sendJson(res, 401, { error: 'user not found' });
+    user.pub = {
+      totalXp: Math.max(0, Math.round(Number(b.totalXp) || 0)),
+      level: Math.max(1, Math.round(Number(b.level) || 1)),
+      rank: String(b.rank || '').slice(0, 40),
+      at: new Date().toISOString(),
+    };
+    user.leaderboardOptOut = !!b.optOut;
+    saveUsers(users);
+    return sendJson(res, 200, { ok: true });
+  }
+  // GET /api/leaderboard — рейтинг всех, кто опубликовал снапшот и не отписался
+  if (u === '/api/leaderboard' && req.method === 'GET') {
+    const me = sessionUserId(req);
+    if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    const rows = loadUsers()
+      .filter(x => x.pub && !x.leaderboardOptOut)
+      .map(x => ({ id: x.id, name: x.name, avatar: x.avatar, totalXp: x.pub.totalXp, level: x.pub.level, rank: x.pub.rank, me: x.id === me }))
+      .sort((a, b) => b.totalXp - a.totalXp);
+    return sendJson(res, 200, rows);
+  }
+
   // ---- Per-user data API ----
   const m = u.match(/^\/api\/data\/([^/?]+)/);
   if (m) {

@@ -365,6 +365,27 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .eq-title { font-size: 10px; color: var(--warn); font-weight: 600; }
 .logout-btn { font-size: 12px; padding: 5px 10px; }
 
+/* ---------- Лидерборд ---------- */
+.lb-table { display: flex; flex-direction: column; gap: 2px; }
+.lb-row { display: grid; grid-template-columns: 40px 32px 1fr auto auto; align-items: center; gap: 12px; padding: 10px 8px; border-bottom: 1px solid var(--line); border-radius: 8px; }
+.lb-row:last-child { border-bottom: none; }
+.lb-row.me { background: color-mix(in srgb, var(--accent) 14%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); }
+.lb-pos { font-size: 18px; font-weight: 800; text-align: center; color: var(--muted); }
+.lb-av { font-size: 24px; text-align: center; }
+.lb-name { font-weight: 600; display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.lb-name .lb-rank { font-size: 11px; font-weight: 600; color: var(--muted); }
+.lb-you { font-size: 10px; font-weight: 700; color: var(--accent); background: color-mix(in srgb, var(--accent) 18%, transparent); padding: 1px 6px; border-radius: 999px; }
+.lb-lvl { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.lb-xp { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lb-optout { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); cursor: pointer; }
+.lb-optout input { width: auto; }
+@media (max-width: 560px) {
+  .lb-row { grid-template-columns: 30px 26px 1fr auto; gap: 8px; }
+  .lb-row .lb-lvl { display: none; }
+  .lb-pos { font-size: 15px; }
+  .lb-av { font-size: 20px; }
+}
+
 /* Хайп-чип (бафф за сложные квесты) */
 .hype-chip { font-size: 12px; font-weight: 800; letter-spacing: .3px; padding: 4px 10px; border-radius: 999px; white-space: nowrap; color: #ffb24a; background: linear-gradient(120deg, rgba(240,90,60,.22), rgba(240,160,40,.16)); border: 1px solid rgba(240,120,50,.55); box-shadow: 0 0 10px rgba(240,110,40,.25); animation: hypePulse 1.8s ease-in-out infinite; }
 @keyframes hypePulse { 0%,100% { box-shadow: 0 0 8px rgba(240,110,40,.2); } 50% { box-shadow: 0 0 16px rgba(240,110,40,.45); } }
