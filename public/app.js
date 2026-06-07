@@ -219,6 +219,7 @@ const State = {
   goals: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
   lootbox: null,
   leaderboard: null, _lbLoading: false,
+  adminUsers: null, _adminUsersLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null,
   aveCat: 'hair', // активная категория в редакторе аватара
   treeEdit: false, treeSelNode: null, // редактор дерева навыков
@@ -1355,12 +1356,28 @@ function securityCard() {
 }
 function adminCard() {
   if (!State.me || !State.me.isAdmin) return '';
+  // Загружаем список пользователей для select
+  if (State.adminUsers === null && !State._adminUsersLoading) {
+    State._adminUsersLoading = true;
+    fetch('/api/users').then((r) => r.json()).then((d) => {
+      State.adminUsers = Array.isArray(d) ? d : [];
+      State._adminUsersLoading = false;
+      if (State.view === 'settings') render();
+    }).catch(() => { State.adminUsers = []; State._adminUsersLoading = false; });
+  }
+  const users = State.adminUsers || [];
+  const datalist = users.length
+    ? `<datalist id="admin-users-dl">${users.map((u) => `<option value="${esc(u.id)}">${esc(u.avatar || '')} ${esc(u.name)} (${esc(u.id)})</option>`).join('')}</datalist>`
+    : '';
+  const userInput = users.length
+    ? `<input name="userId" list="admin-users-dl" placeholder="Найди друга по имени…" autocomplete="off" required />${datalist}`
+    : `<input name="userId" placeholder="${State._adminUsersLoading ? 'Загружаю…' : 'id профиля'}" required />`;
   return `<div class="card"><h3>🛠 Админ — выдать Pro</h3>
     <form id="grant-pro" class="pin-change">
-      <input name="userId" placeholder="id профиля (напр. albert)" required />
+      ${userInput}
       <input name="days" type="number" placeholder="дней (пусто=навсегда)" min="1" style="width:170px" />
       <button type="submit" class="btn">Выдать Pro</button><span id="grant-msg" class="muted"></span></form>
-    <p class="muted" style="font-size:12px">id виден на экране входа. Пусто в «дней» = бессрочный Pro. Для друзей.</p></div>`;
+    <p class="muted" style="font-size:12px">Выбери профиль из списка — поиск по имени или id. Пусто в «дней» = бессрочный Pro.</p></div>`;
 }
 function showPaywall(feature) {
   if (document.getElementById('paywall')) return;
@@ -1950,7 +1967,7 @@ function onSubmit(e) {
 
 function onClick(e) {
   const navBtn = e.target.closest('#nav button[data-view]');
-  if (navBtn) { State.view = navBtn.dataset.view; if (State.view === 'leaderboard') State.leaderboard = null; render(); return; }
+  if (navBtn) { State.view = navBtn.dataset.view; if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'settings') State.adminUsers = null; render(); return; }
   const el = e.target.closest('[data-action]');
   if (!el) return;
   const action = el.dataset.action, id = el.dataset.id, today = todayStr();

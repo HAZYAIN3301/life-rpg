@@ -261,6 +261,17 @@
 - **«📥 JSON»** — `<a href="/api/feedback/export" download>` — скачивает весь файл.
 - В описании — подсказка про `GITHUB_TOKEN`.
 - CSS: `.rep-toolbar`, `.rep-toolbar-btns`.
+
+## Сессия 2026-06-07 (ч.5) — Bug #1: выдача Pro по имени вместо id
+
+**Баг (Issue #1):** Grant Pro ломался для пользователей с кириллическим именем — их id генерируется как `user`, `user1` итд (regex `[^a-z0-9]` убирает всё нелатинское), но ввод был ручным текстовым полем.
+
+**Фикс (app.js):**
+- `State.adminUsers: null`, `State._adminUsersLoading: false` добавлены в State.
+- `adminCard()`: при первом рендере запускает `fetch('/api/users')` → `State.adminUsers`. После загрузки — `render()`.
+- Поле userId заменено на `<input list="admin-users-dl">` + `<datalist>` с опциями вида `⚡ Вася (user1)`. Браузер даёт нативный autocomplete/поиск по имени. Value поля = id пользователя.
+- При навигации на Settings → `State.adminUsers = null` (свежий список каждый раз).
+- Сервер не менялся — `grant-pro` принимает id как и раньше, datalist просто заполняет правильный id автоматически.
 - onClick: `wk-add-task` (открыть форму), `wk-add-cancel` (отмена); week-prev/next сбрасывают `wkAddDate`.
 - onSubmit: `wk-add-form` — создаёт task с `date=f.dataset.date`, `difficulty='normal'`, `estimateMin=30`.
 - Разделы намерения/итогов/рефлексии сохранены внизу страницы.
