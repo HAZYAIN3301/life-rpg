@@ -59,10 +59,10 @@ const WEEKDAYS = [
 ];
 const GOAL_BONUS = { xp: 60, gold: 30 };
 const GOAL_TYPES = [
-  { id: 'recurring', label: 'Повторяющиеся' },
-  { id: 'short', label: 'Краткосрочные' },
-  { id: 'mid', label: 'Среднесрочные' },
-  { id: 'long', label: 'Долгосрочные' },
+  { id: 'recurring', label: 'Повторяющиеся', timeframe: 'ежедневно · еженедельно',  hint: 'Регулярные практики без конечной даты: спорт каждый день, еженедельный обзор' },
+  { id: 'short',     label: 'Краткосрочные', timeframe: 'до 4 недель',              hint: 'Конкретный результат в ближайший месяц: сдать экзамен, дочитать книгу, договориться' },
+  { id: 'mid',       label: 'Среднесрочные', timeframe: '1–6 месяцев',              hint: 'Проект или трансформация за сезон: запустить MVP, пробежать полумарафон, B2 по языку' },
+  { id: 'long',      label: 'Долгосрочные',  timeframe: '6 мес – несколько лет',    hint: 'Большие жизненные цели: карьера, образование, здоровье, отношения' },
 ];
 const GOAL_XP = { recurring: 15, short: 50, mid: 200, long: 750 };
 function goalTypeLabel(t) { const x = GOAL_TYPES.find((g) => g.id === t); return x ? x.label : 'Цель'; }
@@ -219,7 +219,7 @@ const State = {
   goals: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
   lootbox: null,
   leaderboard: null, _lbLoading: false,
-  timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all',
+  timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null,
   aveCat: 'hair', // активная категория в редакторе аватара
   treeEdit: false, treeSelNode: null, // редактор дерева навыков
   settingsCollapsed: {}, // свёрнутые столбы в редакторе сфер
@@ -582,6 +582,7 @@ function longestStreak() {
 function habitScheduledOn(h, dateStr) { return (h.days || []).includes(parseDate(dateStr).getDay()); }
 function habitDone(h, dateStr) { return !!(State.habitlog[dateStr] && State.habitlog[dateStr][h.id]); }
 function todaysHabits() { const t = todayStr(); return State.habits.filter((h) => !h.archived && habitScheduledOn(h, t)); }
+function habitsDueOn(dateStr) { return State.habits.filter((h) => !h.archived && habitScheduledOn(h, dateStr)); }
 function habitStreak(h) {
   let s = 0, cursor = todayStr(), guard = 0;
   if (habitScheduledOn(h, cursor) && !habitDone(h, cursor)) cursor = addDays(cursor, -1);
@@ -1033,8 +1034,10 @@ function renderToday() {
         <input name="title" placeholder="Новый квест на сегодня…" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
         <input name="estimateMin" type="number" min="0" step="1" value="30" title="Минут" />
-        <select name="difficulty"><option value="easy">Лёгкая</option><option value="normal" selected>Обычная</option><option value="hard">Сложная</option></select>
-        <button type="submit">+ Квест</button></form></div>
+        <select name="difficulty"><option value="easy">🌱 Лёгкая</option><option value="normal" selected>⚔️ Обычная</option><option value="hard">🔥 Сложная</option></select>
+        <button type="submit">+ Квест</button></form>
+      <p class="diff-hint muted">🌱 Лёгкая — рутина, механика · ⚔️ Обычная — требует фокуса · 🔥 Сложная — вызов, выход из зоны комфорта → активирует Хайп <b>+15% XP</b></p>
+    </div>
     ${overdueCard}
     <div class="card"><div class="daystat">
         <span>Квестов: <b>${doneCount}/${todays.length}</b></span>
@@ -1084,8 +1087,9 @@ function renderGoals() {
   const archived = State.goals.filter((g) => g.archived);
   const nearest = active.filter((g) => g.targetDate).sort((a, b) => (a.targetDate < b.targetDate ? -1 : 1))[0];
   const skillOpts = skillOptionsHTML();
-  const typeOpts = GOAL_TYPES.map((t) => `<option value="${t.id}" ${t.id === 'short' ? 'selected' : ''}>${t.label}</option>`).join('');
+  const typeOpts = GOAL_TYPES.map((t) => `<option value="${t.id}" ${t.id === 'short' ? 'selected' : ''}>${t.label} · ${t.timeframe}</option>`).join('');
   const parentOpts = '<option value="">— без родителя —</option>' + active.map((g) => `<option value="${g.id}">${esc(g.title)}</option>`).join('');
+  const typeGuide = `<details class="gtype-guide"><summary>ℹ️ Как выбрать тип цели?</summary><div class="gtype-rows">${GOAL_TYPES.map((t) => `<div class="gtype-row"><span class="goal-type type-${t.id}">${t.label}</span><span class="gtype-tf">${t.timeframe}</span><span class="muted">${t.hint}</span></div>`).join('')}</div></details>`;
 
   const counts = { all: active.length };
   GOAL_TYPES.forEach((t) => { counts[t.id] = active.filter((g) => (g.type || 'short') === t.id).length; });
@@ -1100,6 +1104,7 @@ function renderGoals() {
       <div class="kpi"><div class="v">${nearest ? nearest.targetDate.slice(5) : '—'}</div><div class="l">Ближайший дедлайн</div></div>
     </div>
     <div class="card"><h3>Новая цель</h3>
+      ${typeGuide}
       <form id="add-goal" class="goal-form">
         <input name="title" placeholder="Чего хочешь достичь?" autocomplete="off" required />
         <select name="skillId" title="Навык">${skillOpts}</select>
@@ -1510,26 +1515,92 @@ function renderWeekly() {
   const ws = State.weekStart, end = addDays(ws, 6), st = rangeStats(ws, end);
   const wk = State.weeks[ws] || { intention: '', review: '' };
   const isThis = ws === weekStart(todayStr());
-  const reflections = Object.entries(State.days).filter(([d, v]) => d >= ws && d <= end && v.reflection && v.reflection.trim()).sort((a, b) => (a[0] < b[0] ? 1 : -1)).map(([d, v]) => `<li><span class="date">${d}</span><br>${esc(v.reflection)}</li>`).join('');
+  const today = todayStr();
+  // js getDay(): 0=Вс,1=Пн,...,6=Сб — карта для быстрого доступа
+  const WD_BY_JS = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+
+  const dayCols = Array.from({ length: 7 }, (_, i) => {
+    const d = addDays(ws, i);
+    const isToday = d === today;
+    const isPast = d < today;
+    const dayTasks = State.tasks.filter((t) => t.date === d);
+    const doneCount = dayTasks.filter((t) => t.done).length;
+    const dueHabits = habitsDueOn(d);
+    const wdLbl = WD_BY_JS[parseDate(d).getDay()];
+    const adding = State.wkAddDate === d;
+
+    const tasksHtml = dayTasks.length
+      ? dayTasks.map((t) => {
+          const sk = skillById(t.skillId);
+          return `<div class="wk-task${t.done ? ' done' : ''}">
+            <button class="check sm" data-action="toggle-task" data-id="${t.id}">${t.done ? '✓' : ''}</button>
+            <span class="wk-t-title" title="${esc(t.title)}">${esc(t.title)}</span>
+            <span class="wk-t-dot" style="background:${esc(sk.color)}" title="${esc(sk.name)}"></span>
+          </div>`;
+        }).join('')
+      : `<p class="wk-empty muted">Пусто</p>`;
+
+    const habitsHtml = dueHabits.length
+      ? `<div class="wk-habits-dots">${dueHabits.map((h) => {
+          const done = habitDone(h, d);
+          const sk = skillById(h.skillId);
+          return `<span class="wk-h-dot${done ? ' done' : ''}" style="--c:${esc(sk.color)}" title="${esc(h.title)}${done ? ' ✓' : ''}"></span>`;
+        }).join('')}</div>`
+      : '';
+
+    const addArea = adding
+      ? `<form class="wk-add-form" data-date="${d}">
+          <input name="title" placeholder="Название квеста…" autocomplete="off" required />
+          <select name="skillId">${skillOptionsHTML()}</select>
+          <div class="wk-add-btns">
+            <button type="submit" class="btn sm">+</button>
+            <button type="button" class="btn ghost sm" data-action="wk-add-cancel">✕</button>
+          </div>
+         </form>`
+      : `<button class="wk-add-btn" data-action="wk-add-task" data-date="${d}">+ Квест</button>`;
+
+    return `<div class="wk-col${isToday ? ' is-today' : ''}${isPast ? ' is-past' : ''}">
+      <div class="wk-col-head">
+        <span class="wk-wd">${wdLbl}</span>
+        <span class="wk-date">${dmShort(d)}</span>
+        ${dayTasks.length ? `<span class="wk-prog${doneCount === dayTasks.length ? ' all-done' : ''}">${doneCount}/${dayTasks.length}</span>` : ''}
+      </div>
+      <div class="wk-tasks">${tasksHtml}</div>
+      ${habitsHtml}
+      ${addArea}
+    </div>`;
+  }).join('');
+
+  const reflections = Object.entries(State.days)
+    .filter(([d, v]) => d >= ws && d <= end && v.reflection && v.reflection.trim())
+    .sort((a, b) => (a[0] < b[0] ? 1 : -1))
+    .map(([d, v]) => `<li><span class="date">${d}</span><br>${esc(v.reflection)}</li>`)
+    .join('');
+
   return `
     <div class="card week-nav">
       <button class="btn ghost" data-action="week-prev">←</button>
       <div><b>Неделя ${dmShort(ws)} – ${dmShort(end)}</b>${isThis ? ' <span class="muted">(текущая)</span>' : ''}</div>
-      <button class="btn ghost" data-action="week-next">→</button></div>
+      <button class="btn ghost" data-action="week-next">→</button>
+    </div>
     <div class="kpis">
-      <div class="kpi"><div class="v">${st.xp}</div><div class="l">Опыт за неделю</div></div>
+      <div class="kpi"><div class="v">${st.xp}</div><div class="l">XP за неделю</div></div>
       <div class="kpi"><div class="v">🪙 ${st.gold}</div><div class="l">Золото</div></div>
       <div class="kpi"><div class="v">${st.quests}</div><div class="l">Квестов</div></div>
       <div class="kpi"><div class="v">${st.habitsC}</div><div class="l">Привычек</div></div>
       <div class="kpi"><div class="v">${Math.round(st.min / 60 * 10) / 10}ч</div><div class="l">Времени</div></div>
     </div>
-    <div class="card"><h3>Время по сферам</h3>${barChartSVG(st.byArea)}</div>
+    <div class="wk-grid-wrap">
+      <div class="wk-grid">${dayCols}</div>
+    </div>
+    <div class="card"><h3>📊 Время по сферам</h3>${barChartSVG(st.byArea)}</div>
     <div class="card"><h3>🎯 Намерение на неделю</h3>
       <textarea id="week-intention" placeholder="Что главное на этой неделе? Куда направить фокус…">${esc(wk.intention || '')}</textarea>
       <h3 style="margin-top:14px">🔄 Итоги недели</h3>
       <textarea id="week-review" placeholder="Что получилось, что нет, что перенести…">${esc(wk.review || '')}</textarea>
-      <div style="margin-top:10px"><button class="btn" data-action="save-week">Сохранить</button></div></div>
-    <div class="card"><h3>Рефлексии этой недели</h3>${reflections ? `<ul class="reflections">${reflections}</ul>` : '<p class="muted">Нет записей за эту неделю.</p>'}</div>`;
+      <div style="margin-top:10px"><button class="btn" data-action="save-week">Сохранить</button>
+    </div></div>
+    ${reflections ? `<div class="card"><h3>Рефлексии этой недели</h3><ul class="reflections">${reflections}</ul></div>` : ''}`;
 }
 
 // ============================================================
@@ -1843,6 +1914,13 @@ function onSubmit(e) {
     return;
   }
 
+  if (f.classList.contains('wk-add-form')) {
+    e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
+    const date = f.dataset.date || todayStr();
+    State.tasks.push({ id: uid(), title, skillId: f.skillId.value, estimateMin: 30, difficulty: 'normal', date, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
+    Store.save('tasks', State.tasks); State.wkAddDate = null; render(); return;
+  }
+
   if (f.id === 'add-task') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
     State.tasks.push({ id: uid(), title, skillId: f.skillId.value, estimateMin: Number(f.estimateMin.value) || 0, difficulty: f.difficulty.value, date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
@@ -2024,8 +2102,10 @@ function onClick(e) {
     State.rewards = State.rewards.filter((x) => x.id !== id); Store.save('rewards', State.rewards); render();
 
   // --- Неделя ---
-  } else if (action === 'week-prev') { State.weekStart = addDays(State.weekStart, -7); render();
-  } else if (action === 'week-next') { State.weekStart = addDays(State.weekStart, 7); render();
+  } else if (action === 'week-prev') { State.weekStart = addDays(State.weekStart, -7); State.wkAddDate = null; render();
+  } else if (action === 'week-next') { State.weekStart = addDays(State.weekStart, 7); State.wkAddDate = null; render();
+  } else if (action === 'wk-add-task') { State.wkAddDate = el.dataset.date; render();
+  } else if (action === 'wk-add-cancel') { State.wkAddDate = null; render();
   } else if (action === 'save-week') {
     const ws = State.weekStart; State.weeks[ws] = State.weeks[ws] || {};
     State.weeks[ws].intention = document.getElementById('week-intention').value;
