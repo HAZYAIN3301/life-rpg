@@ -706,6 +706,8 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .fb-previews { display: flex; flex-wrap: wrap; gap: 8px; }
 .fb-thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
 /* Репорты (админ) */
+.rep-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+.rep-toolbar-btns { display: flex; gap: 8px; flex-wrap: wrap; }
 .rep-list { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
 .rep-item { background: var(--panel2); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
 .rep-head { display: flex; justify-content: space-between; gap: 10px; align-items: center; font-size: 12px; flex-wrap: wrap; }

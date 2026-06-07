@@ -7,6 +7,7 @@
 //              DATA_DIR/secret.json            (HMAC secret, auto-generated)
 
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -203,6 +204,50 @@ SECRET = loadSecret();
 migrateIfNeeded();
 
 // ============================================================
+//  GitHub Issues integration — forward feedback to issues tracker
+// ============================================================
+async function createGithubIssue(entry) {
+  const token = process.env.GITHUB_TOKEN;
+  if (!token) return; // молча пропускаем если не настроен
+  const repo = process.env.GITHUB_REPO || 'HAZYAIN3301/life-rpg';
+  const [owner, repoName] = repo.split('/');
+  const KIND_EMOJI = { bug: '🐛', idea: '💡', praise: '💛', other: '📝' };
+  const KIND_LABEL = { bug: 'bug', idea: 'enhancement', praise: 'praise', other: 'feedback' };
+  const short = entry.text.slice(0, 70) + (entry.text.length > 70 ? '…' : '');
+  const title = `${KIND_EMOJI[entry.kind] || '📝'} [${entry.kind}] ${short}`;
+  const bodyLines = [
+    `**От:** \`${entry.userId}\` · **${entry.at.slice(0, 16).replace('T', ' ')} UTC**`,
+    '',
+    entry.text,
+  ];
+  if (entry.attachments && entry.attachments.length) {
+    bodyLines.push('', `---`, `📎 Вложений: ${entry.attachments.length}`);
+  }
+  const payload = JSON.stringify({
+    title,
+    body: bodyLines.join('\n'),
+    labels: [KIND_LABEL[entry.kind] || 'feedback'],
+  });
+  return new Promise((resolve) => {
+    const req = https.request({
+      hostname: 'api.github.com',
+      method: 'POST',
+      path: `/repos/${owner}/${repoName}/issues`,
+      headers: {
+        'Authorization': `token ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'gojo-app',
+        'Content-Length': Buffer.byteLength(payload),
+      },
+    }, (r) => { r.resume(); resolve(); });
+    req.on('error', (e) => { console.error('[github-issue]', e.message); resolve(); });
+    req.write(payload);
+    req.end();
+  });
+}
+
+// ============================================================
 //  HTTP server
 // ============================================================
 const server = http.createServer(async (req, res) => {
@@ -384,7 +429,17 @@ const server = http.createServer(async (req, res) => {
     let list = []; try { list = JSON.parse(fs.readFileSync(file, 'utf8')); } catch {}
     list.push({ id, at: new Date().toISOString(), userId: uid, kind: String(fb.kind || 'other').slice(0, 20), text, attachments });
     try { fs.writeFileSync(file, JSON.stringify(list, null, 2)); } catch (e) { return sendJson(res, 500, { error: 'save failed' }); }
+    createGithubIssue(list[list.length - 1]).catch(() => {}); // fire-and-forget
     return sendJson(res, 200, { ok: true, attachments: attachments.length });
+  }
+  // ---- Экспорт feedback.json (скачать, только админ) ----
+  if (u === '/api/feedback/export' && req.method === 'GET') {
+    const me = loadUsers().find(x => x.id === sessionUserId(req));
+    if (!me || !me.isAdmin) return sendJson(res, 403, { error: 'только админ' });
+    let list = []; try { list = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'feedback.json'), 'utf8')); } catch {}
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Content-Disposition': 'attachment; filename="gojo-feedback.json"' });
+    res.end(JSON.stringify(list, null, 2));
+    return;
   }
   // ---- Список репортов (только админ) ----
   if (u === '/api/feedback' && req.method === 'GET') {

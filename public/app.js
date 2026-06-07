@@ -1437,8 +1437,14 @@ async function showReports() {
   }).join('') : '<p class="muted">Репортов пока нет.</p>';
   const ov = document.createElement('div'); ov.id = 'reports'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="guide-box"><button class="modal-x" data-action="close-reports">✕</button>
-    <h2>🐞 Репорты (${list.length})</h2>
-    <p class="muted">Все баги/идеи с вложениями. Файлы — в <code>data/feedback/</code>, список — в <code>data/feedback.json</code>.</p>
+    <div class="rep-toolbar">
+      <h2 style="margin:0">🐞 Репорты (${list.length})</h2>
+      <div class="rep-toolbar-btns">
+        <button class="btn ghost sm" data-action="copy-feedback-for-claude">📋 Скопировать для Claude</button>
+        <a class="btn ghost sm" href="/api/feedback/export" download="gojo-feedback.json">📥 JSON</a>
+      </div>
+    </div>
+    <p class="muted" style="margin:4px 0 10px">Файлы — <code>data/feedback/</code> · список — <code>data/feedback.json</code>. GitHub Issues: настрой <code>GITHUB_TOKEN</code> в Railway → новые репорты пойдут в Issues.</p>
     <div class="rep-list">${items}</div></div>`;
   document.body.appendChild(ov);
 }
@@ -2003,6 +2009,25 @@ function onClick(e) {
   if (action === 'close-guide') { const g = document.getElementById('guide'); if (g) g.remove(); return; }
   if (action === 'show-reports') { showReports(); return; }
   if (action === 'close-reports') { const r = document.getElementById('reports'); if (r) r.remove(); return; }
+  if (action === 'copy-feedback-for-claude') {
+    (async () => {
+      try {
+        const r = await fetch('/api/feedback'); if (!r.ok) { toast('Ошибка доступа'); return; }
+        const list = await r.json();
+        if (!list.length) { toast('Репортов пока нет'); return; }
+        const KIND = { bug: '🐞 Баг', idea: '💡 Идея', praise: '💛 Похвала', other: '💬 Другое' };
+        const lines = list.map((f, i) => [
+          `## [${i + 1}] ${KIND[f.kind] || f.kind} | ${(f.at || '').slice(0, 16).replace('T', ' ')} | ${f.userId}`,
+          f.text,
+          f.attachments && f.attachments.length ? `📎 Вложений: ${f.attachments.length}` : '',
+        ].filter(Boolean).join('\n'));
+        const text = `# Gojo Feedback — ${list.length} репортов\nЭкспорт: ${new Date().toLocaleString('ru')}\n\n` + lines.join('\n\n---\n\n');
+        await navigator.clipboard.writeText(text);
+        toast('📋 Скопировано! Вставь в чат с Claude.');
+      } catch (e) { toast('Ошибка: ' + e.message); }
+    })();
+    return;
+  }
   if (action === 'goto-rewards') { State.view = 'rewards'; render(); return; }
   if (action === 'goto-import') { State.view = 'settings'; render(); setTimeout(() => { const c = document.getElementById('import-card'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('flash-card'); } }, 60); return; }
   if (action === 'av-cat') { State.aveCat = el.dataset.cat; render(); return; }

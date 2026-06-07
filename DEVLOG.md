@@ -241,6 +241,26 @@
   - Точки привычек: цвет сферы, непрозрачные если выполнено.
   - Inline-форма добавления квеста: input+select+btn, `data-date` на форме → создаёт задачу на нужный день.
 - CSS: `.wk-grid-wrap` (overflow-x:auto, min-width 900px), `.wk-col*`, `.wk-task*`, `.wk-h-dot`, `.wk-add-btn/.wk-add-form`.
+
+## Сессия 2026-06-07 (ч.4) — GitHub Issues + feedback export
+
+**Проблема:** Railway (ephemeral disk) — feedback живёт там, локально недоступен Claude Code.
+
+### GitHub Issues auto-forward (`server.js`)
+- `const https = require('https')` — добавлен в requires.
+- `createGithubIssue(entry)` — новая async-функция перед HTTP-сервером. Берёт `GITHUB_TOKEN` и `GITHUB_REPO` (default: `HAZYAIN3301/life-rpg`) из env. Если токен не задан — молча пропускает (graceful degradation). POST на `api.github.com/repos/.../issues` с заголовком `[bug/idea/…] <первые 70 символов>`, меткой (`bug`/`enhancement`/`praise`/`feedback`), телом с userId+timestamp.
+- Вызов в обработчике POST `/api/feedback`, после `fs.writeFileSync`: `createGithubIssue(list[list.length - 1]).catch(() => {})` — fire-and-forget.
+- **Активация:** добавить в Railway Variables → `GITHUB_TOKEN` = PAT с `issues:write`. Опционально `GITHUB_REPO=owner/repo`.
+
+### Feedback export endpoint (`server.js`)
+- `GET /api/feedback/export` (только админ) — отдаёт весь `feedback.json` с заголовком `Content-Disposition: attachment; filename="gojo-feedback.json"`.
+
+### Admin UI (`app.js`, `styles.css`)
+- `showReports()`: заголовок перенесён в `.rep-toolbar` (flex, space-between) с двумя кнопками справа.
+- **«📋 Скопировать для Claude»** (`data-action="copy-feedback-for-claude"`) — fetchит `/api/feedback`, форматирует все репорты в читаемый markdown (с заголовками, датами, userId, текстом, пометкой вложений), копирует в clipboard через `navigator.clipboard.writeText`. Подходит для вставки прямо в чат.
+- **«📥 JSON»** — `<a href="/api/feedback/export" download>` — скачивает весь файл.
+- В описании — подсказка про `GITHUB_TOKEN`.
+- CSS: `.rep-toolbar`, `.rep-toolbar-btns`.
 - onClick: `wk-add-task` (открыть форму), `wk-add-cancel` (отмена); week-prev/next сбрасывают `wkAddDate`.
 - onSubmit: `wk-add-form` — создаёт task с `date=f.dataset.date`, `difficulty='normal'`, `estimateMin=30`.
 - Разделы намерения/итогов/рефлексии сохранены внизу страницы.
