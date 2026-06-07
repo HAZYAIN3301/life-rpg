@@ -417,6 +417,10 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
   .ave-options { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; }
 }
 
+/* подсветка карточки при переходе по нуджу */
+.flash-card { animation: flashCard 1.6s ease; }
+@keyframes flashCard { 0%, 100% { box-shadow: var(--shadow); } 25% { box-shadow: 0 0 0 3px var(--accent), var(--shadow); } }
+
 /* ---------- Импорт достижений ---------- */
 .import-list { display: flex; flex-direction: column; gap: 8px; }
 .import-row { display: grid; grid-template-columns: 12px 1fr minmax(0, 1.5fr) 52px; align-items: center; gap: 10px; }

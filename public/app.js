@@ -237,7 +237,7 @@ function addDays(s, n) { const d = parseDate(s); d.setDate(d.getDate() + n); ret
 function dmShort(s) { return s.slice(8) + '.' + s.slice(5, 7); }
 function fmtClock(ms) { const t = Math.max(0, Math.floor(ms / 1000)); const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60; return h ? `${h}:${pad2(m)}:${pad2(s)}` : `${m}:${pad2(s)}`; }
 function plural(n, one, few, many) { const a = Math.abs(n) % 100, b = a % 10; if (a > 10 && a < 20) return many; if (b > 1 && b < 5) return few; if (b === 1) return one; return many; }
-function skillById(id) { return State.settings.skills.find((s) => s.id === id) || { id, name: id || '—', color: '#888' }; }
+function skillById(id) { return State.settings.skills.find((s) => s.id === id) || { id, name: '—', color: '#888', missing: true }; }
 // ── Иерархия сфер (импорт v2.2): под-навыки через parentId. 2 уровня: столб → под-навык.
 function childSkills(id) { return State.settings.skills.filter((s) => s.parentId === id); }
 function isPillar(id) { return childSkills(id).length > 0; }            // столб = есть под-навыки
@@ -929,7 +929,7 @@ function renderHeader() {
   }).join('');
   const proBadge = e.tier === 'pro' ? '<span class="plan-badge pro" title="Pro активен">PRO</span>'
     : e.tier === 'trial' ? `<span class="plan-badge trial" title="Pro-триал">PRO ${trialDaysLeft()}д</span>`
-    : '<button class="plan-badge free" data-action="show-paywall" data-feature="Pro" title="Открыть Pro">PRO</button>';
+    : '<button class="plan-badge free" data-action="show-paywall" data-feature="Pro" title="Открыть Pro — сейчас у тебя Free">🔓 Pro?</button>';
   document.getElementById('appName').textContent = State.settings.appName || 'Gojo';
   document.getElementById('charSummary').innerHTML = `
     <div class="char-main">
@@ -1031,7 +1031,7 @@ function renderToday() {
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="Новый квест на сегодня…" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
-        <input name="estimateMin" type="number" min="0" step="5" value="30" title="Минут" />
+        <input name="estimateMin" type="number" min="0" step="1" value="30" title="Минут" />
         <select name="difficulty"><option value="easy">Лёгкая</option><option value="normal" selected>Обычная</option><option value="hard">Сложная</option></select>
         <button type="submit">+ Квест</button></form></div>
     ${overdueCard}
@@ -1623,7 +1623,7 @@ function importCard() {
     </div>`;
   };
   const rows = topSkills().map((sk) => row(sk, false) + childSkills(sk.id).map((c) => row(c, true)).join('')).join('');
-  return `<div class="card">
+  return `<div class="card" id="import-card">
     <h3>🎖 Импорт достижений</h3>
     <p class="muted" style="margin:0 0 12px">Ты не начинаешь с нуля. Отметь честно свой реальный уровень в каждой сфере — стартовый опыт начислится. Это «доказанное мастерство», оно не сгорает. Менять можно в любой момент.</p>
     <div class="import-list">${rows}</div>
@@ -1635,9 +1635,9 @@ function renderSettings() {
   const skillOpts = (sel) => skillOptionsHTML(sel);
   // допустимые родители для сферы sk: верхнеуровневые сферы (не она сама), и только если сама не столб (2 уровня)
   const parentOptions = (sk) => {
-    if (isPillar(sk.id)) return `<option value="" selected>— столб</option>`; // у столба не может быть родителя
-    let html = `<option value="" ${!sk.parentId ? 'selected' : ''}>— верхний уровень</option>`;
-    for (const p of topSkills()) if (p.id !== sk.id) html += `<option value="${p.id}" ${sk.parentId === p.id ? 'selected' : ''}>↳ ${esc(p.name)}</option>`;
+    if (isPillar(sk.id)) return `<option value="" selected>Столб (есть под-навыки)</option>`; // у столба не может быть родителя
+    let html = `<option value="" ${!sk.parentId ? 'selected' : ''}>Самостоятельная сфера</option>`;
+    for (const p of topSkills()) if (p.id !== sk.id) html += `<option value="${p.id}" ${sk.parentId === p.id ? 'selected' : ''}>Под-навык в «${esc(p.name)}»</option>`;
     return html;
   };
   const skills = s.skills.map((sk) => `<div class="skill-edit" data-id="${sk.id}"><input type="color" value="${esc(sk.color)}" data-field="color" /><input type="text" value="${esc(sk.name)}" data-field="name" /><select data-field="attr" title="Какой атрибут персонажа качает эта сфера">${ATTRIBUTES.map((a) => `<option value="${a.id}" ${(sk.attr || guessAttr(sk.name)) === a.id ? 'selected' : ''}>${a.icon} ${a.name}</option>`).join('')}</select><select data-field="parentId" title="Вложить в столб (под-навык)">${parentOptions(sk)}</select><button class="del" data-action="delete-skill" data-id="${sk.id}">✕</button></div>`).join('');
@@ -1645,7 +1645,7 @@ function renderSettings() {
       <input type="text" value="${esc(h.title)}" data-field="title" />
       <select data-field="skillId">${skillOpts(h.skillId)}</select>
       <select data-field="difficulty"><option value="easy" ${h.difficulty === 'easy' ? 'selected' : ''}>Лёгкая</option><option value="normal" ${h.difficulty === 'normal' ? 'selected' : ''}>Обычная</option><option value="hard" ${h.difficulty === 'hard' ? 'selected' : ''}>Сложная</option></select>
-      <input type="number" min="0" step="5" value="${Number(h.estimateMin) || 0}" data-field="estimateMin" />
+      <input type="number" min="0" step="1" value="${Number(h.estimateMin) || 0}" data-field="estimateMin" />
       <div class="weekdays">${WEEKDAYS.map((w) => `<label><input type="checkbox" data-day="${w.js}" ${(h.days || []).includes(w.js) ? 'checked' : ''}/>${w.label}</label>`).join('')}</div>
       <button class="del" data-action="delete-habit" data-id="${h.id}">✕</button></div>`).join('');
   return `
@@ -1653,7 +1653,7 @@ function renderSettings() {
     ${securityCard()}
     ${adminCard()}
     <div class="card"><h3>Название</h3><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></div>
-    <div class="card"><h3>Навыки / сферы жизни</h3><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">+ Добавить навык</button></div>
+    <div class="card"><h3>Навыки / сферы жизни</h3><p class="muted" style="font-size:12px;margin:0 0 10px">Третий селект — вложенность: «Самостоятельная» (отдельная сфера) или «Под-навык в …» (войдёт в выбранный столб, опыт суммируется в него). Изменения сохраняются кнопкой ниже.</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">+ Добавить сферу</button></div>
     ${importCard()}
     <div class="card"><h3>🔁 Привычки (повторяющиеся)</h3><div id="habits-list">${habits || '<p class="muted">Пока нет привычек.</p>'}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">+ Добавить привычку</button></div>
     <div class="card"><h3>📦 Программы-данжи</h3><p class="muted" style="margin:0 0 12px">Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
@@ -1912,7 +1912,7 @@ function onClick(e) {
   if (action === 'show-reports') { showReports(); return; }
   if (action === 'close-reports') { const r = document.getElementById('reports'); if (r) r.remove(); return; }
   if (action === 'goto-rewards') { State.view = 'rewards'; render(); return; }
-  if (action === 'goto-import') { State.view = 'settings'; render(); return; }
+  if (action === 'goto-import') { State.view = 'settings'; render(); setTimeout(() => { const c = document.getElementById('import-card'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('flash-card'); } }, 60); return; }
   if (action === 'av-cat') { State.aveCat = el.dataset.cat; render(); return; }
   if (action === 'av-set') { State.settings.avatar = Object.assign(avCfg(), { [el.dataset.part]: Number(el.dataset.idx) }); Store.save('settings', State.settings); render(); return; }
   if (action === 'start-trial') {
@@ -2020,15 +2020,33 @@ function onClick(e) {
 
   // --- Настройки ---
   } else if (action === 'add-skill') {
-    State.settings.skills.push({ id: 'sk_' + uid(), name: 'Новый навык', color: '#6c8cff' }); ensureTrees(); Store.save('settings', State.settings); Store.save('skilltree', State.tree); render();
+    captureSettingsForm(); // сохранить текущие правки формы, чтобы не потерять
+    State.settings.skills.push({ id: 'sk_' + uid(), name: 'Новая сфера', color: '#6c8cff' }); ensureTrees();
+    Store.save('settings', State.settings); Store.save('skilltree', State.tree); render();
   } else if (action === 'delete-skill') {
-    if (!confirm('Удалить навык?')) return; State.settings.skills = State.settings.skills.filter((x) => x.id !== id); for (const sk of State.settings.skills) if (sk.parentId === id) sk.parentId = null; Store.save('settings', State.settings); render();
+    if (!confirm('Удалить сферу? Вместе с ней удалятся её квесты, привычки, цели и накопленный опыт.')) return;
+    captureSettingsForm();
+    const delHabitIds = State.habits.filter((h) => h.skillId === id).map((h) => h.id);
+    State.settings.skills = State.settings.skills.filter((x) => x.id !== id);
+    for (const sk of State.settings.skills) if (sk.parentId === id) sk.parentId = null;
+    State.tasks = State.tasks.filter((t) => t.skillId !== id);
+    State.habits = State.habits.filter((h) => h.skillId !== id);
+    State.goals = (State.goals || []).filter((g) => g.skillId !== id);
+    for (const d in State.habitlog) { for (const hid of delHabitIds) delete State.habitlog[d][hid]; if (!Object.keys(State.habitlog[d]).length) delete State.habitlog[d]; }
+    if (State.tree) delete State.tree[id];
+    if (State.settings.imported) delete State.settings.imported[id];
+    Store.save('settings', State.settings); Store.save('tasks', State.tasks); Store.save('habits', State.habits); Store.save('goals', State.goals); Store.save('habitlog', State.habitlog); Store.save('skilltree', State.tree); render();
   } else if (action === 'add-habit') {
+    captureSettingsForm();
     const first = State.settings.skills[0];
     State.habits.push({ id: 'h_' + uid(), title: 'Новая привычка', skillId: first ? first.id : 'life', difficulty: 'easy', estimateMin: 10, days: [1, 2, 3, 4, 5], archived: false, createdAt: new Date().toISOString() });
     Store.save('habits', State.habits); render();
   } else if (action === 'delete-habit') {
-    if (!confirm('Удалить привычку?')) return; State.habits = State.habits.filter((h) => h.id !== id); Store.save('habits', State.habits); render();
+    if (!confirm('Удалить привычку? Её отметки и опыт тоже удалятся.')) return;
+    captureSettingsForm();
+    State.habits = State.habits.filter((h) => h.id !== id);
+    for (const d in State.habitlog) { delete State.habitlog[d][id]; if (!Object.keys(State.habitlog[d]).length) delete State.habitlog[d]; }
+    Store.save('habits', State.habits); Store.save('habitlog', State.habitlog); render();
   } else if (action === 'save-settings') { saveSettingsFromForm();
   } else if (action === 'reset-data') {
     if (!confirm('Удалить ВСЕ квесты и записи дней? Навыки, привычки, цели и настройки останутся.')) return;
@@ -2036,9 +2054,12 @@ function onClick(e) {
   }
 }
 
-function saveSettingsFromForm() {
-  const s = State.settings, num = (id, fb) => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? fb : v; };
-  s.appName = document.getElementById('set-appName').value.trim() || 'Gojo';
+// Считать ТЕКУЩИЕ правки формы настроек в State (без сохранения/рендера).
+// Вызывается перед любыми структурными изменениями (add/delete), чтобы не терять несохранённые правки.
+function captureSettingsForm() {
+  if (!document.getElementById('skills-list')) return; // формы нет на экране
+  const s = State.settings, num = (id, fb) => { const el = document.getElementById(id); if (!el) return fb; const v = parseFloat(el.value); return isNaN(v) ? fb : v; };
+  const appEl = document.getElementById('set-appName'); if (appEl) s.appName = appEl.value.trim() || 'Gojo';
   s.skills = [...document.querySelectorAll('#skills-list .skill-edit')].map((row) => {
     const psel = row.querySelector('[data-field="parentId"]');
     return { id: row.dataset.id, name: row.querySelector('[data-field="name"]').value.trim() || 'Без названия', color: row.querySelector('[data-field="color"]').value, attr: row.querySelector('[data-field="attr"]') ? row.querySelector('[data-field="attr"]').value : guessAttr(row.querySelector('[data-field="name"]').value), parentId: psel && psel.value ? psel.value : null };
@@ -2055,8 +2076,11 @@ function saveSettingsFromForm() {
   s.gold = { perMinute: num('g-perMinute', 0.4), completionBonus: num('g-bonus', 3) };
   s.focus = { pomodoro: document.getElementById('f-pomodoro').value === '1', workMin: num('f-workMin', 25), breakMin: num('f-breakMin', 5), sound: document.getElementById('f-sound').value === '1', notify: document.getElementById('f-notify').value === '1' };
   s.curve = { base: num('k-base', 100), skillBase: num('k-skillBase', 60), growth: num('k-growth', 1.3) };
+}
+function saveSettingsFromForm() {
+  captureSettingsForm();
   ensureTrees();
-  Store.save('settings', s); Store.save('habits', State.habits); Store.save('skilltree', State.tree);
+  Store.save('settings', State.settings); Store.save('habits', State.habits); Store.save('skilltree', State.tree);
   toast('Настройки сохранены'); render();
 }
 
