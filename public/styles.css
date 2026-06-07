@@ -161,6 +161,14 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .skill-edit input[data-field="name"] { flex: 1 1 130px; min-width: 0; }
 .skill-edit select { flex: 1 1 120px; min-width: 0; }
 .skill-edit .del { flex: 0 0 auto; }
+.skill-edit.is-sub { margin-left: 22px; border-left: 2px solid var(--line); padding-left: 8px; }
+.skill-edit.se-hidden { display: none; }
+.se-move { display: inline-flex; flex-direction: column; gap: 1px; flex: 0 0 auto; }
+.se-move button { background: var(--panel2); border: 1px solid var(--line); color: var(--muted); border-radius: 5px; width: 22px; height: 17px; line-height: 1; font-size: 9px; cursor: pointer; padding: 0; }
+.se-move button:hover { color: var(--text); border-color: var(--accent); }
+.se-collapse { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; width: 18px; flex: 0 0 auto; padding: 0; }
+.se-collapse:hover { color: var(--text); }
+.se-collapse-spacer { width: 18px; flex: 0 0 auto; }
 .knobs { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
 .knob label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
 .knob input { width: 100%; }

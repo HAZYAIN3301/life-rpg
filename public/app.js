@@ -222,6 +222,7 @@ const State = {
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all',
   aveCat: 'hair', // активная категория в редакторе аватара
   treeEdit: false, treeSelNode: null, // редактор дерева навыков
+  settingsCollapsed: {}, // свёрнутые столбы в редакторе сфер
 };
 
 // ============================================================
@@ -1640,7 +1641,20 @@ function renderSettings() {
     for (const p of topSkills()) if (p.id !== sk.id) html += `<option value="${p.id}" ${sk.parentId === p.id ? 'selected' : ''}>Под-навык в «${esc(p.name)}»</option>`;
     return html;
   };
-  const skills = s.skills.map((sk) => `<div class="skill-edit" data-id="${sk.id}"><input type="color" value="${esc(sk.color)}" data-field="color" /><input type="text" value="${esc(sk.name)}" data-field="name" /><select data-field="attr" title="Какой атрибут персонажа качает эта сфера">${ATTRIBUTES.map((a) => `<option value="${a.id}" ${(sk.attr || guessAttr(sk.name)) === a.id ? 'selected' : ''}>${a.icon} ${a.name}</option>`).join('')}</select><select data-field="parentId" title="Вложить в столб (под-навык)">${parentOptions(sk)}</select><button class="del" data-action="delete-skill" data-id="${sk.id}">✕</button></div>`).join('');
+  const collapsed = State.settingsCollapsed || {};
+  const attrSel = (sk) => `<select data-field="attr" title="Какой атрибут персонажа качает эта сфера">${ATTRIBUTES.map((a) => `<option value="${a.id}" ${(sk.attr || guessAttr(sk.name)) === a.id ? 'selected' : ''}>${a.icon} ${a.name}</option>`).join('')}</select>`;
+  const skillRow = (sk, isChild, hidden) => {
+    const pillar = isPillar(sk.id);
+    return `<div class="skill-edit ${isChild ? 'is-sub' : ''} ${hidden ? 'se-hidden' : ''}" data-id="${sk.id}">
+      <span class="se-move"><button data-action="skill-move" data-id="${sk.id}" data-dir="-1" title="Выше">▲</button><button data-action="skill-move" data-id="${sk.id}" data-dir="1" title="Ниже">▼</button></span>
+      ${pillar ? `<button class="se-collapse" data-action="skill-collapse" data-id="${sk.id}" title="Свернуть/развернуть под-навыки">${collapsed[sk.id] ? '▸' : '▾'}</button>` : '<span class="se-collapse-spacer"></span>'}
+      <input type="color" value="${esc(sk.color)}" data-field="color" />
+      <input type="text" value="${esc(sk.name)}" data-field="name" />
+      ${attrSel(sk)}
+      <select data-field="parentId" title="Вложенность сферы">${parentOptions(sk)}</select>
+      <button class="del" data-action="delete-skill" data-id="${sk.id}">✕</button></div>`;
+  };
+  const skills = topSkills().map((sk) => skillRow(sk, false, false) + childSkills(sk.id).map((c) => skillRow(c, true, !!collapsed[sk.id])).join('')).join('');
   const habits = State.habits.map((h) => `<div class="habit-edit" data-id="${h.id}">
       <input type="text" value="${esc(h.title)}" data-field="title" />
       <select data-field="skillId">${skillOpts(h.skillId)}</select>
@@ -2036,6 +2050,21 @@ function onClick(e) {
     if (State.tree) delete State.tree[id];
     if (State.settings.imported) delete State.settings.imported[id];
     Store.save('settings', State.settings); Store.save('tasks', State.tasks); Store.save('habits', State.habits); Store.save('goals', State.goals); Store.save('habitlog', State.habitlog); Store.save('skilltree', State.tree); render();
+  } else if (action === 'skill-collapse') {
+    captureSettingsForm();
+    State.settingsCollapsed = State.settingsCollapsed || {};
+    State.settingsCollapsed[id] = !State.settingsCollapsed[id];
+    render();
+  } else if (action === 'skill-move') {
+    captureSettingsForm();
+    const arr = State.settings.skills, sk = arr.find((x) => x.id === id);
+    if (sk) {
+      const dir = Number(el.dataset.dir);
+      const sibs = arr.filter((x) => (x.parentId || null) === (sk.parentId || null));
+      const pos = sibs.indexOf(sk), tgt = sibs[pos + dir];
+      if (tgt) { const i = arr.indexOf(sk), j = arr.indexOf(tgt); arr[i] = tgt; arr[j] = sk; Store.save('settings', State.settings); }
+    }
+    render();
   } else if (action === 'add-habit') {
     captureSettingsForm();
     const first = State.settings.skills[0];
