@@ -238,6 +238,7 @@ function parseDate(s) { const [y, m, d] = s.split('-').map(Number); return new D
 function addDays(s, n) { const d = parseDate(s); d.setDate(d.getDate() + n); return fmtDate(d); }
 function dmShort(s) { return s.slice(8) + '.' + s.slice(5, 7); }
 function fmtClock(ms) { const t = Math.max(0, Math.floor(ms / 1000)); const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60; return h ? `${h}:${pad2(m)}:${pad2(s)}` : `${m}:${pad2(s)}`; }
+function fmtDur(min) { const m = Math.max(0, Math.round(Number(min) || 0)); if (m < 60) return m + 'м'; const h = Math.floor(m / 60), r = m % 60; return r ? `${h}ч ${r}м` : `${h}ч`; }
 function plural(n, one, few, many) { const a = Math.abs(n) % 100, b = a % 10; if (a > 10 && a < 20) return many; if (b > 1 && b < 5) return few; if (b === 1) return one; return many; }
 function skillById(id) { return State.settings.skills.find((s) => s.id === id) || { id, name: '—', color: '#888', missing: true }; }
 // ── Иерархия сфер (импорт v2.2): под-навыки через parentId. 2 уровня: столб → под-навык.
@@ -956,13 +957,15 @@ function renderHeader() {
 //  Вид «Сегодня»
 // ============================================================
 function questRow(t) {
-  const sk = skillById(t.skillId), time = t.actualMin ? `${t.actualMin}/${t.estimateMin}` : `${Number(t.estimateMin) || 0}`;
+  const sk = skillById(t.skillId), estMin = Number(t.estimateMin) || 0;
+  const time = t.actualMin ? `${fmtDur(t.actualMin)} / ${fmtDur(estMin)}` : fmtDur(estMin);
   const active = State.timer && State.timer.taskId === t.id;
+  const skSel = `<select class="t-skill-sel ${sk.missing ? 'missing' : ''}" style="--c:${esc(sk.color)}" data-action="reassign-skill" data-id="${t.id}" title="Сфера задачи — можно поменять">${sk.missing ? '<option value="" selected disabled>— сфера —</option>' : ''}${skillOptionsHTML(t.skillId)}</select>`;
   return `<li class="task ${t.done ? 'done' : ''}">
     <button class="check" data-action="toggle-task" data-id="${t.id}">${t.done ? '✓' : ''}</button>
     <span class="t-title">${esc(t.title)}</span>
-    <span class="t-skill" style="--c:${esc(sk.color)}">${esc(sk.name)}</span>
-    <span class="t-time" data-action="edit-actual" data-id="${t.id}" title="Клик — фактическое время">${time} мин</span>
+    ${skSel}
+    <span class="t-time" data-action="edit-actual" data-id="${t.id}" title="Клик — фактическое время">${time}</span>
     <span class="t-diff">${DIFF[t.difficulty] || ''}</span>
     <span class="t-xp">${t.done ? '+' + (t.xpAwarded || 0) : ''}</span>
     ${t.done ? '<span></span>' : `<button class="focus ${active ? 'active' : ''}" data-action="focus-task" data-id="${t.id}" title="Фокус-таймер">${active ? '⏱' : '▶'}</button>`}
@@ -974,7 +977,7 @@ function habitRow(h) {
     <button class="check" data-action="toggle-habit" data-id="${h.id}">${done ? '✓' : ''}</button>
     <span class="t-title">${esc(h.title)}</span>
     <span class="t-skill" style="--c:${esc(sk.color)}">${esc(sk.name)}</span>
-    <span class="t-time">${Number(h.estimateMin) || 0} мин</span>
+    <span class="t-time">${fmtDur(h.estimateMin)}</span>
     <span class="t-diff">${DIFF[h.difficulty] || ''}</span>
     <span class="t-xp">${done ? '+' + itemXp(h) : ''}</span>
     <span class="habit-streak" title="Серия">${hs ? '🔥' + hs : ''}</span><span></span></li>`;
@@ -989,17 +992,24 @@ function renderCalendar(todays) {
   const blocks = scheduled.map((t) => {
     const [H, M] = t.startTime.split(':').map(Number);
     const top = ((H * 60 + M) - startH * 60) / 60 * rowH;
-    const height = Math.max(20, (Number(t.estimateMin) || 30) / 60 * rowH);
+    const dur = Number(t.estimateMin) || 30;
+    const height = Math.max(22, dur / 60 * rowH);
     const sk = skillById(t.skillId);
-    return `<div class="cal-block ${t.done ? 'done' : ''}" style="top:${top}px;height:${height}px;--c:${esc(sk.color)}" data-action="unschedule-quest" data-id="${t.id}" title="Клик — убрать из расписания"><b>${pad2(H)}:${pad2(M)}</b> ${esc(t.title)}</div>`;
+    return `<div class="cal-block ${t.done ? 'done' : ''}" style="top:${top}px;height:${height}px;--c:${esc(sk.color)}" title="${esc(t.title)} · ${fmtDur(dur)}">
+      <span class="cal-b-text"><b>${pad2(H)}:${pad2(M)}</b> ${esc(t.title)}<span class="cal-dur"> · ${fmtDur(dur)}</span></span>
+      <button class="cal-x" data-action="unschedule-quest" data-id="${t.id}" title="Снять с расписания">✕</button></div>`;
   }).join('');
+  const dur0 = unscheduled.length ? (Number(unscheduled[0].estimateMin) || 30) : 30;
   const picker = unscheduled.length ? `
     <div class="cal-schedule">
       <select id="cal-quest">${unscheduled.map((t) => `<option value="${t.id}">${esc(t.title)}</option>`).join('')}</select>
-      <input id="cal-time" type="time" value="09:00" />
-      <button class="btn ghost" data-action="schedule-quest">🗓 Поставить на время</button>
+      <input id="cal-time" type="time" value="09:00" title="Начало" />
+      <input id="cal-dur" type="number" min="5" step="5" value="${dur0}" title="Длительность, мин" />
+      <span class="cal-dur-unit muted">мин</span>
+      <button class="btn ghost" data-action="schedule-quest">🗓 Поставить</button>
     </div>` : '<p class="muted">Все квесты разложены по времени.</p>';
   return `<div class="card"><h3>🗓 Календарь дня</h3>
+    <p class="cal-hint muted">Поставь квест на время и задай длительность. Снять с расписания — крестик ✕ на блоке.</p>
     <div class="cal" style="height:${hours.length * rowH}px">${grid}${blocks}</div>${picker}</div>`;
 }
 function renderToday() {
@@ -1042,7 +1052,7 @@ function renderToday() {
     ${overdueCard}
     <div class="card"><div class="daystat">
         <span>Квестов: <b>${doneCount}/${todays.length}</b></span>
-        <span>Время: <b>${minToday}/${planned}</b> мин</span>
+        <span>Время: <b>${fmtDur(minToday)} / ${fmtDur(planned)}</b></span>
         <span>Опыт: <b>+${xpToday}</b> XP</span>
         <span>Золото: <b>+${goldToday}</b> 🪙</span></div>
       ${todays.length ? `<ul class="tasks">${todays.map(questRow).join('')}</ul>` : '<p class="muted">На сегодня пусто. Запланируй первый квест выше ↑</p>'}</div>
@@ -1050,7 +1060,7 @@ function renderToday() {
     <div class="card"><h3>🔁 Привычки на сегодня</h3>
       ${habits.length ? `<ul class="tasks">${habits.map(habitRow).join('')}</ul>` : '<p class="muted">На сегодня привычек нет. Добавь их в «Настройках».</p>'}</div>
     <div class="card shutdown"><h3>🌙 Итог дня</h3>
-      <p class="muted">Квестов ${doneCount}/${todays.length} · привычек ${habits.filter((h) => habitDone(h, today)).length}/${habits.length} · ${minToday} мин · +${xpToday} XP · +${goldToday} 🪙</p>
+      <p class="muted">Квестов ${doneCount}/${todays.length} · привычек ${habits.filter((h) => habitDone(h, today)).length}/${habits.length} · ${fmtDur(minToday)} · +${xpToday} XP · +${goldToday} 🪙</p>
       <textarea id="reflection" placeholder="Рефлексия: что получилось, что перенести, как себя чувствую…">${esc(day.reflection || '')}</textarea>
       <div style="margin-top:10px"><button class="${day.closed ? 'btn ghost' : 'btn'}" data-action="${day.closed ? 'reopen-day' : 'close-day'}">${day.closed ? '✓ День закрыт — открыть заново' : 'Закрыть день'}</button></div></div>`;
 }
@@ -2090,7 +2100,8 @@ function onClick(e) {
     State.tasks.forEach((t) => { if (!t.done && t.date < today) t.date = today; }); Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
   } else if (action === 'schedule-quest') {
     const qid = document.getElementById('cal-quest').value, time = document.getElementById('cal-time').value, t = questById(qid);
-    if (t && time) { t.startTime = time; Store.save('tasks', State.tasks); render(); }
+    const durEl = document.getElementById('cal-dur'), dur = durEl ? Math.max(5, Math.round(Number(durEl.value) || 0)) : 0;
+    if (t && time) { t.startTime = time; if (dur) t.estimateMin = dur; Store.save('tasks', State.tasks); render(); }
   } else if (action === 'unschedule-quest') {
     const t = questById(id); if (t) { t.startTime = null; Store.save('tasks', State.tasks); render(); }
   } else if (action === 'close-day' || action === 'reopen-day') {
@@ -2325,10 +2336,16 @@ function onChange(e) {
     }
     return;
   }
+  // при смене квеста в пикере календаря — подставить его длительность
+  if (e.target.id === 'cal-quest') { const t = questById(e.target.value), d = document.getElementById('cal-dur'); if (t && d) d.value = Number(t.estimateMin) || 30; return; }
   const el = e.target.closest('[data-action]');
   if (!el) return;
   const a = el.dataset.action;
   if (a === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
+  if (a === 'reassign-skill') {
+    const t = questById(el.dataset.id); if (!t || !el.value) return;
+    t.skillId = el.value; Store.save('tasks', State.tasks); render(); return;
+  }
   if (a === 'tree-field') {
     const t = State.tree[State.treeSkill], n = t && t.nodes.find((x) => x.id === el.dataset.node); if (!n) return;
     const f = el.dataset.field;
