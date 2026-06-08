@@ -284,6 +284,36 @@ function activateHype() {
   lb.hype = { stacks: Math.min(HYPE_MAX_STACKS, (cur ? cur.stacks : 0) + 1), until: new Date(Date.now() + HYPE_DURATION_MS).toISOString() };
   Store.save('lootbox', lb); return lb.hype;
 }
+const GRIT_BONUS = 0.10; // бонус за выполнение «через силу» — признание воли, но меньше Хайпа
+// Завершить квест с учётом «желания» (desire): null | 'forced' | 'neutral' | 'hyped'
+function completeTask(t, desire) {
+  if (State.timer && State.timer.taskId === t.id) stopFocus(true, true);
+  t.done = true; t.completedAt = new Date().toISOString(); t.desire = desire || null;
+  let xp = itemXp(t);
+  if (desire === 'forced') xp = Math.round(xp * (1 + GRIT_BONUS));
+  t.xpAwarded = Math.max(1, xp); t.goldAwarded = itemGold(t);
+  let msg = `+${t.xpAwarded} XP · +${t.goldAwarded} 🪙 · ${skillById(t.skillId).name}`;
+  if (desire === 'forced') msg += ` · 💪 через силу +${Math.round(GRIT_BONUS * 100)}%`;
+  toast(msg);
+  if (desire === 'hyped') { const h = activateHype(); toast(`⚔️ Хайп ×${h.stacks} · +${hypePct()}% XP на ${hypeMinLeft()} мин — ты захотел трудное!`); }
+  Store.save('tasks', State.tasks); checkAchievements(); render(); publishLeaderboard();
+}
+// Поп-ап выбора желания при завершении сложного квеста
+function openDesirePicker(taskId) {
+  if (document.getElementById('desire-pop')) return;
+  const t = questById(taskId); if (!t) return;
+  const ov = document.createElement('div'); ov.id = 'desire-pop'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="desire-box">
+    <button class="modal-x" data-action="desire-cancel">✕</button>
+    <h3>Насколько ты хотел это сделать?</h3>
+    <p class="muted">🔥 «${esc(t.title)}» — сложный квест. Честный ответ влияет на награду.</p>
+    <div class="desire-btns">
+      <button class="desire-opt forced" data-action="desire-pick" data-id="${t.id}" data-desire="forced"><span class="d-emoji">😮‍💨</span><b>Через силу</b><small>+${Math.round(GRIT_BONUS * 100)}% за волю</small></button>
+      <button class="desire-opt neutral" data-action="desire-pick" data-id="${t.id}" data-desire="neutral"><span class="d-emoji">🙂</span><b>Нормально</b><small>обычный XP</small></button>
+      <button class="desire-opt hyped" data-action="desire-pick" data-id="${t.id}" data-desire="hyped"><span class="d-emoji">⚔️</span><b>В кураже!</b><small>активирует 🔥 Хайп</small></button>
+    </div></div>`;
+  document.body.appendChild(ov);
+}
 
 function itemXp(it) {
   const xp = State.settings.xp, mult = xp.difficulty[it.difficulty] ?? 1;
@@ -1558,6 +1588,7 @@ function renderWeekly() {
     const isPast = d < today;
     const dayTasks = State.tasks.filter((t) => t.date === d);
     const doneCount = dayTasks.filter((t) => t.done).length;
+    const plannedMin = dayTasks.reduce((s, t) => s + (Number(t.estimateMin) || 0), 0);
     const dueHabits = habitsDueOn(d);
     const wdLbl = WD_BY_JS[parseDate(d).getDay()];
     const adding = State.wkAddDate === d;
@@ -1565,9 +1596,9 @@ function renderWeekly() {
     const tasksHtml = dayTasks.length
       ? dayTasks.map((t) => {
           const sk = skillById(t.skillId);
-          return `<div class="wk-task${t.done ? ' done' : ''}">
+          return `<div class="wk-task${t.done ? ' done' : ''}" draggable="true" data-task="${t.id}">
             <button class="check sm" data-action="toggle-task" data-id="${t.id}">${t.done ? '✓' : ''}</button>
-            <span class="wk-t-title" title="${esc(t.title)}">${esc(t.title)}</span>
+            <span class="wk-t-title" title="${esc(t.title)} · ${fmtDur(t.estimateMin)}">${esc(t.title)}</span>
             <span class="wk-t-dot" style="background:${esc(sk.color)}" title="${esc(sk.name)}"></span>
           </div>`;
         }).join('')
@@ -1592,12 +1623,13 @@ function renderWeekly() {
          </form>`
       : `<button class="wk-add-btn" data-action="wk-add-task" data-date="${d}">+ Квест</button>`;
 
-    return `<div class="wk-col${isToday ? ' is-today' : ''}${isPast ? ' is-past' : ''}">
+    return `<div class="wk-col${isToday ? ' is-today' : ''}${isPast ? ' is-past' : ''}" data-date="${d}">
       <div class="wk-col-head">
         <span class="wk-wd">${wdLbl}</span>
         <span class="wk-date">${dmShort(d)}</span>
         ${dayTasks.length ? `<span class="wk-prog${doneCount === dayTasks.length ? ' all-done' : ''}">${doneCount}/${dayTasks.length}</span>` : ''}
       </div>
+      ${plannedMin ? `<div class="wk-load" title="Запланировано времени на день">⏱ ${fmtDur(plannedMin)}</div>` : ''}
       <div class="wk-tasks">${tasksHtml}</div>
       ${habitsHtml}
       ${addArea}
@@ -1623,6 +1655,7 @@ function renderWeekly() {
       <div class="kpi"><div class="v">${st.habitsC}</div><div class="l">Привычек</div></div>
       <div class="kpi"><div class="v">${Math.round(st.min / 60 * 10) / 10}ч</div><div class="l">Времени</div></div>
     </div>
+    <p class="wk-hint muted">↔ Перетащи квест на другой день, чтобы перенести. ⏱ — запланированное время дня.</p>
     <div class="wk-grid-wrap">
       <div class="wk-grid">${dayCols}</div>
     </div>
@@ -1771,7 +1804,7 @@ function renderSettings() {
     ${securityCard()}
     ${adminCard()}
     <div class="card"><h3>Название</h3><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></div>
-    <div class="card"><h3>Навыки / сферы жизни</h3><p class="muted" style="font-size:12px;margin:0 0 10px">Третий селект — вложенность: «Самостоятельная» (отдельная сфера) или «Под-навык в …» (войдёт в выбранный столб, опыт суммируется в него). Изменения сохраняются кнопкой ниже.</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">+ Добавить сферу</button></div>
+    <div class="card"><h3>Навыки / сферы жизни</h3><p class="muted" style="font-size:12px;margin:0 0 10px">Третий селект — вложенность: «Самостоятельная» (отдельная сфера) или «Под-навык в …» (войдёт в выбранный столб, опыт суммируется в него). Изменения сохраняются автоматически.</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">+ Добавить сферу</button></div>
     ${importCard()}
     <div class="card"><h3>🔁 Привычки (повторяющиеся)</h3><div id="habits-list">${habits || '<p class="muted">Пока нет привычек.</p>'}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">+ Добавить привычку</button></div>
     <div class="card"><h3>📦 Программы-данжи</h3><p class="muted" style="margin:0 0 12px">Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
@@ -1977,7 +2010,7 @@ function onSubmit(e) {
 
 function onClick(e) {
   const navBtn = e.target.closest('#nav button[data-view]');
-  if (navBtn) { State.view = navBtn.dataset.view; if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'settings') State.adminUsers = null; render(); return; }
+  if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'settings') State.adminUsers = null; render(); return; }
   const el = e.target.closest('[data-action]');
   if (!el) return;
   const action = el.dataset.action, id = el.dataset.id, today = todayStr();
@@ -2036,6 +2069,8 @@ function onClick(e) {
   if (action === 'close-guide') { const g = document.getElementById('guide'); if (g) g.remove(); return; }
   if (action === 'show-reports') { showReports(); return; }
   if (action === 'close-reports') { const r = document.getElementById('reports'); if (r) r.remove(); return; }
+  if (action === 'desire-cancel') { const p = document.getElementById('desire-pop'); if (p) p.remove(); return; }
+  if (action === 'desire-pick') { const t = questById(el.dataset.id), p = document.getElementById('desire-pop'); if (p) p.remove(); if (t && !t.done) completeTask(t, el.dataset.desire); return; }
   if (action === 'copy-feedback-for-claude') {
     (async () => {
       try {
@@ -2074,10 +2109,12 @@ function onClick(e) {
 
   if (action === 'toggle-task') {
     const t = questById(id); if (!t) return;
-    if (!t.done) { if (State.timer && State.timer.taskId === id) stopFocus(true, true); t.done = true; t.completedAt = new Date().toISOString(); t.xpAwarded = itemXp(t); t.goldAwarded = itemGold(t); toast(`+${t.xpAwarded} XP · +${t.goldAwarded} 🪙 · ${skillById(t.skillId).name}`);
-      if (t.difficulty === 'hard') { const h = activateHype(); toast(`🔥 Хайп ×${h.stacks} · +${hypePct()}% XP ${hypeMinLeft()} мин — ты выбрал сложное!`); } }
-    else { t.done = false; t.completedAt = null; t.xpAwarded = 0; t.goldAwarded = 0; }
-    Store.save('tasks', State.tasks); checkAchievements(); render(); publishLeaderboard();
+    if (!t.done) {
+      // Сложный квест → спрашиваем «насколько хотел» (Хайп за добровольный выбор трудного). Лёгкий/обычный — сразу.
+      if (t.difficulty === 'hard') { openDesirePicker(id); return; }
+      completeTask(t, null);
+    } else { t.done = false; t.completedAt = null; t.xpAwarded = 0; t.goldAwarded = 0; t.desire = null;
+      Store.save('tasks', State.tasks); checkAchievements(); render(); publishLeaderboard(); }
   } else if (action === 'toggle-habit') {
     const h = habitById(id); if (!h) return;
     State.habitlog[today] = State.habitlog[today] || {};
@@ -2245,6 +2282,19 @@ function saveSettingsFromForm() {
   Store.save('settings', State.settings); Store.save('habits', State.habits); Store.save('skilltree', State.tree);
   toast('Настройки сохранены'); render();
 }
+// Автосохранение формы настроек: читаем DOM в State и сохраняем (дебаунс).
+let _settingsAutosaveTimer = null;
+function autosaveSettings() {
+  clearTimeout(_settingsAutosaveTimer);
+  _settingsAutosaveTimer = setTimeout(flushSettingsForm, 500);
+}
+// Немедленный флаш формы настроек (при уходе с экрана / закрытии вкладки).
+function flushSettingsForm() {
+  if (!document.getElementById('skills-list')) return; // формы нет на экране
+  clearTimeout(_settingsAutosaveTimer);
+  captureSettingsForm();
+  Store.save('settings', State.settings); Store.save('habits', State.habits);
+}
 
 function clearAllData() {
   State.settings = null; State.tasks = null; State.days = null; State.habits = null;
@@ -2338,6 +2388,8 @@ function onChange(e) {
   }
   // при смене квеста в пикере календаря — подставить его длительность
   if (e.target.id === 'cal-quest') { const t = questById(e.target.value), d = document.getElementById('cal-dur'); if (t && d) d.value = Number(t.estimateMin) || 30; return; }
+  // автосохранение формы настроек (сферы/привычки/формулы/название) — чтобы правки не терялись при F5
+  if (e.target.closest('#skills-list, #habits-list, .knob') || e.target.id === 'set-appName') autosaveSettings();
   const el = e.target.closest('[data-action]');
   if (!el) return;
   const a = el.dataset.action;
@@ -2361,13 +2413,59 @@ function onChange(e) {
     Store.save('skilltree', State.tree); render(); return;
   }
 }
+// Живой автосейв формы настроек при вводе (текст печатается без blur — 'change' не сработал бы)
+function onSettingsInput(e) {
+  if (e.target.closest('#skills-list, #habits-list, .knob') || e.target.id === 'set-appName') autosaveSettings();
+}
+
+// --- Перетаскивание задач между днями в недельном виде (Sunsama-style) ---
+let _wkDragId = null;
+function onWkDragStart(e) {
+  const task = e.target.closest('.wk-task'); if (!task) return;
+  _wkDragId = task.dataset.task;
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', _wkDragId); } catch {}
+  task.classList.add('wk-dragging');
+}
+function onWkDragOver(e) {
+  if (!_wkDragId) return;
+  const col = e.target.closest('.wk-col'); if (!col) return;
+  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.wk-col.wk-drop').forEach((c) => { if (c !== col) c.classList.remove('wk-drop'); });
+  col.classList.add('wk-drop');
+}
+function onWkDrop(e) {
+  const col = e.target.closest('.wk-col'); if (!col || !_wkDragId) { cleanupWkDrag(); return; }
+  e.preventDefault();
+  const t = questById(_wkDragId), date = col.dataset.date, changed = t && date && t.date !== date;
+  if (changed) { t.date = date; Store.save('tasks', State.tasks); }
+  cleanupWkDrag();
+  if (changed) render();
+}
+function cleanupWkDrag() {
+  _wkDragId = null;
+  document.querySelectorAll('.wk-dragging').forEach((el) => el.classList.remove('wk-dragging'));
+  document.querySelectorAll('.wk-drop').forEach((el) => el.classList.remove('wk-drop'));
+}
 
 // Точка входа — проверяем сессию, потом грузим нужный экран
 async function init() {
   document.addEventListener('submit', onSubmit);
   document.addEventListener('click', onClick);
   document.addEventListener('change', onChange);
+  document.addEventListener('input', onSettingsInput);
   document.addEventListener('pointerdown', onTreePointerDown);
+  document.addEventListener('dragstart', onWkDragStart);
+  document.addEventListener('dragover', onWkDragOver);
+  document.addEventListener('drop', onWkDrop);
+  document.addEventListener('dragend', cleanupWkDrag);
+  // Страховка от потери правок: при закрытии/перезагрузке дочитываем форму настроек из DOM и сохраняем (keepalive переживает unload)
+  window.addEventListener('beforeunload', () => {
+    if (!document.getElementById('skills-list')) return;
+    captureSettingsForm();
+    const opt = (o) => ({ method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(o), keepalive: true });
+    try { fetch('/api/data/settings', opt(State.settings)); fetch('/api/data/habits', opt(State.habits)); } catch {}
+  });
 
   // Проверяем текущую сессию
   try {

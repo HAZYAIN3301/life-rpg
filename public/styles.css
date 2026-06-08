@@ -362,6 +362,9 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 }
 .wk-col.is-today { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--panel)); }
 .wk-col.is-past { opacity: 0.68; }
+.wk-col.wk-drop { border-color: var(--accent); border-style: dashed; background: color-mix(in srgb, var(--accent) 14%, var(--panel)); }
+.wk-load { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; margin: 2px 0; }
+.wk-hint { font-size: 12px; margin: 0 0 8px; }
 .wk-col-head { display: flex; align-items: center; gap: 5px; padding-bottom: 5px; border-bottom: 1px solid var(--line); margin-bottom: 2px; }
 .wk-wd { font-weight: 700; font-size: 13px; }
 .wk-col.is-today .wk-wd { color: var(--accent); }
@@ -373,8 +376,10 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .wk-task {
   display: flex; align-items: center; gap: 4px;
   padding: 3px 0; border-bottom: 1px solid var(--line);
-  font-size: 12px; min-width: 0;
+  font-size: 12px; min-width: 0; cursor: grab;
 }
+.wk-task:active { cursor: grabbing; }
+.wk-task.wk-dragging { opacity: 0.4; }
 .wk-task:last-child { border-bottom: none; }
 .wk-task.done .wk-t-title { text-decoration: line-through; color: var(--muted); }
 .wk-t-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -713,6 +718,19 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .help-btn:hover { color: var(--accent); border-color: var(--accent); }
 .guide-box { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 26px; width: min(620px, 96vw); max-height: 88vh; overflow-y: auto; }
 .guide-box h2 { margin: 0 0 6px; }
+/* Поп-ап «насколько хотел» (Хайп) */
+.desire-box { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 24px; width: min(460px, 96vw); animation: fadeIn .2s; }
+.desire-box h3 { margin: 0 0 4px; }
+.desire-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; }
+.desire-opt { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 8px; border-radius: 14px; cursor: pointer; background: var(--panel2); border: 1px solid var(--line); color: var(--text); transition: transform .1s, border-color .15s, background .15s; }
+.desire-opt:hover { transform: translateY(-2px); }
+.desire-opt .d-emoji { font-size: 30px; line-height: 1; }
+.desire-opt b { font-size: 13px; }
+.desire-opt small { font-size: 11px; color: var(--muted); text-align: center; }
+.desire-opt.forced:hover { border-color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, var(--panel2)); }
+.desire-opt.neutral:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--panel2)); }
+.desire-opt.hyped:hover { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 14%, var(--panel2)); }
+@media (max-width: 560px) { .desire-btns { grid-template-columns: 1fr; } .desire-opt { flex-direction: row; justify-content: flex-start; gap: 10px; } .desire-opt small { text-align: left; } }
 .guide-list { display: grid; gap: 14px; margin: 16px 0; }
 .guide-sec { display: flex; gap: 14px; align-items: flex-start; }
 .gs-ic { font-size: 24px; flex: 0 0 auto; width: 32px; text-align: center; }
