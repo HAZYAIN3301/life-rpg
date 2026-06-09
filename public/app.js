@@ -314,6 +314,24 @@ function openDesirePicker(taskId) {
     </div></div>`;
   document.body.appendChild(ov);
 }
+// Поп-ап выбора нескольких категорий для квеста (иллюстрация = работа + творчество)
+function openCategoryPicker(taskId) {
+  if (document.getElementById('cat-pop')) return;
+  const t = questById(taskId); if (!t) return;
+  const ids = taskSkills(t);
+  const opt = (s, sub) => {
+    const checked = ids.includes(s.id);
+    return `<label class="cat-opt ${sub ? 'is-sub' : ''}"><input type="checkbox" data-action="toggle-cat" data-id="${t.id}" data-skill="${s.id}" ${checked ? 'checked' : ''}/><span class="t-cat" style="--c:${esc(s.color)}">${esc(s.name)}</span></label>`;
+  };
+  const list = topSkills().map((p) => opt(p, false) + childSkills(p.id).map((c) => opt(c, true)).join('')).join('');
+  const ov = document.createElement('div'); ov.id = 'cat-pop'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="desire-box"><button class="modal-x" data-action="close-cats">✕</button>
+    <h3>Категории квеста</h3>
+    <p class="muted">«${esc(t.title)}» · отметь все подходящие сферы. Опыт делится между ними поровну. Первая — основная.</p>
+    <div class="cat-list">${list}</div>
+    <div class="settings-actions" style="margin-top:14px"><button class="btn" data-action="close-cats">Готово</button></div></div>`;
+  document.body.appendChild(ov);
+}
 
 function itemXp(it) {
   const xp = State.settings.xp, mult = xp.difficulty[it.difficulty] ?? 1;
@@ -326,9 +344,18 @@ function itemGold(it) {
 }
 
 // ---- Единый поток событий (квесты + привычки + цели) ----
+// Категории квеста: массив id сфер. Back-compat: старые задачи с одним skillId.
+function taskSkills(t) { return (t.skillIds && t.skillIds.length) ? t.skillIds : (t.skillId ? [t.skillId] : []); }
+// Делёж целого числа на n частей без потерь: часть i (остаток уходит первым частям/основной сфере).
+function shareInt(total, n, i) { const base = Math.floor(total / n); return base + (i < (total % n) ? 1 : 0); }
 function xpEvents() {
   const ev = [];
-  for (const t of State.tasks) if (t.done) ev.push({ date: dayOf(t), skillId: t.skillId, xp: t.xpAwarded || 0, gold: t.goldAwarded || 0, min: Number(t.actualMin || t.estimateMin) || 0 });
+  for (const t of State.tasks) if (t.done) {
+    const ids = taskSkills(t), n = ids.length || 1;
+    const xp = t.xpAwarded || 0, gold = t.goldAwarded || 0, min = Number(t.actualMin || t.estimateMin) || 0;
+    if (n <= 1) { ev.push({ date: dayOf(t), skillId: ids[0] || t.skillId || null, xp, gold, min }); }
+    else ids.forEach((sid, i) => ev.push({ date: dayOf(t), skillId: sid, xp: shareInt(xp, n, i), gold: shareInt(gold, n, i), min: shareInt(min, n, i) }));
+  }
   const log = State.habitlog || {};
   for (const date in log) for (const hid in log[date]) { const rec = log[date][hid], h = habitById(hid); ev.push({ date, skillId: h ? h.skillId : null, xp: rec.xp || 0, gold: rec.gold || 0, min: rec.min || 0 }); }
   for (const g of State.goals || []) if (g.completedAt) { const xp = g.xpReward != null ? g.xpReward : GOAL_BONUS.xp; ev.push({ date: fmtDate(new Date(g.completedAt)), skillId: g.skillId, xp, gold: Math.round(xp * 0.35), min: 0 }); }
@@ -986,11 +1013,16 @@ function renderHeader() {
 // ============================================================
 //  Вид «Сегодня»
 // ============================================================
+function catChips(t) {
+  const ids = taskSkills(t);
+  if (!ids.length) return `<span class="t-cat missing">— сфера —</span>`;
+  return ids.map((sid) => { const s = skillById(sid); return `<span class="t-cat ${s.missing ? 'missing' : ''}" style="--c:${esc(s.color)}">${esc(s.name)}</span>`; }).join('');
+}
 function questRow(t) {
-  const sk = skillById(t.skillId), estMin = Number(t.estimateMin) || 0;
+  const estMin = Number(t.estimateMin) || 0;
   const time = t.actualMin ? `${fmtDur(t.actualMin)} / ${fmtDur(estMin)}` : fmtDur(estMin);
   const active = State.timer && State.timer.taskId === t.id;
-  const skSel = `<select class="t-skill-sel ${sk.missing ? 'missing' : ''}" style="--c:${esc(sk.color)}" data-action="reassign-skill" data-id="${t.id}" title="Сфера задачи — можно поменять">${sk.missing ? '<option value="" selected disabled>— сфера —</option>' : ''}${skillOptionsHTML(t.skillId)}</select>`;
+  const skSel = `<button class="t-cats" data-action="edit-cats" data-id="${t.id}" title="Категории квеста — клик чтобы изменить (можно несколько)">${catChips(t)}</button>`;
   return `<li class="task ${t.done ? 'done' : ''}">
     <button class="check" data-action="toggle-task" data-id="${t.id}">${t.done ? '✓' : ''}</button>
     <span class="t-title">${esc(t.title)}</span>
@@ -1412,12 +1444,20 @@ function adminCard() {
   const userInput = users.length
     ? `<input name="userId" list="admin-users-dl" placeholder="Найди друга по имени…" autocomplete="off" required />${datalist}`
     : `<input name="userId" placeholder="${State._adminUsersLoading ? 'Загружаю…' : 'id профиля'}" required />`;
+  const recoverList = users.length
+    ? `<datalist id="recover-users-dl">${users.map((u) => `<option value="${esc(u.id)}">${esc(u.avatar || '')} ${esc(u.name)} (${esc(u.id)})</option>`).join('')}</datalist>`
+    : '';
   return `<div class="card"><h3>🛠 Админ — выдать Pro</h3>
     <form id="grant-pro" class="pin-change">
       ${userInput}
       <input name="days" type="number" placeholder="дней (пусто=навсегда)" min="1" style="width:170px" />
       <button type="submit" class="btn">Выдать Pro</button><span id="grant-msg" class="muted"></span></form>
-    <p class="muted" style="font-size:12px">Выбери профиль из списка — поиск по имени или id. Пусто в «дней» = бессрочный Pro.</p></div>`;
+    <p class="muted" style="font-size:12px">Выбери профиль из списка — поиск по имени или id. Пусто в «дней» = бессрочный Pro.</p>
+    <h3 style="margin-top:16px">🗂 Данные и бэкапы юзера</h3>
+    <form id="recover-data" class="pin-change">
+      <input name="userId" ${users.length ? 'list="recover-users-dl"' : ''} placeholder="id или имя профиля" autocomplete="off" required />${recoverList}
+      <button type="submit" class="btn ghost">Открыть</button></form>
+    <p class="muted" style="font-size:12px">Посмотреть текущие данные и восстановить из автоснимка (бэкапы делаются перед каждой записью).</p></div>`;
 }
 function showPaywall(feature) {
   if (document.getElementById('paywall')) return;
@@ -1476,6 +1516,35 @@ async function readAttachment(file) {
   if (file.type.startsWith('image/')) return { name: file.name, type: 'image/jpeg', dataUrl: await downscaleImage(file) };
   if (file.type.startsWith('video/')) { if (file.size > 25 * 1024 * 1024) throw new Error('Видео > 25 МБ — сократи или сожми'); return { name: file.name, type: file.type, dataUrl: await fileToDataURL(file) }; }
   throw new Error('Только фото или видео');
+}
+// Админ: данные и бэкапы юзера + восстановление (спасение при потере)
+function dataSummary(name, val) {
+  if (val == null) return '<span class="muted">нет файла</span>';
+  if (name === 'settings') return `${(val.skills || []).length} сфер`;
+  if (Array.isArray(val)) return `${val.length} элементов`;
+  if (name === 'days' || name === 'habitlog' || name === 'weeks') return `${Object.keys(val).length} дней/записей`;
+  if (typeof val === 'object') return `${Object.keys(val).length} ключей`;
+  return String(val).slice(0, 40);
+}
+async function showUserData(userId) {
+  const old = document.getElementById('userdata'); if (old) old.remove();
+  let d;
+  try { const r = await fetch(`/api/admin/userdata/${encodeURIComponent(userId)}`); if (!r.ok) throw 0; d = await r.json(); }
+  catch { toast('Не удалось загрузить (нужен админ / нет юзера)'); return; }
+  const rows = Object.keys(d.files).map((name) => {
+    const backups = d.backups[name] || [];
+    const bopts = backups.length
+      ? `<select class="ud-stamp" data-name="${name}">${backups.map((s) => `<option value="${esc(s)}">${esc(s.replace('T', ' ').replace(/-/g, (m, i) => i < 10 ? '-' : ':').slice(0, 19))}</option>`).join('')}</select>
+         <button class="btn ghost sm" data-action="restore-backup" data-user="${esc(userId)}" data-name="${name}">↩ Восстановить</button>`
+      : '<span class="muted">нет снимков</span>';
+    return `<tr><td><b>${name}</b></td><td>${dataSummary(name, d.files[name])}</td><td class="ud-bk">${bopts}</td></tr>`;
+  }).join('');
+  const ov = document.createElement('div'); ov.id = 'userdata'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="guide-box"><button class="modal-x" data-action="close-userdata">✕</button>
+    <h2>🗂 Данные: <code>${esc(userId)}</code></h2>
+    <p class="muted">Текущее состояние + автоснимки (бэкап перед каждой записью). Восстановление сделает снимок текущего перед откатом — не разрушительно.</p>
+    <table class="ud-table"><thead><tr><th>Файл</th><th>Сейчас</th><th>Восстановить из снимка</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  document.body.appendChild(ov);
 }
 // Админ-вид всех репортов с вложениями
 async function showReports() {
@@ -1794,7 +1863,7 @@ function renderSettings() {
   const skills = topSkills().map((sk) => skillRow(sk, false, false) + childSkills(sk.id).map((c) => skillRow(c, true, !!collapsed[sk.id])).join('')).join('');
   const habits = State.habits.map((h) => `<div class="habit-edit" data-id="${h.id}">
       <input type="text" value="${esc(h.title)}" data-field="title" />
-      <select data-field="skillId">${skillOpts(h.skillId)}</select>
+      <select data-field="skillId" class="${skillById(h.skillId).missing ? 'missing' : ''}">${skillById(h.skillId).missing ? `<option value="${esc(h.skillId)}" selected>— нет сферы —</option>` : ''}${skillOpts(h.skillId)}</select>
       <select data-field="difficulty"><option value="easy" ${h.difficulty === 'easy' ? 'selected' : ''}>Лёгкая</option><option value="normal" ${h.difficulty === 'normal' ? 'selected' : ''}>Обычная</option><option value="hard" ${h.difficulty === 'hard' ? 'selected' : ''}>Сложная</option></select>
       <input type="number" min="0" step="1" value="${Number(h.estimateMin) || 0}" data-field="estimateMin" />
       <div class="weekdays">${WEEKDAYS.map((w) => `<label><input type="checkbox" data-day="${w.js}" ${(h.days || []).includes(w.js) ? 'checked' : ''}/>${w.label}</label>`).join('')}</div>
@@ -1946,6 +2015,11 @@ function onSubmit(e) {
       .catch(() => { msg.textContent = 'Ошибка сети'; msg.style.color = '#e0526a'; });
     return;
   }
+  if (f.id === 'recover-data') {
+    e.preventDefault();
+    const uid = f.userId.value.trim(); if (uid) showUserData(uid);
+    return;
+  }
 
   // --- Обратная связь ---
   if (f.id === 'feedback-form') {
@@ -1983,13 +2057,13 @@ function onSubmit(e) {
   if (f.classList.contains('wk-add-form')) {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
     const date = f.dataset.date || todayStr();
-    State.tasks.push({ id: uid(), title, skillId: f.skillId.value, estimateMin: 30, difficulty: 'normal', date, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
+    State.tasks.push({ id: uid(), title, skillId: f.skillId.value, skillIds: [f.skillId.value], estimateMin: 30, difficulty: 'normal', date, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
     Store.save('tasks', State.tasks); State.wkAddDate = null; render(); return;
   }
 
   if (f.id === 'add-task') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
-    State.tasks.push({ id: uid(), title, skillId: f.skillId.value, estimateMin: Number(f.estimateMin.value) || 0, difficulty: f.difficulty.value, date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
+    State.tasks.push({ id: uid(), title, skillId: f.skillId.value, skillIds: [f.skillId.value], estimateMin: Number(f.estimateMin.value) || 0, difficulty: f.difficulty.value, date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
     Store.save('tasks', State.tasks); render();
   } else if (f.id === 'add-goal') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
@@ -2069,6 +2143,23 @@ function onClick(e) {
   if (action === 'close-guide') { const g = document.getElementById('guide'); if (g) g.remove(); return; }
   if (action === 'show-reports') { showReports(); return; }
   if (action === 'close-reports') { const r = document.getElementById('reports'); if (r) r.remove(); return; }
+  if (action === 'close-userdata') { const r = document.getElementById('userdata'); if (r) r.remove(); return; }
+  if (action === 'restore-backup') {
+    const name = el.dataset.name, user = el.dataset.user;
+    const sel = el.parentElement.querySelector('.ud-stamp'); const stamp = sel ? sel.value : null;
+    if (!stamp) { toast('Нет снимка'); return; }
+    if (!confirm(`Восстановить «${name}» для ${user} из снимка ${stamp.slice(0, 19).replace('T', ' ')}?\nТекущее состояние сохранится в новый бэкап.`)) return;
+    (async () => {
+      try {
+        const r = await fetch(`/api/admin/userdata/${encodeURIComponent(user)}/restore`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, stamp }) });
+        const d = await r.json();
+        if (r.ok) { toast(`✓ Восстановлено: ${name}`); showUserData(user); } else { toast(d.error || 'Ошибка'); }
+      } catch { toast('Ошибка сети'); }
+    })();
+    return;
+  }
+  if (action === 'edit-cats') { openCategoryPicker(el.dataset.id); return; }
+  if (action === 'close-cats') { const p = document.getElementById('cat-pop'); if (p) p.remove(); render(); return; }
   if (action === 'desire-cancel') { const p = document.getElementById('desire-pop'); if (p) p.remove(); return; }
   if (action === 'desire-pick') { const t = questById(el.dataset.id), p = document.getElementById('desire-pop'); if (p) p.remove(); if (t && !t.done) completeTask(t, el.dataset.desire); return; }
   if (action === 'copy-feedback-for-claude') {
@@ -2208,18 +2299,21 @@ function onClick(e) {
     State.settings.skills.push({ id: 'sk_' + uid(), name: 'Новая сфера', color: '#6c8cff' }); ensureTrees();
     Store.save('settings', State.settings); Store.save('skilltree', State.tree); render();
   } else if (action === 'delete-skill') {
-    if (!confirm('Удалить сферу? Вместе с ней удалятся её квесты, привычки, цели и накопленный опыт.')) return;
     captureSettingsForm();
-    const delHabitIds = State.habits.filter((h) => h.skillId === id).map((h) => h.id);
+    const sk = State.settings.skills.find((x) => x.id === id);
+    // СОХРАНЯЕМ планы: квесты/привычки/цели НЕ удаляются — просто теряют категорию (переназначаются потом).
+    const affected = State.tasks.filter((t) => t.skillId === id).length
+      + State.habits.filter((h) => h.skillId === id).length
+      + (State.goals || []).filter((g) => g.skillId === id).length;
+    const msg = affected
+      ? `Удалить сферу «${sk ? sk.name : id}»?\n\nЕё ${affected} квестов / привычек / целей НЕ удалятся — останутся без категории, переназначишь их потом. Опыт сохранится.`
+      : `Удалить сферу «${sk ? sk.name : id}»?`;
+    if (!confirm(msg)) return;
     State.settings.skills = State.settings.skills.filter((x) => x.id !== id);
-    for (const sk of State.settings.skills) if (sk.parentId === id) sk.parentId = null;
-    State.tasks = State.tasks.filter((t) => t.skillId !== id);
-    State.habits = State.habits.filter((h) => h.skillId !== id);
-    State.goals = (State.goals || []).filter((g) => g.skillId !== id);
-    for (const d in State.habitlog) { for (const hid of delHabitIds) delete State.habitlog[d][hid]; if (!Object.keys(State.habitlog[d]).length) delete State.habitlog[d]; }
+    for (const s2 of State.settings.skills) if (s2.parentId === id) s2.parentId = null;
     if (State.tree) delete State.tree[id];
     if (State.settings.imported) delete State.settings.imported[id];
-    Store.save('settings', State.settings); Store.save('tasks', State.tasks); Store.save('habits', State.habits); Store.save('goals', State.goals); Store.save('habitlog', State.habitlog); Store.save('skilltree', State.tree); render();
+    Store.save('settings', State.settings); Store.save('skilltree', State.tree); render();
   } else if (action === 'skill-collapse') {
     captureSettingsForm();
     State.settingsCollapsed = State.settingsCollapsed || {};
@@ -2259,17 +2353,25 @@ function captureSettingsForm() {
   if (!document.getElementById('skills-list')) return; // формы нет на экране
   const s = State.settings, num = (id, fb) => { const el = document.getElementById(id); if (!el) return fb; const v = parseFloat(el.value); return isNaN(v) ? fb : v; };
   const appEl = document.getElementById('set-appName'); if (appEl) s.appName = appEl.value.trim() || 'Gojo';
-  s.skills = [...document.querySelectorAll('#skills-list .skill-edit')].map((row) => {
-    const psel = row.querySelector('[data-field="parentId"]');
-    return { id: row.dataset.id, name: row.querySelector('[data-field="name"]').value.trim() || 'Без названия', color: row.querySelector('[data-field="color"]').value, attr: row.querySelector('[data-field="attr"]') ? row.querySelector('[data-field="attr"]').value : guessAttr(row.querySelector('[data-field="name"]').value), parentId: psel && psel.value ? psel.value : null };
-  });
-  // нормализация parentId: убрать ссылки на несуществующих и 3-й уровень (оставляем строго 2 уровня)
-  for (const sk of s.skills) { if (sk.parentId) { const p = s.skills.find((x) => x.id === sk.parentId); if (!p || p.parentId) sk.parentId = null; } }
-  const oldHabits = State.habits;
-  State.habits = [...document.querySelectorAll('#habits-list .habit-edit')].map((row) => {
-    const old = oldHabits.find((h) => h.id === row.dataset.id);
-    return { id: row.dataset.id, title: row.querySelector('[data-field="title"]').value.trim() || 'Привычка', skillId: row.querySelector('[data-field="skillId"]').value, difficulty: row.querySelector('[data-field="difficulty"]').value, estimateMin: Number(row.querySelector('[data-field="estimateMin"]').value) || 0, days: [...row.querySelectorAll('input[data-day]:checked')].map((c) => Number(c.dataset.day)), archived: false, createdAt: old ? old.createdAt : new Date().toISOString() };
-  });
+  // ВАЖНО: перезаписываем skills только если в DOM реально есть строки. Иначе глитч/гонка могли бы стереть все сферы.
+  const skillRows = [...document.querySelectorAll('#skills-list .skill-edit')];
+  if (skillRows.length) {
+    s.skills = skillRows.map((row) => {
+      const psel = row.querySelector('[data-field="parentId"]');
+      return { id: row.dataset.id, name: row.querySelector('[data-field="name"]').value.trim() || 'Без названия', color: row.querySelector('[data-field="color"]').value, attr: row.querySelector('[data-field="attr"]') ? row.querySelector('[data-field="attr"]').value : guessAttr(row.querySelector('[data-field="name"]').value), parentId: psel && psel.value ? psel.value : null };
+    });
+    // нормализация parentId: убрать ссылки на несуществующих и 3-й уровень (оставляем строго 2 уровня)
+    for (const sk of s.skills) { if (sk.parentId) { const p = s.skills.find((x) => x.id === sk.parentId); if (!p || p.parentId) sk.parentId = null; } }
+  }
+  // Привычки: 0 строк = пусто легитимно ТОЛЬКО когда секция реально отрендерена. Защита от гонки: пишем лишь если контейнер на месте.
+  const habitsList = document.getElementById('habits-list');
+  if (habitsList) {
+    const oldHabits = State.habits;
+    State.habits = [...habitsList.querySelectorAll('.habit-edit')].map((row) => {
+      const old = oldHabits.find((h) => h.id === row.dataset.id);
+      return { id: row.dataset.id, title: row.querySelector('[data-field="title"]').value.trim() || 'Привычка', skillId: row.querySelector('[data-field="skillId"]').value, difficulty: row.querySelector('[data-field="difficulty"]').value, estimateMin: Number(row.querySelector('[data-field="estimateMin"]').value) || 0, days: [...row.querySelectorAll('input[data-day]:checked')].map((c) => Number(c.dataset.day)), archived: false, createdAt: old ? old.createdAt : new Date().toISOString() };
+    });
+  }
   s.xp.perMinute = num('k-perMinute', 1); s.xp.completionBonus = num('k-bonus', 5);
   s.xp.difficulty = { easy: num('k-easy', 1), normal: num('k-normal', 1.5), hard: num('k-hard', 2.2) };
   s.gold = { perMinute: num('g-perMinute', 0.4), completionBonus: num('g-bonus', 3) };
@@ -2394,9 +2496,14 @@ function onChange(e) {
   if (!el) return;
   const a = el.dataset.action;
   if (a === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
-  if (a === 'reassign-skill') {
-    const t = questById(el.dataset.id); if (!t || !el.value) return;
-    t.skillId = el.value; Store.save('tasks', State.tasks); render(); return;
+  if (a === 'toggle-cat') {
+    const t = questById(el.dataset.id); if (!t) return;
+    let ids = taskSkills(t).slice(); const sid = el.dataset.skill;
+    if (el.checked) { if (!ids.includes(sid)) ids.push(sid); }
+    else ids = ids.filter((x) => x !== sid);
+    if (!ids.length) { el.checked = true; toast('Нужна хотя бы одна категория'); return; } // нельзя снять последнюю
+    t.skillIds = ids; t.skillId = ids[0]; // основная = первая
+    Store.save('tasks', State.tasks); return;
   }
   if (a === 'tree-field') {
     const t = State.tree[State.treeSkill], n = t && t.nodes.find((x) => x.id === el.dataset.node); if (!n) return;

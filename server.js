@@ -100,6 +100,31 @@ function saveUsers(users) {
   fs.writeFileSync(USERS_FILE(), JSON.stringify(users, null, 2));
 }
 function userDataDir(id) { return path.join(DATA_DIR, 'users', id); }
+// Каталог бэкапов одного файла данных пользователя
+function backupDir(dir, name) { return path.join(dir, '.backups', name); }
+// Снимок текущего содержимого файла ПЕРЕД перезаписью.
+// Дедуп по СОДЕРЖИМОМУ (а не по времени): пропускаем только если оно идентично последнему снимку.
+// Так гарантированно сохраняется каждое уникальное состояние, в т.ч. ДО разрушительной правки.
+const BACKUP_KEEP = 50;
+function backupFile(dir, name) {
+  try {
+    const src = path.join(dir, name + '.json');
+    if (!fs.existsSync(src)) return; // нечего бэкапить (первая запись файла)
+    const cur = fs.readFileSync(src);
+    const bdir = backupDir(dir, name);
+    fs.mkdirSync(bdir, { recursive: true });
+    const existing = fs.readdirSync(bdir).filter((f) => f.endsWith('.json')).sort();
+    if (existing.length) {
+      try { if (fs.readFileSync(path.join(bdir, existing[existing.length - 1])).equals(cur)) return; } catch {}
+    }
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    fs.writeFileSync(path.join(bdir, stamp + '.json'), cur);
+    const all = fs.readdirSync(bdir).filter((f) => f.endsWith('.json')).sort();
+    for (const f of all.slice(0, Math.max(0, all.length - BACKUP_KEEP))) {
+      try { fs.unlinkSync(path.join(bdir, f)); } catch {}
+    }
+  } catch (e) { console.error('[backup]', name, e.message); }
+}
 function hashPin(userId, pin) {
   return crypto.createHmac('sha256', SECRET).update(userId + ':' + String(pin)).digest('hex');
 }
@@ -516,11 +541,58 @@ const server = http.createServer(async (req, res) => {
         const body = await readBody(req);
         const parsed = JSON.parse(body);
         fs.mkdirSync(dir, { recursive: true });
+        backupFile(dir, name); // снимок прежнего содержимого ПЕРЕД перезаписью — защита от потери
         fs.writeFileSync(file, JSON.stringify(parsed, null, 2));
         return sendJson(res, 200, { ok: true });
       } catch (e) { return sendJson(res, 400, { error: String(e.message || e) }); }
     }
     return sendJson(res, 405, { error: 'method not allowed' });
+  }
+
+  // ---- Админ: инспекция и восстановление данных любого юзера (спасение при потере) ----
+  {
+    const me = loadUsers().find(x => x.id === sessionUserId(req));
+    const isAdmin = me && me.isAdmin;
+    const DATA_NAMES = ['settings', 'tasks', 'habits', 'goals', 'days', 'habitlog', 'weeks', 'lootbox', 'skilltree', 'purchases', 'achievements'];
+
+    // GET /api/admin/userdata/<userId> — текущее содержимое всех файлов + список бэкапов
+    let am = u.match(/^\/api\/admin\/userdata\/([a-z0-9_-]{1,32})$/);
+    if (am && req.method === 'GET') {
+      if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
+      const dir = userDataDir(am[1]);
+      const files = {}, backups = {};
+      for (const n of DATA_NAMES) {
+        try { files[n] = JSON.parse(fs.readFileSync(path.join(dir, n + '.json'), 'utf8')); } catch { files[n] = null; }
+        try { backups[n] = fs.readdirSync(backupDir(dir, n)).filter(f => f.endsWith('.json')).map(f => f.replace('.json', '')).sort().reverse(); } catch { backups[n] = []; }
+      }
+      return sendJson(res, 200, { userId: am[1], files, backups });
+    }
+
+    // GET /api/admin/userdata/<userId>/backup/<name>/<stamp> — содержимое конкретного бэкапа
+    am = u.match(/^\/api\/admin\/userdata\/([a-z0-9_-]{1,32})\/backup\/([a-z0-9_-]+)\/([0-9TZ-]+)$/);
+    if (am && req.method === 'GET') {
+      if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
+      if (!safeName(am[2])) return sendJson(res, 400, { error: 'bad name' });
+      const fp = path.join(backupDir(userDataDir(am[1]), am[2]), am[3] + '.json');
+      if (!fp.startsWith(DATA_DIR)) return sendJson(res, 400, { error: 'bad path' });
+      return fs.readFile(fp, 'utf8', (err, txt) => err ? sendJson(res, 404, { error: 'not found' }) : send(res, 200, txt, { 'Content-Type': MIME['.json'] }));
+    }
+
+    // POST /api/admin/userdata/<userId>/restore  body { name, stamp } — восстановить бэкап (текущее сначала бэкапится)
+    am = u.match(/^\/api\/admin\/userdata\/([a-z0-9_-]{1,32})\/restore$/);
+    if (am && req.method === 'POST') {
+      if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
+      let b = {}; try { b = JSON.parse(await readBody(req)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
+      const name = safeName(String(b.name || '')); if (!name) return sendJson(res, 400, { error: 'bad name' });
+      const dir = userDataDir(am[1]);
+      const bfile = path.join(backupDir(dir, name), String(b.stamp || '') + '.json');
+      if (!bfile.startsWith(DATA_DIR) || !fs.existsSync(bfile)) return sendJson(res, 404, { error: 'backup not found' });
+      try {
+        backupFile(dir, name); // снимок текущего перед откатом
+        fs.copyFileSync(bfile, path.join(dir, name + '.json'));
+        return sendJson(res, 200, { ok: true, restored: name, from: b.stamp });
+      } catch (e) { return sendJson(res, 500, { error: String(e.message || e) }); }
+    }
   }
 
   // ---- Static files ----

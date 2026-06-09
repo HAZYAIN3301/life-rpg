@@ -137,6 +137,19 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .t-skill-sel:hover { background: color-mix(in srgb, var(--c) 45%, transparent); }
 .t-skill-sel.missing { border-color: var(--warn); color: var(--warn); }
 .t-skill-sel option { color: var(--text); background: var(--panel); }
+.t-cats { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; background: none; border: none; padding: 0; cursor: pointer; max-width: 220px; }
+.t-cat {
+  font-size: 11px; padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+  color: #fff; background: color-mix(in srgb, var(--c) 32%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c) 60%, transparent);
+}
+.t-cat.missing { --c: var(--warn); color: var(--warn); }
+.t-cats:hover .t-cat { filter: brightness(1.15); }
+.cat-list { display: flex; flex-direction: column; gap: 4px; margin-top: 14px; max-height: 50vh; overflow-y: auto; }
+.cat-opt { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; cursor: pointer; }
+.cat-opt:hover { background: var(--panel2); }
+.cat-opt.is-sub { padding-left: 26px; }
+.cat-opt input { width: 17px; height: 17px; accent-color: var(--accent); }
 .t-est, .t-diff { font-size: 12px; color: var(--muted); white-space: nowrap; }
 .t-xp { font-size: 12px; font-weight: 700; color: var(--good); white-space: nowrap; }
 .task .del {
@@ -743,6 +756,14 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .fb-file input { display: none; }
 .fb-previews { display: flex; flex-wrap: wrap; gap: 8px; }
 .fb-thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+/* Данные/бэкапы юзера (админ) */
+.ud-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+.ud-table th, .ud-table td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.ud-table th { color: var(--muted); font-weight: 600; }
+.ud-bk { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.ud-stamp { font-size: 12px; max-width: 180px; }
+.habit-edit select.missing, .skill-edit select.missing { border-color: var(--warn); color: var(--warn); }
+
 /* Репорты (админ) */
 .rep-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
 .rep-toolbar-btns { display: flex; gap: 8px; flex-wrap: wrap; }
