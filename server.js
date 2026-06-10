@@ -133,6 +133,8 @@ function hashPin(userId, pin) {
 const TRIAL_MS = 7 * 24 * 3600 * 1000;
 function entitlement(user) {
   const now = Date.now();
+  // Админ всегда Pro — создатель должен видеть весь продукт (fb: «у меня про, но аналитика недоступна»)
+  if (user.isAdmin) return { tier: 'pro', proUntil: null, trialUsed: true };
   // Явный Pro (оплачен или выдан админом); proUntil=null => бессрочно
   if (user.plan === 'pro' && (!user.proUntil || new Date(user.proUntil).getTime() > now)) {
     return { tier: 'pro', proUntil: user.proUntil || null, trialUsed: !!user.trialStartedAt };
@@ -456,6 +458,13 @@ const server = http.createServer(async (req, res) => {
     try { fs.writeFileSync(file, JSON.stringify(list, null, 2)); } catch (e) { return sendJson(res, 500, { error: 'save failed' }); }
     createGithubIssue(list[list.length - 1]).catch(() => {}); // fire-and-forget
     return sendJson(res, 200, { ok: true, attachments: attachments.length });
+  }
+  // ---- Мои репорты: счётчик для ачивок («Баг-хантер», «Страж Врат») ----
+  if (u === '/api/feedback/mine' && req.method === 'GET') {
+    const uid = sessionUserId(req);
+    if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let list = []; try { list = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'feedback.json'), 'utf8')); } catch {}
+    return sendJson(res, 200, { count: list.filter(x => x.userId === uid).length });
   }
   // ---- Экспорт feedback.json (скачать, только админ) ----
   if (u === '/api/feedback/export' && req.method === 'GET') {

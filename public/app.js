@@ -81,7 +81,33 @@ const ACHIEVEMENTS = [
   { id: 'first_reward', icon: '🎁', title: 'Награда', desc: 'Купи первую награду', test: () => (State.purchases || []).length > 0 },
   { id: 'gold_500', icon: '🪙', title: 'Богатей', desc: 'Заработай 500 золота всего', test: () => goldEarned() >= 500, prog: () => ({ cur: goldEarned(), target: 500 }) },
   { id: 'skills_all3', icon: '📚', title: 'Разносторонний', desc: 'Все навыки до ур.3', test: () => State.settings.skills.length > 0 && State.settings.skills.every((s) => skillLevelOf(s.id) >= 3) },
+  // За полезные репорты — фидбек делает продукт (идея fb_mq2vy77ine8h)
+  { id: 'reporter_3', icon: '🐞', title: 'Баг-хантер', desc: '3 репорта или идеи через 💬', test: () => (State.myFeedbackCount || 0) >= 3, prog: () => ({ cur: State.myFeedbackCount || 0, target: 3 }) },
+  { id: 'cofounder_10', icon: '🛡️', title: 'Страж Врат · SCP-001', desc: '10 репортов — почти со-основатель', test: () => (State.myFeedbackCount || 0) >= 10, prog: () => ({ cur: State.myFeedbackCount || 0, target: 10 }) },
 ];
+
+// Каталог предустановленных наград — «дроп с босса уже выбран» (fb: награды должны быть предустановлены)
+const REWARD_CATALOG = [
+  { icon: '☕', name: 'Кофе в любимой кофейне', cost: 60 },
+  { icon: '🍫', name: 'Шоколадка / сладость', cost: 50 },
+  { icon: '🎮', name: '1 час игр без вины', cost: 120 },
+  { icon: '📺', name: 'Серия сериала', cost: 80 },
+  { icon: '🎬', name: 'Вечер кино с попкорном', cost: 200 },
+  { icon: '🍕', name: 'Пицца / любимая еда', cost: 250 },
+  { icon: '🛁', name: 'Долгая ванна со всеми смузи', cost: 100 },
+  { icon: '😴', name: 'Поспать без будильника', cost: 150 },
+  { icon: '📚', name: 'Новая книга', cost: 300 },
+  { icon: '🎧', name: 'Час музыки/подкаста лёжа', cost: 90 },
+  { icon: '🛍', name: 'Маленькая покупка до 1000₽/10€', cost: 400 },
+  { icon: '🍣', name: 'Заказать доставку', cost: 350 },
+  { icon: '🌳', name: 'Прогулка без телефона', cost: 40 },
+  { icon: '💆', name: 'Массаж / спа', cost: 600 },
+  { icon: '🎲', name: 'Настолки с друзьями', cost: 180 },
+  { icon: '✈️', name: 'Поездка на выходные', cost: 2000 },
+  { icon: '🎁', name: 'Большая хотелка (копилка)', cost: 5000 },
+  { icon: '🍦', name: 'Мороженое', cost: 45 },
+];
+const FREE_REWARDS_MAX = 8; // лимит наград для Free (Pro — без лимита)
 
 // Шаблоны навыков для онбординга (как у rpgreal)
 const SKILL_TEMPLATES = [
@@ -246,14 +272,29 @@ function childSkills(id) { return State.settings.skills.filter((s) => s.parentId
 function isPillar(id) { return childSkills(id).length > 0; }            // столб = есть под-навыки
 function topSkills() { return State.settings.skills.filter((s) => !s.parentId); } // верхний уровень
 function leafSkills() { return State.settings.skills.filter((s) => !isPillar(s.id)); } // листья (для атрибутов/формы)
-function skillLabel(id) { const s = skillById(id); if (s && s.parentId) { const p = skillById(s.parentId); return (p ? p.name + ' › ' : '') + s.name; } return s ? s.name : id; }
+// Все потомки сферы на любую глубину (иерархия N уровней: Учёба → Школа → Bio LK)
+function descendantSkills(id) {
+  const out = [], seen = new Set();
+  const walk = (pid, depth) => { if (depth > 6) return; for (const c of childSkills(pid)) { if (seen.has(c.id)) continue; seen.add(c.id); out.push(c); walk(c.id, depth + 1); } };
+  walk(id, 0); return out;
+}
+function skillDepth(id) { let d = 0, cur = skillById(id), g = 0; while (cur && cur.parentId && g++ < 8) { d++; cur = State.settings.skills.find((x) => x.id === cur.parentId); } return d; }
+function skillLabel(id) {
+  const parts = []; let cur = State.settings.skills.find((x) => x.id === id), g = 0;
+  while (cur && g++ < 8) { parts.unshift(cur.name); cur = cur.parentId ? State.settings.skills.find((x) => x.id === cur.parentId) : null; }
+  return parts.length ? parts.join(' › ') : id;
+}
 // Опции <select> в иерархическом порядке: столб, затем его под-навыки («Столб › Под»)
 function skillOptionsHTML(sel) {
   let html = '';
-  for (const p of topSkills()) {
-    html += `<option value="${p.id}" ${p.id === sel ? 'selected' : ''}>${esc(p.name)}${isPillar(p.id) ? ' (общее)' : ''}</option>`;
-    for (const c of childSkills(p.id)) html += `<option value="${c.id}" ${c.id === sel ? 'selected' : ''}>${esc(p.name)} › ${esc(c.name)}</option>`;
-  }
+  const walk = (parentId, chain, depth) => {
+    if (depth > 6) return;
+    for (const s of State.settings.skills.filter((x) => (x.parentId || null) === parentId)) {
+      html += `<option value="${s.id}" ${s.id === sel ? 'selected' : ''}>${esc([...chain, s.name].join(' › '))}${isPillar(s.id) ? ' (общее)' : ''}</option>`;
+      walk(s.id, [...chain, s.name], depth + 1);
+    }
+  };
+  walk(null, [], 0);
   return html;
 }
 function questById(id) { return State.tasks.find((t) => t.id === id); }
@@ -368,8 +409,8 @@ function totalImportedXp() { const im = (State.settings && State.settings.import
 function earnedXp() { return xpEvents().reduce((s, e) => s + e.xp, 0); } // только заработанное в приложении (для честного лидерборда)
 function overallXp() { return earnedXp() + totalImportedXp(); }
 function ownSkillXp(id) { return xpEvents().reduce((s, e) => s + (e.skillId === id ? e.xp : 0), 0) + importedXp(id); }
-// XP сферы. Для столба = собственный + сумма под-навыков (агрегация в столб).
-function skillXp(id) { let xp = ownSkillXp(id); for (const c of childSkills(id)) xp += ownSkillXp(c.id); return xp; }
+// XP сферы. Для столба = собственный + сумма ВСЕХ потомков (агрегация вверх по дереву любой глубины).
+function skillXp(id) { let xp = ownSkillXp(id); for (const c of descendantSkills(id)) xp += ownSkillXp(c.id); return xp; }
 function goldEarned() { return xpEvents().reduce((s, e) => s + e.gold, 0) + (State.lootbox ? (State.lootbox.goldWon || 0) : 0); }
 function goldSpent() { return (State.purchases || []).reduce((s, p) => s + (p.cost || 0), 0); }
 function goldBalance() { return Math.round(goldEarned() - goldSpent()); }
@@ -492,10 +533,12 @@ function radarSVG(scores) {
 }
 function figureSVG() {
   const str = attrScore('str'), end = attrScore('end'), bmi = bodyBMI(), cr = charRank();
-  const sh = 24 + Math.min(20, str * 1.6);                                  // плечи растут от силы
-  const wa = Math.max(11, 15 + (bmi ? Math.max(0, (bmi - 21)) * 1.7 : 0) - Math.min(5, end * 0.35)); // талия от BMI, минус выносливость
+  const sex = (State.settings.body || {}).sex || '';
+  const sh = (sex === 'f' ? 20 : 24) + Math.min(20, str * (sex === 'f' ? 1.2 : 1.6)); // плечи растут от силы; женский силуэт — уже
+  const wa0 = Math.max(11, 15 + (bmi ? Math.max(0, (bmi - 21)) * 1.7 : 0) - Math.min(5, end * 0.35)); // талия от BMI, минус выносливость
+  const hip = sex === 'f' ? wa0 + 7 : wa0;                                   // женский силуэт — шире бёдра
   const limb = 6 + Math.min(7, str * 0.5);                                  // толщина конечностей
-  const cx = 70, c = cr.color;
+  const cx = 70, c = cr.color, wa = hip;
   const torso = `${cx - sh},58 ${cx + sh},58 ${cx + wa},132 ${cx - wa},132`;
   return `<svg viewBox="0 0 140 230" class="figure">
     <ellipse cx="${cx}" cy="120" rx="${56 + charLevel() * 0.6}" ry="86" fill="${c}" opacity="0.07"/>
@@ -642,12 +685,16 @@ function habitScheduledOn(h, dateStr) { return (h.days || []).includes(parseDate
 function habitDone(h, dateStr) { return !!(State.habitlog[dateStr] && State.habitlog[dateStr][h.id]); }
 function todaysHabits() { const t = todayStr(); return State.habits.filter((h) => !h.archived && habitScheduledOn(h, t)); }
 function habitsDueOn(dateStr) { return State.habits.filter((h) => !h.archived && habitScheduledOn(h, dateStr)); }
+// Щадящий стрик (анти-Duolingo): один пропуск не сжигает серию — «заморозка»
+// восстанавливается после каждых 7 отмеченных дней. Жизнь не наказывает за единичный сбой.
 function habitStreak(h) {
-  let s = 0, cursor = todayStr(), guard = 0;
-  if (habitScheduledOn(h, cursor) && !habitDone(h, cursor)) cursor = addDays(cursor, -1);
+  let s = 0, cursor = todayStr(), guard = 0, freezeLeft = 1, doneRun = 0;
+  if (habitScheduledOn(h, cursor) && !habitDone(h, cursor)) cursor = addDays(cursor, -1); // сегодня ещё не вечер
   while (guard++ < 400) {
     if (!habitScheduledOn(h, cursor)) { cursor = addDays(cursor, -1); continue; }
-    if (habitDone(h, cursor)) { s++; cursor = addDays(cursor, -1); } else break;
+    if (habitDone(h, cursor)) { s++; doneRun++; if (doneRun >= 7) { freezeLeft = 1; doneRun = 0; } cursor = addDays(cursor, -1); }
+    else if (freezeLeft > 0) { freezeLeft--; doneRun = 0; cursor = addDays(cursor, -1); } // заморозка съедает пропуск
+    else break;
   }
   return s;
 }
@@ -840,15 +887,16 @@ function updatePill(fi) {
 function removePill() { const p = document.getElementById('focus-pill'); if (p) p.classList.remove('show'); }
 
 // --- плавающее окно поверх всех приложений (Document Picture-in-Picture) ---
-const PIP_CSS = `body{margin:0;font:14px -apple-system,'Segoe UI',Roboto,sans-serif;background:#11151f;color:#e7ebf5;overflow:hidden}body.break{background:#15241a}body.overrun{background:#2a1622}.pip{padding:12px 14px;display:flex;flex-direction:column;gap:4px;height:100%;box-sizing:border-box}.pip-task{font-size:12px;color:#99a2c0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pip-clock{font-size:36px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}.pip-sub{font-size:12px;color:#c7cee6}body.overrun .pip-sub{color:#ff9bb0}.pip-bar{height:6px;background:#222a40;border-radius:999px;overflow:hidden;margin-top:2px}.pip-bar>span{display:block;height:100%;width:0;background:linear-gradient(90deg,#6c8cff,#9b7cff)}body.overrun .pip-bar>span{background:#e0526a}.pip-ctrl{display:flex;gap:8px;margin-top:auto}.pip-ctrl button{flex:1;background:#1f2640;border:1px solid #2a3250;color:#fff;border-radius:8px;padding:7px;font-size:15px;cursor:pointer}.pip-ctrl button:hover{background:#2a3250}`;
+const PIP_CSS = `body{margin:0;font:13px -apple-system,'Segoe UI',Roboto,sans-serif;background:#11151f;color:#e7ebf5;overflow:hidden}body.break{background:#15241a}body.overrun{background:#2a1622}.pip{padding:9px 11px;display:flex;flex-direction:column;gap:3px;height:100%;box-sizing:border-box}.pip-task{font-size:11px;color:#99a2c0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pip-clock{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}.pip-sub{font-size:12px;color:#c7cee6}body.overrun .pip-sub{color:#ff9bb0}.pip-bar{height:6px;background:#222a40;border-radius:999px;overflow:hidden;margin-top:2px}.pip-bar>span{display:block;height:100%;width:0;background:linear-gradient(90deg,#6c8cff,#9b7cff)}body.overrun .pip-bar>span{background:#e0526a}.pip-ctrl{display:flex;gap:8px;margin-top:auto}.pip-ctrl button{flex:1;background:#1f2640;border:1px solid #2a3250;color:#fff;border-radius:8px;padding:7px;font-size:15px;cursor:pointer}.pip-ctrl button:hover{background:#2a3250}`;
 
 async function openFocusWidget() {
   if (!State.timer) return;
   if (!('documentPictureInPicture' in window)) { toast('Плавающее окно недоступно в этом браузере — показываю плашку'); return; }
   if (pipWindow) { try { pipWindow.focus(); } catch {} return; }
   try {
-    pipWindow = await documentPictureInPicture.requestWindow({ width: 300, height: 190 });
+    pipWindow = await documentPictureInPicture.requestWindow({ width: 232, height: 148 }); // компактнее — меньше мешает (fb)
     const d = pipWindow.document;
+    d.title = (State.settings && State.settings.appName) || 'Gojo'; // вместо служебного текста в заголовке
     const st = d.createElement('style'); st.textContent = PIP_CSS; d.head.appendChild(st);
     d.body.innerHTML = `<div class="pip"><div class="pip-task" id="pip-task"></div><div class="pip-clock" id="pip-clock">0:00</div><div class="pip-sub" id="pip-sub"></div><div class="pip-bar"><span id="pip-bar"></span></div><div class="pip-ctrl"><button id="pip-pause">⏸</button><button id="pip-stop">⏹</button></div></div>`;
     d.getElementById('pip-pause').addEventListener('click', () => { State.timer && State.timer.running ? pauseFocus() : resumeFocus(); });
@@ -982,7 +1030,7 @@ function renderHeader() {
   const cr = charRank(), eqTitle = State.lootbox && State.lootbox.equipped, e = ent();
   const skills = topSkills().map((s) => {
     const si = levelInfo(skillXp(s.id), c.skillBase, c.growth), sr = rankFor(si.level), pillar = isPillar(s.id);
-    const subInfo = pillar ? ` · ${childSkills(s.id).length} под-навыков` : '';
+    const subInfo = pillar ? ` · ${descendantSkills(s.id).length} под-навыков` : '';
     return `<div class="skill-chip" title="${esc(s.name)} — ${sr.name} (ур.${si.level}, ${skillXp(s.id)} XP)${subInfo}">
       <span class="dot" style="background:${esc(s.color)}"></span>
       <span class="sk-name">${esc(s.name)}${pillar ? ' ▾' : ''}</span><span class="sk-lvl">ур.${si.level}</span>
@@ -1097,12 +1145,15 @@ function renderToday() {
   // Нудж новичку: не начинай с нуля — импортируй реальный опыт
   const noImports = !Object.keys((State.settings && State.settings.imported) || {}).length;
   const importNudge = (noImports && earnedXp() < 200) ? `<div class="card nudge-card"><button class="nudge" data-action="goto-import">🎖 Не начинай с нуля — импортируй свой реальный опыт</button><span class="nudge-boost">отметь свой уровень в сферах → стартовый опыт</span></div>` : '';
+  // Сидячий день (4+ ч планов без движения) → мягкий нудж добавить разминку (идея fb_mq3m7zjd)
+  const hasMove = todays.some((t) => /размин|прогул|зарядк|растяжк|спорт|трениров|walk|stretch|gym/i.test(t.title)) || habits.some((h) => /размин|прогул|зарядк|растяжк|спорт|трениров/i.test(h.title));
+  const stretchNudge = (planned >= 240 && !hasMove) ? `<div class="card nudge-card"><button class="nudge" data-action="add-stretch">🤸 ${fmtDur(planned)} сидячих планов — вставить разминку 10 мин</button><span class="nudge-boost">баланс — это тоже квест</span></div>` : '';
 
   const overdueCard = overdue.length ? `<div class="card overdue"><h3>⏳ Просрочено (${overdue.length})</h3>
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">↪ Перенести всё на сегодня</button></div>` : '';
 
-  return `${timerCard}${nudgeCard}${importNudge}
+  return `${timerCard}${nudgeCard}${importNudge}${stretchNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="Новый квест на сегодня…" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
@@ -1161,7 +1212,7 @@ function renderGoals() {
   const nearest = active.filter((g) => g.targetDate).sort((a, b) => (a.targetDate < b.targetDate ? -1 : 1))[0];
   const skillOpts = skillOptionsHTML();
   const typeOpts = GOAL_TYPES.map((t) => `<option value="${t.id}" ${t.id === 'short' ? 'selected' : ''}>${t.label} · ${t.timeframe}</option>`).join('');
-  const parentOpts = '<option value="">— без родителя —</option>' + active.map((g) => `<option value="${g.id}">${esc(g.title)}</option>`).join('');
+  const parentOpts = '<option value="">— самостоятельная цель —</option>' + active.map((g) => `<option value="${g.id}">↳ часть цели: ${esc(g.title)}</option>`).join('');
   const typeGuide = `<details class="gtype-guide"><summary>ℹ️ Как выбрать тип цели?</summary><div class="gtype-rows">${GOAL_TYPES.map((t) => `<div class="gtype-row"><span class="goal-type type-${t.id}">${t.label}</span><span class="gtype-tf">${t.timeframe}</span><span class="muted">${t.hint}</span></div>`).join('')}</div></details>`;
 
   const counts = { all: active.length };
@@ -1186,7 +1237,8 @@ function renderGoals() {
         <select name="parentId" title="Родительская цель">${parentOpts}</select>
         <input name="targetDate" type="date" title="Дедлайн" />
         <input name="why" placeholder="Зачем? (мотивация)" autocomplete="off" />
-        <button type="submit">+ Цель</button></form></div>
+        <button type="submit">+ Цель</button></form>
+      <p class="diff-hint muted">💰 XP пусто = по типу цели: ${GOAL_TYPES.map((t) => `${t.label.toLowerCase()} ${GOAL_XP[t.id]}`).join(' · ')}. Это «курс валюты» — не накручивай себе, иначе уровень потеряет смысл.</p></div>
     <div class="card"><h3>📋 Сводка целей</h3><div class="gfilters">${filterTabs}</div></div>
     ${shown.length ? shown.map(goalCard).join('') : '<div class="card"><p class="muted">Нет активных целей этого типа. Добавь выше ↑</p></div>'}
     ${completed.length ? `<div class="section-title">Достигнутые</div>${completed.map(goalCard).join('')}` : ''}
@@ -1315,6 +1367,7 @@ function renderCharacter() {
   let bmiLabel = '';
   if (bmi) { const cat = bmi < 18.5 ? 'недовес' : bmi < 25 ? 'норма' : bmi < 30 ? 'избыток' : 'выше нормы'; bmiLabel = `<div class="bmi-label">ИМТ <b>${bmi.toFixed(1)}</b> · ${cat}${b.bodyfat ? ` · жир ${b.bodyfat}%` : ''}</div>`; }
   const bodyForm = `<form id="body-form" class="body-form">
+      <label>Пол<select name="sex"><option value="" ${!b.sex ? 'selected' : ''}>—</option><option value="m" ${b.sex === 'm' ? 'selected' : ''}>М</option><option value="f" ${b.sex === 'f' ? 'selected' : ''}>Ж</option></select></label>
       <label>Рост, см<input name="height" type="number" min="100" max="250" value="${b.height || ''}" placeholder="—" /></label>
       <label>Вес, кг<input name="weight" type="number" min="30" max="300" step="0.1" value="${b.weight || ''}" placeholder="—" /></label>
       ${isPro() ? `<label>% жира<input name="bodyfat" type="number" min="3" max="60" step="0.1" value="${b.bodyfat || ''}" placeholder="—" /></label>`
@@ -1622,9 +1675,10 @@ function renderRewards() {
       <div class="kpi"><div class="v">${goldEarned()}</div><div class="l">Заработано всего</div></div>
       <div class="kpi"><div class="v">${ACHIEVEMENTS.filter((a) => State.achievements[a.id]).length}/${ACHIEVEMENTS.length}</div><div class="l">Достижений</div></div>
     </div>
-    <div class="card"><h3>🎁 Магазин наград</h3><div class="rewards-grid">${cards || '<p class="muted">Наград пока нет.</p>'}</div>
+    <div class="card"><h3>🎁 Магазин наград</h3><div class="rewards-grid">${cards || '<p class="muted">Наград пока нет — возьми готовые из каталога ↓</p>'}</div>
+      <div class="settings-actions" style="margin:10px 0 4px"><button class="btn ghost" data-action="open-reward-catalog">📚 Каталог наград</button>${!isPro() ? `<span class="muted" style="font-size:12px">${State.rewards.length}/${FREE_REWARDS_MAX} наград (Free)</span>` : ''}</div>
       <form id="add-reward" class="reward-form">
-        <input name="name" placeholder="Новая награда…" autocomplete="off" required />
+        <input name="name" placeholder="Своя награда…" autocomplete="off" required />
         <input name="icon" placeholder="🎁" maxlength="2" style="width:60px;text-align:center" />
         <input name="cost" type="number" min="1" value="100" style="width:90px" />
         <button type="submit">+ Награда</button></form></div>
@@ -1840,18 +1894,27 @@ function renderSettings() {
   const s = State.settings;
   const f = s.focus || DEFAULT_SETTINGS.focus;
   const skillOpts = (sel) => skillOptionsHTML(sel);
-  // допустимые родители для сферы sk: верхнеуровневые сферы (не она сама), и только если сама не столб (2 уровня)
+  // допустимые родители: любая сфера любой глубины, кроме самой себя и её потомков (защита от циклов).
+  // Столб тоже может иметь родителя — так строится Учёба → Школа → Bio LK. Это же «расстолбливает» (#16).
   const parentOptions = (sk) => {
-    if (isPillar(sk.id)) return `<option value="" selected>Столб (есть под-навыки)</option>`; // у столба не может быть родителя
+    const blocked = new Set([sk.id, ...descendantSkills(sk.id).map((x) => x.id)]);
     let html = `<option value="" ${!sk.parentId ? 'selected' : ''}>Самостоятельная сфера</option>`;
-    for (const p of topSkills()) if (p.id !== sk.id) html += `<option value="${p.id}" ${sk.parentId === p.id ? 'selected' : ''}>Под-навык в «${esc(p.name)}»</option>`;
+    const walk = (parentId, chain, depth) => {
+      if (depth > 6) return;
+      for (const p of State.settings.skills.filter((x) => (x.parentId || null) === parentId)) {
+        if (blocked.has(p.id)) continue; // в себя/потомка нельзя — пропускаем вместе с поддеревом
+        html += `<option value="${p.id}" ${sk.parentId === p.id ? 'selected' : ''}>Внутри «${esc([...chain, p.name].join(' › '))}»</option>`;
+        walk(p.id, [...chain, p.name], depth + 1);
+      }
+    };
+    walk(null, [], 0);
     return html;
   };
   const collapsed = State.settingsCollapsed || {};
   const attrSel = (sk) => `<select data-field="attr" title="Какой атрибут персонажа качает эта сфера">${ATTRIBUTES.map((a) => `<option value="${a.id}" ${(sk.attr || guessAttr(sk.name)) === a.id ? 'selected' : ''}>${a.icon} ${a.name}</option>`).join('')}</select>`;
-  const skillRow = (sk, isChild, hidden) => {
+  const skillRow = (sk, depth, hidden) => {
     const pillar = isPillar(sk.id);
-    return `<div class="skill-edit ${isChild ? 'is-sub' : ''} ${hidden ? 'se-hidden' : ''}" data-id="${sk.id}">
+    return `<div class="skill-edit ${depth > 0 ? 'is-sub' : ''} ${hidden ? 'se-hidden' : ''}" data-id="${sk.id}" style="--d:${depth}">
       <span class="se-move"><button data-action="skill-move" data-id="${sk.id}" data-dir="-1" title="Выше">▲</button><button data-action="skill-move" data-id="${sk.id}" data-dir="1" title="Ниже">▼</button></span>
       ${pillar ? `<button class="se-collapse" data-action="skill-collapse" data-id="${sk.id}" title="Свернуть/развернуть под-навыки">${collapsed[sk.id] ? '▸' : '▾'}</button>` : '<span class="se-collapse-spacer"></span>'}
       <input type="color" value="${esc(sk.color)}" data-field="color" />
@@ -1860,7 +1923,12 @@ function renderSettings() {
       <select data-field="parentId" title="Вложенность сферы">${parentOptions(sk)}</select>
       <button class="del" data-action="delete-skill" data-id="${sk.id}">✕</button></div>`;
   };
-  const skills = topSkills().map((sk) => skillRow(sk, false, false) + childSkills(sk.id).map((c) => skillRow(c, true, !!collapsed[sk.id])).join('')).join('');
+  // Рекурсивный рендер дерева сфер: глубина любая, свёрнутый узел прячет всё поддерево
+  const renderSkillRows = (parentId, depth, hidden) => State.settings.skills
+    .filter((x) => (x.parentId || null) === parentId)
+    .map((sk) => skillRow(sk, depth, hidden) + renderSkillRows(sk.id, depth + 1, hidden || !!collapsed[sk.id]))
+    .join('');
+  const skills = renderSkillRows(null, 0, false);
   const habits = State.habits.map((h) => `<div class="habit-edit" data-id="${h.id}">
       <input type="text" value="${esc(h.title)}" data-field="title" />
       <select data-field="skillId" class="${skillById(h.skillId).missing ? 'missing' : ''}">${skillById(h.skillId).missing ? `<option value="${esc(h.skillId)}" selected>— нет сферы —</option>` : ''}${skillOpts(h.skillId)}</select>
@@ -1873,7 +1941,7 @@ function renderSettings() {
     ${securityCard()}
     ${adminCard()}
     <div class="card"><h3>Название</h3><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></div>
-    <div class="card"><h3>Навыки / сферы жизни</h3><p class="muted" style="font-size:12px;margin:0 0 10px">Третий селект — вложенность: «Самостоятельная» (отдельная сфера) или «Под-навык в …» (войдёт в выбранный столб, опыт суммируется в него). Изменения сохраняются автоматически.</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">+ Добавить сферу</button></div>
+    <div class="card"><h3>Навыки / сферы жизни</h3><p class="muted" style="font-size:12px;margin:0 0 10px">Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">+ Добавить сферу</button></div>
     ${importCard()}
     <div class="card"><h3>🔁 Привычки (повторяющиеся)</h3><div id="habits-list">${habits || '<p class="muted">Пока нет привычек.</p>'}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">+ Добавить привычку</button></div>
     <div class="card"><h3>📦 Программы-данжи</h3><p class="muted" style="margin:0 0 12px">Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
@@ -1892,7 +1960,7 @@ function renderSettings() {
         <div class="knob"><label>Перерыв, мин</label><input id="f-breakMin" type="number" min="1" value="${f.breakMin}" /></div>
         <div class="knob"><label>Колокол</label><select id="f-sound"><option value="1" ${f.sound ? 'selected' : ''}>Вкл</option><option value="0" ${!f.sound ? 'selected' : ''}>Выкл</option></select></div>
         <div class="knob"><label>Уведомления</label><select id="f-notify"><option value="1" ${f.notify ? 'selected' : ''}>Вкл</option><option value="0" ${!f.notify ? 'selected' : ''}>Выкл</option></select></div></div>
-        <p class="muted" style="font-size:12px;margin-top:8px">Плавающее окно поверх всех приложений работает в Chrome / Edge / Brave (Document Picture-in-Picture). В Safari — встроенная плашка внизу слева. Колокол звенит на перерыв и при превышении расчётного времени.</p></div>
+        <p class="muted" style="font-size:12px;margin-top:8px">Плавающее окно поверх всех приложений работает в Chrome / Edge / Brave (Document Picture-in-Picture). В Safari — встроенная плашка внизу слева. Колокол звенит на перерыв и при превышении расчётного времени.<br>⚠️ Честно об ограничении: окно остаётся поверх программ, но на другие рабочие столы macOS (Spaces) браузер его не переносит — это лимит самой технологии, обойти из веба нельзя. Лайфхак: держи окно на том столе, где работаешь, или используй Split View.</p></div>
     <div class="card"><h3>Кривая уровней</h3><div class="knobs">
         <div class="knob"><label>База (персонаж)</label><input id="k-base" type="number" step="10" value="${s.curve.base}" /></div>
         <div class="knob"><label>База (навыки)</label><input id="k-skillBase" type="number" step="10" value="${s.curve.skillBase}" /></div>
@@ -2036,7 +2104,8 @@ function onSubmit(e) {
       try {
         const r = await fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: f.kind.value, text: f.text.value, attachments }) });
         const d = await r.json();
-        if (r.ok) { msg.textContent = `✓ Спасибо! Отправлено${d.attachments ? ` (вложений: ${d.attachments})` : ''}.`; msg.style.color = '#5fbf7a'; f.text.value = ''; f.files.value = ''; const pv = f.querySelector('#fb-previews'); if (pv) pv.innerHTML = ''; }
+        if (r.ok) { msg.textContent = `✓ Спасибо! Отправлено${d.attachments ? ` (вложений: ${d.attachments})` : ''}.`; msg.style.color = '#5fbf7a'; f.text.value = ''; f.files.value = ''; const pv = f.querySelector('#fb-previews'); if (pv) pv.innerHTML = '';
+          State.myFeedbackCount = (State.myFeedbackCount || 0) + 1; checkAchievements(); }
         else { msg.textContent = d.error || 'Ошибка'; msg.style.color = '#e0526a'; }
       } catch { msg.textContent = 'Ошибка сети'; msg.style.color = '#e0526a'; }
       btn.disabled = false;
@@ -2048,7 +2117,7 @@ function onSubmit(e) {
   if (f.id === 'body-form') {
     e.preventDefault();
     const num = (v) => { const x = parseFloat(v); return isNaN(x) ? null : x; };
-    State.settings.body = Object.assign({}, State.settings.body, { height: num(f.height.value), weight: num(f.weight.value) });
+    State.settings.body = Object.assign({}, State.settings.body, { height: num(f.height.value), weight: num(f.weight.value), sex: f.sex.value || '' });
     if (f.bodyfat) State.settings.body.bodyfat = num(f.bodyfat.value);
     Store.save('settings', State.settings); toast('🧍 Телосложение обновлено'); render();
     return;
@@ -2077,9 +2146,26 @@ function onSubmit(e) {
     Store.save('goals', State.goals); render();
   } else if (f.id === 'add-reward') {
     e.preventDefault(); const name = f.name.value.trim(); if (!name) return;
+    if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
     State.rewards.push({ id: 'r_' + uid(), name, icon: f.icon.value.trim() || '🎁', cost: Math.max(1, Number(f.cost.value) || 1), createdAt: new Date().toISOString() });
     Store.save('rewards', State.rewards); render();
   }
+}
+
+// Модалка каталога предустановленных наград
+function openRewardCatalog() {
+  if (document.getElementById('rw-catalog')) return;
+  const have = new Set(State.rewards.map((r) => r.name));
+  const rows = REWARD_CATALOG.map((c, i) => `<div class="rwc-row">
+      <span class="rwc-ic">${c.icon}</span><span class="rwc-name">${esc(c.name)}</span><span class="rwc-cost">🪙 ${c.cost}</span>
+      ${have.has(c.name) ? '<span class="muted" style="font-size:12px">добавлено ✓</span>' : `<button class="btn ghost sm" data-action="add-catalog-reward" data-idx="${i}">+ Добавить</button>`}
+    </div>`).join('');
+  const ov = document.createElement('div'); ov.id = 'rw-catalog'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="guide-box"><button class="modal-x" data-action="close-reward-catalog">✕</button>
+    <h2>📚 Каталог наград</h2>
+    <p class="muted">Готовые награды с откалиброванными ценами — как дроп с босса. Добавь свои в форме на странице наград.</p>
+    <div class="rwc-list">${rows}</div></div>`;
+  document.body.appendChild(ov);
 }
 
 function onClick(e) {
@@ -2144,6 +2230,15 @@ function onClick(e) {
   if (action === 'show-reports') { showReports(); return; }
   if (action === 'close-reports') { const r = document.getElementById('reports'); if (r) r.remove(); return; }
   if (action === 'close-userdata') { const r = document.getElementById('userdata'); if (r) r.remove(); return; }
+  if (action === 'open-reward-catalog') { openRewardCatalog(); return; }
+  if (action === 'close-reward-catalog') { const r = document.getElementById('rw-catalog'); if (r) r.remove(); render(); return; }
+  if (action === 'add-catalog-reward') {
+    if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
+    const c = REWARD_CATALOG[Number(el.dataset.idx)]; if (!c) return;
+    State.rewards.push({ id: 'r_' + uid(), name: c.name, icon: c.icon, cost: c.cost, createdAt: new Date().toISOString() });
+    Store.save('rewards', State.rewards); toast(`🎁 «${c.name}» в магазине`);
+    const m = document.getElementById('rw-catalog'); if (m) m.remove(); openRewardCatalog(); return;
+  }
   if (action === 'restore-backup') {
     const name = el.dataset.name, user = el.dataset.user;
     const sel = el.parentElement.querySelector('.ud-stamp'); const stamp = sel ? sel.value : null;
@@ -2224,6 +2319,11 @@ function onClick(e) {
     const t = questById(id); if (t && t.done && !confirm(`Удалить «${t.title}»?`)) return;
     if (State.timer && State.timer.taskId === id) { State.timer = null; persistTimer(); stopTick(); }
     State.tasks = State.tasks.filter((x) => x.id !== id); Store.save('tasks', State.tasks); render();
+  } else if (action === 'add-stretch') {
+    const sk = State.settings.skills.find((s) => /спорт|здоров|sport|health/i.test(s.name)) || State.settings.skills.find((s) => s.attr === 'str' || s.attr === 'end') || State.settings.skills[0];
+    if (!sk) return;
+    State.tasks.push({ id: uid(), title: 'Разминка / прогулка', skillId: sk.id, skillIds: [sk.id], estimateMin: 10, difficulty: 'easy', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
+    Store.save('tasks', State.tasks); toast('🤸 Разминка в плане — тело скажет спасибо'); render();
   } else if (action === 'move-overdue') {
     State.tasks.forEach((t) => { if (!t.done && t.date < today) t.date = today; }); Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
   } else if (action === 'schedule-quest') {
@@ -2360,8 +2460,17 @@ function captureSettingsForm() {
       const psel = row.querySelector('[data-field="parentId"]');
       return { id: row.dataset.id, name: row.querySelector('[data-field="name"]').value.trim() || 'Без названия', color: row.querySelector('[data-field="color"]').value, attr: row.querySelector('[data-field="attr"]') ? row.querySelector('[data-field="attr"]').value : guessAttr(row.querySelector('[data-field="name"]').value), parentId: psel && psel.value ? psel.value : null };
     });
-    // нормализация parentId: убрать ссылки на несуществующих и 3-й уровень (оставляем строго 2 уровня)
-    for (const sk of s.skills) { if (sk.parentId) { const p = s.skills.find((x) => x.id === sk.parentId); if (!p || p.parentId) sk.parentId = null; } }
+    // нормализация parentId: глубина любая, но родитель должен существовать и цепочка не должна зацикливаться
+    for (const sk of s.skills) {
+      if (!sk.parentId) continue;
+      let cur = sk, ok = true, g = 0; const seen = new Set([sk.id]);
+      while (cur.parentId && g++ < 10) {
+        const p = s.skills.find((x) => x.id === cur.parentId);
+        if (!p || seen.has(p.id)) { ok = false; break; } // битая ссылка или цикл
+        seen.add(p.id); cur = p;
+      }
+      if (!ok || g >= 10) sk.parentId = null;
+    }
   }
   // Привычки: 0 строк = пусто легитимно ТОЛЬКО когда секция реально отрендерена. Защита от гонки: пишем лишь если контейнер на месте.
   const habitsList = document.getElementById('habits-list');
@@ -2436,6 +2545,9 @@ async function initApp() {
     State.phase = 'onboarding'; render(); return;
   }
 
+  // Счётчик своих репортов — для ачивок «Баг-хантер»/«Страж Врат» (не блокирует загрузку)
+  fetch('/api/feedback/mine').then((r) => r.json()).then((d) => { State.myFeedbackCount = d.count || 0; checkAchievements(); }).catch(() => {});
+
   State.tasks = await Store.load('tasks', []);
   State.tasks.forEach((t) => { if (t.actualMin === undefined) t.actualMin = null; if (t.startTime === undefined) t.startTime = null; if (t.goldAwarded === undefined) t.goldAwarded = 0; });
   State.days = await Store.load('days', {});
@@ -2490,6 +2602,8 @@ function onChange(e) {
   }
   // при смене квеста в пикере календаря — подставить его длительность
   if (e.target.id === 'cal-quest') { const t = questById(e.target.value), d = document.getElementById('cal-dur'); if (t && d) d.value = Number(t.estimateMin) || 30; return; }
+  // смена вложенности сферы → сохранить и сразу перерисовать дерево (отступы, защита от циклов)
+  if (e.target.dataset.field === 'parentId' && e.target.closest('#skills-list')) { flushSettingsForm(); render(); return; }
   // автосохранение формы настроек (сферы/привычки/формулы/название) — чтобы правки не терялись при F5
   if (e.target.closest('#skills-list, #habits-list, .knob') || e.target.id === 'set-appName') autosaveSettings();
   const el = e.target.closest('[data-action]');

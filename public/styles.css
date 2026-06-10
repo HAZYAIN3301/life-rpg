@@ -756,6 +756,14 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .fb-file input { display: none; }
 .fb-previews { display: flex; flex-wrap: wrap; gap: 8px; }
 .fb-thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+/* Каталог наград */
+.rwc-list { display: flex; flex-direction: column; margin-top: 12px; }
+.rwc-row { display: flex; align-items: center; gap: 10px; padding: 8px 6px; border-bottom: 1px solid var(--line); }
+.rwc-row:last-child { border-bottom: none; }
+.rwc-ic { font-size: 20px; width: 28px; text-align: center; }
+.rwc-name { flex: 1; min-width: 0; }
+.rwc-cost { color: var(--warn); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
 /* Данные/бэкапы юзера (админ) */
 .ud-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
 .ud-table th, .ud-table td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
@@ -763,6 +771,7 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .ud-bk { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .ud-stamp { font-size: 12px; max-width: 180px; }
 .habit-edit select.missing, .skill-edit select.missing { border-color: var(--warn); color: var(--warn); }
+.skill-edit { margin-left: calc(var(--d, 0) * 22px); } /* отступ по глубине вложенности (N уровней) */
 
 /* Репорты (админ) */
 .rep-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
