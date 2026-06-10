@@ -270,6 +270,10 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .goal-form input[name="title"] { flex: 1 1 100%; }
 .goal-form input, .goal-form select { flex: 1 1 120px; min-width: 0; }
 .goal-form button[type="submit"] { flex: 0 0 auto; }
+.goal-extra { flex: 1 1 100%; }
+.goal-extra summary { font-size: 12px; color: var(--muted); cursor: pointer; padding: 2px 0; user-select: none; }
+.goal-extra summary:hover { color: var(--fg); }
+.goal-extra input { width: 100%; margin-top: 6px; }
 .goal-type { font-size: 11px; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); }
 .type-recurring { color: #5fbf5f; } .type-short { color: #4f86f7; } .type-mid { color: #d8a44b; } .type-long { color: #e0526a; }
 .goal-xp { font-size: 11px; color: #e7c558; font-weight: 600; }
