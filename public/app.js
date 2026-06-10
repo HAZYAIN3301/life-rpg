@@ -189,7 +189,6 @@ function applyProgramMerge(prog) {
   State.settings.skills = skills;
   State.habits.push(...programHabits(prog, map));
   State.tasks.push(...programTasks(prog, map));
-  ensureSkillAttrs();
   Store.save('settings', State.settings); Store.save('habits', State.habits); Store.save('tasks', State.tasks);
   toast(`📦 Программа «${prog.name}» добавлена`); render();
 }
@@ -272,7 +271,7 @@ const State = {
   lootbox: null,
   leaderboard: null, _lbLoading: false,
   adminUsers: null, _adminUsersLoading: false,
-  timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null,
+  timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null,
   aveCat: 'hair', // активная категория в редакторе аватара
   treeEdit: false, treeSelNode: null, // редактор дерева навыков
   settingsCollapsed: {}, // свёрнутые столбы в редакторе сфер
@@ -526,10 +525,18 @@ function guessAttr(name) {
   if (/быт|дисциплин|финанс|план|привыч|работа|бизнес|порядок|деньг|инвест|стартап|предприн/.test(n)) return 'dis';
   return 'dis';
 }
-function ensureSkillAttrs() { for (const s of State.settings.skills) if (!s.attr) s.attr = guessAttr(s.name); }
-// Атрибуты считаем по листьям (под-навыки + одиночные), чтобы не дублировать со столбами
-function attrScore(attrId) { return leafSkills().filter((s) => (s.attr || guessAttr(s.name)) === attrId).reduce((sum, s) => sum + skillLevelOf(s.id), 0); }
+// Атрибуты считаем по листьям (под-навыки + одиночные), чтобы не дублировать со столбами.
+// Маппинг сфера→атрибут полностью автоматический (guessAttr) — атрибуты живут только для архетипа и силуэта.
+function attrScore(attrId) { return leafSkills().filter((s) => guessAttr(s.name) === attrId).reduce((sum, s) => sum + skillLevelOf(s.id), 0); }
 function attrScores() { return ATTRIBUTES.map((a) => Object.assign({}, a, { value: attrScore(a.id) })); }
+// Оси радара = собственные крупные сферы юзера (его личное «десятиборье»), а не абстрактные атрибуты.
+// При >8 сферах берём самые прокачанные, но сохраняем порядок из настроек (оси не скачут).
+function sphereScores() {
+  let list = topSkills();
+  if (list.length > 8) list = [...list].sort((a, b) => skillXp(b.id) - skillXp(a.id)).slice(0, 8)
+    .sort((a, b) => State.settings.skills.indexOf(a) - State.settings.skills.indexOf(b));
+  return list.map((s) => ({ id: s.id, name: s.name, color: s.color, value: skillLevelOf(s.id) }));
+}
 function archetype() {
   const sorted = attrScores().filter((a) => a.value > 0).sort((a, b) => b.value - a.value);
   if (sorted.length === 0) return { name: 'Искатель', desc: 'Путь только начинается' };
@@ -545,14 +552,19 @@ function archetype() {
 }
 function bodyBMI() { const b = State.settings.body || {}; if (!b.height || !b.weight) return null; return b.weight / ((b.height / 100) ** 2); }
 
-// ---- SVG: радар атрибутов + схематичное телосложение ----
+// ---- SVG: радар сфер (личное десятиборье) + схематичное телосложение ----
 function radarSVG(scores) {
-  const cx = 140, cy = 140, R = 96, n = scores.length, max = Math.max(3, ...scores.map((s) => s.value));
+  const cx = 140, cy = 140, R = 88, n = scores.length, max = Math.max(3, ...scores.map((s) => s.value));
   const pt = (i, r) => { const ang = -Math.PI / 2 + i * 2 * Math.PI / n; return [cx + r * Math.cos(ang), cy + r * Math.sin(ang)]; };
   let grid = '';
   for (let g = 1; g <= 3; g++) { const poly = scores.map((_, i) => pt(i, R * g / 3).join(',')).join(' '); grid += `<polygon points="${poly}" fill="none" stroke="var(--line)" stroke-width="1"/>`; }
   let axes = '', labels = '';
-  scores.forEach((s, i) => { const [x, y] = pt(i, R); axes += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)"/>`; const [lx, ly] = pt(i, R + 20); labels += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="15">${s.icon}</text>`; });
+  scores.forEach((s, i) => {
+    const [x, y] = pt(i, R); axes += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)"/>`;
+    const [lx, ly] = pt(i, R + 18);
+    const txt = s.icon || esc(s.name.length > 11 ? s.name.slice(0, 10) + '…' : s.name);
+    labels += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="${s.icon ? 15 : 10.5}" ${s.icon ? '' : `fill="${esc(s.color)}" font-weight="600"`}>${txt}</text>`;
+  });
   const dpoly = scores.map((s, i) => pt(i, R * Math.min(1, s.value / max)).join(',')).join(' ');
   const dots = scores.map((s, i) => { const [x, y] = pt(i, R * Math.min(1, s.value / max)); return `<circle cx="${x}" cy="${y}" r="3.5" fill="${s.color}"/>`; }).join('');
   return `<svg viewBox="0 0 280 280" class="radar"><defs><radialGradient id="radg"><stop offset="0%" stop-color="rgba(108,140,255,.35)"/><stop offset="100%" stop-color="rgba(108,140,255,.08)"/></radialGradient></defs>${grid}${axes}<polygon points="${dpoly}" fill="url(#radg)" stroke="var(--accent)" stroke-width="2"/>${dots}${labels}</svg>`;
@@ -1118,23 +1130,44 @@ function habitRow(h) {
     <span class="t-xp">${done ? '+' + itemXp(h) : ''}</span>
     <span class="habit-streak" title="Серия">${hs ? '🔥' + hs : ''}</span><span></span></li>`;
 }
-function renderCalendar(todays) {
-  const startH = 6, endH = 23, rowH = 42;
-  const scheduled = todays.filter((t) => t.startTime);
-  const unscheduled = todays.filter((t) => !t.startTime);
+// ============================================================
+//  Вид «Календарь» — день по часам (Apple-стиль), отдельная вкладка
+// ============================================================
+const CAL_H0 = 6, CAL_H1 = 23, CAL_ROWH = 48;
+function calMinToY(min) { return (min - CAL_H0 * 60) / 60 * CAL_ROWH; }
+function calYtoMin(y) { const raw = CAL_H0 * 60 + y / CAL_ROWH * 60; return Math.max(CAL_H0 * 60, Math.min(CAL_H1 * 60 + 45, Math.round(raw / 15) * 15)); }
+function fmtHM(min) { return pad2(Math.floor(min / 60)) + ':' + pad2(min % 60); }
+function renderCalendarView() {
+  const date = State.calDate || (State.calDate = todayStr());
+  const WD = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+  const MON = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+  const d = parseDate(date);
+  const dayTasks = State.tasks.filter((t) => t.date === date);
+  const scheduled = dayTasks.filter((t) => t.startTime);
+  const unscheduled = dayTasks.filter((t) => !t.startTime && !t.done);
+  // полоса недели вокруг выбранной даты (с понедельника)
+  const js = d.getDay(), mon = addDays(date, -(js === 0 ? 6 : js - 1));
+  let strip = '';
+  for (let i = 0; i < 7; i++) {
+    const ds = addDays(mon, i), open = State.tasks.filter((t) => t.date === ds && !t.done).length;
+    strip += `<button class="calv-day ${ds === date ? 'active' : ''} ${ds === todayStr() ? 'is-today' : ''}" data-action="cal-date" data-date="${ds}">
+      <span class="cd-wd">${WD[parseDate(ds).getDay()]}</span><span class="cd-n">${Number(ds.slice(8))}</span>${open ? `<span class="cd-dot">${open}</span>` : '<span class="cd-dot-empty"></span>'}</button>`;
+  }
   const hours = [];
-  for (let h = startH; h <= endH; h++) hours.push(h);
-  const grid = hours.map((h, i) => `<div class="cal-row" style="top:${i * rowH}px"><span class="cal-h">${pad2(h)}:00</span></div>`).join('');
+  for (let h = CAL_H0; h <= CAL_H1; h++) hours.push(h);
+  const grid = hours.map((h, i) => `<div class="cal-row" style="top:${i * CAL_ROWH}px"><span class="cal-h">${pad2(h)}:00</span></div>`).join('');
+  const nowMin = (() => { const n = new Date(); return n.getHours() * 60 + n.getMinutes(); })();
+  const nowLine = (date === todayStr() && nowMin >= CAL_H0 * 60 && nowMin <= (CAL_H1 + 1) * 60) ? `<div class="calv-now" style="top:${calMinToY(nowMin)}px"></div>` : '';
   const blocks = scheduled.map((t) => {
     const [H, M] = t.startTime.split(':').map(Number);
-    const top = ((H * 60 + M) - startH * 60) / 60 * rowH;
     const dur = Number(t.estimateMin) || 30;
-    const height = Math.max(22, dur / 60 * rowH);
     const sk = skillById(t.skillId);
-    return `<div class="cal-block ${t.done ? 'done' : ''}" style="top:${top}px;height:${height}px;--c:${esc(sk.color)}" title="${esc(t.title)} · ${fmtDur(dur)}">
+    return `<div class="cal-block calv-block ${t.done ? 'done' : ''}" draggable="true" data-id="${t.id}" style="top:${calMinToY(H * 60 + M)}px;height:${Math.max(24, dur / 60 * CAL_ROWH)}px;--c:${esc(sk.color)}" title="${esc(t.title)} · ${fmtDur(dur)} — тяни, чтобы перенести">
+      <button class="check sm cal-check" data-action="toggle-task" data-id="${t.id}">${t.done ? '✓' : ''}</button>
       <span class="cal-b-text"><b>${pad2(H)}:${pad2(M)}</b> ${esc(t.title)}<span class="cal-dur"> · ${fmtDur(dur)}</span></span>
       <button class="cal-x" data-action="unschedule-quest" data-id="${t.id}" title="Снять с расписания">✕</button></div>`;
   }).join('');
+  const trayTasks = unscheduled.map((t) => { const sk = skillById(t.skillId); return `<span class="calv-chip" draggable="true" data-id="${t.id}" style="--c:${esc(sk.color)}" title="Тяни в сетку, чтобы поставить на время">⠿ ${esc(t.title)} <span class="muted">${fmtDur(Number(t.estimateMin) || 30)}</span></span>`; }).join('');
   const dur0 = unscheduled.length ? (Number(unscheduled[0].estimateMin) || 30) : 30;
   const picker = unscheduled.length ? `
     <div class="cal-schedule">
@@ -1143,10 +1176,33 @@ function renderCalendar(todays) {
       <input id="cal-dur" type="number" min="5" step="5" value="${dur0}" title="Длительность, мин" />
       <span class="cal-dur-unit muted">мин</span>
       <button class="btn ghost" data-action="schedule-quest">🗓 Поставить</button>
-    </div>` : '<p class="muted">Все квесты разложены по времени.</p>';
-  return `<div class="card"><h3>🗓 Календарь дня</h3>
-    <p class="cal-hint muted">Поставь квест на время и задай длительность. Снять с расписания — крестик ✕ на блоке.</p>
-    <div class="cal" style="height:${hours.length * rowH}px">${grid}${blocks}</div>${picker}</div>`;
+    </div>` : '';
+  const planned = dayTasks.reduce((s, t) => s + (Number(t.estimateMin) || 0), 0);
+  return `
+    <div class="card calv-head">
+      <div class="calv-title">
+        <button class="btn ghost sm" data-action="cal-shift" data-days="-1" title="Предыдущий день">‹</button>
+        <h2>${d.getDate()} ${MON[d.getMonth()]} <span class="muted">· ${WD[d.getDay()]}${date === todayStr() ? ' · сегодня' : ''}</span></h2>
+        <button class="btn ghost sm" data-action="cal-shift" data-days="1" title="Следующий день">›</button>
+        ${date !== todayStr() ? '<button class="btn ghost sm" data-action="cal-today">Сегодня</button>' : ''}
+        <span class="wk-load muted">план: ${fmtDur(planned)}</span>
+      </div>
+      <div class="calv-strip">${strip}</div>
+    </div>
+    <div class="card">
+      <form id="add-task" class="add-row">
+        <input type="hidden" name="date" value="${date}" />
+        <input name="title" placeholder="Новый квест на этот день…" autocomplete="off" required />
+        <select name="skillId">${skillOptionsHTML()}</select>
+        <input name="estimateMin" type="number" min="0" step="1" value="30" title="Минут" />
+        <select name="difficulty"><option value="easy">🌱 Лёгкая</option><option value="normal" selected>⚔️ Обычная</option><option value="hard">🔥 Сложная</option></select>
+        <button type="submit">+ Квест</button></form>
+    </div>
+    ${unscheduled.length ? `<div class="card calv-tray"><h3>📥 Без времени (${unscheduled.length})</h3><div class="calv-chips">${trayTasks}</div>${picker}</div>` : ''}
+    <div class="card">
+      <p class="cal-hint muted">Тяни квест по сетке, чтобы сменить время (шаг 15 мин). Клик по пустому месту — подставить время в форму. Крестик ✕ — снять с расписания.</p>
+      <div class="cal calv-grid" style="height:${hours.length * CAL_ROWH}px">${grid}${nowLine}${blocks}</div>
+    </div>`;
 }
 function renderToday() {
   const today = todayStr();
@@ -1195,7 +1251,7 @@ function renderToday() {
         <span>Опыт: <b>+${xpToday}</b> XP</span>
         <span>Золото: <b>+${goldToday}</b> 🪙</span></div>
       ${todays.length ? `<ul class="tasks">${todays.map(questRow).join('')}</ul>` : '<p class="muted">На сегодня пусто. Запланируй первый квест выше ↑</p>'}</div>
-    ${todays.length ? renderCalendar(todays) : ''}
+    ${todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">🗓 ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : ''}
     <div class="card"><h3>🔁 Привычки на сегодня</h3>
       ${habits.length ? `<ul class="tasks">${habits.map(habitRow).join('')}</ul>` : '<p class="muted">На сегодня привычек нет. Добавь их в «Настройках».</p>'}</div>
     <div class="card shutdown"><h3>🌙 Итог дня</h3>
@@ -1262,7 +1318,6 @@ function renderGoals() {
         <input name="xpReward" type="number" min="0" placeholder="XP" title="Награда XP (пусто = по типу)" />
         <select name="parentId" title="Родительская цель">${parentOpts}</select>
         <input name="targetDate" type="date" title="Дедлайн" />
-        <details class="goal-extra"><summary>+ Детали</summary><input name="why" placeholder="Зачем? (мотивация)" autocomplete="off" /></details>
         <button type="submit">+ Цель</button></form>
       <p class="diff-hint muted">💰 XP пусто = по типу цели: ${GOAL_TYPES.map((t) => `${t.label.toLowerCase()} ${GOAL_XP[t.id]}`).join(' · ')}. Это «курс валюты» — не накручивай себе, иначе уровень потеряет смысл.</p></div>
     <div class="card"><h3>📋 Сводка целей</h3><div class="gfilters">${filterTabs}</div></div>
@@ -1387,9 +1442,10 @@ function avatarEditor() {
 }
 function renderCharacter() {
   const c = State.settings.curve, oi = levelInfo(overallXp(), c.base, c.growth), cr = charRank();
-  const scores = attrScores(), arch = archetype(), b = State.settings.body || {}, bmi = bodyBMI();
+  const scores = sphereScores(), arch = archetype(), b = State.settings.body || {}, bmi = bodyBMI(), bal = balanceIndex();
   const max = Math.max(3, ...scores.map((s) => s.value));
-  const attrBars = scores.map((a) => `<div class="attr-row"><span class="attr-ic">${a.icon}</span><span class="attr-nm">${a.name}</span><span class="attr-bar"><span style="width:${Math.round(Math.min(100, a.value / max * 100))}%;background:${a.color}"></span></span><span class="attr-val">${a.value}</span></div>`).join('');
+  const attrBars = scores.map((a) => `<div class="attr-row"><span class="attr-dot" style="background:${esc(a.color)}"></span><span class="attr-nm">${esc(a.name)}</span><span class="attr-bar"><span style="width:${Math.round(Math.min(100, a.value / max * 100))}%;background:${esc(a.color)}"></span></span><span class="attr-val">ур.${a.value}</span></div>`).join('');
+  const balChip = bal.active >= 2 ? `<span class="bal-chip" title="Индекс баланса: равномерность твоих активных сфер + охват. Философия десятиборья — побеждает композиция, не одна вертикаль.">⚖️ Баланс ${bal.index}/100${bal.weakest ? ` · подтяни «${esc(bal.weakest.name)}»` : ''}</span>` : '';
   let bmiLabel = '';
   if (bmi) { const cat = bmi < 18.5 ? 'недовес' : bmi < 25 ? 'норма' : bmi < 30 ? 'избыток' : 'выше нормы'; bmiLabel = `<div class="bmi-label">ИМТ <b>${bmi.toFixed(1)}</b> · ${cat}${b.bodyfat ? ` · жир ${b.bodyfat}%` : ''}</div>`; }
   const bodyForm = `<form id="body-form" class="body-form">
@@ -1405,7 +1461,7 @@ function renderCharacter() {
       <div class="ch-meta">
         <h2>${esc((State.me && State.me.name) || 'Герой')}</h2>
         <div class="ch-rank" style="--rc:${cr.color}">${cr.icon} ${cr.name} · ур.${charLevel()}</div>
-        <div class="ch-arch">🎭 <b>${arch.name}</b> <span class="muted">— ${arch.desc}</span></div>
+        <div class="ch-arch" title="Класс определяется автоматически из названий твоих сфер">🎭 <b>${arch.name}</b> <span class="muted">— ${arch.desc}</span></div>
         <div class="xp-bar" style="max-width:340px"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
         ${(() => { const of = overallForm(), fm = formMeta(of); return `<div class="ch-form" title="Форма — текущая «свежесть» по активности. В отличие от уровня (доказанное мастерство — не сгорает), форма мягко падает без тренировок и легко возвращается.">
           <span class="cf-label">Форма</span>
@@ -1416,10 +1472,10 @@ function renderCharacter() {
     </div>
     ${avatarEditor()}
     <div class="char-grid">
-      <div class="card"><h3>🎯 Атрибуты — твой билд</h3>
-        <div class="radar-wrap">${radarSVG(scores)}</div>
+      <div class="card"><h3>🎯 Твоё десятиборье ${balChip}</h3>
+        ${scores.length >= 3 ? `<div class="radar-wrap">${radarSVG(scores)}</div>` : '<p class="muted">Добавь минимум 3 сферы в «Настройках», чтобы увидеть радар баланса.</p>'}
         <div class="attr-list">${attrBars}</div>
-        <p class="muted" style="font-size:12px;margin-bottom:0">Атрибуты растут из уровней сфер. Какая сфера качает какой атрибут — в «Настройках».</p></div>
+        <p class="muted" style="font-size:12px;margin-bottom:0">Оси — твои собственные сферы (уровень с учётом под-навыков). Это твоя уникальная комбинация: цель — не пик в одной оси, а сильная форма всего многоугольника.</p></div>
       <div class="card"><h3>🧍 Телосложение</h3>
         <div class="figure-wrap">${figureSVG()}</div>${bmiLabel}
         <p class="muted" style="font-size:12px">Силуэт живой: сила расширяет плечи, выносливость подсушивает, вес влияет на талию.</p>
@@ -1937,7 +1993,6 @@ function renderSettings() {
     return html;
   };
   const collapsed = State.settingsCollapsed || {};
-  const attrSel = (sk) => `<select data-field="attr" title="Какой атрибут персонажа качает? Только для радара — на XP не влияет">${ATTRIBUTES.map((a) => `<option value="${a.id}" ${(sk.attr || guessAttr(sk.name)) === a.id ? 'selected' : ''}>${a.icon} ${a.name} — ${a.hint}</option>`).join('')}</select>`;
   const skillRow = (sk, depth, hidden) => {
     const pillar = isPillar(sk.id);
     return `<div class="skill-edit ${depth > 0 ? 'is-sub' : ''} ${hidden ? 'se-hidden' : ''}" data-id="${sk.id}" style="--d:${depth}">
@@ -1945,7 +2000,6 @@ function renderSettings() {
       ${pillar ? `<button class="se-collapse" data-action="skill-collapse" data-id="${sk.id}" title="Свернуть/развернуть под-навыки">${collapsed[sk.id] ? '▸' : '▾'}</button>` : '<span class="se-collapse-spacer"></span>'}
       <input type="color" value="${esc(sk.color)}" data-field="color" />
       <input type="text" value="${esc(sk.name)}" data-field="name" />
-      ${attrSel(sk)}
       <select data-field="parentId" title="Вложенность сферы">${parentOptions(sk)}</select>
       <button class="del" data-action="delete-skill" data-id="${sk.id}">✕</button></div>`;
   };
@@ -2004,6 +2058,7 @@ const APP_SHELL = `
     <div id="charSummary" class="char-summary"></div>
     <nav id="nav">
       <button data-view="today">Сегодня</button>
+      <button data-view="calendar">Календарь</button>
       <button data-view="character">Персонаж</button>
       <button data-view="goals">Цели</button>
       <button data-view="tree">Навыки</button>
@@ -2048,7 +2103,7 @@ function renderLeaderboard() {
     </div>`;
 }
 
-const VIEWS = { today: renderToday, character: renderCharacter, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, leaderboard: renderLeaderboard, settings: renderSettings };
+const VIEWS = { today: renderToday, calendar: renderCalendarView, character: renderCharacter, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, leaderboard: renderLeaderboard, settings: renderSettings };
 function render() {
   if (State.phase !== 'app') { showAuthScreen(); return; }
   // Восстановить app shell если auth-экран его перезаписал
@@ -2158,13 +2213,14 @@ function onSubmit(e) {
 
   if (f.id === 'add-task') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
-    State.tasks.push({ id: uid(), title, skillId: f.skillId.value, skillIds: [f.skillId.value], estimateMin: Number(f.estimateMin.value) || 0, difficulty: f.difficulty.value, date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
+    const tDate = (f.date && f.date.value) || todayStr(); // вкладка «Календарь» добавляет на выбранный день
+    State.tasks.push({ id: uid(), title, skillId: f.skillId.value, skillIds: [f.skillId.value], estimateMin: Number(f.estimateMin.value) || 0, difficulty: f.difficulty.value, date: tDate, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
     Store.save('tasks', State.tasks); render();
   } else if (f.id === 'add-goal') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
     const type = f.type.value || 'short';
     const xpReward = f.xpReward.value !== '' ? Math.max(0, Number(f.xpReward.value)) : GOAL_XP[type];
-    State.goals.push({ id: 'g_' + uid(), title, skillId: f.skillId.value, type, xpReward, parentId: f.parentId.value || null, why: f.why.value.trim(), targetDate: f.targetDate.value || null, steps: [], createdAt: new Date().toISOString(), completedAt: null, archived: false });
+    State.goals.push({ id: 'g_' + uid(), title, skillId: f.skillId.value, type, xpReward, parentId: f.parentId.value || null, targetDate: f.targetDate.value || null, steps: [], createdAt: new Date().toISOString(), completedAt: null, archived: false });
     Store.save('goals', State.goals); render();
   } else if (f.classList.contains('add-step-form')) {
     e.preventDefault(); const g = goalById(f.dataset.goal); const v = f.step.value.trim(); if (!g || !v) return;
@@ -2198,7 +2254,16 @@ function onClick(e) {
   const navBtn = e.target.closest('#nav button[data-view]');
   if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'settings') State.adminUsers = null; render(); return; }
   const el = e.target.closest('[data-action]');
-  if (!el) return;
+  if (!el) {
+    // клик по пустому месту сетки календаря → подставить время в форму планирования
+    const calGrid = e.target.closest('.calv-grid');
+    if (calGrid && !e.target.closest('.cal-block')) {
+      const min = calYtoMin(e.clientY - calGrid.getBoundingClientRect().top);
+      const ti = document.getElementById('cal-time');
+      if (ti) { ti.value = fmtHM(min); toast(`Время ${fmtHM(min)} подставлено в форму`); }
+    }
+    return;
+  }
   const action = el.dataset.action, id = el.dataset.id, today = todayStr();
 
   // --- Auth actions ---
@@ -2346,7 +2411,7 @@ function onClick(e) {
     if (State.timer && State.timer.taskId === id) { State.timer = null; persistTimer(); stopTick(); }
     State.tasks = State.tasks.filter((x) => x.id !== id); Store.save('tasks', State.tasks); render();
   } else if (action === 'add-stretch') {
-    const sk = State.settings.skills.find((s) => /спорт|здоров|sport|health/i.test(s.name)) || State.settings.skills.find((s) => s.attr === 'str' || s.attr === 'end') || State.settings.skills[0];
+    const sk = State.settings.skills.find((s) => /спорт|здоров|sport|health/i.test(s.name)) || State.settings.skills.find((s) => ['str', 'end'].includes(guessAttr(s.name))) || State.settings.skills[0];
     if (!sk) return;
     State.tasks.push({ id: uid(), title: 'Разминка / прогулка', skillId: sk.id, skillIds: [sk.id], estimateMin: 10, difficulty: 'easy', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
     Store.save('tasks', State.tasks); toast('🤸 Разминка в плане — тело скажет спасибо'); render();
@@ -2413,6 +2478,12 @@ function onClick(e) {
   } else if (action === 'week-next') { State.weekStart = addDays(State.weekStart, 7); State.wkAddDate = null; render();
   } else if (action === 'wk-add-task') { State.wkAddDate = el.dataset.date; render();
   } else if (action === 'wk-add-cancel') { State.wkAddDate = null; render();
+
+  // --- Календарь (вкладка) ---
+  } else if (action === 'cal-date') { State.calDate = el.dataset.date; render();
+  } else if (action === 'cal-shift') { State.calDate = addDays(State.calDate || todayStr(), Number(el.dataset.days)); render();
+  } else if (action === 'cal-today') { State.calDate = todayStr(); render();
+  } else if (action === 'goto-calendar') { State.calDate = todayStr(); State.view = 'calendar'; render();
   } else if (action === 'save-week') {
     const ws = State.weekStart; State.weeks[ws] = State.weeks[ws] || {};
     State.weeks[ws].intention = document.getElementById('week-intention').value;
@@ -2484,7 +2555,7 @@ function captureSettingsForm() {
   if (skillRows.length) {
     s.skills = skillRows.map((row) => {
       const psel = row.querySelector('[data-field="parentId"]');
-      return { id: row.dataset.id, name: row.querySelector('[data-field="name"]').value.trim() || 'Без названия', color: row.querySelector('[data-field="color"]').value, attr: row.querySelector('[data-field="attr"]') ? row.querySelector('[data-field="attr"]').value : guessAttr(row.querySelector('[data-field="name"]').value), parentId: psel && psel.value ? psel.value : null };
+      return { id: row.dataset.id, name: row.querySelector('[data-field="name"]').value.trim() || 'Без названия', color: row.querySelector('[data-field="color"]').value, parentId: psel && psel.value ? psel.value : null };
     });
     // нормализация parentId: глубина любая, но родитель должен существовать и цепочка не должна зацикливаться
     for (const sk of s.skills) {
@@ -2590,7 +2661,6 @@ async function initApp() {
   ensureLootbox();
 
   ensureTrees();
-  ensureSkillAttrs();
   State.treeSkill = State.settings.skills[0] && State.settings.skills[0].id;
   State.weekStart = weekStart(todayStr());
   State.timer = loadTimer();
@@ -2695,6 +2765,48 @@ function cleanupWkDrag() {
   document.querySelectorAll('.wk-drop').forEach((el) => el.classList.remove('wk-drop'));
 }
 
+// --- Перетаскивание по часовой сетке во вкладке «Календарь» (#8: drag в расписании дня) ---
+let _calDragId = null;
+function onCalDragStart(e) {
+  const b = e.target.closest('.calv-block, .calv-chip'); if (!b) return;
+  _calDragId = b.dataset.id;
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', _calDragId); } catch {}
+  b.classList.add('wk-dragging');
+}
+function onCalDragOver(e) {
+  if (!_calDragId) return;
+  const grid = e.target.closest('.calv-grid'), tray = e.target.closest('.calv-tray');
+  if (!grid && !tray) return;
+  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+  if (grid) {
+    const min = calYtoMin(e.clientY - grid.getBoundingClientRect().top);
+    let ind = grid.querySelector('.calv-indicator');
+    if (!ind) { ind = document.createElement('div'); ind.className = 'calv-indicator'; grid.appendChild(ind); }
+    ind.style.top = calMinToY(min) + 'px';
+    ind.dataset.time = fmtHM(min);
+  }
+}
+function onCalDrop(e) {
+  if (!_calDragId) return;
+  const grid = e.target.closest('.calv-grid'), tray = e.target.closest('.calv-tray');
+  if (!grid && !tray) { cleanupCalDrag(); return; }
+  e.preventDefault();
+  const t = questById(_calDragId);
+  if (t) {
+    if (grid) t.startTime = fmtHM(calYtoMin(e.clientY - grid.getBoundingClientRect().top));
+    else t.startTime = null; // дроп в «Без времени» — снять с расписания
+    Store.save('tasks', State.tasks);
+  }
+  cleanupCalDrag();
+  render();
+}
+function cleanupCalDrag() {
+  _calDragId = null;
+  document.querySelectorAll('.calv-indicator').forEach((el) => el.remove());
+  document.querySelectorAll('.wk-dragging').forEach((el) => el.classList.remove('wk-dragging'));
+}
+
 // Точка входа — проверяем сессию, потом грузим нужный экран
 async function init() {
   document.addEventListener('submit', onSubmit);
@@ -2706,6 +2818,10 @@ async function init() {
   document.addEventListener('dragover', onWkDragOver);
   document.addEventListener('drop', onWkDrop);
   document.addEventListener('dragend', cleanupWkDrag);
+  document.addEventListener('dragstart', onCalDragStart);
+  document.addEventListener('dragover', onCalDragOver);
+  document.addEventListener('drop', onCalDrop);
+  document.addEventListener('dragend', cleanupCalDrag);
   // Страховка от потери правок: при закрытии/перезагрузке дочитываем форму настроек из DOM и сохраняем (keepalive переживает unload)
   window.addEventListener('beforeunload', () => {
     if (!document.getElementById('skills-list')) return;

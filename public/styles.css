@@ -265,15 +265,43 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .cal-schedule #cal-dur { width: 78px; }
 .cal-dur-unit { font-size: 12px; margin-left: -4px; }
 
+/* ---------- Вкладка «Календарь» (Apple-стиль) ---------- */
+.calv-title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.calv-title h2 { font-size: 19px; margin: 0; }
+.calv-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 12px; }
+.calv-day {
+  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 7px 2px 5px;
+  background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; cursor: pointer; color: var(--text);
+}
+.calv-day:hover { border-color: var(--accent); }
+.calv-day.active { background: color-mix(in srgb, var(--accent) 22%, var(--panel2)); border-color: var(--accent); }
+.calv-day.is-today .cd-n { color: var(--accent); font-weight: 800; }
+.cd-wd { font-size: 10px; color: var(--muted); text-transform: uppercase; }
+.cd-n { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.cd-dot { font-size: 9.5px; min-width: 15px; padding: 0 3px; border-radius: 999px; background: var(--accent); color: #fff; font-weight: 700; line-height: 14px; }
+.cd-dot-empty { height: 14px; }
+.calv-grid .cal-row { height: 48px; }
+.calv-block { cursor: grab; }
+.calv-block:active { cursor: grabbing; }
+.cal-check { flex: none; width: 17px; height: 17px; font-size: 11px; margin-top: 1px; }
+.calv-now { position: absolute; left: 44px; right: 0; height: 0; border-top: 2px solid var(--bad); z-index: 3; pointer-events: none; }
+.calv-now::before { content: ''; position: absolute; left: -5px; top: -5px; width: 8px; height: 8px; border-radius: 50%; background: var(--bad); }
+.calv-indicator {
+  position: absolute; left: 44px; right: 0; height: 0; border-top: 2px dashed var(--accent); z-index: 4; pointer-events: none;
+}
+.calv-indicator::after { content: attr(data-time); position: absolute; left: 4px; top: -18px; font-size: 11px; font-weight: 700; color: var(--accent); background: var(--panel); padding: 1px 5px; border-radius: 4px; }
+.calv-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.calv-chip {
+  display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; font-size: 12.5px; cursor: grab;
+  background: color-mix(in srgb, var(--c) 22%, var(--panel2)); border: 1px solid color-mix(in srgb, var(--c) 45%, var(--line)); border-radius: 999px;
+}
+.calv-chip:active { cursor: grabbing; }
+
 /* ---------- Goals ---------- */
 .goal-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .goal-form input[name="title"] { flex: 1 1 100%; }
 .goal-form input, .goal-form select { flex: 1 1 120px; min-width: 0; }
 .goal-form button[type="submit"] { flex: 0 0 auto; }
-.goal-extra { flex: 1 1 100%; }
-.goal-extra summary { font-size: 12px; color: var(--muted); cursor: pointer; padding: 2px 0; user-select: none; }
-.goal-extra summary:hover { color: var(--fg); }
-.goal-extra input { width: 100%; margin-top: 6px; }
 .goal-type { font-size: 11px; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); }
 .type-recurring { color: #5fbf5f; } .type-short { color: #4f86f7; } .type-mid { color: #d8a44b; } .type-long { color: #e0526a; }
 .goal-xp { font-size: 11px; color: #e7c558; font-weight: 600; }
@@ -712,9 +740,11 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .radar-wrap { display: flex; justify-content: center; }
 .radar { width: 100%; max-width: 280px; height: auto; }
 .attr-list { display: grid; gap: 8px; margin: 12px 0; }
-.attr-row { display: grid; grid-template-columns: 22px 110px 1fr 28px; align-items: center; gap: 8px; font-size: 13px; }
+.attr-row { display: grid; grid-template-columns: 22px 110px 1fr 42px; align-items: center; gap: 8px; font-size: 13px; }
 .attr-ic { font-size: 15px; }
-.attr-nm { font-weight: 600; }
+.attr-dot { width: 11px; height: 11px; border-radius: 50%; justify-self: center; }
+.attr-nm { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bal-chip { font-size: 11.5px; font-weight: 600; color: var(--muted); background: var(--panel2); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; margin-left: 8px; vertical-align: middle; cursor: help; }
 .attr-bar { height: 8px; background: var(--panel2); border-radius: 999px; overflow: hidden; }
 .attr-bar > span { display: block; height: 100%; border-radius: 999px; transition: width .5s; }
 .attr-val { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
