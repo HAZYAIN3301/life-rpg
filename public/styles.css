@@ -823,6 +823,16 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .nudge { background: linear-gradient(120deg, rgba(224,162,62,.16), rgba(224,162,62,.06)); border: 1px solid #e0a23e; color: #ffd479; font-weight: 700; padding: 8px 14px; border-radius: 999px; cursor: pointer; font-size: 14px; }
 .nudge:hover { filter: brightness(1.1); }
 .nudge-boost { color: #ffd479; font-weight: 600; font-size: 13px; }
+.en-low .nudge-boost { color: #ffb3b3; }
+
+/* ---------- Энергия (идея 19) ---------- */
+.energy-card { padding: 12px 16px !important; cursor: help; }
+.en-head { display: flex; align-items: center; gap: 8px; font-size: 13.5px; }
+.en-ic { font-size: 16px; }
+.en-num { font-weight: 700; font-variant-numeric: tabular-nums; margin-left: 2px; }
+.en-text { font-size: 12.5px; }
+.en-bar { height: 9px; background: var(--panel2); border-radius: 999px; overflow: hidden; margin-top: 8px; }
+.en-bar > span { display: block; height: 100%; border-radius: 999px; transition: width .5s, background .5s; }
 
 /* ============================================================
    📱 Мобильная адаптация (телефоны / узкие экраны)

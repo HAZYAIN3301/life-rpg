@@ -50,6 +50,7 @@ const DEFAULT_SETTINGS = {
   curve: { base: 100, growth: 1.3, skillBase: 60 },
   focus: { pomodoro: true, workMin: 25, breakMin: 5, sound: true, notify: true },
   imported: {}, // { skillId: { tier, xp, label, at } } — импортированный стартовый уровень
+  energy: { day: null, cur: 100, max: 100, loadToday: 0, hitZero: false }, // «Энергия» (идея 19): ресурс нагрузка/восстановление
 };
 
 const DIFF = { easy: 'Лёгкая', normal: 'Обычная', hard: 'Сложная' };
@@ -223,7 +224,8 @@ const IMPORT_LADDERS = {
   'язык':         { hint: 'CEFR', top: 18, tiers: ['A1 — начальный', 'A2 — базовый', 'B1 — средний', 'B2 — выше среднего', 'C1 — продвинутый', 'C2 — владение'] },
   'учёб':         { hint: 'ступень образования', top: 20, tiers: ['Школа', 'Старшие классы / Abitur', 'Бакалавриат', 'Магистратура', 'Аспирантура / PhD'] },
   'программир':   { hint: 'грейд', top: 20, tiers: ['Не программирую', 'Учу основы', 'Junior', 'Middle', 'Senior', 'Lead / архитектор'] },
-  'код':          { hint: 'грейд', top: 20, tiers: ['Не программирую', 'Учу основы', 'Junior', 'Middle', 'Senior', 'Lead / архитектор'] },
+  'кодинг':       { hint: 'грейд', top: 20, tiers: ['Не программирую', 'Учу основы', 'Junior', 'Middle', 'Senior', 'Lead / архитектор'] },
+  'разработк':    { hint: 'грейд', top: 20, tiers: ['Не программирую', 'Учу основы', 'Junior', 'Middle', 'Senior', 'Lead / архитектор'] },
   'чтени':        { hint: 'книг в год', top: 16, tiers: ['Почти не читаю', '5–10 книг/год', '1–2 в месяц', 'Книга в неделю', 'Запойный читатель'] },
   // Творчество / харизма
   'рисов':        { hint: 'реальные работы как ориентир', top: 18, tiers: ['Не рисую', 'Копирую из туториалов', 'Рисую из головы простые образы', 'Сложные работы, свой стиль', 'Коммерческий / профессиональный уровень'] },
@@ -243,14 +245,38 @@ const IMPORT_LADDERS = {
   'бизнес':       { hint: 'стадия дела', top: 20, tiers: ['Только идея', 'Первые клиенты / MVP', 'Стабильная выручка', 'Масштабируемый бизнес', 'Успешный выход / инвестиции'] },
   'стартап':      { hint: 'стадия дела', top: 20, tiers: ['Только идея', 'Первые клиенты / MVP', 'Стабильная выручка', 'Масштабируемый бизнес', 'Успешный выход / инвестиции'] },
   'предприн':     { hint: 'стадия дела', top: 20, tiers: ['Только идея', 'Первые клиенты / MVP', 'Стабильная выручка', 'Масштабируемый бизнес', 'Успешный выход / инвестиции'] },
-  'дел':          { hint: 'стадия дела', top: 20, tiers: ['Только идея', 'Первые клиенты / MVP', 'Стабильная выручка', 'Масштабируемый бизнес', 'Успешный выход / инвестиции'] },
   'инвест':       { hint: 'знания + портфель', top: 18, tiers: ['Нет сбережений', 'Есть подушка безопасности', 'Регулярно инвестирую (ETF/акции)', 'Диверсифицированный портфель', 'Финансовая независимость'] },
   'финанс':       { hint: 'знания + портфель', top: 18, tiers: ['Нет сбережений', 'Есть подушка безопасности', 'Регулярно инвестирую', 'Диверсифицированный портфель', 'Финансовая независимость'] },
+  'продаж':       { hint: 'результат / объём', top: 18, tiers: ['Не продаю', 'Первые сделки', 'Стабильно закрываю', 'Перевыполняю план', 'Топ-сейлз / руковожу отделом'] },
+  'маркетинг':    { hint: 'каналы / результат', top: 18, tiers: ['Не занимаюсь', 'Базы: посты, таргет', 'Веду каналы с результатом', 'Системный маркетинг / аналитика', 'Маркетинг-директор / стратег'] },
+  // Социальное / коммуникация
+  'отношен':      { hint: 'честная самооценка близости', top: 16, tiers: ['Сложно сближаться', 'Есть близкие, но нестабильно', 'Здоровые крепкие связи', 'Глубокая близость, умею в конфликты', 'Опора и пример для других'] },
+  'выступл':      { hint: 'опыт сцены', top: 18, tiers: ['Боюсь публики', 'Выступаю с подготовкой', 'Уверенно держу зал', 'Регулярные доклады / лекции', 'Профессиональный спикер'] },
+  'оратор':       { hint: 'опыт сцены', top: 18, tiers: ['Боюсь публики', 'Выступаю с подготовкой', 'Уверенно держу зал', 'Регулярные доклады / лекции', 'Профессиональный спикер'] },
+  'переговор':    { hint: 'сложность сделок', top: 18, tiers: ['Избегаю', 'Базовые договорённости', 'Уверенно торгуюсь', 'Сложные многосторонние сделки', 'Профессиональный переговорщик'] },
+  // Письмо / контент
+  'писательств':  { hint: 'объём / публикации', top: 18, tiers: ['Не пишу', 'Пишу для себя', 'Регулярные тексты, есть читатели', 'Публикуюсь / продаю тексты', 'Профессиональный автор'] },
+  'копирайт':     { hint: 'клиенты / результат', top: 18, tiers: ['Не пишу', 'Учусь, первые тексты', 'Беру заказы', 'Стабильный поток клиентов', 'Топ-копирайтер / редактор'] },
+  'подкаст':      { hint: 'регулярность / аудитория', top: 18, tiers: ['Не веду', 'Первые выпуски', 'Регулярно, есть слушатели', 'Стабильная аудитория / гости', 'Крупный подкаст'] },
+  // Практики / тело
+  'йог':          { hint: 'глубина практики', top: 18, tiers: ['Не практикую', 'Базовые асаны по видео', 'Регулярная самостоятельная практика', 'Сложные асаны, пранаяма', 'Преподаю / сертифицирован'] },
+  'медитац':      { hint: 'регулярность практики', top: 16, tiers: ['Не практикую', 'Иногда 5–10 мин', 'Ежедневная практика', '20–30 мин в потоке', 'Ретриты / углублённая практика'] },
+  'готов':        { hint: 'сложность блюд', top: 16, tiers: ['Только базовое', 'Готовлю по рецептам', 'Импровизирую уверенно', 'Сложные блюда / своя кухня', 'Уровень шефа'] },
+  'кулинар':      { hint: 'сложность блюд', top: 16, tiers: ['Только базовое', 'Готовлю по рецептам', 'Импровизирую уверенно', 'Сложные блюда / своя кухня', 'Уровень шефа'] },
+  'скалолаз':     { hint: 'категория трасс', top: 18, tiers: ['Не лажу', 'Лёгкие трассы в зале', 'Уверенно 6a–6b', 'Сложные 7-е категории', 'Профи / аутдор-мультипитчи'] },
+  // Игры / digital
+  'шахмат':       { hint: 'рейтинг ELO', top: 18, tiers: ['Знаю правила', 'Играю, ~800–1200', 'Уверенно 1200–1600', '1600–2000', 'Кандидат в мастера / выше'] },
+  'геймдев':      { hint: 'выпущенные проекты', top: 20, tiers: ['Не делаю игры', 'Учу движок, прототипы', 'Завершил мелкие проекты', 'Выпустил игру / в команде', 'Профессиональный геймдев'] },
+  'моделирован':  { hint: '3D / портфолио', top: 18, tiers: ['Не моделю', 'Базовые формы в Blender', 'Готовые модели', 'Портфолио / фриланс', 'Профессиональный 3D-артист'] },
+  'актёр':        { hint: 'сцена / роли', top: 18, tiers: ['Не играю', 'Кружок / любитель', 'Регулярные постановки', 'Заметные роли / съёмки', 'Профессиональный актёр'] },
+  'волонт':       { hint: 'регулярность вклада', top: 16, tiers: ['Не участвую', 'Разовые акции', 'Регулярно помогаю', 'Координирую проекты', 'Веду своё движение'] },
 };
 const GENERIC_LADDER = { hint: 'честная самооценка — сравни с тем, кем был год назад', top: 16, tiers: ['Только начинаю', 'Регулярная практика', 'Уверенный прогресс', 'Могу научить других', 'Глубокая экспертиза'] };
+// Ключи матчим от длинных к коротким — специфичное побеждает (иначе «Стартап» цепляет «арт»→рисование, «Рукоделие» цеплял «дел»).
+const LADDER_KEYS = Object.keys(IMPORT_LADDERS).sort((a, b) => b.length - a.length);
 function ladderFor(skillName) {
   const n = (skillName || '').toLowerCase();
-  for (const key in IMPORT_LADDERS) if (n.includes(key)) return IMPORT_LADDERS[key];
+  for (const key of LADDER_KEYS) if (n.includes(key)) return IMPORT_LADDERS[key];
   return GENERIC_LADDER;
 }
 // Целевой уровень для каждого тира (tier 0 → ур.1; верхний → ladder.top)
@@ -358,8 +384,10 @@ function completeTask(t, desire) {
   let xp = itemXp(t);
   if (desire === 'forced') xp = Math.round(xp * (1 + GRIT_BONUS));
   t.xpAwarded = Math.max(1, xp); t.goldAwarded = itemGold(t);
+  const eDelta = applyEnergy(t);
   let msg = `+${t.xpAwarded} XP · +${t.goldAwarded} 🪙 · ${skillById(t.skillId).name}`;
   if (desire === 'forced') msg += ` · 💪 через силу +${Math.round(GRIT_BONUS * 100)}%`;
+  if (eDelta) msg += ` · ${eDelta > 0 ? '+' : ''}${eDelta} 🔋`;
   toast(msg);
   if (desire === 'hyped') { const h = activateHype(); toast(`⚔️ Хайп ×${h.stacks} · +${hypePct()}% XP на ${hypeMinLeft()} мин — ты захотел трудное!`); }
   Store.save('tasks', State.tasks); checkAchievements(); render(); publishLeaderboard();
@@ -804,6 +832,55 @@ function ensureLootbox() {
   if (State.lootbox.day !== todayStr()) { State.lootbox.day = todayStr(); State.lootbox.opened = 0; }
   return State.lootbox;
 }
+
+// ============================================================
+//  Энергия (идея 19) — ресурс «нагрузка ↔ восстановление».
+//  Принцип: НИКОГДА не блокирует и не режет XP. Только индикатор + тёплый нудж.
+//  Ёмкость (max) растёт по суперкомпенсации: нагрузка + отдых → адаптация.
+// ============================================================
+const ENERGY = { regen: 40, max0: 100, maxFloor: 80, maxCeil: 220, grow: 2, shrink: 1, loadForGrowth: 20,
+  cost: { easy: 0, normal: 5, hard: 12 }, recoverMin: 8, recoverMax: 30 };
+// Восстановительная активность — по ключевым словам в названии (сон, отдых, прогулка, медитация…)
+const RECOVERY_RE = /сон|спат|выспат|отдых|отдохн|прогул|медит|релакс|восстан|дыхан|растяжк|баня|сауна|ванн|массаж|поспа|вздремн|сиест|nap|rest|chill|sleep/i;
+function isRecovery(it) { return RECOVERY_RE.test(it.title || ''); }
+function ensureEnergy() {
+  const s = State.settings;
+  if (!s.energy) s.energy = { day: todayStr(), cur: 100, max: 100, loadToday: 0, hitZero: false };
+  const e = s.energy, today = todayStr();
+  if (e.day !== today) {
+    // Суперкомпенсация по вчерашнему дню: был баланс (нагрузка была, в ноль не ушёл) → ёмкость растёт; загнал в ноль → падает.
+    if (e.day) {
+      if (e.loadToday >= ENERGY.loadForGrowth && !e.hitZero) e.max = Math.min(ENERGY.maxCeil, e.max + ENERGY.grow);
+      else if (e.hitZero) e.max = Math.max(ENERGY.maxFloor, e.max - ENERGY.shrink);
+    }
+    e.cur = Math.min(e.max, e.cur + ENERGY.regen); // выспался → реген
+    e.loadToday = 0; e.hitZero = false; e.day = today;
+  }
+  return e;
+}
+function energyPct() { const e = ensureEnergy(); return e.max ? Math.round(e.cur / e.max * 100) : 0; }
+function energyMeta() {
+  const p = energyPct();
+  if (p >= 60) return { color: '#5fbf7a', text: 'свежесть', icon: '🔋' };
+  if (p >= 25) return { color: '#e0a23e', text: 'на исходе', icon: '🔋' };
+  return { color: '#e0526a', text: 'нужен отдых', icon: '🪫' };
+}
+// Применяем энергию при выполнении квеста/привычки. Возвращает дельту (для тоста).
+function applyEnergy(it) {
+  const e = ensureEnergy(), min = Number(it.estimateMin) || 0;
+  let delta;
+  if (isRecovery(it)) {
+    delta = Math.min(ENERGY.recoverMax, Math.max(ENERGY.recoverMin, Math.round(min / 3)));
+  } else {
+    const w = ENERGY.cost[it.difficulty] ?? ENERGY.cost.normal;
+    delta = -Math.round(w * Math.max(0.5, min / 30));
+    e.loadToday += -delta;
+  }
+  e.cur = Math.max(0, Math.min(e.max, e.cur + delta));
+  if (e.cur <= 0) e.hitZero = true;
+  Store.save('settings', State.settings);
+  return delta;
+}
 function todayActivityCount() {
   const t = todayStr();
   const q = State.tasks.filter((x) => x.done && dayOf(x) === t).length;
@@ -1222,6 +1299,13 @@ function renderToday() {
         <div class="timer-task">${tm ? (tmTask ? '🎯 ' + esc(tmTask.title) : '(задача удалена)') : 'Таймер фокуса — нажми ▶ у квеста'}</div></div>
       <div class="timer-controls">${tm ? `${tm.running ? '<button class="btn ghost" data-action="timer-pause">⏸ Пауза</button>' : '<button class="btn" data-action="timer-resume">▶ Продолжить</button>'}<button class="btn" data-action="timer-stop">⏹ Стоп · записать</button><button class="btn ghost" data-action="open-pip" title="Плавающее окно поверх всех приложений">↗ Окно</button>` : ''}</div></div>`;
 
+  // Энергия (идея 19) — индикатор нагрузки/восстановления
+  const en = ensureEnergy(), eP = energyPct(), eM = energyMeta();
+  const energyCard = `<div class="card energy-card" title="Энергия — твой ресурс на день. Сложные квесты тратят, отдых и сон восстанавливают. Не блокирует ничего — это про ритм нагрузка↔восстановление. Ёмкость растёт, когда чередуешь труд и отдых (как в тренировках).">
+      <div class="en-head"><span class="en-ic">${eM.icon}</span><b>Энергия</b><span class="en-num" style="color:${eM.color}">${en.cur} / ${en.max}</span><span class="en-text muted">· ${eM.text}</span></div>
+      <div class="en-bar"><span style="width:${eP}%;background:${eM.color}"></span></div></div>`;
+  const lowEnergyNudge = (eP < 25 && doneCount > 0) ? `<div class="card nudge-card en-low"><span class="nudge-boost">🪫 Энергия на нуле. Отдых сейчас ценнее форсажа — запланируй сон/прогулку, ёмкость вырастет к завтра.</span></div>` : '';
+
   const chestsAvail = lootChestsAvailable(), activeBoost = lootBoostPct(), hp = hypePct();
   const nudgeCard = (chestsAvail > 0 || activeBoost > 0 || hp > 0) ? `<div class="card nudge-card">${chestsAvail > 0 ? `<button class="nudge" data-action="goto-rewards">🎁 ${chestsAvail} ${plural(chestsAvail, 'сундук', 'сундука', 'сундуков')} ждёт — открыть</button>` : ''}${activeBoost > 0 ? `<span class="nudge-boost">⚡ +${activeBoost}% XP активен</span>` : ''}${hp > 0 ? `<span class="nudge-boost">🔥 Хайп ×${hypeState().stacks} · +${hp}% XP · ${hypeMinLeft()}м</span>` : ''}</div>` : '';
   // Нудж новичку: не начинай с нуля — импортируй реальный опыт
@@ -1235,7 +1319,7 @@ function renderToday() {
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">↪ Перенести всё на сегодня</button></div>` : '';
 
-  return `${timerCard}${nudgeCard}${importNudge}${stretchNudge}
+  return `${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="Новый квест на сегодня…" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
@@ -2396,7 +2480,7 @@ function onClick(e) {
     const h = habitById(id); if (!h) return;
     State.habitlog[today] = State.habitlog[today] || {};
     if (State.habitlog[today][id]) { delete State.habitlog[today][id]; if (!Object.keys(State.habitlog[today]).length) delete State.habitlog[today]; }
-    else { State.habitlog[today][id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() }; toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${skillById(h.skillId).name}`); }
+    else { State.habitlog[today][id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() }; const eD = applyEnergy(h); toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${skillById(h.skillId).name}${eD ? ` · ${eD > 0 ? '+' : ''}${eD} 🔋` : ''}`); }
     Store.save('habitlog', State.habitlog); checkAchievements(); render(); publishLeaderboard();
   } else if (action === 'focus-task') { const t = questById(id); if (t && !t.done) startFocus(id);
   } else if (action === 'timer-pause') { pauseFocus();
@@ -2659,6 +2743,7 @@ async function initApp() {
   State.weeks = await Store.load('weeks', {});
   State.lootbox = await Store.load('lootbox', { day: todayStr(), opened: 0, goldWon: 0, boost: null, titles: [], equipped: null, history: [] });
   ensureLootbox();
+  ensureEnergy();
 
   ensureTrees();
   State.treeSkill = State.settings.skills[0] && State.settings.skills[0].id;
