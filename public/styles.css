@@ -836,6 +836,7 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .en-text { font-size: 12.5px; }
 .en-bar { height: 9px; background: var(--panel2); border-radius: 999px; overflow: hidden; margin-top: 8px; }
 .en-bar > span { display: block; height: 100%; border-radius: 999px; transition: width .5s, background .5s; }
+.en-note { font-size: 11px; margin: 7px 0 0; }
 
 /* ============================================================
    📱 Мобильная адаптация (телефоны / узкие экраны)

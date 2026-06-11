@@ -50,7 +50,7 @@ const DEFAULT_SETTINGS = {
   curve: { base: 100, growth: 1.3, skillBase: 60 },
   focus: { pomodoro: true, workMin: 25, breakMin: 5, sound: true, notify: true },
   imported: {}, // { skillId: { tier, xp, label, at } } — импортированный стартовый уровень
-  energy: { day: null, cur: 100, max: 100, loadToday: 0, hitZero: false }, // «Энергия» (идея 19): ресурс нагрузка/восстановление
+  energy: { day: null, cur: 100, max: 100, loadToday: 0, hitZero: false, tickAt: null }, // «Энергия» (идея 19): пассивное восстановление по времени
 };
 
 const DIFF = { easy: 'Лёгкая', normal: 'Обычная', hard: 'Сложная' };
@@ -865,26 +865,29 @@ function ensureLootbox() {
 // ============================================================
 //  Энергия (идея 19) — ресурс «нагрузка ↔ восстановление».
 //  Принцип: НИКОГДА не блокирует и не режет XP. Только индикатор + тёплый нудж.
+//  ВОССТАНОВЛЕНИЕ ПАССИВНОЕ — по реальному времени (не работаешь = отдыхаешь; сон ночью = много часов).
+//  Логировать отдых/сон НЕ нужно. Это оценка по задачам; точные данные — позже через часы (Apple Watch/Garmin).
 //  Ёмкость (max) растёт по суперкомпенсации: нагрузка + отдых → адаптация.
 // ============================================================
-const ENERGY = { regen: 40, max0: 100, maxFloor: 80, maxCeil: 220, grow: 2, shrink: 1, loadForGrowth: 20,
-  cost: { easy: 0, normal: 5, hard: 12 }, recoverMin: 8, recoverMax: 30 };
-// Восстановительная активность — по ключевым словам в названии (сон, отдых, прогулка, медитация…)
-const RECOVERY_RE = /сон|спат|выспат|отдых|отдохн|прогул|медит|релакс|восстан|дыхан|растяжк|баня|сауна|ванн|массаж|поспа|вздремн|сиест|nap|rest|chill|sleep/i;
-function isRecovery(it) { return RECOVERY_RE.test(it.title || ''); }
+const ENERGY = { perHour: 7, maxFloor: 80, maxCeil: 220, grow: 2, shrink: 1, loadForGrowth: 12,
+  cost: { easy: 0, normal: 4, hard: 8 }, costCap: 24 };
 function ensureEnergy() {
   const s = State.settings;
-  if (!s.energy) s.energy = { day: todayStr(), cur: 100, max: 100, loadToday: 0, hitZero: false };
-  const e = s.energy, today = todayStr();
+  if (!s.energy) s.energy = { day: todayStr(), cur: 100, max: 100, loadToday: 0, hitZero: false, tickAt: Date.now() };
+  const e = s.energy, today = todayStr(), now = Date.now();
+  if (!e.tickAt) e.tickAt = now;
+  // Пассивное восстановление по реальному времени — главный механизм отдыха (сон, паузы)
+  const elapsedH = (now - e.tickAt) / 3600000;
+  if (elapsedH > 0) { e.cur = Math.min(e.max, e.cur + ENERGY.perHour * elapsedH); e.tickAt = now; }
   if (e.day !== today) {
-    // Суперкомпенсация по вчерашнему дню: был баланс (нагрузка была, в ноль не ушёл) → ёмкость растёт; загнал в ноль → падает.
+    // Суперкомпенсация по вчерашнему дню: была нагрузка и не ушёл в ноль → ёмкость растёт; загнал в ноль → падает.
     if (e.day) {
       if (e.loadToday >= ENERGY.loadForGrowth && !e.hitZero) e.max = Math.min(ENERGY.maxCeil, e.max + ENERGY.grow);
       else if (e.hitZero) e.max = Math.max(ENERGY.maxFloor, e.max - ENERGY.shrink);
     }
-    e.cur = Math.min(e.max, e.cur + ENERGY.regen); // выспался → реген
-    e.loadToday = 0; e.hitZero = false; e.day = today;
+    e.loadToday = 0; e.hitZero = false; e.day = today; e.cur = Math.min(e.max, e.cur);
   }
+  e.cur = Math.round(e.cur);
   return e;
 }
 function energyPct() { const e = ensureEnergy(); return e.max ? Math.round(e.cur / e.max * 100) : 0; }
@@ -894,20 +897,17 @@ function energyMeta() {
   if (p >= 25) return { color: '#e0a23e', text: 'на исходе', icon: '🔋' };
   return { color: '#e0526a', text: 'нужен отдых', icon: '🪫' };
 }
-// Применяем энергию при выполнении квеста/привычки. Возвращает дельту (для тоста).
+// Применяем энергию при выполнении квеста/привычки (только трата; восстановление — пассивное по времени).
 function applyEnergy(it) {
   const e = ensureEnergy(), min = Number(it.estimateMin) || 0;
-  let delta;
-  if (isRecovery(it)) {
-    delta = Math.min(ENERGY.recoverMax, Math.max(ENERGY.recoverMin, Math.round(min / 3)));
-  } else {
-    const w = ENERGY.cost[it.difficulty] ?? ENERGY.cost.normal;
-    delta = -Math.round(w * Math.max(0.5, min / 30));
+  const w = ENERGY.cost[it.difficulty] ?? ENERGY.cost.normal;
+  const delta = -Math.min(ENERGY.costCap, Math.round(w * Math.max(0.5, min / 30)));
+  if (delta < 0) {
     e.loadToday += -delta;
+    e.cur = Math.max(0, e.cur + delta);
+    if (e.cur <= 0) e.hitZero = true;
+    Store.save('settings', State.settings);
   }
-  e.cur = Math.max(0, Math.min(e.max, e.cur + delta));
-  if (e.cur <= 0) e.hitZero = true;
-  Store.save('settings', State.settings);
   return delta;
 }
 function todayActivityCount() {
@@ -1333,10 +1333,11 @@ function renderToday() {
 
   // Энергия (идея 19) — индикатор нагрузки/восстановления
   const en = ensureEnergy(), eP = energyPct(), eM = energyMeta();
-  const energyCard = `<div class="card energy-card" title="Энергия — твой ресурс на день. Сложные квесты тратят, отдых и сон восстанавливают. Не блокирует ничего — это про ритм нагрузка↔восстановление. Ёмкость растёт, когда чередуешь труд и отдых (как в тренировках).">
+  const energyCard = `<div class="card energy-card" title="Энергия — индикатор нагрузки за день. Сложные квесты тратят. Восстановление ПАССИВНОЕ: идёт само по реальному времени (паузы, вечер, сон ночью) — логировать отдых не нужно. Не блокирует ничего, на XP не влияет. Ёмкость растёт, когда чередуешь нагрузку и восстановление (как в тренировках). Это оценка по задачам — точнее будет позже через часы.">
       <div class="en-head"><span class="en-ic">${eM.icon}</span><b>Энергия</b><span class="en-num" style="color:${eM.color}">${en.cur} / ${en.max}</span><span class="en-text muted">· ${eM.text}</span></div>
-      <div class="en-bar"><span style="width:${eP}%;background:${eM.color}"></span></div></div>`;
-  const lowEnergyNudge = (eP < 25 && doneCount > 0) ? `<div class="card nudge-card en-low"><span class="nudge-boost">🪫 Энергия на нуле. Отдых сейчас ценнее форсажа — запланируй сон/прогулку, ёмкость вырастет к завтра.</span></div>` : '';
+      <div class="en-bar"><span style="width:${eP}%;background:${eM.color}"></span></div>
+      <p class="en-note muted">Восстанавливается сама со временем · ≈ оценка по задачам, точнее с Apple Watch / Garmin (позже)</p></div>`;
+  const lowEnergyNudge = (eP < 25 && doneCount > 0) ? `<div class="card nudge-card en-low"><span class="nudge-boost">🪫 Много нагрузки сегодня. Отдых ценнее форсажа — энергия восстановится сама за паузами и ночью, а ёмкость вырастет.</span></div>` : '';
 
   const chestsAvail = lootChestsAvailable(), activeBoost = lootBoostPct(), hp = hypePct();
   const nudgeCard = (chestsAvail > 0 || activeBoost > 0 || hp > 0) ? `<div class="card nudge-card">${chestsAvail > 0 ? `<button class="nudge" data-action="goto-rewards">🎁 ${chestsAvail} ${plural(chestsAvail, 'сундук', 'сундука', 'сундуков')} ждёт — открыть</button>` : ''}${activeBoost > 0 ? `<span class="nudge-boost">⚡ +${activeBoost}% XP активен</span>` : ''}${hp > 0 ? `<span class="nudge-boost">🔥 Хайп ×${hypeState().stacks} · +${hp}% XP · ${hypeMinLeft()}м</span>` : ''}</div>` : '';
