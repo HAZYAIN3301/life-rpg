@@ -521,6 +521,9 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 
 /* Onboarding chips */
 .ob-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.ob-group { margin-bottom: 12px; }
+.ob-group-h { font-size: 12px; font-weight: 700; color: var(--muted); margin: 0 2px 7px; }
+.ob-group-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .ob-chip { background: var(--panel2); border: 2px solid var(--line); border-radius: 999px; padding: 8px 16px; font-size: 14px; cursor: pointer; }
 .ob-chip.sel { background: color-mix(in srgb, var(--c) 25%, var(--panel2)); border-color: var(--c); color: var(--text); }
 .ob-chip:hover:not(.sel) { border-color: var(--muted); }

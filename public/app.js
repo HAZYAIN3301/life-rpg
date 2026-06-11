@@ -111,58 +111,81 @@ const REWARD_CATALOG = [
 const FREE_REWARDS_MAX = 8; // лимит наград для Free (Pro — без лимита)
 
 // Шаблоны навыков для онбординга (как у rpgreal)
-const SKILL_TEMPLATES = [
-  { name: 'Спорт',          color: '#5fbf5f' }, { name: 'Учёба',          color: '#4f86f7' },
-  { name: 'Работа',         color: '#e0526a' }, { name: 'Здоровье',       color: '#22c1a4' },
-  { name: 'Творчество',     color: '#b06ff0' }, { name: 'Отношения',      color: '#e87d3e' },
-  { name: 'Финансы',        color: '#d8a44b' }, { name: 'Программирование', color: '#4f86f7' },
-  { name: 'Английский',     color: '#22c1a4' }, { name: 'Бизнес',         color: '#e0526a' },
-  { name: 'Саморазвитие',   color: '#b06ff0' }, { name: 'Быт',            color: '#8899bb' },
-  { name: 'Похудение',      color: '#5fbf5f' }, { name: 'Блогинг',        color: '#e87d3e' },
-  { name: 'Музыка',         color: '#d8a44b' }, { name: 'Чтение',         color: '#22c1a4' },
+// Шаблоны сфер сгруппированы по жизненным областям (десятиборье) — чтобы человек собирал
+// «как я делю свою жизнь», а не из плоской кучи. #21: пресеты под реальное деление жизни.
+const SKILL_GROUPS = [
+  { group: '💪 Тело',       items: [{ name: 'Спорт', color: '#5fbf5f' }, { name: 'Здоровье', color: '#22c1a4' }, { name: 'Питание', color: '#e0a23e' }, { name: 'Сон', color: '#6c8cff' }, { name: 'Бег', color: '#46c46b' }] },
+  { group: '🧠 Ум',         items: [{ name: 'Учёба', color: '#4f86f7' }, { name: 'Чтение', color: '#22c1a4' }, { name: 'Английский', color: '#5fbf7a' }, { name: 'Программирование', color: '#4f86f7' }] },
+  { group: '💼 Дело',       items: [{ name: 'Работа', color: '#e0526a' }, { name: 'Финансы', color: '#d8a44b' }, { name: 'Бизнес', color: '#e0526a' }, { name: 'Карьера', color: '#c08a5e' }] },
+  { group: '🧘 Душа',       items: [{ name: 'Саморазвитие', color: '#b06ff0' }, { name: 'Духовность', color: '#9c6ad6' }, { name: 'Медитация', color: '#7c5cff' }] },
+  { group: '❤️ Связи',      items: [{ name: 'Отношения', color: '#e87d3e' }, { name: 'Семья', color: '#e0526a' }, { name: 'Друзья', color: '#e0a23e' }] },
+  { group: '🎨 Творчество', items: [{ name: 'Творчество', color: '#b06ff0' }, { name: 'Блогинг', color: '#e87d3e' }, { name: 'Музыка', color: '#d8a44b' }, { name: 'Видео', color: '#4f86f7' }] },
+  { group: '🏠 Быт',        items: [{ name: 'Быт', color: '#8899bb' }, { name: 'Порядок', color: '#7a8aa0' }, { name: 'Хобби', color: '#46c46b' }] },
 ];
+const SKILL_TEMPLATES = SKILL_GROUPS.flatMap((g) => g.items); // плоский список для поиска цвета по имени
 
 // ── Программы-данжи (идея 25): готовые наборы сфер + привычек + стартовых квестов.
 //    Дают новичку структуру в один тап вместо чистого листа. Можно добавить и позже (Настройки).
+// Персоны (#21): дают реалистичную карту жизни — 5-6 сфер с лёгкой иерархией там, где естественно
+// (Здоровье ⊃ Спорт/Сон). Радар показывает столбы как оси, под-сферы агрегируются — карта богатая, но не куцая.
+// Привычек/квестов немного (3 + 2) — структура полная, дневная нагрузка щадящая.
 const DUNGEON_PROGRAMS = [
-  { id: 'athlete', icon: '🏃', name: 'Спортсмен', tagline: 'Тело как проект: сила, выносливость, режим.',
-    skills: [ { name: 'Спорт', color: '#5fbf5f', attr: 'str' }, { name: 'Здоровье', color: '#22c1a4', attr: 'end' } ],
-    habits: [ { skill: 'Спорт', title: 'Силовая / зарядка', estimateMin: 30, difficulty: 'normal', days: [1,3,5] },
-              { skill: 'Спорт', title: 'Растяжка', estimateMin: 10, difficulty: 'easy', days: [1,2,3,4,5,6,0] },
-              { skill: 'Здоровье', title: 'Выпить 8 стаканов воды', estimateMin: 5, difficulty: 'easy', days: [1,2,3,4,5,6,0] } ],
-    quests: [ { skill: 'Спорт', title: 'Пробежка 20 минут', estimateMin: 20, difficulty: 'normal' },
-              { skill: 'Здоровье', title: 'Лечь спать до 23:00', estimateMin: 5, difficulty: 'easy' } ] },
-  { id: 'student', icon: '🎓', name: 'Студент', tagline: 'Учёба без аврала: регулярность и глубина.',
-    skills: [ { name: 'Учёба', color: '#4f86f7', attr: 'int' }, { name: 'Чтение', color: '#22c1a4', attr: 'int' } ],
-    habits: [ { skill: 'Учёба', title: 'Учить лексику / карточки', estimateMin: 15, difficulty: 'easy', days: [1,2,3,4,5] },
-              { skill: 'Чтение', title: 'Прочитать 10 страниц', estimateMin: 20, difficulty: 'easy', days: [1,2,3,4,5,6,0] },
-              { skill: 'Учёба', title: 'Конспект / повторение', estimateMin: 30, difficulty: 'normal', days: [2,4] } ],
+  { id: 'student', icon: '🎓', name: 'Студент', tagline: 'Учёба, тело, связи, быт — как настоящая жизнь.',
+    skills: [ { name: 'Учёба', color: '#4f86f7' },
+              { name: 'Здоровье', color: '#22c1a4' }, { name: 'Спорт', color: '#5fbf5f', parent: 'Здоровье' }, { name: 'Сон', color: '#6c8cff', parent: 'Здоровье' },
+              { name: 'Отношения', color: '#e87d3e' }, { name: 'Саморазвитие', color: '#b06ff0' }, { name: 'Быт', color: '#8899bb' } ],
+    habits: [ { skill: 'Учёба', title: 'Учить материал / карточки', estimateMin: 20, difficulty: 'easy', days: [1,2,3,4,5] },
+              { skill: 'Спорт', title: 'Зарядка / тренировка', estimateMin: 20, difficulty: 'normal', days: [1,3,5] },
+              { skill: 'Сон', title: 'Лечь спать до 23:30', estimateMin: 5, difficulty: 'easy', days: [1,2,3,4,5,6,0] } ],
     quests: [ { skill: 'Учёба', title: 'Разобрать сложную тему', estimateMin: 45, difficulty: 'hard' },
-              { skill: 'Учёба', title: 'Сделать домашку', estimateMin: 30, difficulty: 'normal' } ] },
-  { id: 'creator', icon: '🎬', name: 'Креатор', tagline: 'Создавай и публикуй регулярно.',
-    skills: [ { name: 'Творчество', color: '#b06ff0', attr: 'cha' }, { name: 'Блогинг', color: '#e87d3e', attr: 'cha' } ],
+              { skill: 'Отношения', title: 'Встретиться / позвонить близким', estimateMin: 30, difficulty: 'easy' } ] },
+  { id: 'athlete', icon: '🏃', name: 'Спортсмен', tagline: 'Тело как проект: нагрузка, питание, восстановление.',
+    skills: [ { name: 'Спорт', color: '#5fbf5f' }, { name: 'Сила', color: '#e0526a', parent: 'Спорт' }, { name: 'Выносливость', color: '#22c1a4', parent: 'Спорт' },
+              { name: 'Питание', color: '#e0a23e' }, { name: 'Сон', color: '#6c8cff' }, { name: 'Здоровье', color: '#46c46b' } ],
+    habits: [ { skill: 'Сила', title: 'Силовая тренировка', estimateMin: 45, difficulty: 'normal', days: [1,3,5] },
+              { skill: 'Выносливость', title: 'Кардио / пробежка', estimateMin: 30, difficulty: 'normal', days: [2,4,6] },
+              { skill: 'Питание', title: 'Следить за КБЖУ', estimateMin: 5, difficulty: 'easy', days: [1,2,3,4,5,6,0] } ],
+    quests: [ { skill: 'Спорт', title: 'Длинная тренировка на пределе', estimateMin: 60, difficulty: 'hard' },
+              { skill: 'Сон', title: 'Восстановление: лечь до 23:00', estimateMin: 5, difficulty: 'easy' } ] },
+  { id: 'creator', icon: '🎬', name: 'Креатор', tagline: 'Создавай и публикуй — и не выгорай.',
+    skills: [ { name: 'Творчество', color: '#b06ff0' }, { name: 'Видео', color: '#e87d3e', parent: 'Творчество' }, { name: 'Сценарий', color: '#d8a44b', parent: 'Творчество' },
+              { name: 'Аудитория', color: '#4f86f7' }, { name: 'Здоровье', color: '#22c1a4' } ],
     habits: [ { skill: 'Творчество', title: 'Идеи в копилку (3 шт)', estimateMin: 10, difficulty: 'easy', days: [1,2,3,4,5,6,0] },
-              { skill: 'Блогинг', title: 'Поработать над контентом', estimateMin: 45, difficulty: 'normal', days: [1,3,5] } ],
-    quests: [ { skill: 'Блогинг', title: 'Выпустить пост / ролик', estimateMin: 60, difficulty: 'hard' },
-              { skill: 'Творчество', title: 'Изучить работу кумира', estimateMin: 30, difficulty: 'easy' } ] },
-  { id: 'zen', icon: '🧘', name: 'Дзен', tagline: 'Внутренняя опора: спокойствие и осознанность.',
-    skills: [ { name: 'Саморазвитие', color: '#b06ff0', attr: 'spr' }, { name: 'Здоровье', color: '#22c1a4', attr: 'spr' } ],
-    habits: [ { skill: 'Саморазвитие', title: 'Медитация', estimateMin: 10, difficulty: 'easy', days: [1,2,3,4,5,6,0] },
-              { skill: 'Саморазвитие', title: 'Дневник благодарности', estimateMin: 5, difficulty: 'easy', days: [1,2,3,4,5,6,0] },
-              { skill: 'Здоровье', title: 'Прогулка без телефона', estimateMin: 20, difficulty: 'easy', days: [2,4,6] } ],
-    quests: [ { skill: 'Саморазвитие', title: 'Цифровой детокс 2 часа', estimateMin: 120, difficulty: 'normal' } ] },
-  { id: 'pro', icon: '💼', name: 'Профи', tagline: 'Карьера и деньги под контролем.',
-    skills: [ { name: 'Работа', color: '#e0526a', attr: 'dis' }, { name: 'Финансы', color: '#d8a44b', attr: 'int' } ],
+              { skill: 'Видео', title: 'Поработать над роликом', estimateMin: 45, difficulty: 'normal', days: [1,3,5] },
+              { skill: 'Здоровье', title: 'Прогулка / разминка', estimateMin: 20, difficulty: 'easy', days: [2,4,6] } ],
+    quests: [ { skill: 'Видео', title: 'Выпустить ролик / пост', estimateMin: 90, difficulty: 'hard' },
+              { skill: 'Аудитория', title: 'Ответить аудитории / разобрать метрики', estimateMin: 20, difficulty: 'easy' } ] },
+  { id: 'pro', icon: '💼', name: 'Профи', tagline: 'Карьера, деньги и связи под контролем.',
+    skills: [ { name: 'Работа', color: '#e0526a' }, { name: 'Финансы', color: '#d8a44b' }, { name: 'Здоровье', color: '#22c1a4' },
+              { name: 'Отношения', color: '#e87d3e' }, { name: 'Саморазвитие', color: '#b06ff0' } ],
     habits: [ { skill: 'Работа', title: 'Глубокая работа 90 мин', estimateMin: 90, difficulty: 'hard', days: [1,2,3,4,5] },
-              { skill: 'Финансы', title: 'Записать траты', estimateMin: 5, difficulty: 'easy', days: [1,2,3,4,5,6,0] } ],
+              { skill: 'Финансы', title: 'Записать траты', estimateMin: 5, difficulty: 'easy', days: [1,2,3,4,5,6,0] },
+              { skill: 'Здоровье', title: 'Прогулка / зал', estimateMin: 30, difficulty: 'easy', days: [2,4,6] } ],
     quests: [ { skill: 'Работа', title: 'Закрыть ключевую задачу недели', estimateMin: 90, difficulty: 'hard' },
               { skill: 'Финансы', title: 'Свести бюджет за неделю', estimateMin: 30, difficulty: 'normal' } ] },
-  { id: 'coder', icon: '💻', name: 'Кодер', tagline: 'Прокачка в разработке шаг за шагом.',
-    skills: [ { name: 'Программирование', color: '#4f86f7', attr: 'int' }, { name: 'Английский', color: '#22c1a4', attr: 'int' } ],
-    habits: [ { skill: 'Программирование', title: 'Кодить / pet-проект', estimateMin: 45, difficulty: 'normal', days: [1,2,3,4,5] },
-              { skill: 'Программирование', title: 'Решить задачу (LeetCode)', estimateMin: 30, difficulty: 'hard', days: [2,4] },
+  { id: 'coder', icon: '💻', name: 'Кодер', tagline: 'Разработка шаг за шагом + язык и режим.',
+    skills: [ { name: 'Программирование', color: '#4f86f7' }, { name: 'Проекты', color: '#5fbf7a', parent: 'Программирование' }, { name: 'Алгоритмы', color: '#e0a23e', parent: 'Программирование' },
+              { name: 'Английский', color: '#22c1a4' }, { name: 'Здоровье', color: '#46c46b' } ],
+    habits: [ { skill: 'Проекты', title: 'Кодить pet-проект', estimateMin: 45, difficulty: 'normal', days: [1,2,3,4,5] },
+              { skill: 'Алгоритмы', title: 'Решить задачу (LeetCode)', estimateMin: 30, difficulty: 'hard', days: [2,4] },
               { skill: 'Английский', title: 'Английский 15 мин', estimateMin: 15, difficulty: 'easy', days: [1,2,3,4,5] } ],
-    quests: [ { skill: 'Программирование', title: 'Разобрать новую технологию', estimateMin: 60, difficulty: 'hard' } ] },
+    quests: [ { skill: 'Программирование', title: 'Разобрать новую технологию', estimateMin: 60, difficulty: 'hard' },
+              { skill: 'Здоровье', title: 'Размяться / прогуляться', estimateMin: 20, difficulty: 'easy' } ] },
+  { id: 'zen', icon: '🧘', name: 'Дзен', tagline: 'Внутренняя опора: спокойствие и осознанность.',
+    skills: [ { name: 'Саморазвитие', color: '#b06ff0' }, { name: 'Медитация', color: '#7c5cff', parent: 'Саморазвитие' },
+              { name: 'Здоровье', color: '#22c1a4' }, { name: 'Отношения', color: '#e87d3e' }, { name: 'Творчество', color: '#46c46b' } ],
+    habits: [ { skill: 'Медитация', title: 'Медитация 10 мин', estimateMin: 10, difficulty: 'easy', days: [1,2,3,4,5,6,0] },
+              { skill: 'Саморазвитие', title: 'Дневник благодарности', estimateMin: 5, difficulty: 'easy', days: [1,2,3,4,5,6,0] },
+              { skill: 'Здоровье', title: 'Прогулка без телефона', estimateMin: 20, difficulty: 'easy', days: [2,4,6] } ],
+    quests: [ { skill: 'Саморазвитие', title: 'Цифровой детокс 2 часа', estimateMin: 120, difficulty: 'normal' },
+              { skill: 'Отношения', title: 'Глубокий разговор с близким', estimateMin: 30, difficulty: 'easy' } ] },
+  { id: 'decathlete', icon: '⚖️', name: 'Десятиборец', tagline: 'Не вписался в роль? Сбалансированная карта всей жизни.',
+    skills: [ { name: 'Тело', color: '#5fbf5f' }, { name: 'Ум', color: '#4f86f7' }, { name: 'Дело', color: '#e0526a' },
+              { name: 'Душа', color: '#b06ff0' }, { name: 'Связи', color: '#e87d3e' }, { name: 'Творчество', color: '#d8a44b' }, { name: 'Быт', color: '#8899bb' } ],
+    habits: [ { skill: 'Тело', title: 'Движение 20 мин', estimateMin: 20, difficulty: 'easy', days: [1,3,5] },
+              { skill: 'Душа', title: 'Тихие 10 минут для себя', estimateMin: 10, difficulty: 'easy', days: [1,2,3,4,5,6,0] } ],
+    quests: [ { skill: 'Дело', title: 'Главное дело недели', estimateMin: 60, difficulty: 'hard' },
+              { skill: 'Связи', title: 'Время с близкими', estimateMin: 30, difficulty: 'easy' } ] },
 ];
 
 function programSkillMap(prog, existingSkills) {
@@ -170,7 +193,13 @@ function programSkillMap(prog, existingSkills) {
   skills.forEach((sk) => { map[sk.name.toLowerCase()] = sk.id; });
   prog.skills.forEach((ps) => {
     const k = ps.name.toLowerCase();
-    if (!map[k]) { const id = 'sk_' + k.replace(/[^a-z0-9]/g, '') + '_' + Math.random().toString(36).slice(2, 7); skills.push({ id, name: ps.name, color: ps.color, attr: ps.attr }); map[k] = id; }
+    if (!map[k]) { const id = 'sk_' + k.replace(/[^a-z0-9]/g, '') + '_' + Math.random().toString(36).slice(2, 7); skills.push({ id, name: ps.name, color: ps.color }); map[k] = id; }
+  });
+  // Второй проход: связываем под-сферы с родителем по имени (пресеты с иерархией, напр. Здоровье ⊃ Спорт/Сон)
+  prog.skills.forEach((ps) => {
+    if (!ps.parent) return;
+    const sk = skills.find((s) => s.id === map[ps.name.toLowerCase()]), pid = map[ps.parent.toLowerCase()];
+    if (sk && pid && sk.id !== pid) sk.parentId = pid;
   });
   return { skills, map };
 }
@@ -1103,9 +1132,12 @@ function renderRegisterScreen() {
 }
 
 function renderOnboardingScreen() {
-  const chips = SKILL_TEMPLATES.map((t) => {
-    const sel = State.obSkills.has(t.name);
-    return `<button type="button" class="ob-chip ${sel ? 'sel' : ''}" data-action="ob-toggle" data-skill="${esc(t.name)}" data-color="${esc(t.color)}" style="--c:${esc(t.color)}">${t.name}</button>`;
+  const chips = SKILL_GROUPS.map((g) => {
+    const items = g.items.map((t) => {
+      const sel = State.obSkills.has(t.name);
+      return `<button type="button" class="ob-chip ${sel ? 'sel' : ''}" data-action="ob-toggle" data-skill="${esc(t.name)}" data-color="${esc(t.color)}" style="--c:${esc(t.color)}">${t.name}</button>`;
+    }).join('');
+    return `<div class="ob-group"><div class="ob-group-h">${g.group}</div><div class="ob-group-chips">${items}</div></div>`;
   }).join('');
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
@@ -1117,7 +1149,7 @@ function renderOnboardingScreen() {
         <div class="ob-section">📦 Быстрый старт — готовая программа</div>
         <div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'ob-program')).join('')}</div>
         <div class="ob-or">— или собери вручную —</div>
-        <div class="ob-chips">${chips}</div>
+        <div class="ob-groups">${chips}</div>
         <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
           <input id="ob-custom" placeholder="Своя сфера…" style="flex:1" />
           <input id="ob-color" type="color" value="#6c8cff" style="width:44px;height:38px;padding:2px;cursor:pointer" />
