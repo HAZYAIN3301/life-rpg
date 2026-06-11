@@ -466,6 +466,32 @@ const server = http.createServer(async (req, res) => {
     let list = []; try { list = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'feedback.json'), 'utf8')); } catch {}
     return sendJson(res, 200, { count: list.filter(x => x.userId === uid).length });
   }
+  // ---- Аналитика активности (#4): приватный агрегат, БЕЗ личного контента ----
+  // Клиент шлёт только имя события (view:today, complete:quest…). Храним счётчики по дням + DAU.
+  if (u === '/api/analytics' && req.method === 'POST') {
+    const uid = sessionUserId(req);
+    if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let body = {}; try { body = JSON.parse(await readBody(req, 8 * 1024)); } catch {}
+    const ev = String(body.event || '').slice(0, 40).replace(/[^\w:.-]/g, '');
+    if (!ev) return sendJson(res, 400, { error: 'no event' });
+    const file = path.join(DATA_DIR, 'analytics.json');
+    let data = {}; try { data = JSON.parse(fs.readFileSync(file, 'utf8')); } catch {}
+    const day = new Date().toISOString().slice(0, 10);
+    const d = data[day] || (data[day] = { events: {}, users: {} });
+    d.events[ev] = (d.events[ev] || 0) + 1;
+    d.users[uid] = (d.users[uid] || 0) + 1;
+    // держим только последние ~60 дней
+    const days = Object.keys(data).sort();
+    while (days.length > 60) { delete data[days.shift()]; }
+    try { fs.writeFileSync(file, JSON.stringify(data)); } catch {}
+    return sendJson(res, 200, { ok: true });
+  }
+  if (u === '/api/admin/analytics' && req.method === 'GET') {
+    const me = loadUsers().find(x => x.id === sessionUserId(req));
+    if (!me || !me.isAdmin) return sendJson(res, 403, { error: 'только админ' });
+    let data = {}; try { data = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'analytics.json'), 'utf8')); } catch {}
+    return sendJson(res, 200, data);
+  }
   // ---- Экспорт feedback.json (скачать, только админ) ----
   if (u === '/api/feedback/export' && req.method === 'GET') {
     const me = loadUsers().find(x => x.id === sessionUserId(req));

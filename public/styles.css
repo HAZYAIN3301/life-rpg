@@ -296,6 +296,22 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
   background: color-mix(in srgb, var(--c) 22%, var(--panel2)); border: 1px solid color-mix(in srgb, var(--c) 45%, var(--line)); border-radius: 999px;
 }
 .calv-chip:active { cursor: grabbing; }
+/* режимы день/месяц + напоминания */
+.cal-modes { display: inline-flex; background: var(--panel2); border-radius: 999px; padding: 2px; gap: 2px; }
+.cal-mode { border: none; background: none; color: var(--muted); font-size: 12.5px; padding: 4px 12px; border-radius: 999px; cursor: pointer; }
+.cal-mode.active { background: var(--accent); color: #fff; font-weight: 600; }
+.cal-remind.on { border-color: var(--accent); color: var(--accent); }
+/* месячная сетка */
+.cm-wd { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 12px; }
+.cm-wd span { text-align: center; font-size: 11px; color: var(--muted); text-transform: uppercase; }
+.cm-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 6px; }
+.cm-cell { position: relative; aspect-ratio: 1 / 1; min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; cursor: pointer; color: var(--text); }
+.cm-cell:hover { border-color: var(--accent); }
+.cm-out { opacity: 0.38; }
+.cm-today .cm-n { color: var(--accent); font-weight: 800; }
+.cm-sel { background: color-mix(in srgb, var(--accent) 22%, var(--panel2)); border-color: var(--accent); }
+.cm-n { font-size: 15px; font-variant-numeric: tabular-nums; }
+.cm-dot { font-size: 9.5px; min-width: 16px; padding: 0 4px; border-radius: 999px; background: var(--accent); color: #fff; font-weight: 700; line-height: 15px; }
 
 /* ---------- Goals ---------- */
 .goal-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
@@ -737,7 +753,8 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .ch-meta { flex: 1; min-width: 220px; }
 .ch-meta h2 { margin: 0 0 4px; }
 .ch-rank { font-size: 14px; font-weight: 700; color: var(--rc, var(--text)); margin-bottom: 4px; }
-.ch-arch { font-size: 14px; margin-bottom: 10px; }
+.ch-arch { font-size: 14px; margin-bottom: 6px; }
+.ch-title { font-size: 13px; margin-bottom: 10px; color: var(--accent); font-weight: 600; }
 .char-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
 @media (max-width: 720px) { .char-grid { grid-template-columns: 1fr; } }
 .radar-wrap { display: flex; justify-content: center; }
@@ -772,6 +789,7 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .desire-box { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 24px; width: min(460px, 96vw); animation: fadeIn .2s; }
 .desire-box h3 { margin: 0 0 4px; }
 .desire-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; }
+.desire-sci { font-size: 11.5px; margin: 14px 0 0; line-height: 1.45; }
 .desire-opt { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 8px; border-radius: 14px; cursor: pointer; background: var(--panel2); border: 1px solid var(--line); color: var(--text); transition: transform .1s, border-color .15s, background .15s; }
 .desire-opt:hover { transform: translateY(-2px); }
 .desire-opt .d-emoji { font-size: 30px; line-height: 1; }
@@ -837,6 +855,14 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .en-bar { height: 9px; background: var(--panel2); border-radius: 999px; overflow: hidden; margin-top: 8px; }
 .en-bar > span { display: block; height: 100%; border-radius: 999px; transition: width .5s, background .5s; }
 .en-note { font-size: 11px; margin: 7px 0 0; }
+/* админ-аналитика */
+.an-box { margin-top: 8px; }
+.an-dau-row { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+.an-dau b { color: var(--text); }
+.an-events { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 6px; }
+.an-row { display: flex; justify-content: space-between; background: var(--panel2); border-radius: 8px; padding: 5px 10px; font-size: 12.5px; }
+.an-k { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.an-v { font-weight: 700; font-variant-numeric: tabular-nums; }
 
 /* ============================================================
    📱 Мобильная адаптация (телефоны / узкие экраны)

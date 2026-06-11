@@ -85,6 +85,14 @@ const ACHIEVEMENTS = [
   // За полезные репорты — фидбек делает продукт (идея fb_mq2vy77ine8h)
   { id: 'reporter_3', icon: '🐞', title: 'Баг-хантер', desc: '3 репорта или идеи через 💬', test: () => (State.myFeedbackCount || 0) >= 3, prog: () => ({ cur: State.myFeedbackCount || 0, target: 3 }) },
   { id: 'cofounder_10', icon: '🛡️', title: 'Страж Врат · SCP-001', desc: '10 репортов — почти со-основатель', test: () => (State.myFeedbackCount || 0) >= 10, prog: () => ({ cur: State.myFeedbackCount || 0, target: 10 }) },
+  // Необычные/календарные — в духе Garmin (фидбек #9): ловят момент, а не только объём
+  { id: 'early_bird', icon: '🌅', title: 'Ранняя пташка', desc: 'Выполни квест до 07:00', test: () => completedTimes().some((d) => d.getHours() < 7) },
+  { id: 'night_owl', icon: '🦉', title: 'Сова', desc: 'Квест между 00:00 и 05:00', test: () => completedTimes().some((d) => d.getHours() < 5) },
+  { id: 'weekend_warrior', icon: '🛡️', title: 'Воин выходных', desc: 'Квесты и в субботу, и в воскресенье', test: () => { const s = new Set(completedTimes().map((d) => d.getDay())); return s.has(6) && s.has(0); } },
+  { id: 'new_year', icon: '🎆', title: 'Новогодний рывок', desc: 'Тренируйся 31 декабря или 1 января', test: () => completedTimes().some((d) => (d.getMonth() === 11 && d.getDate() === 31) || (d.getMonth() === 0 && d.getDate() === 1)) },
+  { id: 'full_spectrum', icon: '🌈', title: 'Полный спектр', desc: '5+ разных сфер за один день', test: () => Object.values(eventsByDay()).some((evs) => new Set(evs.map((e) => e.skillId).filter(Boolean)).size >= 5) },
+  { id: 'marathon_day', icon: '🏔️', title: 'Марафон дня', desc: '4+ часа активности за день', test: () => Object.values(eventsByDay()).some((evs) => evs.reduce((s, e) => s + (e.min || 0), 0) >= 240) },
+  { id: 'balanced', icon: '⚖️', title: 'Десятиборец', desc: 'Индекс баланса ≥ 70', test: () => balanceIndex().index >= 70, prog: () => ({ cur: balanceIndex().index, target: 70 }) },
 ];
 
 // Каталог предустановленных наград — «дроп с босса уже выбран» (fb: награды должны быть предустановлены)
@@ -326,7 +334,7 @@ const State = {
   lootbox: null,
   leaderboard: null, _lbLoading: false,
   adminUsers: null, _adminUsersLoading: false,
-  timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null,
+  timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null, calMode: 'day',
   aveCat: 'hair', // активная категория в редакторе аватара
   treeEdit: false, treeSelNode: null, // редактор дерева навыков
   settingsCollapsed: {}, // свёрнутые столбы в редакторе сфер
@@ -337,6 +345,16 @@ const State = {
 // ============================================================
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+// Приватный трекинг активности (#4): шлём ТОЛЬКО имя события (без личного контента). Дедуп частых.
+const _lastTrack = {};
+function track(event) {
+  try {
+    const now = Date.now();
+    if (_lastTrack[event] && now - _lastTrack[event] < 2000) return;
+    _lastTrack[event] = now;
+    fetch('/api/analytics', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event }) });
+  } catch {}
+}
 function pad2(n) { return String(n).padStart(2, '0'); }
 function fmtDate(d) { return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; }
 function todayStr() { return fmtDate(new Date()); }
@@ -413,12 +431,13 @@ function completeTask(t, desire) {
   let xp = itemXp(t);
   if (desire === 'forced') xp = Math.round(xp * (1 + GRIT_BONUS));
   t.xpAwarded = Math.max(1, xp); t.goldAwarded = itemGold(t);
-  const eDelta = applyEnergy(t);
+  const eDelta = applyEnergy(t, desire);
   let msg = `+${t.xpAwarded} XP · +${t.goldAwarded} 🪙 · ${skillById(t.skillId).name}`;
-  if (desire === 'forced') msg += ` · 💪 через силу +${Math.round(GRIT_BONUS * 100)}%`;
+  if (desire === 'forced') msg += ` · 💪 через силу +${Math.round(GRIT_BONUS * 100)}% XP, но −энергия`;
   if (eDelta) msg += ` · ${eDelta > 0 ? '+' : ''}${eDelta} 🔋`;
   toast(msg);
   if (desire === 'hyped') { const h = activateHype(); toast(`⚔️ Хайп ×${h.stacks} · +${hypePct()}% XP на ${hypeMinLeft()} мин — ты захотел трудное!`); }
+  track('complete:quest');
   Store.save('tasks', State.tasks); checkAchievements(); render(); publishLeaderboard();
 }
 // Поп-ап выбора желания при завершении сложного квеста
@@ -429,12 +448,13 @@ function openDesirePicker(taskId) {
   ov.innerHTML = `<div class="desire-box">
     <button class="modal-x" data-action="desire-cancel">✕</button>
     <h3>Насколько ты хотел это сделать?</h3>
-    <p class="muted">🔥 «${esc(t.title)}» — сложный квест. Честный ответ влияет на награду.</p>
+    <p class="muted">🔥 «${esc(t.title)}» — сложный квест. Честный ответ влияет на XP и на твою 🔋 энергию.</p>
     <div class="desire-btns">
-      <button class="desire-opt forced" data-action="desire-pick" data-id="${t.id}" data-desire="forced"><span class="d-emoji">😮‍💨</span><b>Через силу</b><small>+${Math.round(GRIT_BONUS * 100)}% за волю</small></button>
-      <button class="desire-opt neutral" data-action="desire-pick" data-id="${t.id}" data-desire="neutral"><span class="d-emoji">🙂</span><b>Нормально</b><small>обычный XP</small></button>
-      <button class="desire-opt hyped" data-action="desire-pick" data-id="${t.id}" data-desire="hyped"><span class="d-emoji">⚔️</span><b>В кураже!</b><small>активирует 🔥 Хайп</small></button>
-    </div></div>`;
+      <button class="desire-opt forced" data-action="desire-pick" data-id="${t.id}" data-desire="forced"><span class="d-emoji">😮‍💨</span><b>Через силу</b><small>+${Math.round(GRIT_BONUS * 100)}% XP · −энергия ×1.5</small></button>
+      <button class="desire-opt neutral" data-action="desire-pick" data-id="${t.id}" data-desire="neutral"><span class="d-emoji">🙂</span><b>Нормально</b><small>обычный XP и энергия</small></button>
+      <button class="desire-opt hyped" data-action="desire-pick" data-id="${t.id}" data-desire="hyped"><span class="d-emoji">⚔️</span><b>В кураже!</b><small>🔥 Хайп · энергии тратит меньше</small></button>
+    </div>
+    <p class="desire-sci muted">Воля против сопротивления истощает сильнее (ego depletion), поток — меньше (flow). Поэтому здоровая середина устойчивее, чем вечный форсаж.</p></div>`;
   document.body.appendChild(ov);
 }
 // Поп-ап выбора нескольких категорий для квеста (иллюстрация = работа + творчество)
@@ -485,6 +505,9 @@ function xpEvents() {
   return ev;
 }
 function doneTasks() { return State.tasks.filter((t) => t.done); }
+// Для календарных ачивок: моменты выполнения и группировка событий по дню
+function completedTimes() { return doneTasks().map((t) => t.completedAt ? new Date(t.completedAt) : null).filter(Boolean); }
+function eventsByDay() { const m = {}; for (const e of xpEvents()) (m[e.date] = m[e.date] || []).push(e); return m; }
 // Импортированный «стартовый» XP (доказанное мастерство) — добавляется к заработанному
 function importedXp(id) { const im = State.settings && State.settings.imported; return (im && im[id] && im[id].xp) || 0; }
 function totalImportedXp() { const im = (State.settings && State.settings.imported) || {}; return Object.keys(im).reduce((s, k) => s + (im[k].xp || 0), 0); }
@@ -847,13 +870,14 @@ function checkAchievements(silent) {
 // ============================================================
 const TITLES = ['Ранняя пташка', 'Несокрушимый', 'Полиглот', 'Железная воля', 'Мастер баланса', 'Книжный червь', 'Атлет', 'Творец', 'Стратег', 'Феникс', 'Хранитель ритма', 'Первопроходец', 'Тихий гром', 'Луч дисциплины', 'Алхимик дней'];
 const LOOT_POOL = [
-  { w: 36, type: 'gold',  min: 15,  max: 40,  label: '🪙 Золото' },
-  { w: 22, type: 'gold',  min: 45,  max: 90,  label: '🪙 Золото' },
-  { w: 14, type: 'boost', pct: 25,  hours: 6, label: '⚡ +25% XP' },
-  { w: 10, type: 'gold',  min: 110, max: 200, label: '🪙 Куча золота' },
-  { w: 8,  type: 'boost', pct: 50,  hours: 3, label: '🔥 +50% XP' },
-  { w: 6,  type: 'title',                     label: '🏷 Титул' },
-  { w: 4,  type: 'gold',  min: 250, max: 400, label: '💎 Джекпот' },
+  { w: 30, type: 'gold',   min: 15,  max: 45,  label: '🪙 Золото' },
+  { w: 20, type: 'gold',   min: 50,  max: 100, label: '🪙 Золото' },
+  { w: 14, type: 'energy', min: 20,  max: 40,  label: '🔋 Заряд энергии' },
+  { w: 13, type: 'boost',  pct: 25,  hours: 6, label: '⚡ +25% XP' },
+  { w: 9,  type: 'gold',   min: 120, max: 220, label: '🪙 Куча золота' },
+  { w: 8,  type: 'boost',  pct: 50,  hours: 3, label: '🔥 +50% XP' },
+  { w: 6,  type: 'title',                      label: '🏷 Титул' },
+  { w: 4,  type: 'gold',   min: 280, max: 450, label: '💎 Джекпот' },
 ];
 const LOOT_THRESHOLDS = [1, 3, 5]; // активностей за день для сундука №1 / №2 / №3
 function ensureLootbox() {
@@ -897,11 +921,17 @@ function energyMeta() {
   if (p >= 25) return { color: '#e0a23e', text: 'на исходе', icon: '🔋' };
   return { color: '#e0526a', text: 'нужен отдых', icon: '🪫' };
 }
+// Множитель траты энергии по «желанию» (фидбек #6 + наука):
+//  forced (через силу) → дороже: волевое усилие против сопротивления истощает сильнее (ego depletion, Baumeister).
+//  hyped (в кураже)     → дешевле: добровольный челлендж/поток менее истощающ (flow, Csikszentmihalyi).
+//  neutral/обычный      → база: устойчивая «золотая середина» десятиборья.
+const DESIRE_ENERGY = { forced: 1.5, hyped: 0.8 };
 // Применяем энергию при выполнении квеста/привычки (только трата; восстановление — пассивное по времени).
-function applyEnergy(it) {
+function applyEnergy(it, desire) {
   const e = ensureEnergy(), min = Number(it.estimateMin) || 0;
   const w = ENERGY.cost[it.difficulty] ?? ENERGY.cost.normal;
-  const delta = -Math.min(ENERGY.costCap, Math.round(w * Math.max(0.5, min / 30)));
+  const m = DESIRE_ENERGY[desire] || 1;
+  const delta = -Math.min(ENERGY.costCap, Math.round(w * Math.max(0.5, min / 30) * m));
   if (delta < 0) {
     e.loadToday += -delta;
     e.cur = Math.max(0, e.cur + delta);
@@ -926,6 +956,7 @@ function lootNextThreshold() { const act = todayActivityCount(); const th = LOOT
 function rollLoot() { const total = LOOT_POOL.reduce((s, x) => s + x.w, 0); let r = Math.random() * total; for (const it of LOOT_POOL) { if ((r -= it.w) <= 0) return it; } return LOOT_POOL[0]; }
 function lootResolve(item) {
   if (item.type === 'gold') { const amt = Math.round(item.min + Math.random() * (item.max - item.min)); return { type: 'gold', amount: amt, label: `+${amt} 🪙` }; }
+  if (item.type === 'energy') { const amt = Math.round(item.min + Math.random() * (item.max - item.min)); return { type: 'energy', amount: amt, label: `+${amt} 🔋 энергии` }; }
   if (item.type === 'boost') return { type: 'boost', pct: item.pct, hours: item.hours, label: `+${item.pct}% XP · ${item.hours}ч` };
   if (item.type === 'title') {
     const lb = ensureLootbox(), pool = TITLES.filter((t) => !lb.titles.includes(t));
@@ -937,6 +968,7 @@ function lootResolve(item) {
 function applyLoot(reward) {
   const lb = ensureLootbox();
   if (reward.type === 'gold') lb.goldWon += reward.amount;
+  else if (reward.type === 'energy') { const e = ensureEnergy(); e.cur = Math.min(e.max, e.cur + reward.amount); Store.save('settings', State.settings); }
   else if (reward.type === 'boost') lb.boost = { pct: reward.pct, until: new Date(Date.now() + reward.hours * 3600 * 1000).toISOString() };
   else if (reward.type === 'title') { if (!lb.titles.includes(reward.title)) lb.titles.push(reward.title); if (!lb.equipped) lb.equipped = reward.title; }
   lb.opened += 1;
@@ -1246,8 +1278,46 @@ const CAL_H0 = 6, CAL_H1 = 23, CAL_ROWH = 48;
 function calMinToY(min) { return (min - CAL_H0 * 60) / 60 * CAL_ROWH; }
 function calYtoMin(y) { const raw = CAL_H0 * 60 + y / CAL_ROWH * 60; return Math.max(CAL_H0 * 60, Math.min(CAL_H1 * 60 + 45, Math.round(raw / 15) * 15)); }
 function fmtHM(min) { return pad2(Math.floor(min / 60)) + ':' + pad2(min % 60); }
+const MONTHS_NOM = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+function calModeToggle(mode) {
+  return `<div class="cal-modes">
+    <button class="cal-mode ${mode === 'day' ? 'active' : ''}" data-action="cal-mode" data-mode="day">День</button>
+    <button class="cal-mode ${mode === 'month' ? 'active' : ''}" data-action="cal-mode" data-mode="month">Месяц</button></div>`;
+}
+function calRemindBtn() {
+  const on = State.settings && State.settings.remind;
+  return `<button class="btn ghost sm cal-remind ${on ? 'on' : ''}" data-action="cal-remind-toggle" title="Напоминания о задачах со временем (пока вкладка открыта)">${on ? '🔔 Напоминания вкл' : '🔕 Напоминания'}</button>`;
+}
+// Месячная сетка (6×7, с понедельника). Клик по дню → день этой даты.
+function renderCalMonth(date) {
+  const WD = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+  const d = parseDate(date), y = d.getFullYear(), mo = d.getMonth();
+  const first = new Date(y, mo, 1), startJs = first.getDay();
+  const gridStart = addDays(fmtDate(first), -((startJs === 0 ? 7 : startJs) - 1)); // понедельник перед 1-м
+  const counts = {};
+  for (const t of State.tasks) if (!t.done) counts[t.date] = (counts[t.date] || 0) + 1;
+  let cells = '';
+  for (let i = 0; i < 42; i++) {
+    const ds = addDays(gridStart, i), cd = parseDate(ds), inMonth = cd.getMonth() === mo;
+    const n = counts[ds] || 0, isToday = ds === todayStr(), isSel = ds === date;
+    cells += `<button class="cm-cell ${inMonth ? '' : 'cm-out'} ${isToday ? 'cm-today' : ''} ${isSel ? 'cm-sel' : ''}" data-action="cal-pick-day" data-date="${ds}">
+      <span class="cm-n">${cd.getDate()}</span>${n ? `<span class="cm-dot">${n > 9 ? '9+' : n}</span>` : ''}</button>`;
+  }
+  return `
+    <div class="card calv-head">
+      <div class="calv-title">
+        <button class="btn ghost sm" data-action="cal-shift-month" data-delta="-1" title="Предыдущий месяц">‹</button>
+        <h2>${MONTHS_NOM[mo]} ${y}</h2>
+        <button class="btn ghost sm" data-action="cal-shift-month" data-delta="1" title="Следующий месяц">›</button>
+        ${calModeToggle('month')}${calRemindBtn()}
+      </div>
+      <div class="cm-wd">${WD.map((w) => `<span>${w}</span>`).join('')}</div>
+      <div class="cm-grid">${cells}</div>
+    </div>`;
+}
 function renderCalendarView() {
   const date = State.calDate || (State.calDate = todayStr());
+  if ((State.calMode || 'day') === 'month') return renderCalMonth(date);
   const WD = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
   const MON = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
   const d = parseDate(date);
@@ -1295,6 +1365,7 @@ function renderCalendarView() {
         <button class="btn ghost sm" data-action="cal-shift" data-days="1" title="Следующий день">›</button>
         ${date !== todayStr() ? '<button class="btn ghost sm" data-action="cal-today">Сегодня</button>' : ''}
         <span class="wk-load muted">план: ${fmtDur(planned)}</span>
+        ${calModeToggle('day')}${calRemindBtn()}
       </div>
       <div class="calv-strip">${strip}</div>
     </div>
@@ -1579,6 +1650,7 @@ function renderCharacter() {
         <h2>${esc((State.me && State.me.name) || 'Герой')}</h2>
         <div class="ch-rank" style="--rc:${cr.color}">${cr.icon} ${cr.name} · ур.${charLevel()}</div>
         <div class="ch-arch" title="Класс определяется автоматически из названий твоих сфер">🎭 <b>${arch.name}</b> <span class="muted">— ${arch.desc}</span></div>
+        ${(State.lootbox && State.lootbox.equipped) ? `<div class="ch-title" title="Титул из сундука — смени в «Наградах»">🏷 ${esc(State.lootbox.equipped)}</div>` : ''}
         <div class="xp-bar" style="max-width:340px"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
         ${(() => { const of = overallForm(), fm = formMeta(of); return `<div class="ch-form" title="Форма — текущая «свежесть» по активности. В отличие от уровня (доказанное мастерство — не сгорает), форма мягко падает без тренировок и легко возвращается.">
           <span class="cf-label">Форма</span>
@@ -1709,7 +1781,25 @@ function adminCard() {
     <form id="recover-data" class="pin-change">
       <input name="userId" ${users.length ? 'list="recover-users-dl"' : ''} placeholder="id или имя профиля" autocomplete="off" required />${recoverList}
       <button type="submit" class="btn ghost">Открыть</button></form>
-    <p class="muted" style="font-size:12px">Посмотреть текущие данные и восстановить из автоснимка (бэкапы делаются перед каждой записью).</p></div>`;
+    <p class="muted" style="font-size:12px">Посмотреть текущие данные и восстановить из автоснимка (бэкапы делаются перед каждой записью).</p>
+    <h3 style="margin-top:16px">📊 Активность (аналитика)</h3>
+    ${analyticsHTML()}
+    <p class="muted" style="font-size:12px">Только агрегат: какие вкладки/действия используются и сколько активных в день. Без личного контента.</p></div>`;
+}
+function analyticsHTML() {
+  if (State.analytics === undefined) {
+    State.analytics = null;
+    fetch('/api/admin/analytics').then((r) => r.json()).then((d) => { State.analytics = d || {}; if (State.view === 'settings') render(); }).catch(() => { State.analytics = {}; });
+    return '<p class="muted">Загружаю…</p>';
+  }
+  if (!State.analytics || !Object.keys(State.analytics).length) return '<p class="muted">Данных пока нет.</p>';
+  const days = Object.keys(State.analytics).sort().slice(-7);
+  const ev = {}; const dauSet = {};
+  for (const day of days) { const x = State.analytics[day]; for (const k in (x.events || {})) ev[k] = (ev[k] || 0) + x.events[k]; dauSet[day] = Object.keys(x.users || {}).length; }
+  const top = Object.entries(ev).sort((a, b) => b[1] - a[1]).slice(0, 12);
+  const dauRows = days.map((d) => `<span class="an-dau" title="${d}">${d.slice(5)}: <b>${dauSet[d] || 0}</b></span>`).join('');
+  const evRows = top.map(([k, v]) => `<div class="an-row"><span class="an-k">${esc(k)}</span><span class="an-v">${v}</span></div>`).join('');
+  return `<div class="an-box"><div class="an-dau-row">DAU за 7 дней: ${dauRows}</div><div class="an-events">${evRows}</div></div>`;
 }
 function showPaywall(feature) {
   if (document.getElementById('paywall')) return;
@@ -2230,6 +2320,7 @@ function render() {
   const activeNav = document.querySelector('#nav button.active');
   if (activeNav && activeNav.scrollIntoView) activeNav.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
   document.getElementById('main').innerHTML = (VIEWS[State.view] || renderToday)();
+  scheduleReminders();
 }
 
 // ============================================================
@@ -2369,7 +2460,7 @@ function openRewardCatalog() {
 
 function onClick(e) {
   const navBtn = e.target.closest('#nav button[data-view]');
-  if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'settings') State.adminUsers = null; render(); return; }
+  if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
   const el = e.target.closest('[data-action]');
   if (!el) {
     // клик по пустому месту сетки календаря → подставить время в форму планирования
@@ -2513,7 +2604,7 @@ function onClick(e) {
     const h = habitById(id); if (!h) return;
     State.habitlog[today] = State.habitlog[today] || {};
     if (State.habitlog[today][id]) { delete State.habitlog[today][id]; if (!Object.keys(State.habitlog[today]).length) delete State.habitlog[today]; }
-    else { State.habitlog[today][id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() }; const eD = applyEnergy(h); toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${skillById(h.skillId).name}${eD ? ` · ${eD > 0 ? '+' : ''}${eD} 🔋` : ''}`); }
+    else { State.habitlog[today][id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() }; const eD = applyEnergy(h); track('complete:habit'); toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${skillById(h.skillId).name}${eD ? ` · ${eD > 0 ? '+' : ''}${eD} 🔋` : ''}`); }
     Store.save('habitlog', State.habitlog); checkAchievements(); render(); publishLeaderboard();
   } else if (action === 'focus-task') { const t = questById(id); if (t && !t.done) startFocus(id);
   } else if (action === 'timer-pause') { pauseFocus();
@@ -2601,6 +2692,10 @@ function onClick(e) {
   } else if (action === 'cal-shift') { State.calDate = addDays(State.calDate || todayStr(), Number(el.dataset.days)); render();
   } else if (action === 'cal-today') { State.calDate = todayStr(); render();
   } else if (action === 'goto-calendar') { State.calDate = todayStr(); State.view = 'calendar'; render();
+  } else if (action === 'cal-mode') { State.calMode = el.dataset.mode; render();
+  } else if (action === 'cal-pick-day') { State.calDate = el.dataset.date; State.calMode = 'day'; render();
+  } else if (action === 'cal-shift-month') { const d = parseDate(State.calDate || todayStr()); State.calDate = fmtDate(new Date(d.getFullYear(), d.getMonth() + Number(el.dataset.delta), Math.min(d.getDate(), 28))); render();
+  } else if (action === 'cal-remind-toggle') { toggleReminders();
   } else if (action === 'save-week') {
     const ws = State.weekStart; State.weeks[ws] = State.weeks[ws] || {};
     State.weeks[ws].intention = document.getElementById('week-intention').value;
@@ -2923,6 +3018,31 @@ function cleanupCalDrag() {
   _calDragId = null;
   document.querySelectorAll('.calv-indicator').forEach((el) => el.remove());
   document.querySelectorAll('.wk-dragging').forEach((el) => el.classList.remove('wk-dragging'));
+}
+
+// --- Напоминания о задачах со временем (#7). Браузерные уведомления, пока вкладка открыта. ---
+let _reminderTimers = [];
+function scheduleReminders() {
+  _reminderTimers.forEach(clearTimeout); _reminderTimers = [];
+  if (!State.settings || !State.settings.remind) return;
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const today = todayStr(), now = Date.now();
+  for (const t of State.tasks) {
+    if (t.date !== today || !t.startTime || t.done) continue;
+    const [H, M] = t.startTime.split(':').map(Number);
+    const when = new Date(); when.setHours(H, M, 0, 0);
+    const delay = when.getTime() - now;
+    if (delay > 0 && delay < 24 * 3600 * 1000) {
+      _reminderTimers.push(setTimeout(() => { try { new Notification('🗓 ' + t.title, { body: 'Время по плану: ' + t.startTime, tag: t.id }); } catch {} }, delay));
+    }
+  }
+}
+function toggleReminders() {
+  if (!('Notification' in window)) { toast('Браузер не поддерживает уведомления'); return; }
+  if (State.settings.remind) { State.settings.remind = false; Store.save('settings', State.settings); scheduleReminders(); toast('🔕 Напоминания выключены'); render(); return; }
+  const apply = () => { State.settings.remind = true; Store.save('settings', State.settings); scheduleReminders(); toast('🔔 Напоминания включены · работают пока вкладка открыта'); render(); };
+  if (Notification.permission === 'granted') apply();
+  else Notification.requestPermission().then((p) => { if (p === 'granted') apply(); else toast('Нужно разрешить уведомления в браузере'); });
 }
 
 // Точка входа — проверяем сессию, потом грузим нужный экран
