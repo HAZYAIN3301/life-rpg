@@ -59,13 +59,17 @@ const WEEKDAYS = [
   { js: 4, label: 'Чт' }, { js: 5, label: 'Пт' }, { js: 6, label: 'Сб' }, { js: 0, label: 'Вс' },
 ];
 const GOAL_BONUS = { xp: 60, gold: 30 };
+// Горизонты целей — от Севера (полярная звезда) до недели. Дерево связывается через parentId.
 const GOAL_TYPES = [
+  { id: 'mission',   label: '★ Миссия',      timeframe: 'дело жизни',               hint: 'Полярная звезда — ради чего всё. Обычно одна. К ней привязывается всё остальное.' },
+  { id: 'vision',    label: '🔭 Видение',    timeframe: '10–20 лет',                hint: 'Кем стать, что построить за десятилетия' },
+  { id: 'path',      label: '🧭 Путь',       timeframe: '3–5 лет',                  hint: 'Крупный этап: образование, карьера, переезд' },
+  { id: 'long',      label: 'Долгосрочные',  timeframe: '6 мес – несколько лет',    hint: 'Большие цели года-двух: Abi, C1, проект' },
+  { id: 'mid',       label: 'Среднесрочные', timeframe: '1–6 месяцев',              hint: 'Проект или трансформация за сезон: запустить MVP, пробежать полумарафон' },
+  { id: 'short',     label: 'Краткосрочные', timeframe: 'до 4 недель',              hint: 'Конкретный результат в ближайший месяц: сдать экзамен, дочитать книгу' },
   { id: 'recurring', label: 'Повторяющиеся', timeframe: 'ежедневно · еженедельно',  hint: 'Регулярные практики без конечной даты: спорт каждый день, еженедельный обзор' },
-  { id: 'short',     label: 'Краткосрочные', timeframe: 'до 4 недель',              hint: 'Конкретный результат в ближайший месяц: сдать экзамен, дочитать книгу, договориться' },
-  { id: 'mid',       label: 'Среднесрочные', timeframe: '1–6 месяцев',              hint: 'Проект или трансформация за сезон: запустить MVP, пробежать полумарафон, B2 по языку' },
-  { id: 'long',      label: 'Долгосрочные',  timeframe: '6 мес – несколько лет',    hint: 'Большие жизненные цели: карьера, образование, здоровье, отношения' },
 ];
-const GOAL_XP = { recurring: 15, short: 50, mid: 200, long: 750 };
+const GOAL_XP = { mission: 8000, vision: 3000, path: 1200, long: 750, mid: 200, short: 50, recurring: 15 };
 function goalTypeLabel(t) { const x = GOAL_TYPES.find((g) => g.id === t); return x ? x.label : 'Цель'; }
 
 // Достижения — описаны в коде, считаются на лету
@@ -818,8 +822,37 @@ function habitStreak(h) {
 }
 
 // ---- Цели ----
-function goalProgress(g) { const n = g.steps.length; if (!n) return 0; return Math.round(g.steps.filter((s) => s.done).length / n * 100); }
+// Числовая цель достигнута? (lowerBetter — для оценок/времени, где меньше = лучше)
+function goalMetricReached(g) { const m = g.metric; if (!m || m.target == null) return false; return m.lowerBetter ? m.current <= m.target : m.current >= m.target; }
+function goalProgress(g) {
+  const m = g.metric;
+  if (m && m.target != null) {
+    const span = m.lowerBetter ? (m.start - m.target) : (m.target - m.start);
+    if (!(span > 0)) return goalMetricReached(g) ? 100 : 0;
+    const prog = m.lowerBetter ? (m.start - m.current) : (m.current - m.start);
+    return Math.max(0, Math.min(100, Math.round(prog / span * 100)));
+  }
+  const n = g.steps.length; if (!n) return 0; return Math.round(g.steps.filter((s) => s.done).length / n * 100);
+}
+// Цепочка вверх до Севера (для хлебной крошки «зачем»)
+function goalChain(g) { const out = []; let cur = g.parentId ? goalById(g.parentId) : null, guard = 0; while (cur && guard++ < 12) { out.push(cur); cur = cur.parentId ? goalById(cur.parentId) : null; } return out; }
+// Статус-бейдж: достигнута / держу / просело / жду / пауза / активна
+function goalStatusInfo(g) {
+  if (g.completedAt) return { txt: '✅ Достигнута', cls: 'gs-done' };
+  if (g.metric && g.metric.maintain && g.metric.everReached) return goalMetricReached(g) ? { txt: '🔄 Держу', cls: 'gs-maint' } : { txt: '⚠️ Просело', cls: 'gs-slip' };
+  if (g.status === 'waiting') return { txt: '⏳ Жду' + (g.window ? ' · ' + g.window : ''), cls: 'gs-wait' };
+  if (g.status === 'paused') return { txt: '⏸ Пауза', cls: 'gs-pause' };
+  return { txt: '▶ Активна', cls: 'gs-active' };
+}
 function refreshGoalCompletion(g) {
+  if (g.metric && g.metric.target != null) {
+    const reached = goalMetricReached(g);
+    if (reached) g.metric.everReached = true;
+    // maintain-цель никогда не «завершается» — остаётся в режиме удержания
+    if (reached && !g.metric.maintain && !g.completedAt) { g.completedAt = new Date().toISOString(); toast(`🎯 Цель достигнута: ${g.title} (+${g.xpReward != null ? g.xpReward : GOAL_BONUS.xp} XP)`); }
+    else if (!reached && g.completedAt && !g.metric.maintain) g.completedAt = null;
+    return;
+  }
   const allDone = g.steps.length > 0 && g.steps.every((s) => s.done);
   if (allDone && !g.completedAt) { g.completedAt = new Date().toISOString(); toast(`🎯 Цель достигнута: ${g.title} (+${g.xpReward != null ? g.xpReward : GOAL_BONUS.xp} XP)`); }
   else if (!allDone && g.completedAt) g.completedAt = null;
@@ -1453,25 +1486,41 @@ function renderToday() {
 // ============================================================
 function goalCard(g) {
   const sk = skillById(g.skillId), prog = goalProgress(g), done = !!g.completedAt;
-  const parent = g.parentId ? goalById(g.parentId) : null;
+  const chain = goalChain(g), st = goalStatusInfo(g);
+  const m = (g.metric && g.metric.target != null) ? g.metric : null;
   const xpR = g.xpReward != null ? g.xpReward : (GOAL_XP[g.type] || 50);
   let deadline = '';
   if (g.targetDate) { const left = Math.round((parseDate(g.targetDate) - parseDate(todayStr())) / 86400000); deadline = `<span class="goal-deadline ${left < 0 ? 'overdue' : ''}">📅 ${g.targetDate}${left >= 0 ? ` · ${left} ${plural(left, 'день', 'дня', 'дней')}` : ' · просрочено'}</span>`; }
+  const breadcrumb = chain.length ? `<div class="goal-why" title="Зачем это — цепочка вверх до Севера">↑ ${chain.map((p) => (p.type === 'mission' ? '★ ' : '') + esc(p.title)).join(' › ')}</div>` : '';
+  const metricBlock = m ? `<div class="gm-block">
+      <div class="gm-head"><b>${m.current}</b> / ${m.target}${m.unit ? ' ' + esc(m.unit) : ''}${m.lowerBetter ? ' <span class="muted">↓ меньше лучше</span>' : ''}${m.maintain ? ' <span class="muted">· держать</span>' : ''}</div>
+      ${g.archived ? '' : `<form class="metric-form" data-goal="${g.id}"><input name="val" type="number" step="any" placeholder="новое значение" required /><button type="submit" class="btn ghost sm">Записать</button></form>`}
+      ${(m.log && m.log.length) ? `<div class="gm-log muted">рекорды: ${m.log.slice(0, 5).map((r) => `${r.value} <span>(${dmShort(r.date)})</span>`).join(' · ')}</div>` : ''}
+    </div>` : '';
   const steps = g.steps.map((s) => `<li class="gstep ${s.done ? 'done' : ''}"><button class="check sm" data-action="toggle-step" data-goal="${g.id}" data-step="${s.id}">${s.done ? '✓' : ''}</button><span>${esc(s.title)}</span><button class="del" data-action="delete-step" data-goal="${g.id}" data-step="${s.id}">✕</button></li>`).join('');
+  const subline = m ? `прогресс ${prog}%` : `${g.steps.filter((s) => s.done).length}/${g.steps.length} пунктов · ${prog}%`;
+  const statusCtl = (done || g.archived) ? '' : `<select class="goal-status-sel" data-action="goal-status" data-id="${g.id}">
+      <option value="active" ${(!g.status || g.status === 'active') ? 'selected' : ''}>▶ Активна</option>
+      <option value="waiting" ${g.status === 'waiting' ? 'selected' : ''}>⏳ Жду</option>
+      <option value="paused" ${g.status === 'paused' ? 'selected' : ''}>⏸ Пауза</option></select>`;
   return `<div class="card goal ${done ? 'goal-done' : ''} ${g.archived ? 'goal-archived' : ''}">
     <div class="goal-head"><div><h3>${done ? '✅ ' : ''}${esc(g.title)}</h3>
+        ${breadcrumb}
         <div class="goal-meta">
           <span class="t-skill" style="--c:${esc(sk.color)}">${esc(sk.name)}</span>
           <span class="goal-type type-${g.type || 'short'}">${goalTypeLabel(g.type)}</span>
+          <span class="goal-status ${st.cls}">${st.txt}</span>
           <span class="goal-xp">+${xpR} XP</span>
-          ${deadline}${parent ? `<span class="muted">↳ ${esc(parent.title)}</span>` : ''}${g.why ? `<span class="muted">— ${esc(g.why)}</span>` : ''}
+          ${deadline}${g.why ? `<span class="muted">— ${esc(g.why)}</span>` : ''}
         </div></div>
       <div class="goal-actions">
+        ${statusCtl}
         ${done || g.archived ? `<button class="btn ghost sm" data-action="${g.archived ? 'restore-goal' : 'archive-goal'}" data-id="${g.id}">${g.archived ? '↩ Вернуть' : '🗄 В архив'}</button>` : ''}
         <button class="del" data-action="delete-goal" data-id="${g.id}" title="Удалить">✕</button>
       </div></div>
+    ${metricBlock}
     <div class="progress"><span style="width:${prog}%;background:${esc(sk.color)}"></span></div>
-    <div class="muted" style="font-size:12px;margin:4px 0 8px">${g.steps.filter((s) => s.done).length}/${g.steps.length} пунктов · ${prog}%</div>
+    <div class="muted" style="font-size:12px;margin:4px 0 8px">${subline}</div>
     <ul class="gsteps">${steps}</ul>
     ${g.archived ? '' : `<form class="add-step-form" data-goal="${g.id}"><input name="step" placeholder="+ пункт чек-листа…" autocomplete="off" /><button type="submit" class="btn ghost">Добавить</button></form>`}</div>`;
 }
@@ -1504,8 +1553,23 @@ function renderGoals() {
         <select name="skillId" title="Навык">${skillOpts}</select>
         <select name="type" title="Тип цели">${typeOpts}</select>
         <input name="xpReward" type="number" min="0" placeholder="XP" title="Награда XP (пусто = по типу)" />
-        <select name="parentId" title="Родительская цель">${parentOpts}</select>
+        <select name="parentId" title="Родительская цель — привязка к большей цели вверх до Севера">${parentOpts}</select>
         <input name="targetDate" type="date" title="Дедлайн" />
+        <details class="goal-extra"><summary>📊 Число / состояние (опц.)</summary>
+          <div class="gx-grid">
+            <input name="mStart" type="number" step="any" placeholder="сейчас" title="Текущее значение" />
+            <span class="gx-arrow">→</span>
+            <input name="mTarget" type="number" step="any" placeholder="цель" title="Целевое значение — задай, чтобы цель стала числовой" />
+            <input name="mUnit" placeholder="ед. (кг, км…)" title="Единица" />
+            <label class="gx-check"><input type="checkbox" name="mLower" /> меньше = лучше</label>
+            <label class="gx-check"><input type="checkbox" name="mMaintain" /> держать после</label>
+            <select name="status" title="Состояние цели">
+              <option value="active">▶ Активна</option>
+              <option value="waiting">⏳ Жду события</option>
+              <option value="paused">⏸ Пауза</option></select>
+            <input name="window" placeholder="окно: лето / после 23.06…" title="Когда (для «жду события»)" />
+          </div>
+        </details>
         <button type="submit">+ Цель</button></form>
       <p class="diff-hint muted">💰 XP пусто = по типу цели: ${GOAL_TYPES.map((t) => `${t.label.toLowerCase()} ${GOAL_XP[t.id]}`).join(' · ')}. Это «курс валюты» — не накручивай себе, иначе уровень потеряет смысл.</p></div>
     <div class="card"><h3>📋 Сводка целей</h3><div class="gfilters">${filterTabs}</div></div>
@@ -1830,7 +1894,7 @@ const GUIDE_SECTIONS = [
   { icon: '📅', title: 'Сегодня', text: 'Добавляй квесты (разовые дела) на день. ▶ запускает фокус-таймер (помодоро + плавающее окно поверх всех окон). Галочка — получаешь XP и золото. Ниже — привычки и итог дня с рефлексией.' },
   { icon: '🧍', title: 'Персонаж', text: 'Настраиваемый аватар (собери лицо/причёску/цвета). Атрибуты (Сила, Интеллект, Дух…) растут из твоих сфер и рисуют радар-билд. Архетип = твои сильнейшие атрибуты. Силуэт телосложения меняется от тренировок и веса.' },
   { icon: '🎖', title: 'Уровень vs Форма', text: 'Импортируй реальный опыт в Настройках — не начинаешь с нуля. Уровень = доказанное мастерство, оно НЕ сгорает (как чёрный пояс). Форма — отдельный показатель свежести: мягко падает, если забросил сферу, и быстро возвращается. Так жизнь не наказывает тебя за паузу.' },
-  { icon: '🎯', title: 'Цели', text: 'Большие цели 4 горизонтов: повторяющиеся, кратко-, средне-, долгосрочные. Разбивай на чек-лист, ставь дедлайн и «зачем». Все пункты закрыл — цель засчитана с бонусом.' },
+  { icon: '🎯', title: 'Цели', text: 'Горизонты от ★ Миссии (полярная звезда — зачем всё) вниз: видение 10–20 лет → путь 3–5 лет → долго/средне/кратко → повтор. Привязывай цель к большей (parent) — на карточке видна цепочка «↑ зачем». Цель может быть чек-листом ИЛИ числовой (текущее→цель, лог рекордов, режим «держать» для KPI вроде жима/оценок). Статусы: активна / ⏳ жду события / ⏸ пауза.' },
   { icon: '🌳', title: 'Навыки', text: 'У каждой сферы — дерево. За уровни навыка копятся очки, открывай узлы — они дают пассивный бонус к опыту сферы. Кнопка «✏️ Редактор» включает конструктор: перетаскивай узлы, добавляй свои, задавай название/цену/бонус и что требует. Сделай дерево под себя.' },
   { icon: '🎁', title: 'Награды', text: 'Трать золото в магазине наград (придумай свои!). За активность дня падают сундуки — открывай рулеткой: золото, XP-бусты, титулы. Тут же ачивки.' },
   { icon: '🔥', title: 'Хайп', text: 'Выполни «Сложный» квест — включается Хайп: временный бонус к XP (+15% за стак, до +45%, на 2 часа). Каждый следующий сложный квест усиливает и продлевает его. Награда за то, что лезешь в трудное, а не фармишь лёгкое.' },
@@ -2428,12 +2492,28 @@ function onSubmit(e) {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
     const type = f.type.value || 'short';
     const xpReward = f.xpReward.value !== '' ? Math.max(0, Number(f.xpReward.value)) : GOAL_XP[type];
-    State.goals.push({ id: 'g_' + uid(), title, skillId: f.skillId.value, type, xpReward, parentId: f.parentId.value || null, targetDate: f.targetDate.value || null, steps: [], createdAt: new Date().toISOString(), completedAt: null, archived: false });
+    const tgt = (f.mTarget && f.mTarget.value !== '') ? Number(f.mTarget.value) : null;
+    let metric = null;
+    if (tgt != null && !isNaN(tgt)) {
+      const cur = (f.mStart && f.mStart.value !== '') ? Number(f.mStart.value) : 0;
+      metric = { start: cur, current: cur, target: tgt, unit: (f.mUnit.value || '').trim().slice(0, 12), lowerBetter: !!(f.mLower && f.mLower.checked), maintain: !!(f.mMaintain && f.mMaintain.checked), everReached: false, log: [] };
+    }
+    const status = (f.status && f.status.value) || 'active';
+    const window = (f.window && f.window.value || '').trim().slice(0, 40);
+    const goal = { id: 'g_' + uid(), title, skillId: f.skillId.value, type, xpReward, parentId: f.parentId.value || null, targetDate: f.targetDate.value || null, steps: [], metric, status, window, createdAt: new Date().toISOString(), completedAt: null, archived: false };
+    State.goals.push(goal);
+    if (goal.metric) refreshGoalCompletion(goal); // вдруг уже достигнута на старте (напр. жим уже взят)
     Store.save('goals', State.goals); render();
   } else if (f.classList.contains('add-step-form')) {
     e.preventDefault(); const g = goalById(f.dataset.goal); const v = f.step.value.trim(); if (!g || !v) return;
     g.steps.push({ id: 's_' + uid(), title: v, done: false }); refreshGoalCompletion(g);
     Store.save('goals', State.goals); render();
+  } else if (f.classList.contains('metric-form')) {
+    e.preventDefault(); const g = goalById(f.dataset.goal); if (!g || !g.metric || f.val.value === '') return;
+    const val = Number(f.val.value); if (isNaN(val)) return;
+    g.metric.current = val; g.metric.log = g.metric.log || [];
+    g.metric.log.unshift({ date: todayStr(), value: val }); g.metric.log = g.metric.log.slice(0, 50);
+    refreshGoalCompletion(g); Store.save('goals', State.goals); checkAchievements(); render(); publishLeaderboard();
   } else if (f.id === 'add-reward') {
     e.preventDefault(); const name = f.name.value.trim(); if (!name) return;
     if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
@@ -2863,7 +2943,7 @@ async function initApp() {
   State.habits = await Store.load('habits', []);
   State.habitlog = await Store.load('habitlog', {});
   State.goals = await Store.load('goals', []);
-  State.goals.forEach((g) => { if (!g.type) g.type = 'mid'; if (g.xpReward === undefined) g.xpReward = GOAL_XP[g.type] != null ? GOAL_XP[g.type] : GOAL_BONUS.xp; if (g.parentId === undefined) g.parentId = null; });
+  State.goals.forEach((g) => { if (!g.type) g.type = 'mid'; if (g.xpReward === undefined) g.xpReward = GOAL_XP[g.type] != null ? GOAL_XP[g.type] : GOAL_BONUS.xp; if (g.parentId === undefined) g.parentId = null; if (g.status === undefined) g.status = 'active'; if (g.metric === undefined) g.metric = null; });
   State.tree = await Store.load('skilltree', {});
   State.rewards = await Store.load('rewards', []);
   State.purchases = await Store.load('purchases', []);
@@ -2897,6 +2977,11 @@ function publishLeaderboard() {
 
 // Делегированный обработчик change (для select-ов вне форм — напр. импорт достижений)
 function onChange(e) {
+  // смена статуса цели (active/waiting/paused)
+  if (e.target.dataset && e.target.dataset.action === 'goal-status') {
+    const g = goalById(e.target.dataset.id); if (g) { g.status = e.target.value; Store.save('goals', State.goals); render(); }
+    return;
+  }
   // превью выбранных фото/видео в форме фидбека
   if (e.target.name === 'files' && e.target.closest('#feedback-form')) {
     const pv = document.getElementById('fb-previews'); if (!pv) return;
