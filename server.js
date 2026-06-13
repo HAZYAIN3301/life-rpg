@@ -523,6 +523,38 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // ---- Инбокс: медиа быстрых заметок (голос/видео) — per-user в data/users/<id>/inbox/ ----
+  const INBOX_EXT = { 'audio/webm': 'webm', 'audio/ogg': 'ogg', 'audio/mp4': 'm4a', 'audio/mpeg': 'mp3', 'video/webm': 'webm', 'video/mp4': 'mp4' };
+  const INBOX_MIME = { webm: 'video/webm', ogg: 'audio/ogg', m4a: 'audio/mp4', mp3: 'audio/mpeg', mp4: 'video/mp4' };
+  if (u === '/api/inbox/media' && req.method === 'POST') {
+    const uid = sessionUserId(req);
+    if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let b = {}; try { b = JSON.parse(await readBody(req, 40 * 1024 * 1024)); } catch { return sendJson(res, 400, { error: 'too large / bad json' }); }
+    const mm = /^data:([\w/.+-]+);base64,(.+)$/.exec(b.dataUrl || '');
+    if (!mm) return sendJson(res, 400, { error: 'bad dataUrl' });
+    const mime = mm[1].split(';')[0], ext = INBOX_EXT[mime];
+    if (!ext) return sendJson(res, 400, { error: 'unsupported type' });
+    const buf = Buffer.from(mm[2], 'base64');
+    if (buf.length > 35 * 1024 * 1024) return sendJson(res, 400, { error: 'file too big' });
+    const dir = path.join(userDataDir(uid), 'inbox');
+    const fname = Date.now().toString(36) + Math.random().toString(36).slice(2, 6) + '.' + ext;
+    try { fs.mkdirSync(dir, { recursive: true }); fs.writeFileSync(path.join(dir, fname), buf); } catch (e) { return sendJson(res, 500, { error: 'save failed' }); }
+    return sendJson(res, 200, { ok: true, file: fname, type: mime });
+  }
+  {
+    const im = u.match(/^\/api\/inbox\/media\/([A-Za-z0-9_.-]+)$/);
+    if (im && req.method === 'GET') {
+      const uid = sessionUserId(req);
+      if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      const name = im[1];
+      if (name.includes('..')) return sendJson(res, 400, { error: 'bad name' });
+      const fp = path.join(userDataDir(uid), 'inbox', name);
+      const ext = path.extname(fp).slice(1).toLowerCase();
+      fs.readFile(fp, (err, buf) => err ? send(res, 404, 'Not found') : send(res, 200, buf, { 'Content-Type': INBOX_MIME[ext] || 'application/octet-stream' }));
+      return;
+    }
+  }
+
   // ---- Лидерборд (соцфича) ----
   // Клиент публикует ПУБЛИЧНЫЙ снапшот прогресса (XP/уровень/ранг). Приватные данные
   // (задачи, рефлексия, тело и т.д.) НЕ покидают клиента — на сервере только агрегат.

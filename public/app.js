@@ -335,7 +335,7 @@ const State = {
   // app data
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
   goals: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
-  lootbox: null,
+  lootbox: null, inbox: null, inboxOpen: false,
   leaderboard: null, _lbLoading: false,
   adminUsers: null, _adminUsersLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null, calMode: 'day',
@@ -1417,6 +1417,76 @@ function renderCalendarView() {
       <div class="cal calv-grid" style="height:${hours.length * CAL_ROWH}px">${grid}${nowLine}${blocks}</div>
     </div>`;
 }
+// ============================================================
+//  Быстрый захват + Инбокс (Блок 2) — текст/голос/видео, замена Telegram «Избранное»
+// ============================================================
+let _rec = null; // { kind, recorder, chunks, stream, startedAt, timer }
+function captureBar() {
+  if (_rec) {
+    return `<div class="card capture-card recording">
+      <div class="cap-rec"><span class="cap-dot"></span><span>${_rec.kind === 'video' ? '🎥' : '🎤'} Запись <span id="rec-timer">0:00</span></span>
+      <button class="btn" data-action="cap-stop">⏹ Стоп · сохранить</button></div></div>`;
+  }
+  const n = (State.inbox || []).length;
+  return `<div class="card capture-card">
+    <form id="capture-form" class="cap-row">
+      <input name="text" placeholder="Быстрая мысль / план — закинь в инбокс…" autocomplete="off" />
+      <button type="button" class="cap-btn" data-action="cap-voice" title="Голосовая заметка">🎤</button>
+      <button type="button" class="cap-btn" data-action="cap-video" title="Видео-заметка">🎥</button>
+      <button type="submit" class="cap-add" title="В инбокс">↵</button>
+    </form>
+    ${n ? `<button class="cap-inbox-toggle" data-action="toggle-inbox">📥 Инбокс (${n})${State.inboxOpen ? ' ▾' : ' ▸'}</button>` : ''}</div>`;
+}
+function inboxItem(it) {
+  const media = it.file ? (it.kind === 'video'
+    ? `<video class="inbox-media" controls preload="metadata" src="/api/inbox/media/${esc(it.file)}"></video>`
+    : `<audio class="inbox-media" controls preload="metadata" src="/api/inbox/media/${esc(it.file)}"></audio>`) : '';
+  const label = it.text || (it.kind === 'voice' ? '🎤 Голосовая заметка' : it.kind === 'video' ? '🎥 Видео-заметка' : '');
+  return `<div class="inbox-item">
+    <div class="inbox-row"><span class="inbox-when muted">${(it.at || '').slice(11, 16)}</span><span class="inbox-text">${esc(label)}</span>
+      <span class="inbox-actions"><button class="btn ghost sm" data-action="inbox-quest" data-id="${it.id}" title="Сделать квестом на сегодня">→ Квест</button><button class="del" data-action="inbox-del" data-id="${it.id}" title="Удалить">✕</button></span></div>
+    ${media}</div>`;
+}
+function inboxCard() {
+  if (!State.inbox || !State.inbox.length || !State.inboxOpen) return '';
+  return `<div class="card inbox-card"><h3>📥 Инбокс — разбери в квесты/цели</h3>${State.inbox.map(inboxItem).join('')}</div>`;
+}
+function blobToDataUrl(blob) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); }); }
+async function startCapture(kind) {
+  if (_rec) return;
+  if (!navigator.mediaDevices || !window.MediaRecorder) { toast('Браузер не поддерживает запись'); return; }
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia(kind === 'video' ? { audio: true, video: { width: 640, height: 480 } } : { audio: true }); }
+  catch { toast('Нужен доступ к ' + (kind === 'video' ? 'камере' : 'микрофону')); return; }
+  const recorder = new MediaRecorder(stream);
+  _rec = { kind, recorder, chunks: [], stream, startedAt: Date.now(), timer: null };
+  recorder.ondataavailable = (e) => { if (e.data && e.data.size) _rec.chunks.push(e.data); };
+  recorder.onstop = onCaptureStop;
+  recorder.start();
+  _rec.timer = setInterval(() => {
+    const el = document.getElementById('rec-timer'); const s = Math.floor((Date.now() - _rec.startedAt) / 1000);
+    if (el) el.textContent = Math.floor(s / 60) + ':' + pad2(s % 60);
+    if (s >= 120) stopCapture(); // авто-стоп 2 мин
+  }, 250);
+  render();
+}
+function stopCapture() { if (_rec && _rec.recorder && _rec.recorder.state !== 'inactive') _rec.recorder.stop(); }
+async function onCaptureStop() {
+  const rec = _rec; if (!rec) return;
+  clearInterval(rec.timer);
+  rec.stream.getTracks().forEach((t) => t.stop());
+  const blob = new Blob(rec.chunks, { type: rec.recorder.mimeType || (rec.kind === 'video' ? 'video/webm' : 'audio/webm') });
+  _rec = null; render();
+  if (!blob.size) { toast('Пустая запись'); return; }
+  try {
+    const dataUrl = await blobToDataUrl(blob);
+    const r = await fetch('/api/inbox/media', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataUrl, kind: rec.kind }) });
+    if (!r.ok) { toast('Не удалось сохранить запись'); return; }
+    const d = await r.json();
+    State.inbox.unshift({ id: uid(), kind: rec.kind, text: '', file: d.file, type: d.type, at: new Date().toISOString() });
+    State.inboxOpen = true; Store.save('inbox', State.inbox); track('capture:' + rec.kind); toast(rec.kind === 'video' ? '🎥 Видео в инбоксе' : '🎤 Голос в инбоксе'); render();
+  } catch { toast('Ошибка сохранения записи'); }
+}
 function renderToday() {
   const today = todayStr();
   const todays = State.tasks.filter((t) => t.date === today);
@@ -1456,7 +1526,7 @@ function renderToday() {
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">↪ Перенести всё на сегодня</button></div>` : '';
 
-  return `${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}
+  return `${captureBar()}${inboxCard()}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="Новый квест на сегодня…" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
@@ -2483,6 +2553,12 @@ function onSubmit(e) {
     Store.save('tasks', State.tasks); State.wkAddDate = null; render(); return;
   }
 
+  if (f.id === 'capture-form') {
+    e.preventDefault(); const text = f.text.value.trim(); if (!text) return;
+    State.inbox.unshift({ id: uid(), kind: 'text', text, file: null, type: null, at: new Date().toISOString() });
+    State.inboxOpen = true; Store.save('inbox', State.inbox); track('capture:text'); f.text.value = ''; render();
+    return;
+  }
   if (f.id === 'add-task') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
     const tDate = (f.date && f.date.value) || todayStr(); // вкладка «Календарь» добавляет на выбранный день
@@ -2772,6 +2848,21 @@ function onClick(e) {
   } else if (action === 'cal-shift') { State.calDate = addDays(State.calDate || todayStr(), Number(el.dataset.days)); render();
   } else if (action === 'cal-today') { State.calDate = todayStr(); render();
   } else if (action === 'goto-calendar') { State.calDate = todayStr(); State.view = 'calendar'; render();
+
+  // --- Инбокс / быстрый захват (Блок 2) ---
+  } else if (action === 'cap-voice') { startCapture('voice');
+  } else if (action === 'cap-video') { startCapture('video');
+  } else if (action === 'cap-stop') { stopCapture();
+  } else if (action === 'toggle-inbox') { State.inboxOpen = !State.inboxOpen; render();
+  } else if (action === 'inbox-del') {
+    State.inbox = (State.inbox || []).filter((x) => x.id !== id); Store.save('inbox', State.inbox); render();
+  } else if (action === 'inbox-quest') {
+    const it = (State.inbox || []).find((x) => x.id === id); if (!it) return;
+    const title = (it.text || (it.kind === 'voice' ? 'Голосовая заметка' : it.kind === 'video' ? 'Видео-заметка' : 'Заметка')).slice(0, 120);
+    const sid = State.settings.skills[0] && State.settings.skills[0].id;
+    State.tasks.push({ id: uid(), title, skillId: sid, skillIds: sid ? [sid] : [], estimateMin: 30, difficulty: 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
+    State.inbox = State.inbox.filter((x) => x.id !== id);
+    Store.save('tasks', State.tasks); Store.save('inbox', State.inbox); toast('→ В квестах на сегодня'); render();
   } else if (action === 'cal-mode') { State.calMode = el.dataset.mode; render();
   } else if (action === 'cal-pick-day') { State.calDate = el.dataset.date; State.calMode = 'day'; render();
   } else if (action === 'cal-shift-month') { const d = parseDate(State.calDate || todayStr()); State.calDate = fmtDate(new Date(d.getFullYear(), d.getMonth() + Number(el.dataset.delta), Math.min(d.getDate(), 28))); render();
@@ -2950,6 +3041,7 @@ async function initApp() {
   State.achievements = await Store.load('achievements', {});
   State.weeks = await Store.load('weeks', {});
   State.lootbox = await Store.load('lootbox', { day: todayStr(), opened: 0, goldWon: 0, boost: null, titles: [], equipped: null, history: [] });
+  State.inbox = await Store.load('inbox', []);
   ensureLootbox();
   ensureEnergy();
 

@@ -884,6 +884,30 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .en-bar { height: 9px; background: var(--panel2); border-radius: 999px; overflow: hidden; margin-top: 8px; }
 .en-bar > span { display: block; height: 100%; border-radius: 999px; transition: width .5s, background .5s; }
 .en-note { font-size: 11px; margin: 7px 0 0; }
+
+/* ---------- Быстрый захват + Инбокс (Блок 2) ---------- */
+.capture-card { padding: 12px 14px !important; }
+.cap-row { display: flex; gap: 8px; align-items: center; }
+.cap-row input[name="text"] { flex: 1 1 auto; min-width: 0; }
+.cap-btn { flex: 0 0 auto; background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; font-size: 17px; line-height: 1; padding: 8px 11px; cursor: pointer; }
+.cap-btn:hover { border-color: var(--accent); }
+.cap-add { flex: 0 0 auto; background: var(--accent); border: none; color: #fff; border-radius: 10px; padding: 8px 13px; font-size: 16px; cursor: pointer; font-weight: 700; }
+.cap-inbox-toggle { margin-top: 10px; background: none; border: none; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; padding: 2px 0; }
+.cap-inbox-toggle:hover { color: var(--text); }
+.capture-card.recording { border-color: var(--bad); }
+.cap-rec { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-weight: 600; }
+.cap-dot { width: 11px; height: 11px; border-radius: 50%; background: var(--bad); display: inline-block; margin-right: 6px; animation: capPulse 1s infinite; }
+@keyframes capPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+#rec-timer { font-variant-numeric: tabular-nums; }
+.inbox-card { padding: 14px 16px !important; }
+.inbox-item { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.inbox-item:last-child { border-bottom: none; }
+.inbox-row { display: flex; align-items: center; gap: 8px; }
+.inbox-when { font-size: 11px; flex: 0 0 auto; font-variant-numeric: tabular-nums; }
+.inbox-text { flex: 1 1 auto; min-width: 0; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; }
+.inbox-actions { flex: 0 0 auto; display: flex; gap: 6px; align-items: center; }
+.inbox-media { display: block; margin-top: 8px; width: 100%; max-width: 360px; border-radius: 8px; }
+audio.inbox-media { height: 38px; }
 /* админ-аналитика */
 .an-box { margin-top: 8px; }
 .an-dau-row { font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
