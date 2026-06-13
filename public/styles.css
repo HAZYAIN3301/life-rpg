@@ -953,6 +953,10 @@ audio.note-media { height: 40px; }
 
 /* Телефоны */
 @media (max-width: 560px) {
+  /* Месячная сетка календаря: на узких экранах не давим aspect-ratio (иначе переполнение по ширине) */
+  .cm-grid, .cm-wd { gap: 4px; }
+  .cm-cell { aspect-ratio: auto; min-height: 46px; }
+  .cm-n { font-size: 14px; }
   /* Учитываем «безопасные зоны» (вырез/home-индикатор) в standalone-режиме на iPhone */
   #app { padding: 0 max(12px, env(safe-area-inset-left)) calc(72px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-right)); }
   #topbar { padding: max(12px, env(safe-area-inset-top)) 0 8px; margin-bottom: 16px; }

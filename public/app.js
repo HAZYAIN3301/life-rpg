@@ -315,9 +315,11 @@ const IMPORT_LADDERS = {
 const GENERIC_LADDER = { hint: 'честная самооценка — сравни с тем, кем был год назад', top: 16, tiers: ['Только начинаю', 'Регулярная практика', 'Уверенный прогресс', 'Могу научить других', 'Глубокая экспертиза'] };
 // Ключи матчим от длинных к коротким — специфичное побеждает (иначе «Стартап» цепляет «арт»→рисование, «Рукоделие» цеплял «дел»).
 const LADDER_KEYS = Object.keys(IMPORT_LADDERS).sort((a, b) => b.length - a.length);
+// Нормализация для русского матчинга: ё→е (юзеры часто пишут «учеба» вместо «учёба» — фидбек #16)
+function normRu(s) { return String(s || '').toLowerCase().replace(/ё/g, 'е'); }
 function ladderFor(skillName) {
-  const n = (skillName || '').toLowerCase();
-  for (const key of LADDER_KEYS) if (n.includes(key)) return IMPORT_LADDERS[key];
+  const n = normRu(skillName);
+  for (const key of LADDER_KEYS) if (n.includes(normRu(key))) return IMPORT_LADDERS[key];
   return GENERIC_LADDER;
 }
 // Целевой уровень для каждого тира (tier 0 → ур.1; верхний → ladder.top)
@@ -600,7 +602,7 @@ const ATTRIBUTES = [
 ];
 function attrById(id) { return ATTRIBUTES.find((a) => a.id === id) || ATTRIBUTES[5]; }
 function guessAttr(name) {
-  const n = (name || '').toLowerCase();
+  const n = normRu(name); // ё→е, чтобы «учеба»/«учёба» матчились одинаково
   if (/спорт|сил|качал|штанг|жим|мыш|workout|gym|подтяг|отжим|кросфит|кроссфит/.test(n)) return 'str';
   if (/бег|вынослив|кардио|велик|плав|run|марафон|ходьб|дыхан|поход|здоров|питани|нутриц|диет|сон/.test(n)) return 'end';
   if (/уч[её]б|программ|код|чтени|книг|англ|немецк|deutsch|язык|наук|study|math|школ|универ|интеллект|шахмат/.test(n)) return 'int';
@@ -1428,8 +1430,8 @@ function trainingWithoutMobility() {
   const strengthRe = /зал|штанг|жим|силов|присед|становая|тяга|дзюдо|единоборств|бокс|борьб|gym|judo/i;
   const mobilityRe = /растяжк|мобил|йог|разминк|гибкост|шпагат|суставн|stretch|mobility/i;
   let strength = false, mobility = false;
-  for (const t of State.tasks) if (t.done && dayOf(t) >= since) { if (strengthRe.test(t.title)) strength = true; if (mobilityRe.test(t.title)) mobility = true; }
-  for (const d in State.habitlog) if (d >= since) for (const hid in State.habitlog[d]) { const h = habitById(hid); if (h) { if (strengthRe.test(h.title)) strength = true; if (mobilityRe.test(h.title)) mobility = true; } }
+  for (const t of State.tasks) if (t.done && dayOf(t) >= since) { const n = normRu(t.title); if (strengthRe.test(n)) strength = true; if (mobilityRe.test(n)) mobility = true; }
+  for (const d in State.habitlog) if (d >= since) for (const hid in State.habitlog[d]) { const h = habitById(hid); if (h) { const n = normRu(h.title); if (strengthRe.test(n)) strength = true; if (mobilityRe.test(n)) mobility = true; } }
   return strength && !mobility;
 }
 
