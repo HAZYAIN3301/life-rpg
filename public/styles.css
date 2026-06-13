@@ -877,6 +877,18 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .mobil-nudge { flex-direction: column; align-items: stretch; gap: 10px; }
 .mobil-text p { font-size: 12.5px; margin: 4px 0 0; line-height: 1.45; }
 .mobil-acts { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+/* анти-привычки (свобода от привычек) */
+.anti-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.anti-row:last-of-type { border-bottom: none; }
+.anti-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.anti-title { font-weight: 600; font-size: 14px; }
+.anti-stat { font-size: 12.5px; color: var(--muted); }
+.anti-stat b { color: #5fbf7a; font-variant-numeric: tabular-nums; }
+.anti-undo { color: var(--muted); }
+.anti-note { font-size: 12px; margin: 10px 0 0; line-height: 1.45; }
+.ah-edit { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+.ah-edit:last-child { border-bottom: none; }
+.ah-name { font-size: 13.5px; }
 
 /* ---------- Энергия (идея 19) ---------- */
 .energy-card { padding: 12px 16px !important; cursor: help; }

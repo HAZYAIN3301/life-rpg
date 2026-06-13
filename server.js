@@ -444,7 +444,7 @@ const server = http.createServer(async (req, res) => {
     const fdir = path.join(DATA_DIR, 'feedback');
     const attachments = [];
     for (const [i, a] of (Array.isArray(fb.attachments) ? fb.attachments : []).slice(0, 6).entries()) {
-      const m = /^data:([^,]+);base64,(.+)$/.exec(a && a.dataUrl || '');
+      const m = /^data:(.*);base64,(.+)$/.exec(a && a.dataUrl || '');
       if (!m) continue;
       const mime = m[1].split(';')[0].trim(), ext = FB_EXT[mime]; if (!ext) continue;
       const buf = Buffer.from(m[2], 'base64');
@@ -530,8 +530,8 @@ const server = http.createServer(async (req, res) => {
     const uid = sessionUserId(req);
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     let b = {}; try { b = JSON.parse(await readBody(req, 40 * 1024 * 1024)); } catch { return sendJson(res, 400, { error: 'too large / bad json' }); }
-    // mm[1] = полный media-type (может содержать ;codecs=opus — MediaRecorder его добавляет); базовый mime = до ';'
-    const mm = /^data:([^,]+);base64,(.+)$/.exec(b.dataUrl || '');
+    // mm[1] = полный media-type. Видео-MediaRecorder даёт ;codecs=vp8,opus (с ЗАПЯТОЙ!) — нельзя [^,]; жадно до ;base64,
+    const mm = /^data:(.*);base64,(.+)$/.exec(b.dataUrl || '');
     if (!mm) return sendJson(res, 400, { error: 'bad dataUrl' });
     const mime = mm[1].split(';')[0].trim(), ext = INBOX_EXT[mime];
     if (!ext) return sendJson(res, 400, { error: 'unsupported type' });

@@ -335,7 +335,7 @@ const State = {
   // app data
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
   goals: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
-  lootbox: null, inbox: null, inboxOpen: false,
+  lootbox: null, inbox: null, inboxOpen: false, antihabits: null,
   leaderboard: null, _lbLoading: false,
   adminUsers: null, _adminUsersLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null, calMode: 'day',
@@ -1432,6 +1432,34 @@ function trainingWithoutMobility() {
   for (const d in State.habitlog) if (d >= since) for (const hid in State.habitlog[d]) { const h = habitById(hid); if (h) { if (strengthRe.test(h.title)) strength = true; if (mobilityRe.test(h.title)) mobility = true; } }
   return strength && !mobility;
 }
+
+// ---- Анти-привычки (Блок 4): «чистые дни», без стыда. Срыв = данные, не провал. ----
+function antiDates(a) { return (a.slips || []).slice().sort(); }
+function antiLastSlip(a) { const s = antiDates(a); return s.length ? s[s.length - 1] : null; }
+function antiCleanDays(a) {
+  const last = antiLastSlip(a), from = last || (a.createdAt ? fmtDate(new Date(a.createdAt)) : todayStr());
+  return Math.max(0, Math.round((parseDate(todayStr()) - parseDate(from)) / 86400000));
+}
+function antiBestStreak(a) {
+  const start = a.createdAt ? fmtDate(new Date(a.createdAt)) : todayStr();
+  const pts = [start, ...antiDates(a), todayStr()];
+  let best = 0; for (let i = 1; i < pts.length; i++) { const gap = Math.round((parseDate(pts[i]) - parseDate(pts[i - 1])) / 86400000); if (gap > best) best = gap; }
+  return best;
+}
+function antiHabitsCard() {
+  const list = State.antihabits || []; if (!list.length) return '';
+  const rows = list.map((a) => {
+    const clean = antiCleanDays(a), best = antiBestStreak(a), slippedToday = antiLastSlip(a) === todayStr();
+    return `<div class="anti-row">
+      <div class="anti-main"><span class="anti-title">${esc(a.title)}</span>
+        <span class="anti-stat">🟢 <b>${clean}</b> ${plural(clean, 'день', 'дня', 'дней')} чисто${best > clean ? ` · рекорд ${best}` : ''}</span></div>
+      ${slippedToday
+        ? `<button class="btn ghost sm anti-undo" data-action="anti-unslip" data-id="${a.id}">сегодня был срыв · отменить</button>`
+        : `<button class="btn ghost sm" data-action="anti-slip" data-id="${a.id}">был срыв?</button>`}</div>`;
+  }).join('');
+  return `<div class="card anti-card"><h3>🛡 Свобода от привычек</h3>${rows}
+    <p class="muted anti-note">Срыв — не провал, а данные. Без стыда: это копинг, а не ты. Заметь, что его вызвало — и иди дальше. Завтра новый чистый день 🌱</p></div>`;
+}
 function captureBar() {
   if (_rec) {
     return `<div class="card capture-card recording">
@@ -1569,6 +1597,7 @@ function renderToday() {
     ${todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">🗓 ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : ''}
     <div class="card"><h3>🔁 Привычки на сегодня</h3>
       ${habits.length ? `<ul class="tasks">${habits.map(habitRow).join('')}</ul>` : '<p class="muted">На сегодня привычек нет. Добавь их в «Настройках».</p>'}</div>
+    ${antiHabitsCard()}
     <div class="card shutdown"><h3>🌙 Итог дня</h3>
       <p class="muted">Квестов ${doneCount}/${todays.length} · привычек ${habits.filter((h) => habitDone(h, today)).length}/${habits.length} · ${fmtDur(minToday)} · +${xpToday} XP · +${goldToday} 🪙</p>
       <textarea id="reflection" placeholder="Рефлексия: что получилось, что перенести, как себя чувствую…">${esc(day.reflection || '')}</textarea>
@@ -2389,6 +2418,17 @@ function renderSettings() {
     <div class="card"><h3>Навыки / сферы жизни</h3><p class="muted" style="font-size:12px;margin:0 0 10px">Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">+ Добавить сферу</button></div>
     ${importCard()}
     <div class="card"><h3>🔁 Привычки (повторяющиеся)</h3><div id="habits-list">${habits || '<p class="muted">Пока нет привычек.</p>'}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">+ Добавить привычку</button></div>
+    <div class="card"><h3>🛡 Анти-привычки — с чем борешься</h3>
+      <p class="muted" style="font-size:12px;margin:0 0 10px">Отслеживай «чистые дни». Срыв не наказывается — это данные, без стыда. Подход — твой фреймворк доверия/контекста.</p>
+      <form id="add-antihabit" class="add-row">
+        <input name="title" placeholder="Напр. без бессмысленного скролла" autocomplete="off" required />
+        <select name="approach" title="Подход к борьбе">
+          <option value="">— подход —</option>
+          <option value="доверие">Доверие к себе</option>
+          <option value="недоверие">Недоверие (блоки/лимиты)</option>
+          <option value="контекст">Смена контекста/среды</option></select>
+        <button type="submit">+ Добавить</button></form>
+      ${(State.antihabits || []).map((a) => `<div class="ah-edit"><span class="ah-name">${esc(a.title)}${a.approach ? ` · <span class="muted">${esc(a.approach)}</span>` : ''}</span><button class="del" data-action="delete-antihabit" data-id="${a.id}">✕</button></div>`).join('')}</div>
     <div class="card"><h3>📦 Программы-данжи</h3><p class="muted" style="margin:0 0 12px">Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
     <div class="card"><h3>Формула опыта</h3><div class="knobs">
         <div class="knob"><label>XP за минуту</label><input id="k-perMinute" type="number" step="0.1" value="${s.xp.perMinute}" /></div>
@@ -2582,6 +2622,13 @@ function onSubmit(e) {
     e.preventDefault(); const text = f.text.value.trim(); if (!text) return;
     State.inbox.unshift({ id: uid(), kind: 'text', text, file: null, type: null, at: new Date().toISOString() });
     Store.save('inbox', State.inbox); track('capture:text'); f.text.value = ''; toast('📝 В Заметках'); render();
+    return;
+  }
+  if (f.id === 'add-antihabit') {
+    e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
+    State.antihabits = State.antihabits || [];
+    State.antihabits.push({ id: 'ah_' + uid(), title, approach: (f.approach && f.approach.value) || '', slips: [], createdAt: new Date().toISOString() });
+    Store.save('antihabits', State.antihabits); render();
     return;
   }
   if (f.id === 'add-task') {
@@ -2812,6 +2859,15 @@ function onClick(e) {
   } else if (action === 'mobil-later') { _mobilSnoozeDay = today; render();
   } else if (action === 'mobil-never') {
     State.settings.prefs = Object.assign({}, State.settings.prefs, { noMobilityNudge: true }); Store.save('settings', State.settings); toast('Подсказки мобилки отключены'); render();
+  } else if (action === 'anti-slip') {
+    const a = (State.antihabits || []).find((x) => x.id === id); if (!a) return;
+    a.slips = a.slips || []; if (!a.slips.includes(today)) a.slips.push(today);
+    Store.save('antihabits', State.antihabits); toast('Записано. Без стыда — завтра новый чистый день 🌱'); render();
+  } else if (action === 'anti-unslip') {
+    const a = (State.antihabits || []).find((x) => x.id === id); if (!a) return;
+    a.slips = (a.slips || []).filter((d) => d !== today); Store.save('antihabits', State.antihabits); render();
+  } else if (action === 'delete-antihabit') {
+    State.antihabits = (State.antihabits || []).filter((x) => x.id !== id); Store.save('antihabits', State.antihabits); render();
   } else if (action === 'move-overdue') {
     State.tasks.forEach((t) => { if (!t.done && t.date < today) t.date = today; }); Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
   } else if (action === 'schedule-quest') {
@@ -3075,6 +3131,7 @@ async function initApp() {
   State.weeks = await Store.load('weeks', {});
   State.lootbox = await Store.load('lootbox', { day: todayStr(), opened: 0, goldWon: 0, boost: null, titles: [], equipped: null, history: [] });
   State.inbox = await Store.load('inbox', []);
+  State.antihabits = await Store.load('antihabits', []);
   ensureLootbox();
   ensureEnergy();
 
