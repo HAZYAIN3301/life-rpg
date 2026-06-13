@@ -889,6 +889,13 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .ah-edit { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); }
 .ah-edit:last-child { border-bottom: none; }
 .ah-name { font-size: 13.5px; }
+/* ИИ-ассистент */
+.ai-review-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.ai-box { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 24px; width: min(560px, 96vw); max-height: 86vh; overflow-y: auto; animation: fadeIn .2s; }
+.ai-box h3 { margin: 0 0 12px; }
+.ai-spin { font-size: 28px; text-align: center; padding: 12px; }
+.ai-out { font-size: 14px; line-height: 1.6; }
+.ai-body .muted { line-height: 1.5; }
 
 /* ---------- Энергия (идея 19) ---------- */
 .energy-card { padding: 12px 16px !important; cursor: help; }

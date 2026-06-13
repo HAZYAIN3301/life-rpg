@@ -337,7 +337,7 @@ const State = {
   // app data
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
   goals: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
-  lootbox: null, inbox: null, inboxOpen: false, antihabits: null,
+  lootbox: null, inbox: null, inboxOpen: false, antihabits: null, aiKeys: null,
   leaderboard: null, _lbLoading: false,
   adminUsers: null, _adminUsersLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null, calMode: 'day',
@@ -1462,6 +1462,44 @@ function antiHabitsCard() {
   return `<div class="card anti-card"><h3>🛡 Свобода от привычек</h3>${rows}
     <p class="muted anti-note">Срыв — не провал, а данные. Без стыда: это копинг, а не ты. Заметь, что его вызвало — и иди дальше. Завтра новый чистый день 🌱</p></div>`;
 }
+
+// ============================================================
+//  ИИ-ассистент (BYOK) — твой ключ Claude/OpenAI, сервер проксирует. Разбор недели «правдой о времени».
+// ============================================================
+function aiProvider() { const k = State.aiKeys || {}; return k.anthropic ? 'anthropic' : (k.openai ? 'openai' : null); }
+function ensureAiKeys() { if (State.aiKeys === null) { State.aiKeys = {}; fetch('/api/ai/keys').then((r) => r.json()).then((d) => { State.aiKeys = d || {}; render(); }).catch(() => {}); } }
+// Компактная сводка недели для ИИ — реальные данные, не выдумка
+function buildWeekContext() {
+  const end = todayStr(), start = addDays(end, -6);
+  const ev = xpEvents().filter((e) => e.date >= start && e.date <= end);
+  const bySphere = {};
+  for (const e of ev) { const n = e.skillId ? (skillById(e.skillId).name) : '—'; bySphere[n] = bySphere[n] || { xp: 0, min: 0 }; bySphere[n].xp += e.xp; bySphere[n].min += e.min; }
+  const sphereLines = Object.entries(bySphere).sort((a, b) => b[1].min - a[1].min).map(([n, v]) => `  ${n}: ${fmtDur(v.min)}, ${v.xp} XP`).join('\n') || '  (нет активности)';
+  const bal = balanceIndex();
+  const en = ensureEnergy();
+  const goals = (State.goals || []).filter((g) => !g.archived).map((g) => `  ${g.title} — ${goalStatusInfo(g).txt}${g.metric ? ` (${g.metric.current}/${g.metric.target}${g.metric.unit ? ' ' + g.metric.unit : ''})` : ''}`).join('\n') || '  (нет целей)';
+  const anti = (State.antihabits || []).map((a) => `  ${a.title}: ${antiCleanDays(a)} дней чисто`).join('\n');
+  const radar = sphereScores().map((s) => `${s.name} ур.${s.value}`).join(', ');
+  return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nЭнергия сейчас: ${en.cur}/${en.max}\nРадар сфер: ${radar}\nЦели:\n${goals}${anti ? `\nАнти-привычки:\n${anti}` : ''}`;
+}
+async function runWeeklyReview() {
+  const prov = aiProvider();
+  if (!prov) { toast('Добавь ИИ-ключ в Настройках'); State.view = 'settings'; render(); return; }
+  openAiModal('🤖 Разбор недели', '<p class="muted">Анализирую твою неделю…</p>', true);
+  const system = 'Ты — заботливый, научно обоснованный наставник в приложении Gojo (философия «жизнь как десятиборье»). Анализируй данные недели честно и по-человечески, без воды и без льстивости. Дай: (1) что реально происходило со временем и балансом; (2) 2–3 конкретных наблюдения; (3) 1–2 мягких, выполнимых шага на след. неделю. Помни: отдых и восстановление так же ценны, как труд. Коротко, тепло, по делу. Отвечай на русском.';
+  try {
+    const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: prov, system, prompt: buildWeekContext() }) });
+    const d = await r.json();
+    if (!r.ok || !d.text) { openAiModal('🤖 Разбор недели', `<p class="muted">Не удалось: ${esc(d.detail || d.error || 'ошибка')}. Проверь ключ ${prov} в Настройках.</p>`); return; }
+    openAiModal('🤖 Разбор недели', `<div class="ai-out">${esc(d.text).replace(/\n/g, '<br>')}</div>`);
+    track('ai:weekly');
+  } catch { openAiModal('🤖 Разбор недели', '<p class="muted">Сетевая ошибка.</p>'); }
+}
+function openAiModal(title, bodyHtml, loading) {
+  let ov = document.getElementById('ai-modal');
+  if (!ov) { ov = document.createElement('div'); ov.id = 'ai-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov); }
+  ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="ai-close">✕</button><h3>${esc(title)}</h3>${loading ? '<div class="ai-spin">⏳</div>' : ''}<div class="ai-body">${bodyHtml}</div></div>`;
+}
 function captureBar() {
   if (_rec) {
     return `<div class="card capture-card recording">
@@ -2290,6 +2328,7 @@ function barChartSVG(data, showEvery = 1) {
   return `<svg viewBox="0 0 ${w} ${h}" class="chart" preserveAspectRatio="xMidYMid meet">${bars}</svg>`;
 }
 function renderStats() {
+  ensureAiKeys();
   const since = addDays(todayStr(), -13);
   const planned14 = State.tasks.filter((t) => t.date >= since && t.date <= todayStr());
   const rate = planned14.length ? Math.round((planned14.filter((t) => t.done).length / planned14.length) * 100) : 0;
@@ -2321,6 +2360,9 @@ function renderStats() {
       <div class="kpi"><div class="v">🔥 ${currentStreak()}</div><div class="l">Серия · рекорд ${longestStreak()}</div></div>
       <div class="kpi"><div class="v">${rate}%</div><div class="l">Выполнение (14 дн.)</div></div>
     </div>
+    <div class="card ai-review-card">
+      <div><h3 style="margin:0">🤖 ИИ-разбор недели</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">Правда о времени и балансе + мягкие шаги. ${aiProvider() ? 'Твой ключ ' + aiProvider() + '.' : 'Добавь ключ в Настройках.'}</p></div>
+      <button class="btn" data-action="ai-review">Разобрать неделю</button></div>
     <div class="card balance-card">
       <div class="bal-head"><h3>⚖️ Баланс сфер — твоё десятиборье</h3><div class="bal-score" style="color:${balColor}">${bal.index}<small>/100</small></div></div>
       <div class="bal-meter"><span style="width:${bal.index}%;background:${balColor}"></span></div>
@@ -2369,6 +2411,7 @@ function importCard() {
   </div>`;
 }
 function renderSettings() {
+  ensureAiKeys();
   const s = State.settings;
   const f = s.focus || DEFAULT_SETTINGS.focus;
   const skillOpts = (sel) => skillOptionsHTML(sel);
@@ -2431,6 +2474,13 @@ function renderSettings() {
           <option value="контекст">Смена контекста/среды</option></select>
         <button type="submit">+ Добавить</button></form>
       ${(State.antihabits || []).map((a) => `<div class="ah-edit"><span class="ah-name">${esc(a.title)}${a.approach ? ` · <span class="muted">${esc(a.approach)}</span>` : ''}</span><button class="del" data-action="delete-antihabit" data-id="${a.id}">✕</button></div>`).join('')}</div>
+    <div class="card"><h3>🤖 ИИ-ассистент (свой ключ)</h3>
+      <p class="muted" style="font-size:12px;margin:0 0 10px">Вписываешь свой ключ — Gojo делает разбор недели твоим ИИ. Ключ хранится только на сервере, наружу не отдаётся, в гит не попадает. Стоимость инференса — на твоей стороне (BYOK).</p>
+      <form id="ai-keys" class="pin-change">
+        <input name="anthropic" type="password" placeholder="Anthropic ключ (sk-ant-…)${(State.aiKeys && State.aiKeys.anthropic) ? ' · ✓ сохранён' : ''}" autocomplete="off" />
+        <input name="openai" type="password" placeholder="OpenAI ключ (sk-…)${(State.aiKeys && State.aiKeys.openai) ? ' · ✓ сохранён' : ''}" autocomplete="off" />
+        <button type="submit" class="btn">Сохранить</button><span id="ai-keys-msg" class="muted"></span></form>
+      <p class="muted" style="font-size:11.5px;margin:8px 0 0">Claude — для разбора (рекомендую). OpenAI — на будущее (транскрипция голосовых заметок). Ключ можно стереть, очистив поле и сохранив.</p></div>
     <div class="card"><h3>📦 Программы-данжи</h3><p class="muted" style="margin:0 0 12px">Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
     <div class="card"><h3>Формула опыта</h3><div class="knobs">
         <div class="knob"><label>XP за минуту</label><input id="k-perMinute" type="number" step="0.1" value="${s.xp.perMinute}" /></div>
@@ -2631,6 +2681,15 @@ function onSubmit(e) {
     State.antihabits = State.antihabits || [];
     State.antihabits.push({ id: 'ah_' + uid(), title, approach: (f.approach && f.approach.value) || '', slips: [], createdAt: new Date().toISOString() });
     Store.save('antihabits', State.antihabits); render();
+    return;
+  }
+  if (f.id === 'ai-keys') {
+    e.preventDefault();
+    const body = {}; if (f.anthropic.value.trim()) body.anthropic = f.anthropic.value.trim(); if (f.openai.value.trim()) body.openai = f.openai.value.trim();
+    const msg = document.getElementById('ai-keys-msg'); if (msg) msg.textContent = 'Сохраняю…';
+    fetch('/api/ai/keys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then((r) => r.json()).then((d) => { State.aiKeys = { anthropic: d.anthropic, openai: d.openai }; toast('🤖 Ключ сохранён'); render(); })
+      .catch(() => { if (msg) msg.textContent = 'Ошибка'; });
     return;
   }
   if (f.id === 'add-task') {
@@ -2945,6 +3004,8 @@ function onClick(e) {
   } else if (action === 'cap-video') { startCapture('video');
   } else if (action === 'cap-stop') { stopCapture();
   } else if (action === 'goto-notes') { State.view = 'notes'; track('view:notes'); render();
+  } else if (action === 'ai-review') { runWeeklyReview();
+  } else if (action === 'ai-close') { const m = document.getElementById('ai-modal'); if (m) m.remove();
   } else if (action === 'note-del') {
     State.inbox = (State.inbox || []).filter((x) => x.id !== id); Store.save('inbox', State.inbox); render();
   } else if (action === 'note-quest') {

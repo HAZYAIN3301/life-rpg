@@ -100,6 +100,19 @@ function saveUsers(users) {
   fs.writeFileSync(USERS_FILE(), JSON.stringify(users, null, 2));
 }
 function userDataDir(id) { return path.join(DATA_DIR, 'users', id); }
+// ИИ BYOK: ключи per-user (в data/users/<id>/, под гитигнором). Наружу не отдаём.
+function aiKeysFile(id) { return path.join(userDataDir(id), 'ai-keys.json'); }
+function loadAiKeys(id) { try { return JSON.parse(fs.readFileSync(aiKeysFile(id), 'utf8')); } catch { return {}; } }
+// HTTPS POST JSON → { status, json }. Для прокси к Anthropic/OpenAI ключом юзера.
+function httpsPostJson(host, pathName, headers, bodyObj) {
+  return new Promise((resolve, reject) => {
+    const body = Buffer.from(JSON.stringify(bodyObj));
+    const r = https.request({ host, path: pathName, method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json', 'Content-Length': body.length }, headers) }, (resp) => {
+      let data = ''; resp.on('data', (c) => data += c); resp.on('end', () => { let json = {}; try { json = JSON.parse(data || '{}'); } catch { json = { raw: data.slice(0, 500) }; } resolve({ status: resp.statusCode, json }); });
+    });
+    r.on('error', reject); r.write(body); r.end();
+  });
+}
 // Каталог бэкапов одного файла данных пользователя
 function backupDir(dir, name) { return path.join(dir, '.backups', name); }
 // Снимок текущего содержимого файла ПЕРЕД перезаписью.
@@ -554,6 +567,48 @@ const server = http.createServer(async (req, res) => {
       fs.readFile(fp, (err, buf) => err ? send(res, 404, 'Not found') : send(res, 200, buf, { 'Content-Type': INBOX_MIME[ext] || 'application/octet-stream' }));
       return;
     }
+  }
+
+  // ---- ИИ-ассистент (BYOK — «принеси свой ключ»). Ключ хранится ТОЛЬКО на сервере (data/users/<id>/, в гитигноре), наружу — лишь признак наличия. ----
+  if (u === '/api/ai/keys' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let b = {}; try { b = JSON.parse(await readBody(req, 64 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
+    const cur = loadAiKeys(uid);
+    if (typeof b.anthropic === 'string') cur.anthropic = b.anthropic.trim();
+    if (typeof b.openai === 'string') cur.openai = b.openai.trim();
+    try { fs.mkdirSync(userDataDir(uid), { recursive: true }); fs.writeFileSync(aiKeysFile(uid), JSON.stringify(cur)); } catch { return sendJson(res, 500, { error: 'save failed' }); }
+    return sendJson(res, 200, { ok: true, anthropic: !!cur.anthropic, openai: !!cur.openai });
+  }
+  if (u === '/api/ai/keys' && req.method === 'GET') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const k = loadAiKeys(uid); return sendJson(res, 200, { anthropic: !!k.anthropic, openai: !!k.openai });
+  }
+  if (u === '/api/ai/analyze' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
+    const provider = b.provider === 'openai' ? 'openai' : 'anthropic';
+    const keys = loadAiKeys(uid);
+    const system = String(b.system || '').slice(0, 8000);
+    const prompt = String(b.prompt || '').slice(0, 100000);
+    if (!prompt) return sendJson(res, 400, { error: 'empty prompt' });
+    try {
+      if (provider === 'anthropic') {
+        if (!keys.anthropic) return sendJson(res, 400, { error: 'no_key', provider });
+        const r = await httpsPostJson('api.anthropic.com', '/v1/messages', { 'x-api-key': keys.anthropic, 'anthropic-version': '2023-06-01' },
+          { model: b.model || 'claude-opus-4-8', max_tokens: 2000, system, messages: [{ role: 'user', content: prompt }] });
+        if (r.status !== 200) return sendJson(res, 502, { error: 'provider', status: r.status, detail: (r.json.error && r.json.error.message) || '' });
+        const text = (r.json.content || []).filter((x) => x.type === 'text').map((x) => x.text).join('\n');
+        return sendJson(res, 200, { text });
+      } else {
+        if (!keys.openai) return sendJson(res, 400, { error: 'no_key', provider });
+        const msgs = []; if (system) msgs.push({ role: 'system', content: system }); msgs.push({ role: 'user', content: prompt });
+        const r = await httpsPostJson('api.openai.com', '/v1/chat/completions', { 'Authorization': 'Bearer ' + keys.openai },
+          { model: b.model || 'gpt-4o', max_tokens: 2000, messages: msgs });
+        if (r.status !== 200) return sendJson(res, 502, { error: 'provider', status: r.status, detail: (r.json.error && r.json.error.message) || '' });
+        const text = (r.json.choices && r.json.choices[0] && r.json.choices[0].message && r.json.choices[0].message.content) || '';
+        return sendJson(res, 200, { text });
+      }
+    } catch (e) { return sendJson(res, 502, { error: String(e.message || e) }); }
   }
 
   // ---- Лидерборд (соцфича) ----
