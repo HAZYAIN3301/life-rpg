@@ -1421,6 +1421,17 @@ function renderCalendarView() {
 //  Быстрый захват + Инбокс (Блок 2) — текст/голос/видео, замена Telegram «Избранное»
 // ============================================================
 let _rec = null; // { kind, recorder, chunks, stream, startedAt, timer }
+let _mobilSnoozeDay = null; // «Позже» для нуджа мобилки — на сегодня
+// Профилактика травм: за 7 дней были силовые/единоборства, но НЕ было мобилки/растяжки?
+function trainingWithoutMobility() {
+  const since = addDays(todayStr(), -7);
+  const strengthRe = /зал|штанг|жим|силов|присед|становая|тяга|дзюдо|единоборств|бокс|борьб|gym|judo/i;
+  const mobilityRe = /растяжк|мобил|йог|разминк|гибкост|шпагат|суставн|stretch|mobility/i;
+  let strength = false, mobility = false;
+  for (const t of State.tasks) if (t.done && dayOf(t) >= since) { if (strengthRe.test(t.title)) strength = true; if (mobilityRe.test(t.title)) mobility = true; }
+  for (const d in State.habitlog) if (d >= since) for (const hid in State.habitlog[d]) { const h = habitById(hid); if (h) { if (strengthRe.test(h.title)) strength = true; if (mobilityRe.test(h.title)) mobility = true; } }
+  return strength && !mobility;
+}
 function captureBar() {
   if (_rec) {
     return `<div class="card capture-card recording">
@@ -1528,12 +1539,18 @@ function renderToday() {
   // Сидячий день (4+ ч планов без движения) → мягкий нудж добавить разминку (идея fb_mq3m7zjd)
   const hasMove = todays.some((t) => /размин|прогул|зарядк|растяжк|спорт|трениров|walk|stretch|gym/i.test(t.title)) || habits.some((h) => /размин|прогул|зарядк|растяжк|спорт|трениров/i.test(h.title));
   const stretchNudge = (planned >= 240 && !hasMove) ? `<div class="card nudge-card"><button class="nudge" data-action="add-stretch">🤸 ${fmtDur(planned)} сидячих планов — вставить разминку 10 мин</button><span class="nudge-boost">баланс — это тоже квест</span></div>` : '';
+  // Профилактика травм (Блок 3, спек F): активные силовые/единоборства без мобилки → мягкая opt-in подсказка
+  const prefs = State.settings.prefs || {};
+  const showMobil = !prefs.noMobilityNudge && _mobilSnoozeDay !== today && trainingWithoutMobility();
+  const mobilityNudge = showMobil ? `<div class="card nudge-card mobil-nudge">
+      <div class="mobil-text"><b>🧘 Мобилка спины и плеч</b><p class="muted">Ты активно тренируешься (силовая / дзюдо), но регулярной растяжки давно не видно. Мобилка снижает риск зажимов и перегруза. <i>Это не медицинский совет — при болях сверься со специалистом.</i></p></div>
+      <div class="mobil-acts"><button class="nudge" data-action="add-mobility">+ Растяжка 10 мин</button><button class="btn ghost sm" data-action="mobil-later">Позже</button><button class="btn ghost sm" data-action="mobil-never">Не показывать</button></div></div>` : '';
 
   const overdueCard = overdue.length ? `<div class="card overdue"><h3>⏳ Просрочено (${overdue.length})</h3>
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">↪ Перенести всё на сегодня</button></div>` : '';
 
-  return `${captureBar()}${notesPeekToday()}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}
+  return `${captureBar()}${notesPeekToday()}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="Новый квест на сегодня…" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
@@ -2787,6 +2804,14 @@ function onClick(e) {
     if (!sk) return;
     State.tasks.push({ id: uid(), title: 'Разминка / прогулка', skillId: sk.id, skillIds: [sk.id], estimateMin: 10, difficulty: 'easy', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
     Store.save('tasks', State.tasks); toast('🤸 Разминка в плане — тело скажет спасибо'); render();
+  } else if (action === 'add-mobility') {
+    const sk = State.settings.skills.find((s) => /спорт|здоров|тело|sport|health/i.test(s.name)) || State.settings.skills.find((s) => ['str', 'end'].includes(guessAttr(s.name))) || State.settings.skills[0];
+    if (!sk) return;
+    State.tasks.push({ id: uid(), title: 'Мобилка спины и плеч', skillId: sk.id, skillIds: [sk.id], estimateMin: 10, difficulty: 'easy', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
+    _mobilSnoozeDay = today; Store.save('tasks', State.tasks); toast('🧘 Мобилка в плане — спина и плечи скажут спасибо'); render();
+  } else if (action === 'mobil-later') { _mobilSnoozeDay = today; render();
+  } else if (action === 'mobil-never') {
+    State.settings.prefs = Object.assign({}, State.settings.prefs, { noMobilityNudge: true }); Store.save('settings', State.settings); toast('Подсказки мобилки отключены'); render();
   } else if (action === 'move-overdue') {
     State.tasks.forEach((t) => { if (!t.done && t.date < today) t.date = today; }); Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
   } else if (action === 'schedule-quest') {
