@@ -1427,29 +1427,36 @@ function captureBar() {
       <div class="cap-rec"><span class="cap-dot"></span><span>${_rec.kind === 'video' ? '🎥' : '🎤'} Запись <span id="rec-timer">0:00</span></span>
       <button class="btn" data-action="cap-stop">⏹ Стоп · сохранить</button></div></div>`;
   }
-  const n = (State.inbox || []).length;
   return `<div class="card capture-card">
     <form id="capture-form" class="cap-row">
-      <input name="text" placeholder="Быстрая мысль / план — закинь в инбокс…" autocomplete="off" />
+      <input name="text" placeholder="Быстрая мысль, идея, план — в Заметки…" autocomplete="off" />
       <button type="button" class="cap-btn" data-action="cap-voice" title="Голосовая заметка">🎤</button>
       <button type="button" class="cap-btn" data-action="cap-video" title="Видео-заметка">🎥</button>
-      <button type="submit" class="cap-add" title="В инбокс">↵</button>
-    </form>
-    ${n ? `<button class="cap-inbox-toggle" data-action="toggle-inbox">📥 Инбокс (${n})${State.inboxOpen ? ' ▾' : ' ▸'}</button>` : ''}</div>`;
+      <button type="submit" class="cap-add" title="Сохранить заметку">↵</button>
+    </form></div>`;
 }
-function inboxItem(it) {
+// Карточка-заметка: редактируемый текст + плеер (если медиа) + действия
+function noteCard(it) {
   const media = it.file ? (it.kind === 'video'
-    ? `<video class="inbox-media" controls preload="metadata" src="/api/inbox/media/${esc(it.file)}"></video>`
-    : `<audio class="inbox-media" controls preload="metadata" src="/api/inbox/media/${esc(it.file)}"></audio>`) : '';
-  const label = it.text || (it.kind === 'voice' ? '🎤 Голосовая заметка' : it.kind === 'video' ? '🎥 Видео-заметка' : '');
-  return `<div class="inbox-item">
-    <div class="inbox-row"><span class="inbox-when muted">${(it.at || '').slice(11, 16)}</span><span class="inbox-text">${esc(label)}</span>
-      <span class="inbox-actions"><button class="btn ghost sm" data-action="inbox-quest" data-id="${it.id}" title="Сделать квестом на сегодня">→ Квест</button><button class="del" data-action="inbox-del" data-id="${it.id}" title="Удалить">✕</button></span></div>
-    ${media}</div>`;
+    ? `<video class="note-media" controls preload="metadata" src="/api/inbox/media/${esc(it.file)}"></video>`
+    : `<audio class="note-media" controls preload="metadata" src="/api/inbox/media/${esc(it.file)}"></audio>`) : '';
+  const icon = it.kind === 'voice' ? '🎤' : it.kind === 'video' ? '🎥' : '📝';
+  const when = (it.at || '').replace('T', ' ').slice(0, 16);
+  return `<div class="card note-card">
+    <div class="note-top"><span class="note-when muted">${icon} ${esc(when)}</span>
+      <span class="note-acts"><button class="btn ghost sm" data-action="note-quest" data-id="${it.id}" title="Сделать квестом на сегодня">→ Квест</button><button class="del" data-action="note-del" data-id="${it.id}" title="Удалить">✕</button></span></div>
+    ${media}
+    <textarea class="note-text" data-action="note-edit" data-id="${it.id}" rows="2" placeholder="${it.file ? 'Подпиши заметку…' : 'Текст заметки…'}">${esc(it.text || '')}</textarea></div>`;
 }
-function inboxCard() {
-  if (!State.inbox || !State.inbox.length || !State.inboxOpen) return '';
-  return `<div class="card inbox-card"><h3>📥 Инбокс — разбери в квесты/цели</h3>${State.inbox.map(inboxItem).join('')}</div>`;
+function notesPeekToday() {
+  const n = (State.inbox || []).length; if (!n) return '';
+  return `<div class="card notes-peek"><button class="nudge" data-action="goto-notes">📝 ${n} ${plural(n, 'заметка', 'заметки', 'заметок')} — открыть</button></div>`;
+}
+function renderNotes() {
+  const notes = State.inbox || [];
+  return `${captureBar()}
+    <div class="card"><p class="muted" style="margin:0">📝 Лови любые мысли — идеи проектов, личное, планы. Всё хранится в одном месте. Потом примени в Gojo (→ Квест) или разберёшь с ИИ (скоро).</p></div>
+    ${notes.length ? notes.map(noteCard).join('') : '<div class="card"><p class="muted">Пусто. Запиши первую мысль в строке выше ↑ (текст, 🎤 голос или 🎥 видео).</p></div>'}`;
 }
 function blobToDataUrl(blob) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); }); }
 async function startCapture(kind) {
@@ -1484,7 +1491,7 @@ async function onCaptureStop() {
     if (!r.ok) { toast('Не удалось сохранить запись'); return; }
     const d = await r.json();
     State.inbox.unshift({ id: uid(), kind: rec.kind, text: '', file: d.file, type: d.type, at: new Date().toISOString() });
-    State.inboxOpen = true; Store.save('inbox', State.inbox); track('capture:' + rec.kind); toast(rec.kind === 'video' ? '🎥 Видео в инбоксе' : '🎤 Голос в инбоксе'); render();
+    Store.save('inbox', State.inbox); track('capture:' + rec.kind); toast(rec.kind === 'video' ? '🎥 Видео в Заметках' : '🎤 Голос в Заметках'); render();
   } catch { toast('Ошибка сохранения записи'); }
 }
 function renderToday() {
@@ -1526,7 +1533,7 @@ function renderToday() {
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">↪ Перенести всё на сегодня</button></div>` : '';
 
-  return `${captureBar()}${inboxCard()}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}
+  return `${captureBar()}${notesPeekToday()}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="Новый квест на сегодня…" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
@@ -2399,6 +2406,7 @@ const APP_SHELL = `
     <div id="charSummary" class="char-summary"></div>
     <nav id="nav">
       <button data-view="today">Сегодня</button>
+      <button data-view="notes">Заметки</button>
       <button data-view="calendar">Календарь</button>
       <button data-view="character">Персонаж</button>
       <button data-view="goals">Цели</button>
@@ -2444,7 +2452,7 @@ function renderLeaderboard() {
     </div>`;
 }
 
-const VIEWS = { today: renderToday, calendar: renderCalendarView, character: renderCharacter, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, leaderboard: renderLeaderboard, settings: renderSettings };
+const VIEWS = { today: renderToday, notes: renderNotes, calendar: renderCalendarView, character: renderCharacter, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, leaderboard: renderLeaderboard, settings: renderSettings };
 function render() {
   if (State.phase !== 'app') { showAuthScreen(); return; }
   // Восстановить app shell если auth-экран его перезаписал
@@ -2556,7 +2564,7 @@ function onSubmit(e) {
   if (f.id === 'capture-form') {
     e.preventDefault(); const text = f.text.value.trim(); if (!text) return;
     State.inbox.unshift({ id: uid(), kind: 'text', text, file: null, type: null, at: new Date().toISOString() });
-    State.inboxOpen = true; Store.save('inbox', State.inbox); track('capture:text'); f.text.value = ''; render();
+    Store.save('inbox', State.inbox); track('capture:text'); f.text.value = ''; toast('📝 В Заметках'); render();
     return;
   }
   if (f.id === 'add-task') {
@@ -2853,10 +2861,10 @@ function onClick(e) {
   } else if (action === 'cap-voice') { startCapture('voice');
   } else if (action === 'cap-video') { startCapture('video');
   } else if (action === 'cap-stop') { stopCapture();
-  } else if (action === 'toggle-inbox') { State.inboxOpen = !State.inboxOpen; render();
-  } else if (action === 'inbox-del') {
+  } else if (action === 'goto-notes') { State.view = 'notes'; track('view:notes'); render();
+  } else if (action === 'note-del') {
     State.inbox = (State.inbox || []).filter((x) => x.id !== id); Store.save('inbox', State.inbox); render();
-  } else if (action === 'inbox-quest') {
+  } else if (action === 'note-quest') {
     const it = (State.inbox || []).find((x) => x.id === id); if (!it) return;
     const title = (it.text || (it.kind === 'voice' ? 'Голосовая заметка' : it.kind === 'video' ? 'Видео-заметка' : 'Заметка')).slice(0, 120);
     const sid = State.settings.skills[0] && State.settings.skills[0].id;
@@ -3072,6 +3080,11 @@ function onChange(e) {
   // смена статуса цели (active/waiting/paused)
   if (e.target.dataset && e.target.dataset.action === 'goal-status') {
     const g = goalById(e.target.dataset.id); if (g) { g.status = e.target.value; Store.save('goals', State.goals); render(); }
+    return;
+  }
+  // правка текста заметки (сохраняем на blur/change, без ререндера — не сбивая фокус)
+  if (e.target.dataset && e.target.dataset.action === 'note-edit') {
+    const it = (State.inbox || []).find((x) => x.id === e.target.dataset.id); if (it) { it.text = e.target.value; Store.save('inbox', State.inbox); }
     return;
   }
   // превью выбранных фото/видео в форме фидбека
