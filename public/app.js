@@ -1500,6 +1500,115 @@ function openAiModal(title, bodyHtml, loading) {
   if (!ov) { ov = document.createElement('div'); ov.id = 'ai-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov); }
   ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="ai-close">✕</button><h3>${esc(title)}</h3>${loading ? '<div class="ai-spin">⏳</div>' : ''}<div class="ai-body">${bodyHtml}</div></div>`;
 }
+// ---- Движок «Предложений»: ИИ предлагает → ты одобряешь/отклоняешь ----
+let _proposals = []; // последний полученный набор предложений
+// Контекст: текущие сферы и цели, чтобы ИИ не дублировал и переиспользовал имена
+function proposeContext() {
+  const spheres = State.settings.skills.map((s) => skillLabel(s.id)).join(', ');
+  const goals = (State.goals || []).filter((g) => !g.archived).map((g) => g.title).slice(0, 40).join('; ');
+  return `Сферы: ${spheres || '(нет)'}\nЦели: ${goals || '(нет)'}`;
+}
+function openProposeModal(kind) {
+  if (!aiProvider()) { toast('Сначала добавь ИИ-ключ в Настройках'); State.view = 'settings'; render(); return; }
+  _proposals = [];
+  const isCal = kind === 'calibrate';
+  let ov = document.getElementById('propose-modal');
+  if (!ov) { ov = document.createElement('div'); ov.id = 'propose-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov); }
+  ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="propose-close">✕</button>
+    <h3>${isCal ? '📊 Оценить уровни сфер (ИИ)' : '📥 Импорт целей текстом (ИИ)'}</h3>
+    <p class="muted" style="font-size:12.5px;margin:0 0 10px">${isCal
+      ? 'Опиши, чем и насколько уверенно занимаешься. ИИ предложит стартовые уровни — ты одобришь или отклонишь.'
+      : 'Опиши свободным текстом свои цели, проекты, сферы. ИИ оформит их в цели и сферы — ты одобришь или отклонишь.'}</p>
+    <textarea id="propose-text" rows="6" placeholder="${isCal
+      ? 'Напр.: жму 130 кг на 2 раза; бегал до 36 км; немецкий — речь B2+, понимание C1; Abi около 1.3; монтирую видео пару лет…'
+      : 'Напр.: хочу Abi 1.0–1.1; дойти до C1 немецкого; закончить проект Jugend Forscht к лету; жим 150 кг; пробежать марафон осенью…'}"></textarea>
+    <div class="propose-actions"><button class="btn" data-action="propose-run" data-kind="${kind}">🤖 Предложить</button></div>
+    <div id="propose-result"></div></div>`;
+  setTimeout(() => { const t = document.getElementById('propose-text'); if (t) t.focus(); }, 30);
+}
+async function runPropose(kind) {
+  const ta = document.getElementById('propose-text');
+  const text = ((ta && ta.value) || '').trim();
+  if (!text) { toast('Напиши текст'); return; }
+  const res = document.getElementById('propose-result');
+  if (res) res.innerHTML = '<div class="ai-spin">⏳ ИИ думает…</div>';
+  try {
+    const r = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind, provider: aiProvider(), text, context: proposeContext() }) });
+    const d = await r.json();
+    if (d.error === 'parse') { if (res) res.innerHTML = '<p class="muted">ИИ вернул не тот формат. Попробуй переформулировать короче и конкретнее.</p>'; return; }
+    if (!r.ok || !d.proposals) { if (res) res.innerHTML = `<p class="muted">Не удалось: ${esc(d.detail || d.error || 'ошибка')}. Проверь ключ в Настройках.</p>`; return; }
+    _proposals = d.proposals;
+    if (!_proposals.length) { if (res) res.innerHTML = '<p class="muted">ИИ не нашёл, что предложить. Добавь деталей.</p>'; return; }
+    res.innerHTML = `<div class="prop-list">${_proposals.map((p, i) => `<label class="prop-row"><input type="checkbox" data-prop="${i}" checked/> <span class="prop-text">${esc(proposalLabel(p))}</span></label>`).join('')}</div>
+      <div class="propose-actions"><button class="btn" data-action="propose-apply">✓ Применить выбранные</button> <span class="muted" style="font-size:12px">${_proposals.length} предложений · сними галочку, чтобы отклонить</span></div>`;
+    track('ai:propose:' + kind);
+  } catch { if (res) res.innerHTML = '<p class="muted">Сетевая ошибка.</p>'; }
+}
+function proposalLabel(p) {
+  if (p.type === 'sphere') return `➕ Сфера: ${p.name}${p.parent ? ` (внутри «${p.parent}»)` : ''}`;
+  if (p.type === 'level') return `📊 Уровень: ${p.sphere} → ур.${p.level}${p.note ? ` — ${p.note}` : ''}`;
+  if (p.type === 'goal') {
+    const m = (p.metric && p.metric.target != null) ? ` · ${p.metric.current}→${p.metric.target}${p.metric.unit ? ' ' + p.metric.unit : ''}` : '';
+    const w = p.status === 'waiting' ? ` · ⏳ждёт${p.window ? ' ' + p.window : ''}` : (p.status === 'paused' ? ' · ⏸' : '');
+    return `🎯 Цель: ${p.title} · ${p.sphere} · ${goalTypeLabel(p.horizon)}${m}${w}`;
+  }
+  return JSON.stringify(p).slice(0, 80);
+}
+function applyAcceptedProposals() {
+  const set = new Set([...document.querySelectorAll('#propose-result input[data-prop]:checked')].map((el) => Number(el.dataset.prop)));
+  if (!set.size) { toast('Ничего не выбрано'); return; }
+  const n = applyProposals(_proposals, set);
+  const m = document.getElementById('propose-modal'); if (m) m.remove();
+  toast(`✓ Применено: ${n}`); checkAchievements(); render();
+}
+// Применяет принятые предложения. Порядок: сферы → уровни → цели (с резолвом родителей по имени).
+function applyProposals(proposals, acceptedIdx) {
+  const accepted = proposals.filter((_, i) => acceptedIdx.has(i));
+  const c = State.settings.curve;
+  const palette = ['#4f86f7', '#5fbf5f', '#e0526a', '#b06ff0', '#e0a23e', '#22c1a4', '#e87d3e', '#8899bb'];
+  const findSphere = (name) => name && State.settings.skills.find((s) => normRu(s.name) === normRu(name));
+  let pi = State.settings.skills.length, applied = 0;
+  // 1) Сферы
+  accepted.filter((p) => p.type === 'sphere' && p.name).forEach((p) => {
+    if (findSphere(p.name)) return;
+    State.settings.skills.push({ id: 'sk_' + uid(), name: String(p.name).slice(0, 40), color: p.color || palette[pi++ % palette.length], parentId: null });
+    applied++;
+  });
+  // Привязка родителей сфер (после создания всех в батче)
+  accepted.filter((p) => p.type === 'sphere' && p.parent).forEach((p) => {
+    const sk = findSphere(p.name), par = findSphere(p.parent);
+    if (sk && par && sk.id !== par.id && !sk.parentId) sk.parentId = par.id;
+  });
+  // 2) Уровни (калибровка) → импортированный стартовый XP
+  accepted.filter((p) => p.type === 'level').forEach((p) => {
+    const sk = findSphere(p.sphere); if (!sk) return;
+    const lvl = Math.max(1, Math.min(25, Math.round(Number(p.level) || 1)));
+    State.settings.imported = State.settings.imported || {};
+    State.settings.imported[sk.id] = { tier: null, xp: xpForLevel(lvl, c.skillBase, c.growth), label: '🤖 ИИ: ' + String(p.note || '').slice(0, 60), at: new Date().toISOString() };
+    applied++;
+  });
+  // 3) Цели — два прохода (создать, затем привязать родителей по точному заголовку)
+  const made = [];
+  accepted.filter((p) => p.type === 'goal' && p.title).forEach((p) => {
+    const sk = findSphere(p.sphere) || State.settings.skills[0]; if (!sk) return;
+    const type = ['mission', 'vision', 'path', 'long', 'mid', 'short', 'recurring'].includes(p.horizon) ? p.horizon : 'mid';
+    let metric = null;
+    if (p.metric && p.metric.target != null) {
+      const cur = Number(p.metric.current) || 0;
+      metric = { start: cur, current: cur, target: Number(p.metric.target), unit: String(p.metric.unit || '').slice(0, 12), lowerBetter: !!p.metric.lowerBetter, maintain: !!p.metric.maintain, everReached: false, log: [] };
+    }
+    const g = { id: 'g_' + uid(), title: String(p.title).slice(0, 120), skillId: sk.id, type, xpReward: GOAL_XP[type], parentId: null, _parentTitle: p.parent || null, targetDate: null, steps: [], metric, status: ['waiting', 'paused'].includes(p.status) ? p.status : 'active', window: String(p.window || '').slice(0, 40), createdAt: new Date().toISOString(), completedAt: null, archived: false };
+    State.goals.push(g); made.push(g); applied++;
+  });
+  made.forEach((g) => {
+    if (g._parentTitle) { const par = State.goals.find((x) => x.id !== g.id && normRu(x.title) === normRu(g._parentTitle)); if (par) g.parentId = par.id; }
+    delete g._parentTitle;
+    if (g.metric) refreshGoalCompletion(g);
+  });
+  ensureTrees();
+  Store.save('settings', State.settings); Store.save('goals', State.goals); Store.save('skilltree', State.tree);
+  return applied;
+}
 function captureBar() {
   if (_rec) {
     return `<div class="card capture-card recording">
@@ -1709,6 +1818,9 @@ function renderGoals() {
       <div class="kpi"><div class="v">${completed.length}</div><div class="l">Достигнуто</div></div>
       <div class="kpi"><div class="v">${nearest ? nearest.targetDate.slice(5) : '—'}</div><div class="l">Ближайший дедлайн</div></div>
     </div>
+    <div class="card ai-import-card">
+      <div class="ai-imp-l"><b>📥 Опиши цели текстом — ИИ оформит</b><span class="muted">расскажи словами, что хочешь; ИИ предложит цели и сферы, ты одобришь</span></div>
+      <button class="btn" data-action="ai-import-goals">🤖 Импорт целей</button></div>
     <div class="card"><h3>Новая цель</h3>
       ${typeGuide}
       <form id="add-goal" class="goal-form">
@@ -2405,8 +2517,8 @@ function importCard() {
   };
   const rows = topSkills().map((sk) => row(sk, false) + childSkills(sk.id).map((c) => row(c, true)).join('')).join('');
   return `<div class="card" id="import-card">
-    <h3>🎖 Импорт достижений</h3>
-    <p class="muted" style="margin:0 0 12px">Ты не начинаешь с нуля. Отметь честно свой реальный уровень в каждой сфере — стартовый опыт начислится. Это «доказанное мастерство», оно не сгорает. Менять можно в любой момент.</p>
+    <div class="imp-head"><h3>🎖 Импорт достижений</h3><button class="btn ghost sm" data-action="ai-import-levels" title="ИИ оценит уровни по твоему описанию">🤖 Оценить через ИИ</button></div>
+    <p class="muted" style="margin:0 0 12px">Ты не начинаешь с нуля. Отметь честно свой реальный уровень в каждой сфере — стартовый опыт начислится. Это «доказанное мастерство», оно не сгорает. Менять можно в любой момент. Лестницы не подходят (школа, готовка, творчество)? Жми <b>«Оценить через ИИ»</b> — опиши словами, ИИ предложит уровень.</p>
     <div class="import-list">${rows}</div>
   </div>`;
 }
@@ -3005,6 +3117,11 @@ function onClick(e) {
   } else if (action === 'cap-stop') { stopCapture();
   } else if (action === 'goto-notes') { State.view = 'notes'; track('view:notes'); render();
   } else if (action === 'ai-review') { runWeeklyReview();
+  } else if (action === 'ai-import-goals') { openProposeModal('goals');
+  } else if (action === 'ai-import-levels') { openProposeModal('calibrate');
+  } else if (action === 'propose-run') { runPropose(el.dataset.kind);
+  } else if (action === 'propose-apply') { applyAcceptedProposals();
+  } else if (action === 'propose-close') { const m = document.getElementById('propose-modal'); if (m) m.remove();
   } else if (action === 'ai-close') { const m = document.getElementById('ai-modal'); if (m) m.remove();
   } else if (action === 'note-del') {
     State.inbox = (State.inbox || []).filter((x) => x.id !== id); Store.save('inbox', State.inbox); render();

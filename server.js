@@ -113,6 +113,48 @@ function httpsPostJson(host, pathName, headers, bodyObj) {
     r.on('error', reject); r.write(body); r.end();
   });
 }
+// Универсальный вызов модели: { ok, text } | { ok:false, noKey } | { ok:false, status, detail }
+async function aiComplete(provider, keys, system, prompt, maxTokens) {
+  if (provider === 'openai') {
+    if (!keys.openai) return { ok: false, noKey: true };
+    const msgs = []; if (system) msgs.push({ role: 'system', content: system }); msgs.push({ role: 'user', content: prompt });
+    const r = await httpsPostJson('api.openai.com', '/v1/chat/completions', { 'Authorization': 'Bearer ' + keys.openai },
+      { model: 'gpt-4o', max_tokens: maxTokens || 3000, messages: msgs });
+    if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
+    return { ok: true, text: (r.json.choices && r.json.choices[0] && r.json.choices[0].message && r.json.choices[0].message.content) || '' };
+  }
+  if (!keys.anthropic) return { ok: false, noKey: true };
+  const r = await httpsPostJson('api.anthropic.com', '/v1/messages', { 'x-api-key': keys.anthropic, 'anthropic-version': '2023-06-01' },
+    { model: 'claude-opus-4-8', max_tokens: maxTokens || 3000, system, messages: [{ role: 'user', content: prompt }] });
+  if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
+  return { ok: true, text: (r.json.content || []).filter((x) => x.type === 'text').map((x) => x.text).join('\n') };
+}
+// Защищённый разбор JSON из ответа модели: срезаем ```fences``` и прозу вокруг { ... }
+function extractJson(text) {
+  if (!text) return null;
+  let t = String(text).trim();
+  const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/i); if (fence) t = fence[1].trim();
+  const i = t.indexOf('{'), j = t.lastIndexOf('}');
+  if (i < 0 || j < 0 || j < i) return null;
+  try { return JSON.parse(t.slice(i, j + 1)); } catch { return null; }
+}
+// Системный промпт: импорт целей/сфер из свободного текста → структурированные предложения
+const AI_GOALS_SYS = `Ты — помощник по структурированию жизни в приложении Gojo (философия «жизнь как десятиборье»: у каждого свой набор сфер, целей и регулярных практик). Юзер описывает свободным текстом свои сферы, цели, проекты, задачи. Преврати это в структурированные ПРЕДЛОЖЕНИЯ, которые юзер потом одобрит или отклонит.
+
+Верни СТРОГО JSON вида {"proposals":[ ... ]}, без markdown и без текста вне JSON. Каждый элемент — один из типов:
+- {"type":"sphere","name":"...","parent":"<имя родительской сферы или null>"} — новая сфера жизни. Создавай ТОЛЬКО если её ещё нет среди текущих сфер юзера. Допустима иерархия (Учёба→Школа→Биология).
+- {"type":"goal","title":"...","sphere":"<имя сферы>","horizon":"mission|vision|path|long|mid|short|recurring","metric":null,"status":"active|waiting|paused","window":"","parent":"<заголовок большей цели или null>"}. Поле metric для ЧИСЛОВЫХ целей = {"current":N,"target":N,"unit":"кг/км/балл","lowerBetter":false,"maintain":false}.
+
+Правила:
+- Горизонты: mission = дело жизни (≤1 на всё), vision = 10–20 лет, path = 3–5 лет (универ/карьера), long = цель года, mid = 1–6 мес, short = до месяца, recurring = регулярная практика без конца.
+- metric только для измеримого (жим 130→150 кг; оценка 1.5→1.1). Для оценок и времени (где меньше = лучше) ставь "lowerBetter":true. "maintain":true если цель — достичь и удерживать планку.
+- "status":"waiting" + "window" (напр. "лето", "после 23.06") для событийных целей вне прямого контроля (медаль зависит от соревнований, поездка от расписания).
+- "parent" связывает цель с большей по смыслу (Abi → "Поступить в LMU" → миссия), используя ТОЧНЫЙ заголовок другой цели (существующей или из этого же списка).
+- Переиспользуй СУЩЕСТВУЮЩИЕ сферы по точному имени — не дублируй. Будь реалистичен и конкретен, не выдумывай лишнего. Язык — русский.`;
+// Системный промпт: калибровка уровня сферы по описанию
+const AI_CALIB_SYS = `Ты — калибратор уровней в приложении Gojo. Юзер описывает, чем и насколько уверенно занимается в разных сферах. Оцени уровень по шкале 1–20 (личная RPG-абстракция, НЕ глобальный рейтинг): 1 = только начал; ~5 = регулярная практика, база есть; ~10 = уверенный, могу научить других; ~15 = глубокая экспертиза; 18–20 = топовый/мировой уровень. Для школы/универа опирайся на ступень и оценки честно (отличник старшей школы ≈ 8–11, не 20).
+
+Верни СТРОГО JSON {"proposals":[{"type":"level","sphere":"<имя сферы>","level":N,"note":"<кратко, на чём основана оценка>"}]}, без markdown и текста вне JSON. Только по сферам, о которых юзер дал информацию. Переиспользуй существующие имена сфер. Язык — русский.`;
 // Каталог бэкапов одного файла данных пользователя
 function backupDir(dir, name) { return path.join(dir, '.backups', name); }
 // Снимок текущего содержимого файла ПЕРЕД перезаписью.
@@ -608,6 +650,26 @@ const server = http.createServer(async (req, res) => {
         const text = (r.json.choices && r.json.choices[0] && r.json.choices[0].message && r.json.choices[0].message.content) || '';
         return sendJson(res, 200, { text });
       }
+    } catch (e) { return sendJson(res, 502, { error: String(e.message || e) }); }
+  }
+  // Движок «Предложений»: импорт целей/сфер из текста (kind:goals) или калибровка уровней (kind:calibrate)
+  if (u === '/api/ai/propose' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
+    const provider = b.provider === 'openai' ? 'openai' : 'anthropic';
+    const kind = b.kind === 'calibrate' ? 'calibrate' : 'goals';
+    const text = String(b.text || '').slice(0, 20000);
+    const context = String(b.context || '').slice(0, 6000);
+    if (!text) return sendJson(res, 400, { error: 'empty' });
+    const sys = kind === 'calibrate' ? AI_CALIB_SYS : AI_GOALS_SYS;
+    const prompt = `СФЕРЫ И ЦЕЛИ ЮЗЕРА СЕЙЧАС:\n${context || '(пусто)'}\n\nЧТО НАПИСАЛ ЮЗЕР:\n${text}\n\nВерни ТОЛЬКО JSON по схеме из системного промпта. Без markdown, без пояснений вне JSON.`;
+    try {
+      const r = await aiComplete(provider, loadAiKeys(uid), sys, prompt, 3500);
+      if (r.noKey) return sendJson(res, 400, { error: 'no_key', provider });
+      if (!r.ok) return sendJson(res, 502, { error: 'provider', status: r.status, detail: r.detail });
+      const parsed = extractJson(r.text);
+      if (!parsed || !Array.isArray(parsed.proposals)) return sendJson(res, 200, { error: 'parse', raw: (r.text || '').slice(0, 800) });
+      return sendJson(res, 200, { proposals: parsed.proposals.slice(0, 40) });
     } catch (e) { return sendJson(res, 502, { error: String(e.message || e) }); }
   }
 

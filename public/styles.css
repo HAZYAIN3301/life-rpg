@@ -896,6 +896,21 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .ai-spin { font-size: 28px; text-align: center; padding: 12px; }
 .ai-out { font-size: 14px; line-height: 1.6; }
 .ai-body .muted { line-height: 1.5; }
+/* Движок «Предложений» */
+.ai-box textarea { width: 100%; resize: vertical; min-height: 96px; font: inherit; }
+.propose-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.prop-list { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+.prop-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 11px; background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; cursor: pointer; font-size: 13.5px; line-height: 1.4; }
+.prop-row:hover { border-color: var(--accent); }
+.prop-row input { width: 17px; height: 17px; margin-top: 1px; accent-color: var(--accent); flex: 0 0 auto; }
+.prop-row input:not(:checked) + .prop-text { opacity: 0.45; text-decoration: line-through; }
+.prop-text { flex: 1; }
+/* Баннер «Импорт целей текстом» в Целях */
+.ai-import-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.ai-imp-l { display: flex; flex-direction: column; gap: 2px; }
+.ai-imp-l .muted { font-size: 12.5px; }
+.imp-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.imp-head h3 { margin: 0; }
 
 /* ---------- Энергия (идея 19) ---------- */
 .energy-card { padding: 12px 16px !important; cursor: help; }
