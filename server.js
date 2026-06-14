@@ -129,6 +129,23 @@ async function aiComplete(provider, keys, system, prompt, maxTokens) {
   if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
   return { ok: true, text: (r.json.content || []).filter((x) => x.type === 'text').map((x) => x.text).join('\n') };
 }
+// Многоходовой чат: системный промпт + история сообщений [{role,content}]
+async function aiCompleteMessages(provider, keys, system, messages, maxTokens) {
+  const norm = messages.map((m) => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: String(m.content || '').slice(0, 8000) }));
+  if (provider === 'openai') {
+    if (!keys.openai) return { ok: false, noKey: true };
+    const msgs = []; if (system) msgs.push({ role: 'system', content: system }); for (const m of norm) msgs.push(m);
+    const r = await httpsPostJson('api.openai.com', '/v1/chat/completions', { 'Authorization': 'Bearer ' + keys.openai },
+      { model: 'gpt-4o', max_tokens: maxTokens || 1500, messages: msgs });
+    if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
+    return { ok: true, text: (r.json.choices && r.json.choices[0] && r.json.choices[0].message && r.json.choices[0].message.content) || '' };
+  }
+  if (!keys.anthropic) return { ok: false, noKey: true };
+  const r = await httpsPostJson('api.anthropic.com', '/v1/messages', { 'x-api-key': keys.anthropic, 'anthropic-version': '2023-06-01' },
+    { model: 'claude-opus-4-8', max_tokens: maxTokens || 1500, system, messages: norm });
+  if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
+  return { ok: true, text: (r.json.content || []).filter((x) => x.type === 'text').map((x) => x.text).join('\n') };
+}
 // Защищённый разбор JSON из ответа модели: срезаем ```fences``` и прозу вокруг { ... }
 function extractJson(text) {
   if (!text) return null;
@@ -670,6 +687,22 @@ const server = http.createServer(async (req, res) => {
       const parsed = extractJson(r.text);
       if (!parsed || !Array.isArray(parsed.proposals)) return sendJson(res, 200, { error: 'parse', raw: (r.text || '').slice(0, 800) });
       return sendJson(res, 200, { proposals: parsed.proposals.slice(0, 40) });
+    } catch (e) { return sendJson(res, 502, { error: String(e.message || e) }); }
+  }
+  // Тех-поддержка / гид: многоходовой чат, знающий функции и философию (манифест шлёт клиент)
+  if (u === '/api/ai/chat' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
+    const provider = b.provider === 'openai' ? 'openai' : 'anthropic';
+    const system = String(b.system || '').slice(0, 12000);
+    let messages = Array.isArray(b.messages) ? b.messages.slice(-20) : [];
+    while (messages.length && messages[0].role === 'assistant') messages.shift(); // история должна начинаться с user
+    if (!messages.length) return sendJson(res, 400, { error: 'empty' });
+    try {
+      const r = await aiCompleteMessages(provider, loadAiKeys(uid), system, messages, 1500);
+      if (r.noKey) return sendJson(res, 400, { error: 'no_key', provider });
+      if (!r.ok) return sendJson(res, 502, { error: 'provider', status: r.status, detail: r.detail });
+      return sendJson(res, 200, { text: r.text });
     } catch (e) { return sendJson(res, 502, { error: String(e.message || e) }); }
   }
 

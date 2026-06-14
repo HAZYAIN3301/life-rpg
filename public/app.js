@@ -338,6 +338,7 @@ const State = {
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
   goals: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
   lootbox: null, inbox: null, inboxOpen: false, antihabits: null, aiKeys: null,
+  chatLog: [], _chatBusy: false,
   leaderboard: null, _lbLoading: false,
   adminUsers: null, _adminUsersLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null, calMode: 'day',
@@ -1609,6 +1610,72 @@ function applyProposals(proposals, acceptedIdx) {
   Store.save('settings', State.settings); Store.save('goals', State.goals); Store.save('skilltree', State.tree);
   return applied;
 }
+// ---- ИИ тех-поддержка / гид (Блок 2): постоянный помощник, знает функции и философию ----
+const GOJO_MANUAL = `Ты — встроенный помощник приложения Gojo (геймификация жизни). Философия: «жизнь как десятиборье» — ценится баланс многих сфер, а не одна вертикаль; отдых и восстановление так же важны, как труд; уровень = доказанное мастерство, оно НЕ сгорает (как чёрный пояс). Твоя роль — тёплая постоянная тех-поддержка и гид: помогаешь разобраться в функциях, подсказываешь, что юзер недоиспользует, объясняешь механики простыми словами. Отвечай КРАТКО, по делу, дружелюбно, на русском. Ты не можешь сам нажимать кнопки — направляй словами (куда зайти, что нажать). Если юзер описывает свои цели или опыт — посоветуй кнопку «🤖 Импорт целей» (вкладка Цели) или «🤖 Оценить через ИИ» (Настройки → Импорт), они оформят это автоматически.
+
+ФУНКЦИИ И ГДЕ ОНИ:
+• Сегодня — квесты на день (разовые дела), сложность 🌱лёгкая/⚔️обычная/🔥сложная. ▶ у квеста = фокус-таймер (помодоро + плавающее окно ↗ поверх всех окон). Галочка = XP + золото. Привычки — повторяющиеся дела со стриком. Энергия — индикатор дневной нагрузки, восстанавливается ПАССИВНО по времени (логировать отдых не нужно), ни на что не влияет, честная «оценка по задачам». Хайп — выполни 🔥сложный квест → временный бонус +15% XP за стак (до +45%, на 2 ч); «через силу» тратит больше энергии, «в кураже» меньше.
+• Заметки — быстрый захват: текст / 🎤голос / 🎥видео, хранятся как в приложении «Заметки». Заметку можно превратить в квест (кнопка → Квест).
+• Календарь — Apple-стиль, неделя/месяц, перетаскивание, напоминалки.
+• Персонаж — кастом-аватар (лицо/причёска/цвета), атрибуты (Сила/Интеллект/Дух…) растут из сфер → радар-билд и архетип; силуэт телосложения меняется от тренировок и веса.
+• Цели — горизонты: ★Миссия (полярная звезда, зачем всё) → видение 10–20 лет → путь 3–5 лет → долго / средне / кратко → повтор. Привязка к большей цели (parent) рисует цепочку «↑ зачем». Цель = чек-лист ИЛИ числовая (текущее→цель, лог рекордов, режим «держать» для KPI вроде жима/оценок). Статусы: активна / ⏳ ждёт события / ⏸ пауза.
+• Навыки — у каждой сферы дерево; за уровни навыка копятся очки, открывай узлы (пассивный бонус к XP сферы); «✏️ Редактор» — конструктор узлов под себя.
+• Награды — магазин на золото (придумай свои награды!), сундуки за активность дня (рулетка: золото / XP-бусты / титулы), ачивки.
+• Неделя — недельный обзор и планирование.
+• Статистика — ранг, Индекс баланса (ровно ли развиты сферы — суть десятиборья), ранги по сферам, графики XP/времени, «🤖 Разбор недели» (ИИ-анализ твоей реальной недели).
+• Рейтинг — соревнование по XP со всеми на сервере (видны только имя/аватар/уровень/ранг, задачи приватны; можно скрыться).
+• Настройки — сферы жизни (иерархия N уровней: Учёба→Школа→Bio LK), Импорт достижений (отметь реальный уровень → стартовый XP, не начинаешь с нуля; или «🤖 Оценить через ИИ»), ИИ-ключ (BYOK Claude/OpenAI — он питает все ИИ-функции), кривые XP, бэкапы данных.
+
+Важно — Уровень vs Форма: уровень не сгорает; Форма — отдельный показатель свежести, мягко падает если забросил сферу и быстро возвращается (жизнь не наказывает за паузу).`;
+const CHAT_SUGGESTIONS = ['Какие функции я не использую?', 'Как импортировать мой реальный опыт?', 'Объясни энергию и Хайп', 'Чем цель-метрика отличается от чек-листа?', 'Что такое Индекс баланса?'];
+// Живой контекст юзера — чтобы советы были не абстрактные
+function chatUserContext() {
+  const c = State.settings.curve, lvl = levelInfo(overallXp(), c.base, c.growth).level;
+  const spheres = State.settings.skills.map((s) => `${skillLabel(s.id)} (ур.${skillLevelOf(s.id)})`).join(', ');
+  const bal = balanceIndex();
+  const goalsN = (State.goals || []).filter((g) => !g.archived).length;
+  const noImports = !Object.keys((State.settings && State.settings.imported) || {}).length;
+  return `КОНТЕКСТ ЮЗЕРА СЕЙЧАС: уровень персонажа ${lvl}; сферы: ${spheres || '(нет)'}; целей: ${goalsN}; индекс баланса ${bal.index}/100${bal.weakest ? ` (отстаёт «${bal.weakest.name}»)` : ''}; импорт опыта ${noImports ? 'НЕ сделан' : 'сделан'}; открытая вкладка: ${State.view}.`;
+}
+function openHelperChat() {
+  let ov = document.getElementById('helper-modal');
+  if (!ov) { ov = document.createElement('div'); ov.id = 'helper-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov); }
+  const noKey = !aiProvider();
+  ov.innerHTML = `<div class="ai-box chat-box"><button class="modal-x" data-action="helper-close">✕</button>
+    <h3>🤖 Помощник Gojo</h3>
+    ${noKey ? `<p class="muted">Помощник работает на твоём ИИ-ключе. Добавь ключ Claude или OpenAI в Настройках — и спрашивай что угодно про приложение.<br><button class="btn" data-action="helper-to-settings" style="margin-top:10px">⚙️ В Настройки</button></p>`
+      : `<div id="chat-msgs" class="chat-msgs"></div>
+         <form id="chat-form" class="chat-form"><input id="chat-input" placeholder="Спроси про любую функцию…" autocomplete="off" /><button type="submit" class="cap-add" title="Отправить">↵</button></form>`}</div>`;
+  if (!noKey) { renderChatMessages(); setTimeout(() => { const i = document.getElementById('chat-input'); if (i) i.focus(); }, 30); }
+}
+function renderChatMessages() {
+  const box = document.getElementById('chat-msgs'); if (!box) return;
+  if (!State.chatLog.length) {
+    box.innerHTML = `<div class="chat-empty"><p class="muted">Привет! Я знаю все функции Gojo и помогу разобраться. Спроси меня или начни с подсказки:</p>
+      <div class="chat-suggs">${CHAT_SUGGESTIONS.map((s) => `<button class="chat-sugg" data-action="chat-suggest" data-q="${esc(s)}">${esc(s)}</button>`).join('')}</div></div>`;
+    return;
+  }
+  box.innerHTML = State.chatLog.map((m) => m.role === 'user'
+    ? `<div class="chat-msg me">${esc(m.content)}</div>`
+    : `<div class="chat-msg ai">${esc(m.content).replace(/\n/g, '<br>')}</div>`).join('') + (State._chatBusy ? '<div class="chat-msg ai typing">…</div>' : '');
+  box.scrollTop = box.scrollHeight;
+}
+async function sendChat(text) {
+  text = String(text || '').trim(); if (!text || State._chatBusy) return;
+  if (!aiProvider()) { openHelperChat(); return; }
+  State.chatLog.push({ role: 'user', content: text });
+  State._chatBusy = true; renderChatMessages();
+  const inp = document.getElementById('chat-input'); if (inp) inp.value = '';
+  try {
+    const system = GOJO_MANUAL + '\n\n' + chatUserContext();
+    const r = await fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, messages: State.chatLog.slice(-20) }) });
+    const d = await r.json();
+    State._chatBusy = false;
+    if (!r.ok || !d.text) { State.chatLog.push({ role: 'assistant', content: `⚠️ Не удалось: ${d.detail || d.error || 'ошибка'}. Проверь ИИ-ключ в Настройках.` }); }
+    else { State.chatLog.push({ role: 'assistant', content: d.text }); track('ai:chat'); }
+    renderChatMessages();
+  } catch { State._chatBusy = false; State.chatLog.push({ role: 'assistant', content: '⚠️ Сетевая ошибка.' }); renderChatMessages(); }
+}
 function captureBar() {
   if (_rec) {
     return `<div class="card capture-card recording">
@@ -2175,7 +2242,8 @@ const GUIDE_SECTIONS = [
   { icon: '🔥', title: 'Хайп', text: 'Выполни «Сложный» квест — включается Хайп: временный бонус к XP (+15% за стак, до +45%, на 2 часа). Каждый следующий сложный квест усиливает и продлевает его. Награда за то, что лезешь в трудное, а не фармишь лёгкое.' },
   { icon: '📊', title: 'Статистика', text: 'Ранг, Индекс баланса (ровно ли развиты сферы — это и есть десятиборье), ранги по сферам, графики опыта и времени.' },
   { icon: '🏆', title: 'Рейтинг', text: 'Соревнование по опыту со всеми на сервере — позови друзей! Видны только имя, аватар, уровень и ранг; задачи и личные данные приватны. В рейтинге можно скрыться галочкой.' },
-  { icon: '💎', title: 'Free и Pro', text: 'Ядро бесплатно навсегда. Pro добавляет глубину: расширенная аналитика, 3 сундука в день, состав тела, скоро — ИИ-ассистент и темы. 7-дневный триал без карты.' },
+  { icon: '🤖', title: 'ИИ-помощник', text: 'Плавающая кнопка 🤖 (внизу справа) — постоянный помощник: знает все функции и философию Gojo, отвечает на вопросы, подсказывает что недоиспользуешь. На вкладке Цели «🤖 Импорт целей» оформит цели из твоего текста, в Настройках «🤖 Оценить через ИИ» откалибрует уровни, в Статистике «🤖 Разбор недели». Работает на твоём ключе Claude/OpenAI (Настройки → ИИ-ключ).' },
+  { icon: '💎', title: 'Free и Pro', text: 'Ядро бесплатно навсегда. Pro добавляет глубину: расширенная аналитика, 3 сундука в день, состав тела, темы. ИИ-функции работают на твоём ключе (BYOK). 7-дневный триал без карты.' },
 ];
 // ── Вложения к репортам: фото ужимаем (canvas), видео — как есть с лимитом ──
 function fileToDataURL(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); }); }
@@ -2640,7 +2708,8 @@ const APP_SHELL = `
     </nav>
   </header>
   <main id="main"></main>
-  <div id="toasts"></div>`;
+  <div id="toasts"></div>
+  <button id="ai-fab" data-action="open-helper" title="Помощник Gojo — спроси про любую функцию" aria-label="Помощник">🤖</button>`;
 
 function renderLeaderboard() {
   if (State.leaderboard === null) {
@@ -2786,6 +2855,10 @@ function onSubmit(e) {
     e.preventDefault(); const text = f.text.value.trim(); if (!text) return;
     State.inbox.unshift({ id: uid(), kind: 'text', text, file: null, type: null, at: new Date().toISOString() });
     Store.save('inbox', State.inbox); track('capture:text'); f.text.value = ''; toast('📝 В Заметках'); render();
+    return;
+  }
+  if (f.id === 'chat-form') {
+    e.preventDefault(); const inp = document.getElementById('chat-input'); sendChat(inp && inp.value);
     return;
   }
   if (f.id === 'add-antihabit') {
@@ -3122,6 +3195,10 @@ function onClick(e) {
   } else if (action === 'propose-run') { runPropose(el.dataset.kind);
   } else if (action === 'propose-apply') { applyAcceptedProposals();
   } else if (action === 'propose-close') { const m = document.getElementById('propose-modal'); if (m) m.remove();
+  } else if (action === 'open-helper') { openHelperChat();
+  } else if (action === 'helper-close') { const m = document.getElementById('helper-modal'); if (m) m.remove();
+  } else if (action === 'helper-to-settings') { const m = document.getElementById('helper-modal'); if (m) m.remove(); State.view = 'settings'; render();
+  } else if (action === 'chat-suggest') { sendChat(el.dataset.q);
   } else if (action === 'ai-close') { const m = document.getElementById('ai-modal'); if (m) m.remove();
   } else if (action === 'note-del') {
     State.inbox = (State.inbox || []).filter((x) => x.id !== id); Store.save('inbox', State.inbox); render();
