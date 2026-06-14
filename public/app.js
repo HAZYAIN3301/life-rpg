@@ -317,6 +317,38 @@ const GENERIC_LADDER = { hint: 'честная самооценка — срав
 const LADDER_KEYS = Object.keys(IMPORT_LADDERS).sort((a, b) => b.length - a.length);
 // Нормализация для русского матчинга: ё→е (юзеры часто пишут «учеба» вместо «учёба» — фидбек #16)
 function normRu(s) { return String(s || '').toLowerCase().replace(/ё/g, 'е'); }
+// Авто-категория (Блок 3): локальная эвристика «слово→сфера» по истории квестов. Без ИИ — мгновенно и бесплатно.
+function normTitle(s) { return normRu(s).replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim(); }
+// Подсказывает сферу по тому, как юзер раньше категоризировал похожие квесты. → { skillId, score } | null
+function guessCategoryFromHistory(title) {
+  const q = normTitle(title); if (q.length < 2) return null;
+  const words = q.split(' ').filter((w) => w.length >= 3);
+  const tally = {};
+  const tasks = State.tasks || [];
+  for (let i = 0; i < tasks.length; i++) {
+    const t = tasks[i];
+    const tt = normTitle(t.title || ''); if (!tt) continue;
+    let match = 0;
+    if (tt === q) match = 4;                                   // точное совпадение названия
+    else if (tt.includes(q) || q.includes(tt)) match = 2;      // одно содержит другое
+    else { const tw = new Set(tt.split(' ')); const overlap = words.filter((w) => tw.has(w)).length; if (overlap) match = overlap; }
+    if (!match) continue;
+    const recency = 1 + i / Math.max(1, tasks.length);          // свежие записи весомее (×1..2)
+    const ids = (t.skillIds && t.skillIds.length) ? t.skillIds : (t.skillId ? [t.skillId] : []);
+    for (const id of ids) { if (skillById(id).missing) continue; tally[id] = (tally[id] || 0) + match * recency; }
+  }
+  const ranked = Object.entries(tally).sort((a, b) => b[1] - a[1]);
+  return ranked.length ? { skillId: ranked[0][0], score: ranked[0][1] } : null;
+}
+// Обновляет чип-подсказку под полем ввода квеста (вызывается на input)
+function updateCatSuggest(inputEl) {
+  const form = inputEl.closest('form'); if (!form) return;
+  const box = form.parentElement.querySelector('#cat-suggest'); if (!box) return;
+  const sel = form.querySelector('select[name="skillId"]');
+  const g = guessCategoryFromHistory(inputEl.value);
+  if (!g || !sel || (sel.value === g.skillId)) { box.innerHTML = ''; return; }
+  box.innerHTML = `<button type="button" class="cat-chip" data-action="apply-cat" data-skill="${esc(g.skillId)}">💡 Обычно сюда: <b>${esc(skillLabel(g.skillId))}</b> · применить</button>`;
+}
 function ladderFor(skillName) {
   const n = normRu(skillName);
   for (const key of LADDER_KEYS) if (n.includes(normRu(key))) return IMPORT_LADDERS[key];
@@ -1840,6 +1872,7 @@ function renderToday() {
         <input name="estimateMin" type="number" min="0" step="1" value="30" title="Минут" />
         <select name="difficulty"><option value="easy">🌱 Лёгкая</option><option value="normal" selected>⚔️ Обычная</option><option value="hard">🔥 Сложная</option></select>
         <button type="submit">+ Квест</button></form>
+      <div id="cat-suggest" class="cat-suggest"></div>
       <p class="diff-hint muted">🌱 Лёгкая — рутина, механика · ⚔️ Обычная — требует фокуса · 🔥 Сложная — вызов, выход из зоны комфорта → активирует Хайп <b>+15% XP</b></p>
     </div>
     ${overdueCard}
@@ -3234,6 +3267,10 @@ function onClick(e) {
   } else if (action === 'helper-close') { const m = document.getElementById('helper-modal'); if (m) m.remove();
   } else if (action === 'helper-to-settings') { const m = document.getElementById('helper-modal'); if (m) m.remove(); State.view = 'settings'; render();
   } else if (action === 'chat-suggest') { sendChat(el.dataset.q);
+  } else if (action === 'apply-cat') {
+    const form = el.closest('.card').querySelector('#add-task'); const sel = form && form.querySelector('select[name="skillId"]');
+    if (sel) { sel.value = el.dataset.skill; const ti = form.querySelector('input[name="title"]'); if (ti) ti.focus(); }
+    el.parentElement.innerHTML = '';
   } else if (action === 'ai-close') { const m = document.getElementById('ai-modal'); if (m) m.remove();
   } else if (action === 'note-del') {
     State.inbox = (State.inbox || []).filter((x) => x.id !== id); Store.save('inbox', State.inbox); render();
@@ -3511,6 +3548,7 @@ function onChange(e) {
 // Живой автосейв формы настроек при вводе (текст печатается без blur — 'change' не сработал бы)
 function onSettingsInput(e) {
   if (e.target.closest('#skills-list, #habits-list, .knob') || e.target.id === 'set-appName') autosaveSettings();
+  if (e.target.matches('#add-task input[name="title"]')) updateCatSuggest(e.target);
 }
 
 // --- Перетаскивание задач между днями в недельном виде (Sunsama-style) ---
