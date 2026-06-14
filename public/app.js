@@ -1350,6 +1350,7 @@ const MONTHS_NOM = ['Январь', 'Февраль', 'Март', 'Апрель'
 function calModeToggle(mode) {
   return `<div class="cal-modes">
     <button class="cal-mode ${mode === 'day' ? 'active' : ''}" data-action="cal-mode" data-mode="day">День</button>
+    <button class="cal-mode ${mode === 'week' ? 'active' : ''}" data-action="cal-mode" data-mode="week">Неделя</button>
     <button class="cal-mode ${mode === 'month' ? 'active' : ''}" data-action="cal-mode" data-mode="month">Месяц</button></div>`;
 }
 function calRemindBtn() {
@@ -1386,6 +1387,7 @@ function renderCalMonth(date) {
 function renderCalendarView() {
   const date = State.calDate || (State.calDate = todayStr());
   if ((State.calMode || 'day') === 'month') return renderCalMonth(date);
+  if (State.calMode === 'week') { if (!State.weekStart) State.weekStart = weekStart(todayStr()); return renderWeekly(); }
   const WD = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
   const MON = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
   const d = parseDate(date);
@@ -2428,9 +2430,14 @@ async function showReports() {
   try { const r = await fetch('/api/feedback'); if (!r.ok) throw 0; list = await r.json(); } catch { toast('Не удалось загрузить (нужен админ)'); return; }
   const KIND = { bug: '🐞 Баг', idea: '💡 Идея', other: '💬 Другое' };
   const items = list.length ? list.map((f) => {
-    const media = (f.attachments || []).map((a) => a.type && a.type.startsWith('video/')
-      ? `<video class="rep-media" controls preload="metadata" src="/api/feedback/file/${esc(a.file)}"></video>`
-      : `<a href="/api/feedback/file/${esc(a.file)}" target="_blank"><img class="rep-media" src="/api/feedback/file/${esc(a.file)}" alt=""/></a>`).join('');
+    // ⬇ скачать — чтобы быстро отдать скрин/видео Claude'у для починки бага (Claude видит картинки)
+    const media = (f.attachments || []).map((a) => {
+      const url = `/api/feedback/file/${esc(a.file)}`, dl = `<a class="rep-dl" href="${url}" download="${esc(a.file)}" title="Скачать вложение">⬇ скачать</a>`;
+      const el = a.type && a.type.startsWith('video/')
+        ? `<video class="rep-media" controls preload="metadata" src="${url}"></video>`
+        : `<a href="${url}" target="_blank"><img class="rep-media" src="${url}" alt=""/></a>`;
+      return `<div class="rep-att">${el}${dl}</div>`;
+    }).join('');
     return `<div class="rep-item">
       <div class="rep-head"><span class="rep-kind">${KIND[f.kind] || f.kind}</span><span class="muted">${esc((f.at || '').slice(0, 16).replace('T', ' '))} · ${esc(f.userId || '')}</span></div>
       ${f.text ? `<div class="rep-text">${esc(f.text)}</div>` : ''}
@@ -2592,6 +2599,7 @@ function renderWeekly() {
       <button class="btn ghost" data-action="week-prev">←</button>
       <div><b>Неделя ${dmShort(ws)} – ${dmShort(end)}</b>${isThis ? ' <span class="muted">(текущая)</span>' : ''}</div>
       <button class="btn ghost" data-action="week-next">→</button>
+      ${calModeToggle('week')}
     </div>
     <div class="kpis">
       <div class="kpi"><div class="v">${st.xp}</div><div class="l">XP за неделю</div></div>
@@ -2813,19 +2821,7 @@ const APP_SHELL = `
   <header id="topbar">
     <div class="brand"><span class="logo">⚔️</span><h1 id="appName">Gojo</h1></div>
     <div id="charSummary" class="char-summary"></div>
-    <nav id="nav">
-      <button data-view="today">Сегодня</button>
-      <button data-view="notes">Заметки</button>
-      <button data-view="calendar">Календарь</button>
-      <button data-view="character">Персонаж</button>
-      <button data-view="goals">Цели</button>
-      <button data-view="tree">Навыки</button>
-      <button data-view="rewards">Награды</button>
-      <button data-view="weekly">Неделя</button>
-      <button data-view="stats">Статистика</button>
-      <button data-view="leaderboard">Рейтинг</button>
-      <button data-view="settings">Настройки</button>
-    </nav>
+    <nav id="nav"><!-- 2-уровневая навигация рендерится в renderNav() --></nav>
   </header>
   <main id="main"></main>
   <div id="toasts"></div>
@@ -2863,14 +2859,34 @@ function renderLeaderboard() {
 }
 
 const VIEWS = { today: renderToday, notes: renderNotes, calendar: renderCalendarView, character: renderCharacter, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, leaderboard: renderLeaderboard, settings: renderSettings };
+// Разгрузка дизайна: 11 вкладок → 5 разделов с под-вкладками. Прогрессивное раскрытие через гейт уровня.
+const SECTIONS = [
+  { id: 'today', icon: '🎯', label: 'Сегодня', gate: 0, views: [{ view: 'today', label: 'День' }, { view: 'notes', label: 'Заметки' }] },
+  { id: 'plan', icon: '🗓', label: 'План', gate: 0, views: [{ view: 'calendar', label: 'Календарь' }, { view: 'goals', label: 'Цели' }] },
+  { id: 'rewards', icon: '🎁', label: 'Награды', gate: 0, views: [{ view: 'rewards', label: 'Награды' }] },
+  { id: 'hero', icon: '🧍', label: 'Герой', gate: 3, views: [{ view: 'character', label: 'Персонаж' }, { view: 'tree', label: 'Навыки' }, { view: 'stats', label: 'Прогресс' }] },
+  { id: 'tribe', icon: '🤝', label: 'Племя', gate: 3, views: [{ view: 'leaderboard', label: 'Рейтинг' }] },
+];
+function sectionOf(view) { for (const s of SECTIONS) if (s.views.some((v) => v.view === view)) return s.id; return null; } // settings (шестерёнка) и legacy weekly → null
+function navUnlockLevel() { return (State.me && State.me.isAdmin) ? 999 : charLevel(); } // админ видит всё (дог-фуддинг)
+function renderNav() {
+  const nav = document.getElementById('nav'); if (!nav) return;
+  const lvl = navUnlockLevel(), cur = sectionOf(State.view);
+  const primary = SECTIONS.map((s) => {
+    const locked = s.gate > lvl;
+    return `<button class="navsec${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}" data-action="go-section" data-sec="${s.id}" title="${locked ? 'Откроется на ур.' + s.gate : s.label}">${s.icon}<span class="navsec-l">${s.label}</span>${locked ? `<span class="navsec-lock">🔒${s.gate}</span>` : ''}</button>`;
+  }).join('');
+  const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="Настройки" aria-label="Настройки">⚙️</button>`;
+  const sec = SECTIONS.find((s) => s.id === cur);
+  const subs = (sec && sec.views.length > 1) ? `<div class="navsub">${sec.views.map((v) => `<button class="navsubtab${v.view === State.view ? ' active' : ''}" data-view="${v.view}">${esc(v.label)}</button>`).join('')}</div>` : '';
+  nav.innerHTML = `<div class="navrow">${primary}${gear}</div>${subs}`;
+}
 function render() {
   if (State.phase !== 'app') { showAuthScreen(); return; }
   // Восстановить app shell если auth-экран его перезаписал
   if (!document.getElementById('main')) document.getElementById('app').innerHTML = APP_SHELL;
   renderHeader();
-  document.querySelectorAll('#nav button').forEach((b) => b.classList.toggle('active', b.dataset.view === State.view));
-  const activeNav = document.querySelector('#nav button.active');
-  if (activeNav && activeNav.scrollIntoView) activeNav.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  renderNav();
   document.getElementById('main').innerHTML = (VIEWS[State.view] || renderToday)();
   scheduleReminders();
 }
@@ -3057,6 +3073,13 @@ function openRewardCatalog() {
 function onClick(e) {
   const navBtn = e.target.closest('#nav button[data-view]');
   if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
+  const secBtn = e.target.closest('#nav [data-action="go-section"]');
+  if (secBtn) {
+    const s = SECTIONS.find((x) => x.id === secBtn.dataset.sec); if (!s) return;
+    if (s.gate > navUnlockLevel()) { toast(`🔒 «${s.label}» откроется на ур.${s.gate}`); return; }
+    if (sectionOf(State.view) !== s.id) { flushSettingsForm(); State.view = s.views[0].view; track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; render(); }
+    return;
+  }
   const el = e.target.closest('[data-action]');
   if (!el) {
     // клик по пустому месту сетки календаря → подставить время в форму планирования
@@ -3337,7 +3360,7 @@ function onClick(e) {
     State.tasks.push({ id: uid(), title, skillId: sid, skillIds: sid ? [sid] : [], estimateMin: 30, difficulty: 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
     State.inbox = State.inbox.filter((x) => x.id !== id);
     Store.save('tasks', State.tasks); Store.save('inbox', State.inbox); toast('→ В квестах на сегодня'); render();
-  } else if (action === 'cal-mode') { State.calMode = el.dataset.mode; render();
+  } else if (action === 'cal-mode') { State.calMode = el.dataset.mode; State.view = 'calendar'; render();
   } else if (action === 'cal-pick-day') { State.calDate = el.dataset.date; State.calMode = 'day'; render();
   } else if (action === 'cal-shift-month') { const d = parseDate(State.calDate || todayStr()); State.calDate = fmtDate(new Date(d.getFullYear(), d.getMonth() + Number(el.dataset.delta), Math.min(d.getDate(), 28))); render();
   } else if (action === 'cal-remind-toggle') { toggleReminders();

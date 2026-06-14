@@ -69,13 +69,32 @@ body {
 .skill-chip .sk-bar > span { display: block; height: 100%; border-radius: 999px; }
 
 /* ---------- Nav ---------- */
-#nav { display: flex; gap: 4px; margin-top: 14px; }
-#nav button {
+#nav { margin-top: 14px; }
+/* Верхний ряд — 5 разделов + шестерёнка */
+.navrow { display: flex; gap: 6px; align-items: center; }
+.navsec {
+  display: flex; align-items: center; gap: 6px;
   background: none; border: none; color: var(--muted); font-size: 14px; font-weight: 600;
-  padding: 8px 14px; border-radius: 9px; cursor: pointer;
+  padding: 8px 14px; border-radius: 10px; cursor: pointer; white-space: nowrap;
 }
-#nav button:hover { color: var(--text); background: var(--panel); }
-#nav button.active { color: var(--text); background: var(--panel2); }
+.navsec:hover { color: var(--text); background: var(--panel); }
+.navsec.active { color: var(--text); background: var(--panel2); }
+.navsec.locked { opacity: 0.55; }
+.navsec-lock { font-size: 10.5px; color: var(--muted); font-weight: 700; }
+.navgear { margin-left: auto; background: none; border: none; color: var(--muted); font-size: 18px; padding: 6px 8px; border-radius: 9px; cursor: pointer; }
+.navgear:hover { color: var(--text); background: var(--panel); }
+.navgear.active { color: var(--text); background: var(--panel2); }
+/* Второй ряд — под-вкладки активного раздела */
+.navsub { display: flex; gap: 4px; margin-top: 6px; flex-wrap: wrap; }
+.navsubtab {
+  background: var(--panel2); border: 1px solid var(--line); color: var(--muted);
+  font-size: 12.5px; font-weight: 600; padding: 5px 12px; border-radius: 999px; cursor: pointer;
+}
+.navsubtab:hover { color: var(--text); }
+.navsubtab.active { color: #fff; background: var(--accent); border-color: var(--accent); }
+/* Скачать вложение фидбека */
+.rep-att { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.rep-dl { font-size: 12px; color: var(--accent); }
 
 /* ---------- Cards & layout ---------- */
 .card {
@@ -1002,18 +1021,16 @@ audio.note-media { height: 40px; }
 /* Горизонтально-скроллящийся nav — устойчив к любому числу вкладок.
    Свайпом видно все табы; активный авто-центрируется (JS scrollIntoView). */
 @media (max-width: 720px) {
-  #nav {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    scroll-snap-type: x proximity;
-    margin: 14px -18px 0;
-    padding: 2px 18px 5px;
+  #nav { margin: 14px -18px 0; padding: 0 18px; }
+  .navrow {
+    overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; padding-bottom: 4px;
   }
-  #nav::-webkit-scrollbar { display: none; }
-  #nav button { flex: 0 0 auto; scroll-snap-align: center; }
+  .navrow::-webkit-scrollbar { display: none; }
+  .navsec { flex: 0 0 auto; padding: 8px 12px; }
+  .navsec-l { font-size: 13px; }
+  .navgear { position: sticky; right: 0; }
+  .navsub { padding: 0 0 4px; }
 }
 
 /* Телефоны */
@@ -1034,8 +1051,8 @@ audio.note-media { height: 40px; }
 
   /* Тач-таргеты крупнее. Негативные поля nav совпадают с padding #app (12px),
      чтобы лента табов доходила ровно до краёв экрана без горизонтального скролла. */
-  #nav { margin: 12px -12px 0; padding: 2px 12px 5px; }
-  #nav button { padding: 9px 13px; }
+  #nav { margin: 12px -12px 0; padding: 0 12px; }
+  .navsec { padding: 8px 11px; }
   .btn { min-height: 40px; }
   .gfilter, .tree-tab, .ob-chip, .gfilters .gfilter { min-height: 38px; display: inline-flex; align-items: center; }
 
