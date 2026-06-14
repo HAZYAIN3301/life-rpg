@@ -114,37 +114,45 @@ function httpsPostJson(host, pathName, headers, bodyObj) {
   });
 }
 // Универсальный вызов модели: { ok, text } | { ok:false, noKey } | { ok:false, status, detail }
-async function aiComplete(provider, keys, system, prompt, maxTokens) {
-  if (provider === 'openai') {
-    if (!keys.openai) return { ok: false, noKey: true };
-    const msgs = []; if (system) msgs.push({ role: 'system', content: system }); msgs.push({ role: 'user', content: prompt });
-    const r = await httpsPostJson('api.openai.com', '/v1/chat/completions', { 'Authorization': 'Bearer ' + keys.openai },
-      { model: 'gpt-4o', max_tokens: maxTokens || 3000, messages: msgs });
-    if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
-    return { ok: true, text: (r.json.choices && r.json.choices[0] && r.json.choices[0].message && r.json.choices[0].message.content) || '' };
-  }
-  if (!keys.anthropic) return { ok: false, noKey: true };
-  const r = await httpsPostJson('api.anthropic.com', '/v1/messages', { 'x-api-key': keys.anthropic, 'anthropic-version': '2023-06-01' },
-    { model: 'claude-opus-4-8', max_tokens: maxTokens || 3000, system, messages: [{ role: 'user', content: prompt }] });
-  if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
-  return { ok: true, text: (r.json.content || []).filter((x) => x.type === 'text').map((x) => x.text).join('\n') };
+// Реестр ИИ-провайдеров. shape: 'anthropic' | 'openai' (совместимый) | 'gemini'.
+// free=true — ключ берётся бесплатно без карты/подписки (Gemini, Groq).
+const AI_PROVIDERS = {
+  gemini: { shape: 'gemini', host: 'generativelanguage.googleapis.com', model: 'gemini-2.5-flash' },
+  groq: { shape: 'openai', host: 'api.groq.com', path: '/openai/v1/chat/completions', model: 'llama-3.3-70b-versatile' },
+  anthropic: { shape: 'anthropic', host: 'api.anthropic.com', model: 'claude-opus-4-8' },
+  openai: { shape: 'openai', host: 'api.openai.com', path: '/v1/chat/completions', model: 'gpt-4o' },
+};
+function aiComplete(provider, keys, system, prompt, maxTokens) {
+  return aiCompleteMessages(provider, keys, system, [{ role: 'user', content: prompt }], maxTokens);
 }
-// Многоходовой чат: системный промпт + история сообщений [{role,content}]
+// Единый вызов: системный промпт + история [{role,content}]. Диспатч по форме провайдера.
 async function aiCompleteMessages(provider, keys, system, messages, maxTokens) {
+  const P = AI_PROVIDERS[provider] || AI_PROVIDERS.anthropic;
+  const key = keys[provider];
+  if (!key) return { ok: false, noKey: true };
   const norm = messages.map((m) => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: String(m.content || '').slice(0, 8000) }));
-  if (provider === 'openai') {
-    if (!keys.openai) return { ok: false, noKey: true };
-    const msgs = []; if (system) msgs.push({ role: 'system', content: system }); for (const m of norm) msgs.push(m);
-    const r = await httpsPostJson('api.openai.com', '/v1/chat/completions', { 'Authorization': 'Bearer ' + keys.openai },
-      { model: 'gpt-4o', max_tokens: maxTokens || 1500, messages: msgs });
+  const max = maxTokens || 1500;
+  if (P.shape === 'gemini') {
+    const contents = norm.map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }));
+    const body = { contents, generationConfig: { maxOutputTokens: max } };
+    if (system) body.systemInstruction = { parts: [{ text: system }] };
+    const r = await httpsPostJson(P.host, `/v1beta/models/${P.model}:generateContent?key=${encodeURIComponent(key)}`, {}, body);
     if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
-    return { ok: true, text: (r.json.choices && r.json.choices[0] && r.json.choices[0].message && r.json.choices[0].message.content) || '' };
+    const text = (((r.json.candidates || [])[0] || {}).content || {}).parts || [];
+    return { ok: true, text: text.map((p) => p.text || '').join('') };
   }
-  if (!keys.anthropic) return { ok: false, noKey: true };
-  const r = await httpsPostJson('api.anthropic.com', '/v1/messages', { 'x-api-key': keys.anthropic, 'anthropic-version': '2023-06-01' },
-    { model: 'claude-opus-4-8', max_tokens: maxTokens || 1500, system, messages: norm });
+  if (P.shape === 'anthropic') {
+    const r = await httpsPostJson(P.host, '/v1/messages', { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+      { model: P.model, max_tokens: max, system, messages: norm });
+    if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
+    return { ok: true, text: (r.json.content || []).filter((x) => x.type === 'text').map((x) => x.text).join('\n') };
+  }
+  // openai-совместимый (openai, groq)
+  const msgs = []; if (system) msgs.push({ role: 'system', content: system }); for (const m of norm) msgs.push(m);
+  const r = await httpsPostJson(P.host, P.path, { 'Authorization': 'Bearer ' + key },
+    { model: P.model, max_tokens: max, messages: msgs });
   if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
-  return { ok: true, text: (r.json.content || []).filter((x) => x.type === 'text').map((x) => x.text).join('\n') };
+  return { ok: true, text: (r.json.choices && r.json.choices[0] && r.json.choices[0].message && r.json.choices[0].message.content) || '' };
 }
 // Защищённый разбор JSON из ответа модели: срезаем ```fences``` и прозу вокруг { ... }
 function extractJson(text) {
@@ -633,47 +641,35 @@ const server = http.createServer(async (req, res) => {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     let b = {}; try { b = JSON.parse(await readBody(req, 64 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
     const cur = loadAiKeys(uid);
-    if (typeof b.anthropic === 'string') cur.anthropic = b.anthropic.trim();
-    if (typeof b.openai === 'string') cur.openai = b.openai.trim();
+    for (const id of Object.keys(AI_PROVIDERS)) {
+      if (typeof b[id] === 'string') { const v = b[id].trim(); if (v) cur[id] = v; else delete cur[id]; }
+    }
     try { fs.mkdirSync(userDataDir(uid), { recursive: true }); fs.writeFileSync(aiKeysFile(uid), JSON.stringify(cur)); } catch { return sendJson(res, 500, { error: 'save failed' }); }
-    return sendJson(res, 200, { ok: true, anthropic: !!cur.anthropic, openai: !!cur.openai });
+    const out = { ok: true }; for (const id of Object.keys(AI_PROVIDERS)) out[id] = !!cur[id]; return sendJson(res, 200, out);
   }
   if (u === '/api/ai/keys' && req.method === 'GET') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
-    const k = loadAiKeys(uid); return sendJson(res, 200, { anthropic: !!k.anthropic, openai: !!k.openai });
+    const k = loadAiKeys(uid); const out = {}; for (const id of Object.keys(AI_PROVIDERS)) out[id] = !!k[id]; return sendJson(res, 200, out);
   }
   if (u === '/api/ai/analyze' && req.method === 'POST') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
-    const provider = b.provider === 'openai' ? 'openai' : 'anthropic';
-    const keys = loadAiKeys(uid);
+    const provider = AI_PROVIDERS[b.provider] ? b.provider : 'anthropic';
     const system = String(b.system || '').slice(0, 8000);
     const prompt = String(b.prompt || '').slice(0, 100000);
     if (!prompt) return sendJson(res, 400, { error: 'empty prompt' });
     try {
-      if (provider === 'anthropic') {
-        if (!keys.anthropic) return sendJson(res, 400, { error: 'no_key', provider });
-        const r = await httpsPostJson('api.anthropic.com', '/v1/messages', { 'x-api-key': keys.anthropic, 'anthropic-version': '2023-06-01' },
-          { model: b.model || 'claude-opus-4-8', max_tokens: 2000, system, messages: [{ role: 'user', content: prompt }] });
-        if (r.status !== 200) return sendJson(res, 502, { error: 'provider', status: r.status, detail: (r.json.error && r.json.error.message) || '' });
-        const text = (r.json.content || []).filter((x) => x.type === 'text').map((x) => x.text).join('\n');
-        return sendJson(res, 200, { text });
-      } else {
-        if (!keys.openai) return sendJson(res, 400, { error: 'no_key', provider });
-        const msgs = []; if (system) msgs.push({ role: 'system', content: system }); msgs.push({ role: 'user', content: prompt });
-        const r = await httpsPostJson('api.openai.com', '/v1/chat/completions', { 'Authorization': 'Bearer ' + keys.openai },
-          { model: b.model || 'gpt-4o', max_tokens: 2000, messages: msgs });
-        if (r.status !== 200) return sendJson(res, 502, { error: 'provider', status: r.status, detail: (r.json.error && r.json.error.message) || '' });
-        const text = (r.json.choices && r.json.choices[0] && r.json.choices[0].message && r.json.choices[0].message.content) || '';
-        return sendJson(res, 200, { text });
-      }
+      const r = await aiComplete(provider, loadAiKeys(uid), system, prompt, 2000);
+      if (r.noKey) return sendJson(res, 400, { error: 'no_key', provider });
+      if (!r.ok) return sendJson(res, 502, { error: 'provider', status: r.status, detail: r.detail });
+      return sendJson(res, 200, { text: r.text });
     } catch (e) { return sendJson(res, 502, { error: String(e.message || e) }); }
   }
   // Движок «Предложений»: импорт целей/сфер из текста (kind:goals) или калибровка уровней (kind:calibrate)
   if (u === '/api/ai/propose' && req.method === 'POST') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
-    const provider = b.provider === 'openai' ? 'openai' : 'anthropic';
+    const provider = AI_PROVIDERS[b.provider] ? b.provider : 'anthropic';
     const kind = b.kind === 'calibrate' ? 'calibrate' : 'goals';
     const text = String(b.text || '').slice(0, 20000);
     const context = String(b.context || '').slice(0, 6000);
@@ -693,7 +689,7 @@ const server = http.createServer(async (req, res) => {
   if (u === '/api/ai/chat' && req.method === 'POST') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
-    const provider = b.provider === 'openai' ? 'openai' : 'anthropic';
+    const provider = AI_PROVIDERS[b.provider] ? b.provider : 'anthropic';
     const system = String(b.system || '').slice(0, 12000);
     let messages = Array.isArray(b.messages) ? b.messages.slice(-20) : [];
     while (messages.length && messages[0].role === 'assistant') messages.shift(); // история должна начинаться с user

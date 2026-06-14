@@ -1467,8 +1467,47 @@ function antiHabitsCard() {
 // ============================================================
 //  ИИ-ассистент (BYOK) — твой ключ Claude/OpenAI, сервер проксирует. Разбор недели «правдой о времени».
 // ============================================================
-function aiProvider() { const k = State.aiKeys || {}; return k.anthropic ? 'anthropic' : (k.openai ? 'openai' : null); }
+// Реестр ИИ-провайдеров для UI. free=true → ключ берётся бесплатно без карты/подписки.
+const AI_PROVIDERS = [
+  { id: 'gemini', label: 'Google Gemini', free: true, prefix: 'AIza…', url: 'https://aistudio.google.com/api-keys', hint: 'Бесплатно, без карты — рекомендую. ~500 запросов/день.' },
+  { id: 'groq', label: 'Groq · Llama 3.3', free: true, prefix: 'gsk_…', url: 'https://console.groq.com/keys', hint: 'Бесплатно, без карты, очень быстро.' },
+  { id: 'anthropic', label: 'Claude (Anthropic)', free: false, prefix: 'sk-ant-…', url: 'https://console.anthropic.com/settings/keys', hint: 'Нужны кредиты (~5$), отдельно от подписки Claude.ai.' },
+  { id: 'openai', label: 'OpenAI (ChatGPT)', free: false, prefix: 'sk-…', url: 'https://platform.openai.com/api-keys', hint: 'Нужны кредиты (~5$), отдельно от подписки ChatGPT.' },
+];
+const AI_ORDER = ['gemini', 'groq', 'anthropic', 'openai']; // приоритет автовыбора: бесплатные первыми
+// Активный провайдер: предпочтение юзера (если есть ключ) → иначе первый доступный (free первыми)
+function aiProvider() {
+  const k = State.aiKeys || {};
+  const pref = State.settings && State.settings.aiPref;
+  if (pref && k[pref]) return pref;
+  return AI_ORDER.find((id) => k[id]) || null;
+}
+function aiProviderLabel(id) { const p = AI_PROVIDERS.find((x) => x.id === id); return p ? p.label : id; }
 function ensureAiKeys() { if (State.aiKeys === null) { State.aiKeys = {}; fetch('/api/ai/keys').then((r) => r.json()).then((d) => { State.aiKeys = d || {}; render(); }).catch(() => {}); } }
+// Карточка ИИ-ключей: мультипровайдер + гид «получить бесплатный ключ» + выбор провайдера по умолчанию
+function aiKeysCard() {
+  const k = State.aiKeys || {};
+  const keyed = AI_PROVIDERS.filter((p) => k[p.id]);
+  const rows = AI_PROVIDERS.map((p) => {
+    const saved = k[p.id];
+    return `<div class="aikey-row ${saved ? 'has' : ''}">
+      <div class="aikey-head"><b>${esc(p.label)}</b>${p.free ? '<span class="aikey-free">бесплатно</span>' : '<span class="aikey-paid">нужны кредиты</span>'}${saved ? '<span class="aikey-ok">✓ ключ сохранён</span>' : ''}</div>
+      <div class="aikey-hint muted">${esc(p.hint)} <a href="${p.url}" target="_blank" rel="noopener">Получить ключ →</a></div>
+      <input name="${p.id}" type="password" placeholder="Вставь ключ (${p.prefix})" autocomplete="off" />
+    </div>`;
+  }).join('');
+  const prefSel = keyed.length > 1 ? `<div class="aikey-pref"><label>Использовать по умолчанию:
+      <select data-action="set-ai-pref">${keyed.map((p) => `<option value="${p.id}" ${aiProvider() === p.id ? 'selected' : ''}>${esc(p.label)}</option>`).join('')}</select></label></div>` : '';
+  return `<div class="card"><h3>🤖 ИИ-ассистент (свой ключ)</h3>
+    <p class="muted" style="font-size:12.5px;margin:0 0 6px">ИИ-функции (помощник 🤖, импорт целей, калибровка, разбор недели) работают на твоём ключе — так инференс бесплатен для нас, а данные идут только к выбранному ИИ.</p>
+    <div class="aikey-tip">💡 Нет ключа и платной подписки? Возьми <b>бесплатный</b> у Google Gemini или Groq — 2 минуты, без карты: жми «Получить ключ», войди аккаунтом, создай ключ, вставь сюда.</div>
+    <form id="ai-keys" class="aikey-form">
+      ${rows}
+      ${prefSel}
+      <div class="aikey-actions"><button type="submit" class="btn">Сохранить</button><span id="ai-keys-msg" class="muted"></span></div>
+    </form>
+    <p class="muted" style="font-size:11.5px;margin:8px 0 0">Ключ хранится только на сервере (в гит не попадает, наружу отдаётся лишь признак «✓ сохранён»). Стереть — очисти поле и сохрани. Можно держать несколько и переключаться.</p></div>`;
+}
 // Компактная сводка недели для ИИ — реальные данные, не выдумка
 function buildWeekContext() {
   const end = todayStr(), start = addDays(end, -6);
@@ -1624,7 +1663,7 @@ const GOJO_MANUAL = `Ты — встроенный помощник прилож
 • Неделя — недельный обзор и планирование.
 • Статистика — ранг, Индекс баланса (ровно ли развиты сферы — суть десятиборья), ранги по сферам, графики XP/времени, «🤖 Разбор недели» (ИИ-анализ твоей реальной недели).
 • Рейтинг — соревнование по XP со всеми на сервере (видны только имя/аватар/уровень/ранг, задачи приватны; можно скрыться).
-• Настройки — сферы жизни (иерархия N уровней: Учёба→Школа→Bio LK), Импорт достижений (отметь реальный уровень → стартовый XP, не начинаешь с нуля; или «🤖 Оценить через ИИ»), ИИ-ключ (BYOK Claude/OpenAI — он питает все ИИ-функции), кривые XP, бэкапы данных.
+• Настройки — сферы жизни (иерархия N уровней: Учёба→Школа→Bio LK), Импорт достижений (отметь реальный уровень → стартовый XP, не начинаешь с нуля; или «🤖 Оценить через ИИ»), ИИ-ключ (свой ключ питает все ИИ-функции; бесплатный без карты — Google Gemini или Groq, либо платные Claude/OpenAI), кривые XP, бэкапы данных.
 
 Важно — Уровень vs Форма: уровень не сгорает; Форма — отдельный показатель свежести, мягко падает если забросил сферу и быстро возвращается (жизнь не наказывает за паузу).`;
 const CHAT_SUGGESTIONS = ['Какие функции я не использую?', 'Как импортировать мой реальный опыт?', 'Объясни энергию и Хайп', 'Чем цель-метрика отличается от чек-листа?', 'Что такое Индекс баланса?'];
@@ -1643,7 +1682,7 @@ function openHelperChat() {
   const noKey = !aiProvider();
   ov.innerHTML = `<div class="ai-box chat-box"><button class="modal-x" data-action="helper-close">✕</button>
     <h3>🤖 Помощник Gojo</h3>
-    ${noKey ? `<p class="muted">Помощник работает на твоём ИИ-ключе. Добавь ключ Claude или OpenAI в Настройках — и спрашивай что угодно про приложение.<br><button class="btn" data-action="helper-to-settings" style="margin-top:10px">⚙️ В Настройки</button></p>`
+    ${noKey ? `<p class="muted">Помощник работает на твоём ИИ-ключе. Не хочешь платить? Возьми <b>бесплатный</b> ключ Google Gemini или Groq за 2 минуты (без карты) — в Настройках есть пошаговый гид.<br><button class="btn" data-action="helper-to-settings" style="margin-top:10px">⚙️ Подключить ИИ</button></p>`
       : `<div id="chat-msgs" class="chat-msgs"></div>
          <form id="chat-form" class="chat-form"><input id="chat-input" placeholder="Спроси про любую функцию…" autocomplete="off" /><button type="submit" class="cap-add" title="Отправить">↵</button></form>`}</div>`;
   if (!noKey) { renderChatMessages(); setTimeout(() => { const i = document.getElementById('chat-input'); if (i) i.focus(); }, 30); }
@@ -2143,7 +2182,7 @@ function subscriptionCard() {
   } else if (e.tier === 'trial') {
     cta += `<button class="btn pro-cta" data-action="show-paywall" data-feature="Pro">💎 Оформить Pro насовсем</button>`;
   }
-  const feats = ['📊 Расширенная аналитика и Индекс баланса', '🎁 До 3 сундуков в день + редкие дропы', '🧍 Живой персонаж и кастомизация (скоро)', '🤖 ИИ-ассистент со своим ключом (скоро)', '🎨 Темы оформления (скоро)'];
+  const feats = ['📊 Расширенная аналитика и Индекс баланса', '🎁 До 3 сундуков в день + редкие дропы', '🧍 Живой персонаж и кастомизация (скоро)', '🤖 ИИ-ассистент (на своём ключе — есть бесплатные)', '🎨 Темы оформления (скоро)'];
   return `<div class="card sub-card">
     <h3>Подписка — <span class="tier-badge tier-${e.tier}">${tierLabel}</span></h3>
     <ul class="pro-feats">${feats.map((f) => `<li>${f}</li>`).join('')}</ul>
@@ -2221,7 +2260,7 @@ function showPaywall(feature) {
       <li>📊 Расширенная аналитика и Индекс баланса</li>
       <li>🎁 До 3 сундуков в день + редкие дропы</li>
       <li>🧍 Живой персонаж и кастомизация (скоро)</li>
-      <li>🤖 ИИ-ассистент со своим ключом (скоро)</li>
+      <li>🤖 ИИ-ассистент (на своём ключе — есть бесплатные)</li>
       <li>🎨 Темы оформления (скоро)</li></ul>
     <div class="pw-actions">${trialBtn}<button class="btn pro-cta" data-action="do-upgrade">Оформить Pro</button></div>
     <p class="muted pw-fine">Без карты для триала. Даунгрейд никогда не удаляет данные.</p></div>`;
@@ -2654,13 +2693,7 @@ function renderSettings() {
           <option value="контекст">Смена контекста/среды</option></select>
         <button type="submit">+ Добавить</button></form>
       ${(State.antihabits || []).map((a) => `<div class="ah-edit"><span class="ah-name">${esc(a.title)}${a.approach ? ` · <span class="muted">${esc(a.approach)}</span>` : ''}</span><button class="del" data-action="delete-antihabit" data-id="${a.id}">✕</button></div>`).join('')}</div>
-    <div class="card"><h3>🤖 ИИ-ассистент (свой ключ)</h3>
-      <p class="muted" style="font-size:12px;margin:0 0 10px">Вписываешь свой ключ — Gojo делает разбор недели твоим ИИ. Ключ хранится только на сервере, наружу не отдаётся, в гит не попадает. Стоимость инференса — на твоей стороне (BYOK).</p>
-      <form id="ai-keys" class="pin-change">
-        <input name="anthropic" type="password" placeholder="Anthropic ключ (sk-ant-…)${(State.aiKeys && State.aiKeys.anthropic) ? ' · ✓ сохранён' : ''}" autocomplete="off" />
-        <input name="openai" type="password" placeholder="OpenAI ключ (sk-…)${(State.aiKeys && State.aiKeys.openai) ? ' · ✓ сохранён' : ''}" autocomplete="off" />
-        <button type="submit" class="btn">Сохранить</button><span id="ai-keys-msg" class="muted"></span></form>
-      <p class="muted" style="font-size:11.5px;margin:8px 0 0">Claude — для разбора (рекомендую). OpenAI — на будущее (транскрипция голосовых заметок). Ключ можно стереть, очистив поле и сохранив.</p></div>
+    ${aiKeysCard()}
     <div class="card"><h3>📦 Программы-данжи</h3><p class="muted" style="margin:0 0 12px">Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
     <div class="card"><h3>Формула опыта</h3><div class="knobs">
         <div class="knob"><label>XP за минуту</label><input id="k-perMinute" type="number" step="0.1" value="${s.xp.perMinute}" /></div>
@@ -2870,10 +2903,12 @@ function onSubmit(e) {
   }
   if (f.id === 'ai-keys') {
     e.preventDefault();
-    const body = {}; if (f.anthropic.value.trim()) body.anthropic = f.anthropic.value.trim(); if (f.openai.value.trim()) body.openai = f.openai.value.trim();
+    const body = {};
+    AI_PROVIDERS.forEach((p) => { if (f[p.id] && f[p.id].value.trim()) body[p.id] = f[p.id].value.trim(); });
+    if (!Object.keys(body).length) { const m0 = document.getElementById('ai-keys-msg'); if (m0) m0.textContent = 'Вставь хотя бы один ключ'; return; }
     const msg = document.getElementById('ai-keys-msg'); if (msg) msg.textContent = 'Сохраняю…';
     fetch('/api/ai/keys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-      .then((r) => r.json()).then((d) => { State.aiKeys = { anthropic: d.anthropic, openai: d.openai }; toast('🤖 Ключ сохранён'); render(); })
+      .then((r) => r.json()).then((d) => { const m = {}; AI_PROVIDERS.forEach((p) => m[p.id] = !!d[p.id]); State.aiKeys = m; toast('🤖 Ключ сохранён'); render(); })
       .catch(() => { if (msg) msg.textContent = 'Ошибка'; });
     return;
   }
@@ -3448,6 +3483,7 @@ function onChange(e) {
   if (!el) return;
   const a = el.dataset.action;
   if (a === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
+  if (a === 'set-ai-pref') { State.settings.aiPref = el.value; Store.save('settings', State.settings); toast('🤖 ИИ по умолчанию: ' + aiProviderLabel(el.value)); return; }
   if (a === 'toggle-cat') {
     const t = questById(el.dataset.id); if (!t) return;
     let ids = taskSkills(t).slice(); const sid = el.dataset.skill;

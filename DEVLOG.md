@@ -367,6 +367,25 @@
 
 **Важно про Виолетту:** её прошлая потеря произошла ДО появления бэкапов — старые данные не восстановить (на Railway их уже нет). Но: (1) текущее состояние её профиля можно посмотреть админ-эндпоинтом — вдруг задачи уцелели; (2) баг каскадного удаления убит — это больше не повторится; (3) с этого момента каждое сохранение бэкапится.
 
+## Сессия 2026-06-14 ч.3 — Мультипровайдер ИИ + бесплатные ключи (Opus 4.8)
+
+Снимаем главный блокер BYOK: ключи Claude/OpenAI требуют предоплаты/кредитов (~5$), это барьер. **Решение — не проксировать-биллить (это сделало бы нас платным перепродавцом инференса: наши деньги + биллинг + абьюз, ровно то, чего BYOK избегает), а добавить провайдеров с БЕСПЛАТНЫМ ключом.** Проверено веб-поиском (июнь 2026): Gemini (AI Studio, без карты, `gemini-2.5-flash`, ~500 RPD) и Groq (console.groq.com, без карты, `llama-3.3-70b-versatile`) дают бесплатные ключи. Проксирование-биллинг отложено как Pro-фича на потом.
+
+### Сервер (`server.js`)
+- `AI_PROVIDERS` реестр: `{gemini, groq, anthropic, openai}` с `shape: 'anthropic'|'openai'|'gemini'`, host/path/model. Groq и OpenAI делят openai-форму.
+- `aiCompleteMessages` переписан на диспатч по `shape`: **gemini** (`/v1beta/models/{m}:generateContent?key=`, `contents[{role:user|model,parts}]`, `systemInstruction`, `generationConfig.maxOutputTokens`, ответ `candidates[0].content.parts[].text`); **anthropic** (`/v1/messages`); **openai-совместимый** (`/chat/completions`, Bearer). `aiComplete` теперь тонкая обёртка над messages-версией.
+- `/api/ai/keys` POST/GET — generic по `Object.keys(AI_PROVIDERS)` (хранит/отдаёт признаки для всех). `/api/ai/analyze` отрефакторен на `aiComplete` (теперь тоже мультипровайдер). propose/chat: провайдер валидируется через `AI_PROVIDERS[b.provider]`.
+
+### Клиент (`public/app.js`)
+- Клиентский `AI_PROVIDERS` (label/free/prefix/url/hint) + `AI_ORDER` (free первыми). `aiProvider()` = `settings.aiPref` (если есть ключ) → иначе первый доступный по порядку. `aiProviderLabel()`.
+- `aiKeysCard()` — мультипровайдерная карточка: на каждый провайдер строка (бейдж «бесплатно»/«нужны кредиты», подсказка, «Получить ключ →» deep-link, поле ключа), плашка-гид «возьми бесплатный за 2 минуты», селектор провайдера по умолчанию (если ≥2 ключа), статус «✓ сохранён».
+- Форма `ai-keys` собирает все провайдерские поля; `set-ai-pref` (onChange) сохраняет дефолт. Обновлены no-key CTA (помощник зовёт за бесплатным Gemini/Groq), `GOJO_MANUAL`, Pro-списки (убрано «скоро»).
+- CSS: `.aikey-tip/.aikey-form/.aikey-row(.has)/.aikey-head/.aikey-free/.aikey-paid/.aikey-ok/.aikey-hint/.aikey-pref/.aikey-actions`.
+
+**Тест в превью:** keys generic (4 провайдера presence). Карточка: 4 строки, 2 «бесплатно», 4 deep-link, поля gemini/groq. **Gemini-адаптер: фейк-ключ → 502 «API key not valid» от Google** (форма запроса верна). **Groq: → 502 «Invalid API Key» от Groq**. `analyze` (разбор недели) на gemini → доходит до Google. `aiProvider`: авто=gemini (free первым), pref=anthropic уважается, pref без ключа→fallback. 11 вкладок без ошибок, 0 в консоли, ключи подчищены.
+
+**Дальше:** (3) авто-категория (локальная эвристика), (4) MCP-коннектор. Проксирование-биллинг — Pro, позже.
+
 ## Сессия 2026-06-14 ч.2 — Блок 2 ИИ: тех-поддержка / гид (Opus 4.8)
 
 Второй блок ИИ-слоя. Постоянный помощник, знающий все функции и философию Gojo, — решает боль «функций много, юзер использует 10% потенциала». Плавающая кнопка 🤖 на всех вкладках → чат.
