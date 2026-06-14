@@ -1581,22 +1581,33 @@ function proposeContext() {
   return `Сферы: ${spheres || '(нет)'}\nЦели: ${goals || '(нет)'}`;
 }
 function openProposeModal(kind) {
-  if (!aiProvider()) { toast('Сначала добавь ИИ-ключ в Настройках'); State.view = 'settings'; render(); return; }
   _proposals = [];
   const isCal = kind === 'calibrate';
+  const prov = aiProvider();
   let ov = document.getElementById('propose-modal');
   if (!ov) { ov = document.createElement('div'); ov.id = 'propose-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov); }
   ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="propose-close">✕</button>
-    <h3>${isCal ? '📊 Оценить уровни сфер (ИИ)' : '📥 Импорт целей текстом (ИИ)'}</h3>
+    <h3>${isCal ? '📊 Оценить уровни сфер' : '📥 Импорт целей текстом'}</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 10px">${isCal
       ? 'Опиши, чем и насколько уверенно занимаешься. ИИ предложит стартовые уровни — ты одобришь или отклонишь.'
       : 'Опиши свободным текстом свои цели, проекты, сферы. ИИ оформит их в цели и сферы — ты одобришь или отклонишь.'}</p>
     <textarea id="propose-text" rows="6" placeholder="${isCal
       ? 'Напр.: жму 130 кг на 2 раза; бегал до 36 км; немецкий — речь B2+, понимание C1; Abi около 1.3; монтирую видео пару лет…'
       : 'Напр.: хочу Abi 1.0–1.1; дойти до C1 немецкого; закончить проект Jugend Forscht к лету; жим 150 кг; пробежать марафон осенью…'}"></textarea>
-    <div class="propose-actions"><button class="btn" data-action="propose-run" data-kind="${kind}">🤖 Предложить</button></div>
+    <div class="propose-actions">
+      ${prov ? `<button class="btn" data-action="propose-run" data-kind="${kind}">🤖 Предложить (${esc(aiProviderLabel(prov))})</button>` : ''}
+      <button class="btn ${prov ? 'ghost' : ''}" data-action="bridge-copy" data-kind="${kind}">📋 Через свой Claude/ChatGPT${prov ? '' : ' (без ключа)'}</button>
+    </div>
+    ${prov ? '' : '<p class="muted" style="font-size:11.5px;margin:8px 0 0">Нет API-ключа? Не беда — кнопка справа сделает всё через ИИ, которым ты уже пользуешься (хоть в браузере).</p>'}
     <div id="propose-result"></div></div>`;
   setTimeout(() => { const t = document.getElementById('propose-text'); if (t) t.focus(); }, 30);
+}
+// Карточки-предложения в #propose-result (общий рендер для API и копипаст-моста)
+function renderProposalCards(res) {
+  if (!res) return;
+  if (!_proposals.length) { res.innerHTML = '<p class="muted">Ничего не нашлось. Добавь деталей или переформулируй.</p>'; return; }
+  res.innerHTML = `<div class="prop-list">${_proposals.map((p, i) => `<label class="prop-row"><input type="checkbox" data-prop="${i}" checked/> <span class="prop-text">${esc(proposalLabel(p))}</span></label>`).join('')}</div>
+    <div class="propose-actions"><button class="btn" data-action="propose-apply">✓ Применить выбранные</button> <span class="muted" style="font-size:12px">${_proposals.length} предложений · сними галочку, чтобы отклонить</span></div>`;
 }
 async function runPropose(kind) {
   const ta = document.getElementById('propose-text');
@@ -1610,11 +1621,54 @@ async function runPropose(kind) {
     if (d.error === 'parse') { if (res) res.innerHTML = '<p class="muted">ИИ вернул не тот формат. Попробуй переформулировать короче и конкретнее.</p>'; return; }
     if (!r.ok || !d.proposals) { if (res) res.innerHTML = `<p class="muted">Не удалось: ${esc(d.detail || d.error || 'ошибка')}. Проверь ключ в Настройках.</p>`; return; }
     _proposals = d.proposals;
-    if (!_proposals.length) { if (res) res.innerHTML = '<p class="muted">ИИ не нашёл, что предложить. Добавь деталей.</p>'; return; }
-    res.innerHTML = `<div class="prop-list">${_proposals.map((p, i) => `<label class="prop-row"><input type="checkbox" data-prop="${i}" checked/> <span class="prop-text">${esc(proposalLabel(p))}</span></label>`).join('')}</div>
-      <div class="propose-actions"><button class="btn" data-action="propose-apply">✓ Применить выбранные</button> <span class="muted" style="font-size:12px">${_proposals.length} предложений · сними галочку, чтобы отклонить</span></div>`;
+    renderProposalCards(res);
     track('ai:propose:' + kind);
   } catch { if (res) res.innerHTML = '<p class="muted">Сетевая ошибка.</p>'; }
+}
+// ---- Копипаст-мост: используем СВОЙ внешний ИИ (без API-ключа) ----
+// Защищённый разбор JSON из ответа модели (клиентская версия серверного extractJson)
+function extractJsonClient(text) {
+  if (!text) return null;
+  let t = String(text).trim();
+  const f = t.match(/```(?:json)?\s*([\s\S]*?)```/i); if (f) t = f[1].trim();
+  const i = t.indexOf('{'), j = t.lastIndexOf('}'); if (i < 0 || j < 0 || j < i) return null;
+  try { return JSON.parse(t.slice(i, j + 1)); } catch { return null; }
+}
+const BRIDGE_GOALS = `Ты помогаешь оформить цели для приложения-планировщика Gojo (философия «жизнь как десятиборье»). На основе описания ниже верни СТРОГО JSON {"proposals":[ ... ]} — без markdown и без текста вне JSON. Элементы — одного из типов:
+{"type":"sphere","name":"...","parent":"<имя родительской сферы или null>"}
+{"type":"goal","title":"...","sphere":"<имя сферы>","horizon":"mission|vision|path|long|mid|short|recurring","metric":null,"status":"active|waiting|paused","window":"","parent":"<заголовок большей цели или null>"}
+metric для числовых целей = {"current":N,"target":N,"unit":"кг/км/балл","lowerBetter":false,"maintain":false}.
+Горизонты: mission=дело жизни, vision=10–20 лет, path=3–5 лет, long=цель года, mid=1–6 мес, short=до месяца, recurring=регулярная практика. lowerBetter:true для оценок/времени. status:"waiting"+window для событийных целей. parent — точный заголовок другой цели. Переиспользуй существующие сферы по точному имени. Русский.`;
+const BRIDGE_CALIB = `Ты калибруешь уровни в приложении Gojo. На основе описания верни СТРОГО JSON {"proposals":[{"type":"level","sphere":"<имя сферы>","level":N,"note":"<кратко>"}]} — без markdown и текста вне JSON. Шкала уровня 1–20: 1=только начал, 5=регулярная практика, 10=уверенный/могу учить, 15=глубокая экспертиза, 18–20=топ. Школа/универ оценивай честно. Только по сферам из описания.`;
+function copyBridgePrompt(kind) {
+  const ta = document.getElementById('propose-text');
+  const text = ((ta && ta.value) || '').trim();
+  if (!text) { toast('Сначала опиши в поле выше — что за цели/уровни'); return; }
+  const instr = kind === 'calibrate' ? BRIDGE_CALIB : BRIDGE_GOALS;
+  const prompt = `${instr}\n\nТЕКУЩИЕ СФЕРЫ И ЦЕЛИ ЮЗЕРА:\n${proposeContext()}\n\nОПИСАНИЕ ОТ ЮЗЕРА:\n${text}\n\nВерни ТОЛЬКО JSON по схеме.`;
+  const done = () => toast('📋 Промпт скопирован — вставь своему ИИ');
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(prompt).then(done, () => {});
+  const res = document.getElementById('propose-result'); if (!res) return;
+  res.innerHTML = `<div class="bridge-steps">
+    <div class="bridge-step"><b>1.</b> Промпт скопирован. Не вставился? Скопируй вручную:
+      <textarea class="bridge-prompt" readonly rows="3" onclick="this.select()">${esc(prompt)}</textarea></div>
+    <div class="bridge-step"><b>2.</b> Вставь его своему ИИ — claude.ai, ChatGPT, любой (можно в браузере по подписке, ключ не нужен).</div>
+    <div class="bridge-step"><b>3.</b> Скопируй его ответ и вставь сюда:
+      <textarea id="bridge-json" rows="4" placeholder="Вставь ответ ИИ (JSON) сюда…"></textarea>
+      <button class="btn" data-action="bridge-parse" data-kind="${kind}">Разобрать ответ →</button></div>
+  </div>`;
+  done();
+}
+function parseBridgeResponse() {
+  const ta = document.getElementById('bridge-json');
+  const raw = (ta && ta.value || '').trim();
+  const res = document.getElementById('propose-result');
+  if (!raw) { toast('Вставь ответ ИИ'); return; }
+  const parsed = extractJsonClient(raw);
+  if (!parsed || !Array.isArray(parsed.proposals)) { if (res) res.insertAdjacentHTML('beforeend', '<p class="muted" style="margin-top:8px">Не нашёл корректный JSON в ответе. Скопируй ответ ИИ целиком (он должен содержать {"proposals":[…]}).</p>'); return; }
+  _proposals = parsed.proposals.slice(0, 40);
+  renderProposalCards(res);
+  track('ai:bridge');
 }
 function proposalLabel(p) {
   if (p.type === 'sphere') return `➕ Сфера: ${p.name}${p.parent ? ` (внутри «${p.parent}»)` : ''}`;
@@ -3261,6 +3315,8 @@ function onClick(e) {
   } else if (action === 'ai-import-goals') { openProposeModal('goals');
   } else if (action === 'ai-import-levels') { openProposeModal('calibrate');
   } else if (action === 'propose-run') { runPropose(el.dataset.kind);
+  } else if (action === 'bridge-copy') { copyBridgePrompt(el.dataset.kind);
+  } else if (action === 'bridge-parse') { parseBridgeResponse();
   } else if (action === 'propose-apply') { applyAcceptedProposals();
   } else if (action === 'propose-close') { const m = document.getElementById('propose-modal'); if (m) m.remove();
   } else if (action === 'open-helper') { openHelperChat();
