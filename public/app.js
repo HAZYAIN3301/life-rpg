@@ -369,9 +369,31 @@ function updateCatSuggest(inputEl) {
   const form = inputEl.closest('form'); if (!form) return;
   const box = form.parentElement.querySelector('#cat-suggest'); if (!box) return;
   const sel = form.querySelector('select[name="skillId"]');
-  const g = guessCategoryFromHistory(inputEl.value);
-  if (!g || !sel || (sel.value === g.skillId)) { box.innerHTML = ''; return; }
-  box.innerHTML = `<button type="button" class="cat-chip" data-action="apply-cat" data-skill="${esc(g.skillId)}">💡 Обычно сюда: <b>${esc(skillLabel(g.skillId))}</b> · применить</button>`;
+  const txt = inputEl.value.trim();
+  const g = guessCategoryFromHistory(txt);
+  if (g && sel && sel.value !== g.skillId) { // локальная эвристика по истории — мгновенно, бесплатно
+    box.innerHTML = `<button type="button" class="cat-chip" data-action="apply-cat" data-skill="${esc(g.skillId)}">💡 Обычно сюда: <b>${esc(skillLabel(g.skillId))}</b> · применить</button>`;
+  } else if (!g && txt.length >= 4 && aiProvider()) { // нет в истории + есть ключ → предложить спросить ИИ
+    box.innerHTML = `<button type="button" class="cat-chip cat-chip-ai" data-action="ai-cat-suggest" data-title="${esc(txt)}">🤖 Подобрать сферу через ИИ</button>`;
+  } else { box.innerHTML = ''; }
+}
+// ИИ-фолбэк авто-категории: для нового названия просим модель выбрать ОДНУ сферу из списка
+async function aiCatSuggest(title, box, sel) {
+  if (!aiProvider() || !sel) return;
+  box.innerHTML = '<span class="cat-chip">🤖 думаю…</span>';
+  const names = State.settings.skills.map((s) => skillLabel(s.id));
+  const sys = 'Ты подбираешь сферу жизни для задачи в планировщике. Ответь СТРОГО одним точным названием сферы из списка — без кавычек, без пояснений.';
+  const prompt = `Сферы (выбери ОДНУ, ровно как в списке):\n${names.join('\n')}\n\nЗадача: «${title}»\n\nОтвет (одно название):`;
+  try {
+    const r = await fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system: sys, messages: [{ role: 'user', content: prompt }] }) });
+    const d = await r.json();
+    const ans = (d.text || '').trim().toLowerCase();
+    if (!r.ok || !ans) { box.innerHTML = ''; return; }
+    const match = State.settings.skills.find((s) => { const n = normRu(skillLabel(s.id)); return normRu(ans).includes(n) || n.includes(normRu(ans)); })
+      || State.settings.skills.find((s) => normRu(ans).includes(normRu(s.name)));
+    if (match) { box.innerHTML = `<button type="button" class="cat-chip" data-action="apply-cat" data-skill="${esc(match.id)}">🤖 ИИ: <b>${esc(skillLabel(match.id))}</b> · применить</button>`; track('ai:catsuggest'); }
+    else box.innerHTML = '<span class="cat-chip muted">ИИ не подобрал — выбери вручную</span>';
+  } catch { box.innerHTML = ''; }
 }
 function ladderFor(skillName) {
   const n = normRu(skillName);
@@ -1727,7 +1749,7 @@ function proposeContext() {
   const goals = (State.goals || []).filter((g) => !g.archived).map((g) => g.title).slice(0, 40).join('; ');
   return `Сферы: ${spheres || '(нет)'}\nЦели: ${goals || '(нет)'}`;
 }
-function openProposeModal(kind) {
+function openProposeModal(kind, prefill) {
   _proposals = [];
   const isCal = kind === 'calibrate';
   const prov = aiProvider();
@@ -1747,7 +1769,7 @@ function openProposeModal(kind) {
     </div>
     ${prov ? '' : '<p class="muted" style="font-size:11.5px;margin:8px 0 0">Нет API-ключа? Не беда — кнопка справа сделает всё через ИИ, которым ты уже пользуешься (хоть в браузере).</p>'}
     <div id="propose-result"></div></div>`;
-  setTimeout(() => { const t = document.getElementById('propose-text'); if (t) t.focus(); }, 30);
+  setTimeout(() => { const t = document.getElementById('propose-text'); if (t) { if (prefill) t.value = prefill; t.focus(); } }, 30);
 }
 // Карточки-предложения в #propose-result (общий рендер для API и копипаст-моста)
 function renderProposalCards(res) {
@@ -1971,7 +1993,7 @@ function noteCard(it) {
   const when = (it.at || '').replace('T', ' ').slice(0, 16);
   return `<div class="card note-card">
     <div class="note-top"><span class="note-when muted">${icon} ${esc(when)}</span>
-      <span class="note-acts"><button class="btn ghost sm" data-action="note-quest" data-id="${it.id}" title="Сделать квестом на сегодня">→ Квест</button><button class="del" data-action="note-del" data-id="${it.id}" title="Удалить">✕</button></span></div>
+      <span class="note-acts">${(it.text || '').trim() ? `<button class="btn ghost sm" data-action="note-to-goal" data-id="${it.id}" title="ИИ оформит заметку в цели/квесты">🤖 → Цель</button>` : ''}<button class="btn ghost sm" data-action="note-quest" data-id="${it.id}" title="Сделать квестом на сегодня">→ Квест</button><button class="del" data-action="note-del" data-id="${it.id}" title="Удалить">✕</button></span></div>
     ${media}
     <textarea class="note-text" data-action="note-edit" data-id="${it.id}" rows="2" placeholder="${it.file ? 'Подпиши заметку…' : 'Текст заметки…'}">${esc(it.text || '')}</textarea></div>`;
 }
@@ -3554,9 +3576,16 @@ function onClick(e) {
     const form = el.closest('.card').querySelector('#add-task'); const sel = form && form.querySelector('select[name="skillId"]');
     if (sel) { sel.value = el.dataset.skill; const ti = form.querySelector('input[name="title"]'); if (ti) ti.focus(); }
     el.parentElement.innerHTML = '';
+  } else if (action === 'ai-cat-suggest') {
+    const card = el.closest('.card'); const form = card && card.querySelector('#add-task');
+    const sel = form && form.querySelector('select[name="skillId"]'); const box = card && card.querySelector('#cat-suggest');
+    if (box && sel) aiCatSuggest(el.dataset.title, box, sel);
   } else if (action === 'ai-close') { const m = document.getElementById('ai-modal'); if (m) m.remove();
   } else if (action === 'note-del') {
     State.inbox = (State.inbox || []).filter((x) => x.id !== id); Store.save('inbox', State.inbox); render();
+  } else if (action === 'note-to-goal') {
+    const it = (State.inbox || []).find((x) => x.id === id); if (!it || !(it.text || '').trim()) return;
+    openProposeModal('goals', it.text.trim()); // заметка → движок предложений (ИИ оформит в цели/сферы)
   } else if (action === 'note-quest') {
     const it = (State.inbox || []).find((x) => x.id === id); if (!it) return;
     const title = (it.text || (it.kind === 'voice' ? 'Голосовая заметка' : it.kind === 'video' ? 'Видео-заметка' : 'Заметка')).slice(0, 120);
