@@ -2043,6 +2043,24 @@ async function onCaptureStop() {
     Store.save('inbox', State.inbox); track('capture:' + rec.kind); toast(rec.kind === 'video' ? '🎥 Видео в Заметках' : '🎤 Голос в Заметках'); render();
   } catch { toast('Ошибка сохранения записи'); }
 }
+// Nested-прогрессия (Brawl-Stars: «всегда что-то почти готово») — день → неделя → серия
+function nestedProgress() {
+  const today = todayStr();
+  const tt = State.tasks.filter((t) => t.date === today);
+  const dayDone = tt.filter((t) => t.done).length, dayTot = tt.length;
+  const ws = weekStart(today), evd = eventsByDay();
+  let active = 0; for (let i = 0; i < 7; i++) { const d = addDays(ws, i); if ((evd[d] && evd[d].length) || (State.habitlog[d] && Object.keys(State.habitlog[d]).length)) active++; }
+  const st = currentStreak(), MS = [7, 30, 100, 365], next = MS.find((m) => st < m) || MS[MS.length - 1];
+  return { dayDone, dayTot, dayPct: dayTot ? Math.round(dayDone / dayTot * 100) : 0, active, weekPct: Math.round(active / 7 * 100), streak: st, next, streakPct: Math.round(Math.min(1, st / next) * 100) };
+}
+function progressTrioCard() {
+  const p = nestedProgress();
+  const bar = (lbl, pct, sub, color) => `<div class="ptrio-item"><div class="ptrio-top"><span>${lbl}</span><span class="muted">${sub}</span></div><div class="ptrio-bar"><span style="width:${pct}%;background:${color}"></span></div></div>`;
+  return `<div class="card ptrio-card" title="Перекрывающиеся круги прогресса — всегда что-то почти готово">
+    ${bar('🌅 День', p.dayPct, p.dayTot ? `${p.dayDone}/${p.dayTot}` : '—', '#5fbf7a')}
+    ${bar('🗓 Неделя', p.weekPct, `${p.active}/7 дней`, '#4f9ff7')}
+    ${bar('🔥 Серия', p.streakPct, `${p.streak}→${p.next}`, '#e0a23e')}</div>`;
+}
 function renderToday() {
   const today = todayStr();
   const todays = State.tasks.filter((t) => t.date === today);
@@ -2088,7 +2106,7 @@ function renderToday() {
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">↪ Перенести всё на сегодня</button></div>` : '';
 
-  return `${captureBar()}${notesPeekToday()}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
+  return `${captureBar()}${notesPeekToday()}${progressTrioCard()}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="Новый квест на сегодня…" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
