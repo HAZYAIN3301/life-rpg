@@ -1485,6 +1485,22 @@ function calRemindBtn() {
   const on = State.settings && State.settings.remind;
   return `<button class="btn ghost sm cal-remind ${on ? 'on' : ''}" data-action="cal-remind-toggle" title="Напоминания о задачах со временем (пока вкладка открыта)">${on ? '🔔 Напоминания вкл' : '🔕 Напоминания'}</button>`;
 }
+function calExportBtn() { return `<button class="btn ghost sm" data-action="export-ics" title="Скачать запланированные квесты как .ics — импортировать в Apple/Google Календарь (разово; #8)">📆 .ics</button>`; }
+// Экспорт запланированных квестов (с датой и временем) в iCalendar (#8). Разовый экспорт, не живая подписка.
+function buildICS() {
+  const tasks = (State.tasks || []).filter((t) => t.date && t.startTime);
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  const escV = (s) => String(s || '').replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n');
+  const dt = (date, time) => `${date.replace(/-/g, '')}T${(time || '09:00').replace(':', '')}00`;
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Gojo//Life Planner//RU', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:Gojo'];
+  tasks.forEach((t) => {
+    const dur = Math.max(5, Number(t.estimateMin) || 30);
+    lines.push('BEGIN:VEVENT', `UID:${t.id}@gojo`, `DTSTAMP:${stamp}`, `DTSTART:${dt(t.date, t.startTime)}`, `DURATION:PT${dur}M`,
+      `SUMMARY:${escV('🎯 ' + t.title)}`, `DESCRIPTION:${escV('Gojo · ' + (skillById(t.skillId).name || ''))}`, 'END:VEVENT');
+  });
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
 // Месячная сетка (6×7, с понедельника). Клик по дню → день этой даты.
 function renderCalMonth(date) {
   const WD = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
@@ -1506,7 +1522,7 @@ function renderCalMonth(date) {
         <button class="btn ghost sm" data-action="cal-shift-month" data-delta="-1" title="Предыдущий месяц">‹</button>
         <h2>${MONTHS_NOM[mo]} ${y}</h2>
         <button class="btn ghost sm" data-action="cal-shift-month" data-delta="1" title="Следующий месяц">›</button>
-        ${calModeToggle('month')}${calRemindBtn()}
+        ${calModeToggle('month')}${calExportBtn()}${calRemindBtn()}
       </div>
       <div class="cm-wd">${WD.map((w) => `<span>${w}</span>`).join('')}</div>
       <div class="cm-grid">${cells}</div>
@@ -1563,7 +1579,7 @@ function renderCalendarView() {
         <button class="btn ghost sm" data-action="cal-shift" data-days="1" title="Следующий день">›</button>
         ${date !== todayStr() ? '<button class="btn ghost sm" data-action="cal-today">Сегодня</button>' : ''}
         <span class="wk-load muted">план: ${fmtDur(planned)}</span>
-        ${calModeToggle('day')}${calRemindBtn()}
+        ${calModeToggle('day')}${calExportBtn()}${calRemindBtn()}
       </div>
       <div class="calv-strip">${strip}</div>
     </div>
@@ -3530,6 +3546,10 @@ function onClick(e) {
     State.tasks.push({ id: uid(), title, skillId: sid, skillIds: sid ? [sid] : [], estimateMin: 30, difficulty: 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
     State.inbox = State.inbox.filter((x) => x.id !== id);
     Store.save('tasks', State.tasks); Store.save('inbox', State.inbox); toast('→ В квестах на сегодня'); render();
+  } else if (action === 'export-ics') {
+    const ics = buildICS();
+    if (!/BEGIN:VEVENT/.test(ics)) { toast('Нет квестов со временем — поставь их в Календаре'); return; }
+    try { const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'gojo-calendar.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); toast('📆 .ics скачан — открой его в Календаре для импорта'); } catch { toast('Не удалось создать файл'); }
   } else if (action === 'cal-mode') { State.calMode = el.dataset.mode; State.view = 'calendar'; render();
   } else if (action === 'cal-pick-day') { State.calDate = el.dataset.date; State.calMode = 'day'; render();
   } else if (action === 'cal-shift-month') { const d = parseDate(State.calDate || todayStr()); State.calDate = fmtDate(new Date(d.getFullYear(), d.getMonth() + Number(el.dataset.delta), Math.min(d.getDate(), 28))); render();

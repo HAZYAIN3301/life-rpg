@@ -26,7 +26,8 @@ _Создан 2026-06-14._
 - [ ] **Strava** — OAuth2, нужен дев-app Альберта (client_id/secret в Railway).
 - [ ] **Garmin Body Battery** — партнёрское одобрение Garmin Health API (заявка, недели).
 - [ ] **Apple Health** — на вебе невозможно (нужен нативный апп).
-- [ ] **Apple Calendar sync** (#8) — на вебе только read-only через `.ics`.
+- [x] **Apple Calendar — разовый экспорт .ics** (#8) ✅ 2026-06-15: кнопка «📆 .ics» в Календаре качает запланированные квесты.
+- [ ] **Apple Calendar — ЖИВАЯ подписка** (#8b): subscription-фид по секретному per-user URL (как MCP-токен), чтобы обновлялось само. Крупнее экспорта.
 - [ ] **Транскрипция голосовых/видео-заметок** — OpenAI Whisper (multipart).
 
 ## 🌍 Платформа / охват
