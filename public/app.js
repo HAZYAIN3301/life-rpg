@@ -54,6 +54,7 @@ const DEFAULT_SETTINGS = {
   cosmetics: [], // id'шники выпавшей косметики (рамки/фоны) — #20
   equipped: { frame: null, background: null, title: null }, // надетые косметика + звание
   sound: true, // звуки интерфейса (#23)
+  theme: 'dark', accent: '#6c8cff', // оформление (тема + акцент)
 };
 
 const DIFF = { easy: 'Лёгкая', normal: 'Обычная', hard: 'Сложная' };
@@ -2952,6 +2953,14 @@ function renderSettings() {
     <div class="card"><h3>🔊 Звук</h3>
       <label class="sound-toggle"><input type="checkbox" data-action="toggle-sound" ${sfxOn() ? 'checked' : ''}/> Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)</label>
       <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">▶ Проверить звук</button></div>
+    <div class="card"><h3>🎨 Оформление</h3>
+      <div class="theme-row"><span class="theme-lbl">Тема</span>
+        <div class="theme-toggle">
+          <button class="theme-opt ${s.theme !== 'light' ? 'active' : ''}" data-action="set-theme" data-theme="dark">🌙 Тёмная</button>
+          <button class="theme-opt ${s.theme === 'light' ? 'active' : ''}" data-action="set-theme" data-theme="light">☀️ Светлая</button>
+        </div></div>
+      <div class="theme-row"><span class="theme-lbl">Акцент</span>
+        <div class="accent-swatches">${ACCENTS.map((c) => `<button class="accent-sw ${(s.accent || '#6c8cff') === c ? 'active' : ''}" data-action="set-accent" data-accent="${c}" style="background:${c}" title="${c}" aria-label="Акцент ${c}"></button>`).join('')}</div></div></div>
     <div class="card"><h3>Навыки / сферы жизни</h3><p class="muted" style="font-size:12px;margin:0 0 10px">Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">+ Добавить сферу</button></div>
     ${importCard()}
     <div class="card"><h3>🔁 Привычки (повторяющиеся)</h3><div id="habits-list">${habits || '<p class="muted">Пока нет привычек.</p>'}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">+ Добавить привычку</button></div>
@@ -3059,8 +3068,15 @@ function renderNav() {
   const subs = (sec && sec.views.length > 1) ? `<div class="navsub">${sec.views.map((v) => `<button class="navsubtab${v.view === State.view ? ' active' : ''}" data-view="${v.view}">${esc(v.label)}</button>`).join('')}</div>` : '';
   nav.innerHTML = `<div class="navrow">${primary}${gear}</div>${subs}`;
 }
+const ACCENTS = ['#6c8cff', '#22c1a4', '#e0526a', '#b06ff0', '#e0a23e', '#4f9ff7']; // палитра акцентов (#тема)
+function applyTheme() {
+  const s = State.settings || {};
+  document.documentElement.dataset.theme = s.theme === 'light' ? 'light' : 'dark';
+  document.documentElement.style.setProperty('--accent', s.accent || '#6c8cff');
+}
 function render() {
   if (State.phase !== 'app') { showAuthScreen(); return; }
+  applyTheme();
   // Восстановить app shell если auth-экран его перезаписал
   if (!document.getElementById('main')) document.getElementById('app').innerHTML = APP_SHELL;
   renderHeader();
@@ -3326,6 +3342,8 @@ function onClick(e) {
     eq[ty] = (eq[ty] === el.dataset.id) ? null : el.dataset.id; Store.save('settings', State.settings); render(); return;
   }
   if (action === 'toggle-sound') { State.settings.sound = !!el.checked; Store.save('settings', State.settings); if (el.checked) sfx('complete'); return; }
+  if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; Store.save('settings', State.settings); applyTheme(); render(); return; }
+  if (action === 'set-accent') { State.settings.accent = el.dataset.accent; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'sound-test') { ['complete', 'coin', 'achievement'].forEach((n, i) => setTimeout(() => sfx(n), i * 420)); setTimeout(() => sfx('loot', 'legendary'), 1300); return; }
   if (action === 'show-paywall') { showPaywall(el.dataset.feature); return; }
   if (action === 'close-paywall') { const p = document.getElementById('paywall'); if (p) p.remove(); return; }

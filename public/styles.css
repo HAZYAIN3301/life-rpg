@@ -12,6 +12,21 @@
   --radius: 14px;
   --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
+/* Светлая тема (#тема): переопределяем палитру — компоненты используют переменные */
+:root[data-theme="light"] {
+  --bg: #eef1f8;
+  --panel: #ffffff;
+  --panel2: #f1f4fb;
+  --line: #d9dfeb;
+  --text: #1b2236;
+  --muted: #5f6883;
+  --good: #2ea84f;
+  --warn: #c98a16;
+  --bad: #d23a55;
+  --shadow: 0 8px 28px rgba(40, 52, 90, 0.12);
+}
+:root[data-theme="light"] #topbar { background: linear-gradient(180deg, var(--bg) 70%, rgba(238, 241, 248, 0.85)); }
+:root[data-theme="light"] body { background: radial-gradient(1200px 600px at 80% -10%, rgba(108, 140, 255, 0.07), transparent 60%), var(--bg); }
 
 * { box-sizing: border-box; }
 
@@ -790,6 +805,15 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .rar-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
 .sound-toggle { display: flex; align-items: center; gap: 9px; font-size: 13.5px; line-height: 1.4; cursor: pointer; }
 .sound-toggle input { width: 17px; height: 17px; accent-color: var(--accent); flex: 0 0 auto; }
+/* Оформление: тема + акцент */
+.theme-row { display: flex; align-items: center; gap: 12px; margin: 8px 0; flex-wrap: wrap; }
+.theme-lbl { font-size: 13px; color: var(--muted); width: 64px; flex: 0 0 auto; }
+.theme-toggle { display: flex; gap: 6px; }
+.theme-opt { background: var(--panel2); border: 1px solid var(--line); color: var(--text); border-radius: 9px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.theme-opt.active { border-color: var(--accent); color: #fff; background: var(--accent); }
+.accent-swatches { display: flex; gap: 8px; }
+.accent-sw { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; }
+.accent-sw.active { border-color: var(--text); box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px currentColor; }
 
 /* ============================================================
    Подписка / Pro / Paywall
