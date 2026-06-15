@@ -758,6 +758,36 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 @keyframes winFlash { 50% { background: rgba(224,162,62,.5); } }
 .loot-result { font-size: 22px; font-weight: 800; min-height: 30px; margin: 16px 0; opacity: 0; transform: scale(.7); transition: all .35s cubic-bezier(.2,1.4,.4,1); }
 .loot-result.show { opacity: 1; transform: scale(1); }
+/* #20 рарность в дроп-ленте + reveal-юс */
+.loot-item.win { border-color: var(--rc, #e0a23e); background: linear-gradient(180deg, color-mix(in srgb, var(--rc, #e0a23e) 20%, transparent), var(--panel)); }
+.loot-rarity { font-size: 13px; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 4px; }
+.loot-rline { font-size: 20px; }
+.loot-box.reveal { box-shadow: 0 0 0 1px var(--rc, #e0a23e), 0 0 44px -6px var(--rc, #e0a23e); }
+.loot-box.reveal h3::after { content: ''; }
+/* Коллекция (Brawl-Stars) */
+.collection-card .coll-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.collection-card .coll-head h3 { margin: 0; }
+.coll-prog { font-size: 13px; font-weight: 700; color: var(--accent); }
+.coll-body { display: flex; gap: 16px; align-items: flex-start; margin: 10px 0 4px; flex-wrap: wrap; }
+.coll-preview { width: 96px; height: 96px; border-radius: 50%; overflow: hidden; flex: 0 0 auto; border: 1px solid var(--line); background: var(--panel2); }
+.coll-preview .avatar-svg { width: 100%; height: 100%; display: block; }
+.coll-cats { flex: 1; min-width: 220px; }
+.coll-sub { margin: 12px 0 6px; font-size: 13px; color: var(--muted); }
+.cos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; }
+.cos-tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 9px 5px; border-radius: 11px; background: var(--panel2); border: 1.5px solid var(--line); cursor: pointer; }
+.cos-tile.owned { border-color: color-mix(in srgb, var(--rc) 55%, var(--line)); }
+.cos-tile.owned:hover { border-color: var(--rc); }
+.cos-tile.eq { border-color: var(--rc); box-shadow: 0 0 0 1px var(--rc), 0 0 16px -6px var(--rc); }
+.cos-tile.locked { opacity: 0.5; cursor: default; }
+.cos-prev { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.cos-frame { border: 4px solid; background: var(--panel); }
+.cos-bg { border: 1px solid var(--line); }
+.cos-lock { background: var(--panel); }
+.cos-name { font-size: 11px; text-align: center; line-height: 1.2; color: var(--text); }
+.cos-tile.locked .cos-name { color: var(--muted); }
+.cos-eq { position: absolute; top: 4px; right: 5px; font-size: 11px; color: var(--rc); font-weight: 800; }
+.title-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.rar-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
 
 /* ============================================================
    Подписка / Pro / Paywall

@@ -51,6 +51,9 @@ const DEFAULT_SETTINGS = {
   focus: { pomodoro: true, workMin: 25, breakMin: 5, sound: true, notify: true },
   imported: {}, // { skillId: { tier, xp, label, at } } — импортированный стартовый уровень
   energy: { day: null, cur: 100, max: 100, loadToday: 0, hitZero: false, tickAt: null }, // «Энергия» (идея 19): пассивное восстановление по времени
+  cosmetics: [], // id'шники выпавшей косметики (рамки/фоны) — #20
+  equipped: { frame: null, background: null, title: null }, // надетые косметика + звание
+  sound: true, // звуки интерфейса (#23)
 };
 
 const DIFF = { easy: 'Лёгкая', normal: 'Обычная', hard: 'Сложная' };
@@ -74,29 +77,29 @@ function goalTypeLabel(t) { const x = GOAL_TYPES.find((g) => g.id === t); return
 
 // Достижения — описаны в коде, считаются на лету
 const ACHIEVEMENTS = [
-  { id: 'first_quest', icon: '⚔️', title: 'Первый шаг', desc: 'Выполни первый квест', test: () => doneTasks().length >= 1 },
-  { id: 'quests_50', icon: '🏆', title: 'Полста квестов', desc: '50 выполненных квестов', test: () => doneTasks().length >= 50, prog: () => ({ cur: doneTasks().length, target: 50 }) },
-  { id: 'first_habit', icon: '🌱', title: 'Росток привычки', desc: 'Отметь привычку впервые', test: () => Object.values(State.habitlog).some((m) => Object.keys(m).length > 0) },
-  { id: 'streak_7', icon: '🔥', title: 'Неделя подряд', desc: 'Серия 7 дней', test: () => currentStreak() >= 7, prog: () => ({ cur: currentStreak(), target: 7 }) },
-  { id: 'streak_30', icon: '🌋', title: 'Месяц подряд', desc: 'Серия 30 дней', test: () => currentStreak() >= 30, prog: () => ({ cur: currentStreak(), target: 30 }) },
-  { id: 'level_5', icon: '⭐', title: 'Уровень 5', desc: 'Достигни 5 уровня', test: () => charLevel() >= 5, prog: () => ({ cur: charLevel(), target: 5 }) },
-  { id: 'level_10', icon: '🌟', title: 'Уровень 10', desc: 'Достигни 10 уровня', test: () => charLevel() >= 10, prog: () => ({ cur: charLevel(), target: 10 }) },
-  { id: 'xp_1000', icon: '💎', title: 'Тысяча опыта', desc: 'Накопи 1000 XP', test: () => overallXp() >= 1000, prog: () => ({ cur: overallXp(), target: 1000 }) },
-  { id: 'first_goal', icon: '🎯', title: 'Цель взята', desc: 'Заверши первую цель', test: () => State.goals.some((g) => g.completedAt) },
-  { id: 'first_reward', icon: '🎁', title: 'Награда', desc: 'Купи первую награду', test: () => (State.purchases || []).length > 0 },
-  { id: 'gold_500', icon: '🪙', title: 'Богатей', desc: 'Заработай 500 золота всего', test: () => goldEarned() >= 500, prog: () => ({ cur: goldEarned(), target: 500 }) },
-  { id: 'skills_all3', icon: '📚', title: 'Разносторонний', desc: 'Все навыки до ур.3', test: () => State.settings.skills.length > 0 && State.settings.skills.every((s) => skillLevelOf(s.id) >= 3) },
+  { id: 'first_quest', icon: '⚔️', title: 'Первый шаг', desc: 'Выполни первый квест', ttl: 'Первопроходец', test: () => doneTasks().length >= 1 },
+  { id: 'quests_50', icon: '🏆', title: 'Полста квестов', desc: '50 выполненных квестов', ttl: 'Ветеран квестов', test: () => doneTasks().length >= 50, prog: () => ({ cur: doneTasks().length, target: 50 }) },
+  { id: 'first_habit', icon: '🌱', title: 'Росток привычки', desc: 'Отметь привычку впервые', ttl: 'Садовник', test: () => Object.values(State.habitlog).some((m) => Object.keys(m).length > 0) },
+  { id: 'streak_7', icon: '🔥', title: 'Неделя подряд', desc: 'Серия 7 дней', ttl: 'Хранитель ритма', test: () => currentStreak() >= 7, prog: () => ({ cur: currentStreak(), target: 7 }) },
+  { id: 'streak_30', icon: '🌋', title: 'Месяц подряд', desc: 'Серия 30 дней', ttl: 'Несокрушимый', test: () => currentStreak() >= 30, prog: () => ({ cur: currentStreak(), target: 30 }) },
+  { id: 'level_5', icon: '⭐', title: 'Уровень 5', desc: 'Достигни 5 уровня', ttl: 'Восходящий', test: () => charLevel() >= 5, prog: () => ({ cur: charLevel(), target: 5 }) },
+  { id: 'level_10', icon: '🌟', title: 'Уровень 10', desc: 'Достигни 10 уровня', ttl: 'Покоритель', test: () => charLevel() >= 10, prog: () => ({ cur: charLevel(), target: 10 }) },
+  { id: 'xp_1000', icon: '💎', title: 'Тысяча опыта', desc: 'Накопи 1000 XP', ttl: 'Тысячник', test: () => overallXp() >= 1000, prog: () => ({ cur: overallXp(), target: 1000 }) },
+  { id: 'first_goal', icon: '🎯', title: 'Цель взята', desc: 'Заверши первую цель', ttl: 'Целеустремлённый', test: () => State.goals.some((g) => g.completedAt) },
+  { id: 'first_reward', icon: '🎁', title: 'Награда', desc: 'Купи первую награду', ttl: 'Ценитель', test: () => (State.purchases || []).length > 0 },
+  { id: 'gold_500', icon: '🪙', title: 'Богатей', desc: 'Заработай 500 золота всего', ttl: 'Златолюб', test: () => goldEarned() >= 500, prog: () => ({ cur: goldEarned(), target: 500 }) },
+  { id: 'skills_all3', icon: '📚', title: 'Разносторонний', desc: 'Все навыки до ур.3', ttl: 'Разносторонний', test: () => State.settings.skills.length > 0 && State.settings.skills.every((s) => skillLevelOf(s.id) >= 3) },
   // За полезные репорты — фидбек делает продукт (идея fb_mq2vy77ine8h)
-  { id: 'reporter_3', icon: '🐞', title: 'Баг-хантер', desc: '3 репорта или идеи через 💬', test: () => (State.myFeedbackCount || 0) >= 3, prog: () => ({ cur: State.myFeedbackCount || 0, target: 3 }) },
-  { id: 'cofounder_10', icon: '🛡️', title: 'Страж Врат · SCP-001', desc: '10 репортов — почти со-основатель', test: () => (State.myFeedbackCount || 0) >= 10, prog: () => ({ cur: State.myFeedbackCount || 0, target: 10 }) },
+  { id: 'reporter_3', icon: '🐞', title: 'Баг-хантер', desc: '3 репорта или идеи через 💬', ttl: 'Баг-хантер', test: () => (State.myFeedbackCount || 0) >= 3, prog: () => ({ cur: State.myFeedbackCount || 0, target: 3 }) },
+  { id: 'cofounder_10', icon: '🛡️', title: 'Страж Врат · SCP-001', desc: '10 репортов — почти со-основатель', ttl: 'Страж Врат', test: () => (State.myFeedbackCount || 0) >= 10, prog: () => ({ cur: State.myFeedbackCount || 0, target: 10 }) },
   // Необычные/календарные — в духе Garmin (фидбек #9): ловят момент, а не только объём
-  { id: 'early_bird', icon: '🌅', title: 'Ранняя пташка', desc: 'Выполни квест до 07:00', test: () => completedTimes().some((d) => d.getHours() < 7) },
-  { id: 'night_owl', icon: '🦉', title: 'Сова', desc: 'Квест между 00:00 и 05:00', test: () => completedTimes().some((d) => d.getHours() < 5) },
-  { id: 'weekend_warrior', icon: '🛡️', title: 'Воин выходных', desc: 'Квесты и в субботу, и в воскресенье', test: () => { const s = new Set(completedTimes().map((d) => d.getDay())); return s.has(6) && s.has(0); } },
-  { id: 'new_year', icon: '🎆', title: 'Новогодний рывок', desc: 'Тренируйся 31 декабря или 1 января', test: () => completedTimes().some((d) => (d.getMonth() === 11 && d.getDate() === 31) || (d.getMonth() === 0 && d.getDate() === 1)) },
-  { id: 'full_spectrum', icon: '🌈', title: 'Полный спектр', desc: '5+ разных сфер за один день', test: () => Object.values(eventsByDay()).some((evs) => new Set(evs.map((e) => e.skillId).filter(Boolean)).size >= 5) },
-  { id: 'marathon_day', icon: '🏔️', title: 'Марафон дня', desc: '4+ часа активности за день', test: () => Object.values(eventsByDay()).some((evs) => evs.reduce((s, e) => s + (e.min || 0), 0) >= 240) },
-  { id: 'balanced', icon: '⚖️', title: 'Десятиборец', desc: 'Индекс баланса ≥ 70', test: () => balanceIndex().index >= 70, prog: () => ({ cur: balanceIndex().index, target: 70 }) },
+  { id: 'early_bird', icon: '🌅', title: 'Ранняя пташка', desc: 'Выполни квест до 07:00', ttl: 'Ранняя пташка', test: () => completedTimes().some((d) => d.getHours() < 7) },
+  { id: 'night_owl', icon: '🦉', title: 'Сова', desc: 'Квест между 00:00 и 05:00', ttl: 'Сова', test: () => completedTimes().some((d) => d.getHours() < 5) },
+  { id: 'weekend_warrior', icon: '🛡️', title: 'Воин выходных', desc: 'Квесты и в субботу, и в воскресенье', ttl: 'Воин выходных', test: () => { const s = new Set(completedTimes().map((d) => d.getDay())); return s.has(6) && s.has(0); } },
+  { id: 'new_year', icon: '🎆', title: 'Новогодний рывок', desc: 'Тренируйся 31 декабря или 1 января', ttl: 'Новогодний', test: () => completedTimes().some((d) => (d.getMonth() === 11 && d.getDate() === 31) || (d.getMonth() === 0 && d.getDate() === 1)) },
+  { id: 'full_spectrum', icon: '🌈', title: 'Полный спектр', desc: '5+ разных сфер за один день', ttl: 'Многогранный', test: () => Object.values(eventsByDay()).some((evs) => new Set(evs.map((e) => e.skillId).filter(Boolean)).size >= 5) },
+  { id: 'marathon_day', icon: '🏔️', title: 'Марафон дня', desc: '4+ часа активности за день', ttl: 'Марафонец', test: () => Object.values(eventsByDay()).some((evs) => evs.reduce((s, e) => s + (e.min || 0), 0) >= 240) },
+  { id: 'balanced', icon: '⚖️', title: 'Десятиборец', desc: 'Индекс баланса ≥ 70', ttl: 'Десятиборец', test: () => balanceIndex().index >= 70, prog: () => ({ cur: balanceIndex().index, target: 70 }) },
 ];
 
 // Каталог предустановленных наград — «дроп с босса уже выбран» (fb: награды должны быть предустановлены)
@@ -789,7 +792,9 @@ function avatarSVG(cfg, opts = {}) {
     glasses = lens + `<line x1="${cx - eyeDX + 11}" y1="${eyeY}" x2="${cx + eyeDX - 11}" y2="${eyeY}" stroke="#2a3250" stroke-width="2.6"/>`;
   }
   const bg = opts.bg ? `<rect x="0" y="0" width="240" height="240" fill="${opts.bg}"/>` : '';
-  return `<svg viewBox="0 0 240 240" class="avatar-svg" preserveAspectRatio="xMidYMid slice">${bg}${hairParts.back}${shoulders}${neck}${ear}${head}${beard}${hairParts.front}${brows}${eyes}${nose}${mouth}${glasses}</svg>`;
+  // косметическая рамка (кольцо по краю) — дроп из сундуков
+  const fr = opts.frame ? `${opts.frame.glow ? `<circle cx="120" cy="120" r="111" fill="none" stroke="${opts.frame.ring}" stroke-width="3" opacity="0.5"/>` : ''}<circle cx="120" cy="120" r="117" fill="none" stroke="${opts.frame.ring}" stroke-width="6"/>` : '';
+  return `<svg viewBox="0 0 240 240" class="avatar-svg" preserveAspectRatio="xMidYMid slice">${bg}${hairParts.back}${shoulders}${neck}${ear}${head}${beard}${hairParts.front}${brows}${eyes}${nose}${mouth}${glasses}${fr}</svg>`;
 }
 function avHair(style, cx, cy, rx, ry, hair) {
   if (!style) return { back: '', front: '' };
@@ -937,15 +942,72 @@ function checkAchievements(silent) {
 //  Лутбоксы (сундуки) — ежедневные награды за активность
 // ============================================================
 const TITLES = ['Ранняя пташка', 'Несокрушимый', 'Полиглот', 'Железная воля', 'Мастер баланса', 'Книжный червь', 'Атлет', 'Творец', 'Стратег', 'Феникс', 'Хранитель ритма', 'Первопроходец', 'Тихий гром', 'Луч дисциплины', 'Алхимик дней'];
+// ============================================================
+//  #20 Награды-реформа: рарности + косметика (рамки/фоны) + звания за ачивки + дроп-юс
+// ============================================================
+const RARITY = {
+  common:    { label: 'Обычное',     color: '#8b97b5' },
+  rare:      { label: 'Редкое',      color: '#4f9ff7' },
+  epic:      { label: 'Эпическое',   color: '#b06ff0' },
+  legendary: { label: 'Легендарное', color: '#e0a23e' },
+};
+// Косметика-рамки аватара (кольцо по краю)
+const FRAMES = [
+  { id: 'fr_bronze',   name: 'Бронза',    rarity: 'common',    ring: '#a9744a' },
+  { id: 'fr_leaf',     name: 'Листва',    rarity: 'common',    ring: '#5fbf7a' },
+  { id: 'fr_silver',   name: 'Серебро',   rarity: 'rare',      ring: '#c7cee6' },
+  { id: 'fr_azure',    name: 'Лазурь',    rarity: 'rare',      ring: '#4f9ff7' },
+  { id: 'fr_gold',     name: 'Золото',    rarity: 'epic',      ring: '#e0a23e' },
+  { id: 'fr_amethyst', name: 'Аметист',   rarity: 'epic',      ring: '#b06ff0' },
+  { id: 'fr_flame',    name: 'Пламя',     rarity: 'epic',      ring: '#e0526a' },
+  { id: 'fr_eclipse',  name: 'Затмение',  rarity: 'legendary', ring: '#7c6cff', glow: true },
+  { id: 'fr_phoenix',  name: 'Феникс',    rarity: 'legendary', ring: '#ff8a3d', glow: true },
+];
+// Косметика-фоны аватара (заливка позади)
+const BACKGROUNDS = [
+  { id: 'bg_slate',  name: 'Сланец',     rarity: 'common',    fill: '#2a3150' },
+  { id: 'bg_moss',   name: 'Мох',        rarity: 'common',    fill: '#23402f' },
+  { id: 'bg_ocean',  name: 'Океан',      rarity: 'rare',      fill: '#163a4a' },
+  { id: 'bg_wine',   name: 'Вино',       rarity: 'rare',      fill: '#3a1630' },
+  { id: 'bg_nebula', name: 'Туманность', rarity: 'epic',      fill: '#2c1a4a' },
+  { id: 'bg_ember',  name: 'Тлен',       rarity: 'epic',      fill: '#4a2018' },
+  { id: 'bg_aurora', name: 'Аврора',     rarity: 'legendary', fill: '#0f3a3a' },
+  { id: 'bg_void',   name: 'Бездна',     rarity: 'legendary', fill: '#160f2e' },
+];
+const COSMETICS = FRAMES.concat(BACKGROUNDS); // единый каталог для коллекции
+function cosmeticById(id) { return COSMETICS.find((c) => c.id === id) || null; }
+function frameById(id) { return FRAMES.find((c) => c.id === id) || null; }
+function bgFill(id) { const b = BACKGROUNDS.find((c) => c.id === id); return b ? b.fill : null; }
+function cosmeticType(id) { return FRAMES.some((f) => f.id === id) ? 'frame' : 'background'; }
+function rarityOf(id) { const c = cosmeticById(id); return c ? c.rarity : 'common'; }
+// Инициализация косметики в settings (миграция для существующих юзеров)
+function ensureCosmetics() {
+  const s = State.settings; if (!s) return { frame: null, background: null, title: null };
+  if (!Array.isArray(s.cosmetics)) s.cosmetics = [];
+  if (!s.equipped || typeof s.equipped !== 'object') s.equipped = { frame: null, background: null, title: null };
+  return s.equipped;
+}
+function ownsCosmetic(id) { return (State.settings.cosmetics || []).includes(id); }
+function equippedCosmeticsOpts() { const eq = ensureCosmetics(); return { bg: bgFill(eq.background), frame: frameById(eq.frame) }; }
+// Звания: даются ЗА ДОСТИЖЕНИЯ (не из кейсов — фидбек #20). + легаси-титулы из старых сундуков.
+function earnedTitles() {
+  const fromAch = ACHIEVEMENTS.filter((a) => State.achievements[a.id] && a.ttl).map((a) => a.ttl);
+  const legacy = (State.lootbox && State.lootbox.titles) || [];
+  return [...new Set([...fromAch, ...legacy])];
+}
+function equippedTitle() { const eq = ensureCosmetics(); return eq.title || (State.lootbox && State.lootbox.equipped) || null; }
 const LOOT_POOL = [
-  { w: 30, type: 'gold',   min: 15,  max: 45,  label: '🪙 Золото' },
-  { w: 20, type: 'gold',   min: 50,  max: 100, label: '🪙 Золото' },
-  { w: 14, type: 'energy', min: 20,  max: 40,  label: '🔋 Заряд энергии' },
-  { w: 13, type: 'boost',  pct: 25,  hours: 6, label: '⚡ +25% XP' },
-  { w: 9,  type: 'gold',   min: 120, max: 220, label: '🪙 Куча золота' },
-  { w: 8,  type: 'boost',  pct: 50,  hours: 3, label: '🔥 +50% XP' },
-  { w: 6,  type: 'title',                      label: '🏷 Титул' },
-  { w: 4,  type: 'gold',   min: 280, max: 450, label: '💎 Джекпот' },
+  { w: 26, type: 'gold',     min: 15,  max: 45,  label: '🪙 Золото' },
+  { w: 18, type: 'gold',     min: 50,  max: 100, label: '🪙 Золото' },
+  { w: 16, type: 'cosmetic', rarity: 'common',   label: '🎨 Косметика' },
+  { w: 12, type: 'energy',   min: 20,  max: 40,  label: '🔋 Заряд энергии' },
+  { w: 11, type: 'boost',    pct: 25,  hours: 6, label: '⚡ +25% XP' },
+  { w: 9,  type: 'cosmetic', rarity: 'rare',     label: '🎨 Редкая косметика' },
+  { w: 7,  type: 'boost',    pct: 50,  hours: 3, label: '🔥 +50% XP' },
+  { w: 6,  type: 'gold',     min: 120, max: 220, label: '🪙 Куча золота' },
+  { w: 4,  type: 'cosmetic', rarity: 'epic',     label: '🎨 Эпическая косметика' },
+  { w: 3,  type: 'gold',     min: 280, max: 450, label: '💎 Джекпот' },
+  { w: 1.4,type: 'cosmetic', rarity: 'legendary',label: '🎨 Легендарная косметика' },
 ];
 const LOOT_THRESHOLDS = [1, 3, 5]; // активностей за день для сундука №1 / №2 / №3
 function ensureLootbox() {
@@ -1023,24 +1085,30 @@ function lootChestsAvailable() {
 function lootNextThreshold() { const act = todayActivityCount(); const th = LOOT_THRESHOLDS.find((x) => act < x); return th ? { need: th - act, at: th } : null; }
 function rollLoot() { const total = LOOT_POOL.reduce((s, x) => s + x.w, 0); let r = Math.random() * total; for (const it of LOOT_POOL) { if ((r -= it.w) <= 0) return it; } return LOOT_POOL[0]; }
 function lootResolve(item) {
-  if (item.type === 'gold') { const amt = Math.round(item.min + Math.random() * (item.max - item.min)); return { type: 'gold', amount: amt, label: `+${amt} 🪙` }; }
-  if (item.type === 'energy') { const amt = Math.round(item.min + Math.random() * (item.max - item.min)); return { type: 'energy', amount: amt, label: `+${amt} 🔋 энергии` }; }
-  if (item.type === 'boost') return { type: 'boost', pct: item.pct, hours: item.hours, label: `+${item.pct}% XP · ${item.hours}ч` };
-  if (item.type === 'title') {
-    const lb = ensureLootbox(), pool = TITLES.filter((t) => !lb.titles.includes(t));
-    if (pool.length) { const t = pool[Math.floor(Math.random() * pool.length)]; return { type: 'title', title: t, label: `🏷 «${t}»` }; }
-    return { type: 'gold', amount: 60, label: '+60 🪙 (все титулы собраны)' };
+  if (item.type === 'gold') { const amt = Math.round(item.min + Math.random() * (item.max - item.min)); const rar = amt >= 280 ? 'epic' : amt >= 120 ? 'rare' : 'common'; return { type: 'gold', amount: amt, rarity: rar, label: `+${amt} 🪙` }; }
+  if (item.type === 'energy') { const amt = Math.round(item.min + Math.random() * (item.max - item.min)); return { type: 'energy', amount: amt, rarity: 'common', label: `+${amt} 🔋 энергии` }; }
+  if (item.type === 'boost') return { type: 'boost', pct: item.pct, hours: item.hours, rarity: item.pct >= 50 ? 'epic' : 'rare', label: `+${item.pct}% XP · ${item.hours}ч` };
+  if (item.type === 'cosmetic') {
+    const rar = item.rarity || 'common', pool = COSMETICS.filter((c) => c.rarity === rar && !ownsCosmetic(c.id));
+    if (pool.length) { const c = pool[Math.floor(Math.random() * pool.length)]; return { type: 'cosmetic', id: c.id, rarity: rar, name: c.name, label: `🎨 ${c.name}` }; }
+    const dup = { common: 40, rare: 80, epic: 160, legendary: 320 }[rar] || 40; // дубль (всё собрано) → золото, Brawl-Stars-стиль
+    return { type: 'gold', amount: dup, rarity: rar, label: `+${dup} 🪙 (${RARITY[rar].label.toLowerCase()} собрано)` };
   }
-  return { type: 'gold', amount: 20, label: '+20 🪙' };
+  return { type: 'gold', amount: 20, rarity: 'common', label: '+20 🪙' };
 }
 function applyLoot(reward) {
   const lb = ensureLootbox();
   if (reward.type === 'gold') lb.goldWon += reward.amount;
   else if (reward.type === 'energy') { const e = ensureEnergy(); e.cur = Math.min(e.max, e.cur + reward.amount); Store.save('settings', State.settings); }
   else if (reward.type === 'boost') lb.boost = { pct: reward.pct, until: new Date(Date.now() + reward.hours * 3600 * 1000).toISOString() };
-  else if (reward.type === 'title') { if (!lb.titles.includes(reward.title)) lb.titles.push(reward.title); if (!lb.equipped) lb.equipped = reward.title; }
+  else if (reward.type === 'cosmetic') {
+    ensureCosmetics();
+    if (!State.settings.cosmetics.includes(reward.id)) State.settings.cosmetics.push(reward.id);
+    const t = cosmeticType(reward.id); if (!State.settings.equipped[t]) State.settings.equipped[t] = reward.id; // авто-надеть, если слот пуст
+    Store.save('settings', State.settings);
+  }
   lb.opened += 1;
-  lb.history.unshift({ at: new Date().toISOString(), label: reward.label });
+  lb.history.unshift({ at: new Date().toISOString(), label: reward.label, rarity: reward.rarity || 'common' });
   lb.history = lb.history.slice(0, 40);
   Store.save('lootbox', lb);
 }
@@ -1274,7 +1342,7 @@ function showAuthScreen() {
 // ============================================================
 function renderHeader() {
   const c = State.settings.curve, oi = levelInfo(overallXp(), c.base, c.growth), streak = currentStreak();
-  const cr = charRank(), eqTitle = State.lootbox && State.lootbox.equipped, e = ent();
+  const cr = charRank(), eqTitle = equippedTitle(), e = ent();
   const skills = topSkills().map((s) => {
     const si = levelInfo(skillXp(s.id), c.skillBase, c.growth), sr = rankFor(si.level), pillar = isPillar(s.id);
     const subInfo = pillar ? ` · ${descendantSkills(s.id).length} под-навыков` : '';
@@ -2179,12 +2247,12 @@ function renderCharacter() {
       <button type="submit" class="btn">Сохранить</button></form>`;
   return `
     <div class="card char-hero">
-      <div class="ch-avatar ch-avatar-img" style="--rc:${cr.color};--p:${oi.pct}">${avatarSVG(avCfg())}</div>
+      <div class="ch-avatar ch-avatar-img" style="--rc:${cr.color};--p:${oi.pct}">${avatarSVG(avCfg(), equippedCosmeticsOpts())}</div>
       <div class="ch-meta">
         <h2>${esc((State.me && State.me.name) || 'Герой')}</h2>
         <div class="ch-rank" style="--rc:${cr.color}">${cr.icon} ${cr.name} · ур.${charLevel()}</div>
         <div class="ch-arch" title="Класс определяется автоматически из названий твоих сфер">🎭 <b>${arch.name}</b> <span class="muted">— ${arch.desc}</span></div>
-        ${(State.lootbox && State.lootbox.equipped) ? `<div class="ch-title" title="Титул из сундука — смени в «Наградах»">🏷 ${esc(State.lootbox.equipped)}</div>` : ''}
+        ${equippedTitle() ? `<div class="ch-title" title="Звание — сменить в «Наградах → Коллекция»">🏷 ${esc(equippedTitle())}</div>` : ''}
         <div class="xp-bar" style="max-width:340px"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
         ${(() => { const of = overallForm(), fm = formMeta(of); return `<div class="ch-form" title="Форма — текущая «свежесть» по активности. В отличие от уровня (доказанное мастерство — не сгорает), форма мягко падает без тренировок и легко возвращается.">
           <span class="cf-label">Форма</span>
@@ -2214,8 +2282,7 @@ function lootboxCard() {
   const earned = LOOT_THRESHOLDS.filter((th) => act >= th).length;
   const lockedExtra = Math.max(0, earned - lootTierCap());
   const boost = lootBoostPct();
-  const titles = lb.titles.length ? lb.titles.map((t) => `<button class="title-chip ${lb.equipped === t ? 'eq' : ''}" data-action="equip-title" data-title="${esc(t)}">${lb.equipped === t ? '★ ' : ''}${esc(t)}</button>`).join('') : '<span class="muted">титулов пока нет — лови в сундуках</span>';
-  const hist = (lb.history || []).slice(0, 6).map((h) => `<li><span class="muted">${(h.at || '').slice(11, 16)}</span> ${esc(h.label)}</li>`).join('');
+  const hist = (lb.history || []).slice(0, 6).map((h) => `<li><span class="rar-dot" style="background:${(RARITY[h.rarity] || RARITY.common).color}"></span><span class="muted">${(h.at || '').slice(11, 16)}</span> ${esc(h.label)}</li>`).join('');
   const statusTxt = avail > 0 ? `Открыть (${avail})` : (nextTh ? `Ещё ${nextTh.need} ${plural(nextTh.need, 'дело', 'дела', 'дел')} до сундука` : 'На сегодня всё ✓');
   return `<div class="card lootbox-card">
     <div class="lb-head"><h3>🎁 Сундуки дня</h3>${boost ? `<span class="lb-boost">⚡ +${boost}% XP активен</span>` : ''}</div>
@@ -2224,20 +2291,47 @@ function lootboxCard() {
         <div class="lb-emoji">${avail > 0 ? '🎁' : '📦'}</div><div class="lb-status">${statusTxt}</div>
       </div>
       <div class="lb-info">
-        <p class="muted" style="font-size:12px;margin:0 0 8px">Выполняй квесты и привычки — за активность дают сундуки. ${isPro() ? 'Pro: до 3 сундуков в день.' : 'Free: 1 сундук в день.'}</p>
+        <p class="muted" style="font-size:12px;margin:0 0 8px">Выполняй квесты и привычки — за активность дают сундуки. Внутри: золото, XP-бусты, заряд энергии и <b>косметика</b> (рамки/фоны) по рарностям. ${isPro() ? 'Pro: до 3 сундуков в день.' : 'Free: 1 сундук в день.'}</p>
         ${lockedExtra > 0 && !isPro() ? `<button class="btn pro-cta sm" data-action="show-paywall" data-feature="Больше сундуков">🔒 Ещё ${lockedExtra} ${plural(lockedExtra, 'сундук', 'сундука', 'сундуков')} — с Pro</button>` : ''}
-        <div class="lb-titles">${titles}</div>
       </div>
     </div>
     ${hist ? `<details class="lb-hist"><summary>История дропов</summary><ul class="reflections">${hist}</ul></details>` : ''}</div>`;
 }
+// Brawl-Stars-коллекция: видимый прогресс + экипировка рамок/фонов/званий
+function collectionCard() {
+  const eq = ensureCosmetics();
+  const ownedCount = COSMETICS.filter((c) => ownsCosmetic(c.id)).length;
+  const tile = (c) => {
+    const owned = ownsCosmetic(c.id), r = RARITY[c.rarity], isEq = eq[cosmeticType(c.id)] === c.id;
+    const swatch = c.ring ? `<span class="cos-prev cos-frame" style="border-color:${c.ring}"></span>` : `<span class="cos-prev cos-bg" style="background:${c.fill}"></span>`;
+    return `<button class="cos-tile r-${c.rarity} ${owned ? 'owned' : 'locked'} ${isEq ? 'eq' : ''}" ${owned ? `data-action="equip-cosmetic" data-id="${c.id}"` : 'disabled'} style="--rc:${r.color}" title="${esc(c.name)} · ${r.label}${owned ? (isEq ? ' · надето' : ' · нажми, чтобы надеть') : ' · ещё не выпало'}">
+      ${owned ? swatch : '<span class="cos-prev cos-lock">🔒</span>'}<span class="cos-name">${owned ? esc(c.name) : '???'}</span>${isEq ? '<span class="cos-eq">✓</span>' : ''}</button>`;
+  };
+  const titles = earnedTitles();
+  const titleChips = titles.length
+    ? `<button class="title-chip ${!eq.title ? 'eq' : ''}" data-action="equip-title" data-title="">— без звания —</button>` + titles.map((t) => `<button class="title-chip ${eq.title === t ? 'eq' : ''}" data-action="equip-title" data-title="${esc(t)}">${eq.title === t ? '★ ' : ''}${esc(t)}</button>`).join('')
+    : '<span class="muted">званий пока нет — открывай достижения ниже ↓</span>';
+  return `<div class="card collection-card">
+    <div class="coll-head"><h3>🎨 Коллекция</h3><span class="coll-prog">${ownedCount}/${COSMETICS.length} собрано</span></div>
+    <div class="coll-body">
+      <div class="coll-preview" title="Так выглядит твой аватар">${avatarSVG(avCfg(), equippedCosmeticsOpts())}</div>
+      <div class="coll-cats">
+        <h4 class="coll-sub">Рамки</h4><div class="cos-grid">${FRAMES.map(tile).join('')}</div>
+        <h4 class="coll-sub">Фоны</h4><div class="cos-grid">${BACKGROUNDS.map(tile).join('')}</div>
+      </div>
+    </div>
+    <h4 class="coll-sub">🏷 Звания <span class="muted" style="font-size:12px;font-weight:400">— за достижения</span></h4>
+    <div class="title-chips">${titleChips}</div>
+  </div>`;
+}
 function openChest() {
   if (lootChestsAvailable() <= 0) { toast('Сундуков нет — выполни ещё дела'); return; }
   const reward = lootResolve(rollLoot());
+  const rar = RARITY[reward.rarity] || RARITY.common;
   const ITEMW = 130, WINIDX = 34, N = 42;
-  const labels = [];
-  for (let i = 0; i < N; i++) labels.push(i === WINIDX ? reward.label : lootResolve(rollLoot()).label);
-  const strip = labels.map((l, i) => `<div class="loot-item ${i === WINIDX ? 'win' : ''}">${esc(l)}</div>`).join('');
+  const labels = [], rars = [];
+  for (let i = 0; i < N; i++) { if (i === WINIDX) { labels.push(reward.label); rars.push(reward.rarity || 'common'); } else { const r = lootResolve(rollLoot()); labels.push(r.label); rars.push(r.rarity || 'common'); } }
+  const strip = labels.map((l, i) => `<div class="loot-item r-${rars[i]} ${i === WINIDX ? 'win' : ''}" style="--rc:${(RARITY[rars[i]] || RARITY.common).color}">${esc(l)}</div>`).join('');
   const ov = document.createElement('div'); ov.id = 'loot-modal'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="loot-box">
     <h3>Открываем сундук…</h3>
@@ -2251,8 +2345,12 @@ function openChest() {
   requestAnimationFrame(() => { track.style.transition = 'transform 3.6s cubic-bezier(.12,.72,.16,1)'; track.style.transform = `translateX(${-target}px)`; });
   setTimeout(() => {
     applyLoot(reward);
-    const rEl = ov.querySelector('#loot-result'); rEl.innerHTML = `🎉 ${esc(reward.label)}`; rEl.classList.add('show');
-    ov.querySelector('.loot-win, .loot-item.win')?.classList.add('flash');
+    if (typeof sfxLoot === 'function') sfxLoot(reward.rarity || 'common'); // звук по рарности (#23)
+    const rEl = ov.querySelector('#loot-result');
+    rEl.innerHTML = `<div class="loot-rarity" style="color:${rar.color}">${rar.label.toUpperCase()}</div><div class="loot-rline">🎉 ${esc(reward.label)}</div>`;
+    rEl.classList.add('show'); rEl.style.setProperty('--rc', rar.color);
+    const box = ov.querySelector('.loot-box'); box.classList.add('reveal', `r-${reward.rarity || 'common'}`);
+    ov.querySelector('.loot-item.win')?.classList.add('flash');
     const claim = ov.querySelector('#loot-claim'); claim.style.display = '';
     claim.addEventListener('click', () => { ov.remove(); render(); });
   }, 3750);
@@ -2499,9 +2597,10 @@ function renderRewards() {
   }).join('');
   return `
     ${lootboxCard()}
+    ${collectionCard()}
     <div class="kpis">
       <div class="kpi"><div class="v">🪙 ${bal}</div><div class="l">Баланс золота</div></div>
-      <div class="kpi"><div class="v">${goldEarned()}</div><div class="l">Заработано всего</div></div>
+      <div class="kpi"><div class="v">${COSMETICS.filter((c) => ownsCosmetic(c.id)).length}/${COSMETICS.length}</div><div class="l">Косметики</div></div>
       <div class="kpi"><div class="v">${ACHIEVEMENTS.filter((a) => State.achievements[a.id]).length}/${ACHIEVEMENTS.length}</div><div class="l">Достижений</div></div>
     </div>
     <div class="card"><h3>🎁 Магазин наград</h3><div class="rewards-grid">${cards || '<p class="muted">Наград пока нет — возьми готовые из каталога ↓</p>'}</div>
@@ -3139,7 +3238,13 @@ function onClick(e) {
   // --- Лутбоксы / Pro / Paywall ---
   if (action === 'open-chest') { openChest(); return; }
   if (action === 'equip-title') {
-    const lb = ensureLootbox(); lb.equipped = lb.equipped === el.dataset.title ? null : el.dataset.title; Store.save('lootbox', lb); render(); return;
+    const eq = ensureCosmetics(), t = el.dataset.title || null;
+    eq.title = (!t || eq.title === t) ? null : t; Store.save('settings', State.settings); render(); return;
+  }
+  if (action === 'equip-cosmetic') {
+    if (!ownsCosmetic(el.dataset.id)) return;
+    const eq = ensureCosmetics(), ty = cosmeticType(el.dataset.id);
+    eq[ty] = (eq[ty] === el.dataset.id) ? null : el.dataset.id; Store.save('settings', State.settings); render(); return;
   }
   if (action === 'show-paywall') { showPaywall(el.dataset.feature); return; }
   if (action === 'close-paywall') { const p = document.getElementById('paywall'); if (p) p.remove(); return; }
