@@ -111,6 +111,22 @@ function genPartyCode(parties) { // 5-символьный код без пох�
   return c;
 }
 const PARTY_MAX = 6;
+// Кооп-рейд: понедельник недели (для сброса), цель XP/чел, цель сезона (побед).
+const RAID_PER_WEEK = 600, SEASON_GOAL = 4;
+function mondayStr(dt) { const x = dt ? new Date(dt) : new Date(); const wd = (x.getDay() + 6) % 7; x.setDate(x.getDate() - wd); return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`; }
+// Пересчитывает состояние рейда (мутирует party.raid/season). Победа недели = сумма недельного XP ≥ цель. Сброс на новой неделе. Сезон = накопленные победы.
+function refreshRaid(party) {
+  const ws = mondayStr();
+  if (!party.raid || party.raid.ws !== ws) party.raid = { ws, won: false, claimed: [] };
+  party.season = party.season || { wins: 0 };
+  const users = loadUsers();
+  let total = 0;
+  for (const id of (party.members || [])) { const u = users.find((x) => x.id === id); const w = u && u.pub && u.pub.week; if (w && w.ws === ws) total += (w.xp || 0); }
+  const target = (party.members || []).length * RAID_PER_WEEK;
+  let justWon = false;
+  if (!party.raid.won && target > 0 && total >= target) { party.raid.won = true; party.season.wins = (party.season.wins || 0) + 1; justWon = true; }
+  return { ws, total, target, won: party.raid.won, claimed: party.raid.claimed || [], seasonWins: party.season.wins || 0, justWon };
+}
 // ИИ BYOK: ключи per-user (в data/users/<id>/, под гитигнором). Наружу не отдаём.
 function aiKeysFile(id) { return path.join(userDataDir(id), 'ai-keys.json'); }
 function loadAiKeys(id) { try { return JSON.parse(fs.readFileSync(aiKeysFile(id), 'utf8')); } catch { return {}; } }
@@ -753,27 +769,33 @@ const server = http.createServer(async (req, res) => {
 
   // ---- Мультиплеер: пати (дуо/группа), кооп-рейд по недельному вкладу ----
   // Собирает пати с участниками (из снапшотов users.json) + чиры. Позитивно, без вины.
+  // ВАЖНО: partyView вызывает refreshRaid (мутирует party) — вызывающий эндпоинт ДОЛЖЕН saveParties после.
   function partyView(party, me) {
     if (!party) return null;
+    const r = refreshRaid(party);
     const users = loadUsers();
     const members = (party.members || []).map((id) => {
       const u = users.find((x) => x.id === id) || {}; const w = (u.pub && u.pub.week) || {};
       return { id, name: u.name || '—', avatar: u.avatar || '👤', level: (u.pub && u.pub.level) || 1, rank: (u.pub && u.pub.rank) || '', weekXp: w.xp || 0, weekQuests: w.quests || 0, cleanDays: w.clean || 0, cheers: (party.cheers && party.cheers[id]) || 0, me: id === me };
     });
-    return { id: party.id, name: party.name, code: party.code, createdBy: party.createdBy, members, max: PARTY_MAX };
+    return { id: party.id, name: party.name, code: party.code, createdBy: party.createdBy, members, max: PARTY_MAX, ws: r.ws,
+      raid: { total: r.total, target: r.target, won: r.won, iClaimed: (r.claimed || []).includes(me), claimedCount: (r.claimed || []).length },
+      season: { wins: r.seasonWins, goal: SEASON_GOAL } };
   }
   if (u === '/api/party' && req.method === 'GET') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
-    return sendJson(res, 200, { party: partyView(partyOf(me), me) });
+    const parties = loadParties(); const party = partyOf(me, parties);
+    const view = partyView(party, me); if (party) saveParties(parties); // persist раз пересчитали рейд/сезон
+    return sendJson(res, 200, { party: view });
   }
   if (u === '/api/party/create' && req.method === 'POST') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
     let b = {}; try { b = JSON.parse(await readBody(req)); } catch {}
     const parties = loadParties();
     if (partyOf(me, parties)) return sendJson(res, 400, { error: 'already_in_party' });
-    const party = { id: 'p_' + crypto.randomBytes(5).toString('hex'), name: String(b.name || 'Моя пати').slice(0, 40), code: genPartyCode(parties), members: [me], cheers: {}, createdBy: me, createdAt: new Date().toISOString() };
-    parties.push(party); saveParties(parties);
-    return sendJson(res, 200, { party: partyView(party, me) });
+    const party = { id: 'p_' + crypto.randomBytes(5).toString('hex'), name: String(b.name || 'Моя пати').slice(0, 40), code: genPartyCode(parties), members: [me], cheers: {}, season: { wins: 0 }, createdBy: me, createdAt: new Date().toISOString() };
+    parties.push(party); const view = partyView(party, me); saveParties(parties);
+    return sendJson(res, 200, { party: view });
   }
   if (u === '/api/party/join' && req.method === 'POST') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
@@ -784,8 +806,8 @@ const server = http.createServer(async (req, res) => {
     const party = parties.find((p) => p.code === code);
     if (!party) return sendJson(res, 404, { error: 'not_found' });
     if ((party.members || []).length >= PARTY_MAX) return sendJson(res, 400, { error: 'full' });
-    party.members.push(me); saveParties(parties);
-    return sendJson(res, 200, { party: partyView(party, me) });
+    party.members.push(me); const view = partyView(party, me); saveParties(parties);
+    return sendJson(res, 200, { party: view });
   }
   if (u === '/api/party/leave' && req.method === 'POST') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
@@ -793,6 +815,7 @@ const server = http.createServer(async (req, res) => {
     if (party) {
       party.members = party.members.filter((x) => x !== me);
       if (party.cheers) delete party.cheers[me];
+      if (party.raid && party.raid.claimed) party.raid.claimed = party.raid.claimed.filter((x) => x !== me);
       const idx = parties.indexOf(party);
       if (!party.members.length) parties.splice(idx, 1); // пустая пати удаляется
       else if (party.createdBy === me) party.createdBy = party.members[0]; // передаём «владельца»
@@ -808,8 +831,20 @@ const server = http.createServer(async (req, res) => {
     const to = String(b.to || '');
     if (!party.members.includes(to)) return sendJson(res, 400, { error: 'not_member' });
     party.cheers = party.cheers || {}; party.cheers[to] = (party.cheers[to] || 0) + 1;
-    saveParties(parties);
-    return sendJson(res, 200, { party: partyView(party, me) });
+    const view = partyView(party, me); saveParties(parties);
+    return sendJson(res, 200, { party: view });
+  }
+  // Забрать награду за победу в рейде (раз в неделю на участника) — сундук пати
+  if (u === '/api/party/claim' && req.method === 'POST') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    const parties = loadParties(); const party = partyOf(me, parties);
+    if (!party) return sendJson(res, 404, { error: 'no_party' });
+    refreshRaid(party);
+    if (!party.raid.won) return sendJson(res, 400, { error: 'not_won' });
+    if ((party.raid.claimed || []).includes(me)) return sendJson(res, 400, { error: 'already_claimed' });
+    party.raid.claimed = party.raid.claimed || []; party.raid.claimed.push(me);
+    const view = partyView(party, me); saveParties(parties);
+    return sendJson(res, 200, { reward: { gold: 150, boostPct: 30, boostHours: 6 }, party: view });
   }
 
   // ---- Per-user data API ----

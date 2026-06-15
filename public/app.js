@@ -1217,6 +1217,10 @@ function sfx(name, rarity) {
     notes.forEach((f, i) => sfxTone(f, t + i * 0.08, 0.36, { type: leg ? 'sawtooth' : 'triangle', gain: leg ? 0.15 : 0.11 }));
     if (rarity === 'epic' || leg) sfxTone(notes[notes.length - 1] * 2, t + notes.length * 0.08, 0.55, { type: 'sine', gain: 0.1 });
   }
+  else if (name === 'raidwin') { // эпичная фанфара победы над боссом (#22)
+    [392, 523, 659, 784, 784, 1046].forEach((f, i) => sfxTone(f, t + i * 0.14, 0.5, { type: 'sawtooth', gain: 0.12 }));
+    [523, 659, 784, 1046].forEach((f) => sfxTone(f, t + 0.14 * 6, 1.0, { type: 'triangle', gain: 0.1 })); // финальный аккорд
+  }
 }
 function sfxLoot(rarity) { sfx('loot', rarity); } // вызывается из openChest (#20)
 function notify(title, body) {
@@ -3166,7 +3170,19 @@ const APP_SHELL = `
   <button id="ai-fab" data-action="open-helper" title="Помощник Gojo — спроси про любую функцию" aria-label="Помощник">🤖</button>`;
 
 // ---- Мультиплеер: пати + кооп-рейд (Племя). null=не загружено, false=не в пати, объект=в пати ----
-const RAID_PER_MEMBER = 600; // XP/чел/неделя — цель кооп-рейда
+const RAID_PER_MEMBER = 600; // XP/чел/неделя — цель кооп-рейда (синхр. с сервером)
+// Тематический босс недели (детерминированно по понедельнику). Лярвы прокрастинации/зависимостей.
+const BOSSES = [
+  { name: 'Прокрастинион, Пожиратель Дней', emoji: '🦑' },
+  { name: 'Лярва Бесконечного Скролла', emoji: '🐛' },
+  { name: 'Голод Дофамина', emoji: '👹' },
+  { name: 'Туман Отговорок', emoji: '🌫️' },
+  { name: 'Дракон «Завтра»', emoji: '🐉' },
+  { name: 'Сирена Уюта', emoji: '🧜' },
+  { name: 'Голем Инерции', emoji: '🗿' },
+];
+function bossForWeek(ws) { let h = 0; const s = String(ws || ''); for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return BOSSES[h % BOSSES.length]; }
+function seasonInfo(season) { const goal = (season && season.goal) || 4, wins = (season && season.wins) || 0; return { goal, wins, cycle: Math.floor(wins / goal) + 1, prog: wins % goal, done: Math.floor(wins / goal) }; }
 function renderParty() {
   if (State.party === null) {
     if (!State._partyLoading) {
@@ -3187,11 +3203,17 @@ function partyEmptyHTML() {
     <form id="party-join" class="add-row"><input name="code" placeholder="КОД" autocomplete="off" maxlength="5" style="text-transform:uppercase" /><button type="submit">Войти</button></form></div>`;
 }
 function partyHTML(p) {
-  const target = p.members.length * RAID_PER_MEMBER;
-  const total = p.members.reduce((s, m) => s + (m.weekXp || 0), 0);
-  const pct = target ? Math.min(100, Math.round(total / target * 100)) : 0, won = total >= target, hp = Math.max(0, target - total);
-  if (won && !State._raidCelebrated) { State._raidCelebrated = true; sfx('achievement'); }
-  if (!won) State._raidCelebrated = false;
+  const r = p.raid || { total: 0, target: 1, won: false, iClaimed: false, claimedCount: 0 };
+  const pct = r.target ? Math.min(100, Math.round(r.total / r.target * 100)) : 0;
+  const won = r.won, hp = Math.max(0, r.target - r.total), boss = bossForWeek(p.ws);
+  // Кинематографичная победа — один раз за сессию на эту неделю
+  if (won && State._raidShownFor !== p.ws) { State._raidShownFor = p.ws; setTimeout(() => showRaidWin(p, boss), 220); }
+  if (!won) State._raidShownFor = null;
+  const si = seasonInfo(p.season);
+  const seasonPct = si.goal ? Math.round(si.prog / si.goal * 100) : 0;
+  const claim = won
+    ? (r.iClaimed ? '<span class="raid-claimed muted">✓ награда забрана</span>' : '<button class="btn raid-claim" data-action="party-claim">🎁 Забрать награду пати</button>')
+    : '';
   const members = p.members.slice().sort((a, b) => b.weekXp - a.weekXp).map((m) => `<div class="pm-row ${m.me ? 'me' : ''}">
       <span class="pm-av">${esc(m.avatar)}</span>
       <span class="pm-meta"><span class="pm-name">${esc(m.name)}${m.me ? ' <span class="lb-you">ты</span>' : ''}</span>
@@ -3202,12 +3224,34 @@ function partyHTML(p) {
       <div class="ph-top"><h3>🤝 ${esc(p.name)}</h3><span class="party-code" title="Поделись кодом с другом — он войдёт в пати">код <b>${esc(p.code)}</b></span></div>
       <p class="muted" style="font-size:12px;margin:6px 0 0">${p.members.length}/${p.max} участников · недельный вклад складывается в общий рейд</p></div>
     <div class="card raid-card ${won ? 'won' : ''}">
-      <div class="raid-head"><span class="raid-boss">${won ? '🏆' : '🐉'}</span><div><b>${won ? 'Босс недели повержен!' : 'Кооп-рейд недели'}</b>
-        <div class="muted" style="font-size:12px">${won ? 'Пати справилась вместе — 🎉' : `Осталось ${hp} XP · цель ${target} (по ${RAID_PER_MEMBER}/чел)`}</div></div></div>
+      <div class="raid-head"><span class="raid-boss">${won ? '🏆' : boss.emoji}</span><div><b>${won ? 'Босс повержен!' : esc(boss.name)}</b>
+        <div class="muted" style="font-size:12px">${won ? `Пати справилась — ${r.claimedCount}/${p.members.length} забрали награду` : `Осталось ${hp} XP · цель ${r.target} (по ${RAID_PER_MEMBER}/чел)`}</div></div></div>
       <div class="raid-bar"><span style="width:${pct}%"></span></div>
+      ${claim}
       <p class="muted raid-note">Вклад каждого складывается; ничей пропуск не штрафует команду — просто чуть медленнее. Через поддержку, не через вину.</p></div>
+    <div class="card season-card">
+      <div class="season-head"><b>🏅 Сезон ${si.cycle}</b><span class="muted">${si.prog}/${si.goal} побед недели${si.done ? ` · пройдено ×${si.done}` : ''}</span></div>
+      <div class="season-bar"><span style="width:${seasonPct}%"></span></div>
+      <p class="muted" style="font-size:11.5px;margin:6px 0 0">Бейте босса каждую неделю — собирайте сезон.${si.prog === si.goal - 1 ? ' Ещё одна победа — и сезон взят! 🏅' : ''}</p></div>
     <div class="card"><h3>Состав</h3><div class="pm-list">${members}</div>
       <button class="btn ghost sm" data-action="party-leave" style="margin-top:12px">Покинуть пати</button></div>`;
+}
+// Кинематографичная победа над боссом (#22): полноэкранный оверлей + фанфары + конфетти
+function showRaidWin(p, boss) {
+  if (document.getElementById('raidwin')) return;
+  sfx('raidwin');
+  const colors = ['#e0a23e', '#e0526a', '#7c6cff', '#5fbf7a', '#4f9ff7'];
+  const conf = Array.from({ length: 28 }, (_, i) => `<span class="rw-conf" style="left:${Math.round(Math.random() * 100)}%;animation-delay:${(Math.random() * 0.7).toFixed(2)}s;background:${colors[i % colors.length]}"></span>`).join('');
+  const ov = document.createElement('div'); ov.id = 'raidwin'; ov.className = 'modal-overlay raidwin-ov';
+  ov.innerHTML = `<div class="raidwin-box">
+    <div class="rw-rays"></div>
+    <div class="rw-boss">${boss.emoji}<span class="rw-x">💥</span></div>
+    <div class="rw-title">БОСС ПОВЕРЖЕН</div>
+    <div class="rw-sub">${esc(boss.name)}</div>
+    <div class="rw-party">🤝 ${esc(p.name)} — вместе</div>
+    <button class="btn rw-btn" data-action="raidwin-close">Слава пати! 🎉</button>
+    <div class="rw-confetti">${conf}</div></div>`;
+  document.body.appendChild(ov);
 }
 function renderLeaderboard() {
   if (State.leaderboard === null) {
@@ -3765,6 +3809,17 @@ function onClick(e) {
   } else if (action === 'party-cheer') {
     fetch('/api/party/cheer', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ to: el.dataset.to }) })
       .then((r) => r.json()).then((d) => { if (d.party) { State.party = d.party; sfx('coin'); render(); } }).catch(() => toast('Сетевая ошибка'));
+  } else if (action === 'party-claim') {
+    fetch('/api/party/claim', { method: 'POST' }).then((r) => r.json()).then((d) => {
+      if (d.reward) {
+        const lb = ensureLootbox(); lb.goldWon += d.reward.gold;
+        lb.boost = { pct: d.reward.boostPct, until: new Date(Date.now() + d.reward.boostHours * 3600 * 1000).toISOString() };
+        Store.save('lootbox', lb); sfx('coin');
+        toast(`🎁 Награда пати: +${d.reward.gold} 🪙 · +${d.reward.boostPct}% XP на ${d.reward.boostHours}ч`);
+        if (d.party) State.party = d.party; render();
+      } else toast(d.error === 'already_claimed' ? 'Уже забрано' : d.error === 'not_won' ? 'Босс ещё не повержен' : 'Не удалось');
+    }).catch(() => toast('Сетевая ошибка'));
+  } else if (action === 'raidwin-close') { const m = document.getElementById('raidwin'); if (m) m.remove();
   } else if (action === 'apply-cat') {
     const form = el.closest('.card').querySelector('#add-task'); const sel = form && form.querySelector('select[name="skillId"]');
     if (sel) { sel.value = el.dataset.skill; const ti = form.querySelector('input[name="title"]'); if (ti) ti.focus(); }

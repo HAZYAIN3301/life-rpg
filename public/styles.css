@@ -855,6 +855,31 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .pm-xp { font-weight: 800; color: var(--accent); white-space: nowrap; }
 .pm-xp small { font-size: 10px; color: var(--muted); margin-left: 1px; font-weight: 600; }
 .pm-cheer { flex: 0 0 auto; }
+.raid-claim { margin: 10px 0 2px; background: linear-gradient(90deg, #e0a23e, #e0526a); border: none; }
+.raid-claimed { display: inline-block; margin: 8px 0 2px; font-size: 12px; }
+/* Сезонный прогресс (nested-прогрессия) */
+.season-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.season-bar { height: 10px; background: var(--panel2); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.season-bar > span { display: block; height: 100%; background: linear-gradient(90deg, #7c6cff, #e0a23e); transition: width .5s; }
+/* Кинематографичная победа над боссом (#22) */
+.raidwin-ov { background: rgba(6, 8, 16, 0.86); }
+.raidwin-box { position: relative; text-align: center; padding: 30px 26px; overflow: hidden; max-width: 96vw; }
+.rw-rays { position: absolute; inset: -40% ; background: conic-gradient(from 0deg, transparent 0 10deg, rgba(224,162,62,.16) 10deg 20deg, transparent 20deg 30deg); animation: rwSpin 14s linear infinite; pointer-events: none; }
+@keyframes rwSpin { to { transform: rotate(360deg); } }
+.rw-boss { position: relative; font-size: 74px; animation: rwShake .5s ease 2, rwFade .8s ease 1s forwards; }
+@keyframes rwShake { 0%,100% { transform: translateX(0) } 25% { transform: translateX(-9px) rotate(-6deg) } 75% { transform: translateX(9px) rotate(6deg) } }
+@keyframes rwFade { to { opacity: .25; filter: grayscale(1); transform: scale(.8); } }
+.rw-x { position: absolute; left: 50%; top: 40%; transform: translate(-50%,-50%) scale(0); font-size: 64px; animation: rwPop .4s ease 1.1s forwards; }
+@keyframes rwPop { 0% { transform: translate(-50%,-50%) scale(0); opacity: 0 } 60% { transform: translate(-50%,-50%) scale(1.3); opacity: 1 } 100% { transform: translate(-50%,-50%) scale(1); opacity: .9 } }
+.rw-title { position: relative; font-size: 30px; font-weight: 900; letter-spacing: 2px; margin-top: 10px; color: #ffce6b; text-shadow: 0 0 22px rgba(224,162,62,.6); transform: scale(.6); opacity: 0; animation: rwTitle .5s cubic-bezier(.2,1.5,.4,1) 1.3s forwards; }
+@keyframes rwTitle { to { transform: scale(1); opacity: 1; } }
+.rw-sub { position: relative; font-size: 15px; color: var(--text); margin-top: 6px; opacity: 0; animation: rwIn .4s ease 1.6s forwards; }
+.rw-party { position: relative; font-size: 13px; color: var(--muted); margin-top: 4px; opacity: 0; animation: rwIn .4s ease 1.8s forwards; }
+.rw-btn { position: relative; margin-top: 18px; opacity: 0; animation: rwIn .4s ease 2s forwards; }
+@keyframes rwIn { to { opacity: 1; } }
+.rw-confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.rw-conf { position: absolute; top: -12px; width: 8px; height: 13px; border-radius: 2px; opacity: .9; animation: rwConf 2.4s linear 1.3s infinite; }
+@keyframes rwConf { to { transform: translateY(115%) rotate(540deg); opacity: 0; } }
 /* Оформление: тема + акцент */
 .theme-row { display: flex; align-items: center; gap: 12px; margin: 8px 0; flex-wrap: wrap; }
 .theme-lbl { font-size: 13px; color: var(--muted); width: 64px; flex: 0 0 auto; }
