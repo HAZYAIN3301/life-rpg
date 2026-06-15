@@ -2221,7 +2221,7 @@ function renderToday() {
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">↪ Перенести всё на сегодня</button></div>` : '';
 
-  return `${captureBar()}${notesPeekToday()}${progressTrioCard()}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
+  return `${installBanner()}${captureBar()}${notesPeekToday()}${progressTrioCard()}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="Новый квест на сегодня…" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
@@ -3822,6 +3822,7 @@ function onClick(e) {
     }).catch(() => toast('Сетевая ошибка'));
   } else if (action === 'raidwin-close') { const m = document.getElementById('raidwin'); if (m) m.remove();
   } else if (action === 'install-app') { if (_deferredInstall) { _deferredInstall.prompt(); _deferredInstall.userChoice.finally(() => { _deferredInstall = null; render(); }); }
+  } else if (action === 'install-dismiss') { try { localStorage.setItem('gojo_install_dismiss', '1'); } catch {} render();
   } else if (action === 'push-enable') { pushEnable();
   } else if (action === 'push-disable') { pushDisable();
   } else if (action === 'push-test') { pushTest();
@@ -4222,6 +4223,16 @@ function toggleReminders() {
 }
 
 // Точка входа — проверяем сессию, потом грузим нужный экран
+// ---- PWA: «установи как приложение» ----
+function isStandalone() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
+function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream; }
+// Заметный гид-баннер установки (на «Сегодня»), закрываемый
+function installBanner() {
+  if (isStandalone() || localStorage.getItem('gojo_install_dismiss')) return '';
+  if (_deferredInstall) return `<div class="card install-banner"><span class="ib-text">📲 Установи Gojo как приложение — иконка на телефоне, офлайн, уведомления.</span><span class="ib-acts"><button class="btn" data-action="install-app">Установить</button><button class="del" data-action="install-dismiss" title="Скрыть">✕</button></span></div>`;
+  if (isIOS()) return `<div class="card install-banner"><span class="ib-text">📲 Добавь Gojo на экран «Домой»: кнопка <b>Поделиться</b> → <b>«На экран Домой»</b>.</span><button class="del" data-action="install-dismiss" title="Скрыть">✕</button></div>`;
+  return '';
+}
 // ---- PWA-карточка в Настройках: установка + push-уведомления ----
 function urlB64ToUint8(b64) { const pad = '='.repeat((4 - b64.length % 4) % 4); const s = (b64 + pad).replace(/-/g, '+').replace(/_/g, '/'); const raw = atob(s); const arr = new Uint8Array(raw.length); for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i); return arr; }
 function ensurePushState() {

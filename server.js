@@ -127,6 +127,27 @@ function refreshRaid(party) {
   if (!party.raid.won && target > 0 && total >= target) { party.raid.won = true; party.season.wins = (party.season.wins || 0) + 1; justWon = true; }
   return { ws, total, target, won: party.raid.won, claimed: party.raid.claimed || [], seasonWins: party.season.wins || 0, justWon };
 }
+// ---- Серверная валидация XP: пересчёт из СОХРАНЁННЫХ данных юзера (не доверяем publish-payload) ----
+const RANK_TABLE = [['Новичок', 1], ['Ученик', 3], ['Адепт', 6], ['Эксперт', 10], ['Мастер', 16], ['Грандмастер', 24], ['Легенда', 34]];
+function rankNameFor(level) { let n = RANK_TABLE[0][0]; for (const [nm, min] of RANK_TABLE) if (level >= min) n = nm; return n; }
+function computeUserXp(uid) {
+  const dir = userDataDir(uid);
+  const rd = (n) => { try { return JSON.parse(fs.readFileSync(path.join(dir, n + '.json'), 'utf8')); } catch { return null; } };
+  const settings = rd('settings') || {}, tasks = rd('tasks') || [], habitlog = rd('habitlog') || {}, goals = rd('goals') || [];
+  const curve = settings.curve || { base: 100, growth: 1.3 };
+  const ws = mondayStr(), inWeek = (d) => typeof d === 'string' && d.slice(0, 10) >= ws;
+  let total = 0, weekXp = 0, weekQuests = 0;
+  for (const t of (Array.isArray(tasks) ? tasks : [])) {
+    if (t && t.done && t.completedAt) { const xp = Math.max(0, Number(t.xpAwarded) || 0); total += xp; if (inWeek(t.completedAt)) { weekXp += xp; weekQuests++; } }
+  }
+  for (const day in habitlog) { const m = habitlog[day] || {}; for (const hid in m) { const xp = Math.max(0, Number(m[hid] && m[hid].xp) || 0); total += xp; if (inWeek(day)) weekXp += xp; } }
+  for (const g of (Array.isArray(goals) ? goals : [])) { if (g && g.completedAt) { const xp = Math.max(0, Number(g.xpReward) || 0); total += xp; if (inWeek(g.completedAt)) weekXp += xp; } }
+  const imp = settings.imported || {}; for (const k in imp) total += Math.max(0, Number(imp[k] && imp[k].xp) || 0);
+  total = Math.round(total);
+  let level = 1, rem = total, need = Math.round(curve.base * Math.pow(curve.growth, level - 1));
+  while (rem >= need && level < 999) { rem -= need; level++; need = Math.round(curve.base * Math.pow(curve.growth, level - 1)); }
+  return { total, weekXp: Math.round(weekXp), weekQuests, level, rank: rankNameFor(level) };
+}
 // ---- Web Push (RFC8291 aes128gcm + VAPID RFC8292). Zero-dep, проверено round-trip-тестом. ----
 const PUSH_SUBJECT = process.env.PUSH_SUBJECT || 'mailto:gojo@example.com';
 const pb64u = (buf) => Buffer.from(buf).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -790,22 +811,16 @@ const server = http.createServer(async (req, res) => {
     const users = loadUsers();
     const user = users.find(x => x.id === uid);
     if (!user) return sendJson(res, 401, { error: 'user not found' });
+    // СЕРВЕРНАЯ ВАЛИДАЦИЯ: XP/уровень/недельный вклад пересчитываем из сохранённых данных юзера,
+    // НЕ доверяя значениям из payload (анти-накрутка лидерборда/рейда). clean — некомпетитивно, берём с клиента.
+    const xp = computeUserXp(uid);
     user.pub = {
-      totalXp: Math.max(0, Math.round(Number(b.totalXp) || 0)),
-      level: Math.max(1, Math.round(Number(b.level) || 1)),
-      rank: String(b.rank || '').slice(0, 40),
-      at: new Date().toISOString(),
-      // недельный вклад для пати/рейда (мультиплеер)
-      week: {
-        ws: String(b.weekStart || '').slice(0, 10),
-        xp: Math.max(0, Math.round(Number(b.weekXp) || 0)),
-        quests: Math.max(0, Math.round(Number(b.weekQuests) || 0)),
-        clean: Math.max(0, Math.round(Number(b.cleanDays) || 0)),
-      },
+      totalXp: xp.total, level: xp.level, rank: xp.rank, at: new Date().toISOString(),
+      week: { ws: mondayStr(), xp: xp.weekXp, quests: xp.weekQuests, clean: Math.max(0, Math.round(Number(b.cleanDays) || 0)) },
     };
     user.leaderboardOptOut = !!b.optOut;
     saveUsers(users);
-    return sendJson(res, 200, { ok: true });
+    return sendJson(res, 200, { ok: true, totalXp: xp.total, level: xp.level });
   }
   // GET /api/leaderboard — рейтинг всех, кто опубликовал снапшот и не отписался
   if (u === '/api/leaderboard' && req.method === 'GET') {
