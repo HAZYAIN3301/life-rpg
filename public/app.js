@@ -100,6 +100,26 @@ const ACHIEVEMENTS = [
   { id: 'full_spectrum', icon: '🌈', title: 'Полный спектр', desc: '5+ разных сфер за один день', ttl: 'Многогранный', test: () => Object.values(eventsByDay()).some((evs) => new Set(evs.map((e) => e.skillId).filter(Boolean)).size >= 5) },
   { id: 'marathon_day', icon: '🏔️', title: 'Марафон дня', desc: '4+ часа активности за день', ttl: 'Марафонец', test: () => Object.values(eventsByDay()).some((evs) => evs.reduce((s, e) => s + (e.min || 0), 0) >= 240) },
   { id: 'balanced', icon: '⚖️', title: 'Десятиборец', desc: 'Индекс баланса ≥ 70', ttl: 'Десятиборец', test: () => balanceIndex().index >= 70, prog: () => ({ cur: balanceIndex().index, target: 70 }) },
+  // #21 — больше достижений (2026-06-15): объём, уровни, навыки, цели, привычки, анти-привычки, коллекция, кастом
+  { id: 'quests_100', icon: '💯', title: 'Сотня квестов', desc: '100 выполненных квестов', ttl: 'Сотник', test: () => doneTasks().length >= 100, prog: () => ({ cur: doneTasks().length, target: 100 }) },
+  { id: 'quests_250', icon: '🗡️', title: 'Легион дел', desc: '250 выполненных квестов', ttl: 'Легионер', test: () => doneTasks().length >= 250, prog: () => ({ cur: doneTasks().length, target: 250 }) },
+  { id: 'xp_5000', icon: '🔱', title: 'Пять тысяч', desc: 'Накопи 5000 XP', ttl: 'Архонт', test: () => overallXp() >= 5000, prog: () => ({ cur: overallXp(), target: 5000 }) },
+  { id: 'xp_25000', icon: '☄️', title: 'Титан опыта', desc: 'Накопи 25000 XP', ttl: 'Титан опыта', test: () => overallXp() >= 25000, prog: () => ({ cur: overallXp(), target: 25000 }) },
+  { id: 'streak_100', icon: '🌌', title: 'Сто дней подряд', desc: 'Серия 100 дней', ttl: 'Несгибаемый', test: () => currentStreak() >= 100, prog: () => ({ cur: currentStreak(), target: 100 }) },
+  { id: 'level_20', icon: '🛡️', title: 'Двадцатый', desc: 'Достигни 20 уровня', ttl: 'Архимаг', test: () => charLevel() >= 20, prog: () => ({ cur: charLevel(), target: 20 }) },
+  { id: 'level_30', icon: '👑', title: 'Тридцатый', desc: 'Достигни 30 уровня', ttl: 'Владыка пути', test: () => charLevel() >= 30, prog: () => ({ cur: charLevel(), target: 30 }) },
+  { id: 'skill_master', icon: '🎓', title: 'Мастер сферы', desc: 'Любая сфера до ур.10', ttl: 'Виртуоз', test: () => State.settings.skills.some((s) => skillLevelOf(s.id) >= 10) },
+  { id: 'skills_all5', icon: '🧭', title: 'Эрудит', desc: 'Все сферы до ур.5', ttl: 'Эрудит', test: () => State.settings.skills.length > 0 && State.settings.skills.every((s) => skillLevelOf(s.id) >= 5) },
+  { id: 'goals_10', icon: '🏹', title: 'Десять целей', desc: 'Заверши 10 целей', ttl: 'Достигатор', test: () => State.goals.filter((g) => g.completedAt).length >= 10, prog: () => ({ cur: State.goals.filter((g) => g.completedAt).length, target: 10 }) },
+  { id: 'mission_set', icon: '⭐', title: 'Полярная звезда', desc: 'Задай миссию (★ дело жизни)', ttl: 'Звездочёт', test: () => State.goals.some((g) => g.type === 'mission') },
+  { id: 'habits_100', icon: '🔁', title: 'Сила привычки', desc: '100 отметок привычек', ttl: 'Машина привычек', test: () => Object.values(State.habitlog).reduce((s, m) => s + Object.keys(m).length, 0) >= 100, prog: () => ({ cur: Object.values(State.habitlog).reduce((s, m) => s + Object.keys(m).length, 0), target: 100 }) },
+  { id: 'balanced_90', icon: '☯️', title: 'Идеальный баланс', desc: 'Индекс баланса ≥ 90', ttl: 'Гармония', test: () => balanceIndex().index >= 90, prog: () => ({ cur: balanceIndex().index, target: 90 }) },
+  { id: 'clean_7', icon: '🕊️', title: 'Чистая неделя', desc: '7 дней без срыва (анти-привычка)', ttl: 'Освобождённый', test: () => (State.antihabits || []).some((a) => antiCleanDays(a) >= 7), prog: () => ({ cur: Math.max(0, ...(State.antihabits || []).map((a) => antiCleanDays(a)), 0), target: 7 }) },
+  { id: 'clean_30', icon: '🦋', title: 'Чистый месяц', desc: '30 дней без срыва', ttl: 'Перерождённый', test: () => (State.antihabits || []).some((a) => antiCleanDays(a) >= 30), prog: () => ({ cur: Math.max(0, ...(State.antihabits || []).map((a) => antiCleanDays(a)), 0), target: 30 }) },
+  { id: 'first_note', icon: '📝', title: 'Первая мысль', desc: 'Сохрани первую заметку', ttl: 'Хроникёр', test: () => (State.inbox || []).length >= 1 },
+  { id: 'collector_5', icon: '🎨', title: 'Коллекционер', desc: 'Собери 5 косметики', ttl: 'Коллекционер', test: () => COSMETICS.filter((c) => ownsCosmetic(c.id)).length >= 5, prog: () => ({ cur: COSMETICS.filter((c) => ownsCosmetic(c.id)).length, target: 5 }) },
+  { id: 'legendary_drop', icon: '🌟', title: 'Легендарная удача', desc: 'Получи легендарную косметику', ttl: 'Везунчик', test: () => COSMETICS.some((c) => c.rarity === 'legendary' && ownsCosmetic(c.id)) },
+  { id: 'avatar_custom', icon: '🪄', title: 'Свой облик', desc: 'Настрой аватар под себя', ttl: 'Неповторимый', test: () => JSON.stringify(avCfg()) !== JSON.stringify(defaultAvatar()) },
 ];
 
 // Каталог предустановленных наград — «дроп с босса уже выбран» (fb: награды должны быть предустановлены)
