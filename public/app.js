@@ -527,11 +527,14 @@ function openCategoryPicker(taskId) {
   if (document.getElementById('cat-pop')) return;
   const t = questById(taskId); if (!t) return;
   const ids = taskSkills(t);
-  const opt = (s, sub) => {
+  const opt = (s, depth) => {
     const checked = ids.includes(s.id);
-    return `<label class="cat-opt ${sub ? 'is-sub' : ''}"><input type="checkbox" data-action="toggle-cat" data-id="${t.id}" data-skill="${s.id}" ${checked ? 'checked' : ''}/><span class="t-cat" style="--c:${esc(s.color)}">${esc(s.name)}</span></label>`;
+    return `<label class="cat-opt ${depth ? 'is-sub' : ''}" style="padding-left:${10 + depth * 18}px"><input type="checkbox" data-action="toggle-cat" data-id="${t.id}" data-skill="${s.id}" ${checked ? 'checked' : ''}/><span class="t-cat" style="--c:${esc(s.color)}">${depth ? '↳ ' : ''}${esc(s.name)}</span></label>`;
   };
-  const list = topSkills().map((p) => opt(p, false) + childSkills(p.id).map((c) => opt(c, true)).join('')).join('');
+  // Полная иерархия любой глубины (Учёба › Школа › Математика) — фидбек #19
+  let list = '';
+  const walk = (parentId, depth) => { if (depth > 6) return; for (const s of State.settings.skills.filter((x) => (x.parentId || null) === parentId)) { list += opt(s, depth); walk(s.id, depth + 1); } };
+  walk(null, 0);
   const ov = document.createElement('div'); ov.id = 'cat-pop'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="desire-box"><button class="modal-x" data-action="close-cats">✕</button>
     <h3>Категории квеста</h3>
@@ -1080,17 +1083,25 @@ function energyMeta() {
 //  neutral/обычный      → база: устойчивая «золотая середина» десятиборья.
 const DESIRE_ENERGY = { forced: 1.5, hyped: 0.8 };
 // Применяем энергию при выполнении квеста/привычки (только трата; восстановление — пассивное по времени).
+// Восстановительные дела (сон/отдых/медитация/прогулка/растяжка/баня…) — АКТИВНО дают энергию (фидбек #14).
+// Без \b — он в JS работает только для ASCII и ломает матч кириллицы. Стемы достаточно различимы.
+const ENERGY_RESTORE_RE = /(сон|поспат|выспат|вздремн|отдых|отдохн|релакс|медитац|дыхани|прогул|растяж|разминк|мобилк|баня|сауна|массаж|ванна|nap|sleep|relax|medit|walk|stretch|yoga|йога)/i;
+function isRestActivity(it) { return ENERGY_RESTORE_RE.test(normRu(it.title || '')); }
 function applyEnergy(it, desire) {
   const e = ensureEnergy(), min = Number(it.estimateMin) || 0;
-  const w = ENERGY.cost[it.difficulty] ?? ENERGY.cost.normal;
-  const m = DESIRE_ENERGY[desire] || 1;
-  const delta = -Math.min(ENERGY.costCap, Math.round(w * Math.max(0.5, min / 30) * m));
-  if (delta < 0) {
+  let delta;
+  if (isRestActivity(it)) {
+    // отдых пополняет энергию (мягко, по длительности) — даёт агентность поверх пассивного восстановления
+    delta = Math.min(ENERGY.costCap, Math.max(6, Math.round(min / 30 * 12)));
+    e.cur = Math.min(e.max, e.cur + delta);
+  } else {
+    const w = ENERGY.cost[it.difficulty] ?? ENERGY.cost.normal, m = DESIRE_ENERGY[desire] || 1;
+    delta = -Math.min(ENERGY.costCap, Math.round(w * Math.max(0.5, min / 30) * m));
     e.loadToday += -delta;
     e.cur = Math.max(0, e.cur + delta);
     if (e.cur <= 0) e.hitZero = true;
-    Store.save('settings', State.settings);
   }
+  Store.save('settings', State.settings);
   return delta;
 }
 function todayActivityCount() {
@@ -2016,7 +2027,7 @@ function renderToday() {
   const energyCard = `<div class="card energy-card" title="Энергия — индикатор нагрузки за день. Сложные квесты тратят. Восстановление ПАССИВНОЕ: идёт само по реальному времени (паузы, вечер, сон ночью) — логировать отдых не нужно. Не блокирует ничего, на XP не влияет. Ёмкость растёт, когда чередуешь нагрузку и восстановление (как в тренировках). Это оценка по задачам — точнее будет позже через часы.">
       <div class="en-head"><span class="en-ic">${eM.icon}</span><b>Энергия</b><span class="en-num" style="color:${eM.color}">${en.cur} / ${en.max}</span><span class="en-text muted">· ${eM.text}</span></div>
       <div class="en-bar"><span style="width:${eP}%;background:${eM.color}"></span></div>
-      <p class="en-note muted">Восстанавливается сама со временем · ≈ оценка по задачам, точнее с Apple Watch / Garmin (позже)</p></div>`;
+      <p class="en-note muted">Восстанавливается сама со временем + дела вроде сна / прогулки / растяжки / медитации <b>пополняют</b> её · ≈ оценка по задачам, точнее с Apple Watch / Garmin (позже)</p></div>`;
   const lowEnergyNudge = (eP < 25 && doneCount > 0) ? `<div class="card nudge-card en-low"><span class="nudge-boost">🪫 Много нагрузки сегодня. Отдых ценнее форсажа — энергия восстановится сама за паузами и ночью, а ёмкость вырастет.</span></div>` : '';
 
   const chestsAvail = lootChestsAvailable(), activeBoost = lootBoostPct(), hp = hypePct();
