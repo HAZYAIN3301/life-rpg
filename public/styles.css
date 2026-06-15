@@ -805,6 +805,32 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .rar-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
 .sound-toggle { display: flex; align-items: center; gap: 9px; font-size: 13.5px; line-height: 1.4; cursor: pointer; }
 .sound-toggle input { width: 17px; height: 17px; accent-color: var(--accent); flex: 0 0 auto; }
+/* Раздел «Привычки» (Атомные привычки) */
+.hsub { margin-bottom: 12px; }
+.hb-intro h3 { margin: 0 0 6px; }
+.hb-identity, .hb-field { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+.hb-identity input, .hb-field input { font: inherit; font-size: 13.5px; color: var(--text); }
+.hb-laws h4 { margin: 0 0 10px; }
+.hb-law { display: flex; gap: 11px; padding: 9px 0; border-top: 1px solid var(--line); }
+.hb-law:first-of-type { border-top: none; }
+.hb-lawn { flex: 0 0 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; background: var(--panel2); border: 1.5px solid var(--accent); color: var(--accent); }
+.hb-law.break .hb-lawn { border-color: #e0526a; color: #e0526a; }
+.hb-law b { font-size: 14px; }
+.hb-law ul { margin: 5px 0 0; padding-left: 18px; }
+.hb-law li { font-size: 12.5px; color: var(--muted); line-height: 1.5; margin-bottom: 3px; }
+.hb-ul { margin: 0; padding-left: 18px; } .hb-ul li { font-size: 13px; line-height: 1.55; margin-bottom: 5px; }
+.hb-list { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.hb-card { border-left: 3px solid var(--c, var(--accent)); }
+.hb-top { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.hb-loop { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.hb-loop-step { background: var(--panel2); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 12.5px; }
+.hb-loop-arr { color: var(--accent); font-weight: 700; }
+.hb-extra { padding: 8px 0; border-top: 1px solid var(--line); }
+.hb-extra:first-child { border-top: none; }
+.hb-extra b { font-size: 13.5px; } .hb-extra p { margin: 3px 0 0; font-size: 12.5px; line-height: 1.5; }
+.hb-nmt { font-size: 12px; margin-top: 12px; }
+.anti-row2 { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.anti-row2 .anti-main { flex: 1; min-width: 160px; }
 /* Оформление: тема + акцент */
 .theme-row { display: flex; align-items: center; gap: 12px; margin: 8px 0; flex-wrap: wrap; }
 .theme-lbl { font-size: 13px; color: var(--muted); width: 64px; flex: 0 0 auto; }

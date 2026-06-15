@@ -419,7 +419,7 @@ const State = {
   chatLog: [], _chatBusy: false,
   leaderboard: null, _lbLoading: false,
   adminUsers: null, _adminUsersLoading: false,
-  timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null, calMode: 'day',
+  timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null, calMode: 'day', habitsTab: 'build',
   aveCat: 'hair', // активная категория в редакторе аватара
   treeEdit: false, treeSelNode: null, // редактор дерева навыков
   settingsCollapsed: {}, // свёрнутые столбы в редакторе сфер
@@ -1666,6 +1666,116 @@ function antiHabitsCard() {
 }
 
 // ============================================================
+//  📚 База знаний: «Атомные привычки» Джеймса Клира (2018) → раздел «Привычки»
+// ============================================================
+const ATOMIC = {
+  intro: 'Суть «Атомных привычек» Джеймса Клира: крошечные изменения дают огромный результат. Ты не поднимаешься до уровня целей — ты падаешь до уровня своих систем. Каждое выполнение привычки — голос за того, кем ты хочешь стать.',
+  identity: {
+    title: '🪪 Идентичность важнее целей',
+    points: [
+      'Цель — не «прочитать книгу», а «стать читателем». Поведение следует за идентичностью.',
+      'Каждое выполнение — голос за «я такой человек». Нужно не большинство голосов, а просто перевес в сторону нужного тебя.',
+      'Спроси: «Кем хочу стать?» → «Что бы делал такой человек?» → делай это.',
+    ],
+  },
+  loop: ['Сигнал — замечаешь', 'Желание — хочешь', 'Действие — делаешь', 'Награда — получаешь'],
+  laws: [
+    { n: 1, law: 'Сделай очевидным', cue: 'Сигнал', tactics: [
+      'Намерение-реализация: «Я сделаю [что] в [когда] в [где]».',
+      'Связка привычек: «После [текущая привычка] я [новая]».',
+      'Дизайн среды: помести сигнал на видное место (книга на подушке, вода на столе).',
+    ] },
+    { n: 2, law: 'Сделай привлекательным', cue: 'Желание', tactics: [
+      'Соблазн-бандл: «После [нужное] делаю [приятное]».',
+      'Окружай себя теми, для кого нужное поведение — норма.',
+      'Рефрейм: не «надо», а «я выбираю / я могу».',
+    ] },
+    { n: 3, law: 'Сделай простым', cue: 'Действие', tactics: [
+      'Правило 2 минут: ужми до <2 мин («читать» → «одна страница»). Сначала просто появись.',
+      'Убирай трение: подготовь среду заранее (форма у двери).',
+      'Закон наименьшего усилия — побеждает простота, а не сила воли.',
+    ] },
+    { n: 4, law: 'Сделай приятным', cue: 'Награда', tactics: [
+      'Немедленная награда — сделай так, чтобы было приятно сразу.',
+      'Трекер привычек: «не разрывай цепочку» (это и есть стрик 🔥 в Gojo).',
+      'Никогда не пропускай дважды: один пропуск — случайность, два — начало новой привычки.',
+    ] },
+  ],
+  inversions: [
+    { n: 1, law: 'Сделай незаметным', tactics: ['Убери сигнал из среды: телефон в другую комнату, удали приложение/ярлык.'] },
+    { n: 2, law: 'Сделай непривлекательным', tactics: ['Переосмысли: подчеркни, что теряешь. Свяжи привычку с её настоящей ценой.'] },
+    { n: 3, law: 'Сделай трудным', tactics: ['Увеличь трение: блокировщики, лимиты, «устройство-обязательство».'] },
+    { n: 4, law: 'Сделай неприятным', tactics: ['Партнёр-подотчётность; сделай цену срыва видимой и немедленной — но без стыда, срыв это данные.'] },
+  ],
+  extra: [
+    { t: 'Плато скрытого потенциала', d: 'Результаты отстают от усилий — «долина разочарования», где большинство бросает. Лёд тает не на 25-м градусе, а после долгого нагрева. Продолжай.' },
+    { t: 'Правило Златовласки', d: 'Мотивация держится на задачах ровно по краю возможностей — не слишком легко, не слишком трудно.' },
+    { t: 'Системы важнее целей', d: 'Цели задают направление, но прогресс даёт система. Влюбись в процесс, а не только в результат.' },
+  ],
+};
+function renderHabitsView() {
+  const tab = State.habitsTab || 'build';
+  const tabs = `<div class="navsub hsub">
+    <button class="navsubtab ${tab === 'build' ? 'active' : ''}" data-action="habits-tab" data-tab="build">🌱 Привычки</button>
+    <button class="navsubtab ${tab === 'break' ? 'active' : ''}" data-action="habits-tab" data-tab="break">🛡 Срывы</button>
+    <button class="navsubtab ${tab === 'method' ? 'active' : ''}" data-action="habits-tab" data-tab="method">📖 Метод</button></div>`;
+  const body = tab === 'method' ? atomicMethodHTML() : tab === 'break' ? habitsBreakHTML() : habitsBuildHTML();
+  return tabs + body;
+}
+function lawsBlock(title, laws, kind) {
+  return `<div class="card hb-laws"><h4>${title}</h4>${laws.map((l) => `<div class="hb-law ${kind}"><span class="hb-lawn">${l.n}</span><div><b>${esc(l.law)}</b>${l.cue ? ` <span class="muted">· ${esc(l.cue)}</span>` : ''}<ul>${l.tactics.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div></div>`).join('')}</div>`;
+}
+function habitsBuildHTML() {
+  const habits = State.habits.filter((h) => !h.archived);
+  const idg = (State.settings && State.settings.identityGoal) || '';
+  const cards = habits.length ? habits.map((h) => {
+    const a = h.atomic || {}, sk = skillById(h.skillId), st = habitStreak(h);
+    return `<div class="card hb-card" style="--c:${esc(sk.color)}">
+      <div class="hb-top"><b>${esc(h.title)}</b><span class="muted">${esc(sk.name)} · ${fmtDur(h.estimateMin)}${st ? ` · 🔥${st}` : ''}</span></div>
+      <label class="hb-field">🪪 Идентичность <input data-action="habit-atomic" data-id="${h.id}" data-field="identity" value="${esc(a.identity || '')}" placeholder="Я — человек, который…" /></label>
+      <label class="hb-field">📍 Сигнал / связка <input data-action="habit-atomic" data-id="${h.id}" data-field="cue" value="${esc(a.cue || '')}" placeholder="После [привычки] я…" /></label>
+      <label class="hb-field">⏱ Версия 2 минут <input data-action="habit-atomic" data-id="${h.id}" data-field="twoMin" value="${esc(a.twoMin || '')}" placeholder="Минимум, чтобы просто начать" /></label>
+    </div>`;
+  }).join('') : '<p class="muted">Пока нет привычек — добавь и спроектируй по 4 законам.</p>';
+  return `<div class="card hb-intro"><h3>🌱 Строим привычки</h3>
+      <p class="muted">${esc(ATOMIC.intro)}</p>
+      <label class="hb-identity">Кем ты хочешь стать? <input id="identity-goal" data-action="save-identity" value="${esc(idg)}" placeholder="Напр.: дисциплинированный учёный в отличной форме" /></label></div>
+    ${lawsBlock('4 закона создания привычки', ATOMIC.laws, 'build')}
+    <div class="hb-list">${cards}</div>
+    <button class="btn ghost" data-action="add-habit" style="margin-top:8px">+ Новая привычка</button>
+    <p class="muted hb-nmt">⚠️ Никогда не пропускай дважды: один пропуск — случайность, два — начало новой привычки. Отмечать привычки — на «Сегодня».</p>`;
+}
+function habitsBreakHTML() {
+  const list = State.antihabits || [];
+  const rows = list.length ? list.map((a) => {
+    const clean = antiCleanDays(a), best = antiBestStreak(a), slippedToday = antiLastSlip(a) === todayStr();
+    return `<div class="card anti-row2">
+      <div class="anti-main"><span class="anti-title">${esc(a.title)}</span>
+        <span class="anti-stat">🟢 <b>${clean}</b> ${plural(clean, 'день', 'дня', 'дней')} чисто${best > clean ? ` · рекорд ${best}` : ''}${a.approach ? ` · ${esc(a.approach)}` : ''}</span></div>
+      ${slippedToday ? `<button class="btn ghost sm" data-action="anti-unslip" data-id="${a.id}">сегодня был срыв · отменить</button>` : `<button class="btn ghost sm" data-action="anti-slip" data-id="${a.id}">был срыв?</button>`}
+      <button class="del" data-action="delete-antihabit" data-id="${a.id}" title="Удалить">✕</button></div>`;
+  }).join('') : '<p class="muted">Пока пусто — добавь, с чем хочешь справиться.</p>';
+  return `<div class="card hb-intro"><h3>🛡 Свобода от привычек</h3>
+      <p class="muted">Плохую привычку (зависимость) ломают <b>инверсией</b> 4 законов. Срыв — это данные, не провал. Без стыда.</p>
+      <form id="add-antihabit" class="add-row">
+        <input name="title" placeholder="Напр. без бессмысленного скролла" autocomplete="off" required />
+        <select name="approach" title="Подход"><option value="">— подход —</option><option value="доверие">Доверие к себе</option><option value="недоверие">Недоверие (блоки/лимиты)</option><option value="контекст">Смена среды</option></select>
+        <button type="submit">+ Добавить</button></form></div>
+    <div class="hb-list">${rows}</div>
+    ${lawsBlock('4 закона разрушения привычки (инверсия)', ATOMIC.inversions, 'break')}
+    <p class="muted hb-nmt">Срыв — не провал, а сигнал. Заметь триггер, убери его из среды — и иди дальше. Завтра новый чистый день 🌱</p>`;
+}
+function atomicMethodHTML() {
+  return `<div class="card"><h3>📖 Атомные привычки — метод</h3><p class="muted">${esc(ATOMIC.intro)}</p></div>
+    <div class="card"><h4>${esc(ATOMIC.identity.title)}</h4><ul class="hb-ul">${ATOMIC.identity.points.map((p) => `<li>${esc(p)}</li>`).join('')}</ul></div>
+    <div class="card"><h4>🔄 Петля привычки</h4><div class="hb-loop">${ATOMIC.loop.map((s, i) => `${i ? '<span class="hb-loop-arr">→</span>' : ''}<span class="hb-loop-step">${esc(s)}</span>`).join('')}</div></div>
+    ${lawsBlock('🌱 Создать привычку — 4 закона', ATOMIC.laws, 'build')}
+    ${lawsBlock('🛡 Сломать привычку — инверсия 4 законов', ATOMIC.inversions, 'break')}
+    <div class="card"><h4>Ещё принципы</h4>${ATOMIC.extra.map((e) => `<div class="hb-extra"><b>${esc(e.t)}</b><p class="muted">${esc(e.d)}</p></div>`).join('')}</div>
+    <p class="muted" style="font-size:11.5px">Источник: James Clear, «Atomic Habits» (2018). Концепции адаптированы для Gojo.</p>`;
+}
+
+// ============================================================
 //  ИИ-ассистент (BYOK) — твой ключ Claude/OpenAI, сервер проксирует. Разбор недели «правдой о времени».
 // ============================================================
 // Реестр ИИ-провайдеров для UI. free=true → ключ берётся бесплатно без карты/подписки.
@@ -1911,6 +2021,7 @@ const GOJO_MANUAL = `Ты — встроенный помощник прилож
 • Сегодня — квесты на день (разовые дела), сложность 🌱лёгкая/⚔️обычная/🔥сложная. ▶ у квеста = фокус-таймер (помодоро + плавающее окно ↗ поверх всех окон). Галочка = XP + золото. Привычки — повторяющиеся дела со стриком. Энергия — индикатор дневной нагрузки, восстанавливается ПАССИВНО по времени (логировать отдых не нужно), ни на что не влияет, честная «оценка по задачам». Хайп — выполни 🔥сложный квест → временный бонус +15% XP за стак (до +45%, на 2 ч); «через силу» тратит больше энергии, «в кураже» меньше.
 • Заметки — быстрый захват: текст / 🎤голос / 🎥видео, хранятся как в приложении «Заметки». Заметку можно превратить в квест (кнопка → Квест).
 • Календарь — Apple-стиль, неделя/месяц, перетаскивание, напоминалки.
+• Привычки (раздел 🔁) — по методу «Атомные привычки» Дж. Клира. Под-вкладки: Привычки (идентичность + 4 закона: очевидно/привлекательно/просто/приятно; поля у привычки — идентичность, сигнал-связка «После X я…», версия 2 минут), Срывы (анти-привычки/зависимости через инверсию 4 законов, «чистые дни» без стыда, никогда не пропускай дважды), Метод (справочник по методу). Отмечать привычки — на «Сегодня».
 • Персонаж — кастом-аватар (лицо/причёска/цвета), атрибуты (Сила/Интеллект/Дух…) растут из сфер → радар-билд и архетип; силуэт телосложения меняется от тренировок и веса.
 • Цели — горизонты: ★Миссия (полярная звезда, зачем всё) → видение 10–20 лет → путь 3–5 лет → долго / средне / кратко → повтор. Привязка к большей цели (parent) рисует цепочку «↑ зачем». Цель = чек-лист ИЛИ числовая (текущее→цель, лог рекордов, режим «держать» для KPI вроде жима/оценок). Статусы: активна / ⏳ ждёт события / ⏸ пауза.
 • Навыки — у каждой сферы дерево; за уровни навыка копятся очки, открывай узлы (пассивный бонус к XP сферы); «✏️ Редактор» — конструктор узлов под себя.
@@ -3085,11 +3196,12 @@ function renderLeaderboard() {
     </div>`;
 }
 
-const VIEWS = { today: renderToday, notes: renderNotes, calendar: renderCalendarView, character: renderCharacter, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, leaderboard: renderLeaderboard, settings: renderSettings };
+const VIEWS = { today: renderToday, notes: renderNotes, calendar: renderCalendarView, habits: renderHabitsView, character: renderCharacter, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, leaderboard: renderLeaderboard, settings: renderSettings };
 // Разгрузка дизайна: 11 вкладок → 5 разделов с под-вкладками. Прогрессивное раскрытие через гейт уровня.
 const SECTIONS = [
   { id: 'today', icon: '🎯', label: 'Сегодня', gate: 0, views: [{ view: 'today', label: 'День' }, { view: 'notes', label: 'Заметки' }] },
   { id: 'plan', icon: '🗓', label: 'План', gate: 0, views: [{ view: 'calendar', label: 'Календарь' }, { view: 'goals', label: 'Цели' }] },
+  { id: 'habits', icon: '🔁', label: 'Привычки', gate: 0, views: [{ view: 'habits', label: 'Привычки' }] },
   { id: 'rewards', icon: '🎁', label: 'Награды', gate: 0, views: [{ view: 'rewards', label: 'Награды' }] },
   { id: 'hero', icon: '🧍', label: 'Герой', gate: 3, views: [{ view: 'character', label: 'Персонаж' }, { view: 'tree', label: 'Навыки' }, { view: 'stats', label: 'Прогресс' }] },
   { id: 'tribe', icon: '🤝', label: 'Племя', gate: 3, views: [{ view: 'leaderboard', label: 'Рейтинг' }] },
@@ -3590,6 +3702,7 @@ function onClick(e) {
   } else if (action === 'helper-close') { const m = document.getElementById('helper-modal'); if (m) m.remove();
   } else if (action === 'helper-to-settings') { const m = document.getElementById('helper-modal'); if (m) m.remove(); State.view = 'settings'; render();
   } else if (action === 'chat-suggest') { sendChat(el.dataset.q);
+  } else if (action === 'habits-tab') { State.habitsTab = el.dataset.tab; render();
   } else if (action === 'apply-cat') {
     const form = el.closest('.card').querySelector('#add-task'); const sel = form && form.querySelector('select[name="skillId"]');
     if (sel) { sel.value = el.dataset.skill; const ti = form.querySelector('input[name="title"]'); if (ti) ti.focus(); }
@@ -3855,6 +3968,8 @@ function onChange(e) {
   const a = el.dataset.action;
   if (a === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
   if (a === 'set-ai-pref') { State.settings.aiPref = el.value; Store.save('settings', State.settings); toast('🤖 ИИ по умолчанию: ' + aiProviderLabel(el.value)); return; }
+  if (a === 'habit-atomic') { const h = habitById(el.dataset.id); if (h) { h.atomic = h.atomic || {}; h.atomic[el.dataset.field] = el.value.slice(0, 200); Store.save('habits', State.habits); } return; }
+  if (a === 'save-identity') { State.settings.identityGoal = el.value.slice(0, 200); Store.save('settings', State.settings); return; }
   if (a === 'toggle-cat') {
     const t = questById(el.dataset.id); if (!t) return;
     let ids = taskSkills(t).slice(); const sid = el.dataset.skill;
