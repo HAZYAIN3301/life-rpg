@@ -489,6 +489,7 @@ const GRIT_BONUS = 0.10; // бонус за выполнение «через с
 // Завершить квест с учётом «желания» (desire): null | 'forced' | 'neutral' | 'hyped'
 function completeTask(t, desire) {
   if (State.timer && State.timer.taskId === t.id) stopFocus(true, true);
+  const lvlBefore = charLevel();
   t.done = true; t.completedAt = new Date().toISOString(); t.desire = desire || null;
   let xp = itemXp(t);
   if (desire === 'forced') xp = Math.round(xp * (1 + GRIT_BONUS));
@@ -500,7 +501,9 @@ function completeTask(t, desire) {
   toast(msg);
   if (desire === 'hyped') { const h = activateHype(); toast(`⚔️ Хайп ×${h.stacks} · +${hypePct()}% XP на ${hypeMinLeft()} мин — ты захотел трудное!`); }
   track('complete:quest');
-  Store.save('tasks', State.tasks); checkAchievements(); render(); publishLeaderboard();
+  Store.save('tasks', State.tasks);
+  if (charLevel() > lvlBefore) sfx('levelup'); else sfx('complete'); // #23 звук: левелап важнее завершения
+  checkAchievements(); render(); publishLeaderboard();
 }
 // Поп-ап выбора желания при завершении сложного квеста
 function openDesirePicker(taskId) {
@@ -954,7 +957,7 @@ function nodeUnlockable(id, node) {
 function achUnlocked(a) { try { return !!a.test(); } catch { return false; } }
 function checkAchievements(silent) {
   let changed = false;
-  for (const a of ACHIEVEMENTS) if (achUnlocked(a) && !State.achievements[a.id]) { State.achievements[a.id] = new Date().toISOString(); changed = true; if (!silent) toast(`🏆 Достижение: ${a.title}`); }
+  for (const a of ACHIEVEMENTS) if (achUnlocked(a) && !State.achievements[a.id]) { State.achievements[a.id] = new Date().toISOString(); changed = true; if (!silent) { toast(`🏆 Достижение: ${a.title}`); sfx('achievement'); } }
   if (changed) Store.save('achievements', State.achievements);
 }
 
@@ -1156,6 +1159,32 @@ function bell(strong) {
     o.connect(g).connect(audioCtx.destination); o.start(t0); o.stop(t0 + 1.7);
   });
 }
+// ---- SFX (#23): синтезированные звуки интерфейса через Web Audio, без файлов ----
+function sfxOn() { return !State.settings || State.settings.sound !== false; }
+function sfxTone(freq, t0, dur, opts) {
+  if (!audioCtx) return; opts = opts || {};
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = opts.type || 'sine'; o.frequency.setValueAtTime(freq, t0);
+  if (opts.slideTo) o.frequency.exponentialRampToValueAtTime(opts.slideTo, t0 + dur);
+  const peak = opts.gain || 0.15;
+  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(peak, t0 + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g).connect(audioCtx.destination); o.start(t0); o.stop(t0 + dur + 0.03);
+}
+function sfx(name, rarity) {
+  if (!sfxOn()) return; ensureAudio(); if (!audioCtx) return;
+  const t = audioCtx.currentTime;
+  if (name === 'complete') { [[660, 0], [880, 0.07], [1320, 0.15]].forEach(([f, d]) => sfxTone(f, t + d, 0.18, { type: 'triangle', gain: 0.13 })); }
+  else if (name === 'levelup') { [523, 659, 784, 1046, 1318].forEach((f, i) => sfxTone(f, t + i * 0.085, 0.3, { type: 'sawtooth', gain: 0.11 })); sfxTone(1046, t + 0.45, 0.5, { type: 'sine', gain: 0.1 }); }
+  else if (name === 'coin') { sfxTone(988, t, 0.06, { type: 'square', gain: 0.09 }); sfxTone(1319, t + 0.055, 0.1, { type: 'square', gain: 0.09 }); }
+  else if (name === 'achievement') { [784, 1046, 1318, 1568].forEach((f, i) => sfxTone(f, t + i * 0.1, 0.32, { type: 'triangle', gain: 0.12 })); }
+  else if (name === 'loot') {
+    const map = { common: [523, 659], rare: [523, 659, 784], epic: [523, 659, 784, 1046], legendary: [392, 523, 659, 784, 1046, 1318] };
+    const notes = map[rarity] || map.common, leg = rarity === 'legendary';
+    notes.forEach((f, i) => sfxTone(f, t + i * 0.08, 0.36, { type: leg ? 'sawtooth' : 'triangle', gain: leg ? 0.15 : 0.11 }));
+    if (rarity === 'epic' || leg) sfxTone(notes[notes.length - 1] * 2, t + notes.length * 0.08, 0.55, { type: 'sine', gain: 0.1 });
+  }
+}
+function sfxLoot(rarity) { sfx('loot', rarity); } // вызывается из openChest (#20)
 function notify(title, body) {
   if (!focusCfg().notify || !('Notification' in window) || Notification.permission !== 'granted') return;
   try { new Notification(title, { body }); } catch {}
@@ -2893,6 +2922,9 @@ function renderSettings() {
     ${securityCard()}
     ${adminCard()}
     <div class="card"><h3>Название</h3><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></div>
+    <div class="card"><h3>🔊 Звук</h3>
+      <label class="sound-toggle"><input type="checkbox" data-action="toggle-sound" ${sfxOn() ? 'checked' : ''}/> Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)</label>
+      <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">▶ Проверить звук</button></div>
     <div class="card"><h3>Навыки / сферы жизни</h3><p class="muted" style="font-size:12px;margin:0 0 10px">Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">+ Добавить сферу</button></div>
     ${importCard()}
     <div class="card"><h3>🔁 Привычки (повторяющиеся)</h3><div id="habits-list">${habits || '<p class="muted">Пока нет привычек.</p>'}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">+ Добавить привычку</button></div>
@@ -3266,6 +3298,8 @@ function onClick(e) {
     const eq = ensureCosmetics(), ty = cosmeticType(el.dataset.id);
     eq[ty] = (eq[ty] === el.dataset.id) ? null : el.dataset.id; Store.save('settings', State.settings); render(); return;
   }
+  if (action === 'toggle-sound') { State.settings.sound = !!el.checked; Store.save('settings', State.settings); if (el.checked) sfx('complete'); return; }
+  if (action === 'sound-test') { ['complete', 'coin', 'achievement'].forEach((n, i) => setTimeout(() => sfx(n), i * 420)); setTimeout(() => sfx('loot', 'legendary'), 1300); return; }
   if (action === 'show-paywall') { showPaywall(el.dataset.feature); return; }
   if (action === 'close-paywall') { const p = document.getElementById('paywall'); if (p) p.remove(); return; }
   if (action === 'show-guide') { showGuide(); return; }
@@ -3438,7 +3472,7 @@ function onClick(e) {
     const r = State.rewards.find((x) => x.id === id); if (!r) return;
     if (goldBalance() < r.cost) { toast('Недостаточно золота'); return; }
     State.purchases.push({ id: 'p_' + uid(), rewardId: r.id, name: r.name, cost: r.cost, at: new Date().toISOString() });
-    Store.save('purchases', State.purchases); toast(`Куплено: ${r.name} 🎉`); checkAchievements(); render();
+    Store.save('purchases', State.purchases); toast(`Куплено: ${r.name} 🎉`); sfx('coin'); checkAchievements(); render();
   } else if (action === 'delete-reward') {
     State.rewards = State.rewards.filter((x) => x.id !== id); Store.save('rewards', State.rewards); render();
 
