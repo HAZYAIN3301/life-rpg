@@ -3108,6 +3108,7 @@ function renderSettings() {
     <div class="card"><h3>🔊 Звук</h3>
       <label class="sound-toggle"><input type="checkbox" data-action="toggle-sound" ${sfxOn() ? 'checked' : ''}/> Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)</label>
       <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">▶ Проверить звук</button></div>
+    ${pwaCard()}
     <div class="card"><h3>🎨 Оформление</h3>
       <div class="theme-row"><span class="theme-lbl">Тема</span>
         <div class="theme-toggle">
@@ -3820,6 +3821,10 @@ function onClick(e) {
       } else toast(d.error === 'already_claimed' ? 'Уже забрано' : d.error === 'not_won' ? 'Босс ещё не повержен' : 'Не удалось');
     }).catch(() => toast('Сетевая ошибка'));
   } else if (action === 'raidwin-close') { const m = document.getElementById('raidwin'); if (m) m.remove();
+  } else if (action === 'install-app') { if (_deferredInstall) { _deferredInstall.prompt(); _deferredInstall.userChoice.finally(() => { _deferredInstall = null; render(); }); }
+  } else if (action === 'push-enable') { pushEnable();
+  } else if (action === 'push-disable') { pushDisable();
+  } else if (action === 'push-test') { pushTest();
   } else if (action === 'apply-cat') {
     const form = el.closest('.card').querySelector('#add-task'); const sel = form && form.querySelector('select[name="skillId"]');
     if (sel) { sel.value = el.dataset.skill; const ti = form.querySelector('input[name="title"]'); if (ti) ti.focus(); }
@@ -4217,7 +4222,58 @@ function toggleReminders() {
 }
 
 // Точка входа — проверяем сессию, потом грузим нужный экран
+// ---- PWA-карточка в Настройках: установка + push-уведомления ----
+function urlB64ToUint8(b64) { const pad = '='.repeat((4 - b64.length % 4) % 4); const s = (b64 + pad).replace(/-/g, '+').replace(/_/g, '/'); const raw = atob(s); const arr = new Uint8Array(raw.length); for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i); return arr; }
+function ensurePushState() {
+  if (State.pushOn !== undefined) return;
+  State.pushOn = false;
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+  navigator.serviceWorker.ready.then((reg) => reg.pushManager.getSubscription()).then((sub) => { const on = !!sub; if (on !== State.pushOn) { State.pushOn = on; if (State.view === 'settings') render(); } }).catch(() => {});
+}
+function pwaCard() {
+  ensurePushState();
+  const installed = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+  const canPush = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  const install = installed ? '<span class="muted">✓ Уже установлено как приложение</span>'
+    : (_deferredInstall ? '<button class="btn" data-action="install-app">📲 Установить приложение</button>'
+      : '<span class="muted" style="font-size:12px">Меню браузера → «Установить приложение» / «На экран Домой»</span>');
+  const push = !canPush ? '<p class="muted" style="font-size:11.5px;margin:10px 0 0">Уведомления недоступны в этом браузере.</p>'
+    : (State.pushOn
+      ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-disable">🔕 Выключить уведомления</button><button class="btn ghost sm" data-action="push-test">Проверить</button><span class="muted" style="font-size:12px">✓ включены</span></div>`
+      : `<div class="pwa-row" style="margin-top:10px"><button class="btn" data-action="push-enable">🔔 Включить уведомления</button><span class="muted" style="font-size:12px">позову вернуться — тепло, без вины</span></div>`);
+  return `<div class="card"><h3>📲 Приложение</h3>
+    <p class="muted" style="font-size:12.5px;margin:0 0 10px">Установи Gojo как приложение: иконка на телефоне, работает офлайн, уведомления мягко зовут вернуться (чинит «триггер-дыру»).</p>
+    <div class="pwa-row">${install}</div>${push}</div>`;
+}
+async function pushEnable() {
+  try {
+    if (Notification.permission !== 'granted') { const p = await Notification.requestPermission(); if (p !== 'granted') { toast('Разреши уведомления в браузере'); return; } }
+    const reg = await navigator.serviceWorker.ready;
+    const key = (await (await fetch('/api/push/vapid')).json()).key;
+    const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8(key) });
+    const r = await fetch('/api/push/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subscription: sub.toJSON() }) });
+    if (!r.ok) throw 0;
+    State.pushOn = true; toast('🔔 Уведомления включены'); render();
+  } catch { toast('Не удалось включить уведомления'); }
+}
+async function pushDisable() {
+  try { const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); if (sub) await sub.unsubscribe(); } catch {}
+  try { await fetch('/api/push/unsubscribe', { method: 'POST' }); } catch {}
+  State.pushOn = false; toast('🔕 Уведомления выключены'); render();
+}
+async function pushTest() {
+  try { const r = await (await fetch('/api/push/test', { method: 'POST' })).json(); toast(r.status >= 200 && r.status < 300 ? '✓ Отправлено — жди уведомление' : `Не доставлено (${r.status || r.error || 'ошибка'})`); }
+  catch { toast('Сетевая ошибка'); }
+}
+// PWA: сервис-воркер (офлайн + push) + перехват install-промпта
+let _deferredInstall = null;
+function initPWA() {
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); _deferredInstall = e; if (State.view === 'settings') render(); });
+  window.addEventListener('appinstalled', () => { _deferredInstall = null; toast('📲 Gojo установлен!'); });
+}
 async function init() {
+  initPWA();
   document.addEventListener('submit', onSubmit);
   document.addEventListener('click', onClick);
   document.addEventListener('change', onChange);

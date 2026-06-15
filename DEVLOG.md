@@ -407,6 +407,25 @@
 
 **Тест в превью:** пикер показывает внука (ТестМатематика), 8 опций; isRest: прогулка/сон/растяжка/медитация→true, монтаж/учёба→false; отдых +12🔋 (поднял), работа −16🔋, упирается в max; 0 ошибок.
 
+## Сессия 2026-06-15 — PWA: установка + офлайн + Web Push (Opus 4.8)
+
+Главный анлок удержания (#10 «нужно приложение» + #11 «триггер-дыра»). Gojo стал устанавливаемым PWA с офлайн-режимом и Web Push (зовёт вернуться — тепло, без вины).
+
+### PWA-ядро
+- `public/sw.js` — сервис-воркер: **network-first** для статики (всегда свежий код онлайн, офлайн — из кэша app-shell), `/api/` мимо SW (живые данные), precache `['./','index.html','app.js','styles.css','manifest.webmanifest','icon.svg']`, `skipWaiting`+`clients.claim`. Обработчики `push` (showNotification) и `notificationclick` (фокус/открытие).
+- `initPWA()`: регистрация SW + перехват `beforeinstallprompt` (`_deferredInstall`) + `appinstalled`. Манифест уже был (standalone, иконка).
+- `pwaCard()` в Настройках: «📲 Установить приложение» (или подсказка по меню браузера) + управление уведомлениями.
+
+### Web Push (RFC8291 aes128gcm + VAPID RFC8292) — zero-dep, крипто проверено round-trip
+- **Перед портом** написал автономный тест `/tmp/webpush_test.js`: encrypt→decrypt восстанавливает payload (`roundTrip:true`), VAPID-JWT верифицируется (`jwtVerified:true`). Только после этого порт в `server.js`.
+- Сервер: `loadVapid` (EC P-256, persist `data/push-vapid.json`), `vapidJWT`, `encryptPush` (ECDH + HKDF + AES-128-GCM, заголовок salt/rs/idlen/as_public), `sendWebPush` (https POST на endpoint с VAPID-заголовком). Эндпоинты `/api/push/vapid` (GET pub-ключ), `/subscribe`, `/unsubscribe`, `/test`. Подписка хранится в `user.push`.
+- Клиент: `urlB64ToUint8`, `pushEnable` (permission → `pushManager.subscribe` с applicationServerKey → POST subscribe), `pushDisable`, `pushTest`, `ensurePushState` (отражает текущую подписку). Тумблер в pwaCard.
+
+**Тест в превью:** SW зарегистрирован и контролирует; `/api/push/vapid` → 65-байт ключ; subscribe→ok; test без подписки→400 no_subscription; send с фейк-ключом → крипто отрабатывает и **корректно** падает с «invalid public key» (фейковый p256dh, не баг — реальные ключи проверены round-trip); pwaCard рендерит install+push (оба состояния); 13 вкладок, 0 ошибок. `push-vapid.json` под гитигнором.
+
+**Честно:** доставку реального пуша подтвердишь на устройстве (включи уведомления в Настройках → «Проверить»). Крипто-слой проверен round-trip-декриптом — он RFC-корректен; неизвестна лишь приёмка push-сервисом (FCM/Mozilla), что проверяется только реальной подпиской. Нужен **персистентный том** на Railway для `data/` (иначе VAPID-ключ сбросится при редеплое и подписки протухнут).
+**Отложено (BACKLOG):** автоматические триггеры пушей (ежедневный «новый день», «пати ждёт вклад», «тебя обогнали») — нужен серверный планировщик + тихие часы/таймзоны; шеринг-карточки/«Твой год»; серверная валидация XP.
+
 ## Сессия 2026-06-15 — Рейды v2: кинематографичная победа + сезон + награда (Opus 4.8)
 
 Добиваем мультиплеер: тематический недельный босс, эпичная победа (#22), сезонная прогрессия, награда-сундук пати.

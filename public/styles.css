@@ -803,6 +803,7 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .cos-eq { position: absolute; top: 4px; right: 5px; font-size: 11px; color: var(--rc); font-weight: 800; }
 .title-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .rar-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.pwa-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .sound-toggle { display: flex; align-items: center; gap: 9px; font-size: 13.5px; line-height: 1.4; cursor: pointer; }
 .sound-toggle input { width: 17px; height: 17px; accent-color: var(--accent); flex: 0 0 auto; }
 /* Раздел «Привычки» (Атомные привычки) */

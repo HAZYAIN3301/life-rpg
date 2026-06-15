@@ -127,6 +127,57 @@ function refreshRaid(party) {
   if (!party.raid.won && target > 0 && total >= target) { party.raid.won = true; party.season.wins = (party.season.wins || 0) + 1; justWon = true; }
   return { ws, total, target, won: party.raid.won, claimed: party.raid.claimed || [], seasonWins: party.season.wins || 0, justWon };
 }
+// ---- Web Push (RFC8291 aes128gcm + VAPID RFC8292). Zero-dep, проверено round-trip-тестом. ----
+const PUSH_SUBJECT = process.env.PUSH_SUBJECT || 'mailto:gojo@example.com';
+const pb64u = (buf) => Buffer.from(buf).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const punb64u = (s) => Buffer.from(String(s).replace(/-/g, '+').replace(/_/g, '/'), 'base64');
+const phkdf = (ikm, salt, info, len) => Buffer.from(crypto.hkdfSync('sha256', ikm, salt, info, len));
+let _vapid = null;
+function loadVapid() {
+  if (_vapid) return _vapid;
+  const f = path.join(DATA_DIR, 'push-vapid.json');
+  try { const j = JSON.parse(fs.readFileSync(f, 'utf8')); _vapid = { privateKey: crypto.createPrivateKey({ key: j.priv, format: 'jwk' }), pubB64: j.pubB64 }; return _vapid; } catch {}
+  const { publicKey, privateKey } = crypto.generateKeyPairSync('ec', { namedCurve: 'prime256v1' });
+  const jwk = publicKey.export({ format: 'jwk' });
+  const pubRaw = Buffer.concat([Buffer.from([4]), punb64u(jwk.x), punb64u(jwk.y)]);
+  const pubB64 = pb64u(pubRaw);
+  try { fs.mkdirSync(DATA_DIR, { recursive: true }); fs.writeFileSync(f, JSON.stringify({ priv: privateKey.export({ format: 'jwk' }), pubB64 })); } catch {}
+  _vapid = { privateKey, pubB64 }; return _vapid;
+}
+function vapidJWT(endpoint) {
+  const v = loadVapid(), aud = new URL(endpoint).origin;
+  const head = pb64u(JSON.stringify({ typ: 'JWT', alg: 'ES256' }));
+  const pay = pb64u(JSON.stringify({ aud, exp: Math.floor(Date.now() / 1000) + 12 * 3600, sub: PUSH_SUBJECT }));
+  const sig = crypto.sign('sha256', Buffer.from(`${head}.${pay}`), { key: v.privateKey, dsaEncoding: 'ieee-p1363' });
+  return `${head}.${pay}.${pb64u(sig)}`;
+}
+function encryptPush(keys, plaintext) {
+  const uaPub = punb64u(keys.p256dh), auth = punb64u(keys.auth);
+  const ecdh = crypto.createECDH('prime256v1'); ecdh.generateKeys();
+  const asPub = ecdh.getPublicKey(), shared = ecdh.computeSecret(uaPub);
+  const ikm = phkdf(shared, auth, Buffer.concat([Buffer.from('WebPush: info\0'), uaPub, asPub]), 32);
+  const salt = crypto.randomBytes(16);
+  const cek = phkdf(ikm, salt, Buffer.from('Content-Encoding: aes128gcm\0'), 16);
+  const nonce = phkdf(ikm, salt, Buffer.from('Content-Encoding: nonce\0'), 12);
+  const record = Buffer.concat([Buffer.from(plaintext), Buffer.from([2])]);
+  const cipher = crypto.createCipheriv('aes-128-gcm', cek, nonce);
+  const enc = Buffer.concat([cipher.update(record), cipher.final(), cipher.getAuthTag()]);
+  const header = Buffer.alloc(21); salt.copy(header, 0); header.writeUInt32BE(4096, 16); header.writeUInt8(65, 20);
+  return Buffer.concat([header, asPub, enc]);
+}
+function sendWebPush(sub, payloadObj) {
+  return new Promise((resolve) => {
+    try {
+      const body = encryptPush({ p256dh: sub.p256dh, auth: sub.auth }, JSON.stringify(payloadObj));
+      const url = new URL(sub.endpoint);
+      const r = https.request({ host: url.host, path: url.pathname + url.search, method: 'POST', headers: {
+        'Authorization': `vapid t=${vapidJWT(sub.endpoint)}, k=${loadVapid().pubB64}`,
+        'Content-Encoding': 'aes128gcm', 'Content-Type': 'application/octet-stream', 'TTL': '86400', 'Content-Length': body.length,
+      } }, (resp) => { let d = ''; resp.on('data', (c) => d += c); resp.on('end', () => resolve({ status: resp.statusCode, body: d.slice(0, 300) })); });
+      r.on('error', (e) => resolve({ status: 0, error: String(e.message || e) })); r.write(body); r.end();
+    } catch (e) { resolve({ status: 0, error: String(e.message || e) }); }
+  });
+}
 // ИИ BYOK: ключи per-user (в data/users/<id>/, под гитигнором). Наружу не отдаём.
 function aiKeysFile(id) { return path.join(userDataDir(id), 'ai-keys.json'); }
 function loadAiKeys(id) { try { return JSON.parse(fs.readFileSync(aiKeysFile(id), 'utf8')); } catch { return {}; } }
@@ -845,6 +896,31 @@ const server = http.createServer(async (req, res) => {
     party.raid.claimed = party.raid.claimed || []; party.raid.claimed.push(me);
     const view = partyView(party, me); saveParties(parties);
     return sendJson(res, 200, { reward: { gold: 150, boostPct: 30, boostHours: 6 }, party: view });
+  }
+
+  // ---- Web Push: подписка + тест ----
+  if (u === '/api/push/vapid' && req.method === 'GET') {
+    return sendJson(res, 200, { key: loadVapid().pubB64 });
+  }
+  if (u === '/api/push/subscribe' && req.method === 'POST') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    let b = {}; try { b = JSON.parse(await readBody(req)); } catch {}
+    const s = b.subscription || b;
+    if (!s || !s.endpoint || !s.keys) return sendJson(res, 400, { error: 'bad_subscription' });
+    const users = loadUsers(); const user = users.find((x) => x.id === me); if (!user) return sendJson(res, 401, { error: 'user not found' });
+    user.push = { endpoint: s.endpoint, p256dh: s.keys.p256dh, auth: s.keys.auth, at: new Date().toISOString() };
+    saveUsers(users); return sendJson(res, 200, { ok: true });
+  }
+  if (u === '/api/push/unsubscribe' && req.method === 'POST') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    const users = loadUsers(); const user = users.find((x) => x.id === me); if (user) { delete user.push; saveUsers(users); }
+    return sendJson(res, 200, { ok: true });
+  }
+  if (u === '/api/push/test' && req.method === 'POST') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    const user = loadUsers().find((x) => x.id === me); if (!user || !user.push) return sendJson(res, 400, { error: 'no_subscription' });
+    const r = await sendWebPush(user.push, { title: 'Gojo 🔔', body: 'Уведомления работают! Я позову тебя, когда придёт время.', url: './' });
+    return sendJson(res, 200, r);
   }
 
   // ---- Per-user data API ----
