@@ -831,6 +831,30 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .hb-nmt { font-size: 12px; margin-top: 12px; }
 .anti-row2 { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .anti-row2 .anti-main { flex: 1; min-width: 160px; }
+/* Мультиплеер: пати + кооп-рейд */
+.party-or { text-align: center; font-size: 12px; margin: 10px 0; }
+.ph-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.ph-top h3 { margin: 0; }
+.party-code { font-size: 13px; color: var(--muted); }
+.party-code b { color: var(--accent); letter-spacing: 1px; font-size: 15px; }
+.raid-card { border: 1px solid var(--line); }
+.raid-card.won { border-color: #e0a23e; box-shadow: 0 0 26px -8px #e0a23e; }
+.raid-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.raid-boss { font-size: 30px; }
+.raid-bar { height: 14px; background: var(--panel2); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.raid-bar > span { display: block; height: 100%; background: linear-gradient(90deg, #e0526a, #e0a23e); transition: width .5s; }
+.raid-card.won .raid-bar > span { background: linear-gradient(90deg, #e0a23e, #5fbf7a); }
+.raid-note { font-size: 11.5px; margin: 8px 0 0; }
+.pm-list { display: flex; flex-direction: column; gap: 8px; }
+.pm-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; }
+.pm-row.me { border-color: var(--accent); }
+.pm-av { font-size: 22px; flex: 0 0 auto; }
+.pm-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pm-name { font-weight: 600; }
+.pm-sub { font-size: 12px; }
+.pm-xp { font-weight: 800; color: var(--accent); white-space: nowrap; }
+.pm-xp small { font-size: 10px; color: var(--muted); margin-left: 1px; font-weight: 600; }
+.pm-cheer { flex: 0 0 auto; }
 /* Оформление: тема + акцент */
 .theme-row { display: flex; align-items: center; gap: 12px; margin: 8px 0; flex-wrap: wrap; }
 .theme-lbl { font-size: 13px; color: var(--muted); width: 64px; flex: 0 0 auto; }

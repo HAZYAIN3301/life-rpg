@@ -417,7 +417,7 @@ const State = {
   goals: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
   lootbox: null, inbox: null, inboxOpen: false, antihabits: null, aiKeys: null,
   chatLog: [], _chatBusy: false,
-  leaderboard: null, _lbLoading: false,
+  leaderboard: null, _lbLoading: false, party: null, _partyLoading: false,
   adminUsers: null, _adminUsersLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null, calMode: 'day', habitsTab: 'build',
   aveCat: 'hair', // активная категория в редакторе аватара
@@ -3165,6 +3165,50 @@ const APP_SHELL = `
   <div id="toasts"></div>
   <button id="ai-fab" data-action="open-helper" title="Помощник Gojo — спроси про любую функцию" aria-label="Помощник">🤖</button>`;
 
+// ---- Мультиплеер: пати + кооп-рейд (Племя). null=не загружено, false=не в пати, объект=в пати ----
+const RAID_PER_MEMBER = 600; // XP/чел/неделя — цель кооп-рейда
+function renderParty() {
+  if (State.party === null) {
+    if (!State._partyLoading) {
+      State._partyLoading = true;
+      publishLeaderboard(); // освежить свой недельный вклад
+      fetch('/api/party').then((r) => r.json()).then((d) => { State.party = d.party || false; State._partyLoading = false; if (State.view === 'party') render(); })
+        .catch(() => { State.party = false; State._partyLoading = false; if (State.view === 'party') render(); });
+    }
+    return '<div class="card"><p class="muted">Загрузка пати…</p></div>';
+  }
+  return State.party ? partyHTML(State.party) : partyEmptyHTML();
+}
+function partyEmptyHTML() {
+  return `<div class="card"><h3>🤝 Пати</h3>
+    <p class="muted">Дуо или группа до 6 человек. Видите недельный прогресс друг друга, вместе бьёте кооп-босса и подбадриваете. <b>Без вины:</b> чужой пропуск никого не штрафует.</p>
+    <form id="party-create" class="add-row"><input name="name" placeholder="Название пати…" autocomplete="off" required maxlength="40" /><button type="submit">+ Создать</button></form>
+    <div class="party-or muted">— или войти по коду друга —</div>
+    <form id="party-join" class="add-row"><input name="code" placeholder="КОД" autocomplete="off" maxlength="5" style="text-transform:uppercase" /><button type="submit">Войти</button></form></div>`;
+}
+function partyHTML(p) {
+  const target = p.members.length * RAID_PER_MEMBER;
+  const total = p.members.reduce((s, m) => s + (m.weekXp || 0), 0);
+  const pct = target ? Math.min(100, Math.round(total / target * 100)) : 0, won = total >= target, hp = Math.max(0, target - total);
+  if (won && !State._raidCelebrated) { State._raidCelebrated = true; sfx('achievement'); }
+  if (!won) State._raidCelebrated = false;
+  const members = p.members.slice().sort((a, b) => b.weekXp - a.weekXp).map((m) => `<div class="pm-row ${m.me ? 'me' : ''}">
+      <span class="pm-av">${esc(m.avatar)}</span>
+      <span class="pm-meta"><span class="pm-name">${esc(m.name)}${m.me ? ' <span class="lb-you">ты</span>' : ''}</span>
+        <span class="pm-sub muted">ур.${m.level} · ${m.weekQuests} квест.${m.cleanDays ? ` · 🟢 ${m.cleanDays}д чисто` : ''}</span></span>
+      <span class="pm-xp" title="XP за неделю">${m.weekXp}<small>XP</small></span>
+      ${m.me ? '' : `<button class="btn ghost sm pm-cheer" data-action="party-cheer" data-to="${esc(m.id)}" title="Подбодрить">🎉${m.cheers ? ' ' + m.cheers : ''}</button>`}</div>`).join('');
+  return `<div class="card party-head">
+      <div class="ph-top"><h3>🤝 ${esc(p.name)}</h3><span class="party-code" title="Поделись кодом с другом — он войдёт в пати">код <b>${esc(p.code)}</b></span></div>
+      <p class="muted" style="font-size:12px;margin:6px 0 0">${p.members.length}/${p.max} участников · недельный вклад складывается в общий рейд</p></div>
+    <div class="card raid-card ${won ? 'won' : ''}">
+      <div class="raid-head"><span class="raid-boss">${won ? '🏆' : '🐉'}</span><div><b>${won ? 'Босс недели повержен!' : 'Кооп-рейд недели'}</b>
+        <div class="muted" style="font-size:12px">${won ? 'Пати справилась вместе — 🎉' : `Осталось ${hp} XP · цель ${target} (по ${RAID_PER_MEMBER}/чел)`}</div></div></div>
+      <div class="raid-bar"><span style="width:${pct}%"></span></div>
+      <p class="muted raid-note">Вклад каждого складывается; ничей пропуск не штрафует команду — просто чуть медленнее. Через поддержку, не через вину.</p></div>
+    <div class="card"><h3>Состав</h3><div class="pm-list">${members}</div>
+      <button class="btn ghost sm" data-action="party-leave" style="margin-top:12px">Покинуть пати</button></div>`;
+}
 function renderLeaderboard() {
   if (State.leaderboard === null) {
     if (!State._lbLoading) {
@@ -3196,7 +3240,7 @@ function renderLeaderboard() {
     </div>`;
 }
 
-const VIEWS = { today: renderToday, notes: renderNotes, calendar: renderCalendarView, habits: renderHabitsView, character: renderCharacter, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, leaderboard: renderLeaderboard, settings: renderSettings };
+const VIEWS = { today: renderToday, notes: renderNotes, calendar: renderCalendarView, habits: renderHabitsView, character: renderCharacter, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, party: renderParty, leaderboard: renderLeaderboard, settings: renderSettings };
 // Разгрузка дизайна: 11 вкладок → 5 разделов с под-вкладками. Прогрессивное раскрытие через гейт уровня.
 const SECTIONS = [
   { id: 'today', icon: '🎯', label: 'Сегодня', gate: 0, views: [{ view: 'today', label: 'День' }, { view: 'notes', label: 'Заметки' }] },
@@ -3204,7 +3248,7 @@ const SECTIONS = [
   { id: 'habits', icon: '🔁', label: 'Привычки', gate: 0, views: [{ view: 'habits', label: 'Привычки' }] },
   { id: 'rewards', icon: '🎁', label: 'Награды', gate: 0, views: [{ view: 'rewards', label: 'Награды' }] },
   { id: 'hero', icon: '🧍', label: 'Герой', gate: 3, views: [{ view: 'character', label: 'Персонаж' }, { view: 'tree', label: 'Навыки' }, { view: 'stats', label: 'Прогресс' }] },
-  { id: 'tribe', icon: '🤝', label: 'Племя', gate: 3, views: [{ view: 'leaderboard', label: 'Рейтинг' }] },
+  { id: 'tribe', icon: '🤝', label: 'Племя', gate: 3, views: [{ view: 'party', label: 'Пати' }, { view: 'leaderboard', label: 'Рейтинг' }] },
 ];
 function sectionOf(view) { for (const s of SECTIONS) if (s.views.some((v) => v.view === view)) return s.id; return null; } // settings (шестерёнка) и legacy weekly → null
 function navUnlockLevel() { return (State.me && State.me.isAdmin) ? 999 : charLevel(); } // админ видит всё (дог-фуддинг)
@@ -3343,6 +3387,18 @@ function onSubmit(e) {
     e.preventDefault(); const inp = document.getElementById('chat-input'); sendChat(inp && inp.value);
     return;
   }
+  if (f.id === 'party-create') {
+    e.preventDefault(); const name = f.name.value.trim(); if (!name) return;
+    fetch('/api/party/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) })
+      .then((r) => r.json()).then((d) => { if (d.party) { State.party = d.party; toast('🤝 Пати создана — поделись кодом'); render(); } else toast('Не удалось создать'); }).catch(() => toast('Сетевая ошибка'));
+    return;
+  }
+  if (f.id === 'party-join') {
+    e.preventDefault(); const code = f.code.value.trim().toUpperCase(); if (!code) return;
+    fetch('/api/party/join', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) })
+      .then((r) => r.json()).then((d) => { if (d.party) { State.party = d.party; toast('🤝 Ты в пати!'); render(); } else toast(d.error === 'full' ? 'Пати заполнена' : d.error === 'already_in_party' ? 'Ты уже в пати' : 'Код не найден'); }).catch(() => toast('Сетевая ошибка'));
+    return;
+  }
   if (f.id === 'add-antihabit') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
     State.antihabits = State.antihabits || [];
@@ -3418,12 +3474,12 @@ function openRewardCatalog() {
 
 function onClick(e) {
   const navBtn = e.target.closest('#nav button[data-view]');
-  if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
+  if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
   const secBtn = e.target.closest('#nav [data-action="go-section"]');
   if (secBtn) {
     const s = SECTIONS.find((x) => x.id === secBtn.dataset.sec); if (!s) return;
     if (s.gate > navUnlockLevel()) { toast(`🔒 «${s.label}» откроется на ур.${s.gate}`); return; }
-    if (sectionOf(State.view) !== s.id) { flushSettingsForm(); State.view = s.views[0].view; track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; render(); }
+    if (sectionOf(State.view) !== s.id) { flushSettingsForm(); State.view = s.views[0].view; track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
     return;
   }
   const el = e.target.closest('[data-action]');
@@ -3703,6 +3759,12 @@ function onClick(e) {
   } else if (action === 'helper-to-settings') { const m = document.getElementById('helper-modal'); if (m) m.remove(); State.view = 'settings'; render();
   } else if (action === 'chat-suggest') { sendChat(el.dataset.q);
   } else if (action === 'habits-tab') { State.habitsTab = el.dataset.tab; render();
+  } else if (action === 'party-leave') {
+    if (!confirm('Покинуть пати?')) return;
+    fetch('/api/party/leave', { method: 'POST' }).then(() => { State.party = false; render(); }).catch(() => toast('Сетевая ошибка'));
+  } else if (action === 'party-cheer') {
+    fetch('/api/party/cheer', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ to: el.dataset.to }) })
+      .then((r) => r.json()).then((d) => { if (d.party) { State.party = d.party; sfx('coin'); render(); } }).catch(() => toast('Сетевая ошибка'));
   } else if (action === 'apply-cat') {
     const form = el.closest('.card').querySelector('#add-task'); const sel = form && form.querySelector('select[name="skillId"]');
     if (sel) { sel.value = el.dataset.skill; const ti = form.querySelector('input[name="title"]'); if (ti) ti.focus(); }
@@ -3928,8 +3990,10 @@ function publishLeaderboard() {
   if (!State.settings) return;
   try {
     const c = State.settings.curve, oi = levelInfo(overallXp(), c.base, c.growth);
+    const ws = weekStart(todayStr()), st = rangeStats(ws, todayStr()); // недельный вклад для пати/рейда
+    const clean = Math.max(0, ...((State.antihabits || []).map((a) => antiCleanDays(a))), 0);
     fetch('/api/leaderboard/publish', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ totalXp: overallXp(), level: oi.level, rank: charRank().name, optOut: !!State.settings.leaderboardOptOut }) }).catch(() => {});
+      body: JSON.stringify({ totalXp: overallXp(), level: oi.level, rank: charRank().name, optOut: !!State.settings.leaderboardOptOut, weekStart: ws, weekXp: st.xp, weekQuests: st.quests, cleanDays: clean }) }).catch(() => {});
   } catch (e) {}
 }
 

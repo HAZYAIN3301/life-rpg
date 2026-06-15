@@ -100,6 +100,17 @@ function saveUsers(users) {
   fs.writeFileSync(USERS_FILE(), JSON.stringify(users, null, 2));
 }
 function userDataDir(id) { return path.join(DATA_DIR, 'users', id); }
+// ---- Мультиплеер: пати (общее состояние). Реестр в DATA_DIR/parties.json ----
+const PARTIES_FILE = () => path.join(DATA_DIR, 'parties.json');
+function loadParties() { try { return JSON.parse(fs.readFileSync(PARTIES_FILE(), 'utf8')); } catch { return []; } }
+function saveParties(p) { fs.mkdirSync(DATA_DIR, { recursive: true }); fs.writeFileSync(PARTIES_FILE(), JSON.stringify(p, null, 2)); }
+function partyOf(uid, parties) { return (parties || loadParties()).find((p) => (p.members || []).includes(uid)) || null; }
+function genPartyCode(parties) { // 5-символьный код без похожих символов, уникальный
+  const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let c;
+  do { c = Array.from({ length: 5 }, () => A[Math.floor(Math.random() * A.length)]).join(''); } while (parties.some((p) => p.code === c));
+  return c;
+}
+const PARTY_MAX = 6;
 // ИИ BYOK: ключи per-user (в data/users/<id>/, под гитигнором). Наружу не отдаём.
 function aiKeysFile(id) { return path.join(userDataDir(id), 'ai-keys.json'); }
 function loadAiKeys(id) { try { return JSON.parse(fs.readFileSync(aiKeysFile(id), 'utf8')); } catch { return {}; } }
@@ -717,6 +728,13 @@ const server = http.createServer(async (req, res) => {
       level: Math.max(1, Math.round(Number(b.level) || 1)),
       rank: String(b.rank || '').slice(0, 40),
       at: new Date().toISOString(),
+      // недельный вклад для пати/рейда (мультиплеер)
+      week: {
+        ws: String(b.weekStart || '').slice(0, 10),
+        xp: Math.max(0, Math.round(Number(b.weekXp) || 0)),
+        quests: Math.max(0, Math.round(Number(b.weekQuests) || 0)),
+        clean: Math.max(0, Math.round(Number(b.cleanDays) || 0)),
+      },
     };
     user.leaderboardOptOut = !!b.optOut;
     saveUsers(users);
@@ -731,6 +749,67 @@ const server = http.createServer(async (req, res) => {
       .map(x => ({ id: x.id, name: x.name, avatar: x.avatar, totalXp: x.pub.totalXp, level: x.pub.level, rank: x.pub.rank, me: x.id === me }))
       .sort((a, b) => b.totalXp - a.totalXp);
     return sendJson(res, 200, rows);
+  }
+
+  // ---- Мультиплеер: пати (дуо/группа), кооп-рейд по недельному вкладу ----
+  // Собирает пати с участниками (из снапшотов users.json) + чиры. Позитивно, без вины.
+  function partyView(party, me) {
+    if (!party) return null;
+    const users = loadUsers();
+    const members = (party.members || []).map((id) => {
+      const u = users.find((x) => x.id === id) || {}; const w = (u.pub && u.pub.week) || {};
+      return { id, name: u.name || '—', avatar: u.avatar || '👤', level: (u.pub && u.pub.level) || 1, rank: (u.pub && u.pub.rank) || '', weekXp: w.xp || 0, weekQuests: w.quests || 0, cleanDays: w.clean || 0, cheers: (party.cheers && party.cheers[id]) || 0, me: id === me };
+    });
+    return { id: party.id, name: party.name, code: party.code, createdBy: party.createdBy, members, max: PARTY_MAX };
+  }
+  if (u === '/api/party' && req.method === 'GET') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    return sendJson(res, 200, { party: partyView(partyOf(me), me) });
+  }
+  if (u === '/api/party/create' && req.method === 'POST') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    let b = {}; try { b = JSON.parse(await readBody(req)); } catch {}
+    const parties = loadParties();
+    if (partyOf(me, parties)) return sendJson(res, 400, { error: 'already_in_party' });
+    const party = { id: 'p_' + crypto.randomBytes(5).toString('hex'), name: String(b.name || 'Моя пати').slice(0, 40), code: genPartyCode(parties), members: [me], cheers: {}, createdBy: me, createdAt: new Date().toISOString() };
+    parties.push(party); saveParties(parties);
+    return sendJson(res, 200, { party: partyView(party, me) });
+  }
+  if (u === '/api/party/join' && req.method === 'POST') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    let b = {}; try { b = JSON.parse(await readBody(req)); } catch {}
+    const parties = loadParties();
+    if (partyOf(me, parties)) return sendJson(res, 400, { error: 'already_in_party' });
+    const code = String(b.code || '').trim().toUpperCase();
+    const party = parties.find((p) => p.code === code);
+    if (!party) return sendJson(res, 404, { error: 'not_found' });
+    if ((party.members || []).length >= PARTY_MAX) return sendJson(res, 400, { error: 'full' });
+    party.members.push(me); saveParties(parties);
+    return sendJson(res, 200, { party: partyView(party, me) });
+  }
+  if (u === '/api/party/leave' && req.method === 'POST') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    const parties = loadParties(); const party = partyOf(me, parties);
+    if (party) {
+      party.members = party.members.filter((x) => x !== me);
+      if (party.cheers) delete party.cheers[me];
+      const idx = parties.indexOf(party);
+      if (!party.members.length) parties.splice(idx, 1); // пустая пати удаляется
+      else if (party.createdBy === me) party.createdBy = party.members[0]; // передаём «владельца»
+      saveParties(parties);
+    }
+    return sendJson(res, 200, { ok: true });
+  }
+  if (u === '/api/party/cheer' && req.method === 'POST') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    let b = {}; try { b = JSON.parse(await readBody(req)); } catch {}
+    const parties = loadParties(); const party = partyOf(me, parties);
+    if (!party) return sendJson(res, 404, { error: 'no_party' });
+    const to = String(b.to || '');
+    if (!party.members.includes(to)) return sendJson(res, 400, { error: 'not_member' });
+    party.cheers = party.cheers || {}; party.cheers[to] = (party.cheers[to] || 0) + 1;
+    saveParties(parties);
+    return sendJson(res, 200, { party: partyView(party, me) });
   }
 
   // ---- Per-user data API ----
