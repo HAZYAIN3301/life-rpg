@@ -1,7 +1,7 @@
-/* Gojo Service Worker — офлайн app-shell + push-уведомления (#10/#11).
+/* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    Стратегия: network-first для статики (всегда свежий код онлайн, офлайн — из кэша),
    /api/ — мимо SW (живые данные). Бамп CACHE при изменении набора шелла. */
-const CACHE = 'gojo-v2';
+const CACHE = 'satoru-v1';
 const SHELL = ['./', 'index.html', 'app.js', 'styles.css', 'manifest.webmanifest', 'icon.svg'];
 
 self.addEventListener('install', (e) => {
@@ -28,7 +28,7 @@ self.addEventListener('fetch', (e) => {
 self.addEventListener('push', (e) => {
   let data = {};
   try { data = e.data ? e.data.json() : {}; } catch { data = { body: (e.data && e.data.text()) || '' }; }
-  const title = data.title || 'Gojo';
+  const title = data.title || 'Satoru';
   e.waitUntil(self.registration.showNotification(title, {
     body: data.body || '', icon: 'icon.svg', badge: 'icon.svg', lang: 'ru',
     tag: data.tag || 'gojo', renotify: false, data: { url: data.url || './' },

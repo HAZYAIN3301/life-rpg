@@ -36,7 +36,7 @@ const Store = {
 // Generic defaults — shown to brand-new users who have no data/settings.json yet.
 // Existing users see their own settings.json instead (your personal skills are safe there).
 const DEFAULT_SETTINGS = {
-  appName: 'Gojo',
+  appName: 'Satoru',
   skills: [
     { id: 'study', name: 'Учёба', color: '#4f86f7' },
     { id: 'work', name: 'Работа', color: '#22c1a4' },
@@ -1295,7 +1295,7 @@ async function openFocusWidget() {
   try {
     pipWindow = await documentPictureInPicture.requestWindow({ width: 232, height: 148 }); // компактнее — меньше мешает (fb)
     const d = pipWindow.document;
-    d.title = (State.settings && State.settings.appName) || 'Gojo'; // вместо служебного текста в заголовке
+    d.title = (State.settings && State.settings.appName) || 'Satoru'; // вместо служебного текста в заголовке
     const st = d.createElement('style'); st.textContent = PIP_CSS; d.head.appendChild(st);
     d.body.innerHTML = `<div class="pip"><div class="pip-task" id="pip-task"></div><div class="pip-clock" id="pip-clock">0:00</div><div class="pip-sub" id="pip-sub"></div><div class="pip-bar"><span id="pip-bar"></span></div><div class="pip-ctrl"><button id="pip-pause">⏸</button><button id="pip-stop">⏹</button></div></div>`;
     d.getElementById('pip-pause').addEventListener('click', () => { State.timer && State.timer.running ? pauseFocus() : resumeFocus(); });
@@ -1352,7 +1352,7 @@ function renderLoginScreen() {
   }).join('');
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
-      <div class="auth-logo"><span>⚔️</span><h1>Gojo</h1><p>Превращаем жизнь в игру</p></div>
+      <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>Превращаем жизнь в игру</p></div>
       <div class="profiles-grid">${profileCards}
         <div class="profile-card new-card" data-action="go-register">
           <div class="profile-avatar add-avatar">+</div>
@@ -1367,7 +1367,7 @@ function renderRegisterScreen() {
   const avatarPicker = AVATARS.map((a) => `<button type="button" class="av-btn ${a === State.regAvatar ? 'sel' : ''}" data-action="pick-avatar" data-av="${a}">${a}</button>`).join('');
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
-      <div class="auth-logo"><span>⚔️</span><h1>Gojo</h1><p>Создай свой профиль</p></div>
+      <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>Создай свой профиль</p></div>
       <div class="auth-box">
         <form id="register-form">
           <label>Твоё имя</label>
@@ -1441,7 +1441,7 @@ function renderHeader() {
   const proBadge = e.tier === 'pro' ? '<span class="plan-badge pro" title="Pro активен">PRO</span>'
     : e.tier === 'trial' ? `<span class="plan-badge trial" title="Pro-триал">PRO ${trialDaysLeft()}д</span>`
     : '<button class="plan-badge free" data-action="show-paywall" data-feature="Pro" title="Открыть Pro — сейчас у тебя Free">🔓 Pro?</button>';
-  document.getElementById('appName').textContent = State.settings.appName || 'Gojo';
+  document.getElementById('appName').textContent = State.settings.appName || 'Satoru';
   document.getElementById('charSummary').innerHTML = `
     <div class="char-main">
       ${State.me ? `<div class="user-pill" title="Профиль">
@@ -1519,11 +1519,11 @@ function buildICS() {
   const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
   const escV = (s) => String(s || '').replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n');
   const dt = (date, time) => `${date.replace(/-/g, '')}T${(time || '09:00').replace(':', '')}00`;
-  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Gojo//Life Planner//RU', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:Gojo'];
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Satoru//Life Planner//RU', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:Satoru'];
   tasks.forEach((t) => {
     const dur = Math.max(5, Number(t.estimateMin) || 30);
     lines.push('BEGIN:VEVENT', `UID:${t.id}@gojo`, `DTSTAMP:${stamp}`, `DTSTART:${dt(t.date, t.startTime)}`, `DURATION:PT${dur}M`,
-      `SUMMARY:${escV('🎯 ' + t.title)}`, `DESCRIPTION:${escV('Gojo · ' + (skillById(t.skillId).name || ''))}`, 'END:VEVENT');
+      `SUMMARY:${escV('🎯 ' + t.title)}`, `DESCRIPTION:${escV('Satoru · ' + (skillById(t.skillId).name || ''))}`, 'END:VEVENT');
   });
   lines.push('END:VCALENDAR');
   return lines.join('\r\n');
@@ -1701,7 +1701,7 @@ const ATOMIC = {
     ] },
     { n: 4, law: 'Сделай приятным', cue: 'Награда', tactics: [
       'Немедленная награда — сделай так, чтобы было приятно сразу.',
-      'Трекер привычек: «не разрывай цепочку» (это и есть стрик 🔥 в Gojo).',
+      'Трекер привычек: «не разрывай цепочку» (это и есть стрик 🔥 в Satoru).',
       'Никогда не пропускай дважды: один пропуск — случайность, два — начало новой привычки.',
     ] },
   ],
@@ -1776,7 +1776,7 @@ function atomicMethodHTML() {
     ${lawsBlock('🌱 Создать привычку — 4 закона', ATOMIC.laws, 'build')}
     ${lawsBlock('🛡 Сломать привычку — инверсия 4 законов', ATOMIC.inversions, 'break')}
     <div class="card"><h4>Ещё принципы</h4>${ATOMIC.extra.map((e) => `<div class="hb-extra"><b>${esc(e.t)}</b><p class="muted">${esc(e.d)}</p></div>`).join('')}</div>
-    <p class="muted" style="font-size:11.5px">Источник: James Clear, «Atomic Habits» (2018). Концепции адаптированы для Gojo.</p>`;
+    <p class="muted" style="font-size:11.5px">Источник: James Clear, «Atomic Habits» (2018). Концепции адаптированы для Satoru.</p>`;
 }
 
 // ============================================================
@@ -1841,7 +1841,7 @@ async function runWeeklyReview() {
   const prov = aiProvider();
   if (!prov) { toast('Добавь ИИ-ключ в Настройках'); State.view = 'settings'; render(); return; }
   openAiModal('🤖 Разбор недели', '<p class="muted">Анализирую твою неделю…</p>', true);
-  const system = 'Ты — заботливый, научно обоснованный наставник в приложении Gojo (философия «жизнь как десятиборье»). Анализируй данные недели честно и по-человечески, без воды и без льстивости. Дай: (1) что реально происходило со временем и балансом; (2) 2–3 конкретных наблюдения; (3) 1–2 мягких, выполнимых шага на след. неделю. Помни: отдых и восстановление так же ценны, как труд. Коротко, тепло, по делу. Отвечай на русском.';
+  const system = 'Ты — заботливый, научно обоснованный наставник в приложении Satoru (философия «жизнь как десятиборье»). Анализируй данные недели честно и по-человечески, без воды и без льстивости. Дай: (1) что реально происходило со временем и балансом; (2) 2–3 конкретных наблюдения; (3) 1–2 мягких, выполнимых шага на след. неделю. Помни: отдых и восстановление так же ценны, как труд. Коротко, тепло, по делу. Отвечай на русском.';
   try {
     const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: prov, system, prompt: buildWeekContext() }) });
     const d = await r.json();
@@ -1917,12 +1917,12 @@ function extractJsonClient(text) {
   const i = t.indexOf('{'), j = t.lastIndexOf('}'); if (i < 0 || j < 0 || j < i) return null;
   try { return JSON.parse(t.slice(i, j + 1)); } catch { return null; }
 }
-const BRIDGE_GOALS = `Ты помогаешь оформить цели для приложения-планировщика Gojo (философия «жизнь как десятиборье»). На основе описания ниже верни СТРОГО JSON {"proposals":[ ... ]} — без markdown и без текста вне JSON. Элементы — одного из типов:
+const BRIDGE_GOALS = `Ты помогаешь оформить цели для приложения-планировщика Satoru (философия «жизнь как десятиборье»). На основе описания ниже верни СТРОГО JSON {"proposals":[ ... ]} — без markdown и без текста вне JSON. Элементы — одного из типов:
 {"type":"sphere","name":"...","parent":"<имя родительской сферы или null>"}
 {"type":"goal","title":"...","sphere":"<имя сферы>","horizon":"mission|vision|path|long|mid|short|recurring","metric":null,"status":"active|waiting|paused","window":"","parent":"<заголовок большей цели или null>"}
 metric для числовых целей = {"current":N,"target":N,"unit":"кг/км/балл","lowerBetter":false,"maintain":false}.
 Горизонты: mission=дело жизни, vision=10–20 лет, path=3–5 лет, long=цель года, mid=1–6 мес, short=до месяца, recurring=регулярная практика. lowerBetter:true для оценок/времени. status:"waiting"+window для событийных целей. parent — точный заголовок другой цели. Переиспользуй существующие сферы по точному имени. Русский.`;
-const BRIDGE_CALIB = `Ты калибруешь уровни в приложении Gojo. На основе описания верни СТРОГО JSON {"proposals":[{"type":"level","sphere":"<имя сферы>","level":N,"note":"<кратко>"}]} — без markdown и текста вне JSON. Шкала уровня 1–20: 1=только начал, 5=регулярная практика, 10=уверенный/могу учить, 15=глубокая экспертиза, 18–20=топ. Школа/универ оценивай честно. Только по сферам из описания.`;
+const BRIDGE_CALIB = `Ты калибруешь уровни в приложении Satoru. На основе описания верни СТРОГО JSON {"proposals":[{"type":"level","sphere":"<имя сферы>","level":N,"note":"<кратко>"}]} — без markdown и текста вне JSON. Шкала уровня 1–20: 1=только начал, 5=регулярная практика, 10=уверенный/могу учить, 15=глубокая экспертиза, 18–20=топ. Школа/универ оценивай честно. Только по сферам из описания.`;
 function copyBridgePrompt(kind) {
   const ta = document.getElementById('propose-text');
   const text = ((ta && ta.value) || '').trim();
@@ -2019,7 +2019,7 @@ function applyProposals(proposals, acceptedIdx) {
   return applied;
 }
 // ---- ИИ тех-поддержка / гид (Блок 2): постоянный помощник, знает функции и философию ----
-const GOJO_MANUAL = `Ты — встроенный помощник приложения Gojo (геймификация жизни). Философия: «жизнь как десятиборье» — ценится баланс многих сфер, а не одна вертикаль; отдых и восстановление так же важны, как труд; уровень = доказанное мастерство, оно НЕ сгорает (как чёрный пояс). Твоя роль — тёплая постоянная тех-поддержка и гид: помогаешь разобраться в функциях, подсказываешь, что юзер недоиспользует, объясняешь механики простыми словами. Отвечай КРАТКО, по делу, дружелюбно, на русском. Ты не можешь сам нажимать кнопки — направляй словами (куда зайти, что нажать). Если юзер описывает свои цели или опыт — посоветуй кнопку «🤖 Импорт целей» (вкладка Цели) или «🤖 Оценить через ИИ» (Настройки → Импорт), они оформят это автоматически.
+const GOJO_MANUAL = `Ты — встроенный помощник приложения Satoru (геймификация жизни). Философия: «жизнь как десятиборье» — ценится баланс многих сфер, а не одна вертикаль; отдых и восстановление так же важны, как труд; уровень = доказанное мастерство, оно НЕ сгорает (как чёрный пояс). Твоя роль — тёплая постоянная тех-поддержка и гид: помогаешь разобраться в функциях, подсказываешь, что юзер недоиспользует, объясняешь механики простыми словами. Отвечай КРАТКО, по делу, дружелюбно, на русском. Ты не можешь сам нажимать кнопки — направляй словами (куда зайти, что нажать). Если юзер описывает свои цели или опыт — посоветуй кнопку «🤖 Импорт целей» (вкладка Цели) или «🤖 Оценить через ИИ» (Настройки → Импорт), они оформят это автоматически.
 
 ФУНКЦИИ И ГДЕ ОНИ:
 • Сегодня — квесты на день (разовые дела), сложность 🌱лёгкая/⚔️обычная/🔥сложная. ▶ у квеста = фокус-таймер (помодоро + плавающее окно ↗ поверх всех окон). Галочка = XP + золото. Привычки — повторяющиеся дела со стриком. Энергия — индикатор дневной нагрузки, восстанавливается ПАССИВНО по времени (логировать отдых не нужно), ни на что не влияет, честная «оценка по задачам». Хайп — выполни 🔥сложный квест → временный бонус +15% XP за стак (до +45%, на 2 ч); «через силу» тратит больше энергии, «в кураже» меньше.
@@ -2051,7 +2051,7 @@ function openHelperChat() {
   if (!ov) { ov = document.createElement('div'); ov.id = 'helper-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov); }
   const noKey = !aiProvider();
   ov.innerHTML = `<div class="ai-box chat-box"><button class="modal-x" data-action="helper-close">✕</button>
-    <h3>🤖 Помощник Gojo</h3>
+    <h3>🤖 Помощник Satoru</h3>
     ${noKey ? `<p class="muted">Помощник работает на твоём ИИ-ключе. Не хочешь платить? Возьми <b>бесплатный</b> ключ Google Gemini или Groq за 2 минуты (без карты) — в Настройках есть пошаговый гид.<br><button class="btn" data-action="helper-to-settings" style="margin-top:10px">⚙️ Подключить ИИ</button></p>`
       : `<div id="chat-msgs" class="chat-msgs"></div>
          <form id="chat-form" class="chat-form"><input id="chat-input" placeholder="Спроси про любую функцию…" autocomplete="off" /><button type="submit" class="cap-add" title="Отправить">↵</button></form>`}</div>`;
@@ -2060,7 +2060,7 @@ function openHelperChat() {
 function renderChatMessages() {
   const box = document.getElementById('chat-msgs'); if (!box) return;
   if (!State.chatLog.length) {
-    box.innerHTML = `<div class="chat-empty"><p class="muted">Привет! Я знаю все функции Gojo и помогу разобраться. Спроси меня или начни с подсказки:</p>
+    box.innerHTML = `<div class="chat-empty"><p class="muted">Привет! Я знаю все функции Satoru и помогу разобраться. Спроси меня или начни с подсказки:</p>
       <div class="chat-suggs">${CHAT_SUGGESTIONS.map((s) => `<button class="chat-sugg" data-action="chat-suggest" data-q="${esc(s)}">${esc(s)}</button>`).join('')}</div></div>`;
     return;
   }
@@ -2119,7 +2119,7 @@ function notesPeekToday() {
 function renderNotes() {
   const notes = State.inbox || [];
   return `${captureBar()}
-    <div class="card"><p class="muted" style="margin:0">📝 Лови любые мысли — идеи проектов, личное, планы. Всё хранится в одном месте. Потом примени в Gojo (→ Квест) или разберёшь с ИИ (скоро).</p></div>
+    <div class="card"><p class="muted" style="margin:0">📝 Лови любые мысли — идеи проектов, личное, планы. Всё хранится в одном месте. Потом примени в Satoru (→ Квест) или разберёшь с ИИ (скоро).</p></div>
     ${notes.length ? notes.map(noteCard).join('') : '<div class="card"><p class="muted">Пусто. Запиши первую мысль в строке выше ↑ (текст, 🎤 голос или 🎥 видео).</p></div>'}`;
 }
 function blobToDataUrl(blob) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); }); }
@@ -2673,7 +2673,7 @@ function showPaywall(feature) {
   ov.innerHTML = `<div class="paywall-box">
     <button class="modal-x" data-action="close-paywall">✕</button>
     <div class="pw-crown">💎</div>
-    <h2>${feature && feature !== 'Pro' ? esc(feature) + ' — в Pro' : 'Gojo Pro'}</h2>
+    <h2>${feature && feature !== 'Pro' ? esc(feature) + ' — в Pro' : 'Satoru Pro'}</h2>
     <p class="muted">Открой глубину игры. Ядро всегда бесплатно — Pro добавляет силу.</p>
     <ul class="pro-feats">
       <li>📊 Расширенная аналитика и Индекс баланса</li>
@@ -2690,7 +2690,7 @@ function showPaywall(feature) {
 //  Гайд «Как играть» + форма обратной связи
 // ============================================================
 const GUIDE_SECTIONS = [
-  { icon: '⚔️', title: 'Что это', text: 'Gojo превращает жизнь в игру. Дела дают опыт и золото, ты растёшь в уровне и рангах, а кастомизируемый персонаж отражает прогресс. Не начинаешь с нуля — импортируй реальный опыт (Настройки → Импорт). Философия — «жизнь как десятиборье»: ценится баланс многих сфер, а не одна вертикаль.' },
+  { icon: '⚔️', title: 'Что это', text: 'Satoru превращает жизнь в игру. Дела дают опыт и золото, ты растёшь в уровне и рангах, а кастомизируемый персонаж отражает прогресс. Не начинаешь с нуля — импортируй реальный опыт (Настройки → Импорт). Философия — «жизнь как десятиборье»: ценится баланс многих сфер, а не одна вертикаль.' },
   { icon: '📅', title: 'Сегодня', text: 'Добавляй квесты (разовые дела) на день. ▶ запускает фокус-таймер (помодоро + плавающее окно поверх всех окон). Галочка — получаешь XP и золото. Ниже — привычки и итог дня с рефлексией.' },
   { icon: '🧍', title: 'Персонаж', text: 'Настраиваемый аватар (собери лицо/причёску/цвета). Атрибуты (Сила, Интеллект, Дух…) растут из твоих сфер и рисуют радар-билд. Архетип = твои сильнейшие атрибуты. Силуэт телосложения меняется от тренировок и веса.' },
   { icon: '🎖', title: 'Уровень vs Форма', text: 'Импортируй реальный опыт в Настройках — не начинаешь с нуля. Уровень = доказанное мастерство, оно НЕ сгорает (как чёрный пояс). Форма — отдельный показатель свежести: мягко падает, если забросил сферу, и быстро возвращается. Так жизнь не наказывает тебя за паузу.' },
@@ -2700,7 +2700,7 @@ const GUIDE_SECTIONS = [
   { icon: '🔥', title: 'Хайп', text: 'Выполни «Сложный» квест — включается Хайп: временный бонус к XP (+15% за стак, до +45%, на 2 часа). Каждый следующий сложный квест усиливает и продлевает его. Награда за то, что лезешь в трудное, а не фармишь лёгкое.' },
   { icon: '📊', title: 'Статистика', text: 'Ранг, Индекс баланса (ровно ли развиты сферы — это и есть десятиборье), ранги по сферам, графики опыта и времени.' },
   { icon: '🏆', title: 'Рейтинг', text: 'Соревнование по опыту со всеми на сервере — позови друзей! Видны только имя, аватар, уровень и ранг; задачи и личные данные приватны. В рейтинге можно скрыться галочкой.' },
-  { icon: '🤖', title: 'ИИ-помощник', text: 'Плавающая кнопка 🤖 (внизу справа) — постоянный помощник: знает все функции и философию Gojo, отвечает на вопросы, подсказывает что недоиспользуешь. На вкладке Цели «🤖 Импорт целей» оформит цели из твоего текста, в Настройках «🤖 Оценить через ИИ» откалибрует уровни, в Статистике «🤖 Разбор недели». Работает на твоём ключе Claude/OpenAI (Настройки → ИИ-ключ).' },
+  { icon: '🤖', title: 'ИИ-помощник', text: 'Плавающая кнопка 🤖 (внизу справа) — постоянный помощник: знает все функции и философию Satoru, отвечает на вопросы, подсказывает что недоиспользуешь. На вкладке Цели «🤖 Импорт целей» оформит цели из твоего текста, в Настройках «🤖 Оценить через ИИ» откалибрует уровни, в Статистике «🤖 Разбор недели». Работает на твоём ключе Claude/OpenAI (Настройки → ИИ-ключ).' },
   { icon: '💎', title: 'Free и Pro', text: 'Ядро бесплатно навсегда. Pro добавляет глубину: расширенная аналитика, 3 сундука в день, состав тела, темы. ИИ-функции работают на твоём ключе (BYOK). 7-дневный триал без карты.' },
 ];
 // ── Вложения к репортам: фото ужимаем (canvas), видео — как есть с лимитом ──
@@ -2792,7 +2792,7 @@ function showGuide() {
   const ov = document.createElement('div'); ov.id = 'guide'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="guide-box">
     <button class="modal-x" data-action="close-guide">✕</button>
-    <h2>📖 Как играть в Gojo</h2>
+    <h2>📖 Как играть в Satoru</h2>
     <p class="muted">Коротко по разделам. Лучший способ понять — добавить первый квест и выполнить его.</p>
     <div class="guide-list">${secs}</div>
     <h3 style="margin:6px 0 8px">💬 Нашёл баг или есть идея?</h3>
@@ -3162,13 +3162,13 @@ function renderSettings() {
 // ============================================================
 const APP_SHELL = `
   <header id="topbar">
-    <div class="brand"><span class="logo">⚔️</span><h1 id="appName">Gojo</h1></div>
+    <div class="brand"><span class="logo">?</span><h1 id="appName">Satoru</h1></div>
     <div id="charSummary" class="char-summary"></div>
     <nav id="nav"><!-- 2-уровневая навигация рендерится в renderNav() --></nav>
   </header>
   <main id="main"></main>
   <div id="toasts"></div>
-  <button id="ai-fab" data-action="open-helper" title="Помощник Gojo — спроси про любую функцию" aria-label="Помощник">🤖</button>`;
+  <button id="ai-fab" data-action="open-helper" title="Помощник Satoru — спроси про любую функцию" aria-label="Помощник">🤖</button>`;
 
 // ---- Мультиплеер: пати + кооп-рейд (Племя). null=не загружено, false=не в пати, объект=в пати ----
 const RAID_PER_MEMBER = 600; // XP/чел/неделя — цель кооп-рейда (синхр. с сервером)
@@ -3644,7 +3644,7 @@ function onClick(e) {
           f.text,
           f.attachments && f.attachments.length ? `📎 Вложений: ${f.attachments.length}` : '',
         ].filter(Boolean).join('\n'));
-        const text = `# Gojo Feedback — ${list.length} репортов\nЭкспорт: ${new Date().toLocaleString('ru')}\n\n` + lines.join('\n\n---\n\n');
+        const text = `# Satoru Feedback — ${list.length} репортов\nЭкспорт: ${new Date().toLocaleString('ru')}\n\n` + lines.join('\n\n---\n\n');
         await navigator.clipboard.writeText(text);
         toast('📋 Скопировано! Вставь в чат с Claude.');
       } catch (e) { toast('Ошибка: ' + e.message); }
@@ -3920,7 +3920,7 @@ function onClick(e) {
 function captureSettingsForm() {
   if (!document.getElementById('skills-list')) return; // формы нет на экране
   const s = State.settings, num = (id, fb) => { const el = document.getElementById(id); if (!el) return fb; const v = parseFloat(el.value); return isNaN(v) ? fb : v; };
-  const appEl = document.getElementById('set-appName'); if (appEl) s.appName = appEl.value.trim() || 'Gojo';
+  const appEl = document.getElementById('set-appName'); if (appEl) s.appName = appEl.value.trim() || 'Satoru';
   // ВАЖНО: перезаписываем skills только если в DOM реально есть строки. Иначе глитч/гонка могли бы стереть все сферы.
   const skillRows = [...document.querySelectorAll('#skills-list .skill-edit')];
   if (skillRows.length) {
@@ -3998,6 +3998,7 @@ function toast(msg) {
 async function initApp() {
   State.settings = await Store.load('settings', DEFAULT_SETTINGS);
   State.settings.appName = State.settings.appName || DEFAULT_SETTINGS.appName;
+  if (State.settings.appName === 'Gojo') { State.settings.appName = 'Satoru'; Store.save('settings', State.settings); } // ребренд Gojo->Satoru для старых юзеров
   State.settings.skills = State.settings.skills || [];
   State.settings.xp = Object.assign({}, DEFAULT_SETTINGS.xp, State.settings.xp);
   State.settings.xp.difficulty = Object.assign({}, DEFAULT_SETTINGS.xp.difficulty, State.settings.xp.difficulty);
@@ -4229,8 +4230,8 @@ function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent) && !wind
 // Заметный гид-баннер установки (на «Сегодня»), закрываемый
 function installBanner() {
   if (isStandalone() || localStorage.getItem('gojo_install_dismiss')) return '';
-  if (_deferredInstall) return `<div class="card install-banner"><span class="ib-text">📲 Установи Gojo как приложение — иконка на телефоне, офлайн, уведомления.</span><span class="ib-acts"><button class="btn" data-action="install-app">Установить</button><button class="del" data-action="install-dismiss" title="Скрыть">✕</button></span></div>`;
-  if (isIOS()) return `<div class="card install-banner"><span class="ib-text">📲 Добавь Gojo на экран «Домой»: кнопка <b>Поделиться</b> → <b>«На экран Домой»</b>.</span><button class="del" data-action="install-dismiss" title="Скрыть">✕</button></div>`;
+  if (_deferredInstall) return `<div class="card install-banner"><span class="ib-text">📲 Установи Satoru как приложение — иконка на телефоне, офлайн, уведомления.</span><span class="ib-acts"><button class="btn" data-action="install-app">Установить</button><button class="del" data-action="install-dismiss" title="Скрыть">✕</button></span></div>`;
+  if (isIOS()) return `<div class="card install-banner"><span class="ib-text">📲 Добавь Satoru на экран «Домой»: кнопка <b>Поделиться</b> → <b>«На экран Домой»</b>.</span><button class="del" data-action="install-dismiss" title="Скрыть">✕</button></div>`;
   return '';
 }
 // ---- PWA-карточка в Настройках: установка + push-уведомления ----
@@ -4241,11 +4242,11 @@ function ensurePushState() {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
   navigator.serviceWorker.ready.then((reg) => reg.pushManager.getSubscription()).then((sub) => { const on = !!sub; if (on !== State.pushOn) { State.pushOn = on; if (State.view === 'settings') render(); } }).catch(() => {});
 }
-// Самоактивирующаяся проверка: появился ли собранный APK по /gojo.apk (заливается после PWABuilder)
+// Самоактивирующаяся проверка: появился ли собранный APK по /satoru.apk (заливается после PWABuilder)
 function ensureApkState() {
   if (State.apkAvailable !== undefined) return;
   State.apkAvailable = false;
-  fetch('gojo.apk', { method: 'HEAD' }).then((r) => { if (r.ok && r.status === 200) { State.apkAvailable = true; if (State.view === 'settings') render(); } }).catch(() => {});
+  fetch('satoru.apk', { method: 'HEAD' }).then((r) => { if (r.ok && r.status === 200) { State.apkAvailable = true; if (State.view === 'settings') render(); } }).catch(() => {});
 }
 function pwaCard() {
   ensurePushState(); ensureApkState();
@@ -4254,13 +4255,13 @@ function pwaCard() {
   const install = installed ? '<span class="muted">✓ Уже установлено как приложение</span>'
     : (_deferredInstall ? '<button class="btn" data-action="install-app">📲 Установить приложение</button>'
       : '<span class="muted" style="font-size:12px">Меню браузера → «Установить приложение» / «На экран Домой»</span>');
-  const apk = State.apkAvailable ? `<div class="pwa-row" style="margin-top:10px"><a class="btn ghost" href="gojo.apk" download="Gojo.apk">📥 Скачать для Android (.apk)</a><span class="muted" style="font-size:12px">установка из файла</span></div>` : '';
+  const apk = State.apkAvailable ? `<div class="pwa-row" style="margin-top:10px"><a class="btn ghost" href="satoru.apk" download="Satoru.apk">📥 Скачать для Android (.apk)</a><span class="muted" style="font-size:12px">установка из файла</span></div>` : '';
   const push = !canPush ? '<p class="muted" style="font-size:11.5px;margin:10px 0 0">Уведомления недоступны в этом браузере.</p>'
     : (State.pushOn
       ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-disable">🔕 Выключить уведомления</button><button class="btn ghost sm" data-action="push-test">Проверить</button><span class="muted" style="font-size:12px">✓ включены</span></div>`
       : `<div class="pwa-row" style="margin-top:10px"><button class="btn" data-action="push-enable">🔔 Включить уведомления</button><span class="muted" style="font-size:12px">позову вернуться — тепло, без вины</span></div>`);
   return `<div class="card"><h3>📲 Приложение</h3>
-    <p class="muted" style="font-size:12.5px;margin:0 0 10px">Установи Gojo как приложение: иконка на телефоне, работает офлайн, уведомления мягко зовут вернуться (чинит «триггер-дыру»).</p>
+    <p class="muted" style="font-size:12.5px;margin:0 0 10px">Установи Satoru как приложение: иконка на телефоне, работает офлайн, уведомления мягко зовут вернуться (чинит «триггер-дыру»).</p>
     <div class="pwa-row">${install}</div>${apk}${push}</div>`;
 }
 async function pushEnable() {
@@ -4288,7 +4289,7 @@ let _deferredInstall = null;
 function initPWA() {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
   window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); _deferredInstall = e; if (State.view === 'settings') render(); });
-  window.addEventListener('appinstalled', () => { _deferredInstall = null; toast('📲 Gojo установлен!'); });
+  window.addEventListener('appinstalled', () => { _deferredInstall = null; toast('📲 Satoru установлен!'); });
 }
 async function init() {
   initPWA();
