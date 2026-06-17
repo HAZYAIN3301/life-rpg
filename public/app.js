@@ -4241,20 +4241,27 @@ function ensurePushState() {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
   navigator.serviceWorker.ready.then((reg) => reg.pushManager.getSubscription()).then((sub) => { const on = !!sub; if (on !== State.pushOn) { State.pushOn = on; if (State.view === 'settings') render(); } }).catch(() => {});
 }
+// Самоактивирующаяся проверка: появился ли собранный APK по /gojo.apk (заливается после PWABuilder)
+function ensureApkState() {
+  if (State.apkAvailable !== undefined) return;
+  State.apkAvailable = false;
+  fetch('gojo.apk', { method: 'HEAD' }).then((r) => { if (r.ok && r.status === 200) { State.apkAvailable = true; if (State.view === 'settings') render(); } }).catch(() => {});
+}
 function pwaCard() {
-  ensurePushState();
+  ensurePushState(); ensureApkState();
   const installed = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
   const canPush = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
   const install = installed ? '<span class="muted">✓ Уже установлено как приложение</span>'
     : (_deferredInstall ? '<button class="btn" data-action="install-app">📲 Установить приложение</button>'
       : '<span class="muted" style="font-size:12px">Меню браузера → «Установить приложение» / «На экран Домой»</span>');
+  const apk = State.apkAvailable ? `<div class="pwa-row" style="margin-top:10px"><a class="btn ghost" href="gojo.apk" download="Gojo.apk">📥 Скачать для Android (.apk)</a><span class="muted" style="font-size:12px">установка из файла</span></div>` : '';
   const push = !canPush ? '<p class="muted" style="font-size:11.5px;margin:10px 0 0">Уведомления недоступны в этом браузере.</p>'
     : (State.pushOn
       ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-disable">🔕 Выключить уведомления</button><button class="btn ghost sm" data-action="push-test">Проверить</button><span class="muted" style="font-size:12px">✓ включены</span></div>`
       : `<div class="pwa-row" style="margin-top:10px"><button class="btn" data-action="push-enable">🔔 Включить уведомления</button><span class="muted" style="font-size:12px">позову вернуться — тепло, без вины</span></div>`);
   return `<div class="card"><h3>📲 Приложение</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 10px">Установи Gojo как приложение: иконка на телефоне, работает офлайн, уведомления мягко зовут вернуться (чинит «триггер-дыру»).</p>
-    <div class="pwa-row">${install}</div>${push}</div>`;
+    <div class="pwa-row">${install}</div>${apk}${push}</div>`;
 }
 async function pushEnable() {
   try {
