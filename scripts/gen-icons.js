@@ -1,18 +1,23 @@
 'use strict';
-// Генератор иконок приложения (PWA): скрещённые мечи на тёмно-синем — бренд Gojo ⚔️.
+// Генератор иконок приложения (PWA): фирменный знак вопроса «?» Альберта (чёрный на светлом).
 // Zero-dep: рисуем пиксельно, кодируем PNG через zlib. Запуск: node scripts/gen-icons.js
 const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 
-const BG = [15, 19, 32];        // #0f1320
-const BLADE_TOP = [157, 180, 255];
-const BLADE_BOT = [108, 140, 255]; // #6c8cff
-const GLOW = [108, 140, 255];
-const HANDLE = [224, 162, 62];  // золото рукоять
+const BG = [245, 245, 247];     // светлый фон #f5f5f7 (как бренд: чёрное на белом)
+const INK = [22, 22, 28];       // чернильно-чёрный «?»
+
+// Полилиния знака вопроса в системе 240×240 (петля сверху + ножка), затем точка.
+const QMARK = [
+  [82, 78], [88, 62], [99, 55], [110, 50], [120, 48],
+  [138, 49], [150, 57], [157, 69], [160, 84],
+  [159, 98], [152, 108], [142, 117], [130, 124],
+  [124, 128], [120, 134], [118, 142], [118, 150],
+];
+const DOT = [118, 186], DOT_R = 12, STROKE = 21; // в 240-координатах
 
 function lerp(a, b, t) { return a + (b - a) * t; }
-function mix(c1, c2, t) { return [lerp(c1[0], c2[0], t), lerp(c1[1], c2[1], t), lerp(c1[2], c2[2], t)]; }
 function over(dst, src, a) { return [lerp(dst[0], src[0], a), lerp(dst[1], src[1], a), lerp(dst[2], src[2], a)]; }
 // расстояние от точки до отрезка
 function segDist(px, py, ax, ay, bx, by) {
@@ -21,6 +26,7 @@ function segDist(px, py, ax, ay, bx, by) {
   const cx = ax + t * dx, cy = ay + t * dy;
   return Math.hypot(px - cx, py - cy);
 }
+function distPolyline(px, py, pts) { let d = Infinity; for (let i = 1; i < pts.length; i++) d = Math.min(d, segDist(px, py, pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1])); return d; }
 
 function crc32(buf) {
   let c = ~0;
@@ -44,37 +50,20 @@ function encodePNG(w, h, rgba) {
 }
 
 function renderIcon(size) {
-  const S = size, cx = S / 2, cy = S / 2;
+  const S = size, k = S / 240;          // координаты заданы в 240-системе
   const rgba = Buffer.alloc(S * S * 4);
-  const corner = S * 0.22;          // скругление
-  const bladeW = S * 0.085;         // толщина клинка
-  const m = S * 0.18;               // отступ концов мечей
-  // два скрещённых клинка (диагонали)
-  const swords = [
-    [m, S - m, S - m, m],           // ↗
-    [m, m, S - m, S - m],           // ↘
-  ];
-  const pommels = [[m, S - m], [S - m, m], [m, m], [S - m, S - m]]; // рукояти-навершия
+  const corner = S * 0.225;             // скругление (≈54 в 240)
+  const pts = QMARK.map(([x, y]) => [x * k, y * k]);
+  const dot = [DOT[0] * k, DOT[1] * k], dotR = DOT_R * k, half = STROKE * k / 2;
   for (let y = 0; y < S; y++) {
     for (let x = 0; x < S; x++) {
-      // маска скруглённого квадрата
       const qx = Math.max(corner - x, x - (S - corner), 0);
       const qy = Math.max(corner - y, y - (S - corner), 0);
-      const outside = Math.hypot(qx, qy) > corner;
       const i = (y * S + x) * 4;
-      if (outside) { rgba[i] = rgba[i + 1] = rgba[i + 2] = rgba[i + 3] = 0; continue; }
-      // фон + центральное свечение
-      const dC = Math.hypot(x - cx, y - cy) / (S * 0.5);
-      let col = over(BG, GLOW, Math.max(0, 0.22 * (1 - dC)));
-      // клинки
-      let bd = Infinity; for (const s of swords) bd = Math.min(bd, segDist(x, y, s[0], s[1], s[2], s[3]));
-      const edge = bladeW / 2;
-      if (bd < edge + 1) {
-        const aa = Math.max(0, Math.min(1, edge + 0.5 - bd)); // сглаживание края
-        col = over(col, mix(BLADE_TOP, BLADE_BOT, y / S), aa);
-      }
-      // навершия рукоятей (золото)
-      for (const p of pommels) { const pd = Math.hypot(x - p[0], y - p[1]); if (pd < bladeW * 0.75) { const aa = Math.max(0, Math.min(1, bladeW * 0.75 + 0.5 - pd)); col = over(col, HANDLE, aa); } }
+      if (Math.hypot(qx, qy) > corner) { rgba[i] = rgba[i + 1] = rgba[i + 2] = rgba[i + 3] = 0; continue; } // вне скруглённого квадрата
+      let col = BG;
+      const d = Math.min(distPolyline(x, y, pts), Math.hypot(x - dot[0], y - dot[1]) - (dotR - half)); // «?» + точка
+      if (d < half + 0.75) { const aa = Math.max(0, Math.min(1, half + 0.5 - d)); col = over(col, INK, aa); } // сглаживание края
       rgba[i] = Math.round(col[0]); rgba[i + 1] = Math.round(col[1]); rgba[i + 2] = Math.round(col[2]); rgba[i + 3] = 255;
     }
   }
