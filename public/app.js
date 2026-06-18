@@ -4041,6 +4041,8 @@ async function initApp() {
   State.timer = loadTimer();
   if (State.timer) { State.timer.phase = State.timer.phase || 'work'; if (State.timer.phaseStartElapsed === undefined) State.timer.phaseStartElapsed = 0; updatePill(focusInfo()); if (State.timer.running) startTick(); }
   checkAchievements(true);
+  // Deep-link от ярлыков приложения (manifest shortcuts): ?view=goals → открыть вкладку
+  try { const v = new URLSearchParams(location.search).get('view'); if (v && VIEWS[v]) State.view = v; } catch {}
   State.phase = 'app';
   render();
   publishLeaderboard();
