@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.railway.up.life_rpg_production_416a.twa",
+        "sha256_cert_fingerprints": ["43:F7:D2:93:C8:EB:BC:ED:0B:48:64:A2:56:30:8E:F0:AC:49:E6:35:4C:6E:5D:4E:C6:8C:BA:B0:A2:A1:FE:4F"]
+      }
+    }]
