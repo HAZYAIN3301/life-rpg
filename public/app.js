@@ -55,6 +55,7 @@ const DEFAULT_SETTINGS = {
   equipped: { frame: null, background: null, title: null }, // надетые косметика + звание
   sound: true, // звуки интерфейса (#23)
   theme: 'dark', accent: '#6c8cff', // оформление (тема + акцент)
+  companion: { name: 'Тень', born: null, bond: 0, lastSeen: null, journal: [], check: {} }, // живой компаньон (Finch-модель)
 };
 
 const DIFF = { easy: 'Лёгкая', normal: 'Обычная', hard: 'Сложная' };
@@ -2176,6 +2177,123 @@ function progressTrioCard() {
     ${bar('🗓 Неделя', p.weekPct, `${p.active}/7 дней`, '#4f9ff7')}
     ${bar('🔥 Серия', p.streakPct, `${p.streak}→${p.next}`, '#e0a23e')}</div>`;
 }
+// ============================================================
+//  Живой компаньон (Finch-модель) — эмоциональный якорь удержания «через любовь»
+//  Спутник реагирует на твою активность, скучает, растёт от заботы. Без вины и штрафов.
+//  Бонд растёт от чек-инов (утро/вечер) и «погладить». Хранится в settings.companion.
+// ============================================================
+const COMP_TIERS = [
+  { at: 0, name: 'Искра' }, { at: 6, name: 'Дух' }, { at: 20, name: 'Страж' }, { at: 50, name: 'Хранитель' },
+];
+function ensureCompanion() {
+  const s = State.settings;
+  if (!s.companion) s.companion = { name: 'Тень', born: todayStr(), bond: 0, lastSeen: todayStr(), journal: [], check: {} };
+  const c = s.companion;
+  if (typeof c.bond !== 'number') c.bond = 0;
+  if (!c.check) c.check = {};
+  if (!Array.isArray(c.journal)) c.journal = [];
+  if (!c.born) c.born = todayStr();
+  if (!c.name) c.name = 'Тень';
+  return c;
+}
+function compTierIdx(bond) { let i = 0; COMP_TIERS.forEach((x, k) => { if (bond >= x.at) i = k; }); return i; }
+function compNextTier(bond) { return COMP_TIERS.find((x) => x.at > bond) || null; }
+function daysBetween(a, b) { return Math.max(0, Math.round((parseDate(b) - parseDate(a)) / 86400000)); }
+function compMood() {
+  const c = ensureCompanion();
+  const away = (typeof State._compAway === 'number') ? State._compAway : daysBetween(c.lastSeen || todayStr(), todayStr());
+  const act = todayActivityCount(), hr = new Date().getHours();
+  if (away >= 2) return { face: 'longing', line: `Я скучал по тебе… так рад, что ты вернулся 💛` };
+  if (act >= 3) return { face: 'radiant', line: `Сегодня ты сияешь — ${act} ${plural(act, 'дело', 'дела', 'дел')} уже сделано. Я горжусь тобой ✨` };
+  if (act >= 1) return { face: 'happy', line: `Хороший день идёт. Каждый маленький шаг важен 🙂` };
+  if (hr >= 21) return { face: 'sleepy', line: `День к концу. Что бы ни случилось — ты здесь, и это уже хорошо 🌙` };
+  if (hr < 11) return { face: 'happy', line: `Доброе утро. Чем наполним сегодня?` };
+  return { face: 'calm', line: `Я рядом. Сделаем что-нибудь маленькое и доброе?` };
+}
+function compFaceMarkup(face) {
+  const eyeOpen = (cx) => `<circle cx="${cx}" cy="58" r="5" fill="#1a1f2e"/><circle cx="${cx - 1.5}" cy="56.5" r="1.6" fill="#fff"/>`;
+  const eyeArc = (cx) => `<path d="M${cx - 6} 59 Q${cx} 51 ${cx + 6} 59" stroke="#1a1f2e" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+  const eyeLine = (cx) => `<line x1="${cx - 6}" y1="58" x2="${cx + 6}" y2="58" stroke="#1a1f2e" stroke-width="3.5" stroke-linecap="round"/>`;
+  let eyes, mouth, extra = '';
+  switch (face) {
+    case 'radiant':
+      eyes = eyeArc(44) + eyeArc(76);
+      mouth = `<path d="M48 74 Q60 90 72 74 Z" fill="#1a1f2e"/>`;
+      extra = `<text x="90" y="32" font-size="15">✨</text>`; break;
+    case 'sleepy':
+      eyes = eyeLine(44) + eyeLine(76);
+      mouth = `<path d="M54 78 Q60 82 66 78" stroke="#1a1f2e" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+      extra = `<text x="88" y="34" font-size="13">💤</text>`; break;
+    case 'longing':
+      eyes = eyeOpen(44) + eyeOpen(76);
+      mouth = `<path d="M52 78 Q60 84 68 78" stroke="#1a1f2e" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+      extra = `<path d="M40 64 q-2 5 0 7 q3 -2 0 -7 Z" fill="#7fd0ff"/>`; break;
+    case 'happy':
+      eyes = eyeOpen(44) + eyeOpen(76);
+      mouth = `<path d="M50 76 Q60 86 70 76" stroke="#1a1f2e" stroke-width="3.5" fill="none" stroke-linecap="round"/>`; break;
+    default: // calm
+      eyes = eyeOpen(44) + eyeOpen(76);
+      mouth = `<line x1="54" y1="79" x2="66" y2="79" stroke="#1a1f2e" stroke-width="3" stroke-linecap="round"/>`;
+  }
+  const blush = `<ellipse cx="36" cy="70" rx="5" ry="3" fill="#ff8fa3" opacity="0.45"/><ellipse cx="84" cy="70" rx="5" ry="3" fill="#ff8fa3" opacity="0.45"/>`;
+  return eyes + blush + mouth + extra;
+}
+function compSVG(face, tierIdx) {
+  const aura = tierIdx >= 1 ? `<circle cx="60" cy="60" r="52" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.25"/>` : '';
+  const aura2 = tierIdx >= 2 ? `<circle cx="60" cy="60" r="58" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0.15"/>` : '';
+  const crown = tierIdx >= 2 ? `<text x="60" y="15" font-size="17" text-anchor="middle">${tierIdx >= 3 ? '👑' : '⭐'}</text>` : '';
+  return `<svg class="comp-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs><linearGradient id="compg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0.72"/></linearGradient></defs>
+    ${aura2}${aura}
+    <path d="M60 18 C82 18 96 36 96 62 C96 86 84 102 60 102 C36 102 24 86 24 62 C24 36 38 18 60 18 Z" fill="url(#compg)" stroke="rgba(0,0,0,0.16)" stroke-width="1.5"/>
+    ${compFaceMarkup(face)}${crown}
+  </svg>`;
+}
+function compCheckinDue() {
+  const c = ensureCompanion(), t = todayStr(), hr = new Date().getHours(), ch = c.check[t] || {}, due = [];
+  if (!ch.m && hr < 14) due.push('m');
+  if (!ch.e && hr >= 17) due.push('e');
+  return due;
+}
+function companionCard() {
+  const c = ensureCompanion(), mood = compMood();
+  const ti = compTierIdx(c.bond), tier = COMP_TIERS[ti], nextT = compNextTier(c.bond);
+  const t = todayStr(), form = State._compForm;
+  const petToday = c.pet === t;
+  const nextBar = nextT
+    ? `<div class="comp-bond"><div class="comp-bond-top"><span>🜲 ${tier.name}</span><span class="muted">связь ${c.bond}/${nextT.at} → ${nextT.name}</span></div><div class="comp-bond-bar"><span style="width:${Math.round((c.bond - tier.at) / (nextT.at - tier.at) * 100)}%"></span></div></div>`
+    : `<div class="comp-bond"><div class="comp-bond-top"><span>🜲 ${tier.name}</span><span class="muted">связь нерушима 💛</span></div></div>`;
+  let actions;
+  if (form === 'm' || form === 'e') {
+    const q = form === 'm' ? '🌅 Одна вещь, ради которой стоит проснуться сегодня?' : '🌙 Чем ты сегодня гордишься? (даже мелочь считается)';
+    actions = `<form id="comp-checkin" data-kind="${form}" class="comp-form">
+      <label>${q}</label>
+      <input name="text" maxlength="200" autocomplete="off" placeholder="${form === 'm' ? 'сегодня хочу…' : 'я горжусь тем, что…'}" />
+      <div class="comp-form-btns"><button type="submit" class="btn">Сохранить</button><button type="button" class="btn ghost" data-action="comp-cancel">Позже</button></div></form>`;
+  } else if (form === 'name') {
+    actions = `<form id="comp-rename" class="comp-form"><label>Как зовут твоего спутника?</label><input name="name" maxlength="24" value="${esc(c.name)}" /><div class="comp-form-btns"><button type="submit" class="btn">Назвать</button><button type="button" class="btn ghost" data-action="comp-cancel">Отмена</button></div></form>`;
+  } else {
+    const due = compCheckinDue(), b = [];
+    if (due.includes('m')) b.push(`<button class="btn comp-cta" data-action="comp-check" data-kind="m">🌅 Утренний чек-ин</button>`);
+    if (due.includes('e')) b.push(`<button class="btn comp-cta" data-action="comp-check" data-kind="e">🌙 Вечерний чек-ин</button>`);
+    b.push(`<button class="btn ghost" data-action="comp-pet"${petToday ? ' disabled' : ''}>${petToday ? '💛 обнял сегодня' : '🫶 Погладить'}</button>`);
+    actions = `<div class="comp-actions">${b.join('')}</div>`;
+  }
+  const last = c.journal[c.journal.length - 1];
+  const peek = (last && last.date === t) ? `<p class="comp-peek muted">${last.kind === 'm' ? '🌅' : '🌙'} «${esc(last.text)}»</p>` : '';
+  return `<div class="card comp-card">
+    <div class="comp-row">
+      <div class="comp-art">${compSVG(mood.face, ti)}</div>
+      <div class="comp-body">
+        <div class="comp-name"><b>${esc(c.name)}</b><button class="comp-rename" data-action="comp-rename" title="Переименовать">✎</button></div>
+        <p class="comp-line">${mood.line}</p>
+        ${nextBar}
+      </div>
+    </div>
+    ${actions}${peek}
+  </div>`;
+}
+
 function renderToday() {
   const today = todayStr();
   const todays = State.tasks.filter((t) => t.date === today);
@@ -2221,7 +2339,7 @@ function renderToday() {
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">↪ Перенести всё на сегодня</button></div>` : '';
 
-  return `${installBanner()}${captureBar()}${notesPeekToday()}${progressTrioCard()}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
+  return `${companionCard()}${installBanner()}${captureBar()}${notesPeekToday()}${progressTrioCard()}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="Новый квест на сегодня…" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
@@ -3332,6 +3450,26 @@ function render() {
 function onSubmit(e) {
   const f = e.target;
 
+  // --- Компаньон: чек-ин (утро/вечер) ---
+  if (f.id === 'comp-checkin') {
+    e.preventDefault();
+    const c = ensureCompanion(), t = todayStr(), kind = f.dataset.kind === 'e' ? 'e' : 'm';
+    const text = (f.text.value || '').trim().slice(0, 200);
+    c.check[t] = Object.assign({}, c.check[t], { [kind]: true });
+    if (text) { c.journal.push({ date: t, kind, text }); if (c.journal.length > 120) c.journal = c.journal.slice(-120); }
+    c.bond += 2; c.lastSeen = t; State._compAway = 0; State._compForm = null;
+    Store.save('settings', State.settings);
+    if (typeof sfx === 'function') sfx('complete');
+    toast(kind === 'm' ? '🌅 Утро отмечено вместе' : '🌙 Хорошего тебе вечера 💛');
+    render(); return;
+  }
+  // --- Компаньон: переименование ---
+  if (f.id === 'comp-rename') {
+    e.preventDefault();
+    const c = ensureCompanion(); c.name = (f.name.value || '').trim().slice(0, 24) || 'Тень';
+    State._compForm = null; Store.save('settings', State.settings); toast('✨ Имя сохранено'); render(); return;
+  }
+
   // --- PIN login ---
   if (f.id === 'pin-form') {
     e.preventDefault();
@@ -3595,6 +3733,20 @@ function onClick(e) {
     eq[ty] = (eq[ty] === el.dataset.id) ? null : el.dataset.id; Store.save('settings', State.settings); render(); return;
   }
   if (action === 'toggle-sound') { State.settings.sound = !!el.checked; Store.save('settings', State.settings); if (el.checked) sfx('complete'); return; }
+
+  // --- Живой компаньон (Finch-модель) ---
+  if (action === 'comp-rename') { State._compForm = 'name'; render(); return; }
+  if (action === 'comp-check') { State._compForm = el.dataset.kind === 'e' ? 'e' : 'm'; render(); return; }
+  if (action === 'comp-cancel') { State._compForm = null; render(); return; }
+  if (action === 'comp-pet') {
+    const c = ensureCompanion();
+    if (c.pet === today) return;
+    c.pet = today; c.bond += 1; c.lastSeen = today; State._compAway = 0;
+    Store.save('settings', State.settings);
+    if (typeof sfx === 'function') sfx('complete');
+    toast('💛 ' + esc(c.name) + ' жмурится от тепла');
+    render(); return;
+  }
   if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'set-accent') { State.settings.accent = el.dataset.accent; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'sound-test') { ['complete', 'coin', 'achievement'].forEach((n, i) => setTimeout(() => sfx(n), i * 420)); setTimeout(() => sfx('loot', 'legendary'), 1300); return; }
@@ -4008,6 +4160,8 @@ async function initApp() {
   State.settings.body = State.settings.body || {};
   State.settings.imported = State.settings.imported || {};
   State.settings.avatar = State.settings.avatar || defaultAvatar();
+  // Компаньон: запоминаем сколько дней не виделись (для «я скучал»), затем отмечаем визит
+  { const c = ensureCompanion(); State._compAway = daysBetween(c.lastSeen || todayStr(), todayStr()); c.lastSeen = todayStr(); Store.save('settings', State.settings); }
 
   // Если нет навыков → онбординг
   if (State.settings.skills.length === 0) {
