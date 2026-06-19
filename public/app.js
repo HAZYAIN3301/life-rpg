@@ -2294,6 +2294,111 @@ function companionCard() {
   </div>`;
 }
 
+// ============================================================
+//  Питомцы по сферам (fb_mql0nnn3aflg) — десятиборье как живой зверинец.
+//  Каждая ОСНОВНАЯ сфера = питомец. Кормишь делами в сфере; «насыщение» держит баланс:
+//  забросил сферу → голодает; перекосил всё в одну → разжиреет (сигнал выровняться).
+//  Вид/поведение зависит от подсфер. Сытость считается из xpEvents (zero-persistence).
+//  Через заботу, без штрафов.
+// ============================================================
+const PET_TRAITS = [
+  { re: /спорт|трен|фитнес|gym|бег|run|качал|сил|мышц|единоборств|дзюдо|бокс|вело|плав|workout/i, icon: '🏋', idle: 'разминается' },
+  { re: /здоров|сон|выспат|пита|нутри|медит|йог|wellness|восстан|дыхан/i, icon: '🧘', idle: 'медитирует' },
+  { re: /учеб|учёб|школ|универ|экзам|study|klausur|biolog|био|хими|физик|математ|истор|abi|абитур/i, icon: '📚', idle: 'почитывает книгу' },
+  { re: /язык|нем|deutsch|\bdeu|англ|\beng|француз|испан|vocab|словарн/i, icon: '🗣', idle: 'учит слова' },
+  { re: /работ|карьер|бизнес|деньг|заработ|финанс|инвест|\bwork|\bjob|money|клиент/i, icon: '💼', idle: 'что-то подсчитывает' },
+  { re: /творч|искусств|музык|рисов|дизайн|видео|\bart|creativ|монтаж|съёмк|съемк/i, icon: '🎨', idle: 'творит' },
+  { re: /код|программ|разраб|\btech|\bit\b|девелоп|develop/i, icon: '💻', idle: 'печатает код' },
+  { re: /саморазв|самораз|развит|чтен|книг|\bmind|growth|философ|мышлен|психолог|рефлекс/i, icon: '🧠', idle: 'размышляет' },
+  { re: /быт|дом|house|chore|убор|готов|стирк/i, icon: '🧹', idle: 'прибирается' },
+  { re: /социал|друз|отнош|любов|family|семь|общени|свидан/i, icon: '💬', idle: 'болтает с друзьями' },
+];
+function petTraits(sphereId) {
+  const names = [skillById(sphereId).name, ...descendantSkills(sphereId).map((c) => c.name)].join(' ');
+  const found = [];
+  for (const t of PET_TRAITS) if (t.re.test(names) && !found.some((f) => f.icon === t.icon)) found.push(t);
+  if (!found.length) found.push({ icon: '⭐', idle: 'тихо светится' });
+  return found.slice(0, 3);
+}
+function sphereXpByDay(sphereId) {
+  const ids = new Set([sphereId, ...descendantSkills(sphereId).map((c) => c.id)]);
+  const m = {};
+  for (const e of xpEvents()) if (e.skillId && ids.has(e.skillId)) m[e.date] = (m[e.date] || 0) + e.xp;
+  return m;
+}
+function petStats(sphereId) {
+  const byDay = sphereXpByDay(sphereId), today = todayStr();
+  let sat = 0, lastFed = null;
+  for (let ago = 0; ago < 10; ago++) {
+    const d = addDays(today, -ago), xp = byDay[d] || 0;
+    if (xp > 0 && (!lastFed || d > lastFed)) lastFed = d;
+    sat += Math.min(xp / 4, 25) * ((10 - ago) / 10); // дневная порция с потолком × линейный спад за 10 дней
+  }
+  if (!lastFed) for (const d in byDay) if (!lastFed || d > lastFed) lastFed = d;
+  const daysSince = lastFed ? daysBetween(lastFed, today) : 99;
+  const pct = Math.min(120, Math.round(sat));
+  const state = pct < 18 ? 'hungry' : pct <= 85 ? 'thriving' : pct <= 110 ? 'full' : 'overfed';
+  return { pct, state, daysSince, lastFed };
+}
+const PET_STATE = {
+  hungry: { label: 'голоден', face: 'hungry', color: '#e0a23e' },
+  thriving: { label: 'растёт', face: 'happy', color: '#5fbf7a' },
+  full: { label: 'доволен', face: 'content', color: '#4f9ff7' },
+  overfed: { label: 'перекормлен', face: 'overfed', color: '#e0526a' },
+};
+function petFaceMarkup(face) {
+  const eyeOpen = (cx) => `<circle cx="${cx}" cy="58" r="5" fill="#1a1f2e"/><circle cx="${cx - 1.5}" cy="56.5" r="1.6" fill="#fff"/>`;
+  const eyeX = (cx) => `<path d="M${cx - 5} 54 l10 8 M${cx + 5} 54 l-10 8" stroke="#1a1f2e" stroke-width="3" stroke-linecap="round"/>`;
+  let eyes, mouth, extra = '';
+  if (face === 'hungry') { eyes = eyeOpen(44) + eyeOpen(76); mouth = `<path d="M52 80 Q60 74 68 80" stroke="#1a1f2e" stroke-width="3" fill="none" stroke-linecap="round"/>`; }
+  else if (face === 'overfed') { eyes = eyeX(44) + eyeX(76); mouth = `<ellipse cx="60" cy="80" rx="5" ry="4" fill="#1a1f2e"/>`; extra = `<text x="88" y="38" font-size="13">💢</text>`; }
+  else if (face === 'content') { eyes = eyeOpen(44) + eyeOpen(76); mouth = `<line x1="54" y1="79" x2="66" y2="79" stroke="#1a1f2e" stroke-width="3" stroke-linecap="round"/>`; }
+  else { eyes = eyeOpen(44) + eyeOpen(76); mouth = `<path d="M50 76 Q60 86 70 76" stroke="#1a1f2e" stroke-width="3.5" fill="none" stroke-linecap="round"/>`; }
+  const blush = `<ellipse cx="36" cy="70" rx="5" ry="3" fill="#ff8fa3" opacity="0.4"/><ellipse cx="84" cy="70" rx="5" ry="3" fill="#ff8fa3" opacity="0.4"/>`;
+  return eyes + blush + mouth + extra;
+}
+function petSVG(color, state, traits) {
+  const r = state === 'overfed' ? 1.34 : state === 'full' ? 1.12 : state === 'hungry' ? 0.8 : 1.0;
+  const tic = traits.map((t, i) => `<text x="100" y="${36 + i * 20}" font-size="15">${t.icon}</text>`).join('');
+  return `<svg class="pet-svg" viewBox="0 0 132 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g transform="translate(60,62) scale(${r.toFixed(2)},1) translate(-60,-62)">
+      <path d="M60 18 C82 18 96 36 96 62 C96 86 84 102 60 102 C36 102 24 86 24 62 C24 36 38 18 60 18 Z" fill="${color}" stroke="rgba(0,0,0,0.18)" stroke-width="1.5"/>
+      <ellipse cx="50" cy="42" rx="14" ry="9" fill="#fff" opacity="0.18"/>
+    </g>
+    ${petFaceMarkup(PET_STATE[state].face)}${tic}
+  </svg>`;
+}
+function renderPets() {
+  const spheres = topSkills();
+  if (!spheres.length) return `<div class="card"><p class="muted">Сначала добавь основные сферы жизни (Настройки → Навыки) — у каждой появится свой питомец.</p></div>`;
+  const pets = spheres.map((s) => ({ s, st: petStats(s.id), traits: petTraits(s.id) }));
+  const hungry = pets.filter((p) => p.st.state === 'hungry'), overfed = pets.filter((p) => p.st.state === 'overfed');
+  let balance;
+  if (overfed.length && hungry.length) balance = `🍖 <b>${esc(overfed[0].s.name)}</b> перекормлен, а <b>${esc(hungry.map((p) => p.s.name).slice(0, 2).join(', '))}</b> ${hungry.length > 1 ? 'голодают' : 'голодает'} — выровняй, и зверинец оживёт.`;
+  else if (overfed.length) balance = `🍖 <b>${esc(overfed[0].s.name)}</b> наелся до отвала. Удели денёк другим сферам.`;
+  else if (hungry.length) balance = `🥺 ${hungry.length > 1 ? 'Скучают' : 'Скучает'}: <b>${esc(hungry.map((p) => p.s.name).slice(0, 3).join(', '))}</b> — заверни в ${hungry.length > 1 ? 'эти сферы' : 'эту сферу'} хоть ненадолго.`;
+  else balance = `✨ Зверинец в гармонии — ты держишь десятиборье ровно. Так держать.`;
+  const cards = pets.map(({ s, st, traits }) => {
+    const meta = PET_STATE[st.state], idle = traits[0].idle;
+    const line = st.state === 'hungry' ? (!st.lastFed ? `ждёт первой встречи — покорми делами` : st.daysSince >= 8 ? `не виделись ${st.daysSince} ${plural(st.daysSince, 'день', 'дня', 'дней')} — скучает` : `проголодался — покорми делами`)
+      : st.state === 'overfed' ? `объелся! пора и в другие сферы`
+        : st.state === 'full' ? `сыт и доволен` : `растёт и ${idle}`;
+    return `<div class="card pet-card">
+      <div class="pet-art">${petSVG(s.color || '#6c8cff', st.state, traits)}</div>
+      <div class="pet-name"><b>${esc(s.name)}</b><span class="pet-badge" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span></div>
+      <div class="pet-bar"><span style="width:${Math.min(100, Math.round(st.pct / 120 * 100))}%;background:${meta.color}"></span></div>
+      <p class="pet-line muted">${line}</p>
+      <div class="pet-traits" title="облик и привычки питомца — по твоим подсферам">${traits.map((t) => `<span>${t.icon}</span>`).join('')}</div>
+    </div>`;
+  }).join('');
+  return `<div class="card pet-intro">
+      <h3>🐾 Питомцы сфер</h3>
+      <p class="muted">Каждая основная сфера жизни — живой питомец. Делаешь что-то в сфере — кормишь его; забыл — голодает; перекосил всё в одну — разжиреет. Здоровый зверинец = ты держишь <b>десятиборье</b> в балансе. Через заботу, не вину. Облик и повадки питомца зависят от твоих подсфер.</p>
+      <p class="pet-balance">${balance}</p>
+    </div>
+    <div class="pet-grid">${cards}</div>`;
+}
+
 function renderToday() {
   const today = todayStr();
   const todays = State.tasks.filter((t) => t.date === today);
@@ -3403,14 +3508,14 @@ function renderLeaderboard() {
     </div>`;
 }
 
-const VIEWS = { today: renderToday, notes: renderNotes, calendar: renderCalendarView, habits: renderHabitsView, character: renderCharacter, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, party: renderParty, leaderboard: renderLeaderboard, settings: renderSettings };
+const VIEWS = { today: renderToday, notes: renderNotes, calendar: renderCalendarView, habits: renderHabitsView, character: renderCharacter, pets: renderPets, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, party: renderParty, leaderboard: renderLeaderboard, settings: renderSettings };
 // Разгрузка дизайна: 11 вкладок → 5 разделов с под-вкладками. Прогрессивное раскрытие через гейт уровня.
 const SECTIONS = [
   { id: 'today', icon: '🎯', label: 'Сегодня', gate: 0, views: [{ view: 'today', label: 'День' }, { view: 'notes', label: 'Заметки' }] },
   { id: 'plan', icon: '🗓', label: 'План', gate: 0, views: [{ view: 'calendar', label: 'Календарь' }, { view: 'goals', label: 'Цели' }] },
   { id: 'habits', icon: '🔁', label: 'Привычки', gate: 0, views: [{ view: 'habits', label: 'Привычки' }] },
   { id: 'rewards', icon: '🎁', label: 'Награды', gate: 0, views: [{ view: 'rewards', label: 'Награды' }] },
-  { id: 'hero', icon: '🧍', label: 'Герой', gate: 3, views: [{ view: 'character', label: 'Персонаж' }, { view: 'tree', label: 'Навыки' }, { view: 'stats', label: 'Прогресс' }] },
+  { id: 'hero', icon: '🧍', label: 'Герой', gate: 3, views: [{ view: 'character', label: 'Персонаж' }, { view: 'pets', label: '🐾 Питомцы' }, { view: 'tree', label: 'Навыки' }, { view: 'stats', label: 'Прогресс' }] },
   { id: 'tribe', icon: '🤝', label: 'Племя', gate: 3, views: [{ view: 'party', label: 'Пати' }, { view: 'leaderboard', label: 'Рейтинг' }] },
 ];
 function sectionOf(view) { for (const s of SECTIONS) if (s.views.some((v) => v.view === view)) return s.id; return null; } // settings (шестерёнка) и legacy weekly → null
