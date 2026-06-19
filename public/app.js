@@ -2357,43 +2357,71 @@ function petFaceMarkup(face) {
   const blush = `<ellipse cx="36" cy="70" rx="5" ry="3" fill="#ff8fa3" opacity="0.4"/><ellipse cx="84" cy="70" rx="5" ry="3" fill="#ff8fa3" opacity="0.4"/>`;
   return eyes + blush + mouth + extra;
 }
+// Лакомство для анимации кормёжки — по доминантной подсфере
+const PET_TREAT = { '🏋': '🍗', '🧘': '🍵', '📚': '🍪', '🗣': '🍵', '💼': '☕', '🎨': '🧁', '💻': '🔋', '🧠': '🍪', '🧹': '🍬', '💬': '🍬', '⭐': '🍎' };
+function petGlasses() { return `<circle cx="44" cy="58" r="9" fill="none" stroke="#1a1f2e" stroke-width="2.5"/><circle cx="76" cy="58" r="9" fill="none" stroke="#1a1f2e" stroke-width="2.5"/><line x1="53" y1="58" x2="67" y2="58" stroke="#1a1f2e" stroke-width="2.5"/>`; }
+// Морф-форма по доминантной подсфере (его идея: качок-ноги, читающий и т.п.)
+function petAccessorySVG(icon, color) {
+  switch (icon) {
+    case '🏋': return `<rect x="34" y="33" width="52" height="6" rx="3" fill="#e0526a"/>
+      <ellipse cx="21" cy="76" rx="9" ry="12" fill="${color}" stroke="rgba(0,0,0,0.18)" stroke-width="1.5"/>
+      <ellipse cx="99" cy="76" rx="9" ry="12" fill="${color}" stroke="rgba(0,0,0,0.18)" stroke-width="1.5"/>`; // повязка + бицепсы
+    case '📚': return petGlasses() + `<rect x="46" y="90" width="28" height="16" rx="2" fill="#fff" stroke="#1a1f2e" stroke-width="1.5"/><line x1="60" y1="90" x2="60" y2="106" stroke="#1a1f2e" stroke-width="1.2"/>`; // очки + книжка
+    case '🧠': return petGlasses() + `<text x="92" y="30" font-size="13">✦</text>`;
+    case '🗣': return `<rect x="90" y="17" width="34" height="24" rx="7" fill="#fff" stroke="#1a1f2e" stroke-width="1.3"/><path d="M99 41 l-5 9 l12 -7z" fill="#fff" stroke="#1a1f2e" stroke-width="1.3"/><text x="107" y="34" font-size="13" text-anchor="middle" fill="#1a1f2e" font-weight="700">A</text>`; // речевой пузырь
+    case '💼': return `<path d="M60 84 l-6 7 l6 16 l6 -16z" fill="#2a3550"/><path d="M54 82 h12 l-6 6z" fill="#3a4768"/>`; // галстук
+    case '🎨': return `<g transform="rotate(-10 58 22)"><ellipse cx="58" cy="24" rx="22" ry="8" fill="#b06ff0"/><ellipse cx="58" cy="22" rx="15" ry="5" fill="#c98bff"/><circle cx="44" cy="18" r="3" fill="#b06ff0"/></g>`; // берет
+    case '💻': return `<line x1="60" y1="18" x2="60" y2="6" stroke="#1a1f2e" stroke-width="2"/><circle cx="60" cy="5" r="3.5" fill="#4f9ff7"/>`; // антенна
+    case '🧹': return `<line x1="100" y1="40" x2="92" y2="74" stroke="#8a5a2b" stroke-width="3" stroke-linecap="round"/><path d="M88 72 l10 4 l-3 10 l-10 -4z" fill="#d8a44b"/>`; // веник
+    case '💬': return `<text x="92" y="32" font-size="14">💛</text><text x="101" y="50" font-size="10">💛</text>`;
+    default: return `<text x="92" y="30" font-size="15">✨</text>`;
+  }
+}
 function petSVG(color, state, traits) {
   const r = state === 'overfed' ? 1.34 : state === 'full' ? 1.12 : state === 'hungry' ? 0.8 : 1.0;
-  const tic = traits.map((t, i) => `<text x="100" y="${36 + i * 20}" font-size="15">${t.icon}</text>`).join('');
+  const dom = (traits[0] && traits[0].icon) || '⭐';
   return `<svg class="pet-svg" viewBox="0 0 132 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <g transform="translate(60,62) scale(${r.toFixed(2)},1) translate(-60,-62)">
       <path d="M60 18 C82 18 96 36 96 62 C96 86 84 102 60 102 C36 102 24 86 24 62 C24 36 38 18 60 18 Z" fill="${color}" stroke="rgba(0,0,0,0.18)" stroke-width="1.5"/>
       <ellipse cx="50" cy="42" rx="14" ry="9" fill="#fff" opacity="0.18"/>
     </g>
-    ${petFaceMarkup(PET_STATE[state].face)}${tic}
+    ${petFaceMarkup(PET_STATE[state].face)}
+    ${petAccessorySVG(dom, color)}
   </svg>`;
 }
+function petName(id) { const pn = (State.settings && State.settings.petNames) || {}; return pn[id] || skillById(id).name; }
 function renderPets() {
   const spheres = topSkills();
-  if (!spheres.length) return `<div class="card"><p class="muted">Сначала добавь основные сферы жизни (Настройки → Навыки) — у каждой появится свой питомец.</p></div>`;
-  const pets = spheres.map((s) => ({ s, st: petStats(s.id), traits: petTraits(s.id) }));
+  if (!spheres.length) return `${companionCard()}<div class="card"><p class="muted">Сначала добавь основные сферы жизни (Настройки → Навыки) — у каждой появится свой питомец рядом с твоим спутником.</p></div>`;
+  const pets = spheres.map((s) => ({ s, st: petStats(s.id), traits: petTraits(s.id), nm: petName(s.id) }));
   const hungry = pets.filter((p) => p.st.state === 'hungry'), overfed = pets.filter((p) => p.st.state === 'overfed');
   let balance;
-  if (overfed.length && hungry.length) balance = `🍖 <b>${esc(overfed[0].s.name)}</b> перекормлен, а <b>${esc(hungry.map((p) => p.s.name).slice(0, 2).join(', '))}</b> ${hungry.length > 1 ? 'голодают' : 'голодает'} — выровняй, и зверинец оживёт.`;
-  else if (overfed.length) balance = `🍖 <b>${esc(overfed[0].s.name)}</b> наелся до отвала. Удели денёк другим сферам.`;
-  else if (hungry.length) balance = `🥺 ${hungry.length > 1 ? 'Скучают' : 'Скучает'}: <b>${esc(hungry.map((p) => p.s.name).slice(0, 3).join(', '))}</b> — заверни в ${hungry.length > 1 ? 'эти сферы' : 'эту сферу'} хоть ненадолго.`;
+  if (overfed.length && hungry.length) balance = `🍖 <b>${esc(overfed[0].nm)}</b> перекормлен, а <b>${esc(hungry.map((p) => p.nm).slice(0, 2).join(', '))}</b> ${hungry.length > 1 ? 'голодают' : 'голодает'} — выровняй, и зверинец оживёт.`;
+  else if (overfed.length) balance = `🍖 <b>${esc(overfed[0].nm)}</b> наелся до отвала. Удели денёк другим сферам.`;
+  else if (hungry.length) balance = `🥺 ${hungry.length > 1 ? 'Скучают' : 'Скучает'}: <b>${esc(hungry.map((p) => p.nm).slice(0, 3).join(', '))}</b> — заверни в ${hungry.length > 1 ? 'эти сферы' : 'эту сферу'} хоть ненадолго.`;
   else balance = `✨ Зверинец в гармонии — ты держишь десятиборье ровно. Так держать.`;
-  const cards = pets.map(({ s, st, traits }) => {
+  const cards = pets.map(({ s, st, traits, nm }) => {
     const meta = PET_STATE[st.state], idle = traits[0].idle;
     const line = st.state === 'hungry' ? (!st.lastFed ? `ждёт первой встречи — покорми делами` : st.daysSince >= 8 ? `не виделись ${st.daysSince} ${plural(st.daysSince, 'день', 'дня', 'дней')} — скучает` : `проголодался — покорми делами`)
       : st.state === 'overfed' ? `объелся! пора и в другие сферы`
         : st.state === 'full' ? `сыт и доволен` : `растёт и ${idle}`;
+    const renaming = State._petRename === s.id;
+    const nameRow = renaming
+      ? `<form class="pet-rename-form" data-id="${s.id}"><input name="name" maxlength="20" value="${esc(nm)}" placeholder="${esc(s.name)}" /><div class="pet-rename-btns"><button type="submit" class="btn sm">✓</button><button type="button" class="btn ghost sm" data-action="pet-rename-cancel">✕</button></div></form>`
+      : `<div class="pet-name"><b>${esc(nm)}</b><button class="pet-edit" data-action="pet-rename" data-id="${s.id}" title="Переименовать">✎</button><span class="pet-badge" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span></div>`;
+    const sub = nm !== s.name ? `<p class="pet-sphere muted">сфера: ${esc(s.name)}</p>` : '';
     return `<div class="card pet-card">
-      <div class="pet-art">${petSVG(s.color || '#6c8cff', st.state, traits)}</div>
-      <div class="pet-name"><b>${esc(s.name)}</b><span class="pet-badge" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span></div>
+      <div class="pet-art" data-action="pet-feed" data-id="${s.id}" title="приласкать ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits)}</div>
+      ${nameRow}${sub}
       <div class="pet-bar"><span style="width:${Math.min(100, Math.round(st.pct / 120 * 100))}%;background:${meta.color}"></span></div>
       <p class="pet-line muted">${line}</p>
-      <div class="pet-traits" title="облик и привычки питомца — по твоим подсферам">${traits.map((t) => `<span>${t.icon}</span>`).join('')}</div>
+      <div class="pet-traits" title="облик и повадки питомца — по твоим подсферам">${traits.map((t) => `<span>${t.icon}</span>`).join('')}</div>
     </div>`;
   }).join('');
-  return `<div class="card pet-intro">
-      <h3>🐾 Питомцы сфер</h3>
-      <p class="muted">Каждая основная сфера жизни — живой питомец. Делаешь что-то в сфере — кормишь его; забыл — голодает; перекосил всё в одну — разжиреет. Здоровый зверинец = ты держишь <b>десятиборье</b> в балансе. Через заботу, не вину. Облик и повадки питомца зависят от твоих подсфер.</p>
+  return `${companionCard()}
+    <div class="card pet-intro">
+      <h3>🐾 Зверинец сфер</h3>
+      <p class="muted">Твой спутник присматривает за зверинцем. Каждая основная сфера жизни — живой питомец: делаешь что-то в сфере — кормишь его; забыл — голодает; перекосил всё в одну — разжиреет. Здоровый зверинец = ты держишь <b>десятиборье</b> в балансе. Облик и повадки питомца зависят от твоих подсфер. Через заботу, не вину. <i>Погладь питомца — он будет рад.</i></p>
       <p class="pet-balance">${balance}</p>
     </div>
     <div class="pet-grid">${cards}</div>`;
@@ -3574,6 +3602,14 @@ function onSubmit(e) {
     const c = ensureCompanion(); c.name = (f.name.value || '').trim().slice(0, 24) || 'Тень';
     State._compForm = null; Store.save('settings', State.settings); toast('✨ Имя сохранено'); render(); return;
   }
+  // --- Питомец: переименование ---
+  if (f.classList && f.classList.contains('pet-rename-form')) {
+    e.preventDefault();
+    const id = f.dataset.id, nm = (f.name.value || '').trim().slice(0, 20);
+    State.settings.petNames = State.settings.petNames || {};
+    if (nm && nm !== skillById(id).name) State.settings.petNames[id] = nm; else delete State.settings.petNames[id];
+    State._petRename = null; Store.save('settings', State.settings); toast('✨ Имя питомца сохранено'); render(); return;
+  }
 
   // --- PIN login ---
   if (f.id === 'pin-form') {
@@ -3852,6 +3888,22 @@ function onClick(e) {
     toast('💛 ' + esc(c.name) + ' жмурится от тепла');
     render(); return;
   }
+
+  // --- Питомцы по сферам ---
+  if (action === 'pet-feed') {
+    const art = el.closest('.pet-art'), svg = art && art.querySelector('.pet-svg');
+    if (svg) {
+      svg.classList.remove('pet-nom'); void svg.offsetWidth; svg.classList.add('pet-nom'); // рестарт анимации
+      const dom = (petTraits(id)[0] || {}).icon || '⭐', treat = PET_TREAT[dom] || '🍎';
+      const food = document.createElement('span'); food.className = 'pet-food'; food.textContent = treat;
+      art.appendChild(food); setTimeout(() => food.remove(), 1000);
+    }
+    if (typeof sfx === 'function') sfx('complete');
+    toast('💛 ' + esc(petName(id)) + ' доволен');
+    return;
+  }
+  if (action === 'pet-rename') { State._petRename = id; render(); return; }
+  if (action === 'pet-rename-cancel') { State._petRename = null; render(); return; }
   if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'set-accent') { State.settings.accent = el.dataset.accent; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'sound-test') { ['complete', 'coin', 'achievement'].forEach((n, i) => setTimeout(() => sfx(n), i * 420)); setTimeout(() => sfx('loot', 'legendary'), 1300); return; }

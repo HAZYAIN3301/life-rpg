@@ -211,8 +211,31 @@ function userLocalParts(tz) {
     return { date, hour: Number.isNaN(hour) ? now.getHours() : (hour % 24) };
   } catch { return { date: now.toISOString().slice(0, 10), hour: now.getHours() }; }
 }
-function readUserCompanion(uid) {
-  try { const s = JSON.parse(fs.readFileSync(path.join(userDataDir(uid), 'settings.json'), 'utf8')); return s.companion || null; } catch { return null; }
+function readUserJson(uid, name) { try { return JSON.parse(fs.readFileSync(path.join(userDataDir(uid), name + '.json'), 'utf8')); } catch { return null; } }
+function readUserCompanion(uid) { const s = readUserJson(uid, 'settings'); return (s && s.companion) || null; }
+// «Одинокий питомец»: активный юзер, но какая-то основная сфера давно заброшена → имя того питомца.
+// Лёгкая эвристика из tasks.json + settings.json (без полной репликации xpEvents). Не нашли — null.
+function lonelyPet(uid) {
+  const settings = readUserJson(uid, 'settings'), tasks = readUserJson(uid, 'tasks');
+  if (!settings || !Array.isArray(settings.skills) || !Array.isArray(tasks)) return null;
+  const skills = settings.skills, tops = skills.filter((s) => !s.parentId);
+  if (tops.length < 2) return null;
+  const topOf = (id) => { let s = skills.find((x) => x.id === id), g = 0; while (s && s.parentId && g++ < 12) s = skills.find((x) => x.id === s.parentId); return s ? s.id : id; };
+  const now = Date.now(), DAY = 86400000;
+  const lastByTop = {}; let activeRecently = false;
+  for (const t of tasks) {
+    if (!t.done) continue;
+    const when = t.completedAt ? new Date(t.completedAt).getTime() : new Date(t.date).getTime();
+    if (Number.isNaN(when)) continue;
+    const top = topOf(t.skillId || (t.skillIds && t.skillIds[0]));
+    if (top) { lastByTop[top] = Math.max(lastByTop[top] || 0, when); }
+    if ((now - when) / DAY <= 3) activeRecently = true;
+  }
+  if (!activeRecently) return null; // если юзер вообще не активен — это работа утреннего/вечернего нуджа, не питомца
+  let worst = null, worstGap = 5; // нудж только при простое сферы ≥ 6 дней
+  for (const s of tops) { const gap = lastByTop[s.id] ? (now - lastByTop[s.id]) / DAY : 99; if (gap > worstGap) { worstGap = gap; worst = s; } }
+  if (!worst) return null;
+  return (settings.petNames && settings.petNames[worst.id]) || worst.name;
 }
 // Чистое решение «слать ли и какой чек-ин» — вынесено, чтобы юнит-тестить без отправки.
 function pushDecision(hour, log, checked) {
@@ -228,17 +251,23 @@ async function pushTick() {
     if (user.push.nudges === false) continue; // юзер отключил напоминания компаньона
     const tz = user.push.tz || 'Europe/Berlin';
     const { date, hour } = userLocalParts(tz);
-    const log = (user.push.log && user.push.log.date === date) ? user.push.log : { date, m: false, e: false };
+    const log = (user.push.log && user.push.log.date === date) ? user.push.log : { date, m: false, e: false, p: false };
     const comp = readUserCompanion(user.id);
     const name = (comp && comp.name) || 'Тень';
     const checked = (comp && comp.check && comp.check[date]) || {};
     const kind = pushDecision(hour, log, checked);
-    if (!kind) { if (user.push.log !== log) { user.push.log = log; changed = true; } continue; }
-    const payload = kind === 'm'
-      ? { title: `🌅 ${name} ждёт тебя`, body: 'Доброе утро! Чем наполним сегодня?', url: './?view=today', tag: 'satoru-checkin' }
-      : { title: `🌙 ${name}`, body: 'Как прошёл день? Загляни на минутку 💛', url: './?view=today', tag: 'satoru-checkin' };
+    let payload = null;
+    if (kind === 'm') payload = { title: `🌅 ${name} ждёт тебя`, body: 'Доброе утро! Чем наполним сегодня?', url: './?view=today', tag: 'satoru-checkin' };
+    else if (kind === 'e') payload = { title: `🌙 ${name}`, body: 'Как прошёл день? Загляни на минутку 💛', url: './?view=today', tag: 'satoru-checkin' };
+    // Днём (13–17): «питомец заскучал» — максимум раз в 2 дня, только если есть заброшенная сфера
+    else if (hour >= 13 && hour < 17 && !log.p && (!user.push.petAt || (Date.parse(date) - Date.parse(user.push.petAt)) / 86400000 >= 2)) {
+      const pet = lonelyPet(user.id);
+      if (pet) { payload = { title: `🐾 ${pet} заскучал`, body: `${pet} давно тебя не видел в этой сфере — загляни на минутку 💛`, url: './?view=pets', tag: 'satoru-pet' }; log.p = true; user.push.petAt = date; }
+    }
+    if (!payload) { if (user.push.log !== log) { user.push.log = log; changed = true; } continue; }
     const r = await sendWebPush(user.push, payload);
-    log[kind] = true; user.push.log = log; changed = true;
+    if (kind === 'm' || kind === 'e') log[kind] = true;
+    user.push.log = log; changed = true;
     if (r && (r.status === 404 || r.status === 410)) delete user.push; // мёртвая подписка → выписать
   }
   if (changed) { try { saveUsers(users); } catch {} }
