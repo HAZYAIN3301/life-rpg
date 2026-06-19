@@ -731,6 +731,16 @@ function archetype() {
   return { name: MAP[top] || single[sorted[0].id] || 'Многогранник', desc: `${sorted[0].name}${sorted[1] ? ' + ' + sorted[1].name : ''}` };
 }
 function bodyBMI() { const b = State.settings.body || {}; if (!b.height || !b.weight) return null; return b.weight / ((b.height / 100) ** 2); }
+// % жира по полу (ACE-диапазоны). lean=атлетично/фитнес → ИМТ с мышцами завышает. Не мед.совет.
+function bodyFatCat(bf, sex) {
+  const f = sex === 'f';
+  const ess = f ? 13 : 5, ath = f ? 20 : 13, fit = f ? 24 : 17, acc = f ? 31 : 24;
+  if (bf < ess) return { label: 'очень низкий', lean: true };
+  if (bf <= ath) return { label: 'атлетично', lean: true };
+  if (bf <= fit) return { label: 'фитнес', lean: true };
+  if (bf <= acc) return { label: 'норма', lean: false };
+  return { label: 'выше нормы', lean: false };
+}
 
 // ---- SVG: радар сфер (личное десятиборье) + схематичное телосложение ----
 function radarSVG(scores) {
@@ -1082,7 +1092,7 @@ function ensureLootbox() {
 //  Ёмкость (max) растёт по суперкомпенсации: нагрузка + отдых → адаптация.
 // ============================================================
 const ENERGY = { perHour: 7, maxFloor: 80, maxCeil: 220, grow: 2, shrink: 1, loadForGrowth: 12,
-  cost: { easy: 0, normal: 4, hard: 8 }, costCap: 24 };
+  cost: { easy: 1, normal: 6, hard: 11 }, costCap: 45 }; // тяжёлый/длинный день заметнее тратит (фидбек: 10ч учёбы ≠ 85%)
 function ensureEnergy() {
   const s = State.settings;
   if (!s.energy) s.energy = { day: todayStr(), cur: 100, max: 100, loadToday: 0, hitZero: false, tickAt: Date.now() };
@@ -1482,9 +1492,12 @@ function questRow(t) {
   const time = t.actualMin ? `${fmtDur(t.actualMin)} / ${fmtDur(estMin)}` : fmtDur(estMin);
   const active = State.timer && State.timer.taskId === t.id;
   const skSel = `<button class="t-cats" data-action="edit-cats" data-id="${t.id}" title="Категории квеста — клик чтобы изменить (можно несколько)">${catChips(t)}</button>`;
+  const titleCell = State._editTask === t.id
+    ? `<form class="t-edit-form" data-id="${t.id}"><input name="title" value="${esc(t.title)}" maxlength="120" autocomplete="off" /></form>`
+    : `<span class="t-title" data-action="edit-task-title" data-id="${t.id}" title="Клик — изменить текст квеста">${esc(t.title)}</span>`;
   return `<li class="task ${t.done ? 'done' : ''}">
     <button class="check" data-action="toggle-task" data-id="${t.id}">${t.done ? '✓' : ''}</button>
-    <span class="t-title">${esc(t.title)}</span>
+    ${titleCell}
     ${skSel}
     <span class="t-time" data-action="edit-actual" data-id="${t.id}" title="Клик — фактическое время">${time}</span>
     <span class="t-diff">${DIFF[t.difficulty] || ''}</span>
@@ -1596,7 +1609,7 @@ function renderCalendarView() {
       <span class="cal-b-text"><b>${pad2(H)}:${pad2(M)}</b> ${esc(t.title)}<span class="cal-dur"> · ${fmtDur(dur)}</span></span>
       <button class="cal-x" data-action="unschedule-quest" data-id="${t.id}" title="Снять с расписания">✕</button></div>`;
   }).join('');
-  const trayTasks = unscheduled.map((t) => { const sk = skillById(t.skillId); return `<span class="calv-chip" draggable="true" data-id="${t.id}" style="--c:${esc(sk.color)}" title="Тяни в сетку, чтобы поставить на время">⠿ ${esc(t.title)} <span class="muted">${fmtDur(Number(t.estimateMin) || 30)}</span></span>`; }).join('');
+  const trayTasks = unscheduled.map((t) => { const sk = skillById(t.skillId); return `<span class="calv-chip" draggable="true" data-id="${t.id}" style="--c:${esc(sk.color)}" title="Тяни в сетку, чтобы поставить на время">⠿ ${esc(t.title)} <span class="muted">${fmtDur(Number(t.estimateMin) || 30)}</span><button class="calv-chip-del" data-action="delete-task" data-id="${t.id}" title="Удалить квест">✕</button></span>`; }).join('');
   const dur0 = unscheduled.length ? (Number(unscheduled[0].estimateMin) || 30) : 30;
   const picker = unscheduled.length ? `
     <div class="cal-schedule">
@@ -2146,7 +2159,8 @@ async function startCapture(kind) {
   _rec.timer = setInterval(() => {
     const el = document.getElementById('rec-timer'); const s = Math.floor((Date.now() - _rec.startedAt) / 1000);
     if (el) el.textContent = Math.floor(s / 60) + ':' + pad2(s % 60);
-    if (s >= 120) stopCapture(); // авто-стоп 2 мин
+    const cap = _rec.kind === 'video' ? 180 : 600; // аудио до 10 мин, видео до 3 мин
+    if (s >= cap) stopCapture();
   }, 250);
   render();
 }
@@ -2728,7 +2742,15 @@ function renderCharacter() {
   const attrBars = scores.map((a) => `<div class="attr-row"><span class="attr-dot" style="background:${esc(a.color)}"></span><span class="attr-nm">${esc(a.name)}</span><span class="attr-bar"><span style="width:${Math.round(Math.min(100, a.value / max * 100))}%;background:${esc(a.color)}"></span></span><span class="attr-val">ур.${a.value}</span></div>`).join('');
   const balChip = bal.active >= 2 ? `<span class="bal-chip" title="Индекс баланса: равномерность твоих активных сфер + охват. Философия десятиборья — побеждает композиция, не одна вертикаль.">⚖️ Баланс ${bal.index}/100${bal.weakest ? ` · подтяни «${esc(bal.weakest.name)}»` : ''}</span>` : '';
   let bmiLabel = '';
-  if (bmi) { const cat = bmi < 18.5 ? 'недовес' : bmi < 25 ? 'норма' : bmi < 30 ? 'избыток' : 'выше нормы'; bmiLabel = `<div class="bmi-label">ИМТ <b>${bmi.toFixed(1)}</b> · ${cat}${b.bodyfat ? ` · жир ${b.bodyfat}%` : ''}</div>`; }
+  if (bmi) {
+    const cat = bmi < 18.5 ? 'недовес' : bmi < 25 ? 'норма' : bmi < 30 ? 'избыток' : 'выше нормы';
+    const bf = Number(b.bodyfat) || 0;
+    // % жира — по полу (мужские/женские диапазоны). Это надёжнее ИМТ, т.к. ИМТ не различает мышцы и жир.
+    const bfCat = bf ? bodyFatCat(bf, b.sex) : null;
+    // ИМТ ненадёжен при развитой мускулатуре: если жир атлетичный/нормальный, не пугаем «избытком».
+    const bmiMisleading = bfCat && (bfCat.lean) && (cat === 'избыток' || cat === 'выше нормы');
+    bmiLabel = `<div class="bmi-label">${bf ? `жир <b>${b.bodyfat}%</b> · ${bfCat.label}` : `ИМТ <b>${bmi.toFixed(1)}</b> · ${cat}`}${bf ? `<span class="muted"> · ИМТ ${bmi.toFixed(1)}${bmiMisleading ? ' (с мышцами завышает)' : ''}</span>` : ''}</div>`;
+  }
   const bodyForm = `<form id="body-form" class="body-form">
       <label>Пол<select name="sex"><option value="" ${!b.sex ? 'selected' : ''}>—</option><option value="m" ${b.sex === 'm' ? 'selected' : ''}>М</option><option value="f" ${b.sex === 'f' ? 'selected' : ''}>Ж</option></select></label>
       <label>Рост, см<input name="height" type="number" min="100" max="250" value="${b.height || ''}" placeholder="—" /></label>
@@ -2746,9 +2768,10 @@ function renderCharacter() {
         ${equippedTitle() ? `<div class="ch-title" title="Звание — сменить в «Наградах → Коллекция»">🏷 ${esc(equippedTitle())}</div>` : ''}
         <div class="xp-bar" style="max-width:340px"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
         ${(() => { const of = overallForm(), fm = formMeta(of); return `<div class="ch-form" title="Форма — текущая «свежесть» по активности. В отличие от уровня (доказанное мастерство — не сгорает), форма мягко падает без тренировок и легко возвращается.">
-          <span class="cf-label">Форма</span>
+          <span class="cf-label">🔥 Форма</span>
           <span class="cf-bar"><span style="width:${of == null ? 0 : of}%;background:${fm.color}"></span></span>
           <span class="cf-val" style="color:${fm.color}">${of == null ? '—' : of + '%'} · ${fm.text}</span>
+          <span class="cf-hint muted">свежесть активности — не уровень; падает без практики, легко возвращается${of == null ? ' (появится после первых дел)' : ''}</span>
         </div>`; })()}
       </div>
     </div>
@@ -3663,6 +3686,13 @@ function onSubmit(e) {
     const c = ensureCompanion(); c.name = (f.name.value || '').trim().slice(0, 24) || 'Тень';
     State._compForm = null; Store.save('settings', State.settings); toast('✨ Имя сохранено'); render(); return;
   }
+  // --- Квест: правка текста ---
+  if (f.classList && f.classList.contains('t-edit-form')) {
+    e.preventDefault();
+    const t = questById(f.dataset.id);
+    if (t) { const v = (f.title.value || '').trim().slice(0, 120); if (v) t.title = v; Store.save('tasks', State.tasks); }
+    State._editTask = null; render(); return;
+  }
   // --- Питомец: переименование ---
   if (f.classList && f.classList.contains('pet-rename-form')) {
     e.preventDefault();
@@ -4025,6 +4055,7 @@ function onClick(e) {
     return;
   }
   if (action === 'edit-cats') { openCategoryPicker(el.dataset.id); return; }
+  if (action === 'edit-task-title') { State._editTask = el.dataset.id; render(); setTimeout(() => { const i = document.querySelector('.t-edit-form input'); if (i) { i.focus(); i.select(); } }, 0); return; }
   if (action === 'close-cats') { const p = document.getElementById('cat-pop'); if (p) p.remove(); render(); return; }
   if (action === 'desire-cancel') { const p = document.getElementById('desire-pop'); if (p) p.remove(); return; }
   if (action === 'desire-pick') { const t = questById(el.dataset.id), p = document.getElementById('desire-pop'); if (p) p.remove(); if (t && !t.done) completeTask(t, el.dataset.desire); return; }
@@ -4718,6 +4749,9 @@ async function init() {
   document.addEventListener('change', onChange);
   document.addEventListener('input', onSettingsInput);
   document.addEventListener('pointerdown', onTreePointerDown);
+  // Инлайн-правка текста квеста: клик мимо → сохранить; Esc → отмена
+  document.addEventListener('focusout', (e) => { const f = e.target.closest && e.target.closest('.t-edit-form'); if (f && f.requestSubmit) setTimeout(() => { if (State._editTask) f.requestSubmit(); }, 100); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && State._editTask) { State._editTask = null; render(); } });
   document.addEventListener('dragstart', onWkDragStart);
   document.addEventListener('dragover', onWkDragOver);
   document.addEventListener('drop', onWkDrop);
