@@ -4414,7 +4414,7 @@ function pwaCard() {
   const apk = State.apkAvailable ? `<div class="pwa-row" style="margin-top:10px"><a class="btn ghost" href="satoru.apk" download="Satoru.apk">📥 Скачать для Android (.apk)</a><span class="muted" style="font-size:12px">установка из файла</span></div>` : '';
   const push = !canPush ? '<p class="muted" style="font-size:11.5px;margin:10px 0 0">Уведомления недоступны в этом браузере.</p>'
     : (State.pushOn
-      ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-disable">🔕 Выключить уведомления</button><button class="btn ghost sm" data-action="push-test">Проверить</button><span class="muted" style="font-size:12px">✓ включены</span></div>`
+      ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-disable">🔕 Выключить уведомления</button><button class="btn ghost sm" data-action="push-test">Проверить</button><span class="muted" style="font-size:12px">✓ компаньон зовёт 🌅 утром и 🌙 вечером</span></div>`
       : `<div class="pwa-row" style="margin-top:10px"><button class="btn" data-action="push-enable">🔔 Включить уведомления</button><span class="muted" style="font-size:12px">позову вернуться — тепло, без вины</span></div>`);
   return `<div class="card"><h3>📲 Приложение</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 10px">Установи Satoru как приложение: иконка на телефоне, работает офлайн, уведомления мягко зовут вернуться (чинит «триггер-дыру»).</p>
@@ -4426,7 +4426,8 @@ async function pushEnable() {
     const reg = await navigator.serviceWorker.ready;
     const key = (await (await fetch('/api/push/vapid')).json()).key;
     const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8(key) });
-    const r = await fetch('/api/push/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subscription: sub.toJSON() }) });
+    let tz = 'Europe/Berlin'; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || tz; } catch {}
+    const r = await fetch('/api/push/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subscription: sub.toJSON(), tz }) });
     if (!r.ok) throw 0;
     State.pushOn = true; toast('🔔 Уведомления включены'); render();
   } catch { toast('Не удалось включить уведомления'); }

@@ -200,6 +200,50 @@ function sendWebPush(sub, payloadObj) {
     } catch (e) { resolve({ status: 0, error: String(e.message || e) }); }
   });
 }
+// ---- Планировщик пушей: компаньон зовёт назад утром/вечером (Finch-присутствие вне приложения) ----
+// Каждые 15 мин: для подписанных юзеров — утро (8–11) и вечер (19–22) по ИХ таймзоне,
+// без дублей за день и только если чек-ин ещё не сделан. Через тепло, без вины.
+function userLocalParts(tz) {
+  const now = new Date();
+  try {
+    const date = now.toLocaleDateString('en-CA', { timeZone: tz });                 // YYYY-MM-DD
+    const hour = Number(now.toLocaleString('en-US', { timeZone: tz, hour12: false, hour: '2-digit' }));
+    return { date, hour: Number.isNaN(hour) ? now.getHours() : (hour % 24) };
+  } catch { return { date: now.toISOString().slice(0, 10), hour: now.getHours() }; }
+}
+function readUserCompanion(uid) {
+  try { const s = JSON.parse(fs.readFileSync(path.join(userDataDir(uid), 'settings.json'), 'utf8')); return s.companion || null; } catch { return null; }
+}
+// Чистое решение «слать ли и какой чек-ин» — вынесено, чтобы юнит-тестить без отправки.
+function pushDecision(hour, log, checked) {
+  if (hour >= 8 && hour < 11 && !log.m && !checked.m) return 'm';
+  if (hour >= 19 && hour < 22 && !log.e && !checked.e) return 'e';
+  return null;
+}
+async function pushTick() {
+  let users; try { users = loadUsers(); } catch { return; }
+  let changed = false;
+  for (const user of users) {
+    if (!user.push || !user.push.endpoint) continue;
+    if (user.push.nudges === false) continue; // юзер отключил напоминания компаньона
+    const tz = user.push.tz || 'Europe/Berlin';
+    const { date, hour } = userLocalParts(tz);
+    const log = (user.push.log && user.push.log.date === date) ? user.push.log : { date, m: false, e: false };
+    const comp = readUserCompanion(user.id);
+    const name = (comp && comp.name) || 'Тень';
+    const checked = (comp && comp.check && comp.check[date]) || {};
+    const kind = pushDecision(hour, log, checked);
+    if (!kind) { if (user.push.log !== log) { user.push.log = log; changed = true; } continue; }
+    const payload = kind === 'm'
+      ? { title: `🌅 ${name} ждёт тебя`, body: 'Доброе утро! Чем наполним сегодня?', url: './?view=today', tag: 'satoru-checkin' }
+      : { title: `🌙 ${name}`, body: 'Как прошёл день? Загляни на минутку 💛', url: './?view=today', tag: 'satoru-checkin' };
+    const r = await sendWebPush(user.push, payload);
+    log[kind] = true; user.push.log = log; changed = true;
+    if (r && (r.status === 404 || r.status === 410)) delete user.push; // мёртвая подписка → выписать
+  }
+  if (changed) { try { saveUsers(users); } catch {} }
+}
+
 // ИИ BYOK: ключи per-user (в data/users/<id>/, под гитигнором). Наружу не отдаём.
 function aiKeysFile(id) { return path.join(userDataDir(id), 'ai-keys.json'); }
 function loadAiKeys(id) { try { return JSON.parse(fs.readFileSync(aiKeysFile(id), 'utf8')); } catch { return {}; } }
@@ -924,13 +968,23 @@ const server = http.createServer(async (req, res) => {
     const s = b.subscription || b;
     if (!s || !s.endpoint || !s.keys) return sendJson(res, 400, { error: 'bad_subscription' });
     const users = loadUsers(); const user = users.find((x) => x.id === me); if (!user) return sendJson(res, 401, { error: 'user not found' });
-    user.push = { endpoint: s.endpoint, p256dh: s.keys.p256dh, auth: s.keys.auth, at: new Date().toISOString() };
+    const tz = (typeof b.tz === 'string' && b.tz.length < 64) ? b.tz : (user.push && user.push.tz) || 'Europe/Berlin';
+    user.push = { endpoint: s.endpoint, p256dh: s.keys.p256dh, auth: s.keys.auth, at: new Date().toISOString(), tz, nudges: user.push ? user.push.nudges !== false : true };
     saveUsers(users); return sendJson(res, 200, { ok: true });
   }
   if (u === '/api/push/unsubscribe' && req.method === 'POST') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
     const users = loadUsers(); const user = users.find((x) => x.id === me); if (user) { delete user.push; saveUsers(users); }
     return sendJson(res, 200, { ok: true });
+  }
+  // Вкл/выкл напоминаний компаньона (подписка остаётся — глушим только утро/вечер тики)
+  if (u === '/api/push/nudges' && req.method === 'POST') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    let b = {}; try { b = JSON.parse(await readBody(req)); } catch {}
+    const users = loadUsers(); const user = users.find((x) => x.id === me);
+    if (!user || !user.push) return sendJson(res, 400, { error: 'no_subscription' });
+    user.push.nudges = b.on !== false; saveUsers(users);
+    return sendJson(res, 200, { ok: true, nudges: user.push.nudges });
   }
   if (u === '/api/push/test' && req.method === 'POST') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
@@ -1025,4 +1079,9 @@ server.listen(PORT, HOST, () => {
   console.log(`  📁  Данные:            ${DATA_DIR}`);
   if (HOST === '0.0.0.0') console.log('  🌐  Многопользовательский режим — доступен по сети.');
   console.log('');
+  // Планировщик пушей-чек-инов компаньона: тик каждые 15 мин (отключаемо через PUSH_SCHED=off)
+  if (process.env.PUSH_SCHED !== 'off') {
+    setInterval(() => { pushTick().catch(() => {}); }, 15 * 60 * 1000);
+    setTimeout(() => { pushTick().catch(() => {}); }, 60 * 1000); // первый тик через минуту после старта
+  }
 });
