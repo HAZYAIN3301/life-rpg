@@ -577,11 +577,13 @@ function openCategoryPicker(taskId) {
 function itemXp(it) {
   const xp = State.settings.xp, mult = xp.difficulty[it.difficulty] ?? 1;
   const base = (Number(it.estimateMin) || 0) * xp.perMinute * mult + xp.completionBonus;
-  return Math.max(1, Math.round(base * (1 + skillPerkBonus(it.skillId) / 100) * (1 + lootBoostPct() / 100) * (1 + hypePct() / 100)));
+  const gb = gearBonus(), gearMul = (1 + gb.xpPct / 100) * (it.difficulty === 'hard' ? (1 + gb.hardXpPct / 100) : 1); // гир бустит XP
+  return Math.max(1, Math.round(base * (1 + skillPerkBonus(it.skillId) / 100) * (1 + lootBoostPct() / 100) * (1 + hypePct() / 100) * gearMul));
 }
 function itemGold(it) {
   const g = State.settings.gold || DEFAULT_SETTINGS.gold, mult = State.settings.xp.difficulty[it.difficulty] ?? 1;
-  return Math.max(1, Math.round((Number(it.estimateMin) || 0) * g.perMinute * mult) + g.completionBonus);
+  const base = Math.round((Number(it.estimateMin) || 0) * g.perMinute * mult) + g.completionBonus;
+  return Math.max(1, Math.round(base * (1 + gearBonus().goldPct / 100))); // амулет бустит золото
 }
 
 // ---- Единый поток событий (квесты + привычки + цели) ----
@@ -3070,6 +3072,55 @@ function showGuide() {
 // ============================================================
 //  Вид «Награды» (магазин + достижения)
 // ============================================================
+// ============================================================
+//  Снаряжение / гир (Habitica/LifeUp) — предметы, бустящие XP/золото сверх косметики.
+//  Покупка за золото, открытие по уровню, по 1 предмету на слот. JJK-референсы.
+// ============================================================
+const GEAR = [
+  { id: 'w1', slot: 'weapon', name: 'Тренировочный клинок', icon: '🗡', rarity: 'common', xpPct: 3, cost: 120, lvl: 1 },
+  { id: 'w2', slot: 'weapon', name: 'Клинок Фокуса', icon: '⚔️', rarity: 'rare', xpPct: 6, cost: 450, lvl: 5 },
+  { id: 'w3', slot: 'weapon', name: 'Катана Бесконечности', icon: '🗡️', rarity: 'epic', xpPct: 11, cost: 1400, lvl: 12 },
+  { id: 'a1', slot: 'armor', name: 'Лёгкая броня', icon: '🦺', rarity: 'common', hardXpPct: 5, cost: 120, lvl: 2 },
+  { id: 'a2', slot: 'armor', name: 'Эгида Стойкости', icon: '🛡', rarity: 'rare', hardXpPct: 10, cost: 450, lvl: 6 },
+  { id: 'a3', slot: 'armor', name: 'Латы Несокрушимости', icon: '🛡️', rarity: 'epic', hardXpPct: 18, cost: 1400, lvl: 14 },
+  { id: 'm1', slot: 'amulet', name: 'Медный амулет', icon: '🔸', rarity: 'common', goldPct: 6, cost: 100, lvl: 1 },
+  { id: 'm2', slot: 'amulet', name: 'Амулет Знаний', icon: '📿', rarity: 'rare', goldPct: 12, cost: 380, lvl: 5 },
+  { id: 'm3', slot: 'amulet', name: 'Реликвия Шести Глаз', icon: '🔮', rarity: 'epic', goldPct: 20, cost: 1100, lvl: 13 },
+];
+const GEAR_SLOTS = [{ k: 'weapon', label: '⚔️ Оружие' }, { k: 'armor', label: '🛡 Броня' }, { k: 'amulet', label: '📿 Амулет' }];
+function ensureGear() { const s = State.settings; if (!s.gear) s.gear = { owned: [], equipped: {} }; if (!Array.isArray(s.gear.owned)) s.gear.owned = []; if (!s.gear.equipped) s.gear.equipped = {}; return s.gear; }
+function gearById(id) { return GEAR.find((g) => g.id === id); }
+function gearBonus() {
+  const g = ensureGear(); let xpPct = 0, hardXpPct = 0, goldPct = 0;
+  for (const slot in g.equipped) { const it = gearById(g.equipped[slot]); if (!it) continue; xpPct += it.xpPct || 0; hardXpPct += it.hardXpPct || 0; goldPct += it.goldPct || 0; }
+  return { xpPct, hardXpPct, goldPct };
+}
+function gearBonusLabel(it) { return it.xpPct ? `+${it.xpPct}% XP` : it.hardXpPct ? `+${it.hardXpPct}% XP к 🔥сложным` : `+${it.goldPct}% 🪙`; }
+function arsenalCard() {
+  const g = ensureGear(), bal = goldBalance(), lvl = charLevel(), gb = gearBonus();
+  const slotHtml = GEAR_SLOTS.map((s) => {
+    const items = GEAR.filter((it) => it.slot === s.k).map((it) => {
+      const owned = g.owned.includes(it.id), equipped = g.equipped[s.k] === it.id, rar = RARITY[it.rarity], locked = lvl < it.lvl;
+      let btn;
+      if (equipped) btn = `<button class="btn sm" data-action="equip-gear" data-id="${it.id}">✓ Надето</button>`;
+      else if (owned) btn = `<button class="btn ghost sm" data-action="equip-gear" data-id="${it.id}">Надеть</button>`;
+      else if (locked) btn = `<button class="btn ghost sm" disabled>🔒 ур.${it.lvl}</button>`;
+      else btn = `<button class="btn sm ${bal >= it.cost ? '' : 'disabled'}" data-action="buy-gear" data-id="${it.id}" ${bal >= it.cost ? '' : 'disabled'}>🪙 ${it.cost}</button>`;
+      return `<div class="gear-item${equipped ? ' equipped' : ''}" style="${equipped ? `border-color:${rar.color}` : ''}">
+        <div class="gear-ic" style="color:${rar.color}">${it.icon}</div>
+        <div class="gear-nm">${esc(it.name)}</div>
+        <div class="gear-bonus" style="color:${rar.color}">${gearBonusLabel(it)}</div>${btn}</div>`;
+    }).join('');
+    return `<div class="gear-slot"><div class="gear-slot-h">${s.label}</div><div class="gear-row">${items}</div></div>`;
+  }).join('');
+  const sum = (gb.xpPct || gb.hardXpPct || gb.goldPct)
+    ? `<p class="gear-sum">Надето: ${[gb.xpPct ? `+${gb.xpPct}% XP` : '', gb.hardXpPct ? `+${gb.hardXpPct}% XP к сложным` : '', gb.goldPct ? `+${gb.goldPct}% 🪙` : ''].filter(Boolean).join(' · ')}</p>`
+    : `<p class="gear-sum muted">Ничего не надето — снаряжение усилит рост.</p>`;
+  return `<div class="card"><h3>⚔️ Арсенал — снаряжение</h3>
+    <p class="muted" style="font-size:12px;margin:0 0 6px">Покупай за золото и надевай гир — он пассивно усиливает XP и золото (сверх косметики). По 1 предмету на слот, открывается по уровню.</p>
+    ${sum}${slotHtml}</div>`;
+}
+
 function renderRewards() {
   const bal = goldBalance();
   const cards = State.rewards.map((r) => `<div class="reward">
@@ -3087,6 +3138,7 @@ function renderRewards() {
   return `
     ${lootboxCard()}
     ${collectionCard()}
+    ${arsenalCard()}
     <div class="kpis">
       <div class="kpi"><div class="v">🪙 ${bal}</div><div class="l">Баланс золота</div></div>
       <div class="kpi"><div class="v">${COSMETICS.filter((c) => ownsCosmetic(c.id)).length}/${COSMETICS.length}</div><div class="l">Косметики</div></div>
@@ -3913,6 +3965,27 @@ function onClick(e) {
   }
   if (action === 'pet-rename') { State._petRename = id; render(); return; }
   if (action === 'pet-rename-cancel') { State._petRename = null; render(); return; }
+
+  // --- Снаряжение / гир ---
+  if (action === 'buy-gear') {
+    const it = gearById(id); if (!it) return;
+    const g = ensureGear(); if (g.owned.includes(id)) return;
+    if (charLevel() < it.lvl) { toast(`🔒 Откроется на ур.${it.lvl}`); return; }
+    if (goldBalance() < it.cost) { toast('Недостаточно золота'); return; }
+    g.owned.push(id);
+    if (!g.equipped[it.slot]) g.equipped[it.slot] = id; // авто-надеть в пустой слот
+    State.purchases = State.purchases || [];
+    State.purchases.push({ id: 'p_' + uid(), gearId: id, name: it.name, cost: it.cost, at: new Date().toISOString() });
+    Store.save('settings', State.settings); Store.save('purchases', State.purchases);
+    if (systemMode()) systemNarrate('ПРЕДМЕТ ПОЛУЧЕН', `${it.icon} ${it.name} · ${gearBonusLabel(it)}`); else toast(`⚔️ Получено: ${it.name}`);
+    sfx('coin'); checkAchievements(); render(); return;
+  }
+  if (action === 'equip-gear') {
+    const it = gearById(id); if (!it) return; const g = ensureGear();
+    if (!g.owned.includes(id)) return;
+    g.equipped[it.slot] = (g.equipped[it.slot] === id) ? null : id;
+    Store.save('settings', State.settings); sfx('complete'); render(); return;
+  }
   if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'set-accent') { State.settings.accent = el.dataset.accent; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'toggle-system') {
