@@ -522,11 +522,17 @@ function completeTask(t, desire) {
   let msg = `+${t.xpAwarded} XP · +${t.goldAwarded} 🪙 · ${skillById(t.skillId).name}`;
   if (desire === 'forced') msg += ` · 💪 через силу +${Math.round(GRIT_BONUS * 100)}% XP, но −энергия`;
   if (eDelta) msg += ` · ${eDelta > 0 ? '+' : ''}${eDelta} 🔋`;
-  toast(msg);
+  if (systemMode()) systemNarrate('КВЕСТ ВЫПОЛНЕН', msg); else toast(msg);
   if (desire === 'hyped') { const h = activateHype(); toast(`⚔️ Хайп ×${h.stacks} · +${hypePct()}% XP на ${hypeMinLeft()} мин — ты захотел трудное!`); }
   track('complete:quest');
   Store.save('tasks', State.tasks);
-  if (charLevel() > lvlBefore) sfx('levelup'); else sfx('complete'); // #23 звук: левелап важнее завершения
+  const lvlNow = charLevel();
+  if (lvlNow > lvlBefore) {
+    sfx('levelup'); // #23 звук: левелап важнее завершения
+    announce('УРОВЕНЬ ПОВЫШЕН', `${lvlBefore} → ${lvlNow} · предел сдвинут`, `⬆️ Уровень ${lvlNow} — новый предел!`);
+    const rb = rankFor(lvlBefore), ra = rankFor(lvlNow);
+    if (ra.name !== rb.name) announce('НОВЫЙ РАНГ ПРИСВОЕН', `${ra.icon} ${ra.name} · ты становишься сильнее`, `${ra.icon} Новый ранг: ${ra.name}!`);
+  } else sfx('complete');
   checkAchievements(); render(); publishLeaderboard();
 }
 // Поп-ап выбора желания при завершении сложного квеста
@@ -984,7 +990,7 @@ function nodeUnlockable(id, node) {
 function achUnlocked(a) { try { return !!a.test(); } catch { return false; } }
 function checkAchievements(silent) {
   let changed = false;
-  for (const a of ACHIEVEMENTS) if (achUnlocked(a) && !State.achievements[a.id]) { State.achievements[a.id] = new Date().toISOString(); changed = true; if (!silent) { toast(`🏆 Достижение: ${a.title}`); sfx('achievement'); } }
+  for (const a of ACHIEVEMENTS) if (achUnlocked(a) && !State.achievements[a.id]) { State.achievements[a.id] = new Date().toISOString(); changed = true; if (!silent) { announce('ДОСТИЖЕНИЕ РАЗБЛОКИРОВАНО', `${a.icon || '🏆'} ${a.title}${a.ttl ? ' · звание «' + a.ttl + '»' : ''}`, `🏆 Достижение: ${a.title}`); if (!systemMode()) sfx('achievement'); } }
   if (changed) Store.save('achievements', State.achievements);
 }
 
@@ -3367,7 +3373,9 @@ function renderSettings() {
           <button class="theme-opt ${s.theme === 'light' ? 'active' : ''}" data-action="set-theme" data-theme="light">☀️ Светлая</button>
         </div></div>
       <div class="theme-row"><span class="theme-lbl">Акцент</span>
-        <div class="accent-swatches">${ACCENTS.map((c) => `<button class="accent-sw ${(s.accent || '#6c8cff') === c ? 'active' : ''}" data-action="set-accent" data-accent="${c}" style="background:${c}" title="${c}" aria-label="Акцент ${c}"></button>`).join('')}</div></div></div>
+        <div class="accent-swatches">${ACCENTS.map((c) => `<button class="accent-sw ${(s.accent || '#6c8cff') === c ? 'active' : ''}" data-action="set-accent" data-accent="${c}" style="background:${c}" title="${c}" aria-label="Акцент ${c}"></button>`).join('')}</div></div>
+      <div class="theme-row"><span class="theme-lbl">⚡ Режим «Система»</span>
+        <label class="sound-toggle"><input type="checkbox" data-action="toggle-system" ${systemMode() ? 'checked' : ''}/> Нарратор-Система комментирует твои действия (Solo Leveling-вайб): драматичные объявления при выполнении квестов, левелапах, рангах, ачивках.</label></div></div>
     <div class="card"><h3>Навыки / сферы жизни</h3><p class="muted" style="font-size:12px;margin:0 0 10px">Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">+ Добавить сферу</button></div>
     ${importCard()}
     <div class="card"><h3>🔁 Привычки (повторяющиеся)</h3><div id="habits-list">${habits || '<p class="muted">Пока нет привычек.</p>'}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">+ Добавить привычку</button></div>
@@ -3564,6 +3572,7 @@ const ACCENTS = ['#6c8cff', '#22c1a4', '#e0526a', '#b06ff0', '#e0a23e', '#4f9ff7
 function applyTheme() {
   const s = State.settings || {};
   document.documentElement.dataset.theme = s.theme === 'light' ? 'light' : 'dark';
+  document.documentElement.dataset.system = s.systemMode ? 'on' : 'off';
   document.documentElement.style.setProperty('--accent', s.accent || '#6c8cff');
 }
 function render() {
@@ -3906,6 +3915,11 @@ function onClick(e) {
   if (action === 'pet-rename-cancel') { State._petRename = null; render(); return; }
   if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'set-accent') { State.settings.accent = el.dataset.accent; Store.save('settings', State.settings); applyTheme(); render(); return; }
+  if (action === 'toggle-system') {
+    State.settings.systemMode = !!el.checked; Store.save('settings', State.settings); applyTheme();
+    if (el.checked) systemNarrate('СИСТЕМА АКТИВИРОВАНА', 'Отныне я сопровождаю твой путь. Игрок, не подведи.');
+    render(); return;
+  }
   if (action === 'sound-test') { ['complete', 'coin', 'achievement'].forEach((n, i) => setTimeout(() => sfx(n), i * 420)); setTimeout(() => sfx('loot', 'legendary'), 1300); return; }
   if (action === 'show-paywall') { showPaywall(el.dataset.feature); return; }
   if (action === 'close-paywall') { const p = document.getElementById('paywall'); if (p) p.remove(); return; }
@@ -4298,6 +4312,25 @@ function toast(msg) {
   requestAnimationFrame(() => el.classList.add('show'));
   setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, 2200);
 }
+
+// ============================================================
+//  Режим «Система» (Solo Leveling-вайб) — нарратор комментирует твои действия.
+//  Опционально (тумблер в Оформлении). Брендовая эстетика «?»/Satoru + голос Системы.
+// ============================================================
+function systemMode() { return !!(State.settings && State.settings.systemMode); }
+function sysNarrEl() { let c = document.getElementById('sysnarr'); if (!c) { c = document.createElement('div'); c.id = 'sysnarr'; document.body.appendChild(c); } return c; }
+function systemNarrate(title, body) {
+  if (!systemMode()) return;
+  const c = sysNarrEl();
+  const el = document.createElement('div'); el.className = 'sysnarr';
+  el.innerHTML = `<div class="sysnarr-head">⟦ СИСТЕМА ⟧</div><div class="sysnarr-title">▸ ${esc(title)}</div>${body ? `<div class="sysnarr-body">${esc(body)}</div>` : ''}`;
+  c.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  if (typeof sfx === 'function') sfx('achievement');
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 350); }, 3400);
+}
+// Унифицированное объявление: в режиме «Система» — драматичная панель; иначе обычный тост.
+function announce(title, body, toastMsg) { if (systemMode()) systemNarrate(title, body); else if (toastMsg) toast(toastMsg); }
 
 // ============================================================
 //  Старт
