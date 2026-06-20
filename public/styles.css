@@ -1439,3 +1439,36 @@ audio.note-media { height: 40px; }
   .focus-pill { left: 12px; right: 12px; bottom: 12px; min-width: 0; }
   .fp-task { max-width: none; }
 }
+
+/* ============================================================
+   Нижняя навигация на телефоне (bottom-nav как в нативных аппах)
+   ============================================================ */
+@media (max-width: 560px) {
+  /* backdrop-filter на #topbar создавал бы containing block и ломал position:fixed у бара */
+  #topbar { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  #nav { margin: 12px 0 0; padding: 0; }
+  .navrow {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+    overflow: visible; gap: 0;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--panel) 95%, transparent);
+    border-top: 1px solid var(--line);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    justify-content: space-around;
+    box-shadow: 0 -4px 18px rgba(0,0,0,0.22);
+  }
+  .navrow .navsec {
+    flex: 1 1 0; min-width: 0; flex-direction: column; align-items: center; gap: 2px;
+    padding: 5px 2px; font-size: 19px; border-radius: 10px; line-height: 1;
+  }
+  .navrow .navsec-l { font-size: 9.5px; font-weight: 600; display: block; line-height: 1.1; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+  .navrow .navgear { margin-left: 0; flex: 1 1 0; flex-direction: column; align-items: center; gap: 2px; font-size: 19px; padding: 5px 2px; display: flex; }
+  .navrow .navsec-lock { font-size: 9px; position: absolute; top: 1px; right: 4px; }
+  .navrow .navsec-dot { top: 1px; right: calc(50% - 17px); }
+  .navsub { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .navsub::-webkit-scrollbar { display: none; }
+  .navsubtab { flex: 0 0 auto; }
+  #app { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+  #ai-fab { bottom: calc(76px + env(safe-area-inset-bottom)); }
+  .focus-pill { bottom: calc(76px + env(safe-area-inset-bottom)) !important; }
+}
