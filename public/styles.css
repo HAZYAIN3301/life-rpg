@@ -987,6 +987,42 @@ html[data-system="on"] #appName { letter-spacing: 1.5px; }
 @media (prefers-reduced-motion: reduce) { .sysnarr { transition: opacity .2s; } }
 
 /* ============================================================
+   Режим «Система» v2 — полный визуальный рескин (Solo Leveling «окно Системы»)
+   Только цвета/рамки/шрифты + сетка-фон — раскладку не трогаем.
+   ============================================================ */
+html[data-system="on"] body {
+  background:
+    linear-gradient(rgba(79,214,255,0.045) 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(90deg, rgba(79,214,255,0.035) 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(180deg, #060b14, #0a1119) fixed;
+}
+html[data-system="on"] #topbar { background: linear-gradient(180deg, rgba(8,16,26,0.96), rgba(8,16,26,0.7)); border-bottom: 1px solid rgba(79,214,255,0.25); }
+html[data-system="on"] #appName, html[data-system="on"] .logo { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; letter-spacing: 1.5px; }
+html[data-system="on"] .card {
+  background: rgba(9,16,26,0.92);
+  border: 1px solid rgba(79,214,255,0.36);
+  border-radius: 7px;
+  box-shadow: inset 0 0 16px rgba(79,214,255,0.06), 0 0 14px rgba(79,214,255,0.06);
+}
+html[data-system="on"] .card h2, html[data-system="on"] .card h3 {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  letter-spacing: 1px; color: #dff3fb; text-shadow: 0 0 8px rgba(79,214,255,0.32);
+}
+html[data-system="on"] .navsec.active, html[data-system="on"] .navsubtab.active { color: #4fd6ff; }
+html[data-system="on"] .navsubtab.active { border-color: rgba(79,214,255,0.5); }
+html[data-system="on"] .btn { border-color: rgba(79,214,255,0.4); }
+html[data-system="on"] .xp-bar { border-color: rgba(79,214,255,0.3); }
+html[data-system="on"] .xp-bar > span { box-shadow: 0 0 10px rgba(79,214,255,0.5); }
+html[data-system="on"] #charSummary, html[data-system="on"] .ch-rank, html[data-system="on"] .daystat { font-family: ui-monospace, Menlo, Consolas, monospace; }
+html[data-system="on"] .char-hero { position: relative; border-color: rgba(79,214,255,0.5); }
+html[data-system="on"] .char-hero::before {
+  content: "STATUS"; position: absolute; top: 0; right: 12px;
+  font: 700 10px/1 ui-monospace, monospace; letter-spacing: 2px; color: #06121c;
+  background: #4fd6ff; padding: 4px 9px; border-radius: 0 0 5px 5px;
+}
+html[data-system="on"] .task, html[data-system="on"] .gear-item, html[data-system="on"] .pet-card { border-color: rgba(79,214,255,0.18); }
+
+/* ============================================================
    Снаряжение / Арсенал
    ============================================================ */
 .gear-sum { font-size: 12.5px; font-weight: 600; margin: 0 0 10px; }

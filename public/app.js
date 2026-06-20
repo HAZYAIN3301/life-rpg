@@ -3781,10 +3781,11 @@ function renderNav() {
 }
 const ACCENTS = ['#6c8cff', '#22c1a4', '#e0526a', '#b06ff0', '#e0a23e', '#4f9ff7']; // палитра акцентов (#тема)
 function applyTheme() {
-  const s = State.settings || {};
-  document.documentElement.dataset.theme = s.theme === 'light' ? 'light' : 'dark';
-  document.documentElement.dataset.system = s.systemMode ? 'on' : 'off';
-  document.documentElement.style.setProperty('--accent', s.accent || '#6c8cff');
+  const s = State.settings || {}, sys = !!s.systemMode;
+  // Режим «Система» — полный скин: форсим тёмную тему + системный циан-акцент (v2)
+  document.documentElement.dataset.theme = sys ? 'dark' : (s.theme === 'light' ? 'light' : 'dark');
+  document.documentElement.dataset.system = sys ? 'on' : 'off';
+  document.documentElement.style.setProperty('--accent', sys ? '#4fd6ff' : (s.accent || '#6c8cff'));
 }
 function render() {
   if (State.phase !== 'app') { showAuthScreen(); return; }
