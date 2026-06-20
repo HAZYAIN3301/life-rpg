@@ -2221,12 +2221,28 @@ function ensureCompanion() {
 function compTierIdx(bond) { let i = 0; COMP_TIERS.forEach((x, k) => { if (bond >= x.at) i = k; }); return i; }
 function compNextTier(bond) { return COMP_TIERS.find((x) => x.at > bond) || null; }
 function daysBetween(a, b) { return Math.max(0, Math.round((parseDate(b) - parseDate(a)) / 86400000)); }
+// Самый заброшенный голодный питомец (для контекстной реплики компаньона) — или null.
+function compLonelyPetName() {
+  try {
+    const tops = topSkills(); if (tops.length < 2) return null;
+    let worst = null, worstGap = 4;
+    for (const s of tops) { const st = petStats(s.id); if (st.state === 'hungry' && st.lastFed && st.daysSince > worstGap) { worstGap = st.daysSince; worst = s; } }
+    return worst ? petName(worst.id) : null;
+  } catch { return null; }
+}
 function compMood() {
   const c = ensureCompanion();
   const away = (typeof State._compAway === 'number') ? State._compAway : daysBetween(c.lastSeen || todayStr(), todayStr());
   const act = todayActivityCount(), hr = new Date().getHours();
+  const eP = (typeof energyPct === 'function') ? energyPct() : 100;
+  const st = (typeof currentStreak === 'function') ? currentStreak() : 0;
   if (away >= 2) return { face: 'longing', line: `Я скучал по тебе… так рад, что ты вернулся 💛` };
+  // v3: забота при истощении — тепло, без вины
+  if (eP < 22 && act > 0) return { face: 'caring', line: `Вижу, день был тяжёлым. Отдых — это тоже победа. Я рядом, никуда не спешим 💛` };
   if (act >= 3) return { face: 'radiant', line: `Сегодня ты сияешь — ${act} ${plural(act, 'дело', 'дела', 'дел')} уже сделано. Я горжусь тобой ✨` };
+  if (st >= 3 && act >= 1) return { face: 'happy', line: `🔥 ${st} ${plural(st, 'день', 'дня', 'дней')} подряд — твоё постоянство восхищает. Так держать.` };
+  const lonely = compLonelyPetName();
+  if (lonely && hr >= 11 && hr < 21) return { face: 'happy', line: `${esc(lonely)} заскучал в зверинце — загляни к нему, когда будет минутка 🐾` };
   if (act >= 1) return { face: 'happy', line: `Хороший день идёт. Каждый маленький шаг важен 🙂` };
   if (hr >= 21) return { face: 'sleepy', line: `День к концу. Что бы ни случилось — ты здесь, и это уже хорошо 🌙` };
   if (hr < 11) return { face: 'happy', line: `Доброе утро. Чем наполним сегодня?` };
@@ -2253,6 +2269,10 @@ function compFaceMarkup(face) {
     case 'happy':
       eyes = eyeOpen(44) + eyeOpen(76);
       mouth = `<path d="M50 76 Q60 86 70 76" stroke="#1a1f2e" stroke-width="3.5" fill="none" stroke-linecap="round"/>`; break;
+    case 'caring': // мягкое, заботливое (v3): тёплые глаза + нежная улыбка + сердечко
+      eyes = `<path d="M38 58 q6 -5 12 0" stroke="#1a1f2e" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M70 58 q6 -5 12 0" stroke="#1a1f2e" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+      mouth = `<path d="M52 77 Q60 83 68 77" stroke="#1a1f2e" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+      extra = `<text x="88" y="34" font-size="13">💛</text>`; break;
     default: // calm
       eyes = eyeOpen(44) + eyeOpen(76);
       mouth = `<line x1="54" y1="79" x2="66" y2="79" stroke="#1a1f2e" stroke-width="3" stroke-linecap="round"/>`;
@@ -2260,15 +2280,25 @@ function compFaceMarkup(face) {
   const blush = `<ellipse cx="36" cy="70" rx="5" ry="3" fill="#ff8fa3" opacity="0.45"/><ellipse cx="84" cy="70" rx="5" ry="3" fill="#ff8fa3" opacity="0.45"/>`;
   return eyes + blush + mouth + extra;
 }
+// v3: эволюция-формы по тиру связи. Искра (мелкая, искорка) → Дух → Страж (ушки+⭐+аура) → Хранитель (крылья+нимб).
 function compSVG(face, tierIdx) {
+  const scale = tierIdx === 0 ? 0.82 : tierIdx === 2 ? 1.05 : tierIdx >= 3 ? 1.1 : 1.0;
   const aura = tierIdx >= 1 ? `<circle cx="60" cy="60" r="52" fill="none" stroke="var(--accent)" stroke-width="2" opacity="0.25"/>` : '';
   const aura2 = tierIdx >= 2 ? `<circle cx="60" cy="60" r="58" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0.15"/>` : '';
-  const crown = tierIdx >= 2 ? `<text x="60" y="15" font-size="17" text-anchor="middle">${tierIdx >= 3 ? '👑' : '⭐'}</text>` : '';
+  const wings = tierIdx >= 3 ? `<path d="M28 58 q-22 -12 -18 13 q13 -3 20 5z" fill="var(--accent)" opacity="0.5"/><path d="M92 58 q22 -12 18 13 q-13 -3 -20 5z" fill="var(--accent)" opacity="0.5"/>` : '';
+  const halo = tierIdx >= 3 ? `<ellipse cx="60" cy="9" rx="19" ry="5" fill="none" stroke="#ffe08a" stroke-width="3" opacity="0.9"/>` : '';
+  const ears = tierIdx === 2 ? `<circle cx="42" cy="22" r="6" fill="url(#compg)" stroke="rgba(0,0,0,0.16)" stroke-width="1.2"/><circle cx="78" cy="22" r="6" fill="url(#compg)" stroke="rgba(0,0,0,0.16)" stroke-width="1.2"/>` : '';
+  const spark = tierIdx === 0 ? `<path d="M60 5 q5 9 0 15 q-5 -6 0 -15z" fill="var(--accent)"/><circle cx="93" cy="40" r="2" fill="var(--accent)" opacity="0.8"/><circle cx="29" cy="46" r="1.6" fill="var(--accent)" opacity="0.8"/>` : '';
+  const star = tierIdx === 2 ? `<text x="60" y="14" font-size="15" text-anchor="middle">⭐</text>` : '';
   return `<svg class="comp-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs><linearGradient id="compg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0.72"/></linearGradient></defs>
-    ${aura2}${aura}
-    <path d="M60 18 C82 18 96 36 96 62 C96 86 84 102 60 102 C36 102 24 86 24 62 C24 36 38 18 60 18 Z" fill="url(#compg)" stroke="rgba(0,0,0,0.16)" stroke-width="1.5"/>
-    ${compFaceMarkup(face)}${crown}
+    ${aura2}${aura}${wings}
+    <g transform="translate(60,62) scale(${scale}) translate(-60,-62)">
+      ${ears}
+      <path d="M60 18 C82 18 96 36 96 62 C96 86 84 102 60 102 C36 102 24 86 24 62 C24 36 38 18 60 18 Z" fill="url(#compg)" stroke="rgba(0,0,0,0.16)" stroke-width="1.5"/>
+      ${compFaceMarkup(face)}
+    </g>
+    ${spark}${star}${halo}
   </svg>`;
 }
 function compCheckinDue() {
