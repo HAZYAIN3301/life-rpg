@@ -2501,6 +2501,56 @@ function renderPets() {
     <div class="pet-grid">${cards}</div>`;
 }
 
+// ============================================================
+//  Логово — комната персонажа (Spirit City + SelfQuest фьюжн). v1: уютная сцена,
+//  где живёт аватар + компаньон + питомцы; окно меняется по времени суток; мини-дашборд.
+// ============================================================
+function denWindow(hr) {
+  if (hr >= 6 && hr < 11) return { sky: '#bfe3ff', extra: '<circle cx="300" cy="50" r="10" fill="#ffe08a"/>' };
+  if (hr >= 11 && hr < 17) return { sky: '#a9d8ff', extra: '<circle cx="300" cy="46" r="12" fill="#fff1b8"/>' };
+  if (hr >= 17 && hr < 20) return { sky: '#f6b184', extra: '<circle cx="300" cy="58" r="12" fill="#ffd27f"/>' };
+  return { sky: '#1b2440', extra: '<circle cx="306" cy="46" r="9" fill="#e8eefc"/><circle cx="282" cy="40" r="1.4" fill="#fff"/><circle cx="322" cy="60" r="1.2" fill="#fff"/><circle cx="296" cy="66" r="1" fill="#fff"/>' };
+}
+function denSceneSVG() {
+  const w = denWindow(new Date().getHours());
+  return `<svg class="den-room" viewBox="0 0 360 230" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <rect x="0" y="0" width="360" height="150" fill="var(--den-wall)"/>
+    <rect x="0" y="150" width="360" height="80" fill="var(--den-floor)"/>
+    <line x1="0" y1="150" x2="360" y2="150" stroke="rgba(0,0,0,0.14)" stroke-width="1.5"/>
+    <rect x="266" y="22" width="72" height="64" rx="6" fill="${w.sky}" stroke="rgba(0,0,0,0.2)" stroke-width="3"/>
+    ${w.extra}
+    <line x1="302" y1="22" x2="302" y2="86" stroke="rgba(0,0,0,0.2)" stroke-width="2"/>
+    <line x1="266" y1="54" x2="338" y2="54" stroke="rgba(0,0,0,0.2)" stroke-width="2"/>
+    <rect x="22" y="118" width="20" height="30" rx="3" fill="#b5734a"/>
+    <path d="M32 118 q-16 -22 -2 -36 q10 14 2 36z" fill="#5fbf7a"/>
+    <path d="M32 118 q16 -20 4 -34 q-8 12 -4 34z" fill="#4fa468"/>
+    <ellipse cx="180" cy="198" rx="88" ry="20" fill="var(--accent)" opacity="0.16"/>
+  </svg>`;
+}
+function renderDen() {
+  const c = ensureCompanion(), mood = compMood(), ti = compTierIdx(c.bond);
+  const cr = charRank(), nm = (State.me && State.me.name) || 'Герой';
+  const pets = topSkills().slice(0, 3).map((s) => ({ s, st: petStats(s.id), traits: petTraits(s.id) }));
+  const petLayer = pets.map((p, i) => `<div class="den-pet den-pet-${i}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits)}</div>`).join('');
+  const p = nestedProgress(), eP = energyPct(), eM = energyMeta(), tm = State.timer;
+  const focusRow = tm
+    ? `<div class="den-focus den-focus-on"><span>⏱ Фокус идёт</span><b class="den-clock">${fmtClock(timerElapsedMs())}</b><button class="btn ghost sm" data-action="goto-today">К таймеру</button></div>`
+    : `<div class="den-focus"><span>🎯 Готов к делу?</span><button class="btn sm" data-action="goto-today">Начать фокус</button></div>`;
+  return `<div class="card den-card">
+    <div class="den-scene">
+      ${denSceneSVG()}
+      <div class="den-companion" title="${esc(c.name)}">${compSVG(mood.face, ti)}</div>
+      <div class="den-avatar">${avatarSVG(avCfg(), equippedCosmeticsOpts())}</div>
+      ${petLayer}
+      <div class="den-tag">${cr.icon} ${esc(nm)} · ур.${charLevel()}</div>
+    </div>
+    <p class="den-mood">${mood.line}</p>
+    <div class="den-stats"><span title="Энергия">${eM.icon} ${eP}%</span><span title="Дела сегодня">🌅 ${p.dayDone}/${p.dayTot || 0}</span><span title="Серия">🔥 ${p.streak}</span></div>
+    ${focusRow}
+    <div class="den-actions"><button class="btn ghost sm" data-action="go-wardrobe">👕 Гардероб</button><button class="btn ghost sm" data-action="goto-rewards">🎁 Награды</button><button class="btn ghost sm" data-action="goto-pets">🐾 Зверинец</button></div>
+  </div>`;
+}
+
 function renderToday() {
   const today = todayStr();
   const todays = State.tasks.filter((t) => t.date === today);
@@ -3695,20 +3745,20 @@ function renderLeaderboard() {
     </div>`;
 }
 
-const VIEWS = { today: renderToday, notes: renderNotes, calendar: renderCalendarView, habits: renderHabitsView, character: renderCharacter, pets: renderPets, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, party: renderParty, leaderboard: renderLeaderboard, settings: renderSettings };
+const VIEWS = { today: renderToday, notes: renderNotes, calendar: renderCalendarView, habits: renderHabitsView, den: renderDen, character: renderCharacter, pets: renderPets, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, party: renderParty, leaderboard: renderLeaderboard, settings: renderSettings };
 // Разгрузка дизайна: 11 вкладок → 5 разделов с под-вкладками. Прогрессивное раскрытие через гейт уровня.
 const SECTIONS = [
   { id: 'today', icon: '🎯', label: 'Сегодня', gate: 0, views: [{ view: 'today', label: 'День' }, { view: 'notes', label: 'Заметки' }] },
   { id: 'plan', icon: '🗓', label: 'План', gate: 0, views: [{ view: 'calendar', label: 'Календарь' }, { view: 'goals', label: 'Цели' }] },
   { id: 'habits', icon: '🔁', label: 'Привычки', gate: 0, views: [{ view: 'habits', label: 'Привычки' }] },
   { id: 'rewards', icon: '🎁', label: 'Награды', gate: 0, views: [{ view: 'rewards', label: 'Награды' }] },
-  { id: 'hero', icon: '🧍', label: 'Герой', gate: 3, views: [{ view: 'character', label: 'Персонаж' }, { view: 'pets', label: '🐾 Питомцы' }, { view: 'tree', label: 'Навыки' }, { view: 'stats', label: 'Прогресс' }] },
+  { id: 'hero', icon: '🧍', label: 'Герой', gate: 3, views: [{ view: 'den', label: '🏠 Логово' }, { view: 'character', label: 'Персонаж' }, { view: 'pets', label: '🐾 Питомцы' }, { view: 'tree', label: 'Навыки' }, { view: 'stats', label: 'Прогресс' }] },
   { id: 'tribe', icon: '🤝', label: 'Племя', gate: 3, views: [{ view: 'party', label: 'Пати' }, { view: 'leaderboard', label: 'Рейтинг' }] },
 ];
 function sectionOf(view) { for (const s of SECTIONS) if (s.views.some((v) => v.view === view)) return s.id; return null; } // settings (шестерёнка) и legacy weekly → null
 function navUnlockLevel() { return (State.me && State.me.isAdmin) ? 999 : charLevel(); } // админ видит всё (дог-фуддинг)
 // ── Дискаверабилити: мягко подсвечиваем разделы/фичи, куда юзер ещё не заходил ──
-const NEW_VIEWS = ['pets']; // спотлайт новых фич (точка «NEW» на под-вкладке)
+const NEW_VIEWS = ['den', 'pets']; // спотлайт новых фич (точка «NEW» на под-вкладке)
 function isDiscovered(v) { return ((State.settings && State.settings.discovered) || []).includes(v); }
 function markDiscovered(v) { const s = State.settings; if (!s) return; if (!Array.isArray(s.discovered)) s.discovered = []; if (!s.discovered.includes(v)) { s.discovered.push(v); Store.save('settings', s); } }
 function sectionHasNew(s, lvl) {
@@ -4176,6 +4226,9 @@ function onClick(e) {
     return;
   }
   if (action === 'goto-rewards') { State.view = 'rewards'; render(); return; }
+  if (action === 'goto-today') { State.view = 'today'; render(); return; }
+  if (action === 'goto-pets') { State.view = 'pets'; markDiscovered('pets'); render(); return; }
+  if (action === 'go-wardrobe') { State.view = 'character'; render(); setTimeout(() => { const c = document.getElementById('avatar-editor'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60); return; }
   if (action === 'goto-import') { State.view = 'settings'; render(); setTimeout(() => { const c = document.getElementById('import-card'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('flash-card'); } }, 60); return; }
   if (action === 'av-cat') { State.aveCat = el.dataset.cat; render(); return; }
   if (action === 'av-set') { State.settings.avatar = Object.assign(avCfg(), { [el.dataset.part]: Number(el.dataset.idx) }); Store.save('settings', State.settings); render(); return; }

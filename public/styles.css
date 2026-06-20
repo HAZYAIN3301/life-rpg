@@ -11,6 +11,8 @@
   --bad: #e0526a;
   --radius: 14px;
   --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  --den-wall: #2c2740;
+  --den-floor: #3a3450;
 }
 /* Светлая тема (#тема): переопределяем палитру — компоненты используют переменные */
 :root[data-theme="light"] {
@@ -24,6 +26,8 @@
   --warn: #c98a16;
   --bad: #d23a55;
   --shadow: 0 8px 28px rgba(40, 52, 90, 0.12);
+  --den-wall: #efe7da;
+  --den-floor: #e0d5c2;
 }
 :root[data-theme="light"] #topbar { background: linear-gradient(180deg, var(--bg) 70%, rgba(238, 241, 248, 0.85)); }
 :root[data-theme="light"] body { background: radial-gradient(1200px 600px at 80% -10%, rgba(108, 140, 255, 0.07), transparent 60%), var(--bg); }
@@ -1015,6 +1019,30 @@ html[data-system="on"] #appName { letter-spacing: 1.5px; }
 .sys-teaser { flex-direction: column; align-items: stretch; gap: 8px; }
 .sys-teaser-btns { display: flex; gap: 8px; }
 @media (prefers-reduced-motion: reduce) { .navsec-dot, .navsub-dot { animation: none; } }
+
+/* ============================================================
+   Логово — комната персонажа
+   ============================================================ */
+.den-card { padding: 0 !important; overflow: hidden; }
+.den-scene { position: relative; width: 100%; height: 244px; overflow: hidden; }
+.den-room { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.den-avatar { position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%); width: 132px; z-index: 2; }
+.den-avatar svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25)); }
+.den-companion { position: absolute; right: 16px; top: 44px; width: 60px; z-index: 3; }
+.den-companion svg { width: 100%; height: auto; display: block; }
+.den-pet { position: absolute; z-index: 2; }
+.den-pet svg { width: 100%; height: auto; display: block; }
+.den-pet-0 { left: 14px; bottom: 14px; width: 52px; }
+.den-pet-1 { right: 18px; bottom: 12px; width: 50px; }
+.den-pet-2 { left: 84px; bottom: 6px; width: 42px; opacity: .96; }
+.den-tag { position: absolute; left: 12px; top: 12px; z-index: 4; background: rgba(0,0,0,0.42); color: #fff; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; backdrop-filter: blur(2px); }
+.den-mood { margin: 0; padding: 13px 16px 2px; font-size: 13.5px; line-height: 1.45; }
+.den-stats { display: flex; gap: 16px; padding: 6px 16px 10px; font-size: 13px; font-weight: 700; }
+.den-stats span { color: var(--text); }
+.den-focus { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 12px 10px; padding: 10px 13px; background: var(--panel2); border: 1px solid var(--line); border-radius: 11px; font-size: 13px; }
+.den-focus-on { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.den-clock { font-variant-numeric: tabular-nums; font-size: 16px; }
+.den-actions { display: flex; gap: 8px; padding: 0 12px 14px; flex-wrap: wrap; }
 
 /* ============================================================
    Подписка / Pro / Paywall
