@@ -1391,14 +1391,26 @@ function renderLoginScreen() {
       </form>` : ''}
     </div>`;
   }).join('');
+  const legacy = State.profiles && State.profiles.length
+    ? `<details class="legacy-login"><summary>Вход по профилю (старый способ)</summary><div class="profiles-grid">${profileCards}</div></details>`
+    : '';
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
       <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>Превращаем жизнь в игру</p></div>
-      <div class="profiles-grid">${profileCards}
-        <div class="profile-card new-card" data-action="go-register">
-          <div class="profile-avatar add-avatar">+</div>
-          <div class="profile-name">Новый профиль</div>
+      <div class="auth-box">
+        <form id="login-form">
+          <label>Email</label>
+          <input name="email" type="email" placeholder="you@mail.com" autocomplete="username" required />
+          <label style="margin-top:10px">Пароль</label>
+          <input name="password" type="password" placeholder="Пароль" autocomplete="current-password" required />
+          <div id="login-error" class="pin-error"></div>
+          <button type="submit" class="btn" style="margin-top:14px;width:100%">Войти</button>
+        </form>
+        <div class="auth-links">
+          <button class="link-btn" data-action="go-register">Создать аккаунт</button>
+          <button class="link-btn" data-action="go-reset">Забыл пароль?</button>
         </div>
+        ${legacy}
       </div>
     </div>
     <div id="toasts"></div>`;
@@ -1408,23 +1420,62 @@ function renderRegisterScreen() {
   const avatarPicker = AVATARS.map((a) => `<button type="button" class="av-btn ${a === State.regAvatar ? 'sel' : ''}" data-action="pick-avatar" data-av="${a}">${a}</button>`).join('');
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
-      <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>Создай свой профиль</p></div>
+      <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>Создай аккаунт</p></div>
       <div class="auth-box">
         <form id="register-form">
-          <label>Твоё имя</label>
+          <label>Имя</label>
           <input name="name" placeholder="Как тебя зовут?" maxlength="32" required autocomplete="off" value="${esc(State.regName || '')}" />
           <label style="margin-top:12px">Аватар</label>
           <div class="av-grid">${avatarPicker}</div>
-          <label style="margin-top:12px">PIN-код (минимум 4 символа)</label>
-          <input name="pin" type="password" inputmode="numeric" placeholder="Придумай PIN" maxlength="8" required />
-          <input name="pin2" type="password" inputmode="numeric" placeholder="Повтори PIN" maxlength="8" required />
+          <label style="margin-top:12px">Email</label>
+          <input name="email" type="email" placeholder="you@mail.com" autocomplete="username" required />
+          <label style="margin-top:10px">Пароль (минимум 6 символов)</label>
+          <input name="password" type="password" placeholder="Придумай пароль" autocomplete="new-password" required />
+          <input name="password2" type="password" placeholder="Повтори пароль" autocomplete="new-password" required />
+          <p class="privacy-note">Создавая аккаунт, ты соглашаешься, что приложение (альфа-версия) хранит твои данные — цели, заметки, дневник — на нашем сервере, чтобы они синхронизировались между устройствами. Удалить аккаунт и данные можно в Настройках. Не вводи особо чувствительную информацию.</p>
           <div id="reg-error" class="pin-error"></div>
-          <button type="submit" class="btn" style="margin-top:14px;width:100%">Создать профиль</button>
+          <button type="submit" class="btn" style="margin-top:6px;width:100%">Создать аккаунт</button>
         </form>
-        <button class="btn ghost" data-action="go-login" style="margin-top:10px;width:100%">← Назад</button>
+        <button class="btn ghost" data-action="go-login" style="margin-top:10px;width:100%">← Вход</button>
       </div>
     </div>
     <div id="toasts"></div>`;
+}
+
+function renderResetScreen() {
+  document.getElementById('app').innerHTML = `
+    <div class="auth-screen">
+      <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>Восстановление доступа</p></div>
+      <div class="auth-box">
+        <p class="muted" style="font-size:13px;margin:0 0 12px">Введи email и код восстановления, который выдали при регистрации. Не сохранил код — напиши нам, восстановим вручную.</p>
+        <form id="reset-form">
+          <label>Email</label>
+          <input name="email" type="email" placeholder="you@mail.com" autocomplete="username" required />
+          <label style="margin-top:10px">Код восстановления</label>
+          <input name="code" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" required />
+          <label style="margin-top:10px">Новый пароль (минимум 6)</label>
+          <input name="newPassword" type="password" placeholder="Новый пароль" autocomplete="new-password" required />
+          <div id="reset-error" class="pin-error"></div>
+          <button type="submit" class="btn" style="margin-top:14px;width:100%">Сбросить пароль и войти</button>
+        </form>
+        <button class="btn ghost" data-action="go-login" style="margin-top:10px;width:100%">← Вход</button>
+      </div>
+    </div>
+    <div id="toasts"></div>`;
+}
+// Модалка кода восстановления — показываем ОДИН раз после регистрации/сброса/добавления email.
+function showRecoveryModal(code, onClose) {
+  const ov = document.createElement('div'); ov.className = 'modal-overlay'; ov.id = 'recovery-modal';
+  ov.innerHTML = `<div class="recovery-box">
+    <h3>🔑 Сохрани код восстановления</h3>
+    <p class="muted">Это единственный способ вернуть доступ, если забудешь пароль. Запиши его в надёжное место — мы показываем код только сейчас.</p>
+    <div class="recovery-code" id="recovery-code">${esc(code)}</div>
+    <button class="btn ghost" id="recovery-copy">📋 Скопировать</button>
+    <button class="btn" id="recovery-ok" style="width:100%;margin-top:10px">Я сохранил → продолжить</button>
+  </div>`;
+  document.body.appendChild(ov);
+  ov.querySelector('#recovery-copy').addEventListener('click', () => { try { navigator.clipboard.writeText(code); toast('✓ Скопировано'); } catch { toast('Скопируй вручную'); } });
+  ov.querySelector('#recovery-ok').addEventListener('click', () => { ov.remove(); if (onClose) onClose(); });
 }
 
 function renderOnboardingScreen() {
@@ -1462,6 +1513,7 @@ function renderOnboardingScreen() {
 function showAuthScreen() {
   if (State.phase === 'login') renderLoginScreen();
   else if (State.phase === 'register') renderRegisterScreen();
+  else if (State.phase === 'reset') renderResetScreen();
   else if (State.phase === 'onboarding') renderOnboardingScreen();
 }
 
@@ -2994,11 +3046,23 @@ function subscriptionCard() {
     <div class="settings-actions">${cta || '<span class="muted">Спасибо за поддержку 💛</span>'}</div></div>`;
 }
 function securityCard() {
-  return `<div class="card"><h3>🔐 Сменить PIN</h3>
+  const hasEmail = State.me && State.me.email;
+  const hasPin = State.me && State.me.hasPin;
+  const emailBlock = hasEmail
+    ? `<p class="muted" style="font-size:12.5px;margin:0 0 6px">✓ Email привязан: <b>${esc(hasEmail)}</b> — вход и восстановление по email+паролю.</p>`
+    : `<p class="muted" style="font-size:12.5px;margin:0 0 8px">Привяжи email+пароль — чтобы входить с любого устройства и иметь восстановление доступа (сейчас вход только по PIN).</p>
+       <form id="add-email" class="pin-change">
+         <input name="email" type="email" placeholder="you@mail.com" autocomplete="username" required />
+         <input name="password" type="password" placeholder="Пароль (6+)" autocomplete="new-password" required />
+         <button type="submit" class="btn">Привязать</button><span id="add-email-msg" class="muted"></span></form>`;
+  const pinBlock = hasPin
+    ? `<h3 style="margin-top:16px">🔐 Сменить PIN</h3>
     <form id="change-pin" class="pin-change">
       <input name="oldPin" type="password" inputmode="numeric" placeholder="Текущий PIN" maxlength="8" required />
       <input name="newPin" type="password" inputmode="numeric" placeholder="Новый PIN (4+)" maxlength="8" required />
-      <button type="submit" class="btn">Сменить</button><span id="pin-change-msg" class="muted"></span></form></div>`;
+      <button type="submit" class="btn">Сменить</button><span id="pin-change-msg" class="muted"></span></form>`
+    : '';
+  return `<div class="card"><h3>🔑 Вход и восстановление</h3>${emailBlock}${pinBlock}</div>`;
 }
 function adminCard() {
   if (!State.me || !State.me.isAdmin) return '';
@@ -3876,16 +3940,58 @@ function onSubmit(e) {
     return;
   }
 
-  // --- Register ---
+  // --- Login (email+пароль) ---
+  if (f.id === 'login-form') {
+    e.preventDefault();
+    const errEl = f.querySelector('#login-error');
+    fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: f.email.value.trim(), password: f.password.value }) })
+      .then(async r => { const d = await r.json(); if (r.ok) { State.me = d; initApp(); } else { errEl.textContent = d.error || 'Не удалось войти'; f.password.value = ''; } })
+      .catch(() => { errEl.textContent = 'Ошибка сети'; });
+    return;
+  }
+
+  // --- Register (email+пароль) ---
   if (f.id === 'register-form') {
     e.preventDefault();
-    const name = f.name.value.trim(), pin = f.pin.value, pin2 = f.pin2.value;
+    const name = f.name.value.trim(), email = f.email.value.trim(), pw = f.password.value, pw2 = f.password2.value;
     const errEl = f.querySelector('#reg-error');
-    if (pin !== pin2) { errEl.textContent = 'PIN-коды не совпадают'; return; }
-    if (pin.length < 4) { errEl.textContent = 'PIN минимум 4 символа'; return; }
-    fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, pin, avatar: State.regAvatar || '⚡' }) })
-      .then(async r => { const d = await r.json(); if (r.ok) { State.me = d; State.phase = 'onboarding'; render(); } else { errEl.textContent = d.error || 'Ошибка регистрации'; } })
+    if (pw !== pw2) { errEl.textContent = 'Пароли не совпадают'; return; }
+    if (pw.length < 6) { errEl.textContent = 'Пароль минимум 6 символов'; return; }
+    fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password: pw, avatar: State.regAvatar || '⚡' }) })
+      .then(async r => {
+        const d = await r.json();
+        if (r.ok) { State.me = d; State.phase = 'onboarding'; render(); if (d.recoveryCode) showRecoveryModal(d.recoveryCode); }
+        else { errEl.textContent = d.error || 'Ошибка регистрации'; }
+      })
       .catch(() => { f.querySelector('#reg-error').textContent = 'Ошибка сети'; });
+    return;
+  }
+
+  // --- Reset (по коду восстановления) ---
+  if (f.id === 'reset-form') {
+    e.preventDefault();
+    const errEl = f.querySelector('#reset-error');
+    fetch('/api/auth/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: f.email.value.trim(), code: f.code.value.trim(), newPassword: f.newPassword.value }) })
+      .then(async r => {
+        const d = await r.json();
+        if (r.ok) { State.me = d; const code = d.recoveryCode; initApp(); if (code) showRecoveryModal(code); }
+        else { errEl.textContent = d.error || 'Не удалось сбросить'; }
+      })
+      .catch(() => { errEl.textContent = 'Ошибка сети'; });
+    return;
+  }
+
+  // --- Привязать email+пароль к существующему аккаунту ---
+  if (f.id === 'add-email') {
+    e.preventDefault();
+    const msg = f.querySelector('#add-email-msg');
+    fetch('/api/auth/add-email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: f.email.value.trim(), password: f.password.value }) })
+      .then(async (r) => {
+        const d = await r.json();
+        if (r.ok) { if (State.me) State.me.email = d.email; msg.textContent = '✓ Привязано'; if (d.recoveryCode) showRecoveryModal(d.recoveryCode, () => render()); }
+        else { msg.textContent = d.error || 'Ошибка'; msg.style.color = '#e0526a'; }
+      })
+      .catch(() => { msg.textContent = 'Ошибка сети'; msg.style.color = '#e0526a'; });
     return;
   }
 
@@ -4081,6 +4187,7 @@ function onClick(e) {
   }
   if (action === 'go-register') { State.phase = 'register'; State.regAvatar = '⚡'; State.regName = ''; render(); return; }
   if (action === 'go-login') { State.phase = 'login'; render(); return; }
+  if (action === 'go-reset') { State.phase = 'reset'; render(); return; }
   if (action === 'pick-avatar') { State.regAvatar = el.dataset.av; State.regName = document.querySelector('input[name="name"]')?.value || ''; render(); return; }
   if (action === 'logout') {
     fetch('/api/auth/logout', { method: 'POST' }).finally(() => {

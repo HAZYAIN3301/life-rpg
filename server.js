@@ -381,6 +381,21 @@ function backupFile(dir, name) {
 function hashPin(userId, pin) {
   return crypto.createHmac('sha256', SECRET).update(userId + ':' + String(pin)).digest('hex');
 }
+// ---- Email + пароль (scrypt) + код восстановления (zero-dep, без email-инфры) ----
+function normEmail(e) { return String(e || '').trim().toLowerCase(); }
+function validEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
+function hashPw(password, salt) { return crypto.scryptSync(String(password), salt, 64).toString('hex'); }
+function verifyPw(password, salt, hash) {
+  try { const h = hashPw(password, salt); return h.length === hash.length && crypto.timingSafeEqual(Buffer.from(h, 'hex'), Buffer.from(hash, 'hex')); } catch { return false; }
+}
+function genRecoveryCode() { return crypto.randomBytes(8).toString('hex').toUpperCase().match(/.{4}/g).join('-'); } // XXXX-XXXX-XXXX-XXXX
+function hashCode(code) { return crypto.createHmac('sha256', SECRET).update(String(code).replace(/[\s-]/g, '').toUpperCase()).digest('hex'); }
+function setEmailPassword(user, email, password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  user.email = normEmail(email); user.pwSalt = salt; user.pwHash = hashPw(password, salt);
+  const code = genRecoveryCode(); user.recoveryHash = hashCode(code);
+  return code; // вернуть открытый код ОДИН раз
+}
 
 // ---- Подписка / entitlement (Pro + 7-дневный триал) ----
 const TRIAL_MS = 7 * 24 * 3600 * 1000;
@@ -401,7 +416,7 @@ function entitlement(user) {
   return { tier: 'free', trialUsed: false };
 }
 function publicUser(user) {
-  return { id: user.id, name: user.name, avatar: user.avatar, isAdmin: !!user.isAdmin, entitlement: entitlement(user) };
+  return { id: user.id, name: user.name, avatar: user.avatar, isAdmin: !!user.isAdmin, email: user.email || null, hasPin: !!user.pinHash, entitlement: entitlement(user) };
 }
 
 // ============================================================
@@ -551,29 +566,76 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, publicUser(user));
     }
 
-    // GET /api/auth/profiles — публичный (для экрана выбора профиля)
+    // GET /api/auth/profiles — публичный список (только legacy-киоск без email; email-аккаунты приватны)
     if (u === '/api/auth/profiles' && req.method === 'GET') {
-      return sendJson(res, 200, loadUsers().map(x => ({ id: x.id, name: x.name, avatar: x.avatar })));
+      return sendJson(res, 200, loadUsers().filter(x => !x.email).map(x => ({ id: x.id, name: x.name, avatar: x.avatar })));
     }
 
-    // POST /api/auth/login
+    // POST /api/auth/login — email+пароль (новое) ИЛИ userId+PIN (legacy)
     if (u === '/api/auth/login' && req.method === 'POST') {
-      const { userId, pin } = body;
-      if (!userId || pin === undefined) return sendJson(res, 400, { error: 'userId и pin обязательны' });
-      const user = loadUsers().find(x => x.id === userId);
-      if (!user) return sendJson(res, 401, { error: 'профиль не найден' });
-      if (user.pinHash !== hashPin(userId, String(pin))) return sendJson(res, 401, { error: 'неверный PIN' });
-      const token = makeSession(userId);
+      const { userId, pin, email, password } = body;
+      let user = null;
+      if (email && password !== undefined) {
+        user = loadUsers().find(x => x.email && x.email === normEmail(email));
+        if (!user || !user.pwHash || !verifyPw(password, user.pwSalt, user.pwHash)) return sendJson(res, 401, { error: 'неверный email или пароль' });
+      } else {
+        if (!userId || pin === undefined) return sendJson(res, 400, { error: 'нужен email+пароль или профиль+PIN' });
+        user = loadUsers().find(x => x.id === userId);
+        if (!user || !user.pinHash || user.pinHash !== hashPin(userId, String(pin))) return sendJson(res, 401, { error: 'неверный PIN' });
+      }
+      const token = makeSession(user.id);
       res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(token), 'Cache-Control': 'no-store' });
       return res.end(JSON.stringify(Object.assign({ ok: true }, publicUser(user))));
     }
 
-    // POST /api/auth/register
-    if (u === '/api/auth/register' && req.method === 'POST') {
-      const { name, pin } = body;
-      if (!name || pin === undefined) return sendJson(res, 400, { error: 'name и pin обязательны' });
-      if (String(pin).length < 4) return sendJson(res, 400, { error: 'PIN минимум 4 символа' });
+    // POST /api/auth/reset — сброс пароля по коду восстановления (без email-инфры)
+    if (u === '/api/auth/reset' && req.method === 'POST') {
+      const { email, code, newPassword } = body;
+      if (!email || !code || !newPassword) return sendJson(res, 400, { error: 'email, код и новый пароль обязательны' });
+      if (String(newPassword).length < 6) return sendJson(res, 400, { error: 'пароль минимум 6 символов' });
       const users = loadUsers();
+      const user = users.find(x => x.email && x.email === normEmail(email));
+      if (!user || !user.recoveryHash) return sendJson(res, 401, { error: 'аккаунт не найден' });
+      const given = hashCode(code);
+      if (given.length !== user.recoveryHash.length || !crypto.timingSafeEqual(Buffer.from(given, 'hex'), Buffer.from(user.recoveryHash, 'hex'))) return sendJson(res, 401, { error: 'неверный код восстановления' });
+      const newCode = setEmailPassword(user, user.email, newPassword); // новый пароль + ротация кода
+      saveUsers(users);
+      const token = makeSession(user.id);
+      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(token), 'Cache-Control': 'no-store' });
+      return res.end(JSON.stringify(Object.assign({ ok: true, recoveryCode: newCode }, publicUser(user))));
+    }
+
+    // POST /api/auth/add-email — существующий (PIN) аккаунт добавляет email+пароль
+    if (u === '/api/auth/add-email' && req.method === 'POST') {
+      const uid = sessionUserId(req);
+      if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      const { email, password } = body;
+      if (!email || !password) return sendJson(res, 400, { error: 'email и пароль обязательны' });
+      if (!validEmail(email)) return sendJson(res, 400, { error: 'некорректный email' });
+      if (String(password).length < 6) return sendJson(res, 400, { error: 'пароль минимум 6 символов' });
+      const users = loadUsers();
+      if (users.find(x => x.email === normEmail(email) && x.id !== uid)) return sendJson(res, 400, { error: 'этот email уже занят' });
+      const user = users.find(x => x.id === uid);
+      if (!user) return sendJson(res, 401, { error: 'user not found' });
+      const code = setEmailPassword(user, email, password);
+      saveUsers(users);
+      return sendJson(res, 200, { ok: true, recoveryCode: code, email: user.email });
+    }
+
+    // POST /api/auth/register — поддерживает email+пароль (новое) ИЛИ PIN (legacy-киоск)
+    if (u === '/api/auth/register' && req.method === 'POST') {
+      const { name, pin, email, password } = body;
+      const hasPin = pin !== undefined && pin !== '';
+      const hasEmail = email && password;
+      if (!name) return sendJson(res, 400, { error: 'имя обязательно' });
+      if (!hasPin && !hasEmail) return sendJson(res, 400, { error: 'нужен email+пароль или PIN' });
+      if (hasPin && String(pin).length < 4) return sendJson(res, 400, { error: 'PIN минимум 4 символа' });
+      const users = loadUsers();
+      if (hasEmail) {
+        if (!validEmail(email)) return sendJson(res, 400, { error: 'некорректный email' });
+        if (String(password).length < 6) return sendJson(res, 400, { error: 'пароль минимум 6 символов' });
+        if (users.find(x => x.email === normEmail(email))) return sendJson(res, 400, { error: 'этот email уже зарегистрирован' });
+      }
       let id = name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 16) || 'user';
       if (!id) id = 'user';
       while (users.find(x => x.id === id)) id += Math.floor(Math.random() * 9 + 1);
@@ -581,17 +643,19 @@ const server = http.createServer(async (req, res) => {
       const user = {
         id, name: String(name).slice(0, 32),
         avatar: body.avatar || '⚡',
-        pinHash: hashPin(id, String(pin)),
         createdAt: new Date().toISOString(),
         isAdmin: users.length === 0,
         plan: 'free', trialStartedAt: null, proUntil: null,
       };
+      if (hasPin) user.pinHash = hashPin(id, String(pin));
+      let recoveryCode = null;
+      if (hasEmail) recoveryCode = setEmailPassword(user, email, password);
       fs.mkdirSync(userDataDir(id), { recursive: true });
       users.push(user);
       saveUsers(users);
       const token = makeSession(id);
       res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(token), 'Cache-Control': 'no-store' });
-      return res.end(JSON.stringify(Object.assign({ ok: true }, publicUser(user))));
+      return res.end(JSON.stringify(Object.assign({ ok: true, recoveryCode }, publicUser(user))));
     }
 
     // POST /api/auth/logout
