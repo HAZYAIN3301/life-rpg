@@ -577,7 +577,7 @@ function openCategoryPicker(taskId) {
 function itemXp(it) {
   const xp = State.settings.xp, mult = xp.difficulty[it.difficulty] ?? 1;
   const base = (Number(it.estimateMin) || 0) * xp.perMinute * mult + xp.completionBonus;
-  const gb = gearBonus(), gearMul = (1 + gb.xpPct / 100) * (it.difficulty === 'hard' ? (1 + gb.hardXpPct / 100) : 1); // гир бустит XP
+  const gb = gearBonus(it.skillId), gearMul = (1 + gb.xpPct / 100) * (it.difficulty === 'hard' ? (1 + gb.hardXpPct / 100) : 1); // гир бустит XP (реликвия — по сфере)
   return Math.max(1, Math.round(base * (1 + skillPerkBonus(it.skillId) / 100) * (1 + lootBoostPct() / 100) * (1 + hypePct() / 100) * gearMul));
 }
 function itemGold(it) {
@@ -1073,7 +1073,9 @@ const LOOT_POOL = [
   { w: 9,  type: 'cosmetic', rarity: 'rare',     label: '🎨 Редкая косметика' },
   { w: 7,  type: 'boost',    pct: 50,  hours: 3, label: '🔥 +50% XP' },
   { w: 6,  type: 'gold',     min: 120, max: 220, label: '🪙 Куча золота' },
+  { w: 6,  type: 'gear',                          label: '⚔️ Снаряжение' },
   { w: 4,  type: 'cosmetic', rarity: 'epic',     label: '🎨 Эпическая косметика' },
+  { w: 3.5,type: 'relic',                          label: '🔱 Реликвия сферы' },
   { w: 3,  type: 'gold',     min: 280, max: 450, label: '💎 Джекпот' },
   { w: 1.4,type: 'cosmetic', rarity: 'legendary',label: '🎨 Легендарная косметика' },
 ];
@@ -1170,6 +1172,16 @@ function lootResolve(item) {
     const dup = { common: 40, rare: 80, epic: 160, legendary: 320 }[rar] || 40; // дубль (всё собрано) → золото, Brawl-Stars-стиль
     return { type: 'gold', amount: dup, rarity: rar, label: `+${dup} 🪙 (${RARITY[rar].label.toLowerCase()} собрано)` };
   }
+  if (item.type === 'gear') { // v2: снаряжение падает из сундука
+    const g = ensureGear(), pool = GEAR.filter((x) => !g.owned.includes(x.id));
+    if (pool.length) { const it = pool[Math.floor(Math.random() * pool.length)]; return { type: 'gear', id: it.id, slot: it.slot, rarity: it.rarity, name: it.name, label: `${it.icon} ${it.name}` }; }
+    return { type: 'gold', amount: 150, rarity: 'rare', label: '+150 🪙 (снаряжение собрано)' };
+  }
+  if (item.type === 'relic') { // v2: сфера-привязанная реликвия
+    const r = Math.random(), rar = r < 0.6 ? 'common' : r < 0.9 ? 'rare' : 'epic', relic = genRelic(rar);
+    if (relic) return { type: 'relic', relic, rarity: rar, name: relic.name, label: `${relic.icon} ${relic.name} (+${relic.xpPct}% XP)` };
+    return { type: 'gold', amount: 80, rarity: 'common', label: '+80 🪙' };
+  }
   return { type: 'gold', amount: 20, rarity: 'common', label: '+20 🪙' };
 }
 function applyLoot(reward) {
@@ -1181,6 +1193,16 @@ function applyLoot(reward) {
     ensureCosmetics();
     if (!State.settings.cosmetics.includes(reward.id)) State.settings.cosmetics.push(reward.id);
     const t = cosmeticType(reward.id); if (!State.settings.equipped[t]) State.settings.equipped[t] = reward.id; // авто-надеть, если слот пуст
+    Store.save('settings', State.settings);
+  }
+  else if (reward.type === 'gear') {
+    const g = ensureGear(); if (!g.owned.includes(reward.id)) g.owned.push(reward.id);
+    if (!g.equipped[reward.slot]) g.equipped[reward.slot] = reward.id; // авто-надеть в пустой слот
+    Store.save('settings', State.settings);
+  }
+  else if (reward.type === 'relic') {
+    const g = ensureGear(); g.relics.push(reward.relic);
+    if (!g.equipped.relic) g.equipped.relic = reward.relic.uid; // авто-надеть первую реликвию
     Store.save('settings', State.settings);
   }
   lb.opened += 1;
@@ -3143,12 +3165,24 @@ const GEAR = [
   { id: 'm3', slot: 'amulet', name: 'Реликвия Шести Глаз', icon: '🔮', rarity: 'epic', goldPct: 20, cost: 1100, lvl: 13 },
 ];
 const GEAR_SLOTS = [{ k: 'weapon', label: '⚔️ Оружие' }, { k: 'armor', label: '🛡 Броня' }, { k: 'amulet', label: '📿 Амулет' }];
-function ensureGear() { const s = State.settings; if (!s.gear) s.gear = { owned: [], equipped: {} }; if (!Array.isArray(s.gear.owned)) s.gear.owned = []; if (!s.gear.equipped) s.gear.equipped = {}; return s.gear; }
+function ensureGear() { const s = State.settings; if (!s.gear) s.gear = { owned: [], equipped: {}, relics: [] }; if (!Array.isArray(s.gear.owned)) s.gear.owned = []; if (!s.gear.equipped) s.gear.equipped = {}; if (!Array.isArray(s.gear.relics)) s.gear.relics = []; return s.gear; }
 function gearById(id) { return GEAR.find((g) => g.id === id); }
-function gearBonus() {
+function skillInSphere(skillId, sphereId) { if (!skillId || !sphereId) return false; if (skillId === sphereId) return true; return descendantSkills(sphereId).some((c) => c.id === skillId); }
+// Бонус снаряжения. Реликвия (v2) сфера-привязана: её XP-бонус применяется только к задачам своей сферы.
+function gearBonus(skillId) {
   const g = ensureGear(); let xpPct = 0, hardXpPct = 0, goldPct = 0;
-  for (const slot in g.equipped) { const it = gearById(g.equipped[slot]); if (!it) continue; xpPct += it.xpPct || 0; hardXpPct += it.hardXpPct || 0; goldPct += it.goldPct || 0; }
+  for (const slot of ['weapon', 'armor', 'amulet']) { const it = gearById(g.equipped[slot]); if (!it) continue; xpPct += it.xpPct || 0; hardXpPct += it.hardXpPct || 0; goldPct += it.goldPct || 0; }
+  const relic = (g.relics || []).find((r) => r.uid === g.equipped.relic);
+  if (relic && skillId && skillInSphere(skillId, relic.sphere)) xpPct += relic.xpPct || 0;
   return { xpPct, hardXpPct, goldPct };
+}
+const RELIC_ICONS = { common: '🔱', rare: '🔯', epic: '🔮' };
+// Сгенерировать реликвию, привязанную к случайной основной сфере (для дропа из сундука).
+function genRelic(rarity) {
+  const tops = topSkills(); if (!tops.length) return null;
+  const sphere = tops[Math.floor(Math.random() * tops.length)];
+  const xp = { common: 6, rare: 10, epic: 16 }[rarity] || 6;
+  return { uid: 'rel_' + uid(), sphere: sphere.id, xpPct: xp, rarity, name: `Реликвия: ${sphere.name}`, icon: RELIC_ICONS[rarity] || '🔱' };
 }
 function gearBonusLabel(it) { return it.xpPct ? `+${it.xpPct}% XP` : it.hardXpPct ? `+${it.hardXpPct}% XP к 🔥сложным` : `+${it.goldPct}% 🪙`; }
 function arsenalCard() {
@@ -3168,12 +3202,22 @@ function arsenalCard() {
     }).join('');
     return `<div class="gear-slot"><div class="gear-slot-h">${s.label}</div><div class="gear-row">${items}</div></div>`;
   }).join('');
+  // v2: слот реликвий — динамические инстансы с сфера-привязкой (падают из сундуков)
+  const eqR = g.equipped.relic;
+  const relicItems = (g.relics || []).length
+    ? g.relics.map((r) => { const rar = RARITY[r.rarity] || RARITY.common, on = eqR === r.uid; return `<div class="gear-item${on ? ' equipped' : ''}" style="${on ? `border-color:${rar.color}` : ''}">
+        <div class="gear-ic" style="color:${rar.color}">${r.icon}</div>
+        <div class="gear-nm">${esc(skillById(r.sphere).name)}</div>
+        <div class="gear-bonus" style="color:${rar.color}">+${r.xpPct}% XP сферы</div>
+        <button class="btn ${on ? '' : 'ghost'} sm" data-action="equip-relic" data-uid="${r.uid}">${on ? '✓ Надето' : 'Надеть'}</button></div>`; }).join('')
+    : `<p class="muted" style="font-size:12px;margin:4px 2px 0">Реликвии падают из 🎁 сундуков — каждая усиливает XP <b>конкретной сферы</b>.</p>`;
+  const relicSlot = `<div class="gear-slot"><div class="gear-slot-h">🔱 Реликвии (сфера-привязка)</div><div class="gear-row">${relicItems}</div></div>`;
   const sum = (gb.xpPct || gb.hardXpPct || gb.goldPct)
     ? `<p class="gear-sum">Надето: ${[gb.xpPct ? `+${gb.xpPct}% XP` : '', gb.hardXpPct ? `+${gb.hardXpPct}% XP к сложным` : '', gb.goldPct ? `+${gb.goldPct}% 🪙` : ''].filter(Boolean).join(' · ')}</p>`
     : `<p class="gear-sum muted">Ничего не надето — снаряжение усилит рост.</p>`;
   return `<div class="card"><h3>⚔️ Арсенал — снаряжение</h3>
-    <p class="muted" style="font-size:12px;margin:0 0 6px">Покупай за золото и надевай гир — он пассивно усиливает XP и золото (сверх косметики). По 1 предмету на слот, открывается по уровню.</p>
-    ${sum}${slotHtml}</div>`;
+    <p class="muted" style="font-size:12px;margin:0 0 6px">Покупай за золото <b>или выбивай из 🎁 сундуков</b> и надевай гир — он пассивно усиливает XP и золото (сверх косметики). По 1 предмету на слот. Реликвии бустят конкретную сферу.</p>
+    ${sum}${slotHtml}${relicSlot}</div>`;
 }
 
 function renderRewards() {
@@ -4056,6 +4100,12 @@ function onClick(e) {
     const it = gearById(id); if (!it) return; const g = ensureGear();
     if (!g.owned.includes(id)) return;
     g.equipped[it.slot] = (g.equipped[it.slot] === id) ? null : id;
+    Store.save('settings', State.settings); sfx('complete'); render(); return;
+  }
+  if (action === 'equip-relic') {
+    const g = ensureGear(), uidv = el.dataset.uid;
+    if (!(g.relics || []).some((r) => r.uid === uidv)) return;
+    g.equipped.relic = (g.equipped.relic === uidv) ? null : uidv;
     Store.save('settings', State.settings); sfx('complete'); render(); return;
   }
   if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; Store.save('settings', State.settings); applyTheme(); render(); return; }

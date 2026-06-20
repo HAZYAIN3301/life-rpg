@@ -993,3 +993,10 @@ Solo-Leveling-вайб под бренд Satoru/«?». Опционально (�
 - **Тизер «Системы»** на «Сегодня» (одноразовый, после ур.2, если режим выкл): «⚡ Спрятанная фишка: режим Система» с [Включить]/[Позже]. Оба пишут `teaser:system` в discovered → больше не показывается.
 - **Проверено в превью:** ур.4 → тизер виден, 2 glow-точки (Герой+Племя), точка на Питомцах, «Позже» убирает тизер навсегда.
 - Файлы: `public/app.js` (helpers + renderNav glow + nav-handlers markDiscovered + sysTeaser + хендлеры), `public/styles.css` (`.navsec-dot`/`.navsub-dot`/`.sys-teaser`).
+
+## [2026-06-20] Снаряжение v2 — дроп из сундуков + сфера-привязанные реликвии
+- **Дроп гира из сундуков:** `LOOT_POOL` +`gear`(w6)/+`relic`(w3.5); `lootResolve`/`applyLoot` — гир добавляется в `gear.owned` (авто-надеть в пустой слот), при «всё собрано» → золото-фолбэк. Падает в реальной рулетке сундука (label с иконкой).
+- **Реликвии (сфера-привязка):** новый слот 🔱 — динамические инстансы `gear.relics=[{uid,sphere,xpPct,rarity,name,icon}]`, `genRelic` привязывает к случайной осн. сфере (common+6/rare+10/epic+16% XP). `gearBonus(skillId)` теперь сфера-aware: XP-бонус реликвии применяется ТОЛЬКО если задача в её сфере или подсфере (`skillInSphere`). `itemXp(it)` передаёт `it.skillId`.
+- **Арсенал:** слот реликвий с equip/unequip (`equip-relic`), интро «покупай ИЛИ выбивай из сундуков».
+- **Проверено в превью:** гир падает→owned, реликвия→привязка к сфере, **бонус только своей сфере+подсфере** (Учёба+20/Биология+20/Спорт 0), itemXp различается (60 vs 50), слот рендерится.
+- Файлы: `public/app.js` (ensureGear.relics, skillInSphere, gearBonus(skillId), genRelic, LOOT_POOL, lootResolve/applyLoot gear/relic, arsenalCard relicSlot, equip-relic).
