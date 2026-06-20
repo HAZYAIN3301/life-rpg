@@ -2524,7 +2524,9 @@ function renderToday() {
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">↪ Перенести всё на сегодня</button></div>` : '';
 
-  return `${companionCard()}${installBanner()}${captureBar()}${notesPeekToday()}${progressTrioCard()}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
+  // Тизер режима «Система» — одноразово, после ур.2, если не включён (дискаверабилити)
+  const sysTeaser = (!systemMode() && charLevel() >= 2 && !isDiscovered('teaser:system')) ? `<div class="card nudge-card sys-teaser"><span class="nudge-boost">⚡ Спрятанная фишка: режим «Система» (Solo Leveling-вайб) — нарратор объявляет твои победы.</span><div class="sys-teaser-btns"><button class="btn sm" data-action="enable-system-teaser">Включить</button><button class="btn ghost sm" data-action="dismiss-system-teaser">Позже</button></div></div>` : '';
+  return `${companionCard()}${installBanner()}${captureBar()}${notesPeekToday()}${progressTrioCard()}${sysTeaser}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="Новый квест на сегодня…" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
@@ -3661,16 +3663,26 @@ const SECTIONS = [
 ];
 function sectionOf(view) { for (const s of SECTIONS) if (s.views.some((v) => v.view === view)) return s.id; return null; } // settings (шестерёнка) и legacy weekly → null
 function navUnlockLevel() { return (State.me && State.me.isAdmin) ? 999 : charLevel(); } // админ видит всё (дог-фуддинг)
+// ── Дискаверабилити: мягко подсвечиваем разделы/фичи, куда юзер ещё не заходил ──
+const NEW_VIEWS = ['pets']; // спотлайт новых фич (точка «NEW» на под-вкладке)
+function isDiscovered(v) { return ((State.settings && State.settings.discovered) || []).includes(v); }
+function markDiscovered(v) { const s = State.settings; if (!s) return; if (!Array.isArray(s.discovered)) s.discovered = []; if (!s.discovered.includes(v)) { s.discovered.push(v); Store.save('settings', s); } }
+function sectionHasNew(s, lvl) {
+  if (s.gate > lvl) return false;                                                // ещё заблокирован
+  if (s.views.some((v) => NEW_VIEWS.includes(v.view) && !isDiscovered(v.view))) return true; // внутри новая фича
+  if (s.gate > 0 && s.views.every((v) => !isDiscovered(v.view))) return true;    // level-gated раздел, куда не заходили
+  return false;
+}
 function renderNav() {
   const nav = document.getElementById('nav'); if (!nav) return;
   const lvl = navUnlockLevel(), cur = sectionOf(State.view);
   const primary = SECTIONS.map((s) => {
-    const locked = s.gate > lvl;
-    return `<button class="navsec${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}" data-action="go-section" data-sec="${s.id}" title="${locked ? 'Откроется на ур.' + s.gate : s.label}">${s.icon}<span class="navsec-l">${s.label}</span>${locked ? `<span class="navsec-lock">🔒${s.gate}</span>` : ''}</button>`;
+    const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
+    return `<button class="navsec${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}" title="${locked ? 'Откроется на ур.' + s.gate : (isNew ? s.label + ' — новое!' : s.label)}">${s.icon}<span class="navsec-l">${s.label}</span>${locked ? `<span class="navsec-lock">🔒${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
   }).join('');
   const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="Настройки" aria-label="Настройки">⚙️</button>`;
   const sec = SECTIONS.find((s) => s.id === cur);
-  const subs = (sec && sec.views.length > 1) ? `<div class="navsub">${sec.views.map((v) => `<button class="navsubtab${v.view === State.view ? ' active' : ''}" data-view="${v.view}">${esc(v.label)}</button>`).join('')}</div>` : '';
+  const subs = (sec && sec.views.length > 1) ? `<div class="navsub">${sec.views.map((v) => { const nd = NEW_VIEWS.includes(v.view) && !isDiscovered(v.view) && v.view !== State.view ? '<span class="navsub-dot"></span>' : ''; return `<button class="navsubtab${v.view === State.view ? ' active' : ''}" data-view="${v.view}">${esc(v.label)}${nd}</button>`; }).join('')}</div>` : '';
   nav.innerHTML = `<div class="navrow">${primary}${gear}</div>${subs}`;
 }
 const ACCENTS = ['#6c8cff', '#22c1a4', '#e0526a', '#b06ff0', '#e0a23e', '#4f9ff7']; // палитра акцентов (#тема)
@@ -3919,12 +3931,12 @@ function openRewardCatalog() {
 
 function onClick(e) {
   const navBtn = e.target.closest('#nav button[data-view]');
-  if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
+  if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
   const secBtn = e.target.closest('#nav [data-action="go-section"]');
   if (secBtn) {
     const s = SECTIONS.find((x) => x.id === secBtn.dataset.sec); if (!s) return;
     if (s.gate > navUnlockLevel()) { toast(`🔒 «${s.label}» откроется на ур.${s.gate}`); return; }
-    if (sectionOf(State.view) !== s.id) { flushSettingsForm(); State.view = s.views[0].view; track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
+    if (sectionOf(State.view) !== s.id) { flushSettingsForm(); State.view = s.views[0].view; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
     return;
   }
   const el = e.target.closest('[data-action]');
@@ -4053,6 +4065,11 @@ function onClick(e) {
     if (el.checked) systemNarrate('СИСТЕМА АКТИВИРОВАНА', 'Отныне я сопровождаю твой путь. Игрок, не подведи.');
     render(); return;
   }
+  if (action === 'enable-system-teaser') {
+    State.settings.systemMode = true; markDiscovered('teaser:system'); Store.save('settings', State.settings); applyTheme();
+    systemNarrate('СИСТЕМА АКТИВИРОВАНА', 'Отныне я сопровождаю твой путь. Игрок, не подведи.'); render(); return;
+  }
+  if (action === 'dismiss-system-teaser') { markDiscovered('teaser:system'); render(); return; }
   if (action === 'sound-test') { ['complete', 'coin', 'achievement'].forEach((n, i) => setTimeout(() => sfx(n), i * 420)); setTimeout(() => sfx('loot', 'legendary'), 1300); return; }
   if (action === 'show-paywall') { showPaywall(el.dataset.feature); return; }
   if (action === 'close-paywall') { const p = document.getElementById('paywall'); if (p) p.remove(); return; }

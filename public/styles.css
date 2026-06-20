@@ -1005,6 +1005,17 @@ html[data-system="on"] #appName { letter-spacing: 1.5px; }
 .t-edit-form input { width: 100%; padding: 4px 8px; border-radius: 7px; border: 1px solid var(--accent); background: var(--panel2); color: var(--text); font-size: 14px; font-family: inherit; }
 .t-title { cursor: text; }
 
+/* Дискаверабилити: подсветка новых разделов/фич */
+.navsec { position: relative; }
+.navsec-dot, .navsub-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px var(--panel), 0 0 8px var(--accent); animation: disc-pulse 1.6s ease-in-out infinite; }
+.navsec-dot { position: absolute; top: 5px; right: 7px; }
+.navsub-dot { margin-left: 5px; vertical-align: middle; }
+.navsec-new .navsec-l { color: var(--accent); }
+@keyframes disc-pulse { 0%,100% { transform: scale(1); opacity: 1 } 50% { transform: scale(1.35); opacity: .7 } }
+.sys-teaser { flex-direction: column; align-items: stretch; gap: 8px; }
+.sys-teaser-btns { display: flex; gap: 8px; }
+@media (prefers-reduced-motion: reduce) { .navsec-dot, .navsub-dot { animation: none; } }
+
 /* ============================================================
    Подписка / Pro / Paywall
    ============================================================ */
