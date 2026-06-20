@@ -1080,6 +1080,12 @@ html[data-system="on"] .task, html[data-system="on"] .gear-item, html[data-syste
 .den-clock { font-variant-numeric: tabular-nums; font-size: 16px; }
 .den-actions { display: flex; gap: 8px; padding: 0 12px 14px; flex-wrap: wrap; }
 
+/* Error-boundary карточка */
+.err-card { border-color: var(--bad); }
+.err-card h3 { margin: 0 0 8px; }
+.err-acts { display: flex; gap: 8px; margin-top: 12px; }
+.err-trace { margin-top: 12px; padding: 10px; background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; font-size: 11px; white-space: pre-wrap; overflow-x: auto; color: var(--muted); }
+
 /* ============================================================
    Подписка / Pro / Paywall
    ============================================================ */

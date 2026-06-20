@@ -3787,15 +3787,41 @@ function applyTheme() {
   document.documentElement.dataset.system = sys ? 'on' : 'off';
   document.documentElement.style.setProperty('--accent', sys ? '#4fd6ff' : (s.accent || '#6c8cff'));
 }
+// Авто-репорт креша на сервер (раз на ключ за сессию) — чтобы видеть прод-падения в фидбеке.
+function reportCrash(view, e) {
+  try {
+    State._reportedErrors = State._reportedErrors || new Set();
+    const key = view + ':' + ((e && e.message) || e);
+    if (State._reportedErrors.has(key)) return; State._reportedErrors.add(key);
+    fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'bug', text: `[авто-креш] раздел «${view}»: ` + String((e && e.stack) || e).slice(0, 900), attachments: [] }) }).catch(() => {});
+  } catch {}
+}
+function viewErrorCard(view, e) {
+  const admin = State.me && State.me.isAdmin;
+  return `<div class="card err-card">
+    <h3>😔 Этот раздел не открылся</h3>
+    <p class="muted">Сбой в разделе «${esc(view)}», но твои данные целы. Вернись на «Сегодня» или обнови страницу — отчёт уже ушёл нам.</p>
+    <div class="err-acts"><button class="btn" data-action="goto-today">← На сегодня</button><button class="btn ghost" data-action="reload-app">↻ Обновить</button></div>
+    ${admin ? `<pre class="err-trace">${esc(String((e && e.stack) || e)).slice(0, 700)}</pre>` : ''}
+  </div>`;
+}
 function render() {
   if (State.phase !== 'app') { showAuthScreen(); return; }
-  applyTheme();
+  try { applyTheme(); } catch (e) { console.error('applyTheme', e); }
   // Восстановить app shell если auth-экран его перезаписал
   if (!document.getElementById('main')) document.getElementById('app').innerHTML = APP_SHELL;
-  renderHeader();
-  renderNav();
-  document.getElementById('main').innerHTML = (VIEWS[State.view] || renderToday)();
-  scheduleReminders();
+  try { renderHeader(); } catch (e) { console.error('renderHeader', e); }
+  try { renderNav(); } catch (e) { console.error('renderNav', e); }
+  const main = document.getElementById('main');
+  try {
+    main.innerHTML = (VIEWS[State.view] || renderToday)();
+  } catch (e) {
+    // Error-boundary: сбой одного раздела не должен белить весь экран
+    console.error('Сбой рендера раздела:', State.view, e);
+    reportCrash(State.view, e);
+    try { main.innerHTML = viewErrorCard(State.view, e); } catch { main.innerHTML = '<div class="card"><p>Ошибка. Обнови страницу.</p></div>'; }
+  }
+  try { scheduleReminders(); } catch (e) { console.error('scheduleReminders', e); }
 }
 
 // ============================================================
@@ -4228,6 +4254,7 @@ function onClick(e) {
   }
   if (action === 'goto-rewards') { State.view = 'rewards'; render(); return; }
   if (action === 'goto-today') { State.view = 'today'; render(); return; }
+  if (action === 'reload-app') { location.reload(); return; }
   if (action === 'goto-pets') { State.view = 'pets'; markDiscovered('pets'); render(); return; }
   if (action === 'go-wardrobe') { State.view = 'character'; render(); setTimeout(() => { const c = document.getElementById('avatar-editor'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60); return; }
   if (action === 'goto-import') { State.view = 'settings'; render(); setTimeout(() => { const c = document.getElementById('import-card'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('flash-card'); } }, 60); return; }
