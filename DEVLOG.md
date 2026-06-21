@@ -2,6 +2,32 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-06-21] ИИ-биллинг — дом.ключ (вкл. в Pro) + учёт токенов
+
+Построено и **протестировано** (бэкенд — полная live-curl матрица всех путей + юнит-тест метеринга; клиент — превью, оба состояния карточки + перевод на 4 языка, 0 ошибок). Модель: Opus 4.8. **Для включения нужно действие Альберта:** положить дом.ИИ-ключ в Railway (см. ниже).
+
+### Идея
+Раньше ИИ работал только BYOK (свой ключ). Теперь Pro/триал могут пользоваться ИИ **без своего ключа** — сервер крутит запрос на «домашнем» ключе (мы платим инференс), с месячной квотой токенов. Free без ключа → апселл в Pro. Свой ключ всегда в приоритете (нам бесплатно) и **обходит квоту**.
+
+### Сервер (`server.js`)
+- **Env:** `AI_HOUSE_KEY_GEMINI` / `_GROQ` / `_ANTHROPIC` / `_OPENAI` — дом.ключи per-provider. `AI_HOUSE_PROVIDER` — какой предпочесть (иначе первый заданный; Gemini дешёвый → дефолт). `PRO_AI_TOKENS_MONTH` (дефолт 1_000_000) — квота вкл. в Pro.
+- **`houseProvider()/houseAvailable()`**, **учёт:** `data/users/<id>/ai-usage.json` = `{month, tokens, requests}` (гитигнор, авто-сброс на новом UTC-месяце). `bumpAiUsage`, `aiQuota(user)` → `{tier, used, limit, remaining}`.
+- **`resolveAiCall(user, requestedProvider, userKeys)`** → `{provider,key,source:'byok'|'house'}` | `{error:'no_key'|'not_pro'|'quota'}`. Логика: свой ключ → BYOK; иначе дом.ключ только Pro/триал и в пределах квоты.
+- **`aiCallForUser(user, provider, system, messages, max)`** — резолв → `aiCompleteMessages` → метрит токены **только при успехе house-вызова**. `aiCompleteMessages` теперь возвращает `tokens` (Anthropic usage / OpenAI total_tokens / Gemini usageMetadata).
+- **Эндпоинты:** `/api/ai/{analyze,propose,chat}` переписаны на `aiCallForUser` + `aiErr(res,r)` (маппинг ошибок: no_key→400, not_pro/quota→402, provider→502). **Баг-фикс:** `send()` не возвращал значение → `aiErr` отдавал undefined → двойной `sendJson` → `ERR_HTTP_HEADERS_SENT` крэш. Исправлено: `aiErr` возвращает bool, вызов `if (aiErr(res,r)) return;`. `GET /api/ai/keys` теперь отдаёт `houseAvailable` + `quota`; новый `GET /api/ai/usage`.
+
+### Клиент (`app.js`)
+- `aiHouseOK()` (houseAvailable && isPro && квота), `canUseAi()` (свой ключ ИЛИ дом). Все гейты `aiProvider()`→`canUseAi()` (runWeeklyReview, runPropose, sendChat, openHelperChat, openProposeModal, aiCatSuggest, авто-категория).
+- `aiHandleErr(d)`: not_pro→`showPaywall`, quota→тост+Настройки, no_key→тост+Настройки. Везде в fetch-ответах.
+- `aiKeysCard`: блок `.aihouse` — для Pro «✨ ИИ включён в Pro» + полоса расхода токенов; для free — апселл с кнопкой Pro. `aiSourceHint()` в карточке статистики.
+- Все строки переведены на EN/DE/UK/ES (+ паттерн «X / Y токенов»). CSS `.aihouse*` в styles.css.
+
+### Что осталось (нужно действие Альберта)
+1. Создать дом.ИИ-ключ — **рекомендую бесплатный Google Gemini** (https://aistudio.google.com/api-keys) или Groq.
+2. В Railway добавить `AI_HOUSE_KEY_GEMINI=<ключ>` (+ опц. `PRO_AI_TOKENS_MONTH`, `AI_HOUSE_PROVIDER`).
+3. Деплой → Pro-юзеры видят «ИИ включён в Pro» и пользуются без своего ключа.
+Реальный успешный house-вызов + инкремент токенов не тестировался локально (нет реального ключа) — но путь до провайдера проверен (фейк-ключ дал реальную ошибку Gemini «API key not valid»), метеринг юнит-протестирован.
+
 ## [2026-06-21] Strava — OAuth2-интеграция авто-импорта тренировок
 
 Построено и **протестировано** (бэкенд — live-curl + крипто-юнит-тест; клиент — превью, DOM-проверки обоих состояний + импорт-дедуп). Модель: Opus 4.8. **Требует действия Альберта:** зарегистрировать Strava API-app и положить креды в Railway (см. ниже).

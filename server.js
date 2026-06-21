@@ -298,6 +298,74 @@ const AI_PROVIDERS = {
 function aiComplete(provider, keys, system, prompt, maxTokens) {
   return aiCompleteMessages(provider, keys, system, [{ role: 'user', content: prompt }], maxTokens);
 }
+// ============================================================
+//  ИИ-биллинг: «домашний» ключ (мы платим инференс) для Pro/триала + учёт токенов.
+//  Логика: свой ключ юзера (BYOK) — приоритет (нам бесплатно); иначе дом.ключ из env —
+//  только для Pro/триала и в пределах месячной квоты токенов. Free без своего ключа → апселл.
+// ============================================================
+function houseKeyFor(provider) { return process.env['AI_HOUSE_KEY_' + String(provider).toUpperCase()] || ''; }
+// Какой провайдер крутим на дом.ключе: явный AI_HOUSE_PROVIDER → иначе первый с заданным ключом (Gemini дешёвый — первый).
+function houseProvider() {
+  const pref = (process.env.AI_HOUSE_PROVIDER || '').toLowerCase();
+  if (pref && AI_PROVIDERS[pref] && houseKeyFor(pref)) return pref;
+  for (const id of ['gemini', 'groq', 'anthropic', 'openai']) if (houseKeyFor(id)) return id;
+  return null;
+}
+function houseAvailable() { return !!houseProvider(); }
+const PRO_AI_TOKENS_MONTH = Number(process.env.PRO_AI_TOKENS_MONTH) || 1000000; // вкл. в Pro, токенов/мес
+function curMonthUTC() { const d = new Date(); return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}`; }
+function aiUsageFile(id) { return path.join(userDataDir(id), 'ai-usage.json'); }
+function loadAiUsage(id) {
+  let u; try { u = JSON.parse(fs.readFileSync(aiUsageFile(id), 'utf8')); } catch { u = null; }
+  const m = curMonthUTC();
+  if (!u || u.month !== m) u = { month: m, tokens: 0, requests: 0 }; // авто-сброс на новом месяце
+  return u;
+}
+function bumpAiUsage(id, tokens) {
+  const u = loadAiUsage(id);
+  u.tokens += Math.max(0, Math.round(Number(tokens) || 0)); u.requests += 1;
+  try { fs.mkdirSync(userDataDir(id), { recursive: true }); fs.writeFileSync(aiUsageFile(id), JSON.stringify(u)); } catch {}
+  return u;
+}
+function aiQuota(user) {
+  const u = loadAiUsage(user.id), tier = entitlement(user).tier;
+  const limit = (tier === 'pro' || tier === 'trial') ? PRO_AI_TOKENS_MONTH : 0;
+  return { tier, month: u.month, used: u.tokens, requests: u.requests, limit, remaining: Math.max(0, limit - u.tokens) };
+}
+// Грубая оценка токенов, если провайдер не вернул usage (≈4 символа/токен).
+function estimateTokens(system, messages, out) {
+  const chars = String(system || '').length + (messages || []).reduce((s, m) => s + String(m.content || '').length, 0) + String(out || '').length;
+  return Math.ceil(chars / 4);
+}
+// Резолв ключа: { provider, key, source } | { error:'no_key'|'not_pro'|'quota' }
+function resolveAiCall(user, requestedProvider, userKeys) {
+  if (requestedProvider && userKeys[requestedProvider]) return { provider: requestedProvider, key: userKeys[requestedProvider], source: 'byok' };
+  const ownAny = ['gemini', 'groq', 'anthropic', 'openai'].find((id) => userKeys[id]);
+  if (ownAny) return { provider: ownAny, key: userKeys[ownAny], source: 'byok' };
+  const hp = houseProvider();
+  if (!hp) return { error: 'no_key' };
+  const q = aiQuota(user);
+  if (q.limit <= 0) return { error: 'not_pro' };
+  if (q.remaining <= 0) return { error: 'quota', quota: q };
+  return { provider: hp, key: houseKeyFor(hp), source: 'house' };
+}
+// Высокоуровневый вызов для эндпоинтов: резолв → вызов → учёт house-токенов. Возврат aiCompleteMessages + {source,provider} | {error}.
+async function aiCallForUser(user, requestedProvider, system, messages, maxTokens) {
+  const userKeys = loadAiKeys(user.id);
+  const res = resolveAiCall(user, requestedProvider, userKeys);
+  if (res.error) return res;
+  const r = await aiCompleteMessages(res.provider, { [res.provider]: res.key }, system, messages, maxTokens);
+  if (r.ok && res.source === 'house') bumpAiUsage(user.id, r.tokens || estimateTokens(system, messages, r.text));
+  return Object.assign({}, r, { source: res.source, provider: res.provider });
+}
+// Маппинг ошибок aiCallForUser → HTTP-ответ. true = ошибка обработана (вызывающий должен return), false = всё ок.
+function aiErr(res, r) {
+  if (r.error === 'no_key') { sendJson(res, 400, { error: 'no_key' }); return true; }
+  if (r.error === 'not_pro') { sendJson(res, 402, { error: 'not_pro' }); return true; }
+  if (r.error === 'quota') { sendJson(res, 402, { error: 'quota', quota: r.quota }); return true; }
+  if (!r.ok) { sendJson(res, 502, { error: 'provider', status: r.status, detail: r.detail }); return true; }
+  return false;
+}
 // Единый вызов: системный промпт + история [{role,content}]. Диспатч по форме провайдера.
 async function aiCompleteMessages(provider, keys, system, messages, maxTokens) {
   const P = AI_PROVIDERS[provider] || AI_PROVIDERS.anthropic;
@@ -312,20 +380,23 @@ async function aiCompleteMessages(provider, keys, system, messages, maxTokens) {
     const r = await httpsPostJson(P.host, `/v1beta/models/${P.model}:generateContent?key=${encodeURIComponent(key)}`, {}, body);
     if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
     const text = (((r.json.candidates || [])[0] || {}).content || {}).parts || [];
-    return { ok: true, text: text.map((p) => p.text || '').join('') };
+    const um = r.json.usageMetadata || {};
+    return { ok: true, text: text.map((p) => p.text || '').join(''), tokens: Number(um.totalTokenCount) || 0 };
   }
   if (P.shape === 'anthropic') {
     const r = await httpsPostJson(P.host, '/v1/messages', { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
       { model: P.model, max_tokens: max, system, messages: norm });
     if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
-    return { ok: true, text: (r.json.content || []).filter((x) => x.type === 'text').map((x) => x.text).join('\n') };
+    const us = r.json.usage || {};
+    return { ok: true, text: (r.json.content || []).filter((x) => x.type === 'text').map((x) => x.text).join('\n'), tokens: (Number(us.input_tokens) || 0) + (Number(us.output_tokens) || 0) };
   }
   // openai-совместимый (openai, groq)
   const msgs = []; if (system) msgs.push({ role: 'system', content: system }); for (const m of norm) msgs.push(m);
   const r = await httpsPostJson(P.host, P.path, { 'Authorization': 'Bearer ' + key },
     { model: P.model, max_tokens: max, messages: msgs });
   if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
-  return { ok: true, text: (r.json.choices && r.json.choices[0] && r.json.choices[0].message && r.json.choices[0].message.content) || '' };
+  const us = r.json.usage || {};
+  return { ok: true, text: (r.json.choices && r.json.choices[0] && r.json.choices[0].message && r.json.choices[0].message.content) || '', tokens: Number(us.total_tokens) || ((Number(us.prompt_tokens) || 0) + (Number(us.completion_tokens) || 0)) };
 }
 // Защищённый разбор JSON из ответа модели: срезаем ```fences``` и прозу вокруг { ... }
 function extractJson(text) {
@@ -1081,27 +1152,37 @@ const server = http.createServer(async (req, res) => {
   }
   if (u === '/api/ai/keys' && req.method === 'GET') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
-    const k = loadAiKeys(uid); const out = {}; for (const id of Object.keys(AI_PROVIDERS)) out[id] = !!k[id]; return sendJson(res, 200, out);
+    const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
+    const k = loadAiKeys(uid); const out = { houseAvailable: houseAvailable() }; for (const id of Object.keys(AI_PROVIDERS)) out[id] = !!k[id];
+    out.quota = aiQuota(user); // { tier, used, limit, remaining, ... }
+    return sendJson(res, 200, out);
+  }
+  // GET /api/ai/usage — расход токенов на дом.ключе за месяц + лимит Pro
+  if (u === '/api/ai/usage' && req.method === 'GET') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
+    return sendJson(res, 200, Object.assign({ houseAvailable: houseAvailable() }, aiQuota(user)));
   }
   if (u === '/api/ai/analyze' && req.method === 'POST') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
     let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
-    const provider = AI_PROVIDERS[b.provider] ? b.provider : 'anthropic';
+    const provider = AI_PROVIDERS[b.provider] ? b.provider : null;
     const system = String(b.system || '').slice(0, 8000);
     const prompt = String(b.prompt || '').slice(0, 100000);
     if (!prompt) return sendJson(res, 400, { error: 'empty prompt' });
     try {
-      const r = await aiComplete(provider, loadAiKeys(uid), system, prompt, 2000);
-      if (r.noKey) return sendJson(res, 400, { error: 'no_key', provider });
-      if (!r.ok) return sendJson(res, 502, { error: 'provider', status: r.status, detail: r.detail });
-      return sendJson(res, 200, { text: r.text });
+      const r = await aiCallForUser(user, provider, system, [{ role: 'user', content: prompt }], 2000);
+      if (aiErr(res, r)) return;
+      return sendJson(res, 200, { text: r.text, source: r.source });
     } catch (e) { return sendJson(res, 502, { error: String(e.message || e) }); }
   }
   // Движок «Предложений»: импорт целей/сфер из текста (kind:goals) или калибровка уровней (kind:calibrate)
   if (u === '/api/ai/propose' && req.method === 'POST') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
-    const provider = AI_PROVIDERS[b.provider] ? b.provider : 'anthropic';
+    const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
+    const provider = AI_PROVIDERS[b.provider] ? b.provider : null;
     const kind = b.kind === 'calibrate' ? 'calibrate' : 'goals';
     const text = String(b.text || '').slice(0, 20000);
     const context = String(b.context || '').slice(0, 6000);
@@ -1109,9 +1190,8 @@ const server = http.createServer(async (req, res) => {
     const sys = kind === 'calibrate' ? AI_CALIB_SYS : AI_GOALS_SYS;
     const prompt = `СФЕРЫ И ЦЕЛИ ЮЗЕРА СЕЙЧАС:\n${context || '(пусто)'}\n\nЧТО НАПИСАЛ ЮЗЕР:\n${text}\n\nВерни ТОЛЬКО JSON по схеме из системного промпта. Без markdown, без пояснений вне JSON.`;
     try {
-      const r = await aiComplete(provider, loadAiKeys(uid), sys, prompt, 3500);
-      if (r.noKey) return sendJson(res, 400, { error: 'no_key', provider });
-      if (!r.ok) return sendJson(res, 502, { error: 'provider', status: r.status, detail: r.detail });
+      const r = await aiCallForUser(user, provider, sys, [{ role: 'user', content: prompt }], 3500);
+      if (aiErr(res, r)) return;
       const parsed = extractJson(r.text);
       if (!parsed || !Array.isArray(parsed.proposals)) return sendJson(res, 200, { error: 'parse', raw: (r.text || '').slice(0, 800) });
       return sendJson(res, 200, { proposals: parsed.proposals.slice(0, 40) });
@@ -1121,16 +1201,16 @@ const server = http.createServer(async (req, res) => {
   if (u === '/api/ai/chat' && req.method === 'POST') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
-    const provider = AI_PROVIDERS[b.provider] ? b.provider : 'anthropic';
+    const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
+    const provider = AI_PROVIDERS[b.provider] ? b.provider : null;
     const system = String(b.system || '').slice(0, 12000);
     let messages = Array.isArray(b.messages) ? b.messages.slice(-20) : [];
     while (messages.length && messages[0].role === 'assistant') messages.shift(); // история должна начинаться с user
     if (!messages.length) return sendJson(res, 400, { error: 'empty' });
     try {
-      const r = await aiCompleteMessages(provider, loadAiKeys(uid), system, messages, 1500);
-      if (r.noKey) return sendJson(res, 400, { error: 'no_key', provider });
-      if (!r.ok) return sendJson(res, 502, { error: 'provider', status: r.status, detail: r.detail });
-      return sendJson(res, 200, { text: r.text });
+      const r = await aiCallForUser(user, provider, system, messages, 1500);
+      if (aiErr(res, r)) return;
+      return sendJson(res, 200, { text: r.text, source: r.source });
     } catch (e) { return sendJson(res, 502, { error: String(e.message || e) }); }
   }
 

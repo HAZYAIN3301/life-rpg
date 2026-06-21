@@ -814,6 +814,18 @@ const I18N_EXTRA = {
   '🎖 Ранги по сферам': { en: '🎖 Ranks by area', de: '🎖 Ränge nach Bereich', uk: '🎖 Ранги за сферами', es: '🎖 Rangos por área' },
   'Пока нет записей.': { en: 'No entries yet.', de: 'Noch keine Einträge.', uk: 'Поки немає записів.', es: 'Aún no hay entradas.' },
   'Правда о времени и балансе + мягкие шаги. Добавь ключ в Настройках.': { en: 'The truth about time and balance + gentle steps. Add a key in Settings.', de: 'Die Wahrheit über Zeit und Balance + sanfte Schritte. Füge einen Schlüssel in den Einstellungen hinzu.', uk: 'Правда про час і баланс + м\'які кроки. Додай ключ у Налаштуваннях.', es: 'La verdad sobre el tiempo y el equilibrio + pasos suaves. Añade una clave en Ajustes.' },
+  'Твой ключ': { en: 'Your key', de: 'Dein Schlüssel', uk: 'Твій ключ', es: 'Tu clave' },
+  'ИИ включён в Pro': { en: 'AI included in Pro', de: 'KI in Pro enthalten', uk: 'ШІ включено в Pro', es: 'IA incluida en Pro' },
+  '— свой ключ не нужен': { en: '— no key needed', de: '— kein Schlüssel nötig', uk: '— свій ключ не потрібен', es: '— sin clave' },
+  'Мы оплачиваем инференс. Расход за этот месяц:': { en: 'We pay for inference. Usage this month:', de: 'Wir zahlen die Inferenz. Verbrauch diesen Monat:', uk: 'Ми оплачуємо інференс. Витрата цього місяця:', es: 'Pagamos la inferencia. Uso este mes:' },
+  'ИИ без своего ключа — в Pro': { en: 'AI without your own key — in Pro', de: 'KI ohne eigenen Schlüssel — in Pro', uk: 'ШІ без свого ключа — у Pro', es: 'IA sin tu propia clave — en Pro' },
+  'С Pro мы оплачиваем инференс — помощник, разбор недели и импорт работают сразу, ключ не нужен. Или добавь бесплатный ключ ниже.': { en: 'With Pro we pay for inference — the assistant, weekly review and import work right away, no key needed. Or add a free key below.', de: 'Mit Pro zahlen wir die Inferenz — Assistent, Wochenanalyse und Import funktionieren sofort, kein Schlüssel nötig. Oder füge unten einen kostenlosen Schlüssel hinzu.', uk: 'З Pro ми оплачуємо інференс — помічник, розбір тижня та імпорт працюють одразу, ключ не потрібен. Або додай безкоштовний ключ нижче.', es: 'Con Pro pagamos la inferencia — el asistente, el análisis semanal y la importación funcionan al instante, sin clave. O añade una clave gratis abajo.' },
+  '💎 Оформить Pro': { en: '💎 Get Pro', de: '💎 Pro holen', uk: '💎 Оформити Pro', es: '💎 Obtener Pro' },
+  '✓ Включено в Pro — ключ не нужен.': { en: '✓ Included in Pro — no key needed.', de: '✓ In Pro enthalten — kein Schlüssel nötig.', uk: '✓ Включено в Pro — ключ не потрібен.', es: '✓ Incluido en Pro — sin clave.' },
+  'Доступно в Pro — или добавь бесплатный ключ.': { en: 'Available in Pro — or add a free key.', de: 'In Pro verfügbar — oder füge einen kostenlosen Schlüssel hinzu.', uk: 'Доступно в Pro — або додай безкоштовний ключ.', es: 'Disponible en Pro — o añade una clave gratis.' },
+  'Добавь ключ в Настройках.': { en: 'Add a key in Settings.', de: 'Füge einen Schlüssel in den Einstellungen hinzu.', uk: 'Додай ключ у Налаштуваннях.', es: 'Añade una clave en Ajustes.' },
+  'Добавь ИИ-ключ в Настройках': { en: 'Add an AI key in Settings', de: 'Füge einen KI-Schlüssel in den Einstellungen hinzu', uk: 'Додай ШІ-ключ у Налаштуваннях', es: 'Añade una clave de IA en Ajustes' },
+  '🤖 Лимит ИИ на месяц исчерпан — добавь свой ключ в Настройках': { en: '🤖 Monthly AI limit reached — add your own key in Settings', de: '🤖 Monatliches KI-Limit erreicht — füge in den Einstellungen deinen eigenen Schlüssel hinzu', uk: '🤖 Місячний ліміт ШІ вичерпано — додай свій ключ у Налаштуваннях', es: '🤖 Límite mensual de IA alcanzado — añade tu propia clave en Ajustes' },
   '. Индекс растёт, когда развиваешь жизнь как композицию, а не одну вертикаль. Добавь активность в несколько сфер, чтобы поднять индекс.': { en: '. The index grows when you develop life as a composition, not a single vertical. Add activity in several areas to raise it.', de: '. Der Index wächst, wenn du das Leben als Komposition entwickelst, nicht als eine einzige Vertikale. Füge Aktivität in mehreren Bereichen hinzu, um ihn zu steigern.', uk: '. Індекс зростає, коли розвиваєш життя як композицію, а не одну вертикаль. Додай активність у кількох сферах, щоб підняти індекс.', es: '. El índice crece cuando desarrollas la vida como una composición, no una sola vertical. Añade actividad en varias áreas para subirlo.' },
   '. Индекс растёт, когда развиваешь жизнь как композицию, а не одну вертикаль. Отличный баланс — так держать. ⚖️': { en: '. The index grows when you develop life as a composition, not a single vertical. Great balance — keep it up. ⚖️', de: '. Der Index wächst, wenn du das Leben als Komposition entwickelst, nicht als eine einzige Vertikale. Tolle Balance — weiter so. ⚖️', uk: '. Індекс зростає, коли розвиваєш життя як композицію, а не одну вертикаль. Чудовий баланс — так тримати. ⚖️', es: '. El índice crece cuando desarrollas la vida como una composición, no una sola vertical. Gran equilibrio — sigue así. ⚖️' },
   // Goals XP hint (fixed numbers)
@@ -1192,6 +1204,8 @@ const I18N_DYN = [
   [/^не виделись (\d+) (?:день|дня|дней) — скучает$/, (l, m) => ({ en: `not seen for ${m[1]} ${i18nDay(m[1], l)} — misses you`, de: `${m[1]} ${i18nDay(m[1], l)} nicht gesehen — vermisst dich`, uk: `не бачились ${m[1]} ${i18nDay(m[1], l)} — сумує`, es: `sin verte ${m[1]} ${i18nDay(m[1], l)} — te echa de menos` })[l]],
   [/^Внутри «(.+)»$/, (l, m) => `${({ en: 'Inside', de: 'Innerhalb', uk: 'Всередині', es: 'Dentro de' })[l]} «${i18nWord(m[1], l)}»`],
   [/^Вставь ключ \((.+)\)$/, (l, m) => `${({ en: 'Paste key', de: 'Schlüssel einfügen', uk: 'Встав ключ', es: 'Pega la clave' })[l]} (${m[1]})`],
+  [/^(\S+) \/ (\S+) токенов$/, (l, m) => `${m[1]} / ${m[2]} ${({ en: 'tokens', de: 'Tokens', uk: 'токенів', es: 'tokens' })[l]}`],
+  [/^(\S+) \/ (\S+) токенов · лимит исчерпан — добавь свой ключ ниже ↓$/, (l, m) => `${m[1]} / ${m[2]} ${({ en: 'tokens · limit reached — add your own key below ↓', de: 'Tokens · Limit erreicht — füge unten deinen eigenen Schlüssel hinzu ↓', uk: 'токенів · ліміт вичерпано — додай свій ключ нижче ↓', es: 'tokens · límite alcanzado — añade tu clave abajo ↓' })[l]}`],
   // Роздільники « · » та «, »: перекладаємо кожну частину рекурсивно через i18nString (щоб діяли й шаблони на кшталт «N прив.»). null, якщо нічого не змінилось.
   [/^.+ · .+$/, (l, m) => { const orig = m[0].split(' · '); const parts = orig.map((p) => { const r = i18nString(p, l); return r != null ? r : p; }); return parts.some((p, i) => p !== orig[i]) ? parts.join(' · ') : null; }],
   [/^[^,]+(?:, [^,]+)+$/, (l, m) => { const orig = m[0].split(', '); const parts = orig.map((p) => { const r = i18nString(p, l); return r != null ? r : p; }); return parts.some((p, i) => p !== orig[i]) ? parts.join(', ') : null; }],
@@ -1650,13 +1664,13 @@ function updateCatSuggest(inputEl) {
   const g = guessCategoryFromHistory(txt);
   if (g && sel && sel.value !== g.skillId) { // локальная эвристика по истории — мгновенно, бесплатно
     box.innerHTML = `<button type="button" class="cat-chip" data-action="apply-cat" data-skill="${esc(g.skillId)}">💡 Обычно сюда: <b>${esc(skillLabel(g.skillId))}</b> · применить</button>`;
-  } else if (!g && txt.length >= 4 && aiProvider()) { // нет в истории + есть ключ → предложить спросить ИИ
+  } else if (!g && txt.length >= 4 && canUseAi()) { // нет в истории + ИИ доступен (свой ключ или Pro) → предложить спросить ИИ
     box.innerHTML = `<button type="button" class="cat-chip cat-chip-ai" data-action="ai-cat-suggest" data-title="${esc(txt)}">🤖 Подобрать сферу через ИИ</button>`;
   } else { box.innerHTML = ''; }
 }
 // ИИ-фолбэк авто-категории: для нового названия просим модель выбрать ОДНУ сферу из списка
 async function aiCatSuggest(title, box, sel) {
-  if (!aiProvider() || !sel) return;
+  if (!canUseAi() || !sel) return;
   box.innerHTML = '<span class="cat-chip">🤖 думаю…</span>';
   const names = State.settings.skills.map((s) => skillLabel(s.id));
   const sys = 'Ты подбираешь сферу жизни для задачи в планировщике. Ответь СТРОГО одним точным названием сферы из списка — без кавычек, без пояснений.';
@@ -3293,6 +3307,26 @@ function aiProvider() {
 }
 function aiProviderLabel(id) { const p = AI_PROVIDERS.find((x) => x.id === id); return p ? p.label : id; }
 function ensureAiKeys() { if (State.aiKeys === null) { State.aiKeys = {}; fetch('/api/ai/keys').then((r) => r.json()).then((d) => { State.aiKeys = d || {}; render(); }).catch(() => {}); } }
+// Дом.ИИ (включён в Pro) доступен: сервер настроил дом.ключ И юзер Pro/триал И есть остаток квоты.
+function aiHouseOK() { const k = State.aiKeys || {}; const q = k.quota || {}; return !!k.houseAvailable && isPro() && (q.remaining == null || q.remaining > 0); }
+// Можно ли пользоваться ИИ: свой ключ ИЛИ дом.ключ (Pro). Используется вместо голого aiProvider() в гейтах.
+function canUseAi() { return !!aiProvider() || aiHouseOK(); }
+// Текст-источник для UI: «Твой ключ X» / «Включено в Pro» / подсказка добавить ключ.
+function aiSourceHint() {
+  const p = aiProvider(); if (p) return t('Твой ключ') + ' ' + aiProviderLabel(p) + '.';
+  if (aiHouseOK()) return t('✓ Включено в Pro — ключ не нужен.');
+  const k = State.aiKeys || {};
+  if (k.houseAvailable && !isPro()) return t('Доступно в Pro — или добавь бесплатный ключ.');
+  return t('Добавь ключ в Настройках.');
+}
+// Обработка биллинг-ошибок ответа ИИ-эндпоинта. true = обработано (вызывающий должен прервать).
+function aiHandleErr(d) {
+  if (!d || !d.error) return false;
+  if (d.error === 'not_pro') { showPaywall('ИИ-ассистент'); return true; }
+  if (d.error === 'quota') { toast('🤖 Лимит ИИ на месяц исчерпан — добавь свой ключ в Настройках'); State.view = 'settings'; render(); return true; }
+  if (d.error === 'no_key') { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; render(); return true; }
+  return false;
+}
 // Карточка ИИ-ключей: мультипровайдер + гид «получить бесплатный ключ» + выбор провайдера по умолчанию
 function aiKeysCard() {
   const k = State.aiKeys || {};
@@ -3307,7 +3341,25 @@ function aiKeysCard() {
   }).join('');
   const prefSel = keyed.length > 1 ? `<div class="aikey-pref"><label>Использовать по умолчанию:
       <select data-action="set-ai-pref">${keyed.map((p) => `<option value="${p.id}" ${aiProvider() === p.id ? 'selected' : ''}>${esc(p.label)}</option>`).join('')}</select></label></div>` : '';
+  // Блок «ИИ включён в Pro» (дом.ключ): для Pro — статус + расход токенов; для free — апселл.
+  let houseBlock = '';
+  if (k.houseAvailable) {
+    const q = k.quota || {}, used = q.used || 0, limit = q.limit || 0;
+    const pct = limit > 0 ? Math.min(100, Math.round(used / limit * 100)) : 0;
+    const fmtK = (n) => n >= 1000 ? Math.round(n / 1000) + 'K' : String(n);
+    if (isPro()) {
+      houseBlock = `<div class="aihouse on"><div class="aihouse-h">✨ <b>ИИ включён в Pro</b> — свой ключ не нужен</div>
+        <p class="muted" style="font-size:12px;margin:4px 0 8px">Мы оплачиваем инференс. Расход за этот месяц:</p>
+        <div class="aihouse-bar"><span style="width:${pct}%"></span></div>
+        <div class="aihouse-meta muted">${fmtK(used)} / ${fmtK(limit)} токенов${q.remaining === 0 ? ' · лимит исчерпан — добавь свой ключ ниже ↓' : ''}</div></div>`;
+    } else {
+      houseBlock = `<div class="aihouse off"><div class="aihouse-h">🤖 <b>ИИ без своего ключа — в Pro</b></div>
+        <p class="muted" style="font-size:12px;margin:4px 0 8px">С Pro мы оплачиваем инференс — помощник, разбор недели и импорт работают сразу, ключ не нужен. Или добавь бесплатный ключ ниже.</p>
+        <button class="btn pro-cta sm" data-action="show-paywall" data-feature="ИИ-ассистент">💎 Оформить Pro</button></div>`;
+    }
+  }
   return `<div class="card"><h3>🤖 ИИ-ассистент (свой ключ)</h3>
+    ${houseBlock}
     <p class="muted" style="font-size:12.5px;margin:0 0 6px">ИИ-функции (помощник 🤖, импорт целей, калибровка, разбор недели) работают на твоём ключе — так инференс бесплатен для нас, а данные идут только к выбранному ИИ.</p>
     <div class="aikey-tip">💡 Нет ключа и платной подписки? Возьми <b>бесплатный</b> у Google Gemini или Groq — 2 минуты, без карты: жми «Получить ключ», войди аккаунтом, создай ключ, вставь сюда.</div>
     <form id="ai-keys" class="aikey-form">
@@ -3411,14 +3463,14 @@ function buildWeekContext() {
   return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nЭнергия сейчас: ${en.cur}/${en.max}\nРадар сфер: ${radar}\nЦели:\n${goals}${anti ? `\nАнти-привычки:\n${anti}` : ''}`;
 }
 async function runWeeklyReview() {
-  const prov = aiProvider();
-  if (!prov) { toast('Добавь ИИ-ключ в Настройках'); State.view = 'settings'; render(); return; }
+  if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; render(); return; }
   openAiModal('🤖 Разбор недели', '<p class="muted">Анализирую твою неделю…</p>', true);
   const system = 'Ты — заботливый, научно обоснованный наставник в приложении Satoru (философия «жизнь как десятиборье»). Анализируй данные недели честно и по-человечески, без воды и без льстивости. Дай: (1) что реально происходило со временем и балансом; (2) 2–3 конкретных наблюдения; (3) 1–2 мягких, выполнимых шага на след. неделю. Помни: отдых и восстановление так же ценны, как труд. Коротко, тепло, по делу. Отвечай на русском.';
   try {
-    const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: prov, system, prompt: buildWeekContext() }) });
+    const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, prompt: buildWeekContext() }) });
     const d = await r.json();
-    if (!r.ok || !d.text) { openAiModal('🤖 Разбор недели', `<p class="muted">Не удалось: ${esc(d.detail || d.error || 'ошибка')}. Проверь ключ ${prov} в Настройках.</p>`); return; }
+    if (d.error && aiHandleErr(d)) { const m = document.getElementById('ai-modal'); if (m) m.remove(); return; }
+    if (!r.ok || !d.text) { openAiModal('🤖 Разбор недели', `<p class="muted">Не удалось: ${esc(d.detail || d.error || 'ошибка')}.</p>`); return; }
     openAiModal('🤖 Разбор недели', `<div class="ai-out">${esc(d.text).replace(/\n/g, '<br>')}</div>`);
     track('ai:weekly');
   } catch { openAiModal('🤖 Разбор недели', '<p class="muted">Сетевая ошибка.</p>'); }
@@ -3439,7 +3491,7 @@ function proposeContext() {
 function openProposeModal(kind, prefill) {
   _proposals = [];
   const isCal = kind === 'calibrate';
-  const prov = aiProvider();
+  const prov = aiProvider(), canAi = canUseAi(), aiLabel = prov ? aiProviderLabel(prov) : 'Pro';
   let ov = document.getElementById('propose-modal');
   if (!ov) { ov = document.createElement('div'); ov.id = 'propose-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov); }
   ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="propose-close">✕</button>
@@ -3451,10 +3503,10 @@ function openProposeModal(kind, prefill) {
       ? 'Напр.: жму 130 кг на 2 раза; бегал до 36 км; немецкий — речь B2+, понимание C1; Abi около 1.3; монтирую видео пару лет…'
       : 'Напр.: хочу Abi 1.0–1.1; дойти до C1 немецкого; закончить проект Jugend Forscht к лету; жим 150 кг; пробежать марафон осенью…'}"></textarea>
     <div class="propose-actions">
-      ${prov ? `<button class="btn" data-action="propose-run" data-kind="${kind}">🤖 Предложить (${esc(aiProviderLabel(prov))})</button>` : ''}
-      <button class="btn ${prov ? 'ghost' : ''}" data-action="bridge-copy" data-kind="${kind}">📋 Через свой Claude/ChatGPT${prov ? '' : ' (без ключа)'}</button>
+      ${canAi ? `<button class="btn" data-action="propose-run" data-kind="${kind}">🤖 Предложить (${esc(aiLabel)})</button>` : ''}
+      <button class="btn ${canAi ? 'ghost' : ''}" data-action="bridge-copy" data-kind="${kind}">📋 Через свой Claude/ChatGPT${canAi ? '' : ' (без ключа)'}</button>
     </div>
-    ${prov ? '' : '<p class="muted" style="font-size:11.5px;margin:8px 0 0">Нет API-ключа? Не беда — кнопка справа сделает всё через ИИ, которым ты уже пользуешься (хоть в браузере).</p>'}
+    ${canAi ? '' : '<p class="muted" style="font-size:11.5px;margin:8px 0 0">Нет API-ключа? Не беда — кнопка справа сделает всё через ИИ, которым ты уже пользуешься (хоть в браузере).</p>'}
     <div id="propose-result"></div></div>`;
   setTimeout(() => { const t = document.getElementById('propose-text'); if (t) { if (prefill) t.value = prefill; t.focus(); } }, 30);
 }
@@ -3474,8 +3526,9 @@ async function runPropose(kind) {
   try {
     const r = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind, provider: aiProvider(), text, context: proposeContext() }) });
     const d = await r.json();
+    if (d.error && aiHandleErr(d)) { const p = document.getElementById('propose-modal'); if (p) p.remove(); return; }
     if (d.error === 'parse') { if (res) res.innerHTML = '<p class="muted">ИИ вернул не тот формат. Попробуй переформулировать короче и конкретнее.</p>'; return; }
-    if (!r.ok || !d.proposals) { if (res) res.innerHTML = `<p class="muted">Не удалось: ${esc(d.detail || d.error || 'ошибка')}. Проверь ключ в Настройках.</p>`; return; }
+    if (!r.ok || !d.proposals) { if (res) res.innerHTML = `<p class="muted">Не удалось: ${esc(d.detail || d.error || 'ошибка')}.</p>`; return; }
     _proposals = d.proposals;
     renderProposalCards(res);
     track('ai:propose:' + kind);
@@ -3622,10 +3675,11 @@ function chatUserContext() {
 function openHelperChat() {
   let ov = document.getElementById('helper-modal');
   if (!ov) { ov = document.createElement('div'); ov.id = 'helper-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov); }
-  const noKey = !aiProvider();
+  const noKey = !canUseAi();
+  const proHint = (State.aiKeys && State.aiKeys.houseAvailable && !isPro());
   ov.innerHTML = `<div class="ai-box chat-box"><button class="modal-x" data-action="helper-close">✕</button>
     <h3>🤖 Помощник Satoru</h3>
-    ${noKey ? `<p class="muted">Помощник работает на твоём ИИ-ключе. Не хочешь платить? Возьми <b>бесплатный</b> ключ Google Gemini или Groq за 2 минуты (без карты) — в Настройках есть пошаговый гид.<br><button class="btn" data-action="helper-to-settings" style="margin-top:10px">⚙️ Подключить ИИ</button></p>`
+    ${noKey ? `<p class="muted">${proHint ? 'Помощник <b>включён в Pro</b> — или возьми ' : 'Помощник работает на твоём ИИ-ключе. Не хочешь платить? Возьми '}<b>бесплатный</b> ключ Google Gemini или Groq за 2 минуты (без карты) — в Настройках есть пошаговый гид.<br>${proHint ? `<button class="btn pro-cta" data-action="show-paywall" data-feature="ИИ-ассистент" style="margin-top:10px">💎 Оформить Pro</button> ` : ''}<button class="btn ${proHint ? 'ghost' : ''}" data-action="helper-to-settings" style="margin-top:10px">⚙️ Подключить ИИ</button></p>`
       : `<div id="chat-msgs" class="chat-msgs"></div>
          <form id="chat-form" class="chat-form"><input id="chat-input" placeholder="Спроси про любую функцию…" autocomplete="off" /><button type="submit" class="cap-add" title="Отправить">↵</button></form>`}</div>`;
   if (!noKey) { renderChatMessages(); setTimeout(() => { const i = document.getElementById('chat-input'); if (i) i.focus(); }, 30); }
@@ -3644,7 +3698,7 @@ function renderChatMessages() {
 }
 async function sendChat(text) {
   text = String(text || '').trim(); if (!text || State._chatBusy) return;
-  if (!aiProvider()) { openHelperChat(); return; }
+  if (!canUseAi()) { openHelperChat(); return; }
   State.chatLog.push({ role: 'user', content: text });
   State._chatBusy = true; renderChatMessages();
   const inp = document.getElementById('chat-input'); if (inp) inp.value = '';
@@ -3653,7 +3707,8 @@ async function sendChat(text) {
     const r = await fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, messages: State.chatLog.slice(-20) }) });
     const d = await r.json();
     State._chatBusy = false;
-    if (!r.ok || !d.text) { State.chatLog.push({ role: 'assistant', content: `⚠️ Не удалось: ${d.detail || d.error || 'ошибка'}. Проверь ИИ-ключ в Настройках.` }); }
+    if (d.error && aiHandleErr(d)) { State.chatLog.pop(); renderChatMessages(); return; }
+    if (!r.ok || !d.text) { State.chatLog.push({ role: 'assistant', content: `⚠️ Не удалось: ${d.detail || d.error || 'ошибка'}.` }); }
     else { State.chatLog.push({ role: 'assistant', content: d.text }); track('ai:chat'); }
     renderChatMessages();
   } catch { State._chatBusy = false; State.chatLog.push({ role: 'assistant', content: '⚠️ Сетевая ошибка.' }); renderChatMessages(); }
@@ -5185,7 +5240,7 @@ function renderStats() {
       <div class="kpi"><div class="v">${rate}%</div><div class="l">${t('Выполнение (14 дн.)')}</div></div>
     </div>
     <div class="card ai-review-card">
-      <div><h3 style="margin:0">🤖 ИИ-разбор недели</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">Правда о времени и балансе + мягкие шаги. ${aiProvider() ? 'Твой ключ ' + aiProvider() + '.' : 'Добавь ключ в Настройках.'}</p></div>
+      <div><h3 style="margin:0">🤖 ИИ-разбор недели</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">Правда о времени и балансе + мягкие шаги. ${aiSourceHint()}</p></div>
       <button class="btn" data-action="ai-review">Разобрать неделю</button></div>
     <div class="card balance-card">
       <div class="bal-head"><h3>⚖️ Баланс сфер — твоё десятиборье</h3><div class="bal-score" style="color:${balColor}">${bal.index}<small>/100</small></div></div>

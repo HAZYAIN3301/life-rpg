@@ -1306,6 +1306,14 @@ html[data-system="on"] .task, html[data-system="on"] .gear-item, html[data-syste
 .aikey-pref { font-size: 13px; }
 .aikey-pref select { margin-left: 6px; }
 .aikey-actions { display: flex; align-items: center; gap: 10px; }
+/* ИИ-биллинг: «включено в Pro» + полоса расхода токенов */
+.aihouse { border-radius: 10px; padding: 11px 13px; margin: 0 0 12px; border: 1px solid var(--line); }
+.aihouse.on { background: color-mix(in srgb, var(--accent) 10%, var(--panel2)); border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); }
+.aihouse.off { background: var(--panel2); }
+.aihouse-h { font-size: 14px; }
+.aihouse-bar { height: 7px; border-radius: 99px; background: var(--line); overflow: hidden; margin: 2px 0 5px; }
+.aihouse-bar span { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .4s; }
+.aihouse-meta { font-size: 11.5px; }
 /* Strava: пикер сферы для импорта тренировок */
 .strava-skill { display: flex; flex-direction: column; gap: 5px; font-size: 13px; color: var(--muted); max-width: 320px; }
 .strava-skill select { padding: 7px 10px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--panel2); color: var(--fg); font-size: 14px; }
