@@ -1,6 +1,332 @@
 'use strict';
 
 // ============================================================
+//  i18n — English + Deutsch translations
+// ============================================================
+const I18N_EN = {
+  // Nav sections
+  'Сегодня': 'Today', 'День': 'Day', 'Заметки': 'Notes',
+  'План': 'Plan', 'Календарь': 'Calendar', 'Цели': 'Goals',
+  'Привычки': 'Habits', 'Награды': 'Rewards',
+  'Герой': 'Hero', '🏠 Логово': '🏠 Den', 'Персонаж': 'Character',
+  '🐾 Питомцы': '🐾 Pets', 'Навыки': 'Skills', 'Прогресс': 'Progress',
+  'Племя': 'Tribe', 'Пати': 'Party', 'Рейтинг': 'Leaderboard',
+  // Auth
+  'Превращаем жизнь в игру': 'Turning life into a game',
+  'Создай аккаунт': 'Create your account',
+  'Восстановление доступа': 'Account recovery',
+  'Пароль': 'Password', 'Войти': 'Sign in',
+  'Войти →': 'Sign in →',
+  'Создать аккаунт': 'Create account',
+  'Забыл пароль?': 'Forgot password?',
+  'Вход по профилю (старый способ)': 'Profile sign in (legacy)',
+  'Имя': 'Name', 'Аватар': 'Avatar',
+  'Как тебя зовут?': "What's your name?",
+  'Пароль (минимум 6 символов)': 'Password (min. 6 characters)',
+  'Придумай пароль': 'Choose a password',
+  'Повтори пароль': 'Repeat password',
+  '← Вход': '← Sign in',
+  'Код восстановления': 'Recovery code',
+  'Новый пароль (минимум 6)': 'New password (min. 6)',
+  'Новый пароль': 'New password',
+  'Сбросить пароль и войти': 'Reset password and sign in',
+  'Не сохранил код — напиши нам, восстановим вручную.': "Don't have the code? Contact us and we'll restore access manually.",
+  'Введи email и код восстановления, который выдали при регистрации.': 'Enter the email and recovery code you received during registration.',
+  // Onboarding
+  'Выбери свои сферы развития — их всегда можно изменить': 'Choose your development areas — you can always change them',
+  '📦 Быстрый старт — готовая программа': '📦 Quick start — ready-made program',
+  '— или собери вручную —': '— or build manually —',
+  'Своя сфера…': 'Custom area…',
+  // Settings headings
+  'Язык': 'Language', '🌐 Язык / Language': '🌐 Language',
+  'Название': 'App name',
+  '🔊 Звук': '🔊 Sound',
+  'Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)': 'Interface sounds (quest completion, level up, chest drop, purchase)',
+  '▶ Проверить звук': '▶ Test sound',
+  '🎨 Оформление': '🎨 Appearance',
+  'Тема': 'Theme',
+  '🌙 Тёмная': '🌙 Dark', '☀️ Светлая': '☀️ Light',
+  'Акцент': 'Accent color',
+  '⚡ Режим «Система»': '⚡ System Mode',
+  'Навыки / сферы жизни': 'Skills / life areas',
+  '+ Добавить сферу': '+ Add area',
+  '🔁 Привычки (повторяющиеся)': '🔁 Recurring habits',
+  'Пока нет привычек.': 'No habits yet.',
+  '+ Добавить привычку': '+ Add habit',
+  '🛡 Анти-привычки — с чем борешься': '🛡 Anti-habits — what you\'re fighting',
+  'Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.': 'Any depth: Study → School → Biology. Choose "Inside …" — XP accumulates up the chain. Changes are saved automatically.',
+  'Самостоятельная сфера': 'Stand-alone area',
+  'Лёгкая': 'Easy', 'Обычная': 'Normal', 'Сложная': 'Hard',
+  // Security card
+  '🔑 Вход и восстановление': '🔑 Sign in & recovery',
+  '⚠️ Данные и приватность': '⚠️ Data & privacy',
+  'Удалить аккаунт и все данные': 'Delete account and all data',
+  // Today
+  'Новый квест на сегодня…': 'New quest for today…',
+  '+ Квест': '+ Quest',
+  '🌱 Лёгкая': '🌱 Easy', '⚔️ Обычная': '⚔️ Normal', '🔥 Сложная': '🔥 Hard',
+  'Таймер фокуса — нажми ▶ у квеста': 'Focus timer — press ▶ on a quest',
+  '⏸ Пауза': '⏸ Pause', '▶ Продолжить': '▶ Continue',
+  '⏹ Стоп · записать': '⏹ Stop · save',
+  '↗ Окно': '↗ Window',
+  'Энергия': 'Energy',
+  '⏳ Просрочено': '⏳ Overdue',
+  '↪ Перенести всё на сегодня': '↪ Move all to today',
+  // Goals
+  '+ Добавить цель': '+ Add goal',
+  '🎯 Активные': '🎯 Active',
+  '⏸ Ожидание': '⏸ Waiting',
+  '✓ Выполнено': '✓ Done',
+  // Habits
+  '+ Добавить': '+ Add',
+  // Rewards
+  '+ Добавить награду': '+ Add reward',
+  '📚 Каталог наград': '📚 Reward catalog',
+  '🎁 Ваучер — бесплатная награда': '🎁 Voucher — free reward',
+  // Loot editor
+  '⚙️ Дроп-рейты сундуков': '⚙️ Chest drop rates',
+  'Сбросить к дефолту': 'Reset to default',
+  // Calendar
+  '📅 Подписка': '📅 Subscribe',
+  '📤 Твоя неделя': '📤 Your week',
+  '⬇️ Скачать PNG': '⬇️ Download PNG',
+  '🔗 Поделиться': '🔗 Share',
+  'Главная сфера недели': 'Top area this week',
+  'Живая подписка на квесты': 'Live calendar subscription',
+  'Ссылка для подписки': 'Subscription URL',
+  'Открыть в Календаре': 'Open in Calendar',
+  // Weekly
+  'XP за неделю': 'XP this week',
+  'Золото': 'Gold',
+  'Квестов': 'Quests',
+  'Привычек': 'Habits done',
+  'Времени': 'Time',
+  'Намерение на неделю': 'Weekly intention',
+  'Итоги недели': 'Weekly review',
+  'Рефлексии этой недели': 'Reflections this week',
+  // Party
+  'Загрузка пати…': 'Loading party…',
+  'Загрузка рейтинга…': 'Loading leaderboard…',
+  '🤝 Пати': '🤝 Party',
+  'БОСС ПОВЕРЖЕН': 'BOSS DEFEATED',
+  'Слава пати! 🎉': 'Party victory! 🎉',
+  'Покинуть пати': 'Leave party',
+  'Состав': 'Members',
+  'Босс повержен!': 'Boss defeated!',
+  // Common UI
+  'Сохранить': 'Save',
+  'Отмена': 'Cancel',
+  'Удалить': 'Delete',
+  'Закрыть': 'Close',
+  'Выйти': 'Sign out',
+  '⇦ Выйти': '⇦ Sign out',
+  'Загрузка…': 'Loading…',
+  'Нет данных': 'No data',
+  'Ошибка': 'Error',
+  // Toasts
+  'Сохранено': 'Saved',
+  '✓ Скопировано': '✓ Copied',
+  '✓ Ссылка скопирована': '✓ Link copied',
+  'Нет ваучеров': 'No vouchers',
+  '✓ Дроп-рейты сохранены': '✓ Drop rates saved',
+  'Дроп-рейты сброшены': 'Drop rates reset',
+  // Character
+  'Характеристики': 'Attributes',
+  'Ранг': 'Rank',
+  'Уровень': 'Level',
+  // Ambient
+  '🔊 Эмбиент-звук': '🔊 Ambient sound',
+  '⏹ Выкл': '⏹ Off',
+  '🌧 Дождь': '🌧 Rain',
+  '🔥 Костёр': '🔥 Fire',
+  'Громкость': 'Volume',
+  // Stats
+  'Прогресс за 2 недели': '2-week progress',
+  'XP по дням': 'XP by day',
+  'Время по сферам': 'Time by area',
+  // Goals view
+  'Активных целей': 'Active goals', 'Достигнуто': 'Achieved', 'Ближайший дедлайн': 'Next deadline',
+  'Новая цель': 'New goal', '+ Цель': '+ Goal',
+  '📋 Сводка целей': '📋 Goals summary', 'Достигнутые': 'Achieved goals',
+  // Habits view tabs
+  '🌱 Привычки': '🌱 Habits', '🛡 Срывы': '🛡 Slips', '📖 Метод': '📖 Method',
+  // Stats KPIs
+  'Индекс баланса': 'Balance index', 'Всего опыта': 'Total XP',
+  'Выполнение (14 дн.)': 'Completion (14d)',
+  // Rewards KPIs
+  'Баланс золота': 'Gold balance', 'Косметики': 'Cosmetics', 'Достижений': 'Achievements',
+  'История покупок': 'Purchase history', '🏆 Достижения': '🏆 Achievements',
+  // Subscription/Pro
+  '💎 Про': '💎 Pro',
+  'Настройки': 'Settings',
+};
+
+const I18N_DE = {
+  // Nav sections
+  'Сегодня': 'Heute', 'День': 'Tag', 'Заметки': 'Notizen',
+  'План': 'Plan', 'Календарь': 'Kalender', 'Цели': 'Ziele',
+  'Привычки': 'Gewohnheiten', 'Награды': 'Belohnungen',
+  'Герой': 'Held', '🏠 Логово': '🏠 Lager', 'Персонаж': 'Charakter',
+  '🐾 Питомцы': '🐾 Haustiere', 'Навыки': 'Fähigkeiten', 'Прогресс': 'Fortschritt',
+  'Племя': 'Stamm', 'Пати': 'Gruppe', 'Рейтинг': 'Rangliste',
+  // Auth
+  'Превращаем жизнь в игру': 'Das Leben zum Spiel machen',
+  'Создай аккаунт': 'Konto erstellen',
+  'Восстановление доступа': 'Kontozugang wiederherstellen',
+  'Пароль': 'Passwort', 'Войти': 'Anmelden',
+  'Войти →': 'Anmelden →',
+  'Создать аккаунт': 'Konto erstellen',
+  'Забыл пароль?': 'Passwort vergessen?',
+  'Вход по профилю (старый способ)': 'Profil-Anmeldung (alt)',
+  'Имя': 'Name', 'Аватар': 'Avatar',
+  'Как тебя зовут?': 'Wie heißt du?',
+  'Пароль (минимум 6 символов)': 'Passwort (mind. 6 Zeichen)',
+  'Придумай пароль': 'Passwort wählen',
+  'Повтори пароль': 'Passwort wiederholen',
+  '← Вход': '← Anmelden',
+  'Код восстановления': 'Wiederherstellungscode',
+  'Новый пароль (минимум 6)': 'Neues Passwort (mind. 6)',
+  'Новый пароль': 'Neues Passwort',
+  'Сбросить пароль и войти': 'Passwort zurücksetzen und anmelden',
+  'Не сохранил код — напиши нам, восстановим вручную.': 'Code nicht gespeichert? Schreib uns, wir stellen den Zugang manuell wieder her.',
+  'Введи email и код восстановления, который выдали при регистрации.': 'Gib deine E-Mail und den Wiederherstellungscode ein, den du bei der Registrierung erhalten hast.',
+  // Onboarding
+  'Выбери свои сферы развития — их всегда можно изменить': 'Wähle deine Entwicklungsbereiche — du kannst sie jederzeit ändern',
+  '📦 Быстрый старт — готовая программа': '📦 Schnellstart — fertige Programme',
+  '— или собери вручную —': '— oder manuell zusammenstellen —',
+  'Своя сфера…': 'Eigener Bereich…',
+  // Settings
+  'Язык': 'Sprache', '🌐 Язык / Language': '🌐 Sprache / Language',
+  'Название': 'App-Name',
+  '🔊 Звук': '🔊 Sound',
+  'Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)': 'Interface-Töne (Quest, Level-up, Truhe, Kauf)',
+  '▶ Проверить звук': '▶ Sound testen',
+  '🎨 Оформление': '🎨 Erscheinungsbild',
+  'Тема': 'Thema',
+  '🌙 Тёмная': '🌙 Dunkel', '☀️ Светлая': '☀️ Hell',
+  'Акцент': 'Akzentfarbe',
+  '⚡ Режим «Система»': '⚡ System-Modus',
+  'Навыки / сферы жизни': 'Fähigkeiten / Lebensbereiche',
+  '+ Добавить сферу': '+ Bereich hinzufügen',
+  '🔁 Привычки (повторяющиеся)': '🔁 Wiederkehrende Gewohnheiten',
+  'Пока нет привычек.': 'Noch keine Gewohnheiten.',
+  '+ Добавить привычку': '+ Gewohnheit hinzufügen',
+  '🛡 Анти-привычки — с чем борешься': '🛡 Anti-Gewohnheiten',
+  'Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.': 'Beliebige Tiefe: Lernen → Schule → Biologie. Wähle „Innerhalb …" — XP summiert sich aufwärts. Änderungen werden automatisch gespeichert.',
+  'Самостоятельная сфера': 'Eigenständiger Bereich',
+  'Лёгкая': 'Leicht', 'Обычная': 'Normal', 'Сложная': 'Schwer',
+  // Security
+  '🔑 Вход и восстановление': '🔑 Anmeldung & Wiederherstellung',
+  '⚠️ Данные и приватность': '⚠️ Daten & Datenschutz',
+  'Удалить аккаунт и все данные': 'Konto und alle Daten löschen',
+  // Today
+  'Новый квест на сегодня…': 'Neuer Quest für heute…',
+  '+ Квест': '+ Quest',
+  '🌱 Лёгкая': '🌱 Leicht', '⚔️ Обычная': '⚔️ Normal', '🔥 Сложная': '🔥 Schwer',
+  'Таймер фокуса — нажми ▶ у квеста': 'Fokus-Timer — ▶ bei einem Quest drücken',
+  '⏸ Пауза': '⏸ Pause', '▶ Продолжить': '▶ Weiter',
+  '⏹ Стоп · записать': '⏹ Stop · speichern',
+  '↗ Окно': '↗ Fenster',
+  'Энергия': 'Energie',
+  '⏳ Просрочено': '⏳ Überfällig',
+  '↪ Перенести всё на сегодня': '↪ Alles auf heute verschieben',
+  // Goals
+  '+ Добавить цель': '+ Ziel hinzufügen',
+  '🎯 Активные': '🎯 Aktiv',
+  '⏸ Ожидание': '⏸ Wartend',
+  '✓ Выполнено': '✓ Erledigt',
+  // Rewards
+  '+ Добавить': '+ Hinzufügen',
+  '+ Добавить награду': '+ Belohnung hinzufügen',
+  '📚 Каталог наград': '📚 Belohnungskatalog',
+  '🎁 Ваучер — бесплатная награда': '🎁 Gutschein — kostenlose Belohnung',
+  // Loot editor
+  '⚙️ Дроп-рейты сундуков': '⚙️ Truhen-Drop-Raten',
+  'Сбросить к дефолту': 'Auf Standard zurücksetzen',
+  // Calendar
+  '📅 Подписка': '📅 Abonnieren',
+  '📤 Твоя неделя': '📤 Deine Woche',
+  '⬇️ Скачать PNG': '⬇️ PNG herunterladen',
+  '🔗 Поделиться': '🔗 Teilen',
+  'Главная сфера недели': 'Hauptbereich der Woche',
+  'Живая подписка на квесты': 'Live-Kalenderabonnement',
+  'Ссылка для подписки': 'Abonnement-URL',
+  'Открыть в Календаре': 'Im Kalender öffnen',
+  // Weekly
+  'XP за неделю': 'XP diese Woche',
+  'Золото': 'Gold',
+  'Квестов': 'Quests',
+  'Привычек': 'Gewohnheiten',
+  'Времени': 'Zeit',
+  'Намерение на неделю': 'Wochenintention',
+  'Итоги недели': 'Wochenrückblick',
+  'Рефлексии этой недели': 'Reflexionen dieser Woche',
+  // Party
+  'Загрузка пати…': 'Gruppe lädt…',
+  'Загрузка рейтинга…': 'Rangliste lädt…',
+  '🤝 Пати': '🤝 Gruppe',
+  'БОСС ПОВЕРЖЕН': 'BOSS BESIEGT',
+  'Слава пати! 🎉': 'Gruppensiег! 🎉',
+  'Покинуть пати': 'Gruppe verlassen',
+  'Состав': 'Mitglieder',
+  'Босс повержен!': 'Boss besiegt!',
+  // Common
+  'Сохранить': 'Speichern',
+  'Отмена': 'Abbrechen',
+  'Удалить': 'Löschen',
+  'Закрыть': 'Schließen',
+  'Выйти': 'Abmelden',
+  '⇦ Выйти': '⇦ Abmelden',
+  'Загрузка…': 'Lädt…',
+  'Нет данных': 'Keine Daten',
+  'Ошибка': 'Fehler',
+  // Toasts
+  'Сохранено': 'Gespeichert',
+  '✓ Скопировано': '✓ Kopiert',
+  '✓ Ссылка скопирована': '✓ Link kopiert',
+  'Нет ваучеров': 'Keine Gutscheine',
+  '✓ Дроп-рейты сохранены': '✓ Drop-Raten gespeichert',
+  'Дроп-рейты сброшены': 'Drop-Raten zurückgesetzt',
+  // Character
+  'Характеристики': 'Attribute',
+  'Ранг': 'Rang',
+  'Уровень': 'Level',
+  // Ambient
+  '🔊 Эмбиент-звук': '🔊 Umgebungsgeräusche',
+  '⏹ Выкл': '⏹ Aus',
+  '🌧 Дождь': '🌧 Regen',
+  '🔥 Костёр': '🔥 Lagerfeuer',
+  'Громкость': 'Lautstärke',
+  // Stats
+  'Прогресс за 2 недели': '2-Wochen-Fortschritt',
+  'XP по дням': 'XP nach Tag',
+  'Время по сферам': 'Zeit nach Bereich',
+  // Goals view
+  'Активных целей': 'Aktive Ziele', 'Достигнуто': 'Erreicht', 'Ближайший дедлайн': 'Nächste Frist',
+  'Новая цель': 'Neues Ziel', '+ Цель': '+ Ziel',
+  '📋 Сводка целей': '📋 Zielübersicht', 'Достигнутые': 'Erreichte Ziele',
+  // Habits view tabs
+  '🌱 Привычки': '🌱 Gewohnheiten', '🛡 Срывы': '🛡 Rückfälle', '📖 Метод': '📖 Methode',
+  // Stats KPIs
+  'Индекс баланса': 'Balance-Index', 'Всего опыта': 'Gesamt-XP',
+  'Выполнение (14 дн.)': 'Abschluss (14 T.)',
+  // Rewards KPIs
+  'Баланс золота': 'Goldbestand', 'Косметики': 'Kosmetik', 'Достижений': 'Errungenschaften',
+  'История покупок': 'Kaufhistorie', '🏆 Достижения': '🏆 Errungenschaften',
+  // Pro
+  '💎 Про': '💎 Pro',
+  'Настройки': 'Einstellungen',
+};
+
+function lang() { return (State.settings && State.settings.lang) || 'ru'; }
+function t(k) {
+  const l = lang();
+  if (l === 'ru') return k;
+  const d = l === 'en' ? I18N_EN : I18N_DE;
+  return (d && d[k]) || k;
+}
+
+// ============================================================
 //  Store — общение с локальным сервером. Данные = JSON-файлы в vault.
 // ============================================================
 const Store = {
@@ -1358,15 +1684,15 @@ function ambientCard() {
   const mode = amb.mode || 'off', vol = amb.vol != null ? amb.vol : 60;
   const btn = (m, label, active) => `<button class="btn${active ? '' : ' ghost'} sm" data-action="set-ambient" data-mode="${m}">${label}</button>`;
   return `<div class="card">
-    <h3>🔊 Эмбиент-звук</h3>
+    <h3>${t('🔊 Эмбиент-звук')}</h3>
     <p class="muted" style="font-size:13px;margin-bottom:10px">Фоновый звук без файлов — синтез прямо в браузере.</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-      ${btn('off', '⏹ Выкл', mode === 'off')}
-      ${btn('rain', '🌧 Дождь', mode === 'rain')}
-      ${btn('fire', '🔥 Костёр', mode === 'fire')}
+      ${btn('off', t('⏹ Выкл'), mode === 'off')}
+      ${btn('rain', t('🌧 Дождь'), mode === 'rain')}
+      ${btn('fire', t('🔥 Костёр'), mode === 'fire')}
     </div>
     ${mode !== 'off' ? `<label style="display:flex;align-items:center;gap:10px;font-size:13px">
-      <span>Громкость</span>
+      <span>${t('Громкость')}</span>
       <input type="range" min="0" max="100" value="${vol}" data-action="set-ambient-vol" style="flex:1">
       <span>${vol}%</span>
     </label>` : ''}
@@ -1505,19 +1831,19 @@ function renderLoginScreen() {
     : '';
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
-      <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>Превращаем жизнь в игру</p></div>
+      <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>${t('Превращаем жизнь в игру')}</p></div>
       <div class="auth-box">
         <form id="login-form">
           <label>Email</label>
           <input name="email" type="email" placeholder="you@mail.com" autocomplete="username" required />
-          <label style="margin-top:10px">Пароль</label>
-          <input name="password" type="password" placeholder="Пароль" autocomplete="current-password" required />
+          <label style="margin-top:10px">${t('Пароль')}</label>
+          <input name="password" type="password" placeholder="${t('Пароль')}" autocomplete="current-password" required />
           <div id="login-error" class="pin-error"></div>
-          <button type="submit" class="btn" style="margin-top:14px;width:100%">Войти</button>
+          <button type="submit" class="btn" style="margin-top:14px;width:100%">${t('Войти')}</button>
         </form>
         <div class="auth-links">
-          <button class="link-btn" data-action="go-register">Создать аккаунт</button>
-          <button class="link-btn" data-action="go-reset">Забыл пароль?</button>
+          <button class="link-btn" data-action="go-register">${t('Создать аккаунт')}</button>
+          <button class="link-btn" data-action="go-reset">${t('Забыл пароль?')}</button>
         </div>
         ${legacy}
       </div>
@@ -1529,23 +1855,23 @@ function renderRegisterScreen() {
   const avatarPicker = AVATARS.map((a) => `<button type="button" class="av-btn ${a === State.regAvatar ? 'sel' : ''}" data-action="pick-avatar" data-av="${a}">${a}</button>`).join('');
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
-      <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>Создай аккаунт</p></div>
+      <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>${t('Создай аккаунт')}</p></div>
       <div class="auth-box">
         <form id="register-form">
-          <label>Имя</label>
-          <input name="name" placeholder="Как тебя зовут?" maxlength="32" required autocomplete="off" value="${esc(State.regName || '')}" />
-          <label style="margin-top:12px">Аватар</label>
+          <label>${t('Имя')}</label>
+          <input name="name" placeholder="${t('Как тебя зовут?')}" maxlength="32" required autocomplete="off" value="${esc(State.regName || '')}" />
+          <label style="margin-top:12px">${t('Аватар')}</label>
           <div class="av-grid">${avatarPicker}</div>
           <label style="margin-top:12px">Email</label>
           <input name="email" type="email" placeholder="you@mail.com" autocomplete="username" required />
-          <label style="margin-top:10px">Пароль (минимум 6 символов)</label>
-          <input name="password" type="password" placeholder="Придумай пароль" autocomplete="new-password" required />
-          <input name="password2" type="password" placeholder="Повтори пароль" autocomplete="new-password" required />
+          <label style="margin-top:10px">${t('Пароль (минимум 6 символов)')}</label>
+          <input name="password" type="password" placeholder="${t('Придумай пароль')}" autocomplete="new-password" required />
+          <input name="password2" type="password" placeholder="${t('Повтори пароль')}" autocomplete="new-password" required />
           <p class="privacy-note">Создавая аккаунт, ты соглашаешься, что приложение (альфа-версия) хранит твои данные — цели, заметки, дневник — на нашем сервере, чтобы они синхронизировались между устройствами. Удалить аккаунт и данные можно в Настройках. Не вводи особо чувствительную информацию.</p>
           <div id="reg-error" class="pin-error"></div>
-          <button type="submit" class="btn" style="margin-top:6px;width:100%">Создать аккаунт</button>
+          <button type="submit" class="btn" style="margin-top:6px;width:100%">${t('Создать аккаунт')}</button>
         </form>
-        <button class="btn ghost" data-action="go-login" style="margin-top:10px;width:100%">← Вход</button>
+        <button class="btn ghost" data-action="go-login" style="margin-top:10px;width:100%">${t('← Вход')}</button>
       </div>
     </div>
     <div id="toasts"></div>`;
@@ -1554,20 +1880,20 @@ function renderRegisterScreen() {
 function renderResetScreen() {
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
-      <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>Восстановление доступа</p></div>
+      <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>${t('Восстановление доступа')}</p></div>
       <div class="auth-box">
-        <p class="muted" style="font-size:13px;margin:0 0 12px">Введи email и код восстановления, который выдали при регистрации. Не сохранил код — напиши нам, восстановим вручную.</p>
+        <p class="muted" style="font-size:13px;margin:0 0 12px">${t('Введи email и код восстановления, который выдали при регистрации.')} ${t('Не сохранил код — напиши нам, восстановим вручную.')}</p>
         <form id="reset-form">
           <label>Email</label>
           <input name="email" type="email" placeholder="you@mail.com" autocomplete="username" required />
-          <label style="margin-top:10px">Код восстановления</label>
+          <label style="margin-top:10px">${t('Код восстановления')}</label>
           <input name="code" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" required />
-          <label style="margin-top:10px">Новый пароль (минимум 6)</label>
-          <input name="newPassword" type="password" placeholder="Новый пароль" autocomplete="new-password" required />
+          <label style="margin-top:10px">${t('Новый пароль (минимум 6)')}</label>
+          <input name="newPassword" type="password" placeholder="${t('Новый пароль')}" autocomplete="new-password" required />
           <div id="reset-error" class="pin-error"></div>
-          <button type="submit" class="btn" style="margin-top:14px;width:100%">Сбросить пароль и войти</button>
+          <button type="submit" class="btn" style="margin-top:14px;width:100%">${t('Сбросить пароль и войти')}</button>
         </form>
-        <button class="btn ghost" data-action="go-login" style="margin-top:10px;width:100%">← Вход</button>
+        <button class="btn ghost" data-action="go-login" style="margin-top:10px;width:100%">${t('← Вход')}</button>
       </div>
     </div>
     <div id="toasts"></div>`;
@@ -1583,7 +1909,7 @@ function showRecoveryModal(code, onClose) {
     <button class="btn" id="recovery-ok" style="width:100%;margin-top:10px">Я сохранил → продолжить</button>
   </div>`;
   document.body.appendChild(ov);
-  ov.querySelector('#recovery-copy').addEventListener('click', () => { try { navigator.clipboard.writeText(code); toast('✓ Скопировано'); } catch { toast('Скопируй вручную'); } });
+  ov.querySelector('#recovery-copy').addEventListener('click', () => { try { navigator.clipboard.writeText(code); toast(t('✓ Скопировано')); } catch { toast('Скопируй вручную'); } });
   ov.querySelector('#recovery-ok').addEventListener('click', () => { ov.remove(); if (onClose) onClose(); });
 }
 
@@ -1599,15 +1925,15 @@ function renderOnboardingScreen() {
     <div class="auth-screen">
       <div class="auth-logo"><span>${esc(State.me && State.me.avatar || '⚡')}</span>
         <h1>Привет, ${esc(State.me && State.me.name || '')}!</h1>
-        <p>Выбери свои сферы развития — их всегда можно изменить</p>
+        <p>${t('Выбери свои сферы развития — их всегда можно изменить')}</p>
       </div>
       <div class="auth-box">
-        <div class="ob-section">📦 Быстрый старт — готовая программа</div>
+        <div class="ob-section">${t('📦 Быстрый старт — готовая программа')}</div>
         <div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'ob-program')).join('')}</div>
-        <div class="ob-or">— или собери вручную —</div>
+        <div class="ob-or">${t('— или собери вручную —')}</div>
         <div class="ob-groups">${chips}</div>
         <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
-          <input id="ob-custom" placeholder="Своя сфера…" style="flex:1" />
+          <input id="ob-custom" placeholder="${t('Своя сфера…')}" style="flex:1" />
           <input id="ob-color" type="color" value="#6c8cff" style="width:44px;height:38px;padding:2px;cursor:pointer" />
           <button class="btn ghost" data-action="ob-add-custom">+</button>
         </div>
@@ -1657,7 +1983,7 @@ function renderHeader() {
       ${hypePct() > 0 ? `<div class="hype-chip" title="Хайп ×${hypeState().stacks}: бонус XP за добровольный выбор сложных квестов. Осталось ${hypeMinLeft()} мин.">🔥 Хайп +${hypePct()}%</div>` : ''}
       <button class="help-btn" data-action="show-guide" title="Как играть">?</button>
       ${proBadge}
-      <button class="btn ghost logout-btn" data-action="logout" title="Сменить профиль">⇦ Выйти</button>
+      <button class="btn ghost logout-btn" data-action="logout" title="Сменить профиль">${t('⇦ Выйти')}</button>
     </div>
     <div class="skills-row">${skills}</div>`;
 }
@@ -1718,14 +2044,14 @@ function calRemindBtn() {
   return `<button class="btn ghost sm cal-remind ${on ? 'on' : ''}" data-action="cal-remind-toggle" title="Напоминания о задачах со временем (пока вкладка открыта)">${on ? '🔔 Напоминания вкл' : '🔕 Напоминания'}</button>`;
 }
 function calExportBtn() { return `<button class="btn ghost sm" data-action="export-ics" title="Скачать запланированные квесты как .ics — импортировать в Apple/Google Календарь (разово; #8)">📆 .ics</button>`; }
-function calSubscribeBtn() { return `<button class="btn ghost sm" data-action="show-cal-subscribe" title="Живая подписка на квесты в Apple/Google Календарь">📅 Подписка</button>`; }
+function calSubscribeBtn() { return `<button class="btn ghost sm" data-action="show-cal-subscribe" title="Живая подписка на квесты в Apple/Google Календарь">${t('📅 Подписка')}</button>`; }
 
 async function showCalSubscribeModal() {
   if (document.getElementById('cal-sub-ov')) return;
   const ov = document.createElement('div');
   ov.id = 'cal-sub-ov'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="guide-box"><button class="modal-x" data-action="close-cal-subscribe">✕</button>
-    <h2>📅 Живая подписка на квесты</h2>
+    <h2>${t('Живая подписка на квесты')}</h2>
     <p class="muted" style="font-size:13px">Квесты автоматически обновляются в Apple/Google Календаре при добавлении новых.</p>
     <div id="cal-sub-body" style="margin-top:12px"><span class="muted">Генерация ссылки…</span></div>
   </div>`;
@@ -1736,12 +2062,12 @@ async function showCalSubscribeModal() {
     const base = location.origin + '/api/cal/' + d.userId + '/' + d.secret;
     const webcal = 'webcal://' + base.replace(/^https?:\/\//, '');
     document.getElementById('cal-sub-body').innerHTML = `
-      <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:4px">Ссылка для подписки</label>
+      <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:4px">${t('Ссылка для подписки')}</label>
       <div style="display:flex;gap:6px;margin-bottom:14px">
         <input id="cal-sub-url" readonly value="${esc(base)}" style="flex:1;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--panel2);color:var(--fg)"/>
         <button class="btn ghost sm" data-action="copy-cal-url" data-url="${esc(base)}">Копировать</button>
       </div>
-      <a class="btn sm" href="${esc(webcal)}" style="display:inline-block;margin-bottom:16px">📲 Открыть в Календаре</a>
+      <a class="btn sm" href="${esc(webcal)}" style="display:inline-block;margin-bottom:16px">📲 ${t('Открыть в Календаре')}</a>
       <p class="muted" style="font-size:12px;line-height:1.5">
         <b>Apple Календарь (iOS):</b> Настройки → Учётные записи → Добавить → Другая → Подписной календарь → вставь ссылку.<br>
         <b>Apple Календарь (Mac):</b> Файл → Новый подписной календарь → вставь ссылку.<br>
@@ -1958,9 +2284,9 @@ const ATOMIC = {
 function renderHabitsView() {
   const tab = State.habitsTab || 'build';
   const tabs = `<div class="navsub hsub">
-    <button class="navsubtab ${tab === 'build' ? 'active' : ''}" data-action="habits-tab" data-tab="build">🌱 Привычки</button>
-    <button class="navsubtab ${tab === 'break' ? 'active' : ''}" data-action="habits-tab" data-tab="break">🛡 Срывы</button>
-    <button class="navsubtab ${tab === 'method' ? 'active' : ''}" data-action="habits-tab" data-tab="method">📖 Метод</button></div>`;
+    <button class="navsubtab ${tab === 'build' ? 'active' : ''}" data-action="habits-tab" data-tab="build">${t('🌱 Привычки')}</button>
+    <button class="navsubtab ${tab === 'break' ? 'active' : ''}" data-action="habits-tab" data-tab="break">${t('🛡 Срывы')}</button>
+    <button class="navsubtab ${tab === 'method' ? 'active' : ''}" data-action="habits-tab" data-tab="method">${t('📖 Метод')}</button></div>`;
   const body = tab === 'method' ? atomicMethodHTML() : tab === 'break' ? habitsBreakHTML() : habitsBuildHTML();
   return tabs + body;
 }
@@ -2760,13 +3086,13 @@ function renderToday() {
 
   const timerCard = `<div class="card timer-card">
       <div class="timer-left"><div class="timer-clock" id="timer-clock">${fmtClock(timerElapsedMs())}</div>
-        <div class="timer-task">${tm ? (tmTask ? '🎯 ' + esc(tmTask.title) : '(задача удалена)') : 'Таймер фокуса — нажми ▶ у квеста'}</div></div>
-      <div class="timer-controls">${tm ? `${tm.running ? '<button class="btn ghost" data-action="timer-pause">⏸ Пауза</button>' : '<button class="btn" data-action="timer-resume">▶ Продолжить</button>'}<button class="btn" data-action="timer-stop">⏹ Стоп · записать</button><button class="btn ghost" data-action="open-pip" title="Плавающее окно поверх всех приложений">↗ Окно</button>` : ''}</div></div>`;
+        <div class="timer-task">${tm ? (tmTask ? '🎯 ' + esc(tmTask.title) : '(задача удалена)') : t('Таймер фокуса — нажми ▶ у квеста')}</div></div>
+      <div class="timer-controls">${tm ? `${tm.running ? `<button class="btn ghost" data-action="timer-pause">${t('⏸ Пауза')}</button>` : `<button class="btn" data-action="timer-resume">${t('▶ Продолжить')}</button>`}<button class="btn" data-action="timer-stop">${t('⏹ Стоп · записать')}</button><button class="btn ghost" data-action="open-pip" title="Плавающее окно поверх всех приложений">${t('↗ Окно')}</button>` : ''}</div></div>`;
 
   // Энергия (идея 19) — индикатор нагрузки/восстановления
   const en = ensureEnergy(), eP = energyPct(), eM = energyMeta();
   const energyCard = `<div class="card energy-card" title="Энергия — индикатор нагрузки за день. Сложные квесты тратят. Восстановление ПАССИВНОЕ: идёт само по реальному времени (паузы, вечер, сон ночью) — логировать отдых не нужно. Не блокирует ничего, на XP не влияет. Ёмкость растёт, когда чередуешь нагрузку и восстановление (как в тренировках). Это оценка по задачам — точнее будет позже через часы.">
-      <div class="en-head"><span class="en-ic">${eM.icon}</span><b>Энергия</b><span class="en-num" style="color:${eM.color}">${en.cur} / ${en.max}</span><span class="en-text muted">· ${eM.text}</span></div>
+      <div class="en-head"><span class="en-ic">${eM.icon}</span><b>${t('Энергия')}</b><span class="en-num" style="color:${eM.color}">${en.cur} / ${en.max}</span><span class="en-text muted">· ${eM.text}</span></div>
       <div class="en-bar"><span style="width:${eP}%;background:${eM.color}"></span></div>
       <p class="en-note muted">Восстанавливается сама со временем + дела вроде сна / прогулки / растяжки / медитации <b>пополняют</b> её · ≈ оценка по задачам, точнее с Apple Watch / Garmin (позже)</p></div>`;
   const lowEnergyNudge = (eP < 25 && doneCount > 0) ? `<div class="card nudge-card en-low"><span class="nudge-boost">🪫 Много нагрузки сегодня. Отдых ценнее форсажа — энергия восстановится сама за паузами и ночью, а ёмкость вырастет.</span></div>` : '';
@@ -2786,19 +3112,19 @@ function renderToday() {
       <div class="mobil-text"><b>🧘 Мобилка спины и плеч</b><p class="muted">Ты активно тренируешься (силовая / дзюдо), но регулярной растяжки давно не видно. Мобилка снижает риск зажимов и перегруза. <i>Это не медицинский совет — при болях сверься со специалистом.</i></p></div>
       <div class="mobil-acts"><button class="nudge" data-action="add-mobility">+ Растяжка 10 мин</button><button class="btn ghost sm" data-action="mobil-later">Позже</button><button class="btn ghost sm" data-action="mobil-never">Не показывать</button></div></div>` : '';
 
-  const overdueCard = overdue.length ? `<div class="card overdue"><h3>⏳ Просрочено (${overdue.length})</h3>
+  const overdueCard = overdue.length ? `<div class="card overdue"><h3>${t('⏳ Просрочено')} (${overdue.length})</h3>
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
-      <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">↪ Перенести всё на сегодня</button></div>` : '';
+      <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">${t('↪ Перенести всё на сегодня')}</button></div>` : '';
 
   // Тизер режима «Система» — одноразово, после ур.2, если не включён (дискаверабилити)
   const sysTeaser = (!systemMode() && charLevel() >= 2 && !isDiscovered('teaser:system')) ? `<div class="card nudge-card sys-teaser"><span class="nudge-boost">⚡ Спрятанная фишка: режим «Система» (Solo Leveling-вайб) — нарратор объявляет твои победы.</span><div class="sys-teaser-btns"><button class="btn sm" data-action="enable-system-teaser">Включить</button><button class="btn ghost sm" data-action="dismiss-system-teaser">Позже</button></div></div>` : '';
   return `${companionCard()}${installBanner()}${captureBar()}${notesPeekToday()}${progressTrioCard()}${sysTeaser}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
     <div class="card"><form id="add-task" class="add-row">
-        <input name="title" placeholder="Новый квест на сегодня…" autocomplete="off" required />
+        <input name="title" placeholder="${t('Новый квест на сегодня…')}" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
         <input name="estimateMin" type="number" min="0" step="1" value="30" title="Минут" />
-        <select name="difficulty"><option value="easy">🌱 Лёгкая</option><option value="normal" selected>⚔️ Обычная</option><option value="hard">🔥 Сложная</option></select>
-        <button type="submit">+ Квест</button></form>
+        <select name="difficulty"><option value="easy">${t('🌱 Лёгкая')}</option><option value="normal" selected>${t('⚔️ Обычная')}</option><option value="hard">${t('🔥 Сложная')}</option></select>
+        <button type="submit">${t('+ Квест')}</button></form>
       <div id="cat-suggest" class="cat-suggest"></div>
       <p class="diff-hint muted">🌱 Лёгкая — рутина, механика · ⚔️ Обычная — требует фокуса · 🔥 Сложная — вызов, выход из зоны комфорта → активирует Хайп <b>+15% XP</b></p>
     </div>
@@ -2880,14 +3206,14 @@ function renderGoals() {
 
   return `
     <div class="kpis">
-      <div class="kpi"><div class="v">${active.length}</div><div class="l">Активных целей</div></div>
-      <div class="kpi"><div class="v">${completed.length}</div><div class="l">Достигнуто</div></div>
-      <div class="kpi"><div class="v">${nearest ? nearest.targetDate.slice(5) : '—'}</div><div class="l">Ближайший дедлайн</div></div>
+      <div class="kpi"><div class="v">${active.length}</div><div class="l">${t('Активных целей')}</div></div>
+      <div class="kpi"><div class="v">${completed.length}</div><div class="l">${t('Достигнуто')}</div></div>
+      <div class="kpi"><div class="v">${nearest ? nearest.targetDate.slice(5) : '—'}</div><div class="l">${t('Ближайший дедлайн')}</div></div>
     </div>
     <div class="card ai-import-card">
       <div class="ai-imp-l"><b>📥 Опиши цели текстом — ИИ оформит</b><span class="muted">расскажи словами, что хочешь; ИИ предложит цели и сферы, ты одобришь</span></div>
       <button class="btn" data-action="ai-import-goals">🤖 Импорт целей</button></div>
-    <div class="card"><h3>Новая цель</h3>
+    <div class="card"><h3>${t('Новая цель')}</h3>
       ${typeGuide}
       <form id="add-goal" class="goal-form">
         <input name="title" placeholder="Чего хочешь достичь?" autocomplete="off" required />
@@ -2911,11 +3237,11 @@ function renderGoals() {
             <input name="window" placeholder="окно: лето / после 23.06…" title="Когда (для «жду события»)" />
           </div>
         </details>
-        <button type="submit">+ Цель</button></form>
-      <p class="diff-hint muted">💰 XP пусто = по типу цели: ${GOAL_TYPES.map((t) => `${t.label.toLowerCase()} ${GOAL_XP[t.id]}`).join(' · ')}. Это «курс валюты» — не накручивай себе, иначе уровень потеряет смысл.</p></div>
-    <div class="card"><h3>📋 Сводка целей</h3><div class="gfilters">${filterTabs}</div></div>
+        <button type="submit">${t('+ Цель')}</button></form>
+      <p class="diff-hint muted">💰 XP пусто = по типу цели: ${GOAL_TYPES.map((gt) => `${gt.label.toLowerCase()} ${GOAL_XP[gt.id]}`).join(' · ')}. Это «курс валюты» — не накручивай себе, иначе уровень потеряет смысл.</p></div>
+    <div class="card"><h3>${t('📋 Сводка целей')}</h3><div class="gfilters">${filterTabs}</div></div>
     ${shown.length ? shown.map(goalCard).join('') : '<div class="card"><p class="muted">Нет активных целей этого типа. Добавь выше ↑</p></div>'}
-    ${completed.length ? `<div class="section-title">Достигнутые</div>${completed.map(goalCard).join('')}` : ''}
+    ${completed.length ? `<div class="section-title">${t('Достигнутые')}</div>${completed.map(goalCard).join('')}` : ''}
     ${archived.length ? `<div class="section-title">🗄 Архив (${archived.length})</div>${archived.map(goalCard).join('')}` : ''}`;
 }
 
@@ -3194,12 +3520,12 @@ function showLootEditor() {
   ov.id = 'loot-editor-ov'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="guide-box">
     <button class="modal-x" data-action="close-loot-editor">✕</button>
-    <h2>⚙️ Дроп-рейты сундуков</h2>
+    <h2>${t('⚙️ Дроп-рейты сундуков')}</h2>
     <p class="muted" style="font-size:13px;margin-bottom:12px">Вес типа: 0 = никогда, выше = чаще. Шанс ≈ вес / сумма всех весов.</p>
     <div class="le-rows">${rows}</div>
     <div class="le-foot">
-      <button class="btn ghost sm" data-action="reset-loot-weights">Сбросить к дефолту</button>
-      <button class="btn sm" data-action="save-loot-weights">Сохранить</button>
+      <button class="btn ghost sm" data-action="reset-loot-weights">${t('Сбросить к дефолту')}</button>
+      <button class="btn sm" data-action="save-loot-weights">${t('Сохранить')}</button>
     </div>
   </div>`;
   document.body.appendChild(ov);
@@ -3207,7 +3533,7 @@ function showLootEditor() {
 
 function showVoucherReward() {
   const lb = ensureLootbox();
-  if (!lb.vouchers || lb.vouchers < 1) { toast('Нет ваучеров'); return; }
+  if (!lb.vouchers || lb.vouchers < 1) { toast(t('Нет ваучеров')); return; }
   if (document.getElementById('voucher-ov')) return;
   const rows = REWARD_CATALOG.map((c, i) => `<div class="rwc-row">
     <span class="rwc-ic">${c.icon}</span><span class="rwc-name">${esc(c.name)}</span>
@@ -3218,7 +3544,7 @@ function showVoucherReward() {
   ov.id = 'voucher-ov'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="guide-box">
     <button class="modal-x" data-action="close-voucher">✕</button>
-    <h2>🎁 Ваучер — бесплатная награда</h2>
+    <h2>${t('🎁 Ваучер — бесплатная награда')}</h2>
     <p class="muted">У тебя ${lb.vouchers} ${plural(lb.vouchers, 'ваучер', 'ваучера', 'ваучеров')}. Выбери любую награду из каталога — бесплатно!</p>
     <div class="rwc-list">${rows}</div>
   </div>`;
@@ -3277,7 +3603,7 @@ function showWeekShare(ws, st) {
     <!-- top skill -->
     ${topArea ? `
     <rect x="30" y="202" width="${svgW - 60}" height="48" rx="10" fill="#1a1829"/>
-    <text x="46" y="231" font-family="system-ui,sans-serif" font-size="13" fill="#8b8ba0">Главная сфера недели</text>
+    <text x="46" y="231" font-family="system-ui,sans-serif" font-size="13" fill="#8b8ba0">${t('Главная сфера недели')}</text>
     <text x="46" y="241" font-family="system-ui,sans-serif" font-size="13" fill="#8b8ba0">·</text>
     <rect x="30" y="202" width="4" height="48" rx="2" fill="${esc(topArea.color)}"/>
     <text x="46" y="236" font-family="system-ui,sans-serif" font-size="16" fill="#fff" font-weight="700">${esc(topArea.label)}</text>
@@ -3291,11 +3617,11 @@ function showWeekShare(ws, st) {
   ov.id = 'share-ov'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="guide-box" style="max-width:640px">
     <button class="modal-x" data-action="close-share">✕</button>
-    <h2>📤 Твоя неделя</h2>
+    <h2>${t('📤 Твоя неделя')}</h2>
     <div id="share-card-wrap" style="border-radius:14px;overflow:hidden;margin:14px 0">${svg}</div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn" data-action="download-share-card">⬇️ Скачать PNG</button>
-      ${navigator.share ? `<button class="btn ghost" data-action="web-share-card">🔗 Поделиться</button>` : ''}
+      <button class="btn" data-action="download-share-card">${t('⬇️ Скачать PNG')}</button>
+      ${navigator.share ? `<button class="btn ghost" data-action="web-share-card">${t('🔗 Поделиться')}</button>` : ''}
     </div>
   </div>`;
   document.body.appendChild(ov);
@@ -3357,11 +3683,11 @@ function securityCard() {
       <input name="newPin" type="password" inputmode="numeric" placeholder="Новый PIN (4+)" maxlength="8" required />
       <button type="submit" class="btn">Сменить</button><span id="pin-change-msg" class="muted"></span></form>`
     : '';
-  return `<div class="card"><h3>🔑 Вход и восстановление</h3>${emailBlock}${pinBlock}
+  return `<div class="card"><h3>${t('🔑 Вход и восстановление')}</h3>${emailBlock}${pinBlock}
     <div class="danger-zone">
-      <h3>⚠️ Данные и приватность</h3>
+      <h3>${t('⚠️ Данные и приватность')}</h3>
       <p class="muted" style="font-size:12.5px;margin:0 0 8px">Мы храним только то, что ты вводишь сам: цели, квесты, дневник, привычки. Удаление аккаунта удаляет всё с сервера (DSGVO/GDPR).</p>
-      <button class="btn ghost danger-btn" data-action="show-delete-account">Удалить аккаунт и все данные</button>
+      <button class="btn ghost danger-btn" data-action="show-delete-account">${t('Удалить аккаунт и все данные')}</button>
     </div>
   </div>`;
 }
@@ -3674,19 +4000,19 @@ function renderRewards() {
     ${collectionCard()}
     ${arsenalCard()}
     <div class="kpis">
-      <div class="kpi"><div class="v">🪙 ${bal}</div><div class="l">Баланс золота</div></div>
-      <div class="kpi"><div class="v">${COSMETICS.filter((c) => ownsCosmetic(c.id)).length}/${COSMETICS.length}</div><div class="l">Косметики</div></div>
-      <div class="kpi"><div class="v">${ACHIEVEMENTS.filter((a) => State.achievements[a.id]).length}/${ACHIEVEMENTS.length}</div><div class="l">Достижений</div></div>
+      <div class="kpi"><div class="v">🪙 ${bal}</div><div class="l">${t('Баланс золота')}</div></div>
+      <div class="kpi"><div class="v">${COSMETICS.filter((c) => ownsCosmetic(c.id)).length}/${COSMETICS.length}</div><div class="l">${t('Косметики')}</div></div>
+      <div class="kpi"><div class="v">${ACHIEVEMENTS.filter((a) => State.achievements[a.id]).length}/${ACHIEVEMENTS.length}</div><div class="l">${t('Достижений')}</div></div>
     </div>
     <div class="card"><h3>🎁 Магазин наград</h3><div class="rewards-grid">${cards || '<p class="muted">Наград пока нет — возьми готовые из каталога ↓</p>'}</div>
-      <div class="settings-actions" style="margin:10px 0 4px"><button class="btn ghost" data-action="open-reward-catalog">📚 Каталог наград</button>${!isPro() ? `<span class="muted" style="font-size:12px">${State.rewards.length}/${FREE_REWARDS_MAX} наград (Free)</span>` : ''}</div>
+      <div class="settings-actions" style="margin:10px 0 4px"><button class="btn ghost" data-action="open-reward-catalog">${t('📚 Каталог наград')}</button>${!isPro() ? `<span class="muted" style="font-size:12px">${State.rewards.length}/${FREE_REWARDS_MAX} наград (Free)</span>` : ''}</div>
       <form id="add-reward" class="reward-form">
         <input name="name" placeholder="Своя награда…" autocomplete="off" required />
         <input name="icon" placeholder="🎁" maxlength="2" style="width:60px;text-align:center" />
         <input name="cost" type="number" min="1" value="100" style="width:90px" />
-        <button type="submit">+ Награда</button></form></div>
-    <div class="card"><h3>История покупок</h3>${history ? `<ul class="reflections">${history}</ul>` : '<p class="muted">Пока ничего не куплено.</p>'}</div>
-    <div class="card"><h3>🏆 Достижения</h3><div class="ach-grid">${achs}</div></div>`;
+        <button type="submit">${t('+ Добавить награду')}</button></form></div>
+    <div class="card"><h3>${t('История покупок')}</h3>${history ? `<ul class="reflections">${history}</ul>` : '<p class="muted">Пока ничего не куплено.</p>'}</div>
+    <div class="card"><h3>${t('🏆 Достижения')}</h3><div class="ach-grid">${achs}</div></div>`;
 }
 
 // ============================================================
@@ -3777,24 +4103,24 @@ function renderWeekly() {
       <button class="btn ghost sm" data-action="share-week" title="Поделиться итогами недели">📤</button>
     </div>
     <div class="kpis">
-      <div class="kpi"><div class="v">${st.xp}</div><div class="l">XP за неделю</div></div>
-      <div class="kpi"><div class="v">🪙 ${st.gold}</div><div class="l">Золото</div></div>
-      <div class="kpi"><div class="v">${st.quests}</div><div class="l">Квестов</div></div>
-      <div class="kpi"><div class="v">${st.habitsC}</div><div class="l">Привычек</div></div>
-      <div class="kpi"><div class="v">${Math.round(st.min / 60 * 10) / 10}ч</div><div class="l">Времени</div></div>
+      <div class="kpi"><div class="v">${st.xp}</div><div class="l">${t('XP за неделю')}</div></div>
+      <div class="kpi"><div class="v">🪙 ${st.gold}</div><div class="l">${t('Золото')}</div></div>
+      <div class="kpi"><div class="v">${st.quests}</div><div class="l">${t('Квестов')}</div></div>
+      <div class="kpi"><div class="v">${st.habitsC}</div><div class="l">${t('Привычек')}</div></div>
+      <div class="kpi"><div class="v">${Math.round(st.min / 60 * 10) / 10}ч</div><div class="l">${t('Времени')}</div></div>
     </div>
     <p class="wk-hint muted">↔ Перетащи квест на другой день, чтобы перенести. ⏱ — запланированное время дня.</p>
     <div class="wk-grid-wrap">
       <div class="wk-grid">${dayCols}</div>
     </div>
-    <div class="card"><h3>📊 Время по сферам</h3>${barChartSVG(st.byArea)}</div>
-    <div class="card"><h3>🎯 Намерение на неделю</h3>
+    <div class="card"><h3>📊 ${t('Время по сферам')}</h3>${barChartSVG(st.byArea)}</div>
+    <div class="card"><h3>🎯 ${t('Намерение на неделю')}</h3>
       <textarea id="week-intention" placeholder="Что главное на этой неделе? Куда направить фокус…">${esc(wk.intention || '')}</textarea>
-      <h3 style="margin-top:14px">🔄 Итоги недели</h3>
+      <h3 style="margin-top:14px">🔄 ${t('Итоги недели')}</h3>
       <textarea id="week-review" placeholder="Что получилось, что нет, что перенести…">${esc(wk.review || '')}</textarea>
-      <div style="margin-top:10px"><button class="btn" data-action="save-week">Сохранить</button>
+      <div style="margin-top:10px"><button class="btn" data-action="save-week">${t('Сохранить')}</button>
     </div></div>
-    ${reflections ? `<div class="card"><h3>Рефлексии этой недели</h3><ul class="reflections">${reflections}</ul></div>` : ''}`;
+    ${reflections ? `<div class="card"><h3>${t('Рефлексии этой недели')}</h3><ul class="reflections">${reflections}</ul></div>` : ''}`;
 }
 
 // ============================================================
@@ -3836,18 +4162,18 @@ function renderStats() {
   };
   const skillRanksRows = topSkills().map((s) => rankRow(s, false) + childSkills(s.id).map((c) => rankRow(c, true)).join('')).join('');
   const advanced = isPro()
-    ? `<div class="card"><h3>Время по сферам — эта неделя</h3>${barChartSVG(timeByAreaThisWeek())}</div>`
+    ? `<div class="card"><h3>${t('Время по сферам')}</h3>${barChartSVG(timeByAreaThisWeek())}</div>`
     : `<div class="card locked-card" data-action="show-paywall" data-feature="Расширенная аналитика">
         <div class="lock-veil"><span>🔒 Расширенная аналитика — в Pro</span></div>
-        <h3>Время по сферам</h3>${barChartSVG(timeByAreaThisWeek())}</div>`;
+        <h3>${t('Время по сферам')}</h3>${barChartSVG(timeByAreaThisWeek())}</div>`;
   return `
     <div class="kpis">
       <div class="kpi"><div class="v">${cr.icon} ${charLevel()}</div><div class="l">${cr.name}</div></div>
-      <div class="kpi"><div class="v" style="color:${balColor}">${bal.index}</div><div class="l">Индекс баланса</div></div>
-      <div class="kpi"><div class="v">${overallXp()}</div><div class="l">Всего опыта</div></div>
-      <div class="kpi"><div class="v">🪙 ${goldBalance()}</div><div class="l">Золото</div></div>
+      <div class="kpi"><div class="v" style="color:${balColor}">${bal.index}</div><div class="l">${t('Индекс баланса')}</div></div>
+      <div class="kpi"><div class="v">${overallXp()}</div><div class="l">${t('Всего опыта')}</div></div>
+      <div class="kpi"><div class="v">🪙 ${goldBalance()}</div><div class="l">${t('Золото')}</div></div>
       <div class="kpi"><div class="v">🔥 ${currentStreak()}</div><div class="l">Серия · рекорд ${longestStreak()}</div></div>
-      <div class="kpi"><div class="v">${rate}%</div><div class="l">Выполнение (14 дн.)</div></div>
+      <div class="kpi"><div class="v">${rate}%</div><div class="l">${t('Выполнение (14 дн.)')}</div></div>
     </div>
     <div class="card ai-review-card">
       <div><h3 style="margin:0">🤖 ИИ-разбор недели</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">Правда о времени и балансе + мягкие шаги. ${aiProvider() ? 'Твой ключ ' + aiProvider() + '.' : 'Добавь ключ в Настройках.'}</p></div>
@@ -3858,9 +4184,9 @@ function renderStats() {
       <p class="muted" style="font-size:13px;margin-bottom:0">Активных сфер: <b>${bal.active}/${bal.total}</b>. Индекс растёт, когда развиваешь жизнь как композицию, а не одну вертикаль. ${bal.weakest && bal.index < 80 ? `Сейчас проседает <b>${esc(bal.weakest.name)}</b> — дай ей внимание.` : (bal.index >= 80 ? 'Отличный баланс — так держать. ⚖️' : 'Добавь активность в несколько сфер, чтобы поднять индекс.')}</p>
     </div>
     <div class="card"><h3>🎖 Ранги по сферам</h3>${skillRanksRows || '<p class="muted">Добавь навыки в Настройках.</p>'}</div>
-    <div class="card"><h3>Опыт за последние 14 дней</h3>${barChartSVG(xpByDay(14), 2)}</div>
+    <div class="card"><h3>${t('XP по дням')}</h3>${barChartSVG(xpByDay(14), 2)}</div>
     ${advanced}
-    <div class="card"><h3>Последняя рефлексия</h3>${reflections ? `<ul class="reflections">${reflections}</ul>` : '<p class="muted">Пока нет записей.</p>'}</div>`;
+    <div class="card"><h3>${t('Рефлексии этой недели')}</h3>${reflections ? `<ul class="reflections">${reflections}</ul>` : '<p class="muted">Пока нет записей.</p>'}</div>`;
 }
 
 // ============================================================
@@ -3958,26 +4284,32 @@ function renderSettings() {
     ${subscriptionCard()}
     ${securityCard()}
     ${adminCard()}
-    <div class="card"><h3>Название</h3><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></div>
-    <div class="card"><h3>🔊 Звук</h3>
-      <label class="sound-toggle"><input type="checkbox" data-action="toggle-sound" ${sfxOn() ? 'checked' : ''}/> Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)</label>
-      <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">▶ Проверить звук</button></div>
+    <div class="card"><h3>${t('Название')}</h3><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></div>
+    <div class="card"><h3>${t('🔊 Звук')}</h3>
+      <label class="sound-toggle"><input type="checkbox" data-action="toggle-sound" ${sfxOn() ? 'checked' : ''}/> ${t('Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)')}</label>
+      <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">${t('▶ Проверить звук')}</button></div>
     ${ambientCard()}
     ${pwaCard()}
-    <div class="card"><h3>🎨 Оформление</h3>
-      <div class="theme-row"><span class="theme-lbl">Тема</span>
+    <div class="card"><h3>🌐 ${t('Язык')}</h3>
+      <div class="theme-toggle">
+        <button class="theme-opt ${lang() === 'ru' ? 'active' : ''}" data-action="set-lang" data-lang="ru">🇷🇺 Русский</button>
+        <button class="theme-opt ${lang() === 'en' ? 'active' : ''}" data-action="set-lang" data-lang="en">🇬🇧 English</button>
+        <button class="theme-opt ${lang() === 'de' ? 'active' : ''}" data-action="set-lang" data-lang="de">🇩🇪 Deutsch</button>
+      </div></div>
+    <div class="card"><h3>${t('🎨 Оформление')}</h3>
+      <div class="theme-row"><span class="theme-lbl">${t('Тема')}</span>
         <div class="theme-toggle">
-          <button class="theme-opt ${s.theme !== 'light' ? 'active' : ''}" data-action="set-theme" data-theme="dark">🌙 Тёмная</button>
-          <button class="theme-opt ${s.theme === 'light' ? 'active' : ''}" data-action="set-theme" data-theme="light">☀️ Светлая</button>
+          <button class="theme-opt ${s.theme !== 'light' ? 'active' : ''}" data-action="set-theme" data-theme="dark">${t('🌙 Тёмная')}</button>
+          <button class="theme-opt ${s.theme === 'light' ? 'active' : ''}" data-action="set-theme" data-theme="light">${t('☀️ Светлая')}</button>
         </div></div>
-      <div class="theme-row"><span class="theme-lbl">Акцент</span>
-        <div class="accent-swatches">${ACCENTS.map((c) => `<button class="accent-sw ${(s.accent || '#6c8cff') === c ? 'active' : ''}" data-action="set-accent" data-accent="${c}" style="background:${c}" title="${c}" aria-label="Акцент ${c}"></button>`).join('')}</div></div>
-      <div class="theme-row"><span class="theme-lbl">⚡ Режим «Система»</span>
+      <div class="theme-row"><span class="theme-lbl">${t('Акцент')}</span>
+        <div class="accent-swatches">${ACCENTS.map((c) => `<button class="accent-sw ${(s.accent || '#6c8cff') === c ? 'active' : ''}" data-action="set-accent" data-accent="${c}" style="background:${c}" title="${c}" aria-label="${t('Акцент')} ${c}"></button>`).join('')}</div></div>
+      <div class="theme-row"><span class="theme-lbl">${t('⚡ Режим «Система»')}</span>
         <label class="sound-toggle"><input type="checkbox" data-action="toggle-system" ${systemMode() ? 'checked' : ''}/> Нарратор-Система комментирует твои действия (Solo Leveling-вайб): драматичные объявления при выполнении квестов, левелапах, рангах, ачивках.</label></div></div>
-    <div class="card"><h3>Навыки / сферы жизни</h3><p class="muted" style="font-size:12px;margin:0 0 10px">Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">+ Добавить сферу</button></div>
+    <div class="card"><h3>${t('Навыки / сферы жизни')}</h3><p class="muted" style="font-size:12px;margin:0 0 10px">${t('Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.')}</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">${t('+ Добавить сферу')}</button></div>
     ${importCard()}
-    <div class="card"><h3>🔁 Привычки (повторяющиеся)</h3><div id="habits-list">${habits || '<p class="muted">Пока нет привычек.</p>'}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">+ Добавить привычку</button></div>
-    <div class="card"><h3>🛡 Анти-привычки — с чем борешься</h3>
+    <div class="card"><h3>${t('🔁 Привычки (повторяющиеся)')}</h3><div id="habits-list">${habits || `<p class="muted">${t('Пока нет привычек.')}</p>`}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">${t('+ Добавить привычку')}</button></div>
+    <div class="card"><h3>${t('🛡 Анти-привычки — с чем борешься')}</h3>
       <p class="muted" style="font-size:12px;margin:0 0 10px">Отслеживай «чистые дни». Срыв не наказывается — это данные, без стыда. Подход — твой фреймворк доверия/контекста.</p>
       <form id="add-antihabit" class="add-row">
         <input name="title" placeholder="Напр. без бессмысленного скролла" autocomplete="off" required />
@@ -3986,7 +4318,7 @@ function renderSettings() {
           <option value="доверие">Доверие к себе</option>
           <option value="недоверие">Недоверие (блоки/лимиты)</option>
           <option value="контекст">Смена контекста/среды</option></select>
-        <button type="submit">+ Добавить</button></form>
+        <button type="submit">${t('+ Добавить')}</button></form>
       ${(State.antihabits || []).map((a) => `<div class="ah-edit"><span class="ah-name">${esc(a.title)}${a.approach ? ` · <span class="muted">${esc(a.approach)}</span>` : ''}</span><button class="del" data-action="delete-antihabit" data-id="${a.id}">✕</button></div>`).join('')}</div>
     ${aiKeysCard()}
     <div class="card"><h3>📦 Программы-данжи</h3><p class="muted" style="margin:0 0 12px">Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
@@ -4049,7 +4381,7 @@ function renderParty() {
       fetch('/api/party').then((r) => r.json()).then((d) => { State.party = d.party || false; State._partyLoading = false; if (State.view === 'party') render(); })
         .catch(() => { State.party = false; State._partyLoading = false; if (State.view === 'party') render(); });
     }
-    return '<div class="card"><p class="muted">Загрузка пати…</p></div>';
+    return `<div class="card"><p class="muted">${t('Загрузка пати…')}</p></div>`;
   }
   return State.party ? partyHTML(State.party) : partyEmptyHTML();
 }
@@ -4082,7 +4414,7 @@ function partyHTML(p) {
       <div class="ph-top"><h3>🤝 ${esc(p.name)}</h3><span class="party-code" title="Поделись кодом с другом — он войдёт в пати">код <b>${esc(p.code)}</b></span></div>
       <p class="muted" style="font-size:12px;margin:6px 0 0">${p.members.length}/${p.max} участников · недельный вклад складывается в общий рейд</p></div>
     <div class="card raid-card ${won ? 'won' : ''}">
-      <div class="raid-head"><span class="raid-boss">${won ? '🏆' : boss.emoji}</span><div><b>${won ? 'Босс повержен!' : esc(boss.name)}</b>
+      <div class="raid-head"><span class="raid-boss">${won ? '🏆' : boss.emoji}</span><div><b>${won ? t('Босс повержен!') : esc(boss.name)}</b>
         <div class="muted" style="font-size:12px">${won ? `Пати справилась — ${r.claimedCount}/${p.members.length} забрали награду` : `Осталось ${hp} XP · цель ${r.target} (по ${RAID_PER_MEMBER}/чел)`}</div></div></div>
       <div class="raid-bar"><span style="width:${pct}%"></span></div>
       ${claim}
@@ -4091,8 +4423,8 @@ function partyHTML(p) {
       <div class="season-head"><b>🏅 Сезон ${si.cycle}</b><span class="muted">${si.prog}/${si.goal} побед недели${si.done ? ` · пройдено ×${si.done}` : ''}</span></div>
       <div class="season-bar"><span style="width:${seasonPct}%"></span></div>
       <p class="muted" style="font-size:11.5px;margin:6px 0 0">Бейте босса каждую неделю — собирайте сезон.${si.prog === si.goal - 1 ? ' Ещё одна победа — и сезон взят! 🏅' : ''}</p></div>
-    <div class="card"><h3>Состав</h3><div class="pm-list">${members}</div>
-      <button class="btn ghost sm" data-action="party-leave" style="margin-top:12px">Покинуть пати</button></div>`;
+    <div class="card"><h3>${t('Состав')}</h3><div class="pm-list">${members}</div>
+      <button class="btn ghost sm" data-action="party-leave" style="margin-top:12px">${t('Покинуть пати')}</button></div>`;
 }
 // Кинематографичная победа над боссом (#22): полноэкранный оверлей + фанфары + конфетти
 function showRaidWin(p, boss) {
@@ -4104,10 +4436,10 @@ function showRaidWin(p, boss) {
   ov.innerHTML = `<div class="raidwin-box">
     <div class="rw-rays"></div>
     <div class="rw-boss">${boss.emoji}<span class="rw-x">💥</span></div>
-    <div class="rw-title">БОСС ПОВЕРЖЕН</div>
+    <div class="rw-title">${t('БОСС ПОВЕРЖЕН')}</div>
     <div class="rw-sub">${esc(boss.name)}</div>
     <div class="rw-party">🤝 ${esc(p.name)} — вместе</div>
-    <button class="btn rw-btn" data-action="raidwin-close">Слава пати! 🎉</button>
+    <button class="btn rw-btn" data-action="raidwin-close">${t('Слава пати! 🎉')}</button>
     <div class="rw-confetti">${conf}</div></div>`;
   document.body.appendChild(ov);
 }
@@ -4118,7 +4450,7 @@ function renderLeaderboard() {
       fetch('/api/leaderboard').then((r) => r.json()).then((d) => { State.leaderboard = Array.isArray(d) ? d : []; State._lbLoading = false; if (State.view === 'leaderboard') render(); })
         .catch(() => { State.leaderboard = []; State._lbLoading = false; if (State.view === 'leaderboard') render(); });
     }
-    return `<div class="card"><p class="muted">Загрузка рейтинга…</p></div>`;
+    return `<div class="card"><p class="muted">${t('Загрузка рейтинга…')}</p></div>`;
   }
   const rows = State.leaderboard;
   const optOut = !!(State.settings && State.settings.leaderboardOptOut);
@@ -4169,11 +4501,11 @@ function renderNav() {
   const lvl = navUnlockLevel(), cur = sectionOf(State.view);
   const primary = SECTIONS.map((s) => {
     const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
-    return `<button class="navsec${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}" title="${locked ? 'Откроется на ур.' + s.gate : (isNew ? s.label + ' — новое!' : s.label)}">${s.icon}<span class="navsec-l">${s.label}</span>${locked ? `<span class="navsec-lock">🔒${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
+    return `<button class="navsec${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}" title="${locked ? 'Откроется на ур.' + s.gate : (isNew ? t(s.label) + ' — новое!' : t(s.label))}">${s.icon}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">🔒${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
   }).join('');
-  const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="Настройки" aria-label="Настройки">⚙️</button>`;
+  const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="${t('Настройки')}" aria-label="${t('Настройки')}">⚙️</button>`;
   const sec = SECTIONS.find((s) => s.id === cur);
-  const subs = (sec && sec.views.length > 1) ? `<div class="navsub">${sec.views.map((v) => { const nd = NEW_VIEWS.includes(v.view) && !isDiscovered(v.view) && v.view !== State.view ? '<span class="navsub-dot"></span>' : ''; return `<button class="navsubtab${v.view === State.view ? ' active' : ''}" data-view="${v.view}">${esc(v.label)}${nd}</button>`; }).join('')}</div>` : '';
+  const subs = (sec && sec.views.length > 1) ? `<div class="navsub">${sec.views.map((v) => { const nd = NEW_VIEWS.includes(v.view) && !isDiscovered(v.view) && v.view !== State.view ? '<span class="navsub-dot"></span>' : ''; return `<button class="navsubtab${v.view === State.view ? ' active' : ''}" data-view="${v.view}">${t(v.label)}${nd}</button>`; }).join('')}</div>` : '';
   nav.innerHTML = `<div class="navrow">${primary}${gear}</div>${subs}`;
 }
 const ACCENTS = ['#6c8cff', '#22c1a4', '#e0526a', '#b06ff0', '#e0a23e', '#4f9ff7']; // палитра акцентов (#тема)
@@ -4508,7 +4840,7 @@ function openRewardCatalog() {
     </div>`).join('');
   const ov = document.createElement('div'); ov.id = 'rw-catalog'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="guide-box"><button class="modal-x" data-action="close-reward-catalog">✕</button>
-    <h2>📚 Каталог наград</h2>
+    <h2>${t('📚 Каталог наград')}</h2>
     <p class="muted">Готовые награды с откалиброванными ценами — как дроп с босса. Добавь свои в форме на странице наград.</p>
     <div class="rwc-list">${rows}</div></div>`;
   document.body.appendChild(ov);
@@ -4656,6 +4988,7 @@ function onClick(e) {
     g.equipped.relic = (g.equipped.relic === uidv) ? null : uidv;
     Store.save('settings', State.settings); sfx('complete'); render(); return;
   }
+  if (action === 'set-lang') { State.settings.lang = el.dataset.lang; Store.save('settings', State.settings); render(); return; }
   if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'set-accent') { State.settings.accent = el.dataset.accent; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'toggle-system') {
@@ -4687,19 +5020,19 @@ function onClick(e) {
     const lb = ensureLootbox(), weights = {};
     edOv.querySelectorAll('.le-inp').forEach(inp => { const v = parseFloat(inp.value); if (!isNaN(v) && v >= 0) weights[inp.dataset.letype] = v; });
     lb.customWeights = weights; Store.save('lootbox', lb);
-    edOv.remove(); toast('✓ Дроп-рейты сохранены'); return;
+    edOv.remove(); toast(t('✓ Дроп-рейты сохранены')); return;
   }
   if (action === 'reset-loot-weights') {
     if (!confirm('Сбросить настройки дропа к значениям по умолчанию?')) return;
     const lb = ensureLootbox(); delete lb.customWeights; Store.save('lootbox', lb);
     const edOv = document.getElementById('loot-editor-ov'); if (edOv) edOv.remove();
-    toast('Дроп-рейты сброшены'); return;
+    toast(t('Дроп-рейты сброшены')); return;
   }
   if (action === 'use-voucher') { showVoucherReward(); return; }
   if (action === 'close-voucher') { const v = document.getElementById('voucher-ov'); if (v) v.remove(); return; }
   if (action === 'redeem-voucher') {
     const lb = ensureLootbox();
-    if (!lb.vouchers || lb.vouchers < 1) { toast('Нет ваучеров'); return; }
+    if (!lb.vouchers || lb.vouchers < 1) { toast(t('Нет ваучеров')); return; }
     const c = REWARD_CATALOG[Number(el.dataset.idx)]; if (!c) return;
     if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
     lb.vouchers--; Store.save('lootbox', lb);
@@ -4976,8 +5309,8 @@ function onClick(e) {
   } else if (action === 'close-cal-subscribe') { const m = document.getElementById('cal-sub-ov'); if (m) m.remove();
   } else if (action === 'copy-cal-url') {
     const url = el.dataset.url;
-    navigator.clipboard.writeText(url).then(() => toast('✓ Ссылка скопирована')).catch(() => {
-      const inp = document.getElementById('cal-sub-url'); if (inp) { inp.select(); document.execCommand('copy'); toast('✓ Скопировано'); }
+    navigator.clipboard.writeText(url).then(() => toast(t('✓ Ссылка скопирована'))).catch(() => {
+      const inp = document.getElementById('cal-sub-url'); if (inp) { inp.select(); document.execCommand('copy'); toast(t('✓ Скопировано')); }
     });
   } else if (action === 'export-ics') {
     const ics = buildICS();
@@ -4991,7 +5324,7 @@ function onClick(e) {
     const ws = State.weekStart; State.weeks[ws] = State.weeks[ws] || {};
     State.weeks[ws].intention = document.getElementById('week-intention').value;
     State.weeks[ws].review = document.getElementById('week-review').value;
-    Store.save('weeks', State.weeks); toast('Сохранено'); render();
+    Store.save('weeks', State.weeks); toast(t('Сохранено')); render();
 
   // --- Настройки ---
   } else if (action === 'add-skill') {
