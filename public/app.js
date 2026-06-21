@@ -764,6 +764,7 @@ const State = {
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
   goals: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
   lootbox: null, inbox: null, inboxOpen: false, antihabits: null, aiKeys: null,
+  strava: null, _stravaSyncing: false,
   chatLog: [], _chatBusy: false,
   leaderboard: null, _lbLoading: false, party: null, _partyLoading: false,
   adminUsers: null, _adminUsersLoading: false,
@@ -2386,6 +2387,85 @@ function aiKeysCard() {
       <div class="aikey-actions"><button type="submit" class="btn">Сохранить</button><span id="ai-keys-msg" class="muted"></span></div>
     </form>
     <p class="muted" style="font-size:11.5px;margin:8px 0 0">Ключ хранится только на сервере (в гит не попадает, наружу отдаётся лишь признак «✓ сохранён»). Стереть — очисти поле и сохрани. Можно держать несколько и переключаться.</p></div>`;
+}
+// ============================================================
+//  Strava — авто-импорт тренировок (OAuth2). Токены живут на сервере;
+//  клиент лишь дёргает connect/sync/disconnect и превращает активности в выполненные квесты.
+// ============================================================
+// Ленивая загрузка статуса (как ensureAiKeys): null → fetch → render.
+function ensureStravaStatus() {
+  if (State.strava === null) {
+    State.strava = {};
+    fetch('/api/strava/status').then((r) => r.json()).then((d) => { State.strava = d || {}; render(); }).catch(() => { State.strava = { error: true }; });
+  }
+}
+// Эвристика «сфера для тренировок»: спорт/здоровье/фитнес → иначе настроенная вручную → иначе первый лист.
+function guessFitnessSkill() {
+  const re = /спорт|здоров|фитнес|трениров|бег|тело|physical|workout|sport|health|fitness|gym|run|body/i;
+  const found = State.settings.skills.find((s) => re.test(s.name));
+  return (found || leafSkills()[0] || State.settings.skills[0] || {}).id;
+}
+function stravaSkillId() { return State.settings.stravaSkillId || guessFitnessSkill(); }
+// Сложность по длительности: длиннее = тяжелее (влияет на XP через itemXp).
+function stravaDifficulty(min) { return min >= 75 ? 'hard' : min >= 35 ? 'normal' : 'easy'; }
+function importedStravaIds() { return new Set((State.tasks || []).filter((t) => t.stravaId).map((t) => String(t.stravaId))); }
+// Превращает активности в ВЫПОЛНЕННЫЕ квесты (с датой тренировки), начисляя XP/золото. Дедуп по stravaId.
+function importStravaActivities(activities, skillId) {
+  const have = importedStravaIds();
+  let added = 0, xpTotal = 0;
+  for (const a of (activities || [])) {
+    if (!a || !a.stravaId || have.has(String(a.stravaId))) continue;
+    const start = a.startDate ? new Date(a.startDate) : new Date();
+    const date = fmtDate(start), diff = stravaDifficulty(a.minutes);
+    const taskObj = { id: uid(), title: a.title, skillId, skillIds: [skillId], estimateMin: a.minutes, difficulty: diff,
+      date, done: true, completedAt: start.toISOString(), xpAwarded: 0, goldAwarded: 0, actualMin: a.minutes, startTime: null,
+      createdAt: new Date().toISOString(), stravaId: String(a.stravaId), source: 'strava' };
+    taskObj.xpAwarded = Math.max(1, itemXp(taskObj));
+    taskObj.goldAwarded = itemGold(taskObj);
+    State.tasks.push(taskObj);
+    have.add(String(a.stravaId));
+    added++; xpTotal += taskObj.xpAwarded;
+  }
+  if (added) { Store.save('tasks', State.tasks); checkAchievements(); publishLeaderboard(); }
+  return { added, xpTotal };
+}
+function stravaCard() {
+  const s = State.strava || {};
+  if (!Object.keys(s).length) return `<div class="card"><h3>🏃 Strava</h3><p class="muted">Загрузка…</p></div>`;
+  if (!s.configured) {
+    return `<div class="card"><h3>🏃 Strava — авто-импорт тренировок</h3>
+      <p class="muted" style="font-size:12.5px;margin:0">Интеграция ещё не настроена на сервере. Нужно создать <a href="https://www.strava.com/settings/api" target="_blank" rel="noopener">Strava API-приложение</a> и добавить <code>STRAVA_CLIENT_ID</code> + <code>STRAVA_CLIENT_SECRET</code> в переменные Railway (Authorization Callback Domain = домен приложения).</p></div>`;
+  }
+  if (!s.connected) {
+    return `<div class="card"><h3>🏃 Strava — авто-импорт тренировок</h3>
+      <p class="muted" style="font-size:12.5px;margin:0 0 10px">Подключи Strava — твои пробежки, велозаезды и тренировки автоматически станут выполненными квестами с XP в выбранной сфере.</p>
+      <button class="btn" data-action="strava-connect">🔗 Подключить Strava</button></div>`;
+  }
+  const opts = leafSkills().map((sk) => `<option value="${sk.id}" ${stravaSkillId() === sk.id ? 'selected' : ''}>${esc(skillLabel(sk.id))}</option>`).join('');
+  const last = s.lastSync ? new Date(s.lastSync).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'ещё не было';
+  return `<div class="card"><h3>🏃 Strava</h3>
+    <p class="muted" style="font-size:12.5px;margin:0 0 10px">✓ Подключён: <b>${esc((s.athlete && s.athlete.name) || 'атлет')}</b> · последняя синхронизация: ${esc(last)}</p>
+    <label class="strava-skill">Сфера для тренировок
+      <select data-action="set-strava-skill">${opts}</select></label>
+    <div class="settings-actions" style="margin-top:10px">
+      <button class="btn ${State._stravaSyncing ? 'disabled' : ''}" data-action="strava-sync" ${State._stravaSyncing ? 'disabled' : ''}>${State._stravaSyncing ? '⏳ Синхронизирую…' : '🔄 Синхронизировать (30 дней)'}</button>
+      <button class="btn ghost danger-btn" data-action="strava-disconnect">Отключить</button>
+    </div>
+    <p class="muted" style="font-size:11.5px;margin:8px 0 0">Импорт безопасен: повторная синхронизация не задваивает тренировки (дедуп по Strava-ID). Токены хранятся только на сервере.</p></div>`;
+}
+async function stravaSync() {
+  if (State._stravaSyncing) return;
+  State._stravaSyncing = true; render();
+  try {
+    const r = await fetch('/api/strava/sync', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ days: 30 }) });
+    const d = await r.json();
+    if (!r.ok) { toast(d.error === 'not_connected' ? 'Strava не подключён' : 'Ошибка синхронизации Strava'); return; }
+    const res = importStravaActivities(d.activities || [], stravaSkillId());
+    if (State.strava) State.strava.lastSync = new Date().toISOString();
+    if (res.added) toast(`✓ Импортировано тренировок: ${res.added} · +${res.xpTotal} XP`);
+    else toast('Новых тренировок нет — всё уже импортировано');
+  } catch { toast('Ошибка сети при синхронизации'); }
+  finally { State._stravaSyncing = false; render(); }
 }
 // Компактная сводка недели для ИИ — реальные данные, не выдумка
 function buildWeekContext() {
@@ -4237,6 +4317,7 @@ function importCard() {
 }
 function renderSettings() {
   ensureAiKeys();
+  ensureStravaStatus();
   const s = State.settings;
   const f = s.focus || DEFAULT_SETTINGS.focus;
   const skillOpts = (sel) => skillOptionsHTML(sel);
@@ -4321,6 +4402,7 @@ function renderSettings() {
         <button type="submit">${t('+ Добавить')}</button></form>
       ${(State.antihabits || []).map((a) => `<div class="ah-edit"><span class="ah-name">${esc(a.title)}${a.approach ? ` · <span class="muted">${esc(a.approach)}</span>` : ''}</span><button class="del" data-action="delete-antihabit" data-id="${a.id}">✕</button></div>`).join('')}</div>
     ${aiKeysCard()}
+    ${stravaCard()}
     <div class="card"><h3>📦 Программы-данжи</h3><p class="muted" style="margin:0 0 12px">Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
     <div class="card"><h3>Формула опыта</h3><div class="knobs">
         <div class="knob"><label>XP за минуту</label><input id="k-perMinute" type="number" step="0.1" value="${s.xp.perMinute}" /></div>
@@ -4989,6 +5071,13 @@ function onClick(e) {
     Store.save('settings', State.settings); sfx('complete'); render(); return;
   }
   if (action === 'set-lang') { State.settings.lang = el.dataset.lang; Store.save('settings', State.settings); render(); return; }
+  if (action === 'strava-connect') { window.location.href = '/api/strava/connect'; return; }
+  if (action === 'strava-sync') { stravaSync(); return; }
+  if (action === 'strava-disconnect') {
+    if (!confirm('Отключить Strava? Уже импортированные тренировки останутся, новые синхронизироваться не будут.')) return;
+    fetch('/api/strava/disconnect', { method: 'POST' }).then(() => { State.strava = null; toast('Strava отключён'); render(); }).catch(() => toast('Ошибка'));
+    return;
+  }
   if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'set-accent') { State.settings.accent = el.dataset.accent; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'toggle-system') {
@@ -5562,6 +5651,15 @@ async function initApp() {
   checkAchievements(true);
   // Deep-link от ярлыков приложения (manifest shortcuts): ?view=goals → открыть вкладку
   try { const v = new URLSearchParams(location.search).get('view'); if (v && VIEWS[v]) State.view = v; } catch {}
+  // Возврат с OAuth Strava → открыть Настройки + тост, и почистить URL от ?strava=...
+  try {
+    const sp = new URLSearchParams(location.search), sv = sp.get('strava');
+    if (sv) {
+      State.view = 'settings'; State.strava = null; // перезагрузить статус
+      setTimeout(() => toast(sv === 'connected' ? '✓ Strava подключён — жми «Синхронизировать»' : 'Не удалось подключить Strava'), 400);
+      sp.delete('strava'); history.replaceState(null, '', location.pathname + (sp.toString() ? '?' + sp : '') + location.hash);
+    }
+  } catch {}
   State.phase = 'app';
   render();
   publishLeaderboard();
@@ -5621,6 +5719,7 @@ function onChange(e) {
   }
   if (a === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
   if (a === 'set-ai-pref') { State.settings.aiPref = el.value; Store.save('settings', State.settings); toast('🤖 ИИ по умолчанию: ' + aiProviderLabel(el.value)); return; }
+  if (a === 'set-strava-skill') { State.settings.stravaSkillId = el.value; Store.save('settings', State.settings); return; }
   if (a === 'habit-atomic') { const h = habitById(el.dataset.id); if (h) { h.atomic = h.atomic || {}; h.atomic[el.dataset.field] = el.value.slice(0, 200); Store.save('habits', State.habits); } return; }
   if (a === 'save-identity') { State.settings.identityGoal = el.value.slice(0, 200); Store.save('settings', State.settings); return; }
   if (a === 'toggle-cat') {

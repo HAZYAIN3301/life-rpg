@@ -543,6 +543,100 @@ async function createGithubIssue(entry) {
 }
 
 // ============================================================
+//  Strava integration (OAuth2) — авто-импорт тренировок в сферу здоровья/спорта.
+//  Токены per-user в data/users/<id>/strava.json (секрет, под гитигнором — как ai-keys).
+//  Session-cookie у нас SameSite=Strict → на редиректе-возврате со strava.com он НЕ
+//  передаётся. Поэтому личность юзера едет в подписанном коротко-живущем `state`.
+// ============================================================
+const STRAVA_CLIENT_ID = process.env.STRAVA_CLIENT_ID || '';
+const STRAVA_CLIENT_SECRET = process.env.STRAVA_CLIENT_SECRET || '';
+function stravaConfigured() { return !!(STRAVA_CLIENT_ID && STRAVA_CLIENT_SECRET); }
+function stravaFile(id) { return path.join(userDataDir(id), 'strava.json'); }
+function loadStrava(id) { try { return JSON.parse(fs.readFileSync(stravaFile(id), 'utf8')); } catch { return null; } }
+function saveStrava(id, obj) { try { fs.mkdirSync(userDataDir(id), { recursive: true }); fs.writeFileSync(stravaFile(id), JSON.stringify(obj)); return true; } catch { return false; } }
+function clearStrava(id) { try { fs.unlinkSync(stravaFile(id)); } catch {} }
+
+// Базовый URL для OAuth-redirect: явный env > заголовки прокси (Railway шлёт x-forwarded-*).
+function publicBaseUrl(req) {
+  if (process.env.PUBLIC_BASE_URL) return process.env.PUBLIC_BASE_URL.replace(/\/+$/, '');
+  const proto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim() || 'http';
+  const host = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim();
+  return `${proto}://${host}`;
+}
+// Коротко-живущий подписанный state (uid + срок). Namespace 'oauth' — чтобы его нельзя было
+// подсунуть как session-токен и наоборот. base64url для безопасной передачи в URL.
+function makeOauthState(uid) {
+  const payload = 'oauth.' + uid + '.' + (Date.now() + 15 * 60 * 1000);
+  const sig = crypto.createHmac('sha256', SECRET).update(payload).digest('hex');
+  return Buffer.from(payload + '.' + sig).toString('base64url');
+}
+function verifyOauthState(token) {
+  let raw; try { raw = Buffer.from(String(token || ''), 'base64url').toString('utf8'); } catch { return null; }
+  const parts = raw.split('.');
+  if (parts.length !== 4 || parts[0] !== 'oauth') return null;
+  const [, uid, exp, sig] = parts;
+  const want = crypto.createHmac('sha256', SECRET).update(`oauth.${uid}.${exp}`).digest('hex');
+  if (sig.length !== want.length) return null;
+  try { if (!crypto.timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(want, 'hex'))) return null; } catch { return null; }
+  if (Date.now() > Number(exp)) return null;
+  return uid;
+}
+// POST x-www-form-urlencoded к Strava /oauth/token (обмен кода / рефреш). → { status, json }
+function stravaTokenRequest(params) {
+  return new Promise((resolve) => {
+    const body = Buffer.from(new URLSearchParams(params).toString());
+    const r = https.request({ host: 'www.strava.com', path: '/oauth/token', method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': body.length } }, (resp) => {
+      let d = ''; resp.on('data', (c) => d += c); resp.on('end', () => { let j = {}; try { j = JSON.parse(d || '{}'); } catch {} resolve({ status: resp.statusCode, json: j }); });
+    });
+    r.on('error', (e) => resolve({ status: 0, json: { error: String(e.message || e) } }));
+    r.write(body); r.end();
+  });
+}
+// GET к Strava API с bearer-токеном. → { status, json }
+function stravaApiGet(pathName, token) {
+  return new Promise((resolve) => {
+    const r = https.request({ host: 'www.strava.com', path: pathName, method: 'GET', headers: { 'Authorization': 'Bearer ' + token } }, (resp) => {
+      let d = ''; resp.on('data', (c) => d += c); resp.on('end', () => { let j = null; try { j = JSON.parse(d || 'null'); } catch {} resolve({ status: resp.statusCode, json: j }); });
+    });
+    r.on('error', (e) => resolve({ status: 0, json: { error: String(e.message || e) } }));
+    r.end();
+  });
+}
+// Best-effort отзыв доступа (при «Отключить»).
+function stravaDeauthorize(token) {
+  return new Promise((resolve) => {
+    const r = https.request({ host: 'www.strava.com', path: '/oauth/deauthorize', method: 'POST', headers: { 'Authorization': 'Bearer ' + token, 'Content-Length': 0 } }, (resp) => { resp.resume(); resp.on('end', resolve); });
+    r.on('error', () => resolve()); r.end();
+  });
+}
+// Гарантирует свежий access-токен (рефреш, если истекает в ближайшие 5 мин). Мутирует+пишет strava.json.
+async function stravaFreshToken(uid, st) {
+  if (!st || !st.refreshToken) return null;
+  const now = Math.floor(Date.now() / 1000);
+  if (st.accessToken && st.expiresAt && st.expiresAt - now > 300) return st.accessToken;
+  const r = await stravaTokenRequest({ client_id: STRAVA_CLIENT_ID, client_secret: STRAVA_CLIENT_SECRET, grant_type: 'refresh_token', refresh_token: st.refreshToken });
+  if (r.status !== 200 || !r.json.access_token) return null;
+  st.accessToken = r.json.access_token;
+  st.refreshToken = r.json.refresh_token || st.refreshToken;
+  st.expiresAt = r.json.expires_at;
+  saveStrava(uid, st);
+  return st.accessToken;
+}
+// Эмодзи по виду активности (sport_type приоритетнее устаревшего type).
+const STRAVA_TYPE_EMOJI = { Run: '🏃', TrailRun: '🏃', Ride: '🚴', VirtualRide: '🚴', MountainBikeRide: '🚵', Swim: '🏊', Walk: '🚶', Hike: '🥾', WeightTraining: '🏋️', Workout: '💪', Yoga: '🧘', Crossfit: '🏋️', Rowing: '🚣', Elliptical: '🌀', StairStepper: '🪜', AlpineSki: '⛷️', BackcountrySki: '🎿', NordicSki: '🎿', Snowboard: '🏂', IceSkate: '⛸️', Soccer: '⚽', Tennis: '🎾', Golf: '⛳', Badminton: '🏸', Pickleball: '🥒', TableTennis: '🏓', Pilates: '🧘', Skateboard: '🛹', Surfing: '🏄', Kayaking: '🛶', Velomobile: '🚴', Handcycle: '🦽', Wheelchair: '🦽' };
+// Strava-активность → лёгкий объект импорта. Клиент превращает его в выполненный квест + XP.
+function mapStravaActivity(a) {
+  const sport = a.sport_type || a.type || 'Workout';
+  const emoji = STRAVA_TYPE_EMOJI[sport] || STRAVA_TYPE_EMOJI[a.type] || '🏅';
+  const min = Math.max(1, Math.round((a.moving_time || a.elapsed_time || 0) / 60));
+  const km = a.distance ? Math.round(a.distance / 100) / 10 : 0;
+  let title = `${emoji} ${a.name || sport}`;
+  if (km >= 0.1) title += ` · ${km} км`;
+  return { stravaId: String(a.id), title, sport, minutes: min, distanceKm: km, startDate: a.start_date_local || a.start_date || null };
+}
+
+// ============================================================
 //  HTTP server
 // ============================================================
 const server = http.createServer(async (req, res) => {
@@ -1038,6 +1132,71 @@ const server = http.createServer(async (req, res) => {
       if (!r.ok) return sendJson(res, 502, { error: 'provider', status: r.status, detail: r.detail });
       return sendJson(res, 200, { text: r.text });
     } catch (e) { return sendJson(res, 502, { error: String(e.message || e) }); }
+  }
+
+  // ---- Strava (OAuth2 — авто-импорт тренировок) ----
+  if (u.startsWith('/api/strava/')) {
+    const path0 = u.split('?')[0];
+    // status — настроен ли сервер, подключён ли юзер, имя атлета, время последней синхр.
+    if (path0 === '/api/strava/status' && req.method === 'GET') {
+      const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      const st = loadStrava(uid);
+      return sendJson(res, 200, { configured: stravaConfigured(), connected: !!(st && st.refreshToken),
+        athlete: st ? { id: st.athleteId, name: st.athleteName } : null, lastSync: (st && st.lastSync) || null });
+    }
+    // connect — 302 на страницу авторизации Strava. Личность — в подписанном state (cookie не выживет редирект).
+    if (path0 === '/api/strava/connect' && req.method === 'GET') {
+      const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      if (!stravaConfigured()) return sendJson(res, 503, { error: 'strava_not_configured' });
+      const redirectUri = publicBaseUrl(req) + '/api/strava/callback';
+      const auth = 'https://www.strava.com/oauth/authorize?' + new URLSearchParams({
+        client_id: STRAVA_CLIENT_ID, redirect_uri: redirectUri, response_type: 'code',
+        approval_prompt: 'auto', scope: 'activity:read_all', state: makeOauthState(uid),
+      }).toString();
+      res.writeHead(302, { Location: auth, 'Cache-Control': 'no-store' }); return res.end();
+    }
+    // callback — обмен кода на токены, сохранение, возврат в Настройки
+    if (path0 === '/api/strava/callback' && req.method === 'GET') {
+      const q = new URL(u, 'http://x').searchParams;
+      const back = (ok) => { res.writeHead(302, { Location: '/?strava=' + (ok ? 'connected' : 'error'), 'Cache-Control': 'no-store' }); res.end(); };
+      const uid = verifyOauthState(q.get('state'));
+      if (!uid || q.get('error') || !q.get('code') || !stravaConfigured()) return back(false);
+      const r = await stravaTokenRequest({ client_id: STRAVA_CLIENT_ID, client_secret: STRAVA_CLIENT_SECRET, code: q.get('code'), grant_type: 'authorization_code' });
+      if (r.status !== 200 || !r.json.access_token) return back(false);
+      const ath = r.json.athlete || {};
+      saveStrava(uid, {
+        athleteId: ath.id || null,
+        athleteName: [ath.firstname, ath.lastname].filter(Boolean).join(' ') || ath.username || 'Strava',
+        accessToken: r.json.access_token, refreshToken: r.json.refresh_token, expiresAt: r.json.expires_at,
+        scope: q.get('scope') || 'activity:read_all', connectedAt: new Date().toISOString(), lastSync: null,
+      });
+      return back(true);
+    }
+    // sync — тянем недавние активности → отдаём клиенту (он создаёт выполненные квесты + XP, дедуп по stravaId)
+    if (path0 === '/api/strava/sync' && req.method === 'POST') {
+      const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      const st = loadStrava(uid); if (!st || !st.refreshToken) return sendJson(res, 400, { error: 'not_connected' });
+      let b = {}; try { b = JSON.parse(await readBody(req)); } catch {}
+      const token = await stravaFreshToken(uid, st);
+      if (!token) return sendJson(res, 502, { error: 'token_refresh_failed' });
+      const days = Math.min(365, Math.max(1, Number(b.days) || 30));
+      const after = Number(b.after) > 0 ? Math.floor(Number(b.after)) : Math.floor(Date.now() / 1000) - days * 86400;
+      const r = await stravaApiGet(`/api/v3/athlete/activities?after=${after}&per_page=100`, token);
+      if (r.status === 401) return sendJson(res, 401, { error: 'unauthorized' });
+      if (r.status !== 200 || !Array.isArray(r.json)) return sendJson(res, 502, { error: 'fetch_failed', status: r.status });
+      const activities = r.json.map(mapStravaActivity);
+      st.lastSync = new Date().toISOString(); saveStrava(uid, st);
+      return sendJson(res, 200, { ok: true, athlete: { id: st.athleteId, name: st.athleteName }, activities });
+    }
+    // disconnect — best-effort отзыв + удаление токенов
+    if (path0 === '/api/strava/disconnect' && req.method === 'POST') {
+      const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      const st = loadStrava(uid);
+      if (st && st.accessToken) { try { await stravaDeauthorize(st.accessToken); } catch {} }
+      clearStrava(uid);
+      return sendJson(res, 200, { ok: true });
+    }
+    return sendJson(res, 404, { error: 'not found' });
   }
 
   // ---- Лидерборд (соцфича) ----

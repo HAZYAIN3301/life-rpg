@@ -2,6 +2,44 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-06-21] Strava — OAuth2-интеграция авто-импорта тренировок
+
+Построено и **протестировано** (бэкенд — live-curl + крипто-юнит-тест; клиент — превью, DOM-проверки обоих состояний + импорт-дедуп). Модель: Opus 4.8. **Требует действия Альберта:** зарегистрировать Strava API-app и положить креды в Railway (см. ниже).
+
+### Сервер (`server.js`)
+- **Креды:** `STRAVA_CLIENT_ID` / `STRAVA_CLIENT_SECRET` из env. `stravaConfigured()` = оба заданы.
+- **Хранение токенов:** `data/users/<id>/strava.json` (секрет, под гитигнором — как `ai-keys.json`). Поля: `athleteId, athleteName, accessToken, refreshToken, expiresAt, scope, connectedAt, lastSync`. Хелперы `loadStrava/saveStrava/clearStrava`.
+- **Ключевой нюанс — SameSite=Strict:** session-cookie НЕ передаётся на редиректе-возврате со strava.com (cross-site top-level navigation). Поэтому личность юзера едет в подписанном коротко-живущем `state`: `makeOauthState(uid)` = base64url(`oauth.<uid>.<exp+15мин>.<hmac>`), `verifyOauthState` проверяет namespace `oauth` (session-токен нельзя подсунуть как state), подпись (timingSafeEqual) и срок.
+- **`publicBaseUrl(req)`** — redirect_uri: `PUBLIC_BASE_URL` env > заголовки прокси (`x-forwarded-proto`/`-host`, Railway их шлёт).
+- **Эндпоинты** (`/api/strava/*`):
+  - `GET /status` — `{ configured, connected, athlete, lastSync }` (session).
+  - `GET /connect` — 302 → `strava.com/oauth/authorize` (scope `activity:read_all`, state). 503 если не настроен.
+  - `GET /callback?code&state` — verify state → обмен кода (`stravaTokenRequest`) → сохранение → 302 `/?strava=connected|error`.
+  - `POST /sync` — `stravaFreshToken` (рефреш если истекает <5мин) → `GET /api/v3/athlete/activities?after=<days>` → `mapStravaActivity` → отдаёт клиенту. `lastSync` обновляется.
+  - `POST /disconnect` — best-effort `stravaDeauthorize` + удаление токенов.
+- **`mapStravaActivity`** — эмодзи по `sport_type`, мин из `moving_time`, км из `distance`, title «🏃 Имя · 5.2 км».
+
+### Клиент (`app.js`)
+- **Архитектурный выбор:** сервер владеет только OAuth-токенами; XP/квесты создаёт КЛИЕНТ (как везде — клиент владеет data-файлами). `/sync` отдаёт активности, клиент превращает их в выполненные квесты.
+- `ensureStravaStatus()` — ленивая загрузка `/status` (как `ensureAiKeys`).
+- `stravaCard()` — 3 состояния: не настроено (хинт про Railway-env) / не подключено (кнопка «🔗 Подключить») / подключено (имя атлета, last-sync, пикер сферы, «🔄 Синхронизировать», «Отключить»).
+- `guessFitnessSkill()` — эвристика спорт/здоровье/фитнес; `State.settings.stravaSkillId` переопределяет.
+- `importStravaActivities(activities, skillId)` — создаёт квесты `done:true` с датой тренировки, XP через `itemXp` (сложность по длительности: <35мин easy, <75 normal, иначе hard), золото через `itemGold`. **Дедуп по `stravaId`** (поле на задаче) — повторная синхронизация не задваивает.
+- `stravaSync()` — POST `/sync` → импорт → тост «+N тренировок · +XP».
+- Обработчики: `strava-connect` (navigate), `strava-sync`, `strava-disconnect` (confirm) в `onClick`; `set-strava-skill` в `onChange`.
+- `initApp` ловит `?strava=connected|error` → открывает Настройки + тост + чистит URL (`history.replaceState`).
+- CSS: `.strava-skill`, `.card code` в `styles.css`.
+
+### Что осталось (нужны креды Альберта)
+1. Создать app на https://www.strava.com/settings/api (Authorization Callback Domain = `life-rpg-production-416a.up.railway.app`).
+2. В Railway добавить `STRAVA_CLIENT_ID` + `STRAVA_CLIENT_SECRET` (+ опц. `PUBLIC_BASE_URL`).
+3. Деплой → Настройки → «Подключить Strava» → авторизация → «Синхронизировать».
+Реальный обмен токенов + fetch активностей не тестировался локально (нет кред) — это единственная непокрытая часть.
+
+## [2026-06-21] i18n — полный перевод UI на English + Deutsch
+
+Построено и закоммичено (Sonnet-батч + добивка на Opus). Подход **string-as-key**: русская строка = ключ; `t(k)` для `ru` возвращает `k`, для `en`/`de` ищет в `I18N_EN`/`I18N_DE`, фолбэк = `k`. `lang()` читает `State.settings.lang`. Переключатель 🇷🇺/🇬🇧/🇩🇪 в Настройках (`set-lang`). Обёрнуты: навигация, авторизация, онбординг, Настройки, Сегодня, Цели, Привычки, Награды, Статистика, Неделя, Пати, эмбиент, модалки (лут-редактор, ваучер, календарь-подписка, wrapped), тосты. ~145 ключей в каждом словаре.
+
 ## [2026-06-21] batch-2: каталог наград, лут-редактор, wrapped, эмбиент, Apple Calendar
 
 Построено и **протестировано в превью**. Модель: Sonnet 4.6.

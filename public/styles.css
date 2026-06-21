@@ -1306,6 +1306,10 @@ html[data-system="on"] .task, html[data-system="on"] .gear-item, html[data-syste
 .aikey-pref { font-size: 13px; }
 .aikey-pref select { margin-left: 6px; }
 .aikey-actions { display: flex; align-items: center; gap: 10px; }
+/* Strava: пикер сферы для импорта тренировок */
+.strava-skill { display: flex; flex-direction: column; gap: 5px; font-size: 13px; color: var(--muted); max-width: 320px; }
+.strava-skill select { padding: 7px 10px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--panel2); color: var(--fg); font-size: 14px; }
+.strava-skill code, .card code { background: var(--panel2); border: 1px solid var(--line); border-radius: 5px; padding: 1px 5px; font-size: 12px; }
 /* Авто-категория: чип-подсказка под полем квеста */
 .cat-suggest:empty { display: none; }
 .cat-suggest { margin: 8px 0 0; }
