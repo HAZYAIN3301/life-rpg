@@ -528,10 +528,13 @@ function completeTask(t, desire) {
   Store.save('tasks', State.tasks);
   const lvlNow = charLevel();
   if (lvlNow > lvlBefore) {
-    sfx('levelup'); // #23 звук: левелап важнее завершения
-    announce('УРОВЕНЬ ПОВЫШЕН', `${lvlBefore} → ${lvlNow} · предел сдвинут`, `⬆️ Уровень ${lvlNow} — новый предел!`);
     const rb = rankFor(lvlBefore), ra = rankFor(lvlNow);
-    if (ra.name !== rb.name) announce('НОВЫЙ РАНГ ПРИСВОЕН', `${ra.icon} ${ra.name} · ты становишься сильнее`, `${ra.icon} Новый ранг: ${ra.name}!`);
+    sfx('levelup');
+    showLevelUpEpic(lvlBefore, lvlNow, rb, ra);
+    if (systemMode()) {
+      systemNarrate('УРОВЕНЬ ПОВЫШЕН', `${lvlBefore} → ${lvlNow} · предел сдвинут`);
+      if (ra.name !== rb.name) systemNarrate('НОВЫЙ РАНГ ПРИСВОЕН', `${ra.icon} ${ra.name} · ты становишься сильнее`);
+    }
   } else sfx('complete');
   checkAchievements(); render(); publishLeaderboard();
 }
@@ -3062,7 +3065,33 @@ function securityCard() {
       <input name="newPin" type="password" inputmode="numeric" placeholder="Новый PIN (4+)" maxlength="8" required />
       <button type="submit" class="btn">Сменить</button><span id="pin-change-msg" class="muted"></span></form>`
     : '';
-  return `<div class="card"><h3>🔑 Вход и восстановление</h3>${emailBlock}${pinBlock}</div>`;
+  return `<div class="card"><h3>🔑 Вход и восстановление</h3>${emailBlock}${pinBlock}
+    <div class="danger-zone">
+      <h3>⚠️ Данные и приватность</h3>
+      <p class="muted" style="font-size:12.5px;margin:0 0 8px">Мы храним только то, что ты вводишь сам: цели, квесты, дневник, привычки. Удаление аккаунта удаляет всё с сервера (DSGVO/GDPR).</p>
+      <button class="btn ghost danger-btn" data-action="show-delete-account">Удалить аккаунт и все данные</button>
+    </div>
+  </div>`;
+}
+function showDeleteAccountModal() {
+  if (document.getElementById('del-account-modal')) return;
+  const hasEmail = State.me && State.me.email;
+  const confirmField = hasEmail
+    ? `<label class="auth-label">Подтверди паролем<input name="password" type="password" autocomplete="current-password" placeholder="Текущий пароль" required /></label>`
+    : `<label class="auth-label">Подтверди PIN<input name="pin" type="password" inputmode="numeric" placeholder="Текущий PIN" maxlength="8" required /></label>`;
+  const ov = document.createElement('div'); ov.id = 'del-account-modal'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="paywall-box">
+    <button class="modal-x" data-action="close-del-account">✕</button>
+    <div style="font-size:36px;margin-bottom:8px">⚠️</div>
+    <h2 style="color:var(--bad);margin:0 0 10px">Удалить аккаунт</h2>
+    <p class="muted" style="margin:0 0 16px;font-size:13.5px">Это <b>необратимо</b>. Все твои данные — цели, квесты, дневник, привычки, достижения, питомцы — исчезнут навсегда с наших серверов.</p>
+    <form id="del-account-form" style="display:flex;flex-direction:column;gap:10px">
+      ${confirmField}
+      <button type="submit" class="btn" style="background:var(--bad);border-color:var(--bad);margin-top:4px">Да, удалить навсегда</button>
+      <span id="del-account-msg" class="muted" style="text-align:center;font-size:13px"></span>
+    </form>
+  </div>`;
+  document.body.appendChild(ov);
 }
 function adminCard() {
   if (!State.me || !State.me.isAdmin) return '';
@@ -3563,17 +3592,27 @@ function importCard() {
     const ladder = ladderFor(sk.name), levels = tierLevels(ladder);
     const curTier = (im[sk.id] && im[sk.id].tier) || 0;
     const opts = ladder.tiers.map((t, i) => `<option value="${i}" ${i === curTier ? 'selected' : ''}>${i === 0 ? '— с нуля' : esc(t) + ' · ур.' + levels[i]}</option>`).join('');
+    const startRank = curTier > 0 ? rankFor(levels[curTier]) : null;
+    const rankBadge = startRank ? `<span class="imp-rank" style="color:${esc(startRank.color)}">${esc(startRank.icon)} ${esc(startRank.name)}</span>` : '';
     return `<div class="import-row ${sub ? 'sub' : ''}">
-      <span class="imp-dot" style="background:${esc(sk.color)}"></span>
-      <span class="imp-name">${sub ? '↳ ' : ''}${esc(sk.name)}</span>
-      <select data-action="set-import" data-skill="${esc(sk.id)}" title="${esc(ladder.hint)}">${opts}</select>
-      <span class="imp-lvl ${curTier > 0 ? '' : 'muted'}">${curTier > 0 ? 'ур.' + levels[curTier] : '—'}</span>
+      <div class="imp-left">
+        <span class="imp-dot" style="background:${esc(sk.color)}"></span>
+        <div class="imp-meta">
+          <span class="imp-name">${sub ? '↳ ' : ''}${esc(sk.name)}</span>
+          <span class="imp-hint">${esc(ladder.hint)}</span>
+        </div>
+      </div>
+      <div class="imp-right">
+        <select data-action="set-import" data-skill="${esc(sk.id)}">${opts}</select>
+        ${curTier > 0 ? `<span class="imp-lvl">ур.${levels[curTier]} ${rankBadge}</span>` : '<span class="imp-lvl muted">—</span>'}
+      </div>
     </div>`;
   };
   const rows = topSkills().map((sk) => row(sk, false) + childSkills(sk.id).map((c) => row(c, true)).join('')).join('');
   return `<div class="card" id="import-card">
-    <div class="imp-head"><h3>🎖 Импорт достижений</h3><button class="btn ghost sm" data-action="ai-import-levels" title="ИИ оценит уровни по твоему описанию">🤖 Оценить через ИИ</button></div>
-    <p class="muted" style="margin:0 0 12px">Ты не начинаешь с нуля. Отметь честно свой реальный уровень в каждой сфере — стартовый опыт начислится. Это «доказанное мастерство», оно не сгорает. Менять можно в любой момент. Лестницы не подходят (школа, готовка, творчество)? Жми <b>«Оценить через ИИ»</b> — опиши словами, ИИ предложит уровень.</p>
+    <div class="imp-head"><h3>🎖 Стартовый уровень</h3><button class="btn ghost sm" data-action="ai-import-levels" title="ИИ оценит уровни по твоему описанию">🤖 Оценить через ИИ</button></div>
+    <p class="muted" style="margin:0 0 4px">Ты не начинаешь с нуля. Отметь <b>честно</b> где ты сейчас — стартовый опыт начислится и <b>не сгорит</b> (как чёрный пояс).</p>
+    <p class="muted" style="margin:0 0 12px;font-size:12.5px">Под каждой сферой — подсказка, как оценивать. Нет подходящей ступени? → <b>Оценить через ИИ</b>.</p>
     <div class="import-list">${rows}</div>
   </div>`;
 }
@@ -3995,6 +4034,31 @@ function onSubmit(e) {
     return;
   }
 
+  // --- Удаление аккаунта ---
+  if (f.id === 'del-account-form') {
+    e.preventDefault();
+    const msg = f.querySelector('#del-account-msg');
+    const btn = f.querySelector('button[type="submit"]');
+    msg.textContent = 'Удаляю…'; msg.style.color = 'var(--muted)';
+    btn.disabled = true;
+    const body = {};
+    if (f.password) body.password = f.password.value;
+    if (f.pin) body.pin = f.pin.value;
+    fetch('/api/auth/delete-account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      .then(async (r) => {
+        const d = await r.json();
+        if (r.ok) {
+          document.getElementById('del-account-modal')?.remove();
+          State.me = null; State.phase = 'login'; stopFocus(false); clearAllData();
+          fetch('/api/auth/profiles').then(r2 => r2.json()).then(p => { State.profiles = p; render(); }).catch(() => { State.profiles = []; render(); });
+        } else {
+          msg.textContent = d.error || 'Ошибка'; msg.style.color = 'var(--bad)'; btn.disabled = false;
+        }
+      })
+      .catch(() => { msg.textContent = 'Ошибка сети'; msg.style.color = 'var(--bad)'; btn.disabled = false; });
+    return;
+  }
+
   // --- Смена PIN ---
   if (f.id === 'change-pin') {
     e.preventDefault();
@@ -4307,6 +4371,8 @@ function onClick(e) {
   if (action === 'sound-test') { ['complete', 'coin', 'achievement'].forEach((n, i) => setTimeout(() => sfx(n), i * 420)); setTimeout(() => sfx('loot', 'legendary'), 1300); return; }
   if (action === 'show-paywall') { showPaywall(el.dataset.feature); return; }
   if (action === 'close-paywall') { const p = document.getElementById('paywall'); if (p) p.remove(); return; }
+  if (action === 'show-delete-account') { showDeleteAccountModal(); return; }
+  if (action === 'close-del-account') { const m = document.getElementById('del-account-modal'); if (m) m.remove(); return; }
   if (action === 'show-guide') { showGuide(); return; }
   if (action === 'close-guide') { const g = document.getElementById('guide'); if (g) g.remove(); return; }
   if (action === 'show-reports') { showReports(); return; }
@@ -4720,6 +4786,38 @@ function systemNarrate(title, body) {
 }
 // Унифицированное объявление: в режиме «Система» — драматичная панель; иначе обычный тост.
 function announce(title, body, toastMsg) { if (systemMode()) systemNarrate(title, body); else if (toastMsg) toast(toastMsg); }
+
+function showLevelUpEpic(lvlBefore, lvlNow, rb, ra) {
+  document.getElementById('lvlup-overlay')?.remove();
+  const rankChanged = ra && rb && ra.name !== rb.name;
+  const rankLine = rankChanged ? `<div class="lvlup-rank">${esc(ra.icon)} ${esc(ra.name)}</div>` : '';
+  const COLORS = ['var(--accent)', 'var(--warn)', 'var(--good)', '#fff', '#f8a', '#8ef'];
+  const particles = Array.from({ length: 48 }, (_, i) => {
+    const angle = (i / 48) * 360 + (Math.random() - 0.5) * 15;
+    const dist = 90 + Math.random() * 220;
+    const tx = Math.round(Math.cos(angle * Math.PI / 180) * dist);
+    const ty = Math.round(Math.sin(angle * Math.PI / 180) * dist);
+    const dur = (0.7 + Math.random() * 0.9).toFixed(2);
+    const delay = (Math.random() * 0.35).toFixed(2);
+    const sz = Math.round(4 + Math.random() * 7);
+    const col = COLORS[i % COLORS.length];
+    const br = Math.random() > 0.4 ? '50%' : '2px';
+    return `<span class="lvlup-p" style="--tx:${tx}px;--ty:${ty}px;--dur:${dur}s;--delay:${delay}s;width:${sz}px;height:${sz}px;background:${col};border-radius:${br}"></span>`;
+  }).join('');
+  const ov = document.createElement('div');
+  ov.id = 'lvlup-overlay'; ov.className = 'lvlup-overlay';
+  ov.innerHTML = `<div class="lvlup-particles">${particles}</div>
+    <div class="lvlup-box">
+      <div class="lvlup-title">УРОВЕНЬ ПОВЫШЕН</div>
+      <div class="lvlup-num">${lvlNow}</div>
+      <div class="lvlup-prev">с ${lvlBefore}</div>
+      ${rankLine}
+      <div class="lvlup-tap">нажми, чтобы продолжить</div>
+    </div>`;
+  ov.addEventListener('click', () => { ov.style.opacity = '0'; ov.style.transition = 'opacity .2s'; setTimeout(() => ov.remove(), 220); });
+  document.body.appendChild(ov);
+  setTimeout(() => { if (document.getElementById('lvlup-overlay') === ov) { ov.style.opacity = '0'; ov.style.transition = 'opacity .3s'; setTimeout(() => ov.remove(), 320); } }, 3800);
+}
 
 // ============================================================
 //  Старт

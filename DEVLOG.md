@@ -1047,3 +1047,27 @@ Solo-Leveling-вайб под бренд Satoru/«?». Опционально (�
 - ⚠️ Деплой безопасен: Railway-том (`/app/data`) подтверждён → данные не теряются.
 - Privacy-нота на регистрации (DSGVO-лайт: что хранится/где/удаление).
 - Файлы: `server.js` (auth), `public/app.js` (экраны+хендлеры+securityCard), `public/styles.css` (`.auth-*`/`.recovery-*`).
+
+## [2026-06-21] Онбординг-ясность + Privacy/удаление + Эпик-левелап
+
+### 1. 🎖 Стартовый уровень — онбординг-ясность калибровки (`app.js`, `styles.css`)
+Фидбек Виолы (fb_mqci0hx2261c): «как считать уровень сферы» — не ясно какую ступень выбрать для «Творчество», «Jugend forscht» и других нетипичных сфер.
+- **Хинт под каждой сферой** — `ladder.hint` теперь виден как `<span class="imp-hint">` (ранее только в `title`-атрибуте). Для Учёбы: «ступень образования», для Бега: «дистанция + темп», для всего прочего: «честная самооценка — сравни с тем, кем был год назад».
+- **Ранг-бейдж при выборе** — при тире > 0 показывает `rankFor(levels[curTier])`: иконка + название (напр. «⚜️ Эксперт» при ур.15). Делает уровень осязаемым.
+- **Реструктур строки** — `.imp-left` (цвет-точка + мета-колонка) + `.imp-right` (select + бейдж). Мобайл: обе части складываются в ряд.
+- Заголовок карточки → «🎖 Стартовый уровень» (яснее чем «Импорт достижений»), описание стало двухстрочным.
+- **Проверено:** 6 рядов с хинтами, Учёба tier 3 → «ур.15 ⚜️ Эксперт», reset → «—».
+
+### 2. 🗑 Удаление аккаунта и данных — DSGVO/GDPR (`server.js`, `app.js`, `styles.css`)
+- **Сервер:** `POST /api/auth/delete-account` — верифицирует PIN (для PIN-аккаунтов) или пароль (для email-аккаунтов) → `fs.rmSync(userDataDir, {recursive:true})` → `saveUsers(filter)` → очищает cookie. Без верификации = 401. Неверный PIN/пароль = 401.
+- **UI:** `dangerCard` внизу `securityCard()` (красная граница-разделитель, заголовок «⚠️ Данные и приватность», DSGVO-нота, кнопка «Удалить аккаунт и все данные»). Клик → `showDeleteAccountModal()` — модалка с подтверждением паролем/PIN, кнопка красная «Да, удалить навсегда». После успеха — logout + экран входа.
+- **Проверено:** curl register→delete(wrongPIN)→401, delete(correctPIN)→ok, `data/users/testdel/` удалена, `users.json` чист.
+- Файлы: `server.js` (`/api/auth/delete-account`), `app.js` (`showDeleteAccountModal` + `securityCard` + `del-account-form` onSubmit + `show/close-del-account` onClick), `styles.css` (`.danger-zone/.danger-btn`).
+
+### 3. ⬆️ Эпик-левелап-анимация (`app.js`, `styles.css`)
+До: левелап = только `sfx('levelup')` + тост (или System-нарратор). Теперь:
+- `showLevelUpEpic(lvlBefore, lvlNow, rb, ra)` — полноэкранный оверлей (`z-index:10000`, rgba-фон): 48 CSS-частиц (разные цвета/размеры/углы/задержки через custom props `--tx/--ty/--dur/--delay`), большая цифра уровня с glow-анимацией (`lvlupGlow`), «с N», ранг-бейдж (`.lvlup-rank`, желтый, только при смене ранга), «нажми чтобы продолжить». Авто-дисмисс через 3.8с + клик-дисмисс.
+- `completeTask` теперь: `sfx('levelup')` → `showLevelUpEpic(...)` → System-Mode нарратор (если вкл). Тост убран (анимация заменяет).
+- System Mode: `.lvlup-num` и `.lvlup-title` становятся цианом через `html[data-system="on"]`.
+- **Проверено:** левелап 4→5 (анимация + частицы + «с 4»), 9→10 (ранг-бейдж ⚜️ Адепт), авто-дисмисс, клик-дисмисс, ноль ошибок в консоли.
+- Файлы: `app.js` (`showLevelUpEpic` + изменён `completeTask`), `styles.css` (`.lvlup-*`, `@keyframes lvlupParticle/lvlupPop/lvlupGlow/lvlupFadeSlide`).

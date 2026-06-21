@@ -741,6 +741,31 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { ok: false, comingSoon: true, message: 'Оплата скоро будет доступна. Пока активируй 7-дневный триал, а для постоянного Pro попроси админа.' });
     }
 
+    // POST /api/auth/delete-account — удалить аккаунт и все данные (DSGVO/GDPR)
+    if (u === '/api/auth/delete-account' && req.method === 'POST') {
+      const uid = sessionUserId(req);
+      if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      const { password, pin } = body;
+      const users = loadUsers();
+      const user = users.find(x => x.id === uid);
+      if (!user) return sendJson(res, 401, { error: 'пользователь не найден' });
+      // Verify identity before deleting
+      if (user.pwHash) {
+        if (!password) return sendJson(res, 400, { error: 'нужен пароль для подтверждения' });
+        if (!verifyPw(password, user.pwSalt, user.pwHash)) return sendJson(res, 401, { error: 'неверный пароль' });
+      } else if (user.pinHash) {
+        if (!pin) return sendJson(res, 400, { error: 'нужен PIN для подтверждения' });
+        if (user.pinHash !== hashPin(uid, String(pin))) return sendJson(res, 401, { error: 'неверный PIN' });
+      }
+      // Delete all user data files
+      try { fs.rmSync(userDataDir(uid), { recursive: true, force: true }); } catch {}
+      // Remove from users registry
+      saveUsers(users.filter(x => x.id !== uid));
+      // Clear session cookie
+      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': clearCookieHeader(), 'Cache-Control': 'no-store' });
+      return res.end(JSON.stringify({ ok: true }));
+    }
+
     return sendJson(res, 404, { error: 'not found' });
   }
 
