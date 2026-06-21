@@ -766,7 +766,83 @@ const server = http.createServer(async (req, res) => {
       return res.end(JSON.stringify({ ok: true }));
     }
 
+    // POST /api/auth/cal-secret — создать/получить секрет для ICS-фида
+    if (u === '/api/auth/cal-secret' && req.method === 'POST') {
+      const uid = sessionUserId(req);
+      if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      const users = loadUsers();
+      const user = users.find(x => x.id === uid);
+      if (!user) return sendJson(res, 401, { error: 'not found' });
+      if (!user.calSecret) {
+        user.calSecret = crypto.randomBytes(24).toString('hex');
+        saveUsers(users);
+      }
+      return sendJson(res, 200, { secret: user.calSecret, userId: uid });
+    }
+
     return sendJson(res, 404, { error: 'not found' });
+  }
+
+  // ---- Apple Calendar ICS feed (public URL with secret token) ----
+  const calMatch = u.match(/^\/api\/cal\/([^/]+)\/([^/]+)$/);
+  if (calMatch && req.method === 'GET') {
+    const [, userId, secret] = calMatch;
+    const users = loadUsers();
+    const user = users.find(x => x.id === userId);
+    if (!user || user.calSecret !== secret) {
+      res.writeHead(403, { 'Content-Type': 'text/plain' }); return res.end('Forbidden');
+    }
+    // Load tasks for this user
+    let tasks = [];
+    try { tasks = JSON.parse(fs.readFileSync(path.join(userDataDir(userId), 'tasks.json'), 'utf8')); } catch {}
+    const fmtDt = (dateStr, timeStr) => {
+      // dateStr = YYYY-MM-DD, timeStr = HH:MM or null
+      if (timeStr) {
+        const [h, m] = timeStr.split(':');
+        return `${dateStr.replace(/-/g, '')}T${String(h).padStart(2,'0')}${String(m).padStart(2,'0')}00`;
+      }
+      return dateStr.replace(/-/g, '');
+    };
+    const esc = s => String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+    const now = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z').replace(/Z$/, '');
+    const veventList = tasks.filter(t => t.date).map(t => {
+      const dtStart = fmtDt(t.date, t.startTime || null);
+      const isAllDay = !t.startTime;
+      const dtEnd = isAllDay ? fmtDt(t.date, null) : (() => {
+        const dur = Number(t.estimateMin) || 30;
+        const [h, m] = (t.startTime || '09:00').split(':').map(Number);
+        const totalMin = h * 60 + m + dur;
+        return `${t.date.replace(/-/g, '')}T${String(Math.floor(totalMin/60)).padStart(2,'0')}${String(totalMin%60).padStart(2,'0')}00`;
+      })();
+      const status = t.done ? 'COMPLETED' : 'CONFIRMED';
+      const lines = [
+        'BEGIN:VEVENT',
+        `UID:satoru-${esc(t.id)}@satoru`,
+        `DTSTAMP:${now}Z`,
+        isAllDay ? `DTSTART;VALUE=DATE:${dtStart}` : `DTSTART:${dtStart}`,
+        isAllDay ? `DTEND;VALUE=DATE:${dtEnd}` : `DTEND:${dtEnd}`,
+        `SUMMARY:${esc(t.title)}`,
+        `STATUS:${status}`,
+        t.done ? `COMPLETED:${now}Z` : '',
+      ].filter(Boolean);
+      return lines.join('\r\n') + '\r\nEND:VEVENT';
+    }).join('\r\n');
+    const ics = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Satoru//Life RPG//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      `X-WR-CALNAME:Satoru — ${esc(user.name || 'Квесты')}`,
+      veventList,
+      'END:VCALENDAR',
+    ].join('\r\n');
+    res.writeHead(200, {
+      'Content-Type': 'text/calendar; charset=utf-8',
+      'Content-Disposition': 'inline; filename="satoru.ics"',
+      'Cache-Control': 'no-cache',
+    });
+    return res.end(ics);
   }
 
   // ---- Public users list (for leaderboard) — requires session ----

@@ -2,6 +2,53 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-06-21] batch-2: каталог наград, лут-редактор, wrapped, эмбиент, Apple Calendar
+
+Построено и **протестировано в превью**. Модель: Sonnet 4.6.
+
+### 1. Расширенный каталог наград (`REWARD_CATALOG`)
+33 награды в 6 категориях: Еда/кафе, Досуг, Уход, Покупки, Опыт, Мечты. Все с иконками и откалиброванными ценами в золоте. `app.js` ~строка 128.
+
+### 2. `reward_voucher` из сундуков
+- `LOOT_POOL_DEFAULT` переименован (алиас `LOOT_POOL` оставлен). Добавлен тип `reward_voucher` (w=8).
+- `buildLootPool()` — мёрджит дефолтный пул с `State.lootbox.customWeights` (переопределение весов по типу).
+- `lootResolve()` / `applyLoot()` обрабатывают `reward_voucher`: инкрементируют `lb.vouchers`.
+- `lootboxCard()` показывает `voucher-chip` (кнопка «🎁 Ваучер ×N») и кнопку `⚙️ Дроп-рейты`.
+
+### 3. Редактор лут-рейтов (`showLootEditor`)
+Модалка с числовыми полями для каждого уникального типа в пуле. Сохраняет в `State.lootbox.customWeights`, сбрасывает кнопкой. Обработчики: `open-loot-editor`, `save-loot-weights`, `reset-loot-weights`, `close-loot-editor`.
+
+### 4. Ваучер-редим (`showVoucherReward`)
+Открывает каталог наград с кнопками «Взять» (бесплатно). Обработчик `redeem-voucher`: `lb.vouchers--`, добавляет в `State.rewards`. Обработчики `use-voucher`, `close-voucher`.
+
+### 5. Wrapped / шеринг-карточка (`showWeekShare`)
+- Кнопка `📤` в шапке недельного вида (`share-week`).
+- Генерирует SVG 600×340: градиентный фон, цвет ранга, аватар, имя, уровень, 4 KPI (XP/квесты/привычки/часы), топ-сфера недели с цветовой полоской.
+- `svgToPng(svgStr, w, h)` — через `Blob` + `canvas.drawImage` → PNG `toBlob`.
+- Кнопка «⬇️ Скачать PNG» (`download-share-card`) + «🔗 Поделиться» (`web-share-card`, только если `navigator.share`).
+- SVG хранится в `dataset.svgData` (urlencoded) на оверлее.
+
+### 6. Эмбиент-звук (`ambientCard`, `applyAmbient`)
+- `_ambientCtx`, `_ambientNodes` — отдельный AudioContext от фокус-звуков.
+- `_startRain`: белый шум (случайный буфер 2с) → lowpass 1400 Гц → gain.
+- `_startFire`: коричневый шум (накопительный фильтр) → bandpass 300 Гц Q=0.4 → gain.
+- Кнопки «Выкл / Дождь / Костёр» в карточке настроек, слайдер громкости 0–100%.
+- `State.settings.ambient = { mode, vol }`. `applyAmbient()` вызывается при старте + при смене.
+- `onChange` обрабатывает `set-ambient-vol` (range input) без ре-рендера.
+
+### 7. Apple Calendar — живая ICS-подписка
+**Сервер:**
+- `POST /api/auth/cal-secret` — генерирует `user.calSecret` (24 случайных байта hex), сохраняет в `users.json`. Идемпотентен.
+- `GET /api/cal/:userId/:secret` — отдаёт `text/calendar` ICS со всеми квестами пользователя. Проверяет секрет. Форматирует all-day vs timed (dtEnd = dtStart + estimateMin). Статус COMPLETED если `t.done`.
+- Фикс: `now` строится без лишнего `Z` (`replace(/\.\d+Z$/, 'Z').replace(/Z$/, '')`), чтобы `DTSTAMP:${now}Z` был правильным.
+
+**Клиент:**
+- `calSubscribeBtn()` → кнопка `📅 Подписка` в шапке Календаря (день, месяц).
+- `showCalSubscribeModal()` — async: POST `/api/auth/cal-secret` → строит URL + `webcal://` → показывает input с кнопкой «Копировать», ссылку «📲 Открыть в Календаре», инструкцию iOS/Mac/Google.
+- Обработчики: `show-cal-subscribe`, `close-cal-subscribe`, `copy-cal-url`.
+
+---
+
 ## Стек и где что лежит
 - **Бэкенд:** `server.js` — Node stdlib HTTP, без зависимостей. Порт 4317. Запуск: `npm start` (или preview-конфиг `.claude/launch.json` имя `life-rpg`).
 - **Фронт:** `public/app.js` (вся логика, ~1300 строк), `public/styles.css`, `public/index.html` (только `#app` + подключение).

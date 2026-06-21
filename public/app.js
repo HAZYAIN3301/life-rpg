@@ -126,24 +126,45 @@ const ACHIEVEMENTS = [
 
 // Каталог предустановленных наград — «дроп с босса уже выбран» (fb: награды должны быть предустановлены)
 const REWARD_CATALOG = [
+  // 🍴 Еда / кафе
   { icon: '☕', name: 'Кофе в любимой кофейне', cost: 60 },
   { icon: '🍫', name: 'Шоколадка / сладость', cost: 50 },
+  { icon: '🍦', name: 'Мороженое', cost: 45 },
+  { icon: '🍕', name: 'Пицца / любимая еда', cost: 250 },
+  { icon: '🍣', name: 'Заказать доставку', cost: 350 },
+  { icon: '🧋', name: 'Пузырьковый чай / смузи', cost: 80 },
+  { icon: '🍰', name: 'Кусок торта в кафе', cost: 110 },
+  { icon: '🥐', name: 'Завтрак в любимом месте', cost: 120 },
+  // 🎮 Досуг
   { icon: '🎮', name: '1 час игр без вины', cost: 120 },
   { icon: '📺', name: 'Серия сериала', cost: 80 },
   { icon: '🎬', name: 'Вечер кино с попкорном', cost: 200 },
-  { icon: '🍕', name: 'Пицца / любимая еда', cost: 250 },
+  { icon: '🎲', name: 'Настолки с друзьями', cost: 180 },
+  { icon: '🎯', name: 'Любимое хобби 2 часа без отвлечений', cost: 160 },
+  { icon: '🎨', name: 'Порисовать / порукоделить без цели', cost: 100 },
+  // 💆 Уход и отдых
   { icon: '🛁', name: 'Долгая ванна со всеми смузи', cost: 100 },
   { icon: '😴', name: 'Поспать без будильника', cost: 150 },
-  { icon: '📚', name: 'Новая книга', cost: 300 },
   { icon: '🎧', name: 'Час музыки/подкаста лёжа', cost: 90 },
-  { icon: '🛍', name: 'Маленькая покупка до 1000₽/10€', cost: 400 },
-  { icon: '🍣', name: 'Заказать доставку', cost: 350 },
-  { icon: '🌳', name: 'Прогулка без телефона', cost: 40 },
   { icon: '💆', name: 'Массаж / спа', cost: 600 },
-  { icon: '🎲', name: 'Настолки с друзьями', cost: 180 },
+  { icon: '🌳', name: 'Прогулка без телефона', cost: 40 },
+  { icon: '🧘', name: 'Долгая медитация / баня', cost: 130 },
+  { icon: '🛀', name: 'Банный день с нуля', cost: 200 },
+  // 📦 Покупки
+  { icon: '📚', name: 'Новая книга', cost: 300 },
+  { icon: '🛍', name: 'Маленькая покупка до 10€/1000₽', cost: 400 },
+  { icon: '👟', name: 'Одежда / кроссовки мечты', cost: 1200 },
+  { icon: '🎧', name: 'Новые наушники / гаджет', cost: 1500 },
+  { icon: '🖼', name: 'Постер / декор для комнаты', cost: 500 },
+  // 🌍 Опыт
   { icon: '✈️', name: 'Поездка на выходные', cost: 2000 },
+  { icon: '🎡', name: 'Экскурсия / необычное событие', cost: 800 },
+  { icon: '🎵', name: 'Концерт / фестиваль', cost: 700 },
+  { icon: '🍽', name: 'Ужин в ресторане', cost: 450 },
+  // 🏆 Мечты
+  { icon: '💻', name: 'Курс / обучение', cost: 1000 },
   { icon: '🎁', name: 'Большая хотелка (копилка)', cost: 5000 },
-  { icon: '🍦', name: 'Мороженое', cost: 45 },
+  { icon: '🏖', name: 'Отпуск мечты', cost: 8000 },
 ];
 const FREE_REWARDS_MAX = 8; // лимит наград для Free (Pro — без лимита)
 
@@ -1067,21 +1088,29 @@ function earnedTitles() {
   return [...new Set([...fromAch, ...legacy])];
 }
 function equippedTitle() { const eq = ensureCosmetics(); return eq.title || (State.lootbox && State.lootbox.equipped) || null; }
-const LOOT_POOL = [
-  { w: 26, type: 'gold',     min: 15,  max: 45,  label: '🪙 Золото' },
-  { w: 18, type: 'gold',     min: 50,  max: 100, label: '🪙 Золото' },
-  { w: 16, type: 'cosmetic', rarity: 'common',   label: '🎨 Косметика' },
-  { w: 12, type: 'energy',   min: 20,  max: 40,  label: '🔋 Заряд энергии' },
-  { w: 11, type: 'boost',    pct: 25,  hours: 6, label: '⚡ +25% XP' },
-  { w: 9,  type: 'cosmetic', rarity: 'rare',     label: '🎨 Редкая косметика' },
-  { w: 7,  type: 'boost',    pct: 50,  hours: 3, label: '🔥 +50% XP' },
-  { w: 6,  type: 'gold',     min: 120, max: 220, label: '🪙 Куча золота' },
-  { w: 6,  type: 'gear',                          label: '⚔️ Снаряжение' },
-  { w: 4,  type: 'cosmetic', rarity: 'epic',     label: '🎨 Эпическая косметика' },
-  { w: 3.5,type: 'relic',                          label: '🔱 Реликвия сферы' },
-  { w: 3,  type: 'gold',     min: 280, max: 450, label: '💎 Джекпот' },
-  { w: 1.4,type: 'cosmetic', rarity: 'legendary',label: '🎨 Легендарная косметика' },
+const LOOT_POOL_DEFAULT = [
+  { w: 24, type: 'gold',           min: 15,  max: 45,  label: '🪙 Золото' },
+  { w: 16, type: 'gold',           min: 50,  max: 100, label: '🪙 Золото' },
+  { w: 15, type: 'cosmetic',       rarity: 'common',   label: '🎨 Косметика' },
+  { w: 11, type: 'energy',         min: 20,  max: 40,  label: '🔋 Заряд энергии' },
+  { w: 10, type: 'boost',          pct: 25,  hours: 6, label: '⚡ +25% XP' },
+  { w: 8,  type: 'reward_voucher',                     label: '🎁 Ваучер: бесплатная награда' },
+  { w: 8,  type: 'cosmetic',       rarity: 'rare',     label: '🎨 Редкая косметика' },
+  { w: 6,  type: 'boost',          pct: 50,  hours: 3, label: '🔥 +50% XP' },
+  { w: 5,  type: 'gold',           min: 120, max: 220, label: '🪙 Куча золота' },
+  { w: 5,  type: 'gear',                               label: '⚔️ Снаряжение' },
+  { w: 3.5,type: 'cosmetic',       rarity: 'epic',     label: '🎨 Эпическая косметика' },
+  { w: 3,  type: 'relic',                              label: '🔱 Реликвия сферы' },
+  { w: 2.5,type: 'gold',           min: 280, max: 450, label: '💎 Джекпот' },
+  { w: 1.2,type: 'cosmetic',       rarity: 'legendary',label: '🎨 Легендарная косметика' },
 ];
+// rollLoot использует кастомный пул весов если задан (редактор лутбоксов)
+function buildLootPool() {
+  const custom = State.lootbox && State.lootbox.customWeights;
+  if (!custom) return LOOT_POOL_DEFAULT;
+  return LOOT_POOL_DEFAULT.map((it) => ({ ...it, w: custom[it.type] != null ? custom[it.type] : it.w }));
+}
+const LOOT_POOL = LOOT_POOL_DEFAULT; // legacy alias
 const LOOT_THRESHOLDS = [1, 3, 5]; // активностей за день для сундука №1 / №2 / №3
 function ensureLootbox() {
   if (!State.lootbox) State.lootbox = { day: todayStr(), opened: 0, goldWon: 0, boost: null, titles: [], equipped: null, history: [] };
@@ -1164,7 +1193,7 @@ function lootChestsAvailable() {
   return Math.max(0, Math.min(earned, lootTierCap()) - State.lootbox.opened);
 }
 function lootNextThreshold() { const act = todayActivityCount(); const th = LOOT_THRESHOLDS.find((x) => act < x); return th ? { need: th - act, at: th } : null; }
-function rollLoot() { const total = LOOT_POOL.reduce((s, x) => s + x.w, 0); let r = Math.random() * total; for (const it of LOOT_POOL) { if ((r -= it.w) <= 0) return it; } return LOOT_POOL[0]; }
+function rollLoot() { const pool = buildLootPool(); const total = pool.reduce((s, x) => s + x.w, 0); let r = Math.random() * total; for (const it of pool) { if ((r -= it.w) <= 0) return it; } return pool[0]; }
 function lootResolve(item) {
   if (item.type === 'gold') { const amt = Math.round(item.min + Math.random() * (item.max - item.min)); const rar = amt >= 280 ? 'epic' : amt >= 120 ? 'rare' : 'common'; return { type: 'gold', amount: amt, rarity: rar, label: `+${amt} 🪙` }; }
   if (item.type === 'energy') { const amt = Math.round(item.min + Math.random() * (item.max - item.min)); return { type: 'energy', amount: amt, rarity: 'common', label: `+${amt} 🔋 энергии` }; }
@@ -1185,6 +1214,7 @@ function lootResolve(item) {
     if (relic) return { type: 'relic', relic, rarity: rar, name: relic.name, label: `${relic.icon} ${relic.name} (+${relic.xpPct}% XP)` };
     return { type: 'gold', amount: 80, rarity: 'common', label: '+80 🪙' };
   }
+  if (item.type === 'reward_voucher') return { type: 'reward_voucher', rarity: 'rare', label: '🎁 Ваучер на бесплатную награду' };
   return { type: 'gold', amount: 20, rarity: 'common', label: '+20 🪙' };
 }
 function applyLoot(reward) {
@@ -1208,6 +1238,7 @@ function applyLoot(reward) {
     if (!g.equipped.relic) g.equipped.relic = reward.relic.uid; // авто-надеть первую реликвию
     Store.save('settings', State.settings);
   }
+  else if (reward.type === 'reward_voucher') { lb.vouchers = (lb.vouchers || 0) + 1; }
   lb.opened += 1;
   lb.history.unshift({ at: new Date().toISOString(), label: reward.label, rarity: reward.rarity || 'common' });
   lb.history = lb.history.slice(0, 40);
@@ -1267,6 +1298,81 @@ function sfx(name, rarity) {
   }
 }
 function sfxLoot(rarity) { sfx('loot', rarity); } // вызывается из openChest (#20)
+
+// ============================================================
+//  Эмбиент-звук (синтез без файлов)
+// ============================================================
+let _ambientCtx = null, _ambientNodes = [];
+
+function _ensureAmbientCtx() {
+  if (!_ambientCtx) _ambientCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (_ambientCtx.state === 'suspended') _ambientCtx.resume();
+  return _ambientCtx;
+}
+
+function _stopAmbient() {
+  _ambientNodes.forEach(n => { try { n.stop(); } catch {} try { n.disconnect(); } catch {} });
+  _ambientNodes = [];
+}
+
+function _startRain(vol) {
+  const ctx = _ensureAmbientCtx();
+  const bufLen = ctx.sampleRate * 2;
+  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+
+  const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+  const lpf = ctx.createBiquadFilter(); lpf.type = 'lowpass'; lpf.frequency.value = 1400;
+  const gain = ctx.createGain(); gain.gain.value = (vol / 100) * 0.18;
+  src.connect(lpf).connect(gain).connect(ctx.destination);
+  src.start(); _ambientNodes.push(src, gain);
+}
+
+function _startFire(vol) {
+  const ctx = _ensureAmbientCtx();
+  const bufLen = ctx.sampleRate * 2;
+  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  let last = 0;
+  for (let i = 0; i < bufLen; i++) { last = last * 0.998 + (Math.random() - 0.5) * 0.002; data[i] = last; }
+
+  const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+  const bpf = ctx.createBiquadFilter(); bpf.type = 'bandpass'; bpf.frequency.value = 300; bpf.Q.value = 0.4;
+  const gain = ctx.createGain(); gain.gain.value = (vol / 100) * 0.6;
+  src.connect(bpf).connect(gain).connect(ctx.destination);
+  src.start(); _ambientNodes.push(src, gain);
+}
+
+function applyAmbient() {
+  _stopAmbient();
+  const amb = (State.settings && State.settings.ambient) || {};
+  if (!amb.mode || amb.mode === 'off') return;
+  const vol = amb.vol != null ? amb.vol : 60;
+  if (amb.mode === 'rain') _startRain(vol);
+  else if (amb.mode === 'fire') _startFire(vol);
+}
+
+function ambientCard() {
+  const amb = (State.settings && State.settings.ambient) || {};
+  const mode = amb.mode || 'off', vol = amb.vol != null ? amb.vol : 60;
+  const btn = (m, label, active) => `<button class="btn${active ? '' : ' ghost'} sm" data-action="set-ambient" data-mode="${m}">${label}</button>`;
+  return `<div class="card">
+    <h3>🔊 Эмбиент-звук</h3>
+    <p class="muted" style="font-size:13px;margin-bottom:10px">Фоновый звук без файлов — синтез прямо в браузере.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      ${btn('off', '⏹ Выкл', mode === 'off')}
+      ${btn('rain', '🌧 Дождь', mode === 'rain')}
+      ${btn('fire', '🔥 Костёр', mode === 'fire')}
+    </div>
+    ${mode !== 'off' ? `<label style="display:flex;align-items:center;gap:10px;font-size:13px">
+      <span>Громкость</span>
+      <input type="range" min="0" max="100" value="${vol}" data-action="set-ambient-vol" style="flex:1">
+      <span>${vol}%</span>
+    </label>` : ''}
+  </div>`;
+}
+
 function notify(title, body) {
   if (!focusCfg().notify || !('Notification' in window) || Notification.permission !== 'granted') return;
   try { new Notification(title, { body }); } catch {}
@@ -1612,6 +1718,39 @@ function calRemindBtn() {
   return `<button class="btn ghost sm cal-remind ${on ? 'on' : ''}" data-action="cal-remind-toggle" title="Напоминания о задачах со временем (пока вкладка открыта)">${on ? '🔔 Напоминания вкл' : '🔕 Напоминания'}</button>`;
 }
 function calExportBtn() { return `<button class="btn ghost sm" data-action="export-ics" title="Скачать запланированные квесты как .ics — импортировать в Apple/Google Календарь (разово; #8)">📆 .ics</button>`; }
+function calSubscribeBtn() { return `<button class="btn ghost sm" data-action="show-cal-subscribe" title="Живая подписка на квесты в Apple/Google Календарь">📅 Подписка</button>`; }
+
+async function showCalSubscribeModal() {
+  if (document.getElementById('cal-sub-ov')) return;
+  const ov = document.createElement('div');
+  ov.id = 'cal-sub-ov'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="guide-box"><button class="modal-x" data-action="close-cal-subscribe">✕</button>
+    <h2>📅 Живая подписка на квесты</h2>
+    <p class="muted" style="font-size:13px">Квесты автоматически обновляются в Apple/Google Календаре при добавлении новых.</p>
+    <div id="cal-sub-body" style="margin-top:12px"><span class="muted">Генерация ссылки…</span></div>
+  </div>`;
+  document.body.appendChild(ov);
+  try {
+    const r = await fetch('/api/auth/cal-secret', { method: 'POST' });
+    const d = await r.json();
+    const base = location.origin + '/api/cal/' + d.userId + '/' + d.secret;
+    const webcal = 'webcal://' + base.replace(/^https?:\/\//, '');
+    document.getElementById('cal-sub-body').innerHTML = `
+      <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:4px">Ссылка для подписки</label>
+      <div style="display:flex;gap:6px;margin-bottom:14px">
+        <input id="cal-sub-url" readonly value="${esc(base)}" style="flex:1;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--panel2);color:var(--fg)"/>
+        <button class="btn ghost sm" data-action="copy-cal-url" data-url="${esc(base)}">Копировать</button>
+      </div>
+      <a class="btn sm" href="${esc(webcal)}" style="display:inline-block;margin-bottom:16px">📲 Открыть в Календаре</a>
+      <p class="muted" style="font-size:12px;line-height:1.5">
+        <b>Apple Календарь (iOS):</b> Настройки → Учётные записи → Добавить → Другая → Подписной календарь → вставь ссылку.<br>
+        <b>Apple Календарь (Mac):</b> Файл → Новый подписной календарь → вставь ссылку.<br>
+        <b>Google Календарь:</b> Другие календари → + → По URL → вставь ссылку.
+      </p>`;
+  } catch {
+    document.getElementById('cal-sub-body').innerHTML = `<span class="muted">Ошибка, попробуй ещё раз</span>`;
+  }
+}
 // Экспорт запланированных квестов (с датой и временем) в iCalendar (#8). Разовый экспорт, не живая подписка.
 function buildICS() {
   const tasks = (State.tasks || []).filter((t) => t.date && t.startTime);
@@ -1648,7 +1787,7 @@ function renderCalMonth(date) {
         <button class="btn ghost sm" data-action="cal-shift-month" data-delta="-1" title="Предыдущий месяц">‹</button>
         <h2>${MONTHS_NOM[mo]} ${y}</h2>
         <button class="btn ghost sm" data-action="cal-shift-month" data-delta="1" title="Следующий месяц">›</button>
-        ${calModeToggle('month')}${calExportBtn()}${calRemindBtn()}
+        ${calModeToggle('month')}${calExportBtn()}${calSubscribeBtn()}${calRemindBtn()}
       </div>
       <div class="cm-wd">${WD.map((w) => `<span>${w}</span>`).join('')}</div>
       <div class="cm-grid">${cells}</div>
@@ -1705,7 +1844,7 @@ function renderCalendarView() {
         <button class="btn ghost sm" data-action="cal-shift" data-days="1" title="Следующий день">›</button>
         ${date !== todayStr() ? '<button class="btn ghost sm" data-action="cal-today">Сегодня</button>' : ''}
         <span class="wk-load muted">план: ${fmtDur(planned)}</span>
-        ${calModeToggle('day')}${calExportBtn()}${calRemindBtn()}
+        ${calModeToggle('day')}${calExportBtn()}${calSubscribeBtn()}${calRemindBtn()}
       </div>
       <div class="calv-strip">${strip}</div>
     </div>
@@ -2964,11 +3103,15 @@ function lootboxCard() {
         <div class="lb-emoji">${avail > 0 ? '🎁' : '📦'}</div><div class="lb-status">${statusTxt}</div>
       </div>
       <div class="lb-info">
-        <p class="muted" style="font-size:12px;margin:0 0 8px">Выполняй квесты и привычки — за активность дают сундуки. Внутри: золото, XP-бусты, заряд энергии и <b>косметика</b> (рамки/фоны) по рарностям. ${isPro() ? 'Pro: до 3 сундуков в день.' : 'Free: 1 сундук в день.'}</p>
+        <p class="muted" style="font-size:12px;margin:0 0 8px">Выполняй квесты и привычки — за активность дают сундуки. Внутри: золото, XP-бусты, заряд энергии, <b>косметика</b> и <b>ваучеры наград</b>. ${isPro() ? 'Pro: до 3 сундуков в день.' : 'Free: 1 сундук в день.'}</p>
+        ${(lb.vouchers || 0) > 0 ? `<div class="voucher-chip" data-action="use-voucher">🎁 Ваучер ×${lb.vouchers} — забери награду бесплатно</div>` : ''}
         ${lockedExtra > 0 && !isPro() ? `<button class="btn pro-cta sm" data-action="show-paywall" data-feature="Больше сундуков">🔒 Ещё ${lockedExtra} ${plural(lockedExtra, 'сундук', 'сундука', 'сундуков')} — с Pro</button>` : ''}
       </div>
     </div>
-    ${hist ? `<details class="lb-hist"><summary>История дропов</summary><ul class="reflections">${hist}</ul></details>` : ''}</div>`;
+    <div class="lb-foot">
+      ${hist ? `<details class="lb-hist"><summary>История дропов</summary><ul class="reflections">${hist}</ul></details>` : ''}
+      <button class="btn ghost xs lb-edit-btn" data-action="open-loot-editor" title="Настроить вероятности дропа">⚙️ Дроп-рейты</button>
+    </div></div>`;
 }
 // Brawl-Stars-коллекция: видимый прогресс + экипировка рамок/фонов/званий
 function collectionCard() {
@@ -3027,6 +3170,155 @@ function openChest() {
     const claim = ov.querySelector('#loot-claim'); claim.style.display = '';
     claim.addEventListener('click', () => { ov.remove(); render(); });
   }, 3750);
+}
+
+// ============================================================
+//  Лут-редактор — кастомные веса дропа
+// ============================================================
+function showLootEditor() {
+  if (document.getElementById('loot-editor-ov')) return;
+  const lb = ensureLootbox();
+  const custom = lb.customWeights || {};
+  const seen = new Set(), types = [];
+  for (const it of LOOT_POOL_DEFAULT) {
+    if (!seen.has(it.type)) { seen.add(it.type); types.push({ type: it.type, label: it.label, defaultW: it.w }); }
+  }
+  const rows = types.map(({ type, label, defaultW }) => {
+    const cur = custom[type] != null ? custom[type] : defaultW;
+    return `<div class="le-row">
+      <span class="le-label">${esc(label)}</span>
+      <input class="le-inp" type="number" min="0" max="200" step="0.5" value="${cur}" data-letype="${esc(type)}">
+    </div>`;
+  }).join('');
+  const ov = document.createElement('div');
+  ov.id = 'loot-editor-ov'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="guide-box">
+    <button class="modal-x" data-action="close-loot-editor">✕</button>
+    <h2>⚙️ Дроп-рейты сундуков</h2>
+    <p class="muted" style="font-size:13px;margin-bottom:12px">Вес типа: 0 = никогда, выше = чаще. Шанс ≈ вес / сумма всех весов.</p>
+    <div class="le-rows">${rows}</div>
+    <div class="le-foot">
+      <button class="btn ghost sm" data-action="reset-loot-weights">Сбросить к дефолту</button>
+      <button class="btn sm" data-action="save-loot-weights">Сохранить</button>
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+}
+
+function showVoucherReward() {
+  const lb = ensureLootbox();
+  if (!lb.vouchers || lb.vouchers < 1) { toast('Нет ваучеров'); return; }
+  if (document.getElementById('voucher-ov')) return;
+  const rows = REWARD_CATALOG.map((c, i) => `<div class="rwc-row">
+    <span class="rwc-ic">${c.icon}</span><span class="rwc-name">${esc(c.name)}</span>
+    <span class="muted" style="font-size:11px;color:var(--accent)">🎁 бесплатно</span>
+    <button class="btn ghost sm" data-action="redeem-voucher" data-idx="${i}">Взять</button>
+  </div>`).join('');
+  const ov = document.createElement('div');
+  ov.id = 'voucher-ov'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="guide-box">
+    <button class="modal-x" data-action="close-voucher">✕</button>
+    <h2>🎁 Ваучер — бесплатная награда</h2>
+    <p class="muted">У тебя ${lb.vouchers} ${plural(lb.vouchers, 'ваучер', 'ваучера', 'ваучеров')}. Выбери любую награду из каталога — бесплатно!</p>
+    <div class="rwc-list">${rows}</div>
+  </div>`;
+  document.body.appendChild(ov);
+}
+
+// ============================================================
+//  Wrapped / шеринг-карточка
+// ============================================================
+function showWeekShare(ws, st) {
+  if (document.getElementById('share-ov')) return;
+  const end = addDays(ws, 6);
+  const nm = (State.me && State.me.name) || 'Герой';
+  const av = (State.me && State.me.avatar) || '⚡';
+  const lvl = charLevel(), rk = rankFor(lvl);
+  const topArea = st.byArea.filter(a => a.value > 0).sort((a, b) => b.value - a.value)[0];
+  const hrs = Math.round(st.min / 60 * 10) / 10;
+
+  // SVG share card 600×340
+  const svgW = 600, svgH = 340;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgW} ${svgH}" width="${svgW}" height="${svgH}">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#12111a"/>
+        <stop offset="100%" stop-color="#1e1b2e"/>
+      </linearGradient>
+      <linearGradient id="acc" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="${esc(rk.color)}"/>
+        <stop offset="100%" stop-color="#a78bfa"/>
+      </linearGradient>
+    </defs>
+    <!-- background -->
+    <rect width="${svgW}" height="${svgH}" rx="20" fill="url(#bg)"/>
+    <!-- accent bar -->
+    <rect x="0" y="0" width="${svgW}" height="4" rx="2" fill="url(#acc)"/>
+    <!-- brand -->
+    <text x="30" y="42" font-family="system-ui,sans-serif" font-size="13" fill="${esc(rk.color)}" font-weight="700" letter-spacing="2">SATORU</text>
+    <!-- avatar + name -->
+    <text x="30" y="90" font-family="system-ui,sans-serif" font-size="36">${esc(av)}</text>
+    <text x="76" y="74" font-family="system-ui,sans-serif" font-size="20" fill="#fff" font-weight="700">${esc(nm)}</text>
+    <text x="76" y="94" font-family="system-ui,sans-serif" font-size="13" fill="${esc(rk.color)}" font-weight="600">${esc(rk.icon)} ${esc(rk.name)} · ур.${lvl}</text>
+    <!-- week label -->
+    <text x="${svgW - 30}" y="42" font-family="system-ui,sans-serif" font-size="13" fill="#8b8ba0" text-anchor="end">${esc(dmShort(ws))} – ${esc(dmShort(end))}</text>
+    <!-- divider -->
+    <line x1="30" y1="112" x2="${svgW - 30}" y2="112" stroke="#2d2b3a" stroke-width="1"/>
+    <!-- stats grid -->
+    ${[
+      { label: 'XP', val: st.xp, x: 30 },
+      { label: 'Квестов', val: st.quests, x: 165 },
+      { label: 'Привычек', val: st.habitsC, x: 310 },
+      { label: 'Часов', val: hrs, x: 455 },
+    ].map(({ label, val, x }) => `
+      <text x="${x}" y="158" font-family="system-ui,sans-serif" font-size="32" fill="#fff" font-weight="800">${val}</text>
+      <text x="${x}" y="178" font-family="system-ui,sans-serif" font-size="12" fill="#8b8ba0">${label}</text>
+    `).join('')}
+    <!-- top skill -->
+    ${topArea ? `
+    <rect x="30" y="202" width="${svgW - 60}" height="48" rx="10" fill="#1a1829"/>
+    <text x="46" y="231" font-family="system-ui,sans-serif" font-size="13" fill="#8b8ba0">Главная сфера недели</text>
+    <text x="46" y="241" font-family="system-ui,sans-serif" font-size="13" fill="#8b8ba0">·</text>
+    <rect x="30" y="202" width="4" height="48" rx="2" fill="${esc(topArea.color)}"/>
+    <text x="46" y="236" font-family="system-ui,sans-serif" font-size="16" fill="#fff" font-weight="700">${esc(topArea.label)}</text>
+    <text x="${svgW - 46}" y="236" font-family="system-ui,sans-serif" font-size="14" fill="${esc(topArea.color)}" font-weight="700" text-anchor="end">${Math.round(topArea.value / 60 * 10) / 10} ч</text>
+    ` : ''}
+    <!-- footer -->
+    <text x="30" y="${svgH - 20}" font-family="system-ui,sans-serif" font-size="11" fill="#4a4860">life-rpg-production-416a.up.railway.app</text>
+  </svg>`;
+
+  const ov = document.createElement('div');
+  ov.id = 'share-ov'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="guide-box" style="max-width:640px">
+    <button class="modal-x" data-action="close-share">✕</button>
+    <h2>📤 Твоя неделя</h2>
+    <div id="share-card-wrap" style="border-radius:14px;overflow:hidden;margin:14px 0">${svg}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" data-action="download-share-card">⬇️ Скачать PNG</button>
+      ${navigator.share ? `<button class="btn ghost" data-action="web-share-card">🔗 Поделиться</button>` : ''}
+    </div>
+  </div>`;
+  document.body.appendChild(ov);
+  // stash data for download handler
+  ov.dataset.svgData = encodeURIComponent(svg);
+  ov.dataset.filename = `satoru-week-${ws}.png`;
+}
+
+function svgToPng(svgStr, w, h) {
+  return new Promise((resolve) => {
+    const blob = new Blob([svgStr], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      canvas.toBlob(resolve, 'image/png');
+    };
+    img.src = url;
+  });
 }
 
 // ============================================================
@@ -3482,6 +3774,7 @@ function renderWeekly() {
       <div><b>Неделя ${dmShort(ws)} – ${dmShort(end)}</b>${isThis ? ' <span class="muted">(текущая)</span>' : ''}</div>
       <button class="btn ghost" data-action="week-next">→</button>
       ${calModeToggle('week')}
+      <button class="btn ghost sm" data-action="share-week" title="Поделиться итогами недели">📤</button>
     </div>
     <div class="kpis">
       <div class="kpi"><div class="v">${st.xp}</div><div class="l">XP за неделю</div></div>
@@ -3669,6 +3962,7 @@ function renderSettings() {
     <div class="card"><h3>🔊 Звук</h3>
       <label class="sound-toggle"><input type="checkbox" data-action="toggle-sound" ${sfxOn() ? 'checked' : ''}/> Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)</label>
       <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">▶ Проверить звук</button></div>
+    ${ambientCard()}
     ${pwaCard()}
     <div class="card"><h3>🎨 Оформление</h3>
       <div class="theme-row"><span class="theme-lbl">Тема</span>
@@ -4299,6 +4593,12 @@ function onClick(e) {
     eq[ty] = (eq[ty] === el.dataset.id) ? null : el.dataset.id; Store.save('settings', State.settings); render(); return;
   }
   if (action === 'toggle-sound') { State.settings.sound = !!el.checked; Store.save('settings', State.settings); if (el.checked) sfx('complete'); return; }
+  if (action === 'set-ambient') {
+    if (!State.settings.ambient) State.settings.ambient = {};
+    State.settings.ambient.mode = el.dataset.mode;
+    Store.save('settings', State.settings);
+    applyAmbient(); render(); return;
+  }
 
   // --- Живой компаньон (Finch-модель) ---
   if (action === 'comp-rename') { State._compForm = 'name'; render(); return; }
@@ -4380,6 +4680,34 @@ function onClick(e) {
   if (action === 'close-userdata') { const r = document.getElementById('userdata'); if (r) r.remove(); return; }
   if (action === 'open-reward-catalog') { openRewardCatalog(); return; }
   if (action === 'close-reward-catalog') { const r = document.getElementById('rw-catalog'); if (r) r.remove(); render(); return; }
+  if (action === 'open-loot-editor') { showLootEditor(); return; }
+  if (action === 'close-loot-editor') { const e = document.getElementById('loot-editor-ov'); if (e) e.remove(); return; }
+  if (action === 'save-loot-weights') {
+    const edOv = document.getElementById('loot-editor-ov'); if (!edOv) return;
+    const lb = ensureLootbox(), weights = {};
+    edOv.querySelectorAll('.le-inp').forEach(inp => { const v = parseFloat(inp.value); if (!isNaN(v) && v >= 0) weights[inp.dataset.letype] = v; });
+    lb.customWeights = weights; Store.save('lootbox', lb);
+    edOv.remove(); toast('✓ Дроп-рейты сохранены'); return;
+  }
+  if (action === 'reset-loot-weights') {
+    if (!confirm('Сбросить настройки дропа к значениям по умолчанию?')) return;
+    const lb = ensureLootbox(); delete lb.customWeights; Store.save('lootbox', lb);
+    const edOv = document.getElementById('loot-editor-ov'); if (edOv) edOv.remove();
+    toast('Дроп-рейты сброшены'); return;
+  }
+  if (action === 'use-voucher') { showVoucherReward(); return; }
+  if (action === 'close-voucher') { const v = document.getElementById('voucher-ov'); if (v) v.remove(); return; }
+  if (action === 'redeem-voucher') {
+    const lb = ensureLootbox();
+    if (!lb.vouchers || lb.vouchers < 1) { toast('Нет ваучеров'); return; }
+    const c = REWARD_CATALOG[Number(el.dataset.idx)]; if (!c) return;
+    if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
+    lb.vouchers--; Store.save('lootbox', lb);
+    State.rewards.push({ id: 'r_' + uid(), name: c.name, icon: c.icon, cost: c.cost, createdAt: new Date().toISOString() });
+    Store.save('rewards', State.rewards);
+    const vOv = document.getElementById('voucher-ov'); if (vOv) vOv.remove();
+    toast(`🎁 «${c.name}» получено бесплатно!`); render(); return;
+  }
   if (action === 'add-catalog-reward') {
     if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
     const c = REWARD_CATALOG[Number(el.dataset.idx)]; if (!c) return;
@@ -4555,6 +4883,25 @@ function onClick(e) {
   // --- Неделя ---
   } else if (action === 'week-prev') { State.weekStart = addDays(State.weekStart, -7); State.wkAddDate = null; render();
   } else if (action === 'week-next') { State.weekStart = addDays(State.weekStart, 7); State.wkAddDate = null; render();
+  } else if (action === 'share-week') {
+    const ws = State.weekStart || weekStart(todayStr()), st = rangeStats(ws, addDays(ws, 6));
+    showWeekShare(ws, st);
+  } else if (action === 'close-share') { const s = document.getElementById('share-ov'); if (s) s.remove();
+  } else if (action === 'download-share-card') {
+    const ov = document.getElementById('share-ov'); if (!ov) return;
+    const svgStr = decodeURIComponent(ov.dataset.svgData);
+    svgToPng(svgStr, 600, 340).then(blob => {
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = ov.dataset.filename || 'satoru-week.png'; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    });
+  } else if (action === 'web-share-card') {
+    const ov = document.getElementById('share-ov'); if (!ov) return;
+    const svgStr = decodeURIComponent(ov.dataset.svgData);
+    svgToPng(svgStr, 600, 340).then(async blob => {
+      const file = new File([blob], ov.dataset.filename || 'satoru-week.png', { type: 'image/png' });
+      try { await navigator.share({ files: [file], title: 'Моя неделя в Satoru' }); } catch {}
+    });
   } else if (action === 'wk-add-task') { State.wkAddDate = el.dataset.date; render();
   } else if (action === 'wk-add-cancel') { State.wkAddDate = null; render();
 
@@ -4625,6 +4972,13 @@ function onClick(e) {
     State.tasks.push({ id: uid(), title, skillId: sid, skillIds: sid ? [sid] : [], estimateMin: 30, difficulty: 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
     State.inbox = State.inbox.filter((x) => x.id !== id);
     Store.save('tasks', State.tasks); Store.save('inbox', State.inbox); toast('→ В квестах на сегодня'); render();
+  } else if (action === 'show-cal-subscribe') { showCalSubscribeModal();
+  } else if (action === 'close-cal-subscribe') { const m = document.getElementById('cal-sub-ov'); if (m) m.remove();
+  } else if (action === 'copy-cal-url') {
+    const url = el.dataset.url;
+    navigator.clipboard.writeText(url).then(() => toast('✓ Ссылка скопирована')).catch(() => {
+      const inp = document.getElementById('cal-sub-url'); if (inp) { inp.select(); document.execCommand('copy'); toast('✓ Скопировано'); }
+    });
   } else if (action === 'export-ics') {
     const ics = buildICS();
     if (!/BEGIN:VEVENT/.test(ics)) { toast('Нет квестов со временем — поставь их в Календаре'); return; }
@@ -4865,6 +5219,7 @@ async function initApp() {
   State.antihabits = await Store.load('antihabits', []);
   ensureLootbox();
   ensureEnergy();
+  applyAmbient();
 
   ensureTrees();
   State.treeSkill = State.settings.skills[0] && State.settings.skills[0].id;
@@ -4925,6 +5280,12 @@ function onChange(e) {
   const el = e.target.closest('[data-action]');
   if (!el) return;
   const a = el.dataset.action;
+  if (a === 'set-ambient-vol') {
+    if (!State.settings.ambient) State.settings.ambient = {};
+    State.settings.ambient.vol = Number(el.value);
+    Store.save('settings', State.settings);
+    applyAmbient(); return;
+  }
   if (a === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
   if (a === 'set-ai-pref') { State.settings.aiPref = el.value; Store.save('settings', State.settings); toast('🤖 ИИ по умолчанию: ' + aiProviderLabel(el.value)); return; }
   if (a === 'habit-atomic') { const h = habitById(el.dataset.id); if (h) { h.atomic = h.atomic || {}; h.atomic[el.dataset.field] = el.value.slice(0, 200); Store.save('habits', State.habits); } return; }

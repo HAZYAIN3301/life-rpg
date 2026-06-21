@@ -790,6 +790,18 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .loot-rline { font-size: 20px; }
 .loot-box.reveal { box-shadow: 0 0 0 1px var(--rc, #e0a23e), 0 0 44px -6px var(--rc, #e0a23e); }
 .loot-box.reveal h3::after { content: ''; }
+/* Лутбокс — футер и voucher */
+.lb-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.lb-edit-btn { font-size: 12px; opacity: .7; }
+.voucher-chip { background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #f80)); color: #fff; border-radius: 10px; padding: 7px 13px; font-size: 13px; font-weight: 700; cursor: pointer; margin: 6px 0; text-align: center; letter-spacing: .3px; }
+.voucher-chip:hover { filter: brightness(1.1); }
+/* Лут-редактор */
+.le-rows { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 12px; max-height: 340px; overflow-y: auto; }
+.le-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 4px; border-bottom: 1px solid var(--line); }
+.le-row:last-child { border-bottom: none; }
+.le-label { flex: 1; font-size: 13px; }
+.le-inp { width: 72px; padding: 4px 8px; border-radius: 7px; border: 1.5px solid var(--line); background: var(--panel2); color: var(--fg); font-size: 14px; text-align: right; }
+.le-foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
 /* Коллекция (Brawl-Stars) */
 .collection-card .coll-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
 .collection-card .coll-head h3 { margin: 0; }
