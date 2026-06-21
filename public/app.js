@@ -318,12 +318,706 @@ const I18N_DE = {
   'Настройки': 'Einstellungen',
 };
 
+// Українська — дзеркало ключів I18N_EN
+const I18N_UK = {
+  'Сегодня': 'Сьогодні', 'День': 'День', 'Заметки': 'Нотатки',
+  'План': 'План', 'Календарь': 'Календар', 'Цели': 'Цілі',
+  'Привычки': 'Звички', 'Награды': 'Нагороди',
+  'Герой': 'Герой', '🏠 Логово': '🏠 Лігво', 'Персонаж': 'Персонаж',
+  '🐾 Питомцы': '🐾 Улюбленці', 'Навыки': 'Навички', 'Прогресс': 'Прогрес',
+  'Племя': "Плем'я", 'Пати': 'Паті', 'Рейтинг': 'Рейтинг',
+  'Превращаем жизнь в игру': 'Перетворюємо життя на гру',
+  'Создай аккаунт': 'Створи акаунт', 'Восстановление доступа': 'Відновлення доступу',
+  'Пароль': 'Пароль', 'Войти': 'Увійти', 'Войти →': 'Увійти →',
+  'Создать аккаунт': 'Створити акаунт', 'Забыл пароль?': 'Забув пароль?',
+  'Вход по профилю (старый способ)': 'Вхід за профілем (старий спосіб)',
+  'Имя': "Ім'я", 'Аватар': 'Аватар', 'Как тебя зовут?': 'Як тебе звати?',
+  'Пароль (минимум 6 символов)': 'Пароль (мінімум 6 символів)',
+  'Придумай пароль': 'Придумай пароль', 'Повтори пароль': 'Повтори пароль',
+  '← Вход': '← Вхід', 'Код восстановления': 'Код відновлення',
+  'Новый пароль (минимум 6)': 'Новий пароль (мінімум 6)', 'Новый пароль': 'Новий пароль',
+  'Сбросить пароль и войти': 'Скинути пароль і увійти',
+  'Не сохранил код — напиши нам, восстановим вручную.': 'Не зберіг код — напиши нам, відновимо вручну.',
+  'Введи email и код восстановления, который выдали при регистрации.': 'Введи email і код відновлення, який видали під час реєстрації.',
+  'Выбери свои сферы развития — их всегда можно изменить': 'Обери свої сфери розвитку — їх завжди можна змінити',
+  '📦 Быстрый старт — готовая программа': '📦 Швидкий старт — готова програма',
+  '— или собери вручную —': '— або збери вручну —', 'Своя сфера…': 'Своя сфера…',
+  'Язык': 'Мова', '🌐 Язык / Language': '🌐 Мова / Language', 'Название': 'Назва',
+  '🔊 Звук': '🔊 Звук',
+  'Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)': 'Звуки інтерфейсу (виконання квесту, левелап, дроп зі скрині, покупка)',
+  '▶ Проверить звук': '▶ Перевірити звук', '🎨 Оформление': '🎨 Оформлення', 'Тема': 'Тема',
+  '🌙 Тёмная': '🌙 Темна', '☀️ Светлая': '☀️ Світла', 'Акцент': 'Акцент',
+  '⚡ Режим «Система»': '⚡ Режим «Система»', 'Навыки / сферы жизни': 'Навички / сфери життя',
+  '+ Добавить сферу': '+ Додати сферу', '🔁 Привычки (повторяющиеся)': '🔁 Звички (повторювані)',
+  'Пока нет привычек.': 'Поки немає звичок.', '+ Добавить привычку': '+ Додати звичку',
+  '🛡 Анти-привычки — с чем борешься': '🛡 Анти-звички — з чим борешся',
+  'Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.': 'Вкладеність будь-якої глибини: Навчання → Школа → Біологія. Обери «Всередині …» — досвід додається вгору по всьому ланцюжку. Зміни зберігаються автоматично.',
+  'Самостоятельная сфера': 'Самостійна сфера', 'Лёгкая': 'Легка', 'Обычная': 'Звичайна', 'Сложная': 'Складна',
+  '🔑 Вход и восстановление': '🔑 Вхід і відновлення', '⚠️ Данные и приватность': '⚠️ Дані та приватність',
+  'Удалить аккаунт и все данные': 'Видалити акаунт і всі дані',
+  'Новый квест на сегодня…': 'Новий квест на сьогодні…', '+ Квест': '+ Квест',
+  '🌱 Лёгкая': '🌱 Легка', '⚔️ Обычная': '⚔️ Звичайна', '🔥 Сложная': '🔥 Складна',
+  'Таймер фокуса — нажми ▶ у квеста': 'Таймер фокусу — натисни ▶ біля квесту',
+  '⏸ Пауза': '⏸ Пауза', '▶ Продолжить': '▶ Продовжити', '⏹ Стоп · записать': '⏹ Стоп · записати',
+  '↗ Окно': '↗ Вікно', 'Энергия': 'Енергія', '⏳ Просрочено': '⏳ Прострочено',
+  '↪ Перенести всё на сегодня': '↪ Перенести все на сьогодні',
+  '+ Добавить цель': '+ Додати ціль', '🎯 Активные': '🎯 Активні', '⏸ Ожидание': '⏸ Очікування', '✓ Выполнено': '✓ Виконано',
+  '+ Добавить': '+ Додати', '+ Добавить награду': '+ Додати нагороду',
+  '📚 Каталог наград': '📚 Каталог нагород', '🎁 Ваучер — бесплатная награда': '🎁 Ваучер — безкоштовна нагорода',
+  '⚙️ Дроп-рейты сундуков': '⚙️ Дроп-рейти скринь', 'Сбросить к дефолту': 'Скинути до типового',
+  '📅 Подписка': '📅 Підписка', '📤 Твоя неделя': '📤 Твій тиждень',
+  '⬇️ Скачать PNG': '⬇️ Завантажити PNG', '🔗 Поделиться': '🔗 Поділитися',
+  'Главная сфера недели': 'Головна сфера тижня', 'Живая подписка на квесты': 'Жива підписка на квести',
+  'Ссылка для подписки': 'Посилання для підписки', 'Открыть в Календаре': 'Відкрити в Календарі',
+  'XP за неделю': 'XP за тиждень', 'Золото': 'Золото', 'Квестов': 'Квестів', 'Привычек': 'Звичок', 'Времени': 'Часу',
+  'Намерение на неделю': 'Намір на тиждень', 'Итоги недели': 'Підсумки тижня', 'Рефлексии этой недели': 'Рефлексії цього тижня',
+  'Загрузка пати…': 'Завантаження паті…', 'Загрузка рейтинга…': 'Завантаження рейтингу…',
+  '🤝 Пати': '🤝 Паті', 'БОСС ПОВЕРЖЕН': 'БОС ПОВЕРЖЕНИЙ', 'Слава пати! 🎉': 'Слава паті! 🎉',
+  'Покинуть пати': 'Покинути паті', 'Состав': 'Склад', 'Босс повержен!': 'Бос повержений!',
+  'Сохранить': 'Зберегти', 'Отмена': 'Скасувати', 'Удалить': 'Видалити', 'Закрыть': 'Закрити',
+  'Выйти': 'Вийти', '⇦ Выйти': '⇦ Вийти', 'Загрузка…': 'Завантаження…', 'Нет данных': 'Немає даних', 'Ошибка': 'Помилка',
+  'Сохранено': 'Збережено', '✓ Скопировано': '✓ Скопійовано', '✓ Ссылка скопирована': '✓ Посилання скопійовано',
+  'Нет ваучеров': 'Немає ваучерів', '✓ Дроп-рейты сохранены': '✓ Дроп-рейти збережено', 'Дроп-рейты сброшены': 'Дроп-рейти скинуто',
+  'Характеристики': 'Характеристики', 'Ранг': 'Ранг', 'Уровень': 'Рівень',
+  '🔊 Эмбиент-звук': '🔊 Ембієнт-звук', '⏹ Выкл': '⏹ Вимк', '🌧 Дождь': '🌧 Дощ', '🔥 Костёр': '🔥 Багаття', 'Громкость': 'Гучність',
+  'Прогресс за 2 недели': 'Прогрес за 2 тижні', 'XP по дням': 'XP по днях', 'Время по сферам': 'Час по сферах',
+  'Активных целей': 'Активних цілей', 'Достигнуто': 'Досягнуто', 'Ближайший дедлайн': 'Найближчий дедлайн',
+  'Новая цель': 'Нова ціль', '+ Цель': '+ Ціль', '📋 Сводка целей': '📋 Зведення цілей', 'Достигнутые': 'Досягнуті',
+  '🌱 Привычки': '🌱 Звички', '🛡 Срывы': '🛡 Зриви', '📖 Метод': '📖 Метод',
+  'Индекс баланса': 'Індекс балансу', 'Всего опыта': 'Усього досвіду', 'Выполнение (14 дн.)': 'Виконання (14 дн.)',
+  'Баланс золота': 'Баланс золота', 'Косметики': 'Косметики', 'Достижений': 'Досягнень',
+  'История покупок': 'Історія покупок', '🏆 Достижения': '🏆 Досягнення',
+  '💎 Про': '💎 Про', 'Настройки': 'Налаштування',
+};
+// Español — espejo de las claves de I18N_EN
+const I18N_ES = {
+  'Сегодня': 'Hoy', 'День': 'Día', 'Заметки': 'Notas',
+  'План': 'Plan', 'Календарь': 'Calendario', 'Цели': 'Metas',
+  'Привычки': 'Hábitos', 'Награды': 'Recompensas',
+  'Герой': 'Héroe', '🏠 Логово': '🏠 Guarida', 'Персонаж': 'Personaje',
+  '🐾 Питомцы': '🐾 Mascotas', 'Навыки': 'Habilidades', 'Прогресс': 'Progreso',
+  'Племя': 'Tribu', 'Пати': 'Grupo', 'Рейтинг': 'Clasificación',
+  'Превращаем жизнь в игру': 'Convertir la vida en un juego',
+  'Создай аккаунт': 'Crea tu cuenta', 'Восстановление доступа': 'Recuperar acceso',
+  'Пароль': 'Contraseña', 'Войти': 'Entrar', 'Войти →': 'Entrar →',
+  'Создать аккаунт': 'Crear cuenta', 'Забыл пароль?': '¿Olvidaste la contraseña?',
+  'Вход по профилю (старый способ)': 'Acceso por perfil (modo antiguo)',
+  'Имя': 'Nombre', 'Аватар': 'Avatar', 'Как тебя зовут?': '¿Cómo te llamas?',
+  'Пароль (минимум 6 символов)': 'Contraseña (mínimo 6 caracteres)',
+  'Придумай пароль': 'Elige una contraseña', 'Повтори пароль': 'Repite la contraseña',
+  '← Вход': '← Entrar', 'Код восстановления': 'Código de recuperación',
+  'Новый пароль (минимум 6)': 'Nueva contraseña (mínimo 6)', 'Новый пароль': 'Nueva contraseña',
+  'Сбросить пароль и войти': 'Restablecer contraseña y entrar',
+  'Не сохранил код — напиши нам, восстановим вручную.': '¿No guardaste el código? Escríbenos y lo restauramos a mano.',
+  'Введи email и код восстановления, который выдали при регистрации.': 'Introduce el email y el código de recuperación que recibiste al registrarte.',
+  'Выбери свои сферы развития — их всегда можно изменить': 'Elige tus áreas de desarrollo — siempre puedes cambiarlas',
+  '📦 Быстрый старт — готовая программа': '📦 Inicio rápido — programa listo',
+  '— или собери вручную —': '— o monta manualmente —', 'Своя сфера…': 'Área propia…',
+  'Язык': 'Idioma', '🌐 Язык / Language': '🌐 Idioma / Language', 'Название': 'Nombre de la app',
+  '🔊 Звук': '🔊 Sonido',
+  'Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)': 'Sonidos de interfaz (completar misión, subir nivel, botín del cofre, compra)',
+  '▶ Проверить звук': '▶ Probar sonido', '🎨 Оформление': '🎨 Apariencia', 'Тема': 'Tema',
+  '🌙 Тёмная': '🌙 Oscuro', '☀️ Светлая': '☀️ Claro', 'Акцент': 'Color de acento',
+  '⚡ Режим «Система»': '⚡ Modo «Sistema»', 'Навыки / сферы жизни': 'Habilidades / áreas de vida',
+  '+ Добавить сферу': '+ Añadir área', '🔁 Привычки (повторяющиеся)': '🔁 Hábitos (recurrentes)',
+  'Пока нет привычек.': 'Aún no hay hábitos.', '+ Добавить привычку': '+ Añadir hábito',
+  '🛡 Анти-привычки — с чем борешься': '🛡 Anti-hábitos — contra qué luchas',
+  'Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.': 'Cualquier profundidad: Estudio → Escuela → Biología. Elige «Dentro de …» — la XP se acumula hacia arriba en toda la cadena. Los cambios se guardan automáticamente.',
+  'Самостоятельная сфера': 'Área independiente', 'Лёгкая': 'Fácil', 'Обычная': 'Normal', 'Сложная': 'Difícil',
+  '🔑 Вход и восстановление': '🔑 Acceso y recuperación', '⚠️ Данные и приватность': '⚠️ Datos y privacidad',
+  'Удалить аккаунт и все данные': 'Eliminar cuenta y todos los datos',
+  'Новый квест на сегодня…': 'Nueva misión para hoy…', '+ Квест': '+ Misión',
+  '🌱 Лёгкая': '🌱 Fácil', '⚔️ Обычная': '⚔️ Normal', '🔥 Сложная': '🔥 Difícil',
+  'Таймер фокуса — нажми ▶ у квеста': 'Temporizador de enfoque — pulsa ▶ en una misión',
+  '⏸ Пауза': '⏸ Pausa', '▶ Продолжить': '▶ Continuar', '⏹ Стоп · записать': '⏹ Parar · guardar',
+  '↗ Окно': '↗ Ventana', 'Энергия': 'Energía', '⏳ Просрочено': '⏳ Atrasado',
+  '↪ Перенести всё на сегодня': '↪ Mover todo a hoy',
+  '+ Добавить цель': '+ Añadir meta', '🎯 Активные': '🎯 Activas', '⏸ Ожидание': '⏸ En espera', '✓ Выполнено': '✓ Completado',
+  '+ Добавить': '+ Añadir', '+ Добавить награду': '+ Añadir recompensa',
+  '📚 Каталог наград': '📚 Catálogo de recompensas', '🎁 Ваучер — бесплатная награда': '🎁 Vale — recompensa gratis',
+  '⚙️ Дроп-рейты сундуков': '⚙️ Probabilidades de botín', 'Сбросить к дефолту': 'Restablecer por defecto',
+  '📅 Подписка': '📅 Suscripción', '📤 Твоя неделя': '📤 Tu semana',
+  '⬇️ Скачать PNG': '⬇️ Descargar PNG', '🔗 Поделиться': '🔗 Compartir',
+  'Главная сфера недели': 'Área principal de la semana', 'Живая подписка на квесты': 'Suscripción de calendario en vivo',
+  'Ссылка для подписки': 'Enlace de suscripción', 'Открыть в Календаре': 'Abrir en el Calendario',
+  'XP за неделю': 'XP de la semana', 'Золото': 'Oro', 'Квестов': 'Misiones', 'Привычек': 'Hábitos', 'Времени': 'Tiempo',
+  'Намерение на неделю': 'Intención de la semana', 'Итоги недели': 'Resumen de la semana', 'Рефлексии этой недели': 'Reflexiones de esta semana',
+  'Загрузка пати…': 'Cargando grupo…', 'Загрузка рейтинга…': 'Cargando clasificación…',
+  '🤝 Пати': '🤝 Grupo', 'БОСС ПОВЕРЖЕН': 'JEFE DERROTADO', 'Слава пати! 🎉': '¡Victoria del grupo! 🎉',
+  'Покинуть пати': 'Salir del grupo', 'Состав': 'Miembros', 'Босс повержен!': '¡Jefe derrotado!',
+  'Сохранить': 'Guardar', 'Отмена': 'Cancelar', 'Удалить': 'Eliminar', 'Закрыть': 'Cerrar',
+  'Выйти': 'Salir', '⇦ Выйти': '⇦ Salir', 'Загрузка…': 'Cargando…', 'Нет данных': 'Sin datos', 'Ошибка': 'Error',
+  'Сохранено': 'Guardado', '✓ Скопировано': '✓ Copiado', '✓ Ссылка скопирована': '✓ Enlace copiado',
+  'Нет ваучеров': 'Sin vales', '✓ Дроп-рейты сохранены': '✓ Probabilidades guardadas', 'Дроп-рейты сброшены': 'Probabilidades restablecidas',
+  'Характеристики': 'Atributos', 'Ранг': 'Rango', 'Уровень': 'Nivel',
+  '🔊 Эмбиент-звук': '🔊 Sonido ambiente', '⏹ Выкл': '⏹ Apagado', '🌧 Дождь': '🌧 Lluvia', '🔥 Костёр': '🔥 Fogata', 'Громкость': 'Volumen',
+  'Прогресс за 2 недели': 'Progreso de 2 semanas', 'XP по дням': 'XP por día', 'Время по сферам': 'Tiempo por área',
+  'Активных целей': 'Metas activas', 'Достигнуто': 'Logrado', 'Ближайший дедлайн': 'Próximo plazo',
+  'Новая цель': 'Nueva meta', '+ Цель': '+ Meta', '📋 Сводка целей': '📋 Resumen de metas', 'Достигнутые': 'Logradas',
+  '🌱 Привычки': '🌱 Hábitos', '🛡 Срывы': '🛡 Recaídas', '📖 Метод': '📖 Método',
+  'Индекс баланса': 'Índice de equilibrio', 'Всего опыта': 'XP total', 'Выполнение (14 дн.)': 'Cumplimiento (14 d)',
+  'Баланс золота': 'Saldo de oro', 'Косметики': 'Cosméticos', 'Достижений': 'Logros',
+  'История покупок': 'Historial de compras', '🏆 Достижения': '🏆 Logros',
+  '💎 Про': '💎 Pro', 'Настройки': 'Ajustes',
+};
+// Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
+const I18N_EXTRA = {
+  // Companion (Тень)
+  'Тень': { en: 'Shadow', de: 'Schatten', uk: 'Тінь', es: 'Sombra' },
+  'Искра': { en: 'Spark', de: 'Funke', uk: 'Іскра', es: 'Chispa' },
+  'Дух': { en: 'Spirit', de: 'Geist', uk: 'Дух', es: 'Espíritu' },
+  'Страж': { en: 'Guardian', de: 'Wächter', uk: 'Вартовий', es: 'Guardián' },
+  'Хранитель': { en: 'Keeper', de: 'Hüter', uk: 'Хранитель', es: 'Custodio' },
+  '🌅 Утренний чек-ин': { en: '🌅 Morning check-in', de: '🌅 Morgen-Check-in', uk: '🌅 Ранковий чек-ін', es: '🌅 Registro matutino' },
+  '🌙 Вечерний чек-ин': { en: '🌙 Evening check-in', de: '🌙 Abend-Check-in', uk: '🌙 Вечірній чек-ін', es: '🌙 Registro nocturno' },
+  '🫶 Погладить': { en: '🫶 Pet', de: '🫶 Streicheln', uk: '🫶 Погладити', es: '🫶 Acariciar' },
+  '💛 обнял сегодня': { en: '💛 hugged today', de: '💛 heute umarmt', uk: '💛 обійняв сьогодні', es: '💛 abrazado hoy' },
+  'Назвать': { en: 'Name', de: 'Benennen', uk: 'Назвати', es: 'Nombrar' },
+  'Как зовут твоего спутника?': { en: "What's your companion's name?", de: 'Wie heißt dein Begleiter?', uk: 'Як звати твого супутника?', es: '¿Cómo se llama tu compañero?' },
+  '🌅 Одна вещь, ради которой стоит проснуться сегодня?': { en: '🌅 One thing worth waking up for today?', de: '🌅 Eine Sache, für die es sich lohnt, heute aufzustehen?', uk: '🌅 Одна річ, заради якої варто прокинутися сьогодні?', es: '🌅 ¿Una cosa por la que valga la pena despertar hoy?' },
+  '🌙 Чем ты сегодня гордишься? (даже мелочь считается)': { en: '🌙 What are you proud of today? (even a small thing counts)', de: '🌙 Worauf bist du heute stolz? (auch Kleinigkeiten zählen)', uk: '🌙 Чим ти сьогодні пишаєшся? (навіть дрібниця рахується)', es: '🌙 ¿De qué estás orgulloso hoy? (hasta lo pequeño cuenta)' },
+  'сегодня хочу…': { en: 'today I want…', de: 'heute will ich…', uk: 'сьогодні хочу…', es: 'hoy quiero…' },
+  'я горжусь тем, что…': { en: "I'm proud that…", de: 'ich bin stolz, dass…', uk: 'я пишаюся тим, що…', es: 'estoy orgulloso de que…' },
+  'Я скучал по тебе… так рад, что ты вернулся 💛': { en: "I missed you… so glad you're back 💛", de: 'Ich habe dich vermisst… schön, dass du zurück bist 💛', uk: 'Я сумував за тобою… радий, що ти повернувся 💛', es: 'Te eché de menos… me alegra que hayas vuelto 💛' },
+  'Доброе утро. Чем наполним сегодня?': { en: 'Good morning. What shall we fill today with?', de: 'Guten Morgen. Womit füllen wir heute?', uk: 'Доброго ранку. Чим наповнимо сьогодні?', es: 'Buenos días. ¿Con qué llenamos hoy?' },
+  'разминается': { en: 'warming up', de: 'wärmt sich auf', uk: 'розминається', es: 'calentando' },
+  'медитирует': { en: 'meditating', de: 'meditiert', uk: 'медитує', es: 'meditando' },
+  'почитывает книгу': { en: 'reading a book', de: 'liest ein Buch', uk: 'почитує книгу', es: 'leyendo un libro' },
+  'учит слова': { en: 'learning words', de: 'lernt Wörter', uk: 'вчить слова', es: 'aprendiendo palabras' },
+  'что-то подсчитывает': { en: 'counting something', de: 'rechnet etwas', uk: 'щось підраховує', es: 'contando algo' },
+  'творит': { en: 'creating', de: 'erschafft', uk: 'творить', es: 'creando' },
+  'печатает код': { en: 'typing code', de: 'tippt Code', uk: 'друкує код', es: 'escribiendo código' },
+  'размышляет': { en: 'pondering', de: 'grübelt', uk: 'розмірковує', es: 'reflexionando' },
+  'прибирается': { en: 'tidying up', de: 'räumt auf', uk: 'прибирає', es: 'ordenando' },
+  'болтает с друзьями': { en: 'chatting with friends', de: 'plaudert mit Freunden', uk: 'балакає з друзями', es: 'charlando con amigos' },
+  // Progress trio
+  '🌅 День': { en: '🌅 Day', de: '🌅 Tag', uk: '🌅 День', es: '🌅 Día' },
+  '🗓 Неделя': { en: '🗓 Week', de: '🗓 Woche', uk: '🗓 Тиждень', es: '🗓 Semana' },
+  '🔥 Серия': { en: '🔥 Streak', de: '🔥 Serie', uk: '🔥 Серія', es: '🔥 Racha' },
+  // Quick note
+  'Быстрая мысль, идея, план — в Заметки…': { en: 'Quick thought, idea, plan — to Notes…', de: 'Schneller Gedanke, Idee, Plan — zu Notizen…', uk: 'Швидка думка, ідея, план — у Нотатки…', es: 'Idea o plan rápido — a Notas…' },
+  // Habits
+  '🌱 Строим привычки': { en: '🌱 Building habits', de: '🌱 Gewohnheiten aufbauen', uk: '🌱 Будуємо звички', es: '🌱 Construyendo hábitos' },
+  'Кем ты хочешь стать?': { en: 'Who do you want to become?', de: 'Wer willst du werden?', uk: 'Ким ти хочеш стати?', es: '¿Quién quieres llegar a ser?' },
+  '4 закона создания привычки': { en: 'The 4 laws of building a habit', de: 'Die 4 Gesetze der Gewohnheitsbildung', uk: '4 закони створення звички', es: 'Las 4 leyes para crear un hábito' },
+  '4 закона разрушения привычки (инверсия)': { en: 'The 4 laws of breaking a habit (inversion)', de: 'Die 4 Gesetze, eine Gewohnheit zu brechen (Umkehrung)', uk: '4 закони руйнування звички (інверсія)', es: 'Las 4 leyes para romper un hábito (inversión)' },
+  '🛡 Свобода от привычек': { en: '🛡 Freedom from habits', de: '🛡 Freiheit von Gewohnheiten', uk: '🛡 Свобода від звичок', es: '🛡 Libertad de los hábitos' },
+  '📖 Атомные привычки — метод': { en: '📖 Atomic Habits — method', de: '📖 Atomic Habits — Methode', uk: '📖 Атомні звички — метод', es: '📖 Hábitos atómicos — método' },
+  '🔄 Петля привычки': { en: '🔄 The habit loop', de: '🔄 Die Gewohnheitsschleife', uk: '🔄 Петля звички', es: '🔄 El bucle del hábito' },
+  'Ещё принципы': { en: 'More principles', de: 'Weitere Prinzipien', uk: 'Ще принципи', es: 'Más principios' },
+  '+ Новая привычка': { en: '+ New habit', de: '+ Neue Gewohnheit', uk: '+ Нова звичка', es: '+ Nuevo hábito' },
+  'был срыв?': { en: 'had a slip?', de: 'Rückfall gehabt?', uk: 'був зрив?', es: '¿hubo recaída?' },
+  'сегодня был срыв · отменить': { en: 'slipped today · undo', de: 'heute Rückfall · rückgängig', uk: 'сьогодні був зрив · скасувати', es: 'recaída hoy · deshacer' },
+  'Сделай очевидным': { en: 'Make it obvious', de: 'Mach es offensichtlich', uk: 'Зроби очевидним', es: 'Hazlo obvio' },
+  'Сделай привлекательным': { en: 'Make it attractive', de: 'Mach es attraktiv', uk: 'Зроби привабливим', es: 'Hazlo atractivo' },
+  'Сделай простым': { en: 'Make it easy', de: 'Mach es einfach', uk: 'Зроби простим', es: 'Hazlo fácil' },
+  'Сделай приятным': { en: 'Make it satisfying', de: 'Mach es befriedigend', uk: 'Зроби приємним', es: 'Hazlo satisfactorio' },
+  'Сделай незаметным': { en: 'Make it invisible', de: 'Mach es unsichtbar', uk: 'Зроби непомітним', es: 'Hazlo invisible' },
+  'Сделай непривлекательным': { en: 'Make it unattractive', de: 'Mach es unattraktiv', uk: 'Зроби непривабливим', es: 'Hazlo poco atractivo' },
+  'Сделай трудным': { en: 'Make it hard', de: 'Mach es schwierig', uk: 'Зроби важким', es: 'Hazlo difícil' },
+  'Сделай неприятным': { en: 'Make it unsatisfying', de: 'Mach es unbefriedigend', uk: 'Зроби неприємним', es: 'Hazlo insatisfactorio' },
+  // Rewards
+  '🎁 Сундуки дня': { en: '🎁 Daily chests', de: '🎁 Tägliche Truhen', uk: '🎁 Скрині дня', es: '🎁 Cofres del día' },
+  'История дропов': { en: 'Drop history', de: 'Drop-Verlauf', uk: 'Історія дропів', es: 'Historial de botín' },
+  '🎨 Коллекция': { en: '🎨 Collection', de: '🎨 Sammlung', uk: '🎨 Колекція', es: '🎨 Colección' },
+  'Рамки': { en: 'Frames', de: 'Rahmen', uk: 'Рамки', es: 'Marcos' },
+  'Фоны': { en: 'Backgrounds', de: 'Hintergründe', uk: 'Фони', es: 'Fondos' },
+  '⚔️ Арсенал — снаряжение': { en: '⚔️ Arsenal — gear', de: '⚔️ Arsenal — Ausrüstung', uk: '⚔️ Арсенал — спорядження', es: '⚔️ Arsenal — equipo' },
+  '🎁 Магазин наград': { en: '🎁 Reward shop', de: '🎁 Belohnungs-Shop', uk: '🎁 Магазин нагород', es: '🎁 Tienda de recompensas' },
+  'Обычное': { en: 'Common', de: 'Gewöhnlich', uk: 'Звичайне', es: 'Común' },
+  'Редкое': { en: 'Rare', de: 'Selten', uk: 'Рідкісне', es: 'Raro' },
+  'Эпическое': { en: 'Epic', de: 'Episch', uk: 'Епічне', es: 'Épico' },
+  'Легендарное': { en: 'Legendary', de: 'Legendär', uk: 'Легендарне', es: 'Legendario' },
+  'Взять': { en: 'Take', de: 'Nehmen', uk: 'Взяти', es: 'Tomar' },
+  'Купить': { en: 'Buy', de: 'Kaufen', uk: 'Купити', es: 'Comprar' },
+  // Ranks
+  'Новичок': { en: 'Novice', de: 'Neuling', uk: 'Новачок', es: 'Novato' },
+  'Ученик': { en: 'Apprentice', de: 'Lehrling', uk: 'Учень', es: 'Aprendiz' },
+  'Адепт': { en: 'Adept', de: 'Adept', uk: 'Адепт', es: 'Adepto' },
+  'Эксперт': { en: 'Expert', de: 'Experte', uk: 'Експерт', es: 'Experto' },
+  'Мастер': { en: 'Master', de: 'Meister', uk: 'Майстер', es: 'Maestro' },
+  'Грандмастер': { en: 'Grandmaster', de: 'Großmeister', uk: 'Грандмайстер', es: 'Gran maestro' },
+  'Легенда': { en: 'Legend', de: 'Legende', uk: 'Легенда', es: 'Leyenda' },
+  // Title (visible in header)
+  'Первопроходец': { en: 'Pioneer', de: 'Pionier', uk: 'Першопрохідець', es: 'Pionero' },
+  // Common extras
+  'Готово': { en: 'Done', de: 'Fertig', uk: 'Готово', es: 'Listo' },
+  'Копировать': { en: 'Copy', de: 'Kopieren', uk: 'Копіювати', es: 'Copiar' },
+  'Привязать': { en: 'Link', de: 'Verknüpfen', uk: "Прив'язати", es: 'Vincular' },
+  'Сменить': { en: 'Change', de: 'Ändern', uk: 'Змінити', es: 'Cambiar' },
+  // Reward catalog modal
+  '🎁 Ваучер — бесплатная награда': { en: '🎁 Voucher — free reward', de: '🎁 Gutschein — kostenlose Belohnung', uk: '🎁 Ваучер — безкоштовна нагорода', es: '🎁 Vale — recompensa gratis' },
+  // Companion mood lines
+  'Я рядом. Сделаем что-нибудь маленькое и доброе?': { en: "I'm here. Shall we do something small and kind?", de: 'Ich bin da. Machen wir etwas Kleines und Gutes?', uk: 'Я поруч. Зробимо щось маленьке й добре?', es: 'Estoy aquí. ¿Hacemos algo pequeño y bueno?' },
+  'Вижу, день был тяжёлым. Отдых — это тоже победа. Я рядом, никуда не спешим 💛': { en: 'I see the day was hard. Rest is a win too. I\'m here, no rush 💛', de: 'Ich sehe, der Tag war schwer. Ruhe ist auch ein Sieg. Ich bin da, keine Eile 💛', uk: 'Бачу, день був важким. Відпочинок — теж перемога. Я поруч, не поспішаємо 💛', es: 'Veo que el día fue duro. Descansar también es ganar. Estoy aquí, sin prisa 💛' },
+  'Хороший день идёт. Каждый маленький шаг важен 🙂': { en: "It's a good day. Every small step matters 🙂", de: 'Ein guter Tag läuft. Jeder kleine Schritt zählt 🙂', uk: 'Гарний день триває. Кожен маленький крок важливий 🙂', es: 'Va un buen día. Cada pequeño paso cuenta 🙂' },
+  'День к концу. Что бы ни случилось — ты здесь, и это уже хорошо 🌙': { en: 'The day is ending. Whatever happened — you\'re here, and that\'s already good 🌙', de: 'Der Tag geht zu Ende. Was auch war — du bist hier, und das ist schon gut 🌙', uk: 'День добігає кінця. Що б не сталося — ти тут, і це вже добре 🌙', es: 'El día termina. Pase lo que pase — estás aquí, y eso ya es bueno 🌙' },
+  // Today summary labels
+  'Квестов:': { en: 'Quests:', de: 'Quests:', uk: 'Квестів:', es: 'Misiones:' },
+  'Время:': { en: 'Time:', de: 'Zeit:', uk: 'Час:', es: 'Tiempo:' },
+  'Опыт:': { en: 'XP:', de: 'XP:', uk: 'Досвід:', es: 'XP:' },
+  'Золото:': { en: 'Gold:', de: 'Gold:', uk: 'Золото:', es: 'Oro:' },
+  '🔁 Привычки на сегодня': { en: "🔁 Today's habits", de: '🔁 Heutige Gewohnheiten', uk: '🔁 Звички на сьогодні', es: '🔁 Hábitos de hoy' },
+  'На сегодня привычек нет. Добавь их в «Настройках».': { en: 'No habits for today. Add them in Settings.', de: 'Keine Gewohnheiten für heute. Füge sie in den Einstellungen hinzu.', uk: 'На сьогодні звичок немає. Додай їх у «Налаштуваннях».', es: 'No hay hábitos para hoy. Añádelos en Ajustes.' },
+  '🌙 Итог дня': { en: '🌙 Day summary', de: '🌙 Tagesabschluss', uk: '🌙 Підсумок дня', es: '🌙 Resumen del día' },
+  'Закрыть день': { en: 'Close the day', de: 'Tag abschließen', uk: 'Закрити день', es: 'Cerrar el día' },
+  '✓ День закрыт — открыть заново': { en: '✓ Day closed — reopen', de: '✓ Tag abgeschlossen — wieder öffnen', uk: '✓ День закрито — відкрити знову', es: '✓ Día cerrado — reabrir' },
+  '🌱 Лёгкая — рутина, механика · ⚔️ Обычная — требует фокуса · 🔥 Сложная — вызов, выход из зоны комфорта → активирует Хайп': { en: '🌱 Easy — routine, mechanical · ⚔️ Normal — needs focus · 🔥 Hard — a challenge, out of the comfort zone → triggers Hype', de: '🌱 Leicht — Routine, mechanisch · ⚔️ Normal — braucht Fokus · 🔥 Schwer — Herausforderung, raus aus der Komfortzone → löst Hype aus', uk: '🌱 Легка — рутина, механіка · ⚔️ Звичайна — потребує фокусу · 🔥 Складна — виклик, вихід із зони комфорту → активує Хайп', es: '🌱 Fácil — rutina, mecánica · ⚔️ Normal — requiere enfoque · 🔥 Difícil — un reto, fuera de la zona de confort → activa el Hype' },
+  // Energy
+  'свежесть': { en: 'freshness', de: 'Frische', uk: 'свіжість', es: 'frescura' },
+  'Восстанавливается сама со временем + дела вроде сна / прогулки / растяжки / медитации': { en: 'Recovers on its own over time + activities like sleep / walks / stretching / meditation', de: 'Erholt sich mit der Zeit von selbst + Dinge wie Schlaf / Spaziergänge / Dehnen / Meditation', uk: 'Відновлюється сама з часом + справи на кшталт сну / прогулянки / розтяжки / медитації', es: 'Se recupera sola con el tiempo + cosas como dormir / pasear / estirar / meditar' },
+  'пополняют': { en: 'replenish', de: 'füllen auf', uk: 'поповнюють', es: 'reponen' },
+  'её · ≈ оценка по задачам, точнее с Apple Watch / Garmin (позже)': { en: 'it · ≈ estimated from tasks, more precise with Apple Watch / Garmin (later)', de: 'sie · ≈ Schätzung aus Aufgaben, genauer mit Apple Watch / Garmin (später)', uk: 'її · ≈ оцінка за задачами, точніше з Apple Watch / Garmin (пізніше)', es: 'la · ≈ estimación por tareas, más preciso con Apple Watch / Garmin (luego)' },
+  'отметь свой уровень в сферах → стартовый опыт': { en: 'mark your level in areas → starting XP', de: 'markiere dein Niveau in den Bereichen → Start-XP', uk: 'познач свій рівень у сферах → стартовий досвід', es: 'marca tu nivel en las áreas → XP inicial' },
+  'Pro: до 3 сундуков в день.': { en: 'Pro: up to 3 chests a day.', de: 'Pro: bis zu 3 Truhen pro Tag.', uk: 'Pro: до 3 скринь на день.', es: 'Pro: hasta 3 cofres al día.' },
+  'Free: 1 сундук в день.': { en: 'Free: 1 chest a day.', de: 'Free: 1 Truhe pro Tag.', uk: 'Free: 1 скриня на день.', es: 'Free: 1 cofre al día.' },
+  // Import nudge (Today / Settings)
+  '🎖 Не начинай с нуля — импортируй свой реальный опыт': { en: "🎖 Don't start from scratch — import your real experience", de: '🎖 Fang nicht bei null an — importiere deine echte Erfahrung', uk: '🎖 Не починай з нуля — імпортуй свій реальний досвід', es: '🎖 No empieces de cero — importa tu experiencia real' },
+  '⚠️ Никогда не пропускай дважды: один пропуск — случайность, два — начало новой привычки. Отмечать привычки — на «Сегодня».': { en: '⚠️ Never miss twice: one miss is an accident, two is the start of a new habit. Mark habits on "Today".', de: '⚠️ Verpasse nie zweimal: einmal ist Zufall, zweimal der Beginn einer neuen Gewohnheit. Gewohnheiten markierst du unter „Heute".', uk: '⚠️ Ніколи не пропускай двічі: один пропуск — випадковість, два — початок нової звички. Відмічати звички — на «Сьогодні».', es: '⚠️ Nunca falles dos veces: una vez es accidente, dos es el inicio de un hábito nuevo. Marca los hábitos en «Hoy».' },
+  '. Pro: до 3 сундуков в день.': { en: '. Pro: up to 3 chests a day.', de: '. Pro: bis zu 3 Truhen pro Tag.', uk: '. Pro: до 3 скринь на день.', es: '. Pro: hasta 3 cofres al día.' },
+  '. Free: 1 сундук в день.': { en: '. Free: 1 chest a day.', de: '. Free: 1 Truhe pro Tag.', uk: '. Free: 1 скриня на день.', es: '. Free: 1 cofre al día.' },
+  // Arsenal / gear
+  '⚔️ Арсенал — снаряжение': { en: '⚔️ Arsenal — gear', de: '⚔️ Arsenal — Ausrüstung', uk: '⚔️ Арсенал — спорядження', es: '⚔️ Arsenal — equipo' },
+  '⚔️ Оружие': { en: '⚔️ Weapon', de: '⚔️ Waffe', uk: '⚔️ Зброя', es: '⚔️ Arma' },
+  '🛡 Броня': { en: '🛡 Armor', de: '🛡 Rüstung', uk: '🛡 Броня', es: '🛡 Armadura' },
+  '📿 Амулет': { en: '📿 Amulet', de: '📿 Amulett', uk: '📿 Амулет', es: '📿 Amuleto' },
+  '🔱 Реликвии (сфера-привязка)': { en: '🔱 Relics (area-bound)', de: '🔱 Relikte (bereichsgebunden)', uk: '🔱 Реліквії (прив\'язка до сфери)', es: '🔱 Reliquias (ligadas a un área)' },
+  'Ничего не надето — снаряжение усилит рост.': { en: 'Nothing equipped — gear boosts your growth.', de: 'Nichts ausgerüstet — Ausrüstung verstärkt dein Wachstum.', uk: 'Нічого не вдягнено — спорядження посилить зростання.', es: 'Nada equipado — el equipo impulsa tu crecimiento.' },
+  'Покупай за золото': { en: 'Buy with gold', de: 'Kaufe mit Gold', uk: 'Купуй за золото', es: 'Compra con oro' },
+  'или выбивай из 🎁 сундуков': { en: 'or get them from 🎁 chests', de: 'oder erbeute sie aus 🎁 Truhen', uk: 'або вибивай із 🎁 скринь', es: 'o consíguelos en 🎁 cofres' },
+  'и надевай гир — он пассивно усиливает XP и золото (сверх косметики). По 1 предмету на слот. Реликвии бустят конкретную сферу.': { en: 'and equip gear — it passively boosts XP and gold (on top of cosmetics). One item per slot. Relics boost a specific area.', de: 'und rüste Gear aus — es verstärkt passiv XP und Gold (zusätzlich zur Kosmetik). Ein Teil pro Slot. Relikte verstärken einen bestimmten Bereich.', uk: 'і вдягай гір — він пасивно посилює XP і золото (понад косметику). По 1 предмету на слот. Реліквії бустять конкретну сферу.', es: 'y equipa gear — potencia pasivamente XP y oro (además de los cosméticos). Un objeto por ranura. Las reliquias potencian un área concreta.' },
+  'званий пока нет — открывай достижения ниже ↓': { en: 'no titles yet — unlock achievements below ↓', de: 'noch keine Titel — schalte unten Erfolge frei ↓', uk: 'звань поки немає — відкривай досягнення нижче ↓', es: 'aún no hay títulos — desbloquea logros abajo ↓' },
+  'Реликвии падают из 🎁 сундуков — каждая усиливает XP': { en: 'Relics drop from 🎁 chests — each boosts the XP', de: 'Relikte fallen aus 🎁 Truhen — jedes verstärkt die XP', uk: 'Реліквії падають із 🎁 скринь — кожна посилює XP', es: 'Las reliquias salen de 🎁 cofres — cada una potencia la XP' },
+  'конкретной сферы': { en: 'of a specific area', de: 'eines bestimmten Bereichs', uk: 'конкретної сфери', es: 'de un área concreta' },
+  'Наград пока нет — возьми готовые из каталога ↓': { en: 'No rewards yet — grab ready-made ones from the catalog ↓', de: 'Noch keine Belohnungen — nimm fertige aus dem Katalog ↓', uk: 'Нагород поки немає — візьми готові з каталогу ↓', es: 'Aún no hay recompensas — toma algunas del catálogo ↓' },
+  'Пока ничего не куплено.': { en: 'Nothing purchased yet.', de: 'Noch nichts gekauft.', uk: 'Поки нічого не куплено.', es: 'Aún no se ha comprado nada.' },
+  'свежесть активности — не уровень; падает без практики, легко возвращается (появится после первых дел)': { en: "freshness of activity — not level; drops without practice, returns easily (appears after your first actions)", de: 'Frische der Aktivität — nicht das Level; sinkt ohne Übung, kommt leicht zurück (erscheint nach den ersten Aktionen)', uk: 'свіжість активності — не рівень; падає без практики, легко повертається (з\'явиться після перших справ)', es: 'frescura de la actividad — no el nivel; baja sin práctica, vuelve fácil (aparece tras tus primeras acciones)' },
+  // Gear names
+  'Тренировочный клинок': { en: 'Training blade', de: 'Trainingsklinge', uk: 'Тренувальний клинок', es: 'Hoja de entrenamiento' },
+  'Клинок Фокуса': { en: 'Blade of Focus', de: 'Klinge des Fokus', uk: 'Клинок Фокусу', es: 'Hoja del Enfoque' },
+  'Катана Бесконечности': { en: 'Katana of Infinity', de: 'Katana der Unendlichkeit', uk: 'Катана Нескінченності', es: 'Katana del Infinito' },
+  'Лёгкая броня': { en: 'Light armor', de: 'Leichte Rüstung', uk: 'Легка броня', es: 'Armadura ligera' },
+  'Эгида Стойкости': { en: 'Aegis of Resilience', de: 'Ägis der Standhaftigkeit', uk: 'Егіда Стійкості', es: 'Égida de la Resistencia' },
+  'Латы Несокрушимости': { en: 'Plate of Indestructibility', de: 'Panzer der Unzerstörbarkeit', uk: 'Лати Незламності', es: 'Coraza de la Indestructibilidad' },
+  'Медный амулет': { en: 'Copper amulet', de: 'Kupferamulett', uk: 'Мідний амулет', es: 'Amuleto de cobre' },
+  'Амулет Знаний': { en: 'Amulet of Knowledge', de: 'Amulett des Wissens', uk: 'Амулет Знань', es: 'Amuleto del Saber' },
+  'Реликвия Шести Глаз': { en: 'Relic of the Six Eyes', de: 'Relikt der Sechs Augen', uk: 'Реліквія Шести Очей', es: 'Reliquia de los Seis Ojos' },
+  // Habits — Atomic
+  'Суть «Атомных привычек» Джеймса Клира: крошечные изменения дают огромный результат. Ты не поднимаешься до уровня целей — ты падаешь до уровня своих систем. Каждое выполнение привычки — голос за того, кем ты хочешь стать.': { en: "The core of James Clear's Atomic Habits: tiny changes give huge results. You don't rise to the level of your goals — you fall to the level of your systems. Every time you do a habit is a vote for who you want to become.", de: 'Der Kern von James Clears Atomic Habits: winzige Änderungen bringen riesige Ergebnisse. Du steigst nicht auf das Niveau deiner Ziele — du fällst auf das Niveau deiner Systeme. Jede ausgeführte Gewohnheit ist eine Stimme für den, der du werden willst.', uk: 'Суть «Атомних звичок» Джеймса Кліра: крихітні зміни дають величезний результат. Ти не піднімаєшся до рівня цілей — ти падаєш до рівня своїх систем. Кожне виконання звички — голос за того, ким ти хочеш стати.', es: 'La esencia de Hábitos atómicos de James Clear: pequeños cambios dan grandes resultados. No subes al nivel de tus metas — caes al nivel de tus sistemas. Cada vez que cumples un hábito es un voto por quien quieres llegar a ser.' },
+  'Сигнал': { en: 'Cue', de: 'Auslöser', uk: 'Сигнал', es: 'Señal' },
+  'Желание': { en: 'Craving', de: 'Verlangen', uk: 'Бажання', es: 'Anhelo' },
+  'Действие': { en: 'Response', de: 'Reaktion', uk: 'Дія', es: 'Respuesta' },
+  'Награда': { en: 'Reward', de: 'Belohnung', uk: 'Нагорода', es: 'Recompensa' },
+  'Сигнал — замечаешь': { en: 'Cue — you notice', de: 'Auslöser — du bemerkst', uk: 'Сигнал — помічаєш', es: 'Señal — te das cuenta' },
+  'Желание — хочешь': { en: 'Craving — you want', de: 'Verlangen — du willst', uk: 'Бажання — хочеш', es: 'Anhelo — quieres' },
+  'Действие — делаешь': { en: 'Response — you do', de: 'Reaktion — du tust', uk: 'Дія — робиш', es: 'Respuesta — actúas' },
+  'Награда — получаешь': { en: 'Reward — you get', de: 'Belohnung — du erhältst', uk: 'Нагорода — отримуєш', es: 'Recompensa — recibes' },
+  '🪪 Идентичность': { en: '🪪 Identity', de: '🪪 Identität', uk: '🪪 Ідентичність', es: '🪪 Identidad' },
+  '📍 Сигнал / связка': { en: '📍 Cue / stacking', de: '📍 Auslöser / Kopplung', uk: '📍 Сигнал / зв\'язка', es: '📍 Señal / encadenado' },
+  '⏱ Версия 2 минут': { en: '⏱ 2-minute version', de: '⏱ 2-Minuten-Version', uk: '⏱ Версія 2 хвилини', es: '⏱ Versión de 2 minutos' },
+  // Rewards / lootbox
+  'Выполняй квесты и привычки — за активность дают сундуки. Внутри: золото, XP-бусты, заряд энергии,': { en: 'Complete quests and habits — activity earns chests. Inside: gold, XP boosts, energy charge,', de: 'Erledige Quests und Gewohnheiten — Aktivität bringt Truhen. Darin: Gold, XP-Boosts, Energieladung,', uk: 'Виконуй квести та звички — за активність дають скрині. Усередині: золото, XP-бусти, заряд енергії,', es: 'Completa misiones y hábitos — la actividad da cofres. Dentro: oro, mejoras de XP, carga de energía,' },
+  'косметика': { en: 'cosmetics', de: 'Kosmetik', uk: 'косметика', es: 'cosméticos' },
+  'ваучеры наград': { en: 'reward vouchers', de: 'Belohnungs-Gutscheine', uk: 'ваучери нагород', es: 'vales de recompensa' },
+  '⚙️ Дроп-рейты': { en: '⚙️ Drop rates', de: '⚙️ Drop-Raten', uk: '⚙️ Дроп-рейти', es: '⚙️ Probabilidades' },
+  '🎁 Магазин наград': { en: '🎁 Reward shop', de: '🎁 Belohnungs-Shop', uk: '🎁 Магазин нагород', es: '🎁 Tienda de recompensas' },
+  '🏷 Звания': { en: '🏷 Titles', de: '🏷 Titel', uk: '🏷 Звання', es: '🏷 Títulos' },
+  '— за достижения': { en: '— for achievements', de: '— für Erfolge', uk: '— за досягнення', es: '— por logros' },
+  // Cosmetic names — frames
+  'Бронза': { en: 'Bronze', de: 'Bronze', uk: 'Бронза', es: 'Bronce' },
+  'Листва': { en: 'Foliage', de: 'Laub', uk: 'Листя', es: 'Follaje' },
+  'Серебро': { en: 'Silver', de: 'Silber', uk: 'Срібло', es: 'Plata' },
+  'Лазурь': { en: 'Azure', de: 'Azur', uk: 'Лазур', es: 'Azur' },
+  'Золото': { en: 'Gold', de: 'Gold', uk: 'Золото', es: 'Oro' },
+  'Аметист': { en: 'Amethyst', de: 'Amethyst', uk: 'Аметист', es: 'Amatista' },
+  'Пламя': { en: 'Flame', de: 'Flamme', uk: 'Полум\'я', es: 'Llama' },
+  'Затмение': { en: 'Eclipse', de: 'Finsternis', uk: 'Затемнення', es: 'Eclipse' },
+  'Феникс': { en: 'Phoenix', de: 'Phönix', uk: 'Фенікс', es: 'Fénix' },
+  // Atomic Habits — method tab (full)
+  '🪪 Идентичность важнее целей': { en: '🪪 Identity over goals', de: '🪪 Identität vor Zielen', uk: '🪪 Ідентичність важливіша за цілі', es: '🪪 Identidad por encima de las metas' },
+  'Цель — не «прочитать книгу», а «стать читателем». Поведение следует за идентичностью.': { en: 'The goal isn\'t "read a book" but "become a reader". Behavior follows identity.', de: 'Das Ziel ist nicht „ein Buch lesen", sondern „ein Leser werden". Verhalten folgt der Identität.', uk: 'Мета — не «прочитати книгу», а «стати читачем». Поведінка йде за ідентичністю.', es: 'La meta no es «leer un libro» sino «convertirse en lector». El comportamiento sigue a la identidad.' },
+  'Каждое выполнение — голос за «я такой человек». Нужно не большинство голосов, а просто перевес в сторону нужного тебя.': { en: 'Each rep is a vote for "I\'m that kind of person". You don\'t need a majority — just a tilt toward the you you want.', de: 'Jede Wiederholung ist eine Stimme für „ich bin so ein Mensch". Du brauchst keine Mehrheit — nur eine Neigung zum gewünschten Ich.', uk: 'Кожне виконання — голос за «я така людина». Потрібна не більшість голосів, а просто перевага в бік потрібного тебе.', es: 'Cada repetición es un voto por «soy ese tipo de persona». No necesitas la mayoría — solo inclinarte hacia el tú que quieres.' },
+  'Спроси: «Кем хочу стать?» → «Что бы делал такой человек?» → делай это.': { en: 'Ask: "Who do I want to become?" → "What would that person do?" → do it.', de: 'Frage: „Wer will ich werden?" → „Was würde so jemand tun?" → tu es.', uk: 'Запитай: «Ким хочу стати?» → «Що б робила така людина?» → роби це.', es: 'Pregunta: «¿Quién quiero llegar a ser?» → «¿Qué haría esa persona?» → hazlo.' },
+  'Намерение-реализация: «Я сделаю [что] в [когда] в [где]».': { en: 'Implementation intention: "I will [what] at [when] in [where]".', de: 'Umsetzungsabsicht: „Ich werde [was] um [wann] in [wo] tun".', uk: 'Намір-реалізація: «Я зроблю [що] о [коли] у [де]».', es: 'Intención de implementación: «Haré [qué] a [cuándo] en [dónde]».' },
+  'Связка привычек: «После [текущая привычка] я [новая]».': { en: 'Habit stacking: "After [current habit] I will [new one]".', de: 'Gewohnheiten koppeln: „Nach [aktueller Gewohnheit] werde ich [neue]".', uk: 'Зв\'язка звичок: «Після [поточна звичка] я [нова]».', es: 'Encadenar hábitos: «Después de [hábito actual] haré [el nuevo]».' },
+  'Дизайн среды: помести сигнал на видное место (книга на подушке, вода на столе).': { en: 'Environment design: put the cue in plain sight (book on the pillow, water on the desk).', de: 'Umgebung gestalten: leg den Auslöser sichtbar hin (Buch aufs Kissen, Wasser auf den Tisch).', uk: 'Дизайн середовища: поклади сигнал на видне місце (книга на подушці, вода на столі).', es: 'Diseña el entorno: pon la señal a la vista (libro en la almohada, agua en la mesa).' },
+  'Соблазн-бандл: «После [нужное] делаю [приятное]».': { en: 'Temptation bundling: "After [needed] I do [pleasant]".', de: 'Versuchungs-Bündelung: „Nach [Nötigem] mache ich [Angenehmes]".', uk: 'Спокуса-бандл: «Після [потрібне] роблю [приємне]».', es: 'Agrupar tentaciones: «Después de [lo necesario] hago [lo agradable]».' },
+  'Окружай себя теми, для кого нужное поведение — норма.': { en: 'Surround yourself with people for whom the desired behavior is the norm.', de: 'Umgib dich mit Menschen, für die das gewünschte Verhalten normal ist.', uk: 'Оточуй себе тими, для кого потрібна поведінка — норма.', es: 'Rodéate de gente para quien la conducta deseada es lo normal.' },
+  'Рефрейм: не «надо», а «я выбираю / я могу».': { en: 'Reframe: not "I have to" but "I choose / I get to".', de: 'Umdeuten: nicht „ich muss", sondern „ich wähle / ich darf".', uk: 'Рефрейм: не «треба», а «я обираю / я можу».', es: 'Reencuadre: no «tengo que» sino «elijo / puedo».' },
+  'Правило 2 минут: ужми до <2 мин («читать» → «одна страница»). Сначала просто появись.': { en: 'Two-minute rule: shrink it to <2 min ("read" → "one page"). First, just show up.', de: 'Zwei-Minuten-Regel: auf <2 Min schrumpfen („lesen" → „eine Seite"). Erstmal nur auftauchen.', uk: 'Правило 2 хвилин: стисни до <2 хв («читати» → «одна сторінка»). Спершу просто з\'явись.', es: 'Regla de los 2 minutos: redúcelo a <2 min («leer» → «una página»). Primero, solo preséntate.' },
+  'Убирай трение: подготовь среду заранее (форма у двери).': { en: 'Reduce friction: prep the environment in advance (gym clothes by the door).', de: 'Reibung verringern: bereite die Umgebung vor (Sportkleidung an der Tür).', uk: 'Прибирай тертя: підготуй середовище заздалегідь (форма біля дверей).', es: 'Reduce la fricción: prepara el entorno antes (ropa de gym junto a la puerta).' },
+  'Закон наименьшего усилия — побеждает простота, а не сила воли.': { en: 'Law of least effort — simplicity wins, not willpower.', de: 'Gesetz des geringsten Aufwands — Einfachheit gewinnt, nicht Willenskraft.', uk: 'Закон найменшого зусилля — перемагає простота, а не сила волі.', es: 'Ley del menor esfuerzo — gana la simplicidad, no la fuerza de voluntad.' },
+  'Немедленная награда — сделай так, чтобы было приятно сразу.': { en: 'Immediate reward — make it feel good right away.', de: 'Sofortige Belohnung — sorge dafür, dass es sich gleich gut anfühlt.', uk: 'Негайна нагорода — зроби так, щоб було приємно одразу.', es: 'Recompensa inmediata — haz que se sienta bien al instante.' },
+  'Трекер привычек: «не разрывай цепочку» (это и есть стрик 🔥 в Satoru).': { en: 'Habit tracker: "don\'t break the chain" (that\'s the streak 🔥 in Satoru).', de: 'Gewohnheits-Tracker: „unterbrich die Kette nicht" (das ist die Serie 🔥 in Satoru).', uk: 'Трекер звичок: «не розривай ланцюжок» (це і є стрік 🔥 у Satoru).', es: 'Rastreador de hábitos: «no rompas la cadena» (esa es la racha 🔥 en Satoru).' },
+  'Никогда не пропускай дважды: один пропуск — случайность, два — начало новой привычки.': { en: 'Never miss twice: one miss is an accident, two is the start of a new habit.', de: 'Verpasse nie zweimal: einmal ist ein Zufall, zweimal der Beginn einer neuen Gewohnheit.', uk: 'Ніколи не пропускай двічі: один пропуск — випадковість, два — початок нової звички.', es: 'Nunca falles dos veces: una vez es un accidente, dos es el inicio de un nuevo hábito.' },
+  'Убери сигнал из среды: телефон в другую комнату, удали приложение/ярлык.': { en: 'Remove the cue: phone in another room, delete the app/shortcut.', de: 'Entferne den Auslöser: Handy in einen anderen Raum, App/Verknüpfung löschen.', uk: 'Прибери сигнал із середовища: телефон в іншу кімнату, видали застосунок/ярлик.', es: 'Quita la señal del entorno: el móvil en otra habitación, borra la app/acceso directo.' },
+  'Переосмысли: подчеркни, что теряешь. Свяжи привычку с её настоящей ценой.': { en: 'Reframe: highlight what you lose. Tie the habit to its real cost.', de: 'Umdeuten: betone, was du verlierst. Verknüpfe die Gewohnheit mit ihrem wahren Preis.', uk: 'Переосмисли: підкресли, що втрачаєш. Пов\'яжи звичку з її справжньою ціною.', es: 'Reencuadra: resalta lo que pierdes. Vincula el hábito a su coste real.' },
+  'Увеличь трение: блокировщики, лимиты, «устройство-обязательство».': { en: 'Add friction: blockers, limits, a "commitment device".', de: 'Reibung erhöhen: Blocker, Limits, eine „Selbstbindung".', uk: 'Збільш тертя: блокувальники, ліміти, «пристрій-зобов\'язання».', es: 'Añade fricción: bloqueadores, límites, un «dispositivo de compromiso».' },
+  'Партнёр-подотчётность; сделай цену срыва видимой и немедленной — но без стыда, срыв это данные.': { en: 'Accountability partner; make the cost of a slip visible and immediate — but without shame, a slip is data.', de: 'Verantwortungspartner; mach den Preis eines Rückfalls sichtbar und sofort — aber ohne Scham, ein Rückfall sind Daten.', uk: 'Партнер-підзвітність; зроби ціну зриву видимою й негайною — але без сорому, зрив це дані.', es: 'Compañero de responsabilidad; haz visible e inmediato el coste de una recaída — pero sin vergüenza, una recaída es información.' },
+  'Плато скрытого потенциала': { en: 'The plateau of latent potential', de: 'Das Plateau des verborgenen Potenzials', uk: 'Плато прихованого потенціалу', es: 'La meseta del potencial latente' },
+  'Результаты отстают от усилий — «долина разочарования», где большинство бросает. Лёд тает не на 25-м градусе, а после долгого нагрева. Продолжай.': { en: 'Results lag behind effort — the "valley of disappointment" where most quit. Ice melts not at degree 25 but after long warming. Keep going.', de: 'Ergebnisse hinken dem Aufwand hinterher — das „Tal der Enttäuschung", wo die meisten aufgeben. Eis schmilzt nicht bei 25 Grad, sondern nach langem Erwärmen. Mach weiter.', uk: 'Результати відстають від зусиль — «долина розчарування», де більшість кидає. Лід тане не на 25-му градусі, а після довгого нагрівання. Продовжуй.', es: 'Los resultados van por detrás del esfuerzo — el «valle de la decepción» donde la mayoría abandona. El hielo no se derrite al grado 25 sino tras un largo calentamiento. Sigue.' },
+  'Правило Златовласки': { en: 'The Goldilocks rule', de: 'Die Goldlöckchen-Regel', uk: 'Правило Золотоволоски', es: 'La regla de Ricitos de Oro' },
+  'Мотивация держится на задачах ровно по краю возможностей — не слишком легко, не слишком трудно.': { en: 'Motivation peaks on tasks right at the edge of your ability — not too easy, not too hard.', de: 'Motivation hält sich bei Aufgaben genau an der Grenze des Könnens — nicht zu leicht, nicht zu schwer.', uk: 'Мотивація тримається на задачах рівно на межі можливостей — не надто легко, не надто важко.', es: 'La motivación se mantiene en tareas justo al límite de tu capacidad — ni muy fáciles, ni muy difíciles.' },
+  'Системы важнее целей': { en: 'Systems over goals', de: 'Systeme vor Zielen', uk: 'Системи важливіші за цілі', es: 'Los sistemas por encima de las metas' },
+  'Цели задают направление, но прогресс даёт система. Влюбись в процесс, а не только в результат.': { en: 'Goals set direction, but systems drive progress. Fall in love with the process, not just the outcome.', de: 'Ziele geben die Richtung vor, aber Fortschritt kommt vom System. Verlieb dich in den Prozess, nicht nur ins Ergebnis.', uk: 'Цілі задають напрям, але прогрес дає система. Закохайся в процес, а не лише в результат.', es: 'Las metas dan dirección, pero el progreso lo da el sistema. Enamórate del proceso, no solo del resultado.' },
+  'Никогда не пропускай дважды: один пропуск — случайность, два — начало новой привычки. Отмечать привычки — на «Сегодня».': { en: 'Never miss twice: one miss is an accident, two is the start of a new habit. Mark habits on "Today".', de: 'Verpasse nie zweimal: einmal ist Zufall, zweimal der Beginn einer neuen Gewohnheit. Gewohnheiten markierst du unter „Heute".', uk: 'Ніколи не пропускай двічі: один пропуск — випадковість, два — початок нової звички. Відмічати звички — на «Сьогодні».', es: 'Nunca falles dos veces: una vez es accidente, dos es el inicio de un hábito nuevo. Marca los hábitos en «Hoy».' },
+  'Пока нет привычек — добавь и спроектируй по 4 законам.': { en: 'No habits yet — add one and design it with the 4 laws.', de: 'Noch keine Gewohnheiten — füge eine hinzu und gestalte sie nach den 4 Gesetzen.', uk: 'Поки немає звичок — додай і спроєктуй за 4 законами.', es: 'Aún no hay hábitos — añade uno y diséñalo con las 4 leyes.' },
+  // Achievements (titles + descriptions)
+  'Первый шаг': { en: 'First step', de: 'Erster Schritt', uk: 'Перший крок', es: 'Primer paso' },
+  'Выполни первый квест': { en: 'Complete your first quest', de: 'Schließe deinen ersten Quest ab', uk: 'Виконай перший квест', es: 'Completa tu primera misión' },
+  'Полста квестов': { en: 'Fifty quests', de: 'Fünfzig Quests', uk: 'Півсотні квестів', es: 'Cincuenta misiones' },
+  '50 выполненных квестов': { en: '50 completed quests', de: '50 abgeschlossene Quests', uk: '50 виконаних квестів', es: '50 misiones completadas' },
+  'Росток привычки': { en: 'Habit sprout', de: 'Gewohnheits-Spross', uk: 'Паросток звички', es: 'Brote de hábito' },
+  'Отметь привычку впервые': { en: 'Check off a habit for the first time', de: 'Hak zum ersten Mal eine Gewohnheit ab', uk: 'Відміть звичку вперше', es: 'Marca un hábito por primera vez' },
+  'Неделя подряд': { en: 'A week in a row', de: 'Eine Woche am Stück', uk: 'Тиждень поспіль', es: 'Una semana seguida' },
+  'Серия 7 дней': { en: '7-day streak', de: '7-Tage-Serie', uk: 'Серія 7 днів', es: 'Racha de 7 días' },
+  'Месяц подряд': { en: 'A month in a row', de: 'Einen Monat am Stück', uk: 'Місяць поспіль', es: 'Un mes seguido' },
+  'Серия 30 дней': { en: '30-day streak', de: '30-Tage-Serie', uk: 'Серія 30 днів', es: 'Racha de 30 días' },
+  'Достигни 5 уровня': { en: 'Reach level 5', de: 'Erreiche Level 5', uk: 'Досягни 5 рівня', es: 'Alcanza el nivel 5' },
+  'Достигни 10 уровня': { en: 'Reach level 10', de: 'Erreiche Level 10', uk: 'Досягни 10 рівня', es: 'Alcanza el nivel 10' },
+  'Тысяча опыта': { en: 'A thousand XP', de: 'Tausend XP', uk: 'Тисяча досвіду', es: 'Mil de XP' },
+  'Накопи 1000 XP': { en: 'Accumulate 1000 XP', de: 'Sammle 1000 XP', uk: 'Накопич 1000 XP', es: 'Acumula 1000 XP' },
+  'Цель взята': { en: 'Goal achieved', de: 'Ziel erreicht', uk: 'Ціль узята', es: 'Meta lograda' },
+  'Заверши первую цель': { en: 'Complete your first goal', de: 'Schließe dein erstes Ziel ab', uk: 'Заверши першу ціль', es: 'Completa tu primera meta' },
+  'Награда': { en: 'Reward', de: 'Belohnung', uk: 'Нагорода', es: 'Recompensa' },
+  'Купи первую награду': { en: 'Buy your first reward', de: 'Kauf deine erste Belohnung', uk: 'Купи першу нагороду', es: 'Compra tu primera recompensa' },
+  'Богатей': { en: 'Get rich', de: 'Werde reich', uk: 'Багатій', es: 'Hazte rico' },
+  'Заработай 500 золота всего': { en: 'Earn 500 gold in total', de: 'Verdiene insgesamt 500 Gold', uk: 'Заробити 500 золота всього', es: 'Gana 500 de oro en total' },
+  'Разносторонний': { en: 'Well-rounded', de: 'Vielseitig', uk: 'Різнобічний', es: 'Polifacético' },
+  'Все навыки до ур.3': { en: 'All skills to lv.3', de: 'Alle Fähigkeiten auf St.3', uk: 'Усі навички до рів.3', es: 'Todas las habilidades a niv.3' },
+  'Баг-хантер': { en: 'Bug hunter', de: 'Bug-Jäger', uk: 'Баг-хантер', es: 'Cazador de bugs' },
+  '3 репорта или идеи через 💬': { en: '3 reports or ideas via 💬', de: '3 Berichte oder Ideen über 💬', uk: '3 репорти або ідеї через 💬', es: '3 informes o ideas vía 💬' },
+  'Страж Врат · SCP-001': { en: 'Gatekeeper · SCP-001', de: 'Torwächter · SCP-001', uk: 'Вартовий Брами · SCP-001', es: 'Guardián de la Puerta · SCP-001' },
+  '10 репортов — почти со-основатель': { en: '10 reports — almost a co-founder', de: '10 Berichte — fast ein Mitgründer', uk: '10 репортів — майже співзасновник', es: '10 informes — casi cofundador' },
+  'Ранняя пташка': { en: 'Early bird', de: 'Frühaufsteher', uk: 'Рання пташка', es: 'Madrugador' },
+  'Выполни квест до 07:00': { en: 'Complete a quest before 07:00', de: 'Schließe einen Quest vor 07:00 ab', uk: 'Виконай квест до 07:00', es: 'Completa una misión antes de las 07:00' },
+  'Сова': { en: 'Night owl', de: 'Nachteule', uk: 'Сова', es: 'Búho nocturno' },
+  'Квест между 00:00 и 05:00': { en: 'A quest between 00:00 and 05:00', de: 'Ein Quest zwischen 00:00 und 05:00', uk: 'Квест між 00:00 і 05:00', es: 'Una misión entre las 00:00 y las 05:00' },
+  'Воин выходных': { en: 'Weekend warrior', de: 'Wochenend-Krieger', uk: 'Воїн вихідних', es: 'Guerrero de fin de semana' },
+  'Квесты и в субботу, и в воскресенье': { en: 'Quests on both Saturday and Sunday', de: 'Quests sowohl samstags als auch sonntags', uk: 'Квести і в суботу, і в неділю', es: 'Misiones tanto el sábado como el domingo' },
+  'Новогодний рывок': { en: 'New Year push', de: 'Neujahrs-Schub', uk: 'Новорічний ривок', es: 'Empujón de Año Nuevo' },
+  'Тренируйся 31 декабря или 1 января': { en: 'Train on Dec 31 or Jan 1', de: 'Trainiere am 31. Dezember oder 1. Januar', uk: 'Тренуйся 31 грудня або 1 січня', es: 'Entrena el 31 de diciembre o el 1 de enero' },
+  'Полный спектр': { en: 'Full spectrum', de: 'Volles Spektrum', uk: 'Повний спектр', es: 'Espectro completo' },
+  '5+ разных сфер за один день': { en: '5+ different areas in one day', de: '5+ verschiedene Bereiche an einem Tag', uk: '5+ різних сфер за один день', es: '5+ áreas distintas en un día' },
+  'Марафон дня': { en: 'Day marathon', de: 'Tagesmarathon', uk: 'Марафон дня', es: 'Maratón del día' },
+  '4+ часа активности за день': { en: '4+ hours of activity in a day', de: '4+ Stunden Aktivität an einem Tag', uk: '4+ години активності за день', es: '4+ horas de actividad en un día' },
+  'Десятиборец': { en: 'Decathlete', de: 'Zehnkämpfer', uk: 'Десятиборець', es: 'Decatleta' },
+  'Индекс баланса ≥ 70': { en: 'Balance index ≥ 70', de: 'Balance-Index ≥ 70', uk: 'Індекс балансу ≥ 70', es: 'Índice de equilibrio ≥ 70' },
+  'Сотня квестов': { en: 'A hundred quests', de: 'Hundert Quests', uk: 'Сотня квестів', es: 'Cien misiones' },
+  '100 выполненных квестов': { en: '100 completed quests', de: '100 abgeschlossene Quests', uk: '100 виконаних квестів', es: '100 misiones completadas' },
+  'Легион дел': { en: 'Legion of tasks', de: 'Legion an Aufgaben', uk: 'Легіон справ', es: 'Legión de tareas' },
+  '250 выполненных квестов': { en: '250 completed quests', de: '250 abgeschlossene Quests', uk: '250 виконаних квестів', es: '250 misiones completadas' },
+  'Пять тысяч': { en: 'Five thousand', de: 'Fünftausend', uk: "П'ять тисяч", es: 'Cinco mil' },
+  'Накопи 5000 XP': { en: 'Accumulate 5000 XP', de: 'Sammle 5000 XP', uk: 'Накопич 5000 XP', es: 'Acumula 5000 XP' },
+  'Титан опыта': { en: 'XP titan', de: 'XP-Titan', uk: 'Титан досвіду', es: 'Titán de XP' },
+  'Накопи 25000 XP': { en: 'Accumulate 25000 XP', de: 'Sammle 25000 XP', uk: 'Накопич 25000 XP', es: 'Acumula 25000 XP' },
+  'Сто дней подряд': { en: 'A hundred days in a row', de: 'Hundert Tage am Stück', uk: 'Сто днів поспіль', es: 'Cien días seguidos' },
+  'Серия 100 дней': { en: '100-day streak', de: '100-Tage-Serie', uk: 'Серія 100 днів', es: 'Racha de 100 días' },
+  'Двадцатый': { en: 'The twentieth', de: 'Der Zwanzigste', uk: 'Двадцятий', es: 'El vigésimo' },
+  'Достигни 20 уровня': { en: 'Reach level 20', de: 'Erreiche Level 20', uk: 'Досягни 20 рівня', es: 'Alcanza el nivel 20' },
+  'Тридцатый': { en: 'The thirtieth', de: 'Der Dreißigste', uk: 'Тридцятий', es: 'El trigésimo' },
+  'Достигни 30 уровня': { en: 'Reach level 30', de: 'Erreiche Level 30', uk: 'Досягни 30 рівня', es: 'Alcanza el nivel 30' },
+  'Мастер сферы': { en: 'Area master', de: 'Bereichsmeister', uk: 'Майстер сфери', es: 'Maestro del área' },
+  'Любая сфера до ур.10': { en: 'Any area to lv.10', de: 'Ein Bereich auf St.10', uk: 'Будь-яка сфера до рів.10', es: 'Cualquier área a niv.10' },
+  'Эрудит': { en: 'Polymath', de: 'Universalgelehrter', uk: 'Ерудит', es: 'Erudito' },
+  'Все сферы до ур.5': { en: 'All areas to lv.5', de: 'Alle Bereiche auf St.5', uk: 'Усі сфери до рів.5', es: 'Todas las áreas a niv.5' },
+  'Десять целей': { en: 'Ten goals', de: 'Zehn Ziele', uk: 'Десять цілей', es: 'Diez metas' },
+  'Заверши 10 целей': { en: 'Complete 10 goals', de: 'Schließe 10 Ziele ab', uk: 'Заверши 10 цілей', es: 'Completa 10 metas' },
+  'Полярная звезда': { en: 'North Star', de: 'Polarstern', uk: 'Полярна зірка', es: 'Estrella polar' },
+  'Задай миссию (★ дело жизни)': { en: 'Set a mission (★ life\'s work)', de: 'Setze eine Mission (★ Lebenswerk)', uk: 'Задай місію (★ справа життя)', es: 'Define una misión (★ obra de tu vida)' },
+  'Сила привычки': { en: 'Power of habit', de: 'Macht der Gewohnheit', uk: 'Сила звички', es: 'El poder del hábito' },
+  '100 отметок привычек': { en: '100 habit check-offs', de: '100 Gewohnheits-Häkchen', uk: '100 відміток звичок', es: '100 marcas de hábitos' },
+  'Идеальный баланс': { en: 'Perfect balance', de: 'Perfekte Balance', uk: 'Ідеальний баланс', es: 'Equilibrio perfecto' },
+  'Индекс баланса ≥ 90': { en: 'Balance index ≥ 90', de: 'Balance-Index ≥ 90', uk: 'Індекс балансу ≥ 90', es: 'Índice de equilibrio ≥ 90' },
+  'Чистая неделя': { en: 'Clean week', de: 'Saubere Woche', uk: 'Чистий тиждень', es: 'Semana limpia' },
+  '7 дней без срыва (анти-привычка)': { en: '7 days without a slip (anti-habit)', de: '7 Tage ohne Rückfall (Anti-Gewohnheit)', uk: '7 днів без зриву (анти-звичка)', es: '7 días sin recaída (anti-hábito)' },
+  'Чистый месяц': { en: 'Clean month', de: 'Sauberer Monat', uk: 'Чистий місяць', es: 'Mes limpio' },
+  '30 дней без срыва': { en: '30 days without a slip', de: '30 Tage ohne Rückfall', uk: '30 днів без зриву', es: '30 días sin recaída' },
+  'Первая мысль': { en: 'First thought', de: 'Erster Gedanke', uk: 'Перша думка', es: 'Primer pensamiento' },
+  'Сохрани первую заметку': { en: 'Save your first note', de: 'Speichere deine erste Notiz', uk: 'Збережи першу нотатку', es: 'Guarda tu primera nota' },
+  'Коллекционер': { en: 'Collector', de: 'Sammler', uk: 'Колекціонер', es: 'Coleccionista' },
+  'Собери 5 косметики': { en: 'Collect 5 cosmetics', de: 'Sammle 5 Kosmetika', uk: 'Збери 5 косметики', es: 'Reúne 5 cosméticos' },
+  'Легендарная удача': { en: 'Legendary luck', de: 'Legendäres Glück', uk: 'Легендарна удача', es: 'Suerte legendaria' },
+  'Получи легендарную косметику': { en: 'Get a legendary cosmetic', de: 'Erhalte ein legendäres Kosmetik', uk: 'Отримай легендарну косметику', es: 'Consigue un cosmético legendario' },
+  'Свой облик': { en: 'Your own look', de: 'Dein eigenes Aussehen', uk: 'Свій вигляд', es: 'Tu propio aspecto' },
+  'Настрой аватар под себя': { en: 'Customize your avatar', de: 'Passe deinen Avatar an', uk: 'Налаштуй аватар під себе', es: 'Personaliza tu avatar' },
+  // Goals view — types, form, hints
+  '📥 Опиши цели текстом — ИИ оформит': { en: '📥 Describe goals in words — AI structures them', de: '📥 Ziele in Worten beschreiben — KI strukturiert sie', uk: '📥 Опиши цілі текстом — ШІ оформить', es: '📥 Describe tus metas con palabras — la IA las estructura' },
+  'расскажи словами, что хочешь; ИИ предложит цели и сферы, ты одобришь': { en: "say what you want in words; AI suggests goals and areas, you approve", de: 'sag in Worten, was du willst; die KI schlägt Ziele und Bereiche vor, du bestätigst', uk: 'розкажи словами, що хочеш; ШІ запропонує цілі та сфери, ти схвалиш', es: 'di con palabras lo que quieres; la IA propone metas y áreas, tú apruebas' },
+  '🤖 Импорт целей': { en: '🤖 Import goals', de: '🤖 Ziele importieren', uk: '🤖 Імпорт цілей', es: '🤖 Importar metas' },
+  'ℹ️ Как выбрать тип цели?': { en: '️ℹ️ How to choose a goal type?', de: 'ℹ️ Wie wähle ich einen Zieltyp?', uk: 'ℹ️ Як обрати тип цілі?', es: 'ℹ️ ¿Cómo elegir el tipo de meta?' },
+  '★ Миссия': { en: '★ Mission', de: '★ Mission', uk: '★ Місія', es: '★ Misión' },
+  '🔭 Видение': { en: '🔭 Vision', de: '🔭 Vision', uk: '🔭 Бачення', es: '🔭 Visión' },
+  '🧭 Путь': { en: '🧭 Path', de: '🧭 Weg', uk: '🧭 Шлях', es: '🧭 Camino' },
+  'Долгосрочные': { en: 'Long-term', de: 'Langfristig', uk: 'Довгострокові', es: 'A largo plazo' },
+  'Среднесрочные': { en: 'Mid-term', de: 'Mittelfristig', uk: 'Середньострокові', es: 'A medio plazo' },
+  'Краткосрочные': { en: 'Short-term', de: 'Kurzfristig', uk: 'Короткострокові', es: 'A corto plazo' },
+  'Повторяющиеся': { en: 'Recurring', de: 'Wiederkehrend', uk: 'Повторювані', es: 'Recurrentes' },
+  'Все': { en: 'All', de: 'Alle', uk: 'Усі', es: 'Todas' },
+  'дело жизни': { en: "life's work", de: 'Lebenswerk', uk: 'справа життя', es: 'obra de tu vida' },
+  '10–20 лет': { en: '10–20 years', de: '10–20 Jahre', uk: '10–20 років', es: '10–20 años' },
+  '3–5 лет': { en: '3–5 years', de: '3–5 Jahre', uk: '3–5 років', es: '3–5 años' },
+  '6 мес – несколько лет': { en: '6 mo – a few years', de: '6 Mon. – einige Jahre', uk: '6 міс – кілька років', es: '6 meses – varios años' },
+  '1–6 месяцев': { en: '1–6 months', de: '1–6 Monate', uk: '1–6 місяців', es: '1–6 meses' },
+  'до 4 недель': { en: 'up to 4 weeks', de: 'bis zu 4 Wochen', uk: 'до 4 тижнів', es: 'hasta 4 semanas' },
+  'ежедневно · еженедельно': { en: 'daily · weekly', de: 'täglich · wöchentlich', uk: 'щодня · щотижня', es: 'a diario · semanal' },
+  'Полярная звезда — ради чего всё. Обычно одна. К ней привязывается всё остальное.': { en: 'The North Star — what it\'s all for. Usually one. Everything else ties to it.', de: 'Der Polarstern — wofür alles ist. Meist einer. Alles andere knüpft daran an.', uk: 'Полярна зірка — заради чого все. Зазвичай одна. До неї прив\'язується все інше.', es: 'La estrella polar — el porqué de todo. Suele ser una. Todo lo demás se ata a ella.' },
+  'Кем стать, что построить за десятилетия': { en: 'Who to become, what to build over decades', de: 'Wer du wirst, was du über Jahrzehnte aufbaust', uk: 'Ким стати, що збудувати за десятиліття', es: 'En quién convertirte, qué construir en décadas' },
+  'Крупный этап: образование, карьера, переезд': { en: 'A major stage: education, career, relocation', de: 'Eine große Etappe: Ausbildung, Karriere, Umzug', uk: 'Великий етап: освіта, кар\'єра, переїзд', es: 'Una etapa importante: educación, carrera, mudanza' },
+  'Большие цели года-двух: Abi, C1, проект': { en: 'Big goals of a year or two: Abitur, C1, a project', de: 'Große Ziele für ein, zwei Jahre: Abi, C1, ein Projekt', uk: 'Великі цілі року-двох: Abi, C1, проєкт', es: 'Grandes metas de uno o dos años: Abi, C1, un proyecto' },
+  'Проект или трансформация за сезон: запустить MVP, пробежать полумарафон': { en: 'A project or transformation in a season: launch an MVP, run a half-marathon', de: 'Ein Projekt oder Wandel in einer Saison: ein MVP starten, einen Halbmarathon laufen', uk: 'Проєкт або трансформація за сезон: запустити MVP, пробігти напівмарафон', es: 'Un proyecto o transformación en una temporada: lanzar un MVP, correr una media maratón' },
+  'Конкретный результат в ближайший месяц: сдать экзамен, дочитать книгу': { en: 'A concrete result in the next month: pass an exam, finish a book', de: 'Ein konkretes Ergebnis im nächsten Monat: eine Prüfung bestehen, ein Buch zu Ende lesen', uk: 'Конкретний результат за найближчий місяць: скласти іспит, дочитати книгу', es: 'Un resultado concreto en el próximo mes: aprobar un examen, terminar un libro' },
+  'Регулярные практики без конечной даты: спорт каждый день, еженедельный обзор': { en: 'Regular practices with no end date: sport every day, a weekly review', de: 'Regelmäßige Praktiken ohne Enddatum: täglich Sport, ein wöchentlicher Rückblick', uk: 'Регулярні практики без кінцевої дати: спорт щодня, щотижневий огляд', es: 'Prácticas regulares sin fecha final: deporte cada día, una revisión semanal' },
+  '— самостоятельная цель —': { en: '— stand-alone goal —', de: '— eigenständiges Ziel —', uk: '— самостійна ціль —', es: '— meta independiente —' },
+  '📊 Число / состояние (опц.)': { en: '📊 Number / state (opt.)', de: '📊 Zahl / Zustand (opt.)', uk: '📊 Число / стан (опц.)', es: '📊 Número / estado (opc.)' },
+  'меньше = лучше': { en: 'lower = better', de: 'weniger = besser', uk: 'менше = краще', es: 'menos = mejor' },
+  'держать после': { en: 'maintain after', de: 'danach halten', uk: 'тримати після', es: 'mantener después' },
+  '▶ Активна': { en: '▶ Active', de: '▶ Aktiv', uk: '▶ Активна', es: '▶ Activa' },
+  '⏳ Жду события': { en: '⏳ Awaiting event', de: '⏳ Warte auf Ereignis', uk: '⏳ Чекаю події', es: '⏳ Esperando un evento' },
+  'Нет активных целей этого типа. Добавь выше ↑': { en: 'No active goals of this type. Add one above ↑', de: 'Keine aktiven Ziele dieses Typs. Füge oben eines hinzu ↑', uk: 'Немає активних цілей цього типу. Додай вище ↑', es: 'No hay metas activas de este tipo. Añade una arriba ↑' },
+  // Character view
+  '🪞 Твой персонаж': { en: '🪞 Your character', de: '🪞 Dein Charakter', uk: '🪞 Твій персонаж', es: '🪞 Tu personaje' },
+  'Причёска': { en: 'Hairstyle', de: 'Frisur', uk: 'Зачіска', es: 'Peinado' },
+  'Цвет волос': { en: 'Hair color', de: 'Haarfarbe', uk: 'Колір волосся', es: 'Color de pelo' },
+  'Лицо': { en: 'Face', de: 'Gesicht', uk: 'Обличчя', es: 'Cara' },
+  'Кожа': { en: 'Skin', de: 'Haut', uk: 'Шкіра', es: 'Piel' },
+  'Глаза': { en: 'Eyes', de: 'Augen', uk: 'Очі', es: 'Ojos' },
+  'Брови': { en: 'Eyebrows', de: 'Augenbrauen', uk: 'Брови', es: 'Cejas' },
+  'Рот': { en: 'Mouth', de: 'Mund', uk: 'Рот', es: 'Boca' },
+  'Борода': { en: 'Beard', de: 'Bart', uk: 'Борода', es: 'Barba' },
+  'Очки': { en: 'Glasses', de: 'Brille', uk: 'Окуляри', es: 'Gafas' },
+  'Одежда': { en: 'Clothing', de: 'Kleidung', uk: 'Одяг', es: 'Ropa' },
+  'Собери свой облик. Скоро добавим больше стилей — в том числе нарисованные художником наборы.': { en: 'Build your look. More styles coming soon — including artist-drawn sets.', de: 'Gestalte dein Aussehen. Bald mehr Stile — auch von einem Künstler gezeichnete Sets.', uk: 'Збери свій вигляд. Скоро додамо більше стилів — зокрема намальовані художником набори.', es: 'Crea tu aspecto. Pronto más estilos — incluidos sets dibujados por un artista.' },
+  '🎯 Твоё десятиборье': { en: '🎯 Your decathlon', de: '🎯 Dein Zehnkampf', uk: '🎯 Твоє десятиборство', es: '🎯 Tu decatlón' },
+  'Оси — твои собственные сферы (уровень с учётом под-навыков). Это твоя уникальная комбинация: цель — не пик в одной оси, а сильная форма всего многоугольника.': { en: 'The axes are your own areas (level including sub-skills). This is your unique mix: the goal isn\'t a peak on one axis but a strong shape across the whole polygon.', de: 'Die Achsen sind deine eigenen Bereiche (Level inkl. Unterfähigkeiten). Das ist deine einzigartige Mischung: Ziel ist kein Gipfel auf einer Achse, sondern eine starke Form des ganzen Vielecks.', uk: 'Осі — твої власні сфери (рівень з урахуванням під-навичок). Це твоя унікальна комбінація: мета — не пік на одній осі, а сильна форма всього багатокутника.', es: 'Los ejes son tus propias áreas (nivel con subhabilidades). Es tu combinación única: la meta no es un pico en un eje, sino una forma fuerte de todo el polígono.' },
+  '🧍 Телосложение': { en: '🧍 Physique', de: '🧍 Körperbau', uk: '🧍 Статура', es: '🧍 Físico' },
+  'Силуэт живой: сила расширяет плечи, выносливость подсушивает, вес влияет на талию.': { en: 'The silhouette is alive: strength widens shoulders, endurance leans you out, weight affects the waist.', de: 'Die Silhouette lebt: Kraft verbreitert die Schultern, Ausdauer macht schlanker, Gewicht beeinflusst die Taille.', uk: 'Силует живий: сила розширює плечі, витривалість підсушує, вага впливає на талію.', es: 'La silueta está viva: la fuerza ensancha los hombros, la resistencia te define, el peso afecta la cintura.' },
+  'Пол': { en: 'Sex', de: 'Geschlecht', uk: 'Стать', es: 'Sexo' },
+  'Рост, см': { en: 'Height, cm', de: 'Größe, cm', uk: 'Зріст, см', es: 'Altura, cm' },
+  'Вес, кг': { en: 'Weight, kg', de: 'Gewicht, kg', uk: 'Вага, кг', es: 'Peso, kg' },
+  '% жира': { en: '% fat', de: '% Fett', uk: '% жиру', es: '% grasa' },
+  '🔥 Форма': { en: '🔥 Form', de: '🔥 Form', uk: '🔥 Форма', es: '🔥 Forma' },
+  // Attributes (used in archetype desc, radar, character)
+  'Сила': { en: 'Strength', de: 'Stärke', uk: 'Сила', es: 'Fuerza' },
+  'Выносливость': { en: 'Endurance', de: 'Ausdauer', uk: 'Витривалість', es: 'Resistencia' },
+  'Ловкость': { en: 'Agility', de: 'Geschicklichkeit', uk: 'Спритність', es: 'Agilidad' },
+  'Интеллект': { en: 'Intellect', de: 'Intellekt', uk: 'Інтелект', es: 'Intelecto' },
+  'Харизма': { en: 'Charisma', de: 'Charisma', uk: 'Харизма', es: 'Carisma' },
+  // Stats view
+  '🤖 ИИ-разбор недели': { en: '🤖 AI weekly review', de: '🤖 KI-Wochenanalyse', uk: '🤖 ШІ-розбір тижня', es: '🤖 Análisis semanal de IA' },
+  'Разобрать неделю': { en: 'Analyze the week', de: 'Woche analysieren', uk: 'Розібрати тиждень', es: 'Analizar la semana' },
+  '⚖️ Баланс сфер — твоё десятиборье': { en: '⚖️ Area balance — your decathlon', de: '⚖️ Bereichsbalance — dein Zehnkampf', uk: '⚖️ Баланс сфер — твоє десятиборство', es: '⚖️ Equilibrio de áreas — tu decatlón' },
+  'Активных сфер:': { en: 'Active areas:', de: 'Aktive Bereiche:', uk: 'Активних сфер:', es: 'Áreas activas:' },
+  '🎖 Ранги по сферам': { en: '🎖 Ranks by area', de: '🎖 Ränge nach Bereich', uk: '🎖 Ранги за сферами', es: '🎖 Rangos por área' },
+  'Пока нет записей.': { en: 'No entries yet.', de: 'Noch keine Einträge.', uk: 'Поки немає записів.', es: 'Aún no hay entradas.' },
+  'Правда о времени и балансе + мягкие шаги. Добавь ключ в Настройках.': { en: 'The truth about time and balance + gentle steps. Add a key in Settings.', de: 'Die Wahrheit über Zeit und Balance + sanfte Schritte. Füge einen Schlüssel in den Einstellungen hinzu.', uk: 'Правда про час і баланс + м\'які кроки. Додай ключ у Налаштуваннях.', es: 'La verdad sobre el tiempo y el equilibrio + pasos suaves. Añade una clave en Ajustes.' },
+  '. Индекс растёт, когда развиваешь жизнь как композицию, а не одну вертикаль. Добавь активность в несколько сфер, чтобы поднять индекс.': { en: '. The index grows when you develop life as a composition, not a single vertical. Add activity in several areas to raise it.', de: '. Der Index wächst, wenn du das Leben als Komposition entwickelst, nicht als eine einzige Vertikale. Füge Aktivität in mehreren Bereichen hinzu, um ihn zu steigern.', uk: '. Індекс зростає, коли розвиваєш життя як композицію, а не одну вертикаль. Додай активність у кількох сферах, щоб підняти індекс.', es: '. El índice crece cuando desarrollas la vida como una composición, no una sola vertical. Añade actividad en varias áreas para subirlo.' },
+  '. Индекс растёт, когда развиваешь жизнь как композицию, а не одну вертикаль. Отличный баланс — так держать. ⚖️': { en: '. The index grows when you develop life as a composition, not a single vertical. Great balance — keep it up. ⚖️', de: '. Der Index wächst, wenn du das Leben als Komposition entwickelst, nicht als eine einzige Vertikale. Tolle Balance — weiter so. ⚖️', uk: '. Індекс зростає, коли розвиваєш життя як композицію, а не одну вертикаль. Чудовий баланс — так тримати. ⚖️', es: '. El índice crece cuando desarrollas la vida como una composición, no una sola vertical. Gran equilibrio — sigue así. ⚖️' },
+  // Goals XP hint (fixed numbers)
+  '💰 XP пусто = по типу цели: ★ миссия 8000 · 🔭 видение 3000 · 🧭 путь 1200 · долгосрочные 750 · среднесрочные 200 · краткосрочные 50 · повторяющиеся 15. Это «курс валюты» — не накручивай себе, иначе уровень потеряет смысл.': { en: '💰 XP empty = by goal type: ★ mission 8000 · 🔭 vision 3000 · 🧭 path 1200 · long-term 750 · mid-term 200 · short-term 50 · recurring 15. It\'s the "exchange rate" — don\'t inflate it, or levels lose meaning.', de: '💰 XP leer = nach Zieltyp: ★ Mission 8000 · 🔭 Vision 3000 · 🧭 Weg 1200 · langfristig 750 · mittelfristig 200 · kurzfristig 50 · wiederkehrend 15. Das ist der „Wechselkurs" — blas ihn nicht auf, sonst verlieren Level ihren Sinn.', uk: '💰 XP порожньо = за типом цілі: ★ місія 8000 · 🔭 бачення 3000 · 🧭 шлях 1200 · довгострокові 750 · середньострокові 200 · короткострокові 50 · повторювані 15. Це «курс валюти» — не накручуй собі, інакше рівень втратить сенс.', es: '💰 XP vacío = según el tipo de meta: ★ misión 8000 · 🔭 visión 3000 · 🧭 camino 1200 · a largo plazo 750 · a medio plazo 200 · a corto plazo 50 · recurrentes 15. Es el «tipo de cambio» — no lo infles, o los niveles pierden sentido.' },
+  // Archetypes
+  'Искатель': { en: 'Seeker', de: 'Suchender', uk: 'Шукач', es: 'Buscador' },
+  'Путь только начинается': { en: 'The path is just beginning', de: 'Der Weg beginnt gerade', uk: 'Шлях лише починається', es: 'El camino apenas comienza' },
+  'Атлет': { en: 'Athlete', de: 'Athlet', uk: 'Атлет', es: 'Atleta' },
+  'Воин дисциплины': { en: 'Warrior of discipline', de: 'Krieger der Disziplin', uk: 'Воїн дисципліни', es: 'Guerrero de la disciplina' },
+  'Боевой маг': { en: 'Battle mage', de: 'Kampfmagier', uk: 'Бойовий маг', es: 'Mago de batalla' },
+  'Монах': { en: 'Monk', de: 'Mönch', uk: 'Монах', es: 'Monje' },
+  'Герой': { en: 'Hero', de: 'Held', uk: 'Герой', es: 'Héroe' },
+  'Биохакер': { en: 'Biohacker', de: 'Biohacker', uk: 'Біохакер', es: 'Biohacker' },
+  'Марафонец воли': { en: 'Marathoner of will', de: 'Marathonläufer des Willens', uk: 'Марафонець волі', es: 'Maratonista de la voluntad' },
+  'Энерджайзер': { en: 'Energizer', de: 'Energiebündel', uk: 'Енерджайзер', es: 'Dinamo' },
+  'Странник': { en: 'Wanderer', de: 'Wanderer', uk: 'Мандрівник', es: 'Errante' },
+  'Стратег': { en: 'Strategist', de: 'Stratege', uk: 'Стратег', es: 'Estratega' },
+  'Мудрец': { en: 'Sage', de: 'Weiser', uk: 'Мудрець', es: 'Sabio' },
+  'Просветитель': { en: 'Enlightener', de: 'Aufklärer', uk: 'Просвітитель', es: 'Iluminador' },
+  'Хранитель': { en: 'Keeper', de: 'Hüter', uk: 'Хранитель', es: 'Custodio' },
+  'Вдохновитель': { en: 'Inspirer', de: 'Inspirator', uk: 'Натхненник', es: 'Inspirador' },
+  'Лидер': { en: 'Leader', de: 'Anführer', uk: 'Лідер', es: 'Líder' },
+  'Силач': { en: 'Strongman', de: 'Kraftprotz', uk: 'Силач', es: 'Forzudo' },
+  'Бегун': { en: 'Runner', de: 'Läufer', uk: 'Бігун', es: 'Corredor' },
+  'Учёный': { en: 'Scholar', de: 'Gelehrter', uk: 'Науковець', es: 'Erudito' },
+  'Аскет': { en: 'Ascetic', de: 'Asket', uk: 'Аскет', es: 'Asceta' },
+  'Душа компании': { en: 'Life of the party', de: 'Stimmungskanone', uk: 'Душа компанії', es: 'Alma de la fiesta' },
+  'Машина воли': { en: 'Willpower machine', de: 'Willensmaschine', uk: 'Машина волі', es: 'Máquina de voluntad' },
+  'Многогранник': { en: 'Polyhedron', de: 'Vielflächner', uk: 'Багатогранник', es: 'Poliedro' },
+  // Calendar / Weekly view
+  'Неделя': { en: 'Week', de: 'Woche', uk: 'Тиждень', es: 'Semana' },
+  'Месяц': { en: 'Month', de: 'Monat', uk: 'Місяць', es: 'Mes' },
+  '🔕 Напоминания': { en: '🔕 Reminders', de: '🔕 Erinnerungen', uk: '🔕 Нагадування', es: '🔕 Recordatorios' },
+  '🔔 Напоминания': { en: '🔔 Reminders', de: '🔔 Erinnerungen', uk: '🔔 Нагадування', es: '🔔 Recordatorios' },
+  '📥 Без времени': { en: '📥 No time set', de: '📥 Ohne Zeit', uk: '📥 Без часу', es: '📥 Sin hora' },
+  '🗓 Поставить': { en: '🗓 Schedule', de: '🗓 Planen', uk: '🗓 Поставити', es: '🗓 Programar' },
+  'мин': { en: 'min', de: 'Min', uk: 'хв', es: 'min' },
+  'сегодня': { en: 'today', de: 'heute', uk: 'сьогодні', es: 'hoy' },
+  '(текущая)': { en: '(current)', de: '(aktuell)', uk: '(поточний)', es: '(actual)' },
+  'Пусто': { en: 'Empty', de: 'Leer', uk: 'Порожньо', es: 'Vacío' },
+  'Тяни квест по сетке, чтобы сменить время (шаг 15 мин). Клик по пустому месту — подставить время в форму. Крестик ✕ — снять с расписания.': { en: 'Drag a quest on the grid to change its time (15-min steps). Click an empty spot to fill the time into the form. The ✕ removes it from the schedule.', de: 'Zieh einen Quest im Raster, um die Zeit zu ändern (15-Min-Schritte). Klick auf eine leere Stelle, um die Zeit ins Formular zu übernehmen. Das ✕ nimmt ihn aus dem Zeitplan.', uk: 'Тягни квест по сітці, щоб змінити час (крок 15 хв). Клік по порожньому місцю — підставити час у форму. Хрестик ✕ — зняти з розкладу.', es: 'Arrastra una misión por la cuadrícula para cambiar la hora (pasos de 15 min). Clic en un hueco para poner la hora en el formulario. La ✕ la quita del horario.' },
+  '↔ Перетащи квест на другой день, чтобы перенести. ⏱ — запланированное время дня.': { en: '↔ Drag a quest to another day to move it. ⏱ — the planned time of the day.', de: '↔ Zieh einen Quest auf einen anderen Tag, um ihn zu verschieben. ⏱ — die geplante Tageszeit.', uk: '↔ Перетягни квест на інший день, щоб перенести. ⏱ — запланований час дня.', es: '↔ Arrastra una misión a otro día para moverla. ⏱ — el tiempo planificado del día.' },
+  'план:': { en: 'plan:', de: 'Plan:', uk: 'план:', es: 'plan:' },
+  // Weekdays (short)
+  'Пн': { en: 'Mon', de: 'Mo', uk: 'Пн', es: 'Lun' },
+  'Вт': { en: 'Tue', de: 'Di', uk: 'Вт', es: 'Mar' },
+  'Ср': { en: 'Wed', de: 'Mi', uk: 'Ср', es: 'Mié' },
+  'Чт': { en: 'Thu', de: 'Do', uk: 'Чт', es: 'Jue' },
+  'Пт': { en: 'Fri', de: 'Fr', uk: 'Пт', es: 'Vie' },
+  'Сб': { en: 'Sat', de: 'Sa', uk: 'Сб', es: 'Sáb' },
+  'Вс': { en: 'Sun', de: 'So', uk: 'Нд', es: 'Dom' },
+  // Months (genitive, for "21 июня")
+  'января': { en: 'January', de: 'Januar', uk: 'січня', es: 'enero' },
+  'февраля': { en: 'February', de: 'Februar', uk: 'лютого', es: 'febrero' },
+  'марта': { en: 'March', de: 'März', uk: 'березня', es: 'marzo' },
+  'апреля': { en: 'April', de: 'April', uk: 'квітня', es: 'abril' },
+  'мая': { en: 'May', de: 'Mai', uk: 'травня', es: 'mayo' },
+  'июня': { en: 'June', de: 'Juni', uk: 'червня', es: 'junio' },
+  'июля': { en: 'July', de: 'Juli', uk: 'липня', es: 'julio' },
+  'августа': { en: 'August', de: 'August', uk: 'серпня', es: 'agosto' },
+  'сентября': { en: 'September', de: 'September', uk: 'вересня', es: 'septiembre' },
+  'октября': { en: 'October', de: 'Oktober', uk: 'жовтня', es: 'octubre' },
+  'ноября': { en: 'November', de: 'November', uk: 'листопада', es: 'noviembre' },
+  'декабря': { en: 'December', de: 'Dezember', uk: 'грудня', es: 'diciembre' },
+  // Energy / form states
+  'разогрей': { en: 'warm up', de: 'aufwärmen', uk: 'розігрій', es: 'calienta' },
+  'в форме': { en: 'in shape', de: 'in Form', uk: 'у формі', es: 'en forma' },
+  'в тонусе': { en: 'toned', de: 'in Schwung', uk: 'у тонусі', es: 'en tono' },
+  'расслабленно': { en: 'relaxed', de: 'entspannt', uk: 'розслаблено', es: 'relajado' },
+  'подзаржавел': { en: 'a bit rusty', de: 'etwas eingerostet', uk: 'трохи заіржавів', es: 'algo oxidado' },
+  'бодрость': { en: 'vigor', de: 'Frische', uk: 'бадьорість', es: 'vigor' },
+  // Cosmetic names — backgrounds
+  'Сланец': { en: 'Slate', de: 'Schiefer', uk: 'Сланець', es: 'Pizarra' },
+  'Мох': { en: 'Moss', de: 'Moos', uk: 'Мох', es: 'Musgo' },
+  'Океан': { en: 'Ocean', de: 'Ozean', uk: 'Океан', es: 'Océano' },
+  'Вино': { en: 'Wine', de: 'Wein', uk: 'Вино', es: 'Vino' },
+  'Туманность': { en: 'Nebula', de: 'Nebel', uk: 'Туманність', es: 'Nebulosa' },
+  'Тлен': { en: 'Decay', de: 'Verfall', uk: 'Тлін', es: 'Ceniza' },
+  'Аврора': { en: 'Aurora', de: 'Aurora', uk: 'Аврора', es: 'Aurora' },
+  'Бездна': { en: 'Abyss', de: 'Abgrund', uk: 'Безодня', es: 'Abismo' },
+};
+// Карта мов + злиття EXTRA у відповідні словники
+const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
+for (const ru in I18N_EXTRA) { const row = I18N_EXTRA[ru]; for (const l of ['en', 'de', 'uk', 'es']) { if (row[l]) I18N[l][ru] = row[l]; } }
+
 function lang() { return (State.settings && State.settings.lang) || 'ru'; }
-function t(k) {
-  const l = lang();
-  if (l === 'ru') return k;
-  const d = l === 'en' ? I18N_EN : I18N_DE;
-  return (d && d[k]) || k;
+function t(k) { const l = lang(); if (l === 'ru') return k; const d = I18N[l]; return (d && d[k]) || k; }
+
+// ---- Множина «день» / «нотатка» по мовах (для динамічних рядків) ----
+function i18nDay(n, l) {
+  n = Math.abs(Number(n));
+  if (l === 'en') return n === 1 ? 'day' : 'days';
+  if (l === 'de') return n === 1 ? 'Tag' : 'Tage';
+  if (l === 'es') return n === 1 ? 'día' : 'días';
+  if (l === 'uk') { const a = n % 10, b = n % 100; if (a === 1 && b !== 11) return 'день'; if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return 'дні'; return 'днів'; }
+  return 'дней';
+}
+function i18nNote(n, l) {
+  n = Math.abs(Number(n));
+  if (l === 'en') return n === 1 ? 'note' : 'notes';
+  if (l === 'de') return n === 1 ? 'Notiz' : 'Notizen';
+  if (l === 'es') return n === 1 ? 'nota' : 'notas';
+  if (l === 'uk') { const a = n % 10, b = n % 100; if (a === 1 && b !== 11) return 'нотатка'; if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return 'нотатки'; return 'нотаток'; }
+  return 'заметок';
+}
+const I18N_LVL = { en: 'lv.', de: 'St.', uk: 'рів.', es: 'niv.' };
+function i18nWord(s, l) {
+  const d = I18N[l]; if (!d) return s;
+  if (d[s] != null) return d[s];
+  // Спроба зняти провідний emoji/символ-префікс («🌱 Новичок» → «🌱 » + переклад «Новичок»)
+  const m = s.match(/^([^\p{L}]+)(\p{L}.*)$/u);
+  if (m && d[m[2]] != null) return m[1] + d[m[2]];
+  return s;
+}
+// Динамічні шаблони: [regex, fn(l, match) → переклад | null]
+const I18N_DYN = [
+  [/^Уровень (\d+)$/, (l, m) => `${i18nWord('Уровень', l)} ${m[1]}`],
+  [/^(\d+) (?:день|дня|дней)$/, (l, m) => `${m[1]} ${i18nDay(m[1], l)}`],
+  [/^🔥 (\d+) (?:день|дня|дней)$/, (l, m) => `🔥 ${m[1]} ${i18nDay(m[1], l)}`],
+  [/^🔥 (\d+) (?:день|дня|дней) подряд — твоё постоянство восхищает\. Так держать\.$/, (l, m) => {
+    const tail = { en: 'in a row — your consistency is admirable. Keep it up.', de: 'in Folge — deine Beständigkeit ist bewundernswert. Weiter so.', uk: 'поспіль — твоя послідовність вражає. Так тримати.', es: 'seguidos — tu constancia es admirable. Sigue así.' }[l];
+    return `🔥 ${m[1]} ${i18nDay(m[1], l)} ${tail}`;
+  }],
+  [/^связь (\d+)\/(\d+) → (.+)$/, (l, m) => `${({ en: 'bond', de: 'Bindung', uk: "зв'язок", es: 'vínculo' })[l]} ${m[1]}/${m[2]} → ${i18nWord(m[3], l)}`],
+  [/^связь нерушима 💛$/, (l) => ({ en: 'bond unbreakable 💛', de: 'Bindung unzerbrechlich 💛', uk: "зв'язок незламний 💛", es: 'vínculo irrompible 💛' })[l]],
+  [/^Сегодня ты сияешь — (\d+) (?:дело|дела|дел) уже сделано\. Я горжусь тобой ✨$/, (l, m) => {
+    const w = { en: `${m[1]} ${m[1] === '1' ? 'thing' : 'things'} done`, de: `${m[1]} ${m[1] === '1' ? 'Sache' : 'Sachen'} erledigt`, uk: `${m[1]} справ зроблено`, es: `${m[1]} ${m[1] === '1' ? 'cosa hecha' : 'cosas hechas'}` }[l];
+    return { en: `Today you shine — ${w} already. I'm proud of you ✨`, de: `Heute strahlst du — ${w} schon. Ich bin stolz auf dich ✨`, uk: `Сьогодні ти сяєш — ${w} вже. Я пишаюся тобою ✨`, es: `Hoy brillas — ${w} ya. Estoy orgulloso de ti ✨` }[l];
+  }],
+  [/^🜲 (.+)$/, (l, m) => `🜲 ${i18nWord(m[1], l)}`],
+  [/^· (.+)$/, (l, m) => { const w = i18nWord(m[1], l); return w !== m[1] ? `· ${w}` : null; }],
+  [/^📝 (\d+) (?:заметка|заметки|заметок) — открыть$/, (l, m) => `📝 ${m[1]} ${i18nNote(m[1], l)} — ${({ en: 'open', de: 'öffnen', uk: 'відкрити', es: 'abrir' })[l]}`],
+  [/^(\d+)\/(\d+) дней$/, (l, m) => `${m[1]}/${m[2]} ${i18nDay(m[2], l)}`],
+  [/^Серия · рекорд (\d+)$/, (l, m) => `${({ en: 'Streak · record', de: 'Serie · Rekord', uk: 'Серія · рекорд', es: 'Racha · récord' })[l]} ${m[1]}`],
+  [/^Ещё (\d+) (?:дело|дела|дел) до сундука$/, (l, m) => ({ en: `${m[1]} more to a chest`, de: `Noch ${m[1]} bis zur Truhe`, uk: `Ще ${m[1]} до скрині`, es: `${m[1]} más para un cofre` })[l]],
+  [/^(\d+)\/(\d+) собрано$/, (l, m) => `${m[1]}/${m[2]} ${({ en: 'collected', de: 'gesammelt', uk: 'зібрано', es: 'recogido' })[l]}`],
+  [/^Открыть \((\d+)\)$/, (l, m) => `${({ en: 'Open', de: 'Öffnen', uk: 'Відкрити', es: 'Abrir' })[l]} (${m[1]})`],
+  [/^\+(\d+)% XP к 🔥сложным$/, (l, m) => `+${m[1]}% XP ${({ en: 'to 🔥hard', de: 'auf 🔥schwere', uk: 'до 🔥складних', es: 'a 🔥difíciles' })[l]}`],
+  [/^\+(\d+)% золота$/, (l, m) => `+${m[1]}% ${({ en: 'gold', de: 'Gold', uk: 'золота', es: 'oro' })[l]}`],
+  [/^\+(\d+) до «(.+)»$/, (l, m) => { const w = i18nWord(m[2], l); return `+${m[1]} ${({ en: 'to', de: 'bis', uk: 'до', es: 'a' })[l]} «${w}»`; }],
+  [/^Правда о времени и балансе \+ мягкие шаги\. Твой ключ (.+)\.$/, (l, m) => ({ en: `The truth about time and balance + gentle steps. Your key ${m[1]}.`, de: `Die Wahrheit über Zeit und Balance + sanfte Schritte. Dein Schlüssel ${m[1]}.`, uk: `Правда про час і баланс + м'які кроки. Твій ключ ${m[1]}.`, es: `La verdad sobre el tiempo y el equilibrio + pasos suaves. Tu clave ${m[1]}.` })[l]],
+  [/^— (.+) \+ (.+)$/, (l, m) => { const a = i18nWord(m[1], l), b = i18nWord(m[2], l); return (a !== m[1] || b !== m[2]) ? `— ${a} + ${b}` : null; }],
+  // Дата «21 июня» → день + місяць
+  [/^(\d{1,2}) (января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)$/, (l, m) => { const mo = i18nWord(m[2], l); return mo !== m[2] ? (l === 'es' ? `${m[1]} de ${mo}` : `${m[1]} ${mo}`) : null; }],
+  // «Неделя 15.06 – 21.06» → переклад слова «Неделя» + дати
+  [/^Неделя (.+)$/, (l, m) => `${({ en: 'Week', de: 'Woche', uk: 'Тиждень', es: 'Semana' })[l]} ${m[1]}`],
+  [/^план: (.+)$/, (l, m) => `${({ en: 'plan:', de: 'Plan:', uk: 'план:', es: 'plan:' })[l]} ${m[1]}`],
+  // Узагальнений роздільник « · »: перекладаємо кожну частину через словник, інакше null (щоб спрацював inline-токен)
+  [/^.+ · .+$/, (l, m) => { const orig = m[0].split(' · '); const parts = orig.map((p) => i18nWord(p, l)); return parts.some((p, i) => p !== orig[i]) ? parts.join(' · ') : null; }],
+  [/^(.+?) \((\d+)\)$/, (l, m) => { const a = i18nWord(m[1], l); return a !== m[1] ? `${a} (${m[2]})` : null; }],
+];
+// Переклад одного рядка: точний збіг → динамічні шаблони → inline-токен «ур.N». null = без перекладу.
+function i18nString(s, l) {
+  const d = I18N[l]; if (!d) return null;
+  const key = s.trim(); if (!key) return null;
+  // 1) точний збіг  2) динамічні шаблони  3) emoji-префіксний фолбек (один лейбл)
+  let core = null;
+  if (d[key] != null) core = d[key];
+  if (core == null) { for (const [re, fn] of I18N_DYN) { const m = key.match(re); if (m) { const r = fn(l, m); if (r != null) { core = r; break; } } } }
+  if (core == null) { const w = i18nWord(key, l); if (w !== key) core = w; }
+  // 4) inline-токени «ур.N» (рівень) та одиниці «Nм/Nч» — застосовуються ЗАВЖДИ (і поверх перекладу)
+  let out = core != null ? s.replace(key, core) : s;
+  if (/ур\.\s?\d/.test(out)) out = out.replace(/ур\.(\s?)(\d+)/g, (mm, sp, n) => I18N_LVL[l] + sp + n);
+  if (/\d\s?[мч]/.test(out)) out = out.replace(/(\d+)(\s?)ч(?![а-яёa-zà-ÿ])/gi, '$1$2h').replace(/(\d+)(\s?)м(?![а-яёa-zà-ÿ])/gi, '$1$2m');
+  return out !== s ? out : null;
+}
+// Пост-рендер прохід по DOM: перекладає текст-вузли + placeholder/title/aria-label.
+// Єдине джерело правди — словники вище; не треба обгортати кожен рядок у коді.
+// Користувацький контент (введене юзером) пропускаємо через [data-noi18n].
+const I18N_CYR = /[А-Яа-яЁёІіЇїЄєҐґ]/;
+function translateDOM(root) {
+  const l = lang(); if (l === 'ru' || !I18N[l] || !root) return;
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(n) {
+      if (!n.nodeValue || !I18N_CYR.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+      const p = n.parentNode; if (!p) return NodeFilter.FILTER_REJECT;
+      const tag = p.nodeName;
+      if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'TEXTAREA') return NodeFilter.FILTER_REJECT;
+      if (p.closest && p.closest('[data-noi18n]')) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    },
+  });
+  const list = []; for (let n; (n = walker.nextNode());) list.push(n);
+  for (const n of list) { const tr = i18nString(n.nodeValue, l); if (tr != null && tr !== n.nodeValue) n.nodeValue = tr; }
+  const els = root.querySelectorAll ? root.querySelectorAll('[placeholder],[title],[aria-label]') : [];
+  els.forEach((el) => {
+    if (el.closest('[data-noi18n]')) return;
+    ['placeholder', 'title', 'aria-label'].forEach((a) => {
+      const v = el.getAttribute(a);
+      if (v && I18N_CYR.test(v)) { const tr = i18nString(v, l); if (tr != null && tr !== v) el.setAttribute(a, tr); }
+    });
+  });
+}
+// Спостерігач: перекладає динамічно додані вузли (модалки, тости, оверлеї) поза render().
+let _i18nObserver = null;
+function startI18nObserver() {
+  if (_i18nObserver || typeof MutationObserver === 'undefined') return;
+  _i18nObserver = new MutationObserver((muts) => {
+    if (lang() === 'ru') return;
+    for (const m of muts) for (const node of m.addedNodes) {
+      try {
+        if (node.nodeType === 1) translateDOM(node);
+        else if (node.nodeType === 3 && node.parentNode) { const tr = i18nString(node.nodeValue || '', lang()); if (tr != null && tr !== node.nodeValue) node.nodeValue = tr; }
+      } catch {}
+    }
+  });
+  _i18nObserver.observe(document.body, { childList: true, subtree: true });
 }
 
 // ============================================================
@@ -4372,10 +5066,12 @@ function renderSettings() {
     ${ambientCard()}
     ${pwaCard()}
     <div class="card"><h3>🌐 ${t('Язык')}</h3>
-      <div class="theme-toggle">
+      <div class="theme-toggle" data-noi18n>
         <button class="theme-opt ${lang() === 'ru' ? 'active' : ''}" data-action="set-lang" data-lang="ru">🇷🇺 Русский</button>
         <button class="theme-opt ${lang() === 'en' ? 'active' : ''}" data-action="set-lang" data-lang="en">🇬🇧 English</button>
         <button class="theme-opt ${lang() === 'de' ? 'active' : ''}" data-action="set-lang" data-lang="de">🇩🇪 Deutsch</button>
+        <button class="theme-opt ${lang() === 'uk' ? 'active' : ''}" data-action="set-lang" data-lang="uk">🇺🇦 Українська</button>
+        <button class="theme-opt ${lang() === 'es' ? 'active' : ''}" data-action="set-lang" data-lang="es">🇪🇸 Español</button>
       </div></div>
     <div class="card"><h3>${t('🎨 Оформление')}</h3>
       <div class="theme-row"><span class="theme-lbl">${t('Тема')}</span>
@@ -4632,6 +5328,7 @@ function render() {
     reportCrash(State.view, e);
     try { main.innerHTML = viewErrorCard(State.view, e); } catch { main.innerHTML = '<div class="card"><p>Ошибка. Обнови страницу.</p></div>'; }
   }
+  try { if (lang() !== 'ru') translateDOM(document.body); } catch (e) { console.error('translateDOM', e); }
   try { scheduleReminders(); } catch (e) { console.error('scheduleReminders', e); }
 }
 
@@ -5920,6 +6617,7 @@ function initPWA() {
 }
 async function init() {
   initPWA();
+  startI18nObserver();
   document.addEventListener('submit', onSubmit);
   document.addEventListener('click', onClick);
   document.addEventListener('change', onChange);
