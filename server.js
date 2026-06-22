@@ -131,22 +131,89 @@ function refreshRaid(party) {
 // ---- Серверная валидация XP: пересчёт из СОХРАНЁННЫХ данных юзера (не доверяем publish-payload) ----
 const RANK_TABLE = [['Новичок', 1], ['Ученик', 3], ['Адепт', 6], ['Эксперт', 10], ['Мастер', 16], ['Грандмастер', 24], ['Легенда', 34]];
 function rankNameFor(level) { let n = RANK_TABLE[0][0]; for (const [nm, min] of RANK_TABLE) if (level >= min) n = nm; return n; }
+// ============================================================
+//  Анти-чит XP (Фаза 1 + 2): сервер пересчитывает XP лидерборда/рейда из «сырых фактов»
+//  СВОЕЙ фиксированной формулой, ИГНОРИРУЯ присланные клиентом числа (task.xpAwarded и т.д.),
+//  + потолки/валидация против фабрикации. Личный (клиентский) XP не трогаем — это про тёплый UX.
+//  Формула-константы фиксированы здесь, т.к. settings.xp/curve у юзера редактируемы = вектор накрутки.
+// ============================================================
+const XP_PER_MIN = 1, XP_BONUS = 5, XP_DIFF = { easy: 1, normal: 1.5, hard: 2.2 };
+const LVL_BASE = 100, LVL_GROWTH = 1.3, SKILL_BASE = 60;            // серверная кривая уровней
+const GOAL_XP_SRV = { mission: 8000, vision: 3000, path: 1200, long: 750, mid: 200, short: 50, recurring: 15 };
+const GOAL_XP_DEFAULT = 60;
+const ACX = { // потолки (env-настраиваемы для тюнинга без правки кода)
+  maxTaskMin: Number(process.env.ACX_MAX_TASK_MIN) || 600,         // минут на одну задачу/привычку
+  maxXpPerDay: Number(process.env.ACX_MAX_XP_PER_DAY) || 3000,     // зачётного XP/день (задачи+привычки) — рубит фабрикацию
+  maxTasksPerDay: Number(process.env.ACX_MAX_TASKS_PER_DAY) || 80, // зачётных задач/день
+  maxImportLevel: Number(process.env.ACX_MAX_IMPORT_LEVEL) || 20,  // макс. стартовый уровень импорта сферы
+  futureSkewMs: 36 * 3600 * 1000,                                  // допуск на часовые пояса (±1.5 сут)
+};
+function acxLvlNeed(level) { return Math.round(LVL_BASE * Math.pow(LVL_GROWTH, level - 1)); }
+function acxXpForLevel(L) { let xp = 0; for (let k = 1; k < L; k++) xp += Math.round(SKILL_BASE * Math.pow(LVL_GROWTH, k - 1)); return xp; }
+function acxDiff(d) { return XP_DIFF[d] != null ? XP_DIFF[d] : XP_DIFF.normal; }
+function acxBaseXp(estimateMin, difficulty) { // базовый XP БЕЗ модификаторов (их подделать нельзя проверить — не зачитываем)
+  const min = Math.min(ACX.maxTaskMin, Math.max(0, Math.floor(Number(estimateMin) || 0)));
+  return min * XP_PER_MIN * acxDiff(difficulty) + XP_BONUS;
+}
+function acxValidDate(d) { // строка-дата; валидна и не из будущего (с допуском) → Date, иначе null
+  if (typeof d !== 'string') return null;
+  const t = Date.parse(d); if (isNaN(t) || t > Date.now() + ACX.futureSkewMs) return null;
+  return new Date(t);
+}
+function acxDayKey(date) { return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`; }
+
 function computeUserXp(uid) {
   const dir = userDataDir(uid);
   const rd = (n) => { try { return JSON.parse(fs.readFileSync(path.join(dir, n + '.json'), 'utf8')); } catch { return null; } };
-  const settings = rd('settings') || {}, tasks = rd('tasks') || [], habitlog = rd('habitlog') || {}, goals = rd('goals') || [];
-  const curve = settings.curve || { base: 100, growth: 1.3 };
-  const ws = mondayStr(), inWeek = (d) => typeof d === 'string' && d.slice(0, 10) >= ws;
+  const settings = rd('settings') || {}, tasks = rd('tasks') || [], habitlog = rd('habitlog') || {}, goals = rd('goals') || [], habits = rd('habits') || [];
+  const habitById = {}; for (const h of (Array.isArray(habits) ? habits : [])) if (h && h.id) habitById[h.id] = h;
+  const ws = mondayStr();
   let total = 0, weekXp = 0, weekQuests = 0;
+  // Дневные потолки: не даём одному дню превысить лимит (рубит «1000 фейковых дел сегодня»).
+  const dayXp = Object.create(null), dayCnt = Object.create(null);
+  const addCapped = (dk, xp, countsTask) => {
+    if (countsTask && (dayCnt[dk] || 0) >= ACX.maxTasksPerDay) return 0;
+    const room = ACX.maxXpPerDay - (dayXp[dk] || 0); if (room <= 0) return 0;
+    const grant = Math.max(0, Math.min(xp, room));
+    dayXp[dk] = (dayXp[dk] || 0) + grant; if (countsTask) dayCnt[dk] = (dayCnt[dk] || 0) + 1;
+    return grant;
+  };
+  // Задачи: XP по серверной формуле из difficulty/estimateMin, xpAwarded игнорируем
   for (const t of (Array.isArray(tasks) ? tasks : [])) {
-    if (t && t.done && t.completedAt) { const xp = Math.max(0, Number(t.xpAwarded) || 0); total += xp; if (inWeek(t.completedAt)) { weekXp += xp; weekQuests++; } }
+    if (!t || !t.done) continue;
+    const d = acxValidDate(t.completedAt || t.date); if (!d) continue;
+    const dk = acxDayKey(d), xp = addCapped(dk, acxBaseXp(t.estimateMin, t.difficulty), true);
+    if (xp <= 0) continue;
+    total += xp; if (dk >= ws) { weekXp += xp; weekQuests += 1; }
   }
-  for (const day in habitlog) { const m = habitlog[day] || {}; for (const hid in m) { const xp = Math.max(0, Number(m[hid] && m[hid].xp) || 0); total += xp; if (inWeek(day)) weekXp += xp; } }
-  for (const g of (Array.isArray(goals) ? goals : [])) { if (g && g.completedAt) { const xp = Math.max(0, Number(g.xpReward) || 0); total += xp; if (inWeek(g.completedAt)) weekXp += xp; } }
-  const imp = settings.imported || {}; for (const k in imp) total += Math.max(0, Number(imp[k] && imp[k].xp) || 0);
+  // Привычки: difficulty/estimateMin из habits.json (фолбэк — min из лог-записи)
+  for (const day in habitlog) {
+    const dd = acxValidDate(day); if (!dd) continue;
+    const dk = acxDayKey(dd), m = habitlog[day] || {};
+    for (const hid in m) {
+      const h = habitById[hid], rec = m[hid] || {};
+      const min = (h && h.estimateMin != null) ? h.estimateMin : (rec.min || 0);
+      const xp = addCapped(dk, acxBaseXp(min, h ? h.difficulty : 'normal'), false);
+      if (xp <= 0) continue;
+      total += xp; if (dk >= ws) weekXp += xp;
+    }
+  }
+  // Цели: XP по типу; кастомный xpReward режется потолком типа. Вне дневного лимита (это вехи).
+  for (const g of (Array.isArray(goals) ? goals : [])) {
+    if (!g || !g.completedAt) continue;
+    const d = acxValidDate(g.completedAt); if (!d) continue;
+    const cap = GOAL_XP_SRV[g.type] != null ? GOAL_XP_SRV[g.type] : GOAL_XP_DEFAULT;
+    const xp = Math.max(0, Math.min(Number(g.xpReward) || cap, cap));
+    total += xp; if (acxDayKey(d) >= ws) weekXp += xp;
+  }
+  // Импорт стартового уровня: на сферу не больше, чем XP к maxImportLevel
+  const importCap = acxXpForLevel(ACX.maxImportLevel + 1);
+  const imp = settings.imported || {};
+  for (const k in imp) total += Math.max(0, Math.min(Number(imp[k] && imp[k].xp) || 0, importCap));
   total = Math.round(total);
-  let level = 1, rem = total, need = Math.round(curve.base * Math.pow(curve.growth, level - 1));
-  while (rem >= need && level < 999) { rem -= need; level++; need = Math.round(curve.base * Math.pow(curve.growth, level - 1)); }
+  // Уровень — по серверной кривой (clamp на случай гигантских значений)
+  let level = 1, rem = total, need = acxLvlNeed(level);
+  while (rem >= need && level < 999) { rem -= need; level++; need = acxLvlNeed(level); }
   return { total, weekXp: Math.round(weekXp), weekQuests, level, rank: rankNameFor(level) };
 }
 // ---- Web Push (RFC8291 aes128gcm + VAPID RFC8292). Zero-dep, проверено round-trip-тестом. ----
