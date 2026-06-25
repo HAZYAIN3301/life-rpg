@@ -1715,6 +1715,7 @@ const State = {
   aveCat: 'hair', // активная категория в редакторе аватара
   treeEdit: false, treeSelNode: null, // редактор дерева навыков
   settingsCollapsed: {}, // свёрнутые столбы в редакторе сфер
+  balanceDrill: new Set(), // раскрытые сферы на колесе баланса (дрилл-даун под-сфер) — эфемерно
 };
 
 // ============================================================
@@ -1957,21 +1958,101 @@ function rankProgress(level) {
 function skillRank(id) { return rankFor(skillLevelOf(id)); }
 function charRank() { return rankFor(charLevel()); }
 
-// ---- Индекс баланса (философия десятиборья: ценим композицию, а не одну вертикаль) ----
+// ============================================================
+//  Колесо баланса v1 — РИТМ ВНИМАНИЯ за окно (НЕ стоячий уровень).
+//  Философия: уровень/мастерство — храповик, НЕ сгорает. А баланс — это РИТМ:
+//  сколько внимания ушло в сферу за последние недели. Затихшая сфера сама
+//  проседает на колесе, потому что окно её «не видит» (естественная деградация).
+//  Стартовую уровень-бирку (skillLevelOf) при этом НЕ трогаем — она остаётся.
+// ============================================================
+const BALANCE_WINDOW_DAYS = 21; // ~3 недели (середина «2–4 недель» из гайда §3)
+const COOL_DAYS = 14;           // под-сфера «остыла», если активности не было ≥2 недель
+const HOT_DAYS = 3;             // «горячо» — активность в последние дни
+
+// --- Канонические жизненные домены (фикс, ~10, ОДИНАКОВЫ У ВСЕХ — гайд §2). ---
+// Невидимый «хребет»: каждая верхняя сфера маппится на один домен (авто по имени + ручная правка).
+// Нужен для (а) единой логики, (б) подсказки про пустые домены, (в) будущего мэтчинга в братстве.
+// Порядок важен: autoCanon берёт ПЕРВЫЙ совпавший домен. Грабли §8 — НИКАКИХ \b перед кириллицей!
+const CANON_DOMAINS = [
+  { id: 'body',      name: 'Тело / Здоровье',        icon: '💪', re: /тел[оауые]|здоров|спорт|фитнес|трениров|качал|штанг|жим|мыш|бег|кардио|вынослив|сил[аеуыо]|питани|нутриц|диет|сон|йог|run|gym|workout|health|fitness/ },
+  { id: 'relations', name: 'Отношения',              icon: '❤️', re: /отношен|семь|семей|друз|любов|партн[её]р|социал|общени|свидан|родител|дет[иямь]|близк|relationship|family|friends|social/ },
+  { id: 'work',      name: 'Дело / Карьера',         icon: '💼', re: /дел[оауе]|карьер|работ|бизнес|профес|стартап|предприн|job|career|work|business/ },
+  { id: 'money',     name: 'Деньги / Ресурсы',       icon: '💰', re: /деньг|финанс|бюджет|инвест|капитал|доход|сбереж|money|finance|budget/ },
+  { id: 'growth',    name: 'Развитие / Знания',      icon: '📚', re: /развит|знани|уч[её]б|образован|чтени|книг|язык|англ|немец|deutsch|наук|школ|универ|интеллект|саморазв|программ|код|алгоритм|study|learn|skill/ },
+  { id: 'spirit',    name: 'Дух / Смысл',            icon: '🧘', re: /дух|смысл|медит|вер[аыуе]|осознан|психо|ментал|философ|молитв|религ|дзен|дзэн|mindful|spirit/ },
+  { id: 'create',    name: 'Творчество / Созидание', icon: '🎨', re: /творч|созид|искусств|музык|рисов|арт|дизайн|видео|блог|пиш|писательств|креат|фото|танц|вокал|create|craft|art|music/ },
+  { id: 'rest',      name: 'Отдых / Восстановление', icon: '🌿', re: /отдых|восстанов|релакс|досуг|перезагруз|выгоран|recover|rest|chill|leisure/ },
+  { id: 'home',      name: 'Быт / Среда',            icon: '🏠', re: /быт|дом[аоуе]|порядок|уборк|хозяйств|организац|среда|home|chores|household/ },
+  { id: 'play',      name: 'Игра / Приключения',     icon: '🎲', re: /игр[аыуо]|приключ|путешеств|хобби|развлеч|adventure|travel|game|fun/ },
+];
+function canonById(id) { return CANON_DOMAINS.find((d) => d.id === id) || null; }
+function autoCanon(name) { const n = normRu(name); const d = CANON_DOMAINS.find((x) => x.re.test(n)); return d ? d.id : null; }
+function canonOf(sk) { if (sk && sk.canon && canonById(sk.canon)) return sk.canon; return autoCanon((sk && sk.name) || ''); }
+// Какие домены покрыты верхними сферами (без проектов), какие — пустые (для подсказки §5.3).
+function canonCoverage(spheres) {
+  const list = spheres || balanceSpheres();
+  const covered = new Set(); for (const s of list) { const c = canonOf(s); if (c) covered.add(c); }
+  return { covered, gaps: CANON_DOMAINS.filter((d) => !covered.has(d.id)) };
+}
+
+// --- Проекты — не сферы (гайд §5.4): проект не должен быть осью колеса. ---
+// Лёгкий флаг noBalance (полноценные «типы узлов» — в парковке §6.2, сюда НЕ тащим).
+function isProjectSkill(sk) { return !!(sk && sk.noBalance); }
+function looksLikeProject(name) { return /jufo|jugend\s*forscht|satoru|gojo|life.?rpg|диплом|курсов|реферат/i.test(normRu(name)); }
+// Верхние сферы, которые реально считаются осями баланса (проекты исключены).
+function balanceSpheres() { return topSkills().filter((s) => !isProjectSkill(s)); }
+
+// --- Ритм внимания за окно ---
+// Карта skillId → минуты в окне (только собственные события; агрегацию вверх делаем отдельно).
+function windowMinMap(days) {
+  const since = addDays(todayStr(), -((days || BALANCE_WINDOW_DAYS) - 1));
+  const map = {};
+  for (const e of xpEvents()) if (e.date >= since && e.skillId) map[e.skillId] = (map[e.skillId] || 0) + (e.min || 0);
+  return map;
+}
+// Минуты сферы в окне = свои + все потомки (агрегация вверх по дереву любой глубины).
+function subtreeMin(id, map) { let m = map[id] || 0; for (const c of descendantSkills(id)) m += map[c.id] || 0; return m; }
+// Последняя активность в поддереве (для «остыл»): max даты события по себе + потомкам.
+function skillLastActiveDeep(id) {
+  let last = skillLastActive(id);
+  for (const c of descendantSkills(id)) { const l = skillLastActive(c.id); if (l && (!last || l > last)) last = l; }
+  return last;
+}
+function skillCooled(id) { if (skillXp(id) <= 0) return false; return daysSinceDate(skillLastActiveDeep(id)) >= COOL_DAYS; } // была активность, но затихла
+function skillHot(id) { const d = daysSinceDate(skillLastActiveDeep(id)); return d !== Infinity && d <= HOT_DAYS; }
+// Ритм набора сфер: [{ id,name,color, min, lastActive, days, cooled, hot, level }]
+function rhythmFor(skills, days, map) {
+  const m = map || windowMinMap(days);
+  return skills.map((s) => {
+    const la = skillLastActiveDeep(s.id);
+    return { id: s.id, name: s.name, color: s.color, min: subtreeMin(s.id, m), lastActive: la, days: daysSinceDate(la), cooled: skillCooled(s.id), hot: skillHot(s.id), level: skillLevelOf(s.id) };
+  });
+}
+// Колесо: ритм верхних сфер (без проектов).
+function sphereRhythm(days) { return rhythmFor(balanceSpheres(), days || BALANCE_WINDOW_DAYS); }
+
+// ---- Индекс баланса = РОВНОСТЬ РИТМА внимания за окно + охват (не стоячий уровень). ----
+// Нудж «подтяни X» = обжитая сфера, чья доля внимания сильнее всего ниже простого таргета (равномерно).
 function balanceIndex() {
-  const skills = topSkills(); // баланс по крупным жизненным сферам (столбы агрегируют под-навыки)
-  const xps = skills.map((s) => skillXp(s.id));
-  const active = xps.filter((x) => x > 0);
-  if (active.length < 2) return { index: 0, active: active.length, total: skills.length, weakest: null, strongest: null };
-  const mean = active.reduce((a, b) => a + b, 0) / active.length;
-  const variance = active.reduce((a, x) => a + (x - mean) ** 2, 0) / active.length;
+  const spheres = balanceSpheres();
+  const rh = sphereRhythm();
+  const total = rh.reduce((a, r) => a + r.min, 0);
+  const activeRh = rh.filter((r) => r.min > 0);
+  if (activeRh.length < 2) return { index: 0, active: activeRh.length, total: spheres.length, weakest: null, strongest: null, windowMin: total };
+  const vals = activeRh.map((r) => r.min);
+  const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
+  const variance = vals.reduce((a, x) => a + (x - mean) ** 2, 0) / vals.length;
   const cv = Math.sqrt(variance) / (mean || 1);
-  const evenness = Math.max(0, 1 - cv);            // 1 = идеально равномерно
-  const coverage = active.length / Math.max(1, skills.length); // охват сфер
+  const evenness = Math.max(0, 1 - cv);                            // 1 = идеально ровный ритм
+  const coverage = activeRh.length / Math.max(1, spheres.length); // охват сфер за окно
   const index = Math.max(0, Math.min(100, Math.round(evenness * 70 + coverage * 30)));
-  // самая отстающая активная сфера — куда направить внимание
-  const pairs = skills.map((s) => ({ s, xp: skillXp(s.id) })).filter((p) => p.xp > 0).sort((a, b) => a.xp - b.xp);
-  return { index, active: active.length, total: skills.length, weakest: pairs[0] ? pairs[0].s : null, strongest: pairs[pairs.length - 1] ? pairs[pairs.length - 1].s : null };
+  // Нудж: среди «обжитых» сфер (есть пожизненный опыт) — самая обделённая вниманием за окно.
+  // Показываем, только если её доля < половины таргета — честно, без занудства (через любовь, не вину).
+  const target = 1 / Math.max(1, spheres.length);
+  let weakest = null, worst = 0.5 * target;
+  for (const r of rh) { if (skillXp(r.id) <= 0) continue; const share = total ? r.min / total : 0; if (share < worst) { worst = share; weakest = r; } }
+  const sorted = [...activeRh].sort((a, b) => a.min - b.min);
+  return { index, active: activeRh.length, total: spheres.length, weakest, strongest: sorted[sorted.length - 1] || null, windowMin: total };
 }
 
 // ---- Подписка / Pro ----
@@ -2881,6 +2962,13 @@ function renderOnboardingScreen() {
           <input id="ob-color" type="color" value="#6c8cff" style="width:44px;height:38px;padding:2px;cursor:pointer" />
           <button class="btn ghost" data-action="ob-add-custom">+</button>
         </div>
+        ${(() => {
+          // Мягкая подсказка про пустой домен «Отношения» (§5.3) — без принуждения.
+          const cov = new Set(); for (const nm of State.obSkills) { const cc = autoCanon(nm); if (cc) cov.add(cc); }
+          return (State.obSkills.size > 0 && !cov.has('relations'))
+            ? '<p class="ob-canon-hint">🧭 Пока нет сферы про <b>❤️ Отношения</b> — а это одна из самых весомых частей сбалансированной жизни. Можно добавить «Отношения», «Семью» или «Друзей».</p>'
+            : '';
+        })()}
         <button class="btn" data-action="ob-finish" style="margin-top:18px;width:100%" ${State.obSkills.size === 0 ? 'disabled' : ''}>
           Поехали! (${State.obSkills.size} сфер${State.obSkills.size === 1 ? 'а' : State.obSkills.size < 5 ? 'ы' : ''})
         </button>
@@ -4423,12 +4511,80 @@ function avatarEditor() {
     <p class="muted" style="font-size:12px;margin:10px 0 0">Собери свой облик. Скоро добавим больше стилей — в том числе нарисованные художником наборы.</p>
   </div>`;
 }
+// ---- Колесо баланса (ядро v1): радар ритма + дрилл-даун под-сфер + подсказки ----
+function balanceWheelCard() {
+  const rh = sphereRhythm();
+  const bal = balanceIndex();
+  const maxMin = Math.max(1, ...rh.map((r) => r.min));
+  const totalMin = rh.reduce((a, r) => a + r.min, 0);
+  // Радар по РИТМУ: оси = верхние сферы, длина оси = внимание за окно (а не уровень).
+  const scores = rh.map((r) => ({ id: r.id, name: r.name, color: r.color, value: r.min }));
+  const radar = scores.length >= 3
+    ? `<div class="radar-wrap">${radarSVG(scores)}</div>`
+    : '<p class="muted">Добавь минимум 3 сферы (проекты не в счёт) в «Настройках» — и колесо оживёт.</p>';
+  const balChip = bal.active >= 2
+    ? `<span class="bal-chip" title="Баланс ритма: насколько ровно внимание распределено по сферам за ~${BALANCE_WINDOW_DAYS} дн + охват. Это ритм, не уровень.">⚖️ Баланс ${bal.index}/100${bal.weakest ? ` · подтяни «${esc(bal.weakest.name)}»` : ''}</span>`
+    : '';
+  const rows = rh.map((r) => balanceRow(r, maxMin, 0)).join('');
+  const emptyHint = totalMin === 0
+    ? '<p class="muted bal-empty">За последние недели активности в сферах не было — колесо «остыло». Сделай что-нибудь хоть в одной сфере, и ось оживёт. Через любовь, не вину. 🌱</p>'
+    : '';
+  return `<div class="card balance-card"><h3>⚖️ Колесо баланса ${balChip}</h3>
+    ${radar}
+    <div class="bal-rows">${rows}</div>
+    ${emptyHint}
+    ${canonHintHTML()}
+    ${projectNudgeHTML()}
+    <p class="muted" style="font-size:12px;margin-bottom:0">Длина оси — сколько внимания ушло в сферу за ~${BALANCE_WINDOW_DAYS} дней (не уровень: уровень не сгорает). Затихла сфера — ось проседает. Нажми на сферу → ритм её под-сфер.</p></div>`;
+}
+// Строка ритма сферы + рекурсивный дрилл-даун (раскрытые сферы — в State.balanceDrill).
+function balanceRow(r, maxMin, depth) {
+  const kids = childSkills(r.id), hasKids = kids.length > 0;
+  const open = hasKids && State.balanceDrill && State.balanceDrill.has(r.id);
+  const pct = Math.round(Math.min(100, (r.min / Math.max(1, maxMin)) * 100));
+  const tag = r.cooled ? `<span class="bal-tag cool" title="Эта сфера затихла — окно её почти не видит">💤 остыл${r.days === Infinity ? '' : ' ' + r.days + ' дн'}</span>`
+            : r.hot ? '<span class="bal-tag hot" title="Свежая активность">🔥</span>' : '';
+  const caret = hasKids ? `<span class="bal-caret">${open ? '▾' : '▸'}</span>` : '<span class="bal-caret-spacer"></span>';
+  const row = `<div class="bal-row${depth ? ' is-sub' : ''}${r.cooled ? ' cooled' : ''}" style="--d:${depth}" ${hasKids ? `data-action="bal-drill" data-id="${r.id}" role="button" tabindex="0"` : ''}>
+    ${caret}
+    <span class="bal-dot" style="background:${esc(r.color)}"></span>
+    <span class="bal-nm">${esc(r.name)}</span>
+    <span class="bal-bar"><span style="width:${pct}%;background:${esc(r.color)}"></span></span>
+    <span class="bal-dur">${r.min > 0 ? fmtDur(r.min) : '—'}</span>
+    <span class="bal-lvl" title="Доказанный уровень — не сгорает (храповик)">ур.${r.level}</span>
+    ${tag}</div>`;
+  if (!open) return row;
+  const krh = rhythmFor(kids, BALANCE_WINDOW_DAYS);
+  const kmax = Math.max(1, ...krh.map((x) => x.min));
+  return row + krh.map((k) => balanceRow(k, kmax, depth + 1)).join('');
+}
+// Мягкая подсказка про пустые канонические домены (особенно Отношения — §5.3). Скрываемая.
+function canonHintHTML() {
+  if (State.settings && State.settings.canonHintDismissed) return '';
+  if (balanceSpheres().length < 2) return ''; // на старте не зудим — сначала собери сферы
+  const { gaps } = canonCoverage();
+  if (!gaps.length) return '';
+  const rel = gaps.find((g) => g.id === 'relations');
+  const lead = rel
+    ? `Нет сферы из домена ${rel.icon} <b>Отношения</b> — а у Хартмана связи это до 40% десятиборья.`
+    : `Пустые жизненные домены: ${gaps.slice(0, 3).map((d) => `${d.icon} ${esc(d.name)}`).join(' · ')}.`;
+  return `<div class="canon-hint">
+    <button class="canon-x" data-action="canon-hint-dismiss" title="Скрыть">✕</button>
+    <div class="canon-hint-body">🧭 ${lead} <span class="muted">Не обязательно — карта просто показывает, чего пока не касаешься.</span></div>
+    <button class="btn ghost sm" data-action="go-settings-skills">+ Добавить сферу</button></div>`;
+}
+// Нудж: верхняя сфера выглядит как проект (JuFo/Satoru/реферат…) — предложить убрать с колеса (§5.4).
+function projectNudgeHTML() {
+  const suspects = balanceSpheres().filter((s) => looksLikeProject(s.name));
+  if (!suspects.length) return '';
+  const s = suspects[0];
+  return `<div class="canon-hint proj">
+    <div class="canon-hint-body">🏁 «${esc(s.name)}» похоже на <b>проект</b>, а не сферу жизни. Проектам место в Целях — и они не должны быть осью колеса.</div>
+    <button class="btn ghost sm" data-action="mark-project" data-id="${esc(s.id)}">Убрать с колеса</button></div>`;
+}
 function renderCharacter() {
   const c = State.settings.curve, oi = levelInfo(overallXp(), c.base, c.growth), cr = charRank();
-  const scores = sphereScores(), arch = archetype(), b = State.settings.body || {}, bmi = bodyBMI(), bal = balanceIndex();
-  const max = Math.max(3, ...scores.map((s) => s.value));
-  const attrBars = scores.map((a) => `<div class="attr-row"><span class="attr-dot" style="background:${esc(a.color)}"></span><span class="attr-nm">${esc(a.name)}</span><span class="attr-bar"><span style="width:${Math.round(Math.min(100, a.value / max * 100))}%;background:${esc(a.color)}"></span></span><span class="attr-val">ур.${a.value}</span></div>`).join('');
-  const balChip = bal.active >= 2 ? `<span class="bal-chip" title="Индекс баланса: равномерность твоих активных сфер + охват. Философия десятиборья — побеждает композиция, не одна вертикаль.">⚖️ Баланс ${bal.index}/100${bal.weakest ? ` · подтяни «${esc(bal.weakest.name)}»` : ''}</span>` : '';
+  const arch = archetype(), b = State.settings.body || {}, bmi = bodyBMI();
   let bmiLabel = '';
   if (bmi) {
     const cat = bmi < 18.5 ? 'недовес' : bmi < 25 ? 'норма' : bmi < 30 ? 'избыток' : 'выше нормы';
@@ -4465,10 +4621,7 @@ function renderCharacter() {
     </div>
     ${avatarEditor()}
     <div class="char-grid">
-      <div class="card"><h3>🎯 Твоё десятиборье ${balChip}</h3>
-        ${scores.length >= 3 ? `<div class="radar-wrap">${radarSVG(scores)}</div>` : '<p class="muted">Добавь минимум 3 сферы в «Настройках», чтобы увидеть радар баланса.</p>'}
-        <div class="attr-list">${attrBars}</div>
-        <p class="muted" style="font-size:12px;margin-bottom:0">Оси — твои собственные сферы (уровень с учётом под-навыков). Это твоя уникальная комбинация: цель — не пик в одной оси, а сильная форма всего многоугольника.</p></div>
+      ${balanceWheelCard()}
       <div class="card"><h3>🧍 Телосложение</h3>
         <div class="figure-wrap">${figureSVG()}</div>${bmiLabel}
         <p class="muted" style="font-size:12px">Силуэт живой: сила расширяет плечи, выносливость подсушивает, вес влияет на талию.</p>
@@ -5324,13 +5477,25 @@ function renderSettings() {
   const collapsed = State.settingsCollapsed || {};
   const skillRow = (sk, depth, hidden) => {
     const pillar = isPillar(sk.id);
+    // Только верхние сферы — оси колеса: им даём канонический домен + флаг «проект» (§5.3/§5.4).
+    const auto = canonById(autoCanon(sk.name));
+    const topExtra = depth === 0 ? `
+      <div class="se-canon">
+        <span class="se-canon-lbl" title="Канонический жизненный домен — единый «хребет» для карты баланса и подсказок. Авто по названию, можно поправить.">🧭 домен</span>
+        <select data-field="canon">
+          <option value="">авто${auto ? ' · ' + auto.icon + ' ' + auto.name : ' · —'}</option>
+          ${CANON_DOMAINS.map((d) => `<option value="${d.id}" ${sk.canon === d.id ? 'selected' : ''}>${d.icon} ${esc(d.name)}</option>`).join('')}
+        </select>
+        <label class="se-proj" title="Проект — не ось колеса баланса (живёт в Целях)"><input type="checkbox" data-field="noBalance" ${sk.noBalance ? 'checked' : ''}/> 🏁 проект</label>
+      </div>` : '';
     return `<div class="skill-edit ${depth > 0 ? 'is-sub' : ''} ${hidden ? 'se-hidden' : ''}" data-id="${sk.id}" style="--d:${depth}">
       <span class="se-move"><button data-action="skill-move" data-id="${sk.id}" data-dir="-1" title="Выше">▲</button><button data-action="skill-move" data-id="${sk.id}" data-dir="1" title="Ниже">▼</button></span>
       ${pillar ? `<button class="se-collapse" data-action="skill-collapse" data-id="${sk.id}" title="Свернуть/развернуть под-навыки">${collapsed[sk.id] ? '▸' : '▾'}</button>` : '<span class="se-collapse-spacer"></span>'}
       <input type="color" value="${esc(sk.color)}" data-field="color" />
       <input type="text" value="${esc(sk.name)}" data-field="name" />
       <select data-field="parentId" title="Вложенность сферы">${parentOptions(sk)}</select>
-      <button class="del" data-action="delete-skill" data-id="${sk.id}">✕</button></div>`;
+      <button class="del" data-action="delete-skill" data-id="${sk.id}">✕</button>
+      ${topExtra}</div>`;
   };
   // Рекурсивный рендер дерева сфер: глубина любая, свёрнутый узел прячет всё поддерево
   const renderSkillRows = (parentId, depth, hidden) => State.settings.skills
@@ -6428,6 +6593,19 @@ function onClick(e) {
     State.settingsCollapsed = State.settingsCollapsed || {};
     State.settingsCollapsed[id] = !State.settingsCollapsed[id];
     render();
+  } else if (action === 'bal-drill') {
+    // Дрилл-даун колеса баланса: раскрыть/свернуть под-сферы (эфемерно, без сохранения)
+    if (!(State.balanceDrill instanceof Set)) State.balanceDrill = new Set();
+    if (State.balanceDrill.has(id)) State.balanceDrill.delete(id); else State.balanceDrill.add(id);
+    render();
+  } else if (action === 'canon-hint-dismiss') {
+    State.settings.canonHintDismissed = true; Store.save('settings', State.settings); render();
+  } else if (action === 'go-settings-skills') {
+    flushSettingsForm(); State.view = 'settings'; render();
+    setTimeout(() => { const el2 = document.getElementById('skills-list'); if (el2) el2.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
+  } else if (action === 'mark-project') {
+    const sk = State.settings.skills.find((x) => x.id === id);
+    if (sk) { sk.noBalance = true; Store.save('settings', State.settings); toast(`🏁 «${sk.name}» убрана с колеса — это проект. Веди её в Целях.`); render(); }
   } else if (action === 'skill-move') {
     captureSettingsForm();
     const arr = State.settings.skills, sk = arr.find((x) => x.id === id);
@@ -6465,9 +6643,18 @@ function captureSettingsForm() {
   // ВАЖНО: перезаписываем skills только если в DOM реально есть строки. Иначе глитч/гонка могли бы стереть все сферы.
   const skillRows = [...document.querySelectorAll('#skills-list .skill-edit')];
   if (skillRows.length) {
+    const oldSkills = s.skills || [];
     s.skills = skillRows.map((row) => {
+      const old = oldSkills.find((x) => x.id === row.dataset.id) || {};
       const psel = row.querySelector('[data-field="parentId"]');
-      return { id: row.dataset.id, name: row.querySelector('[data-field="name"]').value.trim() || 'Без названия', color: row.querySelector('[data-field="color"]').value, parentId: psel && psel.value ? psel.value : null };
+      const canonSel = row.querySelector('[data-field="canon"]'), projChk = row.querySelector('[data-field="noBalance"]');
+      // ВАЖНО: строим объект от старого (...old), чтобы НЕ потерять поля канон-маппинга/проекта,
+      // которых нет среди простых инпутов (иначе автосейв формы их стирал бы).
+      const o = { ...old, id: row.dataset.id, name: row.querySelector('[data-field="name"]').value.trim() || 'Без названия', color: row.querySelector('[data-field="color"]').value, parentId: psel && psel.value ? psel.value : null };
+      // canon/noBalance живут только у верхних сфер (есть контролы). У под-сфер — чистим (не оси колеса).
+      if (canonSel) o.canon = canonSel.value || null; else delete o.canon;
+      if (projChk) o.noBalance = projChk.checked; else delete o.noBalance;
+      return o;
     });
     // нормализация parentId: глубина любая, но родитель должен существовать и цепочка не должна зацикливаться
     for (const sk of s.skills) {
@@ -6692,7 +6879,7 @@ function onChange(e) {
   // при смене квеста в пикере календаря — подставить его длительность
   if (e.target.id === 'cal-quest') { const t = questById(e.target.value), d = document.getElementById('cal-dur'); if (t && d) d.value = Number(t.estimateMin) || 30; return; }
   // смена вложенности сферы → сохранить и сразу перерисовать дерево (отступы, защита от циклов)
-  if (e.target.dataset.field === 'parentId' && e.target.closest('#skills-list')) { flushSettingsForm(); render(); return; }
+  if (['parentId', 'canon', 'noBalance'].includes(e.target.dataset.field) && e.target.closest('#skills-list')) { flushSettingsForm(); render(); return; }
   // автосохранение формы настроек (сферы/привычки/формулы/название) — чтобы правки не терялись при F5
   if (e.target.closest('#skills-list, #habits-list, .knob') || e.target.id === 'set-appName') autosaveSettings();
   const el = e.target.closest('[data-action]');
