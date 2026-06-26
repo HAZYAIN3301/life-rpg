@@ -3698,7 +3698,25 @@ function applyProposals(proposals, acceptedIdx) {
   const accepted = proposals.filter((_, i) => acceptedIdx.has(i));
   const c = State.settings.curve;
   const palette = ['#4f86f7', '#5fbf5f', '#e0526a', '#b06ff0', '#e0a23e', '#22c1a4', '#e87d3e', '#8899bb'];
-  const findSphere = (name) => name && State.settings.skills.find((s) => normRu(s.name) === normRu(name));
+  // ИИ возвращает sphere как ПУТЬ «Учёба › Наука › Jugend Forscht» — резолвим по цепочке, не только по листу
+  const findSphere = (name) => {
+    if (!name) return null;
+    const exact = State.settings.skills.find((s) => normRu(s.name) === normRu(name));
+    if (exact) return exact;
+    if (String(name).includes('›')) {
+      const segs = String(name).split('›').map((x) => normRu(x.trim())).filter(Boolean);
+      let parentId = null, cur = null;
+      for (const seg of segs) {
+        cur = State.settings.skills.find((s) => normRu(s.name) === seg && (s.parentId || null) === parentId);
+        if (!cur) { cur = null; break; }
+        parentId = cur.id;
+      }
+      if (cur) return cur;
+      const leaf = segs[segs.length - 1];
+      return State.settings.skills.find((s) => normRu(s.name) === leaf) || null;
+    }
+    return null;
+  };
   let pi = State.settings.skills.length, applied = 0;
   // 1) Сферы
   accepted.filter((p) => p.type === 'sphere' && p.name).forEach((p) => {
