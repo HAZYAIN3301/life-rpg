@@ -1343,7 +1343,7 @@ const GOAL_TYPES = [
   { id: 'short',     label: 'Краткосрочные', timeframe: 'до 4 недель',              hint: 'Конкретный результат в ближайший месяц: сдать экзамен, дочитать книгу' },
   { id: 'recurring', label: 'Повторяющиеся', timeframe: 'ежедневно · еженедельно',  hint: 'Регулярные практики без конечной даты: спорт каждый день, еженедельный обзор' },
 ];
-const GOAL_XP = { mission: 8000, vision: 3000, path: 1200, long: 750, mid: 200, short: 50, recurring: 15 };
+const GOAL_XP = { mission: 40000, vision: 12000, path: 4000, long: 1200, mid: 300, short: 75, recurring: 15 };
 function goalTypeLabel(t) { const x = GOAL_TYPES.find((g) => g.id === t); return x ? x.label : 'Цель'; }
 
 // Достижения — описаны в коде, считаются на лету
@@ -3602,7 +3602,14 @@ function openProposeModal(kind, prefill) {
 function renderProposalCards(res) {
   if (!res) return;
   if (!_proposals.length) { res.innerHTML = '<p class="muted">Ничего не нашлось. Добавь деталей или переформулируй.</p>'; return; }
-  res.innerHTML = `<div class="prop-list">${_proposals.map((p, i) => `<label class="prop-row"><input type="checkbox" data-prop="${i}" checked/> <span class="prop-text">${esc(proposalLabel(p))}</span></label>`).join('')}</div>
+  res.innerHTML = `<div class="prop-list">${_proposals.map((p, i) => {
+      let parentPick = '';
+      if (p.type === 'sphere') {
+        const dp = p.parent ? State.settings.skills.find((s) => normRu(s.name) === normRu(p.parent)) : null;
+        parentPick = `<select class="prop-parent" data-prop-parent="${i}" title="Внутрь какой сферы"><option value="">— верхний уровень —</option>${skillOptionsHTML(dp ? dp.id : '')}</select>`;
+      }
+      return `<label class="prop-row"><input type="checkbox" data-prop="${i}" checked/> <span class="prop-text">${esc(proposalLabel(p))}</span>${parentPick}</label>`;
+    }).join('')}</div>
     <div class="propose-actions"><button class="btn" data-action="propose-apply">✓ Применить выбранные</button> <span class="muted" style="font-size:12px">${_proposals.length} предложений · сними галочку, чтобы отклонить</span></div>`;
 }
 async function runPropose(kind) {
@@ -3689,6 +3696,9 @@ function proposalLabel(p) {
 function applyAcceptedProposals() {
   const set = new Set([...document.querySelectorAll('#propose-result input[data-prop]:checked')].map((el) => Number(el.dataset.prop)));
   if (!set.size) { toast('Ничего не выбрано'); return; }
+  document.querySelectorAll('#propose-result [data-prop-parent]').forEach((sel) => {
+    const i = Number(sel.dataset.propParent); if (_proposals[i]) _proposals[i]._parentId = sel.value || null;
+  });
   const n = applyProposals(_proposals, set);
   const m = document.getElementById('propose-modal'); if (m) m.remove();
   toast(`✓ Применено: ${n}`); checkAchievements(); render();
@@ -3725,8 +3735,9 @@ function applyProposals(proposals, acceptedIdx) {
     applied++;
   });
   // Привязка родителей сфер (после создания всех в батче)
-  accepted.filter((p) => p.type === 'sphere' && p.parent).forEach((p) => {
-    const sk = findSphere(p.name), par = findSphere(p.parent);
+  accepted.filter((p) => p.type === 'sphere' && (p.parent || p._parentId)).forEach((p) => {
+    const sk = findSphere(p.name);
+    const par = p._parentId ? State.settings.skills.find((s) => s.id === p._parentId) : findSphere(p.parent);
     if (sk && par && sk.id !== par.id && !sk.parentId) sk.parentId = par.id;
   });
   // 2) Уровни (калибровка) → импортированный стартовый XP
@@ -4346,6 +4357,7 @@ function goalCard(g) {
       <option value="active" ${(!g.status || g.status === 'active') ? 'selected' : ''}>▶ Активна</option>
       <option value="waiting" ${g.status === 'waiting' ? 'selected' : ''}>⏳ Жду</option>
       <option value="paused" ${g.status === 'paused' ? 'selected' : ''}>⏸ Пауза</option></select>`;
+  const editCtl = (done || g.archived) ? '' : `<select class="goal-edit-sel" data-action="goal-sphere" data-id="${g.id}" title="Сфера">${skillOptionsHTML(g.skillId)}</select><select class="goal-edit-sel" data-action="goal-horizon" data-id="${g.id}" title="Горизонт">${GOAL_TYPES.map((tp) => `<option value="${tp.id}" ${(g.type || 'short') === tp.id ? 'selected' : ''}>${esc(tp.label)}</option>`).join('')}</select>`;
   return `<div class="card goal ${done ? 'goal-done' : ''} ${g.archived ? 'goal-archived' : ''}">
     <div class="goal-head"><div><h3>${done ? '✅ ' : ''}${esc(g.title)}</h3>
         ${breadcrumb}
@@ -4358,7 +4370,9 @@ function goalCard(g) {
         </div></div>
       <div class="goal-actions">
         ${statusCtl}
+        ${editCtl}
         ${done || g.archived ? `<button class="btn ghost sm" data-action="${g.archived ? 'restore-goal' : 'archive-goal'}" data-id="${g.id}">${g.archived ? '↩ Вернуть' : '🗄 В архив'}</button>` : ''}
+        <label class="goal-pick-lbl" title="Выбрать для массового удаления"><input type="checkbox" class="goal-pick" data-pick="${g.id}"/></label>
         <button class="del" data-action="delete-goal" data-id="${g.id}" title="Удалить">✕</button>
       </div></div>
     ${metricBlock}
@@ -4418,7 +4432,8 @@ function renderGoals() {
         </details>
         <button type="submit">${t('+ Цель')}</button></form>
       <p class="diff-hint muted">💰 XP пусто = по типу цели: ${GOAL_TYPES.map((gt) => `${gt.label.toLowerCase()} ${GOAL_XP[gt.id]}`).join(' · ')}. Это «курс валюты» — не накручивай себе, иначе уровень потеряет смысл.</p></div>
-    <div class="card"><h3>${t('📋 Сводка целей')}</h3><div class="gfilters">${filterTabs}</div></div>
+    <div class="card"><h3>${t('📋 Сводка целей')}</h3><div class="gfilters">${filterTabs}</div>
+      <div class="bulk-bar"><button class="btn ghost sm" data-action="goals-pick-all">☑ Выбрать все</button><button class="btn ghost sm" data-action="goals-pick-none">✕ Снять</button><button class="btn ghost sm bulk-del" data-action="goals-del-selected">🗑 Удалить выбранные</button></div></div>
     ${shown.length ? shown.map(goalCard).join('') : '<div class="card"><p class="muted">Нет активных целей этого типа. Добавь выше ↑</p></div>'}
     ${completed.length ? `<div class="section-title">${t('Достигнутые')}</div>${completed.map(goalCard).join('')}` : ''}
     ${archived.length ? `<div class="section-title">🗄 Архив (${archived.length})</div>${archived.map(goalCard).join('')}` : ''}`;
@@ -6444,6 +6459,15 @@ function onClick(e) {
     const g = goalById(el.dataset.goal); if (!g) return; g.steps = g.steps.filter((x) => x.id !== el.dataset.step); refreshGoalCompletion(g); Store.save('goals', State.goals); render();
   } else if (action === 'delete-goal') {
     if (!confirm('Удалить цель?')) return; State.goals = State.goals.filter((g) => g.id !== id); Store.save('goals', State.goals); render();
+  } else if (action === 'goals-pick-all') {
+    document.querySelectorAll('.goal-pick').forEach((c) => { c.checked = true; }); return;
+  } else if (action === 'goals-pick-none') {
+    document.querySelectorAll('.goal-pick').forEach((c) => { c.checked = false; }); return;
+  } else if (action === 'goals-del-selected') {
+    const ids = [...document.querySelectorAll('.goal-pick:checked')].map((c) => c.dataset.pick);
+    if (!ids.length) { toast('Ничего не выбрано — отметь галочки у целей'); return; }
+    if (!confirm(`Удалить выбранные цели: ${ids.length}?`)) return;
+    const s = new Set(ids); State.goals = State.goals.filter((g) => !s.has(g.id)); Store.save('goals', State.goals); toast(`🗑 Удалено: ${ids.length}`); render();
   } else if (action === 'archive-goal') {
     const g = goalById(id); if (g) { g.archived = true; Store.save('goals', State.goals); toast('🗄 В архиве'); render(); }
   } else if (action === 'restore-goal') {
@@ -6884,6 +6908,14 @@ function onChange(e) {
   // смена статуса цели (active/waiting/paused)
   if (e.target.dataset && e.target.dataset.action === 'goal-status') {
     const g = goalById(e.target.dataset.id); if (g) { g.status = e.target.value; Store.save('goals', State.goals); render(); }
+    return;
+  }
+  if (e.target.dataset && e.target.dataset.action === 'goal-sphere') {
+    const g = goalById(e.target.dataset.id); if (g) { g.skillId = e.target.value; Store.save('goals', State.goals); render(); }
+    return;
+  }
+  if (e.target.dataset && e.target.dataset.action === 'goal-horizon') {
+    const g = goalById(e.target.dataset.id); if (g) { g.type = e.target.value; g.xpReward = GOAL_XP[e.target.value]; Store.save('goals', State.goals); render(); }
     return;
   }
   // правка текста заметки (сохраняем на blur/change, без ререндера — не сбивая фокус)

@@ -1612,3 +1612,11 @@ html[data-system="on"] .lvlup-overlay { background: rgba(0,8,20,.82); }
   .bal-row .bal-lvl { display: none; }
   .se-canon { margin-left: 0; }
 }
+
+/* Импорт/редактирование целей: селекты сферы/горизонта, массовое удаление, выбор родителя сферы */
+.goal-edit-sel { font-size: 12px; max-width: 150px; padding: 2px 4px; }
+.goal-pick-lbl { display: inline-flex; align-items: center; padding: 0 4px; }
+.goal-pick { width: 16px; height: 16px; cursor: pointer; }
+.bulk-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.bulk-bar .bulk-del { color: #e0526a; border-color: #e0526a55; }
+.prop-parent { font-size: 12px; max-width: 160px; margin-left: 8px; padding: 2px 4px; }
