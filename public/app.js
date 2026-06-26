@@ -3649,16 +3649,19 @@ function extractJsonClient(text) {
 }
 const BRIDGE_GOALS = `Ты помогаешь оформить цели для приложения-планировщика Satoru (философия «жизнь как десятиборье»). На основе описания ниже верни СТРОГО JSON {"proposals":[ ... ]} — без markdown и без текста вне JSON. Элементы — одного из типов:
 {"type":"sphere","name":"...","parent":"<имя родительской сферы или null>"}
-{"type":"goal","title":"...","sphere":"<имя сферы>","horizon":"mission|vision|path|long|mid|short|recurring","metric":null,"status":"active|waiting|paused","window":"","parent":"<заголовок большей цели или null>"}
+{"type":"goal","title":"...","sphere":"<имя сферы>","horizon":"mission|vision|path|long|mid|short|recurring","metric":null,"status":"active|waiting|paused","window":"","deadline":"YYYY-MM-DD или null","parent":"<точный заголовок большей цели или null>"}
 metric для числовых целей = {"current":N,"target":N,"unit":"кг/км/балл","lowerBetter":false,"maintain":false}.
-Горизонты: mission=дело жизни, vision=10–20 лет, path=3–5 лет, long=цель года, mid=1–6 мес, short=до месяца, recurring=регулярная практика. lowerBetter:true для оценок/времени. status:"waiting"+window для событийных целей. parent — точный заголовок другой цели. Переиспользуй существующие сферы по точному имени. Русский.`;
+Горизонты: mission=дело жизни, vision=10–20 лет, path=3–5 лет, long=цель года, mid=1–6 мес, short=до месяца, recurring=регулярная практика. lowerBetter:true для оценок/времени.
+ПОРЯДОК И «ЗАЧЕМ» (важно — иначе план превращается в свалку): построй иерархию через parent. Сверху крупные цели (миссия/путь/год), под ними — этапы, в самом низу — конкретные ближайшие шаги. У КАЖДОЙ мелкой цели parent = точный заголовок той большей цели, ради которой она делается. Так юзер видит «зачем это» (цепочкой вверх) и с чего начинать (нижние короткие шаги с ближайшими дедлайнами).
+ДЕДЛАЙНЫ: для всего, у чего есть срок, ставь deadline КОНКРЕТНОЙ датой YYYY-MM-DD (год бери из «Сегодня» ниже). «до 7 июля», «к 1 сентября», «4–16 августа» → это deadline (конец периода), НЕ window. window оставляй только для событийных без точной даты (status:"waiting"). Этапы выстраивай по возрастанию дедлайна.
+parent — точный заголовок другой цели из этого же ответа. Переиспользуй существующие сферы по точному имени (включая путь «Учёба › Наука › …»). Русский.`;
 const BRIDGE_CALIB = `Ты калибруешь уровни в приложении Satoru. На основе описания верни СТРОГО JSON {"proposals":[{"type":"level","sphere":"<имя сферы>","level":N,"note":"<кратко>"}]} — без markdown и текста вне JSON. Шкала уровня 1–20: 1=только начал, 5=регулярная практика, 10=уверенный/могу учить, 15=глубокая экспертиза, 18–20=топ. Школа/универ оценивай честно. Только по сферам из описания.`;
 function copyBridgePrompt(kind) {
   const ta = document.getElementById('propose-text');
   const text = ((ta && ta.value) || '').trim();
   if (!text) { toast('Сначала опиши в поле выше — что за цели/уровни'); return; }
   const instr = kind === 'calibrate' ? BRIDGE_CALIB : BRIDGE_GOALS;
-  const prompt = `${instr}\n\nТЕКУЩИЕ СФЕРЫ И ЦЕЛИ ЮЗЕРА:\n${proposeContext()}\n\nОПИСАНИЕ ОТ ЮЗЕРА:\n${text}\n\nВерни ТОЛЬКО JSON по схеме.`;
+  const prompt = `${instr}\n\nСегодня: ${todayStr()}.\n\nТЕКУЩИЕ СФЕРЫ И ЦЕЛИ ЮЗЕРА:\n${proposeContext()}\n\nОПИСАНИЕ ОТ ЮЗЕРА:\n${text}\n\nВерни ТОЛЬКО JSON по схеме.`;
   const done = () => toast('📋 Промпт скопирован — вставь своему ИИ');
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(prompt).then(done, () => {});
   const res = document.getElementById('propose-result'); if (!res) return;
@@ -3758,7 +3761,7 @@ function applyProposals(proposals, acceptedIdx) {
       const cur = Number(p.metric.current) || 0;
       metric = { start: cur, current: cur, target: Number(p.metric.target), unit: String(p.metric.unit || '').slice(0, 12), lowerBetter: !!p.metric.lowerBetter, maintain: !!p.metric.maintain, everReached: false, log: [] };
     }
-    const g = { id: 'g_' + uid(), title: String(p.title).slice(0, 120), skillId: sk.id, type, xpReward: GOAL_XP[type], parentId: null, _parentTitle: p.parent || null, targetDate: null, steps: [], metric, status: ['waiting', 'paused'].includes(p.status) ? p.status : 'active', window: String(p.window || '').slice(0, 40), createdAt: new Date().toISOString(), completedAt: null, archived: false };
+    const g = { id: 'g_' + uid(), title: String(p.title).slice(0, 120), skillId: sk.id, type, xpReward: GOAL_XP[type], parentId: null, _parentTitle: p.parent || null, targetDate: (() => { const d = p.deadline || p.targetDate; return (d && /^\d{4}-\d{2}-\d{2}$/.test(String(d))) ? String(d) : null; })(), steps: [], metric, status: ['waiting', 'paused'].includes(p.status) ? p.status : 'active', window: String(p.window || '').slice(0, 40), createdAt: new Date().toISOString(), completedAt: null, archived: false };
     State.goals.push(g); made.push(g); applied++;
   });
   made.forEach((g) => {
