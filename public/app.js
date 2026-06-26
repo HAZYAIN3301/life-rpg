@@ -3624,12 +3624,21 @@ async function runPropose(kind) {
 }
 // ---- Копипаст-мост: используем СВОЙ внешний ИИ (без API-ключа) ----
 // Защищённый разбор JSON из ответа модели (клиентская версия серверного extractJson)
+function normalizeSmartQuotes(s) {
+  // Типографские кавычки (вставляются при копировании из мессенджеров/некоторых ИИ-UI) ломают JSON.parse
+  return s
+    .replace(/[“”„‟″‶＂]/g, '"')   // “ ” „ ‟ ″ ‶ ＂ → "
+    .replace(/[‘’‚‛′‵]/g, "'")          // ‘ ’ ‚ ‛ ′ ‵ → '
+    .replace(/ /g, ' ');                                        // неразрывный пробел
+}
 function extractJsonClient(text) {
   if (!text) return null;
   let t = String(text).trim();
   const f = t.match(/```(?:json)?\s*([\s\S]*?)```/i); if (f) t = f[1].trim();
   const i = t.indexOf('{'), j = t.lastIndexOf('}'); if (i < 0 || j < 0 || j < i) return null;
-  try { return JSON.parse(t.slice(i, j + 1)); } catch { return null; }
+  const slice = t.slice(i, j + 1);
+  try { return JSON.parse(slice); } catch {}
+  try { return JSON.parse(normalizeSmartQuotes(slice)); } catch { return null; }
 }
 const BRIDGE_GOALS = `Ты помогаешь оформить цели для приложения-планировщика Satoru (философия «жизнь как десятиборье»). На основе описания ниже верни СТРОГО JSON {"proposals":[ ... ]} — без markdown и без текста вне JSON. Элементы — одного из типов:
 {"type":"sphere","name":"...","parent":"<имя родительской сферы или null>"}
@@ -3663,7 +3672,7 @@ function parseBridgeResponse() {
   if (!raw) { toast('Вставь ответ ИИ'); return; }
   const parsed = extractJsonClient(raw);
   if (!parsed || !Array.isArray(parsed.proposals)) { if (res) res.insertAdjacentHTML('beforeend', '<p class="muted" style="margin-top:8px">Не нашёл корректный JSON в ответе. Скопируй ответ ИИ целиком (он должен содержать {"proposals":[…]}).</p>'); return; }
-  _proposals = parsed.proposals.slice(0, 40);
+  _proposals = parsed.proposals.slice(0, 120);
   renderProposalCards(res);
   track('ai:bridge');
 }

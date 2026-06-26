@@ -466,13 +466,19 @@ async function aiCompleteMessages(provider, keys, system, messages, maxTokens) {
   return { ok: true, text: (r.json.choices && r.json.choices[0] && r.json.choices[0].message && r.json.choices[0].message.content) || '', tokens: Number(us.total_tokens) || ((Number(us.prompt_tokens) || 0) + (Number(us.completion_tokens) || 0)) };
 }
 // Защищённый разбор JSON из ответа модели: срезаем ```fences``` и прозу вокруг { ... }
+function normalizeSmartQuotes(s) {
+  // Типографские кавычки ломают JSON.parse (вставляются мессенджерами/некоторыми ИИ-UI при копировании)
+  return s.replace(/[“”„‟″‶＂]/g, '"').replace(/[‘’‚‛′‵]/g, "'").replace(/ /g, ' ');
+}
 function extractJson(text) {
   if (!text) return null;
   let t = String(text).trim();
   const fence = t.match(/```(?:json)?\s*([\s\S]*?)```/i); if (fence) t = fence[1].trim();
   const i = t.indexOf('{'), j = t.lastIndexOf('}');
   if (i < 0 || j < 0 || j < i) return null;
-  try { return JSON.parse(t.slice(i, j + 1)); } catch { return null; }
+  const slice = t.slice(i, j + 1);
+  try { return JSON.parse(slice); } catch {}
+  try { return JSON.parse(normalizeSmartQuotes(slice)); } catch { return null; }
 }
 // Системный промпт: импорт целей/сфер из свободного текста → структурированные предложения
 const AI_GOALS_SYS = `Ты — помощник по структурированию жизни в приложении Satoru (философия «жизнь как десятиборье»: у каждого свой набор сфер, целей и регулярных практик). Юзер описывает свободным текстом свои сферы, цели, проекты, задачи. Преврати это в структурированные ПРЕДЛОЖЕНИЯ, которые юзер потом одобрит или отклонит.
