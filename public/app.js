@@ -3649,7 +3649,7 @@ function extractJsonClient(text) {
 }
 const BRIDGE_GOALS = `Ты помогаешь оформить цели для приложения-планировщика Satoru (философия «жизнь как десятиборье»). На основе описания ниже верни СТРОГО JSON {"proposals":[ ... ]} — без markdown и без текста вне JSON. Элементы — одного из типов:
 {"type":"sphere","name":"...","parent":"<имя родительской сферы или null>"}
-{"type":"goal","title":"...","sphere":"<имя сферы>","horizon":"mission|vision|path|long|mid|short|recurring","metric":null,"status":"active|waiting|paused","window":"","deadline":"YYYY-MM-DD или null","parent":"<точный заголовок большей цели или null>"}
+{"type":"goal","title":"...","sphere":"<имя сферы>","horizon":"mission|vision|path|long|mid|short|recurring","metric":null,"status":"active|waiting|paused","window":"","deadline":"YYYY-MM-DD или null","parent":"<точный заголовок большей цели или null>","description":"<опц. 1–3 предложения: что конкретно делается и зачем. Если есть конкретные шаги — перечисли: 1) ... 2) ... 3) ...>"}
 metric для числовых целей = {"current":N,"target":N,"unit":"кг/км/балл","lowerBetter":false,"maintain":false}.
 Горизонты: mission=дело жизни, vision=10–20 лет, path=3–5 лет, long=цель года, mid=1–6 мес, short=до месяца, recurring=регулярная практика. lowerBetter:true для оценок/времени.
 ПОРЯДОК И «ЗАЧЕМ» (важно — иначе план превращается в свалку): построй иерархию через parent. Сверху крупные цели (миссия/путь/год), под ними — этапы, в самом низу — конкретные ближайшие шаги. У КАЖДОЙ мелкой цели parent = точный заголовок той большей цели, ради которой она делается. Так юзер видит «зачем это» (цепочкой вверх) и с чего начинать (нижние короткие шаги с ближайшими дедлайнами).
@@ -3761,7 +3761,7 @@ function applyProposals(proposals, acceptedIdx) {
       const cur = Number(p.metric.current) || 0;
       metric = { start: cur, current: cur, target: Number(p.metric.target), unit: String(p.metric.unit || '').slice(0, 12), lowerBetter: !!p.metric.lowerBetter, maintain: !!p.metric.maintain, everReached: false, log: [] };
     }
-    const g = { id: 'g_' + uid(), title: String(p.title).slice(0, 120), skillId: sk.id, type, xpReward: GOAL_XP[type], parentId: null, _parentTitle: p.parent || null, targetDate: (() => { const d = p.deadline || p.targetDate; return (d && /^\d{4}-\d{2}-\d{2}$/.test(String(d))) ? String(d) : null; })(), steps: [], metric, status: ['waiting', 'paused'].includes(p.status) ? p.status : 'active', window: String(p.window || '').slice(0, 40), createdAt: new Date().toISOString(), completedAt: null, archived: false };
+    const g = { id: 'g_' + uid(), title: String(p.title).slice(0, 120), description: p.description ? String(p.description).slice(0, 500) : '', skillId: sk.id, type, xpReward: GOAL_XP[type], parentId: null, _parentTitle: p.parent || null, targetDate: (() => { const d = p.deadline || p.targetDate; return (d && /^\d{4}-\d{2}-\d{2}$/.test(String(d))) ? String(d) : null; })(), steps: [], metric, status: ['waiting', 'paused'].includes(p.status) ? p.status : 'active', window: String(p.window || '').slice(0, 40), createdAt: new Date().toISOString(), completedAt: null, archived: false };
     State.goals.push(g); made.push(g); applied++;
   });
   made.forEach((g) => {
@@ -4348,7 +4348,12 @@ function goalCard(g) {
   const xpR = g.xpReward != null ? g.xpReward : (GOAL_XP[g.type] || 50);
   let deadline = '';
   if (g.targetDate) { const left = Math.round((parseDate(g.targetDate) - parseDate(todayStr())) / 86400000); deadline = `<span class="goal-deadline ${left < 0 ? 'overdue' : ''}">📅 ${g.targetDate}${left >= 0 ? ` · ${left} ${plural(left, 'день', 'дня', 'дней')}` : ' · просрочено'}</span>`; }
-  const breadcrumb = chain.length ? `<div class="goal-why" title="Зачем это — цепочка вверх до Севера">↑ ${chain.map((p) => (p.type === 'mission' ? '★ ' : '') + esc(p.title)).join(' › ')}</div>` : '';
+  const breadcrumb = chain.length ? (() => {
+    const full = chain.map((p) => (p.type === 'mission' ? '★ ' : '') + esc(p.title)).join(' › ');
+    if (chain.length === 1) return `<div class="goal-why">↑ ${full}</div>`;
+    const direct = (chain[0].type === 'mission' ? '★ ' : '') + esc(chain[0].title);
+    return `<details class="goal-why-det"><summary class="goal-why">↑ ${direct} <span class="goal-why-more">···</span></summary><div class="goal-why-full">${full}</div></details>`;
+  })() : '';
   const metricBlock = m ? `<div class="gm-block">
       <div class="gm-head"><b>${m.current}</b> / ${m.target}${m.unit ? ' ' + esc(m.unit) : ''}${m.lowerBetter ? ' <span class="muted">↓ меньше лучше</span>' : ''}${m.maintain ? ' <span class="muted">· держать</span>' : ''}</div>
       ${g.archived ? '' : `<form class="metric-form" data-goal="${g.id}"><input name="val" type="number" step="any" placeholder="новое значение" required /><button type="submit" class="btn ghost sm">Записать</button></form>`}
@@ -4363,6 +4368,7 @@ function goalCard(g) {
   const editCtl = (done || g.archived) ? '' : `<select class="goal-edit-sel" data-action="goal-sphere" data-id="${g.id}" title="Сфера">${skillOptionsHTML(g.skillId)}</select><select class="goal-edit-sel" data-action="goal-horizon" data-id="${g.id}" title="Горизонт">${GOAL_TYPES.map((tp) => `<option value="${tp.id}" ${(g.type || 'short') === tp.id ? 'selected' : ''}>${esc(tp.label)}</option>`).join('')}</select>`;
   return `<div class="card goal ${done ? 'goal-done' : ''} ${g.archived ? 'goal-archived' : ''}">
     <div class="goal-head"><div><h3>${done ? '✅ ' : ''}${esc(g.title)}</h3>
+        ${g.description ? `<div class="goal-desc">${esc(g.description)}</div>` : ''}
         ${breadcrumb}
         <div class="goal-meta">
           <span class="t-skill" style="--c:${esc(sk.color)}">${esc(sk.name)}</span>
