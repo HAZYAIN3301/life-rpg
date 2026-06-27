@@ -4037,7 +4037,10 @@ function compSVG(face, tierIdx) {
   </svg>`;
 }
 function shadowVideo(ti) {
-  return `<video class="comp-video" src="/assets/shadow/shadow_${ti + 1}.mp4" autoplay loop muted playsinline></video>`;
+  const n = (ti | 0) + 1;
+  // poster = первый кадр: персонаж виден даже если iOS заблокировал autoplay.
+  // muted+playsinline+autoplay обязательны для inline-автоплея на iOS.
+  return `<video class="comp-video" src="/assets/shadow/shadow_${n}.mp4" poster="/assets/shadow/shadow_${n}.jpg" autoplay loop muted playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>`;
 }
 function compCheckinDue() {
   const c = ensureCompanion(), t = todayStr(), hr = new Date().getHours(), ch = c.check[t] || {}, due = [];
@@ -5839,6 +5842,16 @@ function render() {
   }
   try { if (lang() !== 'ru') translateDOM(document.body); } catch (e) { console.error('translateDOM', e); }
   try { scheduleReminders(); } catch (e) { console.error('scheduleReminders', e); }
+  try { kickCompVideo(); } catch (e) { /* видео-автоплей — не критично */ }
+}
+// iOS: атрибут `muted` из innerHTML не всегда регистрируется и блокирует autoplay.
+// Принудительно мьютим и стартуем; если play() отклонён — остаётся poster (персонаж виден).
+function kickCompVideo() {
+  document.querySelectorAll('video.comp-video').forEach((v) => {
+    v.muted = true; v.defaultMuted = true;
+    const p = v.play();
+    if (p && p.catch) p.catch(() => {});
+  });
 }
 
 // ============================================================
