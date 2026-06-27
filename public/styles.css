@@ -934,8 +934,9 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
    ============================================================ */
 .comp-card { background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 11%, var(--panel)), var(--panel)); border-color: color-mix(in srgb, var(--accent) 28%, var(--line)); }
 .comp-row { display: flex; align-items: center; gap: 14px; }
-.comp-art { flex: 0 0 auto; width: 84px; height: 84px; }
-.comp-svg { width: 100%; height: 100%; display: block; animation: comp-float 4s ease-in-out infinite; transform-origin: center bottom; }
+.comp-art { flex: 0 0 auto; min-width: 90px; height: 150px; display: flex; align-items: flex-end; justify-content: center; }
+.comp-svg { width: 84px; height: 84px; display: block; animation: comp-float 4s ease-in-out infinite; transform-origin: center bottom; }
+.comp-video { display: block; height: 100%; width: auto; }
 @keyframes comp-float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-5px) } }
 .comp-body { flex: 1 1 auto; min-width: 0; }
 .comp-name { display: flex; align-items: center; gap: 7px; }
@@ -1088,8 +1089,8 @@ html[data-system="on"] .task, html[data-system="on"] .gear-item, html[data-syste
 .den-room { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .den-avatar { position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%); width: 132px; z-index: 2; }
 .den-avatar svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25)); }
-.den-companion { position: absolute; right: 16px; top: 44px; width: 60px; z-index: 3; }
-.den-companion svg { width: 100%; height: auto; display: block; }
+.den-companion { position: absolute; right: 10px; top: 24px; width: 90px; z-index: 3; border-radius: 10px; overflow: hidden; box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 55%, transparent); }
+.den-companion svg, .den-companion .comp-video { width: 100%; height: auto; display: block; }
 .den-pet { position: absolute; z-index: 2; }
 .den-pet svg { width: 100%; height: auto; display: block; }
 .den-pet-0 { left: 14px; bottom: 14px; width: 52px; }

@@ -2,6 +2,34 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-06-27] Shadow-компаньон: Kling MP4 → бесшовный loop → в сервис
+
+Полная арт-пайплайн-интеграция. Без бэкенда, только клиент + статичные ассеты.
+
+**Исходники:** 4 Kling-видео (5s, ~620-1160px) в `gamification/reference/animationkling/shadow/` — Искра / Дух / Страж / Хранитель.
+
+**Обработка (Python + ffmpeg):**
+1. Crop: вырезан верхний whitespace и watermark Kling (~25px снизу). Координаты per-video по контенту из projection-detection.
+2. Resize: масштаб до 260px по ширине (`scale=260:-2`, LANCZOS).
+3. Reverse-loop: `concat(fwd + reverse)` → 10s бесшовный idle (пинг-понг без склейки).
+4. H.264 encode: `libx264 -crf 22 -preset slow -movflags +faststart -pix_fmt yuv420p`.
+5. Результат: `public/assets/shadow/shadow_{1-4}.mp4`, 133–559KB.
+
+**Интеграция (app.js + styles.css):**
+- `shadowVideo(ti)` → `<video class="comp-video" src="/assets/shadow/shadow_{ti+1}.mp4" autoplay loop muted playsinline>`. `ti` = `compTierIdx(c.bond)` (0-3, из `COMP_TIERS`).
+- Оба `compSVG(mood.face, ti)` заменены на `shadowVideo(ti)`: в `companionCard()` (`.comp-art`) и `renderDen()` (`.den-companion`).
+- CSS: `.comp-art` → `min-width:90px; height:150px; flex-end` (портретный контейнер). `.comp-video` → `height:100%; width:auto`. `.den-companion` → `border-radius:10px; overflow:hidden; box-shadow: accent glow; 90px wide`.
+- Evolution map: bond 0=shadow_1 (Искра), 6=shadow_2 (Дух), 20=shadow_3 (Страж), 50=shadow_4 (Хранитель) — совпадает с `COMP_TIERS`.
+- `compSVG()` оставлен (не удалён) для совместимости/будущего использования.
+
+**Размеры финальных видео:**
+- shadow_1 (Искра): 260×278, 10s, 133KB
+- shadow_2 (Дух): 260×418, 10s, 262KB
+- shadow_3 (Страж): 260×468, 10s, 389KB
+- shadow_4 (Хранитель): 260×384, 10s, 559KB
+
+**Примечание:** видео с белым фоном (Kling-артефакт). В den-сцене это выглядит как «портрет в рамке» с accent-glow. Если нужно — регенерить без фона или добавить CSS mix-blend-mode.
+
 ## [2026-06-26] Импорт целей v2: путь-сферы + правка/массовое удаление + XP
 
 Кластер багов после реального импорта (Альберт, ~70 целей). Только клиент (`public/app.js` + `public/styles.css`), бэк-совместимо. Модель: Opus 4.8.

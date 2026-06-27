@@ -4036,6 +4036,9 @@ function compSVG(face, tierIdx) {
     ${spark}${star}${halo}
   </svg>`;
 }
+function shadowVideo(ti) {
+  return `<video class="comp-video" src="/assets/shadow/shadow_${ti + 1}.mp4" autoplay loop muted playsinline></video>`;
+}
 function compCheckinDue() {
   const c = ensureCompanion(), t = todayStr(), hr = new Date().getHours(), ch = c.check[t] || {}, due = [];
   if (!ch.m && hr < 14) due.push('m');
@@ -4070,7 +4073,7 @@ function companionCard() {
   const peek = (last && last.date === t) ? `<p class="comp-peek muted">${last.kind === 'm' ? '🌅' : '🌙'} «${esc(last.text)}»</p>` : '';
   return `<div class="card comp-card">
     <div class="comp-row">
-      <div class="comp-art">${compSVG(mood.face, ti)}</div>
+      <div class="comp-art">${shadowVideo(ti)}</div>
       <div class="comp-body">
         <div class="comp-name"><b>${esc(c.name)}</b><button class="comp-rename" data-action="comp-rename" title="Переименовать">✎</button></div>
         <p class="comp-line">${mood.line}</p>
@@ -4252,7 +4255,7 @@ function renderDen() {
   return `<div class="card den-card">
     <div class="den-scene">
       ${denSceneSVG()}
-      <div class="den-companion" title="${esc(c.name)}">${compSVG(mood.face, ti)}</div>
+      <div class="den-companion" title="${esc(c.name)}">${shadowVideo(ti)}</div>
       <div class="den-avatar">${avatarSVG(avCfg(), equippedCosmeticsOpts())}</div>
       ${petLayer}
       <div class="den-tag">${cr.icon} ${esc(nm)} · ур.${charLevel()}</div>
