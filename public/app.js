@@ -4038,9 +4038,7 @@ function compSVG(face, tierIdx) {
 }
 function shadowVideo(ti) {
   const n = (ti | 0) + 1;
-  // poster = первый кадр: персонаж виден даже если iOS заблокировал autoplay.
-  // muted+playsinline+autoplay обязательны для inline-автоплея на iOS.
-  return `<video class="comp-video" src="/assets/shadow/shadow_${n}.mp4" poster="/assets/shadow/shadow_${n}.jpg" autoplay loop muted playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true"></video>`;
+  return `<video class="comp-video" poster="/assets/shadow/shadow_${n}.jpg" autoplay loop muted playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true"><source src="/assets/shadow/shadow_${n}.webm" type="video/webm"><source src="/assets/shadow/shadow_${n}.mp4" type="video/mp4"></video>`;
 }
 function compCheckinDue() {
   const c = ensureCompanion(), t = todayStr(), hr = new Date().getHours(), ch = c.check[t] || {}, due = [];

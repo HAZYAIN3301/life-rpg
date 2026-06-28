@@ -1089,7 +1089,7 @@ html[data-system="on"] .task, html[data-system="on"] .gear-item, html[data-syste
 .den-room { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .den-avatar { position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%); width: 132px; z-index: 2; }
 .den-avatar svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25)); }
-.den-companion { position: absolute; right: 10px; top: 16px; width: 84px; height: 112px; z-index: 3; border-radius: 12px; overflow: hidden; background: transparent; border: 2px solid color-mix(in srgb, var(--accent) 60%, white); box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 45%, transparent), 0 2px 8px rgba(0,0,0,0.35); }
+.den-companion { position: absolute; right: 10px; top: 16px; width: 84px; height: 112px; z-index: 3; border-radius: 12px; overflow: hidden; background: rgba(10,8,20,0.82); border: 2px solid color-mix(in srgb, var(--accent) 60%, white); box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 45%, transparent), 0 2px 8px rgba(0,0,0,0.35); }
 .den-companion .comp-video { width: 100%; height: 100%; object-fit: contain; display: block; background: transparent; }
 .den-companion svg { width: 100%; height: auto; display: block; }
 .den-pet { position: absolute; z-index: 2; }
