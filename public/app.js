@@ -4038,7 +4038,11 @@ function compSVG(face, tierIdx) {
 }
 function shadowVideo(ti) {
   const n = (ti | 0) + 1;
-  return `<video class="comp-video" poster="/assets/shadow/shadow_${n}.jpg" autoplay loop muted playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true"><source src="/assets/shadow/shadow_${n}.webm" type="video/webm"><source src="/assets/shadow/shadow_${n}.mp4" type="video/mp4"></video>`;
+  // ВНИМАНИЕ: WebM-alpha временно отключён — colorkey срезал свечение глаз
+  // (исходник уже с тёмным фоном, белого нет → кейинг бил по светлым пикселям глаз).
+  // Ждём от Альберта правильно отматированный исходник, затем вернём прозрачный source.
+  // Пока — MP4 с navy-фоном (глаза целы), см. ART-PIPELINE.md.
+  return `<video class="comp-video" poster="/assets/shadow/shadow_${n}.jpg" autoplay loop muted playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true"><source src="/assets/shadow/shadow_${n}.mp4" type="video/mp4"></video>`;
 }
 function compCheckinDue() {
   const c = ensureCompanion(), t = todayStr(), hr = new Date().getHours(), ch = c.check[t] || {}, due = [];
@@ -6295,8 +6299,8 @@ function onClick(e) {
     fetch('/api/strava/disconnect', { method: 'POST' }).then(() => { State.strava = null; toast('Strava отключён'); render(); }).catch(() => toast('Ошибка'));
     return;
   }
-  if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; Store.save('settings', State.settings); applyTheme(); render(); return; }
-  if (action === 'set-accent') { State.settings.accent = el.dataset.accent; Store.save('settings', State.settings); applyTheme(); render(); return; }
+  if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; State.settings.systemMode = false; Store.save('settings', State.settings); applyTheme(); render(); return; }
+  if (action === 'set-accent') { State.settings.accent = el.dataset.accent; State.settings.systemMode = false; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'toggle-system') {
     State.settings.systemMode = !!el.checked; Store.save('settings', State.settings); applyTheme();
     if (el.checked) systemNarrate('СИСТЕМА АКТИВИРОВАНА', 'Отныне я сопровождаю твой путь. Игрок, не подведи.');
