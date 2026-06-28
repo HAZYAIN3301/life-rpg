@@ -4038,11 +4038,10 @@ function compSVG(face, tierIdx) {
 }
 function shadowVideo(ti) {
   const n = (ti | 0) + 1;
-  // ВНИМАНИЕ: WebM-alpha временно отключён — colorkey срезал свечение глаз
-  // (исходник уже с тёмным фоном, белого нет → кейинг бил по светлым пикселям глаз).
-  // Ждём от Альберта правильно отматированный исходник, затем вернём прозрачный source.
-  // Пока — MP4 с navy-фоном (глаза целы), см. ART-PIPELINE.md.
-  return `<video class="comp-video" poster="/assets/shadow/shadow_${n}.jpg" autoplay loop muted playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true"><source src="/assets/shadow/shadow_${n}.mp4" type="video/mp4"></video>`;
+  // WebM VP9-alpha = прозрачный фон (кей белого исходника, sim=0.14 — глаза целы).
+  // poster = прозрачный PNG (персонаж виден без белого прямоугольника, если iOS заблокировал autoplay).
+  // MP4 (navy-фон) — fallback для движков без VP9-alpha (старый iOS). См. ART-PIPELINE.md.
+  return `<video class="comp-video" poster="/assets/shadow/shadow_${n}.png" autoplay loop muted playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true"><source src="/assets/shadow/shadow_${n}.webm" type="video/webm"><source src="/assets/shadow/shadow_${n}.mp4" type="video/mp4"></video>`;
 }
 function compCheckinDue() {
   const c = ensureCompanion(), t = todayStr(), hr = new Date().getHours(), ch = c.check[t] || {}, due = [];
