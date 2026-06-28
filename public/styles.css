@@ -934,10 +934,9 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
    ============================================================ */
 .comp-card { background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 11%, var(--panel)), var(--panel)); border-color: color-mix(in srgb, var(--accent) 28%, var(--line)); }
 .comp-row { display: flex; align-items: center; gap: 14px; }
-/* Рамка «портрета»: фон ТОЧНО = фону видео (#fcfcfc) → стык невидим, blend-mode не нужен (надёжно на iOS). */
-.comp-art { flex: 0 0 auto; width: 96px; height: 128px; display: block; overflow: hidden; background: #fcfcfc; border-radius: 14px; border: 2px solid color-mix(in srgb, var(--accent) 50%, #d7dcef); box-shadow: 0 4px 14px rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.6); }
+.comp-art { flex: 0 0 auto; width: 96px; height: 128px; display: block; overflow: hidden; background: transparent; border-radius: 14px; border: 2px solid color-mix(in srgb, var(--accent) 50%, #d7dcef); box-shadow: 0 4px 14px rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.15); }
 .comp-svg { width: 84px; height: 84px; display: block; animation: comp-float 4s ease-in-out infinite; transform-origin: center bottom; }
-.comp-video { display: block; width: 100%; height: 100%; object-fit: contain; background: #fcfcfc; }
+.comp-video { display: block; width: 100%; height: 100%; object-fit: contain; background: transparent; }
 @keyframes comp-float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-5px) } }
 .comp-body { flex: 1 1 auto; min-width: 0; }
 .comp-name { display: flex; align-items: center; gap: 7px; }
@@ -1090,8 +1089,8 @@ html[data-system="on"] .task, html[data-system="on"] .gear-item, html[data-syste
 .den-room { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .den-avatar { position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%); width: 132px; z-index: 2; }
 .den-avatar svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25)); }
-.den-companion { position: absolute; right: 10px; top: 16px; width: 84px; height: 112px; z-index: 3; border-radius: 12px; overflow: hidden; background: #fcfcfc; border: 2px solid color-mix(in srgb, var(--accent) 60%, white); box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 45%, transparent), 0 2px 8px rgba(0,0,0,0.35); }
-.den-companion .comp-video { width: 100%; height: 100%; object-fit: contain; display: block; background: #fcfcfc; }
+.den-companion { position: absolute; right: 10px; top: 16px; width: 84px; height: 112px; z-index: 3; border-radius: 12px; overflow: hidden; background: transparent; border: 2px solid color-mix(in srgb, var(--accent) 60%, white); box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 45%, transparent), 0 2px 8px rgba(0,0,0,0.35); }
+.den-companion .comp-video { width: 100%; height: 100%; object-fit: contain; display: block; background: transparent; }
 .den-companion svg { width: 100%; height: auto; display: block; }
 .den-pet { position: absolute; z-index: 2; }
 .den-pet svg { width: 100%; height: auto; display: block; }
