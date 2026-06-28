@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Satoru — paper-doll pet engine (пилот)</title>
+<style>
+  :root { --bg:#0f1320; --panel:#181d2e; --line:#2a3147; --accent:#7c6cff; --text:#e7ebf5; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 system-ui,sans-serif; }
+  .wrap { max-width:760px; margin:0 auto; padding:24px 16px 60px; }
+  h1 { font-size:19px; margin:0 0 4px; }
+  .sub { color:#9aa3bd; font-size:13px; margin:0 0 20px; }
+  .stage { display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start; }
+  .pet-card { flex:0 0 auto; width:260px; height:280px; background:
+      radial-gradient(120% 80% at 50% 30%, rgba(124,108,255,.12), transparent 70%), var(--panel);
+      border:1px solid var(--line); border-radius:18px; display:flex; align-items:center; justify-content:center;
+      position:relative; overflow:hidden; }
+  .pet-card.light { --pc-bg:#eef1f8; background:radial-gradient(120% 80% at 50% 30%, rgba(124,108,255,.10), transparent 70%), #f3f5fb; }
+  .pet-svg { width:210px; height:230px; display:block; }
+  .controls { flex:1 1 240px; min-width:240px; display:flex; flex-direction:column; gap:14px; }
+  .group { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
+  .group h3 { margin:0 0 9px; font-size:12px; letter-spacing:.4px; text-transform:uppercase; color:#9aa3bd; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; }
+  button { background:#222a40; color:var(--text); border:1px solid var(--line); border-radius:9px;
+      padding:8px 12px; font-size:13px; cursor:pointer; transition:.12s; }
+  button:hover { border-color:var(--accent); }
+  button.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .sw { width:30px; height:30px; border-radius:8px; border:2px solid transparent; cursor:pointer; padding:0; }
+  .sw.sel { border-color:#fff; }
+  .note { color:#9aa3bd; font-size:12px; margin-top:6px; }
+
+  /* ───── idle-анимации частей (zero-dep, чистый CSS) ───── */
+  #pet-body-grp { animation:pd-bob 3.4s ease-in-out infinite; transform-origin:100px 200px; }
+  #pet-ear-l { animation:pd-ear 4.2s ease-in-out infinite; transform-origin:74px 96px; }
+  #pet-ear-r { animation:pd-ear 4.2s ease-in-out infinite .9s; transform-origin:126px 96px; }
+  #pet-tail { animation:pd-tail 3.8s ease-in-out infinite; transform-origin:150px 150px; }
+  #pet-eyes { animation:pd-blink 5s ease-in-out infinite; transform-origin:100px 132px; }
+  #pet-aura { animation:pd-aura 4s ease-in-out infinite; transform-origin:100px 140px; }
+  @keyframes pd-bob { 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-5px) } }
+  @keyframes pd-ear { 0%,92%,100%{ transform:rotate(0) } 96%{ transform:rotate(-9deg) } }
+  @keyframes pd-tail { 0%,100%{ transform:rotate(-7deg) } 50%{ transform:rotate(9deg) } }
+  @keyframes pd-blink { 0%,90%,100%{ transform:scaleY(1) } 95%{ transform:scaleY(.08) } }
+  @keyframes pd-aura { 0%,100%{ opacity:.35; transform:scale(1) } 50%{ opacity:.6; transform:scale(1.06) } }
+  @media (prefers-reduced-motion:reduce){ #pet-body-grp,#pet-ear-l,#pet-ear-r,#pet-tail,#pet-eyes,#pet-aura{ animation:none } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🐾 Paper-doll движок питомца — пилот</h1>
+  <p class="sub">Один SVG, разобранный на слои. Перекраска, экипировка по слотам, прокачка-аура, idle-анимация — всё в коде, zero-dep. Это доказательство механики; chibi-арт потом отполируется.</p>
+
+  <div class="stage">
+    <div class="pet-card" id="card">
+      <!-- ▼▼▼ ПИТОМЕЦ: слои в порядке отрисовки ▼▼▼ -->
+      <svg class="pet-svg" id="pet" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="g-aura" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="var(--accent,#7c6cff)" stop-opacity=".0"/>
+            <stop offset="60%" stop-color="var(--accent,#7c6cff)" stop-opacity=".35"/>
+            <stop offset="100%" stop-color="var(--accent,#7c6cff)" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- тень на полу -->
+        <ellipse cx="100" cy="204" rx="52" ry="11" fill="#000" opacity=".22"/>
+
+        <!-- аура прокачки (скрыта по умолчанию) -->
+        <ellipse id="pet-aura" cx="100" cy="140" rx="78" ry="84" fill="url(#g-aura)" style="display:none"/>
+
+        <!-- хвост (за телом) -->
+        <path id="pet-tail" d="M148 150 q34 -6 30 -36 q-3 22 -26 24 q14 -16 6 -30 q-4 26 -22 30 z"
+              fill="var(--pet-body,#8a6cff)"/>
+
+        <!-- группа тела (качается) -->
+        <g id="pet-body-grp">
+          <!-- лапки -->
+          <ellipse cx="80" cy="190" rx="15" ry="11" fill="var(--pet-body,#8a6cff)"/>
+          <ellipse cx="120" cy="190" rx="15" ry="11" fill="var(--pet-body,#8a6cff)"/>
+          <!-- уши -->
+          <path id="pet-ear-l" d="M62 110 q-12 -34 14 -44 q6 26 -2 44 z" fill="var(--pet-body,#8a6cff)"/>
+          <path id="pet-ear-r" d="M138 110 q12 -34 -14 -44 q-6 26 2 44 z" fill="var(--pet-body,#8a6cff)"/>
+          <!-- тело -->
+          <ellipse cx="100" cy="135" rx="58" ry="54" fill="var(--pet-body,#8a6cff)"/>
+          <!-- животик -->
+          <ellipse cx="100" cy="150" rx="36" ry="34" fill="#fff" opacity=".16"/>
+
+          <!-- СЛОТ: спина (для накидок/крыльев) -->
+          <g id="slot-back" transform="translate(140,118)"></g>
+
+          <!-- лицо -->
+          <g id="pet-eyes">
+            <ellipse cx="82" cy="132" rx="9" ry="11" fill="#fff"/>
+            <ellipse cx="118" cy="132" rx="9" ry="11" fill="#fff"/>
+            <circle cx="83" cy="134" r="5.4" fill="#20243a"/>
+            <circle cx="117" cy="134" r="5.4" fill="#20243a"/>
+            <circle cx="85" cy="131" r="1.9" fill="#fff"/>
+            <circle cx="119" cy="131" r="1.9" fill="#fff"/>
+          </g>
+          <circle cx="70" cy="146" r="5" fill="#ff8fb0" opacity=".55"/>
+          <circle cx="130" cy="146" r="5" fill="#ff8fb0" opacity=".55"/>
+          <path d="M94 148 q6 6 12 0" fill="none" stroke="#20243a" stroke-width="2.4" stroke-linecap="round"/>
+
+          <!-- СЛОТ: шея/ошейник -->
+          <g id="slot-neck" transform="translate(100,170)"></g>
+        </g>
+
+        <!-- СЛОТ: голова (поверх всего, для шапок) -->
+        <g id="slot-head" transform="translate(100,74)"></g>
+      </svg>
+      <!-- ▲▲▲ -->
+    </div>
+
+    <div class="controls">
+      <div class="group">
+        <h3>Цвет (перекраска слоёв)</h3>
+        <div class="row" id="colors"></div>
+      </div>
+      <div class="group">
+        <h3>Экипировка (слоты)</h3>
+        <div class="row">
+          <button data-equip="head" data-item="hat">🎩 Шапка</button>
+          <button data-equip="neck" data-item="collar">🧣 Шарф</button>
+          <button data-equip="back" data-item="cape">🦸 Накидка</button>
+        </div>
+        <p class="note">Предмет = отдельный SVG, садится в свой слот-якорь. Видна композиция «питомец + надетое».</p>
+      </div>
+      <div class="group">
+        <h3>Прокачка / сцена</h3>
+        <div class="row">
+          <button data-toggle="aura">✨ Аура (тир+)</button>
+          <button data-toggle="theme">🌗 Светлый фон</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ───────────── Paper-doll engine (zero-dep) ─────────────
+   Принцип: SVG разобран на слои с id. Движок умеет:
+   - recolor: меняет CSS-переменную --pet-body (перекрашивает все слои тела);
+   - equip(slot,item): вставляет SVG предмета в <g id="slot-*"> (якорь);
+   - toggle: аура прокачки / фон.
+   Тот же подход переносится в app.js для питомцев И аватара. */
+
+const pet = document.getElementById('pet');
+const card = document.getElementById('card');
+
+// палитра перекраски
+const FIX = ['#8a6cff','#ff7a59','#3fb6a8','#7be0a3','#e0526a','#5b8cff','#ffc24b','#b48cff'];
+const colorsRow = document.getElementById('colors');
+FIX.forEach((c,i) => {
+  const b = document.createElement('button');
+  b.className = 'sw' + (i===0?' sel':''); b.style.background = c;
+  b.onclick = () => { pet.style.setProperty('--pet-body', c);
+    [...colorsRow.children].forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); };
+  colorsRow.appendChild(b);
+});
+pet.style.setProperty('--pet-body', FIX[0]);
+
+// ── библиотека экипировки: каждый предмет = функция → SVG-разметка в локальных координатах слота ──
+const ITEMS = {
+  hat: `<g transform="translate(0,-2)">
+          <ellipse cx="0" cy="8" rx="30" ry="7" fill="#3a2f6e"/>
+          <path d="M-20 8 Q0 -46 20 8 Z" fill="#5b4bd6"/>
+          <path d="M-20 8 Q0 -2 20 8 L18 12 Q0 4 -18 12 Z" fill="#3a2f6e"/>
+          <circle cx="0" cy="-40" r="5" fill="#ffc24b"/>
+        </g>`,
+  collar: `<g>
+          <path d="M-30 0 Q0 16 30 0 L26 8 Q0 22 -26 8 Z" fill="#e0526a"/>
+          <circle cx="0" cy="9" r="5" fill="#ffc24b"/>
+        </g>`,
+  cape: `<g transform="translate(-2,-4)">
+          <path d="M0 0 Q34 30 18 78 Q4 60 -2 70 Q-6 30 0 0 Z" fill="#3fb6a8" opacity=".92"/>
+          <path d="M0 0 Q12 6 14 16 L-2 14 Z" fill="#2f8d83"/>
+        </g>`
+};
+const equipped = {};
+document.querySelectorAll('[data-equip]').forEach(btn => {
+  btn.onclick = () => {
+    const slot = btn.dataset.equip, item = btn.dataset.item;
+    const g = document.getElementById('slot-' + slot);
+    if (equipped[slot]) { g.innerHTML=''; equipped[slot]=null; btn.classList.remove('on'); }
+    else { g.innerHTML = ITEMS[item]; equipped[slot]=item; btn.classList.add('on'); }
+  };
+});
+
+// ── прокачка / фон ──
+document.querySelectorAll('[data-toggle]').forEach(btn => {
+  btn.onclick = () => {
+    const t = btn.dataset.toggle; btn.classList.toggle('on');
+    if (t==='aura') { const a=document.getElementById('pet-aura'); a.style.display = btn.classList.contains('on')?'block':'none'; }
+    if (t==='theme') { card.classList.toggle('light'); }
+  };
+});
+</script>
+</body>
+</html>
