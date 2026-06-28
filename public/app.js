@@ -4140,47 +4140,54 @@ const PET_STATE = {
   full: { label: 'доволен', face: 'content', color: '#4f9ff7' },
   overfed: { label: 'перекормлен', face: 'overfed', color: '#e0526a' },
 };
-function petFaceMarkup(face) {
-  const eyeOpen = (cx) => `<circle cx="${cx}" cy="58" r="5" fill="#1a1f2e"/><circle cx="${cx - 1.5}" cy="56.5" r="1.6" fill="#fff"/>`;
-  const eyeX = (cx) => `<path d="M${cx - 5} 54 l10 8 M${cx + 5} 54 l-10 8" stroke="#1a1f2e" stroke-width="3" stroke-linecap="round"/>`;
-  let eyes, mouth, extra = '';
-  if (face === 'hungry') { eyes = eyeOpen(44) + eyeOpen(76); mouth = `<path d="M52 80 Q60 74 68 80" stroke="#1a1f2e" stroke-width="3" fill="none" stroke-linecap="round"/>`; }
-  else if (face === 'overfed') { eyes = eyeX(44) + eyeX(76); mouth = `<ellipse cx="60" cy="80" rx="5" ry="4" fill="#1a1f2e"/>`; extra = `<text x="88" y="38" font-size="13">💢</text>`; }
-  else if (face === 'content') { eyes = eyeOpen(44) + eyeOpen(76); mouth = `<line x1="54" y1="79" x2="66" y2="79" stroke="#1a1f2e" stroke-width="3" stroke-linecap="round"/>`; }
-  else { eyes = eyeOpen(44) + eyeOpen(76); mouth = `<path d="M50 76 Q60 86 70 76" stroke="#1a1f2e" stroke-width="3.5" fill="none" stroke-linecap="round"/>`; }
-  const blush = `<ellipse cx="36" cy="70" rx="5" ry="3" fill="#ff8fa3" opacity="0.4"/><ellipse cx="84" cy="70" rx="5" ry="3" fill="#ff8fa3" opacity="0.4"/>`;
-  return eyes + blush + mouth + extra;
-}
 // Лакомство для анимации кормёжки — по доминантной подсфере
 const PET_TREAT = { '🏋': '🍗', '🧘': '🍵', '📚': '🍪', '🗣': '🍵', '💼': '☕', '🎨': '🧁', '💻': '🔋', '🧠': '🍪', '🧹': '🍬', '💬': '🍬', '⭐': '🍎' };
-function petGlasses() { return `<circle cx="44" cy="58" r="9" fill="none" stroke="#1a1f2e" stroke-width="2.5"/><circle cx="76" cy="58" r="9" fill="none" stroke="#1a1f2e" stroke-width="2.5"/><line x1="53" y1="58" x2="67" y2="58" stroke="#1a1f2e" stroke-width="2.5"/>`; }
-// Морф-форма по доминантной подсфере (его идея: качок-ноги, читающий и т.п.)
-function petAccessorySVG(icon, color) {
+// ── Paper-doll лицо (viewBox 0 0 120 132, глаза ~cy78) — см. PET-PIPELINE.md ──
+function petFaceMarkup(face) {
+  const eyeOpen = (cx) => `<ellipse cx="${cx}" cy="78" rx="7.5" ry="9" fill="#fff"/><circle cx="${cx}" cy="80" r="4.6" fill="#20243a"/><circle cx="${cx + 1.6}" cy="77" r="1.6" fill="#fff"/>`;
+  const eyeX = (cx) => `<path d="M${cx - 5} 73 l10 9 M${cx + 5} 73 l-10 9" stroke="#20243a" stroke-width="3" stroke-linecap="round"/>`;
+  let eyes, mouth, extra = '';
+  if (face === 'hungry') { eyes = eyeOpen(49) + eyeOpen(71); mouth = `<path d="M53 96 Q60 90 67 96" stroke="#20243a" stroke-width="2.6" fill="none" stroke-linecap="round"/>`; }
+  else if (face === 'overfed') { eyes = eyeX(49) + eyeX(71); mouth = `<ellipse cx="60" cy="96" rx="4.5" ry="3.6" fill="#20243a"/>`; extra = `<text x="88" y="50" font-size="13">💢</text>`; }
+  else if (face === 'content') { eyes = eyeOpen(49) + eyeOpen(71); mouth = `<line x1="54" y1="95" x2="66" y2="95" stroke="#20243a" stroke-width="2.6" stroke-linecap="round"/>`; }
+  else { eyes = eyeOpen(49) + eyeOpen(71); mouth = `<path d="M52 92 Q60 100 68 92" stroke="#20243a" stroke-width="2.8" fill="none" stroke-linecap="round"/>`; }
+  const blush = `<circle cx="38" cy="90" r="4.6" fill="#ff8fb0" opacity="0.5"/><circle cx="82" cy="90" r="4.6" fill="#ff8fb0" opacity="0.5"/>`;
+  return `<g class="pd-eyes">${eyes}</g>${blush}${mouth}${extra}`;
+}
+function petGlasses() { return `<circle cx="49" cy="78" r="8.5" fill="none" stroke="#20243a" stroke-width="2.4"/><circle cx="71" cy="78" r="8.5" fill="none" stroke="#20243a" stroke-width="2.4"/><line x1="57.5" y1="78" x2="62.5" y2="78" stroke="#20243a" stroke-width="2.4"/>`; }
+// Морф-аксессуар по доминантной подсфере (его идея: качок, читающий и т.п.) — координаты под chibi viewBox
+function petAccessorySVG(icon) {
   switch (icon) {
-    case '🏋': return `<rect x="34" y="33" width="52" height="6" rx="3" fill="#e0526a"/>
-      <ellipse cx="21" cy="76" rx="9" ry="12" fill="${color}" stroke="rgba(0,0,0,0.18)" stroke-width="1.5"/>
-      <ellipse cx="99" cy="76" rx="9" ry="12" fill="${color}" stroke="rgba(0,0,0,0.18)" stroke-width="1.5"/>`; // повязка + бицепсы
-    case '📚': return petGlasses() + `<rect x="46" y="90" width="28" height="16" rx="2" fill="#fff" stroke="#1a1f2e" stroke-width="1.5"/><line x1="60" y1="90" x2="60" y2="106" stroke="#1a1f2e" stroke-width="1.2"/>`; // очки + книжка
-    case '🧠': return petGlasses() + `<text x="92" y="30" font-size="13">✦</text>`;
-    case '🗣': return `<rect x="90" y="17" width="34" height="24" rx="7" fill="#fff" stroke="#1a1f2e" stroke-width="1.3"/><path d="M99 41 l-5 9 l12 -7z" fill="#fff" stroke="#1a1f2e" stroke-width="1.3"/><text x="107" y="34" font-size="13" text-anchor="middle" fill="#1a1f2e" font-weight="700">A</text>`; // речевой пузырь
-    case '💼': return `<path d="M60 84 l-6 7 l6 16 l6 -16z" fill="#2a3550"/><path d="M54 82 h12 l-6 6z" fill="#3a4768"/>`; // галстук
-    case '🎨': return `<g transform="rotate(-10 58 22)"><ellipse cx="58" cy="24" rx="22" ry="8" fill="#b06ff0"/><ellipse cx="58" cy="22" rx="15" ry="5" fill="#c98bff"/><circle cx="44" cy="18" r="3" fill="#b06ff0"/></g>`; // берет
-    case '💻': return `<line x1="60" y1="18" x2="60" y2="6" stroke="#1a1f2e" stroke-width="2"/><circle cx="60" cy="5" r="3.5" fill="#4f9ff7"/>`; // антенна
-    case '🧹': return `<line x1="100" y1="40" x2="92" y2="74" stroke="#8a5a2b" stroke-width="3" stroke-linecap="round"/><path d="M88 72 l10 4 l-3 10 l-10 -4z" fill="#d8a44b"/>`; // веник
-    case '💬': return `<text x="92" y="32" font-size="14">💛</text><text x="101" y="50" font-size="10">💛</text>`;
-    default: return `<text x="92" y="30" font-size="15">✨</text>`;
+    case '🏋': return `<rect x="40" y="44" width="40" height="5" rx="2.5" fill="#fff"/><rect x="40" y="44" width="40" height="5" rx="2.5" fill="#000" opacity="0.12"/>`; // повязка на лбу (белая — не сливается с цветом сферы)
+    case '📚': return petGlasses();
+    case '🧠': return petGlasses() + `<text x="84" y="44" font-size="13">✦</text>`;
+    case '🗣': return `<g transform="translate(2,0)"><rect x="84" y="34" width="30" height="20" rx="6" fill="#fff" stroke="#20243a" stroke-width="1.2"/><path d="M92 54 l-4 8 l10 -6z" fill="#fff" stroke="#20243a" stroke-width="1.2"/><text x="99" y="49" font-size="12" text-anchor="middle" fill="#20243a" font-weight="700">A</text></g>`; // речевой пузырь
+    case '💼': return `<path d="M60 102 l-5 6 l5 13 l5 -13z" fill="#2a3550"/>`; // галстук
+    case '🎨': return `<g transform="translate(0,-2) rotate(-12 60 40)"><ellipse cx="60" cy="42" rx="20" ry="7" fill="#b06ff0"/><ellipse cx="60" cy="40" rx="13" ry="4.5" fill="#c98bff"/><circle cx="47" cy="36" r="3" fill="#b06ff0"/></g>`; // берет
+    case '💻': return `<line x1="60" y1="40" x2="60" y2="28" stroke="#20243a" stroke-width="2"/><circle cx="60" cy="27" r="3.5" fill="#4f9ff7"/>`; // антенна
+    case '🧹': return `<g transform="translate(6,0)"><line x1="90" y1="56" x2="84" y2="86" stroke="#8a5a2b" stroke-width="3" stroke-linecap="round"/><path d="M80 84 l10 4 l-3 10 l-10 -4z" fill="#d8a44b"/></g>`; // веник
+    case '💬': return `<text x="84" y="46" font-size="14">💛</text>`;
+    default: return `<text x="84" y="44" font-size="15">✨</text>`;
   }
 }
+// Paper-doll питомец: один SVG по слоям (класс-анимации, recolor цветом сферы, экипировка-аксессуар запечена). PET-PIPELINE.md
 function petSVG(color, state, traits) {
-  const r = state === 'overfed' ? 1.34 : state === 'full' ? 1.12 : state === 'hungry' ? 0.8 : 1.0;
+  const r = state === 'overfed' ? 1.18 : state === 'full' ? 1.08 : state === 'hungry' ? 0.86 : 1.0;
   const dom = (traits[0] && traits[0].icon) || '⭐';
-  return `<svg class="pet-svg" viewBox="0 0 132 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <g transform="translate(60,62) scale(${r.toFixed(2)},1) translate(-60,-62)">
-      <path d="M60 18 C82 18 96 36 96 62 C96 86 84 102 60 102 C36 102 24 86 24 62 C24 36 38 18 60 18 Z" fill="${color}" stroke="rgba(0,0,0,0.18)" stroke-width="1.5"/>
-      <ellipse cx="50" cy="42" rx="14" ry="9" fill="#fff" opacity="0.18"/>
+  const dark = 'rgba(0,0,0,0.16)';
+  return `<svg class="pet-svg" viewBox="0 0 120 132" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <ellipse cx="60" cy="123" rx="32" ry="7" fill="#000" opacity="0.2"/>
+    <path class="pd-tail" d="M90 92 q22 -4 19 -23 q-2 14 -17 15 q9 -10 4 -19 q-3 16 -14 19 z" fill="${color}"/>
+    <g class="pd-body-grp" transform="translate(60,80) scale(${r.toFixed(2)},${(0.5 + r * 0.5).toFixed(2)}) translate(-60,-80)">
+      <ellipse cx="46" cy="115" rx="10" ry="7.5" fill="${color}"/>
+      <ellipse cx="74" cy="115" rx="10" ry="7.5" fill="${color}"/>
+      <path class="pd-ear-l" d="M36 62 q-9 -24 10 -31 q4 18 -1 31 z" fill="${color}"/>
+      <path class="pd-ear-r" d="M84 62 q9 -24 -10 -31 q-4 18 1 31 z" fill="${color}"/>
+      <ellipse cx="60" cy="82" rx="37" ry="34" fill="${color}" stroke="${dark}" stroke-width="1.2"/>
+      <ellipse cx="60" cy="92" rx="23" ry="21" fill="#fff" opacity="0.16"/>
+      ${petFaceMarkup(PET_STATE[state].face)}
+      ${petAccessorySVG(dom)}
     </g>
-    ${petFaceMarkup(PET_STATE[state].face)}
-    ${petAccessorySVG(dom, color)}
   </svg>`;
 }
 function petName(id) { const pn = (State.settings && State.settings.petNames) || {}; return pn[id] || skillById(id).name; }

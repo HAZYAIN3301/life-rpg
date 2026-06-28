@@ -965,8 +965,19 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .pet-balance { margin: 10px 0 0 !important; font-size: 13px !important; line-height: 1.45; color: var(--text) !important; font-style: normal !important; }
 .pet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
 .pet-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 14px 12px !important; }
-.pet-art { width: 92px; height: 84px; }
-.pet-svg { width: 100%; height: 100%; display: block; animation: comp-float 4.5s ease-in-out infinite; transform-origin: center bottom; }
+.pet-art { width: 92px; height: 98px; }
+.pet-svg { width: 100%; height: 100%; display: block; }
+/* paper-doll idle: анимируем части по классам (id нельзя — много питомцев на странице) */
+.pet-svg .pd-body-grp { animation: pd-bob 3.4s ease-in-out infinite; transform-origin: 60px 120px; }
+.pet-svg .pd-ear-l { animation: pd-ear 4.2s ease-in-out infinite; transform-origin: 44px 50px; }
+.pet-svg .pd-ear-r { animation: pd-ear 4.2s ease-in-out infinite .9s; transform-origin: 76px 50px; }
+.pet-svg .pd-tail { animation: pd-tail 3.8s ease-in-out infinite; transform-origin: 92px 92px; }
+.pet-svg .pd-eyes { animation: pd-blink 5s ease-in-out infinite; transform-origin: 60px 80px; }
+@keyframes pd-bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-3px) } }
+@keyframes pd-ear { 0%,92%,100% { transform: rotate(0) } 96% { transform: rotate(-9deg) } }
+@keyframes pd-tail { 0%,100% { transform: rotate(-7deg) } 50% { transform: rotate(9deg) } }
+@keyframes pd-blink { 0%,90%,100% { transform: scaleY(1) } 95% { transform: scaleY(.08) } }
+@media (prefers-reduced-motion: reduce) { .pet-svg .pd-body-grp, .pet-svg .pd-ear-l, .pet-svg .pd-ear-r, .pet-svg .pd-tail, .pet-svg .pd-eyes { animation: none } }
 .pet-name { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
 .pet-name b { font-size: 14.5px; font-weight: 800; }
 .pet-badge { font-size: 10.5px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
