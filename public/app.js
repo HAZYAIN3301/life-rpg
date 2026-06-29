@@ -2369,22 +2369,145 @@ function refreshGoalCompletion(g) {
 }
 
 // ---- Дерево навыков ----
+// ── Шаблоны деревьев по архетипу сферы (SKILLTREE-PLAN.md, Фаза 2) ──
+// Форма общая (вход → ядро → 2 ветки → капстоун), контент — по теме. Капстоун даёт звание.
+const TREE_SHAPE = [
+  { key: 'n1', col: 1, row: 0, cost: 1, req: [] },
+  { key: 'n2', col: 1, row: 1, cost: 1, req: ['n1'] },
+  { key: 'n3', col: 0, row: 2, cost: 2, req: ['n2'] },
+  { key: 'n4', col: 2, row: 2, cost: 2, req: ['n2'] },
+  { key: 'n5', col: 0, row: 3, cost: 2, req: ['n3'] },
+  { key: 'n6', col: 2, row: 3, cost: 2, req: ['n4'] },
+  { key: 'n7', col: 1, row: 4, cost: 3, req: ['n5', 'n6'], capstone: true },
+]; // суммарная цена дерева = 13 очков (~ур.13 сферы на полную прокачку)
+// Каждый архетип: 7 узлов [title, desc, perks]. perks=[{kind,val}]. Порядок = TREE_SHAPE.
+const TREE_TEMPLATES = {
+  '🏋': [ // спорт
+    ['Разминка', 'Войти в режим без надрыва', [{ kind: 'energyBack', val: 2 }]],
+    ['Режим', 'Стабильные тренировки', [{ kind: 'xpPct', val: 8 }]],
+    ['Сила', 'Работа с весом и мощью', [{ kind: 'goldPct', val: 12 }]],
+    ['Выносливость', 'Длинная дистанция', [{ kind: 'streakShield', val: 1 }]],
+    ['Дисциплина', 'Тренируешься даже без настроения', [{ kind: 'xpPct', val: 10 }]],
+    ['Закалка', 'Тело привыкло к нагрузке', [{ kind: 'petBoost', val: 25 }]],
+    ['⚜ Атлет', 'Сфера тела на пике', [{ kind: 'title', val: 1 }, { kind: 'energyBack', val: 4 }, { kind: 'xpPct', val: 12 }]],
+  ],
+  '🧘': [ // здоровье/велнес
+    ['Покой', 'Замедлиться и восстановить', [{ kind: 'energyBack', val: 3 }]],
+    ['Баланс', 'Ровный ритм жизни', [{ kind: 'xpPct', val: 8 }]],
+    ['Сон', 'Восстановление через отдых', [{ kind: 'streakShield', val: 1 }]],
+    ['Питание', 'Топливо для тела', [{ kind: 'petBoost', val: 25 }]],
+    ['Осознанность', 'Внимание к себе', [{ kind: 'bond', val: 6 }]],
+    ['Восстановление', 'Глубокий ресурс', [{ kind: 'energyBack', val: 4 }]],
+    ['⚜ Дзен', 'Тело и ум в гармонии', [{ kind: 'title', val: 1 }, { kind: 'energyBack', val: 5 }, { kind: 'xpPct', val: 10 }]],
+  ],
+  '📚': [ // учёба
+    ['Фокус', 'Учиться без отвлечений', [{ kind: 'xpPct', val: 8 }]],
+    ['Конспект', 'Фиксировать главное', [{ kind: 'xpPct', val: 8 }]],
+    ['Память', 'Запоминать надолго', [{ kind: 'lootLuck', val: 12 }]],
+    ['Глубина', 'Разбираться до сути', [{ kind: 'xpPct', val: 10 }]],
+    ['Широта', 'Связывать темы', [{ kind: 'goldPct', val: 12 }]],
+    ['Практика', 'Применять знания', [{ kind: 'petBoost', val: 25 }]],
+    ['⚜ Эрудит', 'Учёба даётся легко', [{ kind: 'title', val: 1 }, { kind: 'xpPct', val: 15 }, { kind: 'lootLuck', val: 10 }]],
+  ],
+  '🗣': [ // язык
+    ['Слова', 'Набирать словарный запас', [{ kind: 'xpPct', val: 8 }]],
+    ['Речь', 'Говорить регулярно', [{ kind: 'xpPct', val: 8 }]],
+    ['Аудио', 'Понимать на слух', [{ kind: 'lootLuck', val: 10 }]],
+    ['Грамматика', 'Структура языка', [{ kind: 'xpPct', val: 10 }]],
+    ['Разговор', 'Живое общение', [{ kind: 'bond', val: 6 }]],
+    ['Погружение', 'Думать на языке', [{ kind: 'goldPct', val: 12 }]],
+    ['⚜ Полиглот', 'Язык стал своим', [{ kind: 'title', val: 1 }, { kind: 'xpPct', val: 15 }]],
+  ],
+  '💼': [ // работа/деньги
+    ['Старт', 'Первые шаги к доходу', [{ kind: 'goldPct', val: 10 }]],
+    ['Ритм', 'Стабильная работа', [{ kind: 'xpPct', val: 8 }]],
+    ['Продуктивность', 'Делать больше за меньшее', [{ kind: 'xpPct', val: 10 }]],
+    ['Доход', 'Растить заработок', [{ kind: 'goldPct', val: 15 }]],
+    ['Связи', 'Сеть контактов', [{ kind: 'bond', val: 6 }]],
+    ['Капитал', 'Деньги работают', [{ kind: 'lootLuck', val: 12 }]],
+    ['⚜ Профи', 'Дело приносит плоды', [{ kind: 'title', val: 1 }, { kind: 'goldPct', val: 20 }, { kind: 'xpPct', val: 10 }]],
+  ],
+  '🎨': [ // творчество
+    ['Искра', 'Начать создавать', [{ kind: 'xpPct', val: 8 }]],
+    ['Поток', 'Творить без блока', [{ kind: 'energyBack', val: 3 }]],
+    ['Техника', 'Оттачивать ремесло', [{ kind: 'xpPct', val: 10 }]],
+    ['Стиль', 'Свой почерк', [{ kind: 'petBoost', val: 25 }]],
+    ['Вдохновение', 'Идеи приходят', [{ kind: 'lootLuck', val: 12 }]],
+    ['Публика', 'Делиться работой', [{ kind: 'bond', val: 6 }]],
+    ['⚜ Творец', 'Творчество как поток', [{ kind: 'title', val: 1 }, { kind: 'xpPct', val: 12 }, { kind: 'lootLuck', val: 10 }]],
+  ],
+  '💻': [ // код/тех
+    ['Сетап', 'Готовое окружение', [{ kind: 'xpPct', val: 8 }]],
+    ['Коммит-привычка', 'Кодить каждый день', [{ kind: 'streakShield', val: 1 }]],
+    ['Алгоритмы', 'Думать структурно', [{ kind: 'xpPct', val: 10 }]],
+    ['Системы', 'Строить надёжно', [{ kind: 'goldPct', val: 12 }]],
+    ['Поток', 'Глубокая работа', [{ kind: 'energyBack', val: 3 }]],
+    ['Сборка', 'Доводить до релиза', [{ kind: 'lootLuck', val: 12 }]],
+    ['⚜ Инженер', 'Код подчиняется', [{ kind: 'title', val: 1 }, { kind: 'xpPct', val: 15 }]],
+  ],
+  '🧠': [ // саморазвитие
+    ['Чтение', 'Питать ум', [{ kind: 'xpPct', val: 8 }]],
+    ['Рефлексия', 'Понимать себя', [{ kind: 'bond', val: 5 }]],
+    ['Глубина', 'Копать вглубь', [{ kind: 'xpPct', val: 10 }]],
+    ['Кругозор', 'Расширять взгляд', [{ kind: 'lootLuck', val: 12 }]],
+    ['Привычки', 'Менять себя системно', [{ kind: 'streakShield', val: 1 }]],
+    ['Мудрость', 'Применять понятое', [{ kind: 'xpPct', val: 10 }]],
+    ['⚜ Мыслитель', 'Растёшь осознанно', [{ kind: 'title', val: 1 }, { kind: 'xpPct', val: 12 }, { kind: 'bond', val: 8 }]],
+  ],
+  '🧹': [ // быт
+    ['Порядок', 'Навести базу', [{ kind: 'energyBack', val: 2 }]],
+    ['Рутина', 'Делать без напоминаний', [{ kind: 'streakShield', val: 1 }]],
+    ['Чистота', 'Дом дышит', [{ kind: 'xpPct', val: 8 }]],
+    ['Уют', 'Пространство для жизни', [{ kind: 'petBoost', val: 25 }]],
+    ['Система', 'Всё на местах', [{ kind: 'goldPct', val: 10 }]],
+    ['Забота', 'Дом как опора', [{ kind: 'bond', val: 5 }]],
+    ['⚜ Хранитель очага', 'Быт работает на тебя', [{ kind: 'title', val: 1 }, { kind: 'streakShield', val: 1 }, { kind: 'energyBack', val: 3 }]],
+  ],
+  '💬': [ // социал
+    ['Контакт', 'Тянуться к людям', [{ kind: 'bond', val: 6 }]],
+    ['Тепло', 'Дарить внимание', [{ kind: 'xpPct', val: 8 }]],
+    ['Дружба', 'Беречь близких', [{ kind: 'bond', val: 8 }]],
+    ['Эмпатия', 'Слышать других', [{ kind: 'petBoost', val: 25 }]],
+    ['Поддержка', 'Быть рядом', [{ kind: 'streakShield', val: 1 }]],
+    ['Близость', 'Глубокие связи', [{ kind: 'bond', val: 8 }]],
+    ['⚜ Душа компании', 'Люди тянутся к тебе', [{ kind: 'title', val: 1 }, { kind: 'bond', val: 12 }, { kind: 'xpPct', val: 10 }]],
+  ],
+  '⭐': [ // generic
+    ['Старт', 'Первый шаг в сфере', [{ kind: 'xpPct', val: 5 }]],
+    ['Регулярность', 'Стабильный ритм', [{ kind: 'xpPct', val: 8 }]],
+    ['Глубина', 'Глубокая работа', [{ kind: 'xpPct', val: 10 }]],
+    ['Широта', 'Расширение охвата', [{ kind: 'goldPct', val: 10 }]],
+    ['Мастерство', 'Высокий уровень', [{ kind: 'petBoost', val: 25 }]],
+    ['Стойкость', 'Не сдаваться', [{ kind: 'streakShield', val: 1 }]],
+    ['⚜ Мастер', 'Сфера на высоте', [{ kind: 'title', val: 1 }, { kind: 'xpPct', val: 12 }, { kind: 'goldPct', val: 10 }]],
+  ],
+};
+function archetypeOf(skillId) { try { const t = petTraits(skillId); return (t[0] && t[0].icon) || '⭐'; } catch { return '⭐'; } }
 function defaultTreeForSkill(skillId) {
-  const p = 'nd_' + skillId + '_';
+  const arc = archetypeOf(skillId), tpl = TREE_TEMPLATES[arc] || TREE_TEMPLATES['⭐'], p = 'nd_' + skillId + '_';
   return {
-    nodes: [
-      { id: p + '1', title: 'Старт', desc: 'Первый шаг в сфере', cost: 1, requires: [], perkXpPct: 5, unlocked: false, col: 1, row: 0 },
-      { id: p + '2', title: 'Регулярность', desc: 'Стабильный ритм', cost: 1, requires: [p + '1'], perkXpPct: 5, unlocked: false, col: 1, row: 1 },
-      { id: p + '3', title: 'Глубина', desc: 'Глубокая работа', cost: 2, requires: [p + '2'], perkXpPct: 10, unlocked: false, col: 0, row: 2 },
-      { id: p + '4', title: 'Широта', desc: 'Расширение охвата', cost: 2, requires: [p + '2'], perkXpPct: 10, unlocked: false, col: 2, row: 2 },
-      { id: p + '5', title: 'Мастерство', desc: 'Высокий уровень', cost: 3, requires: [p + '3', p + '4'], perkXpPct: 15, unlocked: false, col: 1, row: 3 },
-    ],
+    archetype: arc,
+    nodes: TREE_SHAPE.map((sh, i) => ({
+      id: p + sh.key, title: tpl[i][0], desc: tpl[i][1], cost: sh.cost,
+      requires: sh.req.map((k) => p + k), perks: tpl[i][2], capstone: !!sh.capstone,
+      unlocked: false, col: sh.col, row: sh.row,
+    })),
   };
+}
+// Пристойно ли это нетронутое СТАРОЕ дерево (5 узлов, дефолтные тайтлы, ничего не взято)? → можно апгрейдить до шаблона.
+function isPristineOldTree(t) {
+  if (!t || t.archetype || !Array.isArray(t.nodes) || t.nodes.length !== 5) return false;
+  if (t.nodes.some((n) => n.unlocked)) return false;
+  return t.nodes.map((n) => n.title).join('|') === 'Старт|Регулярность|Глубина|Широта|Мастерство';
 }
 const TREE_SX = 194, TREE_SY = 112, TREE_NW = 150, TREE_NH = 70;
 function ensureTrees() {
-  for (const s of State.settings.skills) if (!State.tree[s.id]) State.tree[s.id] = defaultTreeForSkill(s.id);
-  // миграция: позиции col/row → свободные x/y (для перетаскивания)
+  for (const s of State.settings.skills) {
+    if (!State.tree[s.id]) { State.tree[s.id] = defaultTreeForSkill(s.id); continue; }
+    // апгрейд: нетронутое старое generic-дерево → тематический шаблон по архетипу (кастом/использованные не трогаем)
+    if (isPristineOldTree(State.tree[s.id])) State.tree[s.id] = defaultTreeForSkill(s.id);
+  }
+  // позиции col/row → свободные x/y (для перетаскивания)
   for (const id in State.tree) for (const n of State.tree[id].nodes || []) {
     if (n.x == null) n.x = (n.col || 0) * TREE_SX;
     if (n.y == null) n.y = (n.row || 0) * TREE_SY;
