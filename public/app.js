@@ -470,6 +470,24 @@ const I18N_EXTRA = {
   'Хранитель': { en: 'Keeper', de: 'Hüter', uk: 'Хранитель', es: 'Custodio' },
   '🌅 Утренний чек-ин': { en: '🌅 Morning check-in', de: '🌅 Morgen-Check-in', uk: '🌅 Ранковий чек-ін', es: '🌅 Registro matutino' },
   '🌙 Вечерний чек-ин': { en: '🌙 Evening check-in', de: '🌙 Abend-Check-in', uk: '🌙 Вечірній чек-ін', es: '🌙 Registro nocturno' },
+  // — Гайд «Тень ведёт» (онбординг) —
+  'Привет! Я — Тень, твой спутник. Покажу за минуту, как это работает — на деле, без занудства.': { en: "Hi! I'm Shadow, your companion. I'll show you how it works in a minute — by doing, no lectures.", de: 'Hi! Ich bin Schatten, dein Begleiter. Ich zeig dir in einer Minute, wie es geht — direkt, ohne Geschwätz.', uk: 'Привіт! Я — Тінь, твій супутник. Покажу за хвилину, як це працює — на ділі, без занудства.', es: '¡Hola! Soy Sombra, tu compañero. Te muestro cómo funciona en un minuto — haciendo, sin sermones.' },
+  'Сюда кидай любую мысль, идею или дело — одним касанием, чтобы не держать в голове.': { en: "Drop any thought, idea or task here — in one tap, so you don't keep it in your head.", de: 'Wirf hier jeden Gedanken, jede Idee oder Aufgabe rein — mit einem Tippen, damit du es nicht im Kopf behältst.', uk: 'Сюди кидай будь-яку думку, ідею чи справу — одним дотиком, щоб не тримати в голові.', es: 'Lanza aquí cualquier idea, pensamiento o tarea — con un toque, para no tenerlo en la cabeza.' },
+  'Это твой уровень. Каждое выполненное дело растит его — и он НЕ сгорает, как чёрный пояс.': { en: 'This is your level. Every completed task grows it — and it does NOT burn out, like a black belt.', de: 'Das ist dein Level. Jede erledigte Aufgabe lässt es wachsen — und es verfällt NICHT, wie ein schwarzer Gürtel.', uk: 'Це твій рівень. Кожна виконана справа його зрощує — і він НЕ згорає, як чорний пояс.', es: 'Este es tu nivel. Cada tarea completada lo hace crecer — y NO se pierde, como un cinturón negro.' },
+  'А самое тёплое — загляни ко мне и погладь 🫶 Так растёт наша связь.': { en: 'And the warmest part — visit me and pet me 🫶 That’s how our bond grows.', de: 'Und das Schönste — schau bei mir vorbei und streichle mich 🫶 So wächst unsere Bindung.', uk: "А найтепліше — завітай до мене й погладь 🫶 Так росте наш зв'язок.", es: 'Y lo más cálido — visítame y acaríciame 🫶 Así crece nuestro vínculo.' },
+  'Вот и всё, что нужно для старта! Остальное — привычки, цели, дерево навыков — я открою тебе постепенно, по ходу. Ты не один. ✨': { en: "That's all you need to start! The rest — habits, goals, the skill tree — I'll reveal gradually, as you go. You're not alone. ✨", de: 'Das ist alles für den Start! Den Rest — Gewohnheiten, Ziele, den Fähigkeitsbaum — zeige ich dir nach und nach. Du bist nicht allein. ✨', uk: 'Ось і все для старту! Решту — звички, цілі, дерево навичок — я відкрию поступово, по ходу. Ти не один. ✨', es: '¡Eso es todo para empezar! El resto — hábitos, metas, el árbol de habilidades — te lo revelaré poco a poco. No estás solo. ✨' },
+  'Психанём? В Настройки → Оформление есть режим «Система» — весь интерфейс станет как из Solo Leveling. Чисто по желанию.': { en: "Feeling bold? Settings → Appearance has 'System' mode — the whole UI turns Solo-Leveling style. Totally optional.", de: "Mutig? Unter Einstellungen → Darstellung gibt es den 'System'-Modus — das ganze UI wird Solo-Leveling-Style. Ganz optional.", uk: 'Психанемо? У Налаштування → Оформлення є режим «Система» — весь інтерфейс стане як у Solo Leveling. Суто за бажанням.', es: '¿Te atreves? En Ajustes → Apariencia está el modo “Sistema” — toda la interfaz se vuelve estilo Solo Leveling. Opcional.' },
+  'Ты входишь во вкус 👏 Привычки — повторяющиеся дела, что строят тебя по кирпичику. Загляни в раздел «Привычки».': { en: "You're getting into it 👏 Habits are recurring actions that build you brick by brick. Check the 'Habits' section.", de: "Du kommst rein 👏 Gewohnheiten sind wiederkehrende Handlungen, die dich Stein für Stein aufbauen. Schau in 'Gewohnheiten'.", uk: 'Ти входиш у смак 👏 Звички — повторювані справи, що будують тебе по цеглинці. Завітай у розділ «Звички».', es: "Le vas tomando el gusto 👏 Los hábitos son acciones que te construyen ladrillo a ladrillo. Mira la sección 'Hábitos'." },
+  'Открылось Логово 🏠 — наша комната, где живём мы с питомцами. Зайди, тут уютно.': { en: 'Your Den 🏠 just opened — our room where I live with your pets. Come in, it’s cozy.', de: 'Dein Hort 🏠 ist offen — unser Raum, wo ich mit deinen Gefährten lebe. Komm rein, es ist gemütlich.', uk: 'Відкрилося Лігво 🏠 — наша кімната, де живемо ми з улюбленцями. Зайди, тут затишно.', es: 'Se abrió tu Guarida 🏠 — nuestro cuarto donde vivo con tus mascotas. Entra, es acogedor.' },
+  'У тебя есть очки навыков! В «Дереве» сферы открываются пассивные бонусы. Глянь, что доступно.': { en: "You have skill points! In the 'Tree' you unlock passive bonuses for a sphere. See what's available.", de: "Du hast Fähigkeitspunkte! Im 'Baum' schaltest du passive Boni für einen Bereich frei. Schau, was verfügbar ist.", uk: 'У тебе є очки навичок! У «Дереві» сфери відкриваються пасивні бонуси. Глянь, що доступно.', es: "¡Tienes puntos de habilidad! En el 'Árbol' desbloqueas bonos pasivos de una esfera. Mira qué hay disponible." },
+  'Дальше →': { en: 'Next →', de: 'Weiter →', uk: 'Далі →', es: 'Siguiente →' },
+  'Понятно ✓': { en: 'Got it ✓', de: 'Verstanden ✓', uk: 'Зрозуміло ✓', es: 'Entendido ✓' },
+  'Пропустить': { en: 'Skip', de: 'Überspringen', uk: 'Пропустити', es: 'Saltar' },
+  '↑ сделай это, чтобы продолжить': { en: '↑ do this to continue', de: '↑ mach das, um fortzufahren', uk: '↑ зроби це, щоб продовжити', es: '↑ hazlo para continuar' },
+  'Открыть →': { en: 'Open →', de: 'Öffnen →', uk: 'Відкрити →', es: 'Abrir →' },
+  'Позже': { en: 'Later', de: 'Später', uk: 'Пізніше', es: 'Más tarde' },
+  '🎓 Обучение пройдено!': { en: '🎓 Tutorial complete!', de: '🎓 Tutorial abgeschlossen!', uk: '🎓 Навчання пройдено!', es: '🎓 ¡Tutorial completado!' },
+  '✨ Пройти интерактивное обучение с Тенью': { en: '✨ Take the interactive tutorial with Shadow', de: '✨ Interaktives Tutorial mit Schatten starten', uk: '✨ Пройти інтерактивне навчання з Тінню', es: '✨ Hacer el tutorial interactivo con Sombra' },
   '🫶 Погладить': { en: '🫶 Pet', de: '🫶 Streicheln', uk: '🫶 Погладити', es: '🫶 Acariciar' },
   '💛 обнял сегодня': { en: '💛 hugged today', de: '💛 heute umarmt', uk: '💛 обійняв сьогодні', es: '💛 abrazado hoy' },
   'Назвать': { en: 'Name', de: 'Benennen', uk: 'Назвати', es: 'Nombrar' },
@@ -5468,7 +5486,7 @@ function showGuide() {
     <button class="modal-x" data-action="close-guide">✕</button>
     <h2>📖 Как играть в Satoru</h2>
     <p class="muted">Коротко по разделам. Лучший способ понять — добавить первый квест и выполнить его.</p>
-    <button class="btn" data-action="tut-restart" style="margin:2px 0 12px">✨ Пройти интерактивное обучение с Тенью</button>
+    <button class="btn" data-action="tut-restart" style="margin:2px 0 12px">${t('✨ Пройти интерактивное обучение с Тенью')}</button>
     <div class="guide-list">${secs}</div>
     <h3 style="margin:6px 0 8px">💬 Нашёл баг или есть идея?</h3>
     <form id="feedback-form" class="feedback-form">
@@ -6508,7 +6526,7 @@ function tutorialBindGlobals() {
 }
 function tutorialStart() { const t = ensureTutorial(); t.i = 0; t.active = true; t.mode = 'day1'; t.done = false; t.skipped = false; Store.save('settings', State.settings); tutorialBindGlobals(); tutorialPaint(); }
 function tutorialSkip() { const t = ensureTutorial(); t.active = false; t.skipped = true; Store.save('settings', State.settings); tutorialPaint(); }
-function tutorialFinish() { const t = ensureTutorial(); t.active = false; t.done = true; Store.save('settings', State.settings); tutorialPaint(); try { sfx('achievement'); } catch {} toast('🎓 Обучение пройдено!'); }
+function tutorialFinish() { const tut = ensureTutorial(); tut.active = false; tut.done = true; Store.save('settings', State.settings); tutorialPaint(); try { sfx('achievement'); } catch {} toast(t('🎓 Обучение пройдено!')); }
 function tutorialNext() {
   const t = ensureTutorial(); if (!t.active) return;
   const cur = TUTORIAL_DAY1[t.i];
@@ -6525,38 +6543,39 @@ function tutorialAdvance(action) {
   setTimeout(() => tutorialNext(), 650); // дать отыграть анимации/звуку действия
 }
 function tutorialPaint() {
-  const t = ensureTutorial();
+  const tut = ensureTutorial();
   let ov = document.getElementById('tut-overlay');
-  if (!t.active) { if (ov) ov.remove(); return; }
+  if (!tut.active) { if (ov) ov.remove(); return; }
   if (!ov) { ov = document.createElement('div'); ov.id = 'tut-overlay'; document.body.appendChild(ov); }
   // drip-режим: нежный пузырь Тени без затемнения (нудж, не блокирует)
-  if (t.mode === 'drip') {
-    const d = DRIPS.find((x) => x.id === t.dripId); if (!d) { ov.remove(); return; }
+  if (tut.mode === 'drip') {
+    const d = DRIPS.find((x) => x.id === tut.dripId); if (!d) { ov.remove(); return; }
     const acts = d.view
-      ? `<button class="btn sm" data-action="drip-open">Открыть →</button><button class="btn ghost sm" data-action="drip-dismiss">Позже</button>`
-      : `<button class="btn sm" data-action="drip-dismiss">Понятно ✓</button>`;
+      ? `<button class="btn sm" data-action="drip-open">${t('Открыть →')}</button><button class="btn ghost sm" data-action="drip-dismiss">${t('Позже')}</button>`
+      : `<button class="btn sm" data-action="drip-dismiss">${t('Понятно ✓')}</button>`;
     ov.innerHTML = `<div class="tut-bubble tut-drip">
-      <img class="tut-mascot" src="/assets/shadow/shadow_1.png" alt="" aria-hidden="true" />
-      <div class="tut-say">${esc(d.say)}</div><div class="tut-acts">${acts}</div></div>`;
+      ${tutMascotHTML()}
+      <div class="tut-say">${esc(t(d.say))}</div><div class="tut-acts">${acts}</div></div>`;
     return;
   }
-  const step = TUTORIAL_DAY1[t.i]; if (!step) { ov.remove(); return; }
+  const step = TUTORIAL_DAY1[tut.i]; if (!step) { ov.remove(); return; }
   const tgt = step.target ? document.querySelector(step.target) : null, pad = step.spotPad || 8;
   let hole;
   if (tgt) { const r = tgt.getBoundingClientRect(); hole = `<div class="tut-hole" style="left:${Math.max(2, r.left - pad)}px;top:${Math.max(2, r.top - pad)}px;width:${r.width + pad * 2}px;height:${r.height + pad * 2}px"></div>`; }
   else hole = `<div class="tut-dim"></div>`;
-  const total = TUTORIAL_DAY1.length, n = t.i + 1;
+  const total = TUTORIAL_DAY1.length, n = tut.i + 1;
   const nextBtn = step.advanceOn === 'next'
-    ? `<button class="btn sm" data-action="tut-next">${step.last ? 'Понятно ✓' : 'Дальше →'}</button>`
-    : `<span class="tut-hint">↑ сделай это, чтобы продолжить</span>`;
+    ? `<button class="btn sm" data-action="tut-next">${t(step.last ? 'Понятно ✓' : 'Дальше →')}</button>`
+    : `<span class="tut-hint">${t('↑ сделай это, чтобы продолжить')}</span>`;
   ov.innerHTML = `${hole}
     <div class="tut-bubble">
-      <img class="tut-mascot" src="/assets/shadow/shadow_1.png" alt="" aria-hidden="true" />
-      <div class="tut-say">${esc(step.say)}</div>
-      <div class="tut-acts">${nextBtn}<button class="btn ghost sm" data-action="tut-skip">Пропустить</button></div>
+      ${tutMascotHTML()}
+      <div class="tut-say">${esc(t(step.say))}</div>
+      <div class="tut-acts">${nextBtn}<button class="btn ghost sm" data-action="tut-skip">${t('Пропустить')}</button></div>
       <div class="tut-dots">${n} / ${total}</div>
     </div>`;
 }
+function tutMascotHTML() { return `<span class="tut-mascot"><img src="/assets/shadow/shadow_1.png" alt="" aria-hidden="true" /></span>`; }
 function onClick(e) {
   const navBtn = e.target.closest('#nav button[data-view]');
   if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
