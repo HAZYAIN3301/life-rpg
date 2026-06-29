@@ -4347,7 +4347,7 @@ function petAccessorySVG(icon) {
 const PET_DARK = 'rgba(0,0,0,0.16)';
 const PET_SPECIES = {
   round: { // дружелюбный зверёк (универсальный)
-    slots: { head: [60, 26], neck: [60, 116], back: [93, 66] },
+    slots: { head: [60, 48], neck: [60, 102], back: [60, 62] },
     draw: (c) => ({
       tail: `<path class="pd-tail" d="M90 92 q22 -4 19 -23 q-2 14 -17 15 q9 -10 4 -19 q-3 16 -14 19 z" fill="${c}"/>`,
       ears: `<path class="pd-ear-l" d="M36 62 q-9 -24 10 -31 q4 18 -1 31 z" fill="${c}"/><path class="pd-ear-r" d="M84 62 q9 -24 -10 -31 q-4 18 1 31 z" fill="${c}"/>`,
@@ -4357,7 +4357,7 @@ const PET_SPECIES = {
     }),
   },
   sturdy: { // крепыш (спорт/работа) — коренастый, мелкие ушки
-    slots: { head: [60, 30], neck: [60, 116], back: [94, 72] },
+    slots: { head: [60, 50], neck: [60, 104], back: [60, 64] },
     draw: (c) => ({
       tail: `<path class="pd-tail" d="M88 102 q15 1 17 -10 q-2 8 -15 6 z" fill="${c}"/>`,
       ears: `<path class="pd-ear-l" d="M45 52 q-6 -16 7 -18 q2 11 -3 18 z" fill="${c}"/><path class="pd-ear-r" d="M75 52 q6 -16 -7 -18 q-2 11 3 18 z" fill="${c}"/>`,
@@ -4367,7 +4367,7 @@ const PET_SPECIES = {
     }),
   },
   fluffy: { // пушистик (творчество/социал) — большие уши, пышный хвост
-    slots: { head: [60, 22], neck: [60, 118], back: [96, 66] },
+    slots: { head: [60, 44], neck: [60, 104], back: [60, 60] },
     draw: (c) => ({
       tail: `<path class="pd-tail" d="M88 96 q31 -2 26 -31 q-3 20 -23 19 q15 -12 8 -27 q-5 23 -20 27 z" fill="${c}"/>`,
       ears: `<path class="pd-ear-l" d="M34 66 q-17 -29 7 -39 q8 23 2 39 z" fill="${c}"/><path class="pd-ear-r" d="M86 66 q17 -29 -7 -39 q-8 23 -2 39 z" fill="${c}"/>`,
@@ -4378,7 +4378,7 @@ const PET_SPECIES = {
     }),
   },
   slime: { // слайм (код/быт) — капля, без ушей и хвоста
-    slots: { head: [60, 44], neck: [60, 116], back: [90, 78] },
+    slots: { head: [60, 54], neck: [60, 102], back: [60, 68] },
     draw: (c) => ({
       tail: '', ears: '',
       feet: '',
@@ -4388,7 +4388,7 @@ const PET_SPECIES = {
     }),
   },
   bird: { // птичка (язык/здоровье) — яйцо-тело, крылья вместо ушей, клюв
-    slots: { head: [60, 30], neck: [60, 114], back: [88, 78] },
+    slots: { head: [60, 50], neck: [60, 102], back: [60, 64] },
     draw: (c) => ({
       tail: `<path class="pd-tail" d="M86 100 q17 3 21 -6 q-4 11 -17 13 z" fill="${c}"/>`,
       ears: `<path class="pd-ear-l" d="M32 80 q-19 -7 -16 15 q13 -2 19 -9 z" fill="${c}"/><path class="pd-ear-r" d="M88 80 q19 -7 16 15 q-13 -2 -19 -9 z" fill="${c}"/>`,
@@ -4402,19 +4402,65 @@ const PET_SPECIES = {
 function archToSpecies(arc) {
   return ({ '🏋': 'sturdy', '💼': 'sturdy', '🎨': 'fluffy', '💬': 'fluffy', '💻': 'slime', '🧹': 'slime', '🗣': 'bird', '🧘': 'bird' })[arc] || 'round';
 }
-function petSVG(color, state, traits) {
+// ── Надеваемая экипировка (PETS-EQUIPMENT-PLAN.md, Фаза 2) ──
+// Предмет = SVG в ЛОКАЛЬНЫХ координатах слота (0,0 = якорь). Слоты: head/neck/back.
+// Те же предметы переиспользуются на аватаре (Фаза 3).
+const WEARABLES = [
+  // head
+  { id: 'wh_wizard', slot: 'head', name: 'Колпак мага', rarity: 'rare', svg: `<ellipse cx="0" cy="6" rx="24" ry="6" fill="#3a2f6e"/><path d="M-16 6 Q0 -36 16 6 Z" fill="#5b4bd6"/><path d="M-16 6 Q0 -1 16 6 L14 10 Q0 3 -14 10 Z" fill="#3a2f6e"/><circle cx="0" cy="-30" r="4" fill="#ffc24b"/>` },
+  { id: 'wh_cap', slot: 'head', name: 'Кепка', rarity: 'common', svg: `<path d="M-19 4 Q-19 -13 0 -13 Q19 -13 19 4 Z" fill="#e0526a"/><path d="M-2 4 Q20 5 25 11 L-2 11 Z" fill="#b83f54"/>` },
+  { id: 'wh_crown', slot: 'head', name: 'Корона', rarity: 'epic', svg: `<path d="M-17 7 L-17 -8 L-8 0 L0 -12 L8 0 L17 -8 L17 7 Z" fill="#ffc24b" stroke="#caa033" stroke-width="1"/><circle cx="0" cy="-9" r="2.5" fill="#e0526a"/><circle cx="-12" cy="-5" r="2" fill="#5b8cff"/><circle cx="12" cy="-5" r="2" fill="#5b8cff"/>` },
+  { id: 'wh_flower', slot: 'head', name: 'Цветок', rarity: 'common', svg: `<circle cx="0" cy="-3" r="3.6" fill="#ffc24b"/><circle cx="-7" cy="-1" r="4" fill="#ff8fb0"/><circle cx="7" cy="-1" r="4" fill="#ff8fb0"/><circle cx="-4" cy="-8" r="4" fill="#ff8fb0"/><circle cx="4" cy="-8" r="4" fill="#ff8fb0"/>` },
+  // neck
+  { id: 'wn_scarf', slot: 'neck', name: 'Шарф', rarity: 'common', svg: `<path d="M-25 -3 Q0 11 25 -3 L21 7 Q0 17 -21 7 Z" fill="#3fb6a8"/><path d="M13 3 l4 17 l8 -2 l-4 -17 z" fill="#2f8d83"/>` },
+  { id: 'wn_bowtie', slot: 'neck', name: 'Бабочка', rarity: 'rare', svg: `<path d="M-14 -6 L-2 0 L-14 6 Z" fill="#e0526a"/><path d="M14 -6 L2 0 L14 6 Z" fill="#e0526a"/><rect x="-3" y="-4" width="6" height="8" rx="2" fill="#b83f54"/>` },
+  { id: 'wn_collar', slot: 'neck', name: 'Ошейник', rarity: 'common', svg: `<path d="M-23 -2 Q0 11 23 -2 L20 5 Q0 15 -20 5 Z" fill="#5b8cff"/><circle cx="0" cy="7" r="3.6" fill="#ffc24b"/>` },
+  // back
+  { id: 'wb_cape', slot: 'back', name: 'Плащ', rarity: 'rare', svg: `<path d="M0 -2 Q36 30 20 74 Q6 54 0 64 Q-6 54 -20 74 Q-36 30 0 -2 Z" fill="#7c6cff" opacity="0.92"/>` },
+  { id: 'wb_wings', slot: 'back', name: 'Крылья', rarity: 'epic', svg: `<path d="M-3 4 Q-32 -12 -42 20 Q-22 12 -5 22 Z" fill="#eef1f8" opacity="0.92"/><path d="M3 4 Q32 -12 42 20 Q22 12 5 22 Z" fill="#eef1f8" opacity="0.92"/>` },
+];
+const WEARABLES_BY_ID = Object.fromEntries(WEARABLES.map((w) => [w.id, w]));
+function wearableById(id) { return WEARABLES_BY_ID[id] || null; }
+function ensureWear() {
+  const s = State.settings;
+  if (!s.wear) s.wear = { owned: [], pet: {}, avatar: {} };
+  if (!Array.isArray(s.wear.owned)) s.wear.owned = [];
+  if (!s.wear.pet) s.wear.pet = {};
+  if (!s.wear.avatar) s.wear.avatar = {};
+  return s.wear;
+}
+function petWorn(sphereId) { const w = ensureWear(); return (sphereId && w.pet[sphereId]) || {}; }
+// Надеть/снять предмет (на питомца сферы): тот же слот — переключает.
+function equipPetWear(sphereId, itemId) {
+  const w = ensureWear(), it = wearableById(itemId); if (!it) return;
+  const cur = w.pet[sphereId] = w.pet[sphereId] || {};
+  cur[it.slot] = cur[it.slot] === itemId ? null : itemId;
+  Store.save('settings', State.settings);
+}
+function wearLayerHTML(slot, sp, sphereId) {
+  const worn = petWorn(sphereId)[slot]; if (!worn) return '';
+  const it = wearableById(worn); if (!it) return '';
+  const a = (sp.slots && sp.slots[slot]) || [60, 60];
+  // внешняя группа — позиция (статична), внутренняя .pd-wear — bob-анимация (иначе CSS-transform перетёр бы translate)
+  return `<g transform="translate(${a[0]},${a[1]})"><g class="pd-wear">${it.svg}</g></g>`;
+}
+function petSVG(color, state, traits, sphereId) {
   const r = state === 'overfed' ? 1.18 : state === 'full' ? 1.08 : state === 'hungry' ? 0.86 : 1.0;
   const dom = (traits[0] && traits[0].icon) || '⭐';
   const sp = PET_SPECIES[archToSpecies(dom)] || PET_SPECIES.round, p = sp.draw(color);
+  // scale-по-состоянию на внешней группе (статична), bob — на внутренней .pd-body-grp (CSS-анимация не перетирает scale)
   return `<svg class="pet-svg" viewBox="0 0 120 132" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <ellipse cx="60" cy="123" rx="32" ry="7" fill="#000" opacity="0.2"/>
+    ${wearLayerHTML('back', sp, sphereId)}
     ${p.tail}
-    <g class="pd-body-grp" transform="translate(60,80) scale(${r.toFixed(2)},${(0.5 + r * 0.5).toFixed(2)}) translate(-60,-80)">
+    <g transform="translate(60,80) scale(${r.toFixed(2)},${(0.5 + r * 0.5).toFixed(2)}) translate(-60,-80)"><g class="pd-body-grp">
       ${p.feet}${p.ears}${p.body}${p.belly}
       ${petFaceMarkup(PET_STATE[state].face)}
       ${p.extra}
       ${petAccessorySVG(dom)}
-    </g>
+    </g></g>
+    ${wearLayerHTML('neck', sp, sphereId)}
+    ${wearLayerHTML('head', sp, sphereId)}
   </svg>`;
 }
 function petName(id) { const pn = (State.settings && State.settings.petNames) || {}; return pn[id] || skillById(id).name; }
@@ -4439,7 +4485,7 @@ function renderPets() {
       : `<div class="pet-name"><b>${esc(nm)}</b><button class="pet-edit" data-action="pet-rename" data-id="${s.id}" title="Переименовать">✎</button><span class="pet-badge" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span></div>`;
     const sub = nm !== s.name ? `<p class="pet-sphere muted">сфера: ${esc(s.name)}</p>` : '';
     return `<div class="card pet-card">
-      <div class="pet-art" data-action="pet-feed" data-id="${s.id}" title="приласкать ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits)}</div>
+      <div class="pet-art" data-action="pet-feed" data-id="${s.id}" title="приласкать ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits, s.id)}</div>
       ${nameRow}${sub}
       <div class="pet-bar"><span style="width:${Math.min(100, Math.round(st.pct / 120 * 100))}%;background:${meta.color}"></span></div>
       <p class="pet-line muted">${line}</p>
@@ -4485,7 +4531,7 @@ function renderDen() {
   const c = ensureCompanion(), mood = compMood(), ti = compTierIdx(c.bond);
   const cr = charRank(), nm = (State.me && State.me.name) || 'Герой';
   const pets = topSkills().slice(0, 3).map((s) => ({ s, st: petStats(s.id), traits: petTraits(s.id) }));
-  const petLayer = pets.map((p, i) => `<div class="den-pet den-pet-${i}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits)}</div>`).join('');
+  const petLayer = pets.map((p, i) => `<div class="den-pet den-pet-${i}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id)}</div>`).join('');
   const p = nestedProgress(), eP = energyPct(), eM = energyMeta(), tm = State.timer;
   const focusRow = tm
     ? `<div class="den-focus den-focus-on"><span>⏱ Фокус идёт</span><b class="den-clock">${fmtClock(timerElapsedMs())}</b><button class="btn ghost sm" data-action="goto-today">К таймеру</button></div>`

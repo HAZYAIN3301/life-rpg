@@ -987,7 +987,8 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 @keyframes pd-ear { 0%,92%,100% { transform: rotate(0) } 96% { transform: rotate(-9deg) } }
 @keyframes pd-tail { 0%,100% { transform: rotate(-7deg) } 50% { transform: rotate(9deg) } }
 @keyframes pd-blink { 0%,90%,100% { transform: scaleY(1) } 95% { transform: scaleY(.08) } }
-@media (prefers-reduced-motion: reduce) { .pet-svg .pd-body-grp, .pet-svg .pd-ear-l, .pet-svg .pd-ear-r, .pet-svg .pd-tail, .pet-svg .pd-eyes { animation: none } }
+.pet-svg .pd-wear { animation: pd-bob 3.4s ease-in-out infinite; } /* надетая экипировка качается синхронно с телом */
+@media (prefers-reduced-motion: reduce) { .pet-svg .pd-body-grp, .pet-svg .pd-ear-l, .pet-svg .pd-ear-r, .pet-svg .pd-tail, .pet-svg .pd-eyes, .pet-svg .pd-wear { animation: none } }
 .pet-name { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
 .pet-name b { font-size: 14.5px; font-weight: 800; }
 .pet-badge { font-size: 10.5px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
