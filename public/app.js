@@ -2803,6 +2803,15 @@ let tickId = null, pipWindow = null, audioCtx = null;
 function loadTimer() { try { return JSON.parse(localStorage.getItem('liferpg_timer') || 'null'); } catch { return null; } }
 function persistTimer() { if (State.timer) localStorage.setItem('liferpg_timer', JSON.stringify(State.timer)); else localStorage.removeItem('liferpg_timer'); }
 function timerElapsedMs() { const tm = State.timer; if (!tm) return 0; return tm.accumulatedMs + (tm.running ? Date.now() - tm.startedAt : 0); }
+// Банкуем накопленные минуты В ЗАДАЧУ (на сервер) — прогресс не теряется при паузе/крэше/смене устройства.
+// bankedMin = сколько уже записано; пишем только дельту (без двойного счёта). fb_mqm474sp4cbz.
+function bankTimerProgress() {
+  const tm = State.timer; if (!tm) return 0;
+  const t = questById(tm.taskId); if (!t) return 0;
+  const totalMin = Math.floor(timerElapsedMs() / 60000), add = totalMin - (tm.bankedMin || 0);
+  if (add > 0) { t.actualMin = (t.actualMin || 0) + add; tm.bankedMin = totalMin; persistTimer(); Store.save('tasks', State.tasks); }
+  return add;
+}
 function focusCfg() { return Object.assign({ pomodoro: true, workMin: 25, breakMin: 5, sound: true, notify: true }, (State.settings && State.settings.focus) || {}); }
 
 // --- колокол через Web Audio (без файлов) ---
@@ -2956,6 +2965,7 @@ function focusTick() {
   if (fi.estMs > 0 && fi.elapsed >= fi.estMs && !fi.tm.overrunNotified) {
     fi.tm.overrunNotified = true; persistTimer(); bell(true); notify('Превышено расчётное время', fi.t ? `«${fi.t.title}» дольше плана` : '');
   }
+  bankTimerProgress(); // durable-прогресс: банкуем минуты в задачу по ходу (раз в минуту), не теряем при крэше
 }
 function startTick() { stopTick(); if (!pipWindow) tickId = setInterval(focusTick, 1000); }
 function stopTick() { if (tickId) { clearInterval(tickId); tickId = null; } }
@@ -3018,17 +3028,17 @@ function closeFocusWidget() { if (pipWindow && !pipWindow.closed) { try { pipWin
 
 function startFocus(taskId) {
   if (State.timer) { if (State.timer.taskId === taskId) { if (!State.timer.running) resumeFocus(); return; } stopFocus(true, true); }
-  State.timer = { taskId, startedAt: Date.now(), accumulatedMs: 0, running: true, phase: 'work', phaseStartElapsed: 0, overrunNotified: false };
+  State.timer = { taskId, startedAt: Date.now(), accumulatedMs: 0, running: true, phase: 'work', phaseStartElapsed: 0, overrunNotified: false, bankedMin: 0 };
   persistTimer(); ensureAudio();
   if (focusCfg().notify && 'Notification' in window && Notification.permission === 'default') { try { Notification.requestPermission(); } catch {} }
   openFocusWidget(); startTick(); render();
 }
-function pauseFocus() { const tm = State.timer; if (!tm || !tm.running) return; tm.accumulatedMs += Date.now() - tm.startedAt; tm.running = false; persistTimer(); updatePill(focusInfo()); updatePip(focusInfo()); render(); }
+function pauseFocus() { const tm = State.timer; if (!tm || !tm.running) return; tm.accumulatedMs += Date.now() - tm.startedAt; tm.running = false; bankTimerProgress(); persistTimer(); updatePill(focusInfo()); updatePip(focusInfo()); render(); }
 function resumeFocus() { const tm = State.timer; if (!tm || tm.running) return; tm.startedAt = Date.now(); tm.running = true; persistTimer(); if (!pipWindow) startTick(); updatePill(focusInfo()); updatePip(focusInfo()); render(); }
 function stopFocus(log = true, skipRender = false) {
   const tm = State.timer; if (!tm) return;
-  const mins = Math.round(timerElapsedMs() / 60000), t = questById(tm.taskId);
-  if (log && t && mins > 0) { t.actualMin = (t.actualMin || 0) + mins; Store.save('tasks', State.tasks); toast(`⏱ Записано ${mins} мин в «${t.title}»`); }
+  const t = questById(tm.taskId);
+  if (log) { const added = bankTimerProgress(); if (added > 0 && t) toast(`⏱ ${fmtDur(t.actualMin)} записано в «${t.title}»`); }
   State.timer = null; persistTimer(); stopTick(); closeFocusWidget(); removePill();
   if (!skipRender) render();
 }
@@ -6020,7 +6030,13 @@ function partyHTML(p) {
   const pct = r.target ? Math.min(100, Math.round(r.total / r.target * 100)) : 0;
   const won = r.won, hp = Math.max(0, r.target - r.total), boss = bossForWeek(p.ws);
   // Кинематографичная победа — один раз за сессию на эту неделю
-  if (won && State._raidShownFor !== p.ws) { State._raidShownFor = p.ws; setTimeout(() => showRaidWin(p, boss), 220); }
+  // Победу показываем ОДИН раз за неделю (персист в localStorage; раньше флаг жил в памяти → играло каждый заход). fb_mqlz0f2htjfe
+  const _raidSeenKey = 'liferpg_raidwin_' + p.ws;
+  if (won && State._raidShownFor !== p.ws) {
+    State._raidShownFor = p.ws;
+    let seen = false; try { seen = !!localStorage.getItem(_raidSeenKey); } catch {}
+    if (!seen) { try { localStorage.setItem(_raidSeenKey, '1'); } catch {} setTimeout(() => showRaidWin(p, boss), 220); }
+  }
   if (!won) State._raidShownFor = null;
   const si = seasonInfo(p.season);
   const seasonPct = si.goal ? Math.round(si.prog / si.goal * 100) : 0;
