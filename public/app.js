@@ -5468,6 +5468,7 @@ function showGuide() {
     <button class="modal-x" data-action="close-guide">✕</button>
     <h2>📖 Как играть в Satoru</h2>
     <p class="muted">Коротко по разделам. Лучший способ понять — добавить первый квест и выполнить его.</p>
+    <button class="btn" data-action="tut-restart" style="margin:2px 0 12px">✨ Пройти интерактивное обучение с Тенью</button>
     <div class="guide-list">${secs}</div>
     <h3 style="margin:6px 0 8px">💬 Нашёл баг или есть идея?</h3>
     <form id="feedback-form" class="feedback-form">
@@ -6146,6 +6147,7 @@ function render() {
   try { if (lang() !== 'ru') translateDOM(document.body); } catch (e) { console.error('translateDOM', e); }
   try { scheduleReminders(); } catch (e) { console.error('scheduleReminders', e); }
   try { kickCompVideo(); } catch (e) { /* видео-автоплей — не критично */ }
+  try { tutorialPaint(); } catch (e) { /* гайд-оверлей — не критично */ }
 }
 // iOS: атрибут `muted` из innerHTML не всегда регистрируется и блокирует autoplay.
 // Принудительно мьютим и стартуем; если play() отклонён — остаётся poster (персонаж виден).
@@ -6451,6 +6453,68 @@ function openRewardCatalog() {
   document.body.appendChild(ov);
 }
 
+// ── Гайд «Тень ведёт тебя» (ONBOARDING-PLAN.md, Фаза 1+2) ──
+// Пошаговый туториал: спотлайт нужного элемента + пузырь Тени, продвижение по реальному действию.
+function ensureTutorial() {
+  const s = State.settings;
+  if (!s.tutorial) s.tutorial = { i: 0, active: false, done: false, skipped: false, seenDrips: [] };
+  if (!Array.isArray(s.tutorial.seenDrips)) s.tutorial.seenDrips = [];
+  return s.tutorial;
+}
+const TUTORIAL_DAY1 = [
+  { id: 'hi', say: 'Привет! Я — Тень, твой спутник. Покажу за минуту, как это работает — на деле, без занудства.', advanceOn: 'next' },
+  { id: 'capture', say: 'Сюда кидай любую мысль, идею или дело — одним касанием, чтобы не держать в голове.', target: 'input[name="text"]', advanceOn: 'next' },
+  { id: 'level', say: 'Это твой уровень. Каждое выполненное дело растит его — и он НЕ сгорает, как чёрный пояс.', target: '.xp-bar', advanceOn: 'next' },
+  { id: 'pet', say: 'А самое тёплое — загляни ко мне и погладь 🫶 Так растёт наша связь.', target: '[data-action="comp-pet"]', advanceOn: 'comp-pet' },
+  { id: 'done', say: 'Вот и всё, что нужно для старта! Остальное — привычки, цели, дерево навыков — я открою тебе постепенно, по ходу. Ты не один. ✨', advanceOn: 'next', last: true },
+];
+let _tutBound = false;
+function tutorialBindGlobals() {
+  if (_tutBound) return; _tutBound = true;
+  const repaint = () => { try { tutorialPaint(); } catch {} };
+  window.addEventListener('resize', repaint);
+  window.addEventListener('scroll', repaint, true);
+}
+function tutorialStart() { const t = ensureTutorial(); t.i = 0; t.active = true; t.done = false; t.skipped = false; Store.save('settings', State.settings); tutorialBindGlobals(); tutorialPaint(); }
+function tutorialSkip() { const t = ensureTutorial(); t.active = false; t.skipped = true; Store.save('settings', State.settings); tutorialPaint(); }
+function tutorialFinish() { const t = ensureTutorial(); t.active = false; t.done = true; Store.save('settings', State.settings); tutorialPaint(); try { sfx('achievement'); } catch {} toast('🎓 Обучение пройдено!'); }
+function tutorialNext() {
+  const t = ensureTutorial(); if (!t.active) return;
+  const cur = TUTORIAL_DAY1[t.i];
+  if (cur && cur.last) { tutorialFinish(); return; }
+  t.i++; Store.save('settings', State.settings);
+  if (t.i >= TUTORIAL_DAY1.length) { tutorialFinish(); return; }
+  try { sfx('complete'); } catch {}
+  tutorialPaint();
+}
+// Вызывается из onClick на КАЖДОЕ действие; продвигает шаг, если это его триггер.
+function tutorialAdvance(action) {
+  const t = ensureTutorial(); if (!t.active) return;
+  const cur = TUTORIAL_DAY1[t.i]; if (!cur || cur.advanceOn !== action) return;
+  setTimeout(() => tutorialNext(), 650); // дать отыграть анимации/звуку действия
+}
+function tutorialPaint() {
+  const t = ensureTutorial();
+  let ov = document.getElementById('tut-overlay');
+  if (!t.active) { if (ov) ov.remove(); return; }
+  const step = TUTORIAL_DAY1[t.i]; if (!step) { if (ov) ov.remove(); return; }
+  if (!ov) { ov = document.createElement('div'); ov.id = 'tut-overlay'; document.body.appendChild(ov); }
+  const tgt = step.target ? document.querySelector(step.target) : null, pad = step.spotPad || 8;
+  let hole;
+  if (tgt) { const r = tgt.getBoundingClientRect(); hole = `<div class="tut-hole" style="left:${Math.max(2, r.left - pad)}px;top:${Math.max(2, r.top - pad)}px;width:${r.width + pad * 2}px;height:${r.height + pad * 2}px"></div>`; }
+  else hole = `<div class="tut-dim"></div>`;
+  const total = TUTORIAL_DAY1.length, n = t.i + 1;
+  const nextBtn = step.advanceOn === 'next'
+    ? `<button class="btn sm" data-action="tut-next">${step.last ? 'Понятно ✓' : 'Дальше →'}</button>`
+    : `<span class="tut-hint">↑ сделай это, чтобы продолжить</span>`;
+  ov.innerHTML = `${hole}
+    <div class="tut-bubble">
+      <img class="tut-mascot" src="/assets/shadow/shadow_1.png" alt="" aria-hidden="true" />
+      <div class="tut-say">${esc(step.say)}</div>
+      <div class="tut-acts">${nextBtn}<button class="btn ghost sm" data-action="tut-skip">Пропустить</button></div>
+      <div class="tut-dots">${n} / ${total}</div>
+    </div>`;
+}
 function onClick(e) {
   const navBtn = e.target.closest('#nav button[data-view]');
   if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
@@ -6473,6 +6537,12 @@ function onClick(e) {
     return;
   }
   const action = el.dataset.action, id = el.dataset.id, today = todayStr();
+
+  // --- Гайд (туториал) ---
+  if (action === 'tut-next') { tutorialNext(); return; }
+  if (action === 'tut-skip') { tutorialSkip(); return; }
+  if (action === 'tut-restart') { const g = document.getElementById('guide'); if (g) g.remove(); tutorialStart(); return; }
+  try { tutorialAdvance(action); } catch {} // продвигает шаг гайда, если это его триггер (действие выполнится ниже)
 
   // --- Auth actions ---
   if (action === 'select-profile') {
@@ -6515,7 +6585,8 @@ function onClick(e) {
     });
     const settings = Object.assign(structuredClone(DEFAULT_SETTINGS), { skills });
     Store.save('settings', settings);
-    State.phase = 'app'; initApp(); return;
+    State.phase = 'app'; initApp(); // initApp на первом запуске сам запустит гайд «Тень ведёт» (см. конец initApp)
+    return;
   }
 
   // --- Лутбоксы / Pro / Paywall ---
@@ -7217,7 +7288,10 @@ async function initApp() {
   State.phase = 'app';
   render();
   publishLeaderboard();
-  if (!localStorage.getItem('liferpg_seen_guide')) { localStorage.setItem('liferpg_seen_guide', '1'); setTimeout(showGuide, 500); }
+  // Первый запуск на устройстве → игровой гайд «Тень ведёт» (не статичная стена текста).
+  if (!localStorage.getItem('liferpg_seen_guide') && !ensureTutorial().done && !ensureTutorial().skipped) {
+    localStorage.setItem('liferpg_seen_guide', '1'); setTimeout(() => { try { tutorialStart(); } catch {} }, 600);
+  }
 }
 
 // Публикует публичный снапшот прогресса в лидерборд (приватные данные не уходят)
