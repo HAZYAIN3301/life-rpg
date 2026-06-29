@@ -1787,7 +1787,34 @@ function levelInfo(totalXp, base, growth) {
   while (remaining >= need) { remaining -= need; level++; need = needForLevel(level, base, growth); }
   return { level, into: remaining, need, pct: need ? Math.round((remaining / need) * 100) : 0 };
 }
-function skillPerkBonus(id) { const t = State.tree && State.tree[id]; if (!t) return 0; return t.nodes.filter((n) => n.unlocked).reduce((s, n) => s + (n.perkXpPct || 0), 0); }
+// ── Движок перков древа (SKILLTREE-PLAN.md, Фаза 1) ──
+// Узел даёт perks:[{kind,val}]. Legacy perkXpPct мигрируется в {kind:'xpPct'}. Капы — анти-имба.
+const PERK_KINDS = {
+  xpPct:        { icon: '✨', label: 'опыт',     fmt: (v) => `+${v}% XP в сфере`,            cap: 40 },
+  goldPct:      { icon: '🪙', label: 'золото',   fmt: (v) => `+${v}% золота в сфере`,          cap: 30 },
+  lootLuck:     { icon: '🎲', label: 'удача',    fmt: (v) => `+${v}% к буст-шансу сундука`,    cap: 30 },
+  energyBack:   { icon: '🔋', label: 'энергия',  fmt: (v) => `+${v} 🔋 за квест в сфере`,       cap: 10 },
+  streakShield: { icon: '🛡', label: 'щит серии', fmt: (v) => `+${v} спасени${v === 1 ? 'е' : 'я'} серии`, cap: 3 },
+  petBoost:     { icon: '🐾', label: 'питомец',  fmt: (v) => `питомец сферы сытнее на ${v}%`,   cap: 60 },
+  bond:         { icon: '💜', label: 'связь',    fmt: (v) => `+${v} к связи со спутником`,      cap: 20 },
+  title:        { icon: '🏅', label: 'звание',   fmt: () => `звание разблокировано`,            cap: null },
+};
+function nodePerks(n) {
+  if (Array.isArray(n.perks) && n.perks.length) return n.perks;
+  if (n.perkXpPct) return [{ kind: 'xpPct', val: n.perkXpPct }]; // legacy
+  return [];
+}
+// Суммарные перки одной сферы (только взятые узлы), с капами per-kind.
+function skillPerks(id) {
+  const t = State.tree && State.tree[id], out = {};
+  if (!t) return out;
+  for (const n of t.nodes) if (n.unlocked) for (const p of nodePerks(n)) out[p.kind] = (out[p.kind] || 0) + (p.val || 0);
+  for (const k in out) { const cap = PERK_KINDS[k] && PERK_KINDS[k].cap; if (cap != null) out[k] = Math.min(out[k], cap); }
+  return out;
+}
+// Глобальная сумма перка по всем сферам (для скоупа «вся игра»: щит серии, удача).
+function globalPerk(kind) { let s = 0; for (const id in (State.tree || {})) s += skillPerks(id)[kind] || 0; return s; }
+function skillPerkBonus(id) { return skillPerks(id).xpPct || 0; } // legacy-обёртка: только XP%
 function lootBoostPct() { const b = State.lootbox && State.lootbox.boost; if (b && new Date(b.until).getTime() > Date.now()) return b.pct || 0; return 0; }
 
 // ── Хайп: временный XP-бафф за ДОБРОВОЛЬНЫЙ выбор сложных квестов (идея 26).
@@ -1878,7 +1905,7 @@ function itemXp(it) {
 function itemGold(it) {
   const g = State.settings.gold || DEFAULT_SETTINGS.gold, mult = State.settings.xp.difficulty[it.difficulty] ?? 1;
   const base = Math.round((Number(it.estimateMin) || 0) * g.perMinute * mult) + g.completionBonus;
-  return Math.max(1, Math.round(base * (1 + gearBonus().goldPct / 100))); // амулет бустит золото
+  return Math.max(1, Math.round(base * (1 + (gearBonus().goldPct + (skillPerks(it.skillId).goldPct || 0)) / 100))); // амулет + перк древа бустят золото
 }
 
 // ---- Единый поток событий (квесты + привычки + цели) ----
@@ -4130,6 +4157,7 @@ function petStats(sphereId) {
   }
   if (!lastFed) for (const d in byDay) if (!lastFed || d > lastFed) lastFed = d;
   const daysSince = lastFed ? daysBetween(lastFed, today) : 99;
+  sat *= (1 + (skillPerks(sphereId).petBoost || 0) / 100); // перк древа: питомец сытнее
   const pct = Math.min(120, Math.round(sat));
   const state = pct < 18 ? 'hungry' : pct <= 85 ? 'thriving' : pct <= 110 ? 'full' : 'overfed';
   return { pct, state, daysSince, lastFed };
