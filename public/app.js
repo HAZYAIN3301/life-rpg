@@ -4341,21 +4341,78 @@ function petAccessorySVG(icon) {
   }
 }
 // Paper-doll питомец: один SVG по слоям (класс-анимации, recolor цветом сферы, экипировка-аксессуар запечена). PET-PIPELINE.md
+// ── Виды питомцев (PETS-EQUIPMENT-PLAN.md, Фаза 1) ──
+// Каждый вид рисует свои части (хвост/уши/тело/животик/лапы/доп) цветом сферы.
+// Анимация — через классы pd-tail/pd-ear-l/-r/pd-body-grp (см. styles.css). slots = якоря экипировки (Фаза 2).
+const PET_DARK = 'rgba(0,0,0,0.16)';
+const PET_SPECIES = {
+  round: { // дружелюбный зверёк (универсальный)
+    slots: { head: [60, 26], neck: [60, 116], back: [93, 66] },
+    draw: (c) => ({
+      tail: `<path class="pd-tail" d="M90 92 q22 -4 19 -23 q-2 14 -17 15 q9 -10 4 -19 q-3 16 -14 19 z" fill="${c}"/>`,
+      ears: `<path class="pd-ear-l" d="M36 62 q-9 -24 10 -31 q4 18 -1 31 z" fill="${c}"/><path class="pd-ear-r" d="M84 62 q9 -24 -10 -31 q-4 18 1 31 z" fill="${c}"/>`,
+      feet: `<ellipse cx="46" cy="115" rx="10" ry="7.5" fill="${c}"/><ellipse cx="74" cy="115" rx="10" ry="7.5" fill="${c}"/>`,
+      body: `<ellipse cx="60" cy="82" rx="37" ry="34" fill="${c}" stroke="${PET_DARK}" stroke-width="1.2"/>`,
+      belly: `<ellipse cx="60" cy="92" rx="23" ry="21" fill="#fff" opacity="0.16"/>`, extra: '',
+    }),
+  },
+  sturdy: { // крепыш (спорт/работа) — коренастый, мелкие ушки
+    slots: { head: [60, 30], neck: [60, 116], back: [94, 72] },
+    draw: (c) => ({
+      tail: `<path class="pd-tail" d="M88 102 q15 1 17 -10 q-2 8 -15 6 z" fill="${c}"/>`,
+      ears: `<path class="pd-ear-l" d="M45 52 q-6 -16 7 -18 q2 11 -3 18 z" fill="${c}"/><path class="pd-ear-r" d="M75 52 q6 -16 -7 -18 q-2 11 3 18 z" fill="${c}"/>`,
+      feet: `<ellipse cx="44" cy="117" rx="12" ry="8" fill="${c}"/><ellipse cx="76" cy="117" rx="12" ry="8" fill="${c}"/>`,
+      body: `<path d="M28 64 q0 -26 32 -26 q32 0 32 26 l0 28 q0 24 -32 24 q-32 0 -32 -24 z" fill="${c}" stroke="${PET_DARK}" stroke-width="1.2"/>`,
+      belly: `<ellipse cx="60" cy="94" rx="24" ry="19" fill="#fff" opacity="0.15"/>`, extra: '',
+    }),
+  },
+  fluffy: { // пушистик (творчество/социал) — большие уши, пышный хвост
+    slots: { head: [60, 22], neck: [60, 118], back: [96, 66] },
+    draw: (c) => ({
+      tail: `<path class="pd-tail" d="M88 96 q31 -2 26 -31 q-3 20 -23 19 q15 -12 8 -27 q-5 23 -20 27 z" fill="${c}"/>`,
+      ears: `<path class="pd-ear-l" d="M34 66 q-17 -29 7 -39 q8 23 2 39 z" fill="${c}"/><path class="pd-ear-r" d="M86 66 q17 -29 -7 -39 q-8 23 -2 39 z" fill="${c}"/>`,
+      feet: `<ellipse cx="48" cy="116" rx="9" ry="7" fill="${c}"/><ellipse cx="72" cy="116" rx="9" ry="7" fill="${c}"/>`,
+      body: `<ellipse cx="60" cy="84" rx="38" ry="35" fill="${c}" stroke="${PET_DARK}" stroke-width="1.2"/>`,
+      belly: `<ellipse cx="60" cy="93" rx="24" ry="22" fill="#fff" opacity="0.16"/>`,
+      extra: `<circle cx="34" cy="74" r="6" fill="${c}"/><circle cx="86" cy="74" r="6" fill="${c}"/><circle cx="40" cy="58" r="5" fill="${c}"/><circle cx="80" cy="58" r="5" fill="${c}"/>`,
+    }),
+  },
+  slime: { // слайм (код/быт) — капля, без ушей и хвоста
+    slots: { head: [60, 44], neck: [60, 116], back: [90, 78] },
+    draw: (c) => ({
+      tail: '', ears: '',
+      feet: '',
+      body: `<path d="M60 46 q27 6 31 41 q4 35 -31 37 q-35 -2 -31 -37 q4 -35 31 -41 z" fill="${c}" stroke="${PET_DARK}" stroke-width="1.2"/>`,
+      belly: `<ellipse cx="60" cy="94" rx="23" ry="20" fill="#fff" opacity="0.15"/>`,
+      extra: `<ellipse cx="48" cy="64" rx="9" ry="6" fill="#fff" opacity="0.3"/>`,
+    }),
+  },
+  bird: { // птичка (язык/здоровье) — яйцо-тело, крылья вместо ушей, клюв
+    slots: { head: [60, 30], neck: [60, 114], back: [88, 78] },
+    draw: (c) => ({
+      tail: `<path class="pd-tail" d="M86 100 q17 3 21 -6 q-4 11 -17 13 z" fill="${c}"/>`,
+      ears: `<path class="pd-ear-l" d="M32 80 q-19 -7 -16 15 q13 -2 19 -9 z" fill="${c}"/><path class="pd-ear-r" d="M88 80 q19 -7 16 15 q-13 -2 -19 -9 z" fill="${c}"/>`,
+      feet: `<path d="M52 116 l0 8 M48 124 h8" stroke="${c}" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M68 116 l0 8 M64 124 h8" stroke="${c}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
+      body: `<ellipse cx="60" cy="84" rx="32" ry="37" fill="${c}" stroke="${PET_DARK}" stroke-width="1.2"/>`,
+      belly: `<ellipse cx="60" cy="93" rx="20" ry="22" fill="#fff" opacity="0.16"/>`,
+      extra: `<path d="M55 89 l5 7 l5 -7 z" fill="#ffb24b"/>`,
+    }),
+  },
+};
+function archToSpecies(arc) {
+  return ({ '🏋': 'sturdy', '💼': 'sturdy', '🎨': 'fluffy', '💬': 'fluffy', '💻': 'slime', '🧹': 'slime', '🗣': 'bird', '🧘': 'bird' })[arc] || 'round';
+}
 function petSVG(color, state, traits) {
   const r = state === 'overfed' ? 1.18 : state === 'full' ? 1.08 : state === 'hungry' ? 0.86 : 1.0;
   const dom = (traits[0] && traits[0].icon) || '⭐';
-  const dark = 'rgba(0,0,0,0.16)';
+  const sp = PET_SPECIES[archToSpecies(dom)] || PET_SPECIES.round, p = sp.draw(color);
   return `<svg class="pet-svg" viewBox="0 0 120 132" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <ellipse cx="60" cy="123" rx="32" ry="7" fill="#000" opacity="0.2"/>
-    <path class="pd-tail" d="M90 92 q22 -4 19 -23 q-2 14 -17 15 q9 -10 4 -19 q-3 16 -14 19 z" fill="${color}"/>
+    ${p.tail}
     <g class="pd-body-grp" transform="translate(60,80) scale(${r.toFixed(2)},${(0.5 + r * 0.5).toFixed(2)}) translate(-60,-80)">
-      <ellipse cx="46" cy="115" rx="10" ry="7.5" fill="${color}"/>
-      <ellipse cx="74" cy="115" rx="10" ry="7.5" fill="${color}"/>
-      <path class="pd-ear-l" d="M36 62 q-9 -24 10 -31 q4 18 -1 31 z" fill="${color}"/>
-      <path class="pd-ear-r" d="M84 62 q9 -24 -10 -31 q-4 18 1 31 z" fill="${color}"/>
-      <ellipse cx="60" cy="82" rx="37" ry="34" fill="${color}" stroke="${dark}" stroke-width="1.2"/>
-      <ellipse cx="60" cy="92" rx="23" ry="21" fill="#fff" opacity="0.16"/>
+      ${p.feet}${p.ears}${p.body}${p.belly}
       ${petFaceMarkup(PET_STATE[state].face)}
+      ${p.extra}
       ${petAccessorySVG(dom)}
     </g>
   </svg>`;
