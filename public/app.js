@@ -1297,7 +1297,14 @@ const Store = {
       const r = await fetch(`/api/data/${name}`);
       if (r.status === 404) return structuredClone(fallback);
       if (!r.ok) throw new Error('load ' + r.status);
-      return await r.json();
+      const v = await r.json();
+      // Защита от краша рендера: null/undefined или несовпадение типа с дефолтом → дефолт.
+      // Без неё поле, сохранённое как null (или массив вместо объекта), даёт Object.entries(null)/null.filter →
+      // падал весь раздел (Календарь/Статистика у Виолы). Тип сверяем с fallback.
+      if (v == null) return structuredClone(fallback);
+      if (Array.isArray(fallback) && !Array.isArray(v)) return structuredClone(fallback);
+      if (fallback && typeof fallback === 'object' && !Array.isArray(fallback) && (typeof v !== 'object' || Array.isArray(v))) return structuredClone(fallback);
+      return v;
     } catch (e) {
       console.error('load', name, e);
       return structuredClone(fallback);
@@ -2660,18 +2667,22 @@ function ensureEnergy() {
   if (!s.energy) s.energy = { day: todayStr(), cur: 100, max: 100, loadToday: 0, hitZero: false, tickAt: Date.now() };
   const e = s.energy, today = todayStr(), now = Date.now();
   if (!e.tickAt) e.tickAt = now;
+  let dirty = false;
   // Пассивное восстановление по реальному времени — главный механизм отдыха (сон, паузы)
   const elapsedH = (now - e.tickAt) / 3600000;
-  if (elapsedH > 0) { e.cur = Math.min(e.max, e.cur + ENERGY.perHour * elapsedH); e.tickAt = now; }
+  if (elapsedH > 0) { e.cur = Math.min(e.max, e.cur + ENERGY.perHour * elapsedH); e.tickAt = now; if (elapsedH > 0.05) dirty = true; }
   if (e.day !== today) {
     // Суперкомпенсация по вчерашнему дню: была нагрузка и не ушёл в ноль → ёмкость растёт; загнал в ноль → падает.
     if (e.day) {
       if (e.loadToday >= ENERGY.loadForGrowth && !e.hitZero) e.max = Math.min(ENERGY.maxCeil, e.max + ENERGY.grow);
       else if (e.hitZero) e.max = Math.max(ENERGY.maxFloor, e.max - ENERGY.shrink);
     }
-    e.loadToday = 0; e.hitZero = false; e.day = today; e.cur = Math.min(e.max, e.cur);
+    e.loadToday = 0; e.hitZero = false; e.day = today; e.cur = Math.min(e.max, e.cur); dirty = true;
   }
   e.cur = Math.round(e.cur);
+  // Персист свежих tickAt/cur/max (раз в ~3 мин регена или на дневной сброс), чтобы шкала синкалась между устройствами
+  // (раньше регенерация жила только в памяти → device B грузил старое значение). Store.save дебаунсится.
+  if (dirty && State.phase === 'app') { try { Store.save('settings', State.settings); } catch {} }
   return e;
 }
 function energyPct() { const e = ensureEnergy(); return e.max ? Math.round(e.cur / e.max * 100) : 0; }
@@ -3345,7 +3356,7 @@ function renderCalendarView() {
   const WD = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
   const MON = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
   const d = parseDate(date);
-  const dayTasks = State.tasks.filter((t) => t.date === date);
+  const dayTasks = (State.tasks || []).filter((t) => t.date === date);
   const scheduled = dayTasks.filter((t) => t.startTime);
   const unscheduled = dayTasks.filter((t) => !t.startTime && !t.done);
   // полоса недели вокруг выбранной даты (с понедельника)
@@ -5741,9 +5752,9 @@ function barChartSVG(data, showEvery = 1) {
 function renderStats() {
   ensureAiKeys();
   const since = addDays(todayStr(), -13);
-  const planned14 = State.tasks.filter((t) => t.date >= since && t.date <= todayStr());
+  const planned14 = (State.tasks || []).filter((t) => t.date >= since && t.date <= todayStr());
   const rate = planned14.length ? Math.round((planned14.filter((t) => t.done).length / planned14.length) * 100) : 0;
-  const reflections = Object.entries(State.days).filter(([, v]) => v.reflection && v.reflection.trim()).sort((a, b) => (a[0] < b[0] ? 1 : -1)).slice(0, 7).map(([d, v]) => `<li><span class="date">${d}</span><br>${esc(v.reflection)}</li>`).join('');
+  const reflections = Object.entries(State.days || {}).filter(([, v]) => v && v.reflection && v.reflection.trim()).sort((a, b) => (a[0] < b[0] ? 1 : -1)).slice(0, 7).map(([d, v]) => `<li><span class="date">${d}</span><br>${esc(v.reflection)}</li>`).join('');
   const cr = charRank(), bal = balanceIndex();
   const balColor = bal.index >= 70 ? '#5fbf7a' : bal.index >= 40 ? '#e0a23e' : '#e0526a';
   const rankRow = (s, sub) => {
@@ -6146,8 +6157,15 @@ function viewErrorCard(view, e) {
     ${admin ? `<pre class="err-trace">${esc(String((e && e.stack) || e)).slice(0, 700)}</pre>` : ''}
   </div>`;
 }
+// Гарантирует, что core-поля состояния — нужного типа (массив/объект), а не null/мусор.
+// Корневая защита от краша вида (Календарь/Статистика у Виолы): любой хелпер итерирует безопасно.
+function normalizeCoreState() {
+  for (const k of ['tasks', 'habits', 'goals', 'purchases', 'rewards', 'inbox', 'antihabits']) if (!Array.isArray(State[k])) State[k] = [];
+  for (const k of ['days', 'habitlog', 'tree', 'achievements', 'weeks']) if (!State[k] || typeof State[k] !== 'object' || Array.isArray(State[k])) State[k] = {};
+}
 function render() {
   if (State.phase !== 'app') { showAuthScreen(); return; }
+  try { normalizeCoreState(); } catch (e) { console.error('normalizeCoreState', e); }
   try { applyTheme(); } catch (e) { console.error('applyTheme', e); }
   // Восстановить app shell если auth-экран его перезаписал
   if (!document.getElementById('main')) document.getElementById('app').innerHTML = APP_SHELL;

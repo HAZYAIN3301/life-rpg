@@ -1111,7 +1111,15 @@ const server = http.createServer(async (req, res) => {
     const file = path.join(DATA_DIR, 'feedback.json');
     let list = []; try { list = JSON.parse(fs.readFileSync(file, 'utf8')); } catch {}
     list.push({ id, at: new Date().toISOString(), userId: uid, kind: String(fb.kind || 'other').slice(0, 20), text, attachments });
-    try { fs.writeFileSync(file, JSON.stringify(list, null, 2)); } catch (e) { return sendJson(res, 500, { error: 'save failed' }); }
+    try {
+      const data = JSON.stringify(list, null, 2);
+      // Атомарная запись (temp → rename): сбой при записи не оставит обрезанный/пустой файл.
+      const tmp = file + '.tmp'; fs.writeFileSync(tmp, data); fs.renameSync(tmp, file);
+      // Ежедневный бэкап (раз в день): репорты Альберта — это и идеи, терять нельзя; удаление только по команде.
+      try { const bdir = path.join(DATA_DIR, 'feedback-backups'); fs.mkdirSync(bdir, { recursive: true });
+        const bfile = path.join(bdir, `feedback-${new Date().toISOString().slice(0, 10)}.json`);
+        if (!fs.existsSync(bfile)) fs.writeFileSync(bfile, data); } catch {}
+    } catch (e) { return sendJson(res, 500, { error: 'save failed' }); }
     createGithubIssue(list[list.length - 1]).catch(() => {}); // fire-and-forget
     return sendJson(res, 200, { ok: true, attachments: attachments.length });
   }
