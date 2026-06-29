@@ -6148,6 +6148,7 @@ function render() {
   try { scheduleReminders(); } catch (e) { console.error('scheduleReminders', e); }
   try { kickCompVideo(); } catch (e) { /* видео-автоплей — не критично */ }
   try { tutorialPaint(); } catch (e) { /* гайд-оверлей — не критично */ }
+  try { dripCheck(); } catch (e) { /* капельница гайда — не критично */ }
 }
 // iOS: атрибут `muted` из innerHTML не всегда регистрируется и блокирует autoplay.
 // Принудительно мьютим и стартуем; если play() отклонён — остаётся poster (персонаж виден).
@@ -6457,10 +6458,12 @@ function openRewardCatalog() {
 // Пошаговый туториал: спотлайт нужного элемента + пузырь Тени, продвижение по реальному действию.
 function ensureTutorial() {
   const s = State.settings;
-  if (!s.tutorial) s.tutorial = { i: 0, active: false, done: false, skipped: false, seenDrips: [] };
+  if (!s.tutorial) s.tutorial = { i: 0, active: false, done: false, skipped: false, seenDrips: [], mode: 'day1', dripId: null };
   if (!Array.isArray(s.tutorial.seenDrips)) s.tutorial.seenDrips = [];
+  if (!s.tutorial.mode) s.tutorial.mode = 'day1';
   return s.tutorial;
 }
+function tutDoneOrSkipped() { const t = ensureTutorial(); return t.done || t.skipped; }
 const TUTORIAL_DAY1 = [
   { id: 'hi', say: 'Привет! Я — Тень, твой спутник. Покажу за минуту, как это работает — на деле, без занудства.', advanceOn: 'next' },
   { id: 'capture', say: 'Сюда кидай любую мысль, идею или дело — одним касанием, чтобы не держать в голове.', target: 'input[name="text"]', advanceOn: 'next' },
@@ -6468,6 +6471,34 @@ const TUTORIAL_DAY1 = [
   { id: 'pet', say: 'А самое тёплое — загляни ко мне и погладь 🫶 Так растёт наша связь.', target: '[data-action="comp-pet"]', advanceOn: 'comp-pet' },
   { id: 'done', say: 'Вот и всё, что нужно для старта! Остальное — привычки, цели, дерево навыков — я открою тебе постепенно, по ходу. Ты не один. ✨', advanceOn: 'next', last: true },
 ];
+// Капельница (Фаза 3): Тень открывает разделы по одному в следующие заходы — нежный пузырь (без затемнения), once.
+const DRIPS = [
+  { id: 'd_system', say: 'Психанём? В Настройки → Оформление есть режим «Система» — весь интерфейс станет как из Solo Leveling. Чисто по желанию.', disc: 'teaser:system', when: () => charLevel() >= 2 },
+  { id: 'd_habits', say: 'Ты входишь во вкус 👏 Привычки — повторяющиеся дела, что строят тебя по кирпичику. Загляни в раздел «Привычки».', view: 'habits', when: () => tutDoneOrSkipped() && doneTasks().length >= 2 },
+  { id: 'd_den', say: 'Открылось Логово 🏠 — наша комната, где живём мы с питомцами. Зайди, тут уютно.', view: 'den', disc: 'den', when: () => charLevel() >= ((typeof navUnlockLevel === 'function') ? navUnlockLevel() : 3) },
+  { id: 'd_tree', say: 'У тебя есть очки навыков! В «Дереве» сферы открываются пассивные бонусы. Глянь, что доступно.', view: 'tree', when: () => charLevel() >= 3 && topSkills().some((s) => { try { return treePointsAvailable(s.id) > 0; } catch { return false; } }) },
+];
+let _dripShownThisLoad = false;
+function dripCheck() {
+  const t = ensureTutorial();
+  if (t.active || _dripShownThisLoad || State.view !== 'today') return;
+  for (const d of DRIPS) {
+    if (t.seenDrips.includes(d.id)) continue;
+    let ok = false; try { ok = !!d.when(); } catch {}
+    if (ok) { dripStart(d); return; }
+  }
+}
+function dripStart(d) {
+  const t = ensureTutorial(); t.active = true; t.mode = 'drip'; t.dripId = d.id; _dripShownThisLoad = true;
+  tutorialBindGlobals(); tutorialPaint();
+}
+function dripSeen(open) {
+  const t = ensureTutorial(), d = DRIPS.find((x) => x.id === t.dripId);
+  if (d) { if (!t.seenDrips.includes(d.id)) t.seenDrips.push(d.id); if (d.disc) { try { markDiscovered(d.disc); } catch {} } }
+  t.active = false; t.mode = 'day1'; const view = open && d && d.view; t.dripId = null;
+  Store.save('settings', State.settings);
+  if (view) { State.view = view; try { markDiscovered(view); } catch {} render(); } else tutorialPaint();
+}
 let _tutBound = false;
 function tutorialBindGlobals() {
   if (_tutBound) return; _tutBound = true;
@@ -6475,7 +6506,7 @@ function tutorialBindGlobals() {
   window.addEventListener('resize', repaint);
   window.addEventListener('scroll', repaint, true);
 }
-function tutorialStart() { const t = ensureTutorial(); t.i = 0; t.active = true; t.done = false; t.skipped = false; Store.save('settings', State.settings); tutorialBindGlobals(); tutorialPaint(); }
+function tutorialStart() { const t = ensureTutorial(); t.i = 0; t.active = true; t.mode = 'day1'; t.done = false; t.skipped = false; Store.save('settings', State.settings); tutorialBindGlobals(); tutorialPaint(); }
 function tutorialSkip() { const t = ensureTutorial(); t.active = false; t.skipped = true; Store.save('settings', State.settings); tutorialPaint(); }
 function tutorialFinish() { const t = ensureTutorial(); t.active = false; t.done = true; Store.save('settings', State.settings); tutorialPaint(); try { sfx('achievement'); } catch {} toast('🎓 Обучение пройдено!'); }
 function tutorialNext() {
@@ -6497,8 +6528,19 @@ function tutorialPaint() {
   const t = ensureTutorial();
   let ov = document.getElementById('tut-overlay');
   if (!t.active) { if (ov) ov.remove(); return; }
-  const step = TUTORIAL_DAY1[t.i]; if (!step) { if (ov) ov.remove(); return; }
   if (!ov) { ov = document.createElement('div'); ov.id = 'tut-overlay'; document.body.appendChild(ov); }
+  // drip-режим: нежный пузырь Тени без затемнения (нудж, не блокирует)
+  if (t.mode === 'drip') {
+    const d = DRIPS.find((x) => x.id === t.dripId); if (!d) { ov.remove(); return; }
+    const acts = d.view
+      ? `<button class="btn sm" data-action="drip-open">Открыть →</button><button class="btn ghost sm" data-action="drip-dismiss">Позже</button>`
+      : `<button class="btn sm" data-action="drip-dismiss">Понятно ✓</button>`;
+    ov.innerHTML = `<div class="tut-bubble tut-drip">
+      <img class="tut-mascot" src="/assets/shadow/shadow_1.png" alt="" aria-hidden="true" />
+      <div class="tut-say">${esc(d.say)}</div><div class="tut-acts">${acts}</div></div>`;
+    return;
+  }
+  const step = TUTORIAL_DAY1[t.i]; if (!step) { ov.remove(); return; }
   const tgt = step.target ? document.querySelector(step.target) : null, pad = step.spotPad || 8;
   let hole;
   if (tgt) { const r = tgt.getBoundingClientRect(); hole = `<div class="tut-hole" style="left:${Math.max(2, r.left - pad)}px;top:${Math.max(2, r.top - pad)}px;width:${r.width + pad * 2}px;height:${r.height + pad * 2}px"></div>`; }
@@ -6542,6 +6584,8 @@ function onClick(e) {
   if (action === 'tut-next') { tutorialNext(); return; }
   if (action === 'tut-skip') { tutorialSkip(); return; }
   if (action === 'tut-restart') { const g = document.getElementById('guide'); if (g) g.remove(); tutorialStart(); return; }
+  if (action === 'drip-dismiss') { dripSeen(false); return; }
+  if (action === 'drip-open') { dripSeen(true); return; }
   try { tutorialAdvance(action); } catch {} // продвигает шаг гайда, если это его триггер (действие выполнится ниже)
 
   // --- Auth actions ---

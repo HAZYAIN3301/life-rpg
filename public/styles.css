@@ -1673,4 +1673,6 @@ html[data-system="on"] .lvlup-overlay { background: rgba(0,8,20,.82); }
 .tut-hint { font-size: 12px; color: var(--accent); font-weight: 700; }
 .tut-dots { position: absolute; top: 10px; right: 14px; font-size: 11px; color: var(--muted); font-weight: 700; }
 @media (max-width: 560px) { .tut-bubble { bottom: 84px; } } /* над нижней навигацией */
-@media (prefers-reduced-motion: reduce) { .tut-hole { transition: none; } }
+.tut-drip { animation: tut-rise .35s ease; }
+@keyframes tut-rise { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .tut-hole { transition: none; } .tut-drip { animation: none; } }
