@@ -1793,7 +1793,7 @@ const PERK_KINDS = {
   xpPct:        { icon: '✨', label: 'опыт',     fmt: (v) => `+${v}% XP в сфере`,            cap: 40 },
   goldPct:      { icon: '🪙', label: 'золото',   fmt: (v) => `+${v}% золота в сфере`,          cap: 30 },
   lootLuck:     { icon: '🎲', label: 'удача',    fmt: (v) => `+${v}% к буст-шансу сундука`,    cap: 30 },
-  energyBack:   { icon: '🔋', label: 'энергия',  fmt: (v) => `+${v} 🔋 за квест в сфере`,       cap: 10 },
+  energyBack:   { icon: '🔋', label: 'энергия',  fmt: (v) => `+${v} энергии за квест`,          cap: 10 },
   streakShield: { icon: '🛡', label: 'щит серии', fmt: (v) => `+${v} спасени${v === 1 ? 'е' : 'я'} серии`, cap: 3 },
   petBoost:     { icon: '🐾', label: 'питомец',  fmt: (v) => `питомец сферы сытнее на ${v}%`,   cap: 60 },
   bond:         { icon: '💜', label: 'связь',    fmt: (v) => `+${v} к связи со спутником`,      cap: 20 },
@@ -4645,30 +4645,52 @@ function treeNodePanel(id, t) {
     </div>
   </div>`;
 }
+// Компактный чип перка на узле (иконка + значение).
+function perkChip(p) {
+  const k = PERK_KINDS[p.kind]; if (!k) return '';
+  const pct = p.kind === 'xpPct' || p.kind === 'goldPct' || p.kind === 'lootLuck' || p.kind === 'petBoost';
+  const val = p.kind === 'title' ? '' : ' +' + p.val + (pct ? '%' : '');
+  return `<span class="tn-perk" title="${esc(k.fmt(p.val))}">${k.icon}${val}</span>`;
+}
+// Панель активных пассивок сферы (суммарно по взятым узлам).
+function skillActivePerks(id) {
+  const sp = skillPerks(id), keys = Object.keys(sp);
+  if (!keys.length) return '<span class="muted">пока ничего не открыто — бери узлы ниже</span>';
+  return keys.map((k) => `<span class="perk-active">${PERK_KINDS[k].icon} ${PERK_KINDS[k].fmt(sp[k])}</span>`).join('');
+}
 function renderTree() {
   if (!State.treeSkill || !State.tree[State.treeSkill]) State.treeSkill = State.settings.skills[0] && State.settings.skills[0].id;
   const id = State.treeSkill, sk = skillById(id), t = State.tree[id];
   const tabs = State.settings.skills.map((s) => `<button class="tree-tab ${s.id === id ? 'active' : ''}" data-action="select-tree" data-skill="${s.id}" style="--c:${esc(s.color)}">${esc(skillLabel(s.id))} <span class="muted">ур.${skillLevelOf(s.id)}</span></button>`).join('');
   if (!t) return `<div class="card">${tabs}</div>`;
-  const edit = State.treeEdit, avail = treePointsAvailable(id), { width, height } = treeBounds(t);
+  const edit = State.treeEdit, avail = treePointsAvailable(id), earned = treePointsEarned(id), spent = treePointsSpent(id), { width, height } = treeBounds(t);
   const lines = treeLinesHTML(t, sk.color);
+  // рекомендованный следующий узел = самый дешёвый доступный
+  let recId = null;
+  if (!edit) { const ups = t.nodes.filter((n) => nodeUnlockable(id, n)).sort((a, b) => (a.cost || 0) - (b.cost || 0)); recId = ups[0] && ups[0].id; }
   const nodes = t.nodes.map((n) => {
     const st = n.unlocked ? 'unlocked' : nodeUnlockable(id, n) ? 'available' : 'locked';
-    const sel = State.treeSelNode === n.id;
-    return `<div class="tree-node ${edit ? 'editing' : st} ${sel ? 'sel' : ''}" style="left:${n.x}px;top:${n.y}px;--c:${esc(sk.color)}" data-node="${n.id}" ${edit ? '' : 'data-action="unlock-node"'}>
-      <div class="tn-title">${esc(n.title)}</div><div class="tn-desc">+${n.perkXpPct || 0}% XP</div>
-      <div class="tn-cost">${n.unlocked && !edit ? '✓ открыто' : '◈ ' + (n.cost || 0)}</div></div>`;
+    const sel = State.treeSelNode === n.id, rec = n.id === recId, cap = n.capstone ? ' capstone' : '';
+    const chips = nodePerks(n).map(perkChip).join('');
+    const costLine = edit ? '◈ ' + (n.cost || 0) : n.unlocked ? '✓ открыто' : (st === 'locked' ? '🔒 ' : '') + '◈ ' + (n.cost || 0);
+    return `<div class="tree-node ${edit ? 'editing' : st}${cap}${rec ? ' recommend' : ''} ${sel ? 'sel' : ''}" style="left:${n.x}px;top:${n.y}px;--c:${esc(sk.color)}" data-node="${n.id}" ${edit ? '' : 'data-action="unlock-node"'}>
+      ${n.capstone ? '<div class="tn-crown">👑</div>' : ''}
+      <div class="tn-title">${esc(n.title)}</div>
+      <div class="tn-perks">${chips}</div>
+      <div class="tn-cost">${costLine}</div></div>`;
   }).join('');
   const controls = `<div class="tree-ctrls">
-      <div class="tree-points">Очков: <b>${avail}</b></div>
+      <div class="tree-points" title="заработано ${earned} (= ур. сферы) · потрачено ${spent}">◈ <b>${avail}</b> очк.</div>
       ${edit ? '<button class="btn ghost sm" data-action="tree-add-node">+ Узел</button>' : ''}
       <button class="btn ${edit ? '' : 'ghost'} sm" data-action="toggle-tree-edit">${edit ? '✓ Готово' : '✏️ Редактор'}</button>
     </div>`;
+  const recNode = recId && t.nodes.find((n) => n.id === recId);
   return `
     <div class="card"><div class="tree-tabs">${tabs}</div></div>
     <div class="card">
-      <div class="tree-head"><h3 style="margin:0">Дерево: ${esc(sk.name)}</h3>${controls}</div>
-      <p class="muted" style="font-size:12px">${edit ? '✏️ Перетаскивай узлы мышкой/пальцем. Клик по узлу — настроить (название, цена, бонус, что требует). «+ Узел» добавит новый.' : 'Открытые узлы дают пассивный бонус к опыту сферы. Очко — за каждый уровень навыка.'}</p>
+      <div class="tree-head"><h3 style="margin:0">🌳 ${esc(sk.name)}</h3>${controls}</div>
+      ${edit ? '' : `<div class="tree-active"><span class="ta-label">Активные бонусы:</span> ${skillActivePerks(id)}</div>`}
+      <p class="muted" style="font-size:12px">${edit ? '✏️ Перетаскивай узлы. Клик по узлу — настроить (название, цена, бонус, требования). «+ Узел» добавит новый.' : (avail <= 0 ? 'Очки копятся за уровни сферы — делай дела, чтобы открыть узлы.' : recNode ? `Доступно ${avail} очк. · 💡 можно взять «${esc(recNode.title)}» (подсвечен).` : `Доступно ${avail} очк. — открывай узлы кликом.`)}</p>
       <div class="tree-scroll"><div class="tree ${edit ? 'edit' : ''}" style="width:${width}px;height:${height}px">
         <svg class="tree-lines" width="${width}" height="${height}">${lines}</svg>${nodes}</div></div>
       ${edit && State.treeSelNode ? treeNodePanel(id, t) : ''}
