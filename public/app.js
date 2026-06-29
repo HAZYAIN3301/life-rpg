@@ -2298,9 +2298,13 @@ function avHair(style, cx, cy, rx, ry, hair) {
 }
 function currentStreak() {
   const set = new Set(xpEvents().map((e) => e.date));
-  let streak = 0, cursor = todayStr();
-  if (!set.has(cursor)) cursor = addDays(cursor, -1);
-  while (set.has(cursor)) { streak++; cursor = addDays(cursor, -1); }
+  let streak = 0, cursor = todayStr(), freezeLeft = globalPerk('streakShield') || 0, guard = 0;
+  if (!set.has(cursor)) cursor = addDays(cursor, -1); // сегодня ещё может быть не закрыт — не штрафуем
+  while (guard++ < 1000) {
+    if (set.has(cursor)) { streak++; cursor = addDays(cursor, -1); }
+    else if (freezeLeft > 0) { freezeLeft--; cursor = addDays(cursor, -1); } // 🛡 перк древа: щит серии съедает пропуск
+    else break;
+  }
   return streak;
 }
 // Рекорд серии — никогда не сбрасывается (анти-Duolingo: потеря текущей серии не стирает достижение)
@@ -2586,7 +2590,12 @@ function equippedCosmeticsOpts() { const eq = ensureCosmetics(); return { bg: bg
 function earnedTitles() {
   const fromAch = ACHIEVEMENTS.filter((a) => State.achievements[a.id] && a.ttl).map((a) => a.ttl);
   const legacy = (State.lootbox && State.lootbox.titles) || [];
-  return [...new Set([...fromAch, ...legacy])];
+  // звания-капстоуны древа навыков (узел с перком title открыт)
+  const fromTree = [];
+  for (const id in (State.tree || {})) for (const n of (State.tree[id].nodes || [])) {
+    if (n.unlocked && n.capstone && nodePerks(n).some((p) => p.kind === 'title')) fromTree.push(n.title.replace(/^⚜\s*/, ''));
+  }
+  return [...new Set([...fromAch, ...legacy, ...fromTree])];
 }
 function equippedTitle() { const eq = ensureCosmetics(); return eq.title || (State.lootbox && State.lootbox.equipped) || null; }
 const LOOT_POOL_DEFAULT = [
@@ -2677,6 +2686,8 @@ function applyEnergy(it, desire) {
     e.loadToday += -delta;
     e.cur = Math.max(0, e.cur + delta);
     if (e.cur <= 0) e.hitZero = true;
+    const back = skillPerks(it.skillId).energyBack || 0; // перк древа: частичный возврат энергии за квест в прокачанной сфере
+    if (back) { e.cur = Math.min(e.max, e.cur + back); delta += back; }
   }
   Store.save('settings', State.settings);
   return delta;
@@ -2694,7 +2705,15 @@ function lootChestsAvailable() {
   return Math.max(0, Math.min(earned, lootTierCap()) - State.lootbox.opened);
 }
 function lootNextThreshold() { const act = todayActivityCount(); const th = LOOT_THRESHOLDS.find((x) => act < x); return th ? { need: th - act, at: th } : null; }
-function rollLoot() { const pool = buildLootPool(); const total = pool.reduce((s, x) => s + x.w, 0); let r = Math.random() * total; for (const it of pool) { if ((r -= it.w) <= 0) return it; } return pool[0]; }
+function rollLoot() {
+  const pool = buildLootPool(), luck = (globalPerk('lootLuck') || 0) / 100; // 🎲 перк древа: буст шанса премиум-дропа
+  const isPremium = (it) => it.rarity === 'epic' || it.rarity === 'legendary' || it.type === 'gear' || it.type === 'relic' || it.type === 'reward_voucher' || (it.type === 'gold' && (it.min || 0) >= 120) || (it.type === 'boost' && (it.pct || 0) >= 50);
+  const weighted = pool.map((it) => ({ it, w: it.w * (luck && isPremium(it) ? 1 + luck : 1) }));
+  const total = weighted.reduce((s, x) => s + x.w, 0);
+  let r = Math.random() * total;
+  for (const x of weighted) { if ((r -= x.w) <= 0) return x.it; }
+  return pool[0];
+}
 function lootResolve(item) {
   if (item.type === 'gold') { const amt = Math.round(item.min + Math.random() * (item.max - item.min)); const rar = amt >= 280 ? 'epic' : amt >= 120 ? 'rare' : 'common'; return { type: 'gold', amount: amt, rarity: rar, label: `+${amt} 🪙` }; }
   if (item.type === 'energy') { const amt = Math.round(item.min + Math.random() * (item.max - item.min)); return { type: 'energy', amount: amt, rarity: 'common', label: `+${amt} 🔋 энергии` }; }
@@ -6048,7 +6067,8 @@ function onSubmit(e) {
     const text = (f.text.value || '').trim().slice(0, 200);
     c.check[t] = Object.assign({}, c.check[t], { [kind]: true });
     if (text) { c.journal.push({ date: t, kind, text }); if (c.journal.length > 120) c.journal = c.journal.slice(-120); }
-    c.bond += 2; c.lastSeen = t; State._compAway = 0; State._compForm = null;
+    c.bond += 2 + Math.round((globalPerk('bond') || 0) / 6); // 💜 перк древа усиливает связь за чек-ин
+    c.lastSeen = t; State._compAway = 0; State._compForm = null;
     Store.save('settings', State.settings);
     if (typeof sfx === 'function') sfx('complete');
     toast(kind === 'm' ? '🌅 Утро отмечено вместе' : '🌙 Хорошего тебе вечера 💛');
