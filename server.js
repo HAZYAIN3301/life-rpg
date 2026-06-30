@@ -497,6 +497,16 @@ const AI_GOALS_SYS = `Ты — помощник по структурирова�
 const AI_CALIB_SYS = `Ты — калибратор уровней в приложении Satoru. Юзер описывает, чем и насколько уверенно занимается в разных сферах. Оцени уровень по шкале 1–20 (личная RPG-абстракция, НЕ глобальный рейтинг): 1 = только начал; ~5 = регулярная практика, база есть; ~10 = уверенный, могу научить других; ~15 = глубокая экспертиза; 18–20 = топовый/мировой уровень. Для школы/универа опирайся на ступень и оценки честно (отличник старшей школы ≈ 8–11, не 20).
 
 Верни СТРОГО JSON {"proposals":[{"type":"level","sphere":"<имя сферы>","level":N,"note":"<кратко, на чём основана оценка>"}]}, без markdown и текста вне JSON. Только по сферам, о которых юзер дал информацию. Переиспользуй существующие имена сфер. Язык — русский.`;
+const AI_DAYLOG_SYS = `Ты — помощник «Итог дня голосом» в Satoru. Юзер НАГОВОРИЛ или написал разговорным текстом, что делал за день. Преврати это в список ВЫПОЛНЕННЫХ за сегодня дел.
+
+Верни СТРОГО JSON {"proposals":[{"type":"done","title":"краткое название дела","sphere":"<точное имя сферы юзера или пустая строка>","minutes":N,"time":"HH:MM или пустая строка"}]}, без markdown и текста вне JSON.
+
+Правила:
+- Только ОСМЫСЛЕННЫЕ дела (учёба, тренировка, работа, готовка, уборка, встреча, чтение…). Мелочи (умывание, туалет, перекус, переписка) — ПРОПУСКАЙ, не превращай в дела.
+- minutes — оценка длительности в минутах из сказанного; если не названо — оцени реалистично.
+- sphere — подбери из СУЩЕСТВУЮЩИХ сфер юзера по точному имени; если не подходит ни одна — пустая строка.
+- time — приблизительное начало, если упомянуто («около 3 дня» → "15:00"), иначе пустая строка.
+- Не выдумывай дел, которых не было. Язык — русский. Будь краток и точен.`;
 // Каталог бэкапов одного файла данных пользователя
 function backupDir(dir, name) { return path.join(dir, '.backups', name); }
 // Снимок текущего содержимого файла ПЕРЕД перезаписью.
@@ -1264,11 +1274,11 @@ const server = http.createServer(async (req, res) => {
     let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
     const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
     const provider = AI_PROVIDERS[b.provider] ? b.provider : null;
-    const kind = b.kind === 'calibrate' ? 'calibrate' : 'goals';
+    const kind = b.kind === 'calibrate' ? 'calibrate' : b.kind === 'daylog' ? 'daylog' : 'goals';
     const text = String(b.text || '').slice(0, 20000);
     const context = String(b.context || '').slice(0, 6000);
     if (!text) return sendJson(res, 400, { error: 'empty' });
-    const sys = kind === 'calibrate' ? AI_CALIB_SYS : AI_GOALS_SYS;
+    const sys = kind === 'calibrate' ? AI_CALIB_SYS : kind === 'daylog' ? AI_DAYLOG_SYS : AI_GOALS_SYS;
     const prompt = `СФЕРЫ И ЦЕЛИ ЮЗЕРА СЕЙЧАС:\n${context || '(пусто)'}\n\nЧТО НАПИСАЛ ЮЗЕР:\n${text}\n\nВерни ТОЛЬКО JSON по схеме из системного промпта. Без markdown, без пояснений вне JSON.`;
     try {
       const r = await aiCallForUser(user, provider, sys, [{ role: 'user', content: prompt }], 3500);

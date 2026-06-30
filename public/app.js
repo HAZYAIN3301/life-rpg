@@ -3779,6 +3779,81 @@ function openAiModal(title, bodyHtml, loading) {
 // ---- Движок «Предложений»: ИИ предлагает → ты одобряешь/отклоняешь ----
 let _proposals = []; // последний полученный набор предложений
 // Контекст: текущие сферы и цели, чтобы ИИ не дублировал и переиспользовал имена
+// ── «Итог дня голосом» (Speak your day): наговорил → ИИ разложил по делам → записал выполненные ──
+let _dayRec = null, _dayActs = [];
+function dayRecSphereId(name) {
+  const all = State.settings.skills || [], fallback = (topSkills()[0] || all[0] || {}).id || null;
+  if (!name) return fallback;
+  const n = normRu(String(name).trim());
+  let m = all.find((s) => normRu(s.name) === n) || all.find((s) => normRu(s.name).includes(n) || n.includes(normRu(s.name)));
+  return (m || {}).id || fallback;
+}
+function openDayRecap() {
+  if (document.getElementById('dayrec-modal')) return;
+  const ov = document.createElement('div'); ov.id = 'dayrec-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov);
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="dayrec-close">✕</button>
+    <h2>🎤 Итог дня</h2>
+    <p class="muted" style="font-size:13px;margin:0 0 10px">Расскажи своими словами, что делал сегодня — как другу. Тень разложит по делам, сферам и времени. Мелочи (умылся, перекусил) не нужны.</p>
+    ${SR ? `<button class="btn ghost" id="dayrec-mic" data-action="dayrec-mic" style="margin-bottom:8px">🎤 Говорить</button>` : '<p class="muted" style="font-size:12px">Голос не поддерживается в этом браузере — впиши текстом.</p>'}
+    <textarea id="dayrec-text" rows="5" placeholder="Например: с утра учил биологию часа два, потом погулял минут сорок, вечером убрался дома и приготовил ужин…"></textarea>
+    <div class="propose-actions">${canUseAi()
+      ? `<button class="btn" data-action="dayrec-run">🤖 Разобрать день</button>`
+      : `<p class="muted" style="font-size:12px;margin:6px 0 0">Нужен ИИ — добавь ключ в Настройках (бесплатные Gemini/Groq есть), и Тень разберёт твой рассказ.</p>`}</div>
+    <div id="dayrec-result"></div></div>`;
+  setTimeout(() => { const t = document.getElementById('dayrec-text'); if (t) t.focus(); }, 30);
+}
+function dayRecMicToggle() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return;
+  const btn = document.getElementById('dayrec-mic'), ta = document.getElementById('dayrec-text');
+  if (_dayRec) { try { _dayRec.stop(); } catch {} _dayRec = null; if (btn) { btn.textContent = '🎤 Говорить'; btn.classList.remove('rec'); } return; }
+  const rec = new SR(); rec.lang = 'ru-RU'; rec.continuous = true; rec.interimResults = true;
+  let base = ta ? ta.value : '';
+  rec.onresult = (e) => { let fin = '', interim = ''; for (let i = e.resultIndex; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) fin += r[0].transcript; else interim += r[0].transcript; } if (fin) base = (base ? base + ' ' : '') + fin.trim(); if (ta) ta.value = (base + (interim ? ' ' + interim : '')).trim(); };
+  rec.onerror = () => {}; rec.onend = () => { if (_dayRec === rec) { _dayRec = null; if (btn) { btn.textContent = '🎤 Говорить'; btn.classList.remove('rec'); } } };
+  try { rec.start(); _dayRec = rec; if (btn) { btn.textContent = '⏹ Стоп'; btn.classList.add('rec'); } } catch {}
+}
+async function dayRecRun() {
+  const ta = document.getElementById('dayrec-text'), text = (ta && ta.value || '').trim();
+  if (!text) { toast('Расскажи или впиши, что делал'); return; }
+  if (_dayRec) dayRecMicToggle();
+  const res = document.getElementById('dayrec-result'); if (res) res.innerHTML = '<p class="muted">🤖 Разбираю…</p>';
+  try {
+    const r = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'daylog', provider: aiProvider(), text, context: proposeContext() }) });
+    const d = await r.json();
+    if (d.error && aiHandleErr(d)) { const p = document.getElementById('dayrec-modal'); if (p) p.remove(); return; }
+    if (d.error) { if (res) res.innerHTML = `<p class="muted">Не разобрал (${esc(d.error)}). Попробуй ещё раз или подробнее.</p>`; return; }
+    _dayActs = (d.proposals || []).filter((p) => p && p.title).map((p) => ({ title: String(p.title).slice(0, 120), sphere: String(p.sphere || ''), minutes: Math.max(1, Math.round(Number(p.minutes) || 15)), time: String(p.time || '') }));
+    renderDayRecCards(); track('ai:daylog');
+  } catch (e) { if (res) res.innerHTML = '<p class="muted">Ошибка сети.</p>'; }
+}
+function renderDayRecCards() {
+  const res = document.getElementById('dayrec-result'); if (!res) return;
+  if (!_dayActs.length) { res.innerHTML = '<p class="muted">Дел не распознал. Расскажи подробнее.</p>'; return; }
+  res.innerHTML = `<div class="dayrec-list">${_dayActs.map((a, i) => {
+    const sid = dayRecSphereId(a.sphere);
+    return `<label class="dayrec-card"><input type="checkbox" data-dayrec="${i}" checked />
+      <span class="drc-title">${esc(a.title)}</span>
+      <select data-dayrec-sph="${i}" class="drc-sph">${(State.settings.skills || []).map((s) => `<option value="${s.id}" ${s.id === sid ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select>
+      <input type="number" min="1" data-dayrec-min="${i}" class="drc-min" value="${a.minutes}" title="минут" />${a.time ? `<span class="drc-time">${esc(a.time)}</span>` : ''}</label>`;
+  }).join('')}</div>
+  <div class="propose-actions"><button class="btn" data-action="dayrec-apply">✓ Записать день (${_dayActs.length})</button> <span class="muted" style="font-size:12px">сними галочку, чтобы пропустить дело</span></div>`;
+}
+function dayRecApply() {
+  const today = todayStr(), now = new Date().toISOString(); let n = 0;
+  document.querySelectorAll('#dayrec-result [data-dayrec]:checked').forEach((chk) => {
+    const i = Number(chk.dataset.dayrec), a = _dayActs[i]; if (!a) return;
+    const sph = document.querySelector(`[data-dayrec-sph="${i}"]`), min = document.querySelector(`[data-dayrec-min="${i}"]`);
+    const skillId = (sph && sph.value) || dayRecSphereId(a.sphere);
+    const minutes = Math.max(1, Math.round(Number(min && min.value) || a.minutes));
+    const task = { id: uid(), title: a.title, skillId, skillIds: [skillId], estimateMin: minutes, actualMin: minutes, difficulty: 'normal', date: today, done: true, completedAt: now, startTime: a.time || null, desire: null, createdAt: now };
+    task.xpAwarded = Math.max(1, itemXp(task)); task.goldAwarded = itemGold(task);
+    State.tasks.push(task); n++;
+  });
+  if (!n) { toast('Ничего не выбрано'); return; }
+  Store.save('tasks', State.tasks); const m = document.getElementById('dayrec-modal'); if (m) m.remove();
+  toast(`✅ Записано ${n} ${plural(n, 'дело', 'дела', 'дел')} за сегодня`); checkAchievements(); render(); publishLeaderboard();
+}
 function proposeContext() {
   const spheres = State.settings.skills.map((s) => skillLabel(s.id)).join(', ');
   const goals = (State.goals || []).filter((g) => !g.archived).map((g) => g.title).slice(0, 40).join('; ');
@@ -4062,7 +4137,8 @@ function captureBar() {
       <button type="button" class="cap-btn" data-action="cap-voice" title="Голосовая заметка">🎤</button>
       <button type="button" class="cap-btn" data-action="cap-video" title="Видео-заметка">🎥</button>
       <button type="submit" class="cap-add" title="Сохранить заметку">↵</button>
-    </form></div>`;
+    </form>
+    <button class="dayrec-btn" data-action="day-recap" title="Наговори день — Тень разложит по делам">🎤 Итог дня — расскажи, что сделал</button></div>`;
 }
 // Карточка-заметка: редактируемый текст + плеер (если медиа) + действия
 function noteCard(it) {
@@ -7048,6 +7124,11 @@ function onClick(e) {
   } else if (action === 'bridge-parse') { parseBridgeResponse();
   } else if (action === 'propose-apply') { applyAcceptedProposals();
   } else if (action === 'propose-close') { const m = document.getElementById('propose-modal'); if (m) m.remove();
+  } else if (action === 'day-recap') { openDayRecap();
+  } else if (action === 'dayrec-mic') { dayRecMicToggle();
+  } else if (action === 'dayrec-run') { dayRecRun();
+  } else if (action === 'dayrec-apply') { dayRecApply();
+  } else if (action === 'dayrec-close') { if (_dayRec) { try { _dayRec.stop(); } catch {} _dayRec = null; } const m = document.getElementById('dayrec-modal'); if (m) m.remove();
   } else if (action === 'open-helper') { openHelperChat();
   } else if (action === 'helper-close') { const m = document.getElementById('helper-modal'); if (m) m.remove();
   } else if (action === 'helper-to-settings') { const m = document.getElementById('helper-modal'); if (m) m.remove(); State.view = 'settings'; render();

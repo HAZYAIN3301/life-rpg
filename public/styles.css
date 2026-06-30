@@ -1679,3 +1679,16 @@ html[data-system="on"] .lvlup-overlay { background: rgba(0,8,20,.82); }
 .tut-drip { animation: tut-rise .35s ease; }
 @keyframes tut-rise { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .tut-hole { transition: none; } .tut-drip { animation: none; } }
+
+/* «Итог дня голосом» (Speak your day) */
+.dayrec-btn { margin-top: 8px; width: 100%; background: color-mix(in srgb, var(--accent) 14%, var(--panel2)); border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line)); color: var(--text); border-radius: 10px; padding: 9px; font-size: 13px; font-weight: 600; cursor: pointer; transition: .12s; }
+.dayrec-btn:hover { border-color: var(--accent); }
+#dayrec-mic.rec { background: #e0526a; color: #fff; border-color: #e0526a; animation: pulse-rec 1.2s infinite; }
+@keyframes pulse-rec { 0%,100% { box-shadow: 0 0 0 0 rgba(224,82,106,.5) } 50% { box-shadow: 0 0 0 7px rgba(224,82,106,0) } }
+.dayrec-list { display: flex; flex-direction: column; gap: 8px; margin: 10px 0; }
+.dayrec-card { display: flex; align-items: center; gap: 8px; background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; }
+.dayrec-card .drc-title { flex: 1 1 auto; font-size: 13px; min-width: 0; }
+.dayrec-card .drc-sph { max-width: 130px; }
+.dayrec-card .drc-min { width: 62px; }
+.dayrec-card .drc-time { font-size: 11px; color: var(--muted); }
+@media (max-width: 560px) { .dayrec-card { flex-wrap: wrap; } .dayrec-card .drc-title { flex-basis: 100%; } }
