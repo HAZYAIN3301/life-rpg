@@ -5792,6 +5792,8 @@ function renderStats() {
       <div class="kpi"><div class="v">🔥 ${currentStreak()}</div><div class="l">Серия · рекорд ${longestStreak()}</div></div>
       <div class="kpi"><div class="v">${rate}%</div><div class="l">${t('Выполнение (14 дн.)')}</div></div>
     </div>
+    <div class="card wrapped-card"><div><h3 style="margin:0">📤 ${t('Твоя неделя')}</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">Красивая карточка итогов недели — поделись или сохрани PNG.</p></div>
+      <button class="btn" data-action="share-week">📤 ${t('Открыть')}</button></div>
     <div class="card ai-review-card">
       <div><h3 style="margin:0">🤖 ИИ-разбор недели</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">Правда о времени и балансе + мягкие шаги. ${aiSourceHint()}</p></div>
       <button class="btn" data-action="ai-review">Разобрать неделю</button></div>
