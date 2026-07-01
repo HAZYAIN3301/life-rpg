@@ -462,6 +462,34 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // Пути дисциплины: Доверие vs Контроль
+  'Кремень': { en: 'Flint', de: 'Feuerstein', uk: 'Кремінь', es: 'Pedernal' },
+  'Доверие': { en: 'Trust', de: 'Vertrauen', uk: 'Довіра', es: 'Confianza' },
+  'Контроль': { en: 'Control', de: 'Kontrolle', uk: 'Контроль', es: 'Control' },
+  'через доброту': { en: 'through kindness', de: 'durch Güte', uk: 'через доброту', es: 'con bondad' },
+  'через строгость': { en: 'through discipline', de: 'durch Strenge', uk: 'через суворість', es: 'con rigor' },
+  'Тёплый путь. Рост через любовь, а не вину. Серия прощает срыв, отдых — это труд, уровень не сгорает.': { en: 'The warm path. Growth through love, not guilt. Your streak forgives a slip, rest is work, your level never burns.', de: 'Der warme Weg. Wachstum durch Liebe, nicht Schuld. Deine Serie verzeiht einen Ausrutscher, Ruhe ist Arbeit, dein Level verfällt nie.', uk: 'Теплий шлях. Зростання через любов, а не провину. Серія пробачає зрив, відпочинок — це праця, рівень не згорає.', es: 'El camino cálido. Crecimiento con amor, no culpa. Tu racha perdona un desliz, el descanso es trabajo, tu nivel nunca se quema.' },
+  'Жёсткий путь. Ты сам куёшь себя. Пропуск бьёт по энергии, серия не прощает, интерфейс — как «Система». Ты выбрал это.': { en: 'The hard path. You forge yourself. A miss drains energy, the streak forgives nothing, the UI becomes "the System". You chose this.', de: 'Der harte Weg. Du schmiedest dich selbst. Ein Versäumnis kostet Energie, die Serie verzeiht nichts, das UI wird zum „System". Du hast das gewählt.', uk: 'Жорсткий шлях. Ти сам себе куєш. Пропуск б\'є по енергії, серія не пробачає, інтерфейс — як «Система». Ти обрав це.', es: 'El camino duro. Te forjas a ti mismo. Un fallo consume energía, la racha no perdona nada, la interfaz se vuelve «el Sistema». Tú lo elegiste.' },
+  'Выбери свой путь дисциплины': { en: 'Choose your path of discipline', de: 'Wähle deinen Weg der Disziplin', uk: 'Обери свій шлях дисципліни', es: 'Elige tu camino de disciplina' },
+  'Две школы. Мягкая — через доброту. Жёсткая — через строгость. Обе ведут к росту. Сменить можно в любой момент.': { en: 'Two schools. The soft one — through kindness. The hard one — through discipline. Both lead to growth. You can switch anytime.', de: 'Zwei Schulen. Die sanfte — durch Güte. Die harte — durch Strenge. Beide führen zu Wachstum. Du kannst jederzeit wechseln.', uk: 'Дві школи. М\'яка — через доброту. Жорстка — через суворість. Обидві ведуть до зростання. Змінити можна будь-коли.', es: 'Dos escuelas. La suave — con bondad. La dura — con rigor. Ambas llevan al crecimiento. Puedes cambiar cuando quieras.' },
+  'Выбрать': { en: 'Choose', de: 'Wählen', uk: 'Обрати', es: 'Elegir' },
+  'Путь выбран': { en: 'Path chosen', de: 'Weg gewählt', uk: 'Шлях обрано', es: 'Camino elegido' },
+  'с тобой': { en: 'is with you', de: 'ist bei dir', uk: 'з тобою', es: 'está contigo' },
+  'Путь дисциплины': { en: 'Path of discipline', de: 'Weg der Disziplin', uk: 'Шлях дисципліни', es: 'Camino de disciplina' },
+  'Мягкий (Доверие) или жёсткий (Контроль). Обе стороны равны по силе — различие в тоне, строгости и эстетике, а не в объёме наград. Сменить можно в любой момент.': { en: 'Soft (Trust) or hard (Control). Both sides are equal in power — they differ in tone, strictness and aesthetics, not in the amount of rewards. Switch anytime.', de: 'Sanft (Vertrauen) oder hart (Kontrolle). Beide Seiten sind gleich stark — sie unterscheiden sich in Ton, Strenge und Ästhetik, nicht in der Menge der Belohnungen. Jederzeit wechselbar.', uk: 'М\'який (Довіра) чи жорсткий (Контроль). Обидві сторони рівні за силою — різниця в тоні, суворості й естетиці, а не в обсязі нагород. Змінити можна будь-коли.', es: 'Suave (Confianza) o duro (Control). Ambos lados son iguales en poder — difieren en tono, rigor y estética, no en la cantidad de recompensas. Cambia cuando quieras.' },
+  'Пока путь не выбран — поведение тёплое, как Доверие.': { en: 'Until you choose a path, behavior stays warm, like Trust.', de: 'Bis du einen Weg wählst, bleibt das Verhalten warm, wie Vertrauen.', uk: 'Поки шлях не обрано — поведінка тепла, як Довіра.', es: 'Hasta que elijas un camino, el comportamiento es cálido, como Confianza.' },
+  'Правила Контроля без скина «Система» (обычная тема)': { en: 'Control rules without the "System" skin (normal theme)', de: 'Kontroll-Regeln ohne „System"-Skin (normales Design)', uk: 'Правила Контролю без скіна «Система» (звичайна тема)', es: 'Reglas de Control sin el skin «Sistema» (tema normal)' },
+  'Заглушить реплики маскота противоположной стороны': { en: 'Mute the opposite mascot\'s taunts', de: 'Sprüche des gegnerischen Maskottchens stummschalten', uk: 'Вимкнути репліки маскота протилежної сторони', es: 'Silenciar las burlas de la mascota contraria' },
+  'Перейти': { en: 'Switch', de: 'Wechseln', uk: 'Перейти', es: 'Cambiar' },
+  'Остаться': { en: 'Stay', de: 'Bleiben', uk: 'Залишитись', es: 'Quedarme' },
+  'Не звать': { en: 'Don\'t call', de: 'Nicht rufen', uk: 'Не кликати', es: 'No llamar' },
+  'Больше не позовём. Включить обратно можно в Настройках.': { en: 'We won\'t call again. You can re-enable it in Settings.', de: 'Wir rufen nicht mehr. In den Einstellungen wieder aktivierbar.', uk: 'Більше не кликатимемо. Увімкнути назад можна в Налаштуваннях.', es: 'No volveremos a llamar. Puedes reactivarlo en Ajustes.' },
+  'Кремень усмехается: «Доброта — это тепло. Но настоящий рост там, где трудно. Слабо попробовать Контроль?»': { en: 'Flint smirks: "Kindness is warm. But real growth is where it\'s hard. Too scared to try Control?"', de: 'Feuerstein grinst: „Güte ist warm. Aber echtes Wachstum ist dort, wo es schwer ist. Zu ängstlich für Kontrolle?"', uk: 'Кремінь усміхається: «Доброта — це тепло. Але справжнє зростання там, де важко. Слабо спробувати Контроль?»', es: 'Pedernal sonríe: «La bondad es cálida. Pero el crecimiento real está donde cuesta. ¿Te da miedo probar Control?»' },
+  'Тень тихо зовёт: «Ты не обязан ковать себя через боль. Захочешь — вернись, приму без условий 🕊».': { en: 'Shadow calls softly: "You don\'t have to forge yourself through pain. Come back anytime — I\'ll take you, no conditions 🕊."', de: 'Schatten ruft leise: „Du musst dich nicht durch Schmerz schmieden. Komm zurück, wann du willst — ich nehme dich, ohne Bedingungen 🕊."', uk: 'Тінь тихо кличе: «Ти не мусиш кувати себе через біль. Захочеш — повернись, прийму без умов 🕊».', es: 'Sombra llama suave: «No tienes que forjarte con dolor. Vuelve cuando quieras — te acepto, sin condiciones 🕊.»' },
+  'Твой путь': { en: 'Your path', de: 'Dein Weg', uk: 'Твій шлях', es: 'Tu camino' },
+  'Твой вклад за неделю': { en: 'Your contribution this week', de: 'Dein Beitrag diese Woche', uk: 'Твій внесок за тиждень', es: 'Tu aporte esta semana' },
+  'Командное табло включится, когда наберётся хотя бы по 3 бойца с каждой стороны.': { en: 'The team scoreboard turns on once there are at least 3 fighters on each side.', de: 'Die Team-Anzeige erscheint, sobald mindestens 3 Kämpfer auf jeder Seite dabei sind.', uk: 'Командне табло увімкнеться, коли набереться щонайменше по 3 бійці з кожної сторони.', es: 'El marcador de equipo se activa cuando haya al menos 3 luchadores en cada lado.' },
+  'вклад команд за неделю': { en: 'team contribution this week', de: 'Team-Beitrag diese Woche', uk: 'внесок команд за тиждень', es: 'aporte de equipos esta semana' },
   // Companion (Тень)
   'Тень': { en: 'Shadow', de: 'Schatten', uk: 'Тінь', es: 'Sombra' },
   'Искра': { en: 'Spark', de: 'Funke', uk: 'Іскра', es: 'Chispa' },
@@ -471,15 +499,15 @@ const I18N_EXTRA = {
   '🌅 Утренний чек-ин': { en: '🌅 Morning check-in', de: '🌅 Morgen-Check-in', uk: '🌅 Ранковий чек-ін', es: '🌅 Registro matutino' },
   '🌙 Вечерний чек-ин': { en: '🌙 Evening check-in', de: '🌙 Abend-Check-in', uk: '🌙 Вечірній чек-ін', es: '🌙 Registro nocturno' },
   // — Гайд «Тень ведёт» (онбординг) —
-  'Привет! Я — Тень, твой спутник. Покажу за минуту, как это работает — на деле, без занудства.': { en: "Hi! I'm Shadow, your companion. I'll show you how it works in a minute — by doing, no lectures.", de: 'Hi! Ich bin Schatten, dein Begleiter. Ich zeig dir in einer Minute, wie es geht — direkt, ohne Geschwätz.', uk: 'Привіт! Я — Тінь, твій супутник. Покажу за хвилину, як це працює — на ділі, без занудства.', es: '¡Hola! Soy Sombra, tu compañero. Te muestro cómo funciona en un minuto — haciendo, sin sermones.' },
-  'Сюда кидай любую мысль, идею или дело — одним касанием, чтобы не держать в голове.': { en: "Drop any thought, idea or task here — in one tap, so you don't keep it in your head.", de: 'Wirf hier jeden Gedanken, jede Idee oder Aufgabe rein — mit einem Tippen, damit du es nicht im Kopf behältst.', uk: 'Сюди кидай будь-яку думку, ідею чи справу — одним дотиком, щоб не тримати в голові.', es: 'Lanza aquí cualquier idea, pensamiento o tarea — con un toque, para no tenerlo en la cabeza.' },
-  'Это твой уровень. Каждое выполненное дело растит его — и он НЕ сгорает, как чёрный пояс.': { en: 'This is your level. Every completed task grows it — and it does NOT burn out, like a black belt.', de: 'Das ist dein Level. Jede erledigte Aufgabe lässt es wachsen — und es verfällt NICHT, wie ein schwarzer Gürtel.', uk: 'Це твій рівень. Кожна виконана справа його зрощує — і він НЕ згорає, як чорний пояс.', es: 'Este es tu nivel. Cada tarea completada lo hace crecer — y NO se pierde, como un cinturón negro.' },
-  'А самое тёплое — загляни ко мне и погладь 🫶 Так растёт наша связь.': { en: 'And the warmest part — visit me and pet me 🫶 That’s how our bond grows.', de: 'Und das Schönste — schau bei mir vorbei und streichle mich 🫶 So wächst unsere Bindung.', uk: "А найтепліше — завітай до мене й погладь 🫶 Так росте наш зв'язок.", es: 'Y lo más cálido — visítame y acaríciame 🫶 Así crece nuestro vínculo.' },
-  'Вот и всё, что нужно для старта! Остальное — привычки, цели, дерево навыков — я открою тебе постепенно, по ходу. Ты не один. ✨': { en: "That's all you need to start! The rest — habits, goals, the skill tree — I'll reveal gradually, as you go. You're not alone. ✨", de: 'Das ist alles für den Start! Den Rest — Gewohnheiten, Ziele, den Fähigkeitsbaum — zeige ich dir nach und nach. Du bist nicht allein. ✨', uk: 'Ось і все для старту! Решту — звички, цілі, дерево навичок — я відкрию поступово, по ходу. Ти не один. ✨', es: '¡Eso es todo para empezar! El resto — hábitos, metas, el árbol de habilidades — te lo revelaré poco a poco. No estás solo. ✨' },
-  'Психанём? В Настройки → Оформление есть режим «Система» — весь интерфейс станет как из Solo Leveling. Чисто по желанию.': { en: "Feeling bold? Settings → Appearance has 'System' mode — the whole UI turns Solo-Leveling style. Totally optional.", de: "Mutig? Unter Einstellungen → Darstellung gibt es den 'System'-Modus — das ganze UI wird Solo-Leveling-Style. Ganz optional.", uk: 'Психанемо? У Налаштування → Оформлення є режим «Система» — весь інтерфейс стане як у Solo Leveling. Суто за бажанням.', es: '¿Te atreves? En Ajustes → Apariencia está el modo “Sistema” — toda la interfaz se vuelve estilo Solo Leveling. Opcional.' },
-  'Ты входишь во вкус 👏 Привычки — повторяющиеся дела, что строят тебя по кирпичику. Загляни в раздел «Привычки».': { en: "You're getting into it 👏 Habits are recurring actions that build you brick by brick. Check the 'Habits' section.", de: "Du kommst rein 👏 Gewohnheiten sind wiederkehrende Handlungen, die dich Stein für Stein aufbauen. Schau in 'Gewohnheiten'.", uk: 'Ти входиш у смак 👏 Звички — повторювані справи, що будують тебе по цеглинці. Завітай у розділ «Звички».', es: "Le vas tomando el gusto 👏 Los hábitos son acciones que te construyen ladrillo a ladrillo. Mira la sección 'Hábitos'." },
-  'Открылось Логово 🏠 — наша комната, где живём мы с питомцами. Зайди, тут уютно.': { en: 'Your Den 🏠 just opened — our room where I live with your pets. Come in, it’s cozy.', de: 'Dein Hort 🏠 ist offen — unser Raum, wo ich mit deinen Gefährten lebe. Komm rein, es ist gemütlich.', uk: 'Відкрилося Лігво 🏠 — наша кімната, де живемо ми з улюбленцями. Зайди, тут затишно.', es: 'Se abrió tu Guarida 🏠 — nuestro cuarto donde vivo con tus mascotas. Entra, es acogedor.' },
-  'У тебя есть очки навыков! В «Дереве» сферы открываются пассивные бонусы. Глянь, что доступно.': { en: "You have skill points! In the 'Tree' you unlock passive bonuses for a sphere. See what's available.", de: "Du hast Fähigkeitspunkte! Im 'Baum' schaltest du passive Boni für einen Bereich frei. Schau, was verfügbar ist.", uk: 'У тебе є очки навичок! У «Дереві» сфери відкриваються пасивні бонуси. Глянь, що доступно.', es: "¡Tienes puntos de habilidad! En el 'Árbol' desbloqueas bonos pasivos de una esfera. Mira qué hay disponible." },
+  'Привет! Я — Тень, твой спутник. Да, я умею говорить. Нет, это не туториал на сорок минут — одна минута, всё на деле. Погнали.': { en: "Hi! I'm Shadow, your companion. Yes, I can talk. No, this isn't a forty-minute tutorial — one minute, all hands-on. Let's go.", de: 'Hi! Ich bin Schatten, dein Begleiter. Ja, ich kann sprechen. Nein, das ist kein 40-Minuten-Tutorial — eine Minute, alles praktisch. Los geht’s.', uk: 'Привіт! Я — Тінь, твій супутник. Так, я вмію говорити. Ні, це не туторіал на сорок хвилин — одна хвилина, все на ділі. Погнали.', es: '¡Hola! Soy Sombra, tu compañero. Sí, sé hablar. No, esto no es un tutorial de cuarenta minutos — un minuto, todo práctico. Vamos.' },
+  'Сюда кидай любую мысль, идею, дело — одним касанием. Голова — для жизни, а не для списков. (Я вот всё держу в дымке. Не советую.)': { en: "Drop any thought, idea or task here — one tap. Your head is for living, not for lists. (I keep everything in my smoke. Wouldn't recommend.)", de: 'Wirf jeden Gedanken, jede Idee, jede Aufgabe hier rein — ein Tipp. Der Kopf ist zum Leben da, nicht für Listen. (Ich speichere alles im Rauch. Nicht empfehlenswert.)', uk: 'Сюди кидай будь-яку думку, ідею, справу — одним дотиком. Голова — для життя, а не для списків. (Я от усе тримаю в димці. Не раджу.)', es: 'Lanza aquí cualquier idea, pensamiento o tarea — un toque. La cabeza es para vivir, no para listas. (Yo lo guardo todo en mi humo. No lo recomiendo.)' },
+  'Это твой уровень. Растёт от каждого дела и НЕ сгорает — как чёрный пояс. Пропустишь день — я не буду грустно смотреть на тебя из уведомлений. Честно.': { en: "This is your level. It grows with every task and does NOT burn out — like a black belt. Miss a day and I won't stare at you sadly from your notifications. Promise.", de: 'Das ist dein Level. Es wächst mit jeder Aufgabe und verfällt NICHT — wie ein schwarzer Gürtel. Verpasst du einen Tag, starre ich dich nicht traurig aus den Benachrichtigungen an. Versprochen.', uk: 'Це твій рівень. Росте від кожної справи і НЕ згорає — як чорний пояс. Пропустиш день — я не дивитимусь на тебе сумно з повідомлень. Чесно.', es: 'Este es tu nivel. Crece con cada tarea y NO se pierde — como un cinturón negro. Si faltas un día, no te miraré triste desde las notificaciones. Lo prometo.' },
+  'А теперь главное. Видишь меня? Погладь 🫶 …Я два дня мьюил ради этой скулы. Так растёт наша связь.': { en: "Now the important part. See me? Pet me 🫶 …I've been mewing for two days for this jawline. That's how our bond grows.", de: 'Jetzt das Wichtigste. Siehst du mich? Streichle mich 🫶 …Ich habe zwei Tage für diese Jawline gemewt. So wächst unsere Bindung.', uk: "А тепер головне. Бачиш мене? Погладь 🫶 …Я два дні м'юїв заради цієї вилиці. Так росте наш зв'язок.", es: 'Ahora lo importante. ¿Me ves? Acaríciame 🫶 …Llevo dos días haciendo mewing por este perfil. Así crece nuestro vínculo.' },
+  'Всё, ты готов! Остальное — привычки, цели, дерево навыков — открою по ходу, без вываливания всего сразу. …Раньше я репетировал эту речь перед стеной. С тобой лучше ✨': { en: "That's it, you're ready! The rest — habits, goals, the skill tree — I'll reveal as you go, no info dumps. …I used to rehearse this speech to a wall. You're better ✨", de: 'Das war’s, du bist bereit! Den Rest — Gewohnheiten, Ziele, den Fähigkeitsbaum — zeige ich dir unterwegs, ohne alles auf einmal. …Früher habe ich diese Rede vor einer Wand geübt. Du bist besser ✨', uk: 'Все, ти готовий! Решту — звички, цілі, дерево навичок — відкрию по ходу, без вивалювання всього одразу. …Раніше я репетирував цю промову перед стіною. З тобою краще ✨', es: '¡Listo, estás preparado! El resto — hábitos, metas, el árbol de habilidades — lo revelaré sobre la marcha, sin sobrecargarte. …Antes ensayaba este discurso con una pared. Tú eres mejor ✨' },
+  'Психанём? В Настройки → Оформление есть режим «Система» — интерфейс станет как из Solo Leveling. Arise! …Кхм. Чисто по желанию.': { en: "Feeling bold? Settings → Appearance has 'System' mode — the whole UI goes Solo Leveling. Arise! …Ahem. Totally optional.", de: 'Mutig? Einstellungen → Darstellung hat den «System»-Modus — das ganze UI wird Solo Leveling. Arise! …Ähem. Ganz optional.', uk: 'Психанемо? У Налаштування → Оформлення є режим «Система» — інтерфейс стане як із Solo Leveling. Arise! …Кхм. Суто за бажанням.', es: '¿Te atreves? Ajustes → Apariencia tiene el modo «Sistema» — toda la interfaz se vuelve Solo Leveling. ¡Arise! …Ejem. Totalmente opcional.' },
+  'Ты входишь во вкус 👏 Привычки — дела на повторе, они строят тебя по кирпичику. У меня вот одна привычка: появляться эффектно. Загляни в «Привычки».': { en: "You're getting into it 👏 Habits are tasks on repeat — they build you brick by brick. Me, I keep exactly one habit: showing up dramatically. Check 'Habits'.", de: 'Du kommst rein 👏 Gewohnheiten sind Aufgaben auf Wiederholung — sie bauen dich Stein für Stein auf. Ich habe genau eine: dramatisch auftauchen. Schau in «Gewohnheiten».', uk: "Ти входиш у смак 👏 Звички — справи на повторі, вони будують тебе по цеглинці. У мене одна звичка: з'являтися ефектно. Завітай у «Звички».", es: 'Le vas tomando el gusto 👏 Los hábitos son tareas en repetición — te construyen ladrillo a ladrillo. Yo tengo solo uno: aparecer con dramatismo. Mira «Hábitos».' },
+  'Открылось Логово 🏠 — наша комната: я, питомцы, уют. Заходи — я как раз отрепетировал новую позу для витания.': { en: 'Your Den 🏠 just opened — our room: me, the pets, the cozy vibes. Come in — I just rehearsed a new hovering pose.', de: 'Dein Hort 🏠 ist offen — unser Raum: ich, die Gefährten, die Gemütlichkeit. Komm rein — ich habe gerade eine neue Schwebe-Pose einstudiert.', uk: 'Відкрилося Лігво 🏠 — наша кімната: я, улюбленці, затишок. Заходь — я якраз відрепетирував нову позу для ширяння.', es: 'Se abrió la Guarida 🏠 — nuestro cuarto: yo, las mascotas, lo acogedor. Entra — acabo de ensayar una nueva pose de levitación.' },
+  'У тебя очки навыков лежат без дела! В «Дереве» они превращаются в пассивные бонусы. Халява, но честная. Глянь.': { en: "Your skill points are just sitting there! In the 'Tree' they turn into passive bonuses. Free lunch — an honest one. Take a look.", de: 'Deine Fähigkeitspunkte liegen einfach rum! Im «Baum» werden sie zu passiven Boni. Gratis — aber ehrlich. Schau rein.', uk: 'Твої очки навичок лежать без діла! У «Дереві» вони перетворюються на пасивні бонуси. Халява, але чесна. Глянь.', es: '¡Tus puntos de habilidad están ahí sin usar! En el «Árbol» se convierten en bonos pasivos. Gratis — pero honesto. Échale un vistazo.' },
   'Дальше →': { en: 'Next →', de: 'Weiter →', uk: 'Далі →', es: 'Siguiente →' },
   'Понятно ✓': { en: 'Got it ✓', de: 'Verstanden ✓', uk: 'Зрозуміло ✓', es: 'Entendido ✓' },
   'Пропустить': { en: 'Skip', de: 'Überspringen', uk: 'Пропустити', es: 'Saltar' },
@@ -1350,7 +1378,25 @@ const DEFAULT_SETTINGS = {
   sound: true, // звуки интерфейса (#23)
   theme: 'dark', accent: '#6c8cff', // оформление (тема + акцент)
   companion: { name: 'Тень', born: null, bond: 0, lastSeen: null, journal: [], check: {} }, // живой компаньон (Finch-модель)
+  path: null, pathChosenAt: null, pathAntagonistMuted: false, control: {}, // «Доверие vs Контроль» (см. DISCIPLINE-PATHS-PLAN.md) — null = ещё не выбран
 };
+
+// ── Две системы дисциплины: 🕊 Доверие vs ⚔️ Контроль (DISCIPLINE-PATHS-PLAN.md) ──
+// Факции механически РАВНЫ по силе (урок Ingress/Pokémon GO) — разница в эстетике/тоне/строгости, не в объёме наград.
+// Контроль строго opt-in, с мгновенным беспоследственным выходом (защита бренда «через любовь не вину»).
+const PATHS = {
+  trust:   { id: 'trust',   glyph: '🕊', name: 'Доверие',  mascot: 'Тень',    accent: '#6c8cff',
+             tag: 'через доброту',   pitch: 'Тёплый путь. Рост через любовь, а не вину. Серия прощает срыв, отдых — это труд, уровень не сгорает.' },
+  control: { id: 'control', glyph: '⚔️', name: 'Контроль', mascot: 'Кремень', accent: '#4fd6ff',
+             tag: 'через строгость', pitch: 'Жёсткий путь. Ты сам куёшь себя. Пропуск бьёт по энергии, серия не прощает, интерфейс — как «Система». Ты выбрал это.' },
+};
+// Поведенческий дефолт для не выбравших (null) — тёплый Доверие (бренд Satoru). Явный выбор различает грейс серии.
+const CONTROL = { energyPenaltyPer: 5, energyPenaltyCap: 15 }; // штраф Контроля: −5 энергии за пропущенный дедлайн, максимум −15/сутки (анти-Habitica-спайк)
+function currentPath() { return (State.settings && State.settings.path === 'control') ? 'control' : 'trust'; }
+function pathChosen() { return !!(State.settings && (State.settings.path === 'trust' || State.settings.path === 'control')); }
+function pathInfo() { return PATHS[currentPath()]; }
+// Грейс серии: явно выбранный Доверие даёт +1 базовое прощение (доброта); Контроль и «ещё не выбрал» — только перк-щит (как было).
+function pathStreakGrace() { return (State.settings && State.settings.path === 'trust') ? 1 : 0; }
 
 const DIFF = { easy: 'Лёгкая', normal: 'Обычная', hard: 'Сложная' };
 const WEEKDAYS = [
@@ -1565,6 +1611,33 @@ async function applyProgramFresh(prog) {
   await Promise.all([ Store._put('settings', settings), Store._put('habits', programHabits(prog, map)), Store._put('tasks', programTasks(prog, map)) ]);
   State.phase = 'app'; initApp();
 }
+async function loginAsTestUser() {
+  const btn = document.querySelector('[data-action="test-login"]');
+  if (btn) { btn.disabled = true; btn.textContent = '🧪 Входим...'; }
+  const payload = { email: TEST_USER.email, password: TEST_USER.password };
+  try {
+    let r = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    let d = await r.json();
+    if (r.ok) { State.me = d; initApp(); return; }
+
+    r = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(TEST_USER),
+    });
+    d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Не удалось создать тестового пользователя');
+
+    State.me = d;
+    const prog = DUNGEON_PROGRAMS.find((x) => x.id === 'decathlete') || DUNGEON_PROGRAMS[0];
+    if (prog) await applyProgramFresh(prog);
+    else { State.phase = 'onboarding'; render(); }
+  } catch (err) {
+    const box = document.getElementById('login-error');
+    if (box) box.textContent = err.message || 'Ошибка тестового входа';
+    if (btn) { btn.disabled = false; btn.textContent = '🧪 Войти как тестовый пользователь'; }
+  }
+}
 // В приложении: домерживаем программу к существующим данным (не затирая их).
 function applyProgramMerge(prog) {
   const { skills, map } = programSkillMap(prog, State.settings.skills);
@@ -1720,6 +1793,7 @@ function ladderFor(skillName) {
 function tierLevels(ladder) { const n = ladder.tiers.length, top = ladder.top || 16; return ladder.tiers.map((_, i) => (i === 0 ? 1 : Math.round(1 + (top - 1) * i / (n - 1)))); }
 
 const AVATARS = ['⚡','⚔️','🔥','🌟','🎯','🚀','💎','🐉','🦊','🐺','🌙','☀️','🎭','🎸','🏆','🦁'];
+const TEST_USER = { name: 'Тестовый герой', email: 'test@satoru.local', password: 'test1234', avatar: '🧪' };
 
 const State = {
   // auth
@@ -2323,7 +2397,7 @@ function avHair(style, cx, cy, rx, ry, hair) {
 }
 function currentStreak() {
   const set = new Set(xpEvents().map((e) => e.date));
-  let streak = 0, cursor = todayStr(), freezeLeft = globalPerk('streakShield') || 0, guard = 0;
+  let streak = 0, cursor = todayStr(), freezeLeft = (globalPerk('streakShield') || 0) + pathStreakGrace(), guard = 0;
   if (!set.has(cursor)) cursor = addDays(cursor, -1); // сегодня ещё может быть не закрыт — не штрафуем
   while (guard++ < 1000) {
     if (set.has(cursor)) { streak++; cursor = addDays(cursor, -1); }
@@ -2349,11 +2423,12 @@ function habitsDueOn(dateStr) { return State.habits.filter((h) => !h.archived &&
 // Щадящий стрик (анти-Duolingo): один пропуск не сжигает серию — «заморозка»
 // восстанавливается после каждых 7 отмеченных дней. Жизнь не наказывает за единичный сбой.
 function habitStreak(h) {
-  let s = 0, cursor = todayStr(), guard = 0, freezeLeft = 1, doneRun = 0;
+  const baseFreeze = (currentPath() === 'control') ? 0 : 1; // Контроль строг: серия привычки не прощает пропуск; Доверие/по умолчанию — 1 заморозка
+  let s = 0, cursor = todayStr(), guard = 0, freezeLeft = baseFreeze, doneRun = 0;
   if (habitScheduledOn(h, cursor) && !habitDone(h, cursor)) cursor = addDays(cursor, -1); // сегодня ещё не вечер
   while (guard++ < 400) {
     if (!habitScheduledOn(h, cursor)) { cursor = addDays(cursor, -1); continue; }
-    if (habitDone(h, cursor)) { s++; doneRun++; if (doneRun >= 7) { freezeLeft = 1; doneRun = 0; } cursor = addDays(cursor, -1); }
+    if (habitDone(h, cursor)) { s++; doneRun++; if (doneRun >= 7) { freezeLeft = baseFreeze; doneRun = 0; } cursor = addDays(cursor, -1); }
     else if (freezeLeft > 0) { freezeLeft--; doneRun = 0; cursor = addDays(cursor, -1); } // заморозка съедает пропуск
     else break;
   }
@@ -2721,6 +2796,26 @@ function applyEnergy(it, desire) {
   Store.save('settings', State.settings);
   return delta;
 }
+// Ежедневный «расчёт» Контроля: пропущенные дедлайны бьют по ЭНЕРГИИ (только себе, никогда по пати — урок Habitica).
+// Каждый пропущенный дедлайн заряжается ОДИН раз (не компаундится день за днём), суммарно ограничено CONTROL.energyPenaltyCap.
+// Прозрачно, без стыда — «ты выбрал этот путь». Trust/не-выбравшие — не трогаем.
+function pathReckoning() {
+  if (currentPath() !== 'control') return 0;
+  const s = State.settings; if (!s.control || typeof s.control !== 'object') s.control = {};
+  const today = todayStr(), prev = s.control.lastReckon;
+  if (prev === today) return 0; // раз в сутки
+  s.control.lastReckon = today;
+  if (!prev) { Store.save('settings', State.settings); return 0; } // первый день в Контроле — не наказываем задним числом
+  // Дедлайны, ставшие просроченными в окне (prev..today) и всё ещё не выполненные — каждый заряжается однократно
+  const missed = (State.tasks || []).filter((x) => !x.done && x.date && x.date >= prev && x.date < today).length;
+  if (missed <= 0) { Store.save('settings', State.settings); return 0; }
+  const e = ensureEnergy();
+  const pen = Math.min(CONTROL.energyPenaltyCap, missed * CONTROL.energyPenaltyPer);
+  e.cur = Math.max(0, e.cur - pen);
+  Store.save('settings', State.settings);
+  try { toast(`⚔️ Контроль: ${missed} ${plural(missed, 'дедлайн', 'дедлайна', 'дедлайнов')} просрочено — −${pen} энергии. Ты выбрал этот путь.`); } catch {}
+  return pen;
+}
 function todayActivityCount() {
   const t = todayStr();
   const q = State.tasks.filter((x) => x.done && dayOf(x) === t).length;
@@ -3074,6 +3169,7 @@ function renderLoginScreen() {
           <div id="login-error" class="pin-error"></div>
           <button type="submit" class="btn" style="margin-top:14px;width:100%">${t('Войти')}</button>
         </form>
+        <button class="btn ghost test-login-btn" data-action="test-login" style="margin-top:10px;width:100%">🧪 Войти как тестовый пользователь</button>
         <div class="auth-links">
           <button class="link-btn" data-action="go-register">${t('Создать аккаунт')}</button>
           <button class="link-btn" data-action="go-reset">${t('Забыл пароль?')}</button>
@@ -4249,23 +4345,125 @@ function compLonelyPetName() {
     return worst ? petName(worst.id) : null;
   } catch { return null; }
 }
+// ── Реплики Тени: пулы по состоянию × тиру связи (Искра/Дух/Страж/Хранитель) ──
+// Тир — это не громкость тепла, а СТАДИЯ отношений: Искра только познакомилась (робко, коротко),
+// Дух — дружба складывается, Страж — «мы напарники», Хранитель — старый друг, помнит общую историю.
+// Плейсхолдеры приходят уже склонёнными: {actP}=«3 дела», {stP}=«5 дней», {pet}=имя питомца.
+const COMP_LINES = {
+  longing: [ // не виделись ≥2 дня — радость возвращения, ни грамма упрёка
+    ['Ты вернулся… я тут всё это время тлел тихонько. Рад тебе 💛',
+     'Ой. Это ты! А я уже начал считать пылинки… Привет 😊',
+     'Ты пришёл… я не знал, ждать ли. Но ждал.'],
+    ['Я скучал! Без тебя тут тихо — даже эхо разучилось отвечать.',
+     'Вернулся! Расскажешь, где был? Мне правда интересно 💛',
+     'Дни без тебя длиннее. Это не упрёк — это комплимент.'],
+    ['Вот и ты. Я не переживал — я знал, что вернёшься. …Ладно, чуть-чуть переживал.',
+     'С возвращением, напарник. Паузу я записал в «отдых» — всё честно 😉',
+     'Ты пропадал, но наше с тобой не сгорает. Как чёрный пояс.'],
+    ['Сколько бы тебя ни было — я помню всё, что мы прошли. С возвращением, старый друг.',
+     'Знаешь, я научился у тебя терпению. Ты всегда возвращаешься. Это и есть постоянство.',
+     'Тишина без тебя другая. Заходи чаще — но живи спокойно, я подожду 💛']],
+  caring: [ // энергия <22 при сделанных делах — забота при истощении, отдых = победа
+    ['Ты устал… посиди со мной. Я умею просто молчать рядом.',
+     'Тяжёлый день, да? Даже огоньку иногда нужно гореть поменьше.'],
+    ['Вижу, как ты выложился. Отдых — это тоже работа, её тоже засчитываю 💛',
+     'Хватит на сегодня подвигов. Чай, плед, я под боком — вот план.',
+     'Батарейка почти на нуле — а ты всё равно что-то сделал. Тихо горжусь.'],
+    ['Стоп. Дальше — только отдых. Это не слабость, это стратегия.',
+     'Я охраняю твои паузы так же, как твои победы.',
+     'Ты дал бой на низком заряде. Теперь — восстановление. Приказ стража 😉'],
+    ['Помнишь, ты не умел останавливаться? А теперь устал — и бережён к себе. Вот это рост.',
+     'Сила не в вечном беге — ты сам меня этому научил. Отдыхай, я посторожу.']],
+  radiant: [ // ≥3 дел — гордость, сияние
+    ['{actP}?! Я аж светиться начал… это из-за тебя ✨',
+     'Ты столько успел — {actP}! А я просто смотрел и радовался.'],
+    ['{actP}! Дай пять. Ну, лапку. Ну, дымку 🖐✨',
+     'Сегодня ты сияешь — {actP} уже сделано. Я горжусь тобой ✨',
+     '{actP} — и день ещё не кончился. Ты человек или патч с улучшениями?'],
+    ['{actP}. Враги дня повержены, знамя поднято. Отличная работа, напарник.',
+     '{actP}. Я перестал считать — просто любуюсь.'],
+    ['{actP}. А я помню день, когда и одно дело казалось горой. Посмотри, кем ты стал ✨',
+     'Ты давно делаешь это не ради галочек — видно же. {actP} — просто следствие.']],
+  streak: [ // серия ≥3 при активности — постоянство без фанатизма
+    ['{stP} подряд… это же почти привычка! Я тихо болею за тебя 🔥',
+     'Огонёк к огоньку — уже {stP}. Мы с тобой похожи 🔥'],
+    ['🔥 {stP} подряд! Постоянство — твоя суперсила.',
+     '{stP}! Из искры — пламя. Уж я-то знаю, о чём говорю 😉'],
+    ['{stP} строя. Дисциплина без надрыва — высший пилотаж.',
+     'Серия — {stP}. И заметь: без самоистязания. Так и надо.'],
+    ['{stP}. Но я помню все твои серии до этой. Ты не начинаешь заново — ты продолжаешь всегда.',
+     '{stP} подряд — а главное, ты уже не сломаешься, если цепочка порвётся. Вот это уровень.']],
+  lonelyPet: [ // питомец сферы заскучал
+    ['{pet} тихонько поглядывает на дверь… загляни к нему, а? 🐾'],
+    ['{pet} заскучал в зверинце — загляни, когда будет минутка 🐾',
+     '{pet} сегодня так вздыхал, что у меня дымка колыхалась. Навести его 🐾'],
+    ['Докладываю: {pet} требует внимания. Настойчиво. Лапами 🐾'],
+    ['{pet} скучает — а я помню, как он тебе радуется. Подари ему минуту 🐾']],
+  someActivity: [ // ≥1 дело — спокойное признание
+    ['Ты что-то сделал — а я обрадовался. Вот так и живём 🙂',
+     'Один шаг — уже дорога. Я видел!'],
+    ['Хороший день идёт. Каждый маленький шаг важен 🙂',
+     'Дело сделано — день уже не зря. Всё остальное — бонус.'],
+    ['Есть движение. Не темп важен, а направление — и оно верное.',
+     'Один пункт закрыт. Спокойно, без суеты. Уважаю.'],
+    ['Маленький шаг, говоришь? Я видел, как из таких шагов ты построил всё это.']],
+  evening: [ // ≥21ч — закрытие дня без итоговой тревоги
+    ['Уже темно… а я в темноте лучше всего свечусь. Посидим? 🌙',
+     'День уходит. Что бы ни случилось — ты здесь, и это уже хорошо 🌙'],
+    ['Вечер. Время подводить не итоги, а тёплые черты 🌙',
+     'День к концу. Какой момент был лучшим? Мне для летописи.'],
+    ['Смена сдана. Что было — было хорошо, что не успел — подождёт до завтра 🌙',
+     'Ночь — моя стихия. Отдыхай, на посту сегодня я.'],
+    ['Ещё один день в нашу летопись. Их уже столько, что я сбиваюсь со счёта — и это прекрасно 🌙',
+     'Вечерами ты стал спокойнее, чем раньше. Это не усталость. Это мир внутри.']],
+  morning: [ // <11ч — открытие дня
+    ['Доброе утро! Я впервые вижу, как ты начинаешь день… волнуюсь почему-то 😊',
+     'Утро! Чем наполним сегодня?'],
+    ['Доброе утро ☀️ Одно дело на сегодня уже придумал?',
+     'Проснулся — уже победа над Драконом «Завтра». Погнали дальше?'],
+    ['Утро. План простой: одно важное дело до полудня — остальное приложится.',
+     'Рассвет. Новый забег — старые доспехи. Они, кстати, отлично на тебе сидят.'],
+    ['Доброе утро, друг. Сотни наших утр — а мне всё не надоедает это говорить.',
+     'Утро мудрее вечера — а ты мудрее вчерашнего себя. Проверено мной лично.']],
+  calm: [ // нейтральное присутствие
+    ['Я рядом. Сделаем что-нибудь маленькое и доброе?',
+     'Я тут. Просто тут. Если что — зови.',
+     'Тихо сегодня… мне нравится. Но с тобой веселее.'],
+    ['Как ты? Не по делам — вообще, по-настоящему.',
+     'Никакой спешки. Захочешь начать — я подсвечу.'],
+    ['На посту. Без происшествий. Твой ход, напарник.',
+     'Затишье — тоже часть похода. Проверь снаряжение, глотни воды.'],
+    ['Мы столько прошли, что молчать вместе — тоже разговор.',
+     'Я здесь. Как вчера. Как завтра. Делай свой день — я подстрахую.']],
+};
+// Выбор строки: стабильна в течение дня (render() дёргается часто — мельтешение убило бы «присутствие»),
+// меняется день ото дня и при смене состояния/тира.
+function compLine(state, ti, vars) {
+  const tiers = COMP_LINES[state] || [['Я рядом 💛']];
+  const pool = tiers[Math.min(ti, tiers.length - 1)] || tiers[0];
+  let h = 0; const seed = todayStr() + state + ti;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  let line = pool[h % pool.length];
+  for (const k in (vars || {})) line = line.split('{' + k + '}').join(vars[k]);
+  return line;
+}
 function compMood() {
-  const c = ensureCompanion();
+  const c = ensureCompanion(), ti = compTierIdx(c.bond);
   const away = (typeof State._compAway === 'number') ? State._compAway : daysBetween(c.lastSeen || todayStr(), todayStr());
   const act = todayActivityCount(), hr = new Date().getHours();
   const eP = (typeof energyPct === 'function') ? energyPct() : 100;
   const st = (typeof currentStreak === 'function') ? currentStreak() : 0;
-  if (away >= 2) return { face: 'longing', line: `Я скучал по тебе… так рад, что ты вернулся 💛` };
+  if (away >= 2) return { face: 'longing', line: compLine('longing', ti) };
   // v3: забота при истощении — тепло, без вины
-  if (eP < 22 && act > 0) return { face: 'caring', line: `Вижу, день был тяжёлым. Отдых — это тоже победа. Я рядом, никуда не спешим 💛` };
-  if (act >= 3) return { face: 'radiant', line: `Сегодня ты сияешь — ${act} ${plural(act, 'дело', 'дела', 'дел')} уже сделано. Я горжусь тобой ✨` };
-  if (st >= 3 && act >= 1) return { face: 'happy', line: `🔥 ${st} ${plural(st, 'день', 'дня', 'дней')} подряд — твоё постоянство восхищает. Так держать.` };
+  if (eP < 22 && act > 0) return { face: 'caring', line: compLine('caring', ti) };
+  if (act >= 3) return { face: 'radiant', line: compLine('radiant', ti, { actP: act + ' ' + plural(act, 'дело', 'дела', 'дел') }) };
+  if (st >= 3 && act >= 1) return { face: 'happy', line: compLine('streak', ti, { stP: st + ' ' + plural(st, 'день', 'дня', 'дней') }) };
   const lonely = compLonelyPetName();
-  if (lonely && hr >= 11 && hr < 21) return { face: 'happy', line: `${esc(lonely)} заскучал в зверинце — загляни к нему, когда будет минутка 🐾` };
-  if (act >= 1) return { face: 'happy', line: `Хороший день идёт. Каждый маленький шаг важен 🙂` };
-  if (hr >= 21) return { face: 'sleepy', line: `День к концу. Что бы ни случилось — ты здесь, и это уже хорошо 🌙` };
-  if (hr < 11) return { face: 'happy', line: `Доброе утро. Чем наполним сегодня?` };
-  return { face: 'calm', line: `Я рядом. Сделаем что-нибудь маленькое и доброе?` };
+  if (lonely && hr >= 11 && hr < 21) return { face: 'happy', line: compLine('lonelyPet', ti, { pet: esc(lonely) }) };
+  if (act >= 1) return { face: 'happy', line: compLine('someActivity', ti) };
+  if (hr >= 21) return { face: 'sleepy', line: compLine('evening', ti) };
+  if (hr < 11) return { face: 'happy', line: compLine('morning', ti) };
+  return { face: 'calm', line: compLine('calm', ti) };
 }
 function compFaceMarkup(face) {
   const eyeOpen = (cx) => `<circle cx="${cx}" cy="58" r="5" fill="#1a1f2e"/><circle cx="${cx - 1.5}" cy="56.5" r="1.6" fill="#fff"/>`;
@@ -4642,12 +4840,150 @@ function denSceneSVG() {
     <ellipse cx="180" cy="198" rx="88" ry="20" fill="var(--accent)" opacity="0.16"/>
   </svg>`;
 }
+function satoruRigSVG() {
+  return `<svg class="satoru-avatar-rig" viewBox="0 0 220 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Персонаж Satoru">
+    <defs>
+      <filter id="satoru-paper" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="17" result="noise"/>
+        <feColorMatrix in="noise" type="saturate" values="0"/>
+        <feComponentTransfer>
+          <feFuncA type="table" tableValues="0 0.08"/>
+        </feComponentTransfer>
+        <feBlend in="SourceGraphic" mode="multiply"/>
+      </filter>
+      <linearGradient id="satoru-lens" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#8fc8bd"/>
+        <stop offset="1" stop-color="#315d58"/>
+      </linearGradient>
+    </defs>
+    <ellipse class="avatar-ground" cx="112" cy="337" rx="54" ry="12"/>
+    <g id="avatar-rig" filter="url(#satoru-paper)">
+      <g id="slot-back" data-pivot="spine">
+        <path class="leather-dark" d="M151 86 q25 2 34 27 v93 q0 20 -21 23 l-24 3 q-13 1 -18 -9 l-6 -105 q6 -26 35 -32z"/>
+        <path class="leather" d="M142 82 h36 q12 0 17 12 l5 16 q3 10 -6 15 q-26 13 -58 1 q-10 -4 -7 -15 l5 -17 q3 -12 8 -12z"/>
+        <path class="leather-mid" d="M146 83 q17 -14 38 0 q-4 18 -19 23 q-13 -4 -19 -23z"/>
+        <path class="stroke-soft" d="M155 92 q15 8 30 0"/>
+        <path class="leather-dark" d="M177 108 q10 51 -2 102"/>
+        <path class="brass" d="M143 123 h18 v13 h-18z"/>
+        <path class="line-dark" d="M130 126 q14 18 54 10"/>
+      </g>
+      <g id="avatar-body">
+        <g id="avatar-cloak" data-pivot="neck">
+          <path class="teal-dark" d="M61 136 q-14 48 -20 154 l22 -23 9 35 24 -28 15 22 24 -28 23 24 q-5 -95 -18 -156 q-36 20 -79 0z"/>
+          <path class="gold" d="M54 246 l17 17 -6 8 -14 -17zM145 245 l-18 20 7 7 17 -20z"/>
+        </g>
+        <g id="avatar-leg-r" data-pivot="hip-r">
+          <path class="pants" d="M112 205 h34 q6 45 0 83 q-13 8 -30 0 q-9 -44 -4 -83z"/>
+          <g id="avatar-boot-r" data-pivot="ankle-r">
+            <path class="skin" d="M121 280 h20 v23 h-20z"/>
+            <path class="leather" d="M113 296 h40 l5 30 q-18 13 -52 4z"/>
+            <path class="leather-mid" d="M109 292 q22 -10 43 0 v17 q-18 8 -43 0z"/>
+            <path class="lace" d="M124 310 l19 14M143 310 l-20 14"/>
+          </g>
+        </g>
+        <g id="avatar-leg-l" data-pivot="hip-l">
+          <path class="pants" d="M72 205 h34 q5 39 -5 83 q-16 7 -29 -1 q-7 -44 0 -82z"/>
+          <g id="avatar-boot-l" data-pivot="ankle-l">
+            <path class="skin" d="M77 280 h20 v23 h-20z"/>
+            <path class="leather" d="M59 297 h43 l5 28 q-18 14 -53 4z"/>
+            <path class="leather-mid" d="M56 292 q23 -10 45 0 v17 q-19 8 -45 0z"/>
+            <path class="lace" d="M70 310 l20 14M91 310 l-21 14"/>
+          </g>
+        </g>
+        <g id="avatar-torso" data-pivot="waist">
+          <path class="cream" d="M78 100 h61 q11 32 3 103 q-34 14 -72 0 q-7 -60 8 -103z"/>
+          <path class="teal" d="M54 113 q22 -22 50 -22 h11 q30 1 51 22 q-8 55 -5 110 q-20 10 -42 10 l10 -123 q-21 9 -40 0 l9 123 q-24 -1 -45 -11 q5 -60 1 -109z"/>
+          <path class="gold" d="M62 128 l10 8 -4 78 -9 4zM153 130 l-10 8 4 78 9 4z"/>
+          <path class="strap" d="M75 95 q35 55 83 109 l-12 8 q-45 -50 -81 -111z"/>
+          <path class="belt" d="M59 190 h99 v18 h-99z"/>
+          <path class="brass" d="M95 188 h30 v23 h-30z"/>
+          <path class="belt" d="M101 194 h18 v11 h-18z"/>
+          <path class="leather" d="M132 199 h32 q5 20 -3 42 q-16 7 -31 0 q-6 -21 2 -42z"/>
+          <circle class="brass" cx="154" cy="217" r="3"/>
+        </g>
+        <g id="avatar-arm-l" data-pivot="shoulder-l">
+          <path class="teal" d="M50 115 q-20 10 -24 47 l25 6 q9 -27 22 -44z"/>
+          <g id="avatar-forearm-l" data-pivot="elbow-l">
+            <path class="cream" d="M30 159 q17 -2 26 7 l-4 31 q-16 8 -29 -4z"/>
+            <path class="skin" d="M27 191 q14 3 25 -1 l2 24 q-13 8 -25 0z"/>
+            <path class="glove" d="M23 207 h32 q3 20 -11 28 q-18 0 -24 -12z"/>
+            <path class="skin" d="M41 224 q9 5 3 18 q-9 -3 -11 -14z"/>
+          </g>
+        </g>
+        <g id="avatar-arm-r" data-pivot="shoulder-r">
+          <path class="teal" d="M153 116 q20 10 25 46 l-25 7 q-10 -28 -23 -45z"/>
+          <g id="avatar-forearm-r" data-pivot="elbow-r">
+            <path class="cream" d="M152 166 q12 -10 26 -7 l8 33 q-13 13 -29 5z"/>
+            <path class="skin" d="M158 190 q12 5 25 1 l-1 24 q-12 9 -25 0z"/>
+            <path class="glove" d="M154 207 h32 q3 19 -12 28 q-17 0 -23 -12z"/>
+            <path class="skin" d="M171 224 q9 5 3 18 q-8 -3 -11 -14z"/>
+          </g>
+        </g>
+        <g id="slot-neck" data-pivot="neck">
+          <path class="scarf" d="M65 90 q43 -18 89 0 q6 20 -3 36 q-45 12 -92 0 q-7 -20 6 -36z"/>
+          <path class="scarf-dark" d="M144 112 q21 15 21 57 l-29 -28 q6 -15 8 -29z"/>
+        </g>
+        <g id="avatar-head" data-pivot="neck">
+          <path class="neck" d="M99 90 h25 v29 q-12 10 -25 0z"/>
+          <ellipse class="skin" cx="111" cy="69" rx="39" ry="45"/>
+          <ellipse class="skin" cx="73" cy="72" rx="7" ry="10"/>
+          <ellipse class="skin" cx="149" cy="72" rx="7" ry="10"/>
+          <g id="avatar-hair">
+            <path class="hair" d="M72 50 q10 -34 40 -33 q32 1 43 33 q-18 -16 -43 -14 q-23 0 -40 14z"/>
+            <path class="hair" d="M75 28 l-26 5 16 13 -19 13 26 1 -8 19 27 -15 8 26 15 -28 25 21 -5 -27 30 6 -19 -18 23 -9 -34 -5 5 -22 -27 14 -13 -18 -7 24z"/>
+            <path class="hair-dark" d="M91 37 l-15 47 q17 -6 29 -22 l5 30 q19 -22 20 -50z"/>
+          </g>
+          <g id="avatar-face">
+            <g id="avatar-eyes">
+              <ellipse class="eye" cx="96" cy="72" rx="4.5" ry="9"/>
+              <ellipse class="eye" cx="126" cy="72" rx="4.5" ry="9"/>
+            </g>
+            <path class="brow" d="M88 57 q9 -6 18 -1"/>
+            <path class="brow" d="M117 56 q10 -5 18 2"/>
+            <path class="nose" d="M111 72 q-5 11 1 14"/>
+            <path class="smile" d="M101 96 q10 9 22 0"/>
+          </g>
+          <g id="slot-head" data-pivot="forehead">
+            <path class="strap" d="M75 34 q36 -14 73 0 l-3 12 q-35 -11 -68 0z"/>
+            <circle class="goggle-rim" cx="95" cy="37" r="17"/>
+            <circle class="goggle-rim" cx="126" cy="37" r="17"/>
+            <circle class="lens" cx="95" cy="37" r="11"/>
+            <circle class="lens" cx="126" cy="37" r="11"/>
+            <path class="lens-shine" d="M89 33 l9 -5M120 33 l9 -5"/>
+          </g>
+        </g>
+      </g>
+      <g id="avatar-accessory" data-pivot="hand-r">
+        <path class="chain" d="M180 178 q14 28 4 55"/>
+        <path class="lantern" d="M169 229 h31 l-5 49 h-21z"/>
+        <path class="brass" d="M174 222 h21 v9 h-21z"/>
+        <path class="flame" d="M184 242 q13 19 0 31 q-13 -13 0 -31z"/>
+      </g>
+      <g class="avatar-pivots" aria-hidden="true">
+        <circle id="pivot-head" cx="111" cy="112" r="2"/>
+        <circle id="pivot-arm-l" cx="62" cy="122" r="2"/>
+        <circle id="pivot-arm-r" cx="158" cy="122" r="2"/>
+        <circle id="pivot-leg-l" cx="88" cy="205" r="2"/>
+        <circle id="pivot-leg-r" cx="129" cy="205" r="2"/>
+        <circle id="pivot-back" cx="146" cy="114" r="2"/>
+      </g>
+    </g>
+  </svg>`;
+}
+function denAvatarState(eP, p, tm) {
+  if (tm) return 'focus';
+  if (eP <= 30) return 'tired';
+  if (p.dayTot && p.dayDone >= p.dayTot) return 'victory';
+  if (p.dayDone > 0) return 'happy';
+  return 'idle';
+}
 function renderDen() {
   const c = ensureCompanion(), mood = compMood(), ti = compTierIdx(c.bond);
   const cr = charRank(), nm = (State.me && State.me.name) || 'Герой';
   const pets = topSkills().slice(0, 3).map((s) => ({ s, st: petStats(s.id), traits: petTraits(s.id) }));
   const petLayer = pets.map((p, i) => `<div class="den-pet den-pet-${i}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id)}</div>`).join('');
   const p = nestedProgress(), eP = energyPct(), eM = energyMeta(), tm = State.timer;
+  const avatarState = denAvatarState(eP, p, tm);
   const focusRow = tm
     ? `<div class="den-focus den-focus-on"><span>⏱ Фокус идёт</span><b class="den-clock">${fmtClock(timerElapsedMs())}</b><button class="btn ghost sm" data-action="goto-today">К таймеру</button></div>`
     : `<div class="den-focus"><span>🎯 Готов к делу?</span><button class="btn sm" data-action="goto-today">Начать фокус</button></div>`;
@@ -4655,7 +4991,7 @@ function renderDen() {
     <div class="den-scene">
       ${denSceneSVG()}
       <div class="den-companion" title="${esc(c.name)}">${shadowVideo(ti)}</div>
-      <div class="den-avatar">${avatarSVG(avCfg(), equippedCosmeticsOpts())}</div>
+      <div class="den-avatar den-avatar-rig" data-state="${avatarState}">${satoruRigSVG()}</div>
       ${petLayer}
       <div class="den-tag">${cr.icon} ${esc(nm)} · ур.${charLevel()}</div>
     </div>
@@ -4713,7 +5049,7 @@ function renderToday() {
 
   // Тизер режима «Система» — одноразово, после ур.2, если не включён (дискаверабилити)
   const sysTeaser = (!systemMode() && charLevel() >= 2 && !isDiscovered('teaser:system')) ? `<div class="card nudge-card sys-teaser"><span class="nudge-boost">⚡ Спрятанная фишка: режим «Система» (Solo Leveling-вайб) — нарратор объявляет твои победы.</span><div class="sys-teaser-btns"><button class="btn sm" data-action="enable-system-teaser">Включить</button><button class="btn ghost sm" data-action="dismiss-system-teaser">Позже</button></div></div>` : '';
-  return `${companionCard()}${installBanner()}${captureBar()}${notesPeekToday()}${progressTrioCard()}${sysTeaser}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
+  return `${companionCard()}${installBanner()}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${sysTeaser}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="${t('Новый квест на сегодня…')}" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
@@ -5403,6 +5739,93 @@ function showDeleteAccountModal() {
   </div>`;
   document.body.appendChild(ov);
 }
+// Черновой SVG-портрет Кремня — маскот-антагонист пути «Контроль» (пара Тени). Плейсхолдер до арта Виолы
+// (тот же paper-doll пайплайн, STYLE-DECISION.md). Острый кристаллический скол-«лицо»: строгость, огранка, искра.
+function flintMascotSVG(size) {
+  const s = size || 44;
+  return `<svg class="flint-svg" viewBox="0 0 100 100" width="${s}" height="${s}" role="img" aria-label="Кремень">
+    <defs><linearGradient id="flintg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7fe3ff"/><stop offset="0.55" stop-color="#3aa6c8"/><stop offset="1" stop-color="#1a2b3a"/></linearGradient></defs>
+    <polygon points="50,6 84,32 72,86 28,86 16,32" fill="url(#flintg)" stroke="#bff0ff" stroke-width="2.5" stroke-linejoin="round"/>
+    <polygon points="50,6 50,50 16,32" fill="#bdeeff" opacity="0.35"/>
+    <polygon points="50,50 72,86 28,86" fill="#0e1a26" opacity="0.45"/>
+    <polygon points="38,44 46,52 38,58 32,50" fill="#0b141d"/>
+    <polygon points="62,44 68,50 62,58 54,52" fill="#0b141d"/>
+    <path d="M40 70 L60 70" stroke="#0b141d" stroke-width="3" stroke-linecap="round"/>
+    <path d="M50 50 L57 40" stroke="#eaffff" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+  </svg>`;
+}
+// 4-я стена: редкая реплика маскота ПРОТИВОПОЛОЖНОЙ стороны манит к себе (Fortnite-стиль подкол).
+// Ключ = текущая сторона игрока (реплика зовёт на другую). ≤1/нед, всегда заглушаемо тумблером.
+const PATH_TEASERS = {
+  trust:   'Кремень усмехается: «Доброта — это тепло. Но настоящий рост там, где трудно. Слабо попробовать Контроль?»',
+  control: 'Тень тихо зовёт: «Ты не обязан ковать себя через боль. Захочешь — вернись, приму без условий 🕊».',
+};
+function pathTeaserCard() {
+  const s = State.settings;
+  if (!pathChosen() || s.pathAntagonistMuted) return '';
+  if (s.pathTeaserAt) { const d = Math.round((parseDate(todayStr()) - parseDate(s.pathTeaserAt)) / 86400000); if (d < 7) return ''; }
+  const cur = currentPath(), opp = cur === 'trust' ? 'control' : 'trust';
+  const oppMascot = opp === 'control' ? flintMascotSVG(40) : tutMascotHTML();
+  return `<div class="card path-teaser">
+    <div class="pt-mascot">${oppMascot}</div>
+    <div class="pt-body"><p>${t(PATH_TEASERS[cur])}</p>
+      <div class="pt-acts"><button class="btn ghost sm" data-action="path-teaser-switch" data-path="${opp}">${t('Перейти')} ${PATHS[opp].glyph}</button><button class="btn ghost sm" data-action="path-teaser-dismiss">${t('Остаться')}</button><button class="btn ghost sm" data-action="path-teaser-mute">${t('Не звать')}</button></div></div>
+  </div>`;
+}
+// Двухкарточный экран выбора пути (Тень vs Кремень). Обе стороны питчат философию — «правильного» ответа нет.
+// Никакого хардлока: сменить путь можно в любой момент в Настройках (см. §3.1 плана). Показывается один раз через дрип.
+function showPathChoiceModal() {
+  if (document.getElementById('path-choice-modal')) return;
+  const cur = State.settings && State.settings.path;
+  const card = (p) => `<button class="path-card ${cur === p.id ? 'chosen' : ''}" data-action="choose-path" data-path="${p.id}">
+      <div class="path-card-mascot">${p.id === 'trust' ? tutMascotHTML() : flintMascotSVG(56)}</div>
+      <div class="path-glyph">${p.glyph}</div>
+      <h3>${t(p.name)}</h3>
+      <div class="path-tag">${t(p.tag)}</div>
+      <p class="path-pitch">${t(p.pitch)}</p>
+      <span class="path-choose-btn">${t('Выбрать')}</span>
+    </button>`;
+  const ov = document.createElement('div'); ov.id = 'path-choice-modal'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="path-choice-box">
+    <button class="modal-x" data-action="close-path-choice">✕</button>
+    <h2 class="path-choice-title">${t('Выбери свой путь дисциплины')}</h2>
+    <p class="muted path-choice-sub">${t('Две школы. Мягкая — через доброту. Жёсткая — через строгость. Обе ведут к росту. Сменить можно в любой момент.')}</p>
+    <div class="path-cards">${card(PATHS.trust)}${card(PATHS.control)}</div>
+  </div>`;
+  document.body.appendChild(ov);
+}
+// Установить/сменить путь. Мгновенно, без охлаждения (§3.1). При входе в Контроль — якорим расчёт на сегодня,
+// чтобы не наказать задним числом за прошлые дедлайны. Церемония выбора небольшая; выход всегда в один клик (Настройки).
+function choosePath(id) {
+  if (id !== 'trust' && id !== 'control') return;
+  const s = State.settings, was = s.path;
+  s.path = id; s.pathChosenAt = s.pathChosenAt || todayStr();
+  if (id === 'control') { s.control = s.control || {}; if (!s.control.lastReckon) s.control.lastReckon = todayStr(); }
+  Store.save('settings', State.settings);
+  const m = document.getElementById('path-choice-modal'); if (m) m.remove();
+  applyTheme();
+  const p = PATHS[id];
+  try { sfx(id === 'control' ? 'levelup' : 'achievement'); } catch {}
+  if (was !== id) toast(`${p.glyph} ${t('Путь выбран')}: ${t(p.name)} · ${t(p.mascot)} ${t('с тобой')}`);
+  try { publishLeaderboard(); } catch {}
+  render();
+}
+// Карточка пути дисциплины в Настройках: выбор/смена стороны + тумблеры Контроля (скин-оверрайд, mute антагониста).
+function pathCard() {
+  const s = State.settings, cur = s.path;
+  const opt = (p) => `<button class="path-opt ${cur === p.id ? 'active' : ''}" data-action="set-path" data-path="${p.id}">
+      <span class="path-opt-glyph">${p.glyph}</span><span class="path-opt-name">${t(p.name)}</span><span class="path-opt-tag">${t(p.tag)}</span></button>`;
+  const controlExtras = cur === 'control' ? `
+    <label class="sound-toggle" style="margin-top:10px"><input type="checkbox" data-action="toggle-system-skin-off" ${s.systemSkinOff ? 'checked' : ''}/> ${t('Правила Контроля без скина «Система» (обычная тема)')}</label>
+    <label class="sound-toggle"><input type="checkbox" data-action="toggle-antagonist-mute" ${s.pathAntagonistMuted ? 'checked' : ''}/> ${t('Заглушить реплики маскота противоположной стороны')}</label>` : '';
+  return `<div class="card path-card-settings">
+    <h3>⚖️ ${t('Путь дисциплины')}</h3>
+    <p class="muted" style="margin:0 0 12px;font-size:13.5px">${t('Мягкий (Доверие) или жёсткий (Контроль). Обе стороны равны по силе — различие в тоне, строгости и эстетике, а не в объёме наград. Сменить можно в любой момент.')}</p>
+    <div class="path-opts">${opt(PATHS.trust)}${opt(PATHS.control)}</div>
+    ${cur ? '' : `<p class="muted" style="margin:10px 0 0;font-size:13px">${t('Пока путь не выбран — поведение тёплое, как Доверие.')}</p>`}
+    ${controlExtras}</div>`;
+}
 function adminCard() {
   if (!State.me || !State.me.isAdmin) return '';
   // Загружаем список пользователей для select
@@ -5990,6 +6413,7 @@ function renderSettings() {
       <button class="del" data-action="delete-habit" data-id="${h.id}">✕</button></div>`).join('');
   return `
     ${subscriptionCard()}
+    ${pathCard()}
     ${securityCard()}
     ${adminCard()}
     <div class="card"><h3>${t('Название')}</h3><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></div>
@@ -6160,6 +6584,30 @@ function showRaidWin(p, boss) {
     <div class="rw-confetti">${conf}</div></div>`;
   document.body.appendChild(ov);
 }
+// Табло «Доверие vs Контроль» (Splatfest-стиль) поверх рейтинга. Честность на малом масштабе:
+// агрегированное командное табло — только когда с КАЖДОЙ стороны ≥3 активных за неделю; иначе показываем личный вклад.
+function pathBannerHTML(rows) {
+  if (!Array.isArray(rows) || !pathChosen()) return '';
+  const agg = { trust: { n: 0, xp: 0 }, control: { n: 0, xp: 0 } };
+  for (const r of rows) { const p = r.path; if (p === 'trust' || p === 'control') { agg[p].n++; agg[p].xp += Number(r.weekXp) || 0; } }
+  const cur = currentPath(), p = PATHS[cur];
+  const ENOUGH = 3;
+  if (agg.trust.n >= ENOUGH && agg.control.n >= ENOUGH) {
+    const tot = agg.trust.xp + agg.control.xp || 1;
+    const tPct = Math.round(agg.trust.xp / tot * 100), cPct = 100 - tPct;
+    return `<div class="card path-banner">
+      <div class="pb-head"><b>${PATHS.trust.glyph} ${t('Доверие')} vs ${t('Контроль')} ${PATHS.control.glyph}</b><span class="muted">${t('вклад команд за неделю')}</span></div>
+      <div class="pb-bar"><span class="pb-trust" style="width:${tPct}%"></span><span class="pb-control" style="width:${cPct}%"></span></div>
+      <div class="pb-legend"><span>${PATHS.trust.glyph} ${agg.trust.xp.toLocaleString('ru')} XP · ${agg.trust.n}</span><span>${agg.control.n} · ${agg.control.xp.toLocaleString('ru')} XP ${PATHS.control.glyph}</span></div>
+    </div>`;
+  }
+  // Малый масштаб — не выдумываем командную статистику, показываем личный вклад в свою сторону
+  const mine = rows.find((r) => r.me), myXp = (mine && Number(mine.weekXp)) || 0;
+  return `<div class="card path-banner solo">
+    <div class="pb-head"><b>${p.glyph} ${t('Твой путь')}: ${t(p.name)}</b></div>
+    <p class="muted" style="margin:6px 0 0;font-size:13px">${t('Твой вклад за неделю')}: <b>${myXp.toLocaleString('ru')} XP</b>. ${t('Командное табло включится, когда наберётся хотя бы по 3 бойца с каждой стороны.')}</p>
+  </div>`;
+}
 function renderLeaderboard() {
   if (State.leaderboard === null) {
     if (!State._lbLoading) {
@@ -6172,15 +6620,17 @@ function renderLeaderboard() {
   const rows = State.leaderboard;
   const optOut = !!(State.settings && State.settings.leaderboardOptOut);
   const medals = ['🥇', '🥈', '🥉'];
+  const pathGlyph = (p) => p === 'control' ? PATHS.control.glyph : p === 'trust' ? PATHS.trust.glyph : '';
   const list = rows.length ? rows.map((r, i) => `
     <div class="lb-row ${r.me ? 'me' : ''}">
       <div class="lb-pos">${i < 3 ? medals[i] : '#' + (i + 1)}</div>
       <div class="lb-av">${esc(r.avatar || '👤')}</div>
-      <div class="lb-name">${esc(r.name)}${r.me ? ' <span class="lb-you">ты</span>' : ''}<span class="lb-rank">${esc(r.rank || '')}</span></div>
+      <div class="lb-name">${pathGlyph(r.path) ? `<span class="lb-path" title="${esc(t(PATHS[r.path].name))}">${pathGlyph(r.path)}</span> ` : ''}${esc(r.name)}${r.me ? ' <span class="lb-you">ты</span>' : ''}<span class="lb-rank">${esc(r.rank || '')}</span></div>
       <div class="lb-lvl">ур.${r.level}</div>
       <div class="lb-xp">${r.totalXp.toLocaleString('ru')} XP</div>
     </div>`).join('') : '<p class="muted">Пока пусто. Выполняй квесты — и попадёшь в рейтинг. Позови друзей!</p>';
   return `
+    ${pathBannerHTML(rows)}
     <div class="card">
       <h3>🏆 Рейтинг</h3>
       <p class="muted" style="margin:0 0 14px">Соревнование по суммарному опыту среди всех игроков на этом сервере. Видны только имя, аватар, уровень и ранг — твои задачи и личные данные приватны.</p>
@@ -6227,10 +6677,13 @@ function renderNav() {
 }
 const ACCENTS = ['#6c8cff', '#22c1a4', '#e0526a', '#b06ff0', '#e0a23e', '#4f9ff7']; // палитра акцентов (#тема)
 function applyTheme() {
-  const s = State.settings || {}, sys = !!s.systemMode;
-  // Режим «Система» — полный скин: форсим тёмную тему + системный циан-акцент (v2)
+  const s = State.settings || {};
+  // Путь «Контроль» авто-надевает скин «Система» (Solo-Leveling-эстетика строгости), если юзер явно не отключил его оверрайдом.
+  const controlSkin = s.path === 'control' && !s.systemSkinOff;
+  const sys = !!s.systemMode || controlSkin;
   document.documentElement.dataset.theme = sys ? 'dark' : (s.theme === 'light' ? 'light' : 'dark');
   document.documentElement.dataset.system = sys ? 'on' : 'off';
+  document.documentElement.dataset.path = s.path === 'control' ? 'control' : 'trust';
   document.documentElement.style.setProperty('--accent', sys ? '#4fd6ff' : (s.accent || '#6c8cff'));
 }
 // Авто-репорт креша на сервер (раз на ключ за сессию) — чтобы видеть прод-падения в фидбеке.
@@ -6261,6 +6714,7 @@ function render() {
   if (State.phase !== 'app') { showAuthScreen(); return; }
   try { normalizeCoreState(); } catch (e) { console.error('normalizeCoreState', e); }
   try { applyTheme(); } catch (e) { console.error('applyTheme', e); }
+  try { pathReckoning(); } catch (e) { /* расчёт Контроля — не критично для рендера */ }
   // Восстановить app shell если auth-экран его перезаписал
   if (!document.getElementById('main')) document.getElementById('app').innerHTML = APP_SHELL;
   try { renderHeader(); } catch (e) { console.error('renderHeader', e); }
@@ -6595,18 +7049,20 @@ function ensureTutorial() {
 }
 function tutDoneOrSkipped() { const t = ensureTutorial(); return t.done || t.skipped; }
 const TUTORIAL_DAY1 = [
-  { id: 'hi', say: 'Привет! Я — Тень, твой спутник. Покажу за минуту, как это работает — на деле, без занудства.', advanceOn: 'next' },
-  { id: 'capture', say: 'Сюда кидай любую мысль, идею или дело — одним касанием, чтобы не держать в голове.', target: 'input[name="text"]', advanceOn: 'next' },
-  { id: 'level', say: 'Это твой уровень. Каждое выполненное дело растит его — и он НЕ сгорает, как чёрный пояс.', target: '.xp-bar', advanceOn: 'next' },
-  { id: 'pet', say: 'А самое тёплое — загляни ко мне и погладь 🫶 Так растёт наша связь.', target: '[data-action="comp-pet"]', advanceOn: 'comp-pet' },
-  { id: 'done', say: 'Вот и всё, что нужно для старта! Остальное — привычки, цели, дерево навыков — я открою тебе постепенно, по ходу. Ты не один. ✨', advanceOn: 'next', last: true },
+  { id: 'hi', say: 'Привет! Я — Тень, твой спутник. Да, я умею говорить. Нет, это не туториал на сорок минут — одна минута, всё на деле. Погнали.', advanceOn: 'next' },
+  { id: 'capture', say: 'Сюда кидай любую мысль, идею, дело — одним касанием. Голова — для жизни, а не для списков. (Я вот всё держу в дымке. Не советую.)', target: 'input[name="text"]', advanceOn: 'next' },
+  { id: 'level', say: 'Это твой уровень. Растёт от каждого дела и НЕ сгорает — как чёрный пояс. Пропустишь день — я не буду грустно смотреть на тебя из уведомлений. Честно.', target: '.xp-bar', advanceOn: 'next' },
+  { id: 'pet', say: 'А теперь главное. Видишь меня? Погладь 🫶 …Я два дня мьюил ради этой скулы. Так растёт наша связь.', target: '[data-action="comp-pet"]', advanceOn: 'comp-pet' },
+  { id: 'done', say: 'Всё, ты готов! Остальное — привычки, цели, дерево навыков — открою по ходу, без вываливания всего сразу. …Раньше я репетировал эту речь перед стеной. С тобой лучше ✨', advanceOn: 'next', last: true },
 ];
 // Капельница (Фаза 3): Тень открывает разделы по одному в следующие заходы — нежный пузырь (без затемнения), once.
 const DRIPS = [
-  { id: 'd_system', say: 'Психанём? В Настройки → Оформление есть режим «Система» — весь интерфейс станет как из Solo Leveling. Чисто по желанию.', disc: 'teaser:system', when: () => charLevel() >= 2 },
-  { id: 'd_habits', say: 'Ты входишь во вкус 👏 Привычки — повторяющиеся дела, что строят тебя по кирпичику. Загляни в раздел «Привычки».', view: 'habits', when: () => tutDoneOrSkipped() && doneTasks().length >= 2 },
-  { id: 'd_den', say: 'Открылось Логово 🏠 — наша комната, где живём мы с питомцами. Зайди, тут уютно.', view: 'den', disc: 'den', when: () => charLevel() >= ((typeof navUnlockLevel === 'function') ? navUnlockLevel() : 3) },
-  { id: 'd_tree', say: 'У тебя есть очки навыков! В «Дереве» сферы открываются пассивные бонусы. Глянь, что доступно.', view: 'tree', when: () => charLevel() >= 3 && topSkills().some((s) => { try { return treePointsAvailable(s.id) > 0; } catch { return false; } }) },
+  { id: 'd_system', say: 'Психанём? В Настройки → Оформление есть режим «Система» — интерфейс станет как из Solo Leveling. Arise! …Кхм. Чисто по желанию.', disc: 'teaser:system', when: () => charLevel() >= 2 },
+  { id: 'd_habits', say: 'Ты входишь во вкус 👏 Привычки — дела на повторе, они строят тебя по кирпичику. У меня вот одна привычка: появляться эффектно. Загляни в «Привычки».', view: 'habits', when: () => tutDoneOrSkipped() && doneTasks().length >= 2 },
+  { id: 'd_den', say: 'Открылось Логово 🏠 — наша комната: я, питомцы, уют. Заходи — я как раз отрепетировал новую позу для витания.', view: 'den', disc: 'den', when: () => charLevel() >= ((typeof navUnlockLevel === 'function') ? navUnlockLevel() : 3) },
+  { id: 'd_tree', say: 'У тебя очки навыков лежат без дела! В «Дереве» они превращаются в пассивные бонусы. Халява, но честная. Глянь.', view: 'tree', when: () => charLevel() >= 3 && topSkills().some((s) => { try { return treePointsAvailable(s.id) > 0; } catch { return false; } }) },
+  // Выбор пути дисциплины — только когда игрок уже понял базовую игру (урок Pokémon GO: не спрашивать сторону вслепую).
+  { id: 'd_path', say: 'Ты освоился 💪 Пора выбрать путь дисциплины: мягкий (Доверие, через доброту) или жёсткий (Контроль, через строгость). Загляни — покажу оба.', modal: 'path', when: () => tutDoneOrSkipped() && charLevel() >= 3 && !pathChosen() },
 ];
 let _dripShownThisLoad = false;
 function dripCheck() {
@@ -6625,8 +7081,9 @@ function dripStart(d) {
 function dripSeen(open) {
   const t = ensureTutorial(), d = DRIPS.find((x) => x.id === t.dripId);
   if (d) { if (!t.seenDrips.includes(d.id)) t.seenDrips.push(d.id); if (d.disc) { try { markDiscovered(d.disc); } catch {} } }
-  t.active = false; t.mode = 'day1'; const view = open && d && d.view; t.dripId = null;
+  t.active = false; t.mode = 'day1'; const view = open && d && d.view, modal = open && d && d.modal; t.dripId = null;
   Store.save('settings', State.settings);
+  if (modal === 'path') { tutorialPaint(); try { showPathChoiceModal(); } catch {} return; }
   if (view) { State.view = view; try { markDiscovered(view); } catch {} render(); } else tutorialPaint();
 }
 let _tutBound = false;
@@ -6662,7 +7119,7 @@ function tutorialPaint() {
   // drip-режим: нежный пузырь Тени без затемнения (нудж, не блокирует)
   if (tut.mode === 'drip') {
     const d = DRIPS.find((x) => x.id === tut.dripId); if (!d) { ov.remove(); return; }
-    const acts = d.view
+    const acts = (d.view || d.modal)
       ? `<button class="btn sm" data-action="drip-open">${t('Открыть →')}</button><button class="btn ghost sm" data-action="drip-dismiss">${t('Позже')}</button>`
       : `<button class="btn sm" data-action="drip-dismiss">${t('Понятно ✓')}</button>`;
     ov.innerHTML = `<div class="tut-bubble tut-drip">
@@ -6717,6 +7174,11 @@ function onClick(e) {
   if (action === 'tut-restart') { const g = document.getElementById('guide'); if (g) g.remove(); tutorialStart(); return; }
   if (action === 'drip-dismiss') { dripSeen(false); return; }
   if (action === 'drip-open') { dripSeen(true); return; }
+  if (action === 'choose-path') { choosePath(el.dataset.path); return; }
+  if (action === 'close-path-choice') { const m = document.getElementById('path-choice-modal'); if (m) m.remove(); return; }
+  if (action === 'path-teaser-switch') { State.settings.pathTeaserAt = todayStr(); choosePath(el.dataset.path); return; }
+  if (action === 'path-teaser-dismiss') { State.settings.pathTeaserAt = todayStr(); Store.save('settings', State.settings); render(); return; }
+  if (action === 'path-teaser-mute') { State.settings.pathAntagonistMuted = true; State.settings.pathTeaserAt = todayStr(); Store.save('settings', State.settings); toast(t('Больше не позовём. Включить обратно можно в Настройках.')); render(); return; }
   try { tutorialAdvance(action); } catch {} // продвигает шаг гайда, если это его триггер (действие выполнится ниже)
 
   // --- Auth actions ---
@@ -6728,6 +7190,7 @@ function onClick(e) {
   if (action === 'go-register') { State.phase = 'register'; State.regAvatar = '⚡'; State.regName = ''; render(); return; }
   if (action === 'go-login') { State.phase = 'login'; render(); return; }
   if (action === 'go-reset') { State.phase = 'reset'; render(); return; }
+  if (action === 'test-login') { loginAsTestUser(); return; }
   if (action === 'pick-avatar') { State.regAvatar = el.dataset.av; State.regName = document.querySelector('input[name="name"]')?.value || ''; render(); return; }
   if (action === 'logout') {
     fetch('/api/auth/logout', { method: 'POST' }).finally(() => {
@@ -6847,6 +7310,9 @@ function onClick(e) {
     fetch('/api/strava/disconnect', { method: 'POST' }).then(() => { State.strava = null; toast('Strava отключён'); render(); }).catch(() => toast('Ошибка'));
     return;
   }
+  if (action === 'set-path') { choosePath(el.dataset.path); return; }
+  if (action === 'toggle-system-skin-off') { State.settings.systemSkinOff = !!el.checked; Store.save('settings', State.settings); applyTheme(); render(); return; }
+  if (action === 'toggle-antagonist-mute') { State.settings.pathAntagonistMuted = !!el.checked; Store.save('settings', State.settings); render(); return; }
   if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; State.settings.systemMode = false; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'set-accent') { State.settings.accent = el.dataset.accent; State.settings.systemMode = false; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'toggle-system') {
@@ -7482,7 +7948,7 @@ function publishLeaderboard() {
     const ws = weekStart(todayStr()), st = rangeStats(ws, todayStr()); // недельный вклад для пати/рейда
     const clean = Math.max(0, ...((State.antihabits || []).map((a) => antiCleanDays(a))), 0);
     fetch('/api/leaderboard/publish', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ totalXp: overallXp(), level: oi.level, rank: charRank().name, optOut: !!State.settings.leaderboardOptOut, weekStart: ws, weekXp: st.xp, weekQuests: st.quests, cleanDays: clean }) }).catch(() => {});
+      body: JSON.stringify({ totalXp: overallXp(), level: oi.level, rank: charRank().name, optOut: !!State.settings.leaderboardOptOut, weekStart: ws, weekXp: st.xp, weekQuests: st.quests, cleanDays: clean, path: State.settings.path || null }) }).catch(() => {});
   } catch (e) {}
 }
 
