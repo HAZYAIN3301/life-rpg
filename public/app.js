@@ -653,7 +653,7 @@ const I18N_EXTRA = {
   'Грандмастер': { en: 'Grandmaster', de: 'Großmeister', uk: 'Грандмайстер', es: 'Gran maestro' },
   'Легенда': { en: 'Legend', de: 'Legende', uk: 'Легенда', es: 'Leyenda' },
   // Title (visible in header)
-  'Первопроходец': { en: 'Pioneer', de: 'Pionier', uk: 'Першопрохідець', es: 'Pionero' },
+  'Первопроходец': { en: 'Pioneer', de: 'Pionier', uk: 'Першопроходець', es: 'Pionero' },
   // Common extras
   'Готово': { en: 'Done', de: 'Fertig', uk: 'Готово', es: 'Listo' },
   'Копировать': { en: 'Copy', de: 'Kopieren', uk: 'Копіювати', es: 'Copiar' },
@@ -1139,10 +1139,62 @@ const I18N_EXTRA = {
   // Settings — ambient / PWA
   'Фоновый звук без файлов — синтез прямо в браузере.': { en: 'Background sound with no files — synthesized right in the browser.', de: 'Hintergrundsound ohne Dateien — direkt im Browser synthetisiert.', uk: 'Фоновий звук без файлів — синтез прямо в браузері.', es: 'Sonido de fondo sin archivos — sintetizado en el navegador.' },
   '📲 Приложение': { en: '📲 App', de: '📲 App', uk: '📲 Застосунок', es: '📲 App' },
+  '📲 Установи Satoru как приложение — иконка на телефоне, офлайн, уведомления.': { en: '📲 Install Satoru as an app — phone icon, offline mode, notifications.', de: '📲 Installiere Satoru als App — Handy-Icon, offline, Benachrichtigungen.', uk: '📲 Встанови Satoru як застосунок — іконка на телефоні, офлайн, сповіщення.', es: '📲 Instala Satoru como app — icono en el teléfono, sin conexión, notificaciones.' },
+  '📲 Добавь Satoru на экран «Домой»: кнопка Поделиться → «На экран Домой».': { en: '📲 Add Satoru to your Home Screen: Share button → "Add to Home Screen".', de: '📲 Füge Satoru zum Home-Bildschirm hinzu: Teilen-Button → „Zum Home-Bildschirm".', uk: '📲 Додай Satoru на екран «Додому»: кнопка Поділитися → «На екран Додому».', es: '📲 Añade Satoru a la pantalla de inicio: botón Compartir → «Añadir a inicio».' },
   'Установи Satoru как приложение: иконка на телефоне, работает офлайн, уведомления мягко зовут вернуться (чинит «триггер-дыру»).': { en: 'Install Satoru as an app: an icon on your phone, works offline, notifications gently call you back (fixes the "trigger gap").', de: 'Installiere Satoru als App: Icon auf dem Handy, funktioniert offline, Benachrichtigungen rufen dich sanft zurück (schließt die „Trigger-Lücke").', uk: 'Встанови Satoru як застосунок: іконка на телефоні, працює офлайн, сповіщення м\'яко кличуть повернутися (лагодить «тригер-діру»).', es: 'Instala Satoru como app: un icono en tu teléfono, funciona sin conexión, las notificaciones te llaman suavemente de vuelta (arregla el "hueco de disparo").' },
   'Меню браузера → «Установить приложение» / «На экран Домой»': { en: 'Browser menu → "Install app" / "Add to Home Screen"', de: 'Browser-Menü → „App installieren" / „Zum Startbildschirm"', uk: 'Меню браузера → «Встановити застосунок» / «На екран Дому»', es: 'Menú del navegador → «Instalar app» / «Añadir a inicio»' },
   '🔔 Включить уведомления': { en: '🔔 Enable notifications', de: '🔔 Benachrichtigungen aktivieren', uk: '🔔 Увімкнути сповіщення', es: '🔔 Activar notificaciones' },
   'позову вернуться — тепло, без вины': { en: "I'll call you back — warmly, no guilt", de: 'ich rufe dich zurück — herzlich, ohne Schuld', uk: 'покличу повернутися — тепло, без провини', es: 'te llamaré de vuelta — con calidez, sin culpa' },
+  '📂 Импорт тренировок файлом': { en: '📂 Import workouts from file', de: '📂 Trainings aus Datei importieren', uk: '📂 Імпорт тренувань файлом', es: '📂 Importar entrenamientos desde archivo' },
+  'Работает с любыми часами без API: экспортируй GPX/TCX из Garmin Connect, Polar Flow, Suunto, Komoot и т.п. — файлы превратятся в выполненные квесты с XP (дата и длительность из файла, дубликаты пропускаются).': { en: 'Works with any watch without an API: export GPX/TCX from Garmin Connect, Polar Flow, Suunto, Komoot, etc. — files become completed quests with XP (date and duration from the file, duplicates are skipped).', de: 'Funktioniert mit jeder Uhr ohne API: exportiere GPX/TCX aus Garmin Connect, Polar Flow, Suunto, Komoot usw. — Dateien werden zu erledigten Quests mit XP (Datum und Dauer aus der Datei, Duplikate werden übersprungen).', uk: 'Працює з будь-яким годинником без API: експортуй GPX/TCX з Garmin Connect, Polar Flow, Suunto, Komoot тощо — файли стануть виконаними квестами з XP (дата й тривалість із файла, дублікати пропускаються).', es: 'Funciona con cualquier reloj sin API: exporta GPX/TCX desde Garmin Connect, Polar Flow, Suunto, Komoot, etc. — los archivos se convierten en misiones completadas con XP (fecha y duración desde el archivo, duplicados omitidos).' },
+  '📂 Выбрать файлы': { en: '📂 Choose files', de: '📂 Dateien wählen', uk: '📂 Вибрати файли', es: '📂 Elegir archivos' },
+  'Сначала добавь сферы': { en: 'Add areas first', de: 'Füge zuerst Bereiche hinzu', uk: 'Спочатку додай сфери', es: 'Añade áreas primero' },
+  'Не удалось разобрать файлы — нужен GPX или TCX с временем': { en: 'Could not parse the files — GPX or TCX with timestamps is required', de: 'Dateien konnten nicht gelesen werden — GPX oder TCX mit Zeitstempeln nötig', uk: 'Не вдалося розібрати файли — потрібен GPX або TCX з часом', es: 'No se pudieron leer los archivos — se necesita GPX o TCX con tiempos' },
+  'Все эти тренировки уже импортированы': { en: 'All these workouts are already imported', de: 'Alle diese Trainings wurden bereits importiert', uk: 'Усі ці тренування вже імпортовано', es: 'Todos esos entrenamientos ya están importados' },
+  '✅ Импортировано': { en: '✅ Imported', de: '✅ Importiert', uk: '✅ Імпортовано', es: '✅ Importado' },
+  'трен.': { en: 'workouts', de: 'Trainings', uk: 'трен.', es: 'entren.' },
+  'Загрузка…': { en: 'Loading…', de: 'Lädt…', uk: 'Завантаження…', es: 'Cargando…' },
+  'Strava не подключён': { en: 'Strava is not connected', de: 'Strava ist nicht verbunden', uk: 'Strava не підключено', es: 'Strava no está conectada' },
+  'Ошибка синхронизации Strava': { en: 'Strava sync error', de: 'Fehler bei der Strava-Synchronisierung', uk: 'Помилка синхронізації Strava', es: 'Error de sincronización de Strava' },
+  '✓ Импортировано тренировок:': { en: '✓ Workouts imported:', de: '✓ Trainings importiert:', uk: '✓ Тренувань імпортовано:', es: '✓ Entrenamientos importados:' },
+  'Новых тренировок нет — всё уже импортировано': { en: 'No new workouts — everything is already imported', de: 'Keine neuen Trainings — alles ist bereits importiert', uk: 'Нових тренувань немає — усе вже імпортовано', es: 'No hay entrenamientos nuevos — todo ya está importado' },
+  'Ошибка сети при синхронизации': { en: 'Network error during sync', de: 'Netzwerkfehler bei der Synchronisierung', uk: 'Помилка мережі під час синхронізації', es: 'Error de red al sincronizar' },
+  'Подтверди паролем': { en: 'Confirm with password', de: 'Mit Passwort bestätigen', uk: 'Підтверди паролем', es: 'Confirma con contraseña' },
+  'Подтверди PIN': { en: 'Confirm with PIN', de: 'Mit PIN bestätigen', uk: 'Підтверди PIN', es: 'Confirma con PIN' },
+  'Текущий пароль': { en: 'Current password', de: 'Aktuelles Passwort', uk: 'Поточний пароль', es: 'Contraseña actual' },
+  'Удалить аккаунт': { en: 'Delete account', de: 'Konto löschen', uk: 'Видалити акаунт', es: 'Eliminar cuenta' },
+  'Это необратимо. Все твои данные — цели, квесты, дневник, привычки, достижения, питомцы — исчезнут навсегда с наших серверов.': { en: 'This is irreversible. All your data — goals, quests, journal, habits, achievements and pets — will disappear from our servers forever.', de: 'Das ist unumkehrbar. Alle deine Daten — Ziele, Quests, Tagebuch, Gewohnheiten, Erfolge und Gefährten — verschwinden für immer von unseren Servern.', uk: 'Це незворотно. Усі твої дані — цілі, квести, щоденник, звички, досягнення, улюбленці — назавжди зникнуть із наших серверів.', es: 'Esto es irreversible. Todos tus datos — metas, misiones, diario, hábitos, logros y mascotas — desaparecerán para siempre de nuestros servidores.' },
+  'Да, удалить навсегда': { en: 'Yes, delete forever', de: 'Ja, dauerhaft löschen', uk: 'Так, видалити назавжди', es: 'Sí, eliminar para siempre' },
+  'Найди друга по имени…': { en: 'Find a friend by name…', de: 'Freund nach Namen suchen…', uk: 'Знайди друга за імʼям…', es: 'Busca a un amigo por nombre…' },
+  'id профиля': { en: 'profile id', de: 'Profil-ID', uk: 'id профілю', es: 'id de perfil' },
+  'Данных пока нет.': { en: 'No data yet.', de: 'Noch keine Daten.', uk: 'Даних поки немає.', es: 'Aún no hay datos.' },
+  'DAU за 7 дней:': { en: 'DAU for 7 days:', de: 'DAU für 7 Tage:', uk: 'DAU за 7 днів:', es: 'DAU de 7 días:' },
+  '✨ 7 дней Pro бесплатно': { en: '✨ 7 days of Pro free', de: '✨ 7 Tage Pro kostenlos', uk: '✨ 7 днів Pro безкоштовно', es: '✨ 7 días de Pro gratis' },
+  'Оформить Pro': { en: 'Get Pro', de: 'Pro holen', uk: 'Оформити Pro', es: 'Obtener Pro' },
+  '💎 Оформить Pro насовсем': { en: '💎 Get Pro permanently', de: '💎 Pro dauerhaft holen', uk: '💎 Оформити Pro назавжди', es: '💎 Obtener Pro permanente' },
+  'Открой глубину игры. Ядро всегда бесплатно — Pro добавляет силу.': { en: 'Unlock the deeper game. The core stays free — Pro adds power.', de: 'Öffne die Tiefe des Spiels. Der Kern bleibt kostenlos — Pro gibt mehr Kraft.', uk: 'Відкрий глибину гри. Ядро завжди безкоштовне — Pro додає силу.', es: 'Abre la profundidad del juego. El núcleo siempre es gratis — Pro añade fuerza.' },
+  'Без карты для триала. Даунгрейд никогда не удаляет данные.': { en: 'No card for the trial. Downgrading never deletes data.', de: 'Keine Karte für den Testzeitraum. Ein Downgrade löscht nie Daten.', uk: 'Без картки для триалу. Даунгрейд ніколи не видаляє дані.', es: 'Sin tarjeta para la prueba. Bajar de plan nunca elimina datos.' },
+  'Free': { en: 'Free', de: 'Free', uk: 'Free', es: 'Free' },
+  'Подход к борьбе': { en: 'Approach to fighting it', de: 'Ansatz dagegen', uk: 'Підхід до боротьби', es: 'Enfoque para afrontarlo' },
+  'Выше': { en: 'Move up', de: 'Nach oben', uk: 'Вище', es: 'Subir' },
+  'Ниже': { en: 'Move down', de: 'Nach unten', uk: 'Нижче', es: 'Bajar' },
+  'Свернуть/развернуть под-навыки': { en: 'Collapse/expand sub-skills', de: 'Unterfähigkeiten ein-/ausklappen', uk: 'Згорнути/розгорнути піднавички', es: 'Contraer/expandir subhabilidades' },
+  'Вложенность сферы': { en: 'Area nesting', de: 'Bereichsverschachtelung', uk: 'Вкладеність сфери', es: 'Anidación del área' },
+  '— нет сферы —': { en: '— no area —', de: '— kein Bereich —', uk: '— немає сфери —', es: '— sin área —' },
+  'Установить': { en: 'Install', de: 'Installieren', uk: 'Встановити', es: 'Instalar' },
+  'Скрыть': { en: 'Hide', de: 'Ausblenden', uk: 'Сховати', es: 'Ocultar' },
+  'Разреши уведомления в браузере': { en: 'Allow notifications in the browser', de: 'Erlaube Benachrichtigungen im Browser', uk: 'Дозволь сповіщення в браузері', es: 'Permite notificaciones en el navegador' },
+  '🔔 Уведомления включены': { en: '🔔 Notifications enabled', de: '🔔 Benachrichtigungen aktiviert', uk: '🔔 Сповіщення ввімкнено', es: '🔔 Notificaciones activadas' },
+  'Не удалось включить уведомления': { en: 'Could not enable notifications', de: 'Benachrichtigungen konnten nicht aktiviert werden', uk: 'Не вдалося ввімкнути сповіщення', es: 'No se pudieron activar las notificaciones' },
+  '🔕 Уведомления выключены': { en: '🔕 Notifications disabled', de: '🔕 Benachrichtigungen deaktiviert', uk: '🔕 Сповіщення вимкнено', es: '🔕 Notificaciones desactivadas' },
+  '✓ Отправлено — жди уведомление': { en: '✓ Sent — wait for the notification', de: '✓ Gesendet — warte auf die Benachrichtigung', uk: '✓ Надіслано — чекай сповіщення', es: '✓ Enviado — espera la notificación' },
+  'Не доставлено': { en: 'Not delivered', de: 'Nicht zugestellt', uk: 'Не доставлено', es: 'No entregado' },
+  'ошибка': { en: 'error', de: 'Fehler', uk: 'помилка', es: 'error' },
+  'Сетевая ошибка': { en: 'Network error', de: 'Netzwerkfehler', uk: 'Помилка мережі', es: 'Error de red' },
+  '📲 Satoru установлен!': { en: '📲 Satoru installed!', de: '📲 Satoru installiert!', uk: '📲 Satoru встановлено!', es: '📲 ¡Satoru instalado!' },
+  'Слабость': { en: 'Weakness', de: 'Schwachstelle', uk: 'Слабкість', es: 'Debilidad' },
+  'урон ×2': { en: 'damage ×2', de: 'Schaden ×2', uk: 'шкода ×2', es: 'daño ×2' },
+  'Тень греет пламя. Кремень его высекает. Две руки одного огня — выбери, чья ближе сегодня.': { en: 'Shadow warms the flame. Flint strikes it. Two hands of the same fire — choose whose hand feels closer today.', de: 'Schatten wärmt die Flamme. Feuerstein schlägt sie heraus. Zwei Hände desselben Feuers — wähle, wessen Hand dir heute näher ist.', uk: 'Тінь зігріває полумʼя. Кремінь його висікає. Дві руки одного вогню — обери, чия сьогодні ближча.', es: 'Sombra calienta la llama. Pedernal la enciende. Dos manos del mismo fuego — elige cuál sientes más cercana hoy.' },
   'Нарратор-Система комментирует твои действия (Solo Leveling-вайб): драматичные объявления при выполнении квестов, левелапах, рангах, ачивках.': { en: 'The System narrator comments on your actions (Solo Leveling vibe): dramatic announcements on quest completion, level-ups, ranks, achievements.', de: 'Der System-Erzähler kommentiert deine Aktionen (Solo-Leveling-Vibe): dramatische Ansagen bei Quest-Abschluss, Level-ups, Rängen, Erfolgen.', uk: 'Наратор-Система коментує твої дії (Solo Leveling-вайб): драматичні оголошення при виконанні квестів, левелапах, рангах, ачивках.', es: 'El narrador Sistema comenta tus acciones (vibe Solo Leveling): anuncios dramáticos al completar misiones, subir de nivel, rangos, logros.' },
   // Settings — import / start level
   '🎖 Стартовый уровень': { en: '🎖 Starting level', de: '🎖 Startniveau', uk: '🎖 Стартовий рівень', es: '🎖 Nivel inicial' },
@@ -3918,29 +3970,84 @@ function importStravaActivities(activities, skillId) {
   if (added) { Store.save('tasks', State.tasks); checkAchievements(); publishLeaderboard(); }
   return { added, xpTotal };
 }
+// ── Импорт тренировок ФАЙЛОМ (GPX/TCX) — работает с ЛЮБЫМИ часами без API ──
+// Garmin Connect / Polar Flow / Suunto / Apple (через приложения) экспортируют GPX/TCX бесплатно.
+// Парс — браузерный DOMParser (zero-dep). Файл → активность того же формата, что Strava → реюз importStravaActivities.
+const WK_SPORT_EMOJI = { running: '🏃', run: '🏃', biking: '🚴', cycling: '🚴', ride: '🚴', swimming: '🏊', walking: '🚶', hiking: '🥾', other: '🏅' };
+function parseWorkoutFile(name, text) {
+  let doc; try { doc = new DOMParser().parseFromString(text, 'application/xml'); } catch { return null; }
+  if (!doc || doc.querySelector('parsererror')) return null;
+  const lower = name.toLowerCase();
+  let title = '', minutes = 0, start = null, sport = '';
+  if (lower.endsWith('.tcx') || doc.querySelector('TrainingCenterDatabase, Activities')) {
+    const act = doc.querySelector('Activity'); if (!act) return null;
+    sport = (act.getAttribute('Sport') || '').toLowerCase();
+    const idEl = act.querySelector('Id'); start = idEl ? new Date(idEl.textContent.trim()) : null;
+    let secs = 0; act.querySelectorAll('Lap > TotalTimeSeconds').forEach((el) => { secs += Number(el.textContent) || 0; });
+    minutes = Math.round(secs / 60);
+    const notes = act.querySelector('Notes'); title = notes ? notes.textContent.trim() : '';
+  } else { // GPX
+    const meta = doc.querySelector('trk > name, metadata > name'); title = meta ? meta.textContent.trim() : '';
+    const typeEl = doc.querySelector('trk > type'); sport = typeEl ? typeEl.textContent.trim().toLowerCase() : '';
+    const times = doc.querySelectorAll('trkpt > time');
+    if (times.length >= 2) {
+      const t0 = new Date(times[0].textContent.trim()), t1 = new Date(times[times.length - 1].textContent.trim());
+      if (!isNaN(t0) && !isNaN(t1)) { start = t0; minutes = Math.max(1, Math.round((t1 - t0) / 60000)); }
+    }
+  }
+  if (!start || isNaN(start) || minutes <= 0) return null;
+  const emoji = WK_SPORT_EMOJI[sport] || '🏅';
+  if (!title) title = name.replace(/\.(gpx|tcx)$/i, '');
+  // дедуп-ключ: время старта + длительность (стабильно между экспортами одного и того же файла)
+  return { stravaId: 'file_' + start.toISOString() + '_' + minutes, title: `${emoji} ${title} · ${fmtDur(minutes)}`, minutes, startDate: start.toISOString() };
+}
+function fileImportCard() {
+  const sport = (State.settings.skills || []).find((s) => /спорт|трен|фитнес|бег|здоров|sport|fitness|run|health/i.test(s.name)) || (State.settings.skills || [])[0];
+  const opts = (State.settings.skills || []).filter((s) => !s.parentId).map((s) => `<option value="${s.id}" ${sport && s.id === sport.id ? 'selected' : ''}>${esc(s.name)}</option>`).join('');
+  return `<div class="card"><h3>${t('📂 Импорт тренировок файлом')}</h3>
+    <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Работает с любыми часами без API: экспортируй GPX/TCX из Garmin Connect, Polar Flow, Suunto, Komoot и т.п. — файлы превратятся в выполненные квесты с XP (дата и длительность из файла, дубликаты пропускаются).')}</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <select id="wkfile-skill">${opts}</select>
+      <label class="btn ghost sm" style="cursor:pointer">${t('📂 Выбрать файлы')}<input type="file" data-action="wkfile" accept=".gpx,.tcx" multiple style="display:none" /></label>
+    </div></div>`;
+}
+async function importWorkoutFiles(files) {
+  const sel = document.getElementById('wkfile-skill');
+  const skillId = (sel && sel.value) || ((State.settings.skills || [])[0] || {}).id;
+  if (!skillId) { toast(t('Сначала добавь сферы')); return; }
+  const acts = [];
+  for (const f of files) {
+    try { const p = parseWorkoutFile(f.name, await f.text()); if (p) acts.push(p); } catch {}
+  }
+  if (!acts.length) { toast(t('Не удалось разобрать файлы — нужен GPX или TCX с временем')); return; }
+  const r = importStravaActivities(acts, skillId);
+  toast(r.added ? `${t('✅ Импортировано')} ${r.added} ${t('трен.')} · +${r.xpTotal} XP` : t('Все эти тренировки уже импортированы'));
+  render();
+}
 function stravaCard() {
   const s = State.strava || {};
-  if (!Object.keys(s).length) return `<div class="card"><h3>🏃 Strava</h3><p class="muted">Загрузка…</p></div>`;
+  if (!Object.keys(s).length) return `<div class="card"><h3>🏃 Strava</h3><p class="muted">${t('Загрузка…')}</p></div>`;
   if (!s.configured) {
-    return `<div class="card"><h3>🏃 Strava — авто-импорт тренировок</h3>
-      <p class="muted" style="font-size:12.5px;margin:0">Интеграция ещё не настроена на сервере. Нужно создать <a href="https://www.strava.com/settings/api" target="_blank" rel="noopener">Strava API-приложение</a> и добавить <code>STRAVA_CLIENT_ID</code> + <code>STRAVA_CLIENT_SECRET</code> в переменные Railway (Authorization Callback Domain = домен приложения).</p></div>`;
+    return `<div class="card"><h3>${t('🏃 Strava — авто-импорт тренировок')}</h3>
+      <p class="muted" style="font-size:12.5px;margin:0">${t('Интеграция ещё не настроена на сервере. Нужно создать')} <a href="https://www.strava.com/settings/api" target="_blank" rel="noopener">${t('Strava API-приложение')}</a> ${t('и добавить')} <code>STRAVA_CLIENT_ID</code> + <code>STRAVA_CLIENT_SECRET</code> ${t('в переменные Railway (Authorization Callback Domain = домен приложения).')}</p></div>`;
   }
   if (!s.connected) {
-    return `<div class="card"><h3>🏃 Strava — авто-импорт тренировок</h3>
-      <p class="muted" style="font-size:12.5px;margin:0 0 10px">Подключи Strava — твои пробежки, велозаезды и тренировки автоматически станут выполненными квестами с XP в выбранной сфере.</p>
-      <button class="btn" data-action="strava-connect">🔗 Подключить Strava</button></div>`;
+    return `<div class="card"><h3>${t('🏃 Strava — авто-импорт тренировок')}</h3>
+      <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Подключи Strava — твои пробежки, велозаезды и тренировки автоматически станут выполненными квестами с XP в выбранной сфере.')}</p>
+      <button class="btn" data-action="strava-connect">${t('🔗 Подключить Strava')}</button></div>`;
   }
   const opts = leafSkills().map((sk) => `<option value="${sk.id}" ${stravaSkillId() === sk.id ? 'selected' : ''}>${esc(skillLabel(sk.id))}</option>`).join('');
-  const last = s.lastSync ? new Date(s.lastSync).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : 'ещё не было';
+  const locale = ({ ru: 'ru-RU', en: 'en-US', de: 'de-DE', uk: 'uk-UA', es: 'es-ES' })[lang()] || 'en-US';
+  const last = s.lastSync ? new Date(s.lastSync).toLocaleString(locale, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : t('ещё не было');
   return `<div class="card"><h3>🏃 Strava</h3>
-    <p class="muted" style="font-size:12.5px;margin:0 0 10px">✓ Подключён: <b>${esc((s.athlete && s.athlete.name) || 'атлет')}</b> · последняя синхронизация: ${esc(last)}</p>
-    <label class="strava-skill">Сфера для тренировок
+    <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('✓ Подключён:')} <b>${esc((s.athlete && s.athlete.name) || t('атлет'))}</b> · ${t('последняя синхронизация:')} ${esc(last)}</p>
+    <label class="strava-skill">${t('Сфера для тренировок')}
       <select data-action="set-strava-skill">${opts}</select></label>
     <div class="settings-actions" style="margin-top:10px">
-      <button class="btn ${State._stravaSyncing ? 'disabled' : ''}" data-action="strava-sync" ${State._stravaSyncing ? 'disabled' : ''}>${State._stravaSyncing ? '⏳ Синхронизирую…' : '🔄 Синхронизировать (30 дней)'}</button>
-      <button class="btn ghost danger-btn" data-action="strava-disconnect">Отключить</button>
+      <button class="btn ${State._stravaSyncing ? 'disabled' : ''}" data-action="strava-sync" ${State._stravaSyncing ? 'disabled' : ''}>${State._stravaSyncing ? t('⏳ Синхронизирую…') : t('🔄 Синхронизировать (30 дней)')}</button>
+      <button class="btn ghost danger-btn" data-action="strava-disconnect">${t('Отключить')}</button>
     </div>
-    <p class="muted" style="font-size:11.5px;margin:8px 0 0">Импорт безопасен: повторная синхронизация не задваивает тренировки (дедуп по Strava-ID). Токены хранятся только на сервере.</p></div>`;
+    <p class="muted" style="font-size:11.5px;margin:8px 0 0">${t('Импорт безопасен: повторная синхронизация не задваивает тренировки (дедуп по Strava-ID). Токены хранятся только на сервере.')}</p></div>`;
 }
 async function stravaSync() {
   if (State._stravaSyncing) return;
@@ -3948,12 +4055,12 @@ async function stravaSync() {
   try {
     const r = await fetch('/api/strava/sync', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ days: 30 }) });
     const d = await r.json();
-    if (!r.ok) { toast(d.error === 'not_connected' ? 'Strava не подключён' : 'Ошибка синхронизации Strava'); return; }
+    if (!r.ok) { toast(d.error === 'not_connected' ? t('Strava не подключён') : t('Ошибка синхронизации Strava')); return; }
     const res = importStravaActivities(d.activities || [], stravaSkillId());
     if (State.strava) State.strava.lastSync = new Date().toISOString();
-    if (res.added) toast(`✓ Импортировано тренировок: ${res.added} · +${res.xpTotal} XP`);
-    else toast('Новых тренировок нет — всё уже импортировано');
-  } catch { toast('Ошибка сети при синхронизации'); }
+    if (res.added) toast(`${t('✓ Импортировано тренировок:')} ${res.added} · +${res.xpTotal} XP`);
+    else toast(t('Новых тренировок нет — всё уже импортировано'));
+  } catch { toast(t('Ошибка сети при синхронизации')); }
   finally { State._stravaSyncing = false; render(); }
 }
 // Компактная сводка недели для ИИ — реальные данные, не выдумка
@@ -5816,41 +5923,41 @@ function svgToPng(svgStr, w, h) {
 // ============================================================
 function subscriptionCard() {
   const e = ent(), dl = trialDaysLeft();
-  const tierLabel = e.tier === 'pro' ? '💎 Pro' : (e.tier === 'trial' ? `✨ Pro-триал · ${dl} ${plural(dl, 'день', 'дня', 'дней')}` : 'Free');
+  const tierLabel = e.tier === 'pro' ? '💎 Pro' : (e.tier === 'trial' ? `✨ Pro-trial · ${dl} ${i18nDay(dl, lang())}` : t('Free'));
   let cta = '';
   if (e.tier === 'free') {
-    if (!e.trialUsed) cta += `<button class="btn" data-action="start-trial">✨ 7 дней Pro бесплатно</button>`;
-    cta += `<button class="btn pro-cta" data-action="show-paywall" data-feature="Pro">💎 Оформить Pro</button>`;
+    if (!e.trialUsed) cta += `<button class="btn" data-action="start-trial">${t('✨ 7 дней Pro бесплатно')}</button>`;
+    cta += `<button class="btn pro-cta" data-action="show-paywall" data-feature="Pro">${t('💎 Оформить Pro')}</button>`;
   } else if (e.tier === 'trial') {
-    cta += `<button class="btn pro-cta" data-action="show-paywall" data-feature="Pro">💎 Оформить Pro насовсем</button>`;
+    cta += `<button class="btn pro-cta" data-action="show-paywall" data-feature="Pro">${t('💎 Оформить Pro насовсем')}</button>`;
   }
   const feats = ['📊 Расширенная аналитика и Индекс баланса', '🎁 До 3 сундуков в день + редкие дропы', '🧍 Живой персонаж и кастомизация (скоро)', '🤖 ИИ-ассистент (на своём ключе — есть бесплатные)', '🎨 Темы оформления (скоро)'];
   return `<div class="card sub-card">
-    <h3>Подписка — <span class="tier-badge tier-${e.tier}">${tierLabel}</span></h3>
-    <ul class="pro-feats">${feats.map((f) => `<li>${f}</li>`).join('')}</ul>
-    <div class="settings-actions">${cta || '<span class="muted">Спасибо за поддержку 💛</span>'}</div></div>`;
+    <h3>${t('Подписка —')} <span class="tier-badge tier-${e.tier}">${tierLabel}</span></h3>
+    <ul class="pro-feats">${feats.map((f) => `<li>${t(f)}</li>`).join('')}</ul>
+    <div class="settings-actions">${cta || `<span class="muted">${t('Спасибо за поддержку 💛')}</span>`}</div></div>`;
 }
 function securityCard() {
   const hasEmail = State.me && State.me.email;
   const hasPin = State.me && State.me.hasPin;
   const emailBlock = hasEmail
-    ? `<p class="muted" style="font-size:12.5px;margin:0 0 6px">✓ Email привязан: <b>${esc(hasEmail)}</b> — вход и восстановление по email+паролю.</p>`
-    : `<p class="muted" style="font-size:12.5px;margin:0 0 8px">Привяжи email+пароль — чтобы входить с любого устройства и иметь восстановление доступа (сейчас вход только по PIN).</p>
+    ? `<p class="muted" style="font-size:12.5px;margin:0 0 6px">${t('✓ Email привязан:')} <b>${esc(hasEmail)}</b> ${t('— вход и восстановление по email+паролю.')}</p>`
+    : `<p class="muted" style="font-size:12.5px;margin:0 0 8px">${t('Привяжи email+пароль — чтобы входить с любого устройства и иметь восстановление доступа (сейчас вход только по PIN).')}</p>
        <form id="add-email" class="pin-change">
          <input name="email" type="email" placeholder="you@mail.com" autocomplete="username" required />
-         <input name="password" type="password" placeholder="Пароль (6+)" autocomplete="new-password" required />
-         <button type="submit" class="btn">Привязать</button><span id="add-email-msg" class="muted"></span></form>`;
+         <input name="password" type="password" placeholder="${t('Пароль (6+)')}" autocomplete="new-password" required />
+         <button type="submit" class="btn">${t('Привязать')}</button><span id="add-email-msg" class="muted"></span></form>`;
   const pinBlock = hasPin
-    ? `<h3 style="margin-top:16px">🔐 Сменить PIN</h3>
+    ? `<h3 style="margin-top:16px">${t('🔐 Сменить PIN')}</h3>
     <form id="change-pin" class="pin-change">
-      <input name="oldPin" type="password" inputmode="numeric" placeholder="Текущий PIN" maxlength="8" required />
-      <input name="newPin" type="password" inputmode="numeric" placeholder="Новый PIN (4+)" maxlength="8" required />
-      <button type="submit" class="btn">Сменить</button><span id="pin-change-msg" class="muted"></span></form>`
+      <input name="oldPin" type="password" inputmode="numeric" placeholder="${t('Текущий PIN')}" maxlength="8" required />
+      <input name="newPin" type="password" inputmode="numeric" placeholder="${t('Новый PIN (4+)')}" maxlength="8" required />
+      <button type="submit" class="btn">${t('Сменить')}</button><span id="pin-change-msg" class="muted"></span></form>`
     : '';
   return `<div class="card"><h3>${t('🔑 Вход и восстановление')}</h3>${emailBlock}${pinBlock}
     <div class="danger-zone">
       <h3>${t('⚠️ Данные и приватность')}</h3>
-      <p class="muted" style="font-size:12.5px;margin:0 0 8px">Мы храним только то, что ты вводишь сам: цели, квесты, дневник, привычки. Удаление аккаунта удаляет всё с сервера (DSGVO/GDPR).</p>
+      <p class="muted" style="font-size:12.5px;margin:0 0 8px">${t('Мы храним только то, что ты вводишь сам: цели, квесты, дневник, привычки. Удаление аккаунта удаляет всё с сервера (DSGVO/GDPR).')}</p>
       <button class="btn ghost danger-btn" data-action="show-delete-account">${t('Удалить аккаунт и все данные')}</button>
     </div>
   </div>`;
@@ -5859,17 +5966,17 @@ function showDeleteAccountModal() {
   if (document.getElementById('del-account-modal')) return;
   const hasEmail = State.me && State.me.email;
   const confirmField = hasEmail
-    ? `<label class="auth-label">Подтверди паролем<input name="password" type="password" autocomplete="current-password" placeholder="Текущий пароль" required /></label>`
-    : `<label class="auth-label">Подтверди PIN<input name="pin" type="password" inputmode="numeric" placeholder="Текущий PIN" maxlength="8" required /></label>`;
+    ? `<label class="auth-label">${t('Подтверди паролем')}<input name="password" type="password" autocomplete="current-password" placeholder="${t('Текущий пароль')}" required /></label>`
+    : `<label class="auth-label">${t('Подтверди PIN')}<input name="pin" type="password" inputmode="numeric" placeholder="${t('Текущий PIN')}" maxlength="8" required /></label>`;
   const ov = document.createElement('div'); ov.id = 'del-account-modal'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="paywall-box">
     <button class="modal-x" data-action="close-del-account">✕</button>
     <div style="font-size:36px;margin-bottom:8px">⚠️</div>
-    <h2 style="color:var(--bad);margin:0 0 10px">Удалить аккаунт</h2>
-    <p class="muted" style="margin:0 0 16px;font-size:13.5px">Это <b>необратимо</b>. Все твои данные — цели, квесты, дневник, привычки, достижения, питомцы — исчезнут навсегда с наших серверов.</p>
+    <h2 style="color:var(--bad);margin:0 0 10px">${t('Удалить аккаунт')}</h2>
+    <p class="muted" style="margin:0 0 16px;font-size:13.5px">${t('Это необратимо. Все твои данные — цели, квесты, дневник, привычки, достижения, питомцы — исчезнут навсегда с наших серверов.')}</p>
     <form id="del-account-form" style="display:flex;flex-direction:column;gap:10px">
       ${confirmField}
-      <button type="submit" class="btn" style="background:var(--bad);border-color:var(--bad);margin-top:4px">Да, удалить навсегда</button>
+      <button type="submit" class="btn" style="background:var(--bad);border-color:var(--bad);margin-top:4px">${t('Да, удалить навсегда')}</button>
       <span id="del-account-msg" class="muted" style="text-align:center;font-size:13px"></span>
     </form>
   </div>`;
@@ -6044,59 +6151,59 @@ function adminCard() {
     ? `<datalist id="admin-users-dl">${users.map((u) => `<option value="${esc(u.id)}">${esc(u.avatar || '')} ${esc(u.name)} (${esc(u.id)})</option>`).join('')}</datalist>`
     : '';
   const userInput = users.length
-    ? `<input name="userId" list="admin-users-dl" placeholder="Найди друга по имени…" autocomplete="off" required />${datalist}`
-    : `<input name="userId" placeholder="${State._adminUsersLoading ? 'Загружаю…' : 'id профиля'}" required />`;
+    ? `<input name="userId" list="admin-users-dl" placeholder="${t('Найди друга по имени…')}" autocomplete="off" required />${datalist}`
+    : `<input name="userId" placeholder="${State._adminUsersLoading ? t('Загружаю…') : t('id профиля')}" required />`;
   const recoverList = users.length
     ? `<datalist id="recover-users-dl">${users.map((u) => `<option value="${esc(u.id)}">${esc(u.avatar || '')} ${esc(u.name)} (${esc(u.id)})</option>`).join('')}</datalist>`
     : '';
-  return `<div class="card"><h3>🛠 Админ — выдать Pro</h3>
+  return `<div class="card"><h3>${t('🛠 Админ — выдать Pro')}</h3>
     <form id="grant-pro" class="pin-change">
       ${userInput}
-      <input name="days" type="number" placeholder="дней (пусто=навсегда)" min="1" style="width:170px" />
-      <button type="submit" class="btn">Выдать Pro</button><span id="grant-msg" class="muted"></span></form>
-    <p class="muted" style="font-size:12px">Выбери профиль из списка — поиск по имени или id. Пусто в «дней» = бессрочный Pro.</p>
-    <h3 style="margin-top:16px">🗂 Данные и бэкапы юзера</h3>
+      <input name="days" type="number" placeholder="${t('дней (пусто=навсегда)')}" min="1" style="width:170px" />
+      <button type="submit" class="btn">${t('Выдать Pro')}</button><span id="grant-msg" class="muted"></span></form>
+    <p class="muted" style="font-size:12px">${t('Выбери профиль из списка — поиск по имени или id. Пусто в «дней» = бессрочный Pro.')}</p>
+    <h3 style="margin-top:16px">${t('🗂 Данные и бэкапы юзера')}</h3>
     <form id="recover-data" class="pin-change">
-      <input name="userId" ${users.length ? 'list="recover-users-dl"' : ''} placeholder="id или имя профиля" autocomplete="off" required />${recoverList}
-      <button type="submit" class="btn ghost">Открыть</button></form>
-    <p class="muted" style="font-size:12px">Посмотреть текущие данные и восстановить из автоснимка (бэкапы делаются перед каждой записью).</p>
-    <h3 style="margin-top:16px">📊 Активность (аналитика)</h3>
+      <input name="userId" ${users.length ? 'list="recover-users-dl"' : ''} placeholder="${t('id или имя профиля')}" autocomplete="off" required />${recoverList}
+      <button type="submit" class="btn ghost">${t('Открыть')}</button></form>
+    <p class="muted" style="font-size:12px">${t('Посмотреть текущие данные и восстановить из автоснимка (бэкапы делаются перед каждой записью).')}</p>
+    <h3 style="margin-top:16px">${t('📊 Активность (аналитика)')}</h3>
     ${analyticsHTML()}
-    <p class="muted" style="font-size:12px">Только агрегат: какие вкладки/действия используются и сколько активных в день. Без личного контента.</p></div>`;
+    <p class="muted" style="font-size:12px">${t('Только агрегат: какие вкладки/действия используются и сколько активных в день. Без личного контента.')}</p></div>`;
 }
 function analyticsHTML() {
   if (State.analytics === undefined) {
     State.analytics = null;
     fetch('/api/admin/analytics').then((r) => r.json()).then((d) => { State.analytics = d || {}; if (State.view === 'settings') render(); }).catch(() => { State.analytics = {}; });
-    return '<p class="muted">Загружаю…</p>';
+    return `<p class="muted">${t('Загружаю…')}</p>`;
   }
-  if (!State.analytics || !Object.keys(State.analytics).length) return '<p class="muted">Данных пока нет.</p>';
+  if (!State.analytics || !Object.keys(State.analytics).length) return `<p class="muted">${t('Данных пока нет.')}</p>`;
   const days = Object.keys(State.analytics).sort().slice(-7);
   const ev = {}; const dauSet = {};
   for (const day of days) { const x = State.analytics[day]; for (const k in (x.events || {})) ev[k] = (ev[k] || 0) + x.events[k]; dauSet[day] = Object.keys(x.users || {}).length; }
   const top = Object.entries(ev).sort((a, b) => b[1] - a[1]).slice(0, 12);
   const dauRows = days.map((d) => `<span class="an-dau" title="${d}">${d.slice(5)}: <b>${dauSet[d] || 0}</b></span>`).join('');
   const evRows = top.map(([k, v]) => `<div class="an-row"><span class="an-k">${esc(k)}</span><span class="an-v">${v}</span></div>`).join('');
-  return `<div class="an-box"><div class="an-dau-row">DAU за 7 дней: ${dauRows}</div><div class="an-events">${evRows}</div></div>`;
+  return `<div class="an-box"><div class="an-dau-row">${t('DAU за 7 дней:')} ${dauRows}</div><div class="an-events">${evRows}</div></div>`;
 }
 function showPaywall(feature) {
   if (document.getElementById('paywall')) return;
   const e = ent();
-  const trialBtn = (e.tier === 'free' && !e.trialUsed) ? `<button class="btn" data-action="start-trial">✨ 7 дней Pro бесплатно</button>` : '';
+  const trialBtn = (e.tier === 'free' && !e.trialUsed) ? `<button class="btn" data-action="start-trial">${t('✨ 7 дней Pro бесплатно')}</button>` : '';
   const ov = document.createElement('div'); ov.id = 'paywall'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="paywall-box">
     <button class="modal-x" data-action="close-paywall">✕</button>
     <div class="pw-crown">💎</div>
-    <h2>${feature && feature !== 'Pro' ? esc(feature) + ' — в Pro' : 'Satoru Pro'}</h2>
-    <p class="muted">Открой глубину игры. Ядро всегда бесплатно — Pro добавляет силу.</p>
+    <h2>${feature && feature !== 'Pro' ? esc(t(feature)) + ' — Pro' : 'Satoru Pro'}</h2>
+    <p class="muted">${t('Открой глубину игры. Ядро всегда бесплатно — Pro добавляет силу.')}</p>
     <ul class="pro-feats">
-      <li>📊 Расширенная аналитика и Индекс баланса</li>
-      <li>🎁 До 3 сундуков в день + редкие дропы</li>
-      <li>🧍 Живой персонаж и кастомизация (скоро)</li>
-      <li>🤖 ИИ-ассистент (на своём ключе — есть бесплатные)</li>
-      <li>🎨 Темы оформления (скоро)</li></ul>
-    <div class="pw-actions">${trialBtn}<button class="btn pro-cta" data-action="do-upgrade">Оформить Pro</button></div>
-    <p class="muted pw-fine">Без карты для триала. Даунгрейд никогда не удаляет данные.</p></div>`;
+      <li>${t('📊 Расширенная аналитика и Индекс баланса')}</li>
+      <li>${t('🎁 До 3 сундуков в день + редкие дропы')}</li>
+      <li>${t('🧍 Живой персонаж и кастомизация (скоро)')}</li>
+      <li>${t('🤖 ИИ-ассистент (на своём ключе — есть бесплатные)')}</li>
+      <li>${t('🎨 Темы оформления (скоро)')}</li></ul>
+    <div class="pw-actions">${trialBtn}<button class="btn pro-cta" data-action="do-upgrade">${t('Оформить Pro')}</button></div>
+    <p class="muted pw-fine">${t('Без карты для триала. Даунгрейд никогда не удаляет данные.')}</p></div>`;
   document.body.appendChild(ov);
 }
 
@@ -6572,12 +6679,13 @@ function renderSettings() {
   // Столб тоже может иметь родителя — так строится Учёба → Школа → Bio LK. Это же «расстолбливает» (#16).
   const parentOptions = (sk) => {
     const blocked = new Set([sk.id, ...descendantSkills(sk.id).map((x) => x.id)]);
-    let html = `<option value="" ${!sk.parentId ? 'selected' : ''}>Самостоятельная сфера</option>`;
+    let html = `<option value="" ${!sk.parentId ? 'selected' : ''}>${t('Самостоятельная сфера')}</option>`;
     const walk = (parentId, chain, depth) => {
       if (depth > 6) return;
       for (const p of State.settings.skills.filter((x) => (x.parentId || null) === parentId)) {
         if (blocked.has(p.id)) continue; // в себя/потомка нельзя — пропускаем вместе с поддеревом
-        html += `<option value="${p.id}" ${sk.parentId === p.id ? 'selected' : ''}>Внутри «${esc([...chain, p.name].join(' › '))}»</option>`;
+        const label = [...chain, p.name].map((n) => lang() === 'ru' ? n : i18nWord(n, lang())).join(' › ');
+        html += `<option value="${p.id}" ${sk.parentId === p.id ? 'selected' : ''}>${esc(i18nString(`Внутри «${label}»`, lang()) || `Внутри «${label}»`)}</option>`;
         walk(p.id, [...chain, p.name], depth + 1);
       }
     };
@@ -6591,19 +6699,19 @@ function renderSettings() {
     const auto = canonById(autoCanon(sk.name));
     const topExtra = depth === 0 ? `
       <div class="se-canon">
-        <span class="se-canon-lbl" title="Канонический жизненный домен — единый «хребет» для карты баланса и подсказок. Авто по названию, можно поправить.">🧭 домен</span>
+        <span class="se-canon-lbl" title="${t('Канонический жизненный домен — единый «хребет» для карты баланса и подсказок. Авто по названию, можно поправить.')}">${t('🧭 домен')}</span>
         <select data-field="canon">
-          <option value="">авто${auto ? ' · ' + auto.icon + ' ' + auto.name : ' · —'}</option>
-          ${CANON_DOMAINS.map((d) => `<option value="${d.id}" ${sk.canon === d.id ? 'selected' : ''}>${d.icon} ${esc(d.name)}</option>`).join('')}
+          <option value="">${t('авто')}${auto ? ' · ' + auto.icon + ' ' + t(auto.name) : ' · —'}</option>
+          ${CANON_DOMAINS.map((d) => `<option value="${d.id}" ${sk.canon === d.id ? 'selected' : ''}>${d.icon} ${esc(t(d.name))}</option>`).join('')}
         </select>
-        <label class="se-proj" title="Проект — не ось колеса баланса (живёт в Целях)"><input type="checkbox" data-field="noBalance" ${sk.noBalance ? 'checked' : ''}/> 🏁 проект</label>
+        <label class="se-proj" title="${t('Проект — не ось колеса баланса (живёт в Целях)')}"><input type="checkbox" data-field="noBalance" ${sk.noBalance ? 'checked' : ''}/> ${t('🏁 проект')}</label>
       </div>` : '';
     return `<div class="skill-edit ${depth > 0 ? 'is-sub' : ''} ${hidden ? 'se-hidden' : ''}" data-id="${sk.id}" style="--d:${depth}">
-      <span class="se-move"><button data-action="skill-move" data-id="${sk.id}" data-dir="-1" title="Выше">▲</button><button data-action="skill-move" data-id="${sk.id}" data-dir="1" title="Ниже">▼</button></span>
-      ${pillar ? `<button class="se-collapse" data-action="skill-collapse" data-id="${sk.id}" title="Свернуть/развернуть под-навыки">${collapsed[sk.id] ? '▸' : '▾'}</button>` : '<span class="se-collapse-spacer"></span>'}
+      <span class="se-move"><button data-action="skill-move" data-id="${sk.id}" data-dir="-1" title="${t('Выше')}">▲</button><button data-action="skill-move" data-id="${sk.id}" data-dir="1" title="${t('Ниже')}">▼</button></span>
+      ${pillar ? `<button class="se-collapse" data-action="skill-collapse" data-id="${sk.id}" title="${t('Свернуть/развернуть под-навыки')}">${collapsed[sk.id] ? '▸' : '▾'}</button>` : '<span class="se-collapse-spacer"></span>'}
       <input type="color" value="${esc(sk.color)}" data-field="color" />
       <input type="text" value="${esc(sk.name)}" data-field="name" />
-      <select data-field="parentId" title="Вложенность сферы">${parentOptions(sk)}</select>
+      <select data-field="parentId" title="${t('Вложенность сферы')}">${parentOptions(sk)}</select>
       <button class="del" data-action="delete-skill" data-id="${sk.id}">✕</button>
       ${topExtra}</div>`;
   };
@@ -6615,8 +6723,8 @@ function renderSettings() {
   const skills = renderSkillRows(null, 0, false);
   const habits = State.habits.map((h) => `<div class="habit-edit" data-id="${h.id}">
       <input type="text" value="${esc(h.title)}" data-field="title" />
-      <select data-field="skillId" class="${skillById(h.skillId).missing ? 'missing' : ''}">${skillById(h.skillId).missing ? `<option value="${esc(h.skillId)}" selected>— нет сферы —</option>` : ''}${skillOpts(h.skillId)}</select>
-      <select data-field="difficulty"><option value="easy" ${h.difficulty === 'easy' ? 'selected' : ''}>Лёгкая</option><option value="normal" ${h.difficulty === 'normal' ? 'selected' : ''}>Обычная</option><option value="hard" ${h.difficulty === 'hard' ? 'selected' : ''}>Сложная</option></select>
+      <select data-field="skillId" class="${skillById(h.skillId).missing ? 'missing' : ''}">${skillById(h.skillId).missing ? `<option value="${esc(h.skillId)}" selected>${t('— нет сферы —')}</option>` : ''}${skillOpts(h.skillId)}</select>
+      <select data-field="difficulty"><option value="easy" ${h.difficulty === 'easy' ? 'selected' : ''}>${t('Лёгкая')}</option><option value="normal" ${h.difficulty === 'normal' ? 'selected' : ''}>${t('Обычная')}</option><option value="hard" ${h.difficulty === 'hard' ? 'selected' : ''}>${t('Сложная')}</option></select>
       <input type="number" min="0" step="1" value="${Number(h.estimateMin) || 0}" data-field="estimateMin" />
       <div class="weekdays">${WEEKDAYS.map((w) => `<label><input type="checkbox" data-day="${w.js}" ${(h.days || []).includes(w.js) ? 'checked' : ''}/>${w.label}</label>`).join('')}</div>
       <button class="del" data-action="delete-habit" data-id="${h.id}">✕</button></div>`).join('');
@@ -6648,46 +6756,47 @@ function renderSettings() {
       <div class="theme-row"><span class="theme-lbl">${t('Акцент')}</span>
         <div class="accent-swatches">${ACCENTS.map((c) => `<button class="accent-sw ${(s.accent || '#6c8cff') === c ? 'active' : ''}" data-action="set-accent" data-accent="${c}" style="background:${c}" title="${c}" aria-label="${t('Акцент')} ${c}"></button>`).join('')}</div></div>
       <div class="theme-row"><span class="theme-lbl">${t('⚡ Режим «Система»')}</span>
-        <label class="sound-toggle"><input type="checkbox" data-action="toggle-system" ${systemMode() ? 'checked' : ''}/> Нарратор-Система комментирует твои действия (Solo Leveling-вайб): драматичные объявления при выполнении квестов, левелапах, рангах, ачивках.</label></div></div>
+        <label class="sound-toggle"><input type="checkbox" data-action="toggle-system" ${systemMode() ? 'checked' : ''}/> ${t('Нарратор-Система комментирует твои действия (Solo Leveling-вайб): драматичные объявления при выполнении квестов, левелапах, рангах, ачивках.')}</label></div></div>
     <div class="card"><h3>${t('Навыки / сферы жизни')}</h3><p class="muted" style="font-size:12px;margin:0 0 10px">${t('Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.')}</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">${t('+ Добавить сферу')}</button></div>
     ${importCard()}
     <div class="card"><h3>${t('🔁 Привычки (повторяющиеся)')}</h3><div id="habits-list">${habits || `<p class="muted">${t('Пока нет привычек.')}</p>`}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">${t('+ Добавить привычку')}</button></div>
     <div class="card"><h3>${t('🛡 Анти-привычки — с чем борешься')}</h3>
-      <p class="muted" style="font-size:12px;margin:0 0 10px">Отслеживай «чистые дни». Срыв не наказывается — это данные, без стыда. Подход — твой фреймворк доверия/контекста.</p>
+      <p class="muted" style="font-size:12px;margin:0 0 10px">${t('Отслеживай «чистые дни». Срыв не наказывается — это данные, без стыда. Подход — твой фреймворк доверия/контекста.')}</p>
       <form id="add-antihabit" class="add-row">
-        <input name="title" placeholder="Напр. без бессмысленного скролла" autocomplete="off" required />
-        <select name="approach" title="Подход к борьбе">
-          <option value="">— подход —</option>
-          <option value="доверие">Доверие к себе</option>
-          <option value="недоверие">Недоверие (блоки/лимиты)</option>
-          <option value="контекст">Смена контекста/среды</option></select>
+        <input name="title" placeholder="${t('Напр. без бессмысленного скролла')}" autocomplete="off" required />
+        <select name="approach" title="${t('Подход к борьбе')}">
+          <option value="">${t('— подход —')}</option>
+          <option value="доверие">${t('Доверие к себе')}</option>
+          <option value="недоверие">${t('Недоверие (блоки/лимиты)')}</option>
+          <option value="контекст">${t('Смена контекста/среды')}</option></select>
         <button type="submit">${t('+ Добавить')}</button></form>
       ${(State.antihabits || []).map((a) => `<div class="ah-edit"><span class="ah-name">${esc(a.title)}${a.approach ? ` · <span class="muted">${esc(a.approach)}</span>` : ''}</span><button class="del" data-action="delete-antihabit" data-id="${a.id}">✕</button></div>`).join('')}</div>
     ${aiKeysCard()}
     ${stravaCard()}
-    <div class="card"><h3>📦 Программы-данжи</h3><p class="muted" style="margin:0 0 12px">Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
-    <div class="card"><h3>Формула опыта</h3><div class="knobs">
-        <div class="knob"><label>XP за минуту</label><input id="k-perMinute" type="number" step="0.1" value="${s.xp.perMinute}" /></div>
-        <div class="knob"><label>Бонус за выполнение</label><input id="k-bonus" type="number" step="1" value="${s.xp.completionBonus}" /></div>
-        <div class="knob"><label>× Лёгкая</label><input id="k-easy" type="number" step="0.1" value="${s.xp.difficulty.easy}" /></div>
-        <div class="knob"><label>× Обычная</label><input id="k-normal" type="number" step="0.1" value="${s.xp.difficulty.normal}" /></div>
-        <div class="knob"><label>× Сложная</label><input id="k-hard" type="number" step="0.1" value="${s.xp.difficulty.hard}" /></div></div></div>
-    <div class="card"><h3>Формула золота</h3><div class="knobs">
-        <div class="knob"><label>Золото за минуту</label><input id="g-perMinute" type="number" step="0.1" value="${(s.gold || DEFAULT_SETTINGS.gold).perMinute}" /></div>
-        <div class="knob"><label>Бонус за выполнение</label><input id="g-bonus" type="number" step="1" value="${(s.gold || DEFAULT_SETTINGS.gold).completionBonus}" /></div></div></div>
-    <div class="card"><h3>🎯 Фокус и Помодоро</h3><div class="knobs">
-        <div class="knob"><label>Помодоро</label><select id="f-pomodoro"><option value="1" ${f.pomodoro ? 'selected' : ''}>Вкл</option><option value="0" ${!f.pomodoro ? 'selected' : ''}>Выкл</option></select></div>
-        <div class="knob"><label>Работа, мин</label><input id="f-workMin" type="number" min="1" value="${f.workMin}" /></div>
-        <div class="knob"><label>Перерыв, мин</label><input id="f-breakMin" type="number" min="1" value="${f.breakMin}" /></div>
-        <div class="knob"><label>Колокол</label><select id="f-sound"><option value="1" ${f.sound ? 'selected' : ''}>Вкл</option><option value="0" ${!f.sound ? 'selected' : ''}>Выкл</option></select></div>
-        <div class="knob"><label>Уведомления</label><select id="f-notify"><option value="1" ${f.notify ? 'selected' : ''}>Вкл</option><option value="0" ${!f.notify ? 'selected' : ''}>Выкл</option></select></div></div>
-        <p class="muted" style="font-size:12px;margin-top:8px">Плавающее окно поверх всех приложений работает в Chrome / Edge / Brave (Document Picture-in-Picture). В Safari — встроенная плашка внизу слева. Колокол звенит на перерыв и при превышении расчётного времени.<br>⚠️ Честно об ограничении: окно остаётся поверх программ, но на другие рабочие столы macOS (Spaces) браузер его не переносит — это лимит самой технологии, обойти из веба нельзя. Лайфхак: держи окно на том столе, где работаешь, или используй Split View.</p></div>
-    <div class="card"><h3>Кривая уровней</h3><div class="knobs">
-        <div class="knob"><label>База (персонаж)</label><input id="k-base" type="number" step="10" value="${s.curve.base}" /></div>
-        <div class="knob"><label>База (навыки)</label><input id="k-skillBase" type="number" step="10" value="${s.curve.skillBase}" /></div>
-        <div class="knob"><label>Рост ×</label><input id="k-growth" type="number" step="0.05" value="${s.curve.growth}" /></div></div></div>
-    <div class="settings-actions"><button class="btn" data-action="save-settings">Сохранить настройки</button><button class="btn danger" data-action="reset-data">Сбросить квесты и дни</button></div>
-    <p class="muted" style="margin-top:12px">Данные лежат в <code>life-rpg/data/</code> внутри твоего vault — это обычные JSON-файлы.</p>`;
+    ${fileImportCard()}
+    <div class="card"><h3>${t('📦 Программы-данжи')}</h3><p class="muted" style="margin:0 0 12px">${t('Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.')}</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
+    <div class="card"><h3>${t('Формула опыта')}</h3><div class="knobs">
+        <div class="knob"><label>${t('XP за минуту')}</label><input id="k-perMinute" type="number" step="0.1" value="${s.xp.perMinute}" /></div>
+        <div class="knob"><label>${t('Бонус за выполнение')}</label><input id="k-bonus" type="number" step="1" value="${s.xp.completionBonus}" /></div>
+        <div class="knob"><label>× ${t('Лёгкая')}</label><input id="k-easy" type="number" step="0.1" value="${s.xp.difficulty.easy}" /></div>
+        <div class="knob"><label>× ${t('Обычная')}</label><input id="k-normal" type="number" step="0.1" value="${s.xp.difficulty.normal}" /></div>
+        <div class="knob"><label>× ${t('Сложная')}</label><input id="k-hard" type="number" step="0.1" value="${s.xp.difficulty.hard}" /></div></div></div>
+    <div class="card"><h3>${t('Формула золота')}</h3><div class="knobs">
+        <div class="knob"><label>${t('Золото за минуту')}</label><input id="g-perMinute" type="number" step="0.1" value="${(s.gold || DEFAULT_SETTINGS.gold).perMinute}" /></div>
+        <div class="knob"><label>${t('Бонус за выполнение')}</label><input id="g-bonus" type="number" step="1" value="${(s.gold || DEFAULT_SETTINGS.gold).completionBonus}" /></div></div></div>
+    <div class="card"><h3>${t('🎯 Фокус и Помодоро')}</h3><div class="knobs">
+        <div class="knob"><label>${t('Помодоро')}</label><select id="f-pomodoro"><option value="1" ${f.pomodoro ? 'selected' : ''}>${t('Вкл')}</option><option value="0" ${!f.pomodoro ? 'selected' : ''}>${t('Выкл')}</option></select></div>
+        <div class="knob"><label>${t('Работа, мин')}</label><input id="f-workMin" type="number" min="1" value="${f.workMin}" /></div>
+        <div class="knob"><label>${t('Перерыв, мин')}</label><input id="f-breakMin" type="number" min="1" value="${f.breakMin}" /></div>
+        <div class="knob"><label>${t('Колокол')}</label><select id="f-sound"><option value="1" ${f.sound ? 'selected' : ''}>${t('Вкл')}</option><option value="0" ${!f.sound ? 'selected' : ''}>${t('Выкл')}</option></select></div>
+        <div class="knob"><label>${t('Уведомления')}</label><select id="f-notify"><option value="1" ${f.notify ? 'selected' : ''}>${t('Вкл')}</option><option value="0" ${!f.notify ? 'selected' : ''}>${t('Выкл')}</option></select></div></div>
+        <p class="muted" style="font-size:12px;margin-top:8px">${t('Плавающее окно поверх всех приложений работает в Chrome / Edge / Brave (Document Picture-in-Picture). В Safari — встроенная плашка внизу слева. Колокол звенит на перерыв и при превышении расчётного времени.')}<br>${t('⚠️ Честно об ограничении: окно остаётся поверх программ, но на другие рабочие столы macOS (Spaces) браузер его не переносит — это лимит самой технологии, обойти из веба нельзя. Лайфхак: держи окно на том столе, где работаешь, или используй Split View.')}</p></div>
+    <div class="card"><h3>${t('Кривая уровней')}</h3><div class="knobs">
+        <div class="knob"><label>${t('База (персонаж)')}</label><input id="k-base" type="number" step="10" value="${s.curve.base}" /></div>
+        <div class="knob"><label>${t('База (навыки)')}</label><input id="k-skillBase" type="number" step="10" value="${s.curve.skillBase}" /></div>
+        <div class="knob"><label>${t('Рост ×')}</label><input id="k-growth" type="number" step="0.05" value="${s.curve.growth}" /></div></div></div>
+    <div class="settings-actions"><button class="btn" data-action="save-settings">${t('Сохранить настройки')}</button><button class="btn danger" data-action="reset-data">${t('Сбросить квесты и дни')}</button></div>
+    <p class="muted" style="margin-top:12px">${t('Данные лежат в')} <code>life-rpg/data/</code> ${t('внутри твоего vault — это обычные JSON-файлы.')}</p>`;
 }
 
 // ============================================================
@@ -8235,6 +8344,12 @@ function publishLeaderboard() {
 
 // Делегированный обработчик change (для select-ов вне форм — напр. импорт достижений)
 function onChange(e) {
+  // импорт тренировок файлом (GPX/TCX) — любые часы без API
+  if (e.target.dataset && e.target.dataset.action === 'wkfile') {
+    const files = [...(e.target.files || [])]; e.target.value = '';
+    if (files.length) importWorkoutFiles(files);
+    return;
+  }
   // смена статуса цели (active/waiting/paused)
   if (e.target.dataset && e.target.dataset.action === 'goal-status') {
     const g = goalById(e.target.dataset.id); if (g) { g.status = e.target.value; Store.save('goals', State.goals); render(); }
@@ -8419,8 +8534,8 @@ function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent) && !wind
 // Заметный гид-баннер установки (на «Сегодня»), закрываемый
 function installBanner() {
   if (isStandalone() || localStorage.getItem('gojo_install_dismiss')) return '';
-  if (_deferredInstall) return `<div class="card install-banner"><span class="ib-text">📲 Установи Satoru как приложение — иконка на телефоне, офлайн, уведомления.</span><span class="ib-acts"><button class="btn" data-action="install-app">Установить</button><button class="del" data-action="install-dismiss" title="Скрыть">✕</button></span></div>`;
-  if (isIOS()) return `<div class="card install-banner"><span class="ib-text">📲 Добавь Satoru на экран «Домой»: кнопка <b>Поделиться</b> → <b>«На экран Домой»</b>.</span><button class="del" data-action="install-dismiss" title="Скрыть">✕</button></div>`;
+  if (_deferredInstall) return `<div class="card install-banner"><span class="ib-text">${t('📲 Установи Satoru как приложение — иконка на телефоне, офлайн, уведомления.')}</span><span class="ib-acts"><button class="btn" data-action="install-app">${t('Установить')}</button><button class="del" data-action="install-dismiss" title="${t('Скрыть')}">✕</button></span></div>`;
+  if (isIOS()) return `<div class="card install-banner"><span class="ib-text">${t('📲 Добавь Satoru на экран «Домой»: кнопка Поделиться → «На экран Домой».')}</span><button class="del" data-action="install-dismiss" title="${t('Скрыть')}">✕</button></div>`;
   return '';
 }
 // ---- PWA-карточка в Настройках: установка + push-уведомления ----
@@ -8441,45 +8556,45 @@ function pwaCard() {
   ensurePushState(); ensureApkState();
   const installed = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
   const canPush = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
-  const install = installed ? '<span class="muted">✓ Уже установлено как приложение</span>'
-    : (_deferredInstall ? '<button class="btn" data-action="install-app">📲 Установить приложение</button>'
-      : '<span class="muted" style="font-size:12px">Меню браузера → «Установить приложение» / «На экран Домой»</span>');
-  const apk = State.apkAvailable ? `<div class="pwa-row" style="margin-top:10px"><a class="btn ghost" href="satoru.apk" download="Satoru.apk">📥 Скачать для Android (.apk)</a><span class="muted" style="font-size:12px">установка из файла</span></div>` : '';
-  const push = !canPush ? '<p class="muted" style="font-size:11.5px;margin:10px 0 0">Уведомления недоступны в этом браузере.</p>'
+  const install = installed ? `<span class="muted">${t('✓ Уже установлено как приложение')}</span>`
+    : (_deferredInstall ? `<button class="btn" data-action="install-app">${t('📲 Установить приложение')}</button>`
+      : `<span class="muted" style="font-size:12px">${t('Меню браузера → «Установить приложение» / «На экран Домой»')}</span>`);
+  const apk = State.apkAvailable ? `<div class="pwa-row" style="margin-top:10px"><a class="btn ghost" href="satoru.apk" download="Satoru.apk">${t('📥 Скачать для Android (.apk)')}</a><span class="muted" style="font-size:12px">${t('установка из файла')}</span></div>` : '';
+  const push = !canPush ? `<p class="muted" style="font-size:11.5px;margin:10px 0 0">${t('Уведомления недоступны в этом браузере.')}</p>`
     : (State.pushOn
-      ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-disable">🔕 Выключить уведомления</button><button class="btn ghost sm" data-action="push-test">Проверить</button><span class="muted" style="font-size:12px">✓ компаньон зовёт 🌅 утром и 🌙 вечером</span></div>`
-      : `<div class="pwa-row" style="margin-top:10px"><button class="btn" data-action="push-enable">🔔 Включить уведомления</button><span class="muted" style="font-size:12px">позову вернуться — тепло, без вины</span></div>`);
-  return `<div class="card"><h3>📲 Приложение</h3>
-    <p class="muted" style="font-size:12.5px;margin:0 0 10px">Установи Satoru как приложение: иконка на телефоне, работает офлайн, уведомления мягко зовут вернуться (чинит «триггер-дыру»).</p>
+      ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-disable">${t('🔕 Выключить уведомления')}</button><button class="btn ghost sm" data-action="push-test">${t('Проверить')}</button><span class="muted" style="font-size:12px">${t('✓ компаньон зовёт 🌅 утром и 🌙 вечером')}</span></div>`
+      : `<div class="pwa-row" style="margin-top:10px"><button class="btn" data-action="push-enable">${t('🔔 Включить уведомления')}</button><span class="muted" style="font-size:12px">${t('позову вернуться — тепло, без вины')}</span></div>`);
+  return `<div class="card"><h3>${t('📲 Приложение')}</h3>
+    <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Установи Satoru как приложение: иконка на телефоне, работает офлайн, уведомления мягко зовут вернуться (чинит «триггер-дыру»).')}</p>
     <div class="pwa-row">${install}</div>${apk}${push}</div>`;
 }
 async function pushEnable() {
   try {
-    if (Notification.permission !== 'granted') { const p = await Notification.requestPermission(); if (p !== 'granted') { toast('Разреши уведомления в браузере'); return; } }
+    if (Notification.permission !== 'granted') { const p = await Notification.requestPermission(); if (p !== 'granted') { toast(t('Разреши уведомления в браузере')); return; } }
     const reg = await navigator.serviceWorker.ready;
     const key = (await (await fetch('/api/push/vapid')).json()).key;
     const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8(key) });
     let tz = 'Europe/Berlin'; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || tz; } catch {}
     const r = await fetch('/api/push/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subscription: sub.toJSON(), tz }) });
     if (!r.ok) throw 0;
-    State.pushOn = true; toast('🔔 Уведомления включены'); render();
-  } catch { toast('Не удалось включить уведомления'); }
+    State.pushOn = true; toast(t('🔔 Уведомления включены')); render();
+  } catch { toast(t('Не удалось включить уведомления')); }
 }
 async function pushDisable() {
   try { const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); if (sub) await sub.unsubscribe(); } catch {}
   try { await fetch('/api/push/unsubscribe', { method: 'POST' }); } catch {}
-  State.pushOn = false; toast('🔕 Уведомления выключены'); render();
+  State.pushOn = false; toast(t('🔕 Уведомления выключены')); render();
 }
 async function pushTest() {
-  try { const r = await (await fetch('/api/push/test', { method: 'POST' })).json(); toast(r.status >= 200 && r.status < 300 ? '✓ Отправлено — жди уведомление' : `Не доставлено (${r.status || r.error || 'ошибка'})`); }
-  catch { toast('Сетевая ошибка'); }
+  try { const r = await (await fetch('/api/push/test', { method: 'POST' })).json(); toast(r.status >= 200 && r.status < 300 ? t('✓ Отправлено — жди уведомление') : `${t('Не доставлено')} (${r.status || r.error || t('ошибка')})`); }
+  catch { toast(t('Сетевая ошибка')); }
 }
 // PWA: сервис-воркер (офлайн + push) + перехват install-промпта
 let _deferredInstall = null;
 function initPWA() {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
   window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); _deferredInstall = e; if (State.view === 'settings') render(); });
-  window.addEventListener('appinstalled', () => { _deferredInstall = null; toast('📲 Satoru установлен!'); });
+  window.addEventListener('appinstalled', () => { _deferredInstall = null; toast(t('📲 Satoru установлен!')); });
 }
 async function init() {
   initPWA();
