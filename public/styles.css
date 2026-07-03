@@ -1112,6 +1112,136 @@ html[data-system="on"] .task, html[data-system="on"] .gear-item, html[data-syste
 .den-room { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .den-avatar { position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%); width: 132px; z-index: 2; }
 .den-avatar svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.25)); }
+.den-avatar.den-avatar-art { bottom: -4px; width: auto; height: 228px; }
+.den-avatar.den-avatar-art img { display: block; width: auto; height: 100%; filter: drop-shadow(0 10px 12px rgba(0,0,0,0.34)); }
+.den-avatar-rig { bottom: 0; width: 148px; }
+.satoru-avatar-rig { display: block; overflow: visible; }
+.satoru-avatar-rig .avatar-ground { fill: rgba(10, 8, 18, 0.28); }
+.satoru-avatar-rig .skin { fill: #efbd8f; }
+.satoru-avatar-rig .neck { fill: #d79a70; }
+.satoru-avatar-rig .hair { fill: #3b2a1d; }
+.satoru-avatar-rig .hair-dark { fill: #251a13; opacity: .58; }
+.satoru-avatar-rig .eye { fill: #2b231d; }
+.satoru-avatar-rig .brow,
+.satoru-avatar-rig .nose,
+.satoru-avatar-rig .smile { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.satoru-avatar-rig .brow { stroke: #312016; stroke-width: 4; }
+.satoru-avatar-rig .nose { stroke: #c7785f; stroke-width: 2.4; }
+.satoru-avatar-rig .smile { stroke: #9d5146; stroke-width: 2.6; }
+.satoru-avatar-rig .teal { fill: #1e7773; }
+.satoru-avatar-rig .teal-dark { fill: #155955; }
+.satoru-avatar-rig .cream { fill: #f2e3c8; }
+.satoru-avatar-rig .pants { fill: #1f2d33; }
+.satoru-avatar-rig .scarf { fill: #a34d31; }
+.satoru-avatar-rig .scarf-dark { fill: #803621; }
+.satoru-avatar-rig .leather { fill: #7a4f2e; }
+.satoru-avatar-rig .leather-mid { fill: #9a683d; }
+.satoru-avatar-rig .leather-dark { fill: #4d3422; }
+.satoru-avatar-rig .strap,
+.satoru-avatar-rig .belt,
+.satoru-avatar-rig .glove { fill: #4b321f; }
+.satoru-avatar-rig .gold,
+.satoru-avatar-rig .brass,
+.satoru-avatar-rig .goggle-rim { fill: #bd8b42; }
+.satoru-avatar-rig .lens { fill: url(#satoru-lens); }
+.satoru-avatar-rig .lens-shine,
+.satoru-avatar-rig .lace,
+.satoru-avatar-rig .chain,
+.satoru-avatar-rig .line-dark,
+.satoru-avatar-rig .stroke-soft { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.satoru-avatar-rig .lens-shine { stroke: rgba(255,255,255,.62); stroke-width: 3; }
+.satoru-avatar-rig .lace { stroke: #d49a52; stroke-width: 3; }
+.satoru-avatar-rig .chain { stroke: #3b2a1d; stroke-width: 4; stroke-dasharray: 4 6; }
+.satoru-avatar-rig .line-dark { stroke: rgba(30,20,12,.42); stroke-width: 4; }
+.satoru-avatar-rig .stroke-soft { stroke: rgba(40,25,12,.35); stroke-width: 3; }
+.satoru-avatar-rig .lantern { fill: #4b321f; }
+.satoru-avatar-rig .flame { fill: #ffd26a; filter: drop-shadow(0 0 5px rgba(255, 202, 82, .72)); }
+.satoru-avatar-rig .avatar-pivots { display: none; }
+.satoru-avatar-rig #avatar-rig,
+.satoru-avatar-rig #avatar-body,
+.satoru-avatar-rig #avatar-head,
+.satoru-avatar-rig #avatar-arm-l,
+.satoru-avatar-rig #avatar-arm-r,
+.satoru-avatar-rig #avatar-forearm-l,
+.satoru-avatar-rig #avatar-forearm-r,
+.satoru-avatar-rig #avatar-leg-l,
+.satoru-avatar-rig #avatar-leg-r,
+.satoru-avatar-rig #avatar-boot-l,
+.satoru-avatar-rig #avatar-boot-r,
+.satoru-avatar-rig #avatar-cloak,
+.satoru-avatar-rig #slot-head,
+.satoru-avatar-rig #slot-neck,
+.satoru-avatar-rig #slot-back,
+.satoru-avatar-rig #avatar-accessory,
+.satoru-avatar-rig #avatar-eyes {
+  transform-box: view-box;
+}
+.satoru-avatar-rig #avatar-body { transform-origin: 110px 200px; animation: satoru-breath 3.8s ease-in-out infinite; }
+.satoru-avatar-rig #avatar-head { transform-origin: 111px 112px; animation: satoru-head-idle 4.6s ease-in-out infinite; }
+.satoru-avatar-rig #avatar-eyes { transform-origin: 111px 72px; animation: satoru-blink 5.4s infinite; }
+.satoru-avatar-rig #avatar-arm-l { transform-origin: 62px 122px; }
+.satoru-avatar-rig #avatar-arm-r { transform-origin: 158px 122px; }
+.satoru-avatar-rig #avatar-forearm-l { transform-origin: 40px 168px; }
+.satoru-avatar-rig #avatar-forearm-r { transform-origin: 173px 168px; }
+.satoru-avatar-rig #avatar-leg-l { transform-origin: 88px 205px; }
+.satoru-avatar-rig #avatar-leg-r { transform-origin: 129px 205px; }
+.satoru-avatar-rig #avatar-boot-l { transform-origin: 87px 297px; }
+.satoru-avatar-rig #avatar-boot-r { transform-origin: 131px 297px; }
+.satoru-avatar-rig #avatar-cloak,
+.satoru-avatar-rig #slot-neck { transform-origin: 110px 116px; }
+.satoru-avatar-rig #slot-back { transform-origin: 146px 114px; animation: satoru-pack 4.2s ease-in-out infinite; }
+.satoru-avatar-rig #avatar-accessory { transform-origin: 180px 178px; animation: satoru-lantern 3.4s ease-in-out infinite; }
+.den-avatar-rig[data-state="happy"] .satoru-avatar-rig #avatar-rig { animation: satoru-happy 1.1s ease-out 2; }
+.den-avatar-rig[data-state="victory"] .satoru-avatar-rig #avatar-rig { animation: satoru-victory 1s ease-out 3; }
+.den-avatar-rig[data-state="tired"] .satoru-avatar-rig #avatar-body { animation: none; transform: translateY(8px) rotate(1.6deg); }
+.den-avatar-rig[data-state="tired"] .satoru-avatar-rig #avatar-head { animation: none; transform: translateY(8px) rotate(5deg); }
+.den-avatar-rig[data-state="tired"] .satoru-avatar-rig #avatar-arm-l { transform: translateY(9px) rotate(5deg); }
+.den-avatar-rig[data-state="tired"] .satoru-avatar-rig #avatar-arm-r { transform: translateY(9px) rotate(-5deg); }
+.den-avatar-rig[data-state="focus"] .satoru-avatar-rig #avatar-body { animation-duration: 5.2s; }
+.den-avatar-rig[data-state="focus"] .satoru-avatar-rig #avatar-head { transform: translateY(-2px) rotate(-2deg); animation: none; }
+.den-avatar-rig[data-state="focus"] .satoru-avatar-rig #avatar-arm-l { transform: rotate(-4deg); }
+.den-avatar-rig[data-state="focus"] .satoru-avatar-rig #avatar-arm-r { transform: rotate(4deg); }
+@keyframes satoru-breath {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50% { transform: translateY(-2px) scaleY(1.012); }
+}
+@keyframes satoru-head-idle {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-1.5deg); }
+}
+@keyframes satoru-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(.08); }
+}
+@keyframes satoru-pack {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-1px) rotate(.8deg); }
+}
+@keyframes satoru-lantern {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(3deg); }
+}
+@keyframes satoru-happy {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  36% { transform: translateY(-10px) scaleY(1.02); }
+  66% { transform: translateY(2px) scaleY(.98); }
+}
+@keyframes satoru-victory {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  35% { transform: translateY(-16px) rotate(-3deg); }
+  70% { transform: translateY(1px) rotate(2deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .satoru-avatar-rig #avatar-body,
+  .satoru-avatar-rig #avatar-head,
+  .satoru-avatar-rig #avatar-eyes,
+  .satoru-avatar-rig #slot-back,
+  .satoru-avatar-rig #avatar-accessory,
+  .den-avatar-rig[data-state="happy"] .satoru-avatar-rig #avatar-rig,
+  .den-avatar-rig[data-state="victory"] .satoru-avatar-rig #avatar-rig {
+    animation: none;
+  }
+}
 .den-companion { position: absolute; right: 10px; top: 16px; width: 84px; height: 112px; z-index: 3; border-radius: 12px; overflow: hidden; background: rgba(10,8,20,0.82); border: 2px solid color-mix(in srgb, var(--accent) 60%, white); box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 45%, transparent), 0 2px 8px rgba(0,0,0,0.35); }
 .den-companion .comp-video { width: 100%; height: 100%; object-fit: contain; display: block; background: transparent; }
 .den-companion svg { width: 100%; height: auto; display: block; }
@@ -1692,3 +1822,58 @@ html[data-system="on"] .lvlup-overlay { background: rgba(0,8,20,.82); }
 .dayrec-card .drc-min { width: 62px; }
 .dayrec-card .drc-time { font-size: 11px; color: var(--muted); }
 @media (max-width: 560px) { .dayrec-card { flex-wrap: wrap; } .dayrec-card .drc-title { flex-basis: 100%; } }
+
+/* ── Две системы дисциплины: Доверие vs Контроль (DISCIPLINE-PATHS-PLAN.md) ── */
+/* Экран выбора пути — две карты */
+.path-choice-box { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); padding: 26px 24px; width: min(680px, 96vw); text-align: center; animation: fadeIn .25s; }
+.path-choice-title { margin: 0 0 6px; font-size: 22px; }
+.path-choice-sub { margin: 0 0 18px; font-size: 13.5px; }
+.path-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.path-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; cursor: pointer;
+  background: var(--panel2); border: 1.5px solid var(--line); border-radius: 16px; padding: 18px 16px 16px; color: var(--text); transition: transform .12s, border-color .12s, box-shadow .12s; }
+.path-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 10px 26px rgba(0,0,0,.28); }
+.path-card.chosen { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 40%, transparent); }
+.path-card-mascot { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; }
+.path-card-mascot img { width: 56px; height: 56px; object-fit: contain; }
+.path-card .path-glyph { font-size: 26px; line-height: 1; }
+.path-card h3 { margin: 2px 0 0; font-size: 18px; }
+.path-card .path-tag { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+.path-card .path-pitch { font-size: 13px; color: var(--muted); margin: 4px 0 8px; line-height: 1.45; }
+.path-card .path-choose-btn { margin-top: auto; background: var(--accent); color: #fff; border-radius: 9px; padding: 7px 18px; font-weight: 700; font-size: 13.5px; }
+.path-card[data-path="control"]:hover, .path-card.chosen[data-path="control"] { border-color: #4fd6ff; }
+@media (max-width: 560px) { .path-cards { grid-template-columns: 1fr; } }
+
+/* Настройки — выбор пути */
+.path-opts { display: flex; gap: 10px; }
+.path-opt { flex: 1 1 0; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer;
+  background: var(--panel2); border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 8px; color: var(--text); transition: border-color .12s; }
+.path-opt:hover { border-color: var(--accent); }
+.path-opt.active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--panel2)); }
+.path-opt-glyph { font-size: 22px; }
+.path-opt-name { font-weight: 700; font-size: 14px; }
+.path-opt-tag { font-size: 11px; color: var(--muted); }
+
+/* Табло команд на лидерборде */
+.path-banner .pb-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; gap: 8px; flex-wrap: wrap; }
+.path-banner .pb-bar { display: flex; height: 16px; border-radius: 999px; overflow: hidden; border: 1px solid var(--line); background: var(--panel2); }
+.path-banner .pb-trust { background: linear-gradient(90deg, #6c8cff, #9b7cff); }
+.path-banner .pb-control { background: linear-gradient(90deg, #1a2b3a, #4fd6ff); }
+.path-banner .pb-legend { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+.path-banner.solo { text-align: left; }
+.lb-path { font-size: 13px; }
+
+/* Тизер 4-й стены (реплика противоположного маскота) */
+.path-teaser { display: flex; gap: 12px; align-items: flex-start; border-style: dashed; }
+.path-teaser .pt-mascot { flex: 0 0 auto; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+.path-teaser .pt-mascot img { width: 40px; height: 40px; object-fit: contain; }
+.path-teaser .pt-body { flex: 1 1 auto; min-width: 0; }
+.path-teaser .pt-body p { margin: 0 0 8px; font-size: 13.5px; font-style: italic; }
+.path-teaser .pt-acts { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Кремень — маскот-антагонист (черновой SVG) */
+.flint-svg { filter: drop-shadow(0 2px 6px rgba(79,214,255,.35)); }
+
+/* ⚔️ Клятва Кремню (commitment-ставка, путь Контроля) */
+.t-oath { font-size: 11px; font-weight: 800; color: #4fd6ff; white-space: nowrap; padding: 2px 6px; border: 1px solid rgba(79,214,255,.4); border-radius: 7px; }
+.t-oath-btn { background: none; border: 1px dashed var(--line); border-radius: 7px; color: var(--muted); cursor: pointer; font-size: 12px; padding: 2px 6px; transition: .12s; }
+.t-oath-btn:hover { border-color: #4fd6ff; color: #4fd6ff; }

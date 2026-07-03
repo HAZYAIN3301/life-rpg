@@ -1463,7 +1463,7 @@ const PATHS = {
              tag: 'через строгость', pitch: 'Жёсткий путь. Ты сам куёшь себя. Пропуск бьёт по энергии, серия не прощает, интерфейс — как «Система». Ты выбрал это.' },
 };
 // Поведенческий дефолт для не выбравших (null) — тёплый Доверие (бренд Satoru). Явный выбор различает грейс серии.
-const CONTROL = { energyPenaltyPer: 5, energyPenaltyCap: 15 }; // штраф Контроля: −5 энергии за пропущенный дедлайн, максимум −15/сутки (анти-Habitica-спайк)
+const CONTROL = { energyPenaltyPer: 5, energyPenaltyCap: 15, oathGold: 25 }; // штраф: −5 энергии/дедлайн, кап −15/сутки; oathGold — ставка «Клятвы Кремню»
 function currentPath() { return (State.settings && State.settings.path === 'control') ? 'control' : 'trust'; }
 function pathChosen() { return !!(State.settings && (State.settings.path === 'trust' || State.settings.path === 'control')); }
 function pathInfo() { return PATHS[currentPath()]; }
@@ -2019,6 +2019,10 @@ function completeTask(t, desire) {
   let xp = itemXp(t);
   if (desire === 'forced') xp = Math.round(xp * (1 + GRIT_BONUS));
   t.xpAwarded = Math.max(1, xp); t.goldAwarded = itemGold(t);
+  if (t.oath && !t.oath.burned) { // ⚔️ Клятва Кремню сдержана — золото за квест ×1.5
+    t.goldAwarded = Math.round(t.goldAwarded * 1.5); t.oath.kept = true;
+    setTimeout(() => { try { toast('⚔️ ' + FLINT_LINES.oathKept[Math.floor(Math.random() * FLINT_LINES.oathKept.length)]); } catch {} }, 1200);
+  }
   const eDelta = applyEnergy(t, desire);
   let msg = `+${t.xpAwarded} XP · +${t.goldAwarded} 🪙 · ${skillById(t.skillId).name}`;
   if (desire === 'forced') msg += ` · 💪 через силу +${Math.round(GRIT_BONUS * 100)}% XP, но −энергия`;
@@ -2906,6 +2910,22 @@ function pathReckoning() {
       .split('{missedP}').join(missedP).split('{pen}').join(pen);
     toast('⚔️ ' + t(line));
   } catch {}
+  // ⚔️ Сжигание просроченных клятв: ставка уходит «в горн» записью-покупкой (баланс золота честен, след в истории)
+  try {
+    let burned = 0;
+    for (const x of (State.tasks || [])) {
+      if (!x.done && x.oath && !x.oath.burned && x.date && x.date >= prev && x.date < today) {
+        x.oath.burned = true; burned += x.oath.gold || 0;
+        State.purchases = State.purchases || [];
+        State.purchases.push({ id: 'oath_' + x.id, title: '⚔️ Сгоревшая клятва: ' + (x.title || ''), cost: x.oath.gold || 0, at: new Date().toISOString() });
+      }
+    }
+    if (burned > 0) {
+      Store.save('tasks', State.tasks); Store.save('purchases', State.purchases);
+      const line = FLINT_LINES.oathBurned[Math.floor(Math.random() * FLINT_LINES.oathBurned.length)].split('{gold}').join(burned);
+      setTimeout(() => { try { toast('🔥 ' + line); } catch {} }, 1600);
+    }
+  } catch {}
   return pen;
 }
 function todayActivityCount() {
@@ -3443,6 +3463,7 @@ function questRow(t) {
     <span class="t-diff">${DIFF[t.difficulty] || ''}</span>
     <span class="t-xp">${t.done ? '+' + (t.xpAwarded || 0) : ''}</span>
     ${t.done ? '<span></span>' : `<button class="focus ${active ? 'active' : ''}" data-action="focus-task" data-id="${t.id}" title="Фокус-таймер">${active ? '⏱' : '▶'}</button>`}
+    ${t.oath && !t.done ? `<span class="t-oath" title="Клятва Кремню: заверши сегодня или −${t.oath.gold} 🪙">⚔️${t.oath.gold}</span>` : (!t.done && currentPath() === 'control' && t.date === todayStr() && goldBalance() >= CONTROL.oathGold ? `<button class="t-oath-btn" data-action="quest-oath" data-id="${t.id}" title="Клятва Кремню: заверши до конца дня — золото за квест ×1.5; провали — сгорит ${CONTROL.oathGold} 🪙">⚔️</button>` : '')}
     <button class="del" data-action="delete-task" data-id="${t.id}" title="Удалить">✕</button></li>`;
 }
 function habitRow(h) {
@@ -5898,6 +5919,18 @@ const FLINT_LINES = {
     'Выше на ступень. Так куют. Продолжай.',
     'Новый уровень. Заметь: без поблажек. Это всё ты.',
   ],
+  oathTaken: [ // клятва поставлена — ставка принята, без пафоса
+    'Кремень: «Ставка принята. До полуночи. Слово — кремень».',
+    'Кремень: «Записал. Теперь это не задача — это договор».',
+  ],
+  oathKept: [ // клятва сдержана — золото ×1.5
+    'Кремень: «Слово сдержано. Золото твоё — с процентом за характер».',
+    'Кремень: «Договор закрыт. Так звучит сталь, когда она настоящая».',
+  ],
+  oathBurned: [ // клятва сгорела — факт, без унижения, дверь открыта
+    'Кремень: «Клятва сгорела в горне: −{gold} 🪙. Не прячься от счёта — просто дай следующую и сдержи».',
+    'Кремень: «−{gold} 🪙 в горн. Это не наказание — это цена слова. Завтра оно может стоить дороже».',
+  ],
 };
 // Детерминированный выбор по дню (стабилен между рендерами, меняется день ото дня).
 function dayPick(seed, pool) {
@@ -7692,6 +7725,15 @@ function onClick(e) {
   } else if (action === 'edit-actual') {
     const t = questById(id); if (!t) return; const v = prompt('Фактическое время в минутах:', t.actualMin || t.estimateMin || ''); if (v === null) return;
     const n = Math.round(Number(v)); if (!isNaN(n) && n >= 0) { t.actualMin = n || null; Store.save('tasks', State.tasks); render(); }
+  } else if (action === 'quest-oath') {
+    // Клятва Кремню (только путь Контроля): заверши сегодня → золото за квест ×1.5; провали → −oathGold в горн
+    const q = questById(id); if (!q || q.done || q.oath) return;
+    if (!confirm(`⚔️ Клятва Кремню: завершить «${q.title}» до конца дня.\nСдержишь — золото за квест ×1.5. Провалишь — сгорит ${CONTROL.oathGold} 🪙.\n\nДаёшь слово?`)) return;
+    q.oath = { gold: CONTROL.oathGold, at: new Date().toISOString() };
+    Store.save('tasks', State.tasks);
+    toast('⚔️ ' + t(FLINT_LINES.oathTaken[Math.floor(Math.random() * FLINT_LINES.oathTaken.length)]));
+    try { sfx('levelup'); } catch {}
+    render();
   } else if (action === 'delete-task') {
     const t = questById(id); if (t && t.done && !confirm(`Удалить «${t.title}»?`)) return;
     if (State.timer && State.timer.taskId === id) { State.timer = null; persistTimer(); stopTick(); }
