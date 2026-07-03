@@ -266,7 +266,7 @@ const I18N_DE = {
   'Загрузка рейтинга…': 'Rangliste lädt…',
   '🤝 Пати': '🤝 Gruppe',
   'БОСС ПОВЕРЖЕН': 'BOSS BESIEGT',
-  'Слава пати! 🎉': 'Gruppensiег! 🎉',
+  'Слава пати! 🎉': 'Gruppensieg! 🎉',
   'Покинуть пати': 'Gruppe verlassen',
   'Состав': 'Mitglieder',
   'Босс повержен!': 'Boss besiegt!',
@@ -462,6 +462,71 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // Localization fixes: auth/common strings that are rendered without explicit t().
+  'Твоя неделя': { en: 'Your week', de: 'Deine Woche', uk: 'Твій тиждень', es: 'Tu semana' },
+  '🧪 Войти как тестовый пользователь': { en: '🧪 Sign in as test user', de: '🧪 Als Testnutzer anmelden', uk: '🧪 Увійти як тестовий користувач', es: '🧪 Entrar como usuario de prueba' },
+  '🧪 Входим...': { en: '🧪 Signing in...', de: '🧪 Anmeldung...', uk: '🧪 Входимо...', es: '🧪 Entrando...' },
+  'Не удалось создать тестового пользователя': { en: 'Could not create the test user', de: 'Testnutzer konnte nicht erstellt werden', uk: 'Не вдалося створити тестового користувача', es: 'No se pudo crear el usuario de prueba' },
+  'Ошибка тестового входа': { en: 'Test sign-in error', de: 'Fehler bei der Test-Anmeldung', uk: 'Помилка тестового входу', es: 'Error al entrar como usuario de prueba' },
+  'Создавая аккаунт, ты соглашаешься, что приложение (альфа-версия) хранит твои данные — цели, заметки, дневник — на нашем сервере, чтобы они синхронизировались между устройствами. Удалить аккаунт и данные можно в Настройках. Не вводи особо чувствительную информацию.': { en: 'By creating an account, you agree that this alpha app stores your data — goals, notes and journal — on our server so it can sync between devices. You can delete your account and data in Settings. Do not enter highly sensitive information.', de: 'Mit dem Erstellen eines Kontos stimmst du zu, dass diese Alpha-App deine Daten — Ziele, Notizen und Tagebuch — auf unserem Server speichert, damit sie zwischen Geräten synchronisiert werden. Konto und Daten kannst du in den Einstellungen löschen. Gib keine besonders sensiblen Informationen ein.', uk: 'Створюючи акаунт, ти погоджуєшся, що застосунок (альфа-версія) зберігає твої дані — цілі, нотатки, щоденник — на нашому сервері, щоб вони синхронізувалися між пристроями. Видалити акаунт і дані можна в Налаштуваннях. Не вводь особливо чутливу інформацію.', es: 'Al crear una cuenta, aceptas que esta app en alfa guarde tus datos — metas, notas y diario — en nuestro servidor para sincronizarlos entre dispositivos. Puedes eliminar tu cuenta y tus datos en Ajustes. No introduzcas información especialmente sensible.' },
+  '🔑 Сохрани код восстановления': { en: '🔑 Save your recovery code', de: '🔑 Wiederherstellungscode speichern', uk: '🔑 Збережи код відновлення', es: '🔑 Guarda tu código de recuperación' },
+  'Это единственный способ вернуть доступ, если забудешь пароль. Запиши его в надёжное место — мы показываем код только сейчас.': { en: 'This is the only way to get back in if you forget your password. Write it down somewhere safe — we only show this code now.', de: 'Das ist die einzige Möglichkeit, den Zugang wiederherzustellen, wenn du dein Passwort vergisst. Bewahre ihn sicher auf — wir zeigen diesen Code nur jetzt.', uk: 'Це єдиний спосіб повернути доступ, якщо забудеш пароль. Запиши його в надійному місці — ми показуємо код лише зараз.', es: 'Es la única forma de recuperar el acceso si olvidas la contraseña. Guárdalo en un lugar seguro — solo mostramos este código ahora.' },
+  '📋 Скопировать': { en: '📋 Copy', de: '📋 Kopieren', uk: '📋 Скопіювати', es: '📋 Copiar' },
+  'Я сохранил → продолжить': { en: 'I saved it → continue', de: 'Gespeichert → weiter', uk: 'Я зберіг → продовжити', es: 'Lo guardé → continuar' },
+  'Скопируй вручную': { en: 'Copy it manually', de: 'Bitte manuell kopieren', uk: 'Скопіюй вручну', es: 'Cópialo manualmente' },
+  'Профиль': { en: 'Profile', de: 'Profil', uk: 'Профіль', es: 'Perfil' },
+  'Рекорд:': { en: 'Record:', de: 'Rekord:', uk: 'Рекорд:', es: 'Récord:' },
+  'Как играть': { en: 'How to play', de: 'Spielanleitung', uk: 'Як грати', es: 'Cómo jugar' },
+  'Pro активен': { en: 'Pro active', de: 'Pro aktiv', uk: 'Pro активний', es: 'Pro activo' },
+  'Сменить профиль': { en: 'Switch profile', de: 'Profil wechseln', uk: 'Змінити профіль', es: 'Cambiar perfil' },
+  'под-навыков': { en: 'sub-skills', de: 'Unterfähigkeiten', uk: 'піднавичок', es: 'subhabilidades' },
+  'новое!': { en: 'new!', de: 'neu!', uk: 'нове!', es: 'nuevo!' },
+  'Профильный email привязан': { en: 'Profile email linked', de: 'Profil-E-Mail verknüpft', uk: 'Профільний email привʼязано', es: 'Email del perfil vinculado' },
+  '✓ Email привязан:': { en: '✓ Email linked:', de: '✓ E-Mail verknüpft:', uk: '✓ Email привʼязано:', es: '✓ Email vinculado:' },
+  '— вход и восстановление по email+паролю.': { en: '— sign-in and recovery via email + password.', de: '— Anmeldung und Wiederherstellung per E-Mail + Passwort.', uk: '— вхід і відновлення через email + пароль.', es: '— entrada y recuperación por email + contraseña.' },
+  'Привяжи email+пароль — чтобы входить с любого устройства и иметь восстановление доступа (сейчас вход только по PIN).': { en: 'Link email + password to sign in from any device and recover access (right now sign-in is PIN-only).', de: 'Verknüpfe E-Mail + Passwort, um dich von jedem Gerät anzumelden und den Zugang wiederherzustellen (aktuell nur PIN-Anmeldung).', uk: 'Привʼяжи email + пароль, щоб входити з будь-якого пристрою й мати відновлення доступу (зараз вхід лише за PIN).', es: 'Vincula email + contraseña para entrar desde cualquier dispositivo y recuperar el acceso (ahora la entrada es solo por PIN).' },
+  'Привязать': { en: 'Link', de: 'Verknüpfen', uk: 'Привʼязати', es: 'Vincular' },
+  '🔐 Сменить PIN': { en: '🔐 Change PIN', de: '🔐 PIN ändern', uk: '🔐 Змінити PIN', es: '🔐 Cambiar PIN' },
+  'Сменить': { en: 'Change', de: 'Ändern', uk: 'Змінити', es: 'Cambiar' },
+  'Мы храним только то, что ты вводишь сам: цели, квесты, дневник, привычки. Удаление аккаунта удаляет всё с сервера (DSGVO/GDPR).': { en: 'We store only what you enter yourself: goals, quests, journal, habits. Deleting the account removes everything from the server (GDPR).', de: 'Wir speichern nur, was du selbst eingibst: Ziele, Quests, Tagebuch, Gewohnheiten. Beim Löschen des Kontos wird alles vom Server entfernt (DSGVO/GDPR).', uk: 'Ми зберігаємо лише те, що ти вводиш сам: цілі, квести, щоденник, звички. Видалення акаунта видаляє все із сервера (DSGVO/GDPR).', es: 'Solo guardamos lo que introduces tú: metas, misiones, diario y hábitos. Al eliminar la cuenta se borra todo del servidor (RGPD/GDPR).' },
+  '📥 Скачать для Android (.apk)': { en: '📥 Download for Android (.apk)', de: '📥 Für Android herunterladen (.apk)', uk: '📥 Завантажити для Android (.apk)', es: '📥 Descargar para Android (.apk)' },
+  'установка из файла': { en: 'install from file', de: 'Installation aus Datei', uk: 'встановлення з файла', es: 'instalación desde archivo' },
+  '✓ Уже установлено как приложение': { en: '✓ Already installed as an app', de: '✓ Bereits als App installiert', uk: '✓ Уже встановлено як застосунок', es: '✓ Ya instalada como app' },
+  '📲 Установить приложение': { en: '📲 Install app', de: '📲 App installieren', uk: '📲 Встановити застосунок', es: '📲 Instalar app' },
+  'Уведомления недоступны в этом браузере.': { en: 'Notifications are not available in this browser.', de: 'Benachrichtigungen sind in diesem Browser nicht verfügbar.', uk: 'Сповіщення недоступні в цьому браузері.', es: 'Las notificaciones no están disponibles en este navegador.' },
+  '🔕 Выключить уведомления': { en: '🔕 Disable notifications', de: '🔕 Benachrichtigungen deaktivieren', uk: '🔕 Вимкнути сповіщення', es: '🔕 Desactivar notificaciones' },
+  'Проверить': { en: 'Test', de: 'Testen', uk: 'Перевірити', es: 'Probar' },
+  '✓ компаньон зовёт 🌅 утром и 🌙 вечером': { en: '✓ companion calls 🌅 morning and 🌙 evening', de: '✓ Begleiter ruft 🌅 morgens und 🌙 abends', uk: '✓ супутник кличе 🌅 вранці й 🌙 ввечері', es: '✓ el compañero llama 🌅 por la mañana y 🌙 por la noche' },
+  '🧭 домен': { en: '🧭 domain', de: '🧭 Domäne', uk: '🧭 домен', es: '🧭 dominio' },
+  'авто': { en: 'auto', de: 'auto', uk: 'авто', es: 'auto' },
+  '🏁 проект': { en: '🏁 project', de: '🏁 Projekt', uk: '🏁 проєкт', es: '🏁 proyecto' },
+  'Канонический жизненный домен — единый «хребет» для карты баланса и подсказок. Авто по названию, можно поправить.': { en: 'Canonical life domain — one backbone for the balance map and hints. Auto-detected by name, editable.', de: 'Kanonische Lebensdomäne — ein gemeinsames Rückgrat für Balancekarte und Hinweise. Automatisch nach Name, bearbeitbar.', uk: 'Канонічний життєвий домен — єдиний «хребет» для карти балансу й підказок. Авто за назвою, можна змінити.', es: 'Dominio vital canónico: una columna común para el mapa de equilibrio y las pistas. Automático por nombre, editable.' },
+  'Проект — не ось колеса баланса (живёт в Целях)': { en: 'Project — not an axis of the balance wheel (lives in Goals)', de: 'Projekt — keine Achse des Balance-Rads (lebt in Zielen)', uk: 'Проєкт — не вісь колеса балансу (живе в Цілях)', es: 'Proyecto — no es un eje de la rueda de equilibrio (vive en Metas)' },
+  'Тело / Здоровье': { en: 'Body / Health', de: 'Körper / Gesundheit', uk: 'Тіло / Здоровʼя', es: 'Cuerpo / Salud' },
+  'Дело / Карьера': { en: 'Work / Career', de: 'Werk / Karriere', uk: 'Справа / Карʼєра', es: 'Oficio / Carrera' },
+  'Деньги / Ресурсы': { en: 'Money / Resources', de: 'Geld / Ressourcen', uk: 'Гроші / Ресурси', es: 'Dinero / Recursos' },
+  'Развитие / Знания': { en: 'Growth / Knowledge', de: 'Entwicklung / Wissen', uk: 'Розвиток / Знання', es: 'Desarrollo / Conocimiento' },
+  'Дух / Смысл': { en: 'Spirit / Meaning', de: 'Geist / Sinn', uk: 'Дух / Сенс', es: 'Espíritu / Sentido' },
+  'Творчество / Созидание': { en: 'Creativity / Making', de: 'Kreativität / Schaffen', uk: 'Творчість / Творення', es: 'Creatividad / Creación' },
+  'Отдых / Восстановление': { en: 'Rest / Recovery', de: 'Ruhe / Erholung', uk: 'Відпочинок / Відновлення', es: 'Descanso / Recuperación' },
+  'Быт / Среда': { en: 'Home life / Environment', de: 'Alltag / Umgebung', uk: 'Побут / Середовище', es: 'Vida diaria / Entorno' },
+  'Игра / Приключения': { en: 'Play / Adventure', de: 'Spiel / Abenteuer', uk: 'Гра / Пригоди', es: 'Juego / Aventura' },
+  '🏃 Strava — авто-импорт тренировок': { en: '🏃 Strava — auto-import workouts', de: '🏃 Strava — Trainings automatisch importieren', uk: '🏃 Strava — автоімпорт тренувань', es: '🏃 Strava — autoimportar entrenamientos' },
+  'Интеграция ещё не настроена на сервере. Нужно создать': { en: 'Integration is not configured on the server yet. Create a', de: 'Die Integration ist auf dem Server noch nicht eingerichtet. Erstelle eine', uk: 'Інтеграцію ще не налаштовано на сервері. Потрібно створити', es: 'La integración aún no está configurada en el servidor. Crea una' },
+  'Strava API-приложение': { en: 'Strava API app', de: 'Strava-API-App', uk: 'Strava API-застосунок', es: 'app de API de Strava' },
+  'и добавить': { en: 'and add', de: 'und füge', uk: 'і додати', es: 'y añade' },
+  'в переменные Railway (Authorization Callback Domain = домен приложения).': { en: 'to Railway variables (Authorization Callback Domain = app domain).', de: 'zu den Railway-Variablen hinzu (Authorization Callback Domain = App-Domain).', uk: 'у змінні Railway (Authorization Callback Domain = домен застосунку).', es: 'a las variables de Railway (Authorization Callback Domain = dominio de la app).' },
+  'Подключи Strava — твои пробежки, велозаезды и тренировки автоматически станут выполненными квестами с XP в выбранной сфере.': { en: 'Connect Strava — your runs, rides and workouts automatically become completed quests with XP in the selected area.', de: 'Verbinde Strava — Läufe, Radtouren und Trainings werden automatisch erledigte Quests mit XP im gewählten Bereich.', uk: 'Підключи Strava — пробіжки, велозаїзди й тренування автоматично стануть виконаними квестами з XP в обраній сфері.', es: 'Conecta Strava: tus carreras, salidas en bici y entrenamientos se convertirán automáticamente en misiones completadas con XP en el área elegida.' },
+  '🔗 Подключить Strava': { en: '🔗 Connect Strava', de: '🔗 Strava verbinden', uk: '🔗 Підключити Strava', es: '🔗 Conectar Strava' },
+  '✓ Подключён:': { en: '✓ Connected:', de: '✓ Verbunden:', uk: '✓ Підключено:', es: '✓ Conectado:' },
+  'последняя синхронизация:': { en: 'last sync:', de: 'letzte Synchronisierung:', uk: 'остання синхронізація:', es: 'última sincronización:' },
+  'ещё не было': { en: 'not yet', de: 'noch nicht', uk: 'ще не було', es: 'aún no' },
+  'атлет': { en: 'athlete', de: 'Athlet', uk: 'атлет', es: 'atleta' },
+  'Сфера для тренировок': { en: 'Workout area', de: 'Trainingsbereich', uk: 'Сфера для тренувань', es: 'Área para entrenamientos' },
+  '⏳ Синхронизирую…': { en: '⏳ Syncing…', de: '⏳ Synchronisiere…', uk: '⏳ Синхронізую…', es: '⏳ Sincronizando…' },
+  '🔄 Синхронизировать (30 дней)': { en: '🔄 Sync (30 days)', de: '🔄 Synchronisieren (30 Tage)', uk: '🔄 Синхронізувати (30 днів)', es: '🔄 Sincronizar (30 días)' },
+  'Отключить': { en: 'Disconnect', de: 'Trennen', uk: 'Відключити', es: 'Desconectar' },
+  'Импорт безопасен: повторная синхронизация не задваивает тренировки (дедуп по Strava-ID). Токены хранятся только на сервере.': { en: 'Import is safe: syncing again will not duplicate workouts (deduped by Strava ID). Tokens are stored only on the server.', de: 'Der Import ist sicher: Erneute Synchronisierung verdoppelt Trainings nicht (Dedupe per Strava-ID). Tokens liegen nur auf dem Server.', uk: 'Імпорт безпечний: повторна синхронізація не дублює тренування (дедуп за Strava-ID). Токени зберігаються лише на сервері.', es: 'La importación es segura: sincronizar de nuevo no duplica entrenamientos (deduplicado por ID de Strava). Los tokens solo se guardan en el servidor.' },
   // Пути дисциплины: Доверие vs Контроль
   'Кремень': { en: 'Flint', de: 'Feuerstein', uk: 'Кремінь', es: 'Pedernal' },
   'Доверие': { en: 'Trust', de: 'Vertrauen', uk: 'Довіра', es: 'Confianza' },
@@ -1230,6 +1295,7 @@ const I18N_DYN = [
   [/^📝 (\d+) (?:заметка|заметки|заметок) — открыть$/, (l, m) => `📝 ${m[1]} ${i18nNote(m[1], l)} — ${({ en: 'open', de: 'öffnen', uk: 'відкрити', es: 'abrir' })[l]}`],
   [/^(\d+)\/(\d+) дней$/, (l, m) => `${m[1]}/${m[2]} ${i18nDay(m[2], l)}`],
   [/^Серия · рекорд (\d+)$/, (l, m) => `${({ en: 'Streak · record', de: 'Serie · Rekord', uk: 'Серія · рекорд', es: 'Racha · récord' })[l]} ${m[1]}`],
+  [/^Рекорд: (\d+) (?:день|дня|дней)$/, (l, m) => `${({ en: 'Record:', de: 'Rekord:', uk: 'Рекорд:', es: 'Récord:' })[l]} ${m[1]} ${i18nDay(m[1], l)}`],
   [/^Ещё (\d+) (?:дело|дела|дел) до сундука$/, (l, m) => ({ en: `${m[1]} more to a chest`, de: `Noch ${m[1]} bis zur Truhe`, uk: `Ще ${m[1]} до скрині`, es: `${m[1]} más para un cofre` })[l]],
   [/^(\d+)\/(\d+) собрано$/, (l, m) => `${m[1]}/${m[2]} ${({ en: 'collected', de: 'gesammelt', uk: 'зібрано', es: 'recogido' })[l]}`],
   [/^Открыть \((\d+)\)$/, (l, m) => `${({ en: 'Open', de: 'Öffnen', uk: 'Відкрити', es: 'Abrir' })[l]} (${m[1]})`],
@@ -1242,6 +1308,12 @@ const I18N_DYN = [
   [/^(\d{1,2}) (января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)$/, (l, m) => { const mo = i18nWord(m[2], l); return mo !== m[2] ? (l === 'es' ? `${m[1]} de ${mo}` : `${m[1]} ${mo}`) : null; }],
   // «Неделя 15.06 – 21.06» → переклад слова «Неделя» + дати
   [/^Неделя (.+)$/, (l, m) => `${({ en: 'Week', de: 'Woche', uk: 'Тиждень', es: 'Semana' })[l]} ${m[1]}`],
+  [/^(.+) — новое!$/, (l, m) => `${i18nWord(m[1], l)} — ${i18nWord('новое!', l)}`],
+  [/^(.+) — (.+) \(ур\.(\d+), ([^)]+)\)(?: · (\d+) под-навыков)?$/, (l, m) => {
+    const lvl = I18N_LVL[l] || 'ур.';
+    const tail = m[5] ? ` · ${m[5]} ${i18nWord('под-навыков', l)}` : '';
+    return `${i18nWord(m[1], l)} — ${i18nWord(m[2], l)} (${lvl}${m[3]}, ${m[4]})${tail}`;
+  }],
   [/^план: (.+)$/, (l, m) => `${({ en: 'plan:', de: 'Plan:', uk: 'план:', es: 'plan:' })[l]} ${m[1]}`],
   [/^(\d+) прив\.$/, (l, m) => `${m[1]} ${({ en: 'habits', de: 'Gew.', uk: 'звич.', es: 'háb.' })[l]}`],
   [/^(\d+) квест\.$/, (l, m) => `${m[1]} ${({ en: 'quests', de: 'Quests', uk: 'квест.', es: 'mis.' })[l]}`],
@@ -1613,7 +1685,7 @@ async function applyProgramFresh(prog) {
 }
 async function loginAsTestUser() {
   const btn = document.querySelector('[data-action="test-login"]');
-  if (btn) { btn.disabled = true; btn.textContent = '🧪 Входим...'; }
+  if (btn) { btn.disabled = true; btn.textContent = t('🧪 Входим...'); }
   const payload = { email: TEST_USER.email, password: TEST_USER.password };
   try {
     let r = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -1626,7 +1698,7 @@ async function loginAsTestUser() {
       body: JSON.stringify(TEST_USER),
     });
     d = await r.json();
-    if (!r.ok) throw new Error(d.error || 'Не удалось создать тестового пользователя');
+    if (!r.ok) throw new Error(d.error ? t(d.error) : t('Не удалось создать тестового пользователя'));
 
     State.me = d;
     const prog = DUNGEON_PROGRAMS.find((x) => x.id === 'decathlete') || DUNGEON_PROGRAMS[0];
@@ -1634,8 +1706,8 @@ async function loginAsTestUser() {
     else { State.phase = 'onboarding'; render(); }
   } catch (err) {
     const box = document.getElementById('login-error');
-    if (box) box.textContent = err.message || 'Ошибка тестового входа';
-    if (btn) { btn.disabled = false; btn.textContent = '🧪 Войти как тестовый пользователь'; }
+    if (box) box.textContent = err.message || t('Ошибка тестового входа');
+    if (btn) { btn.disabled = false; btn.textContent = t('🧪 Войти как тестовый пользователь'); }
   }
 }
 // В приложении: домерживаем программу к существующим данным (не затирая их).
@@ -1950,7 +2022,10 @@ function completeTask(t, desire) {
     sfx('levelup');
     showLevelUpEpic(lvlBefore, lvlNow, rb, ra);
     if (systemMode()) {
-      systemNarrate('УРОВЕНЬ ПОВЫШЕН', `${lvlBefore} → ${lvlNow} · предел сдвинут`);
+      // На пути Контроля левел-ап комментирует Кремень — скупая, оттого ценная похвала
+      const flint = (typeof currentPath === 'function' && currentPath() === 'control' && typeof FLINT_LINES !== 'undefined')
+        ? FLINT_LINES.levelup[Math.floor(Math.random() * FLINT_LINES.levelup.length)] : null;
+      systemNarrate('УРОВЕНЬ ПОВЫШЕН', flint ? `${lvlBefore} → ${lvlNow} · ${t(flint)}` : `${lvlBefore} → ${lvlNow} · предел сдвинут`);
       if (ra.name !== rb.name) systemNarrate('НОВЫЙ РАНГ ПРИСВОЕН', `${ra.icon} ${ra.name} · ты становишься сильнее`);
     }
   } else sfx('complete');
@@ -2813,7 +2888,13 @@ function pathReckoning() {
   const pen = Math.min(CONTROL.energyPenaltyCap, missed * CONTROL.energyPenaltyPer);
   e.cur = Math.max(0, e.cur - pen);
   Store.save('settings', State.settings);
-  try { toast(`⚔️ Контроль: ${missed} ${plural(missed, 'дедлайн', 'дедлайна', 'дедлайнов')} просрочено — −${pen} энергии. Ты выбрал этот путь.`); } catch {}
+  // Голос Кремня: факты + требование, ноль стыда (жёстко о деле — никогда о личности)
+  try {
+    const missedP = missed + ' ' + plural(missed, 'дедлайн', 'дедлайна', 'дедлайнов');
+    const line = FLINT_LINES.reckon[Math.floor(Math.random() * FLINT_LINES.reckon.length)]
+      .split('{missedP}').join(missedP).split('{pen}').join(pen);
+    toast('⚔️ ' + t(line));
+  } catch {}
   return pen;
 }
 function todayActivityCount() {
@@ -3169,7 +3250,7 @@ function renderLoginScreen() {
           <div id="login-error" class="pin-error"></div>
           <button type="submit" class="btn" style="margin-top:14px;width:100%">${t('Войти')}</button>
         </form>
-        <button class="btn ghost test-login-btn" data-action="test-login" style="margin-top:10px;width:100%">🧪 Войти как тестовый пользователь</button>
+        <button class="btn ghost test-login-btn" data-action="test-login" style="margin-top:10px;width:100%">${t('🧪 Войти как тестовый пользователь')}</button>
         <div class="auth-links">
           <button class="link-btn" data-action="go-register">${t('Создать аккаунт')}</button>
           <button class="link-btn" data-action="go-reset">${t('Забыл пароль?')}</button>
@@ -3196,7 +3277,7 @@ function renderRegisterScreen() {
           <label style="margin-top:10px">${t('Пароль (минимум 6 символов)')}</label>
           <input name="password" type="password" placeholder="${t('Придумай пароль')}" autocomplete="new-password" required />
           <input name="password2" type="password" placeholder="${t('Повтори пароль')}" autocomplete="new-password" required />
-          <p class="privacy-note">Создавая аккаунт, ты соглашаешься, что приложение (альфа-версия) хранит твои данные — цели, заметки, дневник — на нашем сервере, чтобы они синхронизировались между устройствами. Удалить аккаунт и данные можно в Настройках. Не вводи особо чувствительную информацию.</p>
+          <p class="privacy-note">${t('Создавая аккаунт, ты соглашаешься, что приложение (альфа-версия) хранит твои данные — цели, заметки, дневник — на нашем сервере, чтобы они синхронизировались между устройствами. Удалить аккаунт и данные можно в Настройках. Не вводи особо чувствительную информацию.')}</p>
           <div id="reg-error" class="pin-error"></div>
           <button type="submit" class="btn" style="margin-top:6px;width:100%">${t('Создать аккаунт')}</button>
         </form>
@@ -3231,14 +3312,14 @@ function renderResetScreen() {
 function showRecoveryModal(code, onClose) {
   const ov = document.createElement('div'); ov.className = 'modal-overlay'; ov.id = 'recovery-modal';
   ov.innerHTML = `<div class="recovery-box">
-    <h3>🔑 Сохрани код восстановления</h3>
-    <p class="muted">Это единственный способ вернуть доступ, если забудешь пароль. Запиши его в надёжное место — мы показываем код только сейчас.</p>
+    <h3>${t('🔑 Сохрани код восстановления')}</h3>
+    <p class="muted">${t('Это единственный способ вернуть доступ, если забудешь пароль. Запиши его в надёжное место — мы показываем код только сейчас.')}</p>
     <div class="recovery-code" id="recovery-code">${esc(code)}</div>
-    <button class="btn ghost" id="recovery-copy">📋 Скопировать</button>
-    <button class="btn" id="recovery-ok" style="width:100%;margin-top:10px">Я сохранил → продолжить</button>
+    <button class="btn ghost" id="recovery-copy">${t('📋 Скопировать')}</button>
+    <button class="btn" id="recovery-ok" style="width:100%;margin-top:10px">${t('Я сохранил → продолжить')}</button>
   </div>`;
   document.body.appendChild(ov);
-  ov.querySelector('#recovery-copy').addEventListener('click', () => { try { navigator.clipboard.writeText(code); toast(t('✓ Скопировано')); } catch { toast('Скопируй вручную'); } });
+  ov.querySelector('#recovery-copy').addEventListener('click', () => { try { navigator.clipboard.writeText(code); toast(t('✓ Скопировано')); } catch { toast(t('Скопируй вручную')); } });
   ov.querySelector('#recovery-ok').addEventListener('click', () => { ov.remove(); if (onClose) onClose(); });
 }
 
@@ -3296,30 +3377,33 @@ function renderHeader() {
   const cr = charRank(), eqTitle = equippedTitle(), e = ent();
   const skills = topSkills().map((s) => {
     const si = levelInfo(skillXp(s.id), c.skillBase, c.growth), sr = rankFor(si.level), pillar = isPillar(s.id);
-    const subInfo = pillar ? ` · ${descendantSkills(s.id).length} под-навыков` : '';
-    return `<div class="skill-chip" title="${esc(s.name)} — ${sr.name} (ур.${si.level}, ${skillXp(s.id)} XP)${subInfo}">
+    const l = lang(), lvl = I18N_LVL[l] || 'ур.';
+    const titleName = l === 'ru' ? s.name : i18nWord(s.name, l);
+    const titleRank = l === 'ru' ? sr.name : i18nWord(sr.name, l);
+    const subInfo = pillar ? ` · ${descendantSkills(s.id).length} ${l === 'ru' ? 'под-навыков' : i18nWord('под-навыков', l)}` : '';
+    return `<div class="skill-chip" title="${esc(titleName)} — ${esc(titleRank)} (${lvl}${si.level}, ${skillXp(s.id)} XP)${subInfo}">
       <span class="dot" style="background:${esc(s.color)}"></span>
       <span class="sk-name">${esc(s.name)}${pillar ? ' ▾' : ''}</span><span class="sk-lvl">ур.${si.level}</span>
       <span class="sk-bar"><span style="width:${si.pct}%;background:${esc(s.color)}"></span></span></div>`;
   }).join('');
-  const proBadge = e.tier === 'pro' ? '<span class="plan-badge pro" title="Pro активен">PRO</span>'
+  const proBadge = e.tier === 'pro' ? `<span class="plan-badge pro" title="${t('Pro активен')}">PRO</span>`
     : e.tier === 'trial' ? `<span class="plan-badge trial" title="Pro-триал">PRO ${trialDaysLeft()}д</span>`
     : '<button class="plan-badge free" data-action="show-paywall" data-feature="Pro" title="Открыть Pro — сейчас у тебя Free">🔓 Pro?</button>';
   document.getElementById('appName').textContent = State.settings.appName || 'Satoru';
   document.getElementById('charSummary').innerHTML = `
     <div class="char-main">
-      ${State.me ? `<div class="user-pill" title="Профиль">
+      ${State.me ? `<div class="user-pill" title="${t('Профиль')}">
         <span class="up-av">${esc(State.me.avatar || '👤')}</span>
         <span class="up-meta"><span class="up-name">${esc(State.me.name)}${eqTitle ? ` <span class="eq-title">🏷 ${esc(eqTitle)}</span>` : ''}</span>
         <span class="up-rank" style="--rc:${cr.color}">${cr.icon} ${cr.name}</span></span></div>` : ''}
       <div class="char-level">Уровень <b>${oi.level}</b></div>
       <div class="xp-bar"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
       <div class="gold-pill" title="Золото">🪙 ${goldBalance()}</div>
-      <div class="streak" title="Рекорд: ${longestStreak()} ${plural(longestStreak(), 'день', 'дня', 'дней')}">🔥 ${streak} ${plural(streak, 'день', 'дня', 'дней')}</div>
+      <div class="streak" title="${t('Рекорд:')} ${longestStreak()} ${plural(longestStreak(), 'день', 'дня', 'дней')}">🔥 ${streak} ${plural(streak, 'день', 'дня', 'дней')}</div>
       ${hypePct() > 0 ? `<div class="hype-chip" title="Хайп ×${hypeState().stacks}: бонус XP за добровольный выбор сложных квестов. Осталось ${hypeMinLeft()} мин.">🔥 Хайп +${hypePct()}%</div>` : ''}
-      <button class="help-btn" data-action="show-guide" title="Как играть">?</button>
+      <button class="help-btn" data-action="show-guide" title="${t('Как играть')}">?</button>
       ${proBadge}
-      <button class="btn ghost logout-btn" data-action="logout" title="Сменить профиль">${t('⇦ Выйти')}</button>
+      <button class="btn ghost logout-btn" data-action="logout" title="${t('Сменить профиль')}">${t('⇦ Выйти')}</button>
     </div>
     <div class="skills-row">${skills}</div>`;
 }
@@ -5757,9 +5841,55 @@ function flintMascotSVG(size) {
 }
 // 4-я стена: редкая реплика маскота ПРОТИВОПОЛОЖНОЙ стороны манит к себе (Fortnite-стиль подкол).
 // Ключ = текущая сторона игрока (реплика зовёт на другую). ≤1/нед, всегда заглушаемо тумблером.
+// ── Голос Кремня (маскот Контроля). Характер: кузнец-наставник, НЕ злодей и НЕ Тень-наоборот.
+// Рубленые фразы, вес удара в каждом слове. Жёстко о ДЕЛЕ — никогда о личности. Ноль стыда:
+// штраф — констатация договора («ты выбрал этот путь»), уход — уважительное отпускание («кузня не закрывается»).
+// Лор: Кремень — камень, о который высекли первую искру; из той искры родилась Тень. Две руки одного огня.
+const FLINT_LINES = {
+  chose: [ // выбрал Контроль
+    'Кремень: «Принято. С этой минуты твоё слово — кремень. Моё — тоже».',
+    'Кремень: «Хорошо. Не обещаю, что будет легко. Обещаю, что будет честно».',
+    'Кремень: «Встал на наковальню — значит, готов к молоту. Уважаю. Работаем».',
+  ],
+  left: [ // ушёл с Контроля — САМЫЙ важный текст: выход без тени наказания
+    'Кремень: «Ты не сдался — ты выбрал другой инструмент. Кузня не закрывается. Тень, принимай».',
+    'Кремень: «Без обид. Сталь тоже отдыхает между закалками. Понадоблюсь — я тут».',
+    'Кремень: «Нормально. Настоящая дисциплина — знать, какой путь твой сегодня».',
+  ],
+  reckon: [ // просроченные дедлайны: факты + требование, ноль унижения. {missedP}=«2 дедлайна», {pen}=число
+    'Кремень: «{missedP} мимо. −{pen} энергии. Не за то, что упал — за то, что договор есть договор. Встаём».',
+    'Кремень: «{missedP} просрочено. −{pen}. Я не разочарован — я жду следующего подхода».',
+    'Кремень: «Счёт честный: {missedP}, −{pen} энергии. Слабость — не пропустить. Слабость — не вернуться».',
+    'Кремень: «{missedP}. −{pen}. Записал и забыл: кремень не помнит вчерашних сколов — только сегодняшнюю грань».',
+  ],
+  levelup: [ // левел-ап на пути Контроля — скупая, оттого ценная похвала
+    'Уровень взят. Не поздравляю — констатирую: молот попал.',
+    'Выше на ступень. Так куют. Продолжай.',
+    'Новый уровень. Заметь: без поблажек. Это всё ты.',
+  ],
+};
+// Детерминированный выбор по дню (стабилен между рендерами, меняется день ото дня).
+function dayPick(seed, pool) {
+  let h = 0; const s = todayStr() + seed;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return pool[h % pool.length];
+}
+// Тизеры противоположной стороны — пулы (антагонист манит, но обе стороны говорят с уважением друг о друге)
 const PATH_TEASERS = {
-  trust:   'Кремень усмехается: «Доброта — это тепло. Но настоящий рост там, где трудно. Слабо попробовать Контроль?»',
-  control: 'Тень тихо зовёт: «Ты не обязан ковать себя через боль. Захочешь — вернись, приму без условий 🕊».',
+  trust: [ // игрок на Доверии — зовёт Кремень
+    'Кремень усмехается: «Доброта — это тепло. Но настоящий рост там, где трудно. Слабо попробовать Контроль?»',
+    'Кремень, проходя мимо: «Тень хорошо греет. А я хорошо закаляю. Разница — в звоне стали».',
+    'Кремень кивает на твою серию: «Неплохо. А теперь представь то же самое — без страховки».',
+    'Кремень: «Я не против объятий. Я за объятия после тренировки. Заходи в кузню».',
+    'Кремень точит грань: «Мягкость — выбор. Жёсткость — тоже. Проверь, из чего ты, на моей стороне».',
+  ],
+  control: [ // игрок на Контроле — зовёт Тень
+    'Тень тихо зовёт: «Ты не обязан ковать себя через боль. Захочешь — вернись, приму без условий 🕊».',
+    'Тень машет из-за угла: «Горжусь твоей сталью. Просто напоминаю: у меня чай, плед и ноль штрафов 🕊».',
+    'Тень: «Кремень суров, но справедлив. А я просто рядом. Дверь открыта — это не слабость, это дверь».',
+    'Тень шепчет: «Сталь, которую не отпускают остыть, ломается. Захочешь передышку — я тут 🕊».',
+    'Тень: «Ты и в жёстком пути остался собой — это главное. Обнимемся, когда вернёшься. Или просто так».',
+  ],
 };
 function pathTeaserCard() {
   const s = State.settings;
@@ -5769,7 +5899,7 @@ function pathTeaserCard() {
   const oppMascot = opp === 'control' ? flintMascotSVG(40) : tutMascotHTML();
   return `<div class="card path-teaser">
     <div class="pt-mascot">${oppMascot}</div>
-    <div class="pt-body"><p>${t(PATH_TEASERS[cur])}</p>
+    <div class="pt-body"><p>${t(dayPick('teaser', PATH_TEASERS[cur]))}</p>
       <div class="pt-acts"><button class="btn ghost sm" data-action="path-teaser-switch" data-path="${opp}">${t('Перейти')} ${PATHS[opp].glyph}</button><button class="btn ghost sm" data-action="path-teaser-dismiss">${t('Остаться')}</button><button class="btn ghost sm" data-action="path-teaser-mute">${t('Не звать')}</button></div></div>
   </div>`;
 }
@@ -5791,6 +5921,7 @@ function showPathChoiceModal() {
     <button class="modal-x" data-action="close-path-choice">✕</button>
     <h2 class="path-choice-title">${t('Выбери свой путь дисциплины')}</h2>
     <p class="muted path-choice-sub">${t('Две школы. Мягкая — через доброту. Жёсткая — через строгость. Обе ведут к росту. Сменить можно в любой момент.')}</p>
+    <p class="muted path-choice-sub" style="font-style:italic">${t('Тень греет пламя. Кремень его высекает. Две руки одного огня — выбери, чья ближе сегодня.')}</p>
     <div class="path-cards">${card(PATHS.trust)}${card(PATHS.control)}</div>
   </div>`;
   document.body.appendChild(ov);
@@ -5807,7 +5938,14 @@ function choosePath(id) {
   applyTheme();
   const p = PATHS[id];
   try { sfx(id === 'control' ? 'levelup' : 'achievement'); } catch {}
-  if (was !== id) toast(`${p.glyph} ${t('Путь выбран')}: ${t(p.name)} · ${t(p.mascot)} ${t('с тобой')}`);
+  if (was !== id) {
+    // Реплика с характером: вход в Контроль встречает Кремень; уход с Контроля — он же отпускает
+    // с уважением (философский гейт: выход мгновенный и без тени наказания). Иначе — тёплый тост.
+    const line = id === 'control' ? FLINT_LINES.chose[Math.floor(Math.random() * FLINT_LINES.chose.length)]
+      : was === 'control' ? FLINT_LINES.left[Math.floor(Math.random() * FLINT_LINES.left.length)]
+      : `Тень: «Рада, что ты со мной. Идём мягко — но идём 🕊».`;
+    toast(`${p.glyph} ${t(line)}`);
+  }
   try { publishLeaderboard(); } catch {}
   render();
 }
@@ -6497,14 +6635,74 @@ const APP_SHELL = `
 // ---- Мультиплеер: пати + кооп-рейд (Племя). null=не загружено, false=не в пати, объект=в пати ----
 const RAID_PER_MEMBER = 600; // XP/чел/неделя — цель кооп-рейда (синхр. с сервером)
 // Тематический босс недели (детерминированно по понедельнику). Лярвы прокрастинации/зависимостей.
+// Недельные боссы = внутренние враги продуктивной жизни. lore — кто он и чем питается (виден, пока босс жив);
+// weak — СЛАБОСТЬ: какие действия наносят урон ×2 (⚠️ порядок = BOSS_RULES в server.js, урон считает сервер);
+// defeat — метафора победы (эпитафия на победном оверлее). Бой всегда с НИМ, не с собой.
 const BOSSES = [
-  { name: 'Прокрастинион, Пожиратель Дней', emoji: '🦑' },
-  { name: 'Лярва Бесконечного Скролла', emoji: '🐛' },
-  { name: 'Голод Дофамина', emoji: '👹' },
-  { name: 'Туман Отговорок', emoji: '🌫️' },
-  { name: 'Дракон «Завтра»', emoji: '🐉' },
-  { name: 'Сирена Уюта', emoji: '🧜' },
-  { name: 'Голем Инерции', emoji: '🗿' },
+  { name: 'Прокрастинион, Пожиратель Дней', emoji: '🦑',
+    lore: 'Древний кракен, обвивающий щупальцами стрелки часов. Шепчет «успеешь позже» — и день исчезает у него в пасти.',
+    weak: 'закрывай дела, висевшие 2+ дней',
+    defeat: 'Щупальца разжались. Ваши дни — снова ваши.' },
+  { name: 'Лярва Бесконечного Скролла', emoji: '🐛',
+    lore: 'Растёт с каждым свайпом. Ест не время — ест внимание, а время просто осыпается следом.',
+    weak: 'время под фокус-таймером',
+    defeat: 'Лента оборвана. Взгляд снова ваш.' },
+  { name: 'Голод Дофамина', emoji: '👹',
+    lore: 'Демон быстрых радостей. Чем чаще кормишь его конфетами уведомлений — тем голоднее и он, и ты.',
+    weak: 'отмеченные привычки',
+    defeat: 'Насытить его нельзя — но можно перестать кормить. Вы смогли.' },
+  { name: 'Туман Отговорок', emoji: '🌫️',
+    lore: 'Не нападает — обволакивает. В его дымке любое «сделаю» превращается в «потом», а «потом» — в «никогда».',
+    weak: 'сложные квесты',
+    defeat: 'Туман рассеян. Дорога, оказывается, была прямая.' },
+  { name: 'Дракон «Завтра»', emoji: '🐉',
+    lore: 'Спит на горе несделанных дел и растёт с каждым отложенным «на завтра». Его сокровищница — ваши лучшие планы.',
+    weak: 'сделай дело в день создания',
+    defeat: 'Дракон повержен. «Завтра» снова значит просто завтра.' },
+  { name: 'Сирена Уюта', emoji: '🧜',
+    lore: 'Поёт с мягкого дивана: «ещё пять минуточек…» Не злая — но её песня стоила людям целых жизней.',
+    weak: 'дела, завершённые до 10 утра',
+    defeat: 'Вы услышали песню — и всё равно встали. Так побеждают сирен.' },
+  { name: 'Голем Инерции', emoji: '🗿',
+    lore: 'Каменный страж привычной колеи. Держит не силой — тяжестью: первое движение против него всегда самое трудное.',
+    weak: 'первое дело каждого дня',
+    defeat: 'Голем треснул. Первый шаг сделан — остальные легче.' },
+  { name: 'Идол Перфекто, Гранёный Кумир', emoji: '💎',
+    lore: 'Требует идеала до первого шага. Его жертвы не делают плохо — они не делают вообще.',
+    weak: 'лёгкие квесты — просто сделай',
+    defeat: 'Сделанное побеждает идеальное. Идол пал.' },
+  { name: 'Шёпот-за-Плечом', emoji: '🐍',
+    lore: 'Змей внутреннего критика. Говорит твоим голосом — поэтому ему верят: «у тебя не выйдет».',
+    weak: 'сложные квесты',
+    defeat: 'Вы услышали шёпот — и сделали всё равно. Змей онемел.' },
+  { name: 'Зеркало Чужих Побед', emoji: '🪞',
+    lore: 'Проклятое стекло: показывает чужие вершины и прячет чужие пропасти. Смотрящий в него забывает свой путь.',
+    weak: 'закрывай СВОИ цели',
+    defeat: 'Зеркало разбито. Сравнивайте себя с собой вчерашним.' },
+  { name: 'Гидра Многозадачность', emoji: '🐙',
+    lore: 'Обещает восемь дел разом — и восемью щупальцами тянет в стороны, пока не сделано ни одно.',
+    weak: 'фокус-сессии — одно дело за раз',
+    defeat: 'Одно щупальце за раз. Одно дело за раз. Гидра распутана.' },
+  { name: 'Рой Уведомлений', emoji: '🐝',
+    lore: 'Тысяча мелких жал. По одному безобидны — роем съедают день до костей.',
+    weak: 'фокус-сессии от 25 минут',
+    defeat: 'Рой утих. Тишина, оказывается, звучит как фокус.' },
+  { name: 'Вихрь Спешки', emoji: '🌪️',
+    lore: 'Кружит всё быстрее, подменяя важное срочным. В его центре всегда пусто.',
+    weak: 'дела по расписанию (с временем)',
+    defeat: 'Вихрь стих. Вы двигались спокойно — и пришли первыми.' },
+  { name: 'Гипножаба «Ещё Серию»', emoji: '🐸',
+    lore: 'Смотрит в глаза и квакает: «всего одна серия». Наутро выясняется, что сезонов было три.',
+    weak: 'дела вечером, после 19:00',
+    defeat: 'Вы моргнули первыми — и выключили. Жаба квакнула в пустоту.' },
+  { name: 'Паутина Хаоса', emoji: '🕸️',
+    lore: 'Липкие нити мелкого беспорядка. Ни одна не держит крепко — вместе не дают шагнуть.',
+    weak: 'дела в сферах быта и порядка',
+    defeat: 'Нить за нитью — и паутина снята. Порядок — это свобода движения.' },
+  { name: 'Призрак Забытых Целей', emoji: '👻',
+    lore: 'Бродит по чердакам памяти, звеня давними «вот бы когда-нибудь». Питается пылью на мечтах.',
+    weak: 'закрой дело, висевшее 7+ дней',
+    defeat: 'Вы вспомнили — и сделали. Призраку нечем больше звенеть.' },
 ];
 function bossForWeek(ws) { let h = 0; const s = String(ws || ''); for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return BOSSES[h % BOSSES.length]; }
 function seasonInfo(season) { const goal = (season && season.goal) || 4, wins = (season && season.wins) || 0; return { goal, wins, cycle: Math.floor(wins / goal) + 1, prog: wins % goal, done: Math.floor(wins / goal) }; }
@@ -6557,6 +6755,8 @@ function partyHTML(p) {
     <div class="card raid-card ${won ? 'won' : ''}">
       <div class="raid-head"><span class="raid-boss">${won ? '🏆' : boss.emoji}</span><div><b>${won ? t('Босс повержен!') : esc(boss.name)}</b>
         <div class="muted" style="font-size:12px">${won ? `Пати справилась — ${r.claimedCount}/${p.members.length} забрали награду` : `Осталось ${hp} XP · цель ${r.target} (по ${RAID_PER_MEMBER}/чел)`}</div></div></div>
+      ${!won && boss.lore ? `<p class="muted raid-lore" style="font-size:12px;font-style:italic;margin:8px 0 0">${t(boss.lore)}</p>` : ''}
+      ${!won && boss.weak ? `<p class="raid-weak" style="font-size:12.5px;font-weight:700;margin:6px 0 0">⚡ ${t('Слабость')}: ${t(boss.weak)} — ${t('урон ×2')}</p>` : ''}
       <div class="raid-bar"><span style="width:${pct}%"></span></div>
       ${claim}
       <p class="muted raid-note">Вклад каждого складывается; ничей пропуск не штрафует команду — просто чуть медленнее. Через поддержку, не через вину.</p></div>
@@ -6579,6 +6779,7 @@ function showRaidWin(p, boss) {
     <div class="rw-boss">${boss.emoji}<span class="rw-x">💥</span></div>
     <div class="rw-title">${t('БОСС ПОВЕРЖЕН')}</div>
     <div class="rw-sub">${esc(boss.name)}</div>
+    ${boss.defeat ? `<div class="rw-lore" style="font-size:13px;font-style:italic;opacity:.85;margin:6px 14px 0">${t(boss.defeat)}</div>` : ''}
     <div class="rw-party">🤝 ${esc(p.name)} — вместе</div>
     <button class="btn rw-btn" data-action="raidwin-close">${t('Слава пати! 🎉')}</button>
     <div class="rw-confetti">${conf}</div></div>`;

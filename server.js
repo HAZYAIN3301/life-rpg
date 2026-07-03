@@ -114,6 +114,53 @@ function genPartyCode(parties) { // 5-символьный код без пох�
 const PARTY_MAX = 6;
 // Кооп-рейд: понедельник недели (для сброса), цель XP/чел, цель сезона (побед).
 const RAID_PER_WEEK = 600, SEASON_GOAL = 4;
+// ── Тематические боссы: СЛАБОСТЬ босса недели. Действия, попавшие в слабость, наносят УРОН ×2
+//    (обычный XP тоже ранит — рейд не ломается, если сферы юзера не совпали с темой недели).
+//    ⚠️ СИНХРОН С КЛИЕНТОМ: порядок/длина = BOSSES в public/app.js (bossForWeek = hash % length).
+//    Правила детерминированы из сырых данных юзера (анти-накрутка, считает только сервер).
+const BOSS_RULES = [
+  'overdue2',   // 0 Прокрастинион — закрыть дело, висевшее ≥2 дней (отобрать съеденные дни)
+  'focus',      // 1 Лярва Скролла — фокус-время (actualMin>0) вместо ленты
+  'habit',      // 2 Голод Дофамина — отмеченные привычки (стабильность против быстрых радостей)
+  'hard',       // 3 Туман Отговорок — сложные квесты (то, от чего отговариваешься)
+  'sameday',    // 4 Дракон «Завтра» — сделать в день создания (не кормить «завтра»)
+  'morning',    // 5 Сирена Уюта — дело завершено до 10:00 (встать с дивана)
+  'firstofday', // 6 Голем Инерции — ПЕРВОЕ дело каждого дня (первое движение — самое трудное)
+  'easy',       // 7 Идол Перфекто — лёгкие квесты (сделанное побеждает идеальное)
+  'hard',       // 8 Шёпот-за-Плечом — сложные квесты (сделал, хотя «не выйдет»)
+  'goal',       // 9 Зеркало Чужих Побед — закрытие СВОИХ целей (свой путь)
+  'focus',      // 10 Гидра Многозадачность — фокус-сессии (одно дело за раз)
+  'focus25',    // 11 Рой Уведомлений — сессии ≥25 мин без прерываний (полный помидор)
+  'scheduled',  // 12 Вихрь Спешки — дела по расписанию (startTime задан)
+  'evening',    // 13 Гипножаба — дело вечером 19:00–23:59 (вечер занят делом, не серией)
+  'sphere:быт|дом|уборк|поряд|хаос|орган|chore|home|clean', // 14 Паутина Хаоса — сферы порядка/быта
+  'overdue7',   // 15 Призрак Забытых Целей — закрыть дело, висевшее ≥7 дней (вспомнил — и сделал)
+];
+function bossRuleForWeek(ws) { let h = 0; const s = String(ws || ''); for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return BOSS_RULES[h % BOSS_RULES.length]; }
+// Проверка задачи против правила слабости. ctx: { isFirstOfDay, sphereName }
+function taskHitsBossRule(rule, t, ctx) {
+  if (!rule || !t) return false;
+  const doneAt = t.completedAt ? new Date(t.completedAt) : null;
+  const hour = doneAt && !isNaN(doneAt) ? doneAt.getHours() : null;
+  const madeDay = (t.createdAt && String(t.createdAt).slice(0, 10)) || t.date;
+  const doneDay = (t.completedAt && String(t.completedAt).slice(0, 10)) || t.date;
+  const ageDays = (madeDay && doneDay) ? Math.round((Date.parse(doneDay) - Date.parse(madeDay)) / 86400000) : 0;
+  switch (rule.split(':')[0]) {
+    case 'hard': return t.difficulty === 'hard';
+    case 'easy': return t.difficulty === 'easy';
+    case 'overdue2': return ageDays >= 2;
+    case 'overdue7': return ageDays >= 7;
+    case 'sameday': return madeDay && doneDay && madeDay === doneDay;
+    case 'morning': return hour !== null && hour < 10;
+    case 'evening': return hour !== null && hour >= 19;
+    case 'focus': return (Number(t.actualMin) || 0) > 0;
+    case 'focus25': return (Number(t.actualMin) || 0) >= 25;
+    case 'scheduled': return !!t.startTime;
+    case 'firstofday': return !!(ctx && ctx.isFirstOfDay);
+    case 'sphere': { const re = new RegExp(rule.slice(7), 'i'); return !!(ctx && ctx.sphereName && re.test(ctx.sphereName)); }
+    default: return false;
+  }
+}
 function mondayStr(dt) { const x = dt ? new Date(dt) : new Date(); const wd = (x.getDay() + 6) % 7; x.setDate(x.getDate() - wd); return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`; }
 // Пересчитывает состояние рейда (мутирует party.raid/season). Победа недели = сумма недельного XP ≥ цель. Сброс на новой неделе. Сезон = накопленные победы.
 function refreshRaid(party) {
@@ -122,7 +169,8 @@ function refreshRaid(party) {
   party.season = party.season || { wins: 0 };
   const users = loadUsers();
   let total = 0;
-  for (const id of (party.members || [])) { const u = users.find((x) => x.id === id); const w = u && u.pub && u.pub.week; if (w && w.ws === ws) total += (w.xp || 0); }
+  // Урон боссу = bossXp (обычный XP + тематическая слабость ×2); фолбэк на xp для старых снапшотов
+  for (const id of (party.members || [])) { const u = users.find((x) => x.id === id); const w = u && u.pub && u.pub.week; if (w && w.ws === ws) total += (w.bossXp != null ? w.bossXp : (w.xp || 0)); }
   const target = (party.members || []).length * RAID_PER_WEEK;
   let justWon = false;
   if (!party.raid.won && target > 0 && total >= target) { party.raid.won = true; party.season.wins = (party.season.wins || 0) + 1; justWon = true; }
@@ -168,7 +216,17 @@ function computeUserXp(uid) {
   const settings = rd('settings') || {}, tasks = rd('tasks') || [], habitlog = rd('habitlog') || {}, goals = rd('goals') || [], habits = rd('habits') || [];
   const habitById = {}; for (const h of (Array.isArray(habits) ? habits : [])) if (h && h.id) habitById[h.id] = h;
   const ws = mondayStr();
-  let total = 0, weekXp = 0, weekQuests = 0;
+  let total = 0, weekXp = 0, weekQuests = 0, weekBoss = 0;
+  // Тематический босс недели: действия из его «слабости» наносят урон ×2 (weekBoss = добавка сверх weekXp)
+  const bossRule = bossRuleForWeek(ws);
+  const skillNameOf = (id) => { const s = (Array.isArray(settings.skills) ? settings.skills : []).find((x) => x && x.id === id); return s ? String(s.name || '') : ''; };
+  // Для правила «первое дело дня»: задача с минимальным completedAt в каждом дне
+  const firstByDay = Object.create(null);
+  if (bossRule === 'firstofday') for (const t of (Array.isArray(tasks) ? tasks : [])) {
+    if (!t || !t.done) continue; const d = acxValidDate(t.completedAt || t.date); if (!d) continue;
+    const dk = acxDayKey(d), ts = Date.parse(t.completedAt || t.date) || 0;
+    if (!(dk in firstByDay) || ts < firstByDay[dk].ts) firstByDay[dk] = { id: t.id, ts };
+  }
   // Дневные потолки: не даём одному дню превысить лимит (рубит «1000 фейковых дел сегодня»).
   const dayXp = Object.create(null), dayCnt = Object.create(null);
   const addCapped = (dk, xp, countsTask) => {
@@ -184,7 +242,13 @@ function computeUserXp(uid) {
     const d = acxValidDate(t.completedAt || t.date); if (!d) continue;
     const dk = acxDayKey(d), xp = addCapped(dk, acxBaseXp(t.estimateMin, t.difficulty), true);
     if (xp <= 0) continue;
-    total += xp; if (dk >= ws) { weekXp += xp; weekQuests += 1; }
+    total += xp;
+    if (dk >= ws) {
+      weekXp += xp; weekQuests += 1;
+      // слабость босса: попадание → урон ×2 (weekBoss — добавка сверх обычного XP)
+      const ctx = { isFirstOfDay: !!(firstByDay[dk] && firstByDay[dk].id === t.id), sphereName: skillNameOf(t.skillId || (t.skillIds && t.skillIds[0])) };
+      if (taskHitsBossRule(bossRule, t, ctx)) weekBoss += xp;
+    }
   }
   // Привычки: difficulty/estimateMin из habits.json (фолбэк — min из лог-записи)
   for (const day in habitlog) {
@@ -195,7 +259,13 @@ function computeUserXp(uid) {
       const min = (h && h.estimateMin != null) ? h.estimateMin : (rec.min || 0);
       const xp = addCapped(dk, acxBaseXp(min, h ? h.difficulty : 'normal'), false);
       if (xp <= 0) continue;
-      total += xp; if (dk >= ws) weekXp += xp;
+      total += xp;
+      if (dk >= ws) {
+        weekXp += xp;
+        // привычки ранят «Голод Дофамина» (habit) и сферных боссов (sphere:)
+        if (bossRule === 'habit') weekBoss += xp;
+        else if (bossRule && bossRule.indexOf('sphere:') === 0 && taskHitsBossRule(bossRule, {}, { sphereName: skillNameOf(h && h.skillId) })) weekBoss += xp;
+      }
     }
   }
   // Цели: XP по типу; кастомный xpReward режется потолком типа. Вне дневного лимита (это вехи).
@@ -204,7 +274,8 @@ function computeUserXp(uid) {
     const d = acxValidDate(g.completedAt); if (!d) continue;
     const cap = GOAL_XP_SRV[g.type] != null ? GOAL_XP_SRV[g.type] : GOAL_XP_DEFAULT;
     const xp = Math.max(0, Math.min(Number(g.xpReward) || cap, cap));
-    total += xp; if (acxDayKey(d) >= ws) weekXp += xp;
+    total += xp;
+    if (acxDayKey(d) >= ws) { weekXp += xp; if (bossRule === 'goal') weekBoss += xp; } // «Зеркало Чужих Побед» ранят СВОИ закрытые цели
   }
   // Импорт стартового уровня: на сферу не больше, чем XP к maxImportLevel
   const importCap = acxXpForLevel(ACX.maxImportLevel + 1);
@@ -214,7 +285,8 @@ function computeUserXp(uid) {
   // Уровень — по серверной кривой (clamp на случай гигантских значений)
   let level = 1, rem = total, need = acxLvlNeed(level);
   while (rem >= need && level < 999) { rem -= need; level++; need = acxLvlNeed(level); }
-  return { total, weekXp: Math.round(weekXp), weekQuests, level, rank: rankNameFor(level) };
+  // bossXp = weekXp + тематическая добавка (слабость босса = урон ×2 за попавшие действия)
+  return { total, weekXp: Math.round(weekXp), weekBossXp: Math.round(weekXp + weekBoss), weekQuests, level, rank: rankNameFor(level) };
 }
 // ---- Web Push (RFC8291 aes128gcm + VAPID RFC8292). Zero-dep, проверено round-trip-тестом. ----
 const PUSH_SUBJECT = process.env.PUSH_SUBJECT || 'mailto:gojo@example.com';
@@ -1385,7 +1457,8 @@ const server = http.createServer(async (req, res) => {
     const xp = computeUserXp(uid);
     user.pub = {
       totalXp: xp.total, level: xp.level, rank: xp.rank, at: new Date().toISOString(),
-      week: { ws: mondayStr(), xp: xp.weekXp, quests: xp.weekQuests, clean: Math.max(0, Math.round(Number(b.cleanDays) || 0)) },
+      path: (b.path === 'trust' || b.path === 'control') ? b.path : null, // сторона «Доверие/Контроль» — некомпетитивна, берём с клиента
+      week: { ws: mondayStr(), xp: xp.weekXp, bossXp: xp.weekBossXp, quests: xp.weekQuests, clean: Math.max(0, Math.round(Number(b.cleanDays) || 0)) },
     };
     user.leaderboardOptOut = !!b.optOut;
     saveUsers(users);
@@ -1397,7 +1470,7 @@ const server = http.createServer(async (req, res) => {
     if (!me) return sendJson(res, 401, { error: 'not logged in' });
     const rows = loadUsers()
       .filter(x => x.pub && !x.leaderboardOptOut)
-      .map(x => ({ id: x.id, name: x.name, avatar: x.avatar, totalXp: x.pub.totalXp, level: x.pub.level, rank: x.pub.rank, me: x.id === me }))
+      .map(x => ({ id: x.id, name: x.name, avatar: x.avatar, totalXp: x.pub.totalXp, level: x.pub.level, rank: x.pub.rank, path: x.pub.path || null, weekXp: (x.pub.week && x.pub.week.xp) || 0, me: x.id === me }))
       .sort((a, b) => b.totalXp - a.totalXp);
     return sendJson(res, 200, rows);
   }
