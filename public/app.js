@@ -1514,6 +1514,17 @@ const ACHIEVEMENTS = [
   { id: 'full_spectrum', icon: '🌈', title: 'Полный спектр', desc: '5+ разных сфер за один день', ttl: 'Многогранный', test: () => Object.values(eventsByDay()).some((evs) => new Set(evs.map((e) => e.skillId).filter(Boolean)).size >= 5) },
   { id: 'marathon_day', icon: '🏔️', title: 'Марафон дня', desc: '4+ часа активности за день', ttl: 'Марафонец', test: () => Object.values(eventsByDay()).some((evs) => evs.reduce((s, e) => s + (e.min || 0), 0) >= 240) },
   { id: 'balanced', icon: '⚖️', title: 'Десятиборец', desc: 'Индекс баланса ≥ 70', ttl: 'Десятиборец', test: () => balanceIndex().index >= 70, prog: () => ({ cur: balanceIndex().index, target: 70 }) },
+  // Ночная волна 2026-07-03: фокус, дерево, путь, наряды, полный доспех — ачивки под НОВЫЕ системы
+  { id: 'focus_10h', icon: '🌊', title: 'Глубоководный', desc: '10 часов под фокус-таймером (суммарно)', ttl: 'Глубоководный', test: () => (State.tasks || []).reduce((s, t) => s + (Number(t.actualMin) || 0), 0) >= 600, prog: () => ({ cur: (State.tasks || []).reduce((s, t) => s + (Number(t.actualMin) || 0), 0), target: 600 }) },
+  { id: 'capstone_first', icon: '👑', title: 'Вершина ветви', desc: 'Открой первый капстоун в дереве навыков', ttl: 'Восходитель', test: () => { for (const id in (State.tree || {})) for (const n of (State.tree[id].nodes || [])) if (n.capstone && n.unlocked) return true; return false; } },
+  { id: 'tree_full', icon: '🌳', title: 'Древо в цвету', desc: 'Полностью открой дерево одной сферы', ttl: 'Садовник разума', test: () => Object.values(State.tree || {}).some((tr) => (tr.nodes || []).length > 0 && tr.nodes.every((n) => n.unlocked)) },
+  { id: 'path_chosen', icon: '⚖️', title: 'Сторона выбрана', desc: 'Выбери путь дисциплины — Доверие или Контроль', ttl: 'Определившийся', test: () => !!(State.settings && (State.settings.path === 'trust' || State.settings.path === 'control')) },
+  { id: 'wear_first', icon: '🎀', title: 'Первый наряд', desc: 'Надень предмет на питомца', ttl: 'Стилист зверинца', test: () => { const w = State.settings && State.settings.wear; return !!(w && w.pet && Object.values(w.pet).some((sl) => sl && Object.values(sl).some(Boolean))); } },
+  { id: 'gear_full', icon: '🛡️', title: 'Полный доспех', desc: 'Надень оружие, броню и амулет одновременно', ttl: 'Снаряжённый', test: () => { const g = State.settings && State.settings.gear; return !!(g && g.equipped && g.equipped.weapon && g.equipped.armor && g.equipped.amulet); } },
+  { id: 'goals_10', icon: '🏛️', title: 'Десять вершин', desc: 'Заверши 10 целей', ttl: 'Архитектор пути', test: () => (State.goals || []).filter((g) => g.completedAt).length >= 10, prog: () => ({ cur: (State.goals || []).filter((g) => g.completedAt).length, target: 10 }) },
+  { id: 'habit_100', icon: '🧱', title: 'Кирпич за кирпичом', desc: '100 отметок привычек (суммарно)', ttl: 'Каменщик судьбы', test: () => Object.values(State.habitlog || {}).reduce((s, m) => s + Object.keys(m || {}).length, 0) >= 100, prog: () => ({ cur: Object.values(State.habitlog || {}).reduce((s, m) => s + Object.keys(m || {}).length, 0), target: 100 }) },
+  { id: 'sphere_lvl10', icon: '🔟', title: 'Глубина сферы', desc: 'Прокачай любую сферу до 10 уровня', ttl: 'Специалист', test: () => topSkills().some((s) => skillLevelOf(s.id) >= 10) },
+  { id: 'allspheres_5', icon: '🌐', title: 'Широта жизни', desc: 'Все основные сферы — 5 уровень и выше', ttl: 'Ренессанс-человек', test: () => topSkills().length > 0 && topSkills().every((s) => skillLevelOf(s.id) >= 5) },
   // #21 — больше достижений (2026-06-15): объём, уровни, навыки, цели, привычки, анти-привычки, коллекция, кастом
   { id: 'quests_100', icon: '💯', title: 'Сотня квестов', desc: '100 выполненных квестов', ttl: 'Сотник', test: () => doneTasks().length >= 100, prog: () => ({ cur: doneTasks().length, target: 100 }) },
   { id: 'quests_250', icon: '🗡️', title: 'Легион дел', desc: '250 выполненных квестов', ttl: 'Легионер', test: () => doneTasks().length >= 250, prog: () => ({ cur: doneTasks().length, target: 250 }) },
@@ -4815,9 +4826,29 @@ const WEARABLES = [
   // back
   { id: 'wb_cape', slot: 'back', name: 'Плащ', rarity: 'rare', svg: `<path d="M0 -2 Q36 30 20 74 Q6 54 0 64 Q-6 54 -20 74 Q-36 30 0 -2 Z" fill="#7c6cff" opacity="0.92"/>` },
   { id: 'wb_wings', slot: 'back', name: 'Крылья', rarity: 'epic', svg: `<path d="M-3 4 Q-32 -12 -42 20 Q-22 12 -5 22 Z" fill="#eef1f8" opacity="0.92"/><path d="M3 4 Q32 -12 42 20 Q22 12 5 22 Z" fill="#eef1f8" opacity="0.92"/>` },
+  // ── тематические (arch = архетип сферы из petTraits: питомцу Учёбы — академ-шапочка, Заработка — цилиндр…) ──
+  { id: 'wh_grad', slot: 'head', name: 'Шапочка выпускника', rarity: 'rare', arch: '📚', svg: `<path d="M-20 -2 L0 -10 L20 -2 L0 6 Z" fill="#2a3550"/><rect x="-7" y="2" width="14" height="6" rx="2" fill="#3a4768"/><line x1="14" y1="1" x2="14" y2="12" stroke="#ffc24b" stroke-width="1.6"/><circle cx="14" cy="13" r="2" fill="#ffc24b"/>` },
+  { id: 'wh_sage', slot: 'head', name: 'Очки мудреца', rarity: 'common', arch: '🧠', svg: `<circle cx="-8" cy="2" r="6.5" fill="none" stroke="#e7ebf5" stroke-width="2"/><circle cx="8" cy="2" r="6.5" fill="none" stroke="#e7ebf5" stroke-width="2"/><line x1="-1.5" y1="2" x2="1.5" y2="2" stroke="#e7ebf5" stroke-width="2"/>` },
+  { id: 'wn_champ', slot: 'neck', name: 'Чемпионский пояс', rarity: 'epic', arch: '🏋', svg: `<path d="M-24 -2 Q0 9 24 -2 L22 6 Q0 16 -22 6 Z" fill="#8a5a2b"/><ellipse cx="0" cy="4" rx="8" ry="6" fill="#ffc24b" stroke="#caa033" stroke-width="1.2"/><circle cx="0" cy="4" r="2.6" fill="#e0526a"/>` },
+  { id: 'wn_towel', slot: 'neck', name: 'Полотенце атлета', rarity: 'common', arch: '🏋', svg: `<path d="M-18 -4 Q0 5 18 -4 L18 4 Q0 12 -18 4 Z" fill="#eef1f8"/><path d="M-16 2 l-2 16 h7 l1 -14 z" fill="#dfe5f2"/><path d="M16 2 l2 16 h-7 l-1 -14 z" fill="#dfe5f2"/>` },
+  { id: 'wh_tophat', slot: 'head', name: 'Цилиндр магната', rarity: 'epic', arch: '💼', svg: `<ellipse cx="0" cy="5" rx="20" ry="5" fill="#1b2236"/><rect x="-12" y="-18" width="24" height="22" rx="2" fill="#2a3550"/><rect x="-12" y="-1" width="24" height="5" fill="#ffc24b"/>` },
+  { id: 'wn_tie', slot: 'neck', name: 'Галстук успеха', rarity: 'rare', arch: '💼', svg: `<path d="M-4 -4 h8 l-4 5 z" fill="#b83f54"/><path d="M-3 1 L0 22 L3 1 L0 5 Z" fill="#e0526a"/>` },
+  { id: 'wh_beret', slot: 'head', name: 'Берет художника', rarity: 'rare', arch: '🎨', svg: `<ellipse cx="-2" cy="-2" rx="18" ry="9" fill="#b06ff0"/><ellipse cx="-4" cy="-4" rx="12" ry="5" fill="#c98bff"/><circle cx="-4" cy="-10" r="2.6" fill="#8a4fd0"/>` },
+  { id: 'wn_boho', slot: 'neck', name: 'Шарф богемы', rarity: 'common', arch: '🎨', svg: `<path d="M-22 -3 Q0 8 22 -3 L19 5 Q0 14 -19 5 Z" fill="#e0a23e"/><path d="M10 2 l3 16 l7 -1 l-3 -16 z" fill="#c98a2e"/><circle cx="15" cy="19" r="2" fill="#b06ff0"/><circle cx="18" cy="18" r="2" fill="#3fb6a8"/>` },
+  { id: 'wh_headset', slot: 'head', name: 'Наушники кодера', rarity: 'rare', arch: '💻', svg: `<path d="M-16 2 Q0 -16 16 2" fill="none" stroke="#2a3550" stroke-width="3.4"/><rect x="-19" y="0" width="7" height="11" rx="3" fill="#4f9ff7"/><rect x="12" y="0" width="7" height="11" rx="3" fill="#4f9ff7"/>` },
+  { id: 'wb_launch', slot: 'back', name: 'Плащ ночного релиза', rarity: 'epic', arch: '💻', svg: `<path d="M0 -2 Q34 28 18 70 Q5 52 0 60 Q-5 52 -18 70 Q-34 28 0 -2 Z" fill="#1b2236" opacity="0.95"/><circle cx="-8" cy="26" r="1.6" fill="#4fd6ff"/><circle cx="7" cy="38" r="1.3" fill="#4fd6ff"/><circle cx="-3" cy="50" r="1.4" fill="#7c6cff"/><circle cx="10" cy="18" r="1.2" fill="#eef1f8"/>` },
+  { id: 'wh_wreath', slot: 'head', name: 'Венок спокойствия', rarity: 'rare', arch: '🧘', svg: `<path d="M-16 0 Q0 -9 16 0" fill="none" stroke="#46c46b" stroke-width="3.4"/><ellipse cx="-13" cy="-2" rx="4" ry="2.2" fill="#5fbf7a" transform="rotate(-30 -13 -2)"/><ellipse cx="0" cy="-6" rx="4" ry="2.2" fill="#5fbf7a"/><ellipse cx="13" cy="-2" rx="4" ry="2.2" fill="#5fbf7a" transform="rotate(30 13 -2)"/><circle cx="-6" cy="-4" r="1.8" fill="#ff8fb0"/><circle cx="7" cy="-4" r="1.8" fill="#ff8fb0"/>` },
+  { id: 'wn_apron', slot: 'neck', name: 'Фартук хранителя очага', rarity: 'common', arch: '🧹', svg: `<path d="M-14 0 Q0 6 14 0 L12 24 Q0 30 -12 24 Z" fill="#e0a23e"/><path d="M-6 8 h12 v8 h-12 z" fill="#c98a2e"/><path d="M-14 0 Q0 6 14 0" fill="none" stroke="#8a5a2b" stroke-width="2"/>` },
+  { id: 'wh_bow', slot: 'head', name: 'Бант дружбы', rarity: 'common', arch: '💬', svg: `<path d="M-12 -4 L-1 1 L-12 6 Z" fill="#ff8fb0"/><path d="M12 -4 L1 1 L12 6 Z" fill="#ff8fb0"/><circle cx="0" cy="1" r="3.4" fill="#e06a8f"/>` },
+  { id: 'wb_scroll', slot: 'back', name: 'Свиток познания', rarity: 'rare', arch: '🧠', svg: `<rect x="-6" y="-4" width="12" height="52" rx="5" fill="#f0e6cf" transform="rotate(14 0 22)"/><ellipse cx="-5" cy="-2" rx="7" ry="4" fill="#d9c9a5" transform="rotate(14 -5 -2)"/><ellipse cx="17" cy="44" rx="7" ry="4" fill="#d9c9a5" transform="rotate(14 17 44)"/>` },
 ];
 const WEARABLES_BY_ID = Object.fromEntries(WEARABLES.map((w) => [w.id, w]));
 function wearableById(id) { return WEARABLES_BY_ID[id] || null; }
+// Наряды, «родные» питомцу сферы: тематические по её архетипу + универсальные (arch не задан)
+function wearablesForSphere(sphereId) {
+  const arc = (typeof archetypeOf === 'function') ? archetypeOf(sphereId) : '⭐';
+  return WEARABLES.filter((w) => !w.arch || w.arch === arc);
+}
 function ensureWear() {
   const s = State.settings;
   if (!s.wear) s.wear = { owned: [], pet: {}, avatar: {} };
@@ -6178,6 +6209,13 @@ const GEAR = [
   { id: 'm1', slot: 'amulet', name: 'Медный амулет', icon: '🔸', rarity: 'common', goldPct: 6, cost: 100, lvl: 1 },
   { id: 'm2', slot: 'amulet', name: 'Амулет Знаний', icon: '📿', rarity: 'rare', goldPct: 12, cost: 380, lvl: 5 },
   { id: 'm3', slot: 'amulet', name: 'Реликвия Шести Глаз', icon: '🔮', rarity: 'epic', goldPct: 20, cost: 1100, lvl: 13 },
+  // расширение арсенала: альтернативные билды (голд-оружие, XP-броня) + легендарки позднего этапа
+  { id: 'w2b', slot: 'weapon', name: 'Кинжал Наживы', icon: '🔪', rarity: 'rare', goldPct: 10, cost: 420, lvl: 4 },
+  { id: 'a2b', slot: 'armor', name: 'Мантия Потока', icon: '🥋', rarity: 'rare', xpPct: 5, cost: 420, lvl: 4 },
+  { id: 'm2b', slot: 'amulet', name: 'Кулон Испытаний', icon: '🧿', rarity: 'rare', hardXpPct: 8, cost: 400, lvl: 6 },
+  { id: 'w4', slot: 'weapon', name: 'Клинок Рассветной Клятвы', icon: '⚡', rarity: 'legendary', xpPct: 15, goldPct: 6, cost: 3200, lvl: 18 },
+  { id: 'a4', slot: 'armor', name: 'Доспех Несгибаемого', icon: '🐉', rarity: 'legendary', hardXpPct: 24, xpPct: 5, cost: 3200, lvl: 19 },
+  { id: 'm4', slot: 'amulet', name: 'Сердце Десятиборца', icon: '💠', rarity: 'legendary', goldPct: 24, xpPct: 6, cost: 3000, lvl: 20 },
 ];
 const GEAR_SLOTS = [{ k: 'weapon', label: '⚔️ Оружие' }, { k: 'armor', label: '🛡 Броня' }, { k: 'amulet', label: '📿 Амулет' }];
 function ensureGear() { const s = State.settings; if (!s.gear) s.gear = { owned: [], equipped: {}, relics: [] }; if (!Array.isArray(s.gear.owned)) s.gear.owned = []; if (!s.gear.equipped) s.gear.equipped = {}; if (!Array.isArray(s.gear.relics)) s.gear.relics = []; return s.gear; }
