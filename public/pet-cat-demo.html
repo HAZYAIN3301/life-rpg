@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Кот Удачи — paper-doll риг (сфера «Доход»)</title>
+<style>
+  body { background:#0f1320; color:#e7ebf5; font:14px system-ui; margin:0; padding:24px; }
+  h1 { font-size:18px; } .row { display:flex; gap:28px; align-items:flex-end; flex-wrap:wrap; }
+  .card { background:#171c2e; border:1px solid #2a3250; border-radius:14px; padding:16px; }
+  .muted { color:#99a2c0; font-size:12px; }
+
+  /* ── Риг: позиция на обёртке .fc-p (left/top), АНИМАЦИЯ на вложенном элементе —
+     CSS-анимация transform перетирает inline transform (грабля проекта) ── */
+  .fcat { display:inline-block; }
+  .fc-stage { position:relative; width:600px; height:660px; transform-origin:top left; }
+  .fc-p { position:absolute; }
+  .fc-p img { display:block; }
+
+  /* группа головы: наклон целиком (голова+пятна+уши+морда) вокруг шеи */
+  .fc-headgrp { position:absolute; left:150px; top:70px; width:340px; height:300px; }
+  .fc-headanim { position:relative; width:100%; height:100%; transform-origin:50% 92%; animation:headTilt 5.2s ease-in-out infinite; }
+  .fc-headanim .fc-p { position:absolute; }
+
+  .fc-breathe { transform-origin:50% 100%; animation:breathe 3.4s ease-in-out infinite; }
+  .fc-beckon  { transform-origin:50% 88%;  animation:beckon 2.2s ease-in-out infinite; }
+  .fc-coinbob { transform-origin:50% 8%;   animation:coinbob 3.8s ease-in-out infinite; }
+  .fc-tailwag { transform-origin:86% 86%;  animation:tailwag 3.0s ease-in-out infinite; }
+  .fc-bell    { transform-origin:50% 6%;   animation:bellswing 2.2s ease-in-out infinite; }
+
+  @keyframes breathe   { 0%,100% { transform:scaleY(1); } 50% { transform:scaleY(1.016); } }
+  @keyframes headTilt  { 0%,100% { transform:rotate(-1.4deg); } 50% { transform:rotate(1.6deg); } }
+  @keyframes beckon    { 0%,100% { transform:rotate(-14deg); } 50% { transform:rotate(6deg); } }
+  @keyframes coinbob   { 0%,100% { transform:rotate(-2deg); } 50% { transform:rotate(2.5deg); } }
+  @keyframes tailwag   { 0%,100% { transform:rotate(-7deg); } 50% { transform:rotate(6deg); } }
+  @keyframes bellswing { 0%,100% { transform:rotate(-6deg); } 50% { transform:rotate(6deg); } }
+</style>
+</head>
+<body>
+<h1>🐈‍⬛ Кот Удачи (манэки-нэко) — маскот сферы «Доход»</h1>
+<p class="muted">Codex-арт → нарезка → paper-doll риг. Слева риг (анимирован), справа оригинал-сборка для сверки.</p>
+<div class="row">
+  <div class="card">
+    <div class="fcat"><div class="fc-stage" id="rig" style="transform:scale(.72)"></div></div>
+    <div class="muted">риг из 15 частей · манэки-жест · масштаб .72</div>
+  </div>
+  <div class="card">
+    <img src="art/pets/fortune/assembled.png" width="430" alt="референс">
+    <div class="muted">оригинал (Codex, собранный)</div>
+  </div>
+  <div class="card">
+    <div class="fcat"><div class="fc-stage" id="rig-sm" style="transform:scale(.27)"></div></div>
+    <div class="muted">масштаб зверинца (~160px)</div>
+  </div>
+</div>
+
+<script>
+// Раскладка (координаты в масштабе исходного листа; head-group — локальные внутри группы).
+// z: bag/tail сзади → бёдра → тело → лапа-с-монетой → воротник+бубенец → группа головы → поднятая лапа.
+const A = 'art/pets/fortune/';
+const LAYOUT = [
+  { n:'bag',        x:395, y:270, z:1 },
+  { n:'tail',       x:100, y:445, z:1, anim:'fc-tailwag' },
+  { n:'leg_l',      x:155, y:428, z:2 },
+  { n:'leg_r',      x:345, y:428, z:2 },
+  { n:'body',       x:188, y:322, z:3, anim:'fc-breathe' },
+  { n:'paw_coin',   x:300, y:345, z:4, anim:'fc-coinbob' },
+  { n:'collar',     x:210, y:322, z:5 },
+  { n:'bell',       x:258, y:348, z:6, anim:'fc-bell' },
+  { n:'paw_raised', x:152, y:205, z:9, anim:'fc-beckon' },
+];
+// Группа головы (наклон целиком): локальные координаты внутри 340x300, группа на (150,70)
+const HEAD = [
+  { n:'head',    x:62,  y:72  },
+  { n:'patch_l', x:80,  y:60  },
+  { n:'patch_r', x:148, y:56  },
+  { n:'ear_l',   x:68,  y:28  },
+  { n:'ear_r',   x:184, y:28  },
+  { n:'face',    x:50,  y:92  },
+];
+function part(p, base) {
+  const d = document.createElement('div'); d.className = 'fc-p';
+  d.style.left = p.x + 'px'; d.style.top = p.y + 'px'; d.style.zIndex = p.z || 1;
+  const img = document.createElement('img'); img.src = base + p.n + '.png';
+  if (p.anim) img.className = p.anim;
+  d.appendChild(img); return d;
+}
+function buildRig(el) {
+  for (const p of LAYOUT.filter(x => x.z < 7)) el.appendChild(part(p, A));
+  const grp = document.createElement('div'); grp.className = 'fc-headgrp'; grp.style.zIndex = 8;
+  const anim = document.createElement('div'); anim.className = 'fc-headanim';
+  for (const p of HEAD) anim.appendChild(part(p, A));
+  grp.appendChild(anim); el.appendChild(grp);
+  for (const p of LAYOUT.filter(x => x.z >= 7)) el.appendChild(part(p, A));
+}
+buildRig(document.getElementById('rig'));
+buildRig(document.getElementById('rig-sm'));
+</script>
+</body>
+</html>

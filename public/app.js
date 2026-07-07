@@ -4805,7 +4805,7 @@ const PET_TRAITS = [
   { re: /здоров|сон|выспат|пита|нутри|медит|йог|wellness|восстан|дыхан/i, icon: '🧘', idle: 'медитирует' },
   { re: /учеб|учёб|школ|универ|экзам|study|klausur|biolog|био|хими|физик|математ|истор|abi|абитур/i, icon: '📚', idle: 'почитывает книгу' },
   { re: /язык|нем|deutsch|\bdeu|англ|\beng|француз|испан|vocab|словарн/i, icon: '🗣', idle: 'учит слова' },
-  { re: /работ|карьер|бизнес|деньг|заработ|финанс|инвест|\bwork|\bjob|money|клиент/i, icon: '💼', idle: 'что-то подсчитывает' },
+  { re: /работ|карьер|бизнес|деньг|доход|зарплат|прибыл|заработ|финанс|инвест|\bwork|\bjob|money|income|клиент/i, icon: '💼', idle: 'что-то подсчитывает' },
   { re: /творч|искусств|музык|рисов|дизайн|видео|\bart|creativ|монтаж|съёмк|съемк/i, icon: '🎨', idle: 'творит' },
   { re: /код|программ|разраб|\btech|\bit\b|девелоп|develop/i, icon: '💻', idle: 'печатает код' },
   { re: /саморазв|самораз|развит|чтен|книг|\bmind|growth|философ|мышлен|психолог|рефлекс/i, icon: '🧠', idle: 'размышляет' },
@@ -4934,9 +4934,34 @@ const PET_SPECIES = {
       extra: `<path d="M55 89 l5 7 l5 -7 z" fill="#ffb24b"/>`,
     }),
   },
+  fortune: { // 🐈‍⬛ Кот Удачи (манэки-нэко) — ПЕРВЫЙ растровый paper-doll из Codex-арта (сфера «Доход»)
+    // Части — PNG с бумажной текстурой (art/pets/fortune/), собраны <image>-слоями в родном SVG-пайплайне:
+    // слоты/экипировка/масштаб состояния работают как у всех. raster:true — своя морда, без petFaceMarkup.
+    slots: { head: [58, 29], neck: [55, 72], back: [86, 63] },
+    raster: true,
+    draw: () => {
+      const A = 'art/pets/fortune/', T = 'translate(-2.9,6) scale(0.19)';
+      const im = (n, x, y, w, h, cls) => `<image href="${A}${n}.png" x="${x}" y="${y}" width="${w}" height="${h}"${cls ? ` class="${cls}"` : ''}/>`;
+      return {
+        ears: '', feet: '', belly: '', extra: '',
+        tail: `<g transform="${T}">${im('bag', 395, 270, 171, 218)}${im('tail', 100, 445, 85, 152, 'fc-tailwag')}</g>`,
+        body: `<g transform="${T}">
+          ${im('leg_l', 155, 428, 103, 168)}${im('leg_r', 345, 428, 102, 168)}
+          ${im('body', 188, 322, 227, 234)}
+          ${im('paw_coin', 300, 345, 125, 231, 'fc-coinbob')}
+          ${im('collar', 210, 322, 191, 107)}${im('bell', 258, 348, 93, 103, 'fc-bell')}
+          <g transform="translate(150,70)"><g class="fc-headtilt">
+            ${im('head', 62, 72, 217, 197)}${im('patch_l', 80, 60, 124, 100)}${im('patch_r', 148, 56, 124, 100)}
+            ${im('ear_l', 68, 28, 101, 137)}${im('ear_r', 184, 28, 100, 137)}${im('face', 50, 92, 241, 169)}
+          </g></g>
+          ${im('paw_raised', 152, 205, 92, 227, 'fc-beckon')}
+        </g>`,
+      };
+    },
+  },
 };
 function archToSpecies(arc) {
-  return ({ '🏋': 'sturdy', '💼': 'sturdy', '🎨': 'fluffy', '💬': 'fluffy', '💻': 'slime', '🧹': 'slime', '🗣': 'bird', '🧘': 'bird' })[arc] || 'round';
+  return ({ '🏋': 'sturdy', '💼': 'fortune', '🎨': 'fluffy', '💬': 'fluffy', '💻': 'slime', '🧹': 'slime', '🗣': 'bird', '🧘': 'bird' })[arc] || 'round';
 }
 // ── Надеваемая экипировка (PETS-EQUIPMENT-PLAN.md, Фаза 2) ──
 // Предмет = SVG в ЛОКАЛЬНЫХ координатах слота (0,0 = якорь). Слоты: head/neck/back.
@@ -5011,9 +5036,9 @@ function petSVG(color, state, traits, sphereId) {
     ${p.tail}
     <g transform="translate(60,80) scale(${r.toFixed(2)},${(0.5 + r * 0.5).toFixed(2)}) translate(-60,-80)"><g class="pd-body-grp">
       ${p.feet}${p.ears}${p.body}${p.belly}
-      ${petFaceMarkup(PET_STATE[state].face)}
+      ${sp.raster ? '' : petFaceMarkup(PET_STATE[state].face)}
       ${p.extra}
-      ${petAccessorySVG(dom)}
+      ${sp.raster ? '' : petAccessorySVG(dom)}
     </g></g>
     ${wearLayerHTML('neck', sp, sphereId)}
     ${wearLayerHTML('head', sp, sphereId)}
@@ -5255,6 +5280,8 @@ function renderToday() {
   const doneCount = todays.filter((t) => t.done).length;
   const todayEv = xpEvents().filter((e) => e.date === today);
   const xpToday = todayEv.reduce((s, e) => s + e.xp, 0), goldToday = todayEv.reduce((s, e) => s + e.gold, 0), minToday = todayEv.reduce((s, e) => s + e.min, 0);
+  const donePct = todays.length ? Math.round(doneCount / todays.length * 100) : 0;
+  const nextQuest = todays.find((t) => !t.done);
   const skillOpts = skillOptionsHTML();
   const tm = State.timer, tmTask = tm ? questById(tm.taskId) : null;
 
@@ -5292,7 +5319,24 @@ function renderToday() {
 
   // Тизер режима «Система» — одноразово, после ур.2, если не включён (дискаверабилити)
   const sysTeaser = (!systemMode() && charLevel() >= 2 && !isDiscovered('teaser:system')) ? `<div class="card nudge-card sys-teaser"><span class="nudge-boost">⚡ Спрятанная фишка: режим «Система» (Solo Leveling-вайб) — нарратор объявляет твои победы.</span><div class="sys-teaser-btns"><button class="btn sm" data-action="enable-system-teaser">Включить</button><button class="btn ghost sm" data-action="dismiss-system-teaser">Позже</button></div></div>` : '';
-  return `${companionCard()}${installBanner()}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${sysTeaser}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
+  const nextAction = tm ? `<button class="btn" data-action="${tm.running ? 'timer-pause' : 'timer-resume'}">${tm.running ? '⏸ Пауза' : '▶ Продолжить фокус'}</button>`
+    : nextQuest ? `<button class="btn" data-action="focus-task" data-id="${nextQuest.id}">▶ Начать: ${esc(nextQuest.title).slice(0, 32)}${nextQuest.title.length > 32 ? '…' : ''}</button>`
+    : `<button class="btn ghost" data-action="goto-calendar">🗓 Запланировать день</button>`;
+  const todayHero = `<section class="card today-hero">
+      <div>
+        <span class="th-kicker">Daily cockpit</span>
+        <h2>${nextQuest ? 'Следующий ход уже выбран.' : todays.length ? 'День почти собран.' : 'Соберём первый квест на сегодня.'}</h2>
+        <p class="th-sub">${nextQuest ? `Сейчас лучше не смотреть на всю систему — просто закрой следующий квест: <b>${esc(nextQuest.title)}</b>.` : todays.length ? 'Основной список уже на месте. Добей хвосты, забери награды и закрой день спокойно.' : 'Начни с одного понятного действия. Остальные системы подождут за кулисами.'}</p>
+        <div class="th-actions">${nextAction}<button class="btn ghost" data-action="goto-rewards">🎁 Награды</button></div>
+      </div>
+      <div class="th-stats">
+        <div class="th-stat"><b>${donePct}%</b><span>готово</span></div>
+        <div class="th-stat"><b>${eP}%</b><span>энергия</span></div>
+        <div class="th-stat"><b>${fmtDur(minToday)}</b><span>фокус</span></div>
+        <div class="th-stat"><b>+${xpToday}</b><span>XP</span></div>
+      </div>
+    </section>`;
+  return `<div class="today-shell">${companionCard()}${installBanner()}${todayHero}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${sysTeaser}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="${t('Новый квест на сегодня…')}" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
@@ -5316,7 +5360,7 @@ function renderToday() {
     <div class="card shutdown"><h3>🌙 Итог дня</h3>
       <p class="muted">Квестов ${doneCount}/${todays.length} · привычек ${habits.filter((h) => habitDone(h, today)).length}/${habits.length} · ${fmtDur(minToday)} · +${xpToday} XP · +${goldToday} 🪙</p>
       <textarea id="reflection" placeholder="Рефлексия: что получилось, что перенести, как себя чувствую…">${esc(day.reflection || '')}</textarea>
-      <div style="margin-top:10px"><button class="${day.closed ? 'btn ghost' : 'btn'}" data-action="${day.closed ? 'reopen-day' : 'close-day'}">${day.closed ? '✓ День закрыт — открыть заново' : 'Закрыть день'}</button></div></div>`;
+      <div style="margin-top:10px"><button class="${day.closed ? 'btn ghost' : 'btn'}" data-action="${day.closed ? 'reopen-day' : 'close-day'}">${day.closed ? '✓ День закрыт — открыть заново' : 'Закрыть день'}</button></div></div></div>`;
 }
 
 // ============================================================
@@ -5501,16 +5545,31 @@ function renderTree() {
       <button class="btn ${edit ? '' : 'ghost'} sm" data-action="toggle-tree-edit">${edit ? '✓ Готово' : '✏️ Редактор'}</button>
     </div>`;
   const recNode = recId && t.nodes.find((n) => n.id === recId);
+  const unlocked = t.nodes.filter((n) => n.unlocked).length;
+  const treeHero = `<section class="card tree-hero" style="--c:${esc(sk.color)}">
+      <div>
+        <span class="th-kicker">Skill map</span>
+        <h2>${esc(sk.name)}</h2>
+        <p class="muted">${edit ? 'Режим архитектора: двигай узлы и собирай карту развития под себя.' : recNode ? `Следующий лучший узел: «${esc(recNode.title)}».` : avail > 0 ? 'Очки готовы — выбери новый бонус на карте.' : 'Карта ждёт новый опыт. Делай дела в сфере, чтобы открыть следующий узел.'}</p>
+      </div>
+      <div class="tree-hero-stats">
+        <span><b>${avail}</b><small>очк.</small></span>
+        <span><b>${unlocked}/${t.nodes.length}</b><small>узлов</small></span>
+        <span><b>${spent}</b><small>вложено</small></span>
+      </div>
+    </section>`;
   return `
-    <div class="card"><div class="tree-tabs">${tabs}</div></div>
-    <div class="card">
+    <div class="tree-shell">
+    ${treeHero}
+    <div class="card tree-tabs-card"><div class="tree-tabs">${tabs}</div></div>
+    <div class="card tree-map-card">
       <div class="tree-head"><h3 style="margin:0">🌳 ${esc(sk.name)}</h3>${controls}</div>
       ${edit ? '' : `<div class="tree-active"><span class="ta-label">Активные бонусы:</span> ${skillActivePerks(id)}</div>`}
       <p class="muted" style="font-size:12px">${edit ? '✏️ Перетаскивай узлы. Клик по узлу — настроить (название, цена, бонус, требования). «+ Узел» добавит новый.' : (avail <= 0 ? 'Очки копятся за уровни сферы — делай дела, чтобы открыть узлы.' : recNode ? `Доступно ${avail} очк. · 💡 можно взять «${esc(recNode.title)}» (подсвечен).` : `Доступно ${avail} очк. — открывай узлы кликом.`)}</p>
       <div class="tree-scroll"><div class="tree ${edit ? 'edit' : ''}" style="width:${width}px;height:${height}px">
         <svg class="tree-lines" width="${width}" height="${height}">${lines}</svg>${nodes}</div></div>
       ${edit && State.treeSelNode ? treeNodePanel(id, t) : ''}
-    </div>`;
+    </div></div>`;
 }
 // Живая перерисовка линий при перетаскивании (без полного render)
 function updateTreeLines() {
@@ -5656,7 +5715,7 @@ function renderCharacter() {
       ${isPro() ? `<label>% жира<input name="bodyfat" type="number" min="3" max="60" step="0.1" value="${b.bodyfat || ''}" placeholder="—" /></label>`
       : `<label class="locked-inline" data-action="show-paywall" data-feature="Состав тела">% жира 🔒<input disabled placeholder="Pro" /></label>`}
       <button type="submit" class="btn">Сохранить</button></form>`;
-  return `
+  return `<div class="character-shell">
     <div class="card char-hero">
       <div class="ch-avatar ch-avatar-img" style="--rc:${cr.color};--p:${oi.pct}">${avatarSVG(avCfg(), equippedCosmeticsOpts())}</div>
       <div class="ch-meta">
@@ -5680,7 +5739,7 @@ function renderCharacter() {
         <div class="figure-wrap">${figureSVG()}</div>${bmiLabel}
         <p class="muted" style="font-size:12px">Силуэт живой: сила расширяет плечи, выносливость подсушивает, вес влияет на талию.</p>
         ${bodyForm}</div>
-    </div>`;
+    </div></div>`;
 }
 
 // ============================================================
@@ -5923,7 +5982,8 @@ function svgToPng(svgStr, w, h) {
 // ============================================================
 function subscriptionCard() {
   const e = ent(), dl = trialDaysLeft();
-  const tierLabel = e.tier === 'pro' ? '💎 Pro' : (e.tier === 'trial' ? `✨ Pro-trial · ${dl} ${i18nDay(dl, lang())}` : t('Free'));
+  const dayLabel = lang() === 'ru' ? plural(dl, 'день', 'дня', 'дней') : i18nDay(dl, lang());
+  const tierLabel = e.tier === 'pro' ? '💎 Pro' : (e.tier === 'trial' ? `✨ Pro-trial · ${dl} ${dayLabel}` : t('Free'));
   let cta = '';
   if (e.tier === 'free') {
     if (!e.trialUsed) cta += `<button class="btn" data-action="start-trial">${t('✨ 7 дней Pro бесплатно')}</button>`;
@@ -6415,6 +6475,23 @@ function arsenalCard() {
 
 function renderRewards() {
   const bal = goldBalance();
+  const chestReady = lootChestsAvailable();
+  const ownedCos = COSMETICS.filter((c) => ownsCosmetic(c.id)).length;
+  const achGot = ACHIEVEMENTS.filter((a) => State.achievements[a.id]).length;
+  const rewardHero = `<section class="card reward-hero">
+      <div>
+        <span class="th-kicker">Season path</span>
+        <h2>Награды должны чувствоваться как прогресс.</h2>
+        <p class="muted">Сундуки, коллекция, арсенал и личные награды теперь собраны как единый locker / battle-pass слой, без казино-вайба.</p>
+        <div class="th-actions">
+          ${chestReady ? `<button class="btn" data-action="open-chest">🎁 Открыть сундук ×${chestReady}</button>` : '<button class="btn ghost" data-action="open-reward-catalog">📚 Каталог наград</button>'}
+          <button class="btn ghost" data-action="goto-today">🎯 К делам</button>
+        </div>
+      </div>
+      <div class="reward-track-preview" aria-hidden="true">
+        <span class="done">✓</span><i></i><span class="${chestReady ? 'ready' : ''}">🎁</span><i></i><span>🎨</span><i></i><span class="cap">★</span>
+      </div>
+    </section>`;
   const cards = State.rewards.map((r) => `<div class="reward">
       <div class="rw-icon">${esc(r.icon || '🎁')}</div><div class="rw-name">${esc(r.name)}</div>
       <div class="rw-cost">🪙 ${r.cost}</div>
@@ -6428,13 +6505,15 @@ function renderRewards() {
     return `<div class="ach ${got ? 'got' : ''}"><div class="ach-icon">${a.icon}</div><div class="ach-title">${esc(a.title)}</div><div class="ach-desc">${esc(a.desc)}</div>${got ? `<div class="ach-date">${State.achievements[a.id].slice(0, 10)}</div>` : pr}</div>`;
   }).join('');
   return `
+    <div class="rewards-shell">
+    ${rewardHero}
     ${lootboxCard()}
     ${collectionCard()}
     ${arsenalCard()}
     <div class="kpis">
       <div class="kpi"><div class="v">🪙 ${bal}</div><div class="l">${t('Баланс золота')}</div></div>
-      <div class="kpi"><div class="v">${COSMETICS.filter((c) => ownsCosmetic(c.id)).length}/${COSMETICS.length}</div><div class="l">${t('Косметики')}</div></div>
-      <div class="kpi"><div class="v">${ACHIEVEMENTS.filter((a) => State.achievements[a.id]).length}/${ACHIEVEMENTS.length}</div><div class="l">${t('Достижений')}</div></div>
+      <div class="kpi"><div class="v">${ownedCos}/${COSMETICS.length}</div><div class="l">${t('Косметики')}</div></div>
+      <div class="kpi"><div class="v">${achGot}/${ACHIEVEMENTS.length}</div><div class="l">${t('Достижений')}</div></div>
     </div>
     <div class="card"><h3>🎁 Магазин наград</h3><div class="rewards-grid">${cards || '<p class="muted">Наград пока нет — возьми готовые из каталога ↓</p>'}</div>
       <div class="settings-actions" style="margin:10px 0 4px"><button class="btn ghost" data-action="open-reward-catalog">${t('📚 Каталог наград')}</button>${!isPro() ? `<span class="muted" style="font-size:12px">${State.rewards.length}/${FREE_REWARDS_MAX} наград (Free)</span>` : ''}</div>
@@ -6444,7 +6523,7 @@ function renderRewards() {
         <input name="cost" type="number" min="1" value="100" style="width:90px" />
         <button type="submit">${t('+ Добавить награду')}</button></form></div>
     <div class="card"><h3>${t('История покупок')}</h3>${history ? `<ul class="reflections">${history}</ul>` : '<p class="muted">Пока ничего не куплено.</p>'}</div>
-    <div class="card"><h3>${t('🏆 Достижения')}</h3><div class="ach-grid">${achs}</div></div>`;
+    <div class="card"><h3>${t('🏆 Достижения')}</h3><div class="ach-grid">${achs}</div></div></div>`;
 }
 
 // ============================================================

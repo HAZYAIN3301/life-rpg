@@ -9,6 +9,39 @@
   --good: #46c46b;
   --warn: #f0b34a;
   --bad: #e0526a;
+  --surface-0: #090d17;
+  --surface-1: #0f1422;
+  --surface-2: #171d31;
+  --surface-3: #202840;
+  --surface-4: #2a3454;
+  --line-soft: rgba(132, 150, 205, 0.16);
+  --line-strong: rgba(132, 150, 205, 0.34);
+  --text-strong: #f7f9ff;
+  --text-soft: #c2c9dd;
+  --accent-2: #4fd6ff;
+  --accent-warm: #e0a23e;
+  --shadow-card: 0 16px 46px rgba(0, 0, 0, 0.32);
+  --shadow-raised: 0 22px 70px rgba(0, 0, 0, 0.42);
+  --glow-active: 0 0 0 1px color-mix(in srgb, var(--accent) 42%, transparent), 0 0 28px color-mix(in srgb, var(--accent) 20%, transparent);
+  --glow-legendary: 0 0 0 1px rgba(224, 162, 62, 0.48), 0 0 30px rgba(224, 162, 62, 0.18);
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+  --ease-out: cubic-bezier(.2,.8,.2,1);
+  --dur-fast: 140ms;
+  --dur-normal: 240ms;
+  --dur-slow: 520ms;
+  --font-ui: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Arial Rounded MT Bold", "Trebuchet MS", Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-number: "SF Pro Rounded", "Arial Rounded MT Bold", ui-sans-serif, system-ui, sans-serif;
   --radius: 14px;
   --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
   --den-wall: #2c2740;
@@ -25,6 +58,17 @@
   --good: #2ea84f;
   --warn: #c98a16;
   --bad: #d23a55;
+  --surface-0: #e7ebf4;
+  --surface-1: #f3f6fb;
+  --surface-2: #ffffff;
+  --surface-3: #eef2fa;
+  --surface-4: #e2e8f4;
+  --line-soft: rgba(72, 87, 125, 0.14);
+  --line-strong: rgba(72, 87, 125, 0.26);
+  --text-strong: #101728;
+  --text-soft: #3d4964;
+  --shadow-card: 0 14px 36px rgba(40, 52, 90, 0.12);
+  --shadow-raised: 0 20px 58px rgba(40, 52, 90, 0.16);
   --shadow: 0 8px 28px rgba(40, 52, 90, 0.12);
   --den-wall: #efe7da;
   --den-floor: #e0d5c2;
@@ -1877,3 +1921,594 @@ html[data-system="on"] .lvlup-overlay { background: rgba(0,8,20,.82); }
 .t-oath { font-size: 11px; font-weight: 800; color: #4fd6ff; white-space: nowrap; padding: 2px 6px; border: 1px solid rgba(79,214,255,.4); border-radius: 7px; }
 .t-oath-btn { background: none; border: 1px dashed var(--line); border-radius: 7px; color: var(--muted); cursor: pointer; font-size: 12px; padding: 2px 6px; transition: .12s; }
 .t-oath-btn:hover { border-color: #4fd6ff; color: #4fd6ff; }
+
+/* ---------- Design Direction Phase 1: premium shell + daily cockpit ---------- */
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(900px 520px at 82% -8%, color-mix(in srgb, var(--accent) 17%, transparent), transparent 66%),
+    radial-gradient(720px 440px at 12% 14%, rgba(79, 214, 255, 0.08), transparent 66%),
+    linear-gradient(rgba(120, 145, 210, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 145, 210, 0.035) 1px, transparent 1px),
+    var(--surface-0);
+  background-size: auto, auto, 40px 40px, 40px 40px, auto;
+  color: var(--text);
+  font-family: var(--font-ui);
+}
+
+#app {
+  max-width: 1080px;
+  padding-inline: 20px;
+}
+
+#topbar {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-0) 92%, transparent), color-mix(in srgb, var(--surface-0) 70%, transparent)),
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 8%, transparent), transparent 42%);
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  border-bottom: 1px solid var(--line-soft);
+  padding: 18px 0 14px;
+  margin-bottom: 24px;
+}
+
+.brand {
+  gap: 12px;
+}
+
+.brand .logo {
+  width: 34px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 55% 30%, color-mix(in srgb, var(--accent-2) 36%, transparent), transparent 54%),
+    color-mix(in srgb, var(--surface-3) 84%, transparent);
+  border: 1px solid var(--line-soft);
+  color: var(--accent-2);
+  font-size: 24px;
+  font-weight: 900;
+  box-shadow: var(--glow-active);
+}
+
+.brand h1,
+#appName {
+  font-family: var(--font-display);
+  color: var(--text-strong);
+  font-size: 22px;
+  letter-spacing: 0.16em;
+}
+
+.char-summary {
+  margin-top: 14px;
+}
+
+.char-main {
+  gap: 12px;
+}
+
+.user-pill,
+.skill-chip,
+.gold-pill,
+.streak,
+.hype-chip,
+.plan-badge,
+.help-btn,
+.logout-btn {
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--surface-3) 86%, transparent), color-mix(in srgb, var(--surface-2) 92%, transparent));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+.user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.up-av {
+  font-size: 20px;
+  width: 28px;
+  height: 28px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface-4));
+}
+
+.up-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.up-name {
+  color: var(--text-strong);
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.up-rank {
+  color: var(--rc, var(--accent));
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.char-level {
+  color: var(--text-soft);
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+
+.char-level b,
+.timer-clock,
+.kpi .v,
+.rw-title {
+  font-family: var(--font-number);
+  font-variant-numeric: tabular-nums;
+}
+
+.char-level b {
+  color: var(--text-strong);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.xp-bar {
+  height: 18px;
+  min-width: 240px;
+  background: color-mix(in srgb, var(--surface-4) 66%, transparent);
+  border-color: var(--line-soft);
+  box-shadow: inset 0 1px 5px rgba(0,0,0,.42);
+}
+
+.xp-bar > span {
+  background: linear-gradient(90deg, #4fd6ff 0%, var(--accent) 55%, #a77cff 100%);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 32%, transparent);
+  transition: width var(--dur-slow) var(--ease-out);
+}
+
+.xp-bar > i {
+  font-weight: 800;
+  letter-spacing: .03em;
+}
+
+.skills-row {
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.skill-chip {
+  padding: 7px 12px;
+  border-radius: var(--radius-pill);
+  color: var(--text-soft);
+}
+
+.skill-chip .sk-name {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.skill-chip .sk-bar {
+  background: rgba(255,255,255,.06);
+}
+
+.navrow {
+  gap: 8px;
+  padding: 5px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface-1) 84%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+.navsec,
+.navgear {
+  min-height: 38px;
+  border-radius: 13px;
+  transition: transform var(--dur-fast) var(--ease-out), background var(--dur-fast), color var(--dur-fast), box-shadow var(--dur-fast);
+}
+
+.navsec {
+  padding: 8px 13px;
+  color: var(--text-soft);
+}
+
+.navsec:hover,
+.navgear:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--surface-4) 66%, transparent);
+  color: var(--text-strong);
+}
+
+.navsec.active,
+.navgear.active {
+  color: var(--text-strong);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 20%, var(--surface-4)), color-mix(in srgb, var(--accent) 10%, var(--surface-3)));
+  box-shadow: var(--glow-active);
+}
+
+.navsec.locked {
+  opacity: .48;
+}
+
+.navsub {
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.navsubtab {
+  min-height: 34px;
+  padding: 7px 14px;
+  border-color: var(--line-soft);
+  background: color-mix(in srgb, var(--surface-2) 76%, transparent);
+  color: var(--text-soft);
+  transition: transform var(--dur-fast) var(--ease-out), border-color var(--dur-fast), background var(--dur-fast);
+}
+
+.navsubtab:hover {
+  transform: translateY(-1px);
+  border-color: var(--line-strong);
+}
+
+.navsubtab.active {
+  color: var(--accent-2);
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface-3));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 0 18px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.card {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.026), transparent 42%),
+    color-mix(in srgb, var(--surface-2) 92%, transparent);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 18px 20px;
+}
+
+.card h2,
+.card h3 {
+  color: var(--text-strong);
+  font-family: var(--font-display);
+  letter-spacing: .02em;
+}
+
+.card h3 {
+  font-size: 16px;
+}
+
+.btn,
+.add-row button,
+.shutdown button,
+.settings-actions button,
+.goal-form button[type="submit"],
+.reward-form button[type="submit"] {
+  min-height: 38px;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, #fff 13%, var(--accent)), color-mix(in srgb, #000 4%, var(--accent)));
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--accent) 20%, transparent);
+  transition: transform var(--dur-fast) var(--ease-out), filter var(--dur-fast), box-shadow var(--dur-fast);
+}
+
+.btn:hover,
+.add-row button:hover,
+.shutdown button:hover,
+.settings-actions button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--accent) 26%, transparent);
+}
+
+.btn.ghost {
+  background: color-mix(in srgb, var(--surface-3) 86%, transparent);
+  color: var(--text);
+  border-color: var(--line-soft);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+input,
+select,
+textarea {
+  background: color-mix(in srgb, var(--surface-3) 86%, transparent);
+  border-color: var(--line-soft);
+  border-radius: 12px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.task {
+  border: 1px solid var(--line-soft);
+  border-radius: 14px;
+  padding: 9px 10px;
+  background: color-mix(in srgb, var(--surface-3) 54%, transparent);
+  transition: transform var(--dur-fast) var(--ease-out), border-color var(--dur-fast), background var(--dur-fast);
+}
+
+.task:hover {
+  transform: translateY(-1px);
+  border-color: var(--line-strong);
+  background: color-mix(in srgb, var(--surface-4) 52%, transparent);
+}
+
+.task:last-child {
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.task .check {
+  border-radius: 10px;
+  border-color: var(--line-strong);
+  background: color-mix(in srgb, var(--surface-4) 60%, transparent);
+}
+
+.task.done .check {
+  background: linear-gradient(180deg, color-mix(in srgb, #fff 12%, var(--good)), var(--good));
+  box-shadow: 0 0 15px color-mix(in srgb, var(--good) 22%, transparent);
+}
+
+.daystat {
+  gap: 10px;
+  margin-bottom: 13px;
+}
+
+.daystat span {
+  display: inline-flex;
+  gap: 5px;
+  align-items: baseline;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--surface-3) 75%, transparent);
+  border: 1px solid var(--line-soft);
+}
+
+.timer-card,
+.energy-card,
+.nudge-card,
+.capture-card,
+.note-card,
+.ptrio-card,
+.comp-card {
+  border-color: color-mix(in srgb, var(--accent) 24%, var(--line-soft));
+}
+
+.timer-card {
+  background:
+    radial-gradient(320px 160px at 6% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
+    color-mix(in srgb, var(--surface-2) 92%, transparent);
+}
+
+.timer-clock {
+  color: var(--text-strong);
+  text-shadow: 0 0 22px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.today-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.today-hero {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: end;
+  min-height: 170px;
+  padding: 22px 24px;
+  background:
+    radial-gradient(520px 240px at 92% 10%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 66%),
+    radial-gradient(360px 200px at 10% 0%, rgba(79, 214, 255, .10), transparent 70%),
+    linear-gradient(135deg, color-mix(in srgb, var(--surface-3) 70%, transparent), color-mix(in srgb, var(--surface-1) 96%, transparent));
+}
+
+.today-hero::after {
+  content: '';
+  position: absolute;
+  inset: auto -40px -120px auto;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
+  box-shadow: inset 0 0 50px color-mix(in srgb, var(--accent) 10%, transparent);
+  pointer-events: none;
+}
+
+.th-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent-2);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.today-hero h2 {
+  margin: 8px 0 7px;
+  max-width: 660px;
+  color: var(--text-strong);
+  font-size: clamp(25px, 4vw, 42px);
+  line-height: 1.04;
+}
+
+.th-sub {
+  max-width: 660px;
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 14px;
+}
+
+.th-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.th-actions .btn {
+  min-width: 136px;
+}
+
+.th-stats {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(96px, 1fr));
+  gap: 10px;
+  min-width: 230px;
+}
+
+.th-stat {
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.045);
+  border: 1px solid var(--line-soft);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.th-stat b {
+  display: block;
+  color: var(--text-strong);
+  font-family: var(--font-number);
+  font-size: 24px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.th-stat span {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+:root[data-theme="light"] body {
+  background:
+    radial-gradient(900px 520px at 82% -8%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 66%),
+    linear-gradient(rgba(72, 87, 125, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(72, 87, 125, 0.045) 1px, transparent 1px),
+    var(--surface-0);
+  background-size: auto, 40px 40px, 40px 40px, auto;
+}
+
+:root[data-theme="light"] #topbar {
+  background: linear-gradient(180deg, rgba(238, 241, 248, .92), rgba(238, 241, 248, .78));
+}
+
+:root[data-theme="light"] .card,
+:root[data-theme="light"] .navrow,
+:root[data-theme="light"] .today-hero {
+  box-shadow: var(--shadow-card);
+}
+
+@media (max-width: 720px) {
+  #app {
+    padding-inline: 14px;
+  }
+
+  .today-hero {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .th-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    min-width: 0;
+  }
+
+  .th-stat {
+    padding: 10px 8px;
+  }
+
+  .th-stat b {
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 560px) {
+  #topbar {
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+
+  .brand h1,
+  #appName {
+    font-size: 19px;
+    letter-spacing: .12em;
+  }
+
+  .char-main {
+    gap: 8px;
+  }
+
+  .xp-bar {
+    min-width: 170px;
+    flex-basis: 100%;
+  }
+
+  .today-hero h2 {
+    font-size: 27px;
+  }
+
+  .th-actions .btn {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .th-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navsec,
+  .navgear,
+  .navsubtab,
+  .btn,
+  .task {
+    transition: none;
+  }
+
+  .navsec:hover,
+  .navgear:hover,
+  .navsubtab:hover,
+  .btn:hover,
+  .task:hover {
+    transform: none;
+  }
+}
+
+/* 🐈‍⬛ Кот Удачи (растровый paper-doll, art/pets/fortune): анимации частей.
+   transform-box:fill-box обязателен для процентных origin у SVG <image>. */
+.fc-tailwag, .fc-beckon, .fc-coinbob, .fc-bell, .fc-headtilt { transform-box: fill-box; }
+.fc-tailwag  { transform-origin: 86% 86%; animation: fcTailwag 3.0s ease-in-out infinite; }
+.fc-beckon   { transform-origin: 50% 88%; animation: fcBeckon 2.2s ease-in-out infinite; }
+.fc-coinbob  { transform-origin: 50% 8%;  animation: fcCoinbob 3.8s ease-in-out infinite; }
+.fc-bell     { transform-origin: 50% 6%;  animation: fcBell 2.2s ease-in-out infinite; }
+.fc-headtilt { transform-origin: 50% 92%; animation: fcHeadTilt 5.2s ease-in-out infinite; }
+@keyframes fcTailwag  { 0%,100% { transform:rotate(-7deg); } 50% { transform:rotate(6deg); } }
+@keyframes fcBeckon   { 0%,100% { transform:rotate(-14deg); } 50% { transform:rotate(6deg); } }
+@keyframes fcCoinbob  { 0%,100% { transform:rotate(-2deg); } 50% { transform:rotate(2.5deg); } }
+@keyframes fcBell     { 0%,100% { transform:rotate(-6deg); } 50% { transform:rotate(6deg); } }
+@keyframes fcHeadTilt { 0%,100% { transform:rotate(-1.4deg); } 50% { transform:rotate(1.6deg); } }
