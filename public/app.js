@@ -2443,6 +2443,25 @@ const AV_PARTS  = {
 const AV_CAT_ORDER = ['hair', 'hairColor', 'face', 'skin', 'eyes', 'brows', 'mouth', 'beard', 'glasses', 'cloth'];
 function defaultAvatar() { return { face: 0, skin: 1, hair: 1, hairColor: 1, brows: 0, eyes: 0, mouth: 0, beard: 0, glasses: 0, cloth: 0 }; }
 function avCfg() { return Object.assign(defaultAvatar(), (State.settings && State.settings.avatar) || {}); }
+// ── Аватар-презеты (Фаза 3): нарисованные полноростовые фигуры из Codex-арта (painterly-cutout).
+//    Выбор презета кладёт settings.avatar.preset = id; конструктор частей — фолбэк (preset=null). ──
+const AVATAR_PRESETS = [
+  { id: 'wanderer', name: 'Странник', img: 'art/avatars/traveller_cloak.png', tag: 'зелёный плащ, компас, посох' },
+  { id: 'explorer', name: 'Первопроходец', img: 'art/avatars/traveller_goggles.png', tag: 'гогглы, скатка, фонарь' },
+  { id: 'scholar', name: 'Книжник', img: 'art/avatars/mage.png', tag: 'широкополая шляпа, фолиант' },
+];
+function avatarPreset() { const id = State.settings && State.settings.avatar && State.settings.avatar.preset; return id ? AVATAR_PRESETS.find((p) => p.id === id) : null; }
+// Круглый портрет (карточки/коллекция): у презета — фото, кропнутое к голове; иначе — процедурный SVG.
+function avatarPortraitHTML(opts = {}) {
+  const p = avatarPreset();
+  if (p) return `<img class="avatar-preset-portrait" src="${p.img}" alt="${esc(p.name)}" loading="lazy">`;
+  return avatarSVG(avCfg(), opts);
+}
+// Полноростовая фигура (Персонаж/Логово): только для презета.
+function avatarFigureHTML() {
+  const p = avatarPreset(); if (!p) return '';
+  return `<img class="avatar-preset-figure" src="${p.img}" alt="${esc(p.name)}" loading="lazy">`;
+}
 function shade(hex, amt) { // amt -100..100 (минус = темнее)
   const n = parseInt(hex.slice(1), 16); let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
   const t = amt < 0 ? 0 : 255, p = Math.abs(amt) / 100;
@@ -4937,24 +4956,26 @@ const PET_SPECIES = {
   fortune: { // 🐈‍⬛ Кот Удачи (манэки-нэко) — ПЕРВЫЙ растровый paper-doll из Codex-арта (сфера «Доход»)
     // Части — PNG с бумажной текстурой (art/pets/fortune/), собраны <image>-слоями в родном SVG-пайплайне:
     // слоты/экипировка/масштаб состояния работают как у всех. raster:true — своя морда, без petFaceMarkup.
-    slots: { head: [58, 29], neck: [55, 72], back: [86, 63] },
+    slots: { head: [49, 35], neck: [51, 60], back: [95, 53] },
     raster: true,
     draw: () => {
-      const A = 'art/pets/fortune/', T = 'translate(-2.9,6) scale(0.19)';
+      const A = 'art/pets/fortune/', T = 'translate(3,0) scale(0.185)'; // пересчитан под новые координаты частей (см. ниже)
       const im = (n, x, y, w, h, cls) => `<image href="${A}${n}.png" x="${x}" y="${y}" width="${w}" height="${h}"${cls ? ` class="${cls}"` : ''}/>`;
+      // ⚠️ body.png уже включает обе передние лапы в силуэте (см. part_01) — leg_l/leg_r
+      // с того же спрайт-листа сюда НЕ добавляем, иначе «лишние ноги» (баг-репорт Альберта).
+      // Координаты выверены по живому скрин-сравнению с оригиналом (2 раунда правок).
       return {
         ears: '', feet: '', belly: '', extra: '',
-        tail: `<g transform="${T}">${im('bag', 395, 270, 171, 218)}${im('tail', 100, 445, 85, 152, 'fc-tailwag')}</g>`,
+        tail: `<g transform="${T}">${im('bag', 410, 175, 171, 218)}${im('tail', 148, 495, 85, 152, 'fc-tailwag')}</g>`,
         body: `<g transform="${T}">
-          ${im('leg_l', 155, 428, 103, 168)}${im('leg_r', 345, 428, 102, 168)}
-          ${im('body', 188, 322, 227, 234)}
-          ${im('paw_coin', 300, 345, 125, 231, 'fc-coinbob')}
-          ${im('collar', 210, 322, 191, 107)}${im('bell', 258, 348, 93, 103, 'fc-bell')}
-          <g transform="translate(150,70)"><g class="fc-headtilt">
-            ${im('head', 62, 72, 217, 197)}${im('patch_l', 80, 60, 124, 100)}${im('patch_r', 148, 56, 124, 100)}
-            ${im('ear_l', 68, 28, 101, 137)}${im('ear_r', 184, 28, 100, 137)}${im('face', 50, 92, 241, 169)}
+          ${im('body', 147, 315, 227, 234)}
+          ${im('paw_coin', 268, 322, 125, 231, 'fc-coinbob')}
+          ${im('collar', 165, 272, 191, 107)}${im('bell', 214, 298, 93, 103, 'fc-bell')}
+          <g transform="translate(65,65)"><g class="fc-headtilt">
+            ${im('head', 76, 25, 217, 197)}${im('patch_l', 35, 60, 124, 100)}${im('patch_r', 245, 55, 124, 100)}
+            ${im('ear_l', 10, 10, 101, 137)}${im('ear_r', 235, 10, 100, 137)}${im('face', 64, 90, 241, 169)}
           </g></g>
-          ${im('paw_raised', 152, 205, 92, 227, 'fc-beckon')}
+          ${im('paw_raised', 109, 100, 92, 227, 'fc-beckon')}
         </g>`,
       };
     },
@@ -5606,6 +5627,21 @@ function onTreePointerDown(e) {
 // ============================================================
 function avatarEditor() {
   const cfg = avCfg(), cat = AV_PARTS[State.aveCat] ? State.aveCat : 'hair', meta = AV_PARTS[cat];
+  const preset = avatarPreset();
+  // Плитки выбора: нарисованные наборы + «Конструктор» (процедурный)
+  const presetTiles = AVATAR_PRESETS.map((p) => `<button class="ave-preset ${preset && preset.id === p.id ? 'sel' : ''}" data-action="av-preset" data-id="${p.id}" title="${esc(p.name)} — ${esc(p.tag)}">
+      <img src="${p.img}" alt="${esc(p.name)}" loading="lazy"><span>${esc(p.name)}</span></button>`).join('');
+  const customTile = `<button class="ave-preset ave-preset-custom ${preset ? '' : 'sel'}" data-action="av-preset" data-id="" title="Собери облик из частей">
+      <span class="ave-preset-cico">🎨</span><span>Конструктор</span></button>`;
+  const picker = `<div class="ave-presets">${presetTiles}${customTile}</div>`;
+  if (preset) {
+    return `<div class="card avatar-editor" id="avatar-editor">
+      <h3>🪞 Твой персонаж</h3>
+      <div class="ave-stage ave-stage-figure">${avatarFigureHTML()}</div>
+      ${picker}
+      <p class="muted" style="font-size:12px;margin:10px 0 0"><b>${esc(preset.name)}</b> — ${esc(preset.tag)}. Нарисованный набор. Выбери «Конструктор», чтобы собрать облик вручную.</p>
+    </div>`;
+  }
   const cats = AV_CAT_ORDER.map((k) => `<button class="ave-cat ${k === cat ? 'sel' : ''}" data-action="av-cat" data-cat="${k}">${AV_PARTS[k].label}</button>`).join('');
   let options;
   if (meta.colors) {
@@ -5616,12 +5652,13 @@ function avatarEditor() {
       return `<button class="ave-opt ${cfg[cat] === i ? 'sel' : ''}" data-action="av-set" data-part="${cat}" data-idx="${i}" title="${meta.label} ${i + 1}"><span class="ave-mini">${preview}</span></button>`;
     }).join('');
   }
-  return `<div class="card avatar-editor">
+  return `<div class="card avatar-editor" id="avatar-editor">
     <h3>🪞 Твой персонаж</h3>
     <div class="ave-stage">${avatarSVG(cfg)}</div>
+    ${picker}
     <div class="ave-cats">${cats}</div>
     <div class="ave-options ${meta.colors ? 'is-colors' : ''}">${options}</div>
-    <p class="muted" style="font-size:12px;margin:10px 0 0">Собери свой облик. Скоро добавим больше стилей — в том числе нарисованные художником наборы.</p>
+    <p class="muted" style="font-size:12px;margin:10px 0 0">Собери свой облик — или выбери нарисованный набор выше.</p>
   </div>`;
 }
 // ---- Колесо баланса (ядро v1): радар ритма + дрилл-даун под-сфер + подсказки ----
@@ -5717,7 +5754,7 @@ function renderCharacter() {
       <button type="submit" class="btn">Сохранить</button></form>`;
   return `<div class="character-shell">
     <div class="card char-hero">
-      <div class="ch-avatar ch-avatar-img" style="--rc:${cr.color};--p:${oi.pct}">${avatarSVG(avCfg(), equippedCosmeticsOpts())}</div>
+      <div class="ch-avatar ch-avatar-img" style="--rc:${cr.color};--p:${oi.pct}">${avatarPortraitHTML(equippedCosmeticsOpts())}</div>
       <div class="ch-meta">
         <h2>${esc((State.me && State.me.name) || 'Герой')}</h2>
         <div class="ch-rank" style="--rc:${cr.color}">${cr.icon} ${cr.name} · ур.${charLevel()}</div>
@@ -5786,7 +5823,7 @@ function collectionCard() {
   return `<div class="card collection-card">
     <div class="coll-head"><h3>🎨 Коллекция</h3><span class="coll-prog">${ownedCount}/${COSMETICS.length} собрано</span></div>
     <div class="coll-body">
-      <div class="coll-preview" title="Так выглядит твой аватар">${avatarSVG(avCfg(), equippedCosmeticsOpts())}</div>
+      <div class="coll-preview" title="Так выглядит твой аватар">${avatarPortraitHTML(equippedCosmeticsOpts())}</div>
       <div class="coll-cats">
         <h4 class="coll-sub">Рамки</h4><div class="cos-grid">${FRAMES.map(tile).join('')}</div>
         <h4 class="coll-sub">Фоны</h4><div class="cos-grid">${BACKGROUNDS.map(tile).join('')}</div>
@@ -7878,6 +7915,7 @@ function onClick(e) {
   if (action === 'goto-import') { State.view = 'settings'; render(); setTimeout(() => { const c = document.getElementById('import-card'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('flash-card'); } }, 60); return; }
   if (action === 'av-cat') { State.aveCat = el.dataset.cat; render(); return; }
   if (action === 'av-set') { State.settings.avatar = Object.assign(avCfg(), { [el.dataset.part]: Number(el.dataset.idx) }); Store.save('settings', State.settings); render(); return; }
+  if (action === 'av-preset') { State.settings.avatar = Object.assign(avCfg(), { preset: el.dataset.id || null }); Store.save('settings', State.settings); try { sfx('complete'); } catch {} render(); return; }
   if (action === 'start-trial') {
     fetch('/api/auth/start-trial', { method: 'POST' }).then(async (r) => {
       const d = await r.json();

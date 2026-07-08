@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Аватар-презеты (Codex-арт) — сфера «Персонаж»</title>
+<style>
+  body { background:#0f1320; color:#e7ebf5; font:14px system-ui; margin:0; padding:24px; }
+  h1 { font-size:18px; } .muted { color:#99a2c0; font-size:12px; }
+  .row { display:flex; gap:24px; flex-wrap:wrap; margin-top:16px; }
+  .card { background:#171c2e; border:1px solid #2a3250; border-radius:14px; padding:16px; text-align:center; }
+  .fig { height:360px; display:flex; align-items:flex-end; justify-content:center; }
+  .fig img { max-height:360px; max-width:220px; object-fit:contain; filter:drop-shadow(0 10px 18px rgba(0,0,0,.35)); }
+  .portrait { width:96px; height:96px; border-radius:50%; overflow:hidden; margin:12px auto 0; border:3px solid #6c8cff; }
+  .portrait img { width:100%; height:100%; object-fit:cover; object-position:50% 4%; }
+  h3 { margin:10px 0 2px; }
+</style>
+</head>
+<body>
+<h1>🪞 Аватар-презеты — нарисованные наборы (Codex-арт)</h1>
+<p class="muted">Полноростовая фигура (Персонаж/Логово) + круглый портрет, кропнутый к голове (карточки/лидерборд). Тот же файл в обоих контекстах.</p>
+<div class="row" id="root"></div>
+<script>
+const PRESETS = [
+  { name:'Странник', img:'art/avatars/traveller_cloak.png', tag:'зелёный плащ, компас, посох' },
+  { name:'Первопроходец', img:'art/avatars/traveller_goggles.png', tag:'гогглы, скатка, фонарь' },
+  { name:'Книжник', img:'art/avatars/mage.png', tag:'широкополая шляпа, фолиант' },
+];
+document.getElementById('root').innerHTML = PRESETS.map(p => `
+  <div class="card">
+    <div class="fig"><img src="${p.img}" alt="${p.name}"></div>
+    <div class="portrait"><img src="${p.img}" alt="${p.name}"></div>
+    <h3>${p.name}</h3>
+    <div class="muted">${p.tag}</div>
+  </div>`).join('');
+</script>
+</body>
+</html>
