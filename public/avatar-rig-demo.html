@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Странник — paper-doll аватар (каркас + сменные слои)</title>
+<style>
+  body { background:#0f1320; color:#e7ebf5; font:14px system-ui; margin:0; padding:24px; }
+  h1 { font-size:18px; } .muted { color:#99a2c0; font-size:12px; }
+  .row { display:flex; gap:28px; align-items:flex-start; flex-wrap:wrap; }
+  .card { background:#171c2e; border:1px solid #2a3250; border-radius:14px; padding:16px; }
+  .stage { position:relative; width:480px; height:640px; }
+  .p { position:absolute; }
+  .p img { display:block; }
+  .mirror { transform: scaleX(-1); }
+  .toggles { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; max-width:480px; }
+  .toggles button { background:#1f2640; border:1px solid #2a3250; color:#e7ebf5; border-radius:8px; padding:6px 12px; cursor:pointer; font-size:12px; }
+  .toggles button.on { background:#6c8cff; border-color:#6c8cff; color:#0f1320; font-weight:700; }
+</style>
+</head>
+<body>
+<h1>🧑‍🌾 Странник — базовый каркас + сменные слои (не 3 разных фото!)</h1>
+<p class="muted">Один и тот же скелет (голова/торс/руки/ноги фиксированы) — плащ/сумка/шарф/очки включаются и выключаются поверх. Проверка ТОЛЬКО на масштабе 1.0 (урок с котом).</p>
+<div class="row">
+  <div class="card">
+    <div class="stage" id="rig"></div>
+  </div>
+  <div class="card" style="align-self:flex-start">
+    <b>Слои</b>
+    <div class="toggles" id="toggles"></div>
+    <p class="muted" style="margin-top:12px;max-width:220px">Голова, торс, руки, ноги — фиксированный каркас (не переключаются в v1). Переключаемые — реальные части листа, не выдуманные.</p>
+  </div>
+</div>
+
+<script>
+const A = 'art/avatars/wanderer/';
+// Якорь почти у каждой части — КРУГЛОЕ ОТВЕРСТИЕ СВЕРХУ (видно на самой картинке —
+// это стык с предыдущим суставом: рукав-обмотка/перчатка/гетра/сапог). Цепочка:
+// плечо → рукав → перчатка (кисть свисает вниз); бедро → гетра → сапог.
+// ⚠️ Урок с котом: НЕ берём координаты с общего референса другого масштаба —
+// считаем от размеров/якорей каждой части, проверяем только на scale 1.
+// z-порядок: плащ — ВЕРХНИЙ слой одежды (носится ПОВЕРХ рубашки — в референсе рубашка
+// почти не видна, торс на 90% зелёный плащ). Первая версия скрывала плащ ЗА рубашкой — неверно.
+const FIXED = [ // всегда видимые части каркаса
+  { n:'backpack', x:270, y:150, z:1 },
+  { n:'legwrap',  x:150, y:430, z:2 },                      // левая нога
+  { n:'legwrap',  x:245, y:430, z:2, cls:'mirror' },         // правая (отзеркалена)
+  { n:'boot',     x:145, y:560, z:3 },
+  { n:'boot',     x:252, y:560, z:3, cls:'mirror' },
+  { n:'shirt',    x:120, y:195, z:4 },                       // база (в основном скрыта плащом)
+  { n:'cloak',    x:96,  y:150, z:6 },                       // ПОВЕРХ рубашки — основной видимый торс
+  { n:'armwrap',  x:108, y:230, z:7 },                       // левое плечо (поверх плаща)
+  { n:'armwrap',  x:302, y:230, z:7, cls:'mirror' },         // правое (отзеркалено)
+  { n:'glove',    x:105, y:385, z:7 },
+  { n:'glove',    x:300, y:385, z:7, cls:'mirror' },
+  { n:'belt',     x:113, y:370, z:8 },
+  { n:'hair_alt', x:155, y:20,  z:9 },                       // объём волос СЗАДИ головы
+  { n:'head',     x:145, y:15,  z:10 },
+];
+const TOGGLE = [ // сменные слои — категории из настоящих частей листа (не выдуманные)
+  { key:'satchel', n:'satchel', label:'Сумка',  x:290, y:330, z:9,  on:true },
+  { key:'scarf',   n:'scarf',   label:'Шарф',   x:150, y:175, z:9,  on:true },
+  { key:'goggles', n:'goggles', label:'Очки',   x:170, y:35,  z:11, on:false },
+];
+function mk(p) {
+  const d = document.createElement('div'); d.className = 'p ' + (p.cls || '');
+  d.style.left = p.x + 'px'; d.style.top = p.y + 'px'; d.style.zIndex = p.z;
+  const img = document.createElement('img'); img.src = A + p.n + '.png';
+  d.appendChild(img); return d;
+}
+const state = {}; TOGGLE.forEach(t => state[t.key] = t.on);
+function render() {
+  const el = document.getElementById('rig'); el.innerHTML = '';
+  for (const p of FIXED) el.appendChild(mk(p));
+  for (const t of TOGGLE) if (state[t.key]) el.appendChild(mk(t));
+  const tw = document.getElementById('toggles'); tw.innerHTML = '';
+  for (const t of TOGGLE) {
+    const b = document.createElement('button'); b.textContent = t.label; if (state[t.key]) b.className = 'on';
+    b.onclick = () => { state[t.key] = !state[t.key]; render(); };
+    tw.appendChild(b);
+  }
+}
+render();
+</script>
+</body>
+</html>
