@@ -1596,7 +1596,7 @@ const ACHIEVEMENTS = [
   { id: 'first_note', icon: '📝', title: 'Первая мысль', desc: 'Сохрани первую заметку', ttl: 'Хроникёр', test: () => (State.inbox || []).length >= 1 },
   { id: 'collector_5', icon: '🎨', title: 'Коллекционер', desc: 'Собери 5 косметики', ttl: 'Коллекционер', test: () => COSMETICS.filter((c) => ownsCosmetic(c.id)).length >= 5, prog: () => ({ cur: COSMETICS.filter((c) => ownsCosmetic(c.id)).length, target: 5 }) },
   { id: 'legendary_drop', icon: '🌟', title: 'Легендарная удача', desc: 'Получи легендарную косметику', ttl: 'Везунчик', test: () => COSMETICS.some((c) => c.rarity === 'legendary' && ownsCosmetic(c.id)) },
-  { id: 'avatar_custom', icon: '🪄', title: 'Свой облик', desc: 'Настрой аватар под себя', ttl: 'Неповторимый', test: () => { const l = avatarLayers(); return !l.scarf || !l.satchel || l.goggles; } },
+  { id: 'avatar_custom', icon: '🪄', title: 'Свой облик', desc: 'Надень косметику или экипировку', ttl: 'Неповторимый', test: () => { const w = State.settings && State.settings.wear; const g = State.settings && State.settings.gear; return !!(w && w.pet && Object.values(w.pet).some((sl) => sl && Object.values(sl).some(Boolean))) || !!(g && g.equipped && Object.values(g.equipped).some(Boolean)); } },
 ];
 
 // Каталог предустановленных наград — «дроп с босса уже выбран» (fb: награды должны быть предустановлены)
@@ -2443,51 +2443,15 @@ const AV_PARTS  = {
 const AV_CAT_ORDER = ['hair', 'hairColor', 'face', 'skin', 'eyes', 'brows', 'mouth', 'beard', 'glasses', 'cloth'];
 function defaultAvatar() { return { face: 0, skin: 1, hair: 1, hairColor: 1, brows: 0, eyes: 0, mouth: 0, beard: 0, glasses: 0, cloth: 0 }; }
 function avCfg() { return Object.assign(defaultAvatar(), (State.settings && State.settings.avatar) || {}); }
-// ── Аватар-риг (Фаза 3): ОДИН каркас из Codex-арта (painterly-cutout, лист travel2SVG.png),
-// сменные слои поверх — НЕ 3 конкурирующих готовых фото и не процедурный SVG-конструктор.
-// Урок с котом учтён: якоря — по круглому «отверстию» на самой части (стык с предыдущим
-// суставом: плечо→рукав→перчатка, бедро→гетра→сапог), проверено live-скриншотами на scale 1.0
-// (`avatar-rig-demo.html`). z: плащ ПОВЕРХ рубашки (в референсе торс на 90% плащ, не рубашка).
-const AVATAR_RIG_BASE = 'art/avatars/wanderer/';
-const AVATAR_RIG_FIXED = [ // всегда видимый каркас — не переключается в v1
-  { n: 'backpack', x: 270, y: 150, z: 1 },
-  { n: 'legwrap', x: 150, y: 430, z: 2 },
-  { n: 'legwrap', x: 245, y: 430, z: 2, mirror: true },
-  { n: 'boot', x: 145, y: 560, z: 3 },
-  { n: 'boot', x: 252, y: 560, z: 3, mirror: true },
-  { n: 'shirt', x: 120, y: 195, z: 4 },
-  { n: 'cloak', x: 96, y: 150, z: 6 },
-  { n: 'armwrap', x: 108, y: 230, z: 7 },
-  { n: 'armwrap', x: 302, y: 230, z: 7, mirror: true },
-  { n: 'glove', x: 105, y: 385, z: 7 },
-  { n: 'glove', x: 300, y: 385, z: 7, mirror: true },
-  { n: 'belt', x: 113, y: 370, z: 8 },
-  { n: 'hair_alt', x: 155, y: 20, z: 9 },
-  { n: 'head', x: 145, y: 15, z: 10 },
-];
-// Сменные слои — реальные части листа (не выдуманные категории), персистятся в settings.avatar.layers
-const AVATAR_RIG_TOGGLES = [
-  { key: 'satchel', n: 'satchel', label: 'Сумка', x: 290, y: 330, z: 9 },
-  { key: 'scarf', n: 'scarf', label: 'Шарф', x: 150, y: 175, z: 9 },
-  { key: 'goggles', n: 'goggles', label: 'Очки', x: 170, y: 35, z: 11 },
-];
-function avatarLayers() { return Object.assign({ scarf: true, satchel: true, goggles: false }, (State.settings && State.settings.avatar && State.settings.avatar.layers) || {}); }
-function toggleAvatarLayer(key) {
-  const s = State.settings; if (!s.avatar) s.avatar = {}; if (!s.avatar.layers) s.avatar.layers = avatarLayers();
-  s.avatar.layers[key] = !s.avatar.layers[key];
-  Store.save('settings', s);
-}
-// Рендерит риг как позиционированный <div>-стейдж (не SVG — части растровые с бумажной текстурой).
-// full=false → компактная сцена под портрет-кроп (голова+волосы+очки), full=true → фигура в полный рост.
-function avatarRigHTML(full) {
-  const layers = avatarLayers();
-  const part = (p) => `<div class="ar-p${p.mirror ? ' ar-mirror' : ''}" style="left:${p.x}px;top:${p.y}px;z-index:${p.z}"><img src="${AVATAR_RIG_BASE}${p.n}.png" alt=""></div>`;
-  const items = full ? AVATAR_RIG_FIXED.slice() : AVATAR_RIG_FIXED.filter((p) => p.n === 'head' || p.n === 'hair_alt');
-  for (const t of AVATAR_RIG_TOGGLES) if (layers[t.key] && (full || t.key === 'goggles')) items.push(t);
-  return `<div class="${full ? 'ar-outer-full' : 'ar-outer-portrait'}"><div class="ar-stage">${items.map(part).join('')}</div></div>`;
-}
-function avatarPortraitHTML() { return avatarRigHTML(false); }
-function avatarFigureHTML() { return avatarRigHTML(true); }
+// ── Аватар (Фаза 3): ЦЕЛАЯ собранная фигура из Codex-арта (painterly-cutout).
+// Ручная пересборка из вырезанных-в-ячейки частей оказалась принципиально хрупкой (у частей нет
+// общей системы координат — ~60 подогнанных чисел, ошибки компаундятся; + части-дубли: тело уже
+// содержит ноги, голова — уши). Настоящий разборный риг ждёт ПЕРЕ-ЭКСПОРТА слоёв от Codex
+// (каждая часть впечатана в общий холст на финальном месте → сборка = стек в (0,0), без координат).
+// До тех пор — цельная фигура: это исходный арт, всегда когерентный. Портрет = та же фигура, кроп к голове.
+const AVATAR_FIGURE = 'art/avatars/traveller_cloak.png';
+function avatarPortraitHTML() { return `<img class="avatar-preset-portrait" src="${AVATAR_FIGURE}" alt="аватар" loading="lazy">`; }
+function avatarFigureHTML() { return `<img class="avatar-preset-figure" src="${AVATAR_FIGURE}" alt="аватар" loading="lazy">`; }
 function shade(hex, amt) { // amt -100..100 (минус = темнее)
   const n = parseInt(hex.slice(1), 16); let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
   const t = amt < 0 ? 0 : 255, p = Math.abs(amt) / 100;
@@ -4979,32 +4943,16 @@ const PET_SPECIES = {
       extra: `<path d="M55 89 l5 7 l5 -7 z" fill="#ffb24b"/>`,
     }),
   },
-  fortune: { // 🐈‍⬛ Кот Удачи (манэки-нэко) — ПЕРВЫЙ растровый paper-doll из Codex-арта (сфера «Доход»)
-    // Части — PNG с бумажной текстурой (art/pets/fortune/), собраны <image>-слоями в родном SVG-пайплайне:
-    // слоты/экипировка/масштаб состояния работают как у всех. raster:true — своя морда, без petFaceMarkup.
-    slots: { head: [49, 35], neck: [51, 60], back: [95, 53] },
+  fortune: { // 🐈‍⬛ Кот Удачи (манэки-нэко) — Codex-арт, сфера «Доход»
+    // Ручная пересборка из вырезанных частей оказалась хрупкой (голова/хвост/лапа «летали»,
+    // дубли ушей) — та же болезнь, что у аватара. До ПЕРЕ-экспорта пре-регистрированных слоёв
+    // рендерим ЦЕЛЬНУЮ сборку assembled.png (исходный арт, когерентный). raster:true — своя морда.
+    slots: { head: [60, 42], neck: [60, 72], back: [88, 66] },
     raster: true,
-    draw: () => {
-      const A = 'art/pets/fortune/', T = 'translate(3,0) scale(0.185)'; // пересчитан под новые координаты частей (см. ниже)
-      const im = (n, x, y, w, h, cls) => `<image href="${A}${n}.png" x="${x}" y="${y}" width="${w}" height="${h}"${cls ? ` class="${cls}"` : ''}/>`;
-      // ⚠️ body.png уже включает обе передние лапы в силуэте (см. part_01) — leg_l/leg_r
-      // с того же спрайт-листа сюда НЕ добавляем, иначе «лишние ноги» (баг-репорт Альберта).
-      // Координаты выверены по живому скрин-сравнению с оригиналом (2 раунда правок).
-      return {
-        ears: '', feet: '', belly: '', extra: '',
-        tail: `<g transform="${T}">${im('bag', 410, 175, 171, 218)}${im('tail', 148, 495, 85, 152, 'fc-tailwag')}</g>`,
-        body: `<g transform="${T}">
-          ${im('body', 147, 315, 227, 234)}
-          ${im('paw_coin', 268, 322, 125, 231, 'fc-coinbob')}
-          ${im('collar', 165, 272, 191, 107)}${im('bell', 214, 298, 93, 103, 'fc-bell')}
-          <g transform="translate(65,65)"><g class="fc-headtilt">
-            ${im('head', 76, 25, 217, 197)}${im('patch_l', 35, 60, 124, 100)}${im('patch_r', 245, 55, 124, 100)}
-            ${im('ear_l', 10, 10, 101, 137)}${im('ear_r', 235, 10, 100, 137)}${im('face', 64, 90, 241, 169)}
-          </g></g>
-          ${im('paw_raised', 109, 100, 92, 227, 'fc-beckon')}
-        </g>`,
-      };
-    },
+    draw: () => ({
+      ears: '', feet: '', belly: '', extra: '', tail: '',
+      body: `<image href="art/pets/fortune/assembled.png" x="5" y="3" width="111" height="124"/>`,
+    }),
   },
 };
 function archToSpecies(arc) {
@@ -5652,15 +5600,12 @@ function onTreePointerDown(e) {
 //  Вид «Персонаж» — живой аватар, атрибуты, телосложение
 // ============================================================
 function avatarEditor() {
-  // Один рисованный каркас (Странник) + реальные сменные слои поверх — не 3 конкурирующих
-  // готовых фото и не процедурный SVG-конструктор (см. DEVLOG: обе прежние системы снесены).
-  const layers = avatarLayers();
-  const toggles = AVATAR_RIG_TOGGLES.map((t) => `<button class="ave-layer ${layers[t.key] ? 'on' : ''}" data-action="av-layer" data-key="${t.key}">${esc(t.label)}</button>`).join('');
+  // Цельная фигура (Странник) — исходный Codex-арт, когерентный. Разборный риг со свапом одежды
+  // вернём, когда придут ПЕРЕ-экспортированные слои (каждый впечатан в общий холст) — см. DEVLOG.
   return `<div class="card avatar-editor" id="avatar-editor">
     <h3>🪞 Твой персонаж</h3>
     <div class="ave-stage ave-stage-figure">${avatarFigureHTML()}</div>
-    <div class="ave-layers">${toggles}</div>
-    <p class="muted" style="font-size:12px;margin:10px 0 0">Странник — нарисованный каркас; голова/торс/руки/ноги фиксированы, а сумка/шарф/очки — реальные сменные слои поверх (не выдуманные категории).</p>
+    <p class="muted" style="font-size:12px;margin:10px 0 0">Странник. Смена одежды/экипировки слоями — в следующем обновлении арта.</p>
   </div>`;
 }
 // ---- Колесо баланса (ядро v1): радар ритма + дрилл-даун под-сфер + подсказки ----
@@ -7017,11 +6962,14 @@ function renderParty() {
   return State.party ? partyHTML(State.party) : partyEmptyHTML();
 }
 function partyEmptyHTML() {
-  return `<div class="card"><h3>🤝 Пати</h3>
-    <p class="muted">Дуо или группа до 6 человек. Видите недельный прогресс друг друга, вместе бьёте кооп-босса и подбадриваете. <b>Без вины:</b> чужой пропуск никого не штрафует.</p>
-    <form id="party-create" class="add-row"><input name="name" placeholder="Название пати…" autocomplete="off" required maxlength="40" /><button type="submit">+ Создать</button></form>
-    <div class="party-or muted">— или войти по коду друга —</div>
-    <form id="party-join" class="add-row"><input name="code" placeholder="КОД" autocomplete="off" maxlength="5" style="text-transform:uppercase" /><button type="submit">Войти</button></form></div>`;
+  return `<section class="card party-empty-hero">
+    <div class="party-empty-copy"><span class="event-kicker">${t('КОМАНДНАЯ ГЛАВА')}</span><h2>${t('Собери пати для следующего рейда.')}</h2>
+      <p class="muted">${t('Дуо или группа до 6 человек. Недельный вклад складывается в общего босса, а поддержка команды не превращает пропуск в вину.')}</p></div>
+    <div class="party-empty-mark" aria-hidden="true"><span>🤝</span><i></i><b>✦</b></div>
+    <div class="party-empty-actions"><form id="party-create" class="add-row"><input name="name" placeholder="${t('Название пати…')}" autocomplete="off" required maxlength="40" /><button type="submit">${t('+ Создать')}</button></form>
+      <div class="party-or muted">${t('или войти по коду друга')}</div>
+      <form id="party-join" class="add-row"><input name="code" placeholder="${t('КОД')}" autocomplete="off" maxlength="5" style="text-transform:uppercase" /><button type="submit">${t('Войти')}</button></form></div>
+  </section>`;
 }
 function partyHTML(p) {
   const r = p.raid || { total: 0, target: 1, won: false, iClaimed: false, claimedCount: 0 };
@@ -7038,6 +6986,15 @@ function partyHTML(p) {
   if (!won) State._raidShownFor = null;
   const si = seasonInfo(p.season);
   const seasonPct = si.goal ? Math.round(si.prog / si.goal * 100) : 0;
+  const eventTitle = won ? t('Рейд завершён. Команда победила.') : esc(boss.name);
+  const eventText = won
+    ? t('Награда открыта. Забери её и подготовь команду к следующей главе сезона.')
+    : t(`Осталось ${hp} XP до общей победы. Каждый закрытый квест приближает пати к награде.`);
+  const eventSteps = [
+    { icon: won ? '✓' : '1', label: t('Собирайте XP') },
+    { icon: won ? '✓' : '2', label: t('Победите босса') },
+    { icon: won && r.iClaimed ? '✓' : '3', label: t('Заберите награду') },
+  ].map((step, index) => `<span class="event-step${(won || index === 0) ? ' complete' : ''}"><b>${step.icon}</b>${step.label}</span>`).join('');
   const claim = won
     ? (r.iClaimed ? '<span class="raid-claimed muted">✓ награда забрана</span>' : '<button class="btn raid-claim" data-action="party-claim">🎁 Забрать награду пати</button>')
     : '';
@@ -7047,23 +7004,32 @@ function partyHTML(p) {
         <span class="pm-sub muted">ур.${m.level} · ${m.weekQuests} квест.${m.cleanDays ? ` · 🟢 ${m.cleanDays}д чисто` : ''}</span></span>
       <span class="pm-xp" title="XP за неделю">${m.weekXp}<small>XP</small></span>
       ${m.me ? '' : `<button class="btn ghost sm pm-cheer" data-action="party-cheer" data-to="${esc(m.id)}" title="Подбодрить">🎉${m.cheers ? ' ' + m.cheers : ''}</button>`}</div>`).join('');
-  return `<div class="card party-head">
+  return `<div class="party-shell">
+    <section class="card event-hero${won ? ' is-won' : ''}">
+      <div class="event-hero-copy"><span class="event-kicker">${t('НЕДЕЛЬНЫЙ РЕЙД')} · ${t('СЕЗОН')} ${si.cycle}</span>
+        <h2>${eventTitle}</h2><p class="muted">${eventText}</p>
+        <div class="event-metrics"><span>🤝 <b>${p.members.length}/${p.max}</b> ${t('в пати')}</span><span>⚔️ <b>${pct}%</b> ${t('рейда')}</span><span>🏅 <b>${si.prog}/${si.goal}</b> ${t('главы')}</span></div>
+      </div>
+      <div class="event-stage" aria-hidden="true"><i class="event-stage-ring"></i><span class="event-stage-boss">${won ? '🏆' : boss.emoji}</span><b class="event-stage-mark">${won ? 'VICTORY' : 'RAID'}</b></div>
+      <div class="event-step-rail">${eventSteps}</div>
+    </section>
+    <div class="party-top-grid"><div class="card party-head">
       <div class="ph-top"><h3>🤝 ${esc(p.name)}</h3><span class="party-code" title="Поделись кодом с другом — он войдёт в пати">код <b>${esc(p.code)}</b></span></div>
-      <p class="muted" style="font-size:12px;margin:6px 0 0">${p.members.length}/${p.max} участников · недельный вклад складывается в общий рейд</p></div>
-    <div class="card raid-card ${won ? 'won' : ''}">
+      <p class="muted" style="font-size:12px;margin:6px 0 0">${p.members.length}/${p.max} ${t('участников')} · ${t('недельный вклад складывается в общий рейд')}</p></div>
+    <div class="card season-card season-card-event">
+      <div class="season-head"><b>🏅 ${t('Сезон')} ${si.cycle}</b><span class="muted">${si.prog}/${si.goal} ${t('побед недели')}${si.done ? ` · ${t('пройдено')} ×${si.done}` : ''}</span></div>
+      <div class="season-bar"><span style="width:${seasonPct}%"></span></div>
+      <p class="muted">${si.prog === si.goal - 1 ? t('Ещё одна победа — и глава сезона взята.') : t('Побеждайте недельного босса, чтобы открывать следующую главу сезона.')}</p></div></div>
+    <div class="party-event-grid"><div class="card raid-card ${won ? 'won' : ''}">
       <div class="raid-head"><span class="raid-boss">${won ? '🏆' : boss.emoji}</span><div><b>${won ? t('Босс повержен!') : esc(boss.name)}</b>
         <div class="muted" style="font-size:12px">${won ? `Пати справилась — ${r.claimedCount}/${p.members.length} забрали награду` : `Осталось ${hp} XP · цель ${r.target} (по ${RAID_PER_MEMBER}/чел)`}</div></div></div>
       ${!won && boss.lore ? `<p class="muted raid-lore" style="font-size:12px;font-style:italic;margin:8px 0 0">${t(boss.lore)}</p>` : ''}
       ${!won && boss.weak ? `<p class="raid-weak" style="font-size:12.5px;font-weight:700;margin:6px 0 0">⚡ ${t('Слабость')}: ${t(boss.weak)} — ${t('урон ×2')}</p>` : ''}
       <div class="raid-bar"><span style="width:${pct}%"></span></div>
       ${claim}
-      <p class="muted raid-note">Вклад каждого складывается; ничей пропуск не штрафует команду — просто чуть медленнее. Через поддержку, не через вину.</p></div>
-    <div class="card season-card">
-      <div class="season-head"><b>🏅 Сезон ${si.cycle}</b><span class="muted">${si.prog}/${si.goal} побед недели${si.done ? ` · пройдено ×${si.done}` : ''}</span></div>
-      <div class="season-bar"><span style="width:${seasonPct}%"></span></div>
-      <p class="muted" style="font-size:11.5px;margin:6px 0 0">Бейте босса каждую неделю — собирайте сезон.${si.prog === si.goal - 1 ? ' Ещё одна победа — и сезон взят! 🏅' : ''}</p></div>
+      <p class="muted raid-note">${t('Вклад каждого складывается; ничей пропуск не штрафует команду — просто чуть медленнее. Через поддержку, не через вину.')}</p></div>
     <div class="card"><h3>${t('Состав')}</h3><div class="pm-list">${members}</div>
-      <button class="btn ghost sm" data-action="party-leave" style="margin-top:12px">${t('Покинуть пати')}</button></div>`;
+      <button class="btn ghost sm" data-action="party-leave" style="margin-top:12px">${t('Покинуть пати')}</button></div></div></div>`;
 }
 // Кинематографичная победа над боссом (#22): полноэкранный оверлей + фанфары + конфетти
 function showRaidWin(p, boss) {
@@ -7915,9 +7881,6 @@ function onClick(e) {
   if (action === 'goto-pets') { State.view = 'pets'; markDiscovered('pets'); render(); return; }
   if (action === 'go-wardrobe') { State.view = 'character'; render(); setTimeout(() => { const c = document.getElementById('avatar-editor'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60); return; }
   if (action === 'goto-import') { State.view = 'settings'; render(); setTimeout(() => { const c = document.getElementById('import-card'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('flash-card'); } }, 60); return; }
-  if (action === 'av-cat') { State.aveCat = el.dataset.cat; render(); return; }
-  if (action === 'av-set') { State.settings.avatar = Object.assign(avCfg(), { [el.dataset.part]: Number(el.dataset.idx) }); Store.save('settings', State.settings); render(); return; }
-  if (action === 'av-layer') { toggleAvatarLayer(el.dataset.key); try { sfx('complete'); } catch {} render(); return; }
   if (action === 'start-trial') {
     fetch('/api/auth/start-trial', { method: 'POST' }).then(async (r) => {
       const d = await r.json();
