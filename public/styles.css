@@ -3160,6 +3160,9 @@ body {
    Чистый контейнер, картинка целиком (object-fit contain), не обрезается. */
 .ave-stage-figure { width: 100% !important; height: auto !important; min-height: 300px; max-width: none; border-radius: 16px !important; overflow: visible !important; background: radial-gradient(120% 90% at 50% 20%, color-mix(in srgb, var(--accent) 8%, var(--panel2)), var(--panel)) !important; display: flex; align-items: center; justify-content: center; padding: 18px 0; }
 .avatar-preset-figure { max-height: 340px; width: auto; max-width: 88%; object-fit: contain; display: block; filter: drop-shadow(0 10px 22px rgba(0,0,0,.4)); }
+/* «?» у вида питомца — клик даёт хинт «что засчитывать в сферу» */
+.pet-hint-q { display: inline-grid; place-items: center; width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--line); font-size: 10px; color: var(--muted); vertical-align: 1px; }
+
 /* Круглый портрет — та же фигура, кроп к ЛИЦУ (голова ~14% сверху в полноростовом рендере) */
 .avatar-preset-portrait { width: 100%; height: 100%; object-fit: cover; object-position: 50% 11%; display: block; }
 .ar-p { position: absolute; }

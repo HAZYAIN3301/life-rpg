@@ -1543,60 +1543,58 @@ function goalTypeLabel(t) { const x = GOAL_TYPES.find((g) => g.id === t); return
 
 // Достижения — описаны в коде, считаются на лету
 const ACHIEVEMENTS = [
-  { id: 'first_quest', icon: '⚔️', title: 'Первый шаг', desc: 'Выполни первый квест', ttl: 'Первопроходец', test: () => doneTasks().length >= 1 },
-  { id: 'quests_50', icon: '🏆', title: 'Полста квестов', desc: '50 выполненных квестов', ttl: 'Ветеран квестов', test: () => doneTasks().length >= 50, prog: () => ({ cur: doneTasks().length, target: 50 }) },
-  { id: 'first_habit', icon: '🌱', title: 'Росток привычки', desc: 'Отметь привычку впервые', ttl: 'Садовник', test: () => Object.values(State.habitlog).some((m) => Object.keys(m).length > 0) },
-  { id: 'streak_7', icon: '🔥', title: 'Неделя подряд', desc: 'Серия 7 дней', ttl: 'Хранитель ритма', test: () => currentStreak() >= 7, prog: () => ({ cur: currentStreak(), target: 7 }) },
-  { id: 'streak_30', icon: '🌋', title: 'Месяц подряд', desc: 'Серия 30 дней', ttl: 'Несокрушимый', test: () => currentStreak() >= 30, prog: () => ({ cur: currentStreak(), target: 30 }) },
-  { id: 'level_5', icon: '⭐', title: 'Уровень 5', desc: 'Достигни 5 уровня', ttl: 'Восходящий', test: () => charLevel() >= 5, prog: () => ({ cur: charLevel(), target: 5 }) },
-  { id: 'level_10', icon: '🌟', title: 'Уровень 10', desc: 'Достигни 10 уровня', ttl: 'Покоритель', test: () => charLevel() >= 10, prog: () => ({ cur: charLevel(), target: 10 }) },
-  { id: 'xp_1000', icon: '💎', title: 'Тысяча опыта', desc: 'Накопи 1000 XP', ttl: 'Тысячник', test: () => overallXp() >= 1000, prog: () => ({ cur: overallXp(), target: 1000 }) },
-  { id: 'first_goal', icon: '🎯', title: 'Цель взята', desc: 'Заверши первую цель', ttl: 'Целеустремлённый', test: () => State.goals.some((g) => g.completedAt) },
-  { id: 'first_reward', icon: '🎁', title: 'Награда', desc: 'Купи первую награду', ttl: 'Ценитель', test: () => (State.purchases || []).length > 0 },
-  { id: 'gold_500', icon: '🪙', title: 'Богатей', desc: 'Заработай 500 золота всего', ttl: 'Златолюб', test: () => goldEarned() >= 500, prog: () => ({ cur: goldEarned(), target: 500 }) },
-  { id: 'skills_all3', icon: '📚', title: 'Разносторонний', desc: 'Все навыки до ур.3', ttl: 'Разносторонний', test: () => State.settings.skills.length > 0 && State.settings.skills.every((s) => skillLevelOf(s.id) >= 3) },
+  { id: 'first_quest', icon: '⚔️', title: 'Первый шаг', desc: 'Выполни первый квест — самый длинный путь начинается с галочки', ttl: 'Первопроходец', test: () => doneTasks().length >= 1 },
+  { id: 'quests_50', icon: '🏆', title: 'Полста квестов', desc: '50 выполненных квестов — рюкзак уже поскрипывает', ttl: 'Ветеран квестов', test: () => doneTasks().length >= 50, prog: () => ({ cur: doneTasks().length, target: 50 }) },
+  { id: 'first_habit', icon: '🌱', title: 'Росток привычки', desc: 'Отметь привычку впервые — из таких ростков вырастают леса', ttl: 'Садовник', test: () => Object.values(State.habitlog).some((m) => Object.keys(m).length > 0) },
+  { id: 'streak_7', icon: '🔥', title: 'Неделя подряд', desc: 'Серия 7 дней — у ритма появился пульс', ttl: 'Хранитель ритма', test: () => currentStreak() >= 7, prog: () => ({ cur: currentStreak(), target: 7 }) },
+  { id: 'streak_30', icon: '🌋', title: 'Месяц подряд', desc: 'Серия 30 дней — это уже не порыв, это характер', ttl: 'Несокрушимый', test: () => currentStreak() >= 30, prog: () => ({ cur: currentStreak(), target: 30 }) },
+  { id: 'level_5', icon: '⭐', title: 'Уровень 5', desc: 'Достигни 5 уровня — разминка окончена, дальше интереснее', ttl: 'Восходящий', test: () => charLevel() >= 5, prog: () => ({ cur: charLevel(), target: 5 }) },
+  { id: 'level_10', icon: '🌟', title: 'Уровень 10', desc: 'Достигни 10 уровня — двузначный уровень, двузначные планы', ttl: 'Покоритель', test: () => charLevel() >= 10, prog: () => ({ cur: charLevel(), target: 10 }) },
+  { id: 'xp_1000', icon: '💎', title: 'Тысяча опыта', desc: 'Накопи 1000 XP — первая тысяча всегда самая честная', ttl: 'Тысячник', test: () => overallXp() >= 1000, prog: () => ({ cur: overallXp(), target: 1000 }) },
+  { id: 'first_goal', icon: '🎯', title: 'Цель взята', desc: 'Заверши первую цель — задумано и, главное, сделано', ttl: 'Целеустремлённый', test: () => State.goals.some((g) => g.completedAt) },
+  { id: 'first_reward', icon: '🎁', title: 'Награда', desc: 'Купи первую награду — ты заслужил, без всяких «но»', ttl: 'Ценитель', test: () => (State.purchases || []).length > 0 },
+  { id: 'gold_500', icon: '🪙', title: 'Богатей', desc: 'Заработай 500 золота — в кошельке звенит уже уверенно', ttl: 'Златолюб', test: () => goldEarned() >= 500, prog: () => ({ cur: goldEarned(), target: 500 }) },
+  { id: 'skills_all3', icon: '📚', title: 'Разносторонний', desc: 'Все сферы до ур.3 — ни одна не осталась в тени', ttl: 'Разносторонний', test: () => State.settings.skills.length > 0 && State.settings.skills.every((s) => skillLevelOf(s.id) >= 3) },
   // За полезные репорты — фидбек делает продукт (идея fb_mq2vy77ine8h)
-  { id: 'reporter_3', icon: '🐞', title: 'Баг-хантер', desc: '3 репорта или идеи через 💬', ttl: 'Баг-хантер', test: () => (State.myFeedbackCount || 0) >= 3, prog: () => ({ cur: State.myFeedbackCount || 0, target: 3 }) },
+  { id: 'reporter_3', icon: '🐞', title: 'Баг-хантер', desc: '3 репорта или идеи через 💬 — ты делаешь Satoru лучше', ttl: 'Баг-хантер', test: () => (State.myFeedbackCount || 0) >= 3, prog: () => ({ cur: State.myFeedbackCount || 0, target: 3 }) },
   { id: 'cofounder_10', icon: '🛡️', title: 'Страж Врат · SCP-001', desc: '10 репортов — почти со-основатель', ttl: 'Страж Врат', test: () => (State.myFeedbackCount || 0) >= 10, prog: () => ({ cur: State.myFeedbackCount || 0, target: 10 }) },
   // Необычные/календарные — в духе Garmin (фидбек #9): ловят момент, а не только объём
-  { id: 'early_bird', icon: '🌅', title: 'Ранняя пташка', desc: 'Выполни квест до 07:00', ttl: 'Ранняя пташка', test: () => completedTimes().some((d) => d.getHours() < 7) },
-  { id: 'night_owl', icon: '🦉', title: 'Сова', desc: 'Квест между 00:00 и 05:00', ttl: 'Сова', test: () => completedTimes().some((d) => d.getHours() < 5) },
-  { id: 'weekend_warrior', icon: '🛡️', title: 'Воин выходных', desc: 'Квесты и в субботу, и в воскресенье', ttl: 'Воин выходных', test: () => { const s = new Set(completedTimes().map((d) => d.getDay())); return s.has(6) && s.has(0); } },
-  { id: 'new_year', icon: '🎆', title: 'Новогодний рывок', desc: 'Тренируйся 31 декабря или 1 января', ttl: 'Новогодний', test: () => completedTimes().some((d) => (d.getMonth() === 11 && d.getDate() === 31) || (d.getMonth() === 0 && d.getDate() === 1)) },
-  { id: 'full_spectrum', icon: '🌈', title: 'Полный спектр', desc: '5+ разных сфер за один день', ttl: 'Многогранный', test: () => Object.values(eventsByDay()).some((evs) => new Set(evs.map((e) => e.skillId).filter(Boolean)).size >= 5) },
-  { id: 'marathon_day', icon: '🏔️', title: 'Марафон дня', desc: '4+ часа активности за день', ttl: 'Марафонец', test: () => Object.values(eventsByDay()).some((evs) => evs.reduce((s, e) => s + (e.min || 0), 0) >= 240) },
-  { id: 'balanced', icon: '⚖️', title: 'Десятиборец', desc: 'Индекс баланса ≥ 70', ttl: 'Десятиборец', test: () => balanceIndex().index >= 70, prog: () => ({ cur: balanceIndex().index, target: 70 }) },
+  { id: 'early_bird', icon: '🌅', title: 'Ранняя пташка', desc: 'Выполни квест до 07:00 — пока город досматривает сны', ttl: 'Ранняя пташка', test: () => completedTimes().some((d) => d.getHours() < 7) },
+  { id: 'night_owl', icon: '🦉', title: 'Сова', desc: 'Квест между 00:00 и 05:00 — луна была свидетелем', ttl: 'Сова', test: () => completedTimes().some((d) => d.getHours() < 5) },
+  { id: 'weekend_warrior', icon: '🛡️', title: 'Воин выходных', desc: 'Квесты и в субботу, и в воскресенье — выходные тоже твои', ttl: 'Воин выходных', test: () => { const s = new Set(completedTimes().map((d) => d.getDay())); return s.has(6) && s.has(0); } },
+  { id: 'new_year', icon: '🎆', title: 'Новогодний рывок', desc: 'Дело 31 декабря или 1 января — даже календарь не остановил', ttl: 'Новогодний', test: () => completedTimes().some((d) => (d.getMonth() === 11 && d.getDate() === 31) || (d.getMonth() === 0 && d.getDate() === 1)) },
+  { id: 'full_spectrum', icon: '🌈', title: 'Полный спектр', desc: '5+ разных сфер за один день — целая радуга за сутки', ttl: 'Многогранный', test: () => Object.values(eventsByDay()).some((evs) => new Set(evs.map((e) => e.skillId).filter(Boolean)).size >= 5) },
+  { id: 'marathon_day', icon: '🏔️', title: 'Марафон дня', desc: '4+ часа активности за день — вот это забег', ttl: 'Марафонец', test: () => Object.values(eventsByDay()).some((evs) => evs.reduce((s, e) => s + (e.min || 0), 0) >= 240) },
+  { id: 'balanced', icon: '⚖️', title: 'Десятиборец', desc: 'Индекс баланса ≥ 70 — держишь все оси разом', ttl: 'Десятиборец', test: () => balanceIndex().index >= 70, prog: () => ({ cur: balanceIndex().index, target: 70 }) },
   // Ночная волна 2026-07-03: фокус, дерево, путь, наряды, полный доспех — ачивки под НОВЫЕ системы
-  { id: 'focus_10h', icon: '🌊', title: 'Глубоководный', desc: '10 часов под фокус-таймером (суммарно)', ttl: 'Глубоководный', test: () => (State.tasks || []).reduce((s, t) => s + (Number(t.actualMin) || 0), 0) >= 600, prog: () => ({ cur: (State.tasks || []).reduce((s, t) => s + (Number(t.actualMin) || 0), 0), target: 600 }) },
-  { id: 'capstone_first', icon: '👑', title: 'Вершина ветви', desc: 'Открой первый капстоун в дереве навыков', ttl: 'Восходитель', test: () => { for (const id in (State.tree || {})) for (const n of (State.tree[id].nodes || [])) if (n.capstone && n.unlocked) return true; return false; } },
-  { id: 'tree_full', icon: '🌳', title: 'Древо в цвету', desc: 'Полностью открой дерево одной сферы', ttl: 'Садовник разума', test: () => Object.values(State.tree || {}).some((tr) => (tr.nodes || []).length > 0 && tr.nodes.every((n) => n.unlocked)) },
-  { id: 'path_chosen', icon: '⚖️', title: 'Сторона выбрана', desc: 'Выбери путь дисциплины — Доверие или Контроль', ttl: 'Определившийся', test: () => !!(State.settings && (State.settings.path === 'trust' || State.settings.path === 'control')) },
-  { id: 'wear_first', icon: '🎀', title: 'Первый наряд', desc: 'Надень предмет на питомца', ttl: 'Стилист зверинца', test: () => { const w = State.settings && State.settings.wear; return !!(w && w.pet && Object.values(w.pet).some((sl) => sl && Object.values(sl).some(Boolean))); } },
-  { id: 'gear_full', icon: '🛡️', title: 'Полный доспех', desc: 'Надень оружие, броню и амулет одновременно', ttl: 'Снаряжённый', test: () => { const g = State.settings && State.settings.gear; return !!(g && g.equipped && g.equipped.weapon && g.equipped.armor && g.equipped.amulet); } },
-  { id: 'goals_10', icon: '🏛️', title: 'Десять вершин', desc: 'Заверши 10 целей', ttl: 'Архитектор пути', test: () => (State.goals || []).filter((g) => g.completedAt).length >= 10, prog: () => ({ cur: (State.goals || []).filter((g) => g.completedAt).length, target: 10 }) },
-  { id: 'habit_100', icon: '🧱', title: 'Кирпич за кирпичом', desc: '100 отметок привычек (суммарно)', ttl: 'Каменщик судьбы', test: () => Object.values(State.habitlog || {}).reduce((s, m) => s + Object.keys(m || {}).length, 0) >= 100, prog: () => ({ cur: Object.values(State.habitlog || {}).reduce((s, m) => s + Object.keys(m || {}).length, 0), target: 100 }) },
-  { id: 'sphere_lvl10', icon: '🔟', title: 'Глубина сферы', desc: 'Прокачай любую сферу до 10 уровня', ttl: 'Специалист', test: () => topSkills().some((s) => skillLevelOf(s.id) >= 10) },
-  { id: 'allspheres_5', icon: '🌐', title: 'Широта жизни', desc: 'Все основные сферы — 5 уровень и выше', ttl: 'Ренессанс-человек', test: () => topSkills().length > 0 && topSkills().every((s) => skillLevelOf(s.id) >= 5) },
+  { id: 'focus_10h', icon: '🌊', title: 'Глубоководный', desc: '10 часов фокуса суммарно — там, на глубине, тихо', ttl: 'Глубоководный', test: () => (State.tasks || []).reduce((s, t) => s + (Number(t.actualMin) || 0), 0) >= 600, prog: () => ({ cur: (State.tasks || []).reduce((s, t) => s + (Number(t.actualMin) || 0), 0), target: 600 }) },
+  { id: 'capstone_first', icon: '👑', title: 'Вершина ветви', desc: 'Открой первый капстоун — вершина берётся не прыжком, а лесенкой', ttl: 'Восходитель', test: () => { for (const id in (State.tree || {})) for (const n of (State.tree[id].nodes || [])) if (n.capstone && n.unlocked) return true; return false; } },
+  { id: 'tree_full', icon: '🌳', title: 'Древо в цвету', desc: 'Открой дерево сферы целиком — ни одной спящей ветви', ttl: 'Садовник разума', test: () => Object.values(State.tree || {}).some((tr) => (tr.nodes || []).length > 0 && tr.nodes.every((n) => n.unlocked)) },
+  { id: 'path_chosen', icon: '⚖️', title: 'Сторона выбрана', desc: 'Выбери путь — Доверие или Контроль. Обе дороги ведут в гору', ttl: 'Определившийся', test: () => !!(State.settings && (State.settings.path === 'trust' || State.settings.path === 'control')) },
+  { id: 'wear_first', icon: '🎀', title: 'Первый наряд', desc: 'Надень предмет на питомца — теперь он самый нарядный в зверинце', ttl: 'Стилист зверинца', test: () => { const w = State.settings && State.settings.wear; return !!(w && w.pet && Object.values(w.pet).some((sl) => sl && Object.values(sl).some(Boolean))); } },
+  { id: 'gear_full', icon: '🛡️', title: 'Полный доспех', desc: 'Оружие, броня и амулет разом — хоть сейчас в подземелье', ttl: 'Снаряжённый', test: () => { const g = State.settings && State.settings.gear; return !!(g && g.equipped && g.equipped.weapon && g.equipped.armor && g.equipped.amulet); } },
+  { id: 'goals_10', icon: '🏛️', title: 'Десять вершин', desc: 'Заверши 10 целей — по чертежам, которые сам и начертил', ttl: 'Архитектор пути', test: () => (State.goals || []).filter((g) => g.completedAt).length >= 10, prog: () => ({ cur: (State.goals || []).filter((g) => g.completedAt).length, target: 10 }) },
+  { id: 'habit_100', icon: '🧱', title: 'Кирпич за кирпичом', desc: '100 отметок привычек — стена растёт кирпич за кирпичом', ttl: 'Каменщик судьбы', test: () => Object.values(State.habitlog || {}).reduce((s, m) => s + Object.keys(m || {}).length, 0) >= 100, prog: () => ({ cur: Object.values(State.habitlog || {}).reduce((s, m) => s + Object.keys(m || {}).length, 0), target: 100 }) },
+  { id: 'sphere_lvl10', icon: '🔟', title: 'Глубина сферы', desc: 'Сфера до 10 уровня — здесь ты уже дома', ttl: 'Специалист', test: () => topSkills().some((s) => skillLevelOf(s.id) >= 10) },
+  { id: 'allspheres_5', icon: '🌐', title: 'Широта жизни', desc: 'Все основные сферы ≥ 5 — широта без мелководья', ttl: 'Ренессанс-человек', test: () => topSkills().length > 0 && topSkills().every((s) => skillLevelOf(s.id) >= 5) },
   // #21 — больше достижений (2026-06-15): объём, уровни, навыки, цели, привычки, анти-привычки, коллекция, кастом
-  { id: 'quests_100', icon: '💯', title: 'Сотня квестов', desc: '100 выполненных квестов', ttl: 'Сотник', test: () => doneTasks().length >= 100, prog: () => ({ cur: doneTasks().length, target: 100 }) },
-  { id: 'quests_250', icon: '🗡️', title: 'Легион дел', desc: '250 выполненных квестов', ttl: 'Легионер', test: () => doneTasks().length >= 250, prog: () => ({ cur: doneTasks().length, target: 250 }) },
-  { id: 'xp_5000', icon: '🔱', title: 'Пять тысяч', desc: 'Накопи 5000 XP', ttl: 'Архонт', test: () => overallXp() >= 5000, prog: () => ({ cur: overallXp(), target: 5000 }) },
-  { id: 'xp_25000', icon: '☄️', title: 'Титан опыта', desc: 'Накопи 25000 XP', ttl: 'Титан опыта', test: () => overallXp() >= 25000, prog: () => ({ cur: overallXp(), target: 25000 }) },
-  { id: 'streak_100', icon: '🌌', title: 'Сто дней подряд', desc: 'Серия 100 дней', ttl: 'Несгибаемый', test: () => currentStreak() >= 100, prog: () => ({ cur: currentStreak(), target: 100 }) },
-  { id: 'level_20', icon: '🛡️', title: 'Двадцатый', desc: 'Достигни 20 уровня', ttl: 'Архимаг', test: () => charLevel() >= 20, prog: () => ({ cur: charLevel(), target: 20 }) },
-  { id: 'level_30', icon: '👑', title: 'Тридцатый', desc: 'Достигни 30 уровня', ttl: 'Владыка пути', test: () => charLevel() >= 30, prog: () => ({ cur: charLevel(), target: 30 }) },
-  { id: 'skill_master', icon: '🎓', title: 'Мастер сферы', desc: 'Любая сфера до ур.10', ttl: 'Виртуоз', test: () => State.settings.skills.some((s) => skillLevelOf(s.id) >= 10) },
-  { id: 'skills_all5', icon: '🧭', title: 'Эрудит', desc: 'Все сферы до ур.5', ttl: 'Эрудит', test: () => State.settings.skills.length > 0 && State.settings.skills.every((s) => skillLevelOf(s.id) >= 5) },
-  { id: 'goals_10', icon: '🏹', title: 'Десять целей', desc: 'Заверши 10 целей', ttl: 'Достигатор', test: () => State.goals.filter((g) => g.completedAt).length >= 10, prog: () => ({ cur: State.goals.filter((g) => g.completedAt).length, target: 10 }) },
-  { id: 'mission_set', icon: '⭐', title: 'Полярная звезда', desc: 'Задай миссию (★ дело жизни)', ttl: 'Звездочёт', test: () => State.goals.some((g) => g.type === 'mission') },
-  { id: 'habits_100', icon: '🔁', title: 'Сила привычки', desc: '100 отметок привычек', ttl: 'Машина привычек', test: () => Object.values(State.habitlog).reduce((s, m) => s + Object.keys(m).length, 0) >= 100, prog: () => ({ cur: Object.values(State.habitlog).reduce((s, m) => s + Object.keys(m).length, 0), target: 100 }) },
-  { id: 'balanced_90', icon: '☯️', title: 'Идеальный баланс', desc: 'Индекс баланса ≥ 90', ttl: 'Гармония', test: () => balanceIndex().index >= 90, prog: () => ({ cur: balanceIndex().index, target: 90 }) },
-  { id: 'clean_7', icon: '🕊️', title: 'Чистая неделя', desc: '7 дней без срыва (анти-привычка)', ttl: 'Освобождённый', test: () => (State.antihabits || []).some((a) => antiCleanDays(a) >= 7), prog: () => ({ cur: Math.max(0, ...(State.antihabits || []).map((a) => antiCleanDays(a)), 0), target: 7 }) },
-  { id: 'clean_30', icon: '🦋', title: 'Чистый месяц', desc: '30 дней без срыва', ttl: 'Перерождённый', test: () => (State.antihabits || []).some((a) => antiCleanDays(a) >= 30), prog: () => ({ cur: Math.max(0, ...(State.antihabits || []).map((a) => antiCleanDays(a)), 0), target: 30 }) },
-  { id: 'first_note', icon: '📝', title: 'Первая мысль', desc: 'Сохрани первую заметку', ttl: 'Хроникёр', test: () => (State.inbox || []).length >= 1 },
-  { id: 'collector_5', icon: '🎨', title: 'Коллекционер', desc: 'Собери 5 косметики', ttl: 'Коллекционер', test: () => COSMETICS.filter((c) => ownsCosmetic(c.id)).length >= 5, prog: () => ({ cur: COSMETICS.filter((c) => ownsCosmetic(c.id)).length, target: 5 }) },
-  { id: 'legendary_drop', icon: '🌟', title: 'Легендарная удача', desc: 'Получи легендарную косметику', ttl: 'Везунчик', test: () => COSMETICS.some((c) => c.rarity === 'legendary' && ownsCosmetic(c.id)) },
-  { id: 'avatar_custom', icon: '🪄', title: 'Свой облик', desc: 'Надень косметику или экипировку', ttl: 'Неповторимый', test: () => { const w = State.settings && State.settings.wear; const g = State.settings && State.settings.gear; return !!(w && w.pet && Object.values(w.pet).some((sl) => sl && Object.values(sl).some(Boolean))) || !!(g && g.equipped && Object.values(g.equipped).some(Boolean)); } },
+  { id: 'quests_100', icon: '💯', title: 'Сотня квестов', desc: '100 выполненных квестов — сотня, выкованная делом', ttl: 'Сотник', test: () => doneTasks().length >= 100, prog: () => ({ cur: doneTasks().length, target: 100 }) },
+  { id: 'quests_250', icon: '🗡️', title: 'Легион дел', desc: '250 выполненных квестов — легиону хватает одного командира', ttl: 'Легионер', test: () => doneTasks().length >= 250, prog: () => ({ cur: doneTasks().length, target: 250 }) },
+  { id: 'xp_5000', icon: '🔱', title: 'Пять тысяч', desc: 'Накопи 5000 XP — опыт, который не выветривается', ttl: 'Архонт', test: () => overallXp() >= 5000, prog: () => ({ cur: overallXp(), target: 5000 }) },
+  { id: 'xp_25000', icon: '☄️', title: 'Титан опыта', desc: 'Накопи 25000 XP — от такого веса гнутся полки', ttl: 'Титан опыта', test: () => overallXp() >= 25000, prog: () => ({ cur: overallXp(), target: 25000 }) },
+  { id: 'streak_100', icon: '🌌', title: 'Сто дней подряд', desc: 'Серия 100 дней — сто рассветов не прошли мимо', ttl: 'Несгибаемый', test: () => currentStreak() >= 100, prog: () => ({ cur: currentStreak(), target: 100 }) },
+  { id: 'level_20', icon: '🛡️', title: 'Двадцатый', desc: 'Достигни 20 уровня — новички уже спрашивают у тебя дорогу', ttl: 'Архимаг', test: () => charLevel() >= 20, prog: () => ({ cur: charLevel(), target: 20 }) },
+  { id: 'level_30', icon: '👑', title: 'Тридцатый', desc: 'Достигни 30 уровня — твоя тропа стала дорогой для других', ttl: 'Владыка пути', test: () => charLevel() >= 30, prog: () => ({ cur: charLevel(), target: 30 }) },
+  { id: 'skill_master', icon: '🎓', title: 'Мастер сферы', desc: 'Любая сфера или подсфера до ур.10 — глубина, где давление не пугает', ttl: 'Виртуоз', test: () => State.settings.skills.some((s) => skillLevelOf(s.id) >= 10) },
+  { id: 'skills_all5', icon: '🧭', title: 'Эрудит', desc: 'Все сферы до ур.5 — разбираешься везде, где живёшь', ttl: 'Эрудит', test: () => State.settings.skills.length > 0 && State.settings.skills.every((s) => skillLevelOf(s.id) >= 5) },
+  { id: 'mission_set', icon: '⭐', title: 'Полярная звезда', desc: 'Задай миссию ★ — теперь есть звезда, по которой сверяться', ttl: 'Звездочёт', test: () => State.goals.some((g) => g.type === 'mission') },
+  { id: 'balanced_90', icon: '☯️', title: 'Идеальный баланс', desc: 'Индекс баланса ≥ 90 — почти идеальный круг. Почти — это честно', ttl: 'Гармония', test: () => balanceIndex().index >= 90, prog: () => ({ cur: balanceIndex().index, target: 90 }) },
+  { id: 'clean_7', icon: '🕊️', title: 'Чистая неделя', desc: '7 дней без срыва — семь честных побед над «ещё разок»', ttl: 'Освобождённый', test: () => (State.antihabits || []).some((a) => antiCleanDays(a) >= 7), prog: () => ({ cur: Math.max(0, ...(State.antihabits || []).map((a) => antiCleanDays(a)), 0), target: 7 }) },
+  { id: 'clean_30', icon: '🦋', title: 'Чистый месяц', desc: '30 дней без срыва — крылья отрастают именно так', ttl: 'Перерождённый', test: () => (State.antihabits || []).some((a) => antiCleanDays(a) >= 30), prog: () => ({ cur: Math.max(0, ...(State.antihabits || []).map((a) => antiCleanDays(a)), 0), target: 30 }) },
+  { id: 'first_note', icon: '📝', title: 'Первая мысль', desc: 'Сохрани первую заметку — мысль поймана и уже не улетит', ttl: 'Хроникёр', test: () => (State.inbox || []).length >= 1 },
+  { id: 'collector_5', icon: '🎨', title: 'Коллекционер', desc: 'Собери 5 косметик — у коллекции появился характер', ttl: 'Коллекционер', test: () => COSMETICS.filter((c) => ownsCosmetic(c.id)).length >= 5, prog: () => ({ cur: COSMETICS.filter((c) => ownsCosmetic(c.id)).length, target: 5 }) },
+  { id: 'legendary_drop', icon: '🌟', title: 'Легендарная удача', desc: 'Выбей легендарку — вероятность склонилась перед упорством', ttl: 'Везунчик', test: () => COSMETICS.some((c) => c.rarity === 'legendary' && ownsCosmetic(c.id)) },
+  { id: 'avatar_custom', icon: '🪄', title: 'Свой облик', desc: 'Надень косметику или экипировку — образ узнаваем издалека', ttl: 'Неповторимый', test: () => { const w = State.settings && State.settings.wear; const g = State.settings && State.settings.gear; return !!(w && w.pet && Object.values(w.pet).some((sl) => sl && Object.values(sl).some(Boolean))) || !!(g && g.equipped && Object.values(g.equipped).some(Boolean)); } },
 ];
 
 // Каталог предустановленных наград — «дроп с босса уже выбран» (fb: награды должны быть предустановлены)
@@ -4809,23 +4807,57 @@ function companionCard() {
 //  Вид/поведение зависит от подсфер. Сытость считается из xpEvents (zero-persistence).
 //  Через заботу, без штрафов.
 // ============================================================
+// Каждый архетип: kind — имя вида (показывается в карточке), idles — пул «чем занят, пока не смотришь»
+// (fb_mql0nnn3aflg: питомец живёт своей жизнью). Фразы грамматически продолжают «растёт и …».
+// Выбор — dayPick (стабилен в течение дня, меняется день ото дня, у каждого питомца свой).
 const PET_TRAITS = [
-  { re: /спорт|трен|фитнес|gym|бег|run|качал|сил|мышц|единоборств|дзюдо|бокс|вело|плав|workout/i, icon: '🏋', idle: 'разминается' },
-  { re: /здоров|сон|выспат|пита|нутри|медит|йог|wellness|восстан|дыхан/i, icon: '🧘', idle: 'медитирует' },
-  { re: /учеб|учёб|школ|универ|экзам|study|klausur|biolog|био|хими|физик|математ|истор|abi|абитур/i, icon: '📚', idle: 'почитывает книгу' },
-  { re: /язык|нем|deutsch|\bdeu|англ|\beng|француз|испан|vocab|словарн/i, icon: '🗣', idle: 'учит слова' },
-  { re: /работ|карьер|бизнес|деньг|доход|зарплат|прибыл|заработ|финанс|инвест|\bwork|\bjob|money|income|клиент/i, icon: '💼', idle: 'что-то подсчитывает' },
-  { re: /творч|искусств|музык|рисов|дизайн|видео|\bart|creativ|монтаж|съёмк|съемк/i, icon: '🎨', idle: 'творит' },
-  { re: /код|программ|разраб|\btech|\bit\b|девелоп|develop/i, icon: '💻', idle: 'печатает код' },
-  { re: /саморазв|самораз|развит|чтен|книг|\bmind|growth|философ|мышлен|психолог|рефлекс/i, icon: '🧠', idle: 'размышляет' },
-  { re: /быт|дом|house|chore|убор|готов|стирк/i, icon: '🧹', idle: 'прибирается' },
-  { re: /социал|друз|отнош|любов|family|семь|общени|свидан/i, icon: '💬', idle: 'болтает с друзьями' },
+  { re: /спорт|трен|фитнес|gym|бег|run|качал|сил|мышц|единоборств|дзюдо|бокс|вело|плав|workout/i, icon: '🏋', kind: 'Крепыш', hint: 'Считай: тренировки, разминки, прогулки, дорогу пешком. Не считай: разговоры о спорте.', idle: 'разминается', idles: [
+    'разминается', 'отжимается от пола — уже почти один раз', 'делает планку и очень страдает',
+    'гоняет воображаемый мяч', 'считает подходы: один, один, один…', 'тягает жёлудь вместо гантели',
+    'пробежал три круга вокруг миски и требует медаль' ] },
+  { re: /здоров|сон|выспат|пита|нутри|медит|йог|wellness|восстан|дыхан/i, icon: '🧘', kind: 'Тихоня', hint: 'Считай: сон вовремя, медитации, паузы, готовку здоровой еды. Не считай: залипание в кровати.', idle: 'медитирует', idles: [
+    'медитирует', 'дышит по квадрату', 'уснул в позе лотоса', 'заваривает ромашковый чай',
+    'слушает тишину', 'лёг спать вовремя и тихо этим гордится', 'нюхает цветок очень осознанно' ] },
+  { re: /учеб|учёб|школ|универ|экзам|study|klausur|biolog|био|хими|физик|математ|истор|abi|абитур/i, icon: '📚', kind: 'Книгозверь', hint: 'Считай: уроки, конспекты, повторение, домашку. Даже 15 минут — уже дело.', idle: 'почитывает книгу', idles: [
+    'почитывает книгу', 'делает конспект лапой', 'заснул на сорок второй странице',
+    'клеит стикеры на всё подряд', 'бормочет формулы во сне', 'ищет, куда положил закладку',
+    'готовит шпаргалку — на всякий случай' ] },
+  { re: /язык|нем|deutsch|\bdeu|англ|\beng|француз|испан|vocab|словарн/i, icon: '🗣', kind: 'Болтун', hint: 'Считай: слова, Anki, сериал в оригинале, разговор с носителем. Даже 10 минут в счёт.', idle: 'учит слова', idles: [
+    'учит слова', 'разговаривает сам с собой с акцентом', 'зубрит неправильные глаголы',
+    'смотрит сериал без субтитров и делает вид, что понял', 'листает словарь на букву Ы',
+    'здоровается на пяти языках со шкафом' ] },
+  { re: /работ|карьер|бизнес|деньг|доход|зарплат|прибыл|заработ|финанс|инвест|\bwork|\bjob|money|income|клиент/i, icon: '💼', kind: 'Кот Удачи', hint: 'Считай: работу, подработку, резюме, портфолио, учёбу профессии. Деньги растут из действий.', idle: 'что-то подсчитывает', idles: [
+    'что-то подсчитывает', 'полирует свою монету', 'пересчитывает мешок — опять сбился',
+    'машет лапой на удачу', 'прячет заначку под подушку', 'звенит бубенцом по важным делам',
+    'изучает курс валют, щуря золотые глаза' ] },
+  { re: /творч|искусств|музык|рисов|дизайн|видео|\bart|creativ|монтаж|съёмк|съемк/i, icon: '🎨', kind: 'Творец', hint: 'Считай: наброски, монтаж, репетиции, черновики. Плохой черновик — тоже дело: он сделан.', idle: 'творит', idles: [
+    'творит', 'заляпал лапы краской', 'ждёт вдохновение у окна',
+    'строго критикует свой вчерашний шедевр', 'собирает палитру из осенних листьев',
+    'напевает мелодию, которой ещё не существует' ] },
+  { re: /код|программ|разраб|\btech|\bit\b|девелоп|develop/i, icon: '💻', kind: 'Байтик', hint: 'Считай: код, дебаг, чтение доки, пет-проекты. Не считай: смену темы в редакторе.', idle: 'печатает код', idles: [
+    'печатает код', 'дебажит хвостом', 'смотрит в один баг уже час',
+    'переименовывает переменные туда-обратно', 'гуглит ошибку лапой',
+    'закоммитил и убежал', 'обновляет зависимости и тихонько молится' ] },
+  { re: /саморазв|самораз|развит|чтен|книг|\bmind|growth|философ|мышлен|психолог|рефлекс/i, icon: '🧠', kind: 'Мудрёныш', hint: 'Считай: чтение, дневник, рефлексию, курсы. Не считай: скроллинг «полезных» каналов.', idle: 'размышляет', idles: [
+    'размышляет', 'перечитывает любимую цитату', 'ведёт дневник наблюдений за тобой',
+    'смотрит вдаль с очень умным видом', 'разложил мысли по полочкам — все две',
+    'подчёркивает главное в книге. Всю книгу' ] },
+  { re: /быт|дом|house|chore|убор|готов|стирк/i, icon: '🧹', kind: 'Хлопотун', hint: 'Считай: уборку, готовку, стирку, починку, бумажные дела. Быт — это тоже уровень.', idle: 'прибирается', idles: [
+    'прибирается', 'вылизал миску до блеска', 'сортирует носки по настроению',
+    'воюет с пылью под диваном', 'составил список дел из одного дела',
+    'полил цветок. Пластиковый' ] },
+  { re: /социал|друз|отнош|любов|family|семь|общени|свидан/i, icon: '💬', kind: 'Дружок', hint: 'Считай: встречи, звонки родным, письмо другу, свидание. Лайки не считаются.', idle: 'болтает с друзьями', idles: [
+    'болтает с друзьями', 'репетирует комплимент', 'отправил открытку без повода',
+    'вспоминает, у кого скоро день рождения', 'машет хвостом всем прохожим',
+    'бережно хранит все ваши общие секреты' ] },
 ];
 function petTraits(sphereId) {
   const names = [skillById(sphereId).name, ...descendantSkills(sphereId).map((c) => c.name)].join(' ');
   const found = [];
   for (const t of PET_TRAITS) if (t.re.test(names) && !found.some((f) => f.icon === t.icon)) found.push(t);
-  if (!found.length) found.push({ icon: '⭐', idle: 'тихо светится' });
+  if (!found.length) found.push({ icon: '⭐', kind: 'Огонёк', hint: 'Считай любое осознанное дело в эту сторону — даже самое маленькое.', idle: 'тихо светится', idles: [
+    'тихо светится', 'смотрит на тебя с обожанием', 'растёт понемногу каждый день',
+    'нашёл солнечное пятно и лежит в нём', 'просто рад, что ты здесь' ] });
   return found.slice(0, 3);
 }
 function sphereXpByDay(sphereId) {
@@ -5051,7 +5083,9 @@ function renderPets() {
   else if (hungry.length) balance = `🥺 ${hungry.length > 1 ? 'Скучают' : 'Скучает'}: <b>${esc(hungry.map((p) => p.nm).slice(0, 3).join(', '))}</b> — заверни в ${hungry.length > 1 ? 'эти сферы' : 'эту сферу'} хоть ненадолго.`;
   else balance = `✨ Зверинец в гармонии — ты держишь десятиборье ровно. Так держать.`;
   const cards = pets.map(({ s, st, traits, nm }) => {
-    const meta = PET_STATE[st.state], idle = traits[0].idle;
+    const meta = PET_STATE[st.state], tr = traits[0];
+    // «живёт своей жизнью»: фраза дня из пула вида — стабильна в течение дня, своя у каждого питомца
+    const idle = dayPick('petidle' + s.id, tr.idles || [tr.idle]);
     const line = st.state === 'hungry' ? (!st.lastFed ? `ждёт первой встречи — покорми делами` : st.daysSince >= 8 ? `не виделись ${st.daysSince} ${plural(st.daysSince, 'день', 'дня', 'дней')} — скучает` : `проголодался — покорми делами`)
       : st.state === 'overfed' ? `объелся! пора и в другие сферы`
         : st.state === 'full' ? `сыт и доволен` : `растёт и ${idle}`;
@@ -5059,7 +5093,9 @@ function renderPets() {
     const nameRow = renaming
       ? `<form class="pet-rename-form" data-id="${s.id}"><input name="name" maxlength="20" value="${esc(nm)}" placeholder="${esc(s.name)}" /><div class="pet-rename-btns"><button type="submit" class="btn sm">✓</button><button type="button" class="btn ghost sm" data-action="pet-rename-cancel">✕</button></div></form>`
       : `<div class="pet-name"><b>${esc(nm)}</b><button class="pet-edit" data-action="pet-rename" data-id="${s.id}" title="Переименовать">✎</button><span class="pet-badge" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span></div>`;
-    const sub = nm !== s.name ? `<p class="pet-sphere muted">сфера: ${esc(s.name)}</p>` : '';
+    // Клик по виду — хинт «что засчитывать в эту сферу» (боль Виолы: «как считать уровень творчества»).
+    // Кормить питомца = записывать дела; хинт объясняет, какие именно.
+    const sub = `<p class="pet-sphere muted" data-action="pet-hint" data-id="${s.id}" title="${esc(tr.hint || '')}" style="cursor:help">${esc(tr.kind || 'Зверёк')}${nm !== s.name ? ` · сфера: ${esc(s.name)}` : ''} <span class="pet-hint-q">?</span></p>`;
     return `<div class="card pet-card">
       <div class="pet-art" data-action="pet-feed" data-id="${s.id}" title="приласкать ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits, s.id)}</div>
       ${nameRow}${sub}
@@ -7738,6 +7774,7 @@ function onClick(e) {
     toast('💛 ' + esc(petName(id)) + ' доволен');
     return;
   }
+  if (action === 'pet-hint') { const tr = petTraits(id)[0]; if (tr && tr.hint) toast(`${tr.icon} ${t(tr.hint)}`); return; }
   if (action === 'pet-rename') { State._petRename = id; render(); return; }
   if (action === 'pet-rename-cancel') { State._petRename = null; render(); return; }
 
