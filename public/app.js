@@ -1616,7 +1616,7 @@ const REWARD_CATALOG = [
   { icon: '🎯', name: 'Любимое хобби 2 часа без отвлечений', cost: 160 },
   { icon: '🎨', name: 'Порисовать / порукоделить без цели', cost: 100 },
   // 💆 Уход и отдых
-  { icon: '🛁', name: 'Долгая ванна со всеми смузи', cost: 100 },
+  { icon: '🛁', name: 'Долгая ванна со свечами и пеной', cost: 100 },
   { icon: '😴', name: 'Поспать без будильника', cost: 150 },
   { icon: '🎧', name: 'Час музыки/подкаста лёжа', cost: 90 },
   { icon: '💆', name: 'Массаж / спа', cost: 600 },
@@ -2077,7 +2077,7 @@ function completeTask(t, desire) {
   let msg = `+${t.xpAwarded} XP · +${t.goldAwarded} 🪙 · ${skillById(t.skillId).name}`;
   if (desire === 'forced') msg += ` · 💪 через силу +${Math.round(GRIT_BONUS * 100)}% XP, но −энергия`;
   if (eDelta) msg += ` · ${eDelta > 0 ? '+' : ''}${eDelta} 🔋`;
-  if (systemMode()) systemNarrate('КВЕСТ ВЫПОЛНЕН', msg); else toast(msg);
+  if (systemMode()) systemNarrate('КВЕСТ ВЫПОЛНЕН', `${msg} — ${systemVoice('quest')}`); else toast(msg);
   if (desire === 'hyped') { const h = activateHype(); toast(`⚔️ Хайп ×${h.stacks} · +${hypePct()}% XP на ${hypeMinLeft()} мин — ты захотел трудное!`); }
   track('complete:quest');
   Store.save('tasks', State.tasks);
@@ -5641,7 +5641,7 @@ function avatarEditor() {
   return `<div class="card avatar-editor" id="avatar-editor">
     <h3>🪞 Твой персонаж</h3>
     <div class="ave-stage ave-stage-figure">${avatarFigureHTML()}</div>
-    <p class="muted" style="font-size:12px;margin:10px 0 0">Странник. Смена одежды/экипировки слоями — в следующем обновлении арта.</p>
+    <p class="muted" style="font-size:12px;margin:10px 0 0"><b>Странник</b> — тот, кто идёт не потому, что знает дорогу, а потому что выбрал направление. В рюкзаке — всё нужное, в компасе — твой Север. Смена одежды и экипировки — в следующем обновлении арта.</p>
   </div>`;
 }
 // ---- Колесо баланса (ядро v1): радар ритма + дрилл-даун под-сфер + подсказки ----
@@ -7819,12 +7819,12 @@ function onClick(e) {
   if (action === 'set-accent') { State.settings.accent = el.dataset.accent; State.settings.systemMode = false; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'toggle-system') {
     State.settings.systemMode = !!el.checked; Store.save('settings', State.settings); applyTheme();
-    if (el.checked) systemNarrate('СИСТЕМА АКТИВИРОВАНА', 'Отныне я сопровождаю твой путь. Игрок, не подведи.');
+    if (el.checked) systemNarrate('СИСТЕМА АКТИВИРОВАНА', systemVoice('activate'));
     render(); return;
   }
   if (action === 'enable-system-teaser') {
     State.settings.systemMode = true; markDiscovered('teaser:system'); Store.save('settings', State.settings); applyTheme();
-    systemNarrate('СИСТЕМА АКТИВИРОВАНА', 'Отныне я сопровождаю твой путь. Игрок, не подведи.'); render(); return;
+    systemNarrate('СИСТЕМА АКТИВИРОВАНА', systemVoice('activate')); render(); return;
   }
   if (action === 'dismiss-system-teaser') { markDiscovered('teaser:system'); render(); return; }
   if (action === 'sound-test') { ['complete', 'coin', 'achievement'].forEach((n, i) => setTimeout(() => sfx(n), i * 420)); setTimeout(() => sfx('loot', 'legendary'), 1300); return; }
@@ -8329,6 +8329,24 @@ function toast(msg) {
 //  Опционально (тумблер в Оформлении). Брендовая эстетика «?»/Satoru + голос Системы.
 // ============================================================
 function systemMode() { return !!(State.settings && State.settings.systemMode); }
+// Голос Системы (скин Solo Leveling): холодно-торжественный наблюдатель. Пулы реплик,
+// чтобы «СТАТУС-ОКНО» не говорило одно и то же вечно. Выбор случайный (события, не рендер).
+const SYSTEM_VOICE = {
+  quest: [
+    'Зафиксировано. Система наблюдает.',
+    'Приемлемо. Следующая цель уже ждёт.',
+    'Игрок демонстрирует рост.',
+    'Записано в хроники. Продолжай.',
+    'Оценка: достойно.',
+    'Предел отодвинут ещё на шаг.',
+  ],
+  activate: [
+    'Отныне я сопровождаю твой путь. Игрок, не подведи.',
+    'Синхронизация завершена. Твои пределы — теперь моя забота.',
+    'Наблюдение начато. Покажи Системе, на что ты способен.',
+  ],
+};
+function systemVoice(kind) { const p = SYSTEM_VOICE[kind] || []; return p[Math.floor(Math.random() * p.length)] || ''; }
 function sysNarrEl() { let c = document.getElementById('sysnarr'); if (!c) { c = document.createElement('div'); c.id = 'sysnarr'; document.body.appendChild(c); } return c; }
 function systemNarrate(title, body) {
   if (!systemMode()) return;
