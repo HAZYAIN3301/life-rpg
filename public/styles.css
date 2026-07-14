@@ -192,6 +192,14 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 }
 .add-row input[name="title"] { width: 100%; }
 
+/* Нудж «жизнь шла, а записать было некогда» + выбор дня в «Итоге дня» (fb_mragb9rg2tkz) */
+.daylog-nudge { border-color: color-mix(in srgb, var(--accent) 34%, var(--line)); }
+.dayrec-day {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 13px; color: var(--muted); margin: 0 0 10px;
+}
+.dayrec-day input[type="date"] { flex: 0 1 190px; min-width: 0; }
+
 /* «✓ в свой день» — засчитать просроченный квест задним числом (fb_mr4qhq6gy30w) */
 .t-backdate {
   background: transparent; border: 1px dashed var(--muted); color: var(--muted);

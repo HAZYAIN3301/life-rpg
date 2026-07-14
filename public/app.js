@@ -1618,6 +1618,15 @@ const I18N_EXTRA = {
   // ── Зачёт задним числом ──
   'Сделал в тот день, забыл отметить — засчитать в': { en: 'Did it that day, forgot to log — count it on', de: 'An dem Tag erledigt, nur nicht eingetragen — anrechnen auf den', uk: 'Зробив того дня, забув відмітити — зарахувати в', es: 'Lo hiciste ese día y olvidaste anotarlo — cuéntalo el' },
   'Засчитано в': { en: 'Counted on', de: 'Angerechnet auf', uk: 'Зараховано в', es: 'Contado el' },
+  // ── «Итог дня»: выбор дня + нудж «жизнь шла, а записать было некогда» ──
+  'Итог дня': { en: 'Day log', de: 'Tagesabschluss', uk: 'Підсумок дня', es: 'Resumen del día' },
+  'За какой день': { en: 'Which day', de: 'Für welchen Tag', uk: 'За який день', es: 'Qué día' },
+  'Записано': { en: 'Logged', de: 'Eingetragen', uk: 'Записано', es: 'Registrado' },
+  'за сегодня': { en: 'for today', de: 'für heute', uk: 'за сьогодні', es: 'de hoy' },
+  'Расскажи, чем были заняты эти дни': { en: 'Tell me what filled these days', de: 'Erzähl, womit diese Tage gefüllt waren', uk: 'Розкажи, чим були зайняті ці дні', es: 'Cuéntame qué llenó estos días' },
+  'День на исходе — расскажи, что успел': { en: 'The day is winding down — tell me what you got to', de: 'Der Tag geht zur Neige — erzähl, was du geschafft hast', uk: 'День добігає кінця — розкажи, що встиг', es: 'El día se acaba — cuéntame qué lograste' },
+  'Планировать не надо — просто наговори. Тень разложит по сферам, и можно за прошлый день.': { en: 'No planning needed — just say it out loud. Shadow sorts it into spheres, and a past day works too.', de: 'Kein Planen nötig — sprich es einfach aus. Schatten sortiert es in Sphären, auch für einen vergangenen Tag.', uk: 'Планувати не треба — просто наговори. Тінь розкладе по сферах, і можна за минулий день.', es: 'No hace falta planificar — solo cuéntalo. Sombra lo ordena por esferas, y también vale un día pasado.' },
+  'Наговори голосом — Тень сама разложит по делам и сферам.': { en: 'Just speak — Shadow will sort it into deeds and spheres.', de: 'Sprich einfach — Schatten sortiert es in Taten und Sphären.', uk: 'Наговори голосом — Тінь сама розкладе по справах і сферах.', es: 'Solo háblalo — Sombra lo ordenará en tareas y esferas.' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -3358,6 +3367,22 @@ function pathReckoning() {
   } catch {}
   return pen;
 }
+// Сколько ПРОШЕДШИХ дней подряд прошло без единой записи (ни квеста, ни привычки).
+// Это сигнатура «жизнь идёт, а Satoru не в курсе»: поездка, завал, выпадение из рутины —
+// ровно тот момент, когда приложения теряют людей навсегда (fb_mragb9rg2tkz).
+function quietDaysBefore(max) {
+  const lim = max || 7;
+  let n = 0;
+  for (let i = 1; i <= lim; i++) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const ds = fmtDate(d);
+    const hadQuest = (State.tasks || []).some((x) => x.done && dayOf(x) === ds);
+    const hadHabit = !!(State.habitlog && State.habitlog[ds] && Object.keys(State.habitlog[ds]).length);
+    if (hadQuest || hadHabit) break;
+    n++;
+  }
+  return n;
+}
 function todayActivityCount() {
   const t = todayStr();
   const q = State.tasks.filter((x) => x.done && dayOf(x) === t).length;
@@ -4495,9 +4520,14 @@ function openDayRecap() {
   if (document.getElementById('dayrec-modal')) return;
   const ov = document.createElement('div'); ov.id = 'dayrec-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov);
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  // Дата по умолчанию — сегодня, но можно закрыть и прошлый день: в поездке/после паузы
+  // человек делал дела, а записывать было некогда (fb_mragb9rg2tkz). max=сегодня — вперёд нельзя.
+  const dsel = `<label class="dayrec-day">${t('За какой день')}
+      <input type="date" id="dayrec-date" value="${todayStr()}" max="${todayStr()}" /></label>`;
   ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="dayrec-close">✕</button>
-    <h2>🎤 Итог дня</h2>
-    <p class="muted" style="font-size:13px;margin:0 0 10px">Расскажи своими словами, что делал сегодня — как другу. Тень разложит по делам, сферам и времени. Мелочи (умылся, перекусил) не нужны.</p>
+    <h2>🎤 ${t('Итог дня')}</h2>
+    <p class="muted" style="font-size:13px;margin:0 0 10px">Расскажи своими словами, что делал — как другу. Тень разложит по делам, сферам и времени. Мелочи (умылся, перекусил) не нужны.</p>
+    ${dsel}
     ${SR ? `<button class="btn ghost" id="dayrec-mic" data-action="dayrec-mic" style="margin-bottom:8px">🎤 Говорить</button>` : '<p class="muted" style="font-size:12px">Голос не поддерживается в этом браузере — впиши текстом.</p>'}
     <textarea id="dayrec-text" rows="5" placeholder="Например: с утра учил биологию часа два, потом погулял минут сорок, вечером убрался дома и приготовил ужин…"></textarea>
     <div class="propose-actions">${canUseAi()
@@ -4543,19 +4573,29 @@ function renderDayRecCards() {
   <div class="propose-actions"><button class="btn" data-action="dayrec-apply">✓ Записать день (${_dayActs.length})</button> <span class="muted" style="font-size:12px">сними галочку, чтобы пропустить дело</span></div>`;
 }
 function dayRecApply() {
-  const today = todayStr(), now = new Date().toISOString(); let n = 0;
+  // День, за который пишем: из пикера (может быть прошлым — «в поездке не записывал»).
+  // completedAt ставим на выбранный день (полдень), иначе dayOf() свалит всё в сегодня.
+  const dEl = document.getElementById('dayrec-date');
+  const today = todayStr();
+  let day = (dEl && dEl.value) || today;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || day > today) day = today;
+  const now = new Date().toISOString();
+  let stamp = now;
+  if (day < today) { const [y, mo, d] = day.split('-').map(Number); stamp = new Date(y, mo - 1, d, 12, 0, 0).toISOString(); }
+  let n = 0;
   document.querySelectorAll('#dayrec-result [data-dayrec]:checked').forEach((chk) => {
     const i = Number(chk.dataset.dayrec), a = _dayActs[i]; if (!a) return;
     const sph = document.querySelector(`[data-dayrec-sph="${i}"]`), min = document.querySelector(`[data-dayrec-min="${i}"]`);
     const skillId = (sph && sph.value) || dayRecSphereId(a.sphere);
     const minutes = Math.max(1, Math.round(Number(min && min.value) || a.minutes));
-    const task = { id: uid(), title: a.title, skillId, skillIds: [skillId], estimateMin: minutes, actualMin: minutes, difficulty: 'normal', date: today, done: true, completedAt: now, startTime: a.time || null, desire: null, createdAt: now };
+    const task = { id: uid(), title: a.title, skillId, skillIds: [skillId], estimateMin: minutes, actualMin: minutes, difficulty: 'normal', date: day, done: true, completedAt: stamp, startTime: a.time || null, desire: null, createdAt: now };
     task.xpAwarded = Math.max(1, itemXp(task)); task.goldAwarded = itemGold(task);
     State.tasks.push(task); n++;
   });
   if (!n) { toast('Ничего не выбрано'); return; }
   Store.save('tasks', State.tasks); const m = document.getElementById('dayrec-modal'); if (m) m.remove();
-  toast(`✅ Записано ${n} ${plural(n, 'дело', 'дела', 'дел')} за сегодня`); checkAchievements(); render(); publishLeaderboard();
+  toast(`✅ ${t('Записано')} ${n} ${plural(n, 'дело', 'дела', 'дел')} — ${day === today ? t('за сегодня') : dmShort(day)}`);
+  checkAchievements(); render(); publishLeaderboard();
 }
 function proposeContext() {
   const spheres = State.settings.skills.map((s) => skillLabel(s.id)).join(', ');
@@ -5750,6 +5790,21 @@ function renderToday() {
   // Сидячий день (4+ ч планов без движения) → мягкий нудж добавить разминку (идея fb_mq3m7zjd)
   const hasMove = todays.some((t) => /размин|прогул|зарядк|растяжк|спорт|трениров|walk|stretch|gym/i.test(t.title)) || habits.some((h) => /размин|прогул|зарядк|растяжк|спорт|трениров/i.test(h.title));
   const stretchNudge = (planned >= 240 && !hasMove) ? `<div class="card nudge-card"><button class="nudge" data-action="add-stretch">🤸 ${fmtDur(planned)} сидячих планов — вставить разминку 10 мин</button><span class="nudge-boost">баланс — это тоже квест</span></div>` : '';
+
+  // «Жизнь шла, а записывать было некогда» (fb_mragb9rg2tkz). Satoru умеет «запланировал → выполнил»,
+  // но не «сделал → записал» — и в поездке становится бесполезным, хотя человек делает ровно то,
+  // ради чего он есть. «Итог дня» это решает, но его не находят. Значит — предлагаем сами.
+  // ГЕЙТ: это приглашение, а не упрёк. Никаких «ты пропустил N дней».
+  const quietN = (State.tasks || []).length ? quietDaysBefore() : 0;
+  const dayLogNudge = (quietN >= 2 || (doneCount === 0 && new Date().getHours() >= 18 && (State.tasks || []).length > 0))
+    ? `<div class="card nudge-card daylog-nudge">
+        <button class="nudge" data-action="day-recap">🎤 ${quietN >= 2
+          ? t('Расскажи, чем были заняты эти дни')
+          : t('День на исходе — расскажи, что успел')}</button>
+        <span class="nudge-boost">${quietN >= 2
+          ? t('Планировать не надо — просто наговори. Тень разложит по сферам, и можно за прошлый день.')
+          : t('Наговори голосом — Тень сама разложит по делам и сферам.')}</span></div>`
+    : '';
   // Профилактика травм (Блок 3, спек F): активные силовые/единоборства без мобилки → мягкая opt-in подсказка
   const prefs = State.settings.prefs || {};
   const showMobil = !prefs.noMobilityNudge && _mobilSnoozeDay !== today && trainingWithoutMobility();
@@ -5780,7 +5835,7 @@ function renderToday() {
         <div class="th-stat"><b>+${xpToday}</b><span>XP</span></div>
       </div>
     </section>`;
-  return `<div class="today-shell">${companionCard()}${installBanner()}${todayHero}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${sysTeaser}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${importNudge}${stretchNudge}${mobilityNudge}
+  return `<div class="today-shell">${companionCard()}${installBanner()}${todayHero}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${sysTeaser}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${dayLogNudge}${importNudge}${stretchNudge}${mobilityNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="${t('Новый квест на сегодня…')}" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
