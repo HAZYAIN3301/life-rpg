@@ -1634,6 +1634,11 @@ const I18N_EXTRA = {
   'Обсудить с Тенью: мой уровень здесь': { en: 'Talk it through with Shadow: my level here', de: 'Mit Schatten besprechen: mein Level hier', uk: 'Обговорити з Тінню: мій рівень тут', es: 'Hablarlo con Sombra: mi nivel aquí' },
   'Это твоя сфера — значит, только ты решаешь, что в неё входит. Засчитывай любое осознанное действие в эту сторону, даже самое маленькое.': { en: 'This is your sphere — so only you decide what belongs in it. Count any mindful step in this direction, even the tiniest one.', de: 'Das ist deine Sphäre — also entscheidest nur du, was dazugehört. Zählt jeder bewusste Schritt in diese Richtung, auch der kleinste.', uk: 'Це твоя сфера — отже, лише ти вирішуєш, що до неї входить. Зараховуй будь-яку свідому дію в цей бік, навіть найменшу.', es: 'Esta es tu esfera — así que solo tú decides qué entra en ella. Cuenta cualquier paso consciente en esta dirección, hasta el más pequeño.' },
   'Хочешь определить свой стартовый уровень в диалоге — добавь ключ ИИ в Настройках (есть бесплатные).': { en: 'Want to work out your starting level in a conversation — add an AI key in Settings (free ones exist).', de: 'Willst du dein Startlevel im Gespräch bestimmen — füge in den Einstellungen einen KI-Schlüssel hinzu (es gibt kostenlose).', uk: 'Хочеш визначити свій стартовий рівень у діалозі — додай ключ ШІ в Налаштуваннях (є безкоштовні).', es: 'Quieres definir tu nivel inicial en una conversación — añade una clave de IA en Ajustes (las hay gratuitas).' },
+  // ── Дашборд активности: живое vs мёртвое ──
+  'Ни одного обращения за 14 дней': { en: 'Not touched once in 14 days', de: 'In 14 Tagen kein einziges Mal genutzt', uk: 'Жодного звернення за 14 днів', es: 'Ni un solo uso en 14 días' },
+  'Это не «плохие» фичи — это фичи, которые не нашли. Прежде чем строить новое, стоит проверить: их не находят или они не нужны?': { en: 'These are not "bad" features — these are features nobody found. Before building something new, check: are they undiscovered, or unwanted?', de: 'Das sind keine „schlechten" Features — das sind Features, die niemand gefunden hat. Bevor du Neues baust, prüfe: unentdeckt oder ungewollt?', uk: 'Це не «погані» фічі — це фічі, яких не знайшли. Перш ніж будувати нове, варто перевірити: їх не знаходять чи вони не потрібні?', es: 'No son funciones "malas" — son funciones que nadie encontró. Antes de construir algo nuevo, comprueba: ¿no se encuentran o no se quieren?' },
+  'Пока ни одного события.': { en: 'No events yet.', de: 'Noch keine Ereignisse.', uk: 'Поки жодної події.', es: 'Aún no hay eventos.' },
+  'Прочее:': { en: 'Other:', de: 'Sonstiges:', uk: 'Інше:', es: 'Otros:' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -6796,6 +6801,38 @@ function adminCard() {
     ${analyticsHTML()}
     <p class="muted" style="font-size:12px">${t('Только агрегат: какие вкладки/действия используются и сколько активных в день. Без личного контента.')}</p></div>`;
 }
+// Реестр фич: без него дашборд показывает только ЖИВОЕ и молчит про МЁРТВОЕ — а вопрос
+// Альберта (fb_mrkznky6uq9h) звучит ровно наоборот: «что используют реже, на что есть спрос,
+// куда ставить акценты». Ответ даёт список фич с НУЛЁМ обращений. Отсюда и реестр.
+const FEATURE_REGISTRY = [
+  { ev: 'complete:quest', label: 'Выполнить квест' },
+  { ev: 'complete:habit', label: 'Отметить привычку' },
+  { ev: 'focus:start', label: 'Фокус-таймер' },
+  { ev: 'capture:text', label: 'Быстрая заметка' },
+  { ev: 'ai:daylog', label: '«Итог дня» голосом' },
+  { ev: 'ai:chat', label: 'Чат-помощник' },
+  { ev: 'ai:weekly', label: 'Разбор недели' },
+  { ev: 'ai:catsuggest', label: 'Авто-категория' },
+  { ev: 'ai:bridge', label: 'Копипаст-мост (без ключа)' },
+  { ev: 'sphere:guide', label: 'Справочник сфер' },
+  { ev: 'sphere:guide-ai', label: 'Сферу разбирает Тень' },
+  { ev: 'chest:open', label: 'Открыть сундук' },
+  { ev: 'reward:buy', label: 'Купить награду' },
+  { ev: 'pet:feed', label: 'Покормить питомца' },
+  { ev: 'oath:take', label: 'Клятва Кремню' },
+  { ev: 'view:tree', label: 'Дерево навыков' },
+  { ev: 'view:den', label: 'Логово' },
+  { ev: 'view:pets', label: 'Зверинец' },
+  { ev: 'view:party', label: 'Пати и рейды' },
+  { ev: 'view:leaderboard', label: 'Лидерборд' },
+  { ev: 'view:goals', label: 'Цели' },
+  { ev: 'view:calendar', label: 'Календарь' },
+  { ev: 'view:habits', label: 'Привычки' },
+  { ev: 'view:rewards', label: 'Награды' },
+  { ev: 'view:stats', label: 'Статистика' },
+  { ev: 'view:character', label: 'Герой' },
+  { ev: 'view:notes', label: 'Заметки' },
+];
 function analyticsHTML() {
   if (State.analytics === undefined) {
     State.analytics = null;
@@ -6803,13 +6840,29 @@ function analyticsHTML() {
     return `<p class="muted">${t('Загружаю…')}</p>`;
   }
   if (!State.analytics || !Object.keys(State.analytics).length) return `<p class="muted">${t('Данных пока нет.')}</p>`;
-  const days = Object.keys(State.analytics).sort().slice(-7);
+  const days = Object.keys(State.analytics).sort().slice(-14);
   const ev = {}; const dauSet = {};
   for (const day of days) { const x = State.analytics[day]; for (const k in (x.events || {})) ev[k] = (ev[k] || 0) + x.events[k]; dauSet[day] = Object.keys(x.users || {}).length; }
-  const top = Object.entries(ev).sort((a, b) => b[1] - a[1]).slice(0, 12);
-  const dauRows = days.map((d) => `<span class="an-dau" title="${d}">${d.slice(5)}: <b>${dauSet[d] || 0}</b></span>`).join('');
-  const evRows = top.map(([k, v]) => `<div class="an-row"><span class="an-k">${esc(k)}</span><span class="an-v">${v}</span></div>`).join('');
-  return `<div class="an-box"><div class="an-dau-row">${t('DAU за 7 дней:')} ${dauRows}</div><div class="an-events">${evRows}</div></div>`;
+  const dauRows = days.slice(-7).map((d) => `<span class="an-dau" title="${d}">${d.slice(5)}: <b>${dauSet[d] || 0}</b></span>`).join('');
+
+  const used = FEATURE_REGISTRY.filter((f) => ev[f.ev]).sort((a, b) => ev[b.ev] - ev[a.ev]);
+  const dead = FEATURE_REGISTRY.filter((f) => !ev[f.ev]);
+  const max = used.length ? ev[used[0].ev] : 1;
+  const bar = (n) => Math.max(3, Math.round((n / max) * 100));
+  const liveRows = used.map((f) => `<div class="an-row"><span class="an-k">${esc(f.label)}</span>
+      <span class="an-bar"><i style="width:${bar(ev[f.ev])}%"></i></span><span class="an-v">${ev[f.ev]}</span></div>`).join('');
+  const deadRows = dead.length
+    ? `<div class="an-dead"><div class="an-dead-h">💤 ${t('Ни одного обращения за 14 дней')} (${dead.length})</div>
+        <div class="an-dead-list">${dead.map((f) => `<span class="an-dead-chip">${esc(f.label)}</span>`).join('')}</div>
+        <p class="muted" style="font-size:11.5px;margin:8px 0 0">${t('Это не «плохие» фичи — это фичи, которые не нашли. Прежде чем строить новое, стоит проверить: их не находят или они не нужны?')}</p></div>`
+    : '';
+  const other = Object.entries(ev).filter(([k]) => !FEATURE_REGISTRY.some((f) => f.ev === k)).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const otherRows = other.length ? `<div class="an-other">${t('Прочее:')} ${other.map(([k, v]) => `<span class="an-dead-chip">${esc(k)} · ${v}</span>`).join('')}</div>` : '';
+
+  return `<div class="an-box">
+    <div class="an-dau-row">${t('DAU за 7 дней:')} ${dauRows}</div>
+    <div class="an-events">${liveRows || `<p class="muted">${t('Пока ни одного события.')}</p>`}</div>
+    ${deadRows}${otherRows}</div>`;
 }
 function showPaywall(feature) {
   if (document.getElementById('paywall')) return;
@@ -8343,7 +8396,7 @@ function onClick(e) {
   }
 
   // --- Лутбоксы / Pro / Paywall ---
-  if (action === 'open-chest') { openChest(); return; }
+  if (action === 'open-chest') { track('chest:open'); openChest(); return; }
   if (action === 'equip-title') {
     const eq = ensureCosmetics(), t = el.dataset.title || null;
     eq.title = (!t || eq.title === t) ? null : t; Store.save('settings', State.settings); render(); return;
@@ -8376,7 +8429,7 @@ function onClick(e) {
   }
 
   // --- Питомцы по сферам ---
-  if (action === 'pet-feed') {
+  if (action === 'pet-feed') { track('pet:feed');
     const art = el.closest('.pet-art'), svg = art && art.querySelector('.pet-svg');
     if (svg) {
       svg.classList.remove('pet-nom'); void svg.offsetWidth; svg.classList.add('pet-nom'); // рестарт анимации
@@ -8565,7 +8618,7 @@ function onClick(e) {
     if (State.habitlog[today][id]) { delete State.habitlog[today][id]; if (!Object.keys(State.habitlog[today]).length) delete State.habitlog[today]; }
     else { State.habitlog[today][id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() }; const eD = applyEnergy(h); track('complete:habit'); toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${skillById(h.skillId).name}${eD ? ` · ${eD > 0 ? '+' : ''}${eD} 🔋` : ''}`); }
     Store.save('habitlog', State.habitlog); checkAchievements(); render(); publishLeaderboard();
-  } else if (action === 'focus-task') { const t = questById(id); if (t && !t.done) startFocus(id);
+  } else if (action === 'focus-task') { const q = questById(id); if (q && !q.done) { track('focus:start'); startFocus(id); }
   } else if (action === 'timer-pause') { pauseFocus();
   } else if (action === 'timer-resume') { resumeFocus();
   } else if (action === 'timer-stop') { stopFocus(true);
@@ -8573,7 +8626,7 @@ function onClick(e) {
   } else if (action === 'edit-actual') {
     const t = questById(id); if (!t) return; const v = prompt('Фактическое время в минутах:', t.actualMin || t.estimateMin || ''); if (v === null) return;
     const n = Math.round(Number(v)); if (!isNaN(n) && n >= 0) { t.actualMin = n || null; Store.save('tasks', State.tasks); render(); }
-  } else if (action === 'quest-oath') {
+  } else if (action === 'quest-oath') { track('oath:take');
     // Клятва Кремню (только путь Контроля): заверши сегодня → золото за квест ×1.5; провали → −oathGold в горн
     const q = questById(id); if (!q || q.done || q.oath) return;
     if (!confirm(`⚔️ Клятва Кремню: завершить «${q.title}» до конца дня.\nСдержишь — золото за квест ×1.5. Провалишь — сгорит ${CONTROL.oathGold} 🪙.\n\nДаёшь слово?`)) return;
@@ -8667,7 +8720,7 @@ function onClick(e) {
     State.treeSelNode = null; Store.save('skilltree', State.tree); render();
 
   // --- Награды ---
-  } else if (action === 'buy-reward') {
+  } else if (action === 'buy-reward') { track('reward:buy');
     const r = State.rewards.find((x) => x.id === id); if (!r) return;
     if (goldBalance() < r.cost) { toast('Недостаточно золота'); return; }
     State.purchases.push({ id: 'p_' + uid(), rewardId: r.id, name: r.name, cost: r.cost, at: new Date().toISOString() });
