@@ -192,6 +192,15 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 }
 .add-row input[name="title"] { width: 100%; }
 
+/* «✓ в свой день» — засчитать просроченный квест задним числом (fb_mr4qhq6gy30w) */
+.t-backdate {
+  background: transparent; border: 1px dashed var(--muted); color: var(--muted);
+  border-radius: 8px; padding: 2px 6px; font-size: 12px; line-height: 1.1;
+  cursor: pointer; white-space: nowrap;
+}
+.t-backdate sub { font-size: 9px; margin-left: 2px; vertical-align: baseline; opacity: .85; }
+.t-backdate:hover { border-color: var(--good); color: var(--good); border-style: solid; }
+
 /* Ввод длительности «часы + минуты» (fb_mrkzpi0z3zk2) — данные всё так же в минутах */
 .dur-input { display: inline-flex; align-items: center; gap: 2px; min-width: 0; }
 .dur-input input[type="number"] {

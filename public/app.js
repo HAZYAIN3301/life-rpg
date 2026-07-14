@@ -1615,6 +1615,9 @@ const I18N_EXTRA = {
   'Минуты': { en: 'Minutes', de: 'Minuten', uk: 'Хвилини', es: 'Minutos' },
   'ч': { en: 'h', de: 'Std', uk: 'год', es: 'h' },
   'м': { en: 'm', de: 'Min', uk: 'хв', es: 'm' },
+  // ── Зачёт задним числом ──
+  'Сделал в тот день, забыл отметить — засчитать в': { en: 'Did it that day, forgot to log — count it on', de: 'An dem Tag erledigt, nur nicht eingetragen — anrechnen auf den', uk: 'Зробив того дня, забув відмітити — зарахувати в', es: 'Lo hiciste ese día y olvidaste anotarlo — cuéntalo el' },
+  'Засчитано в': { en: 'Counted on', de: 'Angerechnet auf', uk: 'Зараховано в', es: 'Contado el' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -2419,10 +2422,18 @@ const GRIT_BONUS = 0.10; // бонус за выполнение «через с
 // Завершить квест с учётом «желания» (desire): null | 'forced' | 'neutral' | 'hyped'
 // ⚠️ Параметр НЕ называть `t` — это затенило бы глобальную функцию перевода t() и уронило бы
 // всю функцию на первом же t(...) (баг fb_mrkzunjjmn61: энергия списана, квест не сохранён).
-function completeTask(task, desire) {
+// onDate (YYYY-MM-DD) — задним числом засчитать квест в ЕГО день, а не в сегодня (fb_mr4qhq6gy30w):
+// «сделал вчера, записать забыл». dayOf() смотрит на completedAt — значит его и нужно поставить
+// на нужный день (полдень, чтобы не поймать TZ-край суток).
+function completeTask(task, desire, onDate) {
   if (State.timer && State.timer.taskId === task.id) stopFocus(true, true);
   const lvlBefore = charLevel();
-  task.done = true; task.completedAt = new Date().toISOString(); task.desire = desire || null;
+  let when = new Date();
+  if (onDate && /^\d{4}-\d{2}-\d{2}$/.test(onDate) && onDate < todayStr()) {
+    const [y, m, d] = onDate.split('-').map(Number);
+    when = new Date(y, m - 1, d, 12, 0, 0);
+  }
+  task.done = true; task.completedAt = when.toISOString(); task.desire = desire || null;
   let xp = itemXp(task);
   if (desire === 'forced') xp = Math.round(xp * (1 + GRIT_BONUS));
   task.xpAwarded = Math.max(1, xp); task.goldAwarded = itemGold(task);
@@ -3866,24 +3877,31 @@ function catChips(t) {
   if (!ids.length) return `<span class="t-cat missing">— сфера —</span>`;
   return ids.map((sid) => { const s = skillById(sid); return `<span class="t-cat ${s.missing ? 'missing' : ''}" style="--c:${esc(s.color)}">${esc(s.name)}</span>`; }).join('');
 }
-function questRow(t) {
-  const estMin = Number(t.estimateMin) || 0;
-  const time = t.actualMin ? `${fmtDur(t.actualMin)} / ${fmtDur(estMin)}` : fmtDur(estMin);
-  const active = State.timer && State.timer.taskId === t.id;
-  const skSel = `<button class="t-cats" data-action="edit-cats" data-id="${t.id}" title="Категории квеста — клик чтобы изменить (можно несколько)">${catChips(t)}</button>`;
-  const titleCell = State._editTask === t.id
-    ? `<form class="t-edit-form" data-id="${t.id}"><input name="title" value="${esc(t.title)}" maxlength="120" autocomplete="off" /></form>`
-    : `<span class="t-title" data-action="edit-task-title" data-id="${t.id}" title="Клик — изменить текст квеста">${esc(t.title)}</span>`;
-  return `<li class="task ${t.done ? 'done' : ''}">
-    <button class="check" data-action="toggle-task" data-id="${t.id}">${t.done ? '✓' : ''}</button>
+// ⚠️ Параметр НЕ называть `t` — затенил бы глобальную функцию перевода t() (см. баг fb_mrkzunjjmn61).
+function questRow(q) {
+  const estMin = Number(q.estimateMin) || 0;
+  const time = q.actualMin ? `${fmtDur(q.actualMin)} / ${fmtDur(estMin)}` : fmtDur(estMin);
+  const active = State.timer && State.timer.taskId === q.id;
+  const skSel = `<button class="t-cats" data-action="edit-cats" data-id="${q.id}" title="Категории квеста — клик чтобы изменить (можно несколько)">${catChips(q)}</button>`;
+  const titleCell = State._editTask === q.id
+    ? `<form class="t-edit-form" data-id="${q.id}"><input name="title" value="${esc(q.title)}" maxlength="120" autocomplete="off" /></form>`
+    : `<span class="t-title" data-action="edit-task-title" data-id="${q.id}" title="Клик — изменить текст квеста">${esc(q.title)}</span>`;
+  // Квест из прошлого: «✓ в свой день» — засчитать в дату плана, а не в сегодня (fb_mr4qhq6gy30w)
+  const past = !q.done && q.date && q.date < todayStr();
+  const backdate = past
+    ? `<button class="t-backdate" data-action="toggle-task-backdated" data-id="${q.id}" title="${t('Сделал в тот день, забыл отметить — засчитать в')} ${dmShort(q.date)}">✓<sub>${dmShort(q.date)}</sub></button>`
+    : '';
+  return `<li class="task ${q.done ? 'done' : ''}">
+    <button class="check" data-action="toggle-task" data-id="${q.id}">${q.done ? '✓' : ''}</button>
     ${titleCell}
     ${skSel}
-    <span class="t-time" data-action="edit-actual" data-id="${t.id}" title="Клик — фактическое время">${time}</span>
-    <span class="t-diff">${DIFF[t.difficulty] || ''}</span>
-    <span class="t-xp">${t.done ? '+' + (t.xpAwarded || 0) : ''}</span>
-    ${t.done ? '<span></span>' : `<button class="focus ${active ? 'active' : ''}" data-action="focus-task" data-id="${t.id}" title="Фокус-таймер">${active ? '⏱' : '▶'}</button>`}
-    ${t.oath && !t.done ? `<span class="t-oath" title="Клятва Кремню: заверши сегодня или −${t.oath.gold} 🪙">⚔️${t.oath.gold}</span>` : (!t.done && currentPath() === 'control' && t.date === todayStr() && goldBalance() >= CONTROL.oathGold ? `<button class="t-oath-btn" data-action="quest-oath" data-id="${t.id}" title="Клятва Кремню: заверши до конца дня — золото за квест ×1.5; провали — сгорит ${CONTROL.oathGold} 🪙">⚔️</button>` : '')}
-    <button class="del" data-action="delete-task" data-id="${t.id}" title="Удалить">✕</button></li>`;
+    <span class="t-time" data-action="edit-actual" data-id="${q.id}" title="Клик — фактическое время">${time}</span>
+    <span class="t-diff">${DIFF[q.difficulty] || ''}</span>
+    <span class="t-xp">${q.done ? '+' + (q.xpAwarded || 0) : ''}</span>
+    ${q.done ? '<span></span>' : `<button class="focus ${active ? 'active' : ''}" data-action="focus-task" data-id="${q.id}" title="Фокус-таймер">${active ? '⏱' : '▶'}</button>`}
+    ${backdate}
+    ${q.oath && !q.done ? `<span class="t-oath" title="Клятва Кремню: заверши сегодня или −${q.oath.gold} 🪙">⚔️${q.oath.gold}</span>` : (!q.done && currentPath() === 'control' && q.date === todayStr() && goldBalance() >= CONTROL.oathGold ? `<button class="t-oath-btn" data-action="quest-oath" data-id="${q.id}" title="Клятва Кремню: заверши до конца дня — золото за квест ×1.5; провали — сгорит ${CONTROL.oathGold} 🪙">⚔️</button>` : '')}
+    <button class="del" data-action="delete-task" data-id="${q.id}" title="Удалить">✕</button></li>`;
 }
 function habitRow(h) {
   const sk = skillById(h.skillId), done = habitDone(h, todayStr()), hs = habitStreak(h);
@@ -8396,13 +8414,19 @@ function onClick(e) {
   }
 
   if (action === 'toggle-task') {
-    const t = questById(id); if (!t) return;
-    if (!t.done) {
+    const q = questById(id); if (!q) return;
+    if (!q.done) {
       // Сложный квест → спрашиваем «насколько хотел» (Хайп за добровольный выбор трудного). Лёгкий/обычный — сразу.
-      if (t.difficulty === 'hard') { openDesirePicker(id); return; }
-      completeTask(t, null);
-    } else { t.done = false; t.completedAt = null; t.xpAwarded = 0; t.goldAwarded = 0; t.desire = null;
+      if (q.difficulty === 'hard') { openDesirePicker(id); return; }
+      completeTask(q, null);
+    } else { q.done = false; q.completedAt = null; q.xpAwarded = 0; q.goldAwarded = 0; q.desire = null;
       Store.save('tasks', State.tasks); checkAchievements(); render(); publishLeaderboard(); }
+  } else if (action === 'toggle-task-backdated') {
+    // «Сделал в тот день, отметить забыл» — засчитываем в дату плана, а не в сегодня (fb_mr4qhq6gy30w).
+    // Про Хайп не спрашиваем: задним числом «насколько хотел» — недостоверная реконструкция.
+    const q = questById(id); if (!q || q.done) return;
+    completeTask(q, null, q.date);
+    toast(`✓ ${t('Засчитано в')} ${dmShort(q.date)}`);
   } else if (action === 'toggle-habit') {
     const h = habitById(id); if (!h) return;
     State.habitlog[today] = State.habitlog[today] || {};
