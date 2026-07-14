@@ -192,6 +192,22 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 }
 .add-row input[name="title"] { width: 100%; }
 
+/* Справочник сфер: «?» рядом с чипом + модалка объяснения (fb_mrki1qlzwuwu) */
+.ob-chip-wrap { display: inline-flex; align-items: stretch; gap: 3px; }
+.ob-chip-q {
+  flex: 0 0 auto; width: 22px; border-radius: 8px; cursor: pointer;
+  background: transparent; border: 1px solid var(--line); color: var(--muted);
+  font-size: 12px; font-weight: 700; line-height: 1; padding: 0;
+}
+.ob-chip-q:hover { border-color: var(--accent); color: var(--accent); }
+.sg-box .sg-what { font-size: 14px; line-height: 1.5; margin: 0 0 12px; }
+.sg-row {
+  display: grid; gap: 2px; padding: 9px 11px; margin-bottom: 8px;
+  background: var(--panel2); border: 1px solid var(--line); border-radius: 10px;
+}
+.sg-row b { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); font-weight: 700; }
+.sg-row span { font-size: 13.5px; line-height: 1.45; }
+
 /* Нудж «жизнь шла, а записать было некогда» + выбор дня в «Итоге дня» (fb_mragb9rg2tkz) */
 .daylog-nudge { border-color: color-mix(in srgb, var(--accent) 34%, var(--line)); }
 .dayrec-day {
