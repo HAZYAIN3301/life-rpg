@@ -10,7 +10,7 @@ const I18N_EN = {
   'Привычки': 'Habits', 'Награды': 'Rewards',
   'Герой': 'Hero', '🏠 Логово': '🏠 Den', 'Персонаж': 'Character',
   '🐾 Питомцы': '🐾 Pets', 'Навыки': 'Skills', 'Прогресс': 'Progress',
-  'Племя': 'Tribe', 'Пати': 'Party', 'Рейтинг': 'Leaderboard',
+  'Племя': 'Tribe', 'Пати': 'Party', 'Рейтинг': 'Leaderboard', 'Ещё': 'More', 'Помощник': 'Assistant',
   // Auth
   'Превращаем жизнь в игру': 'Turning life into a game',
   'Создай аккаунт': 'Create your account',
@@ -168,7 +168,7 @@ const I18N_DE = {
   'Привычки': 'Gewohnheiten', 'Награды': 'Belohnungen',
   'Герой': 'Held', '🏠 Логово': '🏠 Lager', 'Персонаж': 'Charakter',
   '🐾 Питомцы': '🐾 Haustiere', 'Навыки': 'Fähigkeiten', 'Прогресс': 'Fortschritt',
-  'Племя': 'Stamm', 'Пати': 'Gruppe', 'Рейтинг': 'Rangliste',
+  'Племя': 'Stamm', 'Пати': 'Gruppe', 'Рейтинг': 'Rangliste', 'Ещё': 'Mehr', 'Помощник': 'Assistent',
   // Auth
   'Превращаем жизнь в игру': 'Das Leben zum Spiel machen',
   'Создай аккаунт': 'Konto erstellen',
@@ -325,7 +325,7 @@ const I18N_UK = {
   'Привычки': 'Звички', 'Награды': 'Нагороди',
   'Герой': 'Герой', '🏠 Логово': '🏠 Лігво', 'Персонаж': 'Персонаж',
   '🐾 Питомцы': '🐾 Улюбленці', 'Навыки': 'Навички', 'Прогресс': 'Прогрес',
-  'Племя': "Плем'я", 'Пати': 'Паті', 'Рейтинг': 'Рейтинг',
+  'Племя': "Плем'я", 'Пати': 'Паті', 'Рейтинг': 'Рейтинг', 'Ещё': 'Ще', 'Помощник': 'Помічник',
   'Превращаем жизнь в игру': 'Перетворюємо життя на гру',
   'Создай аккаунт': 'Створи акаунт', 'Восстановление доступа': 'Відновлення доступу',
   'Пароль': 'Пароль', 'Войти': 'Увійти', 'Войти →': 'Увійти →',
@@ -396,7 +396,7 @@ const I18N_ES = {
   'Привычки': 'Hábitos', 'Награды': 'Recompensas',
   'Герой': 'Héroe', '🏠 Логово': '🏠 Guarida', 'Персонаж': 'Personaje',
   '🐾 Питомцы': '🐾 Mascotas', 'Навыки': 'Habilidades', 'Прогресс': 'Progreso',
-  'Племя': 'Tribu', 'Пати': 'Grupo', 'Рейтинг': 'Clasificación',
+  'Племя': 'Tribu', 'Пати': 'Grupo', 'Рейтинг': 'Clasificación', 'Ещё': 'Más', 'Помощник': 'Asistente',
   'Превращаем жизнь в игру': 'Convertir la vida en un juego',
   'Создай аккаунт': 'Crea tu cuenta', 'Восстановление доступа': 'Recuperar acceso',
   'Пароль': 'Contraseña', 'Войти': 'Entrar', 'Войти →': 'Entrar →',
@@ -737,6 +737,12 @@ const I18N_EXTRA = {
   // Habits
   '🌱 Строим привычки': { en: '🌱 Building habits', de: '🌱 Gewohnheiten aufbauen', uk: '🌱 Будуємо звички', es: '🌱 Construyendo hábitos' },
   'Кем ты хочешь стать?': { en: 'Who do you want to become?', de: 'Wer willst du werden?', uk: 'Ким ти хочеш стати?', es: '¿Quién quieres llegar a ser?' },
+  'Выбери, кем хочешь стать. Каждое выполнение ниже — маленькое доказательство этой идентичности.': {
+    en: 'Choose who you want to become. Every completion below is a small proof of that identity.',
+    de: 'Entscheide, wer du werden möchtest. Jede Erledigung unten ist ein kleiner Beweis für diese Identität.',
+    uk: 'Обери, ким хочеш стати. Кожне виконання нижче — маленький доказ цієї ідентичності.',
+    es: 'Elige quién quieres llegar a ser. Cada acción completada abajo es una pequeña prueba de esa identidad.'
+  },
   '4 закона создания привычки': { en: 'The 4 laws of building a habit', de: 'Die 4 Gesetze der Gewohnheitsbildung', uk: '4 закони створення звички', es: 'Las 4 leyes para crear un hábito' },
   '4 закона разрушения привычки (инверсия)': { en: 'The 4 laws of breaking a habit (inversion)', de: 'Die 4 Gesetze, eine Gewohnheit zu brechen (Umkehrung)', uk: '4 закони руйнування звички (інверсія)', es: 'Las 4 leyes para romper un hábito (inversión)' },
   '🛡 Свобода от привычек': { en: '🛡 Freedom from habits', de: '🛡 Freiheit von Gewohnheiten', uk: '🛡 Свобода від звичок', es: '🛡 Libertad de los hábitos' },
@@ -1603,6 +1609,12 @@ const I18N_EXTRA = {
   'СИСТЕМА АКТИВИРОВАНА': { en: 'SYSTEM ACTIVATED', de: 'SYSTEM AKTIVIERT', uk: 'СИСТЕМУ АКТИВОВАНО', es: 'SISTEMA ACTIVADO' },
   'предел сдвинут': { en: 'the limit has moved', de: 'die Grenze hat sich verschoben', uk: 'межу зсунуто', es: 'el límite se movió' },
   'ты становишься сильнее': { en: 'you are growing stronger', de: 'du wirst stärker', uk: 'ти стаєш сильнішим', es: 'te haces más fuerte' },
+  // ── Ввод длительности «часы + минуты» ──
+  'Длительность: часы и минуты': { en: 'Duration: hours and minutes', de: 'Dauer: Stunden und Minuten', uk: 'Тривалість: години та хвилини', es: 'Duración: horas y minutos' },
+  'Часы': { en: 'Hours', de: 'Stunden', uk: 'Години', es: 'Horas' },
+  'Минуты': { en: 'Minutes', de: 'Minuten', uk: 'Хвилини', es: 'Minutos' },
+  'ч': { en: 'h', de: 'Std', uk: 'год', es: 'h' },
+  'м': { en: 'm', de: 'Min', uk: 'хв', es: 'm' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -2302,6 +2314,20 @@ function addDays(s, n) { const d = parseDate(s); d.setDate(d.getDate() + n); ret
 function dmShort(s) { return s.slice(8) + '.' + s.slice(5, 7); }
 function fmtClock(ms) { const t = Math.max(0, Math.floor(ms / 1000)); const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60; return h ? `${h}:${pad2(m)}:${pad2(s)}` : `${m}:${pad2(s)}`; }
 function fmtDur(min) { const m = Math.max(0, Math.round(Number(min) || 0)); if (m < 60) return m + 'м'; const h = Math.floor(m / 60), r = m % 60; return r ? `${h}ч ${r}м` : `${h}ч`; }
+// ── Ввод длительности «часы + минуты» (fb_mrkzpi0z3zk2: «6 часов 10 минут» не хочется считать в 370).
+// Хранение НЕ меняется — канон остаётся в минутах (estimateMin); меняется только форма ввода.
+function durInputHTML(name, minutes) {
+  const total = Math.max(0, Math.round(Number(minutes) || 0));
+  const h = Math.floor(total / 60), m = total % 60;
+  return `<span class="dur-input" title="${t('Длительность: часы и минуты')}">`
+    + `<input name="${name}H" type="number" min="0" max="24" step="1" value="${h}" inputmode="numeric" aria-label="${t('Часы')}" /><i>${t('ч')}</i>`
+    + `<input name="${name}M" type="number" min="0" max="59" step="1" value="${m}" inputmode="numeric" aria-label="${t('Минуты')}" /><i>${t('м')}</i></span>`;
+}
+function readDurInput(form, name) {
+  const h = Number(form[name + 'H'] && form[name + 'H'].value) || 0;
+  const m = Number(form[name + 'M'] && form[name + 'M'].value) || 0;
+  return Math.max(0, Math.round(h * 60 + m));
+}
 function plural(n, one, few, many) { const a = Math.abs(n) % 100, b = a % 10; if (a > 10 && a < 20) return many; if (b > 1 && b < 5) return few; if (b === 1) return one; return many; }
 function skillById(id) { return State.settings.skills.find((s) => s.id === id) || { id, name: '—', color: '#888', missing: true }; }
 // ── Иерархия сфер (импорт v2.2): под-навыки через parentId. 2 уровня: столб → под-навык.
@@ -2391,25 +2417,30 @@ function activateHype() {
 }
 const GRIT_BONUS = 0.10; // бонус за выполнение «через силу» — признание воли, но меньше Хайпа
 // Завершить квест с учётом «желания» (desire): null | 'forced' | 'neutral' | 'hyped'
-function completeTask(t, desire) {
-  if (State.timer && State.timer.taskId === t.id) stopFocus(true, true);
+// ⚠️ Параметр НЕ называть `t` — это затенило бы глобальную функцию перевода t() и уронило бы
+// всю функцию на первом же t(...) (баг fb_mrkzunjjmn61: энергия списана, квест не сохранён).
+function completeTask(task, desire) {
+  if (State.timer && State.timer.taskId === task.id) stopFocus(true, true);
   const lvlBefore = charLevel();
-  t.done = true; t.completedAt = new Date().toISOString(); t.desire = desire || null;
-  let xp = itemXp(t);
+  task.done = true; task.completedAt = new Date().toISOString(); task.desire = desire || null;
+  let xp = itemXp(task);
   if (desire === 'forced') xp = Math.round(xp * (1 + GRIT_BONUS));
-  t.xpAwarded = Math.max(1, xp); t.goldAwarded = itemGold(t);
-  if (t.oath && !t.oath.burned) { // ⚔️ Клятва Кремню сдержана — золото за квест ×1.5
-    t.goldAwarded = Math.round(t.goldAwarded * 1.5); t.oath.kept = true;
+  task.xpAwarded = Math.max(1, xp); task.goldAwarded = itemGold(task);
+  if (task.oath && !task.oath.burned) { // ⚔️ Клятва Кремню сдержана — золото за квест ×1.5
+    task.goldAwarded = Math.round(task.goldAwarded * 1.5); task.oath.kept = true;
     setTimeout(() => { try { toast('⚔️ ' + t(FLINT_LINES.oathKept[Math.floor(Math.random() * FLINT_LINES.oathKept.length)])); } catch {} }, 1200);
   }
-  const eDelta = applyEnergy(t, desire);
-  let msg = `+${t.xpAwarded} XP · +${t.goldAwarded} 🪙 · ${skillById(t.skillId).name}`;
+  const eDelta = applyEnergy(task, desire);
+  // 🔴 Персист СРАЗУ: энергия уже списана — квест обязан быть сохранён раньше любой косметики
+  // (нарратор/тосты/звук). Иначе сбой в UI-слое стоит игроку выполненного квеста.
+  Store.save('tasks', State.tasks);
+  track('complete:quest');
+  const sk = skillById(task.skillId); // сфера могла быть удалена — не роняем завершение квеста
+  let msg = `+${task.xpAwarded} XP · +${task.goldAwarded} 🪙${sk ? ' · ' + sk.name : ''}`;
   if (desire === 'forced') msg += ` · 💪 через силу +${Math.round(GRIT_BONUS * 100)}% XP, но −энергия`;
   if (eDelta) msg += ` · ${eDelta > 0 ? '+' : ''}${eDelta} 🔋`;
   if (systemMode()) systemNarrate('КВЕСТ ВЫПОЛНЕН', `${msg} — ${t(systemVoice('quest'))}`); else toast(msg);
   if (desire === 'hyped') { const h = activateHype(); toast(`⚔️ Хайп ×${h.stacks} · +${hypePct()}% XP на ${hypeMinLeft()} мин — ты захотел трудное!`); }
-  track('complete:quest');
-  Store.save('tasks', State.tasks);
   const lvlNow = charLevel();
   if (lvlNow > lvlBefore) {
     const rb = rankFor(lvlBefore), ra = rankFor(lvlNow);
@@ -3953,7 +3984,7 @@ function renderCalMonth(date) {
         <button class="btn ghost sm" data-action="cal-shift-month" data-delta="-1" title="Предыдущий месяц">‹</button>
         <h2>${MONTHS_NOM[mo]} ${y}</h2>
         <button class="btn ghost sm" data-action="cal-shift-month" data-delta="1" title="Следующий месяц">›</button>
-        ${calModeToggle('month')}${calExportBtn()}${calSubscribeBtn()}${calRemindBtn()}
+        ${calModeToggle('month')}<div class="cal-tools">${calExportBtn()}${calSubscribeBtn()}${calRemindBtn()}</div>
       </div>
       <div class="cm-wd">${WD.map((w) => `<span>${w}</span>`).join('')}</div>
       <div class="cm-grid">${cells}</div>
@@ -3997,7 +4028,7 @@ function renderCalendarView() {
     <div class="cal-schedule">
       <select id="cal-quest">${unscheduled.map((t) => `<option value="${t.id}">${esc(t.title)}</option>`).join('')}</select>
       <input id="cal-time" type="time" value="09:00" title="Начало" />
-      <input id="cal-dur" type="number" min="5" step="5" value="${dur0}" title="Длительность, мин" />
+      <input id="cal-dur" type="number" min="1" step="1" value="${dur0}" title="Длительность, мин (любое число — не только кратное 5)" />
       <span class="cal-dur-unit muted">мин</span>
       <button class="btn ghost" data-action="schedule-quest">🗓 Поставить</button>
     </div>` : '';
@@ -4010,7 +4041,7 @@ function renderCalendarView() {
         <button class="btn ghost sm" data-action="cal-shift" data-days="1" title="Следующий день">›</button>
         ${date !== todayStr() ? '<button class="btn ghost sm" data-action="cal-today">Сегодня</button>' : ''}
         <span class="wk-load muted">план: ${fmtDur(planned)}</span>
-        ${calModeToggle('day')}${calExportBtn()}${calSubscribeBtn()}${calRemindBtn()}
+        ${calModeToggle('day')}<div class="cal-tools">${calExportBtn()}${calSubscribeBtn()}${calRemindBtn()}</div>
       </div>
       <div class="calv-strip">${strip}</div>
     </div>
@@ -4019,7 +4050,7 @@ function renderCalendarView() {
         <input type="hidden" name="date" value="${date}" />
         <input name="title" placeholder="Новый квест на этот день…" autocomplete="off" required />
         <select name="skillId">${skillOptionsHTML()}</select>
-        <input name="estimateMin" type="number" min="0" step="1" value="30" title="Минут" />
+        ${durInputHTML('estimateMin', 30)}
         <select name="difficulty"><option value="easy">🌱 Лёгкая</option><option value="normal" selected>⚔️ Обычная</option><option value="hard">🔥 Сложная</option></select>
         <button type="submit">+ Квест</button></form>
     </div>
@@ -4146,9 +4177,8 @@ function habitsBuildHTML() {
     </div>`;
   }).join('') : '<p class="muted">Пока нет привычек — добавь и спроектируй по 4 законам.</p>';
   return `<div class="card hb-intro"><h3>🌱 Строим привычки</h3>
-      <p class="muted">${esc(ATOMIC.intro)}</p>
+      <p class="muted">${esc(t('Выбери, кем хочешь стать. Каждое выполнение ниже — маленькое доказательство этой идентичности.'))}</p>
       <label class="hb-identity">Кем ты хочешь стать? <input id="identity-goal" data-action="save-identity" value="${esc(idg)}" placeholder="Напр.: дисциплинированный учёный в отличной форме" /></label></div>
-    ${lawsBlock('4 закона создания привычки', ATOMIC.laws, 'build')}
     <div class="hb-list">${cards}</div>
     <button class="btn ghost" data-action="add-habit" style="margin-top:8px">+ Новая привычка</button>
     <p class="muted hb-nmt">⚠️ Никогда не пропускай дважды: один пропуск — случайность, два — начало новой привычки. Отмечать привычки — на «Сегодня».</p>`;
@@ -5307,11 +5337,11 @@ const PET_SPECIES = {
     }),
   },
   fortune: { // 🐈‍⬛ Кот Удачи (манэки-нэко) — Codex-арт, сфера «Доход»
-    // Ручная пересборка из вырезанных частей оказалась хрупкой (голова/хвост/лапа «летали»,
-    // дубли ушей) — та же болезнь, что у аватара. До ПЕРЕ-экспорта пре-регистрированных слоёв
-    // рендерим ЦЕЛЬНУЮ сборку assembled.png (исходный арт, когерентный). raster:true — своя морда.
-    slots: { head: [60, 42], neck: [60, 72], back: [88, 66] },
+    // v2 собран из пре-регистрированных 1024×1024 слоёв с явными pivot-точками.
+    // assembled.png остаётся резервным цельным рендером для старых клиентов.
+    slots: { head: [60, 31], neck: [60, 64], back: [78, 72] },
     raster: true,
+    rigV2: true,
     draw: () => ({
       ears: '', feet: '', belly: '', extra: '', tail: '',
       body: `<image href="art/pets/fortune/assembled.png" x="5" y="3" width="111" height="124"/>`,
@@ -5383,10 +5413,44 @@ function wearLayerHTML(slot, sp, sphereId) {
   // внешняя группа — позиция (статична), внутренняя .pd-wear — bob-анимация (иначе CSS-transform перетёр бы translate)
   return `<g transform="translate(${a[0]},${a[1]})"><g class="pd-wear">${it.svg}</g></g>`;
 }
+function fortuneRigImage(file, className, pivotX, pivotY) {
+  return `<g transform="translate(${pivotX},${pivotY})"><g class="${className}"><image href="art/pets/fortune-v2/${file}" x="${-pivotX}" y="${-pivotY}" width="1024" height="1024"/></g></g>`;
+}
+function fortuneRigGroup(className, pivotX, pivotY, images) {
+  const markup = images.map((file) => {
+    if (file === 'pet-face.png') {
+      return `<g transform="translate(${512 - pivotX},${415 - pivotY})"><g class="fc-face"><image href="art/pets/fortune-v2/${file}" x="-512" y="-415" width="1024" height="1024"/></g></g>`;
+    }
+    const cls = file.includes('head-patch') ? ' class="fc-patch"' : '';
+    return `<image${cls} href="art/pets/fortune-v2/${file}" x="${-pivotX}" y="${-pivotY}" width="1024" height="1024"/>`;
+  }).join('');
+  return `<g transform="translate(${pivotX},${pivotY})"><g class="${className}">${markup}</g></g>`;
+}
+function fortuneRigV2Markup() {
+  return `<g class="fc-rig-frame" transform="translate(-6,-1) scale(.129)">
+    ${fortuneRigImage('pet-shadow.png', 'fc-shadow', 512, 900)}
+    ${fortuneRigImage('pet-tail.png', 'fc-tail', 350, 690)}
+    ${fortuneRigImage('pet-back-bag.png', 'fc-bag', 650, 565)}
+    ${fortuneRigImage('pet-body.png', 'fc-body', 512, 660)}
+    ${fortuneRigImage('pet-paw-raised.png', 'fc-raised-paw', 350, 385)}
+    ${fortuneRigGroup('fc-held', 642, 555, ['pet-hand-item.png', 'pet-paw-holding.png'])}
+    ${fortuneRigGroup('fc-head', 512, 455, ['pet-head-base.png', 'pet-ear-r.png', 'pet-ear-l.png', 'pet-head-patch-r.png', 'pet-head-patch-l.png', 'pet-face.png'])}
+    ${fortuneRigImage('pet-collar.png', 'fc-collar', 512, 505)}
+    ${fortuneRigImage('pet-bell.png', 'fc-bell', 512, 548)}
+  </g>`;
+}
 function petSVG(color, state, traits, sphereId) {
   const r = state === 'overfed' ? 1.18 : state === 'full' ? 1.08 : state === 'hungry' ? 0.86 : 1.0;
   const dom = (traits[0] && traits[0].icon) || '⭐';
   const sp = PET_SPECIES[archToSpecies(dom)] || PET_SPECIES.round, p = sp.draw(color);
+  if (sp.rigV2) {
+    return `<svg class="pet-svg fc-rig fc-state-${state}" viewBox="0 0 120 132" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      ${wearLayerHTML('back', sp, sphereId)}
+      <g transform="translate(60,80) scale(${r.toFixed(2)},${(0.5 + r * 0.5).toFixed(2)}) translate(-60,-80)">${fortuneRigV2Markup()}</g>
+      ${wearLayerHTML('neck', sp, sphereId)}
+      ${wearLayerHTML('head', sp, sphereId)}
+    </svg>`;
+  }
   // scale-по-состоянию на внешней группе (статична), bob — на внутренней .pd-body-grp (CSS-анимация не перетирает scale)
   return `<svg class="pet-svg" viewBox="0 0 120 132" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <ellipse cx="60" cy="123" rx="32" ry="7" fill="#000" opacity="0.2"/>
@@ -5702,7 +5766,7 @@ function renderToday() {
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="${t('Новый квест на сегодня…')}" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
-        <input name="estimateMin" type="number" min="0" step="1" value="30" title="Минут" />
+        ${durInputHTML('estimateMin', 30)}
         <select name="difficulty"><option value="easy">${t('🌱 Лёгкая')}</option><option value="normal" selected>${t('⚔️ Обычная')}</option><option value="hard">${t('🔥 Сложная')}</option></select>
         <button type="submit">${t('+ Квест')}</button></form>
       <div id="cat-suggest" class="cat-suggest"></div>
@@ -7155,7 +7219,9 @@ function renderSettings() {
       <input type="text" value="${esc(h.title)}" data-field="title" />
       <select data-field="skillId" class="${skillById(h.skillId).missing ? 'missing' : ''}">${skillById(h.skillId).missing ? `<option value="${esc(h.skillId)}" selected>${t('— нет сферы —')}</option>` : ''}${skillOpts(h.skillId)}</select>
       <select data-field="difficulty"><option value="easy" ${h.difficulty === 'easy' ? 'selected' : ''}>${t('Лёгкая')}</option><option value="normal" ${h.difficulty === 'normal' ? 'selected' : ''}>${t('Обычная')}</option><option value="hard" ${h.difficulty === 'hard' ? 'selected' : ''}>${t('Сложная')}</option></select>
-      <input type="number" min="0" step="1" value="${Number(h.estimateMin) || 0}" data-field="estimateMin" />
+      <span class="dur-input" title="${t('Длительность: часы и минуты')}">
+        <input type="number" min="0" max="24" step="1" inputmode="numeric" value="${Math.floor((Number(h.estimateMin) || 0) / 60)}" data-field="estimateMinH" aria-label="${t('Часы')}" /><i>${t('ч')}</i>
+        <input type="number" min="0" max="59" step="1" inputmode="numeric" value="${(Number(h.estimateMin) || 0) % 60}" data-field="estimateMinM" aria-label="${t('Минуты')}" /><i>${t('м')}</i></span>
       <div class="weekdays">${WEEKDAYS.map((w) => `<label><input type="checkbox" data-day="${w.js}" ${(h.days || []).includes(w.js) ? 'checked' : ''}/>${w.label}</label>`).join('')}</div>
       <button class="del" data-action="delete-habit" data-id="${h.id}">✕</button></div>`).join('');
   return `
@@ -7500,12 +7566,62 @@ function renderNav() {
   const lvl = navUnlockLevel(), cur = sectionOf(State.view);
   const primary = SECTIONS.map((s) => {
     const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
-    return `<button class="navsec${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}" title="${locked ? 'Откроется на ур.' + s.gate : (isNew ? t(s.label) + ' — новое!' : t(s.label))}">${s.icon}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">🔒${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
+    const mobileClass = ['today', 'plan', 'habits', 'hero'].includes(s.id) ? ' mobile-primary' : ' mobile-secondary';
+    return `<button class="navsec${mobileClass}${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}" title="${locked ? 'Откроется на ур.' + s.gate : (isNew ? t(s.label) + ' — новое!' : t(s.label))}">${s.icon}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">🔒${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
   }).join('');
   const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="${t('Настройки')}" aria-label="${t('Настройки')}">⚙️</button>`;
+  const moreActive = cur === 'rewards' || cur === 'tribe' || State.view === 'settings';
+  const moreNew = SECTIONS.filter((s) => s.id === 'rewards' || s.id === 'tribe').some((s) => sectionHasNew(s, lvl));
+  const more = `<button class="navsec mobile-nav-more${moreActive ? ' active' : ''}${moreNew && !moreActive ? ' navsec-new' : ''}" data-action="mobile-nav-more" aria-haspopup="dialog" aria-label="${t('Ещё')}"><span class="mobile-more-glyph" aria-hidden="true">•••</span><span class="navsec-l">${t('Ещё')}</span>${moreNew && !moreActive ? '<span class="navsec-dot"></span>' : ''}</button>`;
   const sec = SECTIONS.find((s) => s.id === cur);
   const subs = (sec && sec.views.length > 1) ? `<div class="navsub">${sec.views.map((v) => { const nd = NEW_VIEWS.includes(v.view) && !isDiscovered(v.view) && v.view !== State.view ? '<span class="navsub-dot"></span>' : ''; return `<button class="navsubtab${v.view === State.view ? ' active' : ''}" data-view="${v.view}">${t(v.label)}${nd}</button>`; }).join('')}</div>` : '';
-  nav.innerHTML = `<div class="navrow">${primary}${gear}</div>${subs}`;
+  nav.innerHTML = `<div class="navrow">${primary}${more}${gear}</div>${subs}`;
+}
+
+function closeMobileNavSheet() {
+  const overlay = document.getElementById('mobile-nav-sheet');
+  document.documentElement.classList.remove('mobile-nav-open');
+  if (!overlay) return;
+  const returnFocus = overlay._returnFocus;
+  overlay.classList.remove('is-open');
+  setTimeout(() => {
+    overlay.remove();
+    if (returnFocus && returnFocus.isConnected) returnFocus.focus({ preventScroll: true });
+  }, 180);
+}
+
+function showMobileNavSheet() {
+  document.getElementById('mobile-nav-sheet')?.remove();
+  const lvl = navUnlockLevel(), cur = sectionOf(State.view), cr = charRank();
+  const menuSections = SECTIONS.filter((s) => s.id === 'rewards' || s.id === 'tribe').map((s) => {
+    const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
+    return `<button class="mobile-sheet-entry${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}" data-action="go-section" data-sec="${s.id}">
+      <span class="mobile-sheet-icon">${s.icon}</span><span><b>${t(s.label)}</b>${locked ? `<small>🔒 ${t('Уровень')} ${s.gate}</small>` : ''}</span>${isNew ? '<i class="mobile-sheet-new"></i>' : '<span class="mobile-sheet-chevron">›</span>'}
+    </button>`;
+  }).join('');
+  const overlay = document.createElement('div');
+  overlay.id = 'mobile-nav-sheet';
+  overlay.className = 'mobile-nav-overlay';
+  overlay._returnFocus = document.activeElement;
+  overlay.innerHTML = `<section class="mobile-nav-sheet" role="dialog" aria-modal="true" aria-label="${t('Ещё')}">
+    <div class="mobile-sheet-handle" aria-hidden="true"></div>
+    <header class="mobile-sheet-head">
+      <div class="mobile-sheet-profile"><span>${esc((State.me && State.me.avatar) || '👤')}</span><div><b>${esc((State.me && State.me.name) || 'Satoru')}</b><small>${cr.icon} ${esc(cr.name)} · ${t('Уровень')} ${charLevel()}</small></div></div>
+      <button class="mobile-sheet-close" data-action="mobile-nav-close" aria-label="${t('Закрыть')}">✕</button>
+    </header>
+    <div class="mobile-sheet-grid">${menuSections}
+      <button class="mobile-sheet-entry" data-action="open-helper"><span class="mobile-sheet-icon">🤖</span><span><b>${t('Помощник')}</b><small>Satoru AI</small></span><span class="mobile-sheet-chevron">›</span></button>
+      <button class="mobile-sheet-entry${State.view === 'settings' ? ' active' : ''}" data-action="mobile-go-settings"><span class="mobile-sheet-icon">⚙️</span><span><b>${t('Настройки')}</b></span><span class="mobile-sheet-chevron">›</span></button>
+      <button class="mobile-sheet-entry" data-action="show-paywall" data-feature="Pro"><span class="mobile-sheet-icon">💎</span><span><b>Pro</b><small>${ent().tier === 'pro' ? 'PRO' : ent().tier === 'trial' ? `TRIAL · ${trialDaysLeft()}д` : 'FREE'}</small></span><span class="mobile-sheet-chevron">›</span></button>
+    </div>
+    <div class="mobile-sheet-utils"><button class="btn ghost" data-action="show-guide">? ${t('Как играть')}</button><button class="btn ghost" data-action="logout">⇦ ${t('Выйти')}</button></div>
+  </section>`;
+  document.documentElement.classList.add('mobile-nav-open');
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => {
+    overlay.classList.add('is-open');
+    overlay.querySelector('.mobile-sheet-close')?.focus({ preventScroll: true });
+  });
 }
 const ACCENTS = ['#6c8cff', '#22c1a4', '#e0526a', '#b06ff0', '#e0a23e', '#4f9ff7']; // палитра акцентов (#тема)
 function applyTheme() {
@@ -7565,6 +7681,14 @@ function render() {
   try { kickCompVideo(); } catch (e) { /* видео-автоплей — не критично */ }
   try { tutorialPaint(); } catch (e) { /* гайд-оверлей — не критично */ }
   try { dripCheck(); } catch (e) { /* капельница гайда — не критично */ }
+  dismissBootLoader();
+}
+function dismissBootLoader() {
+  const loader = document.getElementById('satoru-boot');
+  if (!loader || loader.dataset.dismissed) return;
+  loader.dataset.dismissed = '1';
+  requestAnimationFrame(() => loader.classList.add('is-done'));
+  setTimeout(() => loader.remove(), 420);
 }
 // iOS: атрибут `muted` из innerHTML не всегда регистрируется и блокирует autoplay.
 // Принудительно мьютим и стартуем; если play() отклонён — остаётся poster (персонаж виден).
@@ -7818,7 +7942,7 @@ function onSubmit(e) {
   if (f.id === 'add-task') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
     const tDate = (f.date && f.date.value) || todayStr(); // вкладка «Календарь» добавляет на выбранный день
-    State.tasks.push({ id: uid(), title, skillId: f.skillId.value, skillIds: [f.skillId.value], estimateMin: Number(f.estimateMin.value) || 0, difficulty: f.difficulty.value, date: tDate, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
+    State.tasks.push({ id: uid(), title, skillId: f.skillId.value, skillIds: [f.skillId.value], estimateMin: readDurInput(f, 'estimateMin'), difficulty: f.difficulty.value, date: tDate, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
     Store.save('tasks', State.tasks); render();
   } else if (f.id === 'add-goal') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
@@ -7980,13 +8104,15 @@ function tutMascotHTML() { return `<span class="tut-mascot"><img src="/assets/sh
 function onClick(e) {
   const navBtn = e.target.closest('#nav button[data-view]');
   if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
-  const secBtn = e.target.closest('#nav [data-action="go-section"]');
+  const secBtn = e.target.closest('[data-action="go-section"]');
   if (secBtn) {
     const s = SECTIONS.find((x) => x.id === secBtn.dataset.sec); if (!s) return;
     if (s.gate > navUnlockLevel()) { toast(`🔒 «${s.label}» откроется на ур.${s.gate}`); return; }
+    closeMobileNavSheet();
     if (sectionOf(State.view) !== s.id) { flushSettingsForm(); State.view = s.views[0].view; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
     return;
   }
+  if (e.target.id === 'mobile-nav-sheet') { closeMobileNavSheet(); return; }
   const el = e.target.closest('[data-action]');
   if (!el) {
     // клик по пустому месту сетки календаря → подставить время в форму планирования
@@ -7999,6 +8125,13 @@ function onClick(e) {
     return;
   }
   const action = el.dataset.action, id = el.dataset.id, today = todayStr();
+
+  if (el.closest('#mobile-nav-sheet') && action !== 'mobile-nav-close') closeMobileNavSheet();
+  if (action === 'mobile-nav-more') { showMobileNavSheet(); return; }
+  if (action === 'mobile-nav-close') { closeMobileNavSheet(); return; }
+  if (action === 'mobile-go-settings') {
+    flushSettingsForm(); State.view = 'settings'; State.adminUsers = null; State.analytics = undefined; track('view:settings'); render(); return;
+  }
 
   // --- Гайд (туториал) ---
   if (action === 'tut-next') { tutorialNext(); return; }
@@ -8611,7 +8744,9 @@ function captureSettingsForm() {
     const oldHabits = State.habits;
     State.habits = [...habitsList.querySelectorAll('.habit-edit')].map((row) => {
       const old = oldHabits.find((h) => h.id === row.dataset.id);
-      return { id: row.dataset.id, title: row.querySelector('[data-field="title"]').value.trim() || 'Привычка', skillId: row.querySelector('[data-field="skillId"]').value, difficulty: row.querySelector('[data-field="difficulty"]').value, estimateMin: Number(row.querySelector('[data-field="estimateMin"]').value) || 0, days: [...row.querySelectorAll('input[data-day]:checked')].map((c) => Number(c.dataset.day)), archived: false, createdAt: old ? old.createdAt : new Date().toISOString() };
+      const hh = Number((row.querySelector('[data-field="estimateMinH"]') || {}).value) || 0;
+      const mm = Number((row.querySelector('[data-field="estimateMinM"]') || {}).value) || 0;
+      return { id: row.dataset.id, title: row.querySelector('[data-field="title"]').value.trim() || 'Привычка', skillId: row.querySelector('[data-field="skillId"]').value, difficulty: row.querySelector('[data-field="difficulty"]').value, estimateMin: Math.max(0, hh * 60 + mm), days: [...row.querySelectorAll('input[data-day]:checked')].map((c) => Number(c.dataset.day)), archived: false, createdAt: old ? old.createdAt : new Date().toISOString() };
     });
   }
   s.xp.perMinute = num('k-perMinute', 1); s.xp.completionBonus = num('k-bonus', 5);
@@ -9074,7 +9209,11 @@ async function init() {
   document.addEventListener('pointerdown', onTreePointerDown);
   // Инлайн-правка текста квеста: клик мимо → сохранить; Esc → отмена
   document.addEventListener('focusout', (e) => { const f = e.target.closest && e.target.closest('.t-edit-form'); if (f && f.requestSubmit) setTimeout(() => { if (State._editTask) f.requestSubmit(); }, 100); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && State._editTask) { State._editTask = null; render(); } });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (document.getElementById('mobile-nav-sheet')) { closeMobileNavSheet(); return; }
+    if (State._editTask) { State._editTask = null; render(); }
+  });
   document.addEventListener('dragstart', onWkDragStart);
   document.addEventListener('dragover', onWkDragOver);
   document.addEventListener('drop', onWkDrop);
