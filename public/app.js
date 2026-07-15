@@ -468,6 +468,11 @@ const I18N_EXTRA = {
   'Книгозверь': { en: 'Bookbeast', de: 'Büchertier', uk: 'Книгозвір', es: 'Librobestia' },
   'Болтун': { en: 'Chatterbox', de: 'Plappermaul', uk: 'Балакун', es: 'Parlanchín' },
   'Кот Удачи': { en: 'Lucky Cat', de: 'Glückskatze', uk: 'Кіт Удачі', es: 'Gato de la Suerte' },
+  'Пушистик': { en: 'Fluffy', de: 'Flauschling', uk: 'Пухнастик', es: 'Peludito' },
+  'Слизень': { en: 'Slime', de: 'Schleimchen', uk: 'Слимак', es: 'Limo' },
+  'Птица': { en: 'Bird', de: 'Vogel', uk: 'Птах', es: 'Ave' },
+  'Облик': { en: 'Appearance', de: 'Aussehen', uk: 'Вигляд', es: 'Aspecto' },
+  'Автоматически': { en: 'Automatic', de: 'Automatisch', uk: 'Автоматично', es: 'Automático' },
   'Творец': { en: 'Maker', de: 'Kreativling', uk: 'Творець', es: 'Creador' },
   'Байтик': { en: 'Bytie', de: 'Bytchen', uk: 'Байтик', es: 'Bytín' },
   'Мудрёныш': { en: 'Sagelet', de: 'Weislein', uk: 'Мудрик', es: 'Sabiecito' },
@@ -5491,6 +5496,29 @@ const PET_SPECIES = {
 function archToSpecies(arc) {
   return ({ '🏋': 'sturdy', '💼': 'fortune', '🎨': 'fluffy', '💬': 'fluffy', '💻': 'slime', '🧹': 'slime', '🗣': 'bird', '🧘': 'bird' })[arc] || 'round';
 }
+const PET_SPECIES_LABELS = {
+  round: 'Огонёк',
+  sturdy: 'Силач',
+  fortune: 'Кот Удачи',
+  fluffy: 'Пушистик',
+  slime: 'Слизень',
+  bird: 'Птица',
+};
+function ensurePetSpecies() {
+  const settings = State.settings || (State.settings = {});
+  if (!settings.petSpecies || typeof settings.petSpecies !== 'object' || Array.isArray(settings.petSpecies)) settings.petSpecies = {};
+  return settings.petSpecies;
+}
+function petSpeciesForSphere(sphereId, traits) {
+  const selected = sphereId && ensurePetSpecies()[sphereId];
+  if (selected && PET_SPECIES[selected]) return selected;
+  const dom = (traits && traits[0] && traits[0].icon) || '⭐';
+  return archToSpecies(dom);
+}
+function petSpeciesOptions(selected) {
+  const automatic = `<option value=""${selected ? '' : ' selected'}>${t('Автоматически')}</option>`;
+  return automatic + Object.entries(PET_SPECIES_LABELS).map(([id, label]) => `<option value="${id}"${id === selected ? ' selected' : ''}>${t(label)}</option>`).join('');
+}
 // ── Надеваемая экипировка (PETS-EQUIPMENT-PLAN.md, Фаза 2) ──
 // Предмет = SVG в ЛОКАЛЬНЫХ координатах слота (0,0 = якорь). Слоты: head/neck/back.
 // Те же предметы переиспользуются на аватаре (Фаза 3).
@@ -5554,35 +5582,36 @@ function wearLayerHTML(slot, sp, sphereId) {
   return `<g transform="translate(${a[0]},${a[1]})"><g class="pd-wear">${it.svg}</g></g>`;
 }
 function fortuneRigImage(file, className, pivotX, pivotY) {
-  return `<g transform="translate(${pivotX},${pivotY})"><g class="${className}"><image href="art/pets/fortune-v2/${file}" x="${-pivotX}" y="${-pivotY}" width="1024" height="1024"/></g></g>`;
+  return `<g transform="translate(${pivotX},${pivotY})"><g class="${className}"><image href="art/pets/fortune-v2/${file}?v=20260715-1" x="${-pivotX}" y="${-pivotY}" width="1024" height="1024"/></g></g>`;
 }
 function fortuneRigGroup(className, pivotX, pivotY, images) {
   const markup = images.map((file) => {
     if (file === 'pet-face.png') {
-      return `<g transform="translate(${512 - pivotX},${415 - pivotY})"><g class="fc-face"><image href="art/pets/fortune-v2/${file}" x="-512" y="-415" width="1024" height="1024"/></g></g>`;
+      return `<g transform="translate(${512 - pivotX},${368 - pivotY})"><g class="fc-face"><image href="art/pets/fortune-v2/${file}?v=20260715-1" x="-512" y="-368" width="1024" height="1024"/></g></g>`;
     }
     const cls = file.includes('head-patch') ? ' class="fc-patch"' : '';
-    return `<image${cls} href="art/pets/fortune-v2/${file}" x="${-pivotX}" y="${-pivotY}" width="1024" height="1024"/>`;
+    return `<image${cls} href="art/pets/fortune-v2/${file}?v=20260715-1" x="${-pivotX}" y="${-pivotY}" width="1024" height="1024"/>`;
   }).join('');
   return `<g transform="translate(${pivotX},${pivotY})"><g class="${className}">${markup}</g></g>`;
 }
 function fortuneRigV2Markup() {
   return `<g class="fc-rig-frame" transform="translate(-6,-1) scale(.129)">
-    ${fortuneRigImage('pet-shadow.png', 'fc-shadow', 512, 900)}
-    ${fortuneRigImage('pet-tail.png', 'fc-tail', 350, 690)}
-    ${fortuneRigImage('pet-back-bag.png', 'fc-bag', 650, 565)}
-    ${fortuneRigImage('pet-body.png', 'fc-body', 512, 660)}
-    ${fortuneRigImage('pet-paw-raised.png', 'fc-raised-paw', 350, 385)}
-    ${fortuneRigGroup('fc-held', 642, 555, ['pet-hand-item.png', 'pet-paw-holding.png'])}
-    ${fortuneRigGroup('fc-head', 512, 455, ['pet-head-base.png', 'pet-ear-r.png', 'pet-ear-l.png', 'pet-head-patch-r.png', 'pet-head-patch-l.png', 'pet-face.png'])}
-    ${fortuneRigImage('pet-collar.png', 'fc-collar', 512, 505)}
-    ${fortuneRigImage('pet-bell.png', 'fc-bell', 512, 548)}
+    ${fortuneRigImage('pet-shadow.png', 'fc-shadow', 512, 902)}
+    ${fortuneRigImage('pet-tail.png', 'fc-tail', 343, 720)}
+    ${fortuneRigImage('pet-back-bag.png', 'fc-bag', 680, 590)}
+    ${fortuneRigImage('pet-body.png', 'fc-body', 512, 690)}
+    ${fortuneRigImage('pet-collar.png', 'fc-collar', 512, 525)}
+    ${fortuneRigImage('pet-paw-raised.png', 'fc-raised-paw', 350, 610)}
+    ${fortuneRigGroup('fc-held', 668, 610, ['pet-paw-holding-arm.png', 'pet-hand-item.png', 'pet-paw-holding.png'])}
+    ${fortuneRigGroup('fc-head', 512, 430, ['pet-ear-r.png', 'pet-ear-l.png', 'pet-head-base.png', 'pet-head-patch-r.png', 'pet-head-patch-l.png', 'pet-face.png'])}
+    ${fortuneRigImage('pet-bell.png', 'fc-bell', 512, 534)}
   </g>`;
 }
 function petSVG(color, state, traits, sphereId) {
   const r = state === 'overfed' ? 1.18 : state === 'full' ? 1.08 : state === 'hungry' ? 0.86 : 1.0;
   const dom = (traits[0] && traits[0].icon) || '⭐';
-  const sp = PET_SPECIES[archToSpecies(dom)] || PET_SPECIES.round, p = sp.draw(color);
+  const speciesId = petSpeciesForSphere(sphereId, traits);
+  const sp = PET_SPECIES[speciesId] || PET_SPECIES.round, p = sp.draw(color);
   if (sp.rigV2) {
     return `<svg class="pet-svg fc-rig fc-state-${state}" viewBox="0 0 120 132" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       ${wearLayerHTML('back', sp, sphereId)}
@@ -5619,6 +5648,7 @@ function renderPets() {
   else balance = `✨ Зверинец в гармонии — ты держишь десятиборье ровно. Так держать.`;
   const cards = pets.map(({ s, st, traits, nm }) => {
     const meta = PET_STATE[st.state], tr = traits[0];
+    const selectedSpecies = ensurePetSpecies()[s.id] || '';
     // «живёт своей жизнью»: фраза дня из пула вида — стабильна в течение дня, своя у каждого питомца
     const idle = dayPick('petidle' + s.id, tr.idles || [tr.idle]);
     const line = st.state === 'hungry' ? (!st.lastFed ? `ждёт первой встречи — покорми делами` : st.daysSince >= 8 ? `не виделись ${st.daysSince} ${plural(st.daysSince, 'день', 'дня', 'дней')} — скучает` : `проголодался — покорми делами`)
@@ -5634,6 +5664,7 @@ function renderPets() {
     return `<div class="card pet-card">
       <div class="pet-art" data-action="pet-feed" data-id="${s.id}" title="приласкать ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits, s.id)}</div>
       ${nameRow}${sub}
+      <label class="pet-species-picker"><span>${t('Облик')}</span><select data-action="set-pet-species" data-id="${s.id}" aria-label="${t('Облик')}: ${esc(nm)}">${petSpeciesOptions(selectedSpecies)}</select></label>
       <div class="pet-bar"><span style="width:${Math.min(100, Math.round(st.pct / 120 * 100))}%;background:${meta.color}"></span></div>
       <p class="pet-line muted">${line}</p>
       <div class="pet-traits" title="облик и повадки питомца — по твоим подсферам">${traits.map((t) => `<span>${t.icon}</span>`).join('')}</div>
@@ -5814,8 +5845,11 @@ function denAvatarState(eP, p, tm) {
 function renderDen() {
   const c = ensureCompanion(), mood = compMood(), ti = compTierIdx(c.bond);
   const cr = charRank(), nm = (State.me && State.me.name) || 'Герой';
-  const pets = topSkills().slice(0, 3).map((s) => ({ s, st: petStats(s.id), traits: petTraits(s.id) }));
-  const petLayer = pets.map((p, i) => `<div class="den-pet den-pet-${i}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id)}</div>`).join('');
+  const pets = topSkills().slice(0, 3).map((s) => {
+    const traits = petTraits(s.id);
+    return { s, st: petStats(s.id), traits, species: petSpeciesForSphere(s.id, traits) };
+  });
+  const petLayer = pets.map((p, i) => `<div class="den-pet den-pet-${i}${p.species === 'fortune' ? ' den-pet-fortune' : ''}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id)}</div>`).join('');
   const p = nestedProgress(), eP = energyPct(), eM = energyMeta(), tm = State.timer;
   const avatarState = denAvatarState(eP, p, tm);
   const focusRow = tm
@@ -9212,6 +9246,15 @@ function onChange(e) {
   const el = e.target.closest('[data-action]');
   if (!el) return;
   const a = el.dataset.action;
+  if (a === 'set-pet-species') {
+    const species = ensurePetSpecies(), sphereId = el.dataset.id;
+    if (el.value && PET_SPECIES[el.value]) species[sphereId] = el.value;
+    else delete species[sphereId];
+    Store.save('settings', State.settings);
+    toast(`🐾 ${t('Облик')}: ${t(PET_SPECIES_LABELS[el.value] || 'Автоматически')}`);
+    render();
+    return;
+  }
   if (a === 'set-ambient-vol') {
     if (!State.settings.ambient) State.settings.ambient = {};
     State.settings.ambient.vol = Number(el.value);

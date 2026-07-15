@@ -1096,6 +1096,8 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .pet-edit { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 12px; padding: 1px 3px; border-radius: 5px; }
 .pet-edit:hover { color: var(--text); background: var(--panel2); }
 .pet-sphere { margin: 2px 0 0 !important; font-size: 10.5px !important; opacity: .8; }
+.pet-species-picker { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 9px; padding-top: 9px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; font-weight: 700; }
+.pet-species-picker select { min-width: 0; width: 100px; padding: 5px 24px 5px 7px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel2); color: var(--text); font: inherit; cursor: pointer; }
 .pet-rename-form { display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: 4px; }
 .pet-rename-form input { padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel2); color: var(--text); font-size: 13px; text-align: center; }
 .pet-rename-btns { display: flex; gap: 6px; justify-content: center; }
@@ -2665,6 +2667,24 @@ body {
   width: 50px;
 }
 
+.den-pet-0.den-pet-fortune {
+  left: 8px;
+  bottom: 5px;
+  width: 128px;
+}
+
+.den-pet-1.den-pet-fortune {
+  right: 8px;
+  bottom: 5px;
+  width: 124px;
+}
+
+.den-pet-2.den-pet-fortune {
+  left: 116px;
+  bottom: 3px;
+  width: 112px;
+}
+
 .den-mood {
   padding: 16px 20px 4px;
   color: var(--text-soft);
@@ -3211,7 +3231,7 @@ body {
   will-change: transform;
 }
 
-.fc-rig .fc-patch { opacity: .72; }
+.fc-rig .fc-patch { opacity: 1; }
 .fc-rig .fc-shadow { animation: fcV2Shadow 3.8s ease-in-out infinite; }
 .fc-rig .fc-tail { animation: fcV2Tail 3.2s ease-in-out infinite; }
 .fc-rig .fc-bag { animation: fcV2Bag 4.2s ease-in-out infinite; }

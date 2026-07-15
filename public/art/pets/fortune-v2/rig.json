@@ -1,0 +1,168 @@
+{
+  "version": 2,
+  "canvas": [
+    1024,
+    1024
+  ],
+  "style": "satoru-cut-paper",
+  "layers": [
+    {
+      "id": "pet-shadow",
+      "file": "pet-shadow.png",
+      "z": 0,
+      "pivot": [
+        512,
+        902
+      ]
+    },
+    {
+      "id": "pet-tail",
+      "file": "pet-tail.png",
+      "z": 10,
+      "pivot": [
+        343,
+        720
+      ]
+    },
+    {
+      "id": "pet-back-bag",
+      "file": "pet-back-bag.png",
+      "z": 20,
+      "pivot": [
+        680,
+        590
+      ]
+    },
+    {
+      "id": "pet-body",
+      "file": "pet-body.png",
+      "z": 30,
+      "pivot": [
+        512,
+        690
+      ]
+    },
+    {
+      "id": "pet-collar",
+      "file": "pet-collar.png",
+      "z": 40,
+      "pivot": [
+        512,
+        525
+      ]
+    },
+    {
+      "id": "pet-paw-raised",
+      "file": "pet-paw-raised.png",
+      "z": 50,
+      "pivot": [
+        350,
+        610
+      ]
+    },
+    {
+      "id": "pet-paw-holding-arm",
+      "file": "pet-paw-holding-arm.png",
+      "z": 52,
+      "pivot": [
+        668,
+        610
+      ]
+    },
+    {
+      "id": "pet-hand-item",
+      "file": "pet-hand-item.png",
+      "z": 54,
+      "pivot": [
+        650,
+        650
+      ]
+    },
+    {
+      "id": "pet-paw-holding",
+      "file": "pet-paw-holding.png",
+      "z": 55,
+      "pivot": [
+        668,
+        610
+      ]
+    },
+    {
+      "id": "pet-ear-r",
+      "file": "pet-ear-r.png",
+      "z": 58,
+      "pivot": [
+        390,
+        295
+      ]
+    },
+    {
+      "id": "pet-ear-l",
+      "file": "pet-ear-l.png",
+      "z": 59,
+      "pivot": [
+        674,
+        295
+      ]
+    },
+    {
+      "id": "pet-head-base",
+      "file": "pet-head-base.png",
+      "z": 60,
+      "pivot": [
+        512,
+        430
+      ]
+    },
+    {
+      "id": "pet-head-patch-r",
+      "file": "pet-head-patch-r.png",
+      "z": 63,
+      "pivot": [
+        552,
+        183
+      ]
+    },
+    {
+      "id": "pet-head-patch-l",
+      "file": "pet-head-patch-l.png",
+      "z": 64,
+      "pivot": [
+        637,
+        186
+      ]
+    },
+    {
+      "id": "pet-face",
+      "file": "pet-face.png",
+      "z": 70,
+      "pivot": [
+        512,
+        368
+      ]
+    },
+    {
+      "id": "pet-bell",
+      "file": "pet-bell.png",
+      "z": 90,
+      "pivot": [
+        512,
+        534
+      ]
+    }
+  ],
+  "slots": {
+    "head": [
+      512,
+      250
+    ],
+    "neck": [
+      512,
+      525
+    ],
+    "back": [
+      680,
+      590
+    ]
+  }
+}
