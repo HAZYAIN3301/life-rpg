@@ -1644,6 +1644,23 @@ const I18N_EXTRA = {
   'Это не «плохие» фичи — это фичи, которые не нашли. Прежде чем строить новое, стоит проверить: их не находят или они не нужны?': { en: 'These are not "bad" features — these are features nobody found. Before building something new, check: are they undiscovered, or unwanted?', de: 'Das sind keine „schlechten" Features — das sind Features, die niemand gefunden hat. Bevor du Neues baust, prüfe: unentdeckt oder ungewollt?', uk: 'Це не «погані» фічі — це фічі, яких не знайшли. Перш ніж будувати нове, варто перевірити: їх не знаходять чи вони не потрібні?', es: 'No son funciones "malas" — son funciones que nadie encontró. Antes de construir algo nuevo, comprueba: ¿no se encuentran o no se quieren?' },
   'Пока ни одного события.': { en: 'No events yet.', de: 'Noch keine Ereignisse.', uk: 'Поки жодної події.', es: 'Aún no hay eventos.' },
   'Прочее:': { en: 'Other:', de: 'Sonstiges:', uk: 'Інше:', es: 'Otros:' },
+  // ── 🕯 «Заход»: UI-обвязка (пулы шагов/уюта — RU-долг, как SPHERE_GUIDE) ──
+  'Заход': { en: 'The Entry', de: 'Der Einstieg', uk: 'Захід', es: 'La Entrada' },
+  'Сил нет — и не надо много. Есть вход на 10 минут в любимое': { en: "No energy left — you don't need much. There's a 10-minute door into what you love", de: 'Keine Kraft mehr — braucht es auch nicht. Es gibt eine 10-Minuten-Tür in das, was du liebst', uk: 'Сил нема — і не треба багато. Є вхід на 10 хвилин у улюблене', es: 'Sin fuerzas — y no hacen falta muchas. Hay una entrada de 10 minutos a lo que amas' },
+  'Вечер идёт не туда? Есть ход получше приставки': { en: 'Evening drifting away? There is a better move than the console', de: 'Der Abend läuft davon? Es gibt einen besseren Zug als die Konsole', uk: 'Вечір іде не туди? Є хід кращий за приставку', es: '¿La tarde se va por otro lado? Hay una jugada mejor que la consola' },
+  'Крошечный вход в твоё дело + уют. Без опыта — связь и золото. Отказ ничего не стоит.': { en: 'A tiny entry into your thing + coziness. No XP — bond and gold. Declining costs nothing.', de: 'Ein winziger Einstieg in dein Ding + Gemütlichkeit. Kein XP — Bindung und Gold. Ablehnen kostet nichts.', uk: 'Крихітний вхід у твою справу + затишок. Без досвіду — звʼязок і золото. Відмова нічого не коштує.', es: 'Una entrada diminuta a lo tuyo + comodidad. Sin XP — vínculo y oro. Rechazar no cuesta nada.' },
+  'Десять минут в любимое дело — не ради галочек, а чтобы вечер стал твоим. Опыта не будет: только связь с Тенью и золото. Так задумано.': { en: 'Ten minutes in the thing you love — not for checkmarks, but so the evening becomes yours. No XP: only bond with Shadow and gold. By design.', de: 'Zehn Minuten in dem, was du liebst — nicht für Häkchen, sondern damit der Abend dir gehört. Kein XP: nur Bindung mit Schatten und Gold. So gewollt.', uk: 'Десять хвилин в улюблену справу — не заради галочок, а щоб вечір став твоїм. Досвіду не буде: лише звʼязок із Тінню та золото. Так задумано.', es: 'Diez minutos en lo que amas — no por casillas, sino para que la tarde sea tuya. Sin XP: solo vínculo con Sombra y oro. Así está pensado.' },
+  'Самый маленький вход': { en: 'The smallest entry', de: 'Der kleinste Einstieg', uk: 'Найменший вхід', es: 'La entrada más pequeña' },
+  'Обставь его': { en: 'Stage it', de: 'Richte ihn her', uk: 'Облаштуй його', es: 'Ambiéntala' },
+  'Захожу — 10 минут': { en: "I'm in — 10 minutes", de: 'Ich steige ein — 10 Minuten', uk: 'Заходжу — 10 хвилин', es: 'Entro — 10 minutos' },
+  'Не сегодня': { en: 'Not tonight', de: 'Heute nicht', uk: 'Не сьогодні', es: 'Hoy no' },
+  'Другой вариант входа': { en: 'Another way in', de: 'Ein anderer Einstieg', uk: 'Інший варіант входу', es: 'Otra forma de entrar' },
+  'Тень зажгла огонёк: десять минут — и вечер твой': { en: 'Shadow lit a little flame: ten minutes — and the evening is yours', de: 'Schatten hat ein Flämmchen entzündet: zehn Minuten — und der Abend gehört dir', uk: 'Тінь запалила вогник: десять хвилин — і вечір твій', es: 'Sombra encendió una llamita: diez minutos — y la tarde es tuya' },
+  'связь': { en: 'bond', de: 'Bindung', uk: 'звʼязок', es: 'vínculo' },
+  'Видишь? Вечер не слит — вечер твой 🕯': { en: 'See? The evening is not wasted — the evening is yours 🕯', de: 'Siehst du? Der Abend ist nicht verloren — der Abend gehört dir 🕯', uk: 'Бачиш? Вечір не злитий — вечір твій 🕯', es: '¿Ves? La tarde no está perdida — la tarde es tuya 🕯' },
+  'Ты пришёл сам, без «надо». Это дороже опыта': { en: 'You came on your own, without a «must». That is worth more than XP', de: 'Du bist von selbst gekommen, ohne „muss". Das ist mehr wert als XP', uk: 'Ти прийшов сам, без «треба». Це дорожче за досвід', es: 'Viniste por tu cuenta, sin un «debo». Eso vale más que la XP' },
+  'Маленький вход — а тепло настоящее 🕯': { en: 'A small entry — but the warmth is real 🕯', de: 'Ein kleiner Einstieg — aber die Wärme ist echt 🕯', uk: 'Маленький вхід — а тепло справжнє 🕯', es: 'Una entrada pequeña — pero el calor es real 🕯' },
+  'Приставка подождёт. А это — засчитано в жизнь': { en: 'The console can wait. This one counts toward life', de: 'Die Konsole kann warten. Das hier zählt fürs Leben', uk: 'Приставка почекає. А це — зараховано в життя', es: 'La consola puede esperar. Esto cuenta para la vida' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -2507,21 +2524,29 @@ function completeTask(task, desire, onDate) {
   task.done = true; task.completedAt = when.toISOString(); task.desire = desire || null;
   let xp = itemXp(task);
   if (desire === 'forced') xp = Math.round(xp * (1 + GRIT_BONUS));
-  task.xpAwarded = Math.max(1, xp); task.goldAwarded = itemGold(task);
+  // «Заход» (entry): НЕ платит опытом — платить XP за любимое дело значит превратить его в фарм.
+  // Золото фиксированное, связь +2 ниже. Энергию не тратит: он бережный по определению.
+  task.xpAwarded = task.entry ? 0 : Math.max(1, xp);
+  task.goldAwarded = task.entry ? 15 : itemGold(task);
   if (task.oath && !task.oath.burned) { // ⚔️ Клятва Кремню сдержана — золото за квест ×1.5
     task.goldAwarded = Math.round(task.goldAwarded * 1.5); task.oath.kept = true;
     setTimeout(() => { try { toast('⚔️ ' + t(FLINT_LINES.oathKept[Math.floor(Math.random() * FLINT_LINES.oathKept.length)])); } catch {} }, 1200);
   }
-  const eDelta = applyEnergy(task, desire);
+  const eDelta = task.entry ? 0 : applyEnergy(task, desire);
   // 🔴 Персист СРАЗУ: энергия уже списана — квест обязан быть сохранён раньше любой косметики
   // (нарратор/тосты/звук). Иначе сбой в UI-слое стоит игроку выполненного квеста.
   Store.save('tasks', State.tasks);
-  track('complete:quest');
+  if (task.entry) { // 💛 связь — валюта захода; сохраняем сразу же, до косметики
+    try { const c = ensureCompanion(); c.bond += 2; c.lastSeen = todayStr(); Store.save('settings', State.settings); } catch {}
+  }
+  track(task.entry ? 'entry:done' : 'complete:quest');
   const sk = skillById(task.skillId); // сфера могла быть удалена — не роняем завершение квеста
-  let msg = `+${task.xpAwarded} XP · +${task.goldAwarded} 🪙${sk ? ' · ' + sk.name : ''}`;
+  let msg = task.entry
+    ? `🕯 +${task.goldAwarded} 🪙 · 💛 ${t('связь')} +2 — ${t(dayPick('entrydone', ENTRY_DONE_LINES))}`
+    : `+${task.xpAwarded} XP · +${task.goldAwarded} 🪙${sk ? ' · ' + sk.name : ''}`;
   if (desire === 'forced') msg += ` · 💪 через силу +${Math.round(GRIT_BONUS * 100)}% XP, но −энергия`;
   if (eDelta) msg += ` · ${eDelta > 0 ? '+' : ''}${eDelta} 🔋`;
-  if (systemMode()) systemNarrate('КВЕСТ ВЫПОЛНЕН', `${msg} — ${t(systemVoice('quest'))}`); else toast(msg);
+  if (systemMode()) systemNarrate(task.entry ? 'ЗАХОД СОВЕРШЁН' : 'КВЕСТ ВЫПОЛНЕН', task.entry ? msg : `${msg} — ${t(systemVoice('quest'))}`); else toast(msg);
   if (desire === 'hyped') { const h = activateHype(); toast(`⚔️ Хайп ×${h.stacks} · +${hypePct()}% XP на ${hypeMinLeft()} мин — ты захотел трудное!`); }
   const lvlNow = charLevel();
   if (lvlNow > lvlBefore) {
@@ -3445,6 +3470,61 @@ function quietDaysBefore(max) {
   }
   return n;
 }
+// ══ «Заход» v1 (fb_mr2afy1ho0hu; живое подтверждение — fb_mrmr1frhpf7z: «слил вечер →
+// нежелание пользоваться приложением») ═══════════════════════════════════════════════
+// Вечер сорвался / сил нет → рука тянется к приставке. «Заход» — альтернатива ровно в этот
+// момент: ничтожно малый вход в любимое дело (≤10 мин), обставленный уютом (temptation
+// bundling). Платит связью с Тенью и золотом, но НЕ опытом — платить XP за любимое дело =
+// превратить любовь в фарм (overjustification). Отказ не имеет последствий — это дверь, не долг.
+const ENTRY_STEPS = {
+  '🏋': ['Разомни шею и плечи — десять медленных кругов, без подвига', 'Одно упражнение. Одно. Любимое', 'Десять минут прогулки вокруг дома — телефон остаётся дома', 'Растяжка под любимый трек — тянись, пока играет'],
+  '🧘': ['Заварить чай и выпить его, не делая больше ничего', 'Десять глубоких вдохов у открытого окна', 'Лечь на пол на пять минут и просто дышать', 'Тёплый душ — как ритуал, а не как гигиена'],
+  '📚': ['Открой вчерашний конспект и перечитай последний абзац. Просто перечитай', 'Одна карточка Anki. Серьёзно, одна — дальше как пойдёт', 'Прочитай одну страницу — с любого места', 'Запиши один вопрос, на который захочешь ответить завтра'],
+  '🗣': ['Включи серию на языке — смотреть можно лёжа', 'Пять слов в Anki, одним пальцем, лёжа', 'Спой куплет любимой песни на языке', 'Прочитай один пост или мем на языке — это тоже контакт'],
+  '💼': ['Открой проект и перечитай, где остановился. Больше ничего', 'Запиши одну мысль: куда двинуться завтра', 'Разбери один имейл или одну бумажку. Одну', 'Пять минут порядка на рабочем столе — завтрашний ты скажет спасибо'],
+  '🎨': ['Один кривой набросок. Кривой — это условие, а не риск', 'Открой проект и подвигай что-нибудь пять минут', 'Запиши идею, которая крутится — не развивая её', 'Полистай референсы десять минут и сохрани один'],
+  '💻': ['Открой файл и перечитай вчерашний код. Просто перечитай', 'Одна строчка. Комментарий тоже считается', 'Запусти проект и потыкай его как обычный юзер', 'Прочитай одну страницу доки — можно лёжа'],
+  '🧠': ['Три предложения в дневник — как есть, без красоты', 'Прочитай две страницы книги с любого места', 'Задай себе один вопрос и ответь одной строкой'],
+  '🧹': ['Один предмет — на своё место. Один', 'Протри один стол под музыку', 'Собери всё лишнее с одной поверхности — только с одной'],
+  '💬': ['Напиши одному человеку: «привет, вспомнил про тебя»', 'Отправь другу мем — это тоже связь', 'Позвони родным на пять минут'],
+};
+const ENTRY_STEP_FALLBACK = ['Самый маленький шаг в эту сторону, какой только придумаешь', 'Открой то, что связано с этим делом, и просто посмотри', 'Запиши одну мысль об этом деле — без обязательств'];
+const ENTRY_BUNDLES = ['чай или какао под бок', 'плед и тёплый свет', 'любимый плейлист фоном', 'желейки — если день был честным', 'минуту у открытого окна — свежий воздух перед входом', 'телефон в другую комнату на эти десять минут'];
+const ENTRY_DONE_LINES = ['Видишь? Вечер не слит — вечер твой 🕯', 'Ты пришёл сам, без «надо». Это дороже опыта', 'Маленький вход — а тепло настоящее 🕯', 'Приставка подождёт. А это — засчитано в жизнь'];
+function entryTodayTask() { return (State.tasks || []).find((x) => x.entry && x.date === todayStr()); }
+// Топ-сферы по XP за 30 дней = «твоё любимое/большое» без вопросов и настроек
+function entryTopSpheres() {
+  const c = new Date(); c.setDate(c.getDate() - 30);
+  const cut = fmtDate(c), score = {};
+  for (const x of (State.tasks || [])) if (x.done && dayOf(x) >= cut) score[x.skillId] = (score[x.skillId] || 0) + (x.xpAwarded || 0);
+  return Object.entries(score).sort((a, b) => b[1] - a[1]).map(([id]) => id).filter((id) => !skillById(id).missing).slice(0, 3);
+}
+function entryStepFor(skillId) {
+  const pool = ENTRY_STEPS[archetypeOf(skillId)] || ENTRY_STEP_FALLBACK;
+  return dayPick('entry' + skillId + '#' + (State._entryRoll || 0), pool);
+}
+function openEntryRitual() {
+  document.getElementById('entry-modal')?.remove();
+  const spheres = entryTopSpheres();
+  if (!spheres.length) return;
+  const sel = (State._entrySkill && spheres.includes(State._entrySkill)) ? State._entrySkill : spheres[0];
+  State._entrySkill = sel;
+  const chips = spheres.map((id) => { const sk = skillById(id); return `<button class="ob-chip ${id === sel ? 'sel' : ''}" data-action="entry-pick" data-skill="${esc(id)}" style="--c:${esc(sk.color)}">${esc(sk.name)}</button>`; }).join('');
+  const step = entryStepFor(sel), bundle = dayPick('entrybundle#' + (State._entryRoll || 0), ENTRY_BUNDLES);
+  const ov = document.createElement('div'); ov.id = 'entry-modal'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="ai-box entry-box"><button class="modal-x" data-action="entry-close">✕</button>
+    <h2>🕯 ${t('Заход')}</h2>
+    <p class="muted" style="font-size:13px;margin:0 0 10px">${t('Десять минут в любимое дело — не ради галочек, а чтобы вечер стал твоим. Опыта не будет: только связь с Тенью и золото. Так задумано.')}</p>
+    <div class="ob-group-chips" style="margin-bottom:10px">${chips}</div>
+    <div class="sg-row en-step"><b>🕯 ${t('Самый маленький вход')}</b><span>${esc(t(step))}</span></div>
+    <div class="sg-row"><b>🍬 ${t('Обставь его')}</b><span>${esc(t(bundle))}</span></div>
+    <div class="propose-actions">
+      <button class="btn" data-action="entry-accept">🕯 ${t('Захожу — 10 минут')}</button>
+      <button class="btn ghost sm" data-action="entry-reroll" title="${t('Другой вариант входа')}">↻</button>
+      <button class="btn ghost sm" data-action="entry-close">${t('Не сегодня')}</button>
+    </div></div>`;
+  document.body.appendChild(ov);
+}
 function todayActivityCount() {
   const t = todayStr();
   const q = State.tasks.filter((x) => x.done && dayOf(x) === t).length;
@@ -4009,7 +4089,7 @@ function questRow(q) {
     ${skSel}
     <span class="t-time" data-action="edit-actual" data-id="${q.id}" title="Клик — фактическое время">${time}</span>
     <span class="t-diff">${DIFF[q.difficulty] || ''}</span>
-    <span class="t-xp">${q.done ? '+' + (q.xpAwarded || 0) : ''}</span>
+    <span class="t-xp">${q.done ? (q.entry ? '💛' : '+' + (q.xpAwarded || 0)) : ''}</span>
     ${q.done ? '<span></span>' : `<button class="focus ${active ? 'active' : ''}" data-action="focus-task" data-id="${q.id}" title="Фокус-таймер">${active ? '⏱' : '▶'}</button>`}
     ${backdate}
     ${q.oath && !q.done ? `<span class="t-oath" title="Клятва Кремню: заверши сегодня или −${q.oath.gold} 🪙">⚔️${q.oath.gold}</span>` : (!q.done && currentPath() === 'control' && q.date === todayStr() && goldBalance() >= CONTROL.oathGold ? `<button class="t-oath-btn" data-action="quest-oath" data-id="${q.id}" title="Клятва Кремню: заверши до конца дня — золото за квест ×1.5; провали — сгорит ${CONTROL.oathGold} 🪙">⚔️</button>` : '')}
@@ -5921,6 +6001,24 @@ function renderToday() {
           ? t('Планировать не надо — просто наговори. Тень разложит по сферам, и можно за прошлый день.')
           : t('Наговори голосом — Тень сама разложит по делам и сферам.')}</span></div>`
     : '';
+
+  // 🕯 «Заход» (fb_mr2afy1ho0hu / fb_mrmr1frhpf7z): вечер сорвался или сил нет — альтернатива
+  // приставке ровно в момент, когда рука к ней тянется. Условия показа: (а) сегодня захода ещё
+  // не было; (б) есть «любимые» сферы (по XP за 30 дн); (в) вечер ИЛИ низкая энергия днём;
+  // (г) последняя активность ≥90 мин назад — вечер реально «уплывает», а не идёт своим ходом.
+  const hrE = new Date().getHours();
+  const lastActTs = Math.max(0,
+    ...todays.filter((x) => x.done && x.completedAt).map((x) => Date.parse(x.completedAt) || 0),
+    ...Object.values(State.habitlog[today] || {}).map((h) => Date.parse(h.at) || 0));
+  const entryStale = !lastActTs || (Date.now() - lastActTs > 90 * 60000);
+  const entryLow = eP < 45 && hrE >= 14;
+  const entryNudge = (!entryTodayTask() && entryTopSpheres().length && (entryLow || hrE >= 18) && entryStale)
+    ? `<div class="card nudge-card entry-nudge">
+        <button class="nudge" data-action="entry-open">🕯 ${entryLow
+          ? t('Сил нет — и не надо много. Есть вход на 10 минут в любимое')
+          : t('Вечер идёт не туда? Есть ход получше приставки')}</button>
+        <span class="nudge-boost">${t('Крошечный вход в твоё дело + уют. Без опыта — связь и золото. Отказ ничего не стоит.')}</span></div>`
+    : '';
   // Профилактика травм (Блок 3, спек F): активные силовые/единоборства без мобилки → мягкая opt-in подсказка
   const prefs = State.settings.prefs || {};
   const showMobil = !prefs.noMobilityNudge && _mobilSnoozeDay !== today && trainingWithoutMobility();
@@ -5951,7 +6049,7 @@ function renderToday() {
         <div class="th-stat"><b>+${xpToday}</b><span>XP</span></div>
       </div>
     </section>`;
-  return `<div class="today-shell">${companionCard()}${installBanner()}${todayHero}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${sysTeaser}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${dayLogNudge}${importNudge}${stretchNudge}${mobilityNudge}
+  return `<div class="today-shell">${companionCard()}${installBanner()}${todayHero}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${sysTeaser}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${entryNudge}${dayLogNudge}${importNudge}${stretchNudge}${mobilityNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="${t('Новый квест на сегодня…')}" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
@@ -6850,6 +6948,7 @@ const FEATURE_REGISTRY = [
   { ev: 'ai:bridge', label: 'Копипаст-мост (без ключа)' },
   { ev: 'sphere:guide', label: 'Справочник сфер' },
   { ev: 'sphere:guide-ai', label: 'Сферу разбирает Тень' },
+  { ev: 'entry:accept', label: '🕯 Заход (вечерний вход)' },
   { ev: 'chest:open', label: 'Открыть сундук' },
   { ev: 'reward:buy', label: 'Купить награду' },
   { ev: 'pet:feed', label: 'Покормить питомца' },
@@ -8806,6 +8905,28 @@ function onClick(e) {
   } else if (action === 'bridge-parse') { parseBridgeResponse();
   } else if (action === 'propose-apply') { applyAcceptedProposals();
   } else if (action === 'propose-close') { const m = document.getElementById('propose-modal'); if (m) m.remove();
+  } else if (action === 'entry-open') {
+    State._entryRoll = 0; State._entrySkill = null; openEntryRitual(); track('entry:open');
+  } else if (action === 'entry-pick') {
+    State._entrySkill = el.dataset.skill; openEntryRitual();
+  } else if (action === 'entry-reroll') {
+    State._entryRoll = (State._entryRoll || 0) + 1; openEntryRitual();
+  } else if (action === 'entry-close') {
+    document.getElementById('entry-modal')?.remove();
+  } else if (action === 'entry-accept') {
+    // Создаём заход как задачу (entry:true) и сразу запускаем фокус-таймер на 10 минут:
+    // нулевой порог входа — один клик от «вечер уплывает» до «я уже внутри».
+    const skillId = State._entrySkill || (entryTopSpheres()[0]);
+    if (!skillId) { document.getElementById('entry-modal')?.remove(); return; }
+    const step = entryStepFor(skillId);
+    const q = { id: uid(), title: ('🕯 ' + t('Заход') + ': ' + t(step)).slice(0, 110), skillId, skillIds: [skillId],
+      estimateMin: 10, difficulty: 'easy', date: todayStr(), done: false, completedAt: null,
+      xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, entry: true, createdAt: new Date().toISOString() };
+    State.tasks.push(q); Store.save('tasks', State.tasks);
+    document.getElementById('entry-modal')?.remove();
+    track('entry:accept');
+    toast('🕯 ' + t('Тень зажгла огонёк: десять минут — и вечер твой'));
+    startFocus(q.id);
   } else if (action === 'sphere-guide') {
     openSphereGuide(el.dataset.skill); track('sphere:guide');
   } else if (action === 'sphguide-close') {
