@@ -1661,6 +1661,14 @@ const I18N_EXTRA = {
   'Ты пришёл сам, без «надо». Это дороже опыта': { en: 'You came on your own, without a «must». That is worth more than XP', de: 'Du bist von selbst gekommen, ohne „muss". Das ist mehr wert als XP', uk: 'Ти прийшов сам, без «треба». Це дорожче за досвід', es: 'Viniste por tu cuenta, sin un «debo». Eso vale más que la XP' },
   'Маленький вход — а тепло настоящее 🕯': { en: 'A small entry — but the warmth is real 🕯', de: 'Ein kleiner Einstieg — aber die Wärme ist echt 🕯', uk: 'Маленький вхід — а тепло справжнє 🕯', es: 'Una entrada pequeña — pero el calor es real 🕯' },
   'Приставка подождёт. А это — засчитано в жизнь': { en: 'The console can wait. This one counts toward life', de: 'Die Konsole kann warten. Das hier zählt fürs Leben', uk: 'Приставка почекає. А це — зараховано в життя', es: 'La consola puede esperar. Esto cuenta para la vida' },
+  // ── 🌳 Гайд Тени по дереву навыков ──
+  'Смотри, тут всё честно:': { en: 'Look, everything here is fair:', de: 'Schau, hier ist alles ehrlich:', uk: 'Дивись, тут усе чесно:', es: 'Mira, aquí todo es justo:' },
+  'Дела в сфере поднимают её уровень. Каждый уровень даёт ◈ очко — оно уже твоё, заработано.': { en: 'Deeds in a sphere raise its level. Every level grants a ◈ point — already yours, already earned.', de: 'Taten in einer Sphäre heben ihr Level. Jedes Level gibt einen ◈ Punkt — der gehört schon dir, verdient.', uk: 'Справи у сфері піднімають її рівень. Кожен рівень дає ◈ очко — воно вже твоє, зароблене.', es: 'Las tareas de una esfera suben su nivel. Cada nivel da un ◈ punto — ya es tuyo, ya está ganado.' },
+  'Очко вкладываешь в узел — получаешь пассивный бонус: +XP, удача сундуков, щит серии, связь со мной…': { en: 'Invest a point into a node — get a passive bonus: +XP, chest luck, streak shield, bond with me…', de: 'Einen Punkt in einen Knoten stecken — passiver Bonus: +XP, Truhenglück, Serienschild, Bindung mit mir…', uk: 'Очко вкладаєш у вузол — отримуєш пасивний бонус: +XP, удача скринь, щит серії, звʼязок зі мною…', es: 'Inviertes un punto en un nodo — obtienes un bono pasivo: +XP, suerte de cofres, escudo de racha, vínculo conmigo…' },
+  'Дорожки ведут к 👑 капстоуну — за него дают звание. Подсвеченный узел — мой совет: самый дешёвый из доступных.': { en: 'The paths lead to the 👑 capstone — it grants a title. The highlighted node is my tip: the cheapest one available.', de: 'Die Pfade führen zum 👑 Schlussstein — er verleiht einen Titel. Der markierte Knoten ist mein Tipp: der günstigste verfügbare.', uk: 'Доріжки ведуть до 👑 капстоуна — за нього дають звання. Підсвічений вузол — моя порада: найдешевший із доступних.', es: 'Los caminos llevan a la 👑 piedra angular — otorga un título. El nodo resaltado es mi consejo: el más barato disponible.' },
+  'А в ✏️ Редакторе можно перестроить всю карту под себя — это твоё дерево, не моё.': { en: 'And in the ✏️ Editor you can rebuild the whole map for yourself — it is your tree, not mine.', de: 'Und im ✏️ Editor kannst du die ganze Karte für dich umbauen — es ist dein Baum, nicht meiner.', uk: 'А в ✏️ Редакторі можна перебудувати всю карту під себе — це твоє дерево, не моє.', es: 'Y en el ✏️ Editor puedes reconstruir todo el mapa a tu manera — es tu árbol, no el mío.' },
+  'уже ждут — попробуй прямо сейчас': { en: 'already waiting — try it right now', de: 'warten schon — probier es gleich aus', uk: 'вже чекають — спробуй просто зараз', es: 'ya esperan — pruébalo ahora mismo' },
+  'Очков пока нет — они придут с уровнями сферы': { en: 'No points yet — they will come with sphere levels', de: 'Noch keine Punkte — sie kommen mit den Sphärenleveln', uk: 'Очок поки нема — вони прийдуть із рівнями сфери', es: 'Aún no hay puntos — llegarán con los niveles de la esfera' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -4701,7 +4709,7 @@ function openDayRecap() {
       ? `<button class="btn" data-action="dayrec-run">🤖 Разобрать день</button>`
       : `<p class="muted" style="font-size:12px;margin:6px 0 0">Нужен ИИ — добавь ключ в Настройках (бесплатные Gemini/Groq есть), и Тень разберёт твой рассказ.</p>`}</div>
     <div id="dayrec-result"></div></div>`;
-  setTimeout(() => { const t = document.getElementById('dayrec-text'); if (t) t.focus(); }, 30);
+  setTimeout(() => { const ta = document.getElementById('dayrec-text'); if (ta) ta.focus(); }, 30);
 }
 function dayRecMicToggle() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return;
@@ -6233,15 +6241,16 @@ function skillActivePerks(id) {
 }
 function renderTree() {
   if (!State.treeSkill || !State.tree[State.treeSkill]) State.treeSkill = State.settings.skills[0] && State.settings.skills[0].id;
-  const id = State.treeSkill, sk = skillById(id), t = State.tree[id];
+  // ⚠️ дерево НЕ называть `t` — затенит глобальную функцию перевода t() (третье попадание этой мины: fb_mrkzunjjmn61, questRow, здесь)
+  const id = State.treeSkill, sk = skillById(id), tree = State.tree[id];
   const tabs = State.settings.skills.map((s) => `<button class="tree-tab ${s.id === id ? 'active' : ''}" data-action="select-tree" data-skill="${s.id}" style="--c:${esc(s.color)}">${esc(skillLabel(s.id))} <span class="muted">ур.${skillLevelOf(s.id)}</span></button>`).join('');
-  if (!t) return `<div class="card">${tabs}</div>`;
-  const edit = State.treeEdit, avail = treePointsAvailable(id), earned = treePointsEarned(id), spent = treePointsSpent(id), { width, height } = treeBounds(t);
-  const lines = treeLinesHTML(t, sk.color);
+  if (!tree) return `<div class="card">${tabs}</div>`;
+  const edit = State.treeEdit, avail = treePointsAvailable(id), earned = treePointsEarned(id), spent = treePointsSpent(id), { width, height } = treeBounds(tree);
+  const lines = treeLinesHTML(tree, sk.color);
   // рекомендованный следующий узел = самый дешёвый доступный
   let recId = null;
-  if (!edit) { const ups = t.nodes.filter((n) => nodeUnlockable(id, n)).sort((a, b) => (a.cost || 0) - (b.cost || 0)); recId = ups[0] && ups[0].id; }
-  const nodes = t.nodes.map((n) => {
+  if (!edit) { const ups = tree.nodes.filter((n) => nodeUnlockable(id, n)).sort((a, b) => (a.cost || 0) - (b.cost || 0)); recId = ups[0] && ups[0].id; }
+  const nodes = tree.nodes.map((n) => {
     const st = n.unlocked ? 'unlocked' : nodeUnlockable(id, n) ? 'available' : 'locked';
     const sel = State.treeSelNode === n.id, rec = n.id === recId, cap = n.capstone ? ' capstone' : '';
     const chips = nodePerks(n).map(perkChip).join('');
@@ -6257,8 +6266,8 @@ function renderTree() {
       ${edit ? '<button class="btn ghost sm" data-action="tree-add-node">+ Узел</button>' : ''}
       <button class="btn ${edit ? '' : 'ghost'} sm" data-action="toggle-tree-edit">${edit ? '✓ Готово' : '✏️ Редактор'}</button>
     </div>`;
-  const recNode = recId && t.nodes.find((n) => n.id === recId);
-  const unlocked = t.nodes.filter((n) => n.unlocked).length;
+  const recNode = recId && tree.nodes.find((n) => n.id === recId);
+  const unlocked = tree.nodes.filter((n) => n.unlocked).length;
   const treeHero = `<section class="card tree-hero" style="--c:${esc(sk.color)}">
       <div>
         <span class="th-kicker">Skill map</span>
@@ -6267,13 +6276,32 @@ function renderTree() {
       </div>
       <div class="tree-hero-stats">
         <span><b>${avail}</b><small>очк.</small></span>
-        <span><b>${unlocked}/${t.nodes.length}</b><small>узлов</small></span>
+        <span><b>${unlocked}/${tree.nodes.length}</b><small>узлов</small></span>
         <span><b>${spent}</b><small>вложено</small></span>
       </div>
     </section>`;
+  // Гайд Тени по дереву (fb_mrnjz1qsjmk8 — 3-й репорт «дерево непонятно»): движок v2 готов,
+  // но петля «дела → уровень → очко → узел → бонус» нигде не объяснена. Карточка висит,
+  // пока игрок сам не скажет «понятно» (persist через discovered) — потом остаётся тултип.
+  const treeGuide = (!edit && !isDiscovered('guide:tree')) ? `
+    <section class="card tree-guide">
+      <div class="tg-row">${(typeof tutMascotHTML === 'function') ? tutMascotHTML() : ''}
+        <div class="tg-say">
+          <b>${t('Смотри, тут всё честно:')}</b>
+          <ol>
+            <li>${t('Дела в сфере поднимают её уровень. Каждый уровень даёт ◈ очко — оно уже твоё, заработано.')}</li>
+            <li>${t('Очко вкладываешь в узел — получаешь пассивный бонус: +XP, удача сундуков, щит серии, связь со мной…')}</li>
+            <li>${t('Дорожки ведут к 👑 капстоуну — за него дают звание. Подсвеченный узел — мой совет: самый дешёвый из доступных.')}</li>
+          </ol>
+          <span class="muted">${t('А в ✏️ Редакторе можно перестроить всю карту под себя — это твоё дерево, не моё.')}</span>
+        </div></div>
+      <div class="tg-acts"><button class="btn sm" data-action="tree-guide-ok">${t('Понятно ✓')}</button>
+        ${avail > 0 ? `<span class="tg-hint">◈ ${avail} ${t('уже ждут — попробуй прямо сейчас')}</span>` : `<span class="tg-hint muted">${t('Очков пока нет — они придут с уровнями сферы')}</span>`}</div>
+    </section>` : '';
   return `
     <div class="tree-shell">
     ${treeHero}
+    ${treeGuide}
     <div class="card tree-tabs-card"><div class="tree-tabs">${tabs}</div></div>
     <div class="card tree-map-card">
       <div class="tree-head"><h3 style="margin:0">🌳 ${esc(sk.name)}</h3>${controls}</div>
@@ -6281,7 +6309,7 @@ function renderTree() {
       <p class="muted" style="font-size:12px">${edit ? '✏️ Перетаскивай узлы. Клик по узлу — настроить (название, цена, бонус, требования). «+ Узел» добавит новый.' : (avail <= 0 ? 'Очки копятся за уровни сферы — делай дела, чтобы открыть узлы.' : recNode ? `Доступно ${avail} очк. · 💡 можно взять «${esc(recNode.title)}» (подсвечен).` : `Доступно ${avail} очк. — открывай узлы кликом.`)}</p>
       <div class="tree-scroll"><div class="tree ${edit ? 'edit' : ''}" style="width:${width}px;height:${height}px">
         <svg class="tree-lines" width="${width}" height="${height}">${lines}</svg>${nodes}</div></div>
-      ${edit && State.treeSelNode ? treeNodePanel(id, t) : ''}
+      ${edit && State.treeSelNode ? treeNodePanel(id, tree) : ''}
     </div></div>`;
 }
 // Живая перерисовка линий при перетаскивании (без полного render)
@@ -8905,6 +8933,8 @@ function onClick(e) {
   } else if (action === 'bridge-parse') { parseBridgeResponse();
   } else if (action === 'propose-apply') { applyAcceptedProposals();
   } else if (action === 'propose-close') { const m = document.getElementById('propose-modal'); if (m) m.remove();
+  } else if (action === 'tree-guide-ok') {
+    markDiscovered('guide:tree'); track('tree:guide-ok'); render();
   } else if (action === 'entry-open') {
     State._entryRoll = 0; State._entrySkill = null; openEntryRitual(); track('entry:open');
   } else if (action === 'entry-pick') {
@@ -9359,7 +9389,7 @@ function onChange(e) {
     return;
   }
   // при смене квеста в пикере календаря — подставить его длительность
-  if (e.target.id === 'cal-quest') { const t = questById(e.target.value), d = document.getElementById('cal-dur'); if (t && d) d.value = Number(t.estimateMin) || 30; return; }
+  if (e.target.id === 'cal-quest') { const q = questById(e.target.value), d = document.getElementById('cal-dur'); if (q && d) d.value = Number(q.estimateMin) || 30; return; }
   // смена вложенности сферы → сохранить и сразу перерисовать дерево (отступы, защита от циклов)
   if (['parentId', 'canon', 'noBalance'].includes(e.target.dataset.field) && e.target.closest('#skills-list')) { flushSettingsForm(); render(); return; }
   // автосохранение формы настроек (сферы/привычки/формулы/название) — чтобы правки не терялись при F5
