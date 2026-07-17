@@ -1669,6 +1669,14 @@ const I18N_EXTRA = {
   'А в ✏️ Редакторе можно перестроить всю карту под себя — это твоё дерево, не моё.': { en: 'And in the ✏️ Editor you can rebuild the whole map for yourself — it is your tree, not mine.', de: 'Und im ✏️ Editor kannst du die ganze Karte für dich umbauen — es ist dein Baum, nicht meiner.', uk: 'А в ✏️ Редакторі можна перебудувати всю карту під себе — це твоє дерево, не моє.', es: 'Y en el ✏️ Editor puedes reconstruir todo el mapa a tu manera — es tu árbol, no el mío.' },
   'уже ждут — попробуй прямо сейчас': { en: 'already waiting — try it right now', de: 'warten schon — probier es gleich aus', uk: 'вже чекають — спробуй просто зараз', es: 'ya esperan — pruébalo ahora mismo' },
   'Очков пока нет — они придут с уровнями сферы': { en: 'No points yet — they will come with sphere levels', de: 'Noch keine Punkte — sie kommen mit den Sphärenleveln', uk: 'Очок поки нема — вони прийдуть із рівнями сфери', es: 'Aún no hay puntos — llegarán con los niveles de la esfera' },
+  // ── Питч на входе (альфа-запуск) ──
+  'RPG, где персонаж — ты. Дела дают опыт, сферы жизни растут уровнями, привычки становятся навыками.': { en: 'An RPG where the character is you. Deeds give XP, life spheres level up, habits become skills.', de: 'Ein RPG, in dem die Figur du selbst bist. Taten geben XP, Lebenssphären steigen im Level, Gewohnheiten werden zu Fähigkeiten.', uk: 'RPG, де персонаж — це ти. Справи дають досвід, сфери життя ростуть рівнями, звички стають навичками.', es: 'Un RPG donde el personaje eres tú. Las tareas dan XP, las esferas de la vida suben de nivel, los hábitos se vuelven habilidades.' },
+  'Свои сферы: учёба, спорт, творчество — что угодно': { en: 'Your own spheres: study, sport, art — anything', de: 'Deine eigenen Sphären: Lernen, Sport, Kunst — was du willst', uk: 'Свої сфери: навчання, спорт, творчість — будь-що', es: 'Tus propias esferas: estudio, deporte, arte — lo que sea' },
+  'Живой спутник Тень — ведёт, а не пилит': { en: 'A living companion, Shadow — guides you, never nags', de: 'Ein lebendiger Begleiter, Schatten — führt dich, nörgelt nie', uk: 'Живий супутник Тінь — веде, а не пиляє', es: 'Un compañero vivo, Sombra — te guía, nunca regaña' },
+  'Без вины: пропуск не сжигает прогресс. Уровень не сгорает': { en: 'No guilt: missing a day never burns your progress. Levels do not expire', de: 'Ohne Schuldgefühle: ein verpasster Tag verbrennt keinen Fortschritt. Level verfallen nicht', uk: 'Без вини: пропуск не спалює прогрес. Рівень не згорає', es: 'Sin culpa: faltar un día no quema tu progreso. Los niveles no caducan' },
+  'Открытая альфа: бесплатно, без карты. Твой фидбек прямо в приложении делает игру лучше — за это дают ачивки.': { en: 'Open alpha: free, no card required. Your in-app feedback makes the game better — and earns achievements.', de: 'Offene Alpha: kostenlos, ohne Karte. Dein Feedback direkt in der App macht das Spiel besser — dafür gibt es Erfolge.', uk: 'Відкрита альфа: безкоштовно, без картки. Твій фідбек прямо в застосунку робить гру кращою — за це дають ачівки.', es: 'Alfa abierta: gratis, sin tarjeta. Tu feedback dentro de la app mejora el juego — y da logros.' },
+  '⚡ Начать — создать аккаунт': { en: '⚡ Start — create an account', de: '⚡ Loslegen — Konto erstellen', uk: '⚡ Почати — створити акаунт', es: '⚡ Empezar — crear cuenta' },
+  'уже играешь?': { en: 'already playing?', de: 'spielst du schon?', uk: 'вже граєш?', es: '¿ya juegas?' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -3874,19 +3882,36 @@ function renderLoginScreen() {
   const legacy = State.profiles && State.profiles.length
     ? `<details class="legacy-login"><summary>Вход по профилю (старый способ)</summary><div class="profiles-grid">${profileCards}</div></details>`
     : '';
+  // Питч для холодного визитёра (подготовка к альфа-запуску): вход — единственная витрина,
+  // «Превращаем жизнь в игру» без расшифровки не продаёт. Тем, у кого аккаунт есть, не мешает —
+  // форма сразу под питчем. Тест-вход — только localhost: на проде общий тест-аккаунт = хаос.
+  const isLocal = /^(localhost|127\.|192\.168\.|0\.0\.0\.0)/.test(location.hostname);
+  const pitch = `
+      <div class="auth-pitch">
+        <p class="ap-lead">${t('RPG, где персонаж — ты. Дела дают опыт, сферы жизни растут уровнями, привычки становятся навыками.')}</p>
+        <div class="ap-points">
+          <span>🧭 ${t('Свои сферы: учёба, спорт, творчество — что угодно')}</span>
+          <span>🕯 ${t('Живой спутник Тень — ведёт, а не пилит')}</span>
+          <span>🛡 ${t('Без вины: пропуск не сжигает прогресс. Уровень не сгорает')}</span>
+        </div>
+        <p class="ap-alpha muted">${t('Открытая альфа: бесплатно, без карты. Твой фидбек прямо в приложении делает игру лучше — за это дают ачивки.')}</p>
+      </div>`;
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
       <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>${t('Превращаем жизнь в игру')}</p></div>
+      ${pitch}
       <div class="auth-box">
+        <button class="btn auth-cta" data-action="go-register" style="width:100%">${t('⚡ Начать — создать аккаунт')}</button>
+        <div class="auth-or muted">${t('уже играешь?')}</div>
         <form id="login-form">
           <label>Email</label>
           <input name="email" type="email" placeholder="you@mail.com" autocomplete="username" required />
           <label style="margin-top:10px">${t('Пароль')}</label>
           <input name="password" type="password" placeholder="${t('Пароль')}" autocomplete="current-password" required />
           <div id="login-error" class="pin-error"></div>
-          <button type="submit" class="btn" style="margin-top:14px;width:100%">${t('Войти')}</button>
+          <button type="submit" class="btn ghost" style="margin-top:14px;width:100%">${t('Войти')}</button>
         </form>
-        <button class="btn ghost test-login-btn" data-action="test-login" style="margin-top:10px;width:100%">${t('🧪 Войти как тестовый пользователь')}</button>
+        ${isLocal ? `<button class="btn ghost test-login-btn" data-action="test-login" style="margin-top:10px;width:100%">${t('🧪 Войти как тестовый пользователь')}</button>` : ''}
         <div class="auth-links">
           <button class="link-btn" data-action="go-register">${t('Создать аккаунт')}</button>
           <button class="link-btn" data-action="go-reset">${t('Забыл пароль?')}</button>
