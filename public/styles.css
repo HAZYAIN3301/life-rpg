@@ -208,6 +208,11 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .sg-row b { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); font-weight: 700; }
 .sg-row span { font-size: 13.5px; line-height: 1.45; }
 
+/* Бэклог «Трение»: авто-подстановка сферы (инфо-чип) + «повторить вчера» в пустом дне */
+.cat-chip-auto { cursor: default; opacity: .85; }
+.empty-repeat { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.empty-repeat .btn { align-self: stretch; }
+
 /* Питч на входе для холодного визитёра (альфа-запуск) */
 .auth-pitch { max-width: 420px; margin: 0 auto 18px; padding: 0 18px; text-align: center; }
 .auth-pitch .ap-lead { font-size: 14.5px; line-height: 1.5; margin: 0 0 12px; color: var(--text); }

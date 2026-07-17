@@ -1806,6 +1806,11 @@ const I18N_EXTRA = {
   'То, что ты делаешь, потому что хочешь. Не должно приносить пользу — в этом и смысл.': { en: 'What you do because you want to. It doesn\'t have to be useful — that is the point.', de: 'Das, was du tust, weil du willst. Es muss keinen Nutzen bringen — das ist der Sinn.', uk: 'Те, що ти робиш, бо хочеш. Не мусить приносити користь — у цьому й сенс.', es: 'Lo que haces porque quieres. No tiene que ser útil — ese es el punto.' },
   'Любое время, потраченное на него без чувства вины.': { en: 'Any time spent on it without guilt.', de: 'Jede Zeit, die du ohne Schuldgefühl damit verbringst.', uk: 'Будь-який час, витрачений на нього без почуття провини.', es: 'Cualquier tiempo dedicado sin culpa.' },
   'Единственная сфера, где «не расти» — тоже нормальный результат.': { en: 'The only sphere where "not growing" is a perfectly fine outcome.', de: 'Die einzige Sphäre, in der „nicht wachsen" auch ein völlig gutes Ergebnis ist.', uk: 'Єдина сфера, де «не рости» — теж нормальний результат.', es: 'La única esfera donde «no crecer» también es un resultado perfectamente válido.' },
+  // ── Бэклог «Трение»: авто-сфера + повторить вчера ──
+  'Сфера подставлена': { en: 'Sphere auto-filled', de: 'Sphäre automatisch gesetzt', uk: 'Сферу підставлено', es: 'Esfera autocompletada' },
+  'На сегодня пусто.': { en: 'Nothing planned for today.', de: 'Für heute ist nichts geplant.', uk: 'На сьогодні порожньо.', es: 'Nada planeado para hoy.' },
+  'Повторить вчерашний план': { en: "Repeat yesterday's plan", de: 'Gestrigen Plan wiederholen', uk: 'Повторити вчорашній план', es: 'Repetir el plan de ayer' },
+  'Перенесено из вчера': { en: 'Carried over from yesterday', de: 'Von gestern übernommen', uk: 'Перенесено з учора', es: 'Traído de ayer' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -2471,7 +2476,14 @@ function updateCatSuggest(inputEl) {
   const sel = form.querySelector('select[name="skillId"]');
   const txt = inputEl.value.trim();
   const g = guessCategoryFromHistory(txt);
-  if (g && sel && sel.value !== g.skillId) { // локальная эвристика по истории — мгновенно, бесплатно
+  // Бэклог «Трение» (fb_mrnivhqrssjx): раньше подсказка была чипом «применить» — лишний тап на
+  // каждый квест. Теперь селект обновляется САМ по мере ввода (видно ДО отправки, override
+  // свободен). Тронул селект руками (catTouched ставит onChange) — авто выключается, чип
+  // возвращается кнопкой-подсказкой, ничего не перебиваем.
+  if (g && sel && !form.dataset.catTouched) {
+    if (sel.value !== g.skillId) sel.value = g.skillId;
+    box.innerHTML = `<span class="cat-chip cat-chip-auto">💡 ${esc(t('Сфера подставлена'))}: <b>${esc(skillLabel(g.skillId))}</b></span>`;
+  } else if (g && sel && sel.value !== g.skillId) { // локальная эвристика по истории — мгновенно, бесплатно
     box.innerHTML = `<button type="button" class="cat-chip" data-action="apply-cat" data-skill="${esc(g.skillId)}">💡 Обычно сюда: <b>${esc(skillLabel(g.skillId))}</b> · применить</button>`;
   } else if (!g && txt.length >= 4 && canUseAi()) { // нет в истории + ИИ доступен (свой ключ или Pro) → предложить спросить ИИ
     box.innerHTML = `<button type="button" class="cat-chip cat-chip-ai" data-action="ai-cat-suggest" data-title="${esc(txt)}">🤖 Подобрать сферу через ИИ</button>`;
@@ -3648,6 +3660,21 @@ function entryTopSpheres() {
 function entryStepFor(skillId) {
   const pool = ENTRY_STEPS[archetypeOf(skillId)] || ENTRY_STEP_FALLBACK;
   return dayPick('entry' + skillId + '#' + (State._entryRoll || 0), pool);
+}
+// ── «Повторить вчерашний план» (бэклог «Трение», fb_mrnivhqrssjx) ─────────────────────
+// Утро, вчера был план, сегодня пусто → не перенабирать руками. Клоны берут титул/сферу/
+// оценку/сложность; заходы (entry) не клонируются — их создаёт Тень по моменту.
+function yesterdayCloneable() {
+  const d = new Date(); d.setDate(d.getDate() - 1);
+  const y = fmtDate(d);
+  const todayTitles = new Set((State.tasks || []).filter((x) => x.date === todayStr()).map((x) => x.title));
+  return (State.tasks || []).filter((x) => x.date === y && !x.entry && !todayTitles.has(x.title));
+}
+function emptyDayHTML() {
+  const src = yesterdayCloneable();
+  if (!src.length) return `<p class="muted">${t('На сегодня пусто. Запланируй первый квест выше ↑')}</p>`;
+  return `<div class="empty-repeat"><p class="muted">${t('На сегодня пусто.')}</p>
+    <button class="btn ghost" data-action="repeat-yesterday">↻ ${t('Повторить вчерашний план')} (${src.length})</button></div>`;
 }
 function openEntryRitual() {
   document.getElementById('entry-modal')?.remove();
@@ -6228,7 +6255,7 @@ function renderToday() {
         <span>Время: <b>${fmtDur(minToday)} / ${fmtDur(planned)}</b></span>
         <span>Опыт: <b>+${xpToday}</b> XP</span>
         <span>Золото: <b>+${goldToday}</b> 🪙</span></div>
-      ${todays.length ? `<ul class="tasks">${todays.map(questRow).join('')}</ul>` : '<p class="muted">На сегодня пусто. Запланируй первый квест выше ↑</p>'}</div>
+      ${todays.length ? `<ul class="tasks">${todays.map(questRow).join('')}</ul>` : emptyDayHTML()}</div>
     ${todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">🗓 ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : ''}
     <div class="card"><h3>🔁 Привычки на сегодня</h3>
       ${habits.length ? `<ul class="tasks">${habits.map(habitRow).join('')}</ul>` : '<p class="muted">На сегодня привычек нет. Добавь их в «Настройках».</p>'}</div>
@@ -7132,6 +7159,9 @@ const FEATURE_REGISTRY = [
   { ev: 'sphere:guide', label: 'Справочник сфер' },
   { ev: 'sphere:guide-ai', label: 'Сферу разбирает Тень' },
   { ev: 'entry:accept', label: '🕯 Заход (вечерний вход)' },
+  { ev: 'repeat:yesterday', label: '↻ Повторить вчерашний план' },
+  { ev: 'shortcut:dayrec', label: 'Ярлык «Итог дня» (телефон)' },
+  { ev: 'shortcut:capture', label: 'Ярлык «Заметка» (телефон)' },
   { ev: 'chest:open', label: 'Открыть сундук' },
   { ev: 'reward:buy', label: 'Купить награду' },
   { ev: 'pet:feed', label: 'Покормить питомца' },
@@ -9088,6 +9118,18 @@ function onClick(e) {
   } else if (action === 'bridge-parse') { parseBridgeResponse();
   } else if (action === 'propose-apply') { applyAcceptedProposals();
   } else if (action === 'propose-close') { const m = document.getElementById('propose-modal'); if (m) m.remove();
+  } else if (action === 'repeat-yesterday') {
+    const src = yesterdayCloneable();
+    if (!src.length) return;
+    const now = new Date().toISOString();
+    for (const s of src) {
+      State.tasks.push({ id: uid(), title: s.title, skillId: s.skillId, skillIds: (s.skillIds && s.skillIds.length) ? [...s.skillIds] : [s.skillId],
+        estimateMin: Number(s.estimateMin) || 0, difficulty: s.difficulty || 'normal', date: todayStr(),
+        done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: s.startTime || null, createdAt: now });
+    }
+    Store.save('tasks', State.tasks); track('repeat:yesterday');
+    toast(`↻ ${t('Перенесено из вчера')}: ${src.length}`);
+    render(); return;
   } else if (action === 'tree-guide-ok') {
     markDiscovered('guide:tree'); track('tree:guide-ok'); render();
   } else if (action === 'entry-open') {
@@ -9475,6 +9517,22 @@ async function initApp() {
   checkAchievements(true);
   // Deep-link от ярлыков приложения (manifest shortcuts): ?view=goals → открыть вкладку
   try { const v = new URLSearchParams(location.search).get('view'); if (v && VIEWS[v]) State.view = v; } catch {}
+  // Ярлыки-действия (?do=dayrec|capture): долгий тап по иконке на телефоне → сразу в действие.
+  // Бэклог «Трение» (fb_mrnivhqrssjx): ноль тапов между «открыл» и «делаю». URL чистим, чтобы
+  // перезагрузка не повторяла действие.
+  try {
+    const sp = new URLSearchParams(location.search), act = sp.get('do');
+    if (act === 'dayrec' || act === 'capture') {
+      State.view = 'today';
+      setTimeout(() => {
+        try {
+          if (act === 'dayrec') { openDayRecap(); track('shortcut:dayrec'); }
+          else { const inp = document.querySelector('#capture-form input[name="text"]'); if (inp) inp.focus(); track('shortcut:capture'); }
+        } catch {}
+      }, 350);
+      sp.delete('do'); history.replaceState(null, '', location.pathname + (sp.toString() ? '?' + sp : '') + location.hash);
+    }
+  } catch {}
   // Возврат с OAuth Strava → открыть Настройки + тост, и почистить URL от ?strava=...
   try {
     const sp = new URLSearchParams(location.search), sv = sp.get('strava');
@@ -9507,6 +9565,8 @@ function publishLeaderboard() {
 
 // Делегированный обработчик change (для select-ов вне форм — напр. импорт достижений)
 function onChange(e) {
+  // Юзер сам выбрал сферу в форме квеста → авто-подстановка по эвристике отключается (не перебиваем руки)
+  if (e.target.name === 'skillId') { const f = e.target.closest('form'); if (f) f.dataset.catTouched = '1'; }
   // импорт тренировок файлом (GPX/TCX) — любые часы без API
   if (e.target.dataset && e.target.dataset.action === 'wkfile') {
     const files = [...(e.target.files || [])]; e.target.value = '';
