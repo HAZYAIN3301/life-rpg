@@ -1811,6 +1811,19 @@ const I18N_EXTRA = {
   'На сегодня пусто.': { en: 'Nothing planned for today.', de: 'Für heute ist nichts geplant.', uk: 'На сьогодні порожньо.', es: 'Nada planeado para hoy.' },
   'Повторить вчерашний план': { en: "Repeat yesterday's plan", de: 'Gestrigen Plan wiederholen', uk: 'Повторити вчорашній план', es: 'Repetir el plan de ayer' },
   'Перенесено из вчера': { en: 'Carried over from yesterday', de: 'Von gestern übernommen', uk: 'Перенесено з учора', es: 'Traído de ayer' },
+  // ── 🚩 Дерево v3: вехи ──
+  'веха — берётся жизнью': { en: 'milestone — earned by living', de: 'Meilenstein — durchs Leben verdient', uk: 'віха — береться життям', es: 'hito — se gana viviendo' },
+  'взята': { en: 'taken', de: 'genommen', uk: 'взята', es: 'logrado' },
+  'Веха берётся жизнью, а не кликом. Сравни честно с тем, где ты сейчас: это уже правда взято?': { en: 'A milestone is earned by living, not by clicking. Compare honestly with where you are now: is this truly taken?', de: 'Ein Meilenstein wird durchs Leben verdient, nicht durch einen Klick. Vergleiche ehrlich, wo du gerade stehst: ist das wirklich erreicht?', uk: 'Віха береться життям, а не кліком. Порівняй чесно з тим, де ти зараз: це вже справді взято?', es: 'Un hito se gana viviendo, no con un clic. Compara honestamente con dónde estás ahora: ¿de verdad ya está logrado?' },
+  'Обмануть тут можно только собственную карту. Взятая веха даёт +1 очко практик — жизнь финансирует бонусы.': { en: 'The only thing you can cheat here is your own map. A taken milestone grants +1 practice point — life funds the perks.', de: 'Betrügen kannst du hier nur deine eigene Karte. Ein genommener Meilenstein gibt +1 Praxispunkt — das Leben finanziert die Boni.', uk: 'Обдурити тут можна лише власну карту. Взята віха дає +1 очко практик — життя фінансує бонуси.', es: 'Aquí solo puedes engañar a tu propio mapa. Un hito logrado da +1 punto de práctica — la vida financia los bonos.' },
+  'Да, взято': { en: 'Yes, taken', de: 'Ja, erreicht', uk: 'Так, взято', es: 'Sí, logrado' },
+  'Ещё нет — иду к ней': { en: 'Not yet — on my way', de: 'Noch nicht — ich bin unterwegs', uk: 'Ще ні — йду до неї', es: 'Aún no — voy hacia él' },
+  'Веха взята': { en: 'Milestone taken', de: 'Meilenstein erreicht', uk: 'Віху взято', es: 'Hito logrado' },
+  'Тень записала это в летопись': { en: 'Shadow wrote it into the chronicle', de: 'Schatten hat es in die Chronik geschrieben', uk: 'Тінь записала це в літопис', es: 'Sombra lo anotó en la crónica' },
+  'Сначала возьми предыдущую веху': { en: 'Take the previous milestone first', de: 'Nimm zuerst den vorherigen Meilenstein', uk: 'Спершу візьми попередню віху', es: 'Primero logra el hito anterior' },
+  'Ориентир': { en: 'Benchmark', de: 'Orientierung', uk: 'Орієнтир', es: 'Referencia' },
+  'Открыто': { en: 'Unlocked', de: 'Freigeschaltet', uk: 'Відкрито', es: 'Desbloqueado' },
+  '🚩 Вехи справа — реальные достижения сферы. Они берутся жизнью, не очками — и каждая взятая даёт +1 ◈.': { en: '🚩 The milestones on the right are real achievements of the sphere. They are earned by living, not with points — and each one taken grants +1 ◈.', de: '🚩 Die Meilensteine rechts sind echte Erfolge der Sphäre. Sie werden durchs Leben verdient, nicht mit Punkten — und jeder genommene gibt +1 ◈.', uk: '🚩 Віхи праворуч — реальні досягнення сфери. Вони беруться життям, не очками — і кожна взята дає +1 ◈.', es: '🚩 Los hitos de la derecha son logros reales de la esfera. Se ganan viviendo, no con puntos — y cada uno logrado da +1 ◈.' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -3379,11 +3392,30 @@ function isPristineOldTree(t) {
   return t.nodes.map((n) => n.title).join('|') === 'Старт|Регулярность|Глубина|Широта|Мастерство';
 }
 const TREE_SX = 194, TREE_SY = 112, TREE_NW = 150, TREE_NH = 70;
+// ── Дерево v3, Фаза 1: 🚩 Вехи (TREE-V3-PLAN.md) ─────────────────────────────────────
+// Хребет реальных достижений сферы из лестниц мастерства (IMPORT_LADDERS — реюз импорта).
+// Вехи открываются жизнью (честное подтверждение), а не очками; каждая взятая веха ДАЁТ
+// +1 очко практик — жизнь финансирует бонусы. Правая колонка (col 3.4), цепочка снизу вверх.
+function milestonesForSkill(skillId) {
+  const ladder = ladderFor(skillLabel(skillId) || skillById(skillId).name || '');
+  const tiers = (ladder.tiers || []).slice(1, 7); // тир 0 («Не бегаю») — не веха; максимум 6
+  const p = 'nd_' + skillId + '_ms';
+  return tiers.map((tier, i) => ({
+    id: p + i, title: tier, desc: ladder.hint || '', milestone: true, cost: 0,
+    requires: i ? [p + (i - 1)] : [], perks: [], unlocked: false,
+    col: 3.4, row: Math.max(0, tiers.length - 1 - i), // первая веха внизу, вершина сверху
+  }));
+}
 function ensureTrees() {
   for (const s of State.settings.skills) {
     if (!State.tree[s.id]) { State.tree[s.id] = defaultTreeForSkill(s.id); continue; }
     // апгрейд: нетронутое старое generic-дерево → тематический шаблон по архетипу (кастом/использованные не трогаем)
     if (isPristineOldTree(State.tree[s.id])) State.tree[s.id] = defaultTreeForSkill(s.id);
+  }
+  // v3: недеструктивный append вех в деревья, где их ещё нет (кастомные узлы/позиции не трогаем)
+  for (const s of State.settings.skills) {
+    const tr = State.tree[s.id];
+    if (tr && Array.isArray(tr.nodes) && !tr.nodes.some((n) => n.milestone)) tr.nodes.push(...milestonesForSkill(s.id));
   }
   // позиции col/row → свободные x/y (для перетаскивания)
   for (const id in State.tree) for (const n of State.tree[id].nodes || []) {
@@ -3391,13 +3423,16 @@ function ensureTrees() {
     if (n.y == null) n.y = (n.row || 0) * TREE_SY;
   }
 }
-function treePointsEarned(id) { return skillLevelOf(id); }
-function treePointsSpent(id) { const t = State.tree[id]; return t ? t.nodes.filter((n) => n.unlocked).reduce((s, n) => s + (n.cost || 0), 0) : 0; }
+// Очки практик = уровень сферы + взятые вехи (жизнь финансирует бонусы)
+function treeMilestonesTaken(id) { const t = State.tree[id]; return t ? t.nodes.filter((n) => n.milestone && n.unlocked).length : 0; }
+function treePointsEarned(id) { return skillLevelOf(id) + treeMilestonesTaken(id); }
+function treePointsSpent(id) { const t = State.tree[id]; return t ? t.nodes.filter((n) => n.unlocked && !n.milestone).reduce((s, n) => s + (n.cost || 0), 0) : 0; }
 function treePointsAvailable(id) { return treePointsEarned(id) - treePointsSpent(id); }
 function nodeUnlockable(id, node) {
   if (node.unlocked) return false;
   const t = State.tree[id];
   if ((node.requires || []).some((rid) => { const r = t.nodes.find((x) => x.id === rid); return r && !r.unlocked; })) return false;
+  if (node.milestone) return true; // веха не стоит очков — она стоит жизни (подтверждение в клике)
   return treePointsAvailable(id) >= (node.cost || 0);
 }
 
@@ -5524,7 +5559,12 @@ function compSVG(face, tierIdx) {
     ${spark}${star}${halo}
   </svg>`;
 }
-function shadowVideo(ti) {
+function shadowVideo(ti, face) {
+  // Первый утверждённый cut-paper скин Тени: пока только форма «Дух» в calm-состоянии.
+  // Остальные тиры/эмоции продолжают использовать прежнее прозрачное видео как fallback.
+  if ((ti | 0) === 1 && face === 'calm') {
+    return `<img class="comp-video comp-shadow-art" src="/art/companions/shadow-v1-20260716/shadow-spirit-calm.png?v=20260717-1" alt="" aria-hidden="true"/>`;
+  }
   const n = (ti | 0) + 1;
   // WebM VP9-alpha = прозрачный фон (кей белого исходника, sim=0.14 — глаза целы).
   // poster = прозрачный PNG (персонаж виден без белого прямоугольника, если iOS заблокировал autoplay).
@@ -5565,7 +5605,7 @@ function companionCard() {
   const peek = (last && last.date === t) ? `<p class="comp-peek muted">${last.kind === 'm' ? '🌅' : '🌙'} «${esc(last.text)}»</p>` : '';
   return `<div class="card comp-card">
     <div class="comp-row">
-      <div class="comp-art">${shadowVideo(ti)}</div>
+      <div class="comp-art">${shadowVideo(ti, mood.face)}</div>
       <div class="comp-body">
         <div class="comp-name"><b>${esc(c.name)}</b><button class="comp-rename" data-action="comp-rename" title="Переименовать">✎</button></div>
         <p class="comp-line">${mood.line}</p>
@@ -5820,13 +5860,22 @@ const WEARABLES = [
   { id: 'wn_apron', slot: 'neck', name: 'Фартук хранителя очага', rarity: 'common', arch: '🧹', svg: `<path d="M-14 0 Q0 6 14 0 L12 24 Q0 30 -12 24 Z" fill="#e0a23e"/><path d="M-6 8 h12 v8 h-12 z" fill="#c98a2e"/><path d="M-14 0 Q0 6 14 0" fill="none" stroke="#8a5a2b" stroke-width="2"/>` },
   { id: 'wh_bow', slot: 'head', name: 'Бант дружбы', rarity: 'common', arch: '💬', svg: `<path d="M-12 -4 L-1 1 L-12 6 Z" fill="#ff8fb0"/><path d="M12 -4 L1 1 L12 6 Z" fill="#ff8fb0"/><circle cx="0" cy="1" r="3.4" fill="#e06a8f"/>` },
   { id: 'wb_scroll', slot: 'back', name: 'Свиток познания', rarity: 'rare', arch: '🧠', svg: `<rect x="-6" y="-4" width="12" height="52" rx="5" fill="#f0e6cf" transform="rotate(14 0 22)"/><ellipse cx="-5" cy="-2" rx="7" ry="4" fill="#d9c9a5" transform="rotate(14 -5 -2)"/><ellipse cx="17" cy="44" rx="7" ry="4" fill="#d9c9a5" transform="rotate(14 17 44)"/>` },
+  // Утверждённый production batch Fortune Cat v2 (полнохолстовые PNG 1024×1024).
+  { id: 'fc_head_crown', slot: 'head', name: 'Корона удачи', rarity: 'epic', species: 'fortune', png: 'head/head-luck-crown.png', z: 95, pivot: [512, 250] },
+  { id: 'fc_head_glasses', slot: 'head', name: 'Очки счетовода', rarity: 'rare', species: 'fortune', png: 'head/head-accountant-glasses.png', z: 100, pivot: [512, 250] },
+  { id: 'fc_neck_bow', slot: 'neck', name: 'Церемониальный бант', rarity: 'rare', species: 'fortune', png: 'neck/neck-ceremonial-bow.png', z: 75, pivot: [512, 525] },
+  { id: 'fc_neck_amulet', slot: 'neck', name: 'Нефритовый амулет', rarity: 'epic', species: 'fortune', png: 'neck/neck-jade-amulet.png', z: 75, pivot: [512, 525] },
+  { id: 'fc_back_scroll', slot: 'back', name: 'Свиток торговца', rarity: 'rare', species: 'fortune', png: 'back/back-merchant-scroll.png', z: 25, pivot: [680, 590] },
+  { id: 'fc_back_cloak', slot: 'back', name: 'Праздничный плащ', rarity: 'epic', species: 'fortune', png: 'back/back-festival-cloak.png', z: 25, pivot: [680, 590] },
 ];
 const WEARABLES_BY_ID = Object.fromEntries(WEARABLES.map((w) => [w.id, w]));
 function wearableById(id) { return WEARABLES_BY_ID[id] || null; }
 // Наряды, «родные» питомцу сферы: тематические по её архетипу + универсальные (arch не задан)
 function wearablesForSphere(sphereId) {
   const arc = (typeof archetypeOf === 'function') ? archetypeOf(sphereId) : '⭐';
-  return WEARABLES.filter((w) => !w.arch || w.arch === arc);
+  const traits = typeof petTraits === 'function' ? petTraits(sphereId) : [];
+  const speciesId = petSpeciesForSphere(sphereId, traits);
+  return WEARABLES.filter((w) => (!w.arch || w.arch === arc) && (!w.species || w.species === speciesId));
 }
 function ensureWear() {
   const s = State.settings;
@@ -5846,48 +5895,156 @@ function equipPetWear(sphereId, itemId) {
 }
 function wearLayerHTML(slot, sp, sphereId) {
   const worn = petWorn(sphereId)[slot]; if (!worn) return '';
-  const it = wearableById(worn); if (!it) return '';
+  const it = wearableById(worn); if (!it || !it.svg) return '';
   const a = (sp.slots && sp.slots[slot]) || [60, 60];
   // внешняя группа — позиция (статична), внутренняя .pd-wear — bob-анимация (иначе CSS-transform перетёр бы translate)
   return `<g transform="translate(${a[0]},${a[1]})"><g class="pd-wear">${it.svg}</g></g>`;
 }
-function fortuneRigImage(file, className, pivotX, pivotY) {
-  return `<g transform="translate(${pivotX},${pivotY})"><g class="${className}"><image href="art/pets/fortune-v2/${file}?v=20260715-1" x="${-pivotX}" y="${-pivotY}" width="1024" height="1024"/></g></g>`;
+const FORTUNE_SOURCE_ROOT = '/art/pets/fortune-v2';
+const FORTUNE_BATCH_ROOT = '/art/pets/fortune-v2-20260716';
+const FORTUNE_ART_VERSION = '20260717-1';
+const FORTUNE_SKINS = {
+  'obsidian-gold': { name: 'Обсидиан и золото' },
+  'ivory-vermilion': { name: 'Слоновая кость и киноварь' },
+};
+const FORTUNE_IVORY_FILES = new Set([
+  'pet-tail.png', 'pet-body.png', 'pet-collar.png', 'pet-paw-raised.png',
+  'pet-paw-holding-arm.png', 'pet-paw-holding.png', 'pet-ear-r.png', 'pet-ear-l.png',
+  'pet-head-base.png', 'pet-head-patch-r.png', 'pet-head-patch-l.png',
+]);
+const FORTUNE_PROPS = {
+  'counting-coins': { name: 'Считает монеты', file: 'prop-counting-coins.png', pivot: [512, 888], z: 100 },
+  'stash-bag': { name: 'Прячет заначку', file: 'prop-stash-bag.png', pivot: [255, 765], z: 25 },
+  'ledger-glasses': { name: 'Проверяет курс', file: 'prop-ledger-glasses.png', pivot: [512, 535], z: 100 },
+};
+function ensureFortuneSkins() {
+  const settings = State.settings || (State.settings = {});
+  if (!settings.fortuneSkins || typeof settings.fortuneSkins !== 'object' || Array.isArray(settings.fortuneSkins)) settings.fortuneSkins = {};
+  return settings.fortuneSkins;
 }
-function fortuneRigGroup(className, pivotX, pivotY, images) {
-  const markup = images.map((file) => {
-    if (file === 'pet-face.png') {
-      return `<g transform="translate(${512 - pivotX},${368 - pivotY})"><g class="fc-face"><image href="art/pets/fortune-v2/${file}?v=20260715-1" x="-512" y="-368" width="1024" height="1024"/></g></g>`;
-    }
-    const cls = file.includes('head-patch') ? ' class="fc-patch"' : '';
-    return `<image${cls} href="art/pets/fortune-v2/${file}?v=20260715-1" x="${-pivotX}" y="${-pivotY}" width="1024" height="1024"/>`;
-  }).join('');
-  return `<g transform="translate(${pivotX},${pivotY})"><g class="${className}">${markup}</g></g>`;
+function ensureFortuneProps() {
+  const settings = State.settings || (State.settings = {});
+  if (!settings.fortuneProps || typeof settings.fortuneProps !== 'object' || Array.isArray(settings.fortuneProps)) settings.fortuneProps = {};
+  return settings.fortuneProps;
 }
-function fortuneRigV2Markup() {
-  return `<g class="fc-rig-frame" transform="translate(-6,-1) scale(.129)">
-    ${fortuneRigImage('pet-shadow.png', 'fc-shadow', 512, 902)}
-    ${fortuneRigImage('pet-tail.png', 'fc-tail', 343, 720)}
-    ${fortuneRigImage('pet-back-bag.png', 'fc-bag', 680, 590)}
-    ${fortuneRigImage('pet-body.png', 'fc-body', 512, 690)}
-    ${fortuneRigImage('pet-collar.png', 'fc-collar', 512, 525)}
-    ${fortuneRigImage('pet-paw-raised.png', 'fc-raised-paw', 350, 610)}
-    ${fortuneRigGroup('fc-held', 668, 610, ['pet-paw-holding-arm.png', 'pet-hand-item.png', 'pet-paw-holding.png'])}
-    ${fortuneRigGroup('fc-head', 512, 430, ['pet-ear-r.png', 'pet-ear-l.png', 'pet-head-base.png', 'pet-head-patch-r.png', 'pet-head-patch-l.png', 'pet-face.png'])}
-    ${fortuneRigImage('pet-bell.png', 'fc-bell', 512, 534)}
+function fortuneSkinForSphere(sphereId) {
+  const id = ensureFortuneSkins()[sphereId];
+  return FORTUNE_SKINS[id] ? id : 'obsidian-gold';
+}
+function fortuneSkinOptions(selected) {
+  return Object.entries(FORTUNE_SKINS).map(([id, skin]) => `<option value="${id}"${id === selected ? ' selected' : ''}>${t(skin.name)}</option>`).join('');
+}
+function fortunePropOptions(selected) {
+  return `<option value=""${selected ? '' : ' selected'}>${t('Автоматически')}</option>`
+    + Object.entries(FORTUNE_PROPS).map(([id, prop]) => `<option value="${id}"${id === selected ? ' selected' : ''}>${t(prop.name)}</option>`).join('');
+}
+function fortunePropForSphere(sphereId, state, idle) {
+  const manual = ensureFortuneProps()[sphereId];
+  if (FORTUNE_PROPS[manual]) return manual;
+  if (state !== 'thriving') return '';
+  const phrase = String(idle || '').toLowerCase();
+  if (phrase.includes('курс валют')) return 'ledger-glasses';
+  if (phrase.includes('занач') || phrase.includes('мешок')) return 'stash-bag';
+  if (phrase.includes('подсчитывает') || phrase.includes('пересчитывает') || phrase.includes('монету')) return 'counting-coins';
+  return '';
+}
+function fortuneWearOptions(sphereId, slot) {
+  const selected = petWorn(sphereId)[slot] || '';
+  const choices = WEARABLES.filter((w) => w.species === 'fortune' && w.slot === slot && w.png);
+  return `<option value=""${selected ? '' : ' selected'}>${t('Нет')}</option>`
+    + choices.map((w) => `<option value="${w.id}"${w.id === selected ? ' selected' : ''}>${t(w.name)}</option>`).join('');
+}
+function setPetWearSlot(sphereId, slot, itemId) {
+  if (!['head', 'neck', 'back'].includes(slot)) return false;
+  const wear = ensureWear(), worn = wear.pet[sphereId] = wear.pet[sphereId] || {};
+  const item = wearableById(itemId);
+  if (!itemId) { delete worn[slot]; return true; }
+  if (!item || item.species !== 'fortune' || item.slot !== slot || !item.png) return false;
+  worn[slot] = itemId;
+  return true;
+}
+function fortuneControlsHTML(sphereId) {
+  const skin = fortuneSkinForSphere(sphereId), prop = ensureFortuneProps()[sphereId] || '';
+  return `<div class="pet-kit">
+    <label><span>${t('Окрас')}</span><select data-action="set-fortune-skin" data-id="${sphereId}">${fortuneSkinOptions(skin)}</select></label>
+    <label><span>${t('Занятие')}</span><select data-action="set-fortune-prop" data-id="${sphereId}">${fortunePropOptions(prop)}</select></label>
+    <details><summary>${t('Экипировка')}</summary>
+      <label><span>${t('Голова')}</span><select data-action="set-pet-wear-slot" data-id="${sphereId}" data-slot="head">${fortuneWearOptions(sphereId, 'head')}</select></label>
+      <label><span>${t('Шея')}</span><select data-action="set-pet-wear-slot" data-id="${sphereId}" data-slot="neck">${fortuneWearOptions(sphereId, 'neck')}</select></label>
+      <label><span>${t('Спина')}</span><select data-action="set-pet-wear-slot" data-id="${sphereId}" data-slot="back">${fortuneWearOptions(sphereId, 'back')}</select></label>
+    </details>
+  </div>`;
+}
+function fortuneSourceHref(file) { return `${FORTUNE_SOURCE_ROOT}/${file}?v=${FORTUNE_ART_VERSION}`; }
+function fortuneSkinHref(file, skin) {
+  if (skin === 'ivory-vermilion' && FORTUNE_IVORY_FILES.has(file)) return `${FORTUNE_BATCH_ROOT}/skins/ivory-vermilion/${file}?v=${FORTUNE_ART_VERSION}`;
+  return fortuneSourceHref(file);
+}
+function fortuneFaceHref(state) {
+  if (['hungry', 'full', 'overfed'].includes(state)) return `${FORTUNE_BATCH_ROOT}/states/pet-face-${state}.png?v=${FORTUNE_ART_VERSION}`;
+  return fortuneSourceHref('pet-face.png');
+}
+function fortuneRigImageHref(href, className, pivotX, pivotY) {
+  return `<g transform="translate(${pivotX},${pivotY})"><g class="${className}"><image href="${href}" x="${-pivotX}" y="${-pivotY}" width="1024" height="1024"/></g></g>`;
+}
+function fortuneRigImage(file, className, pivotX, pivotY, skin) {
+  return fortuneRigImageHref(fortuneSkinHref(file, skin), className, pivotX, pivotY);
+}
+function fortuneWearMarkup(slot, sphereId) {
+  const item = wearableById(petWorn(sphereId)[slot]);
+  if (!item || item.species !== 'fortune' || item.slot !== slot || !item.png) return '';
+  const pivot = item.pivot || [512, 512];
+  return fortuneRigImageHref(`${FORTUNE_BATCH_ROOT}/wearables/${item.png}?v=${FORTUNE_ART_VERSION}`, `fc-${slot}-wear`, pivot[0], pivot[1]);
+}
+function fortunePropMarkup(propId) {
+  const prop = FORTUNE_PROPS[propId]; if (!prop) return '';
+  return fortuneRigImageHref(`${FORTUNE_BATCH_ROOT}/props/${prop.file}?v=${FORTUNE_ART_VERSION}`, `fc-prop fc-prop-${propId}`, prop.pivot[0], prop.pivot[1]);
+}
+function fortuneHeadMarkup(state, skin) {
+  const [px, py] = [512, 430];
+  const layers = ['pet-ear-r.png', 'pet-ear-l.png', 'pet-head-base.png', 'pet-head-patch-r.png', 'pet-head-patch-l.png']
+    .map((file) => `<image${file.includes('head-patch') ? ' class="fc-patch"' : ''} href="${fortuneSkinHref(file, skin)}" x="${-px}" y="${-py}" width="1024" height="1024"/>`).join('');
+  const face = `<g transform="translate(0,-62)"><g class="fc-face"><image href="${fortuneFaceHref(state)}" x="-512" y="-368" width="1024" height="1024"/></g></g>`;
+  return `<g transform="translate(${px},${py})"><g class="fc-head">${layers}${face}</g></g>`;
+}
+function fortuneHeldMarkup(skin) {
+  const [px, py] = [668, 610];
+  return `<g transform="translate(${px},${py})"><g class="fc-held">
+    <image href="${fortuneSkinHref('pet-paw-holding-arm.png', skin)}" x="${-px}" y="${-py}" width="1024" height="1024"/>
+    <image href="${fortuneSourceHref('pet-hand-item.png')}" x="${-px}" y="${-py}" width="1024" height="1024"/>
+    <image href="${fortuneSkinHref('pet-paw-holding.png', skin)}" x="${-px}" y="${-py}" width="1024" height="1024"/>
+  </g></g>`;
+}
+function fortuneRigV2Markup(sphereId, state, idle) {
+  const skin = fortuneSkinForSphere(sphereId);
+  const propId = fortunePropForSphere(sphereId, state, idle);
+  const backProp = FORTUNE_PROPS[propId] && FORTUNE_PROPS[propId].z < 30 ? fortunePropMarkup(propId) : '';
+  const frontProp = FORTUNE_PROPS[propId] && FORTUNE_PROPS[propId].z >= 30 ? fortunePropMarkup(propId) : '';
+  return `<g class="fc-rig-frame fc-skin-${skin}" transform="translate(-6,-1) scale(.129)">
+    ${fortuneRigImage('pet-shadow.png', 'fc-shadow', 512, 902, skin)}
+    ${fortuneRigImage('pet-tail.png', 'fc-tail', 343, 720, skin)}
+    ${fortuneRigImage('pet-back-bag.png', 'fc-bag', 680, 590, skin)}
+    ${fortuneWearMarkup('back', sphereId)}
+    ${backProp}
+    ${fortuneRigImage('pet-body.png', 'fc-body', 512, 690, skin)}
+    ${fortuneRigImage('pet-collar.png', 'fc-collar', 512, 525, skin)}
+    ${fortuneRigImage('pet-paw-raised.png', 'fc-raised-paw', 350, 610, skin)}
+    ${fortuneHeldMarkup(skin)}
+    ${fortuneHeadMarkup(state, skin)}
+    ${fortuneWearMarkup('neck', sphereId)}
+    ${fortuneRigImage('pet-bell.png', 'fc-bell', 512, 534, skin)}
+    ${fortuneWearMarkup('head', sphereId)}
+    ${frontProp}
   </g>`;
 }
-function petSVG(color, state, traits, sphereId) {
+function petSVG(color, state, traits, sphereId, idle = '') {
   const r = state === 'overfed' ? 1.18 : state === 'full' ? 1.08 : state === 'hungry' ? 0.86 : 1.0;
   const dom = (traits[0] && traits[0].icon) || '⭐';
   const speciesId = petSpeciesForSphere(sphereId, traits);
   const sp = PET_SPECIES[speciesId] || PET_SPECIES.round, p = sp.draw(color);
   if (sp.rigV2) {
     return `<svg class="pet-svg fc-rig fc-state-${state}" viewBox="0 0 120 132" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      ${wearLayerHTML('back', sp, sphereId)}
-      <g transform="translate(60,80) scale(${r.toFixed(2)},${(0.5 + r * 0.5).toFixed(2)}) translate(-60,-80)">${fortuneRigV2Markup()}</g>
-      ${wearLayerHTML('neck', sp, sphereId)}
-      ${wearLayerHTML('head', sp, sphereId)}
+      <g transform="translate(60,80) scale(${r.toFixed(2)},${(0.5 + r * 0.5).toFixed(2)}) translate(-60,-80)">${fortuneRigV2Markup(sphereId, state, idle)}</g>
     </svg>`;
   }
   // scale-по-состоянию на внешней группе (статична), bob — на внутренней .pd-body-grp (CSS-анимация не перетирает scale)
@@ -5919,6 +6076,7 @@ function renderPets() {
   const cards = pets.map(({ s, st, traits, nm }) => {
     const meta = PET_STATE[st.state], tr = traits[0];
     const selectedSpecies = ensurePetSpecies()[s.id] || '';
+    const activeSpecies = petSpeciesForSphere(s.id, traits);
     // «живёт своей жизнью»: фраза дня из пула вида — стабильна в течение дня, своя у каждого питомца
     const idle = dayPick('petidle' + s.id, tr.idles || [tr.idle]);
     const line = st.state === 'hungry' ? (!st.lastFed ? `ждёт первой встречи — покорми делами` : st.daysSince >= 8 ? `не виделись ${st.daysSince} ${plural(st.daysSince, 'день', 'дня', 'дней')} — скучает` : `проголодался — покорми делами`)
@@ -5932,9 +6090,10 @@ function renderPets() {
     // Кормить питомца = записывать дела; хинт объясняет, какие именно.
     const sub = `<p class="pet-sphere muted" data-action="pet-hint" data-id="${s.id}" title="${esc(tr.hint || '')}" style="cursor:help">${esc(tr.kind || 'Зверёк')}${nm !== s.name ? ` · сфера: ${esc(s.name)}` : ''} <span class="pet-hint-q">?</span></p>`;
     return `<div class="card pet-card">
-      <div class="pet-art" data-action="pet-feed" data-id="${s.id}" title="приласкать ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits, s.id)}</div>
+      <div class="pet-art" data-action="pet-feed" data-id="${s.id}" title="приласкать ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits, s.id, idle)}</div>
       ${nameRow}${sub}
       <label class="pet-species-picker"><span>${t('Облик')}</span><select data-action="set-pet-species" data-id="${s.id}" aria-label="${t('Облик')}: ${esc(nm)}">${petSpeciesOptions(selectedSpecies)}</select></label>
+      ${activeSpecies === 'fortune' ? fortuneControlsHTML(s.id) : ''}
       <div class="pet-bar"><span style="width:${Math.min(100, Math.round(st.pct / 120 * 100))}%;background:${meta.color}"></span></div>
       <p class="pet-line muted">${line}</p>
       <div class="pet-traits" title="облик и повадки питомца — по твоим подсферам">${traits.map((t) => `<span>${t.icon}</span>`).join('')}</div>
@@ -6117,9 +6276,16 @@ function renderDen() {
   const cr = charRank(), nm = (State.me && State.me.name) || 'Герой';
   const pets = topSkills().slice(0, 3).map((s) => {
     const traits = petTraits(s.id);
-    return { s, st: petStats(s.id), traits, species: petSpeciesForSphere(s.id, traits) };
+    const trait = traits[0] || {};
+    return {
+      s,
+      st: petStats(s.id),
+      traits,
+      species: petSpeciesForSphere(s.id, traits),
+      idle: dayPick('petidle' + s.id, trait.idles || [trait.idle]),
+    };
   });
-  const petLayer = pets.map((p, i) => `<div class="den-pet den-pet-${i}${p.species === 'fortune' ? ' den-pet-fortune' : ''}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id)}</div>`).join('');
+  const petLayer = pets.map((p, i) => `<div class="den-pet den-pet-${i}${p.species === 'fortune' ? ' den-pet-fortune' : ''}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id, p.idle)}</div>`).join('');
   const p = nestedProgress(), eP = energyPct(), eM = energyMeta(), tm = State.timer;
   const avatarState = denAvatarState(eP, p, tm);
   const focusRow = tm
@@ -6128,7 +6294,7 @@ function renderDen() {
   return `<div class="card den-card">
     <div class="den-scene">
       ${denSceneSVG()}
-      <div class="den-companion" title="${esc(c.name)}">${shadowVideo(ti)}</div>
+      <div class="den-companion" title="${esc(c.name)}">${shadowVideo(ti, mood.face)}</div>
       <div class="den-avatar den-avatar-rig" data-state="${avatarState}">${satoruRigSVG()}</div>
       ${petLayer}
       <div class="den-tag">${cr.icon} ${esc(nm)} · ур.${charLevel()}</div>
@@ -6391,6 +6557,25 @@ function treeBounds(t) {
   const xs = t.nodes.map((n) => n.x || 0), ys = t.nodes.map((n) => n.y || 0);
   return { width: Math.max(TREE_SX * 2 + TREE_NW, Math.max(0, ...xs) + TREE_NW + 40), height: Math.max(TREE_SY * 2, Math.max(0, ...ys) + TREE_NH + 40) };
 }
+// 🚩 Модалка честности вехи: веха берётся жизнью, а не кликом. Мы не полиция — обмануть
+// можно только собственную карту, и это прямо проговаривается.
+function openMilestoneClaim(skillId, nodeId) {
+  document.getElementById('ms-claim')?.remove();
+  const tr = State.tree[skillId], node = tr && tr.nodes.find((n) => n.id === nodeId);
+  if (!node) return;
+  const ov = document.createElement('div'); ov.id = 'ms-claim'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="ai-box ms-box">
+    <button class="modal-x" data-action="ms-claim-no">✕</button>
+    <h2>🚩 ${esc(node.title)}</h2>
+    ${node.desc ? `<p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Ориентир')}: ${esc(t(node.desc))}</p>` : ''}
+    <p class="sg-what">${t('Веха берётся жизнью, а не кликом. Сравни честно с тем, где ты сейчас: это уже правда взято?')}</p>
+    <p class="muted" style="font-size:12px">${t('Обмануть тут можно только собственную карту. Взятая веха даёт +1 очко практик — жизнь финансирует бонусы.')}</p>
+    <div class="propose-actions">
+      <button class="btn" data-action="ms-claim-yes" data-skill="${esc(skillId)}" data-node="${esc(nodeId)}">🚩 ${t('Да, взято')}</button>
+      <button class="btn ghost" data-action="ms-claim-no">${t('Ещё нет — иду к ней')}</button>
+    </div></div>`;
+  document.body.appendChild(ov);
+}
 function treeNodePanel(id, t) {
   const n = t.nodes.find((x) => x.id === State.treeSelNode); if (!n) return '';
   const reqs = t.nodes.filter((x) => x.id !== n.id).map((o) => `<label class="tp-req"><input type="checkbox" data-action="tree-toggle-req" data-node="${n.id}" data-req="${o.id}" ${(n.requires || []).includes(o.id) ? 'checked' : ''}/> ${esc(o.title)}</label>`).join('') || '<span class="muted">других узлов нет</span>';
@@ -6435,9 +6620,12 @@ function renderTree() {
   const nodes = tree.nodes.map((n) => {
     const st = n.unlocked ? 'unlocked' : nodeUnlockable(id, n) ? 'available' : 'locked';
     const sel = State.treeSelNode === n.id, rec = n.id === recId, cap = n.capstone ? ' capstone' : '';
+    const ms = n.milestone ? ' milestone' : '';
     const chips = nodePerks(n).map(perkChip).join('');
-    const costLine = edit ? '◈ ' + (n.cost || 0) : n.unlocked ? '✓ открыто' : (st === 'locked' ? '🔒 ' : '') + '◈ ' + (n.cost || 0);
-    return `<div class="tree-node ${edit ? 'editing' : st}${cap}${rec ? ' recommend' : ''} ${sel ? 'sel' : ''}" style="left:${n.x}px;top:${n.y}px;--c:${esc(sk.color)}" data-node="${n.id}" ${edit ? '' : 'data-action="unlock-node"'}>
+    const costLine = n.milestone
+      ? (n.unlocked ? '🚩 ' + t('взята') : (st === 'locked' ? '🔒 ' : '🚩 ') + t('веха — берётся жизнью'))
+      : (edit ? '◈ ' + (n.cost || 0) : n.unlocked ? '✓ открыто' : (st === 'locked' ? '🔒 ' : '') + '◈ ' + (n.cost || 0));
+    return `<div class="tree-node ${edit ? 'editing' : st}${cap}${ms}${rec ? ' recommend' : ''} ${sel ? 'sel' : ''}" style="left:${n.x}px;top:${n.y}px;--c:${esc(sk.color)}" data-node="${n.id}" ${edit ? '' : 'data-action="unlock-node"'}>
       ${n.capstone ? '<div class="tn-crown">👑</div>' : ''}
       <div class="tn-title">${esc(n.title)}</div>
       <div class="tn-perks">${chips}</div>
@@ -6474,6 +6662,7 @@ function renderTree() {
             <li>${t('Дела в сфере поднимают её уровень. Каждый уровень даёт ◈ очко — оно уже твоё, заработано.')}</li>
             <li>${t('Очко вкладываешь в узел — получаешь пассивный бонус: +XP, удача сундуков, щит серии, связь со мной…')}</li>
             <li>${t('Дорожки ведут к 👑 капстоуну — за него дают звание. Подсвеченный узел — мой совет: самый дешёвый из доступных.')}</li>
+            <li>${t('🚩 Вехи справа — реальные достижения сферы. Они берутся жизнью, не очками — и каждая взятая даёт +1 ◈.')}</li>
           </ol>
           <span class="muted">${t('А в ✏️ Редакторе можно перестроить всю карту под себя — это твоё дерево, не моё.')}</span>
         </div></div>
@@ -9048,8 +9237,12 @@ function onClick(e) {
   } else if (action === 'select-tree') { State.treeSkill = el.dataset.skill; State.treeSelNode = null; render();
   } else if (action === 'unlock-node') {
     const sid = State.treeSkill, node = State.tree[sid] && State.tree[sid].nodes.find((n) => n.id === el.dataset.node); if (!node) return;
-    if (!nodeUnlockable(sid, node)) { toast('Не хватает очков или закрыты предыдущие узлы'); return; }
-    node.unlocked = true; Store.save('skilltree', State.tree); toast(`Открыто: ${node.title} (+${node.perkXpPct}% XP)`); render();
+    if (!nodeUnlockable(sid, node)) { toast(t(node.milestone ? 'Сначала возьми предыдущую веху' : 'Не хватает очков или закрыты предыдущие узлы')); return; }
+    if (node.milestone) { openMilestoneClaim(sid, node.id); return; } // веха берётся жизнью — модалка честности
+    node.unlocked = true; Store.save('skilltree', State.tree);
+    // фикс: тост показывал legacy-поле perkXpPct (undefined для v2-узлов) — собираем лейбл из perks
+    const pl = nodePerks(node).map((p) => PERK_KINDS[p.kind] ? PERK_KINDS[p.kind].fmt(p.val) : '').filter(Boolean).join(' · ');
+    toast(`◈ ${t('Открыто')}: ${node.title}${pl ? ' — ' + pl : ''}`); render();
 
   // --- Редактор дерева навыков ---
   } else if (action === 'toggle-tree-edit') { State.treeEdit = !State.treeEdit; State.treeSelNode = null; render();
@@ -9118,6 +9311,19 @@ function onClick(e) {
   } else if (action === 'bridge-parse') { parseBridgeResponse();
   } else if (action === 'propose-apply') { applyAcceptedProposals();
   } else if (action === 'propose-close') { const m = document.getElementById('propose-modal'); if (m) m.remove();
+  } else if (action === 'ms-claim-yes') {
+    const sid = el.dataset.skill, tr = State.tree[sid];
+    const node = tr && tr.nodes.find((n) => n.id === el.dataset.node);
+    document.getElementById('ms-claim')?.remove();
+    if (!node || node.unlocked) return;
+    node.unlocked = true; node.claimedAt = new Date().toISOString();
+    Store.save('skilltree', State.tree);
+    track('tree:milestone');
+    try { sfx('achievement'); } catch {}
+    announce('ВЕХА ВЗЯТА', `🚩 ${node.title} · +1 ◈`, `🚩 ${t('Веха взята')}: ${node.title} · +1 ◈ — ${t('Тень записала это в летопись')}`);
+    render(); return;
+  } else if (action === 'ms-claim-no') {
+    document.getElementById('ms-claim')?.remove(); return;
   } else if (action === 'repeat-yesterday') {
     const src = yesterdayCloneable();
     if (!src.length) return;
@@ -9618,6 +9824,33 @@ function onChange(e) {
     else delete species[sphereId];
     Store.save('settings', State.settings);
     toast(`🐾 ${t('Облик')}: ${t(PET_SPECIES_LABELS[el.value] || 'Автоматически')}`);
+    render();
+    return;
+  }
+  if (a === 'set-fortune-skin') {
+    const sphereId = el.dataset.id, skins = ensureFortuneSkins();
+    if (FORTUNE_SKINS[el.value]) skins[sphereId] = el.value;
+    else delete skins[sphereId];
+    Store.save('settings', State.settings);
+    toast(`🎨 ${t('Окрас')}: ${t((FORTUNE_SKINS[el.value] || FORTUNE_SKINS['obsidian-gold']).name)}`);
+    render();
+    return;
+  }
+  if (a === 'set-fortune-prop') {
+    const sphereId = el.dataset.id, props = ensureFortuneProps();
+    if (FORTUNE_PROPS[el.value]) props[sphereId] = el.value;
+    else delete props[sphereId];
+    Store.save('settings', State.settings);
+    toast(`🪙 ${t('Занятие')}: ${t((FORTUNE_PROPS[el.value] || { name: 'Автоматически' }).name)}`);
+    render();
+    return;
+  }
+  if (a === 'set-pet-wear-slot') {
+    const ok = setPetWearSlot(el.dataset.id, el.dataset.slot, el.value);
+    if (!ok) { toast(t('Этот предмет нельзя надеть в выбранный слот')); render(); return; }
+    Store.save('settings', State.settings);
+    const item = wearableById(el.value);
+    toast(`✨ ${t(item ? item.name : 'Снято')}`);
     render();
     return;
   }

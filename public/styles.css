@@ -226,6 +226,20 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .auth-cta { font-size: 15px; padding: 12px; }
 .auth-or { text-align: center; font-size: 12px; margin: 12px 0 8px; }
 
+/* 🚩 Дерево v3: вехи — хребет реальных достижений (TREE-V3-PLAN.md) */
+.tree-node.milestone {
+  border-style: dashed;
+  border-color: color-mix(in srgb, #e0a23e 55%, var(--line));
+  background: color-mix(in srgb, #e0a23e 7%, var(--panel));
+}
+.tree-node.milestone.unlocked {
+  border-style: solid; border-color: #e0a23e;
+  background: color-mix(in srgb, #e0a23e 16%, var(--panel));
+  box-shadow: 0 0 14px color-mix(in srgb, #e0a23e 30%, transparent);
+}
+.tree-node.milestone .tn-cost { color: #e0a23e; font-weight: 700; }
+.ms-box .sg-what { font-size: 14px; line-height: 1.5; margin: 0 0 10px; }
+
 /* 🌳 Гайд Тени внутри дерева навыков (fb_mrnjz1qsjmk8) */
 .tree-guide { border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); }
 .tree-guide .tg-row { display: flex; gap: 12px; align-items: flex-start; }
@@ -1074,6 +1088,7 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .comp-art { flex: 0 0 auto; width: 96px; height: 128px; display: block; overflow: hidden; background: transparent; border-radius: 14px; border: 2px solid color-mix(in srgb, var(--accent) 50%, #d7dcef); box-shadow: 0 4px 14px rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.15); }
 .comp-svg { width: 84px; height: 84px; display: block; animation: comp-float 4s ease-in-out infinite; transform-origin: center bottom; }
 .comp-video { display: block; width: 100%; height: 100%; object-fit: contain; background: transparent; }
+.comp-shadow-art { object-fit: contain; filter: drop-shadow(0 7px 10px rgba(24, 12, 36, .22)); }
 @keyframes comp-float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-5px) } }
 .comp-body { flex: 1 1 auto; min-width: 0; }
 .comp-name { display: flex; align-items: center; gap: 7px; }
@@ -1134,6 +1149,12 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .pet-sphere { margin: 2px 0 0 !important; font-size: 10.5px !important; opacity: .8; }
 .pet-species-picker { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 9px; padding-top: 9px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; font-weight: 700; }
 .pet-species-picker select { min-width: 0; width: 100px; padding: 5px 24px 5px 7px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel2); color: var(--text); font: inherit; cursor: pointer; }
+.pet-kit { width: 100%; display: grid; gap: 7px; margin-top: 8px; padding: 9px; border: 1px solid var(--line); border-radius: 9px; background: color-mix(in srgb, var(--panel2) 72%, transparent); text-align: left; box-sizing: border-box; }
+.pet-kit label { display: grid; grid-template-columns: 54px minmax(0, 1fr); align-items: center; gap: 6px; color: var(--muted); font-size: 10.5px; font-weight: 700; }
+.pet-kit select { min-width: 0; width: 100%; padding: 5px 22px 5px 6px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); color: var(--text); font: inherit; cursor: pointer; }
+.pet-kit details { border-top: 1px solid var(--line); padding-top: 6px; }
+.pet-kit summary { color: var(--muted); font-size: 10.5px; font-weight: 800; cursor: pointer; user-select: none; }
+.pet-kit details label { margin-top: 6px; }
 .pet-rename-form { display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: 4px; }
 .pet-rename-form input { padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel2); color: var(--text); font-size: 13px; text-align: center; }
 .pet-rename-btns { display: flex; gap: 6px; justify-content: center; }
@@ -3255,12 +3276,16 @@ body {
 .fc-rig .fc-shadow,
 .fc-rig .fc-tail,
 .fc-rig .fc-bag,
+.fc-rig .fc-back-wear,
 .fc-rig .fc-body,
 .fc-rig .fc-raised-paw,
 .fc-rig .fc-held,
 .fc-rig .fc-head,
+.fc-rig .fc-head-wear,
 .fc-rig .fc-face,
 .fc-rig .fc-collar,
+.fc-rig .fc-neck-wear,
+.fc-rig .fc-prop,
 .fc-rig .fc-bell {
   transform-box: view-box;
   transform-origin: 0 0;
@@ -3271,12 +3296,16 @@ body {
 .fc-rig .fc-shadow { animation: fcV2Shadow 3.8s ease-in-out infinite; }
 .fc-rig .fc-tail { animation: fcV2Tail 3.2s ease-in-out infinite; }
 .fc-rig .fc-bag { animation: fcV2Bag 4.2s ease-in-out infinite; }
+.fc-rig .fc-back-wear { animation: fcV2Bag 4.2s ease-in-out infinite; }
 .fc-rig .fc-body { animation: fcV2Breathe 3.8s ease-in-out infinite; }
 .fc-rig .fc-raised-paw { animation: fcV2Beckon 2.35s ease-in-out infinite; }
 .fc-rig .fc-held { animation: fcV2Held 3.8s ease-in-out infinite; }
 .fc-rig .fc-head { animation: fcV2Head 5.2s ease-in-out infinite; }
+.fc-rig .fc-head-wear { animation: fcV2Head 5.2s ease-in-out infinite; }
 .fc-rig .fc-face { animation: fcV2Blink 5.4s linear infinite; }
 .fc-rig .fc-collar { animation: fcV2Collar 3.8s ease-in-out infinite; }
+.fc-rig .fc-neck-wear { animation: fcV2Collar 3.8s ease-in-out infinite; }
+.fc-rig .fc-prop { animation: fcV2Prop 3.8s ease-in-out infinite; }
 .fc-rig .fc-bell { animation: fcV2Bell 2.35s ease-in-out infinite; }
 
 @keyframes fcV2Shadow {
@@ -3319,9 +3348,14 @@ body {
   0%, 100% { transform: rotate(-6deg); }
   50% { transform: rotate(6deg); }
 }
+@keyframes fcV2Prop {
+  0%, 100% { transform: translateY(0) rotate(-.6deg); }
+  50% { transform: translateY(-2px) rotate(.6deg); }
+}
 
 .fc-rig.fc-state-hungry .fc-body { animation: fcV2TiredBody 4.8s ease-in-out infinite; }
 .fc-rig.fc-state-hungry .fc-head { animation: fcV2TiredHead 4.8s ease-in-out infinite; }
+.fc-rig.fc-state-hungry .fc-head-wear { animation: fcV2TiredHead 4.8s ease-in-out infinite; }
 .fc-rig.fc-state-hungry .fc-raised-paw { animation: fcV2TiredPaw 4.8s ease-in-out infinite; }
 .fc-rig.fc-state-hungry .fc-bell { animation-duration: 4.8s; }
 @keyframes fcV2TiredBody {
@@ -3339,6 +3373,8 @@ body {
 
 .fc-rig.fc-state-full .fc-body { animation-duration: 2.7s; }
 .fc-rig.fc-state-full .fc-head { animation: fcV2HappyHead 2.7s ease-in-out infinite; }
+.fc-rig.fc-state-full .fc-head-wear { animation: fcV2HappyHead 2.7s ease-in-out infinite; }
+.fc-rig.fc-state-full .fc-face { animation: none; }
 .fc-rig.fc-state-full .fc-tail,
 .fc-rig.fc-state-full .fc-raised-paw,
 .fc-rig.fc-state-full .fc-bell { animation-duration: 1.8s; }
@@ -3350,23 +3386,31 @@ body {
 .fc-rig.fc-state-overfed .fc-shadow,
 .fc-rig.fc-state-overfed .fc-tail,
 .fc-rig.fc-state-overfed .fc-bag,
+.fc-rig.fc-state-overfed .fc-back-wear,
 .fc-rig.fc-state-overfed .fc-body,
 .fc-rig.fc-state-overfed .fc-raised-paw,
 .fc-rig.fc-state-overfed .fc-held,
 .fc-rig.fc-state-overfed .fc-head,
+.fc-rig.fc-state-overfed .fc-head-wear,
 .fc-rig.fc-state-overfed .fc-collar,
+.fc-rig.fc-state-overfed .fc-neck-wear,
+.fc-rig.fc-state-overfed .fc-prop,
 .fc-rig.fc-state-overfed .fc-bell { animation-duration: 5.6s; }
 
 @media (prefers-reduced-motion: reduce) {
   .fc-rig .fc-shadow,
   .fc-rig .fc-tail,
   .fc-rig .fc-bag,
+  .fc-rig .fc-back-wear,
   .fc-rig .fc-body,
   .fc-rig .fc-raised-paw,
   .fc-rig .fc-held,
   .fc-rig .fc-head,
+  .fc-rig .fc-head-wear,
   .fc-rig .fc-face,
   .fc-rig .fc-collar,
+  .fc-rig .fc-neck-wear,
+  .fc-rig .fc-prop,
   .fc-rig .fc-bell { animation: none !important; }
 }
 
