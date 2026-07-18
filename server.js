@@ -579,6 +579,17 @@ const AI_DAYLOG_SYS = `Ты — помощник «Итог дня голосо�
 - sphere — подбери из СУЩЕСТВУЮЩИХ сфер юзера по точному имени; если не подходит ни одна — пустая строка.
 - time — приблизительное начало, если упомянуто («около 3 дня» → "15:00"), иначе пустая строка.
 - Не выдумывай дел, которых не было. Язык — русский. Будь краток и точен.`;
+// Дерево v3 Фаза 3: картограф персональных вех (TREE-V3-PLAN.md)
+const AI_TREEMAP_SYS = `Ты — картограф мастерства в Satoru. Юзер хочет ПЕРСОНАЛЬНУЮ лестницу вех для одной сферы своей жизни — не общий шаблон, а его реальный путь.
+
+Верни СТРОГО JSON {"proposals":[{"title":"веха","desc":"как понять, что взята — одна короткая проверяемая фраза"}]} — от 4 до 6 вех, упорядоченных СТРОГО от ближайшей к вершине.
+
+Правила:
+- Веха — ПРОВЕРЯЕМОЕ состояние реальности («Сдал Klausur на 13+», «Пробежал 10 км без остановки», «Первый платящий клиент»), НЕ процесс («заниматься чаще»), НЕ игровая сущность (никаких XP и уровней).
+- Строй из того, что юзер написал о себе, и из его целей в контексте: его экзамены, его проекты, его цифры. Уже взятые вехи в контексте показывают, где он СЕЙЧАС — первая новая веха идёт следом за ними.
+- Первая веха достижима из текущего положения за 2–6 недель — она даёт разгон. Вершина — амбиция на годы, но его собственная, из его слов.
+- Названия ≤ 60 знаков, без нумерации. Язык — язык юзера.
+- Ноль воды и лозунгов: только формулировки, которые можно проверить фактом.`;
 // Каталог бэкапов одного файла данных пользователя
 function backupDir(dir, name) { return path.join(dir, '.backups', name); }
 // Снимок текущего содержимого файла ПЕРЕД перезаписью.
@@ -1346,11 +1357,11 @@ const server = http.createServer(async (req, res) => {
     let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
     const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
     const provider = AI_PROVIDERS[b.provider] ? b.provider : null;
-    const kind = b.kind === 'calibrate' ? 'calibrate' : b.kind === 'daylog' ? 'daylog' : 'goals';
+    const kind = b.kind === 'calibrate' ? 'calibrate' : b.kind === 'daylog' ? 'daylog' : b.kind === 'treemap' ? 'treemap' : 'goals';
     const text = String(b.text || '').slice(0, 20000);
     const context = String(b.context || '').slice(0, 6000);
     if (!text) return sendJson(res, 400, { error: 'empty' });
-    const sys = kind === 'calibrate' ? AI_CALIB_SYS : kind === 'daylog' ? AI_DAYLOG_SYS : AI_GOALS_SYS;
+    const sys = kind === 'calibrate' ? AI_CALIB_SYS : kind === 'daylog' ? AI_DAYLOG_SYS : kind === 'treemap' ? AI_TREEMAP_SYS : AI_GOALS_SYS;
     const prompt = `СФЕРЫ И ЦЕЛИ ЮЗЕРА СЕЙЧАС:\n${context || '(пусто)'}\n\nЧТО НАПИСАЛ ЮЗЕР:\n${text}\n\nВерни ТОЛЬКО JSON по схеме из системного промпта. Без markdown, без пояснений вне JSON.`;
     try {
       const r = await aiCallForUser(user, provider, sys, [{ role: 'user', content: prompt }], 3500);

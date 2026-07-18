@@ -1827,6 +1827,23 @@ const I18N_EXTRA = {
   'Вехи до этого тира отмечены на карте пути': { en: 'Milestones up to this tier are marked on your path map', de: 'Meilensteine bis zu dieser Stufe sind auf deiner Wegkarte markiert', uk: 'Віхи до цього тиру відмічено на карті шляху', es: 'Los hitos hasta este nivel quedaron marcados en tu mapa del camino' },
   'Похоже на веху': { en: 'Looks like a milestone', de: 'Sieht nach einem Meilenstein aus', uk: 'Схоже на віху', es: 'Parece un hito' },
   'загляни в карту пути': { en: 'check your path map', de: 'schau auf deine Wegkarte', uk: 'зазирни в карту шляху', es: 'mira tu mapa del camino' },
+  // ── 🤖 Фаза 3: личная карта вех ──
+  'Личная карта': { en: 'Personal map', de: 'Persönliche Karte', uk: 'Особиста карта', es: 'Mapa personal' },
+  'Шаблонная лестница — старт. Расскажи, где ты в этой сфере и куда идёшь — свои экзамены, проекты, цифры — и Тень соберёт вехи под тебя. Взятые вехи останутся: новая тропа строится поверх них.': { en: 'The template ladder is a starting point. Tell me where you are in this sphere and where you are heading — your exams, projects, numbers — and Shadow will build milestones for you. Taken milestones stay: the new trail is built on top of them.', de: 'Die Vorlagen-Leiter ist ein Start. Erzähl, wo du in dieser Sphäre stehst und wohin du willst — deine Prüfungen, Projekte, Zahlen — und Schatten baut Meilensteine für dich. Genommene Meilensteine bleiben: der neue Pfad baut auf ihnen auf.', uk: 'Шаблонна драбина — старт. Розкажи, де ти в цій сфері й куди йдеш — свої іспити, проєкти, цифри — і Тінь збере віхи під тебе. Взяті віхи залишаться: нова стежка будується поверх них.', es: 'La escalera de plantilla es un punto de partida. Cuenta dónde estás en esta esfera y hacia dónde vas — tus exámenes, proyectos, cifras — y Sombra construirá hitos para ti. Los hitos logrados se quedan: el nuevo sendero se construye sobre ellos.' },
+  'Например: готовлюсь к Abitur по био, весной Jugend forscht, хочу в универ на молекулярку…': { en: 'E.g.: preparing for my bio finals, science fair in spring, aiming for molecular biology at uni…', de: 'Z. B.: bereite mich aufs Bio-Abitur vor, im Frühjahr Jugend forscht, will Molekularbiologie studieren…', uk: 'Наприклад: готуюся до іспиту з біо, навесні науковий конкурс, хочу в універ на молекулярку…', es: 'P. ej.: preparo mi examen de bio, feria de ciencias en primavera, quiero molecular en la uni…' },
+  'Собрать карту': { en: 'Build the map', de: 'Karte bauen', uk: 'Зібрати карту', es: 'Construir el mapa' },
+  'Нужен ИИ — добавь ключ в Настройках (бесплатные Gemini/Groq есть), и Тень соберёт твою карту.': { en: 'AI needed — add a key in Settings (free Gemini/Groq exist) and Shadow will build your map.', de: 'KI nötig — füge in den Einstellungen einen Schlüssel hinzu (kostenlose Gemini/Groq gibt es), und Schatten baut deine Karte.', uk: 'Потрібен ШІ — додай ключ у Налаштуваннях (є безкоштовні Gemini/Groq), і Тінь збере твою карту.', es: 'Se necesita IA — añade una clave en Ajustes (hay Gemini/Groq gratuitos) y Sombra construirá tu mapa.' },
+  'Расскажи хоть пару слов о себе в этой сфере': { en: 'Tell at least a few words about yourself in this sphere', de: 'Erzähl wenigstens ein paar Worte über dich in dieser Sphäre', uk: 'Розкажи хоч пару слів про себе в цій сфері', es: 'Cuenta al menos unas palabras sobre ti en esta esfera' },
+  'Собираю…': { en: 'Building…', de: 'Baue…', uk: 'Збираю…', es: 'Construyendo…' },
+  'Не разобрал ответ — попробуй ещё раз': { en: 'Could not parse the answer — try again', de: 'Antwort nicht lesbar — versuch es noch mal', uk: 'Не розібрав відповідь — спробуй ще раз', es: 'No pude interpretar la respuesta — inténtalo de nuevo' },
+  'Ошибка сети — попробуй ещё раз': { en: 'Network error — try again', de: 'Netzwerkfehler — versuch es noch mal', uk: 'Помилка мережі — спробуй ще раз', es: 'Error de red — inténtalo de nuevo' },
+  'Пусто — попробуй описать подробнее': { en: 'Empty — try describing in more detail', de: 'Leer — beschreib es genauer', uk: 'Порожньо — спробуй описати докладніше', es: 'Vacío — intenta describirlo con más detalle' },
+  'Принять карту': { en: 'Accept the map', de: 'Karte übernehmen', uk: 'Прийняти карту', es: 'Aceptar el mapa' },
+  'сними галочки с лишнего — порядок снизу вверх сохранится': { en: 'untick what you don\'t need — bottom-to-top order is kept', de: 'hake Überflüssiges ab — die Reihenfolge von unten nach oben bleibt', uk: 'зніми галочки із зайвого — порядок знизу вгору збережеться', es: 'desmarca lo que sobre — el orden de abajo arriba se mantiene' },
+  'Личная карта принята': { en: 'Personal map accepted', de: 'Persönliche Karte übernommen', uk: 'Особисту карту прийнято', es: 'Mapa personal aceptado' },
+  'вех': { en: 'milestones', de: 'Meilensteine', uk: 'віх', es: 'hitos' },
+  'первая уже ждёт внизу тропы': { en: 'the first one is waiting at the bottom of the trail', de: 'der erste wartet schon am Anfang des Pfads', uk: 'перша вже чекає внизу стежки', es: 'el primero ya espera al inicio del sendero' },
+  'Ничего не выбрано': { en: 'Nothing selected', de: 'Nichts ausgewählt', uk: 'Нічого не вибрано', es: 'Nada seleccionado' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -6696,6 +6713,76 @@ function openMilestoneClaim(skillId, nodeId) {
     </div></div>`;
   document.body.appendChild(ov);
 }
+// ── Фаза 3: 🤖 персональная карта вех (AI_TREEMAP_SYS на сервере) ─────────────────────
+// Не «лестница бега вообще», а ТВОИ вехи: из твоих слов, целей и уже взятого. ИИ предлагает —
+// человек одобряет карточками (реюз движка Предложений). Взятые вехи никогда не удаляются:
+// новая цепь строится ПОВЕРХ них (прошлое внизу, будущее сверху).
+let _treeMapItems = [];
+function treeMapContext(skillId) {
+  const sk = skillById(skillId), tr = State.tree[skillId];
+  const taken = tr ? tr.nodes.filter((n) => n.milestone && n.unlocked).map((n) => n.title) : [];
+  const ahead = tr ? tr.nodes.filter((n) => n.milestone && !n.unlocked).map((n) => n.title) : [];
+  const goals = (State.goals || []).filter((g) => g.skillId === skillId && !g.archived)
+    .map((g) => g.title + (g.metric && g.metric.target != null ? ` (${g.metric.current ?? g.metric.start ?? '?'}→${g.metric.target})` : '') + (g.completedAt ? ' ✓' : '')).slice(0, 12);
+  const imp = (State.settings.imported || {})[skillId];
+  return `Сфера: ${sk.name} (ур.${skillLevelOf(skillId)})\nВЗЯТЫЕ вехи (это его текущее положение): ${taken.join('; ') || '(нет)'}\nШаблонные вехи впереди (замени персональными): ${ahead.join('; ') || '(нет)'}\nЦели юзера в этой сфере: ${goals.join('; ') || '(нет)'}\nИмпорт стартового уровня: ${imp ? imp.label : '(нет)'}`;
+}
+function openTreeMapAI() {
+  document.getElementById('treemap-modal')?.remove();
+  _treeMapItems = [];
+  const skillId = State.treeSkill, sk = skillById(skillId);
+  const ov = document.createElement('div'); ov.id = 'treemap-modal'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="treemap-close">✕</button>
+    <h2>🤖 ${t('Личная карта')}: ${esc(sk.name)}</h2>
+    <p class="muted" style="font-size:13px;margin:0 0 10px">${t('Шаблонная лестница — старт. Расскажи, где ты в этой сфере и куда идёшь — свои экзамены, проекты, цифры — и Тень соберёт вехи под тебя. Взятые вехи останутся: новая тропа строится поверх них.')}</p>
+    <textarea id="treemap-text" rows="4" placeholder="${t('Например: готовлюсь к Abitur по био, весной Jugend forscht, хочу в универ на молекулярку…')}"></textarea>
+    <div class="propose-actions">${canUseAi()
+      ? `<button class="btn" data-action="treemap-run">🤖 ${t('Собрать карту')}</button>`
+      : `<p class="muted" style="font-size:12px;margin:6px 0 0">${t('Нужен ИИ — добавь ключ в Настройках (бесплатные Gemini/Groq есть), и Тень соберёт твою карту.')}</p>`}</div>
+    <div id="treemap-result"></div></div>`;
+  document.body.appendChild(ov);
+  setTimeout(() => { document.getElementById('treemap-text')?.focus(); }, 30);
+}
+async function treeMapRun() {
+  const ta = document.getElementById('treemap-text'), text = (ta && ta.value || '').trim();
+  if (!text) { toast(t('Расскажи хоть пару слов о себе в этой сфере')); return; }
+  const res = document.getElementById('treemap-result'); if (res) res.innerHTML = `<p class="muted">🤖 ${t('Собираю…')}</p>`;
+  try {
+    const r = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kind: 'treemap', provider: aiProvider(), text, context: treeMapContext(State.treeSkill) }) });
+    const d = await r.json();
+    if (d.error && aiHandleErr(d)) { document.getElementById('treemap-modal')?.remove(); return; }
+    if (d.error || !Array.isArray(d.proposals)) { if (res) res.innerHTML = `<p class="muted">${t('Не разобрал ответ — попробуй ещё раз')}</p>`; return; }
+    _treeMapItems = d.proposals.filter((p) => p && p.title).slice(0, 6)
+      .map((p) => ({ title: String(p.title).slice(0, 80), desc: String(p.desc || '').slice(0, 120) }));
+    renderTreeMapCards(); track('tree:aimap-run');
+  } catch { if (res) res.innerHTML = `<p class="muted">${t('Ошибка сети — попробуй ещё раз')}</p>`; }
+}
+function renderTreeMapCards() {
+  const res = document.getElementById('treemap-result'); if (!res) return;
+  if (!_treeMapItems.length) { res.innerHTML = `<p class="muted">${t('Пусто — попробуй описать подробнее')}</p>`; return; }
+  res.innerHTML = `<div class="dayrec-list">${_treeMapItems.map((it, i) => `
+    <label class="drc-row"><input type="checkbox" data-treemap="${i}" checked />
+      <span><b>🚩 ${esc(it.title)}</b>${it.desc ? `<br><span class="muted" style="font-size:12px">${esc(it.desc)}</span>` : ''}</span></label>`).join('')}</div>
+  <div class="propose-actions"><button class="btn" data-action="treemap-apply">🚩 ${t('Принять карту')}</button>
+    <span class="muted" style="font-size:12px">${t('сними галочки с лишнего — порядок снизу вверх сохранится')}</span></div>`;
+}
+function applyPersonalMap(skillId, items) {
+  const tr = State.tree[skillId]; if (!tr || !items.length) return 0;
+  const claimed = tr.nodes.filter((n) => n.milestone && n.unlocked);
+  tr.nodes = tr.nodes.filter((n) => !n.milestone || n.unlocked); // шаблонные невзятые — уходят
+  const total = claimed.length + items.length;
+  claimed.forEach((n, i) => { n.col = 3.4; n.row = total - 1 - i; n.x = n.col * TREE_SX; n.y = n.row * TREE_SY; n.requires = i ? [claimed[i - 1].id] : []; });
+  let prev = claimed.length ? claimed[claimed.length - 1].id : null;
+  items.forEach((it, i) => {
+    const row = total - 1 - (claimed.length + i);
+    const node = { id: 'nd_' + uid(), title: it.title, desc: it.desc, milestone: true, personal: true, cost: 0,
+      requires: prev ? [prev] : [], perks: [], unlocked: false, col: 3.4, row, x: 3.4 * TREE_SX, y: row * TREE_SY };
+    tr.nodes.push(node); prev = node.id;
+  });
+  Store.save('skilltree', State.tree);
+  return items.length;
+}
 function treeNodePanel(id, t) {
   const n = t.nodes.find((x) => x.id === State.treeSelNode); if (!n) return '';
   const reqs = t.nodes.filter((x) => x.id !== n.id).map((o) => `<label class="tp-req"><input type="checkbox" data-action="tree-toggle-req" data-node="${n.id}" data-req="${o.id}" ${(n.requires || []).includes(o.id) ? 'checked' : ''}/> ${esc(o.title)}</label>`).join('') || '<span class="muted">других узлов нет</span>';
@@ -6752,8 +6839,8 @@ function renderTree() {
       <div class="tn-cost">${costLine}</div></div>`;
   }).join('');
   const controls = `<div class="tree-ctrls">
-      <div class="tree-points" title="заработано ${earned} (= ур. сферы) · потрачено ${spent}">◈ <b>${avail}</b> очк.</div>
-      ${edit ? '<button class="btn ghost sm" data-action="tree-add-node">+ Узел</button>' : ''}
+      <div class="tree-points" title="заработано ${earned} (= ур. сферы + вехи) · потрачено ${spent}">◈ <b>${avail}</b> очк.</div>
+      ${edit ? '<button class="btn ghost sm" data-action="tree-add-node">+ Узел</button>' : `<button class="btn ghost sm" data-action="treemap-open">🤖 ${t('Личная карта')}</button>`}
       <button class="btn ${edit ? '' : 'ghost'} sm" data-action="toggle-tree-edit">${edit ? '✓ Готово' : '✏️ Редактор'}</button>
     </div>`;
   const recNode = recId && tree.nodes.find((n) => n.id === recId);
@@ -7469,6 +7556,8 @@ const FEATURE_REGISTRY = [
   { ev: 'sphere:guide-ai', label: 'Сферу разбирает Тень' },
   { ev: 'entry:accept', label: '🕯 Заход (вечерний вход)' },
   { ev: 'repeat:yesterday', label: '↻ Повторить вчерашний план' },
+  { ev: 'tree:milestone', label: '🚩 Веха взята' },
+  { ev: 'tree:aimap-apply', label: '🤖 Личная карта вех' },
   { ev: 'shortcut:dayrec', label: 'Ярлык «Итог дня» (телефон)' },
   { ev: 'shortcut:capture', label: 'Ярлык «Заметка» (телефон)' },
   { ev: 'chest:open', label: 'Открыть сундук' },
@@ -9459,6 +9548,21 @@ function onClick(e) {
   } else if (action === 'bridge-parse') { parseBridgeResponse();
   } else if (action === 'propose-apply') { applyAcceptedProposals();
   } else if (action === 'propose-close') { const m = document.getElementById('propose-modal'); if (m) m.remove();
+  } else if (action === 'treemap-open') {
+    openTreeMapAI(); track('tree:aimap-open'); return;
+  } else if (action === 'treemap-close') {
+    document.getElementById('treemap-modal')?.remove(); return;
+  } else if (action === 'treemap-run') {
+    treeMapRun(); return;
+  } else if (action === 'treemap-apply') {
+    const picked = [...document.querySelectorAll('#treemap-result [data-treemap]:checked')]
+      .map((c) => _treeMapItems[Number(c.dataset.treemap)]).filter(Boolean);
+    if (!picked.length) { toast(t('Ничего не выбрано')); return; }
+    const n = applyPersonalMap(State.treeSkill, picked);
+    document.getElementById('treemap-modal')?.remove();
+    track('tree:aimap-apply');
+    toast(`🚩 ${t('Личная карта принята')}: ${n} ${t('вех')} — ${t('первая уже ждёт внизу тропы')}`);
+    render(); return;
   } else if (action === 'ms-claim-yes') {
     const sid = el.dataset.skill, tr = State.tree[sid];
     const node = tr && tr.nodes.find((n) => n.id === el.dataset.node);
