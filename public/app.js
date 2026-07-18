@@ -1824,6 +1824,9 @@ const I18N_EXTRA = {
   'Ориентир': { en: 'Benchmark', de: 'Orientierung', uk: 'Орієнтир', es: 'Referencia' },
   'Открыто': { en: 'Unlocked', de: 'Freigeschaltet', uk: 'Відкрито', es: 'Desbloqueado' },
   '🚩 Вехи справа — реальные достижения сферы. Они берутся жизнью, не очками — и каждая взятая даёт +1 ◈.': { en: '🚩 The milestones on the right are real achievements of the sphere. They are earned by living, not with points — and each one taken grants +1 ◈.', de: '🚩 Die Meilensteine rechts sind echte Erfolge der Sphäre. Sie werden durchs Leben verdient, nicht mit Punkten — und jeder genommene gibt +1 ◈.', uk: '🚩 Віхи праворуч — реальні досягнення сфери. Вони беруться життям, не очками — і кожна взята дає +1 ◈.', es: '🚩 Los hitos de la derecha son logros reales de la esfera. Se ganan viviendo, no con puntos — y cada uno logrado da +1 ◈.' },
+  'Вехи до этого тира отмечены на карте пути': { en: 'Milestones up to this tier are marked on your path map', de: 'Meilensteine bis zu dieser Stufe sind auf deiner Wegkarte markiert', uk: 'Віхи до цього тиру відмічено на карті шляху', es: 'Los hitos hasta este nivel quedaron marcados en tu mapa del camino' },
+  'Похоже на веху': { en: 'Looks like a milestone', de: 'Sieht nach einem Meilenstein aus', uk: 'Схоже на віху', es: 'Parece un hito' },
+  'загляни в карту пути': { en: 'check your path map', de: 'schau auf deine Wegkarte', uk: 'зазирни в карту шляху', es: 'mira tu mapa del camino' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -3245,17 +3248,27 @@ function goalStatusInfo(g) {
   if (g.status === 'paused') return { txt: '⏸ Пауза', cls: 'gs-pause' };
   return { txt: '▶ Активна', cls: 'gs-active' };
 }
+// Фаза 2 дерева: цель взята → возможно, это веха на карте пути. Только подсказка-мост,
+// не авто-зачёт: веху подтверждает человек (модалка честности), мы лишь напоминаем о ней
+// в момент реальной победы — самый честный момент для этого вопроса.
+function goalMilestoneHint(g) {
+  try {
+    const tr = State.tree[g.skillId]; if (!tr) return;
+    const next = (tr.nodes || []).find((n) => n.milestone && !n.unlocked && nodeUnlockable(g.skillId, n));
+    if (next) { setTimeout(() => { try { toast(`🚩 ${t('Похоже на веху')}: «${next.title}» — ${t('загляни в карту пути')}`); } catch {} }, 1600); track('tree:goal-hint'); }
+  } catch {}
+}
 function refreshGoalCompletion(g) {
   if (g.metric && g.metric.target != null) {
     const reached = goalMetricReached(g);
     if (reached) g.metric.everReached = true;
     // maintain-цель никогда не «завершается» — остаётся в режиме удержания
-    if (reached && !g.metric.maintain && !g.completedAt) { g.completedAt = new Date().toISOString(); toast(`🎯 Цель достигнута: ${g.title} (+${g.xpReward != null ? g.xpReward : GOAL_BONUS.xp} XP)`); }
+    if (reached && !g.metric.maintain && !g.completedAt) { g.completedAt = new Date().toISOString(); toast(`🎯 Цель достигнута: ${g.title} (+${g.xpReward != null ? g.xpReward : GOAL_BONUS.xp} XP)`); goalMilestoneHint(g); }
     else if (!reached && g.completedAt && !g.metric.maintain) g.completedAt = null;
     return;
   }
   const allDone = g.steps.length > 0 && g.steps.every((s) => s.done);
-  if (allDone && !g.completedAt) { g.completedAt = new Date().toISOString(); toast(`🎯 Цель достигнута: ${g.title} (+${g.xpReward != null ? g.xpReward : GOAL_BONUS.xp} XP)`); }
+  if (allDone && !g.completedAt) { g.completedAt = new Date().toISOString(); toast(`🎯 Цель достигнута: ${g.title} (+${g.xpReward != null ? g.xpReward : GOAL_BONUS.xp} XP)`); goalMilestoneHint(g); }
   else if (!allDone && g.completedAt) g.completedAt = null;
 }
 
@@ -3422,6 +3435,24 @@ function ensureTrees() {
     if (n.x == null) n.x = (n.col || 0) * TREE_SX;
     if (n.y == null) n.y = (n.row || 0) * TREE_SY;
   }
+  syncMilestonesFromImport();
+}
+// Фаза 2: синк вех с импортом достижений. Юзер при импорте честно указал тир N — значит вехи
+// до N уже взяты его жизнью ДО Satoru (это то же самосвидетельство, что и модалка честности).
+// Односторонний (взятое не отнимаем — «уровень не сгорает») и идемпотентный.
+function syncMilestonesFromImport() {
+  const im = (State.settings && State.settings.imported) || {}; let changed = false;
+  for (const sid in im) {
+    const tier = im[sid] && im[sid].tier, tr = State.tree[sid];
+    if (!tier || !tr) continue;
+    for (const n of tr.nodes || []) {
+      if (!n.milestone || n.unlocked) continue;
+      const mi = Number((String(n.id).match(/_ms(\d+)$/) || [])[1]);
+      if (!Number.isNaN(mi) && mi < tier) { n.unlocked = true; n.claimedAt = 'import'; changed = true; }
+    }
+  }
+  if (changed) Store.save('skilltree', State.tree);
+  return changed;
 }
 // Очки практик = уровень сферы + взятые вехи (жизнь финансирует бонусы)
 function treeMilestonesTaken(id) { const t = State.tree[id]; return t ? t.nodes.filter((n) => n.milestone && n.unlocked).length : 0; }
@@ -5902,7 +5933,7 @@ function wearLayerHTML(slot, sp, sphereId) {
 }
 const FORTUNE_SOURCE_ROOT = '/art/pets/fortune-v2';
 const FORTUNE_BATCH_ROOT = '/art/pets/fortune-v2-20260716';
-const FORTUNE_ART_VERSION = '20260717-1';
+const FORTUNE_ART_VERSION = '20260717-2';
 const FORTUNE_SKINS = {
   'obsidian-gold': { name: 'Обсидиан и золото' },
   'ivory-vermilion': { name: 'Слоновая кость и киноварь' },
@@ -5963,17 +5994,96 @@ function setPetWearSlot(sphereId, slot, itemId) {
   worn[slot] = itemId;
   return true;
 }
+const FORTUNE_EDITOR_TABS = [
+  { id: 'skin', label: 'Окрас', icon: '🎨' },
+  { id: 'prop', label: 'Занятие', icon: '🪙' },
+  { id: 'head', label: 'Голова', icon: '👑' },
+  { id: 'neck', label: 'Шея', icon: '🎀' },
+  { id: 'back', label: 'Спина', icon: '🎒' },
+];
+function fortuneAppearanceSummary(sphereId) {
+  const skin = FORTUNE_SKINS[fortuneSkinForSphere(sphereId)];
+  const manualProp = ensureFortuneProps()[sphereId];
+  const worn = petWorn(sphereId);
+  const equipped = ['head', 'neck', 'back'].filter((slot) => worn[slot]).length;
+  const propName = FORTUNE_PROPS[manualProp] ? FORTUNE_PROPS[manualProp].name : 'занятие по настроению';
+  const equipment = equipped ? `${equipped} ${equipped === 1 ? 'предмет' : 'предмета'}` : 'без экипировки';
+  return `${skin.name} · ${propName} · ${equipment}`;
+}
 function fortuneControlsHTML(sphereId) {
-  const skin = fortuneSkinForSphere(sphereId), prop = ensureFortuneProps()[sphereId] || '';
-  return `<div class="pet-kit">
-    <label><span>${t('Окрас')}</span><select data-action="set-fortune-skin" data-id="${sphereId}">${fortuneSkinOptions(skin)}</select></label>
-    <label><span>${t('Занятие')}</span><select data-action="set-fortune-prop" data-id="${sphereId}">${fortunePropOptions(prop)}</select></label>
-    <details><summary>${t('Экипировка')}</summary>
-      <label><span>${t('Голова')}</span><select data-action="set-pet-wear-slot" data-id="${sphereId}" data-slot="head">${fortuneWearOptions(sphereId, 'head')}</select></label>
-      <label><span>${t('Шея')}</span><select data-action="set-pet-wear-slot" data-id="${sphereId}" data-slot="neck">${fortuneWearOptions(sphereId, 'neck')}</select></label>
-      <label><span>${t('Спина')}</span><select data-action="set-pet-wear-slot" data-id="${sphereId}" data-slot="back">${fortuneWearOptions(sphereId, 'back')}</select></label>
-    </details>
+  return `<div class="fortune-edit-launch">
+    <button type="button" class="btn ghost sm fortune-edit-btn" data-action="open-fortune-editor" data-id="${esc(sphereId)}"><span aria-hidden="true">🪞</span> ${t('Настроить облик')}</button>
+    <small class="fortune-edit-summary">${esc(fortuneAppearanceSummary(sphereId))}</small>
   </div>`;
+}
+function fortuneEditorOption(action, sphereId, value, label, selected, thumb, extra = '') {
+  return `<button type="button" class="fortune-option${selected ? ' selected' : ''}" data-action="${action}" data-id="${esc(sphereId)}" data-value="${esc(value)}"${extra} aria-pressed="${selected ? 'true' : 'false'}">
+    <span class="fortune-option-thumb">${thumb}</span>
+    <span class="fortune-option-label">${esc(t(label))}</span>
+    <span class="fortune-option-check" aria-hidden="true">✓</span>
+  </button>`;
+}
+function fortuneSkinThumb(skinId) {
+  const ivory = skinId === 'ivory-vermilion';
+  return `<span class="fortune-skin-swatch ${ivory ? 'ivory' : 'obsidian'}"><i></i><b></b><em></em></span>`;
+}
+function fortuneAssetThumb(src) {
+  return `<img src="${src}" alt="" loading="lazy" />`;
+}
+function fortuneEditorPanel(sphereId, tab) {
+  if (tab === 'skin') {
+    const selected = fortuneSkinForSphere(sphereId);
+    return `<div class="fortune-option-grid fortune-skin-grid">${Object.entries(FORTUNE_SKINS).map(([skinId, skin]) =>
+      fortuneEditorOption('pick-fortune-skin', sphereId, skinId, skin.name, selected === skinId, fortuneSkinThumb(skinId))).join('')}</div>`;
+  }
+  if (tab === 'prop') {
+    const selected = ensureFortuneProps()[sphereId] || '';
+    const automatic = fortuneEditorOption('pick-fortune-prop', sphereId, '', 'По настроению', !selected,
+      '<span class="fortune-auto-thumb" aria-hidden="true">✨</span>');
+    const options = Object.entries(FORTUNE_PROPS).map(([propId, prop]) =>
+      fortuneEditorOption('pick-fortune-prop', sphereId, propId, prop.name, selected === propId,
+        fortuneAssetThumb(`${FORTUNE_BATCH_ROOT}/props/${prop.file}?v=${FORTUNE_ART_VERSION}`))).join('');
+    return `<p class="fortune-editor-help">В автоматическом режиме занятие меняется вместе с настроением питомца.</p><div class="fortune-option-grid">${automatic}${options}</div>`;
+  }
+  const selected = petWorn(sphereId)[tab] || '';
+  const empty = fortuneEditorOption('pick-fortune-wear', sphereId, '', 'Без предмета', !selected,
+    '<span class="fortune-auto-thumb empty" aria-hidden="true">∅</span>', ` data-slot="${tab}"`);
+  const options = WEARABLES.filter((item) => item.species === 'fortune' && item.slot === tab && item.png).map((item) =>
+    fortuneEditorOption('pick-fortune-wear', sphereId, item.id, item.name, selected === item.id,
+      fortuneAssetThumb(`${FORTUNE_BATCH_ROOT}/wearables/${item.png}?v=${FORTUNE_ART_VERSION}`), ` data-slot="${tab}"`)).join('');
+  return `<div class="fortune-option-grid">${empty}${options}</div>`;
+}
+function fortuneEditorHTML(sphereId, activeTab = 'skin') {
+  const skill = skillById(sphereId); if (!skill) return '';
+  const traits = petTraits(sphereId), stats = petStats(sphereId);
+  const idle = dayPick('petidle' + sphereId, (traits[0] && traits[0].idles) || [(traits[0] && traits[0].idle) || 'отдыхает']);
+  const tabs = FORTUNE_EDITOR_TABS.map((tab) => `<button type="button" class="fortune-editor-tab${tab.id === activeTab ? ' active' : ''}" data-action="fortune-editor-tab" data-id="${esc(sphereId)}" data-tab="${tab.id}" aria-selected="${tab.id === activeTab ? 'true' : 'false'}"><span aria-hidden="true">${tab.icon}</span>${t(tab.label)}</button>`).join('');
+  return `<div id="fortune-editor" class="modal-overlay fortune-editor-overlay" role="dialog" aria-modal="true" aria-labelledby="fortune-editor-title">
+    <section class="fortune-editor-box">
+      <button type="button" class="modal-x fortune-editor-x" data-action="close-fortune-editor" aria-label="${t('Закрыть')}">✕</button>
+      <header class="fortune-editor-head">
+        <div><span class="fortune-editor-kicker">FORTUNE CAT · ПРИМЕРОЧНАЯ</span><h2 id="fortune-editor-title">${t('Облик')} · ${esc(petName(sphereId))}</h2></div>
+        <span class="fortune-editor-saved"><i></i>${t('Сохраняется сразу')}</span>
+      </header>
+      <div class="fortune-editor-layout">
+        <div class="fortune-editor-preview-column">
+          <div class="fortune-editor-stage">${petSVG(skill.color || '#6c8cff', stats.state, traits, sphereId, idle)}</div>
+          <p class="fortune-editor-caption">${esc(fortuneAppearanceSummary(sphereId))}</p>
+        </div>
+        <div class="fortune-editor-controls">
+          <nav class="fortune-editor-tabs" role="tablist" aria-label="${t('Категории внешности')}">${tabs}</nav>
+          <div class="fortune-editor-options" role="tabpanel">${fortuneEditorPanel(sphereId, activeTab)}</div>
+        </div>
+      </div>
+      <footer class="fortune-editor-footer"><button type="button" class="btn" data-action="close-fortune-editor">${t('Готово')} ✓</button></footer>
+    </section>
+  </div>`;
+}
+function showFortuneEditor(sphereId, activeTab = 'skin') {
+  const validTab = FORTUNE_EDITOR_TABS.some((tab) => tab.id === activeTab) ? activeTab : 'skin';
+  const html = fortuneEditorHTML(sphereId, validTab); if (!html) return;
+  document.getElementById('fortune-editor')?.remove();
+  document.body.insertAdjacentHTML('beforeend', html);
 }
 function fortuneSourceHref(file) { return `${FORTUNE_SOURCE_ROOT}/${file}?v=${FORTUNE_ART_VERSION}`; }
 function fortuneSkinHref(file, skin) {
@@ -5984,8 +6094,18 @@ function fortuneFaceHref(state) {
   if (['hungry', 'full', 'overfed'].includes(state)) return `${FORTUNE_BATCH_ROOT}/states/pet-face-${state}.png?v=${FORTUNE_ART_VERSION}`;
   return fortuneSourceHref('pet-face.png');
 }
+function fortuneLayerStyle(pivotX = 512, pivotY = 512) {
+  const x = ((pivotX / 1024) * 100).toFixed(3);
+  const y = ((pivotY / 1024) * 100).toFixed(3);
+  return ` style="--fc-pivot-x:${x}%;--fc-pivot-y:${y}%;"`;
+}
+
+function fortuneImage(href, className = '') {
+  return `<img${className ? ` class="${className}"` : ''} src="${href}" alt="" draggable="false">`;
+}
+
 function fortuneRigImageHref(href, className, pivotX, pivotY) {
-  return `<g transform="translate(${pivotX},${pivotY})"><g class="${className}"><image href="${href}" x="${-pivotX}" y="${-pivotY}" width="1024" height="1024"/></g></g>`;
+  return `<div class="fc-layer ${className}"${fortuneLayerStyle(pivotX, pivotY)}>${fortuneImage(href)}</div>`;
 }
 function fortuneRigImage(file, className, pivotX, pivotY, skin) {
   return fortuneRigImageHref(fortuneSkinHref(file, skin), className, pivotX, pivotY);
@@ -7869,7 +7989,10 @@ function applyImport(skillId, tierIdx) {
     State.settings.imported[skillId] = { tier: tierIdx, xp: xpForLevel(lvl, c.skillBase, c.growth), label: ladder.tiers[tierIdx], at: new Date().toISOString() };
     toast(`🎖 ${sk.name}: старт с ур.${lvl}`);
   }
-  Store.save('settings', State.settings); render(); publishLeaderboard();
+  Store.save('settings', State.settings);
+  // Фаза 2: импортированный тир сразу отражается на карте пути (вехи до тира — взяты)
+  try { if (syncMilestonesFromImport()) toast('🚩 ' + t('Вехи до этого тира отмечены на карте пути')); } catch {}
+  render(); publishLeaderboard();
 }
 function importCard() {
   const s = State.settings, im = s.imported || {};
@@ -8851,6 +8974,7 @@ function onClick(e) {
     return;
   }
   if (e.target.id === 'mobile-nav-sheet') { closeMobileNavSheet(); return; }
+  if (e.target.id === 'fortune-editor') { e.target.remove(); render(); return; }
   const el = e.target.closest('[data-action]');
   if (!el) {
     // клик по пустому месту сетки календаря → подставить время в форму планирования
@@ -8979,6 +9103,30 @@ function onClick(e) {
   if (action === 'pet-hint') { const tr = petTraits(id)[0]; if (tr && tr.hint) toast(`${tr.icon} ${t(tr.hint)}`); return; }
   if (action === 'pet-rename') { State._petRename = id; render(); return; }
   if (action === 'pet-rename-cancel') { State._petRename = null; render(); return; }
+  if (action === 'open-fortune-editor') { showFortuneEditor(id); return; }
+  if (action === 'close-fortune-editor') { document.getElementById('fortune-editor')?.remove(); render(); return; }
+  if (action === 'fortune-editor-tab') { showFortuneEditor(id, el.dataset.tab); return; }
+  if (action === 'pick-fortune-skin') {
+    const skins = ensureFortuneSkins(), skinId = el.dataset.value;
+    if (FORTUNE_SKINS[skinId]) skins[id] = skinId; else delete skins[id];
+    Store.save('settings', State.settings);
+    try { sfx('complete'); } catch {}
+    showFortuneEditor(id, 'skin'); return;
+  }
+  if (action === 'pick-fortune-prop') {
+    const props = ensureFortuneProps(), propId = el.dataset.value;
+    if (FORTUNE_PROPS[propId]) props[id] = propId; else delete props[id];
+    Store.save('settings', State.settings);
+    try { sfx('complete'); } catch {}
+    showFortuneEditor(id, 'prop'); return;
+  }
+  if (action === 'pick-fortune-wear') {
+    const slot = el.dataset.slot;
+    if (!setPetWearSlot(id, slot, el.dataset.value || '')) { toast(t('Этот предмет нельзя надеть в выбранный слот')); return; }
+    Store.save('settings', State.settings);
+    try { sfx('complete'); } catch {}
+    showFortuneEditor(id, slot); return;
+  }
 
   // --- Снаряжение / гир ---
   if (action === 'buy-gear') {
@@ -9318,6 +9466,13 @@ function onClick(e) {
     if (!node || node.unlocked) return;
     node.unlocked = true; node.claimedAt = new Date().toISOString();
     Store.save('skilltree', State.tree);
+    // Фаза 2: «Тень записала в летопись» — теперь буквально (журнал компаньона, как чек-ины)
+    try {
+      const c = ensureCompanion();
+      c.journal.push({ date: todayStr(), kind: 'ms', text: `🚩 ${skillLabel(sid)}: ${node.title}` });
+      if (c.journal.length > 120) c.journal = c.journal.slice(-120);
+      Store.save('settings', State.settings);
+    } catch {}
     track('tree:milestone');
     try { sfx('achievement'); } catch {}
     announce('ВЕХА ВЗЯТА', `🚩 ${node.title} · +1 ◈`, `🚩 ${t('Веха взята')}: ${node.title} · +1 ◈ — ${t('Тень записала это в летопись')}`);
