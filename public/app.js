@@ -5950,7 +5950,7 @@ function wearLayerHTML(slot, sp, sphereId) {
 }
 const FORTUNE_SOURCE_ROOT = '/art/pets/fortune-v2';
 const FORTUNE_BATCH_ROOT = '/art/pets/fortune-v2-20260716';
-const FORTUNE_ART_VERSION = '20260717-2';
+const FORTUNE_ART_VERSION = '20260718-1';
 const FORTUNE_SKINS = {
   'obsidian-gold': { name: 'Обсидиан и золото' },
   'ivory-vermilion': { name: 'Слоновая кость и киноварь' },
@@ -6111,18 +6111,13 @@ function fortuneFaceHref(state) {
   if (['hungry', 'full', 'overfed'].includes(state)) return `${FORTUNE_BATCH_ROOT}/states/pet-face-${state}.png?v=${FORTUNE_ART_VERSION}`;
   return fortuneSourceHref('pet-face.png');
 }
-function fortuneLayerStyle(pivotX = 512, pivotY = 512) {
-  const x = ((pivotX / 1024) * 100).toFixed(3);
-  const y = ((pivotY / 1024) * 100).toFixed(3);
-  return ` style="--fc-pivot-x:${x}%;--fc-pivot-y:${y}%;"`;
-}
-
-function fortuneImage(href, className = '') {
-  return `<img${className ? ` class="${className}"` : ''} src="${href}" alt="" draggable="false">`;
-}
-
 function fortuneRigImageHref(href, className, pivotX, pivotY) {
-  return `<div class="fc-layer ${className}"${fortuneLayerStyle(pivotX, pivotY)}>${fortuneImage(href)}</div>`;
+  // petSVG() embeds the rig inside an SVG. HTML <div>/<img> children are
+  // invalid there: browsers may drop them or foster-parent them outside the
+  // card, which both hides the cat and lets a stray layer intercept clicks on
+  // neighbouring pets. Keep every production layer in the SVG namespace and
+  // move its real joint pivot to the local origin for CSS animation.
+  return `<g transform="translate(${pivotX},${pivotY})"><g class="fc-layer ${className}"><image href="${href}" x="${-pivotX}" y="${-pivotY}" width="1024" height="1024" preserveAspectRatio="none"/></g></g>`;
 }
 function fortuneRigImage(file, className, pivotX, pivotY, skin) {
   return fortuneRigImageHref(fortuneSkinHref(file, skin), className, pivotX, pivotY);

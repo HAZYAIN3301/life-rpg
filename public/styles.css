@@ -1118,7 +1118,7 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .pet-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
 .pet-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 14px 12px !important; }
 .pet-art { width: 92px; height: 98px; }
-.pet-svg { width: 100%; height: 100%; display: block; }
+.pet-svg { width: 100%; height: 100%; display: block; pointer-events: none; }
 /* paper-doll idle: анимируем части по классам (id нельзя — много питомцев на странице) */
 .pet-svg .pd-body-grp { animation: pd-bob 3.4s ease-in-out infinite; transform-origin: 60px 120px; }
 .pet-svg .pd-ear-l { animation: pd-ear 4.2s ease-in-out infinite; transform-origin: 44px 50px; }
@@ -1155,6 +1155,69 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .pet-kit details { border-top: 1px solid var(--line); padding-top: 6px; }
 .pet-kit summary { color: var(--muted); font-size: 10.5px; font-weight: 800; cursor: pointer; user-select: none; }
 .pet-kit details label { margin-top: 6px; }
+.fortune-edit-launch { width: 100%; display: grid; gap: 6px; margin-top: 8px; }
+.fortune-edit-btn { width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 7px; border-color: color-mix(in srgb, var(--accent) 42%, var(--line)); background: color-mix(in srgb, var(--accent) 9%, var(--panel2)); }
+.fortune-edit-btn:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, var(--panel2)); }
+.fortune-edit-summary { display: block; padding: 0 4px; color: var(--muted); font-size: 9.5px; line-height: 1.35; text-align: center; }
+
+/* Визуальная примерочная Fortune Cat — ручная настройка как в редакторе аватара. */
+.fortune-editor-overlay { z-index: 260; }
+.fortune-editor-box { position: relative; width: min(980px, 96vw); max-height: min(900px, 92dvh); overflow: auto; box-sizing: border-box; padding: 26px; border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--line)); border-radius: 24px; background: linear-gradient(145deg, color-mix(in srgb, var(--panel) 96%, #fff 4%), var(--panel)); box-shadow: 0 30px 90px rgba(0,0,0,.42); }
+.fortune-editor-x { z-index: 2; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--panel2); }
+.fortune-editor-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; padding-right: 42px; margin-bottom: 20px; }
+.fortune-editor-head h2 { margin: 3px 0 0; font-size: clamp(22px, 3vw, 32px); line-height: 1.1; }
+.fortune-editor-kicker { color: var(--accent); font-size: 10px; font-weight: 900; letter-spacing: .16em; }
+.fortune-editor-saved { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 7px; margin-top: 5px; color: var(--muted); font-size: 11px; font-weight: 750; }
+.fortune-editor-saved i { width: 8px; height: 8px; border-radius: 50%; background: #56c985; box-shadow: 0 0 0 4px rgba(86,201,133,.12); }
+.fortune-editor-layout { display: grid; grid-template-columns: minmax(280px, .9fr) minmax(390px, 1.1fr); align-items: start; gap: 24px; }
+.fortune-editor-preview-column { position: sticky; top: 0; min-width: 0; }
+.fortune-editor-stage { display: grid; place-items: center; width: 100%; aspect-ratio: 1; overflow: hidden; border: 1px solid var(--line); border-radius: 22px; background: radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--accent) 11%, var(--panel2)) 0, var(--panel2) 58%, color-mix(in srgb, var(--panel2) 75%, #000) 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.05); }
+.fortune-editor-stage .pet-svg { width: 94%; height: 94%; max-width: none; filter: drop-shadow(0 14px 12px rgba(0,0,0,.2)); }
+.fortune-editor-caption { min-height: 34px; margin: 10px 8px 0; color: var(--muted); font-size: 11px; line-height: 1.45; text-align: center; }
+.fortune-editor-controls { min-width: 0; }
+.fortune-editor-tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin-bottom: 16px; }
+.fortune-editor-tab { min-width: 0; display: grid; justify-items: center; gap: 3px; padding: 9px 4px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel2); color: var(--muted); font: inherit; font-size: 10px; font-weight: 800; cursor: pointer; transition: border-color .16s ease, background .16s ease, transform .16s ease; }
+.fortune-editor-tab span { font-size: 18px; }
+.fortune-editor-tab:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); }
+.fortune-editor-tab.active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--panel2)); color: var(--text); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 11%, transparent); }
+.fortune-editor-options { min-height: 330px; }
+.fortune-editor-help { margin: 0 0 12px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.fortune-option-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.fortune-option { position: relative; min-width: 0; padding: 8px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel2); color: var(--text); font: inherit; cursor: pointer; transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease; }
+.fortune-option:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 62%, var(--line)); }
+.fortune-option.selected { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 14%, transparent); }
+.fortune-option-thumb { display: grid; place-items: center; width: 100%; aspect-ratio: 1; overflow: hidden; border-radius: 10px; background: color-mix(in srgb, var(--panel) 75%, transparent); }
+.fortune-option-thumb img { width: 100%; height: 100%; object-fit: contain; }
+.fortune-option-label { display: block; min-height: 28px; margin-top: 7px; font-size: 10.5px; font-weight: 800; line-height: 1.3; text-align: center; }
+.fortune-option-check { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; background: var(--accent); color: #fff; font-size: 12px; font-weight: 900; opacity: 0; transform: scale(.7); transition: opacity .16s ease, transform .16s ease; }
+.fortune-option.selected .fortune-option-check { opacity: 1; transform: scale(1); }
+.fortune-auto-thumb { font-size: 40px; filter: drop-shadow(0 5px 7px rgba(0,0,0,.14)); }
+.fortune-auto-thumb.empty { color: var(--muted); filter: none; }
+.fortune-skin-swatch { position: relative; width: 72%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; box-shadow: 0 7px 16px rgba(0,0,0,.2); }
+.fortune-skin-swatch i, .fortune-skin-swatch b, .fortune-skin-swatch em { position: absolute; display: block; }
+.fortune-skin-swatch i { inset: 0; background: #292b2f; }
+.fortune-skin-swatch b { width: 66%; height: 66%; right: -7%; top: -6%; border-radius: 50%; background: #111317; }
+.fortune-skin-swatch em { width: 44%; height: 20%; left: 28%; bottom: 16%; border-radius: 999px; background: #b78325; transform: rotate(-12deg); }
+.fortune-skin-swatch.ivory i { background: #f1e8d7; }
+.fortune-skin-swatch.ivory b { background: #fffaf0; }
+.fortune-skin-swatch.ivory em { background: #b33a2e; }
+.fortune-editor-footer { display: flex; justify-content: flex-end; margin-top: 18px; }
+.fortune-editor-footer .btn { min-width: 150px; }
+
+@media (max-width: 760px) {
+  .fortune-editor-box { width: 100%; max-height: 92dvh; padding: 20px 14px 16px; border-radius: 22px 22px 12px 12px; }
+  .fortune-editor-head { display: block; padding-right: 38px; }
+  .fortune-editor-saved { margin-top: 9px; }
+  .fortune-editor-layout { grid-template-columns: 1fr; gap: 14px; }
+  .fortune-editor-preview-column { position: static; }
+  .fortune-editor-stage { width: min(72vw, 310px); margin: 0 auto; }
+  .fortune-editor-caption { min-height: 0; }
+  .fortune-editor-tabs { position: sticky; top: -20px; z-index: 1; padding: 8px 0; margin-bottom: 8px; background: var(--panel); }
+  .fortune-editor-options { min-height: 0; }
+  .fortune-option-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fortune-editor-footer { position: sticky; bottom: -16px; padding: 10px 0 0; background: linear-gradient(transparent, var(--panel) 28%); }
+  .fortune-editor-footer .btn { width: 100%; }
+}
 .pet-rename-form { display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: 4px; }
 .pet-rename-form input { padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel2); color: var(--text); font-size: 13px; text-align: center; }
 .pet-rename-btns { display: flex; gap: 6px; justify-content: center; }
