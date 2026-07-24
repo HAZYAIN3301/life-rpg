@@ -1057,7 +1057,7 @@ const I18N_EXTRA = {
   'Активных сфер:': { en: 'Active areas:', de: 'Aktive Bereiche:', uk: 'Активних сфер:', es: 'Áreas activas:' },
   '🎖 Ранги по сферам': { en: '🎖 Ranks by area', de: '🎖 Ränge nach Bereich', uk: '🎖 Ранги за сферами', es: '🎖 Rangos por área' },
   'Пока нет записей.': { en: 'No entries yet.', de: 'Noch keine Einträge.', uk: 'Поки немає записів.', es: 'Aún no hay entradas.' },
-  'Правда о времени и балансе + мягкие шаги. Добавь ключ в Настройках.': { en: 'The truth about time and balance + gentle steps. Add a key in Settings.', de: 'Die Wahrheit über Zeit und Balance + sanfte Schritte. Füge einen Schlüssel in den Einstellungen hinzu.', uk: 'Правда про час і баланс + м\'які кроки. Додай ключ у Налаштуваннях.', es: 'La verdad sobre el tiempo y el equilibrio + pasos suaves. Añade una clave en Ajustes.' },
+  'Как ты на самом деле, а не только цифры. + мягкие шаги.': { en: 'How you actually are, not just numbers. + gentle steps.', de: 'Wie es dir wirklich geht, nicht nur Zahlen. + sanfte Schritte.', uk: 'Як у тебе справи насправді, а не лише цифри. + м\'які кроки.', es: 'Cómo estás en realidad, no solo números. + pasos suaves.' },
   'Твой ключ': { en: 'Your key', de: 'Dein Schlüssel', uk: 'Твій ключ', es: 'Tu clave' },
   'ИИ включён в Pro': { en: 'AI included in Pro', de: 'KI in Pro enthalten', uk: 'ШІ включено в Pro', es: 'IA incluida en Pro' },
   '— свой ключ не нужен': { en: '— no key needed', de: '— kein Schlüssel nötig', uk: '— свій ключ не потрібен', es: '— sin clave' },
@@ -1926,7 +1926,6 @@ const I18N_DYN = [
   [/^\+(\d+)% XP к 🔥сложным$/, (l, m) => `+${m[1]}% XP ${({ en: 'to 🔥hard', de: 'auf 🔥schwere', uk: 'до 🔥складних', es: 'a 🔥difíciles' })[l]}`],
   [/^\+(\d+)% золота$/, (l, m) => `+${m[1]}% ${({ en: 'gold', de: 'Gold', uk: 'золота', es: 'oro' })[l]}`],
   [/^\+(\d+) до «(.+)»$/, (l, m) => { const w = i18nWord(m[2], l); return `+${m[1]} ${({ en: 'to', de: 'bis', uk: 'до', es: 'a' })[l]} «${w}»`; }],
-  [/^Правда о времени и балансе \+ мягкие шаги\. Твой ключ (.+)\.$/, (l, m) => ({ en: `The truth about time and balance + gentle steps. Your key ${m[1]}.`, de: `Die Wahrheit über Zeit und Balance + sanfte Schritte. Dein Schlüssel ${m[1]}.`, uk: `Правда про час і баланс + м'які кроки. Твій ключ ${m[1]}.`, es: `La verdad sobre el tiempo y el equilibrio + pasos suaves. Tu clave ${m[1]}.` })[l]],
   [/^— (.+) \+ (.+)$/, (l, m) => { const a = i18nWord(m[1], l), b = i18nWord(m[2], l); return (a !== m[1] || b !== m[2]) ? `— ${a} + ${b}` : null; }],
   // Дата «21 июня» → день + місяць
   [/^(\d{1,2}) (января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)$/, (l, m) => { const mo = i18nWord(m[2], l); return mo !== m[2] ? (l === 'es' ? `${m[1]} de ${mo}` : `${m[1]} ${mo}`) : null; }],
@@ -4963,12 +4962,25 @@ function buildWeekContext() {
   // между «тренировался» и «отдыхал», если оба лежат в «Здоровье» — эта строка чинит слепоту явно.
   const restGap = restGapDays();
   const restLine = restGap === 0 ? 'сегодня или вчера был явный отдых' : `${restGap} ${plural(restGap, 'день', 'дня', 'дней')} подряд БЕЗ явного отдыха`;
-  return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nЭнергия сейчас: ${en.cur}/${en.max} (потолок ${en.max} — растёт от суперкомпенсации, падает при выгорании)\nЧестное состояние отдыха: ${restLine} (ищется по тексту дел, не по сфере — тренировка ≠ отдых, даже если оба в «Здоровье»)\nРадар сфер: ${radar}\nЦели:\n${goals}${anti ? `\nАнти-привычки:\n${anti}` : ''}`;
+  // Рефлексия (кирпич 1 AI-STRATEGY): «Итог дня» и «Итоги недели» ловят авторский текст юзера,
+  // но раньше он никуда не шёл дальше списка на глазах юзера — ИИ-зеркало видело только цифры.
+  // Это разница между логгером и секретарём (fb #6) — секретарь читает твои же слова.
+  const reflLines = Object.entries(State.days || {})
+    .filter(([d, v]) => d >= start && d <= end && v && v.reflection && v.reflection.trim())
+    .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+    .map(([d, v]) => `  ${d}: ${v.reflection.trim()}`)
+    .join('\n');
+  const wk = (State.weeks || {})[weekStart(end)];
+  const wkIntention = wk && wk.intention && wk.intention.trim();
+  const wkReview = wk && wk.review && wk.review.trim();
+  const reflBlock = reflLines ? `\nРефлексия по дням (твои же слова, не выдумка ИИ):\n${reflLines}` : '';
+  const wkBlock = `${wkIntention ? `\nНамерение на эту неделю (твои слова): ${wkIntention}` : ''}${wkReview ? `\nИтоги недели (твои слова): ${wkReview}` : ''}`;
+  return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nЭнергия сейчас: ${en.cur}/${en.max} (потолок ${en.max} — растёт от суперкомпенсации, падает при выгорании)\nЧестное состояние отдыха: ${restLine} (ищется по тексту дел, не по сфере — тренировка ≠ отдых, даже если оба в «Здоровье»)\nРадар сфер: ${radar}\nЦели:\n${goals}${anti ? `\nАнти-привычки:\n${anti}` : ''}${reflBlock}${wkBlock}`;
 }
 async function runWeeklyReview() {
   if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; render(); return; }
   openAiModal('🤖 Разбор недели', '<p class="muted">Анализирую твою неделю…</p>', true);
-  const system = 'Ты — заботливый, научно обоснованный наставник в приложении Satoru (философия «жизнь как десятиборье»). Анализируй данные недели честно и по-человечески, без воды и без льстивости. В контексте есть строка «Честное состояние отдыха» — она значит больше, чем индекс баланса: баланс/уровни считаются по сфере квеста и не различают «тренировался» и «отдыхал», если оба лежат в одной сфере (например «Здоровье»), поэтому индекс может показывать зелёное, когда человек вымотан. Если дней без явного отдыха много (≥4) — это ГЛАВНОЕ наблюдение, важнее процента баланса, и один из 1–2 шагов должен быть про отдых, а не про продуктивность. Дай: (1) что реально происходило со временем и балансом — включая честное состояние отдыха; (2) 2–3 конкретных наблюдения; (3) 1–2 мягких, выполнимых шага на след. неделю. Коротко, тепло, по делу, без вины. Отвечай на русском.';
+  const system = 'Ты — заботливый, научно обоснованный наставник в приложении Satoru (философия «жизнь как десятиборье»). Анализируй данные недели честно и по-человечески, без воды и без льстивости. В контексте есть строка «Честное состояние отдыха» — она значит больше, чем индекс баланса: баланс/уровни считаются по сфере квеста и не различают «тренировался» и «отдыхал», если оба лежат в одной сфере (например «Здоровье»), поэтому индекс может показывать зелёное, когда человек вымотан. Если дней без явного отдыха много (≥4) — это ГЛАВНОЕ наблюдение, важнее процента баланса, и один из 1–2 шагов должен быть про отдых, а не про продуктивность. Если в контексте есть «Рефлексия по дням» / «Намерение на неделю» / «Итоги недели» — это САМЫЙ важный сигнал, важнее любых цифр: это собственные слова человека о том, как у него дела на самом деле. Отвечай на конкретную боль или мысль из этих слов напрямую, а не общими фразами — секретарь заметил бы именно это. Не выдумывай ничего, чего нет в тексте юзера. Дай: (1) что реально происходило со временем и балансом — включая честное состояние отдыха; (2) 2–3 конкретных наблюдения, в приоритете — те, что откликаются на рефлексию юзера, если она есть; (3) 1–2 мягких, выполнимых шага на след. неделю. Коротко, тепло, по делу, без вины. Отвечай на русском.';
   try {
     const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, prompt: buildWeekContext() }) });
     const d = await r.json();
@@ -8092,7 +8104,7 @@ function renderStats() {
     <div class="card wrapped-card"><div><h3 style="margin:0">📤 ${t('Твоя неделя')}</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">Красивая карточка итогов недели — поделись или сохрани PNG.</p></div>
       <button class="btn" data-action="share-week">📤 ${t('Открыть')}</button></div>
     <div class="card ai-review-card">
-      <div><h3 style="margin:0">🤖 ИИ-разбор недели</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">Правда о времени и балансе + мягкие шаги. ${aiSourceHint()}</p></div>
+      <div><h3 style="margin:0">🤖 ИИ-разбор недели</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">${t('Как ты на самом деле, а не только цифры. + мягкие шаги.')} ${aiSourceHint()}</p></div>
       <button class="btn" data-action="ai-review">Разобрать неделю</button></div>
     <div class="card balance-card">
       <div class="bal-head"><h3>⚖️ Баланс сфер — твоё десятиборье</h3><div class="bal-score" style="color:${balColor}">${bal.index}<small>/100</small></div></div>
