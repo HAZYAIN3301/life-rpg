@@ -1944,6 +1944,10 @@ const I18N_DYN = [
   [/^растёт и (.+)$/, (l, m) => `${({ en: 'growing and', de: 'wächst und', uk: 'росте і', es: 'crece y' })[l]} ${i18nWord(m[1], l)}`],
   [/^Квестов (\d+\/\d+) · привычек (\d+\/\d+) · (.+)$/, (l, m) => { const q = ({ en: 'Quests', de: 'Quests', uk: 'Квестів', es: 'Misiones' })[l], h = ({ en: 'habits', de: 'Gewohnheiten', uk: 'звичок', es: 'hábitos' })[l]; return `${q} ${m[1]} · ${h} ${m[2]} · ${m[3]}`; }],
   [/^не виделись (\d+) (?:день|дня|дней) — скучает$/, (l, m) => ({ en: `not seen for ${m[1]} ${i18nDay(m[1], l)} — misses you`, de: `${m[1]} ${i18nDay(m[1], l)} nicht gesehen — vermisst dich`, uk: `не бачились ${m[1]} ${i18nDay(m[1], l)} — сумує`, es: `sin verte ${m[1]} ${i18nDay(m[1], l)} — te echa de menos` })[l]],
+  [/^🌿 (\d+) (?:день|дня|дней) без явного отдыха — это тоже часть десятиборья, не только труд\.$/, (l, m) => {
+    const tail = { en: "without clear rest — that's part of the decathlon too, not just work.", de: 'ohne klare Erholung — das ist auch Teil des Zehnkampfs, nicht nur Arbeit.', uk: 'без явного відпочинку — це теж частина десятиборства, не лише праця.', es: 'sin descanso claro — eso también es parte del decatlón, no solo trabajo.' }[l];
+    return `🌿 ${m[1]} ${i18nDay(m[1], l)} ${tail}`;
+  }],
   [/^Внутри «(.+)»$/, (l, m) => `${({ en: 'Inside', de: 'Innerhalb', uk: 'Всередині', es: 'Dentro de' })[l]} «${i18nWord(m[1], l)}»`],
   [/^Вставь ключ \((.+)\)$/, (l, m) => `${({ en: 'Paste key', de: 'Schlüssel einfügen', uk: 'Встав ключ', es: 'Pega la clave' })[l]} (${m[1]})`],
   [/^(\S+) \/ (\S+) токенов$/, (l, m) => `${m[1]} / ${m[2]} ${({ en: 'tokens', de: 'Tokens', uk: 'токенів', es: 'tokens' })[l]}`],
@@ -2914,6 +2918,24 @@ const CANON_DOMAINS = [
 function canonById(id) { return CANON_DOMAINS.find((d) => d.id === id) || null; }
 function autoCanon(name) { const n = normRu(name); const d = CANON_DOMAINS.find((x) => x.re.test(n)); return d ? d.id : null; }
 function canonOf(sk) { if (sk && sk.canon && canonById(sk.canon)) return sk.canon; return autoCanon((sk && sk.name) || ''); }
+// ── Честное состояние отдыха (AI-STRATEGY.md, кирпич 2) ──────────────────────────────────
+// fb #6: «если я не отдыхаю, а тренируюсь — всё равно развивается Здоровье, создаётся видимость
+// баланса, хотя отдыха мало». Баланс/уровни считаются по СФЕРЕ квеста — тренировка и отдых часто
+// сидят в одной сфере «Здоровье», и метрика их не различает. Поэтому ищем не по сфере, а по ТЕКСТУ
+// дела — тем же regex домена 'rest', что и canonOf — работает и без отдельной сферы «Отдых».
+function dayHadRest(d) {
+  const re = canonById('rest').re;
+  if ((State.tasks || []).some((x) => x.done && dayOf(x) === d && re.test(normRu(x.title || '')))) return true;
+  const log = State.habitlog && State.habitlog[d];
+  if (log) for (const hid in log) { const h = (State.habits || []).find((x) => x.id === hid); if (h && re.test(normRu(h.title || ''))) return true; }
+  return false;
+}
+// Сколько дней подряд (от сегодня назад, включительно) не было ни одного явно отдыхового дела.
+function restGapDays(max) {
+  const lim = max || 14; let n = 0;
+  for (let i = 0; i < lim; i++) { const d = new Date(); d.setDate(d.getDate() - i); if (dayHadRest(fmtDate(d))) break; n++; }
+  return n;
+}
 // Какие домены покрыты верхними сферами (без проектов), какие — пустые (для подсказки §5.3).
 function canonCoverage(spheres) {
   const list = spheres || balanceSpheres();
@@ -4937,12 +4959,16 @@ function buildWeekContext() {
   const goals = (State.goals || []).filter((g) => !g.archived).map((g) => `  ${g.title} — ${goalStatusInfo(g).txt}${g.metric ? ` (${g.metric.current}/${g.metric.target}${g.metric.unit ? ' ' + g.metric.unit : ''})` : ''}`).join('\n') || '  (нет целей)';
   const anti = (State.antihabits || []).map((a) => `  ${a.title}: ${antiCleanDays(a)} дней чисто`).join('\n');
   const radar = sphereScores().map((s) => `${s.name} ур.${s.value}`).join(', ');
-  return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nЭнергия сейчас: ${en.cur}/${en.max}\nРадар сфер: ${radar}\nЦели:\n${goals}${anti ? `\nАнти-привычки:\n${anti}` : ''}`;
+  // Честное состояние (кирпич 2 AI-STRATEGY): баланс/уровни считаются по сфере и не видят разницы
+  // между «тренировался» и «отдыхал», если оба лежат в «Здоровье» — эта строка чинит слепоту явно.
+  const restGap = restGapDays();
+  const restLine = restGap === 0 ? 'сегодня или вчера был явный отдых' : `${restGap} ${plural(restGap, 'день', 'дня', 'дней')} подряд БЕЗ явного отдыха`;
+  return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nЭнергия сейчас: ${en.cur}/${en.max} (потолок ${en.max} — растёт от суперкомпенсации, падает при выгорании)\nЧестное состояние отдыха: ${restLine} (ищется по тексту дел, не по сфере — тренировка ≠ отдых, даже если оба в «Здоровье»)\nРадар сфер: ${radar}\nЦели:\n${goals}${anti ? `\nАнти-привычки:\n${anti}` : ''}`;
 }
 async function runWeeklyReview() {
   if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; render(); return; }
   openAiModal('🤖 Разбор недели', '<p class="muted">Анализирую твою неделю…</p>', true);
-  const system = 'Ты — заботливый, научно обоснованный наставник в приложении Satoru (философия «жизнь как десятиборье»). Анализируй данные недели честно и по-человечески, без воды и без льстивости. Дай: (1) что реально происходило со временем и балансом; (2) 2–3 конкретных наблюдения; (3) 1–2 мягких, выполнимых шага на след. неделю. Помни: отдых и восстановление так же ценны, как труд. Коротко, тепло, по делу. Отвечай на русском.';
+  const system = 'Ты — заботливый, научно обоснованный наставник в приложении Satoru (философия «жизнь как десятиборье»). Анализируй данные недели честно и по-человечески, без воды и без льстивости. В контексте есть строка «Честное состояние отдыха» — она значит больше, чем индекс баланса: баланс/уровни считаются по сфере квеста и не различают «тренировался» и «отдыхал», если оба лежат в одной сфере (например «Здоровье»), поэтому индекс может показывать зелёное, когда человек вымотан. Если дней без явного отдыха много (≥4) — это ГЛАВНОЕ наблюдение, важнее процента баланса, и один из 1–2 шагов должен быть про отдых, а не про продуктивность. Дай: (1) что реально происходило со временем и балансом — включая честное состояние отдыха; (2) 2–3 конкретных наблюдения; (3) 1–2 мягких, выполнимых шага на след. неделю. Коротко, тепло, по делу, без вины. Отвечай на русском.';
   try {
     const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, prompt: buildWeekContext() }) });
     const d = await r.json();
@@ -6478,6 +6504,11 @@ function renderToday() {
       <div class="en-bar"><span style="width:${eP}%;background:${eM.color}"></span></div>
       <p class="en-note muted">Восстанавливается сама со временем + дела вроде сна / прогулки / растяжки / медитации <b>пополняют</b> её · ≈ оценка по задачам, точнее с Apple Watch / Garmin (позже)</p></div>`;
   const lowEnergyNudge = (eP < 25 && doneCount > 0) ? `<div class="card nudge-card en-low"><span class="nudge-boost">🪫 Много нагрузки сегодня. Отдых ценнее форсажа — энергия восстановится сама за паузами и ночью, а ёмкость вырастет.</span></div>` : '';
+  // Честное состояние (fb #6): «тренируюсь → Здоровье растёт → баланс выглядит хорошим, хотя
+  // явного отдыха давно не было». Показываем ТОЛЬКО когда набралась история (иначе на старте зря
+  // пугаем нулём дней) и порог значим (≥4) — приглашение, не счётчик вины.
+  const restGapToday = (State.tasks || []).length >= 5 ? restGapDays() : 0;
+  const restNudge = restGapToday >= 4 ? `<div class="card nudge-card en-low"><span class="nudge-boost">🌿 ${restGapToday} ${plural(restGapToday, 'день', 'дня', 'дней')} без явного отдыха — это тоже часть десятиборья, не только труд.</span></div>` : '';
 
   const chestsAvail = lootChestsAvailable(), activeBoost = lootBoostPct(), hp = hypePct();
   const chestCarry = ensureLootbox().carry; // сколько из доступных — перенесены с прошлых дней (не потеряны)
@@ -6552,7 +6583,7 @@ function renderToday() {
         <div class="th-stat"><b>+${xpToday}</b><span>XP</span></div>
       </div>
     </section>`;
-  return `<div class="today-shell">${companionCard()}${installBanner()}${todayHero}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${sysTeaser}${timerCard}${energyCard}${lowEnergyNudge}${nudgeCard}${entryNudge}${dayLogNudge}${importNudge}${stretchNudge}${mobilityNudge}
+  return `<div class="today-shell">${companionCard()}${installBanner()}${todayHero}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${sysTeaser}${timerCard}${energyCard}${lowEnergyNudge}${restNudge}${nudgeCard}${entryNudge}${dayLogNudge}${importNudge}${stretchNudge}${mobilityNudge}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="${t('Новый квест на сегодня…')}" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
