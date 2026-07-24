@@ -1844,6 +1844,8 @@ const I18N_EXTRA = {
   'вех': { en: 'milestones', de: 'Meilensteine', uk: 'віх', es: 'hitos' },
   'первая уже ждёт внизу тропы': { en: 'the first one is waiting at the bottom of the trail', de: 'der erste wartet schon am Anfang des Pfads', uk: 'перша вже чекає внизу стежки', es: 'el primero ya espera al inicio del sendero' },
   'Ничего не выбрано': { en: 'Nothing selected', de: 'Nichts ausgewählt', uk: 'Нічого не вибрано', es: 'Nada seleccionado' },
+  // ── Сундуки: перенос неоткрытого (fb — «неоткрытые вчера сундуки пропали») ──
+  'С прошлых дней сохранено': { en: 'Saved from previous days', de: 'Von früheren Tagen aufbewahrt', uk: 'Збережено з попередніх днів', es: 'Guardado de días anteriores' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -3579,9 +3581,19 @@ function buildLootPool() {
 }
 const LOOT_POOL = LOOT_POOL_DEFAULT; // legacy alias
 const LOOT_THRESHOLDS = [1, 3, 5]; // активностей за день для сундука №1 / №2 / №3
+const LOOT_CARRY_CAP = 5; // потолок «переноса» — вернуть заработанное, но не превратить неделю отсутствия в джекпот
 function ensureLootbox() {
-  if (!State.lootbox) State.lootbox = { day: todayStr(), opened: 0, goldWon: 0, boost: null, titles: [], equipped: null, history: [] };
-  if (State.lootbox.day !== todayStr()) { State.lootbox.day = todayStr(); State.lootbox.opened = 0; }
+  if (!State.lootbox) State.lootbox = { day: todayStr(), opened: 0, goldWon: 0, boost: null, titles: [], equipped: null, history: [], carry: 0 };
+  if (State.lootbox.carry == null) State.lootbox.carry = 0;
+  if (State.lootbox.day !== todayStr()) {
+    // Банкуем неоткрытые сундуки прошлого дня, а не роняем их (fb: «неоткрытые вчера сундуки просто пропали»).
+    // prevTotal — всё, что было доступно вчера (вчерашний лимит + то, что уже было перенесено раньше);
+    // opened вычитается из ЭТОЙ суммы, поэтому carry не накапливается поверх уже открытого.
+    const prevEarned = Math.min(LOOT_THRESHOLDS.filter((th) => activityCountForDate(State.lootbox.day) >= th).length, lootTierCap());
+    const prevTotal = prevEarned + State.lootbox.carry;
+    State.lootbox.carry = Math.min(LOOT_CARRY_CAP, Math.max(0, prevTotal - State.lootbox.opened));
+    State.lootbox.day = todayStr(); State.lootbox.opened = 0;
+  }
   return State.lootbox;
 }
 
@@ -3781,17 +3793,18 @@ function openEntryRitual() {
     </div></div>`;
   document.body.appendChild(ov);
 }
-function todayActivityCount() {
-  const t = todayStr();
-  const q = State.tasks.filter((x) => x.done && dayOf(x) === t).length;
-  const h = State.habitlog[t] ? Object.keys(State.habitlog[t]).length : 0;
+function activityCountForDate(d) {
+  const q = State.tasks.filter((x) => x.done && dayOf(x) === d).length;
+  const h = State.habitlog[d] ? Object.keys(State.habitlog[d]).length : 0;
   return q + h;
 }
+function todayActivityCount() { return activityCountForDate(todayStr()); }
 function lootTierCap() { return isPro() ? 3 : 1; }
 function lootChestsAvailable() {
-  ensureLootbox();
+  const lb = ensureLootbox();
   const earned = LOOT_THRESHOLDS.filter((th) => todayActivityCount() >= th).length;
-  return Math.max(0, Math.min(earned, lootTierCap()) - State.lootbox.opened);
+  const total = Math.min(earned, lootTierCap()) + lb.carry;
+  return Math.max(0, total - lb.opened);
 }
 function lootNextThreshold() { const act = todayActivityCount(); const th = LOOT_THRESHOLDS.find((x) => act < x); return th ? { need: th - act, at: th } : null; }
 function rollLoot() {
@@ -6467,7 +6480,9 @@ function renderToday() {
   const lowEnergyNudge = (eP < 25 && doneCount > 0) ? `<div class="card nudge-card en-low"><span class="nudge-boost">🪫 Много нагрузки сегодня. Отдых ценнее форсажа — энергия восстановится сама за паузами и ночью, а ёмкость вырастет.</span></div>` : '';
 
   const chestsAvail = lootChestsAvailable(), activeBoost = lootBoostPct(), hp = hypePct();
-  const nudgeCard = (chestsAvail > 0 || activeBoost > 0 || hp > 0) ? `<div class="card nudge-card">${chestsAvail > 0 ? `<button class="nudge" data-action="goto-rewards">🎁 ${chestsAvail} ${plural(chestsAvail, 'сундук', 'сундука', 'сундуков')} ждёт — открыть</button>` : ''}${activeBoost > 0 ? `<span class="nudge-boost">⚡ +${activeBoost}% XP активен</span>` : ''}${hp > 0 ? `<span class="nudge-boost">🔥 Хайп ×${hypeState().stacks} · +${hp}% XP · ${hypeMinLeft()}м</span>` : ''}</div>` : '';
+  const chestCarry = ensureLootbox().carry; // сколько из доступных — перенесены с прошлых дней (не потеряны)
+  const chestTitle = chestCarry > 0 ? `title="${esc(t('С прошлых дней сохранено'))}: ${chestCarry}"` : '';
+  const nudgeCard = (chestsAvail > 0 || activeBoost > 0 || hp > 0) ? `<div class="card nudge-card">${chestsAvail > 0 ? `<button class="nudge" data-action="goto-rewards" ${chestTitle}>🎁 ${chestsAvail} ${plural(chestsAvail, 'сундук', 'сундука', 'сундуков')} ждёт — открыть</button>` : ''}${activeBoost > 0 ? `<span class="nudge-boost">⚡ +${activeBoost}% XP активен</span>` : ''}${hp > 0 ? `<span class="nudge-boost">🔥 Хайп ×${hypeState().stacks} · +${hp}% XP · ${hypeMinLeft()}м</span>` : ''}</div>` : '';
   // Нудж новичку: не начинай с нуля — импортируй реальный опыт
   const noImports = !Object.keys((State.settings && State.settings.imported) || {}).length;
   const importNudge = (noImports && earnedXp() < 200) ? `<div class="card nudge-card"><button class="nudge" data-action="goto-import">🎖 Не начинай с нуля — импортируй свой реальный опыт</button><span class="nudge-boost">отметь свой уровень в сферах → стартовый опыт</span></div>` : '';
@@ -8814,6 +8829,12 @@ function onSubmit(e) {
       let attachments = [];
       try { attachments = await Promise.all(files.map(readAttachment)); }
       catch (err) { msg.textContent = err.message || 'Файл не подошёл'; msg.style.color = '#e0526a'; btn.disabled = false; return; }
+      // Суммарный чек ДО отправки: один файл может пройти лимит (25 МБ), но несколько сразу — уже нет.
+      // Без этого юзер получал бы невнятную серверную "bad json" вместо понятной причины.
+      const totalB64 = attachments.reduce((s, a) => s + (a.dataUrl ? a.dataUrl.length : 0), 0);
+      if (totalB64 > 40 * 1024 * 1024) {
+        msg.textContent = 'Вложения слишком большие суммарно — отправь файлы по одному или сожми'; msg.style.color = '#e0526a'; btn.disabled = false; return;
+      }
       msg.textContent = 'Отправляю…';
       try {
         const r = await fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: f.kind.value, text: f.text.value, attachments }) });

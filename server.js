@@ -1186,7 +1186,10 @@ const server = http.createServer(async (req, res) => {
   if (u === '/api/feedback' && req.method === 'POST') {
     const uid = sessionUserId(req);
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
-    let fb = {}; try { fb = JSON.parse(await readBody(req, 30 * 1024 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json / слишком большой файл' }); }
+    // Клиент разрешает видео до 25 МБ бинарных — в base64 это ≈33.3 МБ (+33%), плюс JSON-обёртка
+    // и возможно несколько файлов сразу. Старый лимит 30 МБ резал ровно те видео, что клиент считал
+    // допустимыми («функция прикрепления медиа перестала работать» — размер у границы).
+    let fb = {}; try { fb = JSON.parse(await readBody(req, 46 * 1024 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json / слишком большой файл' }); }
     const text = String(fb.text || '').slice(0, 4000).trim();
     if (!text && !(fb.attachments && fb.attachments.length)) return sendJson(res, 400, { error: 'пусто' });
     const id = 'fb_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -1281,8 +1284,11 @@ const server = http.createServer(async (req, res) => {
   }
 
   // ---- Инбокс: медиа быстрых заметок (голос/видео) — per-user в data/users/<id>/inbox/ ----
-  const INBOX_EXT = { 'audio/webm': 'webm', 'audio/ogg': 'ogg', 'audio/mp4': 'm4a', 'audio/mpeg': 'mp3', 'video/webm': 'webm', 'video/mp4': 'mp4' };
-  const INBOX_MIME = { webm: 'video/webm', ogg: 'audio/ogg', m4a: 'audio/mp4', mp3: 'audio/mpeg', mp4: 'video/mp4' };
+  // audio/webm и video/webm раньше делили расширение .webm → GET всегда отдавал video/webm content-type,
+  // даже для голосовых заметок. Safari/iOS строго проверяет MIME для <audio> и отказывался играть файл
+  // (fb: «функция прикрепления медиа перестала работать»). Разводим расширения — .weba для аудио.
+  const INBOX_EXT = { 'audio/webm': 'weba', 'audio/ogg': 'ogg', 'audio/mp4': 'm4a', 'audio/mpeg': 'mp3', 'video/webm': 'webm', 'video/mp4': 'mp4' };
+  const INBOX_MIME = { weba: 'audio/webm', webm: 'video/webm', ogg: 'audio/ogg', m4a: 'audio/mp4', mp3: 'audio/mpeg', mp4: 'video/mp4' };
   if (u === '/api/inbox/media' && req.method === 'POST') {
     const uid = sessionUserId(req);
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
