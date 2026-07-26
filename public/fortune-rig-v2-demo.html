@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fortune Cat v2 Rig Check</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; padding: 32px 20px; background: #0f1320; color: #e7ebf5; font: 14px/1.45 system-ui, sans-serif; }
+    main { width: min(1120px, 100%); margin: 0 auto; }
+    h1 { margin: 0; font-size: clamp(20px, 3vw, 30px); }
+    .sub { margin: 6px 0 20px; color: #99a2c0; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 20px; align-items: start; }
+    .stage-shell { position: relative; overflow: hidden; border: 1px solid #384367; border-radius: 16px; background: #f4eee4; box-shadow: 0 20px 60px rgba(0,0,0,.34); }
+    .stage-shell::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .18; background-image: linear-gradient(rgba(60,46,30,.16) 1px, transparent 1px), linear-gradient(90deg, rgba(60,46,30,.16) 1px, transparent 1px); background-size: 10% 10%; }
+    .stage { position: relative; width: 100%; aspect-ratio: 1; isolation: isolate; }
+    .part, .group, .group > img { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .part, .group { transform-box: border-box; }
+    .part img, .group > img { display: block; width: 100%; height: 100%; }
+    .shadow { z-index: 0; transform-origin: 50% 88%; animation: shadow 3.8s ease-in-out infinite; }
+    .tail { z-index: 10; transform-origin: 33.50% 70.31%; animation: tail 3s ease-in-out infinite; }
+    .bag { z-index: 20; transform-origin: 66.41% 57.62%; animation: bag 4.4s ease-in-out infinite; }
+    .body { z-index: 30; transform-origin: 50% 67.38%; animation: breathe 3.8s ease-in-out infinite; }
+    .collar { z-index: 40; transform-origin: 50% 51.27%; animation: collar 3.8s ease-in-out infinite; }
+    .raised-paw { z-index: 50; transform-origin: 34.18% 59.57%; animation: beckon 2.2s ease-in-out infinite; }
+    .held { z-index: 54; transform-origin: 65.23% 59.57%; animation: held 3.8s ease-in-out infinite; }
+    .held .paw-holding { z-index: 1; }
+    .head { z-index: 60; transform-origin: 50% 41.99%; animation: head-idle 4.8s ease-in-out infinite; }
+    .head .patch { opacity: 1; }
+    .bell { z-index: 90; transform-origin: 50% 52.15%; animation: bell 2.6s ease-in-out infinite; }
+    .panel { display: grid; gap: 12px; padding: 16px; border: 1px solid #2a3250; border-radius: 12px; background: #171c2e; }
+    .panel h2 { margin: 0; font-size: 15px; }
+    .metric { display: grid; gap: 3px; padding: 10px; border: 1px solid #2a3250; border-radius: 8px; background: #1f2640; }
+    .metric b { color: #7dd4ff; font-variant-numeric: tabular-nums; }
+    .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    button { min-height: 38px; border: 1px solid #40517b; border-radius: 8px; background: #202946; color: #e7ebf5; font: inherit; font-weight: 700; cursor: pointer; }
+    button:hover, button.active { border-color: #59cff9; background: #243d5a; }
+    .note { margin: 0; color: #99a2c0; font-size: 12px; }
+    .stage.happy .body, .stage.happy .held, .stage.happy .head, .stage.happy .collar, .stage.happy .bell { animation: happy .72s cubic-bezier(.2,.9,.35,1) infinite alternate; }
+    .stage.happy .head { animation-name: head-happy; }
+    .stage.tired .body { animation: none; transform: translateY(16px) scaleY(.96); }
+    .stage.tired .head, .stage.tired .collar, .stage.tired .bell { animation: none; transform: translateY(22px) rotate(4deg); }
+    .stage.tired .raised-paw { animation: none; transform: rotate(-18deg); }
+    .stage.victory .group:not(.shadow), .stage.victory .part:not(.shadow) { animation: victory .9s cubic-bezier(.2,.9,.25,1) infinite; }
+    .stage.focus .tail, .stage.focus .raised-paw, .stage.focus .bell { animation-play-state: paused; }
+    .stage.focus .head { animation: focus 2.8s ease-in-out infinite; }
+    .stage.paused .part, .stage.paused .group { animation-play-state: paused; }
+    @keyframes breathe { 0%,100% { transform: translateY(0) scaleY(1); } 50% { transform: translateY(-3px) scaleY(1.012); } }
+    @keyframes shadow { 0%,100% { transform: scaleX(1); opacity: .82; } 50% { transform: scaleX(.94); opacity: .65; } }
+    @keyframes tail { 0%,100% { transform: rotate(-7deg); } 50% { transform: rotate(8deg); } }
+    @keyframes bag { 0%,100% { transform: rotate(-.7deg); } 50% { transform: rotate(1deg); } }
+    @keyframes beckon { 0%,100% { transform: rotate(-13deg); } 50% { transform: rotate(8deg); } }
+    @keyframes held { 0%,100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-3px) rotate(1.5deg); } }
+    @keyframes collar { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+    @keyframes bell { 0%,100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+    @keyframes head-idle { 0%,100% { transform: rotate(-1.3deg); } 50% { transform: rotate(1.7deg); } }
+    @keyframes happy { from { transform: translateY(0); } to { transform: translateY(-24px); } }
+    @keyframes head-happy { from { transform: translateY(0) rotate(-4deg); } to { transform: translateY(-24px) rotate(4deg); } }
+    @keyframes victory { 0%,100% { transform: translateY(0) scale(1); } 42% { transform: translateY(-34px) scale(1.02,.98); } 60% { transform: translateY(-34px) scale(1.02,.98); } }
+    @keyframes focus { 0%,100% { transform: translateY(2px) rotate(-.4deg); } 50% { transform: translateY(-1px) rotate(.4deg); } }
+    @media (prefers-reduced-motion: reduce) { .part, .group { animation: none !important; } }
+    @media (max-width: 760px) { body { padding: 18px 14px; } .layout { grid-template-columns: 1fr; } .panel { grid-template-columns: repeat(2, minmax(0, 1fr)); } .panel h2, .controls, .note { grid-column: 1 / -1; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Fortune Cat v2</h1>
+    <p class="sub">Production-сборка из 16 слоёв на общем холсте 1024×1024.</p>
+    <div class="layout">
+      <div class="stage-shell">
+        <div class="stage" id="stage" aria-label="Тест рига Кота Удачи">
+          <div class="part shadow"><img src="art/pets/fortune-v2/pet-shadow.png" alt=""></div>
+          <div class="part tail"><img src="art/pets/fortune-v2/pet-tail.png" alt=""></div>
+          <div class="part bag"><img src="art/pets/fortune-v2/pet-back-bag.png" alt=""></div>
+          <div class="part body"><img src="art/pets/fortune-v2/pet-body.png" alt=""></div>
+          <div class="part collar"><img src="art/pets/fortune-v2/pet-collar.png" alt=""></div>
+          <div class="part raised-paw"><img src="art/pets/fortune-v2/pet-paw-raised.png" alt=""></div>
+          <div class="group held"><img src="art/pets/fortune-v2/pet-paw-holding-arm.png" alt=""><img src="art/pets/fortune-v2/pet-hand-item.png" alt=""><img class="paw-holding" src="art/pets/fortune-v2/pet-paw-holding.png" alt=""></div>
+          <div class="group head">
+            <img src="art/pets/fortune-v2/pet-ear-r.png" alt="">
+            <img src="art/pets/fortune-v2/pet-ear-l.png" alt="">
+            <img src="art/pets/fortune-v2/pet-head-base.png" alt="">
+            <img class="patch" src="art/pets/fortune-v2/pet-head-patch-r.png" alt="">
+            <img class="patch" src="art/pets/fortune-v2/pet-head-patch-l.png" alt="">
+            <img src="art/pets/fortune-v2/pet-face.png" alt="">
+          </div>
+          <div class="part bell"><img src="art/pets/fortune-v2/pet-bell.png" alt=""></div>
+        </div>
+      </div>
+      <aside class="panel">
+        <h2>Rig Check</h2>
+        <div class="metric"><span>Master canvas</span><b>1024 × 1024</b></div>
+        <div class="metric"><span>Слои</span><b>16 / 16</b></div>
+        <div class="metric"><span>Состояния</span><b>6</b></div>
+        <div class="controls">
+          <button class="active" data-state="idle">Idle</button>
+          <button data-state="happy">Happy</button>
+          <button data-state="tired">Tired</button>
+          <button data-state="victory">Victory</button>
+          <button data-state="focus">Focus</button>
+          <button data-state="paused">Pause</button>
+        </div>
+        <p class="note">Голова, удерживаемый предмет и экипировка сгруппированы: составные части сохраняют геометрию при движении.</p>
+      </aside>
+    </div>
+  </main>
+  <script>
+    const stage = document.getElementById('stage');
+    document.querySelector('.controls').addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-state]');
+      if (!button) return;
+      stage.className = 'stage';
+      if (button.dataset.state !== 'idle') stage.classList.add(button.dataset.state);
+      document.querySelectorAll('button[data-state]').forEach((item) => item.classList.toggle('active', item === button));
+    });
+  </script>
+</body>
+</html>

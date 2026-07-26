@@ -1,0 +1,71 @@
+{
+  "factoryVersion": 1,
+  "batchId": "fortune-v2-20260716",
+  "canvas": [1024, 1024],
+  "geometryReference": "../../public/art/pets/fortune-v2",
+  "assembledReference": "../../public/art/pets/fortune-v2/fortune-v2-preview.png",
+  "style": "satoru-cut-paper",
+  "outputRoot": "outputs",
+  "layers": {
+    "obsidian-gold": [
+      { "id": "pet-shadow", "z": 0, "pivot": [512, 902] },
+      { "id": "pet-tail", "z": 10, "pivot": [343, 720] },
+      { "id": "pet-back-bag", "z": 20, "pivot": [680, 590] },
+      { "id": "pet-body", "z": 30, "pivot": [512, 690] },
+      { "id": "pet-collar", "z": 40, "pivot": [512, 525] },
+      { "id": "pet-paw-raised", "z": 50, "pivot": [350, 610] },
+      { "id": "pet-paw-holding-arm", "z": 52, "pivot": [668, 610] },
+      { "id": "pet-hand-item", "z": 54, "pivot": [650, 650] },
+      { "id": "pet-paw-holding", "z": 55, "pivot": [668, 610] },
+      { "id": "pet-ear-r", "z": 58, "pivot": [390, 295] },
+      { "id": "pet-ear-l", "z": 59, "pivot": [674, 295] },
+      { "id": "pet-head-base", "z": 60, "pivot": [512, 430] },
+      { "id": "pet-head-patch-r", "z": 63, "pivot": [552, 183] },
+      { "id": "pet-head-patch-l", "z": 64, "pivot": [637, 186] },
+      { "id": "pet-face", "z": 70, "pivot": [512, 368] },
+      { "id": "pet-bell", "z": 90, "pivot": [512, 534] }
+    ],
+    "ivory-vermilion": [
+      "pet-tail", "pet-body", "pet-collar", "pet-paw-raised",
+      "pet-paw-holding-arm", "pet-paw-holding", "pet-ear-l", "pet-ear-r",
+      "pet-head-base", "pet-head-patch-l", "pet-head-patch-r"
+    ]
+  },
+  "states": [
+    { "id": "hungry", "face": "pet-face-hungry.png", "z": 70, "pivot": [512, 368] },
+    { "id": "thriving", "face": "../../public/art/pets/fortune-v2/pet-face.png", "z": 70, "pivot": [512, 368] },
+    { "id": "full", "face": "pet-face-full.png", "z": 70, "pivot": [512, 368] },
+    { "id": "overfed", "face": "pet-face-overfed.png", "z": 70, "pivot": [512, 368] }
+  ],
+  "props": [
+    { "id": "prop-counting-coins", "file": "prop-counting-coins.png", "z": 100, "pivot": [512, 888], "bbox": [390, 850, 620, 925] },
+    { "id": "prop-stash-bag", "file": "prop-stash-bag.png", "z": 25, "pivot": [255, 765], "bbox": [155, 660, 350, 870] },
+    { "id": "prop-ledger-glasses", "file": "prop-ledger-glasses.png", "z": 100, "pivot": [512, 535], "bbox": [400, 314, 650, 758] }
+  ],
+  "wearables": {
+    "head": [
+      { "id": "head-luck-crown", "file": "head-luck-crown.png", "z": 95, "pivot": [512, 250], "bbox": [420, 126, 605, 254] },
+      { "id": "head-accountant-glasses", "file": "head-accountant-glasses.png", "z": 100, "pivot": [512, 250], "bbox": [395, 322, 630, 408] }
+    ],
+    "neck": [
+      { "id": "neck-ceremonial-bow", "file": "neck-ceremonial-bow.png", "z": 75, "pivot": [512, 525], "bbox": [417, 515, 608, 680] },
+      { "id": "neck-jade-amulet", "file": "neck-jade-amulet.png", "z": 75, "pivot": [512, 525], "bbox": [478, 540, 546, 690] }
+    ],
+    "back": [
+      { "id": "back-merchant-scroll", "file": "back-merchant-scroll.png", "z": 25, "pivot": [680, 590], "bbox": [773, 340, 937, 680] },
+      { "id": "back-festival-cloak", "file": "back-festival-cloak.png", "z": 25, "pivot": [680, 590], "bbox": [183, 330, 897, 930] }
+    ]
+  },
+  "shadowStyleCheck": {
+    "tier": "spirit",
+    "mood": "calm",
+    "file": "shadow-spirit-calm.png",
+    "pivot": [512, 535],
+    "bbox": [350, 250, 673, 820]
+  },
+  "slots": {
+    "head": [512, 250],
+    "neck": [512, 525],
+    "back": [680, 590]
+  }
+}

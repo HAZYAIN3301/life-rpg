@@ -2,9 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "gojo",
+      "name": "life-rpg",
       "runtimeExecutable": "node",
       "runtimeArgs": ["server.js"],
+      "cwd": "/Users/al.prokopets/Documents/Obsidian Vault/life-rpg",
       "port": 3000
     }
   ]

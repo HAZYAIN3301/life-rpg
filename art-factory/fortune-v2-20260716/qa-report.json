@@ -1,0 +1,468 @@
+{
+  "generatedAt": "2026-07-17T02:33:26.405Z",
+  "assetCount": 24,
+  "passed": 24,
+  "failed": 0,
+  "assets": [
+    {
+      "file": "outputs/props/prop-counting-coins.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.009883,
+      "bbox": [
+        390,
+        850,
+        620,
+        925
+      ],
+      "chromaFringePixels": 0,
+      "pass": true
+    },
+    {
+      "file": "outputs/props/prop-ledger-glasses.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.031051,
+      "bbox": [
+        400,
+        314,
+        650,
+        758
+      ],
+      "chromaFringePixels": 0,
+      "pass": true
+    },
+    {
+      "file": "outputs/props/prop-stash-bag.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.030294,
+      "bbox": [
+        155,
+        660,
+        350,
+        870
+      ],
+      "chromaFringePixels": 0,
+      "pass": true
+    },
+    {
+      "file": "outputs/shadow/shadow-spirit-calm.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.103367,
+      "bbox": [
+        350,
+        250,
+        673,
+        820
+      ],
+      "chromaFringePixels": 122,
+      "pass": true
+    },
+    {
+      "file": "outputs/skins/ivory-vermilion/pet-body.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.242849,
+      "bbox": [
+        205,
+        433,
+        825,
+        932
+      ],
+      "chromaFringePixels": 38,
+      "geometryMode": "exact-alpha",
+      "geometryMatch": true,
+      "pass": true
+    },
+    {
+      "file": "outputs/skins/ivory-vermilion/pet-collar.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.044284,
+      "bbox": [
+        255,
+        465,
+        775,
+        641
+      ],
+      "chromaFringePixels": 165,
+      "geometryMode": "exact-alpha",
+      "geometryMatch": true,
+      "pass": true
+    },
+    {
+      "file": "outputs/skins/ivory-vermilion/pet-ear-l.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.03282,
+      "bbox": [
+        584,
+        74,
+        764,
+        320
+      ],
+      "chromaFringePixels": 4,
+      "geometryMode": "exact-alpha",
+      "geometryMatch": true,
+      "pass": true
+    },
+    {
+      "file": "outputs/skins/ivory-vermilion/pet-ear-r.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.029732,
+      "bbox": [
+        300,
+        77,
+        480,
+        316
+      ],
+      "chromaFringePixels": 18,
+      "geometryMode": "exact-alpha",
+      "geometryMatch": true,
+      "pass": true
+    },
+    {
+      "file": "outputs/skins/ivory-vermilion/pet-head-base.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.123238,
+      "bbox": [
+        303,
+        142,
+        721,
+        522
+      ],
+      "chromaFringePixels": 13,
+      "geometryMode": "exact-alpha",
+      "geometryMatch": true,
+      "pass": true
+    },
+    {
+      "file": "outputs/skins/ivory-vermilion/pet-head-patch-l.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.005502,
+      "bbox": [
+        581,
+        144,
+        692,
+        228
+      ],
+      "chromaFringePixels": 61,
+      "geometryMode": "exact-alpha",
+      "geometryMatch": true,
+      "pass": true
+    },
+    {
+      "file": "outputs/skins/ivory-vermilion/pet-head-patch-r.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.003229,
+      "bbox": [
+        510,
+        150,
+        593,
+        216
+      ],
+      "chromaFringePixels": 19,
+      "geometryMode": "exact-alpha",
+      "geometryMatch": true,
+      "pass": true
+    },
+    {
+      "file": "outputs/skins/ivory-vermilion/pet-paw-holding-arm.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.0356,
+      "bbox": [
+        642,
+        455,
+        768,
+        835
+      ],
+      "chromaFringePixels": 13,
+      "geometryMode": "exact-alpha",
+      "geometryMatch": true,
+      "pass": true
+    },
+    {
+      "file": "outputs/skins/ivory-vermilion/pet-paw-holding.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.021152,
+      "bbox": [
+        628,
+        531,
+        804,
+        686
+      ],
+      "chromaFringePixels": 9,
+      "geometryMode": "exact-alpha",
+      "geometryMatch": true,
+      "pass": true
+    },
+    {
+      "file": "outputs/skins/ivory-vermilion/pet-paw-raised.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.061001,
+      "bbox": [
+        197,
+        245,
+        369,
+        700
+      ],
+      "chromaFringePixels": 14,
+      "geometryMode": "exact-alpha",
+      "geometryMatch": true,
+      "pass": true
+    },
+    {
+      "file": "outputs/skins/ivory-vermilion/pet-tail.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.036895,
+      "bbox": [
+        118,
+        535,
+        361,
+        810
+      ],
+      "chromaFringePixels": 49,
+      "geometryMode": "exact-alpha",
+      "geometryMatch": true,
+      "pass": true
+    },
+    {
+      "file": "outputs/states/pet-face-full.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.00776,
+      "bbox": [
+        341,
+        271,
+        683,
+        434
+      ],
+      "chromaFringePixels": 0,
+      "geometryMode": "exact-master-bbox",
+      "geometryMatch": true,
+      "pass": true
+    },
+    {
+      "file": "outputs/states/pet-face-hungry.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.009481,
+      "bbox": [
+        341,
+        271,
+        683,
+        434
+      ],
+      "chromaFringePixels": 0,
+      "geometryMode": "exact-master-bbox",
+      "geometryMatch": true,
+      "pass": true
+    },
+    {
+      "file": "outputs/states/pet-face-overfed.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.00841,
+      "bbox": [
+        341,
+        271,
+        683,
+        434
+      ],
+      "chromaFringePixels": 0,
+      "geometryMode": "exact-master-bbox",
+      "geometryMatch": true,
+      "pass": true
+    },
+    {
+      "file": "outputs/wearables/back/back-festival-cloak.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.278342,
+      "bbox": [
+        183,
+        330,
+        897,
+        930
+      ],
+      "chromaFringePixels": 336,
+      "pass": true
+    },
+    {
+      "file": "outputs/wearables/back/back-merchant-scroll.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.03161,
+      "bbox": [
+        773,
+        340,
+        937,
+        680
+      ],
+      "chromaFringePixels": 28,
+      "pass": true
+    },
+    {
+      "file": "outputs/wearables/head/head-accountant-glasses.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.006812,
+      "bbox": [
+        395,
+        322,
+        630,
+        408
+      ],
+      "chromaFringePixels": 1,
+      "pass": true
+    },
+    {
+      "file": "outputs/wearables/head/head-luck-crown.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.016714,
+      "bbox": [
+        420,
+        126,
+        605,
+        254
+      ],
+      "chromaFringePixels": 42,
+      "pass": true
+    },
+    {
+      "file": "outputs/wearables/neck/neck-ceremonial-bow.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.021372,
+      "bbox": [
+        417,
+        515,
+        608,
+        680
+      ],
+      "chromaFringePixels": 38,
+      "pass": true
+    },
+    {
+      "file": "outputs/wearables/neck/neck-jade-amulet.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha": true,
+      "transparentCorners": true,
+      "coverage": 0.006314,
+      "bbox": [
+        478,
+        540,
+        546,
+        690
+      ],
+      "chromaFringePixels": 3,
+      "pass": true
+    }
+  ]
+}

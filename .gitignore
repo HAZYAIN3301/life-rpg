@@ -4,6 +4,7 @@ data/*.json
 data/users/
 data/feedback.json
 data/feedback/
+data/feedback-backups/
 
 # macOS
 .DS_Store

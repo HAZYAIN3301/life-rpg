@@ -1,0 +1,237 @@
+{
+  "factoryVersion": 1,
+  "batchId": "traveller-v1-20260725",
+  "canvas": [1024, 1536],
+  "assembledReference": "outputs/control/traveller-assembled.png",
+  "keyedReference": "generated/traveller-assembled-control-keyed.png",
+  "style": "satoru-cut-paper",
+  "coordinateConvention": "character-relative: left/right name the character's own side; every PNG uses the full master canvas and composites at 0,0",
+  "outputRoot": "outputs",
+  "approval": {
+    "status": "control-split",
+    "runtimeIntegrationAllowed": false
+  },
+  "layers": [
+    {
+      "id": "avatar-shadow",
+      "file": "base/avatar-shadow.png",
+      "z": 0,
+      "pivot": [512, 1408],
+      "purpose": "independent soft ground shadow",
+      "dependsOn": []
+    },
+    {
+      "id": "avatar-backpack",
+      "file": "wearables/back/avatar-backpack.png",
+      "z": 10,
+      "pivot": [604, 510],
+      "purpose": "removable canonical back-slot backpack",
+      "dependsOn": ["slot-back"]
+    },
+    {
+      "id": "avatar-hair-back",
+      "file": "base/avatar-hair-back.png",
+      "z": 20,
+      "pivot": [512, 285],
+      "purpose": "hair silhouette behind head and neck",
+      "dependsOn": ["avatar-head"]
+    },
+    {
+      "id": "avatar-leg-r",
+      "file": "base/avatar-leg-r.png",
+      "z": 30,
+      "pivot": [450, 790],
+      "purpose": "character-right leg, screen-left",
+      "dependsOn": ["avatar-hips-pants"]
+    },
+    {
+      "id": "avatar-leg-l",
+      "file": "base/avatar-leg-l.png",
+      "z": 31,
+      "pivot": [574, 790],
+      "purpose": "character-left leg, screen-right",
+      "dependsOn": ["avatar-hips-pants"]
+    },
+    {
+      "id": "avatar-boot-r",
+      "file": "base/avatar-boot-r.png",
+      "z": 35,
+      "pivot": [430, 1165],
+      "purpose": "character-right boot, screen-left",
+      "dependsOn": ["avatar-leg-r"]
+    },
+    {
+      "id": "avatar-boot-l",
+      "file": "base/avatar-boot-l.png",
+      "z": 36,
+      "pivot": [594, 1165],
+      "purpose": "character-left boot, screen-right",
+      "dependsOn": ["avatar-leg-l"]
+    },
+    {
+      "id": "avatar-hips-pants",
+      "file": "base/avatar-hips-pants.png",
+      "z": 40,
+      "pivot": [512, 760],
+      "purpose": "pelvis and pants bridge for both legs",
+      "dependsOn": ["avatar-torso"]
+    },
+    {
+      "id": "avatar-torso",
+      "file": "base/avatar-torso.png",
+      "z": 50,
+      "pivot": [512, 520],
+      "purpose": "cream undershirt and central torso only",
+      "dependsOn": []
+    },
+    {
+      "id": "avatar-cloak",
+      "file": "base/avatar-cloak.png",
+      "z": 52,
+      "pivot": [512, 560],
+      "purpose": "teal coat and tails, separate from torso and limbs",
+      "dependsOn": ["avatar-torso"]
+    },
+    {
+      "id": "avatar-upper-arm-r",
+      "file": "base/avatar-upper-arm-r.png",
+      "z": 55,
+      "pivot": [365, 410],
+      "purpose": "character-right upper arm, screen-left",
+      "dependsOn": ["avatar-torso"]
+    },
+    {
+      "id": "avatar-upper-arm-l",
+      "file": "base/avatar-upper-arm-l.png",
+      "z": 56,
+      "pivot": [659, 410],
+      "purpose": "character-left upper arm, screen-right",
+      "dependsOn": ["avatar-torso"]
+    },
+    {
+      "id": "avatar-forearm-hand-r",
+      "file": "base/avatar-forearm-hand-r.png",
+      "z": 60,
+      "pivot": [315, 610],
+      "purpose": "character-right forearm and hand, screen-left",
+      "dependsOn": ["avatar-upper-arm-r"]
+    },
+    {
+      "id": "avatar-forearm-hand-l",
+      "file": "base/avatar-forearm-hand-l.png",
+      "z": 61,
+      "pivot": [709, 610],
+      "purpose": "character-left forearm and hand, screen-right",
+      "dependsOn": ["avatar-upper-arm-l"]
+    },
+    {
+      "id": "avatar-scarf",
+      "file": "wearables/neck/avatar-scarf.png",
+      "z": 70,
+      "pivot": [512, 350],
+      "purpose": "removable canonical neck-slot scarf",
+      "dependsOn": ["slot-neck"]
+    },
+    {
+      "id": "avatar-head",
+      "file": "base/avatar-head.png",
+      "z": 80,
+      "pivot": [512, 305],
+      "purpose": "skin base with ears and hidden neck overlap; no face or hair",
+      "dependsOn": ["avatar-torso"]
+    },
+    {
+      "id": "avatar-face-eyes",
+      "file": "states/avatar-face-neutral.png",
+      "z": 90,
+      "pivot": [512, 255],
+      "purpose": "eyes, brows, nose and mouth only",
+      "dependsOn": ["avatar-head"]
+    },
+    {
+      "id": "avatar-hair-front",
+      "file": "base/avatar-hair-front.png",
+      "z": 100,
+      "pivot": [512, 190],
+      "purpose": "front fringe only",
+      "dependsOn": ["avatar-head", "avatar-hair-back"]
+    },
+    {
+      "id": "head-traveller-goggles",
+      "file": "wearables/head/head-traveller-goggles.png",
+      "z": 105,
+      "pivot": [512, 160],
+      "purpose": "removable canonical head-slot goggles",
+      "dependsOn": ["slot-head"]
+    },
+    {
+      "id": "avatar-pouch",
+      "file": "accessories/avatar-pouch.png",
+      "z": 110,
+      "pivot": [610, 665],
+      "purpose": "replaceable belt accessory",
+      "dependsOn": ["avatar-hips-pants"]
+    },
+    {
+      "id": "avatar-lantern",
+      "file": "accessories/avatar-lantern.png",
+      "z": 115,
+      "pivot": [665, 570],
+      "purpose": "replaceable lantern including its own chain",
+      "dependsOn": ["avatar-backpack"]
+    }
+  ],
+  "slots": {
+    "slot-head": [512, 160],
+    "slot-neck": [512, 350],
+    "slot-back": [604, 510]
+  },
+  "states": [
+    {
+      "id": "neutral",
+      "file": "states/avatar-face-neutral.png",
+      "z": 90,
+      "pivot": [512, 255]
+    },
+    {
+      "id": "blink",
+      "file": "states/avatar-face-blink.png",
+      "z": 90,
+      "pivot": [512, 255],
+      "status": "deferred-until-base-approval"
+    },
+    {
+      "id": "happy",
+      "file": "states/avatar-face-happy.png",
+      "z": 90,
+      "pivot": [512, 255],
+      "status": "deferred-until-base-approval"
+    },
+    {
+      "id": "tired",
+      "file": "states/avatar-face-tired.png",
+      "z": 90,
+      "pivot": [512, 255],
+      "status": "deferred-until-base-approval"
+    }
+  ],
+  "manualAppearanceAxes": [
+    {
+      "id": "skin-tone",
+      "strategy": "palette transform after canonical geometry approval"
+    },
+    {
+      "id": "hair-color",
+      "strategy": "palette transform after canonical geometry approval"
+    },
+    {
+      "id": "outfit-palette",
+      "strategy": "cloak and accessory variants after canonical geometry approval"
+    }
+  ],
+  "controlSplit": [
+    "avatar-torso",
+    "avatar-head",
+    "avatar-face-eyes"
+  ]
+}
