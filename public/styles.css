@@ -1583,6 +1583,10 @@ html[data-system="on"] .task, html[data-system="on"] .gear-item, html[data-syste
 .desire-opt.hyped:hover { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 14%, var(--panel2)); }
 @media (max-width: 560px) { .desire-btns { grid-template-columns: 1fr; } .desire-opt { flex-direction: row; justify-content: flex-start; gap: 10px; } .desire-opt small { text-align: left; } }
 .guide-list { display: grid; gap: 14px; margin: 16px 0; }
+/* Заголовок группы разделов гайда — якорь для глаза в длинном списке. */
+.guide-group { margin: 10px 0 -2px; font-size: 12px; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--accent); font-weight: 800; }
+.guide-group:first-child { margin-top: 0; }
 .guide-sec { display: flex; gap: 14px; align-items: flex-start; }
 .gs-ic { font-size: 24px; flex: 0 0 auto; width: 32px; text-align: center; }
 .guide-sec h4 { margin: 0 0 3px; font-size: 15px; }
