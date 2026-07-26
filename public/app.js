@@ -1069,6 +1069,11 @@ const I18N_EXTRA = {
   'Доступно в Pro — или добавь бесплатный ключ.': { en: 'Available in Pro — or add a free key.', de: 'In Pro verfügbar — oder füge einen kostenlosen Schlüssel hinzu.', uk: 'Доступно в Pro — або додай безкоштовний ключ.', es: 'Disponible en Pro — o añade una clave gratis.' },
   'Добавь ключ в Настройках.': { en: 'Add a key in Settings.', de: 'Füge einen Schlüssel in den Einstellungen hinzu.', uk: 'Додай ключ у Налаштуваннях.', es: 'Añade una clave en Ajustes.' },
   'Добавь ИИ-ключ в Настройках': { en: 'Add an AI key in Settings', de: 'Füge einen KI-Schlüssel in den Einstellungen hinzu', uk: 'Додай ШІ-ключ у Налаштуваннях', es: 'Añade una clave de IA en Ajustes' },
+  // ── 💬 Карточки-действия в чате (Фаза C) ──
+  'Применить выбранное': { en: 'Apply selected', de: 'Auswahl anwenden', uk: 'Застосувати вибране', es: 'Aplicar selección' },
+  'Добавлено': { en: 'Added', de: 'Hinzugefügt', uk: 'Додано', es: 'Añadido' },
+  'дн/нед': { en: 'days/wk', de: 'Tage/Wo', uk: 'дн/тижд', es: 'días/sem' },
+  'до': { en: 'by', de: 'bis', uk: 'до', es: 'hasta' },
   // ── ⚡ Реальная механика боссов: критический удар ──
   'Урон ×2 по': { en: '×2 damage to', de: '×2 Schaden an', uk: 'Шкода ×2 по', es: 'Daño ×2 a' },
   // ── 🌳 Личная карта: интервью ──
@@ -3997,7 +4002,8 @@ function ttsSpeak(text, btn) {
 function ttsTextNear(btn) {
   const host = btn.closest('[data-tts]'); if (!host) return '';
   const clone = host.cloneNode(true);
-  clone.querySelectorAll('.tts-btn').forEach((b) => b.remove());
+  // Вырезаем и карточки-действия: Тень озвучивает свой ОТВЕТ, а не список чекбоксов с кнопкой
+  clone.querySelectorAll('.tts-btn, .chat-actions').forEach((b) => b.remove());
   // <br> → перевод строки, иначе textContent склеивает строки («…отдыха.Сегодня…») и синтезатор
   // читает их одним словом. Переносы сохраняем — они дают естественные паузы в речи.
   clone.querySelectorAll('br').forEach((b) => b.replaceWith('\n'));
@@ -5393,7 +5399,7 @@ function applyProposals(proposals, acceptedIdx) {
   return applied;
 }
 // ---- ИИ тех-поддержка / гид (Блок 2): постоянный помощник, знает функции и философию ----
-const GOJO_MANUAL = `Ты — встроенный помощник приложения Satoru (геймификация жизни). Философия: «жизнь как десятиборье» — ценится баланс многих сфер, а не одна вертикаль; отдых и восстановление так же важны, как труд; уровень = доказанное мастерство, оно НЕ сгорает (как чёрный пояс). Твоя роль двойная. (1) Гид: помогаешь разобраться в функциях, подсказываешь, что юзер недоиспользует, объясняешь механики простыми словами. (2) Секретарь: в конце этого промпта — блоки «СОСТОЯНИЕ СЕЙЧАС» и «НЕДЕЛЯ …» с живыми данными ИМЕННО этого юзера (энергия, честный отдых, сегодняшние и просроченные дела, дедлайны целей, его собственная рефлексия своими словами). Когда юзер спрашивает о себе — «как у меня дела», «что мне сделать», «почему я выжат» — отвечай ПО ЭТИМ ДАННЫМ, конкретно и адресно, а не общими советами. Строка про отдых значит больше индекса баланса (баланс не отличает тренировку от отдыха). Рефлексия юзера — самый важный сигнал: отвечай на его собственную боль его же словами. Если данные тревожные (≥4 дней без отдыха, энергия у нуля, копятся просрочки) и юзер просит совета — назови это прямо, тепло и без вины, и предложи ОДИН маленький шаг (часто это «Заход» на 10 минут или явный отдых, а не ещё продуктивность). Цифры без запроса не вываливай; ничего сверх данных не выдумывай. Отвечай КРАТКО, по делу, дружелюбно. Ты не можешь сам нажимать кнопки — направляй словами (куда зайти, что нажать). Если юзер описывает свои цели или опыт — посоветуй кнопку «🤖 Импорт целей» (вкладка Цели) или «🤖 Оценить через ИИ» (Настройки → Импорт), они оформят это автоматически.
+const GOJO_MANUAL = `Ты — встроенный помощник приложения Satoru (геймификация жизни). Философия: «жизнь как десятиборье» — ценится баланс многих сфер, а не одна вертикаль; отдых и восстановление так же важны, как труд; уровень = доказанное мастерство, оно НЕ сгорает (как чёрный пояс). Твоя роль двойная. (1) Гид: помогаешь разобраться в функциях, подсказываешь, что юзер недоиспользует, объясняешь механики простыми словами. (2) Секретарь: в конце этого промпта — блоки «СОСТОЯНИЕ СЕЙЧАС» и «НЕДЕЛЯ …» с живыми данными ИМЕННО этого юзера (энергия, честный отдых, сегодняшние и просроченные дела, дедлайны целей, его собственная рефлексия своими словами). Когда юзер спрашивает о себе — «как у меня дела», «что мне сделать», «почему я выжат» — отвечай ПО ЭТИМ ДАННЫМ, конкретно и адресно, а не общими советами. Строка про отдых значит больше индекса баланса (баланс не отличает тренировку от отдыха). Рефлексия юзера — самый важный сигнал: отвечай на его собственную боль его же словами. Если данные тревожные (≥4 дней без отдыха, энергия у нуля, копятся просрочки) и юзер просит совета — назови это прямо, тепло и без вины, и предложи ОДИН маленький шаг (часто это «Заход» на 10 минут или явный отдых, а не ещё продуктивность). Цифры без запроса не вываливай; ничего сверх данных не выдумывай. Отвечай КРАТКО, по делу, дружелюбно. Кнопки в интерфейсе ты не нажимаешь, но умеешь ПРЕДЛАГАТЬ создание квестов/привычек/целей карточками (блок ACTIONS ниже) — применяет их юзер одним тапом. Если юзер описывает большой массив целей или прошлый опыт — посоветуй «🤖 Импорт целей» (вкладка Цели) или «🤖 Оценить через ИИ» (Настройки → Импорт).
 
 ФУНКЦИИ И ГДЕ ОНИ:
 • Сегодня — квесты на день (разовые дела), сложность 🌱лёгкая/⚔️обычная/🔥сложная. ▶ у квеста = фокус-таймер (помодоро + плавающее окно ↗ поверх всех окон). Галочка = XP + золото. Привычки — повторяющиеся дела со стриком. Энергия — индикатор дневной нагрузки, восстанавливается ПАССИВНО по времени (логировать отдых не нужно), ни на что не влияет, честная «оценка по задачам». Хайп — выполни 🔥сложный квест → временный бонус +15% XP за стак (до +45%, на 2 ч); «через силу» тратит больше энергии, «в кураже» меньше.
@@ -5416,7 +5422,13 @@ const GOJO_MANUAL = `Ты — встроенный помощник прилож
 • Рейтинг — соревнование по XP со всеми на сервере (видны только имя/аватар/уровень/ранг, задачи приватны; можно скрыться).
 • Настройки — сферы жизни (иерархия N уровней: Учёба→Школа→Bio LK), Импорт достижений (отметь реальный уровень → стартовый XP, не начинаешь с нуля; или «🤖 Оценить через ИИ»), ИИ-ключ (свой ключ питает все ИИ-функции; бесплатный без карты — Google Gemini или Groq, либо платные Claude/OpenAI), кривые XP, бэкапы данных.
 
-Важно — Уровень vs Форма: уровень не сгорает; Форма — отдельный показатель свежести, мягко падает если забросил сферу и быстро возвращается (жизнь не наказывает за паузу).`;
+Важно — Уровень vs Форма: уровень не сгорает; Форма — отдельный показатель свежести, мягко падает если забросил сферу и быстро возвращается (жизнь не наказывает за паузу).
+
+ACTIONS — карточки-действия. Когда юзер просит СДЕЛАТЬ создаваемое (разложить проект на шаги, поставить дела на даты, завести привычку или цель) — сначала обычный короткий ответ, затем В САМОМ КОНЦЕ сообщения блок:
+<<ACTIONS
+[{"kind":"quest","title":"Черновик постера","date":"2026-07-29","estimateMin":60,"difficulty":"normal","sphere":"Учёба"}]
+ACTIONS>>
+Правила блока: JSON-массив, максимум 5 объектов. kind: "quest" (разовое дело; поля title, date ГГГГ-ММ-ДД сегодня/будущее, estimateMin, difficulty easy|normal|hard, sphere) | "habit" (повторяющееся; title, sphere, estimateMin, days — массив дней недели 0=вс…6=сб, по умолчанию ежедневно) | "goal" (цель; title, sphere, опционально deadline ГГГГ-ММ-ДД). sphere — ТОЧНОЕ имя из сфер юзера в контексте; не уверен — опусти поле. Блок добавляй ТОЛЬКО при явной просьбе действий — на вопросы «как работает…» и «как у меня дела» его НЕ добавляй. Внутри текста ответа содержимое блока не пересказывай списком — карточки юзер увидит сам. Ничего не выдумывай: раскладка должна опираться на слова юзера и его данные.`;
 const CHAT_SUGGESTIONS = ['Как у меня дела на самом деле?', 'Что мне сделать прямо сейчас?', 'Какие функции я не использую?', 'Как импортировать мой реальный опыт?', 'Объясни энергию и Хайп'];
 // Живой контекст юзера — чтобы советы были не абстрактные
 // Язык ответа ИИ = язык интерфейса (раньше чат/зеркало хардкодили русский — DE/EN-юзер получал RU-ответ).
@@ -5470,10 +5482,84 @@ function renderChatMessages() {
       <div class="chat-suggs">${CHAT_SUGGESTIONS.map((s) => `<button class="chat-sugg" data-action="chat-suggest" data-q="${esc(s)}">${esc(s)}</button>`).join('')}</div></div>`;
     return;
   }
-  box.innerHTML = State.chatLog.map((m) => m.role === 'user'
-    ? `<div class="chat-msg me">${esc(m.content)}</div>`
-    : `<div class="chat-msg ai" data-tts>${esc(m.content).replace(/\n/g, '<br>')}${ttsBtnHTML()}</div>`).join('') + (State._chatBusy ? '<div class="chat-msg ai typing">…</div>' : '');
+  box.innerHTML = State.chatLog.map((m, mi) => {
+    if (m.role === 'user') return `<div class="chat-msg me">${esc(m.content)}</div>`;
+    let acts = '';
+    if (m.actions && m.actions.length) {
+      acts = m.actionsApplied != null
+        ? `<div class="chat-actions applied muted">✓ ${t('Добавлено')}: ${m.actionsApplied}</div>`
+        : `<div class="chat-actions" data-mi="${mi}"><div class="dayrec-list">${m.actions.map(chatActionRow).join('')}</div>
+            <button class="btn sm" data-action="chat-actions-apply" data-mi="${mi}">✓ ${t('Применить выбранное')}</button></div>`;
+    }
+    return `<div class="chat-msg ai" data-tts>${esc(m.content).replace(/\n/g, '<br>')}${ttsBtnHTML()}${acts}</div>`;
+  }).join('') + (State._chatBusy ? '<div class="chat-msg ai typing">…</div>' : '');
   box.scrollTop = box.scrollHeight;
+}
+// ── Джарвис-2 Фаза C: карточки-действия в чате (JARVIS-2-PLAN.md) ─────────────────────────
+// Помощник может приложить к ответу блок <<ACTIONS [...json] ACTIONS>> — предложения создать
+// квесты/привычки/цели. v1 сознательно ТОЛЬКО СОЗДАНИЕ: мутации существующих данных (перенос,
+// правка, удаление) ИИ через чат не доверяем — создание безопасно, обратимо и видно глазами.
+// Ничего не применяется без тапа юзера — тот же гейт, что у движка Предложений.
+function chatSkillByName(name) {
+  if (!name) return null;
+  const n = String(name).trim().toLowerCase();
+  return (State.settings.skills || []).find((s) => String(s.name || '').trim().toLowerCase() === n) || null;
+}
+function parseChatActions(text) {
+  const m = /<<ACTIONS\s*([\s\S]*?)\s*ACTIONS>>/.exec(text || '');
+  if (!m) return { clean: text, actions: [] };
+  const clean = (text.replace(m[0], '')).trim();
+  let raw = [];
+  try { raw = JSON.parse(m[1]); } catch { return { clean, actions: [] }; }
+  if (!Array.isArray(raw)) return { clean, actions: [] };
+  const today = todayStr();
+  const actions = raw.slice(0, 5).map((a) => {
+    if (!a || typeof a !== 'object' || !a.title) return null;
+    const kind = ['quest', 'habit', 'goal'].includes(a.kind) ? a.kind : 'quest';
+    const sk = chatSkillByName(a.sphere);
+    const out = { kind, title: String(a.title).slice(0, 120), skillId: sk ? sk.id : (State.settings.skills[0] || {}).id, sphereName: sk ? sk.name : ((State.settings.skills[0] || {}).name || '') };
+    if (kind === 'quest') {
+      out.date = (typeof a.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(a.date) && a.date >= today) ? a.date : today;
+      out.estimateMin = Math.min(600, Math.max(5, Math.round(Number(a.estimateMin) || 30)));
+      out.difficulty = ['easy', 'normal', 'hard'].includes(a.difficulty) ? a.difficulty : 'normal';
+    } else if (kind === 'habit') {
+      out.estimateMin = Math.min(240, Math.max(2, Math.round(Number(a.estimateMin) || 10)));
+      out.days = (Array.isArray(a.days) && a.days.length) ? a.days.map(Number).filter((d) => d >= 0 && d <= 6) : [0, 1, 2, 3, 4, 5, 6];
+      if (!out.days.length) out.days = [0, 1, 2, 3, 4, 5, 6];
+    } else {
+      out.deadline = (typeof a.deadline === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(a.deadline) && a.deadline >= today) ? a.deadline : null;
+    }
+    return out;
+  }).filter(Boolean);
+  return { clean, actions };
+}
+function chatActionRow(a) {
+  const icon = a.kind === 'habit' ? '🔁' : a.kind === 'goal' ? '🎯' : '⚔️';
+  const meta = a.kind === 'quest' ? `${dmShort(a.date)} · ${fmtDur(a.estimateMin)} · ${esc(a.sphereName)}`
+    : a.kind === 'habit' ? `${a.days.length === 7 ? t('ежедневно') : a.days.length + ' ' + t('дн/нед')} · ${fmtDur(a.estimateMin)} · ${esc(a.sphereName)}`
+    : `${a.deadline ? t('до') + ' ' + dmShort(a.deadline) + ' · ' : ''}${esc(a.sphereName)}`;
+  return `<label class="drc-row"><input type="checkbox" data-ca checked />
+    <span><b>${icon} ${esc(a.title)}</b><br><span class="muted" style="font-size:12px">${meta}</span></span></label>`;
+}
+function applyChatActions(msg, checks) {
+  let quests = 0, habits = 0, goals = 0;
+  msg.actions.forEach((a, i) => {
+    if (!checks[i]) return;
+    if (a.kind === 'quest') {
+      State.tasks.push({ id: uid(), title: a.title, skillId: a.skillId, skillIds: [a.skillId], estimateMin: a.estimateMin, difficulty: a.difficulty, date: a.date, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
+      quests++;
+    } else if (a.kind === 'habit') {
+      State.habits.push({ id: 'h_' + uid(), title: a.title, skillId: a.skillId, difficulty: 'easy', estimateMin: a.estimateMin, days: a.days, archived: false, createdAt: new Date().toISOString() });
+      habits++;
+    } else {
+      State.goals.push({ id: 'g_' + uid(), title: a.title, description: '', skillId: a.skillId, type: 'short', xpReward: GOAL_XP.short, parentId: null, targetDate: a.deadline, steps: [], metric: null, status: 'active', window: '', createdAt: new Date().toISOString(), completedAt: null, archived: false });
+      goals++;
+    }
+  });
+  if (quests) Store.save('tasks', State.tasks);
+  if (habits) Store.save('habits', State.habits);
+  if (goals) Store.save('goals', State.goals);
+  return { quests, habits, goals, total: quests + habits + goals };
 }
 async function sendChat(text) {
   text = String(text || '').trim(); if (!text || State._chatBusy) return;
@@ -5483,12 +5569,19 @@ async function sendChat(text) {
   const inp = document.getElementById('chat-input'); if (inp) inp.value = '';
   try {
     const system = GOJO_MANUAL + '\n\n' + aiAnswerLangLine() + '\n\n' + chatUserContext();
-    const r = await fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, messages: State.chatLog.slice(-20) }) });
+    // Провайдерам уходит строго {role, content} — наши поля (actions и пр.) им не шлём
+    const messages = State.chatLog.slice(-20).map((m) => ({ role: m.role, content: m.content }));
+    const r = await fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, messages }) });
     const d = await r.json();
     State._chatBusy = false;
     if (d.error && aiHandleErr(d)) { State.chatLog.pop(); renderChatMessages(); return; }
     if (!r.ok || !d.text) { State.chatLog.push({ role: 'assistant', content: `⚠️ Не удалось: ${d.detail || d.error || 'ошибка'}.` }); }
-    else { State.chatLog.push({ role: 'assistant', content: d.text }); track('ai:chat'); }
+    else {
+      const { clean, actions } = parseChatActions(d.text);
+      const msg = { role: 'assistant', content: clean || d.text };
+      if (actions.length) { msg.actions = actions; track('ai:chatactions-offer'); }
+      State.chatLog.push(msg); track('ai:chat');
+    }
     renderChatMessages();
   } catch { State._chatBusy = false; State.chatLog.push({ role: 'assistant', content: '⚠️ Сетевая ошибка.' }); renderChatMessages(); }
 }
@@ -7850,6 +7943,7 @@ const FEATURE_REGISTRY = [
   { ev: 'ai:chat', label: 'Чат-помощник' },
   { ev: 'ai:weekly', label: 'Разбор недели' },
   { ev: 'ai:nudgevoice', label: 'Тень подбирает слова подсказки' },
+  { ev: 'ai:chatactions', label: 'Карточки-действия в чате (применены)' },
   { ev: 'ai:catsuggest', label: 'Авто-категория' },
   { ev: 'ai:bridge', label: 'Копипаст-мост (без ключа)' },
   { ev: 'sphere:guide', label: 'Справочник сфер' },
@@ -9557,6 +9651,24 @@ function onClick(e) {
   }
   if (action === 'toggle-sound') { State.settings.sound = !!el.checked; Store.save('settings', State.settings); if (el.checked) sfx('complete'); return; }
   if (action === 'tts') { ttsSpeak(ttsTextNear(el), el); return; }
+  if (action === 'chat-actions-apply') {
+    const mi = Number(el.dataset.mi), msg = State.chatLog[mi];
+    if (!msg || !msg.actions || msg.actionsApplied != null) return;
+    const wrap = el.closest('.chat-actions');
+    const checks = [...(wrap ? wrap.querySelectorAll('[data-ca]') : [])].map((c) => c.checked);
+    const res = applyChatActions(msg, checks);
+    msg.actionsApplied = res.total;
+    if (res.total) {
+      const parts = [];
+      if (res.quests) parts.push(`${res.quests} ${plural(res.quests, 'квест', 'квеста', 'квестов')}`);
+      if (res.habits) parts.push(`${res.habits} ${plural(res.habits, 'привычка', 'привычки', 'привычек')}`);
+      if (res.goals) parts.push(`${res.goals} ${plural(res.goals, 'цель', 'цели', 'целей')}`);
+      toast(`✓ ${t('Добавлено')}: ${parts.join(' · ')}`);
+      sfx('complete'); track('ai:chatactions');
+    }
+    renderChatMessages(); render();
+    return;
+  }
   if (action === 'toggle-tts') { State.settings.tts = !!el.checked; Store.save('settings', State.settings); ttsStop(); render(); return; }
   if (action === 'set-ambient') {
     if (!State.settings.ambient) State.settings.ambient = {};

@@ -1099,6 +1099,20 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .comp-line-row { display: flex; align-items: flex-start; gap: 6px; }
 .comp-line-row .comp-line { flex: 1 1 auto; min-width: 0; }
 
+/* Строка-чекбокс с текстом (карточки ИИ: итог дня, личная карта дерева, действия в чате).
+   Раньше класс не был определён вовсе — label оставался инлайновым, и в узких контейнерах
+   чекбокс отрывался от своей подписи. */
+.drc-row { display: flex; align-items: flex-start; gap: 9px; cursor: pointer; line-height: 1.45; }
+.drc-row > input[type="checkbox"] { flex: 0 0 auto; width: 17px; height: 17px; margin-top: 2px; accent-color: var(--accent); }
+.drc-row > span { flex: 1 1 auto; min-width: 0; }
+
+/* 💬 Карточки-действия в ответе Помощника (Фаза C).
+   white-space: normal обязателен — пузырь .chat-msg держит pre-wrap ради переносов в тексте
+   ответа, и без сброса переводы строк ВЁРСТКИ карточек рендерились как пустые строки. */
+.chat-actions { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line); white-space: normal; }
+.chat-actions .dayrec-list { margin: 0 0 8px; gap: 10px; }
+.chat-actions.applied { font-size: 12.5px; padding-top: 6px; }
+
 /* Интервью «Личной карты» дерева: вопрос-лейбл + поле. */
 .tm-q { display: block; margin: 0 0 10px; font-size: 13px; font-weight: 700; }
 .tm-q input, .tm-q textarea { width: 100%; margin-top: 4px; font-weight: 400; }
