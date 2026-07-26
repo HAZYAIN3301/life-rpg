@@ -1099,6 +1099,9 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .comp-line-row { display: flex; align-items: flex-start; gap: 6px; }
 .comp-line-row .comp-line { flex: 1 1 auto; min-width: 0; }
 
+/* Фраза Тени в нудже, когда у карточки нет .nudge-boost (мобилка). */
+.nudge-voice { margin: 0 0 8px; font-size: 13.5px; line-height: 1.45; color: var(--text); }
+
 /* 🔊 Кнопка озвучки (голос Тени). Тихая по умолчанию, активная — акцентом. */
 .tts-btn { flex: 0 0 auto; align-self: flex-start; background: none; border: none; cursor: pointer;
   font-size: 13px; line-height: 1; padding: 4px 5px; border-radius: 7px; opacity: 0.5;

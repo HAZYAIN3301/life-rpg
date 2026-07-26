@@ -6597,7 +6597,7 @@ function renderDen() {
 // низкоприоритетных (import/sysTeaser), если понадобится (см. открытый вопрос в плане).
 function pickNudge(signals) {
   const active = signals.filter((s) => s.html);
-  if (!active.length) return '';
+  if (!active.length) return null;
   const seen = State.settings.nudgeSeen || (State.settings.nudgeSeen = {});
   active.sort((a, b) => {
     if (a.tier !== b.tier) return a.tier - b.tier;
@@ -6606,7 +6606,60 @@ function pickNudge(signals) {
   });
   const win = active[0];
   if (seen[win.id] !== todayStr()) { seen[win.id] = todayStr(); Store.save('settings', State.settings); }
-  return win.html;
+  return win;
+}
+
+// ── Джарвис-2 Фаза B2: Тень подбирает СЛОВА нуджа под состояние ──────────────────────────
+// Фаза A решает ЧТО сейчас важно (локально, бесплатно). Здесь ИИ говорит это своими словами.
+// Правила Альберта: генерация при смене сигнала, потолок — не чаще раза в сутки на тот же
+// сигнал. Без ключа фраза остаётся статичной: фича деградирует, а не ломается.
+const NUDGE_SIG_HINT = {
+  entry: 'вечер уплывает или сил почти нет — предложить крошечный вход в любимое дело вместо залипания',
+  rest: 'много дней подряд без явного отдыха, хотя дела идут',
+  dayLog: 'несколько дней жизнь шла, но записывать было некогда — предложить наговорить итог',
+  lowEnergy: 'энергия почти на нуле после нагруженного дня',
+  stretch: 'день целиком сидячий, движения не запланировано',
+  mobility: 'активно тренируется, но регулярной растяжки давно не видно',
+  import: 'новичок начинает с нуля, хотя за плечами реальный опыт',
+  sysTeaser: 'не открыл для себя спрятанный режим «Система»',
+};
+let _nudgeVoiceBusy = false, _nudgeVoiceFailAt = 0;
+function nudgeVoiceGet(sig) {
+  const v = State.settings && State.settings.nudgeVoice;
+  return (v && sig && v.sig === sig && v.lang === lang() && v.text) ? v.text : null;
+}
+function nudgeVoiceStale(sig) {
+  const v = State.settings && State.settings.nudgeVoice;
+  if (!v || v.sig !== sig || v.lang !== lang()) return true;         // новый сигнал/язык — сразу
+  return (Date.now() - (Date.parse(v.at) || 0)) > 24 * 3600 * 1000;  // тот же — не чаще раза в сутки
+}
+async function nudgeVoiceFetch(sig, staticText) {
+  if (_nudgeVoiceBusy || !sig || !canUseAi() || !nudgeVoiceStale(sig)) return;
+  if (Date.now() - _nudgeVoiceFailAt < 10 * 60000) return; // после сбоя не долбим на каждый рендер
+  _nudgeVoiceBusy = true;
+  try {
+    const system = `Ты — Тень, тёплый спутник человека в приложении Satoru (философия «жизнь как десятиборье»; поддержка через любовь, не через вину). Тебе дают СИГНАЛ — что сейчас важнее всего — и СРЕЗ СОСТОЯНИЯ человека. Скажи ОДНУ фразу от себя, обращаясь к человеку на «ты»: тепло, конкретно по его данным, без вины, без морали и без лозунгов. Максимум 120 знаков. Не пиши «нажми кнопку» — кнопка уже стоит рядом с твоей фразой. Не выдумывай фактов, которых нет в данных. Верни ТОЛЬКО саму фразу, без кавычек и пояснений.\n${aiAnswerLangLine()}`;
+    const prompt = `СИГНАЛ: ${NUDGE_SIG_HINT[sig] || sig}\nСТАНДАРТНАЯ ФОРМУЛИРОВКА (смысл сохрани, слова замени своими): ${staticText || ''}\n\n${stateNowContext()}`;
+    const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, prompt }) });
+    const d = await r.json();
+    const text = (d && d.text || '').replace(/\s+/g, ' ').replace(/^["«»']+|["«»']+$/g, '').trim().slice(0, 160);
+    if (!r.ok || !text) { _nudgeVoiceFailAt = Date.now(); return; }
+    State.settings.nudgeVoice = { sig, text, at: new Date().toISOString(), lang: lang() };
+    Store.save('settings', State.settings);
+    track('ai:nudgevoice');
+    render(); // кэш уже свежий → повторного запроса не будет
+  } catch { _nudgeVoiceFailAt = Date.now(); }
+  finally { _nudgeVoiceBusy = false; }
+}
+// Подстановка фразы Тени в готовую карточку. Заменяем содержимое первого .nudge-boost —
+// у 7 из 8 нуджей это и есть пояснительная строка, а кнопка-действие остаётся нетронутой
+// (ИИ красит слова, не логику). У мобилки .nudge-boost нет — там фраза идёт отдельной строкой.
+function applyNudgeVoice(html, voiced) {
+  if (!html || !voiced) return html;
+  const re = /(<span class="nudge-boost">)([\s\S]*?)(<\/span>)/;
+  if (re.test(html)) return html.replace(re, `$1${esc(voiced)}$3`);
+  const i = html.indexOf('>');
+  return i < 0 ? html : html.slice(0, i + 1) + `<p class="nudge-voice">${esc(voiced)}</p>` + html.slice(i + 1);
 }
 function renderToday() {
   const today = todayStr();
@@ -6697,7 +6750,7 @@ function renderToday() {
   // у уставшего юзера вечером могли гореть 5 советов подряд (fb #9 «панель нечитаема»). Секретарь
   // говорит одну фразу о главном, не зачитывает памятку целиком. `nudgeCard` (сундуки/буст/Хайп) —
   // это награда, а не совет, остаётся отдельно (сознательная петля возврата, не конкурирует за тон).
-  const activeNudge = withTts(pickNudge([
+  const nudgeWin = pickNudge([
     { id: 'entry', tier: 1, html: entryNudge },
     { id: 'rest', tier: 2, html: restNudge },
     { id: 'dayLog', tier: 3, html: dayLogNudge },
@@ -6706,7 +6759,17 @@ function renderToday() {
     { id: 'mobility', tier: 5, html: mobilityNudge },
     { id: 'import', tier: 6, html: importNudge },
     { id: 'sysTeaser', tier: 7, html: sysTeaser },
-  ]));
+  ]);
+  // Фаза B2: если Тень уже подобрала слова под этот сигнал — подставляем их; иначе показываем
+  // статичный текст и в фоне просим фразу (без ключа запрос не уходит вовсе — остаётся статика).
+  let activeNudge = '';
+  if (nudgeWin) {
+    activeNudge = withTts(applyNudgeVoice(nudgeWin.html, nudgeVoiceGet(nudgeWin.id)));
+    if (canUseAi() && nudgeVoiceStale(nudgeWin.id)) {
+      const plain = nudgeWin.html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+      setTimeout(() => nudgeVoiceFetch(nudgeWin.id, plain), 0);
+    }
+  }
 
   const overdueCard = overdue.length ? `<div class="card overdue"><h3>${t('⏳ Просрочено')} (${overdue.length})</h3>
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
@@ -7737,6 +7800,7 @@ const FEATURE_REGISTRY = [
   { ev: 'ai:daylog', label: '«Итог дня» голосом' },
   { ev: 'ai:chat', label: 'Чат-помощник' },
   { ev: 'ai:weekly', label: 'Разбор недели' },
+  { ev: 'ai:nudgevoice', label: 'Тень подбирает слова подсказки' },
   { ev: 'ai:catsuggest', label: 'Авто-категория' },
   { ev: 'ai:bridge', label: 'Копипаст-мост (без ключа)' },
   { ev: 'sphere:guide', label: 'Справочник сфер' },
