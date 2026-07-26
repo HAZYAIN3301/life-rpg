@@ -14,6 +14,11 @@ def main() -> None:
     parser.add_argument("--input", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--box", required=True, nargs=4, type=int, metavar=("L", "T", "R", "B"))
+    parser.add_argument(
+        "--stretch",
+        action="store_true",
+        help="Fill the target box exactly instead of preserving the generated aspect ratio.",
+    )
     args = parser.parse_args()
 
     image = Image.open(args.input).convert("RGBA")
@@ -28,9 +33,12 @@ def main() -> None:
 
     cropped = image.crop(alpha_box)
     max_w, max_h = right - left, bottom - top
-    scale = min(max_w / cropped.width, max_h / cropped.height)
-    out_w = max(1, round(cropped.width * scale))
-    out_h = max(1, round(cropped.height * scale))
+    if args.stretch:
+        out_w, out_h = max_w, max_h
+    else:
+        scale = min(max_w / cropped.width, max_h / cropped.height)
+        out_w = max(1, round(cropped.width * scale))
+        out_h = max(1, round(cropped.height * scale))
     fitted = cropped.resize((out_w, out_h), Image.Resampling.LANCZOS)
 
     x = left + (max_w - out_w) // 2
