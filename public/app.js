@@ -1069,6 +1069,8 @@ const I18N_EXTRA = {
   'Доступно в Pro — или добавь бесплатный ключ.': { en: 'Available in Pro — or add a free key.', de: 'In Pro verfügbar — oder füge einen kostenlosen Schlüssel hinzu.', uk: 'Доступно в Pro — або додай безкоштовний ключ.', es: 'Disponible en Pro — o añade una clave gratis.' },
   'Добавь ключ в Настройках.': { en: 'Add a key in Settings.', de: 'Füge einen Schlüssel in den Einstellungen hinzu.', uk: 'Додай ключ у Налаштуваннях.', es: 'Añade una clave en Ajustes.' },
   'Добавь ИИ-ключ в Настройках': { en: 'Add an AI key in Settings', de: 'Füge einen KI-Schlüssel in den Einstellungen hinzu', uk: 'Додай ШІ-ключ у Налаштуваннях', es: 'Añade una clave de IA en Ajustes' },
+  // ── ⚡ Реальная механика боссов: критический удар ──
+  'Урон ×2 по': { en: '×2 damage to', de: '×2 Schaden an', uk: 'Шкода ×2 по', es: 'Daño ×2 a' },
   // ── 🌳 Личная карта: интервью ──
   'Шаблонная лестница — старт. Ответь на пару вопросов — и Тень соберёт вехи под тебя. Взятые вехи останутся: новая тропа строится поверх них.': { en: 'The template ladder is a starting point. Answer a couple of questions and Shadow will build milestones for you. Claimed milestones stay: the new path is built on top of them.', de: 'Die Vorlagen-Leiter ist der Start. Beantworte ein paar Fragen und Schatten baut Meilensteine für dich. Genommene Meilensteine bleiben: der neue Pfad baut darauf auf.', uk: 'Шаблонна драбина — старт. Дай відповідь на кілька запитань — і Тінь збере віхи під тебе. Взяті віхи залишаться: нова стежка будується поверх них.', es: 'La escalera de plantilla es el punto de partida. Responde un par de preguntas y la Sombra construirá hitos para ti. Los hitos tomados se quedan: el nuevo camino se construye sobre ellos.' },
   'Где ты сейчас в этой сфере?': { en: 'Where are you in this sphere right now?', de: 'Wo stehst du in diesem Bereich gerade?', uk: 'Де ти зараз у цій сфері?', es: '¿Dónde estás ahora en esta esfera?' },
@@ -2780,6 +2782,13 @@ function completeTask(task, desire, onDate) {
       if (ra.name !== rb.name) systemNarrate('НОВЫЙ РАНГ ПРИСВОЕН', `${ra.icon} ${ra.name} · ты становишься сильнее`);
     }
   } else sfx('complete');
+  // Заход намеренно без XP и без давления (см. выше) — критический удар тут неуместен, даже
+  // если по совпадению попадает в правило недели: это не момент для азарта «нанёс урон».
+  if (!task.entry) {
+    const doneToday = State.tasks.filter((x) => x.done && x.completedAt && x.completedAt.slice(0, 10) === todayStr());
+    const isFirstOfDay = !doneToday.some((x) => x.id !== task.id && Date.parse(x.completedAt) < Date.parse(task.completedAt));
+    bossHitFeedback(bossHitCheck('task', task, { isFirstOfDay, sphereName: sk ? sk.name : '' }));
+  }
   checkAchievements(); render(); publishLeaderboard();
 }
 // Поп-ап выбора желания при завершении сложного квеста
@@ -3331,12 +3340,12 @@ function refreshGoalCompletion(g) {
     const reached = goalMetricReached(g);
     if (reached) g.metric.everReached = true;
     // maintain-цель никогда не «завершается» — остаётся в режиме удержания
-    if (reached && !g.metric.maintain && !g.completedAt) { g.completedAt = new Date().toISOString(); toast(`🎯 Цель достигнута: ${g.title} (+${g.xpReward != null ? g.xpReward : GOAL_BONUS.xp} XP)`); goalMilestoneHint(g); }
+    if (reached && !g.metric.maintain && !g.completedAt) { g.completedAt = new Date().toISOString(); toast(`🎯 Цель достигнута: ${g.title} (+${g.xpReward != null ? g.xpReward : GOAL_BONUS.xp} XP)`); goalMilestoneHint(g); bossHitFeedback(bossHitCheck('goal', g)); }
     else if (!reached && g.completedAt && !g.metric.maintain) g.completedAt = null;
     return;
   }
   const allDone = g.steps.length > 0 && g.steps.every((s) => s.done);
-  if (allDone && !g.completedAt) { g.completedAt = new Date().toISOString(); toast(`🎯 Цель достигнута: ${g.title} (+${g.xpReward != null ? g.xpReward : GOAL_BONUS.xp} XP)`); goalMilestoneHint(g); }
+  if (allDone && !g.completedAt) { g.completedAt = new Date().toISOString(); toast(`🎯 Цель достигнута: ${g.title} (+${g.xpReward != null ? g.xpReward : GOAL_BONUS.xp} XP)`); goalMilestoneHint(g); bossHitFeedback(bossHitCheck('goal', g)); }
   else if (!allDone && g.completedAt) g.completedAt = null;
 }
 
@@ -4034,6 +4043,10 @@ function sfx(name, rarity) {
   else if (name === 'raidwin') { // эпичная фанфара победы над боссом (#22)
     [392, 523, 659, 784, 784, 1046].forEach((f, i) => sfxTone(f, t + i * 0.14, 0.5, { type: 'sawtooth', gain: 0.12 }));
     [523, 659, 784, 1046].forEach((f) => sfxTone(f, t + 0.14 * 6, 1.0, { type: 'triangle', gain: 0.1 })); // финальный аккорд
+  }
+  else if (name === 'bosshit') { // критический удар по слабости босса — заметно отличается от 'complete'
+    sfxTone(180, t, 0.09, { type: 'square', slideTo: 90, gain: 0.16 });
+    sfxTone(1046, t + 0.08, 0.22, { type: 'sine', gain: 0.13 });
   }
 }
 function sfxLoot(rarity) { sfx('loot', rarity); } // вызывается из openChest (#20)
@@ -8594,72 +8607,122 @@ const RAID_PER_MEMBER = 600; // XP/чел/неделя — цель кооп-р�
 // weak — СЛАБОСТЬ: какие действия наносят урон ×2 (⚠️ порядок = BOSS_RULES в server.js, урон считает сервер);
 // defeat — метафора победы (эпитафия на победном оверлее). Бой всегда с НИМ, не с собой.
 const BOSSES = [
-  { name: 'Прокрастинион, Пожиратель Дней', emoji: '🦑',
+  { name: 'Прокрастинион, Пожиратель Дней', emoji: '🦑', rule: 'overdue2',
     lore: 'Древний кракен, обвивающий щупальцами стрелки часов. Шепчет «успеешь позже» — и день исчезает у него в пасти.',
     weak: 'закрывай дела, висевшие 2+ дней',
     defeat: 'Щупальца разжались. Ваши дни — снова ваши.' },
-  { name: 'Лярва Бесконечного Скролла', emoji: '🐛',
+  { name: 'Лярва Бесконечного Скролла', emoji: '🐛', rule: 'focus',
     lore: 'Растёт с каждым свайпом. Ест не время — ест внимание, а время просто осыпается следом.',
     weak: 'время под фокус-таймером',
     defeat: 'Лента оборвана. Взгляд снова ваш.' },
-  { name: 'Голод Дофамина', emoji: '👹',
+  { name: 'Голод Дофамина', emoji: '👹', rule: 'habit',
     lore: 'Демон быстрых радостей. Чем чаще кормишь его конфетами уведомлений — тем голоднее и он, и ты.',
     weak: 'отмеченные привычки',
     defeat: 'Насытить его нельзя — но можно перестать кормить. Вы смогли.' },
-  { name: 'Туман Отговорок', emoji: '🌫️',
+  { name: 'Туман Отговорок', emoji: '🌫️', rule: 'hard',
     lore: 'Не нападает — обволакивает. В его дымке любое «сделаю» превращается в «потом», а «потом» — в «никогда».',
     weak: 'сложные квесты',
     defeat: 'Туман рассеян. Дорога, оказывается, была прямая.' },
-  { name: 'Дракон «Завтра»', emoji: '🐉',
+  { name: 'Дракон «Завтра»', emoji: '🐉', rule: 'sameday',
     lore: 'Спит на горе несделанных дел и растёт с каждым отложенным «на завтра». Его сокровищница — ваши лучшие планы.',
     weak: 'сделай дело в день создания',
     defeat: 'Дракон повержен. «Завтра» снова значит просто завтра.' },
-  { name: 'Сирена Уюта', emoji: '🧜',
+  { name: 'Сирена Уюта', emoji: '🧜', rule: 'morning',
     lore: 'Поёт с мягкого дивана: «ещё пять минуточек…» Не злая — но её песня стоила людям целых жизней.',
     weak: 'дела, завершённые до 10 утра',
     defeat: 'Вы услышали песню — и всё равно встали. Так побеждают сирен.' },
-  { name: 'Голем Инерции', emoji: '🗿',
+  { name: 'Голем Инерции', emoji: '🗿', rule: 'firstofday',
     lore: 'Каменный страж привычной колеи. Держит не силой — тяжестью: первое движение против него всегда самое трудное.',
     weak: 'первое дело каждого дня',
     defeat: 'Голем треснул. Первый шаг сделан — остальные легче.' },
-  { name: 'Идол Перфекто, Гранёный Кумир', emoji: '💎',
+  { name: 'Идол Перфекто, Гранёный Кумир', emoji: '💎', rule: 'easy',
     lore: 'Требует идеала до первого шага. Его жертвы не делают плохо — они не делают вообще.',
     weak: 'лёгкие квесты — просто сделай',
     defeat: 'Сделанное побеждает идеальное. Идол пал.' },
-  { name: 'Шёпот-за-Плечом', emoji: '🐍',
+  { name: 'Шёпот-за-Плечом', emoji: '🐍', rule: 'hard',
     lore: 'Змей внутреннего критика. Говорит твоим голосом — поэтому ему верят: «у тебя не выйдет».',
     weak: 'сложные квесты',
     defeat: 'Вы услышали шёпот — и сделали всё равно. Змей онемел.' },
-  { name: 'Зеркало Чужих Побед', emoji: '🪞',
+  { name: 'Зеркало Чужих Побед', emoji: '🪞', rule: 'goal',
     lore: 'Проклятое стекло: показывает чужие вершины и прячет чужие пропасти. Смотрящий в него забывает свой путь.',
     weak: 'закрывай СВОИ цели',
     defeat: 'Зеркало разбито. Сравнивайте себя с собой вчерашним.' },
-  { name: 'Гидра Многозадачность', emoji: '🐙',
+  { name: 'Гидра Многозадачность', emoji: '🐙', rule: 'focus',
     lore: 'Обещает восемь дел разом — и восемью щупальцами тянет в стороны, пока не сделано ни одно.',
     weak: 'фокус-сессии — одно дело за раз',
     defeat: 'Одно щупальце за раз. Одно дело за раз. Гидра распутана.' },
-  { name: 'Рой Уведомлений', emoji: '🐝',
+  { name: 'Рой Уведомлений', emoji: '🐝', rule: 'focus25',
     lore: 'Тысяча мелких жал. По одному безобидны — роем съедают день до костей.',
     weak: 'фокус-сессии от 25 минут',
     defeat: 'Рой утих. Тишина, оказывается, звучит как фокус.' },
-  { name: 'Вихрь Спешки', emoji: '🌪️',
+  { name: 'Вихрь Спешки', emoji: '🌪️', rule: 'scheduled',
     lore: 'Кружит всё быстрее, подменяя важное срочным. В его центре всегда пусто.',
     weak: 'дела по расписанию (с временем)',
     defeat: 'Вихрь стих. Вы двигались спокойно — и пришли первыми.' },
-  { name: 'Гипножаба «Ещё Серию»', emoji: '🐸',
+  { name: 'Гипножаба «Ещё Серию»', emoji: '🐸', rule: 'evening',
     lore: 'Смотрит в глаза и квакает: «всего одна серия». Наутро выясняется, что сезонов было три.',
     weak: 'дела вечером, после 19:00',
     defeat: 'Вы моргнули первыми — и выключили. Жаба квакнула в пустоту.' },
-  { name: 'Паутина Хаоса', emoji: '🕸️',
+  { name: 'Паутина Хаоса', emoji: '🕸️', rule: 'sphere:быт|дом|уборк|поряд|хаос|орган|chore|home|clean',
     lore: 'Липкие нити мелкого беспорядка. Ни одна не держит крепко — вместе не дают шагнуть.',
     weak: 'дела в сферах быта и порядка',
     defeat: 'Нить за нитью — и паутина снята. Порядок — это свобода движения.' },
-  { name: 'Призрак Забытых Целей', emoji: '👻',
+  { name: 'Призрак Забытых Целей', emoji: '👻', rule: 'overdue7',
     lore: 'Бродит по чердакам памяти, звеня давними «вот бы когда-нибудь». Питается пылью на мечтах.',
     weak: 'закрой дело, висевшее 7+ дней',
     defeat: 'Вы вспомнили — и сделали. Призраку нечем больше звенеть.' },
 ];
 function bossForWeek(ws) { let h = 0; const s = String(ws || ''); for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return BOSSES[h % BOSSES.length]; }
+
+// ── Реальная механика боссов: слабость ×2 урона ОЩУТИМА в момент действия ─────────────────
+// Диагноз Альберта (26.07, из похода): «какой бы босс ни был — я делаю задачи одинаково,
+// ничего не меняется». Причина не в том, что слабость не работает — сервер честно считает
+// ×2 урон (server.js computeUserXp/taskHitsBossRule) и копит его в общий рейд. Причина в том,
+// что игрок узнать об этом мог только из статичной строки на карточке рейда — ни одного сигнала
+// в момент самого попадания. Механика была, ощущения не было.
+// Копия правил ниже — ТОЛЬКО для мгновенной косметической обратной связи в момент действия;
+// источник истины для реального урона рейду остаётся сервер (он же валидирует от накрутки).
+// ⚠️ Держать в синхроне с taskHitsBossRule в server.js при правке набора правил.
+function taskHitsBossRule(rule, item, ctx) {
+  if (!rule || !item) return false;
+  const doneAt = item.completedAt ? new Date(item.completedAt) : null;
+  const hour = doneAt && !isNaN(doneAt) ? doneAt.getHours() : null;
+  const madeDay = (item.createdAt && String(item.createdAt).slice(0, 10)) || item.date;
+  const doneDay = (item.completedAt && String(item.completedAt).slice(0, 10)) || item.date;
+  const ageDays = (madeDay && doneDay) ? Math.round((Date.parse(doneDay) - Date.parse(madeDay)) / 86400000) : 0;
+  switch (rule.split(':')[0]) {
+    case 'hard': return item.difficulty === 'hard';
+    case 'easy': return item.difficulty === 'easy';
+    case 'overdue2': return ageDays >= 2;
+    case 'overdue7': return ageDays >= 7;
+    case 'sameday': return madeDay && doneDay && madeDay === doneDay;
+    case 'morning': return hour !== null && hour < 10;
+    case 'evening': return hour !== null && hour >= 19;
+    case 'focus': return (Number(item.actualMin) || 0) > 0;
+    case 'focus25': return (Number(item.actualMin) || 0) >= 25;
+    case 'scheduled': return !!item.startTime;
+    case 'firstofday': return !!(ctx && ctx.isFirstOfDay);
+    case 'sphere': { const re = new RegExp(rule.slice(7), 'i'); return !!(ctx && ctx.sphereName && re.test(ctx.sphereName)); }
+    default: return false;
+  }
+}
+// kind: 'task' | 'habit' | 'goal'. item/ctx — см. вызовы ниже. Молчит, если не в пати/рейд уже взят —
+// критический удар без активного рейда не имеет смысла показывать.
+function bossHitCheck(kind, item, ctx) {
+  const p = State.party; if (!p || !p.raid || p.raid.won) return null;
+  const boss = bossForWeek(p.ws); if (!boss || !boss.rule) return null;
+  const rule = boss.rule.split(':')[0];
+  let hit = false;
+  if (kind === 'habit') hit = rule === 'habit' || (rule === 'sphere' && taskHitsBossRule(boss.rule, {}, ctx));
+  else if (kind === 'goal') hit = rule === 'goal';
+  else hit = taskHitsBossRule(boss.rule, item, ctx);
+  return hit ? boss : null;
+}
+function bossHitFeedback(boss) {
+  if (!boss) return;
+  try { sfx('bosshit'); } catch {}
+  setTimeout(() => { try { toast(`⚡ ${boss.emoji} ${t('Урон ×2 по')} ${t(boss.name)}!`); } catch {} }, 650);
+}
 function seasonInfo(season) { const goal = (season && season.goal) || 4, wins = (season && season.wins) || 0; return { goal, wins, cycle: Math.floor(wins / goal) + 1, prog: wins % goal, done: Math.floor(wins / goal) }; }
 function renderParty() {
   if (State.party === null) {
@@ -9728,7 +9791,13 @@ function onClick(e) {
     const h = habitById(id); if (!h) return;
     State.habitlog[today] = State.habitlog[today] || {};
     if (State.habitlog[today][id]) { delete State.habitlog[today][id]; if (!Object.keys(State.habitlog[today]).length) delete State.habitlog[today]; }
-    else { State.habitlog[today][id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() }; const eD = applyEnergy(h); track('complete:habit'); toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${skillById(h.skillId).name}${eD ? ` · ${eD > 0 ? '+' : ''}${eD} 🔋` : ''}`); }
+    else {
+      State.habitlog[today][id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() };
+      const eD = applyEnergy(h); track('complete:habit');
+      const hsk = skillById(h.skillId);
+      toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${hsk.name}${eD ? ` · ${eD > 0 ? '+' : ''}${eD} 🔋` : ''}`);
+      bossHitFeedback(bossHitCheck('habit', h, { sphereName: hsk ? hsk.name : '' }));
+    }
     Store.save('habitlog', State.habitlog); checkAchievements(); render(); publishLeaderboard();
   } else if (action === 'focus-task') { const q = questById(id); if (q && !q.done) { track('focus:start'); startFocus(id); }
   } else if (action === 'timer-pause') { pauseFocus();
@@ -10294,6 +10363,9 @@ async function initApp() {
 
   // Счётчик своих репортов — для ачивок «Баг-хантер»/«Страж Врат» (не блокирует загрузку)
   fetch('/api/feedback/mine').then((r) => r.json()).then((d) => { State.myFeedbackCount = d.count || 0; checkAchievements(); }).catch(() => {});
+  // Пати — заранее, тихо (не только при заходе в «Племя»): иначе критический удар по боссу
+  // не сработает всю сессию, если юзер ни разу не открыл вкладку и State.party всё ещё null.
+  fetch('/api/party').then((r) => r.json()).then((d) => { if (State.party === null) State.party = d.party || false; }).catch(() => {});
 
   State.tasks = await Store.load('tasks', []);
   State.tasks.forEach((t) => { if (t.actualMin === undefined) t.actualMin = null; if (t.startTime === undefined) t.startTime = null; if (t.goldAwarded === undefined) t.goldAwarded = 0; });
