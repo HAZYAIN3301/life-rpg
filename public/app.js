@@ -6528,6 +6528,24 @@ function renderDen() {
   </div>`;
 }
 
+// Джарвис-2 Фаза A (JARVIS-2-PLAN.md): один совет вместо хора. Строгий приоритет по tier;
+// для равных tier (сейчас только stretch/mobility) — тай-брейк по давности показа
+// (settings.nudgeSeen), чтобы при постоянной ничьей карточки не залипали на одной. Победитель
+// помечается показанным сегодня — тем же полем позже сможет пользоваться анти-голодание для
+// низкоприоритетных (import/sysTeaser), если понадобится (см. открытый вопрос в плане).
+function pickNudge(signals) {
+  const active = signals.filter((s) => s.html);
+  if (!active.length) return '';
+  const seen = State.settings.nudgeSeen || (State.settings.nudgeSeen = {});
+  active.sort((a, b) => {
+    if (a.tier !== b.tier) return a.tier - b.tier;
+    const la = seen[a.id] || '', lb = seen[b.id] || '';
+    return la < lb ? -1 : la > lb ? 1 : 0;
+  });
+  const win = active[0];
+  if (seen[win.id] !== todayStr()) { seen[win.id] = todayStr(); Store.save('settings', State.settings); }
+  return win.html;
+}
 function renderToday() {
   const today = todayStr();
   const todays = State.tasks.filter((t) => t.date === today);
@@ -6610,13 +6628,28 @@ function renderToday() {
   const mobilityNudge = showMobil ? `<div class="card nudge-card mobil-nudge">
       <div class="mobil-text"><b>🧘 Мобилка спины и плеч</b><p class="muted">Ты активно тренируешься (силовая / дзюдо), но регулярной растяжки давно не видно. Мобилка снижает риск зажимов и перегруза. <i>Это не медицинский совет — при болях сверься со специалистом.</i></p></div>
       <div class="mobil-acts"><button class="nudge" data-action="add-mobility">+ Растяжка 10 мин</button><button class="btn ghost sm" data-action="mobil-later">Позже</button><button class="btn ghost sm" data-action="mobil-never">Не показывать</button></div></div>` : '';
+  // Тизер режима «Система» — одноразово, после ур.2, если не включён (дискаверабилити)
+  const sysTeaser = (!systemMode() && charLevel() >= 2 && !isDiscovered('teaser:system')) ? `<div class="card nudge-card sys-teaser"><span class="nudge-boost">⚡ Спрятанная фишка: режим «Система» (Solo Leveling-вайб) — нарратор объявляет твои победы.</span><div class="sys-teaser-btns"><button class="btn sm" data-action="enable-system-teaser">Включить</button><button class="btn ghost sm" data-action="dismiss-system-teaser">Позже</button></div></div>` : '';
+
+  // Джарвис-2 Фаза A (JARVIS-2-PLAN.md): раньше все 8 карточек ниже рендерились ОДНОВРЕМЕННО —
+  // у уставшего юзера вечером могли гореть 5 советов подряд (fb #9 «панель нечитаема»). Секретарь
+  // говорит одну фразу о главном, не зачитывает памятку целиком. `nudgeCard` (сундуки/буст/Хайп) —
+  // это награда, а не совет, остаётся отдельно (сознательная петля возврата, не конкурирует за тон).
+  const activeNudge = pickNudge([
+    { id: 'entry', tier: 1, html: entryNudge },
+    { id: 'rest', tier: 2, html: restNudge },
+    { id: 'dayLog', tier: 3, html: dayLogNudge },
+    { id: 'lowEnergy', tier: 4, html: lowEnergyNudge },
+    { id: 'stretch', tier: 5, html: stretchNudge },
+    { id: 'mobility', tier: 5, html: mobilityNudge },
+    { id: 'import', tier: 6, html: importNudge },
+    { id: 'sysTeaser', tier: 7, html: sysTeaser },
+  ]);
 
   const overdueCard = overdue.length ? `<div class="card overdue"><h3>${t('⏳ Просрочено')} (${overdue.length})</h3>
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">${t('↪ Перенести всё на сегодня')}</button></div>` : '';
 
-  // Тизер режима «Система» — одноразово, после ур.2, если не включён (дискаверабилити)
-  const sysTeaser = (!systemMode() && charLevel() >= 2 && !isDiscovered('teaser:system')) ? `<div class="card nudge-card sys-teaser"><span class="nudge-boost">⚡ Спрятанная фишка: режим «Система» (Solo Leveling-вайб) — нарратор объявляет твои победы.</span><div class="sys-teaser-btns"><button class="btn sm" data-action="enable-system-teaser">Включить</button><button class="btn ghost sm" data-action="dismiss-system-teaser">Позже</button></div></div>` : '';
   const nextAction = tm ? `<button class="btn" data-action="${tm.running ? 'timer-pause' : 'timer-resume'}">${tm.running ? '⏸ Пауза' : '▶ Продолжить фокус'}</button>`
     : nextQuest ? `<button class="btn" data-action="focus-task" data-id="${nextQuest.id}">▶ Начать: ${esc(nextQuest.title).slice(0, 32)}${nextQuest.title.length > 32 ? '…' : ''}</button>`
     : `<button class="btn ghost" data-action="goto-calendar">🗓 Запланировать день</button>`;
@@ -6634,7 +6667,7 @@ function renderToday() {
         <div class="th-stat"><b>+${xpToday}</b><span>XP</span></div>
       </div>
     </section>`;
-  return `<div class="today-shell">${companionCard()}${installBanner()}${todayHero}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${sysTeaser}${timerCard}${energyCard}${lowEnergyNudge}${restNudge}${nudgeCard}${entryNudge}${dayLogNudge}${importNudge}${stretchNudge}${mobilityNudge}
+  return `<div class="today-shell">${companionCard()}${installBanner()}${todayHero}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${timerCard}${energyCard}${activeNudge}${nudgeCard}
     <div class="card"><form id="add-task" class="add-row">
         <input name="title" placeholder="${t('Новый квест на сегодня…')}" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
