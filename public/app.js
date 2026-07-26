@@ -1069,6 +1069,14 @@ const I18N_EXTRA = {
   'Доступно в Pro — или добавь бесплатный ключ.': { en: 'Available in Pro — or add a free key.', de: 'In Pro verfügbar — oder füge einen kostenlosen Schlüssel hinzu.', uk: 'Доступно в Pro — або додай безкоштовний ключ.', es: 'Disponible en Pro — o añade una clave gratis.' },
   'Добавь ключ в Настройках.': { en: 'Add a key in Settings.', de: 'Füge einen Schlüssel in den Einstellungen hinzu.', uk: 'Додай ключ у Налаштуваннях.', es: 'Añade una clave en Ajustes.' },
   'Добавь ИИ-ключ в Настройках': { en: 'Add an AI key in Settings', de: 'Füge einen KI-Schlüssel in den Einstellungen hinzu', uk: 'Додай ШІ-ключ у Налаштуваннях', es: 'Añade una clave de IA en Ajustes' },
+  // ── Чат-помощник (Джарвис-слой): приветствие + витринные подсказки ──
+  'Привет! Я вижу, как у тебя дела (энергия, отдых, дедлайны), и знаю все функции Satoru. Спроси про себя или про приложение:': { en: 'Hi! I can see how you are doing (energy, rest, deadlines) and I know every Satoru feature. Ask about yourself or about the app:', de: 'Hi! Ich sehe, wie es dir geht (Energie, Erholung, Deadlines), und kenne jede Satoru-Funktion. Frag über dich oder über die App:', uk: 'Привіт! Я бачу, як у тебе справи (енергія, відпочинок, дедлайни), і знаю всі функції Satoru. Спитай про себе або про застосунок:', es: '¡Hola! Veo cómo estás (energía, descanso, plazos) y conozco todas las funciones de Satoru. Pregunta sobre ti o sobre la app:' },
+  'Как у меня дела на самом деле?': { en: 'How am I actually doing?', de: 'Wie geht es mir wirklich?', uk: 'Як у мене справи насправді?', es: '¿Cómo estoy en realidad?' },
+  'Что мне сделать прямо сейчас?': { en: 'What should I do right now?', de: 'Was soll ich jetzt gerade tun?', uk: 'Що мені зробити просто зараз?', es: '¿Qué debería hacer ahora mismo?' },
+  'Какие функции я не использую?': { en: 'Which features am I not using?', de: 'Welche Funktionen nutze ich nicht?', uk: 'Які функції я не використовую?', es: '¿Qué funciones no estoy usando?' },
+  'Как импортировать мой реальный опыт?': { en: 'How do I import my real experience?', de: 'Wie importiere ich meine echte Erfahrung?', uk: 'Як імпортувати мій реальний досвід?', es: '¿Cómo importo mi experiencia real?' },
+  'Объясни энергию и Хайп': { en: 'Explain Energy and Hype', de: 'Erkläre Energie und Hype', uk: 'Поясни енергію і Хайп', es: 'Explica la energía y el Hype' },
+  'Спроси про любую функцию…': { en: 'Ask about any feature…', de: 'Frag nach jeder Funktion…', uk: 'Спитай про будь-яку функцію…', es: 'Pregunta por cualquier función…' },
   '🤖 Лимит ИИ на месяц исчерпан — добавь свой ключ в Настройках': { en: '🤖 Monthly AI limit reached — add your own key in Settings', de: '🤖 Monatliches KI-Limit erreicht — füge in den Einstellungen deinen eigenen Schlüssel hinzu', uk: '🤖 Місячний ліміт ШІ вичерпано — додай свій ключ у Налаштуваннях', es: '🤖 Límite mensual de IA alcanzado — añade tu propia clave en Ajustes' },
   '. Индекс растёт, когда развиваешь жизнь как композицию, а не одну вертикаль. Добавь активность в несколько сфер, чтобы поднять индекс.': { en: '. The index grows when you develop life as a composition, not a single vertical. Add activity in several areas to raise it.', de: '. Der Index wächst, wenn du das Leben als Komposition entwickelst, nicht als eine einzige Vertikale. Füge Aktivität in mehreren Bereichen hinzu, um ihn zu steigern.', uk: '. Індекс зростає, коли розвиваєш життя як композицію, а не одну вертикаль. Додай активність у кількох сферах, щоб підняти індекс.', es: '. El índice crece cuando desarrollas la vida como una composición, no una sola vertical. Añade actividad en varias áreas para subirlo.' },
   '. Индекс растёт, когда развиваешь жизнь как композицию, а не одну вертикаль. Отличный баланс — так держать. ⚖️': { en: '. The index grows when you develop life as a composition, not a single vertical. Great balance — keep it up. ⚖️', de: '. Der Index wächst, wenn du das Leben als Komposition entwickelst, nicht als eine einzige Vertikale. Tolle Balance — weiter so. ⚖️', uk: '. Індекс зростає, коли розвиваєш життя як композицію, а не одну вертикаль. Чудовий баланс — так тримати. ⚖️', es: '. El índice crece cuando desarrollas la vida como una composición, no una sola vertical. Gran equilibrio — sigue así. ⚖️' },
@@ -2934,6 +2942,11 @@ function restGapDays(max) {
   const lim = max || 14; let n = 0;
   for (let i = 0; i < lim; i++) { const d = new Date(); d.setDate(d.getDate() - i); if (dayHadRest(fmtDate(d))) break; n++; }
   return n;
+}
+// Одна фраза честного состояния отдыха — общая для недельного зеркала, чата и движка предложений.
+function restStateLine() {
+  const g = restGapDays();
+  return g === 0 ? 'сегодня или вчера был явный отдых' : `${g} ${plural(g, 'день', 'дня', 'дней')} подряд БЕЗ явного отдыха`;
 }
 // Какие домены покрыты верхними сферами (без проектов), какие — пустые (для подсказки §5.3).
 function canonCoverage(spheres) {
@@ -4960,8 +4973,7 @@ function buildWeekContext() {
   const radar = sphereScores().map((s) => `${s.name} ур.${s.value}`).join(', ');
   // Честное состояние (кирпич 2 AI-STRATEGY): баланс/уровни считаются по сфере и не видят разницы
   // между «тренировался» и «отдыхал», если оба лежат в «Здоровье» — эта строка чинит слепоту явно.
-  const restGap = restGapDays();
-  const restLine = restGap === 0 ? 'сегодня или вчера был явный отдых' : `${restGap} ${plural(restGap, 'день', 'дня', 'дней')} подряд БЕЗ явного отдыха`;
+  const restLine = restStateLine();
   // Рефлексия (кирпич 1 AI-STRATEGY): «Итог дня» и «Итоги недели» ловят авторский текст юзера,
   // но раньше он никуда не шёл дальше списка на глазах юзера — ИИ-зеркало видело только цифры.
   // Это разница между логгером и секретарём (fb #6) — секретарь читает твои же слова.
@@ -4980,7 +4992,7 @@ function buildWeekContext() {
 async function runWeeklyReview() {
   if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; render(); return; }
   openAiModal('🤖 Разбор недели', '<p class="muted">Анализирую твою неделю…</p>', true);
-  const system = 'Ты — заботливый, научно обоснованный наставник в приложении Satoru (философия «жизнь как десятиборье»). Анализируй данные недели честно и по-человечески, без воды и без льстивости. В контексте есть строка «Честное состояние отдыха» — она значит больше, чем индекс баланса: баланс/уровни считаются по сфере квеста и не различают «тренировался» и «отдыхал», если оба лежат в одной сфере (например «Здоровье»), поэтому индекс может показывать зелёное, когда человек вымотан. Если дней без явного отдыха много (≥4) — это ГЛАВНОЕ наблюдение, важнее процента баланса, и один из 1–2 шагов должен быть про отдых, а не про продуктивность. Если в контексте есть «Рефлексия по дням» / «Намерение на неделю» / «Итоги недели» — это САМЫЙ важный сигнал, важнее любых цифр: это собственные слова человека о том, как у него дела на самом деле. Отвечай на конкретную боль или мысль из этих слов напрямую, а не общими фразами — секретарь заметил бы именно это. Не выдумывай ничего, чего нет в тексте юзера. Дай: (1) что реально происходило со временем и балансом — включая честное состояние отдыха; (2) 2–3 конкретных наблюдения, в приоритете — те, что откликаются на рефлексию юзера, если она есть; (3) 1–2 мягких, выполнимых шага на след. неделю. Коротко, тепло, по делу, без вины. Отвечай на русском.';
+  const system = 'Ты — заботливый, научно обоснованный наставник в приложении Satoru (философия «жизнь как десятиборье»). Анализируй данные недели честно и по-человечески, без воды и без льстивости. В контексте есть строка «Честное состояние отдыха» — она значит больше, чем индекс баланса: баланс/уровни считаются по сфере квеста и не различают «тренировался» и «отдыхал», если оба лежат в одной сфере (например «Здоровье»), поэтому индекс может показывать зелёное, когда человек вымотан. Если дней без явного отдыха много (≥4) — это ГЛАВНОЕ наблюдение, важнее процента баланса, и один из 1–2 шагов должен быть про отдых, а не про продуктивность. Если в контексте есть «Рефлексия по дням» / «Намерение на неделю» / «Итоги недели» — это САМЫЙ важный сигнал, важнее любых цифр: это собственные слова человека о том, как у него дела на самом деле. Отвечай на конкретную боль или мысль из этих слов напрямую, а не общими фразами — секретарь заметил бы именно это. Не выдумывай ничего, чего нет в тексте юзера. Дай: (1) что реально происходило со временем и балансом — включая честное состояние отдыха; (2) 2–3 конкретных наблюдения, в приоритете — те, что откликаются на рефлексию юзера, если она есть; (3) 1–2 мягких, выполнимых шага на след. неделю. Коротко, тепло, по делу, без вины. ' + aiAnswerLangLine();
   try {
     const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, prompt: buildWeekContext() }) });
     const d = await r.json();
@@ -5091,7 +5103,10 @@ function dayRecApply() {
 function proposeContext() {
   const spheres = State.settings.skills.map((s) => skillLabel(s.id)).join(', ');
   const goals = (State.goals || []).filter((g) => !g.archived).map((g) => g.title).slice(0, 40).join('; ');
-  return `Сферы: ${spheres || '(нет)'}\nЦели: ${goals || '(нет)'}`;
+  // Фон состояния (Джарвис-слой): помогает ИИ соизмерять масштаб предложений с реальной нагрузкой.
+  // Явно помечен «НЕ превращать в предложения» — иначе движок начнёт сочинять цели из самого фона.
+  const en = ensureEnergy();
+  return `Сферы: ${spheres || '(нет)'}\nЦели: ${goals || '(нет)'}\nФОН (учитывай масштаб и нагрузку, но НЕ превращай сам фон в предложения): энергия ${en.cur}/${en.max}; ${restStateLine()}`;
 }
 function openProposeModal(kind, prefill) {
   _proposals = [];
@@ -5291,7 +5306,7 @@ function applyProposals(proposals, acceptedIdx) {
   return applied;
 }
 // ---- ИИ тех-поддержка / гид (Блок 2): постоянный помощник, знает функции и философию ----
-const GOJO_MANUAL = `Ты — встроенный помощник приложения Satoru (геймификация жизни). Философия: «жизнь как десятиборье» — ценится баланс многих сфер, а не одна вертикаль; отдых и восстановление так же важны, как труд; уровень = доказанное мастерство, оно НЕ сгорает (как чёрный пояс). Твоя роль — тёплая постоянная тех-поддержка и гид: помогаешь разобраться в функциях, подсказываешь, что юзер недоиспользует, объясняешь механики простыми словами. Отвечай КРАТКО, по делу, дружелюбно, на русском. Ты не можешь сам нажимать кнопки — направляй словами (куда зайти, что нажать). Если юзер описывает свои цели или опыт — посоветуй кнопку «🤖 Импорт целей» (вкладка Цели) или «🤖 Оценить через ИИ» (Настройки → Импорт), они оформят это автоматически.
+const GOJO_MANUAL = `Ты — встроенный помощник приложения Satoru (геймификация жизни). Философия: «жизнь как десятиборье» — ценится баланс многих сфер, а не одна вертикаль; отдых и восстановление так же важны, как труд; уровень = доказанное мастерство, оно НЕ сгорает (как чёрный пояс). Твоя роль двойная. (1) Гид: помогаешь разобраться в функциях, подсказываешь, что юзер недоиспользует, объясняешь механики простыми словами. (2) Секретарь: в конце этого промпта — блоки «СОСТОЯНИЕ СЕЙЧАС» и «НЕДЕЛЯ …» с живыми данными ИМЕННО этого юзера (энергия, честный отдых, сегодняшние и просроченные дела, дедлайны целей, его собственная рефлексия своими словами). Когда юзер спрашивает о себе — «как у меня дела», «что мне сделать», «почему я выжат» — отвечай ПО ЭТИМ ДАННЫМ, конкретно и адресно, а не общими советами. Строка про отдых значит больше индекса баланса (баланс не отличает тренировку от отдыха). Рефлексия юзера — самый важный сигнал: отвечай на его собственную боль его же словами. Если данные тревожные (≥4 дней без отдыха, энергия у нуля, копятся просрочки) и юзер просит совета — назови это прямо, тепло и без вины, и предложи ОДИН маленький шаг (часто это «Заход» на 10 минут или явный отдых, а не ещё продуктивность). Цифры без запроса не вываливай; ничего сверх данных не выдумывай. Отвечай КРАТКО, по делу, дружелюбно. Ты не можешь сам нажимать кнопки — направляй словами (куда зайти, что нажать). Если юзер описывает свои цели или опыт — посоветуй кнопку «🤖 Импорт целей» (вкладка Цели) или «🤖 Оценить через ИИ» (Настройки → Импорт), они оформят это автоматически.
 
 ФУНКЦИИ И ГДЕ ОНИ:
 • Сегодня — квесты на день (разовые дела), сложность 🌱лёгкая/⚔️обычная/🔥сложная. ▶ у квеста = фокус-таймер (помодоро + плавающее окно ↗ поверх всех окон). Галочка = XP + золото. Привычки — повторяющиеся дела со стриком. Энергия — индикатор дневной нагрузки, восстанавливается ПАССИВНО по времени (логировать отдых не нужно), ни на что не влияет, честная «оценка по задачам». Хайп — выполни 🔥сложный квест → временный бонус +15% XP за стак (до +45%, на 2 ч); «через силу» тратит больше энергии, «в кураже» меньше.
@@ -5308,15 +5323,39 @@ const GOJO_MANUAL = `Ты — встроенный помощник прилож
 • Настройки — сферы жизни (иерархия N уровней: Учёба→Школа→Bio LK), Импорт достижений (отметь реальный уровень → стартовый XP, не начинаешь с нуля; или «🤖 Оценить через ИИ»), ИИ-ключ (свой ключ питает все ИИ-функции; бесплатный без карты — Google Gemini или Groq, либо платные Claude/OpenAI), кривые XP, бэкапы данных.
 
 Важно — Уровень vs Форма: уровень не сгорает; Форма — отдельный показатель свежести, мягко падает если забросил сферу и быстро возвращается (жизнь не наказывает за паузу).`;
-const CHAT_SUGGESTIONS = ['Какие функции я не использую?', 'Как импортировать мой реальный опыт?', 'Объясни энергию и Хайп', 'Чем цель-метрика отличается от чек-листа?', 'Что такое Индекс баланса?'];
+const CHAT_SUGGESTIONS = ['Как у меня дела на самом деле?', 'Что мне сделать прямо сейчас?', 'Какие функции я не использую?', 'Как импортировать мой реальный опыт?', 'Объясни энергию и Хайп'];
 // Живой контекст юзера — чтобы советы были не абстрактные
+// Язык ответа ИИ = язык интерфейса (раньше чат/зеркало хардкодили русский — DE/EN-юзер получал RU-ответ).
+function aiAnswerLangLine() {
+  const names = { ru: 'русский', en: 'английский (English)', de: 'немецкий (Deutsch)', uk: 'украинский (українська)', es: 'испанский (español)' };
+  return `ЯЗЫК ОТВЕТА: ${names[lang()] || 'русский'} (язык интерфейса юзера). Если юзер пишет на другом языке — отвечай на языке юзера.`;
+}
+// «Состояние сейчас» — сегодняшний срез для секретаря: что горит и что осталось ИМЕННО сегодня.
+// Недельную глубину (время по сферам, баланс, рефлексия) даёт buildWeekContext() — здесь только «в моменте».
+function stateNowContext() {
+  const today = todayStr();
+  const todays = (State.tasks || []).filter((x) => x.date === today);
+  const doneN = todays.filter((x) => x.done).length;
+  const left = todays.filter((x) => !x.done).slice(0, 3).map((x) => `«${x.title}»`).join(', ');
+  const overdue = (State.tasks || []).filter((x) => !x.done && x.date < today);
+  const en = ensureEnergy();
+  const hb = todaysHabits(), hbDone = hb.filter((h) => habitDone(h, today)).length;
+  const dls = (State.goals || []).filter((g) => !g.archived && !g.completedAt && g.targetDate)
+    .sort((a, b) => (a.targetDate < b.targetDate ? -1 : 1)).slice(0, 3)
+    .map((g) => { const dl = Math.round((parseDate(g.targetDate) - parseDate(today)) / 86400000); return `«${g.title}» — ${dl < 0 ? `просрочена на ${-dl} дн.` : `через ${dl} дн.`}`; });
+  return `СОСТОЯНИЕ СЕЙЧАС (живые данные юзера, не выдумка):
+  Сегодня: квестов ${doneN}/${todays.length}${left ? ` · осталось: ${left}` : ''} · привычек ${hbDone}/${hb.length}${overdue.length ? ` · ПРОСРОЧЕНО с прошлых дней: ${overdue.length}` : ''}
+  Энергия: ${en.cur}/${en.max} · отдых: ${restStateLine()}${dls.length ? `\n  Ближайшие дедлайны целей: ${dls.join('; ')}` : ''}
+  Серия: ${currentStreak()} дн. · открытая вкладка: ${State.view}`;
+}
 function chatUserContext() {
   const c = State.settings.curve, lvl = levelInfo(overallXp(), c.base, c.growth).level;
   const spheres = State.settings.skills.map((s) => `${skillLabel(s.id)} (ур.${skillLevelOf(s.id)})`).join(', ');
-  const bal = balanceIndex();
-  const goalsN = (State.goals || []).filter((g) => !g.archived).length;
   const noImports = !Object.keys((State.settings && State.settings.imported) || {}).length;
-  return `КОНТЕКСТ ЮЗЕРА СЕЙЧАС: уровень персонажа ${lvl}; сферы: ${spheres || '(нет)'}; целей: ${goalsN}; индекс баланса ${bal.index}/100${bal.weakest ? ` (отстаёт «${bal.weakest.name}»)` : ''}; импорт опыта ${noImports ? 'НЕ сделан' : 'сделан'}; открытая вкладка: ${State.view}.`;
+  return `КОНТЕКСТ ЮЗЕРА: уровень персонажа ${lvl}; сферы: ${spheres || '(нет)'}; импорт опыта ${noImports ? 'НЕ сделан' : 'сделан'}.
+${stateNowContext()}
+
+${buildWeekContext()}`;
 }
 function openHelperChat() {
   let ov = document.getElementById('helper-modal');
@@ -5333,7 +5372,7 @@ function openHelperChat() {
 function renderChatMessages() {
   const box = document.getElementById('chat-msgs'); if (!box) return;
   if (!State.chatLog.length) {
-    box.innerHTML = `<div class="chat-empty"><p class="muted">Привет! Я знаю все функции Satoru и помогу разобраться. Спроси меня или начни с подсказки:</p>
+    box.innerHTML = `<div class="chat-empty"><p class="muted">Привет! Я вижу, как у тебя дела (энергия, отдых, дедлайны), и знаю все функции Satoru. Спроси про себя или про приложение:</p>
       <div class="chat-suggs">${CHAT_SUGGESTIONS.map((s) => `<button class="chat-sugg" data-action="chat-suggest" data-q="${esc(s)}">${esc(s)}</button>`).join('')}</div></div>`;
     return;
   }
@@ -5349,7 +5388,7 @@ async function sendChat(text) {
   State._chatBusy = true; renderChatMessages();
   const inp = document.getElementById('chat-input'); if (inp) inp.value = '';
   try {
-    const system = GOJO_MANUAL + '\n\n' + chatUserContext();
+    const system = GOJO_MANUAL + '\n\n' + aiAnswerLangLine() + '\n\n' + chatUserContext();
     const r = await fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, messages: State.chatLog.slice(-20) }) });
     const d = await r.json();
     State._chatBusy = false;
