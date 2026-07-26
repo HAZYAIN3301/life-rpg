@@ -1069,6 +1069,18 @@ const I18N_EXTRA = {
   'Доступно в Pro — или добавь бесплатный ключ.': { en: 'Available in Pro — or add a free key.', de: 'In Pro verfügbar — oder füge einen kostenlosen Schlüssel hinzu.', uk: 'Доступно в Pro — або додай безкоштовний ключ.', es: 'Disponible en Pro — o añade una clave gratis.' },
   'Добавь ключ в Настройках.': { en: 'Add a key in Settings.', de: 'Füge einen Schlüssel in den Einstellungen hinzu.', uk: 'Додай ключ у Налаштуваннях.', es: 'Añade una clave en Ajustes.' },
   'Добавь ИИ-ключ в Настройках': { en: 'Add an AI key in Settings', de: 'Füge einen KI-Schlüssel in den Einstellungen hinzu', uk: 'Додай ШІ-ключ у Налаштуваннях', es: 'Añade una clave de IA en Ajustes' },
+  // ── 🌳 Личная карта: интервью ──
+  'Шаблонная лестница — старт. Ответь на пару вопросов — и Тень соберёт вехи под тебя. Взятые вехи останутся: новая тропа строится поверх них.': { en: 'The template ladder is a starting point. Answer a couple of questions and Shadow will build milestones for you. Claimed milestones stay: the new path is built on top of them.', de: 'Die Vorlagen-Leiter ist der Start. Beantworte ein paar Fragen und Schatten baut Meilensteine für dich. Genommene Meilensteine bleiben: der neue Pfad baut darauf auf.', uk: 'Шаблонна драбина — старт. Дай відповідь на кілька запитань — і Тінь збере віхи під тебе. Взяті віхи залишаться: нова стежка будується поверх них.', es: 'La escalera de plantilla es el punto de partida. Responde un par de preguntas y la Sombra construirá hitos para ti. Los hitos tomados se quedan: el nuevo camino se construye sobre ellos.' },
+  'Где ты сейчас в этой сфере?': { en: 'Where are you in this sphere right now?', de: 'Wo stehst du in diesem Bereich gerade?', uk: 'Де ти зараз у цій сфері?', es: '¿Dónde estás ahora en esta esfera?' },
+  'Твой пик — куда хочешь прийти в итоге?': { en: 'Your peak — where do you want to end up?', de: 'Dein Gipfel — wo willst du am Ende ankommen?', uk: 'Твій пік — куди хочеш прийти врешті?', es: 'Tu cima — ¿a dónde quieres llegar al final?' },
+  'Пик — это потолок карты. Если пик «10 км» — лестница закончится на 10 км, а не потянет тебя в марафон.': { en: 'The peak is the map\'s ceiling. If your peak is "10 km", the ladder ends at 10 km — it won\'t drag you into a marathon.', de: 'Der Gipfel ist die Obergrenze der Karte. Ist dein Gipfel «10 km», endet die Leiter bei 10 km — sie zieht dich nicht in einen Marathon.', uk: 'Пік — це стеля карти. Якщо пік «10 км» — драбина закінчиться на 10 км, а не потягне тебе в марафон.', es: 'La cima es el techo del mapa. Si tu cima es «10 km», la escalera termina en 10 km — no te arrastrará a un maratón.' },
+  'Что в этом нравится больше всего? (необязательно)': { en: 'What do you enjoy most about it? (optional)', de: 'Was gefällt dir daran am meisten? (optional)', uk: 'Що в цьому подобається найбільше? (необов\'язково)', es: '¿Qué es lo que más te gusta de esto? (opcional)' },
+  'Что скучно или не хочется? (необязательно)': { en: 'What is boring or unwanted? (optional)', de: 'Was ist langweilig oder unerwünscht? (optional)', uk: 'Що нудно або не хочеться? (необов\'язково)', es: '¿Qué te aburre o no quieres hacer? (opcional)' },
+  'Заполни хотя бы «где ты сейчас» или «пик»': { en: 'Fill in at least "where you are" or "peak"', de: 'Fülle mindestens «wo du stehst» oder «Gipfel» aus', uk: 'Заповни хоча б «де ти зараз» або «пік»', es: 'Rellena al menos «dónde estás» o «cima»' },
+  'бегаю 3–5 км пару раз в неделю / Abitur-курс по био + JuFo-проект': { en: 'I run 3–5 km a couple times a week / Abitur bio course + JuFo project', de: 'Laufe 3–5 km ein paarmal pro Woche / Abitur-Bio-Kurs + JuFo-Projekt', uk: 'бігаю 3–5 км кілька разів на тиждень / курс біології + науковий проєкт', es: 'corro 3–5 km un par de veces por semana / curso de bio + proyecto científico' },
+  'стабильно пробегать 10 км — и этого достаточно / ультрамарафон': { en: 'run 10 km consistently — and that\'s enough / an ultramarathon', de: 'stabil 10 km laufen — und das reicht / ein Ultramarathon', uk: 'стабільно пробігати 10 км — і цього досить / ультрамарафон', es: 'correr 10 km con constancia — y con eso basta / un ultramaratón' },
+  'бег в лесу под музыку / темы про науку и космос': { en: 'forest runs with music / science and space topics', de: 'Waldläufe mit Musik / Themen über Wissenschaft und Weltraum', uk: 'біг у лісі під музику / теми про науку і космос', es: 'correr por el bosque con música / temas de ciencia y espacio' },
+  'беговая дорожка, соревнования / темы про профессии': { en: 'treadmill, competitions / topics about professions', de: 'Laufband, Wettkämpfe / Themen über Berufe', uk: 'бігова доріжка, змагання / теми про професії', es: 'cinta de correr, competiciones / temas de profesiones' },
   // ── 🔊 Голос Тени (TTS) ──
   'Озвучить': { en: 'Read aloud', de: 'Vorlesen', uk: 'Озвучити', es: 'Leer en voz alta' },
   'Кнопка 🔊 — озвучить голосом Тени (реплики, подсказки, ответы Помощника)': { en: '🔊 button — have Shadow read aloud (its lines, nudges, assistant replies)', de: '🔊-Taste — Schatten liest vor (Sprüche, Hinweise, Assistenten-Antworten)', uk: 'Кнопка 🔊 — озвучити голосом Тіні (репліки, підказки, відповіді Помічника)', es: 'Botón 🔊 — que la Sombra lea en voz alta (frases, avisos, respuestas del Asistente)' },
@@ -6991,18 +7003,35 @@ function openTreeMapAI() {
   const ov = document.createElement('div'); ov.id = 'treemap-modal'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="treemap-close">✕</button>
     <h2>🤖 ${t('Личная карта')}: ${esc(sk.name)}</h2>
-    <p class="muted" style="font-size:13px;margin:0 0 10px">${t('Шаблонная лестница — старт. Расскажи, где ты в этой сфере и куда идёшь — свои экзамены, проекты, цифры — и Тень соберёт вехи под тебя. Взятые вехи останутся: новая тропа строится поверх них.')}</p>
-    <textarea id="treemap-text" rows="4" placeholder="${t('Например: готовлюсь к Abitur по био, весной Jugend forscht, хочу в универ на молекулярку…')}"></textarea>
+    <p class="muted" style="font-size:13px;margin:0 0 10px">${t('Шаблонная лестница — старт. Ответь на пару вопросов — и Тень соберёт вехи под тебя. Взятые вехи останутся: новая тропа строится поверх них.')}</p>
+    <label class="tm-q">${t('Где ты сейчас в этой сфере?')}
+      <textarea id="treemap-now" rows="2" placeholder="${t('бегаю 3–5 км пару раз в неделю / Abitur-курс по био + JuFo-проект')}"></textarea></label>
+    <label class="tm-q">${t('Твой пик — куда хочешь прийти в итоге?')}
+      <input id="treemap-peak" placeholder="${t('стабильно пробегать 10 км — и этого достаточно / ультрамарафон')}" />
+      <span class="tm-hint muted">${t('Пик — это потолок карты. Если пик «10 км» — лестница закончится на 10 км, а не потянет тебя в марафон.')}</span></label>
+    <label class="tm-q">${t('Что в этом нравится больше всего? (необязательно)')}
+      <input id="treemap-likes" placeholder="${t('бег в лесу под музыку / темы про науку и космос')}" /></label>
+    <label class="tm-q">${t('Что скучно или не хочется? (необязательно)')}
+      <input id="treemap-dislikes" placeholder="${t('беговая дорожка, соревнования / темы про профессии')}" /></label>
     <div class="propose-actions">${canUseAi()
       ? `<button class="btn" data-action="treemap-run">🤖 ${t('Собрать карту')}</button>`
       : `<p class="muted" style="font-size:12px;margin:6px 0 0">${t('Нужен ИИ — добавь ключ в Настройках (бесплатные Gemini/Groq есть), и Тень соберёт твою карту.')}</p>`}</div>
     <div id="treemap-result"></div></div>`;
   document.body.appendChild(ov);
-  setTimeout(() => { document.getElementById('treemap-text')?.focus(); }, 30);
+  setTimeout(() => { document.getElementById('treemap-now')?.focus(); }, 30);
 }
 async function treeMapRun() {
-  const ta = document.getElementById('treemap-text'), text = (ta && ta.value || '').trim();
-  if (!text) { toast(t('Расскажи хоть пару слов о себе в этой сфере')); return; }
+  // Интервью вместо одного пустого поля (запрос Альберта 26.07): человек не знает, ЧТО писать
+  // в свободное поле — вопросы подсказывают. Пик — потолок; нравится/скучно — фильтр контента.
+  const val = (id) => (document.getElementById(id)?.value || '').trim();
+  const now = val('treemap-now'), peak = val('treemap-peak'), likes = val('treemap-likes'), dislikes = val('treemap-dislikes');
+  if (!now && !peak) { toast(t('Заполни хотя бы «где ты сейчас» или «пик»')); return; }
+  const text = [
+    now ? `ГДЕ Я СЕЙЧАС: ${now}` : '',
+    peak ? `МОЙ ПИК (потолок карты — выше НЕ строить): ${peak}` : '',
+    likes ? `НРАВИТСЯ (по возможности строй вехи через это): ${likes}` : '',
+    dislikes ? `СКУЧНО / НЕ ХОЧУ (исключи эти темы и форматы из вех): ${dislikes}` : '',
+  ].filter(Boolean).join('\n');
   const res = document.getElementById('treemap-result'); if (res) res.innerHTML = `<p class="muted">🤖 ${t('Собираю…')}</p>`;
   try {
     const r = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' },
