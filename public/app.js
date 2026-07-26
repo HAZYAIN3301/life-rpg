@@ -1069,6 +1069,9 @@ const I18N_EXTRA = {
   'Доступно в Pro — или добавь бесплатный ключ.': { en: 'Available in Pro — or add a free key.', de: 'In Pro verfügbar — oder füge einen kostenlosen Schlüssel hinzu.', uk: 'Доступно в Pro — або додай безкоштовний ключ.', es: 'Disponible en Pro — o añade una clave gratis.' },
   'Добавь ключ в Настройках.': { en: 'Add a key in Settings.', de: 'Füge einen Schlüssel in den Einstellungen hinzu.', uk: 'Додай ключ у Налаштуваннях.', es: 'Añade una clave en Ajustes.' },
   'Добавь ИИ-ключ в Настройках': { en: 'Add an AI key in Settings', de: 'Füge einen KI-Schlüssel in den Einstellungen hinzu', uk: 'Додай ШІ-ключ у Налаштуваннях', es: 'Añade una clave de IA en Ajustes' },
+  // ── 🔊 Голос Тени (TTS) ──
+  'Озвучить': { en: 'Read aloud', de: 'Vorlesen', uk: 'Озвучити', es: 'Leer en voz alta' },
+  'Кнопка 🔊 — озвучить голосом Тени (реплики, подсказки, ответы Помощника)': { en: '🔊 button — have Shadow read aloud (its lines, nudges, assistant replies)', de: '🔊-Taste — Schatten liest vor (Sprüche, Hinweise, Assistenten-Antworten)', uk: 'Кнопка 🔊 — озвучити голосом Тіні (репліки, підказки, відповіді Помічника)', es: 'Botón 🔊 — que la Sombra lea en voz alta (frases, avisos, respuestas del Asistente)' },
   // ── Чат-помощник (Джарвис-слой): приветствие + витринные подсказки ──
   'Привет! Я вижу, как у тебя дела (энергия, отдых, дедлайны), и знаю все функции Satoru. Спроси про себя или про приложение:': { en: 'Hi! I can see how you are doing (energy, rest, deadlines) and I know every Satoru feature. Ask about yourself or about the app:', de: 'Hi! Ich sehe, wie es dir geht (Energie, Erholung, Deadlines), und kenne jede Satoru-Funktion. Frag über dich oder über die App:', uk: 'Привіт! Я бачу, як у тебе справи (енергія, відпочинок, дедлайни), і знаю всі функції Satoru. Спитай про себе або про застосунок:', es: '¡Hola! Veo cómo estás (energía, descanso, plazos) y conozco todas las funciones de Satoru. Pregunta sobre ti o sobre la app:' },
   'Как у меня дела на самом деле?': { en: 'How am I actually doing?', de: 'Wie geht es mir wirklich?', uk: 'Як у мене справи насправді?', es: '¿Cómo estoy en realidad?' },
@@ -3933,6 +3936,65 @@ function bell(strong) {
     o.connect(g).connect(audioCtx.destination); o.start(t0); o.stop(t0 + 1.7);
   });
 }
+// ---- 🔊 Голос Тени (Джарвис-2, Фаза B1) — браузерный TTS ----
+// Ключевое разделение (идея Альберта): «ЧТО сказать» — это ИИ, стоит денег за вызов; «КАК это
+// звучит» — это speechSynthesis, встроен в браузер, €0 и безлимит. Поэтому голос не завязан ни на
+// ИИ-ключ, ни на Pro: работает у всех, включая Free. Только по кнопке — авто-озвучка навязчива,
+// а на iOS вдобавок блокируется без жеста юзера.
+let _ttsBtn = null, _ttsView = null;
+const TTS_LANG = { ru: 'ru-RU', en: 'en-US', de: 'de-DE', uk: 'uk-UA', es: 'es-ES' };
+function ttsOK() { try { return 'speechSynthesis' in window && typeof SpeechSynthesisUtterance === 'function'; } catch { return false; } }
+function ttsOn() { return !State.settings || State.settings.tts !== false; }
+function ttsVoiceFor(code) {
+  let vs = []; try { vs = speechSynthesis.getVoices() || []; } catch { return null; }
+  const two = code.slice(0, 2); const norm = (v) => (v.lang || '').replace('_', '-');
+  return vs.find((v) => norm(v) === code) || vs.find((v) => norm(v).slice(0, 2) === two) || null;
+}
+function ttsStop() {
+  try { speechSynthesis.cancel(); } catch {}
+  if (_ttsBtn) { _ttsBtn.classList.remove('on'); _ttsBtn.textContent = '🔊'; }
+  _ttsBtn = null; _ttsView = null;
+}
+function ttsSpeak(text, btn) {
+  if (!ttsOK() || !text) return;
+  const same = _ttsBtn === btn;
+  ttsStop();
+  if (same) return; // повторный клик по той же кнопке = стоп
+  const code = TTS_LANG[lang()] || 'ru-RU';
+  const u = new SpeechSynthesisUtterance(String(text).slice(0, 1200));
+  u.lang = code;
+  // Голоса грузятся асинхронно: если список ещё пуст — не назначаем voice, браузер сам возьмёт по u.lang.
+  const v = ttsVoiceFor(code); if (v) u.voice = v;
+  const done = () => { if (_ttsBtn === btn) ttsStop(); };
+  u.onend = done; u.onerror = done;
+  _ttsBtn = btn; _ttsView = State.view;
+  if (btn) { btn.classList.add('on'); btn.textContent = '⏹'; }
+  try { speechSynthesis.speak(u); } catch { ttsStop(); }
+}
+// Текст берётся из ближайшего предка с [data-tts]. Сама кнопка-динамик из текста вырезается,
+// а вот кнопки-действия (у нуджей текст сообщения ЛЕЖИТ внутри <button class="nudge">) — остаются.
+function ttsTextNear(btn) {
+  const host = btn.closest('[data-tts]'); if (!host) return '';
+  const clone = host.cloneNode(true);
+  clone.querySelectorAll('.tts-btn').forEach((b) => b.remove());
+  // <br> → перевод строки, иначе textContent склеивает строки («…отдыха.Сегодня…») и синтезатор
+  // читает их одним словом. Переносы сохраняем — они дают естественные паузы в речи.
+  clone.querySelectorAll('br').forEach((b) => b.replaceWith('\n'));
+  return (clone.textContent || '').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+}
+function ttsBtnHTML() {
+  if (!ttsOK() || !ttsOn()) return '';
+  const lbl = esc(t('Озвучить'));
+  return `<button class="tts-btn" data-action="tts" title="${lbl}" aria-label="${lbl}">🔊</button>`;
+}
+// Обвязка готовой карточки-нуджа: помечаем её как источник текста и вкладываем кнопку внутрь.
+function withTts(html) {
+  const btn = ttsBtnHTML(); if (!html || !btn) return html;
+  const out = html.replace('<div class="card', '<div data-tts class="card');
+  const i = out.lastIndexOf('</div>');
+  return i < 0 ? out : out.slice(0, i) + btn + out.slice(i);
+}
+
 // ---- SFX (#23): синтезированные звуки интерфейса через Web Audio, без файлов ----
 function sfxOn() { return !State.settings || State.settings.sound !== false; }
 function sfxTone(freq, t0, dur, opts) {
@@ -4998,7 +5060,7 @@ async function runWeeklyReview() {
     const d = await r.json();
     if (d.error && aiHandleErr(d)) { const m = document.getElementById('ai-modal'); if (m) m.remove(); return; }
     if (!r.ok || !d.text) { openAiModal('🤖 Разбор недели', `<p class="muted">Не удалось: ${esc(d.detail || d.error || 'ошибка')}.</p>`); return; }
-    openAiModal('🤖 Разбор недели', `<div class="ai-out">${esc(d.text).replace(/\n/g, '<br>')}</div>`);
+    openAiModal('🤖 Разбор недели', `<div class="ai-out" data-tts>${esc(d.text).replace(/\n/g, '<br>')}${ttsBtnHTML()}</div>`);
     track('ai:weekly');
   } catch { openAiModal('🤖 Разбор недели', '<p class="muted">Сетевая ошибка.</p>'); }
 }
@@ -5378,7 +5440,7 @@ function renderChatMessages() {
   }
   box.innerHTML = State.chatLog.map((m) => m.role === 'user'
     ? `<div class="chat-msg me">${esc(m.content)}</div>`
-    : `<div class="chat-msg ai">${esc(m.content).replace(/\n/g, '<br>')}</div>`).join('') + (State._chatBusy ? '<div class="chat-msg ai typing">…</div>' : '');
+    : `<div class="chat-msg ai" data-tts>${esc(m.content).replace(/\n/g, '<br>')}${ttsBtnHTML()}</div>`).join('') + (State._chatBusy ? '<div class="chat-msg ai typing">…</div>' : '');
   box.scrollTop = box.scrollHeight;
 }
 async function sendChat(text) {
@@ -5746,7 +5808,7 @@ function companionCard() {
       <div class="comp-art">${shadowVideo(ti, mood.face)}</div>
       <div class="comp-body">
         <div class="comp-name"><b>${esc(c.name)}</b><button class="comp-rename" data-action="comp-rename" title="Переименовать">✎</button></div>
-        <p class="comp-line">${mood.line}</p>
+        <div class="comp-line-row" data-tts><p class="comp-line">${mood.line}</p>${ttsBtnHTML()}</div>
         ${nextBar}
       </div>
     </div>
@@ -6635,7 +6697,7 @@ function renderToday() {
   // у уставшего юзера вечером могли гореть 5 советов подряд (fb #9 «панель нечитаема»). Секретарь
   // говорит одну фразу о главном, не зачитывает памятку целиком. `nudgeCard` (сундуки/буст/Хайп) —
   // это награда, а не совет, остаётся отдельно (сознательная петля возврата, не конкурирует за тон).
-  const activeNudge = pickNudge([
+  const activeNudge = withTts(pickNudge([
     { id: 'entry', tier: 1, html: entryNudge },
     { id: 'rest', tier: 2, html: restNudge },
     { id: 'dayLog', tier: 3, html: dayLogNudge },
@@ -6644,7 +6706,7 @@ function renderToday() {
     { id: 'mobility', tier: 5, html: mobilityNudge },
     { id: 'import', tier: 6, html: importNudge },
     { id: 'sysTeaser', tier: 7, html: sysTeaser },
-  ]);
+  ]));
 
   const overdueCard = overdue.length ? `<div class="card overdue"><h3>${t('⏳ Просрочено')} (${overdue.length})</h3>
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
@@ -8307,6 +8369,7 @@ function renderSettings() {
     <div class="card"><h3>${t('Название')}</h3><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></div>
     <div class="card"><h3>${t('🔊 Звук')}</h3>
       <label class="sound-toggle"><input type="checkbox" data-action="toggle-sound" ${sfxOn() ? 'checked' : ''}/> ${t('Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)')}</label>
+      ${ttsOK() ? `<label class="sound-toggle"><input type="checkbox" data-action="toggle-tts" ${ttsOn() ? 'checked' : ''}/> ${t('Кнопка 🔊 — озвучить голосом Тени (реплики, подсказки, ответы Помощника)')}</label>` : ''}
       <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">${t('▶ Проверить звук')}</button></div>
     ${ambientCard()}
     ${pwaCard()}
@@ -8740,6 +8803,9 @@ function render() {
   try { pathReckoning(); } catch (e) { /* расчёт Контроля — не критично для рендера */ }
   // Восстановить app shell если auth-экран его перезаписал
   if (!document.getElementById('main')) document.getElementById('app').innerHTML = APP_SHELL;
+  // Тень не должна продолжать говорить в другом разделе. Внутри одного вида перерисовка
+  // (тик таймера и т.п.) речь НЕ прерывает — иначе фраза рубилась бы на полуслове.
+  if (_ttsBtn && _ttsView !== State.view) ttsStop();
   try { renderHeader(); } catch (e) { console.error('renderHeader', e); }
   try { renderNav(); } catch (e) { console.error('renderNav', e); }
   const main = document.getElementById('main');
@@ -9286,6 +9352,8 @@ function onClick(e) {
     eq[ty] = (eq[ty] === el.dataset.id) ? null : el.dataset.id; Store.save('settings', State.settings); render(); return;
   }
   if (action === 'toggle-sound') { State.settings.sound = !!el.checked; Store.save('settings', State.settings); if (el.checked) sfx('complete'); return; }
+  if (action === 'tts') { ttsSpeak(ttsTextNear(el), el); return; }
+  if (action === 'toggle-tts') { State.settings.tts = !!el.checked; Store.save('settings', State.settings); ttsStop(); render(); return; }
   if (action === 'set-ambient') {
     if (!State.settings.ambient) State.settings.ambient = {};
     State.settings.ambient.mode = el.dataset.mode;

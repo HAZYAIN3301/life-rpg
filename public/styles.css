@@ -1096,6 +1096,20 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .comp-rename { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 13px; padding: 2px 4px; border-radius: 6px; }
 .comp-rename:hover { color: var(--text); background: var(--panel2); }
 .comp-line { margin: 3px 0 9px; font-size: 13.5px; line-height: 1.45; color: var(--text); }
+.comp-line-row { display: flex; align-items: flex-start; gap: 6px; }
+.comp-line-row .comp-line { flex: 1 1 auto; min-width: 0; }
+
+/* 🔊 Кнопка озвучки (голос Тени). Тихая по умолчанию, активная — акцентом. */
+.tts-btn { flex: 0 0 auto; align-self: flex-start; background: none; border: none; cursor: pointer;
+  font-size: 13px; line-height: 1; padding: 4px 5px; border-radius: 7px; opacity: 0.5;
+  transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease; }
+.tts-btn:hover { opacity: 1; background: var(--panel2); }
+.tts-btn.on { opacity: 1; background: var(--accent); color: #fff; }
+.nudge-card .tts-btn, .chat-msg .tts-btn, .ai-out .tts-btn { display: block; margin-left: auto; margin-top: 4px; }
+/* Тач: иконка заметнее (нет hover, чтобы её обнаружить) и палец-совместимая зона нажатия. */
+@media (hover: none) {
+  .tts-btn { opacity: 0.75; min-width: 34px; min-height: 34px; padding: 6px; }
+}
 .comp-bond { display: flex; flex-direction: column; gap: 4px; }
 .comp-bond-top { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; }
 .comp-bond-top .muted { font-weight: 500; }
