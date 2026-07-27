@@ -1066,7 +1066,9 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 /* Оформление: тема + акцент */
 .theme-row { display: flex; align-items: center; gap: 12px; margin: 8px 0; flex-wrap: wrap; }
 .theme-lbl { font-size: 13px; color: var(--muted); width: 64px; flex: 0 0 auto; }
-.theme-toggle { display: flex; gap: 6px; }
+/* wrap обязателен: пять языков (🇺🇦 Українська, 🇪🇸 Español) в один ряд не влезают
+   на 375px и раздвигали «Настройки» до горизонтального скролла всей страницы. */
+.theme-toggle { display: flex; flex-wrap: wrap; gap: 6px; }
 .theme-opt { background: var(--panel2); border: 1px solid var(--line); color: var(--text); border-radius: 9px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
 .theme-opt.active { border-color: var(--accent); color: #fff; background: var(--accent); }
 .accent-swatches { display: flex; gap: 8px; }
