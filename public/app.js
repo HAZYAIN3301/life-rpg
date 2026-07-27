@@ -1076,6 +1076,7 @@ const I18N_EXTRA = {
   'Доступно в Pro — или добавь бесплатный ключ.': { en: 'Available in Pro — or add a free key.', de: 'In Pro verfügbar — oder füge einen kostenlosen Schlüssel hinzu.', uk: 'Доступно в Pro — або додай безкоштовний ключ.', es: 'Disponible en Pro — o añade una clave gratis.' },
   'Добавь ключ в Настройках.': { en: 'Add a key in Settings.', de: 'Füge einen Schlüssel in den Einstellungen hinzu.', uk: 'Додай ключ у Налаштуваннях.', es: 'Añade una clave en Ajustes.' },
   'Добавь ИИ-ключ в Настройках': { en: 'Add an AI key in Settings', de: 'Füge einen KI-Schlüssel in den Einstellungen hinzu', uk: 'Додай ШІ-ключ у Налаштуваннях', es: 'Añade una clave de IA en Ajustes' },
+  'Начать': { en: 'Start', de: 'Starten', uk: 'Почати', es: 'Empezar' },
   // ── 🤖 Онбординг v2: Тень собирает старт ──
   '🤖 Расскажи о себе — соберу всё сам': { en: '🤖 Tell me about yourself — I\'ll set it up', de: '🤖 Erzähl mir von dir — ich richte alles ein', uk: '🤖 Розкажи про себе — зберу все сам', es: '🤖 Cuéntame sobre ti — yo lo preparo' },
   'Пара предложений своими словами: чем занимаешься, что важно, к чему идёшь. Я разложу это на сферы и первые дела.': { en: 'A couple of sentences in your own words: what you do, what matters, where you\'re heading. I\'ll turn it into spheres and first tasks.', de: 'Ein paar Sätze in deinen Worten: was du machst, was zählt, wohin du willst. Ich mache daraus Bereiche und erste Aufgaben.', uk: 'Пара речень своїми словами: чим займаєшся, що важливо, до чого йдеш. Я розкладу це на сфери й перші справи.', es: 'Un par de frases con tus palabras: qué haces, qué te importa, hacia dónde vas. Lo convierto en esferas y primeras tareas.' },
@@ -7024,7 +7025,10 @@ function renderToday() {
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">${t('↪ Перенести всё на сегодня')}</button></div>` : '';
 
   const nextAction = tm ? `<button class="btn" data-action="${tm.running ? 'timer-pause' : 'timer-resume'}">${tm.running ? '⏸ Пауза' : '▶ Продолжить фокус'}</button>`
-    : nextQuest ? `<button class="btn" data-action="focus-task" data-id="${nextQuest.id}">▶ Начать: ${esc(nextQuest.title).slice(0, 32)}${nextQuest.title.length > 32 ? '…' : ''}</button>`
+    // Обрезали по 32 знакам — на телефоне из «Достать кроссовки и подготовить форму для бега»
+    // выходило «Достать кроссовки и подготовить …», и человек не понимал, что именно начинает.
+    // Кнопка и так во всю ширину и переносится по строкам: режем только совсем длинное.
+    : nextQuest ? `<button class="btn btn-nextquest" data-action="focus-task" data-id="${nextQuest.id}">▶ ${t('Начать')}: ${esc(nextQuest.title).slice(0, 64)}${nextQuest.title.length > 64 ? '…' : ''}</button>`
     : `<button class="btn ghost" data-action="goto-calendar">🗓 Запланировать день</button>`;
   const todayHero = `<section class="card today-hero">
       <div>
@@ -7041,7 +7045,7 @@ function renderToday() {
       </div>
     </section>`;
   return `<div class="today-shell">${companionCard()}${installBanner()}${todayHero}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${timerCard}${energyCard}${activeNudge}${nudgeCard}
-    <div class="card"><form id="add-task" class="add-row">
+    <div class="card card-addquest"><form id="add-task" class="add-row">
         <input name="title" placeholder="${t('Новый квест на сегодня…')}" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
         ${durInputHTML('estimateMin', 30)}
@@ -7051,14 +7055,14 @@ function renderToday() {
       <p class="diff-hint muted">🌱 Лёгкая — рутина, механика · ⚔️ Обычная — требует фокуса · 🔥 Сложная — вызов, выход из зоны комфорта → активирует Хайп <b>+15% XP</b></p>
     </div>
     ${overdueCard}
-    <div class="card"><div class="daystat">
+    <div class="card card-quests"><div class="daystat">
         <span>Квестов: <b>${doneCount}/${todays.length}</b></span>
         <span>Время: <b>${fmtDur(minToday)} / ${fmtDur(planned)}</b></span>
         <span>Опыт: <b>+${xpToday}</b> XP</span>
         <span>Золото: <b>+${goldToday}</b> 🪙</span></div>
       ${todays.length ? `<ul class="tasks">${todays.map(questRow).join('')}</ul>` : emptyDayHTML()}</div>
     ${todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">🗓 ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : ''}
-    <div class="card"><h3>🔁 Привычки на сегодня</h3>
+    <div class="card card-habits"><h3>🔁 Привычки на сегодня</h3>
       ${habits.length ? `<ul class="tasks">${habits.map(habitRow).join('')}</ul>` : '<p class="muted">На сегодня привычек нет. Добавь их в «Настройках».</p>'}</div>
     ${antiHabitsCard()}
     <div class="card shutdown"><h3>🌙 Итог дня</h3>
