@@ -428,11 +428,16 @@ function httpsPostJson(host, pathName, headers, bodyObj) {
 // Универсальный вызов модели: { ok, text } | { ok:false, noKey } | { ok:false, status, detail }
 // Реестр ИИ-провайдеров. shape: 'anthropic' | 'openai' (совместимый) | 'gemini'.
 // free=true — ключ берётся бесплатно без карты/подписки (Gemini, Groq).
+// ⚠️ Имена моделей ПРОТУХАЮТ. Живой случай 27.07: провайдер отдал «gemini-2.5-flash is no longer
+// available to new users» — старый ключ работал бы, а свежесозданный уже нет, и поймать это можно
+// было только настоящим вызовом (флаг houseAvailable показывал true, потому что проверяет лишь
+// НАЛИЧИЕ ключа). Поэтому каждая модель переопределяется переменной окружения: сменить её можно
+// на Railway за минуту, без правки кода и деплоя.
 const AI_PROVIDERS = {
-  gemini: { shape: 'gemini', host: 'generativelanguage.googleapis.com', model: 'gemini-2.5-flash' },
-  groq: { shape: 'openai', host: 'api.groq.com', path: '/openai/v1/chat/completions', model: 'llama-3.3-70b-versatile' },
-  anthropic: { shape: 'anthropic', host: 'api.anthropic.com', model: 'claude-opus-4-8' },
-  openai: { shape: 'openai', host: 'api.openai.com', path: '/v1/chat/completions', model: 'gpt-4o' },
+  gemini: { shape: 'gemini', host: 'generativelanguage.googleapis.com', model: process.env.AI_MODEL_GEMINI || 'gemini-3.6-flash' },
+  groq: { shape: 'openai', host: 'api.groq.com', path: '/openai/v1/chat/completions', model: process.env.AI_MODEL_GROQ || 'llama-3.3-70b-versatile' },
+  anthropic: { shape: 'anthropic', host: 'api.anthropic.com', model: process.env.AI_MODEL_ANTHROPIC || 'claude-opus-4-8' },
+  openai: { shape: 'openai', host: 'api.openai.com', path: '/v1/chat/completions', model: process.env.AI_MODEL_OPENAI || 'gpt-4o' },
 };
 function aiComplete(provider, keys, system, prompt, maxTokens) {
   return aiCompleteMessages(provider, keys, system, [{ role: 'user', content: prompt }], maxTokens);
