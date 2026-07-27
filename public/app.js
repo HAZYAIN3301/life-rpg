@@ -1076,6 +1076,23 @@ const I18N_EXTRA = {
   'Доступно в Pro — или добавь бесплатный ключ.': { en: 'Available in Pro — or add a free key.', de: 'In Pro verfügbar — oder füge einen kostenlosen Schlüssel hinzu.', uk: 'Доступно в Pro — або додай безкоштовний ключ.', es: 'Disponible en Pro — o añade una clave gratis.' },
   'Добавь ключ в Настройках.': { en: 'Add a key in Settings.', de: 'Füge einen Schlüssel in den Einstellungen hinzu.', uk: 'Додай ключ у Налаштуваннях.', es: 'Añade una clave en Ajustes.' },
   'Добавь ИИ-ключ в Настройках': { en: 'Add an AI key in Settings', de: 'Füge einen KI-Schlüssel in den Einstellungen hinzu', uk: 'Додай ШІ-ключ у Налаштуваннях', es: 'Añade una clave de IA en Ajustes' },
+  // ── 🤖 Онбординг v2: Тень собирает старт ──
+  '🤖 Расскажи о себе — соберу всё сам': { en: '🤖 Tell me about yourself — I\'ll set it up', de: '🤖 Erzähl mir von dir — ich richte alles ein', uk: '🤖 Розкажи про себе — зберу все сам', es: '🤖 Cuéntame sobre ti — yo lo preparo' },
+  'Пара предложений своими словами: чем занимаешься, что важно, к чему идёшь. Я разложу это на сферы и первые дела.': { en: 'A couple of sentences in your own words: what you do, what matters, where you\'re heading. I\'ll turn it into spheres and first tasks.', de: 'Ein paar Sätze in deinen Worten: was du machst, was zählt, wohin du willst. Ich mache daraus Bereiche und erste Aufgaben.', uk: 'Пара речень своїми словами: чим займаєшся, що важливо, до чого йдеш. Я розкладу це на сфери й перші справи.', es: 'Un par de frases con tus palabras: qué haces, qué te importa, hacia dónde vas. Lo convierto en esferas y primeras tareas.' },
+  'Например: учусь в школе, весной экзамены по био, хожу в зал 3 раза в неделю, делаю научный проект и хочу больше времени с друзьями…': { en: 'For example: I\'m in school, bio exams in spring, gym 3× a week, working on a science project and I want more time with friends…', de: 'Zum Beispiel: Ich bin in der Schule, im Frühjahr Bio-Prüfungen, 3× die Woche Gym, arbeite an einem Forschungsprojekt und will mehr Zeit mit Freunden…', uk: 'Наприклад: навчаюсь у школі, навесні іспити з біо, ходжу в зал 3 рази на тиждень, роблю науковий проєкт і хочу більше часу з друзями…', es: 'Por ejemplo: estoy en el colegio, exámenes de bio en primavera, gimnasio 3 veces por semana, hago un proyecto científico y quiero más tiempo con amigos…' },
+  'Собрать мой старт': { en: 'Build my start', de: 'Meinen Start aufbauen', uk: 'Зібрати мій старт', es: 'Preparar mi inicio' },
+  'Собираю…': { en: 'Building…', de: 'Baue auf…', uk: 'Збираю…', es: 'Preparando…' },
+  '🤖 Вот что я собрал': { en: '🤖 Here\'s what I put together', de: '🤖 Das habe ich zusammengestellt', uk: '🤖 Ось що я зібрав', es: '🤖 Esto es lo que preparé' },
+  'Сними галочки с лишнего — потом всё можно поменять.': { en: 'Uncheck anything you don\'t want — everything stays editable later.', de: 'Hak ab, was du nicht willst — alles bleibt später änderbar.', uk: 'Зніми галочки з зайвого — потім усе можна змінити.', es: 'Desmarca lo que no quieras — todo se puede cambiar después.' },
+  '— или выбери сам —': { en: '— or pick it yourself —', de: '— oder wähle selbst —', uk: '— або обери сам —', es: '— o elige tú mismo —' },
+  'Не получилось собрать — попробуй ещё раз или выбери сферы сам ниже.': { en: 'That didn\'t work — try again or pick your spheres below.', de: 'Hat nicht geklappt — versuch es nochmal oder wähle deine Bereiche unten.', uk: 'Не вийшло зібрати — спробуй ще раз або обери сфери самостійно нижче.', es: 'No salió — inténtalo otra vez o elige tus esferas abajo.' },
+  'Сетевая ошибка — попробуй ещё раз.': { en: 'Network error — try again.', de: 'Netzwerkfehler — versuch es nochmal.', uk: 'Мережева помилка — спробуй ще раз.', es: 'Error de red — inténtalo otra vez.' },
+  'Напиши пару слов о себе': { en: 'Write a couple of words about yourself', de: 'Schreib ein paar Worte über dich', uk: 'Напиши кілька слів про себе', es: 'Escribe un par de palabras sobre ti' },
+  'Оставь хотя бы одну сферу': { en: 'Keep at least one sphere', de: 'Behalte mindestens einen Bereich', uk: 'Залиш хоча б одну сферу', es: 'Deja al menos una esfera' },
+  'Заново': { en: 'Start over', de: 'Neu', uk: 'Заново', es: 'De nuevo' },
+  'сфер': { en: 'spheres', de: 'Bereiche', uk: 'сфер', es: 'esferas' },
+  'дел': { en: 'tasks', de: 'Aufgaben', uk: 'справ', es: 'tareas' },
+  'завтра': { en: 'tomorrow', de: 'morgen', uk: 'завтра', es: 'mañana' },
   // ── 💬 Карточки-действия в чате (Фаза C) ──
   'Применить выбранное': { en: 'Apply selected', de: 'Auswahl anwenden', uk: 'Застосувати вибране', es: 'Aplicar selección' },
   'Добавлено': { en: 'Added', de: 'Hinzugefügt', uk: 'Додано', es: 'Añadido' },
@@ -2077,6 +2094,13 @@ const Store = {
   save(name, obj) {
     clearTimeout(this._timers[name]);
     this._timers[name] = setTimeout(() => this._put(name, obj), 250);
+  },
+  // Сохранить НЕМЕДЛЕННО и дождаться. Нужно там, где сразу после записи идёт чтение с сервера:
+  // save() дебаунсится на 250 мс, а initApp() читает мгновенно — и получает ещё не сохранённое.
+  // Именно так онбординг терял выбранные сферы и подставлял вместо них дефолтные.
+  async saveNow(name, obj) {
+    clearTimeout(this._timers[name]);
+    await this._put(name, obj);
   },
   async _put(name, obj) {
     try {
@@ -4392,7 +4416,84 @@ function openSphereGuide(name) {
   document.body.appendChild(ov);
 }
 
+// ── Онбординг v2: Тень собирает старт из пары предложений о себе ─────────────────────────
+// Задача Альберта (27.07, перед раздачей приложения друзьям): «убрать порог дурака — сразу ИИ,
+// сразу сферы, сразу всё нужное». Главный источник дискомфорта у новичка — не сложность, а
+// паралич выбора: список из 30 чипов-сфер и пустой экран после. Здесь человек пишет о себе
+// как другу — и получает готовые сферы и первые маленькие дела на сегодня.
+// Ручной путь (чипы/программы) остаётся ниже: без ИИ-ключа и для тех, кто хочет сам.
+let _obBusy = false, _obItems = null, _obErr = '';
+function obAiBlock() {
+  if (!State.aiKeys || !canUseAi()) return ''; // без ИИ — молча показываем обычный путь ниже
+  if (_obItems) {
+    const spheres = _obItems.filter((p) => p.type === 'sphere');
+    const quests = _obItems.filter((p) => p.type === 'quest');
+    const row = (p, i) => `<label class="drc-row"><input type="checkbox" data-ob-item="${i}" checked />
+      <span><b>${p.type === 'sphere' ? '🧭' : '⚔️'} ${esc(p.title || p.name)}</b>${p.type === 'quest'
+        ? `<br><span class="muted" style="font-size:12px">${p.day === 'tomorrow' ? t('завтра') : t('сегодня')} · ${fmtDur(Number(p.estimateMin) || 20)} · ${esc(p.sphere || '')}</span>` : ''}</span></label>`;
+    return `<div class="ob-ai ob-ai-result">
+      <div class="ob-section">${t('🤖 Вот что я собрал')}</div>
+      <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Сними галочки с лишнего — потом всё можно поменять.')}</p>
+      <div class="dayrec-list">${_obItems.map((p, i) => row(p, i)).join('')}</div>
+      <div class="ob-ai-acts">
+        <button class="btn" data-action="ob-ai-apply">${t('Поехали')} (${spheres.length} ${t('сфер')} · ${quests.length} ${t('дел')})</button>
+        <button class="btn ghost" data-action="ob-ai-reset">${t('Заново')}</button>
+      </div></div>`;
+  }
+  return `<div class="ob-ai">
+    <div class="ob-section">${t('🤖 Расскажи о себе — соберу всё сам')}</div>
+    <p class="muted" style="font-size:12.5px;margin:0 0 8px">${t('Пара предложений своими словами: чем занимаешься, что важно, к чему идёшь. Я разложу это на сферы и первые дела.')}</p>
+    <textarea id="ob-ai-text" rows="3" placeholder="${t('Например: учусь в школе, весной экзамены по био, хожу в зал 3 раза в неделю, делаю научный проект и хочу больше времени с друзьями…')}"></textarea>
+    ${_obErr ? `<p class="muted" style="font-size:12px;color:var(--danger,#e0526a);margin:6px 0 0">${esc(_obErr)}</p>` : ''}
+    <button class="btn" data-action="ob-ai-run" style="margin-top:10px;width:100%" ${_obBusy ? 'disabled' : ''}>${_obBusy ? t('Собираю…') : '🤖 ' + t('Собрать мой старт')}</button>
+    <div class="ob-or">${t('— или выбери сам —')}</div></div>`;
+}
+async function obAiRun() {
+  const ta = document.getElementById('ob-ai-text'), text = (ta && ta.value || '').trim();
+  if (!text) { toast(t('Напиши пару слов о себе')); return; }
+  if (_obBusy) return;
+  _obBusy = true; _obErr = ''; renderOnboardingScreen();
+  try {
+    const r = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kind: 'onboard', provider: aiProvider(), text, context: '(новый юзер, сфер пока нет)' }) });
+    const d = await r.json();
+    _obBusy = false;
+    if (!r.ok || d.error || !Array.isArray(d.proposals)) {
+      _obErr = t('Не получилось собрать — попробуй ещё раз или выбери сферы сам ниже.');
+      _obItems = null; renderOnboardingScreen(); return;
+    }
+    const items = d.proposals.filter((p) => p && (p.name || p.title) && (p.type === 'sphere' || p.type === 'quest')).slice(0, 12);
+    if (!items.filter((p) => p.type === 'sphere').length) {
+      _obErr = t('Не получилось собрать — попробуй ещё раз или выбери сферы сам ниже.');
+      _obItems = null; renderOnboardingScreen(); return;
+    }
+    _obItems = items; track('ai:onboard');
+    renderOnboardingScreen();
+  } catch { _obBusy = false; _obErr = t('Сетевая ошибка — попробуй ещё раз.'); _obItems = null; renderOnboardingScreen(); }
+}
+async function obAiApply() {
+  if (!_obItems) return;
+  const checks = [...document.querySelectorAll('[data-ob-item]')].map((c) => c.checked);
+  const accepted = new Set(); _obItems.forEach((_, i) => { if (checks[i]) accepted.add(i); });
+  if (!_obItems.some((p, i) => accepted.has(i) && p.type === 'sphere')) { toast(t('Оставь хотя бы одну сферу')); return; }
+  // Стартуем с ЧИСТЫХ настроек: applyProposals пишет в State.settings.skills / State.tasks,
+  // а до онбординга State ещё не инициализирован приложением. Дефолтные 6 сфер обязательно
+  // затираем — иначе человек получит вперемешку свои и те, которых не выбирал.
+  State.settings = structuredClone(DEFAULT_SETTINGS);
+  State.settings.skills = [];
+  State.tasks = []; State.goals = []; State.tree = {};
+  applyProposals(_obItems, accepted);
+  // saveNow, а не save: следом initApp() читает данные с сервера, и дебаунс их не догонит.
+  await Store.saveNow('settings', State.settings);
+  await Store.saveNow('tasks', State.tasks);
+  _obItems = null; _obErr = '';
+  State.phase = 'app'; initApp();
+}
 function renderOnboardingScreen() {
+  // Ключи нужны ЗДЕСЬ, а не в initApp: до онбординга приложение не инициализировано, а без них
+  // canUseAi() ложно и ИИ-блок не покажется даже тому, у кого ИИ доступен (триал/свой ключ).
+  // ensureAiKeys сам дёрнет render() по приходу ответа — экран перерисуется уже с блоком.
+  ensureAiKeys();
   const chips = SKILL_GROUPS.map((g) => {
     // ⚠️ не называть параметр `t` — затенит функцию перевода t() (см. баг fb_mrkzunjjmn61)
     const items = g.items.map((sk) => {
@@ -4411,6 +4512,7 @@ function renderOnboardingScreen() {
         <p>${t('Выбери свои сферы развития — их всегда можно изменить')}</p>
       </div>
       <div class="auth-box">
+        ${obAiBlock()}
         <div class="ob-section">${t('📦 Быстрый старт — готовая программа')}</div>
         <div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'ob-program')).join('')}</div>
         <div class="ob-or">${t('— или собери вручную —')}</div>
@@ -5401,8 +5503,22 @@ function applyProposals(proposals, acceptedIdx) {
     delete g._parentTitle;
     if (g.metric) refreshGoalCompletion(g);
   });
+  // 4) Квесты — нужны онбордингу v2: первый экран не должен встречать новичка пустотой.
+  //    day: today|tomorrow (ИИ не знает сегодняшней даты — считаем на клиенте).
+  let questsAdded = 0;
+  accepted.filter((p) => p.type === 'quest' && p.title).forEach((p) => {
+    const sk = findSphere(p.sphere) || State.settings.skills[0]; if (!sk) return;
+    const date = p.day === 'tomorrow' ? addDays(todayStr(), 1) : todayStr();
+    State.tasks.push({ id: uid(), title: String(p.title).slice(0, 120), skillId: sk.id, skillIds: [sk.id],
+      estimateMin: Math.min(600, Math.max(5, Math.round(Number(p.estimateMin) || 20))),
+      difficulty: ['easy', 'normal', 'hard'].includes(p.difficulty) ? p.difficulty : 'normal',
+      date, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null,
+      createdAt: new Date().toISOString() });
+    applied++; questsAdded++;
+  });
   ensureTrees();
   Store.save('settings', State.settings); Store.save('goals', State.goals); Store.save('skilltree', State.tree);
+  if (questsAdded) Store.save('tasks', State.tasks);
   return applied;
 }
 // ---- ИИ тех-поддержка / гид (Блок 2): постоянный помощник, знает функции и философию ----
@@ -9643,6 +9759,9 @@ function onClick(e) {
   if (action === 'ob-program') { const p = DUNGEON_PROGRAMS.find((x) => x.id === el.dataset.prog); if (p) applyProgramFresh(p); return; }
   if (action === 'add-program') { const p = DUNGEON_PROGRAMS.find((x) => x.id === el.dataset.prog); if (p) applyProgramMerge(p); return; }
   if (action === 'toggle-lb-optout') { State.settings.leaderboardOptOut = !State.settings.leaderboardOptOut; Store.save('settings', State.settings); publishLeaderboard(); State.leaderboard = null; render(); return; }
+  if (action === 'ob-ai-run') { obAiRun(); return; }
+  if (action === 'ob-ai-apply') { obAiApply(); return; }
+  if (action === 'ob-ai-reset') { _obItems = null; _obErr = ''; renderOnboardingScreen(); return; }
   if (action === 'ob-finish') {
     if (State.obSkills.size === 0) return;
     const skills = [...State.obSkills].map((entry) => {
@@ -9651,8 +9770,11 @@ function onClick(e) {
       return { id: 'sk_' + name.toLowerCase().replace(/[^a-z0-9]/g, '') + '_' + Date.now().toString(36), name, color: color || (tpl ? tpl.color : '#6c8cff') };
     });
     const settings = Object.assign(structuredClone(DEFAULT_SETTINGS), { skills });
-    Store.save('settings', settings);
-    State.phase = 'app'; initApp(); // initApp на первом запуске сам запустит гайд «Тень ведёт» (см. конец initApp)
+    // saveNow: save() дебаунсится на 250 мс, а initApp() читает настройки с сервера сразу —
+    // выбранные сферы не успевали записаться, и юзер получал дефолтные шесть вместо своих.
+    Store.saveNow('settings', settings).then(() => {
+      State.phase = 'app'; initApp(); // initApp на первом запуске сам запустит гайд «Тень ведёт» (см. конец initApp)
+    });
     return;
   }
 

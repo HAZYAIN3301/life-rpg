@@ -1108,6 +1108,14 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .drc-row > input[type="checkbox"] { flex: 0 0 auto; width: 17px; height: 17px; margin-top: 2px; accent-color: var(--accent); }
 .drc-row > span { flex: 1 1 auto; min-width: 0; }
 
+/* 🤖 Онбординг v2: блок «Тень собирает старт». */
+.ob-ai { margin-bottom: 18px; }
+.ob-ai textarea { width: 100%; resize: vertical; }
+.ob-ai .ob-or { margin-top: 16px; }
+.ob-ai-result .dayrec-list { margin: 0 0 12px; gap: 10px; }
+.ob-ai-acts { display: flex; gap: 8px; flex-wrap: wrap; }
+.ob-ai-acts .btn { flex: 1 1 auto; }
+
 /* 💬 Карточки-действия в ответе Помощника (Фаза C).
    white-space: normal обязателен — пузырь .chat-msg держит pre-wrap ради переносов в тексте
    ответа, и без сброса переводы строк ВЁРСТКИ карточек рендерились как пустые строки. */
