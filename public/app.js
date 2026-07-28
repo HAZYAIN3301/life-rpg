@@ -1078,6 +1078,8 @@ const I18N_EXTRA = {
   'Добавь ИИ-ключ в Настройках': { en: 'Add an AI key in Settings', de: 'Füge einen KI-Schlüssel in den Einstellungen hinzu', uk: 'Додай ШІ-ключ у Налаштуваннях', es: 'Añade una clave de IA en Ajustes' },
   'Начать': { en: 'Start', de: 'Starten', uk: 'Почати', es: 'Empezar' },
   // ── 🕯 Момент дня с Тенью ──
+  'Утром и вечером Тень встречает тебя один раз — говорит по твоему состоянию и зовёт к одному шагу. Здесь можно вызвать эту встречу заново, чтобы посмотреть.': { en: 'Morning and evening, Shadow greets you once — speaking from your actual state and inviting one small step. You can replay that meeting here to see it.', de: 'Morgens und abends begrüßt dich Schatten einmal — spricht aus deinem tatsächlichen Zustand heraus und lädt zu einem kleinen Schritt ein. Hier kannst du die Begegnung erneut ansehen.', uk: 'Вранці та ввечері Тінь зустрічає тебе один раз — говорить за твоїм станом і кличе до одного кроку. Тут можна викликати цю зустріч знову, щоб подивитися.', es: 'Por la mañana y por la noche, la Sombra te saluda una vez — habla desde tu estado real y te invita a un paso pequeño. Aquí puedes repetir ese encuentro para verlo.' },
+  'Показать встречу сейчас': { en: 'Replay the meeting now', de: 'Begegnung jetzt zeigen', uk: 'Показати зустріч зараз', es: 'Repetir el encuentro ahora' },
   'подряд': { en: 'in a row', de: 'am Stück', uk: 'поспіль', es: 'seguidos' },
   'К делам': { en: 'To my day', de: 'Zu meinem Tag', uk: 'До справ', es: 'A mi día' },
   'Спасибо': { en: 'Thanks', de: 'Danke', uk: 'Дякую', es: 'Gracias' },
@@ -8865,6 +8867,9 @@ function renderSettings() {
       <label class="sound-toggle"><input type="checkbox" data-action="toggle-sound" ${sfxOn() ? 'checked' : ''}/> ${t('Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)')}</label>
       ${ttsOK() ? `<label class="sound-toggle"><input type="checkbox" data-action="toggle-tts" ${ttsOn() ? 'checked' : ''}/> ${t('Кнопка 🔊 — озвучить голосом Тени (реплики, подсказки, ответы Помощника)')}</label>` : ''}
       <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">${t('▶ Проверить звук')}</button></div>
+    <div class="card"><h3>🕯 ${t('Тень')}</h3>
+      <p class="muted" style="font-size:13px;margin:0 0 10px">${t('Утром и вечером Тень встречает тебя один раз — говорит по твоему состоянию и зовёт к одному шагу. Здесь можно вызвать эту встречу заново, чтобы посмотреть.')}</p>
+      <button class="btn ghost sm" data-action="moment-replay">${t('Показать встречу сейчас')}</button></div>
     ${ambientCard()}
     ${pwaCard()}
     <div class="card"><h3>🌐 ${t('Язык')}</h3>
@@ -8938,7 +8943,7 @@ const APP_SHELL = `
   </header>
   <main id="main"></main>
   <div id="toasts"></div>
-  <button id="ai-fab" data-action="open-helper" title="Помощник Satoru — спроси про любую функцию" aria-label="Помощник">🤖<span class="fab-streak" id="fab-streak" hidden></span></button>`;
+  <button id="ai-fab" data-action="open-helper" title="Тень — спроси о себе или о приложении" aria-label="Тень"><img class="fab-face" src="/art/companions/shadow-v1-20260716/shadow-spirit-calm.png" alt="" /><span class="fab-streak" id="fab-streak" hidden></span></button>`;
 
 // ---- Мультиплеер: пати + кооп-рейд (Племя). null=не загружено, false=не в пати, объект=в пати ----
 const RAID_PER_MEMBER = 600; // XP/чел/неделя — цель кооп-рейда (синхр. с сервером)
@@ -9951,6 +9956,13 @@ function onClick(e) {
   if (action === 'comp-check') { State._compForm = el.dataset.kind === 'e' ? 'e' : 'm'; render(); return; }
   if (action === 'comp-cancel') { State._compForm = null; render(); return; }
   if (action === 'moment-close') { closeMoment(); return; }
+  if (action === 'moment-replay') {
+    // Встреча по замыслу бывает раз в день — без этого её нельзя ни посмотреть,
+    // ни показать другому, пока не наступит следующее утро.
+    closeMoment();
+    showMoment(new Date().getHours() >= 17 ? 'e' : 'm');
+    return;
+  }
   if (action === 'moment-pet') {
     // То же, что «погладить» на карточке, но из момента: закрываем его следом,
     // чтобы жест завершал встречу, а не оставлял человека в оверлее.
