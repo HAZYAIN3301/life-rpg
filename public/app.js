@@ -1077,6 +1077,17 @@ const I18N_EXTRA = {
   'Добавь ключ в Настройках.': { en: 'Add a key in Settings.', de: 'Füge einen Schlüssel in den Einstellungen hinzu.', uk: 'Додай ключ у Налаштуваннях.', es: 'Añade una clave en Ajustes.' },
   'Добавь ИИ-ключ в Настройках': { en: 'Add an AI key in Settings', de: 'Füge einen KI-Schlüssel in den Einstellungen hinzu', uk: 'Додай ШІ-ключ у Налаштуваннях', es: 'Añade una clave de IA en Ajustes' },
   'Начать': { en: 'Start', de: 'Starten', uk: 'Почати', es: 'Empezar' },
+  // ── 🕯 Момент дня с Тенью ──
+  'подряд': { en: 'in a row', de: 'am Stück', uk: 'поспіль', es: 'seguidos' },
+  'К делам': { en: 'To my day', de: 'Zu meinem Tag', uk: 'До справ', es: 'A mi día' },
+  'Спасибо': { en: 'Thanks', de: 'Danke', uk: 'Дякую', es: 'Gracias' },
+  'жмурится от тепла': { en: 'squints from the warmth', de: 'blinzelt vor Wärme', uk: 'мружиться від тепла', es: 'entrecierra los ojos de gusto' },
+  'С добрым. Я тут посидел, посмотрел на твой день — выглядит подъёмно.': { en: 'Morning. I sat here looking over your day — it looks doable.', de: 'Morgen. Ich habe mir deinen Tag angesehen — sieht machbar aus.', uk: 'З добрим. Я тут посидів, подивився на твій день — виглядає підйомно.', es: 'Buenos días. Estuve mirando tu día — se ve llevadero.' },
+  'Утро. Ничего героического не обещаю, но один шаг мы точно сделаем.': { en: "Morning. I won't promise anything heroic, but we'll take one step for sure.", de: 'Morgen. Nichts Heldenhaftes versprochen, aber einen Schritt schaffen wir.', uk: 'Ранок. Нічого героїчного не обіцяю, але один крок ми точно зробимо.', es: 'Mañana. No prometo nada heroico, pero un paso lo damos seguro.' },
+  'Проснулся? Отлично. Я, честно говоря, и не ложился.': { en: "Awake? Good. I didn't exactly go to bed, to be honest.", de: 'Wach? Gut. Ich bin ehrlich gesagt gar nicht erst schlafen gegangen.', uk: 'Прокинувся? Чудово. Я, чесно кажучи, і не лягав.', es: '¿Despierto? Bien. Yo, sinceramente, ni me acosté.' },
+  'Вечер. Давай без итогов по пунктам — просто как оно?': { en: 'Evening. Skip the bullet-point summary — how was it, really?', de: 'Abend. Lass die Punkteliste — wie war es wirklich?', uk: 'Вечір. Давай без підсумків по пунктах — просто як воно?', es: 'Noche. Sin resúmenes por puntos — ¿cómo fue de verdad?' },
+  'День к концу. Что бы там ни вышло, ты сегодня был.': { en: 'The day is winding down. However it went, you showed up today.', de: 'Der Tag geht zu Ende. Wie es auch lief — du warst heute da.', uk: 'День добігає кінця. Що б там не вийшло, ти сьогодні був.', es: 'El día se acaba. Saliera como saliera, hoy estuviste.' },
+  'Ну что, досидели до вечера. Расскажешь, как прошло?': { en: 'Well, we made it to evening. Want to tell me how it went?', de: 'Na, bis zum Abend geschafft. Erzählst du, wie es lief?', uk: 'Ну що, досиділи до вечора. Розкажеш, як минуло?', es: 'Bueno, llegamos a la noche. ¿Me cuentas cómo fue?' },
   // ── 🤖 Онбординг v2: Тень собирает старт ──
   '🤖 Расскажи о себе — соберу всё сам': { en: '🤖 Tell me about yourself — I\'ll set it up', de: '🤖 Erzähl mir von dir — ich richte alles ein', uk: '🤖 Розкажи про себе — зберу все сам', es: '🤖 Cuéntame sobre ti — yo lo preparo' },
   'Пара предложений своими словами: чем занимаешься, что важно, к чему идёшь. Я разложу это на сферы и первые дела.': { en: 'A couple of sentences in your own words: what you do, what matters, where you\'re heading. I\'ll turn it into spheres and first tasks.', de: 'Ein paar Sätze in deinen Worten: was du machst, was zählt, wohin du willst. Ich mache daraus Bereiche und erste Aufgaben.', uk: 'Пара речень своїми словами: чим займаєшся, що важливо, до чого йдеш. Я розкладу це на сфери й перші справи.', es: 'Un par de frases con tus palabras: qué haces, qué te importa, hacia dónde vas. Lo convierto en esferas y primeras tareas.' },
@@ -6026,6 +6037,114 @@ function compCheckinDue() {
   if (!ch.e && hr >= 17) due.push('e');
   return due;
 }
+// ============================================================
+//  🕯 Момент дня с Тенью (по разбору Альберта 28.07)
+//  Проблема: после подъёма списка дел наверх экран стал удобным, но обычным —
+//  «классический планер, ради которого незачем возвращаться». Всё, что делало
+//  приложение своим, уехало вниз и перестало встречать человека.
+//  Решение НЕ в том, чтобы вернуть большую карточку наверх (она мешала каждый
+//  заход), а в том, чтобы уникальность случалась РАЗ В ДЕНЬ и в нужный момент:
+//  один раз утром и один раз вечером Тень встречает человека, говорит по его
+//  реальному состоянию и зовёт к одному короткому действию. Остальные заходы
+//  за день экран остаётся чистым планером.
+//  ⚠️ Ключевое отличие от нуджей и рейд-баннеров: это НЕ «каждый раз при заходе».
+//  Показано → записано по дате → до завтра не возвращается.
+// ============================================================
+function momentState() {
+  const c = ensureCompanion();
+  if (!c.moments) c.moments = {};
+  return c.moments;
+}
+// Какой момент уместен прямо сейчас: 'm' до 14:00, 'e' после 17:00 — и только если
+// сегодня этот момент ещё не показывали.
+function momentDue() {
+  const t = todayStr(), hr = new Date().getHours(), shown = momentState()[t] || [];
+  if (hr < 14 && !shown.includes('m')) return 'm';
+  if (hr >= 17 && !shown.includes('e')) return 'e';
+  return null;
+}
+function momentSeen(kind) {
+  const t = todayStr(), ms = momentState();
+  ms[t] = [...new Set([...(ms[t] || []), kind])];
+  // не копим историю вечно — храним только последние 7 дней
+  const keep = Object.keys(ms).sort().slice(-7);
+  Object.keys(ms).forEach((k) => { if (!keep.includes(k)) delete ms[k]; });
+  Store.save('settings', State.settings);
+}
+// Фолбэк-реплики: момент обязан работать и БЕЗ ИИ-ключа (Free-тир, отвалившийся ключ).
+const MOMENT_LINES = {
+  m: ['С добрым. Я тут посидел, посмотрел на твой день — выглядит подъёмно.',
+      'Утро. Ничего героического не обещаю, но один шаг мы точно сделаем.',
+      'Проснулся? Отлично. Я, честно говоря, и не ложился.'],
+  e: ['Вечер. Давай без итогов по пунктам — просто как оно?',
+      'День к концу. Что бы там ни вышло, ты сегодня был.',
+      'Ну что, досидели до вечера. Расскажешь, как прошло?'],
+};
+// Строка стрика целиком, а не «число + переведённое слово»: русский plural() отдаёт
+// «дня/дней» всегда, и на немецком выходило «4 дня am Stück» — смесь языков. Каждый
+// язык собирает фразу по своим правилам.
+function momentStreakLine(n) {
+  const l = lang();
+  if (l === 'ru') return `🔥 ${n} ${plural(n, 'день', 'дня', 'дней')} подряд`;
+  if (l === 'uk') return `🔥 ${n} ${plural(n, 'день', 'дні', 'днів')} поспіль`;
+  if (l === 'de') return `🔥 ${n} ${n === 1 ? 'Tag' : 'Tage'} am Stück`;
+  if (l === 'es') return `🔥 ${n} ${n === 1 ? 'día' : 'días'} seguidos`;
+  return `🔥 ${n} ${n === 1 ? 'day' : 'days'} in a row`;
+}
+let _momentBusy = false;
+// Реплика Тени под момент: ИИ по живому состоянию, иначе — пул выше.
+async function momentLine(kind) {
+  if (!canUseAi()) return t(dayPick('moment' + kind, MOMENT_LINES[kind]));
+  try {
+    const system = `Ты — Тень, спутник человека в Satoru (философия «жизнь как десятиборье»; поддержка через любовь, не через вину). ${kind === 'm' ? 'СЕЙЧАС УТРО — ты встречаешь человека в начале дня.' : 'СЕЙЧАС ВЕЧЕР — день заканчивается.'} Скажи ОДНУ живую фразу на «ты», опираясь на его реальные данные ниже. Тепло, по-человечески, без морали и без вины. Максимум 140 знаков. Если данные тревожные (давно без отдыха, энергия у нуля, копятся просрочки) — назови это мягко и прямо, без нотаций. Никаких списков и цифр-отчётов. Верни ТОЛЬКО фразу.\n${aiAnswerLangLine()}`;
+    const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider: aiProvider(), system, prompt: stateNowContext() }) });
+    const d = await r.json();
+    const txt = (d && d.text || '').replace(/\s+/g, ' ').replace(/^["«»']+|["«»']+$/g, '').trim().slice(0, 200);
+    return txt || t(dayPick('moment' + kind, MOMENT_LINES[kind]));
+  } catch { return t(dayPick('moment' + kind, MOMENT_LINES[kind])); }
+}
+async function showMoment(kind) {
+  if (document.getElementById('moment') || _momentBusy) return;
+  _momentBusy = true;
+  try {
+  const c = ensureCompanion(), ti = compTierIdx(c.bond), streak = currentStreak();
+  const ov = document.createElement('div');
+  ov.id = 'moment'; ov.className = 'modal-overlay moment-ov';
+  ov.innerHTML = `<div class="moment-box">
+    <div class="moment-art">${shadowVideo(ti, 'calm')}</div>
+    <p class="moment-line" id="moment-line">…</p>
+    ${streak > 0 ? `<div class="moment-streak">${momentStreakLine(streak)}</div>` : ''}
+    <div class="moment-acts">
+      <button class="btn" data-action="moment-pet">🫶 ${t('Погладить')}</button>
+      <button class="btn ghost" data-action="moment-close">${kind === 'm' ? t('К делам') : t('Спасибо')}</button>
+    </div></div>`;
+  document.body.appendChild(ov);
+  ov.dataset.kind = kind;
+  momentSeen(kind);
+  const line = await momentLine(kind);
+  const el = document.getElementById('moment-line');
+  if (el) el.textContent = line;
+  track('moment:' + kind);
+  } finally { _momentBusy = false; } // иначе один сбой заблокировал бы моменты до перезагрузки
+}
+function closeMoment() { document.getElementById('moment')?.remove(); }
+// Проверка на рендере «Сегодня»: момент не спорит с туториалом и дрипами за внимание.
+let _momentTimer = null;
+function momentCheck() {
+  if (State.view !== 'today' || State.phase !== 'app') return;
+  const tut = ensureTutorial();
+  if (tut.active || !tutDoneOrSkipped()) return;
+  if (document.getElementById('moment') || _momentTimer || _momentBusy) return;
+  const kind = momentDue();
+  if (!kind) return;
+  // Один таймер на всё: render() вызывается часто (тик таймера, тосты, применение
+  // изменений), и без этого замка каждый вызов плодил бы свой отложенный показ.
+  _momentTimer = setTimeout(() => {
+    _momentTimer = null;
+    try { showMoment(kind); } catch {}
+  }, 400);
+}
 function companionCard() {
   const c = ensureCompanion(), mood = compMood();
   const ti = compTierIdx(c.bond), tier = COMP_TIERS[ti], nextT = compNextTier(c.bond);
@@ -8819,7 +8938,7 @@ const APP_SHELL = `
   </header>
   <main id="main"></main>
   <div id="toasts"></div>
-  <button id="ai-fab" data-action="open-helper" title="Помощник Satoru — спроси про любую функцию" aria-label="Помощник">🤖</button>`;
+  <button id="ai-fab" data-action="open-helper" title="Помощник Satoru — спроси про любую функцию" aria-label="Помощник">🤖<span class="fab-streak" id="fab-streak" hidden></span></button>`;
 
 // ---- Мультиплеер: пати + кооп-рейд (Племя). null=не загружено, false=не в пати, объект=в пати ----
 const RAID_PER_MEMBER = 600; // XP/чел/неделя — цель кооп-рейда (синхр. с сервером)
@@ -9247,6 +9366,12 @@ function render() {
   try { kickCompVideo(); } catch (e) { /* видео-автоплей — не критично */ }
   try { tutorialPaint(); } catch (e) { /* гайд-оверлей — не критично */ }
   try { dripCheck(); } catch (e) { /* капельница гайда — не критично */ }
+  try { momentCheck(); } catch (e) { /* момент дня — тоже не критично для рендера */ }
+  // Стрик прямо на кнопке Тени: маленькая цифра вместо отдельной карточки на экране
+  try {
+    const fs = document.getElementById('fab-streak'), st = currentStreak();
+    if (fs) { if (st > 0) { fs.textContent = '🔥' + st; fs.hidden = false; } else fs.hidden = true; }
+  } catch {}
   dismissBootLoader();
 }
 function dismissBootLoader() {
@@ -9825,6 +9950,19 @@ function onClick(e) {
   if (action === 'comp-rename') { State._compForm = 'name'; render(); return; }
   if (action === 'comp-check') { State._compForm = el.dataset.kind === 'e' ? 'e' : 'm'; render(); return; }
   if (action === 'comp-cancel') { State._compForm = null; render(); return; }
+  if (action === 'moment-close') { closeMoment(); return; }
+  if (action === 'moment-pet') {
+    // То же, что «погладить» на карточке, но из момента: закрываем его следом,
+    // чтобы жест завершал встречу, а не оставлял человека в оверлее.
+    const cm = ensureCompanion();
+    if (cm.pet !== today) {
+      cm.pet = today; cm.bond += 1; cm.lastSeen = today; State._compAway = 0;
+      Store.save('settings', State.settings);
+      try { sfx('complete'); } catch {}
+      toast('💛 ' + esc(cm.name) + ' ' + t('жмурится от тепла'));
+    }
+    closeMoment(); render(); return;
+  }
   if (action === 'comp-pet') {
     const c = ensureCompanion();
     if (c.pet === today) return;

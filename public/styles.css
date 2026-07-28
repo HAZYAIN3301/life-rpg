@@ -1112,6 +1112,29 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .drc-row > input[type="checkbox"] { flex: 0 0 auto; width: 17px; height: 17px; margin-top: 2px; accent-color: var(--accent); }
 .drc-row > span { flex: 1 1 auto; min-width: 0; }
 
+/* 🕯 Момент дня с Тенью — встреча, а не модалка-нотация. Появляется один раз
+   утром и один раз вечером, поэтому может позволить себе занять экран целиком. */
+.moment-ov { align-items: flex-end; }
+.moment-box {
+  width: 100%; max-width: 460px; margin: 0 auto;
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 20px 20px 0 0; padding: 22px 20px calc(22px + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;
+  animation: momentUp .32s cubic-bezier(.22,.9,.3,1);
+}
+@keyframes momentUp { from { transform: translateY(22px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .moment-box { animation: none; } }
+.moment-art { width: 116px; height: 116px; display: flex; align-items: center; justify-content: center; }
+.moment-art img, .moment-art video { width: 100%; height: 100%; object-fit: contain; }
+.moment-line { margin: 0; font-size: 16px; line-height: 1.5; color: var(--text); max-width: 34ch; }
+.moment-streak { font-size: 13px; font-weight: 800; color: var(--muted); letter-spacing: .01em; }
+.moment-acts { display: flex; gap: 9px; width: 100%; margin-top: 2px; }
+.moment-acts .btn { flex: 1 1 0; min-height: 46px; }
+@media (min-width: 620px) {
+  .moment-ov { align-items: center; }
+  .moment-box { border-radius: 20px; padding-bottom: 22px; }
+}
+
 /* 🤖 Онбординг v2: блок «Тень собирает старт». */
 .ob-ai { margin-bottom: 18px; }
 .ob-ai textarea { width: 100%; resize: vertical; }
@@ -6467,7 +6490,21 @@ html.mobile-nav-open body {
     font-size: 11px;
   }
 
-  #ai-fab { display: none; }
+  /* Тень в углу — на мобильном кнопка была ПОЛНОСТЬЮ скрыта, и помощник
+     оставался доступен только через меню «Ещё». То есть на телефоне (главном
+     устройстве) Джарвиса нельзя было позвать в один тап. Возвращаем, поднимая
+     над нижней навигацией, и делаем компактнее — экран не забивает. */
+  #ai-fab {
+    display: flex; align-items: center; justify-content: center;
+    width: 46px; height: 46px; font-size: 21px;
+    right: 14px; bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+  #ai-fab .fab-streak {
+    position: absolute; top: -5px; right: -4px;
+    background: var(--panel2); border: 1px solid var(--line); color: var(--text);
+    border-radius: 999px; padding: 1px 5px; font-size: 10px; font-weight: 800;
+    line-height: 1.4; letter-spacing: -.01em;
+  }
 
   #toasts,
   .focus-pill {
