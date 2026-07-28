@@ -1,0 +1,373 @@
+{
+  "canvas": [
+    1024,
+    1536
+  ],
+  "productionPngs": 26,
+  "layersInNeutralStack": 13,
+  "wardrobeSlots": 9,
+  "faceStates": 4,
+  "neutralCompositePixelExact": true,
+  "allProductionFilesPassed": true,
+  "differingPixels": 0,
+  "maximumChannelDelta": 0,
+  "assignedMasterPixels": 423279,
+  "stateChecks": {
+    "neutral": {
+      "changedPixels": 0,
+      "changesOutsideFace": 0
+    },
+    "blink": {
+      "changedPixels": 8167,
+      "changesOutsideFace": 0
+    },
+    "happy": {
+      "changedPixels": 10976,
+      "changesOutsideFace": 0
+    },
+    "tired": {
+      "changedPixels": 10973,
+      "changesOutsideFace": 0
+    }
+  },
+  "files": {
+    "production/base/body-underlay-safe.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 258794,
+      "magentaPixels": 0
+    },
+    "production/wardrobe/outfit/traveller-outfit-backpack-reveal.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 8179,
+      "magentaPixels": 0
+    },
+    "production/wardrobe/backpack/backpack-back.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 27723,
+      "magentaPixels": 0
+    },
+    "production/wardrobe/hair/traveller-hair-back.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 12902,
+      "magentaPixels": 0
+    },
+    "production/wardrobe/outfit/traveller-outfit-current.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 325184,
+      "magentaPixels": 0
+    },
+    "production/base/body-visible-approved.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 5217,
+      "magentaPixels": 0
+    },
+    "production/wardrobe/scarf/traveller-scarf.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 18565,
+      "magentaPixels": 0
+    },
+    "production/wardrobe/backpack/backpack-straps.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 26420,
+      "magentaPixels": 0
+    },
+    "production/states/traveller-face-neutral.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 11071,
+      "magentaPixels": 0
+    },
+    "production/wardrobe/hair/traveller-hair-front.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 21178,
+      "magentaPixels": 0
+    },
+    "production/wardrobe/goggles/traveller-goggles.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 15663,
+      "magentaPixels": 0
+    },
+    "production/wardrobe/pouch/traveller-pouch.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 23267,
+      "magentaPixels": 0
+    },
+    "production/wardrobe/lantern/traveller-lantern.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 23421,
+      "magentaPixels": 0
+    },
+    "production/states/traveller-face-blink.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 11071,
+      "magentaPixels": 0
+    },
+    "production/states/traveller-face-happy.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 11071,
+      "magentaPixels": 0
+    },
+    "production/states/traveller-face-tired.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 11071,
+      "magentaPixels": 0
+    },
+    "production/base/body-underlay-full.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 260985,
+      "magentaPixels": 0
+    },
+    "production/base/body-bald-head-reveal.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 40545,
+      "magentaPixels": 0
+    },
+    "production/colorways/blue/outfit-backpack-reveal.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 8179,
+      "magentaPixels": 0
+    },
+    "production/colorways/blue/outfit-current.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 325184,
+      "magentaPixels": 0
+    },
+    "production/colorways/violet/outfit-backpack-reveal.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 8179,
+      "magentaPixels": 0
+    },
+    "production/colorways/violet/outfit-current.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 325184,
+      "magentaPixels": 0
+    },
+    "production/colorways/crimson/outfit-backpack-reveal.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 8179,
+      "magentaPixels": 0
+    },
+    "production/colorways/crimson/outfit-current.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 325184,
+      "magentaPixels": 0
+    },
+    "production/colorways/forest/outfit-backpack-reveal.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 8179,
+      "magentaPixels": 0
+    },
+    "production/colorways/forest/outfit-current.png": {
+      "canvasCorrect": true,
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 325184,
+      "magentaPixels": 0
+    }
+  }
+}

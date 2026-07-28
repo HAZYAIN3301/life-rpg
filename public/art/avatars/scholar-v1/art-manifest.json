@@ -1,0 +1,240 @@
+{
+  "id": "traveller-scholar-v1",
+  "status": "production-ready",
+  "canvas": [
+    1024,
+    1536
+  ],
+  "compositeOrigin": [
+    0,
+    0
+  ],
+  "sourceMaster": "master/scholar-master-alpha.png",
+  "sourceSha256": "3e7ea4e1125c1646a8ae99c8d14747c898d32f53b52375546c1bc276115281ec",
+  "visiblePixelPolicy": "approved master owns every visible neutral pixel; generated controls supply hidden geometry only",
+  "layers": [
+    {
+      "id": "body-safe",
+      "slot": "body",
+      "z": 0,
+      "file": "base/body-underlay-safe.png"
+    },
+    {
+      "id": "gear-free-base",
+      "slot": "outfit",
+      "z": 4,
+      "file": "wardrobe/outfit/scholar-gear-free-base.png"
+    },
+    {
+      "id": "outfit-reveal",
+      "slot": "outfit",
+      "z": 5,
+      "file": "wardrobe/outfit/scholar-outfit-reveal.png"
+    },
+    {
+      "id": "bald-head-reveal",
+      "slot": "body",
+      "z": 8,
+      "file": "base/body-bald-head-reveal.png"
+    },
+    {
+      "id": "hair-reveal",
+      "slot": "hair",
+      "z": 10,
+      "file": "wardrobe/hair/scholar-hair-reveal.png"
+    },
+    {
+      "id": "backpack",
+      "slot": "gear",
+      "z": 20,
+      "file": "wardrobe/backpack/scholar-backpack.png"
+    },
+    {
+      "id": "outfit",
+      "slot": "outfit",
+      "z": 40,
+      "file": "wardrobe/outfit/scholar-outfit-current.png"
+    },
+    {
+      "id": "body-visible",
+      "slot": "body",
+      "z": 50,
+      "file": "base/body-visible-approved.png"
+    },
+    {
+      "id": "face",
+      "slot": "face",
+      "z": 60,
+      "file": "states/scholar-face-neutral.png"
+    },
+    {
+      "id": "hair",
+      "slot": "hair",
+      "z": 70,
+      "file": "wardrobe/hair/scholar-hair-current.png"
+    },
+    {
+      "id": "hat",
+      "slot": "hat",
+      "z": 80,
+      "file": "wardrobe/hat/scholar-hat.png"
+    },
+    {
+      "id": "glasses",
+      "slot": "glasses",
+      "z": 90,
+      "file": "wardrobe/glasses/scholar-glasses.png"
+    },
+    {
+      "id": "belt-kit",
+      "slot": "gear",
+      "z": 100,
+      "file": "wardrobe/belt-kit/scholar-belt-kit.png"
+    },
+    {
+      "id": "amulet",
+      "slot": "gear",
+      "z": 110,
+      "file": "wardrobe/amulet/scholar-amulet.png"
+    }
+  ],
+  "bodyFull": "base/body-underlay-full.png",
+  "faceStates": {
+    "neutral": "states/scholar-face-neutral.png"
+  },
+  "colorways": {
+    "teal": {
+      "label": "Бирюзовый",
+      "swatch": "#1e7773",
+      "layers": {
+        "body-safe": "colorways/teal/base/body-underlay-safe.png",
+        "gear-free-base": "colorways/teal/wardrobe/outfit/scholar-gear-free-base.png",
+        "outfit-reveal": "colorways/teal/wardrobe/outfit/scholar-outfit-reveal.png",
+        "bald-head-reveal": "colorways/teal/base/body-bald-head-reveal.png",
+        "hair-reveal": "colorways/teal/wardrobe/hair/scholar-hair-reveal.png",
+        "backpack": "colorways/teal/wardrobe/backpack/scholar-backpack.png",
+        "outfit": "colorways/teal/wardrobe/outfit/scholar-outfit-current.png",
+        "body-visible": "colorways/teal/base/body-visible-approved.png",
+        "face": "colorways/teal/states/scholar-face-neutral.png",
+        "hair": "colorways/teal/wardrobe/hair/scholar-hair-current.png",
+        "hat": "colorways/teal/wardrobe/hat/scholar-hat.png",
+        "glasses": "colorways/teal/wardrobe/glasses/scholar-glasses.png",
+        "belt-kit": "colorways/teal/wardrobe/belt-kit/scholar-belt-kit.png",
+        "amulet": "colorways/teal/wardrobe/amulet/scholar-amulet.png"
+      }
+    },
+    "blue": {
+      "label": "Синий",
+      "swatch": "#3f6496",
+      "layers": {
+        "body-safe": "colorways/blue/base/body-underlay-safe.png",
+        "gear-free-base": "colorways/blue/wardrobe/outfit/scholar-gear-free-base.png",
+        "outfit-reveal": "colorways/blue/wardrobe/outfit/scholar-outfit-reveal.png",
+        "bald-head-reveal": "colorways/blue/base/body-bald-head-reveal.png",
+        "hair-reveal": "colorways/blue/wardrobe/hair/scholar-hair-reveal.png",
+        "backpack": "colorways/blue/wardrobe/backpack/scholar-backpack.png",
+        "outfit": "colorways/blue/wardrobe/outfit/scholar-outfit-current.png",
+        "body-visible": "colorways/blue/base/body-visible-approved.png",
+        "face": "colorways/blue/states/scholar-face-neutral.png",
+        "hair": "colorways/blue/wardrobe/hair/scholar-hair-current.png",
+        "hat": "colorways/blue/wardrobe/hat/scholar-hat.png",
+        "glasses": "colorways/blue/wardrobe/glasses/scholar-glasses.png",
+        "belt-kit": "colorways/blue/wardrobe/belt-kit/scholar-belt-kit.png",
+        "amulet": "colorways/blue/wardrobe/amulet/scholar-amulet.png"
+      }
+    },
+    "violet": {
+      "label": "Фиолетовый",
+      "swatch": "#755596",
+      "layers": {
+        "body-safe": "colorways/violet/base/body-underlay-safe.png",
+        "gear-free-base": "colorways/violet/wardrobe/outfit/scholar-gear-free-base.png",
+        "outfit-reveal": "colorways/violet/wardrobe/outfit/scholar-outfit-reveal.png",
+        "bald-head-reveal": "colorways/violet/base/body-bald-head-reveal.png",
+        "hair-reveal": "colorways/violet/wardrobe/hair/scholar-hair-reveal.png",
+        "backpack": "colorways/violet/wardrobe/backpack/scholar-backpack.png",
+        "outfit": "colorways/violet/wardrobe/outfit/scholar-outfit-current.png",
+        "body-visible": "colorways/violet/base/body-visible-approved.png",
+        "face": "colorways/violet/states/scholar-face-neutral.png",
+        "hair": "colorways/violet/wardrobe/hair/scholar-hair-current.png",
+        "hat": "colorways/violet/wardrobe/hat/scholar-hat.png",
+        "glasses": "colorways/violet/wardrobe/glasses/scholar-glasses.png",
+        "belt-kit": "colorways/violet/wardrobe/belt-kit/scholar-belt-kit.png",
+        "amulet": "colorways/violet/wardrobe/amulet/scholar-amulet.png"
+      }
+    },
+    "crimson": {
+      "label": "Бордовый",
+      "swatch": "#984c58",
+      "layers": {
+        "body-safe": "colorways/crimson/base/body-underlay-safe.png",
+        "gear-free-base": "colorways/crimson/wardrobe/outfit/scholar-gear-free-base.png",
+        "outfit-reveal": "colorways/crimson/wardrobe/outfit/scholar-outfit-reveal.png",
+        "bald-head-reveal": "colorways/crimson/base/body-bald-head-reveal.png",
+        "hair-reveal": "colorways/crimson/wardrobe/hair/scholar-hair-reveal.png",
+        "backpack": "colorways/crimson/wardrobe/backpack/scholar-backpack.png",
+        "outfit": "colorways/crimson/wardrobe/outfit/scholar-outfit-current.png",
+        "body-visible": "colorways/crimson/base/body-visible-approved.png",
+        "face": "colorways/crimson/states/scholar-face-neutral.png",
+        "hair": "colorways/crimson/wardrobe/hair/scholar-hair-current.png",
+        "hat": "colorways/crimson/wardrobe/hat/scholar-hat.png",
+        "glasses": "colorways/crimson/wardrobe/glasses/scholar-glasses.png",
+        "belt-kit": "colorways/crimson/wardrobe/belt-kit/scholar-belt-kit.png",
+        "amulet": "colorways/crimson/wardrobe/amulet/scholar-amulet.png"
+      }
+    },
+    "forest": {
+      "label": "Лесной",
+      "swatch": "#477856",
+      "layers": {
+        "body-safe": "colorways/forest/base/body-underlay-safe.png",
+        "gear-free-base": "colorways/forest/wardrobe/outfit/scholar-gear-free-base.png",
+        "outfit-reveal": "colorways/forest/wardrobe/outfit/scholar-outfit-reveal.png",
+        "bald-head-reveal": "colorways/forest/base/body-bald-head-reveal.png",
+        "hair-reveal": "colorways/forest/wardrobe/hair/scholar-hair-reveal.png",
+        "backpack": "colorways/forest/wardrobe/backpack/scholar-backpack.png",
+        "outfit": "colorways/forest/wardrobe/outfit/scholar-outfit-current.png",
+        "body-visible": "colorways/forest/base/body-visible-approved.png",
+        "face": "colorways/forest/states/scholar-face-neutral.png",
+        "hair": "colorways/forest/wardrobe/hair/scholar-hair-current.png",
+        "hat": "colorways/forest/wardrobe/hat/scholar-hat.png",
+        "glasses": "colorways/forest/wardrobe/glasses/scholar-glasses.png",
+        "belt-kit": "colorways/forest/wardrobe/belt-kit/scholar-belt-kit.png",
+        "amulet": "colorways/forest/wardrobe/amulet/scholar-amulet.png"
+      }
+    }
+  },
+  "toggles": [
+    {
+      "id": "outfit",
+      "label": "Мантия",
+      "default": true
+    },
+    {
+      "id": "hair",
+      "label": "Волосы",
+      "default": true
+    },
+    {
+      "id": "hat",
+      "label": "Шляпа",
+      "default": true
+    },
+    {
+      "id": "glasses",
+      "label": "Очки",
+      "default": true
+    },
+    {
+      "id": "gear",
+      "label": "Снаряжение",
+      "default": true
+    }
+  ],
+  "qa": "qa-report.json",
+  "qaReport": "qa-report.md",
+  "previews": {
+    "toggles": "previews/scholar-toggle-matrix.png",
+    "colorways": "previews/scholar-modular-colorways.png"
+  }
+}

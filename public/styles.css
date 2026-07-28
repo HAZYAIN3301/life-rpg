@@ -3574,6 +3574,190 @@ body {
    Чистый контейнер, картинка целиком (object-fit contain), не обрезается. */
 .ave-stage-figure { width: 100% !important; height: auto !important; min-height: 300px; max-width: none; border-radius: 16px !important; overflow: visible !important; background: radial-gradient(120% 90% at 50% 20%, color-mix(in srgb, var(--accent) 8%, var(--panel2)), var(--panel)) !important; display: flex; align-items: center; justify-content: center; padding: 18px 0; }
 .avatar-preset-figure { max-height: 340px; width: auto; max-width: 88%; object-fit: contain; display: block; filter: drop-shadow(0 10px 22px rgba(0,0,0,.4)); }
+.avatar-art-stack { position: relative; display: block; aspect-ratio: 2 / 3; isolation: isolate; }
+.avatar-art-rig { position: absolute; inset: 0; transform-origin: 50% 86%; will-change: transform; }
+.avatar-art-layer { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none; will-change: transform, filter; }
+.avatar-art-stack[data-avatar-interactive="true"] { cursor: pointer; border-radius: 18px; outline: none; }
+.avatar-art-stack[data-avatar-interactive="true"]:focus-visible { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 72%, transparent); }
+.avatar-art-stack--figure { width: min(92%, 284px); filter: drop-shadow(0 13px 22px rgba(0,0,0,.38)); }
+.avatar-art-portrait { position: absolute; inset: 0; display: block; overflow: hidden; border-radius: inherit; }
+.avatar-art-stack--portrait { position: absolute; left: 50%; top: -15%; width: 290%; transform: translateX(-50%); }
+.ch-avatar-img,
+.coll-preview { position: relative; }
+.up-av-raster,
+.mobile-sheet-avatar {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 34%, color-mix(in srgb, var(--accent) 22%, var(--surface-4)), var(--surface-3));
+  color: inherit;
+  cursor: pointer;
+}
+.up-av-raster { width: 32px; height: 32px; }
+.mobile-sheet-avatar { width: 42px; height: 42px; }
+.up-av-raster:hover,
+.mobile-sheet-avatar:hover { border-color: color-mix(in srgb, var(--accent) 65%, var(--line)); }
+.up-av-raster:focus-visible,
+.mobile-sheet-avatar:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.up-av-raster .avatar-art-stack--portrait,
+.mobile-sheet-avatar .avatar-art-stack--portrait { top: -14%; width: 300%; }
+
+.den-avatar-raster { bottom: -10px; width: 180px; }
+.den-avatar-raster .avatar-art-stack { width: 100%; filter: drop-shadow(0 8px 11px rgba(0,0,0,.32)); }
+
+/* Движение — свойство рига, а не внешнего контейнера: portrait-crop и позиционирование
+   остаются стабильными, пока тело и навесные слои двигаются независимо. */
+.avatar-art-stack[data-avatar-motion="idle"] .avatar-art-rig { animation: traveller-body-idle 4.6s ease-in-out infinite; }
+.avatar-art-stack[data-avatar-motion="portrait"] .avatar-art-rig { animation: traveller-body-portrait 5.8s ease-in-out infinite; }
+.avatar-art-stack[data-avatar-motion="focus"] .avatar-art-rig { animation: traveller-body-focus 5.2s ease-in-out infinite; }
+.avatar-art-stack[data-avatar-motion="tired"] .avatar-art-rig { animation: traveller-body-tired 5.8s ease-in-out infinite; }
+.avatar-art-stack[data-avatar-motion="happy"] .avatar-art-rig { animation: traveller-body-happy 1.05s ease-out 2; }
+.avatar-art-stack[data-avatar-motion="victory"] .avatar-art-rig { animation: traveller-body-victory 1.1s ease-out 3; }
+
+.avatar-art-hair-back,
+.avatar-art-hair-front { transform-origin: 50% 18%; }
+.avatar-art-scarf { transform-origin: 48% 27%; }
+.avatar-art-backpack-back,
+.avatar-art-backpack-straps { transform-origin: 63% 30%; }
+.avatar-art-pouch { transform-origin: 58% 49%; }
+.avatar-art-lantern { transform-origin: 74% 43%; }
+.avatar-art-goggles { transform-origin: 50% 15%; }
+
+.avatar-art-stack[data-avatar-motion="idle"] .avatar-art-hair-back,
+.avatar-art-stack[data-avatar-motion="idle"] .avatar-art-hair-front,
+.avatar-art-stack[data-avatar-motion="portrait"] .avatar-art-hair-back,
+.avatar-art-stack[data-avatar-motion="portrait"] .avatar-art-hair-front { animation: traveller-hair-idle 5.1s ease-in-out infinite; }
+.avatar-art-stack[data-avatar-motion="idle"] .avatar-art-scarf { animation: traveller-scarf-idle 4.1s ease-in-out infinite; }
+.avatar-art-stack[data-avatar-motion="idle"] .avatar-art-pouch { animation: traveller-pouch-idle 4.7s ease-in-out infinite; }
+.avatar-art-stack[data-avatar-motion="idle"] .avatar-art-lantern,
+.avatar-art-stack[data-avatar-motion="focus"] .avatar-art-lantern { animation: traveller-lantern-idle 3.4s ease-in-out infinite; }
+.avatar-art-stack[data-avatar-motion="idle"] .avatar-art-backpack-back,
+.avatar-art-stack[data-avatar-motion="idle"] .avatar-art-backpack-straps { animation: traveller-pack-idle 4.6s ease-in-out infinite; }
+.avatar-art-stack[data-avatar-motion="focus"] .avatar-art-goggles { animation: traveller-goggles-focus 2.8s ease-in-out infinite; }
+
+.avatar-art-stack.is-reacting[data-avatar-reaction="greet"] .avatar-art-rig,
+.avatar-art-stack.is-reacting[data-avatar-reaction="happy"] .avatar-art-rig { animation: traveller-react-greet 1.3s cubic-bezier(.2,.8,.2,1) !important; }
+.avatar-art-stack.is-reacting[data-avatar-reaction="victory"] .avatar-art-rig,
+.avatar-art-stack.is-reacting[data-avatar-reaction="levelup"] .avatar-art-rig { animation: traveller-react-victory 1.9s cubic-bezier(.16,.84,.24,1) !important; }
+.avatar-art-stack.is-reacting[data-avatar-reaction="focus"] .avatar-art-rig { animation: traveller-react-focus 1.2s ease-out !important; }
+.avatar-art-stack.is-reacting[data-avatar-reaction="tired"] .avatar-art-rig { animation: traveller-react-tired 1.3s ease-out !important; }
+.avatar-art-stack.is-reacting .avatar-art-lantern { animation: traveller-lantern-react 1.15s ease-in-out !important; }
+.avatar-art-stack.is-reacting .avatar-art-scarf,
+.avatar-art-stack.is-reacting .avatar-art-pouch { animation: traveller-cloth-react 1.15s ease-in-out !important; }
+.avatar-art-stack.is-reacting .avatar-art-hair-back,
+.avatar-art-stack.is-reacting .avatar-art-hair-front { animation: traveller-hair-react 1.15s ease-in-out !important; }
+
+@keyframes traveller-body-idle {
+  0%, 100% { transform: translateY(0) rotate(0) scale(1); }
+  48% { transform: translateY(-1.8px) rotate(-.28deg) scaleX(1.002) scaleY(.998); }
+}
+@keyframes traveller-body-portrait {
+  0%, 100% { transform: translateY(0) rotate(0) scale(1); }
+  50% { transform: translateY(-1px) rotate(-.18deg) scale(1.003); }
+}
+@keyframes traveller-body-focus {
+  0%, 100% { transform: translateY(0) scaleX(1); }
+  50% { transform: translateY(-1px) scaleX(1.004); }
+}
+@keyframes traveller-body-tired {
+  0%, 100% { transform: translateY(6px) rotate(1.1deg) scaleY(.994); }
+  50% { transform: translateY(8px) rotate(1.45deg) scaleY(.99); }
+}
+@keyframes traveller-body-happy {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  38% { transform: translateY(-9px) scaleY(1.012); }
+  68% { transform: translateY(1px) scaleY(.994); }
+}
+@keyframes traveller-body-victory {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  34% { transform: translateY(-13px) rotate(-2deg); }
+  70% { transform: translateY(1px) rotate(1deg); }
+}
+@keyframes traveller-hair-idle { 0%,100% { transform: rotate(0); } 50% { transform: rotate(.45deg) translateY(-.4px); } }
+@keyframes traveller-scarf-idle { 0%,100% { transform: rotate(-.15deg); } 50% { transform: rotate(.55deg) translateX(.4px); } }
+@keyframes traveller-pouch-idle { 0%,100% { transform: rotate(0); } 50% { transform: rotate(.7deg); } }
+@keyframes traveller-lantern-idle { 0%,100% { transform: rotate(-.7deg); } 50% { transform: rotate(.9deg); } }
+@keyframes traveller-pack-idle { 0%,100% { transform: translateY(0); } 50% { transform: translateY(.8px) rotate(.12deg); } }
+@keyframes traveller-goggles-focus { 0%,72%,100% { filter: brightness(1); } 80% { filter: brightness(1.28) saturate(1.15); } }
+@keyframes traveller-react-greet {
+  0%,100% { transform: translateY(0) rotate(0); }
+  24% { transform: translateY(-5px) rotate(-1.7deg); }
+  50% { transform: translateY(-9px) rotate(1.1deg); }
+  74% { transform: translateY(1px) rotate(-.5deg); }
+}
+@keyframes traveller-react-victory {
+  0%,100% { transform: translateY(0) rotate(0) scale(1); }
+  22% { transform: translateY(-15px) rotate(-2.4deg) scale(1.018); }
+  45% { transform: translateY(1px) rotate(1.4deg) scale(.995); }
+  66% { transform: translateY(-8px) rotate(-1deg) scale(1.01); }
+  84% { transform: translateY(1px) rotate(.5deg); }
+}
+@keyframes traveller-react-focus { 0%,100% { transform: translateY(0); } 40% { transform: translateY(-3px) scaleX(1.008); } }
+@keyframes traveller-react-tired { 0% { transform: translateY(0); } 45%,100% { transform: translateY(7px) rotate(1.4deg) scaleY(.992); } }
+@keyframes traveller-lantern-react { 0%,100% { transform: rotate(0); } 30% { transform: rotate(-5deg); } 68% { transform: rotate(4deg); } }
+@keyframes traveller-cloth-react { 0%,100% { transform: rotate(0); } 34% { transform: rotate(2.2deg); } 70% { transform: rotate(-1.4deg); } }
+@keyframes traveller-hair-react { 0%,100% { transform: rotate(0); } 35% { transform: rotate(-1.3deg) translateY(-1px); } 68% { transform: rotate(.8deg); } }
+
+.avatar-reaction-cameo {
+  position: fixed;
+  right: 76px;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 92;
+  width: 126px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(24px) scale(.86);
+  transition: opacity .22s ease, transform .28s cubic-bezier(.18,.86,.3,1.18);
+  filter: drop-shadow(0 13px 19px rgba(0,0,0,.46));
+}
+.avatar-reaction-cameo.is-visible { opacity: 1; transform: translateY(0) scale(1); }
+.avatar-art-stack--cameo { width: 100%; }
+.avatar-reaction-cameo > span:last-child:not(.avatar-art-stack) {
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 5px 9px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: var(--shadow);
+}
+
+.avatar-editor-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 12px; }
+.avatar-editor-head h3 { margin: 0 0 3px; }
+.avatar-editor-head p { margin: 0; color: var(--muted); font-size: 12px; }
+.avatar-editor-badge { flex: 0 0 auto; padding: 5px 9px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line)); color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, var(--panel2)); font-size: 11px; font-weight: 800; }
+.avatar-customizer { display: grid; gap: 15px; margin-top: 16px; }
+.avatar-customizer section { display: grid; gap: 7px; }
+.avatar-customizer h4 { margin: 0; color: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.avatar-choice-row { display: flex; flex-wrap: wrap; gap: 7px; }
+.avatar-choice { min-height: 36px; padding: 7px 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel2); color: var(--text); font: inherit; font-size: 12px; cursor: pointer; transition: transform .12s, border-color .12s, background .12s; }
+.avatar-choice:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 60%, var(--line)); }
+.avatar-choice.is-selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--panel2)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 34%, transparent); }
+.avatar-color-choice { display: inline-flex; align-items: center; gap: 7px; }
+.avatar-swatch { width: 17px; height: 17px; border-radius: 50%; background: var(--swatch); box-shadow: inset 0 0 0 1px rgba(255,255,255,.22), 0 0 0 1px rgba(0,0,0,.2); }
+.avatar-toggle-choice { min-width: 82px; }
+.avatar-editor-note { margin: 15px 0 0; padding: 11px 12px; border-radius: 10px; background: color-mix(in srgb, var(--accent) 7%, var(--panel2)); color: var(--muted); font-size: 12px; line-height: 1.45; }
+@media (max-width: 560px) {
+  .avatar-art-stack--figure { width: min(94%, 248px); }
+  .avatar-choice { min-height: 42px; }
+  .den-avatar-raster { width: 168px; }
+  .avatar-reaction-cameo { right: 12px; bottom: max(82px, calc(env(safe-area-inset-bottom) + 70px)); width: 108px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .avatar-art-rig,
+  .avatar-art-layer { animation: none !important; transition: none !important; }
+  .avatar-reaction-cameo { display: none !important; }
+}
 /* «?» у вида питомца — клик даёт хинт «что засчитывать в сферу» */
 .pet-hint-q { display: inline-grid; place-items: center; width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--line); font-size: 10px; color: var(--muted); vertical-align: 1px; }
 

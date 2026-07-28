@@ -1,0 +1,1807 @@
+{
+  "canvas": [
+    1024,
+    1536
+  ],
+  "productionPngs": 85,
+  "visibleSlots": [
+    "body",
+    "face",
+    "gear",
+    "glasses",
+    "hair",
+    "hat",
+    "outfit"
+  ],
+  "neutralCompositePixelExact": true,
+  "neutralDifferentPixels": 0,
+  "neutralMaxChannelDifference": 0,
+  "allProductionFilesPassed": true,
+  "files": {
+    "production/base/body-bald-head-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 30575,
+      "partialAlphaPixels": 557,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        410,
+        149,
+        602,
+        377
+      ]
+    },
+    "production/base/body-underlay-full.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 242612,
+      "partialAlphaPixels": 19468,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        322,
+        173,
+        674,
+        1467
+      ]
+    },
+    "production/base/body-underlay-safe.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 238898,
+      "partialAlphaPixels": 18062,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        323,
+        173,
+        674,
+        1464
+      ]
+    },
+    "production/base/body-visible-approved.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 7591,
+      "partialAlphaPixels": 0,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        278,
+        720,
+        714,
+        919
+      ]
+    },
+    "production/colorways/blue/base/body-bald-head-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 30575,
+      "partialAlphaPixels": 557,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        410,
+        149,
+        602,
+        377
+      ]
+    },
+    "production/colorways/blue/base/body-underlay-safe.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 238898,
+      "partialAlphaPixels": 18062,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        323,
+        173,
+        674,
+        1464
+      ]
+    },
+    "production/colorways/blue/base/body-visible-approved.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 7591,
+      "partialAlphaPixels": 0,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        278,
+        720,
+        714,
+        919
+      ]
+    },
+    "production/colorways/blue/states/scholar-face-neutral.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 9835,
+      "partialAlphaPixels": 1,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        406,
+        226,
+        588,
+        374
+      ]
+    },
+    "production/colorways/blue/wardrobe/amulet/scholar-amulet.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 3765,
+      "partialAlphaPixels": 0,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        452,
+        421,
+        521,
+        530
+      ]
+    },
+    "production/colorways/blue/wardrobe/backpack/scholar-backpack.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 62298,
+      "partialAlphaPixels": 531,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        372,
+        307,
+        806,
+        730
+      ]
+    },
+    "production/colorways/blue/wardrobe/belt-kit/scholar-belt-kit.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 63467,
+      "partialAlphaPixels": 15,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        364,
+        403,
+        667,
+        945
+      ]
+    },
+    "production/colorways/blue/wardrobe/glasses/scholar-glasses.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 5677,
+      "partialAlphaPixels": 24,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        398,
+        241,
+        600,
+        330
+      ]
+    },
+    "production/colorways/blue/wardrobe/hair/scholar-hair-current.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 18055,
+      "partialAlphaPixels": 437,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        360,
+        185,
+        641,
+        383
+      ]
+    },
+    "production/colorways/blue/wardrobe/hair/scholar-hair-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 22205,
+      "partialAlphaPixels": 953,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        362,
+        147,
+        623,
+        313
+      ]
+    },
+    "production/colorways/blue/wardrobe/hat/scholar-hat.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 41635,
+      "partialAlphaPixels": 938,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        291,
+        58,
+        708,
+        280
+      ]
+    },
+    "production/colorways/blue/wardrobe/outfit/scholar-gear-free-base.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 373449,
+      "partialAlphaPixels": 15555,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        269,
+        315,
+        757,
+        1468
+      ]
+    },
+    "production/colorways/blue/wardrobe/outfit/scholar-outfit-current.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 265677,
+      "partialAlphaPixels": 3566,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        270,
+        308,
+        761,
+        1467
+      ]
+    },
+    "production/colorways/blue/wardrobe/outfit/scholar-outfit-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 313107,
+      "partialAlphaPixels": 13565,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        269,
+        357,
+        757,
+        1468
+      ]
+    },
+    "production/colorways/crimson/base/body-bald-head-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 30575,
+      "partialAlphaPixels": 557,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        410,
+        149,
+        602,
+        377
+      ]
+    },
+    "production/colorways/crimson/base/body-underlay-safe.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 238898,
+      "partialAlphaPixels": 18062,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        323,
+        173,
+        674,
+        1464
+      ]
+    },
+    "production/colorways/crimson/base/body-visible-approved.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 7591,
+      "partialAlphaPixels": 0,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        278,
+        720,
+        714,
+        919
+      ]
+    },
+    "production/colorways/crimson/states/scholar-face-neutral.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 9835,
+      "partialAlphaPixels": 1,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        406,
+        226,
+        588,
+        374
+      ]
+    },
+    "production/colorways/crimson/wardrobe/amulet/scholar-amulet.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 3765,
+      "partialAlphaPixels": 0,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        452,
+        421,
+        521,
+        530
+      ]
+    },
+    "production/colorways/crimson/wardrobe/backpack/scholar-backpack.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 62298,
+      "partialAlphaPixels": 531,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        372,
+        307,
+        806,
+        730
+      ]
+    },
+    "production/colorways/crimson/wardrobe/belt-kit/scholar-belt-kit.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 63467,
+      "partialAlphaPixels": 15,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        364,
+        403,
+        667,
+        945
+      ]
+    },
+    "production/colorways/crimson/wardrobe/glasses/scholar-glasses.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 5677,
+      "partialAlphaPixels": 24,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        398,
+        241,
+        600,
+        330
+      ]
+    },
+    "production/colorways/crimson/wardrobe/hair/scholar-hair-current.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 18055,
+      "partialAlphaPixels": 437,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        360,
+        185,
+        641,
+        383
+      ]
+    },
+    "production/colorways/crimson/wardrobe/hair/scholar-hair-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 22205,
+      "partialAlphaPixels": 953,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        362,
+        147,
+        623,
+        313
+      ]
+    },
+    "production/colorways/crimson/wardrobe/hat/scholar-hat.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 41635,
+      "partialAlphaPixels": 938,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        291,
+        58,
+        708,
+        280
+      ]
+    },
+    "production/colorways/crimson/wardrobe/outfit/scholar-gear-free-base.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 373449,
+      "partialAlphaPixels": 15555,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        269,
+        315,
+        757,
+        1468
+      ]
+    },
+    "production/colorways/crimson/wardrobe/outfit/scholar-outfit-current.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 265677,
+      "partialAlphaPixels": 3566,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        270,
+        308,
+        761,
+        1467
+      ]
+    },
+    "production/colorways/crimson/wardrobe/outfit/scholar-outfit-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 313107,
+      "partialAlphaPixels": 13565,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        269,
+        357,
+        757,
+        1468
+      ]
+    },
+    "production/colorways/forest/base/body-bald-head-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 30575,
+      "partialAlphaPixels": 557,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        410,
+        149,
+        602,
+        377
+      ]
+    },
+    "production/colorways/forest/base/body-underlay-safe.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 238898,
+      "partialAlphaPixels": 18062,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        323,
+        173,
+        674,
+        1464
+      ]
+    },
+    "production/colorways/forest/base/body-visible-approved.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 7591,
+      "partialAlphaPixels": 0,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        278,
+        720,
+        714,
+        919
+      ]
+    },
+    "production/colorways/forest/states/scholar-face-neutral.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 9835,
+      "partialAlphaPixels": 1,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        406,
+        226,
+        588,
+        374
+      ]
+    },
+    "production/colorways/forest/wardrobe/amulet/scholar-amulet.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 3765,
+      "partialAlphaPixels": 0,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        452,
+        421,
+        521,
+        530
+      ]
+    },
+    "production/colorways/forest/wardrobe/backpack/scholar-backpack.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 62298,
+      "partialAlphaPixels": 531,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        372,
+        307,
+        806,
+        730
+      ]
+    },
+    "production/colorways/forest/wardrobe/belt-kit/scholar-belt-kit.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 63467,
+      "partialAlphaPixels": 15,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        364,
+        403,
+        667,
+        945
+      ]
+    },
+    "production/colorways/forest/wardrobe/glasses/scholar-glasses.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 5677,
+      "partialAlphaPixels": 24,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        398,
+        241,
+        600,
+        330
+      ]
+    },
+    "production/colorways/forest/wardrobe/hair/scholar-hair-current.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 18055,
+      "partialAlphaPixels": 437,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        360,
+        185,
+        641,
+        383
+      ]
+    },
+    "production/colorways/forest/wardrobe/hair/scholar-hair-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 22205,
+      "partialAlphaPixels": 953,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        362,
+        147,
+        623,
+        313
+      ]
+    },
+    "production/colorways/forest/wardrobe/hat/scholar-hat.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 41635,
+      "partialAlphaPixels": 938,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        291,
+        58,
+        708,
+        280
+      ]
+    },
+    "production/colorways/forest/wardrobe/outfit/scholar-gear-free-base.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 373449,
+      "partialAlphaPixels": 15555,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        269,
+        315,
+        757,
+        1468
+      ]
+    },
+    "production/colorways/forest/wardrobe/outfit/scholar-outfit-current.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 265677,
+      "partialAlphaPixels": 3566,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        270,
+        308,
+        761,
+        1467
+      ]
+    },
+    "production/colorways/forest/wardrobe/outfit/scholar-outfit-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 313107,
+      "partialAlphaPixels": 13565,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        269,
+        357,
+        757,
+        1468
+      ]
+    },
+    "production/colorways/teal/base/body-bald-head-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 30575,
+      "partialAlphaPixels": 557,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        410,
+        149,
+        602,
+        377
+      ]
+    },
+    "production/colorways/teal/base/body-underlay-safe.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 238898,
+      "partialAlphaPixels": 18062,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        323,
+        173,
+        674,
+        1464
+      ]
+    },
+    "production/colorways/teal/base/body-visible-approved.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 7591,
+      "partialAlphaPixels": 0,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        278,
+        720,
+        714,
+        919
+      ]
+    },
+    "production/colorways/teal/states/scholar-face-neutral.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 9835,
+      "partialAlphaPixels": 1,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        406,
+        226,
+        588,
+        374
+      ]
+    },
+    "production/colorways/teal/wardrobe/amulet/scholar-amulet.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 3765,
+      "partialAlphaPixels": 0,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        452,
+        421,
+        521,
+        530
+      ]
+    },
+    "production/colorways/teal/wardrobe/backpack/scholar-backpack.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 62298,
+      "partialAlphaPixels": 531,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        372,
+        307,
+        806,
+        730
+      ]
+    },
+    "production/colorways/teal/wardrobe/belt-kit/scholar-belt-kit.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 63467,
+      "partialAlphaPixels": 15,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        364,
+        403,
+        667,
+        945
+      ]
+    },
+    "production/colorways/teal/wardrobe/glasses/scholar-glasses.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 5677,
+      "partialAlphaPixels": 24,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        398,
+        241,
+        600,
+        330
+      ]
+    },
+    "production/colorways/teal/wardrobe/hair/scholar-hair-current.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 18055,
+      "partialAlphaPixels": 437,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        360,
+        185,
+        641,
+        383
+      ]
+    },
+    "production/colorways/teal/wardrobe/hair/scholar-hair-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 22205,
+      "partialAlphaPixels": 953,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        362,
+        147,
+        623,
+        313
+      ]
+    },
+    "production/colorways/teal/wardrobe/hat/scholar-hat.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 41635,
+      "partialAlphaPixels": 938,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        291,
+        58,
+        708,
+        280
+      ]
+    },
+    "production/colorways/teal/wardrobe/outfit/scholar-gear-free-base.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 373449,
+      "partialAlphaPixels": 15555,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        269,
+        315,
+        757,
+        1468
+      ]
+    },
+    "production/colorways/teal/wardrobe/outfit/scholar-outfit-current.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 265677,
+      "partialAlphaPixels": 3566,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        270,
+        308,
+        761,
+        1467
+      ]
+    },
+    "production/colorways/teal/wardrobe/outfit/scholar-outfit-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 313107,
+      "partialAlphaPixels": 13565,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        269,
+        357,
+        757,
+        1468
+      ]
+    },
+    "production/colorways/violet/base/body-bald-head-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 30575,
+      "partialAlphaPixels": 557,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        410,
+        149,
+        602,
+        377
+      ]
+    },
+    "production/colorways/violet/base/body-underlay-safe.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 238898,
+      "partialAlphaPixels": 18062,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        323,
+        173,
+        674,
+        1464
+      ]
+    },
+    "production/colorways/violet/base/body-visible-approved.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 7591,
+      "partialAlphaPixels": 0,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        278,
+        720,
+        714,
+        919
+      ]
+    },
+    "production/colorways/violet/states/scholar-face-neutral.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 9835,
+      "partialAlphaPixels": 1,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        406,
+        226,
+        588,
+        374
+      ]
+    },
+    "production/colorways/violet/wardrobe/amulet/scholar-amulet.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 3765,
+      "partialAlphaPixels": 0,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        452,
+        421,
+        521,
+        530
+      ]
+    },
+    "production/colorways/violet/wardrobe/backpack/scholar-backpack.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 62298,
+      "partialAlphaPixels": 531,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        372,
+        307,
+        806,
+        730
+      ]
+    },
+    "production/colorways/violet/wardrobe/belt-kit/scholar-belt-kit.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 63467,
+      "partialAlphaPixels": 15,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        364,
+        403,
+        667,
+        945
+      ]
+    },
+    "production/colorways/violet/wardrobe/glasses/scholar-glasses.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 5677,
+      "partialAlphaPixels": 24,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        398,
+        241,
+        600,
+        330
+      ]
+    },
+    "production/colorways/violet/wardrobe/hair/scholar-hair-current.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 18055,
+      "partialAlphaPixels": 437,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        360,
+        185,
+        641,
+        383
+      ]
+    },
+    "production/colorways/violet/wardrobe/hair/scholar-hair-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 22205,
+      "partialAlphaPixels": 953,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        362,
+        147,
+        623,
+        313
+      ]
+    },
+    "production/colorways/violet/wardrobe/hat/scholar-hat.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 41635,
+      "partialAlphaPixels": 938,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        291,
+        58,
+        708,
+        280
+      ]
+    },
+    "production/colorways/violet/wardrobe/outfit/scholar-gear-free-base.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 373449,
+      "partialAlphaPixels": 15555,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        269,
+        315,
+        757,
+        1468
+      ]
+    },
+    "production/colorways/violet/wardrobe/outfit/scholar-outfit-current.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 265677,
+      "partialAlphaPixels": 3566,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        270,
+        308,
+        761,
+        1467
+      ]
+    },
+    "production/colorways/violet/wardrobe/outfit/scholar-outfit-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 313107,
+      "partialAlphaPixels": 13565,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        269,
+        357,
+        757,
+        1468
+      ]
+    },
+    "production/states/scholar-face-neutral.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 9835,
+      "partialAlphaPixels": 1,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        406,
+        226,
+        588,
+        374
+      ]
+    },
+    "production/wardrobe/amulet/scholar-amulet.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 3765,
+      "partialAlphaPixels": 0,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        452,
+        421,
+        521,
+        530
+      ]
+    },
+    "production/wardrobe/backpack/scholar-backpack.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 62298,
+      "partialAlphaPixels": 531,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        372,
+        307,
+        806,
+        730
+      ]
+    },
+    "production/wardrobe/belt-kit/scholar-belt-kit.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 63467,
+      "partialAlphaPixels": 15,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        364,
+        403,
+        667,
+        945
+      ]
+    },
+    "production/wardrobe/glasses/scholar-glasses.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 5677,
+      "partialAlphaPixels": 24,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        398,
+        241,
+        600,
+        330
+      ]
+    },
+    "production/wardrobe/hair/scholar-hair-current.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 18055,
+      "partialAlphaPixels": 437,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        360,
+        185,
+        641,
+        383
+      ]
+    },
+    "production/wardrobe/hair/scholar-hair-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 22205,
+      "partialAlphaPixels": 953,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        362,
+        147,
+        623,
+        313
+      ]
+    },
+    "production/wardrobe/hat/scholar-hat.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 41635,
+      "partialAlphaPixels": 938,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        291,
+        58,
+        708,
+        280
+      ]
+    },
+    "production/wardrobe/outfit/scholar-gear-free-base.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 373449,
+      "partialAlphaPixels": 15555,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        269,
+        315,
+        757,
+        1468
+      ]
+    },
+    "production/wardrobe/outfit/scholar-outfit-current.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 265677,
+      "partialAlphaPixels": 3566,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        270,
+        308,
+        761,
+        1467
+      ]
+    },
+    "production/wardrobe/outfit/scholar-outfit-reveal.png": {
+      "canvasCorrect": true,
+      "mode": "RGBA",
+      "hasTransparency": true,
+      "transparentCorners": true,
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visiblePixels": 313107,
+      "partialAlphaPixels": 13565,
+      "magentaPixels": 0,
+      "alphaBBox": [
+        269,
+        357,
+        757,
+        1468
+      ]
+    }
+  }
+}

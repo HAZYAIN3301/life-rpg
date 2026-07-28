@@ -1041,6 +1041,30 @@ const I18N_EXTRA = {
   'Борода': { en: 'Beard', de: 'Bart', uk: 'Борода', es: 'Barba' },
   'Очки': { en: 'Glasses', de: 'Brille', uk: 'Окуляри', es: 'Gafas' },
   'Одежда': { en: 'Clothing', de: 'Kleidung', uk: 'Одяг', es: 'Ropa' },
+  'Облик': { en: 'Appearance', de: 'Aussehen', uk: 'Вигляд', es: 'Aspecto' },
+  'Цвет костюма': { en: 'Outfit color', de: 'Kostümfarbe', uk: 'Колір костюма', es: 'Color del atuendo' },
+  'Слои': { en: 'Layers', de: 'Ebenen', uk: 'Шари', es: 'Capas' },
+  'Костюм': { en: 'Outfit', de: 'Kostüm', uk: 'Костюм', es: 'Atuendo' },
+  'Волосы': { en: 'Hair', de: 'Haare', uk: 'Волосся', es: 'Pelo' },
+  'Шарф': { en: 'Scarf', de: 'Schal', uk: 'Шарф', es: 'Bufanda' },
+  'Рюкзак': { en: 'Backpack', de: 'Rucksack', uk: 'Рюкзак', es: 'Mochila' },
+  'Сумка': { en: 'Pouch', de: 'Tasche', uk: 'Сумка', es: 'Bolsa' },
+  'Фонарь': { en: 'Lantern', de: 'Laterne', uk: 'Ліхтар', es: 'Linterna' },
+  'Мантия': { en: 'Robe', de: 'Mantel', uk: 'Мантія', es: 'Túnica' },
+  'Шляпа': { en: 'Hat', de: 'Hut', uk: 'Капелюх', es: 'Sombrero' },
+  'Снаряжение': { en: 'Gear', de: 'Ausrüstung', uk: 'Спорядження', es: 'Equipo' },
+  'Бирюзовый': { en: 'Teal', de: 'Türkis', uk: 'Бірюзовий', es: 'Turquesa' },
+  'Синий': { en: 'Blue', de: 'Blau', uk: 'Синій', es: 'Azul' },
+  'Фиолетовый': { en: 'Violet', de: 'Violett', uk: 'Фіолетовий', es: 'Violeta' },
+  'Бордовый': { en: 'Crimson', de: 'Bordeaux', uk: 'Бордовий', es: 'Carmesí' },
+  'Лесной': { en: 'Forest', de: 'Waldgrün', uk: 'Лісовий', es: 'Bosque' },
+  'Спокойное': { en: 'Neutral', de: 'Neutral', uk: 'Спокійне', es: 'Neutral' },
+  'Радостное': { en: 'Happy', de: 'Fröhlich', uk: 'Радісне', es: 'Feliz' },
+  'Усталое': { en: 'Tired', de: 'Müde', uk: 'Втомлене', es: 'Cansado' },
+  'Моргание': { en: 'Blink', de: 'Blinzeln', uk: 'Моргання', es: 'Parpadeo' },
+  'Проверить движения': { en: 'Preview motion', de: 'Bewegungen testen', uk: 'Перевірити рухи', es: 'Probar movimientos' },
+  'модульная бумажная кукла': { en: 'modular paper doll', de: 'modulare Papierfigur', uk: 'модульна паперова лялька', es: 'muñeco de papel modular' },
+  'слотов': { en: 'slots', de: 'Slots', uk: 'слотів', es: 'ranuras' },
   'Собери свой облик. Скоро добавим больше стилей — в том числе нарисованные художником наборы.': { en: 'Build your look. More styles coming soon — including artist-drawn sets.', de: 'Gestalte dein Aussehen. Bald mehr Stile — auch von einem Künstler gezeichnete Sets.', uk: 'Збери свій вигляд. Скоро додамо більше стилів — зокрема намальовані художником набори.', es: 'Crea tu aspecto. Pronto más estilos — incluidos sets dibujados por un artista.' },
   '🎯 Твоё десятиборье': { en: '🎯 Your decathlon', de: '🎯 Dein Zehnkampf', uk: '🎯 Твоє десятиборство', es: '🎯 Tu decatlón' },
   'Оси — твои собственные сферы (уровень с учётом под-навыков). Это твоя уникальная комбинация: цель — не пик в одной оси, а сильная форма всего многоугольника.': { en: 'The axes are your own areas (level including sub-skills). This is your unique mix: the goal isn\'t a peak on one axis but a strong shape across the whole polygon.', de: 'Die Achsen sind deine eigenen Bereiche (Level inkl. Unterfähigkeiten). Das ist deine einzigartige Mischung: Ziel ist kein Gipfel auf einer Achse, sondern eine starke Form des ganzen Vielecks.', uk: 'Осі — твої власні сфери (рівень з урахуванням під-навичок). Це твоя унікальна комбінація: мета — не пік на одній осі, а сильна форма всього багатокутника.', es: 'Los ejes son tus propias áreas (nivel con subhabilidades). Es tu combinación única: la meta no es un pico en un eje, sino una forma fuerte de todo el polígono.' },
@@ -2839,7 +2863,9 @@ function completeTask(task, desire, onDate) {
     const isFirstOfDay = !doneToday.some((x) => x.id !== task.id && Date.parse(x.completedAt) < Date.parse(task.completedAt));
     bossHitFeedback(bossHitCheck('task', task, { isFirstOfDay, sphereName: sk ? sk.name : '' }));
   }
-  checkAchievements(); render(); publishLeaderboard();
+  const avatarReaction = lvlNow > lvlBefore ? 'levelup' : 'happy';
+  const avatarReactionLabel = lvlNow > lvlBefore ? `Уровень ${lvlNow}` : (task.entry ? 'Шаг сделан' : `+${task.xpAwarded} XP`);
+  checkAchievements(); render(); triggerAvatarReaction(avatarReaction, avatarReactionLabel); publishLeaderboard();
 }
 // Поп-ап выбора желания при завершении сложного квеста
 function openDesirePicker(taskId) {
@@ -3209,15 +3235,300 @@ const AV_PARTS  = {
 const AV_CAT_ORDER = ['hair', 'hairColor', 'face', 'skin', 'eyes', 'brows', 'mouth', 'beard', 'glasses', 'cloth'];
 function defaultAvatar() { return { face: 0, skin: 1, hair: 1, hairColor: 1, brows: 0, eyes: 0, mouth: 0, beard: 0, glasses: 0, cloth: 0 }; }
 function avCfg() { return Object.assign(defaultAvatar(), (State.settings && State.settings.avatar) || {}); }
-// ── Аватар (Фаза 3): ЦЕЛАЯ собранная фигура из Codex-арта (painterly-cutout).
-// Ручная пересборка из вырезанных-в-ячейки частей оказалась принципиально хрупкой (у частей нет
-// общей системы координат — ~60 подогнанных чисел, ошибки компаундятся; + части-дубли: тело уже
-// содержит ноги, голова — уши). Настоящий разборный риг ждёт ПЕРЕ-ЭКСПОРТА слоёв от Codex
-// (каждая часть впечатана в общий холст на финальном месте → сборка = стек в (0,0), без координат).
-// До тех пор — цельная фигура: это исходный арт, всегда когерентный. Портрет = та же фигура, кроп к голове.
-const AVATAR_FIGURE = 'art/avatars/traveller_cloak.png';
-function avatarPortraitHTML() { return `<img class="avatar-preset-portrait" src="${AVATAR_FIGURE}" alt="аватар" loading="lazy">`; }
-function avatarFigureHTML() { return `<img class="avatar-preset-figure" src="${AVATAR_FIGURE}" alt="аватар" loading="lazy">`; }
+// ── Traveller v1: raster paper-doll. Every PNG is 1024×1536 and stacks at (0,0).
+// Public API for UI/tests: setAvatarAppearance({ palette: 'violet', hair: false }).
+const AVATAR_ART_ROOT = '/art/avatars/traveller-v1/';
+const SCHOLAR_ART_ROOT = '/art/avatars/scholar-v1/';
+const AVATAR_OUTFIT_COLORWAYS = {
+  teal:    { label: 'Бирюзовый', color: '#1e7773', reveal: 'wardrobe/outfit/traveller-outfit-backpack-reveal.png', outfit: 'wardrobe/outfit/traveller-outfit-current.png' },
+  blue:    { label: 'Синий', color: '#3f6496', reveal: 'colorways/blue/outfit-backpack-reveal.png', outfit: 'colorways/blue/outfit-current.png' },
+  violet:  { label: 'Фиолетовый', color: '#755596', reveal: 'colorways/violet/outfit-backpack-reveal.png', outfit: 'colorways/violet/outfit-current.png' },
+  crimson: { label: 'Бордовый', color: '#984c58', reveal: 'colorways/crimson/outfit-backpack-reveal.png', outfit: 'colorways/crimson/outfit-current.png' },
+  forest:  { label: 'Лесной', color: '#477856', reveal: 'colorways/forest/outfit-backpack-reveal.png', outfit: 'colorways/forest/outfit-current.png' },
+};
+const AVATAR_FACE_STATES = {
+  neutral: 'states/traveller-face-neutral.png',
+  blink: 'states/traveller-face-blink.png',
+  happy: 'states/traveller-face-happy.png',
+  tired: 'states/traveller-face-tired.png',
+};
+const SCHOLAR_COLORWAYS = {
+  teal:    { label: 'Бирюзовый', color: '#1e7773', prefix: 'colorways/teal/' },
+  blue:    { label: 'Синий', color: '#3f6496', prefix: 'colorways/blue/' },
+  violet:  { label: 'Фиолетовый', color: '#755596', prefix: 'colorways/violet/' },
+  crimson: { label: 'Бордовый', color: '#984c58', prefix: 'colorways/crimson/' },
+  forest:  { label: 'Лесной', color: '#477856', prefix: 'colorways/forest/' },
+};
+const SCHOLAR_FACE_STATES = {
+  neutral: 'states/scholar-face-neutral.png',
+};
+// Variant registry. New appearances can be added as a layered paper-doll or as
+// a single master during their visual-approval gate, without changing callers.
+const AVATAR_VARIANTS = {
+  traveller: {
+    label: 'Странник',
+    description: 'Тот, кто идёт не потому, что знает дорогу, а потому что выбрал направление.',
+    artRoot: AVATAR_ART_ROOT,
+    mode: 'layers',
+    colorways: AVATAR_OUTFIT_COLORWAYS,
+    faceStates: AVATAR_FACE_STATES,
+    slots: 9,
+    toggles: [
+      ['outfit', 'Костюм'],
+      ['hair', 'Волосы'],
+      ['goggles', 'Очки'],
+      ['scarf', 'Шарф'],
+      ['backpack', 'Рюкзак'],
+      ['pouch', 'Сумка'],
+      ['lantern', 'Фонарь'],
+    ],
+  },
+  scholar: {
+    label: 'Учёный',
+    description: 'Полевой исследователь: знания всегда при нём, но снаряжение можно оставить в лагере.',
+    artRoot: SCHOLAR_ART_ROOT,
+    mode: 'scholar-layers',
+    colorways: SCHOLAR_COLORWAYS,
+    faceStates: SCHOLAR_FACE_STATES,
+    slots: 5,
+    toggles: [
+      ['outfit', 'Мантия'],
+      ['hair', 'Волосы'],
+      ['hat', 'Шляпа'],
+      ['glasses', 'Очки'],
+      ['gear', 'Снаряжение'],
+    ],
+  },
+};
+function defaultAvatarAppearance() {
+  return {
+    variant: 'traveller',
+    palette: 'teal',
+    outfit: true,
+    hair: true,
+    goggles: true,
+    scarf: true,
+    backpack: true,
+    pouch: true,
+    lantern: true,
+    hat: true,
+    glasses: true,
+    gear: true,
+    face: 'neutral',
+  };
+}
+function normalizeAvatarAppearance(value) {
+  const cfg = Object.assign(defaultAvatarAppearance(), value || {});
+  if (!AVATAR_VARIANTS[cfg.variant]) cfg.variant = 'traveller';
+  const variant = AVATAR_VARIANTS[cfg.variant];
+  if (!variant.colorways[cfg.palette]) cfg.palette = variant.colorways.teal ? 'teal' : Object.keys(variant.colorways)[0];
+  if (!variant.faceStates[cfg.face]) cfg.face = variant.faceStates.neutral ? 'neutral' : Object.keys(variant.faceStates)[0];
+  ['outfit', 'hair', 'goggles', 'scarf', 'backpack', 'pouch', 'lantern', 'hat', 'glasses', 'gear'].forEach((key) => {
+    cfg[key] = cfg[key] !== false;
+  });
+  return cfg;
+}
+function avatarAppearance() {
+  return normalizeAvatarAppearance(State.settings && State.settings.avatarAppearance);
+}
+function setAvatarAppearance(patch, options = {}) {
+  if (!State.settings) return defaultAvatarAppearance();
+  const next = normalizeAvatarAppearance(Object.assign({}, avatarAppearance(), patch || {}));
+  State.settings.avatarAppearance = next;
+  Store.save('settings', State.settings);
+  if (options.render !== false) render();
+  return next;
+}
+function setAvatarVariant(variant, options = {}) {
+  return setAvatarAppearance({ variant }, options);
+}
+if (typeof window !== 'undefined') {
+  window.setAvatarAppearance = setAvatarAppearance;
+  window.setAvatarVariant = setAvatarVariant;
+}
+function avatarArtLayers(options = {}) {
+  const cfg = normalizeAvatarAppearance(options.appearance || avatarAppearance());
+  const variant = AVATAR_VARIANTS[cfg.variant];
+  const colorway = variant.colorways[cfg.palette];
+  if (variant.mode === 'master') {
+    return [{ id: 'master', z: 0, file: colorway.master, on: true }];
+  }
+  if (variant.mode === 'scholar-layers') {
+    const paletteFile = (file) => `${colorway.prefix}${file}`;
+    const faceState = variant.faceStates[options.faceState] ? options.faceState : cfg.face;
+    if (!cfg.outfit) {
+      return [{ id: 'scholar-body', z: 0, file: 'base/body-underlay-full.png', on: true }];
+    }
+    const hairOn = cfg.hair;
+    const hatOn = hairOn && cfg.hat;
+    const headLayers = [
+      { id: 'scholar-bald-head', z: 10, file: paletteFile('base/body-bald-head-reveal.png'), on: !hairOn },
+      { id: 'scholar-hair-reveal', z: 20, file: paletteFile('wardrobe/hair/scholar-hair-reveal.png'), on: hairOn && !hatOn },
+      { id: 'face', z: 60, file: variant.faceStates[faceState], on: true },
+      { id: 'scholar-hair', z: 70, file: paletteFile('wardrobe/hair/scholar-hair-current.png'), on: hairOn },
+      { id: 'scholar-hat', z: 80, file: paletteFile('wardrobe/hat/scholar-hat.png'), on: hatOn },
+      { id: 'scholar-glasses', z: 90, file: paletteFile('wardrobe/glasses/scholar-glasses.png'), on: cfg.glasses },
+    ];
+    if (!cfg.gear) {
+      return [
+        { id: 'scholar-gear-free', z: 0, file: paletteFile('wardrobe/outfit/scholar-gear-free-base.png'), on: true },
+        ...headLayers,
+      ].filter((layer) => layer.on).sort((a, b) => a.z - b.z);
+    }
+    return [
+      { id: 'scholar-backpack', z: 20, file: paletteFile('wardrobe/backpack/scholar-backpack.png'), on: true },
+      { id: 'scholar-outfit', z: 40, file: paletteFile('wardrobe/outfit/scholar-outfit-current.png'), on: true },
+      { id: 'scholar-body-visible', z: 50, file: paletteFile('base/body-visible-approved.png'), on: true },
+      ...headLayers,
+      { id: 'scholar-belt-kit', z: 100, file: paletteFile('wardrobe/belt-kit/scholar-belt-kit.png'), on: true },
+      { id: 'scholar-amulet', z: 110, file: paletteFile('wardrobe/amulet/scholar-amulet.png'), on: true },
+    ].filter((layer) => layer.on).sort((a, b) => a.z - b.z);
+  }
+  const outfitOn = cfg.outfit;
+  const backpackOn = outfitOn && cfg.backpack;
+  const faceState = variant.faceStates[options.faceState] ? options.faceState : cfg.face;
+  return [
+    { id: 'body', z: 0, file: outfitOn ? 'base/body-underlay-safe.png' : 'base/body-underlay-full.png', on: true },
+    { id: 'outfit-reveal', z: 5, file: colorway.reveal, on: outfitOn },
+    { id: 'backpack-back', z: 10, file: 'wardrobe/backpack/backpack-back.png', on: backpackOn },
+    { id: 'hair-back', z: 20, file: 'wardrobe/hair/traveller-hair-back.png', on: cfg.hair },
+    { id: 'outfit', z: 50, file: colorway.outfit, on: outfitOn },
+    { id: 'body-visible', z: 60, file: 'base/body-visible-approved.png', on: true },
+    { id: 'bald-head', z: 65, file: 'base/body-bald-head-reveal.png', on: !cfg.hair },
+    { id: 'scarf', z: 70, file: 'wardrobe/scarf/traveller-scarf.png', on: outfitOn && cfg.scarf },
+    { id: 'backpack-straps', z: 75, file: 'wardrobe/backpack/backpack-straps.png', on: backpackOn },
+    { id: 'face', z: 80, file: variant.faceStates[faceState], on: true },
+    { id: 'hair-front', z: 90, file: 'wardrobe/hair/traveller-hair-front.png', on: cfg.hair },
+    { id: 'goggles', z: 100, file: 'wardrobe/goggles/traveller-goggles.png', on: cfg.goggles },
+    { id: 'pouch', z: 110, file: 'wardrobe/pouch/traveller-pouch.png', on: outfitOn && cfg.pouch },
+    { id: 'lantern', z: 115, file: 'wardrobe/lantern/traveller-lantern.png', on: backpackOn && cfg.lantern },
+  ].filter((layer) => layer.on).sort((a, b) => a.z - b.z);
+}
+const AVATAR_MOTION_STATES = new Set(['idle', 'portrait', 'focus', 'tired', 'happy', 'victory']);
+function normalizeAvatarMotion(value) {
+  return AVATAR_MOTION_STATES.has(value) ? value : 'idle';
+}
+function avatarArtHTML(options = {}) {
+  const cfg = normalizeAvatarAppearance(options.appearance || avatarAppearance());
+  const variant = AVATAR_VARIANTS[cfg.variant];
+  const faceState = variant.faceStates[options.faceState] ? options.faceState : cfg.face;
+  const motion = normalizeAvatarMotion(options.motion);
+  const interactive = options.interactive === true;
+  const autoBlink = options.autoBlink !== false && !!variant.faceStates.blink && faceState === 'neutral';
+  const classes = ['avatar-art-stack', options.className || ''].filter(Boolean).join(' ');
+  const layers = avatarArtLayers(options).map((layer) => (
+    `<img class="avatar-art-layer avatar-art-${layer.id}" src="${variant.artRoot}${layer.file}" alt="" aria-hidden="true" draggable="false" decoding="async">`
+  )).join('');
+  const faceSources = Object.entries(variant.faceStates).map(([id, file]) => (
+    ` data-avatar-face-${id}-src="${esc(variant.artRoot + file)}"`
+  )).join('');
+  const interactionAttrs = interactive
+    ? ' data-action="avatar-react" data-avatar-interactive="true" role="button" tabindex="0" aria-label="Персонаж Satoru — нажми, чтобы он отреагировал"'
+    : ' role="img" aria-label="Персонаж Satoru"';
+  return `<span class="${classes}" data-avatar-motion="${motion}" data-avatar-face-state="${faceState}" data-avatar-auto-blink="${autoBlink ? 'true' : 'false'}"${faceSources}${interactionAttrs}><span class="avatar-art-rig">${layers}</span></span>`;
+}
+function avatarPortraitHTML(options = {}) {
+  return `<span class="avatar-art-portrait">${avatarArtHTML(Object.assign({}, options, { className: 'avatar-art-stack--portrait', motion: options.motion || 'portrait', interactive: false }))}</span>`;
+}
+function avatarFigureHTML(options = {}) {
+  return avatarArtHTML(Object.assign({}, options, { className: 'avatar-art-stack--figure', motion: options.motion || 'idle', interactive: options.interactive !== false }));
+}
+
+let _avatarBlinkTimer = null;
+let _avatarBlinkRestoreTimer = null;
+function avatarReducedMotion() {
+  return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+function restoreAvatarBlink(stack) {
+  if (!stack) return;
+  const face = stack.querySelector('.avatar-art-face');
+  if (face && stack._avatarBlinkBaseSrc) face.setAttribute('src', stack._avatarBlinkBaseSrc);
+  stack._avatarBlinkBaseSrc = null;
+  stack.classList.remove('is-blinking');
+}
+function scheduleAvatarBlink() {
+  clearTimeout(_avatarBlinkTimer);
+  clearTimeout(_avatarBlinkRestoreTimer);
+  _avatarBlinkTimer = null;
+  _avatarBlinkRestoreTimer = null;
+  if (avatarReducedMotion() || document.hidden) return;
+  const eligible = [...document.querySelectorAll('.avatar-art-stack[data-avatar-auto-blink="true"]')]
+    .filter((stack) => !stack.classList.contains('is-reacting') && stack.querySelector('.avatar-art-face'));
+  if (!eligible.length) return;
+  _avatarBlinkTimer = setTimeout(() => {
+    const live = [...document.querySelectorAll('.avatar-art-stack[data-avatar-auto-blink="true"]')]
+      .filter((stack) => !stack.classList.contains('is-reacting'));
+    live.forEach((stack) => {
+      const face = stack.querySelector('.avatar-art-face');
+      const blinkSrc = stack.dataset.avatarFaceBlinkSrc;
+      if (!face || !blinkSrc) return;
+      stack._avatarBlinkBaseSrc = face.getAttribute('src');
+      face.setAttribute('src', blinkSrc);
+      stack.classList.add('is-blinking');
+    });
+    _avatarBlinkRestoreTimer = setTimeout(() => {
+      live.forEach(restoreAvatarBlink);
+      scheduleAvatarBlink();
+    }, 145);
+  }, 3000 + Math.round(Math.random() * 3600));
+}
+function avatarReactionFace(kind) {
+  if (kind === 'tired') return 'tired';
+  if (kind === 'focus') return 'neutral';
+  return 'happy';
+}
+function avatarReactionMotion(kind) {
+  if (kind === 'levelup' || kind === 'victory') return 'victory';
+  if (kind === 'focus' || kind === 'tired') return kind;
+  return 'happy';
+}
+function animateAvatarStack(stack, kind = 'greet') {
+  if (!stack || avatarReducedMotion()) return;
+  clearTimeout(stack._avatarReactionTimer);
+  restoreAvatarBlink(stack);
+  const face = stack.querySelector('.avatar-art-face');
+  const faceId = avatarReactionFace(kind);
+  const faceSrc = stack.dataset[`avatarFace${faceId[0].toUpperCase()}${faceId.slice(1)}Src`];
+  if (face && faceSrc) {
+    stack._avatarReactionFaceSrc = face.getAttribute('src');
+    face.setAttribute('src', faceSrc);
+  }
+  stack.dataset.avatarReaction = kind;
+  stack.classList.remove('is-reacting');
+  void stack.offsetWidth;
+  stack.classList.add('is-reacting');
+  const duration = kind === 'levelup' ? 2200 : kind === 'victory' ? 1900 : 1350;
+  stack._avatarReactionTimer = setTimeout(() => {
+    stack.classList.remove('is-reacting');
+    delete stack.dataset.avatarReaction;
+    if (face && stack._avatarReactionFaceSrc) face.setAttribute('src', stack._avatarReactionFaceSrc);
+    stack._avatarReactionFaceSrc = null;
+    scheduleAvatarBlink();
+  }, duration);
+}
+function triggerAvatarReaction(kind = 'greet', label = '') {
+  const targets = [...document.querySelectorAll('.avatar-art-stack[data-avatar-interactive="true"]')];
+  if (targets.length) {
+    targets.forEach((stack) => animateAvatarStack(stack, kind));
+    return;
+  }
+  if (avatarReducedMotion()) return;
+  document.querySelector('.avatar-reaction-cameo')?.remove();
+  const cameo = document.createElement('div');
+  cameo.className = `avatar-reaction-cameo avatar-reaction-${kind}`;
+  cameo.setAttribute('aria-hidden', 'true');
+  cameo.innerHTML = `${avatarArtHTML({ className: 'avatar-art-stack--cameo', motion: avatarReactionMotion(kind), faceState: avatarReactionFace(kind), autoBlink: false })}${label ? `<span>${esc(label)}</span>` : ''}`;
+  document.body.appendChild(cameo);
+  requestAnimationFrame(() => cameo.classList.add('is-visible'));
+  setTimeout(() => {
+    cameo.classList.remove('is-visible');
+    setTimeout(() => cameo.remove(), 260);
+  }, kind === 'levelup' ? 2100 : 1550);
+}
+function syncAvatarMotion() {
+  scheduleAvatarBlink();
+}
+if (typeof window !== 'undefined') window.triggerAvatarReaction = triggerAvatarReaction;
 function shade(hex, amt) { // amt -100..100 (минус = темнее)
   const n = parseInt(hex.slice(1), 16); let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
   const t = amt < 0 ? 0 : 255, p = Math.abs(amt) / 100;
@@ -4276,7 +4587,7 @@ function startFocus(taskId) {
   State.timer = { taskId, startedAt: Date.now(), accumulatedMs: 0, running: true, phase: 'work', phaseStartElapsed: 0, overrunNotified: false, bankedMin: 0 };
   persistTimer(); ensureAudio();
   if (focusCfg().notify && 'Notification' in window && Notification.permission === 'default') { try { Notification.requestPermission(); } catch {} }
-  openFocusWidget(); startTick(); render();
+  openFocusWidget(); startTick(); render(); triggerAvatarReaction('focus', 'Фокус');
 }
 function pauseFocus() { const tm = State.timer; if (!tm || !tm.running) return; tm.accumulatedMs += Date.now() - tm.startedAt; tm.running = false; bankTimerProgress(); persistTimer(); updatePill(focusInfo()); updatePip(focusInfo()); render(); }
 function resumeFocus() { const tm = State.timer; if (!tm || tm.running) return; tm.startedAt = Date.now(); tm.running = true; persistTimer(); if (!pipWindow) startTick(); updatePill(focusInfo()); updatePip(focusInfo()); render(); }
@@ -4582,7 +4893,7 @@ function renderHeader() {
   document.getElementById('charSummary').innerHTML = `
     <div class="char-main">
       ${State.me ? `<div class="user-pill" title="${t('Профиль')}">
-        <span class="up-av">${esc(State.me.avatar || '👤')}</span>
+        <button class="up-av up-av-raster" data-action="go-wardrobe" title="Открыть персонажа" aria-label="Открыть персонажа">${avatarPortraitHTML({ motion: 'portrait' })}</button>
         <span class="up-meta"><span class="up-name">${esc(State.me.name)}${eqTitle ? ` <span class="eq-title">🏷 ${esc(eqTitle)}</span>` : ''}</span>
         <span class="up-rank" style="--rc:${cr.color}">${cr.icon} ${cr.name}</span></span></div>` : ''}
       <div class="char-level">Уровень <b>${oi.level}</b></div>
@@ -5314,7 +5625,7 @@ function dayRecApply() {
   if (!n) { toast('Ничего не выбрано'); return; }
   Store.save('tasks', State.tasks); const m = document.getElementById('dayrec-modal'); if (m) m.remove();
   toast(`✅ ${t('Записано')} ${n} ${plural(n, 'дело', 'дела', 'дел')} — ${day === today ? t('за сегодня') : dmShort(day)}`);
-  checkAchievements(); render(); publishLeaderboard();
+  checkAchievements(); render(); triggerAvatarReaction('happy', `Записано: ${n}`); publishLeaderboard();
 }
 function proposeContext() {
   const spheres = State.settings.skills.map((s) => skillLabel(s.id)).join(', ');
@@ -6925,6 +7236,11 @@ function denAvatarState(eP, p, tm) {
   if (p.dayDone > 0) return 'happy';
   return 'idle';
 }
+function denAvatarFace(state) {
+  if (state === 'tired') return 'tired';
+  if (state === 'happy' || state === 'victory') return 'happy';
+  return 'neutral';
+}
 function renderDen() {
   const c = ensureCompanion(), mood = compMood(), ti = compTierIdx(c.bond);
   const cr = charRank(), nm = (State.me && State.me.name) || 'Герой';
@@ -6949,7 +7265,7 @@ function renderDen() {
     <div class="den-scene">
       ${denSceneSVG()}
       <div class="den-companion" title="${esc(c.name)}">${shadowVideo(ti, mood.face)}</div>
-      <div class="den-avatar den-avatar-rig" data-state="${avatarState}">${satoruRigSVG()}</div>
+      <div class="den-avatar den-avatar-raster" data-state="${avatarState}">${avatarArtHTML({ className: 'avatar-art-stack--den', faceState: denAvatarFace(avatarState), motion: avatarState, interactive: true })}</div>
       ${petLayer}
       <div class="den-tag">${cr.icon} ${esc(nm)} · ур.${charLevel()}</div>
     </div>
@@ -7563,13 +7879,57 @@ function onTreePointerDown(e) {
 // ============================================================
 //  Вид «Персонаж» — живой аватар, атрибуты, телосложение
 // ============================================================
+function avatarAppearanceChoice(key, value, label, selected, extraClass = '') {
+  return `<button class="avatar-choice ${selected ? 'is-selected' : ''} ${extraClass}" data-action="avatar-appearance-set" data-key="${key}" data-value="${esc(String(value))}" aria-pressed="${selected ? 'true' : 'false'}">${label}</button>`;
+}
 function avatarEditor() {
-  // Цельная фигура (Странник) — исходный Codex-арт, когерентный. Разборный риг со свапом одежды
-  // вернём, когда придут ПЕРЕ-экспортированные слои (каждый впечатан в общий холст) — см. DEVLOG.
+  const cfg = avatarAppearance();
+  const variant = AVATAR_VARIANTS[cfg.variant];
+  const variants = Object.entries(AVATAR_VARIANTS).map(([id, item]) => (
+    avatarAppearanceChoice('variant', id, esc(item.label), cfg.variant === id)
+  )).join('');
+  const palettes = Object.entries(variant.colorways).map(([id, colorway]) => (
+    avatarAppearanceChoice(
+      'palette',
+      id,
+      `<span class="avatar-swatch" style="--swatch:${colorway.color}"></span><span>${esc(colorway.label)}</span>`,
+      cfg.palette === id,
+      'avatar-color-choice',
+    )
+  )).join('');
+  const toggles = variant.toggles.map(([key, label]) => (
+    avatarAppearanceChoice(key, !cfg[key], `${cfg[key] ? '✓' : '○'} ${label}`, !!cfg[key], 'avatar-toggle-choice')
+  )).join('');
+  const faces = [
+    ['neutral', 'Спокойное'],
+    ['happy', 'Радостное'],
+    ['tired', 'Усталое'],
+    ['blink', 'Моргание'],
+  ].map(([id, label]) => avatarAppearanceChoice('face', id, label, cfg.face === id)).join('');
+  const layersSection = variant.toggles.length
+    ? `<section><h4>Слои</h4><div class="avatar-choice-row">${toggles}</div></section>`
+    : '';
+  const facesSection = Object.keys(variant.faceStates).length > 1
+    ? `<section><h4>Лицо</h4><div class="avatar-choice-row">${faces}</div></section>`
+    : '';
+  const motions = [
+    ['greet', '👋 Отклик'],
+    ['happy', '✨ Радость'],
+    ['victory', '🏆 Победа'],
+    ['focus', '🎯 Фокус'],
+    ['tired', '😮‍💨 Усталость'],
+  ].map(([id, label]) => `<button class="avatar-choice avatar-motion-choice" data-action="avatar-motion-preview" data-motion="${id}">${label}</button>`).join('');
   return `<div class="card avatar-editor" id="avatar-editor">
-    <h3>🪞 Твой персонаж</h3>
-    <div class="ave-stage ave-stage-figure">${avatarFigureHTML()}</div>
-    <p class="muted" style="font-size:12px;margin:10px 0 0"><b>Странник</b> — тот, кто идёт не потому, что знает дорогу, а потому что выбрал направление. В рюкзаке — всё нужное, в компасе — твой Север. Смена одежды и экипировки — в следующем обновлении арта.</p>
+    <div class="avatar-editor-head"><div><h3>🪞 Твой персонаж</h3><p>${esc(variant.label)} · модульная бумажная кукла</p></div><span class="avatar-editor-badge">${variant.slots} слотов</span></div>
+    <div class="ave-stage ave-stage-figure">${avatarFigureHTML({ motion: 'idle', interactive: true })}</div>
+    <div class="avatar-customizer">
+      <section><h4>Облик</h4><div class="avatar-choice-row">${variants}</div></section>
+      <section><h4>Цвет костюма</h4><div class="avatar-choice-row avatar-palette-row">${palettes}</div></section>
+      ${layersSection}
+      ${facesSection}
+      <section><h4>Проверить движения</h4><div class="avatar-choice-row">${motions}</div></section>
+    </div>
+    <p class="avatar-editor-note"><b>${esc(variant.label)}</b> — ${esc(variant.description)} Нажми на персонажа — он откликнется. В Логове движение и выражение лица автоматически зависят от энергии, фокуса и выполненных дел.</p>
   </div>`;
 }
 // ---- Колесо баланса (ядро v1): радар ритма + дрилл-даун под-сфер + подсказки ----
@@ -9293,7 +9653,7 @@ function showMobileNavSheet() {
   overlay.innerHTML = `<section class="mobile-nav-sheet" role="dialog" aria-modal="true" aria-label="${t('Ещё')}">
     <div class="mobile-sheet-handle" aria-hidden="true"></div>
     <header class="mobile-sheet-head">
-      <div class="mobile-sheet-profile"><span>${esc((State.me && State.me.avatar) || '👤')}</span><div><b>${esc((State.me && State.me.name) || 'Satoru')}</b><small>${cr.icon} ${esc(cr.name)} · ${t('Уровень')} ${charLevel()}</small></div></div>
+      <div class="mobile-sheet-profile"><button class="mobile-sheet-avatar" data-action="go-wardrobe" aria-label="Открыть персонажа">${avatarPortraitHTML({ motion: 'portrait' })}</button><div><b>${esc((State.me && State.me.name) || 'Satoru')}</b><small>${cr.icon} ${esc(cr.name)} · ${t('Уровень')} ${charLevel()}</small></div></div>
       <button class="mobile-sheet-close" data-action="mobile-nav-close" aria-label="${t('Закрыть')}">✕</button>
     </header>
     <div class="mobile-sheet-grid">${menuSections}
@@ -9369,6 +9729,7 @@ function render() {
   try { if (lang() !== 'ru') translateDOM(document.body); } catch (e) { console.error('translateDOM', e); }
   try { scheduleReminders(); } catch (e) { console.error('scheduleReminders', e); }
   try { kickCompVideo(); } catch (e) { /* видео-автоплей — не критично */ }
+  try { syncAvatarMotion(); } catch (e) { /* motion-слой не должен ломать основной рендер */ }
   try { tutorialPaint(); } catch (e) { /* гайд-оверлей — не критично */ }
   try { dripCheck(); } catch (e) { /* капельница гайда — не критично */ }
   try { momentCheck(); } catch (e) { /* момент дня — тоже не критично для рендера */ }
@@ -10165,6 +10526,22 @@ function onClick(e) {
   if (action === 'reload-app') { location.reload(); return; }
   if (action === 'goto-pets') { State.view = 'pets'; markDiscovered('pets'); render(); return; }
   if (action === 'go-wardrobe') { State.view = 'character'; render(); setTimeout(() => { const c = document.getElementById('avatar-editor'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60); return; }
+  if (action === 'avatar-react') { animateAvatarStack(el, 'greet'); return; }
+  if (action === 'avatar-motion-preview') {
+    const motion = ['greet', 'happy', 'victory', 'focus', 'tired'].includes(el.dataset.motion) ? el.dataset.motion : 'greet';
+    const stack = document.querySelector('#avatar-editor .avatar-art-stack[data-avatar-interactive="true"]');
+    if (stack) animateAvatarStack(stack, motion);
+    return;
+  }
+  if (action === 'avatar-appearance-set') {
+    const key = el.dataset.key;
+    if (!['variant', 'palette', 'outfit', 'hair', 'goggles', 'scarf', 'backpack', 'pouch', 'lantern', 'hat', 'glasses', 'gear', 'face'].includes(key)) return;
+    let value = el.dataset.value;
+    if (value === 'true') value = true;
+    else if (value === 'false') value = false;
+    setAvatarAppearance({ [key]: value });
+    return;
+  }
   if (action === 'goto-import') { State.view = 'settings'; render(); setTimeout(() => { const c = document.getElementById('import-card'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('flash-card'); } }, 60); return; }
   if (action === 'start-trial') {
     fetch('/api/auth/start-trial', { method: 'POST' }).then(async (r) => {
@@ -10196,7 +10573,8 @@ function onClick(e) {
   } else if (action === 'toggle-habit') {
     const h = habitById(id); if (!h) return;
     State.habitlog[today] = State.habitlog[today] || {};
-    if (State.habitlog[today][id]) { delete State.habitlog[today][id]; if (!Object.keys(State.habitlog[today]).length) delete State.habitlog[today]; }
+    const habitWasDone = !!State.habitlog[today][id];
+    if (habitWasDone) { delete State.habitlog[today][id]; if (!Object.keys(State.habitlog[today]).length) delete State.habitlog[today]; }
     else {
       State.habitlog[today][id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() };
       const eD = applyEnergy(h); track('complete:habit');
@@ -10204,7 +10582,7 @@ function onClick(e) {
       toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${hsk.name}${eD ? ` · ${eD > 0 ? '+' : ''}${eD} 🔋` : ''}`);
       bossHitFeedback(bossHitCheck('habit', h, { sphereName: hsk ? hsk.name : '' }));
     }
-    Store.save('habitlog', State.habitlog); checkAchievements(); render(); publishLeaderboard();
+    Store.save('habitlog', State.habitlog); checkAchievements(); render(); if (!habitWasDone) triggerAvatarReaction('happy', 'Привычка ✓'); publishLeaderboard();
   } else if (action === 'focus-task') { const q = questById(id); if (q && !q.done) { track('focus:start'); startFocus(id); }
   } else if (action === 'timer-pause') { pauseFocus();
   } else if (action === 'timer-resume') { resumeFocus();
@@ -10264,7 +10642,7 @@ function onClick(e) {
   // --- Цели ---
   } else if (action === 'toggle-step') {
     const g = goalById(el.dataset.goal); if (!g) return; const st = g.steps.find((x) => x.id === el.dataset.step); if (!st) return;
-    st.done = !st.done; refreshGoalCompletion(g); Store.save('goals', State.goals); checkAchievements(); render();
+    st.done = !st.done; refreshGoalCompletion(g); Store.save('goals', State.goals); checkAchievements(); render(); if (st.done) triggerAvatarReaction('happy', 'Шаг цели ✓');
   } else if (action === 'delete-step') {
     const g = goalById(el.dataset.goal); if (!g) return; g.steps = g.steps.filter((x) => x.id !== el.dataset.step); refreshGoalCompletion(g); Store.save('goals', State.goals); render();
   } else if (action === 'delete-goal') {
@@ -10759,6 +11137,7 @@ async function initApp() {
   State.settings.body = State.settings.body || {};
   State.settings.imported = State.settings.imported || {};
   State.settings.avatar = State.settings.avatar || defaultAvatar();
+  State.settings.avatarAppearance = normalizeAvatarAppearance(State.settings.avatarAppearance);
   // Компаньон: запоминаем сколько дней не виделись (для «я скучал»), затем отмечаем визит
   { const c = ensureCompanion(); State._compAway = daysBetween(c.lastSeen || todayStr(), todayStr()); c.lastSeen = todayStr(); Store.save('settings', State.settings); }
 
@@ -11149,6 +11528,8 @@ async function init() {
   // Инлайн-правка текста квеста: клик мимо → сохранить; Esc → отмена
   document.addEventListener('focusout', (e) => { const f = e.target.closest && e.target.closest('.t-edit-form'); if (f && f.requestSubmit) setTimeout(() => { if (State._editTask) f.requestSubmit(); }, 100); });
   document.addEventListener('keydown', (e) => {
+    const avatar = e.target.closest && e.target.closest('.avatar-art-stack[data-avatar-interactive="true"]');
+    if (avatar && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); animateAvatarStack(avatar, 'greet'); return; }
     if (e.key !== 'Escape') return;
     if (document.getElementById('mobile-nav-sheet')) { closeMobileNavSheet(); return; }
     if (State._editTask) { State._editTask = null; render(); }
