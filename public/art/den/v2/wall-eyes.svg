@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Шестиглазая печать">
+  <defs>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#090b16" flood-opacity=".38"/>
+    </filter>
+    <filter id="paper" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency=".82" numOctaves="2" seed="9" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 .085"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff8c9"/><stop offset="1" stop-color="#ffb34d"/>
+    </linearGradient>
+  </defs>
+  <g filter="url(#shadow)"><g filter="url(#paper)">
+    <path d="M64 17 L108 43 101 94 64 111 27 94 20 43Z" fill="#33273d" stroke="#a36f88" stroke-width="4"/>
+    <circle cx="64" cy="64" r="34" fill="#654568" opacity=".55"/>
+    <path d="M54 39 q10 -9 20 0 q-10 11 -20 0z" fill="#e4bea6"/><circle cx="64" cy="39" r="3.5" fill="#33273d"/><path d="M35 51 q10 -9 20 0 q-10 11 -20 0z" fill="#e4bea6"/><circle cx="45" cy="51" r="3.5" fill="#33273d"/><path d="M73 51 q10 -9 20 0 q-10 11 -20 0z" fill="#e4bea6"/><circle cx="83" cy="51" r="3.5" fill="#33273d"/><path d="M35 76 q10 -9 20 0 q-10 11 -20 0z" fill="#e4bea6"/><circle cx="45" cy="76" r="3.5" fill="#33273d"/><path d="M73 76 q10 -9 20 0 q-10 11 -20 0z" fill="#e4bea6"/><circle cx="83" cy="76" r="3.5" fill="#33273d"/><path d="M54 88 q10 -9 20 0 q-10 11 -20 0z" fill="#e4bea6"/><circle cx="64" cy="88" r="3.5" fill="#33273d"/>
+    <circle cx="64" cy="64" r="7" fill="#f0dfb8"/></g></g>
+</svg>

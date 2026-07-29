@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title">
+  <title id="title">Media Sound</title>
+  <style>
+  .paper-primary {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .paper-accent {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.45;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: .48;
+  }
+  .paper-fill {
+    fill: currentColor;
+    stroke: none;
+  }
+</style>
+  <g class="paper-primary"><path d="M3 10h4l5-4v12l-5-4H3zM15 9a4 4 0 0 1 0 6M17.5 6.5a8 8 0 0 1 0 11"/></g>
+</svg>

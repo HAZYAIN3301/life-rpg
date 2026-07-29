@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Карта странника">
+  <defs>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#090b16" flood-opacity=".38"/>
+    </filter>
+    <filter id="paper" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency=".82" numOctaves="2" seed="7" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 .085"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff8c9"/><stop offset="1" stop-color="#ffb34d"/>
+    </linearGradient>
+  </defs>
+  <g filter="url(#shadow)"><g filter="url(#paper)">
+    <path d="M21 23 Q63 13 107 23 L103 101 Q63 92 25 102Z" fill="#d9c99a" stroke="#314a42" stroke-width="4"/>
+    <path d="M32 41 Q48 27 62 40 T92 34 M35 69 Q48 58 57 70 T90 64 M51 28 Q43 51 55 92 M78 27 Q86 51 72 91" fill="none" stroke="#557c63" stroke-width="3" stroke-linecap="round"/>
+    <path d="M82 72 l12 4 -8 8 -8 -5z" fill="#a86f45"/><circle cx="82" cy="72" r="4" fill="#a86f45"/>
+    <path d="M26 24 l-7 -8 M103 23 l7 -8 M25 101 l-7 9 M103 101 l7 9" stroke="#a86f45" stroke-width="5" stroke-linecap="round"/></g></g>
+</svg>

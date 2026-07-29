@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">achievement · clean_30</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <g transform="rotate(-2 64 64)"><path d="M64 10l12 8 15-1 6 14 13 7-3 15 8 12-9 12 2 15-14 6-7 14-15-2-12 8-12-9-15 1-6-14-13-7 3-15-8-12 9-12-2-15 14-6 7-14 15 2z" fill="#c9b185" stroke="#25243c" stroke-width="4"/><circle cx="64" cy="64" r="44" fill="#efe0c1" stroke="#e8a94b" stroke-width="4" stroke-dasharray="5 4"/></g>
+    <g class="motif"><path d="M60 63C45 32 22 38 28 61c3 11 14 16 31 18M68 63c15-31 38-25 32-2-3 11-14 16-31 18" fill="#c95f86" stroke="#25243c" stroke-width="4"/><path d="M64 53v41M64 58l-8-14M64 58l8-14" stroke="#25243c" stroke-width="5" stroke-linecap="round"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#e8a94b" opacity=".9"/>
+</svg>

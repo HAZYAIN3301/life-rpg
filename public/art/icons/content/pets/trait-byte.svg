@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">pet · trait · byte</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <circle cx="64" cy="64" r="53" fill="#45b9aa" opacity=".45" stroke="#20253b" stroke-width="5"/><circle cx="64" cy="64" r="44" fill="#f3e4c5" stroke="#f0b44d" stroke-width="4" stroke-dasharray="7 5"/>
+    <g class="motif"><rect x="29" y="29" width="70" height="50" rx="5" fill="#11182b" stroke="#20253b" stroke-width="5"/><path d="M20 83h88l-10 15H30z" fill="#70b8d5" stroke="#20253b" stroke-width="5"/><path d="M48 43h32M48 54h24M48 65h37" stroke="#45b9aa" stroke-width="4" stroke-linecap="round"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#f0b44d" opacity=".9"/>
+</svg>

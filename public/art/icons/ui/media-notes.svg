@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title">
+  <title id="title">Media Notes</title>
+  <style>
+  .paper-primary {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .paper-accent {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.45;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: .48;
+  }
+  .paper-fill {
+    fill: currentColor;
+    stroke: none;
+  }
+</style>
+  <g class="paper-primary"><path d="M5 3h12l2 2v16H5zM17 3v4h4M8 11h8M8 15h8M8 7h5"/></g><g class="paper-accent"><path d="m8 19 2-2 2 2 2-2 2 2"/></g>
+</svg>

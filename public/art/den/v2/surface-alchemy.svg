@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Алхимический стол">
+  <defs>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#090b16" flood-opacity=".38"/>
+    </filter>
+    <filter id="paper" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency=".82" numOctaves="2" seed="14" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 .085"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff8c9"/><stop offset="1" stop-color="#ffb34d"/>
+    </linearGradient>
+  </defs>
+  <g filter="url(#shadow)"><g filter="url(#paper)">
+    <ellipse cx="64" cy="110" rx="49" ry="8" fill="#10131e" opacity=".23"/>
+    <path d="M17 64 H111 V80 H17Z M25 78 h12 v31 H25z M91 78 h12 v31 H91z" fill="#f0dfb8" stroke="#33273d" stroke-width="4"/>
+    <path d="M47 22 h12 v27 l-14 20 q-5 9 7 10 h24 q12 -1 7 -10 L69 49 V22 h12" fill="#a36f88" stroke="#33273d" stroke-width="4"/>
+    <path d="M48 62 q16 -8 32 0 l-6 12 H54z" fill="#654568"/>
+    <circle cx="60" cy="57" r="3" fill="#e4bea6"/><circle cx="71" cy="49" r="4" fill="#e4bea6"/></g></g>
+</svg>

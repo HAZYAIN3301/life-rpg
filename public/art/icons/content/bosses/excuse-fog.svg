@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">boss · excuse fog</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <path d="M64 8l13 9 16-2 7 15 15 7-3 16 8 13-10 13 1 16-16 5-8 15-15-4-14 8-12-10-16 1-5-16-14-8 5-15-7-14 11-12-1-16 16-4 9-14 15 4z" fill="#11182b" stroke="#d9636f" stroke-width="5"/><circle cx="64" cy="64" r="47" fill="#d9c296" opacity=".9"/>
+    <g class="motif"><path d="M23 50c11-13 22-9 30-2 10-17 34-15 41 1 16-3 24 8 16 20 10 13-3 28-18 23-8 13-29 13-37 1-16 8-32-4-27-18-13-7-12-19-5-25z" fill="#d9c296" stroke="#20253b" stroke-width="4" opacity=".85"/><circle cx="52" cy="68" r="4" fill="#11182b"/><circle cx="76" cy="68" r="4" fill="#11182b"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#f0b44d" opacity=".9"/>
+</svg>

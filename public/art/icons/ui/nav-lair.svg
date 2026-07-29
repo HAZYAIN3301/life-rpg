@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title">
+  <title id="title">Nav Lair</title>
+  <style>
+  .paper-primary {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .paper-accent {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.45;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: .48;
+  }
+  .paper-fill {
+    fill: currentColor;
+    stroke: none;
+  }
+</style>
+  <g class="paper-primary"><path d="M3 20V5h18v15M3 9h18M8 9v11M16 9v11"/><path d="M10.5 4h3l.7-2h-4.4z"/><path d="M10 14h4v6h-4z"/></g><g class="paper-accent"><path d="m12 11.7.7 1.2-.7 1.1-.7-1.1z"/></g>
+</svg>

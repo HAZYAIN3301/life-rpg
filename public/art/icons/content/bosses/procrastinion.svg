@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">boss · procrastinion</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <path d="M64 8l13 9 16-2 7 15 15 7-3 16 8 13-10 13 1 16-16 5-8 15-15-4-14 8-12-10-16 1-5-16-14-8 5-15-7-14 11-12-1-16 16-4 9-14 15 4z" fill="#191728" stroke="#ca667d" stroke-width="5"/><circle cx="64" cy="64" r="47" fill="#bfa985" opacity=".9"/>
+    <g class="motif"><path d="M31 96c6-24 6-50 28-61 18-10 39 2 38 20-1 15-16 25-29 18-10-5-9-20 1-23 7-2 13 4 10 10" fill="none" stroke="#ca667d" stroke-width="14" stroke-linecap="round"/><circle cx="38" cy="82" r="3" fill="#ead9bc"/><circle cx="47" cy="64" r="3" fill="#ead9bc"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#dc9e45" opacity=".9"/>
+</svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title">
+  <title id="title">Action Refresh</title>
+  <style>
+  .paper-primary {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .paper-accent {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.45;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: .48;
+  }
+  .paper-fill {
+    fill: currentColor;
+    stroke: none;
+  }
+</style>
+  <g class="paper-primary"><path d="M19.3 8A8 8 0 1 0 20 14"/><path d="M19.3 3v5h-5"/></g><g class="paper-accent"><circle cx="12" cy="12" r="2"/></g>
+</svg>

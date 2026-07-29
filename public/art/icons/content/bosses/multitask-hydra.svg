@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">boss · multitask hydra</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <path d="M64 8l13 9 16-2 7 15 15 7-3 16 8 13-10 13 1 16-16 5-8 15-15-4-14 8-12-10-16 1-5-16-14-8 5-15-7-14 11-12-1-16 16-4 9-14 15 4z" fill="#17172b" stroke="#c95f86" stroke-width="5"/><circle cx="64" cy="64" r="47" fill="#c9b185" opacity=".9"/>
+    <g class="motif"><path d="M64 96V64M64 69C42 67 38 52 43 38M64 69c22-2 26-17 21-31M61 76c-20 8-25 4-30-7M67 76c20 8 25 4 30-7" fill="none" stroke="#6e80c9" stroke-width="9" stroke-linecap="round"/><circle cx="43" cy="34" r="10" fill="#c95f86"/><circle cx="85" cy="34" r="10" fill="#65a9c8"/><circle cx="29" cy="65" r="9" fill="#e8a94b"/><circle cx="99" cy="65" r="9" fill="#c95f86"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#e8a94b" opacity=".9"/>
+</svg>

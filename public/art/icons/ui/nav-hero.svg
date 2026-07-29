@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title">
+  <title id="title">Nav Hero</title>
+  <style>
+  .paper-primary {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .paper-accent {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.45;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: .48;
+  }
+  .paper-fill {
+    fill: currentColor;
+    stroke: none;
+  }
+</style>
+  <g class="paper-fill"><path d="m7.2 9.8 2-1.8L12 9.4 14.8 8l2 1.8 3.4 10.6-4.8-2-3.4 3-3.4-3-4.8 2z"/></g><g class="paper-primary"><circle cx="12" cy="5.25" r="2.45"/><path d="M9.15 8.65c.55 1.55 1.52 2.35 2.85 2.35s2.3-.8 2.85-2.35"/></g><g class="paper-accent"><path d="m12 12.35 13.35 13.5l-.52 1.82h-1.66l-.52-1.82zM7.2 9.8l1.55 8.2M16.8 9.8l-1.55 8.2"/></g>
+</svg>

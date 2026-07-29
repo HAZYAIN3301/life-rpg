@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title">
+  <title id="title">Nav Rewards</title>
+  <style>
+  .paper-primary {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .paper-accent {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.45;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: .48;
+  }
+  .paper-fill {
+    fill: currentColor;
+    stroke: none;
+  }
+</style>
+  <g class="paper-primary"><path d="M3 9h18v11H3zM2.5 6.5h19V10h-19zM12 6.5V20"/><path d="M12 6.5c-1.2-3.4-5.5-3.8-5.7-.9-.1 1.4 1.8 1.8 5.7.9ZM12 6.5c1.2-3.4 5.5-3.8 5.7-.9.1 1.4-1.8 1.8-5.7.9Z"/></g><g class="paper-accent"><circle cx="12" cy="14.5" r="2.2"/><path d="M11.3 13.7c.1-.8 1.4-1 1.5-.1.1.6-.8.7-.8 1.3M12 16.1v.1"/></g>
+</svg>

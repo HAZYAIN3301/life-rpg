@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">boss · hypnotoad</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <path d="M64 8l13 9 16-2 7 15 15 7-3 16 8 13-10 13 1 16-16 5-8 15-15-4-14 8-12-10-16 1-5-16-14-8 5-15-7-14 11-12-1-16 16-4 9-14 15 4z" fill="#11182b" stroke="#d9636f" stroke-width="5"/><circle cx="64" cy="64" r="47" fill="#d9c296" opacity=".9"/>
+    <g class="motif"><path d="M32 63c0-21 14-32 32-32s32 11 32 32v29H32z" fill="#45b9aa" stroke="#20253b" stroke-width="5"/><circle cx="47" cy="45" r="11" fill="#f3e4c5" stroke="#20253b" stroke-width="4"/><circle cx="81" cy="45" r="11" fill="#f3e4c5" stroke="#20253b" stroke-width="4"/><circle cx="47" cy="45" r="6" fill="#d9636f"/><circle cx="81" cy="45" r="6" fill="#d9636f"/><path d="M46 78c11 8 25 8 36 0" fill="none" stroke="#20253b" stroke-width="5" stroke-linecap="round"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#f0b44d" opacity=".9"/>
+</svg>

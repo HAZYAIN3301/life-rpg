@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">pet · trait · sage</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <circle cx="64" cy="64" r="53" fill="#5b9d74" opacity=".45" stroke="#242a3c" stroke-width="5"/><circle cx="64" cy="64" r="44" fill="#f0dfbf" stroke="#e7b04c" stroke-width="4" stroke-dasharray="7 5"/>
+    <g class="motif"><circle cx="64" cy="65" r="37" fill="#6aabd1" stroke="#242a3c" stroke-width="5"/><path d="M27 65h74M64 28c-17 17-17 57 0 74M64 28c17 17 17 57 0 74" fill="none" stroke="#f0dfbf" stroke-width="4"/><path d="M35 46c17 8 41 8 58 0M35 84c17-8 41-8 58 0" fill="none" stroke="#f0dfbf" stroke-width="3"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#e7b04c" opacity=".9"/>
+</svg>

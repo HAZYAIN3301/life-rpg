@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">profile · origin · ember</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <path d="M64 10l44 17-7 51c-4 21-18 33-37 42-19-9-33-21-37-42l-7-51z" fill="#191728" stroke="#dc9e45" stroke-width="5"/><path d="M64 20l34 13-6 41c-3 16-13 26-28 34-15-8-25-18-28-34l-6-41z" fill="#bfa985"/>
+    <g class="motif"><path d="M64 25c14 19 24 28 21 46-2 15-11 25-22 25-17 0-26-12-23-28 2-11 10-18 17-29 1 10 5 15 8 17 5-10 3-19-1-31z" fill="#ca667d" stroke="#29263a" stroke-width="4"/><path d="M63 53c9 10 12 17 10 25-1 7-5 12-11 12-8 0-12-7-10-15 1-7 7-11 11-22z" fill="#dc9e45"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#dc9e45" opacity=".9"/>
+</svg>

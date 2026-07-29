@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Башня манэки">
+  <defs>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#090b16" flood-opacity=".38"/>
+    </filter>
+    <filter id="paper" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency=".82" numOctaves="2" seed="17" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 .085"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff8c9"/><stop offset="1" stop-color="#ffb34d"/>
+    </linearGradient>
+  </defs>
+  <g filter="url(#shadow)"><g filter="url(#paper)">
+    <ellipse cx="64" cy="111" rx="45" ry="8" fill="#10131e" opacity=".23"/>
+    <path d="M32 103 h65 M40 103 V53 M83 103 V33" stroke="#eee1c0" stroke-width="10" stroke-linecap="round"/>
+    <path d="M22 48 H62 V61 H22Z M64 27 H105 V40 H64Z" fill="#c8763e" stroke="#3b2828" stroke-width="4"/>
+    <path d="M50 74 q19 -16 37 0 v23 H50z" fill="#7d4435" stroke="#3b2828" stroke-width="4"/>
+    <path d="M55 72 l7 -10 6 12 M74 73 l7 -11 5 14" fill="#7d4435" stroke="#3b2828" stroke-width="4"/></g></g>
+</svg>

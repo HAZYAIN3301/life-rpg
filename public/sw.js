@@ -1,8 +1,8 @@
 /* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    Стратегия: network-first для статики (всегда свежий код онлайн, офлайн — из кэша),
    /api/ — мимо SW (живые данные). Бамп CACHE при изменении набора шелла. */
-const CACHE = 'satoru-v63';
-const SHELL = ['./', 'index.html', 'app.js', 'styles.css', 'manifest.webmanifest', 'icon.svg'];
+const CACHE = 'satoru-v70';
+const SHELL = ['./', 'index.html', 'app.js', 'styles.css', 'shadow-rig-v2.js', 'shadow-rig-v2-demo.html', 'art/icons/icon-registry.js', 'manifest.webmanifest', 'icon.svg'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()).catch(() => {}));

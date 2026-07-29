@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Облачное кресло">
+  <defs>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#090b16" flood-opacity=".38"/>
+    </filter>
+    <filter id="paper" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency=".82" numOctaves="2" seed="12" result="noise"/>
+      <feColorMatrix in="noise" type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 .085"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+    <linearGradient id="glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff8c9"/><stop offset="1" stop-color="#ffb34d"/>
+    </linearGradient>
+  </defs>
+  <g filter="url(#shadow)"><g filter="url(#paper)">
+    <ellipse cx="64" cy="107" rx="45" ry="9" fill="#10131e" opacity=".25"/>
+    <path d="M20 69 q-2 -21 22 -22 q7 -27 32 -16 q22 -10 31 14 q22 4 16 28 q-4 21 -28 20 H42 q-22 0 -22 -24z" fill="#d8e3d2" stroke="#76a8ad" stroke-width="4"/>
+    <path d="M35 78 q29 13 58 0" fill="none" stroke="#446888" stroke-width="4" opacity=".55"/>
+    <path d="M46 94 l-6 12 M84 94 l7 12" stroke="#c49257" stroke-width="6" stroke-linecap="round"/></g></g>
+</svg>

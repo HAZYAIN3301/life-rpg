@@ -1,5 +1,34 @@
 'use strict';
 
+// ── Icon System v1 ──────────────────────────────────────────
+// The registry is loaded before this file. UI glyphs inherit the surrounding
+// text colour; illustrated game emblems retain their paper-cut colour.
+function satoruIconHTML(id, className = '', fallback = '') {
+  const icon = window.SatoruIconRegistry && window.SatoruIconRegistry[id];
+  if (!icon) return fallback;
+  const cls = `satoru-icon ${icon.kind === 'ui-glyph' ? 'satoru-icon--glyph' : 'satoru-icon--emblem'}${className ? ` ${className}` : ''}`;
+  const motion = Array.isArray(icon.motion) ? icon.motion[0] : icon.motion;
+  const attrs = `data-icon-id="${esc(id)}"${motion ? ` data-motion="${esc(motion)}"` : ''}`;
+  if (icon.kind === 'ui-glyph') {
+    return `<span class="${cls}" ${attrs} style="--satoru-icon:url('${icon.publicPath}')" aria-hidden="true"></span>`;
+  }
+  return `<img class="${cls}" ${attrs} src="${icon.publicPath}" alt="" aria-hidden="true" decoding="async" />`;
+}
+
+function bossEmblemHTML(boss, className = '', fallback = '') {
+  return satoruIconHTML((boss && boss.iconId) || 'system.achievement', className, fallback || (boss && boss.emoji) || '');
+}
+
+function difficultyIconHTML(difficulty) {
+  const map = {
+    easy: ['difficulty.easy', '🌱'],
+    normal: ['difficulty.normal', '⚔️'],
+    hard: ['status.streak', '🔥'],
+  };
+  const [id, fallback] = map[difficulty] || [];
+  return id ? satoruIconHTML(id, 'task-difficulty-icon', fallback) : '';
+}
+
 // ============================================================
 //  i18n — English + Deutsch translations
 // ============================================================
@@ -8,8 +37,8 @@ const I18N_EN = {
   'Сегодня': 'Today', 'День': 'Day', 'Заметки': 'Notes',
   'План': 'Plan', 'Календарь': 'Calendar', 'Цели': 'Goals',
   'Привычки': 'Habits', 'Награды': 'Rewards',
-  'Герой': 'Hero', '🏠 Логово': '🏠 Den', 'Персонаж': 'Character',
-  '🐾 Питомцы': '🐾 Pets', 'Навыки': 'Skills', 'Прогресс': 'Progress',
+  'Герой': 'Hero', '🏠 Логово': '🏠 Den', 'Логово': 'Den', 'Персонаж': 'Character',
+  '🐾 Питомцы': '🐾 Pets', 'Питомцы': 'Pets', 'Навыки': 'Skills', 'Прогресс': 'Progress',
   'Племя': 'Tribe', 'Пати': 'Party', 'Рейтинг': 'Leaderboard', 'Ещё': 'More', 'Помощник': 'Assistant',
   // Auth
   'Превращаем жизнь в игру': 'Turning life into a game',
@@ -166,8 +195,8 @@ const I18N_DE = {
   'Сегодня': 'Heute', 'День': 'Tag', 'Заметки': 'Notizen',
   'План': 'Plan', 'Календарь': 'Kalender', 'Цели': 'Ziele',
   'Привычки': 'Gewohnheiten', 'Награды': 'Belohnungen',
-  'Герой': 'Held', '🏠 Логово': '🏠 Lager', 'Персонаж': 'Charakter',
-  '🐾 Питомцы': '🐾 Haustiere', 'Навыки': 'Fähigkeiten', 'Прогресс': 'Fortschritt',
+  'Герой': 'Held', '🏠 Логово': '🏠 Lager', 'Логово': 'Lager', 'Персонаж': 'Charakter',
+  '🐾 Питомцы': '🐾 Haustiere', 'Питомцы': 'Haustiere', 'Навыки': 'Fähigkeiten', 'Прогресс': 'Fortschritt',
   'Племя': 'Stamm', 'Пати': 'Gruppe', 'Рейтинг': 'Rangliste', 'Ещё': 'Mehr', 'Помощник': 'Assistent',
   // Auth
   'Превращаем жизнь в игру': 'Das Leben zum Spiel machen',
@@ -323,8 +352,8 @@ const I18N_UK = {
   'Сегодня': 'Сьогодні', 'День': 'День', 'Заметки': 'Нотатки',
   'План': 'План', 'Календарь': 'Календар', 'Цели': 'Цілі',
   'Привычки': 'Звички', 'Награды': 'Нагороди',
-  'Герой': 'Герой', '🏠 Логово': '🏠 Лігво', 'Персонаж': 'Персонаж',
-  '🐾 Питомцы': '🐾 Улюбленці', 'Навыки': 'Навички', 'Прогресс': 'Прогрес',
+  'Герой': 'Герой', '🏠 Логово': '🏠 Лігво', 'Логово': 'Лігво', 'Персонаж': 'Персонаж',
+  '🐾 Питомцы': '🐾 Улюбленці', 'Питомцы': 'Улюбленці', 'Навыки': 'Навички', 'Прогресс': 'Прогрес',
   'Племя': "Плем'я", 'Пати': 'Паті', 'Рейтинг': 'Рейтинг', 'Ещё': 'Ще', 'Помощник': 'Помічник',
   'Превращаем жизнь в игру': 'Перетворюємо життя на гру',
   'Создай аккаунт': 'Створи акаунт', 'Восстановление доступа': 'Відновлення доступу',
@@ -394,8 +423,8 @@ const I18N_ES = {
   'Сегодня': 'Hoy', 'День': 'Día', 'Заметки': 'Notas',
   'План': 'Plan', 'Календарь': 'Calendario', 'Цели': 'Metas',
   'Привычки': 'Hábitos', 'Награды': 'Recompensas',
-  'Герой': 'Héroe', '🏠 Логово': '🏠 Guarida', 'Персонаж': 'Personaje',
-  '🐾 Питомцы': '🐾 Mascotas', 'Навыки': 'Habilidades', 'Прогресс': 'Progreso',
+  'Герой': 'Héroe', '🏠 Логово': '🏠 Guarida', 'Логово': 'Guarida', 'Персонаж': 'Personaje',
+  '🐾 Питомцы': '🐾 Mascotas', 'Питомцы': 'Mascotas', 'Навыки': 'Habilidades', 'Прогресс': 'Progreso',
   'Племя': 'Tribu', 'Пати': 'Grupo', 'Рейтинг': 'Clasificación', 'Ещё': 'Más', 'Помощник': 'Asistente',
   'Превращаем жизнь в игру': 'Convertir la vida en un juego',
   'Создай аккаунт': 'Crea tu cuenta', 'Восстановление доступа': 'Recuperar acceso',
@@ -2313,6 +2342,32 @@ const REWARD_CATALOG = [
   { icon: '🎁', name: 'Большая хотелка (копилка)', cost: 5000 },
   { icon: '🏖', name: 'Отпуск мечты', cost: 8000 },
 ];
+const REWARD_ICON_KEYS = [
+  'coffee', 'chocolate', 'icecream', 'pizza', 'delivery', 'boba', 'cake', 'breakfast',
+  'game', 'episode', 'movie', 'boardgames', 'hobby', 'drawing',
+  'bath', 'sleep', 'music', 'spa', 'walk', 'meditation', 'banya',
+  'book', 'small-purchase', 'clothes', 'gadget', 'decor',
+  'weekend-trip', 'event', 'concert', 'restaurant', 'course', 'wishlist', 'vacation',
+];
+REWARD_CATALOG.forEach((reward, index) => { reward.iconId = `reward.${REWARD_ICON_KEYS[index]}`; });
+const LEGACY_REWARD_ICON_IDS = {
+  '☕': 'reward.coffee', '🍫': 'reward.chocolate', '🍦': 'reward.icecream', '🍕': 'reward.pizza',
+  '🍣': 'reward.delivery', '🧋': 'reward.boba', '🍰': 'reward.cake', '🥐': 'reward.breakfast',
+  '🎮': 'reward.game', '📺': 'reward.episode', '🎬': 'reward.movie', '🎲': 'reward.boardgames',
+  '🎯': 'reward.hobby', '🎨': 'reward.drawing', '🛁': 'reward.bath', '😴': 'reward.sleep',
+  '💆': 'reward.spa', '🌳': 'reward.walk', '🧘': 'reward.meditation', '🛀': 'reward.banya',
+  '📚': 'reward.book', '🛍': 'reward.small-purchase', '👟': 'reward.clothes', '🖼': 'reward.decor',
+  '✈️': 'reward.weekend-trip', '🎡': 'reward.event', '🎵': 'reward.concert', '🍽': 'reward.restaurant',
+  '💻': 'reward.course', '🎁': 'reward.wishlist', '🏖': 'reward.vacation',
+};
+function rewardIconId(reward) {
+  if (reward && reward.iconId && window.SatoruIconRegistry && window.SatoruIconRegistry[reward.iconId]) return reward.iconId;
+  if (reward && reward.icon === '🎧') return /гаджет|наушник/i.test(reward.name || '') ? 'reward.gadget' : 'reward.music';
+  return (reward && LEGACY_REWARD_ICON_IDS[reward.icon]) || 'system.rewards';
+}
+function rewardIconHTML(reward, className = '') {
+  return satoruIconHTML(rewardIconId(reward), className, '◇');
+}
 const FREE_REWARDS_MAX = 8; // лимит наград для Free (Pro — без лимита)
 
 // Шаблоны навыков для онбординга (как у rpgreal)
@@ -2653,6 +2708,16 @@ function ladderFor(skillName) {
 function tierLevels(ladder) { const n = ladder.tiers.length, top = ladder.top || 16; return ladder.tiers.map((_, i) => (i === 0 ? 1 : Math.round(1 + (top - 1) * i / (n - 1)))); }
 
 const AVATARS = ['⚡','⚔️','🔥','🌟','🎯','🚀','💎','🐉','🦊','🐺','🌙','☀️','🎭','🎸','🏆','🦁'];
+const AVATAR_ORIGIN_IDS = [
+  'profile.origin.spark', 'profile.origin.blade', 'profile.origin.ember', 'profile.origin.star',
+  'profile.origin.pathfinder', 'profile.origin.voyager', 'profile.origin.memory', 'profile.origin.wyrm',
+  'profile.origin.fox', 'profile.origin.wolf', 'profile.origin.moon', 'profile.origin.sun',
+  'profile.origin.mask', 'profile.origin.bard', 'profile.origin.champion', 'profile.origin.lion',
+];
+function avatarOriginIconHTML(value, className = '') {
+  const index = AVATARS.indexOf(value);
+  return satoruIconHTML(AVATAR_ORIGIN_IDS[index < 0 ? 0 : index], className, value || '◇');
+}
 const TEST_USER = { name: 'Тестовый герой', email: 'test@satoru.local', password: 'test1234', avatar: '🧪' };
 
 const State = {
@@ -2672,6 +2737,7 @@ const State = {
   adminUsers: null, _adminUsersLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null, calMode: 'day', habitsTab: 'build',
   aveCat: 'hair', // активная категория в редакторе аватара
+  _denEdit: false, // открыт ли редактор комнаты (эфемерно, сама обстановка хранится в settings.den)
   treeEdit: false, treeSelNode: null, // редактор дерева навыков
   settingsCollapsed: {}, // свёрнутые столбы в редакторе сфер
   balanceDrill: new Set(), // раскрытые сферы на колесе баланса (дрилл-даун под-сфер) — эфемерно
@@ -2853,7 +2919,7 @@ function completeTask(task, desire, onDate) {
       const flint = (typeof currentPath === 'function' && currentPath() === 'control' && typeof FLINT_LINES !== 'undefined')
         ? FLINT_LINES.levelup[Math.floor(Math.random() * FLINT_LINES.levelup.length)] : null;
       systemNarrate('УРОВЕНЬ ПОВЫШЕН', flint ? `${lvlBefore} → ${lvlNow} · ${t(flint)}` : `${lvlBefore} → ${lvlNow} · предел сдвинут`);
-      if (ra.name !== rb.name) systemNarrate('НОВЫЙ РАНГ ПРИСВОЕН', `${ra.icon} ${ra.name} · ты становишься сильнее`);
+      if (ra.name !== rb.name) systemNarrate('НОВЫЙ РАНГ ПРИСВОЕН', `${ra.name} · ты становишься сильнее`);
     }
   } else sfx('complete');
   // Заход намеренно без XP и без давления (см. выше) — критический удар тут неуместен, даже
@@ -2865,6 +2931,7 @@ function completeTask(task, desire, onDate) {
   }
   const avatarReaction = lvlNow > lvlBefore ? 'levelup' : 'happy';
   const avatarReactionLabel = lvlNow > lvlBefore ? `Уровень ${lvlNow}` : (task.entry ? 'Шаг сделан' : `+${task.xpAwarded} XP`);
+  if (window.ShadowRig) window.ShadowRig.setTransient(lvlNow > lvlBefore ? 'radiant' : 'happy', lvlNow > lvlBefore ? 2200 : 1100);
   checkAchievements(); render(); triggerAvatarReaction(avatarReaction, avatarReactionLabel); publishLeaderboard();
 }
 // Поп-ап выбора желания при завершении сложного квеста
@@ -2976,15 +3043,16 @@ function skillLevelOf(id) { const c = State.settings.curve; return levelInfo(ski
 
 // ---- Ранги и мастерство ----
 const RANKS = [
-  { name: 'Новичок',     min: 1,  color: '#8b97b5', icon: '🌱' },
-  { name: 'Ученик',      min: 3,  color: '#5fbf7a', icon: '📗' },
-  { name: 'Адепт',       min: 6,  color: '#4f9ff7', icon: '🔷' },
-  { name: 'Эксперт',     min: 10, color: '#7c6cff', icon: '⚜️' },
-  { name: 'Мастер',      min: 16, color: '#b06ff0', icon: '🔮' },
-  { name: 'Грандмастер', min: 24, color: '#e0a23e', icon: '👑' },
-  { name: 'Легенда',     min: 34, color: '#e0526a', icon: '🏆' },
+  { name: 'Новичок',     min: 1,  color: '#8b97b5', icon: '🌱', iconId: 'difficulty.easy' },
+  { name: 'Ученик',      min: 3,  color: '#5fbf7a', icon: '📗', iconId: 'nav.skills' },
+  { name: 'Адепт',       min: 6,  color: '#4f9ff7', icon: '🔷', iconId: 'status.xp' },
+  { name: 'Эксперт',     min: 10, color: '#7c6cff', icon: '⚜️', iconId: 'goal.completed' },
+  { name: 'Мастер',      min: 16, color: '#b06ff0', icon: '🔮', iconId: 'gear.m3' },
+  { name: 'Грандмастер', min: 24, color: '#e0a23e', icon: '👑', iconId: 'achievement.level_30' },
+  { name: 'Легенда',     min: 34, color: '#e0526a', icon: '🏆', iconId: 'system.achievement' },
 ];
 function rankFor(level) { let r = RANKS[0]; for (const x of RANKS) if (level >= x.min) r = x; return r; }
+function rankIconHTML(rank, className = '') { return satoruIconHTML((rank && rank.iconId) || 'status.xp', className, (rank && rank.icon) || '◇'); }
 function rankProgress(level) {
   const idx = RANKS.reduce((a, x, i) => (level >= x.min ? i : a), 0);
   const cur = RANKS[idx], next = RANKS[idx + 1];
@@ -4334,8 +4402,9 @@ function ttsVoiceFor(code) {
 }
 function ttsStop() {
   try { speechSynthesis.cancel(); } catch {}
-  if (_ttsBtn) { _ttsBtn.classList.remove('on'); _ttsBtn.textContent = '🔊'; }
+  if (_ttsBtn) { _ttsBtn.classList.remove('on'); _ttsBtn.innerHTML = satoruIconHTML('media.sound', 'tts-glyph', '◇'); }
   _ttsBtn = null; _ttsView = null;
+  if (window.ShadowRig) window.ShadowRig.clearGlobalState();
 }
 function ttsSpeak(text, btn) {
   if (!ttsOK() || !text) return;
@@ -4349,8 +4418,10 @@ function ttsSpeak(text, btn) {
   const v = ttsVoiceFor(code); if (v) u.voice = v;
   const done = () => { if (_ttsBtn === btn) ttsStop(); };
   u.onend = done; u.onerror = done;
+  u.onboundary = () => { if (window.ShadowRig) window.ShadowRig.speechPulse(); };
   _ttsBtn = btn; _ttsView = State.view;
-  if (btn) { btn.classList.add('on'); btn.textContent = '⏹'; }
+  if (btn) { btn.classList.add('on'); btn.innerHTML = satoruIconHTML('media.stop', 'tts-glyph', '◇'); }
+  if (window.ShadowRig) window.ShadowRig.setGlobalState('speaking');
   try { speechSynthesis.speak(u); } catch { ttsStop(); }
 }
 // Текст берётся из ближайшего предка с [data-tts]. Сама кнопка-динамик из текста вырезается,
@@ -4368,7 +4439,7 @@ function ttsTextNear(btn) {
 function ttsBtnHTML() {
   if (!ttsOK() || !ttsOn()) return '';
   const lbl = esc(t('Озвучить'));
-  return `<button class="tts-btn" data-action="tts" title="${lbl}" aria-label="${lbl}">🔊</button>`;
+  return `<button class="tts-btn" data-action="tts" title="${lbl}" aria-label="${lbl}">${satoruIconHTML('media.sound', 'tts-glyph', '◇')}</button>`;
 }
 // Обвязка готовой карточки-нуджа: помечаем её как источник текста и вкладываем кнопку внутрь.
 function withTts(html) {
@@ -4602,11 +4673,18 @@ function stopFocus(log = true, skipRender = false) {
 // ============================================================
 //  Экраны аутентификации
 // ============================================================
+function localPreviewHost() {
+  return /^(localhost|127\.|192\.168\.|0\.0\.0\.0)/.test(location.hostname);
+}
+function demoX7Requested() {
+  try { return localPreviewHost() && new URLSearchParams(location.search).get('demo') === 'x7'; }
+  catch { return false; }
+}
 function renderLoginScreen() {
   const profileCards = State.profiles.map((p) => {
     const selected = State.selectedProfile === p.id;
     return `<div class="profile-card ${selected ? 'selected' : ''}" data-action="select-profile" data-id="${p.id}">
-      <div class="profile-avatar">${esc(p.avatar || '👤')}</div>
+      <div class="profile-avatar">${avatarOriginIconHTML(p.avatar || AVATARS[0], 'profile-origin-icon')}</div>
       <div class="profile-name">${esc(p.name)}</div>
       ${selected ? `<form id="pin-form" class="pin-form" data-id="${p.id}">
         <input name="pin" type="password" inputmode="numeric" placeholder="PIN" maxlength="8" required autofocus />
@@ -4621,7 +4699,7 @@ function renderLoginScreen() {
   // Питч для холодного визитёра (подготовка к альфа-запуску): вход — единственная витрина,
   // «Превращаем жизнь в игру» без расшифровки не продаёт. Тем, у кого аккаунт есть, не мешает —
   // форма сразу под питчем. Тест-вход — только localhost: на проде общий тест-аккаунт = хаос.
-  const isLocal = /^(localhost|127\.|192\.168\.|0\.0\.0\.0)/.test(location.hostname);
+  const isLocal = localPreviewHost();
   const pitch = `
       <div class="auth-pitch">
         <p class="ap-lead">${t('RPG, где персонаж — ты. Дела дают опыт, сферы жизни растут уровнями, привычки становятся навыками.')}</p>
@@ -4659,7 +4737,7 @@ function renderLoginScreen() {
 }
 
 function renderRegisterScreen() {
-  const avatarPicker = AVATARS.map((a) => `<button type="button" class="av-btn ${a === State.regAvatar ? 'sel' : ''}" data-action="pick-avatar" data-av="${a}">${a}</button>`).join('');
+  const avatarPicker = AVATARS.map((a) => `<button type="button" class="av-btn ${a === State.regAvatar ? 'sel' : ''}" data-action="pick-avatar" data-av="${a}">${avatarOriginIconHTML(a, 'avatar-origin-icon')}</button>`).join('');
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
       <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>${t('Создай аккаунт')}</p></div>
@@ -4832,7 +4910,7 @@ function renderOnboardingScreen() {
   }).join('');
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
-      <div class="auth-logo"><span>${esc(State.me && State.me.avatar || '⚡')}</span>
+      <div class="auth-logo"><span>${avatarOriginIconHTML((State.me && State.me.avatar) || AVATARS[0], 'auth-origin-icon')}</span>
         <h1>Привет, ${esc(State.me && State.me.name || '')}!</h1>
         <p>${t('Выбери свои сферы развития — их всегда можно изменить')}</p>
       </div>
@@ -4888,19 +4966,19 @@ function renderHeader() {
   }).join('');
   const proBadge = e.tier === 'pro' ? `<span class="plan-badge pro" title="${t('Pro активен')}">PRO</span>`
     : e.tier === 'trial' ? `<span class="plan-badge trial" title="Pro-триал">PRO ${trialDaysLeft()}д</span>`
-    : '<button class="plan-badge free" data-action="show-paywall" data-feature="Pro" title="Открыть Pro — сейчас у тебя Free">🔓 Pro?</button>';
+    : `<button class="plan-badge free" data-action="show-paywall" data-feature="Pro" title="Открыть Pro — сейчас у тебя Free">${satoruIconHTML('status.unlock', 'inline-glyph', '◇')} Pro?</button>`;
   document.getElementById('appName').textContent = State.settings.appName || 'Satoru';
   document.getElementById('charSummary').innerHTML = `
     <div class="char-main">
       ${State.me ? `<div class="user-pill" title="${t('Профиль')}">
         <button class="up-av up-av-raster" data-action="go-wardrobe" title="Открыть персонажа" aria-label="Открыть персонажа">${avatarPortraitHTML({ motion: 'portrait' })}</button>
-        <span class="up-meta"><span class="up-name">${esc(State.me.name)}${eqTitle ? ` <span class="eq-title">🏷 ${esc(eqTitle)}</span>` : ''}</span>
-        <span class="up-rank" style="--rc:${cr.color}">${cr.icon} ${cr.name}</span></span></div>` : ''}
+        <span class="up-meta"><span class="up-name">${esc(State.me.name)}${eqTitle ? ` <span class="eq-title">${satoruIconHTML('achievement.avatar_custom', 'inline-emblem', '◇')} ${esc(eqTitle)}</span>` : ''}</span>
+        <span class="up-rank" style="--rc:${cr.color}">${rankIconHTML(cr, 'rank-inline-icon')} ${cr.name}</span></span></div>` : ''}
       <div class="char-level">Уровень <b>${oi.level}</b></div>
       <div class="xp-bar"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
-      <div class="gold-pill" title="Золото">🪙 ${goldBalance()}</div>
-      <div class="streak" title="${t('Рекорд:')} ${longestStreak()} ${plural(longestStreak(), 'день', 'дня', 'дней')}">🔥 ${streak} ${plural(streak, 'день', 'дня', 'дней')}</div>
-      ${hypePct() > 0 ? `<div class="hype-chip" title="Хайп ×${hypeState().stacks}: бонус XP за добровольный выбор сложных квестов. Осталось ${hypeMinLeft()} мин.">🔥 Хайп +${hypePct()}%</div>` : ''}
+      <div class="gold-pill" title="Золото">${satoruIconHTML('status.gold', 'header-emblem', '🪙')} ${goldBalance()}</div>
+      <div class="streak" title="${t('Рекорд:')} ${longestStreak()} ${plural(longestStreak(), 'день', 'дня', 'дней')}">${satoruIconHTML('status.streak', 'header-emblem header-emblem--streak', '🔥')} ${streak} ${plural(streak, 'день', 'дня', 'дней')}</div>
+      ${hypePct() > 0 ? `<div class="hype-chip" title="Хайп ×${hypeState().stacks}: бонус XP за добровольный выбор сложных квестов. Осталось ${hypeMinLeft()} мин.">${satoruIconHTML('status.streak', 'header-emblem', '🔥')} Хайп +${hypePct()}%</div>` : ''}
       <button class="help-btn" data-action="show-guide" title="${t('Как играть')}">?</button>
       ${proBadge}
       <button class="btn ghost logout-btn" data-action="logout" title="${t('Сменить профиль')}">${t('⇦ Выйти')}</button>
@@ -4924,7 +5002,7 @@ function questRow(q) {
   const skSel = `<button class="t-cats" data-action="edit-cats" data-id="${q.id}" title="Категории квеста — клик чтобы изменить (можно несколько)">${catChips(q)}</button>`;
   const titleCell = State._editTask === q.id
     ? `<form class="t-edit-form" data-id="${q.id}"><input name="title" value="${esc(q.title)}" maxlength="120" autocomplete="off" /></form>`
-    : `<span class="t-title" data-action="edit-task-title" data-id="${q.id}" title="Клик — изменить текст квеста">${esc(q.title)}</span>`;
+    : `<span class="t-title" data-action="edit-task-title" data-id="${q.id}" title="Клик — изменить текст квеста">${taskContentIconHTML(q, 'task-content-icon')}${esc(taskDisplayTitle(q))}</span>`;
   // Квест из прошлого: «✓ в свой день» — засчитать в дату плана, а не в сегодня (fb_mr4qhq6gy30w)
   const past = !q.done && q.date && q.date < todayStr();
   const backdate = past
@@ -4935,12 +5013,12 @@ function questRow(q) {
     ${titleCell}
     ${skSel}
     <span class="t-time" data-action="edit-actual" data-id="${q.id}" title="Клик — фактическое время">${time}</span>
-    <span class="t-diff">${DIFF[q.difficulty] || ''}</span>
+    <span class="t-diff" title="${DIFF[q.difficulty] || ''}">${difficultyIconHTML(q.difficulty)}</span>
     <span class="t-xp">${q.done ? (q.entry ? '💛' : '+' + (q.xpAwarded || 0)) : ''}</span>
-    ${q.done ? '<span></span>' : `<button class="focus ${active ? 'active' : ''}" data-action="focus-task" data-id="${q.id}" title="Фокус-таймер">${active ? '⏱' : '▶'}</button>`}
+    ${q.done ? '<span></span>' : `<button class="focus ${active ? 'active' : ''}" data-action="focus-task" data-id="${q.id}" title="Фокус-таймер">${satoruIconHTML(active ? 'media.pause' : 'media.play', 'task-action-icon', active ? '⏱' : '▶')}</button>`}
     ${backdate}
     ${q.oath && !q.done ? `<span class="t-oath" title="Клятва Кремню: заверши сегодня или −${q.oath.gold} 🪙">⚔️${q.oath.gold}</span>` : (!q.done && currentPath() === 'control' && q.date === todayStr() && goldBalance() >= CONTROL.oathGold ? `<button class="t-oath-btn" data-action="quest-oath" data-id="${q.id}" title="Клятва Кремню: заверши до конца дня — золото за квест ×1.5; провали — сгорит ${CONTROL.oathGold} 🪙">⚔️</button>` : '')}
-    <button class="del" data-action="delete-task" data-id="${q.id}" title="Удалить">✕</button></li>`;
+    <button class="del" data-action="delete-task" data-id="${q.id}" title="Удалить">${satoruIconHTML('action.close', 'task-action-icon', '✕')}</button></li>`;
 }
 function habitRow(h) {
   const sk = skillById(h.skillId), done = habitDone(h, todayStr()), hs = habitStreak(h);
@@ -4949,9 +5027,9 @@ function habitRow(h) {
     <span class="t-title">${esc(h.title)}</span>
     <span class="t-skill" style="--c:${esc(sk.color)}">${esc(sk.name)}</span>
     <span class="t-time">${fmtDur(h.estimateMin)}</span>
-    <span class="t-diff">${DIFF[h.difficulty] || ''}</span>
+    <span class="t-diff" title="${DIFF[h.difficulty] || ''}">${difficultyIconHTML(h.difficulty)}</span>
     <span class="t-xp">${done ? '+' + itemXp(h) : ''}</span>
-    <span class="habit-streak" title="Серия">${hs ? '🔥' + hs : ''}</span><span></span></li>`;
+    <span class="habit-streak" title="Серия">${hs ? satoruIconHTML('status.streak', 'habit-streak-icon', '🔥') + hs : ''}</span><span></span></li>`;
 }
 // ============================================================
 //  Вид «Календарь» — день по часам (Apple-стиль), отдельная вкладка
@@ -5075,11 +5153,11 @@ function renderCalendarView() {
     const dur = Number(t.estimateMin) || 30;
     const sk = skillById(t.skillId);
     return `<div class="cal-block calv-block ${t.done ? 'done' : ''}" draggable="true" data-id="${t.id}" style="top:${calMinToY(H * 60 + M)}px;height:${Math.max(24, dur / 60 * CAL_ROWH)}px;--c:${esc(sk.color)}" title="${esc(t.title)} · ${fmtDur(dur)} — тяни, чтобы перенести">
-      <button class="check sm cal-check" data-action="toggle-task" data-id="${t.id}">${t.done ? '✓' : ''}</button>
-      <span class="cal-b-text"><b>${pad2(H)}:${pad2(M)}</b> ${esc(t.title)}<span class="cal-dur"> · ${fmtDur(dur)}</span></span>
-      <button class="cal-x" data-action="unschedule-quest" data-id="${t.id}" title="Снять с расписания">✕</button></div>`;
+      <button class="check sm cal-check" data-action="toggle-task" data-id="${t.id}">${t.done ? satoruIconHTML('action.check', 'cal-action-icon', '✓') : ''}</button>
+      <span class="cal-b-text"><b>${pad2(H)}:${pad2(M)}</b> ${taskContentIconHTML(t, 'activity-inline-icon')}${esc(taskDisplayTitle(t))}<span class="cal-dur"> · ${fmtDur(dur)}</span></span>
+      <button class="cal-x" data-action="unschedule-quest" data-id="${t.id}" title="Снять с расписания">${satoruIconHTML('action.close', 'cal-action-icon', '✕')}</button></div>`;
   }).join('');
-  const trayTasks = unscheduled.map((t) => { const sk = skillById(t.skillId); return `<span class="calv-chip" draggable="true" data-id="${t.id}" style="--c:${esc(sk.color)}" title="Тяни в сетку, чтобы поставить на время">⠿ ${esc(t.title)} <span class="muted">${fmtDur(Number(t.estimateMin) || 30)}</span><button class="calv-chip-del" data-action="delete-task" data-id="${t.id}" title="Удалить квест">✕</button></span>`; }).join('');
+  const trayTasks = unscheduled.map((t) => { const sk = skillById(t.skillId); return `<span class="calv-chip" draggable="true" data-id="${t.id}" style="--c:${esc(sk.color)}" title="Тяни в сетку, чтобы поставить на время">${satoruIconHTML('action.drag', 'cal-action-icon', '⠿')} ${esc(t.title)} <span class="muted">${fmtDur(Number(t.estimateMin) || 30)}</span><button class="calv-chip-del" data-action="delete-task" data-id="${t.id}" title="Удалить квест">${satoruIconHTML('action.close', 'cal-action-icon', '✕')}</button></span>`; }).join('');
   const dur0 = unscheduled.length ? (Number(unscheduled[0].estimateMin) || 30) : 30;
   const picker = unscheduled.length ? `
     <div class="cal-schedule">
@@ -5087,15 +5165,15 @@ function renderCalendarView() {
       <input id="cal-time" type="time" value="09:00" title="Начало" />
       <input id="cal-dur" type="number" min="1" step="1" value="${dur0}" title="Длительность, мин (любое число — не только кратное 5)" />
       <span class="cal-dur-unit muted">мин</span>
-      <button class="btn ghost" data-action="schedule-quest">🗓 Поставить</button>
+      <button class="btn ghost" data-action="schedule-quest">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} Поставить</button>
     </div>` : '';
   const planned = dayTasks.reduce((s, t) => s + (Number(t.estimateMin) || 0), 0);
   return `
     <div class="card calv-head">
       <div class="calv-title">
-        <button class="btn ghost sm" data-action="cal-shift" data-days="-1" title="Предыдущий день">‹</button>
+        <button class="btn ghost sm" data-action="cal-shift" data-days="-1" title="Предыдущий день">${satoruIconHTML('action.back', 'cal-action-icon', '‹')}</button>
         <h2>${d.getDate()} ${MON[d.getMonth()]} <span class="muted">· ${WD[d.getDay()]}${date === todayStr() ? ' · сегодня' : ''}</span></h2>
-        <button class="btn ghost sm" data-action="cal-shift" data-days="1" title="Следующий день">›</button>
+        <button class="btn ghost sm" data-action="cal-shift" data-days="1" title="Следующий день">${satoruIconHTML('action.forward', 'cal-action-icon', '›')}</button>
         ${date !== todayStr() ? '<button class="btn ghost sm" data-action="cal-today">Сегодня</button>' : ''}
         <span class="wk-load muted">план: ${fmtDur(planned)}</span>
         ${calModeToggle('day')}<div class="cal-tools">${calExportBtn()}${calSubscribeBtn()}${calRemindBtn()}</div>
@@ -5108,10 +5186,10 @@ function renderCalendarView() {
         <input name="title" placeholder="Новый квест на этот день…" autocomplete="off" required />
         <select name="skillId">${skillOptionsHTML()}</select>
         ${durInputHTML('estimateMin', 30)}
-        <select name="difficulty"><option value="easy">🌱 Лёгкая</option><option value="normal" selected>⚔️ Обычная</option><option value="hard">🔥 Сложная</option></select>
-        <button type="submit">+ Квест</button></form>
+        <select name="difficulty"><option value="easy">${t('Лёгкая')}</option><option value="normal" selected>${t('Обычная')}</option><option value="hard">${t('Сложная')}</option></select>
+        <button type="submit">${satoruIconHTML('action.add', 'button-glyph', '+')} Квест</button></form>
     </div>
-    ${unscheduled.length ? `<div class="card calv-tray"><h3>📥 Без времени (${unscheduled.length})</h3><div class="calv-chips">${trayTasks}</div>${picker}</div>` : ''}
+    ${unscheduled.length ? `<div class="card calv-tray"><h3>${satoruIconHTML('system.calendar', 'heading-glyph', '📥')} Без времени (${unscheduled.length})</h3><div class="calv-chips">${trayTasks}</div>${picker}</div>` : ''}
     <div class="card">
       <p class="cal-hint muted">Тяни квест по сетке, чтобы сменить время (шаг 15 мин). Клик по пустому месту — подставить время в форму. Крестик ✕ — снять с расписания.</p>
       <div class="cal calv-grid" style="height:${hours.length * CAL_ROWH}px">${grid}${nowLine}${blocks}</div>
@@ -5212,9 +5290,9 @@ const ATOMIC = {
 function renderHabitsView() {
   const tab = State.habitsTab || 'build';
   const tabs = `<div class="navsub hsub">
-    <button class="navsubtab ${tab === 'build' ? 'active' : ''}" data-action="habits-tab" data-tab="build">${t('🌱 Привычки')}</button>
-    <button class="navsubtab ${tab === 'break' ? 'active' : ''}" data-action="habits-tab" data-tab="break">${t('🛡 Срывы')}</button>
-    <button class="navsubtab ${tab === 'method' ? 'active' : ''}" data-action="habits-tab" data-tab="method">${t('📖 Метод')}</button></div>`;
+    <button class="navsubtab ${tab === 'build' ? 'active' : ''}" data-action="habits-tab" data-tab="build">${satoruIconHTML('nav.habits', 'tab-glyph', '🌱')} ${t('🌱 Привычки').replace(/^🌱\s*/, '')}</button>
+    <button class="navsubtab ${tab === 'break' ? 'active' : ''}" data-action="habits-tab" data-tab="break">${satoruIconHTML('difficulty.protected', 'tab-emblem', '🛡')} ${t('🛡 Срывы').replace(/^🛡\s*/, '')}</button>
+    <button class="navsubtab ${tab === 'method' ? 'active' : ''}" data-action="habits-tab" data-tab="method">${satoruIconHTML('nav.skills', 'tab-glyph', '📖')} ${t('📖 Метод').replace(/^📖\s*/, '')}</button></div>`;
   const body = tab === 'method' ? atomicMethodHTML() : tab === 'break' ? habitsBreakHTML() : habitsBuildHTML();
   return tabs + body;
 }
@@ -5233,7 +5311,7 @@ function habitsBuildHTML() {
       <label class="hb-field">⏱ Версия 2 минут <input data-action="habit-atomic" data-id="${h.id}" data-field="twoMin" value="${esc(a.twoMin || '')}" placeholder="Минимум, чтобы просто начать" /></label>
     </div>`;
   }).join('') : '<p class="muted">Пока нет привычек — добавь и спроектируй по 4 законам.</p>';
-  return `<div class="card hb-intro"><h3>🌱 Строим привычки</h3>
+  return `<div class="card hb-intro"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🌱')} Строим привычки</h3>
       <p class="muted">${esc(t('Выбери, кем хочешь стать. Каждое выполнение ниже — маленькое доказательство этой идентичности.'))}</p>
       <label class="hb-identity">Кем ты хочешь стать? <input id="identity-goal" data-action="save-identity" value="${esc(idg)}" placeholder="Напр.: дисциплинированный учёный в отличной форме" /></label></div>
     <div class="hb-list">${cards}</div>
@@ -5250,7 +5328,7 @@ function habitsBreakHTML() {
       ${slippedToday ? `<button class="btn ghost sm" data-action="anti-unslip" data-id="${a.id}">сегодня был срыв · отменить</button>` : `<button class="btn ghost sm" data-action="anti-slip" data-id="${a.id}">был срыв?</button>`}
       <button class="del" data-action="delete-antihabit" data-id="${a.id}" title="Удалить">✕</button></div>`;
   }).join('') : '<p class="muted">Пока пусто — добавь, с чем хочешь справиться.</p>';
-  return `<div class="card hb-intro"><h3>🛡 Свобода от привычек</h3>
+  return `<div class="card hb-intro"><h3>${satoruIconHTML('difficulty.protected', 'heading-emblem', '🛡')} Свобода от привычек</h3>
       <p class="muted">Плохую привычку (зависимость) ломают <b>инверсией</b> 4 законов. Срыв — это данные, не провал. Без стыда.</p>
       <form id="add-antihabit" class="add-row">
         <input name="title" placeholder="Напр. без бессмысленного скролла" autocomplete="off" required />
@@ -5372,6 +5450,39 @@ function guessFitnessSkill() {
 function stravaSkillId() { return State.settings.stravaSkillId || guessFitnessSkill(); }
 // Сложность по длительности: длиннее = тяжелее (влияет на XP через itemXp).
 function stravaDifficulty(min) { return min >= 75 ? 'hard' : min >= 35 ? 'normal' : 'easy'; }
+const STRAVA_ACTIVITY_ICON_IDS = {
+  Run: 'activity.run', TrailRun: 'activity.run', Ride: 'activity.ride', VirtualRide: 'activity.ride', MountainBikeRide: 'activity.mtb',
+  Swim: 'activity.swim', Walk: 'activity.walk', Hike: 'activity.hike', WeightTraining: 'activity.weight', Workout: 'activity.workout',
+  Yoga: 'activity.yoga', Crossfit: 'activity.workout', Rowing: 'activity.row', Elliptical: 'activity.elliptical', StairStepper: 'activity.stairs',
+  AlpineSki: 'activity.ski', BackcountrySki: 'activity.backcountry-ski', NordicSki: 'activity.ski', Snowboard: 'activity.snowboard',
+  IceSkate: 'activity.skate', Soccer: 'activity.football', Tennis: 'activity.tennis', Golf: 'activity.golf', Badminton: 'activity.badminton',
+  Pickleball: 'activity.pickleball', TableTennis: 'activity.table-tennis', Pilates: 'activity.yoga', Skateboard: 'activity.skateboard',
+  Surfing: 'activity.surf', Kayaking: 'activity.kayak', Velomobile: 'activity.ride', Handcycle: 'activity.wheelchair',
+  Wheelchair: 'activity.wheelchair', running: 'activity.run', run: 'activity.run', biking: 'activity.ride', cycling: 'activity.ride',
+  ride: 'activity.ride', swimming: 'activity.swim', walking: 'activity.walk', hiking: 'activity.hike', other: 'activity.other',
+};
+function cleanImportedActivityTitle(title) {
+  return String(title || '').replace(/^[^\p{L}\p{N}]+/u, '').trim();
+}
+const LEGACY_ACTIVITY_MARK_IDS = {
+  '🏃': 'activity.run', '🚴': 'activity.ride', '🚵': 'activity.mtb', '🏊': 'activity.swim', '🚶': 'activity.walk',
+  '🥾': 'activity.hike', '🏋️': 'activity.weight', '🏋': 'activity.weight', '💪': 'activity.workout', '🧘': 'activity.yoga',
+  '🚣': 'activity.row', '🌀': 'activity.elliptical', '🪜': 'activity.stairs', '⛷️': 'activity.ski', '⛷': 'activity.ski',
+  '🎿': 'activity.backcountry-ski', '🏂': 'activity.snowboard', '⛸️': 'activity.skate', '⛸': 'activity.skate',
+  '⚽': 'activity.football', '🎾': 'activity.tennis', '⛳': 'activity.golf', '🏸': 'activity.badminton',
+  '🥒': 'activity.pickleball', '🏓': 'activity.table-tennis', '🛹': 'activity.skateboard', '🏄': 'activity.surf',
+  '🛶': 'activity.kayak', '🦽': 'activity.wheelchair', '🏅': 'activity.other',
+};
+function legacyActivityVisual(task) {
+  const title = String((task && task.title) || '');
+  const marker = Object.keys(LEGACY_ACTIVITY_MARK_IDS).find((key) => title.startsWith(key));
+  return marker ? { iconId: LEGACY_ACTIVITY_MARK_IDS[marker], title: title.slice(marker.length).trim() } : { iconId: null, title };
+}
+function taskContentIconHTML(task, className = '') {
+  const iconId = task && (task.iconId || legacyActivityVisual(task).iconId);
+  return iconId ? satoruIconHTML(iconId, className, '') : '';
+}
+function taskDisplayTitle(task) { return legacyActivityVisual(task).title; }
 function importedStravaIds() { return new Set((State.tasks || []).filter((t) => t.stravaId).map((t) => String(t.stravaId))); }
 // Превращает активности в ВЫПОЛНЕННЫЕ квесты (с датой тренировки), начисляя XP/золото. Дедуп по stravaId.
 function importStravaActivities(activities, skillId) {
@@ -5381,7 +5492,7 @@ function importStravaActivities(activities, skillId) {
     if (!a || !a.stravaId || have.has(String(a.stravaId))) continue;
     const start = a.startDate ? new Date(a.startDate) : new Date();
     const date = fmtDate(start), diff = stravaDifficulty(a.minutes);
-    const taskObj = { id: uid(), title: a.title, skillId, skillIds: [skillId], estimateMin: a.minutes, difficulty: diff,
+    const taskObj = { id: uid(), title: cleanImportedActivityTitle(a.title), iconId: a.iconId || STRAVA_ACTIVITY_ICON_IDS[a.sport] || 'activity.other', skillId, skillIds: [skillId], estimateMin: a.minutes, difficulty: diff,
       date, done: true, completedAt: start.toISOString(), xpAwarded: 0, goldAwarded: 0, actualMin: a.minutes, startTime: null,
       createdAt: new Date().toISOString(), stravaId: String(a.stravaId), source: 'strava' };
     taskObj.xpAwarded = Math.max(1, itemXp(taskObj));
@@ -5396,7 +5507,6 @@ function importStravaActivities(activities, skillId) {
 // ── Импорт тренировок ФАЙЛОМ (GPX/TCX) — работает с ЛЮБЫМИ часами без API ──
 // Garmin Connect / Polar Flow / Suunto / Apple (через приложения) экспортируют GPX/TCX бесплатно.
 // Парс — браузерный DOMParser (zero-dep). Файл → активность того же формата, что Strava → реюз importStravaActivities.
-const WK_SPORT_EMOJI = { running: '🏃', run: '🏃', biking: '🚴', cycling: '🚴', ride: '🚴', swimming: '🏊', walking: '🚶', hiking: '🥾', other: '🏅' };
 function parseWorkoutFile(name, text) {
   let doc; try { doc = new DOMParser().parseFromString(text, 'application/xml'); } catch { return null; }
   if (!doc || doc.querySelector('parsererror')) return null;
@@ -5419,10 +5529,9 @@ function parseWorkoutFile(name, text) {
     }
   }
   if (!start || isNaN(start) || minutes <= 0) return null;
-  const emoji = WK_SPORT_EMOJI[sport] || '🏅';
   if (!title) title = name.replace(/\.(gpx|tcx)$/i, '');
   // дедуп-ключ: время старта + длительность (стабильно между экспортами одного и того же файла)
-  return { stravaId: 'file_' + start.toISOString() + '_' + minutes, title: `${emoji} ${title} · ${fmtDur(minutes)}`, minutes, startDate: start.toISOString() };
+  return { stravaId: 'file_' + start.toISOString() + '_' + minutes, title: `${title} · ${fmtDur(minutes)}`, iconId: STRAVA_ACTIVITY_ICON_IDS[sport] || 'activity.other', sport, minutes, startDate: start.toISOString() };
 }
 function fileImportCard() {
   const sport = (State.settings.skills || []).find((s) => /спорт|трен|фитнес|бег|здоров|sport|fitness|run|health/i.test(s.name)) || (State.settings.skills || [])[0];
@@ -5916,8 +6025,12 @@ function openHelperChat() {
   if (!ov) { ov = document.createElement('div'); ov.id = 'helper-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov); }
   const noKey = !canUseAi();
   const proHint = (State.aiKeys && State.aiKeys.houseAvailable && !isPro());
+  const companion = ensureCompanion(), shadowTier = compTierIdx(companion.bond);
   ov.innerHTML = `<div class="ai-box chat-box"><button class="modal-x" data-action="helper-close">✕</button>
-    <h3>🤖 Помощник Satoru</h3>
+    <div class="shadow-chat-head">
+      <div class="shadow-chat-head-art">${shadowVideo(shadowTier, State._chatBusy ? 'thinking' : 'listening', 'helper')}</div>
+      <div><h3>${esc(companion.name)}</h3><p class="muted">Секретарь Satoru · видит состояние, объясняет и помогает действовать</p></div>
+    </div>
     ${noKey ? `<p class="muted">${proHint ? 'Помощник <b>включён в Pro</b> — или возьми ' : 'Помощник работает на твоём ИИ-ключе. Не хочешь платить? Возьми '}<b>бесплатный</b> ключ Google Gemini или Groq за 2 минуты (без карты) — в Настройках есть пошаговый гид.<br>${proHint ? `<button class="btn pro-cta" data-action="show-paywall" data-feature="ИИ-ассистент" style="margin-top:10px">💎 Оформить Pro</button> ` : ''}<button class="btn ${proHint ? 'ghost' : ''}" data-action="helper-to-settings" style="margin-top:10px">⚙️ Подключить ИИ</button></p>`
       : `<div id="chat-msgs" class="chat-msgs"></div>
          <form id="chat-form" class="chat-form"><input id="chat-input" placeholder="Спроси про любую функцию…" autocomplete="off" /><button type="submit" class="cap-add" title="Отправить">↵</button></form>`}</div>`;
@@ -5925,6 +6038,10 @@ function openHelperChat() {
 }
 function renderChatMessages() {
   const box = document.getElementById('chat-msgs'); if (!box) return;
+  if (window.ShadowRig) {
+    const rig = document.querySelector('#helper-modal .shadow-chat-head [data-shadow-rig]');
+    window.ShadowRig.setState(rig, State._chatBusy ? 'thinking' : 'listening');
+  }
   if (!State.chatLog.length) {
     box.innerHTML = `<div class="chat-empty"><p class="muted">Привет! Я вижу, как у тебя дела (энергия, отдых, дедлайны), и знаю все функции Satoru. Спроси про себя или про приложение:</p>
       <div class="chat-suggs">${CHAT_SUGGESTIONS.map((s) => `<button class="chat-sugg" data-action="chat-suggest" data-q="${esc(s)}">${esc(s)}</button>`).join('')}</div></div>`;
@@ -6036,24 +6153,24 @@ async function sendChat(text) {
 function captureBar() {
   if (_rec) {
     return `<div class="card capture-card recording">
-      <div class="cap-rec"><span class="cap-dot"></span><span>${_rec.kind === 'video' ? '🎥' : '🎤'} Запись <span id="rec-timer">0:00</span></span>
-      <button class="btn" data-action="cap-stop">⏹ Стоп · сохранить</button></div></div>`;
+      <div class="cap-rec"><span class="cap-dot"></span><span>${satoruIconHTML(_rec.kind === 'video' ? 'media.video' : 'media.microphone', 'capture-glyph', _rec.kind === 'video' ? '🎥' : '🎤')} Запись <span id="rec-timer">0:00</span></span>
+      <button class="btn" data-action="cap-stop">${satoruIconHTML('media.stop', 'button-glyph', '⏹')} Стоп · сохранить</button></div></div>`;
   }
   return `<div class="card capture-card">
     <form id="capture-form" class="cap-row">
       <input name="text" placeholder="Быстрая мысль, идея, план — в Заметки…" autocomplete="off" />
-      <button type="button" class="cap-btn" data-action="cap-voice" title="Голосовая заметка">🎤</button>
-      <button type="button" class="cap-btn" data-action="cap-video" title="Видео-заметка">🎥</button>
-      <button type="submit" class="cap-add" title="Сохранить заметку">↵</button>
+      <button type="button" class="cap-btn" data-action="cap-voice" title="Голосовая заметка">${satoruIconHTML('media.microphone', 'capture-glyph', '🎤')}</button>
+      <button type="button" class="cap-btn" data-action="cap-video" title="Видео-заметка">${satoruIconHTML('media.video', 'capture-glyph', '🎥')}</button>
+      <button type="submit" class="cap-add" title="Сохранить заметку">${satoruIconHTML('action.add', 'capture-glyph', '↵')}</button>
     </form>
-    <button class="dayrec-btn" data-action="day-recap" title="Наговори день — Тень разложит по делам">🎤 Итог дня — расскажи, что сделал</button></div>`;
+    <button class="dayrec-btn" data-action="day-recap" title="Наговори день — Тень разложит по делам">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} Итог дня — расскажи, что сделал</button></div>`;
 }
 // Карточка-заметка: редактируемый текст + плеер (если медиа) + действия
 function noteCard(it) {
   const media = it.file ? (it.kind === 'video'
     ? `<video class="note-media" controls preload="metadata" src="/api/inbox/media/${esc(it.file)}"></video>`
     : `<audio class="note-media" controls preload="metadata" src="/api/inbox/media/${esc(it.file)}"></audio>`) : '';
-  const icon = it.kind === 'voice' ? '🎤' : it.kind === 'video' ? '🎥' : '📝';
+  const icon = it.kind === 'voice' ? satoruIconHTML('media.microphone', 'note-kind-icon', '🎤') : it.kind === 'video' ? satoruIconHTML('media.video', 'note-kind-icon', '🎥') : satoruIconHTML('media.notes', 'note-kind-icon', '📝');
   const when = (it.at || '').replace('T', ' ').slice(0, 16);
   return `<div class="card note-card">
     <div class="note-top"><span class="note-when muted">${icon} ${esc(when)}</span>
@@ -6122,9 +6239,9 @@ function progressTrioCard() {
   const p = nestedProgress();
   const bar = (lbl, pct, sub, color) => `<div class="ptrio-item"><div class="ptrio-top"><span>${lbl}</span><span class="muted">${sub}</span></div><div class="ptrio-bar"><span style="width:${pct}%;background:${color}"></span></div></div>`;
   return `<div class="card ptrio-card" title="Перекрывающиеся круги прогресса — всегда что-то почти готово">
-    ${bar('🌅 День', p.dayPct, p.dayTot ? `${p.dayDone}/${p.dayTot}` : '—', '#5fbf7a')}
-    ${bar('🗓 Неделя', p.weekPct, `${p.active}/7 дней`, '#4f9ff7')}
-    ${bar('🔥 Серия', p.streakPct, `${p.streak}→${p.next}`, '#e0a23e')}</div>`;
+    ${bar(`${satoruIconHTML('nav.today', 'inline-glyph', '◇')} День`, p.dayPct, p.dayTot ? `${p.dayDone}/${p.dayTot}` : '—', '#5fbf7a')}
+    ${bar(`${satoruIconHTML('nav.plan', 'inline-glyph', '◇')} Неделя`, p.weekPct, `${p.active}/7 дней`, '#4f9ff7')}
+    ${bar(`${satoruIconHTML('status.streak', 'inline-emblem', '◇')} Серия`, p.streakPct, `${p.streak}→${p.next}`, '#e0a23e')}</div>`;
 }
 // ============================================================
 //  Живой компаньон (Finch-модель) — эмоциональный якорь удержания «через любовь»
@@ -6332,16 +6449,21 @@ function compSVG(face, tierIdx) {
     ${spark}${star}${halo}
   </svg>`;
 }
-function shadowVideo(ti, face) {
-  // Первый утверждённый cut-paper скин Тени: пока только форма «Дух» в calm-состоянии.
-  // Остальные тиры/эмоции продолжают использовать прежнее прозрачное видео как fallback.
-  if ((ti | 0) === 1 && face === 'calm') {
-    return `<img class="comp-video comp-shadow-art" src="/art/companions/shadow-v1-20260716/shadow-spirit-calm.png?v=20260717-1" alt="" aria-hidden="true"/>`;
+function shadowVideo(ti, face, context = 'card') {
+  // v2: одна реактивная обвязка для всех поверхностей. Утверждённые постеры задают
+  // узнаваемость четырёх форм, DOM/CSS-риг — состояние, речь, частицы и реакцию.
+  // Это быстрее и надёжнее четырёх наборов видео: состояние меняется мгновенно,
+  // TTS синхронизирует «говорение», а reduced-motion остаётся честным.
+  if (window.ShadowRig) {
+    return window.ShadowRig.markup({
+      tier: ti,
+      state: face || 'calm',
+      context,
+      label: `Тень — ${(COMP_TIERS[ti | 0] || COMP_TIERS[0]).name}`,
+    });
   }
   const n = (ti | 0) + 1;
-  // WebM VP9-alpha = прозрачный фон (кей белого исходника, sim=0.14 — глаза целы).
-  // poster = прозрачный PNG (персонаж виден без белого прямоугольника, если iOS заблокировал autoplay).
-  // MP4 (navy-фон) — fallback для движков без VP9-alpha (старый iOS). См. ART-PIPELINE.md.
+  // Fallback, если модуль рига по какой-либо причине не загрузился.
   return `<video class="comp-video" poster="/assets/shadow/shadow_${n}.png" autoplay loop muted playsinline webkit-playsinline preload="auto" disablepictureinpicture aria-hidden="true"><source src="/assets/shadow/shadow_${n}.webm" type="video/webm"><source src="/assets/shadow/shadow_${n}.mp4" type="video/mp4"></video>`;
 }
 function compCheckinDue() {
@@ -6425,8 +6547,8 @@ async function showMoment(kind) {
   const ov = document.createElement('div');
   ov.id = 'moment'; ov.className = 'modal-overlay moment-ov';
   ov.innerHTML = `<div class="moment-box">
-    <div class="moment-art">${shadowVideo(ti, 'calm')}</div>
-    <p class="moment-line" id="moment-line">…</p>
+    <div class="moment-art">${shadowVideo(ti, kind === 'm' ? 'happy' : 'caring', 'moment')}</div>
+    <div class="moment-line-row" data-tts><p class="moment-line" id="moment-line">…</p>${ttsBtnHTML()}</div>
     ${streak > 0 ? `<div class="moment-streak">${momentStreakLine(streak)}</div>` : ''}
     <div class="moment-acts">
       <button class="btn" data-action="moment-pet">🫶 ${t('Погладить')}</button>
@@ -6438,6 +6560,10 @@ async function showMoment(kind) {
   const line = await momentLine(kind);
   const el = document.getElementById('moment-line');
   if (el) el.textContent = line;
+  if (window.ShadowRig) {
+    const rig = ov.querySelector('[data-shadow-rig]');
+    window.ShadowRig.setState(rig, kind === 'm' ? 'happy' : 'caring');
+  }
   track('moment:' + kind);
   } finally { _momentBusy = false; } // иначе один сбой заблокировал бы моменты до перезагрузки
 }
@@ -6464,11 +6590,11 @@ function companionCard() {
   const t = todayStr(), form = State._compForm;
   const petToday = c.pet === t;
   const nextBar = nextT
-    ? `<div class="comp-bond"><div class="comp-bond-top"><span>🜲 ${tier.name}</span><span class="muted">связь ${c.bond}/${nextT.at} → ${nextT.name}</span></div><div class="comp-bond-bar"><span style="width:${Math.round((c.bond - tier.at) / (nextT.at - tier.at) * 100)}%"></span></div></div>`
-    : `<div class="comp-bond"><div class="comp-bond-top"><span>🜲 ${tier.name}</span><span class="muted">связь нерушима 💛</span></div></div>`;
+    ? `<div class="comp-bond"><div class="comp-bond-top"><span>${satoruIconHTML('nav.shadow', 'inline-glyph', '◇')} ${tier.name}</span><span class="muted">связь ${c.bond}/${nextT.at} → ${nextT.name}</span></div><div class="comp-bond-bar"><span style="width:${Math.round((c.bond - tier.at) / (nextT.at - tier.at) * 100)}%"></span></div></div>`
+    : `<div class="comp-bond"><div class="comp-bond-top"><span>${satoruIconHTML('nav.shadow', 'inline-glyph', '◇')} ${tier.name}</span><span class="muted">связь нерушима</span></div></div>`;
   let actions;
   if (form === 'm' || form === 'e') {
-    const q = form === 'm' ? '🌅 Одна вещь, ради которой стоит проснуться сегодня?' : '🌙 Чем ты сегодня гордишься? (даже мелочь считается)';
+    const q = form === 'm' ? `${satoruIconHTML('nav.today', 'inline-glyph', '◇')} Одна вещь, ради которой стоит проснуться сегодня?` : `${satoruIconHTML('system.day-end', 'inline-glyph', '◇')} Чем ты сегодня гордишься? (даже мелочь считается)`;
     actions = `<form id="comp-checkin" data-kind="${form}" class="comp-form">
       <label>${q}</label>
       <input name="text" maxlength="200" autocomplete="off" placeholder="${form === 'm' ? 'сегодня хочу…' : 'я горжусь тем, что…'}" />
@@ -6477,16 +6603,16 @@ function companionCard() {
     actions = `<form id="comp-rename" class="comp-form"><label>Как зовут твоего спутника?</label><input name="name" maxlength="24" value="${esc(c.name)}" /><div class="comp-form-btns"><button type="submit" class="btn">Назвать</button><button type="button" class="btn ghost" data-action="comp-cancel">Отмена</button></div></form>`;
   } else {
     const due = compCheckinDue(), b = [];
-    if (due.includes('m')) b.push(`<button class="btn comp-cta" data-action="comp-check" data-kind="m">🌅 Утренний чек-ин</button>`);
-    if (due.includes('e')) b.push(`<button class="btn comp-cta" data-action="comp-check" data-kind="e">🌙 Вечерний чек-ин</button>`);
-    b.push(`<button class="btn ghost" data-action="comp-pet"${petToday ? ' disabled' : ''}>${petToday ? '💛 обнял сегодня' : '🫶 Погладить'}</button>`);
+    if (due.includes('m')) b.push(`<button class="btn comp-cta" data-action="comp-check" data-kind="m">${satoruIconHTML('nav.today', 'button-glyph', '◇')} Утренний чек-ин</button>`);
+    if (due.includes('e')) b.push(`<button class="btn comp-cta" data-action="comp-check" data-kind="e">${satoruIconHTML('system.day-end', 'button-glyph', '◇')} Вечерний чек-ин</button>`);
+    b.push(`<button class="btn ghost" data-action="comp-pet"${petToday ? ' disabled' : ''}>${satoruIconHTML('pet.trait.friend', 'button-emblem', '◇')} ${petToday ? 'обнял сегодня' : 'Погладить'}</button>`);
     actions = `<div class="comp-actions">${b.join('')}</div>`;
   }
   const last = c.journal[c.journal.length - 1];
-  const peek = (last && last.date === t) ? `<p class="comp-peek muted">${last.kind === 'm' ? '🌅' : '🌙'} «${esc(last.text)}»</p>` : '';
+  const peek = (last && last.date === t) ? `<p class="comp-peek muted">${satoruIconHTML(last.kind === 'm' ? 'nav.today' : 'system.day-end', 'inline-glyph', '◇')} «${esc(last.text)}»</p>` : '';
   return `<div class="card comp-card">
     <div class="comp-row">
-      <div class="comp-art">${shadowVideo(ti, mood.face)}</div>
+      <div class="comp-art">${shadowVideo(ti, mood.face, 'card')}</div>
       <div class="comp-body">
         <div class="comp-name"><b>${esc(c.name)}</b><button class="comp-rename" data-action="comp-rename" title="Переименовать">✎</button></div>
         <div class="comp-line-row" data-tts><p class="comp-line">${mood.line}</p>${ttsBtnHTML()}</div>
@@ -6548,6 +6674,14 @@ const PET_TRAITS = [
     'вспоминает, у кого скоро день рождения', 'машет хвостом всем прохожим',
     'бережно хранит все ваши общие секреты' ] },
 ];
+const PET_TRAIT_ICON_IDS = {
+  '🏋': 'pet.trait.strong', '🧘': 'pet.trait.quiet', '📚': 'pet.trait.scholar', '🗣': 'pet.trait.polyglot',
+  '💼': 'pet.trait.fortune', '🎨': 'pet.trait.creator', '💻': 'pet.trait.byte', '🧠': 'pet.trait.sage',
+  '🧹': 'pet.trait.helper', '💬': 'pet.trait.friend', '⭐': 'pet.trait.spark',
+};
+function petTraitIconHTML(trait, className = '') {
+  return satoruIconHTML(PET_TRAIT_ICON_IDS[(trait && trait.icon) || '⭐'] || 'pet.trait.spark', className, '◇');
+}
 function petTraits(sphereId) {
   const names = [skillById(sphereId).name, ...descendantSkills(sphereId).map((c) => c.name)].join(' ');
   const found = [];
@@ -6585,14 +6719,21 @@ const PET_STATE = {
   overfed: { label: 'перекормлен', face: 'overfed', color: '#e0526a' },
 };
 // Лакомство для анимации кормёжки — по доминантной подсфере
-const PET_TREAT = { '🏋': '🍗', '🧘': '🍵', '📚': '🍪', '🗣': '🍵', '💼': '☕', '🎨': '🧁', '💻': '🔋', '🧠': '🍪', '🧹': '🍬', '💬': '🍬', '⭐': '🍎' };
+const PET_TREAT = {
+  '🏋': { iconId: 'pet.treat.jerky', fallback: '🍗' }, '🧘': { iconId: 'pet.treat.tea', fallback: '🍵' },
+  '📚': { iconId: 'pet.treat.cookie', fallback: '🍪' }, '🗣': { iconId: 'pet.treat.tea', fallback: '🍵' },
+  '💼': { iconId: 'pet.treat.coffee', fallback: '☕' }, '🎨': { iconId: 'pet.treat.cupcake', fallback: '🧁' },
+  '💻': { iconId: 'pet.treat.energy-bar', fallback: '🔋' }, '🧠': { iconId: 'pet.treat.cookie', fallback: '🍪' },
+  '🧹': { iconId: 'pet.treat.candy', fallback: '🍬' }, '💬': { iconId: 'pet.treat.candy', fallback: '🍬' },
+  '⭐': { iconId: 'pet.treat.apple', fallback: '🍎' },
+};
 // ── Paper-doll лицо (viewBox 0 0 120 132, глаза ~cy78) — см. PET-PIPELINE.md ──
 function petFaceMarkup(face) {
   const eyeOpen = (cx) => `<ellipse cx="${cx}" cy="78" rx="7.5" ry="9" fill="#fff"/><circle cx="${cx}" cy="80" r="4.6" fill="#20243a"/><circle cx="${cx + 1.6}" cy="77" r="1.6" fill="#fff"/>`;
   const eyeX = (cx) => `<path d="M${cx - 5} 73 l10 9 M${cx + 5} 73 l-10 9" stroke="#20243a" stroke-width="3" stroke-linecap="round"/>`;
   let eyes, mouth, extra = '';
   if (face === 'hungry') { eyes = eyeOpen(49) + eyeOpen(71); mouth = `<path d="M53 96 Q60 90 67 96" stroke="#20243a" stroke-width="2.6" fill="none" stroke-linecap="round"/>`; }
-  else if (face === 'overfed') { eyes = eyeX(49) + eyeX(71); mouth = `<ellipse cx="60" cy="96" rx="4.5" ry="3.6" fill="#20243a"/>`; extra = `<text x="88" y="50" font-size="13">💢</text>`; }
+  else if (face === 'overfed') { eyes = eyeX(49) + eyeX(71); mouth = `<ellipse cx="60" cy="96" rx="4.5" ry="3.6" fill="#20243a"/>`; extra = `<path d="M88 50l6-7M94 53l8-2M86 43l1-9" stroke="#e0526a" stroke-width="2.6" stroke-linecap="round"/>`; }
   else if (face === 'content') { eyes = eyeOpen(49) + eyeOpen(71); mouth = `<line x1="54" y1="95" x2="66" y2="95" stroke="#20243a" stroke-width="2.6" stroke-linecap="round"/>`; }
   else { eyes = eyeOpen(49) + eyeOpen(71); mouth = `<path d="M52 92 Q60 100 68 92" stroke="#20243a" stroke-width="2.8" fill="none" stroke-linecap="round"/>`; }
   const blush = `<circle cx="38" cy="90" r="4.6" fill="#ff8fb0" opacity="0.5"/><circle cx="82" cy="90" r="4.6" fill="#ff8fb0" opacity="0.5"/>`;
@@ -6604,14 +6745,14 @@ function petAccessorySVG(icon) {
   switch (icon) {
     case '🏋': return `<rect x="40" y="44" width="40" height="5" rx="2.5" fill="#fff"/><rect x="40" y="44" width="40" height="5" rx="2.5" fill="#000" opacity="0.12"/>`; // повязка на лбу (белая — не сливается с цветом сферы)
     case '📚': return petGlasses();
-    case '🧠': return petGlasses() + `<text x="84" y="44" font-size="13">✦</text>`;
+    case '🧠': return petGlasses() + `<path d="M84 35l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" fill="#ffc24b"/>`;
     case '🗣': return `<g transform="translate(2,0)"><rect x="84" y="34" width="30" height="20" rx="6" fill="#fff" stroke="#20243a" stroke-width="1.2"/><path d="M92 54 l-4 8 l10 -6z" fill="#fff" stroke="#20243a" stroke-width="1.2"/><text x="99" y="49" font-size="12" text-anchor="middle" fill="#20243a" font-weight="700">A</text></g>`; // речевой пузырь
     case '💼': return `<path d="M60 102 l-5 6 l5 13 l5 -13z" fill="#2a3550"/>`; // галстук
     case '🎨': return `<g transform="translate(0,-2) rotate(-12 60 40)"><ellipse cx="60" cy="42" rx="20" ry="7" fill="#b06ff0"/><ellipse cx="60" cy="40" rx="13" ry="4.5" fill="#c98bff"/><circle cx="47" cy="36" r="3" fill="#b06ff0"/></g>`; // берет
     case '💻': return `<line x1="60" y1="40" x2="60" y2="28" stroke="#20243a" stroke-width="2"/><circle cx="60" cy="27" r="3.5" fill="#4f9ff7"/>`; // антенна
     case '🧹': return `<g transform="translate(6,0)"><line x1="90" y1="56" x2="84" y2="86" stroke="#8a5a2b" stroke-width="3" stroke-linecap="round"/><path d="M80 84 l10 4 l-3 10 l-10 -4z" fill="#d8a44b"/></g>`; // веник
-    case '💬': return `<text x="84" y="46" font-size="14">💛</text>`;
-    default: return `<text x="84" y="44" font-size="15">✨</text>`;
+    case '💬': return `<path d="M85 49c-9-7-9-15-3-18 4-2 7 1 8 4 2-4 6-6 9-3 5 5 0 12-14 17z" fill="#ffc24b"/>`;
+    default: return `<path d="M86 32l2 7 7 2-7 2-2 7-2-7-7-2 7-2z" fill="#ffc24b"/>`;
   }
 }
 // Paper-doll питомец: один SVG по слоям (класс-анимации, recolor цветом сферы, экипировка-аксессуар запечена). PET-PIPELINE.md
@@ -7061,7 +7202,7 @@ function renderPets() {
       ${activeSpecies === 'fortune' ? fortuneControlsHTML(s.id) : ''}
       <div class="pet-bar"><span style="width:${Math.min(100, Math.round(st.pct / 120 * 100))}%;background:${meta.color}"></span></div>
       <p class="pet-line muted">${line}</p>
-      <div class="pet-traits" title="облик и повадки питомца — по твоим подсферам">${traits.map((t) => `<span>${t.icon}</span>`).join('')}</div>
+      <div class="pet-traits" title="облик и повадки питомца — по твоим подсферам">${traits.map((trait) => `<span>${petTraitIconHTML(trait, 'pet-trait-icon')}</span>`).join('')}</div>
     </div>`;
   }).join('');
   return `${companionCard()}
@@ -7074,30 +7215,197 @@ function renderPets() {
 }
 
 // ============================================================
-//  Логово — комната персонажа (Spirit City + SelfQuest фьюжн). v1: уютная сцена,
-//  где живёт аватар + компаньон + питомцы; окно меняется по времени суток; мини-дашборд.
+//  Логово v2 — эмоциональный дом и зримая прогрессия.
+//  Комната собирается из независимых cut-paper SVG-слоёв. Состояние хранится в
+//  settings.den: тема, свет, число питомцев, купленные предметы и предмет в каждом слоте.
 // ============================================================
-function denWindow(hr) {
-  if (hr >= 6 && hr < 11) return { sky: '#bfe3ff', extra: '<circle cx="300" cy="50" r="10" fill="#ffe08a"/>' };
-  if (hr >= 11 && hr < 17) return { sky: '#a9d8ff', extra: '<circle cx="300" cy="46" r="12" fill="#fff1b8"/>' };
-  if (hr >= 17 && hr < 20) return { sky: '#f6b184', extra: '<circle cx="300" cy="58" r="12" fill="#ffd27f"/>' };
-  return { sky: '#1b2440', extra: '<circle cx="306" cy="46" r="9" fill="#e8eefc"/><circle cx="282" cy="40" r="1.4" fill="#fff"/><circle cx="322" cy="60" r="1.2" fill="#fff"/><circle cx="296" cy="66" r="1" fill="#fff"/>' };
+const DEN_THEMES = [
+  { id: 'workshop', name: 'Тихая мастерская', tag: 'тёплый старт', access: 'starter', level: 0, cost: 0,
+    wall: '#29283b', wall2: '#343047', floor: '#3b3549', trim: '#b47a52', glow: '#ffd28a', sky: '#8bb9d5' },
+  { id: 'moon-tower', name: 'Лунная башня', tag: 'ночная обсерватория', access: 'level', level: 5, cost: 420,
+    wall: '#20243b', wall2: '#30395c', floor: '#29334e', trim: '#8795c7', glow: '#d8dcff', sky: '#19254c' },
+  { id: 'voxel-hearth', name: 'Кубический очаг', tag: 'бумажный voxel-home', access: 'pro', level: 0, cost: 0,
+    wall: '#2e3b36', wall2: '#435342', floor: '#574336', trim: '#8caf72', glow: '#ffca6b', sky: '#76acd0' },
+  { id: 'spirit-house', name: 'Дом духов', tag: 'тихий аниме-санктуарий', access: 'pro', level: 0, cost: 0,
+    wall: '#342739', wall2: '#4a3446', floor: '#46353d', trim: '#c0766e', glow: '#ffd5a3', sky: '#a17fa0' },
+];
+const DEN_SLOT_META = {
+  wall: { name: 'Стена', empty: 'Чистая стена' },
+  seat: { name: 'Место отдыха', empty: 'Без кресла' },
+  surface: { name: 'Стол', empty: 'Без стола' },
+  comfort: { name: 'Уют', empty: 'Без уголка' },
+  light: { name: 'Свет', empty: 'Только свет из окна' },
+  keepsake: { name: 'Реликвия', empty: 'Без реликвии' },
+  floor: { name: 'Ковёр', empty: 'Чистый пол' },
+};
+const DEN_ITEMS = [
+  { id: 'wall-map', slot: 'wall', name: 'Карта странника', access: 'starter', level: 0, cost: 0, motion: 'drift' },
+  { id: 'wall-moon', slot: 'wall', name: 'Лунный рыбак', access: 'level', level: 4, cost: 180, motion: 'glint' },
+  { id: 'wall-eyes', slot: 'wall', name: 'Шестиглазая печать', access: 'pro', level: 0, cost: 0, motion: 'watch' },
+  { id: 'seat-cushion', slot: 'seat', name: 'Подушка привала', access: 'starter', level: 0, cost: 0, motion: 'breathe' },
+  { id: 'seat-forest', slot: 'seat', name: 'Лесное кресло', access: 'level', level: 5, cost: 260, motion: 'breathe' },
+  { id: 'seat-cloud', slot: 'seat', name: 'Облачное кресло', access: 'pro', level: 0, cost: 0, motion: 'float' },
+  { id: 'surface-crate', slot: 'surface', name: 'Складной стол', access: 'starter', level: 0, cost: 0, motion: 'still' },
+  { id: 'surface-alchemy', slot: 'surface', name: 'Алхимический стол', access: 'level', level: 6, cost: 340, motion: 'bubble' },
+  { id: 'surface-ramen', slot: 'surface', name: 'Рамэн-стол', access: 'pro', level: 0, cost: 0, motion: 'steam' },
+  { id: 'comfort-bonsai', slot: 'comfort', name: 'Бонсай пути', access: 'starter', level: 0, cost: 0, motion: 'leaf' },
+  { id: 'comfort-cat-tower', slot: 'comfort', name: 'Башня манэки', access: 'level', level: 3, cost: 160, motion: 'breathe' },
+  { id: 'comfort-voxel', slot: 'comfort', name: 'Кубический очаг', access: 'pro', level: 0, cost: 0, motion: 'fire' },
+  { id: 'light-lantern', slot: 'light', name: 'Фонарь странника', access: 'starter', level: 0, cost: 0, motion: 'lantern' },
+  { id: 'light-six', slot: 'light', name: 'Лампа шести огней', access: 'level', level: 7, cost: 480, motion: 'glint' },
+  { id: 'light-soot', slot: 'light', name: 'Духи-копотушки', access: 'pro', level: 0, cost: 0, motion: 'soot' },
+  { id: 'keepsake-blades', slot: 'keepsake', name: 'Стойка клинков', access: 'starter', level: 0, cost: 0, motion: 'glint' },
+  { id: 'keepsake-cape', slot: 'keepsake', name: 'Плащ надежды', access: 'level', level: 5, cost: 300, motion: 'cape' },
+  { id: 'keepsake-campfire', slot: 'keepsake', name: 'Костёр племени', access: 'pro', level: 0, cost: 0, motion: 'fire' },
+  { id: 'floor-traveller', slot: 'floor', name: 'Ковёр путника', access: 'starter', level: 0, cost: 0, motion: 'still' },
+  { id: 'floor-yin', slot: 'floor', name: 'Ковёр равновесия', access: 'level', level: 4, cost: 220, motion: 'drift' },
+  { id: 'floor-pixel', slot: 'floor', name: 'Кубическая поляна', access: 'pro', level: 0, cost: 0, motion: 'glint' },
+].map((item) => ({ ...item, src: `/art/den/v2/${item.id}.svg` }));
+const DEN_STARTER_SLOTS = {
+  wall: 'wall-map', seat: 'seat-cushion', surface: 'surface-crate',
+  comfort: 'comfort-bonsai', light: 'light-lantern',
+  keepsake: 'keepsake-blades', floor: 'floor-traveller',
+};
+function ensureDen() {
+  const s = State.settings;
+  if (!s.den || typeof s.den !== 'object' || Array.isArray(s.den)) s.den = {};
+  const den = s.den;
+  if (!DEN_THEMES.some((theme) => theme.id === den.theme)) den.theme = 'workshop';
+  if (!den.slots || typeof den.slots !== 'object' || Array.isArray(den.slots)) den.slots = { ...DEN_STARTER_SLOTS };
+  for (const slot of Object.keys(DEN_SLOT_META)) {
+    if (den.slots[slot] === undefined) den.slots[slot] = DEN_STARTER_SLOTS[slot] || '';
+    if (den.slots[slot] && !DEN_ITEMS.some((item) => item.id === den.slots[slot] && item.slot === slot)) den.slots[slot] = '';
+  }
+  if (!Array.isArray(den.owned)) den.owned = [];
+  for (const item of DEN_ITEMS.filter((x) => x.access === 'starter')) if (!den.owned.includes(item.id)) den.owned.push(item.id);
+  if (!den.owned.includes('theme:workshop')) den.owned.push('theme:workshop');
+  if (!['auto', 'morning', 'day', 'sunset', 'night'].includes(den.light)) den.light = 'auto';
+  den.petCount = Math.max(0, Math.min(3, Number.isFinite(Number(den.petCount)) ? Number(den.petCount) : 3));
+  return den;
 }
-function denSceneSVG() {
-  const w = denWindow(new Date().getHours());
-  return `<svg class="den-room" viewBox="0 0 360 230" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <rect x="0" y="0" width="360" height="150" fill="var(--den-wall)"/>
-    <rect x="0" y="150" width="360" height="80" fill="var(--den-floor)"/>
-    <line x1="0" y1="150" x2="360" y2="150" stroke="rgba(0,0,0,0.14)" stroke-width="1.5"/>
-    <rect x="266" y="22" width="72" height="64" rx="6" fill="${w.sky}" stroke="rgba(0,0,0,0.2)" stroke-width="3"/>
-    ${w.extra}
-    <line x1="302" y1="22" x2="302" y2="86" stroke="rgba(0,0,0,0.2)" stroke-width="2"/>
-    <line x1="266" y1="54" x2="338" y2="54" stroke="rgba(0,0,0,0.2)" stroke-width="2"/>
-    <rect x="22" y="118" width="20" height="30" rx="3" fill="#b5734a"/>
-    <path d="M32 118 q-16 -22 -2 -36 q10 14 2 36z" fill="#5fbf7a"/>
-    <path d="M32 118 q16 -20 4 -34 q-8 12 -4 34z" fill="#4fa468"/>
-    <ellipse cx="180" cy="198" rx="88" ry="20" fill="var(--accent)" opacity="0.16"/>
+function denTheme() {
+  const den = ensureDen();
+  const wanted = DEN_THEMES.find((theme) => theme.id === den.theme) || DEN_THEMES[0];
+  if (wanted.access === 'pro' && !isPro()) return DEN_THEMES[0];
+  return wanted;
+}
+function denItem(id) { return DEN_ITEMS.find((item) => item.id === id) || null; }
+function denOwned(id) {
+  const den = ensureDen();
+  const item = denItem(id);
+  if (!item) return false;
+  if (item.access === 'pro') return isPro();
+  return item.access === 'starter' || den.owned.includes(id);
+}
+function denThemeOwned(theme) {
+  if (theme.access === 'pro') return isPro();
+  return theme.access === 'starter' || ensureDen().owned.includes('theme:' + theme.id);
+}
+function denAcquire(entry, token) {
+  if (entry.access === 'pro') {
+    if (!isPro()) { showPaywall('Темы и мебель Логова'); return false; }
+    return true;
+  }
+  const den = ensureDen();
+  if (entry.access === 'starter' || den.owned.includes(token)) return true;
+  if (charLevel() < entry.level) {
+    toast(`Откроется на ур.${entry.level}`);
+    return false;
+  }
+  if (goldBalance() < entry.cost) { toast('Недостаточно золота'); return false; }
+  den.owned.push(token);
+  State.purchases = State.purchases || [];
+  State.purchases.push({ id: 'den_' + uid(), denId: entry.id, name: 'Логово: ' + entry.name, cost: entry.cost, at: new Date().toISOString() });
+  Store.save('settings', State.settings);
+  Store.save('purchases', State.purchases);
+  try { sfx('coin'); } catch {}
+  toast(`Предмет для Логова получен: ${entry.name}`);
+  return true;
+}
+function denLightHour(light) {
+  if (light === 'morning') return 8;
+  if (light === 'day') return 13;
+  if (light === 'sunset') return 18;
+  if (light === 'night') return 23;
+  return new Date().getHours();
+}
+function denWindow(hr) {
+  if (hr >= 6 && hr < 11) return { sky: '#bfe3ff', extra: '<circle cx="602" cy="88" r="18" fill="#ffe08a"/><path d="M552 143 q42 -25 92 0" fill="none" stroke="#fff" stroke-opacity=".32" stroke-width="7"/>' };
+  if (hr >= 11 && hr < 17) return { sky: '#a9d8ff', extra: '<circle cx="602" cy="82" r="21" fill="#fff1b8"/><path d="M550 143 q45 -21 96 0" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="7"/>' };
+  if (hr >= 17 && hr < 20) return { sky: '#f6b184', extra: '<circle cx="602" cy="105" r="21" fill="#ffd27f"/><path d="M548 144 q45 -17 100 0" fill="none" stroke="#9c5972" stroke-opacity=".38" stroke-width="7"/>' };
+  return { sky: '#1b2440', extra: '<circle cx="610" cy="82" r="17" fill="#e8eefc"/><circle cx="570" cy="72" r="3" fill="#fff"/><circle cx="640" cy="112" r="2.5" fill="#fff"/><circle cx="590" cy="125" r="2" fill="#fff"/><circle cx="649" cy="68" r="2" fill="#fff"/>' };
+}
+function denSceneSVG(theme, light) {
+  const hr = denLightHour(light);
+  const w = denWindow(hr);
+  const isNight = hr < 6 || hr >= 20;
+  return `<svg class="den-room" viewBox="0 0 720 430" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="den-wall-v2" x1="0" y1="0" x2="0" y2="1"><stop stop-color="${theme.wall2}"/><stop offset="1" stop-color="${theme.wall}"/></linearGradient>
+      <linearGradient id="den-floor-v2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${theme.floor}"/><stop offset="1" stop-color="${theme.wall}"/></linearGradient>
+      <radialGradient id="den-light-v2" cx="72%" cy="22%" r="68%"><stop stop-color="${theme.glow}" stop-opacity="${isNight ? '.23' : '.12'}"/><stop offset="1" stop-color="${theme.wall}" stop-opacity="0"/></radialGradient>
+      <filter id="den-paper-v2"><feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="31"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .045"/></feComponentTransfer><feBlend in="SourceGraphic" mode="multiply"/></filter>
+    </defs>
+    <g filter="url(#den-paper-v2)">
+      <path d="M0 0 H720 V284 H0Z" fill="url(#den-wall-v2)"/>
+      <path d="M0 284 H720 V430 H0Z" fill="url(#den-floor-v2)"/>
+      <path d="M0 284 L360 230 720 284 M360 230 V430 M0 357 H720" fill="none" stroke="${theme.trim}" stroke-opacity=".16" stroke-width="3"/>
+      <path d="M0 0 H720 V430 H0Z" fill="url(#den-light-v2)"/>
+      <rect x="536" y="50" width="132" height="126" rx="14" fill="${w.sky}" stroke="${theme.trim}" stroke-width="9"/>
+      ${w.extra}
+      <path d="M602 50 V176 M536 113 H668" stroke="${theme.trim}" stroke-width="5" opacity=".72"/>
+      <path d="M520 181 H684" stroke="${theme.trim}" stroke-width="11" stroke-linecap="round"/>
+      <path d="M38 44 H251" stroke="${theme.trim}" stroke-width="7" opacity=".35" stroke-linecap="round"/>
+      <path d="M46 54 H243" stroke="${theme.trim}" stroke-width="2" opacity=".2"/>
+    </g>
   </svg>`;
+}
+function denObjectsHTML(den) {
+  return Object.entries(den.slots).map(([slot, id]) => {
+    const item = denItem(id);
+    if (!item || item.slot !== slot || !denOwned(id)) return '';
+    return `<img class="den-object den-object-${slot}" data-den-motion="${item.motion}" src="${item.src}" alt="" aria-hidden="true" decoding="async" draggable="false">`;
+  }).join('');
+}
+function denAccessChip(entry, owned, selected) {
+  if (selected) return `<span class="den-choice-state">${satoruIconHTML('action.check', 'den-mini-glyph', '✓')} стоит</span>`;
+  if (owned) return '<span class="den-choice-state">доступно</span>';
+  if (entry.access === 'pro') return `<span class="den-choice-state den-choice-pro">${satoruIconHTML('status.lock', 'den-mini-glyph', '◇')} PRO</span>`;
+  if (charLevel() < entry.level) return `<span class="den-choice-state">${satoruIconHTML('status.lock', 'den-mini-glyph', '◇')} ур.${entry.level}</span>`;
+  return `<span class="den-choice-state">${satoruIconHTML('status.gold', 'den-mini-glyph', '◇')} ${entry.cost}</span>`;
+}
+function denEditorHTML(den) {
+  if (!State._denEdit) return '';
+  const themeCards = DEN_THEMES.map((theme) => {
+    const selected = den.theme === theme.id;
+    const owned = denThemeOwned(theme);
+    return `<button class="den-theme-choice${selected ? ' is-selected' : ''}${owned ? '' : ' is-locked'}" data-action="den-theme" data-id="${theme.id}" style="--den-preview-wall:${theme.wall2};--den-preview-floor:${theme.floor};--den-preview-glow:${theme.glow}">
+      <span class="den-theme-preview"><i></i><b></b></span>
+      <span><strong>${esc(theme.name)}</strong><small>${esc(theme.tag)}</small></span>
+      ${denAccessChip(theme, owned, selected)}
+    </button>`;
+  }).join('');
+  const groups = Object.entries(DEN_SLOT_META).map(([slot, meta]) => {
+    const cards = DEN_ITEMS.filter((item) => item.slot === slot).map((item) => {
+      const selected = den.slots[slot] === item.id;
+      const owned = denOwned(item.id);
+      return `<button class="den-item-choice${selected ? ' is-selected' : ''}${owned ? '' : ' is-locked'}" data-action="den-item" data-id="${item.id}">
+        <span class="den-item-art"><img src="${item.src}" alt="" loading="lazy" decoding="async"></span>
+        <span class="den-item-copy"><strong>${esc(item.name)}</strong>${denAccessChip(item, owned, selected)}</span>
+      </button>`;
+    }).join('');
+    return `<section class="den-editor-group"><div class="den-editor-group-head"><h4>${esc(meta.name)}</h4><button class="den-clear" data-action="den-clear" data-slot="${slot}">${esc(meta.empty)}</button></div><div class="den-item-grid">${cards}</div></section>`;
+  }).join('');
+  const lightModes = [['auto', 'Авто'], ['morning', 'Утро'], ['day', 'День'], ['sunset', 'Закат'], ['night', 'Ночь']]
+    .map(([id, label]) => `<button class="den-pill${den.light === id ? ' is-selected' : ''}" data-action="den-light" data-value="${id}">${label}</button>`).join('');
+  const petModes = [0, 1, 2, 3].map((n) => `<button class="den-pill${den.petCount === n ? ' is-selected' : ''}" data-action="den-pet-count" data-value="${n}">${n || 'без'} ${n === 1 ? 'питомец' : 'питомца'}</button>`).join('');
+  return `<div class="den-editor">
+    <div class="den-editor-title"><div><span>ROOM EDITOR</span><h3>Собери место, куда хочется возвращаться</h3></div><button class="btn ghost sm" data-action="den-reset">Сбросить комнату</button></div>
+    <section class="den-editor-group"><h4>Атмосфера</h4><div class="den-theme-grid">${themeCards}</div></section>
+    <section class="den-editor-group den-editor-compact"><h4>Свет</h4><div class="den-pill-row">${lightModes}</div><h4>Обитатели</h4><div class="den-pill-row">${petModes}</div></section>
+    ${groups}
+    <p class="den-editor-note">Стартовый набор остаётся бесплатным. Прогрессионные предметы покупаются за игровое золото после нужного уровня. Pro открывает дополнительные темы и коллекционные отсылки, но не усиливает характеристики.</p>
+  </div>`;
 }
 function satoruRigSVG() {
   return `<svg class="satoru-avatar-rig" viewBox="0 0 220 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Персонаж Satoru">
@@ -7242,9 +7550,10 @@ function denAvatarFace(state) {
   return 'neutral';
 }
 function renderDen() {
+  const den = ensureDen(), theme = denTheme();
   const c = ensureCompanion(), mood = compMood(), ti = compTierIdx(c.bond);
   const cr = charRank(), nm = (State.me && State.me.name) || 'Герой';
-  const pets = topSkills().slice(0, 3).map((s) => {
+  const pets = topSkills().slice(0, den.petCount).map((s) => {
     const traits = petTraits(s.id);
     const trait = traits[0] || {};
     return {
@@ -7255,24 +7564,46 @@ function renderDen() {
       idle: dayPick('petidle' + s.id, trait.idles || [trait.idle]),
     };
   });
-  const petLayer = pets.map((p, i) => `<div class="den-pet den-pet-${i}${p.species === 'fortune' ? ' den-pet-fortune' : ''}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id, p.idle)}</div>`).join('');
+  const petLayer = pets.map((p, i) => `<button class="den-pet den-pet-${i}${p.species === 'fortune' ? ' den-pet-fortune' : ''}" data-action="den-pet-react" data-id="${p.s.id}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id, p.idle)}</button>`).join('');
   const p = nestedProgress(), eP = energyPct(), eM = energyMeta(), tm = State.timer;
   const avatarState = denAvatarState(eP, p, tm);
+  const amb = (State.settings && State.settings.ambient) || {};
+  const ambientMode = amb.mode || 'off';
+  const ambientLabel = ambientMode === 'rain' ? 'Дождь' : ambientMode === 'fire' ? 'Костёр' : 'Тишина';
   const focusRow = tm
-    ? `<div class="den-focus den-focus-on"><span>⏱ Фокус идёт</span><b class="den-clock">${fmtClock(timerElapsedMs())}</b><button class="btn ghost sm" data-action="goto-today">К таймеру</button></div>`
-    : `<div class="den-focus"><span>🎯 Готов к делу?</span><button class="btn sm" data-action="goto-today">Начать фокус</button></div>`;
-  return `<div class="card den-card">
-    <div class="den-scene">
-      ${denSceneSVG()}
-      <div class="den-companion" title="${esc(c.name)}">${shadowVideo(ti, mood.face)}</div>
-      <div class="den-avatar den-avatar-raster" data-state="${avatarState}">${avatarArtHTML({ className: 'avatar-art-stack--den', faceState: denAvatarFace(avatarState), motion: avatarState, interactive: true })}</div>
+    ? `<div class="den-focus den-focus-on"><span>${satoruIconHTML('system.focus', 'den-row-glyph', '◇')} Фокус идёт</span><b class="den-clock">${fmtClock(timerElapsedMs())}</b><button class="btn ghost sm" data-action="goto-today">К таймеру</button></div>`
+    : `<div class="den-focus"><span>${satoruIconHTML('system.focus', 'den-row-glyph', '◇')} Готов к делу?</span><button class="btn sm" data-action="goto-today">Начать фокус</button></div>`;
+  return `<div class="den-shell">
+    <div class="card den-card">
+    <div class="den-scene" data-den-theme="${theme.id}" data-den-light="${den.light}">
+      ${denSceneSVG(theme, den.light)}
+      ${denObjectsHTML(den)}
+      <div class="den-room-vignette"></div>
+      <button class="den-companion" data-action="comp-pet" title="Погладить ${esc(c.name)}">${shadowVideo(ti, mood.face, 'den')}<span>${esc(c.name)}</span></button>
+      <div class="den-avatar den-avatar-raster" data-state="${avatarState}">${avatarArtHTML({ className: 'avatar-art-stack--den', faceState: denAvatarFace(avatarState), motion: avatarState, interactive: true })}<span class="den-avatar-shadow"></span></div>
       ${petLayer}
-      <div class="den-tag">${cr.icon} ${esc(nm)} · ур.${charLevel()}</div>
+      <div class="den-tag">${rankIconHTML(cr, 'rank-inline-icon')} <span>${esc(nm)}</span><small>ур.${charLevel()}</small></div>
+      <div class="den-scene-tools">
+        <button data-action="den-ambient-cycle" title="Эмбиент: ${ambientLabel}">${satoruIconHTML('media.sound', 'den-tool-glyph', '◇')}<span>${ambientLabel}</span></button>
+        <button class="${State._denEdit ? 'is-active' : ''}" data-action="den-toggle-edit" title="${State._denEdit ? 'Закрыть редактор комнаты' : 'Обставить комнату'}" aria-label="${State._denEdit ? 'Закрыть редактор комнаты' : 'Обставить комнату'}">${satoruIconHTML('action.edit', 'den-tool-glyph', '◇')}<span>${State._denEdit ? 'Готово' : 'Обставить'}</span></button>
+      </div>
     </div>
-    <p class="den-mood">${mood.line}</p>
-    <div class="den-stats"><span title="Энергия">${eM.icon} ${eP}%</span><span title="Дела сегодня">🌅 ${p.dayDone}/${p.dayTot || 0}</span><span title="Серия">🔥 ${p.streak}</span></div>
+    <div class="den-life-strip">
+      <p class="den-mood"><strong>${esc(c.name)}</strong><span>${mood.line}</span></p>
+      <div class="den-stats">
+        <span title="Энергия">${satoruIconHTML('status.energy', 'den-stat-glyph', eM.icon)} ${eP}%</span>
+        <span title="Дела сегодня">${satoruIconHTML('system.day-end', 'den-stat-glyph', '◇')} ${p.dayDone}/${p.dayTot || 0}</span>
+        <span title="Серия">${satoruIconHTML('status.streak', 'den-stat-glyph', '◇')} ${p.streak}</span>
+      </div>
+    </div>
     ${focusRow}
-    <div class="den-actions"><button class="btn ghost sm" data-action="go-wardrobe">👕 Гардероб</button><button class="btn ghost sm" data-action="goto-rewards">🎁 Награды</button><button class="btn ghost sm" data-action="goto-pets">🐾 Зверинец</button></div>
+    <div class="den-actions">
+      <button class="btn ghost sm" data-action="go-wardrobe">${satoruIconHTML('nav.hero', 'button-glyph', '◇')} Гардероб</button>
+      <button class="btn ghost sm" data-action="goto-rewards">${satoruIconHTML('system.rewards', 'button-glyph', '◇')} Награды</button>
+      <button class="btn ghost sm" data-action="goto-pets">${satoruIconHTML('system.pets', 'button-glyph', '◇')} Зверинец</button>
+    </div>
+    ${denEditorHTML(den)}
+    </div>
   </div>`;
 }
 
@@ -7364,16 +7695,16 @@ function renderToday() {
 
   const timerCard = `<div class="card timer-card">
       <div class="timer-left"><div class="timer-clock" id="timer-clock">${fmtClock(timerElapsedMs())}</div>
-        <div class="timer-task">${tm ? (tmTask ? '🎯 ' + esc(tmTask.title) : '(задача удалена)') : t('Таймер фокуса — нажми ▶ у квеста')}</div></div>
+        <div class="timer-task">${tm ? (tmTask ? satoruIconHTML('nav.today', 'timer-task-icon', '🎯') + ' ' + esc(tmTask.title) : '(задача удалена)') : t('Таймер фокуса — нажми ▶ у квеста')}</div></div>
       <div class="timer-controls">${tm ? `${tm.running ? `<button class="btn ghost" data-action="timer-pause">${t('⏸ Пауза')}</button>` : `<button class="btn" data-action="timer-resume">${t('▶ Продолжить')}</button>`}<button class="btn" data-action="timer-stop">${t('⏹ Стоп · записать')}</button><button class="btn ghost" data-action="open-pip" title="Плавающее окно поверх всех приложений">${t('↗ Окно')}</button>` : ''}</div></div>`;
 
   // Энергия (идея 19) — индикатор нагрузки/восстановления
   const en = ensureEnergy(), eP = energyPct(), eM = energyMeta();
   const energyCard = `<div class="card energy-card" title="Энергия — индикатор нагрузки за день. Сложные квесты тратят. Восстановление ПАССИВНОЕ: идёт само по реальному времени (паузы, вечер, сон ночью) — логировать отдых не нужно. Не блокирует ничего, на XP не влияет. Ёмкость не бесконечна: потолок от 80 до 220 (сейчас у тебя ${en.max}) — растёт, когда чередуешь нагрузку и восстановление (как в тренировках), и падает, если постоянно загонять себя в ноль — это и есть выгорание. Это оценка по задачам — точнее будет позже через часы.">
-      <div class="en-head"><span class="en-ic">${eM.icon}</span><b>${t('Энергия')}</b><span class="en-num" style="color:${eM.color}">${en.cur} / ${en.max}</span><span class="en-text muted">· ${eM.text}</span></div>
+      <div class="en-head">${satoruIconHTML('status.energy', 'energy-emblem', eM.icon)}<b>${t('Энергия')}</b><span class="en-num" style="color:${eM.color}">${en.cur} / ${en.max}</span><span class="en-text muted">· ${eM.text}</span></div>
       <div class="en-bar"><span style="width:${eP}%;background:${eM.color}"></span></div>
       <p class="en-note muted">Восстанавливается сама со временем + дела вроде сна / прогулки / растяжки / медитации <b>пополняют</b> её · ≈ оценка по задачам, точнее с Apple Watch / Garmin (позже)</p></div>`;
-  const lowEnergyNudge = (eP < 25 && doneCount > 0) ? `<div class="card nudge-card en-low"><span class="nudge-boost">🪫 Много нагрузки сегодня. Отдых ценнее форсажа — энергия восстановится сама за паузами и ночью, а ёмкость вырастет.</span></div>` : '';
+  const lowEnergyNudge = (eP < 25 && doneCount > 0) ? `<div class="card nudge-card en-low"><span class="nudge-boost">${satoruIconHTML('status.warning', 'inline-glyph', '🪫')} Много нагрузки сегодня. Отдых ценнее форсажа — энергия восстановится сама за паузами и ночью, а ёмкость вырастет.</span></div>` : '';
   // Честное состояние (fb #6): «тренируюсь → Здоровье растёт → баланс выглядит хорошим, хотя
   // явного отдыха давно не было». Показываем ТОЛЬКО когда набралась история (иначе на старте зря
   // пугаем нулём дней) и порог значим (≥4) — приглашение, не счётчик вины.
@@ -7383,7 +7714,7 @@ function renderToday() {
   const chestsAvail = lootChestsAvailable(), activeBoost = lootBoostPct(), hp = hypePct();
   const chestCarry = ensureLootbox().carry; // сколько из доступных — перенесены с прошлых дней (не потеряны)
   const chestTitle = chestCarry > 0 ? `title="${esc(t('С прошлых дней сохранено'))}: ${chestCarry}"` : '';
-  const nudgeCard = (chestsAvail > 0 || activeBoost > 0 || hp > 0) ? `<div class="card nudge-card">${chestsAvail > 0 ? `<button class="nudge" data-action="goto-rewards" ${chestTitle}>🎁 ${chestsAvail} ${plural(chestsAvail, 'сундук', 'сундука', 'сундуков')} ждёт — открыть</button>` : ''}${activeBoost > 0 ? `<span class="nudge-boost">⚡ +${activeBoost}% XP активен</span>` : ''}${hp > 0 ? `<span class="nudge-boost">🔥 Хайп ×${hypeState().stacks} · +${hp}% XP · ${hypeMinLeft()}м</span>` : ''}</div>` : '';
+  const nudgeCard = (chestsAvail > 0 || activeBoost > 0 || hp > 0) ? `<div class="card nudge-card">${chestsAvail > 0 ? `<button class="nudge" data-action="goto-rewards" ${chestTitle}>${satoruIconHTML('system.rewards', 'button-emblem', '🎁')} ${chestsAvail} ${plural(chestsAvail, 'сундук', 'сундука', 'сундуков')} ждёт — открыть</button>` : ''}${activeBoost > 0 ? `<span class="nudge-boost">⚡ +${activeBoost}% XP активен</span>` : ''}${hp > 0 ? `<span class="nudge-boost">${satoruIconHTML('status.streak', 'inline-emblem', '🔥')} Хайп ×${hypeState().stacks} · +${hp}% XP · ${hypeMinLeft()}м</span>` : ''}</div>` : '';
   // Нудж новичку: не начинай с нуля — импортируй реальный опыт
   const noImports = !Object.keys((State.settings && State.settings.imported) || {}).length;
   const importNudge = (noImports && earnedXp() < 200) ? `<div class="card nudge-card"><button class="nudge" data-action="goto-import">🎖 Не начинай с нуля — импортируй свой реальный опыт</button><span class="nudge-boost">отметь свой уровень в сферах → стартовый опыт</span></div>` : '';
@@ -7398,7 +7729,7 @@ function renderToday() {
   const quietN = (State.tasks || []).length ? quietDaysBefore() : 0;
   const dayLogNudge = (quietN >= 2 || (doneCount === 0 && new Date().getHours() >= 18 && (State.tasks || []).length > 0))
     ? `<div class="card nudge-card daylog-nudge">
-        <button class="nudge" data-action="day-recap">🎤 ${quietN >= 2
+        <button class="nudge" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${quietN >= 2
           ? t('Расскажи, чем были заняты эти дни')
           : t('День на исходе — расскажи, что успел')}</button>
         <span class="nudge-boost">${quietN >= 2
@@ -7457,22 +7788,22 @@ function renderToday() {
     }
   }
 
-  const overdueCard = overdue.length ? `<div class="card overdue"><h3>${t('⏳ Просрочено')} (${overdue.length})</h3>
+  const overdueCard = overdue.length ? `<div class="card overdue"><h3>${satoruIconHTML('status.warning', 'heading-glyph', '⏳')} ${t('⏳ Просрочено').replace(/^⏳\s*/, '')} (${overdue.length})</h3>
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">${t('↪ Перенести всё на сегодня')}</button></div>` : '';
 
-  const nextAction = tm ? `<button class="btn" data-action="${tm.running ? 'timer-pause' : 'timer-resume'}">${tm.running ? '⏸ Пауза' : '▶ Продолжить фокус'}</button>`
+  const nextAction = tm ? `<button class="btn" data-action="${tm.running ? 'timer-pause' : 'timer-resume'}">${satoruIconHTML(tm.running ? 'media.pause' : 'media.play', 'button-glyph', tm.running ? '⏸' : '▶')} ${tm.running ? t('⏸ Пауза').replace(/^⏸\s*/, '') : t('▶ Продолжить').replace(/^▶\s*/, '') + ' фокус'}</button>`
     // Обрезали по 32 знакам — на телефоне из «Достать кроссовки и подготовить форму для бега»
     // выходило «Достать кроссовки и подготовить …», и человек не понимал, что именно начинает.
     // Кнопка и так во всю ширину и переносится по строкам: режем только совсем длинное.
-    : nextQuest ? `<button class="btn btn-nextquest" data-action="focus-task" data-id="${nextQuest.id}">▶ ${t('Начать')}: ${esc(nextQuest.title).slice(0, 64)}${nextQuest.title.length > 64 ? '…' : ''}</button>`
-    : `<button class="btn ghost" data-action="goto-calendar">🗓 Запланировать день</button>`;
+    : nextQuest ? `<button class="btn btn-nextquest" data-action="focus-task" data-id="${nextQuest.id}">${satoruIconHTML('media.play', 'button-glyph', '▶')} ${t('Начать')}: ${esc(nextQuest.title).slice(0, 64)}${nextQuest.title.length > 64 ? '…' : ''}</button>`
+    : `<button class="btn ghost" data-action="goto-calendar">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} ${t('🗓 Запланировать день').replace(/^🗓\s*/, '')}</button>`;
   const todayHero = `<section class="card today-hero">
       <div>
         <span class="th-kicker">Daily cockpit</span>
         <h2>${nextQuest ? 'Следующий ход уже выбран.' : todays.length ? 'День почти собран.' : 'Соберём первый квест на сегодня.'}</h2>
         <p class="th-sub">${nextQuest ? `Сейчас лучше не смотреть на всю систему — просто закрой следующий квест: <b>${esc(nextQuest.title)}</b>.` : todays.length ? 'Основной список уже на месте. Добей хвосты, забери награды и закрой день спокойно.' : 'Начни с одного понятного действия. Остальные системы подождут за кулисами.'}</p>
-        <div class="th-actions">${nextAction}<button class="btn ghost" data-action="goto-rewards">🎁 Награды</button></div>
+        <div class="th-actions">${nextAction}<button class="btn ghost" data-action="goto-rewards">${satoruIconHTML('system.rewards', 'button-emblem', '🎁')} ${t('Награды')}</button></div>
       </div>
       <div class="th-stats">
         <div class="th-stat"><b>${donePct}%</b><span>готово</span></div>
@@ -7486,24 +7817,24 @@ function renderToday() {
         <input name="title" placeholder="${t('Новый квест на сегодня…')}" autocomplete="off" required />
         <select name="skillId">${skillOpts}</select>
         ${durInputHTML('estimateMin', 30)}
-        <select name="difficulty"><option value="easy">${t('🌱 Лёгкая')}</option><option value="normal" selected>${t('⚔️ Обычная')}</option><option value="hard">${t('🔥 Сложная')}</option></select>
+        <select name="difficulty"><option value="easy">${t('Лёгкая')}</option><option value="normal" selected>${t('Обычная')}</option><option value="hard">${t('Сложная')}</option></select>
         <button type="submit">${t('+ Квест')}</button></form>
       <div id="cat-suggest" class="cat-suggest"></div>
-      <p class="diff-hint muted">🌱 Лёгкая — рутина, механика · ⚔️ Обычная — требует фокуса · 🔥 Сложная — вызов, выход из зоны комфорта → активирует Хайп <b>+15% XP</b></p>
+      <p class="diff-hint muted"><span>${difficultyIconHTML('easy')} ${t('Лёгкая')} — рутина, механика</span><span>${difficultyIconHTML('normal')} ${t('Обычная')} — требует фокуса</span><span>${difficultyIconHTML('hard')} ${t('Сложная')} — вызов, выход из зоны комфорта → активирует Хайп <b>+15% XP</b></span></p>
     </div>
     ${overdueCard}
     <div class="card card-quests"><div class="daystat">
         <span>Квестов: <b>${doneCount}/${todays.length}</b></span>
         <span>Время: <b>${fmtDur(minToday)} / ${fmtDur(planned)}</b></span>
         <span>Опыт: <b>+${xpToday}</b> XP</span>
-        <span>Золото: <b>+${goldToday}</b> 🪙</span></div>
+        <span>Золото: <b>+${goldToday}</b> ${satoruIconHTML('status.gold', 'daystat-emblem', '🪙')}</span></div>
       ${todays.length ? `<ul class="tasks">${todays.map(questRow).join('')}</ul>` : emptyDayHTML()}</div>
-    ${todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">🗓 ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : ''}
-    <div class="card card-habits"><h3>🔁 Привычки на сегодня</h3>
+    ${todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : ''}
+    <div class="card card-habits"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🔁')} ${t('🔁 Привычки на сегодня').replace(/^🔁\s*/, '')}</h3>
       ${habits.length ? `<ul class="tasks">${habits.map(habitRow).join('')}</ul>` : '<p class="muted">На сегодня привычек нет. Добавь их в «Настройках».</p>'}</div>
     ${antiHabitsCard()}
-    <div class="card shutdown"><h3>🌙 Итог дня</h3>
-      <p class="muted">Квестов ${doneCount}/${todays.length} · привычек ${habits.filter((h) => habitDone(h, today)).length}/${habits.length} · ${fmtDur(minToday)} · +${xpToday} XP · +${goldToday} 🪙</p>
+    <div class="card shutdown"><h3>${satoruIconHTML('system.day-end', 'heading-glyph', '🌙')} ${t('Итог дня')}</h3>
+      <p class="muted">Квестов ${doneCount}/${todays.length} · привычек ${habits.filter((h) => habitDone(h, today)).length}/${habits.length} · ${fmtDur(minToday)} · +${xpToday} XP · +${goldToday} ${satoruIconHTML('status.gold', 'inline-emblem', '◇')}</p>
       <textarea id="reflection" placeholder="Рефлексия: что получилось, что перенести, как себя чувствую…">${esc(day.reflection || '')}</textarea>
       <div style="margin-top:10px"><button class="${day.closed ? 'btn ghost' : 'btn'}" data-action="${day.closed ? 'reopen-day' : 'close-day'}">${day.closed ? '✓ День закрыт — открыть заново' : 'Закрыть день'}</button></div></div></div>`;
 }
@@ -7568,7 +7899,7 @@ function renderGoals() {
   const skillOpts = skillOptionsHTML();
   const typeOpts = GOAL_TYPES.map((t) => `<option value="${t.id}" ${t.id === 'short' ? 'selected' : ''}>${t.label} · ${t.timeframe}</option>`).join('');
   const parentOpts = '<option value="">— самостоятельная цель —</option>' + active.map((g) => `<option value="${g.id}">↳ часть цели: ${esc(g.title)}</option>`).join('');
-  const typeGuide = `<details class="gtype-guide"><summary>ℹ️ Как выбрать тип цели?</summary><div class="gtype-rows">${GOAL_TYPES.map((t) => `<div class="gtype-row"><span class="goal-type type-${t.id}">${t.label}</span><span class="gtype-tf">${t.timeframe}</span><span class="muted">${t.hint}</span></div>`).join('')}</div></details>`;
+  const typeGuide = `<details class="gtype-guide"><summary>${satoruIconHTML('status.info', 'inline-glyph', 'ℹ️')} ${t('ℹ️ Как выбрать тип цели?').replace(/^ℹ️\s*/, '')}</summary><div class="gtype-rows">${GOAL_TYPES.map((t) => `<div class="gtype-row"><span class="goal-type type-${t.id}">${t.label}</span><span class="gtype-tf">${t.timeframe}</span><span class="muted">${t.hint}</span></div>`).join('')}</div></details>`;
 
   const counts = { all: active.length };
   GOAL_TYPES.forEach((t) => { counts[t.id] = active.filter((g) => (g.type || 'short') === t.id).length; });
@@ -7583,9 +7914,9 @@ function renderGoals() {
       <div class="kpi"><div class="v">${nearest ? nearest.targetDate.slice(5) : '—'}</div><div class="l">${t('Ближайший дедлайн')}</div></div>
     </div>
     <div class="card ai-import-card">
-      <div class="ai-imp-l"><b>📥 Опиши цели текстом — ИИ оформит</b><span class="muted">расскажи словами, что хочешь; ИИ предложит цели и сферы, ты одобришь</span></div>
-      <button class="btn" data-action="ai-import-goals">🤖 Импорт целей</button></div>
-    <div class="card"><h3>${t('Новая цель')}</h3>
+      <div class="ai-imp-l"><b>${satoruIconHTML('action.import', 'button-glyph', '📥')} Опиши цели текстом — ИИ оформит</b><span class="muted">расскажи словами, что хочешь; ИИ предложит цели и сферы, ты одобришь</span></div>
+      <button class="btn" data-action="ai-import-goals">${satoruIconHTML('nav.shadow', 'button-glyph', '🤖')} Импорт целей</button></div>
+    <div class="card"><h3>${satoruIconHTML('goal.completed', 'heading-emblem', '🎯')} ${t('Новая цель')}</h3>
       ${typeGuide}
       <form id="add-goal" class="goal-form">
         <input name="title" placeholder="Чего хочешь достичь?" autocomplete="off" required />
@@ -7609,10 +7940,10 @@ function renderGoals() {
             <input name="window" placeholder="окно: лето / после 23.06…" title="Когда (для «жду события»)" />
           </div>
         </details>
-        <button type="submit">${t('+ Цель')}</button></form>
+        <button type="submit">${satoruIconHTML('action.add', 'button-glyph', '+')} ${t('+ Цель').replace(/^\+\s*/, '')}</button></form>
       <p class="diff-hint muted">💰 XP пусто = по типу цели: ${GOAL_TYPES.map((gt) => `${gt.label.toLowerCase()} ${GOAL_XP[gt.id]}`).join(' · ')}. Это «курс валюты» — не накручивай себе, иначе уровень потеряет смысл.</p></div>
-    <div class="card"><h3>${t('📋 Сводка целей')}</h3><div class="gfilters">${filterTabs}</div>
-      <div class="bulk-bar"><button class="btn ghost sm" data-action="goals-pick-all">☑ Выбрать все</button><button class="btn ghost sm" data-action="goals-pick-none">✕ Снять</button><button class="btn ghost sm bulk-del" data-action="goals-del-selected">🗑 Удалить выбранные</button></div></div>
+    <div class="card"><h3>${satoruIconHTML('nav.plan', 'heading-glyph', '📋')} ${t('📋 Сводка целей').replace(/^📋\s*/, '')}</h3><div class="gfilters">${filterTabs}</div>
+      <div class="bulk-bar"><button class="btn ghost sm" data-action="goals-pick-all">${satoruIconHTML('action.check', 'button-glyph', '☑')} Выбрать все</button><button class="btn ghost sm" data-action="goals-pick-none">${satoruIconHTML('action.close', 'button-glyph', '✕')} Снять</button><button class="btn ghost sm bulk-del" data-action="goals-del-selected">${satoruIconHTML('action.delete', 'button-glyph', '🗑')} Удалить выбранные</button></div></div>
     ${shown.length ? shown.map(goalCard).join('') : '<div class="card"><p class="muted">Нет активных целей этого типа. Добавь выше ↑</p></div>'}
     ${completed.length ? `<div class="section-title">${t('Достигнутые')}</div>${completed.map(goalCard).join('')}` : ''}
     ${archived.length ? `<div class="section-title">🗄 Архив (${archived.length})</div>${archived.map(goalCard).join('')}` : ''}`;
@@ -8028,12 +8359,12 @@ function renderCharacter() {
       <div class="ch-avatar ch-avatar-img" style="--rc:${cr.color};--p:${oi.pct}">${avatarPortraitHTML(equippedCosmeticsOpts())}</div>
       <div class="ch-meta">
         <h2>${esc((State.me && State.me.name) || 'Герой')}</h2>
-        <div class="ch-rank" style="--rc:${cr.color}">${cr.icon} ${cr.name} · ур.${charLevel()}</div>
-        <div class="ch-arch" title="Класс определяется автоматически из названий твоих сфер">🎭 <b>${arch.name}</b> <span class="muted">— ${arch.desc}</span></div>
-        ${equippedTitle() ? `<div class="ch-title" title="Звание — сменить в «Наградах → Коллекция»">🏷 ${esc(equippedTitle())}</div>` : ''}
+        <div class="ch-rank" style="--rc:${cr.color}">${rankIconHTML(cr, 'rank-inline-icon')} ${cr.name} · ур.${charLevel()}</div>
+        <div class="ch-arch" title="Класс определяется автоматически из названий твоих сфер">${satoruIconHTML('profile.origin.mask', 'inline-emblem', '◇')} <b>${arch.name}</b> <span class="muted">— ${arch.desc}</span></div>
+        ${equippedTitle() ? `<div class="ch-title" title="Звание — сменить в «Наградах → Коллекция»">${satoruIconHTML('achievement.avatar_custom', 'inline-emblem', '◇')} ${esc(equippedTitle())}</div>` : ''}
         <div class="xp-bar" style="max-width:340px"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
         ${(() => { const of = overallForm(), fm = formMeta(of); return `<div class="ch-form" title="Форма — текущая «свежесть» по активности. В отличие от уровня (доказанное мастерство — не сгорает), форма мягко падает без тренировок и легко возвращается.">
-          <span class="cf-label">🔥 Форма</span>
+          <span class="cf-label">${satoruIconHTML('status.streak', 'inline-emblem', '◇')} Форма</span>
           <span class="cf-bar"><span style="width:${of == null ? 0 : of}%;background:${fm.color}"></span></span>
           <span class="cf-val" style="color:${fm.color}">${of == null ? '—' : of + '%'} · ${fm.text}</span>
           <span class="cf-hint muted">свежесть активности — не уровень; падает без практики, легко возвращается${of == null ? ' (появится после первых дел)' : ''}</span>
@@ -8061,20 +8392,20 @@ function lootboxCard() {
   const hist = (lb.history || []).slice(0, 6).map((h) => `<li><span class="rar-dot" style="background:${(RARITY[h.rarity] || RARITY.common).color}"></span><span class="muted">${(h.at || '').slice(11, 16)}</span> ${esc(h.label)}</li>`).join('');
   const statusTxt = avail > 0 ? `Открыть (${avail})` : (nextTh ? `Ещё ${nextTh.need} ${plural(nextTh.need, 'дело', 'дела', 'дел')} до сундука` : 'На сегодня всё ✓');
   return `<div class="card lootbox-card">
-    <div class="lb-head"><h3>🎁 Сундуки дня</h3>${boost ? `<span class="lb-boost">⚡ +${boost}% XP активен</span>` : ''}</div>
+    <div class="lb-head"><h3>${satoruIconHTML('system.rewards', 'heading-emblem', '🎁')} Сундуки дня</h3>${boost ? `<span class="lb-boost">${satoruIconHTML('status.energy', 'inline-emblem', '⚡')} +${boost}% XP активен</span>` : ''}</div>
     <div class="lb-body">
       <div class="lb-chest ${avail > 0 ? 'ready' : 'empty'}" ${avail > 0 ? 'data-action="open-chest"' : ''}>
-        <div class="lb-emoji">${avail > 0 ? '🎁' : '📦'}</div><div class="lb-status">${statusTxt}</div>
+        ${satoruIconHTML('system.rewards', `lb-emblem${avail > 0 ? ' is-ready' : ''}`, avail > 0 ? '🎁' : '📦')}<div class="lb-status">${statusTxt}</div>
       </div>
       <div class="lb-info">
         <p class="muted" style="font-size:12px;margin:0 0 8px">Выполняй квесты и привычки — за активность дают сундуки. Внутри: золото, XP-бусты, заряд энергии, <b>косметика</b> и <b>ваучеры наград</b>. ${isPro() ? 'Pro: до 3 сундуков в день.' : 'Free: 1 сундук в день.'}</p>
-        ${(lb.vouchers || 0) > 0 ? `<div class="voucher-chip" data-action="use-voucher">🎁 Ваучер ×${lb.vouchers} — забери награду бесплатно</div>` : ''}
-        ${lockedExtra > 0 && !isPro() ? `<button class="btn pro-cta sm" data-action="show-paywall" data-feature="Больше сундуков">🔒 Ещё ${lockedExtra} ${plural(lockedExtra, 'сундук', 'сундука', 'сундуков')} — с Pro</button>` : ''}
+        ${(lb.vouchers || 0) > 0 ? `<div class="voucher-chip" data-action="use-voucher">${satoruIconHTML('system.rewards', 'inline-emblem', '🎁')} Ваучер ×${lb.vouchers} — забери награду бесплатно</div>` : ''}
+        ${lockedExtra > 0 && !isPro() ? `<button class="btn pro-cta sm" data-action="show-paywall" data-feature="Больше сундуков">${satoruIconHTML('status.lock', 'button-glyph', '🔒')} Ещё ${lockedExtra} ${plural(lockedExtra, 'сундук', 'сундука', 'сундуков')} — с Pro</button>` : ''}
       </div>
     </div>
     <div class="lb-foot">
       ${hist ? `<details class="lb-hist"><summary>История дропов</summary><ul class="reflections">${hist}</ul></details>` : ''}
-      <button class="btn ghost xs lb-edit-btn" data-action="open-loot-editor" title="Настроить вероятности дропа">⚙️ Дроп-рейты</button>
+      <button class="btn ghost xs lb-edit-btn" data-action="open-loot-editor" title="Настроить вероятности дропа">${satoruIconHTML('nav.settings', 'button-glyph', '◇')} Дроп-рейты</button>
     </div></div>`;
 }
 // Brawl-Stars-коллекция: видимый прогресс + экипировка рамок/фонов/званий
@@ -8085,14 +8416,14 @@ function collectionCard() {
     const owned = ownsCosmetic(c.id), r = RARITY[c.rarity], isEq = eq[cosmeticType(c.id)] === c.id;
     const swatch = c.ring ? `<span class="cos-prev cos-frame" style="border-color:${c.ring}"></span>` : `<span class="cos-prev cos-bg" style="background:${c.fill}"></span>`;
     return `<button class="cos-tile r-${c.rarity} ${owned ? 'owned' : 'locked'} ${isEq ? 'eq' : ''}" ${owned ? `data-action="equip-cosmetic" data-id="${c.id}"` : 'disabled'} style="--rc:${r.color}" title="${esc(c.name)} · ${r.label}${owned ? (isEq ? ' · надето' : ' · нажми, чтобы надеть') : ' · ещё не выпало'}">
-      ${owned ? swatch : '<span class="cos-prev cos-lock">🔒</span>'}<span class="cos-name">${owned ? esc(c.name) : '???'}</span>${isEq ? '<span class="cos-eq">✓</span>' : ''}</button>`;
+      ${owned ? swatch : `<span class="cos-prev cos-lock">${satoruIconHTML('status.lock', 'cos-lock-icon', '◇')}</span>`}<span class="cos-name">${owned ? esc(c.name) : '???'}</span>${isEq ? '<span class="cos-eq">✓</span>' : ''}</button>`;
   };
   const titles = earnedTitles();
   const titleChips = titles.length
     ? `<button class="title-chip ${!eq.title ? 'eq' : ''}" data-action="equip-title" data-title="">— без звания —</button>` + titles.map((t) => `<button class="title-chip ${eq.title === t ? 'eq' : ''}" data-action="equip-title" data-title="${esc(t)}">${eq.title === t ? '★ ' : ''}${esc(t)}</button>`).join('')
     : '<span class="muted">званий пока нет — открывай достижения ниже ↓</span>';
   return `<div class="card collection-card">
-    <div class="coll-head"><h3>🎨 Коллекция</h3><span class="coll-prog">${ownedCount}/${COSMETICS.length} собрано</span></div>
+    <div class="coll-head"><h3>${satoruIconHTML('achievement.collector_5', 'heading-emblem', '◇')} Коллекция</h3><span class="coll-prog">${ownedCount}/${COSMETICS.length} собрано</span></div>
     <div class="coll-body">
       <div class="coll-preview" title="Так выглядит твой аватар">${avatarPortraitHTML(equippedCosmeticsOpts())}</div>
       <div class="coll-cats">
@@ -8100,7 +8431,7 @@ function collectionCard() {
         <h4 class="coll-sub">Фоны</h4><div class="cos-grid">${BACKGROUNDS.map(tile).join('')}</div>
       </div>
     </div>
-    <h4 class="coll-sub">🏷 Звания <span class="muted" style="font-size:12px;font-weight:400">— за достижения</span></h4>
+    <h4 class="coll-sub">${satoruIconHTML('achievement.avatar_custom', 'slot-emblem', '◇')} Звания <span class="muted" style="font-size:12px;font-weight:400">— за достижения</span></h4>
     <div class="title-chips">${titleChips}</div>
   </div>`;
 }
@@ -8117,7 +8448,7 @@ function openChest() {
     <h3>Открываем сундук…</h3>
     <div class="loot-window"><div class="loot-pointer"></div><div class="loot-track" id="loot-track">${strip}</div></div>
     <div class="loot-result" id="loot-result"></div>
-    <button class="btn" id="loot-claim" style="display:none">Забрать 🎉</button></div>`;
+    <button class="btn" id="loot-claim" style="display:none">Забрать</button></div>`;
   document.body.appendChild(ov);
   const track = ov.querySelector('#loot-track'), win = ov.querySelector('.loot-window');
   const target = WINIDX * ITEMW + ITEMW / 2 - win.clientWidth / 2 + (Math.random() * 36 - 18);
@@ -8127,7 +8458,7 @@ function openChest() {
     applyLoot(reward);
     if (typeof sfxLoot === 'function') sfxLoot(reward.rarity || 'common'); // звук по рарности (#23)
     const rEl = ov.querySelector('#loot-result');
-    rEl.innerHTML = `<div class="loot-rarity" style="color:${rar.color}">${rar.label.toUpperCase()}</div><div class="loot-rline">🎉 ${esc(reward.label)}</div>`;
+    rEl.innerHTML = `<div class="loot-rarity" style="color:${rar.color}">${rar.label.toUpperCase()}</div><div class="loot-rline">${esc(reward.label)}</div>`;
     rEl.classList.add('show'); rEl.style.setProperty('--rc', rar.color);
     const box = ov.querySelector('.loot-box'); box.classList.add('reveal', `r-${reward.rarity || 'common'}`);
     ov.querySelector('.loot-item.win')?.classList.add('flash');
@@ -8174,15 +8505,15 @@ function showVoucherReward() {
   if (!lb.vouchers || lb.vouchers < 1) { toast(t('Нет ваучеров')); return; }
   if (document.getElementById('voucher-ov')) return;
   const rows = REWARD_CATALOG.map((c, i) => `<div class="rwc-row">
-    <span class="rwc-ic">${c.icon}</span><span class="rwc-name">${esc(c.name)}</span>
-    <span class="muted" style="font-size:11px;color:var(--accent)">🎁 бесплатно</span>
+    <span class="rwc-ic">${rewardIconHTML(c, 'reward-catalog-icon')}</span><span class="rwc-name">${esc(c.name)}</span>
+    <span class="muted rwc-free" style="font-size:11px;color:var(--accent)">${satoruIconHTML('system.rewards', 'inline-emblem', '◇')} бесплатно</span>
     <button class="btn ghost sm" data-action="redeem-voucher" data-idx="${i}">Взять</button>
   </div>`).join('');
   const ov = document.createElement('div');
   ov.id = 'voucher-ov'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="guide-box">
     <button class="modal-x" data-action="close-voucher">✕</button>
-    <h2>${t('🎁 Ваучер — бесплатная награда')}</h2>
+    <h2>${satoruIconHTML('system.rewards', 'heading-emblem', '◇')} ${t('Ваучер — бесплатная награда')}</h2>
     <p class="muted">У тебя ${lb.vouchers} ${plural(lb.vouchers, 'ваучер', 'ваучера', 'ваучеров')}. Выбери любую награду из каталога — бесплатно!</p>
     <div class="rwc-list">${rows}</div>
   </div>`;
@@ -8196,7 +8527,6 @@ function showWeekShare(ws, st) {
   if (document.getElementById('share-ov')) return;
   const end = addDays(ws, 6);
   const nm = (State.me && State.me.name) || 'Герой';
-  const av = (State.me && State.me.avatar) || '⚡';
   const lvl = charLevel(), rk = rankFor(lvl);
   const topArea = st.byArea.filter(a => a.value > 0).sort((a, b) => b.value - a.value)[0];
   const hrs = Math.round(st.min / 60 * 10) / 10;
@@ -8220,10 +8550,11 @@ function showWeekShare(ws, st) {
     <rect x="0" y="0" width="${svgW}" height="4" rx="2" fill="url(#acc)"/>
     <!-- brand -->
     <text x="30" y="42" font-family="system-ui,sans-serif" font-size="13" fill="${esc(rk.color)}" font-weight="700" letter-spacing="2">SATORU</text>
-    <!-- avatar + name -->
-    <text x="30" y="90" font-family="system-ui,sans-serif" font-size="36">${esc(av)}</text>
+    <!-- paper origin crest + name -->
+    <path d="M48 51l18 7-3 21c-2 9-7 14-15 18-8-4-13-9-15-18l-3-21z" fill="#1f2742" stroke="${esc(rk.color)}" stroke-width="2"/>
+    <text x="48" y="82" font-family="system-ui,sans-serif" font-size="21" fill="#f1dfba" font-weight="800" text-anchor="middle">?</text>
     <text x="76" y="74" font-family="system-ui,sans-serif" font-size="20" fill="#fff" font-weight="700">${esc(nm)}</text>
-    <text x="76" y="94" font-family="system-ui,sans-serif" font-size="13" fill="${esc(rk.color)}" font-weight="600">${esc(rk.icon)} ${esc(rk.name)} · ур.${lvl}</text>
+    <text x="76" y="94" font-family="system-ui,sans-serif" font-size="13" fill="${esc(rk.color)}" font-weight="600">${esc(rk.name)} · ур.${lvl}</text>
     <!-- week label -->
     <text x="${svgW - 30}" y="42" font-family="system-ui,sans-serif" font-size="13" fill="#8b8ba0" text-anchor="end">${esc(dmShort(ws))} – ${esc(dmShort(end))}</text>
     <!-- divider -->
@@ -8822,7 +9153,11 @@ const GEAR = [
   { id: 'a4', slot: 'armor', name: 'Доспех Несгибаемого', icon: '🐉', rarity: 'legendary', hardXpPct: 24, xpPct: 5, cost: 3200, lvl: 19 },
   { id: 'm4', slot: 'amulet', name: 'Сердце Десятиборца', icon: '💠', rarity: 'legendary', goldPct: 24, xpPct: 6, cost: 3000, lvl: 20 },
 ];
-const GEAR_SLOTS = [{ k: 'weapon', label: '⚔️ Оружие' }, { k: 'armor', label: '🛡 Броня' }, { k: 'amulet', label: '📿 Амулет' }];
+const GEAR_SLOTS = [
+  { k: 'weapon', label: 'Оружие', iconId: 'difficulty.normal' },
+  { k: 'armor', label: 'Броня', iconId: 'difficulty.protected' },
+  { k: 'amulet', label: 'Амулет', iconId: 'gear.m1' },
+];
 function ensureGear() { const s = State.settings; if (!s.gear) s.gear = { owned: [], equipped: {}, relics: [] }; if (!Array.isArray(s.gear.owned)) s.gear.owned = []; if (!s.gear.equipped) s.gear.equipped = {}; if (!Array.isArray(s.gear.relics)) s.gear.relics = []; return s.gear; }
 function gearById(id) { return GEAR.find((g) => g.id === id); }
 function skillInSphere(skillId, sphereId) { if (!skillId || !sphereId) return false; if (skillId === sphereId) return true; return descendantSkills(sphereId).some((c) => c.id === skillId); }
@@ -8842,7 +9177,7 @@ function genRelic(rarity) {
   const xp = { common: 6, rare: 10, epic: 16 }[rarity] || 6;
   return { uid: 'rel_' + uid(), sphere: sphere.id, xpPct: xp, rarity, name: `Реликвия: ${sphere.name}`, icon: RELIC_ICONS[rarity] || '🔱' };
 }
-function gearBonusLabel(it) { return it.xpPct ? `+${it.xpPct}% XP` : it.hardXpPct ? `+${it.hardXpPct}% XP к 🔥сложным` : `+${it.goldPct}% 🪙`; }
+function gearBonusLabel(it) { return it.xpPct ? `+${it.xpPct}% XP` : it.hardXpPct ? `+${it.hardXpPct}% XP к сложным` : `+${it.goldPct}% золота`; }
 function arsenalCard() {
   const g = ensureGear(), bal = goldBalance(), lvl = charLevel(), gb = gearBonus();
   const slotHtml = GEAR_SLOTS.map((s) => {
@@ -8851,30 +9186,30 @@ function arsenalCard() {
       let btn;
       if (equipped) btn = `<button class="btn sm" data-action="equip-gear" data-id="${it.id}">✓ Надето</button>`;
       else if (owned) btn = `<button class="btn ghost sm" data-action="equip-gear" data-id="${it.id}">Надеть</button>`;
-      else if (locked) btn = `<button class="btn ghost sm" disabled>🔒 ур.${it.lvl}</button>`;
-      else btn = `<button class="btn sm ${bal >= it.cost ? '' : 'disabled'}" data-action="buy-gear" data-id="${it.id}" ${bal >= it.cost ? '' : 'disabled'}>🪙 ${it.cost}</button>`;
+      else if (locked) btn = `<button class="btn ghost sm" disabled>${satoruIconHTML('status.lock', 'button-glyph', '◇')} ур.${it.lvl}</button>`;
+      else btn = `<button class="btn sm ${bal >= it.cost ? '' : 'disabled'}" data-action="buy-gear" data-id="${it.id}" ${bal >= it.cost ? '' : 'disabled'}>${satoruIconHTML('status.gold', 'button-emblem', '◇')} ${it.cost}</button>`;
       return `<div class="gear-item${equipped ? ' equipped' : ''}" style="${equipped ? `border-color:${rar.color}` : ''}">
-        <div class="gear-ic" style="color:${rar.color}">${it.icon}</div>
+        <div class="gear-ic" style="color:${rar.color}">${satoruIconHTML(`gear.${it.id}`, 'gear-content-icon', it.icon)}</div>
         <div class="gear-nm">${esc(it.name)}</div>
         <div class="gear-bonus" style="color:${rar.color}">${gearBonusLabel(it)}</div>${btn}</div>`;
     }).join('');
-    return `<div class="gear-slot"><div class="gear-slot-h">${s.label}</div><div class="gear-row">${items}</div></div>`;
+    return `<div class="gear-slot"><div class="gear-slot-h">${satoruIconHTML(s.iconId, s.iconId === 'gear.m1' ? 'slot-emblem' : 'slot-glyph', '◇')} ${s.label}</div><div class="gear-row">${items}</div></div>`;
   }).join('');
   // v2: слот реликвий — динамические инстансы с сфера-привязкой (падают из сундуков)
   const eqR = g.equipped.relic;
   const relicItems = (g.relics || []).length
     ? g.relics.map((r) => { const rar = RARITY[r.rarity] || RARITY.common, on = eqR === r.uid; return `<div class="gear-item${on ? ' equipped' : ''}" style="${on ? `border-color:${rar.color}` : ''}">
-        <div class="gear-ic" style="color:${rar.color}">${r.icon}</div>
+        <div class="gear-ic" style="color:${rar.color}">${satoruIconHTML('gear.m3', 'gear-content-icon', r.icon)}</div>
         <div class="gear-nm">${esc(skillById(r.sphere).name)}</div>
         <div class="gear-bonus" style="color:${rar.color}">+${r.xpPct}% XP сферы</div>
         <button class="btn ${on ? '' : 'ghost'} sm" data-action="equip-relic" data-uid="${r.uid}">${on ? '✓ Надето' : 'Надеть'}</button></div>`; }).join('')
-    : `<p class="muted" style="font-size:12px;margin:4px 2px 0">Реликвии падают из 🎁 сундуков — каждая усиливает XP <b>конкретной сферы</b>.</p>`;
-  const relicSlot = `<div class="gear-slot"><div class="gear-slot-h">🔱 Реликвии (сфера-привязка)</div><div class="gear-row">${relicItems}</div></div>`;
+    : `<p class="muted" style="font-size:12px;margin:4px 2px 0">Реликвии падают из сундуков — каждая усиливает XP <b>конкретной сферы</b>.</p>`;
+  const relicSlot = `<div class="gear-slot"><div class="gear-slot-h">${satoruIconHTML('gear.m3', 'slot-emblem', '◇')} Реликвии (сфера-привязка)</div><div class="gear-row">${relicItems}</div></div>`;
   const sum = (gb.xpPct || gb.hardXpPct || gb.goldPct)
-    ? `<p class="gear-sum">Надето: ${[gb.xpPct ? `+${gb.xpPct}% XP` : '', gb.hardXpPct ? `+${gb.hardXpPct}% XP к сложным` : '', gb.goldPct ? `+${gb.goldPct}% 🪙` : ''].filter(Boolean).join(' · ')}</p>`
+    ? `<p class="gear-sum">Надето: ${[gb.xpPct ? `+${gb.xpPct}% XP` : '', gb.hardXpPct ? `+${gb.hardXpPct}% XP к сложным` : '', gb.goldPct ? `+${gb.goldPct}% золота` : ''].filter(Boolean).join(' · ')}</p>`
     : `<p class="gear-sum muted">Ничего не надето — снаряжение усилит рост.</p>`;
-  return `<div class="card"><h3>⚔️ Арсенал — снаряжение</h3>
-    <p class="muted" style="font-size:12px;margin:0 0 6px">Покупай за золото <b>или выбивай из 🎁 сундуков</b> и надевай гир — он пассивно усиливает XP и золото (сверх косметики). По 1 предмету на слот. Реликвии бустят конкретную сферу.</p>
+  return `<div class="card"><h3>${satoruIconHTML('difficulty.normal', 'heading-emblem', '◇')} Арсенал — снаряжение</h3>
+    <p class="muted" style="font-size:12px;margin:0 0 6px">Покупай за золото <b>или выбивай из сундуков</b> и надевай гир — он пассивно усиливает XP и золото (сверх косметики). По 1 предмету на слот. Реликвии бустят конкретную сферу.</p>
     ${sum}${slotHtml}${relicSlot}</div>`;
 }
 
@@ -8889,25 +9224,25 @@ function renderRewards() {
         <h2>Награды должны чувствоваться как прогресс.</h2>
         <p class="muted">Сундуки, коллекция, арсенал и личные награды теперь собраны как единый locker / battle-pass слой, без казино-вайба.</p>
         <div class="th-actions">
-          ${chestReady ? `<button class="btn" data-action="open-chest">🎁 Открыть сундук ×${chestReady}</button>` : '<button class="btn ghost" data-action="open-reward-catalog">📚 Каталог наград</button>'}
-          <button class="btn ghost" data-action="goto-today">🎯 К делам</button>
+          ${chestReady ? `<button class="btn" data-action="open-chest">${satoruIconHTML('system.rewards', 'button-emblem', '🎁')} Открыть сундук ×${chestReady}</button>` : `<button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} Каталог наград</button>`}
+          <button class="btn ghost" data-action="goto-today">${satoruIconHTML('nav.today', 'button-glyph', '🎯')} К делам</button>
         </div>
       </div>
       <div class="reward-track-preview" aria-hidden="true">
-        <span class="done">✓</span><i></i><span class="${chestReady ? 'ready' : ''}">🎁</span><i></i><span>🎨</span><i></i><span class="cap">★</span>
+        <span class="done">✓</span><i></i><span class="${chestReady ? 'ready' : ''}">${satoruIconHTML('system.rewards', 'track-emblem', '◇')}</span><i></i><span>${satoruIconHTML('achievement.collector_5', 'track-emblem', '◇')}</span><i></i><span class="cap">★</span>
       </div>
     </section>`;
   const cards = State.rewards.map((r) => `<div class="reward">
-      <div class="rw-icon">${esc(r.icon || '🎁')}</div><div class="rw-name">${esc(r.name)}</div>
-      <div class="rw-cost">🪙 ${r.cost}</div>
+      <div class="rw-icon">${rewardIconHTML(r, 'reward-content-icon')}</div><div class="rw-name">${esc(r.name)}</div>
+      <div class="rw-cost">${satoruIconHTML('status.gold', 'cost-emblem', '🪙')} ${r.cost}</div>
       <button class="btn ${bal >= r.cost ? '' : 'disabled'}" data-action="buy-reward" data-id="${r.id}" ${bal >= r.cost ? '' : 'disabled'}>Купить</button>
       <button class="del" data-action="delete-reward" data-id="${r.id}" title="Удалить">✕</button></div>`).join('');
-  const history = (State.purchases || []).slice().reverse().slice(0, 8).map((p) => `<li><span class="muted">${(p.at || '').slice(0, 10)}</span> ${esc(p.name)} — 🪙 ${p.cost}</li>`).join('');
+  const history = (State.purchases || []).slice().reverse().slice(0, 8).map((p) => `<li><span class="muted">${(p.at || '').slice(0, 10)}</span> ${esc(p.name)} — ${satoruIconHTML('status.gold', 'inline-emblem', '◇')} ${p.cost}</li>`).join('');
   const achs = ACHIEVEMENTS.map((a) => {
     const got = !!State.achievements[a.id];
     let pr = '';
     if (!got && a.prog) { try { const p = a.prog(); pr = `<div class="ach-prog">${p.cur}/${p.target}</div>`; } catch {} }
-    return `<div class="ach ${got ? 'got' : ''}"><div class="ach-icon">${a.icon}</div><div class="ach-title">${esc(a.title)}</div><div class="ach-desc">${esc(a.desc)}</div>${got ? `<div class="ach-date">${State.achievements[a.id].slice(0, 10)}</div>` : pr}</div>`;
+    return `<div class="ach ${got ? 'got' : ''}"><div class="ach-icon">${satoruIconHTML(`achievement.${a.id}`, 'achievement-content-icon', a.icon)}</div><div class="ach-title">${esc(a.title)}</div><div class="ach-desc">${esc(a.desc)}</div>${got ? `<div class="ach-date">${State.achievements[a.id].slice(0, 10)}</div>` : pr}</div>`;
   }).join('');
   return `
     <div class="rewards-shell">
@@ -8916,19 +9251,24 @@ function renderRewards() {
     ${collectionCard()}
     ${arsenalCard()}
     <div class="kpis">
-      <div class="kpi"><div class="v">🪙 ${bal}</div><div class="l">${t('Баланс золота')}</div></div>
+      <div class="kpi"><div class="v">${satoruIconHTML('status.gold', 'kpi-emblem', '🪙')} ${bal}</div><div class="l">${t('Баланс золота')}</div></div>
       <div class="kpi"><div class="v">${ownedCos}/${COSMETICS.length}</div><div class="l">${t('Косметики')}</div></div>
       <div class="kpi"><div class="v">${achGot}/${ACHIEVEMENTS.length}</div><div class="l">${t('Достижений')}</div></div>
     </div>
-    <div class="card"><h3>🎁 Магазин наград</h3><div class="rewards-grid">${cards || '<p class="muted">Наград пока нет — возьми готовые из каталога ↓</p>'}</div>
-      <div class="settings-actions" style="margin:10px 0 4px"><button class="btn ghost" data-action="open-reward-catalog">${t('📚 Каталог наград')}</button>${!isPro() ? `<span class="muted" style="font-size:12px">${State.rewards.length}/${FREE_REWARDS_MAX} наград (Free)</span>` : ''}</div>
+    <div class="card"><h3>${satoruIconHTML('system.rewards', 'heading-emblem', '🎁')} Магазин наград</h3><div class="rewards-grid">${cards || '<p class="muted">Наград пока нет — возьми готовые из каталога ↓</p>'}</div>
+      <div class="settings-actions" style="margin:10px 0 4px"><button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} ${t('Каталог наград')}</button>${!isPro() ? `<span class="muted" style="font-size:12px">${State.rewards.length}/${FREE_REWARDS_MAX} наград (Free)</span>` : ''}</div>
       <form id="add-reward" class="reward-form">
         <input name="name" placeholder="Своя награда…" autocomplete="off" required />
-        <input name="icon" placeholder="🎁" maxlength="2" style="width:60px;text-align:center" />
+        <select name="iconId" class="reward-icon-select" aria-label="Образ награды">
+          <option value="reward.wishlist">Сундук мечты</option><option value="reward.coffee">Кофе</option>
+          <option value="reward.game">Игры</option><option value="reward.movie">Кино</option>
+          <option value="reward.book">Книга</option><option value="reward.walk">Прогулка</option>
+          <option value="reward.music">Музыка</option><option value="reward.vacation">Путешествие</option>
+        </select>
         <input name="cost" type="number" min="1" value="100" style="width:90px" />
         <button type="submit">${t('+ Добавить награду')}</button></form></div>
     <div class="card"><h3>${t('История покупок')}</h3>${history ? `<ul class="reflections">${history}</ul>` : '<p class="muted">Пока ничего не куплено.</p>'}</div>
-    <div class="card"><h3>${t('🏆 Достижения')}</h3><div class="ach-grid">${achs}</div></div></div>`;
+    <div class="card"><h3>${satoruIconHTML('system.achievement', 'heading-emblem', '🏆')} ${t('Достижения')}</h3><div class="ach-grid">${achs}</div></div></div>`;
 }
 
 // ============================================================
@@ -8966,7 +9306,7 @@ function renderWeekly() {
           const sk = skillById(t.skillId);
           return `<div class="wk-task${t.done ? ' done' : ''}" draggable="true" data-task="${t.id}">
             <button class="check sm" data-action="toggle-task" data-id="${t.id}">${t.done ? '✓' : ''}</button>
-            <span class="wk-t-title" title="${esc(t.title)} · ${fmtDur(t.estimateMin)}">${esc(t.title)}</span>
+            <span class="wk-t-title" title="${esc(taskDisplayTitle(t))} · ${fmtDur(t.estimateMin)}">${taskContentIconHTML(t, 'activity-inline-icon')}${esc(taskDisplayTitle(t))}</span>
             <span class="wk-t-dot" style="background:${esc(sk.color)}" title="${esc(sk.name)}"></span>
           </div>`;
         }).join('')
@@ -9071,7 +9411,7 @@ function renderStats() {
     return `<div class="rank-row ${sub ? 'sub' : ''}">
       <span class="rr-dot" style="background:${esc(s.color)}"></span>
       <span class="rr-name">${sub ? '↳ ' : ''}${esc(s.name)}</span>
-      <span class="rr-rank" style="--rc:${r.color}">${r.icon} ${r.name}</span>
+      <span class="rr-rank" style="--rc:${r.color}">${rankIconHTML(r, 'rank-inline-icon')} ${r.name}</span>
       <span class="rr-lvl">ур.${lvl}</span>
       <span class="rr-bar"><span style="width:${rp.pct}%;background:${r.color}"></span></span>
       <span class="rr-next muted">${rp.next ? `+${rp.toNext} до «${rp.next.name}»` : 'макс'}</span></div>`;
@@ -9080,19 +9420,19 @@ function renderStats() {
   const advanced = isPro()
     ? `<div class="card"><h3>${t('Время по сферам')}</h3>${barChartSVG(timeByAreaThisWeek())}</div>`
     : `<div class="card locked-card" data-action="show-paywall" data-feature="Расширенная аналитика">
-        <div class="lock-veil"><span>🔒 Расширенная аналитика — в Pro</span></div>
+        <div class="lock-veil"><span>${satoruIconHTML('status.lock', 'inline-glyph', '◇')} Расширенная аналитика — в Pro</span></div>
         <h3>${t('Время по сферам')}</h3>${barChartSVG(timeByAreaThisWeek())}</div>`;
   return `
     <div class="kpis">
-      <div class="kpi"><div class="v">${cr.icon} ${charLevel()}</div><div class="l">${cr.name}</div></div>
+      <div class="kpi"><div class="v">${rankIconHTML(cr, 'kpi-emblem')} ${charLevel()}</div><div class="l">${cr.name}</div></div>
       <div class="kpi"><div class="v" style="color:${balColor}">${bal.index}</div><div class="l">${t('Индекс баланса')}</div></div>
       <div class="kpi"><div class="v">${overallXp()}</div><div class="l">${t('Всего опыта')}</div></div>
-      <div class="kpi"><div class="v">🪙 ${goldBalance()}</div><div class="l">${t('Золото')}</div></div>
-      <div class="kpi"><div class="v">🔥 ${currentStreak()}</div><div class="l">Серия · рекорд ${longestStreak()}</div></div>
+      <div class="kpi"><div class="v">${satoruIconHTML('status.gold', 'kpi-emblem', '◇')} ${goldBalance()}</div><div class="l">${t('Золото')}</div></div>
+      <div class="kpi"><div class="v">${satoruIconHTML('status.streak', 'kpi-emblem', '◇')} ${currentStreak()}</div><div class="l">Серия · рекорд ${longestStreak()}</div></div>
       <div class="kpi"><div class="v">${rate}%</div><div class="l">${t('Выполнение (14 дн.)')}</div></div>
     </div>
-    <div class="card wrapped-card"><div><h3 style="margin:0">📤 ${t('Твоя неделя')}</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">Красивая карточка итогов недели — поделись или сохрани PNG.</p></div>
-      <button class="btn" data-action="share-week">📤 ${t('Открыть')}</button></div>
+    <div class="card wrapped-card"><div><h3 style="margin:0">${satoruIconHTML('action.export', 'heading-glyph', '◇')} ${t('Твоя неделя')}</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">Красивая карточка итогов недели — поделись или сохрани PNG.</p></div>
+      <button class="btn" data-action="share-week">${satoruIconHTML('action.export', 'button-glyph', '◇')} ${t('Открыть')}</button></div>
     <div class="card ai-review-card">
       <div><h3 style="margin:0">🤖 ИИ-разбор недели</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">${t('Как ты на самом деле, а не только цифры. + мягкие шаги.')} ${aiSourceHint()}</p></div>
       <button class="btn" data-action="ai-review">Разобрать неделю</button></div>
@@ -9303,7 +9643,7 @@ const APP_SHELL = `
   </header>
   <main id="main"></main>
   <div id="toasts"></div>
-  <button id="ai-fab" data-action="open-helper" title="Тень — спроси о себе или о приложении" aria-label="Тень"><img class="fab-face" src="/art/companions/shadow-v1-20260716/shadow-spirit-calm.png" alt="" /><span class="fab-streak" id="fab-streak" hidden></span></button>`;
+  <button id="ai-fab" data-action="open-helper" title="Тень — спроси о себе или о приложении" aria-label="Тень">${window.ShadowRig ? window.ShadowRig.markup({ tier: 1, state: 'listening', context: 'fab', label: 'Тень' }) : '<img class="fab-face" src="/art/companions/shadow-v1-20260716/shadow-spirit-calm.png" alt="" />'}<span class="fab-streak" id="fab-streak" hidden></span></button>`;
 
 // ---- Мультиплеер: пати + кооп-рейд (Племя). null=не загружено, false=не в пати, объект=в пати ----
 const RAID_PER_MEMBER = 600; // XP/чел/неделя — цель кооп-рейда (синхр. с сервером)
@@ -9377,6 +9717,13 @@ const BOSSES = [
     weak: 'закрой дело, висевшее 7+ дней',
     defeat: 'Вы вспомнили — и сделали. Призраку нечем больше звенеть.' },
 ];
+const BOSS_ICON_KEYS = [
+  'procrastinion', 'scroll-larva', 'dopamine-hunger', 'excuse-fog',
+  'tomorrow-dragon', 'comfort-siren', 'inertia-golem', 'perfecto-idol',
+  'shoulder-whisper', 'victory-mirror', 'multitask-hydra', 'notification-swarm',
+  'hurry-vortex', 'hypnotoad', 'chaos-web', 'forgotten-goals',
+];
+BOSSES.forEach((boss, index) => { boss.iconId = `boss.${BOSS_ICON_KEYS[index]}`; });
 function bossForWeek(ws) { let h = 0; const s = String(ws || ''); for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return BOSSES[h % BOSSES.length]; }
 
 // ── Реальная механика боссов: слабость ×2 урона ОЩУТИМА в момент действия ─────────────────
@@ -9426,7 +9773,7 @@ function bossHitCheck(kind, item, ctx) {
 function bossHitFeedback(boss) {
   if (!boss) return;
   try { sfx('bosshit'); } catch {}
-  setTimeout(() => { try { toast(`⚡ ${boss.emoji} ${t('Урон ×2 по')} ${t(boss.name)}!`); } catch {} }, 650);
+  setTimeout(() => { try { toast(`${t('Урон ×2 по')} ${t(boss.name)}!`); } catch {} }, 650);
 }
 function seasonInfo(season) { const goal = (season && season.goal) || 4, wins = (season && season.wins) || 0; return { goal, wins, cycle: Math.floor(wins / goal) + 1, prog: wins % goal, done: Math.floor(wins / goal) }; }
 function renderParty() {
@@ -9445,7 +9792,7 @@ function partyEmptyHTML() {
   return `<section class="card party-empty-hero">
     <div class="party-empty-copy"><span class="event-kicker">${t('КОМАНДНАЯ ГЛАВА')}</span><h2>${t('Собери пати для следующего рейда.')}</h2>
       <p class="muted">${t('Дуо или группа до 6 человек. Недельный вклад складывается в общего босса, а поддержка команды не превращает пропуск в вину.')}</p></div>
-    <div class="party-empty-mark" aria-hidden="true"><span>🤝</span><i></i><b>✦</b></div>
+    <div class="party-empty-mark" aria-hidden="true"><span>${satoruIconHTML('nav.tribe', 'party-empty-emblem', '◇')}</span><i></i><b>✦</b></div>
     <div class="party-empty-actions"><form id="party-create" class="add-row"><input name="name" placeholder="${t('Название пати…')}" autocomplete="off" required maxlength="40" /><button type="submit">${t('+ Создать')}</button></form>
       <div class="party-or muted">${t('или войти по коду друга')}</div>
       <form id="party-join" class="add-row"><input name="code" placeholder="${t('КОД')}" autocomplete="off" maxlength="5" style="text-transform:uppercase" /><button type="submit">${t('Войти')}</button></form></div>
@@ -9476,35 +9823,35 @@ function partyHTML(p) {
     { icon: won && r.iClaimed ? '✓' : '3', label: t('Заберите награду') },
   ].map((step, index) => `<span class="event-step${(won || index === 0) ? ' complete' : ''}"><b>${step.icon}</b>${step.label}</span>`).join('');
   const claim = won
-    ? (r.iClaimed ? '<span class="raid-claimed muted">✓ награда забрана</span>' : '<button class="btn raid-claim" data-action="party-claim">🎁 Забрать награду пати</button>')
+    ? (r.iClaimed ? '<span class="raid-claimed muted">✓ награда забрана</span>' : `<button class="btn raid-claim" data-action="party-claim">${satoruIconHTML('system.rewards', 'button-emblem', '◇')} Забрать награду пати</button>`)
     : '';
   const members = p.members.slice().sort((a, b) => b.weekXp - a.weekXp).map((m) => `<div class="pm-row ${m.me ? 'me' : ''}">
-      <span class="pm-av">${esc(m.avatar)}</span>
+      <span class="pm-av">${avatarOriginIconHTML(m.avatar || AVATARS[0], 'party-origin-icon')}</span>
       <span class="pm-meta"><span class="pm-name">${esc(m.name)}${m.me ? ' <span class="lb-you">ты</span>' : ''}</span>
         <span class="pm-sub muted">ур.${m.level} · ${m.weekQuests} квест.${m.cleanDays ? ` · 🟢 ${m.cleanDays}д чисто` : ''}</span></span>
       <span class="pm-xp" title="XP за неделю">${m.weekXp}<small>XP</small></span>
-      ${m.me ? '' : `<button class="btn ghost sm pm-cheer" data-action="party-cheer" data-to="${esc(m.id)}" title="Подбодрить">🎉${m.cheers ? ' ' + m.cheers : ''}</button>`}</div>`).join('');
+      ${m.me ? '' : `<button class="btn ghost sm pm-cheer" data-action="party-cheer" data-to="${esc(m.id)}" title="Подбодрить">${satoruIconHTML('nav.tribe', 'button-glyph', '◇')}${m.cheers ? ' ' + m.cheers : ''}</button>`}</div>`).join('');
   return `<div class="party-shell">
     <section class="card event-hero${won ? ' is-won' : ''}">
       <div class="event-hero-copy"><span class="event-kicker">${t('НЕДЕЛЬНЫЙ РЕЙД')} · ${t('СЕЗОН')} ${si.cycle}</span>
         <h2>${eventTitle}</h2><p class="muted">${eventText}</p>
-        <div class="event-metrics"><span>🤝 <b>${p.members.length}/${p.max}</b> ${t('в пати')}</span><span>⚔️ <b>${pct}%</b> ${t('рейда')}</span><span>🏅 <b>${si.prog}/${si.goal}</b> ${t('главы')}</span></div>
+        <div class="event-metrics"><span>${satoruIconHTML('nav.tribe', 'inline-glyph', '◇')} <b>${p.members.length}/${p.max}</b> ${t('в пати')}</span><span>${satoruIconHTML('difficulty.normal', 'inline-emblem', '◇')} <b>${pct}%</b> ${t('рейда')}</span><span>${satoruIconHTML('system.achievement', 'inline-emblem', '◇')} <b>${si.prog}/${si.goal}</b> ${t('главы')}</span></div>
       </div>
-      <div class="event-stage" aria-hidden="true"><i class="event-stage-ring"></i><span class="event-stage-boss">${won ? '🏆' : boss.emoji}</span><b class="event-stage-mark">${won ? 'VICTORY' : 'RAID'}</b></div>
+      <div class="event-stage" aria-hidden="true"><i class="event-stage-ring"></i><span class="event-stage-boss">${won ? satoruIconHTML('system.achievement', 'boss-victory-emblem', '◇') : bossEmblemHTML(boss, 'boss-stage-emblem')}</span><b class="event-stage-mark">${won ? 'VICTORY' : 'RAID'}</b></div>
       <div class="event-step-rail">${eventSteps}</div>
     </section>
     <div class="party-top-grid"><div class="card party-head">
-      <div class="ph-top"><h3>🤝 ${esc(p.name)}</h3><span class="party-code" title="Поделись кодом с другом — он войдёт в пати">код <b>${esc(p.code)}</b></span></div>
+      <div class="ph-top"><h3>${satoruIconHTML('nav.tribe', 'heading-glyph', '◇')} ${esc(p.name)}</h3><span class="party-code" title="Поделись кодом с другом — он войдёт в пати">код <b>${esc(p.code)}</b></span></div>
       <p class="muted" style="font-size:12px;margin:6px 0 0">${p.members.length}/${p.max} ${t('участников')} · ${t('недельный вклад складывается в общий рейд')}</p></div>
     <div class="card season-card season-card-event">
-      <div class="season-head"><b>🏅 ${t('Сезон')} ${si.cycle}</b><span class="muted">${si.prog}/${si.goal} ${t('побед недели')}${si.done ? ` · ${t('пройдено')} ×${si.done}` : ''}</span></div>
+      <div class="season-head"><b>${satoruIconHTML('system.achievement', 'inline-emblem', '◇')} ${t('Сезон')} ${si.cycle}</b><span class="muted">${si.prog}/${si.goal} ${t('побед недели')}${si.done ? ` · ${t('пройдено')} ×${si.done}` : ''}</span></div>
       <div class="season-bar"><span style="width:${seasonPct}%"></span></div>
       <p class="muted">${si.prog === si.goal - 1 ? t('Ещё одна победа — и глава сезона взята.') : t('Побеждайте недельного босса, чтобы открывать следующую главу сезона.')}</p></div></div>
     <div class="party-event-grid"><div class="card raid-card ${won ? 'won' : ''}">
-      <div class="raid-head"><span class="raid-boss">${won ? '🏆' : boss.emoji}</span><div><b>${won ? t('Босс повержен!') : esc(boss.name)}</b>
+      <div class="raid-head"><span class="raid-boss">${won ? satoruIconHTML('system.achievement', 'boss-victory-emblem', '◇') : bossEmblemHTML(boss, 'boss-card-emblem')}</span><div><b>${won ? t('Босс повержен!') : esc(boss.name)}</b>
         <div class="muted" style="font-size:12px">${won ? `Пати справилась — ${r.claimedCount}/${p.members.length} забрали награду` : `Осталось ${hp} XP · цель ${r.target} (по ${RAID_PER_MEMBER}/чел)`}</div></div></div>
       ${!won && boss.lore ? `<p class="muted raid-lore" style="font-size:12px;font-style:italic;margin:8px 0 0">${t(boss.lore)}</p>` : ''}
-      ${!won && boss.weak ? `<p class="raid-weak" style="font-size:12.5px;font-weight:700;margin:6px 0 0">⚡ ${t('Слабость')}: ${t(boss.weak)} — ${t('урон ×2')}</p>` : ''}
+      ${!won && boss.weak ? `<p class="raid-weak" style="font-size:12.5px;font-weight:700;margin:6px 0 0">${satoruIconHTML('status.streak', 'inline-emblem', '◇')} ${t('Слабость')}: ${t(boss.weak)} — ${t('урон ×2')}</p>` : ''}
       <div class="raid-bar"><span style="width:${pct}%"></span></div>
       ${claim}
       <p class="muted raid-note">${t('Вклад каждого складывается; ничей пропуск не штрафует команду — просто чуть медленнее. Через поддержку, не через вину.')}</p></div>
@@ -9520,12 +9867,12 @@ function showRaidWin(p, boss) {
   const ov = document.createElement('div'); ov.id = 'raidwin'; ov.className = 'modal-overlay raidwin-ov';
   ov.innerHTML = `<div class="raidwin-box">
     <div class="rw-rays"></div>
-    <div class="rw-boss">${boss.emoji}<span class="rw-x">💥</span></div>
+    <div class="rw-boss">${bossEmblemHTML(boss, 'boss-win-emblem')}<span class="rw-x">×2</span></div>
     <div class="rw-title">${t('БОСС ПОВЕРЖЕН')}</div>
     <div class="rw-sub">${esc(boss.name)}</div>
     ${boss.defeat ? `<div class="rw-lore" style="font-size:13px;font-style:italic;opacity:.85;margin:6px 14px 0">${t(boss.defeat)}</div>` : ''}
-    <div class="rw-party">🤝 ${esc(p.name)} — вместе</div>
-    <button class="btn rw-btn" data-action="raidwin-close">${t('Слава пати! 🎉')}</button>
+    <div class="rw-party">${satoruIconHTML('nav.tribe', 'inline-glyph', '◇')} ${esc(p.name)} — вместе</div>
+    <button class="btn rw-btn" data-action="raidwin-close">${t('Слава пати!')}</button>
     <div class="rw-confetti">${conf}</div></div>`;
   document.body.appendChild(ov);
 }
@@ -9564,12 +9911,11 @@ function renderLeaderboard() {
   }
   const rows = State.leaderboard;
   const optOut = !!(State.settings && State.settings.leaderboardOptOut);
-  const medals = ['🥇', '🥈', '🥉'];
   const pathGlyph = (p) => p === 'control' ? PATHS.control.glyph : p === 'trust' ? PATHS.trust.glyph : '';
   const list = rows.length ? rows.map((r, i) => `
     <div class="lb-row ${r.me ? 'me' : ''}">
-      <div class="lb-pos">${i < 3 ? medals[i] : '#' + (i + 1)}</div>
-      <div class="lb-av">${esc(r.avatar || '👤')}</div>
+      <div class="lb-pos ${i < 3 ? `podium podium-${i + 1}` : ''}">${i < 3 ? i + 1 : '#' + (i + 1)}</div>
+      <div class="lb-av">${avatarOriginIconHTML(r.avatar || AVATARS[0], 'leaderboard-origin-icon')}</div>
       <div class="lb-name">${pathGlyph(r.path) ? `<span class="lb-path" title="${esc(t(PATHS[r.path].name))}">${pathGlyph(r.path)}</span> ` : ''}${esc(r.name)}${r.me ? ' <span class="lb-you">ты</span>' : ''}<span class="lb-rank">${esc(r.rank || '')}</span></div>
       <div class="lb-lvl">ур.${r.level}</div>
       <div class="lb-xp">${r.totalXp.toLocaleString('ru')} XP</div>
@@ -9577,7 +9923,7 @@ function renderLeaderboard() {
   return `
     ${pathBannerHTML(rows)}
     <div class="card">
-      <h3>🏆 Рейтинг</h3>
+      <h3>${satoruIconHTML('system.achievement', 'heading-emblem', '◇')} Рейтинг</h3>
       <p class="muted" style="margin:0 0 14px">Соревнование по суммарному опыту среди всех игроков на этом сервере. Видны только имя, аватар, уровень и ранг — твои задачи и личные данные приватны.</p>
       <div class="lb-table">${list}</div>
     </div>
@@ -9589,12 +9935,18 @@ function renderLeaderboard() {
 const VIEWS = { today: renderToday, notes: renderNotes, calendar: renderCalendarView, habits: renderHabitsView, den: renderDen, character: renderCharacter, pets: renderPets, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, party: renderParty, leaderboard: renderLeaderboard, settings: renderSettings };
 // Разгрузка дизайна: 11 вкладок → 5 разделов с под-вкладками. Прогрессивное раскрытие через гейт уровня.
 const SECTIONS = [
-  { id: 'today', icon: '🎯', label: 'Сегодня', gate: 0, views: [{ view: 'today', label: 'День' }, { view: 'notes', label: 'Заметки' }] },
-  { id: 'plan', icon: '🗓', label: 'План', gate: 0, views: [{ view: 'calendar', label: 'Календарь' }, { view: 'goals', label: 'Цели' }] },
-  { id: 'habits', icon: '🔁', label: 'Привычки', gate: 0, views: [{ view: 'habits', label: 'Привычки' }] },
-  { id: 'rewards', icon: '🎁', label: 'Награды', gate: 0, views: [{ view: 'rewards', label: 'Награды' }] },
-  { id: 'hero', icon: '🧍', label: 'Герой', gate: 3, views: [{ view: 'den', label: '🏠 Логово' }, { view: 'character', label: 'Персонаж' }, { view: 'pets', label: '🐾 Питомцы' }, { view: 'tree', label: 'Навыки' }, { view: 'stats', label: 'Прогресс' }] },
-  { id: 'tribe', icon: '🤝', label: 'Племя', gate: 3, views: [{ view: 'party', label: 'Пати' }, { view: 'leaderboard', label: 'Рейтинг' }] },
+  { id: 'today', iconId: 'nav.today', label: 'Сегодня', gate: 0, views: [{ view: 'today', label: 'День' }, { view: 'notes', label: 'Заметки' }] },
+  { id: 'plan', iconId: 'nav.plan', label: 'План', gate: 0, views: [{ view: 'calendar', label: 'Календарь' }, { view: 'goals', label: 'Цели' }] },
+  { id: 'habits', iconId: 'nav.habits', label: 'Привычки', gate: 0, views: [{ view: 'habits', label: 'Привычки' }] },
+  { id: 'rewards', iconId: 'nav.rewards', label: 'Награды', gate: 0, views: [{ view: 'rewards', label: 'Награды' }] },
+  { id: 'hero', iconId: 'nav.hero', label: 'Герой', gate: 3, views: [
+    { view: 'den', label: 'Логово', iconId: 'reward.decor' },
+    { view: 'character', label: 'Персонаж', iconId: 'nav.hero' },
+    { view: 'pets', label: 'Питомцы', iconId: 'system.pets' },
+    { view: 'tree', label: 'Навыки', iconId: 'nav.skills' },
+    { view: 'stats', label: 'Прогресс', iconId: 'system.day-end' },
+  ] },
+  { id: 'tribe', iconId: 'nav.tribe', label: 'Племя', gate: 3, views: [{ view: 'party', label: 'Пати' }, { view: 'leaderboard', label: 'Рейтинг' }] },
 ];
 function sectionOf(view) { for (const s of SECTIONS) if (s.views.some((v) => v.view === view)) return s.id; return null; } // settings (шестерёнка) и legacy weekly → null
 function navUnlockLevel() { return (State.me && State.me.isAdmin) ? 999 : charLevel(); } // админ видит всё (дог-фуддинг)
@@ -9614,14 +9966,14 @@ function renderNav() {
   const primary = SECTIONS.map((s) => {
     const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
     const mobileClass = ['today', 'plan', 'habits', 'hero'].includes(s.id) ? ' mobile-primary' : ' mobile-secondary';
-    return `<button class="navsec${mobileClass}${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}" title="${locked ? 'Откроется на ур.' + s.gate : (isNew ? t(s.label) + ' — новое!' : t(s.label))}">${s.icon}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">🔒${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
+    return `<button class="navsec${mobileClass}${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}" title="${locked ? 'Откроется на ур.' + s.gate : (isNew ? t(s.label) + ' — новое!' : t(s.label))}">${satoruIconHTML(s.iconId, 'navsec-icon', '')}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">${satoruIconHTML('status.lock', 'navsec-lock-icon', '🔒')}${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
   }).join('');
-  const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="${t('Настройки')}" aria-label="${t('Настройки')}">⚙️</button>`;
+  const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="${t('Настройки')}" aria-label="${t('Настройки')}">${satoruIconHTML('nav.settings', 'navgear-icon', '⚙️')}</button>`;
   const moreActive = cur === 'rewards' || cur === 'tribe' || State.view === 'settings';
   const moreNew = SECTIONS.filter((s) => s.id === 'rewards' || s.id === 'tribe').some((s) => sectionHasNew(s, lvl));
   const more = `<button class="navsec mobile-nav-more${moreActive ? ' active' : ''}${moreNew && !moreActive ? ' navsec-new' : ''}" data-action="mobile-nav-more" aria-haspopup="dialog" aria-label="${t('Ещё')}"><span class="mobile-more-glyph" aria-hidden="true">•••</span><span class="navsec-l">${t('Ещё')}</span>${moreNew && !moreActive ? '<span class="navsec-dot"></span>' : ''}</button>`;
   const sec = SECTIONS.find((s) => s.id === cur);
-  const subs = (sec && sec.views.length > 1) ? `<div class="navsub">${sec.views.map((v) => { const nd = NEW_VIEWS.includes(v.view) && !isDiscovered(v.view) && v.view !== State.view ? '<span class="navsub-dot"></span>' : ''; return `<button class="navsubtab${v.view === State.view ? ' active' : ''}" data-view="${v.view}">${t(v.label)}${nd}</button>`; }).join('')}</div>` : '';
+  const subs = (sec && sec.views.length > 1) ? `<div class="navsub">${sec.views.map((v) => { const nd = NEW_VIEWS.includes(v.view) && !isDiscovered(v.view) && v.view !== State.view ? '<span class="navsub-dot"></span>' : ''; return `<button class="navsubtab${v.view === State.view ? ' active' : ''}" data-view="${v.view}">${v.iconId ? satoruIconHTML(v.iconId, 'navsub-icon', '') : ''}${t(v.label)}${nd}</button>`; }).join('')}</div>` : '';
   nav.innerHTML = `<div class="navrow">${primary}${more}${gear}</div>${subs}`;
 }
 
@@ -9643,7 +9995,7 @@ function showMobileNavSheet() {
   const menuSections = SECTIONS.filter((s) => s.id === 'rewards' || s.id === 'tribe').map((s) => {
     const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
     return `<button class="mobile-sheet-entry${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}" data-action="go-section" data-sec="${s.id}">
-      <span class="mobile-sheet-icon">${s.icon}</span><span><b>${t(s.label)}</b>${locked ? `<small>🔒 ${t('Уровень')} ${s.gate}</small>` : ''}</span>${isNew ? '<i class="mobile-sheet-new"></i>' : '<span class="mobile-sheet-chevron">›</span>'}
+      <span class="mobile-sheet-icon">${satoruIconHTML(s.iconId, 'mobile-sheet-glyph', '')}</span><span><b>${t(s.label)}</b>${locked ? `<small>${satoruIconHTML('status.lock', 'inline-glyph', '🔒')} ${t('Уровень')} ${s.gate}</small>` : ''}</span>${isNew ? '<i class="mobile-sheet-new"></i>' : '<span class="mobile-sheet-chevron">›</span>'}
     </button>`;
   }).join('');
   const overlay = document.createElement('div');
@@ -9653,13 +10005,13 @@ function showMobileNavSheet() {
   overlay.innerHTML = `<section class="mobile-nav-sheet" role="dialog" aria-modal="true" aria-label="${t('Ещё')}">
     <div class="mobile-sheet-handle" aria-hidden="true"></div>
     <header class="mobile-sheet-head">
-      <div class="mobile-sheet-profile"><button class="mobile-sheet-avatar" data-action="go-wardrobe" aria-label="Открыть персонажа">${avatarPortraitHTML({ motion: 'portrait' })}</button><div><b>${esc((State.me && State.me.name) || 'Satoru')}</b><small>${cr.icon} ${esc(cr.name)} · ${t('Уровень')} ${charLevel()}</small></div></div>
+      <div class="mobile-sheet-profile"><button class="mobile-sheet-avatar" data-action="go-wardrobe" aria-label="Открыть персонажа">${avatarPortraitHTML({ motion: 'portrait' })}</button><div><b>${esc((State.me && State.me.name) || 'Satoru')}</b><small>${rankIconHTML(cr, 'rank-inline-icon')} ${esc(cr.name)} · ${t('Уровень')} ${charLevel()}</small></div></div>
       <button class="mobile-sheet-close" data-action="mobile-nav-close" aria-label="${t('Закрыть')}">✕</button>
     </header>
     <div class="mobile-sheet-grid">${menuSections}
-      <button class="mobile-sheet-entry" data-action="open-helper"><span class="mobile-sheet-icon">🤖</span><span><b>${t('Помощник')}</b><small>Satoru AI</small></span><span class="mobile-sheet-chevron">›</span></button>
-      <button class="mobile-sheet-entry${State.view === 'settings' ? ' active' : ''}" data-action="mobile-go-settings"><span class="mobile-sheet-icon">⚙️</span><span><b>${t('Настройки')}</b></span><span class="mobile-sheet-chevron">›</span></button>
-      <button class="mobile-sheet-entry" data-action="show-paywall" data-feature="Pro"><span class="mobile-sheet-icon">💎</span><span><b>Pro</b><small>${ent().tier === 'pro' ? 'PRO' : ent().tier === 'trial' ? `TRIAL · ${trialDaysLeft()}д` : 'FREE'}</small></span><span class="mobile-sheet-chevron">›</span></button>
+      <button class="mobile-sheet-entry" data-action="open-helper"><span class="mobile-sheet-icon">${satoruIconHTML('nav.shadow', 'mobile-sheet-glyph', '🤖')}</span><span><b>${t('Помощник')}</b><small>Satoru AI</small></span><span class="mobile-sheet-chevron">›</span></button>
+      <button class="mobile-sheet-entry${State.view === 'settings' ? ' active' : ''}" data-action="mobile-go-settings"><span class="mobile-sheet-icon">${satoruIconHTML('nav.settings', 'mobile-sheet-glyph', '⚙️')}</span><span><b>${t('Настройки')}</b></span><span class="mobile-sheet-chevron">›</span></button>
+      <button class="mobile-sheet-entry" data-action="show-paywall" data-feature="Pro"><span class="mobile-sheet-icon">${satoruIconHTML('status.xp', 'mobile-sheet-glyph', '◇')}</span><span><b>Pro</b><small>${ent().tier === 'pro' ? 'PRO' : ent().tier === 'trial' ? `TRIAL · ${trialDaysLeft()}д` : 'FREE'}</small></span><span class="mobile-sheet-chevron">›</span></button>
     </div>
     <div class="mobile-sheet-utils"><button class="btn ghost" data-action="show-guide">? ${t('Как играть')}</button><button class="btn ghost" data-action="logout">⇦ ${t('Выйти')}</button></div>
   </section>`;
@@ -9705,6 +10057,20 @@ function normalizeCoreState() {
   for (const k of ['tasks', 'habits', 'goals', 'purchases', 'rewards', 'inbox', 'antihabits']) if (!Array.isArray(State[k])) State[k] = [];
   for (const k of ['days', 'habitlog', 'tree', 'achievements', 'weeks']) if (!State[k] || typeof State[k] !== 'object' || Array.isArray(State[k])) State[k] = {};
 }
+function ensureShadowFabRig() {
+  if (!window.ShadowRig || !State.settings) return;
+  const fab = document.getElementById('ai-fab'); if (!fab) return;
+  const c = ensureCompanion(), tier = compTierIdx(c.bond);
+  let rig = fab.querySelector('[data-shadow-rig]');
+  if (!rig || Number(rig.dataset.shadowTier) !== tier) {
+    if (rig) rig.remove();
+    const legacy = fab.querySelector('.fab-face'); if (legacy) legacy.remove();
+    const streak = fab.querySelector('.fab-streak');
+    if (streak) streak.insertAdjacentHTML('beforebegin', window.ShadowRig.markup({ tier, state: State._chatBusy ? 'thinking' : 'listening', context: 'fab', label: c.name || 'Тень' }));
+    rig = fab.querySelector('[data-shadow-rig]');
+  }
+  window.ShadowRig.setState(rig, State._chatBusy ? 'thinking' : 'listening');
+}
 function render() {
   if (State.phase !== 'app') { showAuthScreen(); return; }
   try { normalizeCoreState(); } catch (e) { console.error('normalizeCoreState', e); }
@@ -9712,6 +10078,7 @@ function render() {
   try { pathReckoning(); } catch (e) { /* расчёт Контроля — не критично для рендера */ }
   // Восстановить app shell если auth-экран его перезаписал
   if (!document.getElementById('main')) document.getElementById('app').innerHTML = APP_SHELL;
+  try { ensureShadowFabRig(); } catch (e) { /* декоративный риг не блокирует рендер */ }
   // Тень не должна продолжать говорить в другом разделе. Внутри одного вида перерисовка
   // (тик таймера и т.п.) речь НЕ прерывает — иначе фраза рубилась бы на полуслове.
   if (_ttsBtn && _ttsView !== State.view) ttsStop();
@@ -10036,7 +10403,7 @@ function onSubmit(e) {
   } else if (f.id === 'add-reward') {
     e.preventDefault(); const name = f.name.value.trim(); if (!name) return;
     if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
-    State.rewards.push({ id: 'r_' + uid(), name, icon: f.icon.value.trim() || '🎁', cost: Math.max(1, Number(f.cost.value) || 1), createdAt: new Date().toISOString() });
+    State.rewards.push({ id: 'r_' + uid(), name, iconId: f.iconId.value || 'reward.wishlist', cost: Math.max(1, Number(f.cost.value) || 1), createdAt: new Date().toISOString() });
     Store.save('rewards', State.rewards); render();
   }
 }
@@ -10046,12 +10413,12 @@ function openRewardCatalog() {
   if (document.getElementById('rw-catalog')) return;
   const have = new Set(State.rewards.map((r) => r.name));
   const rows = REWARD_CATALOG.map((c, i) => `<div class="rwc-row">
-      <span class="rwc-ic">${c.icon}</span><span class="rwc-name">${esc(c.name)}</span><span class="rwc-cost">🪙 ${c.cost}</span>
+      <span class="rwc-ic">${rewardIconHTML(c, 'reward-catalog-icon')}</span><span class="rwc-name">${esc(c.name)}</span><span class="rwc-cost">${satoruIconHTML('status.gold', 'inline-emblem', '◇')} ${c.cost}</span>
       ${have.has(c.name) ? '<span class="muted" style="font-size:12px">добавлено ✓</span>' : `<button class="btn ghost sm" data-action="add-catalog-reward" data-idx="${i}">+ Добавить</button>`}
     </div>`).join('');
   const ov = document.createElement('div'); ov.id = 'rw-catalog'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="guide-box"><button class="modal-x" data-action="close-reward-catalog">✕</button>
-    <h2>${t('📚 Каталог наград')}</h2>
+    <h2>${satoruIconHTML('nav.skills', 'heading-glyph', '◇')} ${t('Каталог наград')}</h2>
     <p class="muted">Готовые награды с откалиброванными ценами — как дроп с босса. Добавь свои в форме на странице наград.</p>
     <div class="rwc-list">${rows}</div></div>`;
   document.body.appendChild(ov);
@@ -10174,7 +10541,10 @@ function tutorialPaint() {
       <div class="tut-dots">${n} / ${total}</div>
     </div>`;
 }
-function tutMascotHTML() { return `<span class="tut-mascot"><img src="/assets/shadow/shadow_1.png" alt="" aria-hidden="true" /></span>`; }
+function tutMascotHTML() {
+  const c = ensureCompanion(), ti = compTierIdx(c.bond);
+  return `<span class="tut-mascot">${shadowVideo(ti, 'speaking', 'tutorial')}</span>`;
+}
 function onClick(e) {
   const navBtn = e.target.closest('#nav button[data-view]');
   if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
@@ -10311,6 +10681,66 @@ function onClick(e) {
     Store.save('settings', State.settings);
     applyAmbient(); render(); return;
   }
+  if (action === 'den-toggle-edit') {
+    State._denEdit = !State._denEdit;
+    track(State._denEdit ? 'den:edit-open' : 'den:edit-close');
+    render(); return;
+  }
+  if (action === 'den-ambient-cycle') {
+    if (!State.settings.ambient) State.settings.ambient = {};
+    const now = State.settings.ambient.mode || 'off';
+    State.settings.ambient.mode = now === 'off' ? 'rain' : now === 'rain' ? 'fire' : 'off';
+    Store.save('settings', State.settings);
+    applyAmbient(); render(); return;
+  }
+  if (action === 'den-light') {
+    const den = ensureDen(), value = el.dataset.value;
+    if (['auto', 'morning', 'day', 'sunset', 'night'].includes(value)) den.light = value;
+    Store.save('settings', State.settings);
+    render(); return;
+  }
+  if (action === 'den-pet-count') {
+    const den = ensureDen();
+    den.petCount = Math.max(0, Math.min(3, Number(el.dataset.value) || 0));
+    Store.save('settings', State.settings);
+    render(); return;
+  }
+  if (action === 'den-clear') {
+    const den = ensureDen(), slot = el.dataset.slot;
+    if (DEN_SLOT_META[slot]) den.slots[slot] = '';
+    Store.save('settings', State.settings);
+    render(); return;
+  }
+  if (action === 'den-reset') {
+    const den = ensureDen();
+    den.theme = 'workshop'; den.light = 'auto'; den.petCount = 3; den.slots = { ...DEN_STARTER_SLOTS };
+    Store.save('settings', State.settings);
+    try { sfx('complete'); } catch {}
+    toast('Логово вернулось к стартовой обстановке');
+    render(); return;
+  }
+  if (action === 'den-theme') {
+    const theme = DEN_THEMES.find((x) => x.id === id);
+    if (!theme || !denAcquire(theme, 'theme:' + theme.id)) return;
+    const den = ensureDen(); den.theme = theme.id;
+    Store.save('settings', State.settings);
+    track('den:theme');
+    render(); return;
+  }
+  if (action === 'den-item') {
+    const item = denItem(id);
+    if (!item || !denAcquire(item, item.id)) return;
+    const den = ensureDen(); den.slots[item.slot] = item.id;
+    Store.save('settings', State.settings);
+    track('den:item');
+    render(); return;
+  }
+  if (action === 'den-pet-react') {
+    el.classList.remove('is-reacting'); void el.offsetWidth; el.classList.add('is-reacting');
+    setTimeout(() => el.classList.remove('is-reacting'), 1100);
+    try { sfx('complete'); } catch {}
+    return;
+  }
 
   // --- Живой компаньон (Finch-модель) ---
   if (action === 'comp-rename') { State._compForm = 'name'; render(); return; }
@@ -10333,6 +10763,7 @@ function onClick(e) {
       Store.save('settings', State.settings);
       try { sfx('complete'); } catch {}
       toast('💛 ' + esc(cm.name) + ' ' + t('жмурится от тепла'));
+      if (window.ShadowRig) window.ShadowRig.setTransient('happy', 1000);
     }
     closeMoment(); render(); return;
   }
@@ -10343,6 +10774,7 @@ function onClick(e) {
     Store.save('settings', State.settings);
     if (typeof sfx === 'function') sfx('complete');
     toast('💛 ' + esc(c.name) + ' жмурится от тепла');
+    if (window.ShadowRig) window.ShadowRig.setTransient('happy', 1000);
     render(); return;
   }
 
@@ -10351,15 +10783,15 @@ function onClick(e) {
     const art = el.closest('.pet-art'), svg = art && art.querySelector('.pet-svg');
     if (svg) {
       svg.classList.remove('pet-nom'); void svg.offsetWidth; svg.classList.add('pet-nom'); // рестарт анимации
-      const dom = (petTraits(id)[0] || {}).icon || '⭐', treat = PET_TREAT[dom] || '🍎';
-      const food = document.createElement('span'); food.className = 'pet-food'; food.textContent = treat;
+      const dom = (petTraits(id)[0] || {}).icon || '⭐', treat = PET_TREAT[dom] || PET_TREAT['⭐'];
+      const food = document.createElement('span'); food.className = 'pet-food'; food.innerHTML = satoruIconHTML(treat.iconId, 'pet-treat-icon', treat.fallback);
       art.appendChild(food); setTimeout(() => food.remove(), 1000);
     }
     if (typeof sfx === 'function') sfx('complete');
     toast('💛 ' + esc(petName(id)) + ' доволен');
     return;
   }
-  if (action === 'pet-hint') { const tr = petTraits(id)[0]; if (tr && tr.hint) toast(`${tr.icon} ${t(tr.hint)}`); return; }
+  if (action === 'pet-hint') { const tr = petTraits(id)[0]; if (tr && tr.hint) toast(t(tr.hint)); return; }
   if (action === 'pet-rename') { State._petRename = id; render(); return; }
   if (action === 'pet-rename-cancel') { State._petRename = null; render(); return; }
   if (action === 'open-fortune-editor') { showFortuneEditor(id); return; }
@@ -10471,16 +10903,16 @@ function onClick(e) {
     const c = REWARD_CATALOG[Number(el.dataset.idx)]; if (!c) return;
     if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
     lb.vouchers--; Store.save('lootbox', lb);
-    State.rewards.push({ id: 'r_' + uid(), name: c.name, icon: c.icon, cost: c.cost, createdAt: new Date().toISOString() });
+    State.rewards.push({ id: 'r_' + uid(), name: c.name, icon: c.icon, iconId: c.iconId, cost: c.cost, createdAt: new Date().toISOString() });
     Store.save('rewards', State.rewards);
     const vOv = document.getElementById('voucher-ov'); if (vOv) vOv.remove();
-    toast(`🎁 «${c.name}» получено бесплатно!`); render(); return;
+    toast(`«${c.name}» получено бесплатно!`); render(); return;
   }
   if (action === 'add-catalog-reward') {
     if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
     const c = REWARD_CATALOG[Number(el.dataset.idx)]; if (!c) return;
-    State.rewards.push({ id: 'r_' + uid(), name: c.name, icon: c.icon, cost: c.cost, createdAt: new Date().toISOString() });
-    Store.save('rewards', State.rewards); toast(`🎁 «${c.name}» в магазине`);
+    State.rewards.push({ id: 'r_' + uid(), name: c.name, icon: c.icon, iconId: c.iconId, cost: c.cost, createdAt: new Date().toISOString() });
+    Store.save('rewards', State.rewards); toast(`«${c.name}» в магазине`);
     const m = document.getElementById('rw-catalog'); if (m) m.remove(); openRewardCatalog(); return;
   }
   if (action === 'restore-backup') {
@@ -10582,6 +11014,7 @@ function onClick(e) {
       toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${hsk.name}${eD ? ` · ${eD > 0 ? '+' : ''}${eD} 🔋` : ''}`);
       bossHitFeedback(bossHitCheck('habit', h, { sphereName: hsk ? hsk.name : '' }));
     }
+    if (!habitWasDone && window.ShadowRig) window.ShadowRig.setTransient('happy', 900);
     Store.save('habitlog', State.habitlog); checkAchievements(); render(); if (!habitWasDone) triggerAvatarReaction('happy', 'Привычка ✓'); publishLeaderboard();
   } else if (action === 'focus-task') { const q = questById(id); if (q && !q.done) { track('focus:start'); startFocus(id); }
   } else if (action === 'timer-pause') { pauseFocus();
@@ -10829,7 +11262,7 @@ function onClick(e) {
   } else if (action === 'dayrec-apply') { dayRecApply();
   } else if (action === 'dayrec-close') { if (_dayRec) { try { _dayRec.stop(); } catch {} _dayRec = null; } const m = document.getElementById('dayrec-modal'); if (m) m.remove();
   } else if (action === 'open-helper') { openHelperChat();
-  } else if (action === 'helper-close') { const m = document.getElementById('helper-modal'); if (m) m.remove();
+  } else if (action === 'helper-close') { ttsStop(); const m = document.getElementById('helper-modal'); if (m) m.remove();
   } else if (action === 'helper-to-settings') { const m = document.getElementById('helper-modal'); if (m) m.remove(); State.view = 'settings'; render();
   } else if (action === 'chat-suggest') { sendChat(el.dataset.q);
   } else if (action === 'habits-tab') { State.habitsTab = el.dataset.tab; render();
@@ -11564,6 +11997,10 @@ async function init() {
 
   State.phase = 'login';
   render();
+  // Локальный обзор без регистрации: ссылка ?demo=x7 создаёт/открывает изолированного
+  // тестового героя и может сразу принять обычный deep-link, например &view=den.
+  // На публичном домене намеренно не работает — общий аккаунт там смешал бы данные гостей.
+  if (demoX7Requested()) setTimeout(() => loginAsTestUser(), 40);
 }
 
 init();

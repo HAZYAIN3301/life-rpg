@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">reward · bath</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <path d="M24 24h80l9 12v68l-12 10H27l-12-12V36z" fill="#ead9bc" stroke="#29263a" stroke-width="5"/><path d="M27 24h74l-7 11H34z" fill="#dc9e45" opacity=".7"/>
+    <g class="motif"><path d="M25 65h78c0 26-11 35-39 35s-39-9-39-35z" fill="#64a9bd" stroke="#29263a" stroke-width="5"/><path d="M34 60c0-21 18-24 28-10 8-10 27-7 29 10" fill="#ead9bc" stroke="#29263a" stroke-width="4"/><circle cx="42" cy="44" r="7" fill="#ead9bc"/><circle cx="87" cy="38" r="5" fill="#ead9bc"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#dc9e45" opacity=".9"/>
+</svg>

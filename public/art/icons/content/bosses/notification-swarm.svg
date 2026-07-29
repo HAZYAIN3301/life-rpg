@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">boss · notification swarm</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <path d="M64 8l13 9 16-2 7 15 15 7-3 16 8 13-10 13 1 16-16 5-8 15-15-4-14 8-12-10-16 1-5-16-14-8 5-15-7-14 11-12-1-16 16-4 9-14 15 4z" fill="#11182b" stroke="#d9636f" stroke-width="5"/><circle cx="64" cy="64" r="47" fill="#d9c296" opacity=".9"/>
+    <g class="motif"><g fill="#f0b44d" stroke="#20253b" stroke-width="3"><ellipse cx="37" cy="42" rx="10" ry="7"/><path d="M34 36v12M40 36v12"/><ellipse cx="65" cy="31" rx="10" ry="7"/><path d="M62 25v12M68 25v12"/><ellipse cx="88" cy="46" rx="10" ry="7"/><path d="M85 40v12M91 40v12"/><ellipse cx="48" cy="73" rx="10" ry="7"/><path d="M45 67v12M51 67v12"/><ellipse cx="79" cy="77" rx="10" ry="7"/><path d="M76 71v12M82 71v12"/><ellipse cx="61" cy="99" rx="10" ry="7"/><path d="M58 93v12M64 93v12"/></g></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#f0b44d" opacity=".9"/>
+</svg>

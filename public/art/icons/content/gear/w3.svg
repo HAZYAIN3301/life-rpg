@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">gear · w3</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <path d="M64 9l49 32-13 62-36 16-36-16-13-62z" fill="#151c2c" stroke="#e7b04c" stroke-width="5"/><path d="M64 18l39 27-10 51-29 13-29-13-10-51z" fill="#cfb88c" opacity=".95"/>
+    <g class="motif"><circle cx="64" cy="65" r="28" fill="#151c2c" stroke="#242a3c" stroke-width="5"/><circle cx="64" cy="65" r="9" fill="#6aabd1"/><circle cx="64" cy="31" r="7" fill="#6aabd1"/><circle cx="92" cy="47" r="7" fill="#6aabd1"/><circle cx="92" cy="81" r="7" fill="#6aabd1"/><circle cx="64" cy="99" r="7" fill="#6aabd1"/><circle cx="36" cy="81" r="7" fill="#6aabd1"/><circle cx="36" cy="47" r="7" fill="#6aabd1"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#e7b04c" opacity=".9"/>
+</svg>

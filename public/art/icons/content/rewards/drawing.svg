@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">reward · drawing</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <path d="M24 24h80l9 12v68l-12 10H27l-12-12V36z" fill="#f3e4c5" stroke="#20253b" stroke-width="5"/><path d="M27 24h74l-7 11H34z" fill="#f0b44d" opacity=".7"/>
+    <g class="motif"><path d="M42 91l38-52 13-4-3 13-44 47z" fill="#f3e4c5" stroke="#20253b" stroke-width="5"/><path d="M35 96c-10-8 2-24 12-19 8 4 8 18-12 19z" fill="#d9636f" stroke="#20253b" stroke-width="4"/><circle cx="86" cy="33" r="5" fill="#f0b44d"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#f0b44d" opacity=".9"/>
+</svg>

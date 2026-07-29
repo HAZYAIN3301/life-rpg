@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">boss · perfecto idol</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <path d="M64 8l13 9 16-2 7 15 15 7-3 16 8 13-10 13 1 16-16 5-8 15-15-4-14 8-12-10-16 1-5-16-14-8 5-15-7-14 11-12-1-16 16-4 9-14 15 4z" fill="#17172b" stroke="#c95f86" stroke-width="5"/><circle cx="64" cy="64" r="47" fill="#c9b185" opacity=".9"/>
+    <g class="motif"><path d="M43 30h42l14 25-10 42H39L29 55z" fill="#65a9c8" stroke="#25243c" stroke-width="5"/><path d="M43 30l21 67 21-67M29 55h70" fill="none" stroke="#efe0c1" stroke-width="3"/><path d="M42 105h44" stroke="#c95f86" stroke-width="6" stroke-dasharray="8 6"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#e8a94b" opacity=".9"/>
+</svg>

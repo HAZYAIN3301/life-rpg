@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">profile · origin · voyager</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <path d="M64 10l44 17-7 51c-4 21-18 33-37 42-19-9-33-21-37-42l-7-51z" fill="#191728" stroke="#dc9e45" stroke-width="5"/><path d="M64 20l34 13-6 41c-3 16-13 26-28 34-15-8-25-18-28-34l-6-41z" fill="#bfa985"/>
+    <g class="motif"><path d="M21 69l84-39-31 71-12-24-26 10 14-20z" fill="#ead9bc" stroke="#29263a" stroke-width="5" stroke-linejoin="round"/><path d="M50 67l24 10" stroke="#64a9bd" stroke-width="4"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#dc9e45" opacity=".9"/>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">achievement · reporter_3</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <g transform="rotate(-3 64 64)"><path d="M64 10l12 8 15-1 6 14 13 7-3 15 8 12-9 12 2 15-14 6-7 14-15-2-12 8-12-9-15 1-6-14-13-7 3-15-8-12 9-12-2-15 14-6 7-14 15 2z" fill="#c9b185" stroke="#25243c" stroke-width="4"/><circle cx="64" cy="64" r="44" fill="#efe0c1" stroke="#e8a94b" stroke-width="4" stroke-dasharray="5 4"/></g>
+    <g class="motif"><ellipse cx="65" cy="69" rx="23" ry="28" fill="#c95f86" stroke="#25243c" stroke-width="5"/><path d="M65 42v55M43 62H28M43 79H27M87 62h15M87 79h16M51 44l-8-11M78 44l8-11" stroke="#25243c" stroke-width="5" stroke-linecap="round"/><circle cx="55" cy="61" r="4" fill="#efe0c1"/><circle cx="75" cy="76" r="4" fill="#efe0c1"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#e8a94b" opacity=".9"/>
+</svg>

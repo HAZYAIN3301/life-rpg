@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">activity · workout</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <circle cx="64" cy="64" r="54" fill="#17172b" stroke="#65a9c8" stroke-width="5"/><circle cx="64" cy="64" r="44" fill="#c9b185"/>
+    <g class="motif"><path d="M36 44v40M25 52v24M92 44v40M103 52v24M36 64h56" stroke="#25243c" stroke-width="9" stroke-linecap="round"/><path d="M50 64c0-15 28-15 28 0s-28 15-28 0z" fill="#6e80c9"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#e8a94b" opacity=".9"/>
+</svg>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Тень — Rig Lab v2</title>
+  <link rel="stylesheet" href="styles.css?v=20260729-shadow-rig-v2-1" />
+  <style>
+    body { margin:0; min-height:100vh; background:#090d18; color:#edf0ff; font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif; }
+    .rig-lab { width:min(1120px,calc(100% - 28px)); margin:0 auto; padding:28px 0 52px; }
+    .rig-lab-head { display:flex; justify-content:space-between; gap:20px; align-items:flex-end; margin-bottom:20px; }
+    .rig-lab h1 { margin:0; font-size:clamp(26px,4vw,44px); }
+    .rig-lab-head p { margin:7px 0 0; color:#9ea8c5; max-width:68ch; }
+    .rig-stage { min-height:420px; display:grid; place-items:center; position:relative; overflow:hidden; border-radius:28px; border:1px solid #303953; background:radial-gradient(circle at 50% 42%,#2d2148 0,#141a2d 43%,#0d1220 78%); box-shadow:0 28px 80px rgba(0,0,0,.38); }
+    .rig-stage::before { content:""; position:absolute; inset:0; opacity:.16; background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px); background-size:42px 42px; }
+    #rig-main { width:310px; height:360px; position:relative; z-index:1; }
+    .rig-label { position:absolute; left:20px; top:18px; z-index:2; padding:8px 11px; border:1px solid #394463; border-radius:12px; background:rgba(8,11,22,.7); color:#cbd2ea; font-size:13px; }
+    .rig-controls { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+    .rig-panel { border:1px solid #2d3650; border-radius:18px; padding:14px; background:#111728; }
+    .rig-panel h2 { margin:0 0 10px; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:#aab4d4; }
+    .rig-buttons { display:flex; flex-wrap:wrap; gap:7px; }
+    .rig-buttons button { appearance:none; border:1px solid #35405e; border-radius:11px; background:#1a2237; color:#dce2f5; padding:8px 10px; cursor:pointer; font:inherit; }
+    .rig-buttons button:hover,.rig-buttons button.is-active { border-color:#ab86ff; background:#33264f; color:#fff; }
+    .rig-forms { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:14px; }
+    .rig-form-card { border:1px solid #2d3650; border-radius:18px; padding:10px; background:#111728; text-align:center; cursor:pointer; color:#cbd2ea; }
+    .rig-form-card:hover,.rig-form-card.is-active { border-color:#ab86ff; background:#171a31; }
+    .rig-form-art { height:170px; }
+    .rig-form-card b { display:block; margin-top:4px; }
+    .rig-form-card small { color:#8994b2; }
+    .rig-back { color:#bda6f4; text-decoration:none; font-size:13px; }
+    @media(max-width:700px) {
+      .rig-lab { width:min(100% - 18px,1120px); padding-top:18px; }
+      .rig-lab-head { align-items:flex-start; flex-direction:column; }
+      .rig-stage { min-height:370px; }
+      #rig-main { width:260px; height:310px; }
+      .rig-controls { grid-template-columns:1fr; }
+      .rig-forms { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .rig-form-art { height:142px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="rig-lab">
+    <div class="rig-lab-head">
+      <div><h1>Тень · Rig Lab v2</h1><p>Четыре формы эволюции и десять реактивных состояний. «Говорит» включает тот же speech-state, который используется браузерным голосом в Satoru.</p></div>
+      <a class="rig-back" href="/?demo=x7&view=den">Открыть Satoru →</a>
+    </div>
+    <section class="rig-stage">
+      <div class="rig-label"><b id="rig-name">Дух</b> · <span id="rig-state">calm</span></div>
+      <div id="rig-main"></div>
+    </section>
+    <div class="rig-controls">
+      <section class="rig-panel"><h2>Состояние</h2><div id="state-buttons" class="rig-buttons"></div></section>
+      <section class="rig-panel"><h2>Живой голос</h2><div class="rig-buttons"><button id="talk">▶ Тень говорит</button><button id="stop">■ Стоп</button></div></section>
+    </div>
+    <section id="form-grid" class="rig-forms"></section>
+  </main>
+  <script src="shadow-rig-v2.js?v=20260729-shadow-rig-v2-1"></script>
+  <script>
+    (() => {
+      let tier = 1, state = 'calm';
+      const main = document.getElementById('rig-main');
+      const formGrid = document.getElementById('form-grid');
+      const stateButtons = document.getElementById('state-buttons');
+      const names = { calm:'спокойна', listening:'слушает', thinking:'думает', speaking:'говорит', happy:'рада', radiant:'сияет', caring:'заботится', sleepy:'засыпает', longing:'скучает', alert:'важный сигнал' };
+      function draw() {
+        const form = ShadowRig.forms[tier];
+        main.innerHTML = ShadowRig.markup({ tier, state, context:'lab', label:`Тень — ${form.name}, ${names[state]}` });
+        document.getElementById('rig-name').textContent = form.name;
+        document.getElementById('rig-state').textContent = `${state} · ${names[state]}`;
+        [...document.querySelectorAll('[data-form]')].forEach(b => b.classList.toggle('is-active', Number(b.dataset.form) === tier));
+        [...document.querySelectorAll('[data-state]')].forEach(b => b.classList.toggle('is-active', b.dataset.state === state));
+      }
+      stateButtons.innerHTML = ShadowRig.states.map(s => `<button data-state="${s}">${names[s]}</button>`).join('');
+      formGrid.innerHTML = ShadowRig.forms.map((form,index) => `<button class="rig-form-card" data-form="${index}"><div class="rig-form-art">${ShadowRig.markup({ tier:index, state:'calm', context:'lab-card', label:`Тень — ${form.name}` })}</div><b>${form.name}</b><small>связь ${form.bond}+</small></button>`).join('');
+      document.addEventListener('click', event => {
+        const stateButton = event.target.closest('[data-state]');
+        const formButton = event.target.closest('[data-form]');
+        if (stateButton) { state = stateButton.dataset.state; draw(); }
+        if (formButton) { tier = Number(formButton.dataset.form); draw(); }
+      });
+      document.getElementById('talk').addEventListener('click', () => {
+        if (!('speechSynthesis' in window)) return;
+        speechSynthesis.cancel();
+        state = 'speaking'; draw(); ShadowRig.setGlobalState('speaking');
+        const utterance = new SpeechSynthesisUtterance('Я рядом. Покажи мне, что сейчас важнее всего, и мы разберёмся по одному шагу.');
+        utterance.lang = 'ru-RU';
+        utterance.onboundary = () => ShadowRig.speechPulse();
+        utterance.onend = utterance.onerror = () => { ShadowRig.clearGlobalState(); state = 'calm'; draw(); };
+        speechSynthesis.speak(utterance);
+      });
+      document.getElementById('stop').addEventListener('click', () => { if ('speechSynthesis' in window) speechSynthesis.cancel(); ShadowRig.clearGlobalState(); state = 'calm'; draw(); });
+      draw();
+    })();
+  </script>
+</body>
+</html>

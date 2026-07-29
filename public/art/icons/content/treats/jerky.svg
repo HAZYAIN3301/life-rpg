@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">pet · treat · jerky</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <path d="M20 82c12 29 76 29 88 0" fill="#c9b185" stroke="#25243c" stroke-width="5"/><ellipse cx="64" cy="81" rx="44" ry="15" fill="#efe0c1"/>
+    <g class="motif"><path d="M29 87c7-28 22-42 35-42s28 14 35 42z" fill="#e8a94b" stroke="#25243c" stroke-width="5"/><circle cx="53" cy="67" r="5" fill="#c95f86"/><circle cx="76" cy="76" r="5" fill="#6e80c9"/><path d="M34 88h61" stroke="#efe0c1" stroke-width="5"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#e8a94b" opacity=".9"/>
+</svg>

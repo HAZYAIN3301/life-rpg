@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title">
+  <title id="title">System Day-end</title>
+  <style>
+  .paper-primary {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .paper-accent {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.45;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: .48;
+  }
+  .paper-fill {
+    fill: currentColor;
+    stroke: none;
+  }
+</style>
+  <g class="paper-fill"><path fill-rule="evenodd" d="M15.75 2.9c-1.18 4.98-5.2 8.48-10.12 8.85 1.07 4.62 5.2 7.65 9.94 7.05 3.02-.38 5.6-2.35 6.57-5.28-1.45 1.03-3.25 1.55-5.12 1.32-4.08-.5-6.98-4.22-6.48-8.3.18-1.47.78-2.78 1.63-3.64z"/></g><g class="paper-primary"><path d="M4.2 20.6h15.6M9.4 20.6c.55-2.2 1.42-3.35 2.6-3.35s2.05 1.15 2.6 3.35"/></g><g class="paper-accent"><path d="M5.2 5.7v2.1M4.15 6.75h2.1M19.05 7.65v1.45M18.32 8.38h1.46"/></g>
+</svg>

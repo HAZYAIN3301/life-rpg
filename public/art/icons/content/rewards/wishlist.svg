@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">reward · wishlist</title>
+  <defs>
+    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <g filter="url(#paper-shadow)">
+    <path d="M24 24h80l9 12v68l-12 10H27l-12-12V36z" fill="#ead9bc" stroke="#29263a" stroke-width="5"/><path d="M27 24h74l-7 11H34z" fill="#dc9e45" opacity=".7"/>
+    <g class="motif"><path d="M29 56c0-17 12-28 35-28s35 11 35 28v10H29z" fill="#dc9e45" stroke="#29263a" stroke-width="5"/><path d="M25 60h78v37H25z" fill="#ca667d" stroke="#29263a" stroke-width="5" stroke-linejoin="round"/><path d="M58 57h13v25H58z" fill="#ead9bc"/><circle cx="64.5" cy="72" r="4" fill="#29263a"/></g>
+  </g>
+  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#dc9e45" opacity=".9"/>
+</svg>
