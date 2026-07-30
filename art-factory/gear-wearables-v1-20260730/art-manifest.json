@@ -1,0 +1,306 @@
+{
+  "schemaVersion": 1,
+  "batchId": "gear-wearables-v1",
+  "status": "pilot-geometry-gated",
+  "runtimeIntegrationAllowed": false,
+  "sourceGear": {
+    "file": "/Users/al.prokopets/Documents/Obsidian Vault/life-rpg/public/app.js",
+    "lines": [9138, 9155],
+    "itemCount": 15
+  },
+  "sourceAvatarContracts": {
+    "traveller": "../traveller-v1-wardrobe-v5/art-manifest.json",
+    "scholar": "../traveller-scholar-v1-20260728/art-manifest.json"
+  },
+  "contracts": {
+    "inventoryIcon": {
+      "canvas": [1024, 1024],
+      "mode": "RGBA",
+      "compositeOrigin": [0, 0],
+      "transparentCorners": true,
+      "containsRarityFrame": false,
+      "containsText": false,
+      "purpose": ["arsenal", "shop", "loot", "reward-card"]
+    },
+    "avatarLayers": {
+      "canvas": [1024, 1536],
+      "mode": "RGBA",
+      "compositeOrigin": [0, 0],
+      "characterSpecific": true,
+      "universalCrossAvatarPngAllowed": false,
+      "materialStrategy": "image generation",
+      "geometryStrategy": "deterministic masks, fixed landmarks and normalization",
+      "weaponGripContract": "contracts/weapon-grip-v1.json"
+    }
+  },
+  "gateCodes": {
+    "PLANNED": "No production art exists yet.",
+    "WEAPON_GRIP_POSE_MISSING": "Approved avatar has no closed-grip forearm/hand replacement bundle.",
+    "OUTFIT_REPLACEMENT_REQUIRED": "Armor must replace the outfit bundle and cannot be a badge overlay.",
+    "NECK_CONFLICT_QA_REQUIRED": "Amulet needs character-specific scarf/current-amulet conflict rules."
+  },
+  "items": [
+    {
+      "id": "w1",
+      "slot": "weapon",
+      "name": "Тренировочный клинок",
+      "rarity": "common",
+      "level": 1,
+      "cost": 120,
+      "stats": {"xpPct": 3},
+      "design": "Blunt walnut practice sword, muted brass guard and leather-wrapped grip.",
+      "inventoryIcon": {
+        "status": "qa-passed",
+        "file": "inventory/w1-training-blade.png",
+        "source": "generated/w1-material-alpha.png",
+        "mask": "masks/w1-inventory-silhouette.png"
+      },
+      "avatarLayers": {
+        "traveller": {
+          "status": "geometry-gated",
+          "gateCode": "WEAPON_GRIP_POSE_MISSING",
+          "gripPivot": [319, 825],
+          "bladeTip": [253, 416],
+          "placementMask": "masks/traveller/w1-placement-mask.png",
+          "handReplacementMask": "masks/traveller/w1-hand-occlusion-mask.png",
+          "prototype": [
+            {"stage": "before-avatar", "file": "prototypes/avatar-layers/traveller/w1-training-blade-back.png"},
+            {"stage": "after-avatar", "file": "prototypes/avatar-layers/traveller/w1-training-blade-front.png"}
+          ],
+          "production": []
+        },
+        "scholar": {
+          "status": "geometry-gated",
+          "gateCode": "WEAPON_GRIP_POSE_MISSING",
+          "gripPivot": [317, 861],
+          "bladeTip": [257, 452],
+          "placementMask": "masks/scholar/w1-placement-mask.png",
+          "handReplacementMask": "masks/scholar/w1-hand-occlusion-mask.png",
+          "prototype": [
+            {"stage": "before-avatar", "file": "prototypes/avatar-layers/scholar/w1-training-blade-back.png"},
+            {"stage": "after-avatar", "file": "prototypes/avatar-layers/scholar/w1-training-blade-front.png"}
+          ],
+          "production": []
+        }
+      },
+      "qa": "qa-report.json"
+    },
+    {
+      "id": "w2",
+      "slot": "weapon",
+      "name": "Клинок Фокуса",
+      "rarity": "rare",
+      "level": 5,
+      "cost": 450,
+      "stats": {"xpPct": 6},
+      "design": "Narrow blue-steel blade with a circular focus mark at the guard.",
+      "inventoryIcon": {"status": "planned"},
+      "avatarLayers": {
+        "traveller": {"status": "planned", "gateCode": "WEAPON_GRIP_POSE_MISSING"},
+        "scholar": {"status": "planned", "gateCode": "WEAPON_GRIP_POSE_MISSING"}
+      }
+    },
+    {
+      "id": "w3",
+      "slot": "weapon",
+      "name": "Катана Бесконечности",
+      "rarity": "epic",
+      "level": 12,
+      "cost": 1400,
+      "stats": {"xpPct": 11},
+      "design": "Black-indigo katana with original concentric-space ornament around the tsuba.",
+      "inventoryIcon": {"status": "planned"},
+      "avatarLayers": {
+        "traveller": {"status": "planned", "gateCode": "WEAPON_GRIP_POSE_MISSING"},
+        "scholar": {"status": "planned", "gateCode": "WEAPON_GRIP_POSE_MISSING"}
+      }
+    },
+    {
+      "id": "a1",
+      "slot": "armor",
+      "name": "Лёгкая броня",
+      "rarity": "common",
+      "level": 2,
+      "cost": 120,
+      "stats": {"hardXpPct": 5},
+      "design": "Quilted leather vest, single shoulder plate and practical straps.",
+      "inventoryIcon": {"status": "planned"},
+      "avatarLayers": {
+        "traveller": {"status": "planned", "gateCode": "OUTFIT_REPLACEMENT_REQUIRED", "bundleType": "outfit-replacement"},
+        "scholar": {"status": "planned", "gateCode": "OUTFIT_REPLACEMENT_REQUIRED", "bundleType": "outfit-replacement"}
+      }
+    },
+    {
+      "id": "a2",
+      "slot": "armor",
+      "name": "Эгида Стойкости",
+      "rarity": "rare",
+      "level": 6,
+      "cost": 450,
+      "stats": {"hardXpPct": 10},
+      "design": "Layered chest armor with a compact shield-shaped ridge.",
+      "inventoryIcon": {"status": "planned"},
+      "avatarLayers": {
+        "traveller": {"status": "planned", "gateCode": "OUTFIT_REPLACEMENT_REQUIRED", "bundleType": "rear-main-trim"},
+        "scholar": {"status": "planned", "gateCode": "OUTFIT_REPLACEMENT_REQUIRED", "bundleType": "rear-main-trim"}
+      }
+    },
+    {
+      "id": "a3",
+      "slot": "armor",
+      "name": "Латы Несокрушимости",
+      "rarity": "epic",
+      "level": 14,
+      "cost": 1400,
+      "stats": {"hardXpPct": 18},
+      "design": "Heavy segmented plate with a high collar and reinforced gloves.",
+      "inventoryIcon": {"status": "planned"},
+      "avatarLayers": {
+        "traveller": {"status": "planned", "gateCode": "OUTFIT_REPLACEMENT_REQUIRED", "bundleType": "full-outfit-arms"},
+        "scholar": {"status": "planned", "gateCode": "OUTFIT_REPLACEMENT_REQUIRED", "bundleType": "full-outfit-arms"}
+      }
+    },
+    {
+      "id": "m1",
+      "slot": "amulet",
+      "name": "Медный амулет",
+      "rarity": "common",
+      "level": 1,
+      "cost": 100,
+      "stats": {"goldPct": 6},
+      "design": "Large hammered-copper rhombus on a rough dark cord.",
+      "inventoryIcon": {"status": "planned"},
+      "avatarLayers": {
+        "traveller": {"status": "planned", "gateCode": "NECK_CONFLICT_QA_REQUIRED", "conflicts": ["scarf"]},
+        "scholar": {"status": "planned", "gateCode": "NECK_CONFLICT_QA_REQUIRED", "replaces": ["amulet"]}
+      }
+    },
+    {
+      "id": "m2",
+      "slot": "amulet",
+      "name": "Амулет Знаний",
+      "rarity": "rare",
+      "level": 5,
+      "cost": 380,
+      "stats": {"goldPct": 12},
+      "design": "Paper talisman with beads and a tiny open-page silhouette.",
+      "inventoryIcon": {"status": "planned"},
+      "avatarLayers": {
+        "traveller": {"status": "planned", "gateCode": "NECK_CONFLICT_QA_REQUIRED"},
+        "scholar": {"status": "planned", "gateCode": "NECK_CONFLICT_QA_REQUIRED", "replaces": ["amulet"]}
+      }
+    },
+    {
+      "id": "m3",
+      "slot": "amulet",
+      "name": "Реликвия Шести Глаз",
+      "rarity": "epic",
+      "level": 13,
+      "cost": 1100,
+      "stats": {"goldPct": 20},
+      "design": "Six small lenses orbiting a central prism; original six-eyes cultural nod.",
+      "inventoryIcon": {"status": "planned"},
+      "avatarLayers": {
+        "traveller": {"status": "planned", "gateCode": "NECK_CONFLICT_QA_REQUIRED", "optionalLayers": ["effect"]},
+        "scholar": {"status": "planned", "gateCode": "NECK_CONFLICT_QA_REQUIRED", "replaces": ["amulet"], "optionalLayers": ["effect"]}
+      }
+    },
+    {
+      "id": "w2b",
+      "slot": "weapon",
+      "name": "Кинжал Наживы",
+      "rarity": "rare",
+      "level": 4,
+      "cost": 420,
+      "stats": {"goldPct": 10},
+      "design": "Short dagger with hook-shaped quillons and one copper loot coin.",
+      "inventoryIcon": {"status": "planned"},
+      "avatarLayers": {
+        "traveller": {"status": "planned", "gateCode": "WEAPON_GRIP_POSE_MISSING", "alternateMode": "belt-carry"},
+        "scholar": {"status": "planned", "gateCode": "WEAPON_GRIP_POSE_MISSING", "alternateMode": "belt-carry"}
+      }
+    },
+    {
+      "id": "a2b",
+      "slot": "armor",
+      "name": "Мантия Потока",
+      "rarity": "rare",
+      "level": 4,
+      "cost": 420,
+      "stats": {"xpPct": 5},
+      "design": "Asymmetric flowing robe with an original spiral-current paper pattern.",
+      "inventoryIcon": {"status": "planned"},
+      "avatarLayers": {
+        "traveller": {"status": "planned", "gateCode": "OUTFIT_REPLACEMENT_REQUIRED", "bundleType": "rear-front-outfit"},
+        "scholar": {"status": "planned", "gateCode": "OUTFIT_REPLACEMENT_REQUIRED", "bundleType": "rear-front-outfit"}
+      }
+    },
+    {
+      "id": "m2b",
+      "slot": "amulet",
+      "name": "Кулон Испытаний",
+      "rarity": "rare",
+      "level": 6,
+      "cost": 400,
+      "stats": {"hardXpPct": 8},
+      "design": "Blue eye-bead core with three carved trial marks.",
+      "inventoryIcon": {"status": "planned"},
+      "avatarLayers": {
+        "traveller": {"status": "planned", "gateCode": "NECK_CONFLICT_QA_REQUIRED"},
+        "scholar": {"status": "planned", "gateCode": "NECK_CONFLICT_QA_REQUIRED", "replaces": ["amulet"]}
+      }
+    },
+    {
+      "id": "w4",
+      "slot": "weapon",
+      "name": "Клинок Рассветной Клятвы",
+      "rarity": "legendary",
+      "level": 18,
+      "cost": 3200,
+      "stats": {"xpPct": 15, "goldPct": 6},
+      "design": "Bright oath blade with sunrise paper layers and a lightning-shaped guard.",
+      "inventoryIcon": {"status": "planned"},
+      "avatarLayers": {
+        "traveller": {"status": "planned", "gateCode": "WEAPON_GRIP_POSE_MISSING", "optionalLayers": ["effect"]},
+        "scholar": {"status": "planned", "gateCode": "WEAPON_GRIP_POSE_MISSING", "optionalLayers": ["effect"]}
+      }
+    },
+    {
+      "id": "a4",
+      "slot": "armor",
+      "name": "Доспех Несгибаемого",
+      "rarity": "legendary",
+      "level": 19,
+      "cost": 3200,
+      "stats": {"hardXpPct": 24, "xpPct": 5},
+      "design": "Layered dragon-scale armor with a warm gold core and original crest.",
+      "inventoryIcon": {"status": "planned"},
+      "avatarLayers": {
+        "traveller": {"status": "planned", "gateCode": "OUTFIT_REPLACEMENT_REQUIRED", "bundleType": "full-body-armor"},
+        "scholar": {"status": "planned", "gateCode": "OUTFIT_REPLACEMENT_REQUIRED", "bundleType": "full-body-armor"}
+      }
+    },
+    {
+      "id": "m4",
+      "slot": "amulet",
+      "name": "Сердце Десятиборца",
+      "rarity": "legendary",
+      "level": 20,
+      "cost": 3000,
+      "stats": {"goldPct": 24, "xpPct": 6},
+      "design": "Faceted heart relic divided into ten radial disciplines.",
+      "inventoryIcon": {"status": "planned"},
+      "avatarLayers": {
+        "traveller": {"status": "planned", "gateCode": "NECK_CONFLICT_QA_REQUIRED", "optionalLayers": ["effect"]},
+        "scholar": {"status": "planned", "gateCode": "NECK_CONFLICT_QA_REQUIRED", "replaces": ["amulet"], "optionalLayers": ["effect"]}
+      }
+    }
+  ],
+  "pilot": {
+    "item": "w1",
+    "build": "build_w1_pilot.py",
+    "qa": "qa-report.json",
+    "contactSheet": "previews/w1-contact-sheet.png",
+    "result": "Inventory icon passed. Avatar placement and masks passed file QA but stopped at WEAPON_GRIP_POSE_MISSING."
+  }
+}

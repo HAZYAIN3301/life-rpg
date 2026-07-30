@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title">
+  <title id="title">Reward Shop</title>
+  <style>
+  .paper-primary {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .paper-accent {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.45;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: .48;
+  }
+  .paper-fill {
+    fill: currentColor;
+    stroke: none;
+  }
+</style>
+  <g class="paper-primary"><path d="M4 9v12h16V9M3 9l2-6h14l2 6"/><path d="M3 9c0 2 3 2.4 4 0 1 2.4 4 2.4 5 0 1 2.4 4 2.4 5 0 1 2.4 4 2 4 0M8 14h8v7H8z"/></g><g class="paper-accent"><path d="M8 3 7 9M12 3v6M16 3l1 6"/></g>
+</svg>

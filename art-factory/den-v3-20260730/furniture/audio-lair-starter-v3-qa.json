@@ -1,0 +1,143 @@
+{
+  "batch": "audio-lair-starter-furniture-v3",
+  "date": "2026-07-30",
+  "canvasContract": "tight alpha PNG; long subject edge <= 960 px; canvas rounded to 16 px",
+  "items": [
+    {
+      "id": "surface-crate",
+      "slot": "surface",
+      "file": "surface-crate-v3.png",
+      "sourceCanvas": [
+        1448,
+        1086
+      ],
+      "sourceAlphaBBox": [
+        120,
+        169,
+        1319,
+        963
+      ],
+      "scale": 0.800667,
+      "normalizedCanvas": [
+        1024,
+        704
+      ],
+      "normalizedAlphaBBox": [
+        32,
+        44,
+        992,
+        680
+      ],
+      "contactBaselinePx": 680,
+      "mode": "RGBA",
+      "alpha": true,
+      "transparentCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaPixels": 411434,
+      "opaquePixels": 400299,
+      "partialPixels": 11135,
+      "coverage": 0.570726,
+      "chromaLikePixels": 1,
+      "chromaLikeRatio": 2.43e-06,
+      "chromaEdgePixels": 30,
+      "chromaEdgeRatio": 0.00269421,
+      "sha256": "77d59dda50379d2e15f674211e472da1da1aee2ea94b9eafd936572b56b9a5ed",
+      "result": "PASS"
+    },
+    {
+      "id": "comfort-bonsai",
+      "slot": "comfort",
+      "file": "comfort-bonsai-v3.png",
+      "sourceCanvas": [
+        1122,
+        1402
+      ],
+      "sourceAlphaBBox": [
+        136,
+        171,
+        1015,
+        1255
+      ],
+      "scale": 0.885609,
+      "normalizedCanvas": [
+        848,
+        1024
+      ],
+      "normalizedAlphaBBox": [
+        35,
+        40,
+        813,
+        1000
+      ],
+      "contactBaselinePx": 1000,
+      "mode": "RGBA",
+      "alpha": true,
+      "transparentCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaPixels": 411221,
+      "opaquePixels": 368902,
+      "partialPixels": 42319,
+      "coverage": 0.473565,
+      "chromaLikePixels": 0,
+      "chromaLikeRatio": 0.0,
+      "chromaEdgePixels": 12,
+      "chromaEdgeRatio": 0.00028356,
+      "sha256": "106775b1bbd058427fa1ef40244650994aefd143d5c54ca371260dfb24af0d49",
+      "result": "PASS"
+    },
+    {
+      "id": "keepsake-blades",
+      "slot": "keepsake",
+      "file": "keepsake-blades-v3.png",
+      "sourceCanvas": [
+        1122,
+        1402
+      ],
+      "sourceAlphaBBox": [
+        176,
+        57,
+        929,
+        1336
+      ],
+      "scale": 0.750586,
+      "normalizedCanvas": [
+        640,
+        1024
+      ],
+      "normalizedAlphaBBox": [
+        37,
+        40,
+        602,
+        1000
+      ],
+      "contactBaselinePx": 1000,
+      "mode": "RGBA",
+      "alpha": true,
+      "transparentCorners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaPixels": 247615,
+      "opaquePixels": 238545,
+      "partialPixels": 9070,
+      "coverage": 0.377831,
+      "chromaLikePixels": 0,
+      "chromaLikeRatio": 0.0,
+      "chromaEdgePixels": 0,
+      "chromaEdgeRatio": 0.0,
+      "sha256": "acc998916c81cab5c9d9102dc5a431a42e7d01a9b131963dfb8a1b958f7debf9",
+      "result": "PASS"
+    }
+  ],
+  "result": "PASS"
+}

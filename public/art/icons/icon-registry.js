@@ -24,7 +24,7 @@ window.SatoruIconRegistry = Object.freeze({
     "publicPath": "/art/icons/ui/nav-habits.svg",
     "fallback": "🔁",
     "motion": [
-      "leaf-grow"
+      "cycle-accelerate"
     ]
   },
   "nav.rewards": {
@@ -42,7 +42,7 @@ window.SatoruIconRegistry = Object.freeze({
     "publicPath": "/art/icons/ui/nav-hero.svg",
     "fallback": "🧍",
     "motion": [
-      "breathe"
+      "hero-rise"
     ]
   },
   "nav.tribe": {
@@ -351,6 +351,42 @@ window.SatoruIconRegistry = Object.freeze({
       "page-turn"
     ]
   },
+  "ambient.rain": {
+    "id": "ambient.rain",
+    "kind": "ui-glyph",
+    "publicPath": "/art/icons/ui/ambient-rain.svg",
+    "fallback": null,
+    "motion": [
+      "drizzle"
+    ]
+  },
+  "ambient.fire": {
+    "id": "ambient.fire",
+    "kind": "ui-glyph",
+    "publicPath": "/art/icons/ui/ambient-fire.svg",
+    "fallback": null,
+    "motion": [
+      "ember-flicker"
+    ]
+  },
+  "ambient.noise": {
+    "id": "ambient.noise",
+    "kind": "ui-glyph",
+    "publicPath": "/art/icons/ui/ambient-noise.svg",
+    "fallback": null,
+    "motion": [
+      "waves"
+    ]
+  },
+  "ambient.birds": {
+    "id": "ambient.birds",
+    "kind": "ui-glyph",
+    "publicPath": "/art/icons/ui/ambient-birds.svg",
+    "fallback": null,
+    "motion": [
+      "chirp"
+    ]
+  },
   "system.focus": {
     "id": "system.focus",
     "kind": "ui-glyph",
@@ -385,6 +421,69 @@ window.SatoruIconRegistry = Object.freeze({
     "fallback": "🌙",
     "motion": [
       "moon-settle"
+    ]
+  },
+  "period.day": {
+    "id": "period.day",
+    "kind": "ui-glyph",
+    "publicPath": "/art/icons/ui/period-day.svg",
+    "fallback": "☀",
+    "motion": [
+      "sun-rise"
+    ]
+  },
+  "period.week": {
+    "id": "period.week",
+    "kind": "ui-glyph",
+    "publicPath": "/art/icons/ui/period-week.svg",
+    "fallback": "▦",
+    "motion": [
+      "page-flip"
+    ]
+  },
+  "period.streak": {
+    "id": "period.streak",
+    "kind": "ui-glyph",
+    "publicPath": "/art/icons/ui/period-streak.svg",
+    "fallback": "🔥",
+    "motion": [
+      "ember-flicker"
+    ]
+  },
+  "difficulty.hard": {
+    "id": "difficulty.hard",
+    "kind": "ui-glyph",
+    "publicPath": "/art/icons/ui/difficulty-hard.svg",
+    "fallback": "◆",
+    "motion": [
+      "summit-hit"
+    ]
+  },
+  "reward.voucher": {
+    "id": "reward.voucher",
+    "kind": "ui-glyph",
+    "publicPath": "/art/icons/ui/reward-voucher.svg",
+    "fallback": "◇",
+    "motion": [
+      "ticket-tear"
+    ]
+  },
+  "reward.season": {
+    "id": "reward.season",
+    "kind": "ui-glyph",
+    "publicPath": "/art/icons/ui/reward-season.svg",
+    "fallback": "⌁",
+    "motion": [
+      "path-step"
+    ]
+  },
+  "reward.shop": {
+    "id": "reward.shop",
+    "kind": "ui-glyph",
+    "publicPath": "/art/icons/ui/reward-shop.svg",
+    "fallback": "⌂",
+    "motion": [
+      "awning-open"
     ]
   },
   "status.xp": {
@@ -470,7 +569,7 @@ window.SatoruIconRegistry = Object.freeze({
   "system.rewards": {
     "id": "system.rewards",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/emblems/system-rewards-chest.png",
+    "publicPath": "/art/icons/emblems/system-rewards-chest-v2.png",
     "fallback": "🎁",
     "motion": [
       "lid-pop",
@@ -480,7 +579,7 @@ window.SatoruIconRegistry = Object.freeze({
   "status.gold": {
     "id": "status.gold",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/emblems/status-gold-token.png",
+    "publicPath": "/art/icons/emblems/status-gold-token-v2.png",
     "fallback": "🪙",
     "motion": [
       "coin-flip",
@@ -490,7 +589,7 @@ window.SatoruIconRegistry = Object.freeze({
   "status.energy": {
     "id": "status.energy",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/emblems/status-energy-lantern.png",
+    "publicPath": "/art/icons/emblems/status-energy-lantern-v2.png",
     "fallback": "🔋",
     "motion": [
       "liquid-slosh",
@@ -2218,6 +2317,15 @@ window.SatoruIconRegistry = Object.freeze({
     "motion": [
       "pulse",
       "glint"
+    ]
+  },
+  "scene.day-summary": {
+    "id": "scene.day-summary",
+    "kind": "game-emblem",
+    "publicPath": "/art/icons/scenes/day-summary-fisher.png",
+    "fallback": "☾",
+    "motion": [
+      "moon-fish"
     ]
   }
 });

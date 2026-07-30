@@ -1,0 +1,138 @@
+{
+  "wall-map": {
+    "sourceCanvas": [
+      1536,
+      1024
+    ],
+    "sampledKey": [
+      2,
+      249,
+      6
+    ],
+    "trimBox": [
+      114,
+      59,
+      1403,
+      925
+    ],
+    "canvas": [
+      1024,
+      688
+    ],
+    "visiblePixels": 559182,
+    "visibleCoverage": 0.793715,
+    "partialAlphaPixels": 10747,
+    "transparentCornersMaxAlpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "greenFringePixels": 0,
+    "alphaMin": 0,
+    "alphaMax": 255,
+    "sha256": "ef579523de9a3776e2a2db85a7d8ea2d55ad2f0746958744865beac7cb6dbfe7"
+  },
+  "seat-cushion": {
+    "sourceCanvas": [
+      1881,
+      836
+    ],
+    "sampledKey": [
+      3,
+      249,
+      3
+    ],
+    "trimBox": [
+      60,
+      252,
+      1820,
+      594
+    ],
+    "canvas": [
+      1024,
+      199
+    ],
+    "visiblePixels": 164639,
+    "visibleCoverage": 0.807941,
+    "partialAlphaPixels": 7205,
+    "transparentCornersMaxAlpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "greenFringePixels": 0,
+    "alphaMin": 0,
+    "alphaMax": 255,
+    "sha256": "2aea301e6918ff7575918a8ae4dfdddd8b71a32da56f1dbbfa7b3ddd3d56df03"
+  },
+  "light-lantern": {
+    "sourceCanvas": [
+      1254,
+      1254
+    ],
+    "sampledKey": [
+      3,
+      248,
+      4
+    ],
+    "trimBox": [
+      403,
+      10,
+      843,
+      1230
+    ],
+    "canvas": [
+      369,
+      1024
+    ],
+    "visiblePixels": 171907,
+    "visibleCoverage": 0.454954,
+    "partialAlphaPixels": 9677,
+    "transparentCornersMaxAlpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "greenFringePixels": 0,
+    "alphaMin": 0,
+    "alphaMax": 255,
+    "sha256": "ce8e5df67d42f084d6af909fe8b6aafe45bafbb6401d2b8c349688e970c7fb5d"
+  },
+  "floor-traveller": {
+    "sourceCanvas": [
+      1672,
+      941
+    ],
+    "sampledKey": [
+      3,
+      249,
+      3
+    ],
+    "trimBox": [
+      49,
+      136,
+      1620,
+      818
+    ],
+    "canvas": [
+      1024,
+      445
+    ],
+    "visiblePixels": 332813,
+    "visibleCoverage": 0.730366,
+    "partialAlphaPixels": 7211,
+    "transparentCornersMaxAlpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "greenFringePixels": 0,
+    "alphaMin": 0,
+    "alphaMax": 255,
+    "sha256": "dd7eb016419ee8a16b2e11cb0745e494ca098d510ea974211badc3841a0e15a3"
+  }
+}

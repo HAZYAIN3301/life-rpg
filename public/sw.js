@@ -1,8 +1,25 @@
 /* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    Стратегия: network-first для статики (всегда свежий код онлайн, офлайн — из кэша),
    /api/ — мимо SW (живые данные). Бамп CACHE при изменении набора шелла. */
-const CACHE = 'satoru-v70';
-const SHELL = ['./', 'index.html', 'app.js', 'styles.css', 'shadow-rig-v2.js', 'shadow-rig-v2-demo.html', 'art/icons/icon-registry.js', 'manifest.webmanifest', 'icon.svg'];
+const CACHE = 'satoru-v73';
+const SHELL = [
+  './', 'index.html', 'app.js', 'styles.css', 'shadow-rig-v2.js', 'shadow-rig-v2-demo.html',
+  'art/icons/icon-registry.js', 'art/icons/scenes/day-summary-fisher.png',
+  'art/gear/inventory/w1-training-blade.png',
+  'art/companions/shadow-v3-20260730/shadow-spark-calm.png',
+  'art/companions/shadow-v3-20260730/shadow-spirit-calm.png',
+  'art/companions/shadow-v3-20260730/shadow-guardian-calm.png',
+  'art/companions/shadow-v3-20260730/shadow-keeper-calm.png',
+  'art/den/v3/den-v3-runtime-1536x864.png',
+  'art/den/v3/furniture/wall-map.png',
+  'art/den/v3/furniture/seat-cushion.png',
+  'art/den/v3/furniture/surface-crate.png',
+  'art/den/v3/furniture/comfort-bonsai.png',
+  'art/den/v3/furniture/light-lantern.png',
+  'art/den/v3/furniture/keepsake-blades.png',
+  'art/den/v3/furniture/floor-traveller.png',
+  'manifest.webmanifest', 'icon.svg'
+];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()).catch(() => {}));

@@ -15,6 +15,10 @@ function satoruIconHTML(id, className = '', fallback = '') {
   return `<img class="${cls}" ${attrs} src="${icon.publicPath}" alt="" aria-hidden="true" decoding="async" />`;
 }
 
+function brandMarkHTML(className = '') {
+  return `<img class="brand-shadow-mark${className ? ` ${className}` : ''}" src="/art/companions/shadow-v3-20260730/shadow-spirit-calm.png?v=20260730-1" alt="" aria-hidden="true" decoding="async" />`;
+}
+
 function bossEmblemHTML(boss, className = '', fallback = '') {
   return satoruIconHTML((boss && boss.iconId) || 'system.achievement', className, fallback || (boss && boss.emoji) || '');
 }
@@ -23,7 +27,7 @@ function difficultyIconHTML(difficulty) {
   const map = {
     easy: ['difficulty.easy', '🌱'],
     normal: ['difficulty.normal', '⚔️'],
-    hard: ['status.streak', '🔥'],
+    hard: ['difficulty.hard', '◆'],
   };
   const [id, fallback] = map[difficulty] || [];
   return id ? satoruIconHTML(id, 'task-difficulty-icon', fallback) : '';
@@ -2716,7 +2720,8 @@ const AVATAR_ORIGIN_IDS = [
 ];
 function avatarOriginIconHTML(value, className = '') {
   const index = AVATARS.indexOf(value);
-  return satoruIconHTML(AVATAR_ORIGIN_IDS[index < 0 ? 0 : index], className, value || '◇');
+  if (index < 0) return `<span class="legacy-avatar-emoji ${className}" aria-hidden="true">${esc(value || '◇')}</span>`;
+  return satoruIconHTML(AVATAR_ORIGIN_IDS[index], className, value || '◇');
 }
 const TEST_USER = { name: 'Тестовый герой', email: 'test@satoru.local', password: 'test1234', avatar: '🧪' };
 
@@ -4391,16 +4396,88 @@ function bell(strong) {
 // звучит» — это speechSynthesis, встроен в браузер, €0 и безлимит. Поэтому голос не завязан ни на
 // ИИ-ключ, ни на Pro: работает у всех, включая Free. Только по кнопке — авто-озвучка навязчива,
 // а на iOS вдобавок блокируется без жеста юзера.
-let _ttsBtn = null, _ttsView = null;
+let _ttsBtn = null, _ttsView = null, _ttsRunId = 0, _ttsVoices = [];
 const TTS_LANG = { ru: 'ru-RU', en: 'en-US', de: 'de-DE', uk: 'uk-UA', es: 'es-ES' };
+const TTS_VOICE_HINTS = {
+  ru: ['milena', 'yuri', 'katya', 'alena', 'irina', 'maxim', 'tatyana', 'siri'],
+  en: ['siri', 'samantha', 'ava', 'daniel', 'alex', 'victoria'],
+  de: ['anna', 'markus', 'petra', 'yannick', 'siri'],
+  uk: ['lesya', 'ostap', 'siri'],
+  es: ['mónica', 'monica', 'jorge', 'paulina', 'siri'],
+};
 function ttsOK() { try { return 'speechSynthesis' in window && typeof SpeechSynthesisUtterance === 'function'; } catch { return false; } }
 function ttsOn() { return !State.settings || State.settings.tts !== false; }
+function ttsPrefs() {
+  const defaults = { voiceURI: '', rate: .92, pitch: .96 };
+  return Object.assign(defaults, (State.settings && State.settings.ttsPrefs) || {});
+}
+function ttsRefreshVoices() {
+  if (!ttsOK()) return [];
+  try { _ttsVoices = (speechSynthesis.getVoices() || []).slice(); } catch { _ttsVoices = []; }
+  return _ttsVoices;
+}
+function ttsVoiceScore(voice, code, selectedURI) {
+  const normalLang = String(voice.lang || '').replace('_', '-').toLowerCase();
+  const wanted = code.toLowerCase(), two = wanted.slice(0, 2);
+  if (normalLang.slice(0, 2) !== two) return -10000;
+  let score = normalLang === wanted ? 500 : 360;
+  if (voice.voiceURI === selectedURI) score += 10000;
+  if (voice.localService) score += 90;
+  if (voice.default) score += 25;
+  const name = String(voice.name || '').toLowerCase();
+  if (/premium|enhanced|natural|neural|siri/.test(name)) score += 220;
+  const hints = TTS_VOICE_HINTS[two] || [];
+  const hintIndex = hints.findIndex((hint) => name.includes(hint));
+  if (hintIndex >= 0) score += 180 - hintIndex * 8;
+  if (/compact|espeak|translate/.test(name)) score -= 180;
+  return score;
+}
+function ttsVoicesFor(code) {
+  const prefs = ttsPrefs();
+  const voices = (_ttsVoices.length ? _ttsVoices : ttsRefreshVoices()).slice();
+  return voices
+    .map((voice) => ({ voice, score: ttsVoiceScore(voice, code, prefs.voiceURI) }))
+    .filter((item) => item.score > -10000)
+    .sort((a, b) => b.score - a.score || String(a.voice.name).localeCompare(String(b.voice.name)))
+    .map((item) => item.voice);
+}
 function ttsVoiceFor(code) {
-  let vs = []; try { vs = speechSynthesis.getVoices() || []; } catch { return null; }
-  const two = code.slice(0, 2); const norm = (v) => (v.lang || '').replace('_', '-');
-  return vs.find((v) => norm(v) === code) || vs.find((v) => norm(v).slice(0, 2) === two) || null;
+  return ttsVoicesFor(code)[0] || null;
+}
+function ttsVoiceOptionsHTML() {
+  const code = TTS_LANG[lang()] || 'ru-RU';
+  const prefs = ttsPrefs(), voices = ttsVoicesFor(code);
+  const options = voices.map((voice) => {
+    const selected = prefs.voiceURI === voice.voiceURI ? ' selected' : '';
+    const quality = /premium|enhanced|natural|neural|siri/i.test(voice.name || '') ? ' · enhanced' : voice.localService ? ' · local' : '';
+    return `<option value="${esc(voice.voiceURI)}"${selected}>${esc(voice.name)} · ${esc(voice.lang || code)}${quality}</option>`;
+  }).join('');
+  return `<option value=""${prefs.voiceURI ? '' : ' selected'}>Автоматически — лучший доступный</option>${options}`;
+}
+function ttsChunks(text) {
+  const clean = String(text || '').replace(/\s+/g, ' ').trim().slice(0, 2400);
+  if (!clean) return [];
+  const sentences = clean.match(/[^.!?…]+[.!?…]+|[^.!?…]+$/g) || [clean];
+  const chunks = [];
+  let current = '';
+  for (const sentence of sentences) {
+    const next = `${current} ${sentence}`.trim();
+    if (next.length <= 240) { current = next; continue; }
+    if (current) chunks.push(current);
+    if (sentence.length <= 240) { current = sentence.trim(); continue; }
+    const words = sentence.trim().split(/\s+/);
+    current = '';
+    words.forEach((word) => {
+      const joined = `${current} ${word}`.trim();
+      if (joined.length > 220 && current) { chunks.push(current); current = word; }
+      else current = joined;
+    });
+  }
+  if (current) chunks.push(current);
+  return chunks;
 }
 function ttsStop() {
+  _ttsRunId++;
   try { speechSynthesis.cancel(); } catch {}
   if (_ttsBtn) { _ttsBtn.classList.remove('on'); _ttsBtn.innerHTML = satoruIconHTML('media.sound', 'tts-glyph', '◇'); }
   _ttsBtn = null; _ttsView = null;
@@ -4412,17 +4489,37 @@ function ttsSpeak(text, btn) {
   ttsStop();
   if (same) return; // повторный клик по той же кнопке = стоп
   const code = TTS_LANG[lang()] || 'ru-RU';
-  const u = new SpeechSynthesisUtterance(String(text).slice(0, 1200));
-  u.lang = code;
-  // Голоса грузятся асинхронно: если список ещё пуст — не назначаем voice, браузер сам возьмёт по u.lang.
-  const v = ttsVoiceFor(code); if (v) u.voice = v;
-  const done = () => { if (_ttsBtn === btn) ttsStop(); };
-  u.onend = done; u.onerror = done;
-  u.onboundary = () => { if (window.ShadowRig) window.ShadowRig.speechPulse(); };
+  const chunks = ttsChunks(text);
+  if (!chunks.length) return;
+  const prefs = ttsPrefs(), voice = ttsVoiceFor(code);
+  const runId = ++_ttsRunId;
   _ttsBtn = btn; _ttsView = State.view;
   if (btn) { btn.classList.add('on'); btn.innerHTML = satoruIconHTML('media.stop', 'tts-glyph', '◇'); }
   if (window.ShadowRig) window.ShadowRig.setGlobalState('speaking');
-  try { speechSynthesis.speak(u); } catch { ttsStop(); }
+  const speakChunk = (index, withVoice = true) => {
+    if (runId !== _ttsRunId || index >= chunks.length) {
+      if (runId === _ttsRunId && _ttsBtn === btn) ttsStop();
+      return;
+    }
+    const u = new SpeechSynthesisUtterance(chunks[index]);
+    u.lang = code;
+    u.rate = Math.max(.72, Math.min(1.18, Number(prefs.rate) || .92));
+    u.pitch = Math.max(.72, Math.min(1.18, Number(prefs.pitch) || .96));
+    if (voice && withVoice) u.voice = voice;
+    u.onboundary = () => { if (window.ShadowRig) window.ShadowRig.speechPulse(); };
+    u.onend = () => speakChunk(index + 1, true);
+    u.onerror = () => {
+      if (runId !== _ttsRunId) return;
+      if (voice && withVoice) { speakChunk(index, false); return; }
+      toast('Не удалось запустить выбранный голос — выбери другой в Настройках');
+      ttsStop();
+    };
+    try { speechSynthesis.speak(u); } catch {
+      if (voice && withVoice) speakChunk(index, false);
+      else ttsStop();
+    }
+  };
+  speakChunk(0);
 }
 // Текст берётся из ближайшего предка с [data-tts]. Сама кнопка-динамик из текста вырезается,
 // а вот кнопки-действия (у нуджей текст сообщения ЛЕЖИТ внутри <button class="nudge">) — остаются.
@@ -4440,6 +4537,14 @@ function ttsBtnHTML() {
   if (!ttsOK() || !ttsOn()) return '';
   const lbl = esc(t('Озвучить'));
   return `<button class="tts-btn" data-action="tts" title="${lbl}" aria-label="${lbl}">${satoruIconHTML('media.sound', 'tts-glyph', '◇')}</button>`;
+}
+function ttsSyncVoiceSelect() {
+  const select = document.getElementById('set-tts-voice');
+  if (select) select.innerHTML = ttsVoiceOptionsHTML();
+}
+if (ttsOK()) {
+  ttsRefreshVoices();
+  try { speechSynthesis.addEventListener('voiceschanged', () => { ttsRefreshVoices(); ttsSyncVoiceSelect(); }); } catch {}
 }
 // Обвязка готовой карточки-нуджа: помечаем её как источник текста и вкладываем кнопку внутрь.
 function withTts(html) {
@@ -4485,9 +4590,21 @@ function sfx(name, rarity) {
 function sfxLoot(rarity) { sfx('loot', rarity); } // вызывается из openChest (#20)
 
 // ============================================================
-//  Эмбиент-звук (синтез без файлов)
+//  Эмбиент-звук: процедурные слои с отдельными событиями
 // ============================================================
-let _ambientCtx = null, _ambientNodes = [];
+const AMBIENT_MODES = [
+  { id: 'off', label: 'Тишина', icon: 'media.stop' },
+  { id: 'rain', label: 'Дождь', icon: 'ambient.rain' },
+  { id: 'fire', label: 'Камин', icon: 'ambient.fire' },
+  { id: 'noise', label: 'Мягкий шум', icon: 'ambient.noise' },
+  { id: 'birds', label: 'Птицы', icon: 'ambient.birds' },
+];
+let _ambientCtx = null, _ambientNodes = [], _ambientTimers = [], _ambientRunId = 0;
+function ambientMeta(id) { return AMBIENT_MODES.find((item) => item.id === id) || AMBIENT_MODES[0]; }
+function nextAmbientMode(id) {
+  const index = Math.max(0, AMBIENT_MODES.findIndex((item) => item.id === id));
+  return AMBIENT_MODES[(index + 1) % AMBIENT_MODES.length].id;
+}
 
 function _ensureAmbientCtx() {
   if (!_ambientCtx) _ambientCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -4496,37 +4613,166 @@ function _ensureAmbientCtx() {
 }
 
 function _stopAmbient() {
-  _ambientNodes.forEach(n => { try { n.stop(); } catch {} try { n.disconnect(); } catch {} });
+  _ambientRunId++;
+  _ambientTimers.forEach((id) => clearInterval(id));
+  _ambientTimers = [];
+  _ambientNodes.forEach((n) => { try { n.stop(); } catch {} try { n.disconnect(); } catch {} });
   _ambientNodes = [];
+}
+
+function _ambientNoiseBuffer(ctx, seconds, color) {
+  const length = Math.max(1, Math.floor(ctx.sampleRate * seconds));
+  const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  let brown = 0, pink = 0;
+  for (let i = 0; i < length; i++) {
+    const white = Math.random() * 2 - 1;
+    brown = (brown + .022 * white) / 1.022;
+    pink = pink * .985 + white * .15;
+    data[i] = color === 'brown' ? brown * 3.2 : color === 'pink' ? pink * .72 : white;
+  }
+  return buffer;
+}
+
+function _ambientMaster(ctx, vol, scale) {
+  const gain = ctx.createGain();
+  gain.gain.value = Math.max(0, Math.min(1, vol / 100)) * scale;
+  gain.connect(ctx.destination);
+  _ambientNodes.push(gain);
+  return gain;
+}
+
+function _ambientLoop(ctx, buffer, destination, gainValue, filterType, frequency, q) {
+  const source = ctx.createBufferSource();
+  const filter = ctx.createBiquadFilter();
+  const gain = ctx.createGain();
+  source.buffer = buffer;
+  source.loop = true;
+  filter.type = filterType;
+  filter.frequency.value = frequency;
+  filter.Q.value = q || .7;
+  gain.gain.value = gainValue;
+  source.connect(filter).connect(gain).connect(destination);
+  source.start();
+  _ambientNodes.push(source, filter, gain);
+  return gain;
+}
+
+function _ambientNoiseBurst(ctx, destination, options) {
+  const opts = options || {};
+  const duration = opts.duration || .08;
+  const source = ctx.createBufferSource();
+  const filter = ctx.createBiquadFilter();
+  const gain = ctx.createGain();
+  const panner = typeof ctx.createStereoPanner === 'function' ? ctx.createStereoPanner() : null;
+  source.buffer = _ambientNoiseBuffer(ctx, duration, 'white');
+  filter.type = opts.filter || 'bandpass';
+  filter.frequency.value = opts.frequency || 2200;
+  filter.Q.value = opts.q || 1.2;
+  gain.gain.setValueAtTime(Math.max(.0001, opts.gain || .04), ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime + duration);
+  if (panner) {
+    panner.pan.value = opts.pan || 0;
+    source.connect(filter).connect(gain).connect(panner).connect(destination);
+  } else {
+    source.connect(filter).connect(gain).connect(destination);
+  }
+  source.onended = () => {
+    try { source.disconnect(); filter.disconnect(); gain.disconnect(); if (panner) panner.disconnect(); } catch {}
+  };
+  source.start();
+}
+
+function _ambientInterval(fn, ms) {
+  const runId = _ambientRunId;
+  const id = setInterval(() => { if (runId === _ambientRunId) fn(); }, ms);
+  _ambientTimers.push(id);
 }
 
 function _startRain(vol) {
   const ctx = _ensureAmbientCtx();
-  const bufLen = ctx.sampleRate * 2;
-  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-  const data = buf.getChannelData(0);
-  for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
-
-  const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
-  const lpf = ctx.createBiquadFilter(); lpf.type = 'lowpass'; lpf.frequency.value = 1400;
-  const gain = ctx.createGain(); gain.gain.value = (vol / 100) * 0.18;
-  src.connect(lpf).connect(gain).connect(ctx.destination);
-  src.start(); _ambientNodes.push(src, gain);
+  const master = _ambientMaster(ctx, vol, .72);
+  _ambientLoop(ctx, _ambientNoiseBuffer(ctx, 2.4, 'pink'), master, .14, 'bandpass', 1500, .35);
+  _ambientLoop(ctx, _ambientNoiseBuffer(ctx, 2.8, 'brown'), master, .16, 'lowpass', 620, .45);
+  _ambientInterval(() => {
+    const drops = Math.random() > .68 ? 2 : 1;
+    for (let i = 0; i < drops; i++) {
+      _ambientNoiseBurst(ctx, master, {
+        duration: .045 + Math.random() * .075,
+        frequency: 1450 + Math.random() * 3400,
+        q: 1.4 + Math.random() * 2,
+        gain: .035 + Math.random() * .055,
+        pan: Math.random() * 1.7 - .85,
+      });
+    }
+  }, 170);
 }
 
 function _startFire(vol) {
   const ctx = _ensureAmbientCtx();
-  const bufLen = ctx.sampleRate * 2;
-  const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-  const data = buf.getChannelData(0);
-  let last = 0;
-  for (let i = 0; i < bufLen; i++) { last = last * 0.998 + (Math.random() - 0.5) * 0.002; data[i] = last; }
+  const master = _ambientMaster(ctx, vol, .86);
+  const bed = _ambientLoop(ctx, _ambientNoiseBuffer(ctx, 2.8, 'brown'), master, .36, 'bandpass', 270, .5);
+  const flutter = ctx.createOscillator();
+  const flutterGain = ctx.createGain();
+  flutter.type = 'sine';
+  flutter.frequency.value = .19;
+  flutterGain.gain.value = .08;
+  flutter.connect(flutterGain).connect(bed.gain);
+  flutter.start();
+  _ambientNodes.push(flutter, flutterGain);
+  _ambientInterval(() => {
+    if (Math.random() < .76) {
+      _ambientNoiseBurst(ctx, master, {
+        duration: .025 + Math.random() * .09,
+        frequency: 520 + Math.random() * 1750,
+        q: .8 + Math.random() * 1.7,
+        gain: .08 + Math.random() * .16,
+        pan: Math.random() * 1.2 - .6,
+      });
+    }
+  }, 145);
+}
 
-  const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
-  const bpf = ctx.createBiquadFilter(); bpf.type = 'bandpass'; bpf.frequency.value = 300; bpf.Q.value = 0.4;
-  const gain = ctx.createGain(); gain.gain.value = (vol / 100) * 0.6;
-  src.connect(bpf).connect(gain).connect(ctx.destination);
-  src.start(); _ambientNodes.push(src, gain);
+function _startNoise(vol) {
+  const ctx = _ensureAmbientCtx();
+  const master = _ambientMaster(ctx, vol, .56);
+  _ambientLoop(ctx, _ambientNoiseBuffer(ctx, 3.1, 'pink'), master, .32, 'lowpass', 4200, .25);
+  _ambientLoop(ctx, _ambientNoiseBuffer(ctx, 2.7, 'brown'), master, .12, 'lowpass', 430, .4);
+}
+
+function _birdChirp(ctx, destination) {
+  const start = ctx.currentTime + .01;
+  const notes = Math.random() > .45 ? 3 : 2;
+  const root = 1120 + Math.random() * 720;
+  for (let i = 0; i < notes; i++) {
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const panner = typeof ctx.createStereoPanner === 'function' ? ctx.createStereoPanner() : null;
+    const at = start + i * (.095 + Math.random() * .04);
+    oscillator.type = i % 2 ? 'sine' : 'triangle';
+    oscillator.frequency.setValueAtTime(root * (.92 + i * .12), at);
+    oscillator.frequency.exponentialRampToValueAtTime(root * (1.18 + i * .1), at + .07);
+    gain.gain.setValueAtTime(.0001, at);
+    gain.gain.exponentialRampToValueAtTime(.055, at + .012);
+    gain.gain.exponentialRampToValueAtTime(.0001, at + .12);
+    if (panner) {
+      panner.pan.value = Math.random() * 1.4 - .7;
+      oscillator.connect(gain).connect(panner).connect(destination);
+    } else {
+      oscillator.connect(gain).connect(destination);
+    }
+    oscillator.onended = () => { try { oscillator.disconnect(); gain.disconnect(); if (panner) panner.disconnect(); } catch {} };
+    oscillator.start(at);
+    oscillator.stop(at + .13);
+  }
+}
+
+function _startBirds(vol) {
+  const ctx = _ensureAmbientCtx();
+  const master = _ambientMaster(ctx, vol, .8);
+  _ambientLoop(ctx, _ambientNoiseBuffer(ctx, 3.4, 'pink'), master, .018, 'lowpass', 1500, .25);
+  _birdChirp(ctx, master);
+  _ambientInterval(() => { if (Math.random() < .42) _birdChirp(ctx, master); }, 900);
 }
 
 function applyAmbient() {
@@ -4534,22 +4780,24 @@ function applyAmbient() {
   const amb = (State.settings && State.settings.ambient) || {};
   if (!amb.mode || amb.mode === 'off') return;
   const vol = amb.vol != null ? amb.vol : 60;
-  if (amb.mode === 'rain') _startRain(vol);
-  else if (amb.mode === 'fire') _startFire(vol);
+  try {
+    if (amb.mode === 'rain') _startRain(vol);
+    else if (amb.mode === 'fire') _startFire(vol);
+    else if (amb.mode === 'noise') _startNoise(vol);
+    else if (amb.mode === 'birds') _startBirds(vol);
+  } catch {
+    toast('Не удалось запустить эмбиент в этом браузере');
+  }
 }
 
 function ambientCard() {
   const amb = (State.settings && State.settings.ambient) || {};
   const mode = amb.mode || 'off', vol = amb.vol != null ? amb.vol : 60;
-  const btn = (m, label, active) => `<button class="btn${active ? '' : ' ghost'} sm" data-action="set-ambient" data-mode="${m}">${label}</button>`;
+  const buttons = AMBIENT_MODES.map((item) => `<button class="btn${mode === item.id ? '' : ' ghost'} sm ambient-choice" data-action="set-ambient" data-mode="${item.id}">${satoruIconHTML(item.icon, 'button-glyph', '◇')} ${item.label}</button>`).join('');
   return `<div class="card">
-    <h3>${t('🔊 Эмбиент-звук')}</h3>
-    <p class="muted" style="font-size:13px;margin-bottom:10px">Фоновый звук без файлов — синтез прямо в браузере.</p>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-      ${btn('off', t('⏹ Выкл'), mode === 'off')}
-      ${btn('rain', t('🌧 Дождь'), mode === 'rain')}
-      ${btn('fire', t('🔥 Костёр'), mode === 'fire')}
-    </div>
+    <h3 class="icon-heading">${satoruIconHTML('media.sound', 'heading-emblem', '◇')} ${t('Эмбиент-звук')}</h3>
+    <p class="muted" style="font-size:13px;margin-bottom:10px">У каждого режима свой звуковой рисунок и реакция Логова: капли, треск камина, наушники или птица у окна.</p>
+    <div class="ambient-choices">${buttons}</div>
     ${mode !== 'off' ? `<label style="display:flex;align-items:center;gap:10px;font-size:13px">
       <span>${t('Громкость')}</span>
       <input type="range" min="0" max="100" value="${vol}" data-action="set-ambient-vol" style="flex:1">
@@ -4712,7 +4960,7 @@ function renderLoginScreen() {
       </div>`;
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
-      <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>${t('Превращаем жизнь в игру')}</p></div>
+      <div class="auth-logo"><span class="auth-brand-mark">${brandMarkHTML()}</span><h1>Satoru</h1><p>${t('Превращаем жизнь в игру')}</p></div>
       ${pitch}
       <div class="auth-box">
         <button class="btn auth-cta" data-action="go-register" style="width:100%">${t('⚡ Начать — создать аккаунт')}</button>
@@ -4740,7 +4988,7 @@ function renderRegisterScreen() {
   const avatarPicker = AVATARS.map((a) => `<button type="button" class="av-btn ${a === State.regAvatar ? 'sel' : ''}" data-action="pick-avatar" data-av="${a}">${avatarOriginIconHTML(a, 'avatar-origin-icon')}</button>`).join('');
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
-      <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>${t('Создай аккаунт')}</p></div>
+      <div class="auth-logo"><span class="auth-brand-mark">${brandMarkHTML()}</span><h1>Satoru</h1><p>${t('Создай аккаунт')}</p></div>
       <div class="auth-box">
         <form id="register-form">
           <label>${t('Имя')}</label>
@@ -4765,7 +5013,7 @@ function renderRegisterScreen() {
 function renderResetScreen() {
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
-      <div class="auth-logo"><span>?</span><h1>Satoru</h1><p>${t('Восстановление доступа')}</p></div>
+      <div class="auth-logo"><span class="auth-brand-mark">${brandMarkHTML()}</span><h1>Satoru</h1><p>${t('Восстановление доступа')}</p></div>
       <div class="auth-box">
         <p class="muted" style="font-size:13px;margin:0 0 12px">${t('Введи email и код восстановления, который выдали при регистрации.')} ${t('Не сохранил код — напиши нам, восстановим вручную.')}</p>
         <form id="reset-form">
@@ -4979,7 +5227,7 @@ function renderHeader() {
       <div class="gold-pill" title="Золото">${satoruIconHTML('status.gold', 'header-emblem', '🪙')} ${goldBalance()}</div>
       <div class="streak" title="${t('Рекорд:')} ${longestStreak()} ${plural(longestStreak(), 'день', 'дня', 'дней')}">${satoruIconHTML('status.streak', 'header-emblem header-emblem--streak', '🔥')} ${streak} ${plural(streak, 'день', 'дня', 'дней')}</div>
       ${hypePct() > 0 ? `<div class="hype-chip" title="Хайп ×${hypeState().stacks}: бонус XP за добровольный выбор сложных квестов. Осталось ${hypeMinLeft()} мин.">${satoruIconHTML('status.streak', 'header-emblem', '🔥')} Хайп +${hypePct()}%</div>` : ''}
-      <button class="help-btn" data-action="show-guide" title="${t('Как играть')}">?</button>
+      <button class="help-btn" data-action="show-guide" title="${t('Как играть')}" aria-label="${t('Как играть')}">${satoruIconHTML('status.info', 'help-glyph', '?')}</button>
       ${proBadge}
       <button class="btn ghost logout-btn" data-action="logout" title="${t('Сменить профиль')}">${t('⇦ Выйти')}</button>
     </div>
@@ -6239,9 +6487,9 @@ function progressTrioCard() {
   const p = nestedProgress();
   const bar = (lbl, pct, sub, color) => `<div class="ptrio-item"><div class="ptrio-top"><span>${lbl}</span><span class="muted">${sub}</span></div><div class="ptrio-bar"><span style="width:${pct}%;background:${color}"></span></div></div>`;
   return `<div class="card ptrio-card" title="Перекрывающиеся круги прогресса — всегда что-то почти готово">
-    ${bar(`${satoruIconHTML('nav.today', 'inline-glyph', '◇')} День`, p.dayPct, p.dayTot ? `${p.dayDone}/${p.dayTot}` : '—', '#5fbf7a')}
-    ${bar(`${satoruIconHTML('nav.plan', 'inline-glyph', '◇')} Неделя`, p.weekPct, `${p.active}/7 дней`, '#4f9ff7')}
-    ${bar(`${satoruIconHTML('status.streak', 'inline-emblem', '◇')} Серия`, p.streakPct, `${p.streak}→${p.next}`, '#e0a23e')}</div>`;
+    ${bar(`${satoruIconHTML('period.day', 'period-glyph', '◇')} День`, p.dayPct, p.dayTot ? `${p.dayDone}/${p.dayTot}` : '—', '#5fbf7a')}
+    ${bar(`${satoruIconHTML('period.week', 'period-glyph', '◇')} Неделя`, p.weekPct, `${p.active}/7 дней`, '#4f9ff7')}
+    ${bar(`${satoruIconHTML('period.streak', 'period-glyph', '◇')} Серия`, p.streakPct, `${p.streak}→${p.next}`, '#e0a23e')}</div>`;
 }
 // ============================================================
 //  Живой компаньон (Finch-модель) — эмоциональный якорь удержания «через любовь»
@@ -7194,7 +7442,7 @@ function renderPets() {
       : `<div class="pet-name"><b>${esc(nm)}</b><button class="pet-edit" data-action="pet-rename" data-id="${s.id}" title="Переименовать">✎</button><span class="pet-badge" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span></div>`;
     // Клик по виду — хинт «что засчитывать в эту сферу» (боль Виолы: «как считать уровень творчества»).
     // Кормить питомца = записывать дела; хинт объясняет, какие именно.
-    const sub = `<p class="pet-sphere muted" data-action="pet-hint" data-id="${s.id}" title="${esc(tr.hint || '')}" style="cursor:help">${esc(tr.kind || 'Зверёк')}${nm !== s.name ? ` · сфера: ${esc(s.name)}` : ''} <span class="pet-hint-q">?</span></p>`;
+    const sub = `<p class="pet-sphere muted" data-action="pet-hint" data-id="${s.id}" title="${esc(tr.hint || '')}" style="cursor:help">${esc(tr.kind || 'Зверёк')}${nm !== s.name ? ` · сфера: ${esc(s.name)}` : ''} ${satoruIconHTML('status.info', 'pet-hint-icon', '◇')}</p>`;
     return `<div class="card pet-card">
       <div class="pet-art" data-action="pet-feed" data-id="${s.id}" title="приласкать ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits, s.id, idle)}</div>
       ${nameRow}${sub}
@@ -7202,12 +7450,12 @@ function renderPets() {
       ${activeSpecies === 'fortune' ? fortuneControlsHTML(s.id) : ''}
       <div class="pet-bar"><span style="width:${Math.min(100, Math.round(st.pct / 120 * 100))}%;background:${meta.color}"></span></div>
       <p class="pet-line muted">${line}</p>
-      <div class="pet-traits" title="облик и повадки питомца — по твоим подсферам">${traits.map((trait) => `<span>${petTraitIconHTML(trait, 'pet-trait-icon')}</span>`).join('')}</div>
+      <div class="pet-traits" aria-label="Черты питомца">${traits.map((trait) => `<span class="pet-trait-chip" title="${esc(trait.hint || trait.kind || '')}">${petTraitIconHTML(trait, 'pet-trait-icon')}<small>${esc(trait.kind || 'Черта')}</small></span>`).join('')}</div>
     </div>`;
   }).join('');
   return `${companionCard()}
     <div class="card pet-intro">
-      <h3>🐾 Зверинец сфер</h3>
+      <h3 class="icon-heading">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} Зверинец сфер</h3>
       <p class="muted">Твой спутник присматривает за зверинцем. Каждая основная сфера жизни — живой питомец: делаешь что-то в сфере — кормишь его; забыл — голодает; перекосил всё в одну — разжиреет. Здоровый зверинец = ты держишь <b>десятиборье</b> в балансе. Облик и повадки питомца зависят от твоих подсфер. Через заботу, не вину. <i>Погладь питомца — он будет рад.</i></p>
       <p class="pet-balance">${balance}</p>
     </div>
@@ -7238,6 +7486,15 @@ const DEN_SLOT_META = {
   keepsake: { name: 'Реликвия', empty: 'Без реликвии' },
   floor: { name: 'Ковёр', empty: 'Чистый пол' },
 };
+const DEN_V3_ITEM_FILES = {
+  'wall-map': 'wall-map.png',
+  'seat-cushion': 'seat-cushion.png',
+  'surface-crate': 'surface-crate.png',
+  'comfort-bonsai': 'comfort-bonsai.png',
+  'light-lantern': 'light-lantern.png',
+  'keepsake-blades': 'keepsake-blades.png',
+  'floor-traveller': 'floor-traveller.png',
+};
 const DEN_ITEMS = [
   { id: 'wall-map', slot: 'wall', name: 'Карта странника', access: 'starter', level: 0, cost: 0, motion: 'drift' },
   { id: 'wall-moon', slot: 'wall', name: 'Лунный рыбак', access: 'level', level: 4, cost: 180, motion: 'glint' },
@@ -7260,7 +7517,14 @@ const DEN_ITEMS = [
   { id: 'floor-traveller', slot: 'floor', name: 'Ковёр путника', access: 'starter', level: 0, cost: 0, motion: 'still' },
   { id: 'floor-yin', slot: 'floor', name: 'Ковёр равновесия', access: 'level', level: 4, cost: 220, motion: 'drift' },
   { id: 'floor-pixel', slot: 'floor', name: 'Кубическая поляна', access: 'pro', level: 0, cost: 0, motion: 'glint' },
-].map((item) => ({ ...item, src: `/art/den/v2/${item.id}.svg` }));
+].map((item) => {
+  const v3File = DEN_V3_ITEM_FILES[item.id];
+  return {
+    ...item,
+    artVersion: v3File ? 'v3' : 'v2',
+    src: v3File ? `/art/den/v3/furniture/${v3File}?v=20260730-1` : `/art/den/v2/${item.id}.svg`,
+  };
+});
 const DEN_STARTER_SLOTS = {
   wall: 'wall-map', seat: 'seat-cushion', surface: 'surface-crate',
   comfort: 'comfort-bonsai', light: 'light-lantern',
@@ -7337,35 +7601,26 @@ function denWindow(hr) {
 }
 function denSceneSVG(theme, light) {
   const hr = denLightHour(light);
-  const w = denWindow(hr);
-  const isNight = hr < 6 || hr >= 20;
-  return `<svg class="den-room" viewBox="0 0 720 430" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <defs>
-      <linearGradient id="den-wall-v2" x1="0" y1="0" x2="0" y2="1"><stop stop-color="${theme.wall2}"/><stop offset="1" stop-color="${theme.wall}"/></linearGradient>
-      <linearGradient id="den-floor-v2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${theme.floor}"/><stop offset="1" stop-color="${theme.wall}"/></linearGradient>
-      <radialGradient id="den-light-v2" cx="72%" cy="22%" r="68%"><stop stop-color="${theme.glow}" stop-opacity="${isNight ? '.23' : '.12'}"/><stop offset="1" stop-color="${theme.wall}" stop-opacity="0"/></radialGradient>
-      <filter id="den-paper-v2"><feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="31"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .045"/></feComponentTransfer><feBlend in="SourceGraphic" mode="multiply"/></filter>
-    </defs>
-    <g filter="url(#den-paper-v2)">
-      <path d="M0 0 H720 V284 H0Z" fill="url(#den-wall-v2)"/>
-      <path d="M0 284 H720 V430 H0Z" fill="url(#den-floor-v2)"/>
-      <path d="M0 284 L360 230 720 284 M360 230 V430 M0 357 H720" fill="none" stroke="${theme.trim}" stroke-opacity=".16" stroke-width="3"/>
-      <path d="M0 0 H720 V430 H0Z" fill="url(#den-light-v2)"/>
-      <rect x="536" y="50" width="132" height="126" rx="14" fill="${w.sky}" stroke="${theme.trim}" stroke-width="9"/>
-      ${w.extra}
-      <path d="M602 50 V176 M536 113 H668" stroke="${theme.trim}" stroke-width="5" opacity=".72"/>
-      <path d="M520 181 H684" stroke="${theme.trim}" stroke-width="11" stroke-linecap="round"/>
-      <path d="M38 44 H251" stroke="${theme.trim}" stroke-width="7" opacity=".35" stroke-linecap="round"/>
-      <path d="M46 54 H243" stroke="${theme.trim}" stroke-width="2" opacity=".2"/>
-    </g>
-  </svg>`;
+  const phase = hr >= 6 && hr < 11 ? 'morning' : hr >= 11 && hr < 17 ? 'day' : hr >= 17 && hr < 20 ? 'sunset' : 'night';
+  return `<img class="den-room den-room-art" src="/art/den/v3/den-v3-runtime-1536x864.png?v=20260730-1" alt="" aria-hidden="true" decoding="async" draggable="false">
+    <span class="den-room-colorwash" data-phase="${phase}" style="--den-room-wall:${theme.wall2};--den-room-glow:${theme.glow}"></span>`;
 }
 function denObjectsHTML(den) {
   return Object.entries(den.slots).map(([slot, id]) => {
     const item = denItem(id);
     if (!item || item.slot !== slot || !denOwned(id)) return '';
-    return `<img class="den-object den-object-${slot}" data-den-motion="${item.motion}" src="${item.src}" alt="" aria-hidden="true" decoding="async" draggable="false">`;
+    return `<img class="den-object den-object-${slot}" data-den-id="${esc(item.id)}" data-den-art="${item.artVersion}" data-den-motion="${item.motion}" src="${item.src}" alt="" aria-hidden="true" decoding="async" draggable="false">`;
   }).join('');
+}
+function denAmbientVisualHTML(mode) {
+  const rain = Array.from({ length: 13 }, (_, i) => `<i style="--i:${i};--x:${(i * 37) % 100};--d:${(i % 5) * .17}s"></i>`).join('');
+  return `<div class="den-ambient-visual" data-mode="${esc(mode)}" aria-hidden="true">
+    <span class="den-fire-glow"></span>
+    <span class="den-fire-flame"><i></i><b></b></span>
+    <span class="den-window-rain">${rain}</span>
+    <span class="den-window-bird">${satoruIconHTML('ambient.birds', 'den-bird-glyph', '◇')}</span>
+    <span class="den-noise-headphones">${satoruIconHTML('ambient.noise', 'den-headphone-glyph', '◇')}</span>
+  </div>`;
 }
 function denAccessChip(entry, owned, selected) {
   if (selected) return `<span class="den-choice-state">${satoruIconHTML('action.check', 'den-mini-glyph', '✓')} стоит</span>`;
@@ -7399,7 +7654,7 @@ function denEditorHTML(den) {
   const lightModes = [['auto', 'Авто'], ['morning', 'Утро'], ['day', 'День'], ['sunset', 'Закат'], ['night', 'Ночь']]
     .map(([id, label]) => `<button class="den-pill${den.light === id ? ' is-selected' : ''}" data-action="den-light" data-value="${id}">${label}</button>`).join('');
   const petModes = [0, 1, 2, 3].map((n) => `<button class="den-pill${den.petCount === n ? ' is-selected' : ''}" data-action="den-pet-count" data-value="${n}">${n || 'без'} ${n === 1 ? 'питомец' : 'питомца'}</button>`).join('');
-  return `<div class="den-editor">
+  return `<div class="den-editor" id="den-editor" tabindex="-1">
     <div class="den-editor-title"><div><span>ROOM EDITOR</span><h3>Собери место, куда хочется возвращаться</h3></div><button class="btn ghost sm" data-action="den-reset">Сбросить комнату</button></div>
     <section class="den-editor-group"><h4>Атмосфера</h4><div class="den-theme-grid">${themeCards}</div></section>
     <section class="den-editor-group den-editor-compact"><h4>Свет</h4><div class="den-pill-row">${lightModes}</div><h4>Обитатели</h4><div class="den-pill-row">${petModes}</div></section>
@@ -7569,23 +7824,24 @@ function renderDen() {
   const avatarState = denAvatarState(eP, p, tm);
   const amb = (State.settings && State.settings.ambient) || {};
   const ambientMode = amb.mode || 'off';
-  const ambientLabel = ambientMode === 'rain' ? 'Дождь' : ambientMode === 'fire' ? 'Костёр' : 'Тишина';
+  const ambient = ambientMeta(ambientMode);
   const focusRow = tm
     ? `<div class="den-focus den-focus-on"><span>${satoruIconHTML('system.focus', 'den-row-glyph', '◇')} Фокус идёт</span><b class="den-clock">${fmtClock(timerElapsedMs())}</b><button class="btn ghost sm" data-action="goto-today">К таймеру</button></div>`
     : `<div class="den-focus"><span>${satoruIconHTML('system.focus', 'den-row-glyph', '◇')} Готов к делу?</span><button class="btn sm" data-action="goto-today">Начать фокус</button></div>`;
   return `<div class="den-shell">
     <div class="card den-card">
-    <div class="den-scene" data-den-theme="${theme.id}" data-den-light="${den.light}">
+    <div class="den-scene" data-den-theme="${theme.id}" data-den-light="${den.light}" data-den-ambient="${ambientMode}">
       ${denSceneSVG(theme, den.light)}
       ${denObjectsHTML(den)}
+      ${denAmbientVisualHTML(ambientMode)}
       <div class="den-room-vignette"></div>
-      <button class="den-companion" data-action="comp-pet" title="Погладить ${esc(c.name)}">${shadowVideo(ti, mood.face, 'den')}<span>${esc(c.name)}</span></button>
+      <button class="den-companion" data-action="comp-pet" title="Погладить ${esc(c.name)}">${shadowVideo(ti, mood.face, 'den')}<span class="den-companion-name">${esc(c.name)}</span></button>
       <div class="den-avatar den-avatar-raster" data-state="${avatarState}">${avatarArtHTML({ className: 'avatar-art-stack--den', faceState: denAvatarFace(avatarState), motion: avatarState, interactive: true })}<span class="den-avatar-shadow"></span></div>
       ${petLayer}
       <div class="den-tag">${rankIconHTML(cr, 'rank-inline-icon')} <span>${esc(nm)}</span><small>ур.${charLevel()}</small></div>
       <div class="den-scene-tools">
-        <button data-action="den-ambient-cycle" title="Эмбиент: ${ambientLabel}">${satoruIconHTML('media.sound', 'den-tool-glyph', '◇')}<span>${ambientLabel}</span></button>
-        <button class="${State._denEdit ? 'is-active' : ''}" data-action="den-toggle-edit" title="${State._denEdit ? 'Закрыть редактор комнаты' : 'Обставить комнату'}" aria-label="${State._denEdit ? 'Закрыть редактор комнаты' : 'Обставить комнату'}">${satoruIconHTML('action.edit', 'den-tool-glyph', '◇')}<span>${State._denEdit ? 'Готово' : 'Обставить'}</span></button>
+        <button data-action="den-ambient-cycle" title="Эмбиент: ${ambient.label}">${satoruIconHTML(ambient.icon, 'den-tool-glyph', '◇')}<span>${ambient.label}</span></button>
+        <button class="${State._denEdit ? 'is-active' : ''}" data-action="den-toggle-edit" title="${State._denEdit ? 'Закрыть редактор комнаты' : 'Обставить комнату'}" aria-label="${State._denEdit ? 'Закрыть редактор комнаты' : 'Обставить комнату'}" aria-expanded="${State._denEdit ? 'true' : 'false'}" aria-controls="den-editor">${satoruIconHTML('action.edit', 'den-tool-glyph', '◇')}<span>${State._denEdit ? 'Готово' : 'Обставить'}</span></button>
       </div>
     </div>
     <div class="den-life-strip">
@@ -7599,7 +7855,7 @@ function renderDen() {
     ${focusRow}
     <div class="den-actions">
       <button class="btn ghost sm" data-action="go-wardrobe">${satoruIconHTML('nav.hero', 'button-glyph', '◇')} Гардероб</button>
-      <button class="btn ghost sm" data-action="goto-rewards">${satoruIconHTML('system.rewards', 'button-glyph', '◇')} Награды</button>
+      <button class="btn ghost sm" data-action="goto-rewards">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} Награды</button>
       <button class="btn ghost sm" data-action="goto-pets">${satoruIconHTML('system.pets', 'button-glyph', '◇')} Зверинец</button>
     </div>
     ${denEditorHTML(den)}
@@ -7803,7 +8059,7 @@ function renderToday() {
         <span class="th-kicker">Daily cockpit</span>
         <h2>${nextQuest ? 'Следующий ход уже выбран.' : todays.length ? 'День почти собран.' : 'Соберём первый квест на сегодня.'}</h2>
         <p class="th-sub">${nextQuest ? `Сейчас лучше не смотреть на всю систему — просто закрой следующий квест: <b>${esc(nextQuest.title)}</b>.` : todays.length ? 'Основной список уже на месте. Добей хвосты, забери награды и закрой день спокойно.' : 'Начни с одного понятного действия. Остальные системы подождут за кулисами.'}</p>
-        <div class="th-actions">${nextAction}<button class="btn ghost" data-action="goto-rewards">${satoruIconHTML('system.rewards', 'button-emblem', '🎁')} ${t('Награды')}</button></div>
+        <div class="th-actions">${nextAction}<button class="btn ghost" data-action="goto-rewards">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Награды')}</button></div>
       </div>
       <div class="th-stats">
         <div class="th-stat"><b>${donePct}%</b><span>готово</span></div>
@@ -7833,7 +8089,7 @@ function renderToday() {
     <div class="card card-habits"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🔁')} ${t('🔁 Привычки на сегодня').replace(/^🔁\s*/, '')}</h3>
       ${habits.length ? `<ul class="tasks">${habits.map(habitRow).join('')}</ul>` : '<p class="muted">На сегодня привычек нет. Добавь их в «Настройках».</p>'}</div>
     ${antiHabitsCard()}
-    <div class="card shutdown"><h3>${satoruIconHTML('system.day-end', 'heading-glyph', '🌙')} ${t('Итог дня')}</h3>
+    <div class="card shutdown"><h3>${satoruIconHTML('scene.day-summary', 'day-summary-emblem', '☾')} ${t('Итог дня')}</h3>
       <p class="muted">Квестов ${doneCount}/${todays.length} · привычек ${habits.filter((h) => habitDone(h, today)).length}/${habits.length} · ${fmtDur(minToday)} · +${xpToday} XP · +${goldToday} ${satoruIconHTML('status.gold', 'inline-emblem', '◇')}</p>
       <textarea id="reflection" placeholder="Рефлексия: что получилось, что перенести, как себя чувствую…">${esc(day.reflection || '')}</textarea>
       <div style="margin-top:10px"><button class="${day.closed ? 'btn ghost' : 'btn'}" data-action="${day.closed ? 'reopen-day' : 'close-day'}">${day.closed ? '✓ День закрыт — открыть заново' : 'Закрыть день'}</button></div></div></div>`;
@@ -8392,14 +8648,14 @@ function lootboxCard() {
   const hist = (lb.history || []).slice(0, 6).map((h) => `<li><span class="rar-dot" style="background:${(RARITY[h.rarity] || RARITY.common).color}"></span><span class="muted">${(h.at || '').slice(11, 16)}</span> ${esc(h.label)}</li>`).join('');
   const statusTxt = avail > 0 ? `Открыть (${avail})` : (nextTh ? `Ещё ${nextTh.need} ${plural(nextTh.need, 'дело', 'дела', 'дел')} до сундука` : 'На сегодня всё ✓');
   return `<div class="card lootbox-card">
-    <div class="lb-head"><h3>${satoruIconHTML('system.rewards', 'heading-emblem', '🎁')} Сундуки дня</h3>${boost ? `<span class="lb-boost">${satoruIconHTML('status.energy', 'inline-emblem', '⚡')} +${boost}% XP активен</span>` : ''}</div>
+    <div class="lb-head"><h3>${satoruIconHTML('nav.rewards', 'heading-glyph', '◇')} Сундуки дня</h3>${boost ? `<span class="lb-boost">${satoruIconHTML('status.energy', 'inline-emblem', '⚡')} +${boost}% XP активен</span>` : ''}</div>
     <div class="lb-body">
       <div class="lb-chest ${avail > 0 ? 'ready' : 'empty'}" ${avail > 0 ? 'data-action="open-chest"' : ''}>
         ${satoruIconHTML('system.rewards', `lb-emblem${avail > 0 ? ' is-ready' : ''}`, avail > 0 ? '🎁' : '📦')}<div class="lb-status">${statusTxt}</div>
       </div>
       <div class="lb-info">
         <p class="muted" style="font-size:12px;margin:0 0 8px">Выполняй квесты и привычки — за активность дают сундуки. Внутри: золото, XP-бусты, заряд энергии, <b>косметика</b> и <b>ваучеры наград</b>. ${isPro() ? 'Pro: до 3 сундуков в день.' : 'Free: 1 сундук в день.'}</p>
-        ${(lb.vouchers || 0) > 0 ? `<div class="voucher-chip" data-action="use-voucher">${satoruIconHTML('system.rewards', 'inline-emblem', '🎁')} Ваучер ×${lb.vouchers} — забери награду бесплатно</div>` : ''}
+        ${(lb.vouchers || 0) > 0 ? `<div class="voucher-chip" data-action="use-voucher">${satoruIconHTML('reward.voucher', 'inline-glyph', '◇')} Ваучер ×${lb.vouchers} — забери награду бесплатно</div>` : ''}
         ${lockedExtra > 0 && !isPro() ? `<button class="btn pro-cta sm" data-action="show-paywall" data-feature="Больше сундуков">${satoruIconHTML('status.lock', 'button-glyph', '🔒')} Ещё ${lockedExtra} ${plural(lockedExtra, 'сундук', 'сундука', 'сундуков')} — с Pro</button>` : ''}
       </div>
     </div>
@@ -8506,14 +8762,14 @@ function showVoucherReward() {
   if (document.getElementById('voucher-ov')) return;
   const rows = REWARD_CATALOG.map((c, i) => `<div class="rwc-row">
     <span class="rwc-ic">${rewardIconHTML(c, 'reward-catalog-icon')}</span><span class="rwc-name">${esc(c.name)}</span>
-    <span class="muted rwc-free" style="font-size:11px;color:var(--accent)">${satoruIconHTML('system.rewards', 'inline-emblem', '◇')} бесплатно</span>
+    <span class="muted rwc-free" style="font-size:11px;color:var(--accent)">${satoruIconHTML('reward.voucher', 'inline-glyph', '◇')} бесплатно</span>
     <button class="btn ghost sm" data-action="redeem-voucher" data-idx="${i}">Взять</button>
   </div>`).join('');
   const ov = document.createElement('div');
   ov.id = 'voucher-ov'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="guide-box">
     <button class="modal-x" data-action="close-voucher">✕</button>
-    <h2>${satoruIconHTML('system.rewards', 'heading-emblem', '◇')} ${t('Ваучер — бесплатная награда')}</h2>
+    <h2>${satoruIconHTML('reward.voucher', 'heading-glyph', '◇')} ${t('Ваучер — бесплатная награда')}</h2>
     <p class="muted">У тебя ${lb.vouchers} ${plural(lb.vouchers, 'ваучер', 'ваучера', 'ваучеров')}. Выбери любую награду из каталога — бесплатно!</p>
     <div class="rwc-list">${rows}</div>
   </div>`;
@@ -9136,7 +9392,7 @@ function showGuide() {
 //  Покупка за золото, открытие по уровню, по 1 предмету на слот. JJK-референсы.
 // ============================================================
 const GEAR = [
-  { id: 'w1', slot: 'weapon', name: 'Тренировочный клинок', icon: '🗡', rarity: 'common', xpPct: 3, cost: 120, lvl: 1 },
+  { id: 'w1', slot: 'weapon', name: 'Тренировочный клинок', icon: '🗡', inventoryArt: '/art/gear/inventory/w1-training-blade.png', rarity: 'common', xpPct: 3, cost: 120, lvl: 1 },
   { id: 'w2', slot: 'weapon', name: 'Клинок Фокуса', icon: '⚔️', rarity: 'rare', xpPct: 6, cost: 450, lvl: 5 },
   { id: 'w3', slot: 'weapon', name: 'Катана Бесконечности', icon: '🗡️', rarity: 'epic', xpPct: 11, cost: 1400, lvl: 12 },
   { id: 'a1', slot: 'armor', name: 'Лёгкая броня', icon: '🦺', rarity: 'common', hardXpPct: 5, cost: 120, lvl: 2 },
@@ -9178,6 +9434,10 @@ function genRelic(rarity) {
   return { uid: 'rel_' + uid(), sphere: sphere.id, xpPct: xp, rarity, name: `Реликвия: ${sphere.name}`, icon: RELIC_ICONS[rarity] || '🔱' };
 }
 function gearBonusLabel(it) { return it.xpPct ? `+${it.xpPct}% XP` : it.hardXpPct ? `+${it.hardXpPct}% XP к сложным` : `+${it.goldPct}% золота`; }
+function gearInventoryArtHTML(it) {
+  if (!it.inventoryArt) return satoruIconHTML(`gear.${it.id}`, 'gear-content-icon', it.icon);
+  return `<img class="satoru-icon satoru-icon--emblem gear-content-icon" data-gear-id="${esc(it.id)}" src="${esc(it.inventoryArt)}" alt="" aria-hidden="true" decoding="async" />`;
+}
 function arsenalCard() {
   const g = ensureGear(), bal = goldBalance(), lvl = charLevel(), gb = gearBonus();
   const slotHtml = GEAR_SLOTS.map((s) => {
@@ -9189,7 +9449,7 @@ function arsenalCard() {
       else if (locked) btn = `<button class="btn ghost sm" disabled>${satoruIconHTML('status.lock', 'button-glyph', '◇')} ур.${it.lvl}</button>`;
       else btn = `<button class="btn sm ${bal >= it.cost ? '' : 'disabled'}" data-action="buy-gear" data-id="${it.id}" ${bal >= it.cost ? '' : 'disabled'}>${satoruIconHTML('status.gold', 'button-emblem', '◇')} ${it.cost}</button>`;
       return `<div class="gear-item${equipped ? ' equipped' : ''}" style="${equipped ? `border-color:${rar.color}` : ''}">
-        <div class="gear-ic" style="color:${rar.color}">${satoruIconHTML(`gear.${it.id}`, 'gear-content-icon', it.icon)}</div>
+        <div class="gear-ic" style="color:${rar.color}">${gearInventoryArtHTML(it)}</div>
         <div class="gear-nm">${esc(it.name)}</div>
         <div class="gear-bonus" style="color:${rar.color}">${gearBonusLabel(it)}</div>${btn}</div>`;
     }).join('');
@@ -9224,12 +9484,12 @@ function renderRewards() {
         <h2>Награды должны чувствоваться как прогресс.</h2>
         <p class="muted">Сундуки, коллекция, арсенал и личные награды теперь собраны как единый locker / battle-pass слой, без казино-вайба.</p>
         <div class="th-actions">
-          ${chestReady ? `<button class="btn" data-action="open-chest">${satoruIconHTML('system.rewards', 'button-emblem', '🎁')} Открыть сундук ×${chestReady}</button>` : `<button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} Каталог наград</button>`}
+          ${chestReady ? `<button class="btn" data-action="open-chest">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} Открыть сундук ×${chestReady}</button>` : `<button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} Каталог наград</button>`}
           <button class="btn ghost" data-action="goto-today">${satoruIconHTML('nav.today', 'button-glyph', '🎯')} К делам</button>
         </div>
       </div>
       <div class="reward-track-preview" aria-hidden="true">
-        <span class="done">✓</span><i></i><span class="${chestReady ? 'ready' : ''}">${satoruIconHTML('system.rewards', 'track-emblem', '◇')}</span><i></i><span>${satoruIconHTML('achievement.collector_5', 'track-emblem', '◇')}</span><i></i><span class="cap">★</span>
+        <span class="done">✓</span><i></i><span class="${chestReady ? 'ready' : ''}">${satoruIconHTML('reward.season', 'track-glyph', '◇')}</span><i></i><span>${satoruIconHTML('achievement.collector_5', 'track-emblem', '◇')}</span><i></i><span class="cap">★</span>
       </div>
     </section>`;
   const cards = State.rewards.map((r) => `<div class="reward">
@@ -9255,7 +9515,7 @@ function renderRewards() {
       <div class="kpi"><div class="v">${ownedCos}/${COSMETICS.length}</div><div class="l">${t('Косметики')}</div></div>
       <div class="kpi"><div class="v">${achGot}/${ACHIEVEMENTS.length}</div><div class="l">${t('Достижений')}</div></div>
     </div>
-    <div class="card"><h3>${satoruIconHTML('system.rewards', 'heading-emblem', '🎁')} Магазин наград</h3><div class="rewards-grid">${cards || '<p class="muted">Наград пока нет — возьми готовые из каталога ↓</p>'}</div>
+    <div class="card"><h3>${satoruIconHTML('reward.shop', 'heading-glyph', '◇')} Магазин наград</h3><div class="rewards-grid">${cards || '<p class="muted">Наград пока нет — возьми готовые из каталога ↓</p>'}</div>
       <div class="settings-actions" style="margin:10px 0 4px"><button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} ${t('Каталог наград')}</button>${!isPro() ? `<span class="muted" style="font-size:12px">${State.rewards.length}/${FREE_REWARDS_MAX} наград (Free)</span>` : ''}</div>
       <form id="add-reward" class="reward-form">
         <input name="name" placeholder="Своя награда…" autocomplete="off" required />
@@ -9566,6 +9826,13 @@ function renderSettings() {
     <div class="card"><h3>${t('🔊 Звук')}</h3>
       <label class="sound-toggle"><input type="checkbox" data-action="toggle-sound" ${sfxOn() ? 'checked' : ''}/> ${t('Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)')}</label>
       ${ttsOK() ? `<label class="sound-toggle"><input type="checkbox" data-action="toggle-tts" ${ttsOn() ? 'checked' : ''}/> ${t('Кнопка 🔊 — озвучить голосом Тени (реплики, подсказки, ответы Помощника)')}</label>` : ''}
+      ${ttsOK() && ttsOn() ? `<div class="tts-settings">
+        <label><span>Голос Тени</span><select id="set-tts-voice" data-action="set-tts-voice">${ttsVoiceOptionsHTML()}</select></label>
+        <label><span>Скорость <b>${Number(ttsPrefs().rate).toFixed(2)}×</b></span><input type="range" min="0.72" max="1.18" step="0.02" value="${ttsPrefs().rate}" data-action="set-tts-rate"></label>
+        <label><span>Тон <b>${Number(ttsPrefs().pitch).toFixed(2)}</b></span><input type="range" min="0.72" max="1.18" step="0.02" value="${ttsPrefs().pitch}" data-action="set-tts-pitch"></label>
+        <button class="btn ghost sm" data-action="tts-preview">${satoruIconHTML('media.sound', 'button-glyph', '◇')} Прослушать Тень</button>
+        <small class="muted">На Mac обычно лучше звучит Milena/Yuri Enhanced или Siri; выбор сохраняется на аккаунте.</small>
+      </div>` : ''}
       <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">${t('▶ Проверить звук')}</button></div>
     <div class="card"><h3>🕯 ${t('Тень')}</h3>
       <p class="muted" style="font-size:13px;margin:0 0 10px">${t('Утром и вечером Тень встречает тебя один раз — говорит по твоему состоянию и зовёт к одному шагу. Здесь можно вызвать эту встречу заново, чтобы посмотреть.')}</p>
@@ -9637,13 +9904,13 @@ function renderSettings() {
 // ============================================================
 const APP_SHELL = `
   <header id="topbar">
-    <div class="brand"><span class="logo">?</span><h1 id="appName">Satoru</h1></div>
+    <div class="brand"><span class="logo">${brandMarkHTML()}</span><h1 id="appName">Satoru</h1></div>
     <div id="charSummary" class="char-summary"></div>
     <nav id="nav"><!-- 2-уровневая навигация рендерится в renderNav() --></nav>
   </header>
   <main id="main"></main>
   <div id="toasts"></div>
-  <button id="ai-fab" data-action="open-helper" title="Тень — спроси о себе или о приложении" aria-label="Тень">${window.ShadowRig ? window.ShadowRig.markup({ tier: 1, state: 'listening', context: 'fab', label: 'Тень' }) : '<img class="fab-face" src="/art/companions/shadow-v1-20260716/shadow-spirit-calm.png" alt="" />'}<span class="fab-streak" id="fab-streak" hidden></span></button>`;
+  <button id="ai-fab" data-action="open-helper" title="Тень — спроси о себе или о приложении" aria-label="Тень">${window.ShadowRig ? window.ShadowRig.markup({ tier: 1, state: 'listening', context: 'fab', label: 'Тень' }) : '<img class="fab-face" src="/art/companions/shadow-v3-20260730/shadow-spirit-calm.png?v=20260730-1" alt="" />'}<span class="fab-streak" id="fab-streak" hidden></span></button>`;
 
 // ---- Мультиплеер: пати + кооп-рейд (Племя). null=не загружено, false=не в пати, объект=в пати ----
 const RAID_PER_MEMBER = 600; // XP/чел/неделя — цель кооп-рейда (синхр. с сервером)
@@ -9823,7 +10090,7 @@ function partyHTML(p) {
     { icon: won && r.iClaimed ? '✓' : '3', label: t('Заберите награду') },
   ].map((step, index) => `<span class="event-step${(won || index === 0) ? ' complete' : ''}"><b>${step.icon}</b>${step.label}</span>`).join('');
   const claim = won
-    ? (r.iClaimed ? '<span class="raid-claimed muted">✓ награда забрана</span>' : `<button class="btn raid-claim" data-action="party-claim">${satoruIconHTML('system.rewards', 'button-emblem', '◇')} Забрать награду пати</button>`)
+    ? (r.iClaimed ? '<span class="raid-claimed muted">✓ награда забрана</span>' : `<button class="btn raid-claim" data-action="party-claim">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} Забрать награду пати</button>`)
     : '';
   const members = p.members.slice().sort((a, b) => b.weekXp - a.weekXp).map((m) => `<div class="pm-row ${m.me ? 'me' : ''}">
       <span class="pm-av">${avatarOriginIconHTML(m.avatar || AVATARS[0], 'party-origin-icon')}</span>
@@ -9940,11 +10207,11 @@ const SECTIONS = [
   { id: 'habits', iconId: 'nav.habits', label: 'Привычки', gate: 0, views: [{ view: 'habits', label: 'Привычки' }] },
   { id: 'rewards', iconId: 'nav.rewards', label: 'Награды', gate: 0, views: [{ view: 'rewards', label: 'Награды' }] },
   { id: 'hero', iconId: 'nav.hero', label: 'Герой', gate: 3, views: [
-    { view: 'den', label: 'Логово', iconId: 'reward.decor' },
+    { view: 'den', label: 'Логово', iconId: 'nav.lair' },
     { view: 'character', label: 'Персонаж', iconId: 'nav.hero' },
-    { view: 'pets', label: 'Питомцы', iconId: 'system.pets' },
+    { view: 'pets', label: 'Питомцы', iconId: 'nav.pets' },
     { view: 'tree', label: 'Навыки', iconId: 'nav.skills' },
-    { view: 'stats', label: 'Прогресс', iconId: 'system.day-end' },
+    { view: 'stats', label: 'Прогресс', iconId: 'nav.progress' },
   ] },
   { id: 'tribe', iconId: 'nav.tribe', label: 'Племя', gate: 3, views: [{ view: 'party', label: 'Пати' }, { view: 'leaderboard', label: 'Рейтинг' }] },
 ];
@@ -10656,6 +10923,10 @@ function onClick(e) {
   }
   if (action === 'toggle-sound') { State.settings.sound = !!el.checked; Store.save('settings', State.settings); if (el.checked) sfx('complete'); return; }
   if (action === 'tts') { ttsSpeak(ttsTextNear(el), el); return; }
+  if (action === 'tts-preview') {
+    ttsSpeak('Я рядом. Давай спокойно выберем один следующий шаг.', el);
+    return;
+  }
   if (action === 'chat-actions-apply') {
     const mi = Number(el.dataset.mi), msg = State.chatLog[mi];
     if (!msg || !msg.actions || msg.actionsApplied != null) return;
@@ -10684,12 +10955,17 @@ function onClick(e) {
   if (action === 'den-toggle-edit') {
     State._denEdit = !State._denEdit;
     track(State._denEdit ? 'den:edit-open' : 'den:edit-close');
-    render(); return;
+    render();
+    if (State._denEdit) requestAnimationFrame(() => {
+      const editor = document.getElementById('den-editor');
+      if (editor) { editor.scrollIntoView({ behavior: 'smooth', block: 'start' }); editor.focus({ preventScroll: true }); }
+    });
+    return;
   }
   if (action === 'den-ambient-cycle') {
     if (!State.settings.ambient) State.settings.ambient = {};
     const now = State.settings.ambient.mode || 'off';
-    State.settings.ambient.mode = now === 'off' ? 'rain' : now === 'rain' ? 'fire' : 'off';
+    State.settings.ambient.mode = nextAmbientMode(now);
     Store.save('settings', State.settings);
     applyAmbient(); render(); return;
   }
@@ -11748,6 +12024,21 @@ function onChange(e) {
     State.settings.ambient.vol = Number(el.value);
     Store.save('settings', State.settings);
     applyAmbient(); return;
+  }
+  if (a === 'set-tts-voice') {
+    State.settings.ttsPrefs = Object.assign({}, ttsPrefs(), { voiceURI: el.value });
+    Store.save('settings', State.settings);
+    ttsStop();
+    return;
+  }
+  if (a === 'set-tts-rate' || a === 'set-tts-pitch') {
+    const key = a === 'set-tts-rate' ? 'rate' : 'pitch';
+    const value = Math.max(.72, Math.min(1.18, Number(el.value) || (key === 'rate' ? .92 : .96)));
+    State.settings.ttsPrefs = Object.assign({}, ttsPrefs(), { [key]: value });
+    Store.save('settings', State.settings);
+    const valueLabel = el.closest('label')?.querySelector('b');
+    if (valueLabel) valueLabel.textContent = value.toFixed(2) + (key === 'rate' ? '×' : '');
+    return;
   }
   if (a === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
   if (a === 'set-ai-pref') { State.settings.aiPref = el.value; Store.save('settings', State.settings); toast('🤖 ИИ по умолчанию: ' + aiProviderLabel(el.value)); return; }

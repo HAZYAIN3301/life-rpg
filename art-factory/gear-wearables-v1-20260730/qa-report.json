@@ -1,0 +1,214 @@
+{
+  "id": "gear-wearables-v1-w1-pilot",
+  "status": "GEOMETRY_GATE",
+  "productionReady": false,
+  "gate": {
+    "code": "WEAPON_GRIP_POSE_MISSING",
+    "fileAndMaskQA": "PASS",
+    "visualGripCompatibility": "FAIL",
+    "reason": "Both approved neutral avatars use relaxed/open hands. A sword can be registered to the palm and occluded deterministically, but neither approved hand silhouette closes around the grip. Prototype layers must not be shipped as a believable held weapon.",
+    "requiredNextAsset": "character-specific forearm+closed-grip replacement bundle"
+  },
+  "source": {
+    "material": "generated/w1-material-alpha.png",
+    "sha256": "03f906a660c4d5f4b6788ecb050971283dbb56c991d6ed7957b63236e12588d6",
+    "sourceGrip": [
+      627,
+      1014
+    ],
+    "sourceTip": [
+      627,
+      54
+    ]
+  },
+  "files": {
+    "inventory/w1-training-blade.png": {
+      "pass": true,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "nonEmptyAlpha": true,
+        "transparentCorners": true,
+        "greenFringePixels": 0,
+        "greenFringePass": true
+      },
+      "alpha": {
+        "bbox": [
+          237,
+          136,
+          763,
+          876
+        ],
+        "opaquePixels": 42857,
+        "partialPixels": 6719,
+        "transparentPixels": 999000,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "sha256": "daae177e45510f27b45f96827cbe570c2a25d5b4a0ffe3965883ba22b8d41477"
+    },
+    "prototypes/avatar-layers/traveller/w1-training-blade-back.png": {
+      "pass": true,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "nonEmptyAlpha": true,
+        "transparentCorners": true,
+        "greenFringePixels": 0,
+        "greenFringePass": true
+      },
+      "alpha": {
+        "bbox": [
+          241,
+          414,
+          361,
+          910
+        ],
+        "opaquePixels": 12661,
+        "partialPixels": 3979,
+        "transparentPixels": 1556224,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "sha256": "a3adade2bbe8f6c0aef06a8ef007fd4aa955593be2330dce6e60e748f67f10e2"
+    },
+    "prototypes/avatar-layers/traveller/w1-training-blade-front.png": {
+      "pass": true,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "nonEmptyAlpha": true,
+        "transparentCorners": true,
+        "greenFringePixels": 0,
+        "greenFringePass": true
+      },
+      "alpha": {
+        "bbox": [
+          308,
+          827,
+          350,
+          910
+        ],
+        "opaquePixels": 821,
+        "partialPixels": 421,
+        "transparentPixels": 1571622,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "sha256": "cecee16c398bf106666b53ec1375aef673fade740fe68c3094d9e7b0934d34cc"
+    },
+    "prototypes/avatar-layers/scholar/w1-training-blade-back.png": {
+      "pass": true,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "nonEmptyAlpha": true,
+        "transparentCorners": true,
+        "greenFringePixels": 0,
+        "greenFringePass": true
+      },
+      "alpha": {
+        "bbox": [
+          245,
+          450,
+          359,
+          946
+        ],
+        "opaquePixels": 12584,
+        "partialPixels": 3963,
+        "transparentPixels": 1556317,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "sha256": "cbbdb40a19b15067ff8cde34ffdbb89ded25e07e57bdf050624f5343108865ec"
+    },
+    "prototypes/avatar-layers/scholar/w1-training-blade-front.png": {
+      "pass": true,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "nonEmptyAlpha": true,
+        "transparentCorners": true,
+        "greenFringePixels": 0,
+        "greenFringePass": true
+      },
+      "alpha": {
+        "bbox": [
+          305,
+          917,
+          347,
+          946
+        ],
+        "opaquePixels": 605,
+        "partialPixels": 242,
+        "transparentPixels": 1572017,
+        "cornerAlpha": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "sha256": "d63b5fc0941ae712ba6516a88cbe62dd0bd156be7c263c9769ad46f1e1a4cf2c"
+    }
+  },
+  "geometry": {
+    "traveller": {
+      "grip": [
+        319,
+        825
+      ],
+      "tip": [
+        253,
+        416
+      ],
+      "scale": 0.431553,
+      "rotationDegrees": -9.167,
+      "gripAvatarAlpha": 255,
+      "occludedWeaponPixels": 6170,
+      "visibleWeaponPixels": 10940,
+      "back": "prototypes/avatar-layers/traveller/w1-training-blade-back.png",
+      "front": "prototypes/avatar-layers/traveller/w1-training-blade-front.png",
+      "placementMask": "masks/traveller/w1-placement-mask.png",
+      "handMask": "masks/traveller/w1-hand-occlusion-mask.png",
+      "geometryPass": true
+    },
+    "scholar": {
+      "grip": [
+        317,
+        861
+      ],
+      "tip": [
+        257,
+        452
+      ],
+      "scale": 0.430602,
+      "rotationDegrees": -8.346,
+      "gripAvatarAlpha": 255,
+      "occludedWeaponPixels": 8513,
+      "visibleWeaponPixels": 8228,
+      "back": "prototypes/avatar-layers/scholar/w1-training-blade-back.png",
+      "front": "prototypes/avatar-layers/scholar/w1-training-blade-front.png",
+      "placementMask": "masks/scholar/w1-placement-mask.png",
+      "handMask": "masks/scholar/w1-hand-occlusion-mask.png",
+      "geometryPass": true
+    }
+  },
+  "contactSheet": "previews/w1-contact-sheet.png"
+}

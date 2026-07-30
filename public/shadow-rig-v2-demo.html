@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Тень — Rig Lab v2</title>
-  <link rel="stylesheet" href="styles.css?v=20260729-shadow-rig-v2-1" />
+  <title>Тень — Rig Lab v3</title>
+  <link rel="stylesheet" href="styles.css?v=20260730-shadow-v3-den-v3-1" />
   <style>
     body { margin:0; min-height:100vh; background:#090d18; color:#edf0ff; font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif; }
     .rig-lab { width:min(1120px,calc(100% - 28px)); margin:0 auto; padding:28px 0 52px; }
@@ -19,7 +19,8 @@
     .rig-panel { border:1px solid #2d3650; border-radius:18px; padding:14px; background:#111728; }
     .rig-panel h2 { margin:0 0 10px; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:#aab4d4; }
     .rig-buttons { display:flex; flex-wrap:wrap; gap:7px; }
-    .rig-buttons button { appearance:none; border:1px solid #35405e; border-radius:11px; background:#1a2237; color:#dce2f5; padding:8px 10px; cursor:pointer; font:inherit; }
+    .rig-buttons button,.rig-buttons select { appearance:none; border:1px solid #35405e; border-radius:11px; background:#1a2237; color:#dce2f5; padding:8px 10px; cursor:pointer; font:inherit; }
+    .rig-buttons select { flex:1 1 100%; min-width:0; }
     .rig-buttons button:hover,.rig-buttons button.is-active { border-color:#ab86ff; background:#33264f; color:#fff; }
     .rig-forms { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-top:14px; }
     .rig-form-card { border:1px solid #2d3650; border-radius:18px; padding:10px; background:#111728; text-align:center; cursor:pointer; color:#cbd2ea; }
@@ -42,7 +43,7 @@
 <body>
   <main class="rig-lab">
     <div class="rig-lab-head">
-      <div><h1>Тень · Rig Lab v2</h1><p>Четыре формы эволюции и десять реактивных состояний. «Говорит» включает тот же speech-state, который используется браузерным голосом в Satoru.</p></div>
+      <div><h1>Тень · Rig Lab v3</h1><p>Четыре формы в едином каноне и десять реактивных состояний. «Говорит» включает тот же speech-state и системный голос, который используется в Satoru.</p></div>
       <a class="rig-back" href="/?demo=x7&view=den">Открыть Satoru →</a>
     </div>
     <section class="rig-stage">
@@ -51,18 +52,34 @@
     </section>
     <div class="rig-controls">
       <section class="rig-panel"><h2>Состояние</h2><div id="state-buttons" class="rig-buttons"></div></section>
-      <section class="rig-panel"><h2>Живой голос</h2><div class="rig-buttons"><button id="talk">▶ Тень говорит</button><button id="stop">■ Стоп</button></div></section>
+      <section class="rig-panel"><h2>Живой голос</h2><div class="rig-buttons"><select id="lab-voice" aria-label="Голос Тени"><option value="">Лучший русский голос автоматически</option></select><button id="talk">▶ Тень говорит</button><button id="stop">■ Стоп</button></div></section>
     </div>
     <section id="form-grid" class="rig-forms"></section>
   </main>
-  <script src="shadow-rig-v2.js?v=20260729-shadow-rig-v2-1"></script>
+  <script src="shadow-rig-v2.js?v=20260730-shadow-v3-den-v3-1"></script>
   <script>
     (() => {
       let tier = 1, state = 'calm';
       const main = document.getElementById('rig-main');
       const formGrid = document.getElementById('form-grid');
       const stateButtons = document.getElementById('state-buttons');
+      const voiceSelect = document.getElementById('lab-voice');
       const names = { calm:'спокойна', listening:'слушает', thinking:'думает', speaking:'говорит', happy:'рада', radiant:'сияет', caring:'заботится', sleepy:'засыпает', longing:'скучает', alert:'важный сигнал' };
+      let voices = [];
+      function voiceScore(voice) {
+        const lang = String(voice.lang || '').replace('_','-').toLowerCase();
+        if (!lang.startsWith('ru')) return -1000;
+        const name = String(voice.name || '').toLowerCase();
+        return (lang === 'ru-ru' ? 300 : 200) + (/premium|enhanced|natural|neural|siri/.test(name) ? 220 : 0) + (voice.localService ? 70 : 0) - (/compact|espeak|translate/.test(name) ? 160 : 0);
+      }
+      function refreshVoices() {
+        voices = (speechSynthesis.getVoices() || []).filter(v => voiceScore(v) > -1000).sort((a,b) => voiceScore(b) - voiceScore(a));
+        voiceSelect.innerHTML = '<option value="">Лучший русский голос автоматически</option>' + voices.map(v => `<option value="${v.voiceURI}">${v.name} · ${v.lang}</option>`).join('');
+      }
+      if ('speechSynthesis' in window) {
+        refreshVoices();
+        speechSynthesis.addEventListener?.('voiceschanged', refreshVoices);
+      }
       function draw() {
         const form = ShadowRig.forms[tier];
         main.innerHTML = ShadowRig.markup({ tier, state, context:'lab', label:`Тень — ${form.name}, ${names[state]}` });
@@ -85,6 +102,9 @@
         state = 'speaking'; draw(); ShadowRig.setGlobalState('speaking');
         const utterance = new SpeechSynthesisUtterance('Я рядом. Покажи мне, что сейчас важнее всего, и мы разберёмся по одному шагу.');
         utterance.lang = 'ru-RU';
+        utterance.rate = .92;
+        utterance.pitch = .96;
+        utterance.voice = voices.find(v => v.voiceURI === voiceSelect.value) || voices[0] || null;
         utterance.onboundary = () => ShadowRig.speechPulse();
         utterance.onend = utterance.onerror = () => { ShadowRig.clearGlobalState(); state = 'calm'; draw(); };
         speechSynthesis.speak(utterance);

@@ -1,5 +1,5 @@
-/* Satoru Shadow Rig v2
- * Reactive wrapper around the four approved Shadow evolution posters.
+/* Satoru Shadow Rig v2 runtime + v3 canonical evolution art
+ * Reactive wrapper around the four normalized Shadow evolution posters.
  * The rig is intentionally DOM/CSS-native: forms stay recognisable while
  * state, speech and context can change instantly without rendering a video.
  */
@@ -7,10 +7,10 @@
   'use strict';
 
   const FORMS = [
-    { id: 'spark', name: 'Искра', asset: '/assets/shadow/shadow_1.png', bond: 0 },
-    { id: 'spirit', name: 'Дух', asset: '/art/companions/shadow-v1-20260716/shadow-spirit-calm.png?v=20260717-1', bond: 6 },
-    { id: 'guardian', name: 'Страж', asset: '/assets/shadow/shadow_3.png', bond: 20 },
-    { id: 'keeper', name: 'Хранитель', asset: '/assets/shadow/shadow_4.png', bond: 50 },
+    { id: 'spark', name: 'Искра', asset: '/art/companions/shadow-v3-20260730/shadow-spark-calm.png?v=20260730-1', bond: 0 },
+    { id: 'spirit', name: 'Дух', asset: '/art/companions/shadow-v3-20260730/shadow-spirit-calm.png?v=20260730-1', bond: 6 },
+    { id: 'guardian', name: 'Страж', asset: '/art/companions/shadow-v3-20260730/shadow-guardian-calm.png?v=20260730-1', bond: 20 },
+    { id: 'keeper', name: 'Хранитель', asset: '/art/companions/shadow-v3-20260730/shadow-keeper-calm.png?v=20260730-1', bond: 50 },
   ];
   const STATES = ['calm', 'listening', 'thinking', 'speaking', 'happy', 'radiant', 'caring', 'sleepy', 'longing', 'alert'];
   const STATE_ALIASES = {

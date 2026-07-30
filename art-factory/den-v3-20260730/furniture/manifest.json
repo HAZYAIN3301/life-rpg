@@ -1,0 +1,145 @@
+{
+  "id": "satoru-den-v3-starter-furniture",
+  "version": "2026.07.30.1",
+  "status": "qa-passed",
+  "room": {
+    "file": "../den-v3-runtime-1536x864.png",
+    "canvas": [1536, 864],
+    "coordinateSpace": "percent-of-den-scene"
+  },
+  "pipeline": {
+    "generation": "one-built-in-imagegen-call-per-item",
+    "sourceBackground": "flat-green-chroma-key",
+    "keyColorRequested": "#00ff00",
+    "chromaRemoval": "border-sampled color-distance soft matte",
+    "despill": true,
+    "normalization": {
+      "mode": "alpha-tight-crop",
+      "sourcePaddingPx": 24,
+      "maxEdgePx": 1024,
+      "resampling": "Lanczos"
+    },
+    "script": "build-furniture-pack.py",
+    "prompts": "prompts.md",
+    "metrics": "qa-metrics.json"
+  },
+  "runtimeRules": {
+    "position": "absolute",
+    "objectFit": "contain",
+    "additionalFloorScaleY": 1,
+    "note": "The floor perspective is baked into floor-traveller.png; do not reuse the Den v2 scaleY(.42) transform."
+  },
+  "items": [
+    {
+      "id": "wall-map",
+      "slot": "wall",
+      "name": "Карта странника",
+      "access": "starter",
+      "motion": "drift",
+      "files": {
+        "sourceGreen": "sources-green/wall-map-green.png",
+        "intermediateAlpha": "intermediate-alpha/wall-map-alpha.png",
+        "runtime": "layers/wall-map.png"
+      },
+      "canvas": [1024, 688],
+      "placement": {
+        "leftPct": 35.5,
+        "topPct": 17.5,
+        "widthPct": 25.5,
+        "zIndex": 2,
+        "transformOrigin": "50% 15%"
+      },
+      "motionHint": {
+        "property": "transform",
+        "range": "translateY(-1px..1px) rotate(-0.2deg..0.2deg)",
+        "durationMs": 5200
+      },
+      "sha256": "ef579523de9a3776e2a2db85a7d8ea2d55ad2f0746958744865beac7cb6dbfe7"
+    },
+    {
+      "id": "seat-cushion",
+      "slot": "seat",
+      "name": "Подушка привала",
+      "access": "starter",
+      "motion": "breathe",
+      "files": {
+        "sourceGreen": "sources-green/seat-cushion-green.png",
+        "intermediateAlpha": "intermediate-alpha/seat-cushion-alpha.png",
+        "runtime": "layers/seat-cushion.png"
+      },
+      "canvas": [1024, 199],
+      "placement": {
+        "leftPct": 64.2,
+        "topPct": 58.5,
+        "widthPct": 28.0,
+        "zIndex": 4,
+        "transformOrigin": "50% 85%"
+      },
+      "motionHint": {
+        "property": "transform",
+        "range": "scaleY(0.985..1.0)",
+        "durationMs": 3800
+      },
+      "sha256": "2aea301e6918ff7575918a8ae4dfdddd8b71a32da56f1dbbfa7b3ddd3d56df03"
+    },
+    {
+      "id": "light-lantern",
+      "slot": "light",
+      "name": "Фонарь странника",
+      "access": "starter",
+      "motion": "lantern",
+      "files": {
+        "sourceGreen": "sources-green/light-lantern-green.png",
+        "intermediateAlpha": "intermediate-alpha/light-lantern-alpha.png",
+        "runtime": "layers/light-lantern.png"
+      },
+      "canvas": [369, 1024],
+      "placement": {
+        "leftPct": 27.0,
+        "topPct": 6.5,
+        "widthPct": 7.5,
+        "zIndex": 4,
+        "transformOrigin": "50% 0%"
+      },
+      "rig": {
+        "pivotNormalized": [0.5, 0.0],
+        "pivotRole": "top attachment ring"
+      },
+      "motionHint": {
+        "property": "transform",
+        "range": "rotate(-1.5deg..1.5deg)",
+        "durationMs": 3200
+      },
+      "sha256": "ce8e5df67d42f084d6af909fe8b6aafe45bafbb6401d2b8c349688e970c7fb5d"
+    },
+    {
+      "id": "floor-traveller",
+      "slot": "floor",
+      "name": "Ковёр путника",
+      "access": "starter",
+      "motion": "still",
+      "files": {
+        "sourceGreen": "sources-green/floor-traveller-green.png",
+        "intermediateAlpha": "intermediate-alpha/floor-traveller-alpha.png",
+        "runtime": "layers/floor-traveller.png"
+      },
+      "canvas": [1024, 445],
+      "placement": {
+        "leftPct": 31.0,
+        "bottomPct": -1.2,
+        "widthPct": 38.0,
+        "zIndex": 1,
+        "transformOrigin": "50% 100%"
+      },
+      "perspective": {
+        "baked": true,
+        "runtimeScaleY": 1
+      },
+      "sha256": "dd7eb016419ee8a16b2e11cb0745e494ca098d510ea974211badc3841a0e15a3"
+    }
+  ],
+  "previews": {
+    "contactSheet": "previews/starter-furniture-contact-sheet.png",
+    "sceneComposite": "previews/starter-furniture-scene-preview.png"
+  }
+}

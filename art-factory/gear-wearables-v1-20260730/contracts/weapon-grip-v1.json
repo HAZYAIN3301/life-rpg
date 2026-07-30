@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "weapon-grip-v1",
+  "canvas": [1024, 1536],
+  "compositeOrigin": [0, 0],
+  "status": "geometry-gated",
+  "reason": "Approved neutral hands are relaxed/open and are not independently replaceable in either current wardrobe contract.",
+  "renderOrder": [
+    "weapon-back",
+    "avatar-with-hand-replacement-mask",
+    "forearm-grip-reveal",
+    "hand-grip-front",
+    "weapon-front"
+  ],
+  "avatars": {
+    "traveller": {
+      "sourceContract": "../../traveller-v1-wardrobe-v5/art-manifest.json",
+      "characterHand": "right",
+      "screenSide": "left",
+      "gripPivot": [319, 825],
+      "w1BladeTip": [253, 416],
+      "placementMask": "../masks/traveller/w1-placement-mask.png",
+      "handReplacementMask": "../masks/traveller/w1-hand-occlusion-mask.png",
+      "prototypeLayers": [
+        "../prototypes/avatar-layers/traveller/w1-training-blade-back.png",
+        "../prototypes/avatar-layers/traveller/w1-training-blade-front.png"
+      ],
+      "requiredProductionLayers": [
+        "forearm-grip-reveal.png",
+        "hand-grip-front.png"
+      ]
+    },
+    "scholar": {
+      "sourceContract": "../../traveller-scholar-v1-20260728/art-manifest.json",
+      "characterHand": "right",
+      "screenSide": "left",
+      "gripPivot": [317, 861],
+      "w1BladeTip": [257, 452],
+      "placementMask": "../masks/scholar/w1-placement-mask.png",
+      "handReplacementMask": "../masks/scholar/w1-hand-occlusion-mask.png",
+      "prototypeLayers": [
+        "../prototypes/avatar-layers/scholar/w1-training-blade-back.png",
+        "../prototypes/avatar-layers/scholar/w1-training-blade-front.png"
+      ],
+      "requiredProductionLayers": [
+        "forearm-grip-reveal.png",
+        "hand-grip-front.png"
+      ]
+    }
+  },
+  "acceptance": {
+    "canvas": [1024, 1536],
+    "rgba": true,
+    "transparentCorners": true,
+    "maxChromaFringePixels": 0,
+    "pixelsOutsideReplacementMaskChanged": 0,
+    "handClosesAroundGrip": true,
+    "characterSpecific": true
+  }
+}

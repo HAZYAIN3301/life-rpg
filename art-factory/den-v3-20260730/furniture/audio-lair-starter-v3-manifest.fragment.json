@@ -1,0 +1,161 @@
+{
+  "batchId": "audio-lair-starter-furniture-v3",
+  "owner": "audio_lair_audit",
+  "date": "2026-07-30",
+  "status": "art-ready-not-runtime-integrated",
+  "generationMode": "built-in-imagegen-one-prompt-per-item-plus-local-chroma-removal",
+  "baseScene": "../den-v3-runtime-1536x864.png",
+  "baseSceneCanvas": [
+    1536,
+    864
+  ],
+  "sourceContract": {
+    "background": "#00ff00",
+    "backgroundRule": "perfectly flat chroma key; no floor, cast shadow, reflection, text or character",
+    "chromaRemoval": {
+      "tool": "/Users/al.prokopets/.codex/skills/.system/imagegen/scripts/remove_chroma_key.py",
+      "arguments": [
+        "--auto-key",
+        "border",
+        "--soft-matte",
+        "--transparent-threshold",
+        "12",
+        "--opaque-threshold",
+        "220",
+        "--despill"
+      ]
+    }
+  },
+  "normalizationContract": {
+    "type": "tight-alpha",
+    "subjectLongEdgeMaxPx": 960,
+    "canvasMultiplePx": 16,
+    "sidePaddingPx": 32,
+    "topPaddingPx": 32,
+    "bottomPaddingPx": 24,
+    "bottomAligned": true,
+    "premultipliedAlphaResize": true
+  },
+  "styleContract": {
+    "medium": "premium 2D cut-paper / paper-craft with painterly material finish",
+    "palette": [
+      "charcoal",
+      "dark walnut",
+      "leather brown",
+      "muted teal",
+      "aged copper",
+      "parchment cream"
+    ],
+    "lighting": "warm upper-left/front amber key plus restrained cool upper-right rim",
+    "perspective": "nearly frontal, shallow three-quarter depth, slight top visibility, straight verticals",
+    "forbidden": [
+      "text",
+      "characters",
+      "pets",
+      "faces",
+      "background scene",
+      "baked cast shadow",
+      "flat SVG look",
+      "plastic 3D",
+      "photorealism"
+    ]
+  },
+  "items": [
+    {
+      "id": "surface-crate",
+      "slot": "surface",
+      "name": "Складной стол",
+      "access": "starter",
+      "motion": "still",
+      "file": "surface-crate-v3.png",
+      "source": "sources/surface-crate-v3-source-green.png",
+      "rawAlpha": "sources/surface-crate-v3-alpha-raw.png",
+      "normalizedCanvas": [
+        1024,
+        704
+      ],
+      "alphaBBox": [
+        32,
+        44,
+        992,
+        680
+      ],
+      "sha256": "77d59dda50379d2e15f674211e472da1da1aee2ea94b9eafd936572b56b9a5ed",
+      "currentRuntimePlacement": {
+        "right": "7%",
+        "bottom": "3%",
+        "width": "20%",
+        "zIndex": 4
+      },
+      "prompt": "audio-lair-starter-v3-generation-prompts.md#surface-crate"
+    },
+    {
+      "id": "comfort-bonsai",
+      "slot": "comfort",
+      "name": "Бонсай пути",
+      "access": "starter",
+      "motion": "leaf",
+      "file": "comfort-bonsai-v3.png",
+      "source": "sources/comfort-bonsai-v3-source-green.png",
+      "rawAlpha": "sources/comfort-bonsai-v3-alpha-raw.png",
+      "normalizedCanvas": [
+        848,
+        1024
+      ],
+      "alphaBBox": [
+        35,
+        40,
+        813,
+        1000
+      ],
+      "sha256": "106775b1bbd058427fa1ef40244650994aefd143d5c54ca371260dfb24af0d49",
+      "currentRuntimePlacement": {
+        "left": "0%",
+        "bottom": "18%",
+        "width": "13%",
+        "zIndex": 3
+      },
+      "prompt": "audio-lair-starter-v3-generation-prompts.md#comfort-bonsai"
+    },
+    {
+      "id": "keepsake-blades",
+      "slot": "keepsake",
+      "name": "Стойка клинков",
+      "access": "starter",
+      "motion": "glint",
+      "file": "keepsake-blades-v3.png",
+      "source": "sources/keepsake-blades-v3-source-green.png",
+      "rawAlpha": "sources/keepsake-blades-v3-alpha-raw.png",
+      "normalizedCanvas": [
+        640,
+        1024
+      ],
+      "alphaBBox": [
+        37,
+        40,
+        602,
+        1000
+      ],
+      "sha256": "acc998916c81cab5c9d9102dc5a431a42e7d01a9b131963dfb8a1b958f7debf9",
+      "currentRuntimePlacement": {
+        "right": "0%",
+        "bottom": "18%",
+        "width": "13%",
+        "zIndex": 3
+      },
+      "prompt": "audio-lair-starter-v3-generation-prompts.md#keepsake-blades"
+    }
+  ],
+  "qa": {
+    "result": "PASS",
+    "json": "audio-lair-starter-v3-qa.json",
+    "report": "audio-lair-starter-v3-qa.md",
+    "contactSheet": "previews/audio-lair-starter-v3-contact-sheet.png",
+    "denComposite": "previews/audio-lair-starter-v3-den-composite.png"
+  },
+  "runtimeBoundary": {
+    "integrated": false,
+    "appJsChanged": false,
+    "stylesCssChanged": false
+  }
+}
