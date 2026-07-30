@@ -2519,22 +2519,41 @@ function programTasks(prog, map) { return (prog.quests || []).map((pq) => ({ id:
 async function applyProgramFresh(prog) {
   const { skills, map } = programSkillMap(prog, []);
   const settings = Object.assign(structuredClone(DEFAULT_SETTINGS), { skills });
+  // Публичный X7 — отдельный showcase-профиль на каждый браузер. Даём ему достаточно
+  // импортированного опыта, чтобы ревьюер мог открыть все разделы, но исключаем из
+  // лидерборда: демонстрационный прогресс не должен соревноваться с живыми игроками.
+  if (demoX7Requested()) {
+    const anchor = skills[0];
+    settings.imported = anchor ? {
+      [anchor.id]: { tier: 5, xp: 6700, label: 'X7 showcase', at: new Date().toISOString() },
+    } : {};
+    settings.leaderboardOptOut = true;
+    settings.demoMode = 'x7';
+    settings.tutorial = { i: 0, active: false, done: false, skipped: true, seenDrips: [], mode: 'day1', dripId: null };
+    try { localStorage.setItem('liferpg_seen_guide', '1'); } catch {}
+  }
   await Promise.all([ Store._put('settings', settings), Store._put('habits', programHabits(prog, map)), Store._put('tasks', programTasks(prog, map)) ]);
   State.phase = 'app'; initApp();
 }
 async function loginAsTestUser() {
   const btn = document.querySelector('[data-action="test-login"]');
   if (btn) { btn.disabled = true; btn.textContent = t('🧪 Входим...'); }
-  const payload = { email: TEST_USER.email, password: TEST_USER.password };
+  const testUser = demoX7Requested() ? demoX7Identity() : TEST_USER;
+  const payload = { email: testUser.email, password: testUser.password };
   try {
     let r = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     let d = await r.json();
-    if (r.ok) { State.me = d; initApp(); return; }
+    if (r.ok) {
+      State.me = d;
+      if (demoX7Requested()) try { localStorage.setItem('liferpg_seen_guide', '1'); } catch {}
+      initApp();
+      return;
+    }
 
     r = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(TEST_USER),
+      body: JSON.stringify(testUser),
     });
     d = await r.json();
     if (!r.ok) throw new Error(d.error ? t(d.error) : t('Не удалось создать тестового пользователя'));
@@ -2724,6 +2743,27 @@ function avatarOriginIconHTML(value, className = '') {
   return satoruIconHTML(AVATAR_ORIGIN_IDS[index], className, value || '◇');
 }
 const TEST_USER = { name: 'Тестовый герой', email: 'test@satoru.local', password: 'test1234', avatar: '🧪' };
+function demoX7Identity() {
+  const storageKey = 'satoru_demo_x7_browser_v1';
+  let browserId = '';
+  try { browserId = localStorage.getItem(storageKey) || ''; } catch {}
+  if (!/^[a-f0-9]{32}$/.test(browserId)) {
+    try {
+      const bytes = new Uint8Array(16);
+      crypto.getRandomValues(bytes);
+      browserId = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+    } catch {
+      browserId = (Date.now().toString(16) + Math.random().toString(16).slice(2)).padEnd(32, '0').slice(0, 32);
+    }
+    try { localStorage.setItem(storageKey, browserId); } catch {}
+  }
+  return {
+    name: 'X7 Traveller',
+    email: `demo-x7-${browserId}@satoru.local`,
+    password: `x7-${browserId}-preview`,
+    avatar: '🌙',
+  };
+}
 
 const State = {
   // auth
@@ -4925,7 +4965,7 @@ function localPreviewHost() {
   return /^(localhost|127\.|192\.168\.|0\.0\.0\.0)/.test(location.hostname);
 }
 function demoX7Requested() {
-  try { return localPreviewHost() && new URLSearchParams(location.search).get('demo') === 'x7'; }
+  try { return new URLSearchParams(location.search).get('demo') === 'x7'; }
   catch { return false; }
 }
 function renderLoginScreen() {
@@ -12288,9 +12328,9 @@ async function init() {
 
   State.phase = 'login';
   render();
-  // Локальный обзор без регистрации: ссылка ?demo=x7 создаёт/открывает изолированного
-  // тестового героя и может сразу принять обычный deep-link, например &view=den.
-  // На публичном домене намеренно не работает — общий аккаунт там смешал бы данные гостей.
+  // Обзор без регистрации: ?demo=x7 создаёт отдельного тестового героя для этого
+  // браузера и принимает deep-link, например &view=den. Случайный browser id хранится
+  // локально, поэтому публичные гости не смешивают прогресс в одном общем аккаунте.
   if (demoX7Requested()) setTimeout(() => loginAsTestUser(), 40);
 }
 

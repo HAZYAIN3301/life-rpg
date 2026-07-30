@@ -1,7 +1,7 @@
 /* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    Стратегия: network-first для статики (всегда свежий код онлайн, офлайн — из кэша),
    /api/ — мимо SW (живые данные). Бамп CACHE при изменении набора шелла. */
-const CACHE = 'satoru-v73';
+const CACHE = 'satoru-v74';
 const SHELL = [
   './', 'index.html', 'app.js', 'styles.css', 'shadow-rig-v2.js', 'shadow-rig-v2-demo.html',
   'art/icons/icon-registry.js', 'art/icons/scenes/day-summary-fisher.png',
