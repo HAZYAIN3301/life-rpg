@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "id": "satoru-avatar-common-rig-v1",
+  "status": "qa-gated",
+  "canvas": [512, 768],
+  "compositeOrigin": [0, 0],
+  "coordinateConvention": "character-relative right is screen-left",
+  "canonicalBase": "traveller-clean-v2",
+  "joints": {
+    "root": [256, 704],
+    "hips": [256, 380],
+    "shoulder-r": [182.5, 205],
+    "elbow-r": [157.5, 305],
+    "shoulder-l": [329.5, 205],
+    "elbow-l": [354.5, 305],
+    "neck": [256, 175],
+    "head": [256, 152.5],
+    "face": [256, 127.5],
+    "backpack": [302, 255]
+  },
+  "slots": [
+    "body/base",
+    "hair/back",
+    "hair/front",
+    "outfit/torso",
+    "outfit/sleeve-r",
+    "outfit/sleeve-l",
+    "legs/pants",
+    "feet",
+    "headwear",
+    "eyewear",
+    "neck",
+    "back",
+    "waist",
+    "hand-r/back",
+    "hand-r/front",
+    "hand-l/back",
+    "hand-l/front"
+  ],
+  "poseStates": ["idle", "greet", "happy", "victory", "focus", "tired"],
+  "activityStates": ["walk", "write", "train", "sit", "sleep"],
+  "policy": {
+    "wholePngMotionAllowed": false,
+    "slotAssetsMustUseFullCanvas": true,
+    "slotAssetsMustHaveAlpha": true,
+    "transparentCornersRequired": true,
+    "manualRuntimeOffsetsAllowed": false
+  }
+}
