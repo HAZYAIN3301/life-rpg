@@ -5459,6 +5459,7 @@ let _headerRenderKey = '';
 function renderHeader(force = false) {
   const c = State.settings.curve, oi = levelInfo(overallXp(), c.base, c.growth), streak = currentStreak();
   const cr = charRank(), eqTitle = equippedTitle(), e = ent();
+  const hype = hypeState();
   const top = topSkills();
   const header = document.getElementById('charSummary');
   const nextKey = JSON.stringify({
@@ -5470,7 +5471,7 @@ function renderHeader(force = false) {
     title: eqTitle,
     gold: goldBalance(),
     streak: [streak, longestStreak()],
-    hype: [hypePct(), hypeState().stacks, hypeMinLeft()],
+    hype: [hypePct(), hype ? hype.stacks : 0, hypeMinLeft()],
     tier: [e.tier, trialDaysLeft()],
     avatar: State.settings.avatarAppearance || null,
     skills: top.map((s) => [s.id, s.name, s.color, skillXp(s.id)]),
