@@ -1,7 +1,7 @@
 /* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    App shell: network-first. Art/media: cache-first. /api/: always live network.
    Bump CACHE whenever the shell or a stable asset URL changes. */
-const CACHE = 'satoru-v79';
+const CACHE = 'satoru-v78';
 const SHELL = [
   './', 'index.html', 'app.js', 'styles.css', 'shadow-rig-v2.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
   'art/icons/icon-registry.js', 'art/icons/scenes/day-summary-fisher.png',

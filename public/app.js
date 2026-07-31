@@ -3376,12 +3376,12 @@ const AV_PARTS  = {
 const AV_CAT_ORDER = ['hair', 'hairColor', 'face', 'skin', 'eyes', 'brows', 'mouth', 'beard', 'glasses', 'cloth'];
 function defaultAvatar() { return { face: 0, skin: 1, hair: 1, hairColor: 1, brows: 0, eyes: 0, mouth: 0, beard: 0, glasses: 0, cloth: 0 }; }
 function avCfg() { return Object.assign(defaultAvatar(), (State.settings && State.settings.avatar) || {}); }
-// ── Common avatar rig v1: Traveller is the canonical mannequin, Scholar is a
-// real wardrobe set on the same 512×768 joints. Presets only fill slots; every
-// slot can then be mixed independently without swapping the body or face.
-// Legacy boolean API remains mapped to slots for saved profiles and tests.
+// ── Traveller clean-v2: canonical semantic layers, runtime 512×768.
+// Scholar пока намеренно использует цельные safe masters: старый semantic split
+// визуально ломался при выключении шляпы/очков/мантии и больше не выдается за modular.
+// Public API for UI/tests: setAvatarAppearance({ palette: 'violet', hair: false }).
 const AVATAR_ART_ROOT = '/art/avatars/traveller-clean-v2/';
-const SCHOLAR_COMMON_ROOT = '/art/avatars/common-rig-v1/scholar-v2/';
+const SCHOLAR_ART_ROOT = '/art/avatars/scholar-flat-v2/';
 const AVATAR_OUTFIT_COLORWAYS = {
   teal:    { label: 'Бирюзовый', color: '#1e7773', prefix: '' },
   blue:    { label: 'Синий', color: '#3f6496', prefix: 'colorways/blue/' },
@@ -3394,6 +3394,16 @@ const AVATAR_FACE_STATES = {
   blink: 'states/avatar-face-blink.png',
   happy: 'states/avatar-face-happy.png',
   tired: 'states/avatar-face-tired.png',
+};
+const SCHOLAR_COLORWAYS = {
+  teal:    { label: 'Бирюзовый', color: '#1e7773', master: 'colorways/teal/master.png' },
+  blue:    { label: 'Синий', color: '#3f6496', master: 'colorways/blue/master.png' },
+  violet:  { label: 'Фиолетовый', color: '#755596', master: 'colorways/violet/master.png' },
+  crimson: { label: 'Бордовый', color: '#984c58', master: 'colorways/crimson/master.png' },
+  forest:  { label: 'Лесной', color: '#477856', master: 'colorways/forest/master.png' },
+};
+const SCHOLAR_FACE_STATES = {
+  neutral: 'colorways/teal/master.png',
 };
 const TRAVELLER_CLEAN_LAYERS = [
   { id: 'shadow', file: 'base/avatar-shadow.png', z: 0, group: 'core', pivot: [256, 704] },
@@ -3418,61 +3428,39 @@ const TRAVELLER_CLEAN_LAYERS = [
   { id: 'pouch', file: 'accessories/avatar-pouch.png', z: 110, group: 'pouch', pivot: [305, 332.5] },
   { id: 'lantern', file: 'accessories/avatar-lantern.png', z: 115, group: 'lantern', pivot: [332.5, 285] },
 ];
-const SCHOLAR_COMMON_LAYERS = [
-  { id: 'scholar-backpack', file: 'back/scholar-backpack.png', z: 10, slot: 'back', pivot: [302, 255], rigRole: 'backpack' },
-  { id: 'scholar-coat', file: 'outfit/scholar-coat.png', z: 52, slot: 'outfit', pivot: [256, 280], rigRole: 'cloak' },
-  { id: 'scholar-sleeve-r', file: 'outfit/scholar-sleeve-r.png', z: 55, slot: 'outfit', pivot: [182.5, 205], rigRole: 'upper-arm-r' },
-  { id: 'scholar-sleeve-l', file: 'outfit/scholar-sleeve-l.png', z: 56, slot: 'outfit', pivot: [329.5, 205], rigRole: 'upper-arm-l' },
-  { id: 'scholar-neck', file: 'neck/scholar-collar-amulet.png', z: 70, slot: 'neck', pivot: [256, 175], rigRole: 'scarf' },
-  { id: 'scholar-hat', file: 'head/scholar-hat.png', z: 106, slot: 'headwear', pivot: [256, 92], rigRole: 'goggles' },
-  { id: 'scholar-glasses', file: 'head/scholar-glasses.png', z: 108, slot: 'eyewear', pivot: [256, 128], rigRole: 'goggles' },
-  { id: 'scholar-field-kit', file: 'waist/scholar-field-kit.png', z: 110, slot: 'waist', pivot: [287, 350], rigRole: 'pouch' },
-];
-const AVATAR_PRESETS = {
-  traveller: {
-    outfitSet: 'traveller', hairStyle: 'traveller', headwear: 'none', eyewear: 'traveller-goggles',
-    neckItem: 'traveller-scarf', backItem: 'traveller-backpack', waistItem: 'traveller-pouch', handItem: 'traveller-lantern',
-  },
-  scholar: {
-    outfitSet: 'scholar', hairStyle: 'traveller', headwear: 'scholar-hat', eyewear: 'scholar-glasses',
-    neckItem: 'scholar-neck', backItem: 'scholar-backpack', waistItem: 'scholar-field-kit', handItem: 'none',
-  },
-};
-const AVATAR_SLOT_DEFS = [
-  { key: 'outfitSet', label: 'Верх', options: [['base', 'Базовая рубашка'], ['traveller', 'Плащ Странника'], ['scholar', 'Пальто Учёного']] },
-  { key: 'hairStyle', label: 'Волосы', options: [['none', 'Без волос'], ['traveller', 'Странник']] },
-  { key: 'headwear', label: 'Головной убор', options: [['none', 'Без убора'], ['scholar-hat', 'Шляпа Учёного']] },
-  { key: 'eyewear', label: 'Очки', options: [['none', 'Без очков'], ['traveller-goggles', 'Гогглы'], ['scholar-glasses', 'Круглые очки']] },
-  { key: 'neckItem', label: 'Шея', options: [['none', 'Без аксессуара'], ['traveller-scarf', 'Шарф'], ['scholar-neck', 'Воротник и амулет']] },
-  { key: 'backItem', label: 'Спина', options: [['none', 'Без рюкзака'], ['traveller-backpack', 'Рюкзак Странника'], ['scholar-backpack', 'Книжный рюкзак']] },
-  { key: 'waistItem', label: 'Пояс', options: [['none', 'Без сумки'], ['traveller-pouch', 'Сумка Странника'], ['scholar-field-kit', 'Набор Учёного']] },
-  { key: 'handItem', label: 'В руках', options: [['none', 'Пустые руки'], ['traveller-lantern', 'Фонарь']] },
-];
-const AVATAR_SLOT_VALUES = Object.fromEntries(AVATAR_SLOT_DEFS.map((slot) => [slot.key, new Set(slot.options.map(([id]) => id))]));
-// Variant is now a preset identity, not a closed complete PNG.
+// Variant registry. New appearances can be added as a layered paper-doll or as
+// a single master during their visual-approval gate, without changing callers.
 const AVATAR_VARIANTS = {
   traveller: {
     label: 'Странник',
     description: 'Тот, кто идёт не потому, что знает дорогу, а потому что выбрал направление.',
     artRoot: AVATAR_ART_ROOT,
-    mode: 'common-rig',
+    mode: 'clean-layers',
     modular: true,
     rigged: true,
     colorways: AVATAR_OUTFIT_COLORWAYS,
     faceStates: AVATAR_FACE_STATES,
-    slots: AVATAR_SLOT_DEFS.length,
-    toggles: [],
+    slots: 7,
+    toggles: [
+      ['outfit', 'Плащ'],
+      ['hair', 'Волосы'],
+      ['goggles', 'Очки'],
+      ['scarf', 'Шарф'],
+      ['backpack', 'Рюкзак'],
+      ['pouch', 'Сумка'],
+      ['lantern', 'Фонарь'],
+    ],
   },
   scholar: {
     label: 'Учёный',
-    description: 'Полевой исследователь на общем риге. Его пальто, шляпа, очки, рюкзак и полевой набор можно смешивать со снаряжением Странника.',
-    artRoot: AVATAR_ART_ROOT,
-    mode: 'common-rig',
-    modular: true,
-    rigged: true,
-    colorways: AVATAR_OUTFIT_COLORWAYS,
-    faceStates: AVATAR_FACE_STATES,
-    slots: AVATAR_SLOT_DEFS.length,
+    description: 'Полевой исследователь. Сейчас это цельный безопасный пресет: старые ложные слои отключены, новая модульная версия пересобирается на общем риге.',
+    artRoot: SCHOLAR_ART_ROOT,
+    mode: 'master',
+    modular: false,
+    rigged: false,
+    colorways: SCHOLAR_COLORWAYS,
+    faceStates: SCHOLAR_FACE_STATES,
+    slots: 1,
     toggles: [],
   },
 };
@@ -3480,7 +3468,6 @@ function defaultAvatarAppearance() {
   return {
     variant: 'traveller',
     palette: 'teal',
-    ...AVATAR_PRESETS.traveller,
     outfit: true,
     hair: true,
     goggles: true,
@@ -3495,29 +3482,11 @@ function defaultAvatarAppearance() {
   };
 }
 function normalizeAvatarAppearance(value) {
-  const raw = value || {};
-  const cfg = Object.assign(defaultAvatarAppearance(), raw);
+  const cfg = Object.assign(defaultAvatarAppearance(), value || {});
   if (!AVATAR_VARIANTS[cfg.variant]) cfg.variant = 'traveller';
   const variant = AVATAR_VARIANTS[cfg.variant];
-  // One-time migration from the old closed-preset booleans.
-  if (!Object.prototype.hasOwnProperty.call(raw, 'outfitSet')) {
-    Object.assign(cfg, AVATAR_PRESETS[cfg.variant]);
-    if (raw.outfit === false) cfg.outfitSet = 'base';
-    if (raw.hair === false) cfg.hairStyle = 'none';
-    if (raw.goggles === false && cfg.eyewear === 'traveller-goggles') cfg.eyewear = 'none';
-    if (raw.scarf === false && cfg.neckItem === 'traveller-scarf') cfg.neckItem = 'none';
-    if (raw.backpack === false) cfg.backItem = 'none';
-    if (raw.pouch === false) cfg.waistItem = 'none';
-    if (raw.lantern === false) cfg.handItem = 'none';
-    if (raw.hat === false && cfg.headwear === 'scholar-hat') cfg.headwear = 'none';
-    if (raw.glasses === false && cfg.eyewear === 'scholar-glasses') cfg.eyewear = 'none';
-  }
   if (!variant.colorways[cfg.palette]) cfg.palette = variant.colorways.teal ? 'teal' : Object.keys(variant.colorways)[0];
   if (!variant.faceStates[cfg.face]) cfg.face = variant.faceStates.neutral ? 'neutral' : Object.keys(variant.faceStates)[0];
-  for (const [key, allowed] of Object.entries(AVATAR_SLOT_VALUES)) {
-    if (!allowed.has(cfg[key])) cfg[key] = AVATAR_PRESETS[cfg.variant][key];
-  }
-  if (cfg.handItem === 'traveller-lantern' && cfg.backItem !== 'traveller-backpack') cfg.backItem = 'traveller-backpack';
   ['outfit', 'hair', 'goggles', 'scarf', 'backpack', 'pouch', 'lantern', 'hat', 'glasses', 'gear'].forEach((key) => {
     cfg[key] = cfg[key] !== false;
   });
@@ -3529,18 +3498,8 @@ function avatarAppearance() {
 function setAvatarAppearance(patch, options = {}) {
   if (!State.settings) return defaultAvatarAppearance();
   const requested = Object.assign({}, patch || {});
-  const current = avatarAppearance();
-  if ('outfit' in requested) requested.outfitSet = requested.outfit === false ? 'base' : current.variant;
-  if ('hair' in requested) requested.hairStyle = requested.hair === false ? 'none' : 'traveller';
-  if ('goggles' in requested) requested.eyewear = requested.goggles === false ? 'none' : 'traveller-goggles';
-  if ('scarf' in requested) requested.neckItem = requested.scarf === false ? 'none' : 'traveller-scarf';
-  if ('backpack' in requested) requested.backItem = requested.backpack === false ? 'none' : 'traveller-backpack';
-  if ('pouch' in requested) requested.waistItem = requested.pouch === false ? 'none' : 'traveller-pouch';
-  if ('lantern' in requested) requested.handItem = requested.lantern === false ? 'none' : 'traveller-lantern';
-  if ('hat' in requested) requested.headwear = requested.hat === false ? 'none' : 'scholar-hat';
-  if ('glasses' in requested) requested.eyewear = requested.glasses === false ? 'none' : 'scholar-glasses';
-  if (requested.handItem === 'traveller-lantern') requested.backItem = 'traveller-backpack';
-  if (requested.backItem && requested.backItem !== 'traveller-backpack' && current.handItem === 'traveller-lantern' && !('handItem' in requested)) requested.handItem = 'none';
+  if (requested.lantern === true) requested.backpack = true;
+  if (requested.backpack === false) requested.lantern = false;
   const next = normalizeAvatarAppearance(Object.assign({}, avatarAppearance(), requested));
   State.settings.avatarAppearance = next;
   Store.save('settings', State.settings);
@@ -3548,8 +3507,7 @@ function setAvatarAppearance(patch, options = {}) {
   return next;
 }
 function setAvatarVariant(variant, options = {}) {
-  if (!AVATAR_PRESETS[variant]) variant = 'traveller';
-  return setAvatarAppearance({ variant, ...AVATAR_PRESETS[variant] }, options);
+  return setAvatarAppearance({ variant }, options);
 }
 if (typeof window !== 'undefined') {
   window.setAvatarAppearance = setAvatarAppearance;
@@ -3559,44 +3517,29 @@ function avatarArtLayers(options = {}) {
   const cfg = normalizeAvatarAppearance(options.appearance || avatarAppearance());
   const variant = AVATAR_VARIANTS[cfg.variant];
   const colorway = variant.colorways[cfg.palette];
-  const faceState = variant.faceStates[options.faceState] ? options.faceState : cfg.face;
-  const traveller = (id, overrides = {}) => {
-    const source = TRAVELLER_CLEAN_LAYERS.find((layer) => layer.id === id);
-    if (!source) return null;
-    const layer = { ...source, ...overrides, root: AVATAR_ART_ROOT };
-    if (id === 'face') layer.file = AVATAR_FACE_STATES[faceState];
-    if (layer.colorized && cfg.palette !== 'teal') layer.file = `${colorway.prefix}${layer.file}`;
-    layer.src = layer.root + layer.file;
-    return layer;
-  };
-  const scholar = (id) => {
-    const source = SCHOLAR_COMMON_LAYERS.find((layer) => layer.id === id);
-    if (!source) return null;
-    const prefix = cfg.palette === 'teal' ? '' : `colorways/${cfg.palette}/`;
-    return { ...source, root: SCHOLAR_COMMON_ROOT, src: SCHOLAR_COMMON_ROOT + prefix + source.file };
-  };
-  const layers = [
-    traveller('shadow'),
-    cfg.backItem === 'traveller-backpack' ? traveller('backpack') : cfg.backItem === 'scholar-backpack' ? scholar('scholar-backpack') : null,
-    cfg.hairStyle === 'traveller' ? traveller('hair-back') : null,
-    traveller('leg-r'), traveller('leg-l'), traveller('boot-r'), traveller('boot-l'), traveller('torso'),
-  ];
-  if (cfg.outfitSet === 'scholar') layers.push(scholar('scholar-coat'), scholar('scholar-sleeve-r'), scholar('scholar-sleeve-l'));
-  else {
-    if (cfg.outfitSet === 'traveller') layers.push(traveller('cloak'));
-    layers.push(traveller('upper-arm-r'), traveller('upper-arm-l'));
+  if (variant.mode === 'master') {
+    return [{ id: 'master', z: 0, file: colorway.master, on: true }];
   }
-  layers.push(
-    traveller('hips-pants'), traveller('forearm-hand-r'), traveller('forearm-hand-l'), traveller('head'),
-    cfg.neckItem === 'traveller-scarf' ? traveller('scarf') : cfg.neckItem === 'scholar-neck' ? scholar('scholar-neck') : null,
-    traveller('face'),
-    cfg.hairStyle === 'traveller' ? traveller('hair-front') : null,
-    cfg.headwear === 'scholar-hat' ? scholar('scholar-hat') : null,
-    cfg.eyewear === 'traveller-goggles' ? traveller('goggles') : cfg.eyewear === 'scholar-glasses' ? scholar('scholar-glasses') : null,
-    cfg.waistItem === 'traveller-pouch' ? traveller('pouch') : cfg.waistItem === 'scholar-field-kit' ? scholar('scholar-field-kit') : null,
-    cfg.handItem === 'traveller-lantern' ? traveller('lantern') : null,
-  );
-  return layers.filter(Boolean).sort((a, b) => a.z - b.z);
+  if (variant.mode === 'clean-layers') {
+    const faceState = variant.faceStates[options.faceState] ? options.faceState : cfg.face;
+    const backpackOn = cfg.backpack;
+    return TRAVELLER_CLEAN_LAYERS.map((source) => {
+      const layer = { ...source };
+      if (layer.group === 'face') layer.file = variant.faceStates[faceState];
+      if (layer.colorized && cfg.palette !== 'teal') layer.file = `${colorway.prefix}${layer.file}`;
+      layer.on = layer.group === 'core'
+        || layer.group === 'face'
+        || (layer.group === 'outfit' && cfg.outfit)
+        || (layer.group === 'hair' && cfg.hair)
+        || (layer.group === 'goggles' && cfg.goggles)
+        || (layer.group === 'scarf' && cfg.scarf)
+        || (layer.group === 'pouch' && cfg.pouch)
+        || (layer.group === 'backpack' && backpackOn)
+        || (layer.group === 'lantern' && backpackOn && cfg.lantern);
+      return layer;
+    }).filter((layer) => layer.on).sort((a, b) => a.z - b.z);
+  }
+  return [];
 }
 
 const _avatarImageCache = new Map();
@@ -3620,7 +3563,7 @@ function preloadAvatarImage(url) {
 function preloadAvatarAppearance(appearance) {
   const cfg = normalizeAvatarAppearance(appearance);
   const variant = AVATAR_VARIANTS[cfg.variant];
-  const urls = avatarArtLayers({ appearance: cfg }).map((layer) => layer.src || variant.artRoot + layer.file);
+  const urls = avatarArtLayers({ appearance: cfg }).map((layer) => variant.artRoot + layer.file);
   return Promise.race([
     Promise.all(urls.map(preloadAvatarImage)),
     new Promise((resolve) => setTimeout(resolve, 1600)),
@@ -3678,11 +3621,10 @@ function avatarArtHTML(options = {}) {
     const pivot = layer.pivot
       ? ` style="--avatar-layer-pivot-x:${(layer.pivot[0] / 512 * 100).toFixed(3)}%;--avatar-layer-pivot-y:${(layer.pivot[1] / 768 * 100).toFixed(3)}%"`
       : '';
-    const rigRole = layer.rigRole ? ` avatar-art-${layer.rigRole}` : '';
-    return `<img class="avatar-art-layer avatar-art-${layer.id}${rigRole}" src="${layer.src || variant.artRoot + layer.file}" alt="" aria-hidden="true" draggable="false" decoding="async"${pivot}>`;
+    return `<img class="avatar-art-layer avatar-art-${layer.id}" src="${variant.artRoot}${layer.file}" alt="" aria-hidden="true" draggable="false" decoding="async"${pivot}>`;
   }).join('');
   const faceSources = Object.entries(variant.faceStates).map(([id, file]) => (
-    ` data-avatar-face-${id}-src="${esc(AVATAR_ART_ROOT + file)}"`
+    ` data-avatar-face-${id}-src="${esc(variant.artRoot + file)}"`
   )).join('');
   const interactionAttrs = interactive
     ? ' data-action="avatar-react" data-avatar-interactive="true" role="button" tabindex="0" aria-label="Персонаж Satoru — нажми, чтобы он отреагировал"'
@@ -8893,18 +8835,18 @@ function avatarEditor() {
       'avatar-color-choice',
     )
   )).join('');
-  const slots = AVATAR_SLOT_DEFS.map((slot) => {
-    const choices = slot.options.map(([id, label]) => (
-      avatarAppearanceChoice(slot.key, id, esc(label), cfg[slot.key] === id, 'avatar-slot-choice')
-    )).join('');
-    return `<section class="avatar-slot-section"><h4>${esc(slot.label)}</h4><div class="avatar-choice-row">${choices}</div></section>`;
-  }).join('');
+  const toggles = variant.toggles.map(([key, label]) => (
+    avatarAppearanceChoice(key, !cfg[key], `${cfg[key] ? '✓' : '○'} ${label}`, !!cfg[key], 'avatar-toggle-choice')
+  )).join('');
   const faces = [
     ['neutral', 'Спокойное'],
     ['happy', 'Радостное'],
     ['tired', 'Усталое'],
     ['blink', 'Моргание'],
   ].map(([id, label]) => avatarAppearanceChoice('face', id, label, cfg.face === id)).join('');
+  const layersSection = variant.toggles.length
+    ? `<section><h4>Слои</h4><div class="avatar-choice-row">${toggles}</div></section>`
+    : '';
   const facesSection = Object.keys(variant.faceStates).length > 1
     ? `<section><h4>Лицо</h4><div class="avatar-choice-row">${faces}</div></section>`
     : '';
@@ -8918,19 +8860,19 @@ function avatarEditor() {
   const motionSection = variant.rigged
     ? `<section><h4>Проверить движения</h4><div class="avatar-choice-row">${motions}</div></section>`
     : `<section class="avatar-editor-honesty"><h4>Движение</h4><p>У этого пресета пока нет честного рига. Поэтому фальшивые «прыжки всей PNG» отключены — новая версия Учёного будет собрана на тех же суставах, что Странник.</p></section>`;
-  const modeLabel = 'общий модульный риг';
-  const badgeLabel = `${variant.slots} слотов`;
+  const modeLabel = variant.modular ? 'модульная бумажная кукла' : 'цельный безопасный пресет';
+  const badgeLabel = variant.modular ? `${variant.slots} слотов` : 'без артефактов';
   return `<div class="card avatar-editor" id="avatar-editor">
     <div class="avatar-editor-head"><div><h3>🪞 Твой персонаж</h3><p>${esc(variant.label)} · ${modeLabel}</p></div><span class="avatar-editor-badge">${badgeLabel}</span></div>
     <div class="ave-stage ave-stage-figure">${avatarFigureHTML({ motion: 'idle', interactive: true })}</div>
     <div class="avatar-customizer">
-      <section><h4>Быстрый комплект</h4><div class="avatar-choice-row">${variants}</div><p class="avatar-section-help">Пресет заполняет слоты, но не блокирует их: ниже можно смешать Странника и Учёного.</p></section>
+      <section><h4>Облик</h4><div class="avatar-choice-row">${variants}</div></section>
       <section><h4>Цвет костюма</h4><div class="avatar-choice-row avatar-palette-row">${palettes}</div></section>
-      <div class="avatar-slots-grid">${slots}</div>
+      ${layersSection}
       ${facesSection}
       ${motionSection}
     </div>
-    <p class="avatar-editor-note"><b>${esc(variant.label)}</b> — ${esc(variant.description)} Все варианты собираются на одном теле и не меняют координаты суставов. Нажми на персонажа — он откликнется.</p>
+    <p class="avatar-editor-note"><b>${esc(variant.label)}</b> — ${esc(variant.description)} Нажми на персонажа — он откликнется. В Логове движение и выражение лица автоматически зависят от энергии, фокуса и выполненных дел.</p>
   </div>`;
 }
 // ---- Колесо баланса (ядро v1): радар ритма + дрилл-даун под-сфер + подсказки ----
@@ -11772,13 +11714,11 @@ function onClick(e) {
   }
   if (action === 'avatar-appearance-set') {
     const key = el.dataset.key;
-    const legacyKeys = ['outfit', 'hair', 'goggles', 'scarf', 'backpack', 'pouch', 'lantern', 'hat', 'glasses', 'gear'];
-    if (!['variant', 'palette', 'face', ...legacyKeys, ...Object.keys(AVATAR_SLOT_VALUES)].includes(key)) return;
+    if (!['variant', 'palette', 'outfit', 'hair', 'goggles', 'scarf', 'backpack', 'pouch', 'lantern', 'hat', 'glasses', 'gear', 'face'].includes(key)) return;
     let value = el.dataset.value;
     if (value === 'true') value = true;
     else if (value === 'false') value = false;
-    if (key === 'variant') setAvatarVariant(value);
-    else setAvatarAppearance({ [key]: value });
+    setAvatarAppearance({ [key]: value });
     return;
   }
   if (action === 'goto-import') { State.view = 'settings'; render(); setTimeout(() => { const c = document.getElementById('import-card'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('flash-card'); } }, 60); return; }
