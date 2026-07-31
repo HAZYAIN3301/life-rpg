@@ -30,6 +30,7 @@ const MIME = {
   '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.png':  'image/png',
   '.jpg':  'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.gif': 'image/gif',
+  '.mp3':  'audio/mpeg', '.m4a': 'audio/mp4', '.ogg': 'audio/ogg', '.opus': 'audio/ogg; codecs=opus', '.wav': 'audio/wav',
   '.mp4':  'video/mp4', '.webm': 'video/webm', '.mov': 'video/quicktime',
   '.apk':  'application/vnd.android.package-archive',
 };
@@ -51,6 +52,25 @@ function sendJson(res, status, obj) {
 }
 function safeName(n) { return /^[a-z0-9_-]+$/.test(n) ? n : null; }
 function safeId(n)   { return /^[a-z0-9_-]{1,32}$/.test(n) ? n : null; }
+const STATIC_MEDIA_EXTS = new Set([
+  '.avif', '.gif', '.ico', '.jpeg', '.jpg', '.m4a', '.mp3', '.mp4',
+  '.ogg', '.opus', '.png', '.svg', '.wav', '.webm', '.webp', '.woff', '.woff2',
+]);
+function staticCacheControl(urlPath, rel, ext) {
+  const parsed = new URL(urlPath, 'http://satoru.local');
+  const pathname = rel.replace(/\\/g, '/');
+  const versionedMedia = STATIC_MEDIA_EXTS.has(ext) && (
+    parsed.searchParams.has('v') ||
+    parsed.searchParams.has('build') ||
+    /(?:^|[/_.-])(?:v\d+|20\d{6,8}|[a-f0-9]{8,})(?=[/_.-]|$)/i.test(pathname)
+  );
+  if (pathname.startsWith('/art/') || versionedMedia) {
+    return 'public, max-age=31536000, immutable';
+  }
+  // HTML, JS, CSS, the service worker and the manifest must revalidate so a
+  // deploy cannot strand an installed PWA on an old application shell.
+  return 'no-cache';
+}
 function readBody(req, maxBytes) {
   const cap = maxBytes || 5 * 1024 * 1024;
   return new Promise((resolve, reject) => {
@@ -72,7 +92,10 @@ function serveStatic(req, res, urlPath, headOnly) {
   fs.readFile(filePath, (err, buf) => {
     if (err) return send(res, 404, 'Not found');
     const ext = path.extname(filePath).toLowerCase();
-    send(res, 200, headOnly ? '' : buf, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
+    send(res, 200, headOnly ? '' : buf, {
+      'Content-Type': MIME[ext] || 'application/octet-stream',
+      'Cache-Control': staticCacheControl(urlPath, rel, ext),
+    });
   });
 }
 
@@ -900,6 +923,368 @@ function mapStravaActivity(a) {
 }
 
 // ============================================================
+//  Голос Тени v2 — OpenAI Speech API, только через сервер
+// ============================================================
+// Секрет никогда не отправляется в браузер. Приоритет: OpenAI BYOK конкретного
+// пользователя → общий OPENAI_API_KEY → уже используемый AI_HOUSE_KEY_OPENAI.
+// Встроенный speechSynthesis остаётся только честно обозначенным fallback на клиенте.
+const SHADOW_TTS_MODEL = /^[A-Za-z0-9._-]{1,80}$/.test(process.env.SHADOW_TTS_MODEL || '')
+  ? process.env.SHADOW_TTS_MODEL
+  : 'gpt-4o-mini-tts';
+const SHADOW_TTS_FORMATS = {
+  mp3: { mime: 'audio/mpeg', ext: 'mp3' },
+  opus: { mime: 'audio/ogg; codecs=opus', ext: 'opus' },
+  aac: { mime: 'audio/aac', ext: 'aac' },
+  wav: { mime: 'audio/wav', ext: 'wav' },
+};
+const SHADOW_TTS_FORMAT = SHADOW_TTS_FORMATS[process.env.SHADOW_TTS_FORMAT]
+  ? process.env.SHADOW_TTS_FORMAT
+  : 'mp3';
+const SHADOW_TTS_VOICES = new Set([
+  'alloy', 'ash', 'ballad', 'coral', 'echo', 'fable', 'nova',
+  'onyx', 'sage', 'shimmer', 'verse', 'marin', 'cedar',
+]);
+const SHADOW_TTS_CONTEXTS = new Set(['calm', 'morning', 'evening', 'focus', 'coach', 'celebrate', 'warning']);
+const SHADOW_TTS_ACCESS = ['authenticated', 'pro', 'byok'].includes(process.env.SHADOW_TTS_ACCESS)
+  ? process.env.SHADOW_TTS_ACCESS
+  : 'authenticated';
+const SHADOW_TTS_MAX_CHARS = Math.max(80, Math.min(4096, Number(process.env.SHADOW_TTS_MAX_CHARS) || 2400));
+const SHADOW_TTS_RPM = Math.max(2, Math.min(120, Number(process.env.SHADOW_TTS_RPM) || 24));
+const SHADOW_TTS_USER_CONCURRENCY = Math.max(1, Math.min(4, Number(process.env.SHADOW_TTS_USER_CONCURRENCY) || 2));
+const SHADOW_TTS_GLOBAL_CONCURRENCY = Math.max(2, Math.min(32, Number(process.env.SHADOW_TTS_GLOBAL_CONCURRENCY) || 10));
+const SHADOW_TTS_TIMEOUT_MS = Math.max(5000, Math.min(120000, Number(process.env.SHADOW_TTS_TIMEOUT_MS) || 45000));
+const SHADOW_TTS_MAX_AUDIO_BYTES = Math.max(1024 * 1024, Math.min(32 * 1024 * 1024, Number(process.env.SHADOW_TTS_MAX_AUDIO_BYTES) || 8 * 1024 * 1024));
+const SHADOW_TTS_CACHE_TTL_MS = Math.max(1, Math.min(365, Number(process.env.SHADOW_TTS_CACHE_DAYS) || 30)) * 86400000;
+const SHADOW_TTS_CACHE_MAX_FILES = Math.max(8, Math.min(1000, Number(process.env.SHADOW_TTS_CACHE_MAX_FILES) || 128));
+const SHADOW_TTS_CACHE_MAX_BYTES = Math.max(8, Math.min(1024, Number(process.env.SHADOW_TTS_CACHE_MAX_MB) || 96)) * 1024 * 1024;
+const SHADOW_TTS_RATE = new Map();
+const SHADOW_TTS_ACTIVE_BY_USER = new Map();
+let shadowTtsActiveGlobal = 0;
+
+function shadowTtsVoiceEnv(code) {
+  const voice = String(process.env['SHADOW_TTS_VOICE_' + code] || 'marin').toLowerCase();
+  return SHADOW_TTS_VOICES.has(voice) ? voice : 'marin';
+}
+function shadowTtsSpeedEnv(code, fallback) {
+  const speed = Number(process.env['SHADOW_TTS_SPEED_' + code]);
+  return speed >= 0.75 && speed <= 1.25 ? speed : fallback;
+}
+
+const SHADOW_TTS_LANG = {
+  ru: {
+    tag: 'ru-RU',
+    voice: shadowTtsVoiceEnv('RU'),
+    speed: shadowTtsSpeedEnv('RU', 0.94),
+    instruction: 'Speak in native Russian. Use a warm, composed, subtly mysterious feminine secretary voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
+  },
+  uk: {
+    tag: 'uk-UA',
+    voice: shadowTtsVoiceEnv('UK'),
+    speed: shadowTtsSpeedEnv('UK', 0.94),
+    instruction: 'Speak in native Ukrainian. Use a warm, composed, subtly mysterious feminine secretary voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
+  },
+  en: {
+    tag: 'en-US',
+    voice: shadowTtsVoiceEnv('EN'),
+    speed: shadowTtsSpeedEnv('EN', 0.96),
+    instruction: 'Speak in natural English. Use a warm, composed, subtly mysterious feminine secretary voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
+  },
+  de: {
+    tag: 'de-DE',
+    voice: shadowTtsVoiceEnv('DE'),
+    speed: shadowTtsSpeedEnv('DE', 0.93),
+    instruction: 'Speak in native German. Use a warm, composed, subtly mysterious feminine secretary voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
+  },
+  es: {
+    tag: 'es-ES',
+    voice: shadowTtsVoiceEnv('ES'),
+    speed: shadowTtsSpeedEnv('ES', 0.96),
+    instruction: 'Speak in native Spanish from Spain. Use a warm, composed, subtly mysterious feminine secretary voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
+  },
+};
+const SHADOW_TTS_CONTEXT_INSTRUCTION = {
+  calm: 'The emotional state is calm, attentive, and reassuring.',
+  morning: 'Sound gently energizing, like a trusted assistant beginning the day. Avoid forced cheerfulness.',
+  evening: 'Sound quiet, reflective, and unhurried, like a trusted assistant closing the day.',
+  focus: 'Sound concise, grounded, and quietly motivating. Use deliberate pauses.',
+  coach: 'Sound supportive and direct, with confident but kind emphasis.',
+  celebrate: 'Sound genuinely pleased and a little playful, without shouting.',
+  warning: 'Sound serious and clear, but never alarming or harsh.',
+};
+
+function shadowTtsLanguage(value) {
+  const code = String(value || '').trim().toLowerCase().replace('_', '-').slice(0, 2);
+  return SHADOW_TTS_LANG[code] ? code : null;
+}
+function shadowTtsText(value) {
+  return String(value || '')
+    .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+function shadowTtsHouseKey() {
+  return process.env.OPENAI_API_KEY || process.env.AI_HOUSE_KEY_OPENAI || '';
+}
+function shadowTtsAccess(user) {
+  const byok = String(loadAiKeys(user.id).openai || '').trim();
+  if (byok) return { ok: true, key: byok, source: 'byok' };
+  const house = shadowTtsHouseKey();
+  if (!house) return { ok: false, error: 'no_openai_key' };
+  if (SHADOW_TTS_ACCESS === 'byok') return { ok: false, error: 'cloud_voice_requires_byok' };
+  if (SHADOW_TTS_ACCESS === 'pro') {
+    const tier = entitlement(user).tier;
+    if (tier !== 'pro' && tier !== 'trial') return { ok: false, error: 'cloud_voice_requires_pro' };
+  }
+  return { ok: true, key: house, source: 'house' };
+}
+function shadowTtsCacheDir(uid) {
+  return path.join(DATA_DIR, 'shadow-voice-cache', safeId(uid) || crypto.createHash('sha256').update(String(uid)).digest('hex').slice(0, 24));
+}
+function shadowTtsCacheInfo(uid, cacheKey) {
+  const fmt = SHADOW_TTS_FORMATS[SHADOW_TTS_FORMAT];
+  const dir = shadowTtsCacheDir(uid);
+  return { dir, file: path.join(dir, cacheKey + '.' + fmt.ext), mime: fmt.mime, ext: fmt.ext };
+}
+function shadowTtsCacheKey(uid, language, context, text) {
+  const cfg = SHADOW_TTS_LANG[language];
+  return crypto.createHash('sha256').update(JSON.stringify({
+    v: 2, uid, model: SHADOW_TTS_MODEL, format: SHADOW_TTS_FORMAT,
+    voice: cfg.voice, speed: cfg.speed, language, context, text,
+  })).digest('hex');
+}
+function shadowTtsFreshCache(info) {
+  try {
+    const stat = fs.statSync(info.file);
+    if (!stat.isFile() || stat.size <= 0 || stat.size > SHADOW_TTS_MAX_AUDIO_BYTES) return null;
+    if (Date.now() - stat.mtimeMs > SHADOW_TTS_CACHE_TTL_MS) {
+      try { fs.unlinkSync(info.file); } catch {}
+      return null;
+    }
+    return stat;
+  } catch { return null; }
+}
+function shadowTtsPruneCache(dir) {
+  try {
+    const entries = fs.readdirSync(dir)
+      .filter((name) => !name.includes('.tmp-'))
+      .map((name) => {
+        const file = path.join(dir, name);
+        try { return { file, stat: fs.statSync(file) }; } catch { return null; }
+      })
+      .filter((item) => item && item.stat.isFile())
+      .sort((a, b) => b.stat.mtimeMs - a.stat.mtimeMs);
+    let bytes = 0;
+    for (let i = 0; i < entries.length; i++) {
+      bytes += entries[i].stat.size;
+      if (i >= SHADOW_TTS_CACHE_MAX_FILES || bytes > SHADOW_TTS_CACHE_MAX_BYTES || Date.now() - entries[i].stat.mtimeMs > SHADOW_TTS_CACHE_TTL_MS) {
+        try { fs.unlinkSync(entries[i].file); } catch {}
+      }
+    }
+  } catch {}
+}
+function shadowTtsRateLimit(uid) {
+  const now = Date.now();
+  if (SHADOW_TTS_RATE.size > 10000) {
+    for (const [key, value] of SHADOW_TTS_RATE) if (now - value.start >= 120000) SHADOW_TTS_RATE.delete(key);
+  }
+  let rec = SHADOW_TTS_RATE.get(uid);
+  if (!rec || now - rec.start >= 60000) rec = { start: now, count: 0 };
+  rec.count += 1;
+  SHADOW_TTS_RATE.set(uid, rec);
+  if (rec.count <= SHADOW_TTS_RPM) return null;
+  return Math.max(1, Math.ceil((60000 - (now - rec.start)) / 1000));
+}
+function shadowTtsAcquire(uid) {
+  const userActive = SHADOW_TTS_ACTIVE_BY_USER.get(uid) || 0;
+  if (userActive >= SHADOW_TTS_USER_CONCURRENCY || shadowTtsActiveGlobal >= SHADOW_TTS_GLOBAL_CONCURRENCY) return false;
+  SHADOW_TTS_ACTIVE_BY_USER.set(uid, userActive + 1);
+  shadowTtsActiveGlobal += 1;
+  return true;
+}
+function shadowTtsRelease(uid) {
+  const userActive = Math.max(0, (SHADOW_TTS_ACTIVE_BY_USER.get(uid) || 1) - 1);
+  if (userActive) SHADOW_TTS_ACTIVE_BY_USER.set(uid, userActive);
+  else SHADOW_TTS_ACTIVE_BY_USER.delete(uid);
+  shadowTtsActiveGlobal = Math.max(0, shadowTtsActiveGlobal - 1);
+}
+function shadowTtsError(res, status, error, requestId, extra, headers) {
+  send(res, status, JSON.stringify(Object.assign({
+    error,
+    requestId,
+    fallback: 'browser-system-voice',
+  }, extra || {})), Object.assign({
+    'Content-Type': MIME['.json'],
+    'X-Request-Id': requestId,
+  }, headers || {}));
+}
+function shadowTtsHeaders(info, requestId, language, cacheState, length) {
+  const headers = {
+    'Content-Type': info.mime,
+    'Cache-Control': 'private, no-store',
+    'Content-Disposition': `inline; filename="shadow-voice.${info.ext}"`,
+    'X-Content-Type-Options': 'nosniff',
+    'X-Request-Id': requestId,
+    'X-Shadow-Voice-Mode': 'cloud-ai',
+    'X-Shadow-Voice-AI-Generated': 'true',
+    'X-Shadow-Voice-Language': language,
+    'X-Shadow-Voice-Cache': cacheState,
+  };
+  if (length != null) headers['Content-Length'] = length;
+  return headers;
+}
+function shadowTtsServeCache(res, info, stat, requestId, language) {
+  res.writeHead(200, shadowTtsHeaders(info, requestId, language, 'HIT', stat.size));
+  const stream = fs.createReadStream(info.file);
+  stream.on('error', () => { if (!res.writableEnded) res.destroy(); });
+  stream.pipe(res);
+}
+function shadowTtsOpenAi(res, key, payload, info, requestId, language) {
+  return new Promise((resolve) => {
+    const body = Buffer.from(JSON.stringify(payload));
+    let responseStarted = false;
+    let finished = false;
+    const finish = () => { if (!finished) { finished = true; resolve(); } };
+    const upstream = https.request({
+      host: 'api.openai.com',
+      path: '/v1/audio/speech',
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + key,
+        'Content-Type': 'application/json',
+        'Content-Length': body.length,
+        'Accept': info.mime,
+      },
+    }, (providerRes) => {
+      const providerStatus = Number(providerRes.statusCode) || 502;
+      if (providerStatus < 200 || providerStatus >= 300) {
+        const chunks = []; let size = 0;
+        providerRes.on('data', (chunk) => {
+          if (size < 65536) { chunks.push(chunk); size += chunk.length; }
+        });
+        providerRes.on('error', (err) => {
+          if (!res.writableEnded) shadowTtsError(res, 502, 'cloud_voice_unreachable', requestId, { detail: String(err.message || err).slice(0, 160) });
+          finish();
+        });
+        providerRes.on('end', () => {
+          if (finished) return;
+          let detail = '';
+          try {
+            const parsed = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+            detail = String((parsed.error && parsed.error.message) || '').slice(0, 240);
+          } catch {}
+          shadowTtsError(res, 502, 'cloud_voice_provider_error', requestId, { providerStatus, detail });
+          finish();
+        });
+        return;
+      }
+      const declaredLength = Number(providerRes.headers['content-length']) || 0;
+      if (declaredLength > SHADOW_TTS_MAX_AUDIO_BYTES) {
+        providerRes.resume();
+        shadowTtsError(res, 502, 'cloud_voice_response_too_large', requestId);
+        finish();
+        return;
+      }
+
+      const tempFile = info.file + '.tmp-' + process.pid + '-' + crypto.randomBytes(5).toString('hex');
+      let cacheStream = null, cacheWritable = true, bytes = 0, clientOpen = true, failed = false;
+      try {
+        fs.mkdirSync(info.dir, { recursive: true });
+        cacheStream = fs.createWriteStream(tempFile, { flags: 'wx' });
+        cacheStream.on('error', () => { cacheWritable = false; try { fs.unlinkSync(tempFile); } catch {} });
+      } catch { cacheWritable = false; }
+      res.on('close', () => { clientOpen = false; });
+      res.writeHead(200, shadowTtsHeaders(info, requestId, language, 'MISS'));
+      responseStarted = true;
+
+      const abortStream = () => {
+        if (failed) return;
+        failed = true;
+        try { providerRes.destroy(); } catch {}
+        try { if (cacheStream) cacheStream.destroy(); } catch {}
+        try { fs.unlinkSync(tempFile); } catch {}
+        if (clientOpen && !res.writableEnded) res.destroy();
+        finish();
+      };
+      providerRes.on('data', (chunk) => {
+        bytes += chunk.length;
+        if (bytes > SHADOW_TTS_MAX_AUDIO_BYTES) return abortStream();
+        if (cacheWritable && cacheStream) cacheStream.write(chunk);
+        if (clientOpen && !res.writableEnded) res.write(chunk);
+      });
+      providerRes.on('aborted', abortStream);
+      providerRes.on('error', abortStream);
+      providerRes.on('end', () => {
+        if (failed) return;
+        if (clientOpen && !res.writableEnded) res.end();
+        if (!cacheWritable || !cacheStream || bytes <= 0) {
+          try { if (cacheStream) cacheStream.destroy(); } catch {}
+          try { fs.unlinkSync(tempFile); } catch {}
+          finish();
+          return;
+        }
+        cacheStream.end(() => {
+          fs.rename(tempFile, info.file, (err) => {
+            if (err) { try { fs.unlinkSync(tempFile); } catch {} }
+            else shadowTtsPruneCache(info.dir);
+            finish();
+          });
+        });
+      });
+    });
+    upstream.setTimeout(SHADOW_TTS_TIMEOUT_MS, () => upstream.destroy(new Error('OpenAI Speech timeout')));
+    upstream.on('error', (err) => {
+      if (!responseStarted && !res.writableEnded) {
+        shadowTtsError(res, 502, 'cloud_voice_unreachable', requestId, { detail: String(err.message || err).slice(0, 160) });
+      } else if (!res.writableEnded) res.destroy();
+      finish();
+    });
+    upstream.end(body);
+  });
+}
+async function handleShadowTts(req, res, user) {
+  const requestId = crypto.randomBytes(10).toString('hex');
+  const access = shadowTtsAccess(user);
+  if (!access.ok) {
+    const status = access.error === 'cloud_voice_requires_pro' ? 402
+      : access.error === 'cloud_voice_requires_byok' ? 403
+        : 503;
+    return shadowTtsError(res, status, access.error, requestId);
+  }
+
+  let body = {};
+  try { body = JSON.parse(await readBody(req, 16 * 1024)); }
+  catch { return shadowTtsError(res, 400, 'bad_json', requestId); }
+  const language = shadowTtsLanguage(body.language);
+  const text = shadowTtsText(body.text);
+  const context = SHADOW_TTS_CONTEXTS.has(body.context) ? body.context : 'calm';
+  if (!language) return shadowTtsError(res, 400, 'unsupported_language', requestId, { supportedLanguages: Object.keys(SHADOW_TTS_LANG) });
+  if (!text) return shadowTtsError(res, 400, 'empty_text', requestId);
+  if (text.length > SHADOW_TTS_MAX_CHARS) return shadowTtsError(res, 413, 'text_too_long', requestId, { maxCharacters: SHADOW_TTS_MAX_CHARS });
+
+  const retryAfter = shadowTtsRateLimit(user.id);
+  if (retryAfter) return shadowTtsError(res, 429, 'voice_rate_limit', requestId, { retryAfter }, { 'Retry-After': String(retryAfter) });
+  const cacheKey = shadowTtsCacheKey(user.id, language, context, text);
+  const info = shadowTtsCacheInfo(user.id, cacheKey);
+  const cached = shadowTtsFreshCache(info);
+  if (cached) return shadowTtsServeCache(res, info, cached, requestId, language);
+  if (!shadowTtsAcquire(user.id)) return shadowTtsError(res, 429, 'voice_busy', requestId, { retryAfter: 2 }, { 'Retry-After': '2' });
+
+  const cfg = SHADOW_TTS_LANG[language];
+  const payload = {
+    model: SHADOW_TTS_MODEL,
+    input: text,
+    voice: cfg.voice,
+    instructions: `${cfg.instruction} ${SHADOW_TTS_CONTEXT_INSTRUCTION[context]}`,
+    response_format: SHADOW_TTS_FORMAT,
+    speed: cfg.speed,
+    stream_format: 'audio',
+  };
+  try { await shadowTtsOpenAi(res, access.key, payload, info, requestId, language); }
+  finally { shadowTtsRelease(user.id); }
+}
+
+// ============================================================
 //  HTTP server
 // ============================================================
 const server = http.createServer(async (req, res) => {
@@ -1346,6 +1731,44 @@ const server = http.createServer(async (req, res) => {
       const ext = path.extname(fp).slice(1).toLowerCase();
       fs.readFile(fp, (err, buf) => err ? send(res, 404, 'Not found') : send(res, 200, buf, { 'Content-Type': INBOX_MIME[ext] || 'application/octet-stream' }));
       return;
+    }
+  }
+
+  // ---- Голос Тени v2: облачный TTS. Только авторизованный same-origin запрос. ----
+  {
+    const voicePath = u.split('?')[0];
+    if (voicePath === '/api/shadow/voice/status' && req.method === 'GET') {
+      const uid = sessionUserId(req);
+      if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      const user = loadUsers().find((item) => item.id === uid);
+      if (!user) return sendJson(res, 401, { error: 'user not found' });
+      const access = shadowTtsAccess(user);
+      const languages = {};
+      for (const code of Object.keys(SHADOW_TTS_LANG)) {
+        const cfg = SHADOW_TTS_LANG[code];
+        languages[code] = { tag: cfg.tag, voice: cfg.voice, speed: cfg.speed };
+      }
+      return sendJson(res, 200, {
+        configured: access.ok,
+        reason: access.ok ? null : access.error,
+        mode: access.ok ? 'cloud-ai' : 'browser-system-fallback',
+        provider: 'openai',
+        model: SHADOW_TTS_MODEL,
+        format: SHADOW_TTS_FORMAT,
+        languages,
+        maxCharacters: SHADOW_TTS_MAX_CHARS,
+        aiGeneratedDisclosureRequired: true,
+      });
+    }
+    if (voicePath === '/api/shadow/voice' && req.method === 'POST') {
+      const uid = sessionUserId(req);
+      if (!uid) return shadowTtsError(res, 401, 'not_logged_in', crypto.randomBytes(10).toString('hex'));
+      const user = loadUsers().find((item) => item.id === uid);
+      if (!user) return shadowTtsError(res, 401, 'user_not_found', crypto.randomBytes(10).toString('hex'));
+      return handleShadowTts(req, res, user);
+    }
+    if (voicePath === '/api/shadow/voice' || voicePath === '/api/shadow/voice/status') {
+      return sendJson(res, 405, { error: 'method not allowed' });
     }
   }
 

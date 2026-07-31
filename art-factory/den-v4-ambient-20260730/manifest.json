@@ -1,0 +1,77 @@
+{
+  "id": "den-v4-ambient-20260730",
+  "style": "Satoru premium cut-paper fantasy",
+  "coordinateContract": "public/den-scene-v4.js",
+  "pipeline": [
+    "image generation on chroma-key field",
+    "deterministic chroma removal and despill",
+    "RGBA master verification",
+    "aspect-preserving runtime resize",
+    "world-space placement in 1536x864 scene"
+  ],
+  "assets": [
+    {
+      "id": "fireplace-grate-logs",
+      "source": "sources/fireplace-grate-logs-keyed.png",
+      "master": "outputs/fireplace-grate-logs.png",
+      "masterSize": [1672, 941],
+      "runtime": "public/art/den/v4/ambient/fireplace-grate-logs-runtime.png",
+      "runtimeSize": [512, 288],
+      "alpha": true,
+      "mode": "always visible"
+    },
+    {
+      "id": "fireplace-flame",
+      "source": "sources/fireplace-flame-keyed.png",
+      "master": "outputs/fireplace-flame.png",
+      "masterSize": [1672, 941],
+      "runtime": "public/art/den/v4/ambient/fireplace-flame-runtime.png",
+      "runtimeSize": [512, 288],
+      "alpha": true,
+      "mode": "fire"
+    },
+    {
+      "id": "window-robin",
+      "source": "sources/window-robin-keyed.png",
+      "master": "outputs/window-robin.png",
+      "masterSize": [1184, 1328],
+      "runtime": "public/art/den/v4/ambient/window-robin-runtime.png",
+      "runtimeSize": [456, 512],
+      "alpha": true,
+      "mode": "birds"
+    },
+    {
+      "id": "traveller-headphones",
+      "source": "sources/traveller-headphones-keyed.png",
+      "master": "outputs/traveller-headphones.png",
+      "masterSize": [1254, 1254],
+      "runtime": "public/art/den/v4/ambient/traveller-headphones-runtime.png",
+      "runtimeSize": [512, 512],
+      "alpha": true,
+      "mode": "noise"
+    }
+  ],
+  "audio": [
+    {
+      "id": "rain-natural-v1",
+      "runtime": "public/audio/ambient/rain-natural-v1.mp3",
+      "source": "audio/sources/rain-original.ogg",
+      "license": "Public domain",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Rain.ogg"
+    },
+    {
+      "id": "fire-natural-v1",
+      "runtime": "public/audio/ambient/fire-natural-v1.mp3",
+      "source": "audio/sources/fire-original.ogg",
+      "license": "CC BY 4.0, Work With Sounds / La Fonderie",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:WWS_Fireoftheforge.ogg"
+    },
+    {
+      "id": "birds-natural-v1",
+      "runtime": "public/audio/ambient/birds-natural-v1.mp3",
+      "source": "audio/sources/birds-original.ogg",
+      "license": "CC0 1.0, Akum20",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Birds_chirping_in_a_garden.ogg"
+    }
+  ]
+}

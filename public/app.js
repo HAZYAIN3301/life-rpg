@@ -15,6 +15,34 @@ function satoruIconHTML(id, className = '', fallback = '') {
   return `<img class="${cls}" ${attrs} src="${icon.publicPath}" alt="" aria-hidden="true" decoding="async" />`;
 }
 
+// Главная навигация использует составные inline-SVG там, где движение должно
+// затрагивать не всю картинку, а конкретную деталь. CSS-mask скрывает внутреннюю
+// структуру внешнего SVG, поэтому мишень+дротик и складная карта собраны здесь.
+function navMotionIconHTML(id) {
+  if (id === 'nav.today') {
+    return `<span class="navsec-icon nav-motion-icon nav-motion-today" data-motion="arrow-lock" aria-hidden="true">
+      <svg viewBox="0 0 24 24" focusable="false">
+        <g class="nav-today-target" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="12" r="7"/><circle cx="11" cy="12" r="3"/>
+          <path d="M11 3V1.8M11 22.2V21M2 12H.8M21.2 12H20"/>
+          <circle cx="11" cy="12" r="1.15" fill="currentColor" stroke="none" opacity=".52"/>
+        </g>
+        <path class="nav-today-dart" d="m14.2 8.8 6.2-5.2-5.2 6.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>`;
+  }
+  if (id === 'nav.plan') {
+    return `<span class="navsec-icon nav-motion-icon nav-motion-plan" data-motion="unfold" aria-hidden="true">
+      <svg viewBox="0 0 24 24" focusable="false" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <g class="nav-map-panel nav-map-panel-a"><path d="M3 5 8 3v15l-5 2z"/></g>
+        <g class="nav-map-panel nav-map-panel-b"><path d="m8 3 8 3v15l-8-3z"/><path d="m10.3 9.5 2.2 1.5 1.8-1.1 1.7 1.8" opacity=".55"/></g>
+        <g class="nav-map-panel nav-map-panel-c"><path d="m16 6 5-2v15l-5 2z"/><circle cx="18.3" cy="13.8" r=".85" fill="currentColor" stroke="none" opacity=".55"/></g>
+      </svg>
+    </span>`;
+  }
+  return satoruIconHTML(id, 'navsec-icon', '');
+}
+
 function brandMarkHTML(className = '') {
   return `<img class="brand-shadow-mark${className ? ` ${className}` : ''}" src="/art/companions/shadow-v3-20260730/shadow-spirit-calm.png?v=20260730-1" alt="" aria-hidden="true" decoding="async" />`;
 }
@@ -3348,33 +3376,58 @@ const AV_PARTS  = {
 const AV_CAT_ORDER = ['hair', 'hairColor', 'face', 'skin', 'eyes', 'brows', 'mouth', 'beard', 'glasses', 'cloth'];
 function defaultAvatar() { return { face: 0, skin: 1, hair: 1, hairColor: 1, brows: 0, eyes: 0, mouth: 0, beard: 0, glasses: 0, cloth: 0 }; }
 function avCfg() { return Object.assign(defaultAvatar(), (State.settings && State.settings.avatar) || {}); }
-// ── Traveller v1: raster paper-doll. Every PNG is 1024×1536 and stacks at (0,0).
+// ── Traveller clean-v2: canonical semantic layers, runtime 512×768.
+// Scholar пока намеренно использует цельные safe masters: старый semantic split
+// визуально ломался при выключении шляпы/очков/мантии и больше не выдается за modular.
 // Public API for UI/tests: setAvatarAppearance({ palette: 'violet', hair: false }).
-const AVATAR_ART_ROOT = '/art/avatars/traveller-v1/';
-const SCHOLAR_ART_ROOT = '/art/avatars/scholar-v1/';
+const AVATAR_ART_ROOT = '/art/avatars/traveller-clean-v2/';
+const SCHOLAR_ART_ROOT = '/art/avatars/scholar-flat-v2/';
 const AVATAR_OUTFIT_COLORWAYS = {
-  teal:    { label: 'Бирюзовый', color: '#1e7773', reveal: 'wardrobe/outfit/traveller-outfit-backpack-reveal.png', outfit: 'wardrobe/outfit/traveller-outfit-current.png' },
-  blue:    { label: 'Синий', color: '#3f6496', reveal: 'colorways/blue/outfit-backpack-reveal.png', outfit: 'colorways/blue/outfit-current.png' },
-  violet:  { label: 'Фиолетовый', color: '#755596', reveal: 'colorways/violet/outfit-backpack-reveal.png', outfit: 'colorways/violet/outfit-current.png' },
-  crimson: { label: 'Бордовый', color: '#984c58', reveal: 'colorways/crimson/outfit-backpack-reveal.png', outfit: 'colorways/crimson/outfit-current.png' },
-  forest:  { label: 'Лесной', color: '#477856', reveal: 'colorways/forest/outfit-backpack-reveal.png', outfit: 'colorways/forest/outfit-current.png' },
-};
-const AVATAR_FACE_STATES = {
-  neutral: 'states/traveller-face-neutral.png',
-  blink: 'states/traveller-face-blink.png',
-  happy: 'states/traveller-face-happy.png',
-  tired: 'states/traveller-face-tired.png',
-};
-const SCHOLAR_COLORWAYS = {
-  teal:    { label: 'Бирюзовый', color: '#1e7773', prefix: 'colorways/teal/' },
+  teal:    { label: 'Бирюзовый', color: '#1e7773', prefix: '' },
   blue:    { label: 'Синий', color: '#3f6496', prefix: 'colorways/blue/' },
   violet:  { label: 'Фиолетовый', color: '#755596', prefix: 'colorways/violet/' },
   crimson: { label: 'Бордовый', color: '#984c58', prefix: 'colorways/crimson/' },
   forest:  { label: 'Лесной', color: '#477856', prefix: 'colorways/forest/' },
 };
-const SCHOLAR_FACE_STATES = {
-  neutral: 'states/scholar-face-neutral.png',
+const AVATAR_FACE_STATES = {
+  neutral: 'states/avatar-face-neutral.png',
+  blink: 'states/avatar-face-blink.png',
+  happy: 'states/avatar-face-happy.png',
+  tired: 'states/avatar-face-tired.png',
 };
+const SCHOLAR_COLORWAYS = {
+  teal:    { label: 'Бирюзовый', color: '#1e7773', master: 'colorways/teal/master.png' },
+  blue:    { label: 'Синий', color: '#3f6496', master: 'colorways/blue/master.png' },
+  violet:  { label: 'Фиолетовый', color: '#755596', master: 'colorways/violet/master.png' },
+  crimson: { label: 'Бордовый', color: '#984c58', master: 'colorways/crimson/master.png' },
+  forest:  { label: 'Лесной', color: '#477856', master: 'colorways/forest/master.png' },
+};
+const SCHOLAR_FACE_STATES = {
+  neutral: 'colorways/teal/master.png',
+};
+const TRAVELLER_CLEAN_LAYERS = [
+  { id: 'shadow', file: 'base/avatar-shadow.png', z: 0, group: 'core', pivot: [256, 704] },
+  { id: 'backpack', file: 'wearables/back/avatar-backpack.png', z: 10, group: 'backpack', pivot: [302, 255] },
+  { id: 'hair-back', file: 'base/avatar-hair-back.png', z: 20, group: 'hair', pivot: [256, 142.5] },
+  { id: 'leg-r', file: 'base/avatar-leg-r.png', z: 30, group: 'core', pivot: [225, 395] },
+  { id: 'leg-l', file: 'base/avatar-leg-l.png', z: 31, group: 'core', pivot: [287, 395] },
+  { id: 'boot-r', file: 'base/avatar-boot-r.png', z: 35, group: 'core', pivot: [215, 582.5] },
+  { id: 'boot-l', file: 'base/avatar-boot-l.png', z: 36, group: 'core', pivot: [297, 582.5] },
+  { id: 'torso', file: 'base/avatar-torso.png', z: 50, group: 'core', pivot: [256, 260] },
+  { id: 'cloak', file: 'base/avatar-cloak.png', z: 52, group: 'outfit', pivot: [256, 280], colorized: true },
+  { id: 'hips-pants', file: 'base/avatar-hips-pants.png', z: 54, group: 'core', pivot: [256, 380] },
+  { id: 'upper-arm-r', file: 'base/avatar-upper-arm-r.png', z: 55, group: 'core', pivot: [182.5, 205], colorized: true },
+  { id: 'upper-arm-l', file: 'base/avatar-upper-arm-l.png', z: 56, group: 'core', pivot: [329.5, 205], colorized: true },
+  { id: 'forearm-hand-r', file: 'base/avatar-forearm-hand-r.png', z: 60, group: 'core', pivot: [157.5, 305] },
+  { id: 'forearm-hand-l', file: 'base/avatar-forearm-hand-l.png', z: 61, group: 'core', pivot: [354.5, 305] },
+  { id: 'head', file: 'base/avatar-head.png', z: 65, group: 'core', pivot: [256, 152.5] },
+  { id: 'scarf', file: 'wearables/neck/avatar-scarf.png', z: 70, group: 'scarf', pivot: [256, 175] },
+  { id: 'face', file: 'states/avatar-face-neutral.png', z: 90, group: 'face', pivot: [256, 127.5] },
+  { id: 'hair-front', file: 'base/avatar-hair-front.png', z: 100, group: 'hair', pivot: [256, 95] },
+  { id: 'goggles', file: 'wearables/head/head-traveller-goggles.png', z: 105, group: 'goggles', pivot: [256, 80] },
+  { id: 'pouch', file: 'accessories/avatar-pouch.png', z: 110, group: 'pouch', pivot: [305, 332.5] },
+  { id: 'lantern', file: 'accessories/avatar-lantern.png', z: 115, group: 'lantern', pivot: [332.5, 285] },
+];
 // Variant registry. New appearances can be added as a layered paper-doll or as
 // a single master during their visual-approval gate, without changing callers.
 const AVATAR_VARIANTS = {
@@ -3382,12 +3435,14 @@ const AVATAR_VARIANTS = {
     label: 'Странник',
     description: 'Тот, кто идёт не потому, что знает дорогу, а потому что выбрал направление.',
     artRoot: AVATAR_ART_ROOT,
-    mode: 'layers',
+    mode: 'clean-layers',
+    modular: true,
+    rigged: true,
     colorways: AVATAR_OUTFIT_COLORWAYS,
     faceStates: AVATAR_FACE_STATES,
-    slots: 9,
+    slots: 7,
     toggles: [
-      ['outfit', 'Костюм'],
+      ['outfit', 'Плащ'],
       ['hair', 'Волосы'],
       ['goggles', 'Очки'],
       ['scarf', 'Шарф'],
@@ -3398,19 +3453,15 @@ const AVATAR_VARIANTS = {
   },
   scholar: {
     label: 'Учёный',
-    description: 'Полевой исследователь: знания всегда при нём, но снаряжение можно оставить в лагере.',
+    description: 'Полевой исследователь. Сейчас это цельный безопасный пресет: старые ложные слои отключены, новая модульная версия пересобирается на общем риге.',
     artRoot: SCHOLAR_ART_ROOT,
-    mode: 'scholar-layers',
+    mode: 'master',
+    modular: false,
+    rigged: false,
     colorways: SCHOLAR_COLORWAYS,
     faceStates: SCHOLAR_FACE_STATES,
-    slots: 5,
-    toggles: [
-      ['outfit', 'Мантия'],
-      ['hair', 'Волосы'],
-      ['hat', 'Шляпа'],
-      ['glasses', 'Очки'],
-      ['gear', 'Снаряжение'],
-    ],
+    slots: 1,
+    toggles: [],
   },
 };
 function defaultAvatarAppearance() {
@@ -3446,10 +3497,13 @@ function avatarAppearance() {
 }
 function setAvatarAppearance(patch, options = {}) {
   if (!State.settings) return defaultAvatarAppearance();
-  const next = normalizeAvatarAppearance(Object.assign({}, avatarAppearance(), patch || {}));
+  const requested = Object.assign({}, patch || {});
+  if (requested.lantern === true) requested.backpack = true;
+  if (requested.backpack === false) requested.lantern = false;
+  const next = normalizeAvatarAppearance(Object.assign({}, avatarAppearance(), requested));
   State.settings.avatarAppearance = next;
   Store.save('settings', State.settings);
-  if (options.render !== false) render();
+  if (options.render !== false) queueAvatarAppearanceRender(next);
   return next;
 }
 function setAvatarVariant(variant, options = {}) {
@@ -3466,57 +3520,91 @@ function avatarArtLayers(options = {}) {
   if (variant.mode === 'master') {
     return [{ id: 'master', z: 0, file: colorway.master, on: true }];
   }
-  if (variant.mode === 'scholar-layers') {
-    const paletteFile = (file) => `${colorway.prefix}${file}`;
+  if (variant.mode === 'clean-layers') {
     const faceState = variant.faceStates[options.faceState] ? options.faceState : cfg.face;
-    if (!cfg.outfit) {
-      return [{ id: 'scholar-body', z: 0, file: 'base/body-underlay-full.png', on: true }];
-    }
-    const hairOn = cfg.hair;
-    const hatOn = hairOn && cfg.hat;
-    const headLayers = [
-      { id: 'scholar-bald-head', z: 10, file: paletteFile('base/body-bald-head-reveal.png'), on: !hairOn },
-      { id: 'scholar-hair-reveal', z: 20, file: paletteFile('wardrobe/hair/scholar-hair-reveal.png'), on: hairOn && !hatOn },
-      { id: 'face', z: 60, file: variant.faceStates[faceState], on: true },
-      { id: 'scholar-hair', z: 70, file: paletteFile('wardrobe/hair/scholar-hair-current.png'), on: hairOn },
-      { id: 'scholar-hat', z: 80, file: paletteFile('wardrobe/hat/scholar-hat.png'), on: hatOn },
-      { id: 'scholar-glasses', z: 90, file: paletteFile('wardrobe/glasses/scholar-glasses.png'), on: cfg.glasses },
-    ];
-    if (!cfg.gear) {
-      return [
-        { id: 'scholar-gear-free', z: 0, file: paletteFile('wardrobe/outfit/scholar-gear-free-base.png'), on: true },
-        ...headLayers,
-      ].filter((layer) => layer.on).sort((a, b) => a.z - b.z);
-    }
-    return [
-      { id: 'scholar-backpack', z: 20, file: paletteFile('wardrobe/backpack/scholar-backpack.png'), on: true },
-      { id: 'scholar-outfit', z: 40, file: paletteFile('wardrobe/outfit/scholar-outfit-current.png'), on: true },
-      { id: 'scholar-body-visible', z: 50, file: paletteFile('base/body-visible-approved.png'), on: true },
-      ...headLayers,
-      { id: 'scholar-belt-kit', z: 100, file: paletteFile('wardrobe/belt-kit/scholar-belt-kit.png'), on: true },
-      { id: 'scholar-amulet', z: 110, file: paletteFile('wardrobe/amulet/scholar-amulet.png'), on: true },
-    ].filter((layer) => layer.on).sort((a, b) => a.z - b.z);
+    const backpackOn = cfg.backpack;
+    return TRAVELLER_CLEAN_LAYERS.map((source) => {
+      const layer = { ...source };
+      if (layer.group === 'face') layer.file = variant.faceStates[faceState];
+      if (layer.colorized && cfg.palette !== 'teal') layer.file = `${colorway.prefix}${layer.file}`;
+      layer.on = layer.group === 'core'
+        || layer.group === 'face'
+        || (layer.group === 'outfit' && cfg.outfit)
+        || (layer.group === 'hair' && cfg.hair)
+        || (layer.group === 'goggles' && cfg.goggles)
+        || (layer.group === 'scarf' && cfg.scarf)
+        || (layer.group === 'pouch' && cfg.pouch)
+        || (layer.group === 'backpack' && backpackOn)
+        || (layer.group === 'lantern' && backpackOn && cfg.lantern);
+      return layer;
+    }).filter((layer) => layer.on).sort((a, b) => a.z - b.z);
   }
-  const outfitOn = cfg.outfit;
-  const backpackOn = outfitOn && cfg.backpack;
-  const faceState = variant.faceStates[options.faceState] ? options.faceState : cfg.face;
-  return [
-    { id: 'body', z: 0, file: outfitOn ? 'base/body-underlay-safe.png' : 'base/body-underlay-full.png', on: true },
-    { id: 'outfit-reveal', z: 5, file: colorway.reveal, on: outfitOn },
-    { id: 'backpack-back', z: 10, file: 'wardrobe/backpack/backpack-back.png', on: backpackOn },
-    { id: 'hair-back', z: 20, file: 'wardrobe/hair/traveller-hair-back.png', on: cfg.hair },
-    { id: 'outfit', z: 50, file: colorway.outfit, on: outfitOn },
-    { id: 'body-visible', z: 60, file: 'base/body-visible-approved.png', on: true },
-    { id: 'bald-head', z: 65, file: 'base/body-bald-head-reveal.png', on: !cfg.hair },
-    { id: 'scarf', z: 70, file: 'wardrobe/scarf/traveller-scarf.png', on: outfitOn && cfg.scarf },
-    { id: 'backpack-straps', z: 75, file: 'wardrobe/backpack/backpack-straps.png', on: backpackOn },
-    { id: 'face', z: 80, file: variant.faceStates[faceState], on: true },
-    { id: 'hair-front', z: 90, file: 'wardrobe/hair/traveller-hair-front.png', on: cfg.hair },
-    { id: 'goggles', z: 100, file: 'wardrobe/goggles/traveller-goggles.png', on: cfg.goggles },
-    { id: 'pouch', z: 110, file: 'wardrobe/pouch/traveller-pouch.png', on: outfitOn && cfg.pouch },
-    { id: 'lantern', z: 115, file: 'wardrobe/lantern/traveller-lantern.png', on: backpackOn && cfg.lantern },
-  ].filter((layer) => layer.on).sort((a, b) => a.z - b.z);
+  return [];
 }
+
+const _avatarImageCache = new Map();
+let _avatarAppearanceRenderToken = 0;
+function preloadAvatarImage(url) {
+  if (_avatarImageCache.has(url)) return _avatarImageCache.get(url);
+  const promise = new Promise((resolve) => {
+    const image = new Image();
+    const done = () => {
+      if (typeof image.decode === 'function') image.decode().catch(() => {}).then(resolve);
+      else resolve();
+    };
+    image.addEventListener('load', done, { once: true });
+    image.addEventListener('error', resolve, { once: true });
+    image.src = url;
+    if (image.complete && image.naturalWidth > 0) done();
+  });
+  _avatarImageCache.set(url, promise);
+  return promise;
+}
+function preloadAvatarAppearance(appearance) {
+  const cfg = normalizeAvatarAppearance(appearance);
+  const variant = AVATAR_VARIANTS[cfg.variant];
+  const urls = avatarArtLayers({ appearance: cfg }).map((layer) => variant.artRoot + layer.file);
+  return Promise.race([
+    Promise.all(urls.map(preloadAvatarImage)),
+    new Promise((resolve) => setTimeout(resolve, 1600)),
+  ]);
+}
+let _artWarmupScheduled = false;
+function scheduleArtWarmup() {
+  if (_artWarmupScheduled || typeof Image === 'undefined') return;
+  _artWarmupScheduled = true;
+  const run = () => {
+    try {
+      preloadAvatarAppearance(avatarAppearance());
+      [
+        '/art/den/v3/den-v3-runtime-1536x864.png?v=20260730-1',
+        '/art/den/v3/furniture/wall-map.png?v=20260730-1',
+        '/art/den/v3/furniture/seat-cushion.png?v=20260730-1',
+        '/art/den/v3/furniture/surface-crate.png?v=20260730-1',
+        '/art/den/v3/furniture/comfort-bonsai.png?v=20260730-1',
+        '/art/den/v3/furniture/light-lantern.png?v=20260730-1',
+        '/art/den/v3/furniture/keepsake-blades.png?v=20260730-1',
+        '/art/den/v3/furniture/floor-traveller.png?v=20260730-1',
+        '/art/den/v4/ambient/fireplace-grate-logs-runtime.png?v=20260730-1',
+        '/art/den/v4/ambient/fireplace-flame-runtime.png?v=20260730-1',
+        '/art/den/v4/ambient/window-robin-runtime.png?v=20260730-1',
+        '/art/den/v4/ambient/traveller-headphones-runtime.png?v=20260730-1',
+      ].forEach(preloadAvatarImage);
+    } catch {}
+  };
+  if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 1800 });
+  else setTimeout(run, 250);
+}
+function queueAvatarAppearanceRender(next) {
+  const token = ++_avatarAppearanceRenderToken;
+  const editor = document.getElementById('avatar-editor');
+  if (editor) editor.classList.add('is-avatar-swapping');
+  preloadAvatarAppearance(next).then(() => {
+    if (token !== _avatarAppearanceRenderToken) return;
+    render();
+  });
+}
+
 const AVATAR_MOTION_STATES = new Set(['idle', 'portrait', 'focus', 'tired', 'happy', 'victory']);
 function normalizeAvatarMotion(value) {
   return AVATAR_MOTION_STATES.has(value) ? value : 'idle';
@@ -3529,16 +3617,19 @@ function avatarArtHTML(options = {}) {
   const interactive = options.interactive === true;
   const autoBlink = options.autoBlink !== false && !!variant.faceStates.blink && faceState === 'neutral';
   const classes = ['avatar-art-stack', options.className || ''].filter(Boolean).join(' ');
-  const layers = avatarArtLayers(options).map((layer) => (
-    `<img class="avatar-art-layer avatar-art-${layer.id}" src="${variant.artRoot}${layer.file}" alt="" aria-hidden="true" draggable="false" decoding="async">`
-  )).join('');
+  const layers = avatarArtLayers(options).map((layer) => {
+    const pivot = layer.pivot
+      ? ` style="--avatar-layer-pivot-x:${(layer.pivot[0] / 512 * 100).toFixed(3)}%;--avatar-layer-pivot-y:${(layer.pivot[1] / 768 * 100).toFixed(3)}%"`
+      : '';
+    return `<img class="avatar-art-layer avatar-art-${layer.id}" src="${variant.artRoot}${layer.file}" alt="" aria-hidden="true" draggable="false" decoding="async"${pivot}>`;
+  }).join('');
   const faceSources = Object.entries(variant.faceStates).map(([id, file]) => (
     ` data-avatar-face-${id}-src="${esc(variant.artRoot + file)}"`
   )).join('');
   const interactionAttrs = interactive
     ? ' data-action="avatar-react" data-avatar-interactive="true" role="button" tabindex="0" aria-label="Персонаж Satoru — нажми, чтобы он отреагировал"'
     : ' role="img" aria-label="Персонаж Satoru"';
-  return `<span class="${classes}" data-avatar-motion="${motion}" data-avatar-face-state="${faceState}" data-avatar-auto-blink="${autoBlink ? 'true' : 'false'}"${faceSources}${interactionAttrs}><span class="avatar-art-rig">${layers}</span></span>`;
+  return `<span class="${classes}" data-avatar-variant="${esc(cfg.variant)}" data-avatar-rigged="${variant.rigged ? 'true' : 'false'}" data-avatar-motion="${motion}" data-avatar-face-state="${faceState}" data-avatar-auto-blink="${autoBlink ? 'true' : 'false'}"${faceSources}${interactionAttrs}><span class="avatar-art-rig">${layers}</span></span>`;
 }
 function avatarPortraitHTML(options = {}) {
   return `<span class="avatar-art-portrait">${avatarArtHTML(Object.assign({}, options, { className: 'avatar-art-stack--portrait', motion: options.motion || 'portrait', interactive: false }))}</span>`;
@@ -4431,13 +4522,19 @@ function bell(strong) {
     o.connect(g).connect(audioCtx.destination); o.start(t0); o.stop(t0 + 1.7);
   });
 }
-// ---- 🔊 Голос Тени (Джарвис-2, Фаза B1) — браузерный TTS ----
-// Ключевое разделение (идея Альберта): «ЧТО сказать» — это ИИ, стоит денег за вызов; «КАК это
-// звучит» — это speechSynthesis, встроен в браузер, €0 и безлимит. Поэтому голос не завязан ни на
-// ИИ-ключ, ни на Pro: работает у всех, включая Free. Только по кнопке — авто-озвучка навязчива,
-// а на iOS вдобавок блокируется без жеста юзера.
+// ---- 🔊 Голос Тени (Джарвис-2, Фаза B2) ----
+// Основной путь — server-side Cloud AI voice (shadow-voice-v2.js). Встроенный
+// speechSynthesis оставлен только как честно обозначенный аварийный fallback:
+// его качество зависит от устройства и он больше не называется голосом Тени.
 let _ttsBtn = null, _ttsView = null, _ttsRunId = 0, _ttsVoices = [];
 const TTS_LANG = { ru: 'ru-RU', en: 'en-US', de: 'de-DE', uk: 'uk-UA', es: 'es-ES' };
+const TTS_PREVIEW = {
+  ru: 'Я рядом. Давай спокойно выберем один следующий шаг.',
+  uk: 'Я поруч. Давай спокійно оберемо один наступний крок.',
+  en: 'I am here. Let us calmly choose one honest next step.',
+  de: 'Ich bin da. Lass uns in Ruhe den nächsten ehrlichen Schritt wählen.',
+  es: 'Estoy aquí. Elijamos con calma un siguiente paso honesto.',
+};
 const TTS_VOICE_HINTS = {
   ru: ['milena', 'yuri', 'katya', 'alena', 'irina', 'maxim', 'tatyana', 'siri'],
   en: ['siri', 'samantha', 'ava', 'daniel', 'alex', 'victoria'],
@@ -4445,14 +4542,16 @@ const TTS_VOICE_HINTS = {
   uk: ['lesya', 'ostap', 'siri'],
   es: ['mónica', 'monica', 'jorge', 'paulina', 'siri'],
 };
-function ttsOK() { try { return 'speechSynthesis' in window && typeof SpeechSynthesisUtterance === 'function'; } catch { return false; } }
+function ttsSystemOK() { try { return 'speechSynthesis' in window && typeof SpeechSynthesisUtterance === 'function'; } catch { return false; } }
+function ttsCloudOK() { return !!(window.ShadowVoiceV2 && typeof window.ShadowVoiceV2.speak === 'function'); }
+function ttsOK() { return ttsCloudOK() || ttsSystemOK(); }
 function ttsOn() { return !State.settings || State.settings.tts !== false; }
 function ttsPrefs() {
   const defaults = { voiceURI: '', rate: .92, pitch: .96 };
   return Object.assign(defaults, (State.settings && State.settings.ttsPrefs) || {});
 }
 function ttsRefreshVoices() {
-  if (!ttsOK()) return [];
+  if (!ttsSystemOK()) return [];
   try { _ttsVoices = (speechSynthesis.getVoices() || []).slice(); } catch { _ttsVoices = []; }
   return _ttsVoices;
 }
@@ -4523,8 +4622,8 @@ function ttsStop() {
   _ttsBtn = null; _ttsView = null;
   if (window.ShadowRig) window.ShadowRig.clearGlobalState();
 }
-function ttsSpeak(text, btn) {
-  if (!ttsOK() || !text) return;
+function ttsSpeak(text, btn, context = 'calm') {
+  if (!ttsSystemOK() || !text) return;
   const same = _ttsBtn === btn;
   ttsStop();
   if (same) return; // повторный клик по той же кнопке = стоп
@@ -4573,16 +4672,63 @@ function ttsTextNear(btn) {
   clone.querySelectorAll('br').forEach((b) => b.replaceWith('\n'));
   return (clone.textContent || '').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
 }
+function ttsContextNear(btn) {
+  const explicit = btn && btn.dataset ? btn.dataset.ttsContext : '';
+  if (explicit) return explicit;
+  const host = btn && btn.closest ? btn.closest('[data-tts]') : null;
+  if (host && host.matches('.moment-card, .companion-moment')) {
+    const hour = new Date().getHours();
+    return hour < 12 ? 'morning' : hour >= 18 ? 'evening' : 'calm';
+  }
+  if (host && host.matches('.achievement, .reward, .lvlup-box, .raidwin-box')) return 'celebrate';
+  if (State.timer && State.timer.running) return 'focus';
+  if (State.view === 'today') return 'coach';
+  return 'calm';
+}
 function ttsBtnHTML() {
   if (!ttsOK() || !ttsOn()) return '';
   const lbl = esc(t('Озвучить'));
   return `<button class="tts-btn" data-action="tts" title="${lbl}" aria-label="${lbl}">${satoruIconHTML('media.sound', 'tts-glyph', '◇')}</button>`;
 }
+const SHADOW_VOICE_COPY = {
+  ru: { checking: 'Проверяем облачный голос…', cloud: 'Cloud AI · естественный голос', detail: 'Русский, украинский, английский, немецкий и испанский выбираются автоматически. Голос сгенерирован ИИ.', fallback: 'Системный голос устройства · только резерв', unavailable: 'Облачный голос пока не настроен на сервере. При воспроизведении приложение явно предупредит о системном резерве.' },
+  uk: { checking: 'Перевіряємо хмарний голос…', cloud: 'Cloud AI · природний голос', detail: 'Російська, українська, англійська, німецька та іспанська обираються автоматично. Голос згенеровано ШІ.', fallback: 'Системний голос пристрою · лише резерв', unavailable: 'Хмарний голос поки не налаштовано на сервері. Застосунок явно попередить про системний резерв.' },
+  en: { checking: 'Checking cloud voice…', cloud: 'Cloud AI · natural voice', detail: 'Russian, Ukrainian, English, German and Spanish are selected automatically. The voice is AI-generated.', fallback: 'Device system voice · fallback only', unavailable: 'Cloud voice is not configured on the server yet. The app will clearly label any device-voice fallback.' },
+  de: { checking: 'Cloud-Stimme wird geprüft…', cloud: 'Cloud AI · natürliche Stimme', detail: 'Russisch, Ukrainisch, Englisch, Deutsch und Spanisch werden automatisch gewählt. Die Stimme ist KI-generiert.', fallback: 'Systemstimme des Geräts · nur Reserve', unavailable: 'Die Cloud-Stimme ist auf dem Server noch nicht eingerichtet. Die App kennzeichnet die Systemstimme eindeutig als Reserve.' },
+  es: { checking: 'Comprobando la voz en la nube…', cloud: 'Cloud AI · voz natural', detail: 'Ruso, ucraniano, inglés, alemán y español se eligen automáticamente. La voz está generada por IA.', fallback: 'Voz del sistema · solo de reserva', unavailable: 'La voz en la nube aún no está configurada en el servidor. La app indicará claramente cualquier voz de reserva.' },
+};
+function shadowVoiceCopy() { return SHADOW_VOICE_COPY[lang()] || SHADOW_VOICE_COPY.ru; }
+function shadowVoiceStatusMarkup() {
+  const copy = shadowVoiceCopy();
+  const status = State._shadowVoiceStatus;
+  if (!ttsCloudOK() || (status && status.configured === false)) {
+    return `<b class="voice-mode voice-mode-fallback">${copy.fallback}</b><small>${copy.unavailable}</small>`;
+  }
+  if (!status) return `<b class="voice-mode">${copy.checking}</b>`;
+  return `<b class="voice-mode voice-mode-cloud">${copy.cloud}</b><small>${copy.detail}</small>`;
+}
+function refreshShadowVoiceStatus() {
+  if (!ttsCloudOK() || State._shadowVoiceStatusLoading) return;
+  State._shadowVoiceStatusLoading = true;
+  window.ShadowVoiceV2.getStatus(lang()).then((status) => {
+    State._shadowVoiceStatus = status;
+  }).catch((error) => {
+    State._shadowVoiceStatus = { configured: false, reason: (error && error.code) || 'unavailable' };
+  }).finally(() => {
+    State._shadowVoiceStatusLoading = false;
+    const node = document.getElementById('shadow-voice-status');
+    if (node) node.innerHTML = shadowVoiceStatusMarkup();
+  });
+}
+function shadowVoiceSettingsHTML() {
+  setTimeout(refreshShadowVoiceStatus, 0);
+  return `<div class="shadow-voice-status" id="shadow-voice-status">${shadowVoiceStatusMarkup()}</div>`;
+}
 function ttsSyncVoiceSelect() {
   const select = document.getElementById('set-tts-voice');
   if (select) select.innerHTML = ttsVoiceOptionsHTML();
 }
-if (ttsOK()) {
+if (ttsSystemOK()) {
   ttsRefreshVoices();
   try { speechSynthesis.addEventListener('voiceschanged', () => { ttsRefreshVoices(); ttsSyncVoiceSelect(); }); } catch {}
 }
@@ -4630,7 +4776,9 @@ function sfx(name, rarity) {
 function sfxLoot(rarity) { sfx('loot', rarity); } // вызывается из openChest (#20)
 
 // ============================================================
-//  Эмбиент-звук: процедурные слои с отдельными событиями
+//  Эмбиент-звук: натуральные локальные записи + процедурный мягкий шум.
+//  MediaElement живёт между render(): смена вкладки больше не обрывает и не
+//  перезапускает дождь/камин/птиц. Файлы локальные и кешируются PWA.
 // ============================================================
 const AMBIENT_MODES = [
   { id: 'off', label: 'Тишина', icon: 'media.stop' },
@@ -4639,7 +4787,14 @@ const AMBIENT_MODES = [
   { id: 'noise', label: 'Мягкий шум', icon: 'ambient.noise' },
   { id: 'birds', label: 'Птицы', icon: 'ambient.birds' },
 ];
+const AMBIENT_AUDIO = {
+  rain: { src: '/audio/ambient/rain-natural-v1.mp3', gain: .82 },
+  fire: { src: '/audio/ambient/fire-natural-v1.mp3', gain: .9 },
+  birds: { src: '/audio/ambient/birds-natural-v1.mp3', gain: .78 },
+};
 let _ambientCtx = null, _ambientNodes = [], _ambientTimers = [], _ambientRunId = 0;
+let _ambientMode = 'off', _ambientMedia = null, _ambientMasterGain = null;
+const _ambientMediaCache = new Map();
 function ambientMeta(id) { return AMBIENT_MODES.find((item) => item.id === id) || AMBIENT_MODES[0]; }
 function nextAmbientMode(id) {
   const index = Math.max(0, AMBIENT_MODES.findIndex((item) => item.id === id));
@@ -4654,10 +4809,16 @@ function _ensureAmbientCtx() {
 
 function _stopAmbient() {
   _ambientRunId++;
+  if (_ambientMedia) {
+    try { _ambientMedia.pause(); } catch {}
+    _ambientMedia = null;
+  }
   _ambientTimers.forEach((id) => clearInterval(id));
   _ambientTimers = [];
   _ambientNodes.forEach((n) => { try { n.stop(); } catch {} try { n.disconnect(); } catch {} });
   _ambientNodes = [];
+  _ambientMasterGain = null;
+  _ambientMode = 'off';
 }
 
 function _ambientNoiseBuffer(ctx, seconds, color) {
@@ -4679,7 +4840,52 @@ function _ambientMaster(ctx, vol, scale) {
   gain.gain.value = Math.max(0, Math.min(1, vol / 100)) * scale;
   gain.connect(ctx.destination);
   _ambientNodes.push(gain);
+  _ambientMasterGain = gain;
   return gain;
+}
+
+function _ambientVolume(mode, vol) {
+  const config = AMBIENT_AUDIO[mode];
+  const scale = config ? config.gain : mode === 'noise' ? .56 : 1;
+  return Math.max(0, Math.min(1, Number(vol) / 100)) * scale;
+}
+
+function _naturalAmbientMedia(mode) {
+  if (_ambientMediaCache.has(mode)) return _ambientMediaCache.get(mode);
+  const config = AMBIENT_AUDIO[mode];
+  if (!config) return null;
+  const media = new Audio(config.src);
+  media.loop = true;
+  media.preload = 'auto';
+  media.playsInline = true;
+  media.setAttribute('aria-hidden', 'true');
+  _ambientMediaCache.set(mode, media);
+  return media;
+}
+
+function _startNaturalAmbient(mode, vol) {
+  const media = _naturalAmbientMedia(mode);
+  if (!media) return false;
+  media.volume = _ambientVolume(mode, vol);
+  _ambientMedia = media;
+  const play = media.play();
+  if (play && typeof play.then === 'function') {
+    const runId = _ambientRunId;
+    play.then(() => {
+      if (runId === _ambientRunId && _ambientMode === mode) {
+        document.querySelectorAll(`[data-action="set-ambient"][data-mode="${mode}"]`)
+          .forEach((button) => button.classList.remove('needs-audio-tap'));
+      }
+    }).catch(() => {
+      // iOS запрещает восстановленный autoplay без жеста. Не выдаём это за
+      // поломку: следующий прямой тап по режиму снова вызовет play().
+      if (runId === _ambientRunId && _ambientMode === mode) {
+        document.querySelectorAll(`[data-action="set-ambient"][data-mode="${mode}"]`)
+          .forEach((button) => button.classList.add('needs-audio-tap'));
+      }
+    });
+  }
+  return true;
 }
 
 function _ambientLoop(ctx, buffer, destination, gainValue, filterType, frequency, q) {
@@ -4816,16 +5022,27 @@ function _startBirds(vol) {
 }
 
 function applyAmbient() {
-  _stopAmbient();
   const amb = (State.settings && State.settings.ambient) || {};
-  if (!amb.mode || amb.mode === 'off') return;
+  const mode = amb.mode || 'off';
   const vol = amb.vol != null ? amb.vol : 60;
+  if (mode === _ambientMode) {
+    if (_ambientMedia) {
+      _ambientMedia.volume = _ambientVolume(mode, vol);
+      const play = _ambientMedia.play();
+      if (play && typeof play.catch === 'function') play.catch(() => {});
+    } else if (_ambientMasterGain && _ambientCtx) {
+      _ambientMasterGain.gain.setTargetAtTime(_ambientVolume(mode, vol), _ambientCtx.currentTime, .06);
+    }
+    return;
+  }
+  _stopAmbient();
+  if (mode === 'off') return;
+  _ambientMode = mode;
   try {
-    if (amb.mode === 'rain') _startRain(vol);
-    else if (amb.mode === 'fire') _startFire(vol);
-    else if (amb.mode === 'noise') _startNoise(vol);
-    else if (amb.mode === 'birds') _startBirds(vol);
+    if (AMBIENT_AUDIO[mode]) _startNaturalAmbient(mode, vol);
+    else if (mode === 'noise') _startNoise(vol);
   } catch {
+    _ambientMode = 'off';
     toast('Не удалось запустить эмбиент в этом браузере');
   }
 }
@@ -5238,10 +5455,29 @@ function showAuthScreen() {
 // ============================================================
 //  Заголовок: персонаж
 // ============================================================
-function renderHeader() {
+let _headerRenderKey = '';
+function renderHeader(force = false) {
   const c = State.settings.curve, oi = levelInfo(overallXp(), c.base, c.growth), streak = currentStreak();
   const cr = charRank(), eqTitle = equippedTitle(), e = ent();
-  const skills = topSkills().map((s) => {
+  const top = topSkills();
+  const header = document.getElementById('charSummary');
+  const nextKey = JSON.stringify({
+    appName: State.settings.appName || 'Satoru',
+    lang: lang(),
+    me: State.me ? [State.me.id, State.me.name, State.me.avatar, State.me.isAdmin] : null,
+    level: [oi.level, oi.pct, oi.into, oi.need],
+    rank: [cr.name, cr.color],
+    title: eqTitle,
+    gold: goldBalance(),
+    streak: [streak, longestStreak()],
+    hype: [hypePct(), hypeState().stacks, hypeMinLeft()],
+    tier: [e.tier, trialDaysLeft()],
+    avatar: State.settings.avatarAppearance || null,
+    skills: top.map((s) => [s.id, s.name, s.color, skillXp(s.id)]),
+  });
+  if (!force && header && header.childElementCount && nextKey === _headerRenderKey) return;
+  _headerRenderKey = nextKey;
+  const skills = top.map((s) => {
     const si = levelInfo(skillXp(s.id), c.skillBase, c.growth), sr = rankFor(si.level), pillar = isPillar(s.id);
     const l = lang(), lvl = I18N_LVL[l] || 'ур.';
     const titleName = l === 'ru' ? s.name : i18nWord(s.name, l);
@@ -5256,7 +5492,7 @@ function renderHeader() {
     : e.tier === 'trial' ? `<span class="plan-badge trial" title="Pro-триал">PRO ${trialDaysLeft()}д</span>`
     : `<button class="plan-badge free" data-action="show-paywall" data-feature="Pro" title="Открыть Pro — сейчас у тебя Free">${satoruIconHTML('status.unlock', 'inline-glyph', '◇')} Pro?</button>`;
   document.getElementById('appName').textContent = State.settings.appName || 'Satoru';
-  document.getElementById('charSummary').innerHTML = `
+  header.innerHTML = `
     <div class="char-main">
       ${State.me ? `<div class="user-pill" title="${t('Профиль')}">
         <button class="up-av up-av-raster" data-action="go-wardrobe" title="Открыть персонажа" aria-label="Открыть персонажа">${avatarPortraitHTML({ motion: 'portrait' })}</button>
@@ -7639,28 +7875,102 @@ function denWindow(hr) {
   if (hr >= 17 && hr < 20) return { sky: '#f6b184', extra: '<circle cx="602" cy="105" r="21" fill="#ffd27f"/><path d="M548 144 q45 -17 100 0" fill="none" stroke="#9c5972" stroke-opacity=".38" stroke-width="7"/>' };
   return { sky: '#1b2440', extra: '<circle cx="610" cy="82" r="17" fill="#e8eefc"/><circle cx="570" cy="72" r="3" fill="#fff"/><circle cx="640" cy="112" r="2.5" fill="#fff"/><circle cx="590" cy="125" r="2" fill="#fff"/><circle cx="649" cy="68" r="2" fill="#fff"/>' };
 }
-function denSceneSVG(theme, light) {
+function denPhaseForLight(light) {
+  if (light === 'auto' && window.DenSceneV4) return window.DenSceneV4.phaseAt(new Date()).id;
   const hr = denLightHour(light);
-  const phase = hr >= 6 && hr < 11 ? 'morning' : hr >= 11 && hr < 17 ? 'day' : hr >= 17 && hr < 20 ? 'sunset' : 'night';
+  return hr >= 6 && hr < 11 ? 'morning' : hr >= 11 && hr < 17 ? 'day' : hr >= 17 && hr < 20 ? 'sunset' : 'night';
+}
+function denSceneSVG(theme, light) {
+  const phase = denPhaseForLight(light);
   return `<img class="den-room den-room-art" src="/art/den/v3/den-v3-runtime-1536x864.png?v=20260730-1" alt="" aria-hidden="true" decoding="async" draggable="false">
-    <span class="den-room-colorwash" data-phase="${phase}" style="--den-room-wall:${theme.wall2};--den-room-glow:${theme.glow}"></span>`;
+    <svg class="den-window-sky" data-phase="${phase}" viewBox="0 0 1536 864" preserveAspectRatio="none" aria-hidden="true">
+      <defs><clipPath id="den-window-glass-v4"><path d="M1084 509V229C1084 139 1158 93 1252 93S1420 139 1420 229V509Z"/></clipPath></defs>
+      <g clip-path="url(#den-window-glass-v4)">
+        <rect class="den-window-sky-fill" x="1084" y="93" width="336" height="416"/>
+        <circle class="den-window-sun" cx="1343" cy="169" r="30"/>
+        <g class="den-window-clouds"><path d="M1098 268c24-31 51-22 62 0 20-25 61-11 61 17h-123z"/><path d="M1260 321c17-24 41-18 50 0 18-20 49-7 49 17h-99z"/></g>
+      </g>
+    </svg>
+    <span class="den-room-colorwash" data-phase="${phase}" style="--den-room-wall:${theme.wall2};--den-room-glow:${theme.glow}"></span>
+    <span class="den-practical-light den-practical-light-lantern" aria-hidden="true"></span>
+    <span class="den-practical-light den-practical-light-fireplace" aria-hidden="true"></span>`;
 }
 function denObjectsHTML(den) {
   return Object.entries(den.slots).map(([slot, id]) => {
     const item = denItem(id);
     if (!item || item.slot !== slot || !denOwned(id)) return '';
-    return `<img class="den-object den-object-${slot}" data-den-id="${esc(item.id)}" data-den-art="${item.artVersion}" data-den-motion="${item.motion}" src="${item.src}" alt="" aria-hidden="true" decoding="async" draggable="false">`;
+    const placement = window.DenSceneV4 && window.DenSceneV4.item(item.id);
+    let style = '';
+    let motion = item.motion;
+    if (placement) {
+      const p = (value, total) => `${(value / total * 100).toFixed(4)}%`;
+      const transform = placement.transform || 'none';
+      style = `--den-x:${p(placement.x, 1536)};--den-y:${p(placement.y, 864)};--den-w:${p(placement.w, 1536)};--den-h:${p(placement.h, 864)};--den-z:${placement.z};--den-pivot-x:${placement.pivot.x * 100}%;--den-pivot-y:${placement.pivot.y * 100}%;--den-transform:${transform}`;
+      if (!placement.motion || placement.motion.kind === 'still' || placement.motion.target === 'none-until-foliage-split') motion = 'still';
+      else if (placement.motion.kind === 'pendulum') motion = 'lantern';
+    }
+    return `<img class="den-object den-object-${slot}${placement ? ' den-object-v4' : ' den-object-legacy'}" data-den-id="${esc(item.id)}" data-den-art="${item.artVersion}" data-den-plane="${esc((placement && placement.plane) || 'legacy')}" data-den-motion="${motion}"${style ? ` style="${style}"` : ''} src="${item.src}" alt="" aria-hidden="true" decoding="async" draggable="false">`;
   }).join('');
 }
 function denAmbientVisualHTML(mode) {
   const rain = Array.from({ length: 13 }, (_, i) => `<i style="--i:${i};--x:${(i * 37) % 100};--d:${(i % 5) * .17}s"></i>`).join('');
   return `<div class="den-ambient-visual" data-mode="${esc(mode)}" aria-hidden="true">
+    <span class="den-fireplace-base"><img src="/art/den/v4/ambient/fireplace-grate-logs-runtime.png?v=20260730-1" alt="" decoding="async"></span>
     <span class="den-fire-glow"></span>
-    <span class="den-fire-flame"><i></i><b></b></span>
+    <span class="den-fire-flame"><img src="/art/den/v4/ambient/fireplace-flame-runtime.png?v=20260730-1" alt="" decoding="async"></span>
     <span class="den-window-rain">${rain}</span>
-    <span class="den-window-bird">${satoruIconHTML('ambient.birds', 'den-bird-glyph', '◇')}</span>
-    <span class="den-noise-headphones">${satoruIconHTML('ambient.noise', 'den-headphone-glyph', '◇')}</span>
+    <span class="den-window-bird"><img src="/art/den/v4/ambient/window-robin-runtime.png?v=20260730-1" alt="" decoding="async"><span class="den-bird-song"><i></i><b></b></span></span>
+    <span class="den-noise-headphones"><img src="/art/den/v4/ambient/traveller-headphones-runtime.png?v=20260730-1" alt="" decoding="async"></span>
   </div>`;
+}
+function syncDenAmbientVisual(mode) {
+  const safeMode = AMBIENT_MODES.some((item) => item.id === mode) ? mode : 'off';
+  const scene = document.querySelector('.den-scene');
+  if (scene) scene.dataset.denAmbient = safeMode;
+  const active = ambientMeta(safeMode);
+  const tool = document.querySelector('[data-action="den-ambient-cycle"]');
+  if (tool) {
+    tool.title = `Эмбиент: ${active.label}`;
+    tool.innerHTML = `${satoruIconHTML(active.icon, 'den-tool-glyph', '◇')}<span>${active.label}</span>`;
+  }
+  document.querySelectorAll('.ambient-choice[data-mode]').forEach((button) => {
+    const selected = button.dataset.mode === safeMode;
+    button.classList.toggle('ghost', !selected);
+    button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+  });
+}
+let _denPhaseTimer = null;
+function scheduleDenPhaseBoundary() {
+  clearTimeout(_denPhaseTimer);
+  _denPhaseTimer = null;
+  if (State.view !== 'den' || !State.settings || !window.DenSceneV4) return;
+  const den = ensureDen();
+  if (den.light !== 'auto') return;
+  const delay = Math.max(1000, Math.min(2147483000, window.DenSceneV4.millisecondsToNextBoundary(new Date()) + 250));
+  _denPhaseTimer = setTimeout(() => {
+    if (State.view === 'den' && ensureDen().light === 'auto') {
+      syncDenLightVisual('auto');
+      scheduleDenPhaseBoundary();
+    }
+  }, delay);
+}
+function syncDenLightVisual(light) {
+  const den = ensureDen();
+  const safeLight = ['auto', 'morning', 'day', 'sunset', 'night'].includes(light) ? light : 'auto';
+  den.light = safeLight;
+  const hr = denLightHour(safeLight);
+  const phase = hr >= 6 && hr < 11 ? 'morning' : hr >= 11 && hr < 17 ? 'day' : hr >= 17 && hr < 20 ? 'sunset' : 'night';
+  const scene = document.querySelector('.den-scene');
+  if (scene) {
+    scene.dataset.denLight = safeLight;
+    scene.dataset.denPhase = phase;
+    const wash = scene.querySelector('.den-room-colorwash');
+    if (wash) wash.dataset.phase = phase;
+  }
+  document.querySelectorAll('[data-action="den-light"]').forEach((button) => {
+    button.classList.toggle('is-selected', button.dataset.value === safeLight);
+  });
+  scheduleDenPhaseBoundary();
 }
 function denAccessChip(entry, owned, selected) {
   if (selected) return `<span class="den-choice-state">${satoruIconHTML('action.check', 'den-mini-glyph', '✓')} стоит</span>`;
@@ -7870,7 +8180,7 @@ function renderDen() {
     : `<div class="den-focus"><span>${satoruIconHTML('system.focus', 'den-row-glyph', '◇')} Готов к делу?</span><button class="btn sm" data-action="goto-today">Начать фокус</button></div>`;
   return `<div class="den-shell">
     <div class="card den-card">
-    <div class="den-scene" data-den-theme="${theme.id}" data-den-light="${den.light}" data-den-ambient="${ambientMode}">
+    <div class="den-scene" data-den-theme="${theme.id}" data-den-light="${den.light}" data-den-phase="${denPhaseForLight(den.light)}" data-den-ambient="${ambientMode}">
       ${denSceneSVG(theme, den.light)}
       ${denObjectsHTML(den)}
       ${denAmbientVisualHTML(ambientMode)}
@@ -8546,15 +8856,20 @@ function avatarEditor() {
     ['focus', '🎯 Фокус'],
     ['tired', '😮‍💨 Усталость'],
   ].map(([id, label]) => `<button class="avatar-choice avatar-motion-choice" data-action="avatar-motion-preview" data-motion="${id}">${label}</button>`).join('');
+  const motionSection = variant.rigged
+    ? `<section><h4>Проверить движения</h4><div class="avatar-choice-row">${motions}</div></section>`
+    : `<section class="avatar-editor-honesty"><h4>Движение</h4><p>У этого пресета пока нет честного рига. Поэтому фальшивые «прыжки всей PNG» отключены — новая версия Учёного будет собрана на тех же суставах, что Странник.</p></section>`;
+  const modeLabel = variant.modular ? 'модульная бумажная кукла' : 'цельный безопасный пресет';
+  const badgeLabel = variant.modular ? `${variant.slots} слотов` : 'без артефактов';
   return `<div class="card avatar-editor" id="avatar-editor">
-    <div class="avatar-editor-head"><div><h3>🪞 Твой персонаж</h3><p>${esc(variant.label)} · модульная бумажная кукла</p></div><span class="avatar-editor-badge">${variant.slots} слотов</span></div>
+    <div class="avatar-editor-head"><div><h3>🪞 Твой персонаж</h3><p>${esc(variant.label)} · ${modeLabel}</p></div><span class="avatar-editor-badge">${badgeLabel}</span></div>
     <div class="ave-stage ave-stage-figure">${avatarFigureHTML({ motion: 'idle', interactive: true })}</div>
     <div class="avatar-customizer">
       <section><h4>Облик</h4><div class="avatar-choice-row">${variants}</div></section>
       <section><h4>Цвет костюма</h4><div class="avatar-choice-row avatar-palette-row">${palettes}</div></section>
       ${layersSection}
       ${facesSection}
-      <section><h4>Проверить движения</h4><div class="avatar-choice-row">${motions}</div></section>
+      ${motionSection}
     </div>
     <p class="avatar-editor-note"><b>${esc(variant.label)}</b> — ${esc(variant.description)} Нажми на персонажа — он откликнется. В Логове движение и выражение лица автоматически зависят от энергии, фокуса и выполненных дел.</p>
   </div>`;
@@ -9867,11 +10182,8 @@ function renderSettings() {
       <label class="sound-toggle"><input type="checkbox" data-action="toggle-sound" ${sfxOn() ? 'checked' : ''}/> ${t('Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)')}</label>
       ${ttsOK() ? `<label class="sound-toggle"><input type="checkbox" data-action="toggle-tts" ${ttsOn() ? 'checked' : ''}/> ${t('Кнопка 🔊 — озвучить голосом Тени (реплики, подсказки, ответы Помощника)')}</label>` : ''}
       ${ttsOK() && ttsOn() ? `<div class="tts-settings">
-        <label><span>Голос Тени</span><select id="set-tts-voice" data-action="set-tts-voice">${ttsVoiceOptionsHTML()}</select></label>
-        <label><span>Скорость <b>${Number(ttsPrefs().rate).toFixed(2)}×</b></span><input type="range" min="0.72" max="1.18" step="0.02" value="${ttsPrefs().rate}" data-action="set-tts-rate"></label>
-        <label><span>Тон <b>${Number(ttsPrefs().pitch).toFixed(2)}</b></span><input type="range" min="0.72" max="1.18" step="0.02" value="${ttsPrefs().pitch}" data-action="set-tts-pitch"></label>
+        ${shadowVoiceSettingsHTML()}
         <button class="btn ghost sm" data-action="tts-preview">${satoruIconHTML('media.sound', 'button-glyph', '◇')} Прослушать Тень</button>
-        <small class="muted">На Mac обычно лучше звучит Milena/Yuri Enhanced или Siri; выбор сохраняется на аккаунте.</small>
       </div>` : ''}
       <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">${t('▶ Проверить звук')}</button></div>
     <div class="card"><h3>🕯 ${t('Тень')}</h3>
@@ -10270,18 +10582,59 @@ function sectionHasNew(s, lvl) {
 function renderNav() {
   const nav = document.getElementById('nav'); if (!nav) return;
   const lvl = navUnlockLevel(), cur = sectionOf(State.view);
-  const primary = SECTIONS.map((s) => {
-    const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
-    const mobileClass = ['today', 'plan', 'habits', 'hero'].includes(s.id) ? ' mobile-primary' : ' mobile-secondary';
-    return `<button class="navsec${mobileClass}${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}" title="${locked ? 'Откроется на ур.' + s.gate : (isNew ? t(s.label) + ' — новое!' : t(s.label))}">${satoruIconHTML(s.iconId, 'navsec-icon', '')}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">${satoruIconHTML('status.lock', 'navsec-lock-icon', '🔒')}${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
-  }).join('');
-  const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="${t('Настройки')}" aria-label="${t('Настройки')}">${satoruIconHTML('nav.settings', 'navgear-icon', '⚙️')}</button>`;
+  const discovered = ((State.settings && State.settings.discovered) || []).slice().sort().join(',');
+  const primaryKey = `${lang()}|${lvl}|${discovered}`;
+  let row = nav.querySelector(':scope > .navrow');
+  if (!row || nav.dataset.primaryKey !== primaryKey) {
+    const primary = SECTIONS.map((s) => {
+      const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
+      const mobileClass = ['today', 'plan', 'habits', 'hero'].includes(s.id) ? ' mobile-primary' : ' mobile-secondary';
+      return `<button class="navsec${mobileClass}${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}" title="${locked ? 'Откроется на ур.' + s.gate : (isNew ? t(s.label) + ' — новое!' : t(s.label))}">${navMotionIconHTML(s.iconId)}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">${satoruIconHTML('status.lock', 'navsec-lock-icon', '🔒')}${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
+    }).join('');
+    const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="${t('Настройки')}" aria-label="${t('Настройки')}">${satoruIconHTML('nav.settings', 'navgear-icon', '⚙️')}</button>`;
+    const moreActive = cur === 'rewards' || cur === 'tribe' || State.view === 'settings';
+    const moreNew = SECTIONS.filter((s) => s.id === 'rewards' || s.id === 'tribe').some((s) => sectionHasNew(s, lvl));
+    const more = `<button class="navsec mobile-nav-more${moreActive ? ' active' : ''}${moreNew && !moreActive ? ' navsec-new' : ''}" data-action="mobile-nav-more" aria-haspopup="dialog" aria-label="${t('Ещё')}"><span class="mobile-more-glyph" aria-hidden="true">•••</span><span class="navsec-l">${t('Ещё')}</span>${moreNew && !moreActive ? '<span class="navsec-dot"></span>' : ''}</button>`;
+    if (row) row.remove();
+    nav.insertAdjacentHTML('afterbegin', `<div class="navrow">${primary}${more}${gear}</div>`);
+    row = nav.querySelector(':scope > .navrow');
+    nav.dataset.primaryKey = primaryKey;
+  }
+
+  // Переход между разделами больше не пересоздаёт SVG/маски. Меняем только
+  // состояния кнопок — так анимация успевает начаться и не исчезает вместе с DOM.
+  for (const s of SECTIONS) {
+    const button = row && row.querySelector(`[data-sec="${s.id}"]`);
+    if (!button) continue;
+    const locked = s.gate > lvl;
+    const isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
+    button.classList.toggle('active', s.id === cur);
+    button.classList.toggle('navsec-new', isNew);
+    button.title = locked ? `Откроется на ур.${s.gate}` : (isNew ? `${t(s.label)} — новое!` : t(s.label));
+    const dot = button.querySelector('.navsec-dot');
+    if (isNew && !dot) button.insertAdjacentHTML('beforeend', '<span class="navsec-dot"></span>');
+    if (!isNew && dot) dot.remove();
+  }
   const moreActive = cur === 'rewards' || cur === 'tribe' || State.view === 'settings';
   const moreNew = SECTIONS.filter((s) => s.id === 'rewards' || s.id === 'tribe').some((s) => sectionHasNew(s, lvl));
-  const more = `<button class="navsec mobile-nav-more${moreActive ? ' active' : ''}${moreNew && !moreActive ? ' navsec-new' : ''}" data-action="mobile-nav-more" aria-haspopup="dialog" aria-label="${t('Ещё')}"><span class="mobile-more-glyph" aria-hidden="true">•••</span><span class="navsec-l">${t('Ещё')}</span>${moreNew && !moreActive ? '<span class="navsec-dot"></span>' : ''}</button>`;
+  const moreButton = row && row.querySelector('.mobile-nav-more');
+  if (moreButton) {
+    moreButton.classList.toggle('active', moreActive);
+    moreButton.classList.toggle('navsec-new', moreNew && !moreActive);
+    const dot = moreButton.querySelector('.navsec-dot');
+    if (moreNew && !moreActive && !dot) moreButton.insertAdjacentHTML('beforeend', '<span class="navsec-dot"></span>');
+    if ((!moreNew || moreActive) && dot) dot.remove();
+  }
+  row && row.querySelector('.navgear')?.classList.toggle('active', State.view === 'settings');
+
   const sec = SECTIONS.find((s) => s.id === cur);
   const subs = (sec && sec.views.length > 1) ? `<div class="navsub">${sec.views.map((v) => { const nd = NEW_VIEWS.includes(v.view) && !isDiscovered(v.view) && v.view !== State.view ? '<span class="navsub-dot"></span>' : ''; return `<button class="navsubtab${v.view === State.view ? ' active' : ''}" data-view="${v.view}">${v.iconId ? satoruIconHTML(v.iconId, 'navsub-icon', '') : ''}${t(v.label)}${nd}</button>`; }).join('')}</div>` : '';
-  nav.innerHTML = `<div class="navrow">${primary}${more}${gear}</div>${subs}`;
+  const subKey = `${cur || ''}|${State.view}|${lang()}|${discovered}`;
+  if (nav.dataset.subKey !== subKey) {
+    nav.querySelector(':scope > .navsub')?.remove();
+    if (subs) nav.insertAdjacentHTML('beforeend', subs);
+    nav.dataset.subKey = subKey;
+  }
 }
 
 function closeMobileNavSheet() {
@@ -10378,6 +10731,86 @@ function ensureShadowFabRig() {
   }
   window.ShadowRig.setState(rig, State._chatBusy ? 'thinking' : 'listening');
 }
+
+let _renderedMainView = '';
+let _mainRenderToken = 0;
+function safeViewMarkup(view) {
+  try {
+    return (VIEWS[view] || renderToday)();
+  } catch (e) {
+    console.error('Сбой рендера раздела:', view, e);
+    reportCrash(view, e);
+    try { return viewErrorCard(view, e); } catch { return '<div class="card"><p>Ошибка. Обнови страницу.</p></div>'; }
+  }
+}
+function waitForViewImages(root, maxWait = 650) {
+  const images = Array.from(root.querySelectorAll('img')).filter((img) => img.loading !== 'lazy');
+  if (!images.length) return Promise.resolve();
+  const jobs = images.map((img) => {
+    if (img.complete && img.naturalWidth > 0) {
+      return typeof img.decode === 'function' ? img.decode().catch(() => {}) : Promise.resolve();
+    }
+    return new Promise((resolve) => {
+      const done = () => resolve();
+      img.addEventListener('load', done, { once: true });
+      img.addEventListener('error', done, { once: true });
+    }).then(() => (typeof img.decode === 'function' ? img.decode().catch(() => {}) : undefined));
+  });
+  return Promise.race([
+    Promise.all(jobs),
+    new Promise((resolve) => setTimeout(resolve, maxWait)),
+  ]);
+}
+function afterMainCommit() {
+  try { kickCompVideo(); } catch {}
+  try { syncAvatarMotion(); } catch {}
+  try { scheduleDenPhaseBoundary(); } catch {}
+  try { tutorialPaint(); } catch {}
+}
+function commitMainView(main, staging, view) {
+  main.replaceChildren(...Array.from(staging.childNodes));
+  _renderedMainView = view;
+  main.classList.remove('is-view-pending');
+  main.classList.remove('is-view-entering');
+  requestAnimationFrame(() => {
+    main.classList.add('is-view-entering');
+    setTimeout(() => main.classList.remove('is-view-entering'), 260);
+  });
+  afterMainCommit();
+}
+function renderMainView(main) {
+  const view = State.view;
+  const html = safeViewMarkup(view);
+  const firstPaint = !_renderedMainView || !main.childElementCount;
+  const sameView = _renderedMainView === view;
+  if (firstPaint || sameView) {
+    _mainRenderToken++;
+    const staging = document.createElement('div');
+    staging.innerHTML = html;
+    if (lang() !== 'ru') {
+      try { translateDOM(staging); } catch {}
+    }
+    commitMainView(main, staging, view);
+    return;
+  }
+
+  // На переходе старый экран остаётся видимым, пока изображения следующего уже
+  // загружаются и декодируются в detached DOM. После этого выполняется одна
+  // атомарная замена — без белого экрана и «летающего лица».
+  const token = ++_mainRenderToken;
+  const staging = document.createElement('div');
+  staging.className = 'view-staging';
+  staging.innerHTML = html;
+  if (lang() !== 'ru') {
+    try { translateDOM(staging); } catch {}
+  }
+  main.classList.add('is-view-pending');
+  waitForViewImages(staging).then(() => {
+    if (token !== _mainRenderToken || State.view !== view) return;
+    commitMainView(main, staging, view);
+  });
+}
+
 function render() {
   if (State.phase !== 'app') { showAuthScreen(); return; }
   try { normalizeCoreState(); } catch (e) { console.error('normalizeCoreState', e); }
@@ -10392,11 +10825,8 @@ function render() {
   try { renderHeader(); } catch (e) { console.error('renderHeader', e); }
   try { renderNav(); } catch (e) { console.error('renderNav', e); }
   const main = document.getElementById('main');
-  try {
-    main.innerHTML = (VIEWS[State.view] || renderToday)();
-  } catch (e) {
-    // Error-boundary: сбой одного раздела не должен белить весь экран
-    console.error('Сбой рендера раздела:', State.view, e);
+  try { renderMainView(main); } catch (e) {
+    console.error('Сбой установки раздела:', State.view, e);
     reportCrash(State.view, e);
     try { main.innerHTML = viewErrorCard(State.view, e); } catch { main.innerHTML = '<div class="card"><p>Ошибка. Обнови страницу.</p></div>'; }
   }
@@ -10962,9 +11392,9 @@ function onClick(e) {
     eq[ty] = (eq[ty] === el.dataset.id) ? null : el.dataset.id; Store.save('settings', State.settings); render(); return;
   }
   if (action === 'toggle-sound') { State.settings.sound = !!el.checked; Store.save('settings', State.settings); if (el.checked) sfx('complete'); return; }
-  if (action === 'tts') { ttsSpeak(ttsTextNear(el), el); return; }
+  if (action === 'tts') { ttsSpeak(ttsTextNear(el), el, ttsContextNear(el)); return; }
   if (action === 'tts-preview') {
-    ttsSpeak('Я рядом. Давай спокойно выберем один следующий шаг.', el);
+    ttsSpeak(TTS_PREVIEW[lang()] || TTS_PREVIEW.ru, el, 'calm');
     return;
   }
   if (action === 'chat-actions-apply') {
@@ -10990,7 +11420,7 @@ function onClick(e) {
     if (!State.settings.ambient) State.settings.ambient = {};
     State.settings.ambient.mode = el.dataset.mode;
     Store.save('settings', State.settings);
-    applyAmbient(); render(); return;
+    applyAmbient(); syncDenAmbientVisual(State.settings.ambient.mode); return;
   }
   if (action === 'den-toggle-edit') {
     State._denEdit = !State._denEdit;
@@ -11007,13 +11437,13 @@ function onClick(e) {
     const now = State.settings.ambient.mode || 'off';
     State.settings.ambient.mode = nextAmbientMode(now);
     Store.save('settings', State.settings);
-    applyAmbient(); render(); return;
+    applyAmbient(); syncDenAmbientVisual(State.settings.ambient.mode); return;
   }
   if (action === 'den-light') {
     const den = ensureDen(), value = el.dataset.value;
     if (['auto', 'morning', 'day', 'sunset', 'night'].includes(value)) den.light = value;
     Store.save('settings', State.settings);
-    render(); return;
+    syncDenLightVisual(den.light); return;
   }
   if (action === 'den-pet-count') {
     const den = ensureDen();
@@ -11955,6 +12385,7 @@ async function initApp() {
   } catch {}
   State.phase = 'app';
   render();
+  scheduleArtWarmup();
   publishLeaderboard();
   // Первый запуск на устройстве → игровой гайд «Тень ведёт» (не статичная стена текста).
   if (!localStorage.getItem('liferpg_seen_guide') && !ensureTutorial().done && !ensureTutorial().skipped) {
