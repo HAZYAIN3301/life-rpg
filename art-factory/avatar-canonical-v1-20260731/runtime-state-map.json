@@ -1,0 +1,27 @@
+{
+  "canvas": [1024, 1536],
+  "origin": [0, 0],
+  "canonicalPose": "traveller-v1-approved-slim-front",
+  "baseModes": {
+    "outfitOn": "base/body-underlay-safe.png",
+    "outfitOff": "base/body-underlay-full.png",
+    "hairOffReveal": "base/body-bald-head-reveal.png"
+  },
+  "bundles": {
+    "outfit": ["outfit-backpack-reveal", "outfit-current"],
+    "hair": ["hair-back", "hair-front"],
+    "backpack": ["backpack-back", "backpack-straps"]
+  },
+  "dependencies": {
+    "lantern": ["backpack"],
+    "scarf": ["outfit"],
+    "pouch": ["outfit"]
+  },
+  "forbiddenRuntimeStates": [
+    "hat-with-baked-hair",
+    "isolated-joint-parts",
+    "cross-pose-wardrobe",
+    "empty-stack-during-swap",
+    "loading-spinner-over-avatar"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "canvas": [
+    1024,
+    1536
+  ],
+  "removedAuxiliaryPixels": {
+    "body-underlay-full": 0,
+    "body-bald-head-reveal": 0
+  },
+  "removedDetachedPixels": {},
+  "states": {
+    "approved": {
+      "components": 1,
+      "detachedSmallComponents": [],
+      "pass": true
+    },
+    "backpack-off": {
+      "components": 1,
+      "detachedSmallComponents": [],
+      "pass": true
+    },
+    "scarf-off": {
+      "components": 1,
+      "detachedSmallComponents": [],
+      "pass": true
+    },
+    "goggles-off": {
+      "components": 1,
+      "detachedSmallComponents": [],
+      "pass": true
+    },
+    "hair-off": {
+      "components": 1,
+      "detachedSmallComponents": [],
+      "pass": true
+    },
+    "pouch-off": {
+      "components": 1,
+      "detachedSmallComponents": [],
+      "pass": true
+    },
+    "lantern-off": {
+      "components": 1,
+      "detachedSmallComponents": [],
+      "pass": true
+    },
+    "outfit-off": {
+      "components": 1,
+      "detachedSmallComponents": [],
+      "pass": true
+    }
+  },
+  "allPassed": true,
+  "runtimeIntegrationAllowed": true
+}

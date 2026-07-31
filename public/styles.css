@@ -3883,8 +3883,8 @@ body {
 .den-avatar-raster { bottom: -10px; width: 180px; }
 .den-avatar-raster .avatar-art-stack { width: 100%; filter: drop-shadow(0 8px 11px rgba(0,0,0,.32)); }
 
-/* Clean-v2 имеет отдельные конечности и реальные pivot-точки. Общий rig только
-   едва дышит; жест читается по рукам/голове/аксессуарам, а не по прыжку всей PNG. */
+/* Canonical-v1 stays still until a real animation rig exists. It deliberately
+   avoids the old detached-joint pseudo-rig and whole-PNG bounce. */
 .avatar-art-stack[data-avatar-rigged="false"] .avatar-art-rig,
 .avatar-art-stack[data-avatar-rigged="false"] .avatar-art-layer { animation: none !important; }
 .avatar-art-stack[data-avatar-rigged="true"][data-avatar-motion="idle"] .avatar-art-rig { animation: traveller-body-idle 4.6s ease-in-out infinite; }
@@ -4072,23 +4072,6 @@ body {
 
 .avatar-editor-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 12px; }
 #avatar-editor { position: relative; }
-#avatar-editor.is-avatar-swapping { pointer-events: none; }
-#avatar-editor.is-avatar-swapping::after {
-  position: absolute;
-  right: 14px;
-  top: 14px;
-  z-index: 8;
-  padding: 5px 9px;
-  content: "Готовим образ…";
-  border: 1px solid color-mix(in srgb, var(--accent) 48%, var(--line));
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--panel) 92%, transparent);
-  color: var(--accent);
-  font-size: 10px;
-  font-weight: 850;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(8px);
-}
 .avatar-editor-head h3 { margin: 0 0 3px; }
 .avatar-editor-head p { margin: 0; color: var(--muted); font-size: 12px; }
 .avatar-editor-badge { flex: 0 0 auto; padding: 5px 9px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line)); color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, var(--panel2)); font-size: 11px; font-weight: 800; }

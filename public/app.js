@@ -3376,11 +3376,13 @@ const AV_PARTS  = {
 const AV_CAT_ORDER = ['hair', 'hairColor', 'face', 'skin', 'eyes', 'brows', 'mouth', 'beard', 'glasses', 'cloth'];
 function defaultAvatar() { return { face: 0, skin: 1, hair: 1, hairColor: 1, brows: 0, eyes: 0, mouth: 0, beard: 0, glasses: 0, cloth: 0 }; }
 function avCfg() { return Object.assign(defaultAvatar(), (State.settings && State.settings.avatar) || {}); }
-// ── Traveller clean-v2: canonical semantic layers, runtime 512×768.
+// ── Traveller canonical-v1: approved slim anime cut-paper master on one
+// permanent 1024×1536 mannequin. Outfits are coherent bundles; joints are never
+// wardrobe slices.
 // Scholar пока намеренно использует цельные safe masters: старый semantic split
 // визуально ломался при выключении шляпы/очков/мантии и больше не выдается за modular.
 // Public API for UI/tests: setAvatarAppearance({ palette: 'violet', hair: false }).
-const AVATAR_ART_ROOT = '/art/avatars/traveller-clean-v2/';
+const AVATAR_ART_ROOT = '/art/avatars/canonical-v1/traveller/';
 const SCHOLAR_ART_ROOT = '/art/avatars/scholar-flat-v2/';
 const AVATAR_OUTFIT_COLORWAYS = {
   teal:    { label: 'Бирюзовый', color: '#1e7773', prefix: '' },
@@ -3390,10 +3392,10 @@ const AVATAR_OUTFIT_COLORWAYS = {
   forest:  { label: 'Лесной', color: '#477856', prefix: 'colorways/forest/' },
 };
 const AVATAR_FACE_STATES = {
-  neutral: 'states/avatar-face-neutral.png',
-  blink: 'states/avatar-face-blink.png',
-  happy: 'states/avatar-face-happy.png',
-  tired: 'states/avatar-face-tired.png',
+  neutral: 'states/traveller-face-neutral.png',
+  blink: 'states/traveller-face-blink.png',
+  happy: 'states/traveller-face-happy.png',
+  tired: 'states/traveller-face-tired.png',
 };
 const SCHOLAR_COLORWAYS = {
   teal:    { label: 'Бирюзовый', color: '#1e7773', master: 'colorways/teal/master.png' },
@@ -3405,28 +3407,22 @@ const SCHOLAR_COLORWAYS = {
 const SCHOLAR_FACE_STATES = {
   neutral: 'colorways/teal/master.png',
 };
-const TRAVELLER_CLEAN_LAYERS = [
-  { id: 'shadow', file: 'base/avatar-shadow.png', z: 0, group: 'core', pivot: [256, 704] },
-  { id: 'backpack', file: 'wearables/back/avatar-backpack.png', z: 10, group: 'backpack', pivot: [302, 255] },
-  { id: 'hair-back', file: 'base/avatar-hair-back.png', z: 20, group: 'hair', pivot: [256, 142.5] },
-  { id: 'leg-r', file: 'base/avatar-leg-r.png', z: 30, group: 'core', pivot: [225, 395] },
-  { id: 'leg-l', file: 'base/avatar-leg-l.png', z: 31, group: 'core', pivot: [287, 395] },
-  { id: 'boot-r', file: 'base/avatar-boot-r.png', z: 35, group: 'core', pivot: [215, 582.5] },
-  { id: 'boot-l', file: 'base/avatar-boot-l.png', z: 36, group: 'core', pivot: [297, 582.5] },
-  { id: 'torso', file: 'base/avatar-torso.png', z: 50, group: 'core', pivot: [256, 260] },
-  { id: 'cloak', file: 'base/avatar-cloak.png', z: 52, group: 'outfit', pivot: [256, 280], colorized: true },
-  { id: 'hips-pants', file: 'base/avatar-hips-pants.png', z: 54, group: 'core', pivot: [256, 380] },
-  { id: 'upper-arm-r', file: 'base/avatar-upper-arm-r.png', z: 55, group: 'core', pivot: [182.5, 205], colorized: true },
-  { id: 'upper-arm-l', file: 'base/avatar-upper-arm-l.png', z: 56, group: 'core', pivot: [329.5, 205], colorized: true },
-  { id: 'forearm-hand-r', file: 'base/avatar-forearm-hand-r.png', z: 60, group: 'core', pivot: [157.5, 305] },
-  { id: 'forearm-hand-l', file: 'base/avatar-forearm-hand-l.png', z: 61, group: 'core', pivot: [354.5, 305] },
-  { id: 'head', file: 'base/avatar-head.png', z: 65, group: 'core', pivot: [256, 152.5] },
-  { id: 'scarf', file: 'wearables/neck/avatar-scarf.png', z: 70, group: 'scarf', pivot: [256, 175] },
-  { id: 'face', file: 'states/avatar-face-neutral.png', z: 90, group: 'face', pivot: [256, 127.5] },
-  { id: 'hair-front', file: 'base/avatar-hair-front.png', z: 100, group: 'hair', pivot: [256, 95] },
-  { id: 'goggles', file: 'wearables/head/head-traveller-goggles.png', z: 105, group: 'goggles', pivot: [256, 80] },
-  { id: 'pouch', file: 'accessories/avatar-pouch.png', z: 110, group: 'pouch', pivot: [305, 332.5] },
-  { id: 'lantern', file: 'accessories/avatar-lantern.png', z: 115, group: 'lantern', pivot: [332.5, 285] },
+const TRAVELLER_CANONICAL_LAYERS = [
+  { id: 'body-full', file: 'base/body-underlay-full.png', z: 0, group: 'body-full' },
+  { id: 'body-safe', file: 'base/body-underlay-safe.png', z: 1, group: 'body-safe' },
+  { id: 'outfit-reveal', file: 'wardrobe/outfit/traveller-outfit-backpack-reveal.png', colorwayFile: 'outfit-backpack-reveal.png', z: 5, group: 'outfit' },
+  { id: 'backpack-back', file: 'wardrobe/backpack/backpack-back.png', z: 10, group: 'backpack' },
+  { id: 'hair-back', file: 'wardrobe/hair/traveller-hair-back.png', z: 20, group: 'hair' },
+  { id: 'outfit', file: 'wardrobe/outfit/traveller-outfit-current.png', colorwayFile: 'outfit-current.png', z: 50, group: 'outfit' },
+  { id: 'body-visible', file: 'base/body-visible-approved.png', z: 60, group: 'body-visible' },
+  { id: 'bald-reveal', file: 'base/body-bald-head-reveal.png', z: 65, group: 'bald-reveal' },
+  { id: 'scarf', file: 'wardrobe/scarf/traveller-scarf.png', z: 70, group: 'scarf' },
+  { id: 'backpack-straps', file: 'wardrobe/backpack/backpack-straps.png', z: 75, group: 'backpack' },
+  { id: 'face', file: 'states/traveller-face-neutral.png', z: 80, group: 'face' },
+  { id: 'hair-front', file: 'wardrobe/hair/traveller-hair-front.png', z: 90, group: 'hair' },
+  { id: 'goggles', file: 'wardrobe/goggles/traveller-goggles.png', z: 100, group: 'goggles' },
+  { id: 'pouch', file: 'wardrobe/pouch/traveller-pouch.png', z: 110, group: 'pouch' },
+  { id: 'lantern', file: 'wardrobe/lantern/traveller-lantern.png', z: 115, group: 'lantern' },
 ];
 // Variant registry. New appearances can be added as a layered paper-doll or as
 // a single master during their visual-approval gate, without changing callers.
@@ -3435,9 +3431,9 @@ const AVATAR_VARIANTS = {
     label: 'Странник',
     description: 'Тот, кто идёт не потому, что знает дорогу, а потому что выбрал направление.',
     artRoot: AVATAR_ART_ROOT,
-    mode: 'clean-layers',
+    mode: 'canonical-bundles',
     modular: true,
-    rigged: true,
+    rigged: false,
     colorways: AVATAR_OUTFIT_COLORWAYS,
     faceStates: AVATAR_FACE_STATES,
     slots: 7,
@@ -3520,20 +3516,24 @@ function avatarArtLayers(options = {}) {
   if (variant.mode === 'master') {
     return [{ id: 'master', z: 0, file: colorway.master, on: true }];
   }
-  if (variant.mode === 'clean-layers') {
+  if (variant.mode === 'canonical-bundles') {
     const faceState = variant.faceStates[options.faceState] ? options.faceState : cfg.face;
-    const backpackOn = cfg.backpack;
-    return TRAVELLER_CLEAN_LAYERS.map((source) => {
+    const outfitOn = cfg.outfit;
+    const backpackOn = outfitOn && cfg.backpack;
+    return TRAVELLER_CANONICAL_LAYERS.map((source) => {
       const layer = { ...source };
       if (layer.group === 'face') layer.file = variant.faceStates[faceState];
-      if (layer.colorized && cfg.palette !== 'teal') layer.file = `${colorway.prefix}${layer.file}`;
-      layer.on = layer.group === 'core'
+      if (layer.colorwayFile && cfg.palette !== 'teal') layer.file = `${colorway.prefix}${layer.colorwayFile}`;
+      layer.on = (layer.group === 'body-full' && !outfitOn)
+        || (layer.group === 'body-safe' && outfitOn)
+        || (layer.group === 'body-visible' && outfitOn)
         || layer.group === 'face'
-        || (layer.group === 'outfit' && cfg.outfit)
+        || (layer.group === 'bald-reveal' && !cfg.hair)
+        || (layer.group === 'outfit' && outfitOn)
         || (layer.group === 'hair' && cfg.hair)
         || (layer.group === 'goggles' && cfg.goggles)
-        || (layer.group === 'scarf' && cfg.scarf)
-        || (layer.group === 'pouch' && cfg.pouch)
+        || (layer.group === 'scarf' && outfitOn && cfg.scarf)
+        || (layer.group === 'pouch' && outfitOn && cfg.pouch)
         || (layer.group === 'backpack' && backpackOn)
         || (layer.group === 'lantern' && backpackOn && cfg.lantern);
       return layer;
@@ -3576,6 +3576,9 @@ function scheduleArtWarmup() {
   const run = () => {
     try {
       preloadAvatarAppearance(avatarAppearance());
+      Object.keys(AVATAR_OUTFIT_COLORWAYS).forEach((palette) => {
+        preloadAvatarAppearance(Object.assign({}, avatarAppearance(), { variant: 'traveller', palette }));
+      });
       [
         '/art/den/v3/den-v3-runtime-1536x864.png?v=20260730-1',
         '/art/den/v3/furniture/wall-map.png?v=20260730-1',
@@ -3597,8 +3600,6 @@ function scheduleArtWarmup() {
 }
 function queueAvatarAppearanceRender(next) {
   const token = ++_avatarAppearanceRenderToken;
-  const editor = document.getElementById('avatar-editor');
-  if (editor) editor.classList.add('is-avatar-swapping');
   preloadAvatarAppearance(next).then(() => {
     if (token !== _avatarAppearanceRenderToken) return;
     render();
@@ -8859,7 +8860,7 @@ function avatarEditor() {
   ].map(([id, label]) => `<button class="avatar-choice avatar-motion-choice" data-action="avatar-motion-preview" data-motion="${id}">${label}</button>`).join('');
   const motionSection = variant.rigged
     ? `<section><h4>Проверить движения</h4><div class="avatar-choice-row">${motions}</div></section>`
-    : `<section class="avatar-editor-honesty"><h4>Движение</h4><p>У этого пресета пока нет честного рига. Поэтому фальшивые «прыжки всей PNG» отключены — новая версия Учёного будет собрана на тех же суставах, что Странник.</p></section>`;
+    : `<section class="avatar-editor-honesty"><h4>Движение</h4><p>У этого пресета пока нет честного анимационного рига. Фальшивые прыжки цельной картинки и разрезанные суставы отключены; движения вернутся только отдельным визуально проверенным этапом.</p></section>`;
   const modeLabel = variant.modular ? 'модульная бумажная кукла' : 'цельный безопасный пресет';
   const badgeLabel = variant.modular ? `${variant.slots} слотов` : 'без артефактов';
   return `<div class="card avatar-editor" id="avatar-editor">

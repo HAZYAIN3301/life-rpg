@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Satoru canonical avatar visual gate</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background:#111625; color:#f2ede2; }
+    body { margin:0; display:grid; grid-template-columns:minmax(280px,1fr) minmax(260px,360px); min-height:100vh; }
+    main { display:grid; place-items:center; padding:24px; background:radial-gradient(circle at 50% 38%,#26334a,#111625 70%); }
+    .avatar { position:relative; width:min(74vw,480px); aspect-ratio:2/3; }
+    .avatar img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; opacity:0; transition:opacity 120ms linear; }
+    .avatar img.on { opacity:1; }
+    aside { padding:24px; border-left:1px solid #35405a; background:#181e2f; }
+    h1 { margin:0 0 8px; font-size:22px; }
+    p { color:#aeb7ca; line-height:1.45; }
+    label { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:10px 0; border-bottom:1px solid #2a3247; }
+    input { width:22px; height:22px; accent-color:#4fd2e8; }
+    .pass { color:#75df9b; font-weight:800; }
+    @media (max-width:720px) { body { grid-template-columns:1fr; } aside { border-left:0; border-top:1px solid #35405a; } .avatar { width:min(88vw,420px); } }
+  </style>
+</head>
+<body>
+  <main><div id="avatar" class="avatar" aria-label="Traveller canonical avatar"></div></main>
+  <aside>
+    <h1>Canonical rig v1</h1>
+    <p class="pass">Connectivity QA: PASS</p>
+    <p>Слои загружаются один раз и дальше только меняют видимость. DOM не пересобирается, поэтому при переключении нет пустого кадра или синего спиннера.</p>
+    <div id="controls"></div>
+  </aside>
+  <script type="module" src="canonical-avatar.js"></script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+{
+  "factoryVersion": 5,
+  "batchId": "traveller-v1-wardrobe-v5",
+  "canvas": [
+    1024,
+    1536
+  ],
+  "style": "satoru-cut-paper",
+  "coordinateConvention": "full 1024x1536 canvas; composite every PNG at (0,0)",
+  "productionRoot": "production",
+  "approvedMaster": "master/traveller-master-approved.png",
+  "runtimeIntegrationAllowed": false,
+  "neutralCompositePixelExact": true,
+  "layers": [
+    {
+      "id": "body-underlay-safe",
+      "file": "base/body-underlay-safe.png",
+      "z": 0,
+      "slot": "body"
+    },
+    {
+      "id": "outfit-backpack-reveal",
+      "file": "wardrobe/outfit/traveller-outfit-backpack-reveal.png",
+      "z": 5,
+      "slot": "outfit"
+    },
+    {
+      "id": "backpack-back",
+      "file": "wardrobe/backpack/backpack-back.png",
+      "z": 10,
+      "slot": "backpack"
+    },
+    {
+      "id": "hair-back",
+      "file": "wardrobe/hair/traveller-hair-back.png",
+      "z": 20,
+      "slot": "hair"
+    },
+    {
+      "id": "outfit-current",
+      "file": "wardrobe/outfit/traveller-outfit-current.png",
+      "z": 50,
+      "slot": "outfit"
+    },
+    {
+      "id": "body-visible",
+      "file": "base/body-visible-approved.png",
+      "z": 60,
+      "slot": "body"
+    },
+    {
+      "id": "scarf",
+      "file": "wardrobe/scarf/traveller-scarf.png",
+      "z": 70,
+      "slot": "scarf"
+    },
+    {
+      "id": "backpack-straps",
+      "file": "wardrobe/backpack/backpack-straps.png",
+      "z": 75,
+      "slot": "backpack"
+    },
+    {
+      "id": "face",
+      "file": "states/traveller-face-neutral.png",
+      "z": 80,
+      "slot": "face"
+    },
+    {
+      "id": "hair-front",
+      "file": "wardrobe/hair/traveller-hair-front.png",
+      "z": 90,
+      "slot": "hair"
+    },
+    {
+      "id": "goggles",
+      "file": "wardrobe/goggles/traveller-goggles.png",
+      "z": 100,
+      "slot": "goggles"
+    },
+    {
+      "id": "pouch",
+      "file": "wardrobe/pouch/traveller-pouch.png",
+      "z": 110,
+      "slot": "pouch"
+    },
+    {
+      "id": "lantern",
+      "file": "wardrobe/lantern/traveller-lantern.png",
+      "z": 115,
+      "slot": "lantern"
+    }
+  ],
+  "faceStates": {
+    "neutral": "states/traveller-face-neutral.png",
+    "blink": "states/traveller-face-blink.png",
+    "happy": "states/traveller-face-happy.png",
+    "tired": "states/traveller-face-tired.png"
+  },
+  "colorways": {
+    "outfit": {
+      "teal": {
+        "label": "Бирюзовый",
+        "swatch": "#1e7773",
+        "layers": {
+          "outfit-backpack-reveal": "wardrobe/outfit/traveller-outfit-backpack-reveal.png",
+          "outfit-current": "wardrobe/outfit/traveller-outfit-current.png"
+        }
+      },
+      "blue": {
+        "label": "Синий",
+        "swatch": "#3f6496",
+        "layers": {
+          "outfit-backpack-reveal": "colorways/blue/outfit-backpack-reveal.png",
+          "outfit-current": "colorways/blue/outfit-current.png"
+        }
+      },
+      "violet": {
+        "label": "Фиолетовый",
+        "swatch": "#755596",
+        "layers": {
+          "outfit-backpack-reveal": "colorways/violet/outfit-backpack-reveal.png",
+          "outfit-current": "colorways/violet/outfit-current.png"
+        }
+      },
+      "crimson": {
+        "label": "Бордовый",
+        "swatch": "#984c58",
+        "layers": {
+          "outfit-backpack-reveal": "colorways/crimson/outfit-backpack-reveal.png",
+          "outfit-current": "colorways/crimson/outfit-current.png"
+        }
+      },
+      "forest": {
+        "label": "Лесной",
+        "swatch": "#477856",
+        "layers": {
+          "outfit-backpack-reveal": "colorways/forest/outfit-backpack-reveal.png",
+          "outfit-current": "colorways/forest/outfit-current.png"
+        }
+      }
+    }
+  },
+  "wardrobeSlots": {
+    "body": [
+      "body-underlay-safe",
+      "body-visible"
+    ],
+    "outfit": [
+      "outfit-backpack-reveal",
+      "outfit-current"
+    ],
+    "backpack": [
+      "backpack-back",
+      "backpack-straps"
+    ],
+    "hair": [
+      "hair-back",
+      "hair-front"
+    ],
+    "scarf": [
+      "scarf"
+    ],
+    "face": [
+      "face"
+    ],
+    "goggles": [
+      "goggles"
+    ],
+    "pouch": [
+      "pouch"
+    ],
+    "lantern": [
+      "lantern"
+    ]
+  },
+  "bundles": {
+    "outfit": [
+      "outfit-backpack-reveal",
+      "outfit-current"
+    ],
+    "hair": [
+      "hair-back",
+      "hair-front"
+    ],
+    "backpack": [
+      "backpack-back",
+      "backpack-straps"
+    ]
+  },
+  "dependencies": {
+    "lantern": {
+      "requires": [
+        "backpack"
+      ]
+    },
+    "scarf": {
+      "recommendedWith": [
+        "outfit"
+      ]
+    },
+    "pouch": {
+      "recommendedWith": [
+        "outfit"
+      ]
+    }
+  },
+  "bodyUnderlay": {
+    "neutralSafe": "base/body-underlay-safe.png",
+    "fullReveal": "base/body-underlay-full.png",
+    "baldHeadReveal": "base/body-bald-head-reveal.png",
+    "note": "Use fullReveal for an undressed/base preview; neutralSafe guarantees exact approved neutral."
+  }
+}
