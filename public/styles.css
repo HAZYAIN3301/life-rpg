@@ -3883,10 +3883,14 @@ body {
 .den-avatar-raster { bottom: -10px; width: 180px; }
 .den-avatar-raster .avatar-art-stack { width: 100%; filter: drop-shadow(0 8px 11px rgba(0,0,0,.32)); }
 
-/* Canonical-v1 stays still until a real animation rig exists. It deliberately
-   avoids the old detached-joint pseudo-rig and whole-PNG bounce. */
+/* Avatar Forge v1 uses semantic full-canvas wardrobe layers, not sliced joints.
+   Keep this static until a separately reviewed motion rig is available. */
 .avatar-art-stack[data-avatar-rigged="false"] .avatar-art-rig,
-.avatar-art-stack[data-avatar-rigged="false"] .avatar-art-layer { animation: none !important; }
+.avatar-art-stack[data-avatar-rigged="false"] .avatar-art-layer {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
 .avatar-art-stack[data-avatar-rigged="true"][data-avatar-motion="idle"] .avatar-art-rig { animation: traveller-body-idle 4.6s ease-in-out infinite; }
 .avatar-art-stack[data-avatar-rigged="true"][data-avatar-motion="portrait"] .avatar-art-rig { animation: traveller-body-portrait 5.8s ease-in-out infinite; }
 .avatar-art-stack[data-avatar-rigged="true"][data-avatar-motion="focus"] .avatar-art-rig { animation: traveller-body-focus 5.2s ease-in-out infinite; }
@@ -4072,6 +4076,23 @@ body {
 
 .avatar-editor-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 12px; }
 #avatar-editor { position: relative; }
+#avatar-editor.is-avatar-swapping { pointer-events: none; }
+#avatar-editor.is-avatar-swapping::after {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  z-index: 8;
+  padding: 5px 9px;
+  content: "Готовим образ…";
+  border: 1px solid color-mix(in srgb, var(--accent) 48%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 850;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
+}
 .avatar-editor-head h3 { margin: 0 0 3px; }
 .avatar-editor-head p { margin: 0; color: var(--muted); font-size: 12px; }
 .avatar-editor-badge { flex: 0 0 auto; padding: 5px 9px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line)); color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, var(--panel2)); font-size: 11px; font-weight: 800; }
@@ -4086,6 +4107,11 @@ body {
 }
 .avatar-editor-honesty p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .avatar-choice-row { display: flex; flex-wrap: wrap; gap: 7px; }
+.avatar-slots-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.avatar-slot-section { min-width: 0; padding: 10px; border: 1px solid color-mix(in srgb, var(--line) 82%, transparent); border-radius: 12px; background: color-mix(in srgb, var(--panel2) 86%, transparent); }
+.avatar-slot-section h4 { margin: 0 0 8px; color: var(--muted); font-size: 11px; letter-spacing: .045em; text-transform: uppercase; }
+.avatar-section-help { margin: 7px 0 0; color: var(--muted); font-size: 11px; line-height: 1.4; }
+.avatar-slot-choice { flex: 1 1 auto; }
 .avatar-choice { min-height: 36px; padding: 7px 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel2); color: var(--text); font: inherit; font-size: 12px; cursor: pointer; transition: transform .12s, border-color .12s, background .12s; }
 .avatar-choice:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 60%, var(--line)); }
 .avatar-choice.is-selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--panel2)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 34%, transparent); }
@@ -4093,9 +4119,43 @@ body {
 .avatar-swatch { width: 17px; height: 17px; border-radius: 50%; background: var(--swatch); box-shadow: inset 0 0 0 1px rgba(255,255,255,.22), 0 0 0 1px rgba(0,0,0,.2); }
 .avatar-toggle-choice { min-width: 82px; }
 .avatar-editor-note { margin: 15px 0 0; padding: 11px 12px; border-radius: 10px; background: color-mix(in srgb, var(--accent) 7%, var(--panel2)); color: var(--muted); font-size: 12px; line-height: 1.45; }
+.avatar-forge-summary { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
+.avatar-forge-summary span { padding: 5px 9px; border: 1px solid color-mix(in srgb, var(--accent) 26%, var(--line)); border-radius: 999px; color: var(--muted); background: color-mix(in srgb, var(--accent) 5%, var(--panel2)); font-size: 11px; }
+.avatar-editor-actions { display: grid; grid-template-columns: minmax(190px, auto) minmax(0, 1fr); align-items: center; gap: 14px; margin-top: 14px; padding: 13px; border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--line)); border-radius: 13px; background: color-mix(in srgb, var(--accent) 5%, var(--panel2)); }
+.avatar-editor-actions .btn { min-height: 42px; }
+.avatar-editor-actions p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+
+html.avatar-forge-open,
+html.avatar-forge-open body { overflow: hidden !important; }
+.avatar-forge-overlay {
+  position: fixed;
+  z-index: 1200;
+  inset: 0;
+  background: #0c111c;
+  opacity: 0;
+  transition: opacity .16s ease;
+}
+.avatar-forge-overlay.is-visible { opacity: 1; }
+.avatar-forge-overlay iframe { display: block; width: 100%; height: 100%; border: 0; background: #0c111c; }
+.avatar-forge-overlay.is-applying::after {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  content: "Сохраняем образ…";
+  color: #f4efe6;
+  background: rgba(8, 12, 20, .68);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  backdrop-filter: blur(4px);
+}
 @media (max-width: 560px) {
   .avatar-art-stack--figure { width: min(94%, 248px); }
+  .avatar-slots-grid { grid-template-columns: 1fr; }
   .avatar-choice { min-height: 42px; }
+  .avatar-editor-actions { grid-template-columns: 1fr; }
   .den-avatar-raster { width: 168px; }
   .avatar-reaction-cameo { right: 12px; bottom: max(82px, calc(env(safe-area-inset-bottom) + 70px)); width: 108px; }
 }
@@ -7719,6 +7779,21 @@ html.mobile-nav-open body {
   aspect-ratio: 16 / 9;
 }
 .den-room-art { object-fit: contain; object-position: 50% 50%; }
+.den-room-master {
+  opacity: 1;
+  transition: opacity .24s ease;
+  will-change: opacity;
+}
+.den-room-master.is-den-master-incoming { opacity: 0; }
+.den-room-master.is-den-master-incoming.is-den-master-ready { opacity: 1; }
+.den-room-master.is-den-master-outgoing { opacity: 0; }
+/* Coherent v5 masters already contain their window, furniture and physical
+   lighting. Ambient remains audio-only until locked-camera videos pass QA. */
+.den-scene[data-den-renderer="v5"] .den-window-sky,
+.den-scene[data-den-renderer="v5"] .den-room-colorwash,
+.den-scene[data-den-renderer="v5"] .den-practical-light,
+.den-ambient-visual,
+.den-practical-light-fireplace { display: none !important; }
 .den-window-sky {
   position: absolute;
   inset: 0;
@@ -7937,7 +8012,8 @@ html.mobile-nav-open body {
   .den-window-rain i,
   .den-window-bird,
   .den-noise-headphones,
-  .den-practical-light { animation: none !important; transition: none !important; }
+  .den-practical-light,
+  .den-room-master { animation: none !important; transition: none !important; }
 }
 
 /* ============================================================

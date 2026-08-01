@@ -3376,134 +3376,224 @@ const AV_PARTS  = {
 const AV_CAT_ORDER = ['hair', 'hairColor', 'face', 'skin', 'eyes', 'brows', 'mouth', 'beard', 'glasses', 'cloth'];
 function defaultAvatar() { return { face: 0, skin: 1, hair: 1, hairColor: 1, brows: 0, eyes: 0, mouth: 0, beard: 0, glasses: 0, cloth: 0 }; }
 function avCfg() { return Object.assign(defaultAvatar(), (State.settings && State.settings.avatar) || {}); }
-// ── Traveller canonical-v1: approved slim anime cut-paper master on one
-// permanent 1024×1536 mannequin. Outfits are coherent bundles; joints are never
-// wardrobe slices.
-// Scholar пока намеренно использует цельные safe masters: старый semantic split
-// визуально ломался при выключении шляпы/очков/мантии и больше не выдается за modular.
-// Public API for UI/tests: setAvatarAppearance({ palette: 'violet', hair: false }).
-const AVATAR_ART_ROOT = '/art/avatars/canonical-v1/traveller/';
-const SCHOLAR_ART_ROOT = '/art/avatars/scholar-flat-v2/';
-const AVATAR_OUTFIT_COLORWAYS = {
-  teal:    { label: 'Бирюзовый', color: '#1e7773', prefix: '' },
-  blue:    { label: 'Синий', color: '#3f6496', prefix: 'colorways/blue/' },
-  violet:  { label: 'Фиолетовый', color: '#755596', prefix: 'colorways/violet/' },
-  crimson: { label: 'Бордовый', color: '#984c58', prefix: 'colorways/crimson/' },
-  forest:  { label: 'Лесной', color: '#477856', prefix: 'colorways/forest/' },
-};
-const AVATAR_FACE_STATES = {
-  neutral: 'states/traveller-face-neutral.png',
-  blink: 'states/traveller-face-blink.png',
-  happy: 'states/traveller-face-happy.png',
-  tired: 'states/traveller-face-tired.png',
-};
-const SCHOLAR_COLORWAYS = {
-  teal:    { label: 'Бирюзовый', color: '#1e7773', master: 'colorways/teal/master.png' },
-  blue:    { label: 'Синий', color: '#3f6496', master: 'colorways/blue/master.png' },
-  violet:  { label: 'Фиолетовый', color: '#755596', master: 'colorways/violet/master.png' },
-  crimson: { label: 'Бордовый', color: '#984c58', master: 'colorways/crimson/master.png' },
-  forest:  { label: 'Лесной', color: '#477856', master: 'colorways/forest/master.png' },
-};
-const SCHOLAR_FACE_STATES = {
-  neutral: 'colorways/teal/master.png',
-};
-const TRAVELLER_CANONICAL_LAYERS = [
-  { id: 'body-full', file: 'base/body-underlay-full.png', z: 0, group: 'body-full' },
-  { id: 'body-safe', file: 'base/body-underlay-safe.png', z: 1, group: 'body-safe' },
-  { id: 'outfit-reveal', file: 'wardrobe/outfit/traveller-outfit-backpack-reveal.png', colorwayFile: 'outfit-backpack-reveal.png', z: 5, group: 'outfit' },
-  { id: 'backpack-back', file: 'wardrobe/backpack/backpack-back.png', z: 10, group: 'backpack' },
-  { id: 'hair-back', file: 'wardrobe/hair/traveller-hair-back.png', z: 20, group: 'hair' },
-  { id: 'outfit', file: 'wardrobe/outfit/traveller-outfit-current.png', colorwayFile: 'outfit-current.png', z: 50, group: 'outfit' },
-  { id: 'body-visible', file: 'base/body-visible-approved.png', z: 60, group: 'body-visible' },
-  { id: 'bald-reveal', file: 'base/body-bald-head-reveal.png', z: 65, group: 'bald-reveal' },
-  { id: 'scarf', file: 'wardrobe/scarf/traveller-scarf.png', z: 70, group: 'scarf' },
-  { id: 'backpack-straps', file: 'wardrobe/backpack/backpack-straps.png', z: 75, group: 'backpack' },
-  { id: 'face', file: 'states/traveller-face-neutral.png', z: 80, group: 'face' },
-  { id: 'hair-front', file: 'wardrobe/hair/traveller-hair-front.png', z: 90, group: 'hair' },
-  { id: 'goggles', file: 'wardrobe/goggles/traveller-goggles.png', z: 100, group: 'goggles' },
-  { id: 'pouch', file: 'wardrobe/pouch/traveller-pouch.png', z: 110, group: 'pouch' },
-  { id: 'lantern', file: 'wardrobe/lantern/traveller-lantern.png', z: 115, group: 'lantern' },
+// ── Avatar Forge v1: one approved full-canvas mannequin and independent
+// 512×768 production layers. There are no sliced joints in this batch, so the
+// renderer deliberately stays static until a visually verified animation rig exists.
+const AVATAR_FORGE_SCHEMA_VERSION = 2;
+const AVATAR_FORGE_MESSAGE_VERSION = 1;
+const AVATAR_FORGE_BATCH_ID = 'avatar-forge-v1-20260801';
+const AVATAR_ART_ROOT = '/art/avatars/avatar-forge-v1/';
+const AVATAR_ART_RUNTIME_ROOT = `${AVATAR_ART_ROOT}runtime/512/`;
+const AVATAR_SLOT_DEFS = [
+  { key: 'hair', label: 'Волосы', options: [['none', 'Без волос'], ['traveller', 'Traveller'], ['scholar', 'Scholar'], ['explorer-bob', 'Explorer bob']] },
+  { key: 'earwear', label: 'Уши', options: [['none', 'Без аксессуара'], ['soft-noise-headphones', 'Наушники мягкого шума']] },
+  { key: 'headwear', label: 'Головной убор', options: [['none', 'Без убора'], ['scholar-hat-draft', 'Шляпа Scholar']] },
+  { key: 'outerwear', label: 'Верхняя одежда', options: [['none', 'Базовая рубашка'], ['traveller-coat-draft', 'Пальто Traveller'], ['scholar-coat-draft', 'Мантия Scholar']] },
+  { key: 'neck', label: 'Шея', options: [['none', 'Без аксессуара'], ['traveller-scarf-draft', 'Шарф Traveller'], ['scholar-astrolabe-draft', 'Астролябия Scholar']] },
+  { key: 'eyewear', label: 'Очки', options: [['none', 'Без очков'], ['traveller-goggles-draft', 'Гогглы Traveller'], ['scholar-spectacles-draft', 'Очки Scholar']] },
+  { key: 'back', label: 'Спина', options: [['none', 'Без рюкзака'], ['traveller-backpack-draft', 'Рюкзак Traveller'], ['scholar-backpack-draft', 'Рюкзак Scholar']] },
+  { key: 'waist', label: 'Пояс', options: [['none', 'Без сумки'], ['traveller-pouch-draft', 'Сумка Traveller'], ['scholar-field-kit-draft', 'Полевой набор Scholar']] },
+  { key: 'rightHand', label: 'Правая рука', options: [['none', 'Пустая рука'], ['traveller-lantern-draft', 'Фонарь'], ['scholar-journal-draft', 'Полевой журнал']] },
 ];
-// Variant registry. New appearances can be added as a layered paper-doll or as
-// a single master during their visual-approval gate, without changing callers.
-const AVATAR_VARIANTS = {
+const AVATAR_SLOT_KEYS = AVATAR_SLOT_DEFS.map((slot) => slot.key);
+const AVATAR_SLOT_VALUES = Object.fromEntries(AVATAR_SLOT_DEFS.map((slot) => [slot.key, new Set(slot.options.map(([id]) => id))]));
+const AVATAR_COLORWAY_IDS = ['teal', 'blue', 'violet', 'crimson', 'forest'];
+const AVATAR_COLORWAY_VALUES = new Set(AVATAR_COLORWAY_IDS);
+const AVATAR_PRESETS = {
   traveller: {
-    label: 'Странник',
-    description: 'Тот, кто идёт не потому, что знает дорогу, а потому что выбрал направление.',
-    artRoot: AVATAR_ART_ROOT,
-    mode: 'canonical-bundles',
-    modular: true,
-    rigged: false,
-    colorways: AVATAR_OUTFIT_COLORWAYS,
-    faceStates: AVATAR_FACE_STATES,
-    slots: 7,
-    toggles: [
-      ['outfit', 'Плащ'],
-      ['hair', 'Волосы'],
-      ['goggles', 'Очки'],
-      ['scarf', 'Шарф'],
-      ['backpack', 'Рюкзак'],
-      ['pouch', 'Сумка'],
-      ['lantern', 'Фонарь'],
-    ],
+    hair: 'traveller', earwear: 'none', headwear: 'none', outerwear: 'traveller-coat-draft', neck: 'traveller-scarf-draft',
+    eyewear: 'traveller-goggles-draft', back: 'traveller-backpack-draft', waist: 'traveller-pouch-draft', rightHand: 'traveller-lantern-draft',
   },
   scholar: {
-    label: 'Учёный',
-    description: 'Полевой исследователь. Сейчас это цельный безопасный пресет: старые ложные слои отключены, новая модульная версия пересобирается на общем риге.',
-    artRoot: SCHOLAR_ART_ROOT,
-    mode: 'master',
-    modular: false,
-    rigged: false,
-    colorways: SCHOLAR_COLORWAYS,
-    faceStates: SCHOLAR_FACE_STATES,
-    slots: 1,
-    toggles: [],
+    hair: 'scholar', earwear: 'none', headwear: 'scholar-hat-draft', outerwear: 'scholar-coat-draft', neck: 'scholar-astrolabe-draft',
+    eyewear: 'scholar-spectacles-draft', back: 'scholar-backpack-draft', waist: 'scholar-field-kit-draft', rightHand: 'scholar-journal-draft',
+  },
+  base: {
+    hair: 'none', earwear: 'none', headwear: 'none', outerwear: 'none', neck: 'none', eyewear: 'none', back: 'none', waist: 'none', rightHand: 'none',
   },
 };
-function defaultAvatarAppearance() {
+const AVATAR_PRESET_COLORS = {
+  traveller: { outerwear: 'teal' },
+  scholar: { outerwear: 'forest' },
+  base: { outerwear: 'teal' },
+};
+const AVATAR_PRESET_META = {
+  traveller: { label: 'Странник', description: 'Полный комплект Traveller' },
+  scholar: { label: 'Учёный', description: 'Полный комплект Scholar' },
+  base: { label: 'Базовый', description: 'Чистый манекен в рубашке и брюках' },
+  custom: { label: 'Свой образ', description: 'Смешанный набор слотов' },
+};
+const AVATAR_LAYER_FILES = {
+  base: 'mannequin-base-alpha.png',
+  hair: { traveller: 'hair-traveller-alpha.png', scholar: 'hair-scholar-alpha.png', 'explorer-bob': 'hair-bob-alpha.png' },
+  earwear: { 'soft-noise-headphones': 'headphones-soft-noise-alpha.png' },
+  headwear: { 'scholar-hat-draft': 'scholar-hat-alpha.png' },
+  outerwear: { 'traveller-coat-draft': 'traveller-outerwear-alpha.png', 'scholar-coat-draft': 'scholar-outerwear-alpha.png' },
+  neck: { 'traveller-scarf-draft': 'traveller-scarf-alpha.png', 'scholar-astrolabe-draft': 'scholar-pendant-alpha.png' },
+  eyewear: { 'traveller-goggles-draft': 'traveller-goggles-alpha.png', 'scholar-spectacles-draft': 'scholar-glasses-alpha.png' },
+  back: {
+    'traveller-backpack-draft': { back: 'traveller-backpack-back-alpha.png', front: 'traveller-backpack-front-alpha.png' },
+    'scholar-backpack-draft': { back: 'scholar-backpack-back-alpha.png', front: 'scholar-backpack-front-alpha.png' },
+  },
+  waist: { 'traveller-pouch-draft': 'traveller-pouch-alpha.png', 'scholar-field-kit-draft': 'scholar-waist-kit-alpha.png' },
+  rightHand: { 'traveller-lantern-draft': 'traveller-lantern-hand-alpha.png', 'scholar-journal-draft': 'scholar-journal-alpha.png' },
+};
+const AVATAR_OUTERWEAR_COLORWAY_FILES = {
+  'traveller-coat-draft': {
+    teal: 'colorways/traveller/traveller-outerwear-teal-alpha.png',
+    blue: 'colorways/traveller/traveller-outerwear-blue-alpha.png',
+    violet: 'colorways/traveller/traveller-outerwear-violet-alpha.png',
+    crimson: 'colorways/traveller/traveller-outerwear-crimson-alpha.png',
+    forest: 'colorways/traveller/traveller-outerwear-forest-alpha.png',
+  },
+  'scholar-coat-draft': {
+    teal: 'colorways/scholar/scholar-outerwear-teal-alpha.png',
+    blue: 'colorways/scholar/scholar-outerwear-blue-alpha.png',
+    violet: 'colorways/scholar/scholar-outerwear-violet-alpha.png',
+    crimson: 'colorways/scholar/scholar-outerwear-crimson-alpha.png',
+    forest: 'colorways/scholar/scholar-outerwear-forest-alpha.png',
+  },
+};
+function isPlainRecord(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+}
+function avatarPresetForAppearance(slots, colors) {
+  for (const id of ['traveller', 'scholar', 'base']) {
+    if (AVATAR_SLOT_KEYS.every((key) => slots[key] === AVATAR_PRESETS[id][key]) &&
+      colors.outerwear === AVATAR_PRESET_COLORS[id].outerwear) return id;
+  }
+  return 'custom';
+}
+function avatarForgeEnvelope(slots, colors = { outerwear: 'teal' }) {
+  const safeSlots = Object.fromEntries(AVATAR_SLOT_KEYS.map((key) => [key, slots[key]]));
+  const safeColors = {
+    outerwear: AVATAR_COLORWAY_VALUES.has(colors && colors.outerwear) ? colors.outerwear : 'teal',
+  };
   return {
-    variant: 'traveller',
-    palette: 'teal',
-    outfit: true,
-    hair: true,
-    goggles: true,
-    scarf: true,
-    backpack: true,
-    pouch: true,
-    lantern: true,
-    hat: true,
-    glasses: true,
-    gear: true,
-    face: 'neutral',
+    schemaVersion: AVATAR_FORGE_SCHEMA_VERSION,
+    batchId: AVATAR_FORGE_BATCH_ID,
+    presetId: avatarPresetForAppearance(safeSlots, safeColors),
+    palette: 'authored',
+    slots: safeSlots,
+    colors: safeColors,
   };
 }
+function defaultAvatarAppearance() {
+  return avatarForgeEnvelope({ ...AVATAR_PRESETS.traveller }, AVATAR_PRESET_COLORS.traveller);
+}
+function legacyAvatarAppearance(value) {
+  const raw = isPlainRecord(value) ? value : {};
+  const preset = raw.variant === 'scholar' || raw.outfitSet === 'scholar' ? 'scholar' : 'traveller';
+  const slots = { ...AVATAR_PRESETS[preset] };
+  const colors = { ...AVATAR_PRESET_COLORS[preset] };
+  const untouchedScholar = preset === 'scholar' &&
+    (!raw.outfitSet || raw.outfitSet === 'scholar') && (!raw.hairStyle || raw.hairStyle === 'traveller') &&
+    (!raw.headwear || raw.headwear === 'scholar-hat') && (!raw.eyewear || raw.eyewear === 'scholar-glasses') &&
+    (!raw.neckItem || raw.neckItem === 'scholar-neck') && (!raw.backItem || raw.backItem === 'scholar-backpack') &&
+    (!raw.waistItem || raw.waistItem === 'scholar-field-kit') && (!raw.handItem || raw.handItem === 'none');
+  if (!untouchedScholar) {
+    const maps = {
+      outerwear: { base: 'none', traveller: 'traveller-coat-draft', scholar: 'scholar-coat-draft' },
+      hair: { none: 'none', traveller: 'traveller', scholar: 'scholar' },
+      earwear: { none: 'none' },
+      headwear: { none: 'none', 'scholar-hat': 'scholar-hat-draft' },
+      eyewear: { none: 'none', 'traveller-goggles': 'traveller-goggles-draft', 'scholar-glasses': 'scholar-spectacles-draft' },
+      neck: { none: 'none', 'traveller-scarf': 'traveller-scarf-draft', 'scholar-neck': 'scholar-astrolabe-draft' },
+      back: { none: 'none', 'traveller-backpack': 'traveller-backpack-draft', 'scholar-backpack': 'scholar-backpack-draft' },
+      waist: { none: 'none', 'traveller-pouch': 'traveller-pouch-draft', 'scholar-field-kit': 'scholar-field-kit-draft' },
+      rightHand: { none: 'none', 'traveller-lantern': 'traveller-lantern-draft' },
+    };
+    const legacyKeys = { outerwear: 'outfitSet', hair: 'hairStyle', earwear: 'earwear', headwear: 'headwear', eyewear: 'eyewear', neck: 'neckItem', back: 'backItem', waist: 'waistItem', rightHand: 'handItem' };
+    for (const key of AVATAR_SLOT_KEYS) {
+      const mapped = maps[key][raw[legacyKeys[key]]];
+      if (mapped) slots[key] = mapped;
+    }
+  }
+  if (raw.outfit === false) slots.outerwear = 'none';
+  if (raw.hair === false) slots.hair = 'none';
+  if (raw.goggles === false && slots.eyewear === 'traveller-goggles-draft') slots.eyewear = 'none';
+  if (raw.scarf === false && slots.neck === 'traveller-scarf-draft') slots.neck = 'none';
+  if (raw.backpack === false) slots.back = 'none';
+  if (raw.pouch === false) slots.waist = 'none';
+  if (raw.lantern === false) slots.rightHand = 'none';
+  if (raw.hat === false && slots.headwear === 'scholar-hat-draft') slots.headwear = 'none';
+  if (raw.glasses === false && slots.eyewear === 'scholar-spectacles-draft') slots.eyewear = 'none';
+  const legacyColor = isPlainRecord(raw.colors) ? raw.colors.outerwear : (raw.colorway || raw.color);
+  if (AVATAR_COLORWAY_VALUES.has(legacyColor)) colors.outerwear = legacyColor;
+  return avatarForgeEnvelope(slots, colors);
+}
 function normalizeAvatarAppearance(value) {
-  const cfg = Object.assign(defaultAvatarAppearance(), value || {});
-  if (!AVATAR_VARIANTS[cfg.variant]) cfg.variant = 'traveller';
-  const variant = AVATAR_VARIANTS[cfg.variant];
-  if (!variant.colorways[cfg.palette]) cfg.palette = variant.colorways.teal ? 'teal' : Object.keys(variant.colorways)[0];
-  if (!variant.faceStates[cfg.face]) cfg.face = variant.faceStates.neutral ? 'neutral' : Object.keys(variant.faceStates)[0];
-  ['outfit', 'hair', 'goggles', 'scarf', 'backpack', 'pouch', 'lantern', 'hat', 'glasses', 'gear'].forEach((key) => {
-    cfg[key] = cfg[key] !== false;
-  });
-  return cfg;
+  const raw = isPlainRecord(value) ? value : {};
+  if (raw.schemaVersion !== AVATAR_FORGE_SCHEMA_VERSION || !isPlainRecord(raw.slots)) return legacyAvatarAppearance(raw);
+  const slots = { ...AVATAR_PRESETS.traveller };
+  for (const key of AVATAR_SLOT_KEYS) {
+    if (AVATAR_SLOT_VALUES[key].has(raw.slots[key])) slots[key] = raw.slots[key];
+  }
+  // Existing v2 envelopes predate `colors`. Teal is the general migration
+  // fallback; an untouched authored Scholar preset keeps its forest source look.
+  const colors = { outerwear: 'teal' };
+  if (isPlainRecord(raw.colors) && AVATAR_COLORWAY_VALUES.has(raw.colors.outerwear)) {
+    colors.outerwear = raw.colors.outerwear;
+  } else if (raw.presetId === 'scholar' && AVATAR_SLOT_KEYS.every((key) => slots[key] === AVATAR_PRESETS.scholar[key])) {
+    colors.outerwear = AVATAR_PRESET_COLORS.scholar.outerwear;
+  }
+  return avatarForgeEnvelope(slots, colors);
+}
+function validateAvatarForgeAppearance(value) {
+  if (!isPlainRecord(value)) return null;
+  const allowedEnvelopeKeys = new Set(['schemaVersion', 'batchId', 'presetId', 'palette', 'slots', 'colors']);
+  if (Object.keys(value).some((key) => !allowedEnvelopeKeys.has(key))) return null;
+  if (value.schemaVersion !== AVATAR_FORGE_SCHEMA_VERSION || value.batchId !== AVATAR_FORGE_BATCH_ID || value.palette !== 'authored') return null;
+  if (!['traveller', 'scholar', 'base', 'custom'].includes(value.presetId) || !isPlainRecord(value.slots) || !isPlainRecord(value.colors)) return null;
+  if (Object.keys(value.slots).length !== AVATAR_SLOT_KEYS.length || Object.keys(value.slots).some((key) => !AVATAR_SLOT_VALUES[key])) return null;
+  if (Object.keys(value.colors).length !== 1 || !Object.prototype.hasOwnProperty.call(value.colors, 'outerwear') ||
+    typeof value.colors.outerwear !== 'string' || !AVATAR_COLORWAY_VALUES.has(value.colors.outerwear)) return null;
+  for (const key of AVATAR_SLOT_KEYS) {
+    if (!Object.prototype.hasOwnProperty.call(value.slots, key) || typeof value.slots[key] !== 'string' || !AVATAR_SLOT_VALUES[key].has(value.slots[key])) return null;
+  }
+  return avatarForgeEnvelope(value.slots, value.colors);
 }
 function avatarAppearance() {
-  return normalizeAvatarAppearance(State.settings && State.settings.avatarAppearance);
+  const settings = State.settings || {};
+  return normalizeAvatarAppearance(settings.avatarForge || settings.avatarAppearance);
+}
+function persistAvatarAppearance(next) {
+  if (!State.settings) return;
+  const safe = normalizeAvatarAppearance(next);
+  State.settings.avatarAppearance = safe;
+  // A rollout mirror prevents an older cached app.js from destroying Forge slot
+  // strings by coercing its legacy flat `hair` flag to a boolean.
+  State.settings.avatarForge = safe;
+  Store.save('settings', State.settings);
+}
+function nextAvatarAppearance(patch) {
+  const current = avatarAppearance();
+  let slots = { ...current.slots };
+  let colors = { ...current.colors };
+  const requested = isPlainRecord(patch) ? patch : {};
+  const preset = requested.presetId || requested.variant;
+  if (AVATAR_PRESETS[preset]) {
+    slots = { ...slots, ...AVATAR_PRESETS[preset] };
+    colors = { ...colors, ...AVATAR_PRESET_COLORS[preset] };
+  }
+  if (isPlainRecord(requested.slots)) {
+    for (const key of AVATAR_SLOT_KEYS) if (AVATAR_SLOT_VALUES[key].has(requested.slots[key])) slots[key] = requested.slots[key];
+  }
+  if (isPlainRecord(requested.colors) && AVATAR_COLORWAY_VALUES.has(requested.colors.outerwear)) colors.outerwear = requested.colors.outerwear;
+  if (AVATAR_COLORWAY_VALUES.has(requested.colorway)) colors.outerwear = requested.colorway;
+  for (const key of AVATAR_SLOT_KEYS) if (AVATAR_SLOT_VALUES[key].has(requested[key])) slots[key] = requested[key];
+  return avatarForgeEnvelope(slots, colors);
 }
 function setAvatarAppearance(patch, options = {}) {
-  if (!State.settings) return defaultAvatarAppearance();
-  const requested = Object.assign({}, patch || {});
-  if (requested.lantern === true) requested.backpack = true;
-  if (requested.backpack === false) requested.lantern = false;
-  const next = normalizeAvatarAppearance(Object.assign({}, avatarAppearance(), requested));
-  State.settings.avatarAppearance = next;
-  Store.save('settings', State.settings);
-  if (options.render !== false) queueAvatarAppearanceRender(next);
+  const next = nextAvatarAppearance(patch);
+  if (options.render === false) persistAvatarAppearance(next);
+  else queueAvatarAppearanceRender(next).catch(() => {});
   return next;
 }
 function setAvatarVariant(variant, options = {}) {
-  return setAvatarAppearance({ variant }, options);
+  return setAvatarAppearance({ presetId: AVATAR_PRESETS[variant] ? variant : 'traveller' }, options);
 }
 if (typeof window !== 'undefined') {
   window.setAvatarAppearance = setAvatarAppearance;
@@ -3511,63 +3601,68 @@ if (typeof window !== 'undefined') {
 }
 function avatarArtLayers(options = {}) {
   const cfg = normalizeAvatarAppearance(options.appearance || avatarAppearance());
-  const variant = AVATAR_VARIANTS[cfg.variant];
-  const colorway = variant.colorways[cfg.palette];
-  if (variant.mode === 'master') {
-    return [{ id: 'master', z: 0, file: colorway.master, on: true }];
-  }
-  if (variant.mode === 'canonical-bundles') {
-    const faceState = variant.faceStates[options.faceState] ? options.faceState : cfg.face;
-    const outfitOn = cfg.outfit;
-    const backpackOn = outfitOn && cfg.backpack;
-    return TRAVELLER_CANONICAL_LAYERS.map((source) => {
-      const layer = { ...source };
-      if (layer.group === 'face') layer.file = variant.faceStates[faceState];
-      if (layer.colorwayFile && cfg.palette !== 'teal') layer.file = `${colorway.prefix}${layer.colorwayFile}`;
-      layer.on = (layer.group === 'body-full' && !outfitOn)
-        || (layer.group === 'body-safe' && outfitOn)
-        || (layer.group === 'body-visible' && outfitOn)
-        || layer.group === 'face'
-        || (layer.group === 'bald-reveal' && !cfg.hair)
-        || (layer.group === 'outfit' && outfitOn)
-        || (layer.group === 'hair' && cfg.hair)
-        || (layer.group === 'goggles' && cfg.goggles)
-        || (layer.group === 'scarf' && outfitOn && cfg.scarf)
-        || (layer.group === 'pouch' && outfitOn && cfg.pouch)
-        || (layer.group === 'backpack' && backpackOn)
-        || (layer.group === 'lantern' && backpackOn && cfg.lantern);
-      return layer;
-    }).filter((layer) => layer.on).sort((a, b) => a.z - b.z);
-  }
-  return [];
+  const slots = cfg.slots;
+  const layers = [];
+  const add = (id, slot, file, pass = '') => {
+    if (!file) return;
+    layers.push({ id, slot, pass, file, src: AVATAR_ART_RUNTIME_ROOT + file });
+  };
+  const back = AVATAR_LAYER_FILES.back[slots.back];
+  add(`${slots.back}-back`, 'back', back && back.back, 'back');
+  add('mannequin-base', 'base', AVATAR_LAYER_FILES.base);
+  const outerwearColorways = AVATAR_OUTERWEAR_COLORWAY_FILES[slots.outerwear];
+  const outerwearFile = (outerwearColorways && outerwearColorways[cfg.colors.outerwear]) || AVATAR_LAYER_FILES.outerwear[slots.outerwear];
+  add(slots.outerwear, 'outerwear', outerwearFile);
+  add(`${slots.back}-front`, 'back', back && back.front, 'front');
+  add(slots.hair, 'hair', AVATAR_LAYER_FILES.hair[slots.hair]);
+  add(slots.earwear, 'earwear', AVATAR_LAYER_FILES.earwear[slots.earwear]);
+  add(slots.headwear, 'headwear', AVATAR_LAYER_FILES.headwear[slots.headwear]);
+  add(slots.neck, 'neck', AVATAR_LAYER_FILES.neck[slots.neck]);
+  add(slots.eyewear, 'eyewear', AVATAR_LAYER_FILES.eyewear[slots.eyewear]);
+  add(slots.waist, 'waist', AVATAR_LAYER_FILES.waist[slots.waist]);
+  add(slots.rightHand, 'rightHand', AVATAR_LAYER_FILES.rightHand[slots.rightHand]);
+  return layers;
 }
 
 const _avatarImageCache = new Map();
 let _avatarAppearanceRenderToken = 0;
 function preloadAvatarImage(url) {
   if (_avatarImageCache.has(url)) return _avatarImageCache.get(url);
-  const promise = new Promise((resolve) => {
+  const promise = new Promise((resolve, reject) => {
     const image = new Image();
-    const done = () => {
-      if (typeof image.decode === 'function') image.decode().catch(() => {}).then(resolve);
-      else resolve();
+    let settled = false;
+    const ready = async () => {
+      if (settled) return;
+      settled = true;
+      try {
+        if (typeof image.decode === 'function') await image.decode();
+        if (!image.naturalWidth) throw new Error(`Empty avatar asset: ${url}`);
+        resolve(url);
+      } catch (error) {
+        if (image.naturalWidth) resolve(url);
+        else reject(error);
+      }
     };
-    image.addEventListener('load', done, { once: true });
-    image.addEventListener('error', resolve, { once: true });
+    image.decoding = 'async';
+    image.addEventListener('load', ready, { once: true });
+    image.addEventListener('error', () => {
+      if (settled) return;
+      settled = true;
+      reject(new Error(`Avatar asset failed: ${url}`));
+    }, { once: true });
     image.src = url;
-    if (image.complete && image.naturalWidth > 0) done();
+    if (image.complete && image.naturalWidth > 0) ready();
+  }).catch((error) => {
+    _avatarImageCache.delete(url);
+    throw error;
   });
   _avatarImageCache.set(url, promise);
   return promise;
 }
 function preloadAvatarAppearance(appearance) {
   const cfg = normalizeAvatarAppearance(appearance);
-  const variant = AVATAR_VARIANTS[cfg.variant];
-  const urls = avatarArtLayers({ appearance: cfg }).map((layer) => variant.artRoot + layer.file);
-  return Promise.race([
-    Promise.all(urls.map(preloadAvatarImage)),
-    new Promise((resolve) => setTimeout(resolve, 1600)),
-  ]);
+  const urls = avatarArtLayers({ appearance: cfg }).map((layer) => layer.src);
+  return Promise.all(urls.map(preloadAvatarImage));
 }
 let _artWarmupScheduled = false;
 function scheduleArtWarmup() {
@@ -3575,10 +3670,16 @@ function scheduleArtWarmup() {
   _artWarmupScheduled = true;
   const run = () => {
     try {
-      preloadAvatarAppearance(avatarAppearance());
-      Object.keys(AVATAR_OUTFIT_COLORWAYS).forEach((palette) => {
-        preloadAvatarAppearance(Object.assign({}, avatarAppearance(), { variant: 'traveller', palette }));
+      preloadAvatarAppearance(avatarAppearance()).catch(() => {});
+      Object.entries(AVATAR_PRESETS).forEach(([id, slots]) => {
+        preloadAvatarAppearance(avatarForgeEnvelope(slots, AVATAR_PRESET_COLORS[id])).catch(() => {});
       });
+      for (const outerwear of ['traveller-coat-draft', 'scholar-coat-draft']) {
+        for (const colorway of AVATAR_COLORWAY_IDS) {
+          preloadAvatarAppearance(avatarForgeEnvelope({ ...AVATAR_PRESETS.base, outerwear }, { outerwear: colorway })).catch(() => {});
+        }
+      }
+      preloadAvatarAppearance(avatarForgeEnvelope({ ...AVATAR_PRESETS.base, hair: 'explorer-bob' }, AVATAR_PRESET_COLORS.base)).catch(() => {});
       [
         '/art/den/v3/den-v3-runtime-1536x864.png?v=20260730-1',
         '/art/den/v3/furniture/wall-map.png?v=20260730-1',
@@ -3589,151 +3690,117 @@ function scheduleArtWarmup() {
         '/art/den/v3/furniture/keepsake-blades.png?v=20260730-1',
         '/art/den/v3/furniture/floor-traveller.png?v=20260730-1',
         '/art/den/v4/ambient/fireplace-grate-logs-runtime.png?v=20260730-1',
-        '/art/den/v4/ambient/fireplace-flame-runtime.png?v=20260730-1',
-        '/art/den/v4/ambient/window-robin-runtime.png?v=20260730-1',
-        '/art/den/v4/ambient/traveller-headphones-runtime.png?v=20260730-1',
-      ].forEach(preloadAvatarImage);
+        '/art/den/v5/den-day.jpg',
+        '/art/den/v5/den-night-lantern.jpg',
+      ].forEach((url) => preloadAvatarImage(url).catch(() => {}));
     } catch {}
   };
   if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 1800 });
   else setTimeout(run, 250);
 }
 function queueAvatarAppearanceRender(next) {
+  const safe = normalizeAvatarAppearance(next);
   const token = ++_avatarAppearanceRenderToken;
-  preloadAvatarAppearance(next).then(() => {
+  const editor = document.getElementById('avatar-editor');
+  if (editor) editor.classList.add('is-avatar-swapping');
+  return preloadAvatarAppearance(safe).then(() => {
     if (token !== _avatarAppearanceRenderToken) return;
+    persistAvatarAppearance(safe);
     render();
+    return safe;
+  }).catch((error) => {
+    if (token === _avatarAppearanceRenderToken) {
+      if (editor) editor.classList.remove('is-avatar-swapping');
+      toast('Не удалось загрузить слой аватара');
+    }
+    throw error;
   });
 }
 
-const AVATAR_MOTION_STATES = new Set(['idle', 'portrait', 'focus', 'tired', 'happy', 'victory']);
-function normalizeAvatarMotion(value) {
-  return AVATAR_MOTION_STATES.has(value) ? value : 'idle';
-}
 function avatarArtHTML(options = {}) {
   const cfg = normalizeAvatarAppearance(options.appearance || avatarAppearance());
-  const variant = AVATAR_VARIANTS[cfg.variant];
-  const faceState = variant.faceStates[options.faceState] ? options.faceState : cfg.face;
-  const motion = normalizeAvatarMotion(options.motion);
-  const interactive = options.interactive === true;
-  const autoBlink = options.autoBlink !== false && !!variant.faceStates.blink && faceState === 'neutral';
   const classes = ['avatar-art-stack', options.className || ''].filter(Boolean).join(' ');
   const layers = avatarArtLayers(options).map((layer) => {
-    const pivot = layer.pivot
-      ? ` style="--avatar-layer-pivot-x:${(layer.pivot[0] / 512 * 100).toFixed(3)}%;--avatar-layer-pivot-y:${(layer.pivot[1] / 768 * 100).toFixed(3)}%"`
-      : '';
-    return `<img class="avatar-art-layer avatar-art-${layer.id}" src="${variant.artRoot}${layer.file}" alt="" aria-hidden="true" draggable="false" decoding="async"${pivot}>`;
+    const pass = layer.pass ? ` data-avatar-pass="${esc(layer.pass)}"` : '';
+    return `<img class="avatar-art-layer avatar-art-${esc(layer.id)}" data-avatar-slot="${esc(layer.slot)}"${pass} src="${esc(layer.src)}" alt="" aria-hidden="true" draggable="false" decoding="async">`;
   }).join('');
-  const faceSources = Object.entries(variant.faceStates).map(([id, file]) => (
-    ` data-avatar-face-${id}-src="${esc(variant.artRoot + file)}"`
-  )).join('');
-  const interactionAttrs = interactive
-    ? ' data-action="avatar-react" data-avatar-interactive="true" role="button" tabindex="0" aria-label="Персонаж Satoru — нажми, чтобы он отреагировал"'
-    : ' role="img" aria-label="Персонаж Satoru"';
-  return `<span class="${classes}" data-avatar-variant="${esc(cfg.variant)}" data-avatar-rigged="${variant.rigged ? 'true' : 'false'}" data-avatar-motion="${motion}" data-avatar-face-state="${faceState}" data-avatar-auto-blink="${autoBlink ? 'true' : 'false'}"${faceSources}${interactionAttrs}><span class="avatar-art-rig">${layers}</span></span>`;
+  return `<span class="${classes}" data-avatar-preset="${esc(cfg.presetId)}" data-avatar-colorway="${esc(cfg.colors.outerwear)}" data-avatar-batch="${AVATAR_FORGE_BATCH_ID}" data-avatar-rigged="false" data-avatar-static="true" role="img" aria-label="Персонаж Satoru"><span class="avatar-art-rig">${layers}</span></span>`;
 }
 function avatarPortraitHTML(options = {}) {
-  return `<span class="avatar-art-portrait">${avatarArtHTML(Object.assign({}, options, { className: 'avatar-art-stack--portrait', motion: options.motion || 'portrait', interactive: false }))}</span>`;
+  return `<span class="avatar-art-portrait">${avatarArtHTML(Object.assign({}, options, { className: 'avatar-art-stack--portrait' }))}</span>`;
 }
 function avatarFigureHTML(options = {}) {
-  return avatarArtHTML(Object.assign({}, options, { className: 'avatar-art-stack--figure', motion: options.motion || 'idle', interactive: options.interactive !== false }));
+  return avatarArtHTML(Object.assign({}, options, { className: 'avatar-art-stack--figure' }));
 }
+// Static full-canvas v1 cannot be animated by rotating sliced joints without
+// recreating the exact artefacts the user rejected. Keep legacy call sites safe.
+function animateAvatarStack() {}
+function triggerAvatarReaction() {}
+function syncAvatarMotion() {}
 
-let _avatarBlinkTimer = null;
-let _avatarBlinkRestoreTimer = null;
-function avatarReducedMotion() {
-  return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-}
-function restoreAvatarBlink(stack) {
-  if (!stack) return;
-  const face = stack.querySelector('.avatar-art-face');
-  if (face && stack._avatarBlinkBaseSrc) face.setAttribute('src', stack._avatarBlinkBaseSrc);
-  stack._avatarBlinkBaseSrc = null;
-  stack.classList.remove('is-blinking');
-}
-function scheduleAvatarBlink() {
-  clearTimeout(_avatarBlinkTimer);
-  clearTimeout(_avatarBlinkRestoreTimer);
-  _avatarBlinkTimer = null;
-  _avatarBlinkRestoreTimer = null;
-  if (avatarReducedMotion() || document.hidden) return;
-  const eligible = [...document.querySelectorAll('.avatar-art-stack[data-avatar-auto-blink="true"]')]
-    .filter((stack) => !stack.classList.contains('is-reacting') && stack.querySelector('.avatar-art-face'));
-  if (!eligible.length) return;
-  _avatarBlinkTimer = setTimeout(() => {
-    const live = [...document.querySelectorAll('.avatar-art-stack[data-avatar-auto-blink="true"]')]
-      .filter((stack) => !stack.classList.contains('is-reacting'));
-    live.forEach((stack) => {
-      const face = stack.querySelector('.avatar-art-face');
-      const blinkSrc = stack.dataset.avatarFaceBlinkSrc;
-      if (!face || !blinkSrc) return;
-      stack._avatarBlinkBaseSrc = face.getAttribute('src');
-      face.setAttribute('src', blinkSrc);
-      stack.classList.add('is-blinking');
-    });
-    _avatarBlinkRestoreTimer = setTimeout(() => {
-      live.forEach(restoreAvatarBlink);
-      scheduleAvatarBlink();
-    }, 145);
-  }, 3000 + Math.round(Math.random() * 3600));
-}
-function avatarReactionFace(kind) {
-  if (kind === 'tired') return 'tired';
-  if (kind === 'focus') return 'neutral';
-  return 'happy';
-}
-function avatarReactionMotion(kind) {
-  if (kind === 'levelup' || kind === 'victory') return 'victory';
-  if (kind === 'focus' || kind === 'tired') return kind;
-  return 'happy';
-}
-function animateAvatarStack(stack, kind = 'greet') {
-  if (!stack || avatarReducedMotion()) return;
-  clearTimeout(stack._avatarReactionTimer);
-  restoreAvatarBlink(stack);
-  const face = stack.querySelector('.avatar-art-face');
-  const faceId = avatarReactionFace(kind);
-  const faceSrc = stack.dataset[`avatarFace${faceId[0].toUpperCase()}${faceId.slice(1)}Src`];
-  if (face && faceSrc) {
-    stack._avatarReactionFaceSrc = face.getAttribute('src');
-    face.setAttribute('src', faceSrc);
-  }
-  stack.dataset.avatarReaction = kind;
-  stack.classList.remove('is-reacting');
-  void stack.offsetWidth;
-  stack.classList.add('is-reacting');
-  const duration = kind === 'levelup' ? 2200 : kind === 'victory' ? 1900 : 1350;
-  stack._avatarReactionTimer = setTimeout(() => {
-    stack.classList.remove('is-reacting');
-    delete stack.dataset.avatarReaction;
-    if (face && stack._avatarReactionFaceSrc) face.setAttribute('src', stack._avatarReactionFaceSrc);
-    stack._avatarReactionFaceSrc = null;
-    scheduleAvatarBlink();
-  }, duration);
-}
-function triggerAvatarReaction(kind = 'greet', label = '') {
-  const targets = [...document.querySelectorAll('.avatar-art-stack[data-avatar-interactive="true"]')];
-  if (targets.length) {
-    targets.forEach((stack) => animateAvatarStack(stack, kind));
+function openAvatarForgeEditor() {
+  const existing = document.getElementById('avatar-forge-overlay');
+  if (existing) {
+    existing.querySelector('iframe')?.focus();
     return;
   }
-  if (avatarReducedMotion()) return;
-  document.querySelector('.avatar-reaction-cameo')?.remove();
-  const cameo = document.createElement('div');
-  cameo.className = `avatar-reaction-cameo avatar-reaction-${kind}`;
-  cameo.setAttribute('aria-hidden', 'true');
-  cameo.innerHTML = `${avatarArtHTML({ className: 'avatar-art-stack--cameo', motion: avatarReactionMotion(kind), faceState: avatarReactionFace(kind), autoBlink: false })}${label ? `<span>${esc(label)}</span>` : ''}`;
-  document.body.appendChild(cameo);
-  requestAnimationFrame(() => cameo.classList.add('is-visible'));
-  setTimeout(() => {
-    cameo.classList.remove('is-visible');
-    setTimeout(() => cameo.remove(), 260);
-  }, kind === 'levelup' ? 2100 : 1550);
+  const overlay = document.createElement('div');
+  overlay.id = 'avatar-forge-overlay';
+  overlay.className = 'avatar-forge-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-label', 'Редактор внешности');
+  overlay.innerHTML = '<iframe id="avatar-forge-frame" src="/avatar-forge-v1.html?embedded=1&build=20260801-colorways-v1" title="Avatar Forge" allow="none"></iframe>';
+  document.body.appendChild(overlay);
+  document.documentElement.classList.add('avatar-forge-open');
+  requestAnimationFrame(() => overlay.classList.add('is-visible'));
 }
-function syncAvatarMotion() {
-  scheduleAvatarBlink();
+function closeAvatarForgeEditor() {
+  const overlay = document.getElementById('avatar-forge-overlay');
+  if (!overlay) return;
+  overlay.classList.remove('is-visible');
+  document.documentElement.classList.remove('avatar-forge-open');
+  setTimeout(() => overlay.remove(), 160);
 }
-if (typeof window !== 'undefined') window.triggerAvatarReaction = triggerAvatarReaction;
+async function onAvatarForgeMessage(event) {
+  const frame = document.getElementById('avatar-forge-frame');
+  if (!frame || event.origin !== location.origin || event.source !== frame.contentWindow || !isPlainRecord(event.data)) return;
+  const message = event.data;
+  if (message.source !== 'satoru-avatar-forge' || message.messageVersion !== AVATAR_FORGE_MESSAGE_VERSION) return;
+  if (message.type === 'ready') {
+    frame.contentWindow.postMessage({
+      source: 'satoru-app',
+      messageVersion: AVATAR_FORGE_MESSAGE_VERSION,
+      type: 'init',
+      appearance: avatarAppearance(),
+    }, location.origin);
+    return;
+  }
+  if (message.type === 'close') {
+    closeAvatarForgeEditor();
+    return;
+  }
+  if (message.type !== 'apply') return;
+  const next = validateAvatarForgeAppearance(message.appearance);
+  if (!next) {
+    toast('Редактор вернул неверную схему образа');
+    return;
+  }
+  const overlay = document.getElementById('avatar-forge-overlay');
+  if (overlay?.classList.contains('is-applying')) return;
+  overlay?.classList.add('is-applying');
+  try {
+    await queueAvatarAppearanceRender(next);
+    closeAvatarForgeEditor();
+    toast('Образ сохранён');
+  } catch {
+    overlay?.classList.remove('is-applying');
+  }
+}
+if (typeof window !== 'undefined') {
+  window.triggerAvatarReaction = triggerAvatarReaction;
+  window.addEventListener('message', onAvatarForgeMessage);
+}
 function shade(hex, amt) { // amt -100..100 (минус = темнее)
   const n = parseInt(hex.slice(1), 16); let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
   const t = amt < 0 ? 0 : 255, p = Math.abs(amt) / 100;
@@ -5474,7 +5541,7 @@ function renderHeader(force = false) {
     streak: [streak, longestStreak()],
     hype: [hypePct(), hype ? hype.stacks : 0, hypeMinLeft()],
     tier: [e.tier, trialDaysLeft()],
-    avatar: State.settings.avatarAppearance || null,
+    avatar: State.settings.avatarForge || State.settings.avatarAppearance || null,
     skills: top.map((s) => [s.id, s.name, s.color, skillXp(s.id)]),
   });
   if (!force && header && header.childElementCount && nextKey === _headerRenderKey) return;
@@ -7808,6 +7875,24 @@ const DEN_STARTER_SLOTS = {
   comfort: 'comfort-bonsai', light: 'light-lantern',
   keepsake: 'keepsake-blades', floor: 'floor-traveller',
 };
+// Den v5 is a coherent, perspective-locked starter room. These objects are
+// already baked into its two masters and must never be drawn a second time.
+// As soon as the user changes one of them, rendering falls back to the v3
+// clean plate so the existing furniture customizer remains truthful.
+const DEN_V5_MASTERS = Object.freeze({
+  day: '/art/den/v5/den-day.jpg',
+  night: '/art/den/v5/den-night-lantern.jpg',
+});
+const DEN_V5_BAKED_STARTER_SLOTS = Object.freeze({
+  wall: 'wall-map',
+  seat: 'seat-cushion',
+  surface: 'surface-crate',
+  comfort: 'comfort-bonsai',
+  light: 'light-lantern',
+  keepsake: 'keepsake-blades',
+});
+const _denMasterPreloads = new Map();
+let _denMasterSwapToken = 0;
 function ensureDen() {
   const s = State.settings;
   if (!s.den || typeof s.den !== 'object' || Array.isArray(s.den)) s.den = {};
@@ -7882,9 +7967,90 @@ function denPhaseForLight(light) {
   const hr = denLightHour(light);
   return hr >= 6 && hr < 11 ? 'morning' : hr >= 11 && hr < 17 ? 'day' : hr >= 17 && hr < 20 ? 'sunset' : 'night';
 }
-function denSceneSVG(theme, light) {
+function denUsesCoherentV5(den) {
+  if (!den || den.theme !== 'workshop' || !den.slots) return false;
+  return Object.entries(DEN_V5_BAKED_STARTER_SLOTS)
+    .every(([slot, id]) => den.slots[slot] === id);
+}
+function denMasterFor(den) {
+  const coherent = denUsesCoherentV5(den);
+  const phase = denPhaseForLight(den.light);
+  if (coherent) {
+    const period = phase === 'night' ? 'night' : 'day';
+    return { coherent: true, period, phase, src: DEN_V5_MASTERS[period] };
+  }
+  return {
+    coherent: false,
+    period: 'legacy',
+    phase,
+    src: '/art/den/v3/den-v3-runtime-1536x864.png?v=20260730-1',
+  };
+}
+function preloadDenMaster(src) {
+  if (_denMasterPreloads.has(src)) return _denMasterPreloads.get(src);
+  const ready = new Promise((resolve, reject) => {
+    const image = new Image();
+    image.decoding = 'async';
+    const done = () => {
+      if (!image.naturalWidth) { reject(new Error(`Den master failed: ${src}`)); return; }
+      const decoded = typeof image.decode === 'function' ? image.decode().catch(() => {}) : Promise.resolve();
+      decoded.then(() => resolve(src));
+    };
+    image.addEventListener('load', done, { once: true });
+    image.addEventListener('error', () => reject(new Error(`Den master failed: ${src}`)), { once: true });
+    image.src = src;
+    if (image.complete && image.naturalWidth) done();
+  }).catch((error) => {
+    _denMasterPreloads.delete(src);
+    throw error;
+  });
+  _denMasterPreloads.set(src, ready);
+  return ready;
+}
+function preloadDenMasterCandidates() {
+  Object.values(DEN_V5_MASTERS).forEach((src) => { preloadDenMaster(src).catch(() => {}); });
+}
+function syncDenSceneMaster() {
+  if (State.view !== 'den' || !State.settings) return;
+  const scene = document.querySelector('.den-scene');
+  if (!scene) return;
+  const target = denMasterFor(ensureDen());
+  const current = scene.querySelector('.den-room-master');
+  scene.dataset.denRenderer = target.coherent ? 'v5' : 'v3';
+  scene.dataset.denPeriod = target.period;
+  if (!current || current.dataset.denMasterSrc === target.src) return;
+  const token = ++_denMasterSwapToken;
+  preloadDenMaster(target.src).then(() => {
+    if (token !== _denMasterSwapToken || !scene.isConnected) return;
+    const latest = denMasterFor(ensureDen());
+    if (latest.src !== target.src) return;
+    const next = document.createElement('img');
+    next.className = 'den-room den-room-art den-room-master is-den-master-incoming';
+    next.src = target.src;
+    next.alt = '';
+    next.setAttribute('aria-hidden', 'true');
+    next.decoding = 'async';
+    next.draggable = false;
+    next.dataset.denMasterSrc = target.src;
+    current.insertAdjacentElement('afterend', next);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (!next.isConnected) return;
+      next.classList.add('is-den-master-ready');
+      current.classList.add('is-den-master-outgoing');
+      setTimeout(() => {
+        if (current.isConnected) current.remove();
+        next.classList.remove('is-den-master-incoming', 'is-den-master-ready');
+      }, 260);
+    }));
+  }).catch(() => {});
+}
+function denSceneSVG(theme, light, den) {
   const phase = denPhaseForLight(light);
-  return `<img class="den-room den-room-art" src="/art/den/v3/den-v3-runtime-1536x864.png?v=20260730-1" alt="" aria-hidden="true" decoding="async" draggable="false">
+  const master = denMasterFor(den);
+  if (master.coherent) {
+    return `<img class="den-room den-room-art den-room-master" src="${master.src}" data-den-master-src="${master.src}" alt="" aria-hidden="true" decoding="async" fetchpriority="high" draggable="false">`;
+  }
+  return `<img class="den-room den-room-art den-room-master" src="${master.src}" data-den-master-src="${master.src}" alt="" aria-hidden="true" decoding="async" draggable="false">
     <svg class="den-window-sky" data-phase="${phase}" viewBox="0 0 1536 864" preserveAspectRatio="none" aria-hidden="true">
       <defs><clipPath id="den-window-glass-v4"><path d="M1084 509V229C1084 139 1158 93 1252 93S1420 139 1420 229V509Z"/></clipPath></defs>
       <g clip-path="url(#den-window-glass-v4)">
@@ -7894,11 +8060,11 @@ function denSceneSVG(theme, light) {
       </g>
     </svg>
     <span class="den-room-colorwash" data-phase="${phase}" style="--den-room-wall:${theme.wall2};--den-room-glow:${theme.glow}"></span>
-    <span class="den-practical-light den-practical-light-lantern" aria-hidden="true"></span>
-    <span class="den-practical-light den-practical-light-fireplace" aria-hidden="true"></span>`;
+    <span class="den-practical-light den-practical-light-lantern" aria-hidden="true"></span>`;
 }
-function denObjectsHTML(den) {
+function denObjectsHTML(den, coherentV5) {
   return Object.entries(den.slots).map(([slot, id]) => {
+    if (coherentV5 && Object.prototype.hasOwnProperty.call(DEN_V5_BAKED_STARTER_SLOTS, slot)) return '';
     const item = denItem(id);
     if (!item || item.slot !== slot || !denOwned(id)) return '';
     const placement = window.DenSceneV4 && window.DenSceneV4.item(item.id);
@@ -7914,16 +8080,9 @@ function denObjectsHTML(den) {
     return `<img class="den-object den-object-${slot}${placement ? ' den-object-v4' : ' den-object-legacy'}" data-den-id="${esc(item.id)}" data-den-art="${item.artVersion}" data-den-plane="${esc((placement && placement.plane) || 'legacy')}" data-den-motion="${motion}"${style ? ` style="${style}"` : ''} src="${item.src}" alt="" aria-hidden="true" decoding="async" draggable="false">`;
   }).join('');
 }
-function denAmbientVisualHTML(mode) {
-  const rain = Array.from({ length: 13 }, (_, i) => `<i style="--i:${i};--x:${(i * 37) % 100};--d:${(i % 5) * .17}s"></i>`).join('');
-  return `<div class="den-ambient-visual" data-mode="${esc(mode)}" aria-hidden="true">
-    <span class="den-fireplace-base"><img src="/art/den/v4/ambient/fireplace-grate-logs-runtime.png?v=20260730-1" alt="" decoding="async"></span>
-    <span class="den-fire-glow"></span>
-    <span class="den-fire-flame"><img src="/art/den/v4/ambient/fireplace-flame-runtime.png?v=20260730-1" alt="" decoding="async"></span>
-    <span class="den-window-rain">${rain}</span>
-    <span class="den-window-bird"><img src="/art/den/v4/ambient/window-robin-runtime.png?v=20260730-1" alt="" decoding="async"><span class="den-bird-song"><i></i><b></b></span></span>
-    <span class="den-noise-headphones"><img src="/art/den/v4/ambient/traveller-headphones-runtime.png?v=20260730-1" alt="" decoding="async"></span>
-  </div>`;
+function denLegacyRoomFixturesHTML(coherentV5) {
+  if (coherentV5) return '';
+  return `<span class="den-fireplace-base" aria-hidden="true"><img src="/art/den/v4/ambient/fireplace-grate-logs-runtime.png?v=20260730-1" alt="" decoding="async"></span>`;
 }
 function syncDenAmbientVisual(mode) {
   const safeMode = AMBIENT_MODES.some((item) => item.id === mode) ? mode : 'off';
@@ -7972,8 +8131,18 @@ function syncDenLightVisual(light) {
   document.querySelectorAll('[data-action="den-light"]').forEach((button) => {
     button.classList.toggle('is-selected', button.dataset.value === safeLight);
   });
+  syncDenSceneMaster();
   scheduleDenPhaseBoundary();
 }
+function resyncAutoDenLight() {
+  if (State.phase !== 'app' || State.view !== 'den' || !State.settings) return;
+  const den = ensureDen();
+  if (den.light === 'auto') syncDenLightVisual('auto');
+}
+window.addEventListener('pageshow', resyncAutoDenLight);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) resyncAutoDenLight();
+});
 function denAccessChip(entry, owned, selected) {
   if (selected) return `<span class="den-choice-state">${satoruIconHTML('action.check', 'den-mini-glyph', '✓')} стоит</span>`;
   if (owned) return '<span class="den-choice-state">доступно</span>';
@@ -8158,6 +8327,8 @@ function denAvatarFace(state) {
 }
 function renderDen() {
   const den = ensureDen(), theme = denTheme();
+  const coherentV5 = denUsesCoherentV5(den);
+  preloadDenMasterCandidates();
   const c = ensureCompanion(), mood = compMood(), ti = compTierIdx(c.bond);
   const cr = charRank(), nm = (State.me && State.me.name) || 'Герой';
   const pets = topSkills().slice(0, den.petCount).map((s) => {
@@ -8177,18 +8348,26 @@ function renderDen() {
   const amb = (State.settings && State.settings.ambient) || {};
   const ambientMode = amb.mode || 'off';
   const ambient = ambientMeta(ambientMode);
+  const savedAvatarAppearance = avatarAppearance();
+  const denAvatarAppearance = ambientMode === 'noise'
+    ? avatarForgeEnvelope({
+      ...savedAvatarAppearance.slots,
+      earwear: 'soft-noise-headphones',
+      headwear: savedAvatarAppearance.slots.headwear === 'scholar-hat-draft' ? 'none' : savedAvatarAppearance.slots.headwear,
+    }, savedAvatarAppearance.colors)
+    : savedAvatarAppearance;
   const focusRow = tm
     ? `<div class="den-focus den-focus-on"><span>${satoruIconHTML('system.focus', 'den-row-glyph', '◇')} Фокус идёт</span><b class="den-clock">${fmtClock(timerElapsedMs())}</b><button class="btn ghost sm" data-action="goto-today">К таймеру</button></div>`
     : `<div class="den-focus"><span>${satoruIconHTML('system.focus', 'den-row-glyph', '◇')} Готов к делу?</span><button class="btn sm" data-action="goto-today">Начать фокус</button></div>`;
   return `<div class="den-shell">
     <div class="card den-card">
-    <div class="den-scene" data-den-theme="${theme.id}" data-den-light="${den.light}" data-den-phase="${denPhaseForLight(den.light)}" data-den-ambient="${ambientMode}">
-      ${denSceneSVG(theme, den.light)}
-      ${denObjectsHTML(den)}
-      ${denAmbientVisualHTML(ambientMode)}
+    <div class="den-scene" data-den-theme="${theme.id}" data-den-light="${den.light}" data-den-phase="${denPhaseForLight(den.light)}" data-den-period="${denMasterFor(den).period}" data-den-renderer="${coherentV5 ? 'v5' : 'v3'}" data-den-ambient="${ambientMode}">
+      ${denSceneSVG(theme, den.light, den)}
+      ${denObjectsHTML(den, coherentV5)}
+      ${denLegacyRoomFixturesHTML(coherentV5)}
       <div class="den-room-vignette"></div>
       <button class="den-companion" data-action="comp-pet" title="Погладить ${esc(c.name)}">${shadowVideo(ti, mood.face, 'den')}<span class="den-companion-name">${esc(c.name)}</span></button>
-      <div class="den-avatar den-avatar-raster" data-state="${avatarState}">${avatarArtHTML({ className: 'avatar-art-stack--den', faceState: denAvatarFace(avatarState), motion: avatarState, interactive: true })}<span class="den-avatar-shadow"></span></div>
+      <div class="den-avatar den-avatar-raster" data-state="${avatarState}">${avatarArtHTML({ className: 'avatar-art-stack--den', appearance: denAvatarAppearance })}<span class="den-avatar-shadow"></span></div>
       ${petLayer}
       <div class="den-tag">${rankIconHTML(cr, 'rank-inline-icon')} <span>${esc(nm)}</span><small>ур.${charLevel()}</small></div>
       <div class="den-scene-tools">
@@ -8818,62 +8997,19 @@ function onTreePointerDown(e) {
 // ============================================================
 //  Вид «Персонаж» — живой аватар, атрибуты, телосложение
 // ============================================================
-function avatarAppearanceChoice(key, value, label, selected, extraClass = '') {
-  return `<button class="avatar-choice ${selected ? 'is-selected' : ''} ${extraClass}" data-action="avatar-appearance-set" data-key="${key}" data-value="${esc(String(value))}" aria-pressed="${selected ? 'true' : 'false'}">${label}</button>`;
-}
 function avatarEditor() {
   const cfg = avatarAppearance();
-  const variant = AVATAR_VARIANTS[cfg.variant];
-  const variants = Object.entries(AVATAR_VARIANTS).map(([id, item]) => (
-    avatarAppearanceChoice('variant', id, esc(item.label), cfg.variant === id)
-  )).join('');
-  const palettes = Object.entries(variant.colorways).map(([id, colorway]) => (
-    avatarAppearanceChoice(
-      'palette',
-      id,
-      `<span class="avatar-swatch" style="--swatch:${colorway.color}"></span><span>${esc(colorway.label)}</span>`,
-      cfg.palette === id,
-      'avatar-color-choice',
-    )
-  )).join('');
-  const toggles = variant.toggles.map(([key, label]) => (
-    avatarAppearanceChoice(key, !cfg[key], `${cfg[key] ? '✓' : '○'} ${label}`, !!cfg[key], 'avatar-toggle-choice')
-  )).join('');
-  const faces = [
-    ['neutral', 'Спокойное'],
-    ['happy', 'Радостное'],
-    ['tired', 'Усталое'],
-    ['blink', 'Моргание'],
-  ].map(([id, label]) => avatarAppearanceChoice('face', id, label, cfg.face === id)).join('');
-  const layersSection = variant.toggles.length
-    ? `<section><h4>Слои</h4><div class="avatar-choice-row">${toggles}</div></section>`
-    : '';
-  const facesSection = Object.keys(variant.faceStates).length > 1
-    ? `<section><h4>Лицо</h4><div class="avatar-choice-row">${faces}</div></section>`
-    : '';
-  const motions = [
-    ['greet', '👋 Отклик'],
-    ['happy', '✨ Радость'],
-    ['victory', '🏆 Победа'],
-    ['focus', '🎯 Фокус'],
-    ['tired', '😮‍💨 Усталость'],
-  ].map(([id, label]) => `<button class="avatar-choice avatar-motion-choice" data-action="avatar-motion-preview" data-motion="${id}">${label}</button>`).join('');
-  const motionSection = variant.rigged
-    ? `<section><h4>Проверить движения</h4><div class="avatar-choice-row">${motions}</div></section>`
-    : `<section class="avatar-editor-honesty"><h4>Движение</h4><p>У этого пресета пока нет честного анимационного рига. Фальшивые прыжки цельной картинки и разрезанные суставы отключены; движения вернутся только отдельным визуально проверенным этапом.</p></section>`;
-  const modeLabel = variant.modular ? 'модульная бумажная кукла' : 'цельный безопасный пресет';
-  const badgeLabel = variant.modular ? `${variant.slots} слотов` : 'без артефактов';
+  const meta = AVATAR_PRESET_META[cfg.presetId] || AVATAR_PRESET_META.custom;
+  const active = AVATAR_SLOT_DEFS
+    .filter((slot) => cfg.slots[slot.key] !== 'none')
+    .map((slot) => `<span>${esc(slot.label)}</span>`)
+    .join('');
   return `<div class="card avatar-editor" id="avatar-editor">
-    <div class="avatar-editor-head"><div><h3>🪞 Твой персонаж</h3><p>${esc(variant.label)} · ${modeLabel}</p></div><span class="avatar-editor-badge">${badgeLabel}</span></div>
-    <div class="ave-stage ave-stage-figure">${avatarFigureHTML({ motion: 'idle', interactive: true })}</div>
-    <div class="avatar-customizer">
-      <section><h4>Облик</h4><div class="avatar-choice-row">${variants}</div></section>
-      <section><h4>Цвет костюма</h4><div class="avatar-choice-row avatar-palette-row">${palettes}</div></section>
-      ${layersSection}
-      ${facesSection}
-      ${motionSection}
-    </div>
-    <p class="avatar-editor-note"><b>${esc(variant.label)}</b> — ${esc(variant.description)} Нажми на персонажа — он откликнется. В Логове движение и выражение лица автоматически зависят от энергии, фокуса и выполненных дел.</p>
+    <div class="avatar-editor-head"><div><h3>${satoruIconHTML('nav.hero', 'inline-glyph', '◇')} Твой персонаж</h3><p>${esc(meta.label)} · Avatar Forge v1</p></div><span class="avatar-editor-badge">${AVATAR_SLOT_KEYS.length} слотов</span></div>
+    <div class="ave-stage ave-stage-figure">${avatarFigureHTML()}</div>
+    <div class="avatar-forge-summary" aria-label="Активные категории">${active || '<span>Базовый манекен</span>'}</div>
+    <div class="avatar-editor-actions"><button class="btn" data-action="open-avatar-forge">Открыть Avatar Forge</button><p>Пресеты Traveller и Scholar можно смешивать послотово: волосы, одежда, её цвет, шляпа, очки, рюкзак, пояс и предмет в руке независимы.</p></div>
+    <p class="avatar-editor-note"><b>${esc(meta.label)}</b> — ${esc(meta.description)}. Все слои собираются на одном холсте 512×768 без ручных смещений. Фальшивая анимация цельной PNG отключена; движения вернутся с отдельным ригом.</p>
   </div>`;
 }
 // ---- Колесо баланса (ядро v1): радар ритма + дрилл-даун под-сфер + подсказки ----
@@ -10785,7 +10921,7 @@ function renderMainView(main) {
   const html = safeViewMarkup(view);
   const firstPaint = !_renderedMainView || !main.childElementCount;
   const sameView = _renderedMainView === view;
-  if (firstPaint || sameView) {
+  if (firstPaint || (sameView && view !== 'den')) {
     _mainRenderToken++;
     const staging = document.createElement('div');
     staging.innerHTML = html;
@@ -10807,7 +10943,7 @@ function renderMainView(main) {
     try { translateDOM(staging); } catch {}
   }
   main.classList.add('is-view-pending');
-  waitForViewImages(staging).then(() => {
+  waitForViewImages(staging, view === 'den' ? 1500 : 650).then(() => {
     if (token !== _mainRenderToken || State.view !== view) return;
     commitMainView(main, staging, view);
   });
@@ -11705,23 +11841,8 @@ function onClick(e) {
   if (action === 'goto-today') { State.view = 'today'; render(); return; }
   if (action === 'reload-app') { location.reload(); return; }
   if (action === 'goto-pets') { State.view = 'pets'; markDiscovered('pets'); render(); return; }
-  if (action === 'go-wardrobe') { State.view = 'character'; render(); setTimeout(() => { const c = document.getElementById('avatar-editor'); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60); return; }
-  if (action === 'avatar-react') { animateAvatarStack(el, 'greet'); return; }
-  if (action === 'avatar-motion-preview') {
-    const motion = ['greet', 'happy', 'victory', 'focus', 'tired'].includes(el.dataset.motion) ? el.dataset.motion : 'greet';
-    const stack = document.querySelector('#avatar-editor .avatar-art-stack[data-avatar-interactive="true"]');
-    if (stack) animateAvatarStack(stack, motion);
-    return;
-  }
-  if (action === 'avatar-appearance-set') {
-    const key = el.dataset.key;
-    if (!['variant', 'palette', 'outfit', 'hair', 'goggles', 'scarf', 'backpack', 'pouch', 'lantern', 'hat', 'glasses', 'gear', 'face'].includes(key)) return;
-    let value = el.dataset.value;
-    if (value === 'true') value = true;
-    else if (value === 'false') value = false;
-    setAvatarAppearance({ [key]: value });
-    return;
-  }
+  if (action === 'go-wardrobe') { State.view = 'character'; render(); setTimeout(openAvatarForgeEditor, 60); return; }
+  if (action === 'open-avatar-forge') { openAvatarForgeEditor(); return; }
   if (action === 'goto-import') { State.view = 'settings'; render(); setTimeout(() => { const c = document.getElementById('import-card'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('flash-card'); } }, 60); return; }
   if (action === 'start-trial') {
     fetch('/api/auth/start-trial', { method: 'POST' }).then(async (r) => {
@@ -12318,7 +12439,8 @@ async function initApp() {
   State.settings.body = State.settings.body || {};
   State.settings.imported = State.settings.imported || {};
   State.settings.avatar = State.settings.avatar || defaultAvatar();
-  State.settings.avatarAppearance = normalizeAvatarAppearance(State.settings.avatarAppearance);
+  State.settings.avatarAppearance = normalizeAvatarAppearance(State.settings.avatarForge || State.settings.avatarAppearance);
+  State.settings.avatarForge = State.settings.avatarAppearance;
   // Компаньон: запоминаем сколько дней не виделись (для «я скучал»), затем отмечаем визит
   { const c = ensureCompanion(); State._compAway = daysBetween(c.lastSeen || todayStr(), todayStr()); c.lastSeen = todayStr(); Store.save('settings', State.settings); }
 
@@ -12725,9 +12847,8 @@ async function init() {
   // Инлайн-правка текста квеста: клик мимо → сохранить; Esc → отмена
   document.addEventListener('focusout', (e) => { const f = e.target.closest && e.target.closest('.t-edit-form'); if (f && f.requestSubmit) setTimeout(() => { if (State._editTask) f.requestSubmit(); }, 100); });
   document.addEventListener('keydown', (e) => {
-    const avatar = e.target.closest && e.target.closest('.avatar-art-stack[data-avatar-interactive="true"]');
-    if (avatar && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); animateAvatarStack(avatar, 'greet'); return; }
     if (e.key !== 'Escape') return;
+    if (document.getElementById('avatar-forge-overlay')) { closeAvatarForgeEditor(); return; }
     if (document.getElementById('mobile-nav-sheet')) { closeMobileNavSheet(); return; }
     if (State._editTask) { State._editTask = null; render(); }
   });
