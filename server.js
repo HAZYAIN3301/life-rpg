@@ -405,6 +405,29 @@ function pushDecision(hour, log, checked) {
   if (hour >= 19 && hour < 22 && !log.e && !checked.e) return 'e';
   return null;
 }
+function daysBetween(a, b) { const x = Date.parse(a), y = Date.parse(b); if (Number.isNaN(x) || Number.isNaN(y)) return 0; return Math.max(0, Math.round((y - x) / 86400000)); }
+// Текст нуджей: варианты по «сколько дней юзера не было» (near ≤1, mid 2-3, far ≥4) — тон теплее,
+// но НИКОГДА не виноватит (принцип «через любовь, не вину»). Гендерно-нейтрально: избегаем
+// прошедшего времени/прилагательных, согласующихся с полом юзера (которого мы не знаем).
+const NUDGE_TEXT = {
+  m: {
+    near: ['Доброе утро! Чем наполним сегодня?', 'Утро. Один маленький шаг — и день уже не пустой.', 'С добрым утром! Что сегодня в фокусе?', 'Новый день, чистый лист. Куда посмотрим?', 'Утро — хорошее время начать с малого.'],
+    mid: ['Давно не виделись — как ты вообще?', 'Тут стало тихо в последние дни. Есть пару минут?', 'Не тороплю — просто загляни, когда будет момент.', 'Соскучились по тебе твои сферы. Как оно?'],
+    far: ['Сколько бы ни прошло — здесь по-прежнему ждут. Без спешки.', 'Ничего не пропало и не сгорело. Возвращайся в свой темп.', 'Будет минутка — заглядывай, в любой момент, без спешки.', 'Без вины, правда: просто будет свободная минута — заглядывай.'],
+  },
+  e: {
+    near: ['Как прошёл день? Загляни на минутку 💛', 'Вечер — время подвести итог дня, даже коротко.', 'Как всё сегодня? Пара слов — и уже что-то.', 'День почти закончился. Что в нём было хорошего?'],
+    mid: ['Несколько дней тишины. Как ты?', 'Не пропадай совсем — даже пара минут вечером считается.', 'Вечер — хороший момент вернуться, без спешки.'],
+    far: ['Вечер. Здесь всё так же спокойно ждут — без вины за паузу.', 'Сколько бы дней ни прошло, дверь открыта в любое время.', 'Не срочно и без давления — просто напоминаю, что жду.'],
+  },
+  p: ['{pet} давно тебя не видел в этой сфере — загляни на минутку 💛', 'Кажется, {pet} немного скучает без тебя в этой сфере.', '{pet} ждёт хоть немного внимания здесь.', 'Загляни к {pet} — тут давно ничего не происходило.'],
+};
+// Ротация без повторов подряд: индекс последнего варианта persist-ится в user.push.variantIdx.
+function pickVariant(pool, lastIdx) {
+  if (!pool || !pool.length) return { text: '', idx: 0 };
+  const idx = ((Number.isInteger(lastIdx) ? lastIdx : -1) + 1) % pool.length;
+  return { text: pool[idx], idx };
+}
 async function pushTick() {
   let users; try { users = loadUsers(); } catch { return; }
   let changed = false;
@@ -418,13 +441,25 @@ async function pushTick() {
     const name = (comp && comp.name) || 'Тень';
     const checked = (comp && comp.check && comp.check[date]) || {};
     const kind = pushDecision(hour, log, checked);
+    const vIdx = user.push.variantIdx || {};
     let payload = null;
-    if (kind === 'm') payload = { title: `🌅 ${name} ждёт тебя`, body: 'Доброе утро! Чем наполним сегодня?', url: './?view=today', tag: 'satoru-checkin' };
-    else if (kind === 'e') payload = { title: `🌙 ${name}`, body: 'Как прошёл день? Загляни на минутку 💛', url: './?view=today', tag: 'satoru-checkin' };
+    if (kind === 'm' || kind === 'e') {
+      const away = daysBetween((comp && comp.lastSeen) || date, date);
+      const bucket = away <= 1 ? 'near' : (away <= 3 ? 'mid' : 'far');
+      const { text, idx } = pickVariant(NUDGE_TEXT[kind][bucket], vIdx[kind]);
+      vIdx[kind] = idx; user.push.variantIdx = vIdx;
+      const title = kind === 'm' ? `🌅 ${name} ждёт тебя` : `🌙 ${name}`;
+      payload = { title, body: text, url: './?view=today', tag: 'satoru-checkin' };
+    }
     // Днём (13–17): «питомец заскучал» — максимум раз в 2 дня, только если есть заброшенная сфера
     else if (hour >= 13 && hour < 17 && !log.p && (!user.push.petAt || (Date.parse(date) - Date.parse(user.push.petAt)) / 86400000 >= 2)) {
       const pet = lonelyPet(user.id);
-      if (pet) { payload = { title: `🐾 ${pet} заскучал`, body: `${pet} давно тебя не видел в этой сфере — загляни на минутку 💛`, url: './?view=pets', tag: 'satoru-pet' }; log.p = true; user.push.petAt = date; }
+      if (pet) {
+        const { text, idx } = pickVariant(NUDGE_TEXT.p, vIdx.p);
+        vIdx.p = idx; user.push.variantIdx = vIdx;
+        payload = { title: `🐾 ${pet} заскучал`, body: text.replace(/\{pet\}/g, pet), url: './?view=pets', tag: 'satoru-pet' };
+        log.p = true; user.push.petAt = date;
+      }
     }
     if (!payload) { if (user.push.log !== log) { user.push.log = log; changed = true; } continue; }
     const r = await sendWebPush(user.push, payload);
@@ -626,6 +661,20 @@ const AI_DAYLOG_SYS = `Ты — помощник «Итог дня голосо�
 - sphere — подбери из СУЩЕСТВУЮЩИХ сфер юзера по точному имени; если не подходит ни одна — пустая строка.
 - time — приблизительное начало, если упомянуто («около 3 дня» → "15:00"), иначе пустая строка.
 - Не выдумывай дел, которых не было. Язык — русский. Будь краток и точен.`;
+// Эпизоды (LIFE-CAPTURE-PLAN.md): период вместо дней. Юзер НЕ назначает себе XP — он двигает
+// ползунки интенсивности, опыт выводится из них клиентом. Поэтому здесь оценивается ТОЛЬКО
+// интенсивность жизни сфер, без единого упоминания очков.
+const AI_EPISODE_SYS = `Ты — помощник «Эпизод» в Satoru. Юзер рассказал про ПЕРИОД своей жизни (поездка, интенсив, лагерь, болезнь, отпуск, спринт), когда он не вёл записи. Оцени, насколько сильно в этот период жила каждая его сфера.
+
+Верни СТРОГО JSON {"proposals":[{"sphere":"<точное имя сферы юзера>","intensity":N,"why":"3-6 слов из рассказа"}],"highlights":["короткое событие"],"social":"high|normal|low"} — без markdown и текста вне JSON.
+
+Правила:
+- intensity: 0 не было · 1 слегка · 2 умеренно · 3 заметно · 4 сильно · 5 весь день насквозь.
+- Оцени КАЖДУЮ сферу из списка юзера. Не было — ставь 0, не пропускай сферу.
+- ОБЯЗАТЕЛЬНО считай ФОНОВОЕ, а не только «занимался специально». Человек весь день в чужой языковой среде — язык живёт на 4-5, даже если он «не учил» его ни минуты. Всё время в группе людей — сфера общения/отношений высокая. Физическая работа или ходьба весь день — тело живёт, даже без тренировки. В этом весь смысл эпизода: за неделю на выезде часы не делятся на непересекающиеся дела.
+- highlights: 1-4 запомнившихся события КОРОТКО, словами юзера («исследование ватта»). Не выдумывай.
+- social: сколько вокруг было людей — high (постоянно в группе), normal, low (в основном один).
+- Не выдумывай сфер, которых нет в списке юзера. Язык — русский.`;
 // Дерево v3 Фаза 3: картограф персональных вех (TREE-V3-PLAN.md)
 const AI_TREEMAP_SYS = `Ты — картограф мастерства в Satoru. Юзер хочет ПЕРСОНАЛЬНУЮ лестницу вех для одной сферы своей жизни — не общий шаблон, а его реальный путь.
 
@@ -1816,18 +1865,25 @@ const server = http.createServer(async (req, res) => {
     let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
     const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
     const provider = AI_PROVIDERS[b.provider] ? b.provider : null;
-    const kind = b.kind === 'calibrate' ? 'calibrate' : b.kind === 'daylog' ? 'daylog' : b.kind === 'treemap' ? 'treemap' : b.kind === 'onboard' ? 'onboard' : 'goals';
+    const kind = b.kind === 'calibrate' ? 'calibrate' : b.kind === 'daylog' ? 'daylog' : b.kind === 'treemap' ? 'treemap' : b.kind === 'onboard' ? 'onboard' : b.kind === 'episode' ? 'episode' : 'goals';
     const text = String(b.text || '').slice(0, 20000);
     const context = String(b.context || '').slice(0, 6000);
     if (!text) return sendJson(res, 400, { error: 'empty' });
-    const sys = kind === 'calibrate' ? AI_CALIB_SYS : kind === 'daylog' ? AI_DAYLOG_SYS : kind === 'treemap' ? AI_TREEMAP_SYS : kind === 'onboard' ? AI_ONBOARD_SYS : AI_GOALS_SYS;
+    const sys = kind === 'calibrate' ? AI_CALIB_SYS : kind === 'daylog' ? AI_DAYLOG_SYS : kind === 'treemap' ? AI_TREEMAP_SYS : kind === 'onboard' ? AI_ONBOARD_SYS : kind === 'episode' ? AI_EPISODE_SYS : AI_GOALS_SYS;
     const prompt = `СФЕРЫ И ЦЕЛИ ЮЗЕРА СЕЙЧАС:\n${context || '(пусто)'}\n\nЧТО НАПИСАЛ ЮЗЕР:\n${text}\n\nВерни ТОЛЬКО JSON по схеме из системного промпта. Без markdown, без пояснений вне JSON.`;
     try {
       const r = await aiCallForUser(user, provider, sys, [{ role: 'user', content: prompt }], 3500);
       if (aiErr(res, r)) return;
       const parsed = extractJson(r.text);
       if (!parsed || !Array.isArray(parsed.proposals)) return sendJson(res, 200, { error: 'parse', raw: (r.text || '').slice(0, 800) });
-      return sendJson(res, 200, { proposals: parsed.proposals.slice(0, 40) });
+      const out = { proposals: parsed.proposals.slice(0, 40) };
+      // Эпизод отдаёт не только сферы: заметные события периода и нагрузку людьми (её нельзя
+      // мерить часами — именно за этим Альберт и хотел её видеть: «неделя перегруза → нужен день соло»).
+      if (kind === 'episode') {
+        out.highlights = (Array.isArray(parsed.highlights) ? parsed.highlights : []).slice(0, 4).map((x) => String(x).slice(0, 80));
+        out.social = ['high', 'normal', 'low'].includes(parsed.social) ? parsed.social : null;
+      }
+      return sendJson(res, 200, out);
     } catch (e) { return sendJson(res, 502, { error: String(e.message || e) }); }
   }
   // Тех-поддержка / гид: многоходовой чат, знающий функции и философию (манифест шлёт клиент)

@@ -1778,6 +1778,81 @@ const I18N_EXTRA = {
   'Засчитано в': { en: 'Counted on', de: 'Angerechnet auf', uk: 'Зараховано в', es: 'Contado el' },
   // ── «Итог дня»: выбор дня + нудж «жизнь шла, а записать было некогда» ──
   'Итог дня': { en: 'Day log', de: 'Tagesabschluss', uk: 'Підсумок дня', es: 'Resumen del día' },
+  // ── Эпизод: период вместо дней (LIFE-CAPTURE-PLAN.md) ──
+  'Эпизод': { en: 'Episode', de: 'Episode', uk: 'Епізод', es: 'Episodio' },
+  'Был период, когда записывать было некогда — поездка, интенсив, болезнь. Расскажи о нём целиком, одним куском. Разбивать по дням не надо.': { en: "There was a stretch when logging wasn't possible — a trip, an intensive, illness. Tell it as one piece. No need to split it by day.", de: 'Es gab eine Zeit, in der Aufschreiben nicht ging — Reise, Intensivkurs, Krankheit. Erzähl sie als Ganzes. Kein Aufteilen nach Tagen nötig.', uk: 'Був період, коли записувати було ніколи — поїздка, інтенсив, хвороба. Розкажи про нього цілком, одним шматком. Розбивати по днях не треба.', es: 'Hubo un tramo en que no se podía registrar — un viaje, un intensivo, una enfermedad. Cuéntalo entero, de una pieza. No hace falta dividirlo por días.' },
+  'Поездка': { en: 'Trip', de: 'Reise', uk: 'Поїздка', es: 'Viaje' },
+  'Интенсив / курс': { en: 'Intensive / course', de: 'Intensivkurs', uk: 'Інтенсив / курс', es: 'Intensivo / curso' },
+  'Лагерь / выезд': { en: 'Camp / field trip', de: 'Camp / Exkursion', uk: 'Табір / виїзд', es: 'Campamento / salida' },
+  'Отпуск': { en: 'Vacation', de: 'Urlaub', uk: 'Відпустка', es: 'Vacaciones' },
+  'Болезнь': { en: 'Illness', de: 'Krankheit', uk: 'Хвороба', es: 'Enfermedad' },
+  'Дедлайн-спринт': { en: 'Deadline sprint', de: 'Deadline-Sprint', uk: 'Дедлайн-спринт', es: 'Sprint de entrega' },
+  'Гости / семья': { en: 'Guests / family', de: 'Gäste / Familie', uk: 'Гості / сім\'я', es: 'Visitas / familia' },
+  'Другое': { en: 'Other', de: 'Sonstiges', uk: 'Інше', es: 'Otro' },
+  'Название': { en: 'Name', de: 'Name', uk: 'Назва', es: 'Nombre' },
+  'например: Хайлиг Хооге, проектная неделя': { en: 'e.g. Hallig Hooge, project week', de: 'z.B. Hallig Hooge, Projektwoche', uk: 'наприклад: Халіг Хооге, проєктний тиждень', es: 'p. ej. Hallig Hooge, semana de proyecto' },
+  'С': { en: 'From', de: 'Von', uk: 'З', es: 'Desde' },
+  'По': { en: 'To', de: 'Bis', uk: 'По', es: 'Hasta' },
+  'Говорить': { en: 'Speak', de: 'Sprechen', uk: 'Говорити', es: 'Hablar' },
+  'Стоп': { en: 'Stop', de: 'Stopp', uk: 'Стоп', es: 'Parar' },
+  'Например: был на острове с классом, проектная неделя, исследовали ватт и солончаки, всё время на немецком, готовили сами, вечером играли в мяч…': { en: 'E.g. was on an island with my class, project week, studied the mudflats and salt marshes, German all day, cooked ourselves, played ball in the evenings…', de: 'Z.B. war mit der Klasse auf einer Insel, Projektwoche, Watt und Salzwiesen untersucht, den ganzen Tag Deutsch, selbst gekocht, abends Ball gespielt…', uk: 'Наприклад: був на острові з класом, проєктний тиждень, досліджували ват і солончаки, увесь час німецькою, готували самі, увечері грали в м\'яч…', es: 'P. ej. estuve en una isla con mi clase, semana de proyecto, estudiamos las marismas, alemán todo el día, cocinábamos nosotros, por la tarde jugábamos a la pelota…' },
+  'Разобрать период': { en: 'Break down the period', de: 'Zeitraum auswerten', uk: 'Розібрати період', es: 'Analizar el periodo' },
+  'Заполнить вручную': { en: 'Fill in manually', de: 'Manuell ausfüllen', uk: 'Заповнити вручну', es: 'Rellenar a mano' },
+  'С ИИ-ключом Тень разберёт рассказ сама (бесплатные Gemini/Groq есть в Настройках).': { en: 'With an AI key the Shadow breaks the story down for you (free Gemini/Groq are in Settings).', de: 'Mit einem KI-Schlüssel wertet der Schatten die Erzählung selbst aus (kostenlose Gemini/Groq in den Einstellungen).', uk: 'З ІІ-ключем Тінь розбере розповідь сама (безкоштовні Gemini/Groq є в Налаштуваннях).', es: 'Con una clave de IA la Sombra analiza el relato sola (Gemini/Groq gratuitos están en Ajustes).' },
+  'Расскажи или впиши, что это был за период': { en: 'Say or type what this stretch was', de: 'Sag oder tippe, was das für ein Zeitraum war', uk: 'Розкажи або впиши, що це був за період', es: 'Di o escribe qué fue este periodo' },
+  'Разбираю…': { en: 'Working through it…', de: 'Werte aus…', uk: 'Розбираю…', es: 'Analizando…' },
+  'Не разобрал': { en: "Couldn't parse it", de: 'Nicht verstanden', uk: 'Не розібрав', es: 'No lo entendí' },
+  'Попробуй подробнее или заполни вручную.': { en: 'Try more detail, or fill it in manually.', de: 'Versuch es ausführlicher oder füll es manuell aus.', uk: 'Спробуй докладніше або заповни вручну.', es: 'Prueba con más detalle o rellénalo a mano.' },
+  'Ошибка сети.': { en: 'Network error.', de: 'Netzwerkfehler.', uk: 'Помилка мережі.', es: 'Error de red.' },
+  'Сначала добавь сферы в Настройках.': { en: 'Add some spheres in Settings first.', de: 'Füge zuerst Sphären in den Einstellungen hinzu.', uk: 'Спершу додай сфери в Налаштуваннях.', es: 'Primero añade esferas en Ajustes.' },
+  'Насколько сильно жила каждая сфера. Поправь, если Тень не угадала — опыт считается из этого.': { en: "How strongly each sphere was alive. Correct it if the Shadow got it wrong — experience is derived from this.", de: 'Wie stark jede Sphäre gelebt hat. Korrigiere es, wenn der Schatten danebenlag — die Erfahrung wird daraus berechnet.', uk: 'Наскільки сильно жила кожна сфера. Виправ, якщо Тінь не вгадала — досвід рахується з цього.', es: 'Con cuánta fuerza vivió cada esfera. Corrígelo si la Sombra se equivocó — la experiencia se calcula de aquí.' },
+  'не было': { en: 'none', de: 'gar nicht', uk: 'не було', es: 'nada' },
+  'слегка': { en: 'a little', de: 'leicht', uk: 'трохи', es: 'un poco' },
+  'умеренно': { en: 'moderate', de: 'mäßig', uk: 'помірно', es: 'moderado' },
+  'заметно': { en: 'notable', de: 'deutlich', uk: 'помітно', es: 'notable' },
+  'сильно': { en: 'strong', de: 'stark', uk: 'сильно', es: 'fuerte' },
+  'весь день': { en: 'all day', de: 'den ganzen Tag', uk: 'увесь день', es: 'todo el día' },
+  'Людей вокруг было': { en: 'People around', de: 'Menschen um dich', uk: 'Людей навколо було', es: 'Gente alrededor' },
+  'мало': { en: 'few', de: 'wenige', uk: 'мало', es: 'poca' },
+  'норм': { en: 'normal', de: 'normal', uk: 'норм', es: 'normal' },
+  'много': { en: 'many', de: 'viele', uk: 'багато', es: 'mucha' },
+  'Заметное': { en: 'Notable', de: 'Bemerkenswert', uk: 'Помітне', es: 'Destacado' },
+  'Записать эпизод': { en: 'Log the episode', de: 'Episode eintragen', uk: 'Записати епізод', es: 'Registrar el episodio' },
+  'Проверь даты': { en: 'Check the dates', de: 'Prüf die Daten', uk: 'Перевір дати', es: 'Revisa las fechas' },
+  '«По» раньше, чем «С»': { en: '"To" is earlier than "From"', de: '„Bis" liegt vor „Von"', uk: '«По» раніше, ніж «З»', es: '«Hasta» es anterior a «Desde»' },
+  'Эпизод — про то, что уже было': { en: "An episode is about what already happened", de: 'Eine Episode handelt von Vergangenem', uk: 'Епізод — про те, що вже було', es: 'Un episodio trata de lo que ya pasó' },
+  'Отметь хотя бы одну сферу': { en: 'Mark at least one sphere', de: 'Markiere mindestens eine Sphäre', uk: 'Познач хоча б одну сферу', es: 'Marca al menos una esfera' },
+  'Эпизод записан': { en: 'Episode logged', de: 'Episode eingetragen', uk: 'Епізод записано', es: 'Episodio registrado' },
+  '👥 Людей было много несколько дней подряд — по-хорошему стоит запланировать день соло': { en: '👥 Lots of people several days running — worth planning a solo day', de: '👥 Mehrere Tage am Stück viele Menschen — ein Solo-Tag wäre angebracht', uk: '👥 Людей було багато кілька днів поспіль — варто запланувати день соло', es: '👥 Mucha gente varios días seguidos — conviene planear un día en solitario' },
+  'Тебя не было': { en: 'You were away', de: 'Du warst weg', uk: 'Тебе не було', es: 'Estuviste fuera' },
+  'что это было?': { en: 'what was it?', de: 'was war das?', uk: 'що це було?', es: '¿qué fue?' },
+  'Расскажи период целиком, одним куском — по дням разбивать не надо.': { en: 'Tell the whole stretch as one piece — no need to split it by day.', de: 'Erzähl den Zeitraum als Ganzes — kein Aufteilen nach Tagen nötig.', uk: 'Розкажи період цілком, одним шматком — по днях розбивати не треба.', es: 'Cuenta el tramo entero de una pieza — no hace falta dividirlo por días.' },
+  'Эпизоды': { en: 'Episodes', de: 'Episoden', uk: 'Епізоди', es: 'Episodios' },
+  'Периоды, когда жизнь шла, а записывать было некогда: поездки, интенсивы, болезнь.': { en: "Stretches when life was happening but logging wasn't: trips, intensives, illness.", de: 'Zeiträume, in denen das Leben lief, das Aufschreiben aber nicht: Reisen, Intensivkurse, Krankheit.', uk: 'Періоди, коли життя йшло, а записувати було ніколи: поїздки, інтенсиви, хвороба.', es: 'Tramos en que la vida seguía pero registrarla no: viajes, intensivos, enfermedad.' },
+  'Пока пусто.': { en: 'Nothing yet.', de: 'Noch nichts.', uk: 'Поки порожньо.', es: 'Aún nada.' },
+  'Удалить эпизод': { en: 'Delete episode', de: 'Episode löschen', uk: 'Видалити епізод', es: 'Eliminar episodio' },
+  'Опыт за него тоже уйдёт.': { en: 'Its experience goes too.', de: 'Die Erfahrung dafür verschwindet ebenfalls.', uk: 'Досвід за нього теж піде.', es: 'La experiencia por él también se va.' },
+  'Эпизод удалён': { en: 'Episode deleted', de: 'Episode gelöscht', uk: 'Епізод видалено', es: 'Episodio eliminado' },
+  // ── Слои у дела (этап 2) ──
+  'Сферы квеста': { en: 'Quest spheres', de: 'Quest-Sphären', uk: 'Сфери квесту', es: 'Esferas de la misión' },
+  'основная получает опыт и время. Фон — сферы, которые дело задевает попутно: они держат форму и дают немного опыта сверху, не отнимая у основной.': { en: 'the main one gets the experience and the time. Background = spheres the task touches in passing: they hold form and add a little experience on top, without taking any from the main one.', de: 'Die Hauptsphäre bekommt Erfahrung und Zeit. Hintergrund = Sphären, die die Aufgabe nebenbei berührt: Sie halten die Form und geben etwas Erfahrung obendrauf, ohne der Hauptsphäre etwas wegzunehmen.', uk: 'основна отримує досвід і час. Фон — сфери, яких справа торкається побіжно: вони тримають форму й дають трохи досвіду зверху, не забираючи в основної.', es: 'la principal recibe la experiencia y el tiempo. Fondo = esferas que la tarea roza de paso: mantienen la forma y dan algo de experiencia extra, sin quitarle nada a la principal.' },
+  'основная': { en: 'main', de: 'Haupt', uk: 'основна', es: 'principal' },
+  'фон': { en: 'background', de: 'Hintergrund', uk: 'фон', es: 'fondo' },
+  'Нужна хотя бы одна основная сфера': { en: 'At least one main sphere is required', de: 'Mindestens eine Hauptsphäre wird gebraucht', uk: 'Потрібна хоча б одна основна сфера', es: 'Hace falta al menos una esfera principal' },
+  'Фонов не больше': { en: 'No more backgrounds than', de: 'Nicht mehr Hintergründe als', uk: 'Фонів не більше', es: 'No más fondos que' },
+  // ── Нагрузка сфер (этап 3) ──
+  'Нагрузка сфер': { en: 'Sphere load', de: 'Sphären-Auslastung', uk: 'Навантаження сфер', es: 'Carga de esferas' },
+  'Сравнение с твоей же нормой: последние 7 дней против предыдущих 28. Не «много вообще», а «много для тебя».': { en: 'Compared against your own norm: the last 7 days versus the 28 before them. Not "a lot in general" — a lot for you.', de: 'Verglichen mit deiner eigenen Norm: die letzten 7 Tage gegen die 28 davor. Nicht „viel allgemein", sondern viel für dich.', uk: 'Порівняння з твоєю ж нормою: останні 7 днів проти попередніх 28. Не «багато взагалі», а «багато для тебе».', es: 'Comparado con tu propia norma: los últimos 7 días frente a los 28 anteriores. No «mucho en general», sino mucho para ti.' },
+  'Перегрев': { en: 'Overload', de: 'Überlastung', uk: 'Перегрів', es: 'Sobrecarga' },
+  'от твоей нормы': { en: 'of your norm', de: 'deiner Norm', uk: 'від твоєї норми', es: 'de tu norma' },
+  'от нормы': { en: 'of your norm', de: 'deiner Norm', uk: 'від норми', es: 'de tu norma' },
+  'Без внимания': { en: 'Getting none', de: 'Ohne Aufmerksamkeit', uk: 'Без уваги', es: 'Sin atención' },
+  'мало данных': { en: 'not enough data', de: 'zu wenig Daten', uk: 'мало даних', es: 'pocos datos' },
+  'Эта сфера меня восстанавливает — не предупреждать о перегрузе': { en: "This sphere restores me — don't warn about overload", de: 'Diese Sphäre erholt mich — nicht vor Überlastung warnen', uk: 'Ця сфера мене відновлює — не попереджати про перевантаження', es: 'Esta esfera me repone — no avisar de sobrecarga' },
+  'сфера восстанавливает: перегрев по ней не считается': { en: "sphere restores you: overload isn't counted for it", de: 'Sphäre erholt dich: Überlastung zählt hier nicht', uk: 'сфера відновлює: перегрів по ній не рахується', es: 'la esfera te repone: no se cuenta sobrecarga en ella' },
+  '🌿 Эта сфера восстанавливает — перегрев по ней считать не буду': { en: "🌿 This sphere restores you — I won't count overload for it", de: '🌿 Diese Sphäre erholt dich — ich zähle hier keine Überlastung', uk: '🌿 Ця сфера відновлює — перегрів по ній рахувати не буду', es: '🌿 Esta esfera te repone — no contaré sobrecarga en ella' },
+  'Снова считаю перегрев по этой сфере': { en: "I'll count overload for this sphere again", de: 'Ich zähle Überlastung für diese Sphäre wieder', uk: 'Знову рахую перегрів по цій сфері', es: 'Vuelvo a contar sobrecarga en esta esfera' },
+  'Не упрёк: просто похоже, что пора дать себе передышку в этой сфере.': { en: "Not a reproach: it just looks like time to give yourself a break in that sphere.", de: 'Kein Vorwurf: Es sieht nur so aus, als wäre eine Pause in dieser Sphäre dran.', uk: 'Не докір: просто схоже, що час дати собі перепочинок у цій сфері.', es: 'No es un reproche: simplemente parece que toca darte un respiro en esa esfera.' },
   'За какой день': { en: 'Which day', de: 'Für welchen Tag', uk: 'За який день', es: 'Qué día' },
   'Записано': { en: 'Logged', de: 'Eingetragen', uk: 'Записано', es: 'Registrado' },
   'за сегодня': { en: 'for today', de: 'für heute', uk: 'за сьогодні', es: 'de hoy' },
@@ -2006,6 +2081,10 @@ for (const ru in I18N_EXTRA) { const row = I18N_EXTRA[ru]; for (const l of ['en'
 
 function lang() { return (State.settings && State.settings.lang) || 'ru'; }
 function t(k) { const l = lang(); if (l === 'ru') return k; const d = I18N[l]; return (d && d[k]) || k; }
+// Алиас перевода для функций, где `t` занята задачей (task). Это не стиль, а защита: в проекте
+// уже был data-losing баг ровно из-за того, что локальная `const t = task` молча ломала все
+// вызовы t() в области видимости. Там, где переменная называется `t`, переводим через t18().
+const t18 = t;
 
 // ---- Множина «день» / «нотатка» по мовах (для динамічних рядків) ----
 function i18nDay(n, l) {
@@ -2691,11 +2770,55 @@ const LADDER_KEYS = Object.keys(IMPORT_LADDERS).sort((a, b) => b.length - a.leng
 function normRu(s) { return String(s || '').toLowerCase().replace(/ё/g, 'е'); }
 // Авто-категория (Блок 3): локальная эвристика «слово→сфера» по истории квестов. Без ИИ — мгновенно и бесплатно.
 function normTitle(s) { return normRu(s).replace(/[^\p{L}\p{N}\s]/gu, ' ').replace(/\s+/g, ' ').trim(); }
+// ══ СЛОВАРЬ ЧАСТЫХ АКТИВНОСТЕЙ — холодный старт для слоёв ═══════════════════════════════
+// Липкие дефолты (см. guessCategoryFromHistory) учатся только со ВТОРОГО раза: разметил «футбол» —
+// дальше подставляется. Но у нового юзера истории нет вообще, поэтому фон у него не появился бы
+// никогда, и весь этап 2 для новичка был бы невидим. Словарь закрывает именно этот холодный старт.
+//
+// Сознательно НЕ через ИИ: словарь мгновенный, бесплатный, работает офлайн и без ключа. ИИ-вызов
+// на каждое создание дела стоил бы задержки и денег ради того же результата на типовых активностях.
+//
+// Ключи — СМЫСЛОВЫЕ имена сфер; они сопоставляются со сферами конкретного юзера по названию.
+// Не совпало — слой просто не ставится (лучше пусто, чем мимо).
+const ACTIVITY_HINTS = [
+  { re: /футбол|баскетбол|волейбол|хоккей|теннис|поигра.* в мяч|мяч с/i, main: 'Тело', layers: ['Отдых', 'Люди'] },
+  { re: /трениров|качалк|спортзал|зал|жим|штанг|турник|отжим|присед/i, main: 'Тело', layers: [] },
+  { re: /пробежк|побегал|бег\b|кросс|марафон/i, main: 'Тело', layers: ['Отдых'] },
+  { re: /прогулк|погулял|пройтись|walk|поход|горы|туризм/i, main: 'Тело', layers: ['Отдых'] },
+  { re: /йог|растяжк|мобилк|разминк|медитац/i, main: 'Тело', layers: ['Отдых'] },
+  { re: /встрет|встреча с друз|посидели|тусов|вечеринк|гост|созвон с друз/i, main: 'Люди', layers: ['Отдых'] },
+  { re: /свидан|с девушк|с парнем|с женой|с мужем/i, main: 'Люди', layers: ['Отдых'] },
+  { re: /позвонил родител|с семь|с родител|семейн/i, main: 'Люди', layers: [] },
+  { re: /настолк|шахмат|карты с|играл с ребят/i, main: 'Отдых', layers: ['Люди'] },
+  { re: /готов(ил|ка)|ужин|обед|завтрак сделал|приготовил/i, main: 'Быт', layers: [] },
+  { re: /убрал|уборк|постирал|помыл посуд|порядок/i, main: 'Быт', layers: [] },
+  { re: /читал книг|прочитал|чтение/i, main: 'Саморазвитие', layers: ['Отдых'] },
+  { re: /сериал|фильм|аниме|манг|игра(л|ть)? в|приставк/i, main: 'Отдых', layers: [] },
+  { re: /немецк|английск|язык|deutsch|vokabel/i, main: 'Немецкий', layers: [] },
+  { re: /лекц|семинар|конспект|домашк|уроки|экзамен|klausur|подготовк к/i, main: 'Учёба', layers: [] },
+];
+// Сфера юзера по смысловому имени. В отличие от dayRecSphereId — БЕЗ фолбэка на первую попавшуюся:
+// для подсказки промах хуже пустоты (поставить «футбол → Учёба» только потому, что она первая).
+function matchSphereByName(name) {
+  if (!name) return null;
+  const all = State.settings.skills || [], n = normRu(String(name).trim());
+  const m = all.find((s) => normRu(s.name) === n) || all.find((s) => normRu(s.name).includes(n) || n.includes(normRu(s.name)));
+  return m ? m.id : null;
+}
+// → { skillId, layers } | null. Только то, что реально нашлось у юзера.
+function guessFromDictionary(title) {
+  const q = normTitle(title); if (q.length < 3) return null;
+  const hit = ACTIVITY_HINTS.find((h) => h.re.test(q)); if (!hit) return null;
+  const skillId = matchSphereByName(hit.main);
+  const layers = hit.layers.map(matchSphereByName).filter((id) => id && id !== skillId);
+  if (!skillId && !layers.length) return null;
+  return { skillId, layers };
+}
 // Подсказывает сферу по тому, как юзер раньше категоризировал похожие квесты. → { skillId, score } | null
 function guessCategoryFromHistory(title) {
   const q = normTitle(title); if (q.length < 2) return null;
   const words = q.split(' ').filter((w) => w.length >= 3);
-  const tally = {};
+  const tally = {}, lay = {};
   const tasks = State.tasks || [];
   for (let i = 0; i < tasks.length; i++) {
     const t = tasks[i];
@@ -2708,9 +2831,16 @@ function guessCategoryFromHistory(title) {
     const recency = 1 + i / Math.max(1, tasks.length);          // свежие записи весомее (×1..2)
     const ids = (t.skillIds && t.skillIds.length) ? t.skillIds : (t.skillId ? [t.skillId] : []);
     for (const id of ids) { if (skillById(id).missing) continue; tally[id] = (tally[id] || 0) + match * recency; }
+    // Липкие дефолты (этап 2): фон запоминается той же машинерией, что и основная сфера.
+    // Отдельного реестра правил намеренно НЕТ — иначе появилась бы ещё одна сущность, которую
+    // юзеру надо вести. Разметил «мяч» один раз — дальше подставляется само, вопрос больше не задаётся.
+    for (const id of (t.layers || [])) { if (skillById(id).missing) continue; lay[id] = (lay[id] || 0) + match * recency; }
   }
   const ranked = Object.entries(tally).sort((a, b) => b[1] - a[1]);
-  return ranked.length ? { skillId: ranked[0][0], score: ranked[0][1] } : null;
+  if (!ranked.length) return null;
+  const layers = Object.entries(lay).sort((a, b) => b[1] - a[1]).map(([id]) => id)
+    .filter((id) => id !== ranked[0][0]).slice(0, LAYER_MAX);
+  return { skillId: ranked[0][0], score: ranked[0][1], layers };
 }
 // Обновляет чип-подсказку под полем ввода квеста (вызывается на input)
 function updateCatSuggest(inputEl) {
@@ -2728,6 +2858,12 @@ function updateCatSuggest(inputEl) {
     box.innerHTML = `<span class="cat-chip cat-chip-auto">💡 ${esc(t('Сфера подставлена'))}: <b>${esc(skillLabel(g.skillId))}</b></span>`;
   } else if (g && sel && sel.value !== g.skillId) { // локальная эвристика по истории — мгновенно, бесплатно
     box.innerHTML = `<button type="button" class="cat-chip" data-action="apply-cat" data-skill="${esc(g.skillId)}">💡 Обычно сюда: <b>${esc(skillLabel(g.skillId))}</b> · применить</button>`;
+  } else if (!g && sel && guessFromDictionary(txt) && guessFromDictionary(txt).skillId && !form.dataset.catTouched) {
+    // Истории нет (новый юзер / новое дело) → словарь частых активностей. Мгновенно и бесплатно,
+    // до всякого ИИ: у новичка история пуста по определению, и без этого он не увидел бы подсказок вовсе.
+    const d = guessFromDictionary(txt);
+    if (sel.value !== d.skillId) sel.value = d.skillId;
+    box.innerHTML = `<span class="cat-chip cat-chip-auto">💡 ${esc(t('Сфера подставлена'))}: <b>${esc(skillLabel(d.skillId))}</b></span>`;
   } else if (!g && txt.length >= 4 && canUseAi()) { // нет в истории + ИИ доступен (свой ключ или Pro) → предложить спросить ИИ
     box.innerHTML = `<button type="button" class="cat-chip cat-chip-ai" data-action="ai-cat-suggest" data-title="${esc(txt)}">🤖 Подобрать сферу через ИИ</button>`;
   } else { box.innerHTML = ''; }
@@ -2803,7 +2939,7 @@ const State = {
   // app data
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
   goals: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
-  lootbox: null, inbox: null, inboxOpen: false, antihabits: null, aiKeys: null,
+  lootbox: null, inbox: null, inboxOpen: false, antihabits: null, aiKeys: null, episodes: null,
   strava: null, _stravaSyncing: false,
   chatLog: [], _chatBusy: false,
   leaderboard: null, _lbLoading: false, party: null, _partyLoading: false,
@@ -3027,11 +3163,19 @@ function openDesirePicker(taskId) {
 // Поп-ап выбора нескольких категорий для квеста (иллюстрация = работа + творчество)
 function openCategoryPicker(taskId) {
   if (document.getElementById('cat-pop')) return;
-  const t = questById(taskId); if (!t) return;
-  const ids = taskSkills(t);
+  const t = questById(taskId); if (!t) return;   // ⚠️ `t` здесь — задача, глобальная t() затенена → переводим через t18()
+  const ids = taskSkills(t), lids = taskLayers(t);
   const opt = (s, depth) => {
     const checked = ids.includes(s.id);
-    return `<label class="cat-opt ${depth ? 'is-sub' : ''}" style="padding-left:${10 + depth * 18}px"><input type="checkbox" data-action="toggle-cat" data-id="${t.id}" data-skill="${s.id}" ${checked ? 'checked' : ''}/><span class="t-cat" style="--c:${esc(s.color)}">${depth ? '↳ ' : ''}${esc(s.name)}</span></label>`;
+    const isLayer = lids.includes(s.id);
+    // Три состояния сферы: не участвует · фон · основная. Раньше их было два, и «участвует»
+    // означало делёж опыта — поэтому отметить правду («мяч это и тело, и отдых») было
+    // невыгодно. Теперь фон добавляет сверху, и честность больше ничего не стоит.
+    return `<label class="cat-opt ${depth ? 'is-sub' : ''}" style="padding-left:${10 + depth * 18}px">
+      <input type="checkbox" data-action="toggle-cat" data-id="${t.id}" data-skill="${s.id}" ${checked ? 'checked' : ''}/>
+      <span class="t-cat" style="--c:${esc(s.color)}">${depth ? '↳ ' : ''}${esc(s.name)}</span>
+      <button type="button" class="cat-role${isLayer ? ' is-layer' : (checked ? ' is-main' : '')}" data-action="toggle-layer" data-id="${t.id}" data-skill="${s.id}">${isLayer ? t18('фон') : (checked ? t18('основная') : '+ ' + t18('фон'))}</button>
+    </label>`;
   };
   // Полная иерархия любой глубины (Учёба › Школа › Математика) — фидбек #19
   let list = '';
@@ -3039,10 +3183,10 @@ function openCategoryPicker(taskId) {
   walk(null, 0);
   const ov = document.createElement('div'); ov.id = 'cat-pop'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="desire-box"><button class="modal-x" data-action="close-cats">✕</button>
-    <h3>Категории квеста</h3>
-    <p class="muted">«${esc(t.title)}» · отметь все подходящие сферы. Опыт делится между ними поровну. Первая — основная.</p>
+    <h3>${t18('Сферы квеста')}</h3>
+    <p class="muted">«${esc(t.title)}» · ${t18('основная получает опыт и время. Фон — сферы, которые дело задевает попутно: они держат форму и дают немного опыта сверху, не отнимая у основной.')}</p>
     <div class="cat-list">${list}</div>
-    <div class="settings-actions" style="margin-top:14px"><button class="btn" data-action="close-cats">Готово</button></div></div>`;
+    <div class="settings-actions" style="margin-top:14px"><button class="btn" data-action="close-cats">${t18('Готово')}</button></div></div>`;
   document.body.appendChild(ov);
 }
 
@@ -3061,6 +3205,22 @@ function itemGold(it) {
 // ---- Единый поток событий (квесты + привычки + цели) ----
 // Категории квеста: массив id сфер. Back-compat: старые задачи с одним skillId.
 function taskSkills(t) { return (t.skillIds && t.skillIds.length) ? t.skillIds : (t.skillId ? [t.skillId] : []); }
+// ══ СЛОИ у обычного дела (этап 2 LIFE-CAPTURE-PLAN.md) ═════════════════════════════════
+// Проблема, которую это чинит: мульти-сфера выше ДЕЛИТ опыт (`shareInt`) — отметив «мяч =
+// Тело + Отдых», человек получал по половине в каждую. То есть честность наказывалась, и
+// приходилось мучительно выбирать ОДНУ сферу («мяч — это отдых или развитие тела?»). Это и
+// был «налог на классификацию» из разбора.
+// Слой — другая сущность: основная сфера получает СВОЁ полностью, фоновая — бонус СВЕРХУ.
+// Никто ничего не теряет, поэтому отмечать правду становится выгодно.
+// Фон намеренно слабее: держит Форму (главное) + небольшой XP. Если бы фон догонял основную,
+// «был в среде» стало бы выгоднее «занимался целенаправленно» — и мотивация к осознанной
+// практике сломалась бы. Время (`min`) фон не даёт вовсе — иначе вернулись бы «>24 ч в сутки».
+const LAYER_SHARE = 0.2;   // доля XP основного дела, которую получает каждый фоновый слой
+const LAYER_MAX = 3;       // больше трёх фонов — это уже не дело, а эпизод
+function taskLayers(t) {
+  const prim = taskSkills(t);
+  return (t.layers || []).filter((id) => id && !prim.includes(id) && !skillById(id).missing).slice(0, LAYER_MAX);
+}
 // Делёж целого числа на n частей без потерь: часть i (остаток уходит первым частям/основной сфере).
 function shareInt(total, n, i) { const base = Math.floor(total / n); return base + (i < (total % n) ? 1 : 0); }
 function xpEvents() {
@@ -3070,10 +3230,23 @@ function xpEvents() {
     const xp = t.xpAwarded || 0, gold = t.goldAwarded || 0, min = Number(t.actualMin || t.estimateMin) || 0;
     if (n <= 1) { ev.push({ date: dayOf(t), skillId: ids[0] || t.skillId || null, xp, gold, min }); }
     else ids.forEach((sid, i) => ev.push({ date: dayOf(t), skillId: sid, xp: shareInt(xp, n, i), gold: shareInt(gold, n, i), min: shareInt(min, n, i) }));
+    // Фоновые слои: бонус СВЕРХУ, а не доля от основного (см. taskSkills выше — почему).
+    // min:0 и gold:0 — фон не тратит время суток и не платит золотом.
+    for (const lid of taskLayers(t)) ev.push({ date: dayOf(t), skillId: lid, xp: Math.max(1, Math.round(xp * LAYER_SHARE)), gold: 0, min: 0, layer: true });
   }
   const log = State.habitlog || {};
   for (const date in log) for (const hid in log[date]) { const rec = log[date][hid], h = habitById(hid); ev.push({ date, skillId: h ? h.skillId : null, xp: rec.xp || 0, gold: rec.gold || 0, min: rec.min || 0 }); }
   for (const g of State.goals || []) if (g.completedAt) { const xp = g.xpReward != null ? g.xpReward : GOAL_BONUS.xp; ev.push({ date: fmtDate(new Date(g.completedAt)), skillId: g.skillId, xp, gold: Math.round(xp * 0.35), min: 0 }); }
+  // Эпизоды: период раскладывается в события ПО ДНЯМ (а не одним куском на дату окончания) —
+  // именно поэтому стрик остаётся целым и Форма держится по всем дням периода, без отдельного кода.
+  // min:0 намеренно: часы эпизода НЕ идут в бюджет суток. Попытка уложить погружённый день в
+  // 24 часа («12 ч немецкого + 12 ч людей + наука») и была тем, что ломало модель. gold:0 —
+  // золото платится за конкретные выполненные дела, а не за прожитый период.
+  for (const ep of State.episodes || []) {
+    const days = episodeDays(ep); if (!days.length) continue;
+    const per = episodePerDayXp(ep); if (!per.length) continue;
+    for (const ds of days) for (const r of per) ev.push({ date: ds, skillId: r.skillId, xp: r.xp, gold: 0, min: 0, ep: ep.id });
+  }
   return ev;
 }
 function doneTasks() { return State.tasks.filter((t) => t.done); }
@@ -3231,6 +3404,58 @@ function rhythmFor(skills, days, map) {
 }
 // Колесо: ритм верхних сфер (без проектов).
 function sphereRhythm(days) { return rhythmFor(balanceSpheres(), days || BALANCE_WINDOW_DAYS); }
+
+// ══ НАГРУЗКА СФЕР — этап 3 (LIFE-CAPTURE-PLAN.md) ══════════════════════════════════════
+// Запрос Альберта дословно: «чтобы понять — вот я неделю общался с рандомными типами, у меня
+// перегрузилась сфера отношений, мне надо побыть одному». В часах это не выражается, поэтому
+// в старой модели такого вывода не могло появиться в принципе.
+//
+// Считаем НЕ абсолютные часы, а превышение сферой СВОЕЙ ЖЕ нормы: свежее окно (7 дней) против
+// личной базы (предыдущие 28). Нормы у всех разные, поэтому единого порога «много» не бывает —
+// перегрев определяется только относительно самого себя.
+//
+// ⚠️ Считаем по ОПЫТУ, а не по минутам (в отличие от индекса баланса, который на минутах).
+// Причина: у эпизодов и фоновых слоёв `min: 0` — по минутам неделя на выезде и весь фон были бы
+// НЕВИДИМЫ, то есть ровно те перегрузы, ради которых всё и затевалось, не детектировались бы.
+const LOAD_WIN = 7, LOAD_BASE_WIN = 28, LOAD_HOT = 1.7, LOAD_QUIET = 7;
+function windowXpMap(fromDate, toDate) {
+  const map = {};
+  for (const e of xpEvents()) if (e.skillId && e.date >= fromDate && e.date <= toDate) map[e.skillId] = (map[e.skillId] || 0) + (e.xp || 0);
+  return map;
+}
+function subtreeXp(id, map) { let v = map[id] || 0; for (const c of descendantSkills(id)) v += map[c.id] || 0; return v; }
+// «Эта сфера меня восстанавливает» — снимает перегрев (предупреждать «ты перебрал отдыха» глупо).
+// Это же и калибровка интроверт/экстраверт из плана: для экстраверта сфера людей — заряд, а не расход.
+function sphereRestores(id) { const s = skillById(id); return !!(s && s.restores); }
+function sphereLoads() {
+  const T = todayStr();
+  const recFrom = addDays(T, -(LOAD_WIN - 1));
+  const baseTo = addDays(recFrom, -1), baseFrom = addDays(baseTo, -(LOAD_BASE_WIN - 1));
+  const recMap = windowXpMap(recFrom, T), baseMap = windowXpMap(baseFrom, baseTo);
+  return balanceSpheres().map((s) => {
+    const rec = subtreeXp(s.id, recMap) / LOAD_WIN, base = subtreeXp(s.id, baseMap) / LOAD_BASE_WIN;
+    const la = skillLastActiveDeep(s.id);
+    // База должна быть содержательной: иначе первая же активность в новой сфере даёт ratio=∞
+    // и приложение кричит «перегрев» там, где человек просто начал.
+    const ratio = base >= 3 ? rec / base : null;
+    return {
+      id: s.id, name: s.name, color: s.color, rec, base, ratio,
+      quietDays: la ? daysSinceDate(la) : null,
+      hot: ratio != null && ratio >= LOAD_HOT && !sphereRestores(s.id),
+      restores: sphereRestores(s.id),
+    };
+  });
+}
+// Перегрев + то, что при этом молчит. Именно ПАРА даёт вывод, ради которого всё делалось:
+// не «ты много общался» (это и так видно), а «люди горят, а тело и учёба стоят — сделай день на себя».
+function loadInsight() {
+  const rows = sphereLoads();
+  const hot = rows.filter((r) => r.hot).sort((a, b) => b.ratio - a.ratio);
+  if (!hot.length) return null;
+  const quiet = rows.filter((r) => !r.hot && skillXp(r.id) > 0 && (r.quietDays == null || r.quietDays >= LOAD_QUIET))
+    .sort((a, b) => (b.quietDays || 999) - (a.quietDays || 999)).slice(0, 2);
+  return { hot: hot[0], quiet };
+}
 
 // ---- Индекс баланса = РОВНОСТЬ РИТМА внимания за окно + охват (не стоячий уровень). ----
 // Нудж «подтяни X» = обжитая сфера, чья доля внимания сильнее всего ниже простого таргета (равномерно).
@@ -4409,7 +4634,9 @@ function quietDaysBefore(max) {
     const ds = fmtDate(d);
     const hadQuest = (State.tasks || []).some((x) => x.done && dayOf(x) === ds);
     const hadHabit = !!(State.habitlog && State.habitlog[ds] && Object.keys(State.habitlog[ds]).length);
-    if (hadQuest || hadHabit) break;
+    // День внутри объявленного эпизода — не «тихий»: он уже рассказан целиком, и предлагать
+    // рассказать его ещё раз значит дёргать человека за то, что он УЖЕ закрыл.
+    if (hadQuest || hadHabit || episodeCoversDay(ds)) break;
     n++;
   }
   return n;
@@ -5585,7 +5812,10 @@ function renderHeader(force = false) {
 function catChips(t) {
   const ids = taskSkills(t);
   if (!ids.length) return `<span class="t-cat missing">— сфера —</span>`;
-  return ids.map((sid) => { const s = skillById(sid); return `<span class="t-cat ${s.missing ? 'missing' : ''}" style="--c:${esc(s.color)}">${esc(s.name)}</span>`; }).join('');
+  const main = ids.map((sid) => { const s = skillById(sid); return `<span class="t-cat ${s.missing ? 'missing' : ''}" style="--c:${esc(s.color)}">${esc(s.name)}</span>`; }).join('');
+  // Фоновые слои — приглушённо: они есть, но не спорят за внимание с основной сферой.
+  const lay = taskLayers(t).map((sid) => { const s = skillById(sid); return `<span class="t-cat is-layer" style="--c:${esc(s.color)}">${esc(s.name)}</span>`; }).join('');
+  return main + lay;
 }
 // ⚠️ Параметр НЕ называть `t` — затенил бы глобальную функцию перевода t() (см. баг fb_mrkzunjjmn61).
 function questRow(q) {
@@ -6328,6 +6558,180 @@ function dayRecApply() {
   Store.save('tasks', State.tasks); const m = document.getElementById('dayrec-modal'); if (m) m.remove();
   toast(`✅ ${t('Записано')} ${n} ${plural(n, 'дело', 'дела', 'дел')} — ${day === today ? t('за сегодня') : dmShort(day)}`);
   checkAchievements(); render(); triggerAvatarReaction('happy', `Записано: ${n}`); publishLeaderboard();
+}
+// ══ ЭПИЗОДЫ — период вместо дней (LIFE-CAPTURE-PLAN.md) ═══════════════════════════════
+// Живой кейс: 15 дней тишины у самого автора (остров Хайлиг Хооге → практика в лаборатории →
+// горы). Причина не в лени: день — атомарная единица учёта, поэтому неделя на выезде = 7 дыр,
+// которые надо закрывать по одной, и стоимость возврата растёт с длиной паузы. Обычный юзер
+// в этой точке не возвращается вообще.
+//
+// Эпизод объявляется ОДНИМ действием и описывается ОДНИМ рассказом на весь период — поэтому
+// возврат стоит одинаково после 3 дней и после 15. Внутри эпизода день перестаёт быть
+// единицей: вместо «сколько часов на что» — «насколько сильно жила каждая сфера»
+// (интенсивность 0-5). Так снимается неразрешимое в старой модели: 12 ч немецкого + 12 ч
+// людей + наука + тело — это больше 24 часов в сутках, и записать это честно было нельзя.
+//
+// ⚠️ Опыт юзер себе НЕ назначает (решение Альберта 01.08): он двигает ползунки интенсивности,
+// XP выводится из них по фиксированной таблице ниже.
+//
+// Интеграция сделана через xpEvents() — единый поток событий приложения. Отсюда БЕСПЛАТНО
+// получаются три вещи, которые иначе пришлось бы писать и чинить отдельно:
+//   • стрик не рвётся — currentStreak() строится из дат xpEvents;
+//   • Форма не падает — skillForm()/skillLastActive() тоже читают xpEvents. Это чинит
+//     настоящий баг: сейчас неделя на Хооге ПОНИЗИЛА бы свежесть немецкого — ровно за самый
+//     немецкоязычный период года;
+//   • опыт и вся статистика — тот же поток.
+const EPISODE_TYPES = [
+  { id: 'trip', icon: '🎒', name: 'Поездка' },
+  { id: 'intensive', icon: '🔬', name: 'Интенсив / курс' },
+  { id: 'camp', icon: '⛺️', name: 'Лагерь / выезд' },
+  { id: 'vacation', icon: '🌴', name: 'Отпуск' },
+  { id: 'illness', icon: '🤒', name: 'Болезнь' },
+  { id: 'sprint', icon: '🔥', name: 'Дедлайн-спринт' },
+  { id: 'guests', icon: '🏡', name: 'Гости / семья' },
+  { id: 'other', icon: '✨', name: 'Другое' },
+];
+const EPISODE_INTENSITY = ['не было', 'слегка', 'умеренно', 'заметно', 'сильно', 'весь день'];
+// XP за один день эпизода по интенсивности. Калибровка: 7 дней полного погружения (ур.5) =
+// 504 XP против ~1295 XP за 7 дней осознанной практики по 2 ч. То есть погружение даёт
+// реальный прогресс, но остаётся заметно слабее целенаправленной работы — иначе «жил в среде»
+// начало бы выгоднее «занимался», и мотивация к практике сломалась бы.
+const EPISODE_XP_PER_DAY = [0, 8, 18, 32, 50, 72];
+const EPISODE_XP_DAY_CAP = 250;  // потолок суммы по всем сферам за день эпизода
+const EPISODE_MAX_DAYS = 60;
+function episodeType(id) { return EPISODE_TYPES.find((x) => x.id === id) || EPISODE_TYPES[EPISODE_TYPES.length - 1]; }
+function episodeDays(ep) {
+  if (!ep || !ep.from || !ep.to || ep.to < ep.from) return [];
+  const out = []; let cur = ep.from;
+  for (let i = 0; i < EPISODE_MAX_DAYS && cur <= ep.to; i++) { out.push(cur); cur = addDays(cur, 1); }
+  return out;
+}
+function episodeCoversDay(ds) { return (State.episodes || []).some((ep) => ep.from && ep.to && ds >= ep.from && ds <= ep.to); }
+// XP по сферам за ОДИН день эпизода, уже с учётом потолка (масштабируем, а не обрезаем —
+// иначе при перегрузе профиля порядок сфер решал бы, кому достанется опыт).
+function episodePerDayXp(ep) {
+  const rows = (ep.profile || []).map((p) => ({
+    skillId: p.skillId,
+    lvl: Math.max(0, Math.min(5, Math.round(Number(p.intensity) || 0))),
+  })).filter((r) => r.skillId && r.lvl > 0);
+  const raw = rows.reduce((s, r) => s + EPISODE_XP_PER_DAY[r.lvl], 0);
+  const scale = raw > EPISODE_XP_DAY_CAP ? EPISODE_XP_DAY_CAP / raw : 1;
+  return rows.map((r) => ({ skillId: r.skillId, xp: Math.max(1, Math.round(EPISODE_XP_PER_DAY[r.lvl] * scale)) }));
+}
+function episodeTotalXp(ep) { const d = episodeDays(ep).length; return episodePerDayXp(ep).reduce((s, r) => s + r.xp, 0) * d; }
+
+let _epRec = null, _epRows = [], _epExtra = { highlights: [], social: null };
+function openEpisode(preFrom, preTo) {
+  if (document.getElementById('ep-modal')) return;
+  const today = todayStr();
+  const from = preFrom || addDays(today, -6), to = preTo || today;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const ov = document.createElement('div'); ov.id = 'ep-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov);
+  ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="ep-close">✕</button>
+    <h2>🎒 ${t('Эпизод')}</h2>
+    <p class="muted" style="font-size:13px;margin:0 0 10px">${t('Был период, когда записывать было некогда — поездка, интенсив, болезнь. Расскажи о нём целиком, одним куском. Разбивать по дням не надо.')}</p>
+    <div class="ep-types">${EPISODE_TYPES.map((x, i) => `<button type="button" class="ep-type${i === 0 ? ' on' : ''}" data-action="ep-type" data-id="${x.id}">${x.icon} ${t(x.name)}</button>`).join('')}</div>
+    <label class="dayrec-day">${t('Название')}<input type="text" id="ep-title" maxlength="60" placeholder="${t('например: Хайлиг Хооге, проектная неделя')}" /></label>
+    <div class="ep-dates">
+      <label class="dayrec-day">${t('С')}<input type="date" id="ep-from" value="${from}" max="${today}" /></label>
+      <label class="dayrec-day">${t('По')}<input type="date" id="ep-to" value="${to}" max="${today}" /></label>
+    </div>
+    ${SR ? `<button class="btn ghost" id="ep-mic" data-action="ep-mic" style="margin-bottom:8px">🎤 ${t('Говорить')}</button>` : ''}
+    <textarea id="ep-text" rows="5" placeholder="${t('Например: был на острове с классом, проектная неделя, исследовали ватт и солончаки, всё время на немецком, готовили сами, вечером играли в мяч…')}"></textarea>
+    <div class="propose-actions">${canUseAi()
+      ? `<button class="btn" data-action="ep-run">🤖 ${t('Разобрать период')}</button>`
+      : `<button class="btn ghost" data-action="ep-manual">${t('Заполнить вручную')}</button><p class="muted" style="font-size:12px;margin:6px 0 0">${t('С ИИ-ключом Тень разберёт рассказ сама (бесплатные Gemini/Groq есть в Настройках).')}</p>`}</div>
+    <div id="ep-result"></div></div>`;
+  setTimeout(() => { const el = document.getElementById('ep-title'); if (el) el.focus(); }, 30);
+}
+function epMicToggle() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return;
+  const btn = document.getElementById('ep-mic'), ta = document.getElementById('ep-text');
+  if (_epRec) { try { _epRec.stop(); } catch {} _epRec = null; if (btn) { btn.textContent = '🎤 ' + t('Говорить'); btn.classList.remove('rec'); } return; }
+  const rec = new SR(); rec.lang = 'ru-RU'; rec.continuous = true; rec.interimResults = true;
+  let base = ta ? ta.value : '';
+  rec.onresult = (e) => { let fin = '', interim = ''; for (let i = e.resultIndex; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) fin += r[0].transcript; else interim += r[0].transcript; } if (fin) base = (base ? base + ' ' : '') + fin.trim(); if (ta) ta.value = (base + (interim ? ' ' + interim : '')).trim(); };
+  rec.onerror = () => {}; rec.onend = () => { if (_epRec === rec) { _epRec = null; if (btn) { btn.textContent = '🎤 ' + t('Говорить'); btn.classList.remove('rec'); } } };
+  try { rec.start(); _epRec = rec; if (btn) { btn.textContent = '⏹ ' + t('Стоп'); btn.classList.add('rec'); } } catch {}
+}
+// Все сферы верхнего уровня с интенсивностью 0 — база, поверх которой ложится разбор ИИ.
+// Показываем ВСЕ, а не только распознанные: увидеть «Здоровье — не было» так же полезно,
+// как «Немецкий — весь день», и это ровно то, ради чего эпизод и заводится.
+function epBlankRows() { return topSkills().map((s) => ({ skillId: s.id, intensity: 0, why: '' })); }
+async function epRun() {
+  const ta = document.getElementById('ep-text'), text = (ta && ta.value || '').trim();
+  if (!text) { toast(t('Расскажи или впиши, что это был за период')); return; }
+  if (_epRec) epMicToggle();
+  const res = document.getElementById('ep-result'); if (res) res.innerHTML = `<p class="muted">🤖 ${t('Разбираю…')}</p>`;
+  try {
+    const r = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'episode', provider: aiProvider(), text, context: proposeContext() }) });
+    const d = await r.json();
+    if (d.error && aiHandleErr(d)) { const p = document.getElementById('ep-modal'); if (p) p.remove(); return; }
+    if (d.error) { if (res) res.innerHTML = `<p class="muted">${t('Не разобрал')} (${esc(d.error)}). ${t('Попробуй подробнее или заполни вручную.')}</p><div class="propose-actions"><button class="btn ghost" data-action="ep-manual">${t('Заполнить вручную')}</button></div>`; return; }
+    _epRows = epBlankRows();
+    for (const p of d.proposals || []) {
+      const sid = dayRecSphereId(p.sphere); const row = _epRows.find((x) => x.skillId === sid);
+      if (row) { row.intensity = Math.max(0, Math.min(5, Math.round(Number(p.intensity) || 0))); row.why = String(p.why || '').slice(0, 60); }
+    }
+    _epExtra = { highlights: d.highlights || [], social: d.social || null };
+    renderEpProfile(); track('ai:episode');
+  } catch (e) { if (res) res.innerHTML = `<p class="muted">${t('Ошибка сети.')}</p>`; }
+}
+function epManual() { _epRows = epBlankRows(); _epExtra = { highlights: [], social: null }; renderEpProfile(); }
+function renderEpProfile() {
+  const res = document.getElementById('ep-result'); if (!res) return;
+  if (!_epRows.length) { res.innerHTML = `<p class="muted">${t('Сначала добавь сферы в Настройках.')}</p>`; return; }
+  const soc = _epExtra.social;
+  res.innerHTML = `<div class="ep-profile">
+    <p class="muted" style="font-size:12px;margin:12px 0 6px">${t('Насколько сильно жила каждая сфера. Поправь, если Тень не угадала — опыт считается из этого.')}</p>
+    ${_epRows.map((r, i) => `<label class="ep-row">
+      <span class="ep-row-name">${esc(skillLabel(r.skillId))}</span>
+      <input type="range" min="0" max="5" step="1" value="${r.intensity}" data-ep-lvl="${i}" />
+      <span class="ep-row-lvl" data-ep-lvl-txt="${i}">${t(EPISODE_INTENSITY[r.intensity])}</span>
+    </label>${r.why ? `<span class="ep-row-why">${esc(r.why)}</span>` : ''}`).join('')}
+    <div class="ep-social">
+      <span class="muted" style="font-size:12px">${t('Людей вокруг было')}</span>
+      <div class="ep-social-btns">${[['low', 'мало'], ['normal', 'норм'], ['high', 'много']].map(([id, lbl]) =>
+        `<button type="button" class="ep-soc${soc === id ? ' on' : ''}" data-action="ep-social" data-id="${id}">${t(lbl)}</button>`).join('')}</div>
+    </div>
+    ${(_epExtra.highlights || []).length ? `<p class="muted" style="font-size:12px;margin:10px 0 0">${t('Заметное')}: ${_epExtra.highlights.map((h) => esc(h)).join(' · ')}</p>` : ''}
+    <div class="propose-actions"><button class="btn" data-action="ep-save">✓ ${t('Записать эпизод')}</button></div>
+  </div>`;
+}
+function epSetLevel(i, v) {
+  const r = _epRows[i]; if (!r) return;
+  r.intensity = Math.max(0, Math.min(5, Math.round(Number(v) || 0)));
+  const txt = document.querySelector(`[data-ep-lvl-txt="${i}"]`); if (txt) txt.textContent = t(EPISODE_INTENSITY[r.intensity]);
+}
+function epSave() {
+  const from = (document.getElementById('ep-from') || {}).value, to = (document.getElementById('ep-to') || {}).value;
+  const today = todayStr();
+  if (!from || !to || !/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) { toast(t('Проверь даты')); return; }
+  if (to < from) { toast(t('«По» раньше, чем «С»')); return; }
+  if (from > today || to > today) { toast(t('Эпизод — про то, что уже было')); return; }
+  const rows = _epRows.filter((r) => r.intensity > 0);
+  if (!rows.length) { toast(t('Отметь хотя бы одну сферу')); return; }
+  const typeEl = document.querySelector('.ep-type.on');
+  const ep = {
+    id: uid(),
+    type: (typeEl && typeEl.dataset.id) || 'trip',
+    title: String((document.getElementById('ep-title') || {}).value || '').slice(0, 60).trim(),
+    from, to,
+    story: String((document.getElementById('ep-text') || {}).value || '').slice(0, 4000),
+    profile: rows.map((r) => ({ skillId: r.skillId, intensity: r.intensity })),
+    highlights: _epExtra.highlights || [],
+    social: _epExtra.social || null,
+    createdAt: new Date().toISOString(),
+  };
+  if (!ep.title) ep.title = t(episodeType(ep.type).name);
+  State.episodes = State.episodes || []; State.episodes.push(ep);
+  Store.save('episodes', State.episodes);
+  const m = document.getElementById('ep-modal'); if (m) m.remove();
+  const days = episodeDays(ep).length, xp = episodeTotalXp(ep);
+  toast(`${episodeType(ep.type).icon} ${t('Эпизод записан')} — ${days} ${plural(days, 'день', 'дня', 'дней')}, +${xp} XP`);
+  checkAchievements(); render(); publishLeaderboard();
+  // Нагрузка людьми — то, ради чего эпизод и заводился: «неделя перегруза → нужен день соло».
+  if (ep.social === 'high' && days >= 3) setTimeout(() => toast(t('👥 Людей было много несколько дней подряд — по-хорошему стоит запланировать день соло')), 2600);
 }
 function proposeContext() {
   const spheres = State.settings.skills.map((s) => skillLabel(s.id)).join(', ');
@@ -8513,6 +8917,28 @@ function renderToday() {
   // но не «сделал → записал» — и в поездке становится бесполезным, хотя человек делает ровно то,
   // ради чего он есть. «Итог дня» это решает, но его не находят. Значит — предлагаем сами.
   // ГЕЙТ: это приглашение, а не упрёк. Никаких «ты пропустил N дней».
+  // Долгая тишина (3+ дня) — это почти всегда не «забыл», а «жизнь была не той формы»: поездка,
+  // интенсив, болезнь. Предлагать закрывать её по дню — та самая стена, из-за которой не
+  // возвращаются. Поэтому от 3 дней зовём в эпизод, а посуточный разбор оставляем как выбор.
+  const quietLong = (State.tasks || []).length ? quietDaysBefore(30) : 0;
+  const epNudge = quietLong >= 3
+    ? `<div class="card nudge-card ep-nudge">
+        <button class="nudge" data-action="episode-open" data-from="${addDays(todayStr(), -quietLong)}" data-to="${addDays(todayStr(), -1)}">🎒 ${t('Тебя не было')} ${quietLong} ${plural(quietLong, 'день', 'дня', 'дней')} — ${t('что это было?')}</button>
+        <span class="nudge-boost">${t('Расскажи период целиком, одним куском — по дням разбивать не надо.')}</span></div>`
+    : '';
+  // Перегрев сферы (этап 3). Единственный нудж в приложении, который толкает делать МЕНЬШЕ, а не
+  // больше — прямо из запроса Альберта «перегрузилась сфера отношений, надо побыть одному».
+  // Показываем только в паре с тем, что при этом молчит: без второй половины это просто
+  // констатация «ты много работал», из которой ничего не следует.
+  const li = loadInsight();
+  // ⚠️ Формулировка намеренно БЕЗ глаголов при названии сферы: имена сфер задаёт юзер («Люди»,
+  // «Тело», «Немецкий»), род и число заранее неизвестны — «Люди горит» и «Тело молчат» вылезли бы
+  // сразу. Двоеточие вместо сказуемого решает это на всех языках.
+  const loadNudge = (li && li.quiet.length)
+    ? `<div class="card nudge-card load-nudge">
+        <button class="nudge" data-action="goto-stats">🌡 ${esc(li.hot.name)} — ×${li.hot.ratio.toFixed(1)} ${t('от нормы')}. ${t('Без внимания')}: ${li.quiet.map((q) => esc(q.name)).join(', ')}</button>
+        <span class="nudge-boost">${t('Не упрёк: просто похоже, что пора дать себе передышку в этой сфере.')}</span></div>`
+    : '';
   const quietN = (State.tasks || []).length ? quietDaysBefore() : 0;
   const dayLogNudge = (quietN >= 2 || (doneCount === 0 && new Date().getHours() >= 18 && (State.tasks || []).length > 0))
     ? `<div class="card nudge-card daylog-nudge">
@@ -8556,6 +8982,12 @@ function renderToday() {
   // это награда, а не совет, остаётся отдельно (сознательная петля возврата, не конкурирует за тон).
   const nudgeWin = pickNudge([
     { id: 'entry', tier: 1, html: entryNudge },
+    // Эпизод выше посуточного разбора: если человека не было 3+ дня, предложить закрывать это
+    // по одному дню — та самая стена, из-за которой не возвращаются вообще. Ниже «Захода»:
+    // тот спасает вечер прямо сейчас, а эпизод подождёт до любого следующего захода.
+    { id: 'episode', tier: 2, html: epNudge },
+    // Перегрев — рядом с «отдохни» по смыслу и по приоритету: оба про «сбавь», а не «поднажми».
+    { id: 'load', tier: 2, html: loadNudge },
     { id: 'rest', tier: 2, html: restNudge },
     { id: 'dayLog', tier: 3, html: dayLogNudge },
     { id: 'lowEnergy', tier: 4, html: lowEnergyNudge },
@@ -10175,6 +10607,44 @@ function renderStats() {
     : `<div class="card locked-card" data-action="show-paywall" data-feature="Расширенная аналитика">
         <div class="lock-veil"><span>${satoruIconHTML('status.lock', 'inline-glyph', '◇')} Расширенная аналитика — в Pro</span></div>
         <h3>${t('Время по сферам')}</h3>${barChartSVG(timeByAreaThisWeek())}</div>`;
+  // Эпизоды: без списка сохранённый период исчезал из виду, а ошибка ИИ в разборе оставалась
+  // навсегда неверным опытом — откатить было нечем. Здесь же вход «записать эпизод» вручную,
+  // не дожидаясь нуджа (поездку можно отметить сразу, а не после недели тишины).
+  // Нагрузка сфер: превышение сферой СВОЕЙ нормы за 7 дней против личной базы за 28.
+  // Тумблер «восстанавливает» стоит прямо здесь, а не в Настройках: он нужен ровно в тот момент,
+  // когда видишь «перегрев отдыха» и понимаешь, что для этой сферы предупреждение бессмысленно.
+  const loads = sphereLoads().filter((r) => r.ratio != null || r.rec > 0);
+  const ins = loadInsight();
+  const loadCard = loads.length ? `<div class="card"><h3>🌡 ${t('Нагрузка сфер')}</h3>
+    <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Сравнение с твоей же нормой: последние 7 дней против предыдущих 28. Не «много вообще», а «много для тебя».')}</p>
+    ${ins ? `<p class="load-insight">${t('Перегрев')}: <b>${esc(ins.hot.name)}</b> — ×${ins.hot.ratio.toFixed(1)} ${t('от твоей нормы')}${ins.quiet.length ? `. ${t('Без внимания')}: ${ins.quiet.map((q) => esc(q.name)).join(', ')}` : ''}.</p>` : ''}
+    <div class="load-rows">${loads.map((r) => {
+      const pct = r.ratio == null ? null : Math.max(4, Math.min(100, Math.round(r.ratio / 3 * 100)));
+      return `<div class="load-row">
+        <span class="load-name">${esc(r.name)}</span>
+        <span class="load-bar">${pct == null ? `<i class="load-none"></i>` : `<i style="width:${pct}%;background:${r.hot ? '#e0526a' : esc(r.color)}"></i>`}</span>
+        <span class="load-val ${r.hot ? 'is-hot' : ''}">${r.ratio == null ? t('мало данных') : '×' + r.ratio.toFixed(1)}</span>
+        <button type="button" class="load-restore${r.restores ? ' on' : ''}" data-action="toggle-restores" data-id="${r.id}" title="${t('Эта сфера меня восстанавливает — не предупреждать о перегрузе')}">${r.restores ? '🌿' : '·'}</button>
+      </div>`;
+    }).join('')}</div>
+    <p class="muted" style="font-size:11.5px;margin:8px 0 0">🌿 — ${t('сфера восстанавливает: перегрев по ней не считается')}</p></div>` : '';
+  const epList = (State.episodes || []).slice().sort((a, b) => (a.from < b.from ? 1 : -1));
+  const episodesCard = `<div class="card"><h3>🎒 ${t('Эпизоды')}</h3>
+    <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Периоды, когда жизнь шла, а записывать было некогда: поездки, интенсивы, болезнь.')}</p>
+    ${epList.length ? `<div class="ep-cards">${epList.map((ep) => {
+      const d = episodeDays(ep).length, xp = episodeTotalXp(ep);
+      const top = (ep.profile || []).slice().sort((a, b) => b.intensity - a.intensity).slice(0, 3)
+        .map((p) => `${esc(skillLabel(p.skillId))} <span class="muted">${t(EPISODE_INTENSITY[p.intensity])}</span>`).join(' · ');
+      return `<div class="ep-card">
+        <div class="ep-card-head">
+          <span class="ep-card-title">${episodeType(ep.type).icon} ${esc(ep.title)}</span>
+          <button class="del" data-action="ep-del" data-id="${ep.id}" title="${t('Удалить эпизод')}">✕</button>
+        </div>
+        <div class="ep-card-meta">${dmShort(ep.from)} — ${dmShort(ep.to)} · ${d} ${plural(d, 'день', 'дня', 'дней')} · +${xp} XP</div>
+        <div class="ep-card-top">${top}</div>
+      </div>`;
+    }).join('')}</div>` : `<p class="muted" style="font-size:12.5px">${t('Пока пусто.')}</p>`}
+    <div class="propose-actions"><button class="btn ghost" data-action="episode-open">🎒 ${t('Записать эпизод')}</button></div></div>`;
   return `
     <div class="kpis">
       <div class="kpi"><div class="v">${rankIconHTML(cr, 'kpi-emblem')} ${charLevel()}</div><div class="l">${cr.name}</div></div>
@@ -10197,6 +10667,8 @@ function renderStats() {
     <div class="card"><h3>🎖 Ранги по сферам</h3>${skillRanksRows || '<p class="muted">Добавь навыки в Настройках.</p>'}</div>
     <div class="card"><h3>${t('XP по дням')}</h3>${barChartSVG(xpByDay(14), 2)}</div>
     ${advanced}
+    ${loadCard}
+    ${episodesCard}
     <div class="card"><h3>${t('Рефлексии этой недели')}</h3>${reflections ? `<ul class="reflections">${reflections}</ul>` : '<p class="muted">Пока нет записей.</p>'}</div>`;
 }
 
@@ -11247,7 +11719,15 @@ function onSubmit(e) {
   if (f.id === 'add-task') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
     const tDate = (f.date && f.date.value) || todayStr(); // вкладка «Календарь» добавляет на выбранный день
-    State.tasks.push({ id: uid(), title, skillId: f.skillId.value, skillIds: [f.skillId.value], estimateMin: readDurInput(f, 'estimateMin'), difficulty: f.difficulty.value, date: tDate, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
+    // Липкие слои: если такое дело раньше уже размечали фоном — подставляем молча, без вопроса.
+    // Только когда основная сфера совпала с угаданной: иначе юзер сменил смысл дела руками, и
+    // тащить к нему старый фон неправильно.
+    const g = guessCategoryFromHistory(title);
+    let layers = (g && g.skillId === f.skillId.value) ? (g.layers || []) : [];
+    // История молчит (новый юзер или новое дело) → словарь частых активностей. Тоже только если
+    // основная сфера сошлась — иначе юзер задал делу свой смысл, и наш фон к нему не относится.
+    if (!layers.length) { const d = guessFromDictionary(title); if (d && d.skillId === f.skillId.value) layers = d.layers; }
+    State.tasks.push({ id: uid(), title, skillId: f.skillId.value, skillIds: [f.skillId.value], layers, estimateMin: readDurInput(f, 'estimateMin'), difficulty: f.difficulty.value, date: tDate, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
     Store.save('tasks', State.tasks); render();
   } else if (f.id === 'add-goal') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
@@ -11838,6 +12318,7 @@ function onClick(e) {
     return;
   }
   if (action === 'goto-rewards') { State.view = 'rewards'; render(); return; }
+  if (action === 'goto-stats') { State.view = 'stats'; render(); return; }
   if (action === 'goto-today') { State.view = 'today'; render(); return; }
   if (action === 'reload-app') { location.reload(); return; }
   if (action === 'goto-pets') { State.view = 'pets'; markDiscovered('pets'); render(); return; }
@@ -12130,6 +12611,43 @@ function onClick(e) {
   } else if (action === 'dayrec-run') { dayRecRun();
   } else if (action === 'dayrec-apply') { dayRecApply();
   } else if (action === 'dayrec-close') { if (_dayRec) { try { _dayRec.stop(); } catch {} _dayRec = null; } const m = document.getElementById('dayrec-modal'); if (m) m.remove();
+  } else if (action === 'episode-open') { openEpisode(el.dataset.from || '', el.dataset.to || '');
+  } else if (action === 'ep-mic') { epMicToggle();
+  } else if (action === 'ep-run') { epRun();
+  } else if (action === 'ep-manual') { epManual();
+  } else if (action === 'ep-save') { epSave();
+  } else if (action === 'ep-type') { document.querySelectorAll('.ep-type').forEach((b) => b.classList.toggle('on', b === el));
+  } else if (action === 'ep-social') { _epExtra.social = el.dataset.id; document.querySelectorAll('.ep-soc').forEach((b) => b.classList.toggle('on', b === el));
+  } else if (action === 'toggle-restores') {
+    const s = State.settings.skills.find((x) => x.id === el.dataset.id); if (!s) return;
+    s.restores = !s.restores; Store.save('settings', State.settings);
+    toast(s.restores ? t('🌿 Эта сфера восстанавливает — перегрев по ней считать не буду') : t('Снова считаю перегрев по этой сфере'));
+    render();
+  } else if (action === 'toggle-layer') {
+    // Роль сферы по кругу: не участвует → фон → (если была основной) фон → выключено.
+    const q = questById(el.dataset.id); if (!q) return;
+    const sid = el.dataset.skill;
+    let prim = taskSkills(q).slice(), lay = (q.layers || []).slice();
+    if (lay.includes(sid)) {                    // фон → выключить совсем
+      lay = lay.filter((x) => x !== sid);
+    } else if (prim.includes(sid)) {            // основная → фон, но не последнюю: без основной дело осиротеет
+      if (prim.length <= 1) { toast(t('Нужна хотя бы одна основная сфера')); return; }
+      prim = prim.filter((x) => x !== sid); lay.push(sid);
+    } else {                                    // не участвует → фон
+      if (lay.length >= LAYER_MAX) { toast(`${t('Фонов не больше')} ${LAYER_MAX}`); return; }
+      lay.push(sid);
+    }
+    q.skillIds = prim; q.skillId = prim[0]; q.layers = lay;
+    Store.save('tasks', State.tasks);
+    const pop = document.getElementById('cat-pop'); if (pop) { pop.remove(); openCategoryPicker(q.id); }
+    render();
+  } else if (action === 'ep-del') {
+    const ep = (State.episodes || []).find((x) => x.id === el.dataset.id);
+    if (ep && confirm(`${t('Удалить эпизод')} «${ep.title}»? ${t('Опыт за него тоже уйдёт.')}`)) {
+      State.episodes = State.episodes.filter((x) => x.id !== ep.id);
+      Store.save('episodes', State.episodes); toast(t('Эпизод удалён')); render(); publishLeaderboard();
+    }
+  } else if (action === 'ep-close') { if (_epRec) { try { _epRec.stop(); } catch {} _epRec = null; } const m = document.getElementById('ep-modal'); if (m) m.remove();
   } else if (action === 'open-helper') { openHelperChat();
   } else if (action === 'helper-close') { ttsStop(); const m = document.getElementById('helper-modal'); if (m) m.remove();
   } else if (action === 'helper-to-settings') { const m = document.getElementById('helper-modal'); if (m) m.remove(); State.view = 'settings'; render();
@@ -12470,6 +12988,7 @@ async function initApp() {
   State.lootbox = await Store.load('lootbox', { day: todayStr(), opened: 0, goldWon: 0, boost: null, titles: [], equipped: null, history: [] });
   State.inbox = await Store.load('inbox', []);
   State.antihabits = await Store.load('antihabits', []);
+  State.episodes = await Store.load('episodes', []);
   ensureLootbox();
   ensureEnergy();
   applyAmbient();
@@ -12512,8 +13031,26 @@ async function initApp() {
   scheduleArtWarmup();
   publishLeaderboard();
   // Первый запуск на устройстве → игровой гайд «Тень ведёт» (не статичная стена текста).
-  if (!localStorage.getItem('liferpg_seen_guide') && !ensureTutorial().done && !ensureTutorial().skipped) {
+  // Флаг читаем ДО того, как этот же блок его выставит — иначе следующая проверка (авто-пуш) увидит
+  // guide уже «показанным» в этом же самом запуске и столкнётся с ним нативным диалогом разрешения.
+  const guideAlreadySeen = !!localStorage.getItem('liferpg_seen_guide');
+  if (!guideAlreadySeen && !ensureTutorial().done && !ensureTutorial().skipped) {
     localStorage.setItem('liferpg_seen_guide', '1'); setTimeout(() => { try { tutorialStart(); } catch {} }, 600);
+  }
+  // Авто-подключение пушей (once per device). Раньше это был переключатель, спрятанный в Настройках —
+  // почти никто его не находил сам (баг-репорт: друзья Альберта поставили PWA и не получали пушей,
+  // 2026-07-31). Спрашиваем сами при первой возможности, но НЕ поверх гайда «Тень ведёт» (нативный
+  // диалог разрешения не должен сталкиваться с полноэкранным туториалом) — если гайд только что
+  // показан в ЭТОМ запуске (или ещё не видели вовсе), ничего не просим сейчас — попытка сама
+  // повторится на следующем открытии. На iOS вне standalone (обычная вкладка Safari) 'Notification'
+  // даже нет в window — canPush сам это учитывает, дожмём после того, как юзер добавит на
+  // «Экран Домой» и откроет уже установленную иконку.
+  if (!localStorage.getItem('liferpg_push_auto_asked') && guideAlreadySeen) {
+    const canPush = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+    if (canPush && Notification.permission === 'default') {
+      localStorage.setItem('liferpg_push_auto_asked', '1');
+      setTimeout(() => { pushEnable().catch(() => {}); }, 1200);
+    }
   }
 }
 
@@ -12647,7 +13184,12 @@ function onChange(e) {
     else ids = ids.filter((x) => x !== sid);
     if (!ids.length) { el.checked = true; toast('Нужна хотя бы одна категория'); return; } // нельзя снять последнюю
     t.skillIds = ids; t.skillId = ids[0]; // основная = первая
-    Store.save('tasks', State.tasks); return;
+    // Сфера не может быть одновременно основной и фоновой — сделали основной, убираем из фона.
+    // (taskLayers это и так отфильтровал бы, но оставлять противоречие в данных не стоит.)
+    if (el.checked && t.layers) t.layers = t.layers.filter((x) => x !== sid);
+    Store.save('tasks', State.tasks);
+    const pop = document.getElementById('cat-pop'); if (pop) { pop.remove(); openCategoryPicker(t.id); } // перерисовать подписи ролей
+    render(); return;
   }
   if (a === 'tree-field') {
     const t = State.tree[State.treeSkill], n = t && t.nodes.find((x) => x.id === el.dataset.node); if (!n) return;
@@ -12668,6 +13210,9 @@ function onChange(e) {
 function onSettingsInput(e) {
   if (e.target.closest('#skills-list, #habits-list, .knob') || e.target.id === 'set-appName') autosaveSettings();
   if (e.target.matches('#add-task input[name="title"]')) updateCatSuggest(e.target);
+  // Ползунки интенсивности эпизода: обновляем подпись на лету, без перерисовки модалки
+  // (перерисовка сбросила бы фокус и позицию пальца прямо во время перетаскивания).
+  if (e.target.dataset && e.target.dataset.epLvl !== undefined) epSetLevel(Number(e.target.dataset.epLvl), e.target.value);
 }
 
 // --- Перетаскивание задач между днями в недельном виде (Sunsama-style) ---

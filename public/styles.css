@@ -328,6 +328,13 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .cat-opt { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 8px; cursor: pointer; }
 .cat-opt:hover { background: var(--panel2); }
 .cat-opt.is-sub { padding-left: 26px; }
+/* Роль сферы в квесте: основная / фон (этап 2 LIFE-CAPTURE-PLAN.md) */
+.cat-opt .cat-role { margin-left: auto; flex: 0 0 auto; background: transparent; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; padding: 3px 9px; font-size: 11px; cursor: pointer; min-height: 26px; }
+.cat-opt .cat-role:hover { border-color: var(--accent); color: var(--fg); }
+.cat-opt .cat-role.is-main { border-color: var(--accent); color: var(--accent); }
+.cat-opt .cat-role.is-layer { border-style: dashed; color: var(--fg); opacity: .85; }
+/* Фоновый слой на карточке квеста — пунктиром и приглушённо: виден, но не спорит с основной */
+.t-cat.is-layer { border-style: dashed; opacity: .62; }
 .cat-opt input { width: 17px; height: 17px; accent-color: var(--accent); }
 .t-est, .t-diff { font-size: 12px; color: var(--muted); white-space: nowrap; }
 .t-xp { font-size: 12px; font-weight: 700; color: var(--good); white-space: nowrap; }
@@ -2356,6 +2363,56 @@ html[data-system="on"] .lvlup-overlay { background: rgba(0,8,20,.82); }
 .dayrec-card .drc-min { width: 62px; }
 .dayrec-card .drc-time { font-size: 11px; color: var(--muted); }
 @media (max-width: 560px) { .dayrec-card { flex-wrap: wrap; } .dayrec-card .drc-title { flex-basis: 100%; } }
+
+/* ── Эпизод: период вместо дней (LIFE-CAPTURE-PLAN.md) ── */
+#ep-mic.rec { background: #e0526a; color: #fff; border-color: #e0526a; animation: pulse-rec 1.2s infinite; }
+.ep-types { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+.ep-type { background: var(--panel2); border: 1px solid var(--line); color: var(--fg); border-radius: 999px; padding: 6px 11px; font-size: 12.5px; cursor: pointer; min-height: 32px; }
+.ep-type:hover { border-color: var(--accent); }
+.ep-type.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.ep-dates { display: flex; gap: 10px; flex-wrap: wrap; }
+.ep-dates .dayrec-day { flex: 1 1 150px; }
+.ep-profile { margin-top: 4px; }
+/* Сетка: название сферы — ползунок — подпись уровня. Ползунок тянется, подписи фиксированы,
+   чтобы длинные имена сфер не сдвигали шкалу и строки читались как единый столбец. */
+.ep-row { display: grid; grid-template-columns: minmax(72px, 1fr) minmax(90px, 2fr) 74px; align-items: center; gap: 10px; padding: 5px 0; }
+.ep-row-name { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ep-row input[type="range"] { width: 100%; min-width: 0; accent-color: var(--accent); }
+.ep-row-lvl { font-size: 11.5px; color: var(--muted); text-align: right; }
+.ep-row-why { display: block; font-size: 11px; color: var(--muted); margin: -3px 0 5px; opacity: .75; }
+.ep-social { margin: 12px 0 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ep-social-btns { display: flex; gap: 6px; }
+.ep-soc { background: var(--panel2); border: 1px solid var(--line); color: var(--fg); border-radius: 999px; padding: 5px 12px; font-size: 12.5px; cursor: pointer; min-height: 32px; }
+.ep-soc:hover { border-color: var(--accent); }
+.ep-soc.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+@media (max-width: 560px) {
+  .ep-row { grid-template-columns: minmax(64px, 1fr) minmax(72px, 1.6fr) 62px; gap: 7px; }
+  .ep-row-lvl { font-size: 11px; }
+}
+/* ── Нагрузка сфер (этап 3 LIFE-CAPTURE-PLAN.md) ── */
+.load-insight { font-size: 13px; margin: 0 0 10px; padding: 8px 10px; border-radius: 8px; background: var(--panel2); border-left: 3px solid #e0526a; }
+.load-rows { display: flex; flex-direction: column; gap: 6px; }
+.load-row { display: grid; grid-template-columns: minmax(66px, 1fr) minmax(70px, 2fr) 62px 28px; align-items: center; gap: 8px; }
+.load-name { font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.load-bar { height: 8px; border-radius: 999px; background: var(--panel2); overflow: hidden; }
+.load-bar i { display: block; height: 100%; border-radius: 999px; }
+.load-bar .load-none { width: 100%; opacity: .25; background: repeating-linear-gradient(90deg, var(--muted) 0 3px, transparent 3px 6px); }
+.load-val { font-size: 11.5px; color: var(--muted); text-align: right; }
+.load-val.is-hot { color: #e0526a; font-weight: 600; }
+.load-restore { background: transparent; border: 1px solid var(--line); border-radius: 8px; color: var(--muted); cursor: pointer; font-size: 12px; line-height: 1; padding: 0; width: 26px; height: 26px; }
+.load-restore:hover { border-color: var(--accent); }
+.load-restore.on { border-color: #5fbf7a; }
+@media (max-width: 560px) {
+  .load-row { grid-template-columns: minmax(58px, 1fr) minmax(54px, 1.4fr) 54px 26px; gap: 6px; }
+}
+
+/* Список эпизодов (Прогресс) */
+.ep-cards { display: flex; flex-direction: column; gap: 8px; margin: 0 0 10px; }
+.ep-card { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; }
+.ep-card-head { display: flex; align-items: center; gap: 8px; }
+.ep-card-title { flex: 1 1 auto; font-size: 13.5px; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ep-card-meta { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+.ep-card-top { font-size: 12px; margin-top: 5px; }
 
 /* ── Две системы дисциплины: Доверие vs Контроль (DISCIPLINE-PATHS-PLAN.md) ── */
 /* Экран выбора пути — две карты */
