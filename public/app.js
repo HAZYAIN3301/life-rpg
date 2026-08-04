@@ -8397,7 +8397,7 @@ function renderPets() {
       <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="train">Размяться</button>
       <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="rest">Передохнуть</button>
     </div>` : '';
-    return `<div class="card pet-card${activeSpecies === 'bodyToad' ? ' pet-card-body-toad' : ''}">
+    return `<div class="card pet-card pet-card-${activeSpecies}${activeSpecies === 'bodyToad' ? ' pet-card-body-toad' : ''}">
       <div class="pet-art" data-action="pet-feed" data-id="${s.id}" title="приласкать ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits, s.id, idle)}</div>
       ${nameRow}${sub}
       ${activeSpecies === 'bodyToad' ? '<div class="body-toad-domain-badge">BODY · канонический хранитель</div>' : `<label class="pet-species-picker"><span>${t('Облик')}</span><select data-action="set-pet-species" data-id="${s.id}" aria-label="${t('Облик')}: ${esc(nm)}">${petSpeciesOptions(selectedSpecies)}</select></label>`}
@@ -8974,9 +8974,17 @@ function renderDen() {
       idle: dayPick('petidle' + s.id, trait.idles || [trait.idle]),
     };
   });
+  const denStagePlacements = window.DenStageV1
+    ? window.DenStageV1.layoutPets(pets.map((pet) => ({ id: pet.s.id, species: pet.species })))
+    : [];
+  const denStageById = new Map(denStagePlacements.map((placement) => [placement.id, placement]));
   const petLayer = pets.map((p, i) => {
-    if (p.species === 'bodyToad') return `<button class="den-pet den-pet-${i} den-body-toad" data-action="body-toad-interact" data-mode="greet" data-id="${p.s.id}" title="Жабий сэнсэй — ${PET_STATE[p.st.state].label}. Нажми, чтобы поприветствовать">${bodyToadHTML(p.s.id, { className: 'body-toad-v1--den' })}</button>`;
-    return `<button class="den-pet den-pet-${i}${p.species === 'fortune' ? ' den-pet-fortune' : ''}" data-action="den-pet-react" data-id="${p.s.id}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id, p.idle)}</button>`;
+    const placement = denStageById.get(String(p.s.id));
+    const stageAttrs = placement
+      ? ` data-den-entity="pet" data-den-slot="${placement.slot}" data-den-ground-y="${placement.groundY}" style="${window.DenStageV1.styleVars(placement)}"`
+      : '';
+    if (p.species === 'bodyToad') return `<button class="den-pet den-pet-${i} den-body-toad"${stageAttrs} data-action="body-toad-interact" data-mode="greet" data-id="${p.s.id}" title="Жабий сэнсэй — ${PET_STATE[p.st.state].label}. Нажми, чтобы поприветствовать">${bodyToadHTML(p.s.id, { className: 'body-toad-v1--den' })}</button>`;
+    return `<button class="den-pet den-pet-${i}${p.species === 'fortune' ? ' den-pet-fortune' : ''}"${stageAttrs} data-action="den-pet-react" data-id="${p.s.id}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id, p.idle)}</button>`;
   }).join('');
   const bodyGuardian = pets.find((pet) => pet.species === 'bodyToad');
   const p = nestedProgress(), eP = energyPct(), eM = energyMeta(), tm = State.timer;
@@ -12346,7 +12354,11 @@ function onClick(e) {
       if (action === 'body-toad-interact') {
         cancelDenRoomAction(false);
         cancelDenAvatarLocomotion(true);
-        window.BodyToadV1.playPair(scope, mode, { toad, restoreState }).then((played) => {
+        const playPair = () => window.BodyToadV1.playPair(scope, mode, { toad, restoreState });
+        const pairPromise = window.DenStageV1
+          ? window.DenStageV1.approachBodyPair(scope, playPair)
+          : playPair();
+        pairPromise.then((played) => {
           if (!played) window.BodyToadV1.playInteraction(toad, mode, { restoreState }).catch(() => {});
         }).catch(() => window.BodyToadV1.playInteraction(toad, mode, { restoreState }).catch(() => {}));
       } else {
