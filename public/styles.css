@@ -295,6 +295,26 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
   align-items: center; gap: 10px; padding: 11px 4px; border-bottom: 1px solid var(--line);
 }
 .task:last-child { border-bottom: none; }
+
+/* ◆ Ядро дня. Метка приглушена, пока не выбрана: ядро — это осознанное решение,
+   а не ещё один призыв что-то нажать. Выбранное дело получает левую полосу,
+   чтобы ядро читалось в списке одним взглядом, без подсчёта значков. */
+.t-core {
+  background: none; border: none; cursor: pointer; padding: 0 5px 0 0;
+  font-size: 11px; line-height: 1; color: var(--muted); opacity: .38;
+  transition: opacity .15s ease, color .15s ease;
+  min-width: 24px; min-height: 24px;
+}
+.t-core:hover { opacity: .8; }
+.t-core.on { opacity: 1; color: var(--accent); }
+.task.is-core { box-shadow: inset 3px 0 0 -1px var(--accent); }
+.task.is-core.done { box-shadow: inset 3px 0 0 -1px var(--good); }
+@media (hover: none) { .t-core { opacity: .55; min-width: 30px; min-height: 30px; } }
+
+/* Закрытый день и закрытое ядро — герой меняет тон, а не только текст. */
+.today-hero.is-coredone .th-kicker { color: var(--good); }
+.today-hero.is-daydone { opacity: .82; }
+.today-hero.is-daydone .th-kicker { color: var(--muted); }
 .task .check {
   width: 24px; height: 24px; border-radius: 7px; border: 2px solid var(--line);
   background: var(--panel2); color: #fff; cursor: pointer; padding: 0; line-height: 1;

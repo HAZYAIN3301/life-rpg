@@ -1162,6 +1162,21 @@ const I18N_EXTRA = {
   'Добавь ключ в Настройках.': { en: 'Add a key in Settings.', de: 'Füge einen Schlüssel in den Einstellungen hinzu.', uk: 'Додай ключ у Налаштуваннях.', es: 'Añade una clave en Ajustes.' },
   'Добавь ИИ-ключ в Настройках': { en: 'Add an AI key in Settings', de: 'Füge einen KI-Schlüssel in den Einstellungen hinzu', uk: 'Додай ШІ-ключ у Налаштуваннях', es: 'Añade una clave de IA en Ajustes' },
   'Начать': { en: 'Start', de: 'Starten', uk: 'Почати', es: 'Empezar' },
+  // ── ◆ Ядро дня и закрытие дня (DISCIPLINE-BOUNDARIES-PLAN) ──
+  'Ядро дня': { en: 'Day core', de: 'Tageskern', uk: 'Ядро дня', es: 'Núcleo del día' },
+  'Ядро закрыто': { en: 'Core closed', de: 'Kern geschlossen', uk: 'Ядро закрито', es: 'Núcleo cerrado' },
+  'Ядро закрыто — дальше день твой.': { en: 'Core closed — the rest of the day is yours.', de: 'Kern geschlossen — der Rest des Tages gehört dir.', uk: 'Ядро закрито — далі день твій.', es: 'Núcleo cerrado — el resto del día es tuyo.' },
+  'Главное сделано. Остальное сегодня — уже бонус, а не долг.': { en: 'The main thing is done. Anything else today is a bonus, not a debt.', de: 'Das Wichtigste ist erledigt. Alles Weitere heute ist Bonus, keine Schuld.', uk: 'Головне зроблено. Решта сьогодні — вже бонус, а не борг.', es: 'Lo principal está hecho. Lo demás hoy es un extra, no una deuda.' },
+  'Закрой ядро — и день засчитан': { en: 'Close the core and the day counts', de: 'Schließ den Kern — und der Tag zählt', uk: 'Закрий ядро — і день зараховано', es: 'Cierra el núcleo y el día cuenta' },
+  'День закрыт': { en: 'Day closed', de: 'Tag geschlossen', uk: 'День закрито', es: 'Día cerrado' },
+  'На сегодня всё.': { en: "That's it for today.", de: 'Das war\'s für heute.', uk: 'На сьогодні все.', es: 'Eso es todo por hoy.' },
+  'Что не сделано — осталось в дне, не в тебе. Ночью не отыгрываемся: завтра свежее.': { en: "What's undone stayed in the day, not in you. No making up for it tonight — tomorrow you\'re fresh.", de: 'Was offen blieb, blieb im Tag, nicht in dir. Heute Nacht wird nichts nachgeholt — morgen bist du frisch.', uk: 'Що не зроблено — лишилося в дні, не в тобі. Уночі не відіграємося: завтра свіжіше.', es: 'Lo que quedó sin hacer se quedó en el día, no en ti. Esta noche no se recupera — mañana estarás fresco.' },
+  'День закрыт. Что не сделано — осталось в дне, не в тебе.': { en: "Day closed. What's undone stayed in the day, not in you.", de: 'Tag geschlossen. Was offen blieb, blieb im Tag, nicht in dir.', uk: 'День закрито. Що не зроблено — лишилося в дні, не в тобі.', es: 'Día cerrado. Lo que quedó sin hacer se quedó en el día, no en ti.' },
+  'В ядро дня — то, ради чего день считается состоявшимся': { en: 'Add to the day core — what makes today count', de: 'Zum Tageskern — was den Tag zählen lässt', uk: 'У ядро дня — те, заради чого день вважається таким, що відбувся', es: 'Al núcleo del día — lo que hace que hoy cuente' },
+  'Убрать из ядра дня': { en: 'Remove from the day core', de: 'Aus dem Tageskern entfernen', uk: 'Прибрати з ядра дня', es: 'Quitar del núcleo del día' },
+  'В ядре максимум': { en: 'The core holds at most', de: 'Der Kern fasst höchstens', uk: 'У ядрі щонайбільше', es: 'El núcleo admite como máximo' },
+  'иначе это уже просто список': { en: "otherwise it's just a list again", de: 'sonst ist es wieder nur eine Liste', uk: 'інакше це вже просто список', es: 'si no, vuelve a ser solo una lista' },
+  'Ядро дня — то, ради чего день считается состоявшимся': { en: 'The day core — what makes the day count', de: 'Der Tageskern — was den Tag zählen lässt', uk: 'Ядро дня — те, заради чого день вважається таким, що відбувся', es: 'El núcleo del día — lo que hace que el día cuente' },
   // ── 🕯 Момент дня с Тенью ──
   'Утром и вечером Тень встречает тебя один раз — говорит по твоему состоянию и зовёт к одному шагу. Здесь можно вызвать эту встречу заново, чтобы посмотреть.': { en: 'Morning and evening, Shadow greets you once — speaking from your actual state and inviting one small step. You can replay that meeting here to see it.', de: 'Morgens und abends begrüßt dich Schatten einmal — spricht aus deinem tatsächlichen Zustand heraus und lädt zu einem kleinen Schritt ein. Hier kannst du die Begegnung erneut ansehen.', uk: 'Вранці та ввечері Тінь зустрічає тебе один раз — говорить за твоїм станом і кличе до одного кроку. Тут можна викликати цю зустріч знову, щоб подивитися.', es: 'Por la mañana y por la noche, la Sombra te saluda una vez — habla desde tu estado real y te invita a un paso pequeño. Aquí puedes repetir ese encuentro para verlo.' },
   'Показать встречу сейчас': { en: 'Replay the meeting now', de: 'Begegnung jetzt zeigen', uk: 'Показати зустріч зараз', es: 'Repetir el encuentro ahora' },
@@ -5990,6 +6005,21 @@ function catChips(t) {
   return main + lay;
 }
 // ⚠️ Параметр НЕ называть `t` — затенил бы глобальную функцию перевода t() (см. баг fb_mrkzunjjmn61).
+// ── Ядро дня (DISCIPLINE-BOUNDARIES-PLAN §2.8) ────────────────────────────────
+// Разбор Альберта 04.08: интерфейс говорил «энергия 40%» и «14 дней без отдыха» —
+// это диагноз, то есть ЦЕНА. Товар — его же слова: «к 13:30 ядро закрыто, дальше
+// день твой». Ядро — 2-3 дела, которые делают день состоявшимся; всё сверх него
+// уже бонус. Смысл не в норме, а в разрешении остановиться.
+const CORE_MAX = 3;
+function coreQuests(dateStr) { return (State.tasks || []).filter((t) => t.core && t.date === (dateStr || todayStr())); }
+function coreState(dateStr) {
+  const list = coreQuests(dateStr);
+  const done = list.filter((t) => t.done).length;
+  return { list, total: list.length, done, closed: list.length > 0 && done === list.length };
+}
+// Флаг «день закрыт» существовал с давних пор, но был МЁРТВЫМ: писался кнопкой и
+// не читался нигде, кроме подписи самой кнопки. Здесь он впервые что-то значит.
+function dayClosed(dateStr) { const d = State.days[dateStr || todayStr()]; return !!(d && d.closed); }
 function questRow(q) {
   const estMin = Number(q.estimateMin) || 0;
   const time = q.actualMin ? `${fmtDur(q.actualMin)} / ${fmtDur(estMin)}` : fmtDur(estMin);
@@ -5997,13 +6027,19 @@ function questRow(q) {
   const skSel = `<button class="t-cats" data-action="edit-cats" data-id="${q.id}" title="Категории квеста — клик чтобы изменить (можно несколько)">${catChips(q)}</button>`;
   const titleCell = State._editTask === q.id
     ? `<form class="t-edit-form" data-id="${q.id}"><input name="title" value="${esc(q.title)}" maxlength="120" autocomplete="off" /></form>`
-    : `<span class="t-title" data-action="edit-task-title" data-id="${q.id}" title="Клик — изменить текст квеста">${taskContentIconHTML(q, 'task-content-icon')}${esc(taskDisplayTitle(q))}</span>`;
+    // Метка ядра вложена ВНУТРЬ ячейки заголовка, а не отдельной колонкой: сетка
+    // строки жёсткая (и на мобильном все ячейки размещены поимённо), а кнопка
+    // условная — своя колонка ломала бы выравнивание у дел не на сегодня.
+    // Клик по ней не открывает правку текста: onClick берёт closest('[data-action]').
+    : `<span class="t-title" data-action="edit-task-title" data-id="${q.id}" title="Клик — изменить текст квеста">${
+        q.date === todayStr() ? `<button class="t-core${q.core ? ' on' : ''}" data-action="toggle-core" data-id="${q.id}" aria-pressed="${q.core ? 'true' : 'false'}" title="${esc(q.core ? t('Убрать из ядра дня') : t('В ядро дня — то, ради чего день считается состоявшимся'))}">◆</button>` : ''
+      }${taskContentIconHTML(q, 'task-content-icon')}${esc(taskDisplayTitle(q))}</span>`;
   // Квест из прошлого: «✓ в свой день» — засчитать в дату плана, а не в сегодня (fb_mr4qhq6gy30w)
   const past = !q.done && q.date && q.date < todayStr();
   const backdate = past
     ? `<button class="t-backdate" data-action="toggle-task-backdated" data-id="${q.id}" title="${t('Сделал в тот день, забыл отметить — засчитать в')} ${dmShort(q.date)}">✓<sub>${dmShort(q.date)}</sub></button>`
     : '';
-  return `<li class="task ${q.done ? 'done' : ''}">
+  return `<li class="task ${q.done ? 'done' : ''} ${q.core ? 'is-core' : ''}">
     <button class="check" data-action="toggle-task" data-id="${q.id}">${q.done ? '✓' : ''}</button>
     ${titleCell}
     ${skSel}
@@ -9049,6 +9085,10 @@ function renderDen() {
 // помечается показанным сегодня — тем же полем позже сможет пользоваться анти-голодание для
 // низкоприоритетных (import/sysTeaser), если понадобится (см. открытый вопрос в плане).
 function pickNudge(signals) {
+  // Закрытый день = приложение замолкает. Не блокирует (взрослый имеет право
+  // работать ночью) — просто перестаёт подначивать. Это лечит петлю долга из
+  // §2.5 плана: «провалил день → сажусь отыгрываться → скролл до часу».
+  if (dayClosed()) return null;
   const active = signals.filter((s) => s.html);
   if (!active.length) return null;
   const seen = State.settings.nudgeSeen || (State.settings.nudgeSeen = {});
@@ -9262,11 +9302,29 @@ function renderToday() {
     // Кнопка и так во всю ширину и переносится по строкам: режем только совсем длинное.
     : nextQuest ? `<button class="btn btn-nextquest" data-action="focus-task" data-id="${nextQuest.id}">${satoruIconHTML('media.play', 'button-glyph', '▶')} ${t('Начать')}: ${esc(nextQuest.title).slice(0, 64)}${nextQuest.title.length > 64 ? '…' : ''}</button>`
     : `<button class="btn ghost" data-action="goto-calendar">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} ${t('🗓 Запланировать день').replace(/^🗓\s*/, '')}</button>`;
-  const todayHero = `<section class="card today-hero">
+  // Тон героя. Ключевое из разбора 04.08: приложение продавало ЦЕНУ («осталось
+  // столько-то», «энергия 40%») вместо ТОВАРА («дальше день твой»). Порядок
+  // проверок = порядок важности: закрытый день молчит, закрытое ядро отпускает,
+  // и только потом обычная подсказка следующего хода.
+  const cs = coreState();
+  const closed = dayClosed();
+  const heroKicker = closed ? t('День закрыт') : cs.closed ? t('Ядро закрыто') : 'Daily cockpit';
+  const heroTitle = closed ? t('На сегодня всё.')
+    : cs.closed ? t('Ядро закрыто — дальше день твой.')
+    : cs.total ? `${t('Ядро дня')}: ${cs.done}/${cs.total}`
+    : nextQuest ? 'Следующий ход уже выбран.' : todays.length ? 'День почти собран.' : 'Соберём первый квест на сегодня.';
+  const heroSub = closed
+    ? t('Что не сделано — осталось в дне, не в тебе. Ночью не отыгрываемся: завтра свежее.')
+    : cs.closed
+      ? t('Главное сделано. Остальное сегодня — уже бонус, а не долг.')
+      : cs.total
+        ? `${t('Закрой ядро — и день засчитан')}${cs.list.find((x) => !x.done) ? `: <b>${esc(cs.list.find((x) => !x.done).title)}</b>` : ''}`
+        : nextQuest ? `Сейчас лучше не смотреть на всю систему — просто закрой следующий квест: <b>${esc(nextQuest.title)}</b>.` : todays.length ? 'Основной список уже на месте. Добей хвосты, забери награды и закрой день спокойно.' : 'Начни с одного понятного действия. Остальные системы подождут за кулисами.';
+  const todayHero = `<section class="card today-hero${closed ? ' is-daydone' : cs.closed ? ' is-coredone' : ''}">
       <div>
-        <span class="th-kicker">Daily cockpit</span>
-        <h2>${nextQuest ? 'Следующий ход уже выбран.' : todays.length ? 'День почти собран.' : 'Соберём первый квест на сегодня.'}</h2>
-        <p class="th-sub">${nextQuest ? `Сейчас лучше не смотреть на всю систему — просто закрой следующий квест: <b>${esc(nextQuest.title)}</b>.` : todays.length ? 'Основной список уже на месте. Добей хвосты, забери награды и закрой день спокойно.' : 'Начни с одного понятного действия. Остальные системы подождут за кулисами.'}</p>
+        <span class="th-kicker">${heroKicker}</span>
+        <h2>${heroTitle}</h2>
+        <p class="th-sub">${heroSub}</p>
         <div class="th-actions">${nextAction}<button class="btn ghost" data-action="goto-rewards">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Награды')}</button></div>
       </div>
       <div class="th-stats">
@@ -12730,10 +12788,26 @@ function onClick(e) {
     if (t && time) { t.startTime = time; if (dur) t.estimateMin = dur; Store.save('tasks', State.tasks); render(); }
   } else if (action === 'unschedule-quest') {
     const t = questById(id); if (t) { t.startTime = null; Store.save('tasks', State.tasks); render(); }
+  } else if (action === 'toggle-core') {
+    const q = questById(id); if (!q) return;
+    if (!q.core && coreState().total >= CORE_MAX) {
+      // Потолок не ради запрета: ядро из пяти дел перестаёт быть ядром.
+      toast(`◆ ${t('В ядре максимум')} ${CORE_MAX} — ${t('иначе это уже просто список')}`);
+      return;
+    }
+    if (q.core) delete q.core; else q.core = true;
+    Store.save('tasks', State.tasks);
+    if (q.core && coreState().total === 1) toast(`◆ ${t('Ядро дня — то, ради чего день считается состоявшимся')}`);
+    track('core:toggle'); render();
+
   } else if (action === 'close-day' || action === 'reopen-day') {
     const ref = document.getElementById('reflection'); State.days[today] = State.days[today] || { reflection: '', closed: false };
     if (ref) State.days[today].reflection = ref.value; State.days[today].closed = action === 'close-day';
-    Store.save('days', State.days); if (action === 'close-day') toast('🌙 День закрыт'); render();
+    Store.save('days', State.days);
+    // Раньше здесь был просто тост. Теперь закрытие — настоящая граница: см. §2.5
+    // плана. Долг списывается на закрытии, а не переносится в ночь.
+    if (action === 'close-day') toast(`🌙 ${t('День закрыт. Что не сделано — осталось в дне, не в тебе.')}`);
+    render();
 
   // --- Цели ---
   } else if (action === 'toggle-step') {
