@@ -11,9 +11,10 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenStage(root) {
   'use strict';
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
   const WORLD = Object.freeze({ width: 1536, height: 864 });
-  const APPROACH_MS = 820;
+  const APPROACH_MS = 1800;
+  const RETURN_MS = 1600;
 
   // Anchors are measured at the actor's ground contact, not at its image box.
   // Their footprints never overlap, including the largest BODY guardian.
@@ -102,23 +103,56 @@
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  async function approachBodyPair(scope, play) {
+  function nextFrame() {
+    return new Promise((resolve) => {
+      const raf = root.requestAnimationFrame || ((callback) => setTimeout(callback, 16));
+      raf(() => raf(resolve));
+    });
+  }
+
+  function clearMeetingClasses(scope) {
+    scope.classList.remove('is-body-pair-approaching', 'is-body-pair-at-meeting', 'is-body-pair-returning', 'is-body-pair-settling');
+  }
+
+  async function approachBodyPair(scope, play, options) {
     if (!scope || typeof play !== 'function') return false;
-    scope.classList.remove('is-body-pair-settling');
+    const config = options || {};
+    const avatar = scope.querySelector && scope.querySelector('.den-avatar-core');
+    const motion = root.TravellerMotionV3;
+    const approachMs = Math.max(700, Number(config.approachMs) || APPROACH_MS);
+    const returnMs = Math.max(700, Number(config.returnMs) || RETURN_MS);
+    const contactMs = Math.max(400, Number(config.duration) || 3000);
+    clearMeetingClasses(scope);
+    if (avatar && motion) motion.installWalkFrames(avatar, 'right');
     scope.classList.add('is-body-pair-approaching');
-    await wait(APPROACH_MS);
+    await nextFrame();
+    await wait(approachMs);
     if (!scope.isConnected) {
-      scope.classList.remove('is-body-pair-approaching');
+      clearMeetingClasses(scope);
+      if (avatar && motion) motion.clearWalkFrames(avatar);
       return false;
     }
-    const played = await play();
     scope.classList.remove('is-body-pair-approaching');
-    if (!played) return false;
+    scope.classList.add('is-body-pair-at-meeting');
+    if (avatar && motion) motion.clearWalkFrames(avatar);
+    const played = await play();
+    if (!played) {
+      clearMeetingClasses(scope);
+      return false;
+    }
     scope.classList.add('is-body-pair-settling');
-    const pair = scope.querySelector && scope.querySelector('[data-body-pair-v2]');
-    const mode = pair && pair.dataset ? pair.dataset.mode : 'greet';
-    const durations = { greet: 1500, train: 2800, rest: 3000 };
-    setTimeout(() => scope.classList.remove('is-body-pair-settling'), (durations[mode] || 3000) + 260);
+    await wait(contactMs + 80);
+    if (!scope.isConnected) {
+      clearMeetingClasses(scope);
+      return true;
+    }
+    scope.classList.remove('is-body-pair-settling');
+    scope.classList.add('is-body-pair-returning');
+    if (avatar && motion) motion.installWalkFrames(avatar, 'left');
+    await nextFrame();
+    scope.classList.remove('is-body-pair-at-meeting', 'is-body-pair-returning');
+    await wait(returnMs);
+    if (avatar && motion) motion.clearWalkFrames(avatar);
     return true;
   }
 
@@ -126,6 +160,7 @@
     VERSION,
     WORLD,
     APPROACH_MS,
+    RETURN_MS,
     PET_SLOTS,
     PROFILES,
     profileFor,

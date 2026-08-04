@@ -14,7 +14,7 @@ function pngSize(file) {
   return [header.readUInt32BE(16), header.readUInt32BE(20)];
 }
 
-assert.equal(toad.VERSION, '2.0.0');
+assert.equal(toad.VERSION, '2.1.0');
 assert.deepEqual(toad.STATES, ['calm', 'thriving', 'strained', 'restoring']);
 assert.equal(toad.normalizeState('thriving'), 'thriving');
 assert.equal(toad.normalizeState('unknown'), 'calm');
@@ -22,7 +22,7 @@ assert.equal(toad.stateFromPetState('hungry'), 'strained');
 assert.equal(toad.stateFromPetState('growing'), 'calm');
 assert.equal(toad.stateFromPetState('full'), 'thriving');
 assert.equal(toad.stateFromPetState('overfed'), 'restoring');
-assert.equal(toad.frameSrc('calm', true), '/art/pets/body-toad-v1/motion/idle-breath.gif');
+assert.equal(toad.frameSrc('calm', true), '/art/pets/body-toad-v1/states/calm.png');
 assert.equal(toad.frameSrc('strained', true), '/art/pets/body-toad-v1/states/strained.png');
 assert.equal(toad.pairFrameSrc('greet-contact'), '/art/pets/body-toad-v1/pair-v2/greet-contact.png');
 assert.equal(toad.pairFrameSrc('rest-pet'), '/art/pets/body-toad-v1/pair-v2/rest-pet.png');

@@ -2326,3 +2326,18 @@ Solo-Leveling-вайб под бренд Satoru/«?». Опционально (�
   longer consume the focus session.
 - Added mobile/desktop browser acceptance and `den-life-v1.test.js`; bumped PWA
   shell to `satoru-v93`.
+
+# 2026-08-04 — Den Life v2
+
+- Replaced the one-shot Den director with a persistent context-aware loop that
+  survives ordinary rerenders.
+- BODY focus now repeats coach + 8.4-second squat training throughout the
+  session instead of firing once.
+- Traveller approaches and returns with authored `walk-a` / `walk-b` frames;
+  the guardian remains at its reserved floor slot.
+- Ambient mode autonomously rotates guardian face beats, window visit, bench
+  rest, and bench reading.
+- Removed the guardian's whole-PNG breathing scale and retained only approved
+  full-frame changes.
+- QA: project tests `15/15`; two BODY cycles observed in 26 seconds; desktop and
+  mobile `390×844` visual acceptance passed; PWA cache bumped to `satoru-v94`.

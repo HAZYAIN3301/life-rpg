@@ -1,8 +1,8 @@
-/* Satoru Den Life v1.
+/* Satoru Den Life v2.
  *
- * A small deterministic director for the approved flattened BODY guardian.
- * It never invents joints or locomotion. Ambient beats move the complete
- * authored sprite, while physical contact remains in atomic pair frames.
+ * A persistent director for authored full-frame Den actions. It survives DOM
+ * rebinds, never treats a CSS scale as acting, and keeps BODY focus active for
+ * the whole session instead of firing one greeting at the start.
  */
 (function exposeDenLife(root, factory) {
   const api = factory(root);
@@ -11,20 +11,24 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenLife(root) {
   'use strict';
 
-  const VERSION = '1.0.0';
-  const FIRST_AMBIENT_MS = 7200;
-  const RETRY_MS = 3200;
-  const FOCUS_START_MS = 5200;
-  const AMBIENT_ACTIONS = Object.freeze([
-    Object.freeze({ id: 'observe', duration: 2400, gap: 12800 }),
-    Object.freeze({ id: 'brace', duration: 2200, gap: 15400 }),
-    Object.freeze({ id: 'settle', duration: 2800, gap: 18200 }),
+  const VERSION = '2.0.0';
+  const FIRST_AMBIENT_MS = 3200;
+  const FIRST_FOCUS_MS = 1600;
+  const RETRY_MS = 1800;
+  const AMBIENT_SEQUENCE = Object.freeze([
+    Object.freeze({ id: 'toad-blink', kind: 'toad', gap: 2600 }),
+    Object.freeze({ id: 'bench-rest', kind: 'room', gap: 4200 }),
+    Object.freeze({ id: 'toad-look', kind: 'toad', gap: 3200 }),
+    Object.freeze({ id: 'window-visit', kind: 'window', gap: 4400 }),
+    Object.freeze({ id: 'bench-read', kind: 'room', gap: 5200 }),
+  ]);
+  const BODY_FOCUS_SEQUENCE = Object.freeze([
+    Object.freeze({ id: 'coach', kind: 'toad', gap: 900 }),
+    Object.freeze({ id: 'train', kind: 'pair', duration: 8400, gap: 2800 }),
   ]);
 
-  const active = new WeakMap();
-  const completedFocusSessions = new Set();
-  let liveScope = null;
-  let sequence = 0;
+  let director = null;
+  let sequenceSeed = 0;
 
   function normalizeContext(value) {
     const input = value || {};
@@ -40,35 +44,13 @@
     return safe.focusRunning && safe.focusCanon === 'body' ? 'body-focus' : 'ambient';
   }
 
-  function nextAmbient(index) {
-    const safe = Math.abs(Number(index) || 0) % AMBIENT_ACTIONS.length;
-    return AMBIENT_ACTIONS[safe];
+  function contextKey(context) {
+    const safe = normalizeContext(context);
+    return `${modeFor(safe)}:${safe.focusSession}:${safe.focusCanon}`;
   }
 
-  function clearAmbient(scope) {
-    const toad = scope && scope.querySelector && scope.querySelector('[data-body-toad]');
-    if (!toad) return;
-    toad.classList.remove('is-den-ambient');
-    delete toad.dataset.ambient;
-  }
-
-  function stop(target) {
-    const scope = target || liveScope;
-    if (!scope) return false;
-    const state = active.get(scope);
-    if (state) {
-      clearTimeout(state.timer);
-      clearTimeout(state.finishTimer);
-      active.delete(scope);
-    }
-    clearAmbient(scope);
-    if (liveScope === scope) liveScope = null;
-    return Boolean(state);
-  }
-
-  function schedule(scope, state, delay) {
-    clearTimeout(state.timer);
-    state.timer = setTimeout(() => tick(scope), Math.max(0, Number(delay) || 0));
+  function sequenceFor(context) {
+    return modeFor(context) === 'body-focus' ? BODY_FOCUS_SEQUENCE : AMBIENT_SEQUENCE;
   }
 
   function canAct(state) {
@@ -76,99 +58,126 @@
     try { return state.canAct() !== false; } catch { return false; }
   }
 
-  function finishAmbient(scope, state, action) {
-    if (!scope.isConnected || active.get(scope) !== state) return;
-    clearAmbient(scope);
-    state.finishTimer = 0;
-    schedule(scope, state, action.gap);
+  function clearTimer(state) {
+    if (state && state.timer) clearTimeout(state.timer);
+    if (state) state.timer = 0;
   }
 
-  function playAmbient(scope, state) {
-    const toad = scope.querySelector('[data-body-toad]');
-    if (!toad) return schedule(scope, state, RETRY_MS);
-    const action = nextAmbient(state.step++);
-    clearAmbient(scope);
-    toad.dataset.ambient = action.id;
-    toad.classList.add('is-den-ambient');
-    state.finishTimer = setTimeout(() => finishAmbient(scope, state, action), action.duration);
+  function schedule(state, delay) {
+    if (!state || director !== state) return;
+    clearTimer(state);
+    state.nextAt = Date.now() + Math.max(0, Number(delay) || 0);
+    state.timer = setTimeout(tick, Math.max(0, state.nextAt - Date.now()));
   }
 
-  function focusWasPlayed(context) {
-    return !context.focusSession || completedFocusSessions.has(context.focusSession);
+  function callbackFor(state, action) {
+    if (action.kind === 'pair') return state.onPair && state.onPair('train', { automatic: true, duration: action.duration });
+    if (action.kind === 'room') return state.onRoomAction && state.onRoomAction(action.id, { automatic: true });
+    if (action.kind === 'window') return state.onWindowVisit && state.onWindowVisit({ automatic: true });
+    if (action.kind === 'toad') return state.onToadBeat && state.onToadBeat(action.id, { automatic: true });
+    return false;
   }
 
-  function playFocusBeat(scope, state) {
-    const play = typeof state.onPair === 'function' ? state.onPair('train', { automatic: true }) : false;
-    Promise.resolve(play).then((played) => {
-      if (!scope.isConnected || active.get(scope) !== state) return;
-      if (played) {
-        completedFocusSessions.add(state.context.focusSession);
-        schedule(scope, state, 15800);
-      } else {
-        schedule(scope, state, RETRY_MS);
-      }
+  function tick() {
+    const state = director;
+    if (!state || state.busy) return;
+    const scope = state.scope;
+    if (!scope || !scope.isConnected || !canAct(state)) {
+      schedule(state, RETRY_MS);
+      return;
+    }
+    const sequence = sequenceFor(state.context);
+    const action = sequence[state.step % sequence.length];
+    state.step += 1;
+    state.busy = true;
+    let result = false;
+    try { result = callbackFor(state, action); } catch { result = false; }
+    Promise.resolve(result).then((played) => {
+      if (director !== state) return;
+      state.busy = false;
+      schedule(state, played === false ? RETRY_MS : action.gap);
     }).catch(() => {
-      if (scope.isConnected && active.get(scope) === state) schedule(scope, state, RETRY_MS);
+      if (director !== state) return;
+      state.busy = false;
+      schedule(state, RETRY_MS);
     });
   }
 
-  function tick(scope) {
-    const state = active.get(scope);
-    if (!state || !scope.isConnected) return stop(scope);
-    if (!canAct(state)) return schedule(scope, state, RETRY_MS);
-    if (modeFor(state.context) === 'body-focus' && !focusWasPlayed(state.context)) {
-      playFocusBeat(scope, state);
-      return;
-    }
-    playAmbient(scope, state);
+  function stop() {
+    if (!director) return false;
+    clearTimer(director);
+    director = null;
+    return true;
   }
 
   function start(target, options) {
     const scope = target;
     const config = options || {};
     if (!scope || !scope.querySelector || !scope.querySelector('[data-body-toad]')) return false;
-    if (liveScope && liveScope !== scope) stop(liveScope);
-    stop(scope);
     const context = normalizeContext(config.context);
-    const state = {
+    const key = contextKey(context);
+    if (director && director.key === key) {
+      director.scope = scope;
+      director.canAct = config.canAct;
+      director.onPair = config.onPair;
+      director.onRoomAction = config.onRoomAction;
+      director.onWindowVisit = config.onWindowVisit;
+      director.onToadBeat = config.onToadBeat;
+      if (!director.busy && !director.timer) schedule(director, Math.max(0, director.nextAt - Date.now()));
+      return true;
+    }
+    stop();
+    director = {
+      busy: false,
       canAct: config.canAct,
       context,
-      finishTimer: 0,
+      key,
+      nextAt: 0,
       onPair: config.onPair,
-      step: sequence++,
+      onRoomAction: config.onRoomAction,
+      onToadBeat: config.onToadBeat,
+      onWindowVisit: config.onWindowVisit,
+      scope,
+      step: sequenceSeed++,
       timer: 0,
     };
-    active.set(scope, state);
-    liveScope = scope;
-    const firstDelay = modeFor(context) === 'body-focus' && !focusWasPlayed(context)
-      ? FOCUS_START_MS
-      : FIRST_AMBIENT_MS;
-    schedule(scope, state, firstDelay);
+    schedule(director, modeFor(context) === 'body-focus' ? FIRST_FOCUS_MS : FIRST_AMBIENT_MS);
     return true;
   }
 
   function postpone(target, delay) {
-    const scope = target || liveScope;
-    const state = scope && active.get(scope);
-    if (!state) return false;
-    clearAmbient(scope);
-    clearTimeout(state.finishTimer);
-    state.finishTimer = 0;
-    schedule(scope, state, delay || 9000);
+    const scope = target || (director && director.scope);
+    if (!director || (scope && director.scope !== scope)) return false;
+    director.busy = false;
+    schedule(director, delay || 9000);
     return true;
+  }
+
+  function inspect() {
+    if (!director) return null;
+    return Object.freeze({
+      busy: director.busy,
+      key: director.key,
+      mode: modeFor(director.context),
+      nextAt: director.nextAt,
+      step: director.step,
+    });
   }
 
   return Object.freeze({
     VERSION,
     FIRST_AMBIENT_MS,
+    FIRST_FOCUS_MS,
     RETRY_MS,
-    FOCUS_START_MS,
-    AMBIENT_ACTIONS,
+    AMBIENT_SEQUENCE,
+    BODY_FOCUS_SEQUENCE,
     normalizeContext,
     modeFor,
-    nextAmbient,
+    contextKey,
+    sequenceFor,
     start,
     stop,
     postpone,
+    inspect,
   });
 });

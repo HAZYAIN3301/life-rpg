@@ -4106,16 +4106,26 @@ function cancelDenRoomAction(notify = false) {
   if (!shell || !window.TravellerRoomV4) return false;
   return window.TravellerRoomV4.cancel(shell, { notify });
 }
-function runDenRoomAction(actionId) {
+function runDenRoomAction(actionId, options = {}) {
   const shell = document.querySelector('.den-shell');
   if (State.view !== 'den' || !shell || !window.TravellerRoomV4) return Promise.resolve(false);
+  if (!options.automatic && window.DenLifeV1) window.DenLifeV1.postpone(shell, 11000);
   clearDenAvatarWanderTimer();
   cancelDenAvatarLocomotion(true);
-  return window.TravellerRoomV4.play(shell, actionId, {
-    onFinish: () => syncAvatarMotion(),
-  }).then((played) => {
-    if (!played) syncAvatarMotion();
-    return played;
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (played) => {
+      if (settled) return;
+      settled = true;
+      syncAvatarMotion();
+      resolve(played);
+    };
+    window.TravellerRoomV4.play(shell, actionId, {
+      onFinish: () => finish(true),
+    }).then((played) => {
+      if (!played) finish(false);
+      else if (!options.waitForFinish) finish(true);
+    }).catch(() => finish(false));
   });
 }
 function scheduleDenAvatarWander(delay = 16000) {
@@ -4133,6 +4143,8 @@ function runDenAvatarWindowVisit(options = {}) {
     return Promise.resolve(false);
   }
   if (window.TravellerMotionV3.isPlaying(host)) return Promise.resolve(false);
+  const shell = host.closest('.den-shell');
+  if (!options.automatic && window.DenLifeV1 && shell) window.DenLifeV1.postpone(shell, 12000);
   State._denAvatarPose = 'idle';
   return window.TravellerMotionV3.playWindowVisit(host, {
     preload: preloadAvatarImage,
@@ -4147,6 +4159,7 @@ function syncAvatarMotion() {
   const host = document.querySelector('.den-avatar-core');
   const roomAction = window.TravellerRoomV4 && window.TravellerRoomV4.isPlaying(document.querySelector('.den-shell'));
   if (!host || roomAction || (State._denAvatarPose && State._denAvatarPose !== 'idle')) return;
+  if (window.DenLifeV1 && document.querySelector('[data-body-toad]')) return;
   scheduleDenAvatarWander(6500);
 }
 
@@ -4181,19 +4194,36 @@ function playBodyToadScene(scope, sphereId, mode, options = {}) {
   if (!toad) return Promise.resolve(false);
   const automatic = options.automatic === true;
   const meta = window.BodyToadV1.INTERACTIONS[mode];
+  const duration = automatic && mode === 'train'
+    ? Math.max(meta.duration, Number(options.duration) || 8400)
+    : meta.duration;
   if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, meta.duration + 9000);
   cancelDenRoomAction(false);
   cancelDenAvatarLocomotion(true);
   const restoreState = bodyToadStateForSphere(sphereId);
-  const playPair = () => window.BodyToadV1.playPair(scope, mode, { toad, restoreState });
+  const playPair = () => window.BodyToadV1.playPair(scope, mode, { toad, restoreState, duration });
   const pairPromise = window.DenStageV1
-    ? window.DenStageV1.approachBodyPair(scope, playPair)
+    ? window.DenStageV1.approachBodyPair(scope, playPair, { duration })
     : playPair();
   return pairPromise.then((played) => {
     if (played) return true;
     return window.BodyToadV1.playInteraction(toad, mode, { restoreState });
   }).catch(() => window.BodyToadV1.playInteraction(toad, mode, { restoreState }))
-    .finally(() => setTimeout(() => syncAvatarMotion(), meta.duration + 180));
+    .finally(() => syncAvatarMotion());
+}
+
+function playDenToadBeat(scope, sphereId, beatId) {
+  if (!scope || !window.BodyToadV1) return Promise.resolve(false);
+  const toad = scope.querySelector('[data-body-toad]');
+  if (!toad) return Promise.resolve(false);
+  const restoreState = bodyToadStateForSphere(sphereId);
+  const targetState = beatId === 'coach' || beatId === 'toad-look' ? 'thriving' : 'restoring';
+  const hold = beatId === 'coach' ? 1350 : beatId === 'toad-look' ? 900 : 170;
+  return window.BodyToadV1.setState(toad, targetState, { animated: false }).then(() => new Promise((resolve) => {
+    setTimeout(() => {
+      window.BodyToadV1.setState(toad, restoreState, { animated: false }).then(() => resolve(true)).catch(() => resolve(false));
+    }, hold);
+  })).catch(() => false);
 }
 
 function syncDenLife() {
@@ -4206,6 +4236,9 @@ function syncDenLife() {
     context: denLifeContext(),
     canAct: () => denLifeCanAct(shell),
     onPair: (mode, options) => playBodyToadScene(shell, sphereId, mode, options),
+    onRoomAction: (actionId) => runDenRoomAction(actionId, { automatic: true, waitForFinish: true }),
+    onWindowVisit: () => runDenAvatarWindowVisit({ automatic: true, reschedule: false }),
+    onToadBeat: (beatId) => playDenToadBeat(shell, sphereId, beatId),
   });
 }
 

@@ -10,6 +10,8 @@ const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 
 assert.equal(stage.WORLD.width, 1536);
 assert.equal(stage.WORLD.height, 864);
+assert.equal(stage.APPROACH_MS, 1800);
+assert.equal(stage.RETURN_MS, 1600);
 
 const mixed = stage.layoutPets([
   { id: 'body', species: 'bodyToad' },
@@ -52,11 +54,15 @@ const sw = read('public/sw.js');
 assert.match(app, /DenStageV1\.layoutPets/);
 assert.match(app, /DenStageV1\.approachBodyPair/);
 assert.match(css, /\.den-pet\[data-den-slot\]/);
-assert.match(css, /data-locomotion-position="window"\]\s*\{ scale: \.86/);
+assert.match(css, /data-locomotion-position="window"\]\s*\{ scale: \.80/);
+assert.match(css, /is-body-pair-at-meeting/);
+assert.match(css, /is-body-pair-approaching \.den-body-toad[\s\S]*translate: 0 0/);
+assert.match(read('public/den-stage-v1.js'), /installWalkFrames\(avatar, 'right'\)/);
+assert.match(read('public/den-stage-v1.js'), /installWalkFrames\(avatar, 'left'\)/);
 assert.match(css, /\.body-pair-v2__frame[\s\S]*transform: scaleX\(-1\)/);
 assert.match(css, /\.pet-card\.pet-card-body-toad \{ grid-column: auto/);
 assert.match(index, /den-stage-v1\.js\?v=20260804-den-stage-v1/);
-assert.match(sw, /satoru-v93/);
+assert.match(sw, /satoru-v94/);
 assert.match(sw, /'den-stage-v1\.js'/);
 
 console.log('den-stage-v1: ok');

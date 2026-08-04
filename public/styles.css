@@ -1106,8 +1106,8 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .body-pair-v2__frame { object-fit: contain; object-position: 50% 100%; filter: drop-shadow(0 12px 12px rgba(4,6,12,.4)); }
 .body-pair-v2__frame--a { opacity: 1; }
 .body-pair-v2__frame--b { opacity: 0; }
-.body-pair-v2[data-mode="train"].is-active .body-pair-v2__frame--a { animation: bodyPairTrainA 1.4s steps(1,end) 2; }
-.body-pair-v2[data-mode="train"].is-active .body-pair-v2__frame--b { animation: bodyPairTrainB 1.4s steps(1,end) 2; }
+.body-pair-v2[data-mode="train"].is-active .body-pair-v2__frame--a { animation: bodyPairTrainA 1.4s steps(1,end) infinite; }
+.body-pair-v2[data-mode="train"].is-active .body-pair-v2__frame--b { animation: bodyPairTrainB 1.4s steps(1,end) infinite; }
 .body-pair-v2[data-mode="rest"].is-active .body-pair-v2__frame--a { animation: bodyPairPetA 1.5s steps(1,end) 2; }
 .body-pair-v2[data-mode="rest"].is-active .body-pair-v2__frame--b { animation: bodyPairPetB 1.5s steps(1,end) 2; }
 .body-pair-v2[data-mode="rest"].is-active .body-pair-v2__stage { animation: bodyPairRestBreath 3s ease-in-out 1; transform-origin: 50% 95.703125%; }
@@ -8785,7 +8785,7 @@ html.mobile-nav-open body {
 .avatar-core-blink-layer img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%; }
 .avatar-core-stack[data-avatar-core-pose="idle"]:not([data-locomotion="walk"]) .avatar-core-blink-layer { animation: avatarCoreBlink 5.6s steps(1,end) infinite; }
 .avatar-core-stack[data-locomotion="walk"] .avatar-core-motion { animation: none; }
-.avatar-core-stack[data-locomotion="walk"] .avatar-core-frame.is-active:not(.avatar-core-walk-frame) { opacity: 0; transition: none; }
+.avatar-core-stack[data-locomotion="walk"] .avatar-core-frame.is-active:not(.avatar-core-walk-frame) { opacity: 0 !important; transition: none; }
 .avatar-core-walk-frame { opacity: 0; transition: none; }
 .avatar-core-stack[data-locomotion="walk"] .avatar-core-walk-frame--a { animation: avatarCoreWalkA .52s steps(1,end) infinite; }
 .avatar-core-stack[data-locomotion="walk"] .avatar-core-walk-frame--b { animation: avatarCoreWalkB .52s steps(1,end) infinite; }
@@ -8828,7 +8828,7 @@ html.mobile-nav-open body {
 .den-avatar-core[data-locomotion-position="home"],
 .den-avatar-core[data-locomotion-position="window"] { left: 38.2813% !important; width: 23.4375% !important; }
 .den-avatar-core[data-locomotion-position="home"] { translate: 0 0; }
-.den-avatar-core[data-locomotion-position="window"] { translate: 98% 0; }
+.den-avatar-core[data-locomotion-position="window"] { translate: 122% 0; }
 .den-avatar-core.is-locomotion-resetting { transition: none !important; translate: 0 0 !important; }
 
 @media (max-width: 720px) {
@@ -8934,11 +8934,11 @@ html.mobile-nav-open body {
   translate: 46% 1.5%;
   scale: .94;
 }
-.den-shell.is-body-pair-approaching .den-body-toad {
-  translate: -10% 0;
-  scale: .98;
-  outline: none;
-}
+.den-shell.is-body-pair-at-meeting .den-avatar-core,
+.den-shell.is-body-pair-returning .den-avatar-core { translate: 46% 1.5%; scale: .94; }
+.den-shell.is-body-pair-approaching .den-body-toad,
+.den-shell.is-body-pair-at-meeting .den-body-toad,
+.den-shell.is-body-pair-returning .den-body-toad { translate: 0 0; scale: 1; outline: none; }
 .den-shell.is-body-pair-approaching .den-avatar-core .avatar-core-stack[data-locomotion="walk"] .avatar-core-frame,
 .den-shell.is-body-pair-approaching .den-avatar-core .avatar-core-frame { transition: opacity .12s ease; }
 
@@ -8958,41 +8958,16 @@ html.mobile-nav-open body {
 /* Perspective belongs to the actor's ground point. The window is farther from
    the camera than the home anchor, therefore both translation and scale tween. */
 .den-avatar-core {
-  transition: translate 2.8s linear, scale 2.8s linear, opacity .18s ease, visibility 0s linear 0s;
+  transition: translate 1.8s linear, scale 1.8s linear, opacity .18s ease, visibility 0s linear 0s;
   scale: 1;
 }
 .den-avatar-core[data-locomotion-position="home"] { scale: 1; }
-.den-avatar-core[data-locomotion-position="window"] { scale: .86; }
+.den-avatar-core[data-locomotion-position="window"] { scale: .80; }
 
-/* Den Life v1: honest full-sprite acting for the flattened approved guardian.
-   No limb is rotated independently; these are weight shifts of the complete
-   authored paper figure between longer periods of stillness. */
-.body-toad-v1.is-den-ambient[data-ambient="observe"] .body-toad-v1__stage {
-  animation: denToadObserve 2.4s cubic-bezier(.37,0,.2,1) 1 both;
-}
-.body-toad-v1.is-den-ambient[data-ambient="brace"] .body-toad-v1__stage {
-  animation: denToadBrace 2.2s cubic-bezier(.25,.7,.2,1) 1 both;
-}
-.body-toad-v1.is-den-ambient[data-ambient="settle"] .body-toad-v1__stage {
-  animation: denToadSettle 2.8s cubic-bezier(.45,0,.35,1) 1 both;
-}
+/* Den Life v2 uses authored frame swaps. Scaling a complete PNG is not acting. */
+.den-body-toad .body-toad-v1__stage { animation: none !important; }
 .den-scene[data-den-focus-canon="body"] .den-body-toad {
   filter: drop-shadow(0 10px 9px rgba(4,6,12,.4)) drop-shadow(0 0 8px rgba(78,205,224,.16));
-}
-@keyframes denToadObserve {
-  0%,100% { transform: translateX(0) rotate(0); }
-  32% { transform: translateX(-.9%) rotate(-.28deg); }
-  68% { transform: translateX(.65%) rotate(.2deg); }
-}
-@keyframes denToadBrace {
-  0%,100% { transform: scale(1); }
-  35% { transform: scale(1.012,.975); }
-  67% { transform: scale(.998,1.018); }
-}
-@keyframes denToadSettle {
-  0%,100% { transform: translateY(0) scale(1); }
-  42% { transform: translateY(.65%) scale(1.006,.982); }
-  72% { transform: translateY(.25%) scale(1.002,.993); }
 }
 
 /* Every species receives the same card viewport. Species-specific normalization
@@ -9037,6 +9012,8 @@ html.mobile-nav-open body {
 
 @media (prefers-reduced-motion: reduce) {
   .den-shell.is-body-pair-approaching .den-avatar-core,
+  .den-shell.is-body-pair-at-meeting .den-avatar-core,
+  .den-shell.is-body-pair-returning .den-avatar-core,
   .den-shell.is-body-pair-approaching .den-body-toad {
     translate: 0 0;
     scale: 1;

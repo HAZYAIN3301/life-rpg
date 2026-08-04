@@ -18,7 +18,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildBodyToadV1() {
   'use strict';
 
-  const VERSION = '2.0.0';
+  const VERSION = '2.1.0';
   const ART_ROOT = '/art/pets/body-toad-v1/';
   const PAIR_ART_ROOT = `${ART_ROOT}pair-v2/`;
   const STATES = Object.freeze(['calm', 'thriving', 'strained', 'restoring']);
@@ -55,11 +55,8 @@
     return `${ART_ROOT}states/${normalizeState(state)}.png`;
   }
 
-  function frameSrc(state, animated) {
-    const safe = normalizeState(state);
-    return animated && safe === 'calm'
-      ? `${ART_ROOT}motion/idle-breath.gif`
-      : stateSrc(safe);
+  function frameSrc(state) {
+    return stateSrc(state);
   }
 
   function pairFrameSrc(frame) {
@@ -92,7 +89,7 @@
 
   function prefetch() {
     const pairSources = Object.values(INTERACTIONS).flatMap((interaction) => interaction.pairFrames.map(pairFrameSrc));
-    const sources = STATES.map(stateSrc).concat(`${ART_ROOT}motion/idle-breath.gif`, pairSources);
+    const sources = STATES.map(stateSrc).concat(pairSources);
     return Promise.allSettled(sources.map(preload));
   }
 
@@ -150,6 +147,7 @@
     const pair = scope.querySelector('[data-body-pair-v2]');
     if (!pair) return Promise.resolve(false);
     const config = options || {};
+    const duration = Math.max(400, Number(config.duration) || INTERACTIONS[mode].duration);
     const toad = config.toad || scope.querySelector('[data-body-toad]');
     const previousState = toad ? normalizeState(config.restoreState || toad.dataset.state) : 'calm';
     const oldTimer = pairTimers.get(pair);
@@ -168,7 +166,8 @@
         scope.classList.remove('is-body-pair-active');
         if (toad) setState(toad, previousState, { animated: true }).catch(() => {});
         pairTimers.delete(pair);
-      }, INTERACTIONS[mode].duration);
+        if (typeof config.onFinish === 'function') config.onFinish(mode);
+      }, duration);
       pairTimers.set(pair, timer);
       return true;
     });

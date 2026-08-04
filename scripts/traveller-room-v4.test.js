@@ -48,7 +48,7 @@ assert.ok(html.indexOf('traveller-motion-v3.js') < html.indexOf('traveller-room-
 assert.ok(html.indexOf('traveller-room-v4.js') < html.indexOf('app.js'));
 
 const sw = read('public/sw.js');
-assert.match(sw, /satoru-v93/);
+assert.match(sw, /satoru-v94/);
 assert.match(sw, /room-actions-v4\/bench-read-b\.png/);
 
 console.log('Traveller room actions v4: runtime contract checks passed');
