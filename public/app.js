@@ -3323,22 +3323,10 @@ const HOT_DAYS = 3;             // «горячо» — активность в 
 // --- Канонические жизненные домены (фикс, ~10, ОДИНАКОВЫ У ВСЕХ — гайд §2). ---
 // Невидимый «хребет»: каждая верхняя сфера маппится на один домен (авто по имени + ручная правка).
 // Нужен для (а) единой логики, (б) подсказки про пустые домены, (в) будущего мэтчинга в братстве.
-// Порядок важен: autoCanon берёт ПЕРВЫЙ совпавший домен. Грабли §8 — НИКАКИХ \b перед кириллицей!
-const CANON_DOMAINS = [
-  { id: 'body',      name: 'Тело / Здоровье',        icon: '💪', re: /тел[оауые]|здоров|спорт|фитнес|трениров|качал|штанг|жим|мыш|бег|кардио|вынослив|сил[аеуыо]|питани|нутриц|диет|сон|йог|run|gym|workout|health|fitness/ },
-  { id: 'relations', name: 'Отношения',              icon: '❤️', re: /отношен|семь|семей|друз|любов|партн[её]р|социал|общени|свидан|родител|дет[иямь]|близк|relationship|family|friends|social/ },
-  { id: 'work',      name: 'Дело / Карьера',         icon: '💼', re: /дел[оауе]|карьер|работ|бизнес|профес|стартап|предприн|job|career|work|business/ },
-  { id: 'money',     name: 'Деньги / Ресурсы',       icon: '💰', re: /деньг|финанс|бюджет|инвест|капитал|доход|сбереж|money|finance|budget/ },
-  { id: 'growth',    name: 'Развитие / Знания',      icon: '📚', re: /развит|знани|уч[её]б|образован|чтени|книг|язык|англ|немец|deutsch|наук|школ|универ|интеллект|саморазв|программ|код|алгоритм|study|learn|skill/ },
-  { id: 'spirit',    name: 'Дух / Смысл',            icon: '🧘', re: /дух|смысл|медит|вер[аыуе]|осознан|психо|ментал|философ|молитв|религ|дзен|дзэн|mindful|spirit/ },
-  { id: 'create',    name: 'Творчество / Созидание', icon: '🎨', re: /творч|созид|искусств|музык|рисов|арт|дизайн|видео|блог|пиш|писательств|креат|фото|танц|вокал|create|craft|art|music/ },
-  { id: 'rest',      name: 'Отдых / Восстановление', icon: '🌿', re: /отдых|восстанов|релакс|досуг|перезагруз|выгоран|recover|rest|chill|leisure/ },
-  { id: 'home',      name: 'Быт / Среда',            icon: '🏠', re: /быт|дом[аоуе]|порядок|уборк|хозяйств|организац|среда|home|chores|household/ },
-  { id: 'play',      name: 'Игра / Приключения',     icon: '🎲', re: /игр[аыуо]|приключ|путешеств|хобби|развлеч|adventure|travel|game|fun/ },
-];
-function canonById(id) { return CANON_DOMAINS.find((d) => d.id === id) || null; }
-function autoCanon(name) { const n = normRu(name); const d = CANON_DOMAINS.find((x) => x.re.test(n)); return d ? d.id : null; }
-function canonOf(sk) { if (sk && sk.canon && canonById(sk.canon)) return sk.canon; return autoCanon((sk && sk.name) || ''); }
+// Порядок важен: autoCanon берёт ПЕРВЫЙ совпавший домен. Чистый модуль загружается
+// до app.js и одновременно является production-реализацией и объектом Node-тестов.
+if (!globalThis.SatoruCanonDomains) throw new Error('canon-domains.js must load before app.js');
+const { CANON_DOMAINS, canonById, autoCanon, canonOf } = globalThis.SatoruCanonDomains;
 // ── Честное состояние отдыха (AI-STRATEGY.md, кирпич 2) ──────────────────────────────────
 // fb #6: «если я не отдыхаю, а тренируюсь — всё равно развивается Здоровье, создаётся видимость
 // баланса, хотя отдыха мало». Баланс/уровни считаются по СФЕРЕ квеста — тренировка и отдых часто
@@ -3609,6 +3597,19 @@ const AVATAR_FORGE_MESSAGE_VERSION = 1;
 const AVATAR_FORGE_BATCH_ID = 'avatar-forge-v1-20260801';
 const AVATAR_ART_ROOT = '/art/avatars/avatar-forge-v1/';
 const AVATAR_ART_RUNTIME_ROOT = `${AVATAR_ART_ROOT}runtime/512/`;
+const AVATAR_CORE_ROOT = '/art/avatars/traveller-core-v1/';
+// V2 ships one visually approved protagonist. The rejected female draft stays
+// archived on disk for audit, but is neither selectable nor prefetched.
+const AVATAR_CORE_GENDERS = ['male'];
+const AVATAR_CORE_GENDER_META = {
+  male: { label: 'Мужской', description: 'Traveller' },
+};
+const AVATAR_CORE_POSES = ['idle', 'arms-up', 'window-back'];
+const AVATAR_CORE_POSE_META = {
+  idle: { label: 'Стоит', description: 'Спокойная базовая поза' },
+  'arms-up': { label: 'Руки вверх', description: 'Разминка и победа' },
+  'window-back': { label: 'У окна', description: 'Вид со спины' },
+};
 const AVATAR_SLOT_DEFS = [
   { key: 'hair', label: 'Волосы', options: [['none', 'Без волос'], ['traveller', 'Traveller'], ['scholar', 'Scholar'], ['explorer-bob', 'Explorer bob']] },
   { key: 'earwear', label: 'Уши', options: [['none', 'Без аксессуара'], ['soft-noise-headphones', 'Наушники мягкого шума']] },
@@ -3896,6 +3897,19 @@ function scheduleArtWarmup() {
   const run = () => {
     try {
       preloadAvatarAppearance(avatarAppearance()).catch(() => {});
+      AVATAR_CORE_GENDERS.forEach((gender) => AVATAR_CORE_POSES.forEach((pose) => {
+        preloadAvatarImage(avatarCorePoseSrc(pose, gender)).catch(() => {});
+      }));
+      if (window.TravellerMotionV3) {
+        Object.keys(window.TravellerMotionV3.ASSETS).forEach((key) => {
+          preloadAvatarImage(window.TravellerMotionV3.frameSrc(key)).catch(() => {});
+        });
+      }
+      if (window.TravellerRoomV4) {
+        Object.values(window.TravellerRoomV4.ACTIONS).forEach((action) => {
+          action.frames.forEach((url) => preloadAvatarImage(url).catch(() => {}));
+        });
+      }
       Object.entries(AVATAR_PRESETS).forEach(([id, slots]) => {
         preloadAvatarAppearance(avatarForgeEnvelope(slots, AVATAR_PRESET_COLORS[id])).catch(() => {});
       });
@@ -3952,16 +3966,174 @@ function avatarArtHTML(options = {}) {
   return `<span class="${classes}" data-avatar-preset="${esc(cfg.presetId)}" data-avatar-colorway="${esc(cfg.colors.outerwear)}" data-avatar-batch="${AVATAR_FORGE_BATCH_ID}" data-avatar-rigged="false" data-avatar-static="true" role="img" aria-label="Персонаж Satoru"><span class="avatar-art-rig">${layers}</span></span>`;
 }
 function avatarPortraitHTML(options = {}) {
-  return `<span class="avatar-art-portrait">${avatarArtHTML(Object.assign({}, options, { className: 'avatar-art-stack--portrait' }))}</span>`;
+  void options;
+  return `<span class="avatar-art-portrait avatar-core-portrait">${avatarCorePoseHTML('idle', { className: 'avatar-core-stack--portrait' })}</span>`;
 }
 function avatarFigureHTML(options = {}) {
   return avatarArtHTML(Object.assign({}, options, { className: 'avatar-art-stack--figure' }));
 }
-// Static full-canvas v1 cannot be animated by rotating sliced joints without
-// recreating the exact artefacts the user rejected. Keep legacy call sites safe.
-function animateAvatarStack() {}
-function triggerAvatarReaction() {}
-function syncAvatarMotion() {}
+function normalizedAvatarCorePose(value) {
+  return AVATAR_CORE_POSES.includes(value) ? value : 'idle';
+}
+function normalizedAvatarCoreGender(value) {
+  return AVATAR_CORE_GENDERS.includes(value) ? value : 'male';
+}
+function avatarCoreGender() {
+  const saved = State.settings && State.settings.avatarCoreGender;
+  if (AVATAR_CORE_GENDERS.includes(saved)) return saved;
+  return 'male';
+}
+function avatarCorePoseSrc(pose = 'idle', gender = avatarCoreGender()) {
+  return `${AVATAR_CORE_ROOT}${normalizedAvatarCoreGender(gender)}/poses/${normalizedAvatarCorePose(pose)}.png`;
+}
+function avatarCorePoseHTML(pose = 'idle', options = {}) {
+  const safePose = normalizedAvatarCorePose(pose);
+  const safeGender = normalizedAvatarCoreGender(options.gender || avatarCoreGender());
+  const classes = ['avatar-core-stack', options.className || ''].filter(Boolean).join(' ');
+  const blink = window.TravellerMotionV3 ? window.TravellerMotionV3.blinkMarkup() : '';
+  return `<span class="${classes}" data-avatar-core-pose="${safePose}" data-avatar-core-gender="${safeGender}" role="img" aria-label="${esc(AVATAR_CORE_GENDER_META[safeGender].label)} Traveller: ${esc(AVATAR_CORE_POSE_META[safePose].label)}"><span class="avatar-core-motion"><img class="avatar-core-frame is-active" src="${avatarCorePoseSrc(safePose, safeGender)}" alt="" aria-hidden="true" draggable="false" decoding="async"></span>${blink}</span>`;
+}
+function swapAvatarCoreStack(stack, pose, gender = avatarCoreGender()) {
+  if (!stack) return Promise.resolve(false);
+  const safePose = normalizedAvatarCorePose(pose);
+  const safeGender = normalizedAvatarCoreGender(gender);
+  const src = avatarCorePoseSrc(safePose, safeGender);
+  const active = stack.querySelector('.avatar-core-frame.is-active') || stack.querySelector('.avatar-core-frame');
+  if (active && new URL(active.src, location.href).pathname === src && stack.dataset.avatarCoreGender === safeGender) {
+    stack.dataset.avatarCorePose = safePose;
+    return Promise.resolve(true);
+  }
+  const token = String((Number(stack.dataset.swapToken) || 0) + 1);
+  stack.dataset.swapToken = token;
+  return preloadAvatarImage(src).then(() => {
+    if (!stack.isConnected || stack.dataset.swapToken !== token) return false;
+    const motion = stack.querySelector('.avatar-core-motion') || stack;
+    const previousFrames = [...motion.querySelectorAll('.avatar-core-frame')];
+    const image = document.createElement('img');
+    image.className = 'avatar-core-frame is-entering';
+    image.src = src;
+    image.alt = '';
+    image.setAttribute('aria-hidden', 'true');
+    image.draggable = false;
+    image.decoding = 'async';
+    motion.appendChild(image);
+    stack.dataset.avatarCorePose = safePose;
+    stack.dataset.avatarCoreGender = safeGender;
+    stack.setAttribute('aria-label', `${AVATAR_CORE_GENDER_META[safeGender].label} Traveller: ${AVATAR_CORE_POSE_META[safePose].label}`);
+    requestAnimationFrame(() => {
+      if (!stack.isConnected || stack.dataset.swapToken !== token) return;
+      previousFrames.forEach((frame) => frame.classList.remove('is-active'));
+      previousFrames.forEach((frame) => frame.classList.add('is-leaving'));
+      image.classList.remove('is-entering');
+      image.classList.add('is-active');
+      setTimeout(() => {
+        if (stack.dataset.swapToken !== token) return;
+        previousFrames.forEach((frame) => frame.remove());
+      }, 240);
+    });
+    return true;
+  });
+}
+function setAvatarCoreGender(gender) {
+  const safeGender = normalizedAvatarCoreGender(gender);
+  return Promise.all(AVATAR_CORE_POSES.map((pose) => preloadAvatarImage(avatarCorePoseSrc(pose, safeGender)))).then(() => {
+    if (!State.settings) return safeGender;
+    State.settings.avatarCoreGender = safeGender;
+    Store.save('settings', State.settings);
+    document.querySelectorAll('.avatar-core-stack').forEach((stack) => {
+      swapAvatarCoreStack(stack, stack.dataset.avatarCorePose || 'idle', safeGender).catch(() => {});
+    });
+    document.querySelectorAll('[data-action="avatar-core-gender"]').forEach((button) => {
+      const selected = button.dataset.gender === safeGender;
+      button.classList.toggle('is-selected', selected);
+      button.setAttribute('aria-pressed', String(selected));
+    });
+    return safeGender;
+  });
+}
+// V3 uses complete authored walk poses and a deterministic blink frame. It
+// never rotates sliced joints or asks CSS to invent missing anatomy.
+let _denAvatarWanderTimer = 0;
+function avatarMotionReduced() {
+  return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+}
+function clearDenAvatarWanderTimer() {
+  if (_denAvatarWanderTimer) clearTimeout(_denAvatarWanderTimer);
+  _denAvatarWanderTimer = 0;
+}
+function animateAvatarStack(stack, pose = 'arms-up', duration = 900) {
+  if (!stack || (window.TravellerMotionV3 && window.TravellerMotionV3.isPlaying(stack.closest('.den-avatar-core')))) return Promise.resolve(false);
+  const previous = normalizedAvatarCorePose(stack.dataset.avatarCorePose || 'idle');
+  return swapAvatarCoreStack(stack, pose).then((changed) => {
+    setTimeout(() => {
+      if (stack.isConnected) swapAvatarCoreStack(stack, previous).catch(() => {});
+    }, duration);
+    return changed;
+  });
+}
+function triggerAvatarReaction(kind) {
+  if (kind !== 'happy' && kind !== 'victory') return;
+  document.querySelectorAll('.avatar-core-stack').forEach((stack) => animateAvatarStack(stack, 'arms-up', 900).catch(() => {}));
+}
+function cancelDenAvatarLocomotion(restore = true) {
+  clearDenAvatarWanderTimer();
+  const host = document.querySelector('.den-avatar-core');
+  if (!host || !window.TravellerMotionV3) return false;
+  const cancelled = window.TravellerMotionV3.cancel(host);
+  if (restore) {
+    State._denAvatarPose = 'idle';
+    syncDenCorePose('idle').catch(() => {});
+  }
+  return cancelled;
+}
+function cancelDenRoomAction(notify = false) {
+  const shell = document.querySelector('.den-shell');
+  if (!shell || !window.TravellerRoomV4) return false;
+  return window.TravellerRoomV4.cancel(shell, { notify });
+}
+function runDenRoomAction(actionId) {
+  const shell = document.querySelector('.den-shell');
+  if (State.view !== 'den' || !shell || !window.TravellerRoomV4) return Promise.resolve(false);
+  clearDenAvatarWanderTimer();
+  cancelDenAvatarLocomotion(true);
+  return window.TravellerRoomV4.play(shell, actionId, {
+    onFinish: () => syncAvatarMotion(),
+  }).then((played) => {
+    if (!played) syncAvatarMotion();
+    return played;
+  });
+}
+function scheduleDenAvatarWander(delay = 16000) {
+  clearDenAvatarWanderTimer();
+  if (State.view !== 'den' || avatarMotionReduced()) return;
+  _denAvatarWanderTimer = setTimeout(() => runDenAvatarWindowVisit({ reschedule: true }), delay);
+}
+function runDenAvatarWindowVisit(options = {}) {
+  clearDenAvatarWanderTimer();
+  const host = document.querySelector('.den-avatar-core');
+  const pair = document.querySelector('.body-pair-v2.is-active');
+  const roomAction = window.TravellerRoomV4 && window.TravellerRoomV4.isPlaying(document.querySelector('.den-shell'));
+  if (State.view !== 'den' || !host || pair || roomAction || !window.TravellerMotionV3 || avatarMotionReduced()) {
+    if (options.reschedule !== false) scheduleDenAvatarWander(6500);
+    return Promise.resolve(false);
+  }
+  if (window.TravellerMotionV3.isPlaying(host)) return Promise.resolve(false);
+  State._denAvatarPose = 'idle';
+  return window.TravellerMotionV3.playWindowVisit(host, {
+    preload: preloadAvatarImage,
+    swapPose: (pose) => syncDenCorePose(pose),
+  }).finally(() => {
+    if (options.reschedule !== false) scheduleDenAvatarWander(18000);
+  });
+}
+function syncAvatarMotion() {
+  clearDenAvatarWanderTimer();
+  if (State.view !== 'den' || avatarMotionReduced()) return;
+  const host = document.querySelector('.den-avatar-core');
+  const roomAction = window.TravellerRoomV4 && window.TravellerRoomV4.isPlaying(document.querySelector('.den-shell'));
+  if (!host || roomAction || (State._denAvatarPose && State._denAvatarPose !== 'idle')) return;
+  scheduleDenAvatarWander(6500);
+}
 
 function openAvatarForgeEditor() {
   const existing = document.getElementById('avatar-forge-overlay');
@@ -7758,6 +7930,12 @@ function petAccessorySVG(icon) {
 // Анимация — через классы pd-tail/pd-ear-l/-r/pd-body-grp (см. styles.css). slots = якоря экипировки (Фаза 2).
 const PET_DARK = 'rgba(0,0,0,0.16)';
 const PET_SPECIES = {
+  bodyToad: { // утверждённый BODY Guardian v1 — полнохолстовый cut-paper raster
+    slots: { head: [60, 40], neck: [60, 92], back: [76, 70] },
+    raster: true,
+    guardianV1: true,
+    draw: () => ({ ears: '', feet: '', belly: '', extra: '', tail: '', body: '' }),
+  },
   round: { // дружелюбный зверёк (универсальный)
     slots: { head: [60, 48], neck: [60, 102], back: [60, 62] },
     draw: (c) => ({
@@ -7826,6 +8004,7 @@ function archToSpecies(arc) {
   return ({ '🏋': 'sturdy', '💼': 'fortune', '🎨': 'fluffy', '💬': 'fluffy', '💻': 'slime', '🧹': 'slime', '🗣': 'bird', '🧘': 'bird' })[arc] || 'round';
 }
 const PET_SPECIES_LABELS = {
+  bodyToad: 'Жабий сэнсэй',
   round: 'Огонёк',
   sturdy: 'Силач',
   fortune: 'Кот Удачи',
@@ -7838,15 +8017,35 @@ function ensurePetSpecies() {
   if (!settings.petSpecies || typeof settings.petSpecies !== 'object' || Array.isArray(settings.petSpecies)) settings.petSpecies = {};
   return settings.petSpecies;
 }
+function bodyGuardianSphereId() {
+  const candidates = topSkills().filter((sphere) => canonOf(sphere) === 'body');
+  if (!candidates.length) return null;
+  return [...candidates].sort((a, b) => skillXp(b.id) - skillXp(a.id))[0].id;
+}
+function isBodyGuardianSphere(sphereId) { return !!sphereId && bodyGuardianSphereId() === sphereId; }
+function bodyToadStateForSphere(sphereId) {
+  const stats = petStats(sphereId);
+  return window.BodyToadV1 ? window.BodyToadV1.stateFromPetState(stats.state) : 'calm';
+}
+function bodyToadHTML(sphereId, options = {}) {
+  if (!window.BodyToadV1) return '';
+  return window.BodyToadV1.markup({
+    state: bodyToadStateForSphere(sphereId),
+    animated: options.animated !== false,
+    className: options.className || '',
+    label: `Жабий сэнсэй — хранитель тела, ${PET_STATE[petStats(sphereId).state].label.toLowerCase()}`,
+  });
+}
 function petSpeciesForSphere(sphereId, traits) {
+  if (isBodyGuardianSphere(sphereId)) return 'bodyToad';
   const selected = sphereId && ensurePetSpecies()[sphereId];
-  if (selected && PET_SPECIES[selected]) return selected;
+  if (selected && PET_SPECIES[selected] && selected !== 'bodyToad') return selected;
   const dom = (traits && traits[0] && traits[0].icon) || '⭐';
   return archToSpecies(dom);
 }
-function petSpeciesOptions(selected) {
+function petSpeciesOptions(selected, allowBodyToad = false) {
   const automatic = `<option value=""${selected ? '' : ' selected'}>${t('Автоматически')}</option>`;
-  return automatic + Object.entries(PET_SPECIES_LABELS).map(([id, label]) => `<option value="${id}"${id === selected ? ' selected' : ''}>${t(label)}</option>`).join('');
+  return automatic + Object.entries(PET_SPECIES_LABELS).filter(([id]) => id !== 'bodyToad' || allowBodyToad).map(([id, label]) => `<option value="${id}"${id === selected ? ' selected' : ''}>${t(label)}</option>`).join('');
 }
 // ── Надеваемая экипировка (PETS-EQUIPMENT-PLAN.md, Фаза 2) ──
 // Предмет = SVG в ЛОКАЛЬНЫХ координатах слота (0,0 = якорь). Слоты: head/neck/back.
@@ -8145,6 +8344,7 @@ function petSVG(color, state, traits, sphereId, idle = '') {
   const dom = (traits[0] && traits[0].icon) || '⭐';
   const speciesId = petSpeciesForSphere(sphereId, traits);
   const sp = PET_SPECIES[speciesId] || PET_SPECIES.round, p = sp.draw(color);
+  if (sp.guardianV1) return bodyToadHTML(sphereId, { className: 'body-toad-v1--card' });
   if (sp.rigV2) {
     return `<svg class="pet-svg fc-rig fc-state-${state}" viewBox="0 0 120 132" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <g transform="translate(60,80) scale(${r.toFixed(2)},${(0.5 + r * 0.5).toFixed(2)}) translate(-60,-80)">${fortuneRigV2Markup(sphereId, state, idle)}</g>
@@ -8192,14 +8392,20 @@ function renderPets() {
     // Клик по виду — хинт «что засчитывать в эту сферу» (боль Виолы: «как считать уровень творчества»).
     // Кормить питомца = записывать дела; хинт объясняет, какие именно.
     const sub = `<p class="pet-sphere muted" data-action="pet-hint" data-id="${s.id}" title="${esc(tr.hint || '')}" style="cursor:help">${esc(tr.kind || 'Зверёк')}${nm !== s.name ? ` · сфера: ${esc(s.name)}` : ''} ${satoruIconHTML('status.info', 'pet-hint-icon', '◇')}</p>`;
-    return `<div class="card pet-card">
+    const guardianActions = activeSpecies === 'bodyToad' ? `<div class="body-toad-card-actions" aria-label="Действия с хранителем тела">
+      <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="greet">Поприветствовать</button>
+      <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="train">Размяться</button>
+      <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="rest">Передохнуть</button>
+    </div>` : '';
+    return `<div class="card pet-card${activeSpecies === 'bodyToad' ? ' pet-card-body-toad' : ''}">
       <div class="pet-art" data-action="pet-feed" data-id="${s.id}" title="приласкать ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits, s.id, idle)}</div>
       ${nameRow}${sub}
-      <label class="pet-species-picker"><span>${t('Облик')}</span><select data-action="set-pet-species" data-id="${s.id}" aria-label="${t('Облик')}: ${esc(nm)}">${petSpeciesOptions(selectedSpecies)}</select></label>
+      ${activeSpecies === 'bodyToad' ? '<div class="body-toad-domain-badge">BODY · канонический хранитель</div>' : `<label class="pet-species-picker"><span>${t('Облик')}</span><select data-action="set-pet-species" data-id="${s.id}" aria-label="${t('Облик')}: ${esc(nm)}">${petSpeciesOptions(selectedSpecies)}</select></label>`}
       ${activeSpecies === 'fortune' ? fortuneControlsHTML(s.id) : ''}
       <div class="pet-bar"><span style="width:${Math.min(100, Math.round(st.pct / 120 * 100))}%;background:${meta.color}"></span></div>
       <p class="pet-line muted">${line}</p>
       <div class="pet-traits" aria-label="Черты питомца">${traits.map((trait) => `<span class="pet-trait-chip" title="${esc(trait.hint || trait.kind || '')}">${petTraitIconHTML(trait, 'pet-trait-icon')}<small>${esc(trait.kind || 'Черта')}</small></span>`).join('')}</div>
+      ${guardianActions}
     </div>`;
   }).join('');
   return `${companionCard()}
@@ -8729,13 +8935,35 @@ function denAvatarFace(state) {
   if (state === 'happy' || state === 'victory') return 'happy';
   return 'neutral';
 }
+function denDefaultCorePose(state) {
+  if (state === 'victory') return 'arms-up';
+  return 'idle';
+}
+function denCorePose(state) {
+  return normalizedAvatarCorePose(State._denAvatarPose || denDefaultCorePose(state));
+}
+function syncDenCorePose(pose) {
+  const safePose = normalizedAvatarCorePose(pose);
+  const host = document.querySelector('.den-avatar-core');
+  const stack = host && host.querySelector('.avatar-core-stack');
+  if (!host || !stack) return Promise.resolve(false);
+  return swapAvatarCoreStack(stack, safePose).then((changed) => {
+    if (!host.isConnected) return false;
+    host.dataset.pose = safePose;
+    host.title = `${AVATAR_CORE_POSE_META[safePose].label}. Нажми, чтобы сменить действие`;
+    return changed;
+  });
+}
 function renderDen() {
   const den = ensureDen(), theme = denTheme();
   const coherentV5 = denUsesCoherentV5(den);
   preloadDenMasterCandidates();
   const c = ensureCompanion(), mood = compMood(), ti = compTierIdx(c.bond);
   const cr = charRank(), nm = (State.me && State.me.name) || 'Герой';
-  const pets = topSkills().slice(0, den.petCount).map((s) => {
+  const bodyId = bodyGuardianSphereId();
+  const denSpheres = topSkills();
+  if (bodyId) denSpheres.sort((a, b) => (a.id === bodyId ? -1 : b.id === bodyId ? 1 : 0));
+  const pets = denSpheres.slice(0, den.petCount).map((s) => {
     const traits = petTraits(s.id);
     const trait = traits[0] || {};
     return {
@@ -8746,20 +8974,17 @@ function renderDen() {
       idle: dayPick('petidle' + s.id, trait.idles || [trait.idle]),
     };
   });
-  const petLayer = pets.map((p, i) => `<button class="den-pet den-pet-${i}${p.species === 'fortune' ? ' den-pet-fortune' : ''}" data-action="den-pet-react" data-id="${p.s.id}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id, p.idle)}</button>`).join('');
+  const petLayer = pets.map((p, i) => {
+    if (p.species === 'bodyToad') return `<button class="den-pet den-pet-${i} den-body-toad" data-action="body-toad-interact" data-mode="greet" data-id="${p.s.id}" title="Жабий сэнсэй — ${PET_STATE[p.st.state].label}. Нажми, чтобы поприветствовать">${bodyToadHTML(p.s.id, { className: 'body-toad-v1--den' })}</button>`;
+    return `<button class="den-pet den-pet-${i}${p.species === 'fortune' ? ' den-pet-fortune' : ''}" data-action="den-pet-react" data-id="${p.s.id}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id, p.idle)}</button>`;
+  }).join('');
+  const bodyGuardian = pets.find((pet) => pet.species === 'bodyToad');
   const p = nestedProgress(), eP = energyPct(), eM = energyMeta(), tm = State.timer;
   const avatarState = denAvatarState(eP, p, tm);
+  const avatarPose = denCorePose(avatarState);
   const amb = (State.settings && State.settings.ambient) || {};
   const ambientMode = amb.mode || 'off';
   const ambient = ambientMeta(ambientMode);
-  const savedAvatarAppearance = avatarAppearance();
-  const denAvatarAppearance = ambientMode === 'noise'
-    ? avatarForgeEnvelope({
-      ...savedAvatarAppearance.slots,
-      earwear: 'soft-noise-headphones',
-      headwear: savedAvatarAppearance.slots.headwear === 'scholar-hat-draft' ? 'none' : savedAvatarAppearance.slots.headwear,
-    }, savedAvatarAppearance.colors)
-    : savedAvatarAppearance;
   const focusRow = tm
     ? `<div class="den-focus den-focus-on"><span>${satoruIconHTML('system.focus', 'den-row-glyph', '◇')} Фокус идёт</span><b class="den-clock">${fmtClock(timerElapsedMs())}</b><button class="btn ghost sm" data-action="goto-today">К таймеру</button></div>`
     : `<div class="den-focus"><span>${satoruIconHTML('system.focus', 'den-row-glyph', '◇')} Готов к делу?</span><button class="btn sm" data-action="goto-today">Начать фокус</button></div>`;
@@ -8771,7 +8996,9 @@ function renderDen() {
       ${denLegacyRoomFixturesHTML(coherentV5)}
       <div class="den-room-vignette"></div>
       <button class="den-companion" data-action="comp-pet" title="Погладить ${esc(c.name)}">${shadowVideo(ti, mood.face, 'den')}<span class="den-companion-name">${esc(c.name)}</span></button>
-      <div class="den-avatar den-avatar-raster" data-state="${avatarState}">${avatarArtHTML({ className: 'avatar-art-stack--den', appearance: denAvatarAppearance })}<span class="den-avatar-shadow"></span></div>
+      ${bodyGuardian ? window.BodyToadV1.pairMarkup({ className: 'body-pair-v2--den' }) : ''}
+      ${coherentV5 && window.TravellerRoomV4 ? window.TravellerRoomV4.markup({ className: 'traveller-room-v4--den' }) : ''}
+      <button class="den-avatar den-avatar-raster den-avatar-core" data-action="den-avatar-pose" data-state="${avatarState}" data-pose="${avatarPose}" title="${esc(AVATAR_CORE_POSE_META[avatarPose].label)}. Нажми, чтобы сменить действие">${avatarCorePoseHTML(avatarPose, { className: 'avatar-core-stack--den' })}<span class="den-avatar-shadow"></span></button>
       ${petLayer}
       <div class="den-tag">${rankIconHTML(cr, 'rank-inline-icon')} <span>${esc(nm)}</span><small>ур.${charLevel()}</small></div>
       <div class="den-scene-tools">
@@ -8789,10 +9016,20 @@ function renderDen() {
     </div>
     ${focusRow}
     <div class="den-actions">
+      <button class="btn ghost sm" data-action="den-avatar-walk">Пройтись к окну</button>
+      ${coherentV5 ? '<button class="btn ghost sm" data-action="den-room-action" data-room-action="bench-rest">Сесть у окна</button><button class="btn ghost sm" data-action="den-room-action" data-room-action="bench-read">Почитать</button>' : ''}
       <button class="btn ghost sm" data-action="go-wardrobe">${satoruIconHTML('nav.hero', 'button-glyph', '◇')} Гардероб</button>
       <button class="btn ghost sm" data-action="goto-rewards">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} Награды</button>
       <button class="btn ghost sm" data-action="goto-pets">${satoruIconHTML('system.pets', 'button-glyph', '◇')} Зверинец</button>
     </div>
+    ${bodyGuardian ? `<div class="den-guardian-actions" aria-label="Взаимодействие с хранителем тела">
+      <span><b>Жабий сэнсэй</b><small>${esc(window.BodyToadV1.STATE_META[bodyToadStateForSphere(bodyGuardian.s.id)].line)}</small></span>
+      <div>
+        <button class="btn ghost sm" data-action="body-toad-interact" data-mode="greet" data-id="${bodyGuardian.s.id}">Приветствие</button>
+        <button class="btn ghost sm" data-action="body-toad-interact" data-mode="train" data-id="${bodyGuardian.s.id}">Разминка вместе</button>
+        <button class="btn ghost sm" data-action="body-toad-interact" data-mode="rest" data-id="${bodyGuardian.s.id}">Передышка</button>
+      </div>
+    </div>` : ''}
     ${denEditorHTML(den)}
     </div>
   </div>`;
@@ -9430,18 +9667,14 @@ function onTreePointerDown(e) {
 //  Вид «Персонаж» — живой аватар, атрибуты, телосложение
 // ============================================================
 function avatarEditor() {
-  const cfg = avatarAppearance();
-  const meta = AVATAR_PRESET_META[cfg.presetId] || AVATAR_PRESET_META.custom;
-  const active = AVATAR_SLOT_DEFS
-    .filter((slot) => cfg.slots[slot.key] !== 'none')
-    .map((slot) => `<span>${esc(slot.label)}</span>`)
-    .join('');
+  const pose = normalizedAvatarCorePose(State._avatarCorePose || 'idle');
+  const gender = avatarCoreGender();
+  const poseButtons = AVATAR_CORE_POSES.map((id) => `<button class="avatar-core-pose-button ${pose === id ? 'is-selected' : ''}" data-action="avatar-core-pose" data-pose="${id}" aria-pressed="${pose === id}"><strong>${esc(AVATAR_CORE_POSE_META[id].label)}</strong><small>${esc(AVATAR_CORE_POSE_META[id].description)}</small></button>`).join('');
   return `<div class="card avatar-editor" id="avatar-editor">
-    <div class="avatar-editor-head"><div><h3>${satoruIconHTML('nav.hero', 'inline-glyph', '◇')} Твой персонаж</h3><p>${esc(meta.label)} · Avatar Forge v1</p></div><span class="avatar-editor-badge">${AVATAR_SLOT_KEYS.length} слотов</span></div>
-    <div class="ave-stage ave-stage-figure">${avatarFigureHTML()}</div>
-    <div class="avatar-forge-summary" aria-label="Активные категории">${active || '<span>Базовый манекен</span>'}</div>
-    <div class="avatar-editor-actions"><button class="btn" data-action="open-avatar-forge">Открыть Avatar Forge</button><p>Пресеты Traveller и Scholar можно смешивать послотово: волосы, одежда, её цвет, шляпа, очки, рюкзак, пояс и предмет в руке независимы.</p></div>
-    <p class="avatar-editor-note"><b>${esc(meta.label)}</b> — ${esc(meta.description)}. Все слои собираются на одном холсте 512×768 без ручных смещений. Фальшивая анимация цельной PNG отключена; движения вернутся с отдельным ригом.</p>
+    <div class="avatar-editor-head"><div><h3>${satoruIconHTML('nav.hero', 'inline-glyph', '◇')} Traveller Core v2</h3><p>Один утверждённый мужской Traveller · авторские позы · парные сцены с хранителями</p></div><span class="avatar-editor-badge">Local motion</span></div>
+    <div class="ave-stage ave-stage-figure avatar-core-stage">${avatarCorePoseHTML(pose, { gender, className: 'avatar-core-stack--figure' })}</div>
+    <div class="avatar-core-pose-grid">${poseButtons}</div>
+    <p class="avatar-editor-note"><b>Персонаж фиксированный.</b> Женский черновик отключён. Сидение больше не имитируется позой на невидимом стуле: отдых, приветствие и разминка с Жабьим сэнсэем используют цельные парные кадры на одной линии пола.</p>
   </div>`;
 }
 // ---- Колесо баланса (ядро v1): радар ритма + дрилл-даун под-сфер + подсказки ----
@@ -11373,6 +11606,11 @@ function waitForViewImages(root, maxWait = 650) {
 }
 function afterMainCommit() {
   try { kickCompVideo(); } catch {}
+  try {
+    if (State.view === 'den' && window.TravellerRoomV4) {
+      window.TravellerRoomV4.restore(document.querySelector('.den-shell'), { onFinish: () => syncAvatarMotion() });
+    }
+  } catch {}
   try { syncAvatarMotion(); } catch {}
   try { scheduleDenPhaseBoundary(); } catch {}
   try { tutorialPaint(); } catch {}
@@ -12099,6 +12337,67 @@ function onClick(e) {
     track('den:item');
     render(); return;
   }
+  if (action === 'body-toad-interact' || action === 'body-toad-card-interact') {
+    const mode = el.dataset.mode || 'greet';
+    const scope = action === 'body-toad-interact' ? el.closest('.den-shell') : el.closest('.pet-card');
+    const toad = (el.matches('[data-body-toad]') ? el : null) || (scope && scope.querySelector('[data-body-toad]'));
+    if (toad && window.BodyToadV1) {
+      const restoreState = bodyToadStateForSphere(id);
+      if (action === 'body-toad-interact') {
+        cancelDenRoomAction(false);
+        cancelDenAvatarLocomotion(true);
+        window.BodyToadV1.playPair(scope, mode, { toad, restoreState }).then((played) => {
+          if (!played) window.BodyToadV1.playInteraction(toad, mode, { restoreState }).catch(() => {});
+        }).catch(() => window.BodyToadV1.playInteraction(toad, mode, { restoreState }).catch(() => {}));
+      } else {
+        window.BodyToadV1.playInteraction(toad, mode, { restoreState }).catch(() => {});
+      }
+      const meta = window.BodyToadV1.INTERACTIONS[mode];
+      if (action === 'body-toad-interact') setTimeout(() => syncAvatarMotion(), (meta && meta.duration || 3000) + 180);
+      if (meta) toast(`🐸 ${meta.label}`);
+      try { sfx(mode === 'train' ? 'complete' : 'click'); } catch {}
+      track(`body-toad:${mode}`);
+    }
+    return;
+  }
+  if (action === 'den-avatar-walk') {
+    cancelDenRoomAction(false);
+    runDenAvatarWindowVisit({ reschedule: true }).catch(() => {});
+    track('den:avatar-walk:window');
+    return;
+  }
+  if (action === 'den-room-action') {
+    const roomAction = el.dataset.roomAction || 'bench-rest';
+    runDenRoomAction(roomAction).catch(() => {});
+    track(`den:room-action:${roomAction}`);
+    return;
+  }
+  if (action === 'den-avatar-pose') {
+    cancelDenRoomAction(false);
+    cancelDenAvatarLocomotion(false);
+    const current = normalizedAvatarCorePose(el.dataset.pose || State._denAvatarPose || 'idle');
+    const next = AVATAR_CORE_POSES[(AVATAR_CORE_POSES.indexOf(current) + 1) % AVATAR_CORE_POSES.length];
+    State._denAvatarPose = next;
+    syncDenCorePose(next).catch(() => {});
+    track(`den:avatar-pose:${next}`);
+    return;
+  }
+  if (action === 'avatar-core-pose') {
+    const pose = normalizedAvatarCorePose(el.dataset.pose);
+    State._avatarCorePose = pose;
+    const editor = document.getElementById('avatar-editor');
+    swapAvatarCoreStack(editor && editor.querySelector('.avatar-core-stack'), pose).catch(() => {});
+    editor && editor.querySelectorAll('[data-action="avatar-core-pose"]').forEach((button) => {
+      const selected = button.dataset.pose === pose;
+      button.classList.toggle('is-selected', selected);
+      button.setAttribute('aria-pressed', String(selected));
+    });
+    return;
+  }
+  if (action === 'avatar-core-gender') {
+    setAvatarCoreGender(el.dataset.gender).catch(() => toast('Не удалось загрузить аватар'));
+    return;
+  }
   if (action === 'den-pet-react') {
     el.classList.remove('is-reacting'); void el.offsetWidth; el.classList.add('is-reacting');
     setTimeout(() => el.classList.remove('is-reacting'), 1100);
@@ -12145,6 +12444,8 @@ function onClick(e) {
   // --- Питомцы по сферам ---
   if (action === 'pet-feed') { track('pet:feed');
     const art = el.closest('.pet-art'), svg = art && art.querySelector('.pet-svg');
+    const toad = art && art.querySelector('[data-body-toad]');
+    if (toad && window.BodyToadV1) window.BodyToadV1.playInteraction(toad, 'greet', { restoreState: bodyToadStateForSphere(id) }).catch(() => {});
     if (svg) {
       svg.classList.remove('pet-nom'); void svg.offsetWidth; svg.classList.add('pet-nom'); // рестарт анимации
       const dom = (petTraits(id)[0] || {}).icon || '⭐', treat = PET_TREAT[dom] || PET_TREAT['⭐'];
@@ -13117,7 +13418,7 @@ function onChange(e) {
   const a = el.dataset.action;
   if (a === 'set-pet-species') {
     const species = ensurePetSpecies(), sphereId = el.dataset.id;
-    if (el.value && PET_SPECIES[el.value]) species[sphereId] = el.value;
+    if (el.value && PET_SPECIES[el.value] && (el.value !== 'bodyToad' || isBodyGuardianSphere(sphereId))) species[sphereId] = el.value;
     else delete species[sphereId];
     Store.save('settings', State.settings);
     toast(`🐾 ${t('Облик')}: ${t(PET_SPECIES_LABELS[el.value] || 'Автоматически')}`);

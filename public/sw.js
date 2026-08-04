@@ -1,9 +1,9 @@
 /* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    App shell: network-first. Art/media: cache-first. /api/: always live network.
    Bump CACHE whenever the shell or a stable asset URL changes. */
-const CACHE = 'satoru-v85';
+const CACHE = 'satoru-v91';
 const SHELL = [
-  './', 'index.html', 'app.js', 'styles.css', 'shadow-rig-v2.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
+  './', 'index.html', 'app.js', 'canon-domains.js', 'body-toad-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js', 'styles.css', 'shadow-rig-v2.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
   'avatar-forge-v1.html', 'avatar-forge-v1.css', 'avatar-forge-v1.js',
   'art/icons/icon-registry.js', 'art/icons/scenes/day-summary-fisher.png',
   'art/gear/inventory/w1-training-blade.png',
@@ -22,6 +22,29 @@ const SHELL = [
   'art/den/v4/ambient/fireplace-grate-logs-runtime.png',
   'art/den/v5/den-day.jpg',
   'art/den/v5/den-night-lantern.jpg',
+  'art/pets/body-toad-v1/states/calm.png',
+  'art/pets/body-toad-v1/states/thriving.png',
+  'art/pets/body-toad-v1/states/strained.png',
+  'art/pets/body-toad-v1/states/restoring.png',
+  'art/pets/body-toad-v1/motion/idle-breath.gif',
+  'art/pets/body-toad-v1/pair-v2/manifest.json',
+  'art/pets/body-toad-v1/pair-v2/greet-contact.png',
+  'art/pets/body-toad-v1/pair-v2/train-low.png',
+  'art/pets/body-toad-v1/pair-v2/train-high.png',
+  'art/pets/body-toad-v1/pair-v2/rest-contact.png',
+  'art/pets/body-toad-v1/pair-v2/rest-pet.png',
+  'art/avatars/traveller-core-v1/manifest.json',
+  'art/avatars/traveller-core-v1/male/poses/idle.png',
+  'art/avatars/traveller-core-v1/male/poses/arms-up.png',
+  'art/avatars/traveller-core-v1/male/poses/window-back.png',
+  'art/avatars/traveller-core-v1/male/motion-v3/manifest.json',
+  'art/avatars/traveller-core-v1/male/motion-v3/idle-blink.png',
+  'art/avatars/traveller-core-v1/male/motion-v3/walk-a.png',
+  'art/avatars/traveller-core-v1/male/motion-v3/walk-b.png',
+  'art/avatars/traveller-core-v1/male/room-actions-v4/manifest.json',
+  'art/avatars/traveller-core-v1/male/room-actions-v4/bench-rest.png',
+  'art/avatars/traveller-core-v1/male/room-actions-v4/bench-read-a.png',
+  'art/avatars/traveller-core-v1/male/room-actions-v4/bench-read-b.png',
   'art/avatars/avatar-forge-v1/art-manifest.json',
   'art/avatars/avatar-forge-v1/runtime/512/mannequin-base-alpha.png',
   'art/avatars/avatar-forge-v1/runtime/512/hair-traveller-alpha.png',

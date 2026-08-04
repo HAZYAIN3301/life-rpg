@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "lan": "HOST=0.0.0.0 node server.js"
+    "lan": "HOST=0.0.0.0 node server.js",
+    "test": "node --test scripts/*.test.js"
   },
   "engines": {
     "node": ">=18"

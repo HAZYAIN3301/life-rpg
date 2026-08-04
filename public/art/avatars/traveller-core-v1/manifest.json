@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 4,
+  "batchId": "traveller-room-actions-v4-20260803",
+  "canvas": [
+    640,
+    900
+  ],
+  "floorY": 860,
+  "genders": [
+    "male",
+    "female"
+  ],
+  "poses": [
+    "idle",
+    "arms-up",
+    "seated",
+    "window-back"
+  ],
+  "runtime": {
+    "activeGender": "male",
+    "activePoses": ["idle", "arms-up", "window-back"],
+    "motionPack": "male/motion-v3/manifest.json",
+    "roomActionPack": "male/room-actions-v4/manifest.json",
+    "roomActionLayout": "workshop-v5",
+    "femaleRuntime": false
+  },
+  "animation": "authored-full-pose-runtime-css-js",
+  "klingRequired": false,
+  "petInteractionGate": "passed via BODY Pair v2 atomic contact frames",
+  "assets": [
+    {
+      "id": "male:idle",
+      "gender": "male",
+      "pose": "idle",
+      "file": "male/poses/idle.png",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        155,
+        64,
+        485,
+        860
+      ],
+      "nonTransparentPixels": 131375,
+      "transparentCorners": true,
+      "result": "PASS"
+    },
+    {
+      "id": "male:arms-up",
+      "gender": "male",
+      "pose": "arms-up",
+      "file": "male/poses/arms-up.png",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        161,
+        31,
+        479,
+        860
+      ],
+      "nonTransparentPixels": 128854,
+      "transparentCorners": true,
+      "result": "PASS"
+    },
+    {
+      "id": "male:seated",
+      "gender": "male",
+      "pose": "seated",
+      "file": "male/poses/seated.png",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        147,
+        167,
+        492,
+        860
+      ],
+      "nonTransparentPixels": 112185,
+      "transparentCorners": true,
+      "result": "PASS"
+    },
+    {
+      "id": "male:window-back",
+      "gender": "male",
+      "pose": "window-back",
+      "file": "male/poses/window-back.png",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        195,
+        60,
+        445,
+        860
+      ],
+      "nonTransparentPixels": 119675,
+      "transparentCorners": true,
+      "result": "PASS"
+    },
+    {
+      "id": "female:idle",
+      "gender": "female",
+      "pose": "idle",
+      "file": "female/poses/idle.png",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        177,
+        91,
+        463,
+        860
+      ],
+      "nonTransparentPixels": 115959,
+      "transparentCorners": true,
+      "result": "PASS"
+    },
+    {
+      "id": "female:arms-up",
+      "gender": "female",
+      "pose": "arms-up",
+      "file": "female/poses/arms-up.png",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        126,
+        46,
+        513,
+        860
+      ],
+      "nonTransparentPixels": 120822,
+      "transparentCorners": true,
+      "result": "PASS"
+    },
+    {
+      "id": "female:seated",
+      "gender": "female",
+      "pose": "seated",
+      "file": "female/poses/seated.png",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        165,
+        197,
+        475,
+        860
+      ],
+      "nonTransparentPixels": 102088,
+      "transparentCorners": true,
+      "result": "PASS"
+    },
+    {
+      "id": "female:window-back",
+      "gender": "female",
+      "pose": "window-back",
+      "file": "female/poses/window-back.png",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        213,
+        92,
+        426,
+        860
+      ],
+      "nonTransparentPixels": 105107,
+      "transparentCorners": true,
+      "result": "PASS"
+    }
+  ]
+}

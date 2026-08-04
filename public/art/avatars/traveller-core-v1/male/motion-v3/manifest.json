@@ -1,0 +1,24 @@
+{
+  "schema": "satoru.traveller-locomotion-v3/1",
+  "avatar": "male-traveller-core-v2",
+  "femaleRuntime": false,
+  "canvas": [
+    640,
+    900
+  ],
+  "floorY": 860,
+  "assets": {
+    "blink": "idle-blink.png",
+    "walk": [
+      "walk-a.png",
+      "walk-b.png"
+    ]
+  },
+  "motion": {
+    "blink": "deterministic finite idle blink",
+    "walk": "two authored pose frames plus world-space translation",
+    "windowVisit": "walk-right -> window-back dwell -> walk-left -> idle"
+  },
+  "klingRequired": false,
+  "passed": true
+}

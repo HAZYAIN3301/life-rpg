@@ -1,0 +1,22 @@
+{
+  "schema": "satoru.body-pair-v2/1",
+  "batchId": "male-traveller-body-toad-v2-20260803",
+  "canvas": [1536, 1536],
+  "groundY": 1470,
+  "avatar": "male-traveller-core-v2",
+  "guardian": "body-toad-02g",
+  "runtimeComposition": "atomic-pair-frame",
+  "femaleRuntime": false,
+  "interactions": {
+    "greet": ["greet-contact.png"],
+    "train": ["train-low.png", "train-high.png"],
+    "rest": ["rest-contact.png", "rest-pet.png"]
+  },
+  "qa": {
+    "sharedCanvas": true,
+    "sharedGroundLine": true,
+    "transparentCorners": true,
+    "physicalContact": true,
+    "klingRequired": false
+  }
+}

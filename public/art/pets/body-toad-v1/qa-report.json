@@ -1,0 +1,96 @@
+{
+  "guardian": "body-toad",
+  "design": "02g-short-judogi-high-belt",
+  "states": {
+    "calm": {
+      "bbox": [
+        72,
+        148,
+        952,
+        920
+      ],
+      "partialAlphaRatio": 0.018487,
+      "magentaPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "stageLocked": true,
+        "magentaFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    },
+    "thriving": {
+      "bbox": [
+        72,
+        148,
+        952,
+        920
+      ],
+      "partialAlphaRatio": 0.018673,
+      "magentaPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "stageLocked": true,
+        "magentaFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    },
+    "strained": {
+      "bbox": [
+        72,
+        148,
+        952,
+        920
+      ],
+      "partialAlphaRatio": 0.018616,
+      "magentaPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "stageLocked": true,
+        "magentaFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    },
+    "restoring": {
+      "bbox": [
+        72,
+        148,
+        952,
+        920
+      ],
+      "partialAlphaRatio": 0.019362,
+      "magentaPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "stageLocked": true,
+        "magentaFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    }
+  },
+  "motion": {
+    "idle": "outputs/body-toad/motion/idle-breath-02g.gif",
+    "frames": 33,
+    "durationMs": 2640,
+    "seamEqual": true,
+    "stageLocked": true,
+    "method": "bottom-anchored breathing deformation; no whole-sprite translation",
+    "pass": true
+  },
+  "pass": true
+}

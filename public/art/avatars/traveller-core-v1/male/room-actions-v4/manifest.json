@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "traveller-room-actions-v4",
+  "layout": "workshop-v5",
+  "anchor": {
+    "leftPct": 65.0,
+    "bottomPct": 10.9,
+    "widthPct": 21.75
+  },
+  "actions": {
+    "bench-rest": {
+      "frames": [
+        "bench-rest.png"
+      ],
+      "durationMs": 7000
+    },
+    "bench-read": {
+      "frames": [
+        "bench-read-a.png",
+        "bench-read-b.png"
+      ],
+      "durationMs": 9000
+    }
+  }
+}
