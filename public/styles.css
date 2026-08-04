@@ -8964,6 +8964,37 @@ html.mobile-nav-open body {
 .den-avatar-core[data-locomotion-position="home"] { scale: 1; }
 .den-avatar-core[data-locomotion-position="window"] { scale: .86; }
 
+/* Den Life v1: honest full-sprite acting for the flattened approved guardian.
+   No limb is rotated independently; these are weight shifts of the complete
+   authored paper figure between longer periods of stillness. */
+.body-toad-v1.is-den-ambient[data-ambient="observe"] .body-toad-v1__stage {
+  animation: denToadObserve 2.4s cubic-bezier(.37,0,.2,1) 1 both;
+}
+.body-toad-v1.is-den-ambient[data-ambient="brace"] .body-toad-v1__stage {
+  animation: denToadBrace 2.2s cubic-bezier(.25,.7,.2,1) 1 both;
+}
+.body-toad-v1.is-den-ambient[data-ambient="settle"] .body-toad-v1__stage {
+  animation: denToadSettle 2.8s cubic-bezier(.45,0,.35,1) 1 both;
+}
+.den-scene[data-den-focus-canon="body"] .den-body-toad {
+  filter: drop-shadow(0 10px 9px rgba(4,6,12,.4)) drop-shadow(0 0 8px rgba(78,205,224,.16));
+}
+@keyframes denToadObserve {
+  0%,100% { transform: translateX(0) rotate(0); }
+  32% { transform: translateX(-.9%) rotate(-.28deg); }
+  68% { transform: translateX(.65%) rotate(.2deg); }
+}
+@keyframes denToadBrace {
+  0%,100% { transform: scale(1); }
+  35% { transform: scale(1.012,.975); }
+  67% { transform: scale(.998,1.018); }
+}
+@keyframes denToadSettle {
+  0%,100% { transform: translateY(0) scale(1); }
+  42% { transform: translateY(.65%) scale(1.006,.982); }
+  72% { transform: translateY(.25%) scale(1.002,.993); }
+}
+
 /* Every species receives the same card viewport. Species-specific normalization
    happens inside it, so a large guardian cannot stretch the grid. */
 .pet-grid {
@@ -9012,4 +9043,5 @@ html.mobile-nav-open body {
   }
   .den-avatar-core,
   .den-scene[data-den-renderer="v5"] .den-pet[data-den-slot] { transition: none !important; }
+  .body-toad-v1.is-den-ambient .body-toad-v1__stage { animation: none !important; }
 }

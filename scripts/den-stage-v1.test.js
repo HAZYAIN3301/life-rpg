@@ -56,7 +56,7 @@ assert.match(css, /data-locomotion-position="window"\]\s*\{ scale: \.86/);
 assert.match(css, /\.body-pair-v2__frame[\s\S]*transform: scaleX\(-1\)/);
 assert.match(css, /\.pet-card\.pet-card-body-toad \{ grid-column: auto/);
 assert.match(index, /den-stage-v1\.js\?v=20260804-den-stage-v1/);
-assert.match(sw, /satoru-v92/);
+assert.match(sw, /satoru-v93/);
 assert.match(sw, /'den-stage-v1\.js'/);
 
 console.log('den-stage-v1: ok');

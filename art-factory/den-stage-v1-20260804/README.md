@@ -1,7 +1,7 @@
 # Den Stage v1
 
 Date: 2026-08-04
-Status: runtime candidate, QA passed
+Status: production foundation, superseded for autonomous direction by Den Life v1
 World: coherent Den v5, `1536 × 864`
 
 ## Problem closed by this batch
@@ -59,5 +59,6 @@ BODY guardian uses the full square.
 
 This batch does not add the ten domain vignettes, a pet wing, autonomous pet
 walking or a generic skeleton. It supplies the geometry foundation those
-features require. The next vertical slice remains BODY-domain ambient motion,
-followed by MONEY / RESOURCES with Fortune Cat.
+features require. BODY-domain ambient direction is implemented by
+`art-factory/den-life-v1-20260804/`; the next vertical slice is MONEY /
+RESOURCES with Fortune Cat.

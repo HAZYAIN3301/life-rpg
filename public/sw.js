@@ -3,7 +3,7 @@
    Bump CACHE whenever the shell or a stable asset URL changes. */
 const CACHE = 'satoru-v93';
 const SHELL = [
-  './', 'index.html', 'app.js', 'canon-domains.js', 'den-stage-v1.js', 'body-toad-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js', 'styles.css', 'shadow-rig-v2.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
+  './', 'index.html', 'app.js', 'canon-domains.js', 'den-stage-v1.js', 'den-life-v1.js', 'body-toad-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js', 'styles.css', 'shadow-rig-v2.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
   'avatar-forge-v1.html', 'avatar-forge-v1.css', 'avatar-forge-v1.js',
   'art/icons/icon-registry.js', 'art/icons/scenes/day-summary-fisher.png',
   'art/gear/inventory/w1-training-blade.png',

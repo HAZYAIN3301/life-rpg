@@ -2312,3 +2312,17 @@ Solo-Leveling-вайб под бренд Satoru/«?». Опционально (�
 - В зверинце все виды получили одинаковое квадратное окно арта. Жаба больше не занимает две колонки и не растягивает сетку размером иллюстрации.
 - Добавлены `public/den-stage-v1.js`, контрактный тест и документация `art-factory/den-stage-v1-20260804/`.
 - QA: Node `14/14`, desktop + mobile `390×844`, 0 browser errors/warnings.
+
+# 2026-08-04 — Den Life v1
+
+- Added `public/den-life-v1.js`: deterministic sparse ambient direction for the
+  approved flattened BODY guardian (`observe`, `brace`, `settle`).
+- Running BODY focus now triggers one automatic authored Traveller–toad warm-up
+  per focus session; physical contact remains an atomic pair frame.
+- Added a scene-priority contract so background direction cannot interrupt
+  manual actions, Traveller room actions, locomotion, contact, editing,
+  tutorials/modals, hidden tabs, or reduced-motion.
+- Fixed a QA-found race: failed/blocked pair starts remain retryable and no
+  longer consume the focus session.
+- Added mobile/desktop browser acceptance and `den-life-v1.test.js`; bumped PWA
+  shell to `satoru-v93`.

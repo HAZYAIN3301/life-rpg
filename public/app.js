@@ -4150,6 +4150,65 @@ function syncAvatarMotion() {
   scheduleDenAvatarWander(6500);
 }
 
+function denLifeContext() {
+  const timer = State.timer;
+  const task = timer ? questById(timer.taskId) : null;
+  const skillIds = task ? taskSkills(task) : [];
+  const focusCanons = skillIds.map((skillId) => {
+    const skill = skillById(skillId);
+    return skill ? canonOf(skill) : null;
+  }).filter(Boolean);
+  const focusCanon = focusCanons.includes('body') ? 'body' : (focusCanons[0] || '');
+  return {
+    focusCanon,
+    focusRunning: Boolean(timer && timer.running),
+    focusSession: timer ? `${timer.taskId}:${timer.startedAt}` : '',
+  };
+}
+
+function denLifeCanAct(shell) {
+  if (!shell || !shell.isConnected || State.view !== 'den' || document.hidden || avatarMotionReduced()) return false;
+  if (document.querySelector('.modal-overlay, .tut-bubble')) return false;
+  if (State._denEdit || shell.classList.contains('is-body-pair-active') || shell.classList.contains('is-body-pair-approaching') || shell.classList.contains('is-room-action-v4-active')) return false;
+  const avatar = shell.querySelector('.den-avatar-core');
+  if (avatar && window.TravellerMotionV3 && window.TravellerMotionV3.isPlaying(avatar)) return false;
+  return true;
+}
+
+function playBodyToadScene(scope, sphereId, mode, options = {}) {
+  if (!scope || !window.BodyToadV1 || !window.BodyToadV1.INTERACTIONS[mode]) return Promise.resolve(false);
+  const toad = scope.querySelector('[data-body-toad]');
+  if (!toad) return Promise.resolve(false);
+  const automatic = options.automatic === true;
+  const meta = window.BodyToadV1.INTERACTIONS[mode];
+  if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, meta.duration + 9000);
+  cancelDenRoomAction(false);
+  cancelDenAvatarLocomotion(true);
+  const restoreState = bodyToadStateForSphere(sphereId);
+  const playPair = () => window.BodyToadV1.playPair(scope, mode, { toad, restoreState });
+  const pairPromise = window.DenStageV1
+    ? window.DenStageV1.approachBodyPair(scope, playPair)
+    : playPair();
+  return pairPromise.then((played) => {
+    if (played) return true;
+    return window.BodyToadV1.playInteraction(toad, mode, { restoreState });
+  }).catch(() => window.BodyToadV1.playInteraction(toad, mode, { restoreState }))
+    .finally(() => setTimeout(() => syncAvatarMotion(), meta.duration + 180));
+}
+
+function syncDenLife() {
+  if (!window.DenLifeV1) return false;
+  if (State.view !== 'den') return window.DenLifeV1.stop();
+  const shell = document.querySelector('.den-shell');
+  const sphereId = bodyGuardianSphereId();
+  if (!shell || !sphereId || !shell.querySelector('[data-body-toad]')) return window.DenLifeV1.stop();
+  return window.DenLifeV1.start(shell, {
+    context: denLifeContext(),
+    canAct: () => denLifeCanAct(shell),
+    onPair: (mode, options) => playBodyToadScene(shell, sphereId, mode, options),
+  });
+}
+
 function openAvatarForgeEditor() {
   const existing = document.getElementById('avatar-forge-overlay');
   if (existing) {
@@ -9024,6 +9083,8 @@ function renderDen() {
   }).join('');
   const bodyGuardian = pets.find((pet) => pet.species === 'bodyToad');
   const p = nestedProgress(), eP = energyPct(), eM = energyMeta(), tm = State.timer;
+  const lifeContext = denLifeContext();
+  const bodyFocusActive = lifeContext.focusRunning && lifeContext.focusCanon === 'body';
   const avatarState = denAvatarState(eP, p, tm);
   const avatarPose = denCorePose(avatarState);
   const amb = (State.settings && State.settings.ambient) || {};
@@ -9034,7 +9095,7 @@ function renderDen() {
     : `<div class="den-focus"><span>${satoruIconHTML('system.focus', 'den-row-glyph', '◇')} Готов к делу?</span><button class="btn sm" data-action="goto-today">Начать фокус</button></div>`;
   return `<div class="den-shell">
     <div class="card den-card">
-    <div class="den-scene" data-den-theme="${theme.id}" data-den-light="${den.light}" data-den-phase="${denPhaseForLight(den.light)}" data-den-period="${denMasterFor(den).period}" data-den-renderer="${coherentV5 ? 'v5' : 'v3'}" data-den-ambient="${ambientMode}">
+    <div class="den-scene" data-den-theme="${theme.id}" data-den-light="${den.light}" data-den-phase="${denPhaseForLight(den.light)}" data-den-period="${denMasterFor(den).period}" data-den-renderer="${coherentV5 ? 'v5' : 'v3'}" data-den-ambient="${ambientMode}" data-den-focus-canon="${esc(lifeContext.focusCanon)}">
       ${denSceneSVG(theme, den.light, den)}
       ${denObjectsHTML(den, coherentV5)}
       ${denLegacyRoomFixturesHTML(coherentV5)}
@@ -9067,7 +9128,7 @@ function renderDen() {
       <button class="btn ghost sm" data-action="goto-pets">${satoruIconHTML('system.pets', 'button-glyph', '◇')} Зверинец</button>
     </div>
     ${bodyGuardian ? `<div class="den-guardian-actions" aria-label="Взаимодействие с хранителем тела">
-      <span><b>Жабий сэнсэй</b><small>${esc(window.BodyToadV1.STATE_META[bodyToadStateForSphere(bodyGuardian.s.id)].line)}</small></span>
+      <span><b>Жабий сэнсэй${bodyFocusActive ? ' · ведёт разминку' : ''}</b><small>${esc(bodyFocusActive ? 'BODY-фокус активен: сэнсэй подключится сам и не будет отвлекать от работы.' : window.BodyToadV1.STATE_META[bodyToadStateForSphere(bodyGuardian.s.id)].line)}</small></span>
       <div>
         <button class="btn ghost sm" data-action="body-toad-interact" data-mode="greet" data-id="${bodyGuardian.s.id}">Приветствие</button>
         <button class="btn ghost sm" data-action="body-toad-interact" data-mode="train" data-id="${bodyGuardian.s.id}">Разминка вместе</button>
@@ -11678,6 +11739,7 @@ function afterMainCommit() {
     }
   } catch {}
   try { syncAvatarMotion(); } catch {}
+  try { syncDenLife(); } catch {}
   try { scheduleDenPhaseBoundary(); } catch {}
   try { tutorialPaint(); } catch {}
 }
@@ -12410,20 +12472,11 @@ function onClick(e) {
     if (toad && window.BodyToadV1) {
       const restoreState = bodyToadStateForSphere(id);
       if (action === 'body-toad-interact') {
-        cancelDenRoomAction(false);
-        cancelDenAvatarLocomotion(true);
-        const playPair = () => window.BodyToadV1.playPair(scope, mode, { toad, restoreState });
-        const pairPromise = window.DenStageV1
-          ? window.DenStageV1.approachBodyPair(scope, playPair)
-          : playPair();
-        pairPromise.then((played) => {
-          if (!played) window.BodyToadV1.playInteraction(toad, mode, { restoreState }).catch(() => {});
-        }).catch(() => window.BodyToadV1.playInteraction(toad, mode, { restoreState }).catch(() => {}));
+        playBodyToadScene(scope, id, mode).catch(() => {});
       } else {
         window.BodyToadV1.playInteraction(toad, mode, { restoreState }).catch(() => {});
       }
       const meta = window.BodyToadV1.INTERACTIONS[mode];
-      if (action === 'body-toad-interact') setTimeout(() => syncAvatarMotion(), (meta && meta.duration || 3000) + 180);
       if (meta) toast(`🐸 ${meta.label}`);
       try { sfx(mode === 'train' ? 'complete' : 'click'); } catch {}
       track(`body-toad:${mode}`);
