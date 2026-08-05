@@ -1108,6 +1108,12 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .body-pair-v2__frame--b { opacity: 0; }
 .body-pair-v2[data-mode="train"].is-active .body-pair-v2__frame--a { animation: bodyPairTrainA 1.4s steps(1,end) infinite; }
 .body-pair-v2[data-mode="train"].is-active .body-pair-v2__frame--b { animation: bodyPairTrainB 1.4s steps(1,end) infinite; }
+.body-pair-v2[data-mode="pushup"].is-active .body-pair-v2__frame--a { animation: bodyPairPushA 1.18s steps(1,end) infinite; }
+.body-pair-v2[data-mode="pushup"].is-active .body-pair-v2__frame--b { animation: bodyPairPushB 1.18s steps(1,end) infinite; }
+.body-pair-v2[data-mode="stretch"].is-active .body-pair-v2__frame--a { animation: bodyPairStretchA 2.4s steps(1,end) infinite; }
+.body-pair-v2[data-mode="stretch"].is-active .body-pair-v2__frame--b { animation: bodyPairStretchB 2.4s steps(1,end) infinite; }
+.body-pair-v2[data-mode="whistle"].is-active .body-pair-v2__frame--a { animation: bodyPairWhistleA .86s steps(1,end) infinite; }
+.body-pair-v2[data-mode="whistle"].is-active .body-pair-v2__frame--b { animation: bodyPairWhistleB .86s steps(1,end) infinite; }
 .body-pair-v2[data-mode="rest"].is-active .body-pair-v2__frame--a { animation: bodyPairPetA 1.5s steps(1,end) 2; }
 .body-pair-v2[data-mode="rest"].is-active .body-pair-v2__frame--b { animation: bodyPairPetB 1.5s steps(1,end) 2; }
 .body-pair-v2[data-mode="rest"].is-active .body-pair-v2__stage { animation: bodyPairRestBreath 3s ease-in-out 1; transform-origin: 50% 95.703125%; }
@@ -1162,6 +1168,12 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 }
 @keyframes bodyPairTrainA { 0%,49.999%,100% { opacity: 1; } 50%,99.999% { opacity: 0; } }
 @keyframes bodyPairTrainB { 0%,49.999%,100% { opacity: 0; } 50%,99.999% { opacity: 1; } }
+@keyframes bodyPairPushA { 0%,49.999%,100% { opacity: 1; } 50%,99.999% { opacity: 0; } }
+@keyframes bodyPairPushB { 0%,49.999%,100% { opacity: 0; } 50%,99.999% { opacity: 1; } }
+@keyframes bodyPairStretchA { 0%,54.999%,100% { opacity: 1; } 55%,99.999% { opacity: 0; } }
+@keyframes bodyPairStretchB { 0%,54.999%,100% { opacity: 0; } 55%,99.999% { opacity: 1; } }
+@keyframes bodyPairWhistleA { 0%,49.999%,100% { opacity: 1; } 50%,99.999% { opacity: 0; } }
+@keyframes bodyPairWhistleB { 0%,49.999%,100% { opacity: 0; } 50%,99.999% { opacity: 1; } }
 @keyframes bodyPairPetA { 0%,49.999%,100% { opacity: 1; } 50%,99.999% { opacity: 0; } }
 @keyframes bodyPairPetB { 0%,49.999%,100% { opacity: 0; } 50%,99.999% { opacity: 1; } }
 @keyframes bodyPairRestBreath { 0%,100% { transform: scale(1); } 55% { transform: scale(1.001,1.004); } }
@@ -8201,10 +8213,10 @@ html.mobile-nav-open body {
 
 .den-avatar.den-avatar-raster {
   left: 38.2813% !important;
-  top: 38.4259% !important;
+  top: 31.9444% !important;
   bottom: auto !important;
-  width: 23.4375% !important;
-  height: 62.5%;
+  width: 27.5% !important;
+  height: 69%;
   transform: none !important;
 }
 .den-companion {
@@ -8787,8 +8799,8 @@ html.mobile-nav-open body {
 .avatar-core-stack[data-locomotion="walk"] .avatar-core-motion { animation: none; }
 .avatar-core-stack[data-locomotion="walk"] .avatar-core-frame.is-active:not(.avatar-core-walk-frame) { opacity: 0 !important; transition: none; }
 .avatar-core-walk-frame { opacity: 0; transition: none; }
-.avatar-core-stack[data-locomotion="walk"] .avatar-core-walk-frame--a { animation: avatarCoreWalkA .52s steps(1,end) infinite; }
-.avatar-core-stack[data-locomotion="walk"] .avatar-core-walk-frame--b { animation: avatarCoreWalkB .52s steps(1,end) infinite; }
+.avatar-core-stack[data-locomotion="walk"] .avatar-core-walk-frame--a { animation: avatarCoreWalkA .76s steps(1,end) infinite; }
+.avatar-core-stack[data-locomotion="walk"] .avatar-core-walk-frame--b { animation: avatarCoreWalkB .76s steps(1,end) infinite; }
 .den-avatar-core[data-locomotion-direction="left"] .avatar-core-walk-frame { transform: scaleX(-1); }
 .avatar-core-stack[data-avatar-core-pose="arms-up"] .avatar-core-motion { animation: avatarCoreVictorySettle .72s cubic-bezier(.18,.76,.22,1) 1, avatarCoreBreathing 4.8s .72s cubic-bezier(.45,0,.55,1) infinite; }
 .avatar-core-stack[data-avatar-core-pose="window-back"] .avatar-core-motion { animation-duration: 5.8s; }
@@ -8824,11 +8836,13 @@ html.mobile-nav-open body {
 .den-avatar-core:hover .avatar-core-frame { filter: drop-shadow(0 14px 18px rgba(0,0,0,.4)) brightness(1.035); }
 .den-avatar-core:focus-visible { outline: none; }
 .den-avatar-core:focus-visible .avatar-core-frame { filter: drop-shadow(0 14px 19px rgba(83,214,255,.38)) brightness(1.035); }
-.den-avatar-core[data-pose="window-back"] { left: 63% !important; width: 21% !important; }
+.den-avatar-core[data-pose="window-back"] { left: 38.2813% !important; width: 27.5% !important; }
 .den-avatar-core[data-locomotion-position="home"],
-.den-avatar-core[data-locomotion-position="window"] { left: 38.2813% !important; width: 23.4375% !important; }
+.den-avatar-core[data-locomotion-position="window"],
+.den-avatar-core[data-locomotion-position="bench"] { left: 38.2813% !important; width: 27.5% !important; }
 .den-avatar-core[data-locomotion-position="home"] { translate: 0 0; }
-.den-avatar-core[data-locomotion-position="window"] { translate: 122% 0; }
+.den-avatar-core[data-locomotion-position="window"],
+.den-avatar-core[data-locomotion-position="bench"] { translate: 100% 0; }
 .den-avatar-core.is-locomotion-resetting { transition: none !important; translate: 0 0 !important; }
 
 @media (max-width: 720px) {
@@ -8883,6 +8897,30 @@ html.mobile-nav-open body {
 .traveller-room-v4[data-action="bench-read"].is-active .traveller-room-v4__frame--b {
   animation: travellerRoomReadB 3.2s steps(1,end) infinite;
 }
+.den-prop-portal {
+  position: absolute;
+  left: 74%;
+  bottom: 18%;
+  z-index: 12;
+  display: block;
+  width: 8.5%;
+  aspect-ratio: 1054 / 1492;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: scale(.08,.72) rotate(-7deg);
+  transform-origin: 50% 86%;
+}
+.den-prop-portal img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.den-shell.is-den-prop-portal-active .den-prop-portal {
+  visibility: visible;
+  animation: denPropPortalOpen 1.05s cubic-bezier(.2,.78,.2,1) both;
+}
+@keyframes denPropPortalOpen {
+  0% { opacity: 0; transform: scale(.06,.7) rotate(-8deg); }
+  28%,68% { opacity: 1; transform: scale(1) rotate(2deg); }
+  100% { opacity: 0; transform: scale(.04,.76) rotate(9deg); }
+}
 .den-shell.is-room-action-v4-active .den-avatar-core {
   opacity: 0 !important;
   visibility: hidden !important;
@@ -8907,6 +8945,7 @@ html.mobile-nav-open body {
 @media (prefers-reduced-motion: reduce) {
   .traveller-room-v4,
   .traveller-room-v4__frame { animation: none !important; transition: none !important; }
+  .den-prop-portal { animation: none !important; opacity: 0 !important; visibility: hidden !important; }
   .traveller-room-v4[data-action="bench-read"] .traveller-room-v4__frame--a { opacity: 1 !important; }
   .traveller-room-v4[data-action="bench-read"] .traveller-room-v4__frame--b { opacity: 0 !important; }
 }
@@ -8931,11 +8970,11 @@ html.mobile-nav-open body {
 /* Approach the same meeting anchor before the complete contact frame appears.
    The final contact remains one authored image, so hands and faces cannot split. */
 .den-shell.is-body-pair-approaching .den-avatar-core {
-  translate: 46% 1.5%;
-  scale: .94;
+  translate: 8% 1%;
+  scale: .96;
 }
 .den-shell.is-body-pair-at-meeting .den-avatar-core,
-.den-shell.is-body-pair-returning .den-avatar-core { translate: 46% 1.5%; scale: .94; }
+.den-shell.is-body-pair-returning .den-avatar-core { translate: 8% 1%; scale: .96; }
 .den-shell.is-body-pair-approaching .den-body-toad,
 .den-shell.is-body-pair-at-meeting .den-body-toad,
 .den-shell.is-body-pair-returning .den-body-toad { translate: 0 0; scale: 1; outline: none; }
@@ -8958,11 +8997,12 @@ html.mobile-nav-open body {
 /* Perspective belongs to the actor's ground point. The window is farther from
    the camera than the home anchor, therefore both translation and scale tween. */
 .den-avatar-core {
-  transition: translate 1.8s linear, scale 1.8s linear, opacity .18s ease, visibility 0s linear 0s;
+  transition: translate 2.2s linear, scale 2.2s linear, opacity .18s ease, visibility 0s linear 0s;
   scale: 1;
 }
 .den-avatar-core[data-locomotion-position="home"] { scale: 1; }
-.den-avatar-core[data-locomotion-position="window"] { scale: .80; }
+.den-avatar-core[data-locomotion-position="window"],
+.den-avatar-core[data-locomotion-position="bench"] { scale: .78; }
 
 /* Den Life v2 uses authored frame swaps. Scaling a complete PNG is not acting. */
 .den-body-toad .body-toad-v1__stage { animation: none !important; }

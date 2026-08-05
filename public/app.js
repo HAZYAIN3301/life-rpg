@@ -4106,13 +4106,39 @@ function cancelDenRoomAction(notify = false) {
   if (!shell || !window.TravellerRoomV4) return false;
   return window.TravellerRoomV4.cancel(shell, { notify });
 }
+function playDenPropPortal(shell, duration = 1050) {
+  const layer = shell && shell.querySelector('[data-den-prop-portal]');
+  if (!shell || !layer) return Promise.resolve(false);
+  shell.classList.remove('is-den-prop-portal-active');
+  void layer.offsetWidth;
+  shell.classList.add('is-den-prop-portal-active');
+  layer.setAttribute('aria-hidden', 'false');
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      if (shell.isConnected) shell.classList.remove('is-den-prop-portal-active');
+      if (layer.isConnected) layer.setAttribute('aria-hidden', 'true');
+      resolve(true);
+    }, Math.max(500, Number(duration) || 1050));
+  });
+}
 function runDenRoomAction(actionId, options = {}) {
   const shell = document.querySelector('.den-shell');
   if (State.view !== 'den' || !shell || !window.TravellerRoomV4) return Promise.resolve(false);
   if (!options.automatic && window.DenLifeV1) window.DenLifeV1.postpone(shell, 11000);
   clearDenAvatarWanderTimer();
-  cancelDenAvatarLocomotion(true);
-  return new Promise((resolve) => {
+  const host = shell.querySelector('.den-avatar-core');
+  if (!host || !window.TravellerMotionV3) return Promise.resolve(false);
+  if (window.TravellerMotionV3.isPlaying(host)) window.TravellerMotionV3.cancel(host);
+  State._denAvatarPose = 'idle';
+  const walkOptions = { preload: preloadAvatarImage };
+  return syncDenCorePose('idle').then(() => window.TravellerMotionV3.walkTo(host, 'bench', walkOptions)).then((arrived) => {
+    if (!arrived || !shell.isConnected) return false;
+    return actionId === 'bench-read' ? playDenPropPortal(shell) : true;
+  }).then((ready) => new Promise((resolve) => {
+    if (!ready || !shell.isConnected) {
+      window.TravellerMotionV3.walkTo(host, 'home', walkOptions).finally(() => resolve(false));
+      return;
+    }
     let settled = false;
     const finish = (played) => {
       if (settled) return;
@@ -4121,12 +4147,20 @@ function runDenRoomAction(actionId, options = {}) {
       resolve(played);
     };
     window.TravellerRoomV4.play(shell, actionId, {
-      onFinish: () => finish(true),
+      onFinish: () => {
+        window.TravellerMotionV3.walkTo(host, 'home', walkOptions)
+          .then(() => finish(true))
+          .catch(() => finish(true));
+      },
     }).then((played) => {
-      if (!played) finish(false);
+      if (!played) {
+        window.TravellerMotionV3.walkTo(host, 'home', walkOptions)
+          .then(() => finish(false))
+          .catch(() => finish(false));
+      }
       else if (!options.waitForFinish) finish(true);
     }).catch(() => finish(false));
-  });
+  }));
 }
 function scheduleDenAvatarWander(delay = 16000) {
   clearDenAvatarWanderTimer();
@@ -4217,8 +4251,16 @@ function playDenToadBeat(scope, sphereId, beatId) {
   const toad = scope.querySelector('[data-body-toad]');
   if (!toad) return Promise.resolve(false);
   const restoreState = bodyToadStateForSphere(sphereId);
+  if (beatId === 'toad-blink') {
+    return window.BodyToadV1.setState(toad, 'restoring', { animated: false, instant: true }).then(() => new Promise((resolve) => {
+      setTimeout(() => {
+        window.BodyToadV1.setState(toad, restoreState, { animated: false, instant: true })
+          .then(() => resolve(true)).catch(() => resolve(false));
+      }, 115);
+    })).catch(() => false);
+  }
   const targetState = beatId === 'coach' || beatId === 'toad-look' ? 'thriving' : 'restoring';
-  const hold = beatId === 'coach' ? 1350 : beatId === 'toad-look' ? 900 : 170;
+  const hold = beatId === 'coach' ? 1350 : 900;
   return window.BodyToadV1.setState(toad, targetState, { animated: false }).then(() => new Promise((resolve) => {
     setTimeout(() => {
       window.BodyToadV1.setState(toad, restoreState, { animated: false }).then(() => resolve(true)).catch(() => resolve(false));
@@ -9136,6 +9178,7 @@ function renderDen() {
       <button class="den-companion" data-action="comp-pet" title="Погладить ${esc(c.name)}">${shadowVideo(ti, mood.face, 'den')}<span class="den-companion-name">${esc(c.name)}</span></button>
       ${bodyGuardian ? window.BodyToadV1.pairMarkup({ className: 'body-pair-v2--den' }) : ''}
       ${coherentV5 && window.TravellerRoomV4 ? window.TravellerRoomV4.markup({ className: 'traveller-room-v4--den' }) : ''}
+      ${coherentV5 ? '<span class="den-prop-portal" data-den-prop-portal aria-hidden="true"><img src="/art/den/actors/prop-portal.png?v=20260805-1" alt="" aria-hidden="true" draggable="false" decoding="async"></span>' : ''}
       <button class="den-avatar den-avatar-raster den-avatar-core" data-action="den-avatar-pose" data-state="${avatarState}" data-pose="${avatarPose}" title="${esc(AVATAR_CORE_POSE_META[avatarPose].label)}. Нажми, чтобы сменить действие">${avatarCorePoseHTML(avatarPose, { className: 'avatar-core-stack--den' })}<span class="den-avatar-shadow"></span></button>
       ${petLayer}
       <div class="den-tag">${rankIconHTML(cr, 'rank-inline-icon')} <span>${esc(nm)}</span><small>ур.${charLevel()}</small></div>
@@ -9165,6 +9208,9 @@ function renderDen() {
       <div>
         <button class="btn ghost sm" data-action="body-toad-interact" data-mode="greet" data-id="${bodyGuardian.s.id}">Приветствие</button>
         <button class="btn ghost sm" data-action="body-toad-interact" data-mode="train" data-id="${bodyGuardian.s.id}">Разминка вместе</button>
+        <button class="btn ghost sm" data-action="body-toad-interact" data-mode="pushup" data-id="${bodyGuardian.s.id}">Отжимания</button>
+        <button class="btn ghost sm" data-action="body-toad-interact" data-mode="stretch" data-id="${bodyGuardian.s.id}">Растяжка</button>
+        <button class="btn ghost sm" data-action="body-toad-interact" data-mode="whistle" data-id="${bodyGuardian.s.id}">Свисток</button>
         <button class="btn ghost sm" data-action="body-toad-interact" data-mode="rest" data-id="${bodyGuardian.s.id}">Передышка</button>
       </div>
     </div>` : ''}
@@ -12511,7 +12557,7 @@ function onClick(e) {
       }
       const meta = window.BodyToadV1.INTERACTIONS[mode];
       if (meta) toast(`🐸 ${meta.label}`);
-      try { sfx(mode === 'train' ? 'complete' : 'click'); } catch {}
+      try { sfx(['train', 'pushup', 'stretch', 'whistle'].includes(mode) ? 'complete' : 'click'); } catch {}
       track(`body-toad:${mode}`);
     }
     return;

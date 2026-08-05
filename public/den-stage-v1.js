@@ -11,10 +11,10 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenStage(root) {
   'use strict';
 
-  const VERSION = '1.1.0';
+  const VERSION = '1.2.0';
   const WORLD = Object.freeze({ width: 1536, height: 864 });
-  const APPROACH_MS = 1800;
-  const RETURN_MS = 1600;
+  const APPROACH_MS = 2200;
+  const RETURN_MS = 2200;
 
   // Anchors are measured at the actor's ground contact, not at its image box.
   // Their footprints never overlap, including the largest BODY guardian.

@@ -2341,3 +2341,22 @@ Solo-Leveling-вайб под бренд Satoru/«?». Опционально (�
   full-frame changes.
 - QA: project tests `15/15`; two BODY cycles observed in 26 seconds; desktop and
   mobile `390×844` visual acceptance passed; PWA cache bumped to `satoru-v94`.
+
+# 2026-08-05 — Den Life v3 + BODY action pack v3
+
+- Fixed walk timing (`2200 ms` motion = `2200 ms` translation), return path,
+  rear-room perspective and standing/sitting scale continuity.
+- Sitting and reading now approach the bench; reading opens an original
+  cut-paper portal before the authored book frame appears.
+- Manual room actions use a hard director hold and cannot be interrupted by a
+  late automatic callback.
+- Frog blink is a real 115 ms frame swap; BODY meeting no longer changes the
+  approach distance at the atomic-pair cut.
+- Added six production pair frames: push-up down/up, assisted stretch A/B and
+  whistle A/B. Rejected oversized toad drafts were corrected before runtime.
+- BODY focus now keeps acting for the session: whistle → push-up → stretch →
+  squat, with only short recovery gaps.
+- Runtime: `TravellerMotionV3 3.1.0`, `DenStageV1 1.2.0`, `DenLifeV1 2.1.0`,
+  `BodyToadV1 2.3.0`, PWA `satoru-v95`.
+- Automated QA: `15/15` PASS; desktop action acceptance passed. Mobile and
+  production smoke are recorded after deployment.

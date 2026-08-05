@@ -1,0 +1,21 @@
+{
+  "id": "body-toad-action-pack-v3",
+  "date": "2026-08-05",
+  "status": "production-candidate",
+  "canvas": [1536, 1536],
+  "groundY": 1470,
+  "avatar": "male-traveller-core-v1",
+  "guardian": "body-toad-v1-final",
+  "runtimeRoot": "/art/pets/body-toad-v1/pair-v3/",
+  "interactions": {
+    "pushup": ["pushup-down.png", "pushup-up.png"],
+    "stretch": ["stretch-a.png", "stretch-b.png"],
+    "whistle": ["whistle-a.png", "whistle-b.png"]
+  },
+  "rules": {
+    "atomicPair": true,
+    "runtimeOffset": [0, 0],
+    "transparentCorners": true,
+    "femaleRuntime": false
+  }
+}

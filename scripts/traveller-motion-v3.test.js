@@ -14,7 +14,9 @@ function pngSize(file) {
   return [header.readUInt32BE(16), header.readUInt32BE(20)];
 }
 
-assert.equal(motion.VERSION, '3.0.0');
+assert.equal(motion.VERSION, '3.1.0');
+assert.equal(motion.WALK_MS, 2200);
+assert.equal(typeof motion.walkTo, 'function');
 assert.equal(motion.frameSrc('blink'), '/art/avatars/traveller-core-v1/male/motion-v3/idle-blink.png');
 assert.equal(motion.frameSrc('walkA'), '/art/avatars/traveller-core-v1/male/motion-v3/walk-a.png');
 assert.equal(motion.frameSrc('walkB'), '/art/avatars/traveller-core-v1/male/motion-v3/walk-b.png');

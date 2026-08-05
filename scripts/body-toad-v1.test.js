@@ -14,7 +14,7 @@ function pngSize(file) {
   return [header.readUInt32BE(16), header.readUInt32BE(20)];
 }
 
-assert.equal(toad.VERSION, '2.1.0');
+assert.equal(toad.VERSION, '2.3.0');
 assert.deepEqual(toad.STATES, ['calm', 'thriving', 'strained', 'restoring']);
 assert.equal(toad.normalizeState('thriving'), 'thriving');
 assert.equal(toad.normalizeState('unknown'), 'calm');
@@ -26,6 +26,7 @@ assert.equal(toad.frameSrc('calm', true), '/art/pets/body-toad-v1/states/calm.pn
 assert.equal(toad.frameSrc('strained', true), '/art/pets/body-toad-v1/states/strained.png');
 assert.equal(toad.pairFrameSrc('greet-contact'), '/art/pets/body-toad-v1/pair-v2/greet-contact.png');
 assert.equal(toad.pairFrameSrc('rest-pet'), '/art/pets/body-toad-v1/pair-v2/rest-pet.png');
+assert.equal(toad.pairFrameSrc('pushup-down'), '/art/pets/body-toad-v1/pair-v3/pushup-down.png?v=20260805-2');
 assert.equal(toad.pairFrameSrc('unknown'), '/art/pets/body-toad-v1/pair-v2/rest-contact.png');
 
 const html = toad.markup({ state: 'thriving', className: 'qa"class', label: 'Жаба <босс>' });
@@ -34,11 +35,16 @@ assert.match(html, /data-state="thriving"/);
 assert.match(html, /qa&quot;class/);
 assert.match(html, /Жаба &lt;босс&gt;/);
 
-assert.deepEqual(Object.keys(toad.INTERACTIONS), ['greet', 'train', 'rest']);
+assert.deepEqual(Object.keys(toad.INTERACTIONS), ['greet', 'train', 'whistle', 'pushup', 'stretch', 'rest']);
 for (const interaction of Object.values(toad.INTERACTIONS)) {
-  assert.ok(interaction.duration >= 1000 && interaction.duration <= 3000);
+  assert.ok(interaction.duration >= 1000 && interaction.duration <= 6000);
   assert.ok(toad.STATES.includes(interaction.state));
   assert.ok(interaction.pairFrames.length >= 1);
+}
+
+const actionPairRoot = path.join(projectRoot, 'public', 'art', 'pets', 'body-toad-v1', 'pair-v3');
+for (const file of ['pushup-down.png', 'pushup-up.png', 'stretch-a.png', 'stretch-b.png', 'whistle-a.png', 'whistle-b.png']) {
+  assert.deepEqual(pngSize(path.join(actionPairRoot, file)), [1536, 1536]);
 }
 
 const pairRoot = path.join(projectRoot, 'public', 'art', 'pets', 'body-toad-v1', 'pair-v2');

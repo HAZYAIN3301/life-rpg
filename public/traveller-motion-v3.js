@@ -5,15 +5,15 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function (root) {
   'use strict';
 
-  const VERSION = '3.0.0';
+  const VERSION = '3.1.0';
   const ART_ROOT = '/art/avatars/traveller-core-v1/male/motion-v3/';
   const ASSETS = Object.freeze({
     blink: 'idle-blink.png',
     walkA: 'walk-a.png',
     walkB: 'walk-b.png',
   });
-  const WALK_MS = 2800;
-  const DWELL_MS = 4200;
+  const WALK_MS = 2200;
+  const DWELL_MS = 3600;
   const controllers = new WeakMap();
 
   function frameSrc(key) {
@@ -85,6 +85,45 @@
     raf(() => host.classList.remove('is-locomotion-resetting'));
   }
 
+  async function walkLeg(host, controller, target, options) {
+    const config = options || {};
+    const destination = target === 'home' ? 'home' : (target === 'bench' ? 'bench' : 'window');
+    const direction = destination === 'home' ? 'left' : 'right';
+    const preload = typeof config.preload === 'function' ? config.preload : () => Promise.resolve();
+    await Promise.all(['walkA', 'walkB'].map((key) => preload(frameSrc(key))));
+    if (controller.cancelled || !host.isConnected) return false;
+    host.classList.remove('is-locomotion-resetting');
+    if (!host.dataset.locomotionPosition && destination !== 'home') host.dataset.locomotionPosition = 'home';
+    if (!installWalkFrames(host, direction)) return false;
+    await nextFrame();
+    if (controller.cancelled) return false;
+    host.dataset.locomotionPosition = destination;
+    if (!(await pause(controller, Number(config.walkMs) || WALK_MS))) return false;
+    clearWalkFrames(host);
+    if (destination === 'home') {
+      delete host.dataset.locomotion;
+      delete host.dataset.locomotionDirection;
+      delete host.dataset.locomotionPosition;
+    } else {
+      host.dataset.locomotion = 'arrived';
+      delete host.dataset.locomotionDirection;
+    }
+    return true;
+  }
+
+  async function walkTo(host, target, options) {
+    if (!host || !host.isConnected || controllers.has(host)) return false;
+    const controller = { cancelled: false, timer: 0, waitResolve: null };
+    controllers.set(host, controller);
+    try {
+      return await walkLeg(host, controller, target, options);
+    } finally {
+      const current = controllers.get(host);
+      if (current === controller) controllers.delete(host);
+      if (controller.cancelled) resetHost(host);
+    }
+  }
+
   function cancel(host) {
     if (!host) return false;
     const controller = controllers.get(host);
@@ -116,29 +155,18 @@
       await Promise.all(['walkA', 'walkB', 'blink'].map((key) => preload(frameSrc(key))));
       if (controller.cancelled || !host.isConnected) return false;
 
-      host.classList.remove('is-locomotion-resetting');
-      host.dataset.locomotionPosition = 'home';
-      if (!installWalkFrames(host, 'right')) return false;
-      await nextFrame();
-      if (controller.cancelled) return false;
-      host.dataset.locomotionPosition = 'window';
-      if (!(await pause(controller, Number(config.walkMs) || WALK_MS))) return false;
+      if (!(await walkLeg(host, controller, 'window', config))) return false;
 
       await swapPose('window-back');
       if (controller.cancelled || !host.isConnected) return false;
-      clearWalkFrames(host);
       host.dataset.locomotion = 'dwell';
       host.dataset.pose = 'window-back';
       if (!(await pause(controller, Number(config.dwellMs) || DWELL_MS))) return false;
 
-      if (!installWalkFrames(host, 'left')) return false;
-      await nextFrame();
-      if (controller.cancelled) return false;
-      host.dataset.locomotionPosition = 'home';
-      if (!(await pause(controller, Number(config.walkMs) || WALK_MS))) return false;
-
       await swapPose('idle');
       if (controller.cancelled || !host.isConnected) return false;
+      if (!(await walkLeg(host, controller, 'home', config))) return false;
+
       clearWalkFrames(host);
       host.dataset.pose = 'idle';
       delete host.dataset.locomotion;
@@ -166,6 +194,7 @@
     blinkMarkup,
     installWalkFrames,
     clearWalkFrames,
+    walkTo,
     playWindowVisit,
     cancel,
     isPlaying,

@@ -18,9 +18,10 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildBodyToadV1() {
   'use strict';
 
-  const VERSION = '2.1.0';
+  const VERSION = '2.3.0';
   const ART_ROOT = '/art/pets/body-toad-v1/';
   const PAIR_ART_ROOT = `${ART_ROOT}pair-v2/`;
+  const ACTION_PAIR_ART_ROOT = `${ART_ROOT}pair-v3/`;
   const STATES = Object.freeze(['calm', 'thriving', 'strained', 'restoring']);
   const STATE_META = Object.freeze({
     calm: { label: 'Спокоен', line: 'Держит стойку и следит за ритмом.' },
@@ -31,6 +32,9 @@
   const INTERACTIONS = Object.freeze({
     greet: { label: 'Поприветствовать', duration: 1500, state: 'calm', pairFrames: ['greet-contact'] },
     train: { label: 'Размяться вместе', duration: 2800, state: 'thriving', pairFrames: ['train-low', 'train-high'] },
+    whistle: { label: 'Команда сэнсэя', duration: 3200, state: 'thriving', pairFrames: ['whistle-a', 'whistle-b'] },
+    pushup: { label: 'Отжимания', duration: 5200, state: 'thriving', pairFrames: ['pushup-down', 'pushup-up'] },
+    stretch: { label: 'Растяжка', duration: 5600, state: 'restoring', pairFrames: ['stretch-a', 'stretch-b'] },
     rest: { label: 'Погладить и передохнуть', duration: 3000, state: 'restoring', pairFrames: ['rest-contact', 'rest-pet'] },
   });
   const PET_STATE_MAP = Object.freeze({
@@ -60,8 +64,10 @@
   }
 
   function pairFrameSrc(frame) {
-    const allowed = new Set(['rest-contact', 'rest-pet', 'greet-contact', 'train-low', 'train-high']);
-    const safe = allowed.has(frame) ? frame : 'rest-contact';
+    const legacy = new Set(['rest-contact', 'rest-pet', 'greet-contact', 'train-low', 'train-high']);
+    const actions = new Set(['whistle-a', 'whistle-b', 'pushup-down', 'pushup-up', 'stretch-a', 'stretch-b']);
+    if (actions.has(frame)) return `${ACTION_PAIR_ART_ROOT}${frame}.png?v=20260805-2`;
+    const safe = legacy.has(frame) ? frame : 'rest-contact';
     return `${PAIR_ART_ROOT}${safe}.png`;
   }
 
@@ -189,14 +195,16 @@
       const stage = element.querySelector('.body-toad-v1__stage');
       if (!stage) return element;
       const next = document.createElement('img');
-      next.className = 'body-toad-v1__frame is-incoming';
+      next.className = `body-toad-v1__frame ${config.instant === true ? 'is-active' : 'is-incoming'}`;
       next.src = src;
       next.alt = '';
       next.setAttribute('aria-hidden', 'true');
       next.draggable = false;
       next.decoding = 'async';
-      stage.appendChild(next);
+      if (config.instant === true) stage.replaceChildren(next);
+      else stage.appendChild(next);
       element.dataset.state = safe;
+      if (config.instant === true) return element;
       requestAnimationFrame(() => requestAnimationFrame(() => {
         if (!next.isConnected) return;
         next.classList.add('is-active');
@@ -241,6 +249,7 @@
     VERSION,
     ART_ROOT,
     PAIR_ART_ROOT,
+    ACTION_PAIR_ART_ROOT,
     STATES,
     STATE_META,
     INTERACTIONS,

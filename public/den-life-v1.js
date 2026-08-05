@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenLife(root) {
   'use strict';
 
-  const VERSION = '2.0.0';
+  const VERSION = '2.1.0';
   const FIRST_AMBIENT_MS = 3200;
   const FIRST_FOCUS_MS = 1600;
   const RETRY_MS = 1800;
@@ -23,8 +23,10 @@
     Object.freeze({ id: 'bench-read', kind: 'room', gap: 5200 }),
   ]);
   const BODY_FOCUS_SEQUENCE = Object.freeze([
-    Object.freeze({ id: 'coach', kind: 'toad', gap: 900 }),
-    Object.freeze({ id: 'train', kind: 'pair', duration: 8400, gap: 2800 }),
+    Object.freeze({ id: 'whistle', kind: 'pair', duration: 3200, gap: 650 }),
+    Object.freeze({ id: 'pushup', kind: 'pair', duration: 5600, gap: 700 }),
+    Object.freeze({ id: 'stretch', kind: 'pair', duration: 6000, gap: 850 }),
+    Object.freeze({ id: 'train', kind: 'pair', duration: 5200, gap: 750 }),
   ]);
 
   let director = null;
@@ -66,12 +68,15 @@
   function schedule(state, delay) {
     if (!state || director !== state) return;
     clearTimer(state);
-    state.nextAt = Date.now() + Math.max(0, Number(delay) || 0);
+    state.nextAt = Math.max(
+      Date.now() + Math.max(0, Number(delay) || 0),
+      Number(state.holdUntil) || 0,
+    );
     state.timer = setTimeout(tick, Math.max(0, state.nextAt - Date.now()));
   }
 
   function callbackFor(state, action) {
-    if (action.kind === 'pair') return state.onPair && state.onPair('train', { automatic: true, duration: action.duration });
+    if (action.kind === 'pair') return state.onPair && state.onPair(action.id, { automatic: true, duration: action.duration });
     if (action.kind === 'room') return state.onRoomAction && state.onRoomAction(action.id, { automatic: true });
     if (action.kind === 'window') return state.onWindowVisit && state.onWindowVisit({ automatic: true });
     if (action.kind === 'toad') return state.onToadBeat && state.onToadBeat(action.id, { automatic: true });
@@ -81,6 +86,10 @@
   function tick() {
     const state = director;
     if (!state || state.busy) return;
+    if (Number(state.holdUntil) > Date.now()) {
+      schedule(state, state.holdUntil - Date.now());
+      return;
+    }
     const scope = state.scope;
     if (!scope || !scope.isConnected || !canAct(state)) {
       schedule(state, RETRY_MS);
@@ -132,6 +141,7 @@
       canAct: config.canAct,
       context,
       key,
+      holdUntil: 0,
       nextAt: 0,
       onPair: config.onPair,
       onRoomAction: config.onRoomAction,
@@ -148,8 +158,8 @@
   function postpone(target, delay) {
     const scope = target || (director && director.scope);
     if (!director || (scope && director.scope !== scope)) return false;
-    director.busy = false;
-    schedule(director, delay || 9000);
+    director.holdUntil = Date.now() + Math.max(0, Number(delay) || 9000);
+    if (!director.busy) schedule(director, director.holdUntil - Date.now());
     return true;
   }
 
@@ -158,6 +168,7 @@
     return Object.freeze({
       busy: director.busy,
       key: director.key,
+      holdUntil: director.holdUntil,
       mode: modeFor(director.context),
       nextAt: director.nextAt,
       step: director.step,

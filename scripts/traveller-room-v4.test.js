@@ -36,6 +36,8 @@ assert.match(app, /cancelDenRoomAction\(false\)/);
 assert.match(app, /data-room-action="bench-rest"/);
 assert.match(app, /data-room-action="bench-read"/);
 assert.match(app, /TravellerRoomV4\.restore/);
+assert.match(app, /TravellerMotionV3\.walkTo\(host, 'bench'/);
+assert.match(app, /data-den-prop-portal/);
 
 const css = read('public/styles.css');
 assert.match(css, /left: 65%;/);
@@ -48,7 +50,7 @@ assert.ok(html.indexOf('traveller-motion-v3.js') < html.indexOf('traveller-room-
 assert.ok(html.indexOf('traveller-room-v4.js') < html.indexOf('app.js'));
 
 const sw = read('public/sw.js');
-assert.match(sw, /satoru-v94/);
+assert.match(sw, /satoru-v95/);
 assert.match(sw, /room-actions-v4\/bench-read-b\.png/);
 
 console.log('Traveller room actions v4: runtime contract checks passed');
