@@ -1894,6 +1894,16 @@ const I18N_EXTRA = {
   'Крошечный вход в твоё дело + уют. Без опыта — связь и золото. Отказ ничего не стоит.': { en: 'A tiny entry into your thing + coziness. No XP — bond and gold. Declining costs nothing.', de: 'Ein winziger Einstieg in dein Ding + Gemütlichkeit. Kein XP — Bindung und Gold. Ablehnen kostet nichts.', uk: 'Крихітний вхід у твою справу + затишок. Без досвіду — звʼязок і золото. Відмова нічого не коштує.', es: 'Una entrada diminuta a lo tuyo + comodidad. Sin XP — vínculo y oro. Rechazar no cuesta nada.' },
   'Десять минут в любимое дело — не ради галочек, а чтобы вечер стал твоим. Опыта не будет: только связь с Тенью и золото. Так задумано.': { en: 'Ten minutes in the thing you love — not for checkmarks, but so the evening becomes yours. No XP: only bond with Shadow and gold. By design.', de: 'Zehn Minuten in dem, was du liebst — nicht für Häkchen, sondern damit der Abend dir gehört. Kein XP: nur Bindung mit Schatten und Gold. So gewollt.', uk: 'Десять хвилин в улюблену справу — не заради галочок, а щоб вечір став твоїм. Досвіду не буде: лише звʼязок із Тінню та золото. Так задумано.', es: 'Diez minutos en lo que amas — no por casillas, sino para que la tarde sea tuya. Sin XP: solo vínculo con Sombra y oro. Así está pensado.' },
   'Самый маленький вход': { en: 'The smallest entry', de: 'Der kleinste Einstieg', uk: 'Найменший вхід', es: 'La entrada más pequeña' },
+  // ── «Заход» v2: вход в конкретное дело, которое не двигается (план §6 п.3) ──
+  'Что не двигается': { en: "What isn't moving", de: 'Was sich nicht bewegt', uk: 'Що не рухається', es: 'Lo que no avanza' },
+  'Или просто в любимое': { en: 'Or simply into what you love', de: 'Oder einfach in das, was du liebst', uk: 'Або просто в улюблене', es: 'O simplemente a lo que amas' },
+  'Не надо делать его целиком. Надо только войти — десять минут, и ты уже вправе остановиться. Дело настоящее, так что опыт за него платится как обычно.': { en: "You don't have to do the whole thing. You only have to get in — ten minutes, and you're already free to stop. It's a real task, so it pays XP as usual.", de: 'Du musst es nicht ganz erledigen. Du musst nur hinein — zehn Minuten, und du darfst schon aufhören. Es ist eine echte Aufgabe, also zahlt sie XP wie gewohnt.', uk: 'Не треба робити його цілком. Треба лише увійти — десять хвилин, і ти вже маєш право спинитися. Справа справжня, тож досвід за неї платиться як звично.', es: 'No tienes que hacerlo entero. Solo tienes que entrar — diez minutos, y ya puedes parar. Es una tarea real, así que paga XP como siempre.' },
+  'Дел заведено больше, чем сделано. Может, дело не в лени, а в размере входа': { en: 'More tasks created than closed. Maybe it is not laziness but the size of the entry', de: 'Mehr Aufgaben angelegt als erledigt. Vielleicht liegt es nicht an Faulheit, sondern an der Größe des Einstiegs', uk: 'Справ заведено більше, ніж зроблено. Може, річ не в ліні, а в розмірі входу', es: 'Has creado más tareas de las que cierras. Quizá no sea pereza, sino el tamaño de la entrada' },
+  'Только вход. Через десять минут ты вправе остановиться': { en: 'Just the entry. In ten minutes you are free to stop', de: 'Nur der Einstieg. In zehn Minuten darfst du aufhören', uk: 'Лише вхід. За десять хвилин ти маєш право спинитися', es: 'Solo la entrada. En diez minutos puedes parar' },
+  'Открой и просто посмотри, с чего оно начинается. Закрыть можно сразу': { en: 'Open it and just look at where it begins. You may close it right away', de: 'Öffne es und schau nur, wo es anfängt. Du darfst sofort wieder schließen', uk: 'Відкрий і просто подивись, з чого воно починається. Закрити можна одразу', es: 'Ábrelo y solo mira por dónde empieza. Puedes cerrarlo enseguida' },
+  'Десять минут по таймеру. Прозвенит — ты уже вправе остановиться, это не половина дела, это заход': { en: "Ten minutes on the timer. When it rings you're already free to stop — this isn't half a task, it's an entry", de: 'Zehn Minuten auf der Uhr. Wenn sie klingelt, darfst du aufhören — das ist keine halbe Aufgabe, das ist ein Einstieg', uk: 'Десять хвилин за таймером. Продзвенить — ти вже маєш право спинитися, це не половина справи, це захід', es: 'Diez minutos con el temporizador. Cuando suene ya puedes parar — no es media tarea, es una entrada' },
+  'Сделай только самый первый шаг. Один. Второй сегодня не обязателен': { en: 'Do only the very first step. One. The second is not required today', de: 'Mach nur den allerersten Schritt. Einen. Der zweite muss heute nicht sein', uk: 'Зроби лише найперший крок. Один. Другий сьогодні не обовʼязковий', es: 'Haz solo el primer paso. Uno. El segundo no hace falta hoy' },
+  'Пять минут — и если не пойдёт, брось честно. Разрешение дано заранее': { en: "Five minutes — and if it doesn't take, drop it honestly. Permission is granted in advance", de: 'Fünf Minuten — und wenn es nicht läuft, lass es ehrlich sein. Die Erlaubnis ist im Voraus erteilt', uk: 'Пʼять хвилин — і якщо не піде, кинь чесно. Дозвіл дано заздалегідь', es: 'Cinco minutos — y si no cuaja, déjalo con honestidad. El permiso está dado de antemano' },
   'Обставь его': { en: 'Stage it', de: 'Richte ihn her', uk: 'Облаштуй його', es: 'Ambiéntala' },
   'Захожу — 10 минут': { en: "I'm in — 10 minutes", de: 'Ich steige ein — 10 Minuten', uk: 'Заходжу — 10 хвилин', es: 'Entro — 10 minutos' },
   'Не сегодня': { en: 'Not tonight', de: 'Heute nicht', uk: 'Не сьогодні', es: 'Hoy no' },
@@ -4986,6 +4996,14 @@ const ENTRY_STEPS = {
   '💬': ['Напиши одному человеку: «привет, вспомнил про тебя»', 'Отправь другу мем — это тоже связь', 'Позвони родным на пять минут'],
 };
 const ENTRY_STEP_FALLBACK = ['Самый маленький шаг в эту сторону, какой только придумаешь', 'Открой то, что связано с этим делом, и просто посмотри', 'Запиши одну мысль об этом деле — без обязательств'];
+// Входы в конкретное дело, которое не двигается. В каждом заранее выдано разрешение бросить —
+// именно оно снимает вес со старта. «Начну и придётся закончить» и есть то, что не даёт начать.
+const ENTRY_TINY_STEPS = [
+  'Открой и просто посмотри, с чего оно начинается. Закрыть можно сразу',
+  'Десять минут по таймеру. Прозвенит — ты уже вправе остановиться, это не половина дела, это заход',
+  'Сделай только самый первый шаг. Один. Второй сегодня не обязателен',
+  'Пять минут — и если не пойдёт, брось честно. Разрешение дано заранее',
+];
 const ENTRY_BUNDLES = ['чай или какао под бок', 'плед и тёплый свет', 'любимый плейлист фоном', 'желейки — если день был честным', 'минуту у открытого окна — свежий воздух перед входом', 'телефон в другую комнату на эти десять минут'];
 const ENTRY_DONE_LINES = ['Видишь? Вечер не слит — вечер твой 🕯', 'Ты пришёл сам, без «надо». Это дороже опыта', 'Маленький вход — а тепло настоящее 🕯', 'Приставка подождёт. А это — засчитано в жизнь'];
 function entryTodayTask() { return (State.tasks || []).find((x) => x.entry && x.date === todayStr()); }
@@ -4994,11 +5012,35 @@ function entryTopSpheres() {
   const c = new Date(); c.setDate(c.getDate() - 30);
   const cut = fmtDate(c), score = {};
   for (const x of (State.tasks || [])) if (x.done && dayOf(x) >= cut) score[x.skillId] = (score[x.skillId] || 0) + (x.xpAwarded || 0);
-  return Object.entries(score).sort((a, b) => b[1] - a[1]).map(([id]) => id).filter((id) => !skillById(id).missing).slice(0, 3);
+  const top = Object.entries(score).sort((a, b) => b[1] - a[1]).map(([id]) => id).filter((id) => !skillById(id).missing).slice(0, 3);
+  if (top.length) return top;
+  // Запасной путь (DISCIPLINE-BOUNDARIES-PLAN §6 п.3). Топ считается по ЗАВЕРШЁННЫМ делам, а у
+  // того, кто не может начать, завершённых нет — и «Заход» молча возвращал пустоту ровно тому,
+  // ради кого он написан. Тогда «любимое» берём из того, что человек хотя бы ЗАВЁЛ: заводят
+  // обычно то, что важно. Совсем пусто — верхние сферы, лишь бы дверь была.
+  const open = [];
+  for (const x of (State.tasks || [])) if (!x.done && !x.entry && x.skillId && !open.includes(x.skillId)) open.push(x.skillId);
+  const alive = open.filter((id) => !skillById(id).missing).slice(0, 3);
+  return alive.length ? alive : leafSkills().slice(0, 3).map((s) => s.id);
+}
+// Дела, которые не двигаются: открытые, срок уже наступил, заведены не сегодня. Это и есть
+// «трудно начать» в данных — не абстрактная сфера, а конкретное дело, которое человек обходит.
+function entryStuckTasks() {
+  const today = todayStr();
+  return (State.tasks || [])
+    .filter((x) => !x.done && !x.entry && x.date <= today && (!x.createdAt || fmtDate(new Date(x.createdAt)) < today))
+    .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0))
+    .slice(0, 4);
 }
 function entryStepFor(skillId) {
   const pool = ENTRY_STEPS[archetypeOf(skillId)] || ENTRY_STEP_FALLBACK;
   return dayPick('entry' + skillId + '#' + (State._entryRoll || 0), pool);
+}
+// Вход в КОНКРЕТНОЕ дело. Формулировки намеренно не про сферу, а про само дело, и каждая несёт
+// заявленный выигрыш — разрешение остановиться (гейт §5: граница даёт выигрыш, а не норму).
+// Без этого «уменьши вход» превращается в ещё один способ быть собой недовольным.
+function entryTinyStepFor(task) {
+  return dayPick('entrytiny' + task.id + '#' + (State._entryRoll || 0), ENTRY_TINY_STEPS);
 }
 // ── «Повторить вчерашний план» (бэклог «Трение», fb_mrnivhqrssjx) ─────────────────────
 // Утро, вчера был план, сегодня пусто → не перенабирать руками. Клоны берут титул/сферу/
@@ -5018,16 +5060,33 @@ function emptyDayHTML() {
 function openEntryRitual() {
   document.getElementById('entry-modal')?.remove();
   const spheres = entryTopSpheres();
-  if (!spheres.length) return;
+  const stuck = entryStuckTasks();
+  if (!spheres.length && !stuck.length) return;
+  // Два входа в одну дверь: конкретное дело, которое не двигается, и любимая сфера. Первое —
+  // «уменьши то, что ты обходишь», второе — «не дай вечеру утечь». Это разные болезни (§3
+  // паттерн 2 против паттерна 1), и лечатся они по-разному, поэтому и режима два.
+  const selTask = State._entryTask ? stuck.find((x) => x.id === State._entryTask) : null;
+  if (State._entryTask && !selTask) State._entryTask = null;
   const sel = (State._entrySkill && spheres.includes(State._entrySkill)) ? State._entrySkill : spheres[0];
   State._entrySkill = sel;
-  const chips = spheres.map((id) => { const sk = skillById(id); return `<button class="ob-chip ${id === sel ? 'sel' : ''}" data-action="entry-pick" data-skill="${esc(id)}" style="--c:${esc(sk.color)}">${esc(sk.name)}</button>`; }).join('');
-  const step = entryStepFor(sel), bundle = dayPick('entrybundle#' + (State._entryRoll || 0), ENTRY_BUNDLES);
+  const taskChips = stuck.map((x) => `<button class="ob-chip ${selTask && x.id === selTask.id ? 'sel' : ''}" data-action="entry-pick-task" data-task="${esc(x.id)}" style="--c:${esc(skillById(x.skillId).color)}">${esc(x.title.slice(0, 40))}</button>`).join('');
+  const sphereChips = spheres.map((id) => { const sk = skillById(id); return `<button class="ob-chip ${!selTask && id === sel ? 'sel' : ''}" data-action="entry-pick" data-skill="${esc(id)}" style="--c:${esc(sk.color)}">${esc(sk.name)}</button>`; }).join('');
+  const step = selTask ? entryTinyStepFor(selTask) : entryStepFor(sel);
+  const bundle = dayPick('entrybundle#' + (State._entryRoll || 0), ENTRY_BUNDLES);
+  // Подпись обязана быть честной про опыт: заход в любимое его не платит намеренно
+  // (overjustification), а заход в РЕАЛЬНОЕ дело платит как обычно — это же настоящая работа,
+  // просто начатая с нелепо малого куска. Обещать «без опыта» на настоящем деле было бы враньём.
+  const lead = selTask
+    ? t('Не надо делать его целиком. Надо только войти — десять минут, и ты уже вправе остановиться. Дело настоящее, так что опыт за него платится как обычно.')
+    : t('Десять минут в любимое дело — не ради галочек, а чтобы вечер стал твоим. Опыта не будет: только связь с Тенью и золото. Так задумано.');
   const ov = document.createElement('div'); ov.id = 'entry-modal'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="ai-box entry-box"><button class="modal-x" data-action="entry-close">✕</button>
     <h2>🕯 ${t('Заход')}</h2>
-    <p class="muted" style="font-size:13px;margin:0 0 10px">${t('Десять минут в любимое дело — не ради галочек, а чтобы вечер стал твоим. Опыта не будет: только связь с Тенью и золото. Так задумано.')}</p>
-    <div class="ob-group-chips" style="margin-bottom:10px">${chips}</div>
+    <p class="muted" style="font-size:13px;margin:0 0 10px">${lead}</p>
+    ${stuck.length ? `<p class="muted" style="font-size:11.5px;margin:0 0 4px">${t('Что не двигается')}</p>
+    <div class="ob-group-chips" style="margin-bottom:8px">${taskChips}</div>` : ''}
+    ${spheres.length ? `<p class="muted" style="font-size:11.5px;margin:0 0 4px">${t('Или просто в любимое')}</p>
+    <div class="ob-group-chips" style="margin-bottom:10px">${sphereChips}</div>` : ''}
     <div class="sg-row en-step"><b>🕯 ${t('Самый маленький вход')}</b><span>${esc(t(step))}</span></div>
     <div class="sg-row"><b>🍬 ${t('Обставь его')}</b><span>${esc(t(bundle))}</span></div>
     <div class="propose-actions">
@@ -9467,9 +9526,19 @@ function renderToday() {
     ...Object.values(State.habitlog[today] || {}).map((h) => Date.parse(h.at) || 0));
   const entryStale = !lastActTs || (Date.now() - lastActTs > 90 * 60000);
   const entryLow = eP < 45 && hrE >= 14;
-  const entryNudge = (!entryTodayTask() && entryTopSpheres().length && (entryLow || hrE >= 18) && entryStale)
+  // Гейт расширен (DISCIPLINE-BOUNDARIES-PLAN §6 п.3). Раньше дверь открывалась только вечером
+  // или на низкой энергии — то есть лечила ровно паттерн 1 («вечер уплывает»). Но «не могу
+  // начать» не явление 18:00: дело, которое обходят, обходят и в полдень. Поэтому если детектор
+  // назвал доминирующим именно nostart — дверь открыта в любой час. Проверяется весь детектор, а
+  // не один сигнал: если сильнее болит другое, лезть с этим не надо (гейт §5, один паттерн за раз).
+  const entryStuckNow = !entryTodayTask() && entryStale && entryStuckTasks().length
+    && (detectBoundaryPattern() || {}).id === 'nostart';
+  const entryNudge = (!entryTodayTask() && (entryTopSpheres().length || entryStuckTasks().length)
+    && (entryLow || hrE >= 18 || entryStuckNow) && entryStale)
     ? `<div class="card nudge-card entry-nudge">
-        <button class="nudge" data-action="entry-open">🕯 ${entryLow
+        <button class="nudge" data-action="entry-open">🕯 ${entryStuckNow && !entryLow && hrE < 18
+          ? t('Дел заведено больше, чем сделано. Может, дело не в лени, а в размере входа')
+          : entryLow
           ? t('Сил нет — и не надо много. Есть вход на 10 минут в любимое')
           : t('Вечер идёт не туда? Есть ход получше приставки')}</button>
         <span class="nudge-boost">${t('Крошечный вход в твоё дело + уют. Без опыта — связь и золото. Отказ ничего не стоит.')}</span></div>`
@@ -13175,14 +13244,29 @@ function onClick(e) {
   } else if (action === 'tree-guide-ok') {
     markDiscovered('guide:tree'); track('tree:guide-ok'); render();
   } else if (action === 'entry-open') {
-    State._entryRoll = 0; State._entrySkill = null; openEntryRitual(); track('entry:open');
+    State._entryRoll = 0; State._entrySkill = null; State._entryTask = null; openEntryRitual(); track('entry:open');
   } else if (action === 'entry-pick') {
-    State._entrySkill = el.dataset.skill; openEntryRitual();
+    State._entrySkill = el.dataset.skill; State._entryTask = null; openEntryRitual();
+  } else if (action === 'entry-pick-task') {
+    State._entryTask = el.dataset.task; openEntryRitual();
   } else if (action === 'entry-reroll') {
     State._entryRoll = (State._entryRoll || 0) + 1; openEntryRitual();
   } else if (action === 'entry-close') {
     document.getElementById('entry-modal')?.remove();
   } else if (action === 'entry-accept') {
+    // Заход в дело, которое не двигается: НЕ создаём ничего нового — запускаем таймер на том
+    // самом деле. Плодить рядом «🕯 Заход: …» значило бы обойти дело ещё раз, теперь с помощью
+    // приложения, а весь смысл в том, чтобы уменьшить вход именно в него.
+    if (State._entryTask) {
+      const target = questById(State._entryTask);
+      document.getElementById('entry-modal')?.remove();
+      State._entryTask = null;
+      if (!target) return;
+      track('entry:accept-task');
+      toast('🕯 ' + t('Только вход. Через десять минут ты вправе остановиться'));
+      startFocus(target.id);
+      return;
+    }
     // Создаём заход как задачу (entry:true) и сразу запускаем фокус-таймер на 10 минут:
     // нулевой порог входа — один клик от «вечер уплывает» до «я уже внутри».
     const skillId = State._entrySkill || (entryTopSpheres()[0]);
