@@ -3,7 +3,7 @@
    Bump CACHE whenever the shell or a stable asset URL changes. */
 const CACHE = 'satoru-v101';
 const SHELL = [
-  './', 'index.html', 'app.js', 'canon-domains.js', 'den-stage-v1.js', 'den-life-v1.js', 'body-toad-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js', 'styles.css', 'shadow-rig-v2.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
+  './', 'index.html', 'app.js', 'canon-domains.js', 'den-stage-v1.js', 'den-life-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js', 'styles.css', 'shadow-rig-v2.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
   'avatar-forge-v1.html', 'avatar-forge-v1.css', 'avatar-forge-v1.js',
   'art/icons/icon-registry.js', 'art/icons/scenes/day-summary-fisher.png',
   'art/gear/inventory/w1-training-blade.png',
@@ -30,6 +30,7 @@ const SHELL = [
   'art/pets/body-toad-v1/motion-v4/hop-crouch.png',
   'art/pets/body-toad-v1/motion-v4/hop-air.png',
   'art/pets/body-toad-v1/motion-v4/solo-stretch.png',
+  'art/pets/body-toad-v1/motion-v4/solo-stretch-up.png',
   'art/pets/body-toad-v1/motion-v4/bench-sleep.png',
   'art/pets/body-toad-v1/pair-v4/greet-contact.png',
   'art/pets/body-toad-v1/pair-v4/train-low.png',
@@ -54,6 +55,11 @@ const SHELL = [
   'art/pets/body-toad-v1/states/thriving.png',
   'art/pets/body-toad-v1/states/strained.png',
   'art/pets/body-toad-v1/states/restoring.png',
+  'art/pets/recovery-slug-v1/states/calm.png',
+  'art/pets/recovery-slug-v1/states/thriving.png',
+  'art/pets/recovery-slug-v1/states/strained.png',
+  'art/pets/recovery-slug-v1/states/restoring.png',
+  'art/pets/recovery-slug-v1/motion/idle-softbody.gif',
   'art/pets/body-toad-v1/motion/idle-breath.gif',
   'art/pets/body-toad-v1/pair-v2/manifest.json',
   'art/pets/body-toad-v1/pair-v2/greet-contact.png',
@@ -73,6 +79,7 @@ const SHELL = [
   'art/avatars/traveller-core-v1/male/room-actions-v4/bench-rest.png',
   'art/avatars/traveller-core-v1/male/room-actions-v4/bench-read-a.png',
   'art/avatars/traveller-core-v1/male/room-actions-v4/bench-read-b.png',
+  'art/avatars/traveller-core-v1/male/room-actions-v4/bench-portal-reach.png',
   'art/avatars/avatar-forge-v1/art-manifest.json',
   'art/avatars/avatar-forge-v1/runtime/512/mannequin-base-alpha.png',
   'art/avatars/avatar-forge-v1/runtime/512/hair-traveller-alpha.png',

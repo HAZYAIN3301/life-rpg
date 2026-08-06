@@ -11,13 +11,13 @@
     "compositeOffset": [0, 0],
     "denGuardianWidthPercent": 19.2,
     "denGuardianFootprintPercent": 15.7,
-    "pwaCache": "satoru-v98"
+    "pwaCache": "satoru-v101"
   },
   "motion": {
     "idle": "motion-v4/idle-breath.gif",
     "blink": "motion-v4/idle-blink.png",
     "hop": ["motion-v4/hop-crouch.png", "motion-v4/hop-air.png"],
-    "soloStretch": "motion-v4/solo-stretch.png",
+    "soloStretch": ["motion-v4/solo-stretch.png", "motion-v4/solo-stretch-up.png"],
     "benchNap": "motion-v4/bench-sleep.png"
   },
   "pairInteractions": {
@@ -31,7 +31,8 @@
   "portal": {
     "rim": "art/den/actors/prop-portal-rim.png",
     "core": "art/den/actors/prop-portal-core.png",
-    "reachPose": "art/den/actors/traveller-portal-reach.png",
+    "reachPose": "art/avatars/traveller-core-v1/male/room-actions-v4/bench-portal-reach.png",
+    "sequence": ["walk-to-bench", "bench-rest", "portal-open", "seated-reach", "portal-close", "bench-read"],
     "sound": "deferred"
   },
   "generationMode": "reference-guided image generation plus deterministic chroma key, coordinate normalization and actor-only pair recomposition"

@@ -16,7 +16,7 @@ const manifest = JSON.parse(read(`${base}/manifest.json`));
 assert.equal(manifest.id, 'traveller-room-actions-v4');
 assert.equal(manifest.layout, 'workshop-v5');
 assert.deepEqual(manifest.anchor, { leftPct: 65, bottomPct: 10.9, widthPct: 21.75 });
-for (const file of ['bench-rest.png', 'bench-read-a.png', 'bench-read-b.png']) {
+for (const file of ['bench-rest.png', 'bench-read-a.png', 'bench-read-b.png', 'bench-portal-reach.png']) {
   assert.deepEqual(pngSize(`${base}/${file}`), [640, 900], `${file} must use the shared stage`);
 }
 
@@ -50,9 +50,9 @@ assert.ok(html.indexOf('traveller-motion-v3.js') < html.indexOf('traveller-room-
 assert.ok(html.indexOf('traveller-room-v4.js') < html.indexOf('app.js'));
 
 const sw = read('public/sw.js');
-assert.match(sw, /satoru-v98/);
+assert.match(sw, /satoru-v101/);
 assert.match(sw, /room-actions-v4\/bench-read-b\.png/);
 assert.match(sw, /prop-portal-core\.png/);
-assert.match(app, /traveller-portal-reach\.png/);
+assert.match(app, /bench-portal-reach\.png/);
 
 console.log('Traveller room actions v4: runtime contract checks passed');

@@ -18,6 +18,7 @@ PUBLIC = HERE.parents[1] / "public"
 MOTION = PUBLIC / "art/pets/body-toad-v1/motion-v4"
 PAIR = PUBLIC / "art/pets/body-toad-v1/pair-v4"
 ACTORS = PUBLIC / "art/den/actors"
+ROOM_ACTIONS = PUBLIC / "art/avatars/traveller-core-v1/male/room-actions-v4"
 
 
 def keyed(source: Path) -> Image.Image:
@@ -79,6 +80,16 @@ def build_motion() -> None:
         target = MOTION / f"{name}.png"
         result.save(target, optimize=True)
         print(target.relative_to(PUBLIC), alpha_bbox(result))
+
+    # The upright phase keeps the frog's head/body scale from the source. A
+    # generic bounding-box fit would shrink him because the raised arms make
+    # this pose much taller than the side stretch.
+    stretch_up = keyed(SOURCES / "solo-stretch-up-source.png").resize((1024, 1024), Image.Resampling.LANCZOS)
+    stretch_subject = stretch_up.crop(alpha_bbox(stretch_up))
+    stretch_result = Image.new("RGBA", (1024, 1024), (0, 0, 0, 0))
+    stretch_result.alpha_composite(stretch_subject, (round(512 - stretch_subject.width / 2), 920 - stretch_subject.height))
+    stretch_result.save(MOTION / "solo-stretch-up.png", optimize=True)
+    print("motion-v4/solo-stretch-up.png", alpha_bbox(stretch_result))
 
     # The restoring state is registered as a dedicated, decoded blink frame.
     blink = Image.open(SOURCES / "restoring-reference.png").convert("RGBA")
@@ -155,13 +166,31 @@ def build_portal() -> None:
     arm_subject = arm_subject.resize(arm_size, Image.Resampling.LANCZOS)
     reach.alpha_composite(arm_subject, (462, 318))
     reach.save(ACTORS / "traveller-portal-reach.png", optimize=True)
-    print("portal core", alpha_bbox(core), "arm", alpha_bbox(arm), "reach", alpha_bbox(reach))
+
+    # The portal is opened only after Traveller has sat down. This authored
+    # pose shares the exact 640x900 bench-action canvas, so changing from
+    # seated-rest to portal-reach cannot teleport or rescale the character.
+    seated_reach = fit_sprite(
+        keyed(SOURCES / "traveller-seated-portal-reach-source.png"),
+        (640, 900),
+        (600, 790),
+        330,
+        860,
+    )
+    seated_reach.save(ROOM_ACTIONS / "bench-portal-reach.png", optimize=True)
+    print(
+        "portal core", alpha_bbox(core),
+        "arm", alpha_bbox(arm),
+        "reach", alpha_bbox(reach),
+        "seated reach", alpha_bbox(seated_reach),
+    )
 
 
 if __name__ == "__main__":
     MOTION.mkdir(parents=True, exist_ok=True)
     PAIR.mkdir(parents=True, exist_ok=True)
     ACTORS.mkdir(parents=True, exist_ok=True)
+    ROOM_ACTIONS.mkdir(parents=True, exist_ok=True)
     build_motion()
     build_pairs()
     build_portal()

@@ -11,23 +11,24 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenStage(root) {
   'use strict';
 
-  const VERSION = '1.3.0';
+  const VERSION = '1.5.0';
   const WORLD = Object.freeze({ width: 1536, height: 864 });
-  const APPROACH_MS = 2200;
-  const RETURN_MS = 2200;
+  const APPROACH_MS = 1800;
+  const RETURN_MS = 1800;
 
   // Anchors are measured at the actor's ground contact, not at its image box.
   // Their footprints never overlap, including the largest BODY guardian.
   const PET_SLOTS = Object.freeze([
-    Object.freeze({ id: 'west', x: 23.5, groundY: 96.2, depth: 0.98, z: 7 }),
+    Object.freeze({ id: 'west', x: 28.0, groundY: 96.2, depth: 0.98, z: 8 }),
     Object.freeze({ id: 'east', x: 85.0, groundY: 96.0, depth: 0.97, z: 7 }),
     Object.freeze({ id: 'mid-east', x: 65.5, groundY: 96.0, depth: 0.96, z: 8 }),
   ]);
 
   const PROFILES = Object.freeze({
-    bodyToad: Object.freeze({ width: 19.2, aspect: 1, footprint: 15.7, preferred: 'mid-east' }),
-    fortune: Object.freeze({ width: 8.9, aspect: 1, footprint: 8.0, preferred: 'west' }),
-    default: Object.freeze({ width: 6.7, aspect: 120 / 132, footprint: 6.2, preferred: 'east' }),
+    bodyToad: Object.freeze({ width: 19.2, aspect: 1, footprint: 15.7, preferred: 'west' }),
+    recoverySlug: Object.freeze({ width: 14.6, aspect: 1, footprint: 12.2, preferred: 'mid-east' }),
+    fortune: Object.freeze({ width: 8.9, aspect: 1, footprint: 8.0, preferred: 'east' }),
+    default: Object.freeze({ width: 6.7, aspect: 120 / 132, footprint: 6.2, preferred: 'mid-east' }),
   });
 
   function profileFor(species) {
@@ -64,9 +65,11 @@
 
   function layoutPets(entities) {
     const source = Array.isArray(entities) ? entities.filter((entry) => entry && entry.id) : [];
-    // Reserve the BODY guardian first because its footprint is the largest.
+    // Reserve canonical guardians first; generic sphere pets fill the remaining
+    // authored slots without ever competing for the same footprint.
+    const priority = (species) => species === 'bodyToad' ? 2 : species === 'recoverySlug' ? 1 : 0;
     const sorted = source.map((entry, index) => ({ ...entry, _index: index }))
-      .sort((a, b) => Number(b.species === 'bodyToad') - Number(a.species === 'bodyToad'));
+      .sort((a, b) => priority(b.species) - priority(a.species));
     const occupied = new Set();
     const result = [];
     for (const entity of sorted) {
@@ -156,8 +159,9 @@
     if (avatar && motion) motion.installWalkFrames(avatar, 'left');
     if (toad && toadMotion && toadMotion.installHopFrames) await toadMotion.installHopFrames(toad, 'home');
     await nextFrame();
-    scope.classList.remove('is-body-pair-at-meeting', 'is-body-pair-returning');
+    scope.classList.remove('is-body-pair-at-meeting');
     await wait(returnMs);
+    scope.classList.remove('is-body-pair-returning');
     if (avatar && motion) motion.clearWalkFrames(avatar);
     if (toad && toadMotion && toadMotion.clearHopFrames) await toadMotion.clearHopFrames(toad);
     return true;

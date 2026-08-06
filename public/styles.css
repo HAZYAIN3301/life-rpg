@@ -9080,11 +9080,30 @@ html.mobile-nav-open body {
   translate: 24% 1%;
   scale: .98;
 }
-.den-shell.is-body-pair-approaching .den-body-toad,
-.den-shell.is-body-pair-at-meeting .den-body-toad,
-.den-shell.is-body-pair-returning .den-body-toad {
-  translate: -44% 0;
+.den-shell.is-body-pair-approaching .den-body-toad {
+  animation: bodyToadMeetingArc 1.8s cubic-bezier(.34,.02,.24,1) both;
+}
+.den-shell.is-body-pair-at-meeting .den-body-toad {
+  translate: 112% 0;
   scale: 1;
+}
+.den-shell.is-body-pair-returning .den-body-toad {
+  animation: bodyToadMeetingReturnArc 1.8s cubic-bezier(.34,.02,.24,1) both;
+}
+.den-body-toad[data-toad-direction="left"] .body-toad-v1__frame { transform: scaleX(-1); }
+@keyframes bodyToadMeetingArc {
+  0% { translate: 0 0; scale: 1; }
+  23% { translate: 30% -17%; scale: 1; }
+  45% { translate: 54% 0; scale: 1; }
+  68% { translate: 82% -14%; scale: 1; }
+  100% { translate: 112% 0; scale: 1; }
+}
+@keyframes bodyToadMeetingReturnArc {
+  0% { translate: 112% 0; scale: 1; }
+  23% { translate: 82% -14%; scale: 1; }
+  45% { translate: 54% 0; scale: 1; }
+  68% { translate: 30% -17%; scale: 1; }
+  100% { translate: 0 0; scale: 1; }
 }
 
 .body-toad-v1__motion-frame--b { opacity: 0; }
@@ -9097,24 +9116,63 @@ html.mobile-nav-open body {
 @keyframes bodyToadHopCrouch { 0%,31%,100% { opacity: 1; } 32%,76% { opacity: 0; } 77%,99% { opacity: 1; } }
 @keyframes bodyToadHopAir { 0%,31%,77%,100% { opacity: 0; } 32%,76% { opacity: 1; } }
 
-.den-body-toad[data-toad-motion="hop-tour"],
-.den-body-toad[data-toad-motion="bench-nap"] {
-  transition: translate .88s cubic-bezier(.36,.02,.28,1), scale .88s cubic-bezier(.36,.02,.28,1), opacity .18s ease;
+.den-body-toad[data-toad-motion="hop-tour"][data-toad-route="away"] {
+  animation: bodyToadTourAway 1.5s cubic-bezier(.34,.02,.24,1) both;
 }
-.den-body-toad[data-toad-route="away"] { translate: 188% -16%; scale: .9; }
-.den-body-toad[data-toad-route="bench"] { translate: 76% -66%; scale: .76; z-index: 10 !important; }
-.den-body-toad[data-toad-route="home"] { translate: 0 0; scale: 1; }
-.body-toad-v1[data-motion="solo-stretch"] .body-toad-v1__stage {
-  animation: bodyToadSoloStretch 3.4s ease-in-out both !important;
+.den-body-toad[data-toad-motion="hop-tour"][data-toad-route="home"] {
+  animation: bodyToadTourHome 1.5s cubic-bezier(.34,.02,.24,1) both;
+}
+.den-body-toad[data-toad-motion="bench-nap"][data-toad-route="bench"] {
+  z-index: 10 !important;
+  animation: bodyToadBenchAway 1.8s cubic-bezier(.34,.02,.24,1) both;
+}
+.den-body-toad[data-toad-motion="bench-nap"][data-toad-route="home"] {
+  z-index: 10 !important;
+  animation: bodyToadBenchHome 2.2s cubic-bezier(.34,.02,.24,1) both;
+}
+.body-toad-v1[data-motion="solo-stretch"] .body-toad-v1__motion-frame--a {
+  animation: bodyToadStretchSide 6.4s steps(1,end) infinite;
+}
+.body-toad-v1[data-motion="solo-stretch"] .body-toad-v1__motion-frame--b {
+  animation: bodyToadStretchUp 6.4s steps(1,end) infinite;
 }
 .body-toad-v1[data-motion="bench-nap"] .body-toad-v1__stage {
-  animation: bodyToadNapBreath 3s ease-in-out infinite !important;
+  animation: bodyToadNapBreath 5.8s ease-in-out infinite !important;
 }
-@keyframes bodyToadSoloStretch {
-  0%,100% { transform: rotate(0); }
-  24% { transform: rotate(-1.4deg); }
-  62% { transform: rotate(1deg); }
+@keyframes bodyToadTourAway {
+  0% { translate: 0 0; scale: 1; }
+  22% { translate: 22% -16%; scale: 1; }
+  44% { translate: 40% 0; scale: 1; }
+  67% { translate: 58% -13%; scale: 1; }
+  100% { translate: 76% 0; scale: 1; }
 }
+@keyframes bodyToadTourHome {
+  0% { translate: 76% 0; scale: 1; }
+  22% { translate: 58% -13%; scale: 1; }
+  44% { translate: 40% 0; scale: 1; }
+  67% { translate: 22% -16%; scale: 1; }
+  100% { translate: 0 0; scale: 1; }
+}
+@keyframes bodyToadBenchAway {
+  0% { translate: 0 0; scale: 1; }
+  18% { translate: 48% -18%; scale: 1; }
+  34% { translate: 88% 0; scale: 1; }
+  50% { translate: 136% -22%; scale: .99; }
+  66% { translate: 176% -2%; scale: .98; }
+  82% { translate: 218% -45%; scale: .95; }
+  100% { translate: 248% -58%; scale: .92; }
+}
+@keyframes bodyToadBenchHome {
+  0% { translate: 248% -58%; scale: .92; }
+  18% { translate: 218% -45%; scale: .95; }
+  34% { translate: 176% -2%; scale: .98; }
+  50% { translate: 136% -22%; scale: .99; }
+  66% { translate: 88% 0; scale: 1; }
+  82% { translate: 48% -18%; scale: 1; }
+  100% { translate: 0 0; scale: 1; }
+}
+@keyframes bodyToadStretchSide { 0%,47.999%,100% { opacity: 1; } 48%,84% { opacity: 0; } }
+@keyframes bodyToadStretchUp { 0%,47.999%,84.001%,100% { opacity: 0; } 48%,84% { opacity: 1; } }
 @keyframes bodyToadNapBreath { 0%,100% { translate: 0 0; } 50% { translate: 0 -1.2%; } }
 
 .body-pair-v2__frame--c,
@@ -9133,11 +9191,11 @@ html.mobile-nav-open body {
 .den-scene[data-den-renderer="v5"] .body-pair-v2[data-mode="rest"] { left: 39.75%; width: 37.5%; }
 
 .den-prop-portal {
-  left: 79%;
-  bottom: 20%;
+  left: 79.5%;
+  bottom: 27%;
   width: 10.5%;
   z-index: 14;
-  transform: scale(.04,.72) rotate(-7deg);
+  transform: scale(.04,.72);
   overflow: visible;
 }
 .den-prop-portal__core,
@@ -9156,16 +9214,16 @@ html.mobile-nav-open body {
   animation: denPropPortalOpenV4 2.5s cubic-bezier(.2,.78,.2,1) both;
 }
 .den-shell.is-den-prop-portal-active .den-prop-portal__core {
-  animation: denPropPortalCoreFlow 1.05s linear infinite;
+  animation: denPropPortalCoreFlow 2.8s ease-in-out infinite;
 }
 .den-prop-reach {
   position: absolute;
-  left: 58.5%;
-  bottom: 9.8%;
+  left: 65%;
+  bottom: 10.9%;
   z-index: 13;
   display: block;
-  width: 29%;
-  aspect-ratio: 1;
+  width: 21.75%;
+  aspect-ratio: 640 / 900;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -9174,38 +9232,84 @@ html.mobile-nav-open body {
 .den-prop-reach img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%; }
 .den-shell.is-den-prop-portal-reaching .den-prop-reach {
   visibility: visible;
-  animation: denPropReachV4 1.98s cubic-bezier(.2,.72,.2,1) both;
+  animation: denPropReachV4 3.75s cubic-bezier(.2,.72,.2,1) both;
 }
-.den-shell.is-den-prop-portal-reaching .den-avatar-core {
+.den-shell.is-den-prop-portal-reaching .den-avatar-core,
+.den-shell.is-den-prop-portal-reaching .traveller-room-v4 {
   opacity: 0 !important;
   visibility: hidden !important;
 }
+.den-shell.is-body-pair-active .den-scene > .den-pet:not(.den-body-toad) {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
 @keyframes denPropPortalOpenV4 {
-  0% { opacity: 0; transform: scale(.035,.72) rotate(-8deg); }
-  18% { opacity: 1; transform: scale(1.02,.96) rotate(1deg); }
-  30%,78% { opacity: 1; transform: scale(1) rotate(0); }
-  100% { opacity: 0; transform: scale(.035,.74) rotate(8deg); }
+  0% { opacity: 0; transform: scale(.035,.72); }
+  18% { opacity: 1; transform: scale(1.02,.96); }
+  30%,78% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(.035,.74); }
 }
 @keyframes denPropPortalCoreFlow {
-  0% { transform: rotate(0deg) scale(.92); filter: brightness(.98) saturate(1.04); }
-  50% { transform: rotate(180deg) scale(.97); filter: brightness(1.12) saturate(1.18); }
-  100% { transform: rotate(360deg) scale(.92); filter: brightness(.98) saturate(1.04); }
+  0%,100% { transform: scale(.965,.985); filter: brightness(.98) saturate(1.04); opacity: .94; }
+  50% { transform: scale(1.01,1.025); filter: brightness(1.12) saturate(1.18); opacity: 1; }
 }
 @keyframes denPropReachV4 {
-  0% { opacity: 0; translate: -2.4% 0; }
-  18%,62% { opacity: 1; translate: 0 0; }
-  78% { opacity: 1; translate: -1% 0; }
-  100% { opacity: 0; translate: -4% 0; }
+  0% { opacity: 0; translate: -1% 0; }
+  14%,60% { opacity: 1; translate: 0 0; }
+  78% { opacity: 1; translate: -.4% 0; }
+  100% { opacity: 0; translate: -1% 0; }
 }
 
+/* ============================================================
+   RECOVERY Guardian v1 — authored state plates and soft-body idle.
+   No whole-sprite bobbing or scale pulse is used as character acting.
+   ============================================================ */
+.recovery-slug-v1,
+.recovery-slug-v1__stage {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.recovery-slug-v1__frame {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%;
+  opacity: 0;
+  transition: opacity .28s ease;
+  filter: drop-shadow(0 9px 9px rgba(4, 8, 12, .34));
+}
+.recovery-slug-v1__frame.is-active { opacity: 1; }
+.recovery-slug-v1__frame.is-incoming { opacity: 0; }
+.recovery-slug-v1__frame.is-outgoing { opacity: 0; }
+.recovery-slug-v1.is-reassuring .recovery-slug-v1__stage {
+  animation: recoverySlugWarmth 5.2s ease-in-out 1;
+}
+@keyframes recoverySlugWarmth {
+  0%,100% { filter: brightness(1) drop-shadow(0 0 0 rgba(121,184,170,0)); }
+  42%,72% { filter: brightness(1.06) drop-shadow(0 0 12px rgba(121,184,170,.42)); }
+}
+.den-recovery-slug {
+  aspect-ratio: 1 / 1;
+  height: auto !important;
+}
+.den-recovery-slug .recovery-slug-v1 { width: 100%; height: 100%; }
+.pet-card-recovery-slug .pet-art > .recovery-slug-v1 { width: 100%; height: 100%; }
+.recovery-slug-domain-badge { color: #9fd5c9; border-color: rgba(121,184,170,.34); }
+
 @media (max-width: 720px) {
-  .den-body-toad[data-toad-route="away"] { translate: 148% -12%; }
-  .den-body-toad[data-toad-route="bench"] { translate: 58% -54%; scale: .78; }
-  .den-prop-reach { left: 57.5%; width: 31%; }
+  .den-prop-reach { left: 65%; width: 21.75%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .den-prop-reach { display: none !important; }
   .den-prop-portal__core { animation: none !important; }
   .den-body-toad[data-toad-route] { translate: 0 0 !important; scale: 1 !important; }
+  .recovery-slug-v1__frame,
+  .recovery-slug-v1__stage { animation: none !important; transition: none !important; }
 }

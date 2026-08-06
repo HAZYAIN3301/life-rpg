@@ -11,24 +11,25 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenLife(root) {
   'use strict';
 
-  const VERSION = '2.2.0';
-  const FIRST_AMBIENT_MS = 3200;
-  const FIRST_FOCUS_MS = 1600;
-  const RETRY_MS = 1800;
+  const VERSION = '2.3.0';
+  const FIRST_AMBIENT_MS = 8000;
+  const FIRST_FOCUS_MS = 3200;
+  const RETRY_MS = 3000;
   const AMBIENT_SEQUENCE = Object.freeze([
-    Object.freeze({ id: 'toad-blink', kind: 'toad', gap: 2200 }),
-    Object.freeze({ id: 'toad-hop-tour', kind: 'toad', gap: 3200 }),
-    Object.freeze({ id: 'bench-rest', kind: 'room', gap: 4200 }),
-    Object.freeze({ id: 'toad-stretch', kind: 'toad', gap: 3000 }),
-    Object.freeze({ id: 'window-visit', kind: 'window', gap: 4400 }),
-    Object.freeze({ id: 'toad-bench-nap', kind: 'toad', gap: 3800 }),
-    Object.freeze({ id: 'bench-read', kind: 'room', gap: 5200 }),
+    Object.freeze({ id: 'toad-blink', kind: 'toad', gap: 14000 }),
+    Object.freeze({ id: 'window-visit', kind: 'window', gap: 24000 }),
+    Object.freeze({ id: 'bench-read', kind: 'room', gap: 30000 }),
+    Object.freeze({ id: 'toad-stretch', kind: 'toad', gap: 22000 }),
+    Object.freeze({ id: 'toad-hop-tour', kind: 'toad', gap: 26000 }),
+    Object.freeze({ id: 'bench-rest', kind: 'room', gap: 26000 }),
+    Object.freeze({ id: 'toad-bench-nap', kind: 'toad', gap: 32000 }),
   ]);
   const BODY_FOCUS_SEQUENCE = Object.freeze([
-    Object.freeze({ id: 'whistle', kind: 'pair', duration: 4200, gap: 650 }),
-    Object.freeze({ id: 'pushup', kind: 'pair', duration: 5600, gap: 700 }),
-    Object.freeze({ id: 'stretch', kind: 'pair', duration: 6000, gap: 850 }),
-    Object.freeze({ id: 'train', kind: 'pair', duration: 5200, gap: 750 }),
+    Object.freeze({ id: 'whistle', kind: 'pair', duration: 12000, gap: 5000 }),
+    Object.freeze({ id: 'pushup', kind: 'pair', duration: 14000, gap: 6000 }),
+    Object.freeze({ id: 'stretch', kind: 'pair', duration: 14000, gap: 7000 }),
+    Object.freeze({ id: 'train', kind: 'pair', duration: 12000, gap: 6000 }),
+    Object.freeze({ id: 'rest', kind: 'pair', duration: 10000, gap: 10000 }),
   ]);
 
   let director = null;

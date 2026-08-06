@@ -1,18 +1,18 @@
 (function initTravellerRoomV4(global) {
   'use strict';
 
-  const VERSION = '4.0.0';
+  const VERSION = '4.1.0';
   const BASE = '/art/avatars/traveller-core-v1/male/room-actions-v4';
   const STORAGE_KEY = 'satoru.traveller-room-v4.active';
   const ACTIONS = Object.freeze({
     'bench-rest': Object.freeze({
       label: 'Сесть у окна',
-      duration: 7000,
+      duration: 26000,
       frames: Object.freeze([`${BASE}/bench-rest.png`]),
     }),
     'bench-read': Object.freeze({
       label: 'Почитать',
-      duration: 9000,
+      duration: 42000,
       frames: Object.freeze([`${BASE}/bench-read-a.png`, `${BASE}/bench-read-b.png`]),
     }),
   });

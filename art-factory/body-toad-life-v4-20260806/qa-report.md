@@ -1,6 +1,6 @@
 # BODY Guardian life v4 — QA
 
-Status: **PASS** — 21/21 PNG assets and the 21-frame idle GIF passed runtime QA.
+Status: **PASS** — 23/23 PNG assets and the 21-frame idle GIF passed runtime QA.
 
 Scope:
 
@@ -18,12 +18,13 @@ rejects wrong canvases, missing alpha, opaque corners and surviving magenta frin
 
 Automated checks:
 
-- 5 standalone motion frames: 1024×1024 RGBA;
+- 6 standalone motion frames: 1024×1024 RGBA;
 - 13 pair frames: 1536×1536 RGBA, groundY 1470;
-- 3 portal/reach assets with transparent corners;
+- 4 portal/reach assets with transparent corners, including the seated reach pose;
 - idle-breath.gif: 21 frames on a 1024×1024 canvas;
 - vivid chroma leakage below the rejection threshold for every PNG;
-- browser timing audit observed hop-tour, solo-stretch and bench-nap (including
-  deterministic away/bench/home routes), plus the four-frame whistle action;
-- PWA cache generation: `satoru-v98`;
-- Node contract suite: 4/4 files passed; full project suite: 15/15 passed.
+- browser timing audit observed the non-rotating filled portal, seated reach,
+  delayed reading frame, pair collision isolation and the Recovery Guardian card;
+- hop-tour and bench-nap use directional parabolic routes with stable scale;
+- PWA cache generation: `satoru-v101`;
+- Node contract suite: 5/5 focused files passed; full project suite: 16/16 passed.

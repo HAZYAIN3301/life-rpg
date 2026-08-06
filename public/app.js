@@ -4125,9 +4125,10 @@ function cancelDenRoomAction(notify = false) {
   if (!shell || !window.TravellerRoomV4) return false;
   return window.TravellerRoomV4.cancel(shell, { notify });
 }
-function playDenPropPortal(shell, duration = 2500) {
+function playDenPropPortal(shell, duration = 4600, options = {}) {
   const layer = shell && shell.querySelector('[data-den-prop-portal]');
   if (!shell || !layer) return Promise.resolve(false);
+  const config = options || {};
   shell.classList.remove('is-den-prop-portal-active', 'is-den-prop-portal-reaching', 'is-den-prop-portal-extracting');
   void layer.offsetWidth;
   shell.classList.add('is-den-prop-portal-active');
@@ -4135,43 +4136,36 @@ function playDenPropPortal(shell, duration = 2500) {
   return new Promise((resolve) => {
     const reaching = setTimeout(() => {
       if (shell.isConnected) shell.classList.add('is-den-prop-portal-reaching');
-    }, 520);
+    }, 850);
     const extracting = setTimeout(() => {
-      if (shell.isConnected) shell.classList.add('is-den-prop-portal-extracting');
-    }, 1620);
+      if (!shell.isConnected) return;
+      shell.classList.add('is-den-prop-portal-extracting');
+      if (typeof config.onExtract === 'function') {
+        try { config.onExtract(); } catch {}
+      }
+    }, 3100);
     setTimeout(() => {
       clearTimeout(reaching);
       clearTimeout(extracting);
       if (shell.isConnected) shell.classList.remove('is-den-prop-portal-active', 'is-den-prop-portal-reaching', 'is-den-prop-portal-extracting');
       if (layer.isConnected) layer.setAttribute('aria-hidden', 'true');
       resolve(true);
-    }, Math.max(1500, Number(duration) || 2500));
+    }, Math.max(3800, Number(duration) || 4600));
   });
 }
-function runDenRoomAction(actionId, options = {}) {
-  const shell = document.querySelector('.den-shell');
-  if (State.view !== 'den' || !shell || !window.TravellerRoomV4) return Promise.resolve(false);
-  if (!options.automatic && window.DenLifeV1) window.DenLifeV1.postpone(shell, 11000);
-  clearDenAvatarWanderTimer();
-  const host = shell.querySelector('.den-avatar-core');
-  if (!host || !window.TravellerMotionV3) return Promise.resolve(false);
-  if (window.TravellerMotionV3.isPlaying(host)) window.TravellerMotionV3.cancel(host);
-  State._denAvatarPose = 'idle';
-  const walkOptions = { preload: preloadAvatarImage };
-  return syncDenCorePose('idle').then(() => window.TravellerMotionV3.walkTo(host, 'bench', walkOptions)).then((arrived) => {
-    if (!arrived || !shell.isConnected) return false;
-    return actionId === 'bench-read' ? playDenPropPortal(shell) : true;
-  }).then((ready) => new Promise((resolve) => {
-    if (!ready || !shell.isConnected) {
-      window.TravellerMotionV3.walkTo(host, 'home', walkOptions).finally(() => resolve(false));
-      return;
-    }
-    let settled = false;
-    const finish = (played) => {
-      if (settled) return;
-      settled = true;
+
+function waitDenMoment(ms) {
+  return new Promise((resolve) => setTimeout(resolve, Math.max(0, Number(ms) || 0)));
+}
+
+function playDenRoomLayerAndReturn(shell, host, actionId, walkOptions, waitForFinish) {
+  return new Promise((resolve) => {
+    let resolved = false;
+    const finish = (value) => {
+      if (resolved) return;
+      resolved = true;
       syncAvatarMotion();
-      resolve(played);
+      resolve(value);
     };
     window.TravellerRoomV4.play(shell, actionId, {
       onFinish: () => {
@@ -4184,10 +4178,42 @@ function runDenRoomAction(actionId, options = {}) {
         window.TravellerMotionV3.walkTo(host, 'home', walkOptions)
           .then(() => finish(false))
           .catch(() => finish(false));
+      } else if (!waitForFinish) {
+        finish(true);
       }
-      else if (!options.waitForFinish) finish(true);
     }).catch(() => finish(false));
-  }));
+  });
+}
+
+function runDenRoomAction(actionId, options = {}) {
+  const shell = document.querySelector('.den-shell');
+  if (State.view !== 'den' || !shell || !window.TravellerRoomV4) return Promise.resolve(false);
+  if (!options.automatic && window.DenLifeV1) window.DenLifeV1.postpone(shell, 11000);
+  clearDenAvatarWanderTimer();
+  const host = shell.querySelector('.den-avatar-core');
+  if (!host || !window.TravellerMotionV3) return Promise.resolve(false);
+  if (window.TravellerMotionV3.isPlaying(host)) window.TravellerMotionV3.cancel(host);
+  State._denAvatarPose = 'idle';
+  const walkOptions = { preload: preloadAvatarImage };
+  return syncDenCorePose('idle')
+    .then(() => window.TravellerMotionV3.walkTo(host, 'bench', walkOptions))
+    .then(async (arrived) => {
+      if (!arrived || !shell.isConnected) return false;
+      if (actionId !== 'bench-read') {
+        return playDenRoomLayerAndReturn(shell, host, actionId, walkOptions, options.waitForFinish === true);
+      }
+
+      // Sit first. The portal replaces the seated-rest frame with an authored
+      // seated reach pose; only after it closes do we install the reading pose.
+      const seated = await window.TravellerRoomV4.play(shell, 'bench-rest');
+      if (!seated || !shell.isConnected) return false;
+      await waitDenMoment(1100);
+      // Keep the seated reach pose visible until the portal has fully closed.
+      // Swapping to the reading plate while the reach plate is still visible
+      // creates a double torso / four-arm ghost, which reads as teleportation.
+      await playDenPropPortal(shell, 4600);
+      return playDenRoomLayerAndReturn(shell, host, 'bench-read', walkOptions, options.waitForFinish === true);
+    });
 }
 function scheduleDenAvatarWander(delay = 16000) {
   clearDenAvatarWanderTimer();
@@ -4255,8 +4281,8 @@ function playBodyToadScene(scope, sphereId, mode, options = {}) {
   if (!toad) return Promise.resolve(false);
   const automatic = options.automatic === true;
   const meta = window.BodyToadV1.INTERACTIONS[mode];
-  const duration = automatic && mode === 'train'
-    ? Math.max(meta.duration, Number(options.duration) || 8400)
+  const duration = automatic
+    ? Math.max(meta.duration, Number(options.duration) || meta.duration)
     : meta.duration;
   if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, meta.duration + 9000);
   cancelDenRoomAction(false);
@@ -8369,6 +8395,23 @@ function bodyToadHTML(sphereId, options = {}) {
     label: `Жабий сэнсэй — хранитель тела, ${PET_STATE[petStats(sphereId).state].label.toLowerCase()}`,
   });
 }
+function recoverySlugState() {
+  if (!window.RecoverySlugV1) return 'calm';
+  return window.RecoverySlugV1.deriveState({
+    restGapDays: restGapDays(),
+    energyPct: energyPct(),
+  });
+}
+function recoverySlugHTML(options = {}) {
+  if (!window.RecoverySlugV1) return '';
+  const state = recoverySlugState();
+  return window.RecoverySlugV1.markup({
+    state,
+    animated: options.animated !== false && !avatarMotionReduced(),
+    className: options.className || '',
+    label: `Кацую — хранительница восстановления, ${window.RecoverySlugV1.STATE_META[state].label.toLowerCase()}`,
+  });
+}
 function petSpeciesForSphere(sphereId, traits) {
   if (isBodyGuardianSphere(sphereId)) return 'bodyToad';
   const selected = sphereId && ensurePetSpecies()[sphereId];
@@ -8741,13 +8784,23 @@ function renderPets() {
       ${guardianActions}
     </div>`;
   }).join('');
+  const recoveryState = recoverySlugState();
+  const recoveryMeta = window.RecoverySlugV1 && window.RecoverySlugV1.STATE_META[recoveryState];
+  const recoveryCard = window.RecoverySlugV1 ? `<div class="card pet-card pet-card-recovery-slug">
+      <div class="pet-art" data-action="recovery-slug-react" title="Успокоить Кацую">${recoverySlugHTML({ className: 'recovery-slug-v1--card' })}</div>
+      <div class="pet-name"><b>Кацую</b><span class="pet-badge" style="background:#79b8aa22;color:#79b8aa">${esc(recoveryMeta.label)}</span></div>
+      <p class="pet-sphere muted">Хранительница отдыха · состояние считается по энергии и честным паузам</p>
+      <div class="body-toad-domain-badge recovery-slug-domain-badge">RECOVERY · скрытый канонический сигнал</div>
+      <p class="pet-line muted">${esc(recoveryMeta.line)}</p>
+      <div class="body-toad-card-actions"><button class="btn ghost sm" data-action="recovery-slug-react">Побыть рядом</button></div>
+    </div>` : '';
   return `${companionCard()}
     <div class="card pet-intro">
       <h3 class="icon-heading">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} Зверинец сфер</h3>
       <p class="muted">Твой спутник присматривает за зверинцем. Каждая основная сфера жизни — живой питомец: делаешь что-то в сфере — кормишь его; забыл — голодает; перекосил всё в одну — разжиреет. Здоровый зверинец = ты держишь <b>десятиборье</b> в балансе. Облик и повадки питомца зависят от твоих подсфер. Через заботу, не вину. <i>Погладь питомца — он будет рад.</i></p>
       <p class="pet-balance">${balance}</p>
     </div>
-    <div class="pet-grid">${cards}</div>`;
+    <div class="pet-grid">${recoveryCard}${cards}</div>`;
 }
 
 // ============================================================
@@ -9296,7 +9349,9 @@ function renderDen() {
   const bodyId = bodyGuardianSphereId();
   const denSpheres = topSkills();
   if (bodyId) denSpheres.sort((a, b) => (a.id === bodyId ? -1 : b.id === bodyId ? 1 : 0));
-  const pets = denSpheres.slice(0, den.petCount).map((s) => {
+  const recoveryGuardianActive = Boolean(window.RecoverySlugV1 && den.petCount >= 2);
+  const spherePetLimit = Math.max(0, den.petCount - (recoveryGuardianActive ? 1 : 0));
+  const pets = denSpheres.slice(0, spherePetLimit).map((s) => {
     const traits = petTraits(s.id);
     const trait = traits[0] || {};
     return {
@@ -9307,8 +9362,10 @@ function renderDen() {
       idle: dayPick('petidle' + s.id, trait.idles || [trait.idle]),
     };
   });
+  const denStageEntities = pets.map((pet) => ({ id: pet.s.id, species: pet.species }));
+  if (recoveryGuardianActive) denStageEntities.push({ id: 'recovery-guardian', species: 'recoverySlug' });
   const denStagePlacements = window.DenStageV1
-    ? window.DenStageV1.layoutPets(pets.map((pet) => ({ id: pet.s.id, species: pet.species })))
+    ? window.DenStageV1.layoutPets(denStageEntities)
     : [];
   const denStageById = new Map(denStagePlacements.map((placement) => [placement.id, placement]));
   const petLayer = pets.map((p, i) => {
@@ -9319,6 +9376,10 @@ function renderDen() {
     if (p.species === 'bodyToad') return `<button class="den-pet den-pet-${i} den-body-toad"${stageAttrs} data-action="body-toad-interact" data-mode="greet" data-id="${p.s.id}" title="Жабий сэнсэй — ${PET_STATE[p.st.state].label}. Нажми, чтобы поприветствовать">${bodyToadHTML(p.s.id, { className: 'body-toad-v1--den' })}</button>`;
     return `<button class="den-pet den-pet-${i}${p.species === 'fortune' ? ' den-pet-fortune' : ''}"${stageAttrs} data-action="den-pet-react" data-id="${p.s.id}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id, p.idle)}</button>`;
   }).join('');
+  const recoveryPlacement = denStageById.get('recovery-guardian');
+  const recoveryLayer = recoveryGuardianActive && recoveryPlacement
+    ? `<button class="den-pet den-recovery-slug" data-den-entity="pet" data-den-slot="${recoveryPlacement.slot}" data-den-ground-y="${recoveryPlacement.groundY}" style="${window.DenStageV1.styleVars(recoveryPlacement)}" data-action="recovery-slug-react" title="Кацую — ${esc(window.RecoverySlugV1.STATE_META[recoverySlugState()].label)}">${recoverySlugHTML({ className: 'recovery-slug-v1--den' })}</button>`
+    : '';
   const bodyGuardian = pets.find((pet) => pet.species === 'bodyToad');
   const p = nestedProgress(), eP = energyPct(), eM = energyMeta(), tm = State.timer;
   const lifeContext = denLifeContext();
@@ -9341,9 +9402,9 @@ function renderDen() {
       <button class="den-companion" data-action="comp-pet" title="Погладить ${esc(c.name)}">${shadowVideo(ti, mood.face, 'den')}<span class="den-companion-name">${esc(c.name)}</span></button>
       ${bodyGuardian ? window.BodyToadV1.pairMarkup({ className: 'body-pair-v2--den' }) : ''}
       ${coherentV5 && window.TravellerRoomV4 ? window.TravellerRoomV4.markup({ className: 'traveller-room-v4--den' }) : ''}
-      ${coherentV5 ? '<span class="den-prop-reach" aria-hidden="true"><img src="/art/den/actors/traveller-portal-reach.png?v=20260806-1" alt="" aria-hidden="true" draggable="false" decoding="async"></span><span class="den-prop-portal" data-den-prop-portal aria-hidden="true"><img class="den-prop-portal__core" src="/art/den/actors/prop-portal-core.png?v=20260806-1" alt="" aria-hidden="true" draggable="false" decoding="async"><img class="den-prop-portal__rim" src="/art/den/actors/prop-portal-rim.png?v=20260806-1" alt="" aria-hidden="true" draggable="false" decoding="async"></span>' : ''}
+      ${coherentV5 ? '<span class="den-prop-reach" aria-hidden="true"><img src="/art/avatars/traveller-core-v1/male/room-actions-v4/bench-portal-reach.png?v=20260806-2" alt="" aria-hidden="true" draggable="false" decoding="async"></span><span class="den-prop-portal" data-den-prop-portal aria-hidden="true"><img class="den-prop-portal__core" src="/art/den/actors/prop-portal-core.png?v=20260806-2" alt="" aria-hidden="true" draggable="false" decoding="async"><img class="den-prop-portal__rim" src="/art/den/actors/prop-portal-rim.png?v=20260806-2" alt="" aria-hidden="true" draggable="false" decoding="async"></span>' : ''}
       <button class="den-avatar den-avatar-raster den-avatar-core" data-action="den-avatar-pose" data-state="${avatarState}" data-pose="${avatarPose}" title="${esc(AVATAR_CORE_POSE_META[avatarPose].label)}. Нажми, чтобы сменить действие">${avatarCorePoseHTML(avatarPose, { className: 'avatar-core-stack--den' })}<span class="den-avatar-shadow"></span></button>
-      ${petLayer}
+      ${petLayer}${recoveryLayer}
       <div class="den-tag">${rankIconHTML(cr, 'rank-inline-icon')} <span>${esc(nm)}</span><small>ур.${charLevel()}</small></div>
       <div class="den-scene-tools">
         <button data-action="den-ambient-cycle" title="Эмбиент: ${ambient.label}">${satoruIconHTML(ambient.icon, 'den-tool-glyph', '◇')}<span>${ambient.label}</span></button>
@@ -12782,6 +12843,17 @@ function onClick(e) {
     State._denAvatarPose = next;
     syncDenCorePose(next).catch(() => {});
     track(`den:avatar-pose:${next}`);
+    return;
+  }
+  if (action === 'recovery-slug-react') {
+    const scope = el.closest('.den-shell, .pet-card') || document;
+    const slug = el.matches('[data-recovery-slug]') ? el : scope.querySelector('[data-recovery-slug]');
+    if (slug && window.RecoverySlugV1) {
+      window.RecoverySlugV1.reassure(slug, recoverySlugState()).catch(() => {});
+      toast('🌿 Кацую замедляет дыхание рядом с тобой');
+      try { sfx('click'); } catch {}
+      track('recovery-slug:reassure');
+    }
     return;
   }
   if (action === 'avatar-core-pose') {

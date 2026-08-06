@@ -12,7 +12,7 @@ function pngSize(file) {
   return [header.readUInt32BE(16), header.readUInt32BE(20)];
 }
 
-assert.equal(toad.VERSION, '3.0.0');
+assert.equal(toad.VERSION, '3.1.0');
 assert.equal(toad.frameSrc('calm', true), '/art/pets/body-toad-v1/motion-v4/idle-breath.gif?v=20260806-3');
 assert.equal(toad.frameSrc('strained', true), '/art/pets/body-toad-v1/states/strained.png');
 assert.equal(toad.motionFrameSrc('air'), '/art/pets/body-toad-v1/motion-v4/hop-air.png?v=20260806-3');
@@ -23,7 +23,7 @@ assert.equal(typeof toad.playAmbient, 'function');
 assert.equal(typeof toad.installHopFrames, 'function');
 
 const motionRoot = path.join(root, 'public/art/pets/body-toad-v1/motion-v4');
-for (const file of ['idle-blink.png', 'hop-crouch.png', 'hop-air.png', 'solo-stretch.png', 'bench-sleep.png']) {
+for (const file of ['idle-blink.png', 'hop-crouch.png', 'hop-air.png', 'solo-stretch.png', 'solo-stretch-up.png', 'bench-sleep.png']) {
   assert.deepEqual(pngSize(path.join(motionRoot, file)), [1024, 1024]);
 }
 assert.ok(fs.statSync(path.join(motionRoot, 'idle-breath.gif')).size > 1000);
@@ -38,5 +38,6 @@ for (const interaction of Object.values(toad.INTERACTIONS)) {
 for (const file of ['prop-portal-rim.png', 'prop-portal-core.png', 'traveller-portal-reach.png']) {
   assert.ok(fs.statSync(path.join(root, 'public/art/den/actors', file)).size > 1000);
 }
+assert.deepEqual(pngSize(path.join(root, 'public/art/avatars/traveller-core-v1/male/room-actions-v4/bench-portal-reach.png')), [640, 900]);
 
 console.log('BODY Guardian life v4: contract checks passed');
