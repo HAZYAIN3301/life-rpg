@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenStage(root) {
   'use strict';
 
-  const VERSION = '1.2.0';
+  const VERSION = '1.3.0';
   const WORLD = Object.freeze({ width: 1536, height: 864 });
   const APPROACH_MS = 2200;
   const RETURN_MS = 2200;
@@ -25,7 +25,7 @@
   ]);
 
   const PROFILES = Object.freeze({
-    bodyToad: Object.freeze({ width: 16.0, aspect: 1, footprint: 13.2, preferred: 'mid-east' }),
+    bodyToad: Object.freeze({ width: 19.2, aspect: 1, footprint: 15.7, preferred: 'mid-east' }),
     fortune: Object.freeze({ width: 8.9, aspect: 1, footprint: 8.0, preferred: 'west' }),
     default: Object.freeze({ width: 6.7, aspect: 120 / 132, footprint: 6.2, preferred: 'east' }),
   });
@@ -118,23 +118,28 @@
     if (!scope || typeof play !== 'function') return false;
     const config = options || {};
     const avatar = scope.querySelector && scope.querySelector('.den-avatar-core');
+    const toad = scope.querySelector && scope.querySelector('[data-body-toad]');
     const motion = root.TravellerMotionV3;
+    const toadMotion = root.BodyToadV1;
     const approachMs = Math.max(700, Number(config.approachMs) || APPROACH_MS);
     const returnMs = Math.max(700, Number(config.returnMs) || RETURN_MS);
     const contactMs = Math.max(400, Number(config.duration) || 3000);
     clearMeetingClasses(scope);
     if (avatar && motion) motion.installWalkFrames(avatar, 'right');
+    if (toad && toadMotion && toadMotion.installHopFrames) await toadMotion.installHopFrames(toad, 'meeting');
     scope.classList.add('is-body-pair-approaching');
     await nextFrame();
     await wait(approachMs);
     if (!scope.isConnected) {
       clearMeetingClasses(scope);
       if (avatar && motion) motion.clearWalkFrames(avatar);
+      if (toad && toadMotion && toadMotion.clearHopFrames) toadMotion.clearHopFrames(toad).catch(() => {});
       return false;
     }
     scope.classList.remove('is-body-pair-approaching');
     scope.classList.add('is-body-pair-at-meeting');
     if (avatar && motion) motion.clearWalkFrames(avatar);
+    if (toad && toadMotion && toadMotion.clearHopFrames) await toadMotion.clearHopFrames(toad);
     const played = await play();
     if (!played) {
       clearMeetingClasses(scope);
@@ -149,10 +154,12 @@
     scope.classList.remove('is-body-pair-settling');
     scope.classList.add('is-body-pair-returning');
     if (avatar && motion) motion.installWalkFrames(avatar, 'left');
+    if (toad && toadMotion && toadMotion.installHopFrames) await toadMotion.installHopFrames(toad, 'home');
     await nextFrame();
     scope.classList.remove('is-body-pair-at-meeting', 'is-body-pair-returning');
     await wait(returnMs);
     if (avatar && motion) motion.clearWalkFrames(avatar);
+    if (toad && toadMotion && toadMotion.clearHopFrames) await toadMotion.clearHopFrames(toad);
     return true;
   }
 

@@ -4106,19 +4106,27 @@ function cancelDenRoomAction(notify = false) {
   if (!shell || !window.TravellerRoomV4) return false;
   return window.TravellerRoomV4.cancel(shell, { notify });
 }
-function playDenPropPortal(shell, duration = 1050) {
+function playDenPropPortal(shell, duration = 2500) {
   const layer = shell && shell.querySelector('[data-den-prop-portal]');
   if (!shell || !layer) return Promise.resolve(false);
-  shell.classList.remove('is-den-prop-portal-active');
+  shell.classList.remove('is-den-prop-portal-active', 'is-den-prop-portal-reaching', 'is-den-prop-portal-extracting');
   void layer.offsetWidth;
   shell.classList.add('is-den-prop-portal-active');
   layer.setAttribute('aria-hidden', 'false');
   return new Promise((resolve) => {
+    const reaching = setTimeout(() => {
+      if (shell.isConnected) shell.classList.add('is-den-prop-portal-reaching');
+    }, 520);
+    const extracting = setTimeout(() => {
+      if (shell.isConnected) shell.classList.add('is-den-prop-portal-extracting');
+    }, 1620);
     setTimeout(() => {
-      if (shell.isConnected) shell.classList.remove('is-den-prop-portal-active');
+      clearTimeout(reaching);
+      clearTimeout(extracting);
+      if (shell.isConnected) shell.classList.remove('is-den-prop-portal-active', 'is-den-prop-portal-reaching', 'is-den-prop-portal-extracting');
       if (layer.isConnected) layer.setAttribute('aria-hidden', 'true');
       resolve(true);
-    }, Math.max(500, Number(duration) || 1050));
+    }, Math.max(1500, Number(duration) || 2500));
   });
 }
 function runDenRoomAction(actionId, options = {}) {
@@ -4216,7 +4224,7 @@ function denLifeContext() {
 function denLifeCanAct(shell) {
   if (!shell || !shell.isConnected || State.view !== 'den' || document.hidden || avatarMotionReduced()) return false;
   if (document.querySelector('.modal-overlay, .tut-bubble')) return false;
-  if (State._denEdit || shell.classList.contains('is-body-pair-active') || shell.classList.contains('is-body-pair-approaching') || shell.classList.contains('is-room-action-v4-active')) return false;
+  if (State._denEdit || shell.classList.contains('is-body-pair-active') || shell.classList.contains('is-body-pair-approaching') || shell.classList.contains('is-room-action-v4-active') || shell.classList.contains('is-toad-ambient-active')) return false;
   const avatar = shell.querySelector('.den-avatar-core');
   if (avatar && window.TravellerMotionV3 && window.TravellerMotionV3.isPlaying(avatar)) return false;
   return true;
@@ -4234,12 +4242,12 @@ function playBodyToadScene(scope, sphereId, mode, options = {}) {
   if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, meta.duration + 9000);
   cancelDenRoomAction(false);
   cancelDenAvatarLocomotion(true);
+  if (window.BodyToadV1.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
   const restoreState = bodyToadStateForSphere(sphereId);
   const playPair = () => window.BodyToadV1.playPair(scope, mode, { toad, restoreState, duration });
-  const pairPromise = window.DenStageV1
+  return syncDenCorePose('idle').catch(() => false).then(() => (window.DenStageV1
     ? window.DenStageV1.approachBodyPair(scope, playPair, { duration })
-    : playPair();
-  return pairPromise.then((played) => {
+    : playPair())).then((played) => {
     if (played) return true;
     return window.BodyToadV1.playInteraction(toad, mode, { restoreState });
   }).catch(() => window.BodyToadV1.playInteraction(toad, mode, { restoreState }))
@@ -4251,21 +4259,18 @@ function playDenToadBeat(scope, sphereId, beatId) {
   const toad = scope.querySelector('[data-body-toad]');
   if (!toad) return Promise.resolve(false);
   const restoreState = bodyToadStateForSphere(sphereId);
-  if (beatId === 'toad-blink') {
-    return window.BodyToadV1.setState(toad, 'restoring', { animated: false, instant: true }).then(() => new Promise((resolve) => {
-      setTimeout(() => {
-        window.BodyToadV1.setState(toad, restoreState, { animated: false, instant: true })
-          .then(() => resolve(true)).catch(() => resolve(false));
-      }, 115);
-    })).catch(() => false);
+  const ambientMode = {
+    'toad-blink': 'blink',
+    'toad-hop-tour': 'hop-tour',
+    'toad-stretch': 'solo-stretch',
+    'toad-bench-nap': 'bench-nap',
+  }[beatId];
+  if (ambientMode && window.BodyToadV1.playAmbient) {
+    return window.BodyToadV1.playAmbient(toad, ambientMode, { restoreState }).catch(() => false);
   }
-  const targetState = beatId === 'coach' || beatId === 'toad-look' ? 'thriving' : 'restoring';
-  const hold = beatId === 'coach' ? 1350 : 900;
-  return window.BodyToadV1.setState(toad, targetState, { animated: false }).then(() => new Promise((resolve) => {
-    setTimeout(() => {
-      window.BodyToadV1.setState(toad, restoreState, { animated: false }).then(() => resolve(true)).catch(() => resolve(false));
-    }, hold);
-  })).catch(() => false);
+  return window.BodyToadV1.playAmbient
+    ? window.BodyToadV1.playAmbient(toad, 'solo-stretch', { restoreState, duration: 1800 }).catch(() => false)
+    : Promise.resolve(false);
 }
 
 function syncDenLife() {
@@ -9178,7 +9183,7 @@ function renderDen() {
       <button class="den-companion" data-action="comp-pet" title="Погладить ${esc(c.name)}">${shadowVideo(ti, mood.face, 'den')}<span class="den-companion-name">${esc(c.name)}</span></button>
       ${bodyGuardian ? window.BodyToadV1.pairMarkup({ className: 'body-pair-v2--den' }) : ''}
       ${coherentV5 && window.TravellerRoomV4 ? window.TravellerRoomV4.markup({ className: 'traveller-room-v4--den' }) : ''}
-      ${coherentV5 ? '<span class="den-prop-portal" data-den-prop-portal aria-hidden="true"><img src="/art/den/actors/prop-portal.png?v=20260805-1" alt="" aria-hidden="true" draggable="false" decoding="async"></span>' : ''}
+      ${coherentV5 ? '<span class="den-prop-reach" aria-hidden="true"><img src="/art/den/actors/traveller-portal-reach.png?v=20260806-1" alt="" aria-hidden="true" draggable="false" decoding="async"></span><span class="den-prop-portal" data-den-prop-portal aria-hidden="true"><img class="den-prop-portal__core" src="/art/den/actors/prop-portal-core.png?v=20260806-1" alt="" aria-hidden="true" draggable="false" decoding="async"><img class="den-prop-portal__rim" src="/art/den/actors/prop-portal-rim.png?v=20260806-1" alt="" aria-hidden="true" draggable="false" decoding="async"></span>' : ''}
       <button class="den-avatar den-avatar-raster den-avatar-core" data-action="den-avatar-pose" data-state="${avatarState}" data-pose="${avatarPose}" title="${esc(AVATAR_CORE_POSE_META[avatarPose].label)}. Нажми, чтобы сменить действие">${avatarCorePoseHTML(avatarPose, { className: 'avatar-core-stack--den' })}<span class="den-avatar-shadow"></span></button>
       ${petLayer}
       <div class="den-tag">${rankIconHTML(cr, 'rank-inline-icon')} <span>${esc(nm)}</span><small>ур.${charLevel()}</small></div>

@@ -9062,3 +9062,148 @@ html.mobile-nav-open body {
   .den-scene[data-den-renderer="v5"] .den-pet[data-den-slot] { transition: none !important; }
   .body-toad-v1.is-den-ambient .body-toad-v1__stage { animation: none !important; }
 }
+
+/* ============================================================
+   BODY Guardian life v4 — authored locomotion, stable scale and portal reach.
+   ============================================================ */
+.den-scene[data-den-renderer="v5"] .den-pet.den-body-toad {
+  transition: translate 2.2s linear, scale 2.2s linear, opacity .18s ease, visibility 0s linear 0s;
+}
+.den-shell.is-body-pair-approaching .den-avatar-core {
+  translate: 24% 1%;
+  scale: .98;
+}
+.den-shell.is-body-pair-at-meeting .den-avatar-core,
+.den-shell.is-body-pair-returning .den-avatar-core {
+  translate: 24% 1%;
+  scale: .98;
+}
+.den-shell.is-body-pair-approaching .den-body-toad,
+.den-shell.is-body-pair-at-meeting .den-body-toad,
+.den-shell.is-body-pair-returning .den-body-toad {
+  translate: -44% 0;
+  scale: 1;
+}
+
+.body-toad-v1__motion-frame--b { opacity: 0; }
+.body-toad-v1[data-motion="approach-hop"] .body-toad-v1__motion-frame--a {
+  animation: bodyToadHopCrouch .72s steps(1,end) infinite;
+}
+.body-toad-v1[data-motion="approach-hop"] .body-toad-v1__motion-frame--b {
+  animation: bodyToadHopAir .72s steps(1,end) infinite;
+}
+@keyframes bodyToadHopCrouch { 0%,31%,100% { opacity: 1; } 32%,76% { opacity: 0; } 77%,99% { opacity: 1; } }
+@keyframes bodyToadHopAir { 0%,31%,77%,100% { opacity: 0; } 32%,76% { opacity: 1; } }
+
+.den-body-toad[data-toad-motion="hop-tour"],
+.den-body-toad[data-toad-motion="bench-nap"] {
+  transition: translate .88s cubic-bezier(.36,.02,.28,1), scale .88s cubic-bezier(.36,.02,.28,1), opacity .18s ease;
+}
+.den-body-toad[data-toad-route="away"] { translate: 188% -16%; scale: .9; }
+.den-body-toad[data-toad-route="bench"] { translate: 76% -66%; scale: .76; z-index: 10 !important; }
+.den-body-toad[data-toad-route="home"] { translate: 0 0; scale: 1; }
+.body-toad-v1[data-motion="solo-stretch"] .body-toad-v1__stage {
+  animation: bodyToadSoloStretch 3.4s ease-in-out both !important;
+}
+.body-toad-v1[data-motion="bench-nap"] .body-toad-v1__stage {
+  animation: bodyToadNapBreath 3s ease-in-out infinite !important;
+}
+@keyframes bodyToadSoloStretch {
+  0%,100% { transform: rotate(0); }
+  24% { transform: rotate(-1.4deg); }
+  62% { transform: rotate(1deg); }
+}
+@keyframes bodyToadNapBreath { 0%,100% { translate: 0 0; } 50% { translate: 0 -1.2%; } }
+
+.body-pair-v2__frame--c,
+.body-pair-v2__frame--d { opacity: 0; }
+.body-pair-v2[data-mode="whistle"].is-active .body-pair-v2__frame--a { animation: bodyPairWhistle4A 1.84s steps(1,end) infinite; }
+.body-pair-v2[data-mode="whistle"].is-active .body-pair-v2__frame--b { animation: bodyPairWhistle4B 1.84s steps(1,end) infinite; }
+.body-pair-v2[data-mode="whistle"].is-active .body-pair-v2__frame--c { animation: bodyPairWhistle4C 1.84s steps(1,end) infinite; }
+.body-pair-v2[data-mode="whistle"].is-active .body-pair-v2__frame--d { animation: bodyPairWhistle4D 1.84s steps(1,end) infinite; }
+@keyframes bodyPairWhistle4A { 0%,24.99%,100% { opacity: 1; } 25%,99.99% { opacity: 0; } }
+@keyframes bodyPairWhistle4B { 0%,24.99%,50%,100% { opacity: 0; } 25%,49.99% { opacity: 1; } }
+@keyframes bodyPairWhistle4C { 0%,49.99%,75%,100% { opacity: 0; } 50%,74.99% { opacity: 1; } }
+@keyframes bodyPairWhistle4D { 0%,74.99%,100% { opacity: 0; } 75%,99.99% { opacity: 1; } }
+.den-scene[data-den-renderer="v5"] .body-pair-v2[data-mode="whistle"] { left: 39%; width: 39%; }
+.den-scene[data-den-renderer="v5"] .body-pair-v2[data-mode="pushup"] { left: 39.5%; width: 38%; }
+.den-scene[data-den-renderer="v5"] .body-pair-v2[data-mode="train"] { left: 39.5%; width: 38%; }
+.den-scene[data-den-renderer="v5"] .body-pair-v2[data-mode="rest"] { left: 39.75%; width: 37.5%; }
+
+.den-prop-portal {
+  left: 79%;
+  bottom: 20%;
+  width: 10.5%;
+  z-index: 14;
+  transform: scale(.04,.72) rotate(-7deg);
+  overflow: visible;
+}
+.den-prop-portal__core,
+.den-prop-portal__rim {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.den-prop-portal__core { z-index: 0; transform-origin: 50% 50%; }
+.den-prop-portal__rim { z-index: 1; }
+.den-shell.is-den-prop-portal-active .den-prop-portal {
+  visibility: visible;
+  animation: denPropPortalOpenV4 2.5s cubic-bezier(.2,.78,.2,1) both;
+}
+.den-shell.is-den-prop-portal-active .den-prop-portal__core {
+  animation: denPropPortalCoreFlow 1.05s linear infinite;
+}
+.den-prop-reach {
+  position: absolute;
+  left: 58.5%;
+  bottom: 9.8%;
+  z-index: 13;
+  display: block;
+  width: 29%;
+  aspect-ratio: 1;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform-origin: 50% 95.5%;
+}
+.den-prop-reach img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%; }
+.den-shell.is-den-prop-portal-reaching .den-prop-reach {
+  visibility: visible;
+  animation: denPropReachV4 1.98s cubic-bezier(.2,.72,.2,1) both;
+}
+.den-shell.is-den-prop-portal-reaching .den-avatar-core {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+@keyframes denPropPortalOpenV4 {
+  0% { opacity: 0; transform: scale(.035,.72) rotate(-8deg); }
+  18% { opacity: 1; transform: scale(1.02,.96) rotate(1deg); }
+  30%,78% { opacity: 1; transform: scale(1) rotate(0); }
+  100% { opacity: 0; transform: scale(.035,.74) rotate(8deg); }
+}
+@keyframes denPropPortalCoreFlow {
+  0% { transform: rotate(0deg) scale(.92); filter: brightness(.98) saturate(1.04); }
+  50% { transform: rotate(180deg) scale(.97); filter: brightness(1.12) saturate(1.18); }
+  100% { transform: rotate(360deg) scale(.92); filter: brightness(.98) saturate(1.04); }
+}
+@keyframes denPropReachV4 {
+  0% { opacity: 0; translate: -2.4% 0; }
+  18%,62% { opacity: 1; translate: 0 0; }
+  78% { opacity: 1; translate: -1% 0; }
+  100% { opacity: 0; translate: -4% 0; }
+}
+
+@media (max-width: 720px) {
+  .den-body-toad[data-toad-route="away"] { translate: 148% -12%; }
+  .den-body-toad[data-toad-route="bench"] { translate: 58% -54%; scale: .78; }
+  .den-prop-reach { left: 57.5%; width: 31%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .den-prop-reach { display: none !important; }
+  .den-prop-portal__core { animation: none !important; }
+  .den-body-toad[data-toad-route] { translate: 0 0 !important; scale: 1 !important; }
+}

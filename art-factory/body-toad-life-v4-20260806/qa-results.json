@@ -1,0 +1,427 @@
+{
+  "status": "PASS",
+  "pngCount": 21,
+  "idleFrames": 21,
+  "assets": [
+    {
+      "file": "art/pets/body-toad-v1/motion-v4/idle-blink.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        72,
+        148,
+        952,
+        920
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/motion-v4/hop-crouch.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        72,
+        221,
+        952,
+        920
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/motion-v4/hop-air.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        117,
+        225,
+        907,
+        850
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/motion-v4/solo-stretch.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        63,
+        388,
+        962,
+        920
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/motion-v4/bench-sleep.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        62,
+        493,
+        962,
+        920
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/pair-v4/greet-contact.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        158,
+        740,
+        1377,
+        1470
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/pair-v4/train-low.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        154,
+        539,
+        1481,
+        1470
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/pair-v4/train-high.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        153,
+        226,
+        1424,
+        1470
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/pair-v4/rest-contact.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        144,
+        642,
+        1391,
+        1470
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/pair-v4/rest-pet.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        144,
+        628,
+        1392,
+        1470
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/pair-v4/pushup-down.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        15,
+        864,
+        1531,
+        1470
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/pair-v4/pushup-up.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        15,
+        822,
+        1530,
+        1470
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/pair-v4/stretch-a.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        248,
+        694,
+        1289,
+        1470
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/pair-v4/stretch-b.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        248,
+        732,
+        1288,
+        1470
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/pair-v4/whistle-a.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        156,
+        508,
+        1380,
+        1470
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/pair-v4/whistle-b.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        159,
+        508,
+        1377,
+        1470
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/pair-v4/whistle-c.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        156,
+        523,
+        1380,
+        1470
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/pair-v4/whistle-d.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        156,
+        562,
+        1380,
+        1470
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/den/actors/prop-portal-rim.png",
+      "size": [
+        542,
+        768
+      ],
+      "bbox": [
+        40,
+        46,
+        499,
+        728
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/den/actors/prop-portal-core.png",
+      "size": [
+        542,
+        768
+      ],
+      "bbox": [
+        76,
+        130,
+        466,
+        714
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/den/actors/traveller-portal-reach.png",
+      "size": [
+        900,
+        900
+      ],
+      "bbox": [
+        255,
+        64,
+        807,
+        860
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    }
+  ]
+}

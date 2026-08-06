@@ -18,10 +18,11 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildBodyToadV1() {
   'use strict';
 
-  const VERSION = '2.3.0';
+  const VERSION = '3.0.0';
   const ART_ROOT = '/art/pets/body-toad-v1/';
-  const PAIR_ART_ROOT = `${ART_ROOT}pair-v2/`;
-  const ACTION_PAIR_ART_ROOT = `${ART_ROOT}pair-v3/`;
+  const PAIR_ART_ROOT = `${ART_ROOT}pair-v4/`;
+  const ACTION_PAIR_ART_ROOT = PAIR_ART_ROOT;
+  const MOTION_ART_ROOT = `${ART_ROOT}motion-v4/`;
   const STATES = Object.freeze(['calm', 'thriving', 'strained', 'restoring']);
   const STATE_META = Object.freeze({
     calm: { label: 'Спокоен', line: 'Держит стойку и следит за ритмом.' },
@@ -32,7 +33,7 @@
   const INTERACTIONS = Object.freeze({
     greet: { label: 'Поприветствовать', duration: 1500, state: 'calm', pairFrames: ['greet-contact'] },
     train: { label: 'Размяться вместе', duration: 2800, state: 'thriving', pairFrames: ['train-low', 'train-high'] },
-    whistle: { label: 'Команда сэнсэя', duration: 3200, state: 'thriving', pairFrames: ['whistle-a', 'whistle-b'] },
+    whistle: { label: 'Команда сэнсэя', duration: 4200, state: 'thriving', pairFrames: ['whistle-a', 'whistle-b', 'whistle-c', 'whistle-d'] },
     pushup: { label: 'Отжимания', duration: 5200, state: 'thriving', pairFrames: ['pushup-down', 'pushup-up'] },
     stretch: { label: 'Растяжка', duration: 5600, state: 'restoring', pairFrames: ['stretch-a', 'stretch-b'] },
     rest: { label: 'Погладить и передохнуть', duration: 3000, state: 'restoring', pairFrames: ['rest-contact', 'rest-pet'] },
@@ -45,7 +46,16 @@
   });
   const reactionTimers = new WeakMap();
   const pairTimers = new WeakMap();
+  const ambientControllers = new WeakMap();
   const preloads = new Map();
+  const MOTION_FRAMES = Object.freeze({
+    blink: 'idle-blink.png',
+    breath: 'idle-breath.gif',
+    crouch: 'hop-crouch.png',
+    air: 'hop-air.png',
+    stretch: 'solo-stretch.png',
+    sleep: 'bench-sleep.png',
+  });
 
   function normalizeState(value) {
     return STATES.includes(value) ? value : 'calm';
@@ -59,16 +69,20 @@
     return `${ART_ROOT}states/${normalizeState(state)}.png`;
   }
 
-  function frameSrc(state) {
-    return stateSrc(state);
+  function motionFrameSrc(key) {
+    return `${MOTION_ART_ROOT}${MOTION_FRAMES[key] || MOTION_FRAMES.blink}?v=20260806-3`;
+  }
+
+  function frameSrc(state, animated) {
+    const safe = normalizeState(state);
+    if (safe === 'calm' && animated !== false) return motionFrameSrc('breath');
+    return stateSrc(safe);
   }
 
   function pairFrameSrc(frame) {
-    const legacy = new Set(['rest-contact', 'rest-pet', 'greet-contact', 'train-low', 'train-high']);
-    const actions = new Set(['whistle-a', 'whistle-b', 'pushup-down', 'pushup-up', 'stretch-a', 'stretch-b']);
-    if (actions.has(frame)) return `${ACTION_PAIR_ART_ROOT}${frame}.png?v=20260805-2`;
-    const safe = legacy.has(frame) ? frame : 'rest-contact';
-    return `${PAIR_ART_ROOT}${safe}.png`;
+    const allowed = new Set(Object.values(INTERACTIONS).flatMap((interaction) => interaction.pairFrames));
+    const safe = allowed.has(frame) ? frame : 'rest-contact';
+    return `${PAIR_ART_ROOT}${safe}.png?v=20260806-3`;
   }
 
   function preload(src) {
@@ -95,7 +109,8 @@
 
   function prefetch() {
     const pairSources = Object.values(INTERACTIONS).flatMap((interaction) => interaction.pairFrames.map(pairFrameSrc));
-    const sources = STATES.map(stateSrc).concat(pairSources);
+    const motionSources = Object.keys(MOTION_FRAMES).map(motionFrameSrc);
+    const sources = STATES.map(stateSrc).concat(pairSources, motionSources);
     return Promise.allSettled(sources.map(preload));
   }
 
@@ -124,7 +139,7 @@
     const interaction = INTERACTIONS[mode] || INTERACTIONS.rest;
     return interaction.pairFrames.map((frame, index) => {
       const image = document.createElement('img');
-      image.className = `body-pair-v2__frame body-pair-v2__frame--${index === 0 ? 'a' : 'b'}`;
+      image.className = `body-pair-v2__frame body-pair-v2__frame--${['a', 'b', 'c', 'd'][index] || 'a'}`;
       image.src = pairFrameSrc(frame);
       image.alt = '';
       image.setAttribute('aria-hidden', 'true');
@@ -186,7 +201,9 @@
     const animated = config.animated !== false && element.dataset.animated !== 'false';
     const src = frameSrc(safe, animated);
     const active = element.querySelector('.body-toad-v1__frame.is-active');
-    if (active && new URL(active.src, location.href).pathname === src) {
+    const activeUrl = active ? new URL(active.src, location.href) : null;
+    const targetUrl = new URL(src, location.href);
+    if (activeUrl && activeUrl.pathname === targetUrl.pathname && activeUrl.search === targetUrl.search) {
       element.dataset.state = safe;
       return Promise.resolve(element);
     }
@@ -217,6 +234,142 @@
       }));
       return element;
     });
+  }
+
+  function waitFor(controller, ms) {
+    return new Promise((resolve) => {
+      controller.resolve = resolve;
+      controller.timer = setTimeout(() => {
+        controller.timer = 0;
+        controller.resolve = null;
+        resolve(!controller.cancelled);
+      }, ms);
+    });
+  }
+
+  function motionHost(element) {
+    return element && element.closest ? (element.closest('.den-body-toad') || element) : element;
+  }
+
+  function replaceMotionFrames(element, keys, motion) {
+    if (!element) return Promise.resolve(false);
+    const safeKeys = Array.isArray(keys) ? keys : [keys];
+    const sources = safeKeys.map(motionFrameSrc);
+    return Promise.all(sources.map(preload)).then(() => {
+      if (!element.isConnected) return false;
+      const stage = element.querySelector('.body-toad-v1__stage');
+      if (!stage) return false;
+      const frames = sources.map((src, index) => {
+        const image = document.createElement('img');
+        image.className = `body-toad-v1__frame body-toad-v1__motion-frame body-toad-v1__motion-frame--${index === 0 ? 'a' : 'b'} is-active`;
+        image.src = src;
+        image.alt = '';
+        image.setAttribute('aria-hidden', 'true');
+        image.draggable = false;
+        image.decoding = 'async';
+        return image;
+      });
+      stage.replaceChildren(...frames);
+      element.dataset.motion = motion;
+      element.classList.add('is-den-ambient');
+      return true;
+    });
+  }
+
+  function clearMotion(element, restoreState) {
+    if (!element) return Promise.resolve(false);
+    const host = motionHost(element);
+    const shell = element.closest && element.closest('.den-shell');
+    element.classList.remove('is-den-ambient');
+    delete element.dataset.motion;
+    if (host && host.dataset) {
+      delete host.dataset.toadMotion;
+      delete host.dataset.toadRoute;
+    }
+    if (shell) shell.classList.remove('is-toad-ambient-active');
+    return setState(element, normalizeState(restoreState || element.dataset.state), { animated: true, instant: true }).then(() => true);
+  }
+
+  function cancelAmbient(element, restore) {
+    const controller = ambientControllers.get(element);
+    if (!controller) return false;
+    controller.cancelled = true;
+    if (controller.timer) clearTimeout(controller.timer);
+    if (controller.resolve) controller.resolve(false);
+    ambientControllers.delete(element);
+    if (restore !== false) clearMotion(element, controller.restoreState).catch(() => {});
+    return true;
+  }
+
+  async function installHopFrames(element, direction) {
+    if (!element) return false;
+    cancelAmbient(element, false);
+    const ready = await replaceMotionFrames(element, ['crouch', 'air'], 'approach-hop');
+    if (!ready) return false;
+    const host = motionHost(element);
+    if (host && host.dataset) host.dataset.toadApproach = direction === 'home' ? 'home' : 'meeting';
+    return true;
+  }
+
+  function clearHopFrames(element, restoreState) {
+    const host = motionHost(element);
+    if (host && host.dataset) delete host.dataset.toadApproach;
+    return clearMotion(element, restoreState);
+  }
+
+  async function playAmbient(element, mode, options) {
+    if (!element || !element.isConnected) return false;
+    cancelAmbient(element, false);
+    const config = options || {};
+    const restoreState = normalizeState(config.restoreState || element.dataset.state);
+    const controller = { cancelled: false, resolve: null, restoreState, timer: 0 };
+    ambientControllers.set(element, controller);
+    const host = motionHost(element);
+    const shell = element.closest && element.closest('.den-shell');
+    if (shell) shell.classList.add('is-toad-ambient-active');
+    if (host && host.dataset) host.dataset.toadMotion = mode;
+    const show = (key) => replaceMotionFrames(element, key, mode);
+    const wait = (ms) => waitFor(controller, ms);
+    try {
+      if (mode === 'blink') {
+        if (!(await show('blink'))) return false;
+        return await wait(145);
+      }
+      if (mode === 'solo-stretch') {
+        if (!(await show('stretch'))) return false;
+        return await wait(Math.max(1800, Number(config.duration) || 3400));
+      }
+      if (mode === 'bench-nap') {
+        if (!(await show('crouch')) || !(await wait(300))) return false;
+        await show('air');
+        if (host && host.dataset) host.dataset.toadRoute = 'bench';
+        if (!(await wait(900))) return false;
+        await show('sleep');
+        if (!(await wait(Math.max(2800, Number(config.duration) || 5200)))) return false;
+        await show('air');
+        if (host && host.dataset) host.dataset.toadRoute = 'home';
+        if (!(await wait(900))) return false;
+        await show('crouch');
+        return await wait(260);
+      }
+      if (mode === 'hop-tour') {
+        if (!(await show('crouch')) || !(await wait(320))) return false;
+        await show('air');
+        if (host && host.dataset) host.dataset.toadRoute = 'away';
+        if (!(await wait(900))) return false;
+        await show('crouch');
+        if (!(await wait(480))) return false;
+        await show('air');
+        if (host && host.dataset) host.dataset.toadRoute = 'home';
+        if (!(await wait(900))) return false;
+        await show('crouch');
+        return await wait(260);
+      }
+      return false;
+    } finally {
+      if (ambientControllers.get(element) === controller) ambientControllers.delete(element);
+      await clearMotion(element, restoreState).catch(() => {});
+    }
   }
 
   function playInteraction(element, mode, options) {
@@ -250,6 +403,8 @@
     ART_ROOT,
     PAIR_ART_ROOT,
     ACTION_PAIR_ART_ROOT,
+    MOTION_ART_ROOT,
+    MOTION_FRAMES,
     STATES,
     STATE_META,
     INTERACTIONS,
@@ -257,6 +412,7 @@
     stateFromPetState,
     stateSrc,
     frameSrc,
+    motionFrameSrc,
     pairFrameSrc,
     prefetch,
     markup,
@@ -265,5 +421,9 @@
     playInteraction,
     setPairMode,
     playPair,
+    installHopFrames,
+    clearHopFrames,
+    playAmbient,
+    cancelAmbient,
   });
 });

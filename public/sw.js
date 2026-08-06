@@ -1,7 +1,7 @@
 /* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    App shell: network-first. Art/media: cache-first. /api/: always live network.
    Bump CACHE whenever the shell or a stable asset URL changes. */
-const CACHE = 'satoru-v95';
+const CACHE = 'satoru-v98';
 const SHELL = [
   './', 'index.html', 'app.js', 'canon-domains.js', 'den-stage-v1.js', 'den-life-v1.js', 'body-toad-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js', 'styles.css', 'shadow-rig-v2.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
   'avatar-forge-v1.html', 'avatar-forge-v1.css', 'avatar-forge-v1.js',
@@ -22,7 +22,28 @@ const SHELL = [
   'art/den/v4/ambient/fireplace-grate-logs-runtime.png',
   'art/den/v5/den-day.jpg',
   'art/den/v5/den-night-lantern.jpg',
-  'art/den/actors/prop-portal.png',
+  'art/den/actors/prop-portal-rim.png',
+  'art/den/actors/prop-portal-core.png',
+  'art/den/actors/traveller-portal-reach.png',
+  'art/pets/body-toad-v1/motion-v4/idle-breath.gif',
+  'art/pets/body-toad-v1/motion-v4/idle-blink.png',
+  'art/pets/body-toad-v1/motion-v4/hop-crouch.png',
+  'art/pets/body-toad-v1/motion-v4/hop-air.png',
+  'art/pets/body-toad-v1/motion-v4/solo-stretch.png',
+  'art/pets/body-toad-v1/motion-v4/bench-sleep.png',
+  'art/pets/body-toad-v1/pair-v4/greet-contact.png',
+  'art/pets/body-toad-v1/pair-v4/train-low.png',
+  'art/pets/body-toad-v1/pair-v4/train-high.png',
+  'art/pets/body-toad-v1/pair-v4/rest-contact.png',
+  'art/pets/body-toad-v1/pair-v4/rest-pet.png',
+  'art/pets/body-toad-v1/pair-v4/pushup-down.png',
+  'art/pets/body-toad-v1/pair-v4/pushup-up.png',
+  'art/pets/body-toad-v1/pair-v4/stretch-a.png',
+  'art/pets/body-toad-v1/pair-v4/stretch-b.png',
+  'art/pets/body-toad-v1/pair-v4/whistle-a.png',
+  'art/pets/body-toad-v1/pair-v4/whistle-b.png',
+  'art/pets/body-toad-v1/pair-v4/whistle-c.png',
+  'art/pets/body-toad-v1/pair-v4/whistle-d.png',
   'art/pets/body-toad-v1/pair-v3/pushup-down.png',
   'art/pets/body-toad-v1/pair-v3/pushup-up.png',
   'art/pets/body-toad-v1/pair-v3/stretch-a.png',
