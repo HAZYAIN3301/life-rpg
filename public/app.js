@@ -12483,6 +12483,8 @@ function tutorialBindGlobals() {
   const repaint = () => { try { tutorialPaint(); } catch {} };
   window.addEventListener('resize', repaint);
   window.addEventListener('scroll', repaint, true);
+  // Модалы монтируются и снимаются прямо в body, мимо render() — иначе пузырь не вернётся после закрытия.
+  try { new MutationObserver(repaint).observe(document.body, { childList: true }); } catch {}
 }
 function tutorialStart() { const t = ensureTutorial(); t.i = 0; t.active = true; t.mode = 'day1'; t.done = false; t.skipped = false; Store.save('settings', State.settings); tutorialBindGlobals(); tutorialPaint(); }
 function tutorialSkip() { const t = ensureTutorial(); t.active = false; t.skipped = true; Store.save('settings', State.settings); tutorialPaint(); }
@@ -12505,7 +12507,11 @@ function tutorialAdvance(action) {
 function tutorialPaint() {
   const tut = ensureTutorial();
   let ov = document.getElementById('tut-overlay');
-  if (!tut.active) { if (ov) ov.remove(); return; }
+  if (tut.active) tutorialBindGlobals(); // после перезагрузки с активным гайдом paint зовут напрямую из render()
+  // Пока открыт любой модал — гайда нет. #tut-overlay лежит на z-index 10001 против 200 у .modal-overlay,
+  // так что пузырь накрывал бы кнопки открытого окна, а подсказка всё равно про другой элемент интерфейса.
+  // Состояние не трогаем: закроют модал — MutationObserver перерисует и пузырь вернётся.
+  if (!tut.active || document.querySelector('.modal-overlay')) { if (ov) ov.remove(); return; }
   if (!ov) { ov = document.createElement('div'); ov.id = 'tut-overlay'; document.body.appendChild(ov); }
   // drip-режим: нежный пузырь Тени без затемнения (нудж, не блокирует)
   if (tut.mode === 'drip') {
