@@ -12,14 +12,22 @@
       "frames": [
         "bench-rest.png"
       ],
-      "durationMs": 7000
+      "durationMs": 26000
     },
     "bench-read": {
       "frames": [
         "bench-read-a.png",
         "bench-read-b.png"
       ],
-      "durationMs": 9000
+      "durationMs": 42000
+    },
+    "portal-transition": {
+      "frames": [
+        "bench-rest.png",
+        "bench-portal-reach.png",
+        "bench-read-a.png"
+      ],
+      "durationMs": 4600
     }
   }
 }

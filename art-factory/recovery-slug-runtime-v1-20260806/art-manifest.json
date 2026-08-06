@@ -1,0 +1,25 @@
+{
+  "id": "recovery-slug-runtime-v1-20260806",
+  "status": "runtime-foundation",
+  "character": "recovery-slug-katsuya-inspired",
+  "style": "authored cut-paper guardian",
+  "runtime": {
+    "canvas": [1024, 1024],
+    "compositeOffset": [0, 0],
+    "denSlot": "mid-east",
+    "denWidthPercent": 14.6,
+    "boundedByRoomPetCount": true,
+    "pwaCache": "satoru-v101"
+  },
+  "states": ["calm", "thriving", "strained", "restoring"],
+  "motion": {
+    "idle": "motion/idle-softbody.gif",
+    "idleFrames": 33
+  },
+  "signal": {
+    "kind": "derived-recovery",
+    "inputs": ["energyPct", "restGapDays"],
+    "userVisibleSphere": false
+  },
+  "contactFrames": "deferred-until-authored"
+}

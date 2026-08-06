@@ -1,0 +1,58 @@
+{
+  "status": "PASS",
+  "states": [
+    {
+      "state": "calm",
+      "canvas": [
+        1024,
+        1024
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "state": "thriving",
+      "canvas": [
+        1024,
+        1024
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "state": "strained",
+      "canvas": [
+        1024,
+        1024
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "state": "restoring",
+      "canvas": [
+        1024,
+        1024
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "idleFrames": 33
+}

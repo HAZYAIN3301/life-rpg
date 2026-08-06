@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "pngCount": 21,
+  "pngCount": 23,
   "idleFrames": 21,
   "assets": [
     {
@@ -73,6 +73,26 @@
         63,
         388,
         962,
+        920
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/body-toad-v1/motion-v4/solo-stretch-up.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        179,
+        68,
+        845,
         920
       ],
       "cornerAlpha": [
@@ -413,6 +433,26 @@
         255,
         64,
         807,
+        860
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/avatars/traveller-core-v1/male/room-actions-v4/bench-portal-reach.png",
+      "size": [
+        640,
+        900
+      ],
+      "bbox": [
+        30,
+        77,
+        629,
         860
       ],
       "cornerAlpha": [

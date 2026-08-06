@@ -16,7 +16,7 @@ ACTORS = PUBLIC / "art/den/actors"
 
 PNG_EXPECTED = {
     **{MOTION / name: (1024, 1024) for name in [
-        "idle-blink.png", "hop-crouch.png", "hop-air.png", "solo-stretch.png", "bench-sleep.png",
+        "idle-blink.png", "hop-crouch.png", "hop-air.png", "solo-stretch.png", "solo-stretch-up.png", "bench-sleep.png",
     ]},
     **{PAIR / f"{name}.png": (1536, 1536) for name in [
         "greet-contact", "train-low", "train-high", "rest-contact", "rest-pet",
@@ -26,6 +26,7 @@ PNG_EXPECTED = {
     ACTORS / "prop-portal-rim.png": (542, 768),
     ACTORS / "prop-portal-core.png": (542, 768),
     ACTORS / "traveller-portal-reach.png": (900, 900),
+    PUBLIC / "art/avatars/traveller-core-v1/male/room-actions-v4/bench-portal-reach.png": (640, 900),
 }
 
 

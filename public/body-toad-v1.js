@@ -18,7 +18,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildBodyToadV1() {
   'use strict';
 
-  const VERSION = '3.0.0';
+  const VERSION = '3.1.0';
   const ART_ROOT = '/art/pets/body-toad-v1/';
   const PAIR_ART_ROOT = `${ART_ROOT}pair-v4/`;
   const ACTION_PAIR_ART_ROOT = PAIR_ART_ROOT;
@@ -31,12 +31,12 @@
     restoring: { label: 'Восстанавливается', line: 'Сбавил темп и возвращает силу.' },
   });
   const INTERACTIONS = Object.freeze({
-    greet: { label: 'Поприветствовать', duration: 1500, state: 'calm', pairFrames: ['greet-contact'] },
-    train: { label: 'Размяться вместе', duration: 2800, state: 'thriving', pairFrames: ['train-low', 'train-high'] },
-    whistle: { label: 'Команда сэнсэя', duration: 4200, state: 'thriving', pairFrames: ['whistle-a', 'whistle-b', 'whistle-c', 'whistle-d'] },
-    pushup: { label: 'Отжимания', duration: 5200, state: 'thriving', pairFrames: ['pushup-down', 'pushup-up'] },
-    stretch: { label: 'Растяжка', duration: 5600, state: 'restoring', pairFrames: ['stretch-a', 'stretch-b'] },
-    rest: { label: 'Погладить и передохнуть', duration: 3000, state: 'restoring', pairFrames: ['rest-contact', 'rest-pet'] },
+    greet: { label: 'Поприветствовать', duration: 4200, state: 'calm', pairFrames: ['greet-contact'] },
+    train: { label: 'Размяться вместе', duration: 8000, state: 'thriving', pairFrames: ['train-low', 'train-high'] },
+    whistle: { label: 'Команда сэнсэя', duration: 9000, state: 'thriving', pairFrames: ['whistle-a', 'whistle-b', 'whistle-c', 'whistle-d'] },
+    pushup: { label: 'Отжимания', duration: 9000, state: 'thriving', pairFrames: ['pushup-down', 'pushup-up'] },
+    stretch: { label: 'Растяжка', duration: 10000, state: 'restoring', pairFrames: ['stretch-a', 'stretch-b'] },
+    rest: { label: 'Погладить и передохнуть', duration: 8000, state: 'restoring', pairFrames: ['rest-contact', 'rest-pet'] },
   });
   const PET_STATE_MAP = Object.freeze({
     hungry: 'strained',
@@ -54,6 +54,7 @@
     crouch: 'hop-crouch.png',
     air: 'hop-air.png',
     stretch: 'solo-stretch.png',
+    stretchUp: 'solo-stretch-up.png',
     sleep: 'bench-sleep.png',
   });
 
@@ -285,6 +286,7 @@
     if (host && host.dataset) {
       delete host.dataset.toadMotion;
       delete host.dataset.toadRoute;
+      delete host.dataset.toadDirection;
     }
     if (shell) shell.classList.remove('is-toad-ambient-active');
     return setState(element, normalizeState(restoreState || element.dataset.state), { animated: true, instant: true }).then(() => true);
@@ -307,13 +309,19 @@
     const ready = await replaceMotionFrames(element, ['crouch', 'air'], 'approach-hop');
     if (!ready) return false;
     const host = motionHost(element);
-    if (host && host.dataset) host.dataset.toadApproach = direction === 'home' ? 'home' : 'meeting';
+    if (host && host.dataset) {
+      host.dataset.toadApproach = direction === 'home' ? 'home' : 'meeting';
+      host.dataset.toadDirection = direction === 'home' ? 'left' : 'right';
+    }
     return true;
   }
 
   function clearHopFrames(element, restoreState) {
     const host = motionHost(element);
-    if (host && host.dataset) delete host.dataset.toadApproach;
+    if (host && host.dataset) {
+      delete host.dataset.toadApproach;
+      delete host.dataset.toadDirection;
+    }
     return clearMotion(element, restoreState);
   }
 
@@ -333,37 +341,43 @@
     try {
       if (mode === 'blink') {
         if (!(await show('blink'))) return false;
-        return await wait(145);
+        return await wait(165);
       }
       if (mode === 'solo-stretch') {
-        if (!(await show('stretch'))) return false;
-        return await wait(Math.max(1800, Number(config.duration) || 3400));
+        if (!(await show(['stretch', 'stretchUp']))) return false;
+        return await wait(Math.max(8000, Number(config.duration) || 10800));
       }
       if (mode === 'bench-nap') {
-        if (!(await show('crouch')) || !(await wait(300))) return false;
+        if (!(await show('crouch')) || !(await wait(320))) return false;
+        if (host && host.dataset) host.dataset.toadDirection = 'right';
         await show('air');
         if (host && host.dataset) host.dataset.toadRoute = 'bench';
-        if (!(await wait(900))) return false;
+        if (!(await wait(1800))) return false;
         await show('sleep');
-        if (!(await wait(Math.max(2800, Number(config.duration) || 5200)))) return false;
+        if (!(await wait(Math.max(14000, Number(config.duration) || 18000)))) return false;
+        if (host && host.dataset) host.dataset.toadDirection = 'left';
         await show('air');
         if (host && host.dataset) host.dataset.toadRoute = 'home';
-        if (!(await wait(900))) return false;
+        if (!(await wait(2200))) return false;
         await show('crouch');
-        return await wait(260);
+        return await wait(340);
       }
       if (mode === 'hop-tour') {
         if (!(await show('crouch')) || !(await wait(320))) return false;
+        if (host && host.dataset) host.dataset.toadDirection = 'right';
         await show('air');
         if (host && host.dataset) host.dataset.toadRoute = 'away';
-        if (!(await wait(900))) return false;
+        if (!(await wait(1500))) return false;
+        await show('breath');
+        if (!(await wait(Math.max(6000, Number(config.dwellMs) || 8200)))) return false;
         await show('crouch');
-        if (!(await wait(480))) return false;
+        if (!(await wait(320))) return false;
+        if (host && host.dataset) host.dataset.toadDirection = 'left';
         await show('air');
         if (host && host.dataset) host.dataset.toadRoute = 'home';
-        if (!(await wait(900))) return false;
+        if (!(await wait(1500))) return false;
         await show('crouch');
-        return await wait(260);
+        return await wait(340);
       }
       return false;
     } finally {
