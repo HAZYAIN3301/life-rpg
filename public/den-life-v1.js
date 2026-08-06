@@ -11,17 +11,21 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenLife(root) {
   'use strict';
 
-  const VERSION = '2.3.0';
+  const VERSION = '2.4.0';
   const FIRST_AMBIENT_MS = 8000;
   const FIRST_FOCUS_MS = 3200;
   const RETRY_MS = 3000;
   const AMBIENT_SEQUENCE = Object.freeze([
     Object.freeze({ id: 'toad-blink', kind: 'toad', gap: 14000 }),
+    Object.freeze({ id: 'recovery-stretch', kind: 'recovery', gap: 22000 }),
     Object.freeze({ id: 'window-visit', kind: 'window', gap: 24000 }),
     Object.freeze({ id: 'bench-read', kind: 'room', gap: 30000 }),
+    Object.freeze({ id: 'recovery-glide-tour', kind: 'recovery', gap: 28000 }),
     Object.freeze({ id: 'toad-stretch', kind: 'toad', gap: 22000 }),
+    Object.freeze({ id: 'recovery-helpers', kind: 'recovery', gap: 26000 }),
     Object.freeze({ id: 'toad-hop-tour', kind: 'toad', gap: 26000 }),
     Object.freeze({ id: 'bench-rest', kind: 'room', gap: 26000 }),
+    Object.freeze({ id: 'recovery-cushion-nap', kind: 'recovery', gap: 34000 }),
     Object.freeze({ id: 'toad-bench-nap', kind: 'toad', gap: 32000 }),
   ]);
   const BODY_FOCUS_SEQUENCE = Object.freeze([
@@ -83,6 +87,7 @@
     if (action.kind === 'room') return state.onRoomAction && state.onRoomAction(action.id, { automatic: true });
     if (action.kind === 'window') return state.onWindowVisit && state.onWindowVisit({ automatic: true });
     if (action.kind === 'toad') return state.onToadBeat && state.onToadBeat(action.id, { automatic: true });
+    if (action.kind === 'recovery') return state.onRecoveryBeat && state.onRecoveryBeat(action.id, { automatic: true });
     return false;
   }
 
@@ -125,7 +130,7 @@
   function start(target, options) {
     const scope = target;
     const config = options || {};
-    if (!scope || !scope.querySelector || !scope.querySelector('[data-body-toad]')) return false;
+    if (!scope || !scope.querySelector || (!scope.querySelector('[data-body-toad]') && !scope.querySelector('[data-recovery-slug]'))) return false;
     const context = normalizeContext(config.context);
     const key = contextKey(context);
     if (director && director.key === key) {
@@ -133,6 +138,7 @@
       director.canAct = config.canAct;
       director.onPair = config.onPair;
       director.onRoomAction = config.onRoomAction;
+      director.onRecoveryBeat = config.onRecoveryBeat;
       director.onWindowVisit = config.onWindowVisit;
       director.onToadBeat = config.onToadBeat;
       if (!director.busy && !director.timer) schedule(director, Math.max(0, director.nextAt - Date.now()));
@@ -147,6 +153,7 @@
       holdUntil: 0,
       nextAt: 0,
       onPair: config.onPair,
+      onRecoveryBeat: config.onRecoveryBeat,
       onRoomAction: config.onRoomAction,
       onToadBeat: config.onToadBeat,
       onWindowVisit: config.onWindowVisit,

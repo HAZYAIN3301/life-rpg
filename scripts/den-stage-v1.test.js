@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const stage = require('../public/den-stage-v1.js');
 
-assert.equal(stage.VERSION, '1.5.0');
+assert.equal(stage.VERSION, '1.6.0');
 assert.equal(stage.PROFILES.bodyToad.width, 19.2);
 assert.equal(stage.PROFILES.bodyToad.footprint, 15.7);
 const mixed = stage.layoutPets([
@@ -28,11 +28,13 @@ const stageSource = read('public/den-stage-v1.js');
 const css = read('public/styles.css');
 assert.match(stageSource, /installHopFrames\(toad, 'meeting'\)/);
 assert.match(stageSource, /installHopFrames\(toad, 'home'\)/);
+assert.match(stageSource, /installGlideFrames\(slug, 'meeting'\)/);
+assert.match(stageSource, /installGlideFrames\(slug, 'home'\)/);
 assert.match(css, /is-body-pair-approaching \.den-avatar-core[\s\S]*translate: 24% 1%/);
 assert.match(css, /bodyToadMeetingArc/);
 assert.match(css, /bodyToadMeetingReturnArc/);
 assert.match(css, /data-toad-direction="left"/);
-assert.match(read('public/index.html'), /20260806-den-stage-v1-5/);
-assert.match(read('public/sw.js'), /satoru-v101/);
+assert.match(read('public/index.html'), /20260806-den-stage-v1-6/);
+assert.match(read('public/sw.js'), /satoru-v102/);
 
-console.log('den-stage-v1.5: ok');
+console.log('den-stage-v1.6: ok');
