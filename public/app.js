@@ -6765,6 +6765,78 @@ async function stravaSync() {
   } catch { toast(t('Ошибка сети при синхронизации')); }
   finally { State._stravaSyncing = false; render(); }
 }
+// ── Детектор развилки (DISCIPLINE-BOUNDARIES-PLAN §3–4) ───────────────────────
+// Болезнь одна — граница не определена; симптом у каждого свой. Поэтому система
+// не навязывает всем одну методику, а смотрит на данные и называет ОДИН
+// доминирующий паттерн. Считается локально из того, что приложение уже пишет:
+// ни новых полей, ни вызовов ИИ, ни стоимости.
+// ⚠️ Один паттерн за раз — сознательно (гейт §5). Назвать человеку восемь его
+// проблем это гарантированный способ, чтобы он не починил ни одной.
+const BOUNDARY_PATTERNS = [
+  { id: 'nightdebt', min: 2, label: 'Ночная отработка',
+    say: 'Замечаю: в дни, когда днём не пошло, ты садишься доделывать поздно вечером. Обычно это забирает следующий день, а не спасает прошедший.',
+    offer: 'Попробуй закрывать день кнопкой в «Итоге дня» — я перестану подсовывать дела, и вечер останется вечером.' },
+  { id: 'noend', min: 2, label: 'Работа без конца',
+    say: 'Твои дела часто закрываются поздно вечером, а энергия к этому времени на нуле. Похоже, у дня нет конца — он кончается, когда кончаешься ты.',
+    offer: 'Отметь 1–3 дела как ядро дня (◆). Закрыл ядро — день засчитан, остальное уже бонус.' },
+  { id: 'norest', min: 2, label: 'Отдых не наступает',
+    say: 'Дел много, а явного отдыха давно не было. Это не лень наоборот — это то, из-за чего потом всё валится разом.',
+    offer: 'Поставь на ближайшие дни одно дело, которое существует только ради удовольствия. Не «полезное» — приятное.' },
+  { id: 'nostart', min: 2, label: 'Трудно начать',
+    say: 'Дел заведено заметно больше, чем закрыто. Похоже, проблема не в том, чтобы делать, а в том, чтобы начать.',
+    offer: 'Уменьши вход: вместо целого дела поставь его нелепо маленькую версию. Начатое почти всегда продолжается само.' },
+  { id: 'weekend', min: 2, label: 'Выходные растворяются',
+    say: 'В будни у тебя плотно, а выходные почти пустые. Обычно это значит не отдых, а день без формы — он утекает сам.',
+    offer: 'Дай выходному одно конкретное дело, лучше новое. Не ради продуктивности — ради того, чтобы он запомнился.' },
+  { id: 'norecover', min: 1, label: 'Срыв не отпускает',
+    say: 'После пропуска пауза затянулась. Это самый обычный сценарий — и он про инерцию, а не про характер.',
+    offer: 'Верни что-нибудь одно и маленькое. Серия считается заново, но прошлое никуда не делось.' },
+];
+// Каждый детектор возвращает силу сигнала (0 = нет). Пороги намеренно
+// консервативные: ложное срабатывание раздражает сильнее, чем молчание.
+function boundarySignals() {
+  const today = todayStr(), start = addDays(today, -13);
+  const tasks = (State.tasks || []).filter((t) => t.date >= start && t.date <= today);
+  const done = tasks.filter((t) => t.done && t.completedAt);
+  const hourOf = (t) => { const d = new Date(t.completedAt); return isNaN(d) ? null : d.getHours(); };
+  const lateDone = done.filter((t) => { const h = hourOf(t); return h !== null && h >= 22; });
+  const byDay = {};
+  // dayOf(), а не completedAt.slice(0,10): срез ISO-строки — это дата по UTC, и
+  // ровно у ночных завершений (тех, ради которых этот детектор и написан) она
+  // уезжает на сутки. Час при этом берётся локальный — сравнивать их нельзя.
+  done.forEach((t) => { const d = dayOf(t); (byDay[d] = byDay[d] || []).push(t); });
+  const debtDays = Object.values(byDay).filter((list) => list.length >= 2 && list.every((t) => { const h = hourOf(t); return h !== null && h >= 22; }));
+  const allEv = xpEvents();
+  const evs = allEv.filter((e) => e.date >= start && e.date <= today);
+  const weekendDays = new Set(), weekdayDays = new Set();
+  evs.forEach((e) => { const wd = parseDate(e.date).getDay(); (wd === 0 || wd === 6 ? weekendDays : weekdayDays).add(e.date); });
+  const created = tasks.length, closed = done.length;
+  let restGap = 0; try { restGap = restGapDays(); } catch {}
+  let quiet = 0; try { quiet = quietDaysBefore(); } catch {}
+  // Срыв — это пауза ПОСЛЕ разбега. У человека, который только завёл аккаунт,
+  // quietDaysBefore() честно вернёт максимум: истории просто нет. Без этой
+  // проверки первое, что услышал бы новый юзер, — «после пропуска пауза
+  // затянулась», то есть упрёк за то, чего он не делал (гейт §5: наблюдение
+  // без осуждения — или молчание). Тихая полоса кончается за quiet дней до
+  // сегодня; значит нужна хоть одна активность на день раньше её начала.
+  const hadRunBefore = allEv.some((e) => e.date <= addDays(today, -(quiet + 1)));
+  return {
+    nightdebt: debtDays.length,
+    noend: lateDone.length >= 4 && energyPct() < 45 ? lateDone.length : 0,
+    norest: (closed >= 5 && restGap >= 6) ? restGap : 0,
+    nostart: (created >= 8 && closed / created < 0.4) ? Math.round((1 - closed / created) * 10) : 0,
+    weekend: (weekdayDays.size >= 6 && weekendDays.size === 0) ? weekdayDays.size : 0,
+    norecover: (quiet >= 3 && hadRunBefore) ? quiet : 0,
+  };
+}
+// Один победитель или null. Порядок в BOUNDARY_PATTERNS = приоритет при ничьей:
+// сначала то, что вредит сильнее (ночная отработка забирает следующий день).
+function detectBoundaryPattern() {
+  const sig = boundarySignals();
+  const hit = BOUNDARY_PATTERNS.filter((p) => (sig[p.id] || 0) >= p.min);
+  if (!hit.length) return null;
+  return { ...hit[0], strength: sig[hit[0].id] };
+}
 // Компактная сводка недели для ИИ — реальные данные, не выдумка
 function buildWeekContext() {
   const end = todayStr(), start = addDays(end, -6);
@@ -6793,7 +6865,12 @@ function buildWeekContext() {
   const wkReview = wk && wk.review && wk.review.trim();
   const reflBlock = reflLines ? `\nРефлексия по дням (твои же слова, не выдумка ИИ):\n${reflLines}` : '';
   const wkBlock = `${wkIntention ? `\nНамерение на эту неделю (твои слова): ${wkIntention}` : ''}${wkReview ? `\nИтоги недели (твои слова): ${wkReview}` : ''}`;
-  return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nЭнергия сейчас: ${en.cur}/${en.max} (потолок ${en.max} — растёт от суперкомпенсации, падает при выгорании)\nЧестное состояние отдыха: ${restLine} (ищется по тексту дел, не по сфере — тренировка ≠ отдых, даже если оба в «Здоровье»)\nРадар сфер: ${radar}\nЦели:\n${goals}${anti ? `\nАнти-привычки:\n${anti}` : ''}${reflBlock}${wkBlock}`;
+  // Развилка недели: паттерн посчитан локально, ИИ его не выдумывает — только
+  // проговаривает своими словами. Если детектор молчит, блока нет вовсе, и ИИ
+  // не будет искать проблему там, где данные её не показывают.
+  const bp = detectBoundaryPattern();
+  const bpBlock = bp ? `\nНАЙДЕННЫЙ ПАТТЕРН (посчитан по данным, не выдумывай другой): ${bp.label}. Суть: ${bp.say} Что предложить: ${bp.offer}\nЕсли это совпадает с его собственной рефлексией выше — скажи об этом прямо. Предлагай ОДНО, мягко, без морали и без вины.` : '';
+  return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nЭнергия сейчас: ${en.cur}/${en.max} (потолок ${en.max} — растёт от суперкомпенсации, падает при выгорании)\nЧестное состояние отдыха: ${restLine} (ищется по тексту дел, не по сфере — тренировка ≠ отдых, даже если оба в «Здоровье»)\nРадар сфер: ${radar}\nЦели:\n${goals}${anti ? `\nАнти-привычки:\n${anti}` : ''}${reflBlock}${wkBlock}${bpBlock}`;
 }
 async function runWeeklyReview() {
   if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; render(); return; }
