@@ -2413,6 +2413,8 @@ audio.note-media { height: 40px; }
 .auth-links { display: flex; justify-content: space-between; gap: 10px; margin-top: 12px; }
 .link-btn { background: none; border: none; color: var(--accent); font-size: 13px; cursor: pointer; padding: 4px; }
 .link-btn:hover { text-decoration: underline; }
+/* Тач: «вернуть обратно» стоит внутри строки текста, а палец не попадает в 23px (контракт ≥30). */
+@media (hover: none) { .amnesty-undo .link-btn { min-height: 30px; padding: 6px 8px; } }
 .legacy-login { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 12px; }
 .legacy-login summary { cursor: pointer; font-size: 12.5px; color: var(--muted); list-style: none; }
 .legacy-login summary::-webkit-details-marker { display: none; }

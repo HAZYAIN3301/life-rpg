@@ -1894,6 +1894,15 @@ const I18N_EXTRA = {
   'Крошечный вход в твоё дело + уют. Без опыта — связь и золото. Отказ ничего не стоит.': { en: 'A tiny entry into your thing + coziness. No XP — bond and gold. Declining costs nothing.', de: 'Ein winziger Einstieg in dein Ding + Gemütlichkeit. Kein XP — Bindung und Gold. Ablehnen kostet nichts.', uk: 'Крихітний вхід у твою справу + затишок. Без досвіду — звʼязок і золото. Відмова нічого не коштує.', es: 'Una entrada diminuta a lo tuyo + comodidad. Sin XP — vínculo y oro. Rechazar no cuesta nada.' },
   'Десять минут в любимое дело — не ради галочек, а чтобы вечер стал твоим. Опыта не будет: только связь с Тенью и золото. Так задумано.': { en: 'Ten minutes in the thing you love — not for checkmarks, but so the evening becomes yours. No XP: only bond with Shadow and gold. By design.', de: 'Zehn Minuten in dem, was du liebst — nicht für Häkchen, sondern damit der Abend dir gehört. Kein XP: nur Bindung mit Schatten und Gold. So gewollt.', uk: 'Десять хвилин в улюблену справу — не заради галочок, а щоб вечір став твоїм. Досвіду не буде: лише звʼязок із Тінню та золото. Так задумано.', es: 'Diez minutos en lo que amas — no por casillas, sino para que la tarde sea tuya. Sin XP: solo vínculo con Sombra y oro. Así está pensado.' },
   'Самый маленький вход': { en: 'The smallest entry', de: 'Der kleinste Einstieg', uk: 'Найменший вхід', es: 'La entrada más pequeña' },
+  // ── Возврат после срыва: амнистия накопившемуся (план §6 п.4) ──
+  'Отпустить накопившееся': { en: 'Let the pile go', de: 'Den Stapel loslassen', uk: 'Відпустити накопичене', es: 'Soltar lo acumulado' },
+  'Они останутся в своих днях и никуда не денутся — просто перестанут висеть над тобой и штрафовать. Рекорд серии': { en: "They stay in their own days and go nowhere — they just stop hanging over you and penalising you. Your streak record", de: 'Sie bleiben in ihren Tagen und verschwinden nicht — sie hängen nur nicht mehr über dir und bestrafen dich nicht mehr. Dein Serienrekord', uk: 'Вони залишаться у своїх днях і нікуди не дінуться — просто перестануть висіти над тобою і штрафувати. Рекорд серії', es: 'Se quedan en sus propios días y no desaparecen — solo dejan de pesarte y de penalizarte. Tu récord de racha' },
+  'не сгорает. Возвращаются с одного маленького дела, а не с разбора завала.': { en: "doesn't burn. You come back with one small thing, not by clearing the backlog.", de: 'verfällt nicht. Man kommt mit einer kleinen Sache zurück, nicht mit dem Aufräumen des Rückstands.', uk: 'не згорає. Повертаються з однієї маленької справи, а не з розбору завалу.', es: 'no se quema. Se vuelve con una cosa pequeña, no despejando el atraso.' },
+  'Отпущено сегодня': { en: 'Let go today', de: 'Heute losgelassen', uk: 'Відпущено сьогодні', es: 'Soltado hoy' },
+  'вернуть обратно': { en: 'bring back', de: 'zurückholen', uk: 'повернути назад', es: 'traer de vuelta' },
+  'Отпущено': { en: 'Let go', de: 'Losgelassen', uk: 'Відпущено', es: 'Soltado' },
+  'Они остались в тех днях, а не в тебе': { en: 'They stayed in those days, not in you', de: 'Sie sind in jenen Tagen geblieben, nicht in dir', uk: 'Вони лишилися в тих днях, а не в тобі', es: 'Se quedaron en aquellos días, no en ti' },
+  'Вернули обратно': { en: 'Brought back', de: 'Zurückgeholt', uk: 'Повернули назад', es: 'Devueltas' },
   // ── «Заход» v2: вход в конкретное дело, которое не двигается (план §6 п.3) ──
   'Что не двигается': { en: "What isn't moving", de: 'Was sich nicht bewegt', uk: 'Що не рухається', es: 'Lo que no avanza' },
   'Или просто в любимое': { en: 'Or simply into what you love', de: 'Oder einfach in das, was du liebst', uk: 'Або просто в улюблене', es: 'O simplemente a lo que amas' },
@@ -4456,6 +4465,17 @@ function avHair(style, cx, cy, rx, ry, hair) {
     default: return { back: '', front: cap(cy - ry * 0.42) };
   }
 }
+// ══ Возврат после срыва (DISCIPLINE-BOUNDARIES-PLAN §6 п.4) ══════════════════════════
+// Заморозка серии ниже — это ПРОЩЕНИЕ: пропуск не сжигает серию. Но прощение не помогает
+// вернуться. Человек, которого не было пять дней, открывает приложение и видит стену
+// просроченного — и именно эта стена, а не сломанная серия, решает, что он не вернётся.
+// Амнистия — про другое: куча перестаёт висеть, при этом ничего не удаляется. Дела остаются
+// в своих днях (`date` не трогаем), просто больше не считаются долгом и не штрафуют.
+// Клятвы (`oath`) намеренно НЕ амнистируются: там человек сам поставил ставку, и снимать её
+// за него значило бы обесценить механику, которую он выбрал осознанно.
+function taskOverdue(x, today) { return !x.done && !!x.date && x.date < (today || todayStr()) && !x.amnesty; }
+function amnestyCandidates() { return (State.tasks || []).filter((x) => taskOverdue(x) && !(x.oath && !x.oath.burned)); }
+function amnestiedToday() { const d = todayStr(); return (State.tasks || []).filter((x) => x.amnesty === d); }
 function currentStreak() {
   const set = new Set(xpEvents().map((e) => e.date));
   let streak = 0, cursor = todayStr(), freezeLeft = (globalPerk('streakShield') || 0) + pathStreakGrace(), guard = 0;
@@ -4928,7 +4948,7 @@ function pathReckoning() {
   s.control.lastReckon = today;
   if (!prev) { Store.save('settings', State.settings); return 0; } // первый день в Контроле — не наказываем задним числом
   // Дедлайны, ставшие просроченными в окне (prev..today) и всё ещё не выполненные — каждый заряжается однократно
-  const missed = (State.tasks || []).filter((x) => !x.done && x.date && x.date >= prev && x.date < today).length;
+  const missed = (State.tasks || []).filter((x) => taskOverdue(x, today) && x.date >= prev).length;
   if (missed <= 0) { Store.save('settings', State.settings); return 0; }
   const e = ensureEnergy();
   const pen = Math.min(CONTROL.energyPenaltyCap, missed * CONTROL.energyPenaltyPer);
@@ -6233,6 +6253,8 @@ function questRow(q) {
         q.date === todayStr() ? `<button class="t-core${q.core ? ' on' : ''}" data-action="toggle-core" data-id="${q.id}" aria-pressed="${q.core ? 'true' : 'false'}" title="${esc(q.core ? t('Убрать из ядра дня') : t('В ядро дня — то, ради чего день считается состоявшимся'))}">◆</button>` : ''
       }${taskContentIconHTML(q, 'task-content-icon')}${esc(taskDisplayTitle(q))}</span>`;
   // Квест из прошлого: «✓ в свой день» — засчитать в дату плана, а не в сегодня (fb_mr4qhq6gy30w)
+  // Намеренно НЕ taskOverdue(): здесь «past» — просто факт, что дата в прошлом, а не суждение
+  // о долге. Амнистия снимает долг, но не право сказать «я это всё-таки сделал в тот день».
   const past = !q.done && q.date && q.date < todayStr();
   const backdate = past
     ? `<button class="t-backdate" data-action="toggle-task-backdated" data-id="${q.id}" title="${t('Сделал в тот день, забыл отметить — засчитать в')} ${dmShort(q.date)}">✓<sub>${dmShort(q.date)}</sub></button>`
@@ -7480,7 +7502,7 @@ function stateNowContext() {
   const todays = (State.tasks || []).filter((x) => x.date === today);
   const doneN = todays.filter((x) => x.done).length;
   const left = todays.filter((x) => !x.done).slice(0, 3).map((x) => `«${x.title}»`).join(', ');
-  const overdue = (State.tasks || []).filter((x) => !x.done && x.date < today);
+  const overdue = (State.tasks || []).filter((x) => taskOverdue(x, today));
   const en = ensureEnergy();
   const hb = todaysHabits(), hbDone = hb.filter((h) => habitDone(h, today)).length;
   const dls = (State.goals || []).filter((g) => !g.archived && !g.completedAt && g.targetDate)
@@ -9438,7 +9460,7 @@ function applyNudgeVoice(html, voiced) {
 function renderToday() {
   const today = todayStr();
   const todays = State.tasks.filter((t) => t.date === today);
-  const overdue = State.tasks.filter((t) => !t.done && t.date < today);
+  const overdue = State.tasks.filter((t) => taskOverdue(t, today));
   const habits = todaysHabits();
   const day = State.days[today] || { reflection: '', closed: false };
   const planned = todays.reduce((s, t) => s + (Number(t.estimateMin) || 0), 0);
@@ -9505,6 +9527,23 @@ function renderToday() {
         <button class="nudge" data-action="goto-stats">🌡 ${esc(li.hot.name)} — ×${li.hot.ratio.toFixed(1)} ${t('от нормы')}. ${t('Без внимания')}: ${li.quiet.map((q) => esc(q.name)).join(', ')}</button>
         <span class="nudge-boost">${t('Не упрёк: просто похоже, что пора дать себе передышку в этой сфере.')}</span></div>`
     : '';
+  // 🌅 Возврат после срыва (DISCIPLINE-BOUNDARIES-PLAN §6 п.4). Отличается от эпизода выше:
+  // тот просит РАССКАЗАТЬ, чем была пауза, а этот убирает стену, из-за которой не возвращаются.
+  // Показывается, только когда детектор назвал доминирующим именно norecover — и только если
+  // стена реально есть (пустой список амнистировать нечего, а карточка без дела — это шум).
+  // Рекорд назван прямо: он не сгорает никогда, и человеку важно услышать это в первую минуту.
+  const amnCand = amnestyCandidates();
+  const returnNudge = (amnCand.length >= 3 && (detectBoundaryPattern() || {}).id === 'norecover')
+    ? `<div class="card nudge-card return-nudge">
+        <button class="nudge" data-action="amnesty-overdue">🌅 ${t('Отпустить накопившееся')} (${amnCand.length})</button>
+        <span class="nudge-boost">${t('Они останутся в своих днях и никуда не денутся — просто перестанут висеть над тобой и штрафовать. Рекорд серии')} ${longestStreak()} ${t('не сгорает. Возвращаются с одного маленького дела, а не с разбора завала.')}</span></div>`
+    : '';
+  // Отпущенное сегодня — тихая строка с возвратом. Без неё амнистия читается как «дела пропали»,
+  // а это ровно та тревога, ради снятия которой всё и делалось.
+  const amnBack = amnestiedToday();
+  const amnestyUndo = amnBack.length
+    ? `<div class="card nudge-card amnesty-undo"><span class="nudge-boost">🌅 ${t('Отпущено сегодня')}: ${amnBack.length} · <button class="link-btn" data-action="amnesty-undo">${t('вернуть обратно')}</button></span></div>`
+    : '';
   const quietN = (State.tasks || []).length ? quietDaysBefore() : 0;
   const dayLogNudge = (quietN >= 2 || (doneCount === 0 && new Date().getHours() >= 18 && (State.tasks || []).length > 0))
     ? `<div class="card nudge-card daylog-nudge">
@@ -9557,6 +9596,9 @@ function renderToday() {
   // говорит одну фразу о главном, не зачитывает памятку целиком. `nudgeCard` (сундуки/буст/Хайп) —
   // это награда, а не совет, остаётся отдельно (сознательная петля возврата, не конкурирует за тон).
   const nudgeWin = pickNudge([
+    // Возврат — выше «Захода»: пока над человеком висит стена просроченного, предложение
+    // «войди на десять минут» разбивается об неё. Сначала убрать стену, потом звать внутрь.
+    { id: 'return', tier: 0, html: returnNudge },
     { id: 'entry', tier: 1, html: entryNudge },
     // Эпизод выше посуточного разбора: если человека не было 3+ дня, предложить закрывать это
     // по одному дню — та самая стена, из-за которой не возвращаются вообще. Ниже «Захода»:
@@ -9636,6 +9678,7 @@ function renderToday() {
       <p class="diff-hint muted"><span>${difficultyIconHTML('easy')} ${t('Лёгкая')} — рутина, механика</span><span>${difficultyIconHTML('normal')} ${t('Обычная')} — требует фокуса</span><span>${difficultyIconHTML('hard')} ${t('Сложная')} — вызов, выход из зоны комфорта → активирует Хайп <b>+15% XP</b></span></p>
     </div>
     ${overdueCard}
+    ${amnestyUndo}
     <div class="card card-quests"><div class="daystat">
         <span>Квестов: <b>${doneCount}/${todays.length}</b></span>
         <span>Время: <b>${fmtDur(minToday)} / ${fmtDur(planned)}</b></span>
@@ -13064,7 +13107,24 @@ function onClick(e) {
   } else if (action === 'delete-antihabit') {
     State.antihabits = (State.antihabits || []).filter((x) => x.id !== id); Store.save('antihabits', State.antihabits); render();
   } else if (action === 'move-overdue') {
-    State.tasks.forEach((t) => { if (!t.done && t.date < today) t.date = today; }); Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
+    State.tasks.forEach((t) => { if (taskOverdue(t, today)) t.date = today; }); Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
+  } else if (action === 'amnesty-overdue') {
+    // Ничего не удаляем и не переносим: дата остаётся прежней, дело остаётся в своём дне.
+    // Меняется только одно — оно перестаёт считаться долгом. Это и есть разница между
+    // амнистией и «перенести всё на сегодня»: тот собирал стену заново, только на новой дате.
+    const list = amnestyCandidates();
+    if (!list.length) return;
+    list.forEach((x) => { x.amnesty = today; });
+    Store.save('tasks', State.tasks);
+    track('amnesty:overdue');
+    toast('🌅 ' + t('Отпущено') + ': ' + list.length + '. ' + t('Они остались в тех днях, а не в тебе'));
+    render();
+  } else if (action === 'amnesty-undo') {
+    const back = amnestiedToday();
+    back.forEach((x) => { delete x.amnesty; });
+    Store.save('tasks', State.tasks);
+    toast(t('Вернули обратно') + ': ' + back.length);
+    render();
   } else if (action === 'schedule-quest') {
     const qid = document.getElementById('cal-quest').value, time = document.getElementById('cal-time').value, t = questById(qid);
     const durEl = document.getElementById('cal-dur'), dur = durEl ? Math.max(5, Math.round(Number(durEl.value) || 0)) : 0;
