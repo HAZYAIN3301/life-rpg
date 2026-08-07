@@ -1,0 +1,36 @@
+{
+  "id": "recovery-slug-life-v2-20260806",
+  "character": "Katsuya / RECOVERY Guardian",
+  "canvas": {
+    "solo": [1024, 1024],
+    "pair": [1536, 1536]
+  },
+  "runtimeRoots": {
+    "solo": "/art/pets/recovery-slug-v1/motion-v2/",
+    "pair": "/art/pets/recovery-slug-v1/pair-v2/"
+  },
+  "solo": [
+    "glide-compress.png",
+    "glide-extend.png",
+    "stretch-up.png",
+    "cushion-sleep.png",
+    "helpers.png"
+  ],
+  "pair": {
+    "greet": ["greet-contact.png"],
+    "breathe": ["breathe-in.png", "breathe-out.png"],
+    "restore": ["restore-contact.png"],
+    "stretch": ["stretch-a.png", "stretch-b.png"]
+  },
+  "inherited": {
+    "states": ["calm", "thriving", "strained", "restoring"],
+    "idle": "motion/idle-softbody.gif"
+  },
+  "rules": [
+    "whole-character authored frames only",
+    "male Traveller only",
+    "shared pair canvas without runtime offsets",
+    "slug travel requires compress/extend frame changes",
+    "long holds and quiet lofi pacing"
+  ]
+}

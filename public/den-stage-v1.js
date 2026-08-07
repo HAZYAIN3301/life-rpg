@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenStage(root) {
   'use strict';
 
-  const VERSION = '1.5.0';
+  const VERSION = '1.6.0';
   const WORLD = Object.freeze({ width: 1536, height: 864 });
   const APPROACH_MS = 1800;
   const RETURN_MS = 1800;
@@ -117,6 +117,10 @@
     scope.classList.remove('is-body-pair-approaching', 'is-body-pair-at-meeting', 'is-body-pair-returning', 'is-body-pair-settling');
   }
 
+  function clearRecoveryMeetingClasses(scope) {
+    scope.classList.remove('is-recovery-pair-approaching', 'is-recovery-pair-at-meeting', 'is-recovery-pair-returning', 'is-recovery-pair-settling');
+  }
+
   async function approachBodyPair(scope, play, options) {
     if (!scope || typeof play !== 'function') return false;
     const config = options || {};
@@ -167,6 +171,56 @@
     return true;
   }
 
+  async function approachRecoveryPair(scope, play, options) {
+    if (!scope || typeof play !== 'function') return false;
+    const config = options || {};
+    const avatar = scope.querySelector && scope.querySelector('.den-avatar-core');
+    const slug = scope.querySelector && scope.querySelector('[data-recovery-slug]');
+    const motion = root.TravellerMotionV3;
+    const slugMotion = root.RecoverySlugV1;
+    const approachMs = Math.max(1200, Number(config.approachMs) || 2600);
+    const returnMs = Math.max(1200, Number(config.returnMs) || 2800);
+    const contactMs = Math.max(800, Number(config.duration) || 6800);
+    clearRecoveryMeetingClasses(scope);
+    if (avatar && motion) motion.installWalkFrames(avatar, 'right');
+    if (slug && slugMotion && slugMotion.installGlideFrames) await slugMotion.installGlideFrames(slug, 'meeting');
+    scope.classList.add('is-recovery-pair-approaching');
+    await nextFrame();
+    await wait(approachMs);
+    if (!scope.isConnected) {
+      clearRecoveryMeetingClasses(scope);
+      if (avatar && motion) motion.clearWalkFrames(avatar);
+      if (slug && slugMotion && slugMotion.clearGlideFrames) slugMotion.clearGlideFrames(slug).catch(() => {});
+      return false;
+    }
+    scope.classList.remove('is-recovery-pair-approaching');
+    scope.classList.add('is-recovery-pair-at-meeting');
+    if (avatar && motion) motion.clearWalkFrames(avatar);
+    if (slug && slugMotion && slugMotion.clearGlideFrames) await slugMotion.clearGlideFrames(slug);
+    const played = await play();
+    if (!played) {
+      clearRecoveryMeetingClasses(scope);
+      return false;
+    }
+    scope.classList.add('is-recovery-pair-settling');
+    await wait(contactMs + 100);
+    if (!scope.isConnected) {
+      clearRecoveryMeetingClasses(scope);
+      return true;
+    }
+    scope.classList.remove('is-recovery-pair-settling');
+    scope.classList.add('is-recovery-pair-returning');
+    if (avatar && motion) motion.installWalkFrames(avatar, 'left');
+    if (slug && slugMotion && slugMotion.installGlideFrames) await slugMotion.installGlideFrames(slug, 'home');
+    await nextFrame();
+    scope.classList.remove('is-recovery-pair-at-meeting');
+    await wait(returnMs);
+    scope.classList.remove('is-recovery-pair-returning');
+    if (avatar && motion) motion.clearWalkFrames(avatar);
+    if (slug && slugMotion && slugMotion.clearGlideFrames) await slugMotion.clearGlideFrames(slug);
+    return true;
+  }
+
   return Object.freeze({
     VERSION,
     WORLD,
@@ -179,5 +233,6 @@
     styleVars,
     overlaps,
     approachBodyPair,
+    approachRecoveryPair,
   });
 });

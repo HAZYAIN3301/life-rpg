@@ -1,0 +1,310 @@
+{
+  "status": "PASS",
+  "productionPngCount": 11,
+  "stateCount": 4,
+  "idleFrames": 33,
+  "assets": [
+    {
+      "file": "art/pets/recovery-slug-v1/motion-v2/cushion-sleep.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        30,
+        297,
+        995,
+        837
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/recovery-slug-v1/motion-v2/glide-compress.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        72,
+        240,
+        894,
+        887
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/recovery-slug-v1/motion-v2/glide-extend.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        37,
+        287,
+        978,
+        849
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/recovery-slug-v1/motion-v2/helpers.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        14,
+        178,
+        995,
+        871
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/recovery-slug-v1/motion-v2/stretch-up.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        74,
+        34,
+        950,
+        967
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/recovery-slug-v1/pair-v2/breathe-in.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        29,
+        210,
+        1516,
+        1334
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/recovery-slug-v1/pair-v2/breathe-out.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        5,
+        2,
+        1534,
+        1534
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/recovery-slug-v1/pair-v2/greet-contact.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        43,
+        295,
+        1493,
+        1361
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/recovery-slug-v1/pair-v2/restore-contact.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        39,
+        375,
+        1509,
+        1357
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/recovery-slug-v1/pair-v2/stretch-a.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        62,
+        389,
+        1490,
+        1298
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/recovery-slug-v1/pair-v2/stretch-b.png",
+      "size": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        6,
+        12,
+        1534,
+        1534
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    }
+  ],
+  "states": [
+    {
+      "file": "art/pets/recovery-slug-v1/states/calm.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        74,
+        48,
+        951,
+        920
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/recovery-slug-v1/states/thriving.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        74,
+        48,
+        951,
+        920
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/recovery-slug-v1/states/strained.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        74,
+        48,
+        951,
+        920
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    },
+    {
+      "file": "art/pets/recovery-slug-v1/states/restoring.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "bbox": [
+        74,
+        48,
+        951,
+        920
+      ],
+      "cornerAlpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "magentaRatio": 0.0
+    }
+  ]
+}
