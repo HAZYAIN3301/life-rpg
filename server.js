@@ -30,6 +30,7 @@ const MIME = {
   '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.png':  'image/png',
   '.jpg':  'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.gif': 'image/gif',
+  '.woff': 'font/woff', '.woff2': 'font/woff2',
   '.mp3':  'audio/mpeg', '.m4a': 'audio/mp4', '.ogg': 'audio/ogg', '.opus': 'audio/ogg; codecs=opus', '.wav': 'audio/wav',
   '.mp4':  'video/mp4', '.webm': 'video/webm', '.mov': 'video/quicktime',
   '.apk':  'application/vnd.android.package-archive',

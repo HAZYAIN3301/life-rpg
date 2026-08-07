@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "Satoru Display";
+  src: url("fonts/podkova/Podkova-wght.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+}
+
 :root {
   --bg: #0f1320;
   --panel: #171c2e;
@@ -40,8 +48,8 @@
   --dur-normal: 240ms;
   --dur-slow: 520ms;
   --font-ui: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Arial Rounded MT Bold", "Trebuchet MS", Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-number: "SF Pro Rounded", "Arial Rounded MT Bold", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Satoru Display", Georgia, serif;
+  --font-number: "Satoru Display", Georgia, serif;
   --radius: 14px;
   --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
   --den-wall: #2c2740;
@@ -1472,7 +1480,7 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
   60% { transform: scale(1.18); opacity: 1; }
   100% { transform: scale(1); opacity: .95; }
 }
-.rw-title { position: relative; font-size: 30px; font-weight: 900; letter-spacing: 2px; margin-top: 10px; color: #ffce6b; text-shadow: 0 0 22px rgba(224,162,62,.6); transform: scale(.6); opacity: 0; animation: rwTitle .5s cubic-bezier(.2,1.5,.4,1) 1.3s forwards; }
+.rw-title { position: relative; font-size: 30px; font-weight: 800; letter-spacing: 2px; margin-top: 10px; color: #ffce6b; text-shadow: 0 0 22px rgba(224,162,62,.6); transform: scale(.6); opacity: 0; animation: rwTitle .5s cubic-bezier(.2,1.5,.4,1) 1.3s forwards; }
 @keyframes rwTitle { to { transform: scale(1); opacity: 1; } }
 .rw-sub { position: relative; font-size: 15px; color: var(--text); margin-top: 6px; opacity: 0; animation: rwIn .4s ease 1.6s forwards; }
 .rw-party { position: relative; font-size: 13px; color: var(--muted); margin-top: 4px; opacity: 0; animation: rwIn .4s ease 1.8s forwards; }
@@ -2747,6 +2755,7 @@ body {
 .auth-logo .auth-brand-mark { display: grid; place-items: center; font-size: 0; }
 .auth-brand-mark .brand-shadow-mark { width: 68px; height: 68px; transform: scale(2.05); }
 
+.auth-logo h1,
 .brand h1,
 #appName {
   font-family: var(--font-display);
@@ -2829,6 +2838,7 @@ body {
 .char-level b {
   color: var(--text-strong);
   font-size: 28px;
+  font-weight: 800;
   line-height: 1;
 }
 
