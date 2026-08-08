@@ -3487,6 +3487,11 @@ textarea:focus {
 }
 
 .shutdown h3 { display: flex; align-items: center; margin-bottom: 4px; }
+/* Наблюдение → просьба поправить: узкий факт, не открытый вопрос — поэтому визуально
+   лёгкий, не тревожный акцент, а не тон предупреждения. */
+.day-obs { background: var(--panel2); border: 1px solid var(--line); border-radius: var(--radius-md, 12px); padding: 10px 12px; margin: 8px 0; }
+.day-obs-q { margin: 0 0 8px; font-size: 13px; line-height: 1.4; }
+.day-obs-acts { display: flex; gap: 8px; flex-wrap: wrap; }
 
 .timer-card,
 .energy-card,

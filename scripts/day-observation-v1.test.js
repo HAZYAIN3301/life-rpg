@@ -22,22 +22,19 @@ assert.equal(obs.observeDay({ tasks: [], skillNames: names, now: new Date(2026, 
   assert.equal(obs.observeDay({ tasks, skillNames: names, now: new Date(2026, 0, 1, 14, 0) }), null);
 }
 
-// ── Кандидат 1: поздний старт
+// ── Кандидат 1: поздний старт — возвращает СЫРОЙ час, не готовую фразу
 {
   const tasks = [
     { done: true, completedAt: at(13, 30), skillId: 'sport', minutes: 20 },
     { done: true, completedAt: at(15, 0), skillId: 'study', minutes: 15 },
   ];
   const o = obs.observeDay({ tasks, skillNames: names, now: new Date(2026, 0, 1, 16, 0) });
-  assert.equal(o.id, 'late-start');
-  assert.ok(o.statement.includes('13:00'), 'берётся САМОЕ раннее дело, не любое');
-  assert.ok(o.question.endsWith('Так и было?'));
-  assert.ok(o.question.startsWith(o.statement), 'question = statement + вопрос, без рассинхрона');
+  assert.deepEqual(o, { id: 'late-start', hour: 13 }, 'берётся САМОЕ раннее дело, не любое');
 }
 // Ровно на границе (12:00) — тоже считается поздним (>=, не >)
 {
   const tasks = [{ done: true, completedAt: at(12, 0), skillId: 'sport', minutes: 30 }];
-  assert.equal(obs.observeDay({ tasks, skillNames: names, now: new Date(2026, 0, 1, 14, 0) }).id, 'late-start');
+  assert.deepEqual(obs.observeDay({ tasks, skillNames: names, now: new Date(2026, 0, 1, 14, 0) }), { id: 'late-start', hour: 12 });
 }
 // Дело без completedAt (не выполнено) не считается точкой отсчёта
 {
@@ -55,9 +52,7 @@ assert.equal(obs.observeDay({ tasks: [], skillNames: names, now: new Date(2026, 
     { done: true, completedAt: at(9, 30), skillId: 'sport', minutes: 10 },
   ];
   const o = obs.observeDay({ tasks, skillNames: names, now: new Date(2026, 0, 1, 14, 0) });
-  assert.equal(o.id, 'sphere-dominant');
-  assert.ok(o.statement.includes('Учёба'));
-  assert.ok(o.statement.includes('90%'));
+  assert.deepEqual(o, { id: 'sphere-dominant', sphereName: 'Учёба', pct: 90 });
 }
 // Доля высокая, но абсолютных минут мало (10 мин) — шум, не наблюдение
 {
@@ -67,14 +62,14 @@ assert.equal(obs.observeDay({ tasks: [], skillNames: names, now: new Date(2026, 
 // Неизвестный id сферы → показываем сам id, не роняем функцию
 {
   const tasks = [{ done: true, completedAt: at(9, 0), skillId: 'ghost', minutes: 90 }];
-  assert.ok(obs.observeDay({ tasks, skillNames: names, now: new Date(2026, 0, 1, 14, 0) }).statement.includes('ghost'));
+  assert.equal(obs.observeDay({ tasks, skillNames: names, now: new Date(2026, 0, 1, 14, 0) }).sphereName, 'ghost');
 }
 
 // ── Кандидат 3: тихий день — план был, час поздний, ничего не сделано
 {
   const tasks = [{ done: false, completedAt: null, skillId: 'sport', minutes: 20 }];
   const o = obs.observeDay({ tasks, skillNames: names, now: new Date(2026, 0, 1, 19, 0) });
-  assert.equal(o.id, 'quiet-day');
+  assert.deepEqual(o, { id: 'quiet-day' });
 }
 // Тот же день, но ещё не вечер — рано делать вывод
 {

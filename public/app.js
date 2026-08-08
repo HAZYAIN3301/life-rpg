@@ -1559,6 +1559,14 @@ const I18N_EXTRA = {
   'Обновить через ИИ': { en: 'Update with AI', de: 'Mit KI aktualisieren', uk: 'Оновити через ШІ', es: 'Actualizar con IA' },
   'Обновляю…': { en: 'Updating…', de: 'Aktualisiere…', uk: 'Оновлюю…', es: 'Actualizando…' },
   'Сохранить правки': { en: 'Save edits', de: 'Änderungen speichern', uk: 'Зберегти правки', es: 'Guardar cambios' },
+  // ── Наблюдение → просьба поправить (JARVIS-3-PLAN §5, правило 3) ──
+  'Первое дело сегодня отмечено только в {h}:00.': { en: 'The first thing today was logged only at {h}:00.', de: 'Die erste Sache heute wurde erst um {h}:00 vermerkt.', uk: 'Перша справа сьогодні відмічена лише о {h}:00.', es: 'Lo primero de hoy quedó registrado recién a las {h}:00.' },
+  'Так и было?': { en: 'Was that right?', de: 'Stimmt das?', uk: 'Так і було?', es: '¿Fue así?' },
+  'Почти всё время сегодня ({pct}%) ушло в «{sphere}».': { en: 'Almost all of today\'s time ({pct}%) went into "{sphere}".', de: 'Fast die ganze heutige Zeit ({pct}%) ging in „{sphere}“.', uk: 'Майже весь сьогоднішній час ({pct}%) пішов на «{sphere}».', es: 'Casi todo el tiempo de hoy ({pct}%) fue a «{sphere}».' },
+  'Судя по данным, сегодня почти ничего не отмечено.': { en: 'Going by the data, almost nothing was logged today.', de: 'Den Daten nach wurde heute fast nichts vermerkt.', uk: 'Судячи з даних, сьогодні майже нічого не відмічено.', es: 'Según los datos, casi nada quedó registrado hoy.' },
+  'Так и было, или просто забыл записать?': { en: 'Was that really it, or did you just forget to log it?', de: 'War das wirklich so, oder hast du es nur vergessen einzutragen?', uk: 'Так і було, чи просто забув записати?', es: '¿De verdad fue así, o solo se te olvidó anotarlo?' },
+  'Да, так': { en: 'Yes, that\'s right', de: 'Ja, stimmt', uk: 'Так, все вірно', es: 'Sí, así fue' },
+  'Не совсем': { en: 'Not quite', de: 'Nicht ganz', uk: 'Не зовсім', es: 'No del todo' },
   'Профиль сохранён': { en: 'Profile saved', de: 'Profil gespeichert', uk: 'Профіль збережено', es: 'Perfil guardado' },
   'Пока пусто. Тень составит профиль после первого разбора недели — или нажми «Обновить через ИИ».': { en: 'Empty for now. Shadow will draft it after the first weekly review — or tap "Update with AI".', de: 'Noch leer. Schatten erstellt es nach dem ersten Wochenrückblick — oder tippe „Mit KI aktualisieren".', uk: 'Поки порожньо. Тінь складе профіль після першого розбору тижня — або натисни «Оновити через ШІ».', es: 'Vacío por ahora. Sombra lo redactará tras el primer resumen semanal — o toca "Actualizar con IA".' },
   'Это досье Тень берёт с собой в каждый разговор — поэтому оно короткое. Правь смело: твои правки важнее её выводов.': { en: 'Shadow brings this dossier into every conversation — that is why it is short. Edit freely: your corrections outweigh its conclusions.', de: 'Schatten nimmt dieses Dossier in jedes Gespräch mit — deshalb ist es kurz. Ändere es ruhig: deine Korrekturen zählen mehr als seine Schlüsse.', uk: 'Це досьє Тінь бере з собою в кожну розмову — тому воно коротке. Правь смiло: твої правки важливіші за її висновки.', es: 'Sombra lleva este expediente a cada conversación — por eso es corto. Edita sin miedo: tus correcciones pesan más que sus conclusiones.' },
@@ -7779,6 +7787,42 @@ async function refreshProfile(opts) {
   } catch { if (!o.silent) toast(t('Сетевая ошибка')); return false; }
   finally { State._profileBusy = false; if (!o.silent) render(); }
 }
+// ── Наблюдение → просьба поправить (JARVIS-3-PLAN §5, правило 3) ──────────────
+// Логика в day-observation-v1.js: чистый модуль, узкий проверяемый факт вместо
+// открытого «как прошёл день». «Да» подставляет наблюдение в поле рефлексии как
+// есть; поправка — сам текст, который человек допишет или заменит, и есть рефлексия.
+function dayObsMem() { return (typeof DayObservationV1 !== 'undefined') ? DayObservationV1 : null; }
+// Модуль отдаёт сырые значения (час/сфера/процент), не готовое предложение — оно
+// не ловилось бы словарным переводом. Фраза на языке юзера собирается здесь,
+// тем же приёмом, что и остальные динамические строки в проекте: t() на шаблон
+// + подстановка значений.
+function dayObsPhrase(raw) {
+  if (!raw) return null;
+  if (raw.id === 'late-start') {
+    const statement = t('Первое дело сегодня отмечено только в {h}:00.').replace('{h}', raw.hour);
+    return { id: raw.id, statement, question: `${statement} ${t('Так и было?')}` };
+  }
+  if (raw.id === 'sphere-dominant') {
+    const statement = t('Почти всё время сегодня ({pct}%) ушло в «{sphere}».').replace('{pct}', raw.pct).replace('{sphere}', raw.sphereName);
+    return { id: raw.id, statement, question: `${statement} ${t('Так и было?')}` };
+  }
+  if (raw.id === 'quiet-day') {
+    const statement = t('Судя по данным, сегодня почти ничего не отмечено.');
+    return { id: raw.id, statement, question: `${statement} ${t('Так и было, или просто забыл записать?')}` };
+  }
+  return null;
+}
+function dayObservationFor(dateStr) {
+  const mem = dayObsMem(); if (!mem) return null;
+  const d = dateStr || todayStr();
+  const day = State.days[d];
+  if (day && day.reflection && day.reflection.trim()) return null; // уже есть рефлексия — предлагать нечего
+  if (day && day.obsDismissed === d) return null; // однократно отклонено на этот день
+  const tasks = (State.tasks || []).filter((x) => x.date === d)
+    .map((x) => ({ done: !!x.done, completedAt: x.completedAt || null, skillId: x.skillId, minutes: x.actualMin || x.estimateMin || 0 }));
+  const skillNames = {}; for (const s of (State.settings.skills || [])) skillNames[s.id] = s.name;
+  return dayObsPhrase(mem.observeDay({ tasks, skillNames, now: new Date(), hasPlan: tasks.length > 0 }));
+}
 function chatUserContext() {
   const c = State.settings.curve, lvl = levelInfo(overallXp(), c.base, c.growth).level;
   const spheres = State.settings.skills.map((s) => `${skillLabel(s.id)} (ур.${skillLevelOf(s.id)})`).join(', ');
@@ -10053,8 +10097,16 @@ function renderToday() {
   const scheduleCard = todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : '';
   const habitsCard = `<div class="card card-habits"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🔁')} ${t('🔁 Привычки на сегодня').replace(/^🔁\s*/, '')}</h3>
       ${habits.length ? `<ul class="tasks">${habits.map(habitRow).join('')}</ul>` : '<p class="muted">На сегодня привычек нет. Добавь их в «Настройках».</p>'}</div>`;
+  const obs = dayObservationFor(today);
+  const obsBlock = obs ? `<div class="day-obs" data-obs-id="${esc(obs.id)}">
+      <p class="day-obs-q">🔎 ${esc(obs.question)}</p>
+      <div class="day-obs-acts">
+        <button class="btn ghost sm" data-action="dayobs-yes" data-text="${esc(obs.statement)}">${t('Да, так')}</button>
+        <button class="btn ghost sm" data-action="dayobs-no">${t('Не совсем')}</button>
+      </div></div>` : '';
   const shutdownCard = `<div class="card shutdown"><h3>${satoruIconHTML('scene.day-summary', 'day-summary-emblem', '☾')} ${t('Итог дня')}</h3>
       <p class="muted">Квестов ${doneCount}/${todays.length} · привычек ${habits.filter((h) => habitDone(h, today)).length}/${habits.length} · ${fmtDur(minToday)} · +${xpToday} XP · +${goldToday} ${satoruIconHTML('status.gold', 'inline-emblem', '◇')}</p>
+      ${obsBlock}
       <textarea id="reflection" placeholder="Рефлексия: что получилось, что перенести, как себя чувствую…">${esc(day.reflection || '')}</textarea>
       <div style="margin-top:10px"><button class="${day.closed ? 'btn ghost' : 'btn'}" data-action="${day.closed ? 'reopen-day' : 'close-day'}">${day.closed ? '✓ День закрыт — открыть заново' : 'Закрыть день'}</button></div></div>`;
   const deeperPath = `<button class="today-deeper" data-action="goto-rewards">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Награды')} <span aria-hidden="true">→</span></button>`;
@@ -13506,6 +13558,19 @@ function onClick(e) {
       prof.updatedAt = new Date().toISOString(); prof.auto = false;
       Store.save('profile', prof); toast('🧠 ' + t('Профиль сохранён')); render();
     }
+  } else if (action === 'dayobs-yes') {
+    // «Да» подставляет наблюдение в поле рефлексии КАК ЕСТЬ — это уже конкретный
+    // факт про день, его же слова просить не нужно, только подтверждение.
+    const d = State.days[todayStr()] || (State.days[todayStr()] = {});
+    d.reflection = String(el.dataset.text || '');
+    Store.save('days', State.days); render();
+  } else if (action === 'dayobs-no') {
+    // Поправка — это и есть рефлексия (правило 3): просто убираем наблюдение
+    // с дороги и фокусируем пустое поле, ничего не подставляя за юзера.
+    const d = State.days[todayStr()] || (State.days[todayStr()] = {});
+    d.obsDismissed = todayStr();
+    Store.save('days', State.days); render();
+    setTimeout(() => { const ta = document.getElementById('reflection'); if (ta) ta.focus(); }, 30);
   } else if (action === 'focus-pick-duration') {
     const min = Math.max(1, Math.round(Number(el.dataset.min) || 25));
     State.settings.focus = Object.assign({}, focusCfg(), { workMin: min });

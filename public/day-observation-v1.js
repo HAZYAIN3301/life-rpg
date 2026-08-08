@@ -39,12 +39,18 @@
   function hourOf(iso) { const d = new Date(iso); return isNaN(d) ? null : d.getHours(); }
 
   /**
+   * Возвращает СЫРЫЕ значения, не готовое предложение: приложение мультиязычное
+   * (RU/EN/DE/UK/ES), а собранный текст с числами внутри не ловится словарным
+   * переводом. Фразу на конкретном языке собирает вызывающий код через t()
+   * с этими значениями — так же, как собраны все остальные динамические строки
+   * в проекте (шаблон + esc()/plural() + подстановка, не готовое предложение здесь).
+   *
    * @param {object} input
    * @param {Array<{completedAt: (string|null), done: boolean, skillId: string, minutes: number}>} input.tasks — дела ЭТОГО дня
    * @param {Object<string,string>} input.skillNames — id сферы → человекочитаемое имя
    * @param {Date} [input.now] — для тестов; по умолчанию текущее время
    * @param {boolean} [input.hasPlan] — было ли в этот день хоть что-то запланировано
-   * @returns {{id:string, statement:string, question:string}|null}
+   * @returns {{id:string, hour:number}|{id:string, sphereName:string, pct:number}|{id:string}|null}
    */
   function observeDay(input) {
     const inp = input || {};
@@ -60,10 +66,7 @@
       const hours = done.map((t) => hourOf(t.completedAt)).filter((h) => h != null);
       if (hours.length) {
         const first = Math.min(...hours);
-        if (first >= LATE_START_HOUR) {
-          const statement = `Первое дело сегодня отмечено только в ${first}:00.`;
-          return { id: 'late-start', statement, question: `${statement} Так и было?` };
-        }
+        if (first >= LATE_START_HOUR) return { id: 'late-start', hour: first };
       }
     }
 
@@ -80,10 +83,9 @@
       if (total >= SPHERE_DOMINANT_MIN_MINUTES) {
         const top = Object.entries(bySphere).sort((a, b) => b[1] - a[1])[0];
         if (top && top[1] / total >= SPHERE_DOMINANT_SHARE) {
-          const name = skillNames[top[0]] || top[0];
+          const sphereName = skillNames[top[0]] || top[0];
           const pct = Math.round((top[1] / total) * 100);
-          const statement = `Почти всё время сегодня (${pct}%) ушло в «${name}».`;
-          return { id: 'sphere-dominant', statement, question: `${statement} Так и было?` };
+          return { id: 'sphere-dominant', sphereName, pct };
         }
       }
     }
@@ -91,10 +93,7 @@
     // ── Кандидат 3: тихий день — план был, час поздний, не сделано ничего.
     // hasPlan обязателен: пустой день без единого запланированного дела — это не
     // «наблюдение», а укор в никуда, ни на что не отвечающий (правило 2).
-    if (hasPlan && !done.length && now.getHours() >= QUIET_DAY_HOUR) {
-      const statement = 'Судя по данным, сегодня почти ничего не отмечено.';
-      return { id: 'quiet-day', statement, question: `${statement} Так и было, или просто забыл записать?` };
-    }
+    if (hasPlan && !done.length && now.getHours() >= QUIET_DAY_HOUR) return { id: 'quiet-day' };
 
     return null;
   }
