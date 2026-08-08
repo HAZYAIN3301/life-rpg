@@ -36,6 +36,19 @@ Status: BODY-toad vertical slice implemented; other guardians remain gated
 - Level 2 is not yet a universal policy. It is being calibrated against the Recovery slug and Money/Resources penguin before adoption.
 - Product-owner decision: use resemblance level 2 as the working direction.
 - Level 2 is a design target, not permission to retain the full signature feature bundle. The Money/Resources penguin required a `02b` safety pass: black tuxedo and a pillbox concierge cap replace the source-like colored uniform and bell cap.
+- Money/Resources candidate `02c-black-plumage-tuxedo.png` was produced on 2026-08-07 as a single approval gate: the turquoise plumage from `02b` is replaced with charcoal black while the tuxedo silhouette and accessories remain locked. It does not replace `02b` or open runtime production until the product owner approves it.
+- The first black-plumage candidate remained too source-adjacent in its facial construction. Five controlled `02d` alternatives were therefore produced without changing the costume, palette, body, suitcase, or material language. Their only design variable is the face: mask, brows, eyes, beak, and small forehead-feather geometry. Selection is documented in `concepts/resources-penguin/SIMILARITY-GATE-02D.md`; all five remain concept-only until one is explicitly approved.
+- Final MONEY / RESOURCES approval: `02d-03-old-school-steward.png`. The canonical face has two separate brows and three short forehead-feather tufts. The connected-Y-brow experiment `02e-triple-eyebrow.png` was an incorrect interpretation and is rejected. Static/state/action production is authorized; runtime import still requires its own QA gate.
+
+## MONEY / RESOURCES runtime staging decision — 2026-08-07
+
+- The approved `02d-03-old-school-steward.png` is the canonical MONEY / RESOURCES guardian. No later face variant supersedes it.
+- Runtime ownership is the canonical `money` domain only. `work` / career remains separate and never summons this guardian.
+- When several user spheres map to `money`, the highest-XP top-level sphere owns the single guardian; duplicate penguins are forbidden.
+- Four state plates, twelve solo action plates, one blink plate, and twelve male-Traveller atomic pair plates are production-approved (`29/29 PASS`).
+- Runtime may swap complete authored plates only. It must not split the penguin into wearable layers, scale individual parts, or reconstruct hand/prop contact.
+- The Den director has a persistent MONEY-focus sequence and longer ambient holds. The guardian waddles on authored alternating steps, occupies a collision-safe east slot, and is hidden only while an atomic pair frame is visible.
+- Staging syntax, alpha, canvas, service-worker, domain, slot, and sequence contract tests pass. Live visual QA and deployment are a separate final gate.
 
 ## BODY-toad production decision — 2026-08-02
 
@@ -79,17 +92,3 @@ Status: BODY-toad vertical slice implemented; other guardians remain gated
 - Greeting has an explicit fist-bump; rest alternates hand-to-shoulder and hand-to-brow contact while Traveller stays seated on the floor; training alternates two articulated poses as a finite loop.
 - Pair assets decode before the standalone characters are hidden. This prevents empty flashes and preserves geometry across mobile orientation changes.
 - Kling is not part of this runtime path. Walking and a standalone blink system are a later locomotion/facial-motion batch, not simulated from the flattened pair art.
-
-## BODY Den Life v1 decision — 2026-08-04
-
-- The approved flattened guardian receives only complete-sprite ambient acting:
-  observe, brace, and settle. No independent joints or fake face rig are claimed.
-- Ambient motion is sparse by design and yields to manual actions, authored
-  Traveller scenes, pair contact, room editing, overlays, hidden tabs, and
-  reduced-motion.
-- A running task mapped to canonical `body` triggers one automatic authored
-  warm-up pair per focus session.
-- A focus beat counts as consumed only after contact actually starts; blocked or
-  failed attempts retry later.
-- This closes BODY ambient v1. New locomotion or blinking still requires newly
-  authored art topology.

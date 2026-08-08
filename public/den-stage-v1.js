@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenStage(root) {
   'use strict';
 
-  const VERSION = '1.6.0';
+  const VERSION = '1.7.0';
   const WORLD = Object.freeze({ width: 1536, height: 864 });
   const APPROACH_MS = 1800;
   const RETURN_MS = 1800;
@@ -26,6 +26,7 @@
 
   const PROFILES = Object.freeze({
     bodyToad: Object.freeze({ width: 19.2, aspect: 1, footprint: 15.7, preferred: 'west' }),
+    resourcesPenguin: Object.freeze({ width: 12.8, aspect: 1, footprint: 10.8, preferred: 'east' }),
     recoverySlug: Object.freeze({ width: 14.6, aspect: 1, footprint: 12.2, preferred: 'mid-east' }),
     fortune: Object.freeze({ width: 8.9, aspect: 1, footprint: 8.0, preferred: 'east' }),
     default: Object.freeze({ width: 6.7, aspect: 120 / 132, footprint: 6.2, preferred: 'mid-east' }),
@@ -67,7 +68,7 @@
     const source = Array.isArray(entities) ? entities.filter((entry) => entry && entry.id) : [];
     // Reserve canonical guardians first; generic sphere pets fill the remaining
     // authored slots without ever competing for the same footprint.
-    const priority = (species) => species === 'bodyToad' ? 2 : species === 'recoverySlug' ? 1 : 0;
+    const priority = (species) => species === 'bodyToad' ? 3 : species === 'resourcesPenguin' ? 2 : species === 'recoverySlug' ? 1 : 0;
     const sorted = source.map((entry, index) => ({ ...entry, _index: index }))
       .sort((a, b) => priority(b.species) - priority(a.species));
     const occupied = new Set();
@@ -119,6 +120,10 @@
 
   function clearRecoveryMeetingClasses(scope) {
     scope.classList.remove('is-recovery-pair-approaching', 'is-recovery-pair-at-meeting', 'is-recovery-pair-returning', 'is-recovery-pair-settling');
+  }
+
+  function clearResourcesMeetingClasses(scope) {
+    scope.classList.remove('is-resources-pair-approaching', 'is-resources-pair-at-meeting', 'is-resources-pair-returning', 'is-resources-pair-settling');
   }
 
   async function approachBodyPair(scope, play, options) {
@@ -221,6 +226,56 @@
     return true;
   }
 
+  async function approachResourcesPair(scope, play, options) {
+    if (!scope || typeof play !== 'function') return false;
+    const config = options || {};
+    const avatar = scope.querySelector && scope.querySelector('.den-avatar-core');
+    const penguin = scope.querySelector && scope.querySelector('[data-resources-penguin]');
+    const motion = root.TravellerMotionV3;
+    const penguinMotion = root.ResourcesPenguinV1;
+    const approachMs = Math.max(1200, Number(config.approachMs) || 2200);
+    const returnMs = Math.max(1200, Number(config.returnMs) || 2200);
+    const contactMs = Math.max(900, Number(config.duration) || 7200);
+    clearResourcesMeetingClasses(scope);
+    if (avatar && motion) motion.installWalkFrames(avatar, 'right');
+    if (penguin && penguinMotion && penguinMotion.installWaddleFrames) await penguinMotion.installWaddleFrames(penguin, 'meeting');
+    scope.classList.add('is-resources-pair-approaching');
+    await nextFrame();
+    await wait(approachMs);
+    if (!scope.isConnected) {
+      clearResourcesMeetingClasses(scope);
+      if (avatar && motion) motion.clearWalkFrames(avatar);
+      if (penguin && penguinMotion && penguinMotion.clearWaddleFrames) penguinMotion.clearWaddleFrames(penguin).catch(() => {});
+      return false;
+    }
+    scope.classList.remove('is-resources-pair-approaching');
+    scope.classList.add('is-resources-pair-at-meeting');
+    if (avatar && motion) motion.clearWalkFrames(avatar);
+    if (penguin && penguinMotion && penguinMotion.clearWaddleFrames) await penguinMotion.clearWaddleFrames(penguin);
+    const played = await play();
+    if (!played) {
+      clearResourcesMeetingClasses(scope);
+      return false;
+    }
+    scope.classList.add('is-resources-pair-settling');
+    await wait(contactMs + 100);
+    if (!scope.isConnected) {
+      clearResourcesMeetingClasses(scope);
+      return true;
+    }
+    scope.classList.remove('is-resources-pair-settling');
+    scope.classList.add('is-resources-pair-returning');
+    if (avatar && motion) motion.installWalkFrames(avatar, 'left');
+    if (penguin && penguinMotion && penguinMotion.installWaddleFrames) await penguinMotion.installWaddleFrames(penguin, 'home');
+    await nextFrame();
+    scope.classList.remove('is-resources-pair-at-meeting');
+    await wait(returnMs);
+    scope.classList.remove('is-resources-pair-returning');
+    if (avatar && motion) motion.clearWalkFrames(avatar);
+    if (penguin && penguinMotion && penguinMotion.clearWaddleFrames) await penguinMotion.clearWaddleFrames(penguin);
+    return true;
+  }
+
   return Object.freeze({
     VERSION,
     WORLD,
@@ -234,5 +289,6 @@
     overlaps,
     approachBodyPair,
     approachRecoveryPair,
+    approachResourcesPair,
   });
 });

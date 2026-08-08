@@ -1,0 +1,257 @@
+{
+  "schema": "satoru.resources-penguin-pair-v1.qa/1",
+  "pair": "male-traveller+resources-penguin-02d-03",
+  "contract": {
+    "canvas": [
+      1536,
+      1536
+    ],
+    "sharedGroundY": 1470,
+    "fixedSourceScale": 1.21955261,
+    "runtimeComposition": "atomic-whole-pair-frame",
+    "femaleRuntime": false
+  },
+  "frames": {
+    "greet-contact": {
+      "bbox": [
+        60,
+        436,
+        1477,
+        1470
+      ],
+      "partialAlphaRatio": 0.030985,
+      "greenPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "groundLocked": true,
+        "greenFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    },
+    "budget-point": {
+      "bbox": [
+        120,
+        376,
+        1415,
+        1470
+      ],
+      "partialAlphaRatio": 0.026714,
+      "greenPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "groundLocked": true,
+        "greenFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    },
+    "budget-reserve": {
+      "bbox": [
+        120,
+        379,
+        1415,
+        1470
+      ],
+      "partialAlphaRatio": 0.026597,
+      "greenPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "groundLocked": true,
+        "greenFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    },
+    "count-pass": {
+      "bbox": [
+        46,
+        480,
+        1490,
+        1470
+      ],
+      "partialAlphaRatio": 0.030638,
+      "greenPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "groundLocked": true,
+        "greenFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    },
+    "count-place": {
+      "bbox": [
+        48,
+        487,
+        1487,
+        1470
+      ],
+      "partialAlphaRatio": 0.030465,
+      "greenPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "groundLocked": true,
+        "greenFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    },
+    "count-stack": {
+      "bbox": [
+        50,
+        525,
+        1487,
+        1470
+      ],
+      "partialAlphaRatio": 0.031943,
+      "greenPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "groundLocked": true,
+        "greenFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    },
+    "reserve-offer": {
+      "bbox": [
+        32,
+        419,
+        1504,
+        1470
+      ],
+      "partialAlphaRatio": 0.029291,
+      "greenPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "groundLocked": true,
+        "greenFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    },
+    "reserve-accept": {
+      "bbox": [
+        32,
+        427,
+        1504,
+        1470
+      ],
+      "partialAlphaRatio": 0.027672,
+      "greenPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "groundLocked": true,
+        "greenFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    },
+    "focus-work": {
+      "bbox": [
+        62,
+        464,
+        1475,
+        1470
+      ],
+      "partialAlphaRatio": 0.024481,
+      "greenPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "groundLocked": true,
+        "greenFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    },
+    "focus-check": {
+      "bbox": [
+        62,
+        476,
+        1473,
+        1470
+      ],
+      "partialAlphaRatio": 0.024656,
+      "greenPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "groundLocked": true,
+        "greenFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    },
+    "focus-nod": {
+      "bbox": [
+        63,
+        457,
+        1473,
+        1470
+      ],
+      "partialAlphaRatio": 0.024011,
+      "greenPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "groundLocked": true,
+        "greenFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    },
+    "close-stamp": {
+      "bbox": [
+        120,
+        414,
+        1415,
+        1470
+      ],
+      "partialAlphaRatio": 0.025617,
+      "greenPixels": 0,
+      "checks": {
+        "canvas": true,
+        "alpha": true,
+        "transparentCorners": true,
+        "safeBBox": true,
+        "groundLocked": true,
+        "greenFringe": true,
+        "opaquePaper": true
+      },
+      "pass": true
+    }
+  },
+  "pass": true
+}

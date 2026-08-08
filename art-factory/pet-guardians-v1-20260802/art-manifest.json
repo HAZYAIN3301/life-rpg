@@ -1,0 +1,170 @@
+{
+  "factoryVersion": 1,
+  "batchId": "pet-guardians-v1-20260802",
+    "status": "body-toad-runtime-pass-resources-penguin-runtime-pass",
+    "runtimeIntegration": "body-toad-v1-live-resources-penguin-v1-live-ready",
+  "style": "satoru-cut-paper",
+  "styleReference": "../../runtime-staging/life-rpg/public/art/pets/fortune-v2/fortune-v2-preview.png",
+  "canvas": [1024, 1024],
+  "stageOrigin": [512, 920],
+  "safeArea": [72, 48, 952, 928],
+  "states": ["calm", "thriving", "strained", "restoring"],
+  "guardians": [
+    {
+      "id": "body-toad",
+      "domain": "body",
+      "concept": "refinement/body-toad/candidates/02g-short-judogi-high-belt.png",
+      "refinement": "refinement/body-toad/base-alpha.png",
+      "geometry": "refinement/body-toad/geometry.json",
+      "rigPlan": "refinement/body-toad/rig-plan.json",
+      "productionStates": {
+        "calm": "outputs/body-toad/states/calm.png",
+        "thriving": "outputs/body-toad/states/thriving.png",
+        "strained": "outputs/body-toad/states/strained.png",
+        "restoring": "outputs/body-toad/states/restoring.png"
+      },
+      "motion": {
+        "idle": "outputs/body-toad/motion/idle-breath-02g.gif"
+      },
+      "candidates": [
+        {
+          "id": "02c-judo-black-belt",
+          "file": "refinement/body-toad/candidates/02c-judo-black-belt.png",
+          "qa": "refinement/body-toad/candidates/02c-judo-black-belt-qa.json",
+          "status": "superseded-by-02g"
+        },
+        {
+          "id": "02g-short-judogi-high-belt",
+          "file": "refinement/body-toad/candidates/02g-short-judogi-high-belt-production.png",
+          "qa": "refinement/body-toad/candidates/02g-short-judogi-high-belt-qa.json",
+          "status": "approved-final"
+        }
+      ],
+      "qa": "outputs/body-toad/qa-report.json",
+      "runtime": {
+                "module": "public/body-toad-v1.js",
+                "artRoot": "public/art/pets/body-toad-v1",
+                "avatarCoreRoot": "public/art/avatars/traveller-core-v1",
+                "avatarGenders": [
+                    "male"
+                ],
+                "avatarPoses": [
+                    "idle",
+                    "arms-up",
+                    "window-back"
+                ],
+                "pairRoot": "public/art/pets/body-toad-v1/pair-v2",
+                "pairCanvas": [1536, 1536],
+                "pairGroundY": 1470,
+                "pairFrames": {
+                    "greet": ["greet-contact.png"],
+                    "train": ["train-low.png", "train-high.png"],
+                    "rest": ["rest-contact.png", "rest-pet.png"]
+                },
+                "preview": "previews/body-toad-pair-v2-contact-sheet.jpg",
+        "stateMapping": {
+          "hungry": "strained",
+          "growing": "calm",
+          "full": "thriving",
+          "overfed": "restoring"
+        },
+        "interactions": ["greet", "train", "rest"]
+      },
+      "status": "runtime-pair-v2-pass"
+    },
+    {
+      "id": "recovery-slug",
+      "domain": "recovery",
+      "concept": "concepts/recovery-slug/02-close-homage.png",
+      "refinement": "refinement/recovery-slug/base-alpha.png",
+      "geometry": "refinement/recovery-slug/geometry.json",
+      "rigPlan": "refinement/recovery-slug/rig-plan.json",
+      "productionStates": {
+        "calm": "outputs/recovery-slug/states/calm.png",
+        "thriving": "outputs/recovery-slug/states/thriving.png",
+        "strained": "outputs/recovery-slug/states/strained.png",
+        "restoring": "outputs/recovery-slug/states/restoring.png"
+      },
+      "motion": {
+        "idle": "outputs/recovery-slug/motion/idle-softbody.gif"
+      },
+      "qa": "outputs/recovery-slug/qa-report.json",
+      "status": "production-pass-visual-approval-pending"
+    },
+    {
+      "id": "resources-penguin",
+      "domain": "money-resources",
+      "concept": "concepts/resources-penguin/02d-03-old-school-steward.png",
+      "productionContract": "RESOURCES-PENGUIN-PRODUCTION-V1.md",
+      "productionStates": {
+        "calm": "outputs/resources-penguin-v1/states/calm.png",
+        "thriving": "outputs/resources-penguin-v1/states/thriving.png",
+        "strained": "outputs/resources-penguin-v1/states/strained.png",
+        "restoring": "outputs/resources-penguin-v1/states/restoring.png"
+      },
+      "motion": {
+        "blink": "outputs/resources-penguin-v1/motion/idle-blink.png",
+        "soloRoot": "outputs/resources-penguin-v1/solo",
+        "pairRoot": "outputs/resources-penguin-v1/pair-v1"
+      },
+      "soloFrames": [
+        "waddle-left",
+        "waddle-right",
+        "coin-sort-a",
+        "coin-sort-b",
+        "coin-sort-c",
+        "stash-open",
+        "stash-place",
+        "stash-closed",
+        "ledger-read",
+        "ledger-mark",
+        "jacket-reset",
+        "quiet-rest"
+      ],
+      "pairFrames": [
+        "greet-contact",
+        "budget-point",
+        "budget-reserve",
+        "count-pass",
+        "count-place",
+        "count-stack",
+        "reserve-offer",
+        "reserve-accept",
+        "focus-work",
+        "focus-check",
+        "focus-nod",
+        "close-stamp"
+      ],
+      "qa": {
+        "states": "outputs/resources-penguin-v1/qa-report.json",
+        "solo": "outputs/resources-penguin-v1/solo-qa-report.json",
+        "pair": "outputs/resources-penguin-v1/pair-v1/qa-report.json"
+      },
+      "previews": [
+        "previews/resources-penguin-v1-state-lineup.png",
+        "previews/resources-penguin-v1-solo-lineup.jpg",
+        "previews/resources-penguin-v1-pair-lineup.jpg"
+      ],
+      "runtime": {
+        "module": "den-life-v4/public/resources-penguin-v1.js",
+        "artRoot": "den-life-v4/public/art/pets/resources-penguin-v1",
+        "avatarGenders": ["male"],
+        "soloCanvas": [1024, 1024],
+        "soloGroundY": 920,
+        "pairCanvas": [1536, 1536],
+        "pairGroundY": 1470,
+        "composition": "atomic-whole-frame",
+        "stageProfile": {
+          "preferredSlot": "east",
+          "widthPct": 12.8,
+          "footprintPct": 10.8
+        },
+        "ambientActions": ["ledger", "stash", "quietRest"],
+        "focusSequence": ["budget", "count", "focus", "reserve", "close"],
+        "interactions": ["greet", "budget", "count", "reserve", "focus", "close"],
+        "status": "runtime-pass-local-live-app-visual-qa-pass"
+      },
+      "status": "production-pass-29-of-29-runtime-live-ready"
+    }
+  ]
+}

@@ -1020,6 +1020,134 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
   .satoru-icon[data-motion] { animation: none !important; transition: none !important; }
 }
 
+/* ============================================================
+   MONEY / RESOURCES Guardian v1 — authored cut-paper plates.
+   Runtime swaps complete figures and complete contact scenes; no limb layers
+   or scale pulses are used to fake acting.
+   ============================================================ */
+.resources-penguin-v1,
+.resources-penguin-v1__stage {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.resources-penguin-v1__frame {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%;
+  opacity: 0;
+  filter: drop-shadow(0 10px 10px rgba(4, 7, 12, .4));
+}
+.resources-penguin-v1__frame.is-active,
+.resources-penguin-v1__waddle-a { opacity: 1; }
+.resources-penguin-v1[data-motion="waddle-route"] .resources-penguin-v1__waddle-a {
+  animation: resourcesWaddleA .72s steps(1,end) infinite;
+}
+.resources-penguin-v1[data-motion="waddle-route"] .resources-penguin-v1__waddle-b {
+  animation: resourcesWaddleB .72s steps(1,end) infinite;
+}
+@keyframes resourcesWaddleA { 0%,49.999%,100% { opacity: 1; } 50%,99.999% { opacity: 0; } }
+@keyframes resourcesWaddleB { 0%,49.999%,100% { opacity: 0; } 50%,99.999% { opacity: 1; } }
+
+.den-resources-penguin {
+  aspect-ratio: 1;
+  height: auto !important;
+}
+.den-resources-penguin .resources-penguin-v1 { width: 100%; height: 100%; }
+.pet-card-resourcesPenguin .pet-art > .resources-penguin-v1 { width: 100%; height: 100%; }
+.resources-penguin-domain-badge { color: #f1c979; border-color: rgba(213, 164, 73, .38); }
+.den-resources-actions { border-color: rgba(213, 164, 73, .26); }
+.den-resources-actions > span b { color: #f5d895; }
+.den-scene[data-den-focus-canon="money"] .den-resources-penguin {
+  filter: drop-shadow(0 10px 10px rgba(4,7,12,.4)) drop-shadow(0 0 9px rgba(230,177,72,.18));
+}
+
+.resources-pair-v1 {
+  position: absolute;
+  left: 37.5%;
+  bottom: 1.4%;
+  z-index: 23;
+  display: block;
+  width: 43%;
+  aspect-ratio: 1;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .2s ease, visibility 0s linear .2s;
+}
+.resources-pair-v1.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.resources-pair-v1__stage,
+.resources-pair-v1__frame {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.resources-pair-v1__frame {
+  object-fit: contain;
+  object-position: 50% 100%;
+  filter: drop-shadow(0 13px 13px rgba(4,7,12,.42));
+}
+
+.den-scene[data-den-renderer="v5"] .den-pet.den-resources-penguin {
+  transition: translate 2.2s cubic-bezier(.25,.64,.22,1), scale 2.2s linear, opacity .18s ease, visibility 0s linear 0s;
+}
+.den-shell.is-resources-pair-approaching .den-avatar-core,
+.den-shell.is-resources-pair-at-meeting .den-avatar-core,
+.den-shell.is-resources-pair-returning .den-avatar-core {
+  translate: 18% 1%;
+  scale: .98;
+}
+.den-shell.is-resources-pair-approaching .den-resources-penguin,
+.den-shell.is-resources-pair-at-meeting .den-resources-penguin {
+  translate: -142% 0;
+  scale: 1;
+}
+.den-shell.is-resources-pair-returning .den-resources-penguin {
+  translate: 0 0;
+  scale: 1;
+}
+.den-resources-penguin[data-resources-direction="home"] .resources-penguin-v1__frame { transform: scaleX(-1); }
+
+.den-shell.is-resources-pair-active .den-avatar-core,
+.den-shell.is-resources-pair-active .den-resources-penguin,
+.den-shell.is-resources-pair-active .traveller-room-v4 {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.den-shell.is-resources-pair-active .den-scene > .den-pet:not(.den-resources-penguin) {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 720px) {
+  .resources-pair-v1 { left: 35%; bottom: 1.1%; width: 48%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resources-pair-v1,
+  .resources-pair-v1 *,
+  .resources-penguin-v1[data-motion] * { animation: none !important; transition: none !important; }
+  .den-shell.is-resources-pair-approaching .den-avatar-core,
+  .den-shell.is-resources-pair-at-meeting .den-avatar-core,
+  .den-shell.is-resources-pair-returning .den-avatar-core,
+  .den-shell.is-resources-pair-approaching .den-resources-penguin,
+  .den-shell.is-resources-pair-at-meeting .den-resources-penguin,
+  .den-shell.is-resources-pair-returning .den-resources-penguin { translate: 0 0 !important; scale: 1 !important; }
+}
+
 /* ══ BODY Guardian v1 — approved cut-paper toad ═══════════════════════════════
    A single 1024×1024 stage is scaled as a unit. State changes cross-fade only
    after decode; interaction motion is anchored at the floor, never a floating

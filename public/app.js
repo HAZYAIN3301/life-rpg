@@ -1545,9 +1545,6 @@ const I18N_EXTRA = {
   'Выкл': { en: 'Off', de: 'Aus', uk: 'Вимк', es: 'No' },
   'Работа, мин': { en: 'Work, min', de: 'Arbeit, Min', uk: 'Робота, хв', es: 'Trabajo, min' },
   'Перерыв, мин': { en: 'Break, min', de: 'Pause, Min', uk: 'Перерва, хв', es: 'Descanso, min' },
-  // ── Пикер длительности блока при старте (JARVIS-3-PLAN §4) ──
-  'Сколько минут?': { en: 'How many minutes?', de: 'Wie viele Minuten?', uk: 'Скільки хвилин?', es: '¿Cuántos minutos?' },
-  'Тап — и пошёл отсчёт. Поменять можно и позже, в Настройках.': { en: 'Tap and the clock starts. You can change it later in Settings.', de: 'Tippen, und die Zeit läuft. Später in den Einstellungen änderbar.', uk: 'Тап — і пішов відлік. Змінити можна і пізніше, в Налаштуваннях.', es: 'Toca y empieza el conteo. Puedes cambiarlo luego en Ajustes.' },
   'Колокол': { en: 'Bell', de: 'Glocke', uk: 'Дзвін', es: 'Campana' },
   'Уведомления': { en: 'Notifications', de: 'Benachrichtigungen', uk: 'Сповіщення', es: 'Notificaciones' },
   'Плавающее окно поверх всех приложений работает в Chrome / Edge / Brave (Document Picture-in-Picture). В Safari — встроенная плашка внизу слева. Колокол звенит на перерыв и при превышении расчётного времени.': { en: 'A floating window over all apps works in Chrome / Edge / Brave (Document Picture-in-Picture). In Safari — a built-in bar at the bottom left. The bell rings for the break and when estimated time is exceeded.', de: 'Ein schwebendes Fenster über allen Apps funktioniert in Chrome / Edge / Brave (Document Picture-in-Picture). In Safari — eine eingebaute Leiste unten links. Die Glocke läutet zur Pause und bei Überschreitung der geschätzten Zeit.', uk: 'Плаваюче вікно поверх усіх застосунків працює в Chrome / Edge / Brave (Document Picture-in-Picture). У Safari — вбудована плашка внизу зліва. Дзвін дзвенить на перерву та при перевищенні розрахункового часу.', es: 'Una ventana flotante sobre todas las apps funciona en Chrome / Edge / Brave (Document Picture-in-Picture). En Safari — una barra integrada abajo a la izquierda. La campana suena para el descanso y al superar el tiempo estimado.' },
@@ -2634,7 +2631,8 @@ const DUNGEON_PROGRAMS = [
               { skill: 'Отношения', title: 'Глубокий разговор с близким', estimateMin: 30, difficulty: 'easy' } ] },
   { id: 'decathlete', icon: '⚖️', name: 'Десятиборец', tagline: 'Не вписался в роль? Сбалансированная карта всей жизни.',
     skills: [ { name: 'Тело', color: '#5fbf5f' }, { name: 'Ум', color: '#4f86f7' }, { name: 'Дело', color: '#e0526a' },
-              { name: 'Душа', color: '#b06ff0' }, { name: 'Связи', color: '#e87d3e' }, { name: 'Творчество', color: '#d8a44b' }, { name: 'Быт', color: '#8899bb' } ],
+              { name: 'Деньги / Ресурсы', color: '#d8a44b' }, { name: 'Душа', color: '#b06ff0' }, { name: 'Связи', color: '#e87d3e' },
+              { name: 'Творчество', color: '#c08a5e' }, { name: 'Быт', color: '#8899bb' } ],
     habits: [ { skill: 'Тело', title: 'Движение 20 мин', estimateMin: 20, difficulty: 'easy', days: [1,3,5] },
               { skill: 'Душа', title: 'Тихие 10 минут для себя', estimateMin: 10, difficulty: 'easy', days: [1,2,3,4,5,6,0] } ],
     quests: [ { skill: 'Дело', title: 'Главное дело недели', estimateMin: 60, difficulty: 'hard' },
@@ -4249,7 +4247,7 @@ function syncAvatarMotion() {
   const host = document.querySelector('.den-avatar-core');
   const roomAction = window.TravellerRoomV4 && window.TravellerRoomV4.isPlaying(document.querySelector('.den-shell'));
   if (!host || roomAction || (State._denAvatarPose && State._denAvatarPose !== 'idle')) return;
-  if (window.DenLifeV1 && document.querySelector('[data-body-toad]')) return;
+  if (window.DenLifeV1 && document.querySelector('[data-body-toad], [data-recovery-slug], [data-resources-penguin]')) return;
   scheduleDenAvatarWander(6500);
 }
 
@@ -4261,7 +4259,7 @@ function denLifeContext() {
     const skill = skillById(skillId);
     return skill ? canonOf(skill) : null;
   }).filter(Boolean);
-  const focusCanon = focusCanons.includes('body') ? 'body' : (focusCanons[0] || '');
+  const focusCanon = focusCanons.includes('body') ? 'body' : focusCanons.includes('money') ? 'money' : (focusCanons[0] || '');
   return {
     focusCanon,
     focusRunning: Boolean(timer && timer.running),
@@ -4272,7 +4270,7 @@ function denLifeContext() {
 function denLifeCanAct(shell) {
   if (!shell || !shell.isConnected || State.view !== 'den' || document.hidden || avatarMotionReduced()) return false;
   if (document.querySelector('.modal-overlay, .tut-bubble')) return false;
-  if (State._denEdit || shell.classList.contains('is-body-pair-active') || shell.classList.contains('is-body-pair-approaching') || shell.classList.contains('is-recovery-pair-active') || shell.classList.contains('is-recovery-pair-approaching') || shell.classList.contains('is-room-action-v4-active') || shell.classList.contains('is-toad-ambient-active') || shell.classList.contains('is-recovery-ambient-active')) return false;
+  if (State._denEdit || shell.classList.contains('is-body-pair-active') || shell.classList.contains('is-body-pair-approaching') || shell.classList.contains('is-recovery-pair-active') || shell.classList.contains('is-recovery-pair-approaching') || shell.classList.contains('is-resources-pair-active') || shell.classList.contains('is-resources-pair-approaching') || shell.classList.contains('is-room-action-v4-active') || shell.classList.contains('is-toad-ambient-active') || shell.classList.contains('is-recovery-ambient-active') || shell.classList.contains('is-resources-ambient-active')) return false;
   const avatar = shell.querySelector('.den-avatar-core');
   if (avatar && window.TravellerMotionV3 && window.TravellerMotionV3.isPlaying(avatar)) return false;
   return true;
@@ -4360,19 +4358,66 @@ function playDenRecoveryBeat(scope, beatId) {
   return window.RecoverySlugV1.playAmbient(slug, ambientMode, { restoreState: recoverySlugState() }).catch(() => false);
 }
 
+function playResourcesPenguinScene(scope, sphereId, mode, options = {}) {
+  if (!scope || !window.ResourcesPenguinV1 || !window.ResourcesPenguinV1.INTERACTIONS[mode]) return Promise.resolve(false);
+  if (scope.classList.contains('is-body-pair-active') || scope.classList.contains('is-body-pair-approaching') || scope.classList.contains('is-recovery-pair-active') || scope.classList.contains('is-recovery-pair-approaching')) return Promise.resolve(false);
+  const penguin = scope.querySelector('[data-resources-penguin]');
+  if (!penguin) return Promise.resolve(false);
+  const automatic = options.automatic === true;
+  const meta = window.ResourcesPenguinV1.INTERACTIONS[mode];
+  const duration = automatic ? Math.max(meta.duration, Number(options.duration) || meta.duration) : meta.duration;
+  if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, duration + 10000);
+  cancelDenRoomAction(false);
+  cancelDenAvatarLocomotion(true);
+  window.ResourcesPenguinV1.cancel(penguin, false);
+  const toad = scope.querySelector('[data-body-toad]');
+  if (toad && window.BodyToadV1 && window.BodyToadV1.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
+  const slug = scope.querySelector('[data-recovery-slug]');
+  if (slug && window.RecoverySlugV1 && window.RecoverySlugV1.cancelAmbient) window.RecoverySlugV1.cancelAmbient(slug);
+  const restoreState = resourcesPenguinStateForSphere(sphereId);
+  const playPair = () => window.ResourcesPenguinV1.playPair(scope, mode, { duration });
+  return syncDenCorePose('idle').catch(() => false).then(() => (window.DenStageV1 && window.DenStageV1.approachResourcesPair
+    ? window.DenStageV1.approachResourcesPair(scope, playPair, { duration })
+    : playPair())).then((played) => {
+    if (played) return true;
+    const fallback = mode === 'greet' ? 'blink' : mode === 'reserve' ? 'stash' : mode === 'focus' ? 'ledger' : 'coinSort';
+    return window.ResourcesPenguinV1.playSolo(penguin, fallback, { restoreState });
+  }).catch(() => false).finally(() => syncAvatarMotion());
+}
+
+function playDenResourcesBeat(scope, sphereId, beatId) {
+  if (!scope || !window.ResourcesPenguinV1) return Promise.resolve(false);
+  const penguin = scope.querySelector('[data-resources-penguin]');
+  if (!penguin) return Promise.resolve(false);
+  const mode = {
+    'resources-ledger': 'ledger',
+    'resources-stash': 'stash',
+    'resources-rest': 'quietRest',
+  }[beatId];
+  if (!mode) return Promise.resolve(false);
+  scope.classList.add('is-resources-ambient-active');
+  return window.ResourcesPenguinV1.playSolo(penguin, mode, { restoreState: resourcesPenguinStateForSphere(sphereId) })
+    .catch(() => false)
+    .finally(() => scope.classList.remove('is-resources-ambient-active'));
+}
+
 function syncDenLife() {
   if (!window.DenLifeV1) return false;
   if (State.view !== 'den') return window.DenLifeV1.stop();
   const shell = document.querySelector('.den-shell');
   const sphereId = bodyGuardianSphereId();
+  const resourcesSphereId = resourcesGuardianSphereId();
   const hasBodyGuardian = Boolean(shell && sphereId && shell.querySelector('[data-body-toad]'));
   const hasRecoveryGuardian = Boolean(shell && shell.querySelector('[data-recovery-slug]'));
-  if (!shell || (!hasBodyGuardian && !hasRecoveryGuardian)) return window.DenLifeV1.stop();
+  const hasResourcesGuardian = Boolean(shell && resourcesSphereId && shell.querySelector('[data-resources-penguin]'));
+  if (!shell || (!hasBodyGuardian && !hasRecoveryGuardian && !hasResourcesGuardian)) return window.DenLifeV1.stop();
   return window.DenLifeV1.start(shell, {
     context: denLifeContext(),
     canAct: () => denLifeCanAct(shell),
     onPair: (mode, options) => hasBodyGuardian ? playBodyToadScene(shell, sphereId, mode, options) : false,
     onRecoveryBeat: (beatId) => hasRecoveryGuardian ? playDenRecoveryBeat(shell, beatId) : false,
+    onResourcesBeat: (beatId) => hasResourcesGuardian ? playDenResourcesBeat(shell, resourcesSphereId, beatId) : false,
+    onResourcesPair: (mode, options) => hasResourcesGuardian ? playResourcesPenguinScene(shell, resourcesSphereId, mode, options) : false,
     onRoomAction: (actionId) => runDenRoomAction(actionId, { automatic: true, waitForFinish: true }),
     onWindowVisit: () => runDenAvatarWindowVisit({ automatic: true, reschedule: false }),
     onToadBeat: (beatId) => playDenToadBeat(shell, sphereId, beatId),
@@ -5929,23 +5974,6 @@ function updatePip(fi) {
 }
 function closeFocusWidget() { if (pipWindow && !pipWindow.closed) { try { pipWindow.close(); } catch {} } pipWindow = null; }
 
-// ── Длительность блока — выбор в момент старта, не в Настройках (JARVIS-3-PLAN §4) ──
-// Раньше workMin жил только в Настройках и был один на все задачи — «мёртвая» настройка,
-// которую никто не искал и не менял под конкретное дело. Три пресета прямо здесь: тап —
-// и таймер уже идёт. Выбор персистится в тот же State.settings.focus.workMin, так что он
-// же становится «последним использованным по умолчанию» без отдельного поля для этого.
-const FOCUS_DURATION_PRESETS = [15, 25, 45];
-function openFocusDurationPicker(taskId) {
-  document.getElementById('focus-dur-modal')?.remove();
-  const cur = focusCfg().workMin;
-  const chips = FOCUS_DURATION_PRESETS.map((m) => `<button class="ob-chip ${m === cur ? 'sel' : ''}" data-action="focus-pick-duration" data-task="${esc(taskId)}" data-min="${m}" style="--c:var(--accent)">${m} ${t('мин')}</button>`).join('');
-  const ov = document.createElement('div'); ov.id = 'focus-dur-modal'; ov.className = 'modal-overlay';
-  ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="focus-duration-close">✕</button>
-    <h2>🎯 ${t('Сколько минут?')}</h2>
-    <div class="ob-group-chips" style="margin:10px 0">${chips}</div>
-    <p class="muted" style="font-size:12.5px;margin:0">${t('Тап — и пошёл отсчёт. Поменять можно и позже, в Настройках.')}</p></div>`;
-  document.body.appendChild(ov);
-}
 function startFocus(taskId) {
   if (State.timer) { if (State.timer.taskId === taskId) { if (!State.timer.running) resumeFocus(); return; } stopFocus(true, true); }
   State.timer = { taskId, startedAt: Date.now(), accumulatedMs: 0, running: true, phase: 'work', phaseStartElapsed: 0, overrunNotified: false, bankedMin: 0 };
@@ -8357,6 +8385,13 @@ const PET_SPECIES = {
     guardianV1: true,
     draw: () => ({ ears: '', feet: '', belly: '', extra: '', tail: '', body: '' }),
   },
+  resourcesPenguin: { // утверждённый MONEY / RESOURCES Guardian v1
+    slots: { head: [60, 34], neck: [60, 68], back: [78, 76] },
+    raster: true,
+    guardianV1: true,
+    guardian: 'resources',
+    draw: () => ({ ears: '', feet: '', belly: '', extra: '', tail: '', body: '' }),
+  },
   round: { // дружелюбный зверёк (универсальный)
     slots: { head: [60, 48], neck: [60, 102], back: [60, 62] },
     draw: (c) => ({
@@ -8426,6 +8461,7 @@ function archToSpecies(arc) {
 }
 const PET_SPECIES_LABELS = {
   bodyToad: 'Жабий сэнсэй',
+  resourcesPenguin: 'Распорядитель ресурсов',
   round: 'Огонёк',
   sturdy: 'Силач',
   fortune: 'Кот Удачи',
@@ -8444,6 +8480,12 @@ function bodyGuardianSphereId() {
   return [...candidates].sort((a, b) => skillXp(b.id) - skillXp(a.id))[0].id;
 }
 function isBodyGuardianSphere(sphereId) { return !!sphereId && bodyGuardianSphereId() === sphereId; }
+function resourcesGuardianSphereId() {
+  const candidates = topSkills().filter((sphere) => canonOf(sphere) === 'money');
+  if (!candidates.length) return null;
+  return [...candidates].sort((a, b) => skillXp(b.id) - skillXp(a.id))[0].id;
+}
+function isResourcesGuardianSphere(sphereId) { return !!sphereId && resourcesGuardianSphereId() === sphereId; }
 function bodyToadStateForSphere(sphereId) {
   const stats = petStats(sphereId);
   return window.BodyToadV1 ? window.BodyToadV1.stateFromPetState(stats.state) : 'calm';
@@ -8455,6 +8497,19 @@ function bodyToadHTML(sphereId, options = {}) {
     animated: options.animated !== false,
     className: options.className || '',
     label: `Жабий сэнсэй — хранитель тела, ${PET_STATE[petStats(sphereId).state].label.toLowerCase()}`,
+  });
+}
+function resourcesPenguinStateForSphere(sphereId) {
+  const stats = petStats(sphereId);
+  return window.ResourcesPenguinV1 ? window.ResourcesPenguinV1.stateFromPetState(stats.state) : 'calm';
+}
+function resourcesPenguinHTML(sphereId, options = {}) {
+  if (!window.ResourcesPenguinV1) return '';
+  const state = resourcesPenguinStateForSphere(sphereId);
+  return window.ResourcesPenguinV1.markup({
+    state,
+    className: options.className || '',
+    label: `Распорядитель денег и ресурсов, ${window.ResourcesPenguinV1.STATE_META[state].label.toLowerCase()}`,
   });
 }
 function recoverySlugState() {
@@ -8476,14 +8531,15 @@ function recoverySlugHTML(options = {}) {
 }
 function petSpeciesForSphere(sphereId, traits) {
   if (isBodyGuardianSphere(sphereId)) return 'bodyToad';
+  if (isResourcesGuardianSphere(sphereId)) return 'resourcesPenguin';
   const selected = sphereId && ensurePetSpecies()[sphereId];
-  if (selected && PET_SPECIES[selected] && selected !== 'bodyToad') return selected;
+  if (selected && PET_SPECIES[selected] && !PET_SPECIES[selected].guardianV1) return selected;
   const dom = (traits && traits[0] && traits[0].icon) || '⭐';
   return archToSpecies(dom);
 }
 function petSpeciesOptions(selected, allowBodyToad = false) {
   const automatic = `<option value=""${selected ? '' : ' selected'}>${t('Автоматически')}</option>`;
-  return automatic + Object.entries(PET_SPECIES_LABELS).filter(([id]) => id !== 'bodyToad' || allowBodyToad).map(([id, label]) => `<option value="${id}"${id === selected ? ' selected' : ''}>${t(label)}</option>`).join('');
+  return automatic + Object.entries(PET_SPECIES_LABELS).filter(([id]) => !PET_SPECIES[id].guardianV1 || (id === 'bodyToad' && allowBodyToad)).map(([id, label]) => `<option value="${id}"${id === selected ? ' selected' : ''}>${t(label)}</option>`).join('');
 }
 // ── Надеваемая экипировка (PETS-EQUIPMENT-PLAN.md, Фаза 2) ──
 // Предмет = SVG в ЛОКАЛЬНЫХ координатах слота (0,0 = якорь). Слоты: head/neck/back.
@@ -8782,7 +8838,8 @@ function petSVG(color, state, traits, sphereId, idle = '') {
   const dom = (traits[0] && traits[0].icon) || '⭐';
   const speciesId = petSpeciesForSphere(sphereId, traits);
   const sp = PET_SPECIES[speciesId] || PET_SPECIES.round, p = sp.draw(color);
-  if (sp.guardianV1) return bodyToadHTML(sphereId, { className: 'body-toad-v1--card' });
+  if (speciesId === 'bodyToad') return bodyToadHTML(sphereId, { className: 'body-toad-v1--card' });
+  if (speciesId === 'resourcesPenguin') return resourcesPenguinHTML(sphereId, { className: 'resources-penguin-v1--card' });
   if (sp.rigV2) {
     return `<svg class="pet-svg fc-rig fc-state-${state}" viewBox="0 0 120 132" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <g transform="translate(60,80) scale(${r.toFixed(2)},${(0.5 + r * 0.5).toFixed(2)}) translate(-60,-80)">${fortuneRigV2Markup(sphereId, state, idle)}</g>
@@ -8834,11 +8891,18 @@ function renderPets() {
       <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="greet">Поприветствовать</button>
       <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="train">Размяться</button>
       <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="rest">Передохнуть</button>
+    </div>` : activeSpecies === 'resourcesPenguin' ? `<div class="body-toad-card-actions resources-penguin-card-actions" aria-label="Действия с хранителем ресурсов">
+      <button class="btn ghost sm" data-action="resources-penguin-card-interact" data-id="${s.id}" data-mode="greet">Поприветствовать</button>
+      <button class="btn ghost sm" data-action="resources-penguin-card-interact" data-id="${s.id}" data-mode="coinSort">Монеты</button>
+      <button class="btn ghost sm" data-action="resources-penguin-card-interact" data-id="${s.id}" data-mode="ledger">Гроссбух</button>
+      <button class="btn ghost sm" data-action="resources-penguin-card-interact" data-id="${s.id}" data-mode="stash">Резерв</button>
     </div>` : '';
-    return `<div class="card pet-card pet-card-${activeSpecies}${activeSpecies === 'bodyToad' ? ' pet-card-body-toad' : ''}">
-      <div class="pet-art" data-action="pet-feed" data-id="${s.id}" title="приласкать ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits, s.id, idle)}</div>
+    const canonicalGuardian = activeSpecies === 'bodyToad' || activeSpecies === 'resourcesPenguin';
+    const artAction = activeSpecies === 'resourcesPenguin' ? 'resources-penguin-card-interact' : 'pet-feed';
+    return `<div class="card pet-card pet-card-${activeSpecies}${canonicalGuardian ? ' pet-card-canonical-guardian' : ''}${activeSpecies === 'bodyToad' ? ' pet-card-body-toad' : ''}">
+      <div class="pet-art" data-action="${artAction}" data-id="${s.id}"${activeSpecies === 'resourcesPenguin' ? ' data-mode="greet"' : ''} title="приласкать ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits, s.id, idle)}</div>
       ${nameRow}${sub}
-      ${activeSpecies === 'bodyToad' ? '<div class="body-toad-domain-badge">BODY · канонический хранитель</div>' : `<label class="pet-species-picker"><span>${t('Облик')}</span><select data-action="set-pet-species" data-id="${s.id}" aria-label="${t('Облик')}: ${esc(nm)}">${petSpeciesOptions(selectedSpecies)}</select></label>`}
+      ${activeSpecies === 'bodyToad' ? '<div class="body-toad-domain-badge">BODY · канонический хранитель</div>' : activeSpecies === 'resourcesPenguin' ? '<div class="body-toad-domain-badge resources-penguin-domain-badge">MONEY / RESOURCES · канонический хранитель</div>' : `<label class="pet-species-picker"><span>${t('Облик')}</span><select data-action="set-pet-species" data-id="${s.id}" aria-label="${t('Облик')}: ${esc(nm)}">${petSpeciesOptions(selectedSpecies)}</select></label>`}
       ${activeSpecies === 'fortune' ? fortuneControlsHTML(s.id) : ''}
       <div class="pet-bar"><span style="width:${Math.min(100, Math.round(st.pct / 120 * 100))}%;background:${meta.color}"></span></div>
       <p class="pet-line muted">${line}</p>
@@ -9409,8 +9473,12 @@ function renderDen() {
   const c = ensureCompanion(), mood = compMood(), ti = compTierIdx(c.bond);
   const cr = charRank(), nm = (State.me && State.me.name) || 'Герой';
   const bodyId = bodyGuardianSphereId();
+  const resourcesId = resourcesGuardianSphereId();
   const denSpheres = topSkills();
-  if (bodyId) denSpheres.sort((a, b) => (a.id === bodyId ? -1 : b.id === bodyId ? 1 : 0));
+  denSpheres.sort((a, b) => {
+    const rank = (sphere) => sphere.id === bodyId ? 0 : sphere.id === resourcesId ? 1 : 2;
+    return rank(a) - rank(b);
+  });
   const recoveryGuardianActive = Boolean(window.RecoverySlugV1 && den.petCount >= 2);
   const spherePetLimit = Math.max(0, den.petCount - (recoveryGuardianActive ? 1 : 0));
   const pets = denSpheres.slice(0, spherePetLimit).map((s) => {
@@ -9436,6 +9504,7 @@ function renderDen() {
       ? ` data-den-entity="pet" data-den-slot="${placement.slot}" data-den-ground-y="${placement.groundY}" style="${window.DenStageV1.styleVars(placement)}"`
       : '';
     if (p.species === 'bodyToad') return `<button class="den-pet den-pet-${i} den-body-toad"${stageAttrs} data-action="body-toad-interact" data-mode="greet" data-id="${p.s.id}" title="Жабий сэнсэй — ${PET_STATE[p.st.state].label}. Нажми, чтобы поприветствовать">${bodyToadHTML(p.s.id, { className: 'body-toad-v1--den' })}</button>`;
+    if (p.species === 'resourcesPenguin') return `<button class="den-pet den-pet-${i} den-resources-penguin"${stageAttrs} data-action="resources-penguin-interact" data-mode="greet" data-id="${p.s.id}" title="Распорядитель ресурсов — ${PET_STATE[p.st.state].label}. Нажми, чтобы поприветствовать">${resourcesPenguinHTML(p.s.id, { className: 'resources-penguin-v1--den' })}</button>`;
     return `<button class="den-pet den-pet-${i}${p.species === 'fortune' ? ' den-pet-fortune' : ''}"${stageAttrs} data-action="den-pet-react" data-id="${p.s.id}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id, p.idle)}</button>`;
   }).join('');
   const recoveryPlacement = denStageById.get('recovery-guardian');
@@ -9443,9 +9512,11 @@ function renderDen() {
     ? `<button class="den-pet den-recovery-slug" data-den-entity="pet" data-den-slot="${recoveryPlacement.slot}" data-den-ground-y="${recoveryPlacement.groundY}" style="${window.DenStageV1.styleVars(recoveryPlacement)}" data-action="recovery-slug-interact" data-mode="greet" title="Кацую — ${esc(window.RecoverySlugV1.STATE_META[recoverySlugState()].label)}. Нажми, чтобы поздороваться">${recoverySlugHTML({ className: 'recovery-slug-v1--den' })}</button>`
     : '';
   const bodyGuardian = pets.find((pet) => pet.species === 'bodyToad');
+  const resourcesGuardian = pets.find((pet) => pet.species === 'resourcesPenguin');
   const p = nestedProgress(), eP = energyPct(), eM = energyMeta(), tm = State.timer;
   const lifeContext = denLifeContext();
   const bodyFocusActive = lifeContext.focusRunning && lifeContext.focusCanon === 'body';
+  const resourcesFocusActive = lifeContext.focusRunning && lifeContext.focusCanon === 'money';
   const avatarState = denAvatarState(eP, p, tm);
   const avatarPose = denCorePose(avatarState);
   const amb = (State.settings && State.settings.ambient) || {};
@@ -9463,6 +9534,7 @@ function renderDen() {
       <div class="den-room-vignette"></div>
       <button class="den-companion" data-action="comp-pet" title="Погладить ${esc(c.name)}">${shadowVideo(ti, mood.face, 'den')}<span class="den-companion-name">${esc(c.name)}</span></button>
       ${bodyGuardian ? window.BodyToadV1.pairMarkup({ className: 'body-pair-v2--den' }) : ''}
+      ${resourcesGuardian ? window.ResourcesPenguinV1.pairMarkup({ className: 'resources-pair-v1--den' }) : ''}
       ${recoveryGuardianActive ? window.RecoverySlugV1.pairMarkup({ className: 'recovery-pair-v2--den' }) : ''}
       ${coherentV5 && window.TravellerRoomV4 ? window.TravellerRoomV4.markup({ className: 'traveller-room-v4--den' }) : ''}
       ${coherentV5 ? '<span class="den-prop-reach" aria-hidden="true"><img src="/art/avatars/traveller-core-v1/male/room-actions-v4/bench-portal-reach.png?v=20260806-2" alt="" aria-hidden="true" draggable="false" decoding="async"></span><span class="den-prop-portal" data-den-prop-portal aria-hidden="true"><img class="den-prop-portal__core" src="/art/den/actors/prop-portal-core.png?v=20260806-2" alt="" aria-hidden="true" draggable="false" decoding="async"><img class="den-prop-portal__rim" src="/art/den/actors/prop-portal-rim.png?v=20260806-2" alt="" aria-hidden="true" draggable="false" decoding="async"></span>' : ''}
@@ -9499,6 +9571,17 @@ function renderDen() {
         <button class="btn ghost sm" data-action="body-toad-interact" data-mode="stretch" data-id="${bodyGuardian.s.id}">Растяжка</button>
         <button class="btn ghost sm" data-action="body-toad-interact" data-mode="whistle" data-id="${bodyGuardian.s.id}">Свисток</button>
         <button class="btn ghost sm" data-action="body-toad-interact" data-mode="rest" data-id="${bodyGuardian.s.id}">Передышка</button>
+      </div>
+    </div>` : ''}
+    ${resourcesGuardian ? `<div class="den-guardian-actions den-resources-actions" aria-label="Взаимодействие с хранителем ресурсов">
+      <span><b>Распорядитель ресурсов${resourcesFocusActive ? ' · ведёт учёт' : ''}</b><small>${esc(resourcesFocusActive ? 'MONEY / RESOURCES-фокус активен: бюджет, резерв и спокойная сверка будут продолжаться весь сеанс.' : window.ResourcesPenguinV1.STATE_META[resourcesPenguinStateForSphere(resourcesGuardian.s.id)].line)}</small></span>
+      <div>
+        <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="greet" data-id="${resourcesGuardian.s.id}">Приветствие</button>
+        <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="budget" data-id="${resourcesGuardian.s.id}">Сверить бюджет</button>
+        <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="count" data-id="${resourcesGuardian.s.id}">Разложить монеты</button>
+        <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="reserve" data-id="${resourcesGuardian.s.id}">Отложить резерв</button>
+        <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="focus" data-id="${resourcesGuardian.s.id}">Поработать вместе</button>
+        <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="close" data-id="${resourcesGuardian.s.id}">Закрыть план</button>
       </div>
     </div>` : ''}
     ${recoveryGuardianActive ? `<div class="den-guardian-actions den-recovery-actions" aria-label="Взаимодействие с хранительницей восстановления">
@@ -12895,6 +12978,24 @@ function onClick(e) {
     }
     return;
   }
+  if (action === 'resources-penguin-interact' || action === 'resources-penguin-card-interact') {
+    const mode = el.dataset.mode || 'greet';
+    const scope = action === 'resources-penguin-interact' ? el.closest('.den-shell') : el.closest('.pet-card');
+    const penguin = (el.matches('[data-resources-penguin]') ? el : null) || (scope && scope.querySelector('[data-resources-penguin]'));
+    if (penguin && window.ResourcesPenguinV1) {
+      if (action === 'resources-penguin-interact') {
+        playResourcesPenguinScene(scope, id || resourcesGuardianSphereId(), mode).catch(() => {});
+      } else {
+        const soloMode = mode === 'greet' ? 'blink' : mode;
+        window.ResourcesPenguinV1.playSolo(penguin, soloMode, { restoreState: resourcesPenguinStateForSphere(id) }).catch(() => {});
+      }
+      const meta = window.ResourcesPenguinV1.INTERACTIONS[mode] || window.ResourcesPenguinV1.SOLO[mode];
+      if (meta) toast(`🪙 ${meta.label || 'Распорядитель проверяет порядок'}`);
+      try { sfx(mode === 'greet' ? 'click' : 'complete'); } catch {}
+      track(`resources-penguin:${mode}`);
+    }
+    return;
+  }
   if (action === 'den-avatar-walk') {
     cancelDenRoomAction(false);
     runDenAvatarWindowVisit({ reschedule: true }).catch(() => {});
@@ -13224,16 +13325,7 @@ function onClick(e) {
     }
     if (!habitWasDone && window.ShadowRig) window.ShadowRig.setTransient('happy', 900);
     Store.save('habitlog', State.habitlog); checkAchievements(); render(); if (!habitWasDone) triggerAvatarReaction('happy', 'Привычка ✓'); publishLeaderboard();
-  } else if (action === 'focus-task') { const q = questById(id); if (q && !q.done) { track('focus:start');
-      if (focusCfg().pomodoro) openFocusDurationPicker(id); else startFocus(id); }
-  } else if (action === 'focus-pick-duration') {
-    const min = Math.max(1, Math.round(Number(el.dataset.min) || 25));
-    State.settings.focus = Object.assign({}, focusCfg(), { workMin: min });
-    Store.save('settings', State.settings);
-    document.getElementById('focus-dur-modal')?.remove();
-    startFocus(el.dataset.task);
-  } else if (action === 'focus-duration-close') {
-    document.getElementById('focus-dur-modal')?.remove();
+  } else if (action === 'focus-task') { const q = questById(id); if (q && !q.done) { track('focus:start'); startFocus(id); }
   } else if (action === 'timer-pause') { pauseFocus();
   } else if (action === 'timer-resume') { resumeFocus();
   } else if (action === 'timer-stop') { stopFocus(true);
@@ -13864,6 +13956,12 @@ async function initApp() {
   State.settings.appName = State.settings.appName || DEFAULT_SETTINGS.appName;
   if (State.settings.appName === 'Gojo') { State.settings.appName = 'Satoru'; Store.save('settings', State.settings); } // ребренд Gojo->Satoru для старых юзеров
   State.settings.skills = State.settings.skills || [];
+  // X7 должен показывать канонического MONEY / RESOURCES-хранителя даже для
+  // уже созданных демо-профилей со старой семисферной схемой.
+  if (demoX7Requested() && !State.settings.skills.some((skill) => canonOf(skill) === 'money')) {
+    State.settings.skills.push({ id: 'sk_demo_money_resources', name: 'Деньги / Ресурсы', color: '#d8a44b' });
+    Store.save('settings', State.settings);
+  }
   State.settings.xp = Object.assign({}, DEFAULT_SETTINGS.xp, State.settings.xp);
   State.settings.xp.difficulty = Object.assign({}, DEFAULT_SETTINGS.xp.difficulty, State.settings.xp.difficulty);
   State.settings.gold = Object.assign({}, DEFAULT_SETTINGS.gold, State.settings.gold);
@@ -14032,7 +14130,7 @@ function onChange(e) {
   const a = el.dataset.action;
   if (a === 'set-pet-species') {
     const species = ensurePetSpecies(), sphereId = el.dataset.id;
-    if (el.value && PET_SPECIES[el.value] && (el.value !== 'bodyToad' || isBodyGuardianSphere(sphereId))) species[sphereId] = el.value;
+    if (el.value && PET_SPECIES[el.value] && !PET_SPECIES[el.value].guardianV1) species[sphereId] = el.value;
     else delete species[sphereId];
     Store.save('settings', State.settings);
     toast(`🐾 ${t('Облик')}: ${t(PET_SPECIES_LABELS[el.value] || 'Автоматически')}`);

@@ -50,7 +50,7 @@ assert.ok(html.indexOf('traveller-motion-v3.js') < html.indexOf('traveller-room-
 assert.ok(html.indexOf('traveller-room-v4.js') < html.indexOf('app.js'));
 
 const sw = read('public/sw.js');
-assert.match(sw, /satoru-v102/);
+assert.match(sw, /satoru-v105/);
 assert.match(sw, /room-actions-v4\/bench-read-b\.png/);
 assert.match(sw, /prop-portal-core\.png/);
 assert.match(app, /bench-portal-reach\.png/);

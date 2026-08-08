@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenLife(root) {
   'use strict';
 
-  const VERSION = '2.4.0';
+  const VERSION = '2.5.0';
   const FIRST_AMBIENT_MS = 8000;
   const FIRST_FOCUS_MS = 3200;
   const RETRY_MS = 3000;
@@ -26,7 +26,10 @@
     Object.freeze({ id: 'toad-hop-tour', kind: 'toad', gap: 26000 }),
     Object.freeze({ id: 'bench-rest', kind: 'room', gap: 26000 }),
     Object.freeze({ id: 'recovery-cushion-nap', kind: 'recovery', gap: 34000 }),
+    Object.freeze({ id: 'resources-ledger', kind: 'resources', gap: 30000 }),
+    Object.freeze({ id: 'resources-stash', kind: 'resources', gap: 32000 }),
     Object.freeze({ id: 'toad-bench-nap', kind: 'toad', gap: 32000 }),
+    Object.freeze({ id: 'resources-rest', kind: 'resources', gap: 36000 }),
   ]);
   const BODY_FOCUS_SEQUENCE = Object.freeze([
     Object.freeze({ id: 'whistle', kind: 'pair', duration: 12000, gap: 5000 }),
@@ -34,6 +37,13 @@
     Object.freeze({ id: 'stretch', kind: 'pair', duration: 14000, gap: 7000 }),
     Object.freeze({ id: 'train', kind: 'pair', duration: 12000, gap: 6000 }),
     Object.freeze({ id: 'rest', kind: 'pair', duration: 10000, gap: 10000 }),
+  ]);
+  const MONEY_FOCUS_SEQUENCE = Object.freeze([
+    Object.freeze({ id: 'budget', kind: 'resources-pair', duration: 15000, gap: 8000 }),
+    Object.freeze({ id: 'count', kind: 'resources-pair', duration: 16000, gap: 9000 }),
+    Object.freeze({ id: 'focus', kind: 'resources-pair', duration: 32000, gap: 12000 }),
+    Object.freeze({ id: 'reserve', kind: 'resources-pair', duration: 15000, gap: 10000 }),
+    Object.freeze({ id: 'close', kind: 'resources-pair', duration: 9000, gap: 16000 }),
   ]);
 
   let director = null;
@@ -50,7 +60,9 @@
 
   function modeFor(context) {
     const safe = normalizeContext(context);
-    return safe.focusRunning && safe.focusCanon === 'body' ? 'body-focus' : 'ambient';
+    if (safe.focusRunning && safe.focusCanon === 'body') return 'body-focus';
+    if (safe.focusRunning && safe.focusCanon === 'money') return 'money-focus';
+    return 'ambient';
   }
 
   function contextKey(context) {
@@ -59,7 +71,10 @@
   }
 
   function sequenceFor(context) {
-    return modeFor(context) === 'body-focus' ? BODY_FOCUS_SEQUENCE : AMBIENT_SEQUENCE;
+    const mode = modeFor(context);
+    if (mode === 'body-focus') return BODY_FOCUS_SEQUENCE;
+    if (mode === 'money-focus') return MONEY_FOCUS_SEQUENCE;
+    return AMBIENT_SEQUENCE;
   }
 
   function canAct(state) {
@@ -88,6 +103,8 @@
     if (action.kind === 'window') return state.onWindowVisit && state.onWindowVisit({ automatic: true });
     if (action.kind === 'toad') return state.onToadBeat && state.onToadBeat(action.id, { automatic: true });
     if (action.kind === 'recovery') return state.onRecoveryBeat && state.onRecoveryBeat(action.id, { automatic: true });
+    if (action.kind === 'resources') return state.onResourcesBeat && state.onResourcesBeat(action.id, { automatic: true });
+    if (action.kind === 'resources-pair') return state.onResourcesPair && state.onResourcesPair(action.id, { automatic: true, duration: action.duration });
     return false;
   }
 
@@ -130,7 +147,7 @@
   function start(target, options) {
     const scope = target;
     const config = options || {};
-    if (!scope || !scope.querySelector || (!scope.querySelector('[data-body-toad]') && !scope.querySelector('[data-recovery-slug]'))) return false;
+    if (!scope || !scope.querySelector || (!scope.querySelector('[data-body-toad]') && !scope.querySelector('[data-recovery-slug]') && !scope.querySelector('[data-resources-penguin]'))) return false;
     const context = normalizeContext(config.context);
     const key = contextKey(context);
     if (director && director.key === key) {
@@ -139,6 +156,8 @@
       director.onPair = config.onPair;
       director.onRoomAction = config.onRoomAction;
       director.onRecoveryBeat = config.onRecoveryBeat;
+      director.onResourcesBeat = config.onResourcesBeat;
+      director.onResourcesPair = config.onResourcesPair;
       director.onWindowVisit = config.onWindowVisit;
       director.onToadBeat = config.onToadBeat;
       if (!director.busy && !director.timer) schedule(director, Math.max(0, director.nextAt - Date.now()));
@@ -154,6 +173,8 @@
       nextAt: 0,
       onPair: config.onPair,
       onRecoveryBeat: config.onRecoveryBeat,
+      onResourcesBeat: config.onResourcesBeat,
+      onResourcesPair: config.onResourcesPair,
       onRoomAction: config.onRoomAction,
       onToadBeat: config.onToadBeat,
       onWindowVisit: config.onWindowVisit,
@@ -161,7 +182,7 @@
       step: sequenceSeed++,
       timer: 0,
     };
-    schedule(director, modeFor(context) === 'body-focus' ? FIRST_FOCUS_MS : FIRST_AMBIENT_MS);
+    schedule(director, modeFor(context) === 'ambient' ? FIRST_AMBIENT_MS : FIRST_FOCUS_MS);
     return true;
   }
 
@@ -192,6 +213,7 @@
     RETRY_MS,
     AMBIENT_SEQUENCE,
     BODY_FOCUS_SEQUENCE,
+    MONEY_FOCUS_SEQUENCE,
     normalizeContext,
     modeFor,
     contextKey,

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "resources-penguin-v1",
+  "domain": "money-resources",
+  "canonicalConcept": "../../../concepts/resources-penguin/02d-03-old-school-steward.png",
+  "style": "satoru-cut-paper",
+  "supportedAvatarGenders": ["male"],
+  "states": {
+    "calm": "states/calm.png",
+    "thriving": "states/thriving.png",
+    "strained": "states/strained.png",
+    "restoring": "states/restoring.png"
+  },
+  "motion": {
+    "blink": "motion/idle-blink.png",
+    "solo": {
+      "waddle": ["solo/waddle-left.png", "solo/waddle-right.png"],
+      "coinSort": ["solo/coin-sort-a.png", "solo/coin-sort-b.png", "solo/coin-sort-c.png"],
+      "stash": ["solo/stash-open.png", "solo/stash-place.png", "solo/stash-closed.png"],
+      "ledger": ["solo/ledger-read.png", "solo/ledger-mark.png"],
+      "jacketReset": ["solo/jacket-reset.png"],
+      "quietRest": ["solo/quiet-rest.png"]
+    },
+    "pair": {
+      "greet": ["pair-v1/greet-contact.png"],
+      "budget": ["pair-v1/budget-point.png", "pair-v1/budget-reserve.png"],
+      "count": ["pair-v1/count-pass.png", "pair-v1/count-place.png", "pair-v1/count-stack.png"],
+      "reserve": ["pair-v1/reserve-offer.png", "pair-v1/reserve-accept.png"],
+      "focus": ["pair-v1/focus-work.png", "pair-v1/focus-check.png", "pair-v1/focus-nod.png"],
+      "close": ["pair-v1/close-stamp.png"]
+    }
+  },
+  "geometry": {
+    "soloCanvas": [1024, 1024],
+    "soloGroundY": 920,
+    "pairCanvas": [1536, 1536],
+    "pairGroundY": 1470,
+    "compositeOrigin": [0, 0]
+  },
+  "qa": {
+    "states": "qa-report.json",
+    "solo": "solo-qa-report.json",
+    "pair": "pair-v1/qa-report.json"
+  }
+}
