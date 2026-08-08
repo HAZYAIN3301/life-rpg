@@ -2194,6 +2194,76 @@ const I18N_EXTRA = {
   'Сесть у окна': { en: 'Sit by the window', de: 'Ans Fenster setzen', uk: 'Сісти біля вікна', es: 'Sentarse junto a la ventana' },
   'Почитать': { en: 'Read', de: 'Lesen', uk: 'Почитати', es: 'Leer' },
   'Гардероб': { en: 'Wardrobe', de: 'Garderobe', uk: 'Гардероб', es: 'Armario' },
+  'Персонаж': { en: 'Character', de: 'Charakter', uk: 'Персонаж', es: 'Personaje' },
+  'Форма': { en: 'Form', de: 'Form', uk: 'Форма', es: 'Forma' },
+  'Персонаж Satoru': { en: 'Satoru character', de: 'Satoru-Charakter', uk: 'Персонаж Satoru', es: 'Personaje de Satoru' },
+  'Открыть персонажа': { en: 'Open character', de: 'Charakter öffnen', uk: 'Відкрити персонажа', es: 'Abrir personaje' },
+  'Три слота. Один ясный образ.': { en: 'Three slots. One clear look.', de: 'Drei Plätze. Ein klares Outfit.', uk: 'Три слоти. Один зрозумілий образ.', es: 'Tres espacios. Un conjunto claro.' },
+  'Выбери слот и предмет — предпросмотр обновится сразу.': { en: 'Choose a slot and an item — the preview updates immediately.', de: 'Wähle einen Platz und einen Gegenstand – die Vorschau aktualisiert sich sofort.', uk: 'Обери слот і предмет — попередній перегляд оновиться одразу.', es: 'Elige un espacio y un objeto: la vista previa se actualiza al instante.' },
+  'Предпросмотр образа': { en: 'Look preview', de: 'Outfit-Vorschau', uk: 'Попередній перегляд образу', es: 'Vista previa del conjunto' },
+  'Слоты экипировки': { en: 'Equipment slots', de: 'Ausrüstungsplätze', uk: 'Слоти спорядження', es: 'Espacios de equipo' },
+  'Голова': { en: 'Head', de: 'Kopf', uk: 'Голова', es: 'Cabeza' },
+  'Шея': { en: 'Neck', de: 'Hals', uk: 'Шия', es: 'Cuello' },
+  'Спина': { en: 'Back', de: 'Rücken', uk: 'Спина', es: 'Espalda' },
+  'Без головного убора': { en: 'No headwear', de: 'Ohne Kopfbedeckung', uk: 'Без головного убору', es: 'Sin accesorio de cabeza' },
+  'Шляпа Scholar': { en: 'Scholar hat', de: 'Scholar-Hut', uk: 'Капелюх Scholar', es: 'Sombrero Scholar' },
+  'Без аксессуара': { en: 'No accessory', de: 'Ohne Accessoire', uk: 'Без аксесуара', es: 'Sin accesorio' },
+  'Шарф Traveller': { en: 'Traveller scarf', de: 'Traveller-Schal', uk: 'Шарф Traveller', es: 'Bufanda Traveller' },
+  'Астролябия Scholar': { en: 'Scholar astrolabe', de: 'Scholar-Astrolabium', uk: 'Астролябія Scholar', es: 'Astrolabio Scholar' },
+  'Без рюкзака': { en: 'No backpack', de: 'Ohne Rucksack', uk: 'Без рюкзака', es: 'Sin mochila' },
+  'Рюкзак Traveller': { en: 'Traveller backpack', de: 'Traveller-Rucksack', uk: 'Рюкзак Traveller', es: 'Mochila Traveller' },
+  'Рюкзак Scholar': { en: 'Scholar backpack', de: 'Scholar-Rucksack', uk: 'Рюкзак Scholar', es: 'Mochila Scholar' },
+  'Надето': { en: 'Equipped', de: 'Angelegt', uk: 'Одягнено', es: 'Equipado' },
+  'В наличии': { en: 'Owned', de: 'Im Besitz', uk: 'У наявності', es: 'En propiedad' },
+  'Новое': { en: 'New', de: 'Neu', uk: 'Нове', es: 'Nuevo' },
+  'Фильтр предметов': { en: 'Item filter', de: 'Gegenstandsfilter', uk: 'Фільтр предметів', es: 'Filtro de objetos' },
+  'Снять': { en: 'Remove', de: 'Ablegen', uk: 'Зняти', es: 'Quitar' },
+  'Надеть': { en: 'Equip', de: 'Anlegen', uk: 'Одягнути', es: 'Equipar' },
+  'Свой образ': { en: 'Custom look', de: 'Eigenes Outfit', uk: 'Власний образ', es: 'Conjunto propio' },
+  'Выбери предмет для слота': { en: 'Choose an item for the slot', de: 'Wähle einen Gegenstand für den Platz', uk: 'Обери предмет для слота', es: 'Elige un objeto para el espacio' },
+  'Все показанные предметы уже в наличии. Новые будут отмечены отдельно.': { en: 'All shown items are owned. New ones will be marked separately.', de: 'Alle angezeigten Gegenstände sind in deinem Besitz. Neue werden separat markiert.', uk: 'Усі показані предмети вже в наявності. Нові буде позначено окремо.', es: 'Todos los objetos mostrados son tuyos. Los nuevos aparecerán marcados.' },
+  'В этом слоте пока нет новых предметов.': { en: 'There are no new items in this slot yet.', de: 'Für diesen Platz gibt es noch keine neuen Gegenstände.', uk: 'У цьому слоті поки немає нових предметів.', es: 'Todavía no hay objetos nuevos en este espacio.' },
+  'В этом слоте пока нет предметов. Снять экипировку всё равно можно.': { en: 'There are no items in this slot yet. You can still remove equipped gear.', de: 'Für diesen Platz gibt es noch keine Gegenstände. Angelegte Ausrüstung kann trotzdem entfernt werden.', uk: 'У цьому слоті поки немає предметів. Зняти спорядження все одно можна.', es: 'Todavía no hay objetos en este espacio. Aun así puedes quitar el equipo.' },
+  'Редкость читается по подписи и форме рамки, а не только по цвету.': { en: 'Rarity is shown by its label and frame shape, not color alone.', de: 'Seltenheit wird durch Beschriftung und Rahmenform gezeigt, nicht nur durch Farbe.', uk: 'Рідкісність читається за підписом і формою рамки, а не лише за кольором.', es: 'La rareza se indica con la etiqueta y la forma del marco, no solo con el color.' },
+  'Дополнительно': { en: 'More character tools', de: 'Weitere Charakterwerkzeuge', uk: 'Додатково', es: 'Más herramientas del personaje' },
+  'Живые позы': { en: 'Live poses', de: 'Lebendige Posen', uk: 'Живі пози', es: 'Poses animadas' },
+  'Ритм сфер': { en: 'Area rhythm', de: 'Bereichsrhythmus', uk: 'Ритм сфер', es: 'Ritmo de áreas' },
+  'Телосложение': { en: 'Body', de: 'Körper', uk: 'Статура', es: 'Cuerpo' },
+  'Примерить предмет': { en: 'Try on item', de: 'Gegenstand anprobieren', uk: 'Приміряти предмет', es: 'Probar objeto' },
+  'Позы для работы, разминки и отдыха.': { en: 'Poses for work, warm-ups, and rest.', de: 'Posen für Arbeit, Aufwärmen und Ruhe.', uk: 'Пози для роботи, розминки й відпочинку.', es: 'Poses para trabajar, calentar y descansar.' },
+  'Локально': { en: 'Local', de: 'Lokal', uk: 'Локально', es: 'Local' },
+  'Спокойная базовая поза': { en: 'Calm base pose', de: 'Ruhige Grundpose', uk: 'Спокійна базова поза', es: 'Pose básica tranquila' },
+  'Разминка и победа': { en: 'Warm-up and victory', de: 'Aufwärmen und Sieg', uk: 'Розминка й перемога', es: 'Calentamiento y victoria' },
+  'Бережная поза для низкой энергии': { en: 'Gentle low-energy pose', de: 'Sanfte Pose bei wenig Energie', uk: 'Бережна поза для низької енергії', es: 'Pose suave para poca energía' },
+  'Вид со спины': { en: 'View from behind', de: 'Ansicht von hinten', uk: 'Вигляд зі спини', es: 'Vista desde atrás' },
+  'Позы меняют состояние персонажа, а экипировка остаётся на месте.': { en: 'Poses change the character state while equipment stays in place.', de: 'Posen ändern den Zustand der Figur; die Ausrüstung bleibt angelegt.', uk: 'Пози змінюють стан персонажа, а спорядження лишається на місці.', es: 'Las poses cambian el estado del personaje y el equipo permanece puesto.' },
+  'Колесо ритма': { en: 'Rhythm wheel', de: 'Rhythmusrad', uk: 'Колесо ритму', es: 'Rueda de ritmo' },
+  'Добавь минимум 3 сферы в Настройках — и колесо оживёт.': { en: 'Add at least 3 areas in Settings and the wheel will come alive.', de: 'Füge in den Einstellungen mindestens 3 Bereiche hinzu, dann erwacht das Rad.', uk: 'Додай щонайменше 3 сфери в Налаштуваннях — і колесо оживе.', es: 'Añade al menos 3 áreas en Ajustes y la rueda cobrará vida.' },
+  'Баланс ритма': { en: 'Rhythm balance', de: 'Rhythmusbalance', uk: 'Баланс ритму', es: 'Equilibrio del ritmo' },
+  'За последние недели активности в сферах не было. Сделай небольшое дело в одной сфере — и ось оживёт.': { en: 'There has been no area activity in recent weeks. Do one small action in an area and its axis will wake up.', de: 'In den letzten Wochen gab es keine Aktivität in den Bereichen. Eine kleine Aktion belebt die Achse wieder.', uk: 'Останніми тижнями у сферах не було активності. Зроби невелику справу в одній сфері — й вісь оживе.', es: 'No hubo actividad en las áreas durante las últimas semanas. Haz una pequeña acción y el eje cobrará vida.' },
+  'Длина оси — внимание за последние {days} дней. Уровень не сгорает.': { en: 'Axis length is attention over the last {days} days. Level does not decay.', de: 'Die Achsenlänge zeigt die Aufmerksamkeit der letzten {days} Tage. Das Level verfällt nicht.', uk: 'Довжина осі — увага за останні {days} днів. Рівень не згорає.', es: 'La longitud del eje muestra la atención de los últimos {days} días. El nivel no disminuye.' },
+  'Эта сфера давно без активности': { en: 'This area has been quiet for a while', de: 'Dieser Bereich war länger inaktiv', uk: 'У цій сфері давно не було активності', es: 'Esta área lleva tiempo sin actividad' },
+  'остыла': { en: 'cooled', de: 'abgekühlt', uk: 'охолола', es: 'se enfrió' },
+  'Свежая активность': { en: 'Recent activity', de: 'Neue Aktivität', uk: 'Свіжа активність', es: 'Actividad reciente' },
+  'Доказанный уровень — не сгорает': { en: 'Proven level does not decay', de: 'Bewiesenes Level verfällt nicht', uk: 'Доведений рівень не згорає', es: 'El nivel demostrado no disminuye' },
+  'дн.': { en: 'd', de: 'T.', uk: 'дн.', es: 'd' },
+  'Нет сферы «Отношения» — карта показывает этот пробел без давления.': { en: 'There is no Relationships area; the map shows the gap without pressure.', de: 'Der Bereich Beziehungen fehlt; die Karte zeigt diese Lücke ohne Druck.', uk: 'Немає сфери «Стосунки» — карта показує цю прогалину без тиску.', es: 'No hay un área de Relaciones; el mapa muestra ese hueco sin presión.' },
+  'Пустые жизненные домены:': { en: 'Empty life domains:', de: 'Leere Lebensbereiche:', uk: 'Порожні життєві домени:', es: 'Dominios vitales vacíos:' },
+  'Карта лишь показывает, чего ты пока не касаешься. Это не обязательство.': { en: 'The map only shows what you are not touching yet. It is not an obligation.', de: 'Die Karte zeigt nur, was du gerade nicht berührst. Das ist keine Verpflichtung.', uk: 'Карта лише показує, чого ти поки не торкаєшся. Це не обов’язок.', es: 'El mapa solo muestra lo que aún no estás tocando. No es una obligación.' },
+  '«{name}» похоже на проект, а не сферу жизни. Проектам место в Целях.': { en: '“{name}” looks like a project, not a life area. Projects belong in Goals.', de: '„{name}“ wirkt wie ein Projekt, nicht wie ein Lebensbereich. Projekte gehören zu den Zielen.', uk: '«{name}» схоже на проєкт, а не сферу життя. Проєктам місце в Цілях.', es: '«{name}» parece un proyecto, no un área vital. Los proyectos van en Metas.' },
+  'Убрать с колеса': { en: 'Remove from wheel', de: 'Vom Rad entfernen', uk: 'Прибрати з колеса', es: 'Quitar de la rueda' },
+  'Женский': { en: 'Female', de: 'Weiblich', uk: 'Жіночий', es: 'Femenino' },
+  'Состав тела': { en: 'Body composition', de: 'Körperzusammensetzung', uk: 'Склад тіла', es: 'Composición corporal' },
+  'очень низкий': { en: 'very low', de: 'sehr niedrig', uk: 'дуже низький', es: 'muy bajo' },
+  'атлетично': { en: 'athletic', de: 'athletisch', uk: 'атлетично', es: 'atlético' },
+  'фитнес': { en: 'fitness', de: 'Fitness', uk: 'фітнес', es: 'fitness' },
+  'норма': { en: 'in range', de: 'im Bereich', uk: 'норма', es: 'en rango' },
+  'выше нормы': { en: 'above range', de: 'über dem Bereich', uk: 'вище норми', es: 'por encima del rango' },
+  'недовес': { en: 'underweight', de: 'Untergewicht', uk: 'недостатня вага', es: 'bajo peso' },
+  'избыток': { en: 'above range', de: 'über dem Bereich', uk: 'надлишок', es: 'por encima del rango' },
+  'жир': { en: 'body fat', de: 'Körperfett', uk: 'жир', es: 'grasa corporal' },
+  'ИМТ': { en: 'BMI', de: 'BMI', uk: 'ІМТ', es: 'IMC' },
+  '(с мышцами завышает)': { en: '(overstates with muscle)', de: '(bei Muskulatur zu hoch)', uk: '(завищує через м’язи)', es: '(se sobrestima con músculo)' },
   'Зверинец': { en: 'Menagerie', de: 'Tiergehege', uk: 'Звіринець', es: 'Bestiario' },
   'Действия комнаты': { en: 'Room actions', de: 'Zimmeraktionen', uk: 'Дії кімнати', es: 'Acciones de la habitación' },
   'Прогулка, отдых и коллекции': { en: 'Walks, rest, and collections', de: 'Spaziergang, Ruhe und Sammlungen', uk: 'Прогулянка, відпочинок і колекції', es: 'Paseo, descanso y colecciones' },
@@ -3892,6 +3962,48 @@ const AVATAR_PRESET_META = {
   base: { label: 'Базовый', description: 'Чистый манекен в рубашке и брюках' },
   custom: { label: 'Свой образ', description: 'Смешанный набор слотов' },
 };
+// Character / Wardrobe v1 is deliberately narrower than the advanced Forge.
+// These are presentation-only rarity labels: all existing options stay owned,
+// prices/loot are untouched, and the saved Forge envelope remains the sole
+// source of equipped truth.
+const CHARACTER_WARDROBE_V1_SLOTS = [
+  {
+    id: 'head', runtimeKey: 'headwear', label: 'Голова', icon: '◇',
+    items: [
+      { id: 'headwear:none', value: 'none', label: 'Без головного убора', files: [] },
+      { id: 'headwear:scholar-hat-draft', value: 'scholar-hat-draft', label: 'Шляпа Scholar', rarity: 'rare', files: ['scholar-hat-alpha.png'] },
+    ],
+  },
+  {
+    id: 'neck', runtimeKey: 'neck', label: 'Шея', icon: '◇',
+    items: [
+      { id: 'neck:none', value: 'none', label: 'Без аксессуара', files: [] },
+      { id: 'neck:traveller-scarf-draft', value: 'traveller-scarf-draft', label: 'Шарф Traveller', rarity: 'common', files: ['traveller-scarf-alpha.png'] },
+      { id: 'neck:scholar-astrolabe-draft', value: 'scholar-astrolabe-draft', label: 'Астролябия Scholar', rarity: 'rare', files: ['scholar-pendant-alpha.png'] },
+    ],
+  },
+  {
+    id: 'back', runtimeKey: 'back', label: 'Спина', icon: '◇',
+    items: [
+      { id: 'back:none', value: 'none', label: 'Без рюкзака', files: [] },
+      { id: 'back:traveller-backpack-draft', value: 'traveller-backpack-draft', label: 'Рюкзак Traveller', rarity: 'common', files: ['traveller-backpack-back-alpha.png', 'traveller-backpack-front-alpha.png'] },
+      { id: 'back:scholar-backpack-draft', value: 'scholar-backpack-draft', label: 'Рюкзак Scholar', rarity: 'rare', files: ['scholar-backpack-back-alpha.png', 'scholar-backpack-front-alpha.png'] },
+    ],
+  },
+];
+// Immutable migration baseline: items added after v1 stay absent here so they
+// can truthfully enter the existing-user wardrobe as "New".
+const CHARACTER_WARDROBE_V1_BASELINE_SEEN = [
+  'headwear:none', 'headwear:scholar-hat-draft',
+  'neck:none', 'neck:traveller-scarf-draft', 'neck:scholar-astrolabe-draft',
+  'back:none', 'back:traveller-backpack-draft', 'back:scholar-backpack-draft',
+];
+const CHARACTER_WARDROBE_V1_BASELINE_OWNED = [
+  'headwear:scholar-hat-draft',
+  'neck:traveller-scarf-draft', 'neck:scholar-astrolabe-draft',
+  'back:traveller-backpack-draft', 'back:scholar-backpack-draft',
+];
+const CHARACTER_WARDROBE_V1_ITEM_IDS = new Set(CHARACTER_WARDROBE_V1_SLOTS.flatMap((slot) => slot.items.map((item) => item.id)));
 const AVATAR_LAYER_FILES = {
   base: 'mannequin-base-alpha.png',
   hair: { traveller: 'hair-traveller-alpha.png', scholar: 'hair-scholar-alpha.png', 'explorer-bob': 'hair-bob-alpha.png' },
@@ -4055,6 +4167,43 @@ function nextAvatarAppearance(patch) {
   for (const key of AVATAR_SLOT_KEYS) if (AVATAR_SLOT_VALUES[key].has(requested[key])) slots[key] = requested[key];
   return avatarForgeEnvelope(slots, colors);
 }
+function characterWardrobeV1Slot(slotId) {
+  return CHARACTER_WARDROBE_V1_SLOTS.find((slot) => slot.id === slotId) || null;
+}
+function characterWardrobeV1Item(slotId, itemId) {
+  const slot = characterWardrobeV1Slot(slotId);
+  return slot ? slot.items.find((item) => item.id === itemId) || null : null;
+}
+function characterWardrobeV1Seen() {
+  const raw = State.settings && State.settings.avatarWardrobeV1;
+  const source = raw && Array.isArray(raw.seen) ? raw.seen : CHARACTER_WARDROBE_V1_BASELINE_SEEN;
+  return new Set(source.filter((id) => CHARACTER_WARDROBE_V1_ITEM_IDS.has(id)));
+}
+function characterWardrobeV1Owned() {
+  const raw = State.settings && State.settings.avatarWardrobeV1;
+  const source = raw && Array.isArray(raw.owned) ? raw.owned : CHARACTER_WARDROBE_V1_BASELINE_OWNED;
+  return new Set(source.filter((id) => CHARACTER_WARDROBE_V1_ITEM_IDS.has(id) && !id.endsWith(':none')));
+}
+function rememberCharacterWardrobeV1Item(itemId) {
+  if (!State.settings || !CHARACTER_WARDROBE_V1_ITEM_IDS.has(itemId)) return false;
+  const seen = characterWardrobeV1Seen();
+  const owned = characterWardrobeV1Owned();
+  const current = State.settings.avatarWardrobeV1;
+  if (seen.has(itemId) && current && Array.isArray(current.seen) && Array.isArray(current.owned)) return true;
+  seen.add(itemId);
+  State.settings.avatarWardrobeV1 = { schemaVersion: 1, owned: [...owned], seen: [...seen] };
+  Store.save('settings', State.settings);
+  return true;
+}
+function characterWardrobeV1Equipped(slot, item, appearance = avatarAppearance()) {
+  return Boolean(slot && item && appearance.slots[slot.runtimeKey] === item.value);
+}
+function characterWardrobeV1Current(slot, appearance = avatarAppearance()) {
+  return slot.items.find((item) => characterWardrobeV1Equipped(slot, item, appearance)) || null;
+}
+function characterWardrobeV1RarityColor(rarityId) {
+  return RARITY[rarityId] ? `var(--rarity-${rarityId})` : 'var(--line-strong)';
+}
 function setAvatarAppearance(patch, options = {}) {
   const next = nextAvatarAppearance(patch);
   if (options.render === false) persistAvatarAppearance(next);
@@ -4183,8 +4332,11 @@ function scheduleArtWarmup() {
 function queueAvatarAppearanceRender(next) {
   const safe = normalizeAvatarAppearance(next);
   const token = ++_avatarAppearanceRenderToken;
-  const editor = document.getElementById('avatar-editor');
-  if (editor) editor.classList.add('is-avatar-swapping');
+  const editors = [...document.querySelectorAll('#avatar-editor, #character-wardrobe')];
+  editors.forEach((editor) => {
+    editor.classList.add('is-avatar-swapping');
+    editor.setAttribute('aria-busy', 'true');
+  });
   return preloadAvatarAppearance(safe).then(() => {
     if (token !== _avatarAppearanceRenderToken) return;
     persistAvatarAppearance(safe);
@@ -4192,7 +4344,10 @@ function queueAvatarAppearanceRender(next) {
     return safe;
   }).catch((error) => {
     if (token === _avatarAppearanceRenderToken) {
-      if (editor) editor.classList.remove('is-avatar-swapping');
+      editors.forEach((editor) => {
+        editor.classList.remove('is-avatar-swapping');
+        editor.removeAttribute('aria-busy');
+      });
       toast('Не удалось загрузить слой аватара');
     }
     throw error;
@@ -4206,7 +4361,7 @@ function avatarArtHTML(options = {}) {
     const pass = layer.pass ? ` data-avatar-pass="${esc(layer.pass)}"` : '';
     return `<img class="avatar-art-layer avatar-art-${esc(layer.id)}" data-avatar-slot="${esc(layer.slot)}"${pass} src="${esc(layer.src)}" alt="" aria-hidden="true" draggable="false" decoding="async">`;
   }).join('');
-  return `<span class="${classes}" data-avatar-preset="${esc(cfg.presetId)}" data-avatar-colorway="${esc(cfg.colors.outerwear)}" data-avatar-batch="${AVATAR_FORGE_BATCH_ID}" data-avatar-rigged="false" data-avatar-static="true" role="img" aria-label="Персонаж Satoru"><span class="avatar-art-rig">${layers}</span></span>`;
+  return `<span class="${classes}" data-avatar-preset="${esc(cfg.presetId)}" data-avatar-colorway="${esc(cfg.colors.outerwear)}" data-avatar-batch="${AVATAR_FORGE_BATCH_ID}" data-avatar-rigged="false" data-avatar-static="true" role="img" aria-label="${esc(t('Персонаж Satoru'))}"><span class="avatar-art-rig">${layers}</span></span>`;
 }
 function avatarPortraitHTML(options = {}) {
   void options;
@@ -6585,7 +6740,7 @@ function renderHeader(force = false) {
   header.innerHTML = `
     <div class="char-main">
       ${State.me ? `<div class="user-pill" title="${t('Профиль')}">
-        <button class="up-av up-av-raster" data-action="go-wardrobe" title="Открыть персонажа" aria-label="Открыть персонажа">${avatarPortraitHTML({ motion: 'portrait' })}</button>
+        <button class="up-av up-av-raster" data-action="go-wardrobe" title="${t('Открыть персонажа')}" aria-label="${t('Открыть персонажа')}">${avatarPortraitHTML({ motion: 'portrait' })}</button>
         <span class="up-meta"><span class="up-name">${esc(State.me.name)}${eqTitle ? ` <span class="eq-title">${satoruIconHTML('achievement.avatar_custom', 'inline-emblem', '◇')} ${esc(eqTitle)}</span>` : ''}</span>
         <span class="up-rank" style="--rc:${cr.color}">${rankIconHTML(cr, 'rank-inline-icon')} ${cr.name}</span></span></div>` : ''}
       <div class="char-level">Уровень <b>${oi.level}</b></div>
@@ -10757,13 +10912,82 @@ function onTreePointerDown(e) {
 function avatarEditor() {
   const pose = normalizedAvatarCorePose(State._avatarCorePose || 'idle');
   const gender = avatarCoreGender();
-  const poseButtons = AVATAR_CORE_POSES.map((id) => `<button class="avatar-core-pose-button ${pose === id ? 'is-selected' : ''}" data-action="avatar-core-pose" data-pose="${id}" aria-pressed="${pose === id}"><strong>${esc(AVATAR_CORE_POSE_META[id].label)}</strong><small>${esc(AVATAR_CORE_POSE_META[id].description)}</small></button>`).join('');
+  const poseButtons = AVATAR_CORE_POSES.map((id) => `<button class="avatar-core-pose-button ${pose === id ? 'is-selected' : ''}" data-action="avatar-core-pose" data-pose="${id}" aria-pressed="${pose === id}"><strong>${esc(t(AVATAR_CORE_POSE_META[id].label))}</strong><small>${esc(t(AVATAR_CORE_POSE_META[id].description))}</small></button>`).join('');
   return `<div class="card avatar-editor" id="avatar-editor">
-    <div class="avatar-editor-head"><div><h3>${satoruIconHTML('nav.hero', 'inline-glyph', '◇')} Traveller Core v2</h3><p>Один утверждённый мужской Traveller · авторские позы · парные сцены с хранителями</p></div><span class="avatar-editor-badge">Local motion</span></div>
+    <div class="avatar-editor-head"><div><h3>${satoruIconHTML('nav.hero', 'inline-glyph', '◇')} Traveller</h3><p>${t('Позы для работы, разминки и отдыха.')}</p></div><span class="avatar-editor-badge">${t('Локально')}</span></div>
     <div class="ave-stage ave-stage-figure avatar-core-stage">${avatarCorePoseHTML(pose, { gender, className: 'avatar-core-stack--figure' })}</div>
     <div class="avatar-core-pose-grid">${poseButtons}</div>
-    <p class="avatar-editor-note"><b>Персонаж фиксированный.</b> Женский черновик отключён. Сидение больше не имитируется позой на невидимом стуле: отдых, приветствие и разминка с Жабьим сэнсэем используют цельные парные кадры на одной линии пола.</p>
+    <p class="avatar-editor-note">${t('Позы меняют состояние персонажа, а экипировка остаётся на месте.')}</p>
   </div>`;
+}
+function characterWardrobeV1ItemArtHTML(slot, item) {
+  if (!item.files.length) {
+    return `<span class="character-wardrobe-item-art is-empty" aria-hidden="true"><span>${slot.icon}</span></span>`;
+  }
+  const layers = item.files.map((file) => `<img src="${esc(AVATAR_ART_RUNTIME_ROOT + file)}" alt="" aria-hidden="true" draggable="false" decoding="async">`).join('');
+  return `<span class="character-wardrobe-item-art is-${slot.id}" aria-hidden="true"><span class="character-wardrobe-item-art-rig">${layers}</span></span>`;
+}
+function characterWardrobeV1HTML(cr, oi, arch) {
+  const appearance = avatarAppearance();
+  const requestedSlot = characterWardrobeV1Slot(State._characterWardrobeSlot);
+  const activeSlot = requestedSlot || CHARACTER_WARDROBE_V1_SLOTS[0];
+  const filter = State._characterWardrobeFilter === 'new' ? 'new' : 'all';
+  const seen = characterWardrobeV1Seen();
+  const ownedItems = characterWardrobeV1Owned();
+  const slotButtons = CHARACTER_WARDROBE_V1_SLOTS.map((slot) => {
+    const current = characterWardrobeV1Current(slot, appearance);
+    const selected = slot.id === activeSlot.id;
+    return `<button type="button" class="character-wardrobe-slot${selected ? ' is-active' : ''}" data-action="character-wardrobe-slot" data-slot="${slot.id}" aria-pressed="${selected}" aria-controls="character-wardrobe-drawer">
+      <span class="character-wardrobe-slot-icon" aria-hidden="true">${slot.icon}</span>
+      <span><b>${t(slot.label)}</b><small>${current ? t(current.label) : t('Свой образ')}</small></span>
+      <span class="character-wardrobe-slot-state">${current ? '✓' : '•'} ${t(current ? 'Надето' : 'Свой образ')}</span>
+    </button>`;
+  }).join('');
+  const itemRows = activeSlot.items.map((item) => {
+    const equipped = characterWardrobeV1Equipped(activeSlot, item, appearance);
+    const remove = item.value === 'none';
+    const owned = !remove && (ownedItems.has(item.id) || equipped);
+    const isNew = owned && !seen.has(item.id);
+    return { item, equipped, owned, remove, isNew };
+  });
+  const availableRows = itemRows.filter((row) => row.remove || row.owned);
+  const visibleRows = filter === 'new' ? availableRows.filter((row) => row.isNew) : availableRows;
+  const inventoryNote = t(availableRows.some((row) => row.owned)
+    ? 'Все показанные предметы уже в наличии. Новые будут отмечены отдельно.'
+    : 'В этом слоте пока нет предметов. Снять экипировку всё равно можно.');
+  const items = visibleRows.length ? visibleRows.map(({ item, equipped, owned, isNew }) => {
+    const rarity = item.rarity ? RARITY[item.rarity] : null;
+    const state = equipped ? t('Надето') : (owned ? t('В наличии') : t('Снять'));
+    const accessible = [t(activeSlot.label), t(item.label), rarity ? t(rarity.label) : '', state, isNew ? t('Новое') : '', t('Примерить предмет')].filter(Boolean).join('. ');
+    return `<button type="button" class="character-wardrobe-item${equipped ? ' is-equipped' : ''}${isNew ? ' is-new' : ''}${item.rarity ? ` rarity-${item.rarity}` : ' rarity-none'}" data-action="character-wardrobe-equip" data-slot="${activeSlot.id}" data-item="${esc(item.id)}" data-wardrobe-item="${esc(item.id)}" aria-pressed="${equipped}" aria-label="${esc(accessible)}" style="--rarity-color:${characterWardrobeV1RarityColor(item.rarity)}">
+      ${characterWardrobeV1ItemArtHTML(activeSlot, item)}
+      <span class="character-wardrobe-item-copy"><b>${t(item.label)}</b>${rarity ? `<small class="character-wardrobe-rarity">${t(rarity.label)}</small>` : '<small class="character-wardrobe-rarity">—</small>'}</span>
+      <span class="character-wardrobe-item-badges">${owned ? `<span class="is-owned">${t('В наличии')}</span>` : (!equipped ? `<span class="is-remove">${t('Снять')}</span>` : '')}${isNew ? `<span class="is-new">${t('Новое')}</span>` : ''}${equipped ? `<span class="is-equipped">✓ ${t('Надето')}</span>` : ''}</span>
+    </button>`;
+  }).join('') : `<div class="character-wardrobe-empty" role="status"><b>${t('В этом слоте пока нет новых предметов.')}</b><span>${inventoryNote}</span></div>`;
+  const rarityKey = ['common', 'rare', 'epic', 'legendary'].map((id) => `<span class="character-rarity-key rarity-${id}" style="--rarity-color:${characterWardrobeV1RarityColor(id)}"><i aria-hidden="true"></i>${t(RARITY[id].label)}</span>`).join('');
+  const of = overallForm(), fm = formMeta(of);
+  return `<section class="card character-wardrobe-v1" id="character-wardrobe" tabindex="-1" aria-labelledby="character-route-title">
+    <header class="character-identity">
+      <div class="character-identity-copy"><p class="character-kicker">Satoru</p><h2 id="character-route-title">${t('Персонаж')}</h2><p class="character-name"${State.me && State.me.name ? ' data-noi18n' : ''}>${State.me && State.me.name ? esc(State.me.name) : t('Герой')}</p>
+        <div class="character-identity-chips"><span class="ch-rank" style="--rc:${cr.color}">${rankIconHTML(cr, 'rank-inline-icon')} ${esc(t(cr.name))} · ${t('Уровень')} ${charLevel()}</span><span class="ch-arch">${satoruIconHTML('profile.origin.mask', 'inline-emblem', '◇')} <b>${esc(t(arch.name))}</b></span>${equippedTitle() ? `<span class="ch-title" data-noi18n>${satoruIconHTML('achievement.avatar_custom', 'inline-emblem', '◇')} ${esc(equippedTitle())}</span>` : ''}</div>
+      </div>
+      <div class="character-identity-progress"><div class="xp-bar"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div><div class="character-form-line"><span>${t('Форма')}</span><b style="--form-color:${fm.color}">${of == null ? '—' : of + '%'} · ${esc(t(fm.text))}</b></div></div>
+    </header>
+    <div class="character-wardrobe-heading"><div><p class="character-kicker">${t('Гардероб')}</p><h3 id="character-wardrobe-title">${t('Три слота. Один ясный образ.')}</h3><p>${t('Выбери слот и предмет — предпросмотр обновится сразу.')}</p></div></div>
+    <div class="character-wardrobe-layout">
+      <div class="character-wardrobe-preview-panel">
+        <figure class="character-wardrobe-preview"><div class="character-wardrobe-stage">${avatarFigureHTML({ appearance })}</div><figcaption>${t('Предпросмотр образа')}</figcaption></figure>
+        <div class="character-wardrobe-slots" role="group" aria-label="${t('Слоты экипировки')}">${slotButtons}</div>
+      </div>
+      <section class="character-wardrobe-drawer" id="character-wardrobe-drawer" aria-labelledby="character-wardrobe-slot-title">
+        <header><div><p class="character-kicker">${t(activeSlot.label)}</p><h4 id="character-wardrobe-slot-title">${t('Выбери предмет для слота')}</h4></div><div class="character-wardrobe-filters" role="group" aria-label="${t('Фильтр предметов')}"><button type="button" data-action="character-wardrobe-filter" data-filter="all" class="${filter === 'all' ? 'is-active' : ''}" aria-pressed="${filter === 'all'}">${t('Все')}</button><button type="button" data-action="character-wardrobe-filter" data-filter="new" class="${filter === 'new' ? 'is-active' : ''}" aria-pressed="${filter === 'new'}">${t('Новое')}</button></div></header>
+        <div class="character-wardrobe-items">${items}</div>
+        <div class="character-rarity-key-list" aria-label="${t('Редкость читается по подписи и форме рамки, а не только по цвету.')}">${rarityKey}</div>
+        <p class="character-wardrobe-note">${inventoryNote}</p>
+      </section>
+    </div>
+  </section>`;
 }
 // ---- Колесо баланса (ядро v1): радар ритма + дрилл-даун под-сфер + подсказки ----
 function balanceWheelCard() {
@@ -10772,40 +10996,41 @@ function balanceWheelCard() {
   const maxMin = Math.max(1, ...rh.map((r) => r.min));
   const totalMin = rh.reduce((a, r) => a + r.min, 0);
   // Радар по РИТМУ: оси = верхние сферы, длина оси = внимание за окно (а не уровень).
-  const scores = rh.map((r) => ({ id: r.id, name: r.name, color: r.color, value: r.min }));
+  const scores = rh.map((r) => ({ id: r.id, name: i18nWord(r.name, lang()), color: r.color, value: r.min }));
   const radar = scores.length >= 3
     ? `<div class="radar-wrap">${radarSVG(scores)}</div>`
-    : '<p class="muted">Добавь минимум 3 сферы (проекты не в счёт) в «Настройках» — и колесо оживёт.</p>';
+    : `<p class="muted">${t('Добавь минимум 3 сферы в Настройках — и колесо оживёт.')}</p>`;
   const balChip = bal.active >= 2
-    ? `<span class="bal-chip" title="Баланс ритма: насколько ровно внимание распределено по сферам за ~${BALANCE_WINDOW_DAYS} дн + охват. Это ритм, не уровень.">⚖️ Баланс ${bal.index}/100${bal.weakest ? ` · подтяни «${esc(bal.weakest.name)}»` : ''}</span>`
+    ? `<span class="bal-chip" title="${t('Баланс ритма')}">⚖️ ${t('Баланс ритма')} ${bal.index}/100${bal.weakest ? ` · ${esc(i18nWord(bal.weakest.name, lang()))}` : ''}</span>`
     : '';
   const rows = rh.map((r) => balanceRow(r, maxMin, 0)).join('');
   const emptyHint = totalMin === 0
-    ? '<p class="muted bal-empty">За последние недели активности в сферах не было — колесо «остыло». Сделай что-нибудь хоть в одной сфере, и ось оживёт. Через любовь, не вину. 🌱</p>'
+    ? `<p class="muted bal-empty">${t('За последние недели активности в сферах не было. Сделай небольшое дело в одной сфере — и ось оживёт.')}</p>`
     : '';
-  return `<div class="card balance-card"><h3>⚖️ Колесо баланса ${balChip}</h3>
+  const rhythmHelp = t('Длина оси — внимание за последние {days} дней. Уровень не сгорает.').replace('{days}', String(BALANCE_WINDOW_DAYS));
+  return `<div class="card balance-card"><h3>⚖️ ${t('Колесо ритма')} ${balChip}</h3>
     ${radar}
     <div class="bal-rows">${rows}</div>
     ${emptyHint}
     ${canonHintHTML()}
     ${projectNudgeHTML()}
-    <p class="muted" style="font-size:12px;margin-bottom:0">Длина оси — сколько внимания ушло в сферу за ~${BALANCE_WINDOW_DAYS} дней (не уровень: уровень не сгорает). Затихла сфера — ось проседает. Нажми на сферу → ритм её под-сфер.</p></div>`;
+    <p class="muted" style="font-size:var(--type-meta);margin-bottom:0">${rhythmHelp}</p></div>`;
 }
 // Строка ритма сферы + рекурсивный дрилл-даун (раскрытые сферы — в State.balanceDrill).
 function balanceRow(r, maxMin, depth) {
   const kids = childSkills(r.id), hasKids = kids.length > 0;
   const open = hasKids && State.balanceDrill && State.balanceDrill.has(r.id);
   const pct = Math.round(Math.min(100, (r.min / Math.max(1, maxMin)) * 100));
-  const tag = r.cooled ? `<span class="bal-tag cool" title="Эта сфера затихла — окно её почти не видит">💤 остыл${r.days === Infinity ? '' : ' ' + r.days + ' дн'}</span>`
-            : r.hot ? '<span class="bal-tag hot" title="Свежая активность">🔥</span>' : '';
+  const tag = r.cooled ? `<span class="bal-tag cool" title="${t('Эта сфера давно без активности')}">💤 ${t('остыла')}${r.days === Infinity ? '' : ' ' + r.days + ' ' + t('дн.')}</span>`
+            : r.hot ? `<span class="bal-tag hot" title="${t('Свежая активность')}">🔥</span>` : '';
   const caret = hasKids ? `<span class="bal-caret">${open ? '▾' : '▸'}</span>` : '<span class="bal-caret-spacer"></span>';
-  const row = `<div class="bal-row${depth ? ' is-sub' : ''}${r.cooled ? ' cooled' : ''}" style="--d:${depth}" ${hasKids ? `data-action="bal-drill" data-id="${r.id}" role="button" tabindex="0"` : ''}>
+  const row = `<div class="bal-row${depth ? ' is-sub' : ''}${r.cooled ? ' cooled' : ''}" style="--d:${depth}" ${hasKids ? `data-action="bal-drill" data-id="${r.id}" role="button" tabindex="0" aria-expanded="${open}"` : ''}>
     ${caret}
     <span class="bal-dot" style="background:${esc(r.color)}"></span>
-    <span class="bal-nm">${esc(r.name)}</span>
+    <span class="bal-nm" data-noi18n>${esc(i18nWord(r.name, lang()))}</span>
     <span class="bal-bar"><span style="width:${pct}%;background:${esc(r.color)}"></span></span>
     <span class="bal-dur">${r.min > 0 ? fmtDur(r.min) : '—'}</span>
-    <span class="bal-lvl" title="Доказанный уровень — не сгорает (храповик)">ур.${r.level}</span>
+    <span class="bal-lvl" title="${t('Доказанный уровень — не сгорает')}">${t('Уровень')} ${r.level}</span>
     ${tag}</div>`;
   if (!open) return row;
   const krh = rhythmFor(kids, BALANCE_WINDOW_DAYS);
@@ -10820,21 +11045,22 @@ function canonHintHTML() {
   if (!gaps.length) return '';
   const rel = gaps.find((g) => g.id === 'relations');
   const lead = rel
-    ? `Нет сферы из домена ${rel.icon} <b>Отношения</b> — а у Хартмана связи это до 40% десятиборья.`
-    : `Пустые жизненные домены: ${gaps.slice(0, 3).map((d) => `${d.icon} ${esc(d.name)}`).join(' · ')}.`;
+    ? `${rel.icon} ${t('Нет сферы «Отношения» — карта показывает этот пробел без давления.')}`
+    : `${t('Пустые жизненные домены:')} ${gaps.slice(0, 3).map((d) => `${d.icon} ${esc(t(d.name))}`).join(' · ')}.`;
   return `<div class="canon-hint">
-    <button class="canon-x" data-action="canon-hint-dismiss" title="Скрыть">✕</button>
-    <div class="canon-hint-body">🧭 ${lead} <span class="muted">Не обязательно — карта просто показывает, чего пока не касаешься.</span></div>
-    <button class="btn ghost sm" data-action="go-settings-skills">+ Добавить сферу</button></div>`;
+    <button class="canon-x" data-action="canon-hint-dismiss" aria-label="${t('Скрыть')}" title="${t('Скрыть')}">✕</button>
+    <div class="canon-hint-body">🧭 ${lead} <span class="muted">${t('Карта лишь показывает, чего ты пока не касаешься. Это не обязательство.')}</span></div>
+    <button class="btn ghost sm" data-action="go-settings-skills">${t('+ Добавить сферу')}</button></div>`;
 }
 // Нудж: верхняя сфера выглядит как проект (JuFo/Satoru/реферат…) — предложить убрать с колеса (§5.4).
 function projectNudgeHTML() {
   const suspects = balanceSpheres().filter((s) => looksLikeProject(s.name));
   if (!suspects.length) return '';
   const s = suspects[0];
+  const copy = t('«{name}» похоже на проект, а не сферу жизни. Проектам место в Целях.').replace('{name}', esc(s.name));
   return `<div class="canon-hint proj">
-    <div class="canon-hint-body">🏁 «${esc(s.name)}» похоже на <b>проект</b>, а не сферу жизни. Проектам место в Целях — и они не должны быть осью колеса.</div>
-    <button class="btn ghost sm" data-action="mark-project" data-id="${esc(s.id)}">Убрать с колеса</button></div>`;
+    <div class="canon-hint-body">🏁 ${copy}</div>
+    <button class="btn ghost sm" data-action="mark-project" data-id="${esc(s.id)}">${t('Убрать с колеса')}</button></div>`;
 }
 function renderCharacter() {
   const c = State.settings.curve, oi = levelInfo(overallXp(), c.base, c.growth), cr = charRank();
@@ -10847,40 +11073,27 @@ function renderCharacter() {
     const bfCat = bf ? bodyFatCat(bf, b.sex) : null;
     // ИМТ ненадёжен при развитой мускулатуре: если жир атлетичный/нормальный, не пугаем «избытком».
     const bmiMisleading = bfCat && (bfCat.lean) && (cat === 'избыток' || cat === 'выше нормы');
-    bmiLabel = `<div class="bmi-label">${bf ? `жир <b>${b.bodyfat}%</b> · ${bfCat.label}` : `ИМТ <b>${bmi.toFixed(1)}</b> · ${cat}`}${bf ? `<span class="muted"> · ИМТ ${bmi.toFixed(1)}${bmiMisleading ? ' (с мышцами завышает)' : ''}</span>` : ''}</div>`;
+    bmiLabel = `<div class="bmi-label">${bf ? `${t('жир')} <b>${b.bodyfat}%</b> · ${t(bfCat.label)}` : `${t('ИМТ')} <b>${bmi.toFixed(1)}</b> · ${t(cat)}`}${bf ? `<span class="muted"> · ${t('ИМТ')} ${bmi.toFixed(1)}${bmiMisleading ? ' ' + t('(с мышцами завышает)') : ''}</span>` : ''}</div>`;
   }
   const bodyForm = `<form id="body-form" class="body-form">
-      <label>Пол<select name="sex"><option value="" ${!b.sex ? 'selected' : ''}>—</option><option value="m" ${b.sex === 'm' ? 'selected' : ''}>М</option><option value="f" ${b.sex === 'f' ? 'selected' : ''}>Ж</option></select></label>
-      <label>Рост, см<input name="height" type="number" min="100" max="250" value="${b.height || ''}" placeholder="—" /></label>
-      <label>Вес, кг<input name="weight" type="number" min="30" max="300" step="0.1" value="${b.weight || ''}" placeholder="—" /></label>
-      ${isPro() ? `<label>% жира<input name="bodyfat" type="number" min="3" max="60" step="0.1" value="${b.bodyfat || ''}" placeholder="—" /></label>`
-      : `<label class="locked-inline" data-action="show-paywall" data-feature="Состав тела">% жира 🔒<input disabled placeholder="Pro" /></label>`}
-      <button type="submit" class="btn">Сохранить</button></form>`;
+      <label>${t('Пол')}<select name="sex"><option value="" ${!b.sex ? 'selected' : ''}>—</option><option value="m" ${b.sex === 'm' ? 'selected' : ''}>${t('Мужской')}</option><option value="f" ${b.sex === 'f' ? 'selected' : ''}>${t('Женский')}</option></select></label>
+      <label>${t('Рост, см')}<input name="height" type="number" min="100" max="250" value="${b.height || ''}" placeholder="—" /></label>
+      <label>${t('Вес, кг')}<input name="weight" type="number" min="30" max="300" step="0.1" value="${b.weight || ''}" placeholder="—" /></label>
+      ${isPro() ? `<label>${t('% жира')}<input name="bodyfat" type="number" min="3" max="60" step="0.1" value="${b.bodyfat || ''}" placeholder="—" /></label>`
+      : `<label class="locked-inline" data-action="show-paywall" data-feature="Состав тела">${t('% жира')} 🔒<input disabled placeholder="Pro" /></label>`}
+      <button type="submit" class="btn">${t('Сохранить')}</button></form>`;
+  const secondaryOpen = (id) => State._characterSecondaryOpen === id ? ' open' : '';
   return `<div class="character-shell">
-    <div class="card char-hero">
-      <div class="ch-avatar ch-avatar-img" style="--rc:${cr.color};--p:${oi.pct}">${avatarPortraitHTML(equippedCosmeticsOpts())}</div>
-      <div class="ch-meta">
-        <h2>${esc((State.me && State.me.name) || 'Герой')}</h2>
-        <div class="ch-rank" style="--rc:${cr.color}">${rankIconHTML(cr, 'rank-inline-icon')} ${cr.name} · ур.${charLevel()}</div>
-        <div class="ch-arch" title="Класс определяется автоматически из названий твоих сфер">${satoruIconHTML('profile.origin.mask', 'inline-emblem', '◇')} <b>${arch.name}</b> <span class="muted">— ${arch.desc}</span></div>
-        ${equippedTitle() ? `<div class="ch-title" title="Звание — сменить в «Наградах → Коллекция»">${satoruIconHTML('achievement.avatar_custom', 'inline-emblem', '◇')} ${esc(equippedTitle())}</div>` : ''}
-        <div class="xp-bar" style="max-width:340px"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
-        ${(() => { const of = overallForm(), fm = formMeta(of); return `<div class="ch-form" title="Форма — текущая «свежесть» по активности. В отличие от уровня (доказанное мастерство — не сгорает), форма мягко падает без тренировок и легко возвращается.">
-          <span class="cf-label">${satoruIconHTML('status.streak', 'inline-emblem', '◇')} Форма</span>
-          <span class="cf-bar"><span style="width:${of == null ? 0 : of}%;background:${fm.color}"></span></span>
-          <span class="cf-val" style="color:${fm.color}">${of == null ? '—' : of + '%'} · ${fm.text}</span>
-          <span class="cf-hint muted">свежесть активности — не уровень; падает без практики, легко возвращается${of == null ? ' (появится после первых дел)' : ''}</span>
-        </div>`; })()}
+    ${characterWardrobeV1HTML(cr, oi, arch)}
+    <section class="character-secondary" aria-labelledby="character-secondary-title">
+      <h3 id="character-secondary-title">${t('Дополнительно')}</h3>
+      <div class="character-secondary-grid">
+        <details class="character-secondary-panel" data-character-panel="poses"${secondaryOpen('poses')}><summary><span>${satoruIconHTML('nav.hero', 'inline-glyph', '◇')} <b>${t('Живые позы')}</b></span><span aria-hidden="true">＋</span></summary><div class="character-secondary-body">${avatarEditor()}</div></details>
+        <details class="character-secondary-panel" data-character-panel="rhythm"${secondaryOpen('rhythm')}><summary><span>⚖️ <b>${t('Ритм сфер')}</b></span><span aria-hidden="true">＋</span></summary><div class="character-secondary-body">${balanceWheelCard()}</div></details>
+        <details class="character-secondary-panel" data-character-panel="body"${secondaryOpen('body')}><summary><span>🧍 <b>${t('Телосложение')}</b></span><span aria-hidden="true">＋</span></summary><div class="character-secondary-body"><div class="card character-body-card"><h3>${t('Телосложение')}</h3><div class="figure-wrap">${figureSVG()}</div>${bmiLabel}<p class="muted" style="font-size:var(--type-meta)">${t('Силуэт живой: сила расширяет плечи, выносливость подсушивает, вес влияет на талию.')}</p>${bodyForm}</div></div></details>
       </div>
-    </div>
-    ${avatarEditor()}
-    <div class="char-grid">
-      ${balanceWheelCard()}
-      <div class="card"><h3>🧍 Телосложение</h3>
-        <div class="figure-wrap">${figureSVG()}</div>${bmiLabel}
-        <p class="muted" style="font-size:12px">Силуэт живой: сила расширяет плечи, выносливость подсушивает, вес влияет на талию.</p>
-        ${bodyForm}</div>
-    </div></div>`;
+    </section>
+  </div>`;
 }
 
 // ============================================================
@@ -12600,7 +12813,7 @@ function showMobileNavSheet() {
   overlay.innerHTML = `<section class="mobile-nav-sheet" role="dialog" aria-modal="true" aria-label="${t('Ещё')}">
     <div class="mobile-sheet-handle" aria-hidden="true"></div>
     <header class="mobile-sheet-head">
-      <div class="mobile-sheet-profile"><button class="mobile-sheet-avatar" data-action="go-wardrobe" aria-label="Открыть персонажа">${avatarPortraitHTML({ motion: 'portrait' })}</button><div><b>${esc((State.me && State.me.name) || 'Satoru')}</b><small>${rankIconHTML(cr, 'rank-inline-icon')} ${esc(cr.name)} · ${t('Уровень')} ${charLevel()}</small></div></div>
+      <div class="mobile-sheet-profile"><button class="mobile-sheet-avatar" data-action="go-wardrobe" aria-label="${t('Открыть персонажа')}">${avatarPortraitHTML({ motion: 'portrait' })}</button><div><b>${esc((State.me && State.me.name) || 'Satoru')}</b><small>${rankIconHTML(cr, 'rank-inline-icon')} ${esc(cr.name)} · ${t('Уровень')} ${charLevel()}</small></div></div>
       <button class="mobile-sheet-close" data-action="mobile-nav-close" aria-label="${t('Закрыть')}">✕</button>
     </header>
     <div class="mobile-sheet-grid">${menuSections}
@@ -12716,6 +12929,17 @@ function afterMainCommit() {
       const target = document.querySelector(selector);
       if (!target) return;
       if (selector === '#den-editor') target.scrollIntoView({ behavior: avatarMotionReduced() ? 'auto' : 'smooth', block: 'start' });
+      target.focus({ preventScroll: true });
+    });
+  }
+  if (State._characterFocusAfterCommit && State.view === 'character') {
+    const selector = State._characterFocusAfterCommit;
+    State._characterFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const fallback = `[data-action="character-wardrobe-filter"][data-filter="${State._characterWardrobeFilter === 'new' ? 'new' : 'all'}"]`;
+      const target = document.querySelector(selector) || document.querySelector(fallback) || document.getElementById('character-wardrobe');
+      if (!target) return;
+      if (selector === '#character-wardrobe') target.scrollIntoView({ behavior: avatarMotionReduced() ? 'auto' : 'smooth', block: 'start' });
       target.focus({ preventScroll: true });
     });
   }
@@ -13279,7 +13503,11 @@ function onClick(e) {
   }
   const action = el.dataset.action, id = el.dataset.id, today = todayStr();
 
-  if (el.closest('#mobile-nav-sheet') && action !== 'mobile-nav-close') closeMobileNavSheet();
+  if (el.closest('#mobile-nav-sheet') && action !== 'mobile-nav-close') {
+    const sheet = el.closest('#mobile-nav-sheet');
+    if (action === 'go-wardrobe') sheet._returnFocus = null;
+    closeMobileNavSheet();
+  }
   if (action === 'mobile-nav-more') { showMobileNavSheet(); return; }
   if (action === 'mobile-nav-close') { closeMobileNavSheet(); return; }
   if (action === 'mobile-go-settings') {
@@ -13533,6 +13761,36 @@ function onClick(e) {
     }
     return;
   }
+  if (action === 'character-wardrobe-slot') {
+    const slot = characterWardrobeV1Slot(el.dataset.slot);
+    if (!slot) return;
+    State._characterWardrobeSlot = slot.id;
+    State._characterFocusAfterCommit = `[data-action="character-wardrobe-slot"][data-slot="${slot.id}"]`;
+    render();
+    return;
+  }
+  if (action === 'character-wardrobe-filter') {
+    const filter = el.dataset.filter === 'new' ? 'new' : 'all';
+    State._characterWardrobeFilter = filter;
+    State._characterFocusAfterCommit = `[data-action="character-wardrobe-filter"][data-filter="${filter}"]`;
+    render();
+    return;
+  }
+  if (action === 'character-wardrobe-equip') {
+    const slot = characterWardrobeV1Slot(el.dataset.slot);
+    const item = slot && characterWardrobeV1Item(slot.id, el.dataset.item);
+    if (!slot || !item || !AVATAR_SLOT_VALUES[slot.runtimeKey].has(item.value)) return;
+    const owned = characterWardrobeV1Owned();
+    if (item.value !== 'none' && !owned.has(item.id) && !characterWardrobeV1Equipped(slot, item)) return;
+    rememberCharacterWardrobeV1Item(item.id);
+    State._characterWardrobeSlot = slot.id;
+    State._characterFocusAfterCommit = `[data-wardrobe-item="${item.id}"]`;
+    const next = nextAvatarAppearance({ slots: { [slot.runtimeKey]: item.value } });
+    queueAvatarAppearanceRender(next).then(() => toast(`${t(item.value === 'none' ? 'Снять' : 'Надето')}: ${t(item.label)}`)).catch(() => {
+      State._characterFocusAfterCommit = '';
+    });
+    return;
+  }
   if (action === 'avatar-core-pose') {
     const pose = normalizedAvatarCorePose(el.dataset.pose);
     State._avatarCorePose = pose;
@@ -13774,7 +14032,7 @@ function onClick(e) {
   if (action === 'goto-today') { State.view = 'today'; render(); return; }
   if (action === 'reload-app') { location.reload(); return; }
   if (action === 'goto-pets') { State.view = 'pets'; markDiscovered('pets'); render(); return; }
-  if (action === 'go-wardrobe') { State.view = 'character'; render(); setTimeout(openAvatarForgeEditor, 60); return; }
+  if (action === 'go-wardrobe') { State.view = 'character'; State._characterFocusAfterCommit = '#character-wardrobe'; render(); return; }
   if (action === 'open-avatar-forge') { openAvatarForgeEditor(); return; }
   if (action === 'goto-import') { State.view = 'settings'; render(); setTimeout(() => { const c = document.getElementById('import-card'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('flash-card'); } }, 60); return; }
   if (action === 'start-trial') {
@@ -14284,6 +14542,8 @@ function onClick(e) {
     // Дрилл-даун колеса баланса: раскрыть/свернуть под-сферы (эфемерно, без сохранения)
     if (!(State.balanceDrill instanceof Set)) State.balanceDrill = new Set();
     if (State.balanceDrill.has(id)) State.balanceDrill.delete(id); else State.balanceDrill.add(id);
+    State._characterSecondaryOpen = 'rhythm';
+    State._characterFocusAfterCommit = `[data-action="bal-drill"][data-id="${CSS.escape(id)}"]`;
     render();
   } else if (action === 'canon-hint-dismiss') {
     State.settings.canonHintDismissed = true; Store.save('settings', State.settings); render();
@@ -14930,12 +15190,34 @@ async function init() {
   startI18nObserver();
   document.addEventListener('submit', onSubmit);
   document.addEventListener('click', onClick);
+  document.addEventListener('toggle', (e) => {
+    const panel = e.target;
+    if (!(panel instanceof HTMLDetailsElement) || !panel.matches('.character-secondary-panel[data-character-panel]')) return;
+    const id = panel.dataset.characterPanel;
+    if (panel.open) {
+      panel.parentElement?.querySelectorAll('.character-secondary-panel[open]').forEach((other) => { if (other !== panel) other.open = false; });
+      State._characterSecondaryOpen = id;
+    } else if (State._characterSecondaryOpen === id) {
+      State._characterSecondaryOpen = '';
+    }
+  }, true);
   document.addEventListener('change', onChange);
   document.addEventListener('input', onSettingsInput);
   document.addEventListener('pointerdown', onTreePointerDown);
   // Инлайн-правка текста квеста: клик мимо → сохранить; Esc → отмена
   document.addEventListener('focusout', (e) => { const f = e.target.closest && e.target.closest('.t-edit-form'); if (f && f.requestSubmit) setTimeout(() => { if (State._editTask) f.requestSubmit(); }, 100); });
   document.addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('.character-secondary-panel > summary')) {
+      e.preventDefault();
+      const panel = e.target.parentElement;
+      if (panel instanceof HTMLDetailsElement) panel.open = !panel.open;
+      return;
+    }
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('.character-secondary .bal-row[role="button"]')) {
+      e.preventDefault();
+      e.target.click();
+      return;
+    }
     if (e.key !== 'Escape') return;
     if (document.getElementById('avatar-forge-overlay')) { closeAvatarForgeEditor(); return; }
     if (document.getElementById('mobile-nav-sheet')) { closeMobileNavSheet(); return; }
