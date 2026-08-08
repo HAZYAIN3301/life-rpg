@@ -28,6 +28,16 @@
   --text-soft: #c2c9dd;
   --accent-2: #4fd6ff;
   --accent-warm: #e0a23e;
+  --today-kicker-fg: #4fd6ff;
+  --today-kicker-good-fg: #46c46b;
+  --today-kicker-done-fg: #99a2c0;
+  --today-subtab-active-fg: #4fd6ff;
+  --today-subtab-active-border: #6c8cff;
+  --today-nudge-fg: #ffd479;
+  --today-nudge-border: #e0a23e;
+  --today-nudge-danger-fg: #ffb3b3;
+  --header-gold-fg: #e7c558;
+  --header-streak-fg: #f0b34a;
   --shadow-card: 0 16px 46px rgba(0, 0, 0, 0.32);
   --shadow-raised: 0 22px 70px rgba(0, 0, 0, 0.42);
   --glow-active: 0 0 0 1px color-mix(in srgb, var(--accent) 42%, transparent), 0 0 28px color-mix(in srgb, var(--accent) 20%, transparent);
@@ -47,9 +57,40 @@
   --dur-fast: 140ms;
   --dur-normal: 240ms;
   --dur-slow: 520ms;
+  --layout-max: 1080px;
+  --work-max: 720px;
+  --touch-min: 42px;
+  --on-accent: #090d17;
+  --on-bad: #090d17;
+  --focus-ring: 0 0 0 2px var(--surface-0), 0 0 0 4px var(--text-strong);
   --font-ui: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-display: "Satoru Display", Georgia, serif;
   --font-number: "Satoru Display", Georgia, serif;
+  --font-data: var(--font-ui);
+  --type-floor: 11px;
+  --type-meta: 12px;
+  --type-control: 14px;
+  --type-body: 15px;
+  --type-heading: 16px;
+  --type-brand: clamp(18px, 1.4vw, 22px);
+  --type-title: clamp(20px, 3vw, 34px);
+  --type-hero: clamp(21px, 4vw, 42px);
+  --type-ceremony: clamp(48px, 10vw, 96px);
+  --leading-tight: 1;
+  --leading-display: 1.12;
+  --leading-label: 1.2;
+  --leading-ui: 1.35;
+  --leading-prose: 1.5;
+  --tracking-natural: 0em;
+  --tracking-caps: .08em;
+  --tracking-ceremony: .12em;
+  --measure-prose: 68ch;
+  --measure-compact: 55ch;
+  --measure-dialog: 34ch;
+  --number-slot-timer: 5.5ch;
+  --number-slot-level: 3ch;
+  --number-slot-kpi: 7ch;
+  --number-slot-data: 8ch;
   --radius: 14px;
   --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
   --den-wall: #2c2740;
@@ -75,6 +116,17 @@
   --line-strong: rgba(72, 87, 125, 0.26);
   --text-strong: #101728;
   --text-soft: #3d4964;
+  --today-kicker-fg: #075f78;
+  --today-kicker-good-fg: #0f612b;
+  --today-kicker-done-fg: #4b556f;
+  --today-subtab-active-fg: #075f78;
+  --today-subtab-active-border: #075f78;
+  --today-nudge-fg: #6f4700;
+  --today-nudge-border: #8a5a00;
+  --today-nudge-danger-fg: #9b2336;
+  --header-gold-fg: #6f5300;
+  --header-streak-fg: #744600;
+  --on-bad: #fff;
   --shadow-card: 0 14px 36px rgba(40, 52, 90, 0.12);
   --shadow-raised: 0 20px 58px rgba(40, 52, 90, 0.16);
   --shadow: 0 8px 28px rgba(40, 52, 90, 0.12);
@@ -113,7 +165,7 @@ body {
 .char-main { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .char-level { font-size: 15px; color: var(--muted); white-space: nowrap; }
 .char-level b { color: var(--text); font-size: 20px; }
-.streak { color: var(--warn); font-weight: 600; white-space: nowrap; }
+.streak { color: var(--header-streak-fg); font-weight: 600; white-space: nowrap; }
 
 .xp-bar {
   position: relative; flex: 1; min-width: 180px; height: 16px;
@@ -199,6 +251,57 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
   display: grid; grid-template-columns: 1fr 150px 118px 120px auto; gap: 8px; align-items: center;
 }
 .add-row input[name="title"] { width: 100%; }
+
+.card-addquest .add-row {
+  grid-template-columns: minmax(0, 1fr) minmax(112px, 150px) minmax(144px, 160px) minmax(104px, 120px) auto;
+  gap: var(--sp-2);
+  align-items: end;
+}
+
+.card-addquest .add-field,
+.card-addquest .dur-part {
+  display: grid;
+  min-width: 0;
+  gap: var(--sp-1);
+}
+
+.card-addquest :is(.add-field-label, .dur-part-label) {
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: var(--type-meta);
+  line-height: var(--leading-ui);
+  font-weight: 700;
+}
+
+.card-addquest :is(input, select) {
+  width: 100%;
+  font-size: var(--type-control);
+  line-height: var(--leading-prose);
+}
+
+.card-addquest button {
+  font-size: var(--type-control);
+  line-height: var(--leading-ui);
+}
+
+.card-addquest .dur-input.is-labeled {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-1);
+  width: 100%;
+}
+
+.card-addquest .dur-part-control {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.card-addquest .dur-part-control input { width: 100%; }
+.card-addquest .dur-input i {
+  font-size: var(--type-meta);
+  line-height: var(--leading-ui);
+}
 
 /* Справочник сфер: «?» рядом с чипом + модалка объяснения (fb_mrki1qlzwuwu) */
 .ob-chip-wrap { display: inline-flex; align-items: stretch; gap: 3px; }
@@ -320,9 +423,8 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 @media (hover: none) { .t-core { opacity: .55; min-width: 30px; min-height: 30px; } }
 
 /* Закрытый день и закрытое ядро — герой меняет тон, а не только текст. */
-.today-hero.is-coredone .th-kicker { color: var(--good); }
-.today-hero.is-daydone { opacity: .82; }
-.today-hero.is-daydone .th-kicker { color: var(--muted); }
+.today-hero.is-coredone .th-kicker { color: var(--today-kicker-good-fg); }
+.today-hero.is-daydone .th-kicker { color: var(--today-kicker-done-fg); }
 .task .check {
   width: 24px; height: 24px; border-radius: 7px; border: 2px solid var(--line);
   background: var(--panel2); color: #fff; cursor: pointer; padding: 0; line-height: 1;
@@ -421,7 +523,7 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 
 /* ---------- Responsive ---------- */
 /* ---------- Stage 1: gold, focus timer, habits ---------- */
-.gold-pill { color: #e7c558; font-weight: 600; white-space: nowrap; }
+.gold-pill { color: var(--header-gold-fg); font-weight: 600; white-space: nowrap; }
 
 .task { grid-template-columns: 30px 1fr auto auto auto auto 30px 28px; }
 .t-time { font-size: 12px; color: var(--muted); white-space: nowrap; cursor: pointer; }
@@ -432,7 +534,7 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 }
 .focus:hover { border-color: var(--accent); }
 .focus.active { background: var(--accent); border-color: var(--accent); }
-.habit-streak { font-size: 12px; color: var(--warn); white-space: nowrap; }
+.habit-streak { font-size: var(--type-meta); line-height: var(--leading-label); color: var(--header-streak-fg); white-space: nowrap; }
 
 .timer-card { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .timer-clock { font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
@@ -2835,7 +2937,7 @@ body {
 }
 
 #app {
-  max-width: 1080px;
+  max-width: var(--layout-max);
   padding-inline: 20px;
 }
 
@@ -3071,6 +3173,9 @@ body {
   border-color: var(--line-soft);
   background: color-mix(in srgb, var(--surface-2) 76%, transparent);
   color: var(--text-soft);
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+  letter-spacing: var(--tracking-natural);
   transition: transform var(--dur-fast) var(--ease-out), border-color var(--dur-fast), background var(--dur-fast);
 }
 
@@ -3083,6 +3188,11 @@ body {
   color: var(--accent-2);
   background: color-mix(in srgb, var(--accent) 14%, var(--surface-3));
   box-shadow: inset 0 1px 0 rgba(255,255,255,.04), 0 0 18px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+:root[data-theme="light"]:not([data-system="on"]) body:has(.today-shell) .navsubtab.active {
+  color: var(--today-subtab-active-fg);
+  border-color: var(--today-subtab-active-border);
 }
 
 .card {
@@ -3195,11 +3305,187 @@ textarea:focus {
   display: inline-flex;
   gap: 5px;
   align-items: center;
-  padding: 5px 10px;
-  border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--surface-3) 75%, transparent);
-  border: 1px solid var(--line-soft);
+  padding: 0 12px 0 0;
+  border-right: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: transparent;
+  border-top: 0;
+  border-bottom: 0;
+  border-left: 0;
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
 }
+
+.daystat span:last-child {
+  padding-right: 0;
+  border-right: 0;
+}
+
+.card-quests .tasks {
+  gap: 0;
+}
+
+.card-quests .task {
+  position: relative;
+  padding: var(--sp-2) 0;
+  border: 0;
+  border-bottom: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.card-quests .task:last-child {
+  border-bottom: 0;
+}
+
+.card-quests .task.is-core {
+  box-shadow: inset 3px 0 0 -1px var(--accent);
+}
+
+.card-quests .task.is-core.done {
+  box-shadow: inset 3px 0 0 -1px var(--good);
+}
+
+.t-title-edit,
+.t-time {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.t-title-edit {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
+  padding: 0;
+  text-align: left;
+  overflow-wrap: anywhere;
+  font-family: var(--font-ui);
+  font-size: var(--type-control);
+  line-height: var(--leading-ui);
+  letter-spacing: var(--tracking-natural);
+}
+
+.t-title-copy {
+  display: -webkit-box;
+  overflow: hidden;
+  min-width: 0;
+  line-height: inherit;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+.t-time {
+  padding: 0 4px;
+  color: var(--muted);
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+  white-space: nowrap;
+}
+
+.task-more {
+  position: relative;
+  z-index: 2;
+}
+
+.task-more > summary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.task-more > summary::-webkit-details-marker {
+  display: none;
+}
+
+.task-more[open] > summary {
+  background: var(--surface-3);
+  color: var(--text-strong);
+}
+
+.task-more-disclosure {
+  display: none;
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+  letter-spacing: var(--tracking-natural);
+  white-space: nowrap;
+}
+
+.task.has-title-overflow .task-more-dots { display: none; }
+.task.has-title-overflow .task-more-disclosure { display: inline; }
+
+.task-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 30;
+  display: grid;
+  gap: 4px;
+  width: min(230px, calc(100vw - 40px));
+  padding: 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  box-shadow: var(--shadow-raised);
+}
+
+.task-menu-title {
+  margin: 0;
+  padding: var(--sp-2);
+  border-bottom: 1px solid var(--line-soft);
+  color: var(--text-strong);
+  font-size: var(--type-body);
+  font-weight: 700;
+  line-height: var(--leading-prose);
+  overflow-wrap: anywhere;
+}
+
+.task-menu button {
+  min-height: var(--touch-min);
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: var(--type-control);
+  line-height: var(--leading-ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.task-menu .task-menu-delete {
+  color: var(--bad);
+}
+
+.empty-day,
+.empty-repeat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.empty-day p,
+.empty-repeat p {
+  margin: 0;
+}
+
 .shutdown h3 { display: flex; align-items: center; margin-bottom: 4px; }
 
 .timer-card,
@@ -3224,9 +3510,68 @@ textarea:focus {
 }
 
 .today-shell {
+  display: grid;
+  grid-template-columns: minmax(0, var(--work-max)) minmax(260px, 1fr);
+  gap: var(--sp-5);
+  align-items: start;
+}
+
+.today-work,
+.today-support,
+.today-footer {
+  min-width: 0;
+}
+
+.today-work,
+.today-support,
+.today-footer {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.today-footer {
+  grid-column: 1 / -1;
+}
+
+.today-support > .comp-card {
+  padding: var(--sp-4);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--accent) 7%, var(--surface-2)), var(--surface-2));
+}
+
+.today-support > .comp-card .comp-row {
+  align-items: flex-start;
+  gap: var(--sp-3);
+}
+
+.today-support > .comp-card .comp-art {
+  flex-basis: 80px;
+  width: 80px;
+  height: 104px;
+}
+
+.today-support > .comp-card .comp-actions .btn {
+  flex: 1 1 100%;
+}
+
+.today-deeper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  width: 100%;
+  min-height: var(--touch-min);
+  padding: 8px 12px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-soft);
+  font-family: var(--font-ui);
+  font-size: var(--type-control);
+  line-height: var(--leading-ui);
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .today-hero {
@@ -3256,30 +3601,35 @@ textarea:focus {
   pointer-events: none;
 }
 
-.th-kicker {
+.today-hero .th-kicker {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: var(--accent-2);
-  font-size: 12px;
+  color: var(--today-kicker-fg);
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
   font-weight: 900;
-  letter-spacing: .13em;
+  letter-spacing: var(--tracking-caps);
   text-transform: uppercase;
 }
 
 .today-hero h2 {
   margin: 8px 0 7px;
-  max-width: 660px;
+  max-width: var(--measure-compact);
   color: var(--text-strong);
-  font-size: clamp(25px, 4vw, 42px);
-  line-height: 1.04;
+  font-size: var(--type-hero);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-natural);
+  font-synthesis: none;
+  font-kerning: normal;
 }
 
 .th-sub {
-  max-width: 660px;
+  max-width: var(--measure-compact);
   margin: 0;
   color: var(--text-soft);
-  font-size: 14px;
+  font-size: var(--type-body);
+  line-height: var(--leading-prose);
 }
 
 .th-actions {
@@ -3296,37 +3646,151 @@ textarea:focus {
 .th-stats {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(96px, 1fr));
-  gap: 10px;
-  min-width: 230px;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  min-width: 190px;
 }
 
 .th-stat {
-  padding: 12px;
-  border-radius: 16px;
-  background: rgba(255,255,255,.045);
-  border: 1px solid var(--line-soft);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+  min-width: 82px;
+  padding: 3px 12px;
+  border: 0;
+  border-right: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.th-stat:last-child {
+  padding-right: 0;
+  border-right: 0;
 }
 
 .th-stat b {
   display: block;
   color: var(--text-strong);
   font-family: var(--font-number);
-  font-size: 24px;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
+  min-inline-size: var(--number-slot-kpi);
+  font-size: var(--type-heading);
+  line-height: var(--leading-tight);
+  font-synthesis: none;
+  font-kerning: normal;
+  font-variant-numeric: normal;
 }
 
 .th-stat span {
   display: block;
   margin-top: 5px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: .08em;
+  letter-spacing: var(--tracking-caps);
+}
+
+.today-shell .btn:not(.ghost):not(.danger):not(.pro-cta),
+.today-shell .task.done .check,
+.today-hero .btn:not(.ghost) {
+  color: var(--on-accent);
+}
+
+/* Filled work/support controls share the same contrast-safe foreground as the
+   hero CTA. Keep the override Today-scoped: other screens still need their own
+   accent review before inheriting this contract. */
+.today-shell .comp-cta,
+.today-shell .card-addquest .add-row button[type="submit"],
+.today-shell .cap-add,
+.today-shell .tts-btn.on {
+  color: var(--on-accent) !important;
+}
+
+.today-shell .btn.danger,
+.today-shell #dayrec-mic.rec,
+.today-shell #ep-mic.rec {
+  color: var(--on-bad) !important;
+}
+
+.today-shell .t-cat,
+.today-shell .t-skill,
+.today-shell .t-xp,
+.today-shell .t-oath,
+.today-shell .t-backdate,
+.today-shell .t-backdate sub {
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+}
+
+:root[data-theme="light"] .today-shell .t-cat:not(.missing),
+:root[data-theme="light"] .today-shell .t-skill {
+  color: var(--text-strong);
+}
+
+.today-hero .btn {
+  font-family: var(--font-ui);
+  font-size: var(--type-control);
+  line-height: var(--leading-ui);
+}
+
+.today-shell .nudge {
+  color: var(--today-nudge-fg);
+  border-color: var(--today-nudge-border);
+}
+
+.today-shell .nudge-boost { color: var(--today-nudge-fg); }
+.today-shell .entry-nudge .nudge { color: inherit; }
+.today-shell .en-low .nudge-boost { color: var(--today-nudge-danger-fg); }
+
+/* На Today полноценная cut-paper Тень уже живёт в support rail; второй glowing
+   FAB дублировал персонажа и создавал конкурирующий фокус. На других экранах
+   плавающий вход в помощника остаётся прежним. */
+#main:has(.today-shell) ~ #ai-fab {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-quests .task:hover {
+    transform: none;
+    background: color-mix(in srgb, var(--surface-3) 42%, transparent);
+  }
+
+  .task-more > summary:hover,
+  .task-menu button:hover {
+    background: var(--surface-3);
+  }
+
+  .task-more > summary:hover {
+    color: var(--text-strong);
+  }
+
+  .today-deeper:hover {
+    background: color-mix(in srgb, var(--surface-3) 70%, transparent);
+    color: var(--text-strong);
+  }
+}
+
+.btn-nextquest {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.today-shell :where(button, input, select, textarea, summary):focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+@media (max-width: 900px) {
+  .today-shell {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .today-footer {
+    grid-column: auto;
+  }
 }
 
 :root[data-theme="light"] body {
@@ -3368,7 +3832,7 @@ textarea:focus {
   }
 
   .th-stat b {
-    font-size: 19px;
+    font-size: var(--type-heading);
   }
 }
 
@@ -3393,7 +3857,7 @@ textarea:focus {
   }
 
   .today-hero h2 {
-    font-size: 27px;
+    font-size: var(--type-hero);
   }
 
   .th-actions .btn {
@@ -7072,15 +7536,15 @@ html.mobile-nav-open body {
   .navrow .navsec-l {
     display: block;
     width: 100%;
-    overflow: hidden;
+    overflow: visible;
     color: inherit;
-    font-size: 10.5px;
+    font-size: var(--type-meta);
+    line-height: var(--leading-label);
+    letter-spacing: var(--tracking-natural);
     font-weight: 750;
-    line-height: 1.1;
-    letter-spacing: 0;
     text-align: center;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    text-overflow: clip;
+    white-space: normal;
   }
 
   .mobile-more-glyph {
@@ -7115,10 +7579,11 @@ html.mobile-nav-open body {
 
   .navsubtab {
     flex: 0 0 auto;
-    min-height: 38px;
+    min-height: var(--touch-min);
     padding: 8px 12px;
     border-radius: 11px;
-    font-size: 12px;
+    font-size: var(--type-meta);
+    line-height: var(--leading-label);
   }
 
   .card {
@@ -7129,8 +7594,6 @@ html.mobile-nav-open body {
 
   .card h2,
   .card h3,
-  .th-kicker,
-  .th-stat span,
   .calv-title h2 {
     letter-spacing: 0;
   }
@@ -7164,26 +7627,13 @@ html.mobile-nav-open body {
     gap: 0;
   }
 
-  /* ── Порядок карточек «Сегодня» на телефоне ───────────────────────────────
-     Замер на проде 27.07: до списка дел нужно было пролистать 1810px — 2.2 экрана.
-     Дела оказывались ДЕВЯТОЙ карточкой из двенадцати: выше сидели Тень, герой,
-     захват, прогресс, таймер, энергия, подсказка и форма добавления. Человек
-     открывает приложение, чтобы увидеть и закрыть свои дела, — и не видел их.
-     Меняем только порядок и только здесь: DOM не трогаем, десктоп не трогаем. */
-  .today-shell > * { order: 60; }
-  .today-shell > .install-banner { order: -4; }
-  .today-shell > .today-hero { order: -3; }
-  .today-shell > .overdue { order: -1; }       /* просрочено — это данные, не совет */
-  .today-shell > .card-quests { order: 0; }    /* ← ради чего экран и открывают */
-  .today-shell > .card-habits { order: 10; }
-  .today-shell > .card-addquest { order: 20; }
-  .today-shell > .comp-card { order: 30; }     /* Тень сразу под рабочим блоком */
-  .today-shell > .nudge-card { order: 40; }
-  .today-shell > .capture-card { order: 50; }
-  .today-shell > .energy-card { order: 70; }
-  .today-shell > .timer-card { order: 72; }
-  .today-shell > .ptrio-card { order: 74; }
-  .today-shell > .shutdown { order: 90; }      /* итог дня — в конце дня и экрана */
+  /* Источник уже идёт в том же порядке, что экран и клавиатура: work → support
+     → day close. Здесь остаётся только одноколоночная геометрия. */
+  .today-work,
+  .today-support,
+  .today-footer {
+    gap: 0;
+  }
 
   .today-hero {
     grid-template-columns: 1fr;
@@ -7201,25 +7651,22 @@ html.mobile-nav-open body {
   }
 
   .th-kicker {
-    font-size: 10.5px;
-    letter-spacing: 0;
+    font-size: var(--type-meta);
+    line-height: var(--leading-label);
+    letter-spacing: var(--tracking-caps);
   }
 
   /* Герой ужат: на телефоне он вместе с шапкой съедал ~520px до первого дела.
-     Заголовок и подпись обрезаны по высоте, не по смыслу — текст тот же. */
+     Иерархию держат scale/spacing; пользовательский next action остаётся полным. */
   .today-hero h2 {
     margin: 5px 0 4px;
-    font-size: 21px;
-    line-height: 1.12;
+    font-size: var(--type-hero);
+    line-height: var(--leading-display);
   }
 
   .th-sub {
-    font-size: 12.5px;
-    line-height: 1.4;
-    display: -webkit-box;                 /* длинные подписи не растягивают карточку */
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    font-size: var(--type-body);
+    line-height: var(--leading-prose);
   }
 
   .th-actions {
@@ -7235,25 +7682,23 @@ html.mobile-nav-open body {
   }
 
   .th-stats {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    justify-content: flex-start;
     min-width: 0;
-    gap: 6px;
   }
 
   .th-stat {
+    flex: 1 1 0;
     min-width: 0;
-    padding: 6px 4px;
-    border-radius: 10px;
-    text-align: center;
+    padding: 3px 10px;
+    text-align: left;
   }
 
-  .th-stat b { font-size: 15px; }
+  .th-stat b { font-size: var(--type-heading); }
   .th-stat span {
     margin-top: 4px;
-    overflow-wrap: anywhere;
-    font-size: 8.5px;
-    line-height: 1.1;
-    letter-spacing: 0;
+    font-size: var(--type-meta);
+    line-height: var(--leading-label);
+    letter-spacing: var(--tracking-caps);
   }
 
   .comp-card { padding: 12px 13px; }
@@ -7280,16 +7725,16 @@ html.mobile-nav-open body {
   }
 
   .daystat {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
+    display: flex;
+    gap: 10px;
   }
 
   .daystat span {
     min-width: 0;
-    justify-content: center;
-    padding: 6px 7px;
-    font-size: 11px;
+    justify-content: flex-start;
+    padding: 0 10px 0 0;
+    font-size: var(--type-meta);
+    line-height: var(--leading-label);
   }
 
   .add-row {
@@ -7305,32 +7750,45 @@ html.mobile-nav-open body {
     width: 100%;
   }
 
+  .card-addquest .add-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-2);
+  }
+
+  .card-addquest :is(.add-field-title, .add-field-duration),
+  .card-addquest .add-row button {
+    grid-column: 1 / -1;
+  }
+
+  .card-addquest .add-field-skill { grid-column: 1; }
+  .card-addquest .add-field-difficulty { grid-column: 2; }
+  .card-addquest :is(input, select) {
+    font-size: max(16px, var(--type-control));
+    line-height: var(--leading-prose);
+  }
+
   .task {
     display: grid;
-    grid-template-columns: 30px minmax(0, 1fr) auto 30px 26px;
+    grid-template-columns: var(--touch-min) minmax(0, 1fr) auto var(--touch-min) var(--touch-min);
     grid-template-rows: auto auto;
     gap: 6px 7px;
     align-items: center;
     min-width: 0;
-    padding: 9px 8px;
+    padding: var(--sp-2) 0;
   }
 
   .task .check { grid-column: 1; grid-row: 1 / 3; }
 
-  /* Тач-зоны в строке квеста. Замер 27.07: галочка 24×24, ▶ 26×30, ✕ 14×26 —
-     это половина от того, во что уверенно попадает палец. Растим ОБЛАСТЬ НАЖАТИЯ,
-     а не сам значок: сетка уже задана выше, поэтому увеличиваем через padding и
-     min-height, чтобы колонки не разъехались и вид строки не поплыл. */
-  .task .check { min-width: 30px; min-height: 30px; }
-  .task .focus, .task .del {
-    min-width: 34px; min-height: 34px;
+  /* Тач-зоны в строке квеста. В direct contour остаются completion и overflow;
+     сам glyph компактный, но каждая нажимаемая область держит hard floor 42px. */
+  .task .check,
+  .task .task-more > summary {
+    min-width: var(--touch-min); min-height: var(--touch-min);
     display: inline-flex; align-items: center; justify-content: center;
   }
-  .task .del { font-size: 15px; }
   .task .t-title,
-  .task .t-edit-form { grid-column: 2 / 4; grid-row: 1; min-width: 0; }
-  .task .focus { grid-column: 4; grid-row: 1; }
-  .task .del { grid-column: 5; grid-row: 1; }
+  .task .t-edit-form { grid-column: 2 / 5; grid-row: 1; min-width: 0; }
+  .task .task-more { grid-column: 5; grid-row: 1; }
   .task .t-cats { grid-column: 2; grid-row: 2; min-width: 0; }
   .task .t-time { grid-column: 3; grid-row: 2; }
   .task .t-diff { grid-column: 4; grid-row: 2; }
@@ -7339,22 +7797,45 @@ html.mobile-nav-open body {
   .task .t-oath-btn { grid-column: 5; grid-row: 2; }
   .task > span:not([class]):empty { display: none; }
 
-  .task .t-title {
+  .task .t-title,
+  .task .t-title-edit {
     overflow-wrap: anywhere;
-    line-height: 1.3;
+    line-height: var(--leading-ui);
+  }
+
+  .task .t-cats,
+  .task .t-time,
+  .task .t-title-edit {
+    min-height: var(--touch-min);
+  }
+
+  .task .t-time {
+    min-width: var(--touch-min);
+  }
+
+  .task-menu {
+    position: fixed;
+    top: auto;
+    right: 12px;
+    bottom: calc(86px + env(safe-area-inset-bottom));
+    left: 12px;
+    z-index: 130;
+    width: auto;
   }
 
   .task .t-cats {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 10px;
+    font-size: var(--type-meta);
+    line-height: var(--leading-label);
   }
 
   .task .t-time,
   .task .t-diff,
   .task .t-xp {
-    font-size: 10px;
+    font-size: var(--type-meta);
+    line-height: var(--leading-label);
     white-space: nowrap;
   }
 
@@ -7500,17 +7981,33 @@ html.mobile-nav-open body {
     font-size: 11px;
   }
 
-  /* Тень в углу — на мобильном кнопка была ПОЛНОСТЬЮ скрыта, и помощник
-     оставался доступен только через меню «Ещё». То есть на телефоне (главном
-     устройстве) Джарвиса нельзя было позвать в один тап. Возвращаем, поднимая
-     над нижней навигацией, и делаем компактнее — экран не забивает. */
+  /* На остальных mobile-экранах rail с Тенью нет: сохраняем компактный one-tap
+     FAB. Более специфичный Today-selector выше скрывает его только рядом с rail. */
   #ai-fab {
-    display: flex; align-items: center; justify-content: center;
-    width: 46px; height: 46px; font-size: 21px;
-    right: 14px; bottom: calc(84px + env(safe-area-inset-bottom));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    right: 14px;
+    bottom: calc(84px + env(safe-area-inset-bottom));
+    font-size: 21px;
   }
-  /* размер бейджа на телефоне — сами стили общие, они ниже вне медиа-запроса */
   #ai-fab .fab-streak { font-size: 9.5px; padding: 1px 4px; }
+
+  .user-pill .up-av,
+  .comp-rename,
+  .today-shell .nudge,
+  .today-shell .tts-btn,
+  .card-quests .t-backdate,
+  .card-quests .t-oath-btn,
+  .today-shell .install-banner .del,
+  .dayrec-btn,
+  .cap-btn,
+  .cap-add {
+    min-width: var(--touch-min);
+    min-height: var(--touch-min);
+  }
 
   #toasts,
   .focus-pill {
@@ -7523,16 +8020,40 @@ html.mobile-nav-open body {
   }
 }
 
+@media (pointer: coarse) {
+  .today-shell :is(button, input, select, textarea, summary) {
+    min-width: var(--touch-min);
+    min-height: var(--touch-min);
+  }
+}
+
 @media (max-width: 370px) {
   .gold-pill,
   .streak { padding-inline: 6px; font-size: 11px; }
   .today-hero { padding-inline: 14px; }
-  .today-hero h2 { font-size: 23px; }
+  .today-hero h2 { font-size: var(--type-hero); }
   .th-stat { padding-inline: 3px; }
-  .th-stat b { font-size: 16px; }
+  .th-stat b { font-size: var(--type-heading); }
   .navrow { left: 6px; right: 6px; gap: 2px; }
-  .navrow .navsec-l { font-size: 9.5px; }
+  .navrow .navsec-l { font-size: var(--type-meta); line-height: var(--leading-label); }
   .mobile-sheet-grid { grid-template-columns: 1fr; }
+}
+
+@media (hover: none) {
+  .card-quests .task:hover {
+    background: transparent;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .today-shell *,
+  .today-shell *::before,
+  .today-shell *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @keyframes mobile-view-enter {

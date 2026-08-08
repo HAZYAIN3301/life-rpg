@@ -50,7 +50,9 @@ assert.ok(html.indexOf('traveller-motion-v3.js') < html.indexOf('traveller-room-
 assert.ok(html.indexOf('traveller-room-v4.js') < html.indexOf('app.js'));
 
 const sw = read('public/sw.js');
-assert.match(sw, /satoru-v105/);
+const swCache = sw.match(/const CACHE = 'satoru-v(\d+)'/);
+assert.ok(swCache, 'service-worker cache version must be declared');
+assert.ok(Number(swCache[1]) >= 105, 'Traveller room v4 requires cache v105 or newer');
 assert.match(sw, /room-actions-v4\/bench-read-b\.png/);
 assert.match(sw, /prop-portal-core\.png/);
 assert.match(app, /bench-portal-reach\.png/);

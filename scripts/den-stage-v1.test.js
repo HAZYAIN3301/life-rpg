@@ -37,6 +37,8 @@ assert.match(css, /bodyToadMeetingArc/);
 assert.match(css, /bodyToadMeetingReturnArc/);
 assert.match(css, /data-toad-direction="left"/);
 assert.match(read('public/index.html'), /20260807-den-stage-v1-7/);
-assert.match(read('public/sw.js'), /satoru-v105/);
+const swCache = read('public/sw.js').match(/const CACHE = 'satoru-v(\d+)'/);
+assert.ok(swCache, 'service-worker cache version must be declared');
+assert.ok(Number(swCache[1]) >= 105, 'den stage requires cache v105 or newer');
 
 console.log('den-stage-v1.7: ok');

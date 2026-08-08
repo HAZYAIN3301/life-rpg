@@ -124,6 +124,7 @@ const I18N_EN = {
   'Удалить аккаунт и все данные': 'Delete account and all data',
   // Today
   'Новый квест на сегодня…': 'New quest for today…',
+  'Квест': 'Quest', 'Сфера': 'Area', 'Длительность': 'Duration', 'Сложность': 'Difficulty',
   '+ Квест': '+ Quest',
   '🌱 Лёгкая': '🌱 Easy', '⚔️ Обычная': '⚔️ Normal', '🔥 Сложная': '🔥 Hard',
   'Таймер фокуса — нажми ▶ у квеста': 'Focus timer — press ▶ on a quest',
@@ -282,6 +283,7 @@ const I18N_DE = {
   'Удалить аккаунт и все данные': 'Konto und alle Daten löschen',
   // Today
   'Новый квест на сегодня…': 'Neuer Quest für heute…',
+  'Квест': 'Quest', 'Сфера': 'Bereich', 'Длительность': 'Dauer', 'Сложность': 'Schwierigkeit',
   '+ Квест': '+ Quest',
   '🌱 Лёгкая': '🌱 Leicht', '⚔️ Обычная': '⚔️ Normal', '🔥 Сложная': '🔥 Schwer',
   'Таймер фокуса — нажми ▶ у квеста': 'Fokus-Timer — ▶ bei einem Quest drücken',
@@ -416,7 +418,9 @@ const I18N_UK = {
   'Самостоятельная сфера': 'Самостійна сфера', 'Лёгкая': 'Легка', 'Обычная': 'Звичайна', 'Сложная': 'Складна',
   '🔑 Вход и восстановление': '🔑 Вхід і відновлення', '⚠️ Данные и приватность': '⚠️ Дані та приватність',
   'Удалить аккаунт и все данные': 'Видалити акаунт і всі дані',
-  'Новый квест на сегодня…': 'Новий квест на сьогодні…', '+ Квест': '+ Квест',
+  'Новый квест на сегодня…': 'Новий квест на сьогодні…',
+  'Квест': 'Квест', 'Сфера': 'Сфера', 'Длительность': 'Тривалість', 'Сложность': 'Складність',
+  '+ Квест': '+ Квест',
   '🌱 Лёгкая': '🌱 Легка', '⚔️ Обычная': '⚔️ Звичайна', '🔥 Сложная': '🔥 Складна',
   'Таймер фокуса — нажми ▶ у квеста': 'Таймер фокусу — натисни ▶ біля квесту',
   '⏸ Пауза': '⏸ Пауза', '▶ Продолжить': '▶ Продовжити', '⏹ Стоп · записать': '⏹ Стоп · записати',
@@ -487,7 +491,9 @@ const I18N_ES = {
   'Самостоятельная сфера': 'Área independiente', 'Лёгкая': 'Fácil', 'Обычная': 'Normal', 'Сложная': 'Difícil',
   '🔑 Вход и восстановление': '🔑 Acceso y recuperación', '⚠️ Данные и приватность': '⚠️ Datos y privacidad',
   'Удалить аккаунт и все данные': 'Eliminar cuenta y todos los datos',
-  'Новый квест на сегодня…': 'Nueva misión para hoy…', '+ Квест': '+ Misión',
+  'Новый квест на сегодня…': 'Nueva misión para hoy…',
+  'Квест': 'Misión', 'Сфера': 'Área', 'Длительность': 'Duración', 'Сложность': 'Dificultad',
+  '+ Квест': '+ Misión',
   '🌱 Лёгкая': '🌱 Fácil', '⚔️ Обычная': '⚔️ Normal', '🔥 Сложная': '🔥 Difícil',
   'Таймер фокуса — нажми ▶ у квеста': 'Temporizador de enfoque — pulsa ▶ en una misión',
   '⏸ Пауза': '⏸ Pausa', '▶ Продолжить': '▶ Continuar', '⏹ Стоп · записать': '⏹ Parar · guardar',
@@ -1795,7 +1801,23 @@ const I18N_EXTRA = {
   'СИСТЕМА АКТИВИРОВАНА': { en: 'SYSTEM ACTIVATED', de: 'SYSTEM AKTIVIERT', uk: 'СИСТЕМУ АКТИВОВАНО', es: 'SISTEMA ACTIVADO' },
   'предел сдвинут': { en: 'the limit has moved', de: 'die Grenze hat sich verschoben', uk: 'межу зсунуто', es: 'el límite se movió' },
   'ты становишься сильнее': { en: 'you are growing stronger', de: 'du wirst stärker', uk: 'ти стаєш сильнішим', es: 'te haces más fuerte' },
-  // ── Ввод длительности «часы + минуты» ──
+  // ── Today: полное название в контекстном меню + ввод длительности ──
+  'Полное название и действия квеста': { en: 'Full quest title and actions', de: 'Vollständiger Questtitel und Aktionen', uk: 'Повна назва квесту та дії', es: 'Título completo de la misión y acciones' },
+  'Изменить сферы квеста': { en: 'Edit quest areas', de: 'Quest-Bereiche bearbeiten', uk: 'Змінити сфери квесту', es: 'Editar áreas de la misión' },
+  'Категории квеста — клик чтобы изменить (можно несколько)': { en: 'Quest areas — click to edit (multiple allowed)', de: 'Quest-Bereiche — zum Bearbeiten klicken (mehrere möglich)', uk: 'Сфери квесту — натисніть, щоб змінити (можна кілька)', es: 'Áreas de la misión — pulsa para editar (se permiten varias)' },
+  'Изменить название квеста': { en: 'Edit quest title', de: 'Questtitel bearbeiten', uk: 'Змінити назву квесту', es: 'Editar título de la misión' },
+  'Клик — изменить текст квеста': { en: 'Click to edit quest text', de: 'Zum Bearbeiten des Questtexts klicken', uk: 'Натисніть, щоб змінити текст квесту', es: 'Pulsa para editar el texto de la misión' },
+  'Открыть активный фокус': { en: 'Open active focus', de: 'Aktiven Fokus öffnen', uk: 'Відкрити активний фокус', es: 'Abrir enfoque activo' },
+  'Начать фокус': { en: 'Start focus', de: 'Fokus starten', uk: 'Почати фокус', es: 'Iniciar enfoque' },
+  'Открыть фокус': { en: 'Open focus', de: 'Fokus öffnen', uk: 'Відкрити фокус', es: 'Abrir enfoque' },
+  'Удалить квест': { en: 'Delete quest', de: 'Quest löschen', uk: 'Видалити квест', es: 'Eliminar misión' },
+  'Снять выполнение': { en: 'Mark incomplete', de: 'Als unerledigt markieren', uk: 'Позначити невиконаним', es: 'Marcar como pendiente' },
+  'Выполнить': { en: 'Complete', de: 'Erledigen', uk: 'Виконати', es: 'Completar' },
+  'Изменить фактическое время квеста': { en: 'Edit actual quest time', de: 'Tatsächliche Questzeit bearbeiten', uk: 'Змінити фактичний час квесту', es: 'Editar tiempo real de la misión' },
+  'Клик — фактическое время': { en: 'Click to edit actual time', de: 'Zum Bearbeiten der tatsächlichen Zeit klicken', uk: 'Натисніть, щоб змінити фактичний час', es: 'Pulsa para editar el tiempo real' },
+  'Снять выполнение привычки': { en: 'Mark habit incomplete', de: 'Gewohnheit als unerledigt markieren', uk: 'Позначити звичку невиконаною', es: 'Marcar hábito como pendiente' },
+  'Выполнить привычку': { en: 'Complete habit', de: 'Gewohnheit erledigen', uk: 'Виконати звичку', es: 'Completar hábito' },
+  'Состояние дня': { en: 'Day status', de: 'Tagesstatus', uk: 'Стан дня', es: 'Estado del día' },
   'Длительность: часы и минуты': { en: 'Duration: hours and minutes', de: 'Dauer: Stunden und Minuten', uk: 'Тривалість: години та хвилини', es: 'Duración: horas y minutos' },
   'Часы': { en: 'Hours', de: 'Stunden', uk: 'Години', es: 'Horas' },
   'Минуты': { en: 'Minutes', de: 'Minuten', uk: 'Хвилини', es: 'Minutos' },
@@ -3025,9 +3047,14 @@ function fmtClock(ms) { const t = Math.max(0, Math.floor(ms / 1000)); const h = 
 function fmtDur(min) { const m = Math.max(0, Math.round(Number(min) || 0)); if (m < 60) return m + 'м'; const h = Math.floor(m / 60), r = m % 60; return r ? `${h}ч ${r}м` : `${h}ч`; }
 // ── Ввод длительности «часы + минуты» (fb_mrkzpi0z3zk2: «6 часов 10 минут» не хочется считать в 370).
 // Хранение НЕ меняется — канон остаётся в минутах (estimateMin); меняется только форма ввода.
-function durInputHTML(name, minutes) {
+function durInputHTML(name, minutes, visibleLabels = false) {
   const total = Math.max(0, Math.round(Number(minutes) || 0));
   const h = Math.floor(total / 60), m = total % 60;
+  if (visibleLabels) {
+    return `<span class="dur-input is-labeled" title="${t('Длительность: часы и минуты')}">`
+      + `<label class="dur-part"><span class="dur-part-label">${t('Часы')}</span><span class="dur-part-control"><input name="${name}H" type="number" min="0" max="24" step="1" value="${h}" inputmode="numeric" aria-label="${t('Часы')}" /><i aria-hidden="true">${t('ч')}</i></span></label>`
+      + `<label class="dur-part"><span class="dur-part-label">${t('Минуты')}</span><span class="dur-part-control"><input name="${name}M" type="number" min="0" max="59" step="1" value="${m}" inputmode="numeric" aria-label="${t('Минуты')}" /><i aria-hidden="true">${t('м')}</i></span></label></span>`;
+  }
   return `<span class="dur-input" title="${t('Длительность: часы и минуты')}">`
     + `<input name="${name}H" type="number" min="0" max="24" step="1" value="${h}" inputmode="numeric" aria-label="${t('Часы')}" /><i>${t('ч')}</i>`
     + `<input name="${name}M" type="number" min="0" max="59" step="1" value="${m}" inputmode="numeric" aria-label="${t('Минуты')}" /><i>${t('м')}</i></span>`;
@@ -5202,7 +5229,7 @@ function yesterdayCloneable() {
 }
 function emptyDayHTML() {
   const src = yesterdayCloneable();
-  if (!src.length) return `<p class="muted">${t('На сегодня пусто. Запланируй первый квест выше ↑')}</p>`;
+  if (!src.length) return `<div class="empty-day"><p class="muted">${t('На сегодня пусто.')}</p></div>`;
   return `<div class="empty-repeat"><p class="muted">${t('На сегодня пусто.')}</p>
     <button class="btn ghost" data-action="repeat-yesterday">↻ ${t('Повторить вчерашний план')} (${src.length})</button></div>`;
 }
@@ -6374,6 +6401,7 @@ function catChips(t) {
 // день твой». Ядро — 2-3 дела, которые делают день состоявшимся; всё сверх него
 // уже бонус. Смысл не в норме, а в разрешении остановиться.
 const CORE_MAX = 3;
+let _questTitleDisclosureFrame = 0;
 function coreQuests(dateStr) { return (State.tasks || []).filter((t) => t.core && t.date === (dateStr || todayStr())); }
 function coreState(dateStr) {
   const list = coreQuests(dateStr);
@@ -6387,16 +6415,11 @@ function questRow(q) {
   const estMin = Number(q.estimateMin) || 0;
   const time = q.actualMin ? `${fmtDur(q.actualMin)} / ${fmtDur(estMin)}` : fmtDur(estMin);
   const active = State.timer && State.timer.taskId === q.id;
-  const skSel = `<button class="t-cats" data-action="edit-cats" data-id="${q.id}" title="Категории квеста — клик чтобы изменить (можно несколько)">${catChips(q)}</button>`;
+  const fullTitle = taskDisplayTitle(q);
+  const skSel = `<button class="t-cats" data-action="edit-cats" data-id="${q.id}" aria-label="${t('Изменить сферы квеста')}: ${esc(fullTitle)}" title="${t('Категории квеста — клик чтобы изменить (можно несколько)')}">${catChips(q)}</button>`;
   const titleCell = State._editTask === q.id
-    ? `<form class="t-edit-form" data-id="${q.id}"><input name="title" value="${esc(q.title)}" maxlength="120" autocomplete="off" /></form>`
-    // Метка ядра вложена ВНУТРЬ ячейки заголовка, а не отдельной колонкой: сетка
-    // строки жёсткая (и на мобильном все ячейки размещены поимённо), а кнопка
-    // условная — своя колонка ломала бы выравнивание у дел не на сегодня.
-    // Клик по ней не открывает правку текста: onClick берёт closest('[data-action]').
-    : `<span class="t-title" data-action="edit-task-title" data-id="${q.id}" title="Клик — изменить текст квеста">${
-        q.date === todayStr() ? `<button class="t-core${q.core ? ' on' : ''}" data-action="toggle-core" data-id="${q.id}" aria-pressed="${q.core ? 'true' : 'false'}" title="${esc(q.core ? t('Убрать из ядра дня') : t('В ядро дня — то, ради чего день считается состоявшимся'))}">◆</button>` : ''
-      }${taskContentIconHTML(q, 'task-content-icon')}${esc(taskDisplayTitle(q))}</span>`;
+    ? `<form class="t-edit-form" data-id="${q.id}"><input name="title" value="${esc(q.title)}" maxlength="160" autocomplete="off" aria-label="${t('Квест')}" /></form>`
+    : `<span class="t-title"><button class="t-title-edit" data-action="edit-task-title" data-id="${q.id}" aria-label="${t('Изменить название квеста')}: ${esc(fullTitle)}" title="${t('Клик — изменить текст квеста')}"><span class="t-title-copy" data-noi18n>${taskContentIconHTML(q, 'task-content-icon')}${esc(fullTitle)}</span></button></span>`;
   // Квест из прошлого: «✓ в свой день» — засчитать в дату плана, а не в сегодня (fb_mr4qhq6gy30w)
   // Намеренно НЕ taskOverdue(): здесь «past» — просто факт, что дата в прошлом, а не суждение
   // о долге. Амнистия снимает долг, но не право сказать «я это всё-таки сделал в тот день».
@@ -6404,22 +6427,43 @@ function questRow(q) {
   const backdate = past
     ? `<button class="t-backdate" data-action="toggle-task-backdated" data-id="${q.id}" title="${t('Сделал в тот день, забыл отметить — засчитать в')} ${dmShort(q.date)}">✓<sub>${dmShort(q.date)}</sub></button>`
     : '';
+  const coreLabel = q.core ? t('Убрать из ядра дня') : t('В ядро дня — то, ради чего день считается состоявшимся');
+  const taskMenu = `<details class="task-more"><summary aria-label="${t('Полное название и действия квеста')}: ${esc(fullTitle)}"><span class="task-more-dots" aria-hidden="true">•••</span><span class="task-more-disclosure" aria-hidden="true">${t('Ещё')}</span></summary><div class="task-menu">
+      <p class="task-menu-title" data-noi18n>${esc(fullTitle)}</p>
+      ${!q.done ? `<button data-action="focus-task" data-id="${q.id}" aria-label="${t(active ? 'Открыть активный фокус' : 'Начать фокус')}: ${esc(fullTitle)}">${satoruIconHTML(active ? 'media.pause' : 'media.play', 'task-action-icon', active ? '⏱' : '▶')} ${t(active ? 'Открыть фокус' : 'Начать фокус')}</button>` : ''}
+      ${q.date === todayStr() ? `<button data-action="toggle-core" data-id="${q.id}" aria-pressed="${q.core ? 'true' : 'false'}">◆ ${esc(coreLabel)}</button>` : ''}
+      <button class="task-menu-delete" data-action="delete-task" data-id="${q.id}">${satoruIconHTML('action.close', 'task-action-icon', '✕')} ${t('Удалить квест')}</button>
+    </div></details>`;
   return `<li class="task ${q.done ? 'done' : ''} ${q.core ? 'is-core' : ''}">
-    <button class="check" data-action="toggle-task" data-id="${q.id}">${q.done ? '✓' : ''}</button>
+    <button class="check" data-action="toggle-task" data-id="${q.id}" aria-label="${t(q.done ? 'Снять выполнение' : 'Выполнить')}: ${esc(fullTitle)}" aria-pressed="${q.done ? 'true' : 'false'}">${q.done ? '✓' : ''}</button>
     ${titleCell}
     ${skSel}
-    <span class="t-time" data-action="edit-actual" data-id="${q.id}" title="Клик — фактическое время">${time}</span>
+    <button class="t-time" data-action="edit-actual" data-id="${q.id}" aria-label="${t('Изменить фактическое время квеста')} ${esc(fullTitle)}: ${time}" title="${t('Клик — фактическое время')}">${time}</button>
     <span class="t-diff" title="${DIFF[q.difficulty] || ''}">${difficultyIconHTML(q.difficulty)}</span>
     <span class="t-xp">${q.done ? (q.entry ? '💛' : '+' + (q.xpAwarded || 0)) : ''}</span>
-    ${q.done ? '<span></span>' : `<button class="focus ${active ? 'active' : ''}" data-action="focus-task" data-id="${q.id}" title="Фокус-таймер">${satoruIconHTML(active ? 'media.pause' : 'media.play', 'task-action-icon', active ? '⏱' : '▶')}</button>`}
     ${backdate}
     ${q.oath && !q.done ? `<span class="t-oath" title="Клятва Кремню: заверши сегодня или −${q.oath.gold} 🪙">⚔️${q.oath.gold}</span>` : (!q.done && currentPath() === 'control' && q.date === todayStr() && goldBalance() >= CONTROL.oathGold ? `<button class="t-oath-btn" data-action="quest-oath" data-id="${q.id}" title="Клятва Кремню: заверши до конца дня — золото за квест ×1.5; провали — сгорит ${CONTROL.oathGold} 🪙">⚔️</button>` : '')}
-    <button class="del" data-action="delete-task" data-id="${q.id}" title="Удалить">${satoruIconHTML('action.close', 'task-action-icon', '✕')}</button></li>`;
+    ${taskMenu}</li>`;
 }
+function scheduleQuestTitleDisclosures() {
+  if (_questTitleDisclosureFrame) cancelAnimationFrame(_questTitleDisclosureFrame);
+  _questTitleDisclosureFrame = requestAnimationFrame(() => {
+    const rows = Array.from(document.querySelectorAll('.card-quests .task')).map((row) => ({ row, copy: row.querySelector('.t-title-copy') })).filter((item) => item.copy);
+    rows.forEach(({ row }) => row.classList.remove('has-title-overflow'));
+    _questTitleDisclosureFrame = requestAnimationFrame(() => {
+      rows.forEach(({ row, copy }) => {
+        if (!row.isConnected) return;
+        row.classList.toggle('has-title-overflow', copy.scrollHeight > copy.clientHeight + 1);
+      });
+      _questTitleDisclosureFrame = 0;
+    });
+  });
+}
+window.addEventListener('resize', scheduleQuestTitleDisclosures, { passive: true });
 function habitRow(h) {
   const sk = skillById(h.skillId), done = habitDone(h, todayStr()), hs = habitStreak(h);
   return `<li class="task habit ${done ? 'done' : ''}">
-    <button class="check" data-action="toggle-habit" data-id="${h.id}">${done ? '✓' : ''}</button>
+    <button class="check" data-action="toggle-habit" data-id="${h.id}" aria-label="${t(done ? 'Снять выполнение привычки' : 'Выполнить привычку')}: ${esc(h.title)}" aria-pressed="${done ? 'true' : 'false'}">${done ? '✓' : ''}</button>
     <span class="t-title">${esc(h.title)}</span>
     <span class="t-skill" style="--c:${esc(sk.color)}">${esc(sk.name)}</span>
     <span class="t-time">${fmtDur(h.estimateMin)}</span>
@@ -9956,18 +10000,17 @@ function renderToday() {
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">${t('↪ Перенести всё на сегодня')}</button></div>` : '';
 
   const nextAction = tm ? `<button class="btn" data-action="${tm.running ? 'timer-pause' : 'timer-resume'}">${satoruIconHTML(tm.running ? 'media.pause' : 'media.play', 'button-glyph', tm.running ? '⏸' : '▶')} ${tm.running ? t('⏸ Пауза').replace(/^⏸\s*/, '') : t('▶ Продолжить').replace(/^▶\s*/, '') + ' фокус'}</button>`
-    // Обрезали по 32 знакам — на телефоне из «Достать кроссовки и подготовить форму для бега»
-    // выходило «Достать кроссовки и подготовить …», и человек не понимал, что именно начинает.
-    // Кнопка и так во всю ширину и переносится по строкам: режем только совсем длинное.
-    : nextQuest ? `<button class="btn btn-nextquest" data-action="focus-task" data-id="${nextQuest.id}">${satoruIconHTML('media.play', 'button-glyph', '▶')} ${t('Начать')}: ${esc(nextQuest.title).slice(0, 64)}${nextQuest.title.length > 64 ? '…' : ''}</button>`
-    : `<button class="btn ghost" data-action="goto-calendar">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} ${t('🗓 Запланировать день').replace(/^🗓\s*/, '')}</button>`;
+    // Следующий ход обязан называть настоящий объект действия. Кнопка переносится, но не
+    // обрезает пользовательский квест до другого смысла ради высоты карточки.
+    : nextQuest ? `<button class="btn btn-nextquest" data-action="focus-task" data-id="${nextQuest.id}" aria-label="${t('Начать')}: ${esc(nextQuest.title)}">${satoruIconHTML('media.play', 'button-glyph', '▶')} ${t('Начать')}: ${esc(nextQuest.title)}</button>`
+    : `<button class="btn" data-action="focus-add-task">${satoruIconHTML('action.add', 'button-glyph', '+')} ${t('+ Квест').replace(/^\+\s*/, '')}</button>`;
   // Тон героя. Ключевое из разбора 04.08: приложение продавало ЦЕНУ («осталось
   // столько-то», «энергия 40%») вместо ТОВАРА («дальше день твой»). Порядок
   // проверок = порядок важности: закрытый день молчит, закрытое ядро отпускает,
   // и только потом обычная подсказка следующего хода.
   const cs = coreState();
   const closed = dayClosed();
-  const heroKicker = closed ? t('День закрыт') : cs.closed ? t('Ядро закрыто') : 'Daily cockpit';
+  const heroKicker = closed ? t('День закрыт') : cs.closed ? t('Ядро закрыто') : t('Сегодня');
   const heroTitle = closed ? t('На сегодня всё.')
     : cs.closed ? t('Ядро закрыто — дальше день твой.')
     : cs.total ? `${t('Ядро дня')}: ${cs.done}/${cs.total}`
@@ -9978,47 +10021,48 @@ function renderToday() {
       ? t('Главное сделано. Остальное сегодня — уже бонус, а не долг.')
       : cs.total
         ? `${t('Закрой ядро — и день засчитан')}${cs.list.find((x) => !x.done) ? `: <b>${esc(cs.list.find((x) => !x.done).title)}</b>` : ''}`
-        : nextQuest ? `Сейчас лучше не смотреть на всю систему — просто закрой следующий квест: <b>${esc(nextQuest.title)}</b>.` : todays.length ? 'Основной список уже на месте. Добей хвосты, забери награды и закрой день спокойно.' : 'Начни с одного понятного действия. Остальные системы подождут за кулисами.';
-  const todayHero = `<section class="card today-hero${closed ? ' is-daydone' : cs.closed ? ' is-coredone' : ''}">
+        : nextQuest ? 'Сейчас лучше не смотреть на всю систему — закрой следующий квест.' : todays.length ? 'Основной список уже на месте. Добей хвосты, забери награды и закрой день спокойно.' : 'Начни с одного понятного действия. Остальные системы подождут за кулисами.';
+  const heroStats = [
+    `<div class="th-stat"><b>${donePct}%</b><span>готово</span></div>`,
+    `<div class="th-stat"><b>${eP}%</b><span>энергия</span></div>`,
+    minToday > 0 ? `<div class="th-stat"><b>${fmtDur(minToday)}</b><span>фокус</span></div>` : '',
+    xpToday > 0 ? `<div class="th-stat"><b>+${xpToday}</b><span>XP</span></div>` : '',
+  ].filter(Boolean).join('');
+  const todayHero = `<section class="card today-hero${closed ? ' is-daydone' : cs.closed ? ' is-coredone' : ''}" aria-labelledby="today-title">
       <div>
         <span class="th-kicker">${heroKicker}</span>
-        <h2>${heroTitle}</h2>
+        <h2 id="today-title">${heroTitle}</h2>
         <p class="th-sub">${heroSub}</p>
-        <div class="th-actions">${nextAction}<button class="btn ghost" data-action="goto-rewards">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Награды')}</button></div>
+        <div class="th-actions">${nextAction}</div>
       </div>
-      <div class="th-stats">
-        <div class="th-stat"><b>${donePct}%</b><span>готово</span></div>
-        <div class="th-stat"><b>${eP}%</b><span>энергия</span></div>
-        <div class="th-stat"><b>${fmtDur(minToday)}</b><span>фокус</span></div>
-        <div class="th-stat"><b>+${xpToday}</b><span>XP</span></div>
-      </div>
+      <div class="th-stats" aria-label="${t('Состояние дня')}">${heroStats}</div>
     </section>`;
-  return `<div class="today-shell">${companionCard()}${installBanner()}${todayHero}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${timerCard}${energyCard}${activeNudge}${nudgeCard}
-    <div class="card card-addquest"><form id="add-task" class="add-row">
-        <input name="title" placeholder="${t('Новый квест на сегодня…')}" autocomplete="off" required />
-        <select name="skillId">${skillOpts}</select>
-        ${durInputHTML('estimateMin', 30)}
-        <select name="difficulty"><option value="easy">${t('Лёгкая')}</option><option value="normal" selected>${t('Обычная')}</option><option value="hard">${t('Сложная')}</option></select>
-        <button type="submit">${t('+ Квест')}</button></form>
+  const addQuestCard = `<div class="card card-addquest"><form id="add-task" class="add-row">
+        <label class="add-field add-field-title"><span class="add-field-label">${t('Квест')}</span><input name="title" placeholder="${t('Новый квест на сегодня…')}" maxlength="160" autocomplete="off" required /></label>
+        <label class="add-field add-field-skill"><span class="add-field-label">${t('Сфера')}</span><select name="skillId">${skillOpts}</select></label>
+        <span class="add-field add-field-duration" role="group" aria-label="${t('Длительность')}">${durInputHTML('estimateMin', 30, true)}</span>
+        <label class="add-field add-field-difficulty"><span class="add-field-label">${t('Сложность')}</span><select name="difficulty"><option value="easy">${t('Лёгкая')}</option><option value="normal" selected>${t('Обычная')}</option><option value="hard">${t('Сложная')}</option></select></label>
+        <button class="add-submit" type="submit">${t('+ Квест')}</button></form>
       <div id="cat-suggest" class="cat-suggest"></div>
       <p class="diff-hint muted"><span>${difficultyIconHTML('easy')} ${t('Лёгкая')} — рутина, механика</span><span>${difficultyIconHTML('normal')} ${t('Обычная')} — требует фокуса</span><span>${difficultyIconHTML('hard')} ${t('Сложная')} — вызов, выход из зоны комфорта → активирует Хайп <b>+15% XP</b></span></p>
-    </div>
-    ${overdueCard}
-    ${amnestyUndo}
-    <div class="card card-quests"><div class="daystat">
+    </div>`;
+  const questBoard = `<section class="card card-quests" aria-label="Квесты на сегодня"><div class="daystat">
         <span>Квестов: <b>${doneCount}/${todays.length}</b></span>
-        <span>Время: <b>${fmtDur(minToday)} / ${fmtDur(planned)}</b></span>
-        <span>Опыт: <b>+${xpToday}</b> XP</span>
-        <span>Золото: <b>+${goldToday}</b> ${satoruIconHTML('status.gold', 'daystat-emblem', '🪙')}</span></div>
-      ${todays.length ? `<ul class="tasks">${todays.map(questRow).join('')}</ul>` : emptyDayHTML()}</div>
-    ${todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : ''}
-    <div class="card card-habits"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🔁')} ${t('🔁 Привычки на сегодня').replace(/^🔁\s*/, '')}</h3>
-      ${habits.length ? `<ul class="tasks">${habits.map(habitRow).join('')}</ul>` : '<p class="muted">На сегодня привычек нет. Добавь их в «Настройках».</p>'}</div>
-    ${antiHabitsCard()}
-    <div class="card shutdown"><h3>${satoruIconHTML('scene.day-summary', 'day-summary-emblem', '☾')} ${t('Итог дня')}</h3>
+        <span>План: <b>${fmtDur(planned)}</b></span></div>
+      ${todays.length ? `<ul class="tasks">${todays.map(questRow).join('')}</ul>` : emptyDayHTML()}</section>`;
+  const scheduleCard = todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : '';
+  const habitsCard = `<div class="card card-habits"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🔁')} ${t('🔁 Привычки на сегодня').replace(/^🔁\s*/, '')}</h3>
+      ${habits.length ? `<ul class="tasks">${habits.map(habitRow).join('')}</ul>` : '<p class="muted">На сегодня привычек нет. Добавь их в «Настройках».</p>'}</div>`;
+  const shutdownCard = `<div class="card shutdown"><h3>${satoruIconHTML('scene.day-summary', 'day-summary-emblem', '☾')} ${t('Итог дня')}</h3>
       <p class="muted">Квестов ${doneCount}/${todays.length} · привычек ${habits.filter((h) => habitDone(h, today)).length}/${habits.length} · ${fmtDur(minToday)} · +${xpToday} XP · +${goldToday} ${satoruIconHTML('status.gold', 'inline-emblem', '◇')}</p>
       <textarea id="reflection" placeholder="Рефлексия: что получилось, что перенести, как себя чувствую…">${esc(day.reflection || '')}</textarea>
-      <div style="margin-top:10px"><button class="${day.closed ? 'btn ghost' : 'btn'}" data-action="${day.closed ? 'reopen-day' : 'close-day'}">${day.closed ? '✓ День закрыт — открыть заново' : 'Закрыть день'}</button></div></div></div>`;
+      <div style="margin-top:10px"><button class="${day.closed ? 'btn ghost' : 'btn'}" data-action="${day.closed ? 'reopen-day' : 'close-day'}">${day.closed ? '✓ День закрыт — открыть заново' : 'Закрыть день'}</button></div></div>`;
+  const deeperPath = `<button class="today-deeper" data-action="goto-rewards">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Награды')} <span aria-hidden="true">→</span></button>`;
+  return `<div class="today-shell">
+    <div class="today-work">${todayHero}${overdueCard}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
+    <aside class="today-support" aria-label="Поддержка дня">${companionCard()}${deeperPath}${activeNudge}${nudgeCard}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${tm ? timerCard : ''}${energyCard}${installBanner()}</aside>
+    <div class="today-footer">${antiHabitsCard()}${shutdownCard}</div>
+  </div>`;
 }
 
 // ============================================================
@@ -12342,6 +12386,7 @@ function afterMainCommit() {
   try { syncDenLife(); } catch {}
   try { scheduleDenPhaseBoundary(); } catch {}
   try { tutorialPaint(); } catch {}
+  try { scheduleQuestTitleDisclosures(); } catch {}
 }
 function commitMainView(main, staging, view) {
   main.replaceChildren(...Array.from(staging.childNodes));
@@ -12467,7 +12512,7 @@ function onSubmit(e) {
   if (f.classList && f.classList.contains('t-edit-form')) {
     e.preventDefault();
     const t = questById(f.dataset.id);
-    if (t) { const v = (f.title.value || '').trim().slice(0, 120); if (v) t.title = v; Store.save('tasks', State.tasks); }
+    if (t) { const v = (f.title.value || '').trim().slice(0, 160); if (v) t.title = v; Store.save('tasks', State.tasks); }
     State._editTask = null; render(); return;
   }
   // --- Питомец: переименование ---
@@ -12873,6 +12918,10 @@ function tutMascotHTML() {
   return `<span class="tut-mascot">${shadowVideo(ti, 'speaking', 'tutorial')}</span>`;
 }
 function onClick(e) {
+  const targetTaskMenu = e.target.closest('.task-more');
+  document.querySelectorAll('.task-more[open]').forEach((menu) => {
+    if (menu !== targetTaskMenu) menu.removeAttribute('open');
+  });
   const navBtn = e.target.closest('#nav button[data-view]');
   if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
   const secBtn = e.target.closest('[data-action="go-section"]');
@@ -12904,7 +12953,11 @@ function onClick(e) {
   if (action === 'mobile-go-settings') {
     flushSettingsForm(); State.view = 'settings'; State.adminUsers = null; State.analytics = undefined; track('view:settings'); render(); return;
   }
-
+  if (action === 'focus-add-task') {
+    const input = document.querySelector('#add-task input[name="title"]');
+    if (input) { input.scrollIntoView({ block: 'center' }); input.focus({ preventScroll: true }); }
+    return;
+  }
   // --- Гайд (туториал) ---
   if (action === 'tut-next') { tutorialNext(); return; }
   if (action === 'tut-skip') { tutorialSkip(); return; }
@@ -14468,8 +14521,8 @@ function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent) && !wind
 // Заметный гид-баннер установки (на «Сегодня»), закрываемый
 function installBanner() {
   if (isStandalone() || localStorage.getItem('gojo_install_dismiss')) return '';
-  if (_deferredInstall) return `<div class="card install-banner"><span class="ib-text">${t('📲 Установи Satoru как приложение — иконка на телефоне, офлайн, уведомления.')}</span><span class="ib-acts"><button class="btn" data-action="install-app">${t('Установить')}</button><button class="del" data-action="install-dismiss" title="${t('Скрыть')}">✕</button></span></div>`;
-  if (isIOS()) return `<div class="card install-banner"><span class="ib-text">${t('📲 Добавь Satoru на экран «Домой»: кнопка Поделиться → «На экран Домой».')}</span><button class="del" data-action="install-dismiss" title="${t('Скрыть')}">✕</button></div>`;
+  if (_deferredInstall) return `<div class="card install-banner"><span class="ib-text">${t('📲 Установи Satoru как приложение — иконка на телефоне, офлайн, уведомления.')}</span><span class="ib-acts"><button class="btn" data-action="install-app">${t('Установить')}</button><button class="del" data-action="install-dismiss" aria-label="${t('Скрыть')}" title="${t('Скрыть')}">✕</button></span></div>`;
+  if (isIOS()) return `<div class="card install-banner"><span class="ib-text">${t('📲 Добавь Satoru на экран «Домой»: кнопка Поделиться → «На экран Домой».')}</span><button class="del" data-action="install-dismiss" aria-label="${t('Скрыть')}" title="${t('Скрыть')}">✕</button></div>`;
   return '';
 }
 // ---- PWA-карточка в Настройках: установка + push-уведомления ----
@@ -14544,6 +14597,8 @@ async function init() {
     if (e.key !== 'Escape') return;
     if (document.getElementById('avatar-forge-overlay')) { closeAvatarForgeEditor(); return; }
     if (document.getElementById('mobile-nav-sheet')) { closeMobileNavSheet(); return; }
+    const taskMenus = document.querySelectorAll('.task-more[open]');
+    if (taskMenus.length) { taskMenus.forEach((menu) => menu.removeAttribute('open')); return; }
     if (State._editTask) { State._editTask = null; render(); }
   });
   document.addEventListener('dragstart', onWkDragStart);
