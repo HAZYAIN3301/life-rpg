@@ -2,6 +2,19 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-08] 🎛 Design Craft Rules — книжная база стала измеримым контрактом
+
+**Почему.** `DESIGN-BOOK-NOTES.md` закрыл обязательный §1a gate, но 252 проверки ещё нельзя было применять как одну систему: без синтеза каждый экран мог выбрать удобный совет из отдельной книги и снова скатиться в локальные «улучшения». `DESIGN-CRAFT-RULES.md` переводит аудит в общий ремесленный контракт, не меняя North Star из `DESIGN-DIRECTION.md` и cut-paper/runtime решение из `STYLE-DECISION.md`.
+
+- **47 правил в четырёх разделах:** типографика 13, отступы/плотность 13, цвет 11, движение 10. Все правила числовые либо имеют однозначный usage gate, current selector/token anchor, книжное основание и QA на 375×812 / 1280×900.
+- **Одна `:root`-система, не второй дизайн-кит.** Семейства Podkova/system UI сохранены; type roles расширяют текущие `--font-*`, spacing использует существующие `--sp-1…6`, surface/color — существующие `--surface-*`/accent/glow, motion — `--dur-fast/normal/slow` и `--ease-out`.
+- **Зафиксированы craft contracts:** meaning text floor 11px и standard meta 12px; 15px/1.5 body; prose 68ch; touch floor 42px только в touch posture; four-level surface semantics; accent/destructive text ≥4.5:1 через отдельные `--on-accent`/`--on-bad`; ordinary motion ≤240ms; known reward result/Claim/Close <500ms; reduced motion = 0ms, не замедленная анимация.
+- **Direction побеждает literal book advice.** Не удалены пять подписанных mobile destinations total, семь дней + три tools, Podkova, cool tinted neutrals, rarity, authored Lair/Tree/Event/Boss и cut-paper/paper-doll choreography. Workhorse UI строгий; integrated scenes остаются bounded exception. Anti-casino/no-grind veto не превращён в «более красивую рулетку».
+- **Поведенческие долги не замаскированы CSS.** Undo, autosave, network error vs empty, Goals→Today, privacy/fairness и reward mechanics остаются в `DESIGN-BOOK-NOTES.md` и screen-by-screen QA; в rules они появляются только там, где задают типографический, плотностный, цветовой или motion contract.
+- **Проверено:** 563 строки / 91,665 bytes; ровно 1 H1 / 4 H2 в требуемом порядке; 47 последовательных rule IDs; token values между разделами не конфликтуют; оба независимых блокера закрыты (`--on-bad` 5.16:1 dark / 4.69:1 light; text-only zoom отделён от full-page reflow); 0 trailing whitespace, final newline, `git diff --check` чист. Финальный аудит: KEEP / REVISE 0 / DROP 0. Runtime не менялся, visual change отсутствует — preview/screenshots не применимы. **SW `satoru-v108` → `satoru-v108`.**
+
+Следующий шаг — screen-by-screen проход §4 брифа: каждый непройденный экран отдельным visual commit со скриншотами 375px/1280px и обязательным SW bump при `app.js/index.html/styles.css`.
+
 ## [2026-08-08] 🧹 SW v108 — доставить интеграцию профиль-памяти в уже открытые вкладки
 
 **Почему.** Коммит `f0c7cee` изменил `public/app.js` и `public/styles.css`, но не поднял cache key. `satoru-v107` был создан предыдущим `2674bc4`, когда в shell уже добавили модуль `profile-memory-v1.js`, однако его wiring и стили ещё не существовали. Поэтому вкладка, уже установившая v107, могла продолжать отдавать старые `app.js/styles.css` после деплоя `f0c7cee` — ровно тот класс ошибки, ради которого `START-HERE.md` требует bump при каждой такой правке.
