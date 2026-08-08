@@ -1545,6 +1545,9 @@ const I18N_EXTRA = {
   'Выкл': { en: 'Off', de: 'Aus', uk: 'Вимк', es: 'No' },
   'Работа, мин': { en: 'Work, min', de: 'Arbeit, Min', uk: 'Робота, хв', es: 'Trabajo, min' },
   'Перерыв, мин': { en: 'Break, min', de: 'Pause, Min', uk: 'Перерва, хв', es: 'Descanso, min' },
+  // ── Пикер длительности блока при старте (JARVIS-3-PLAN §4) ──
+  'Сколько минут?': { en: 'How many minutes?', de: 'Wie viele Minuten?', uk: 'Скільки хвилин?', es: '¿Cuántos minutos?' },
+  'Тап — и пошёл отсчёт. Поменять можно и позже, в Настройках.': { en: 'Tap and the clock starts. You can change it later in Settings.', de: 'Tippen, und die Zeit läuft. Später in den Einstellungen änderbar.', uk: 'Тап — і пішов відлік. Змінити можна і пізніше, в Налаштуваннях.', es: 'Toca y empieza el conteo. Puedes cambiarlo luego en Ajustes.' },
   'Колокол': { en: 'Bell', de: 'Glocke', uk: 'Дзвін', es: 'Campana' },
   'Уведомления': { en: 'Notifications', de: 'Benachrichtigungen', uk: 'Сповіщення', es: 'Notificaciones' },
   'Плавающее окно поверх всех приложений работает в Chrome / Edge / Brave (Document Picture-in-Picture). В Safari — встроенная плашка внизу слева. Колокол звенит на перерыв и при превышении расчётного времени.': { en: 'A floating window over all apps works in Chrome / Edge / Brave (Document Picture-in-Picture). In Safari — a built-in bar at the bottom left. The bell rings for the break and when estimated time is exceeded.', de: 'Ein schwebendes Fenster über allen Apps funktioniert in Chrome / Edge / Brave (Document Picture-in-Picture). In Safari — eine eingebaute Leiste unten links. Die Glocke läutet zur Pause und bei Überschreitung der geschätzten Zeit.', uk: 'Плаваюче вікно поверх усіх застосунків працює в Chrome / Edge / Brave (Document Picture-in-Picture). У Safari — вбудована плашка внизу зліва. Дзвін дзвенить на перерву та при перевищенні розрахункового часу.', es: 'Una ventana flotante sobre todas las apps funciona en Chrome / Edge / Brave (Document Picture-in-Picture). En Safari — una barra integrada abajo a la izquierda. La campana suena para el descanso y al superar el tiempo estimado.' },
@@ -5926,6 +5929,23 @@ function updatePip(fi) {
 }
 function closeFocusWidget() { if (pipWindow && !pipWindow.closed) { try { pipWindow.close(); } catch {} } pipWindow = null; }
 
+// ── Длительность блока — выбор в момент старта, не в Настройках (JARVIS-3-PLAN §4) ──
+// Раньше workMin жил только в Настройках и был один на все задачи — «мёртвая» настройка,
+// которую никто не искал и не менял под конкретное дело. Три пресета прямо здесь: тап —
+// и таймер уже идёт. Выбор персистится в тот же State.settings.focus.workMin, так что он
+// же становится «последним использованным по умолчанию» без отдельного поля для этого.
+const FOCUS_DURATION_PRESETS = [15, 25, 45];
+function openFocusDurationPicker(taskId) {
+  document.getElementById('focus-dur-modal')?.remove();
+  const cur = focusCfg().workMin;
+  const chips = FOCUS_DURATION_PRESETS.map((m) => `<button class="ob-chip ${m === cur ? 'sel' : ''}" data-action="focus-pick-duration" data-task="${esc(taskId)}" data-min="${m}" style="--c:var(--accent)">${m} ${t('мин')}</button>`).join('');
+  const ov = document.createElement('div'); ov.id = 'focus-dur-modal'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="focus-duration-close">✕</button>
+    <h2>🎯 ${t('Сколько минут?')}</h2>
+    <div class="ob-group-chips" style="margin:10px 0">${chips}</div>
+    <p class="muted" style="font-size:12.5px;margin:0">${t('Тап — и пошёл отсчёт. Поменять можно и позже, в Настройках.')}</p></div>`;
+  document.body.appendChild(ov);
+}
 function startFocus(taskId) {
   if (State.timer) { if (State.timer.taskId === taskId) { if (!State.timer.running) resumeFocus(); return; } stopFocus(true, true); }
   State.timer = { taskId, startedAt: Date.now(), accumulatedMs: 0, running: true, phase: 'work', phaseStartElapsed: 0, overrunNotified: false, bankedMin: 0 };
@@ -13204,7 +13224,16 @@ function onClick(e) {
     }
     if (!habitWasDone && window.ShadowRig) window.ShadowRig.setTransient('happy', 900);
     Store.save('habitlog', State.habitlog); checkAchievements(); render(); if (!habitWasDone) triggerAvatarReaction('happy', 'Привычка ✓'); publishLeaderboard();
-  } else if (action === 'focus-task') { const q = questById(id); if (q && !q.done) { track('focus:start'); startFocus(id); }
+  } else if (action === 'focus-task') { const q = questById(id); if (q && !q.done) { track('focus:start');
+      if (focusCfg().pomodoro) openFocusDurationPicker(id); else startFocus(id); }
+  } else if (action === 'focus-pick-duration') {
+    const min = Math.max(1, Math.round(Number(el.dataset.min) || 25));
+    State.settings.focus = Object.assign({}, focusCfg(), { workMin: min });
+    Store.save('settings', State.settings);
+    document.getElementById('focus-dur-modal')?.remove();
+    startFocus(el.dataset.task);
+  } else if (action === 'focus-duration-close') {
+    document.getElementById('focus-dur-modal')?.remove();
   } else if (action === 'timer-pause') { pauseFocus();
   } else if (action === 'timer-resume') { resumeFocus();
   } else if (action === 'timer-stop') { stopFocus(true);
