@@ -18,6 +18,12 @@ test('Traveller Core archive stays auditable while active V4 is male-only', () =
   assert.deepEqual(manifest.poses, ['idle', 'arms-up', 'seated', 'window-back']);
   assert.match(appSource, /const AVATAR_CORE_GENDERS = \['male'\];/);
   assert.match(appSource, /const AVATAR_CORE_POSES = \['idle', 'arms-up', 'window-back'\];/);
+  assert.match(appSource, /const AVATAR_CORE_RENDER_POSES = \[\.\.\.AVATAR_CORE_POSES, 'seated'\];/);
+  assert.match(appSource, /if \(state === 'tired'\) return 'seated';/);
+  assert.match(appSource, /class="den-tired-seat"[\s\S]*bench-rest\.png/);
+  assert.match(appSource, /options\.automatic && \(energyPct\(\) <= 30/);
+  assert.match(appSource, /function denLifeCanAct\(shell\)[\s\S]*energyPct\(\) <= 30/);
+  assert.match(appSource, /function pauseDenSceneForViewport\(shell\)/);
   assert.doesNotMatch(appSource, /female:\s*\{ label: 'Женский'/);
   assert.equal(manifest.animation, 'authored-full-pose-runtime-css-js');
   assert.equal(manifest.runtime.activeGender, 'male');
@@ -28,9 +34,9 @@ test('Traveller Core archive stays auditable while active V4 is male-only', () =
   assert.equal(manifest.klingRequired, false);
 });
 
-test('the three active male standalone poses exist on the shared 640x900 stage', () => {
-  const active = manifest.assets.filter((asset) => asset.gender === 'male' && ['idle', 'arms-up', 'window-back'].includes(asset.pose));
-  assert.equal(active.length, 3);
+test('the three selectable poses and seated energy pose share the 640x900 stage', () => {
+  const active = manifest.assets.filter((asset) => asset.gender === 'male' && ['idle', 'arms-up', 'seated', 'window-back'].includes(asset.pose));
+  assert.equal(active.length, 4);
   for (const asset of active) {
     const file = path.join(runtimeRoot, asset.file);
     assert.equal(fs.existsSync(file), true, `${asset.id} is missing`);

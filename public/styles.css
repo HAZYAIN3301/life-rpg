@@ -1315,7 +1315,6 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
   filter: drop-shadow(0 10px 9px rgba(4,6,12,.4));
   transform: none !important;
 }
-.den-body-toad:hover { filter: brightness(1.035) drop-shadow(0 12px 11px rgba(4,6,12,.44)); }
 .body-pair-v2 {
   position: absolute;
   left: 24%;
@@ -3750,7 +3749,8 @@ textarea:focus {
 /* На Today полноценная cut-paper Тень уже живёт в support rail; второй glowing
    FAB дублировал персонажа и создавал конкурирующий фокус. На других экранах
    плавающий вход в помощника остаётся прежним. */
-#main:has(.today-shell) ~ #ai-fab {
+#main:has(.today-shell) ~ #ai-fab,
+#main:has(.den-shell) ~ #ai-fab {
   display: none;
 }
 
@@ -8297,7 +8297,6 @@ html.mobile-nav-open body {
   cursor: pointer;
   animation: denCompanionFloat 4.4s ease-in-out infinite;
 }
-.den-companion:hover { filter: brightness(1.08); }
 .den-companion .comp-video,
 .den-companion img,
 .den-companion video {
@@ -8339,7 +8338,6 @@ html.mobile-nav-open body {
   cursor: pointer;
   filter: drop-shadow(0 8px 9px rgba(4,6,12,.32));
 }
-.den-pet:hover { transform: translateY(-3px); }
 .den-pet-0 { left: 27%; bottom: 3%; width: 70px; }
 .den-pet-1 { right: 25%; bottom: 2%; width: 68px; }
 .den-pet-2 { right: 10%; bottom: 4%; width: 62px; }
@@ -8387,7 +8385,6 @@ html.mobile-nav-open body {
   cursor: pointer;
   backdrop-filter: blur(10px);
 }
-.den-scene-tools button:hover,
 .den-scene-tools button.is-active { background: color-mix(in srgb, var(--accent) 72%, rgba(8,10,20,.7)); border-color: rgba(255,255,255,.3); }
 .den-tool-glyph { width: 16px; height: 16px; }
 .den-life-strip {
@@ -8511,7 +8508,6 @@ html.mobile-nav-open body {
   font-size: 10px;
   cursor: pointer;
 }
-.den-clear:hover { color: var(--accent); }
 .den-theme-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; }
 .den-theme-choice {
   display: grid;
@@ -8528,7 +8524,6 @@ html.mobile-nav-open body {
   text-align: left;
   cursor: pointer;
 }
-.den-theme-choice:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 58%, var(--line)); }
 .den-theme-choice.is-selected { border-color: var(--accent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent); }
 .den-theme-choice.is-locked { opacity: .76; }
 .den-theme-preview {
@@ -8574,7 +8569,6 @@ html.mobile-nav-open body {
   text-align: left;
   cursor: pointer;
 }
-.den-item-choice:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 58%, var(--line)); }
 .den-item-choice.is-selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--panel)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent); }
 .den-item-choice.is-locked .den-item-art { filter: saturate(.55) brightness(.75); }
 .den-item-art {
@@ -8601,7 +8595,6 @@ html.mobile-nav-open body {
   font-weight: 800;
   cursor: pointer;
 }
-.den-pill:hover,
 .den-pill.is-selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--panel)); color: var(--text); }
 .den-editor-note { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
 
@@ -9510,7 +9503,6 @@ html.mobile-nav-open body {
 .den-avatar-core { margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; color: inherit; cursor: pointer; appearance: none; translate: 0 0; transition: translate 2.8s linear; }
 .den-avatar-core .avatar-core-stack { width: 100%; height: 100%; aspect-ratio: auto; }
 .den-avatar-core .avatar-core-frame { filter: drop-shadow(0 14px 15px rgba(0,0,0,.37)); }
-.den-avatar-core:hover .avatar-core-frame { filter: drop-shadow(0 14px 18px rgba(0,0,0,.4)) brightness(1.035); }
 .den-avatar-core:focus-visible { outline: none; }
 .den-avatar-core:focus-visible .avatar-core-frame { filter: drop-shadow(0 14px 19px rgba(83,214,255,.38)) brightness(1.035); }
 .den-avatar-core[data-pose="window-back"] { left: 38.2813% !important; width: 27.5% !important; }
@@ -10135,4 +10127,414 @@ html.mobile-nav-open body {
   .den-shell.is-recovery-pair-approaching .den-recovery-slug,
   .den-shell.is-recovery-pair-at-meeting .den-recovery-slug,
   .den-shell.is-recovery-pair-returning .den-recovery-slug { translate: 0 0 !important; scale: 1 !important; }
+}
+
+/* ============================================================
+   Lair craft pass — controls and actor reservations.
+   The locked 16:9 room remains authored art geometry; these rules reserve
+   interactive/actor footprints around it without retile or crop.
+   ============================================================ */
+
+/* The protagonist is the static focal anchor while the in-room Shadow owns
+   the one continuous idle group. Walk and authored interaction frames remain
+   available because they use separate transient classes/layers. */
+.den-shell .den-avatar-core .avatar-core-motion,
+.den-shell .den-avatar-core .avatar-core-blink-layer {
+  animation: none;
+}
+
+/* Window/bench actions occupy the east lane. Recovery moves into the vacated
+   home lane, and Shadow clears the authored actor instead of floating over it. */
+.den-shell.is-room-action-v4-active .den-recovery-slug,
+.den-shell:has(.den-avatar-core[data-locomotion-position="window"]) .den-recovery-slug,
+.den-shell:has(.den-avatar-core[data-locomotion-position="bench"]) .den-recovery-slug {
+  translate: -132% 0;
+}
+.den-shell.is-room-action-v4-active .den-companion,
+.den-shell:has(.den-avatar-core[data-locomotion-position="window"]) .den-companion,
+.den-shell:has(.den-avatar-core[data-locomotion-position="bench"]) .den-companion {
+  left: 52% !important;
+  top: 22% !important;
+}
+
+/* During an authored actor beat, pause the default Shadow idle so the room
+   still has a single moving focal group. */
+.den-shell:is(
+  .is-room-action-v4-active,
+  .is-body-pair-approaching, .is-body-pair-at-meeting, .is-body-pair-returning, .is-body-pair-active,
+  .is-resources-pair-approaching, .is-resources-pair-at-meeting, .is-resources-pair-returning, .is-resources-pair-active,
+  .is-recovery-pair-approaching, .is-recovery-pair-at-meeting, .is-recovery-pair-returning, .is-recovery-pair-active
+) .den-companion,
+.den-shell:is(
+  .is-room-action-v4-active,
+  .is-body-pair-approaching, .is-body-pair-at-meeting, .is-body-pair-returning, .is-body-pair-active,
+  .is-resources-pair-approaching, .is-resources-pair-at-meeting, .is-resources-pair-returning, .is-resources-pair-active,
+  .is-recovery-pair-approaching, .is-recovery-pair-at-meeting, .is-recovery-pair-returning, .is-recovery-pair-active
+) .den-companion * {
+  animation-play-state: paused !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .den-body-toad:hover { filter: brightness(1.035) drop-shadow(0 12px 11px rgba(4,6,12,.44)); }
+  .den-companion:hover { filter: brightness(1.08); }
+  .den-pet:hover { transform: translateY(-2px); }
+  .den-scene-tools button:hover { background: color-mix(in srgb, var(--accent) 72%, rgba(8,10,20,.7)); border-color: rgba(255,255,255,.3); }
+  .den-clear:hover { color: var(--accent); }
+  .den-theme-choice:hover,
+  .den-item-choice:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 58%, var(--line)); }
+  .den-pill:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--panel)); color: var(--text); }
+  .den-avatar-core:hover .avatar-core-frame { filter: drop-shadow(0 14px 18px rgba(0,0,0,.4)) brightness(1.035); }
+}
+
+@media (pointer: coarse), (max-width: 600px) {
+  .den-scene-tools button,
+  .den-companion,
+  .den-focus .btn,
+  .den-editor-title .btn,
+  .den-editor .den-pill,
+  .den-editor .den-clear {
+    min-inline-size: var(--touch-min);
+    min-block-size: var(--touch-min);
+  }
+}
+
+/* Lair craft shell: one authored room, one compact console and disclosures
+   for the controls that are not part of the room's primary emotional beat. */
+.den-console {
+  min-width: 0;
+  background: color-mix(in srgb, var(--surface-2) 92%, transparent);
+}
+.den-tag {
+  align-items: flex-start;
+  border-radius: var(--radius-md);
+}
+.den-tag-copy {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+.den-route-title {
+  margin: 0;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: var(--type-title);
+  font-weight: 800;
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-natural);
+  font-synthesis: none;
+  font-kerning: normal;
+}
+.den-tag .den-route-title { color: #fff; }
+.den-tag-copy small,
+.den-companion-name,
+.den-scene-tools button,
+.den-stats span {
+  font-family: var(--font-ui);
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+  letter-spacing: var(--tracking-natural);
+}
+.den-tag-copy small { color: rgba(255,255,255,.78); }
+.den-mood {
+  font-size: var(--type-body);
+  line-height: var(--leading-prose);
+}
+.den-mood strong {
+  font-size: var(--type-heading);
+  line-height: var(--leading-ui);
+}
+.den-focus,
+.den-actions .btn,
+.den-drawer > summary,
+.den-residents > summary,
+.den-guardian-actions .btn {
+  font-family: var(--font-ui);
+  font-size: var(--type-control);
+  line-height: var(--leading-ui);
+}
+.den-focus .btn,
+.den-scene-tools button {
+  font-family: var(--font-ui);
+  font-size: var(--type-control);
+  line-height: var(--leading-ui);
+}
+.den-shell .btn:not(.ghost):not(.danger):not(.pro-cta) { color: var(--on-accent); }
+.den-drawer,
+.den-residents {
+  margin: 0 var(--sp-3) var(--sp-3);
+  overflow: visible;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+.den-drawer > summary,
+.den-residents > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  min-block-size: var(--touch-min);
+  padding: var(--sp-2) var(--sp-3);
+  color: var(--text-strong);
+  cursor: pointer;
+  list-style: none;
+}
+.den-drawer > summary::-webkit-details-marker,
+.den-residents > summary::-webkit-details-marker { display: none; }
+.den-disclosure-copy {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+.den-drawer > summary small,
+.den-residents > summary small {
+  color: var(--text-soft);
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+}
+.den-disclosure-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  width: 100%;
+  margin: 0;
+  color: inherit;
+  font-family: var(--font-ui);
+  font-size: var(--type-heading);
+  line-height: var(--leading-label);
+}
+.den-drawer-chevron,
+.den-residents-chevron {
+  flex: 0 0 auto;
+  transition: rotate var(--dur-fast) var(--ease-out);
+}
+.den-drawer[open] > summary .den-drawer-chevron,
+.den-residents[open] > summary .den-residents-chevron { rotate: 180deg; }
+.den-drawer[open] > summary,
+.den-residents[open] > summary { border-bottom: 1px solid var(--line-soft); }
+.den-drawer .den-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+}
+.den-residents-body {
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+}
+.den-residents .den-guardian-actions {
+  align-items: stretch;
+  margin: 0;
+  padding: var(--sp-3);
+  border-color: var(--line-soft);
+  background: var(--surface-3);
+}
+.den-residents .den-guardian-actions > span b {
+  color: var(--text-strong);
+  font-size: var(--type-heading);
+  line-height: var(--leading-ui);
+}
+.den-residents .den-guardian-actions small {
+  color: var(--text-soft);
+  font-size: var(--type-body);
+  line-height: var(--leading-prose);
+}
+.den-residents .den-guardian-actions > div { justify-content: flex-start; }
+
+/* The editor is itself disclosed. Once open, every visible control follows
+   the same semantic type roles instead of the former 9–11px micro-scale. */
+.den-editor-title > div > span,
+.den-editor-group h4,
+.den-theme-choice small,
+.den-choice-state,
+.den-editor-note {
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+}
+.den-editor-title > div > span { color: var(--text-soft); }
+.den-editor-title > div > span,
+.den-editor-group h4 { letter-spacing: var(--tracking-caps); }
+.den-editor-title h3 {
+  font-family: var(--font-display);
+  font-size: var(--type-heading);
+  line-height: var(--leading-display);
+}
+.den-clear,
+.den-theme-choice strong,
+.den-item-copy strong,
+.den-pill,
+.den-editor .btn {
+  font-family: var(--font-ui);
+  font-size: var(--type-control);
+  line-height: var(--leading-ui);
+}
+.den-editor-note {
+  font-size: var(--type-body);
+  line-height: var(--leading-prose);
+}
+.den-theme-choice strong,
+.den-theme-choice small,
+.den-item-copy strong {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.den-drawer > summary:focus-visible,
+.den-residents > summary:focus-visible,
+.den-console button:focus-visible,
+.den-editor button:focus-visible,
+.den-scene-tools button:focus-visible {
+  outline: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--focus-ring);
+}
+
+@media (max-width: 460px) {
+  .den-tag .den-tag-copy {
+    max-inline-size: 160px;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Static tired state uses the existing approved bench plate without starting
+   or persisting a 26-second room action. */
+.den-tired-seat {
+  position: absolute;
+  left: 65%;
+  bottom: 10.9%;
+  z-index: 9;
+  display: block;
+  width: 21.75%;
+  pointer-events: none;
+  transform-origin: 50% 95.5%;
+  animation: none;
+}
+.den-tired-seat img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%; }
+.den-shell.is-energy-tired .den-avatar-core {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.den-shell.is-room-action-v4-active .den-tired-seat { opacity: 0; visibility: hidden; }
+.den-shell.is-energy-tired.is-energy-motion-active .den-avatar-core {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+.den-shell.is-energy-tired.is-energy-motion-active .den-tired-seat {
+  opacity: 0;
+  visibility: hidden;
+}
+.den-shell.is-energy-tired:is(
+  .is-body-pair-approaching, .is-body-pair-returning,
+  .is-recovery-pair-approaching, .is-recovery-pair-returning,
+  .is-resources-pair-approaching, .is-resources-pair-returning
+):not(:is(.is-body-pair-active, .is-recovery-pair-active, .is-resources-pair-active)) .den-avatar-core {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+.den-shell.is-energy-tired:is(
+  .is-body-pair-approaching, .is-body-pair-at-meeting, .is-body-pair-returning, .is-body-pair-settling, .is-body-pair-active,
+  .is-recovery-pair-approaching, .is-recovery-pair-at-meeting, .is-recovery-pair-returning, .is-recovery-pair-settling, .is-recovery-pair-active,
+  .is-resources-pair-approaching, .is-resources-pair-at-meeting, .is-resources-pair-returning, .is-resources-pair-settling, .is-resources-pair-active
+) .den-tired-seat {
+  opacity: 0;
+  visibility: hidden;
+}
+.den-shell.is-den-offscreen .den-scene *,
+.den-shell.is-den-offscreen .den-scene *::before,
+.den-shell.is-den-offscreen .den-scene *::after {
+  animation-play-state: paused !important;
+}
+
+/* Ambient recovery travel changes depth instead of crossing the Traveller's
+   home lane. Authored contact/pair choreography remains a separate state. */
+@keyframes recoverySlugTourAway {
+  from { translate: 0 0; scale: 1; }
+  to { translate: 0 -18%; scale: .96; }
+}
+@keyframes recoverySlugTourHome {
+  from { translate: 0 -18%; scale: .96; }
+  to { translate: 0 0; scale: 1; }
+}
+
+@media (min-width: 1180px) {
+  .den-card {
+    display: grid;
+    grid-template-columns: minmax(0, var(--work-max)) minmax(0, 1fr);
+    align-items: start;
+  }
+  .den-scene {
+    grid-column: 1;
+    grid-row: 1;
+    border-right: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
+    border-bottom: 0;
+  }
+  .den-console {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: stretch;
+    min-height: 100%;
+  }
+  .den-editor { grid-column: 1 / -1; }
+  .den-console .den-life-strip {
+    align-items: stretch;
+    flex-direction: column;
+    gap: var(--sp-2);
+    padding: var(--sp-3);
+  }
+  .den-console .den-mood span { white-space: normal; }
+  .den-console .den-stats { width: 100%; }
+  .den-console .den-stats span { flex: 1; justify-content: center; padding-inline: var(--sp-1); }
+  .den-console .den-focus { margin: 0 var(--sp-3) var(--sp-2); }
+  .den-console .den-drawer,
+  .den-console .den-residents { margin-bottom: var(--sp-2); }
+}
+
+@media (pointer: coarse), (max-width: 600px) {
+  .den-drawer > summary,
+  .den-residents > summary,
+  .den-actions .btn,
+  .den-guardian-actions .btn,
+  .den-theme-choice,
+  .den-item-choice,
+  .den-pill,
+  .den-clear {
+    min-inline-size: var(--touch-min);
+    min-block-size: var(--touch-min);
+  }
+  .den-scene[data-den-renderer="v5"] .den-pet.den-resources-penguin[data-den-slot],
+  .den-scene[data-den-renderer="v5"] .den-pet[data-den-slot]:not(.den-body-toad):not(.den-resources-penguin):not(.den-recovery-slug) {
+    min-inline-size: var(--touch-min);
+    min-block-size: var(--touch-min);
+    left: calc(var(--den-stage-center) - 21px) !important;
+  }
+  .den-tag-copy { max-width: 112px; }
+  .den-actions .btn { padding-inline: var(--sp-1); }
+}
+
+/* Bench/window and passive tired postures share one reserved stage map. */
+.den-shell:is(.is-room-action-v4-active, .is-energy-tired) .den-scene[data-den-renderer="v5"] .den-pet[data-den-slot] {
+  left: var(--den-stage-seated-left) !important;
+  bottom: var(--den-stage-seated-bottom) !important;
+  width: var(--den-stage-seated-width) !important;
+  z-index: var(--den-stage-seated-z) !important;
+  translate: 0 0;
+  scale: 1;
+}
+.den-shell.is-energy-tired .den-companion {
+  left: 52% !important;
+  top: 22% !important;
+}
+@media (pointer: coarse), (max-width: 600px) {
+  .den-shell:is(.is-room-action-v4-active, .is-energy-tired) .den-scene[data-den-renderer="v5"] .den-pet.den-resources-penguin[data-den-slot],
+  .den-shell:is(.is-room-action-v4-active, .is-energy-tired) .den-scene[data-den-renderer="v5"] .den-pet[data-den-slot]:not(.den-body-toad):not(.den-resources-penguin):not(.den-recovery-slug) {
+    left: calc(var(--den-stage-seated-center) - 21px) !important;
+  }
 }

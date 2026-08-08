@@ -2149,6 +2149,164 @@ const I18N_EXTRA = {
   'вех': { en: 'milestones', de: 'Meilensteine', uk: 'віх', es: 'hitos' },
   'первая уже ждёт внизу тропы': { en: 'the first one is waiting at the bottom of the trail', de: 'der erste wartet schon am Anfang des Pfads', uk: 'перша вже чекає внизу стежки', es: 'el primero ya espera al inicio del sendero' },
   'Ничего не выбрано': { en: 'Nothing selected', de: 'Nichts ausgewählt', uk: 'Нічого не вибрано', es: 'Nada seleccionado' },
+  // ── Логово: shell, действия и доступные подписи ──
+  'Установлено': { en: 'Placed', de: 'Platziert', uk: 'Розміщено', es: 'Colocado' },
+  'Доступно': { en: 'Available', de: 'Verfügbar', uk: 'Доступно', es: 'Disponible' },
+  'ур.': { en: 'Lv. ', de: 'St. ', uk: 'рів. ', es: 'niv. ' },
+  'Редактор комнаты': { en: 'Room editor', de: 'Raumeditor', uk: 'Редактор кімнати', es: 'Editor de habitación' },
+  'Собери место, куда хочется возвращаться': { en: 'Build a place you will want to return to', de: 'Richte einen Ort ein, an den du gern zurückkehrst', uk: 'Створи місце, куди хочеться повертатися', es: 'Crea un lugar al que quieras volver' },
+  'Сбросить комнату': { en: 'Reset room', de: 'Zimmer zurücksetzen', uk: 'Скинути кімнату', es: 'Restablecer habitación' },
+  'Атмосфера': { en: 'Atmosphere', de: 'Atmosphäre', uk: 'Атмосфера', es: 'Ambiente' },
+  'Свет': { en: 'Light', de: 'Licht', uk: 'Світло', es: 'Luz' },
+  'Обитатели': { en: 'Residents', de: 'Bewohner', uk: 'Мешканці', es: 'Habitantes' },
+  'без питомца': { en: 'No pets', de: 'Keine Haustiere', uk: 'Без улюбленців', es: 'Sin mascotas' },
+  '1 питомец': { en: '1 pet', de: '1 Haustier', uk: '1 улюбленець', es: '1 mascota' },
+  '2 питомца': { en: '2 pets', de: '2 Haustiere', uk: '2 улюбленці', es: '2 mascotas' },
+  '3 питомца': { en: '3 pets', de: '3 Haustiere', uk: '3 улюбленці', es: '3 mascotas' },
+  'Стартовый набор остаётся бесплатным. Прогрессионные предметы покупаются за игровое золото после нужного уровня. Pro открывает дополнительные темы и коллекционные отсылки, но не усиливает характеристики.': { en: 'The starter set stays free. Progression items are bought with in-game gold after reaching the required level. Pro unlocks extra themes and collectible references, but does not increase stats.', de: 'Das Starterset bleibt kostenlos. Fortschrittsgegenstände werden nach Erreichen der nötigen Stufe mit Spielgold gekauft. Pro schaltet zusätzliche Themen und sammelbare Anspielungen frei, erhöht aber keine Werte.', uk: 'Стартовий набір залишається безкоштовним. Прогресійні предмети купуються за ігрове золото після потрібного рівня. Pro відкриває додаткові теми й колекційні відсилання, але не посилює характеристики.', es: 'El set inicial sigue siendo gratuito. Los objetos de progresión se compran con oro del juego tras alcanzar el nivel requerido. Pro desbloquea temas adicionales y referencias coleccionables, pero no mejora las características.' },
+  'Темы и мебель Логова': { en: 'Lair themes and furniture', de: 'Themen und Möbel fürs Lager', uk: 'Теми й меблі Лігва', es: 'Temas y muebles de la Guarida' },
+  'Откроется на уровне': { en: 'Unlocks at level', de: 'Wird freigeschaltet auf Stufe', uk: 'Відкриється на рівні', es: 'Se desbloquea en el nivel' },
+  'Недостаточно золота': { en: 'Not enough gold', de: 'Nicht genug Gold', uk: 'Недостатньо золота', es: 'No hay suficiente oro' },
+  'Предмет для Логова получен: {item}': { en: 'Lair item acquired: {item}', de: 'Gegenstand fürs Lager erhalten: {item}', uk: 'Предмет для Лігва отримано: {item}', es: 'Objeto para la Guarida obtenido: {item}' },
+  'Логово вернулось к стартовой обстановке': { en: 'The Lair is back to its starter setup', de: 'Das Lager ist wieder in der Startausstattung', uk: 'Лігво повернулося до стартового облаштування', es: 'La Guarida volvió a la configuración inicial' },
+  'Распорядитель проверяет порядок': { en: 'The resource keeper checks that everything is in order', de: 'Der Ressourcenhüter prüft die Ordnung', uk: 'Розпорядник перевіряє порядок', es: 'El encargado de recursos comprueba que todo esté en orden' },
+  'Кацую замедляет дыхание рядом с тобой': { en: 'Katsuyu slows her breathing beside you', de: 'Katsuyu verlangsamt neben dir ihren Atem', uk: 'Кацую сповільнює дихання поруч із тобою', es: 'Katsuyu ralentiza la respiración a tu lado' },
+  'Поприветствовать': { en: 'Say hello', de: 'Begrüßen', uk: 'Привітатися', es: 'Saludar' },
+  'Размяться вместе': { en: 'Warm up together', de: 'Zusammen aufwärmen', uk: 'Розімʼятися разом', es: 'Calentar juntos' },
+  'Команда сэнсэя': { en: "Sensei's cue", de: 'Kommando des Sensei', uk: 'Команда сенсея', es: 'Orden del sensei' },
+  'Погладить и передохнуть': { en: 'Pet and take a breather', de: 'Streicheln und durchatmen', uk: 'Погладити й перепочити', es: 'Acariciar y descansar' },
+  'Работать над ресурсами': { en: 'Work on resources', de: 'An Ressourcen arbeiten', uk: 'Працювати над ресурсами', es: 'Trabajar en recursos' },
+  'Поздороваться': { en: 'Say hello', de: 'Begrüßen', uk: 'Привітатися', es: 'Saludar' },
+  'Подышать вместе': { en: 'Breathe together', de: 'Zusammen atmen', uk: 'Подихати разом', es: 'Respirar juntos' },
+  'Восстановиться рядом': { en: 'Recover together', de: 'Gemeinsam erholen', uk: 'Відновитися поруч', es: 'Recuperarse juntos' },
+  'Фокус идёт': { en: 'Focus is running', de: 'Fokus läuft', uk: 'Фокус триває', es: 'Enfoque en curso' },
+  'К таймеру': { en: 'Go to timer', de: 'Zum Timer', uk: 'До таймера', es: 'Ir al temporizador' },
+  'Готов к делу?': { en: 'Ready to begin?', de: 'Bereit loszulegen?', uk: 'Готовий до справи?', es: '¿Listo para empezar?' },
+  'Погладить {name}': { en: 'Pet {name}', de: '{name} streicheln', uk: 'Погладити {name}', es: 'Acariciar a {name}' },
+  'Нажми, чтобы сменить действие': { en: 'Press to change action', de: 'Drücken, um die Aktion zu wechseln', uk: 'Натисни, щоб змінити дію', es: 'Pulsa para cambiar de acción' },
+  'Эмбиент': { en: 'Ambient', de: 'Ambiente', uk: 'Ембієнт', es: 'Ambiente' },
+  'Закрыть редактор комнаты': { en: 'Close room editor', de: 'Raumeditor schließen', uk: 'Закрити редактор кімнати', es: 'Cerrar editor de habitación' },
+  'Обставить комнату': { en: 'Furnish room', de: 'Zimmer einrichten', uk: 'Обставити кімнату', es: 'Amueblar habitación' },
+  'Обставить': { en: 'Furnish', de: 'Einrichten', uk: 'Обставити', es: 'Amueblar' },
+  'Дела сегодня': { en: 'Things today', de: 'Heutige Aufgaben', uk: 'Справи сьогодні', es: 'Tareas de hoy' },
+  'Серия': { en: 'Streak', de: 'Serie', uk: 'Серія', es: 'Racha' },
+  'Пройтись к окну': { en: 'Walk to the window', de: 'Zum Fenster gehen', uk: 'Пройтися до вікна', es: 'Caminar hasta la ventana' },
+  'Сесть у окна': { en: 'Sit by the window', de: 'Ans Fenster setzen', uk: 'Сісти біля вікна', es: 'Sentarse junto a la ventana' },
+  'Почитать': { en: 'Read', de: 'Lesen', uk: 'Почитати', es: 'Leer' },
+  'Гардероб': { en: 'Wardrobe', de: 'Garderobe', uk: 'Гардероб', es: 'Armario' },
+  'Зверинец': { en: 'Menagerie', de: 'Tiergehege', uk: 'Звіринець', es: 'Bestiario' },
+  'Действия комнаты': { en: 'Room actions', de: 'Zimmeraktionen', uk: 'Дії кімнати', es: 'Acciones de la habitación' },
+  'Прогулка, отдых и коллекции': { en: 'Walks, rest, and collections', de: 'Spaziergang, Ruhe und Sammlungen', uk: 'Прогулянка, відпочинок і колекції', es: 'Paseo, descanso y colecciones' },
+  'Спросить Тень': { en: 'Ask Shadow', de: 'Schatten fragen', uk: 'Запитати Тінь', es: 'Preguntar a Sombra' },
+  'Хранители': { en: 'Guardians', de: 'Hüter', uk: 'Хранителі', es: 'Guardianes' },
+  'Совместные действия': { en: 'Shared actions', de: 'Gemeinsame Aktionen', uk: 'Спільні дії', es: 'Acciones conjuntas' },
+  'Взаимодействие с хранителем тела': { en: 'Body guardian interactions', de: 'Interaktionen mit dem Körperhüter', uk: 'Взаємодія з хранителем тіла', es: 'Interacciones con el guardián del cuerpo' },
+  'Взаимодействие с хранителем ресурсов': { en: 'Resource guardian interactions', de: 'Interaktionen mit dem Ressourcenhüter', uk: 'Взаємодія з хранителем ресурсів', es: 'Interacciones con el guardián de recursos' },
+  'Взаимодействие с хранительницей восстановления': { en: 'Recovery guardian interactions', de: 'Interaktionen mit der Hüterin der Erholung', uk: 'Взаємодія з хранителькою відновлення', es: 'Interacciones con la guardiana de la recuperación' },
+  'Жабий сэнсэй': { en: 'Toad Sensei', de: 'Kröten-Sensei', uk: 'Жаб’ячий сенсей', es: 'Sensei sapo' },
+  'Распорядитель ресурсов': { en: 'Resource Steward', de: 'Ressourcenverwalter', uk: 'Розпорядник ресурсів', es: 'Gestor de recursos' },
+  'Кацую': { en: 'Katsuyu', de: 'Katsuyu', uk: 'Кацую', es: 'Katsuyu' },
+  'Нажми, чтобы поприветствовать': { en: 'Press to say hello', de: 'Drücken, um zu grüßen', uk: 'Натисни, щоб привітатися', es: 'Pulsa para saludar' },
+  'Нажми, чтобы поздороваться': { en: 'Press to say hello', de: 'Drücken, um Hallo zu sagen', uk: 'Натисни, щоб привітатися', es: 'Pulsa para saludar' },
+  'ведёт разминку': { en: 'leads the warm-up', de: 'leitet das Aufwärmen', uk: 'проводить розминку', es: 'dirige el calentamiento' },
+  'ведёт учёт': { en: 'keeps the books', de: 'führt Buch', uk: 'веде облік', es: 'lleva las cuentas' },
+  'BODY-фокус активен: сэнсэй подключится сам и не будет отвлекать от работы.': { en: 'BODY focus is active: Sensei will join automatically and will not distract you from the work.', de: 'BODY-Fokus aktiv: Der Sensei macht automatisch mit und lenkt dich nicht von der Arbeit ab.', uk: 'BODY-фокус активний: сенсей долучиться сам і не відволікатиме від роботи.', es: 'Foco BODY activo: el sensei se unirá automáticamente y no te distraerá del trabajo.' },
+  'MONEY / RESOURCES-фокус активен: бюджет, резерв и спокойная сверка будут продолжаться весь сеанс.': { en: 'MONEY / RESOURCES focus is active: the budget, reserve, and calm review will continue throughout the session.', de: 'MONEY-/RESOURCES-Fokus aktiv: Budget, Rücklage und ruhiger Abgleich laufen die ganze Sitzung weiter.', uk: 'MONEY / RESOURCES-фокус активний: бюджет, резерв і спокійна звірка триватимуть увесь сеанс.', es: 'Foco MONEY / RESOURCES activo: el presupuesto, la reserva y la revisión tranquila continuarán toda la sesión.' },
+  'хранительница восстановления': { en: 'recovery guardian', de: 'Hüterin der Erholung', uk: 'хранителька відновлення', es: 'guardiana de la recuperación' },
+  'Действия идут медленно и не перебивают фокус.': { en: 'Actions move slowly and do not interrupt your focus.', de: 'Die Aktionen laufen langsam und unterbrechen den Fokus nicht.', uk: 'Дії відбуваються повільно й не перебивають фокус.', es: 'Las acciones avanzan despacio y no interrumpen el enfoque.' },
+  'Приветствие': { en: 'Greeting', de: 'Begrüßung', uk: 'Привітання', es: 'Saludo' },
+  'Разминка вместе': { en: 'Warm up together', de: 'Gemeinsam aufwärmen', uk: 'Розминка разом', es: 'Calentar juntos' },
+  'Отжимания': { en: 'Push-ups', de: 'Liegestütze', uk: 'Віджимання', es: 'Flexiones' },
+  'Растяжка': { en: 'Stretching', de: 'Dehnen', uk: 'Розтяжка', es: 'Estiramiento' },
+  'Свисток': { en: 'Whistle', de: 'Pfiff', uk: 'Свисток', es: 'Silbato' },
+  'Передышка': { en: 'Break', de: 'Verschnaufpause', uk: 'Перепочинок', es: 'Descanso' },
+  'Сверить бюджет': { en: 'Review budget', de: 'Budget abgleichen', uk: 'Звірити бюджет', es: 'Revisar presupuesto' },
+  'Разложить монеты': { en: 'Sort coins', de: 'Münzen sortieren', uk: 'Розкласти монети', es: 'Ordenar monedas' },
+  'Отложить резерв': { en: 'Set aside reserve', de: 'Rücklage bilden', uk: 'Відкласти резерв', es: 'Apartar reserva' },
+  'Поработать вместе': { en: 'Work together', de: 'Zusammen arbeiten', uk: 'Попрацювати разом', es: 'Trabajar juntos' },
+  'Закрыть план': { en: 'Close plan', de: 'Plan abschließen', uk: 'Закрити план', es: 'Cerrar plan' },
+  'Дыхание': { en: 'Breathing', de: 'Atmen', uk: 'Дихання', es: 'Respiración' },
+  'Восстановление': { en: 'Recovery', de: 'Erholung', uk: 'Відновлення', es: 'Recuperación' },
+  'Мягкая растяжка': { en: 'Gentle stretch', de: 'Sanftes Dehnen', uk: 'М’яка розтяжка', es: 'Estiramiento suave' },
+  // ── Логово: authored data и состояния модулей ──
+  'Тишина': { en: 'Silence', de: 'Stille', uk: 'Тиша', es: 'Silencio' },
+  'Дождь': { en: 'Rain', de: 'Regen', uk: 'Дощ', es: 'Lluvia' },
+  'Камин': { en: 'Fireplace', de: 'Kamin', uk: 'Камін', es: 'Chimenea' },
+  'Мягкий шум': { en: 'Soft noise', de: 'Sanftes Rauschen', uk: 'М’який шум', es: 'Ruido suave' },
+  'Птицы': { en: 'Birds', de: 'Vögel', uk: 'Птахи', es: 'Pájaros' },
+  'Мужской': { en: 'Male', de: 'Männlich', uk: 'Чоловічий', es: 'Masculino' },
+  'Стоит': { en: 'Standing', de: 'Steht', uk: 'Стоїть', es: 'De pie' },
+  'Руки вверх': { en: 'Arms up', de: 'Arme hoch', uk: 'Руки вгору', es: 'Brazos arriba' },
+  'Присел': { en: 'Seated', de: 'Sitzt', uk: 'Присів', es: 'Sentado' },
+  'У окна': { en: 'By the window', de: 'Am Fenster', uk: 'Біля вікна', es: 'Junto a la ventana' },
+  'Тихая мастерская': { en: 'Quiet Workshop', de: 'Stille Werkstatt', uk: 'Тиха майстерня', es: 'Taller tranquilo' },
+  'тёплый старт': { en: 'warm beginning', de: 'warmer Anfang', uk: 'теплий початок', es: 'comienzo cálido' },
+  'Лунная башня': { en: 'Moon Tower', de: 'Mondturm', uk: 'Місячна вежа', es: 'Torre lunar' },
+  'ночная обсерватория': { en: 'night observatory', de: 'Nachtobservatorium', uk: 'нічна обсерваторія', es: 'observatorio nocturno' },
+  'Кубический очаг': { en: 'Cubic Hearth', de: 'Kubischer Herd', uk: 'Кубічне вогнище', es: 'Hogar cúbico' },
+  'бумажный voxel-home': { en: 'paper voxel home', de: 'Papier-Voxel-Zuhause', uk: 'паперовий voxel-дім', es: 'hogar voxel de papel' },
+  'Дом духов': { en: 'Spirit House', de: 'Haus der Geister', uk: 'Дім духів', es: 'Casa de espíritus' },
+  'тихий аниме-санктуарий': { en: 'quiet anime sanctuary', de: 'stilles Anime-Sanktuarium', uk: 'тихий аніме-санктуарій', es: 'santuario anime tranquilo' },
+  'Стена': { en: 'Wall', de: 'Wand', uk: 'Стіна', es: 'Pared' },
+  'Чистая стена': { en: 'Clear wall', de: 'Freie Wand', uk: 'Чиста стіна', es: 'Pared despejada' },
+  'Место отдыха': { en: 'Resting place', de: 'Ruheplatz', uk: 'Місце відпочинку', es: 'Rincón de descanso' },
+  'Без кресла': { en: 'No chair', de: 'Ohne Sessel', uk: 'Без крісла', es: 'Sin sillón' },
+  'Стол': { en: 'Table', de: 'Tisch', uk: 'Стіл', es: 'Mesa' },
+  'Без стола': { en: 'No table', de: 'Ohne Tisch', uk: 'Без столу', es: 'Sin mesa' },
+  'Уют': { en: 'Comfort', de: 'Gemütlichkeit', uk: 'Затишок', es: 'Confort' },
+  'Без уголка': { en: 'No cozy corner', de: 'Ohne Kuschelecke', uk: 'Без куточка', es: 'Sin rincón acogedor' },
+  'Только свет из окна': { en: 'Window light only', de: 'Nur Fensterlicht', uk: 'Лише світло з вікна', es: 'Solo luz de la ventana' },
+  'Реликвия': { en: 'Relic', de: 'Relikt', uk: 'Реліквія', es: 'Reliquia' },
+  'Без реликвии': { en: 'No relic', de: 'Ohne Relikt', uk: 'Без реліквії', es: 'Sin reliquia' },
+  'Ковёр': { en: 'Rug', de: 'Teppich', uk: 'Килим', es: 'Alfombra' },
+  'Чистый пол': { en: 'Clear floor', de: 'Freier Boden', uk: 'Чиста підлога', es: 'Suelo despejado' },
+  'Карта странника': { en: 'Traveller’s Map', de: 'Karte des Wanderers', uk: 'Карта мандрівника', es: 'Mapa del viajero' },
+  'Лунный рыбак': { en: 'Moon Fisher', de: 'Mondfischer', uk: 'Місячний рибалка', es: 'Pescador lunar' },
+  'Шестиглазая печать': { en: 'Six-Eyed Seal', de: 'Siegel der sechs Augen', uk: 'Шестиока печать', es: 'Sello de seis ojos' },
+  'Подушка привала': { en: 'Rest Cushion', de: 'Rastkissen', uk: 'Подушка привалу', es: 'Cojín de descanso' },
+  'Лесное кресло': { en: 'Forest Armchair', de: 'Waldsessel', uk: 'Лісове крісло', es: 'Sillón del bosque' },
+  'Облачное кресло': { en: 'Cloud Armchair', de: 'Wolkensessel', uk: 'Хмарне крісло', es: 'Sillón nube' },
+  'Складной стол': { en: 'Folding Table', de: 'Klapptisch', uk: 'Складаний стіл', es: 'Mesa plegable' },
+  'Алхимический стол': { en: 'Alchemy Table', de: 'Alchemietisch', uk: 'Алхімічний стіл', es: 'Mesa de alquimia' },
+  'Рамэн-стол': { en: 'Ramen Table', de: 'Ramen-Tisch', uk: 'Рамен-стіл', es: 'Mesa de ramen' },
+  'Бонсай пути': { en: 'Path Bonsai', de: 'Pfad-Bonsai', uk: 'Бонсай шляху', es: 'Bonsái del camino' },
+  'Башня манэки': { en: 'Maneki Tower', de: 'Maneki-Turm', uk: 'Вежа манекі', es: 'Torre maneki' },
+  'Фонарь странника': { en: 'Traveller’s Lantern', de: 'Laterne des Wanderers', uk: 'Ліхтар мандрівника', es: 'Farol del viajero' },
+  'Лампа шести огней': { en: 'Six-Flame Lamp', de: 'Lampe der sechs Lichter', uk: 'Лампа шести вогнів', es: 'Lámpara de seis luces' },
+  'Духи-копотушки': { en: 'Soot Spirits', de: 'Rußgeister', uk: 'Духи-коптушки', es: 'Espíritus de hollín' },
+  'Стойка клинков': { en: 'Blade Rack', de: 'Klingenständer', uk: 'Стійка клинків', es: 'Expositor de espadas' },
+  'Плащ надежды': { en: 'Cloak of Hope', de: 'Mantel der Hoffnung', uk: 'Плащ надії', es: 'Capa de la esperanza' },
+  'Костёр племени': { en: 'Tribal Campfire', de: 'Stammesfeuer', uk: 'Вогнище племені', es: 'Hoguera tribal' },
+  'Ковёр путника': { en: 'Wayfarer’s Rug', de: 'Wanderteppich', uk: 'Килим мандрівника', es: 'Alfombra del caminante' },
+  'Ковёр равновесия': { en: 'Balance Rug', de: 'Teppich des Gleichgewichts', uk: 'Килим рівноваги', es: 'Alfombra del equilibrio' },
+  'Кубическая поляна': { en: 'Cubic Glade', de: 'Kubische Lichtung', uk: 'Кубічна галявина', es: 'Claro cúbico' },
+  'Авто': { en: 'Auto', de: 'Auto', uk: 'Авто', es: 'Auto' },
+  'Утро': { en: 'Morning', de: 'Morgen', uk: 'Ранок', es: 'Mañana' },
+  'Закат': { en: 'Sunset', de: 'Sonnenuntergang', uk: 'Захід сонця', es: 'Atardecer' },
+  'Ночь': { en: 'Night', de: 'Nacht', uk: 'Ніч', es: 'Noche' },
+  'Жабий сэнсэй — хранитель тела, {state}': { en: 'Toad Sensei — body guardian, {state}', de: 'Kröten-Sensei — Körperhüter, {state}', uk: 'Жаб’ячий сенсей — хранитель тіла, {state}', es: 'Sensei sapo — guardián del cuerpo, {state}' },
+  'Распорядитель денег и ресурсов, {state}': { en: 'Steward of money and resources, {state}', de: 'Verwalter von Geld und Ressourcen, {state}', uk: 'Розпорядник грошей і ресурсів, {state}', es: 'Gestor de dinero y recursos, {state}' },
+  'Кацую — хранительница восстановления, {state}': { en: 'Katsuyu — recovery guardian, {state}', de: 'Katsuyu — Hüterin der Erholung, {state}', uk: 'Кацую — хранителька відновлення, {state}', es: 'Katsuyu — guardiana de la recuperación, {state}' },
+  'Держит стойку и следит за ритмом.': { en: 'Keeps his stance and follows the rhythm.', de: 'Hält die Haltung und achtet auf den Rhythmus.', uk: 'Тримає стійку й стежить за ритмом.', es: 'Mantiene la postura y sigue el ritmo.' },
+  'Грудь колесом: тело отвечает на заботу.': { en: 'Chest out: the body responds to care.', de: 'Brust raus: Der Körper antwortet auf Fürsorge.', uk: 'Груди колесом: тіло відповідає на турботу.', es: 'Pecho erguido: el cuerpo responde al cuidado.' },
+  'Хмурится: нагрузку пора уравновесить.': { en: 'Frowning: it is time to balance the load.', de: 'Er schaut finster: Zeit, die Belastung auszugleichen.', uk: 'Хмуриться: навантаження час урівноважити.', es: 'Frunce el ceño: toca equilibrar la carga.' },
+  'Сбавил темп и возвращает силу.': { en: 'He has slowed down and is regaining strength.', de: 'Hat das Tempo gedrosselt und gewinnt Kraft zurück.', uk: 'Збавив темп і повертає силу.', es: 'Ha bajado el ritmo y recupera fuerzas.' },
+  'Собран': { en: 'Composed', de: 'Konzentriert', uk: 'Зібраний', es: 'Centrado' },
+  'Держит цифры в порядке и не путает деньги с делом.': { en: 'Keeps the numbers in order and does not confuse money with the work.', de: 'Hält die Zahlen in Ordnung und verwechselt Geld nicht mit der Sache.', uk: 'Тримає цифри в порядку й не плутає гроші зі справою.', es: 'Mantiene las cifras en orden y no confunde el dinero con el trabajo.' },
+  'Уверен': { en: 'Confident', de: 'Sicher', uk: 'Упевнений', es: 'Seguro' },
+  'Резерв растёт, а план остаётся честным.': { en: 'The reserve is growing, and the plan stays honest.', de: 'Die Rücklage wächst, und der Plan bleibt ehrlich.', uk: 'Резерв зростає, а план лишається чесним.', es: 'La reserva crece y el plan sigue siendo honesto.' },
+  'Насторожен': { en: 'Wary', de: 'Wachsam', uk: 'Насторожений', es: 'Alerta' },
+  'Бюджету нужна ясность, а не ещё одна тревожная мысль.': { en: 'The budget needs clarity, not another anxious thought.', de: 'Das Budget braucht Klarheit, keinen weiteren sorgenvollen Gedanken.', uk: 'Бюджету потрібна ясність, а не ще одна тривожна думка.', es: 'El presupuesto necesita claridad, no otro pensamiento ansioso.' },
+  'Пересобирает': { en: 'Reorganizing', de: 'Ordnet neu', uk: 'Перебудовує', es: 'Reorganizando' },
+  'Спокойно возвращает запас и порядок.': { en: 'Calmly restoring reserves and order.', de: 'Stellt in Ruhe Rücklage und Ordnung wieder her.', uk: 'Спокійно повертає запас і порядок.', es: 'Recupera con calma la reserva y el orden.' },
+  'Спокойна': { en: 'Calm', de: 'Ruhig', uk: 'Спокійна', es: 'Tranquila' },
+  'Дышит медленно и хранит запас тишины.': { en: 'Breathes slowly and keeps a reserve of quiet.', de: 'Atmet langsam und bewahrt einen Vorrat an Stille.', uk: 'Дихає повільно й береже запас тиші.', es: 'Respira despacio y guarda una reserva de calma.' },
+  'Наполнена': { en: 'Replenished', de: 'Aufgeladen', uk: 'Наповнена', es: 'Renovada' },
+  'Отдых действительно возвращает тебе силы.': { en: 'Rest is truly giving your strength back.', de: 'Erholung gibt dir wirklich Kraft zurück.', uk: 'Відпочинок справді повертає тобі сили.', es: 'El descanso de verdad te devuelve las fuerzas.' },
+  'Тревожится': { en: 'Worried', de: 'Besorgt', uk: 'Тривожиться', es: 'Preocupada' },
+  'Слишком долго не было настоящей паузы.': { en: 'It has been too long since a real pause.', de: 'Es gab zu lange keine echte Pause.', uk: 'Надто довго не було справжньої паузи.', es: 'Ha pasado demasiado tiempo sin una pausa de verdad.' },
+  'Лечит': { en: 'Healing', de: 'Heilt', uk: 'Лікує', es: 'Sanando' },
+  'Не торопит: силы уже возвращаются.': { en: 'No rush: your strength is already returning.', de: 'Kein Drängen: Die Kraft kehrt bereits zurück.', uk: 'Не квапить: сили вже повертаються.', es: 'Sin prisa: las fuerzas ya están volviendo.' },
   // ── Сундуки: перенос неоткрытого (fb — «неоткрытые вчера сундуки пропали») ──
   'С прошлых дней сохранено': { en: 'Saved from previous days', de: 'Von früheren Tagen aufbewahrt', uk: 'Збережено з попередніх днів', es: 'Guardado de días anteriores' },
 };
@@ -3688,9 +3846,11 @@ const AVATAR_CORE_GENDER_META = {
   male: { label: 'Мужской', description: 'Traveller' },
 };
 const AVATAR_CORE_POSES = ['idle', 'arms-up', 'window-back'];
+const AVATAR_CORE_RENDER_POSES = [...AVATAR_CORE_POSES, 'seated'];
 const AVATAR_CORE_POSE_META = {
   idle: { label: 'Стоит', description: 'Спокойная базовая поза' },
   'arms-up': { label: 'Руки вверх', description: 'Разминка и победа' },
+  seated: { label: 'Присел', description: 'Бережная поза для низкой энергии' },
   'window-back': { label: 'У окна', description: 'Вид со спины' },
 };
 const AVATAR_SLOT_DEFS = [
@@ -4056,7 +4216,7 @@ function avatarFigureHTML(options = {}) {
   return avatarArtHTML(Object.assign({}, options, { className: 'avatar-art-stack--figure' }));
 }
 function normalizedAvatarCorePose(value) {
-  return AVATAR_CORE_POSES.includes(value) ? value : 'idle';
+  return AVATAR_CORE_RENDER_POSES.includes(value) ? value : 'idle';
 }
 function normalizedAvatarCoreGender(value) {
   return AVATAR_CORE_GENDERS.includes(value) ? value : 'male';
@@ -4074,7 +4234,7 @@ function avatarCorePoseHTML(pose = 'idle', options = {}) {
   const safeGender = normalizedAvatarCoreGender(options.gender || avatarCoreGender());
   const classes = ['avatar-core-stack', options.className || ''].filter(Boolean).join(' ');
   const blink = window.TravellerMotionV3 ? window.TravellerMotionV3.blinkMarkup() : '';
-  return `<span class="${classes}" data-avatar-core-pose="${safePose}" data-avatar-core-gender="${safeGender}" role="img" aria-label="${esc(AVATAR_CORE_GENDER_META[safeGender].label)} Traveller: ${esc(AVATAR_CORE_POSE_META[safePose].label)}"><span class="avatar-core-motion"><img class="avatar-core-frame is-active" src="${avatarCorePoseSrc(safePose, safeGender)}" alt="" aria-hidden="true" draggable="false" decoding="async"></span>${blink}</span>`;
+  return `<span class="${classes}" data-avatar-core-pose="${safePose}" data-avatar-core-gender="${safeGender}" role="img" aria-label="${esc(t(AVATAR_CORE_GENDER_META[safeGender].label))} Traveller: ${esc(t(AVATAR_CORE_POSE_META[safePose].label))}"><span class="avatar-core-motion"><img class="avatar-core-frame is-active" src="${avatarCorePoseSrc(safePose, safeGender)}" alt="" aria-hidden="true" draggable="false" decoding="async"></span>${blink}</span>`;
 }
 function swapAvatarCoreStack(stack, pose, gender = avatarCoreGender()) {
   if (!stack) return Promise.resolve(false);
@@ -4102,7 +4262,7 @@ function swapAvatarCoreStack(stack, pose, gender = avatarCoreGender()) {
     motion.appendChild(image);
     stack.dataset.avatarCorePose = safePose;
     stack.dataset.avatarCoreGender = safeGender;
-    stack.setAttribute('aria-label', `${AVATAR_CORE_GENDER_META[safeGender].label} Traveller: ${AVATAR_CORE_POSE_META[safePose].label}`);
+    stack.setAttribute('aria-label', `${t(AVATAR_CORE_GENDER_META[safeGender].label)} Traveller: ${t(AVATAR_CORE_POSE_META[safePose].label)}`);
     requestAnimationFrame(() => {
       if (!stack.isConnected || stack.dataset.swapToken !== token) return;
       previousFrames.forEach((frame) => frame.classList.remove('is-active'));
@@ -4119,7 +4279,7 @@ function swapAvatarCoreStack(stack, pose, gender = avatarCoreGender()) {
 }
 function setAvatarCoreGender(gender) {
   const safeGender = normalizedAvatarCoreGender(gender);
-  return Promise.all(AVATAR_CORE_POSES.map((pose) => preloadAvatarImage(avatarCorePoseSrc(pose, safeGender)))).then(() => {
+  return Promise.all(AVATAR_CORE_RENDER_POSES.map((pose) => preloadAvatarImage(avatarCorePoseSrc(pose, safeGender)))).then(() => {
     if (!State.settings) return safeGender;
     State.settings.avatarCoreGender = safeGender;
     Store.save('settings', State.settings);
@@ -4237,10 +4397,13 @@ function playDenRoomLayerAndReturn(shell, host, actionId, walkOptions, waitForFi
 function runDenRoomAction(actionId, options = {}) {
   const shell = document.querySelector('.den-shell');
   if (State.view !== 'den' || !shell || !window.TravellerRoomV4) return Promise.resolve(false);
+  if (options.automatic && (energyPct() <= 30 || shell.classList.contains('is-den-offscreen'))) return Promise.resolve(false);
   if (!options.automatic && window.DenLifeV1) window.DenLifeV1.postpone(shell, 11000);
   clearDenAvatarWanderTimer();
   const host = shell.querySelector('.den-avatar-core');
   if (!host || !window.TravellerMotionV3) return Promise.resolve(false);
+  const restoresTiredState = shell.classList.contains('is-energy-tired') && !options.automatic;
+  if (restoresTiredState) shell.classList.add('is-energy-motion-active');
   if (window.TravellerMotionV3.isPlaying(host)) window.TravellerMotionV3.cancel(host);
   State._denAvatarPose = 'idle';
   const walkOptions = { preload: preloadAvatarImage };
@@ -4262,39 +4425,45 @@ function runDenRoomAction(actionId, options = {}) {
       // creates a double torso / four-arm ghost, which reads as teleportation.
       await playDenPropPortal(shell, 4600);
       return playDenRoomLayerAndReturn(shell, host, 'bench-read', walkOptions, options.waitForFinish === true);
+    }).finally(() => {
+      if (restoresTiredState && shell.isConnected) shell.classList.remove('is-energy-motion-active');
     });
 }
 function scheduleDenAvatarWander(delay = 16000) {
   clearDenAvatarWanderTimer();
-  if (State.view !== 'den' || avatarMotionReduced()) return;
-  _denAvatarWanderTimer = setTimeout(() => runDenAvatarWindowVisit({ reschedule: true }), delay);
+  if (State.view !== 'den' || avatarMotionReduced() || energyPct() <= 30) return;
+  _denAvatarWanderTimer = setTimeout(() => runDenAvatarWindowVisit({ automatic: true, reschedule: true }), delay);
 }
 function runDenAvatarWindowVisit(options = {}) {
   clearDenAvatarWanderTimer();
   const host = document.querySelector('.den-avatar-core');
+  const shell = host && host.closest('.den-shell');
   const pair = document.querySelector('.body-pair-v2.is-active');
   const roomAction = window.TravellerRoomV4 && window.TravellerRoomV4.isPlaying(document.querySelector('.den-shell'));
-  if (State.view !== 'den' || !host || pair || roomAction || !window.TravellerMotionV3 || avatarMotionReduced()) {
+  if (State.view !== 'den' || !host || pair || roomAction || !window.TravellerMotionV3 || avatarMotionReduced() || (options.automatic && (energyPct() <= 30 || (shell && shell.classList.contains('is-den-offscreen'))))) {
     if (options.reschedule !== false) scheduleDenAvatarWander(6500);
     return Promise.resolve(false);
   }
   if (window.TravellerMotionV3.isPlaying(host)) return Promise.resolve(false);
-  const shell = host.closest('.den-shell');
   if (!options.automatic && window.DenLifeV1 && shell) window.DenLifeV1.postpone(shell, 12000);
+  const restoresTiredState = Boolean(shell && shell.classList.contains('is-energy-tired') && !options.automatic);
+  if (restoresTiredState) shell.classList.add('is-energy-motion-active');
   State._denAvatarPose = 'idle';
   return window.TravellerMotionV3.playWindowVisit(host, {
     preload: preloadAvatarImage,
     swapPose: (pose) => syncDenCorePose(pose),
   }).finally(() => {
+    if (restoresTiredState && shell && shell.isConnected) shell.classList.remove('is-energy-motion-active');
     if (options.reschedule !== false) scheduleDenAvatarWander(18000);
   });
 }
 function syncAvatarMotion() {
   clearDenAvatarWanderTimer();
-  if (State.view !== 'den' || avatarMotionReduced()) return;
+  if (State.view !== 'den' || avatarMotionReduced() || energyPct() <= 30) return;
   const host = document.querySelector('.den-avatar-core');
-  const roomAction = window.TravellerRoomV4 && window.TravellerRoomV4.isPlaying(document.querySelector('.den-shell'));
-  if (!host || roomAction || (State._denAvatarPose && State._denAvatarPose !== 'idle')) return;
+  const shell = document.querySelector('.den-shell');
+  const roomAction = window.TravellerRoomV4 && window.TravellerRoomV4.isPlaying(shell);
+  if (!host || !shell || shell.classList.contains('is-den-offscreen') || roomAction || (State._denAvatarPose && State._denAvatarPose !== 'idle')) return;
   if (window.DenLifeV1 && document.querySelector('[data-body-toad], [data-recovery-slug], [data-resources-penguin]')) return;
   scheduleDenAvatarWander(6500);
 }
@@ -4317,6 +4486,9 @@ function denLifeContext() {
 
 function denLifeCanAct(shell) {
   if (!shell || !shell.isConnected || State.view !== 'den' || document.hidden || avatarMotionReduced()) return false;
+  if (energyPct() <= 30 || shell.classList.contains('is-energy-tired') || shell.classList.contains('is-den-offscreen')) return false;
+  const sceneRect = shell.querySelector('.den-scene')?.getBoundingClientRect();
+  if (sceneRect && (sceneRect.bottom <= 0 || sceneRect.top >= window.innerHeight)) return false;
   if (document.querySelector('.modal-overlay, .tut-bubble')) return false;
   if (State._denEdit || shell.classList.contains('is-body-pair-active') || shell.classList.contains('is-body-pair-approaching') || shell.classList.contains('is-recovery-pair-active') || shell.classList.contains('is-recovery-pair-approaching') || shell.classList.contains('is-resources-pair-active') || shell.classList.contains('is-resources-pair-approaching') || shell.classList.contains('is-room-action-v4-active') || shell.classList.contains('is-toad-ambient-active') || shell.classList.contains('is-recovery-ambient-active') || shell.classList.contains('is-resources-ambient-active')) return false;
   const avatar = shell.querySelector('.den-avatar-core');
@@ -4470,6 +4642,43 @@ function syncDenLife() {
     onWindowVisit: () => runDenAvatarWindowVisit({ automatic: true, reschedule: false }),
     onToadBeat: (beatId) => playDenToadBeat(shell, sphereId, beatId),
   });
+}
+
+let _denViewportObserver = null;
+function pauseDenSceneForViewport(shell) {
+  if (!shell || !shell.isConnected) return;
+  shell.classList.add('is-den-offscreen');
+  clearDenAvatarWanderTimer();
+  cancelDenRoomAction(true);
+  cancelDenAvatarLocomotion(true);
+  const toad = shell.querySelector('[data-body-toad]');
+  if (toad && window.BodyToadV1 && window.BodyToadV1.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
+  const slug = shell.querySelector('[data-recovery-slug]');
+  if (slug && window.RecoverySlugV1 && window.RecoverySlugV1.cancelAmbient) window.RecoverySlugV1.cancelAmbient(slug);
+  const penguin = shell.querySelector('[data-resources-penguin]');
+  if (penguin && window.ResourcesPenguinV1 && window.ResourcesPenguinV1.cancel) window.ResourcesPenguinV1.cancel(penguin, true);
+  if (window.DenLifeV1) window.DenLifeV1.postpone(shell, 5000);
+}
+function syncDenViewportGate() {
+  if (_denViewportObserver) {
+    _denViewportObserver.disconnect();
+    _denViewportObserver = null;
+  }
+  const shell = State.view === 'den' ? document.querySelector('.den-shell') : null;
+  const scene = shell && shell.querySelector('.den-scene');
+  if (!shell || !scene || typeof IntersectionObserver === 'undefined') return;
+  _denViewportObserver = new IntersectionObserver((entries) => {
+    const entry = entries[0];
+    if (!entry || !shell.isConnected) return;
+    const offscreen = !entry.isIntersecting;
+    shell.classList.toggle('is-den-offscreen', offscreen);
+    if (offscreen) {
+      pauseDenSceneForViewport(shell);
+    } else {
+      syncAvatarMotion();
+    }
+  }, { threshold: 0.01 });
+  _denViewportObserver.observe(scene);
 }
 
 function openAvatarForgeEditor() {
@@ -8275,7 +8484,7 @@ function shadowVideo(ti, face, context = 'card') {
       tier: ti,
       state: face || 'calm',
       context,
-      label: `Тень — ${(COMP_TIERS[ti | 0] || COMP_TIERS[0]).name}`,
+      label: `${t('Тень')} — ${t((COMP_TIERS[ti | 0] || COMP_TIERS[0]).name)}`,
     });
   }
   const n = (ti | 0) + 1;
@@ -8690,11 +8899,12 @@ function bodyToadStateForSphere(sphereId) {
 }
 function bodyToadHTML(sphereId, options = {}) {
   if (!window.BodyToadV1) return '';
+  const stateLabel = t(PET_STATE[petStats(sphereId).state].label);
   return window.BodyToadV1.markup({
     state: bodyToadStateForSphere(sphereId),
     animated: options.animated !== false,
     className: options.className || '',
-    label: `Жабий сэнсэй — хранитель тела, ${PET_STATE[petStats(sphereId).state].label.toLowerCase()}`,
+    label: t('Жабий сэнсэй — хранитель тела, {state}').replace('{state}', stateLabel),
   });
 }
 function resourcesPenguinStateForSphere(sphereId) {
@@ -8704,10 +8914,11 @@ function resourcesPenguinStateForSphere(sphereId) {
 function resourcesPenguinHTML(sphereId, options = {}) {
   if (!window.ResourcesPenguinV1) return '';
   const state = resourcesPenguinStateForSphere(sphereId);
+  const stateLabel = t(window.ResourcesPenguinV1.STATE_META[state].label);
   return window.ResourcesPenguinV1.markup({
     state,
     className: options.className || '',
-    label: `Распорядитель денег и ресурсов, ${window.ResourcesPenguinV1.STATE_META[state].label.toLowerCase()}`,
+    label: t('Распорядитель денег и ресурсов, {state}').replace('{state}', stateLabel),
   });
 }
 function recoverySlugState() {
@@ -8720,11 +8931,12 @@ function recoverySlugState() {
 function recoverySlugHTML(options = {}) {
   if (!window.RecoverySlugV1) return '';
   const state = recoverySlugState();
+  const stateLabel = t(window.RecoverySlugV1.STATE_META[state].label);
   return window.RecoverySlugV1.markup({
     state,
     animated: options.animated !== false && !avatarMotionReduced(),
     className: options.className || '',
-    label: `Кацую — хранительница восстановления, ${window.RecoverySlugV1.STATE_META[state].label.toLowerCase()}`,
+    label: t('Кацую — хранительница восстановления, {state}').replace('{state}', stateLabel),
   });
 }
 function petSpeciesForSphere(sphereId, traits) {
@@ -9250,23 +9462,23 @@ function denThemeOwned(theme) {
 }
 function denAcquire(entry, token) {
   if (entry.access === 'pro') {
-    if (!isPro()) { showPaywall('Темы и мебель Логова'); return false; }
+    if (!isPro()) { showPaywall(t('Темы и мебель Логова')); return false; }
     return true;
   }
   const den = ensureDen();
   if (entry.access === 'starter' || den.owned.includes(token)) return true;
   if (charLevel() < entry.level) {
-    toast(`Откроется на ур.${entry.level}`);
+    toast(`${t('Откроется на уровне')} ${entry.level}`);
     return false;
   }
-  if (goldBalance() < entry.cost) { toast('Недостаточно золота'); return false; }
+  if (goldBalance() < entry.cost) { toast(t('Недостаточно золота')); return false; }
   den.owned.push(token);
   State.purchases = State.purchases || [];
-  State.purchases.push({ id: 'den_' + uid(), denId: entry.id, name: 'Логово: ' + entry.name, cost: entry.cost, at: new Date().toISOString() });
+  State.purchases.push({ id: 'den_' + uid(), denId: entry.id, denNameKey: entry.name, name: 'Логово: ' + entry.name, cost: entry.cost, at: new Date().toISOString() });
   Store.save('settings', State.settings);
   Store.save('purchases', State.purchases);
   try { sfx('coin'); } catch {}
-  toast(`Предмет для Логова получен: ${entry.name}`);
+  toast(t('Предмет для Логова получен: {item}').replace('{item}', t(entry.name)));
   return true;
 }
 function denLightHour(light) {
@@ -9411,8 +9623,10 @@ function syncDenAmbientVisual(mode) {
   const active = ambientMeta(safeMode);
   const tool = document.querySelector('[data-action="den-ambient-cycle"]');
   if (tool) {
-    tool.title = `Эмбиент: ${active.label}`;
-    tool.innerHTML = `${satoruIconHTML(active.icon, 'den-tool-glyph', '◇')}<span>${active.label}</span>`;
+    const label = `${t('Эмбиент')}: ${t(active.label)}`;
+    tool.title = label;
+    tool.setAttribute('aria-label', label);
+    tool.innerHTML = `${satoruIconHTML(active.icon, 'den-tool-glyph', '◇')}<span>${t(active.label)}</span>`;
   }
   document.querySelectorAll('.ambient-choice[data-mode]').forEach((button) => {
     const selected = button.dataset.mode === safeMode;
@@ -9449,7 +9663,9 @@ function syncDenLightVisual(light) {
     if (wash) wash.dataset.phase = phase;
   }
   document.querySelectorAll('[data-action="den-light"]').forEach((button) => {
-    button.classList.toggle('is-selected', button.dataset.value === safeLight);
+    const selected = button.dataset.value === safeLight;
+    button.classList.toggle('is-selected', selected);
+    button.setAttribute('aria-pressed', String(selected));
   });
   syncDenSceneMaster();
   scheduleDenPhaseBoundary();
@@ -9461,13 +9677,20 @@ function resyncAutoDenLight() {
 }
 window.addEventListener('pageshow', resyncAutoDenLight);
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) resyncAutoDenLight();
+  if (document.hidden && State.view === 'den') {
+    pauseDenSceneForViewport(document.querySelector('.den-shell'));
+    return;
+  }
+  if (!document.hidden) {
+    resyncAutoDenLight();
+    syncDenViewportGate();
+  }
 });
 function denAccessChip(entry, owned, selected) {
-  if (selected) return `<span class="den-choice-state">${satoruIconHTML('action.check', 'den-mini-glyph', '✓')} стоит</span>`;
-  if (owned) return '<span class="den-choice-state">доступно</span>';
+  if (selected) return `<span class="den-choice-state">${satoruIconHTML('action.check', 'den-mini-glyph', '✓')} ${t('Установлено')}</span>`;
+  if (owned) return `<span class="den-choice-state">${t('Доступно')}</span>`;
   if (entry.access === 'pro') return `<span class="den-choice-state den-choice-pro">${satoruIconHTML('status.lock', 'den-mini-glyph', '◇')} PRO</span>`;
-  if (charLevel() < entry.level) return `<span class="den-choice-state">${satoruIconHTML('status.lock', 'den-mini-glyph', '◇')} ур.${entry.level}</span>`;
+  if (charLevel() < entry.level) return `<span class="den-choice-state">${satoruIconHTML('status.lock', 'den-mini-glyph', '◇')} ${t('ур.')}${entry.level}</span>`;
   return `<span class="den-choice-state">${satoruIconHTML('status.gold', 'den-mini-glyph', '◇')} ${entry.cost}</span>`;
 }
 function denEditorHTML(den) {
@@ -9475,9 +9698,9 @@ function denEditorHTML(den) {
   const themeCards = DEN_THEMES.map((theme) => {
     const selected = den.theme === theme.id;
     const owned = denThemeOwned(theme);
-    return `<button class="den-theme-choice${selected ? ' is-selected' : ''}${owned ? '' : ' is-locked'}" data-action="den-theme" data-id="${theme.id}" style="--den-preview-wall:${theme.wall2};--den-preview-floor:${theme.floor};--den-preview-glow:${theme.glow}">
+    return `<button class="den-theme-choice${selected ? ' is-selected' : ''}${owned ? '' : ' is-locked'}" data-action="den-theme" data-id="${theme.id}" aria-pressed="${selected}" style="--den-preview-wall:${theme.wall2};--den-preview-floor:${theme.floor};--den-preview-glow:${theme.glow}">
       <span class="den-theme-preview"><i></i><b></b></span>
-      <span><strong>${esc(theme.name)}</strong><small>${esc(theme.tag)}</small></span>
+      <span><strong>${esc(t(theme.name))}</strong><small>${esc(t(theme.tag))}</small></span>
       ${denAccessChip(theme, owned, selected)}
     </button>`;
   }).join('');
@@ -9485,22 +9708,23 @@ function denEditorHTML(den) {
     const cards = DEN_ITEMS.filter((item) => item.slot === slot).map((item) => {
       const selected = den.slots[slot] === item.id;
       const owned = denOwned(item.id);
-      return `<button class="den-item-choice${selected ? ' is-selected' : ''}${owned ? '' : ' is-locked'}" data-action="den-item" data-id="${item.id}">
+      return `<button class="den-item-choice${selected ? ' is-selected' : ''}${owned ? '' : ' is-locked'}" data-action="den-item" data-id="${item.id}" aria-pressed="${selected}">
         <span class="den-item-art"><img src="${item.src}" alt="" loading="lazy" decoding="async"></span>
-        <span class="den-item-copy"><strong>${esc(item.name)}</strong>${denAccessChip(item, owned, selected)}</span>
+        <span class="den-item-copy"><strong>${esc(t(item.name))}</strong>${denAccessChip(item, owned, selected)}</span>
       </button>`;
     }).join('');
-    return `<section class="den-editor-group"><div class="den-editor-group-head"><h4>${esc(meta.name)}</h4><button class="den-clear" data-action="den-clear" data-slot="${slot}">${esc(meta.empty)}</button></div><div class="den-item-grid">${cards}</div></section>`;
+    return `<section class="den-editor-group"><div class="den-editor-group-head"><h4>${esc(t(meta.name))}</h4><button class="den-clear" data-action="den-clear" data-slot="${slot}">${esc(t(meta.empty))}</button></div><div class="den-item-grid">${cards}</div></section>`;
   }).join('');
   const lightModes = [['auto', 'Авто'], ['morning', 'Утро'], ['day', 'День'], ['sunset', 'Закат'], ['night', 'Ночь']]
-    .map(([id, label]) => `<button class="den-pill${den.light === id ? ' is-selected' : ''}" data-action="den-light" data-value="${id}">${label}</button>`).join('');
-  const petModes = [0, 1, 2, 3].map((n) => `<button class="den-pill${den.petCount === n ? ' is-selected' : ''}" data-action="den-pet-count" data-value="${n}">${n || 'без'} ${n === 1 ? 'питомец' : 'питомца'}</button>`).join('');
+    .map(([id, label]) => `<button class="den-pill${den.light === id ? ' is-selected' : ''}" data-action="den-light" data-value="${id}" aria-pressed="${den.light === id}">${t(label)}</button>`).join('');
+  const petModeLabels = ['без питомца', '1 питомец', '2 питомца', '3 питомца'];
+  const petModes = petModeLabels.map((label, n) => `<button class="den-pill${den.petCount === n ? ' is-selected' : ''}" data-action="den-pet-count" data-value="${n}" aria-pressed="${den.petCount === n}">${t(label)}</button>`).join('');
   return `<div class="den-editor" id="den-editor" tabindex="-1">
-    <div class="den-editor-title"><div><span>ROOM EDITOR</span><h3>Собери место, куда хочется возвращаться</h3></div><button class="btn ghost sm" data-action="den-reset">Сбросить комнату</button></div>
-    <section class="den-editor-group"><h4>Атмосфера</h4><div class="den-theme-grid">${themeCards}</div></section>
-    <section class="den-editor-group den-editor-compact"><h4>Свет</h4><div class="den-pill-row">${lightModes}</div><h4>Обитатели</h4><div class="den-pill-row">${petModes}</div></section>
+    <div class="den-editor-title"><div><span>${t('Редактор комнаты')}</span><h3>${t('Собери место, куда хочется возвращаться')}</h3></div><button class="btn ghost sm" data-action="den-reset">${t('Сбросить комнату')}</button></div>
+    <section class="den-editor-group"><h4>${t('Атмосфера')}</h4><div class="den-theme-grid">${themeCards}</div></section>
+    <section class="den-editor-group den-editor-compact"><h4>${t('Свет')}</h4><div class="den-pill-row">${lightModes}</div><h4>${t('Обитатели')}</h4><div class="den-pill-row">${petModes}</div></section>
     ${groups}
-    <p class="den-editor-note">Стартовый набор остаётся бесплатным. Прогрессионные предметы покупаются за игровое золото после нужного уровня. Pro открывает дополнительные темы и коллекционные отсылки, но не усиливает характеристики.</p>
+    <p class="den-editor-note">${t('Стартовый набор остаётся бесплатным. Прогрессионные предметы покупаются за игровое золото после нужного уровня. Pro открывает дополнительные темы и коллекционные отсылки, но не усиливает характеристики.')}</p>
   </div>`;
 }
 function satoruRigSVG() {
@@ -9646,11 +9870,17 @@ function denAvatarFace(state) {
   return 'neutral';
 }
 function denDefaultCorePose(state) {
+  if (state === 'tired') return 'seated';
   if (state === 'victory') return 'arms-up';
   return 'idle';
 }
 function denCorePose(state) {
+  if (state === 'tired') return 'seated';
   return normalizedAvatarCorePose(State._denAvatarPose || denDefaultCorePose(state));
+}
+function denAvatarActionLabel(pose) {
+  const safePose = normalizedAvatarCorePose(pose);
+  return `${t(AVATAR_CORE_POSE_META[safePose].label)}. ${t('Нажми, чтобы сменить действие')}`;
 }
 function syncDenCorePose(pose) {
   const safePose = normalizedAvatarCorePose(pose);
@@ -9660,7 +9890,9 @@ function syncDenCorePose(pose) {
   return swapAvatarCoreStack(stack, safePose).then((changed) => {
     if (!host.isConnected) return false;
     host.dataset.pose = safePose;
-    host.title = `${AVATAR_CORE_POSE_META[safePose].label}. Нажми, чтобы сменить действие`;
+    const label = denAvatarActionLabel(safePose);
+    host.title = label;
+    host.setAttribute('aria-label', label);
     return changed;
   });
 }
@@ -9669,7 +9901,7 @@ function renderDen() {
   const coherentV5 = denUsesCoherentV5(den);
   preloadDenMasterCandidates();
   const c = ensureCompanion(), mood = compMood(), ti = compTierIdx(c.bond);
-  const cr = charRank(), nm = (State.me && State.me.name) || 'Герой';
+  const cr = charRank(), nm = (State.me && State.me.name) || t('Герой');
   const bodyId = bodyGuardianSphereId();
   const resourcesId = resourcesGuardianSphereId();
   const denSpheres = topSkills();
@@ -9693,21 +9925,42 @@ function renderDen() {
   const denStageEntities = pets.map((pet) => ({ id: pet.s.id, species: pet.species }));
   if (recoveryGuardianActive) denStageEntities.push({ id: 'recovery-guardian', species: 'recoverySlug' });
   const denStagePlacements = window.DenStageV1
-    ? window.DenStageV1.layoutPets(denStageEntities)
+    ? window.DenStageV1.layoutPets(denStageEntities, { posture: 'home' })
+    : [];
+  const denStageSeatedPlacements = window.DenStageV1
+    ? window.DenStageV1.layoutPets(denStageEntities, { posture: 'seated' })
     : [];
   const denStageById = new Map(denStagePlacements.map((placement) => [placement.id, placement]));
+  const denStageSeatedById = new Map(denStageSeatedPlacements.map((placement) => [placement.id, placement]));
+  const denStageStyle = (id) => {
+    const home = denStageById.get(String(id));
+    const seated = denStageSeatedById.get(String(id));
+    if (!home) return '';
+    return `${window.DenStageV1.styleVars(home)};${window.DenStageV1.styleVars(seated || home, { prefix: 'seated' })}`;
+  };
   const petLayer = pets.map((p, i) => {
     const placement = denStageById.get(String(p.s.id));
     const stageAttrs = placement
-      ? ` data-den-entity="pet" data-den-slot="${placement.slot}" data-den-ground-y="${placement.groundY}" style="${window.DenStageV1.styleVars(placement)}"`
+      ? ` data-den-entity="pet" data-den-slot="${placement.slot}" data-den-ground-y="${placement.groundY}" style="${denStageStyle(p.s.id)}"`
       : '';
-    if (p.species === 'bodyToad') return `<button class="den-pet den-pet-${i} den-body-toad"${stageAttrs} data-action="body-toad-interact" data-mode="greet" data-id="${p.s.id}" title="Жабий сэнсэй — ${PET_STATE[p.st.state].label}. Нажми, чтобы поприветствовать">${bodyToadHTML(p.s.id, { className: 'body-toad-v1--den' })}</button>`;
-    if (p.species === 'resourcesPenguin') return `<button class="den-pet den-pet-${i} den-resources-penguin"${stageAttrs} data-action="resources-penguin-interact" data-mode="greet" data-id="${p.s.id}" title="Распорядитель ресурсов — ${PET_STATE[p.st.state].label}. Нажми, чтобы поприветствовать">${resourcesPenguinHTML(p.s.id, { className: 'resources-penguin-v1--den' })}</button>`;
-    return `<button class="den-pet den-pet-${i}${p.species === 'fortune' ? ' den-pet-fortune' : ''}"${stageAttrs} data-action="den-pet-react" data-id="${p.s.id}" title="${esc(petName(p.s.id))} — ${PET_STATE[p.st.state].label}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id, p.idle)}</button>`;
+    const petStateLabel = t(PET_STATE[p.st.state].label);
+    if (p.species === 'bodyToad') {
+      const label = `${t('Жабий сэнсэй')} — ${petStateLabel}. ${t('Нажми, чтобы поприветствовать')}`;
+      return `<button class="den-pet den-pet-${i} den-body-toad"${stageAttrs} data-action="body-toad-interact" data-mode="greet" data-id="${p.s.id}" title="${esc(label)}" aria-label="${esc(label)}">${bodyToadHTML(p.s.id, { className: 'body-toad-v1--den' })}</button>`;
+    }
+    if (p.species === 'resourcesPenguin') {
+      const label = `${t('Распорядитель ресурсов')} — ${petStateLabel}. ${t('Нажми, чтобы поприветствовать')}`;
+      return `<button class="den-pet den-pet-${i} den-resources-penguin"${stageAttrs} data-action="resources-penguin-interact" data-mode="greet" data-id="${p.s.id}" title="${esc(label)}" aria-label="${esc(label)}">${resourcesPenguinHTML(p.s.id, { className: 'resources-penguin-v1--den' })}</button>`;
+    }
+    const label = `${petName(p.s.id)} — ${petStateLabel}`;
+    return `<button class="den-pet den-pet-${i}${p.species === 'fortune' ? ' den-pet-fortune' : ''}"${stageAttrs} data-action="den-pet-react" data-id="${p.s.id}" title="${esc(label)}" aria-label="${esc(label)}">${petSVG(p.s.color || '#6c8cff', p.st.state, p.traits, p.s.id, p.idle)}</button>`;
   }).join('');
   const recoveryPlacement = denStageById.get('recovery-guardian');
+  const recoveryLabel = recoveryGuardianActive
+    ? `${t('Кацую')} — ${t(window.RecoverySlugV1.STATE_META[recoverySlugState()].label)}. ${t('Нажми, чтобы поздороваться')}`
+    : '';
   const recoveryLayer = recoveryGuardianActive && recoveryPlacement
-    ? `<button class="den-pet den-recovery-slug" data-den-entity="pet" data-den-slot="${recoveryPlacement.slot}" data-den-ground-y="${recoveryPlacement.groundY}" style="${window.DenStageV1.styleVars(recoveryPlacement)}" data-action="recovery-slug-interact" data-mode="greet" title="Кацую — ${esc(window.RecoverySlugV1.STATE_META[recoverySlugState()].label)}. Нажми, чтобы поздороваться">${recoverySlugHTML({ className: 'recovery-slug-v1--den' })}</button>`
+    ? `<button class="den-pet den-recovery-slug" data-den-entity="pet" data-den-slot="${recoveryPlacement.slot}" data-den-ground-y="${recoveryPlacement.groundY}" style="${denStageStyle('recovery-guardian')}" data-action="recovery-slug-interact" data-mode="greet" title="${esc(recoveryLabel)}" aria-label="${esc(recoveryLabel)}">${recoverySlugHTML({ className: 'recovery-slug-v1--den' })}</button>`
     : '';
   const bodyGuardian = pets.find((pet) => pet.species === 'bodyToad');
   const resourcesGuardian = pets.find((pet) => pet.species === 'resourcesPenguin');
@@ -9720,77 +9973,90 @@ function renderDen() {
   const amb = (State.settings && State.settings.ambient) || {};
   const ambientMode = amb.mode || 'off';
   const ambient = ambientMeta(ambientMode);
+  const avatarLabel = denAvatarActionLabel(avatarPose);
+  const companionLabel = t('Погладить {name}').replace('{name}', t(c.name));
+  const ambientLabel = `${t('Эмбиент')}: ${t(ambient.label)}`;
+  const editorLabel = State._denEdit ? t('Закрыть редактор комнаты') : t('Обставить комнату');
   const focusRow = tm
-    ? `<div class="den-focus den-focus-on"><span>${satoruIconHTML('system.focus', 'den-row-glyph', '◇')} Фокус идёт</span><b class="den-clock">${fmtClock(timerElapsedMs())}</b><button class="btn ghost sm" data-action="goto-today">К таймеру</button></div>`
-    : `<div class="den-focus"><span>${satoruIconHTML('system.focus', 'den-row-glyph', '◇')} Готов к делу?</span><button class="btn sm" data-action="goto-today">Начать фокус</button></div>`;
-  return `<div class="den-shell">
+    ? `<div class="den-focus den-focus-on"><span>${satoruIconHTML('system.focus', 'den-row-glyph', '◇')} ${t('Фокус идёт')}</span><b class="den-clock">${fmtClock(timerElapsedMs())}</b><button class="btn ghost sm" data-action="goto-today">${t('К таймеру')}</button></div>`
+    : `<div class="den-focus"><span>${satoruIconHTML('system.focus', 'den-row-glyph', '◇')} ${t('Готов к делу?')}</span><button class="btn sm" data-action="goto-today">${t('Начать фокус')}</button></div>`;
+  const guardianSections = [];
+  if (bodyGuardian) guardianSections.push(`<section class="den-guardian-actions" aria-label="${t('Взаимодействие с хранителем тела')}">
+    <span><b>${t('Жабий сэнсэй')}${bodyFocusActive ? ` · ${t('ведёт разминку')}` : ''}</b><small>${esc(t(bodyFocusActive ? 'BODY-фокус активен: сэнсэй подключится сам и не будет отвлекать от работы.' : window.BodyToadV1.STATE_META[bodyToadStateForSphere(bodyGuardian.s.id)].line))}</small></span>
+    <div>
+      <button class="btn ghost sm" data-action="body-toad-interact" data-mode="greet" data-id="${bodyGuardian.s.id}">${t('Приветствие')}</button>
+      <button class="btn ghost sm" data-action="body-toad-interact" data-mode="train" data-id="${bodyGuardian.s.id}">${t('Разминка вместе')}</button>
+      <button class="btn ghost sm" data-action="body-toad-interact" data-mode="pushup" data-id="${bodyGuardian.s.id}">${t('Отжимания')}</button>
+      <button class="btn ghost sm" data-action="body-toad-interact" data-mode="stretch" data-id="${bodyGuardian.s.id}">${t('Растяжка')}</button>
+      <button class="btn ghost sm" data-action="body-toad-interact" data-mode="whistle" data-id="${bodyGuardian.s.id}">${t('Свисток')}</button>
+      <button class="btn ghost sm" data-action="body-toad-interact" data-mode="rest" data-id="${bodyGuardian.s.id}">${t('Передышка')}</button>
+    </div>
+  </section>`);
+  if (resourcesGuardian) guardianSections.push(`<section class="den-guardian-actions den-resources-actions" aria-label="${t('Взаимодействие с хранителем ресурсов')}">
+    <span><b>${t('Распорядитель ресурсов')}${resourcesFocusActive ? ` · ${t('ведёт учёт')}` : ''}</b><small>${esc(t(resourcesFocusActive ? 'MONEY / RESOURCES-фокус активен: бюджет, резерв и спокойная сверка будут продолжаться весь сеанс.' : window.ResourcesPenguinV1.STATE_META[resourcesPenguinStateForSphere(resourcesGuardian.s.id)].line))}</small></span>
+    <div>
+      <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="greet" data-id="${resourcesGuardian.s.id}">${t('Приветствие')}</button>
+      <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="budget" data-id="${resourcesGuardian.s.id}">${t('Сверить бюджет')}</button>
+      <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="count" data-id="${resourcesGuardian.s.id}">${t('Разложить монеты')}</button>
+      <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="reserve" data-id="${resourcesGuardian.s.id}">${t('Отложить резерв')}</button>
+      <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="focus" data-id="${resourcesGuardian.s.id}">${t('Поработать вместе')}</button>
+      <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="close" data-id="${resourcesGuardian.s.id}">${t('Закрыть план')}</button>
+    </div>
+  </section>`);
+  if (recoveryGuardianActive) guardianSections.push(`<section class="den-guardian-actions den-recovery-actions" aria-label="${t('Взаимодействие с хранительницей восстановления')}">
+    <span><b>${t('Кацую')} · ${t('хранительница восстановления')}</b><small>${esc(t(window.RecoverySlugV1.STATE_META[recoverySlugState()].line))} ${t('Действия идут медленно и не перебивают фокус.')}</small></span>
+    <div>
+      <button class="btn ghost sm" data-action="recovery-slug-interact" data-mode="greet">${t('Приветствие')}</button>
+      <button class="btn ghost sm" data-action="recovery-slug-interact" data-mode="breathe">${t('Дыхание')}</button>
+      <button class="btn ghost sm" data-action="recovery-slug-interact" data-mode="restore">${t('Восстановление')}</button>
+      <button class="btn ghost sm" data-action="recovery-slug-interact" data-mode="stretch">${t('Мягкая растяжка')}</button>
+    </div>
+  </section>`);
+  const guardianDisclosure = guardianSections.length
+    ? `<details class="den-residents"><summary><h3 class="den-disclosure-title"><span class="den-disclosure-copy"><span>${t('Хранители')}</span><small>${t('Совместные действия')} · ${guardianSections.length}</small></span><span class="den-residents-chevron" aria-hidden="true">⌄</span></h3></summary><div class="den-residents-body">${guardianSections.join('')}</div></details>`
+    : '';
+  return `<div class="den-shell${avatarState === 'tired' ? ' is-energy-tired' : ''}">
     <div class="card den-card">
-    <div class="den-scene" data-den-theme="${theme.id}" data-den-light="${den.light}" data-den-phase="${denPhaseForLight(den.light)}" data-den-period="${denMasterFor(den).period}" data-den-renderer="${coherentV5 ? 'v5' : 'v3'}" data-den-ambient="${ambientMode}" data-den-focus-canon="${esc(lifeContext.focusCanon)}">
+    <div class="den-scene" role="region" aria-labelledby="den-route-title" data-den-theme="${theme.id}" data-den-light="${den.light}" data-den-phase="${denPhaseForLight(den.light)}" data-den-period="${denMasterFor(den).period}" data-den-renderer="${coherentV5 ? 'v5' : 'v3'}" data-den-ambient="${ambientMode}" data-den-focus-canon="${esc(lifeContext.focusCanon)}">
       ${denSceneSVG(theme, den.light, den)}
       ${denObjectsHTML(den, coherentV5)}
       ${denLegacyRoomFixturesHTML(coherentV5)}
       <div class="den-room-vignette"></div>
-      <button class="den-companion" data-action="comp-pet" title="Погладить ${esc(c.name)}">${shadowVideo(ti, mood.face, 'den')}<span class="den-companion-name">${esc(c.name)}</span></button>
+      <div class="den-tag">${rankIconHTML(cr, 'rank-inline-icon')}<span class="den-tag-copy"><h2 class="den-route-title" id="den-route-title">${t('Логово')}</h2><small>${esc(nm)} · ${t('Уровень')} ${charLevel()}</small></span></div>
+      <div class="den-scene-tools">
+        <button data-action="den-ambient-cycle" title="${esc(ambientLabel)}" aria-label="${esc(ambientLabel)}">${satoruIconHTML(ambient.icon, 'den-tool-glyph', '◇')}<span>${t(ambient.label)}</span></button>
+        <button class="${State._denEdit ? 'is-active' : ''}" data-action="den-toggle-edit" title="${esc(editorLabel)}" aria-label="${esc(editorLabel)}" aria-expanded="${State._denEdit ? 'true' : 'false'}"${State._denEdit ? ' aria-controls="den-editor"' : ''}>${satoruIconHTML('action.edit', 'den-tool-glyph', '◇')}<span>${State._denEdit ? t('Готово') : t('Обставить')}</span></button>
+      </div>
+      <button class="den-companion" data-action="comp-pet" title="${esc(companionLabel)}" aria-label="${esc(companionLabel)}">${shadowVideo(ti, mood.face, 'den')}<span class="den-companion-name">${esc(c.name)}</span></button>
       ${bodyGuardian ? window.BodyToadV1.pairMarkup({ className: 'body-pair-v2--den' }) : ''}
       ${resourcesGuardian ? window.ResourcesPenguinV1.pairMarkup({ className: 'resources-pair-v1--den' }) : ''}
       ${recoveryGuardianActive ? window.RecoverySlugV1.pairMarkup({ className: 'recovery-pair-v2--den' }) : ''}
       ${coherentV5 && window.TravellerRoomV4 ? window.TravellerRoomV4.markup({ className: 'traveller-room-v4--den' }) : ''}
+      ${coherentV5 && avatarState === 'tired' ? '<span class="den-tired-seat" aria-hidden="true"><img src="/art/avatars/traveller-core-v1/male/room-actions-v4/bench-rest.png" alt="" aria-hidden="true" draggable="false" decoding="async"></span>' : ''}
       ${coherentV5 ? '<span class="den-prop-reach" aria-hidden="true"><img src="/art/avatars/traveller-core-v1/male/room-actions-v4/bench-portal-reach.png?v=20260806-2" alt="" aria-hidden="true" draggable="false" decoding="async"></span><span class="den-prop-portal" data-den-prop-portal aria-hidden="true"><img class="den-prop-portal__core" src="/art/den/actors/prop-portal-core.png?v=20260806-2" alt="" aria-hidden="true" draggable="false" decoding="async"><img class="den-prop-portal__rim" src="/art/den/actors/prop-portal-rim.png?v=20260806-2" alt="" aria-hidden="true" draggable="false" decoding="async"></span>' : ''}
-      <button class="den-avatar den-avatar-raster den-avatar-core" data-action="den-avatar-pose" data-state="${avatarState}" data-pose="${avatarPose}" title="${esc(AVATAR_CORE_POSE_META[avatarPose].label)}. Нажми, чтобы сменить действие">${avatarCorePoseHTML(avatarPose, { className: 'avatar-core-stack--den' })}<span class="den-avatar-shadow"></span></button>
+      <button class="den-avatar den-avatar-raster den-avatar-core" data-action="den-avatar-pose" data-state="${avatarState}" data-pose="${avatarPose}" title="${esc(avatarLabel)}" aria-label="${esc(avatarLabel)}">${avatarCorePoseHTML(avatarPose, { className: 'avatar-core-stack--den' })}<span class="den-avatar-shadow"></span></button>
       ${petLayer}${recoveryLayer}
-      <div class="den-tag">${rankIconHTML(cr, 'rank-inline-icon')} <span>${esc(nm)}</span><small>ур.${charLevel()}</small></div>
-      <div class="den-scene-tools">
-        <button data-action="den-ambient-cycle" title="Эмбиент: ${ambient.label}">${satoruIconHTML(ambient.icon, 'den-tool-glyph', '◇')}<span>${ambient.label}</span></button>
-        <button class="${State._denEdit ? 'is-active' : ''}" data-action="den-toggle-edit" title="${State._denEdit ? 'Закрыть редактор комнаты' : 'Обставить комнату'}" aria-label="${State._denEdit ? 'Закрыть редактор комнаты' : 'Обставить комнату'}" aria-expanded="${State._denEdit ? 'true' : 'false'}" aria-controls="den-editor">${satoruIconHTML('action.edit', 'den-tool-glyph', '◇')}<span>${State._denEdit ? 'Готово' : 'Обставить'}</span></button>
-      </div>
     </div>
+    <div class="den-console">
     <div class="den-life-strip">
-      <p class="den-mood"><strong>${esc(c.name)}</strong><span>${mood.line}</span></p>
+      <p class="den-mood"><strong>${esc(c.name)}</strong><span>${esc(mood.line)}</span></p>
       <div class="den-stats">
-        <span title="Энергия">${satoruIconHTML('status.energy', 'den-stat-glyph', eM.icon)} ${eP}%</span>
-        <span title="Дела сегодня">${satoruIconHTML('system.day-end', 'den-stat-glyph', '◇')} ${p.dayDone}/${p.dayTot || 0}</span>
-        <span title="Серия">${satoruIconHTML('status.streak', 'den-stat-glyph', '◇')} ${p.streak}</span>
+        <span title="${t('Энергия')}">${satoruIconHTML('status.energy', 'den-stat-glyph', eM.icon)} ${eP}%</span>
+        <span title="${t('Дела сегодня')}">${satoruIconHTML('system.day-end', 'den-stat-glyph', '◇')} ${p.dayDone}/${p.dayTot || 0}</span>
+        <span title="${t('Серия')}">${satoruIconHTML('status.streak', 'den-stat-glyph', '◇')} ${p.streak}</span>
       </div>
     </div>
     ${focusRow}
-    <div class="den-actions">
-      <button class="btn ghost sm" data-action="den-avatar-walk">Пройтись к окну</button>
-      ${coherentV5 ? '<button class="btn ghost sm" data-action="den-room-action" data-room-action="bench-rest">Сесть у окна</button><button class="btn ghost sm" data-action="den-room-action" data-room-action="bench-read">Почитать</button>' : ''}
-      <button class="btn ghost sm" data-action="go-wardrobe">${satoruIconHTML('nav.hero', 'button-glyph', '◇')} Гардероб</button>
-      <button class="btn ghost sm" data-action="goto-rewards">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} Награды</button>
-      <button class="btn ghost sm" data-action="goto-pets">${satoruIconHTML('system.pets', 'button-glyph', '◇')} Зверинец</button>
+    <details class="den-drawer"><summary><h3 class="den-disclosure-title"><span class="den-disclosure-copy"><span>${t('Действия комнаты')}</span><small>${t('Прогулка, отдых и коллекции')}</small></span><span class="den-drawer-chevron" aria-hidden="true">⌄</span></h3></summary><div class="den-actions">
+      <button class="btn ghost sm" data-action="den-avatar-walk">${t('Пройтись к окну')}</button>
+      ${coherentV5 ? `<button class="btn ghost sm" data-action="den-room-action" data-room-action="bench-rest">${t('Сесть у окна')}</button><button class="btn ghost sm" data-action="den-room-action" data-room-action="bench-read">${t('Почитать')}</button>` : ''}
+      <button class="btn ghost sm" data-action="go-wardrobe">${satoruIconHTML('nav.hero', 'button-glyph', '◇')} ${t('Гардероб')}</button>
+      <button class="btn ghost sm" data-action="goto-rewards">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Награды')}</button>
+      <button class="btn ghost sm" data-action="goto-pets">${satoruIconHTML('system.pets', 'button-glyph', '◇')} ${t('Зверинец')}</button>
+      <button class="btn ghost sm" data-action="open-helper">${satoruIconHTML('nav.shadow', 'button-glyph', '◇')} ${t('Спросить Тень')}</button>
+    </div></details>
+    ${guardianDisclosure}
     </div>
-    ${bodyGuardian ? `<div class="den-guardian-actions" aria-label="Взаимодействие с хранителем тела">
-      <span><b>Жабий сэнсэй${bodyFocusActive ? ' · ведёт разминку' : ''}</b><small>${esc(bodyFocusActive ? 'BODY-фокус активен: сэнсэй подключится сам и не будет отвлекать от работы.' : window.BodyToadV1.STATE_META[bodyToadStateForSphere(bodyGuardian.s.id)].line)}</small></span>
-      <div>
-        <button class="btn ghost sm" data-action="body-toad-interact" data-mode="greet" data-id="${bodyGuardian.s.id}">Приветствие</button>
-        <button class="btn ghost sm" data-action="body-toad-interact" data-mode="train" data-id="${bodyGuardian.s.id}">Разминка вместе</button>
-        <button class="btn ghost sm" data-action="body-toad-interact" data-mode="pushup" data-id="${bodyGuardian.s.id}">Отжимания</button>
-        <button class="btn ghost sm" data-action="body-toad-interact" data-mode="stretch" data-id="${bodyGuardian.s.id}">Растяжка</button>
-        <button class="btn ghost sm" data-action="body-toad-interact" data-mode="whistle" data-id="${bodyGuardian.s.id}">Свисток</button>
-        <button class="btn ghost sm" data-action="body-toad-interact" data-mode="rest" data-id="${bodyGuardian.s.id}">Передышка</button>
-      </div>
-    </div>` : ''}
-    ${resourcesGuardian ? `<div class="den-guardian-actions den-resources-actions" aria-label="Взаимодействие с хранителем ресурсов">
-      <span><b>Распорядитель ресурсов${resourcesFocusActive ? ' · ведёт учёт' : ''}</b><small>${esc(resourcesFocusActive ? 'MONEY / RESOURCES-фокус активен: бюджет, резерв и спокойная сверка будут продолжаться весь сеанс.' : window.ResourcesPenguinV1.STATE_META[resourcesPenguinStateForSphere(resourcesGuardian.s.id)].line)}</small></span>
-      <div>
-        <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="greet" data-id="${resourcesGuardian.s.id}">Приветствие</button>
-        <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="budget" data-id="${resourcesGuardian.s.id}">Сверить бюджет</button>
-        <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="count" data-id="${resourcesGuardian.s.id}">Разложить монеты</button>
-        <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="reserve" data-id="${resourcesGuardian.s.id}">Отложить резерв</button>
-        <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="focus" data-id="${resourcesGuardian.s.id}">Поработать вместе</button>
-        <button class="btn ghost sm" data-action="resources-penguin-interact" data-mode="close" data-id="${resourcesGuardian.s.id}">Закрыть план</button>
-      </div>
-    </div>` : ''}
-    ${recoveryGuardianActive ? `<div class="den-guardian-actions den-recovery-actions" aria-label="Взаимодействие с хранительницей восстановления">
-      <span><b>Кацую · хранительница восстановления</b><small>${esc(window.RecoverySlugV1.STATE_META[recoverySlugState()].line)} Действия идут медленно и не перебивают фокус.</small></span>
-      <div>
-        <button class="btn ghost sm" data-action="recovery-slug-interact" data-mode="greet">Приветствие</button>
-        <button class="btn ghost sm" data-action="recovery-slug-interact" data-mode="breathe">Дыхание</button>
-        <button class="btn ghost sm" data-action="recovery-slug-interact" data-mode="restore">Восстановление</button>
-        <button class="btn ghost sm" data-action="recovery-slug-interact" data-mode="stretch">Мягкая растяжка</button>
-      </div>
-    </div>` : ''}
     ${denEditorHTML(den)}
     </div>
   </div>`;
@@ -11477,7 +11743,10 @@ function renderRewards() {
       <div class="rw-cost">${satoruIconHTML('status.gold', 'cost-emblem', '🪙')} ${r.cost}</div>
       <button class="btn ${bal >= r.cost ? '' : 'disabled'}" data-action="buy-reward" data-id="${r.id}" ${bal >= r.cost ? '' : 'disabled'}>Купить</button>
       <button class="del" data-action="delete-reward" data-id="${r.id}" title="Удалить">✕</button></div>`).join('');
-  const history = (State.purchases || []).slice().reverse().slice(0, 8).map((p) => `<li><span class="muted">${(p.at || '').slice(0, 10)}</span> ${esc(p.name)} — ${satoruIconHTML('status.gold', 'inline-emblem', '◇')} ${p.cost}</li>`).join('');
+  const history = (State.purchases || []).slice().reverse().slice(0, 8).map((p) => {
+    const purchaseName = p.denNameKey ? `${t('Логово')}: ${t(p.denNameKey)}` : p.name;
+    return `<li><span class="muted">${(p.at || '').slice(0, 10)}</span> ${esc(purchaseName)} — ${satoruIconHTML('status.gold', 'inline-emblem', '◇')} ${p.cost}</li>`;
+  }).join('');
   const achs = ACHIEVEMENTS.map((a) => {
     const got = !!State.achievements[a.id];
     let pr = '';
@@ -12435,10 +12704,21 @@ function afterMainCommit() {
     }
   } catch {}
   try { syncAvatarMotion(); } catch {}
+  try { syncDenViewportGate(); } catch {}
   try { syncDenLife(); } catch {}
   try { scheduleDenPhaseBoundary(); } catch {}
   try { tutorialPaint(); } catch {}
   try { scheduleQuestTitleDisclosures(); } catch {}
+  if (State._denFocusAfterCommit && State.view === 'den') {
+    const selector = State._denFocusAfterCommit;
+    State._denFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const target = document.querySelector(selector);
+      if (!target) return;
+      if (selector === '#den-editor') target.scrollIntoView({ behavior: avatarMotionReduced() ? 'auto' : 'smooth', block: 'start' });
+      target.focus({ preventScroll: true });
+    });
+  }
 }
 function commitMainView(main, staging, view) {
   main.replaceChildren(...Array.from(staging.childNodes));
@@ -13119,12 +13399,9 @@ function onClick(e) {
   }
   if (action === 'den-toggle-edit') {
     State._denEdit = !State._denEdit;
+    State._denFocusAfterCommit = State._denEdit ? '#den-editor' : '.den-scene-tools [data-action="den-toggle-edit"]';
     track(State._denEdit ? 'den:edit-open' : 'den:edit-close');
     render();
-    if (State._denEdit) requestAnimationFrame(() => {
-      const editor = document.getElementById('den-editor');
-      if (editor) { editor.scrollIntoView({ behavior: 'smooth', block: 'start' }); editor.focus({ preventScroll: true }); }
-    });
     return;
   }
   if (action === 'den-ambient-cycle') {
@@ -13157,7 +13434,7 @@ function onClick(e) {
     den.theme = 'workshop'; den.light = 'auto'; den.petCount = 3; den.slots = { ...DEN_STARTER_SLOTS };
     Store.save('settings', State.settings);
     try { sfx('complete'); } catch {}
-    toast('Логово вернулось к стартовой обстановке');
+    toast(t('Логово вернулось к стартовой обстановке'));
     render(); return;
   }
   if (action === 'den-theme') {
@@ -13188,7 +13465,7 @@ function onClick(e) {
         window.BodyToadV1.playInteraction(toad, mode, { restoreState }).catch(() => {});
       }
       const meta = window.BodyToadV1.INTERACTIONS[mode];
-      if (meta) toast(`🐸 ${meta.label}`);
+      if (meta) toast(`🐸 ${t(meta.label)}`);
       try { sfx(['train', 'pushup', 'stretch', 'whistle'].includes(mode) ? 'complete' : 'click'); } catch {}
       track(`body-toad:${mode}`);
     }
@@ -13206,7 +13483,7 @@ function onClick(e) {
         window.ResourcesPenguinV1.playSolo(penguin, soloMode, { restoreState: resourcesPenguinStateForSphere(id) }).catch(() => {});
       }
       const meta = window.ResourcesPenguinV1.INTERACTIONS[mode] || window.ResourcesPenguinV1.SOLO[mode];
-      if (meta) toast(`🪙 ${meta.label || 'Распорядитель проверяет порядок'}`);
+      if (meta) toast(`🪙 ${t(meta.label || 'Распорядитель проверяет порядок')}`);
       try { sfx(mode === 'greet' ? 'click' : 'complete'); } catch {}
       track(`resources-penguin:${mode}`);
     }
@@ -13239,7 +13516,7 @@ function onClick(e) {
     const scope = el.closest('.den-shell');
     if (scope && window.RecoverySlugV1 && window.RecoverySlugV1.INTERACTIONS[mode]) {
       playRecoverySlugScene(scope, mode).catch(() => {});
-      toast(`🌿 ${window.RecoverySlugV1.INTERACTIONS[mode].label}`);
+      toast(`🌿 ${t(window.RecoverySlugV1.INTERACTIONS[mode].label)}`);
       try { sfx(mode === 'greet' ? 'click' : 'complete'); } catch {}
       track(`recovery-slug:${mode}`);
     }
@@ -13250,7 +13527,7 @@ function onClick(e) {
     const slug = el.matches('[data-recovery-slug]') ? el : scope.querySelector('[data-recovery-slug]');
     if (slug && window.RecoverySlugV1) {
       window.RecoverySlugV1.reassure(slug, recoverySlugState()).catch(() => {});
-      toast('🌿 Кацую замедляет дыхание рядом с тобой');
+      toast(`🌿 ${t('Кацую замедляет дыхание рядом с тобой')}`);
       try { sfx('click'); } catch {}
       track('recovery-slug:reassure');
     }

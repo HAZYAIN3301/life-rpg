@@ -11,18 +11,25 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenStage(root) {
   'use strict';
 
-  const VERSION = '1.7.0';
+  const VERSION = '1.8.0';
   const WORLD = Object.freeze({ width: 1536, height: 864 });
   const APPROACH_MS = 1800;
   const RETURN_MS = 1800;
 
   // Anchors are measured at the actor's ground contact, not at its image box.
-  // Their footprints never overlap, including the largest BODY guardian.
+  // The east lane also reserves the Traveller's home silhouette
+  // (38.2813..65.7813%): pets must not merely avoid one another.
   const PET_SLOTS = Object.freeze([
     Object.freeze({ id: 'west', x: 28.0, groundY: 96.2, depth: 0.98, z: 8 }),
-    Object.freeze({ id: 'east', x: 85.0, groundY: 96.0, depth: 0.97, z: 7 }),
-    Object.freeze({ id: 'mid-east', x: 65.5, groundY: 96.0, depth: 0.96, z: 8 }),
+    Object.freeze({ id: 'east', x: 89.0, groundY: 96.0, depth: 0.97, z: 7 }),
+    Object.freeze({ id: 'mid-east', x: 74.0, groundY: 96.0, depth: 0.96, z: 8 }),
   ]);
+  const SEATED_PET_SLOTS = Object.freeze([
+    Object.freeze({ id: 'west', x: 28.0, groundY: 96.2, depth: 0.98, z: 8 }),
+    Object.freeze({ id: 'east', x: 93.25, groundY: 96.0, depth: 0.88, z: 7 }),
+    Object.freeze({ id: 'mid-east', x: 56.5, groundY: 96.0, depth: 0.96, z: 8 }),
+  ]);
+  const PET_LAYOUTS = Object.freeze({ home: PET_SLOTS, seated: SEATED_PET_SLOTS });
 
   const PROFILES = Object.freeze({
     bodyToad: Object.freeze({ width: 19.2, aspect: 1, footprint: 15.7, preferred: 'west' }),
@@ -36,10 +43,10 @@
     return PROFILES[species] || PROFILES.default;
   }
 
-  function orderedSlots(entity, occupied) {
+  function orderedSlots(entity, occupied, slots) {
     const profile = profileFor(entity.species);
-    const preferred = PET_SLOTS.find((slot) => slot.id === profile.preferred);
-    const rest = PET_SLOTS.filter((slot) => !preferred || slot.id !== preferred.id);
+    const preferred = slots.find((slot) => slot.id === profile.preferred);
+    const rest = slots.filter((slot) => !preferred || slot.id !== preferred.id);
     return (preferred ? [preferred, ...rest] : rest).filter((slot) => !occupied.has(slot.id));
   }
 
@@ -64,8 +71,10 @@
     });
   }
 
-  function layoutPets(entities) {
+  function layoutPets(entities, options) {
     const source = Array.isArray(entities) ? entities.filter((entry) => entry && entry.id) : [];
+    const posture = options && options.posture === 'seated' ? 'seated' : 'home';
+    const slots = PET_LAYOUTS[posture];
     // Reserve canonical guardians first; generic sphere pets fill the remaining
     // authored slots without ever competing for the same footprint.
     const priority = (species) => species === 'bodyToad' ? 3 : species === 'resourcesPenguin' ? 2 : species === 'recoverySlug' ? 1 : 0;
@@ -74,7 +83,7 @@
     const occupied = new Set();
     const result = [];
     for (const entity of sorted) {
-      const slot = orderedSlots(entity, occupied)[0];
+      const slot = orderedSlots(entity, occupied, slots)[0];
       if (!slot) continue;
       occupied.add(slot.id);
       result.push({ ...placementFor(entity, slot), _index: entity._index });
@@ -83,14 +92,16 @@
     return result.map(({ _index, ...placement }) => Object.freeze(placement));
   }
 
-  function styleVars(placement) {
+  function styleVars(placement, options) {
     if (!placement) return '';
+    const prefix = options && options.prefix ? `${String(options.prefix)}-` : '';
     return [
-      `--den-stage-left:${placement.left.toFixed(4)}%`,
-      `--den-stage-bottom:${placement.bottom.toFixed(4)}%`,
-      `--den-stage-width:${placement.width.toFixed(4)}%`,
-      `--den-stage-depth:${placement.depth.toFixed(4)}`,
-      `--den-stage-z:${placement.z}`,
+      `--den-stage-${prefix}center:${placement.anchorX.toFixed(4)}%`,
+      `--den-stage-${prefix}left:${placement.left.toFixed(4)}%`,
+      `--den-stage-${prefix}bottom:${placement.bottom.toFixed(4)}%`,
+      `--den-stage-${prefix}width:${placement.width.toFixed(4)}%`,
+      `--den-stage-${prefix}depth:${placement.depth.toFixed(4)}`,
+      `--den-stage-${prefix}z:${placement.z}`,
     ].join(';');
   }
 
@@ -282,6 +293,8 @@
     APPROACH_MS,
     RETURN_MS,
     PET_SLOTS,
+    SEATED_PET_SLOTS,
+    PET_LAYOUTS,
     PROFILES,
     profileFor,
     layoutPets,
