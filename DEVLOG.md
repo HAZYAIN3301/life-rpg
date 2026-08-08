@@ -2,6 +2,18 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-08] 📚 Семь книг — ремесленный аудит до синтеза правил
+
+**Почему.** `DESIGN-CRAFT-BRIEF.md` запрещает выводить усреднённые «принципы дизайна» прямо из стопки книг: сначала нужен отдельный проверяемый ledger по каждой книге, где каждый механизм привязан к текущему UI Satoru и подчинён уже принятой `DESIGN-DIRECTION.md` / `STYLE-DECISION.md`.
+
+- Создан `DESIGN-BOOK-NOTES.md`: **7 разделов / 252 конкретные карточки** в заданном порядке — Norman → About Face → Refactoring UI → Thinking with Type → Design Systems → Mobile First → Schell. Итоговый баланс: **74 PASS / 75 GAP / 103 FAIL**.
+- У каждой карточки есть специфичный для книги механизм, воспроизводимый locator в переданном PDF, точный экран/selector/handler текущего Satoru, статус и проверяемое действие с QA на 375px/1280px. Это code-backed craft audit, а не пересказ глав.
+- Все PDF прочитаны последовательно целиком. Для scan/reflow-файлов пагинация не угадывалась единым offset: локаторы проверялись по реальным футерам/рендерам; embedded text и OCR применялись только там, где это позволяло конкретное издание.
+- Книжные советы не получили права переопределить North Star. Защищены serious life OS в RPG-коже, quest-first Today, painterly cut-paper/paper-doll, ровно пять mobile destinations total, семь дней Plan, редкая earned ceremony, recovery/no-shame и запрет casino/grind.
+- Самые сильные межкнижные разрывы уже видны до синтеза: equal-weight feature load; mobile DOM/visual-order mismatch; микротипографика 8–10px; неиспользуемые spacing/motion roles; неполный Undo; false-empty network states; goal→daily-task разрыв; paid/random loot; feedback chorus; Entry обещает 10 минут, но не создаёт 10-minute focus phase.
+- **Проверено:** 2,083 строки / 415,299 bytes; ровно 7 book-level `##`, 252 audit cards, sequential IDs, все обязательные поля, чистое дерево заголовков, 0 trailing-whitespace, final newline. Schell-секция byte-identical своему frozen editor pass.
+- Runtime, `app.js`, `styles.css`, `index.html` и `sw.js` не менялись; визуальной правки нет, поэтому preview/screenshots не применимы. **SW `satoru-v107` → `satoru-v107`.** Следующий разрешённый шаг — синтез `DESIGN-CRAFT-RULES.md` из этого ledger, не повторное чтение книг.
+
 ## [2026-08-08] 🎯 Длительность блока — выбор при старте, не в Настройках (JARVIS-3-PLAN §4, п.1)
 
 **Почему.** `workMin` жил только в Настройках — один фиксированный лимит на все задачи. Разбор рефлексии Альберта: «никто не хочет искать это в настройках, никто не хочет каждый раз перед каждой задачей настраивать отдельно таймер» — то есть функция мертва не потому, что плохая, а потому что зарыта. Самая дешёвая правка из всего документа, шла первой по плану.
