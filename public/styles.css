@@ -2325,6 +2325,17 @@ html[data-system="on"] .task, html[data-system="on"] .gear-item, html[data-syste
 /* Карточка ИИ-ключей: мультипровайдер + гид */
 .aikey-tip { background: var(--panel2); border: 1px solid var(--line); border-left: 3px solid #5fbf5f; border-radius: 9px; padding: 9px 12px; font-size: 12.5px; line-height: 1.5; margin: 0 0 12px; }
 .aikey-form { display: flex; flex-direction: column; gap: 12px; }
+/* Профиль-память: монопространственный, потому что это досье, а не проза — так видно
+   структуру разделов и сразу заметно, если ИИ вернул мусор вместо текста. */
+.profile-text {
+  width: 100%; box-sizing: border-box; resize: vertical; min-height: 160px;
+  background: var(--panel2); color: var(--text); border: 1px solid var(--line);
+  border-radius: var(--radius-md, 12px); padding: 10px 12px;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12.5px; line-height: 1.55;
+}
+.profile-text:focus { outline: none; border-color: var(--accent); }
+.profile-meta { font-size: 11.5px; margin-top: 6px; text-align: right; }
 .aikey-row { display: flex; flex-direction: column; gap: 5px; padding: 10px 12px; background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; }
 .aikey-row.has { border-color: #5fbf5f; }
 .aikey-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; }

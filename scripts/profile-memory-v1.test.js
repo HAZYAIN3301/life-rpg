@@ -12,6 +12,10 @@ assert.equal(profile.SECTIONS[0], 'Кто это');
 assert.equal(profile.normalize('```markdown\n## Кто это\nАльберт\n```'), '## Кто это\nАльберт');
 assert.equal(profile.normalize('```\nтекст\n```'), 'текст');
 assert.equal(profile.normalize('Вот обновлённый профиль:\n## Кто это\nАльберт'), '## Кто это\nАльберт');
+// Преамбула И фенс вместе, в любом порядке — поймано живым прогоном: односторонний
+// проход снимал преамбулу, а фенс оставлял, и в профиль уезжали ``` .
+assert.equal(profile.normalize('Вот профиль:\n```markdown\n## Кто это\nАльберт\n```'), '## Кто это\nАльберт');
+assert.equal(profile.normalize('```markdown\nВот профиль:\n## Кто это\nАльберт\n```'), '## Кто это\nАльберт');
 assert.equal(profile.normalize('  ## Кто это\nАльберт  '), '## Кто это\nАльберт');
 assert.equal(profile.normalize('a\n\n\n\nb'), 'a\n\nb', 'лишние пустые строки схлопываются');
 assert.equal(profile.normalize(null), '');

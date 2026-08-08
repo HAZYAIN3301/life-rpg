@@ -1546,6 +1546,17 @@ const I18N_EXTRA = {
   'Работа, мин': { en: 'Work, min', de: 'Arbeit, Min', uk: 'Робота, хв', es: 'Trabajo, min' },
   'Перерыв, мин': { en: 'Break, min', de: 'Pause, Min', uk: 'Перерва, хв', es: 'Descanso, min' },
   'Сколько минут?': { en: 'How many minutes?', de: 'Wie viele Minuten?', uk: 'Скільки хвилин?', es: '¿Cuántos minutos?' },
+  // ── Профиль-память (JARVIS-3-PLAN §2) ──
+  '🧠 Что Тень о тебе помнит': { en: '🧠 What Shadow remembers about you', de: '🧠 Was Schatten über dich weiß', uk: '🧠 Що Тінь про тебе пам\'ятає', es: '🧠 Lo que Sombra recuerda de ti' },
+  'Профиль обновлён': { en: 'Profile updated', de: 'Profil aktualisiert', uk: 'Профіль оновлено', es: 'Perfil actualizado' },
+  'Не удалось обновить профиль': { en: 'Could not update the profile', de: 'Profil konnte nicht aktualisiert werden', uk: 'Не вдалося оновити профіль', es: 'No se pudo actualizar el perfil' },
+  'Обновить через ИИ': { en: 'Update with AI', de: 'Mit KI aktualisieren', uk: 'Оновити через ШІ', es: 'Actualizar con IA' },
+  'Обновляю…': { en: 'Updating…', de: 'Aktualisiere…', uk: 'Оновлюю…', es: 'Actualizando…' },
+  'Сохранить правки': { en: 'Save edits', de: 'Änderungen speichern', uk: 'Зберегти правки', es: 'Guardar cambios' },
+  'Профиль сохранён': { en: 'Profile saved', de: 'Profil gespeichert', uk: 'Профіль збережено', es: 'Perfil guardado' },
+  'Пока пусто. Тень составит профиль после первого разбора недели — или нажми «Обновить через ИИ».': { en: 'Empty for now. Shadow will draft it after the first weekly review — or tap "Update with AI".', de: 'Noch leer. Schatten erstellt es nach dem ersten Wochenrückblick — oder tippe „Mit KI aktualisieren".', uk: 'Поки порожньо. Тінь складе профіль після першого розбору тижня — або натисни «Оновити через ШІ».', es: 'Vacío por ahora. Sombra lo redactará tras el primer resumen semanal — o toca "Actualizar con IA".' },
+  'Это досье Тень берёт с собой в каждый разговор — поэтому оно короткое. Правь смело: твои правки важнее её выводов.': { en: 'Shadow brings this dossier into every conversation — that is why it is short. Edit freely: your corrections outweigh its conclusions.', de: 'Schatten nimmt dieses Dossier in jedes Gespräch mit — deshalb ist es kurz. Ändere es ruhig: deine Korrekturen zählen mehr als seine Schlüsse.', uk: 'Це досьє Тінь бере з собою в кожну розмову — тому воно коротке. Правь смiло: твої правки важливіші за її висновки.', es: 'Sombra lleva este expediente a cada conversación — por eso es corto. Edita sin miedo: tus correcciones pesan más que sus conclusiones.' },
+  'обновлено': { en: 'updated', de: 'aktualisiert', uk: 'оновлено', es: 'actualizado' },
   'Тап — и пошёл отсчёт. Поменять можно и позже, в Настройках.': { en: 'Tap and the clock starts. You can change it later in Settings.', de: 'Tippen, und die Zeit läuft. Später in den Einstellungen änderbar.', uk: 'Тап — і пішов відлік. Змінити можна і пізніше, в Налаштуваннях.', es: 'Toca y empieza el conteo. Puedes cambiarlo luego en Ajustes.' },
   'Колокол': { en: 'Bell', de: 'Glocke', uk: 'Дзвін', es: 'Campana' },
   'Уведомления': { en: 'Notifications', de: 'Benachrichtigungen', uk: 'Сповіщення', es: 'Notificaciones' },
@@ -6774,6 +6785,23 @@ function aiHandleErr(d) {
   return false;
 }
 // Карточка ИИ-ключей: мультипровайдер + гид «получить бесплатный ключ» + выбор провайдера по умолчанию
+// Карточка профиля-памяти. Открыта на чтение и правку сознательно (JARVIS-3-PLAN §2):
+// это и доверие — видно, что приложение о тебе думает, — и защита от накопления
+// ошибочных выводов ИИ, которые иначе тихо жили бы в каждом разговоре.
+function profileCard() {
+  const mem = profileMem(); if (!mem) return '';
+  const prof = ensureProfile(), u = mem.usage(prof, mem.MAX_CHARS);
+  const busy = !!State._profileBusy;
+  const when = prof.updatedAt ? new Date(prof.updatedAt).toLocaleDateString(({ ru: 'ru-RU', en: 'en-US', de: 'de-DE', uk: 'uk-UA', es: 'es-ES' })[lang()] || 'en-US', { day: '2-digit', month: '2-digit' }) : '';
+  return `<div class="card"><h3>${t('🧠 Что Тень о тебе помнит')}</h3>
+    <p class="muted" style="font-size:12.5px;margin:0 0 8px">${t('Это досье Тень берёт с собой в каждый разговор — поэтому оно короткое. Правь смело: твои правки важнее её выводов.')}</p>
+    <textarea id="profile-text" class="profile-text" rows="10" maxlength="${mem.MAX_CHARS}" placeholder="${esc(t('Пока пусто. Тень составит профиль после первого разбора недели — или нажми «Обновить через ИИ».'))}">${esc(prof.text)}</textarea>
+    <div class="profile-meta muted">${u.chars} / ${u.max}${when ? ` · ${t('обновлено')} ${when}` : ''}</div>
+    <div class="settings-actions" style="margin-top:8px">
+      <button class="btn ghost" data-action="profile-save">${t('Сохранить правки')}</button>
+      <button class="btn ${busy ? 'disabled' : ''}" data-action="profile-refresh" ${busy ? 'disabled' : ''}>${busy ? '⏳ ' + t('Обновляю…') : '🤖 ' + t('Обновить через ИИ')}</button>
+    </div></div>`;
+}
 function aiKeysCard() {
   const k = State.aiKeys || {};
   const keyed = AI_PROVIDERS.filter((p) => k[p.id]);
@@ -7098,6 +7126,10 @@ async function runWeeklyReview() {
     if (!r.ok || !d.text) { openAiModal('🤖 Разбор недели', `<p class="muted">Не удалось: ${esc(d.detail || d.error || 'ошибка')}.</p>`); return; }
     openAiModal('🤖 Разбор недели', `<div class="ai-out" data-tts>${esc(d.text).replace(/\n/g, '<br>')}${ttsBtnHTML()}</div>`);
     track('ai:weekly');
+    // Недельный разбор — естественная точка обновления профиля: раз в неделю, когда
+    // человек и так пришёл смотреть итоги, а не на каждый рендер. silent, чтобы
+    // второй тост и перерисовка не перебивали открытый разбор.
+    refreshProfile({ silent: true });
   } catch { openAiModal('🤖 Разбор недели', '<p class="muted">Сетевая ошибка.</p>'); }
 }
 function openAiModal(title, bodyHtml, loading) {
@@ -7647,12 +7679,72 @@ function stateNowContext() {
   Энергия: ${en.cur}/${en.max} · отдых: ${restStateLine()}${dls.length ? `\n  Ближайшие дедлайны целей: ${dls.join('; ')}` : ''}
   Серия: ${currentStreak()} дн. · открытая вкладка: ${State.view}`;
 }
+// ── Профиль-память (JARVIS-3-PLAN §2) ─────────────────────────────────────────
+// Сжатая выжимка о человеке: ИИ её пишет, человек читает и правит. Нужна потому,
+// что у бесплатной модели окно 8–32k токенов и история туда не влезет никогда —
+// хранилище тут ни при чём, синхронизация телефон↔ноутбук решена сервером давно.
+// Сжатие и бюджет живут в profile-memory-v1.js (чистые функции + тесты в scripts/).
+function profileMem() { return (typeof ProfileMemoryV1 !== 'undefined') ? ProfileMemoryV1 : null; }
+function ensureProfile() {
+  if (!State.profile || typeof State.profile !== 'object' || Array.isArray(State.profile)) State.profile = { text: '', updatedAt: null, auto: true };
+  if (typeof State.profile.text !== 'string') State.profile.text = '';
+  return State.profile;
+}
+// Факты для профиля считаются ЗДЕСЬ, локально. ИИ получает готовое и только
+// переформулирует — тот же принцип, что у детектора развилки, и именно он
+// делает слабую модель пригодной: выводить закономерности она не умеет.
+function profileFacts() {
+  const spheres = (State.settings.skills || []).map((s) => `${skillLabel(s.id)} (ур.${skillLevelOf(s.id)})`).join(', ');
+  const goals = (State.goals || []).filter((g) => !g.archived && !g.completedAt).slice(0, 6)
+    .map((g) => `«${g.title}»${g.targetDate ? ` — до ${g.targetDate}` : ''}`).join('\n');
+  const bp = (typeof detectBoundaryPattern === 'function') ? detectBoundaryPattern() : null;
+  const en = ensureEnergy();
+  // Дословные слова юзера — самый сильный сигнал (AI-STRATEGY), в пересказе теряются.
+  const refl = Object.entries(State.days || {})
+    .filter(([, v]) => v && v.reflection && String(v.reflection).trim())
+    .sort((a, b) => (a[0] < b[0] ? 1 : -1)).slice(0, 5)
+    .map(([d, v]) => `${d}: ${String(v.reflection).trim()}`).join('\n');
+  return {
+    lang: lang(), spheres, goals,
+    pattern: bp ? `${bp.label}. ${bp.say}` : '',
+    state: `энергия ${en.cur}/${en.max} · ${restStateLine()} · серия ${currentStreak()} дн. (рекорд ${longestStreak()})`,
+    reflections: refl,
+  };
+}
+async function refreshProfile(opts) {
+  const o = opts || {}, mem = profileMem();
+  if (!mem) return false;
+  if (!canUseAi()) { if (!o.silent) toast(t('Добавь ИИ-ключ в Настройках')); return false; }
+  if (State._profileBusy) return false;
+  State._profileBusy = true; if (!o.silent) render();
+  try {
+    const prof = ensureProfile();
+    const system = 'Ты ведёшь краткое досье о человеке для приложения Satoru. Верни ТОЛЬКО текст профиля — без преамбулы, без код-блоков. ' + aiAnswerLangLine();
+    const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider: aiProvider(), system, prompt: mem.buildPrompt(profileFacts(), prof.text, mem.MAX_CHARS) }) });
+    const d = await r.json();
+    if (d.error && aiHandleErr(d)) return false;
+    if (!r.ok || !d.text) { if (!o.silent) toast(t('Не удалось обновить профиль')); return false; }
+    // Бюджет режется на клиенте, а не доверием к модели: она регулярно промахивается
+    // мимо лимита, а профиль, который только растёт, через полгода не влезет никуда.
+    prof.text = mem.enforceBudget(mem.normalize(d.text), mem.MAX_CHARS);
+    prof.updatedAt = new Date().toISOString(); prof.auto = true;
+    Store.save('profile', prof); track('profile:refresh');
+    if (!o.silent) toast('🧠 ' + t('Профиль обновлён'));
+    return true;
+  } catch { if (!o.silent) toast(t('Сетевая ошибка')); return false; }
+  finally { State._profileBusy = false; if (!o.silent) render(); }
+}
 function chatUserContext() {
   const c = State.settings.curve, lvl = levelInfo(overallXp(), c.base, c.growth).level;
   const spheres = State.settings.skills.map((s) => `${skillLabel(s.id)} (ур.${skillLevelOf(s.id)})`).join(', ');
   const noImports = !Object.keys((State.settings && State.settings.imported) || {}).length;
+  // Профиль идёт ПЕРЕД живыми данными и с явным приоритетом свежего: досье устаревает
+  // между обновлениями, и без этой оговорки вчерашняя выжимка спорила бы с сегодняшним фактом.
+  const pText = ensureProfile().text.trim();
+  const pBlock = pText ? `\nПРОФИЛЬ (память между сессиями; если расходится с данными ниже — верь данным):\n${pText}\n` : '';
   return `КОНТЕКСТ ЮЗЕРА: уровень персонажа ${lvl}; сферы: ${spheres || '(нет)'}; импорт опыта ${noImports ? 'НЕ сделан' : 'сделан'}.
-${stateNowContext()}
+${pBlock}${stateNowContext()}
 
 ${buildWeekContext()}`;
 }
@@ -11701,6 +11793,7 @@ function renderSettings() {
         <button type="submit">${t('+ Добавить')}</button></form>
       ${(State.antihabits || []).map((a) => `<div class="ah-edit"><span class="ah-name">${esc(a.title)}${a.approach ? ` · <span class="muted">${esc(a.approach)}</span>` : ''}</span><button class="del" data-action="delete-antihabit" data-id="${a.id}">✕</button></div>`).join('')}</div>
     ${aiKeysCard()}
+    ${profileCard()}
     ${stravaCard()}
     ${fileImportCard()}
     <div class="card"><h3>${t('📦 Программы-данжи')}</h3><p class="muted" style="margin:0 0 12px">${t('Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.')}</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
@@ -13348,6 +13441,18 @@ function onClick(e) {
       // и спрашивать нечего. «Заход» намеренно зовёт startFocus() напрямую, минуя пикер:
       // там весь смысл в нулевом пороге входа между «вечер уплывает» и «я уже внутри».
       if (focusCfg().pomodoro) openFocusDurationPicker(id); else startFocus(id); }
+  } else if (action === 'profile-refresh') {
+    refreshProfile();
+  } else if (action === 'profile-save') {
+    // Правка человека — источник истины поверх выводов ИИ, поэтому auto:false:
+    // так видно, что текст трогали руками, и это не «сгенерированное».
+    const mem = profileMem(), ta = document.getElementById('profile-text');
+    if (mem && ta) {
+      const prof = ensureProfile();
+      prof.text = mem.enforceBudget(String(ta.value || '').trim(), mem.MAX_CHARS);
+      prof.updatedAt = new Date().toISOString(); prof.auto = false;
+      Store.save('profile', prof); toast('🧠 ' + t('Профиль сохранён')); render();
+    }
   } else if (action === 'focus-pick-duration') {
     const min = Math.max(1, Math.round(Number(el.dataset.min) || 25));
     State.settings.focus = Object.assign({}, focusCfg(), { workMin: min });
@@ -14032,6 +14137,7 @@ async function initApp() {
   State.inbox = await Store.load('inbox', []);
   State.antihabits = await Store.load('antihabits', []);
   State.episodes = await Store.load('episodes', []);
+  State.profile = await Store.load('profile', { text: '', updatedAt: null, auto: true });
   ensureLootbox();
   ensureEnergy();
   applyAmbient();
