@@ -40,6 +40,19 @@ const USER_DATA_FILES = [
   'settings', 'tasks', 'habits', 'habitlog', 'goals',
   'skilltree', 'rewards', 'purchases', 'achievements', 'days', 'weeks',
 ];
+// Переносимый архив намеренно не содержит серверные секреты (AI keys, Strava
+// tokens, push endpoint, recovery/password hashes). Эти данные либо нужно
+// привязать заново, либо они остаются частью серверной учётной записи.
+const ACCOUNT_PORTABLE_FILES = [
+  ...USER_DATA_FILES, 'lootbox', 'inbox', 'antihabits', 'episodes', 'profile',
+];
+const ACCOUNT_PORTABLE_TYPES = {
+  settings: 'object', tasks: 'array', habits: 'array', habitlog: 'object', goals: 'array',
+  skilltree: 'object', rewards: 'array', purchases: 'array', achievements: 'object',
+  days: 'object', weeks: 'object', lootbox: 'object', inbox: 'array', antihabits: 'array',
+  episodes: 'array', profile: 'object',
+};
+const PASSWORD_MIN = 8;
 
 // ============================================================
 //  Helpers
@@ -50,6 +63,17 @@ function send(res, status, body, headers = {}) {
 }
 function sendJson(res, status, obj) {
   send(res, status, JSON.stringify(obj), { 'Content-Type': MIME['.json'] });
+}
+function writeJsonAtomic(file, value) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  const tmp = `${file}.${process.pid}.${crypto.randomBytes(4).toString('hex')}.tmp`;
+  try {
+    fs.writeFileSync(tmp, JSON.stringify(value, null, 2));
+    fs.renameSync(tmp, file);
+  } catch (error) {
+    try { fs.unlinkSync(tmp); } catch {}
+    throw error;
+  }
 }
 function safeName(n) { return /^[a-z0-9_-]+$/.test(n) ? n : null; }
 function safeId(n)   { return /^[a-z0-9_-]{1,32}$/.test(n) ? n : null; }
@@ -121,15 +145,40 @@ function loadUsers() {
   try { return JSON.parse(fs.readFileSync(USERS_FILE(), 'utf8')); } catch { return []; }
 }
 function saveUsers(users) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(USERS_FILE(), JSON.stringify(users, null, 2));
+  writeJsonAtomic(USERS_FILE(), users);
 }
 function userDataDir(id) { return path.join(DATA_DIR, 'users', id); }
 // ---- Мультиплеер: пати (общее состояние). Реестр в DATA_DIR/parties.json ----
 const PARTIES_FILE = () => path.join(DATA_DIR, 'parties.json');
 function loadParties() { try { return JSON.parse(fs.readFileSync(PARTIES_FILE(), 'utf8')); } catch { return []; } }
-function saveParties(p) { fs.mkdirSync(DATA_DIR, { recursive: true }); fs.writeFileSync(PARTIES_FILE(), JSON.stringify(p, null, 2)); }
+function saveParties(p) { writeJsonAtomic(PARTIES_FILE(), p); }
 function partyOf(uid, parties) { return (parties || loadParties()).find((p) => (p.members || []).includes(uid)) || null; }
+function removeUserFromParties(uid, parties) {
+  const next = [];
+  for (const source of parties || []) {
+    const party = structuredClone(source);
+    party.members = (party.members || []).filter((id) => id !== uid);
+    if (party.cheers) delete party.cheers[uid];
+    if (party.raid && Array.isArray(party.raid.claimed)) party.raid.claimed = party.raid.claimed.filter((id) => id !== uid);
+    if (!party.members.length) continue;
+    if (party.createdBy === uid) party.createdBy = party.members[0];
+    next.push(party);
+  }
+  return next;
+}
+function fileSnapshot(file) {
+  try { return { exists: true, data: fs.readFileSync(file) }; }
+  catch { return { exists: false, data: null }; }
+}
+function restoreSnapshot(file, snapshot) {
+  if (snapshot.exists) {
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    const tmp = `${file}.${process.pid}.restore.tmp`;
+    fs.writeFileSync(tmp, snapshot.data); fs.renameSync(tmp, file);
+  } else {
+    try { fs.unlinkSync(file); } catch {}
+  }
+}
 function genPartyCode(parties) { // 5-символьный код без похожих символов, уникальный
   const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let c;
   do { c = Array.from({ length: 5 }, () => A[Math.floor(Math.random() * A.length)]).join(''); } while (parties.some((p) => p.code === c));
@@ -761,9 +810,13 @@ function publicUser(user) {
 const SESSION_COOKIE = 'lrpg_sess';
 const SESSION_AGE_MS = 30 * 24 * 3600 * 1000; // 30 дней
 
-function makeSession(userId) {
+function newSessionVersion() { return crypto.randomBytes(12).toString('hex'); }
+function rotateSessionVersion(user) { user.sessionVersion = newSessionVersion(); return user.sessionVersion; }
+function makeSession(user) {
+  const userId = typeof user === 'string' ? user : user.id;
+  const version = typeof user === 'object' && user ? (user.sessionVersion || rotateSessionVersion(user)) : 'legacy';
   const exp = Date.now() + SESSION_AGE_MS;
-  const payload = userId + '.' + exp;
+  const payload = userId + '.' + exp + '.' + version;
   const sig = crypto.createHmac('sha256', SECRET).update(payload).digest('hex');
   return payload + '.' + sig;
 }
@@ -777,9 +830,16 @@ function verifySession(token) {
     if (sig.length !== exp.length) return null;
     if (!crypto.timingSafeEqual(Buffer.from(sig, 'hex'), Buffer.from(exp, 'hex'))) return null;
   } catch { return null; }
-  const dot = payload.indexOf('.');
-  const uid = payload.slice(0, dot), expires = Number(payload.slice(dot + 1));
+  const parts = payload.split('.');
+  if (parts.length !== 2 && parts.length !== 3) return null;
+  const uid = parts[0], expires = Number(parts[1]), version = parts[2] || '';
   if (!uid || isNaN(expires) || Date.now() > expires) return null;
+  // Проверяем живую запись пользователя на КАЖДОМ запросе. Поэтому удалённый
+  // аккаунт нельзя воскресить старой cookie через /api/data, а смена секрета
+  // сессии немедленно отзывает все ранее выданные устройства.
+  const user = loadUsers().find((item) => item.id === uid);
+  if (!user) return null;
+  if (user.sessionVersion && version !== user.sessionVersion) return null;
   return uid;
 }
 function parseCookies(req) {
@@ -791,11 +851,104 @@ function parseCookies(req) {
   return out;
 }
 function sessionUserId(req) { return verifySession(parseCookies(req)[SESSION_COOKIE]); }
-function setCookieHeader(token) {
-  return `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${Math.floor(SESSION_AGE_MS / 1000)}`;
+function secureCookieSuffix(req) {
+  const proto = String(req && req.headers && req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
+  return proto === 'https' || (req && req.socket && req.socket.encrypted) ? '; Secure' : '';
 }
-function clearCookieHeader() {
-  return `${SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`;
+function setCookieHeader(req, token) {
+  return `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${Math.floor(SESSION_AGE_MS / 1000)}${secureCookieSuffix(req)}`;
+}
+function clearCookieHeader(req) {
+  return `${SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secureCookieSuffix(req)}`;
+}
+
+function deleteAccountLifecycle(uid, users) {
+  const partiesFile = PARTIES_FILE();
+  const feedbackFile = path.join(DATA_DIR, 'feedback.json');
+  const analyticsFile = path.join(DATA_DIR, 'analytics.json');
+  const feedbackBackupDir = path.join(DATA_DIR, 'feedback-backups');
+  let feedbackBackupFiles = [];
+  try { feedbackBackupFiles = fs.readdirSync(feedbackBackupDir).filter((name) => /^feedback-\d{4}-\d{2}-\d{2}\.json$/.test(name)).map((name) => path.join(feedbackBackupDir, name)); } catch {}
+  const protectedFiles = [USERS_FILE(), partiesFile, feedbackFile, analyticsFile, ...feedbackBackupFiles];
+  const snapshots = new Map(protectedFiles.map((file) => [file, fileSnapshot(file)]));
+  const userDir = userDataDir(uid);
+  const trashDir = path.join(DATA_DIR, `.account-delete-${uid}-${crypto.randomBytes(5).toString('hex')}`);
+  const attachmentNames = [];
+  let movedUserDir = false;
+  try {
+    if (fs.existsSync(userDir)) { fs.renameSync(userDir, trashDir); movedUserDir = true; }
+    writeJsonAtomic(partiesFile, removeUserFromParties(uid, loadParties()));
+
+    for (const file of [feedbackFile, ...feedbackBackupFiles]) {
+      let rows = []; try { rows = JSON.parse(fs.readFileSync(file, 'utf8')); } catch { continue; }
+      if (!Array.isArray(rows)) continue;
+      for (const row of rows) if (row && row.userId === uid) {
+        for (const item of Array.isArray(row.attachments) ? row.attachments : []) if (item && item.file) attachmentNames.push(item.file);
+      }
+      writeJsonAtomic(file, rows.filter((row) => !row || row.userId !== uid));
+    }
+
+    let analytics = {}; try { analytics = JSON.parse(fs.readFileSync(analyticsFile, 'utf8')); } catch {}
+    for (const day of Object.values(analytics || {})) if (day && day.users) delete day.users[uid];
+    writeJsonAtomic(analyticsFile, analytics || {});
+    saveUsers(users.filter((user) => user.id !== uid));
+  } catch (error) {
+    for (const [file, snapshot] of snapshots) { try { restoreSnapshot(file, snapshot); } catch {} }
+    if (movedUserDir && fs.existsSync(trashDir) && !fs.existsSync(userDir)) { try { fs.renameSync(trashDir, userDir); } catch {} }
+    throw error;
+  }
+
+  // Registry/party/privacy files are committed at this point. Cache/trash
+  // cleanup is best-effort and must not turn a completed account deletion into
+  // a false 500 that tells the client the account was preserved.
+  if (movedUserDir) { try { fs.rmSync(trashDir, { recursive: true, force: true }); } catch (error) { console.error('[delete-account cleanup]', trashDir, error); } }
+  for (const name of new Set(attachmentNames)) {
+    if (!/^[A-Za-z0-9_.-]+$/.test(name)) continue;
+    try { fs.unlinkSync(path.join(DATA_DIR, 'feedback', name)); } catch {}
+  }
+  try { fs.rmSync(shadowTtsCacheDir(uid), { recursive: true, force: true }); } catch {}
+  try { SHADOW_TTS_RATE.delete(uid); SHADOW_TTS_ACTIVE_BY_USER.delete(uid); } catch {}
+}
+
+function portableValueValid(name, value) {
+  const type = ACCOUNT_PORTABLE_TYPES[name];
+  if (!type || value == null) return false;
+  if (type === 'array') return Array.isArray(value);
+  return typeof value === 'object' && !Array.isArray(value);
+}
+function readPortableAccountData(uid) {
+  const data = {};
+  for (const name of ACCOUNT_PORTABLE_FILES) {
+    try {
+      const value = JSON.parse(fs.readFileSync(path.join(userDataDir(uid), `${name}.json`), 'utf8'));
+      if (portableValueValid(name, value)) data[name] = value;
+    } catch {}
+  }
+  return data;
+}
+function importPortableAccountData(uid, payload) {
+  if (!payload || payload.format !== 'satoru-account' || Number(payload.version) !== 1 || !payload.data || typeof payload.data !== 'object' || Array.isArray(payload.data)) {
+    throw new Error('invalid_archive');
+  }
+  const names = Object.keys(payload.data);
+  if (!names.length || names.some((name) => !ACCOUNT_PORTABLE_FILES.includes(name) || !portableValueValid(name, payload.data[name]))) throw new Error('invalid_archive');
+  const encoded = JSON.stringify(payload.data);
+  if (Buffer.byteLength(encoded) > 8 * 1024 * 1024) throw new Error('archive_too_large');
+
+  const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
+  const snapshots = new Map(); const written = [];
+  for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
+  try {
+    for (const name of names) {
+      backupFile(dir, name);
+      writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
+      written.push(name);
+    }
+  } catch (error) {
+    for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
+    throw error;
+  }
+  return names;
 }
 
 // ============================================================
@@ -1366,17 +1519,19 @@ const server = http.createServer(async (req, res) => {
     // POST /api/auth/login — email+пароль (новое) ИЛИ userId+PIN (legacy)
     if (u === '/api/auth/login' && req.method === 'POST') {
       const { userId, pin, email, password } = body;
+      const users = loadUsers();
       let user = null;
       if (email && password !== undefined) {
-        user = loadUsers().find(x => x.email && x.email === normEmail(email));
+        user = users.find(x => x.email && x.email === normEmail(email));
         if (!user || !user.pwHash || !verifyPw(password, user.pwSalt, user.pwHash)) return sendJson(res, 401, { error: 'неверный email или пароль' });
       } else {
         if (!userId || pin === undefined) return sendJson(res, 400, { error: 'нужен email+пароль или профиль+PIN' });
-        user = loadUsers().find(x => x.id === userId);
+        user = users.find(x => x.id === userId);
         if (!user || !user.pinHash || user.pinHash !== hashPin(userId, String(pin))) return sendJson(res, 401, { error: 'неверный PIN' });
       }
-      const token = makeSession(user.id);
-      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(token), 'Cache-Control': 'no-store' });
+      if (!user.sessionVersion) { rotateSessionVersion(user); saveUsers(users); }
+      const token = makeSession(user);
+      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(req, token), 'Cache-Control': 'no-store' });
       return res.end(JSON.stringify(Object.assign({ ok: true }, publicUser(user))));
     }
 
@@ -1384,16 +1539,17 @@ const server = http.createServer(async (req, res) => {
     if (u === '/api/auth/reset' && req.method === 'POST') {
       const { email, code, newPassword } = body;
       if (!email || !code || !newPassword) return sendJson(res, 400, { error: 'email, код и новый пароль обязательны' });
-      if (String(newPassword).length < 6) return sendJson(res, 400, { error: 'пароль минимум 6 символов' });
+      if (String(newPassword).length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
       const users = loadUsers();
       const user = users.find(x => x.email && x.email === normEmail(email));
       if (!user || !user.recoveryHash) return sendJson(res, 401, { error: 'аккаунт не найден' });
       const given = hashCode(code);
       if (given.length !== user.recoveryHash.length || !crypto.timingSafeEqual(Buffer.from(given, 'hex'), Buffer.from(user.recoveryHash, 'hex'))) return sendJson(res, 401, { error: 'неверный код восстановления' });
       const newCode = setEmailPassword(user, user.email, newPassword); // новый пароль + ротация кода
+      rotateSessionVersion(user);
       saveUsers(users);
-      const token = makeSession(user.id);
-      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(token), 'Cache-Control': 'no-store' });
+      const token = makeSession(user);
+      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(req, token), 'Cache-Control': 'no-store' });
       return res.end(JSON.stringify(Object.assign({ ok: true, recoveryCode: newCode }, publicUser(user))));
     }
 
@@ -1404,14 +1560,17 @@ const server = http.createServer(async (req, res) => {
       const { email, password } = body;
       if (!email || !password) return sendJson(res, 400, { error: 'email и пароль обязательны' });
       if (!validEmail(email)) return sendJson(res, 400, { error: 'некорректный email' });
-      if (String(password).length < 6) return sendJson(res, 400, { error: 'пароль минимум 6 символов' });
+      if (String(password).length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
       const users = loadUsers();
       if (users.find(x => x.email === normEmail(email) && x.id !== uid)) return sendJson(res, 400, { error: 'этот email уже занят' });
       const user = users.find(x => x.id === uid);
       if (!user) return sendJson(res, 401, { error: 'user not found' });
       const code = setEmailPassword(user, email, password);
+      rotateSessionVersion(user);
       saveUsers(users);
-      return sendJson(res, 200, { ok: true, recoveryCode: code, email: user.email });
+      const token = makeSession(user);
+      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(req, token), 'Cache-Control': 'no-store' });
+      return res.end(JSON.stringify({ ok: true, recoveryCode: code, email: user.email }));
     }
 
     // POST /api/auth/register — поддерживает email+пароль (новое) ИЛИ PIN (legacy-киоск)
@@ -1425,7 +1584,7 @@ const server = http.createServer(async (req, res) => {
       const users = loadUsers();
       if (hasEmail) {
         if (!validEmail(email)) return sendJson(res, 400, { error: 'некорректный email' });
-        if (String(password).length < 6) return sendJson(res, 400, { error: 'пароль минимум 6 символов' });
+        if (String(password).length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
         if (users.find(x => x.email === normEmail(email))) return sendJson(res, 400, { error: 'этот email уже зарегистрирован' });
       }
       let id = name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 16) || 'user';
@@ -1442,6 +1601,7 @@ const server = http.createServer(async (req, res) => {
         // сборка старта, личная карта) для него невидим, и приложение встречает пустым экраном
         // и вопросом «а что тут делать». Ровно тот порог, ради снятия которого Джарвис и строился.
         plan: 'free', trialStartedAt: new Date().toISOString(), proUntil: null,
+        sessionVersion: newSessionVersion(),
       };
       if (hasPin) user.pinHash = hashPin(id, String(pin));
       let recoveryCode = null;
@@ -1449,14 +1609,21 @@ const server = http.createServer(async (req, res) => {
       fs.mkdirSync(userDataDir(id), { recursive: true });
       users.push(user);
       saveUsers(users);
-      const token = makeSession(id);
-      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(token), 'Cache-Control': 'no-store' });
+      const token = makeSession(user);
+      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(req, token), 'Cache-Control': 'no-store' });
       return res.end(JSON.stringify(Object.assign({ ok: true, recoveryCode }, publicUser(user))));
     }
 
     // POST /api/auth/logout
     if (u === '/api/auth/logout' && req.method === 'POST') {
-      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': clearCookieHeader(), 'Cache-Control': 'no-store' });
+      if (body.all === true) {
+        const uid = sessionUserId(req);
+        if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+        const users = loadUsers(); const user = users.find((item) => item.id === uid);
+        if (!user) return sendJson(res, 401, { error: 'user not found' });
+        rotateSessionVersion(user); saveUsers(users);
+      }
+      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': clearCookieHeader(req), 'Cache-Control': 'no-store' });
       return res.end(JSON.stringify({ ok: true }));
     }
 
@@ -1471,8 +1638,28 @@ const server = http.createServer(async (req, res) => {
       if (user.pinHash !== hashPin(uid, String(oldPin))) return sendJson(res, 401, { error: 'неверный текущий PIN' });
       if (String(newPin).length < 4) return sendJson(res, 400, { error: 'PIN минимум 4 символа' });
       user.pinHash = hashPin(uid, String(newPin));
+      rotateSessionVersion(user);
       saveUsers(users);
-      return sendJson(res, 200, { ok: true });
+      const token = makeSession(user);
+      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(req, token), 'Cache-Control': 'no-store' });
+      return res.end(JSON.stringify({ ok: true }));
+    }
+
+    // POST /api/auth/change-password — current password + rotation of recovery
+    // code and all sessions. A stolen old cookie becomes unusable immediately.
+    if (u === '/api/auth/change-password' && req.method === 'POST') {
+      const uid = sessionUserId(req);
+      if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      const { currentPassword, newPassword } = body;
+      const users = loadUsers(); const user = users.find((item) => item.id === uid);
+      if (!user || !user.pwHash) return sendJson(res, 400, { error: 'password sign-in is not configured' });
+      if (!verifyPw(currentPassword, user.pwSalt, user.pwHash)) return sendJson(res, 401, { error: 'неверный текущий пароль' });
+      if (String(newPassword || '').length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
+      const recoveryCode = setEmailPassword(user, user.email, newPassword);
+      rotateSessionVersion(user); saveUsers(users);
+      const token = makeSession(user);
+      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(req, token), 'Cache-Control': 'no-store' });
+      return res.end(JSON.stringify({ ok: true, recoveryCode }));
     }
 
     // POST /api/auth/update-profile
@@ -1541,10 +1728,11 @@ const server = http.createServer(async (req, res) => {
     if (u === '/api/auth/delete-account' && req.method === 'POST') {
       const uid = sessionUserId(req);
       if (!uid) return sendJson(res, 401, { error: 'not logged in' });
-      const { password, pin } = body;
+      const { password, pin, confirm } = body;
       const users = loadUsers();
       const user = users.find(x => x.id === uid);
       if (!user) return sendJson(res, 401, { error: 'пользователь не найден' });
+      if (confirm !== 'DELETE') return sendJson(res, 400, { error: 'введи DELETE для подтверждения' });
       // Verify identity before deleting
       if (user.pwHash) {
         if (!password) return sendJson(res, 400, { error: 'нужен пароль для подтверждения' });
@@ -1553,12 +1741,10 @@ const server = http.createServer(async (req, res) => {
         if (!pin) return sendJson(res, 400, { error: 'нужен PIN для подтверждения' });
         if (user.pinHash !== hashPin(uid, String(pin))) return sendJson(res, 401, { error: 'неверный PIN' });
       }
-      // Delete all user data files
-      try { fs.rmSync(userDataDir(uid), { recursive: true, force: true }); } catch {}
-      // Remove from users registry
-      saveUsers(users.filter(x => x.id !== uid));
+      try { deleteAccountLifecycle(uid, users); }
+      catch (error) { console.error('[delete-account]', uid, error); return sendJson(res, 500, { error: 'удаление не завершено; данные сохранены, повтори попытку' }); }
       // Clear session cookie
-      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': clearCookieHeader(), 'Cache-Control': 'no-store' });
+      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': clearCookieHeader(req), 'Cache-Control': 'no-store' });
       return res.end(JSON.stringify({ ok: true }));
     }
 
@@ -2117,6 +2303,33 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, r);
   }
 
+  // ---- Account data lifecycle: portable JSON archive, always current user ----
+  if (u === '/api/account/export' && req.method === 'GET') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const user = loadUsers().find((item) => item.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
+    const archive = {
+      format: 'satoru-account', version: 1, exportedAt: new Date().toISOString(),
+      account: { id: user.id, name: user.name, email: user.email || null },
+      data: readPortableAccountData(uid),
+      excludedSecrets: ['password', 'recoveryCode', 'session', 'aiKeys', 'stravaTokens', 'pushSubscription', 'noteMedia'],
+    };
+    const filename = `satoru-account-${new Date().toISOString().slice(0, 10)}.json`;
+    res.writeHead(200, { 'Content-Type': MIME['.json'], 'Content-Disposition': `attachment; filename="${filename}"`, 'Cache-Control': 'no-store' });
+    return res.end(JSON.stringify(archive, null, 2));
+  }
+  if (u === '/api/account/import' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload; try { payload = JSON.parse(await readBody(req, 9 * 1024 * 1024)); }
+    catch (error) { return sendJson(res, 400, { error: error && error.message === 'payload too large' ? 'archive_too_large' : 'invalid_archive' }); }
+    try {
+      const files = importPortableAccountData(uid, payload);
+      return sendJson(res, 200, { ok: true, files, importedAt: new Date().toISOString() });
+    } catch (error) {
+      const code = error && (error.message === 'invalid_archive' || error.message === 'archive_too_large') ? 400 : 500;
+      return sendJson(res, code, { error: code === 500 ? 'import_failed_no_changes_lost' : error.message });
+    }
+  }
+
   // ---- Per-user data API ----
   const m = u.match(/^\/api\/data\/([^/?]+)/);
   if (m) {
@@ -2140,7 +2353,7 @@ const server = http.createServer(async (req, res) => {
         const parsed = JSON.parse(body);
         fs.mkdirSync(dir, { recursive: true });
         backupFile(dir, name); // снимок прежнего содержимого ПЕРЕД перезаписью — защита от потери
-        fs.writeFileSync(file, JSON.stringify(parsed, null, 2));
+        writeJsonAtomic(file, parsed);
         return sendJson(res, 200, { ok: true });
       } catch (e) { return sendJson(res, 400, { error: String(e.message || e) }); }
     }

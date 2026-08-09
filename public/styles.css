@@ -13954,3 +13954,64 @@ html.calendar-task-open body {
   .calendar-month-shell *::before,
   .calendar-month-shell *::after { animation: none !important; transition-duration: 0ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important; }
 }
+
+/* ============================================================
+   Account & data lifecycle v123
+   ============================================================ */
+.account-credential-form,
+.pin-change {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: var(--sp-2);
+}
+.account-credential-form label,
+.pin-change label {
+  display: grid;
+  min-width: 0;
+  gap: var(--sp-1);
+  color: var(--text-soft);
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+  font-weight: 700;
+}
+.account-credential-form input,
+.pin-change input { width: 100%; min-width: 0; min-height: var(--touch-min); font-size: var(--type-control); line-height: var(--leading-prose); }
+.account-credential-form .account-form-status,
+.pin-change > .muted { grid-column: 1 / -1; min-height: 1.5em; }
+.account-session-actions { margin-top: var(--sp-3); }
+.account-data-card .settings-actions { flex-wrap: wrap; }
+.account-import-label { position: relative; overflow: hidden; cursor: pointer; }
+.account-import-label input { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; pointer-events: none; }
+.account-import-label:focus-within { outline: var(--focus-ring); outline-offset: 2px; }
+.account-dialog-box { width: min(100%, 560px); max-height: min(100%, 720px); overflow-y: auto; }
+.account-dialog-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); }
+.account-dialog-actions .btn { min-height: var(--touch-min); }
+.account-import-summary { padding: var(--sp-2); border: 1px solid var(--line-soft); border-radius: var(--radius-sm); color: var(--text-soft); background: var(--surface-2); overflow-wrap: anywhere; }
+.account-import-result,
+#account-import-status { min-height: 1.5em; }
+.account-notice { margin: var(--sp-2) 0 0; padding: var(--sp-2); border: 1px solid var(--warn); border-radius: var(--radius-sm); color: var(--text-strong); background: color-mix(in srgb, var(--warn) 10%, var(--surface-2)); font-size: var(--type-meta); line-height: var(--leading-prose); }
+.account-dialog-box :is(button, input):focus-visible,
+.account-credential-form :is(button, input):focus-visible,
+.pin-change :is(button, input):focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+
+@media (max-width: 600px) {
+  .account-credential-form,
+  .pin-change { grid-template-columns: minmax(0, 1fr); }
+  .account-credential-form .account-form-status,
+  .pin-change > .muted { grid-column: 1; }
+  .account-dialog-box { max-height: calc(100dvh - 24px); }
+}
+
+@media (pointer: coarse) {
+  .account-credential-form :is(button, input),
+  .pin-change :is(button, input),
+  .account-data-card :is(.btn, input),
+  .account-dialog-box :is(button, input) { min-inline-size: var(--touch-min); min-block-size: var(--touch-min); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .account-dialog-box *,
+  .account-dialog-box *::before,
+  .account-dialog-box *::after { animation: none !important; transition-duration: 0ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important; }
+}

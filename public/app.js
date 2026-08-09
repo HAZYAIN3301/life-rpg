@@ -1535,6 +1535,61 @@ const I18N_EXTRA = {
   // Settings — security
   'Привяжи email+пароль — чтобы входить с любого устройства и иметь восстановление доступа (сейчас вход только по PIN).': { en: 'Link an email + password — to sign in from any device and have account recovery (currently PIN-only sign-in).', de: 'Verknüpfe E-Mail + Passwort — um dich von jedem Gerät anzumelden und eine Wiederherstellung zu haben (derzeit nur PIN-Anmeldung).', uk: 'Прив\'яжи email + пароль — щоб входити з будь-якого пристрою та мати відновлення доступу (зараз вхід лише за PIN).', es: 'Vincula email + contraseña — para entrar desde cualquier dispositivo y tener recuperación de cuenta (ahora solo acceso por PIN).' },
   '🔐 Сменить PIN': { en: '🔐 Change PIN', de: '🔐 PIN ändern', uk: '🔐 Змінити PIN', es: '🔐 Cambiar PIN' },
+  '🔐 Сменить пароль': { en: '🔐 Change password', de: '🔐 Passwort ändern', uk: '🔐 Змінити пароль', es: '🔐 Cambiar contraseña' },
+  'Пароль (минимум 8 символов)': { en: 'Password (min. 8 characters)', de: 'Passwort (mind. 8 Zeichen)', uk: 'Пароль (мінімум 8 символів)', es: 'Contraseña (mínimo 8 caracteres)' },
+  'Новый пароль (минимум 8)': { en: 'New password (min. 8)', de: 'Neues Passwort (mind. 8)', uk: 'Новий пароль (мінімум 8)', es: 'Nueva contraseña (mínimo 8)' },
+  'Пароль (8+)': { en: 'Password (8+)', de: 'Passwort (8+)', uk: 'Пароль (8+)', es: 'Contraseña (8+)' },
+  'Новый пароль (8+)': { en: 'New password (8+)', de: 'Neues Passwort (8+)', uk: 'Новий пароль (8+)', es: 'Nueva contraseña (8+)' },
+  'Повтори новый пароль': { en: 'Repeat new password', de: 'Neues Passwort wiederholen', uk: 'Повтори новий пароль', es: 'Repite la nueva contraseña' },
+  'Сменить пароль': { en: 'Change password', de: 'Passwort ändern', uk: 'Змінити пароль', es: 'Cambiar contraseña' },
+  'Пароли не совпадают': { en: 'Passwords do not match', de: 'Passwörter stimmen nicht überein', uk: 'Паролі не збігаються', es: 'Las contraseñas no coinciden' },
+  'Пароль изменён. Другие сессии завершены.': { en: 'Password changed. Other sessions were signed out.', de: 'Passwort geändert. Andere Sitzungen wurden abgemeldet.', uk: 'Пароль змінено. Інші сесії завершено.', es: 'Contraseña cambiada. Las demás sesiones se cerraron.' },
+  'Выйти на всех устройствах': { en: 'Sign out on all devices', de: 'Auf allen Geräten abmelden', uk: 'Вийти на всіх пристроях', es: 'Cerrar sesión en todos los dispositivos' },
+  'Сессия истекла. Войди снова — несохранённые данные не отправлялись.': { en: 'Your session expired. Sign in again — unsaved data was not sent.', de: 'Deine Sitzung ist abgelaufen. Melde dich erneut an — ungespeicherte Daten wurden nicht gesendet.', uk: 'Сесія завершилася. Увійди знову — незбережені дані не надсилалися.', es: 'Tu sesión caducó. Inicia sesión de nuevo: los datos no guardados no se enviaron.' },
+  'Экспорт и импорт аккаунта': { en: 'Account export and import', de: 'Konto exportieren und importieren', uk: 'Експорт та імпорт акаунта', es: 'Exportar e importar la cuenta' },
+  'Архив содержит твои JSON-данные. Медиафайлы заметок, пароли, ключи ИИ, Strava-токены и push-подписка не экспортируются.': { en: 'The archive contains your JSON data. Note media, passwords, AI keys, Strava tokens and the push subscription are not exported.', de: 'Das Archiv enthält deine JSON-Daten. Notizmedien, Passwörter, KI-Schlüssel, Strava-Tokens und Push-Abos werden nicht exportiert.', uk: 'Архів містить твої JSON-дані. Медіафайли нотаток, паролі, ключі ШІ, Strava-токени та push-підписка не експортуються.', es: 'El archivo contiene tus datos JSON. No se exportan archivos multimedia de notas, contraseñas, claves de IA, tokens de Strava ni la suscripción push.' },
+  'Скачать архив JSON': { en: 'Download JSON archive', de: 'JSON-Archiv herunterladen', uk: 'Завантажити JSON-архів', es: 'Descargar archivo JSON' },
+  'Импортировать архив': { en: 'Import archive', de: 'Archiv importieren', uk: 'Імпортувати архів', es: 'Importar archivo' },
+  'Подтверди импорт данных': { en: 'Confirm data import', de: 'Datenimport bestätigen', uk: 'Підтвердь імпорт даних', es: 'Confirma la importación de datos' },
+  'Импорт заменит только файлы, которые есть в архиве. Перед каждой записью сервер создаст резервную копию.': { en: 'Import replaces only files present in the archive. The server creates a backup before every write.', de: 'Der Import ersetzt nur Dateien im Archiv. Vor jedem Schreiben erstellt der Server eine Sicherung.', uk: 'Імпорт замінить лише файли з архіву. Перед кожним записом сервер створить резервну копію.', es: 'La importación sustituye solo los archivos presentes en el archivo. El servidor crea una copia antes de cada escritura.' },
+  'Подтвердить импорт': { en: 'Confirm import', de: 'Import bestätigen', uk: 'Підтвердити імпорт', es: 'Confirmar importación' },
+  'Архив импортирован': { en: 'Archive imported', de: 'Archiv importiert', uk: 'Архів імпортовано', es: 'Archivo importado' },
+  'Архив не распознан. Выбери JSON-экспорт Satoru.': { en: 'Archive not recognized. Choose a Satoru JSON export.', de: 'Archiv nicht erkannt. Wähle einen Satoru-JSON-Export.', uk: 'Архів не розпізнано. Обери JSON-експорт Satoru.', es: 'Archivo no reconocido. Elige una exportación JSON de Satoru.' },
+  'Импорт не завершён. Исходные данные сохранены — повтори попытку.': { en: 'Import did not finish. Original data was preserved — try again.', de: 'Import nicht abgeschlossen. Die ursprünglichen Daten wurden erhalten — versuche es erneut.', uk: 'Імпорт не завершено. Початкові дані збережено — спробуй ще раз.', es: 'La importación no terminó. Los datos originales se conservaron; inténtalo de nuevo.' },
+  'Для удаления введи DELETE': { en: 'Type DELETE to confirm', de: 'Gib zur Bestätigung DELETE ein', uk: 'Для видалення введи DELETE', es: 'Escribe DELETE para confirmar' },
+  'Удаление не завершено. Данные сохранены — повтори попытку.': { en: 'Deletion did not finish. Your data was preserved — try again.', de: 'Löschen nicht abgeschlossen. Deine Daten wurden erhalten — versuche es erneut.', uk: 'Видалення не завершено. Дані збережено — спробуй ще раз.', es: 'La eliminación no terminó. Tus datos se conservaron; inténtalo de nuevo.' },
+  'неверный email или пароль': { en: 'Incorrect email or password', de: 'E-Mail oder Passwort ist falsch', uk: 'Неправильний email або пароль', es: 'Email o contraseña incorrectos' },
+  'неверный PIN': { en: 'Incorrect PIN', de: 'Falsche PIN', uk: 'Неправильний PIN', es: 'PIN incorrecto' },
+  'неверный пароль': { en: 'Incorrect password', de: 'Falsches Passwort', uk: 'Неправильний пароль', es: 'Contraseña incorrecta' },
+  'аккаунт не найден': { en: 'Account not found', de: 'Konto nicht gefunden', uk: 'Акаунт не знайдено', es: 'Cuenta no encontrada' },
+  'пользователь не найден': { en: 'User not found', de: 'Benutzer nicht gefunden', uk: 'Користувача не знайдено', es: 'Usuario no encontrado' },
+  'профиль не найден': { en: 'Profile not found', de: 'Profil nicht gefunden', uk: 'Профіль не знайдено', es: 'Perfil no encontrado' },
+  'неверный код восстановления': { en: 'Incorrect recovery code', de: 'Falscher Wiederherstellungscode', uk: 'Неправильний код відновлення', es: 'Código de recuperación incorrecto' },
+  'email и пароль обязательны': { en: 'Email and password are required', de: 'E-Mail und Passwort sind erforderlich', uk: 'Email і пароль обов’язкові', es: 'El email y la contraseña son obligatorios' },
+  'email, код и новый пароль обязательны': { en: 'Email, recovery code and new password are required', de: 'E-Mail, Wiederherstellungscode und neues Passwort sind erforderlich', uk: 'Email, код і новий пароль обов’язкові', es: 'El email, el código y la nueva contraseña son obligatorios' },
+  'имя обязательно': { en: 'Name is required', de: 'Name ist erforderlich', uk: 'Ім’я обов’язкове', es: 'El nombre es obligatorio' },
+  'некорректный email': { en: 'Invalid email address', de: 'Ungültige E-Mail-Adresse', uk: 'Некоректний email', es: 'Dirección de email no válida' },
+  'этот email уже зарегистрирован': { en: 'This email is already registered', de: 'Diese E-Mail ist bereits registriert', uk: 'Цей email уже зареєстровано', es: 'Este email ya está registrado' },
+  'этот email уже занят': { en: 'This email is already in use', de: 'Diese E-Mail wird bereits verwendet', uk: 'Цей email уже зайнятий', es: 'Este email ya está en uso' },
+  'неверный текущий пароль': { en: 'Current password is incorrect', de: 'Das aktuelle Passwort ist falsch', uk: 'Поточний пароль неправильний', es: 'La contraseña actual es incorrecta' },
+  'неверный текущий PIN': { en: 'Current PIN is incorrect', de: 'Die aktuelle PIN ist falsch', uk: 'Поточний PIN неправильний', es: 'El PIN actual es incorrecto' },
+  'PIN минимум 4 символа': { en: 'PIN must contain at least 4 characters', de: 'Die PIN muss mindestens 4 Zeichen lang sein', uk: 'PIN має містити щонайменше 4 символи', es: 'El PIN debe tener al menos 4 caracteres' },
+  'введи DELETE для подтверждения': { en: 'Type DELETE to confirm', de: 'Gib zur Bestätigung DELETE ein', uk: 'Введи DELETE для підтвердження', es: 'Escribe DELETE para confirmar' },
+  'нужен пароль для подтверждения': { en: 'Enter your password to confirm', de: 'Gib zur Bestätigung dein Passwort ein', uk: 'Введи пароль для підтвердження', es: 'Introduce tu contraseña para confirmar' },
+  'нужен PIN для подтверждения': { en: 'Enter your PIN to confirm', de: 'Gib zur Bestätigung deine PIN ein', uk: 'Введи PIN для підтвердження', es: 'Introduce tu PIN para confirmar' },
+  'удаление не завершено; данные сохранены, повтори попытку': { en: 'Deletion did not finish; your data was preserved. Try again.', de: 'Löschen nicht abgeschlossen; deine Daten wurden erhalten. Versuche es erneut.', uk: 'Видалення не завершено; дані збережено. Спробуй ще раз.', es: 'La eliminación no terminó; tus datos se conservaron. Inténtalo de nuevo.' },
+  'триал уже был использован': { en: 'The trial has already been used', de: 'Der Testzeitraum wurde bereits genutzt', uk: 'Пробний період уже використано', es: 'La prueba ya se utilizó' },
+  'у тебя уже Pro': { en: 'You already have Pro', de: 'Du hast bereits Pro', uk: 'У тебе вже є Pro', es: 'Ya tienes Pro' },
+  'password sign-in is not configured': { en: 'Password sign-in is not configured', de: 'Die Passwort-Anmeldung ist nicht eingerichtet', uk: 'Вхід за паролем не налаштовано', es: 'El inicio de sesión con contraseña no está configurado' },
+  'not logged in': { en: 'Sign in to continue', de: 'Melde dich an, um fortzufahren', uk: 'Увійди, щоб продовжити', es: 'Inicia sesión para continuar' },
+  'user not found': { en: 'User not found', de: 'Benutzer nicht gefunden', uk: 'Користувача не знайдено', es: 'Usuario no encontrado' },
+  'Удалить все квесты и записи дней?': { en: 'Delete all quests and day entries?', de: 'Alle Quests und Tageseinträge löschen?', uk: 'Видалити всі квести та записи днів?', es: '¿Eliminar todas las misiones y registros diarios?' },
+  'Навыки, привычки, цели и настройки останутся. Сервер сначала сохранит резервные копии.': { en: 'Skills, habits, goals and settings will remain. The server will create backups first.', de: 'Fähigkeiten, Gewohnheiten, Ziele und Einstellungen bleiben erhalten. Der Server erstellt zuerst Sicherungen.', uk: 'Навички, звички, цілі та налаштування залишаться. Сервер спочатку створить резервні копії.', es: 'Las habilidades, hábitos, metas y ajustes se conservarán. El servidor creará copias primero.' },
+  'Для сброса введи RESET': { en: 'Type RESET to confirm', de: 'Gib zur Bestätigung RESET ein', uk: 'Для скидання введи RESET', es: 'Escribe RESET para confirmar' },
+  'Сбросить данные': { en: 'Reset data', de: 'Daten zurücksetzen', uk: 'Скинути дані', es: 'Restablecer datos' },
+  'Сброс не завершён. Данные сохранены — повтори попытку.': { en: 'Reset did not finish. Your data was preserved — try again.', de: 'Zurücksetzen nicht abgeschlossen. Deine Daten wurden erhalten — versuche es erneut.', uk: 'Скидання не завершено. Дані збережено — спробуй ще раз.', es: 'El restablecimiento no terminó. Tus datos se conservaron; inténtalo de nuevo.' },
+  'Сброшено': { en: 'Reset complete', de: 'Zurücksetzen abgeschlossen', uk: 'Скидання завершено', es: 'Restablecimiento completado' },
+  'Удаляю…': { en: 'Deleting…', de: 'Wird gelöscht…', uk: 'Видаляю…', es: 'Eliminando…' },
   'Мы храним только то, что ты вводишь сам: цели, квесты, дневник, привычки. Удаление аккаунта удаляет всё с сервера (DSGVO/GDPR).': { en: 'We store only what you enter yourself: goals, quests, journal, habits. Deleting the account removes everything from the server (GDPR).', de: 'Wir speichern nur, was du selbst eingibst: Ziele, Quests, Tagebuch, Gewohnheiten. Das Löschen des Kontos entfernt alles vom Server (DSGVO).', uk: 'Ми зберігаємо лише те, що ти вводиш сам: цілі, квести, щоденник, звички. Видалення акаунта видаляє все з сервера (GDPR).', es: 'Solo guardamos lo que tú introduces: metas, misiones, diario, hábitos. Eliminar la cuenta borra todo del servidor (RGPD).' },
   // Settings — admin
   '🛠 Админ — выдать Pro': { en: '🛠 Admin — grant Pro', de: '🛠 Admin — Pro vergeben', uk: '🛠 Адмін — видати Pro', es: '🛠 Admin — conceder Pro' },
@@ -1596,6 +1651,8 @@ const I18N_EXTRA = {
   'Разреши уведомления в браузере': { en: 'Allow notifications in the browser', de: 'Erlaube Benachrichtigungen im Browser', uk: 'Дозволь сповіщення в браузері', es: 'Permite notificaciones en el navegador' },
   '🔔 Уведомления включены': { en: '🔔 Notifications enabled', de: '🔔 Benachrichtigungen aktiviert', uk: '🔔 Сповіщення ввімкнено', es: '🔔 Notificaciones activadas' },
   'Не удалось включить уведомления': { en: 'Could not enable notifications', de: 'Benachrichtigungen konnten nicht aktiviert werden', uk: 'Не вдалося ввімкнути сповіщення', es: 'No se pudieron activar las notificaciones' },
+  'Уведомления заблокированы в браузере. Разреши их в настройках сайта, затем повтори.': { en: 'Notifications are blocked in the browser. Allow them in site settings, then try again.', de: 'Benachrichtigungen sind im Browser blockiert. Erlaube sie in den Website-Einstellungen und versuche es erneut.', uk: 'Сповіщення заблоковані в браузері. Дозволь їх у налаштуваннях сайту й повтори.', es: 'Las notificaciones están bloqueadas en el navegador. Permítelas en los ajustes del sitio y vuelve a intentarlo.' },
+  'Не удалось выключить уведомления. Подписка не изменена.': { en: 'Notifications could not be disabled. The subscription was not changed.', de: 'Benachrichtigungen konnten nicht deaktiviert werden. Das Abo wurde nicht geändert.', uk: 'Не вдалося вимкнути сповіщення. Підписку не змінено.', es: 'No se pudieron desactivar las notificaciones. La suscripción no cambió.' },
   '🔕 Уведомления выключены': { en: '🔕 Notifications disabled', de: '🔕 Benachrichtigungen deaktiviert', uk: '🔕 Сповіщення вимкнено', es: '🔕 Notificaciones desactivadas' },
   '✓ Отправлено — жди уведомление': { en: '✓ Sent — wait for the notification', de: '✓ Gesendet — warte auf die Benachrichtigung', uk: '✓ Надіслано — чекай сповіщення', es: '✓ Enviado — espera la notificación' },
   'Не доставлено': { en: 'Not delivered', de: 'Nicht zugestellt', uk: 'Не доставлено', es: 'No entregado' },
@@ -2785,6 +2842,7 @@ const Store = {
   async load(name, fallback) {
     try {
       const r = await fetch(`/api/data/${name}`);
+      if (r.status === 401) { handleAccountSessionExpired(); throw new Error('session expired'); }
       if (r.status === 404) return structuredClone(fallback);
       if (!r.ok) throw new Error('load ' + r.status);
       const v = await r.json();
@@ -2806,6 +2864,7 @@ const Store = {
   async loadChecked(name, fallback, validate) {
     try {
       const r = await fetch(`/api/data/${name}`);
+      if (r.status === 401) { handleAccountSessionExpired(); return { value: structuredClone(fallback), error: 'session' }; }
       if (r.status === 404) return { value: structuredClone(fallback), error: '' };
       if (!r.ok) throw new Error('load ' + r.status);
       const value = await r.json();
@@ -2842,6 +2901,7 @@ const Store = {
       const r = await fetch(`/api/data/${name}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj),
       });
+      if (r.status === 401) { handleAccountSessionExpired(); return false; }
       if (!r.ok) throw new Error('save ' + r.status);
       return true;
     } catch (e) { console.error('save', name, e); toast('⚠️ Не удалось сохранить'); return false; }
@@ -4059,6 +4119,7 @@ const State = {
   profiles: [],       // [{ id, name, avatar }] для экрана логина
   phase: 'boot',      // 'boot' | 'login' | 'register' | 'onboarding' | 'app'
   selectedProfile: null,
+  _accountSessionExpired: false,
   obSkills: new Set(), // выбранные шаблоны на онбординге
   // app data
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
@@ -8989,7 +9050,7 @@ function renderRegisterScreen() {
           <div class="av-grid">${avatarPicker}</div>
           <label style="margin-top:12px">Email</label>
           <input name="email" type="email" placeholder="you@mail.com" autocomplete="username" required />
-          <label style="margin-top:10px">${t('Пароль (минимум 6 символов)')}</label>
+          <label style="margin-top:10px">${t('Пароль (минимум 8 символов)')}</label>
           <input name="password" type="password" placeholder="${t('Придумай пароль')}" autocomplete="new-password" required />
           <input name="password2" type="password" placeholder="${t('Повтори пароль')}" autocomplete="new-password" required />
           <p class="privacy-note">${t('Создавая аккаунт, ты соглашаешься, что приложение (альфа-версия) хранит твои данные — цели, заметки, дневник — на нашем сервере, чтобы они синхронизировались между устройствами. Удалить аккаунт и данные можно в Настройках. Не вводи особо чувствительную информацию.')}</p>
@@ -9013,7 +9074,7 @@ function renderResetScreen() {
           <input name="email" type="email" placeholder="you@mail.com" autocomplete="username" required />
           <label style="margin-top:10px">${t('Код восстановления')}</label>
           <input name="code" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" required />
-          <label style="margin-top:10px">${t('Новый пароль (минимум 6)')}</label>
+          <label style="margin-top:10px">${t('Новый пароль (минимум 8)')}</label>
           <input name="newPassword" type="password" placeholder="${t('Новый пароль')}" autocomplete="new-password" required />
           <div id="reset-error" class="pin-error"></div>
           <button type="submit" class="btn" style="margin-top:14px;width:100%">${t('Сбросить пароль и войти')}</button>
@@ -9026,16 +9087,17 @@ function renderResetScreen() {
 // Модалка кода восстановления — показываем ОДИН раз после регистрации/сброса/добавления email.
 function showRecoveryModal(code, onClose) {
   const ov = document.createElement('div'); ov.className = 'modal-overlay'; ov.id = 'recovery-modal';
+  ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'recovery-title'); ov.setAttribute('aria-describedby', 'recovery-copy-note');
   ov.innerHTML = `<div class="recovery-box">
-    <h3>${t('🔑 Сохрани код восстановления')}</h3>
-    <p class="muted">${t('Это единственный способ вернуть доступ, если забудешь пароль. Запиши его в надёжное место — мы показываем код только сейчас.')}</p>
+    <h3 id="recovery-title" tabindex="-1">${t('🔑 Сохрани код восстановления')}</h3>
+    <p id="recovery-copy-note" class="muted">${t('Это единственный способ вернуть доступ, если забудешь пароль. Запиши его в надёжное место — мы показываем код только сейчас.')}</p>
     <div class="recovery-code" id="recovery-code">${esc(code)}</div>
     <button class="btn ghost" id="recovery-copy">${t('📋 Скопировать')}</button>
     <button class="btn" id="recovery-ok" style="width:100%;margin-top:10px">${t('Я сохранил → продолжить')}</button>
   </div>`;
-  document.body.appendChild(ov);
+  mountAccountDialog(ov, { initial: '#recovery-title', dismissible: false });
   ov.querySelector('#recovery-copy').addEventListener('click', () => { try { navigator.clipboard.writeText(code); toast(t('✓ Скопировано')); } catch { toast(t('Скопируй вручную')); } });
-  ov.querySelector('#recovery-ok').addEventListener('click', () => { ov.remove(); if (onClose) onClose(); });
+  ov.querySelector('#recovery-ok').addEventListener('click', () => { closeAccountDialog('recovery-modal'); if (onClose) onClose(); });
 }
 
 // Объяснение сферы: суть → что засчитывать → чем развивать. Без ИИ работает полностью;
@@ -14338,6 +14400,39 @@ function subscriptionCard() {
     <ul class="pro-feats">${feats.map((f) => `<li>${t(f)}</li>`).join('')}</ul>
     <div class="settings-actions">${cta || `<span class="muted">${t('Спасибо за поддержку 💛')}</span>`}</div></div>`;
 }
+let _accountDialogReturnFocus = null;
+function closeAccountDialog(id, { restoreFocus = true } = {}) {
+  const overlay = document.getElementById(id); if (!overlay) return false;
+  const target = restoreFocus && _accountDialogReturnFocus && _accountDialogReturnFocus.isConnected ? _accountDialogReturnFocus : null;
+  const app = document.getElementById('app'); if (app) app.inert = false;
+  overlay.remove(); _accountDialogReturnFocus = null; unlockCalendarDialogScroll();
+  if (target) requestAnimationFrame(() => target.focus());
+  return true;
+}
+function mountAccountDialog(overlay, { initial, dismissible = true, returnFocus = document.activeElement } = {}) {
+  _accountDialogReturnFocus = returnFocus && typeof returnFocus.focus === 'function' ? returnFocus : null;
+  const app = document.getElementById('app'); if (app) app.inert = true;
+  lockCalendarDialogScroll();
+  overlay.addEventListener('click', (event) => { if (dismissible && event.target === overlay) closeAccountDialog(overlay.id); });
+  overlay.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault(); event.stopPropagation();
+      if (dismissible) closeAccountDialog(overlay.id);
+      else overlay.querySelector(initial || 'button')?.focus();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const focusable = pathChoiceFocusable(overlay);
+    if (!focusable.length) { event.preventDefault(); overlay.querySelector(initial || '[tabindex="-1"]')?.focus(); return; }
+    const index = focusable.indexOf(document.activeElement);
+    if (index < 0 || (!event.shiftKey && index === focusable.length - 1) || (event.shiftKey && index === 0)) {
+      event.preventDefault(); focusable[event.shiftKey ? focusable.length - 1 : 0].focus();
+    }
+  });
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.querySelector(initial || '[tabindex="-1"], input, button')?.focus());
+  return overlay;
+}
 function securityCard() {
   const hasEmail = State.me && State.me.email;
   const hasPin = State.me && State.me.hasPin;
@@ -14345,17 +14440,26 @@ function securityCard() {
     ? `<p class="muted" style="font-size:12.5px;margin:0 0 6px">${t('✓ Email привязан:')} <b>${esc(hasEmail)}</b> ${t('— вход и восстановление по email+паролю.')}</p>`
     : `<p class="muted" style="font-size:12.5px;margin:0 0 8px">${t('Привяжи email+пароль — чтобы входить с любого устройства и иметь восстановление доступа (сейчас вход только по PIN).')}</p>
        <form id="add-email" class="pin-change">
-         <input name="email" type="email" placeholder="you@mail.com" autocomplete="username" required />
-         <input name="password" type="password" placeholder="${t('Пароль (6+)')}" autocomplete="new-password" required />
+         <label><span>Email</span><input name="email" type="email" placeholder="you@mail.com" autocomplete="username" required /></label>
+         <label><span>${t('Пароль (8+)')}</span><input name="password" type="password" autocomplete="new-password" minlength="8" required /></label>
          <button type="submit" class="btn">${t('Привязать')}</button><span id="add-email-msg" class="muted"></span></form>`;
+  const passwordBlock = hasEmail
+    ? `<h3 style="margin-top:16px">${t('🔐 Сменить пароль')}</h3>
+      <form id="change-password" class="account-credential-form">
+        <label><span>${t('Текущий пароль')}</span><input name="currentPassword" type="password" autocomplete="current-password" required /></label>
+        <label><span>${t('Новый пароль (8+)')}</span><input name="newPassword" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <label><span>${t('Повтори новый пароль')}</span><input name="newPassword2" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <button type="submit" class="btn">${t('Сменить пароль')}</button><span class="account-form-status muted" role="status" aria-live="polite"></span>
+      </form>` : '';
   const pinBlock = hasPin
     ? `<h3 style="margin-top:16px">${t('🔐 Сменить PIN')}</h3>
     <form id="change-pin" class="pin-change">
-      <input name="oldPin" type="password" inputmode="numeric" placeholder="${t('Текущий PIN')}" maxlength="8" required />
-      <input name="newPin" type="password" inputmode="numeric" placeholder="${t('Новый PIN (4+)')}" maxlength="8" required />
+      <label><span>${t('Текущий PIN')}</span><input name="oldPin" type="password" inputmode="numeric" maxlength="8" required /></label>
+      <label><span>${t('Новый PIN (4+)')}</span><input name="newPin" type="password" inputmode="numeric" minlength="4" maxlength="8" required /></label>
       <button type="submit" class="btn">${t('Сменить')}</button><span id="pin-change-msg" class="muted"></span></form>`
     : '';
-  return `<div class="card"><h3>${t('🔑 Вход и восстановление')}</h3>${emailBlock}${pinBlock}
+  return `<div class="card"><h3>${t('🔑 Вход и восстановление')}</h3>${emailBlock}${passwordBlock}${pinBlock}
+    <div class="settings-actions account-session-actions"><button type="button" class="btn ghost" data-action="logout-all">${t('Выйти на всех устройствах')}</button></div>
     <div class="danger-zone">
       <h3>${t('⚠️ Данные и приватность')}</h3>
       <p class="muted" style="font-size:12.5px;margin:0 0 8px">${t('Мы храним только то, что ты вводишь сам: цели, квесты, дневник, привычки. Удаление аккаунта удаляет всё с сервера (DSGVO/GDPR).')}</p>
@@ -14370,18 +14474,63 @@ function showDeleteAccountModal() {
     ? `<label class="auth-label">${t('Подтверди паролем')}<input name="password" type="password" autocomplete="current-password" placeholder="${t('Текущий пароль')}" required /></label>`
     : `<label class="auth-label">${t('Подтверди PIN')}<input name="pin" type="password" inputmode="numeric" placeholder="${t('Текущий PIN')}" maxlength="8" required /></label>`;
   const ov = document.createElement('div'); ov.id = 'del-account-modal'; ov.className = 'modal-overlay';
-  ov.innerHTML = `<div class="paywall-box">
-    <button class="modal-x" data-action="close-del-account">✕</button>
+  ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'delete-account-title'); ov.setAttribute('aria-describedby', 'delete-account-copy');
+  ov.innerHTML = `<div class="paywall-box account-dialog-box">
+    <button type="button" class="modal-x" data-action="close-del-account" aria-label="${esc(t('Закрыть'))}">✕</button>
     <div style="font-size:36px;margin-bottom:8px">⚠️</div>
-    <h2 style="color:var(--bad);margin:0 0 10px">${t('Удалить аккаунт')}</h2>
-    <p class="muted" style="margin:0 0 16px;font-size:13.5px">${t('Это необратимо. Все твои данные — цели, квесты, дневник, привычки, достижения, питомцы — исчезнут навсегда с наших серверов.')}</p>
+    <h2 id="delete-account-title" tabindex="-1" style="color:var(--bad);margin:0 0 10px">${t('Удалить аккаунт')}</h2>
+    <p id="delete-account-copy" class="muted" style="margin:0 0 16px;font-size:13.5px">${t('Это необратимо. Все твои данные — цели, квесты, дневник, привычки, достижения, питомцы — исчезнут навсегда с наших серверов.')}</p>
     <form id="del-account-form" style="display:flex;flex-direction:column;gap:10px">
       ${confirmField}
-      <button type="submit" class="btn" style="background:var(--bad);border-color:var(--bad);margin-top:4px">${t('Да, удалить навсегда')}</button>
-      <span id="del-account-msg" class="muted" style="text-align:center;font-size:13px"></span>
+      <label class="auth-label">${t('Для удаления введи DELETE')}<input name="confirm" autocomplete="off" spellcheck="false" placeholder="DELETE" required /></label>
+      <div class="account-dialog-actions"><button type="button" class="btn ghost" data-action="close-del-account">${t('Отмена')}</button><button type="submit" class="btn danger" style="margin-top:4px">${t('Да, удалить навсегда')}</button></div>
+      <span id="del-account-msg" class="muted" role="alert" aria-live="assertive" style="text-align:center;font-size:13px"></span>
     </form>
   </div>`;
-  document.body.appendChild(ov);
+  mountAccountDialog(ov, { initial: '#delete-account-title' });
+}
+
+function accountDataCard() {
+  return `<div class="card settings-data-card account-data-card"><h4>${t('Экспорт и импорт аккаунта')}</h4>
+    <p class="muted">${t('Архив содержит твои JSON-данные. Медиафайлы заметок, пароли, ключи ИИ, Strava-токены и push-подписка не экспортируются.')}</p>
+    <div class="settings-actions">
+      <a class="btn ghost" href="/api/account/export" download>${t('Скачать архив JSON')}</a>
+      <label class="btn ghost account-import-label"><span>${t('Импортировать архив')}</span><input id="account-import-file" type="file" accept="application/json,.json" /></label>
+    </div>
+    <p id="account-import-status" class="muted" role="status" aria-live="polite"></p>
+  </div>`;
+}
+
+function showAccountImportDialog(archive, filename, returnFocus) {
+  document.getElementById('account-import-modal')?.remove();
+  const files = Object.keys(archive.data || {});
+  const overlay = document.createElement('div'); overlay.id = 'account-import-modal'; overlay.className = 'modal-overlay';
+  overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true'); overlay.setAttribute('aria-labelledby', 'account-import-title'); overlay.setAttribute('aria-describedby', 'account-import-copy');
+  overlay._archive = archive;
+  overlay.innerHTML = `<div class="paywall-box account-dialog-box">
+    <button type="button" class="modal-x" data-action="close-account-import" aria-label="${esc(t('Закрыть'))}">✕</button>
+    <h2 id="account-import-title" tabindex="-1">${t('Подтверди импорт данных')}</h2>
+    <p id="account-import-copy" class="muted">${t('Импорт заменит только файлы, которые есть в архиве. Перед каждой записью сервер создаст резервную копию.')}</p>
+    <p class="account-import-summary"><b data-noi18n>${esc(filename)}</b><br><span data-noi18n>${files.map(esc).join(', ')}</span></p>
+    <div class="account-dialog-actions"><button type="button" class="btn ghost" data-action="close-account-import">${t('Отмена')}</button><button type="button" class="btn" data-action="confirm-account-import">${t('Подтвердить импорт')}</button></div>
+    <p class="account-import-result muted" role="alert" aria-live="assertive"></p>
+  </div>`;
+  mountAccountDialog(overlay, { initial: '#account-import-title', returnFocus });
+}
+
+function showResetDataDialog(returnFocus = document.activeElement) {
+  document.getElementById('account-reset-modal')?.remove();
+  const overlay = document.createElement('div'); overlay.id = 'account-reset-modal'; overlay.className = 'modal-overlay';
+  overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true'); overlay.setAttribute('aria-labelledby', 'account-reset-title'); overlay.setAttribute('aria-describedby', 'account-reset-copy');
+  overlay.innerHTML = `<div class="paywall-box account-dialog-box">
+    <button type="button" class="modal-x" data-action="close-account-reset" aria-label="${esc(t('Закрыть'))}">✕</button>
+    <h2 id="account-reset-title" tabindex="-1">${t('Удалить все квесты и записи дней?')}</h2>
+    <p id="account-reset-copy" class="muted">${t('Навыки, привычки, цели и настройки останутся. Сервер сначала сохранит резервные копии.')}</p>
+    <label class="auth-label">${t('Для сброса введи RESET')}<input name="confirm" autocomplete="off" spellcheck="false" placeholder="RESET" /></label>
+    <div class="account-dialog-actions"><button type="button" class="btn ghost" data-action="close-account-reset">${t('Отмена')}</button><button type="button" class="btn danger" data-action="confirm-account-reset">${t('Сбросить данные')}</button></div>
+    <p class="account-reset-result muted" role="alert" aria-live="assertive"></p>
+  </div>`;
+  mountAccountDialog(overlay, { initial: '#account-reset-title', returnFocus });
 }
 // Черновой SVG-портрет Кремня — маскот-антагонист пути «Контроль» (пара Тени). Плейсхолдер до арта Виолы
 // (тот же paper-doll пайплайн, STYLE-DECISION.md). Острый кристаллический скол-«лицо»: строгость, огранка, искра.
@@ -15565,6 +15714,7 @@ function renderSettings() {
     ${groupEnd()}
     ${groupStart('data', 'Данные', 'Сброс и локальное хранилище')}
     ${settingsRecoveryCard()}
+    ${accountDataCard()}
     <div class="card settings-data-card"><h4>${t('Данные')}</h4><p class="muted">${t('Данные лежат в')} <code>life-rpg/data/</code> ${t('внутри твоего vault — это обычные JSON-файлы.')}</p><div class="settings-actions"><button class="btn danger" data-action="reset-data">${t('Сбросить квесты и дни')}</button></div></div>
     ${groupEnd()}
     </div>`;
@@ -16359,20 +16509,28 @@ async function onSubmit(e) {
   if (f.id === 'pin-form') {
     e.preventDefault();
     const userId = f.dataset.id, pin = f.pin.value;
-    const errEl = f.querySelector('#pin-error');
-    fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, pin }) })
-      .then(async r => { const d = await r.json(); if (r.ok) { State.me = d; initApp(); } else { if (errEl) errEl.textContent = d.error || 'Неверный PIN'; f.pin.value = ''; } })
-      .catch(() => { if (errEl) errEl.textContent = 'Ошибка сети'; });
+    const errEl = f.querySelector('#pin-error'), btn = f.querySelector('button[type="submit"]');
+    if (errEl) errEl.setAttribute('role', 'alert'); if (btn) btn.disabled = true;
+    try {
+      const { response, data } = await accountJson('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, pin }) }, { authenticated: false });
+      if (response.ok) { State._accountSessionExpired = false; State.me = data; await initApp(); }
+      else { if (errEl) errEl.textContent = accountError(data, 'Неверный PIN'); f.pin.value = ''; }
+    } catch { if (errEl) errEl.textContent = t('Сетевая ошибка'); }
+    finally { if (btn && btn.isConnected) btn.disabled = false; }
     return;
   }
 
   // --- Login (email+пароль) ---
   if (f.id === 'login-form') {
     e.preventDefault();
-    const errEl = f.querySelector('#login-error');
-    fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: f.email.value.trim(), password: f.password.value }) })
-      .then(async r => { const d = await r.json(); if (r.ok) { State.me = d; initApp(); } else { errEl.textContent = d.error || 'Не удалось войти'; f.password.value = ''; } })
-      .catch(() => { errEl.textContent = 'Ошибка сети'; });
+    const errEl = f.querySelector('#login-error'), btn = f.querySelector('button[type="submit"]');
+    errEl.setAttribute('role', 'alert'); btn.disabled = true;
+    try {
+      const { response, data } = await accountJson('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: f.email.value.trim(), password: f.password.value }) }, { authenticated: false });
+      if (response.ok) { State._accountSessionExpired = false; State.me = data; await initApp(); }
+      else { errEl.textContent = accountError(data, 'Не удалось войти'); f.password.value = ''; }
+    } catch { errEl.textContent = t('Сетевая ошибка'); }
+    finally { if (btn.isConnected) btn.disabled = false; }
     return;
   }
 
@@ -16381,43 +16539,47 @@ async function onSubmit(e) {
     e.preventDefault();
     const name = f.name.value.trim(), email = f.email.value.trim(), pw = f.password.value, pw2 = f.password2.value;
     const errEl = f.querySelector('#reg-error');
-    if (pw !== pw2) { errEl.textContent = 'Пароли не совпадают'; return; }
-    if (pw.length < 6) { errEl.textContent = 'Пароль минимум 6 символов'; return; }
-    fetch('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password: pw, avatar: State.regAvatar || '⚡' }) })
-      .then(async r => {
-        const d = await r.json();
-        if (r.ok) { State.me = d; State.phase = 'onboarding'; render(); if (d.recoveryCode) showRecoveryModal(d.recoveryCode); }
-        else { errEl.textContent = d.error || 'Ошибка регистрации'; }
-      })
-      .catch(() => { f.querySelector('#reg-error').textContent = 'Ошибка сети'; });
+    const btn = f.querySelector('button[type="submit"]'); errEl.setAttribute('role', 'alert');
+    if (pw !== pw2) { errEl.textContent = t('Пароли не совпадают'); return; }
+    if (pw.length < 8) { errEl.textContent = t('Пароль (минимум 8 символов)'); return; }
+    btn.disabled = true;
+    try {
+      const { response, data } = await accountJson('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password: pw, avatar: State.regAvatar || '⚡' }) }, { authenticated: false });
+      if (response.ok) { State._accountSessionExpired = false; State.me = data; State.phase = 'onboarding'; render(); if (data.recoveryCode) showRecoveryModal(data.recoveryCode); }
+      else errEl.textContent = accountError(data, 'Ошибка регистрации');
+    } catch { errEl.textContent = t('Сетевая ошибка'); }
+    finally { if (btn.isConnected) btn.disabled = false; }
     return;
   }
 
   // --- Reset (по коду восстановления) ---
   if (f.id === 'reset-form') {
     e.preventDefault();
-    const errEl = f.querySelector('#reset-error');
-    fetch('/api/auth/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: f.email.value.trim(), code: f.code.value.trim(), newPassword: f.newPassword.value }) })
-      .then(async r => {
-        const d = await r.json();
-        if (r.ok) { State.me = d; const code = d.recoveryCode; initApp(); if (code) showRecoveryModal(code); }
-        else { errEl.textContent = d.error || 'Не удалось сбросить'; }
-      })
-      .catch(() => { errEl.textContent = 'Ошибка сети'; });
+    const errEl = f.querySelector('#reset-error'), btn = f.querySelector('button[type="submit"]');
+    errEl.setAttribute('role', 'alert');
+    if (f.newPassword.value.length < 8) { errEl.textContent = t('Пароль (минимум 8 символов)'); return; }
+    btn.disabled = true;
+    try {
+      const { response, data } = await accountJson('/api/auth/reset', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: f.email.value.trim(), code: f.code.value.trim(), newPassword: f.newPassword.value }) }, { authenticated: false });
+      if (response.ok) { State._accountSessionExpired = false; State.me = data; const code = data.recoveryCode; await initApp(); if (code) showRecoveryModal(code); }
+      else errEl.textContent = accountError(data, 'Не удалось сбросить');
+    } catch { errEl.textContent = t('Сетевая ошибка'); }
+    finally { if (btn.isConnected) btn.disabled = false; }
     return;
   }
 
   // --- Привязать email+пароль к существующему аккаунту ---
   if (f.id === 'add-email') {
     e.preventDefault();
-    const msg = f.querySelector('#add-email-msg');
-    fetch('/api/auth/add-email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: f.email.value.trim(), password: f.password.value }) })
-      .then(async (r) => {
-        const d = await r.json();
-        if (r.ok) { if (State.me) State.me.email = d.email; msg.textContent = '✓ Привязано'; if (d.recoveryCode) showRecoveryModal(d.recoveryCode, () => render()); }
-        else { msg.textContent = d.error || 'Ошибка'; msg.style.color = '#e0526a'; }
-      })
-      .catch(() => { msg.textContent = 'Ошибка сети'; msg.style.color = '#e0526a'; });
+    const msg = f.querySelector('#add-email-msg'), btn = f.querySelector('button[type="submit"]'); msg.setAttribute('role', 'status');
+    if (f.password.value.length < 8) { msg.textContent = t('Пароль (минимум 8 символов)'); msg.style.color = 'var(--bad)'; return; }
+    btn.disabled = true;
+    try {
+      const { response, data } = await accountJson('/api/auth/add-email', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: f.email.value.trim(), password: f.password.value }) });
+      if (response.ok) { if (State.me) State.me.email = data.email; msg.textContent = '✓ ' + t('Привязано'); if (data.recoveryCode) showRecoveryModal(data.recoveryCode, () => render()); }
+      else { msg.textContent = accountError(data); msg.style.color = 'var(--bad)'; }
+    } catch { msg.textContent = t('Сетевая ошибка'); msg.style.color = 'var(--bad)'; }
+    finally { if (btn.isConnected) btn.disabled = false; }
     return;
   }
 
@@ -16426,33 +16588,50 @@ async function onSubmit(e) {
     e.preventDefault();
     const msg = f.querySelector('#del-account-msg');
     const btn = f.querySelector('button[type="submit"]');
-    msg.textContent = 'Удаляю…'; msg.style.color = 'var(--muted)';
+    msg.textContent = t('Удаляю…'); msg.style.color = 'var(--muted)';
     btn.disabled = true;
     const body = {};
     if (f.password) body.password = f.password.value;
     if (f.pin) body.pin = f.pin.value;
-    fetch('/api/auth/delete-account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-      .then(async (r) => {
-        const d = await r.json();
-        if (r.ok) {
-          document.getElementById('del-account-modal')?.remove();
-          State.me = null; State.phase = 'login'; stopFocus(false); clearAllData();
-          fetch('/api/auth/profiles').then(r2 => r2.json()).then(p => { State.profiles = p; render(); }).catch(() => { State.profiles = []; render(); });
-        } else {
-          msg.textContent = d.error || 'Ошибка'; msg.style.color = 'var(--bad)'; btn.disabled = false;
-        }
-      })
-      .catch(() => { msg.textContent = 'Ошибка сети'; msg.style.color = 'var(--bad)'; btn.disabled = false; });
+    body.confirm = f.confirm.value.trim();
+    try {
+      const { response, data } = await accountJson('/api/auth/delete-account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      if (response.ok) {
+        closeAccountDialog('del-account-modal', { restoreFocus: false });
+        State.me = null; State.phase = 'login'; stopFocus(false); clearAllData(); State._accountSessionExpired = false;
+        try { const profiles = await fetch('/api/auth/profiles'); State.profiles = profiles.ok ? await profiles.json() : []; } catch { State.profiles = []; }
+        render();
+      } else msg.textContent = accountError(data, 'Удаление не завершено. Данные сохранены — повтори попытку.');
+    } catch { msg.textContent = t('Сетевая ошибка'); }
+    finally { if (btn.isConnected) btn.disabled = false; }
+    return;
+  }
+
+  if (f.id === 'change-password') {
+    e.preventDefault();
+    const msg = f.querySelector('.account-form-status'), btn = f.querySelector('button[type="submit"]');
+    if (f.newPassword.value !== f.newPassword2.value) { msg.textContent = t('Пароли не совпадают'); msg.setAttribute('role', 'alert'); return; }
+    if (f.newPassword.value.length < 8) { msg.textContent = t('Пароль (минимум 8 символов)'); msg.setAttribute('role', 'alert'); return; }
+    btn.disabled = true;
+    try {
+      const { response, data } = await accountJson('/api/auth/change-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ currentPassword: f.currentPassword.value, newPassword: f.newPassword.value }) });
+      if (response.ok) { f.reset(); msg.textContent = t('Пароль изменён. Другие сессии завершены.'); msg.setAttribute('role', 'status'); if (data.recoveryCode) showRecoveryModal(data.recoveryCode, () => render()); }
+      else { msg.textContent = accountError(data); msg.setAttribute('role', 'alert'); }
+    } catch { msg.textContent = t('Сетевая ошибка'); msg.setAttribute('role', 'alert'); }
+    finally { if (btn.isConnected) btn.disabled = false; }
     return;
   }
 
   // --- Смена PIN ---
   if (f.id === 'change-pin') {
     e.preventDefault();
-    const msg = f.querySelector('#pin-change-msg');
-    fetch('/api/auth/change-pin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ oldPin: f.oldPin.value, newPin: f.newPin.value }) })
-      .then(async (r) => { const d = await r.json(); if (r.ok) { msg.textContent = '✓ PIN изменён'; msg.style.color = '#5fbf7a'; f.reset(); } else { msg.textContent = d.error || 'Ошибка'; msg.style.color = '#e0526a'; } })
-      .catch(() => { msg.textContent = 'Ошибка сети'; msg.style.color = '#e0526a'; });
+    const msg = f.querySelector('#pin-change-msg'), btn = f.querySelector('button[type="submit"]'); msg.setAttribute('role', 'status'); btn.disabled = true;
+    try {
+      const { response, data } = await accountJson('/api/auth/change-pin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ oldPin: f.oldPin.value, newPin: f.newPin.value }) });
+      if (response.ok) { msg.textContent = '✓ PIN'; msg.style.color = 'var(--good)'; f.reset(); }
+      else { msg.textContent = accountError(data); msg.style.color = 'var(--bad)'; }
+    } catch { msg.textContent = t('Сетевая ошибка'); msg.style.color = 'var(--bad)'; }
+    finally { if (btn.isConnected) btn.disabled = false; }
     return;
   }
 
@@ -16462,7 +16641,7 @@ async function onSubmit(e) {
     const msg = f.querySelector('#grant-msg'), days = f.days.value ? Number(f.days.value) : undefined;
     fetch('/api/auth/grant-pro', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: f.userId.value.trim(), days }) })
       .then(async (r) => { const d = await r.json(); if (r.ok) { msg.textContent = `✓ Pro выдан: ${d.name}`; msg.style.color = '#5fbf7a'; if (d.id === (State.me && State.me.id)) { State.me = d; render(); } } else { msg.textContent = d.error || 'Ошибка'; msg.style.color = '#e0526a'; } })
-      .catch(() => { msg.textContent = 'Ошибка сети'; msg.style.color = '#e0526a'; });
+      .catch(() => { msg.textContent = t('Сетевая ошибка'); msg.style.color = '#e0526a'; });
     return;
   }
   if (f.id === 'recover-data') {
@@ -16495,7 +16674,7 @@ async function onSubmit(e) {
         if (r.ok) { msg.textContent = `✓ Спасибо! Отправлено${d.attachments ? ` (вложений: ${d.attachments})` : ''}.`; msg.style.color = '#5fbf7a'; f.text.value = ''; f.files.value = ''; const pv = f.querySelector('#fb-previews'); if (pv) pv.innerHTML = '';
           State.myFeedbackCount = (State.myFeedbackCount || 0) + 1; checkAchievements(); }
         else { msg.textContent = d.error || 'Ошибка'; msg.style.color = '#e0526a'; }
-      } catch { msg.textContent = 'Ошибка сети'; msg.style.color = '#e0526a'; }
+      } catch { msg.textContent = t('Сетевая ошибка'); msg.style.color = '#e0526a'; }
       btn.disabled = false;
     })();
     return;
@@ -16858,10 +17037,22 @@ function onClick(e) {
   if (action === 'test-login') { loginAsTestUser(); return; }
   if (action === 'pick-avatar') { State.regAvatar = el.dataset.av; State.regName = document.querySelector('input[name="name"]')?.value || ''; render(); return; }
   if (action === 'logout') {
-    fetch('/api/auth/logout', { method: 'POST' }).finally(() => {
-      State.me = null; State.phase = 'login'; stopFocus(false); clearAllData();
-      fetch('/api/auth/profiles').then(r => r.json()).then(p => { State.profiles = p; render(); }).catch(() => { State.profiles = []; render(); });
-    }); return;
+    el.disabled = true;
+    accountJson('/api/auth/logout', { method: 'POST' }).then(async ({ response, data }) => {
+      if (!response.ok) { toast(accountError(data, 'Сетевая ошибка')); return; }
+      State.me = null; State.phase = 'login'; stopFocus(false); clearAllData(); State._accountSessionExpired = false;
+      try { const profiles = await fetch('/api/auth/profiles'); State.profiles = profiles.ok ? await profiles.json() : []; } catch { State.profiles = []; }
+      render();
+    }).catch(() => toast(t('Сетевая ошибка'))).finally(() => { if (el.isConnected) el.disabled = false; }); return;
+  }
+  if (action === 'logout-all') {
+    el.disabled = true;
+    accountJson('/api/auth/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ all: true }) }).then(async ({ response, data }) => {
+      if (!response.ok) { toast(accountError(data, 'Сетевая ошибка')); return; }
+      State.me = null; State.phase = 'login'; stopFocus(false); clearAllData(); State._accountSessionExpired = false;
+      try { const profiles = await fetch('/api/auth/profiles'); State.profiles = profiles.ok ? await profiles.json() : []; } catch { State.profiles = []; }
+      render();
+    }).catch(() => toast(t('Сетевая ошибка'))).finally(() => { if (el.isConnected) el.disabled = false; }); return;
   }
 
   // --- Onboarding actions ---
@@ -17261,7 +17452,32 @@ function onClick(e) {
   if (action === 'show-paywall') { showPaywall(el.dataset.feature); return; }
   if (action === 'close-paywall') { const p = document.getElementById('paywall'); if (p) p.remove(); return; }
   if (action === 'show-delete-account') { showDeleteAccountModal(); return; }
-  if (action === 'close-del-account') { const m = document.getElementById('del-account-modal'); if (m) m.remove(); return; }
+  if (action === 'close-del-account') { closeAccountDialog('del-account-modal'); return; }
+  if (action === 'close-account-import') { closeAccountDialog('account-import-modal'); return; }
+  if (action === 'close-account-reset') { closeAccountDialog('account-reset-modal'); return; }
+  if (action === 'confirm-account-reset') {
+    const overlay = document.getElementById('account-reset-modal'); if (!overlay) return;
+    const input = overlay.querySelector('input[name="confirm"]'), result = overlay.querySelector('.account-reset-result');
+    if (!input || input.value.trim() !== 'RESET') { result.textContent = t('Для сброса введи RESET'); input?.focus(); return; }
+    el.disabled = true; input.disabled = true;
+    const archive = { format: 'satoru-account', version: 1, data: { tasks: [], days: {} } };
+    accountJson('/api/account/import', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(archive) }).then(({ response }) => {
+      if (!response.ok) { result.textContent = t('Сброс не завершён. Данные сохранены — повтори попытку.'); el.disabled = false; input.disabled = false; input.focus(); return; }
+      State.tasks = []; State.days = {}; State.view = 'today';
+      closeAccountDialog('account-reset-modal', { restoreFocus: false }); toast(t('Сброшено')); render();
+    }).catch(() => { result.textContent = t('Сброс не завершён. Данные сохранены — повтори попытку.'); el.disabled = false; input.disabled = false; input.focus(); });
+    return;
+  }
+  if (action === 'confirm-account-import') {
+    const overlay = document.getElementById('account-import-modal'); if (!overlay || !overlay._archive) return;
+    const result = overlay.querySelector('.account-import-result'); el.disabled = true;
+    accountJson('/api/account/import', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(overlay._archive) }).then(({ response, data }) => {
+      if (!response.ok) { result.textContent = t('Импорт не завершён. Исходные данные сохранены — повтори попытку.'); el.disabled = false; return; }
+      result.textContent = t('Архив импортирован');
+      setTimeout(() => location.reload(), 350);
+    }).catch(() => { result.textContent = t('Импорт не завершён. Исходные данные сохранены — повтори попытку.'); el.disabled = false; });
+    return;
+  }
   if (action === 'show-guide') { showGuide(); return; }
   if (action === 'close-guide') { const g = document.getElementById('guide'); if (g) g.remove(); return; }
   if (action === 'show-reports') { showReports(); return; }
@@ -17411,8 +17627,8 @@ function onClick(e) {
     fetch('/api/auth/start-trial', { method: 'POST' }).then(async (r) => {
       const d = await r.json();
       if (r.ok) { State.me = d; const p = document.getElementById('paywall'); if (p) p.remove(); toast('✨ Pro-триал активирован на 7 дней!'); render(); }
-      else toast(d.error || 'Не удалось');
-    }).catch(() => toast('Ошибка сети'));
+      else toast(accountError(d, 'Не удалось'));
+    }).catch(() => toast(t('Сетевая ошибка')));
     return;
   }
   if (action === 'do-upgrade') {
@@ -18031,8 +18247,7 @@ function onClick(e) {
     Store.save('habits', State.habits); Store.save('habitlog', State.habitlog); render();
   } else if (action === 'save-settings') { saveSettingsFromForm();
   } else if (action === 'reset-data') {
-    if (!confirm('Удалить ВСЕ квесты и записи дней? Навыки, привычки, цели и настройки останутся.')) return;
-    State.tasks = []; State.days = {}; Store.save('tasks', State.tasks); Store.save('days', State.days); State.view = 'today'; toast('Сброшено'); render();
+    showResetDataDialog(el);
   }
 }
 
@@ -18153,8 +18368,40 @@ function clearAllData() {
   State.settings = null; State.tasks = null; State.days = null; State.habits = null;
   State.habitlog = null; State.goals = null; State.tree = null; State.rewards = null;
   State.purchases = null; State.achievements = null; State.weeks = null; State.lootbox = null;
+  State.inbox = null; State.inboxOpen = false; State.antihabits = null; State.episodes = null;
+  State.profile = null; State.aiKeys = null; State.strava = null; State.chatLog = [];
+  State.leaderboard = null; State.party = null; State.adminUsers = null; State.myFeedbackCount = 0;
+  State._stravaSyncing = false; State._chatBusy = false; State._lbLoading = false;
+  State._partyLoading = false; State._adminUsersLoading = false;
+  State._tasksLoadError = ''; State._tasksLoadBusy = false; State._tasksFocusAfterCommit = '';
+  State._settingsLoadError = ''; State._settingsLoadBusy = false; State._treeLoadError = '';
   State.timer = null; persistTimer(); stopTick(); closeFocusWidget(); removePill();
   State.selectedProfile = null; State.obSkills = new Set();
+}
+
+function handleAccountSessionExpired() {
+  if (State._accountSessionExpired) return;
+  State._accountSessionExpired = true;
+  State.me = null; State.phase = 'login'; stopFocus(false); clearAllData();
+  render();
+  const message = t('Сессия истекла. Войди снова — несохранённые данные не отправлялись.');
+  const host = document.getElementById('login-error');
+  if (host) { host.textContent = message; host.setAttribute('role', 'alert'); }
+  fetch('/api/auth/profiles').then((response) => response.ok ? response.json() : []).then((profiles) => { State.profiles = profiles; renderLoginScreen(); const next = document.getElementById('login-error'); if (next) { next.textContent = message; next.setAttribute('role', 'alert'); } }).catch(() => {});
+}
+
+async function accountJson(url, options = {}, { authenticated = true } = {}) {
+  const response = await fetch(url, options);
+  let data = {}; try { data = await response.json(); } catch {}
+  // 401 у credential-проверок (неверный текущий пароль/PIN) — нормальная
+  // ошибка формы, а не потеря сессии. На логин возвращаем только когда сервер
+  // прямо говорит, что авторизация отсутствует или пользователь уже удалён.
+  if (authenticated && response.status === 401 && (data.error === 'not logged in' || data.error === 'user not found')) handleAccountSessionExpired();
+  return { response, data };
+}
+
+function accountError(data, fallback = 'Ошибка') {
+  return t(String(data && data.error ? data.error : fallback));
 }
 
 function toast(msg) {
@@ -18245,6 +18492,7 @@ async function initApp() {
     State._settingsLoadError = settingsLoad.error;
     State._settingsLoadBusy = false;
   }
+  if (State._settingsLoadError === 'session' || State._accountSessionExpired) return;
   // Нельзя превращать повреждённый settings.json в новый пустой профиль: сразу
   // открываем восстановление и держим write fence до успешной повторной загрузки.
   if (State._settingsLoadError) {
@@ -18293,6 +18541,7 @@ async function initApp() {
     State._tasksLoadError = tasksLoad.error;
     State._tasksLoadBusy = false;
   }
+  if (State._tasksLoadError === 'session' || State._accountSessionExpired) return;
   State.days = await Store.load('days', {});
   State.habits = await Store.load('habits', []);
   State.habitlog = await Store.load('habitlog', {});
@@ -18359,21 +18608,9 @@ async function initApp() {
   if (!guideAlreadySeen && !ensureTutorial().done && !ensureTutorial().skipped) {
     localStorage.setItem('liferpg_seen_guide', '1'); setTimeout(() => { try { tutorialStart(); } catch {} }, 600);
   }
-  // Авто-подключение пушей (once per device). Раньше это был переключатель, спрятанный в Настройках —
-  // почти никто его не находил сам (баг-репорт: друзья Альберта поставили PWA и не получали пушей,
-  // 2026-07-31). Спрашиваем сами при первой возможности, но НЕ поверх гайда «Тень ведёт» (нативный
-  // диалог разрешения не должен сталкиваться с полноэкранным туториалом) — если гайд только что
-  // показан в ЭТОМ запуске (или ещё не видели вовсе), ничего не просим сейчас — попытка сама
-  // повторится на следующем открытии. На iOS вне standalone (обычная вкладка Safari) 'Notification'
-  // даже нет в window — canPush сам это учитывает, дожмём после того, как юзер добавит на
-  // «Экран Домой» и откроет уже установленную иконку.
-  if (!localStorage.getItem('liferpg_push_auto_asked') && guideAlreadySeen) {
-    const canPush = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
-    if (canPush && Notification.permission === 'default') {
-      localStorage.setItem('liferpg_push_auto_asked', '1');
-      setTimeout(() => { pushEnable().catch(() => {}); }, 1200);
-    }
-  }
+  // Notification permission запрашивается только после явного нажатия человека
+  // в Settings. Контекстный native prompt нельзя планировать по таймеру после входа:
+  // отказ браузер запоминает, а пользователь ещё не выбирал reminders/push intent.
 }
 
 // Публикует публичный снапшот прогресса в лидерборд (приватные данные не уходят)
@@ -18390,6 +18627,24 @@ function publishLeaderboard() {
 
 // Делегированный обработчик change (для select-ов вне форм — напр. импорт достижений)
 function onChange(e) {
+  if (e.target.id === 'account-import-file') {
+    const input = e.target, file = input.files && input.files[0], status = document.getElementById('account-import-status');
+    input.value = '';
+    if (!file) return;
+    (async () => {
+      try {
+        if (file.size > 9 * 1024 * 1024) throw new Error('large');
+        const archive = JSON.parse(await file.text());
+        const valid = archive && archive.format === 'satoru-account' && Number(archive.version) === 1 && archive.data && typeof archive.data === 'object' && !Array.isArray(archive.data) && Object.keys(archive.data).length;
+        if (!valid) throw new Error('invalid');
+        if (status) status.textContent = '';
+        showAccountImportDialog(archive, file.name, input.closest('.account-import-label'));
+      } catch {
+        if (status) { status.textContent = t('Архив не распознан. Выбери JSON-экспорт Satoru.'); status.setAttribute('role', 'alert'); }
+      }
+    })();
+    return;
+  }
   // Юзер сам выбрал сферу в форме квеста → авто-подстановка по эвристике отключается (не перебиваем руки)
   if (e.target.name === 'skillId') { const f = e.target.closest('form'); if (f) f.dataset.catTouched = '1'; }
   // импорт тренировок файлом (GPX/TCX) — любые часы без API
@@ -18682,29 +18937,36 @@ function pwaCard() {
       : `<span class="muted" style="font-size:12px">${t('Меню браузера → «Установить приложение» / «На экран Домой»')}</span>`);
   const apk = State.apkAvailable ? `<div class="pwa-row" style="margin-top:10px"><a class="btn ghost" href="satoru.apk" download="Satoru.apk">${t('📥 Скачать для Android (.apk)')}</a><span class="muted" style="font-size:12px">${t('установка из файла')}</span></div>` : '';
   const push = !canPush ? `<p class="muted" style="font-size:11.5px;margin:10px 0 0">${t('Уведомления недоступны в этом браузере.')}</p>`
+    : (Notification.permission === 'denied'
+      ? `<p class="account-notice" role="status">${t('Уведомления заблокированы в браузере. Разреши их в настройках сайта, затем повтори.')}</p>`
     : (State.pushOn
       ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-disable">${t('🔕 Выключить уведомления')}</button><button class="btn ghost sm" data-action="push-test">${t('Проверить')}</button><span class="muted" style="font-size:12px">${t('✓ компаньон зовёт 🌅 утром и 🌙 вечером')}</span></div>`
-      : `<div class="pwa-row" style="margin-top:10px"><button class="btn" data-action="push-enable">${t('🔔 Включить уведомления')}</button><span class="muted" style="font-size:12px">${t('позову вернуться — тепло, без вины')}</span></div>`);
+      : `<div class="pwa-row" style="margin-top:10px"><button class="btn" data-action="push-enable">${t('🔔 Включить уведомления')}</button><span class="muted" style="font-size:12px">${t('позову вернуться — тепло, без вины')}</span></div>`));
   return `<div class="card"><h3>${t('📲 Приложение')}</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Установи Satoru как приложение: иконка на телефоне, работает офлайн, уведомления мягко зовут вернуться (чинит «триггер-дыру»).')}</p>
     <div class="pwa-row">${install}</div>${apk}${push}</div>`;
 }
 async function pushEnable() {
+  let localSubscription = null;
   try {
     if (Notification.permission !== 'granted') { const p = await Notification.requestPermission(); if (p !== 'granted') { toast(t('Разреши уведомления в браузере')); return; } }
     const reg = await navigator.serviceWorker.ready;
-    const key = (await (await fetch('/api/push/vapid')).json()).key;
-    const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8(key) });
+    const keyResponse = await fetch('/api/push/vapid'); if (!keyResponse.ok) throw new Error('vapid');
+    const key = (await keyResponse.json()).key; if (!key) throw new Error('vapid');
+    localSubscription = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlB64ToUint8(key) });
     let tz = 'Europe/Berlin'; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || tz; } catch {}
-    const r = await fetch('/api/push/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subscription: sub.toJSON(), tz }) });
-    if (!r.ok) throw 0;
+    const { response } = await accountJson('/api/push/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subscription: localSubscription.toJSON(), tz }) });
+    if (!response.ok) throw new Error('server');
     State.pushOn = true; toast(t('🔔 Уведомления включены')); render();
-  } catch { toast(t('Не удалось включить уведомления')); }
+  } catch { try { if (localSubscription) await localSubscription.unsubscribe(); } catch {} State.pushOn = false; toast(t('Не удалось включить уведомления')); render(); }
 }
 async function pushDisable() {
-  try { const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); if (sub) await sub.unsubscribe(); } catch {}
-  try { await fetch('/api/push/unsubscribe', { method: 'POST' }); } catch {}
-  State.pushOn = false; toast(t('🔕 Уведомления выключены')); render();
+  try {
+    const { response } = await accountJson('/api/push/unsubscribe', { method: 'POST' });
+    if (!response.ok) throw new Error('server');
+    const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); if (sub) await sub.unsubscribe();
+    State.pushOn = false; toast(t('🔕 Уведомления выключены')); render();
+  } catch { toast(t('Не удалось выключить уведомления. Подписка не изменена.')); }
 }
 async function pushTest() {
   try { const r = await (await fetch('/api/push/test', { method: 'POST' })).json(); toast(r.status >= 200 && r.status < 300 ? t('✓ Отправлено — жди уведомление') : `${t('Не доставлено')} (${r.status || r.error || t('ошибка')})`); }
@@ -18779,7 +19041,7 @@ async function init() {
   // Проверяем текущую сессию
   try {
     const r = await fetch('/api/auth/me');
-    if (r.ok) { State.me = await r.json(); await initApp(); return; }
+    if (r.ok) { State._accountSessionExpired = false; State.me = await r.json(); await initApp(); return; }
   } catch {}
 
   // Не залогинен — загружаем профили и показываем экран входа
