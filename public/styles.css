@@ -13453,3 +13453,277 @@ html.calendar-task-open body {
   .settings-shell *, .settings-shell *::before, .settings-shell *::after { animation: none !important; transition-duration: 0ms !important; }
   .settings-hub-item:hover { transform: none; }
 }
+
+/* ---------- Calendar Week v121: seven dates, selected-day mobile detail ---------- */
+.calendar-week-shell .calv-title-main {
+  grid-template-columns: var(--touch-min) minmax(0, 1fr) var(--touch-min);
+}
+.calendar-week-shell .calv-title h2 { font-size: var(--type-brand); }
+.calendar-week-shell .week-work,
+.calendar-week-shell .week-secondary {
+  display: grid;
+  min-width: 0;
+  gap: var(--sp-3);
+}
+.calendar-week-shell .week-work-card {
+  display: grid;
+  min-width: 0;
+  gap: var(--sp-3);
+  overflow: visible;
+  border-color: var(--line-soft);
+  background: var(--surface-1);
+  box-shadow: none;
+}
+.calendar-week-shell .week-work-head,
+.calendar-week-shell .week-summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+.calendar-week-shell :is(.week-work-head, .week-summary-head) h3 {
+  margin: 0;
+  color: var(--text-strong);
+  font-family: var(--font-display);
+  font-size: var(--type-heading);
+  line-height: var(--leading-ui);
+}
+.calendar-week-shell .wk-mobile-detail { display: none; }
+.calendar-week-shell .week-work-title-mobile { display: none; }
+.calendar-week-shell .wk-grid-wrap {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+.calendar-week-shell .wk-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  min-width: 0;
+  gap: var(--sp-2);
+  align-items: stretch;
+}
+.calendar-week-shell .wk-col {
+  display: flex;
+  min-width: 0;
+  min-height: 300px;
+  padding: var(--sp-2);
+  flex-direction: column;
+  gap: var(--sp-2);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  box-shadow: none;
+}
+.calendar-week-shell .wk-col.is-today {
+  border-color: color-mix(in srgb, var(--calendar-today-fg) 68%, var(--line-soft));
+  box-shadow: inset 0 3px 0 var(--calendar-today-fg);
+}
+.calendar-week-shell .wk-col.wk-drop {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
+}
+.calendar-week-shell .wk-col-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--sp-1);
+  align-items: baseline;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+.calendar-week-shell .wk-wd {
+  color: var(--text-strong);
+  font-size: var(--type-control);
+  line-height: var(--leading-ui);
+  font-weight: 800;
+}
+.calendar-week-shell .wk-date,
+.calendar-week-shell .wk-prog,
+.calendar-week-shell .wk-load {
+  color: var(--text-soft);
+  font-family: var(--font-data);
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+}
+.calendar-week-shell .wk-prog { grid-column: 1 / -1; }
+.calendar-week-shell .wk-load {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.calendar-week-shell .wk-tasks,
+.calendar-week-shell .wk-detail-tasks {
+  display: grid;
+  min-width: 0;
+  gap: var(--sp-1);
+}
+.calendar-week-shell .wk-tasks { align-content: start; flex: 1 1 auto; }
+.calendar-week-shell .wk-task {
+  display: grid;
+  grid-template-columns: var(--touch-min) minmax(0, 1fr);
+  min-width: 0;
+  min-height: var(--touch-min);
+  padding: 0;
+  gap: 0;
+  align-items: stretch;
+  border: 1px solid var(--line-soft);
+  border-inline-start: 3px solid var(--wk-skill, var(--accent));
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+  box-shadow: none;
+}
+.calendar-week-shell .wk-task.done { opacity: 1; background: color-mix(in srgb, var(--surface-1) 86%, var(--good)); }
+.calendar-week-shell .wk-task.done .wk-task-title { color: var(--text-soft); text-decoration: line-through; }
+.calendar-week-shell .wk-task.wk-dragging { opacity: .62; }
+.calendar-week-shell .wk-task-board { cursor: grab; }
+.calendar-week-shell .wk-task-detail { cursor: default; }
+.calendar-week-shell .wk-task-board {
+  grid-template-columns: 28px minmax(0, 1fr);
+}
+.calendar-week-shell .wk-task-board .wk-task-check {
+  inline-size: 28px;
+  min-inline-size: 28px;
+  min-block-size: 28px;
+}
+.calendar-week-shell .wk-task-board .wk-task-main {
+  min-block-size: 28px;
+  padding: var(--sp-1);
+}
+.calendar-week-shell .wk-task-board .wk-task-title {
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: auto;
+}
+.calendar-week-shell .wk-task-check {
+  inline-size: var(--touch-min);
+  min-inline-size: var(--touch-min);
+  min-block-size: var(--touch-min);
+  margin: 0;
+  border: 0;
+  border-inline-end: 1px solid var(--line-soft);
+  border-radius: 0;
+  color: var(--text-strong);
+  background: transparent;
+}
+.calendar-week-shell .wk-task-main {
+  display: grid;
+  min-width: 0;
+  min-height: var(--touch-min);
+  padding: var(--sp-2);
+  gap: var(--sp-1);
+  border: 0;
+  border-radius: 0;
+  color: var(--text-strong);
+  background: transparent;
+  text-align: start;
+}
+.calendar-week-shell .wk-task-title {
+  min-width: 0;
+  font-family: var(--font-ui);
+  font-size: var(--type-control);
+  line-height: var(--leading-ui);
+  font-weight: 760;
+  overflow-wrap: anywhere;
+}
+.calendar-week-shell .wk-task-meta {
+  display: flex;
+  min-width: 0;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  color: var(--text-soft);
+  font-family: var(--font-data);
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+}
+.calendar-week-shell .wk-empty,
+.calendar-week-shell .wk-detail-empty {
+  margin: 0;
+  padding: var(--sp-3);
+  border: 1px dashed var(--line-soft);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+.calendar-week-shell .wk-detail-empty p { margin: 0; }
+.calendar-week-shell .wk-add-btn {
+  width: 100%;
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  margin-top: auto;
+  padding: var(--sp-2);
+  color: var(--text-soft);
+  font-size: var(--type-control);
+  line-height: var(--leading-ui);
+}
+.calendar-week-shell .wk-add-form {
+  display: grid;
+  min-width: 0;
+  margin-top: auto;
+  padding: var(--sp-2);
+  gap: var(--sp-2);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+}
+.calendar-week-shell .wk-add-form label { display: grid; min-width: 0; gap: var(--sp-1); color: var(--text-soft); font-size: var(--type-meta); line-height: var(--leading-label); }
+.calendar-week-shell .wk-add-form :is(input, select) { width: 100%; min-width: 0; min-height: var(--touch-min); font-size: var(--type-control); }
+.calendar-week-shell .wk-add-btns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); }
+.calendar-week-shell .wk-add-btns .btn { min-width: var(--touch-min); min-height: var(--touch-min); }
+.calendar-week-shell .wk-add-status { min-height: 1.4em; margin: 0; }
+.calendar-week-shell .wk-habits-dots { display: flex; min-height: 12px; margin: 0; gap: var(--sp-1); align-items: center; flex-wrap: wrap; }
+.calendar-week-shell .wk-h-dot { inline-size: 10px; block-size: 10px; border: 1px solid var(--c); border-radius: 50%; background: transparent; }
+.calendar-week-shell .wk-h-dot.done { background: var(--c); }
+.calendar-week-shell .wk-hint { margin: 0; font-size: var(--type-meta); line-height: var(--leading-label); }
+.calendar-week-shell .week-secondary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.calendar-week-shell .week-summary-card,
+.calendar-week-shell .week-reflections-card { grid-column: 1 / -1; }
+.calendar-week-shell .week-summary-card { display: grid; gap: var(--sp-3); }
+.calendar-week-shell .week-summary-card .kpis { margin: 0; }
+
+@media (max-width: 900px) {
+  .calendar-week-shell .wk-grid-wrap { display: none; }
+  .calendar-week-shell .wk-mobile-detail { display: grid; min-width: 0; gap: var(--sp-3); }
+  .calendar-week-shell .week-work-title-desktop { display: none; }
+  .calendar-week-shell .week-work-title-mobile { display: inline; }
+  .calendar-week-shell .wk-hint { display: none; }
+  .calendar-week-shell .week-secondary { grid-template-columns: minmax(0, 1fr); }
+  .calendar-week-shell .week-secondary > * { grid-column: 1 !important; }
+  .calendar-week-shell .week-summary-card .kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  body:has(.calendar-week-shell) #ai-fab { display: none; }
+}
+
+@media (max-width: 600px) {
+  .calendar-week-shell .calv-title { grid-template-columns: minmax(0, 1fr); }
+  .calendar-week-shell .calv-title-main { grid-column: 1; grid-row: 1; }
+  .calendar-week-shell .cal-modes { grid-column: 1; grid-row: 2; width: 100%; min-width: 0; }
+  .calendar-week-shell .cal-tools { grid-column: 1; grid-row: 3; width: 100%; min-width: 0; }
+  .calendar-week-shell .cal-tools > button { padding-inline: var(--sp-1); }
+  .calendar-week-shell .week-overview { grid-template-columns: repeat(7, minmax(var(--touch-min), 1fr)); gap: var(--sp-1); }
+  .calendar-week-shell .week-overview-day { min-width: var(--touch-min); min-height: 58px; padding-inline: 0; }
+  .calendar-week-shell .week-work-card { padding: var(--sp-3); }
+  .calendar-week-shell .week-work-head { align-items: flex-start; }
+  .calendar-week-shell .wk-task-main { padding-inline: var(--sp-2); }
+  .calendar-week-shell .week-summary-card .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (pointer: coarse) {
+  .calendar-week-shell :is(button, input, select, textarea) { min-inline-size: var(--touch-min); min-block-size: var(--touch-min); }
+  .calendar-week-shell .wk-task-board { grid-template-columns: var(--touch-min) minmax(0, 1fr); }
+  .calendar-week-shell .wk-task-board .wk-task-check { inline-size: var(--touch-min); min-inline-size: var(--touch-min); min-block-size: var(--touch-min); }
+  .calendar-week-shell .wk-task-board .wk-task-main { min-block-size: var(--touch-min); }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .calendar-week-shell .wk-task-main:hover,
+  .calendar-week-shell .wk-add-btn:hover { background: color-mix(in srgb, var(--accent) 7%, transparent); transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-week-shell *,
+  .calendar-week-shell *::before,
+  .calendar-week-shell *::after { animation: none !important; transition-duration: 0ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important; }
+  .calendar-week-shell :is(.wk-task-main, .wk-add-btn):hover { transform: none !important; }
+}

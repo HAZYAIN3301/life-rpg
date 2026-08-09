@@ -1358,6 +1358,20 @@ const I18N_EXTRA = {
   'Вернуть': { en: 'Undo', de: 'Rückgängig', uk: 'Повернути', es: 'Deshacer' },
   'Изменение отменено': { en: 'Change undone', de: 'Änderung rückgängig gemacht', uk: 'Зміну скасовано', es: 'Cambio deshecho' },
   'На desktop можно перетащить квест; тап, клик или Enter открывает точное расписание.': { en: 'On desktop you can drag a quest; tap, click, or Enter opens its exact schedule.', de: 'Am Desktop kannst du einen Quest ziehen; Tippen, Klicken oder Enter öffnet den genauen Zeitplan.', uk: 'На desktop квест можна перетягнути; тап, клік або Enter відкриває точний розклад.', es: 'En escritorio puedes arrastrar una misión; tocar, hacer clic o pulsar Enter abre su horario exacto.' },
+  'Предыдущая неделя': { en: 'Previous week', de: 'Vorherige Woche', uk: 'Попередній тиждень', es: 'Semana anterior' },
+  'Следующая неделя': { en: 'Next week', de: 'Nächste Woche', uk: 'Наступний тиждень', es: 'Semana siguiente' },
+  'Квесты выбранного дня': { en: 'Quests for the selected day', de: 'Quests am ausgewählten Tag', uk: 'Квести вибраного дня', es: 'Misiones del día seleccionado' },
+  'Квесты недели': { en: 'Quests for the week', de: 'Quests der Woche', uk: 'Квести тижня', es: 'Misiones de la semana' },
+  'Нет квестов на этот день': { en: 'No quests on this day', de: 'Keine Quests an diesem Tag', uk: 'На цей день немає квестів', es: 'No hay misiones este día' },
+  'Без времени': { en: 'No time set', de: 'Ohne Zeit', uk: 'Без часу', es: 'Sin hora' },
+  'Запланировано времени на день': { en: 'Time planned for the day', de: 'Für den Tag geplante Zeit', uk: 'Заплановано часу на день', es: 'Tiempo planificado para el día' },
+  'Поделиться итогами недели': { en: 'Share the weekly summary', de: 'Wochenrückblick teilen', uk: 'Поділитися підсумками тижня', es: 'Compartir el resumen semanal' },
+  'Добавить квест на этот день': { en: 'Add a quest to this day', de: 'Quest zu diesem Tag hinzufügen', uk: 'Додати квест на цей день', es: 'Añadir una misión a este día' },
+  'Отменить добавление': { en: 'Cancel adding', de: 'Hinzufügen abbrechen', uk: 'Скасувати додавання', es: 'Cancelar la adición' },
+  'На desktop можно перетащить квест в другой день; тап, клик или Enter открывает расписание.': { en: 'On desktop you can drag a quest to another day; tap, click, or Enter opens its schedule.', de: 'Am Desktop kannst du einen Quest auf einen anderen Tag ziehen; Tippen, Klicken oder Enter öffnet den Zeitplan.', uk: 'На desktop квест можна перетягнути на інший день; тап, клік або Enter відкриває розклад.', es: 'En escritorio puedes arrastrar una misión a otro día; tocar, hacer clic o pulsar Enter abre su horario.' },
+  'Выбранный день': { en: 'Selected day', de: 'Ausgewählter Tag', uk: 'Вибраний день', es: 'Día seleccionado' },
+  'Квестов на день': { en: 'Quests on this day', de: 'Quests an diesem Tag', uk: 'Квестів на день', es: 'Misiones del día' },
+  'Поделиться': { en: 'Share', de: 'Teilen', uk: 'Поділитися', es: 'Compartir' },
   // Weekdays (short)
   'Пн': { en: 'Mon', de: 'Mo', uk: 'Пн', es: 'Lun' },
   'Вт': { en: 'Tue', de: 'Di', uk: 'Вт', es: 'Mar' },
@@ -9601,6 +9615,10 @@ async function saveCalendarTaskEditor({ unschedule = false } = {}) {
     estimateMin: data.get('estimateMin'),
   }, { renderAfter: false });
   if (ok) {
+    if (State.calMode === 'week') {
+      State.calDate = calendarDateValue(data.get('date'));
+      State.weekStart = weekStart(State.calDate);
+    }
     closeCalendarTaskEditor({ restoreFocus: false });
     render();
     return true;
@@ -15064,68 +15082,72 @@ function rangeStats(start, end) {
   const byArea = leafSkills().map((s) => ({ label: skillLabel(s.id), value: ev.filter((e) => e.skillId === s.id).reduce((a, e) => a + e.min, 0), color: s.color }));
   return { xp, gold, min, quests, habitsC, byArea };
 }
+function selectedWeekDate(ws) {
+  const start = calendarDateValue(ws, weekStart(todayStr()));
+  const end = addDays(start, 6);
+  const selected = calendarDateValue(State.calDate, '');
+  if (selected && selected >= start && selected <= end) return selected;
+  const today = todayStr();
+  return today >= start && today <= end ? today : start;
+}
+function weekTaskRowHTML(task, variant = 'detail') {
+  const fullTitle = taskDisplayTitle(task);
+  const skill = skillById(task.skillId);
+  const timed = calendarTimeValue(task.startTime);
+  const draggable = variant === 'board' ? ' draggable="true"' : '';
+  return `<div class="wk-task wk-task-${variant}${task.done ? ' done' : ''}"${draggable} data-task="${esc(task.id)}" data-calendar-task="${esc(task.id)}" style="--wk-skill:${esc(skill.color)}">
+    <button type="button" class="check wk-task-check" data-action="toggle-task" data-id="${esc(task.id)}" aria-label="${esc(t(task.done ? 'Снять выполнение' : 'Выполнить'))}: ${esc(fullTitle)}" aria-pressed="${task.done ? 'true' : 'false'}">${task.done ? satoruIconHTML('action.check', 'cal-action-icon', '✓') : ''}</button>
+    <button type="button" class="wk-task-main" data-action="cal-edit-task" data-id="${esc(task.id)}" aria-label="${esc(t('Открыть расписание квеста'))}: ${esc(fullTitle)}"><span class="wk-task-title" data-noi18n>${taskContentIconHTML(task, 'activity-inline-icon')}${esc(fullTitle)}</span><span class="wk-task-meta"><span>${timed ? esc(timed) : esc(t('Без времени'))}</span><span>${fmtDur(Number(task.estimateMin) || 30)}</span></span></button>
+  </div>`;
+}
+function weekAddAreaHTML(date, variant = 'detail') {
+  if (State.wkAddDate !== date) {
+    return `<button type="button" class="btn ghost wk-add-btn" data-action="wk-add-task" data-date="${date}" aria-label="${esc(t('Добавить квест на этот день'))}">${satoruIconHTML('action.add', 'button-glyph', '+')} ${esc(t('Добавить квест'))}</button>`;
+  }
+  return `<form class="wk-add-form wk-add-form-${variant}" data-date="${date}">
+    <label><span>${esc(t('Название квеста'))}</span><input name="title" maxlength="160" autocomplete="off" required /></label>
+    <label><span>${esc(t('Сфера'))}</span><select name="skillId">${skillOptionsHTML()}</select></label>
+    <p class="wk-add-status muted" aria-live="polite"></p>
+    <div class="wk-add-btns"><button type="submit" class="btn">${esc(t('Добавить квест'))}</button><button type="button" class="btn ghost" data-action="wk-add-cancel" data-date="${date}" aria-label="${esc(t('Отменить добавление'))}">${esc(t('Отмена'))}</button></div>
+  </form>`;
+}
 function renderWeekly() {
   if (State._tasksLoadError) return calendarLoadRecoveryHTML();
-  const ws = State.weekStart, end = addDays(ws, 6), st = rangeStats(ws, end);
+  State.calMode = 'week';
+  const ws = State.weekStart || (State.weekStart = weekStart(State.calDate || todayStr()));
+  const end = addDays(ws, 6), st = rangeStats(ws, end);
   const wk = State.weeks[ws] || { intention: '', review: '' };
   const isThis = ws === weekStart(todayStr());
   const today = todayStr();
-  // js getDay(): 0=Вс,1=Пн,...,6=Сб — карта для быстрого доступа
   const WD_BY_JS = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-
-  const dayCols = Array.from({ length: 7 }, (_, i) => {
+  const selected = selectedWeekDate(ws);
+  State.calDate = selected;
+  const dayData = Array.from({ length: 7 }, (_, i) => {
     const d = addDays(ws, i);
-    const isToday = d === today;
-    const isPast = d < today;
-    const dayTasks = State.tasks.filter((t) => t.date === d);
-    const doneCount = dayTasks.filter((t) => t.done).length;
-    const plannedMin = dayTasks.reduce((s, t) => s + (Number(t.estimateMin) || 0), 0);
-    const dueHabits = habitsDueOn(d);
-    const wdLbl = WD_BY_JS[parseDate(d).getDay()];
-    const adding = State.wkAddDate === d;
-
-    const tasksHtml = dayTasks.length
-      ? dayTasks.map((t) => {
-          const sk = skillById(t.skillId);
-          return `<div class="wk-task${t.done ? ' done' : ''}" draggable="true" data-task="${t.id}">
-            <button class="check sm" data-action="toggle-task" data-id="${t.id}">${t.done ? '✓' : ''}</button>
-            <span class="wk-t-title" title="${esc(taskDisplayTitle(t))} · ${fmtDur(t.estimateMin)}">${taskContentIconHTML(t, 'activity-inline-icon')}${esc(taskDisplayTitle(t))}</span>
-            <span class="wk-t-dot" style="background:${esc(sk.color)}" title="${esc(sk.name)}"></span>
-          </div>`;
-        }).join('')
-      : `<p class="wk-empty muted">Пусто</p>`;
-
-    const habitsHtml = dueHabits.length
-      ? `<div class="wk-habits-dots">${dueHabits.map((h) => {
-          const done = habitDone(h, d);
-          const sk = skillById(h.skillId);
-          return `<span class="wk-h-dot${done ? ' done' : ''}" style="--c:${esc(sk.color)}" title="${esc(h.title)}${done ? ' ✓' : ''}"></span>`;
-        }).join('')}</div>`
-      : '';
-
-    const addArea = adding
-      ? `<form class="wk-add-form" data-date="${d}">
-          <input name="title" placeholder="Название квеста…" autocomplete="off" required />
-          <select name="skillId">${skillOptionsHTML()}</select>
-          <div class="wk-add-btns">
-            <button type="submit" class="btn sm">+</button>
-            <button type="button" class="btn ghost sm" data-action="wk-add-cancel">✕</button>
-          </div>
-         </form>`
-      : `<button class="wk-add-btn" data-action="wk-add-task" data-date="${d}">+ Квест</button>`;
-
-    return `<div class="wk-col${isToday ? ' is-today' : ''}${isPast ? ' is-past' : ''}" data-date="${d}">
-      <div class="wk-col-head">
-        <span class="wk-wd">${wdLbl}</span>
-        <span class="wk-date">${dmShort(d)}</span>
-        ${dayTasks.length ? `<span class="wk-prog${doneCount === dayTasks.length ? ' all-done' : ''}">${doneCount}/${dayTasks.length}</span>` : ''}
-      </div>
-      ${plannedMin ? `<div class="wk-load" title="Запланировано времени на день">⏱ ${fmtDur(plannedMin)}</div>` : ''}
-      <div class="wk-tasks">${tasksHtml}</div>
-      ${habitsHtml}
-      ${addArea}
-    </div>`;
+    const tasks = State.tasks.filter((task) => task.date === d).sort((a, b) => {
+      const at = calendarTimeValue(a.startTime), bt = calendarTimeValue(b.startTime);
+      if (at && bt) return at.localeCompare(bt) || String(a.createdAt || '').localeCompare(String(b.createdAt || ''));
+      if (at) return -1;
+      if (bt) return 1;
+      return String(a.createdAt || '').localeCompare(String(b.createdAt || ''));
+    });
+    return { date: d, tasks, open: tasks.filter((task) => !task.done).length, done: tasks.filter((task) => task.done).length, planned: tasks.reduce((sum, task) => sum + (Number(task.estimateMin) || 0), 0), habits: habitsDueOn(d) };
+  });
+  const strip = dayData.map((day) => {
+    const active = day.date === selected, isToday = day.date === today;
+    const weekday = t(WD_BY_JS[parseDate(day.date).getDay()]);
+    const summary = `${weekday} ${Number(day.date.slice(8))} · ${t('Квестов на день')}: ${day.tasks.length} · ${t('Запланировано времени на день')}: ${fmtDur(day.planned)}`;
+    return `<button type="button" class="calv-day week-overview-day${active ? ' active' : ''}${isToday ? ' is-today' : ''}" data-action="cal-date" data-date="${day.date}" aria-label="${esc(summary)}" aria-pressed="${active ? 'true' : 'false'}" ${isToday ? 'aria-current="date"' : ''}><span class="cd-wd">${esc(weekday)}</span><span class="cd-n">${Number(day.date.slice(8))}</span><span class="cd-dot${day.open ? '' : '-empty'}" ${day.open ? `aria-label="${day.open}"` : 'aria-hidden="true"'}>${day.open || ''}</span></button>`;
   }).join('');
+  const board = dayData.map((day) => {
+    const isToday = day.date === today;
+    const taskRows = day.tasks.map((task) => weekTaskRowHTML(task, 'board')).join('');
+    const habitDots = day.habits.length ? `<div class="wk-habits-dots" aria-label="${esc(t('Привычек'))}: ${day.habits.length}">${day.habits.map((habit) => `<span class="wk-h-dot${habitDone(habit, day.date) ? ' done' : ''}" style="--c:${esc(skillById(habit.skillId).color)}" title="${esc(habit.title)}" aria-hidden="true"></span>`).join('')}</div>` : '';
+    return `<section class="wk-col${isToday ? ' is-today' : ''}" data-date="${day.date}" aria-label="${esc(t(WD_BY_JS[parseDate(day.date).getDay()]))} ${Number(day.date.slice(8))}"><header class="wk-col-head"><span class="wk-wd">${esc(t(WD_BY_JS[parseDate(day.date).getDay()]))}</span><span class="wk-date">${dmShort(day.date)}</span><span class="wk-prog">${day.done}/${day.tasks.length}</span></header><div class="wk-load" title="${esc(t('Запланировано времени на день'))}">${fmtDur(day.planned)}</div><div class="wk-tasks">${taskRows || `<p class="wk-empty muted">${esc(t('Пусто'))}</p>`}</div>${habitDots}${weekAddAreaHTML(day.date, 'board')}</section>`;
+  }).join('');
+  const selectedDay = dayData.find((day) => day.date === selected) || dayData[0];
+  const selectedWeekday = t(WD_BY_JS[parseDate(selectedDay.date).getDay()]);
+  const detailRows = selectedDay.tasks.map((task) => weekTaskRowHTML(task, 'detail')).join('');
 
   const reflections = Object.entries(State.days)
     .filter(([d, v]) => d >= ws && d <= end && v.reflection && v.reflection.trim())
@@ -15134,32 +15156,20 @@ function renderWeekly() {
     .join('');
 
   return `
-    <div class="card week-nav">
-      <button class="btn ghost" data-action="week-prev">←</button>
-      <div><b>Неделя ${dmShort(ws)} – ${dmShort(end)}</b>${isThis ? ' <span class="muted">(текущая)</span>' : ''}</div>
-      <button class="btn ghost" data-action="week-next">→</button>
-      ${calModeToggle('week')}
-      <button class="btn ghost sm" data-action="share-week" title="Поделиться итогами недели">📤</button>
-    </div>
-    <div class="kpis">
-      <div class="kpi"><div class="v">${st.xp}</div><div class="l">${t('XP за неделю')}</div></div>
-      <div class="kpi"><div class="v">🪙 ${st.gold}</div><div class="l">${t('Золото')}</div></div>
-      <div class="kpi"><div class="v">${st.quests}</div><div class="l">${t('Квестов')}</div></div>
-      <div class="kpi"><div class="v">${st.habitsC}</div><div class="l">${t('Привычек')}</div></div>
-      <div class="kpi"><div class="v">${Math.round(st.min / 60 * 10) / 10}ч</div><div class="l">${t('Времени')}</div></div>
-    </div>
-    <p class="wk-hint muted">↔ Перетащи квест на другой день, чтобы перенести. ⏱ — запланированное время дня.</p>
-    <div class="wk-grid-wrap">
-      <div class="wk-grid">${dayCols}</div>
-    </div>
-    <div class="card"><h3>📊 ${t('Время по сферам')}</h3>${barChartSVG(st.byArea)}</div>
-    <div class="card"><h3>🎯 ${t('Намерение на неделю')}</h3>
-      <textarea id="week-intention" placeholder="Что главное на этой неделе? Куда направить фокус…">${esc(wk.intention || '')}</textarea>
+  <section class="calendar-shell calendar-week-shell" aria-labelledby="calendar-screen-title">
+    <header class="card calv-head"><div class="calv-title"><div class="calv-title-main"><button type="button" class="btn ghost sm cal-nav-prev" data-action="week-prev" aria-label="${esc(t('Предыдущая неделя'))}">${satoruIconHTML('action.back', 'cal-action-icon', '‹')}</button><h2 id="calendar-screen-title" class="week-screen-title" tabindex="-1">${esc(t('Неделя'))} ${dmShort(ws)} – ${dmShort(end)}${isThis ? ` <span class="muted">· ${esc(t('(текущая)'))}</span>` : ''}</h2><button type="button" class="btn ghost sm cal-nav-next" data-action="week-next" aria-label="${esc(t('Следующая неделя'))}">${satoruIconHTML('action.forward', 'cal-action-icon', '›')}</button></div>${calModeToggle('week')}${calendarToolsHTML()}</div><div class="calv-strip week-overview" role="group" aria-label="${esc(t('Дни выбранной недели'))}">${strip}</div></header>
+    ${calendarMoveReceiptHTML()}
+    <main class="week-work"><section class="card week-work-card" aria-labelledby="week-work-title"><div class="week-work-head"><div><h3 id="week-work-title"><span class="week-work-title-desktop">${esc(t('Квесты недели'))}</span><span class="week-work-title-mobile">${esc(t('Квесты выбранного дня'))}</span></h3><span class="muted week-selected-summary">${esc(selectedWeekday)} ${dmShort(selectedDay.date)} · ${selectedDay.tasks.length} · ${fmtDur(selectedDay.planned)}</span></div></div><div class="wk-mobile-detail" role="region" aria-label="${esc(t('Выбранный день'))}"><div class="wk-detail-tasks">${detailRows || `<div class="wk-detail-empty"><p>${esc(t('Нет квестов на этот день'))}</p></div>`}</div>${weekAddAreaHTML(selectedDay.date, 'detail')}</div><div class="wk-grid-wrap"><div class="wk-grid">${board}</div></div><p class="wk-hint muted">${esc(t('На desktop можно перетащить квест в другой день; тап, клик или Enter открывает расписание.'))}</p></section></main>
+    <aside class="week-secondary"><div class="card week-summary-card"><div class="week-summary-head"><h3>${esc(t('Итоги недели'))}</h3><button type="button" class="btn ghost" data-action="share-week" aria-label="${esc(t('Поделиться итогами недели'))}">${satoruIconHTML('action.share', 'button-glyph', '📤')} ${esc(t('Поделиться'))}</button></div><div class="kpis"><div class="kpi"><div class="v">${st.xp}</div><div class="l">${t('XP за неделю')}</div></div><div class="kpi"><div class="v">🪙 ${st.gold}</div><div class="l">${t('Золото')}</div></div><div class="kpi"><div class="v">${st.quests}</div><div class="l">${t('Квестов')}</div></div><div class="kpi"><div class="v">${st.habitsC}</div><div class="l">${t('Привычек')}</div></div><div class="kpi"><div class="v">${fmtDur(st.min)}</div><div class="l">${t('Времени')}</div></div></div></div>
+    <div class="card week-chart-card"><h3>📊 ${t('Время по сферам')}</h3>${barChartSVG(st.byArea)}</div>
+    <div class="card week-review-card"><h3>🎯 ${t('Намерение на неделю')}</h3>
+      <textarea id="week-intention" placeholder="${esc(t('Что главное на этой неделе? Куда направить фокус…'))}">${esc(wk.intention || '')}</textarea>
       <h3 style="margin-top:14px">🔄 ${t('Итоги недели')}</h3>
-      <textarea id="week-review" placeholder="Что получилось, что нет, что перенести…">${esc(wk.review || '')}</textarea>
+      <textarea id="week-review" placeholder="${esc(t('Что получилось, что нет, что перенести…'))}">${esc(wk.review || '')}</textarea>
       <div style="margin-top:10px"><button class="btn" data-action="save-week">${t('Сохранить')}</button>
     </div></div>
-    ${reflections ? `<div class="card"><h3>${t('Рефлексии этой недели')}</h3><ul class="reflections">${reflections}</ul></div>` : ''}`;
+    ${reflections ? `<div class="card week-reflections-card"><h3>${t('Рефлексии этой недели')}</h3><ul class="reflections">${reflections}</ul></div>` : ''}</aside>
+  </section>`;
 }
 
 // ============================================================
@@ -16453,9 +16463,27 @@ async function onSubmit(e) {
 
   if (f.classList.contains('wk-add-form')) {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
+    if (State._tasksLoadError) { toast(t('Изменения квестов заблокированы до восстановления данных')); return; }
     const date = f.dataset.date || todayStr();
-    State.tasks.push({ id: uid(), title, skillId: f.skillId.value, skillIds: [f.skillId.value], estimateMin: 30, difficulty: 'normal', date, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
-    Store.save('tasks', State.tasks); State.wkAddDate = null; render(); return;
+    const task = { id: uid(), title, skillId: f.skillId.value, skillIds: [f.skillId.value], estimateMin: 30, difficulty: 'normal', date, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() };
+    const controls = f.querySelectorAll('button, input, select');
+    const status = f.querySelector('.wk-add-status');
+    controls.forEach((control) => { control.disabled = true; });
+    if (status) status.textContent = t('Сохраняю…');
+    State.tasks.push(task);
+    const saved = await Store.saveNow('tasks', State.tasks);
+    if (!saved) {
+      State.tasks = State.tasks.filter((item) => item !== task);
+      controls.forEach((control) => { control.disabled = false; });
+      if (status) status.textContent = t('Не удалось сохранить квест');
+      focusPathChoiceTarget(f.title);
+      return;
+    }
+    State.wkAddDate = null;
+    State.calDate = date;
+    State.weekStart = weekStart(date);
+    State._calendarFocusAfterCommit = `[data-calendar-task="${CSS.escape(task.id)}"] .wk-task-main`;
+    render(); return;
   }
 
   if (f.id === 'capture-form') {
@@ -17614,8 +17642,15 @@ function onClick(e) {
     State.rewards = State.rewards.filter((x) => x.id !== id); Store.save('rewards', State.rewards); render();
 
   // --- Неделя ---
-  } else if (action === 'week-prev') { State.weekStart = addDays(State.weekStart, -7); State.wkAddDate = null; render();
-  } else if (action === 'week-next') { State.weekStart = addDays(State.weekStart, 7); State.wkAddDate = null; render();
+  } else if (action === 'week-prev' || action === 'week-next') {
+    const delta = action === 'week-prev' ? -7 : 7;
+    const selected = selectedWeekDate(State.weekStart || weekStart(todayStr()));
+    cleanupWkDrag();
+    State.weekStart = addDays(State.weekStart || weekStart(todayStr()), delta);
+    State.calDate = addDays(selected, delta);
+    State.wkAddDate = null;
+    State._calendarFocusAfterCommit = `[data-action="${action}"]`;
+    render();
   } else if (action === 'share-week') {
     const ws = State.weekStart || weekStart(todayStr()), st = rangeStats(ws, addDays(ws, 6));
     showWeekShare(ws, st);
@@ -17635,11 +17670,19 @@ function onClick(e) {
       const file = new File([blob], ov.dataset.filename || 'satoru-week.png', { type: 'image/png' });
       try { await navigator.share({ files: [file], title: 'Моя неделя в Satoru' }); } catch {}
     });
-  } else if (action === 'wk-add-task') { State.wkAddDate = el.dataset.date; render();
-  } else if (action === 'wk-add-cancel') { State.wkAddDate = null; render();
+  } else if (action === 'wk-add-task') {
+    State.wkAddDate = el.dataset.date;
+    State.calDate = el.dataset.date;
+    State._calendarFocusAfterCommit = `.wk-add-form[data-date="${CSS.escape(el.dataset.date)}"] input[name="title"]`;
+    render();
+  } else if (action === 'wk-add-cancel') {
+    const date = el.dataset.date || State.wkAddDate;
+    State.wkAddDate = null;
+    State._calendarFocusAfterCommit = `.wk-add-btn[data-date="${CSS.escape(date || selectedWeekDate(State.weekStart))}"]`;
+    render();
 
   // --- Календарь (вкладка) ---
-  } else if (action === 'cal-date') { State.calDate = el.dataset.date; State._calendarFocusAfterCommit = `.calv-day[data-date="${CSS.escape(State.calDate)}"]`; render();
+  } else if (action === 'cal-date') { State.calDate = el.dataset.date; if (State.calMode === 'week') State.weekStart = weekStart(State.calDate); State._calendarFocusAfterCommit = `.calv-day[data-date="${CSS.escape(State.calDate)}"]`; render();
   } else if (action === 'cal-shift') { State.calDate = addDays(State.calDate || todayStr(), Number(el.dataset.days)); State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
   } else if (action === 'cal-today') { State.calDate = todayStr(); State._calendarFocusAfterCommit = `.calv-day[data-date="${CSS.escape(State.calDate)}"]`; render();
   } else if (action === 'goto-calendar') { State.calDate = todayStr(); State.view = 'calendar'; render();
@@ -17861,7 +17904,7 @@ function onClick(e) {
     const ics = buildICS();
     if (!/BEGIN:VEVENT/.test(ics)) { toast('Нет квестов со временем — поставь их в Календаре'); return; }
     try { const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'gojo-calendar.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); toast('📆 .ics скачан — открой его в Календаре для импорта'); } catch { toast('Не удалось создать файл'); }
-  } else if (action === 'cal-mode') { State.calMode = el.dataset.mode; State.view = 'calendar'; State._calendarFocusAfterCommit = `.cal-mode[data-mode="${CSS.escape(State.calMode)}"]`; render();
+  } else if (action === 'cal-mode') { cleanupWkDrag(); State.calMode = el.dataset.mode; State.view = 'calendar'; if (State.calMode === 'week') State.weekStart = weekStart(State.calDate || todayStr()); State._calendarFocusAfterCommit = `.cal-mode[data-mode="${CSS.escape(State.calMode)}"]`; render();
   } else if (action === 'cal-pick-day') { State.calDate = el.dataset.date; State.calMode = 'day'; State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
   } else if (action === 'cal-shift-month') { const d = parseDate(State.calDate || todayStr()); State.calDate = fmtDate(new Date(d.getFullYear(), d.getMonth() + Number(el.dataset.delta), Math.min(d.getDate(), 28))); render();
   } else if (action === 'cal-remind-toggle') { toggleReminders();
@@ -18464,13 +18507,23 @@ function onWkDragOver(e) {
   document.querySelectorAll('.wk-col.wk-drop').forEach((c) => { if (c !== col) c.classList.remove('wk-drop'); });
   col.classList.add('wk-drop');
 }
-function onWkDrop(e) {
+function onWkDragLeave(e) {
+  const col = e.target.closest('.wk-col');
+  if (!col || col.contains(e.relatedTarget)) return;
+  col.classList.remove('wk-drop');
+}
+async function onWkDrop(e) {
   const col = e.target.closest('.wk-col'); if (!col || !_wkDragId) { cleanupWkDrag(); return; }
   e.preventDefault();
-  const t = questById(_wkDragId), date = col.dataset.date, changed = t && date && t.date !== date;
-  if (changed) { t.date = date; Store.save('tasks', State.tasks); }
+  const task = questById(_wkDragId), date = col.dataset.date;
+  const changed = task && date && task.date !== date;
   cleanupWkDrag();
-  if (changed) render();
+  if (!changed) return;
+  const moved = await moveCalendarTask({ id: task.id, date, startTime: task.startTime || null, estimateMin: Number(task.estimateMin) || 30 }, { renderAfter: false });
+  if (!moved) return;
+  State.calDate = date;
+  State.weekStart = weekStart(date);
+  render();
 }
 function cleanupWkDrag() {
   _wkDragId = null;
@@ -18647,6 +18700,7 @@ async function init() {
       return;
     }
     if (e.key !== 'Escape') return;
+    if (_wkDragId) { cleanupWkDrag(); return; }
     if (document.getElementById('avatar-forge-overlay')) { closeAvatarForgeEditor(); return; }
     if (document.getElementById('mobile-nav-sheet')) { closeMobileNavSheet(); return; }
     const taskMenus = document.querySelectorAll('.task-more[open]');
@@ -18655,6 +18709,7 @@ async function init() {
   });
   document.addEventListener('dragstart', onWkDragStart);
   document.addEventListener('dragover', onWkDragOver);
+  document.addEventListener('dragleave', onWkDragLeave);
   document.addEventListener('drop', onWkDrop);
   document.addEventListener('dragend', cleanupWkDrag);
   document.addEventListener('dragstart', onCalDragStart);

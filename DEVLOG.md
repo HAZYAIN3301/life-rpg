@@ -2,6 +2,21 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-09] 🗓 Calendar Week v121 — семь дней без горизонтального полотна
+
+**Почему.** Week наследовал desktop-полотно шириной 900px: на телефоне одновременно читались примерно три из семи дней, а управление задачей зависело от drag. Добавление сохранялось оптимистично без полного rollback, а выбранный день не был общей точкой ориентации между mobile и desktop.
+
+- **Один Calendar shell.** Week переиспользует те же семь дат, три режима и три Calendar tools, что Day. Выбранная дата хранится в `State.calDate`, поэтому переходы Day ↔ Week не теряют контекст.
+- **Mobile — обзор плюс detail.** На 360/375 все семь дат видны одновременно; ниже показаны только задачи выбранного дня и одна явная кнопка добавления. Никакого 900px canvas и document overflow нет. На 1280×900 — семь равных полноценных колонок без горизонтального скролла.
+- **Редактирование без drag-зависимости.** Клик, tap и клавиатура открывают общий Day schedule editor. Drag на desktop остаётся ускорением, но вызывает ту же awaitable Move-транзакцию и тот же Undo receipt.
+- **Честные записи.** Week add ждёт `saveNow`, при ошибке откатывает ровно добавленный объект, сохраняет введённый текст и возвращает фокус. Move и Undo используют уже проверенный Day-контракт; глобальный task write guard и recovery-card v117 сохранены.
+- **Доступность и локализация.** Visible mobile/coarse actions имеют минимум 42px, focus-visible и reduced-motion покрыты. Новый Week chrome полностью переведён на RU/EN/DE/UK/ES; длинные немецкие заголовки переносятся внутри колонок без clamp и без разрыва layout.
+- **PWA.** `public/sw.js`: **`satoru-v120` → `satoru-v121`**; shell-список и authored assets не менялись.
+
+**Проверено.** `node --check public/app.js`, `node --check public/sw.js`, CSS/diff gates; focused Calendar data/Day/Week suite **25/25 PASS**, полный `npm test` **69/69 PASS**. Fresh-origin live QA: 360×800, 375×812 и 1280×900; empty/dense/malformed recovery, RU/DE, dark/light. Mobile: 7 dates / 3 modes / 3 tools, targets `<42px` — 0, horizontal overflow — 0, first work до fixed nav. Desktop: семь равных колонок, task overflow — 0. Editor dialog, add success/failure rollback, Move→Undo и recovery Retry/focus — PASS. Reduced motion зафиксирован статическим contract test, потому что текущий in-app Browser не предоставляет native media emulation.
+
+Скриншоты: `docs/design-qa/2026-08-09-calendar-week-v121/` — dense dark 360×800 и 1280×900, dense light 375×812, empty dark 375×812; все JPEG сняты после последних `app.js`/`styles.css`.
+
 ## [2026-08-09] ⚙️ Settings v120 — шесть понятных областей и честное сохранение
 
 **Почему.** Settings был одной длинной лентой несвязанных карточек: трудно найти нужное, на телефоне тяжело пройти, а общий Save сообщал об успехе раньше завершения записи. Ошибка загрузки настроек могла выглядеть как нормальное пустое состояние.
