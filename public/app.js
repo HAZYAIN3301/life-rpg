@@ -1312,6 +1312,52 @@ const I18N_EXTRA = {
   'Повторить загрузку': { en: 'Retry loading', de: 'Erneut laden', uk: 'Повторити завантаження', es: 'Reintentar la carga' },
   'Проверяем данные…': { en: 'Checking data…', de: 'Daten werden geprüft…', uk: 'Перевіряємо дані…', es: 'Comprobando los datos…' },
   'Изменения квестов заблокированы до восстановления данных': { en: 'Quest changes are blocked until the data is recovered', de: 'Quest-Änderungen sind bis zur Wiederherstellung der Daten gesperrt', uk: 'Зміни квестів заблоковано до відновлення даних', es: 'Los cambios de misiones están bloqueados hasta recuperar los datos' },
+  'Режим календаря': { en: 'Calendar view', de: 'Kalenderansicht', uk: 'Режим календаря', es: 'Vista del calendario' },
+  'Дни выбранной недели': { en: 'Days in the selected week', de: 'Tage der ausgewählten Woche', uk: 'Дні вибраного тижня', es: 'Días de la semana seleccionada' },
+  'Инструменты календаря': { en: 'Calendar tools', de: 'Kalenderwerkzeuge', uk: 'Інструменти календаря', es: 'Herramientas del calendario' },
+  'Предыдущий день': { en: 'Previous day', de: 'Vorheriger Tag', uk: 'Попередній день', es: 'Día anterior' },
+  'Следующий день': { en: 'Next day', de: 'Nächster Tag', uk: 'Наступний день', es: 'Día siguiente' },
+  'Экспорт календаря': { en: 'Export calendar', de: 'Kalender exportieren', uk: 'Експорт календаря', es: 'Exportar calendario' },
+  'Экспорт': { en: 'Export', de: 'Export', uk: 'Експорт', es: 'Exportar' },
+  'Подписка': { en: 'Subscribe', de: 'Abonnieren', uk: 'Підписка', es: 'Suscripción' },
+  'Напоминания': { en: 'Reminders', de: 'Erinnerungen', uk: 'Нагадування', es: 'Recordatorios' },
+  'Напоминания о квестах со временем': { en: 'Reminders for timed quests', de: 'Erinnerungen für terminierte Quests', uk: 'Нагадування про квести з часом', es: 'Recordatorios para misiones con hora' },
+  'Расписание дня': { en: 'Day schedule', de: 'Tagesplan', uk: 'Розклад дня', es: 'Horario del día' },
+  'Расписание': { en: 'Schedule', de: 'Zeitplan', uk: 'Розклад', es: 'Horario' },
+  'Нет квестов со временем': { en: 'No timed quests', de: 'Keine terminierten Quests', uk: 'Немає квестів із часом', es: 'No hay misiones con hora' },
+  'Добавь новый квест или назначь время квесту из списка без времени.': { en: 'Add a new quest or set a time for one from the no-time list.', de: 'Füge einen neuen Quest hinzu oder plane einen aus der Liste ohne Zeit.', uk: 'Додай новий квест або признач час квесту зі списку без часу.', es: 'Añade una misión nueva o asigna una hora a una de la lista sin hora.' },
+  'Добавить квест': { en: 'Add quest', de: 'Quest hinzufügen', uk: 'Додати квест', es: 'Añadir misión' },
+  'Новый квест': { en: 'New quest', de: 'Neuer Quest', uk: 'Новий квест', es: 'Nueva misión' },
+  'Название квеста': { en: 'Quest title', de: 'Quest-Titel', uk: 'Назва квесту', es: 'Título de la misión' },
+  'Квесты без времени': { en: 'Quests without a time', de: 'Quests ohne Zeit', uk: 'Квести без часу', es: 'Misiones sin hora' },
+  'Открыть расписание квеста': { en: 'Open quest schedule', de: 'Quest-Zeitplan öffnen', uk: 'Відкрити розклад квесту', es: 'Abrir horario de la misión' },
+  'Изменить расписание квеста': { en: 'Edit quest schedule', de: 'Quest-Zeitplan bearbeiten', uk: 'Змінити розклад квесту', es: 'Editar horario de la misión' },
+  'Дата': { en: 'Date', de: 'Datum', uk: 'Дата', es: 'Fecha' },
+  'Начало': { en: 'Start', de: 'Beginn', uk: 'Початок', es: 'Inicio' },
+  'Оставить без времени': { en: 'Leave without a time', de: 'Ohne Zeit lassen', uk: 'Залишити без часу', es: 'Dejar sin hora' },
+  'Сохранить расписание': { en: 'Save schedule', de: 'Zeitplan speichern', uk: 'Зберегти розклад', es: 'Guardar horario' },
+  'Квест перенесён': { en: 'Quest moved', de: 'Quest verschoben', uk: 'Квест перенесено', es: 'Misión movida' },
+  'Квест снят с расписания': { en: 'Quest removed from schedule', de: 'Quest aus dem Zeitplan genommen', uk: 'Квест знято з розкладу', es: 'Misión retirada del horario' },
+  'Не удалось сохранить перенос': { en: 'The move could not be saved', de: 'Die Verschiebung konnte nicht gespeichert werden', uk: 'Не вдалося зберегти перенесення', es: 'No se pudo guardar el cambio' },
+  'Не удалось сохранить квест': { en: 'The quest could not be saved', de: 'Der Quest konnte nicht gespeichert werden', uk: 'Не вдалося зберегти квест', es: 'No se pudo guardar la misión' },
+  'Квесты автоматически обновляются в Apple и Google Календаре после изменений в Satoru.': { en: 'Quests update automatically in Apple and Google Calendar after changes in Satoru.', de: 'Quests werden nach Änderungen in Satoru automatisch in Apple und Google Kalender aktualisiert.', uk: 'Квести автоматично оновлюються в Apple і Google Календарі після змін у Satoru.', es: 'Las misiones se actualizan automáticamente en Apple y Google Calendar tras los cambios en Satoru.' },
+  'Готовим безопасную ссылку…': { en: 'Preparing a secure link…', de: 'Sicherer Link wird vorbereitet…', uk: 'Готуємо безпечне посилання…', es: 'Preparando un enlace seguro…' },
+  'Не удалось создать ссылку. Повтори попытку.': { en: 'The link could not be created. Try again.', de: 'Der Link konnte nicht erstellt werden. Versuche es erneut.', uk: 'Не вдалося створити посилання. Спробуй ще раз.', es: 'No se pudo crear el enlace. Inténtalo de nuevo.' },
+  'Как подключить календарь': { en: 'How to connect the calendar', de: 'Kalender verbinden', uk: 'Як підключити календар', es: 'Cómo conectar el calendario' },
+  'Apple Календарь: добавь подписной календарь и вставь ссылку.': { en: 'Apple Calendar: add a subscription calendar and paste the link.', de: 'Apple Kalender: Füge einen Kalender mit Abonnement hinzu und setze den Link ein.', uk: 'Apple Календар: додай підписний календар і встав посилання.', es: 'Calendario de Apple: añade un calendario por suscripción y pega el enlace.' },
+  'Google Календарь: открой «Другие календари» → «Добавить по URL» и вставь ссылку.': { en: 'Google Calendar: open “Other calendars” → “Add by URL” and paste the link.', de: 'Google Kalender: Öffne „Weitere Kalender“ → „Per URL“ und setze den Link ein.', uk: 'Google Календар: відкрий «Інші календарі» → «Додати за URL» і встав посилання.', es: 'Google Calendar: abre «Otros calendarios» → «Añadir mediante URL» y pega el enlace.' },
+  'Насколько ты хотел это сделать?': { en: 'How much did you want to do this?', de: 'Wie sehr wolltest du das tun?', uk: 'Наскільки тобі хотілося це зробити?', es: '¿Cuánto querías hacerlo?' },
+  'Это сложный квест. Честный ответ влияет на XP и твою энергию.': { en: 'This is a hard quest. An honest answer affects XP and your energy.', de: 'Das ist ein schwieriger Quest. Eine ehrliche Antwort beeinflusst XP und deine Energie.', uk: 'Це складний квест. Чесна відповідь впливає на XP і твою енергію.', es: 'Es una misión difícil. Una respuesta honesta influye en los XP y en tu energía.' },
+  'Через силу': { en: 'Pushed through', de: 'Mit Überwindung', uk: 'Через силу', es: 'A la fuerza' },
+  'расход энергии ×1,5': { en: 'energy cost ×1.5', de: 'Energieverbrauch ×1,5', uk: 'витрати енергії ×1,5', es: 'gasto de energía ×1,5' },
+  'Нормально': { en: 'Fine', de: 'Ganz normal', uk: 'Нормально', es: 'Normal' },
+  'обычные XP и энергия': { en: 'standard XP and energy', de: 'normale XP und Energie', uk: 'звичайні XP та енергія', es: 'XP y energía normales' },
+  'В кураже!': { en: 'In the zone!', de: 'Voller Elan!', uk: 'У куражі!', es: '¡Con ganas!' },
+  'Хайп · расход энергии ниже': { en: 'Hype · lower energy cost', de: 'Hype · geringerer Energieverbrauch', uk: 'Хайп · нижчі витрати енергії', es: 'Hype · menor gasto de energía' },
+  'Воля против сопротивления истощает сильнее (ego depletion), поток — меньше (flow). Поэтому здоровая середина устойчивее, чем вечный форсаж.': { en: 'Pushing against resistance is more draining (ego depletion); flow is less so. A healthy middle ground is more sustainable than constant overdrive.', de: 'Widerstand mit Willenskraft zu überwinden erschöpft stärker (Ego-Depletion), Flow weniger. Eine gesunde Mitte ist nachhaltiger als ständiger Vollgasmodus.', uk: 'Вольове подолання опору виснажує сильніше (ego depletion), стан потоку — менше (flow). Тому здорова середина стійкіша за постійний форсаж.', es: 'Forzar la voluntad contra la resistencia agota más (ego depletion); el flujo, menos (flow). Un punto medio sano es más sostenible que ir siempre al límite.' },
+  'Вернуть': { en: 'Undo', de: 'Rückgängig', uk: 'Повернути', es: 'Deshacer' },
+  'Изменение отменено': { en: 'Change undone', de: 'Änderung rückgängig gemacht', uk: 'Зміну скасовано', es: 'Cambio deshecho' },
+  'На desktop можно перетащить квест; тап, клик или Enter открывает точное расписание.': { en: 'On desktop you can drag a quest; tap, click, or Enter opens its exact schedule.', de: 'Am Desktop kannst du einen Quest ziehen; Tippen, Klicken oder Enter öffnet den genauen Zeitplan.', uk: 'На desktop квест можна перетягнути; тап, клік або Enter відкриває точний розклад.', es: 'En escritorio puedes arrastrar una misión; tocar, hacer clic o pulsar Enter abre su horario exacto.' },
   // Weekdays (short)
   'Пн': { en: 'Mon', de: 'Mo', uk: 'Пн', es: 'Lun' },
   'Вт': { en: 'Tue', de: 'Di', uk: 'Вт', es: 'Mar' },
@@ -3940,6 +3986,8 @@ const State = {
   adminUsers: null, _adminUsersLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null, calMode: 'day', habitsTab: 'build',
   _tasksLoadError: '', _tasksLoadBusy: false, _tasksWriteBlockedNoticeAt: 0, _tasksFocusAfterCommit: '',
+  _calendarUndo: null, _calendarUndoTimer: null, _calendarFocusAfterCommit: '',
+  _calendarViewportNode: null, _calendarViewportDate: '', _calendarViewportScroll: null,
   aveCat: 'hair', // активная категория в редакторе аватара
   _denEdit: false, // открыт ли редактор комнаты (эфемерно, сама обстановка хранится в settings.den)
   treeEdit: false, treeSelNode: null, // редактор дерева навыков
@@ -3970,7 +4018,12 @@ function parseDate(s) { const [y, m, d] = s.split('-').map(Number); return new D
 function addDays(s, n) { const d = parseDate(s); d.setDate(d.getDate() + n); return fmtDate(d); }
 function dmShort(s) { return s.slice(8) + '.' + s.slice(5, 7); }
 function fmtClock(ms) { const t = Math.max(0, Math.floor(ms / 1000)); const h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), s = t % 60; return h ? `${h}:${pad2(m)}:${pad2(s)}` : `${m}:${pad2(s)}`; }
-function fmtDur(min) { const m = Math.max(0, Math.round(Number(min) || 0)); if (m < 60) return m + 'м'; const h = Math.floor(m / 60), r = m % 60; return r ? `${h}ч ${r}м` : `${h}ч`; }
+function fmtDur(min) {
+  const m = Math.max(0, Math.round(Number(min) || 0));
+  if (m < 60) return `${m}${t('м')}`;
+  const h = Math.floor(m / 60), r = m % 60;
+  return r ? `${h}${t('ч')} ${r}${t('м')}` : `${h}${t('ч')}`;
+}
 // ── Ввод длительности «часы + минуты» (fb_mrkzpi0z3zk2: «6 часов 10 минут» не хочется считать в 370).
 // Хранение НЕ меняется — канон остаётся в минутах (estimateMin); меняется только форма ввода.
 function durInputHTML(name, minutes, visibleLabels = false) {
@@ -4183,22 +4236,117 @@ function completeTask(task, desire, onDate) {
   if (window.ShadowRig) window.ShadowRig.setTransient(lvlNow > lvlBefore ? 'radiant' : 'happy', lvlNow > lvlBefore ? 2200 : 1100);
   checkAchievements(); render(); triggerAvatarReaction(avatarReaction, avatarReactionLabel); publishLeaderboard();
 }
-// Поп-ап выбора желания при завершении сложного квеста
-function openDesirePicker(taskId) {
-  if (document.getElementById('desire-pop')) return;
-  const t = questById(taskId); if (!t) return;
-  const ov = document.createElement('div'); ov.id = 'desire-pop'; ov.className = 'modal-overlay';
-  ov.innerHTML = `<div class="desire-box">
-    <button class="modal-x" data-action="desire-cancel">✕</button>
-    <h3>Насколько ты хотел это сделать?</h3>
-    <p class="muted">🔥 «${esc(t.title)}» — сложный квест. Честный ответ влияет на XP и на твою 🔋 энергию.</p>
+function taskCompletionFocusPlan(taskId, source = document.activeElement) {
+  const selector = `[data-action="toggle-task"][data-id="${CSS.escape(String(taskId))}"]`;
+  const calendarSource = !!(source && source.closest && source.closest('[data-calendar-task]'));
+  return { selector, stateKey: calendarSource ? '_calendarFocusAfterCommit' : '_tasksFocusAfterCommit' };
+}
+function queueTaskCompletionFocus(taskId, source = document.activeElement) {
+  const plan = taskCompletionFocusPlan(taskId, source);
+  State[plan.stateKey] = plan.selector;
+  return plan;
+}
+let _calendarDialogScrollLock = null;
+function lockCalendarDialogScroll() {
+  document.documentElement.classList.add('calendar-task-open');
+  if (_calendarDialogScrollLock || !document.body) return;
+  const body = document.body;
+  _calendarDialogScrollLock = {
+    x: window.scrollX, y: window.scrollY,
+    position: body.style.position, top: body.style.top, left: body.style.left,
+    right: body.style.right, width: body.style.width, overflow: body.style.overflow,
+  };
+  body.style.position = 'fixed';
+  body.style.top = `-${_calendarDialogScrollLock.y}px`;
+  body.style.left = `-${_calendarDialogScrollLock.x}px`;
+  body.style.right = '0';
+  body.style.width = '100%';
+  body.style.overflow = 'hidden';
+}
+function unlockCalendarDialogScroll() {
+  if (document.querySelector('#cal-task-modal, #desire-pop, #cal-sub-ov')) return;
+  document.documentElement.classList.remove('calendar-task-open');
+  const lock = _calendarDialogScrollLock;
+  _calendarDialogScrollLock = null;
+  if (!lock || !document.body) return;
+  const body = document.body;
+  body.style.position = lock.position;
+  body.style.top = lock.top;
+  body.style.left = lock.left;
+  body.style.right = lock.right;
+  body.style.width = lock.width;
+  body.style.overflow = lock.overflow;
+  window.scrollTo(lock.x, lock.y);
+}
+function closeDesirePicker({ restoreFocus = true } = {}) {
+  const overlay = document.getElementById('desire-pop');
+  if (!overlay) return false;
+  const target = restoreFocus && overlay._returnFocus && overlay._returnFocus.isConnected ? overlay._returnFocus : null;
+  if (overlay._desireApp) overlay._desireApp.inert = !!overlay._desireAppWasInert;
+  document.documentElement.classList.remove('desire-picker-open');
+  overlay.remove();
+  unlockCalendarDialogScroll();
+  if (target) requestAnimationFrame(() => focusPathChoiceTarget(target));
+  return true;
+}
+function handleDesirePickerKeydown(event) {
+  const overlay = document.getElementById('desire-pop');
+  if (!overlay || !overlay.contains(event.target)) return false;
+  if (event.key === 'Escape') {
+    event.preventDefault(); event.stopPropagation(); closeDesirePicker(); return true;
+  }
+  if (event.key !== 'Tab') return false;
+  const focusable = pathChoiceFocusable(overlay);
+  if (!focusable.length) {
+    event.preventDefault(); focusPathChoiceTarget(document.getElementById('desire-title')); return true;
+  }
+  const index = focusable.indexOf(document.activeElement);
+  if (index < 0 || (!event.shiftKey && index === focusable.length - 1) || (event.shiftKey && index === 0)) {
+    event.preventDefault(); focusPathChoiceTarget(event.shiftKey ? focusable[focusable.length - 1] : focusable[0]);
+  }
+  return true;
+}
+// Поп-ап выбора желания при завершении сложного квеста. Значения forced/neutral/hyped
+// и их награды остаются прежними; этот слой отвечает только за честный, доступный выбор.
+function openDesirePicker(taskId, returnFocus = document.activeElement) {
+  const existing = document.getElementById('desire-pop');
+  if (existing) {
+    requestAnimationFrame(() => focusPathChoiceTarget(document.getElementById('desire-title')));
+    return existing;
+  }
+  const task = questById(taskId); if (!task) return null;
+  const overlay = document.createElement('div');
+  overlay.id = 'desire-pop';
+  overlay.className = 'modal-overlay cal-task-overlay desire-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-labelledby', 'desire-title');
+  overlay.setAttribute('aria-describedby', 'desire-task-summary desire-science');
+  overlay.setAttribute('lang', lang());
+  overlay._returnFocus = returnFocus && typeof returnFocus.focus === 'function' ? returnFocus : null;
+  overlay._completionFocus = taskCompletionFocusPlan(task.id, returnFocus);
+  overlay.innerHTML = `<div class="desire-box">
+    <button type="button" class="modal-x" data-action="desire-cancel" aria-label="${esc(t('Закрыть'))}">✕</button>
+    <h3 id="desire-title" tabindex="-1">${esc(t('Насколько ты хотел это сделать?'))}</h3>
+    <p class="muted" id="desire-task-summary"><span aria-hidden="true">🔥</span> <span data-noi18n>«${esc(task.title)}»</span> — ${esc(t('Это сложный квест. Честный ответ влияет на XP и твою энергию.'))}</p>
     <div class="desire-btns">
-      <button class="desire-opt forced" data-action="desire-pick" data-id="${t.id}" data-desire="forced"><span class="d-emoji">😮‍💨</span><b>Через силу</b><small>+${Math.round(GRIT_BONUS * 100)}% XP · −энергия ×1.5</small></button>
-      <button class="desire-opt neutral" data-action="desire-pick" data-id="${t.id}" data-desire="neutral"><span class="d-emoji">🙂</span><b>Нормально</b><small>обычный XP и энергия</small></button>
-      <button class="desire-opt hyped" data-action="desire-pick" data-id="${t.id}" data-desire="hyped"><span class="d-emoji">⚔️</span><b>В кураже!</b><small>🔥 Хайп · энергии тратит меньше</small></button>
+      <button type="button" class="desire-opt forced" data-action="desire-pick" data-id="${task.id}" data-desire="forced"><span class="d-emoji" aria-hidden="true">😮‍💨</span><b>${esc(t('Через силу'))}</b><small>+${Math.round(GRIT_BONUS * 100)}% XP · ${esc(t('расход энергии ×1,5'))}</small></button>
+      <button type="button" class="desire-opt neutral" data-action="desire-pick" data-id="${task.id}" data-desire="neutral"><span class="d-emoji" aria-hidden="true">🙂</span><b>${esc(t('Нормально'))}</b><small>${esc(t('обычные XP и энергия'))}</small></button>
+      <button type="button" class="desire-opt hyped" data-action="desire-pick" data-id="${task.id}" data-desire="hyped"><span class="d-emoji" aria-hidden="true">⚔️</span><b>${esc(t('В кураже!'))}</b><small>🔥 ${esc(t('Хайп · расход энергии ниже'))}</small></button>
     </div>
-    <p class="desire-sci muted">Воля против сопротивления истощает сильнее (ego depletion), поток — меньше (flow). Поэтому здоровая середина устойчивее, чем вечный форсаж.</p></div>`;
-  document.body.appendChild(ov);
+    <p class="desire-sci muted" id="desire-science">${esc(t('Воля против сопротивления истощает сильнее (ego depletion), поток — меньше (flow). Поэтому здоровая середина устойчивее, чем вечный форсаж.'))}</p>
+  </div>`;
+  const appRoot = document.getElementById('app');
+  overlay._desireApp = appRoot;
+  overlay._desireAppWasInert = !!(appRoot && appRoot.inert);
+  if (appRoot) appRoot.inert = true;
+  lockCalendarDialogScroll();
+  document.documentElement.classList.add('desire-picker-open');
+  overlay.addEventListener('keydown', handleDesirePickerKeydown);
+  overlay.addEventListener('click', (event) => { if (event.target === overlay) closeDesirePicker(); });
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => focusPathChoiceTarget(document.getElementById('desire-title')));
+  return overlay;
 }
 // Поп-ап выбора нескольких категорий для квеста (иллюстрация = работа + творчество)
 function openCategoryPicker(taskId) {
@@ -9105,23 +9253,61 @@ function habitRow(h) {
 // ============================================================
 //  Вид «Календарь» — день по часам (Apple-стиль), отдельная вкладка
 // ============================================================
-const CAL_H0 = 6, CAL_H1 = 23, CAL_ROWH = 48;
+const CAL_H0 = 0, CAL_H1 = 23, CAL_ROWH = 48, CAL_BLOCK_MIN_PX = 28;
+const CAL_BLOCK_MIN_MIN = Math.ceil(CAL_BLOCK_MIN_PX / CAL_ROWH * 60);
 function calMinToY(min) { return (min - CAL_H0 * 60) / 60 * CAL_ROWH; }
 function calYtoMin(y) { const raw = CAL_H0 * 60 + y / CAL_ROWH * 60; return Math.max(CAL_H0 * 60, Math.min(CAL_H1 * 60 + 45, Math.round(raw / 15) * 15)); }
 function fmtHM(min) { return pad2(Math.floor(min / 60)) + ':' + pad2(min % 60); }
+function calendarTaskLayout(tasks) {
+  const entries = (tasks || []).map((task) => {
+    const [hour, minute] = String(task.startTime || '00:00').split(':').map(Number);
+    const start = hour * 60 + minute;
+    const duration = Math.max(5, Number(task.estimateMin) || 30);
+    const end = start + duration;
+    // Even a five-minute event keeps a 28px mouse/keyboard hitbox. Layout lanes
+    // must reserve that visible footprint too, otherwise adjacent short events
+    // occupy the same lane and the later control covers the earlier one.
+    const layoutEnd = start + Math.max(duration, CAL_BLOCK_MIN_MIN);
+    return { task, start, duration, end, layoutEnd, lane: 0, laneCount: 1 };
+  }).sort((a, b) => a.start - b.start || b.layoutEnd - a.layoutEnd || String(a.task.id).localeCompare(String(b.task.id)));
+  const clusters = [];
+  let cluster = [], clusterEnd = -Infinity;
+  entries.forEach((entry) => {
+    if (cluster.length && entry.start >= clusterEnd) {
+      clusters.push(cluster);
+      cluster = [];
+      clusterEnd = -Infinity;
+    }
+    cluster.push(entry);
+    clusterEnd = Math.max(clusterEnd, entry.layoutEnd);
+  });
+  if (cluster.length) clusters.push(cluster);
+  clusters.forEach((items) => {
+    const laneEnds = [];
+    items.forEach((entry) => {
+      let lane = laneEnds.findIndex((end) => end <= entry.start);
+      if (lane < 0) lane = laneEnds.length;
+      laneEnds[lane] = entry.layoutEnd;
+      entry.lane = lane;
+    });
+    items.forEach((entry) => { entry.laneCount = Math.max(1, laneEnds.length); });
+  });
+  return entries;
+}
 const MONTHS_NOM = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
 function calModeToggle(mode) {
-  return `<div class="cal-modes">
-    <button class="cal-mode ${mode === 'day' ? 'active' : ''}" data-action="cal-mode" data-mode="day">День</button>
-    <button class="cal-mode ${mode === 'week' ? 'active' : ''}" data-action="cal-mode" data-mode="week">Неделя</button>
-    <button class="cal-mode ${mode === 'month' ? 'active' : ''}" data-action="cal-mode" data-mode="month">Месяц</button></div>`;
+  const option = (id, label) => `<button type="button" class="cal-mode ${mode === id ? 'active' : ''}" data-action="cal-mode" data-mode="${id}" aria-pressed="${mode === id}">${esc(t(label))}</button>`;
+  return `<div class="cal-modes" role="group" aria-label="${esc(t('Режим календаря'))}">${option('day', 'День')}${option('week', 'Неделя')}${option('month', 'Месяц')}</div>`;
 }
 function calRemindBtn() {
   const on = State.settings && State.settings.remind;
-  return `<button class="btn ghost sm cal-remind ${on ? 'on' : ''}" data-action="cal-remind-toggle" title="Напоминания о задачах со временем (пока вкладка открыта)">${on ? '🔔 Напоминания вкл' : '🔕 Напоминания'}</button>`;
+  return `<button type="button" class="btn ghost sm cal-remind ${on ? 'on' : ''}" data-action="cal-remind-toggle" aria-pressed="${on ? 'true' : 'false'}" aria-label="${esc(t('Напоминания о квестах со временем'))}" title="${esc(t('Напоминания о квестах со временем'))}"><span class="cal-tool-icon" aria-hidden="true">${on ? '🔔' : '🔕'}</span> <span class="cal-tool-copy">${esc(t('Напоминания'))}</span></button>`;
 }
-function calExportBtn() { return `<button class="btn ghost sm" data-action="export-ics" title="Скачать запланированные квесты как .ics — импортировать в Apple/Google Календарь (разово; #8)">📆 .ics</button>`; }
-function calSubscribeBtn() { return `<button class="btn ghost sm" data-action="show-cal-subscribe" title="Живая подписка на квесты в Apple/Google Календарь">${t('📅 Подписка')}</button>`; }
+function calExportBtn() { return `<button type="button" class="btn ghost sm" data-action="export-ics" aria-label="${esc(t('Экспорт календаря'))}" title="${esc(t('Экспорт календаря'))}"><span class="cal-tool-icon" aria-hidden="true">📆</span> <span class="cal-tool-copy">${esc(t('Экспорт'))}</span></button>`; }
+function calSubscribeBtn() { return `<button type="button" class="btn ghost sm" data-action="show-cal-subscribe" aria-label="${esc(t('Живая подписка на квесты'))}" title="${esc(t('Живая подписка на квесты'))}"><span class="cal-tool-icon" aria-hidden="true">📅</span> <span class="cal-tool-copy">${esc(t('Подписка'))}</span></button>`; }
+function calendarToolsHTML() {
+  return `<div class="cal-tools" role="group" aria-label="${esc(t('Инструменты календаря'))}">${calExportBtn()}${calSubscribeBtn()}${calRemindBtn()}</div>`;
+}
 
 function validateTasksPayload(value) {
   if (!Array.isArray(value)) return false;
@@ -9187,36 +9373,273 @@ async function retryTasksLoad() {
   render();
 }
 
-async function showCalSubscribeModal() {
-  if (document.getElementById('cal-sub-ov')) return;
-  const ov = document.createElement('div');
-  ov.id = 'cal-sub-ov'; ov.className = 'modal-overlay';
-  ov.innerHTML = `<div class="guide-box"><button class="modal-x" data-action="close-cal-subscribe">✕</button>
-    <h2>${t('Живая подписка на квесты')}</h2>
-    <p class="muted" style="font-size:13px">Квесты автоматически обновляются в Apple/Google Календаре при добавлении новых.</p>
-    <div id="cal-sub-body" style="margin-top:12px"><span class="muted">Генерация ссылки…</span></div>
+function calendarTimeValue(value) {
+  if (!/^\d{2}:\d{2}$/.test(String(value || ''))) return null;
+  const [hours, minutes] = String(value).split(':').map(Number);
+  if (!Number.isFinite(hours) || !Number.isFinite(minutes) || minutes > 59) return null;
+  const total = Math.max(CAL_H0 * 60, Math.min(CAL_H1 * 60 + 45, hours * 60 + minutes));
+  return fmtHM(Math.round(total / 15) * 15);
+}
+function calendarDateValue(value, fallback = todayStr()) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(value || '')) ? String(value) : fallback;
+}
+function syncCalendarDayViewport() {
+  const viewport = document.querySelector('.calendar-day-shell .calv-grid-viewport');
+  if (!viewport || getComputedStyle(viewport).display === 'none' || State._calendarViewportNode === viewport) return;
+  State._calendarViewportNode = viewport;
+  const shell = viewport.closest('.calendar-day-shell');
+  const date = shell && shell.dataset.calendarDate || '';
+  if (date && State._calendarViewportDate === date && Number.isFinite(State._calendarViewportScroll)) {
+    viewport.scrollTop = State._calendarViewportScroll;
+  } else {
+    const firstTask = viewport.querySelector('.calv-block');
+    const currentTime = viewport.querySelector('.calv-now');
+    const target = firstTask || currentTime;
+    viewport.scrollTop = target ? Math.max(0, target.offsetTop - 72) : 0;
+  }
+  State._calendarViewportDate = date;
+  State._calendarViewportScroll = viewport.scrollTop;
+  viewport.addEventListener('scroll', () => {
+    if (!viewport.isConnected) return;
+    State._calendarViewportDate = date;
+    State._calendarViewportScroll = viewport.scrollTop;
+  }, { passive: true });
+}
+function calendarMoveReceiptHTML() {
+  const receipt = State._calendarUndo;
+  if (!receipt || receipt.expiresAt < Date.now() || !questById(receipt.taskId)) return '';
+  return `<div class="cal-move-receipt" role="status"><span>${esc(t(receipt.unscheduled ? 'Квест снят с расписания' : 'Квест перенесён'))}</span><button type="button" class="link-btn cal-move-undo" data-action="cal-move-undo">${esc(t('Вернуть'))}</button></div>`;
+}
+async function moveCalendarTask(command, { makeUndo = true, renderAfter = true } = {}) {
+  const task = questById(command && command.id);
+  if (!task || State._tasksLoadError) return false;
+  const before = { date: task.date, startTime: task.startTime || null, estimateMin: Number(task.estimateMin) || 30 };
+  const nextDate = calendarDateValue(command.date, task.date || todayStr());
+  const nextTime = command.startTime == null || command.startTime === '' ? null : calendarTimeValue(command.startTime);
+  const nextDuration = Math.max(5, Math.min(18 * 60, Math.round(Number(command.estimateMin) || before.estimateMin)));
+  if (command.startTime != null && command.startTime !== '' && !nextTime) return false;
+  task.date = nextDate;
+  task.startTime = nextTime;
+  task.estimateMin = nextDuration;
+  const saved = await Store.saveNow('tasks', State.tasks);
+  if (!saved) {
+    Object.assign(task, before);
+    toast(t('Не удалось сохранить перенос'));
+    return false;
+  }
+  if (makeUndo) {
+    if (State._calendarUndoTimer) clearTimeout(State._calendarUndoTimer);
+    const receipt = { taskId: task.id, before, unscheduled: !nextTime, expiresAt: Date.now() + 12000 };
+    State._calendarUndo = receipt;
+    State._calendarUndoTimer = setTimeout(() => {
+      if (State._calendarUndo !== receipt) return;
+      State._calendarUndo = null;
+      State._calendarUndoTimer = null;
+      render();
+    }, 12050);
+  }
+  State._calendarFocusAfterCommit = makeUndo ? '.cal-move-undo' : `[data-calendar-task="${CSS.escape(task.id)}"]`;
+  if (renderAfter) render();
+  return true;
+}
+async function undoCalendarMove() {
+  const receipt = State._calendarUndo;
+  if (!receipt) return;
+  if (receipt.expiresAt < Date.now()) {
+    State._calendarUndo = null;
+    if (State._calendarUndoTimer) clearTimeout(State._calendarUndoTimer);
+    State._calendarUndoTimer = null;
+    render();
+    return;
+  }
+  const ok = await moveCalendarTask(
+    { id: receipt.taskId, ...receipt.before },
+    { makeUndo: false, renderAfter: false },
+  );
+  if (!ok) {
+    State._calendarFocusAfterCommit = '.cal-move-undo';
+    render();
+    return;
+  }
+  State._calendarUndo = null;
+  if (State._calendarUndoTimer) clearTimeout(State._calendarUndoTimer);
+  State._calendarUndoTimer = null;
+  State._calendarFocusAfterCommit = '#calendar-screen-title, .week-screen-title, #main h2';
+  toast(t('Изменение отменено'));
+  render();
+}
+function closeCalendarTaskEditor({ restoreFocus = true } = {}) {
+  const overlay = document.getElementById('cal-task-modal');
+  if (!overlay) return false;
+  const target = restoreFocus && overlay._returnFocus && overlay._returnFocus.isConnected ? overlay._returnFocus : null;
+  if (overlay._calendarApp) overlay._calendarApp.inert = !!overlay._calendarAppWasInert;
+  overlay.remove();
+  unlockCalendarDialogScroll();
+  if (target) requestAnimationFrame(() => focusPathChoiceTarget(target));
+  return true;
+}
+function handleCalendarTaskKeydown(event) {
+  const overlay = document.getElementById('cal-task-modal');
+  if (!overlay || !overlay.contains(event.target)) return false;
+  if (event.key === 'Escape') {
+    event.preventDefault(); event.stopPropagation(); closeCalendarTaskEditor(); return true;
+  }
+  if (event.key !== 'Tab') return false;
+  const focusable = pathChoiceFocusable(overlay);
+  if (!focusable.length) {
+    event.preventDefault(); focusPathChoiceTarget(document.getElementById('cal-task-title')); return true;
+  }
+  const index = focusable.indexOf(document.activeElement);
+  if (index < 0 || (!event.shiftKey && index === focusable.length - 1) || (event.shiftKey && index === 0)) {
+    event.preventDefault(); focusPathChoiceTarget(event.shiftKey ? focusable[focusable.length - 1] : focusable[0]);
+  }
+  return true;
+}
+function openCalendarTaskEditor(id, returnFocus = document.activeElement) {
+  const task = questById(id);
+  if (!task || State._tasksLoadError) return null;
+  closeCalendarTaskEditor({ restoreFocus: false });
+  const overlay = document.createElement('div');
+  overlay.id = 'cal-task-modal';
+  overlay.className = 'modal-overlay cal-task-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-labelledby', 'cal-task-title');
+  overlay.setAttribute('aria-describedby', 'cal-task-name');
+  overlay.setAttribute('lang', lang());
+  overlay.dataset.taskId = task.id;
+  overlay._returnFocus = returnFocus && typeof returnFocus.focus === 'function' ? returnFocus : null;
+  const scheduled = !!task.startTime;
+  overlay.innerHTML = `<div class="cal-task-dialog">
+    <div class="cal-task-dialog-head"><h2 id="cal-task-title" tabindex="-1">${esc(t('Изменить расписание квеста'))}</h2><button type="button" class="modal-x" data-action="cal-task-close" aria-label="${esc(t('Закрыть'))}">✕</button></div>
+    <p class="cal-task-name" id="cal-task-name" data-noi18n>${esc(task.title)}</p>
+    <form id="cal-task-form">
+      <label class="cal-task-field"><span>${esc(t('Дата'))}</span><input name="date" type="date" value="${esc(calendarDateValue(task.date))}" required /></label>
+      <label class="cal-task-field"><span>${esc(t('Начало'))}</span><input name="startTime" type="time" min="00:00" max="23:45" step="900" value="${esc(calendarTimeValue(task.startTime) || '09:00')}" required /></label>
+      <label class="cal-task-field"><span>${esc(t('Длительность'))}</span><input name="estimateMin" type="number" min="5" max="1080" step="5" value="${Math.max(5, Number(task.estimateMin) || 30)}" required /></label>
+      <p class="cal-task-status muted" aria-live="polite"></p>
+      <div class="cal-task-actions"><button type="button" class="btn ghost cal-task-cancel" data-action="cal-task-close">${esc(t('Отмена'))}</button>${scheduled ? `<button type="button" class="btn ghost cal-task-unschedule" data-action="cal-task-unschedule">${esc(t('Оставить без времени'))}</button>` : ''}<button type="submit" class="btn cal-task-save">${esc(t('Сохранить расписание'))}</button></div>
+    </form>
   </div>`;
-  document.body.appendChild(ov);
+  const appRoot = document.getElementById('app');
+  overlay._calendarApp = appRoot;
+  overlay._calendarAppWasInert = !!(appRoot && appRoot.inert);
+  if (appRoot) appRoot.inert = true;
+  lockCalendarDialogScroll();
+  overlay.addEventListener('keydown', handleCalendarTaskKeydown);
+  overlay.addEventListener('click', (event) => { if (event.target === overlay) closeCalendarTaskEditor(); });
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => focusPathChoiceTarget(document.getElementById('cal-task-title')));
+  return overlay;
+}
+async function saveCalendarTaskEditor({ unschedule = false } = {}) {
+  const overlay = document.getElementById('cal-task-modal');
+  const form = overlay && overlay.querySelector('#cal-task-form');
+  if (!overlay || !form) return false;
+  const taskId = overlay.dataset.taskId;
+  const data = new FormData(form);
+  const status = overlay.querySelector('.cal-task-status');
+  const controls = overlay.querySelectorAll('button, input');
+  controls.forEach((control) => { control.disabled = true; });
+  if (status) status.textContent = t('Сохраняю…');
+  const ok = await moveCalendarTask({
+    id: taskId,
+    date: data.get('date'),
+    startTime: unschedule ? null : data.get('startTime'),
+    estimateMin: data.get('estimateMin'),
+  }, { renderAfter: false });
+  if (ok) {
+    closeCalendarTaskEditor({ restoreFocus: false });
+    render();
+    return true;
+  }
+  controls.forEach((control) => { control.disabled = false; });
+  if (status) status.textContent = t('Не удалось сохранить перенос');
+  return false;
+}
+
+function closeCalSubscribeModal({ restoreFocus = true } = {}) {
+  const overlay = document.getElementById('cal-sub-ov');
+  if (!overlay) return false;
+  const target = restoreFocus && overlay._returnFocus && overlay._returnFocus.isConnected ? overlay._returnFocus : null;
+  if (overlay._calendarApp) overlay._calendarApp.inert = !!overlay._calendarAppWasInert;
+  overlay.remove();
+  unlockCalendarDialogScroll();
+  if (target) requestAnimationFrame(() => focusPathChoiceTarget(target));
+  return true;
+}
+function handleCalSubscribeKeydown(event) {
+  const overlay = document.getElementById('cal-sub-ov');
+  if (!overlay || !overlay.contains(event.target)) return false;
+  if (event.key === 'Escape') {
+    event.preventDefault(); event.stopPropagation(); closeCalSubscribeModal(); return true;
+  }
+  if (event.key !== 'Tab') return false;
+  const focusable = pathChoiceFocusable(overlay);
+  if (!focusable.length) {
+    event.preventDefault(); focusPathChoiceTarget(document.getElementById('cal-sub-title')); return true;
+  }
+  const index = focusable.indexOf(document.activeElement);
+  if (index < 0 || (!event.shiftKey && index === focusable.length - 1) || (event.shiftKey && index === 0)) {
+    event.preventDefault(); focusPathChoiceTarget(event.shiftKey ? focusable[focusable.length - 1] : focusable[0]);
+  }
+  return true;
+}
+async function loadCalSubscribeBody(overlay, { focusAfter = false } = {}) {
+  const body = overlay && overlay.querySelector('#cal-sub-body');
+  if (!overlay || !body) return false;
+  body.innerHTML = `<p class="cal-sub-loading" id="cal-sub-loading" role="status" tabindex="-1">${esc(t('Готовим безопасную ссылку…'))}</p>`;
+  if (focusAfter) requestAnimationFrame(() => focusPathChoiceTarget(document.getElementById('cal-sub-loading')));
   try {
     const r = await fetch('/api/auth/cal-secret', { method: 'POST' });
+    if (!r.ok) throw new Error('calendar subscription failed');
     const d = await r.json();
+    if (!overlay.isConnected || !d.userId || !d.secret) return false;
     const base = location.origin + '/api/cal/' + d.userId + '/' + d.secret;
     const webcal = 'webcal://' + base.replace(/^https?:\/\//, '');
-    document.getElementById('cal-sub-body').innerHTML = `
-      <label style="display:block;font-size:12px;color:var(--muted);margin-bottom:4px">${t('Ссылка для подписки')}</label>
-      <div style="display:flex;gap:6px;margin-bottom:14px">
-        <input id="cal-sub-url" readonly value="${esc(base)}" style="flex:1;font-size:12px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--panel2);color:var(--fg)"/>
-        <button class="btn ghost sm" data-action="copy-cal-url" data-url="${esc(base)}">Копировать</button>
-      </div>
-      <a class="btn sm" href="${esc(webcal)}" style="display:inline-block;margin-bottom:16px">📲 ${t('Открыть в Календаре')}</a>
-      <p class="muted" style="font-size:12px;line-height:1.5">
-        <b>Apple Календарь (iOS):</b> Настройки → Учётные записи → Добавить → Другая → Подписной календарь → вставь ссылку.<br>
-        <b>Apple Календарь (Mac):</b> Файл → Новый подписной календарь → вставь ссылку.<br>
-        <b>Google Календарь:</b> Другие календари → + → По URL → вставь ссылку.
-      </p>`;
+    body.innerHTML = `
+      <div class="cal-sub-link"><label for="cal-sub-url">${esc(t('Ссылка для подписки'))}</label><div class="cal-sub-link-row"><input id="cal-sub-url" readonly value="${esc(base)}"/><button type="button" class="btn ghost cal-sub-copy" data-action="copy-cal-url" data-url="${esc(base)}">${esc(t('Копировать'))}</button></div></div>
+      <a class="btn cal-sub-open" href="${esc(webcal)}">📲 ${esc(t('Открыть в Календаре'))}</a>
+      <section class="cal-sub-help" aria-labelledby="cal-sub-help-title"><h3 id="cal-sub-help-title">${esc(t('Как подключить календарь'))}</h3>
+        <p>${esc(t('Apple Календарь: добавь подписной календарь и вставь ссылку.'))}</p>
+        <p>${esc(t('Google Календарь: открой «Другие календари» → «Добавить по URL» и вставь ссылку.'))}</p>
+      </section>`;
+    if (focusAfter) requestAnimationFrame(() => focusPathChoiceTarget(document.getElementById('cal-sub-url')));
+    return true;
   } catch {
-    document.getElementById('cal-sub-body').innerHTML = `<span class="muted">Ошибка, попробуй ещё раз</span>`;
+    if (!overlay.isConnected) return false;
+    body.innerHTML = `<div class="cal-sub-error" role="alert"><p>${esc(t('Не удалось создать ссылку. Повтори попытку.'))}</p><button type="button" class="btn cal-sub-retry" data-action="cal-sub-retry">${esc(t('Повторить загрузку'))}</button></div>`;
+    if (focusAfter) requestAnimationFrame(() => focusPathChoiceTarget(body.querySelector('.cal-sub-retry')));
+    return false;
   }
+}
+async function showCalSubscribeModal(returnFocus = document.activeElement) {
+  const existing = document.getElementById('cal-sub-ov');
+  if (existing) { requestAnimationFrame(() => focusPathChoiceTarget(document.getElementById('cal-sub-title'))); return existing; }
+  const ov = document.createElement('div');
+  ov.id = 'cal-sub-ov';
+  ov.className = 'modal-overlay cal-task-overlay cal-sub-overlay';
+  ov.setAttribute('role', 'dialog');
+  ov.setAttribute('aria-modal', 'true');
+  ov.setAttribute('aria-labelledby', 'cal-sub-title');
+  ov.setAttribute('aria-describedby', 'cal-sub-intro');
+  ov.setAttribute('lang', lang());
+  ov._returnFocus = returnFocus && typeof returnFocus.focus === 'function' ? returnFocus : null;
+  ov.innerHTML = `<div class="cal-sub-dialog"><div class="cal-sub-head"><h2 id="cal-sub-title" tabindex="-1">${esc(t('Живая подписка на квесты'))}</h2><button type="button" class="modal-x" data-action="close-cal-subscribe" aria-label="${esc(t('Закрыть'))}">✕</button></div>
+    <p class="cal-sub-intro" id="cal-sub-intro">${esc(t('Квесты автоматически обновляются в Apple и Google Календаре после изменений в Satoru.'))}</p>
+    <div id="cal-sub-body"></div>
+  </div>`;
+  const appRoot = document.getElementById('app');
+  ov._calendarApp = appRoot;
+  ov._calendarAppWasInert = !!(appRoot && appRoot.inert);
+  if (appRoot) appRoot.inert = true;
+  lockCalendarDialogScroll();
+  ov.addEventListener('keydown', handleCalSubscribeKeydown);
+  ov.addEventListener('click', (event) => { if (event.target === ov) closeCalSubscribeModal(); });
+  document.body.appendChild(ov);
+  requestAnimationFrame(() => focusPathChoiceTarget(document.getElementById('cal-sub-title')));
+  loadCalSubscribeBody(ov);
+  return ov;
 }
 // Экспорт запланированных квестов (с датой и временем) в iCalendar (#8). Разовый экспорт, не живая подписка.
 function buildICS() {
@@ -9269,67 +9692,72 @@ function renderCalendarView() {
   const MON = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
   const d = parseDate(date);
   const dayTasks = (State.tasks || []).filter((t) => t.date === date);
-  const scheduled = dayTasks.filter((t) => t.startTime);
+  const scheduled = dayTasks.filter((t) => t.startTime).sort((a, b) => String(a.startTime).localeCompare(String(b.startTime)));
   const unscheduled = dayTasks.filter((t) => !t.startTime && !t.done);
   // полоса недели вокруг выбранной даты (с понедельника)
   const js = d.getDay(), mon = addDays(date, -(js === 0 ? 6 : js - 1));
   let strip = '';
   for (let i = 0; i < 7; i++) {
     const ds = addDays(mon, i), open = State.tasks.filter((t) => t.date === ds && !t.done).length;
-    strip += `<button class="calv-day ${ds === date ? 'active' : ''} ${ds === todayStr() ? 'is-today' : ''}" data-action="cal-date" data-date="${ds}">
-      <span class="cd-wd">${WD[parseDate(ds).getDay()]}</span><span class="cd-n">${Number(ds.slice(8))}</span>${open ? `<span class="cd-dot">${open}</span>` : '<span class="cd-dot-empty"></span>'}</button>`;
+    const selected = ds === date, isToday = ds === todayStr(), weekday = t(WD[parseDate(ds).getDay()]);
+    strip += `<button type="button" class="calv-day ${selected ? 'active' : ''} ${isToday ? 'is-today' : ''}" data-action="cal-date" data-date="${ds}" aria-pressed="${selected}" ${isToday ? 'aria-current="date"' : ''} aria-label="${esc(`${weekday} ${Number(ds.slice(8))}${isToday ? ` · ${t('сегодня')}` : ''}`)}">
+      <span class="cd-wd">${esc(weekday)}</span><span class="cd-n">${Number(ds.slice(8))}</span>${open ? `<span class="cd-dot" aria-label="${open}">${open}</span>` : '<span class="cd-dot-empty" aria-hidden="true"></span>'}</button>`;
   }
   const hours = [];
   for (let h = CAL_H0; h <= CAL_H1; h++) hours.push(h);
   const grid = hours.map((h, i) => `<div class="cal-row" style="top:${i * CAL_ROWH}px"><span class="cal-h">${pad2(h)}:00</span></div>`).join('');
   const nowMin = (() => { const n = new Date(); return n.getHours() * 60 + n.getMinutes(); })();
   const nowLine = (date === todayStr() && nowMin >= CAL_H0 * 60 && nowMin <= (CAL_H1 + 1) * 60) ? `<div class="calv-now" style="top:${calMinToY(nowMin)}px"></div>` : '';
-  const blocks = scheduled.map((t) => {
-    const [H, M] = t.startTime.split(':').map(Number);
-    const dur = Number(t.estimateMin) || 30;
-    const sk = skillById(t.skillId);
-    return `<div class="cal-block calv-block ${t.done ? 'done' : ''}" draggable="true" data-id="${t.id}" style="top:${calMinToY(H * 60 + M)}px;height:${Math.max(24, dur / 60 * CAL_ROWH)}px;--c:${esc(sk.color)}" title="${esc(t.title)} · ${fmtDur(dur)} — тяни, чтобы перенести">
-      <button class="check sm cal-check" data-action="toggle-task" data-id="${t.id}">${t.done ? satoruIconHTML('action.check', 'cal-action-icon', '✓') : ''}</button>
-      <span class="cal-b-text"><b>${pad2(H)}:${pad2(M)}</b> ${taskContentIconHTML(t, 'activity-inline-icon')}${esc(taskDisplayTitle(t))}<span class="cal-dur"> · ${fmtDur(dur)}</span></span>
-      <button class="cal-x" data-action="unschedule-quest" data-id="${t.id}" title="Снять с расписания">${satoruIconHTML('action.close', 'cal-action-icon', '✕')}</button></div>`;
+  const blocks = calendarTaskLayout(scheduled).map(({ task, start, duration: dur, lane, laneCount }) => {
+    const H = Math.floor(start / 60), M = start % 60;
+    const sk = skillById(task.skillId);
+    const fullTitle = taskDisplayTitle(task);
+    const laneStart = lane / laneCount * 100;
+    const laneEnd = (lane + 1) / laneCount * 100;
+    const durationHeight = Math.max(2, dur / 60 * CAL_ROWH);
+    const laneStyle = `left:calc(${laneStart}% + ${lane ? 2 : 0}px);right:calc(${100 - laneEnd}% + ${lane < laneCount - 1 ? 2 : 0}px)`;
+    return `<div class="cal-block calv-block ${task.done ? 'done' : ''}" draggable="true" data-id="${task.id}" data-calendar-task="${task.id}" data-cal-lane="${lane + 1}/${laneCount}" style="top:${calMinToY(start)}px;height:${Math.max(CAL_BLOCK_MIN_PX, durationHeight)}px;--cal-duration-h:${durationHeight}px;${laneStyle};--c:${esc(sk.color)}"><span class="cal-duration-mark" aria-hidden="true"></span>
+      <button type="button" class="check sm cal-check" data-action="toggle-task" data-id="${task.id}" aria-label="${esc(t(task.done ? 'Снять выполнение' : 'Выполнить'))}: ${esc(fullTitle)}" aria-pressed="${task.done ? 'true' : 'false'}">${task.done ? satoruIconHTML('action.check', 'cal-action-icon', '✓') : ''}</button>
+      <button type="button" class="cal-block-main" data-action="cal-edit-task" data-id="${task.id}" aria-label="${esc(t('Открыть расписание квеста'))}: ${esc(fullTitle)}"><span class="cal-b-text"><b>${pad2(H)}:${pad2(M)}</b> <span data-noi18n>${taskContentIconHTML(task, 'activity-inline-icon')}<span>${esc(fullTitle)}</span></span><span class="cal-dur"> · ${fmtDur(dur)}</span></span></button></div>`;
   }).join('');
-  const trayTasks = unscheduled.map((t) => { const sk = skillById(t.skillId); return `<span class="calv-chip" draggable="true" data-id="${t.id}" style="--c:${esc(sk.color)}" title="Тяни в сетку, чтобы поставить на время">${satoruIconHTML('action.drag', 'cal-action-icon', '⠿')} ${esc(t.title)} <span class="muted">${fmtDur(Number(t.estimateMin) || 30)}</span><button class="calv-chip-del" data-action="delete-task" data-id="${t.id}" title="Удалить квест">${satoruIconHTML('action.close', 'cal-action-icon', '✕')}</button></span>`; }).join('');
-  const dur0 = unscheduled.length ? (Number(unscheduled[0].estimateMin) || 30) : 30;
-  const picker = unscheduled.length ? `
-    <div class="cal-schedule">
-      <select id="cal-quest">${unscheduled.map((t) => `<option value="${t.id}">${esc(t.title)}</option>`).join('')}</select>
-      <input id="cal-time" type="time" value="09:00" title="Начало" />
-      <input id="cal-dur" type="number" min="1" step="1" value="${dur0}" title="Длительность, мин (любое число — не только кратное 5)" />
-      <span class="cal-dur-unit muted">мин</span>
-      <button class="btn ghost" data-action="schedule-quest">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} Поставить</button>
-    </div>` : '';
+  const agendaRows = scheduled.map((task) => {
+    const fullTitle = taskDisplayTitle(task), duration = Number(task.estimateMin) || 30;
+    return `<div class="cal-agenda-row ${task.done ? 'done' : ''}" role="listitem" data-calendar-task="${task.id}"><button type="button" class="check cal-agenda-check" data-action="toggle-task" data-id="${task.id}" aria-label="${esc(t(task.done ? 'Снять выполнение' : 'Выполнить'))}: ${esc(fullTitle)}" aria-pressed="${task.done ? 'true' : 'false'}">${task.done ? satoruIconHTML('action.check', 'cal-action-icon', '✓') : ''}</button><button type="button" class="cal-agenda-main" data-action="cal-edit-task" data-id="${task.id}" aria-label="${esc(t('Открыть расписание квеста'))}: ${esc(fullTitle)}"><span class="cal-agenda-time">${esc(task.startTime)}</span><span class="cal-agenda-title" data-noi18n>${taskContentIconHTML(task, 'activity-inline-icon')}${esc(fullTitle)}</span><span class="cal-agenda-meta"><span class="cal-agenda-duration">${fmtDur(duration)}</span><span class="cal-agenda-disclosure">${esc(t('Расписание'))}</span></span></button></div>`;
+  }).join('');
+  const trayTasks = unscheduled.map((task) => `<button type="button" class="calv-chip" draggable="true" data-id="${task.id}" data-calendar-task="${task.id}" data-action="cal-edit-task" aria-label="${esc(t('Открыть расписание квеста'))}: ${esc(task.title)}"><span aria-hidden="true">${satoruIconHTML('action.drag', 'cal-action-icon', '⠿')}</span><span class="calv-chip-title" data-noi18n>${esc(task.title)}</span><span class="calv-chip-meta"><span class="calv-chip-duration">${fmtDur(Number(task.estimateMin) || 30)}</span><span class="calv-chip-disclosure">${esc(t('Расписание'))}</span></span></button>`).join('');
   const planned = dayTasks.reduce((s, t) => s + (Number(t.estimateMin) || 0), 0);
-  return `
-    <div class="card calv-head">
+  const emptyAgenda = `<div class="cal-agenda-empty"><p><strong>${esc(t('Нет квестов со временем'))}</strong><span>${esc(t('Добавь новый квест или назначь время квесту из списка без времени.'))}</span></p><button type="button" class="btn" data-action="cal-focus-add">${satoruIconHTML('action.add', 'button-glyph', '+')} ${esc(t('Добавить квест'))}</button></div>`;
+  return `<section class="calendar-shell calendar-day-shell" data-calendar-date="${date}" aria-labelledby="calendar-screen-title">
+    <header class="card calv-head">
       <div class="calv-title">
-        <button class="btn ghost sm" data-action="cal-shift" data-days="-1" title="Предыдущий день">${satoruIconHTML('action.back', 'cal-action-icon', '‹')}</button>
-        <h2>${d.getDate()} ${MON[d.getMonth()]} <span class="muted">· ${WD[d.getDay()]}${date === todayStr() ? ' · сегодня' : ''}</span></h2>
-        <button class="btn ghost sm" data-action="cal-shift" data-days="1" title="Следующий день">${satoruIconHTML('action.forward', 'cal-action-icon', '›')}</button>
-        ${date !== todayStr() ? '<button class="btn ghost sm" data-action="cal-today">Сегодня</button>' : ''}
-        <span class="wk-load muted">план: ${fmtDur(planned)}</span>
-        ${calModeToggle('day')}<div class="cal-tools">${calExportBtn()}${calSubscribeBtn()}${calRemindBtn()}</div>
+        <div class="calv-title-main"><button type="button" class="btn ghost sm cal-nav-prev" data-action="cal-shift" data-days="-1" aria-label="${esc(t('Предыдущий день'))}">${satoruIconHTML('action.back', 'cal-action-icon', '‹')}</button><h2 id="calendar-screen-title" tabindex="-1">${d.getDate()} ${esc(t(MON[d.getMonth()]))} <span class="muted">· ${esc(t(WD[d.getDay()]))}${date === todayStr() ? ` · ${esc(t('сегодня'))}` : ''}</span></h2><button type="button" class="btn ghost sm cal-nav-next" data-action="cal-shift" data-days="1" aria-label="${esc(t('Следующий день'))}">${satoruIconHTML('action.forward', 'cal-action-icon', '›')}</button>${date !== todayStr() ? `<button type="button" class="btn ghost sm cal-nav-today" data-action="cal-today">${esc(t('Сегодня'))}</button>` : ''}<span class="wk-load muted">${esc(t('план:'))} ${fmtDur(planned)}</span></div>
+        ${calModeToggle('day')}${calendarToolsHTML()}
       </div>
-      <div class="calv-strip">${strip}</div>
+      <div class="calv-strip" role="group" aria-label="${esc(t('Дни выбранной недели'))}">${strip}</div>
+    </header>
+    ${calendarMoveReceiptHTML()}
+    <div class="calendar-day-layout">
+      <main class="calendar-day-work">
+        <section class="card calendar-work-card" aria-labelledby="calendar-schedule-title"><div class="cal-work-head"><div><h3 id="calendar-schedule-title">${esc(t('Расписание дня'))}</h3><span class="muted">${scheduled.length} · ${fmtDur(planned)}</span></div><button type="button" class="btn ghost" data-action="cal-focus-add">${satoruIconHTML('action.add', 'button-glyph', '+')} ${esc(t('Добавить квест'))}</button></div>
+          <div class="calv-agenda" role="list">${agendaRows || emptyAgenda}</div>
+          <div class="calv-grid-viewport" role="region" aria-label="${esc(t('Расписание дня'))}" tabindex="0"><div class="cal calv-grid" style="height:${hours.length * CAL_ROWH}px">${grid}${nowLine}<div class="cal-events-layer">${blocks}</div></div></div>
+          <p class="cal-hint muted">${esc(t('На desktop можно перетащить квест; тап, клик или Enter открывает точное расписание.'))}</p>
+        </section>
+      </main>
+      <aside class="calendar-day-support" aria-label="${esc(t('Новый квест'))}">
+        <section class="card card-addquest calendar-add-card"><h3>${esc(t('Новый квест'))}</h3><form id="add-task" class="add-row calendar-add-form">
+          <input type="hidden" name="date" value="${date}" />
+          <label class="add-field add-field-title"><span class="add-field-label">${esc(t('Название квеста'))}</span><input name="title" placeholder="${esc(t('Новый квест на этот день…'))}" autocomplete="off" maxlength="160" required /></label>
+          <label class="add-field add-field-time"><span class="add-field-label">${esc(t('Начало'))}</span><input name="startTime" type="time" min="00:00" max="23:45" step="900" /></label>
+          <label class="add-field add-field-skill"><span class="add-field-label">${esc(t('Сфера'))}</span><select name="skillId">${skillOptionsHTML()}</select></label>
+          <div class="add-field add-field-duration" role="group" aria-label="${esc(t('Длительность'))}">${durInputHTML('estimateMin', 30, true)}</div>
+          <label class="add-field add-field-difficulty"><span class="add-field-label">${esc(t('Сложность'))}</span><select name="difficulty"><option value="easy">${esc(t('Лёгкая'))}</option><option value="normal" selected>${esc(t('Обычная'))}</option><option value="hard">${esc(t('Сложная'))}</option></select></label>
+          <p class="calendar-add-status muted" aria-live="polite"></p>
+          <button type="submit">${satoruIconHTML('action.add', 'button-glyph', '+')} ${esc(t('Добавить квест'))}</button></form></section>
+        ${unscheduled.length ? `<details class="card calv-tray"><summary><span class="calv-tray-title">${satoruIconHTML('system.calendar', 'heading-glyph', '📥')} ${esc(t('Квесты без времени'))}</span><span class="calv-tray-count">${unscheduled.length}</span></summary><div class="calv-chips">${trayTasks}</div></details>` : ''}
+      </aside>
     </div>
-    <div class="card">
-      <form id="add-task" class="add-row">
-        <input type="hidden" name="date" value="${date}" />
-        <input name="title" placeholder="Новый квест на этот день…" autocomplete="off" required />
-        <select name="skillId">${skillOptionsHTML()}</select>
-        ${durInputHTML('estimateMin', 30)}
-        <select name="difficulty"><option value="easy">${t('Лёгкая')}</option><option value="normal" selected>${t('Обычная')}</option><option value="hard">${t('Сложная')}</option></select>
-        <button type="submit">${satoruIconHTML('action.add', 'button-glyph', '+')} Квест</button></form>
-    </div>
-    ${unscheduled.length ? `<div class="card calv-tray"><h3>${satoruIconHTML('system.calendar', 'heading-glyph', '📥')} Без времени (${unscheduled.length})</h3><div class="calv-chips">${trayTasks}</div>${picker}</div>` : ''}
-    <div class="card">
-      <p class="cal-hint muted">Тяни квест по сетке, чтобы сменить время (шаг 15 мин). Клик по пустому месту — подставить время в форму. Крестик ✕ — снять с расписания.</p>
-      <div class="cal calv-grid" style="height:${hours.length * CAL_ROWH}px">${grid}${nowLine}${blocks}</div>
-    </div>`;
+  </section>`;
 }
 // ============================================================
 //  Быстрый захват + Инбокс (Блок 2) — текст/голос/видео, замена Telegram «Избранное»
@@ -15495,6 +15923,7 @@ function afterMainCommit() {
   try { scheduleDenPhaseBoundary(); } catch {}
   try { tutorialPaint(); } catch {}
   try { scheduleQuestTitleDisclosures(); } catch {}
+  try { syncCalendarDayViewport(); } catch {}
   if (State._tasksFocusAfterCommit) {
     const selector = State._tasksFocusAfterCommit;
     State._tasksFocusAfterCommit = '';
@@ -15531,6 +15960,15 @@ function afterMainCommit() {
       const target = document.querySelector(selector);
       if (!target) return;
       focusPathChoiceTarget(target);
+    });
+  }
+  if (State._calendarFocusAfterCommit && (State.view === 'calendar' || State.view === 'weekly')) {
+    const selector = State._calendarFocusAfterCommit;
+    State._calendarFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const candidates = Array.from(document.querySelectorAll(selector));
+      const target = candidates.find((node) => node.getClientRects().length) || candidates[0] || document.getElementById('calendar-screen-title');
+      if (target) focusPathChoiceTarget(target);
     });
   }
   if (State.view === 'tree') {
@@ -15658,8 +16096,14 @@ function kickCompVideo() {
 // ============================================================
 //  События
 // ============================================================
-function onSubmit(e) {
+async function onSubmit(e) {
   const f = e.target;
+
+  if (f.id === 'cal-task-form') {
+    e.preventDefault();
+    saveCalendarTaskEditor();
+    return;
+  }
 
   // --- Компаньон: чек-ин (утро/вечер) ---
   if (f.id === 'comp-checkin') {
@@ -15902,6 +16346,7 @@ function onSubmit(e) {
   }
   if (f.id === 'add-task') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
+    if (State._tasksLoadError) { toast(t('Изменения квестов заблокированы до восстановления данных')); return; }
     const tDate = (f.date && f.date.value) || todayStr(); // вкладка «Календарь» добавляет на выбранный день
     // Липкие слои: если такое дело раньше уже размечали фоном — подставляем молча, без вопроса.
     // Только когда основная сфера совпала с угаданной: иначе юзер сменил смысл дела руками, и
@@ -15911,7 +16356,28 @@ function onSubmit(e) {
     // История молчит (новый юзер или новое дело) → словарь частых активностей. Тоже только если
     // основная сфера сошлась — иначе юзер задал делу свой смысл, и наш фон к нему не относится.
     if (!layers.length) { const d = guessFromDictionary(title); if (d && d.skillId === f.skillId.value) layers = d.layers; }
-    State.tasks.push({ id: uid(), title, skillId: f.skillId.value, skillIds: [f.skillId.value], layers, estimateMin: readDurInput(f, 'estimateMin'), difficulty: f.difficulty.value, date: tDate, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
+    const startTime = f.startTime ? calendarTimeValue(f.startTime.value) : null;
+    const task = { id: uid(), title, skillId: f.skillId.value, skillIds: [f.skillId.value], layers, estimateMin: readDurInput(f, 'estimateMin'), difficulty: f.difficulty.value, date: tDate, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime, createdAt: new Date().toISOString() };
+    State.tasks.push(task);
+    if (f.classList.contains('calendar-add-form')) {
+      const status = f.querySelector('.calendar-add-status');
+      const controls = f.querySelectorAll('button, input, select');
+      controls.forEach((control) => { control.disabled = true; });
+      if (status) status.textContent = t('Сохраняю…');
+      const saved = await Store.saveNow('tasks', State.tasks);
+      if (!saved) {
+        State.tasks = State.tasks.filter((item) => item !== task);
+        controls.forEach((control) => { control.disabled = false; });
+        if (status) status.textContent = t('Не удалось сохранить квест');
+        focusPathChoiceTarget(f.title);
+        return;
+      }
+      State._calendarFocusAfterCommit = startTime
+        ? `.cal-block-main[data-id="${CSS.escape(task.id)}"], .cal-agenda-main[data-id="${CSS.escape(task.id)}"]`
+        : '.calv-tray > summary';
+      render();
+      return;
+    }
     Store.save('tasks', State.tasks); render();
   } else if (f.id === 'add-goal') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
@@ -16623,8 +17089,16 @@ function onClick(e) {
   if (action === 'edit-cats') { openCategoryPicker(el.dataset.id); return; }
   if (action === 'edit-task-title') { State._editTask = el.dataset.id; render(); setTimeout(() => { const i = document.querySelector('.t-edit-form input'); if (i) { i.focus(); i.select(); } }, 0); return; }
   if (action === 'close-cats') { const p = document.getElementById('cat-pop'); if (p) p.remove(); render(); return; }
-  if (action === 'desire-cancel') { const p = document.getElementById('desire-pop'); if (p) p.remove(); return; }
-  if (action === 'desire-pick') { const t = questById(el.dataset.id), p = document.getElementById('desire-pop'); if (p) p.remove(); if (t && !t.done) completeTask(t, el.dataset.desire); return; }
+  if (action === 'desire-cancel') { closeDesirePicker(); return; }
+  if (action === 'desire-pick') {
+    const task = questById(el.dataset.id), overlay = document.getElementById('desire-pop');
+    if (!task || task.done) { closeDesirePicker(); return; }
+    const focusPlan = overlay && overlay._completionFocus;
+    closeDesirePicker({ restoreFocus: false });
+    if (focusPlan) State[focusPlan.stateKey] = focusPlan.selector;
+    completeTask(task, el.dataset.desire);
+    return;
+  }
   if (action === 'copy-feedback-for-claude') {
     (async () => {
       try {
@@ -16669,9 +17143,10 @@ function onClick(e) {
     const q = questById(id); if (!q) return;
     if (!q.done) {
       // Сложный квест → спрашиваем «насколько хотел» (Хайп за добровольный выбор трудного). Лёгкий/обычный — сразу.
-      if (q.difficulty === 'hard') { openDesirePicker(id); return; }
+      if (q.difficulty === 'hard') { openDesirePicker(id, el); return; }
+      queueTaskCompletionFocus(id, el);
       completeTask(q, null);
-    } else { q.done = false; q.completedAt = null; q.xpAwarded = 0; q.goldAwarded = 0; q.desire = null;
+    } else { queueTaskCompletionFocus(id, el); q.done = false; q.completedAt = null; q.xpAwarded = 0; q.goldAwarded = 0; q.desire = null;
       Store.save('tasks', State.tasks); checkAchievements(); render(); publishLeaderboard(); }
   } else if (action === 'toggle-task-backdated') {
     // «Сделал в тот день, отметить забыл» — засчитываем в дату плана, а не в сегодня (fb_mr4qhq6gy30w).
@@ -16798,6 +17273,18 @@ function onClick(e) {
     if (t && time) { t.startTime = time; if (dur) t.estimateMin = dur; Store.save('tasks', State.tasks); render(); }
   } else if (action === 'unschedule-quest') {
     const t = questById(id); if (t) { t.startTime = null; Store.save('tasks', State.tasks); render(); }
+  } else if (action === 'cal-edit-task') {
+    openCalendarTaskEditor(id, el); return;
+  } else if (action === 'cal-task-close') {
+    closeCalendarTaskEditor(); return;
+  } else if (action === 'cal-task-unschedule') {
+    saveCalendarTaskEditor({ unschedule: true }); return;
+  } else if (action === 'cal-move-undo') {
+    undoCalendarMove(); return;
+  } else if (action === 'cal-focus-add') {
+    const input = document.querySelector('.calendar-add-card input[name="title"]');
+    if (input) { input.scrollIntoView({ block: 'center' }); input.focus({ preventScroll: true }); }
+    return;
   } else if (action === 'toggle-core') {
     const q = questById(id); if (!q) return;
     if (!q.core && coreState().total >= CORE_MAX) {
@@ -16946,9 +17433,9 @@ function onClick(e) {
   } else if (action === 'wk-add-cancel') { State.wkAddDate = null; render();
 
   // --- Календарь (вкладка) ---
-  } else if (action === 'cal-date') { State.calDate = el.dataset.date; render();
-  } else if (action === 'cal-shift') { State.calDate = addDays(State.calDate || todayStr(), Number(el.dataset.days)); render();
-  } else if (action === 'cal-today') { State.calDate = todayStr(); render();
+  } else if (action === 'cal-date') { State.calDate = el.dataset.date; State._calendarFocusAfterCommit = `.calv-day[data-date="${CSS.escape(State.calDate)}"]`; render();
+  } else if (action === 'cal-shift') { State.calDate = addDays(State.calDate || todayStr(), Number(el.dataset.days)); State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
+  } else if (action === 'cal-today') { State.calDate = todayStr(); State._calendarFocusAfterCommit = `.calv-day[data-date="${CSS.escape(State.calDate)}"]`; render();
   } else if (action === 'goto-calendar') { State.calDate = todayStr(); State.view = 'calendar'; render();
 
   // --- Инбокс / быстрый захват (Блок 2) ---
@@ -17156,8 +17643,9 @@ function onClick(e) {
     State.tasks.push({ id: uid(), title, skillId: sid, skillIds: sid ? [sid] : [], estimateMin: 30, difficulty: 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
     State.inbox = State.inbox.filter((x) => x.id !== id);
     Store.save('tasks', State.tasks); Store.save('inbox', State.inbox); toast('→ В квестах на сегодня'); render();
-  } else if (action === 'show-cal-subscribe') { showCalSubscribeModal();
-  } else if (action === 'close-cal-subscribe') { const m = document.getElementById('cal-sub-ov'); if (m) m.remove();
+  } else if (action === 'show-cal-subscribe') { showCalSubscribeModal(el);
+  } else if (action === 'close-cal-subscribe') { closeCalSubscribeModal();
+  } else if (action === 'cal-sub-retry') { loadCalSubscribeBody(document.getElementById('cal-sub-ov'), { focusAfter: true });
   } else if (action === 'copy-cal-url') {
     const url = el.dataset.url;
     navigator.clipboard.writeText(url).then(() => toast(t('✓ Ссылка скопирована'))).catch(() => {
@@ -17167,8 +17655,8 @@ function onClick(e) {
     const ics = buildICS();
     if (!/BEGIN:VEVENT/.test(ics)) { toast('Нет квестов со временем — поставь их в Календаре'); return; }
     try { const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'gojo-calendar.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); toast('📆 .ics скачан — открой его в Календаре для импорта'); } catch { toast('Не удалось создать файл'); }
-  } else if (action === 'cal-mode') { State.calMode = el.dataset.mode; State.view = 'calendar'; render();
-  } else if (action === 'cal-pick-day') { State.calDate = el.dataset.date; State.calMode = 'day'; render();
+  } else if (action === 'cal-mode') { State.calMode = el.dataset.mode; State.view = 'calendar'; State._calendarFocusAfterCommit = `.cal-mode[data-mode="${CSS.escape(State.calMode)}"]`; render();
+  } else if (action === 'cal-pick-day') { State.calDate = el.dataset.date; State.calMode = 'day'; State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
   } else if (action === 'cal-shift-month') { const d = parseDate(State.calDate || todayStr()); State.calDate = fmtDate(new Date(d.getFullYear(), d.getMonth() + Number(el.dataset.delta), Math.min(d.getDate(), 28))); render();
   } else if (action === 'cal-remind-toggle') { toggleReminders();
   } else if (action === 'cal-tasks-retry') { retryTasksLoad();
@@ -17757,12 +18245,10 @@ function onCalDrop(e) {
   e.preventDefault();
   const t = questById(_calDragId);
   if (t) {
-    if (grid) t.startTime = fmtHM(calYtoMin(e.clientY - grid.getBoundingClientRect().top));
-    else t.startTime = null; // дроп в «Без времени» — снять с расписания
-    Store.save('tasks', State.tasks);
+    const startTime = grid ? fmtHM(calYtoMin(e.clientY - grid.getBoundingClientRect().top)) : null;
+    moveCalendarTask({ id: t.id, date: t.date, startTime, estimateMin: t.estimateMin });
   }
   cleanupCalDrag();
-  render();
 }
 function cleanupCalDrag() {
   _calDragId = null;
