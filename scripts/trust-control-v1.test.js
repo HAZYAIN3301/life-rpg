@@ -42,7 +42,7 @@ function frozenJsonConstant(name) {
 }
 
 test('dialog is local, labelled, inert, focus-trapped, and dismissible', () => {
-  const controller = between('function pathChoiceFocusable', '\nfunction confirmPathChoice');
+  const controller = between('function pathChoiceFocusable', '\nasync function confirmPathChoice');
   for (const selector of [
     'path-choice-box', 'path-choice-head', 'path-choice-intro', 'path-choice-lore',
     'path-cards', 'path-card-state', 'path-consequences', 'path-choice-actions',
@@ -67,8 +67,8 @@ test('dialog is local, labelled, inert, focus-trapped, and dismissible', () => {
 
 test('pending selection does not save and explicit confirmation owns mutation', () => {
   const select = between('function selectPathChoice', '\nfunction showPathChoiceModal');
-  const show = between('function showPathChoiceModal', '\nfunction confirmPathChoice');
-  const confirm = between('function confirmPathChoice', '\n// Единственная точка мутации пути');
+  const show = between('function showPathChoiceModal', '\nasync function confirmPathChoice');
+  const confirm = between('async function confirmPathChoice', '\n// Единственная точка мутации пути');
   assert.doesNotMatch(select, /Store\.save|State\.settings\.[A-Za-z_$][\w$]*\s*=/);
   assert.doesNotMatch(show, /Store\.save|State\.settings\.[A-Za-z_$][\w$]*\s*=/);
   assert.match(select, /overlay\.dataset\.selected = id/);
@@ -77,22 +77,24 @@ test('pending selection does not save and explicit confirmation owns mutation', 
   assert.match(show, /data-action="confirm-path-choice"/);
   assert.match(confirm, /if \(id === current\) \{ closePathChoiceModal\(\); return false; \}/);
   assert.match(confirm, /closePathChoiceModal\(\{ restoreFocus: false \}\)/);
-  assert.match(confirm, /return choosePath\(id\)/);
+  assert.match(confirm, /await choosePath\(id\)/);
 });
 
-test('real transitions save once and preserve the reckoning cursor', () => {
-  const source = between('function choosePath', '\n// Настройки остаются постоянной точкой обзора');
+test('real transitions save once and preserve the reckoning cursor', async () => {
+  const source = between('async function choosePath', '\n// Настройки остаются постоянной точкой обзора');
   const State = { settings: {
     path: 'trust', pathChosenAt: '2025-01-02', pathTeaserAt: 'old',
     control: { lastReckon: 'stale', keep: 'yes' },
   } };
   const calls = { save: 0, theme: 0, sfx: 0, toast: 0, publish: 0, render: 0 };
-  const Store = { save(key, value) {
+  const Store = { async saveNow(key, value) {
     assert.equal(key, 'settings');
     assert.equal(value, State.settings);
     calls.save += 1;
+    return true;
   } };
-  const choosePath = Function(
+  const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+  const choosePath = await AsyncFunction(
     'pathIdValid', 'State', 'Store', 'todayStr', 'applyTheme', 'PATHS', 'sfx',
     'FLINT_LINES', 'toast', 't', 'publishLeaderboard', 'render',
     source + '\nreturn choosePath;'
@@ -105,19 +107,19 @@ test('real transitions save once and preserve the reckoning cursor', () => {
     () => { calls.publish += 1; }, () => { calls.render += 1; }
   );
 
-  assert.equal(choosePath('control'), true);
+  assert.equal(await choosePath('control'), true);
   assert.equal(State.settings.pathChosenAt, '2025-01-02');
   assert.equal(State.settings.pathTeaserAt, '2026-08-09');
   assert.deepEqual(State.settings.control, { lastReckon: '2026-08-09', keep: 'yes' });
   State.settings.control.lastReckon = 'sentinel';
-  assert.equal(choosePath('control'), false);
+  assert.equal(await choosePath('control'), false);
   assert.equal(State.settings.control.lastReckon, 'sentinel');
-  assert.equal(choosePath('trust'), true);
+  assert.equal(await choosePath('trust'), true);
   assert.equal(State.settings.control.lastReckon, 'sentinel');
   State.settings.control = 'corrupt';
-  assert.equal(choosePath('control'), true);
+  assert.equal(await choosePath('control'), true);
   assert.deepEqual(State.settings.control, { lastReckon: '2026-08-09' });
-  for (const invalid of ['', 'constructor', '__proto__', 'kindness']) assert.equal(choosePath(invalid), false);
+  for (const invalid of ['', 'constructor', '__proto__', 'kindness']) assert.equal(await choosePath(invalid), false);
   assert.deepEqual(calls, { save: 3, theme: 3, sfx: 3, toast: 3, publish: 3, render: 3 });
 });
 

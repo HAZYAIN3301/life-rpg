@@ -2511,6 +2511,34 @@ const I18N_EXTRA = {
   "узлов": { en: "nodes", de: "Knoten", uk: "вузлів", es: "nodos" },
   // ── Сундуки: перенос неоткрытого (fb — «неоткрытые вчера сундуки пропали») ──
   'С прошлых дней сохранено': { en: 'Saved from previous days', de: 'Von früheren Tagen aufbewahrt', uk: 'Збережено з попередніх днів', es: 'Guardado de días anteriores' },
+  // ── Settings v120 ──
+  'Твоя система': { en: 'Your system', de: 'Dein System', uk: 'Твоя система', es: 'Tu sistema' },
+  'Разделы настроек': { en: 'Settings sections', de: 'Einstellungsbereiche', uk: 'Розділи налаштувань', es: 'Secciones de ajustes' },
+  'Аккаунт': { en: 'Account', de: 'Konto', uk: 'Акаунт', es: 'Cuenta' },
+  'Опыт': { en: 'Experience', de: 'Erlebnis', uk: 'Досвід', es: 'Experiencia' },
+  'Жизнь': { en: 'Life', de: 'Leben', uk: 'Життя', es: 'Vida' },
+  'Прогресс': { en: 'Progress', de: 'Fortschritt', uk: 'Прогрес', es: 'Progreso' },
+  'Данные': { en: 'Data', de: 'Daten', uk: 'Дані', es: 'Datos' },
+  'Подписка, безопасность и доступ': { en: 'Subscription, security and access', de: 'Abo, Sicherheit und Zugriff', uk: 'Підписка, безпека й доступ', es: 'Suscripción, seguridad y acceso' },
+  'Язык, тема, звук и присутствие Тени': { en: 'Language, theme, sound and Shadow presence', de: 'Sprache, Thema, Klang und Schattens Präsenz', uk: 'Мова, тема, звук і присутність Тіні', es: 'Idioma, tema, sonido y presencia de Sombra' },
+  'Сферы, привычки, путь и стартовый опыт': { en: 'Areas, habits, path and starting experience', de: 'Bereiche, Gewohnheiten, Weg und Start-Erfahrung', uk: 'Сфери, звички, шлях і стартовий досвід', es: 'Áreas, hábitos, camino y experiencia inicial' },
+  'Помощник, профиль, Strava и импорт': { en: 'Assistant, profile, Strava and import', de: 'Assistent, Profil, Strava und Import', uk: 'Помічник, профіль, Strava та імпорт', es: 'Asistente, perfil, Strava e importación' },
+  'XP, золото, фокус и кривая уровней': { en: 'XP, gold, focus and level curve', de: 'XP, Gold, Fokus und Levelkurve', uk: 'XP, золото, фокус і крива рівнів', es: 'XP, oro, foco y curva de niveles' },
+  'Сброс и локальное хранилище': { en: 'Reset and local storage', de: 'Zurücksetzen und lokaler Speicher', uk: 'Скидання та локальне сховище', es: 'Restablecer y almacenamiento local' },
+  'Меняй одну область за раз. Обычные правки сохраняются автоматически; важные личные данные — отдельным действием.': { en: 'Change one area at a time. Ordinary edits save automatically; important personal data uses a separate action.', de: 'Ändere jeweils nur einen Bereich. Normale Änderungen werden automatisch gespeichert; wichtige persönliche Daten haben eine eigene Aktion.', uk: 'Змінюй одну сферу за раз. Звичайні правки зберігаються автоматично; важливі особисті дані — окремою дією.', es: 'Cambia un área a la vez. Las ediciones normales se guardan automáticamente; los datos personales importantes usan una acción aparte.' },
+  'Все обычные настройки сохранены': { en: 'All ordinary settings are saved', de: 'Alle normalen Einstellungen sind gespeichert', uk: 'Усі звичайні налаштування збережено', es: 'Todos los ajustes habituales están guardados' },
+  'Сохраняем изменения…': { en: 'Saving changes…', de: 'Änderungen werden gespeichert…', uk: 'Зберігаємо зміни…', es: 'Guardando cambios…' },
+  'Не удалось сохранить изменения.': { en: 'Changes could not be saved.', de: 'Änderungen konnten nicht gespeichert werden.', uk: 'Не вдалося зберегти зміни.', es: 'No se pudieron guardar los cambios.' },
+  'Повторить': { en: 'Retry', de: 'Erneut versuchen', uk: 'Повторити', es: 'Reintentar' },
+  'Настройки требуют восстановления': { en: 'Settings need recovery', de: 'Einstellungen müssen wiederhergestellt werden', uk: 'Налаштування потребують відновлення', es: 'Los ajustes necesitan recuperación' },
+  'Файл настроек повреждён или имеет неверную структуру. Ничего не перезаписываем.': { en: 'The settings file is damaged or has an invalid structure. Nothing will be overwritten.', de: 'Die Einstellungsdatei ist beschädigt oder hat eine ungültige Struktur. Nichts wird überschrieben.', uk: 'Файл налаштувань пошкоджено або має хибну структуру. Нічого не перезаписуємо.', es: 'El archivo de ajustes está dañado o tiene una estructura no válida. No se sobrescribirá nada.' },
+  'Настройки сейчас недоступны. Ничего не перезаписываем, пока чтение не восстановится.': { en: 'Settings are unavailable right now. Nothing will be overwritten until reading recovers.', de: 'Einstellungen sind gerade nicht verfügbar. Nichts wird überschrieben, bis das Lesen wieder funktioniert.', uk: 'Налаштування зараз недоступні. Нічого не перезаписуємо, доки читання не відновиться.', es: 'Los ajustes no están disponibles ahora. No se sobrescribirá nada hasta que se recupere la lectura.' },
+  'Повторить чтение': { en: 'Retry reading', de: 'Lesen erneut versuchen', uk: 'Повторити читання', es: 'Reintentar lectura' },
+  'Проверяю…': { en: 'Checking…', de: 'Prüfe…', uk: 'Перевіряю…', es: 'Comprobando…' },
+  'Изменения настроек заблокированы до восстановления данных': { en: 'Settings changes are blocked until data recovers', de: 'Einstellungsänderungen sind bis zur Datenwiederherstellung gesperrt', uk: 'Зміни налаштувань заблоковано до відновлення даних', es: 'Los cambios de ajustes están bloqueados hasta recuperar los datos' },
+  'Не удалось сохранить выбор пути. Попробуй ещё раз.': { en: 'The path choice could not be saved. Try again.', de: 'Die Wegwahl konnte nicht gespeichert werden. Versuche es noch einmal.', uk: 'Не вдалося зберегти вибір шляху. Спробуй ще раз.', es: 'No se pudo guardar la elección de camino. Inténtalo de nuevo.' },
+  'Имя приложения': { en: 'App name', de: 'App-Name', uk: 'Назва застосунку', es: 'Nombre de la aplicación' },
+  'Поле настройки': { en: 'Settings field', de: 'Einstellungsfeld', uk: 'Поле налаштувань', es: 'Campo de ajustes' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -2699,6 +2727,27 @@ function taskWriteAllowed(source, notify = false) {
   console.error(`${source} blocked`, 'tasks', State._tasksLoadError);
   return false;
 }
+function validateSettingsPayload(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  if (value.skills !== undefined && !Array.isArray(value.skills)) return false;
+  for (const key of ['xp', 'gold', 'curve', 'focus']) {
+    if (value[key] !== undefined && (!value[key] || typeof value[key] !== 'object' || Array.isArray(value[key]))) return false;
+  }
+  return true;
+}
+function settingsWriteAllowed(source, notify = false) {
+  if (!State._settingsLoadError) return true;
+  clearTimeout(Store._timers.settings);
+  if (notify) {
+    const now = Date.now();
+    if (now - (State._settingsWriteBlockedNoticeAt || 0) > 2000) {
+      State._settingsWriteBlockedNoticeAt = now;
+      toast(t('Изменения настроек заблокированы до восстановления данных'));
+    }
+  }
+  console.error(`${source} blocked`, 'settings', State._settingsLoadError);
+  return false;
+}
 const Store = {
   _timers: {},
   async load(name, fallback) {
@@ -2738,6 +2787,7 @@ const Store = {
   },
   save(name, obj) {
     if (name === 'tasks' && !taskWriteAllowed('save', true)) return false;
+    if (name === 'settings' && !settingsWriteAllowed('save', true)) return false;
     clearTimeout(this._timers[name]);
     this._timers[name] = setTimeout(() => this._put(name, obj), 250);
     return true;
@@ -2747,6 +2797,7 @@ const Store = {
   // Именно так онбординг терял выбранные сферы и подставлял вместо них дефолтные.
   async saveNow(name, obj) {
     if (name === 'tasks' && !taskWriteAllowed('saveNow', true)) return false;
+    if (name === 'settings' && !settingsWriteAllowed('saveNow', true)) return false;
     clearTimeout(this._timers[name]);
     return this._put(name, obj);
   },
@@ -2754,6 +2805,7 @@ const Store = {
     // Последний рубеж: прямые Store._put('tasks', ...) тоже не могут
     // перезаписать повреждённый/недоступный файл fallback-массивом.
     if (name === 'tasks' && !taskWriteAllowed('_put', true)) return false;
+    if (name === 'settings' && !settingsWriteAllowed('_put', true)) return false;
     try {
       const r = await fetch(`/api/data/${name}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj),
@@ -5024,7 +5076,7 @@ function persistAvatarAppearance(next) {
   // A rollout mirror prevents an older cached app.js from destroying Forge slot
   // strings by coercing its legacy flat `hair` flag to a boolean.
   State.settings.avatarForge = safe;
-  Store.save('settings', State.settings);
+  autosaveSettings();
 }
 function nextAvatarAppearance(patch) {
   const current = avatarAppearance();
@@ -9948,8 +10000,8 @@ function aiSourceHint() {
 function aiHandleErr(d) {
   if (!d || !d.error) return false;
   if (d.error === 'not_pro') { showPaywall('ИИ-ассистент'); return true; }
-  if (d.error === 'quota') { toast('🤖 Лимит ИИ на месяц исчерпан — добавь свой ключ в Настройках'); State.view = 'settings'; render(); return true; }
-  if (d.error === 'no_key') { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; render(); return true; }
+  if (d.error === 'quota') { toast('🤖 Лимит ИИ на месяц исчерпан — добавь свой ключ в Настройках'); State.view = 'settings'; State.settingsSection = 'connections'; render(); return true; }
+  if (d.error === 'no_key') { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; render(); return true; }
   return false;
 }
 // Карточка ИИ-ключей: мультипровайдер + гид «получить бесплатный ключ» + выбор провайдера по умолчанию
@@ -10284,7 +10336,7 @@ function buildWeekContext() {
   return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nЭнергия сейчас: ${en.cur}/${en.max} (потолок ${en.max} — растёт от суперкомпенсации, падает при выгорании)\nЧестное состояние отдыха: ${restLine} (ищется по тексту дел, не по сфере — тренировка ≠ отдых, даже если оба в «Здоровье»)\nРадар сфер: ${radar}\nЦели:\n${goals}${anti ? `\nАнти-привычки:\n${anti}` : ''}${reflBlock}${wkBlock}${bpBlock}`;
 }
 async function runWeeklyReview() {
-  if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; render(); return; }
+  if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; render(); return; }
   openAiModal('🤖 Разбор недели', '<p class="muted">Анализирую твою неделю…</p>', true);
   const system = 'Ты — заботливый, научно обоснованный наставник в приложении Satoru (философия «жизнь как десятиборье»). Анализируй данные недели честно и по-человечески, без воды и без льстивости. В контексте есть строка «Честное состояние отдыха» — она значит больше, чем индекс баланса: баланс/уровни считаются по сфере квеста и не различают «тренировался» и «отдыхал», если оба лежат в одной сфере (например «Здоровье»), поэтому индекс может показывать зелёное, когда человек вымотан. Если дней без явного отдыха много (≥4) — это ГЛАВНОЕ наблюдение, важнее процента баланса, и один из 1–2 шагов должен быть про отдых, а не про продуктивность. Если в контексте есть «Рефлексия по дням» / «Намерение на неделю» / «Итоги недели» — это САМЫЙ важный сигнал, важнее любых цифр: это собственные слова человека о том, как у него дела на самом деле. Отвечай на конкретную боль или мысль из этих слов напрямую, а не общими фразами — секретарь заметил бы именно это. Не выдумывай ничего, чего нет в тексте юзера. Дай: (1) что реально происходило со временем и балансом — включая честное состояние отдыха; (2) 2–3 конкретных наблюдения, в приоритете — те, что откликаются на рефлексию юзера, если она есть; (3) 1–2 мягких, выполнимых шага на след. неделю. Коротко, тепло, по делу, без вины. ' + aiAnswerLangLine();
   try {
@@ -14491,22 +14543,30 @@ function showPathChoiceModal({ pendingPath = null, source = 'drip', returnFocus 
   requestAnimationFrame(() => focusPathChoiceTarget(document.getElementById('path-choice-title')));
   return overlay;
 }
-function confirmPathChoice() {
+async function confirmPathChoice() {
   const overlay = document.getElementById('path-choice-modal');
   const id = overlay && overlay.dataset.selected;
   if (!overlay || !pathIdValid(id)) return false;
   const current = State.settings && State.settings.path;
   if (id === current) { closePathChoiceModal(); return false; }
-  State._pathFocusAfterCommit = overlay.dataset.source === 'settings' ? '#path-settings-title' : '#today-title';
+  const source = overlay.dataset.source;
+  const returnFocus = overlay._returnFocus;
   closePathChoiceModal({ restoreFocus: false });
-  return choosePath(id);
+  State._pathFocusAfterCommit = source === 'settings' ? '#path-settings-title' : '#today-title';
+  const ok = await choosePath(id);
+  if (!ok) {
+    State._pathFocusAfterCommit = '';
+    showPathChoiceModal({ pendingPath: id, source, returnFocus });
+  }
+  return ok;
 }
 // Единственная точка мутации пути. Реальный переход в Контроль начинает расчёт сегодня;
 // повторное подтверждение Контроля и выход из него не переписывают сохранённый lastReckon.
-function choosePath(id) {
+async function choosePath(id) {
   if (!pathIdValid(id) || !State.settings || typeof State.settings !== 'object') return false;
   const s = State.settings, was = s.path;
   if (was === id) return false;
+  const before = structuredClone(s);
   const changedAt = todayStr();
   s.path = id;
   s.pathChosenAt = s.pathChosenAt || changedAt;
@@ -14515,7 +14575,12 @@ function choosePath(id) {
     if (!s.control || typeof s.control !== 'object' || Array.isArray(s.control)) s.control = {};
     s.control.lastReckon = changedAt;
   }
-  Store.save('settings', State.settings);
+  const saved = await Store.saveNow('settings', State.settings);
+  if (!saved) {
+    State.settings = before;
+    toast(t('Не удалось сохранить выбор пути. Попробуй ещё раз.'));
+    return false;
+  }
   applyTheme();
   const p = PATHS[id];
   try { sfx(id === 'control' ? 'levelup' : 'achievement'); } catch {}
@@ -15254,6 +15319,17 @@ function importCard() {
     <div class="import-list">${rows}</div>
   </div>`;
 }
+function settingsRecoveryCard() {
+  if (!State._settingsLoadError) return '';
+  const reason = State._settingsLoadError === 'invalid'
+    ? t('Файл настроек повреждён или имеет неверную структуру. Ничего не перезаписываем.')
+    : t('Настройки сейчас недоступны. Ничего не перезаписываем, пока чтение не восстановится.');
+  return `<div class="card settings-recovery" role="alert" aria-live="assertive">
+    <h3 id="settings-recovery-title">${t('Настройки требуют восстановления')}</h3>
+    <p>${reason}</p>
+    <button class="btn" data-action="retry-settings-load" ${State._settingsLoadBusy ? 'disabled' : ''}>${State._settingsLoadBusy ? t('Проверяю…') : t('Повторить чтение')}</button>
+  </div>`;
+}
 function renderSettings() {
   ensureAiKeys();
   ensureStravaStatus();
@@ -15315,12 +15391,40 @@ function renderSettings() {
         <input type="number" min="0" max="59" step="1" inputmode="numeric" value="${(Number(h.estimateMin) || 0) % 60}" data-field="estimateMinM" aria-label="${t('Минуты')}" /><i>${t('м')}</i></span>
       <div class="weekdays">${WEEKDAYS.map((w) => `<label><input type="checkbox" data-day="${w.js}" ${(h.days || []).includes(w.js) ? 'checked' : ''}/>${w.label}</label>`).join('')}</div>
       <button class="del" data-action="delete-habit" data-id="${h.id}">✕</button></div>`).join('');
+  const SETTINGS_GROUPS = [
+    ['account', 'Аккаунт', 'Подписка, безопасность и доступ'],
+    ['experience', 'Опыт', 'Язык, тема, звук и присутствие Тени'],
+    ['life', 'Жизнь', 'Сферы, привычки, путь и стартовый опыт'],
+    ['connections', 'Связи', 'Помощник, профиль, Strava и импорт'],
+    ['progression', 'Прогресс', 'XP, золото, фокус и кривая уровней'],
+    ['data', 'Данные', 'Сброс и локальное хранилище'],
+  ];
+  const activeGroup = SETTINGS_GROUPS.some(([id]) => id === State.settingsSection) ? State.settingsSection : 'account';
+  const activeGroupIndex = SETTINGS_GROUPS.findIndex(([id]) => id === activeGroup);
+  const groupStart = (id, title, description) => `<section class="settings-group" data-settings-group="${id}" aria-labelledby="settings-group-${id}" ${activeGroup === id ? '' : 'hidden'}>
+    <div class="settings-group-head"><h3 id="settings-group-${id}" tabindex="-1">${t(title)}</h3><p class="muted">${t(description)}</p></div>`;
+  const groupEnd = () => `</section>`;
+  const hub = SETTINGS_GROUPS.map(([id, title]) => `<button type="button" class="settings-hub-item ${activeGroup === id ? 'active' : ''}" data-action="set-settings-group" data-settings-group="${id}" aria-pressed="${activeGroup === id}">${t(title)}</button>`).join('');
+  const mobileStep = `<div class="settings-mobile-step" aria-label="${t('Навигация по настройкам')}">
+    <button type="button" class="btn ghost" data-action="settings-section-step" data-dir="-1" ${activeGroupIndex === 0 ? 'disabled' : ''}>${t('Назад')}</button>
+    <span>${t(SETTINGS_GROUPS[activeGroupIndex][1])}</span>
+    <button type="button" class="btn ghost" data-action="settings-section-step" data-dir="1" ${activeGroupIndex === SETTINGS_GROUPS.length - 1 ? 'disabled' : ''}>${t('Готово')}</button>
+  </div>`;
   return `
+    <div class="settings-shell" aria-labelledby="settings-title">
+      <header class="settings-hub">
+        <div><p class="settings-eyebrow">${t('Настройки')}</p><h2 id="settings-title" tabindex="-1">${t('Твоя система')}</h2><p class="muted">${t('Меняй одну область за раз. Обычные правки сохраняются автоматически; важные личные данные — отдельным действием.')}</p></div>
+        <nav class="settings-hub-nav" aria-label="${t('Разделы настроек')}">${hub}</nav>
+        ${mobileStep}
+        <div class="settings-save-state muted" aria-live="polite"></div>
+      </header>
+    ${groupStart('account', 'Аккаунт', 'Подписка, безопасность и доступ')}
     ${subscriptionCard()}
-    ${pathCard()}
     ${securityCard()}
     ${adminCard()}
-    <div class="card"><h3>${t('Название')}</h3><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></div>
+    ${groupEnd()}
+    ${groupStart('experience', 'Опыт', 'Язык, тема, звук и присутствие Тени')}
+    <div class="card"><h3>${t('Название')}</h3><label class="settings-inline-field"><span>${t('Имя приложения')}</span><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></label></div>
     <div class="card"><h3>${t('🔊 Звук')}</h3>
       <label class="sound-toggle"><input type="checkbox" data-action="toggle-sound" ${sfxOn() ? 'checked' : ''}/> ${t('Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)')}</label>
       ${ttsOK() ? `<label class="sound-toggle"><input type="checkbox" data-action="toggle-tts" ${ttsOn() ? 'checked' : ''}/> ${t('Кнопка 🔊 — озвучить голосом Тени (реплики, подсказки, ответы Помощника)')}</label>` : ''}
@@ -15352,6 +15456,9 @@ function renderSettings() {
         <div class="accent-swatches">${ACCENTS.map((c) => `<button class="accent-sw ${(s.accent || '#6c8cff') === c ? 'active' : ''}" data-action="set-accent" data-accent="${c}" style="background:${c}" title="${c}" aria-label="${t('Акцент')} ${c}"></button>`).join('')}</div></div>
       <div class="theme-row"><span class="theme-lbl">${t('⚡ Режим «Система»')}</span>
         <label class="sound-toggle"><input type="checkbox" data-action="toggle-system" ${systemMode() ? 'checked' : ''}/> ${t('Нарратор-Система комментирует твои действия (Solo Leveling-вайб): драматичные объявления при выполнении квестов, левелапах, рангах, ачивках.')}</label></div></div>
+    ${groupEnd()}
+    ${groupStart('life', 'Жизнь', 'Сферы, привычки, путь и стартовый опыт')}
+    ${pathCard()}
     <div class="card"><h3>${t('Навыки / сферы жизни')}</h3><p class="muted" style="font-size:12px;margin:0 0 10px">${t('Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.')}</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">${t('+ Добавить сферу')}</button></div>
     ${importCard()}
     <div class="card"><h3>${t('🔁 Привычки (повторяющиеся)')}</h3><div id="habits-list">${habits || `<p class="muted">${t('Пока нет привычек.')}</p>`}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">${t('+ Добавить привычку')}</button></div>
@@ -15366,11 +15473,15 @@ function renderSettings() {
           <option value="контекст">${t('Смена контекста/среды')}</option></select>
         <button type="submit">${t('+ Добавить')}</button></form>
       ${(State.antihabits || []).map((a) => `<div class="ah-edit"><span class="ah-name">${esc(a.title)}${a.approach ? ` · <span class="muted">${esc(a.approach)}</span>` : ''}</span><button class="del" data-action="delete-antihabit" data-id="${a.id}">✕</button></div>`).join('')}</div>
+    <div class="card"><h3>${t('📦 Программы-данжи')}</h3><p class="muted" style="margin:0 0 12px">${t('Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.')}</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
+    ${groupEnd()}
+    ${groupStart('connections', 'Связи', 'Помощник, профиль, Strava и импорт')}
     ${aiKeysCard()}
     ${profileCard()}
     ${stravaCard()}
     ${fileImportCard()}
-    <div class="card"><h3>${t('📦 Программы-данжи')}</h3><p class="muted" style="margin:0 0 12px">${t('Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.')}</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
+    ${groupEnd()}
+    ${groupStart('progression', 'Прогресс', 'XP, золото, фокус и кривая уровней')}
     <div class="card"><h3>${t('Формула опыта')}</h3><div class="knobs">
         <div class="knob"><label>${t('XP за минуту')}</label><input id="k-perMinute" type="number" step="0.1" value="${s.xp.perMinute}" /></div>
         <div class="knob"><label>${t('Бонус за выполнение')}</label><input id="k-bonus" type="number" step="1" value="${s.xp.completionBonus}" /></div>
@@ -15391,8 +15502,12 @@ function renderSettings() {
         <div class="knob"><label>${t('База (персонаж)')}</label><input id="k-base" type="number" step="10" value="${s.curve.base}" /></div>
         <div class="knob"><label>${t('База (навыки)')}</label><input id="k-skillBase" type="number" step="10" value="${s.curve.skillBase}" /></div>
         <div class="knob"><label>${t('Рост ×')}</label><input id="k-growth" type="number" step="0.05" value="${s.curve.growth}" /></div></div></div>
-    <div class="settings-actions"><button class="btn" data-action="save-settings">${t('Сохранить настройки')}</button><button class="btn danger" data-action="reset-data">${t('Сбросить квесты и дни')}</button></div>
-    <p class="muted" style="margin-top:12px">${t('Данные лежат в')} <code>life-rpg/data/</code> ${t('внутри твоего vault — это обычные JSON-файлы.')}</p>`;
+    ${groupEnd()}
+    ${groupStart('data', 'Данные', 'Сброс и локальное хранилище')}
+    ${settingsRecoveryCard()}
+    <div class="card settings-data-card"><h4>${t('Данные')}</h4><p class="muted">${t('Данные лежат в')} <code>life-rpg/data/</code> ${t('внутри твоего vault — это обычные JSON-файлы.')}</p><div class="settings-actions"><button class="btn danger" data-action="reset-data">${t('Сбросить квесты и дни')}</button></div></div>
+    ${groupEnd()}
+    </div>`;
 }
 
 // ============================================================
@@ -15924,6 +16039,9 @@ function afterMainCommit() {
   try { tutorialPaint(); } catch {}
   try { scheduleQuestTitleDisclosures(); } catch {}
   try { syncCalendarDayViewport(); } catch {}
+  try { normalizeSettingsOutline(); } catch {}
+  try { labelSettingsControls(); } catch {}
+  try { if (State.view === 'settings') SettingsAutosave.paint(); } catch {}
   if (State._tasksFocusAfterCommit) {
     const selector = State._tasksFocusAfterCommit;
     State._tasksFocusAfterCommit = '';
@@ -15962,6 +16080,14 @@ function afterMainCommit() {
       focusPathChoiceTarget(target);
     });
   }
+  if (State._settingsFocusAfterCommit && State.view === 'settings') {
+    const selector = State._settingsFocusAfterCommit;
+    State._settingsFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const target = document.querySelector(selector) || document.getElementById('settings-title');
+      if (target) focusPathChoiceTarget(target);
+    });
+  }
   if (State._calendarFocusAfterCommit && (State.view === 'calendar' || State.view === 'weekly')) {
     const selector = State._calendarFocusAfterCommit;
     State._calendarFocusAfterCommit = '';
@@ -15998,6 +16124,34 @@ function afterMainCommit() {
       target.focus({ preventScroll: true });
     });
   }
+}
+// Внутри v120 только заголовок экрана — h2, шесть разделов — h3.
+// Старые карточки сохранены как независимые фрагменты, поэтому по месту понижаем
+// их прежние h3 до h4 после атомарного коммита DOM.
+function normalizeSettingsOutline() {
+  const shell = document.querySelector('.settings-shell');
+  if (!shell || shell.dataset.outlineReady) return;
+  shell.querySelectorAll('.settings-group > .card h3').forEach((old) => {
+    const next = document.createElement('h4');
+    for (const attr of old.attributes) next.setAttribute(attr.name, attr.value);
+    while (old.firstChild) next.appendChild(old.firstChild);
+    old.replaceWith(next);
+  });
+  shell.dataset.outlineReady = 'true';
+}
+function labelSettingsControls() {
+  const shell = document.querySelector('.settings-shell');
+  if (!shell) return;
+  shell.querySelectorAll('input, select, textarea').forEach((control) => {
+    if (control.type === 'hidden' || control.hasAttribute('aria-label') || control.closest('label')) return;
+    const explicit = control.id && shell.querySelector(`label[for="${CSS.escape(control.id)}"]`);
+    if (explicit) return;
+    const fromPlaceholder = control.getAttribute('placeholder');
+    const fromTitle = control.getAttribute('title');
+    const fromCard = control.closest('.card')?.querySelector('h4')?.textContent?.trim();
+    const fromName = control.getAttribute('name');
+    control.setAttribute('aria-label', fromPlaceholder || fromTitle || fromCard || fromName || t('Поле настройки'));
+  });
 }
 function commitMainView(main, staging, view) {
   main.replaceChildren(...Array.from(staging.childNodes));
@@ -16677,7 +16831,7 @@ function onClick(e) {
     const eq = ensureCosmetics(), ty = cosmeticType(el.dataset.id);
     eq[ty] = (eq[ty] === el.dataset.id) ? null : el.dataset.id; Store.save('settings', State.settings); render(); return;
   }
-  if (action === 'toggle-sound') { State.settings.sound = !!el.checked; Store.save('settings', State.settings); if (el.checked) sfx('complete'); return; }
+  if (action === 'toggle-sound') { State.settings.sound = !!el.checked; autosaveSettings(); if (el.checked) sfx('complete'); return; }
   if (action === 'tts') { ttsSpeak(ttsTextNear(el), el, ttsContextNear(el)); return; }
   if (action === 'tts-preview') {
     ttsSpeak(TTS_PREVIEW[lang()] || TTS_PREVIEW.ru, el, 'calm');
@@ -16701,7 +16855,7 @@ function onClick(e) {
     renderChatMessages(); render();
     return;
   }
-  if (action === 'toggle-tts') { State.settings.tts = !!el.checked; Store.save('settings', State.settings); ttsStop(); render(); return; }
+  if (action === 'toggle-tts') { State.settings.tts = !!el.checked; autosaveSettings(); ttsStop(); render(); return; }
   if (action === 'set-ambient') {
     if (!State.settings.ambient) State.settings.ambient = {};
     State.settings.ambient.mode = el.dataset.mode;
@@ -17002,7 +17156,7 @@ function onClick(e) {
     g.equipped.relic = (g.equipped.relic === uidv) ? null : uidv;
     Store.save('settings', State.settings); sfx('complete'); render(); return;
   }
-  if (action === 'set-lang') { State.settings.lang = el.dataset.lang; Store.save('settings', State.settings); render(); return; }
+  if (action === 'set-lang') { State.settings.lang = el.dataset.lang; autosaveSettings(); render(); return; }
   if (action === 'strava-connect') { window.location.href = '/api/strava/connect'; return; }
   if (action === 'strava-sync') { stravaSync(); return; }
   if (action === 'strava-disconnect') {
@@ -17011,12 +17165,12 @@ function onClick(e) {
     return;
   }
   if (action === 'open-path-choice') { showPathChoiceModal({ pendingPath: el.dataset.path || null, source: 'settings', returnFocus: el }); return; }
-  if (action === 'toggle-system-skin-off') { State.settings.systemSkinOff = !!el.checked; Store.save('settings', State.settings); applyTheme(); render(); return; }
-  if (action === 'toggle-antagonist-mute') { State.settings.pathAntagonistMuted = !!el.checked; Store.save('settings', State.settings); render(); return; }
-  if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; State.settings.systemMode = false; Store.save('settings', State.settings); applyTheme(); render(); return; }
-  if (action === 'set-accent') { State.settings.accent = el.dataset.accent; State.settings.systemMode = false; Store.save('settings', State.settings); applyTheme(); render(); return; }
+  if (action === 'toggle-system-skin-off') { State.settings.systemSkinOff = !!el.checked; autosaveSettings(); applyTheme(); render(); return; }
+  if (action === 'toggle-antagonist-mute') { State.settings.pathAntagonistMuted = !!el.checked; autosaveSettings(); render(); return; }
+  if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; State.settings.systemMode = false; autosaveSettings(); applyTheme(); render(); return; }
+  if (action === 'set-accent') { State.settings.accent = el.dataset.accent; State.settings.systemMode = false; autosaveSettings(); applyTheme(); render(); return; }
   if (action === 'toggle-system') {
-    State.settings.systemMode = !!el.checked; Store.save('settings', State.settings); applyTheme();
+    State.settings.systemMode = !!el.checked; autosaveSettings(); applyTheme();
     if (el.checked) systemNarrate('СИСТЕМА АКТИВИРОВАНА', t(systemVoice('activate')));
     render(); return;
   }
@@ -17125,7 +17279,56 @@ function onClick(e) {
   if (action === 'goto-pets') { State.view = 'pets'; markDiscovered('pets'); render(); return; }
   if (action === 'go-wardrobe') { State.view = 'character'; State._characterFocusAfterCommit = '#character-wardrobe'; render(); return; }
   if (action === 'open-avatar-forge') { openAvatarForgeEditor(); return; }
-  if (action === 'goto-import') { State.view = 'settings'; render(); setTimeout(() => { const c = document.getElementById('import-card'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('flash-card'); } }, 60); return; }
+  if (action === 'goto-import') {
+    State.view = 'settings'; State.settingsSection = 'life'; State._settingsFocusAfterCommit = '#import-card h4, #import-card h3'; render();
+    setTimeout(() => { const c = document.getElementById('import-card'); if (c) { c.scrollIntoView({ behavior: 'smooth', block: 'start' }); c.classList.add('flash-card'); } }, 60); return;
+  }
+  if (action === 'set-settings-group') {
+    const group = el.dataset.settingsGroup;
+    if (!['account', 'experience', 'life', 'connections', 'progression', 'data'].includes(group)) return;
+    captureSettingsForm();
+    State.settingsSection = group;
+    State._settingsFocusAfterCommit = `#settings-group-${group}`;
+    render();
+    return;
+  }
+  if (action === 'settings-section-step') {
+    const ids = ['account', 'experience', 'life', 'connections', 'progression', 'data'];
+    const now = Math.max(0, ids.indexOf(State.settingsSection || 'account'));
+    const next = Math.max(0, Math.min(ids.length - 1, now + Number(el.dataset.dir || 0)));
+    if (next === now) return;
+    captureSettingsForm();
+    State.settingsSection = ids[next];
+    State._settingsFocusAfterCommit = `#settings-group-${ids[next]}`;
+    render();
+    return;
+  }
+  if (action === 'retry-settings-load') {
+    if (State._settingsLoadBusy) return;
+    State._settingsLoadBusy = true;
+    render();
+    (async () => {
+      const fresh = await Store.loadChecked('settings', DEFAULT_SETTINGS, validateSettingsPayload);
+      State._settingsLoadBusy = false;
+      if (fresh.error) {
+        State._settingsLoadError = fresh.error;
+        State._settingsFocusAfterCommit = '[data-action="retry-settings-load"]';
+        render();
+        return;
+      }
+      // Полный reload заново применяет миграции и загружает зависимые данные, не
+      // смешивая старый fallback с восстановленным файлом.
+      State._settingsLoadError = '';
+      location.reload();
+    })();
+    return;
+  }
+  if (action === 'retry-settings-save') {
+    SettingsAutosave.failed = false;
+    SettingsAutosave.paint();
+    SettingsAutosave.flush();
+    return;
+  }
   if (action === 'start-trial') {
     fetch('/api/auth/start-trial', { method: 'POST' }).then(async (r) => {
       const d = await r.json();
@@ -17183,7 +17386,10 @@ function onClick(e) {
       const prof = ensureProfile();
       prof.text = mem.enforceBudget(String(ta.value || '').trim(), mem.MAX_CHARS);
       prof.updatedAt = new Date().toISOString(); prof.auto = false;
-      Store.save('profile', prof); toast('🧠 ' + t('Профиль сохранён')); render();
+      (async () => {
+        const saved = await Store.saveNow('profile', prof);
+        if (saved) { toast('🧠 ' + t('Профиль сохранён')); render(); }
+      })();
     }
   } else if (action === 'dayobs-yes') {
     // «Да» подставляет наблюдение в поле рефлексии КАК ЕСТЬ — это уже конкретный
@@ -17786,25 +17992,67 @@ function captureSettingsForm() {
   s.focus = { pomodoro: document.getElementById('f-pomodoro').value === '1', workMin: num('f-workMin', 25), breakMin: num('f-breakMin', 5), sound: document.getElementById('f-sound').value === '1', notify: document.getElementById('f-notify').value === '1' };
   s.curve = { base: num('k-base', 100), skillBase: num('k-skillBase', 60), growth: num('k-growth', 1.3) };
 }
-function saveSettingsFromForm() {
-  captureSettingsForm();
-  ensureTrees();
-  Store.save('settings', State.settings); Store.save('habits', State.habits); Store.save('skilltree', State.tree);
-  toast('Настройки сохранены'); render();
-}
-// Автосохранение формы настроек: читаем DOM в State и сохраняем (дебаунс).
-let _settingsAutosaveTimer = null;
-function autosaveSettings() {
-  clearTimeout(_settingsAutosaveTimer);
-  _settingsAutosaveTimer = setTimeout(flushSettingsForm, 500);
-}
-// Немедленный флаш формы настроек (при уходе с экрана / закрытии вкладки).
-function flushSettingsForm() {
-  if (!document.getElementById('skills-list')) return; // формы нет на экране
-  clearTimeout(_settingsAutosaveTimer);
-  captureSettingsForm();
-  Store.save('settings', State.settings); Store.save('habits', State.habits);
-}
+// Один сериализованный autosave для обычных настроек. Старый вариант сначала
+// дебаунсил форму, а затем ещё раз Store.save(), поэтому UI мог сказать
+// «сохранено» до первого PUT. Здесь каждый revision проходит через saveNow().
+const SettingsAutosave = {
+  timer: null, revision: 0, durableRevision: 0, saving: false, failed: false, includeTree: false,
+  paint() {
+    const state = document.querySelector('.settings-save-state');
+    if (!state) return;
+    if (this.failed) {
+      state.innerHTML = `<span>${esc(t('Не удалось сохранить изменения.'))}</span> <button type="button" class="btn ghost sm" data-action="retry-settings-save">${esc(t('Повторить'))}</button>`;
+      return;
+    }
+    state.textContent = this.saving || this.revision > this.durableRevision
+      ? t('Сохраняем изменения…')
+      : t('Все обычные настройки сохранены');
+  },
+  queue({ immediate = false, includeTree = false } = {}) {
+    if (!document.getElementById('skills-list')) return Promise.resolve(true);
+    captureSettingsForm();
+    this.revision += 1;
+    this.includeTree = this.includeTree || includeTree;
+    this.failed = false;
+    clearTimeout(this.timer);
+    this.paint();
+    if (immediate) return this.flush();
+    this.timer = setTimeout(() => { this.flush(); }, 500);
+    return Promise.resolve(true);
+  },
+  async flush() {
+    if (!document.getElementById('skills-list')) return true;
+    clearTimeout(this.timer);
+    this.timer = null;
+    if (this.saving) return false;
+    captureSettingsForm();
+    const revision = this.revision || ++this.revision;
+    const includeTree = this.includeTree;
+    this.includeTree = false;
+    this.saving = true;
+    this.paint();
+    let ok = false;
+    try {
+      ensureTrees();
+      ok = await Store.saveNow('settings', State.settings);
+      if (ok) ok = await Store.saveNow('habits', State.habits);
+      if (ok && includeTree) ok = await Store.saveNow('skilltree', State.tree);
+    } finally {
+      this.saving = false;
+      if (ok) {
+        this.durableRevision = Math.max(this.durableRevision, revision);
+        this.failed = false;
+      } else this.failed = true;
+      this.paint();
+      // Правка, сделанная пока шёл PUT, получает собственный последовательный PUT.
+      if (this.durableRevision < this.revision && !this.failed) this.timer = setTimeout(() => { this.flush(); }, 0);
+    }
+    return ok;
+  },
+};
+function saveSettingsFromForm() { return SettingsAutosave.queue({ immediate: true, includeTree: true }); }
+function autosaveSettings() { return SettingsAutosave.queue(); }
+function flushSettingsForm() { return SettingsAutosave.flush(); }
 
 function clearAllData() {
   State.settings = null; State.tasks = null; State.days = null; State.habits = null;
@@ -17896,7 +18144,21 @@ function showLevelUpEpic(lvlBefore, lvlNow, rb, ra) {
 
 // Загружает данные пользователя и переходит в основное приложение
 async function initApp() {
-  State.settings = await Store.load('settings', DEFAULT_SETTINGS);
+  {
+    const settingsLoad = await Store.loadChecked('settings', DEFAULT_SETTINGS, validateSettingsPayload);
+    State.settings = settingsLoad.value;
+    State._settingsLoadError = settingsLoad.error;
+    State._settingsLoadBusy = false;
+  }
+  // Нельзя превращать повреждённый settings.json в новый пустой профиль: сразу
+  // открываем восстановление и держим write fence до успешной повторной загрузки.
+  if (State._settingsLoadError) {
+    State.phase = 'app';
+    State.view = 'settings';
+    State.settingsSection = 'data';
+    render();
+    return;
+  }
   State.settings.appName = State.settings.appName || DEFAULT_SETTINGS.appName;
   if (State.settings.appName === 'Gojo') { State.settings.appName = 'Satoru'; Store.save('settings', State.settings); } // ребренд Gojo->Satoru для старых юзеров
   State.settings.skills = State.settings.skills || [];
@@ -17986,7 +18248,7 @@ async function initApp() {
   try {
     const sp = new URLSearchParams(location.search), sv = sp.get('strava');
     if (sv) {
-      State.view = 'settings'; State.strava = null; // перезагрузить статус
+      State.view = 'settings'; State.settingsSection = 'connections'; State.strava = null; // перезагрузить статус
       setTimeout(() => toast(sv === 'connected' ? '✓ Strava подключён — жми «Синхронизировать»' : 'Не удалось подключить Strava'), 400);
       sp.delete('strava'); history.replaceState(null, '', location.pathname + (sp.toString() ? '?' + sp : '') + location.hash);
     }
@@ -18138,10 +18400,10 @@ function onChange(e) {
     return;
   }
   if (a === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
-  if (a === 'set-ai-pref') { State.settings.aiPref = el.value; Store.save('settings', State.settings); toast('🤖 ИИ по умолчанию: ' + aiProviderLabel(el.value)); return; }
-  if (a === 'set-strava-skill') { State.settings.stravaSkillId = el.value; Store.save('settings', State.settings); return; }
+  if (a === 'set-ai-pref') { State.settings.aiPref = el.value; autosaveSettings(); toast('🤖 ИИ по умолчанию: ' + aiProviderLabel(el.value)); return; }
+  if (a === 'set-strava-skill') { State.settings.stravaSkillId = el.value; autosaveSettings(); return; }
   if (a === 'habit-atomic') { const h = habitById(el.dataset.id); if (h) { h.atomic = h.atomic || {}; h.atomic[el.dataset.field] = el.value.slice(0, 200); Store.save('habits', State.habits); } return; }
-  if (a === 'save-identity') { State.settings.identityGoal = el.value.slice(0, 200); Store.save('settings', State.settings); return; }
+  if (a === 'save-identity') { State.settings.identityGoal = el.value.slice(0, 200); autosaveSettings(); return; }
   if (a === 'toggle-cat') {
     const t = questById(el.dataset.id); if (!t) return;
     let ids = taskSkills(t).slice(); const sid = el.dataset.skill;

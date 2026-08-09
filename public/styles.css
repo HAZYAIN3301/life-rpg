@@ -13379,3 +13379,77 @@ html.calendar-task-open body {
   }
   #desire-pop .desire-opt:hover { transform: none !important; }
 }
+
+/* ---------- Settings v120: six-purpose hub, progressive disclosure ---------- */
+.settings-shell {
+  display: grid;
+  gap: var(--sp-4);
+  max-width: min(100%, 1120px);
+  margin-inline: auto;
+}
+.settings-hub,
+.settings-group-head {
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, transparent), transparent 42%),
+    color-mix(in srgb, var(--surface-2) 94%, transparent);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+.settings-hub { display: grid; gap: var(--sp-3); padding: clamp(var(--sp-3), 3vw, var(--sp-5)); }
+.settings-hub h2 { margin: 0; font-family: var(--font-display); font-size: var(--type-title); line-height: var(--leading-display); }
+.settings-hub p { max-width: var(--measure-prose); margin: var(--sp-1) 0 0; }
+.settings-eyebrow { color: var(--today-kicker-fg, var(--accent-2)); font-size: var(--type-meta); font-weight: 900; letter-spacing: var(--tracking-caps); line-height: var(--leading-label); text-transform: uppercase; }
+.settings-hub-nav { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--sp-2); }
+.settings-mobile-step { display: none; }
+.settings-hub-item {
+  min-block-size: var(--touch-min);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface-3) 72%, transparent);
+  color: var(--text-soft);
+  font: 800 var(--type-control)/var(--leading-ui) var(--font-ui);
+  cursor: pointer;
+}
+.settings-hub-item.active {
+  border-color: color-mix(in srgb, var(--accent) 62%, var(--line-soft));
+  background: color-mix(in srgb, var(--accent) 20%, var(--surface-3));
+  color: var(--text-strong);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 32%, transparent);
+}
+.settings-hub-item:focus-visible,
+.settings-group :is(button, input, select, textarea):focus-visible {
+  outline: var(--focus-ring, 2px solid var(--accent-2));
+  outline-offset: 2px;
+}
+.settings-save-state { min-height: 1.5em; font-size: var(--type-meta); line-height: var(--leading-label); }
+.settings-group { display: grid; gap: var(--sp-3); }
+.settings-group[hidden] { display: none !important; }
+.settings-group-head { padding: var(--sp-3) var(--sp-4); }
+.settings-group-head h3 { margin: 0; font-size: var(--type-heading); line-height: var(--leading-ui); }
+.settings-group-head p { margin: var(--sp-1) 0 0; font-size: var(--type-body); line-height: var(--leading-prose); }
+.settings-group > .card { border-color: var(--line-soft); }
+.settings-group > .card h4 { margin: 0 0 var(--sp-2); color: var(--text-strong); font-size: var(--type-heading); line-height: var(--leading-ui); }
+.settings-data-card .settings-actions { position: static; margin-top: var(--sp-3); box-shadow: none; backdrop-filter: none; }
+
+@media (max-width: 840px) {
+  .settings-hub-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .settings-shell { gap: var(--sp-3); }
+  .settings-hub { padding: var(--sp-3); }
+  .settings-hub-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .settings-mobile-step { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: var(--sp-2); }
+  .settings-mobile-step span { color: var(--text-soft); font-size: var(--type-meta); font-weight: 800; text-align: center; }
+  .settings-mobile-step .btn:last-child { justify-self: end; }
+  .settings-hub-item { min-block-size: var(--touch-min); padding-inline: var(--sp-2); }
+  .settings-group-head { padding: var(--sp-3); }
+  .settings-group > .card { padding: var(--sp-3); }
+}
+@media (hover:hover) and (pointer:fine) {
+  .settings-hub-item:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 46%, var(--line-soft)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-shell *, .settings-shell *::before, .settings-shell *::after { animation: none !important; transition-duration: 0ms !important; }
+  .settings-hub-item:hover { transform: none; }
+}
