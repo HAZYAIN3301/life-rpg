@@ -1371,6 +1371,24 @@ const I18N_EXTRA = {
   'На desktop можно перетащить квест в другой день; тап, клик или Enter открывает расписание.': { en: 'On desktop you can drag a quest to another day; tap, click, or Enter opens its schedule.', de: 'Am Desktop kannst du einen Quest auf einen anderen Tag ziehen; Tippen, Klicken oder Enter öffnet den Zeitplan.', uk: 'На desktop квест можна перетягнути на інший день; тап, клік або Enter відкриває розклад.', es: 'En escritorio puedes arrastrar una misión a otro día; tocar, hacer clic o pulsar Enter abre su horario.' },
   'Выбранный день': { en: 'Selected day', de: 'Ausgewählter Tag', uk: 'Вибраний день', es: 'Día seleccionado' },
   'Квестов на день': { en: 'Quests on this day', de: 'Quests an diesem Tag', uk: 'Квестів на день', es: 'Misiones del día' },
+  'Предыдущий месяц': { en: 'Previous month', de: 'Vorheriger Monat', uk: 'Попередній місяць', es: 'Mes anterior' },
+  'Следующий месяц': { en: 'Next month', de: 'Nächster Monat', uk: 'Наступний місяць', es: 'Mes siguiente' },
+  'Дни месяца': { en: 'Days of the month', de: 'Tage des Monats', uk: 'Дні місяця', es: 'Días del mes' },
+  'Выбери день месяца': { en: 'Choose a day', de: 'Tag auswählen', uk: 'Вибери день місяця', es: 'Elige un día' },
+  'Квесты этого дня': { en: 'Quests on this day', de: 'Quests an diesem Tag', uk: 'Квести цього дня', es: 'Misiones de este día' },
+  'Открыть выбранный день': { en: 'Open selected day', de: 'Ausgewählten Tag öffnen', uk: 'Відкрити вибраний день', es: 'Abrir el día seleccionado' },
+  'Январь': { en: 'January', de: 'Januar', uk: 'Січень', es: 'Enero' },
+  'Февраль': { en: 'February', de: 'Februar', uk: 'Лютий', es: 'Febrero' },
+  'Март': { en: 'March', de: 'März', uk: 'Березень', es: 'Marzo' },
+  'Апрель': { en: 'April', de: 'April', uk: 'Квітень', es: 'Abril' },
+  'Май': { en: 'May', de: 'Mai', uk: 'Травень', es: 'Mayo' },
+  'Июнь': { en: 'June', de: 'Juni', uk: 'Червень', es: 'Junio' },
+  'Июль': { en: 'July', de: 'Juli', uk: 'Липень', es: 'Julio' },
+  'Август': { en: 'August', de: 'August', uk: 'Серпень', es: 'Agosto' },
+  'Сентябрь': { en: 'September', de: 'September', uk: 'Вересень', es: 'Septiembre' },
+  'Октябрь': { en: 'October', de: 'Oktober', uk: 'Жовтень', es: 'Octubre' },
+  'Ноябрь': { en: 'November', de: 'November', uk: 'Листопад', es: 'Noviembre' },
+  'Декабрь': { en: 'December', de: 'Dezember', uk: 'Грудень', es: 'Diciembre' },
   'Поделиться': { en: 'Share', de: 'Teilen', uk: 'Поділитися', es: 'Compartir' },
   // Weekdays (short)
   'Пн': { en: 'Mon', de: 'Mo', uk: 'Пн', es: 'Lun' },
@@ -9615,8 +9633,10 @@ async function saveCalendarTaskEditor({ unschedule = false } = {}) {
     estimateMin: data.get('estimateMin'),
   }, { renderAfter: false });
   if (ok) {
-    if (State.calMode === 'week') {
+    if (State.calMode === 'week' || State.calMode === 'month') {
       State.calDate = calendarDateValue(data.get('date'));
+    }
+    if (State.calMode === 'week') {
       State.weekStart = weekStart(State.calDate);
     }
     closeCalendarTaskEditor({ restoreFocus: false });
@@ -9726,32 +9746,62 @@ function buildICS() {
   lines.push('END:VCALENDAR');
   return lines.join('\r\n');
 }
-// Месячная сетка (6×7, с понедельника). Клик по дню → день этой даты.
+function calendarTasksForDate(date) {
+  return (State.tasks || []).filter((task) => task.date === date).sort((a, b) => {
+    const at = calendarTimeValue(a.startTime), bt = calendarTimeValue(b.startTime);
+    if (at && bt) return at.localeCompare(bt) || String(a.createdAt || '').localeCompare(String(b.createdAt || ''));
+    if (at) return -1;
+    if (bt) return 1;
+    return String(a.createdAt || '').localeCompare(String(b.createdAt || ''));
+  });
+}
+function shiftedMonthDate(date, delta) {
+  const current = parseDate(date || todayStr());
+  const first = new Date(current.getFullYear(), current.getMonth() + Number(delta || 0), 1);
+  const lastDay = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+  return fmtDate(new Date(first.getFullYear(), first.getMonth(), Math.min(current.getDate(), lastDay)));
+}
+// Месячная сетка (6×7, с понедельника) + доступный detail выбранного дня.
 function renderCalMonth(date) {
   const WD = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
   const d = parseDate(date), y = d.getFullYear(), mo = d.getMonth();
   const first = new Date(y, mo, 1), startJs = first.getDay();
-  const gridStart = addDays(fmtDate(first), -((startJs === 0 ? 7 : startJs) - 1)); // понедельник перед 1-м
-  const counts = {};
-  for (const t of State.tasks) if (!t.done) counts[t.date] = (counts[t.date] || 0) + 1;
+  const gridStart = addDays(fmtDate(first), -((startJs === 0 ? 7 : startJs) - 1));
+  const tasksByDate = new Map();
+  for (const task of State.tasks || []) {
+    if (!tasksByDate.has(task.date)) tasksByDate.set(task.date, []);
+    tasksByDate.get(task.date).push(task);
+  }
+  const selectedTasks = calendarTasksForDate(date);
+  const selectedPlanned = selectedTasks.reduce((sum, task) => sum + (Number(task.estimateMin) || 0), 0);
+  const selectedWeekStart = weekStart(date);
+  const weekStrip = Array.from({ length: 7 }, (_, i) => {
+    const ds = addDays(selectedWeekStart, i), day = parseDate(ds);
+    const tasks = tasksByDate.get(ds) || [];
+    const open = tasks.filter((task) => !task.done).length;
+    const active = ds === date, isToday = ds === todayStr();
+    const label = `${t(WD[i])} ${day.getDate()} · ${t('Квестов на день')}: ${tasks.length}`;
+    return `<button type="button" class="calv-day month-overview-day${active ? ' active' : ''}${isToday ? ' is-today' : ''}" data-action="cal-date" data-date="${ds}" aria-label="${esc(label)}" aria-pressed="${active ? 'true' : 'false'}" ${isToday ? 'aria-current="date"' : ''}><span class="cd-wd">${esc(t(WD[i]))}</span><span class="cd-n">${day.getDate()}</span><span class="cd-dot${open ? '' : '-empty'}" ${open ? `aria-label="${open}"` : 'aria-hidden="true"'}>${open || ''}</span></button>`;
+  }).join('');
   let cells = '';
   for (let i = 0; i < 42; i++) {
     const ds = addDays(gridStart, i), cd = parseDate(ds), inMonth = cd.getMonth() === mo;
-    const n = counts[ds] || 0, isToday = ds === todayStr(), isSel = ds === date;
-    cells += `<button class="cm-cell ${inMonth ? '' : 'cm-out'} ${isToday ? 'cm-today' : ''} ${isSel ? 'cm-sel' : ''}" data-action="cal-pick-day" data-date="${ds}">
-      <span class="cm-n">${cd.getDate()}</span>${n ? `<span class="cm-dot">${n > 9 ? '9+' : n}</span>` : ''}</button>`;
+    const tasks = tasksByDate.get(ds) || [], open = tasks.filter((task) => !task.done).length;
+    const isToday = ds === todayStr(), isSel = ds === date;
+    const label = `${t(WD[i % 7])} ${cd.getDate()} ${t(MONTHS_NOM[cd.getMonth()])} · ${t('Квестов на день')}: ${tasks.length}`;
+    cells += `<button type="button" class="cm-cell${inMonth ? '' : ' cm-out'}${isToday ? ' cm-today' : ''}${isSel ? ' cm-sel' : ''}" data-action="cal-month-date" data-date="${ds}" aria-label="${esc(label)}" aria-pressed="${isSel ? 'true' : 'false'}" ${isToday ? 'aria-current="date"' : ''}><span class="cm-n">${cd.getDate()}</span>${tasks.length ? `<span class="cm-dot" aria-label="${open}/${tasks.length}">${open > 9 ? '9+' : open}</span>` : ''}</button>`;
   }
+  const selectedRows = selectedTasks.map((task) => weekTaskRowHTML(task, 'detail')).join('');
+  const selectedWeekday = t(WD[(d.getDay() + 6) % 7]);
   return `
-    <div class="card calv-head">
-      <div class="calv-title">
-        <button class="btn ghost sm" data-action="cal-shift-month" data-delta="-1" title="Предыдущий месяц">‹</button>
-        <h2>${MONTHS_NOM[mo]} ${y}</h2>
-        <button class="btn ghost sm" data-action="cal-shift-month" data-delta="1" title="Следующий месяц">›</button>
-        ${calModeToggle('month')}<div class="cal-tools">${calExportBtn()}${calSubscribeBtn()}${calRemindBtn()}</div>
-      </div>
-      <div class="cm-wd">${WD.map((w) => `<span>${w}</span>`).join('')}</div>
-      <div class="cm-grid">${cells}</div>
-    </div>`;
+    <section class="calendar-shell calendar-month-shell" aria-labelledby="calendar-screen-title">
+      <header class="card calv-head"><div class="calv-title"><div class="calv-title-main"><button type="button" class="btn ghost sm cal-nav-prev" data-action="cal-shift-month" data-delta="-1" aria-label="${esc(t('Предыдущий месяц'))}">${satoruIconHTML('action.back', 'cal-action-icon', '‹')}</button><h2 id="calendar-screen-title" tabindex="-1">${esc(t(MONTHS_NOM[mo]))} ${y}</h2><button type="button" class="btn ghost sm cal-nav-next" data-action="cal-shift-month" data-delta="1" aria-label="${esc(t('Следующий месяц'))}">${satoruIconHTML('action.forward', 'cal-action-icon', '›')}</button></div>${calModeToggle('month')}${calendarToolsHTML()}</div><div class="calv-strip month-overview" role="group" aria-label="${esc(t('Дни выбранной недели'))}">${weekStrip}</div></header>
+      ${calendarMoveReceiptHTML()}
+      <main class="month-work">
+        <section class="card month-grid-card" aria-labelledby="month-grid-title"><h3 id="month-grid-title">${esc(t('Выбери день месяца'))}</h3><div class="cm-wd" aria-hidden="true">${WD.map((w) => `<span>${esc(t(w))}</span>`).join('')}</div><div class="cm-grid" role="group" aria-label="${esc(t('Дни месяца'))}">${cells}</div></section>
+        <section class="card month-detail-card" aria-labelledby="month-detail-title"><div class="month-detail-head"><div><h3 id="month-detail-title" tabindex="-1">${esc(t('Квесты этого дня'))}</h3><p class="month-detail-summary">${esc(selectedWeekday)} ${dmShort(date)} · ${selectedTasks.length} · ${fmtDur(selectedPlanned)}</p></div><button type="button" class="btn ghost month-open-day" data-action="month-open-day">${esc(t('Открыть выбранный день'))}</button></div><div class="month-detail-tasks">${selectedRows || `<div class="month-detail-empty"><p>${esc(t('Нет квестов на этот день'))}</p></div>`}</div>${weekAddAreaHTML(date, 'detail')}</section>
+      </main>
+    </section>`;
 }
 function renderCalendarView() {
   if (State._tasksLoadError) return calendarLoadRecoveryHTML();
@@ -17905,8 +17955,10 @@ function onClick(e) {
     if (!/BEGIN:VEVENT/.test(ics)) { toast('Нет квестов со временем — поставь их в Календаре'); return; }
     try { const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'gojo-calendar.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); toast('📆 .ics скачан — открой его в Календаре для импорта'); } catch { toast('Не удалось создать файл'); }
   } else if (action === 'cal-mode') { cleanupWkDrag(); State.calMode = el.dataset.mode; State.view = 'calendar'; if (State.calMode === 'week') State.weekStart = weekStart(State.calDate || todayStr()); State._calendarFocusAfterCommit = `.cal-mode[data-mode="${CSS.escape(State.calMode)}"]`; render();
+  } else if (action === 'cal-month-date') { State.calDate = el.dataset.date; State.wkAddDate = null; State._calendarFocusAfterCommit = '#month-detail-title'; render();
+  } else if (action === 'month-open-day') { State.calMode = 'day'; State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
   } else if (action === 'cal-pick-day') { State.calDate = el.dataset.date; State.calMode = 'day'; State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
-  } else if (action === 'cal-shift-month') { const d = parseDate(State.calDate || todayStr()); State.calDate = fmtDate(new Date(d.getFullYear(), d.getMonth() + Number(el.dataset.delta), Math.min(d.getDate(), 28))); render();
+  } else if (action === 'cal-shift-month') { State.calDate = shiftedMonthDate(State.calDate || todayStr(), Number(el.dataset.delta)); State.wkAddDate = null; State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
   } else if (action === 'cal-remind-toggle') { toggleReminders();
   } else if (action === 'cal-tasks-retry') { retryTasksLoad();
   } else if (action === 'save-week') {

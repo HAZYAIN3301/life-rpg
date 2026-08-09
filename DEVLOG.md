@@ -2,6 +2,22 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-09] 🗓 Calendar Month v122 — месяц как выбор дня, а не пассивная таблица
+
+**Почему.** Старый Month показывал только 6×7 счётчиков и при выборе сразу выбрасывал в Day. В нём не было общего Calendar shell, семидневного контекста, полноценного detail выбранного дня, доступного editor и честной локализации названий месяцев. Старый coarse gate одновременно пытался сделать каждую дату 42px, что раздувало геометрию телефона.
+
+- **Один Calendar shell.** Month сохраняет те же семь дат, три режима и три Calendar tools, что Day/Week. Выбранная дата остаётся общей для всех трёх режимов.
+- **Сначала выбор, затем действие.** Компактная 6×7 сетка выбирает день внутри Month и переводит фокус в именованный detail. Detail показывает все квесты дня, полный длинный title, время/длительность, completion, общий schedule editor, add и явный переход в Day.
+- **Touch без невозможной геометрии.** Инструменты, режимы, editor, add и task actions остаются ≥42px. Сами даты — компактные 28px mobile calendar cells с отдельным доступным именем; на 360×800 все 42 даты заканчиваются выше fixed navigation.
+- **Транзакции переиспользованы.** Add ждёт `saveNow`, откатывает точный объект и сохраняет ввод при ошибке. Editor использует общий Move/Undo; после переноса в Month выбранной становится дата назначения, поэтому задача и фокус не исчезают. Переход месяца сохраняет число дня и корректно clamp-ит 31 января к 28/29 февраля, включая leap year и границы года.
+- **Ошибка не выглядит пустым месяцем.** Global checked-loader/recovery v117 остаётся перед Month render; malformed/network состояние показывает `role=alert`, Retry и write fence, а не пустую сетку.
+- **RU/EN/DE/UK/ES.** Названия всех 12 месяцев, навигация, grid/detail labels и actions имеют полный locale contract; пользовательские названия не переводятся и не режутся.
+- **PWA.** `public/sw.js`: **`satoru-v121` → `satoru-v122`**; shell-список и authored assets не менялись.
+
+**Проверено.** Calendar data/Day/Week/Month contracts **33/33 PASS**; полный `npm test` **77/77 PASS**. Fresh-origin live QA: 360×800, 375×812 и 1280×900; dense/malformed, DE, dark/light. На 360: 42 cells / 7 dates / 3 modes / 3 tools, document overflow `0`, реальные actions `<42px` — 0, последняя дата заканчивается на `y=713` перед nav `y=727`. Desktop — `708px + 320px`, длинные названия без overflow. Day selection возвращает focus в `#month-detail-title`; editor dialog, Escape/opener return, add success, month boundaries и malformed→valid Retry — PASS. Reduced motion закрыт статическим contract test.
+
+Скриншоты: `docs/design-qa/2026-08-09-calendar-month-v122/` — dense dark 360×800 и 1280×900, dense light 375×812, malformed dark 375×812; настоящие JPEG после последних CSS-байтов.
+
 ## [2026-08-09] 🗓 Calendar Week v121 — семь дней без горизонтального полотна
 
 **Почему.** Week наследовал desktop-полотно шириной 900px: на телефоне одновременно читались примерно три из семи дней, а управление задачей зависело от drag. Добавление сохранялось оптимистично без полного rollback, а выбранный день не был общей точкой ориентации между mobile и desktop.

@@ -13727,3 +13727,230 @@ html.calendar-task-open body {
   .calendar-week-shell *::after { animation: none !important; transition-duration: 0ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important; }
   .calendar-week-shell :is(.wk-task-main, .wk-add-btn):hover { transform: none !important; }
 }
+
+/* ---------- Calendar Month v122: compact month choice + selected-day detail ---------- */
+.calendar-month-shell .calv-title-main {
+  grid-template-columns: var(--touch-min) minmax(0, 1fr) var(--touch-min);
+}
+.calendar-month-shell .calv-title h2 { font-size: var(--type-brand); }
+.calendar-month-shell .month-work {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
+  min-width: 0;
+  gap: var(--sp-3);
+  align-items: start;
+}
+.calendar-month-shell :is(.month-grid-card, .month-detail-card) {
+  display: grid;
+  min-width: 0;
+  gap: var(--sp-3);
+  border-color: var(--line-soft);
+  background: var(--surface-1);
+  box-shadow: none;
+}
+.calendar-month-shell :is(.month-grid-card, .month-detail-card) h3 {
+  margin: 0;
+  color: var(--text-strong);
+  font-family: var(--font-display);
+  font-size: var(--type-heading);
+  line-height: var(--leading-ui);
+}
+.calendar-month-shell .month-detail-card { position: sticky; top: var(--sp-3); }
+.calendar-month-shell .month-detail-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  gap: var(--sp-2);
+  align-items: start;
+}
+.calendar-month-shell .month-detail-summary {
+  margin: var(--sp-1) 0 0;
+  color: var(--text-soft);
+  font-family: var(--font-data);
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+}
+.calendar-month-shell .month-open-day { width: 100%; min-height: var(--touch-min); }
+.calendar-month-shell .cm-wd,
+.calendar-month-shell .cm-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  min-width: 0;
+  gap: var(--sp-2);
+  margin: 0;
+}
+.calendar-month-shell .cm-wd span {
+  color: var(--text-soft);
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+  font-weight: 800;
+  text-align: center;
+}
+.calendar-month-shell .cm-cell {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto;
+  place-items: center;
+  min-width: 0;
+  min-height: 54px;
+  aspect-ratio: auto;
+  padding: var(--sp-1);
+  gap: 2px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  color: var(--text-strong);
+  background: var(--surface-2);
+  box-shadow: none;
+  cursor: pointer;
+}
+.calendar-month-shell .cm-cell.cm-out { opacity: 1; color: var(--text-soft); background: color-mix(in srgb, var(--surface-2) 62%, transparent); }
+.calendar-month-shell .cm-cell.cm-today { border-color: var(--calendar-today-fg); box-shadow: inset 0 2px 0 var(--calendar-today-fg); }
+.calendar-month-shell .cm-cell.cm-sel {
+  border-color: var(--calendar-active-border);
+  color: var(--calendar-active-fg);
+  background: color-mix(in srgb, var(--calendar-active-border) 14%, var(--surface-2));
+  box-shadow: inset 0 0 0 1px var(--calendar-active-border);
+}
+.calendar-month-shell .cm-n {
+  font-family: var(--font-data);
+  font-size: var(--type-control);
+  line-height: var(--leading-label);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.calendar-month-shell .cm-dot {
+  min-width: 18px;
+  padding: 1px var(--sp-1);
+  border-radius: 999px;
+  color: var(--on-accent);
+  background: var(--accent);
+  font-family: var(--font-data);
+  font-size: var(--type-floor);
+  line-height: var(--leading-label);
+  font-weight: 800;
+}
+.calendar-month-shell .month-detail-tasks {
+  display: grid;
+  min-width: 0;
+  gap: var(--sp-1);
+}
+.calendar-month-shell .wk-task {
+  display: grid;
+  grid-template-columns: var(--touch-min) minmax(0, 1fr);
+  min-width: 0;
+  min-height: var(--touch-min);
+  border: 1px solid var(--line-soft);
+  border-inline-start: 3px solid var(--wk-skill, var(--accent));
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.calendar-month-shell .wk-task.done { background: color-mix(in srgb, var(--surface-2) 86%, var(--good)); }
+.calendar-month-shell .wk-task.done .wk-task-title { color: var(--text-soft); text-decoration: line-through; }
+.calendar-month-shell .wk-task-check {
+  inline-size: var(--touch-min);
+  min-inline-size: var(--touch-min);
+  min-block-size: var(--touch-min);
+  margin: 0;
+  border: 0;
+  border-inline-end: 1px solid var(--line-soft);
+  border-radius: 0;
+  color: var(--text-strong);
+  background: transparent;
+}
+.calendar-month-shell .wk-task-main {
+  display: grid;
+  min-width: 0;
+  min-height: var(--touch-min);
+  padding: var(--sp-2);
+  gap: var(--sp-1);
+  border: 0;
+  border-radius: 0;
+  color: var(--text-strong);
+  background: transparent;
+  text-align: start;
+}
+.calendar-month-shell .wk-task-title {
+  min-width: 0;
+  font-size: var(--type-control);
+  line-height: var(--leading-ui);
+  font-weight: 760;
+  overflow-wrap: anywhere;
+}
+.calendar-month-shell .wk-task-meta {
+  display: flex;
+  min-width: 0;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  color: var(--text-soft);
+  font-family: var(--font-data);
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+}
+.calendar-month-shell .month-detail-empty {
+  padding: var(--sp-3);
+  border: 1px dashed var(--line-soft);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+.calendar-month-shell .month-detail-empty p { margin: 0; }
+.calendar-month-shell .wk-add-btn {
+  width: 100%;
+  min-height: var(--touch-min);
+  color: var(--text-soft);
+  font-size: var(--type-control);
+  line-height: var(--leading-ui);
+}
+.calendar-month-shell .wk-add-form {
+  display: grid;
+  min-width: 0;
+  padding: var(--sp-2);
+  gap: var(--sp-2);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+.calendar-month-shell .wk-add-form label { display: grid; min-width: 0; gap: var(--sp-1); color: var(--text-soft); font-size: var(--type-meta); line-height: var(--leading-label); }
+.calendar-month-shell .wk-add-form :is(input, select) { width: 100%; min-width: 0; min-height: var(--touch-min); font-size: var(--type-control); }
+.calendar-month-shell .wk-add-btns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); }
+.calendar-month-shell .wk-add-btns .btn { min-width: var(--touch-min); min-height: var(--touch-min); }
+.calendar-month-shell .wk-add-status { min-height: 1.4em; margin: 0; }
+
+@media (max-width: 900px) {
+  .calendar-month-shell .month-work { grid-template-columns: minmax(0, 1fr); }
+  .calendar-month-shell .month-detail-card { position: static; }
+  body:has(.calendar-month-shell) #ai-fab { display: none; }
+}
+
+@media (max-width: 600px) {
+  .calendar-month-shell .calv-title { grid-template-columns: minmax(0, 1fr); }
+  .calendar-month-shell .calv-title-main { grid-column: 1; grid-row: 1; }
+  .calendar-month-shell .cal-modes { grid-column: 1; grid-row: 2; width: 100%; min-width: 0; }
+  .calendar-month-shell .cal-tools { grid-column: 1; grid-row: 3; width: 100%; min-width: 0; }
+  .calendar-month-shell .cal-tools > button { padding-inline: var(--sp-1); }
+  .calendar-month-shell .month-overview { grid-template-columns: repeat(7, minmax(var(--touch-min), 1fr)); gap: var(--sp-1); }
+  .calendar-month-shell .month-overview-day { min-width: var(--touch-min); min-height: 58px; padding-inline: 0; }
+  .calendar-month-shell :is(.month-grid-card, .month-detail-card) { padding: var(--sp-3); }
+  .calendar-month-shell .cm-wd,
+  .calendar-month-shell .cm-grid { gap: 2px; }
+  .calendar-month-shell .cm-cell { min-height: 28px; padding: 1px; border-radius: 6px; }
+  .calendar-month-shell .cm-n { font-size: var(--type-meta); }
+  .calendar-month-shell .cm-dot { position: absolute; inset-inline-end: 2px; inset-block-end: 2px; min-width: 12px; padding-inline: 2px; font-size: 8px; line-height: 11px; }
+  .calendar-month-shell .month-detail-head { grid-template-columns: minmax(0, 1fr); }
+  .calendar-month-shell .month-open-day { width: 100%; }
+}
+
+@media (pointer: coarse) {
+  .calendar-month-shell :is(button, input, select, textarea) { min-inline-size: var(--touch-min); min-block-size: var(--touch-min); }
+  .calendar-month-shell .cm-cell { min-inline-size: 0; min-block-size: 0; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .calendar-month-shell :is(.cm-cell, .wk-task-main, .wk-add-btn):hover { border-color: var(--line-strong); background-color: color-mix(in srgb, var(--accent) 7%, var(--surface-2)); transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-month-shell *,
+  .calendar-month-shell *::before,
+  .calendar-month-shell *::after { animation: none !important; transition-duration: 0ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important; }
+}
