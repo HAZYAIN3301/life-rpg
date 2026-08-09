@@ -2377,6 +2377,67 @@ const I18N_EXTRA = {
   'Слишком долго не было настоящей паузы.': { en: 'It has been too long since a real pause.', de: 'Es gab zu lange keine echte Pause.', uk: 'Надто довго не було справжньої паузи.', es: 'Ha pasado demasiado tiempo sin una pausa de verdad.' },
   'Лечит': { en: 'Healing', de: 'Heilt', uk: 'Лікує', es: 'Sanando' },
   'Не торопит: силы уже возвращаются.': { en: 'No rush: your strength is already returning.', de: 'Kein Drängen: Die Kraft kehrt bereits zurück.', uk: 'Не квапить: сили вже повертаються.', es: 'Sin prisa: las fuerzas ya están volviendo.' },
+  // ── Дерево навыков v115: chrome, состояния и безопасная загрузка ──
+  "Активные бонусы": { en: "Active bonuses", de: "Aktive Boni", uk: "Активні бонуси", es: "Bonificaciones activas" },
+  "Без требований": { en: "No requirements", de: "Keine Voraussetzungen", uk: "Без вимог", es: "Sin requisitos" },
+  "Бонус": { en: "Bonus", de: "Bonus", uk: "Бонус", es: "Bonificación" },
+  "Бонус XP, %": { en: "XP bonus, %", de: "XP-Bonus, %", uk: "Бонус XP, %", es: "Bonificación de XP, %" },
+  "Бонус уже действует": { en: "Bonus is active", de: "Bonus ist bereits aktiv", uk: "Бонус уже діє", es: "La bonificación ya está activa" },
+  "Веха жизни": { en: "Life milestone", de: "Lebensmeilenstein", uk: "Життєва віха", es: "Hito vital" },
+  "Вложено": { en: "Invested", de: "Investiert", uk: "Вкладено", es: "Invertido" },
+  "Выбери узел для настройки. Перетаскивай мышью или используй кнопки перемещения в панели.": { en: "Select a node to configure it. Drag it with the mouse or use the move buttons in the panel.", de: "Wähle einen Knoten zum Bearbeiten. Ziehe ihn mit der Maus oder nutze die Bewegungstasten im Bedienfeld.", uk: "Вибери вузол для налаштування. Перетягуй мишею або використовуй кнопки переміщення на панелі.", es: "Elige un nodo para configurarlo. Arrástralo con el ratón o usa los botones de movimiento del panel." },
+  "Выбери узел, чтобы увидеть полное описание и действие. Карта прокручивается в обе стороны.": { en: "Select a node to see its full description and action. The map scrolls in both directions.", de: "Wähle einen Knoten, um die vollständige Beschreibung und Aktion zu sehen. Die Karte lässt sich in beide Richtungen scrollen.", uk: "Вибери вузол, щоб побачити повний опис і дію. Карта прокручується в обидва боки.", es: "Elige un nodo para ver la descripción completa y la acción. El mapa se desplaza en ambas direcciones." },
+  "Дела → уровень → очко → узел → бонус": { en: "Deeds → level → point → node → bonus", de: "Taten → Stufe → Punkt → Knoten → Bonus", uk: "Справи → рівень → очко → вузол → бонус", es: "Acciones → nivel → punto → nodo → bonificación" },
+  "Других узлов нет": { en: "No other nodes", de: "Keine weiteren Knoten", uk: "Інших вузлів немає", es: "No hay otros nodos" },
+  "Загружаю карту…": { en: "Loading map…", de: "Karte wird geladen…", uk: "Завантажую карту…", es: "Cargando el mapa…" },
+  "Заработано": { en: "Earned", de: "Verdient", uk: "Зароблено", es: "Ganado" },
+  "Здесь уже есть узел": { en: "There is already a node here", de: "Hier befindet sich bereits ein Knoten", uk: "Тут уже є вузол", es: "Ya hay un nodo aquí" },
+  "Как работает карта": { en: "How the map works", de: "So funktioniert die Karte", uk: "Як працює карта", es: "Cómo funciona el mapa" },
+  "Карта ждёт новый опыт. Делай дела в сфере, чтобы открыть следующий узел.": { en: "The map is waiting for new experience. Complete deeds in this area to unlock the next node.", de: "Die Karte wartet auf neue Erfahrung. Erledige Taten in diesem Bereich, um den nächsten Knoten freizuschalten.", uk: "Карта чекає на новий досвід. Роби справи в цій сфері, щоб відкрити наступний вузол.", es: "El mapa espera nueva experiencia. Haz acciones en esta área para desbloquear el siguiente nodo." },
+  "Карта навыков": { en: "Skill map", de: "Fähigkeitenkarte", uk: "Карта навичок", es: "Mapa de habilidades" },
+  "Карта не загружена": { en: "Map not loaded", de: "Karte nicht geladen", uk: "Карту не завантажено", es: "Mapa sin cargar" },
+  "Карта развития": { en: "Progress map", de: "Entwicklungskarte", uk: "Карта розвитку", es: "Mapa de progreso" },
+  "Карта узлов": { en: "Node map", de: "Knotenkarte", uk: "Карта вузлів", es: "Mapa de nodos" },
+  "Заблокировано": { en: "Locked", de: "Gesperrt", uk: "Заблоковано", es: "Bloqueado" },
+  "Не удалось загрузить карту. Проверь соединение и попробуй снова.": { en: "Could not load the map. Check your connection and try again.", de: "Die Karte konnte nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.", uk: "Не вдалося завантажити карту. Перевір з’єднання та спробуй ще раз.", es: "No se pudo cargar el mapa. Comprueba la conexión e inténtalo de nuevo." },
+  "Новый узел": { en: "New node", de: "Neuer Knoten", uk: "Новий вузол", es: "Nodo nuevo" },
+  "Описание": { en: "Description", de: "Beschreibung", uk: "Опис", es: "Descripción" },
+  "Открыть за": { en: "Unlock for", de: "Freischalten für", uk: "Відкрити за", es: "Desbloquear por" },
+  "Очки готовы — выбери новый бонус на карте.": { en: "Points are ready — choose a new bonus on the map.", de: "Punkte sind bereit — wähle einen neuen Bonus auf der Karte.", uk: "Очки готові — вибери новий бонус на карті.", es: "Los puntos están listos: elige una nueva bonificación en el mapa." },
+  "Пассивный бонус не задан": { en: "No passive bonus set", de: "Kein passiver Bonus festgelegt", uk: "Пасивний бонус не задано", es: "No se ha definido una bonificación pasiva" },
+  "Переместить": { en: "Move", de: "Verschieben", uk: "Перемістити", es: "Mover" },
+  "Переместить вверх": { en: "Move up", de: "Nach oben verschieben", uk: "Перемістити вгору", es: "Mover arriba" },
+  "Переместить влево": { en: "Move left", de: "Nach links verschieben", uk: "Перемістити ліворуч", es: "Mover a la izquierda" },
+  "Переместить вниз": { en: "Move down", de: "Nach unten verschieben", uk: "Перемістити вниз", es: "Mover abajo" },
+  "Переместить вправо": { en: "Move right", de: "Nach rechts verschieben", uk: "Перемістити праворуч", es: "Mover a la derecha" },
+  "Переместить выбранный узел": { en: "Move selected node", de: "Ausgewählten Knoten verschieben", uk: "Перемістити вибраний вузол", es: "Mover el nodo seleccionado" },
+  "Повторить загрузку": { en: "Retry loading", de: "Erneut laden", uk: "Повторити завантаження", es: "Reintentar la carga" },
+  "Повторная загрузка безопасна. Новую карту создавай только если готов заменить повреждённый файл.": { en: "Retrying is safe. Create a new map only if you are ready to replace the damaged file.", de: "Erneutes Laden ist sicher. Erstelle nur dann eine neue Karte, wenn du die beschädigte Datei ersetzen möchtest.", uk: "Повторне завантаження безпечне. Створюй нову карту, лише якщо готовий замінити пошкоджений файл.", es: "Reintentar la carga es seguro. Crea un mapa nuevo solo si quieres reemplazar el archivo dañado." },
+  "Подтвердить веху": { en: "Confirm milestone", de: "Meilenstein bestätigen", uk: "Підтвердити віху", es: "Confirmar hito" },
+  "Пока недоступно": { en: "Not available yet", de: "Noch nicht verfügbar", uk: "Поки недоступно", es: "Aún no disponible" },
+  "Пока ничего не открыто — бери узлы ниже": { en: "Nothing is unlocked yet — start with the nodes below", de: "Noch ist nichts freigeschaltet — beginne mit den Knoten weiter unten", uk: "Поки нічого не відкрито — бери вузли нижче", es: "Aún no hay nada desbloqueado: empieza por los nodos de abajo" },
+  "Проверяю сохранённые данные.": { en: "Checking saved data.", de: "Gespeicherte Daten werden geprüft.", uk: "Перевіряю збережені дані.", es: "Comprobando los datos guardados." },
+  "Прогресс сохранён в отдельном файле и не будет молча заменён шаблоном.": { en: "Progress is stored in a separate file and will never be silently replaced with a template.", de: "Der Fortschritt liegt in einer separaten Datei und wird nicht stillschweigend durch eine Vorlage ersetzt.", uk: "Прогрес збережено в окремому файлі й не буде непомітно замінено шаблоном.", es: "El progreso se guarda en un archivo independiente y no se sustituirá silenciosamente por una plantilla." },
+  "Развести наложения": { en: "Separate overlaps", de: "Überlappungen trennen", uk: "Розвести накладання", es: "Separar solapamientos" },
+  "Редактор": { en: "Editor", de: "Editor", uk: "Редактор", es: "Editor" },
+  "Режим архитектора": { en: "Architect mode", de: "Architektenmodus", uk: "Режим архітектора", es: "Modo arquitecto" },
+  "Режим архитектора: двигай узлы и собирай карту развития под себя.": { en: "Architect mode: move nodes and shape the progress map around you.", de: "Architektenmodus: Verschiebe Knoten und gestalte die Entwicklungskarte nach deinen Bedürfnissen.", uk: "Режим архітектора: рухай вузли й збирай карту розвитку під себе.", es: "Modo arquitecto: mueve los nodos y adapta el mapa de progreso a ti." },
+  "Связи с ним будут сняты.": { en: "Its connections will be removed.", de: "Seine Verbindungen werden entfernt.", uk: "Зв’язки з ним буде знято.", es: "Se eliminarán sus conexiones." },
+  "Следующий лучший узел": { en: "Next best node", de: "Nächster bester Knoten", uk: "Наступний найкращий вузол", es: "Siguiente mejor nodo" },
+  "Создать новую карту": { en: "Create new map", de: "Neue Karte erstellen", uk: "Створити нову карту", es: "Crear un mapa nuevo" },
+  "Создать новую карту? Повреждённый файл будет заменён стартовыми деревьями.": { en: "Create a new map? The damaged file will be replaced with starter trees.", de: "Neue Karte erstellen? Die beschädigte Datei wird durch Startbäume ersetzt.", uk: "Створити нову карту? Пошкоджений файл буде замінено стартовими деревами.", es: "¿Crear un mapa nuevo? El archivo dañado se sustituirá por árboles iniciales." },
+  "Сфера карты": { en: "Map area", de: "Kartenbereich", uk: "Сфера карти", es: "Área del mapa" },
+  "Требования": { en: "Requirements", de: "Voraussetzungen", uk: "Вимоги", es: "Requisitos" },
+  "Требует узлы": { en: "Requires nodes", de: "Erfordert Knoten", uk: "Потребує вузлів", es: "Requiere nodos" },
+  "Удалить узел": { en: "Delete node", de: "Knoten löschen", uk: "Видалити вузол", es: "Eliminar nodo" },
+  "Узел": { en: "Node", de: "Knoten", uk: "Вузол", es: "Nodo" },
+  "Узлы разведены": { en: "Nodes separated", de: "Knoten getrennt", uk: "Вузли розведено", es: "Nodos separados" },
+  "Файл карты повреждён или имеет неизвестный формат.": { en: "The map file is damaged or has an unknown format.", de: "Die Kartendatei ist beschädigt oder hat ein unbekanntes Format.", uk: "Файл карти пошкоджено або він має невідомий формат.", es: "El archivo del mapa está dañado o tiene un formato desconocido." },
+  "Цена (очки)": { en: "Cost (points)", de: "Kosten (Punkte)", uk: "Ціна (очки)", es: "Coste (puntos)" },
+  "Этот узел уже открыт": { en: "This node is already unlocked", de: "Dieser Knoten ist bereits freigeschaltet", uk: "Цей вузол уже відкрито", es: "Este nodo ya está desbloqueado" },
+  "вложено": { en: "invested", de: "investiert", uk: "вкладено", es: "invertido" },
+  "очк.": { en: "pts.", de: "Pkt.", uk: "оч.", es: "pts." },
+  "узлов": { en: "nodes", de: "Knoten", uk: "вузлів", es: "nodos" },
   // ── Сундуки: перенос неоткрытого (fb — «неоткрытые вчера сундуки пропали») ──
   'С прошлых дней сохранено': { en: 'Saved from previous days', de: 'Von früheren Tagen aufbewahrt', uk: 'Збережено з попередніх днів', es: 'Guardado de días anteriores' },
 };
@@ -2572,6 +2633,23 @@ const Store = {
     } catch (e) {
       console.error('load', name, e);
       return structuredClone(fallback);
+    }
+  },
+  // Для экранов, где молчаливая подмена повреждённых данных дефолтом опасна.
+  // Возвращает причину отдельно: вызывающий может показать recovery UI и НЕ
+  // сохранить fallback поверх исходного файла до явного решения человека.
+  async loadChecked(name, fallback, validate) {
+    try {
+      const r = await fetch(`/api/data/${name}`);
+      if (r.status === 404) return { value: structuredClone(fallback), error: '' };
+      if (!r.ok) throw new Error('load ' + r.status);
+      const value = await r.json();
+      if (value == null || (validate && !validate(value))) throw new Error('invalid data');
+      return { value, error: '' };
+    } catch (error) {
+      console.error('loadChecked', name, error);
+      const invalid = error && (error.message === 'invalid data' || error.name === 'SyntaxError');
+      return { value: structuredClone(fallback), error: invalid ? 'invalid' : 'load' };
     }
   },
   save(name, obj) {
@@ -3070,6 +3148,546 @@ const IMPORT_LADDERS = {
   'волонт':       { hint: 'регулярность вклада', top: 16, tiers: ['Не участвую', 'Разовые акции', 'Регулярно помогаю', 'Координирую проекты', 'Веду своё движение'] },
 };
 const GENERIC_LADDER = { hint: 'честная самооценка — сравни с тем, кем был год назад', top: 16, tiers: ['Только начинаю', 'Регулярная практика', 'Уверенный прогресс', 'Могу научить других', 'Глубокая экспертиза'] };
+const LADDER_AUTHORED_COPY = Object.freeze({
+  "version": 1,
+  "defaultId": "general",
+  "aliasToId": {
+    "бег": "running",
+    "сил": "strength-honest",
+    "зал": "strength",
+    "качал": "strength",
+    "единоборств": "martial-arts",
+    "велосипед": "cycling",
+    "плаван": "swimming",
+    "питани": "nutrition",
+    "нутриц": "nutrition",
+    "танц": "dance",
+    "английск": "language-cefr",
+    "deutsch": "language-cefr",
+    "немецк": "language-cefr",
+    "язык": "language-cefr",
+    "учёб": "education",
+    "программир": "programming",
+    "кодинг": "programming",
+    "разработк": "programming",
+    "чтени": "reading",
+    "рисов": "drawing",
+    "арт": "drawing",
+    "иллюстр": "drawing",
+    "дизайн": "design",
+    "фото": "photography",
+    "видеограф": "videography",
+    "видеомонт": "video-editing",
+    "блог": "blogging",
+    "контент": "content-creation",
+    "музык": "music",
+    "гитар": "guitar",
+    "пени": "vocal",
+    "вокал": "vocal",
+    "бизнес": "business",
+    "стартап": "business",
+    "предприн": "business",
+    "инвест": "investing-etf",
+    "финанс": "personal-finance",
+    "продаж": "sales",
+    "маркетинг": "marketing",
+    "отношен": "relationships",
+    "выступл": "public-speaking",
+    "оратор": "public-speaking",
+    "переговор": "negotiation",
+    "писательств": "writing",
+    "копирайт": "copywriting",
+    "подкаст": "podcasting",
+    "йог": "yoga",
+    "медитац": "meditation",
+    "готов": "cooking",
+    "кулинар": "cooking",
+    "скалолаз": "climbing",
+    "шахмат": "chess",
+    "геймдев": "game-development",
+    "моделирован": "modeling-3d",
+    "актёр": "acting",
+    "волонт": "volunteering"
+  },
+  "variants": {
+    "running": {
+      "top": 20,
+      "hint": {"ru":"дистанция + темп","en":"distance + pace","de":"Distanz + Tempo","uk":"дистанція + темп","es":"distancia + ritmo"},
+      "tiers": [
+        {"ru":"Не бегаю","en":"I don't run","de":"Ich laufe nicht","uk":"Не бігаю","es":"No corro"},
+        {"ru":"Иногда, до 5 км","en":"Occasionally, up to 5 km","de":"Gelegentlich, bis 5 km","uk":"Іноді, до 5 км","es":"A veces, hasta 5 km"},
+        {"ru":"Регулярно 5–10 км","en":"Regularly, 5–10 km","de":"Regelmäßig 5–10 km","uk":"Регулярно 5–10 км","es":"5–10 km con regularidad"},
+        {"ru":"Полумарафон","en":"Half marathon","de":"Halbmarathon","uk":"Півмарафон","es":"Media maratón"},
+        {"ru":"Марафон","en":"Marathon","de":"Marathon","uk":"Марафон","es":"Maratón"},
+        {"ru":"Марафон <3:30 / ультра","en":"Marathon <3:30 / ultra","de":"Marathon <3:30 / Ultra","uk":"Марафон <3:30 / ультра","es":"Maratón <3:30 / ultra"}
+      ]
+    },
+    "strength-honest": {
+      "top": 18,
+      "hint": {"ru":"жим относительно своего веса (честно при любом весе)","en":"bench press relative to body weight (fair at any weight)","de":"Bankdrücken relativ zum Körpergewicht (fair bei jedem Gewicht)","uk":"жим відносно власної ваги (чесно за будь-якої ваги)","es":"press de banca relativo al peso corporal (justo con cualquier peso)"},
+      "tiers": [
+        {"ru":"Не тренируюсь","en":"I don't train","de":"Ich trainiere nicht","uk":"Не тренуюся","es":"No entreno"},
+        {"ru":"Жим < 0.75× веса","en":"Bench press < 0.75× body weight","de":"Bankdrücken < 0.75× Körpergewicht","uk":"Жим < 0.75× власної ваги","es":"Press de banca < 0.75× del peso corporal"},
+        {"ru":"Жим ≈ вес тела","en":"Bench press ≈ body weight","de":"Bankdrücken ≈ Körpergewicht","uk":"Жим ≈ власна вага","es":"Press de banca ≈ peso corporal"},
+        {"ru":"Жим 1.25× веса","en":"Bench press 1.25× body weight","de":"Bankdrücken 1.25× Körpergewicht","uk":"Жим 1.25× власної ваги","es":"Press de banca 1.25× el peso corporal"},
+        {"ru":"Жим 1.5×+ веса","en":"Bench press 1.5×+ body weight","de":"Bankdrücken 1.5×+ Körpergewicht","uk":"Жим 1.5×+ власної ваги","es":"Press de banca 1.5×+ el peso corporal"}
+      ]
+    },
+    "strength": {
+      "top": 18,
+      "hint": {"ru":"жим относительно своего веса","en":"bench press relative to body weight","de":"Bankdrücken relativ zum Körpergewicht","uk":"жим відносно власної ваги","es":"press de banca relativo al peso corporal"},
+      "tiers": [
+        {"ru":"Не тренируюсь","en":"I don't train","de":"Ich trainiere nicht","uk":"Не тренуюся","es":"No entreno"},
+        {"ru":"Жим < 0.75× веса","en":"Bench press < 0.75× body weight","de":"Bankdrücken < 0.75× Körpergewicht","uk":"Жим < 0.75× власної ваги","es":"Press de banca < 0.75× del peso corporal"},
+        {"ru":"Жим ≈ вес тела","en":"Bench press ≈ body weight","de":"Bankdrücken ≈ Körpergewicht","uk":"Жим ≈ власна вага","es":"Press de banca ≈ peso corporal"},
+        {"ru":"Жим 1.25× веса","en":"Bench press 1.25× body weight","de":"Bankdrücken 1.25× Körpergewicht","uk":"Жим 1.25× власної ваги","es":"Press de banca 1.25× el peso corporal"},
+        {"ru":"Жим 1.5×+ веса","en":"Bench press 1.5×+ body weight","de":"Bankdrücken 1.5×+ Körpergewicht","uk":"Жим 1.5×+ власної ваги","es":"Press de banca 1.5×+ el peso corporal"}
+      ]
+    },
+    "martial-arts": {
+      "top": 20,
+      "hint": {"ru":"пояс / разряд","en":"belt / rank","de":"Gürtel / Rang","uk":"пояс / розряд","es":"cinturón / grado"},
+      "tiers": [
+        {"ru":"Не занимаюсь","en":"I don't practice","de":"Ich trainiere nicht","uk":"Не займаюся","es":"No practico"},
+        {"ru":"Белый–жёлтый пояс","en":"White–yellow belt","de":"Weiß–Gelb-Gurt","uk":"Білий–жовтий пояс","es":"Cinturón blanco–amarillo"},
+        {"ru":"Оранжевый–зелёный","en":"Orange–green belt","de":"Orange–Grün-Gurt","uk":"Помаранчевий–зелений пояс","es":"Cinturón naranja–verde"},
+        {"ru":"Синий–коричневый","en":"Blue–brown belt","de":"Blau–Braun-Gurt","uk":"Синій–коричневий пояс","es":"Cinturón azul–marrón"},
+        {"ru":"Чёрный пояс / разряд","en":"Black belt / rank","de":"Schwarzgurt / Rang","uk":"Чорний пояс / розряд","es":"Cinturón negro / grado"}
+      ]
+    },
+    "cycling": {
+      "top": 18,
+      "hint": {"ru":"дистанция","en":"distance","de":"Distanz","uk":"дистанція","es":"distancia"},
+      "tiers": [
+        {"ru":"Не катаюсь","en":"I don't ride","de":"Ich fahre nicht","uk":"Не катаюся","es":"No monto"},
+        {"ru":"До 20 км","en":"Up to 20 km","de":"Bis 20 km","uk":"До 20 км","es":"Hasta 20 km"},
+        {"ru":"20–50 км регулярно","en":"20–50 km regularly","de":"Regelmäßig 20–50 km","uk":"Регулярно 20–50 км","es":"20–50 km con regularidad"},
+        {"ru":"Сенчури 100 км","en":"100 km century ride","de":"100-km-Century","uk":"Сентурі 100 км","es":"Century de 100 km"},
+        {"ru":"Бревет 200 км+ / гонки","en":"200 km+ brevet / races","de":"Brevet 200 km+ / Rennen","uk":"Бревет 200 км+ / перегони","es":"Brevet de 200 km+ / carreras"}
+      ]
+    },
+    "swimming": {
+      "top": 18,
+      "hint": {"ru":"дистанция без остановки","en":"nonstop distance","de":"Distanz ohne Pause","uk":"дистанція без зупинки","es":"distancia sin parar"},
+      "tiers": [
+        {"ru":"Не плаваю","en":"I don't swim","de":"Ich schwimme nicht","uk":"Не плаваю","es":"No nado"},
+        {"ru":"Держусь на воде","en":"I stay afloat","de":"Ich halte mich über Wasser","uk":"Тримаюся на воді","es":"Me mantengo a flote"},
+        {"ru":"500 м","en":"500 m","de":"500 m","uk":"500 м","es":"500 m"},
+        {"ru":"1.5 км","en":"1.5 km","de":"1.5 km","uk":"1.5 км","es":"1.5 km"},
+        {"ru":"Триатлон / 3 км+","en":"Triathlon / 3 km+","de":"Triathlon / 3 km+","uk":"Тріатлон / 3 км+","es":"Triatlón / 3 km+"}
+      ]
+    },
+    "nutrition": {
+      "top": 16,
+      "hint": {"ru":"осознанность рациона","en":"dietary awareness","de":"bewusste Ernährung","uk":"усвідомленість раціону","es":"alimentación consciente"},
+      "tiers": [
+        {"ru":"Ем как получится","en":"I eat whatever works","de":"Ich esse, wie es gerade kommt","uk":"Їм як виходить","es":"Como lo que puedo"},
+        {"ru":"Базовый КБЖУ / слежу","en":"Basic calorie/macros tracking","de":"Kalorien/Makros im Blick","uk":"Базові КБЖВ / стежу","es":"Seguimiento básico de calorías/macros"},
+        {"ru":"Осознанный рацион без строгого счёта","en":"Mindful diet without strict tracking","de":"Bewusste Ernährung ohne striktes Zählen","uk":"Усвідомлений раціон без суворого підрахунку","es":"Alimentación consciente sin conteo estricto"},
+        {"ru":"Спортивное питание / протокол","en":"Sports nutrition / protocol","de":"Sporternährung / Protokoll","uk":"Спортивне харчування / протокол","es":"Nutrición deportiva / protocolo"},
+        {"ru":"Нутрициолог / диетолог","en":"Nutritionist / dietitian","de":"Ernährungsberater / Diätologe","uk":"Нутриціолог / дієтолог","es":"Nutricionista / dietista"}
+      ]
+    },
+    "dance": {
+      "top": 18,
+      "hint": {"ru":"стиль / соревнования","en":"style / competitions","de":"Stil / Wettbewerbe","uk":"стиль / змагання","es":"estilo / competiciones"},
+      "tiers": [
+        {"ru":"Не танцую","en":"I don't dance","de":"Ich tanze nicht","uk":"Не танцюю","es":"No bailo"},
+        {"ru":"Базовые движения","en":"Basic moves","de":"Grundschritte","uk":"Базові рухи","es":"Movimientos básicos"},
+        {"ru":"Уверенно на вечеринках","en":"Confident at parties","de":"Sicher auf Partys","uk":"Упевнено на вечірках","es":"Con soltura en fiestas"},
+        {"ru":"Регулярные занятия, свой стиль","en":"Regular classes, own style","de":"Regelmäßiges Training, eigener Stil","uk":"Регулярні заняття, власний стиль","es":"Clases regulares, estilo propio"},
+        {"ru":"Соревнования / хореография","en":"Competitions / choreography","de":"Wettbewerbe / Choreografie","uk":"Змагання / хореографія","es":"Competiciones / coreografía"}
+      ]
+    },
+    "language-cefr": {
+      "top": 18,
+      "hint": {"ru":"CEFR","en":"CEFR","de":"CEFR","uk":"CEFR","es":"CEFR"},
+      "tiers": [
+        {"ru":"A1 — начальный","en":"A1 — beginner","de":"A1 — Anfänger","uk":"A1 — початковий","es":"A1 — inicial"},
+        {"ru":"A2 — базовый","en":"A2 — basic","de":"A2 — Grundlagen","uk":"A2 — базовий","es":"A2 — básico"},
+        {"ru":"B1 — средний","en":"B1 — intermediate","de":"B1 — Mittelstufe","uk":"B1 — середній","es":"B1 — intermedio"},
+        {"ru":"B2 — выше среднего","en":"B2 — upper-intermediate","de":"B2 — obere Mittelstufe","uk":"B2 — вище середнього","es":"B2 — intermedio alto"},
+        {"ru":"C1 — продвинутый","en":"C1 — advanced","de":"C1 — fortgeschritten","uk":"C1 — просунутий","es":"C1 — avanzado"},
+        {"ru":"C2 — владение","en":"C2 — mastery","de":"C2 — Beherrschung","uk":"C2 — володіння","es":"C2 — dominio"}
+      ]
+    },
+    "education": {
+      "top": 20,
+      "hint": {"ru":"ступень образования","en":"education level","de":"Bildungsstufe","uk":"ступінь освіти","es":"nivel educativo"},
+      "tiers": [
+        {"ru":"Школа","en":"School","de":"Schule","uk":"Школа","es":"Escuela"},
+        {"ru":"Старшие классы / Abitur","en":"Upper secondary / Abitur","de":"Oberstufe / Abitur","uk":"Старші класи / Abitur","es":"Secundaria superior / Abitur"},
+        {"ru":"Бакалавриат","en":"Bachelor's","de":"Bachelor","uk":"Бакалаврат","es":"Grado universitario"},
+        {"ru":"Магистратура","en":"Master's","de":"Master","uk":"Магістратура","es":"Máster"},
+        {"ru":"Аспирантура / PhD","en":"Doctoral studies / PhD","de":"Promotion / PhD","uk":"Аспірантура / PhD","es":"Doctorado / PhD"}
+      ]
+    },
+    "programming": {
+      "top": 20,
+      "hint": {"ru":"грейд","en":"seniority","de":"Karrierestufe","uk":"грейд","es":"nivel profesional"},
+      "tiers": [
+        {"ru":"Не программирую","en":"I don't code","de":"Ich programmiere nicht","uk":"Не програмую","es":"No programo"},
+        {"ru":"Учу основы","en":"Learning the basics","de":"Ich lerne die Grundlagen","uk":"Вчу основи","es":"Aprendo los fundamentos"},
+        {"ru":"Junior","en":"Junior","de":"Junior","uk":"Junior","es":"Junior"},
+        {"ru":"Middle","en":"Mid-level","de":"Mid-Level","uk":"Middle","es":"Mid-level"},
+        {"ru":"Senior","en":"Senior","de":"Senior","uk":"Senior","es":"Senior"},
+        {"ru":"Lead / архитектор","en":"Lead / architect","de":"Lead / Architekt","uk":"Lead / архітектор","es":"Lead / arquitecto"}
+      ]
+    },
+    "reading": {
+      "top": 16,
+      "hint": {"ru":"книг в год","en":"books per year","de":"Bücher pro Jahr","uk":"книг на рік","es":"libros al año"},
+      "tiers": [
+        {"ru":"Почти не читаю","en":"I hardly read","de":"Ich lese kaum","uk":"Майже не читаю","es":"Casi no leo"},
+        {"ru":"5–10 книг/год","en":"5–10 books/year","de":"5–10 Bücher/Jahr","uk":"5–10 книг/рік","es":"5–10 libros/año"},
+        {"ru":"1–2 в месяц","en":"1–2 per month","de":"1–2 pro Monat","uk":"1–2 на місяць","es":"1–2 al mes"},
+        {"ru":"Книга в неделю","en":"One book a week","de":"Ein Buch pro Woche","uk":"Книга на тиждень","es":"Un libro por semana"},
+        {"ru":"Запойный читатель","en":"Voracious reader","de":"Vielleser","uk":"Читаю запоєм","es":"Lector voraz"}
+      ]
+    },
+    "drawing": {
+      "top": 18,
+      "hint": {"ru":"реальные работы как ориентир","en":"real work as a benchmark","de":"reale Arbeiten als Maßstab","uk":"реальні роботи як орієнтир","es":"trabajos reales como referencia"},
+      "tiers": [
+        {"ru":"Не рисую","en":"I don't draw","de":"Ich zeichne nicht","uk":"Не малюю","es":"No dibujo"},
+        {"ru":"Копирую из туториалов","en":"I copy from tutorials","de":"Ich zeichne Tutorials nach","uk":"Копіюю з туторіалів","es":"Copio de tutoriales"},
+        {"ru":"Рисую из головы простые образы","en":"I draw simple images from imagination","de":"Einfache Motive aus dem Kopf","uk":"Малюю з голови прості образи","es":"Dibujo imágenes sencillas de mi imaginación"},
+        {"ru":"Сложные работы, свой стиль","en":"Complex work, own style","de":"Komplexe Arbeiten, eigener Stil","uk":"Складні роботи, власний стиль","es":"Trabajos complejos, estilo propio"},
+        {"ru":"Коммерческий / профессиональный уровень","en":"Commercial / professional level","de":"Kommerzielles / professionelles Niveau","uk":"Комерційний / професійний рівень","es":"Nivel comercial / profesional"}
+      ]
+    },
+    "design": {
+      "top": 18,
+      "hint": {"ru":"проекты / клиенты","en":"projects / clients","de":"Projekte / Kunden","uk":"проєкти / клієнти","es":"proyectos / clientes"},
+      "tiers": [
+        {"ru":"Не занимаюсь","en":"I don't design","de":"Ich designe nicht","uk":"Не займаюся дизайном","es":"No hago diseño"},
+        {"ru":"Базы Figma/Canva, простые макеты","en":"Figma/Canva basics, simple layouts","de":"Figma/Canva-Grundlagen, einfache Layouts","uk":"Основи Figma/Canva, прості макети","es":"Fundamentos de Figma/Canva, maquetas simples"},
+        {"ru":"Свои проекты, понятная система","en":"Own projects, coherent system","de":"Eigene Projekte, schlüssiges System","uk":"Власні проєкти, зрозуміла система","es":"Proyectos propios, sistema coherente"},
+        {"ru":"Продаю работы / работаю с клиентами","en":"I sell work / work with clients","de":"Ich verkaufe Arbeiten / arbeite mit Kunden","uk":"Продаю роботи / працюю з клієнтами","es":"Vendo trabajos / trabajo con clientes"},
+        {"ru":"Ведущий дизайнер / арт-директор","en":"Lead designer / art director","de":"Lead Designer / Art Director","uk":"Провідний дизайнер / артдиректор","es":"Diseñador principal / director de arte"}
+      ]
+    },
+    "photography": {
+      "top": 18,
+      "hint": {"ru":"контроль над снимком","en":"control over the shot","de":"Kontrolle über das Bild","uk":"контроль над знімком","es":"control de la toma"},
+      "tiers": [
+        {"ru":"Только авто-режим","en":"Auto mode only","de":"Nur Automatikmodus","uk":"Лише авторежим","es":"Solo modo automático"},
+        {"ru":"Базовая ручная настройка","en":"Basic manual settings","de":"Grundlegende manuelle Einstellungen","uk":"Базові ручні налаштування","es":"Ajustes manuales básicos"},
+        {"ru":"Стабильно хорошие кадры","en":"Consistently good shots","de":"Konstant gute Aufnahmen","uk":"Стабільно хороші кадри","es":"Buenas tomas de forma constante"},
+        {"ru":"Продаю / публикую работы","en":"I sell / publish my work","de":"Ich verkaufe / veröffentliche Arbeiten","uk":"Продаю / публікую роботи","es":"Vendo / publico trabajos"},
+        {"ru":"Профессиональный фотограф","en":"Professional photographer","de":"Professioneller Fotograf","uk":"Професійний фотограф","es":"Fotógrafo profesional"}
+      ]
+    },
+    "videography": {
+      "top": 18,
+      "hint": {"ru":"проекты / качество","en":"projects / quality","de":"Projekte / Qualität","uk":"проєкти / якість","es":"proyectos / calidad"},
+      "tiers": [
+        {"ru":"Не снимаю","en":"I don't shoot video","de":"Ich filme nicht","uk":"Не знімаю","es":"No grabo vídeo"},
+        {"ru":"Снимаю для себя на телефон","en":"I shoot for myself on my phone","de":"Ich filme für mich mit dem Handy","uk":"Знімаю для себе на телефон","es":"Grabo para mí con el móvil"},
+        {"ru":"Сознательная работа с кадром/светом","en":"Deliberate framing/lighting","de":"Bewusste Arbeit mit Bild/Licht","uk":"Свідома робота з кадром/світлом","es":"Trabajo consciente de encuadre/luz"},
+        {"ru":"Коммерческие съёмки / клиенты","en":"Commercial shoots / clients","de":"Kommerzielle Drehs / Kunden","uk":"Комерційні зйомки / клієнти","es":"Rodajes comerciales / clientes"},
+        {"ru":"Профессиональный видеограф","en":"Professional videographer","de":"Professioneller Videograf","uk":"Професійний відеограф","es":"Videógrafo profesional"}
+      ]
+    },
+    "video-editing": {
+      "top": 18,
+      "hint": {"ru":"проекты / инструменты","en":"projects / tools","de":"Projekte / Werkzeuge","uk":"проєкти / інструменти","es":"proyectos / herramientas"},
+      "tiers": [
+        {"ru":"Не монтирую","en":"I don't edit video","de":"Ich schneide keine Videos","uk":"Не монтую","es":"No edito vídeo"},
+        {"ru":"Базовый монтаж на телефоне","en":"Basic editing on a phone","de":"Einfacher Schnitt am Handy","uk":"Базовий монтаж на телефоні","es":"Edición básica en el móvil"},
+        {"ru":"Premiere/Final Cut, стабильный результат","en":"Premiere/Final Cut, consistent results","de":"Premiere/Final Cut, konstante Ergebnisse","uk":"Premiere/Final Cut, стабільний результат","es":"Premiere/Final Cut, resultados consistentes"},
+        {"ru":"VFX / motion graphics","en":"VFX / motion graphics","de":"VFX / Motion Graphics","uk":"VFX / motion graphics","es":"VFX / motion graphics"},
+        {"ru":"Профессиональный монтажёр","en":"Professional video editor","de":"Professioneller Videoeditor","uk":"Професійний монтажер","es":"Editor de vídeo profesional"}
+      ]
+    },
+    "blogging": {
+      "top": 18,
+      "hint": {"ru":"аудитория / регулярность","en":"audience / consistency","de":"Publikum / Regelmäßigkeit","uk":"аудиторія / регулярність","es":"audiencia / regularidad"},
+      "tiers": [
+        {"ru":"Не веду","en":"I don't blog","de":"Ich blogge nicht","uk":"Не веду блог","es":"No llevo un blog"},
+        {"ru":"Первые публикации, нерегулярно","en":"First posts, irregularly","de":"Erste Beiträge, unregelmäßig","uk":"Перші публікації, нерегулярно","es":"Primeras publicaciones, sin regularidad"},
+        {"ru":"Регулярно, есть постоянные читатели","en":"Regular posts, returning readers","de":"Regelmäßig, mit Stammlesern","uk":"Регулярно, є постійні читачі","es":"Publico con regularidad, hay lectores habituales"},
+        {"ru":"Монетизация / спонсоры","en":"Monetization / sponsors","de":"Monetarisierung / Sponsoren","uk":"Монетизація / спонсори","es":"Monetización / patrocinadores"},
+        {"ru":"Крупный блог / медиа","en":"Major blog / media outlet","de":"Großer Blog / Medium","uk":"Великий блог / медіа","es":"Blog grande / medio"}
+      ]
+    },
+    "content-creation": {
+      "top": 18,
+      "hint": {"ru":"аудитория / регулярность","en":"audience / consistency","de":"Publikum / Regelmäßigkeit","uk":"аудиторія / регулярність","es":"audiencia / regularidad"},
+      "tiers": [
+        {"ru":"Не создаю","en":"I don't create content","de":"Ich erstelle keine Inhalte","uk":"Не створюю","es":"No creo contenido"},
+        {"ru":"Первые ролики/посты","en":"First videos/posts","de":"Erste Videos/Beiträge","uk":"Перші ролики/дописи","es":"Primeros vídeos/posts"},
+        {"ru":"Регулярно, стабильное качество","en":"Regularly, consistent quality","de":"Regelmäßig, konstante Qualität","uk":"Регулярно, стабільна якість","es":"Con regularidad, calidad constante"},
+        {"ru":"Своя аудитория, монетизация","en":"Own audience, monetization","de":"Eigenes Publikum, Monetarisierung","uk":"Власна аудиторія, монетизація","es":"Audiencia propia, monetización"},
+        {"ru":"Крупный канал / инфлюенсер","en":"Major channel / influencer","de":"Großer Kanal / Influencer","uk":"Великий канал / інфлюенсер","es":"Canal grande / influencer"}
+      ]
+    },
+    "music": {
+      "top": 18,
+      "hint": {"ru":"инструмент","en":"instrument","de":"Instrument","uk":"інструмент","es":"instrumento"},
+      "tiers": [
+        {"ru":"Не играю","en":"I don't play","de":"Ich spiele nicht","uk":"Не граю","es":"No toco"},
+        {"ru":"Базовые аккорды/ноты","en":"Basic chords/notes","de":"Grundakkorde/Noten","uk":"Базові акорди/ноти","es":"Acordes/notas básicos"},
+        {"ru":"Играю любимое","en":"I play favorite pieces","de":"Ich spiele Lieblingsstücke","uk":"Граю улюблене","es":"Toco mis piezas favoritas"},
+        {"ru":"Сложный репертуар","en":"Complex repertoire","de":"Anspruchsvolles Repertoire","uk":"Складний репертуар","es":"Repertorio complejo"},
+        {"ru":"Концертный уровень","en":"Concert level","de":"Konzertniveau","uk":"Концертний рівень","es":"Nivel de concierto"}
+      ]
+    },
+    "guitar": {
+      "top": 18,
+      "hint": {"ru":"инструмент","en":"instrument","de":"Instrument","uk":"інструмент","es":"instrumento"},
+      "tiers": [
+        {"ru":"Не играю","en":"I don't play","de":"Ich spiele nicht","uk":"Не граю","es":"No toco"},
+        {"ru":"Базовые аккорды","en":"Basic chords","de":"Grundakkorde","uk":"Базові акорди","es":"Acordes básicos"},
+        {"ru":"Играю любимое","en":"I play my favorite songs","de":"Ich spiele Lieblingssongs","uk":"Граю улюблене","es":"Toco mis canciones favoritas"},
+        {"ru":"Сложный репертуар","en":"Complex repertoire","de":"Anspruchsvolles Repertoire","uk":"Складний репертуар","es":"Repertorio complejo"},
+        {"ru":"Концертный уровень","en":"Concert level","de":"Konzertniveau","uk":"Концертний рівень","es":"Nivel de concierto"}
+      ]
+    },
+    "vocal": {
+      "top": 18,
+      "hint": {"ru":"выступления / уровень","en":"performances / level","de":"Auftritte / Niveau","uk":"виступи / рівень","es":"actuaciones / nivel"},
+      "tiers": [
+        {"ru":"Только в душе","en":"Only in the shower","de":"Nur unter der Dusche","uk":"Лише під душем","es":"Solo en la ducha"},
+        {"ru":"Пою для себя/друзей","en":"I sing for myself/friends","de":"Ich singe für mich/meine Freunde","uk":"Співаю для себе/друзів","es":"Canto para mí/mis amigos"},
+        {"ru":"Занимаюсь с педагогом","en":"I study with a vocal coach","de":"Ich nehme Gesangsunterricht","uk":"Займаюся з викладачем","es":"Tomo clases de canto"},
+        {"ru":"Выступления на публике","en":"Public performances","de":"Auftritte vor Publikum","uk":"Виступи перед публікою","es":"Actuaciones en público"},
+        {"ru":"Профессиональный вокал","en":"Professional singing","de":"Professioneller Gesang","uk":"Професійний вокал","es":"Canto profesional"}
+      ]
+    },
+    "business": {
+      "top": 20,
+      "hint": {"ru":"стадия дела","en":"business stage","de":"Unternehmensphase","uk":"етап справи","es":"etapa del negocio"},
+      "tiers": [
+        {"ru":"Только идея","en":"Just an idea","de":"Nur eine Idee","uk":"Лише ідея","es":"Solo una idea"},
+        {"ru":"Первые клиенты / MVP","en":"First customers / MVP","de":"Erste Kunden / MVP","uk":"Перші клієнти / MVP","es":"Primeros clientes / MVP"},
+        {"ru":"Стабильная выручка","en":"Steady revenue","de":"Stabile Umsätze","uk":"Стабільна виручка","es":"Ingresos estables"},
+        {"ru":"Масштабируемый бизнес","en":"Scalable business","de":"Skalierbares Unternehmen","uk":"Масштабований бізнес","es":"Negocio escalable"},
+        {"ru":"Успешный выход / инвестиции","en":"Successful exit / investment","de":"Erfolgreicher Exit / Investitionen","uk":"Успішний вихід / інвестиції","es":"Salida exitosa / inversión"}
+      ]
+    },
+    "investing-etf": {
+      "top": 18,
+      "hint": {"ru":"знания + портфель","en":"knowledge + portfolio","de":"Wissen + Portfolio","uk":"знання + портфель","es":"conocimientos + cartera"},
+      "tiers": [
+        {"ru":"Нет сбережений","en":"No savings","de":"Keine Ersparnisse","uk":"Немає заощаджень","es":"Sin ahorros"},
+        {"ru":"Есть подушка безопасности","en":"I have an emergency fund","de":"Notgroschen vorhanden","uk":"Є фінансова подушка","es":"Tengo un fondo de emergencia"},
+        {"ru":"Регулярно инвестирую (ETF/акции)","en":"Invest regularly (ETF/stocks)","de":"Regelmäßige Investments (ETF/Aktien)","uk":"Регулярно інвестую (ETF/акції)","es":"Invierto con regularidad (ETF/acciones)"},
+        {"ru":"Диверсифицированный портфель","en":"Diversified portfolio","de":"Diversifiziertes Portfolio","uk":"Диверсифікований портфель","es":"Cartera diversificada"},
+        {"ru":"Финансовая независимость","en":"Financial independence","de":"Finanzielle Unabhängigkeit","uk":"Фінансова незалежність","es":"Independencia financiera"}
+      ]
+    },
+    "personal-finance": {
+      "top": 18,
+      "hint": {"ru":"знания + портфель","en":"knowledge + portfolio","de":"Wissen + Portfolio","uk":"знання + портфель","es":"conocimientos + cartera"},
+      "tiers": [
+        {"ru":"Нет сбережений","en":"No savings","de":"Keine Ersparnisse","uk":"Немає заощаджень","es":"Sin ahorros"},
+        {"ru":"Есть подушка безопасности","en":"I have an emergency fund","de":"Notgroschen vorhanden","uk":"Є фінансова подушка","es":"Tengo un fondo de emergencia"},
+        {"ru":"Регулярно инвестирую","en":"Invest regularly","de":"Regelmäßige Investments","uk":"Регулярно інвестую","es":"Invierto con regularidad"},
+        {"ru":"Диверсифицированный портфель","en":"Diversified portfolio","de":"Diversifiziertes Portfolio","uk":"Диверсифікований портфель","es":"Cartera diversificada"},
+        {"ru":"Финансовая независимость","en":"Financial independence","de":"Finanzielle Unabhängigkeit","uk":"Фінансова незалежність","es":"Independencia financiera"}
+      ]
+    },
+    "sales": {
+      "top": 18,
+      "hint": {"ru":"результат / объём","en":"results / volume","de":"Ergebnisse / Volumen","uk":"результат / обсяг","es":"resultados / volumen"},
+      "tiers": [
+        {"ru":"Не продаю","en":"I don't sell","de":"Ich verkaufe nicht","uk":"Не продаю","es":"No vendo"},
+        {"ru":"Первые сделки","en":"First deals","de":"Erste Abschlüsse","uk":"Перші угоди","es":"Primeras ventas"},
+        {"ru":"Стабильно закрываю","en":"Close consistently","de":"Schließe regelmäßig ab","uk":"Стабільно закриваю угоди","es":"Cierro ventas con constancia"},
+        {"ru":"Перевыполняю план","en":"Exceed quota","de":"Übererfülle das Ziel","uk":"Перевиконую план","es":"Supero el objetivo"},
+        {"ru":"Топ-сейлз / руковожу отделом","en":"Top seller / lead a sales team","de":"Top im Verkauf / leite ein Vertriebsteam","uk":"Топпродавець / керую відділом","es":"Vendedor destacado / dirijo un equipo de ventas"}
+      ]
+    },
+    "marketing": {
+      "top": 18,
+      "hint": {"ru":"каналы / результат","en":"channels / results","de":"Kanäle / Ergebnisse","uk":"канали / результат","es":"canales / resultados"},
+      "tiers": [
+        {"ru":"Не занимаюсь","en":"Not active","de":"Nicht aktiv","uk":"Не займаюся","es":"No me dedico"},
+        {"ru":"Базы: посты, таргет","en":"Basics: posts, ad targeting","de":"Grundlagen: Posts, Targeting","uk":"База: дописи, таргет","es":"Fundamentos: publicaciones, segmentación"},
+        {"ru":"Веду каналы с результатом","en":"Run channels with results","de":"Betreibe Kanäle mit Ergebnissen","uk":"Веду канали з результатом","es":"Gestiono canales con resultados"},
+        {"ru":"Системный маркетинг / аналитика","en":"Systematic marketing / analytics","de":"Systematisches Marketing / Analytik","uk":"Системний маркетинг / аналітика","es":"Marketing sistemático / analítica"},
+        {"ru":"Маркетинг-директор / стратег","en":"Marketing director / strategist","de":"Marketingleitung / Strategie","uk":"Маркетинг-директор / стратег","es":"Dirección de marketing / estrategia"}
+      ]
+    },
+    "relationships": {
+      "top": 16,
+      "hint": {"ru":"честная самооценка близости","en":"honest assessment of closeness","de":"Ehrliche Selbsteinschätzung der Nähe","uk":"чесна самооцінка близькості","es":"autoevaluación sincera de la cercanía"},
+      "tiers": [
+        {"ru":"Сложно сближаться","en":"Hard to connect","de":"Nähe fällt mir schwer","uk":"Складно зближуватися","es":"Me cuesta conectar"},
+        {"ru":"Есть близкие, но нестабильно","en":"Close relationships, but unstable","de":"Enge Beziehungen, aber instabil","uk":"Є близькі, але нестабільно","es":"Tengo personas cercanas, pero es inestable"},
+        {"ru":"Здоровые крепкие связи","en":"Healthy, strong relationships","de":"Gesunde, stabile Beziehungen","uk":"Здорові міцні зв’язки","es":"Relaciones sanas y sólidas"},
+        {"ru":"Глубокая близость, умею в конфликты","en":"Deep intimacy, can handle conflict","de":"Tiefe Nähe, kann mit Konflikten umgehen","uk":"Глибока близькість, умію проходити конфлікти","es":"Intimidad profunda, sé afrontar conflictos"},
+        {"ru":"Опора и пример для других","en":"A source of support and example to others","de":"Rückhalt und Vorbild für andere","uk":"Опора й приклад для інших","es":"Apoyo y ejemplo para los demás"}
+      ]
+    },
+    "public-speaking": {
+      "top": 18,
+      "hint": {"ru":"опыт сцены","en":"stage experience","de":"Bühnenerfahrung","uk":"досвід сцени","es":"experiencia en el escenario"},
+      "tiers": [
+        {"ru":"Боюсь публики","en":"Afraid of audiences","de":"Angst vor Publikum","uk":"Боюся публіки","es":"Me da miedo el público"},
+        {"ru":"Выступаю с подготовкой","en":"Present with preparation","de":"Halte vorbereitete Vorträge","uk":"Виступаю з підготовкою","es":"Presento con preparación"},
+        {"ru":"Уверенно держу зал","en":"Command the room confidently","de":"Halte den Saal sicher","uk":"Упевнено тримаю зал","es":"Domino la sala con confianza"},
+        {"ru":"Регулярные доклады / лекции","en":"Regular talks / lectures","de":"Regelmäßige Vorträge / Lehrveranstaltungen","uk":"Регулярні доповіді / лекції","es":"Charlas / clases regulares"},
+        {"ru":"Профессиональный спикер","en":"Professional speaker","de":"Professioneller Redner","uk":"Професійний спікер","es":"Conferenciante profesional"}
+      ]
+    },
+    "negotiation": {
+      "top": 18,
+      "hint": {"ru":"сложность сделок","en":"deal complexity","de":"Komplexität der Verhandlungen","uk":"складність угод","es":"complejidad de los acuerdos"},
+      "tiers": [
+        {"ru":"Избегаю","en":"Avoid it","de":"Vermeide es","uk":"Уникаю","es":"Lo evito"},
+        {"ru":"Базовые договорённости","en":"Basic agreements","de":"Grundlegende Vereinbarungen","uk":"Базові домовленості","es":"Acuerdos básicos"},
+        {"ru":"Уверенно торгуюсь","en":"Negotiate confidently","de":"Verhandle sicher","uk":"Упевнено торгуюся","es":"Negocio con confianza"},
+        {"ru":"Сложные многосторонние сделки","en":"Complex multi-party deals","de":"Komplexe Verhandlungen mit mehreren Parteien","uk":"Складні багатосторонні угоди","es":"Acuerdos complejos entre varias partes"},
+        {"ru":"Профессиональный переговорщик","en":"Professional negotiator","de":"Professioneller Verhandlungsführer","uk":"Професійний переговорник","es":"Negociador profesional"}
+      ]
+    },
+    "writing": {
+      "top": 18,
+      "hint": {"ru":"объём / публикации","en":"output / publications","de":"Umfang / Veröffentlichungen","uk":"обсяг / публікації","es":"volumen / publicaciones"},
+      "tiers": [
+        {"ru":"Не пишу","en":"I don't write","de":"Ich schreibe nicht","uk":"Не пишу","es":"No escribo"},
+        {"ru":"Пишу для себя","en":"Write for myself","de":"Schreibe für mich","uk":"Пишу для себе","es":"Escribo para mí"},
+        {"ru":"Регулярные тексты, есть читатели","en":"Regular writing, with readers","de":"Regelmäßige Texte, mit Leserschaft","uk":"Регулярні тексти, є читачі","es":"Textos regulares, con lectores"},
+        {"ru":"Публикуюсь / продаю тексты","en":"Published / sell writing","de":"Veröffentliche / verkaufe Texte","uk":"Публікуюся / продаю тексти","es":"Publico / vendo textos"},
+        {"ru":"Профессиональный автор","en":"Professional author","de":"Professioneller Autor","uk":"Професійний автор","es":"Autor profesional"}
+      ]
+    },
+    "copywriting": {
+      "top": 18,
+      "hint": {"ru":"клиенты / результат","en":"clients / results","de":"Kunden / Ergebnisse","uk":"клієнти / результат","es":"clientes / resultados"},
+      "tiers": [
+        {"ru":"Не пишу","en":"I don't write","de":"Ich schreibe nicht","uk":"Не пишу","es":"No escribo"},
+        {"ru":"Учусь, первые тексты","en":"Learning, first pieces","de":"Lerne, erste Texte","uk":"Навчаюся, перші тексти","es":"Aprendo, primeros textos"},
+        {"ru":"Беру заказы","en":"Take commissions","de":"Nehme Aufträge an","uk":"Беру замовлення","es":"Acepto encargos"},
+        {"ru":"Стабильный поток клиентов","en":"Steady flow of clients","de":"Stetiger Kundenstrom","uk":"Стабільний потік клієнтів","es":"Flujo estable de clientes"},
+        {"ru":"Топ-копирайтер / редактор","en":"Top copywriter / editor","de":"Top-Texter / Redakteur","uk":"Топкопірайтер / редактор","es":"Copywriter destacado / editor"}
+      ]
+    },
+    "podcasting": {
+      "top": 18,
+      "hint": {"ru":"регулярность / аудитория","en":"regularity / audience","de":"Regelmäßigkeit / Hörerschaft","uk":"регулярність / аудиторія","es":"regularidad / audiencia"},
+      "tiers": [
+        {"ru":"Не веду","en":"No podcast","de":"Kein Podcast","uk":"Не веду","es":"No tengo podcast"},
+        {"ru":"Первые выпуски","en":"First episodes","de":"Erste Folgen","uk":"Перші випуски","es":"Primeros episodios"},
+        {"ru":"Регулярно, есть слушатели","en":"Regular, with listeners","de":"Regelmäßig, mit Hörerschaft","uk":"Регулярно, є слухачі","es":"Regular, con oyentes"},
+        {"ru":"Стабильная аудитория / гости","en":"Steady audience / guests","de":"Stabile Hörerschaft / Gäste","uk":"Стабільна аудиторія / гості","es":"Audiencia estable / invitados"},
+        {"ru":"Крупный подкаст","en":"Major podcast","de":"Großer Podcast","uk":"Великий подкаст","es":"Podcast consolidado"}
+      ]
+    },
+    "yoga": {
+      "top": 18,
+      "hint": {"ru":"глубина практики","en":"depth of practice","de":"Tiefe der Praxis","uk":"глибина практики","es":"profundidad de la práctica"},
+      "tiers": [
+        {"ru":"Не практикую","en":"No practice","de":"Keine Praxis","uk":"Не практикую","es":"No practico"},
+        {"ru":"Базовые асаны по видео","en":"Basic asanas from videos","de":"Grundlegende Asanas per Video","uk":"Базові асани за відео","es":"Asanas básicas con vídeos"},
+        {"ru":"Регулярная самостоятельная практика","en":"Regular independent practice","de":"Regelmäßige eigene Praxis","uk":"Регулярна самостійна практика","es":"Práctica autónoma regular"},
+        {"ru":"Сложные асаны, пранаяма","en":"Advanced asanas, pranayama","de":"Anspruchsvolle Asanas, Pranayama","uk":"Складні асани, пранаяма","es":"Asanas avanzadas, pranayama"},
+        {"ru":"Преподаю / сертифицирован","en":"Teach / certified","de":"Unterrichte / zertifiziert","uk":"Викладаю / сертифікований","es":"Enseño / tengo certificación"}
+      ]
+    },
+    "meditation": {
+      "top": 16,
+      "hint": {"ru":"регулярность практики","en":"regularity of practice","de":"Regelmäßigkeit der Praxis","uk":"регулярність практики","es":"regularidad de la práctica"},
+      "tiers": [
+        {"ru":"Не практикую","en":"No practice","de":"Keine Praxis","uk":"Не практикую","es":"No practico"},
+        {"ru":"Иногда 5–10 мин","en":"Sometimes 5–10 min","de":"Manchmal 5–10 Min.","uk":"Іноді 5–10 хв","es":"A veces 5–10 min"},
+        {"ru":"Ежедневная практика","en":"Daily practice","de":"Tägliche Praxis","uk":"Щоденна практика","es":"Práctica diaria"},
+        {"ru":"20–30 мин в потоке","en":"20–30 min in flow","de":"20–30 Min. im Flow","uk":"20–30 хв у потоці","es":"20–30 min en flujo"},
+        {"ru":"Ретриты / углублённая практика","en":"Retreats / deep practice","de":"Retreats / vertiefte Praxis","uk":"Ретрити / поглиблена практика","es":"Retiros / práctica profunda"}
+      ]
+    },
+    "cooking": {
+      "top": 16,
+      "hint": {"ru":"сложность блюд","en":"dish complexity","de":"Komplexität der Gerichte","uk":"складність страв","es":"complejidad de los platos"},
+      "tiers": [
+        {"ru":"Только базовое","en":"Only the basics","de":"Nur Grundlegendes","uk":"Лише базове","es":"Solo lo básico"},
+        {"ru":"Готовлю по рецептам","en":"Cook from recipes","de":"Koche nach Rezept","uk":"Готую за рецептами","es":"Cocino con recetas"},
+        {"ru":"Импровизирую уверенно","en":"Improvise confidently","de":"Improvisiere sicher","uk":"Упевнено імпровізую","es":"Improviso con confianza"},
+        {"ru":"Сложные блюда / своя кухня","en":"Complex dishes / own cuisine","de":"Anspruchsvolle Gerichte / eigene Küche","uk":"Складні страви / власна кухня","es":"Platos complejos / cocina propia"},
+        {"ru":"Уровень шефа","en":"Chef level","de":"Küchenchef-Niveau","uk":"Рівень шефа","es":"Nivel de chef"}
+      ]
+    },
+    "climbing": {
+      "top": 18,
+      "hint": {"ru":"категория трасс","en":"route grade","de":"Schwierigkeitsgrad","uk":"категорія трас","es":"grado de las vías"},
+      "tiers": [
+        {"ru":"Не лажу","en":"I don't climb","de":"Ich klettere nicht","uk":"Не лазжу","es":"No escalo"},
+        {"ru":"Лёгкие трассы в зале","en":"Easy indoor routes","de":"Leichte Routen in der Halle","uk":"Легкі траси в залі","es":"Vías fáciles en rocódromo"},
+        {"ru":"Уверенно 6a–6b","en":"Comfortable at 6a–6b","de":"Sicher auf 6a–6b","uk":"Упевнено 6a–6b","es":"Con soltura en 6a–6b"},
+        {"ru":"Сложные 7-е категории","en":"Hard grade 7 routes","de":"Schwierige Routen im 7. Grad","uk":"Складні траси 7-ї категорії","es":"Vías difíciles de grado 7"},
+        {"ru":"Профи / аутдор-мультипитчи","en":"Pro / outdoor multipitch","de":"Profi / Outdoor-Mehrseillängen","uk":"Профі / аутдор-мультипітчі","es":"Profesional / vías largas al aire libre"}
+      ]
+    },
+    "chess": {
+      "top": 18,
+      "hint": {"ru":"рейтинг ELO","en":"ELO rating","de":"ELO-Wertung","uk":"рейтинг ELO","es":"puntuación ELO"},
+      "tiers": [
+        {"ru":"Знаю правила","en":"Know the rules","de":"Kenne die Regeln","uk":"Знаю правила","es":"Conozco las reglas"},
+        {"ru":"Играю, ~800–1200","en":"Play, ~800–1200","de":"Spiele, ~800–1200","uk":"Граю, ~800–1200","es":"Juego, ~800–1200"},
+        {"ru":"Уверенно 1200–1600","en":"Solid at 1200–1600","de":"Sicher bei 1200–1600","uk":"Упевнено 1200–1600","es":"Sólido en 1200–1600"},
+        {"ru":"1600–2000","en":"1600–2000","de":"1600–2000","uk":"1600–2000","es":"1600–2000"},
+        {"ru":"Кандидат в мастера / выше","en":"Candidate Master / above","de":"Meisterkandidat / höher","uk":"Кандидат у майстри / вище","es":"Candidato a maestro / superior"}
+      ]
+    },
+    "game-development": {
+      "top": 20,
+      "hint": {"ru":"выпущенные проекты","en":"released projects","de":"veröffentlichte Projekte","uk":"випущені проєкти","es":"proyectos publicados"},
+      "tiers": [
+        {"ru":"Не делаю игры","en":"I don't make games","de":"Ich entwickle keine Spiele","uk":"Не роблю ігор","es":"No hago juegos"},
+        {"ru":"Учу движок, прототипы","en":"Learning an engine, prototypes","de":"Lerne eine Engine, Prototypen","uk":"Вивчаю рушій, прототипи","es":"Aprendo un motor, prototipos"},
+        {"ru":"Завершил мелкие проекты","en":"Finished small projects","de":"Kleine Projekte abgeschlossen","uk":"Завершив невеликі проєкти","es":"Terminé proyectos pequeños"},
+        {"ru":"Выпустил игру / в команде","en":"Released a game / work on a team","de":"Ein Spiel veröffentlicht / im Team","uk":"Випустив гру / працюю в команді","es":"Publiqué un juego / trabajo en equipo"},
+        {"ru":"Профессиональный геймдев","en":"Professional game development","de":"Professionelle Spieleentwicklung","uk":"Професійний геймдев","es":"Desarrollo de videojuegos profesional"}
+      ]
+    },
+    "modeling-3d": {
+      "top": 18,
+      "hint": {"ru":"3D / портфолио","en":"3D / portfolio","de":"3D / Portfolio","uk":"3D / портфоліо","es":"3D / portafolio"},
+      "tiers": [
+        {"ru":"Не моделю","en":"I don't model","de":"Ich modelliere nicht","uk":"Не моделюю","es":"No modelo"},
+        {"ru":"Базовые формы в Blender","en":"Basic shapes in Blender","de":"Grundformen in Blender","uk":"Базові форми в Blender","es":"Formas básicas en Blender"},
+        {"ru":"Готовые модели","en":"Finished models","de":"Fertige Modelle","uk":"Готові моделі","es":"Modelos terminados"},
+        {"ru":"Портфолио / фриланс","en":"Portfolio / freelance","de":"Portfolio / Freelance","uk":"Портфоліо / фриланс","es":"Portafolio / freelance"},
+        {"ru":"Профессиональный 3D-артист","en":"Professional 3D artist","de":"Professioneller 3D-Artist","uk":"Професійний 3D-художник","es":"Artista 3D profesional"}
+      ]
+    },
+    "acting": {
+      "top": 18,
+      "hint": {"ru":"сцена / роли","en":"stage / roles","de":"Bühne / Rollen","uk":"сцена / ролі","es":"escenario / papeles"},
+      "tiers": [
+        {"ru":"Не играю","en":"I don't act","de":"Ich spiele nicht","uk":"Не граю","es":"No actúo"},
+        {"ru":"Кружок / любитель","en":"Theater group / amateur","de":"Theatergruppe / Amateur","uk":"Гурток / аматор","es":"Grupo de teatro / aficionado"},
+        {"ru":"Регулярные постановки","en":"Regular productions","de":"Regelmäßige Produktionen","uk":"Регулярні постановки","es":"Producciones regulares"},
+        {"ru":"Заметные роли / съёмки","en":"Notable roles / shoots","de":"Bedeutende Rollen / Drehs","uk":"Помітні ролі / зйомки","es":"Papeles destacados / rodajes"},
+        {"ru":"Профессиональный актёр","en":"Professional actor","de":"Professioneller Schauspieler","uk":"Професійний актор","es":"Actor profesional"}
+      ]
+    },
+    "volunteering": {
+      "top": 16,
+      "hint": {"ru":"регулярность вклада","en":"regularity of contribution","de":"Regelmäßigkeit des Beitrags","uk":"регулярність внеску","es":"regularidad de la contribución"},
+      "tiers": [
+        {"ru":"Не участвую","en":"I don't participate","de":"Ich mache nicht mit","uk":"Не беру участі","es":"No participo"},
+        {"ru":"Разовые акции","en":"One-off actions","de":"Einzelne Aktionen","uk":"Разові акції","es":"Acciones puntuales"},
+        {"ru":"Регулярно помогаю","en":"Help regularly","de":"Helfe regelmäßig","uk":"Регулярно допомагаю","es":"Ayudo con regularidad"},
+        {"ru":"Координирую проекты","en":"Coordinate projects","de":"Koordiniere Projekte","uk":"Координую проєкти","es":"Coordino proyectos"},
+        {"ru":"Веду своё движение","en":"Lead my own movement","de":"Leite meine eigene Initiative","uk":"Веду власний рух","es":"Lidero mi propio movimiento"}
+      ]
+    },
+    "general": {
+      "top": 16,
+      "hint": {"ru":"честная самооценка — сравни с тем, кем был год назад","en":"honest self-assessment — compare yourself with a year ago","de":"Ehrliche Selbsteinschätzung — vergleiche dich mit dir vor einem Jahr","uk":"чесна самооцінка — порівняй себе із собою рік тому","es":"autoevaluación sincera: compárate con quien eras hace un año"},
+      "tiers": [
+        {"ru":"Только начинаю","en":"Just starting","de":"Fange gerade an","uk":"Лише починаю","es":"Acabo de empezar"},
+        {"ru":"Регулярная практика","en":"Regular practice","de":"Regelmäßige Praxis","uk":"Регулярна практика","es":"Práctica regular"},
+        {"ru":"Уверенный прогресс","en":"Solid progress","de":"Sicherer Fortschritt","uk":"Упевнений прогрес","es":"Progreso sólido"},
+        {"ru":"Могу научить других","en":"Can teach others","de":"Kann andere unterrichten","uk":"Можу навчити інших","es":"Puedo enseñar a otros"},
+        {"ru":"Глубокая экспертиза","en":"Deep expertise","de":"Tiefe Expertise","uk":"Глибока експертиза","es":"Experiencia profunda"}
+      ]
+    }
+  }
+});
 // Ключи матчим от длинных к коротким — специфичное побеждает (иначе «Стартап» цепляет «арт»→рисование, «Рукоделие» цеплял «дел»).
 const LADDER_KEYS = Object.keys(IMPORT_LADDERS).sort((a, b) => b.length - a.length);
 // Нормализация для русского матчинга: ё→е (юзеры часто пишут «учеба» вместо «учёба» — фидбек #16)
@@ -3192,10 +3810,18 @@ async function aiCatSuggest(title, box, sel) {
     else box.innerHTML = '<span class="cat-chip muted">ИИ не подобрал — выбери вручную</span>';
   } catch { box.innerHTML = ''; }
 }
+function ladderMatch(skillName) {
+  const normalized = normRu(skillName);
+  for (const alias of LADDER_KEYS) {
+    if (!normalized.includes(normRu(alias))) continue;
+    const id = LADDER_AUTHORED_COPY.aliasToId[alias];
+    const ladder = IMPORT_LADDERS[alias];
+    return { id, alias, ladder };
+  }
+  return { id: LADDER_AUTHORED_COPY.defaultId, alias: null, ladder: GENERIC_LADDER };
+}
 function ladderFor(skillName) {
-  const n = normRu(skillName);
-  for (const key of LADDER_KEYS) if (n.includes(normRu(key))) return IMPORT_LADDERS[key];
-  return GENERIC_LADDER;
+  return ladderMatch(skillName).ladder;
 }
 // Целевой уровень для каждого тира (tier 0 → ур.1; верхний → ladder.top)
 function tierLevels(ladder) { const n = ladder.tiers.length, top = ladder.top || 16; return ladder.tiers.map((_, i) => (i === 0 ? 1 : Math.round(1 + (top - 1) * i / (n - 1)))); }
@@ -3348,15 +3974,54 @@ function levelInfo(totalXp, base, growth) {
 }
 // ── Движок перков древа (SKILLTREE-PLAN.md, Фаза 1) ──
 // Узел даёт perks:[{kind,val}]. Legacy perkXpPct мигрируется в {kind:'xpPct'}. Капы — анти-имба.
+const PERK_TEXT = Object.freeze({
+  xpPct: {
+    ru: (v) => `+${v}% XP в сфере`, en: (v) => `+${v}% XP in this area`,
+    de: (v) => `+${v} % XP in diesem Bereich`, uk: (v) => `+${v}% XP у сфері`, es: (v) => `+${v}% de XP en esta área`,
+  },
+  goldPct: {
+    ru: (v) => `+${v}% золота в сфере`, en: (v) => `+${v}% gold in this area`,
+    de: (v) => `+${v} % Gold in diesem Bereich`, uk: (v) => `+${v}% золота у сфері`, es: (v) => `+${v}% de oro en esta área`,
+  },
+  lootLuck: {
+    ru: (v) => `+${v}% к буст-шансу сундука`, en: (v) => `+${v}% chest boost chance`,
+    de: (v) => `+${v} % auf die Bonuschance der Truhe`, uk: (v) => `+${v}% до шансу бонусу зі скрині`, es: (v) => `+${v}% a la probabilidad de bonus del cofre`,
+  },
+  energyBack: {
+    ru: (v) => `+${v} энергии за квест`, en: (v) => `+${v} energy per quest`,
+    de: (v) => `+${v} Energie pro Quest`, uk: (v) => `+${v} енергії за квест`, es: (v) => `+${v} de energía por misión`,
+  },
+  streakShield: {
+    ru: (v) => `+${v} ${v === 1 ? 'спасение' : 'спасения'} серии`, en: (v) => `+${v} streak ${v === 1 ? 'save' : 'saves'}`,
+    de: (v) => `+${v} ${v === 1 ? 'Serienrettung' : 'Serienrettungen'}`, uk: (v) => `+${v} ${v === 1 ? 'порятунок' : 'порятунки'} серії`, es: (v) => `+${v} ${v === 1 ? 'protección' : 'protecciones'} de racha`,
+  },
+  petBoost: {
+    ru: (v) => `питомец сферы сытнее на ${v}%`, en: (v) => `area pet stays ${v}% better fed`,
+    de: (v) => `Sphärenbegleiter bleibt ${v} % satter`, uk: (v) => `улюбленець сфери ситіший на ${v}%`, es: (v) => `la mascota del área está un ${v}% más saciada`,
+  },
+  bond: {
+    ru: (v) => `+${v} к связи со спутником`, en: (v) => `+${v} bond with the companion`,
+    de: (v) => `+${v} Bindung zum Begleiter`, uk: (v) => `+${v} до зв’язку із супутником`, es: (v) => `+${v} de vínculo con el compañero`,
+  },
+  title: {
+    ru: () => 'звание разблокировано', en: () => 'title unlocked', de: () => 'Titel freigeschaltet',
+    uk: () => 'звання відкрито', es: () => 'título desbloqueado',
+  },
+});
+function perkText(kind, value) {
+  const row = PERK_TEXT[kind]; if (!row) return '';
+  const format = row[lang()] || row.ru;
+  return format(Number(value) || 0);
+}
 const PERK_KINDS = {
-  xpPct:        { icon: '✨', label: 'опыт',     fmt: (v) => `+${v}% XP в сфере`,            cap: 40 },
-  goldPct:      { icon: '🪙', label: 'золото',   fmt: (v) => `+${v}% золота в сфере`,          cap: 30 },
-  lootLuck:     { icon: '🎲', label: 'удача',    fmt: (v) => `+${v}% к буст-шансу сундука`,    cap: 30 },
-  energyBack:   { icon: '🔋', label: 'энергия',  fmt: (v) => `+${v} энергии за квест`,          cap: 10 },
-  streakShield: { icon: '🛡', label: 'щит серии', fmt: (v) => `+${v} спасени${v === 1 ? 'е' : 'я'} серии`, cap: 3 },
-  petBoost:     { icon: '🐾', label: 'питомец',  fmt: (v) => `питомец сферы сытнее на ${v}%`,   cap: 60 },
-  bond:         { icon: '💜', label: 'связь',    fmt: (v) => `+${v} к связи со спутником`,      cap: 20 },
-  title:        { icon: '🏅', label: 'звание',   fmt: () => `звание разблокировано`,            cap: null },
+  xpPct:        { icon: '✨', label: 'опыт',     fmt: (v) => perkText('xpPct', v),        cap: 40 },
+  goldPct:      { icon: '🪙', label: 'золото',   fmt: (v) => perkText('goldPct', v),      cap: 30 },
+  lootLuck:     { icon: '🎲', label: 'удача',    fmt: (v) => perkText('lootLuck', v),     cap: 30 },
+  energyBack:   { icon: '🔋', label: 'энергия',  fmt: (v) => perkText('energyBack', v),   cap: 10 },
+  streakShield: { icon: '🛡', label: 'щит серии', fmt: (v) => perkText('streakShield', v), cap: 3 },
+  petBoost:     { icon: '🐾', label: 'питомец',  fmt: (v) => perkText('petBoost', v),     cap: 60 },
+  bond:         { icon: '💜', label: 'связь',    fmt: (v) => perkText('bond', v),         cap: 20 },
+  title:        { icon: '🏅', label: 'звание',   fmt: (v) => perkText('title', v),        cap: null },
 };
 function nodePerks(n) {
   if (Array.isArray(n.perks) && n.perks.length) return n.perks;
@@ -5205,16 +5870,1316 @@ const TREE_TEMPLATES = {
     ['⚜ Мастер', 'Сфера на высоте', [{ kind: 'title', val: 1 }, { kind: 'xpPct', val: 12 }, { kind: 'goldPct', val: 10 }]],
   ],
 };
+const TREE_AUTHORED_COPY = Object.freeze({
+  "version": 1,
+  "archetypeByIcon": {
+    "🏋": "body",
+    "🧘": "wellbeing",
+    "📚": "study",
+    "🗣": "language",
+    "💼": "work",
+    "🎨": "creative",
+    "💻": "tech",
+    "🧠": "growth",
+    "🧹": "home",
+    "💬": "social",
+    "⭐": "general"
+  },
+  "rows": {
+    "body.n1": {
+      "title": {
+        "ru": "Разминка",
+        "en": "Warm-up",
+        "de": "Aufwärmen",
+        "uk": "Розминка",
+        "es": "Calentamiento"
+      },
+      "desc": {
+        "ru": "Войти в режим без надрыва",
+        "en": "Ease into the routine without overdoing it",
+        "de": "Ohne Überlastung in den Rhythmus kommen",
+        "uk": "Увійти в ритм без перенапруження",
+        "es": "Entrar en ritmo sin forzarte"
+      }
+    },
+    "body.n2": {
+      "title": {
+        "ru": "Режим",
+        "en": "Routine",
+        "de": "Routine",
+        "uk": "Режим",
+        "es": "Rutina"
+      },
+      "desc": {
+        "ru": "Стабильные тренировки",
+        "en": "Consistent training",
+        "de": "Beständiges Training",
+        "uk": "Стабільні тренування",
+        "es": "Entrenamientos constantes"
+      }
+    },
+    "body.n3": {
+      "title": {
+        "ru": "Сила",
+        "en": "Strength",
+        "de": "Kraft",
+        "uk": "Сила",
+        "es": "Fuerza"
+      },
+      "desc": {
+        "ru": "Работа с весом и мощью",
+        "en": "Train with weight and power",
+        "de": "Mit Gewicht und Kraft trainieren",
+        "uk": "Робота з вагою та потужністю",
+        "es": "Trabajar con peso y potencia"
+      }
+    },
+    "body.n4": {
+      "title": {
+        "ru": "Выносливость",
+        "en": "Endurance",
+        "de": "Ausdauer",
+        "uk": "Витривалість",
+        "es": "Resistencia"
+      },
+      "desc": {
+        "ru": "Длинная дистанция",
+        "en": "Go the distance",
+        "de": "Lange Distanzen durchhalten",
+        "uk": "Тримати довгу дистанцію",
+        "es": "Aguantar largas distancias"
+      }
+    },
+    "body.n5": {
+      "title": {
+        "ru": "Дисциплина",
+        "en": "Discipline",
+        "de": "Disziplin",
+        "uk": "Дисципліна",
+        "es": "Disciplina"
+      },
+      "desc": {
+        "ru": "Тренируешься даже без настроения",
+        "en": "Train even when you don't feel like it",
+        "de": "Trainieren, auch wenn dir nicht danach ist",
+        "uk": "Тренуєшся навіть без настрою",
+        "es": "Entrenar incluso sin ganas"
+      }
+    },
+    "body.n6": {
+      "title": {
+        "ru": "Закалка",
+        "en": "Conditioning",
+        "de": "Abhärtung",
+        "uk": "Загартування",
+        "es": "Acondicionamiento"
+      },
+      "desc": {
+        "ru": "Тело привыкло к нагрузке",
+        "en": "Your body has adapted to exertion",
+        "de": "Dein Körper ist an Belastung gewöhnt",
+        "uk": "Тіло звикло до навантаження",
+        "es": "Tu cuerpo se ha habituado al esfuerzo"
+      }
+    },
+    "body.n7": {
+      "title": {
+        "ru": "⚜ Атлет",
+        "en": "⚜ Athlete",
+        "de": "⚜ Athlet",
+        "uk": "⚜ Атлет",
+        "es": "⚜ Atleta"
+      },
+      "desc": {
+        "ru": "Сфера тела на пике",
+        "en": "Body area at its peak",
+        "de": "Körperbereich auf seinem Höhepunkt",
+        "uk": "Сфера тіла на піку",
+        "es": "Área física en su apogeo"
+      }
+    },
+    "wellbeing.n1": {
+      "title": {
+        "ru": "Покой",
+        "en": "Calm",
+        "de": "Ruhe",
+        "uk": "Спокій",
+        "es": "Calma"
+      },
+      "desc": {
+        "ru": "Замедлиться и восстановить",
+        "en": "Slow down and recover",
+        "de": "Zur Ruhe kommen und erholen",
+        "uk": "Сповільнитися й відновитися",
+        "es": "Bajar el ritmo y recuperarte"
+      }
+    },
+    "wellbeing.n2": {
+      "title": {
+        "ru": "Баланс",
+        "en": "Balance",
+        "de": "Balance",
+        "uk": "Баланс",
+        "es": "Equilibrio"
+      },
+      "desc": {
+        "ru": "Ровный ритм жизни",
+        "en": "A steady rhythm of life",
+        "de": "Ein gleichmäßiger Lebensrhythmus",
+        "uk": "Рівний ритм життя",
+        "es": "Un ritmo de vida estable"
+      }
+    },
+    "wellbeing.n3": {
+      "title": {
+        "ru": "Сон",
+        "en": "Sleep",
+        "de": "Schlaf",
+        "uk": "Сон",
+        "es": "Sueño"
+      },
+      "desc": {
+        "ru": "Восстановление через отдых",
+        "en": "Recovery through rest",
+        "de": "Erholung durch Ruhe",
+        "uk": "Відновлення через відпочинок",
+        "es": "Recuperarte mediante el descanso"
+      }
+    },
+    "wellbeing.n4": {
+      "title": {
+        "ru": "Питание",
+        "en": "Nutrition",
+        "de": "Ernährung",
+        "uk": "Харчування",
+        "es": "Nutrición"
+      },
+      "desc": {
+        "ru": "Топливо для тела",
+        "en": "Fuel for the body",
+        "de": "Treibstoff für den Körper",
+        "uk": "Паливо для тіла",
+        "es": "Combustible para el cuerpo"
+      }
+    },
+    "wellbeing.n5": {
+      "title": {
+        "ru": "Осознанность",
+        "en": "Mindfulness",
+        "de": "Achtsamkeit",
+        "uk": "Усвідомленість",
+        "es": "Atención plena"
+      },
+      "desc": {
+        "ru": "Внимание к себе",
+        "en": "Tune in to yourself",
+        "de": "Auf dich selbst achten",
+        "uk": "Увага до себе",
+        "es": "Prestarte atención"
+      }
+    },
+    "wellbeing.n6": {
+      "title": {
+        "ru": "Восстановление",
+        "en": "Recovery",
+        "de": "Regeneration",
+        "uk": "Відновлення",
+        "es": "Recuperación"
+      },
+      "desc": {
+        "ru": "Глубокий ресурс",
+        "en": "Deep reserves",
+        "de": "Tiefe Kraftreserven",
+        "uk": "Глибокий ресурс",
+        "es": "Reservas profundas"
+      }
+    },
+    "wellbeing.n7": {
+      "title": {
+        "ru": "⚜ Дзен",
+        "en": "⚜ Zen",
+        "de": "⚜ Zen",
+        "uk": "⚜ Дзен",
+        "es": "⚜ Zen"
+      },
+      "desc": {
+        "ru": "Тело и ум в гармонии",
+        "en": "Body and mind in harmony",
+        "de": "Körper und Geist im Einklang",
+        "uk": "Тіло й розум у гармонії",
+        "es": "Cuerpo y mente en armonía"
+      }
+    },
+    "study.n1": {
+      "title": {
+        "ru": "Фокус",
+        "en": "Focus",
+        "de": "Fokus",
+        "uk": "Фокус",
+        "es": "Enfoque"
+      },
+      "desc": {
+        "ru": "Учиться без отвлечений",
+        "en": "Learn without distractions",
+        "de": "Ohne Ablenkungen lernen",
+        "uk": "Навчатися без відволікань",
+        "es": "Aprender sin distracciones"
+      }
+    },
+    "study.n2": {
+      "title": {
+        "ru": "Конспект",
+        "en": "Notes",
+        "de": "Mitschrift",
+        "uk": "Конспект",
+        "es": "Apuntes"
+      },
+      "desc": {
+        "ru": "Фиксировать главное",
+        "en": "Capture what matters",
+        "de": "Das Wichtigste festhalten",
+        "uk": "Фіксувати головне",
+        "es": "Anotar lo esencial"
+      }
+    },
+    "study.n3": {
+      "title": {
+        "ru": "Память",
+        "en": "Memory",
+        "de": "Gedächtnis",
+        "uk": "Пам’ять",
+        "es": "Memoria"
+      },
+      "desc": {
+        "ru": "Запоминать надолго",
+        "en": "Remember for the long term",
+        "de": "Langfristig im Gedächtnis behalten",
+        "uk": "Запам’ятовувати надовго",
+        "es": "Recordar a largo plazo"
+      }
+    },
+    "study.n4": {
+      "title": {
+        "ru": "Глубина",
+        "en": "Depth",
+        "de": "Tiefe",
+        "uk": "Глибина",
+        "es": "Profundidad"
+      },
+      "desc": {
+        "ru": "Разбираться до сути",
+        "en": "Get to the heart of it",
+        "de": "Bis zum Kern vordringen",
+        "uk": "Розбиратися до суті",
+        "es": "Comprender a fondo"
+      }
+    },
+    "study.n5": {
+      "title": {
+        "ru": "Широта",
+        "en": "Breadth",
+        "de": "Breite",
+        "uk": "Широта",
+        "es": "Amplitud"
+      },
+      "desc": {
+        "ru": "Связывать темы",
+        "en": "Connect topics",
+        "de": "Themen verknüpfen",
+        "uk": "Поєднувати теми",
+        "es": "Conectar temas"
+      }
+    },
+    "study.n6": {
+      "title": {
+        "ru": "Практика",
+        "en": "Practice",
+        "de": "Praxis",
+        "uk": "Практика",
+        "es": "Práctica"
+      },
+      "desc": {
+        "ru": "Применять знания",
+        "en": "Apply knowledge",
+        "de": "Wissen anwenden",
+        "uk": "Застосовувати знання",
+        "es": "Aplicar conocimientos"
+      }
+    },
+    "study.n7": {
+      "title": {
+        "ru": "⚜ Эрудит",
+        "en": "⚜ Scholar",
+        "de": "⚜ Gelehrter",
+        "uk": "⚜ Ерудит",
+        "es": "⚜ Erudito"
+      },
+      "desc": {
+        "ru": "Учёба даётся легко",
+        "en": "Learning comes easily",
+        "de": "Lernen fällt dir leicht",
+        "uk": "Навчання дається легко",
+        "es": "Aprender te resulta fácil"
+      }
+    },
+    "language.n1": {
+      "title": {
+        "ru": "Слова",
+        "en": "Words",
+        "de": "Wörter",
+        "uk": "Слова",
+        "es": "Palabras"
+      },
+      "desc": {
+        "ru": "Набирать словарный запас",
+        "en": "Build your vocabulary",
+        "de": "Deinen Wortschatz erweitern",
+        "uk": "Нарощувати словниковий запас",
+        "es": "Ampliar tu vocabulario"
+      }
+    },
+    "language.n2": {
+      "title": {
+        "ru": "Речь",
+        "en": "Speech",
+        "de": "Sprechen",
+        "uk": "Мовлення",
+        "es": "Habla"
+      },
+      "desc": {
+        "ru": "Говорить регулярно",
+        "en": "Speak regularly",
+        "de": "Regelmäßig sprechen",
+        "uk": "Говорити регулярно",
+        "es": "Hablar con regularidad"
+      }
+    },
+    "language.n3": {
+      "title": {
+        "ru": "Аудио",
+        "en": "Audio",
+        "de": "Audio",
+        "uk": "Аудіо",
+        "es": "Audio"
+      },
+      "desc": {
+        "ru": "Понимать на слух",
+        "en": "Understand by listening",
+        "de": "Gesprochenes verstehen",
+        "uk": "Розуміти на слух",
+        "es": "Comprender al escuchar"
+      }
+    },
+    "language.n4": {
+      "title": {
+        "ru": "Грамматика",
+        "en": "Grammar",
+        "de": "Grammatik",
+        "uk": "Граматика",
+        "es": "Gramática"
+      },
+      "desc": {
+        "ru": "Структура языка",
+        "en": "The structure of language",
+        "de": "Die Struktur der Sprache",
+        "uk": "Структура мови",
+        "es": "La estructura del idioma"
+      }
+    },
+    "language.n5": {
+      "title": {
+        "ru": "Разговор",
+        "en": "Conversation",
+        "de": "Gespräch",
+        "uk": "Розмова",
+        "es": "Conversación"
+      },
+      "desc": {
+        "ru": "Живое общение",
+        "en": "Real conversation",
+        "de": "Echter Austausch",
+        "uk": "Живе спілкування",
+        "es": "Comunicación real"
+      }
+    },
+    "language.n6": {
+      "title": {
+        "ru": "Погружение",
+        "en": "Immersion",
+        "de": "Eintauchen",
+        "uk": "Занурення",
+        "es": "Inmersión"
+      },
+      "desc": {
+        "ru": "Думать на языке",
+        "en": "Think in the language",
+        "de": "In der Sprache denken",
+        "uk": "Думати цією мовою",
+        "es": "Pensar en el idioma"
+      }
+    },
+    "language.n7": {
+      "title": {
+        "ru": "⚜ Полиглот",
+        "en": "⚜ Polyglot",
+        "de": "⚜ Polyglott",
+        "uk": "⚜ Поліглот",
+        "es": "⚜ Políglota"
+      },
+      "desc": {
+        "ru": "Язык стал своим",
+        "en": "The language feels like your own",
+        "de": "Die Sprache fühlt sich wie deine eigene an",
+        "uk": "Мова стала своєю",
+        "es": "El idioma ya se siente tuyo"
+      }
+    },
+    "work.n1": {
+      "title": {
+        "ru": "Старт",
+        "en": "Start",
+        "de": "Start",
+        "uk": "Старт",
+        "es": "Inicio"
+      },
+      "desc": {
+        "ru": "Первые шаги к доходу",
+        "en": "First steps toward income",
+        "de": "Erste Schritte zum Einkommen",
+        "uk": "Перші кроки до доходу",
+        "es": "Primeros pasos hacia tus ingresos"
+      }
+    },
+    "work.n2": {
+      "title": {
+        "ru": "Ритм",
+        "en": "Rhythm",
+        "de": "Rhythmus",
+        "uk": "Ритм",
+        "es": "Ritmo"
+      },
+      "desc": {
+        "ru": "Стабильная работа",
+        "en": "Steady work",
+        "de": "Beständige Arbeit",
+        "uk": "Стабільна робота",
+        "es": "Trabajo constante"
+      }
+    },
+    "work.n3": {
+      "title": {
+        "ru": "Продуктивность",
+        "en": "Productivity",
+        "de": "Produktivität",
+        "uk": "Продуктивність",
+        "es": "Productividad"
+      },
+      "desc": {
+        "ru": "Делать больше за меньшее",
+        "en": "Do more with less",
+        "de": "Mehr mit weniger schaffen",
+        "uk": "Робити більше з меншими витратами",
+        "es": "Hacer más con menos"
+      }
+    },
+    "work.n4": {
+      "title": {
+        "ru": "Доход",
+        "en": "Income",
+        "de": "Einkommen",
+        "uk": "Дохід",
+        "es": "Ingresos"
+      },
+      "desc": {
+        "ru": "Растить заработок",
+        "en": "Grow your earnings",
+        "de": "Dein Einkommen steigern",
+        "uk": "Збільшувати заробіток",
+        "es": "Aumentar tus ganancias"
+      }
+    },
+    "work.n5": {
+      "title": {
+        "ru": "Связи",
+        "en": "Network",
+        "de": "Netzwerk",
+        "uk": "Зв’язки",
+        "es": "Contactos"
+      },
+      "desc": {
+        "ru": "Сеть контактов",
+        "en": "Build professional connections",
+        "de": "Berufliche Kontakte aufbauen",
+        "uk": "Мережа професійних контактів",
+        "es": "Crear una red profesional"
+      }
+    },
+    "work.n6": {
+      "title": {
+        "ru": "Капитал",
+        "en": "Capital",
+        "de": "Kapital",
+        "uk": "Капітал",
+        "es": "Capital"
+      },
+      "desc": {
+        "ru": "Деньги работают",
+        "en": "Put money to work",
+        "de": "Geld für dich arbeiten lassen",
+        "uk": "Гроші працюють",
+        "es": "Poner el dinero a trabajar"
+      }
+    },
+    "work.n7": {
+      "title": {
+        "ru": "⚜ Профи",
+        "en": "⚜ Professional",
+        "de": "⚜ Profi",
+        "uk": "⚜ Профі",
+        "es": "⚜ Profesional"
+      },
+      "desc": {
+        "ru": "Дело приносит плоды",
+        "en": "Your work bears fruit",
+        "de": "Deine Arbeit trägt Früchte",
+        "uk": "Справа приносить плоди",
+        "es": "Tu trabajo da frutos"
+      }
+    },
+    "creative.n1": {
+      "title": {
+        "ru": "Искра",
+        "en": "Spark",
+        "de": "Funke",
+        "uk": "Іскра",
+        "es": "Chispa"
+      },
+      "desc": {
+        "ru": "Начать создавать",
+        "en": "Begin creating",
+        "de": "Mit dem Schaffen beginnen",
+        "uk": "Почати творити",
+        "es": "Empezar a crear"
+      }
+    },
+    "creative.n2": {
+      "title": {
+        "ru": "Поток",
+        "en": "Flow",
+        "de": "Flow",
+        "uk": "Потік",
+        "es": "Flujo"
+      },
+      "desc": {
+        "ru": "Творить без блока",
+        "en": "Create without creative blocks",
+        "de": "Ohne Blockade gestalten",
+        "uk": "Творити без блоків",
+        "es": "Crear sin bloqueos"
+      }
+    },
+    "creative.n3": {
+      "title": {
+        "ru": "Техника",
+        "en": "Technique",
+        "de": "Technik",
+        "uk": "Техніка",
+        "es": "Técnica"
+      },
+      "desc": {
+        "ru": "Оттачивать ремесло",
+        "en": "Hone your craft",
+        "de": "Dein Handwerk verfeinern",
+        "uk": "Відточувати майстерність",
+        "es": "Perfeccionar tu oficio"
+      }
+    },
+    "creative.n4": {
+      "title": {
+        "ru": "Стиль",
+        "en": "Style",
+        "de": "Stil",
+        "uk": "Стиль",
+        "es": "Estilo"
+      },
+      "desc": {
+        "ru": "Свой почерк",
+        "en": "Your own signature",
+        "de": "Deine eigene Handschrift",
+        "uk": "Власний почерк",
+        "es": "Tu sello propio"
+      }
+    },
+    "creative.n5": {
+      "title": {
+        "ru": "Вдохновение",
+        "en": "Inspiration",
+        "de": "Inspiration",
+        "uk": "Натхнення",
+        "es": "Inspiración"
+      },
+      "desc": {
+        "ru": "Идеи приходят",
+        "en": "Ideas come to you",
+        "de": "Ideen kommen zu dir",
+        "uk": "Ідеї приходять",
+        "es": "Las ideas llegan"
+      }
+    },
+    "creative.n6": {
+      "title": {
+        "ru": "Публика",
+        "en": "Audience",
+        "de": "Publikum",
+        "uk": "Публіка",
+        "es": "Público"
+      },
+      "desc": {
+        "ru": "Делиться работой",
+        "en": "Share your work",
+        "de": "Deine Arbeit teilen",
+        "uk": "Ділитися своїми роботами",
+        "es": "Compartir tu trabajo"
+      }
+    },
+    "creative.n7": {
+      "title": {
+        "ru": "⚜ Творец",
+        "en": "⚜ Creator",
+        "de": "⚜ Schöpfer",
+        "uk": "⚜ Творець",
+        "es": "⚜ Creador"
+      },
+      "desc": {
+        "ru": "Творчество как поток",
+        "en": "Creativity in full flow",
+        "de": "Kreativität im Fluss",
+        "uk": "Творчість як потік",
+        "es": "La creatividad fluye"
+      }
+    },
+    "tech.n1": {
+      "title": {
+        "ru": "Сетап",
+        "en": "Setup",
+        "de": "Setup",
+        "uk": "Сетап",
+        "es": "Configuración"
+      },
+      "desc": {
+        "ru": "Готовое окружение",
+        "en": "A ready environment",
+        "de": "Eine eingerichtete Umgebung",
+        "uk": "Готове середовище",
+        "es": "Un entorno listo"
+      }
+    },
+    "tech.n2": {
+      "title": {
+        "ru": "Коммит-привычка",
+        "en": "Commit Habit",
+        "de": "Commit-Routine",
+        "uk": "Звичка комітити",
+        "es": "Hábito de commits"
+      },
+      "desc": {
+        "ru": "Кодить каждый день",
+        "en": "Code every day",
+        "de": "Jeden Tag programmieren",
+        "uk": "Кодити щодня",
+        "es": "Programar cada día"
+      }
+    },
+    "tech.n3": {
+      "title": {
+        "ru": "Алгоритмы",
+        "en": "Algorithms",
+        "de": "Algorithmen",
+        "uk": "Алгоритми",
+        "es": "Algoritmos"
+      },
+      "desc": {
+        "ru": "Думать структурно",
+        "en": "Think structurally",
+        "de": "Strukturiert denken",
+        "uk": "Мислити структурно",
+        "es": "Pensar de forma estructurada"
+      }
+    },
+    "tech.n4": {
+      "title": {
+        "ru": "Системы",
+        "en": "Systems",
+        "de": "Systeme",
+        "uk": "Системи",
+        "es": "Sistemas"
+      },
+      "desc": {
+        "ru": "Строить надёжно",
+        "en": "Build reliably",
+        "de": "Zuverlässig bauen",
+        "uk": "Будувати надійно",
+        "es": "Construir con fiabilidad"
+      }
+    },
+    "tech.n5": {
+      "title": {
+        "ru": "Поток",
+        "en": "Flow",
+        "de": "Flow",
+        "uk": "Потік",
+        "es": "Flujo"
+      },
+      "desc": {
+        "ru": "Глубокая работа",
+        "en": "Deep work",
+        "de": "Konzentrierte Arbeit",
+        "uk": "Глибока робота",
+        "es": "Trabajo profundo"
+      }
+    },
+    "tech.n6": {
+      "title": {
+        "ru": "Сборка",
+        "en": "Build",
+        "de": "Build",
+        "uk": "Збірка",
+        "es": "Compilación"
+      },
+      "desc": {
+        "ru": "Доводить до релиза",
+        "en": "Ship it to release",
+        "de": "Bis zum Release bringen",
+        "uk": "Доводити до релізу",
+        "es": "Llevar hasta el lanzamiento"
+      }
+    },
+    "tech.n7": {
+      "title": {
+        "ru": "⚜ Инженер",
+        "en": "⚜ Engineer",
+        "de": "⚜ Ingenieur",
+        "uk": "⚜ Інженер",
+        "es": "⚜ Ingeniero"
+      },
+      "desc": {
+        "ru": "Код подчиняется",
+        "en": "Code bends to your will",
+        "de": "Der Code gehorcht",
+        "uk": "Код слухається",
+        "es": "El código obedece"
+      }
+    },
+    "growth.n1": {
+      "title": {
+        "ru": "Чтение",
+        "en": "Reading",
+        "de": "Lesen",
+        "uk": "Читання",
+        "es": "Lectura"
+      },
+      "desc": {
+        "ru": "Питать ум",
+        "en": "Feed the mind",
+        "de": "Den Geist nähren",
+        "uk": "Живити розум",
+        "es": "Alimentar la mente"
+      }
+    },
+    "growth.n2": {
+      "title": {
+        "ru": "Рефлексия",
+        "en": "Reflection",
+        "de": "Reflexion",
+        "uk": "Рефлексія",
+        "es": "Reflexión"
+      },
+      "desc": {
+        "ru": "Понимать себя",
+        "en": "Understand yourself",
+        "de": "Dich selbst verstehen",
+        "uk": "Розуміти себе",
+        "es": "Comprenderte"
+      }
+    },
+    "growth.n3": {
+      "title": {
+        "ru": "Глубина",
+        "en": "Depth",
+        "de": "Tiefe",
+        "uk": "Глибина",
+        "es": "Profundidad"
+      },
+      "desc": {
+        "ru": "Копать вглубь",
+        "en": "Dig deeper",
+        "de": "Tiefer graben",
+        "uk": "Копати глибше",
+        "es": "Profundizar"
+      }
+    },
+    "growth.n4": {
+      "title": {
+        "ru": "Кругозор",
+        "en": "Perspective",
+        "de": "Weitblick",
+        "uk": "Кругозір",
+        "es": "Perspectiva"
+      },
+      "desc": {
+        "ru": "Расширять взгляд",
+        "en": "Broaden your perspective",
+        "de": "Den Blick erweitern",
+        "uk": "Розширювати погляд",
+        "es": "Ampliar tu mirada"
+      }
+    },
+    "growth.n5": {
+      "title": {
+        "ru": "Привычки",
+        "en": "Habits",
+        "de": "Gewohnheiten",
+        "uk": "Звички",
+        "es": "Hábitos"
+      },
+      "desc": {
+        "ru": "Менять себя системно",
+        "en": "Change yourself systematically",
+        "de": "Dich systematisch verändern",
+        "uk": "Змінювати себе системно",
+        "es": "Cambiar de forma sistemática"
+      }
+    },
+    "growth.n6": {
+      "title": {
+        "ru": "Мудрость",
+        "en": "Wisdom",
+        "de": "Weisheit",
+        "uk": "Мудрість",
+        "es": "Sabiduría"
+      },
+      "desc": {
+        "ru": "Применять понятое",
+        "en": "Apply what you understand",
+        "de": "Verstandenes anwenden",
+        "uk": "Застосовувати зрозуміле",
+        "es": "Aplicar lo comprendido"
+      }
+    },
+    "growth.n7": {
+      "title": {
+        "ru": "⚜ Мыслитель",
+        "en": "⚜ Thinker",
+        "de": "⚜ Denker",
+        "uk": "⚜ Мислитель",
+        "es": "⚜ Pensador"
+      },
+      "desc": {
+        "ru": "Растёшь осознанно",
+        "en": "Grow with awareness",
+        "de": "Bewusst wachsen",
+        "uk": "Зростати усвідомлено",
+        "es": "Crecer con conciencia"
+      }
+    },
+    "home.n1": {
+      "title": {
+        "ru": "Порядок",
+        "en": "Order",
+        "de": "Ordnung",
+        "uk": "Порядок",
+        "es": "Orden"
+      },
+      "desc": {
+        "ru": "Навести базу",
+        "en": "Get the basics in order",
+        "de": "Die Grundlage ordnen",
+        "uk": "Навести лад в основі",
+        "es": "Poner en orden lo básico"
+      }
+    },
+    "home.n2": {
+      "title": {
+        "ru": "Рутина",
+        "en": "Routine",
+        "de": "Routine",
+        "uk": "Рутина",
+        "es": "Rutina"
+      },
+      "desc": {
+        "ru": "Делать без напоминаний",
+        "en": "Do it without reminders",
+        "de": "Ohne Erinnerungen erledigen",
+        "uk": "Робити без нагадувань",
+        "es": "Hacerlo sin recordatorios"
+      }
+    },
+    "home.n3": {
+      "title": {
+        "ru": "Чистота",
+        "en": "Cleanliness",
+        "de": "Sauberkeit",
+        "uk": "Чистота",
+        "es": "Limpieza"
+      },
+      "desc": {
+        "ru": "Дом дышит",
+        "en": "The home can breathe",
+        "de": "Das Zuhause atmet",
+        "uk": "Дім дихає",
+        "es": "La casa respira"
+      }
+    },
+    "home.n4": {
+      "title": {
+        "ru": "Уют",
+        "en": "Comfort",
+        "de": "Gemütlichkeit",
+        "uk": "Затишок",
+        "es": "Calidez"
+      },
+      "desc": {
+        "ru": "Пространство для жизни",
+        "en": "A space for living",
+        "de": "Raum zum Leben",
+        "uk": "Простір для життя",
+        "es": "Un espacio para vivir"
+      }
+    },
+    "home.n5": {
+      "title": {
+        "ru": "Система",
+        "en": "System",
+        "de": "System",
+        "uk": "Система",
+        "es": "Sistema"
+      },
+      "desc": {
+        "ru": "Всё на местах",
+        "en": "Everything in its place",
+        "de": "Alles an seinem Platz",
+        "uk": "Усе на своїх місцях",
+        "es": "Todo en su sitio"
+      }
+    },
+    "home.n6": {
+      "title": {
+        "ru": "Забота",
+        "en": "Care",
+        "de": "Fürsorge",
+        "uk": "Турбота",
+        "es": "Cuidado"
+      },
+      "desc": {
+        "ru": "Дом как опора",
+        "en": "Home as support",
+        "de": "Das Zuhause als Rückhalt",
+        "uk": "Дім як опора",
+        "es": "El hogar como apoyo"
+      }
+    },
+    "home.n7": {
+      "title": {
+        "ru": "⚜ Хранитель очага",
+        "en": "⚜ Hearthkeeper",
+        "de": "⚜ Hüter des Herdes",
+        "uk": "⚜ Хранитель вогнища",
+        "es": "⚜ Guardián del hogar"
+      },
+      "desc": {
+        "ru": "Быт работает на тебя",
+        "en": "Home life works for you",
+        "de": "Der Alltag arbeitet für dich",
+        "uk": "Побут працює на тебе",
+        "es": "El hogar trabaja a tu favor"
+      }
+    },
+    "social.n1": {
+      "title": {
+        "ru": "Контакт",
+        "en": "Contact",
+        "de": "Kontakt",
+        "uk": "Контакт",
+        "es": "Contacto"
+      },
+      "desc": {
+        "ru": "Тянуться к людям",
+        "en": "Reach out to people",
+        "de": "Auf Menschen zugehen",
+        "uk": "Тягнутися до людей",
+        "es": "Acercarte a la gente"
+      }
+    },
+    "social.n2": {
+      "title": {
+        "ru": "Тепло",
+        "en": "Warmth",
+        "de": "Wärme",
+        "uk": "Тепло",
+        "es": "Calidez"
+      },
+      "desc": {
+        "ru": "Дарить внимание",
+        "en": "Give attention",
+        "de": "Aufmerksamkeit schenken",
+        "uk": "Дарувати увагу",
+        "es": "Brindar atención"
+      }
+    },
+    "social.n3": {
+      "title": {
+        "ru": "Дружба",
+        "en": "Friendship",
+        "de": "Freundschaft",
+        "uk": "Дружба",
+        "es": "Amistad"
+      },
+      "desc": {
+        "ru": "Беречь близких",
+        "en": "Cherish those close to you",
+        "de": "Nahestehende Menschen schätzen",
+        "uk": "Берегти близьких",
+        "es": "Cuidar a tus seres queridos"
+      }
+    },
+    "social.n4": {
+      "title": {
+        "ru": "Эмпатия",
+        "en": "Empathy",
+        "de": "Empathie",
+        "uk": "Емпатія",
+        "es": "Empatía"
+      },
+      "desc": {
+        "ru": "Слышать других",
+        "en": "Hear others",
+        "de": "Anderen zuhören",
+        "uk": "Чути інших",
+        "es": "Escuchar a los demás"
+      }
+    },
+    "social.n5": {
+      "title": {
+        "ru": "Поддержка",
+        "en": "Support",
+        "de": "Unterstützung",
+        "uk": "Підтримка",
+        "es": "Apoyo"
+      },
+      "desc": {
+        "ru": "Быть рядом",
+        "en": "Be there",
+        "de": "Für andere da sein",
+        "uk": "Бути поруч",
+        "es": "Estar presente"
+      }
+    },
+    "social.n6": {
+      "title": {
+        "ru": "Близость",
+        "en": "Closeness",
+        "de": "Nähe",
+        "uk": "Близькість",
+        "es": "Cercanía"
+      },
+      "desc": {
+        "ru": "Глубокие связи",
+        "en": "Deep connections",
+        "de": "Tiefe Verbindungen",
+        "uk": "Глибокі зв’язки",
+        "es": "Vínculos profundos"
+      }
+    },
+    "social.n7": {
+      "title": {
+        "ru": "⚜ Душа компании",
+        "en": "⚜ Life of the Party",
+        "de": "⚜ Herz der Runde",
+        "uk": "⚜ Душа компанії",
+        "es": "⚜ Alma del grupo"
+      },
+      "desc": {
+        "ru": "Люди тянутся к тебе",
+        "en": "People are drawn to you",
+        "de": "Menschen fühlen sich zu dir hingezogen",
+        "uk": "Люди тягнуться до тебе",
+        "es": "La gente se siente atraída hacia ti"
+      }
+    },
+    "general.n1": {
+      "title": {
+        "ru": "Старт",
+        "en": "Start",
+        "de": "Start",
+        "uk": "Старт",
+        "es": "Inicio"
+      },
+      "desc": {
+        "ru": "Первый шаг в сфере",
+        "en": "First step in this area",
+        "de": "Erster Schritt in diesem Bereich",
+        "uk": "Перший крок у сфері",
+        "es": "Primer paso en esta área"
+      }
+    },
+    "general.n2": {
+      "title": {
+        "ru": "Регулярность",
+        "en": "Consistency",
+        "de": "Beständigkeit",
+        "uk": "Регулярність",
+        "es": "Constancia"
+      },
+      "desc": {
+        "ru": "Стабильный ритм",
+        "en": "A steady rhythm",
+        "de": "Ein stabiler Rhythmus",
+        "uk": "Стабільний ритм",
+        "es": "Un ritmo estable"
+      }
+    },
+    "general.n3": {
+      "title": {
+        "ru": "Глубина",
+        "en": "Depth",
+        "de": "Tiefe",
+        "uk": "Глибина",
+        "es": "Profundidad"
+      },
+      "desc": {
+        "ru": "Глубокая работа",
+        "en": "Deep work",
+        "de": "Konzentrierte Arbeit",
+        "uk": "Глибока робота",
+        "es": "Trabajo profundo"
+      }
+    },
+    "general.n4": {
+      "title": {
+        "ru": "Широта",
+        "en": "Breadth",
+        "de": "Breite",
+        "uk": "Широта",
+        "es": "Amplitud"
+      },
+      "desc": {
+        "ru": "Расширение охвата",
+        "en": "Expand your reach",
+        "de": "Die Reichweite erweitern",
+        "uk": "Розширення охоплення",
+        "es": "Ampliar el alcance"
+      }
+    },
+    "general.n5": {
+      "title": {
+        "ru": "Мастерство",
+        "en": "Mastery",
+        "de": "Meisterschaft",
+        "uk": "Майстерність",
+        "es": "Maestría"
+      },
+      "desc": {
+        "ru": "Высокий уровень",
+        "en": "A high level",
+        "de": "Hohes Niveau",
+        "uk": "Високий рівень",
+        "es": "Un nivel alto"
+      }
+    },
+    "general.n6": {
+      "title": {
+        "ru": "Стойкость",
+        "en": "Resilience",
+        "de": "Durchhaltevermögen",
+        "uk": "Стійкість",
+        "es": "Perseverancia"
+      },
+      "desc": {
+        "ru": "Не сдаваться",
+        "en": "Never give up",
+        "de": "Nicht aufgeben",
+        "uk": "Не здаватися",
+        "es": "No rendirse"
+      }
+    },
+    "general.n7": {
+      "title": {
+        "ru": "⚜ Мастер",
+        "en": "⚜ Master",
+        "de": "⚜ Meister",
+        "uk": "⚜ Майстер",
+        "es": "⚜ Maestro"
+      },
+      "desc": {
+        "ru": "Сфера на высоте",
+        "en": "Area at its peak",
+        "de": "Bereich auf höchstem Niveau",
+        "uk": "Сфера на висоті",
+        "es": "Área en su punto más alto"
+      }
+    }
+  }
+});
+const TREE_TEMPLATE_COPY_KEY_RE = /^tree\.template\.([a-z][a-z0-9-]*)\.(n[1-7])\.(title|desc)$/;
+function treeTemplateCopyRef(archetype, nodeKey) {
+  const slug = TREE_AUTHORED_COPY.archetypeByIcon[archetype];
+  const row = slug && TREE_AUTHORED_COPY.rows[slug + '.' + nodeKey];
+  return row ? { slug, nodeKey, row } : null;
+}
+function treeTemplateCopyKey(archetype, nodeKey, field) {
+  if (field !== 'title' && field !== 'desc') return null;
+  const ref = treeTemplateCopyRef(archetype, nodeKey);
+  return ref ? `tree.template.${ref.slug}.${nodeKey}.${field}` : null;
+}
+function treeTemplateCanonicalFieldByKey(key) {
+  const match = TREE_TEMPLATE_COPY_KEY_RE.exec(String(key || ''));
+  if (!match) return null;
+  const row = TREE_AUTHORED_COPY.rows[match[1] + '.' + match[2]];
+  return row && row[match[3]] ? row[match[3]] : null;
+}
+const TREE_LADDER_COPY_KEY_RE = /^tree\.ladder\.([a-z][a-z0-9-]*)\.(hint|tier\.(\d+))$/;
+function treeLadderCopyKey(ladderId, field, tierIndex) {
+  const variant = LADDER_AUTHORED_COPY.variants[ladderId];
+  if (!variant) return null;
+  if (field === 'hint') return `tree.ladder.${ladderId}.hint`;
+  if (field !== 'tier' || !Number.isInteger(tierIndex) || !variant.tiers[tierIndex]) return null;
+  return `tree.ladder.${ladderId}.tier.${tierIndex}`;
+}
+function treeLadderCanonicalFieldByKey(key) {
+  const match = TREE_LADDER_COPY_KEY_RE.exec(String(key || ''));
+  if (!match) return null;
+  const variant = LADDER_AUTHORED_COPY.variants[match[1]];
+  if (!variant) return null;
+  if (match[2] === 'hint') return variant.hint;
+  const tierIndex = Number(match[3]);
+  return Number.isInteger(tierIndex) ? variant.tiers[tierIndex] || null : null;
+}
+function treeCanonicalFieldByKey(key) {
+  return treeTemplateCanonicalFieldByKey(key) || treeLadderCanonicalFieldByKey(key);
+}
+function treeNodeCopy(node, field) {
+  if (field !== 'title' && field !== 'desc') return '';
+  const raw = String((node && node[field]) || '');
+  if (!node || node[field + 'Custom'] === true) return raw;
+  const copy = treeCanonicalFieldByKey(node[field + 'Key']);
+  if (!copy || raw !== copy.ru) return raw;
+  return copy[lang()] || copy.ru;
+}
 function archetypeOf(skillId) { try { const t = petTraits(skillId); return (t[0] && t[0].icon) || '⭐'; } catch { return '⭐'; } }
 function defaultTreeForSkill(skillId) {
   const arc = archetypeOf(skillId), tpl = TREE_TEMPLATES[arc] || TREE_TEMPLATES['⭐'], p = 'nd_' + skillId + '_';
   return {
     archetype: arc,
-    nodes: TREE_SHAPE.map((sh, i) => ({
-      id: p + sh.key, title: tpl[i][0], desc: tpl[i][1], cost: sh.cost,
-      requires: sh.req.map((k) => p + k), perks: tpl[i][2], capstone: !!sh.capstone,
-      unlocked: false, col: sh.col, row: sh.row,
-    })),
+    nodes: TREE_SHAPE.map((sh, i) => {
+      const titleKey = treeTemplateCopyKey(arc, sh.key, 'title');
+      const descKey = treeTemplateCopyKey(arc, sh.key, 'desc');
+      return {
+        id: p + sh.key, title: tpl[i][0], desc: tpl[i][1],
+        ...(titleKey ? { titleKey, descKey } : {}),
+        cost: sh.cost, requires: sh.req.map((k) => p + k), perks: tpl[i][2], capstone: !!sh.capstone,
+        unlocked: false, col: sh.col, row: sh.row,
+      };
+    }),
   };
 }
 // Пристойно ли это нетронутое СТАРОЕ дерево (5 узлов, дефолтные тайтлы, ничего не взято)? → можно апгрейдить до шаблона.
@@ -5223,22 +7188,182 @@ function isPristineOldTree(t) {
   if (t.nodes.some((n) => n.unlocked)) return false;
   return t.nodes.map((n) => n.title).join('|') === 'Старт|Регулярность|Глубина|Широта|Мастерство';
 }
-const TREE_SX = 194, TREE_SY = 112, TREE_NW = 150, TREE_NH = 70;
+function sameTreeReqs(a, b) {
+  a = Array.isArray(a) ? a : []; b = Array.isArray(b) ? b : [];
+  return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+function sameTreePerks(a, b) {
+  a = Array.isArray(a) ? a : []; b = Array.isArray(b) ? b : [];
+  return a.length === b.length && a.every((perk, index) => {
+    const expected = b[index];
+    return perk && expected && perk.kind === expected.kind && perk.val === expected.val;
+  });
+}
+function exactCanonicalTemplateNode(skillId, tree, index) {
+  const shape = TREE_SHAPE[index], template = TREE_TEMPLATES[tree && tree.archetype];
+  const node = tree && Array.isArray(tree.nodes) && tree.nodes[index];
+  const copy = shape && treeTemplateCopyRef(tree.archetype, shape.key);
+  if (!shape || !template || !template[index] || !node || !copy) return null;
+  const prefix = 'nd_' + skillId + '_';
+  const expectedReqs = shape.req.map((key) => prefix + key);
+  if (node.id !== prefix + shape.key || node.milestone || node.personal) return null;
+  if (node.titleCustom === true || node.descCustom === true) return null;
+  if (node.title !== copy.row.title.ru || String(node.desc || '') !== copy.row.desc.ru) return null;
+  if (Number(node.cost) !== shape.cost || !!node.capstone !== !!shape.capstone) return null;
+  if (!sameTreeReqs(node.requires, expectedReqs) || !sameTreePerks(node.perks, template[index][2])) return null;
+  return { node, shape };
+}
+function backfillCanonicalTemplateKeys(skillId, tree) {
+  let changed = false;
+  for (let index = 0; index < TREE_SHAPE.length; index++) {
+    const exact = exactCanonicalTemplateNode(skillId, tree, index); if (!exact) continue;
+    const { node, shape } = exact;
+    const titleKey = treeTemplateCopyKey(tree.archetype, shape.key, 'title');
+    const descKey = treeTemplateCopyKey(tree.archetype, shape.key, 'desc');
+    if ((node.titleKey != null && node.titleKey !== titleKey) || (node.descKey != null && node.descKey !== descKey)) continue;
+    if (node.titleKey == null) { node.titleKey = titleKey; changed = true; }
+    if (node.descKey == null) { node.descKey = descKey; changed = true; }
+  }
+  return changed;
+}
+function defaultMilestoneIndex(skillId, node) {
+  if (!node || node.milestone !== true || node.personal === true) return null;
+  const prefix = 'nd_' + skillId + '_ms';
+  const id = String(node.id || '');
+  if (!id.startsWith(prefix)) return null;
+  const suffix = id.slice(prefix.length);
+  if (!/^\d+$/.test(suffix)) return null;
+  const index = Number(suffix);
+  return Number.isSafeInteger(index) ? index : null;
+}
+function defaultMilestoneNodes(skillId, tree) {
+  if (!tree || !Array.isArray(tree.nodes)) return [];
+  const found = [], seen = new Set();
+  for (const node of tree.nodes) {
+    const milestoneIndex = defaultMilestoneIndex(skillId, node);
+    if (milestoneIndex == null) continue;
+    if (seen.has(milestoneIndex)) return [];
+    seen.add(milestoneIndex);
+    found.push({ node, milestoneIndex, tierIndex: milestoneIndex + 1 });
+  }
+  return found.sort((a, b) => a.milestoneIndex - b.milestoneIndex);
+}
+function exactDefaultMilestoneShape(skillId, entry) {
+  const { node, milestoneIndex } = entry;
+  const expectedReqs = milestoneIndex === 0 ? [] : ['nd_' + skillId + '_ms' + (milestoneIndex - 1)];
+  return Number(node.cost) === 0 &&
+    node.titleCustom !== true && node.descCustom !== true &&
+    sameTreeReqs(node.requires, expectedReqs);
+}
+function ladderCandidatesForDefaultMilestones(skillId, tree) {
+  const entries = defaultMilestoneNodes(skillId, tree);
+  if (!entries.length || entries.some((entry) => !exactDefaultMilestoneShape(skillId, entry))) return { entries: [], ids: [] };
+  const ids = Object.keys(LADDER_AUTHORED_COPY.variants).filter((id) => {
+    const variant = LADDER_AUTHORED_COPY.variants[id];
+    return entries.every(({ node, tierIndex }) => {
+      const tier = variant.tiers[tierIndex];
+      return tier && tier.ru === node.title && variant.hint.ru === String(node.desc || '');
+    });
+  });
+  return { entries, ids };
+}
+function backfillDefaultMilestoneKeys(skillId, tree) {
+  const { entries, ids } = ladderCandidatesForDefaultMilestones(skillId, tree);
+  if (ids.length !== 1) return false;
+  const ladderId = ids[0];
+  for (const { node, tierIndex } of entries) {
+    const titleKey = treeLadderCopyKey(ladderId, 'tier', tierIndex);
+    const descKey = treeLadderCopyKey(ladderId, 'hint');
+    if (!titleKey || !descKey) return false;
+    if (node.ladderId != null && node.ladderId !== ladderId) return false;
+    if (node.tierIndex != null && node.tierIndex !== tierIndex) return false;
+    if (node.titleKey != null && node.titleKey !== titleKey) return false;
+    if (node.descKey != null && node.descKey !== descKey) return false;
+  }
+  let changed = false;
+  for (const { node, tierIndex } of entries) {
+    const titleKey = treeLadderCopyKey(ladderId, 'tier', tierIndex);
+    const descKey = treeLadderCopyKey(ladderId, 'hint');
+    if (node.ladderId == null) { node.ladderId = ladderId; changed = true; }
+    if (node.tierIndex == null) { node.tierIndex = tierIndex; changed = true; }
+    if (node.titleKey == null) { node.titleKey = titleKey; changed = true; }
+    if (node.descKey == null) { node.descKey = descKey; changed = true; }
+  }
+  return changed;
+}
+const TREE_SX = 194, TREE_SY = 112, TREE_NW = 168, TREE_NH = 96;
+const TREE_GRID_COLS = 5;
+function isPlainRecord(value) {
+  return value != null && typeof value === 'object' && !Array.isArray(value);
+}
+function validateSkillTreePayload(value) {
+  if (!isPlainRecord(value)) return false;
+  for (const tree of Object.values(value)) {
+    if (!isPlainRecord(tree) || !Array.isArray(tree.nodes)) return false;
+    const ids = new Set();
+    for (const node of tree.nodes) {
+      if (!isPlainRecord(node) || typeof node.id !== 'string' || !node.id || ids.has(node.id)) return false;
+      ids.add(node.id);
+      if (typeof node.title !== 'string') return false;
+      if (node.desc != null && typeof node.desc !== 'string') return false;
+      if (node.descKey != null && typeof node.descKey !== 'string') return false;
+      if (node.requires != null && (!Array.isArray(node.requires) || node.requires.some((id) => typeof id !== 'string'))) return false;
+      if (node.perks != null && (!Array.isArray(node.perks) || node.perks.some((perk) => !isPlainRecord(perk) || typeof perk.kind !== 'string' || !Number.isFinite(Number(perk.val))))) return false;
+      if (node.cost != null && (!Number.isFinite(Number(node.cost)) || Number(node.cost) < 0)) return false;
+      for (const flag of ['unlocked', 'milestone', 'capstone', 'personal', 'titleCustom', 'descCustom']) if (node[flag] != null && typeof node[flag] !== 'boolean') return false;
+      if (node.x == null && node.col == null) return false;
+      if (node.y == null && node.row == null) return false;
+      if (node.x != null && !Number.isFinite(Number(node.x))) return false;
+      if (node.y != null && !Number.isFinite(Number(node.y))) return false;
+      if (node.x == null && node.col != null && !Number.isFinite(Number(node.col))) return false;
+      if (node.y == null && node.row != null && !Number.isFinite(Number(node.row))) return false;
+    }
+  }
+  return true;
+}
+async function retrySkillTreeLoad() {
+  State._treeLoadBusy = true; render();
+  const result = await Store.loadChecked('skilltree', {}, validateSkillTreePayload);
+  State.tree = result.value; State._treeLoadError = result.error; State._treeLoadBusy = false;
+  if (!result.error) {
+    ensureTrees();
+    if (!State.treeSkill || !State.tree[State.treeSkill]) State.treeSkill = State.settings.skills[0] && State.settings.skills[0].id;
+    State._treeFocusAfterCommit = '.tree-scroll';
+  } else State._treeFocusAfterCommit = '[data-action="tree-retry-load"]';
+  render();
+}
+async function resetSkillTreeData() {
+  State._treeLoadBusy = true; State._treeLoadError = ''; State.tree = {};
+  ensureTrees();
+  await Store.saveNow('skilltree', State.tree);
+  State._treeLoadBusy = false; State.treeSkill = State.settings.skills[0] && State.settings.skills[0].id;
+  State._treeFocusAfterCommit = '.tree-scroll'; render();
+}
 // ── Дерево v3, Фаза 1: 🚩 Вехи (TREE-V3-PLAN.md) ─────────────────────────────────────
 // Хребет реальных достижений сферы из лестниц мастерства (IMPORT_LADDERS — реюз импорта).
 // Вехи открываются жизнью (честное подтверждение), а не очками; каждая взятая веха ДАЁТ
 // +1 очко практик — жизнь финансирует бонусы. Правая колонка (col 3.4), цепочка снизу вверх.
 function milestonesForSkill(skillId) {
-  const ladder = ladderFor(skillLabel(skillId) || skillById(skillId).name || '');
-  const tiers = (ladder.tiers || []).slice(1, 7); // тир 0 («Не бегаю») — не веха; максимум 6
+  const skillName = skillLabel(skillId) || skillById(skillId).name || '';
+  const match = ladderMatch(skillName);
+  const tiers = (match.ladder.tiers || []).slice(1, 7); // тир 0 («Не бегаю») — не веха; максимум 6
   const p = 'nd_' + skillId + '_ms';
-  return tiers.map((tier, i) => ({
-    id: p + i, title: tier, desc: ladder.hint || '', milestone: true, cost: 0,
-    requires: i ? [p + (i - 1)] : [], perks: [], unlocked: false,
-    col: 3.4, row: Math.max(0, tiers.length - 1 - i), // первая веха внизу, вершина сверху
-  }));
+  return tiers.map((tier, i) => {
+    const tierIndex = i + 1;
+    return {
+      id: p + i, title: tier, desc: match.ladder.hint || '',
+      titleKey: treeLadderCopyKey(match.id, 'tier', tierIndex),
+      descKey: treeLadderCopyKey(match.id, 'hint'),
+      ladderId: match.id, tierIndex,
+      milestone: true, cost: 0,
+      requires: i ? [p + (i - 1)] : [], perks: [], unlocked: false,
+      col: 3.4, row: Math.max(0, tiers.length - 1 - i), // первая веха внизу, вершина сверху
+    };
+  });
 }
 function ensureTrees() {
+  if (State._treeLoadError) return;
+  let copyKeysChanged = false;
   for (const s of State.settings.skills) {
     if (!State.tree[s.id]) { State.tree[s.id] = defaultTreeForSkill(s.id); continue; }
     // апгрейд: нетронутое старое generic-дерево → тематический шаблон по архетипу (кастом/использованные не трогаем)
@@ -5248,12 +7373,15 @@ function ensureTrees() {
   for (const s of State.settings.skills) {
     const tr = State.tree[s.id];
     if (tr && Array.isArray(tr.nodes) && !tr.nodes.some((n) => n.milestone)) tr.nodes.push(...milestonesForSkill(s.id));
+    if (tr && backfillCanonicalTemplateKeys(s.id, tr)) copyKeysChanged = true;
+    if (tr && backfillDefaultMilestoneKeys(s.id, tr)) copyKeysChanged = true;
   }
   // позиции col/row → свободные x/y (для перетаскивания)
   for (const id in State.tree) for (const n of State.tree[id].nodes || []) {
     if (n.x == null) n.x = (n.col || 0) * TREE_SX;
     if (n.y == null) n.y = (n.row || 0) * TREE_SY;
   }
+  if (copyKeysChanged) Store.save('skilltree', State.tree);
   syncMilestonesFromImport();
 }
 // Фаза 2: синк вех с импортом достижений. Юзер при импорте честно указал тир N — значит вехи
@@ -5281,9 +7409,76 @@ function treePointsAvailable(id) { return treePointsEarned(id) - treePointsSpent
 function nodeUnlockable(id, node) {
   if (node.unlocked) return false;
   const t = State.tree[id];
-  if ((node.requires || []).some((rid) => { const r = t.nodes.find((x) => x.id === rid); return r && !r.unlocked; })) return false;
+  if ((node.requires || []).some((rid) => { const r = t.nodes.find((x) => x.id === rid); return !r || !r.unlocked; })) return false;
   if (node.milestone) return true; // веха не стоит очков — она стоит жизни (подтверждение в клике)
   return treePointsAvailable(id) >= (node.cost || 0);
+}
+function treeNodeState(id, node) {
+  if (node.unlocked) return 'unlocked';
+  return nodeUnlockable(id, node) ? 'available' : 'locked';
+}
+function treeNodeRequirements(id, node) {
+  const tree = State.tree[id];
+  if (!tree) return [];
+  return (node.requires || []).map((rid) => tree.nodes.find((item) => item.id === rid)).filter(Boolean);
+}
+function treeNodeLockReason(id, node) {
+  if (!node || node.unlocked) return '';
+  const tree = State.tree[id];
+  const missing = (node.requires || []).filter((rid) => {
+    const required = tree && tree.nodes.find((item) => item.id === rid);
+    return !required || !required.unlocked;
+  });
+  if (missing.length) return t('Сначала открой предыдущие узлы');
+  if (!node.milestone && treePointsAvailable(id) < (node.cost || 0)) return t('Не хватает очков практик');
+  return '';
+}
+function treeNodeStateLabel(state, node) {
+  if (node && node.milestone) return state === 'unlocked' ? t('Веха взята') : state === 'available' ? t('Веха доступна') : t('Веха закрыта');
+  return state === 'unlocked' ? t('Открыто') : state === 'available' ? t('Доступно') : t('Заблокировано');
+}
+function treeNodeStateIcon(state, node) {
+  if (node && node.milestone) return state === 'unlocked' ? '✓' : state === 'available' ? '🚩' : '🔒';
+  return state === 'unlocked' ? '✓' : state === 'available' ? '◇' : '🔒';
+}
+function treeNodeRectOverlap(a, b) {
+  return a.x < b.x + TREE_NW + 12 && a.x + TREE_NW + 12 > b.x && a.y < b.y + TREE_NH + 12 && a.y + TREE_NH + 12 > b.y;
+}
+function treePositionOpen(tree, x, y, ignoreId = '') {
+  const candidate = { x, y };
+  return !(tree.nodes || []).some((node) => node.id !== ignoreId && treeNodeRectOverlap(candidate, { x: Number(node.x) || 0, y: Number(node.y) || 0 }));
+}
+function nextTreeNodePosition(tree) {
+  for (let row = 0; row < 200; row++) {
+    for (let col = 0; col < TREE_GRID_COLS; col++) {
+      const x = col * TREE_SX, y = row * TREE_SY;
+      if (treePositionOpen(tree, x, y)) return { x, y };
+    }
+  }
+  return { x: 0, y: (tree.nodes || []).length * TREE_SY };
+}
+function treeOverlapCount(tree) {
+  const nodes = tree && Array.isArray(tree.nodes) ? tree.nodes : [];
+  let count = 0;
+  for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
+    if (treeNodeRectOverlap({ x: Number(nodes[i].x) || 0, y: Number(nodes[i].y) || 0 }, { x: Number(nodes[j].x) || 0, y: Number(nodes[j].y) || 0 })) count++;
+  }
+  return count;
+}
+function arrangeTreeOverlaps(tree) {
+  const placed = [];
+  let moved = 0;
+  for (const node of tree.nodes || []) {
+    const current = { x: Number(node.x) || 0, y: Number(node.y) || 0 };
+    if (!placed.some((other) => treeNodeRectOverlap(current, other))) {
+      placed.push({ id: node.id, ...current });
+      continue;
+    }
+    const pos = nextTreeNodePosition({ nodes: placed });
+    node.x = pos.x; node.y = pos.y; node.col = pos.x / TREE_SX; node.row = pos.y / TREE_SY;
+    placed.push({ id: node.id, ...pos }); moved++;
+  }
+  return moved;
 }
 
 // ---- Достижения ----
@@ -8789,7 +10984,10 @@ function companionCard() {
     actions = `<div class="comp-actions">${b.join('')}</div>`;
   }
   const last = c.journal[c.journal.length - 1];
-  const peek = (last && last.date === t) ? `<p class="comp-peek muted">${satoruIconHTML(last.kind === 'm' ? 'nav.today' : 'system.day-end', 'inline-glyph', '◇')} «${esc(last.text)}»</p>` : '';
+  const lastText = last && last.kind === 'ms' && last.title
+    ? `🚩 ${last.skillId ? skillLabel(last.skillId) : ''}: ${treeNodeCopy(last, 'title')}`
+    : last && last.text;
+  const peek = (last && last.date === t) ? `<p class="comp-peek muted" data-noi18n>${satoruIconHTML(last.kind === 'm' ? 'nav.today' : last.kind === 'ms' ? 'status.milestone' : 'system.day-end', 'inline-glyph', '◇')} «${esc(lastText)}»</p>` : '';
   return `<div class="card comp-card">
     <div class="comp-row">
       <div class="comp-art">${shadowVideo(ti, mood.face, 'card')}</div>
@@ -10663,24 +12861,58 @@ function treeBounds(t) {
   const xs = t.nodes.map((n) => n.x || 0), ys = t.nodes.map((n) => n.y || 0);
   return { width: Math.max(TREE_SX * 2 + TREE_NW, Math.max(0, ...xs) + TREE_NW + 40), height: Math.max(TREE_SY * 2, Math.max(0, ...ys) + TREE_NH + 40) };
 }
+let _treeDialogReturnFocus = null;
+function mountTreeDialog(overlay, initialSelector) {
+  document.querySelector('[data-tree-dialog]')?.remove();
+  _treeDialogReturnFocus = document.activeElement;
+  overlay.dataset.treeDialog = 'true';
+  document.getElementById('app')?.setAttribute('inert', '');
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() => {
+    const initial = overlay.querySelector(initialSelector) || overlay.querySelector('button, input, textarea, select, [tabindex]:not([tabindex="-1"])');
+    initial?.focus({ preventScroll: true });
+  });
+}
+function closeTreeDialog(id) {
+  const overlay = document.getElementById(id) || document.querySelector('[data-tree-dialog]');
+  if (overlay) overlay.remove();
+  document.getElementById('app')?.removeAttribute('inert');
+  const returnFocus = _treeDialogReturnFocus;
+  _treeDialogReturnFocus = null;
+  if (returnFocus && returnFocus.isConnected) requestAnimationFrame(() => returnFocus.focus({ preventScroll: true }));
+}
+function handleTreeDialogKeydown(e) {
+  const overlay = document.querySelector('[data-tree-dialog]'); if (!overlay) return false;
+  if (e.key === 'Escape') { e.preventDefault(); closeTreeDialog(overlay.id); return true; }
+  if (e.key !== 'Tab') return false;
+  const focusable = [...overlay.querySelectorAll('button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), [tabindex]:not([tabindex="-1"])')]
+    .filter((el) => !el.hidden && el.getClientRects().length);
+  if (!focusable.length) { e.preventDefault(); overlay.focus(); return true; }
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); return true; }
+  if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); return true; }
+  return false;
+}
 // 🚩 Модалка честности вехи: веха берётся жизнью, а не кликом. Мы не полиция — обмануть
 // можно только собственную карту, и это прямо проговаривается.
 function openMilestoneClaim(skillId, nodeId) {
-  document.getElementById('ms-claim')?.remove();
+  if (document.getElementById('ms-claim')) closeTreeDialog('ms-claim');
   const tr = State.tree[skillId], node = tr && tr.nodes.find((n) => n.id === nodeId);
   if (!node) return;
+  const displayTitle = treeNodeCopy(node, 'title'), displayDesc = treeNodeCopy(node, 'desc');
   const ov = document.createElement('div'); ov.id = 'ms-claim'; ov.className = 'modal-overlay';
+  ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'ms-claim-title'); ov.tabIndex = -1;
   ov.innerHTML = `<div class="ai-box ms-box">
-    <button class="modal-x" data-action="ms-claim-no">✕</button>
-    <h2>🚩 ${esc(node.title)}</h2>
-    ${node.desc ? `<p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Ориентир')}: ${esc(t(node.desc))}</p>` : ''}
+    <button class="modal-x" data-action="ms-claim-no" aria-label="${t('Закрыть')}">✕</button>
+    <h2 id="ms-claim-title" data-noi18n>🚩 ${esc(displayTitle)}</h2>
+    ${displayDesc ? `<p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Ориентир')}: <span data-noi18n>${esc(displayDesc)}</span></p>` : ''}
     <p class="sg-what">${t('Веха берётся жизнью, а не кликом. Сравни честно с тем, где ты сейчас: это уже правда взято?')}</p>
     <p class="muted" style="font-size:12px">${t('Обмануть тут можно только собственную карту. Взятая веха даёт +1 очко практик — жизнь финансирует бонусы.')}</p>
     <div class="propose-actions">
       <button class="btn" data-action="ms-claim-yes" data-skill="${esc(skillId)}" data-node="${esc(nodeId)}">🚩 ${t('Да, взято')}</button>
       <button class="btn ghost" data-action="ms-claim-no">${t('Ещё нет — иду к ней')}</button>
     </div></div>`;
-  document.body.appendChild(ov);
+  mountTreeDialog(ov, '[data-action="ms-claim-yes"]');
 }
 // ── Фаза 3: 🤖 персональная карта вех (AI_TREEMAP_SYS на сервере) ─────────────────────
 // Не «лестница бега вообще», а ТВОИ вехи: из твоих слов, целей и уже взятого. ИИ предлагает —
@@ -10689,20 +12921,21 @@ function openMilestoneClaim(skillId, nodeId) {
 let _treeMapItems = [];
 function treeMapContext(skillId) {
   const sk = skillById(skillId), tr = State.tree[skillId];
-  const taken = tr ? tr.nodes.filter((n) => n.milestone && n.unlocked).map((n) => n.title) : [];
-  const ahead = tr ? tr.nodes.filter((n) => n.milestone && !n.unlocked).map((n) => n.title) : [];
+  const taken = tr ? tr.nodes.filter((n) => n.milestone && n.unlocked).map((n) => treeNodeCopy(n, 'title')) : [];
+  const ahead = tr ? tr.nodes.filter((n) => n.milestone && !n.unlocked).map((n) => treeNodeCopy(n, 'title')) : [];
   const goals = (State.goals || []).filter((g) => g.skillId === skillId && !g.archived)
     .map((g) => g.title + (g.metric && g.metric.target != null ? ` (${g.metric.current ?? g.metric.start ?? '?'}→${g.metric.target})` : '') + (g.completedAt ? ' ✓' : '')).slice(0, 12);
   const imp = (State.settings.imported || {})[skillId];
   return `Сфера: ${sk.name} (ур.${skillLevelOf(skillId)})\nВЗЯТЫЕ вехи (это его текущее положение): ${taken.join('; ') || '(нет)'}\nШаблонные вехи впереди (замени персональными): ${ahead.join('; ') || '(нет)'}\nЦели юзера в этой сфере: ${goals.join('; ') || '(нет)'}\nИмпорт стартового уровня: ${imp ? imp.label : '(нет)'}`;
 }
 function openTreeMapAI() {
-  document.getElementById('treemap-modal')?.remove();
+  closeTreeDialog('treemap-modal');
   _treeMapItems = [];
   const skillId = State.treeSkill, sk = skillById(skillId);
   const ov = document.createElement('div'); ov.id = 'treemap-modal'; ov.className = 'modal-overlay';
-  ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="treemap-close">✕</button>
-    <h2>🤖 ${t('Личная карта')}: ${esc(sk.name)}</h2>
+  ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'treemap-title'); ov.tabIndex = -1;
+  ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="treemap-close" aria-label="${t('Закрыть')}">✕</button>
+    <h2 id="treemap-title">🤖 ${t('Личная карта')}: <span data-noi18n>${esc(sk.name)}</span></h2>
     <p class="muted" style="font-size:13px;margin:0 0 10px">${t('Шаблонная лестница — старт. Ответь на пару вопросов — и Тень соберёт вехи под тебя. Взятые вехи останутся: новая тропа строится поверх них.')}</p>
     <label class="tm-q">${t('Где ты сейчас в этой сфере?')}
       <textarea id="treemap-now" rows="2" placeholder="${t('бегаю 3–5 км пару раз в неделю / Abitur-курс по био + JuFo-проект')}"></textarea></label>
@@ -10717,8 +12950,7 @@ function openTreeMapAI() {
       ? `<button class="btn" data-action="treemap-run">🤖 ${t('Собрать карту')}</button>`
       : `<p class="muted" style="font-size:12px;margin:6px 0 0">${t('Нужен ИИ — добавь ключ в Настройках (бесплатные Gemini/Groq есть), и Тень соберёт твою карту.')}</p>`}</div>
     <div id="treemap-result"></div></div>`;
-  document.body.appendChild(ov);
-  setTimeout(() => { document.getElementById('treemap-now')?.focus(); }, 30);
+  mountTreeDialog(ov, '#treemap-now');
 }
 async function treeMapRun() {
   // Интервью вместо одного пустого поля (запрос Альберта 26.07): человек не знает, ЧТО писать
@@ -10737,7 +12969,7 @@ async function treeMapRun() {
     const r = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ kind: 'treemap', provider: aiProvider(), text, context: treeMapContext(State.treeSkill) }) });
     const d = await r.json();
-    if (d.error && aiHandleErr(d)) { document.getElementById('treemap-modal')?.remove(); return; }
+    if (d.error && aiHandleErr(d)) { closeTreeDialog('treemap-modal'); return; }
     if (d.error || !Array.isArray(d.proposals)) { if (res) res.innerHTML = `<p class="muted">${t('Не разобрал ответ — попробуй ещё раз')}</p>`; return; }
     _treeMapItems = d.proposals.filter((p) => p && p.title).slice(0, 6)
       .map((p) => ({ title: String(p.title).slice(0, 80), desc: String(p.desc || '').slice(0, 120) }));
@@ -10762,7 +12994,7 @@ function applyPersonalMap(skillId, items) {
   let prev = claimed.length ? claimed[claimed.length - 1].id : null;
   items.forEach((it, i) => {
     const row = total - 1 - (claimed.length + i);
-    const node = { id: 'nd_' + uid(), title: it.title, desc: it.desc, milestone: true, personal: true, cost: 0,
+    const node = { id: 'nd_' + uid(), title: it.title, desc: it.desc, titleCustom: true, descCustom: true, milestone: true, personal: true, cost: 0,
       requires: prev ? [prev] : [], perks: [], unlocked: false, col: 3.4, row, x: 3.4 * TREE_SX, y: row * TREE_SY };
     tr.nodes.push(node); prev = node.id;
   });
@@ -10771,83 +13003,139 @@ function applyPersonalMap(skillId, items) {
 }
 function treeNodePanel(id, t) {
   const n = t.nodes.find((x) => x.id === State.treeSelNode); if (!n) return '';
-  const reqs = t.nodes.filter((x) => x.id !== n.id).map((o) => `<label class="tp-req"><input type="checkbox" data-action="tree-toggle-req" data-node="${n.id}" data-req="${o.id}" ${(n.requires || []).includes(o.id) ? 'checked' : ''}/> ${esc(o.title)}</label>`).join('') || '<span class="muted">других узлов нет</span>';
-  return `<div class="tree-panel">
+  const displayTitle = treeNodeCopy(n, 'title'), displayDesc = treeNodeCopy(n, 'desc');
+  const reqs = t.nodes.filter((x) => x.id !== n.id).map((o) => `<label class="tp-req"><input type="checkbox" data-action="tree-toggle-req" data-node="${n.id}" data-req="${o.id}" ${(n.requires || []).includes(o.id) ? 'checked' : ''}/> <span data-noi18n>${esc(treeNodeCopy(o, 'title'))}</span></label>`).join('') || `<span class="muted">${t18('Других узлов нет')}</span>`;
+  return `<section class="tree-panel" id="tree-node-panel" tabindex="-1" aria-labelledby="tree-node-panel-title">
+    <div class="tree-detail-head"><div><span class="tree-detail-kicker">${t18('Режим архитектора')}</span><h4 id="tree-node-panel-title" data-noi18n>${esc(displayTitle)}</h4></div><button class="tree-detail-close" data-action="tree-sel-node" data-node="" aria-label="${t18('Закрыть')}">✕</button></div>
     <div class="tp-grid">
-      <label>Название<input data-action="tree-field" data-node="${n.id}" data-field="title" value="${esc(n.title)}" /></label>
-      <label>Описание<input data-action="tree-field" data-node="${n.id}" data-field="desc" value="${esc(n.desc || '')}" /></label>
-      <label>Цена (очки)<input type="number" min="0" step="1" data-action="tree-field" data-node="${n.id}" data-field="cost" value="${n.cost || 0}" /></label>
-      <label>Бонус XP, %<input type="number" min="0" step="1" data-action="tree-field" data-node="${n.id}" data-field="perkXpPct" value="${n.perkXpPct || 0}" /></label>
+      <label>${t18('Название')}<input data-action="tree-field" data-node="${n.id}" data-field="title" value="${esc(displayTitle)}" /></label>
+      <label>${t18('Описание')}<input data-action="tree-field" data-node="${n.id}" data-field="desc" value="${esc(displayDesc)}" /></label>
+      <label>${t18('Цена (очки)')}<input type="number" min="0" step="1" data-action="tree-field" data-node="${n.id}" data-field="cost" value="${n.cost || 0}" /></label>
+      <label>${t18('Бонус XP, %')}<input type="number" min="0" step="1" data-action="tree-field" data-node="${n.id}" data-field="perkXpPct" value="${n.perkXpPct || 0}" /></label>
     </div>
-    <div class="tp-reqs"><span class="muted">Требует узлы:</span> ${reqs}</div>
+    <div class="tp-reqs"><span class="muted">${t18('Требует узлы')}:</span> ${reqs}</div>
+    <div class="tree-nudge" role="group" aria-label="${t18('Переместить выбранный узел')}">
+      <span>${t18('Переместить')}</span>
+      <button class="btn ghost sm" data-action="tree-nudge-node" data-node="${n.id}" data-dx="-${TREE_SX}" data-dy="0" aria-label="${t18('Переместить влево')}">←</button>
+      <button class="btn ghost sm" data-action="tree-nudge-node" data-node="${n.id}" data-dx="0" data-dy="-${TREE_SY}" aria-label="${t18('Переместить вверх')}">↑</button>
+      <button class="btn ghost sm" data-action="tree-nudge-node" data-node="${n.id}" data-dx="0" data-dy="${TREE_SY}" aria-label="${t18('Переместить вниз')}">↓</button>
+      <button class="btn ghost sm" data-action="tree-nudge-node" data-node="${n.id}" data-dx="${TREE_SX}" data-dy="0" aria-label="${t18('Переместить вправо')}">→</button>
+    </div>
     <div class="tp-actions">
-      <button class="btn danger sm" data-action="tree-del-node" data-node="${n.id}">🗑 Удалить</button>
-      <button class="btn ghost sm" data-action="tree-sel-node" data-node="">Закрыть</button>
+      <button class="btn danger sm" data-action="tree-del-node" data-node="${n.id}">🗑 ${t18('Удалить')}</button>
+      <button class="btn ghost sm" data-action="tree-sel-node" data-node="">${t18('Закрыть')}</button>
     </div>
-  </div>`;
+  </section>`;
+}
+function treeNodeDetailPanel(id, tree) {
+  const node = tree.nodes.find((item) => item.id === State.treeSelNode); if (!node) return '';
+  const displayTitle = treeNodeCopy(node, 'title'), displayDesc = treeNodeCopy(node, 'desc');
+  const state = treeNodeState(id, node), stateLabel = treeNodeStateLabel(state, node), stateIcon = treeNodeStateIcon(state, node);
+  const requirements = treeNodeRequirements(id, node);
+  const requirementText = requirements.length
+    ? requirements.map((item) => `<span class="tree-detail-req ${item.unlocked ? 'is-met' : ''}"><span aria-hidden="true">${item.unlocked ? '✓' : '○'}</span><span data-noi18n>${esc(treeNodeCopy(item, 'title'))}</span></span>`).join('')
+    : `<span class="tree-detail-req is-met"><span aria-hidden="true">✓</span>${t18('Без требований')}</span>`;
+  const perks = nodePerks(node).map((perk) => {
+    const kind = PERK_KINDS[perk.kind]; if (!kind) return '';
+    return `<span class="tree-detail-perk">${kind.icon} ${esc(t(kind.fmt(perk.val)))}</span>`;
+  }).join('') || `<span class="muted">${t18('Пассивный бонус не задан')}</span>`;
+  const reason = treeNodeLockReason(id, node);
+  const action = state === 'available'
+    ? `<button class="btn tree-detail-primary" data-action="unlock-node" data-node="${node.id}">${node.milestone ? '🚩 ' + t18('Подтвердить веху') : `◇ ${t18('Открыть за')} ${node.cost || 0}`}</button>`
+    : state === 'locked'
+      ? `<p class="tree-detail-reason"><span aria-hidden="true">🔒</span>${esc(reason || t18('Пока недоступно'))}</p>`
+      : `<p class="tree-detail-reason is-unlocked"><span aria-hidden="true">✓</span>${t18('Бонус уже действует')}</p>`;
+  return `<section class="tree-detail" id="tree-node-detail" tabindex="-1" aria-labelledby="tree-node-detail-title">
+    <div class="tree-detail-head"><div><span class="tree-detail-kicker ${state}">${stateIcon} ${stateLabel}</span><h4 id="tree-node-detail-title" data-noi18n>${esc(displayTitle)}</h4></div><button class="tree-detail-close" data-action="tree-detail-close" data-node="${node.id}" aria-label="${t18('Закрыть')}">✕</button></div>
+    ${displayDesc ? `<p class="tree-detail-copy" data-noi18n>${esc(displayDesc)}</p>` : ''}
+    <div class="tree-detail-grid"><div><b>${t18('Бонус')}</b><div class="tree-detail-perks">${perks}</div></div><div><b>${t18('Требования')}</b><div class="tree-detail-reqs">${requirementText}</div></div></div>
+    <div class="tree-detail-actions">${action}</div>
+  </section>`;
 }
 // Компактный чип перка на узле (иконка + значение).
 function perkChip(p) {
   const k = PERK_KINDS[p.kind]; if (!k) return '';
   const pct = p.kind === 'xpPct' || p.kind === 'goldPct' || p.kind === 'lootLuck' || p.kind === 'petBoost';
   const val = p.kind === 'title' ? '' : ' +' + p.val + (pct ? '%' : '');
-  return `<span class="tn-perk" title="${esc(k.fmt(p.val))}">${k.icon}${val}</span>`;
+  return `<span class="tn-perk" title="${esc(t(k.fmt(p.val)))}">${k.icon}${val}</span>`;
 }
 // Панель активных пассивок сферы (суммарно по взятым узлам).
 function skillActivePerks(id) {
   const sp = skillPerks(id), keys = Object.keys(sp);
-  if (!keys.length) return '<span class="muted">пока ничего не открыто — бери узлы ниже</span>';
-  return keys.map((k) => `<span class="perk-active">${PERK_KINDS[k].icon} ${PERK_KINDS[k].fmt(sp[k])}</span>`).join('');
+  if (!keys.length) return `<span class="muted">${t('Пока ничего не открыто — бери узлы ниже')}</span>`;
+  return keys.map((k) => `<span class="perk-active">${PERK_KINDS[k].icon} ${esc(t(PERK_KINDS[k].fmt(sp[k])))}</span>`).join('');
+}
+function treeLoadErrorHTML() {
+  const busy = !!State._treeLoadBusy;
+  const detail = State._treeLoadError === 'invalid'
+    ? t('Файл карты повреждён или имеет неизвестный формат.')
+    : t('Не удалось загрузить карту. Проверь соединение и попробуй снова.');
+  return `<div class="tree-shell" aria-labelledby="tree-route-title">
+    <section class="card tree-hero"><div><span class="th-kicker">Satoru · ${t('Карта развития')}</span><h2 id="tree-route-title">${t('Карта навыков')}</h2><p>${t('Прогресс сохранён в отдельном файле и не будет молча заменён шаблоном.')}</p></div></section>
+    <section class="card tree-load-error" ${busy ? 'aria-live="polite"' : 'role="alert"'}>
+      <span class="tree-load-error-icon" aria-hidden="true">${busy ? '◌' : '⚠'}</span>
+      <div><h3>${busy ? t('Загружаю карту…') : t('Карта не загружена')}</h3><p>${busy ? t('Проверяю сохранённые данные.') : detail}</p>
+      ${busy ? '' : `<p class="muted">${t('Повторная загрузка безопасна. Новую карту создавай только если готов заменить повреждённый файл.')}</p>`}</div>
+      ${busy ? '' : `<div class="tree-load-actions"><button class="btn" data-action="tree-retry-load">↻ ${t('Повторить загрузку')}</button><button class="btn danger ghost" data-action="tree-reset-load">${t('Создать новую карту')}</button></div>`}
+    </section>
+  </div>`;
 }
 function renderTree() {
+  if (State._treeLoadError || State._treeLoadBusy) return treeLoadErrorHTML();
   if (!State.treeSkill || !State.tree[State.treeSkill]) State.treeSkill = State.settings.skills[0] && State.settings.skills[0].id;
   // ⚠️ дерево НЕ называть `t` — затенит глобальную функцию перевода t() (третье попадание этой мины: fb_mrkzunjjmn61, questRow, здесь)
   const id = State.treeSkill, sk = skillById(id), tree = State.tree[id];
-  const tabs = State.settings.skills.map((s) => `<button class="tree-tab ${s.id === id ? 'active' : ''}" data-action="select-tree" data-skill="${s.id}" style="--c:${esc(s.color)}">${esc(skillLabel(s.id))} <span class="muted">ур.${skillLevelOf(s.id)}</span></button>`).join('');
+  const tabs = State.settings.skills.map((s) => `<button type="button" class="tree-tab ${s.id === id ? 'active' : ''}" data-action="select-tree" data-skill="${s.id}" style="--c:${esc(s.color)}" aria-pressed="${s.id === id}" aria-controls="tree-map-region">${esc(skillLabel(s.id))} <span class="muted">${t('ур.')} ${skillLevelOf(s.id)}</span></button>`).join('');
   if (!tree) return `<div class="card">${tabs}</div>`;
   const edit = State.treeEdit, avail = treePointsAvailable(id), earned = treePointsEarned(id), spent = treePointsSpent(id), { width, height } = treeBounds(tree);
   const lines = treeLinesHTML(tree, sk.color);
   // рекомендованный следующий узел = самый дешёвый доступный
   let recId = null;
-  if (!edit) { const ups = tree.nodes.filter((n) => nodeUnlockable(id, n)).sort((a, b) => (a.cost || 0) - (b.cost || 0)); recId = ups[0] && ups[0].id; }
+  if (!edit) { const ups = tree.nodes.filter((n) => !n.milestone && !n.capstone && nodeUnlockable(id, n)).sort((a, b) => (a.cost || 0) - (b.cost || 0)); recId = ups[0] && ups[0].id; }
   const nodes = tree.nodes.map((n) => {
-    const st = n.unlocked ? 'unlocked' : nodeUnlockable(id, n) ? 'available' : 'locked';
+    const displayTitle = treeNodeCopy(n, 'title'), displayDesc = treeNodeCopy(n, 'desc');
+    const st = treeNodeState(id, n), stateLabel = treeNodeStateLabel(st, n), stateIcon = treeNodeStateIcon(st, n);
     const sel = State.treeSelNode === n.id, rec = n.id === recId, cap = n.capstone ? ' capstone' : '';
     const ms = n.milestone ? ' milestone' : '';
     const chips = nodePerks(n).map(perkChip).join('');
     const costLine = n.milestone
-      ? (n.unlocked ? '🚩 ' + t('взята') : (st === 'locked' ? '🔒 ' : '🚩 ') + t('веха — берётся жизнью'))
-      : (edit ? '◈ ' + (n.cost || 0) : n.unlocked ? '✓ открыто' : (st === 'locked' ? '🔒 ' : '') + '◈ ' + (n.cost || 0));
-    return `<div class="tree-node ${edit ? 'editing' : st}${cap}${ms}${rec ? ' recommend' : ''} ${sel ? 'sel' : ''}" style="left:${n.x}px;top:${n.y}px;--c:${esc(sk.color)}" data-node="${n.id}" ${edit ? '' : 'data-action="unlock-node"'}>
-      ${n.capstone ? '<div class="tn-crown">👑</div>' : ''}
-      <div class="tn-title">${esc(n.title)}</div>
-      <div class="tn-perks">${chips}</div>
-      <div class="tn-cost">${costLine}</div></div>`;
+      ? (n.unlocked ? '🚩 ' + t('взята') : t('Веха жизни'))
+      : `◈ ${n.cost || 0}`;
+    const reqNames = treeNodeRequirements(id, n).map((item) => treeNodeCopy(item, 'title')).join(', ');
+    const accessibleName = `${displayTitle}. ${stateLabel}. ${displayDesc}${reqNames ? `. ${t('Требования')}: ${reqNames}` : ''}`;
+    return `<button type="button" class="tree-node ${edit ? 'editing' : st}${cap}${ms}${rec ? ' recommend' : ''} ${sel ? 'sel' : ''}" style="left:${n.x}px;top:${n.y}px;--c:${esc(sk.color)}" data-node="${n.id}" data-action="${edit ? 'tree-sel-node' : 'tree-select-node'}" aria-pressed="${sel}" aria-label="${esc(accessibleName)}">
+      ${n.capstone ? '<span class="tn-crown" aria-hidden="true">👑</span>' : ''}
+      <span class="tn-state ${st}"><span aria-hidden="true">${stateIcon}</span>${stateLabel}</span>
+      <span class="tn-title" data-noi18n>${esc(displayTitle)}</span>
+      <span class="tn-perks">${chips}</span>
+      <span class="tn-cost">${costLine}</span></button>`;
   }).join('');
+  const overlapCount = treeOverlapCount(tree);
   const controls = `<div class="tree-ctrls">
-      <div class="tree-points" title="заработано ${earned} (= ур. сферы + вехи) · потрачено ${spent}">◈ <b>${avail}</b> очк.</div>
-      ${edit ? '<button class="btn ghost sm" data-action="tree-add-node">+ Узел</button>' : `<button class="btn ghost sm" data-action="treemap-open">🤖 ${t('Личная карта')}</button>`}
-      <button class="btn ${edit ? '' : 'ghost'} sm" data-action="toggle-tree-edit">${edit ? '✓ Готово' : '✏️ Редактор'}</button>
+      <div class="tree-points" title="${t('Заработано')}: ${earned} · ${t('Вложено')}: ${spent}">◈ <b>${avail}</b> ${t('очк.')}</div>
+      ${edit ? `<button class="btn ghost sm" data-action="tree-add-node">+ ${t('Узел')}</button>${overlapCount ? `<button class="btn ghost sm" data-action="tree-arrange-overlaps">↔ ${t('Развести наложения')} · ${overlapCount}</button>` : ''}` : `<button class="btn ghost sm" data-action="treemap-open">🤖 ${t('Личная карта')}</button>`}
+      <button class="btn ${edit ? '' : 'ghost'} sm" data-action="toggle-tree-edit">${edit ? `✓ ${t('Готово')}` : `✏️ ${t('Редактор')}`}</button>
     </div>`;
   const recNode = recId && tree.nodes.find((n) => n.id === recId);
   const unlocked = tree.nodes.filter((n) => n.unlocked).length;
   const treeHero = `<section class="card tree-hero" style="--c:${esc(sk.color)}">
       <div>
-        <span class="th-kicker">Skill map</span>
-        <h2>${esc(sk.name)}</h2>
-        <p class="muted">${edit ? 'Режим архитектора: двигай узлы и собирай карту развития под себя.' : recNode ? `Следующий лучший узел: «${esc(recNode.title)}».` : avail > 0 ? 'Очки готовы — выбери новый бонус на карте.' : 'Карта ждёт новый опыт. Делай дела в сфере, чтобы открыть следующий узел.'}</p>
+        <span class="th-kicker">Satoru · ${t('Карта развития')}</span>
+        <h2 id="tree-route-title">${esc(skillLabel(id))}</h2>
+        <p>${edit ? t('Режим архитектора: двигай узлы и собирай карту развития под себя.') : recNode ? `${t('Следующий лучший узел')}: «<span data-noi18n>${esc(treeNodeCopy(recNode, 'title'))}</span>».` : avail > 0 ? t('Очки готовы — выбери новый бонус на карте.') : t('Карта ждёт новый опыт. Делай дела в сфере, чтобы открыть следующий узел.')}</p>
       </div>
       <div class="tree-hero-stats">
-        <span><b>${avail}</b><small>очк.</small></span>
-        <span><b>${unlocked}/${tree.nodes.length}</b><small>узлов</small></span>
-        <span><b>${spent}</b><small>вложено</small></span>
+        <span><b>${avail}</b><small>${t('очк.')}</small></span>
+        <span><b>${unlocked}/${tree.nodes.length}</b><small>${t('узлов')}</small></span>
+        <span><b>${spent}</b><small>${t('вложено')}</small></span>
       </div>
     </section>`;
   // Гайд Тени по дереву (fb_mrnjz1qsjmk8 — 3-й репорт «дерево непонятно»): движок v2 готов,
   // но петля «дела → уровень → очко → узел → бонус» нигде не объяснена. Карточка висит,
   // пока игрок сам не скажет «понятно» (persist через discovered) — потом остаётся тултип.
   const treeGuide = (!edit && !isDiscovered('guide:tree')) ? `
-    <section class="card tree-guide">
+    <details class="card tree-guide">
+      <summary><span>${t('Как работает карта')}</span><small>${t('Дела → уровень → очко → узел → бонус')}</small></summary>
       <div class="tg-row">${(typeof tutMascotHTML === 'function') ? tutMascotHTML() : ''}
         <div class="tg-say">
           <b>${t('Смотри, тут всё честно:')}</b>
@@ -10861,49 +13149,71 @@ function renderTree() {
         </div></div>
       <div class="tg-acts"><button class="btn sm" data-action="tree-guide-ok">${t('Понятно ✓')}</button>
         ${avail > 0 ? `<span class="tg-hint">◈ ${avail} ${t('уже ждут — попробуй прямо сейчас')}</span>` : `<span class="tg-hint muted">${t('Очков пока нет — они придут с уровнями сферы')}</span>`}</div>
-    </section>` : '';
+    </details>` : '';
+  const detail = edit ? treeNodePanel(id, tree) : treeNodeDetailPanel(id, tree);
   return `
-    <div class="tree-shell">
+    <div class="tree-shell" aria-labelledby="tree-route-title">
     ${treeHero}
-    ${treeGuide}
-    <div class="card tree-tabs-card"><div class="tree-tabs">${tabs}</div></div>
+    <div class="card tree-tabs-card"><div class="tree-tabs" role="group" aria-label="${t('Сфера карты')}">${tabs}</div></div>
     <div class="card tree-map-card">
-      <div class="tree-head"><h3 style="margin:0">🌳 ${esc(sk.name)}</h3>${controls}</div>
-      ${edit ? '' : `<div class="tree-active"><span class="ta-label">Активные бонусы:</span> ${skillActivePerks(id)}</div>`}
-      <p class="muted" style="font-size:12px">${edit ? '✏️ Перетаскивай узлы. Клик по узлу — настроить (название, цена, бонус, требования). «+ Узел» добавит новый.' : (avail <= 0 ? 'Очки копятся за уровни сферы — делай дела, чтобы открыть узлы.' : recNode ? `Доступно ${avail} очк. · 💡 можно взять «${esc(recNode.title)}» (подсвечен).` : `Доступно ${avail} очк. — открывай узлы кликом.`)}</p>
-      <div class="tree-scroll"><div class="tree ${edit ? 'edit' : ''}" style="width:${width}px;height:${height}px">
-        <svg class="tree-lines" width="${width}" height="${height}">${lines}</svg>${nodes}</div></div>
-      ${edit && State.treeSelNode ? treeNodePanel(id, tree) : ''}
-    </div></div>`;
+      <div class="tree-head"><h3>🌳 ${esc(skillLabel(id))}</h3>${controls}</div>
+      ${edit ? '' : `<div class="tree-active"><span class="ta-label">${t('Активные бонусы')}:</span> ${skillActivePerks(id)}</div>`}
+      <p class="tree-map-lede">${edit ? t('Выбери узел для настройки. Перетаскивай мышью или используй кнопки перемещения в панели.') : t('Выбери узел, чтобы увидеть полное описание и действие. Карта прокручивается в обе стороны.')}</p>
+      <div class="tree-scroll" id="tree-map-region" role="region" aria-label="${t('Карта узлов')}" tabindex="0" data-node-count="${tree.nodes.length}"><div class="tree ${edit ? 'edit' : ''}" style="width:${width}px;height:${height}px">
+        <svg class="tree-lines" width="${width}" height="${height}" aria-hidden="true">${lines}</svg>${nodes}</div></div>
+      ${detail}
+    </div>
+    ${treeGuide}
+    </div>`;
 }
 // Живая перерисовка линий при перетаскивании (без полного render)
 function updateTreeLines() {
   const t = State.tree[State.treeSkill]; if (!t) return;
   const svg = document.querySelector('.tree-lines'); if (svg) svg.innerHTML = treeLinesHTML(t, skillById(State.treeSkill).color);
 }
+function rememberTreeViewport() {
+  const viewport = document.querySelector('.tree-scroll');
+  if (!viewport) return;
+  State._treeViewport = { left: viewport.scrollLeft, top: viewport.scrollTop };
+}
+function treeFocusAfterCommit(selector) {
+  State._treeFocusAfterCommit = selector;
+  rememberTreeViewport();
+}
 // Перетаскивание узлов в режиме редактора (pointer; делегировано на document)
 let _treeDrag = null;
 function onTreePointerDown(e) {
   if (State.view !== 'tree' || !State.treeEdit) return;
   const el = e.target.closest('.tree-node'); if (!el) return;
+  if (e.button !== 0 || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches)) return;
   const t = State.tree[State.treeSkill]; if (!t) return;
   const node = t.nodes.find((n) => n.id === el.dataset.node); if (!node) return;
-  e.preventDefault();
   const startX = e.clientX, startY = e.clientY, ox = node.x || 0, oy = node.y || 0;
   let moved = false;
   const onMove = (ev) => {
     const dx = ev.clientX - startX, dy = ev.clientY - startY;
-    if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
+    if (!moved && Math.abs(dx) + Math.abs(dy) > 4) {
+      moved = true;
+      try { el.setPointerCapture(e.pointerId); } catch {}
+    }
+    if (!moved) return;
+    ev.preventDefault();
     node.x = Math.max(0, Math.round(ox + dx)); node.y = Math.max(0, Math.round(oy + dy));
     el.style.left = node.x + 'px'; el.style.top = node.y + 'px';
     updateTreeLines();
   };
-  const onUp = () => {
-    document.removeEventListener('pointermove', onMove); document.removeEventListener('pointerup', onUp);
-    if (moved) { Store.save('skilltree', State.tree); render(); }
-    else { State.treeSelNode = State.treeSelNode === node.id ? null : node.id; render(); }
+  const finish = (cancelled) => {
+    document.removeEventListener('pointermove', onMove); document.removeEventListener('pointerup', onUp); document.removeEventListener('pointercancel', onCancel);
+    try { if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId); } catch {}
+    if (!moved) return;
+    if (cancelled) { node.x = ox; node.y = oy; updateTreeLines(); return; }
+    treeFocusAfterCommit(`[data-action="tree-sel-node"][data-node="${CSS.escape(node.id)}"]`);
+    Store.save('skilltree', State.tree); render();
   };
+  const onUp = () => finish(false);
+  const onCancel = () => finish(true);
   document.addEventListener('pointermove', onMove); document.addEventListener('pointerup', onUp);
+  document.addEventListener('pointercancel', onCancel);
 }
 
 // ============================================================
@@ -12833,6 +15143,7 @@ function showMobileNavSheet() {
 const ACCENTS = ['#6c8cff', '#22c1a4', '#e0526a', '#b06ff0', '#e0a23e', '#4f9ff7']; // палитра акцентов (#тема)
 function applyTheme() {
   const s = State.settings || {};
+  document.documentElement.lang = lang();
   // Путь «Контроль» авто-надевает скин «Система» (Solo-Leveling-эстетика строгости), если юзер явно не отключил его оверрайдом.
   const controlSkin = s.path === 'control' && !s.systemSkinOff;
   const sys = !!s.systemMode || controlSkin;
@@ -12940,6 +15251,33 @@ function afterMainCommit() {
       const target = document.querySelector(selector) || document.querySelector(fallback) || document.getElementById('character-wardrobe');
       if (!target) return;
       if (selector === '#character-wardrobe') target.scrollIntoView({ behavior: avatarMotionReduced() ? 'auto' : 'smooth', block: 'start' });
+      target.focus({ preventScroll: true });
+    });
+  }
+  if (State.view === 'tree') {
+    const viewportState = State._treeViewport;
+    const focusSelector = State._treeFocusAfterCommit;
+    State._treeViewport = null;
+    State._treeFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const viewport = document.querySelector('.tree-scroll');
+      if (viewport && viewportState) {
+        viewport.scrollLeft = viewportState.left || 0;
+        viewport.scrollTop = viewportState.top || 0;
+      } else if (viewport) {
+        const anchor = viewport.querySelector('.tree-node.recommend') ||
+          viewport.querySelector('.tree-node.available') ||
+          viewport.querySelector('.tree-node.unlocked') ||
+          viewport.querySelector('.tree-node');
+        if (anchor) {
+          viewport.scrollLeft = Math.max(0, anchor.offsetLeft - (viewport.clientWidth - anchor.offsetWidth) / 2);
+          viewport.scrollTop = Math.max(0, anchor.offsetTop - (viewport.clientHeight - anchor.offsetHeight) / 2);
+        }
+      }
+      if (!focusSelector) return;
+      const target = document.querySelector(focusSelector) || viewport || document.querySelector('[data-action="toggle-tree-edit"]');
+      if (!target) return;
+      if (target.matches('#tree-node-detail, #tree-node-panel')) target.scrollIntoView({ behavior: 'auto', block: 'nearest' });
       target.focus({ preventScroll: true });
     });
   }
@@ -14227,29 +16565,72 @@ function onClick(e) {
     State.goalFilter = el.dataset.type; render();
 
   // --- Дерево ---
-  } else if (action === 'select-tree') { State.treeSkill = el.dataset.skill; State.treeSelNode = null; render();
+  } else if (action === 'tree-retry-load') {
+    retrySkillTreeLoad().catch((error) => { console.error('retrySkillTreeLoad', error); State._treeLoadError = 'load'; State._treeLoadBusy = false; render(); }); return;
+  } else if (action === 'tree-reset-load') {
+    if (!confirm(t('Создать новую карту? Повреждённый файл будет заменён стартовыми деревьями.'))) return;
+    resetSkillTreeData().catch((error) => { console.error('resetSkillTreeData', error); State._treeLoadError = 'load'; State._treeLoadBusy = false; render(); }); return;
+  } else if (action === 'select-tree') {
+    const sid = el.dataset.skill;
+    if (!State.settings.skills.some((skill) => skill.id === sid)) return;
+    State.treeSkill = sid; State.treeSelNode = null; State._treeViewport = null;
+    State._treeFocusAfterCommit = `[data-action="select-tree"][data-skill="${CSS.escape(sid)}"]`; render();
+  } else if (action === 'tree-select-node') {
+    const nodeId = el.dataset.node;
+    if (!State.tree[State.treeSkill]?.nodes.some((node) => node.id === nodeId)) return;
+    State.treeSelNode = nodeId;
+    treeFocusAfterCommit('#tree-node-detail'); render();
   } else if (action === 'unlock-node') {
     const sid = State.treeSkill, node = State.tree[sid] && State.tree[sid].nodes.find((n) => n.id === el.dataset.node); if (!node) return;
-    if (!nodeUnlockable(sid, node)) { toast(t(node.milestone ? 'Сначала возьми предыдущую веху' : 'Не хватает очков или закрыты предыдущие узлы')); return; }
+    if (!nodeUnlockable(sid, node)) { toast(treeNodeLockReason(sid, node) || t('Этот узел уже открыт')); return; }
     if (node.milestone) { openMilestoneClaim(sid, node.id); return; } // веха берётся жизнью — модалка честности
     node.unlocked = true; Store.save('skilltree', State.tree);
     // фикс: тост показывал legacy-поле perkXpPct (undefined для v2-узлов) — собираем лейбл из perks
     const pl = nodePerks(node).map((p) => PERK_KINDS[p.kind] ? PERK_KINDS[p.kind].fmt(p.val) : '').filter(Boolean).join(' · ');
-    toast(`◈ ${t('Открыто')}: ${node.title}${pl ? ' — ' + pl : ''}`); render();
+    toast(`◈ ${t('Открыто')}: ${treeNodeCopy(node, 'title')}${pl ? ' — ' + pl : ''}`);
+    treeFocusAfterCommit('#tree-node-detail'); render();
 
   // --- Редактор дерева навыков ---
-  } else if (action === 'toggle-tree-edit') { State.treeEdit = !State.treeEdit; State.treeSelNode = null; render();
-  } else if (action === 'tree-sel-node') { State.treeSelNode = el.dataset.node || null; render();
+  } else if (action === 'toggle-tree-edit') {
+    State.treeEdit = !State.treeEdit; State.treeSelNode = null;
+    treeFocusAfterCommit('[data-action="toggle-tree-edit"]'); render();
+  } else if (action === 'tree-sel-node') {
+    const nodeId = el.dataset.node || null;
+    if (nodeId && !State.tree[State.treeSkill]?.nodes.some((node) => node.id === nodeId)) return;
+    const previousNodeId = State.treeSelNode;
+    State.treeSelNode = nodeId;
+    treeFocusAfterCommit(nodeId ? '#tree-node-panel' : previousNodeId ? `[data-action="tree-sel-node"][data-node="${CSS.escape(previousNodeId)}"]` : '[data-action="toggle-tree-edit"]'); render();
   } else if (action === 'tree-add-node') {
     const t = State.tree[State.treeSkill]; if (!t) return;
-    const k = t.nodes.length, nn = { id: 'nd_' + uid(), title: 'Новый узел', desc: '', cost: 1, requires: [], perkXpPct: 5, unlocked: false, x: 40 + (k % 4) * 46, y: 40 + (k % 4) * 46 };
-    t.nodes.push(nn); State.treeSelNode = nn.id; Store.save('skilltree', State.tree); render();
+    const pos = nextTreeNodePosition(t), nn = { id: 'nd_' + uid(), title: t18('Новый узел'), desc: '', titleCustom: true, descCustom: true, cost: 1, requires: [], perkXpPct: 5, unlocked: false, x: pos.x, y: pos.y };
+    t.nodes.push(nn); State.treeSelNode = nn.id; Store.save('skilltree', State.tree);
+    treeFocusAfterCommit('#tree-node-panel'); render();
+  } else if (action === 'tree-arrange-overlaps') {
+    const tree = State.tree[State.treeSkill]; if (!tree) return;
+    const moved = arrangeTreeOverlaps(tree);
+    if (moved) { Store.save('skilltree', State.tree); toast(`${t('Узлы разведены')}: ${moved}`); }
+    treeFocusAfterCommit('[data-action="tree-arrange-overlaps"]'); render();
+  } else if (action === 'tree-nudge-node') {
+    const tree = State.tree[State.treeSkill], node = tree && tree.nodes.find((item) => item.id === el.dataset.node); if (!node) return;
+    const x = Math.max(0, (Number(node.x) || 0) + Number(el.dataset.dx || 0));
+    const y = Math.max(0, (Number(node.y) || 0) + Number(el.dataset.dy || 0));
+    if (!treePositionOpen(tree, x, y, node.id)) { toast(t('Здесь уже есть узел')); return; }
+    node.x = x; node.y = y; node.col = x / TREE_SX; node.row = y / TREE_SY;
+    Store.save('skilltree', State.tree);
+    treeFocusAfterCommit('#tree-node-panel'); render();
   } else if (action === 'tree-del-node') {
     const t = State.tree[State.treeSkill]; if (!t) return;
     const nid = el.dataset.node;
+    const node = t.nodes.find((item) => item.id === nid); if (!node) return;
+    if (!confirm(`${t('Удалить узел')} «${treeNodeCopy(node, 'title')}»? ${t('Связи с ним будут сняты.')}`)) return;
     t.nodes = t.nodes.filter((n) => n.id !== nid);
     for (const n of t.nodes) n.requires = (n.requires || []).filter((r) => r !== nid); // снять висящие связи
-    State.treeSelNode = null; Store.save('skilltree', State.tree); render();
+    State.treeSelNode = null; Store.save('skilltree', State.tree);
+    treeFocusAfterCommit('[data-action="tree-add-node"]'); render();
+  } else if (action === 'tree-detail-close') {
+    const nodeId = el.dataset.node;
+    State.treeSelNode = null;
+    treeFocusAfterCommit(`[data-action="tree-select-node"][data-node="${CSS.escape(nodeId)}"]`); render();
 
   // --- Награды ---
   } else if (action === 'buy-reward') { track('reward:buy');
@@ -14307,7 +16688,7 @@ function onClick(e) {
   } else if (action === 'treemap-open') {
     openTreeMapAI(); track('tree:aimap-open'); return;
   } else if (action === 'treemap-close') {
-    document.getElementById('treemap-modal')?.remove(); return;
+    closeTreeDialog('treemap-modal'); return;
   } else if (action === 'treemap-run') {
     treeMapRun(); return;
   } else if (action === 'treemap-apply') {
@@ -14315,30 +16696,35 @@ function onClick(e) {
       .map((c) => _treeMapItems[Number(c.dataset.treemap)]).filter(Boolean);
     if (!picked.length) { toast(t('Ничего не выбрано')); return; }
     const n = applyPersonalMap(State.treeSkill, picked);
-    document.getElementById('treemap-modal')?.remove();
+    closeTreeDialog('treemap-modal');
     track('tree:aimap-apply');
     toast(`🚩 ${t('Личная карта принята')}: ${n} ${t('вех')} — ${t('первая уже ждёт внизу тропы')}`);
     render(); return;
   } else if (action === 'ms-claim-yes') {
     const sid = el.dataset.skill, tr = State.tree[sid];
     const node = tr && tr.nodes.find((n) => n.id === el.dataset.node);
-    document.getElementById('ms-claim')?.remove();
-    if (!node || node.unlocked) return;
+    if (!node || node.unlocked || !node.milestone || !nodeUnlockable(sid, node)) {
+      closeTreeDialog('ms-claim');
+      toast(t('Веха больше не доступна — проверь предыдущий шаг'));
+      return;
+    }
+    closeTreeDialog('ms-claim');
     node.unlocked = true; node.claimedAt = new Date().toISOString();
     Store.save('skilltree', State.tree);
     // Фаза 2: «Тень записала в летопись» — теперь буквально (журнал компаньона, как чек-ины)
     try {
       const c = ensureCompanion();
-      c.journal.push({ date: todayStr(), kind: 'ms', text: `🚩 ${skillLabel(sid)}: ${node.title}` });
+      c.journal.push({ date: todayStr(), kind: 'ms', skillId: sid, nodeId: node.id, title: node.title, titleKey: node.titleKey || null, text: `🚩 ${skillLabel(sid)}: ${node.title}` });
       if (c.journal.length > 120) c.journal = c.journal.slice(-120);
       Store.save('settings', State.settings);
     } catch {}
     track('tree:milestone');
     try { sfx('achievement'); } catch {}
-    announce('ВЕХА ВЗЯТА', `🚩 ${node.title} · +1 ◈`, `🚩 ${t('Веха взята')}: ${node.title} · +1 ◈ — ${t('Тень записала это в летопись')}`);
-    render(); return;
+    const displayTitle = treeNodeCopy(node, 'title');
+    announce(t('ВЕХА ВЗЯТА'), `🚩 ${displayTitle} · +1 ◈`, `🚩 ${t('Веха взята')}: ${displayTitle} · +1 ◈ — ${t('Тень записала это в летопись')}`);
+    treeFocusAfterCommit('#tree-node-detail'); render(); return;
   } else if (action === 'ms-claim-no') {
-    document.getElementById('ms-claim')?.remove(); return;
+    closeTreeDialog('ms-claim'); return;
   } else if (action === 'repeat-yesterday') {
     const src = yesterdayCloneable();
     if (!src.length) return;
@@ -14783,7 +17169,10 @@ async function initApp() {
   State.habitlog = await Store.load('habitlog', {});
   State.goals = await Store.load('goals', []);
   State.goals.forEach((g) => { if (!g.type) g.type = 'mid'; if (g.xpReward === undefined) g.xpReward = GOAL_XP[g.type] != null ? GOAL_XP[g.type] : GOAL_BONUS.xp; if (g.parentId === undefined) g.parentId = null; if (g.status === undefined) g.status = 'active'; if (g.metric === undefined) g.metric = null; });
-  State.tree = await Store.load('skilltree', {});
+  {
+    const treeLoad = await Store.loadChecked('skilltree', {}, validateSkillTreePayload);
+    State.tree = treeLoad.value; State._treeLoadError = treeLoad.error; State._treeLoadBusy = false;
+  }
   State.rewards = await Store.load('rewards', []);
   State.purchases = await Store.load('purchases', []);
   State.achievements = await Store.load('achievements', {});
@@ -14797,7 +17186,7 @@ async function initApp() {
   ensureEnergy();
   applyAmbient();
 
-  ensureTrees();
+  if (!State._treeLoadError) ensureTrees();
   State.treeSkill = State.settings.skills[0] && State.settings.skills[0].id;
   State.weekStart = weekStart(todayStr());
   State.timer = loadTimer();
@@ -14999,15 +17388,21 @@ function onChange(e) {
     const t = State.tree[State.treeSkill], n = t && t.nodes.find((x) => x.id === el.dataset.node); if (!n) return;
     const f = el.dataset.field;
     if (f === 'cost' || f === 'perkXpPct') n[f] = Math.max(0, Math.round(Number(el.value) || 0));
-    else n[f] = el.value.trim() || (f === 'title' ? 'Узел' : '');
-    Store.save('skilltree', State.tree); render(); return;
+    else if (f === 'title' || f === 'desc') {
+      n[f] = el.value.trim() || (f === 'title' ? t18('Узел') : '');
+      n[f + 'Custom'] = true;
+      delete n[f + 'Key'];
+    }
+    Store.save('skilltree', State.tree);
+    treeFocusAfterCommit(`[data-action="tree-field"][data-node="${CSS.escape(n.id)}"][data-field="${CSS.escape(f)}"]`); render(); return;
   }
   if (a === 'tree-toggle-req') {
     const t = State.tree[State.treeSkill], n = t && t.nodes.find((x) => x.id === el.dataset.node); if (!n) return;
     const req = el.dataset.req; n.requires = n.requires || [];
     if (el.checked) { if (!n.requires.includes(req)) n.requires.push(req); }
     else n.requires = n.requires.filter((r) => r !== req);
-    Store.save('skilltree', State.tree); render(); return;
+    Store.save('skilltree', State.tree);
+    treeFocusAfterCommit(`[data-action="tree-toggle-req"][data-node="${CSS.escape(n.id)}"][data-req="${CSS.escape(req)}"]`); render(); return;
   }
 }
 // Живой автосейв формы настроек при вводе (текст печатается без blur — 'change' не сработал бы)
@@ -15207,6 +17602,7 @@ async function init() {
   // Инлайн-правка текста квеста: клик мимо → сохранить; Esc → отмена
   document.addEventListener('focusout', (e) => { const f = e.target.closest && e.target.closest('.t-edit-form'); if (f && f.requestSubmit) setTimeout(() => { if (State._editTask) f.requestSubmit(); }, 100); });
   document.addEventListener('keydown', (e) => {
+    if (handleTreeDialogKeydown(e)) return;
     if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('.character-secondary-panel > summary')) {
       e.preventDefault();
       const panel = e.target.parentElement;
