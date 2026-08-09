@@ -2,6 +2,18 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-09] 🛡 Calendar data safety v117 — ошибка больше не выглядит пустым планом
+
+**Почему.** Screen-by-screen аудит Calendar обнаружил опасный false-empty: сетевой `500`, malformed JSON и повреждённый shape проходили через общий fallback `[]`. Today и Calendar честно рисовали «квестов нет», а следующая оптимистичная запись могла сохранить этот пустой массив поверх недоступных данных. Визуальную перестройку Day/Week оставили следующему отдельному коммиту; v117 закрывает только целостность.
+
+- **Загрузка различает пусто и ошибка.** Tasks читаются через checked-loader с явными состояниями `load / invalid`. Валидатор принимает только массив квестов с уникальным непустым `id`, непустым `title`, реальной датой `YYYY-MM-DD`, корректным optional `HH:MM`, boolean `done` и числовой длительностью. `[{}]`, duplicate ids, невозможные даты/время и неверные типы не становятся пустым планом.
+- **Recovery действует глобально.** После инициализации пользователя Today, Calendar, Week и любой другой route вместо ghost/empty-квестов показывают один локализованный recovery-card с `role=alert`, причиной и Retry. Успешный Retry возвращает человека в тот же экран и фокусирует его H2; неуспешный оставляет фокус на Retry. Новый X7 bootstrap остаётся отдельным first-use путём до известного load-state.
+- **Запись закрыта на самом нижнем уровне.** Пока tasks invalid/unavailable, `Store.save`, `saveNow`, прямой `_put('tasks')` и уже поставленный debounce возвращают `false` и не отправляют PUT. Поэтому ни один старый или будущий handler не может случайно обойти экранный guard. Только валидный Retry снимает блокировку.
+- **RU/EN/DE/UK/ES и touch.** Заголовок, malformed/network explanations, Retry и accessible status переведены на пять локалей; recovery action имеет минимум 42px в mobile/coarse posture. Light/dark используют существующие purpose-токены без новой визуальной системы.
+- **PWA.** `public/sw.js`: **`satoru-v116` → `satoru-v117`**; shell-список, `day-observation-v1.js` и все authored assets сохранены.
+
+**Проверено живьём.** Независимый fresh-origin прогон на 375×812 и 1280×900: Today + Calendar, malformed JSON / HTTP 500 / `[{}]` / valid Retry. Во всей error-фазе — `0` task PUT, включая public `save`, `saveNow`, прямой `_put` и pending debounce; после валидного ответа запись снова разрешена. Failed focus → Retry, success focus → H2 текущего экрана; horizontal overflow `0`, fine/coarse target ≥42px, blockers `[]`. Скриншоты: `docs/design-qa/2026-08-09-calendar-data-v117/` — malformed и 500, Today/Calendar, каждый на 375×812 и 1280×900, сняты с финальных байтов. Статика: app/SW/server syntax, CSS/diff gate, `calendar-data-v1.test.js` 6/6 — PASS. Полный `npm test`: **44/44 PASS**.
+
 ## [2026-08-09] ⚖️ Trust vs Control v116 — сначала решение, потом последствия
 
 **Почему.** Пятый screen-by-screen прогон по `DESIGN-CRAFT-RULES.md` показал, что выбор пути выглядел как важная развилка, но работал как мгновенный переключатель: нажатие на карточку сразу меняло состояние, до подтверждения нельзя было спокойно сравнить последствия. Повторный вход в Control мог использовать старый `control.lastReckon` и ретроактивно снять энергию за прошлые дни. Модалка не имела полного dialog/focus-контракта, длинный немецкий текст не помещался в телефонный stage, light CTA и state-labels теряли контраст, а reduced motion не гасил весь входной beat.

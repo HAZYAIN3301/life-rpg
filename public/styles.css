@@ -6,6 +6,67 @@
   font-display: swap;
 }
 
+/* ==========================================================
+   Calendar data safety v117 — error is not an empty plan
+   ========================================================== */
+.calendar-load-recovery {
+  width: min(100%, var(--layout-max));
+  margin-inline: auto;
+}
+
+.calendar-load-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--sp-3);
+  align-items: center;
+  border-color: color-mix(in srgb, var(--bad) 48%, var(--line-soft));
+  background: color-mix(in srgb, var(--bad) 7%, var(--surface-1));
+  box-shadow: none;
+}
+
+.calendar-load-mark {
+  display: grid;
+  place-items: center;
+  inline-size: var(--touch-min);
+  block-size: var(--touch-min);
+  border: 1px solid color-mix(in srgb, var(--bad) 62%, var(--line-soft));
+  border-radius: 50%;
+  color: var(--bad);
+  font-family: var(--font-display);
+  font-size: var(--type-heading);
+  font-weight: 800;
+}
+
+.calendar-load-copy { min-width: 0; }
+.calendar-load-copy h2 {
+  margin: 0 0 var(--sp-1);
+  color: var(--text-strong);
+  font-family: var(--font-display);
+  font-size: var(--type-title);
+  line-height: var(--leading-display);
+}
+.calendar-load-copy p {
+  max-inline-size: var(--measure-prose);
+  margin: 0;
+  color: var(--text-soft);
+  font-size: var(--type-body);
+  line-height: var(--leading-prose);
+}
+.calendar-load-retry {
+  min-inline-size: var(--touch-min);
+  min-block-size: var(--touch-min);
+}
+
+@media (max-width: 600px) {
+  .calendar-load-card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .calendar-load-retry {
+    grid-column: 1 / -1;
+    inline-size: 100%;
+  }
+}
+
 :root {
   --bg: #0f1320;
   --panel: #171c2e;
@@ -12398,4 +12459,13 @@ body:has(#path-choice-modal) {
   #path-choice-modal :is(.modal-x, .path-choice-confirm, .path-choice-cancel):hover,
   .path-card-settings .path-opt:hover,
   .path-teaser .pt-acts .btn:hover { transform: none !important; }
+}
+
+/* Calendar recovery is a global task-data gate, not a compact desktop action. */
+#main .calendar-load-retry { min-block-size: var(--touch-min); }
+@media (pointer: coarse), (max-width: 600px) {
+  #main .calendar-load-retry {
+    min-inline-size: var(--touch-min);
+    min-block-size: var(--touch-min);
+  }
 }

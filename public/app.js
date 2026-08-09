@@ -1306,6 +1306,12 @@ const I18N_EXTRA = {
   'Тяни квест по сетке, чтобы сменить время (шаг 15 мин). Клик по пустому месту — подставить время в форму. Крестик ✕ — снять с расписания.': { en: 'Drag a quest on the grid to change its time (15-min steps). Click an empty spot to fill the time into the form. The ✕ removes it from the schedule.', de: 'Zieh einen Quest im Raster, um die Zeit zu ändern (15-Min-Schritte). Klick auf eine leere Stelle, um die Zeit ins Formular zu übernehmen. Das ✕ nimmt ihn aus dem Zeitplan.', uk: 'Тягни квест по сітці, щоб змінити час (крок 15 хв). Клік по порожньому місцю — підставити час у форму. Хрестик ✕ — зняти з розкладу.', es: 'Arrastra una misión por la cuadrícula para cambiar la hora (pasos de 15 min). Clic en un hueco para poner la hora en el formulario. La ✕ la quita del horario.' },
   '↔ Перетащи квест на другой день, чтобы перенести. ⏱ — запланированное время дня.': { en: '↔ Drag a quest to another day to move it. ⏱ — the planned time of the day.', de: '↔ Zieh einen Quest auf einen anderen Tag, um ihn zu verschieben. ⏱ — die geplante Tageszeit.', uk: '↔ Перетягни квест на інший день, щоб перенести. ⏱ — запланований час дня.', es: '↔ Arrastra una misión a otro día para moverla. ⏱ — el tiempo planificado del día.' },
   'план:': { en: 'plan:', de: 'Plan:', uk: 'план:', es: 'plan:' },
+  'План временно недоступен': { en: 'Plan is temporarily unavailable', de: 'Plan ist vorübergehend nicht verfügbar', uk: 'План тимчасово недоступний', es: 'El plan no está disponible temporalmente' },
+  'Не удалось загрузить квесты. Мы ничего не перезапишем, пока данные не вернутся.': { en: 'Quests could not be loaded. Nothing will be overwritten until the data returns.', de: 'Quests konnten nicht geladen werden. Bis die Daten zurück sind, wird nichts überschrieben.', uk: 'Не вдалося завантажити квести. Ми нічого не перезапишемо, доки дані не повернуться.', es: 'No se pudieron cargar las misiones. No se sobrescribirá nada hasta que vuelvan los datos.' },
+  'Файл квестов повреждён. Мы ничего не перезапишем, пока данные не будут восстановлены.': { en: 'The quest file is damaged. Nothing will be overwritten until the data is recovered.', de: 'Die Quest-Datei ist beschädigt. Bis zur Wiederherstellung wird nichts überschrieben.', uk: 'Файл квестів пошкоджено. Ми нічого не перезапишемо, доки дані не буде відновлено.', es: 'El archivo de misiones está dañado. No se sobrescribirá nada hasta que se recupere.' },
+  'Повторить загрузку': { en: 'Retry loading', de: 'Erneut laden', uk: 'Повторити завантаження', es: 'Reintentar la carga' },
+  'Проверяем данные…': { en: 'Checking data…', de: 'Daten werden geprüft…', uk: 'Перевіряємо дані…', es: 'Comprobando los datos…' },
+  'Изменения квестов заблокированы до восстановления данных': { en: 'Quest changes are blocked until the data is recovered', de: 'Quest-Änderungen sind bis zur Wiederherstellung der Daten gesperrt', uk: 'Зміни квестів заблоковано до відновлення даних', es: 'Los cambios de misiones están bloqueados hasta recuperar los datos' },
   // Weekdays (short)
   'Пн': { en: 'Mon', de: 'Mo', uk: 'Пн', es: 'Lun' },
   'Вт': { en: 'Tue', de: 'Di', uk: 'Вт', es: 'Mar' },
@@ -2634,6 +2640,19 @@ function startI18nObserver() {
 // ============================================================
 //  Store — общение с локальным сервером. Данные = JSON-файлы в vault.
 // ============================================================
+function taskWriteAllowed(source, notify = false) {
+  if (!State._tasksLoadError) return true;
+  clearTimeout(Store._timers.tasks);
+  if (notify) {
+    const now = Date.now();
+    if (now - (State._tasksWriteBlockedNoticeAt || 0) > 2000) {
+      State._tasksWriteBlockedNoticeAt = now;
+      toast(t('Изменения квестов заблокированы до восстановления данных'));
+    }
+  }
+  console.error(`${source} blocked`, 'tasks', State._tasksLoadError);
+  return false;
+}
 const Store = {
   _timers: {},
   async load(name, fallback) {
@@ -2672,23 +2691,30 @@ const Store = {
     }
   },
   save(name, obj) {
+    if (name === 'tasks' && !taskWriteAllowed('save', true)) return false;
     clearTimeout(this._timers[name]);
     this._timers[name] = setTimeout(() => this._put(name, obj), 250);
+    return true;
   },
   // Сохранить НЕМЕДЛЕННО и дождаться. Нужно там, где сразу после записи идёт чтение с сервера:
   // save() дебаунсится на 250 мс, а initApp() читает мгновенно — и получает ещё не сохранённое.
   // Именно так онбординг терял выбранные сферы и подставлял вместо них дефолтные.
   async saveNow(name, obj) {
+    if (name === 'tasks' && !taskWriteAllowed('saveNow', true)) return false;
     clearTimeout(this._timers[name]);
-    await this._put(name, obj);
+    return this._put(name, obj);
   },
   async _put(name, obj) {
+    // Последний рубеж: прямые Store._put('tasks', ...) тоже не могут
+    // перезаписать повреждённый/недоступный файл fallback-массивом.
+    if (name === 'tasks' && !taskWriteAllowed('_put', true)) return false;
     try {
       const r = await fetch(`/api/data/${name}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj),
       });
       if (!r.ok) throw new Error('save ' + r.status);
-    } catch (e) { console.error('save', name, e); toast('⚠️ Не удалось сохранить'); }
+      return true;
+    } catch (e) { console.error('save', name, e); toast('⚠️ Не удалось сохранить'); return false; }
   },
 };
 
@@ -3913,6 +3939,7 @@ const State = {
   leaderboard: null, _lbLoading: false, party: null, _partyLoading: false,
   adminUsers: null, _adminUsersLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null, calMode: 'day', habitsTab: 'build',
+  _tasksLoadError: '', _tasksLoadBusy: false, _tasksWriteBlockedNoticeAt: 0, _tasksFocusAfterCommit: '',
   aveCat: 'hair', // активная категория в редакторе аватара
   _denEdit: false, // открыт ли редактор комнаты (эфемерно, сама обстановка хранится в settings.den)
   treeEdit: false, treeSelNode: null, // редактор дерева навыков
@@ -9096,6 +9123,70 @@ function calRemindBtn() {
 function calExportBtn() { return `<button class="btn ghost sm" data-action="export-ics" title="Скачать запланированные квесты как .ics — импортировать в Apple/Google Календарь (разово; #8)">📆 .ics</button>`; }
 function calSubscribeBtn() { return `<button class="btn ghost sm" data-action="show-cal-subscribe" title="Живая подписка на квесты в Apple/Google Календарь">${t('📅 Подписка')}</button>`; }
 
+function validateTasksPayload(value) {
+  if (!Array.isArray(value)) return false;
+  const ids = new Set();
+  const validDate = (raw) => {
+    if (typeof raw !== 'string') return false;
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
+    if (!match) return false;
+    const year = Number(match[1]), month = Number(match[2]), day = Number(match[3]);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+  };
+  const validTime = (raw) => raw == null || (typeof raw === 'string' && /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(raw));
+  return value.every((item) => {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) return false;
+    if (typeof item.id !== 'string' || !item.id.trim() || ids.has(item.id)) return false;
+    if (typeof item.title !== 'string' || !item.title.trim()) return false;
+    if (!validDate(item.date) || !validTime(item.startTime)) return false;
+    if (item.done != null && typeof item.done !== 'boolean') return false;
+    if (item.estimateMin != null && (!Number.isFinite(Number(item.estimateMin)) || Number(item.estimateMin) < 0)) return false;
+    ids.add(item.id);
+    return true;
+  });
+}
+function normalizeLoadedTasks(value) {
+  const tasks = Array.isArray(value) ? value : [];
+  tasks.forEach((task) => {
+    if (task.actualMin === undefined) task.actualMin = null;
+    if (task.startTime === undefined) task.startTime = null;
+    if (task.goldAwarded === undefined) task.goldAwarded = 0;
+  });
+  return tasks;
+}
+function calendarLoadRecoveryHTML() {
+  const invalid = State._tasksLoadError === 'invalid';
+  const message = invalid
+    ? t('Файл квестов повреждён. Мы ничего не перезапишем, пока данные не будут восстановлены.')
+    : t('Не удалось загрузить квесты. Мы ничего не перезапишем, пока данные не вернутся.');
+  return `<section class="calendar-load-recovery" aria-labelledby="calendar-load-title">
+    <div class="card calendar-load-card" role="alert">
+      <span class="calendar-load-mark" aria-hidden="true">!</span>
+      <div class="calendar-load-copy"><h2 id="calendar-load-title">${esc(t('План временно недоступен'))}</h2><p>${esc(message)}</p></div>
+      <button type="button" class="btn calendar-load-retry" data-action="cal-tasks-retry" ${State._tasksLoadBusy ? 'disabled' : ''}>${esc(t(State._tasksLoadBusy ? 'Проверяем данные…' : 'Повторить загрузку'))}</button>
+    </div>
+  </section>`;
+}
+async function retryTasksLoad() {
+  if (State._tasksLoadBusy) return;
+  State._tasksLoadBusy = true;
+  State._tasksFocusAfterCommit = '.calendar-load-retry';
+  render();
+  const result = await Store.loadChecked('tasks', [], validateTasksPayload);
+  State._tasksLoadBusy = false;
+  State._tasksLoadError = result.error;
+  if (!result.error) {
+    State.tasks = normalizeLoadedTasks(result.value);
+    State._tasksWriteBlockedNoticeAt = 0;
+    scheduleReminders();
+  }
+  State._tasksFocusAfterCommit = result.error
+    ? '.calendar-load-retry'
+    : '#today-title, #calendar-screen-title, .week-nav b, #main h2';
+  render();
+}
+
 async function showCalSubscribeModal() {
   if (document.getElementById('cal-sub-ov')) return;
   const ov = document.createElement('div');
@@ -9170,6 +9261,7 @@ function renderCalMonth(date) {
     </div>`;
 }
 function renderCalendarView() {
+  if (State._tasksLoadError) return calendarLoadRecoveryHTML();
   const date = State.calDate || (State.calDate = todayStr());
   if ((State.calMode || 'day') === 'month') return renderCalMonth(date);
   if (State.calMode === 'week') { if (!State.weekStart) State.weekStart = weekStart(todayStr()); return renderWeekly(); }
@@ -14480,6 +14572,7 @@ function rangeStats(start, end) {
   return { xp, gold, min, quests, habitsC, byArea };
 }
 function renderWeekly() {
+  if (State._tasksLoadError) return calendarLoadRecoveryHTML();
   const ws = State.weekStart, end = addDays(ws, 6), st = rangeStats(ws, end);
   const wk = State.weeks[ws] || { intention: '', review: '' };
   const isThis = ws === weekStart(todayStr());
@@ -15359,6 +15452,10 @@ function ensureShadowFabRig() {
 let _renderedMainView = '';
 let _mainRenderToken = 0;
 function safeViewMarkup(view) {
+  // Ошибка tasks — глобальное состояние приложения, а не «пустой Calendar».
+  // Пока исходный файл не прочитан и не проверен, ни один task-dependent
+  // экран не получает fallback-массив и не предлагает мутирующие controls.
+  if (State._tasksLoadError) return calendarLoadRecoveryHTML();
   try {
     return (VIEWS[view] || renderToday)();
   } catch (e) {
@@ -15398,6 +15495,14 @@ function afterMainCommit() {
   try { scheduleDenPhaseBoundary(); } catch {}
   try { tutorialPaint(); } catch {}
   try { scheduleQuestTitleDisclosures(); } catch {}
+  if (State._tasksFocusAfterCommit) {
+    const selector = State._tasksFocusAfterCommit;
+    State._tasksFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const target = document.querySelector(selector) || document.querySelector('#main h2');
+      if (target) focusPathChoiceTarget(target);
+    });
+  }
   if (State._denFocusAfterCommit && State.view === 'den') {
     const selector = State._denFocusAfterCommit;
     State._denFocusAfterCommit = '';
@@ -17066,6 +17171,7 @@ function onClick(e) {
   } else if (action === 'cal-pick-day') { State.calDate = el.dataset.date; State.calMode = 'day'; render();
   } else if (action === 'cal-shift-month') { const d = parseDate(State.calDate || todayStr()); State.calDate = fmtDate(new Date(d.getFullYear(), d.getMonth() + Number(el.dataset.delta), Math.min(d.getDate(), 28))); render();
   } else if (action === 'cal-remind-toggle') { toggleReminders();
+  } else if (action === 'cal-tasks-retry') { retryTasksLoad();
   } else if (action === 'save-week') {
     const ws = State.weekStart; State.weeks[ws] = State.weeks[ws] || {};
     State.weeks[ws].intention = document.getElementById('week-intention').value;
@@ -17336,8 +17442,12 @@ async function initApp() {
   // не сработает всю сессию, если юзер ни разу не открыл вкладку и State.party всё ещё null.
   fetch('/api/party').then((r) => r.json()).then((d) => { if (State.party === null) State.party = d.party || false; }).catch(() => {});
 
-  State.tasks = await Store.load('tasks', []);
-  State.tasks.forEach((t) => { if (t.actualMin === undefined) t.actualMin = null; if (t.startTime === undefined) t.startTime = null; if (t.goldAwarded === undefined) t.goldAwarded = 0; });
+  {
+    const tasksLoad = await Store.loadChecked('tasks', [], validateTasksPayload);
+    State.tasks = normalizeLoadedTasks(tasksLoad.value);
+    State._tasksLoadError = tasksLoad.error;
+    State._tasksLoadBusy = false;
+  }
   State.days = await Store.load('days', {});
   State.habits = await Store.load('habits', []);
   State.habitlog = await Store.load('habitlog', {});
