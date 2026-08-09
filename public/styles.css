@@ -11658,3 +11658,744 @@ body:has(.character-shell) #ai-fab { display: none; }
     scroll-behavior: auto !important;
   }
 }
+
+/* Trust / Control craft v116 */
+:is(#path-choice-modal, .path-card-settings, .path-teaser) {
+  --path-stage-bg: #0b0f1a;
+  --path-box-bg: #111827;
+  --path-stage-fg: #f7f9ff;
+  --path-stage-muted: #c2c9dd;
+  --path-stage-line: #687493;
+  --path-divider: #8994b0;
+  --path-shadow: 0 24px 72px rgba(0, 0, 0, .44);
+  --path-trust-field: #211d3a;
+  --path-trust-field-strong: #302754;
+  --path-trust-border: #a99aff;
+  --path-trust-fg: #cfc5ff;
+  --path-trust-action: #b7a8ff;
+  --path-control-field: #122a34;
+  --path-control-field-strong: #183b48;
+  --path-control-border: #72def3;
+  --path-control-fg: #9beaf8;
+  --path-control-action: #79e1f2;
+  --path-state-bg: #f7f9ff;
+  --path-state-fg: #101728;
+  --path-disabled-bg: #30394f;
+  --path-disabled-fg: #c2c9dd;
+}
+
+:root[data-theme="light"] :is(#path-choice-modal, .path-card-settings, .path-teaser) {
+  --path-stage-bg: #edf1f8;
+  --path-box-bg: #ffffff;
+  --path-stage-fg: #101728;
+  --path-stage-muted: #3d4964;
+  --path-stage-line: #65718c;
+  --path-divider: #65718c;
+  --path-shadow: 0 22px 58px rgba(40, 52, 90, .16);
+  --path-trust-field: #f0edff;
+  --path-trust-field-strong: #e5dfff;
+  --path-trust-border: #5d48a9;
+  --path-trust-fg: #4d388f;
+  --path-trust-action: #b7a8ff;
+  --path-control-field: #e6f4f7;
+  --path-control-field-strong: #d8edf2;
+  --path-control-border: #075f78;
+  --path-control-fg: #075f78;
+  --path-control-action: #79e1f2;
+  --path-state-bg: #101728;
+  --path-state-fg: #ffffff;
+  --path-disabled-bg: #dbe1ed;
+  --path-disabled-fg: #3d4964;
+}
+
+html:has(#path-choice-modal),
+body:has(#path-choice-modal) {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+@keyframes path-choice-stage-in-v116 {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+#path-choice-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 260;
+  display: grid;
+  inline-size: 100%;
+  min-inline-size: 0;
+  block-size: 100dvh;
+  min-block-size: 100dvh;
+  max-block-size: 100dvh;
+  place-items: start center;
+  padding:
+    max(12px, env(safe-area-inset-top))
+    max(12px, env(safe-area-inset-right))
+    max(12px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-left));
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
+  isolation: isolate;
+  background:
+    linear-gradient(118deg, var(--path-trust-field) 0, transparent 44%),
+    linear-gradient(242deg, var(--path-control-field) 0, transparent 44%),
+    var(--path-stage-bg);
+  color: var(--path-stage-fg);
+  font-family: var(--font-ui);
+  text-align: start;
+  animation: path-choice-stage-in-v116 var(--dur-normal) var(--ease-out) both;
+}
+
+#path-choice-modal .path-choice-box {
+  position: relative;
+  display: flex;
+  inline-size: min(1120px, 100%);
+  min-inline-size: 0;
+  min-block-size: calc(100dvh - max(12px, env(safe-area-inset-top)) - max(12px, env(safe-area-inset-bottom)));
+  margin: auto;
+  padding: clamp(58px, 7dvh, 72px) clamp(20px, 3vw, 40px) clamp(20px, 3dvh, 32px);
+  overflow: clip;
+  flex-direction: column;
+  border: 1px solid var(--path-stage-line);
+  border-radius: var(--radius-xl);
+  background: var(--path-box-bg);
+  box-shadow: var(--path-shadow);
+  color: var(--path-stage-fg);
+  text-align: start;
+  animation: none;
+  isolation: isolate;
+}
+
+#path-choice-modal .path-choice-box::before,
+#path-choice-modal .path-choice-box::after {
+  position: absolute;
+  z-index: -1;
+  inset-block: 0;
+  inline-size: 46%;
+  opacity: .24;
+  pointer-events: none;
+  content: "";
+}
+
+#path-choice-modal .path-choice-box::before {
+  inset-inline-start: 0;
+  background: linear-gradient(142deg, var(--path-trust-field-strong), transparent 72%);
+  clip-path: polygon(0 0, 100% 0, 74% 100%, 0 84%);
+}
+
+#path-choice-modal .path-choice-box::after {
+  inset-inline-end: 0;
+  background: linear-gradient(218deg, var(--path-control-field-strong), transparent 72%);
+  clip-path: polygon(0 0, 100% 0, 100% 84%, 26% 100%);
+}
+
+#path-choice-modal .modal-x {
+  position: fixed;
+  z-index: 4;
+  inset-block-start: max(16px, env(safe-area-inset-top));
+  inset-inline-end: max(16px, env(safe-area-inset-right));
+  display: inline-grid;
+  inline-size: var(--touch-min);
+  block-size: var(--touch-min);
+  min-inline-size: var(--touch-min);
+  min-block-size: var(--touch-min);
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--path-stage-line);
+  border-radius: var(--radius-md);
+  background: var(--path-box-bg);
+  box-shadow: var(--shadow-card);
+  color: var(--path-stage-fg);
+  font: 750 var(--type-control)/1 var(--font-ui);
+  cursor: pointer;
+  transform: none;
+  transition: none;
+}
+
+#path-choice-modal :is(.path-choice-head, .path-choice-header) {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-inline-size: 0;
+  justify-items: center;
+  gap: var(--sp-2);
+  text-align: center;
+}
+
+#path-choice-modal :is(.path-choice-kicker, .path-card-kicker) {
+  color: var(--path-stage-muted);
+  font: 800 var(--type-meta)/var(--leading-label) var(--font-ui);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+
+#path-choice-modal .path-choice-title {
+  position: relative;
+  z-index: 1;
+  max-inline-size: var(--measure-dialog);
+  margin: 0 auto;
+  color: var(--path-stage-fg);
+  font: 750 var(--type-title)/var(--leading-display) var(--font-display);
+  letter-spacing: var(--tracking-natural);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+#path-choice-modal .path-choice-title:focus { outline: none; }
+
+#path-choice-modal :is(.path-choice-sub, .path-choice-intro, .path-choice-description, .path-choice-lore) {
+  position: relative;
+  z-index: 1;
+  inline-size: min(100%, var(--measure-dialog));
+  margin: var(--sp-2) auto 0;
+  color: var(--path-stage-muted);
+  font: var(--type-body)/var(--leading-prose) var(--font-ui);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+#path-choice-modal .path-choice-lore { font-size: var(--type-control); }
+
+#path-choice-modal .path-cards {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  min-inline-size: 0;
+  min-block-size: clamp(360px, 50dvh, 560px);
+  gap: clamp(28px, 4vw, 52px);
+  margin-block-start: clamp(18px, 3dvh, 28px);
+}
+
+#path-choice-modal .path-cards::before,
+#path-choice-modal .path-cards::after {
+  position: absolute;
+  z-index: 0;
+  inset-inline-start: 50%;
+  pointer-events: none;
+  content: "";
+}
+
+#path-choice-modal .path-cards::before {
+  inset-block: 10%;
+  inline-size: 1px;
+  background: var(--path-divider);
+}
+
+#path-choice-modal .path-cards::after {
+  inset-block-start: 50%;
+  inline-size: 13px;
+  block-size: 13px;
+  border: 2px solid var(--path-divider);
+  background: var(--path-box-bg);
+  transform: translate(-46%, -50%) rotate(45deg);
+}
+
+#path-choice-modal .path-card {
+  --path-card-field: var(--path-trust-field);
+  --path-card-field-strong: var(--path-trust-field-strong);
+  --path-card-border: var(--path-trust-border);
+  --path-card-purpose-fg: var(--path-trust-fg);
+  --path-card-action: var(--path-trust-action);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 0;
+  block-size: 100%;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--sp-2);
+  padding: clamp(18px, 2.4vw, 28px);
+  overflow: visible;
+  flex-direction: column;
+  appearance: none;
+  border: 2px solid var(--path-card-border);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(155deg, var(--path-card-field-strong), var(--path-card-field) 48%);
+  box-shadow: none;
+  color: var(--path-stage-fg);
+  font-family: var(--font-ui);
+  text-align: start;
+  cursor: pointer;
+  transform: none;
+  transition: none;
+  isolation: isolate;
+}
+
+#path-choice-modal .path-card[data-path="control"] {
+  --path-card-field: var(--path-control-field);
+  --path-card-field-strong: var(--path-control-field-strong);
+  --path-card-border: var(--path-control-border);
+  --path-card-purpose-fg: var(--path-control-fg);
+  --path-card-action: var(--path-control-action);
+}
+
+#path-choice-modal .path-card::before { content: none; }
+
+#path-choice-modal .path-card::after {
+  position: absolute;
+  z-index: 2;
+  inset-block-start: -2px;
+  inset-inline-end: 18px;
+  inline-size: 24px;
+  block-size: 10px;
+  background: var(--path-state-bg);
+  clip-path: polygon(0 0, 100% 0, 72% 100%, 28% 100%);
+  opacity: 0;
+  pointer-events: none;
+  content: "";
+}
+
+#path-choice-modal .path-card:is(.is-current, [data-current="true"]) {
+  border-width: 4px;
+  border-style: double;
+}
+
+#path-choice-modal .path-card:is(.is-selected, [aria-pressed="true"]) {
+  outline: 3px solid var(--path-state-bg);
+  outline-offset: 3px;
+  box-shadow: inset 0 -6px 0 var(--path-state-bg);
+}
+
+#path-choice-modal .path-card:is(.is-selected, [aria-pressed="true"])::after { opacity: 1; }
+
+#path-choice-modal .path-card-mascot {
+  display: grid;
+  inline-size: 76px;
+  block-size: 76px;
+  min-inline-size: 76px;
+  min-block-size: 76px;
+  margin: 0 0 var(--sp-1);
+  place-items: center;
+  overflow: clip;
+  border: 1px solid var(--path-card-border);
+  border-radius: var(--radius-lg);
+  background: var(--path-box-bg);
+  box-shadow: none;
+}
+
+#path-choice-modal .path-card-mascot :is(img, svg, video, [data-shadow-rig]) {
+  max-inline-size: 100%;
+  max-block-size: 100%;
+}
+
+#path-choice-modal .path-card .path-glyph {
+  position: absolute;
+  inset-block-start: clamp(18px, 2.4vw, 28px);
+  inset-inline-end: clamp(18px, 2.4vw, 28px);
+  display: grid;
+  inline-size: var(--touch-min);
+  block-size: var(--touch-min);
+  place-items: center;
+  border: 1px solid var(--path-card-border);
+  border-radius: var(--radius-md);
+  background: var(--path-box-bg);
+  color: var(--path-card-purpose-fg);
+  font: 750 var(--type-heading)/1 var(--font-display);
+}
+
+#path-choice-modal .path-card :is(h3, .path-card-title) {
+  max-inline-size: calc(100% - 4px);
+  margin: var(--sp-1) 0 0;
+  color: var(--path-stage-fg);
+  font: 750 var(--type-brand)/var(--leading-display) var(--font-display);
+  letter-spacing: var(--tracking-natural);
+  overflow-wrap: anywhere;
+}
+
+#path-choice-modal .path-card .path-tag {
+  color: var(--path-card-purpose-fg);
+  font: 800 var(--type-meta)/var(--leading-label) var(--font-ui);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+#path-choice-modal .path-card .path-pitch {
+  inline-size: min(100%, var(--measure-dialog));
+  min-block-size: 0;
+  margin: var(--sp-1) 0 0;
+  color: var(--path-stage-muted);
+  font: var(--type-body)/var(--leading-prose) var(--font-ui);
+  white-space: normal;
+  text-overflow: clip;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  -webkit-line-clamp: unset;
+}
+
+#path-choice-modal :is(.path-consequences, .path-card-consequences) {
+  display: grid;
+  inline-size: min(100%, var(--measure-dialog));
+  min-inline-size: 0;
+  gap: var(--sp-2);
+  margin: var(--sp-2) 0 0;
+  padding: 0;
+  color: var(--path-stage-fg);
+  font: var(--type-control)/var(--leading-prose) var(--font-ui);
+  list-style: none;
+}
+
+#path-choice-modal :is(.path-consequences, .path-card-consequences) li {
+  position: relative;
+  min-inline-size: 0;
+  padding-inline-start: 22px;
+  overflow-wrap: anywhere;
+}
+
+#path-choice-modal .path-consequences-title {
+  color: var(--path-card-purpose-fg);
+  font: 800 var(--type-meta)/var(--leading-label) var(--font-ui);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+
+#path-choice-modal .path-consequence {
+  display: block;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+#path-choice-modal :is(.path-consequences, .path-card-consequences) li::before {
+  position: absolute;
+  inset-block-start: .15em;
+  inset-inline-start: 0;
+  color: var(--path-card-purpose-fg);
+  font-weight: 900;
+  content: "◇";
+}
+
+#path-choice-modal :is(.path-card-state, .path-card-status, .path-state, .path-current-marker, .path-selected-marker) {
+  display: inline-flex;
+  min-block-size: 26px;
+  max-inline-size: 100%;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 4px 8px;
+  border: 1px solid var(--path-stage-line);
+  border-radius: var(--radius-pill);
+  background: var(--path-state-bg);
+  color: var(--path-state-fg);
+  font: 800 var(--type-meta)/var(--leading-label) var(--font-ui);
+  letter-spacing: .02em;
+  overflow-wrap: anywhere;
+}
+
+#path-choice-modal .path-card .path-choose-btn {
+  display: grid;
+  inline-size: 100%;
+  min-block-size: var(--touch-min);
+  margin-block-start: auto;
+  place-items: center;
+  padding: 8px 12px;
+  border: 1px solid var(--path-card-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  box-shadow: none;
+  color: var(--path-stage-fg);
+  font: 750 var(--type-control)/var(--leading-ui) var(--font-ui);
+}
+
+#path-choice-modal :is(.path-choice-actions, .path-choice-footer) {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex: 0 0 auto;
+  min-inline-size: 0;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  margin-block-start: clamp(18px, 3dvh, 28px);
+  padding-block-start: var(--sp-3);
+  border-block-start: 1px solid var(--path-stage-line);
+}
+
+#path-choice-modal .path-choice-status {
+  flex: 1 1 18rem;
+  margin: 0;
+  color: var(--path-stage-muted);
+  font: var(--type-control)/var(--leading-ui) var(--font-ui);
+  overflow-wrap: anywhere;
+}
+
+#path-choice-modal :is(.path-choice-confirm, .path-choice-cancel) {
+  min-inline-size: min(240px, 100%);
+  min-block-size: var(--touch-min);
+  padding: 9px 18px;
+  font: 750 var(--type-control)/var(--leading-ui) var(--font-ui);
+  transform: none;
+  transition: none;
+}
+
+#path-choice-modal .path-choice-confirm {
+  border: 1px solid var(--path-stage-line);
+  background: var(--path-disabled-bg);
+  color: var(--on-accent) !important;
+  box-shadow: none;
+}
+
+#path-choice-modal:is([data-selected="trust"], [data-pending-path="trust"], [data-path-pending="trust"]) .path-choice-confirm,
+#path-choice-modal :is(.path-choice-box[data-pending-path="trust"], .path-choice-box[data-path-pending="trust"]) .path-choice-confirm {
+  border-color: var(--path-trust-border);
+  background: var(--path-trust-action);
+}
+
+#path-choice-modal:is([data-selected="control"], [data-pending-path="control"], [data-path-pending="control"]) .path-choice-confirm,
+#path-choice-modal :is(.path-choice-box[data-pending-path="control"], .path-choice-box[data-path-pending="control"]) .path-choice-confirm {
+  border-color: var(--path-control-border);
+  background: var(--path-control-action);
+}
+
+#path-choice-modal .path-choice-confirm:disabled {
+  border-color: var(--path-stage-line);
+  background: var(--path-disabled-bg);
+  color: var(--path-disabled-fg) !important;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+#path-choice-modal .path-choice-cancel {
+  border-color: var(--path-stage-line);
+  background: transparent;
+  color: var(--path-stage-fg);
+}
+
+#path-choice-modal :is(.path-card, .modal-x, .path-choice-confirm, .path-choice-cancel):focus-visible,
+.path-card-settings :is(.path-opt, button, input):focus-visible,
+.path-teaser .pt-acts .btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring) !important;
+}
+
+#path-choice-modal .path-card:is(.is-selected, [aria-pressed="true"]):focus-visible {
+  box-shadow: var(--focus-ring), inset 0 -6px 0 var(--path-state-bg) !important;
+}
+
+.path-card-settings {
+  color: var(--text);
+  font-family: var(--font-ui);
+}
+
+.path-card-settings h3 {
+  color: var(--text-strong);
+  font: 750 var(--type-heading)/var(--leading-display) var(--font-display);
+  overflow-wrap: anywhere;
+}
+
+.path-card-settings .path-opts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2);
+}
+
+.path-card-settings .path-opt {
+  position: relative;
+  min-inline-size: 0;
+  min-block-size: 72px;
+  padding: var(--sp-3);
+  border: 2px solid var(--path-trust-border);
+  background: var(--path-trust-field);
+  color: var(--text-strong);
+  font: 750 var(--type-control)/var(--leading-ui) var(--font-ui);
+  transform: none;
+  transition: none;
+}
+
+.path-card-settings .path-opt[data-path="control"] {
+  border-color: var(--path-control-border);
+  background: var(--path-control-field);
+}
+
+.path-card-settings .path-opt:is(.active, .is-current, [aria-pressed="true"]) {
+  border-width: 4px;
+  border-style: double;
+  box-shadow: inset 0 -5px 0 var(--path-state-bg);
+}
+
+.path-card-settings .path-opt-name {
+  color: var(--text-strong);
+  font: 750 var(--type-heading)/var(--leading-display) var(--font-display);
+  overflow-wrap: anywhere;
+}
+
+.path-card-settings .path-opt-tag,
+.path-card-settings :is(.path-opt-state, .path-current-marker) {
+  color: var(--text-soft);
+  font: 750 var(--type-meta)/var(--leading-label) var(--font-ui);
+  overflow-wrap: anywhere;
+}
+
+.path-card-settings :is(.path-review, [data-action="review-paths"], [data-action="review-path-choice"]) {
+  min-block-size: var(--touch-min);
+  margin-block-start: var(--sp-2);
+  font: 750 var(--type-control)/var(--leading-ui) var(--font-ui);
+}
+
+.path-card-settings :is(.path-settings-row, .path-extra, label) {
+  color: var(--text-soft);
+  font: var(--type-control)/var(--leading-ui) var(--font-ui);
+}
+
+.path-teaser .pt-body p {
+  color: var(--text);
+  font: var(--type-body)/var(--leading-prose) var(--font-ui);
+}
+
+.path-teaser .pt-acts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, max-content));
+  gap: var(--sp-2);
+}
+
+.path-teaser .pt-acts .btn {
+  min-block-size: var(--touch-min);
+  font: 750 var(--type-control)/var(--leading-ui) var(--font-ui);
+  transition: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #path-choice-modal .path-card,
+  #path-choice-modal :is(.modal-x, .path-choice-confirm, .path-choice-cancel),
+  .path-card-settings .path-opt,
+  .path-teaser .pt-acts .btn {
+    transition: transform var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+  }
+
+  #path-choice-modal .path-card:hover,
+  .path-card-settings .path-opt:hover { transform: translateY(-2px); }
+
+  #path-choice-modal :is(.modal-x, .path-choice-confirm:not(:disabled), .path-choice-cancel):hover,
+  .path-teaser .pt-acts .btn:hover { transform: translateY(-1px); }
+
+  #path-choice-modal .path-card:focus-visible,
+  .path-card-settings .path-opt:focus-visible { transform: none; }
+}
+
+@media (min-width: 761px) and (max-height: 900px) {
+  #path-choice-modal .path-choice-box {
+    padding-block-start: 28px;
+    padding-block-end: var(--sp-3);
+  }
+
+  #path-choice-modal :is(.path-choice-intro, .path-choice-lore) {
+    inline-size: min(100%, var(--measure-prose));
+    margin-block-start: var(--sp-1);
+  }
+
+  #path-choice-modal .path-cards {
+    min-block-size: 0;
+    margin-block-start: var(--sp-3);
+  }
+
+  #path-choice-modal :is(.path-choice-actions, .path-choice-footer) {
+    margin-block-start: var(--sp-2);
+    padding-block-start: var(--sp-2);
+  }
+}
+
+@media (max-width: 760px) {
+  #path-choice-modal {
+    padding:
+      calc(12px + env(safe-area-inset-top))
+      calc(12px + env(safe-area-inset-right))
+      calc(12px + env(safe-area-inset-bottom))
+      calc(12px + env(safe-area-inset-left));
+    scrollbar-gutter: auto;
+  }
+
+  #path-choice-modal .path-choice-box {
+    inline-size: 100%;
+    min-block-size: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    margin: 0;
+    padding: 58px var(--sp-3) var(--sp-3);
+    border-radius: var(--radius-lg);
+  }
+
+  #path-choice-modal .path-cards {
+    flex: 0 0 auto;
+    grid-template-columns: minmax(0, 1fr);
+    min-block-size: 0;
+    gap: var(--sp-4);
+    margin-block-start: var(--sp-4);
+  }
+
+  #path-choice-modal .path-cards::before,
+  #path-choice-modal .path-cards::after { content: none; }
+
+  #path-choice-modal .path-card {
+    block-size: auto;
+    min-block-size: 0;
+    padding: var(--sp-4);
+    border-radius: var(--radius-lg);
+  }
+
+  #path-choice-modal .path-card .path-pitch,
+  #path-choice-modal :is(.path-consequences, .path-card-consequences) {
+    inline-size: min(100%, var(--measure-dialog));
+    min-inline-size: min(24ch, 100%);
+  }
+
+  #path-choice-modal :is(.path-choice-actions, .path-choice-footer) {
+    position: sticky;
+    inset-block-end: 0;
+    flex-direction: column;
+    align-items: stretch;
+    margin: var(--sp-4) calc(-1 * var(--sp-3)) calc(-1 * var(--sp-3));
+    padding: var(--sp-3) var(--sp-3) max(var(--sp-3), env(safe-area-inset-bottom));
+    background: var(--path-box-bg);
+  }
+
+  #path-choice-modal .path-choice-status { flex: 0 1 auto; }
+
+  #path-choice-modal :is(.path-choice-confirm, .path-choice-cancel) {
+    inline-size: 100%;
+    min-inline-size: 0;
+  }
+
+  .path-teaser .pt-acts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  .path-card-settings .path-opts { grid-template-columns: minmax(0, 1fr); }
+  .path-teaser .pt-acts { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (pointer: coarse), (max-width: 600px) {
+  #path-choice-modal :is(button, [role="button"], input, select, textarea),
+  .path-card-settings :is(.path-opt, button, input, select, textarea),
+  .path-card-settings label,
+  .path-teaser .pt-acts .btn {
+    min-inline-size: var(--touch-min);
+    min-block-size: var(--touch-min);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #path-choice-modal,
+  #path-choice-modal *,
+  #path-choice-modal *::before,
+  #path-choice-modal *::after,
+  .path-card-settings :is(.path-opt, button),
+  .path-teaser .pt-acts .btn {
+    animation: none !important;
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  #path-choice-modal .path-card:hover,
+  #path-choice-modal :is(.modal-x, .path-choice-confirm, .path-choice-cancel):hover,
+  .path-card-settings .path-opt:hover,
+  .path-teaser .pt-acts .btn:hover { transform: none !important; }
+}

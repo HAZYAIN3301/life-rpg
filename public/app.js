@@ -744,23 +744,42 @@ const I18N_EXTRA = {
   'через доброту': { en: 'through kindness', de: 'durch Güte', uk: 'через доброту', es: 'con bondad' },
   'через строгость': { en: 'through discipline', de: 'durch Strenge', uk: 'через суворість', es: 'con rigor' },
   'Тёплый путь. Рост через любовь, а не вину. Серия прощает срыв, отдых — это труд, уровень не сгорает.': { en: 'The warm path. Growth through love, not guilt. Your streak forgives a slip, rest is work, your level never burns.', de: 'Der warme Weg. Wachstum durch Liebe, nicht Schuld. Deine Serie verzeiht einen Ausrutscher, Ruhe ist Arbeit, dein Level verfällt nie.', uk: 'Теплий шлях. Зростання через любов, а не провину. Серія пробачає зрив, відпочинок — це праця, рівень не згорає.', es: 'El camino cálido. Crecimiento con amor, no culpa. Tu racha perdona un desliz, el descanso es trabajo, tu nivel nunca se quema.' },
-  'Жёсткий путь. Ты сам куёшь себя. Пропуск бьёт по энергии, серия не прощает, интерфейс — как «Система». Ты выбрал это.': { en: 'The hard path. You forge yourself. A miss drains energy, the streak forgives nothing, the UI becomes "the System". You chose this.', de: 'Der harte Weg. Du schmiedest dich selbst. Ein Versäumnis kostet Energie, die Serie verzeiht nichts, das UI wird zum „System". Du hast das gewählt.', uk: 'Жорсткий шлях. Ти сам себе куєш. Пропуск б\'є по енергії, серія не пробачає, інтерфейс — як «Система». Ти обрав це.', es: 'El camino duro. Te forjas a ti mismo. Un fallo consume energía, la racha no perdona nada, la interfaz se vuelve «el Sistema». Tú lo elegiste.' },
+  'Жёсткий путь. Ты сам куёшь себя. Пропуск бьёт по энергии, серия не прощает, интерфейс — как «Система». Ты выбрал это.': { en: 'The hard path. You forge yourself. A miss drains energy, the streak forgives nothing, the UI becomes “the System”. You chose this.', de: 'Der harte Weg. Du schmiedest dich selbst. Ein Versäumnis kostet Energie, die Serie verzeiht nichts, das UI wird zum „System“. Du hast das gewählt.', uk: 'Жорсткий шлях. Ти сам себе куєш. Пропуск б\'є по енергії, серія не пробачає, інтерфейс — як «Система». Ти обрав це.', es: 'El camino duro. Te forjas a ti mismo. Un fallo consume energía, la racha no perdona nada, la interfaz se vuelve «el Sistema». Tú lo elegiste.' },
   'Выбери свой путь дисциплины': { en: 'Choose your path of discipline', de: 'Wähle deinen Weg der Disziplin', uk: 'Обери свій шлях дисципліни', es: 'Elige tu camino de disciplina' },
   'Две школы. Мягкая — через доброту. Жёсткая — через строгость. Обе ведут к росту. Сменить можно в любой момент.': { en: 'Two schools. The soft one — through kindness. The hard one — through discipline. Both lead to growth. You can switch anytime.', de: 'Zwei Schulen. Die sanfte — durch Güte. Die harte — durch Strenge. Beide führen zu Wachstum. Du kannst jederzeit wechseln.', uk: 'Дві школи. М\'яка — через доброту. Жорстка — через суворість. Обидві ведуть до зростання. Змінити можна будь-коли.', es: 'Dos escuelas. La suave — con bondad. La dura — con rigor. Ambas llevan al crecimiento. Puedes cambiar cuando quieras.' },
   'Выбрать': { en: 'Choose', de: 'Wählen', uk: 'Обрати', es: 'Elegir' },
   'Путь выбран': { en: 'Path chosen', de: 'Weg gewählt', uk: 'Шлях обрано', es: 'Camino elegido' },
   'с тобой': { en: 'is with you', de: 'ist bei dir', uk: 'з тобою', es: 'está contigo' },
   'Путь дисциплины': { en: 'Path of discipline', de: 'Weg der Disziplin', uk: 'Шлях дисципліни', es: 'Camino de disciplina' },
-  'Мягкий (Доверие) или жёсткий (Контроль). Обе стороны равны по силе — различие в тоне, строгости и эстетике, а не в объёме наград. Сменить можно в любой момент.': { en: 'Soft (Trust) or hard (Control). Both sides are equal in power — they differ in tone, strictness and aesthetics, not in the amount of rewards. Switch anytime.', de: 'Sanft (Vertrauen) oder hart (Kontrolle). Beide Seiten sind gleich stark — sie unterscheiden sich in Ton, Strenge und Ästhetik, nicht in der Menge der Belohnungen. Jederzeit wechselbar.', uk: 'М\'який (Довіра) чи жорсткий (Контроль). Обидві сторони рівні за силою — різниця в тоні, суворості й естетиці, а не в обсязі нагород. Змінити можна будь-коли.', es: 'Suave (Confianza) o duro (Control). Ambos lados son iguales en poder — difieren en tono, rigor y estética, no en la cantidad de recompensas. Cambia cuando quieras.' },
+  'Мягкий (Доверие) или жёсткий (Контроль). Базовые XP и золото одинаковы; различаются тон, строгость и опциональная ставка Контроля. Сменить можно в любой момент.': { en: 'Soft (Trust) or hard (Control). Base XP and gold are the same; tone, strictness and Control’s optional wager differ. Switch anytime.', de: 'Sanft (Vertrauen) oder hart (Kontrolle). Basis-XP und Gold sind gleich; Ton, Strenge und der optionale Einsatz der Kontrolle unterscheiden sich. Jederzeit wechselbar.', uk: 'М\'який (Довіра) чи жорсткий (Контроль). Базові XP і золото однакові; різняться тон, суворість і опціональна ставка Контролю. Змінити можна будь-коли.', es: 'Suave (Confianza) o duro (Control). Los XP y el oro base son iguales; cambian el tono, el rigor y la apuesta opcional de Control. Puedes cambiar cuando quieras.' },
   'Пока путь не выбран — поведение тёплое, как Доверие.': { en: 'Until you choose a path, behavior stays warm, like Trust.', de: 'Bis du einen Weg wählst, bleibt das Verhalten warm, wie Vertrauen.', uk: 'Поки шлях не обрано — поведінка тепла, як Довіра.', es: 'Hasta que elijas un camino, el comportamiento es cálido, como Confianza.' },
-  'Правила Контроля без скина «Система» (обычная тема)': { en: 'Control rules without the "System" skin (normal theme)', de: 'Kontroll-Regeln ohne „System"-Skin (normales Design)', uk: 'Правила Контролю без скіна «Система» (звичайна тема)', es: 'Reglas de Control sin el skin «Sistema» (tema normal)' },
+  'Правила Контроля без скина «Система» (обычная тема)': { en: 'Control rules without the “System” skin (normal theme)', de: 'Kontroll-Regeln ohne „System“-Skin (normales Design)', uk: 'Правила Контролю без скіна «Система» (звичайна тема)', es: 'Reglas de Control sin el skin «Sistema» (tema normal)' },
   'Заглушить реплики маскота противоположной стороны': { en: 'Mute the opposite mascot\'s taunts', de: 'Sprüche des gegnerischen Maskottchens stummschalten', uk: 'Вимкнути репліки маскота протилежної сторони', es: 'Silenciar las burlas de la mascota contraria' },
   'Перейти': { en: 'Switch', de: 'Wechseln', uk: 'Перейти', es: 'Cambiar' },
   'Остаться': { en: 'Stay', de: 'Bleiben', uk: 'Залишитись', es: 'Quedarme' },
   'Не звать': { en: 'Don\'t call', de: 'Nicht rufen', uk: 'Не кликати', es: 'No llamar' },
   'Больше не позовём. Включить обратно можно в Настройках.': { en: 'We won\'t call again. You can re-enable it in Settings.', de: 'Wir rufen nicht mehr. In den Einstellungen wieder aktivierbar.', uk: 'Більше не кликатимемо. Увімкнути назад можна в Налаштуваннях.', es: 'No volveremos a llamar. Puedes reactivarlo en Ajustes.' },
-  'Кремень усмехается: «Доброта — это тепло. Но настоящий рост там, где трудно. Слабо попробовать Контроль?»': { en: 'Flint smirks: "Kindness is warm. But real growth is where it\'s hard. Too scared to try Control?"', de: 'Feuerstein grinst: „Güte ist warm. Aber echtes Wachstum ist dort, wo es schwer ist. Zu ängstlich für Kontrolle?"', uk: 'Кремінь усміхається: «Доброта — це тепло. Але справжнє зростання там, де важко. Слабо спробувати Контроль?»', es: 'Pedernal sonríe: «La bondad es cálida. Pero el crecimiento real está donde cuesta. ¿Te da miedo probar Control?»' },
-  'Тень тихо зовёт: «Ты не обязан ковать себя через боль. Захочешь — вернись, приму без условий 🕊».': { en: 'Shadow calls softly: "You don\'t have to forge yourself through pain. Come back anytime — I\'ll take you, no conditions 🕊."', de: 'Schatten ruft leise: „Du musst dich nicht durch Schmerz schmieden. Komm zurück, wann du willst — ich nehme dich, ohne Bedingungen 🕊."', uk: 'Тінь тихо кличе: «Ти не мусиш кувати себе через біль. Захочеш — повернись, прийму без умов 🕊».', es: 'Sombra llama suave: «No tienes que forjarte con dolor. Vuelve cuando quieras — te acepto, sin condiciones 🕊.»' },
+  'Кремень усмехается: «Доброта — это тепло. Но настоящий рост там, где трудно. Слабо попробовать Контроль?»': { en: 'Flint smirks: “Kindness is warm. But real growth is where it\'s hard. Too scared to try Control?”', de: 'Feuerstein grinst: „Güte ist warm. Aber echtes Wachstum ist dort, wo es schwer ist. Zu ängstlich für Kontrolle?“', uk: 'Кремінь усміхається: «Доброта — це тепло. Але справжнє зростання там, де важко. Слабо спробувати Контроль?»', es: 'Pedernal sonríe: «La bondad es cálida. Pero el crecimiento real está donde cuesta. ¿Te da miedo probar Control?»' },
+  'Тень тихо зовёт: «Ты не обязан ковать себя через боль. Захочешь — вернись, приму без условий 🕊».': { en: 'Shadow calls softly: “You don\'t have to forge yourself through pain. Come back anytime — I\'ll take you, no conditions 🕊.”', de: 'Schatten ruft leise: „Du musst dich nicht durch Schmerz schmieden. Komm zurück, wann du willst — ich nehme dich, ohne Bedingungen 🕊.“', uk: 'Тінь тихо кличе: «Ти не мусиш кувати себе через біль. Захочеш — повернись, прийму без умов 🕊».', es: 'Sombra llama suave: «No tienes que forjarte con dolor. Vuelve cuando quieras — te acepto, sin condiciones 🕊.»' },
+  'Закрыть выбор пути': { en: 'Close path choice', de: 'Wegauswahl schließen', uk: 'Закрити вибір шляху', es: 'Cerrar elección de camino' },
+  'Варианты пути': { en: 'Path options', de: 'Wegoptionen', uk: 'Варіанти шляху', es: 'Opciones de camino' },
+  'Текущий путь': { en: 'Current path', de: 'Aktueller Weg', uk: 'Поточний шлях', es: 'Camino actual' },
+  'Выбрано для подтверждения': { en: 'Selected for confirmation', de: 'Zur Bestätigung ausgewählt', uk: 'Обрано для підтвердження', es: 'Seleccionado para confirmar' },
+  'Подтвердить путь': { en: 'Confirm path', de: 'Weg bestätigen', uk: 'Підтвердити шлях', es: 'Confirmar camino' },
+  'Подтвердить смену пути': { en: 'Confirm path change', de: 'Wegwechsel bestätigen', uk: 'Підтвердити зміну шляху', es: 'Confirmar cambio de camino' },
+  'Оставить текущий путь': { en: 'Keep current path', de: 'Aktuellen Weg behalten', uk: 'Залишити поточний шлях', es: 'Mantener el camino actual' },
+  'Сначала выбери путь': { en: 'Choose a path first', de: 'Wähle zuerst einen Weg', uk: 'Спочатку обери шлях', es: 'Elige primero un camino' },
+  'Сравнить оба пути': { en: 'Compare both paths', de: 'Beide Wege vergleichen', uk: 'Порівняти обидва шляхи', es: 'Comparar ambos caminos' },
+  'Что меняется': { en: 'What changes', de: 'Was sich ändert', uk: 'Що змінюється', es: 'Qué cambia' },
+  'Серия: +1 базовая защита от срыва.': { en: 'Streak: +1 baseline slip protection.', de: 'Serie: +1 grundlegender Schutz bei einem Ausrutscher.', uk: 'Серія: +1 базовий захист від зриву.', es: 'Racha: +1 protección básica ante un fallo.' },
+  'Просроченный дедлайн: 0 потерь энергии.': { en: 'Overdue deadline: 0 energy lost.', de: 'Überfällige Deadline: 0 Energieverlust.', uk: 'Прострочений дедлайн: 0 втрат енергії.', es: 'Plazo vencido: 0 de energía perdida.' },
+  'Клятва Кремню недоступна.': { en: 'Flint’s Oath is unavailable.', de: 'Feuersteins Eid ist nicht verfügbar.', uk: 'Клятва Кременя недоступна.', es: 'El Juramento de Pedernal no está disponible.' },
+  'Базовые XP и золото не меняются.': { en: 'Base XP and gold do not change.', de: 'Basis-XP und Gold ändern sich nicht.', uk: 'Базові XP і золото не змінюються.', es: 'Los XP y el oro base no cambian.' },
+  'Оформление: следует твоим настройкам темы и нарратора.': { en: 'Appearance: follows your theme and narrator settings.', de: 'Darstellung: folgt deinen Einstellungen für Theme und Erzähler.', uk: 'Оформлення: відповідає твоїм налаштуванням теми й наратора.', es: 'Apariencia: sigue tus ajustes de tema y narrador.' },
+  'Серия: 0 базовых защит от пути.': { en: 'Streak: 0 baseline protections from the path.', de: 'Serie: 0 grundlegende Schutzladungen durch den Weg.', uk: 'Серія: 0 базових захистів від шляху.', es: 'Racha: 0 protecciones básicas del camino.' },
+  'Просроченный дедлайн: −5 энергии, максимум −15 в день.': { en: 'Overdue deadline: −5 energy, up to −15 per day.', de: 'Überfällige Deadline: −5 Energie, höchstens −15 pro Tag.', uk: 'Прострочений дедлайн: −5 енергії, максимум −15 на день.', es: 'Plazo vencido: −5 de energía, hasta −15 al día.' },
+  'Клятва Кремню: ×1,5 золота при успехе или −25 золота при срыве.': { en: 'Flint’s Oath: ×1.5 gold on success or −25 gold on failure.', de: 'Feuersteins Eid: ×1,5 Gold bei Erfolg oder −25 Gold bei Scheitern.', uk: 'Клятва Кременя: ×1,5 золота за успіх або −25 золота за зрив.', es: 'Juramento de Pedernal: ×1,5 de oro si cumples o −25 de oro si fallas.' },
+  'Оформление: по умолчанию включается скин «Система»; настройка нарратора не меняется.': { en: 'Appearance: the “System” skin is on by default; the narrator setting does not change.', de: 'Darstellung: Der „System“-Skin ist standardmäßig aktiv; die Erzähler-Einstellung bleibt unverändert.', uk: 'Оформлення: скін «Система» увімкнений за замовчуванням; налаштування наратора не змінюється.', es: 'Apariencia: el skin «Sistema» está activo de forma predeterminada; el ajuste del narrador no cambia.' },
   'Твой путь': { en: 'Your path', de: 'Dein Weg', uk: 'Твій шлях', es: 'Tu camino' },
   'Твой вклад за неделю': { en: 'Your contribution this week', de: 'Dein Beitrag diese Woche', uk: 'Твій внесок за тиждень', es: 'Tu aporte esta semana' },
   'Командное табло включится, когда наберётся хотя бы по 3 бойца с каждой стороны.': { en: 'The team scoreboard turns on once there are at least 3 fighters on each side.', de: 'Die Team-Anzeige erscheint, sobald mindestens 3 Kämpfer auf jeder Seite dabei sind.', uk: 'Командне табло увімкнеться, коли набереться щонайменше по 3 бійці з кожної сторони.', es: 'El marcador de equipo se activa cuando haya al menos 3 luchadores en cada lado.' },
@@ -1700,34 +1719,34 @@ const I18N_EXTRA = {
   'Я здесь. Как вчера. Как завтра. Делай свой день — я подстрахую.': { en: "I'm here. Like yesterday. Like tomorrow. Live your day — I've got your back.", de: 'Ich bin da. Wie gestern. Wie morgen. Mach deinen Tag — ich sichere dich ab.', uk: 'Я тут. Як учора. Як завтра. Роби свій день — я підстрахую.', es: 'Estoy aquí. Como ayer. Como mañana. Vive tu día — yo te cubro.' },
   'Я рядом 💛': { en: "I'm here 💛", de: 'Ich bin da 💛', uk: 'Я поруч 💛', es: 'Estoy aquí 💛' },
   // ══ i18n пласт 2 — Кремінь (FLINT_LINES) + решта тизерів шляхів + фолбек Тіні. reckon/oathBurned зберігають {missedP}/{pen}/{gold}. ══
-  'Кремень: «Принято. С этой минуты твоё слово — кремень. Моё — тоже».': { en: 'Flint: «Accepted. From this minute your word is flint. So is mine».', de: 'Feuerstein: „Angenommen. Ab dieser Minute ist dein Wort Feuerstein. Meins auch."', uk: 'Кремінь: «Прийнято. З цієї хвилини твоє слово — кремінь. Моє — теж».', es: 'Pedernal: «Aceptado. Desde este minuto tu palabra es pedernal. La mía también».' },
-  'Кремень: «Хорошо. Не обещаю, что будет легко. Обещаю, что будет честно».': { en: 'Flint: «Good. I won\'t promise it will be easy. I promise it will be fair».', de: 'Feuerstein: „Gut. Ich verspreche nicht, dass es leicht wird. Ich verspreche, dass es ehrlich wird."', uk: 'Кремінь: «Добре. Не обіцяю, що буде легко. Обіцяю, що буде чесно».', es: 'Pedernal: «Bien. No prometo que sea fácil. Prometo que será honesto».' },
-  'Кремень: «Встал на наковальню — значит, готов к молоту. Уважаю. Работаем».': { en: 'Flint: «You stepped onto the anvil — so you are ready for the hammer. Respect. Let us work».', de: 'Feuerstein: „Du bist auf den Amboss getreten — also bereit für den Hammer. Respekt. An die Arbeit."', uk: 'Кремінь: «Став на ковадло — значить, готовий до молота. Поважаю. Працюємо».', es: 'Pedernal: «Te subiste al yunque — entonces estás listo para el martillo. Respeto. A trabajar».' },
-  'Кремень: «Ты не сдался — ты выбрал другой инструмент. Кузня не закрывается. Тень, принимай».': { en: 'Flint: «You did not give up — you chose a different tool. The forge stays open. Shadow, take over».', de: 'Feuerstein: „Du hast nicht aufgegeben — du hast ein anderes Werkzeug gewählt. Die Schmiede bleibt offen. Schatten, übernimm."', uk: 'Кремінь: «Ти не здався — ти обрав інший інструмент. Кузня не зачиняється. Тіне, приймай».', es: 'Pedernal: «No te rendiste — elegiste otra herramienta. La fragua no cierra. Sombra, toma el relevo».' },
-  'Кремень: «Без обид. Сталь тоже отдыхает между закалками. Понадоблюсь — я тут».': { en: 'Flint: «No hard feelings. Even steel rests between temperings. If you need me — I am here».', de: 'Feuerstein: „Nichts für ungut. Auch Stahl ruht zwischen den Härtungen. Wenn du mich brauchst — ich bin da."', uk: 'Кремінь: «Без образ. Сталь теж відпочиває між гартуваннями. Знадоблюся — я тут».', es: 'Pedernal: «Sin rencores. Hasta el acero descansa entre temples. Si me necesitas — aquí estoy».' },
-  'Кремень: «Нормально. Настоящая дисциплина — знать, какой путь твой сегодня».': { en: 'Flint: «That is fine. Real discipline is knowing which path is yours today».', de: 'Feuerstein: „Alles gut. Wahre Disziplin heißt zu wissen, welcher Weg heute deiner ist."', uk: 'Кремінь: «Нормально. Справжня дисципліна — знати, який шлях твій сьогодні».', es: 'Pedernal: «Está bien. La disciplina de verdad es saber qué camino es el tuyo hoy».' },
-  'Кремень: «{missedP} мимо. −{pen} энергии. Не за то, что упал — за то, что договор есть договор. Встаём».': { en: 'Flint: «{missedP} missed. −{pen} energy. Not for falling — because a deal is a deal. Up we get».', de: 'Feuerstein: „{missedP} verpasst. −{pen} Energie. Nicht fürs Fallen — weil eine Abmachung eine Abmachung ist. Wir stehen auf."', uk: 'Кремінь: «{missedP} повз. −{pen} енергії. Не за те, що впав — за те, що договір є договір. Встаємо».', es: 'Pedernal: «{missedP} sin cumplir. −{pen} de energía. No por caer — porque un trato es un trato. Nos levantamos».' },
-  'Кремень: «{missedP} просрочено. −{pen}. Я не разочарован — я жду следующего подхода».': { en: 'Flint: «{missedP} overdue. −{pen}. I am not disappointed — I am waiting for your next set».', de: 'Feuerstein: „{missedP} überfällig. −{pen}. Ich bin nicht enttäuscht — ich warte auf deinen nächsten Satz."', uk: 'Кремінь: «{missedP} прострочено. −{pen}. Я не розчарований — я чекаю на наступний підхід».', es: 'Pedernal: «{missedP} vencidos. −{pen}. No estoy decepcionado — espero tu próxima serie».' },
-  'Кремень: «Счёт честный: {missedP}, −{pen} энергии. Слабость — не пропустить. Слабость — не вернуться».': { en: 'Flint: «The count is fair: {missedP}, −{pen} energy. Weakness is not missing. Weakness is not coming back».', de: 'Feuerstein: „Die Rechnung ist ehrlich: {missedP}, −{pen} Energie. Schwäche ist nicht, etwas zu verpassen. Schwäche ist, nicht zurückzukommen."', uk: 'Кремінь: «Рахунок чесний: {missedP}, −{pen} енергії. Слабкість — не пропустити. Слабкість — не повернутися».', es: 'Pedernal: «La cuenta es justa: {missedP}, −{pen} de energía. La debilidad no es fallar. La debilidad es no volver».' },
-  'Кремень: «{missedP}. −{pen}. Записал и забыл: кремень не помнит вчерашних сколов — только сегодняшнюю грань».': { en: 'Flint: «{missedP}. −{pen}. Noted and let go: flint does not remember yesterday\'s chips — only today\'s edge».', de: 'Feuerstein: „{missedP}. −{pen}. Notiert und losgelassen: Feuerstein erinnert sich nicht an gestrige Absplitterungen — nur an die heutige Kante."', uk: 'Кремінь: «{missedP}. −{pen}. Записав і забув: кремінь не памʼятає вчорашніх сколів — тільки сьогоднішню грань».', es: 'Pedernal: «{missedP}. −{pen}. Anotado y soltado: el pedernal no recuerda las mellas de ayer — solo el filo de hoy».' },
+  'Кремень: «Принято. С этой минуты твоё слово — кремень. Моё — тоже».': { en: 'Flint: “Accepted. From this minute your word is flint. So is mine.”', de: 'Feuerstein: „Angenommen. Ab dieser Minute ist dein Wort Feuerstein. Meins auch.“', uk: 'Кремінь: «Прийнято. З цієї хвилини твоє слово — кремінь. Моє — теж».', es: 'Pedernal: «Aceptado. Desde este minuto tu palabra es pedernal. La mía también».' },
+  'Кремень: «Хорошо. Не обещаю, что будет легко. Обещаю, что будет честно».': { en: 'Flint: “Good. I won\'t promise it will be easy. I promise it will be fair.”', de: 'Feuerstein: „Gut. Ich verspreche nicht, dass es leicht wird. Ich verspreche, dass es ehrlich wird.“', uk: 'Кремінь: «Добре. Не обіцяю, що буде легко. Обіцяю, що буде чесно».', es: 'Pedernal: «Bien. No prometo que sea fácil. Prometo que será honesto».' },
+  'Кремень: «Встал на наковальню — значит, готов к молоту. Уважаю. Работаем».': { en: 'Flint: “You stepped onto the anvil — so you are ready for the hammer. Respect. Let us work.”', de: 'Feuerstein: „Du bist auf den Amboss getreten — also bereit für den Hammer. Respekt. An die Arbeit.“', uk: 'Кремінь: «Став на ковадло — значить, готовий до молота. Поважаю. Працюємо».', es: 'Pedernal: «Te subiste al yunque — entonces estás listo para el martillo. Respeto. A trabajar».' },
+  'Кремень: «Ты не сдался — ты выбрал другой инструмент. Кузня не закрывается. Тень, принимай».': { en: 'Flint: “You did not give up — you chose a different tool. The forge stays open. Shadow, take over.”', de: 'Feuerstein: „Du hast nicht aufgegeben — du hast ein anderes Werkzeug gewählt. Die Schmiede bleibt offen. Schatten, übernimm.“', uk: 'Кремінь: «Ти не здався — ти обрав інший інструмент. Кузня не зачиняється. Тіне, приймай».', es: 'Pedernal: «No te rendiste — elegiste otra herramienta. La fragua no cierra. Sombra, toma el relevo».' },
+  'Кремень: «Без обид. Сталь тоже отдыхает между закалками. Понадоблюсь — я тут».': { en: 'Flint: “No hard feelings. Even steel rests between temperings. If you need me — I am here.”', de: 'Feuerstein: „Nichts für ungut. Auch Stahl ruht zwischen den Härtungen. Wenn du mich brauchst — ich bin da.“', uk: 'Кремінь: «Без образ. Сталь теж відпочиває між гартуваннями. Знадоблюся — я тут».', es: 'Pedernal: «Sin rencores. Hasta el acero descansa entre temples. Si me necesitas — aquí estoy».' },
+  'Кремень: «Нормально. Настоящая дисциплина — знать, какой путь твой сегодня».': { en: 'Flint: “That is fine. Real discipline is knowing which path is yours today.”', de: 'Feuerstein: „Alles gut. Wahre Disziplin heißt zu wissen, welcher Weg heute deiner ist.“', uk: 'Кремінь: «Нормально. Справжня дисципліна — знати, який шлях твій сьогодні».', es: 'Pedernal: «Está bien. La disciplina de verdad es saber qué camino es el tuyo hoy».' },
+  'Кремень: «{missedP} мимо. −{pen} энергии. Не за то, что упал — за то, что договор есть договор. Встаём».': { en: 'Flint: “{missedP} missed. −{pen} energy. Not for falling — because a deal is a deal. Up we get.”', de: 'Feuerstein: „{missedP} verpasst. −{pen} Energie. Nicht fürs Fallen — weil eine Abmachung eine Abmachung ist. Wir stehen auf.“', uk: 'Кремінь: «{missedP} повз. −{pen} енергії. Не за те, що впав — за те, що договір є договір. Встаємо».', es: 'Pedernal: «{missedP} sin cumplir. −{pen} de energía. No por caer — porque un trato es un trato. Nos levantamos».' },
+  'Кремень: «{missedP} просрочено. −{pen}. Я не разочарован — я жду следующего подхода».': { en: 'Flint: “{missedP} overdue. −{pen}. I am not disappointed — I am waiting for your next set.”', de: 'Feuerstein: „{missedP} überfällig. −{pen}. Ich bin nicht enttäuscht — ich warte auf deinen nächsten Satz.“', uk: 'Кремінь: «{missedP} прострочено. −{pen}. Я не розчарований — я чекаю на наступний підхід».', es: 'Pedernal: «{missedP} vencidos. −{pen}. No estoy decepcionado — espero tu próxima serie».' },
+  'Кремень: «Счёт честный: {missedP}, −{pen} энергии. Слабость — не пропустить. Слабость — не вернуться».': { en: 'Flint: “The count is fair: {missedP}, −{pen} energy. Weakness is not missing. Weakness is not coming back.”', de: 'Feuerstein: „Die Rechnung ist ehrlich: {missedP}, −{pen} Energie. Schwäche ist nicht, etwas zu verpassen. Schwäche ist, nicht zurückzukommen.“', uk: 'Кремінь: «Рахунок чесний: {missedP}, −{pen} енергії. Слабкість — не пропустити. Слабкість — не повернутися».', es: 'Pedernal: «La cuenta es justa: {missedP}, −{pen} de energía. La debilidad no es fallar. La debilidad es no volver».' },
+  'Кремень: «{missedP}. −{pen}. Записал и забыл: кремень не помнит вчерашних сколов — только сегодняшнюю грань».': { en: 'Flint: “{missedP}. −{pen}. Noted and let go: flint does not remember yesterday\'s chips — only today\'s edge.”', de: 'Feuerstein: „{missedP}. −{pen}. Notiert und losgelassen: Feuerstein erinnert sich nicht an gestrige Absplitterungen — nur an die heutige Kante.“', uk: 'Кремінь: «{missedP}. −{pen}. Записав і забув: кремінь не памʼятає вчорашніх сколів — тільки сьогоднішню грань».', es: 'Pedernal: «{missedP}. −{pen}. Anotado y soltado: el pedernal no recuerda las mellas de ayer — solo el filo de hoy».' },
   'Уровень взят. Не поздравляю — констатирую: молот попал.': { en: 'Level taken. No congratulations — just a fact: the hammer landed.', de: 'Stufe genommen. Kein Glückwunsch — nur eine Feststellung: der Hammer hat getroffen.', uk: 'Рівень узято. Не вітаю — констатую: молот влучив.', es: 'Nivel conquistado. No te felicito — constato: el martillo dio en el blanco.' },
   'Выше на ступень. Так куют. Продолжай.': { en: 'One step higher. That is how you forge. Keep going.', de: 'Eine Stufe höher. So wird geschmiedet. Mach weiter.', uk: 'Вище на щабель. Так кують. Продовжуй.', es: 'Un peldaño más arriba. Así se forja. Sigue.' },
   'Новый уровень. Заметь: без поблажек. Это всё ты.': { en: 'New level. Notice: no leniency. This is all you.', de: 'Neues Level. Merk dir: keine Nachsicht. Das bist alles du.', uk: 'Новий рівень. Зауваж: без поблажок. Це все ти.', es: 'Nuevo nivel. Fíjate: sin concesiones. Todo esto eres tú.' },
-  'Кремень: «Ставка принята. До полуночи. Слово — кремень».': { en: 'Flint: «Bet accepted. Until midnight. Your word is flint».', de: 'Feuerstein: „Einsatz angenommen. Bis Mitternacht. Dein Wort ist Feuerstein."', uk: 'Кремінь: «Ставку прийнято. До півночі. Слово — кремінь».', es: 'Pedernal: «Apuesta aceptada. Hasta medianoche. Tu palabra es pedernal».' },
-  'Кремень: «Записал. Теперь это не задача — это договор».': { en: 'Flint: «Noted. Now it is not a task — it is a contract».', de: 'Feuerstein: „Notiert. Jetzt ist es keine Aufgabe mehr — es ist ein Vertrag."', uk: 'Кремінь: «Записав. Тепер це не задача — це договір».', es: 'Pedernal: «Anotado. Ahora no es una tarea — es un contrato».' },
-  'Кремень: «Слово сдержано. Золото твоё — с процентом за характер».': { en: 'Flint: «Word kept. The gold is yours — with interest for character».', de: 'Feuerstein: „Wort gehalten. Das Gold ist deins — mit Zinsen für Charakter."', uk: 'Кремінь: «Слово стримано. Золото твоє — з відсотком за характер».', es: 'Pedernal: «Palabra cumplida. El oro es tuyo — con intereses por el carácter».' },
-  'Кремень: «Договор закрыт. Так звучит сталь, когда она настоящая».': { en: 'Flint: «Contract closed. That is the sound steel makes when it is the real thing».', de: 'Feuerstein: „Vertrag geschlossen. So klingt Stahl, wenn er echt ist."', uk: 'Кремінь: «Договір закрито. Так звучить сталь, коли вона справжня».', es: 'Pedernal: «Contrato cerrado. Así suena el acero cuando es de verdad».' },
-  'Кремень: «Клятва сгорела в горне: −{gold} 🪙. Не прячься от счёта — просто дай следующую и сдержи».': { en: 'Flint: «The oath burned in the forge: −{gold} 🪙. Do not hide from the count — just make the next one and keep it».', de: 'Feuerstein: „Der Eid ist in der Esse verbrannt: −{gold} 🪙. Versteck dich nicht vor der Rechnung — leg einfach den nächsten ab und halte ihn."', uk: 'Кремінь: «Клятва згоріла в горні: −{gold} 🪙. Не ховайся від рахунку — просто дай наступну і стримай».', es: 'Pedernal: «El juramento ardió en la fragua: −{gold} 🪙. No huyas de la cuenta — solo haz el siguiente y cúmplelo».' },
-  'Кремень: «−{gold} 🪙 в горн. Это не наказание — это цена слова. Завтра оно может стоить дороже».': { en: 'Flint: «−{gold} 🪙 to the forge. It is not punishment — it is the price of your word. Tomorrow it may cost more».', de: 'Feuerstein: „−{gold} 🪙 in die Esse. Das ist keine Strafe — das ist der Preis deines Wortes. Morgen kann es mehr kosten."', uk: 'Кремінь: «−{gold} 🪙 у горн. Це не покарання — це ціна слова. Завтра воно може коштувати дорожче».', es: 'Pedernal: «−{gold} 🪙 a la fragua. No es un castigo — es el precio de tu palabra. Mañana puede costar más».' },
-  'Кремень, проходя мимо: «Тень хорошо греет. А я хорошо закаляю. Разница — в звоне стали».': { en: 'Flint, passing by: «Shadow warms you well. I temper you well. The difference is in the ring of steel».', de: 'Feuerstein im Vorbeigehen: „Schatten wärmt gut. Ich härte gut. Der Unterschied liegt im Klang des Stahls."', uk: 'Кремінь, проходячи повз: «Тінь добре гріє. А я добре гартую. Різниця — у дзвоні сталі».', es: 'Pedernal, al pasar: «Sombra calienta bien. Yo templo bien. La diferencia está en el tañido del acero».' },
-  'Кремень кивает на твою серию: «Неплохо. А теперь представь то же самое — без страховки».': { en: 'Flint nods at your streak: «Not bad. Now imagine the same — without a safety net».', de: 'Feuerstein nickt zu deiner Serie: „Nicht schlecht. Und jetzt stell dir dasselbe vor — ohne Sicherung."', uk: 'Кремінь киває на твою серію: «Непогано. А тепер уяви те саме — без страхування».', es: 'Pedernal asiente ante tu racha: «Nada mal. Ahora imagina lo mismo — sin red de seguridad».' },
-  'Кремень: «Я не против объятий. Я за объятия после тренировки. Заходи в кузню».': { en: 'Flint: «I am not against hugs. I am for hugs after training. Come to the forge».', de: 'Feuerstein: „Ich bin nicht gegen Umarmungen. Ich bin für Umarmungen nach dem Training. Komm in die Schmiede."', uk: 'Кремінь: «Я не проти обіймів. Я за обійми після тренування. Заходь у кузню».', es: 'Pedernal: «No estoy en contra de los abrazos. Estoy a favor de los abrazos tras entrenar. Ven a la fragua».' },
-  'Кремень точит грань: «Мягкость — выбор. Жёсткость — тоже. Проверь, из чего ты, на моей стороне».': { en: 'Flint hones an edge: «Softness is a choice. Hardness too. Come find out what you are made of on my side».', de: 'Feuerstein schärft eine Kante: „Weichheit ist eine Wahl. Härte auch. Finde auf meiner Seite heraus, woraus du bist."', uk: 'Кремінь гострить грань: «Мʼякість — вибір. Жорсткість — теж. Перевір, з чого ти, на моєму боці».', es: 'Pedernal afila un filo: «La suavidad es una elección. La dureza también. Averigua de qué estás hecho de mi lado».' },
-  'Тень машет из-за угла: «Горжусь твоей сталью. Просто напоминаю: у меня чай, плед и ноль штрафов 🕊».': { en: 'Shadow waves from around the corner: «Proud of your steel. Just a reminder: I have tea, a blanket, and zero penalties 🕊».', de: 'Schatten winkt um die Ecke: „Stolz auf deinen Stahl. Nur zur Erinnerung: bei mir gibt es Tee, eine Decke und null Strafen 🕊."', uk: 'Тінь махає з-за рогу: «Пишаюся твоєю сталлю. Просто нагадую: у мене чай, плед і нуль штрафів 🕊».', es: 'Sombra saluda desde la esquina: «Orgullosa de tu acero. Solo un recordatorio: tengo té, una manta y cero penalizaciones 🕊».' },
-  'Тень: «Кремень суров, но справедлив. А я просто рядом. Дверь открыта — это не слабость, это дверь».': { en: 'Shadow: «Flint is stern but fair. And I am simply here. The door is open — that is not weakness, that is a door».', de: 'Schatten: „Feuerstein ist streng, aber gerecht. Und ich bin einfach da. Die Tür ist offen — das ist keine Schwäche, das ist eine Tür."', uk: 'Тінь: «Кремінь суворий, але справедливий. А я просто поруч. Двері відчинені — це не слабкість, це двері».', es: 'Sombra: «Pedernal es severo pero justo. Y yo simplemente estoy aquí. La puerta está abierta — no es debilidad, es una puerta».' },
-  'Тень шепчет: «Сталь, которую не отпускают остыть, ломается. Захочешь передышку — я тут 🕊».': { en: 'Shadow whispers: «Steel that is never let to cool will crack. If you want a breather — I am here 🕊».', de: 'Schatten flüstert: „Stahl, den man nie abkühlen lässt, bricht. Wenn du eine Verschnaufpause willst — ich bin da 🕊."', uk: 'Тінь шепоче: «Сталь, якій не дають охолонути, ламається. Захочеш перепочинок — я тут 🕊».', es: 'Sombra susurra: «El acero que nunca se deja enfriar se quiebra. Si quieres un respiro — aquí estoy 🕊».' },
-  'Тень: «Ты и в жёстком пути остался собой — это главное. Обнимемся, когда вернёшься. Или просто так».': { en: 'Shadow: «Even on the hard path you stayed yourself — that is what matters. We will hug when you are back. Or just because».', de: 'Schatten: „Auch auf dem harten Weg bist du du selbst geblieben — das ist die Hauptsache. Wir umarmen uns, wenn du zurück bist. Oder einfach so."', uk: 'Тінь: «Ти й на жорсткому шляху лишився собою — це головне. Обіймемося, коли повернешся. Або просто так».', es: 'Sombra: «Incluso en el camino duro seguiste siendo tú — eso es lo que importa. Nos abrazamos cuando vuelvas. O porque sí».' },
-  'Тень: «Рада, что ты со мной. Идём мягко — но идём 🕊».': { en: 'Shadow: «Glad you are with me. Let us go gently — but let us go 🕊».', de: 'Schatten: „Schön, dass du bei mir bist. Gehen wir sanft — aber gehen wir 🕊."', uk: 'Тінь: «Рада, що ти зі мною. Ідемо мʼяко — але йдемо 🕊».', es: 'Sombra: «Me alegra que estés conmigo. Vamos con calma — pero vamos 🕊».' },
+  'Кремень: «Ставка принята. До полуночи. Слово — кремень».': { en: 'Flint: “Bet accepted. Until midnight. Your word is flint.”', de: 'Feuerstein: „Einsatz angenommen. Bis Mitternacht. Dein Wort ist Feuerstein.“', uk: 'Кремінь: «Ставку прийнято. До півночі. Слово — кремінь».', es: 'Pedernal: «Apuesta aceptada. Hasta medianoche. Tu palabra es pedernal».' },
+  'Кремень: «Записал. Теперь это не задача — это договор».': { en: 'Flint: “Noted. Now it is not a task — it is a contract.”', de: 'Feuerstein: „Notiert. Jetzt ist es keine Aufgabe mehr — es ist ein Vertrag.“', uk: 'Кремінь: «Записав. Тепер це не задача — це договір».', es: 'Pedernal: «Anotado. Ahora no es una tarea — es un contrato».' },
+  'Кремень: «Слово сдержано. Золото твоё — с процентом за характер».': { en: 'Flint: “Word kept. The gold is yours — with interest for character.”', de: 'Feuerstein: „Wort gehalten. Das Gold ist deins — mit Zinsen für Charakter.“', uk: 'Кремінь: «Слово стримано. Золото твоє — з відсотком за характер».', es: 'Pedernal: «Palabra cumplida. El oro es tuyo — con intereses por el carácter».' },
+  'Кремень: «Договор закрыт. Так звучит сталь, когда она настоящая».': { en: 'Flint: “Contract closed. That is the sound steel makes when it is the real thing.”', de: 'Feuerstein: „Vertrag geschlossen. So klingt Stahl, wenn er echt ist.“', uk: 'Кремінь: «Договір закрито. Так звучить сталь, коли вона справжня».', es: 'Pedernal: «Contrato cerrado. Así suena el acero cuando es de verdad».' },
+  'Кремень: «Клятва сгорела в горне: −{gold} 🪙. Не прячься от счёта — просто дай следующую и сдержи».': { en: 'Flint: “The oath burned in the forge: −{gold} 🪙. Do not hide from the count — just make the next one and keep it.”', de: 'Feuerstein: „Der Eid ist in der Esse verbrannt: −{gold} 🪙. Versteck dich nicht vor der Rechnung — leg einfach den nächsten ab und halte ihn.“', uk: 'Кремінь: «Клятва згоріла в горні: −{gold} 🪙. Не ховайся від рахунку — просто дай наступну і стримай».', es: 'Pedernal: «El juramento ardió en la fragua: −{gold} 🪙. No huyas de la cuenta — solo haz el siguiente y cúmplelo».' },
+  'Кремень: «−{gold} 🪙 в горн. Это не наказание — это цена слова. Завтра оно может стоить дороже».': { en: 'Flint: “−{gold} 🪙 to the forge. It is not punishment — it is the price of your word. Tomorrow it may cost more.”', de: 'Feuerstein: „−{gold} 🪙 in die Esse. Das ist keine Strafe — das ist der Preis deines Wortes. Morgen kann es mehr kosten.“', uk: 'Кремінь: «−{gold} 🪙 у горн. Це не покарання — це ціна слова. Завтра воно може коштувати дорожче».', es: 'Pedernal: «−{gold} 🪙 a la fragua. No es un castigo — es el precio de tu palabra. Mañana puede costar más».' },
+  'Кремень, проходя мимо: «Тень хорошо греет. А я хорошо закаляю. Разница — в звоне стали».': { en: 'Flint, passing by: “Shadow warms you well. I temper you well. The difference is in the ring of steel.”', de: 'Feuerstein im Vorbeigehen: „Schatten wärmt gut. Ich härte gut. Der Unterschied liegt im Klang des Stahls.“', uk: 'Кремінь, проходячи повз: «Тінь добре гріє. А я добре гартую. Різниця — у дзвоні сталі».', es: 'Pedernal, al pasar: «Sombra calienta bien. Yo templo bien. La diferencia está en el tañido del acero».' },
+  'Кремень кивает на твою серию: «Неплохо. А теперь представь то же самое — без страховки».': { en: 'Flint nods at your streak: “Not bad. Now imagine the same — without a safety net.”', de: 'Feuerstein nickt zu deiner Serie: „Nicht schlecht. Und jetzt stell dir dasselbe vor — ohne Sicherung.“', uk: 'Кремінь киває на твою серію: «Непогано. А тепер уяви те саме — без страхування».', es: 'Pedernal asiente ante tu racha: «Nada mal. Ahora imagina lo mismo — sin red de seguridad».' },
+  'Кремень: «Я не против объятий. Я за объятия после тренировки. Заходи в кузню».': { en: 'Flint: “I am not against hugs. I am for hugs after training. Come to the forge.”', de: 'Feuerstein: „Ich bin nicht gegen Umarmungen. Ich bin für Umarmungen nach dem Training. Komm in die Schmiede.“', uk: 'Кремінь: «Я не проти обіймів. Я за обійми після тренування. Заходь у кузню».', es: 'Pedernal: «No estoy en contra de los abrazos. Estoy a favor de los abrazos tras entrenar. Ven a la fragua».' },
+  'Кремень точит грань: «Мягкость — выбор. Жёсткость — тоже. Проверь, из чего ты, на моей стороне».': { en: 'Flint hones an edge: “Softness is a choice. Hardness too. Come find out what you are made of on my side.”', de: 'Feuerstein schärft eine Kante: „Weichheit ist eine Wahl. Härte auch. Finde auf meiner Seite heraus, woraus du bist.“', uk: 'Кремінь гострить грань: «Мʼякість — вибір. Жорсткість — теж. Перевір, з чого ти, на моєму боці».', es: 'Pedernal afila un filo: «La suavidad es una elección. La dureza también. Averigua de qué estás hecho de mi lado».' },
+  'Тень машет из-за угла: «Горжусь твоей сталью. Просто напоминаю: у меня чай, плед и ноль штрафов 🕊».': { en: 'Shadow waves from around the corner: “Proud of your steel. Just a reminder: I have tea, a blanket, and zero penalties 🕊.”', de: 'Schatten winkt um die Ecke: „Stolz auf deinen Stahl. Nur zur Erinnerung: bei mir gibt es Tee, eine Decke und null Strafen 🕊.“', uk: 'Тінь махає з-за рогу: «Пишаюся твоєю сталлю. Просто нагадую: у мене чай, плед і нуль штрафів 🕊».', es: 'Sombra saluda desde la esquina: «Orgullosa de tu acero. Solo un recordatorio: tengo té, una manta y cero penalizaciones 🕊».' },
+  'Тень: «Кремень суров, но справедлив. А я просто рядом. Дверь открыта — это не слабость, это дверь».': { en: 'Shadow: “Flint is stern but fair. And I am simply here. The door is open — that is not weakness, that is a door.”', de: 'Schatten: „Feuerstein ist streng, aber gerecht. Und ich bin einfach da. Die Tür ist offen — das ist keine Schwäche, das ist eine Tür.“', uk: 'Тінь: «Кремінь суворий, але справедливий. А я просто поруч. Двері відчинені — це не слабкість, це двері».', es: 'Sombra: «Pedernal es severo pero justo. Y yo simplemente estoy aquí. La puerta está abierta — no es debilidad, es una puerta».' },
+  'Тень шепчет: «Сталь, которую не отпускают остыть, ломается. Захочешь передышку — я тут 🕊».': { en: 'Shadow whispers: “Steel that is never let to cool will crack. If you want a breather — I am here 🕊.”', de: 'Schatten flüstert: „Stahl, den man nie abkühlen lässt, bricht. Wenn du eine Verschnaufpause willst — ich bin da 🕊.“', uk: 'Тінь шепоче: «Сталь, якій не дають охолонути, ламається. Захочеш перепочинок — я тут 🕊».', es: 'Sombra susurra: «El acero que nunca se deja enfriar se quiebra. Si quieres un respiro — aquí estoy 🕊».' },
+  'Тень: «Ты и в жёстком пути остался собой — это главное. Обнимемся, когда вернёшься. Или просто так».': { en: 'Shadow: “Even on the hard path you stayed yourself — that is what matters. We will hug when you are back. Or just because.”', de: 'Schatten: „Auch auf dem harten Weg bist du du selbst geblieben — das ist die Hauptsache. Wir umarmen uns, wenn du zurück bist. Oder einfach so.“', uk: 'Тінь: «Ти й на жорсткому шляху лишився собою — це головне. Обіймемося, коли повернешся. Або просто так».', es: 'Sombra: «Incluso en el camino duro seguiste siendo tú — eso es lo que importa. Nos abrazamos cuando vuelvas. O porque sí».' },
+  'Тень: «Рада, что ты со мной. Идём мягко — но идём 🕊».': { en: 'Shadow: “Glad you are with me. Let us go gently — but let us go 🕊.”', de: 'Schatten: „Schön, dass du bei mir bist. Gehen wir sanft — aber gehen wir 🕊.“', uk: 'Тінь: «Рада, що ти зі мною. Ідемо мʼяко — але йдемо 🕊».', es: 'Sombra: «Me alegra que estés conmigo. Vamos con calma — pero vamos 🕊».' },
   // ══ i18n пласт 2 — Боссы: імена + лор + слабкість + перемога (BOSSES) ══
   'Прокрастинион, Пожиратель Дней': { en: 'Procrastinion, Devourer of Days', de: 'Prokrastinion, der Tageverschlinger', uk: 'Прокрастиніон, Пожирач Днів', es: 'Procrastinión, Devorador de Días' },
   'Древний кракен, обвивающий щупальцами стрелки часов. Шепчет «успеешь позже» — и день исчезает у него в пасти.': { en: 'An ancient kraken coiled around the clock hands. It whispers «you\'ll get to it later» — and the day vanishes into its maw.', de: 'Ein uralter Krake, der die Zeiger der Uhr umschlingt. Er flüstert „das schaffst du später" — und der Tag verschwindet in seinem Schlund.', uk: 'Стародавній кракен, що обвиває щупальцями стрілки годинника. Шепоче «встигнеш пізніше» — і день зникає в його пащі.', es: 'Un kraken ancestral que enrosca sus tentáculos en las agujas del reloj. Susurra «ya lo harás luego» — y el día desaparece en sus fauces.' },
@@ -2711,9 +2730,26 @@ const PATHS = {
   control: { id: 'control', glyph: '⚔️', name: 'Контроль', mascot: 'Кремень', accent: '#4fd6ff',
              tag: 'через строгость', pitch: 'Жёсткий путь. Ты сам куёшь себя. Пропуск бьёт по энергии, серия не прощает, интерфейс — как «Система». Ты выбрал это.' },
 };
+const PATH_CONSEQUENCES = Object.freeze({
+  trust: Object.freeze([
+    'Серия: +1 базовая защита от срыва.',
+    'Просроченный дедлайн: 0 потерь энергии.',
+    'Клятва Кремню недоступна.',
+    'Базовые XP и золото не меняются.',
+    'Оформление: следует твоим настройкам темы и нарратора.',
+  ]),
+  control: Object.freeze([
+    'Серия: 0 базовых защит от пути.',
+    'Просроченный дедлайн: −5 энергии, максимум −15 в день.',
+    'Клятва Кремню: ×1,5 золота при успехе или −25 золота при срыве.',
+    'Базовые XP и золото не меняются.',
+    'Оформление: по умолчанию включается скин «Система»; настройка нарратора не меняется.',
+  ]),
+});
 // Поведенческий дефолт для не выбравших (null) — тёплый Доверие (бренд Satoru). Явный выбор различает грейс серии.
 const CONTROL = { energyPenaltyPer: 5, energyPenaltyCap: 15, oathGold: 25 }; // штраф: −5 энергии/дедлайн, кап −15/сутки; oathGold — ставка «Клятвы Кремню»
 function currentPath() { return (State.settings && State.settings.path === 'control') ? 'control' : 'trust'; }
+function pathIdValid(id) { return id === 'trust' || id === 'control'; }
 function pathChosen() { return !!(State.settings && (State.settings.path === 'trust' || State.settings.path === 'control')); }
 function pathInfo() { return PATHS[currentPath()]; }
 // Грейс серии: явно выбранный Доверие даёт +1 базовое прощение (доброта); Контроль и «ещё не выбрал» — только перк-щит (как было).
@@ -3880,6 +3916,7 @@ const State = {
   aveCat: 'hair', // активная категория в редакторе аватара
   _denEdit: false, // открыт ли редактор комнаты (эфемерно, сама обстановка хранится в settings.den)
   treeEdit: false, treeSelNode: null, // редактор дерева навыков
+  _pathFocusAfterCommit: '', // path-dialog возвращает фокус после render() на стабильный якорь маршрута
   settingsCollapsed: {}, // свёрнутые столбы в редакторе сфер
   balanceDrill: new Set(), // раскрытые сферы на колесе баланса (дрилл-даун под-сфер) — эфемерно
 };
@@ -13793,71 +13830,199 @@ function pathTeaserCard() {
   const cur = currentPath(), opp = cur === 'trust' ? 'control' : 'trust';
   const oppMascot = opp === 'control' ? flintMascotSVG(40) : tutMascotHTML();
   return `<div class="card path-teaser">
-    <div class="pt-mascot">${oppMascot}</div>
+    <div class="pt-mascot" aria-hidden="true">${oppMascot}</div>
     <div class="pt-body"><p>${t(dayPick('teaser', PATH_TEASERS[cur]))}</p>
-      <div class="pt-acts"><button class="btn ghost sm" data-action="path-teaser-switch" data-path="${opp}">${t('Перейти')} ${PATHS[opp].glyph}</button><button class="btn ghost sm" data-action="path-teaser-dismiss">${t('Остаться')}</button><button class="btn ghost sm" data-action="path-teaser-mute">${t('Не звать')}</button></div></div>
+      <div class="pt-acts"><button type="button" class="btn ghost sm" data-action="path-teaser-switch" data-path="${opp}">${t('Перейти')} ${PATHS[opp].glyph}</button><button type="button" class="btn ghost sm" data-action="path-teaser-dismiss">${t('Остаться')}</button></div></div>
   </div>`;
 }
-// Двухкарточный экран выбора пути (Тень vs Кремень). Обе стороны питчат философию — «правильного» ответа нет.
-// Никакого хардлока: сменить путь можно в любой момент в Настройках (см. §3.1 плана). Показывается один раз через дрип.
-function showPathChoiceModal() {
-  if (document.getElementById('path-choice-modal')) return;
-  const cur = State.settings && State.settings.path;
-  const card = (p) => `<button class="path-card ${cur === p.id ? 'chosen' : ''}" data-action="choose-path" data-path="${p.id}">
-      <div class="path-card-mascot">${p.id === 'trust' ? tutMascotHTML() : flintMascotSVG(56)}</div>
-      <div class="path-glyph">${p.glyph}</div>
-      <h3>${t(p.name)}</h3>
-      <div class="path-tag">${t(p.tag)}</div>
-      <p class="path-pitch">${t(p.pitch)}</p>
-      <span class="path-choose-btn">${t('Выбрать')}</span>
+// Один локальный контроллер обслуживает дрип, Настройки и недельный тизер. Выбор карточки
+// меняет только pending-состояние диалога; данные сохраняются исключительно явным подтверждением.
+function pathChoiceFocusable(overlay) {
+  return Array.from(overlay.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+    .filter((node) => node.getAttribute('aria-hidden') !== 'true' && !node.hidden);
+}
+function focusPathChoiceTarget(target) {
+  if (!target || typeof target.focus !== 'function') return;
+  if (target.tabIndex < 0 && !target.hasAttribute('tabindex')) target.tabIndex = -1;
+  try { target.focus({ preventScroll: true }); } catch { target.focus(); }
+}
+function pathChoiceReturnTarget(overlay) {
+  const opener = overlay && overlay._returnFocus;
+  if (opener && opener.isConnected && opener !== document.body && opener !== document.documentElement) return opener;
+  const source = overlay && overlay.dataset.source;
+  return source === 'settings'
+    ? document.getElementById('path-settings-title') || document.querySelector('[data-view="settings"]')
+    : document.getElementById('today-title') || document.querySelector('[data-view="today"]');
+}
+function closePathChoiceModal({ restoreFocus = true } = {}) {
+  const overlay = document.getElementById('path-choice-modal');
+  if (!overlay) return false;
+  const returnTarget = restoreFocus ? pathChoiceReturnTarget(overlay) : null;
+  if (overlay._pathApp) overlay._pathApp.inert = !!overlay._pathAppWasInert;
+  document.documentElement.classList.remove('path-choice-open');
+  overlay.remove();
+  if (returnTarget) requestAnimationFrame(() => focusPathChoiceTarget(returnTarget));
+  return true;
+}
+function handlePathChoiceKeydown(event) {
+  const overlay = document.getElementById('path-choice-modal');
+  if (!overlay || !overlay.contains(event.target)) return false;
+  if (event.key === 'Escape') {
+    event.preventDefault(); event.stopPropagation(); closePathChoiceModal(); return true;
+  }
+  if (event.key !== 'Tab') return false;
+  const focusable = pathChoiceFocusable(overlay);
+  if (!focusable.length) {
+    event.preventDefault(); focusPathChoiceTarget(document.getElementById('path-choice-title')); return true;
+  }
+  const activeIndex = focusable.indexOf(document.activeElement);
+  if (activeIndex < 0 || (!event.shiftKey && activeIndex === focusable.length - 1) || (event.shiftKey && activeIndex === 0)) {
+    event.preventDefault();
+    focusPathChoiceTarget(event.shiftKey ? focusable[focusable.length - 1] : focusable[0]);
+  }
+  return true;
+}
+function selectPathChoice(id) {
+  const overlay = document.getElementById('path-choice-modal');
+  if (!overlay || !pathIdValid(id)) return false;
+  const current = State.settings && State.settings.path;
+  overlay.dataset.selected = id;
+  overlay.querySelectorAll('.path-card[data-path]').forEach((card) => {
+    const selected = card.dataset.path === id;
+    const isCurrent = card.dataset.path === current;
+    card.classList.toggle('is-selected', selected);
+    card.classList.toggle('chosen', selected); // совместимость с существующей визуальной грамматикой
+    card.dataset.selected = String(selected);
+    card.setAttribute('aria-pressed', String(selected));
+    const state = card.querySelector('.path-card-state');
+    if (state) {
+      const labels = [];
+      if (isCurrent) labels.push(t('Текущий путь'));
+      if (selected) labels.push(t('Выбрано для подтверждения'));
+      state.textContent = labels.length ? labels.join(' · ') : t('Выбрать');
+    }
+  });
+  const status = overlay.querySelector('.path-choice-status');
+  if (status) status.textContent = `${t('Выбрано для подтверждения')}: ${t(PATHS[id].name)}`;
+  const confirm = overlay.querySelector('.path-choice-confirm');
+  if (confirm) {
+    confirm.disabled = false;
+    confirm.textContent = id === current ? t('Оставить текущий путь') : current ? t('Подтвердить смену пути') : t('Подтвердить путь');
+  }
+  return true;
+}
+function showPathChoiceModal({ pendingPath = null, source = 'drip', returnFocus = document.activeElement } = {}) {
+  const pendingValid = pathIdValid(pendingPath);
+  const existing = document.getElementById('path-choice-modal');
+  if (existing) {
+    if (pendingValid) selectPathChoice(pendingPath);
+    requestAnimationFrame(() => focusPathChoiceTarget(document.getElementById('path-choice-title')));
+    return existing;
+  }
+  const current = State.settings && State.settings.path;
+  const safeSource = ['drip', 'settings', 'teaser'].includes(source) ? source : 'drip';
+  const card = (p) => {
+    const isCurrent = current === p.id;
+    const isSelected = pendingValid && pendingPath === p.id;
+    const consequences = PATH_CONSEQUENCES[p.id].map((line) => `<span class="path-consequence">• ${esc(t(line))}</span>`).join('');
+    const state = [isCurrent ? t('Текущий путь') : '', isSelected ? t('Выбрано для подтверждения') : ''].filter(Boolean).join(' · ') || t('Выбрать');
+    return `<button type="button" class="path-card${isCurrent ? ' is-current' : ''}${isSelected ? ' is-selected chosen' : ''}" data-action="select-path-choice" data-path="${p.id}" data-current="${isCurrent}" data-selected="${isSelected}" aria-pressed="${isSelected}" aria-labelledby="path-card-${p.id}-title" aria-describedby="path-card-${p.id}-state path-card-${p.id}-pitch path-card-${p.id}-consequences">
+      <span class="path-card-mascot" aria-hidden="true">${p.id === 'trust' ? tutMascotHTML() : flintMascotSVG(56)}</span>
+      <span class="path-glyph" aria-hidden="true">${p.glyph}</span>
+      <span class="path-card-title" id="path-card-${p.id}-title" role="heading" aria-level="3">${esc(t(p.name))}</span>
+      <span class="path-tag">${esc(t(p.tag))}</span>
+      <span class="path-pitch" id="path-card-${p.id}-pitch">${esc(t(p.pitch))}</span>
+      <span class="path-consequences" id="path-card-${p.id}-consequences"><span class="path-consequences-title">${esc(t('Что меняется'))}</span>${consequences}</span>
+      <span class="path-card-state" id="path-card-${p.id}-state">${esc(state)}</span>
     </button>`;
-  const ov = document.createElement('div'); ov.id = 'path-choice-modal'; ov.className = 'modal-overlay';
-  ov.innerHTML = `<div class="path-choice-box">
-    <button class="modal-x" data-action="close-path-choice">✕</button>
-    <h2 class="path-choice-title">${t('Выбери свой путь дисциплины')}</h2>
-    <p class="muted path-choice-sub">${t('Две школы. Мягкая — через доброту. Жёсткая — через строгость. Обе ведут к росту. Сменить можно в любой момент.')}</p>
-    <p class="muted path-choice-sub" style="font-style:italic">${t('Тень греет пламя. Кремень его высекает. Две руки одного огня — выбери, чья ближе сегодня.')}</p>
-    <div class="path-cards">${card(PATHS.trust)}${card(PATHS.control)}</div>
+  };
+  const overlay = document.createElement('div');
+  overlay.id = 'path-choice-modal';
+  overlay.className = 'modal-overlay path-choice-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-labelledby', 'path-choice-title');
+  overlay.setAttribute('aria-describedby', 'path-choice-intro path-choice-lore');
+  overlay.setAttribute('lang', lang());
+  overlay.dataset.source = safeSource;
+  overlay.dataset.current = current || '';
+  overlay.dataset.selected = pendingValid ? pendingPath : '';
+  overlay._returnFocus = returnFocus && typeof returnFocus.focus === 'function' ? returnFocus : null;
+  overlay.innerHTML = `<div class="path-choice-box path-choice-fullscreen">
+    <div class="path-choice-head"><h2 class="path-choice-title" id="path-choice-title" tabindex="-1">${esc(t('Выбери свой путь дисциплины'))}</h2><button type="button" class="modal-x" data-action="close-path-choice" aria-label="${esc(t('Закрыть выбор пути'))}">✕</button></div>
+    <p class="muted path-choice-intro" id="path-choice-intro">${esc(t('Две школы. Мягкая — через доброту. Жёсткая — через строгость. Обе ведут к росту. Сменить можно в любой момент.'))}</p>
+    <p class="muted path-choice-lore" id="path-choice-lore">${esc(t('Тень греет пламя. Кремень его высекает. Две руки одного огня — выбери, чья ближе сегодня.'))}</p>
+    <div class="path-cards" role="group" aria-label="${esc(t('Варианты пути'))}">${card(PATHS.trust)}${card(PATHS.control)}</div>
+    <div class="path-choice-actions">
+      <p class="path-choice-status muted" aria-live="polite">${pendingValid ? `${esc(t('Выбрано для подтверждения'))}: ${esc(t(PATHS[pendingPath].name))}` : esc(t('Сначала выбери путь'))}</p>
+      <button type="button" class="btn ghost path-choice-cancel" data-action="close-path-choice" aria-label="${esc(t('Закрыть выбор пути'))}">${esc(t('Отмена'))}</button>
+      <button type="button" class="btn path-choice-confirm" data-action="confirm-path-choice" ${pendingValid ? '' : 'disabled'}>${pendingValid ? esc(pendingPath === current ? t('Оставить текущий путь') : current ? t('Подтвердить смену пути') : t('Подтвердить путь')) : esc(t('Подтвердить путь'))}</button>
+    </div>
   </div>`;
-  document.body.appendChild(ov);
+  const appRoot = document.getElementById('app');
+  overlay._pathApp = appRoot;
+  overlay._pathAppWasInert = !!(appRoot && appRoot.inert);
+  if (appRoot) appRoot.inert = true;
+  document.documentElement.classList.add('path-choice-open');
+  overlay.addEventListener('keydown', handlePathChoiceKeydown);
+  overlay.addEventListener('click', (event) => { if (event.target === overlay) closePathChoiceModal(); });
+  document.body.appendChild(overlay);
+  if (avatarMotionReduced()) overlay.querySelectorAll('video').forEach((video) => { try { video.pause(); } catch {} });
+  requestAnimationFrame(() => focusPathChoiceTarget(document.getElementById('path-choice-title')));
+  return overlay;
 }
-// Установить/сменить путь. Мгновенно, без охлаждения (§3.1). При входе в Контроль — якорим расчёт на сегодня,
-// чтобы не наказать задним числом за прошлые дедлайны. Церемония выбора небольшая; выход всегда в один клик (Настройки).
+function confirmPathChoice() {
+  const overlay = document.getElementById('path-choice-modal');
+  const id = overlay && overlay.dataset.selected;
+  if (!overlay || !pathIdValid(id)) return false;
+  const current = State.settings && State.settings.path;
+  if (id === current) { closePathChoiceModal(); return false; }
+  State._pathFocusAfterCommit = overlay.dataset.source === 'settings' ? '#path-settings-title' : '#today-title';
+  closePathChoiceModal({ restoreFocus: false });
+  return choosePath(id);
+}
+// Единственная точка мутации пути. Реальный переход в Контроль начинает расчёт сегодня;
+// повторное подтверждение Контроля и выход из него не переписывают сохранённый lastReckon.
 function choosePath(id) {
-  if (id !== 'trust' && id !== 'control') return;
+  if (!pathIdValid(id) || !State.settings || typeof State.settings !== 'object') return false;
   const s = State.settings, was = s.path;
-  s.path = id; s.pathChosenAt = s.pathChosenAt || todayStr();
-  if (id === 'control') { s.control = s.control || {}; if (!s.control.lastReckon) s.control.lastReckon = todayStr(); }
+  if (was === id) return false;
+  const changedAt = todayStr();
+  s.path = id;
+  s.pathChosenAt = s.pathChosenAt || changedAt;
+  s.pathTeaserAt = changedAt;
+  if (id === 'control' && was !== 'control') {
+    if (!s.control || typeof s.control !== 'object' || Array.isArray(s.control)) s.control = {};
+    s.control.lastReckon = changedAt;
+  }
   Store.save('settings', State.settings);
-  const m = document.getElementById('path-choice-modal'); if (m) m.remove();
   applyTheme();
   const p = PATHS[id];
   try { sfx(id === 'control' ? 'levelup' : 'achievement'); } catch {}
-  if (was !== id) {
-    // Реплика с характером: вход в Контроль встречает Кремень; уход с Контроля — он же отпускает
-    // с уважением (философский гейт: выход мгновенный и без тени наказания). Иначе — тёплый тост.
-    const line = id === 'control' ? FLINT_LINES.chose[Math.floor(Math.random() * FLINT_LINES.chose.length)]
-      : was === 'control' ? FLINT_LINES.left[Math.floor(Math.random() * FLINT_LINES.left.length)]
-      : `Тень: «Рада, что ты со мной. Идём мягко — но идём 🕊».`;
-    toast(`${p.glyph} ${t(line)}`);
-  }
+  const line = id === 'control' ? FLINT_LINES.chose[Math.floor(Math.random() * FLINT_LINES.chose.length)]
+    : was === 'control' ? FLINT_LINES.left[Math.floor(Math.random() * FLINT_LINES.left.length)]
+    : `Тень: «Рада, что ты со мной. Идём мягко — но идём 🕊».`;
+  toast(`${p.glyph} ${t(line)}`);
   try { publishLeaderboard(); } catch {}
   render();
+  return true;
 }
-// Карточка пути дисциплины в Настройках: выбор/смена стороны + тумблеры Контроля (скин-оверрайд, mute антагониста).
+// Настройки остаются постоянной точкой обзора: обе стороны открывают тот же pending-dialog,
+// mute доступен на любом выбранном пути, а System-skin — только на Контроле.
 function pathCard() {
   const s = State.settings, cur = s.path;
-  const opt = (p) => `<button class="path-opt ${cur === p.id ? 'active' : ''}" data-action="set-path" data-path="${p.id}">
-      <span class="path-opt-glyph">${p.glyph}</span><span class="path-opt-name">${t(p.name)}</span><span class="path-opt-tag">${t(p.tag)}</span></button>`;
+  const opt = (p) => `<button type="button" class="path-opt ${cur === p.id ? 'active' : ''}" data-action="open-path-choice" data-path="${p.id}" aria-pressed="${cur === p.id}">
+      <span class="path-opt-glyph" aria-hidden="true">${p.glyph}</span><span class="path-opt-name">${esc(t(p.name))}</span><span class="path-opt-tag">${esc(t(p.tag))}</span>${cur === p.id ? `<span class="path-opt-state">${esc(t('Текущий путь'))}</span>` : ''}</button>`;
   const controlExtras = cur === 'control' ? `
-    <label class="sound-toggle" style="margin-top:10px"><input type="checkbox" data-action="toggle-system-skin-off" ${s.systemSkinOff ? 'checked' : ''}/> ${t('Правила Контроля без скина «Система» (обычная тема)')}</label>
-    <label class="sound-toggle"><input type="checkbox" data-action="toggle-antagonist-mute" ${s.pathAntagonistMuted ? 'checked' : ''}/> ${t('Заглушить реплики маскота противоположной стороны')}</label>` : '';
+    <label class="sound-toggle" style="margin-top:10px"><input type="checkbox" data-action="toggle-system-skin-off" ${s.systemSkinOff ? 'checked' : ''}/> ${t('Правила Контроля без скина «Система» (обычная тема)')}</label>` : '';
+  const muteExtra = cur ? `<label class="sound-toggle"><input type="checkbox" data-action="toggle-antagonist-mute" ${s.pathAntagonistMuted ? 'checked' : ''}/> ${t('Заглушить реплики маскота противоположной стороны')}</label>` : '';
   return `<div class="card path-card-settings">
-    <h3>⚖️ ${t('Путь дисциплины')}</h3>
-    <p class="muted" style="margin:0 0 12px;font-size:13.5px">${t('Мягкий (Доверие) или жёсткий (Контроль). Обе стороны равны по силе — различие в тоне, строгости и эстетике, а не в объёме наград. Сменить можно в любой момент.')}</p>
+    <h3 id="path-settings-title" tabindex="-1">⚖️ ${t('Путь дисциплины')}</h3>
+    <p class="muted" style="margin:0 0 12px;font-size:13.5px">${t('Мягкий (Доверие) или жёсткий (Контроль). Базовые XP и золото одинаковы; различаются тон, строгость и опциональная ставка Контроля. Сменить можно в любой момент.')}</p>
     <div class="path-opts">${opt(PATHS.trust)}${opt(PATHS.control)}</div>
+    <button type="button" class="btn ghost path-review" data-action="open-path-choice">${t('Сравнить оба пути')}</button>
     ${cur ? '' : `<p class="muted" style="margin:10px 0 0;font-size:13px">${t('Пока путь не выбран — поведение тёплое, как Доверие.')}</p>`}
-    ${controlExtras}</div>`;
+    ${controlExtras}${muteExtra}</div>`;
 }
 function adminCard() {
   if (!State.me || !State.me.isAdmin) return '';
@@ -15254,6 +15419,15 @@ function afterMainCommit() {
       target.focus({ preventScroll: true });
     });
   }
+  if (State._pathFocusAfterCommit) {
+    const selector = State._pathFocusAfterCommit;
+    State._pathFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const target = document.querySelector(selector);
+      if (!target) return;
+      focusPathChoiceTarget(target);
+    });
+  }
   if (State.view === 'tree') {
     const viewportState = State._treeViewport;
     const focusSelector = State._treeFocusAfterCommit;
@@ -15735,12 +15909,12 @@ function dripStart(d) {
   const t = ensureTutorial(); t.active = true; t.mode = 'drip'; t.dripId = d.id; _dripShownThisLoad = true;
   tutorialBindGlobals(); tutorialPaint();
 }
-function dripSeen(open) {
+function dripSeen(open, returnFocus = null) {
   const t = ensureTutorial(), d = DRIPS.find((x) => x.id === t.dripId);
   if (d) { if (!t.seenDrips.includes(d.id)) t.seenDrips.push(d.id); if (d.disc) { try { markDiscovered(d.disc); } catch {} } }
   t.active = false; t.mode = 'day1'; const view = open && d && d.view, modal = open && d && d.modal; t.dripId = null;
   Store.save('settings', State.settings);
-  if (modal === 'path') { tutorialPaint(); try { showPathChoiceModal(); } catch {} return; }
+  if (modal === 'path') { tutorialPaint(); try { showPathChoiceModal({ source: 'drip', returnFocus }); } catch {} return; }
   if (view) { State.view = view; try { markDiscovered(view); } catch {} render(); } else tutorialPaint();
 }
 let _tutBound = false;
@@ -15860,13 +16034,13 @@ function onClick(e) {
   if (action === 'tut-next') { tutorialNext(); return; }
   if (action === 'tut-skip') { tutorialSkip(); return; }
   if (action === 'tut-restart') { const g = document.getElementById('guide'); if (g) g.remove(); tutorialStart(); return; }
-  if (action === 'drip-dismiss') { dripSeen(false); return; }
-  if (action === 'drip-open') { dripSeen(true); return; }
-  if (action === 'choose-path') { choosePath(el.dataset.path); return; }
-  if (action === 'close-path-choice') { const m = document.getElementById('path-choice-modal'); if (m) m.remove(); return; }
-  if (action === 'path-teaser-switch') { State.settings.pathTeaserAt = todayStr(); choosePath(el.dataset.path); return; }
+  if (action === 'drip-dismiss') { dripSeen(false, el); return; }
+  if (action === 'drip-open') { dripSeen(true, el); return; }
+  if (action === 'select-path-choice') { selectPathChoice(el.dataset.path); return; }
+  if (action === 'confirm-path-choice') { confirmPathChoice(); return; }
+  if (action === 'close-path-choice') { closePathChoiceModal(); return; }
+  if (action === 'path-teaser-switch') { showPathChoiceModal({ pendingPath: el.dataset.path, source: 'teaser', returnFocus: el }); return; }
   if (action === 'path-teaser-dismiss') { State.settings.pathTeaserAt = todayStr(); Store.save('settings', State.settings); render(); return; }
-  if (action === 'path-teaser-mute') { State.settings.pathAntagonistMuted = true; State.settings.pathTeaserAt = todayStr(); Store.save('settings', State.settings); toast(t('Больше не позовём. Включить обратно можно в Настройках.')); render(); return; }
   try { tutorialAdvance(action); } catch {} // продвигает шаг гайда, если это его триггер (действие выполнится ниже)
 
   // --- Auth actions ---
@@ -16265,7 +16439,7 @@ function onClick(e) {
     fetch('/api/strava/disconnect', { method: 'POST' }).then(() => { State.strava = null; toast('Strava отключён'); render(); }).catch(() => toast('Ошибка'));
     return;
   }
-  if (action === 'set-path') { choosePath(el.dataset.path); return; }
+  if (action === 'open-path-choice') { showPathChoiceModal({ pendingPath: el.dataset.path || null, source: 'settings', returnFocus: el }); return; }
   if (action === 'toggle-system-skin-off') { State.settings.systemSkinOff = !!el.checked; Store.save('settings', State.settings); applyTheme(); render(); return; }
   if (action === 'toggle-antagonist-mute') { State.settings.pathAntagonistMuted = !!el.checked; Store.save('settings', State.settings); render(); return; }
   if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; State.settings.systemMode = false; Store.save('settings', State.settings); applyTheme(); render(); return; }
