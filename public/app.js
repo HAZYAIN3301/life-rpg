@@ -1566,7 +1566,7 @@ const I18N_EXTRA = {
   'Награды дня': { en: 'Daily rewards', de: 'Tagesbelohnungen', uk: 'Нагороди дня', es: 'Recompensas del día' },
   'Случайность: 0%': { en: 'Randomness: 0%', de: 'Zufall: 0 %', uk: 'Випадковість: 0%', es: 'Aleatoriedad: 0 %' },
   'Открыть награду': { en: 'Open reward', de: 'Belohnung öffnen', uk: 'Відкрити нагороду', es: 'Abrir recompensa' },
-  'Ещё': { en: 'Another', de: 'Noch', uk: 'Ще', es: 'Faltan' },
+  'До следующей награды осталось {count} {unit}': { en: '{count} {unit} until the next reward', de: 'Noch {count} {unit} bis zur nächsten Belohnung', uk: 'До наступної нагороди залишилося {count} {unit}', es: 'Faltan {count} {unit} para la siguiente recompensa' },
   'до следующей награды': { en: 'until the next reward', de: 'bis zur nächsten Belohnung', uk: 'до наступної нагороди', es: 'para la siguiente recompensa' },
   'Все награды дня получены': { en: 'All daily rewards collected', de: 'Alle Tagesbelohnungen erhalten', uk: 'Усі нагороди дня отримано', es: 'Todas las recompensas del día obtenidas' },
   'Получено': { en: 'Collected', de: 'Erhalten', uk: 'Отримано', es: 'Obtenido' },
@@ -2719,6 +2719,102 @@ const I18N_EXTRA = {
   'Не удалось сохранить выбор пути. Попробуй ещё раз.': { en: 'The path choice could not be saved. Try again.', de: 'Die Wegwahl konnte nicht gespeichert werden. Versuche es noch einmal.', uk: 'Не вдалося зберегти вибір шляху. Спробуй ще раз.', es: 'No se pudo guardar la elección de camino. Inténtalo de nuevo.' },
   'Имя приложения': { en: 'App name', de: 'App-Name', uk: 'Назва застосунку', es: 'Nombre de la aplicación' },
   'Поле настройки': { en: 'Settings field', de: 'Einstellungsfeld', uk: 'Поле налаштувань', es: 'Campo de ajustes' },
+  // ── Party, leaderboard & social privacy v125 ──
+  'Рейтинг участия': { en: 'Participation board', de: 'Teilnahmeübersicht', uk: 'Рейтинг участі', es: 'Tabla de participación' },
+  '+ Создать': { en: '+ Create', de: '+ Erstellen', uk: '+ Створити', es: '+ Crear' },
+  'Суммарный lifetime XP отражает длительность и объём участия под серверными лимитами. Это не рейтинг навыка, таланта, продуктивности или ценности человека; новички не обязаны догонять старые аккаунты.': { en: 'Lifetime XP reflects time and volume of participation under server limits. It is not a ranking of skill, talent, productivity or human worth; newcomers are not expected to catch old accounts.', de: 'Lifetime-XP spiegeln Dauer und Umfang der Teilnahme unter Serverlimits wider. Sie bewerten weder Können, Talent, Produktivität noch den Wert eines Menschen; neue Konten müssen alte nicht einholen.', uk: 'Сумарний lifetime XP відображає тривалість і обсяг участі в межах серверних лімітів. Це не рейтинг навичок, таланту, продуктивності чи цінності людини; новачки не зобов’язані наздоганяти старі акаунти.', es: 'La XP acumulada refleja el tiempo y el volumen de participación dentro de límites del servidor. No clasifica habilidad, talento, productividad ni valor personal; las cuentas nuevas no tienen que alcanzar a las antiguas.' },
+  'Сервер заново считает XP из сохранённых задач, привычек и целей и игнорирует числа из запроса. Публично видны только имя, аватар, уровень, ранг пути и итоговый XP.': { en: 'The server recalculates XP from saved tasks, habits and goals and ignores numbers in the request. Only name, avatar, level, path rank and total XP are public.', de: 'Der Server berechnet XP aus gespeicherten Aufgaben, Gewohnheiten und Zielen neu und ignoriert Zahlen aus Anfragen. Öffentlich sind nur Name, Avatar, Level, Pfadrang und Gesamt-XP.', uk: 'Сервер заново рахує XP зі збережених завдань, звичок і цілей та ігнорує числа із запиту. Публічно видно лише ім’я, аватар, рівень, ранг шляху й підсумковий XP.', es: 'El servidor recalcula la XP desde tareas, hábitos y objetivos guardados e ignora las cifras de la petición. Solo son públicos el nombre, avatar, nivel, rango de senda y XP total.' },
+  'Отдельное согласие на публикацию': { en: 'Separate publishing consent', de: 'Separate Veröffentlichungseinwilligung', uk: 'Окрема згода на публікацію', es: 'Consentimiento separado para publicar' },
+  'Если разрешить, другие авторизованные пользователи увидят имя, аватар, server-computed lifetime XP, уровень и ранг пути. Задачи, названия привычек, cleanDays, заметки и недельные детали не публикуются.': { en: 'If enabled, other signed-in users see your name, avatar, server-computed lifetime XP, level and path rank. Tasks, habit names, cleanDays, notes and weekly details are never published.', de: 'Wenn aktiviert, sehen andere angemeldete Nutzer Name, Avatar, serverberechnete Lifetime-XP, Level und Pfadrang. Aufgaben, Gewohnheitsnamen, cleanDays, Notizen und Wochendetails werden nie veröffentlicht.', uk: 'Якщо дозволити, інші авторизовані користувачі побачать ім’я, аватар, обчислений сервером lifetime XP, рівень і ранг шляху. Завдання, назви звичок, cleanDays, нотатки та тижневі деталі не публікуються.', es: 'Si lo permites, otros usuarios autenticados verán nombre, avatar, XP acumulada calculada por el servidor, nivel y rango de senda. No se publican tareas, nombres de hábitos, cleanDays, notas ni detalles semanales.' },
+  'Разрешить публикацию': { en: 'Allow publishing', de: 'Veröffentlichung erlauben', uk: 'Дозволити публікацію', es: 'Permitir publicación' },
+  'Отозвать публикацию': { en: 'Withdraw publishing', de: 'Veröffentlichung widerrufen', uk: 'Відкликати публікацію', es: 'Retirar publicación' },
+  'Публикация включена; согласие можно отозвать сразу': { en: 'Publishing is on; consent can be withdrawn immediately', de: 'Veröffentlichung ist aktiv; die Einwilligung kann sofort widerrufen werden', uk: 'Публікацію ввімкнено; згоду можна відкликати одразу', es: 'La publicación está activa; el consentimiento se puede retirar al instante' },
+  'Ты не опубликован в рейтинге': { en: 'You are not published on the board', de: 'Du wirst in der Übersicht nicht veröffentlicht', uk: 'Тебе не опубліковано в рейтингу', es: 'No apareces publicado en la tabla' },
+  'Публичных участников пока нет. Это настоящее пустое состояние, а не ошибка загрузки.': { en: 'No public participants yet. This is a genuine empty state, not a loading error.', de: 'Noch keine öffentlichen Teilnehmenden. Das ist ein echter Leerzustand, kein Ladefehler.', uk: 'Публічних учасників поки немає. Це справжній порожній стан, а не помилка завантаження.', es: 'Aún no hay participantes públicos. Es un estado vacío real, no un error de carga.' },
+  'Видимость внутри пати': { en: 'Visibility inside the party', de: 'Sichtbarkeit in der Gruppe', uk: 'Видимість усередині паті', es: 'Visibilidad dentro del grupo' },
+  'После вступления участники видят имя и аватар как идентичность члена пати. Недельный XP и число завершённых квестов видны только при отдельном согласии на вклад. Названия задач, привычки, cleanDays, заметки и другие личные данные не публикуются.': { en: 'After joining, members see your name and avatar as your party identity. Weekly XP and completed quest count are visible only with separate contribution consent. Task names, habits, cleanDays, notes and other personal data are not published.', de: 'Nach dem Beitritt sehen Mitglieder deinen Namen und Avatar als Gruppenidentität. Wochen-XP und die Zahl erledigter Quests sind nur mit separater Einwilligung zum Beitrag sichtbar. Aufgabennamen, Gewohnheiten, cleanDays, Notizen und andere persönliche Daten werden nicht veröffentlicht.', uk: 'Після вступу учасники бачать ім’я та аватар як ідентичність члена паті. Тижневий XP і кількість завершених квестів видно лише за окремою згодою на внесок. Назви завдань, звички, cleanDays, нотатки й інші особисті дані не публікуються.', es: 'Tras unirte, los miembros ven tu nombre y avatar como identidad del grupo. La XP semanal y el número de misiones completadas solo son visibles con un consentimiento separado para compartir la contribución. No se publican nombres de tareas, hábitos, cleanDays, notas ni otros datos personales.' },
+  'Я понимаю, что после вступления участники увидят моё имя и аватар, и отдельно разрешаю им видеть недельный XP и число завершённых квестов. Названия задач, привычки, cleanDays и личные данные не публикуются.': { en: 'I understand that members will see my name and avatar after I join, and I separately allow them to see my weekly XP and completed quest count. Task names, habits, cleanDays and personal data are not published.', de: 'Ich verstehe, dass Mitglieder nach meinem Beitritt meinen Namen und Avatar sehen, und erlaube ihnen separat, meine Wochen-XP und die Zahl erledigter Quests zu sehen. Aufgabennamen, Gewohnheiten, cleanDays und persönliche Daten werden nicht veröffentlicht.', uk: 'Я розумію, що після вступу учасники бачитимуть моє ім’я та аватар, і окремо дозволяю їм бачити тижневий XP та кількість завершених квестів. Назви завдань, звички, cleanDays та особисті дані не публікуються.', es: 'Entiendo que los miembros verán mi nombre y avatar cuando me una, y les permito por separado ver mi XP semanal y el número de misiones completadas. No se publican nombres de tareas, hábitos, cleanDays ni datos personales.' },
+  'До общей победы осталось {xp} XP. Каждый закрытый квест приближает пати к награде.': { en: '{xp} XP remain until the shared victory. Every completed quest brings the party closer to the reward.', de: 'Noch {xp} XP bis zum gemeinsamen Sieg. Jede abgeschlossene Quest bringt die Gruppe näher an die Belohnung.', uk: 'До спільної перемоги залишилося {xp} XP. Кожен завершений квест наближає паті до нагороди.', es: 'Faltan {xp} XP para la victoria compartida. Cada misión completada acerca al grupo a la recompensa.' },
+  'Разрешить недельный вклад': { en: 'Share weekly contribution', de: 'Wochenbeitrag teilen', uk: 'Дозволити тижневий внесок', es: 'Compartir contribución semanal' },
+  'Скрыть мой недельный вклад': { en: 'Hide my weekly contribution', de: 'Meinen Wochenbeitrag verbergen', uk: 'Приховати мій тижневий внесок', es: 'Ocultar mi contribución semanal' },
+  'Разрешено только для участников этой пати': { en: 'Shared only with this party’s members', de: 'Nur mit Mitgliedern dieser Gruppe geteilt', uk: 'Дозволено лише для учасників цієї паті', es: 'Compartido solo con miembros de este grupo' },
+  'Вклад скрыт; рейд не учитывает мои XP': { en: 'Contribution hidden; the raid does not count my XP', de: 'Beitrag verborgen; der Raid zählt meine XP nicht', uk: 'Внесок приховано; рейд не враховує мій XP', es: 'Contribución oculta; la incursión no cuenta mi XP' },
+  'Недельный вклад скрыт участником': { en: 'Weekly contribution hidden by member', de: 'Wochenbeitrag vom Mitglied verborgen', uk: 'Тижневий внесок приховано учасником', es: 'Contribución semanal ocultada por el miembro' },
+  'видно только участникам пати': { en: 'visible only to party members', de: 'nur für Gruppenmitglieder sichtbar', uk: 'видно лише учасникам паті', es: 'visible solo para miembros del grupo' },
+  'квестов за неделю': { en: 'quests this week', de: 'Quests diese Woche', uk: 'квестів за тиждень', es: 'misiones esta semana' },
+  'приватно': { en: 'private', de: 'privat', uk: 'приватно', es: 'privado' },
+  'Название пати': { en: 'Party name', de: 'Gruppenname', uk: 'Назва паті', es: 'Nombre del grupo' },
+  'Код пати': { en: 'Party code', de: 'Gruppencode', uk: 'Код паті', es: 'Código del grupo' },
+  'Код видят только участники пати; поделись им с теми, кого приглашаешь.': { en: 'Only party members see the code; share it with people you invite.', de: 'Nur Gruppenmitglieder sehen den Code; teile ihn mit den Personen, die du einlädst.', uk: 'Код бачать лише учасники паті; поділися ним із тими, кого запрошуєш.', es: 'Solo los miembros ven el código; compártelo con quienes invites.' },
+  'Состав и права': { en: 'Members and permissions', de: 'Mitglieder und Rechte', uk: 'Склад і права', es: 'Miembros y permisos' },
+  'Ты создатель: можешь удалить пати для всех или передать роль, выйдя из неё.': { en: 'You are the creator: you can delete the party for everyone or transfer the role by leaving.', de: 'Du bist der Ersteller: Du kannst die Gruppe für alle löschen oder die Rolle beim Verlassen übertragen.', uk: 'Ти творець: можеш видалити паті для всіх або передати роль, вийшовши з неї.', es: 'Eres quien creó el grupo: puedes eliminarlo para todos o transferir el rol al salir.' },
+  'Ты участник: можешь выйти в любой момент. Только создатель может удалить пати для всех.': { en: 'You are a member: you can leave at any time. Only the creator can delete the party for everyone.', de: 'Du bist Mitglied und kannst jederzeit gehen. Nur der Ersteller kann die Gruppe für alle löschen.', uk: 'Ти учасник і можеш вийти будь-коли. Лише творець може видалити паті для всіх.', es: 'Eres miembro y puedes salir cuando quieras. Solo quien la creó puede eliminarla para todos.' },
+  'создатель': { en: 'creator', de: 'Ersteller', uk: 'творець', es: 'creador' },
+  'Передать роль и выйти': { en: 'Transfer role and leave', de: 'Rolle übertragen und gehen', uk: 'Передати роль і вийти', es: 'Transferir rol y salir' },
+  'Удалить пати для всех': { en: 'Delete party for everyone', de: 'Gruppe für alle löschen', uk: 'Видалити паті для всіх', es: 'Eliminar grupo para todos' },
+  'Осознанное социальное действие': { en: 'Deliberate social action', de: 'Bewusste soziale Aktion', uk: 'Усвідомлена соціальна дія', es: 'Acción social consciente' },
+  'Передать роль и выйти?': { en: 'Transfer the role and leave?', de: 'Rolle übertragen und gehen?', uk: 'Передати роль і вийти?', es: '¿Transferir el rol y salir?' },
+  'Покинуть пати?': { en: 'Leave the party?', de: 'Gruppe verlassen?', uk: 'Покинути паті?', es: '¿Salir del grupo?' },
+  'Удалить пати для всех?': { en: 'Delete the party for everyone?', de: 'Gruppe für alle löschen?', uk: 'Видалити паті для всіх?', es: '¿Eliminar el grupo para todos?' },
+  'Пати, код, рейд и список участников будут удалены для всех. Личные задачи и прогресс участников останутся у них.': { en: 'The party, code, raid and member list will be deleted for everyone. Members keep their personal tasks and progress.', de: 'Gruppe, Code, Raid und Mitgliederliste werden für alle gelöscht. Persönliche Aufgaben und Fortschritt bleiben erhalten.', uk: 'Паті, код, рейд і список учасників буде видалено для всіх. Особисті завдання й прогрес учасників залишаться.', es: 'El grupo, código, incursión y lista de miembros se eliminarán para todos. Las tareas y el progreso personales se conservan.' },
+  'Если в пати есть другие участники, роль создателя перейдёт следующему. Если ты один, пустая пати будет удалена. Твои личные данные останутся.': { en: 'If others remain, the creator role transfers to the next member. If you are alone, the empty party is deleted. Your personal data remains.', de: 'Bleiben andere Mitglieder, geht die Erstellerrolle an das nächste über. Bist du allein, wird die leere Gruppe gelöscht. Deine persönlichen Daten bleiben.', uk: 'Якщо лишилися інші учасники, роль творця перейде наступному. Якщо ти один, порожню паті буде видалено. Твої особисті дані залишаться.', es: 'Si quedan miembros, el rol de creador pasa al siguiente. Si estás solo, se elimina el grupo vacío. Tus datos personales permanecen.' },
+  'Ты исчезнешь из состава и рейда. Твои личные задачи и прогресс останутся; вернуться можно только по новому приглашению.': { en: 'You will leave the roster and raid. Your personal tasks and progress remain; returning requires a new invitation.', de: 'Du verlässt Mitgliederliste und Raid. Persönliche Aufgaben und Fortschritt bleiben; zurück kommst du nur mit neuer Einladung.', uk: 'Ти зникнеш зі складу та рейду. Особисті завдання й прогрес залишаться; повернутися можна лише за новим запрошенням.', es: 'Saldrás de la lista y de la incursión. Tus tareas y progreso permanecen; para volver necesitarás otra invitación.' },
+  'Введи название пати для подтверждения': { en: 'Enter the party name to confirm', de: 'Gruppennamen zur Bestätigung eingeben', uk: 'Введи назву паті для підтвердження', es: 'Escribe el nombre del grupo para confirmar' },
+  'Выйти из пати': { en: 'Leave party', de: 'Gruppe verlassen', uk: 'Вийти з паті', es: 'Salir del grupo' },
+  'Название не совпадает. Пати не удалена.': { en: 'The name does not match. The party was not deleted.', de: 'Der Name stimmt nicht. Die Gruppe wurde nicht gelöscht.', uk: 'Назва не збігається. Паті не видалено.', es: 'El nombre no coincide. El grupo no se eliminó.' },
+  'Не удалось сохранить изменение. Пати не изменена — повтори попытку.': { en: 'The change could not be saved. The party is unchanged — try again.', de: 'Die Änderung konnte nicht gespeichert werden. Die Gruppe ist unverändert — versuche es erneut.', uk: 'Не вдалося зберегти зміну. Паті не змінено — спробуй ще раз.', es: 'No se pudo guardar el cambio. El grupo no cambió — inténtalo de nuevo.' },
+  'Пати удалена для всех': { en: 'Party deleted for everyone', de: 'Gruppe für alle gelöscht', uk: 'Паті видалено для всіх', es: 'Grupo eliminado para todos' },
+  'Ты вышел из пати': { en: 'You left the party', de: 'Du hast die Gruppe verlassen', uk: 'Ти вийшов із паті', es: 'Has salido del grupo' },
+  'Не удалось загрузить социальный раздел': { en: 'Social section could not be loaded', de: 'Sozialbereich konnte nicht geladen werden', uk: 'Не вдалося завантажити соціальний розділ', es: 'No se pudo cargar la sección social' },
+  'Соединение не восстановлено. Пустое состояние не показываем, потому что данные могли не загрузиться.': { en: 'The connection has not recovered. We do not show an empty state because data may have failed to load.', de: 'Die Verbindung ist nicht wiederhergestellt. Kein Leerzustand, weil Daten möglicherweise nicht geladen wurden.', uk: 'З’єднання не відновлено. Порожній стан не показуємо, бо дані могли не завантажитися.', es: 'La conexión no se ha recuperado. No mostramos un estado vacío porque los datos podrían no haberse cargado.' },
+  'Не удалось загрузить пати. Проверь соединение и повтори.': { en: 'Party could not be loaded. Check the connection and retry.', de: 'Gruppe konnte nicht geladen werden. Prüfe die Verbindung und versuche es erneut.', uk: 'Не вдалося завантажити паті. Перевір з’єднання й повтори.', es: 'No se pudo cargar el grupo. Comprueba la conexión y reintenta.' },
+  'Не удалось загрузить рейтинг. Проверь соединение и повтори.': { en: 'The board could not be loaded. Check the connection and retry.', de: 'Die Übersicht konnte nicht geladen werden. Prüfe die Verbindung und versuche es erneut.', uk: 'Не вдалося завантажити рейтинг. Перевір з’єднання й повтори.', es: 'No se pudo cargar la tabla. Comprueba la conexión y reintenta.' },
+  'Не удалось изменить согласие. Ничего не изменено — повтори попытку.': { en: 'Consent could not be changed. Nothing changed — try again.', de: 'Die Einwilligung konnte nicht geändert werden. Nichts wurde geändert — versuche es erneut.', uk: 'Не вдалося змінити згоду. Нічого не змінено — спробуй ще раз.', es: 'No se pudo cambiar el consentimiento. Nada cambió — inténtalo de nuevo.' },
+  'Согласие сохранено на сервере, но локальные настройки пока не записались. При следующей загрузке сервер восстановит выбор.': { en: 'Consent is saved on the server, but local settings have not saved yet. The server will restore the choice on next load.', de: 'Die Einwilligung ist auf dem Server gespeichert, lokale Einstellungen aber noch nicht. Beim nächsten Laden stellt der Server die Wahl wieder her.', uk: 'Згоду збережено на сервері, але локальні налаштування ще не записались. Під час наступного завантаження сервер відновить вибір.', es: 'El consentimiento se guardó en el servidor, pero los ajustes locales aún no. El servidor restaurará la elección al cargar de nuevo.' },
+  'Не удалось создать пати. Ничего не изменено — повтори попытку.': { en: 'Party could not be created. Nothing changed — try again.', de: 'Die Gruppe konnte nicht erstellt werden. Nichts wurde geändert — versuche es erneut.', uk: 'Не вдалося створити паті. Нічого не змінено — спробуй ще раз.', es: 'No se pudo crear el grupo. Nada cambió — inténtalo de nuevo.' },
+  'Не удалось войти в пати. Ничего не изменено — повтори попытку.': { en: 'Could not join the party. Nothing changed — try again.', de: 'Der Gruppe konnte nicht beigetreten werden. Nichts wurde geändert — versuche es erneut.', uk: 'Не вдалося увійти в паті. Нічого не змінено — спробуй ще раз.', es: 'No se pudo entrar en el grupo. Nada cambió — inténtalo de nuevo.' },
+  'Не удалось отправить поддержку. Повтори попытку.': { en: 'Support could not be sent. Try again.', de: 'Die Unterstützung konnte nicht gesendet werden. Versuche es erneut.', uk: 'Не вдалося надіслати підтримку. Спробуй ще раз.', es: 'No se pudo enviar el apoyo. Inténtalo de nuevo.' },
+  'Создаю пати…': { en: 'Creating party…', de: 'Gruppe wird erstellt…', uk: 'Створюю паті…', es: 'Creando grupo…' },
+  'Вхожу в пати…': { en: 'Joining party…', de: 'Gruppe wird beigetreten…', uk: 'Входжу в паті…', es: 'Entrando en el grupo…' },
+  'Пати создана — поделись кодом': { en: 'Party created — share the code', de: 'Gruppe erstellt — teile den Code', uk: 'Паті створено — поділися кодом', es: 'Grupo creado — comparte el código' },
+  'Ты в пати!': { en: 'You are in the party!', de: 'Du bist in der Gruppe!', uk: 'Ти в паті!', es: '¡Estás en el grupo!' },
+  'Награда забрана': { en: 'Reward claimed', de: 'Belohnung abgeholt', uk: 'Нагороду забрано', es: 'Recompensa recogida' },
+  'Забрать награду пати': { en: 'Claim party reward', de: 'Gruppenbelohnung abholen', uk: 'Забрати нагороду паті', es: 'Recoger recompensa del grupo' },
+  'ПОБЕДА': { en: 'VICTORY', de: 'SIEG', uk: 'ПЕРЕМОГА', es: 'VICTORIA' },
+  'РЕЙД': { en: 'RAID', de: 'RAID', uk: 'РЕЙД', es: 'INCURSIÓN' },
+  'Пати справилась': { en: 'The party succeeded', de: 'Die Gruppe hat es geschafft', uk: 'Паті впоралася', es: 'El grupo lo consiguió' },
+  'забрали награду': { en: 'claimed the reward', de: 'haben die Belohnung abgeholt', uk: 'забрали нагороду', es: 'recogieron la recompensa' },
+  'участник': { en: 'member', de: 'Mitglied', uk: 'учасник', es: 'miembro' },
+  'вместе': { en: 'together', de: 'gemeinsam', uk: 'разом', es: 'juntos' },
+  'XP за неделю': { en: 'XP this week', de: 'XP diese Woche', uk: 'XP за тиждень', es: 'XP esta semana' },
+  'Подбодрить': { en: 'Cheer on', de: 'Anfeuern', uk: 'Підбадьорити', es: 'Animar' },
+  'Сохраняю изменение…': { en: 'Saving change…', de: 'Änderung wird gespeichert…', uk: 'Зберігаю зміну…', es: 'Guardando cambio…' },
+  'КОМАНДНАЯ ГЛАВА': { en: 'TEAM CHAPTER', de: 'TEAMKAPITEL', uk: 'КОМАНДНИЙ РОЗДІЛ', es: 'CAPÍTULO DE EQUIPO' },
+  'НЕДЕЛЬНЫЙ РЕЙД': { en: 'WEEKLY RAID', de: 'WOCHEN-RAID', uk: 'ТИЖНЕВИЙ РЕЙД', es: 'INCURSIÓN SEMANAL' },
+  'СЕЗОН': { en: 'SEASON', de: 'SAISON', uk: 'СЕЗОН', es: 'TEMPORADA' },
+  'Сезон': { en: 'Season', de: 'Saison', uk: 'Сезон', es: 'Temporada' },
+  'Собери пати для следующего рейда.': { en: 'Build a party for the next raid.', de: 'Stelle eine Gruppe für den nächsten Raid zusammen.', uk: 'Збери паті для наступного рейду.', es: 'Forma un grupo para la próxima incursión.' },
+  'Дуо или группа до 6 человек. Недельный вклад складывается в общего босса, а поддержка команды не превращает пропуск в вину.': { en: 'A duo or party of up to 6. Weekly contributions fight one shared boss, and team support never turns a missed day into guilt.', de: 'Duo oder Gruppe bis 6. Wochenbeiträge kämpfen gegen einen gemeinsamen Boss, und Unterstützung macht aus einem Fehltag keine Schuld.', uk: 'Дует або паті до 6 людей. Тижневі внески б’ють спільного боса, а підтримка команди не перетворює пропуск на провину.', es: 'Dúo o grupo de hasta 6. Las contribuciones semanales luchan contra un jefe común y el apoyo nunca convierte una ausencia en culpa.' },
+  'или войти по коду друга': { en: 'or join with a friend’s code', de: 'oder mit dem Code eines Freundes beitreten', uk: 'або увійти за кодом друга', es: 'o entra con el código de un amigo' },
+  'Рейд завершён. Команда победила.': { en: 'Raid complete. The team won.', de: 'Raid beendet. Das Team hat gewonnen.', uk: 'Рейд завершено. Команда перемогла.', es: 'Incursión completada. El equipo ganó.' },
+  'Награда открыта. Забери её и подготовь команду к следующей главе сезона.': { en: 'The reward is open. Claim it and prepare the team for the next season chapter.', de: 'Die Belohnung ist offen. Hole sie ab und bereite das Team auf das nächste Saisonkapitel vor.', uk: 'Нагороду відкрито. Забери її та підготуй команду до наступного розділу сезону.', es: 'La recompensa está abierta. Recógela y prepara al equipo para el siguiente capítulo.' },
+  'Собирайте XP': { en: 'Gather XP', de: 'XP sammeln', uk: 'Збирайте XP', es: 'Reunid XP' },
+  'Победите босса': { en: 'Defeat the boss', de: 'Boss besiegen', uk: 'Переможіть боса', es: 'Derrotad al jefe' },
+  'Заберите награду': { en: 'Claim the reward', de: 'Belohnung abholen', uk: 'Заберіть нагороду', es: 'Recoged la recompensa' },
+  'Ещё одна победа — и глава сезона взята.': { en: 'One more win takes the season chapter.', de: 'Noch ein Sieg, dann ist das Saisonkapitel geschafft.', uk: 'Ще одна перемога — і розділ сезону взято.', es: 'Una victoria más y el capítulo será vuestro.' },
+  'Побеждайте недельного босса, чтобы открывать следующую главу сезона.': { en: 'Defeat the weekly boss to open the next season chapter.', de: 'Besiegt den Wochenboss, um das nächste Saisonkapitel zu öffnen.', uk: 'Перемагайте тижневого боса, щоб відкривати наступний розділ сезону.', es: 'Derrotad al jefe semanal para abrir el siguiente capítulo.' },
+  'Вклад каждого складывается; ничей пропуск не штрафует команду — просто чуть медленнее. Через поддержку, не через вину.': { en: 'Every contribution adds up; nobody’s missed day penalizes the team — progress is simply a little slower. Support, never guilt.', de: 'Jeder Beitrag zählt; kein Fehltag bestraft das Team — es geht nur etwas langsamer. Unterstützung statt Schuld.', uk: 'Кожен внесок додається; чийсь пропуск не штрафує команду — просто трохи повільніше. Через підтримку, не провину.', es: 'Cada aporte suma; una ausencia no penaliza al equipo, solo ralentiza un poco. Apoyo, nunca culpa.' },
+  'Слава пати!': { en: 'Glory to the party!', de: 'Ruhm der Gruppe!', uk: 'Слава паті!', es: '¡Gloria al grupo!' },
+  'Осталось': { en: 'Remaining', de: 'Verbleibend', uk: 'Залишилося', es: 'Quedan' },
+  'код': { en: 'code', de: 'Code', uk: 'код', es: 'código' },
+  'участников': { en: 'members', de: 'Mitglieder', uk: 'учасників', es: 'miembros' },
+  'в пати': { en: 'in party', de: 'in der Gruppe', uk: 'у паті', es: 'en el grupo' },
+  'рейда': { en: 'raid', de: 'Raid', uk: 'рейду', es: 'incursión' },
+  'главы': { en: 'chapter', de: 'Kapitel', uk: 'розділу', es: 'capítulo' },
+  'недельный вклад складывается в общий рейд': { en: 'weekly contributions combine in the shared raid', de: 'Wochenbeiträge fließen in den gemeinsamen Raid', uk: 'тижневі внески складаються в спільний рейд', es: 'las contribuciones semanales se suman en la incursión común' },
+  'побед недели': { en: 'weekly wins', de: 'Wochensiege', uk: 'перемог тижня', es: 'victorias semanales' },
+  'пройдено': { en: 'completed', de: 'abgeschlossen', uk: 'пройдено', es: 'completado' },
+  'ты': { en: 'you', de: 'du', uk: 'ти', es: 'tú' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -2910,7 +3006,7 @@ function taskWriteAllowed(source, notify = false) {
 function validateSettingsPayload(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   if (value.skills !== undefined && !Array.isArray(value.skills)) return false;
-  for (const key of ['xp', 'gold', 'curve', 'focus']) {
+  for (const key of ['xp', 'gold', 'curve', 'focus', 'social']) {
     if (value[key] !== undefined && (!value[key] || typeof value[key] !== 'object' || Array.isArray(value[key]))) return false;
   }
   return true;
@@ -3026,6 +3122,7 @@ const DEFAULT_SETTINGS = {
   theme: 'dark', accent: '#6c8cff', // оформление (тема + акцент)
   companion: { name: 'Тень', born: null, bond: 0, lastSeen: null, journal: [], check: {} }, // живой компаньон (Finch-модель)
   path: null, pathChosenAt: null, pathAntagonistMuted: false, control: {}, // «Доверие vs Контроль» (см. DISCIPLINE-PATHS-PLAN.md) — null = ещё не выбран
+  social: { leaderboard: false, party: false }, // два независимых explicit-consent; отсутствие поля всегда означает «не публиковать»
 };
 
 // ── Две системы дисциплины: 🕊 Доверие vs ⚔️ Контроль (DISCIPLINE-PATHS-PLAN.md) ──
@@ -3361,7 +3458,7 @@ async function applyProgramFresh(prog) {
     settings.imported = anchor ? {
       [anchor.id]: { tier: 5, xp: 6700, label: 'X7 showcase', at: new Date().toISOString() },
     } : {};
-    settings.leaderboardOptOut = true;
+    settings.social = { leaderboard: false, party: false };
     settings.demoMode = 'x7';
     settings.tutorial = { i: 0, active: false, done: false, skipped: true, seenDrips: [], mode: 'day1', dripId: null };
     try { localStorage.setItem('liferpg_seen_guide', '1'); } catch {}
@@ -4218,7 +4315,8 @@ const State = {
   lootbox: null, inbox: null, inboxOpen: false, antihabits: null, aiKeys: null, episodes: null,
   strava: null, _stravaSyncing: false,
   chatLog: [], _chatBusy: false,
-  leaderboard: null, _lbLoading: false, party: null, _partyLoading: false,
+  leaderboard: null, _lbLoading: false, _lbError: '', party: null, _partyLoading: false, _partyError: '',
+  socialPrivacy: null, _socialBusy: '', _socialError: '', _socialFocusAfterCommit: '',
   adminUsers: null, _adminUsersLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null, calMode: 'day', habitsTab: 'build',
   _tasksLoadError: '', _tasksLoadBusy: false, _tasksWriteBlockedNoticeAt: 0, _tasksFocusAfterCommit: '',
@@ -14247,7 +14345,7 @@ function lootboxCard() {
   const hist = (lb.history || []).slice(0, 6).map((h) => `<li><span class="reward-history-mark" aria-hidden="true">✓</span><span class="muted">${(h.at || '').slice(0, 10)}</span> ${esc(h.label)}</li>`).join('');
   const statusTxt = avail > 0
     ? `${t('Открыть награду')} (${avail})`
-    : (nextTh ? `${t('Ещё')} ${nextTh.need} ${locThing(nextTh.need, lang())} ${t('до следующей награды')}` : t('Все награды дня получены'));
+    : (nextTh ? t('До следующей награды осталось {count} {unit}').replace('{count}', String(nextTh.need)).replace('{unit}', locThing(nextTh.need, lang())) : t('Все награды дня получены'));
   const track = DAILY_REWARD_TRACK.map((reward, index) => {
     const reached = act >= reward.threshold;
     const opened = index < Math.min(Number(lb.opened) || 0, DAILY_REWARD_TRACK.length);
@@ -14666,6 +14764,54 @@ function mountAccountDialog(overlay, { initial, dismissible = true, returnFocus 
   document.body.appendChild(overlay);
   requestAnimationFrame(() => overlay.querySelector(initial || '[tabindex="-1"], input, button')?.focus());
   return overlay;
+}
+function showPartyExitDialog(mode, returnFocus = document.activeElement) {
+  const party = State.party; if (!party || !['leave', 'delete'].includes(mode)) return null;
+  const owner = party.permissions && party.permissions.role === 'owner';
+  if (mode === 'delete' && !owner) return null;
+  closeAccountDialog('social-party-dialog', { restoreFocus: false });
+  const overlay = document.createElement('div'); overlay.id = 'social-party-dialog'; overlay.className = 'modal-overlay'; overlay.dataset.mode = mode;
+  const deleting = mode === 'delete';
+  const title = deleting ? t('Удалить пати для всех?') : owner ? t('Передать роль и выйти?') : t('Покинуть пати?');
+  const detail = deleting
+    ? t('Пати, код, рейд и список участников будут удалены для всех. Личные задачи и прогресс участников останутся у них.')
+    : owner
+      ? t('Если в пати есть другие участники, роль создателя перейдёт следующему. Если ты один, пустая пати будет удалена. Твои личные данные останутся.')
+      : t('Ты исчезнешь из состава и рейда. Твои личные задачи и прогресс останутся; вернуться можно только по новому приглашению.');
+  overlay.innerHTML = `<section class="social-confirm-box" role="dialog" aria-modal="true" aria-labelledby="social-party-dialog-title" aria-describedby="social-party-dialog-detail">
+    <button type="button" class="modal-x" data-action="close-party-dialog" aria-label="${esc(t('Закрыть'))}">✕</button>
+    <p class="social-confirm-kicker">${t('Осознанное социальное действие')}</p>
+    <h2 id="social-party-dialog-title" tabindex="-1">${esc(title)}</h2>
+    <p id="social-party-dialog-detail">${esc(detail)}</p>
+    ${deleting ? `<label class="social-confirm-name"><span>${t('Введи название пати для подтверждения')}</span><input name="confirmName" autocomplete="off" /></label>` : ''}
+    <p class="social-confirm-status" role="status" aria-live="polite"></p>
+    <div class="social-confirm-actions"><button type="button" class="btn ${deleting ? 'danger' : ''}" data-action="confirm-party-exit">${esc(deleting ? t('Удалить пати для всех') : t('Выйти из пати'))}</button><button type="button" class="btn ghost" data-action="close-party-dialog">${t('Отмена')}</button></div>
+  </section>`;
+  mountAccountDialog(overlay, { initial: deleting ? 'input[name="confirmName"]' : '#social-party-dialog-title', returnFocus });
+  return overlay;
+}
+async function commitPartyExit(overlay) {
+  if (!overlay || overlay._saving || !State.party) return;
+  const deleting = overlay.dataset.mode === 'delete';
+  const confirm = overlay.querySelector('[data-action="confirm-party-exit"]');
+  const cancel = overlay.querySelector('[data-action="close-party-dialog"]:not(.modal-x)');
+  const status = overlay.querySelector('.social-confirm-status');
+  const confirmName = overlay.querySelector('input[name="confirmName"]')?.value || '';
+  if (deleting && confirmName !== State.party.name) { status.textContent = t('Название не совпадает. Пати не удалена.'); status.classList.add('is-error'); return; }
+  overlay._saving = true; if (confirm) confirm.disabled = true; if (cancel) cancel.disabled = true;
+  status.classList.remove('is-error'); status.textContent = t('Сохраняю изменение…');
+  try {
+    const response = await fetch(deleting ? '/api/party/delete' : '/api/party/leave', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(deleting ? { confirmName } : {}),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.ok) throw new Error(data.error || `HTTP ${response.status}`);
+    closeAccountDialog('social-party-dialog', { restoreFocus: false }); State.party = false;
+    State._socialFocusAfterCommit = '#party-title'; toast(deleting ? t('Пати удалена для всех') : t('Ты вышел из пати')); render();
+  } catch {
+    overlay._saving = false; status.textContent = t('Не удалось сохранить изменение. Пати не изменена — повтори попытку.'); status.classList.add('is-error');
+    if (confirm) { confirm.disabled = false; confirm.focus(); } if (cancel) cancel.disabled = false;
+  }
 }
 function securityCard() {
   const hasEmail = State.me && State.me.email;
@@ -16099,26 +16245,94 @@ function bossHitFeedback(boss) {
   setTimeout(() => { try { toast(`${t('Урон ×2 по')} ${t(boss.name)}!`); } catch {} }, 650);
 }
 function seasonInfo(season) { const goal = (season && season.goal) || 4, wins = (season && season.wins) || 0; return { goal, wins, cycle: Math.floor(wins / goal) + 1, prog: wins % goal, done: Math.floor(wins / goal) }; }
+function socialConsentValue(channel) {
+  const authoritative = State.socialPrivacy && State.socialPrivacy[channel];
+  if (typeof authoritative === 'boolean') return authoritative;
+  return !!(State.settings && State.settings.social && State.settings.social[channel] === true);
+}
+function rememberSocialConsent(consent) {
+  if (!consent || typeof consent !== 'object') return;
+  State.socialPrivacy = { leaderboard: consent.leaderboard === true, party: consent.party === true };
+  if (State.settings) State.settings.social = { ...State.socialPrivacy };
+}
+function socialErrorCard(kind, message) {
+  const action = kind === 'party' ? 'retry-party-load' : 'retry-leaderboard-load';
+  return `<section class="card social-state social-state-error" role="alert" aria-labelledby="${kind}-error-title">
+    <h2 id="${kind}-error-title" tabindex="-1">${t('Не удалось загрузить социальный раздел')}</h2>
+    <p>${esc(message || t('Соединение не восстановлено. Пустое состояние не показываем, потому что данные могли не загрузиться.'))}</p>
+    <button type="button" class="btn" data-action="${action}">${t('Повторить')}</button>
+  </section>`;
+}
+async function loadPartySocial() {
+  if (State._partyLoading) return;
+  State._partyLoading = true; State._partyError = '';
+  try {
+    const response = await fetch('/api/party'); const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
+    rememberSocialConsent(data.consent); State.party = data.party || false;
+  } catch {
+    State.party = null; State._partyError = t('Не удалось загрузить пати. Проверь соединение и повтори.');
+  } finally {
+    State._partyLoading = false; if (State.view === 'party') render();
+  }
+}
+async function loadLeaderboardSocial() {
+  if (State._lbLoading) return;
+  State._lbLoading = true; State._lbError = '';
+  try {
+    const response = await fetch('/api/leaderboard'); const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
+    if (!data || !Array.isArray(data.rows)) throw new Error('invalid_payload');
+    rememberSocialConsent(data.consent); State.leaderboard = { metric: data.metric || 'lifetime_xp', rows: data.rows };
+  } catch {
+    State.leaderboard = null; State._lbError = t('Не удалось загрузить рейтинг. Проверь соединение и повтори.');
+  } finally {
+    State._lbLoading = false; if (State.view === 'leaderboard') render();
+  }
+}
+async function setSocialConsent(channel, value, returnSelector) {
+  if (!['leaderboard', 'party'].includes(channel) || State._socialBusy) return false;
+  State._socialBusy = channel; State._socialError = ''; render();
+  try {
+    const response = await fetch('/api/social/consent', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ [channel]: value === true }) });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.consent) throw new Error(data.error || `HTTP ${response.status}`);
+    rememberSocialConsent(data.consent);
+    const saved = State.settings ? await Store.saveNow('settings', State.settings) : true;
+    if (!saved) State._socialError = t('Согласие сохранено на сервере, но локальные настройки пока не записались. При следующей загрузке сервер восстановит выбор.');
+    State._socialFocusAfterCommit = returnSelector || `[data-action="set-${channel}-consent"]`;
+    if (channel === 'leaderboard') State.leaderboard = null;
+    if (channel === 'party') State.party = null;
+    return true;
+  } catch {
+    State._socialError = t('Не удалось изменить согласие. Ничего не изменено — повтори попытку.');
+    State._socialFocusAfterCommit = returnSelector || `[data-action="set-${channel}-consent"]`;
+    return false;
+  } finally {
+    State._socialBusy = ''; render();
+  }
+}
 function renderParty() {
   if (State.party === null) {
-    if (!State._partyLoading) {
-      State._partyLoading = true;
-      publishLeaderboard(); // освежить свой недельный вклад
-      fetch('/api/party').then((r) => r.json()).then((d) => { State.party = d.party || false; State._partyLoading = false; if (State.view === 'party') render(); })
-        .catch(() => { State.party = false; State._partyLoading = false; if (State.view === 'party') render(); });
-    }
-    return `<div class="card"><p class="muted">${t('Загрузка пати…')}</p></div>`;
+    if (State._partyError) return socialErrorCard('party', State._partyError);
+    if (!State._partyLoading) loadPartySocial();
+    return `<section class="card social-state" role="status" aria-live="polite"><h2>${t('Пати')}</h2><p class="muted">${t('Загрузка пати…')}</p></section>`;
   }
   return State.party ? partyHTML(State.party) : partyEmptyHTML();
 }
 function partyEmptyHTML() {
+  const busy = State._socialBusy === 'party';
+  const consentCopy = t('Я понимаю, что после вступления участники увидят моё имя и аватар, и отдельно разрешаю им видеть недельный XP и число завершённых квестов. Названия задач, привычки, cleanDays и личные данные не публикуются.');
   return `<section class="card party-empty-hero">
-    <div class="party-empty-copy"><span class="event-kicker">${t('КОМАНДНАЯ ГЛАВА')}</span><h2>${t('Собери пати для следующего рейда.')}</h2>
+    <div class="party-empty-copy"><span class="event-kicker">${t('КОМАНДНАЯ ГЛАВА')}</span><h2 id="party-title" tabindex="-1">${t('Собери пати для следующего рейда.')}</h2>
       <p class="muted">${t('Дуо или группа до 6 человек. Недельный вклад складывается в общего босса, а поддержка команды не превращает пропуск в вину.')}</p></div>
     <div class="party-empty-mark" aria-hidden="true"><span>${satoruIconHTML('nav.tribe', 'party-empty-emblem', '◇')}</span><i></i><b>✦</b></div>
-    <div class="party-empty-actions"><form id="party-create" class="add-row"><input name="name" placeholder="${t('Название пати…')}" autocomplete="off" required maxlength="40" /><button type="submit">${t('+ Создать')}</button></form>
+    <div class="party-empty-actions"><form id="party-create" class="social-party-form"><label><span>${t('Название пати')}</span><input name="name" autocomplete="off" required maxlength="40" /></label>
+      <label class="social-consent-check"><input type="checkbox" name="shareProgress" required /> <span>${consentCopy}</span></label><button type="submit" ${busy ? 'disabled' : ''}>${t('+ Создать')}</button><p class="social-form-status" role="status" aria-live="polite"></p></form>
       <div class="party-or muted">${t('или войти по коду друга')}</div>
-      <form id="party-join" class="add-row"><input name="code" placeholder="${t('КОД')}" autocomplete="off" maxlength="5" style="text-transform:uppercase" /><button type="submit">${t('Войти')}</button></form></div>
+      <form id="party-join" class="social-party-form"><label><span>${t('Код пати')}</span><input name="code" autocomplete="off" maxlength="5" style="text-transform:uppercase" required /></label>
+      <label class="social-consent-check"><input type="checkbox" name="shareProgress" required /> <span>${consentCopy}</span></label><button type="submit" ${busy ? 'disabled' : ''}>${t('Войти')}</button><p class="social-form-status" role="status" aria-live="polite"></p></form></div>
+    ${State._socialError ? `<p class="social-inline-error" role="alert">${esc(State._socialError)}</p>` : ''}
   </section>`;
 }
 function partyHTML(p) {
@@ -16136,50 +16350,60 @@ function partyHTML(p) {
   if (!won) State._raidShownFor = null;
   const si = seasonInfo(p.season);
   const seasonPct = si.goal ? Math.round(si.prog / si.goal * 100) : 0;
-  const eventTitle = won ? t('Рейд завершён. Команда победила.') : esc(boss.name);
+  const eventTitle = won ? t('Рейд завершён. Команда победила.') : esc(t(boss.name));
   const eventText = won
     ? t('Награда открыта. Забери её и подготовь команду к следующей главе сезона.')
-    : t(`Осталось ${hp} XP до общей победы. Каждый закрытый квест приближает пати к награде.`);
+    : t('До общей победы осталось {xp} XP. Каждый закрытый квест приближает пати к награде.').replace('{xp}', String(hp));
   const eventSteps = [
     { icon: won ? '✓' : '1', label: t('Собирайте XP') },
     { icon: won ? '✓' : '2', label: t('Победите босса') },
     { icon: won && r.iClaimed ? '✓' : '3', label: t('Заберите награду') },
   ].map((step, index) => `<span class="event-step${(won || index === 0) ? ' complete' : ''}"><b>${step.icon}</b>${step.label}</span>`).join('');
   const claim = won
-    ? (r.iClaimed ? '<span class="raid-claimed muted">✓ награда забрана</span>' : `<button class="btn raid-claim" data-action="party-claim">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} Забрать награду пати</button>`)
+    ? (r.iClaimed ? `<span class="raid-claimed muted">✓ ${t('Награда забрана')}</span>` : `<button class="btn raid-claim" data-action="party-claim">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Забрать награду пати')}</button>`)
     : '';
-  const members = p.members.slice().sort((a, b) => b.weekXp - a.weekXp).map((m) => `<div class="pm-row ${m.me ? 'me' : ''}">
+  const members = p.members.slice().sort((a, b) => (Number(b.weekXp) || 0) - (Number(a.weekXp) || 0)).map((m) => `<div class="pm-row ${m.me ? 'me' : ''} ${m.shared ? '' : 'is-private'}">
       <span class="pm-av">${avatarOriginIconHTML(m.avatar || AVATARS[0], 'party-origin-icon')}</span>
-      <span class="pm-meta"><span class="pm-name">${esc(m.name)}${m.me ? ' <span class="lb-you">ты</span>' : ''}</span>
-        <span class="pm-sub muted">ур.${m.level} · ${m.weekQuests} квест.${m.cleanDays ? ` · 🟢 ${m.cleanDays}д чисто` : ''}</span></span>
-      <span class="pm-xp" title="XP за неделю">${m.weekXp}<small>XP</small></span>
-      ${m.me ? '' : `<button class="btn ghost sm pm-cheer" data-action="party-cheer" data-to="${esc(m.id)}" title="Подбодрить">${satoruIconHTML('nav.tribe', 'button-glyph', '◇')}${m.cheers ? ' ' + m.cheers : ''}</button>`}</div>`).join('');
+      <span class="pm-meta"><span class="pm-name">${esc(m.name)}${m.owner ? ` <span class="party-role">${t('создатель')}</span>` : ''}${m.me ? ` <span class="lb-you">${t('ты')}</span>` : ''}</span>
+        <span class="pm-sub muted">${m.shared ? `${m.weekQuests || 0} ${t('квестов за неделю')} · ${t('видно только участникам пати')}` : t('Недельный вклад скрыт участником')}</span></span>
+      <span class="pm-xp" title="${esc(t('XP за неделю'))}">${m.shared ? `${Number(m.weekXp || 0).toLocaleString(lang())}<small>XP</small>` : `<small>${t('приватно')}</small>`}</span>
+      ${m.me ? '' : `<button class="btn ghost sm pm-cheer" data-action="party-cheer" data-to="${esc(m.id)}" aria-label="${esc(`${t('Подбодрить')}: ${m.name}`)}">${satoruIconHTML('nav.tribe', 'button-glyph', '◇')}${m.cheers ? ' ' + m.cheers : ''}</button>`}</div>`).join('');
+  const partyConsent = socialConsentValue('party');
+  const owner = p.permissions && p.permissions.role === 'owner';
+  const privacyCard = `<section class="card social-privacy-card ${partyConsent ? 'is-consented' : ''}" aria-labelledby="party-privacy-title">
+    <div><h3 id="party-privacy-title">${t('Видимость внутри пати')}</h3>
+      <p>${t('После вступления участники видят имя и аватар как идентичность члена пати. Недельный XP и число завершённых квестов видны только при отдельном согласии на вклад. Названия задач, привычки, cleanDays, заметки и другие личные данные не публикуются.')}</p></div>
+    <button type="button" class="btn ${partyConsent ? 'ghost' : ''}" data-action="set-party-consent" data-value="${partyConsent ? 'false' : 'true'}" ${State._socialBusy ? 'disabled' : ''}>${partyConsent ? t('Скрыть мой недельный вклад') : t('Разрешить недельный вклад')}</button>
+    <p class="social-consent-state" role="status" aria-live="polite">${partyConsent ? t('Разрешено только для участников этой пати') : t('Вклад скрыт; рейд не учитывает мои XP')}</p>
+    ${State._socialError ? `<p class="social-inline-error" role="alert">${esc(State._socialError)}</p>` : ''}
+  </section>`;
   return `<div class="party-shell">
     <section class="card event-hero${won ? ' is-won' : ''}">
       <div class="event-hero-copy"><span class="event-kicker">${t('НЕДЕЛЬНЫЙ РЕЙД')} · ${t('СЕЗОН')} ${si.cycle}</span>
-        <h2>${eventTitle}</h2><p class="muted">${eventText}</p>
+        <h2 id="party-title" tabindex="-1">${eventTitle}</h2><p class="muted">${eventText}</p>
         <div class="event-metrics"><span>${satoruIconHTML('nav.tribe', 'inline-glyph', '◇')} <b>${p.members.length}/${p.max}</b> ${t('в пати')}</span><span>${satoruIconHTML('difficulty.normal', 'inline-emblem', '◇')} <b>${pct}%</b> ${t('рейда')}</span><span>${satoruIconHTML('system.achievement', 'inline-emblem', '◇')} <b>${si.prog}/${si.goal}</b> ${t('главы')}</span></div>
       </div>
-      <div class="event-stage" aria-hidden="true"><i class="event-stage-ring"></i><span class="event-stage-boss">${won ? satoruIconHTML('system.achievement', 'boss-victory-emblem', '◇') : bossEmblemHTML(boss, 'boss-stage-emblem')}</span><b class="event-stage-mark">${won ? 'VICTORY' : 'RAID'}</b></div>
+      <div class="event-stage" aria-hidden="true"><i class="event-stage-ring"></i><span class="event-stage-boss">${won ? satoruIconHTML('system.achievement', 'boss-victory-emblem', '◇') : bossEmblemHTML(boss, 'boss-stage-emblem')}</span><b class="event-stage-mark">${won ? t('ПОБЕДА') : t('РЕЙД')}</b></div>
       <div class="event-step-rail">${eventSteps}</div>
     </section>
+    ${privacyCard}
     <div class="party-top-grid"><div class="card party-head">
-      <div class="ph-top"><h3>${satoruIconHTML('nav.tribe', 'heading-glyph', '◇')} ${esc(p.name)}</h3><span class="party-code" title="Поделись кодом с другом — он войдёт в пати">код <b>${esc(p.code)}</b></span></div>
+      <div class="ph-top"><h3>${satoruIconHTML('nav.tribe', 'heading-glyph', '◇')} ${esc(p.name)}</h3><span class="party-code" title="${esc(t('Код видят только участники пати; поделись им с теми, кого приглашаешь.'))}">${t('код')} <b>${esc(p.code)}</b></span></div>
       <p class="muted" style="font-size:12px;margin:6px 0 0">${p.members.length}/${p.max} ${t('участников')} · ${t('недельный вклад складывается в общий рейд')}</p></div>
     <div class="card season-card season-card-event">
       <div class="season-head"><b>${satoruIconHTML('system.achievement', 'inline-emblem', '◇')} ${t('Сезон')} ${si.cycle}</b><span class="muted">${si.prog}/${si.goal} ${t('побед недели')}${si.done ? ` · ${t('пройдено')} ×${si.done}` : ''}</span></div>
       <div class="season-bar"><span style="width:${seasonPct}%"></span></div>
       <p class="muted">${si.prog === si.goal - 1 ? t('Ещё одна победа — и глава сезона взята.') : t('Побеждайте недельного босса, чтобы открывать следующую главу сезона.')}</p></div></div>
     <div class="party-event-grid"><div class="card raid-card ${won ? 'won' : ''}">
-      <div class="raid-head"><span class="raid-boss">${won ? satoruIconHTML('system.achievement', 'boss-victory-emblem', '◇') : bossEmblemHTML(boss, 'boss-card-emblem')}</span><div><b>${won ? t('Босс повержен!') : esc(boss.name)}</b>
-        <div class="muted" style="font-size:12px">${won ? `Пати справилась — ${r.claimedCount}/${p.members.length} забрали награду` : `Осталось ${hp} XP · цель ${r.target} (по ${RAID_PER_MEMBER}/чел)`}</div></div></div>
+      <div class="raid-head"><span class="raid-boss">${won ? satoruIconHTML('system.achievement', 'boss-victory-emblem', '◇') : bossEmblemHTML(boss, 'boss-card-emblem')}</span><div><b>${won ? t('Босс повержен!') : esc(t(boss.name))}</b>
+        <div class="muted" style="font-size:12px">${won ? `${t('Пати справилась')} — ${r.claimedCount}/${p.members.length} ${t('забрали награду')}` : `${t('Осталось')} ${hp} XP · ${t('цель')} ${r.target} (${RAID_PER_MEMBER}/${t('участник')})`}</div></div></div>
       ${!won && boss.lore ? `<p class="muted raid-lore" style="font-size:12px;font-style:italic;margin:8px 0 0">${t(boss.lore)}</p>` : ''}
       ${!won && boss.weak ? `<p class="raid-weak" style="font-size:12.5px;font-weight:700;margin:6px 0 0">${satoruIconHTML('status.streak', 'inline-emblem', '◇')} ${t('Слабость')}: ${t(boss.weak)} — ${t('урон ×2')}</p>` : ''}
       <div class="raid-bar"><span style="width:${pct}%"></span></div>
       ${claim}
       <p class="muted raid-note">${t('Вклад каждого складывается; ничей пропуск не штрафует команду — просто чуть медленнее. Через поддержку, не через вину.')}</p></div>
-    <div class="card"><h3>${t('Состав')}</h3><div class="pm-list">${members}</div>
-      <button class="btn ghost sm" data-action="party-leave" style="margin-top:12px">${t('Покинуть пати')}</button></div></div></div>`;
+    <div class="card party-members-card"><h3>${t('Состав и права')}</h3><p class="muted">${owner ? t('Ты создатель: можешь удалить пати для всех или передать роль, выйдя из неё.') : t('Ты участник: можешь выйти в любой момент. Только создатель может удалить пати для всех.')}</p><div class="pm-list">${members}</div>
+      <div class="party-exit-actions"><button class="btn ghost" data-action="open-party-leave">${owner ? t('Передать роль и выйти') : t('Покинуть пати')}</button>${owner ? `<button class="btn danger" data-action="open-party-delete">${t('Удалить пати для всех')}</button>` : ''}</div></div></div></div>`;
 }
 // Кинематографичная победа над боссом (#22): полноэкранный оверлей + фанфары + конфетти
 function showRaidWin(p, boss) {
@@ -16192,9 +16416,9 @@ function showRaidWin(p, boss) {
     <div class="rw-rays"></div>
     <div class="rw-boss">${bossEmblemHTML(boss, 'boss-win-emblem')}<span class="rw-x">×2</span></div>
     <div class="rw-title">${t('БОСС ПОВЕРЖЕН')}</div>
-    <div class="rw-sub">${esc(boss.name)}</div>
+    <div class="rw-sub">${esc(t(boss.name))}</div>
     ${boss.defeat ? `<div class="rw-lore" style="font-size:13px;font-style:italic;opacity:.85;margin:6px 14px 0">${t(boss.defeat)}</div>` : ''}
-    <div class="rw-party">${satoruIconHTML('nav.tribe', 'inline-glyph', '◇')} ${esc(p.name)} — вместе</div>
+    <div class="rw-party">${satoruIconHTML('nav.tribe', 'inline-glyph', '◇')} ${esc(p.name)} — ${t('вместе')}</div>
     <button class="btn rw-btn" data-action="raidwin-close">${t('Слава пати!')}</button>
     <div class="rw-confetti">${conf}</div></div>`;
   document.body.appendChild(ov);
@@ -16202,7 +16426,7 @@ function showRaidWin(p, boss) {
 // Табло «Доверие vs Контроль» (Splatfest-стиль) поверх рейтинга. Честность на малом масштабе:
 // агрегированное командное табло — только когда с КАЖДОЙ стороны ≥3 активных за неделю; иначе показываем личный вклад.
 function pathBannerHTML(rows) {
-  if (!Array.isArray(rows) || !pathChosen()) return '';
+  if (!Array.isArray(rows) || !pathChosen() || !socialConsentValue('leaderboard')) return '';
   const agg = { trust: { n: 0, xp: 0 }, control: { n: 0, xp: 0 } };
   for (const r of rows) { const p = r.path; if (p === 'trust' || p === 'control') { agg[p].n++; agg[p].xp += Number(r.weekXp) || 0; } }
   const cur = currentPath(), p = PATHS[cur];
@@ -16213,46 +16437,47 @@ function pathBannerHTML(rows) {
     return `<div class="card path-banner">
       <div class="pb-head"><b>${PATHS.trust.glyph} ${t('Доверие')} vs ${t('Контроль')} ${PATHS.control.glyph}</b><span class="muted">${t('вклад команд за неделю')}</span></div>
       <div class="pb-bar"><span class="pb-trust" style="width:${tPct}%"></span><span class="pb-control" style="width:${cPct}%"></span></div>
-      <div class="pb-legend"><span>${PATHS.trust.glyph} ${agg.trust.xp.toLocaleString('ru')} XP · ${agg.trust.n}</span><span>${agg.control.n} · ${agg.control.xp.toLocaleString('ru')} XP ${PATHS.control.glyph}</span></div>
+      <div class="pb-legend"><span>${PATHS.trust.glyph} ${agg.trust.xp.toLocaleString(lang())} XP · ${agg.trust.n}</span><span>${agg.control.n} · ${agg.control.xp.toLocaleString(lang())} XP ${PATHS.control.glyph}</span></div>
     </div>`;
   }
   // Малый масштаб — не выдумываем командную статистику, показываем личный вклад в свою сторону
   const mine = rows.find((r) => r.me), myXp = (mine && Number(mine.weekXp)) || 0;
   return `<div class="card path-banner solo">
     <div class="pb-head"><b>${p.glyph} ${t('Твой путь')}: ${t(p.name)}</b></div>
-    <p class="muted" style="margin:6px 0 0;font-size:13px">${t('Твой вклад за неделю')}: <b>${myXp.toLocaleString('ru')} XP</b>. ${t('Командное табло включится, когда наберётся хотя бы по 3 бойца с каждой стороны.')}</p>
+    <p class="muted" style="margin:6px 0 0;font-size:13px">${t('Твой вклад за неделю')}: <b>${myXp.toLocaleString(lang())} XP</b>. ${t('Командное табло включится, когда наберётся хотя бы по 3 бойца с каждой стороны.')}</p>
   </div>`;
 }
 function renderLeaderboard() {
   if (State.leaderboard === null) {
-    if (!State._lbLoading) {
-      State._lbLoading = true;
-      fetch('/api/leaderboard').then((r) => r.json()).then((d) => { State.leaderboard = Array.isArray(d) ? d : []; State._lbLoading = false; if (State.view === 'leaderboard') render(); })
-        .catch(() => { State.leaderboard = []; State._lbLoading = false; if (State.view === 'leaderboard') render(); });
-    }
-    return `<div class="card"><p class="muted">${t('Загрузка рейтинга…')}</p></div>`;
+    if (State._lbError) return socialErrorCard('leaderboard', State._lbError);
+    if (!State._lbLoading) loadLeaderboardSocial();
+    return `<section class="card social-state" role="status" aria-live="polite"><h2>${t('Рейтинг')}</h2><p class="muted">${t('Загрузка рейтинга…')}</p></section>`;
   }
-  const rows = State.leaderboard;
-  const optOut = !!(State.settings && State.settings.leaderboardOptOut);
+  const rows = State.leaderboard.rows;
+  const consent = socialConsentValue('leaderboard');
   const pathGlyph = (p) => p === 'control' ? PATHS.control.glyph : p === 'trust' ? PATHS.trust.glyph : '';
   const list = rows.length ? rows.map((r, i) => `
     <div class="lb-row ${r.me ? 'me' : ''}">
       <div class="lb-pos ${i < 3 ? `podium podium-${i + 1}` : ''}">${i < 3 ? i + 1 : '#' + (i + 1)}</div>
       <div class="lb-av">${avatarOriginIconHTML(r.avatar || AVATARS[0], 'leaderboard-origin-icon')}</div>
-      <div class="lb-name">${pathGlyph(r.path) ? `<span class="lb-path" title="${esc(t(PATHS[r.path].name))}">${pathGlyph(r.path)}</span> ` : ''}${esc(r.name)}${r.me ? ' <span class="lb-you">ты</span>' : ''}<span class="lb-rank">${esc(r.rank || '')}</span></div>
-      <div class="lb-lvl">ур.${r.level}</div>
-      <div class="lb-xp">${r.totalXp.toLocaleString('ru')} XP</div>
-    </div>`).join('') : '<p class="muted">Пока пусто. Выполняй квесты — и попадёшь в рейтинг. Позови друзей!</p>';
+      <div class="lb-name">${pathGlyph(r.path) ? `<span class="lb-path" title="${esc(t(PATHS[r.path].name))}">${pathGlyph(r.path)}</span> ` : ''}${esc(r.name)}${r.me ? ` <span class="lb-you">${t('ты')}</span>` : ''}<span class="lb-rank">${esc(t(r.rank || ''))}</span></div>
+      <div class="lb-lvl">${t('ур.')} ${r.level}</div>
+      <div class="lb-xp">${Number(r.totalXp || 0).toLocaleString(lang())} XP</div>
+    </div>`).join('') : `<p class="muted social-empty-copy">${t('Публичных участников пока нет. Это настоящее пустое состояние, а не ошибка загрузки.')}</p>`;
   return `
-    ${pathBannerHTML(rows)}
-    <div class="card">
-      <h3>${satoruIconHTML('system.achievement', 'heading-emblem', '◇')} Рейтинг</h3>
-      <p class="muted" style="margin:0 0 14px">Соревнование по суммарному опыту среди всех игроков на этом сервере. Видны только имя, аватар, уровень и ранг — твои задачи и личные данные приватны.</p>
+    <section class="card leaderboard-card" aria-labelledby="leaderboard-title">
+      <h2 id="leaderboard-title" tabindex="-1">${satoruIconHTML('system.achievement', 'heading-emblem', '◇')} ${t('Рейтинг участия')}</h2>
+      <p class="leaderboard-explainer">${t('Суммарный lifetime XP отражает длительность и объём участия под серверными лимитами. Это не рейтинг навыка, таланта, продуктивности или ценности человека; новички не обязаны догонять старые аккаунты.')}</p>
+      <p class="muted">${t('Сервер заново считает XP из сохранённых задач, привычек и целей и игнорирует числа из запроса. Публично видны только имя, аватар, уровень, ранг пути и итоговый XP.')}</p>
       <div class="lb-table">${list}</div>
-    </div>
-    <div class="card">
-      <label class="lb-optout"><input type="checkbox" data-action="toggle-lb-optout" ${optOut ? 'checked' : ''}/> Скрыть меня из рейтинга</label>
-    </div>`;
+    </section>
+    <section class="card social-privacy-card ${consent ? 'is-consented' : ''}" aria-labelledby="leaderboard-privacy-title">
+      <div><h3 id="leaderboard-privacy-title">${t('Отдельное согласие на публикацию')}</h3>
+      <p>${t('Если разрешить, другие авторизованные пользователи увидят имя, аватар, server-computed lifetime XP, уровень и ранг пути. Задачи, названия привычек, cleanDays, заметки и недельные детали не публикуются.')}</p></div>
+      <button type="button" class="btn ${consent ? 'ghost' : ''}" data-action="set-leaderboard-consent" data-value="${consent ? 'false' : 'true'}" ${State._socialBusy ? 'disabled' : ''}>${consent ? t('Отозвать публикацию') : t('Разрешить публикацию')}</button>
+      <p class="social-consent-state" role="status" aria-live="polite">${consent ? t('Публикация включена; согласие можно отозвать сразу') : t('Ты не опубликован в рейтинге')}</p>
+      ${State._socialError ? `<p class="social-inline-error" role="alert">${esc(State._socialError)}</p>` : ''}
+    </section>`;
 }
 
 const VIEWS = { today: renderToday, notes: renderNotes, calendar: renderCalendarView, habits: renderHabitsView, den: renderDen, character: renderCharacter, pets: renderPets, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, party: renderParty, leaderboard: renderLeaderboard, settings: renderSettings };
@@ -16539,6 +16764,23 @@ function afterMainCommit() {
     requestAnimationFrame(() => {
       const target = document.querySelector(selector) || document.getElementById('daily-reward-title') || document.querySelector('.rewards-shell h2');
       if (target) focusPathChoiceTarget(target);
+    });
+  }
+  if (State._socialFocusAfterCommit && (State.view === 'party' || State.view === 'leaderboard')) {
+    const selector = State._socialFocusAfterCommit;
+    requestAnimationFrame(() => {
+      const target = document.querySelector(selector);
+      if (target) {
+        State._socialFocusAfterCommit = '';
+        focusPathChoiceTarget(target);
+        return;
+      }
+      // Consent/Retry first commits a loading state and then replaces it with the
+      // authoritative server response. Do not spend the focus plan on that transient DOM.
+      if (State._partyLoading || State._lbLoading) return;
+      State._socialFocusAfterCommit = '';
+      const fallback = document.querySelector('#main h2, #main [role="alert"], #main button');
+      if (fallback) focusPathChoiceTarget(fallback);
     });
   }
   if (State._calendarFocusAfterCommit && (State.view === 'calendar' || State.view === 'weekly')) {
@@ -16969,15 +17211,28 @@ async function onSubmit(e) {
     return;
   }
   if (f.id === 'party-create') {
-    e.preventDefault(); const name = f.name.value.trim(); if (!name) return;
-    fetch('/api/party/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) })
-      .then((r) => r.json()).then((d) => { if (d.party) { State.party = d.party; toast('🤝 Пати создана — поделись кодом'); render(); } else toast('Не удалось создать'); }).catch(() => toast('Сетевая ошибка'));
+    e.preventDefault(); const name = f.name.value.trim(), status = f.querySelector('.social-form-status'); if (!name || !f.shareProgress.checked) return;
+    const controls = Array.from(f.elements); controls.forEach((control) => { control.disabled = true; }); if (status) status.textContent = t('Создаю пати…');
+    try {
+      const response = await fetch('/api/party/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, shareProgress: true, acknowledgedVisibility: true }) });
+      const data = await response.json().catch(() => ({})); if (!response.ok || !data.party) throw new Error(data.error || 'failed');
+      rememberSocialConsent(data.consent); State.party = data.party; State._socialFocusAfterCommit = '#party-title'; toast(t('Пати создана — поделись кодом')); render();
+    } catch { controls.forEach((control) => { control.disabled = false; }); if (status) { status.textContent = t('Не удалось создать пати. Ничего не изменено — повтори попытку.'); status.setAttribute('role', 'alert'); } }
     return;
   }
   if (f.id === 'party-join') {
-    e.preventDefault(); const code = f.code.value.trim().toUpperCase(); if (!code) return;
-    fetch('/api/party/join', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) })
-      .then((r) => r.json()).then((d) => { if (d.party) { State.party = d.party; toast('🤝 Ты в пати!'); render(); } else toast(d.error === 'full' ? 'Пати заполнена' : d.error === 'already_in_party' ? 'Ты уже в пати' : 'Код не найден'); }).catch(() => toast('Сетевая ошибка'));
+    e.preventDefault(); const code = f.code.value.trim().toUpperCase(), status = f.querySelector('.social-form-status'); if (!code || !f.shareProgress.checked) return;
+    const controls = Array.from(f.elements); controls.forEach((control) => { control.disabled = true; }); if (status) status.textContent = t('Вхожу в пати…');
+    try {
+      const response = await fetch('/api/party/join', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, shareProgress: true, acknowledgedVisibility: true }) });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.party) throw new Error(data.error || 'failed');
+      rememberSocialConsent(data.consent); State.party = data.party; State._socialFocusAfterCommit = '#party-title'; toast(t('Ты в пати!')); render();
+    } catch (error) {
+      controls.forEach((control) => { control.disabled = false; });
+      const message = error.message === 'full' ? t('Пати заполнена') : error.message === 'already_in_party' ? t('Ты уже в пати') : error.message === 'not_found' ? t('Код не найден') : t('Не удалось войти в пати. Ничего не изменено — повтори попытку.');
+      if (status) { status.textContent = message; status.setAttribute('role', 'alert'); }
+    }
     return;
   }
   if (f.id === 'add-antihabit') {
@@ -17314,7 +17569,10 @@ function onClick(e) {
   }
   if (action === 'ob-program') { const p = DUNGEON_PROGRAMS.find((x) => x.id === el.dataset.prog); if (p) applyProgramFresh(p); return; }
   if (action === 'add-program') { const p = DUNGEON_PROGRAMS.find((x) => x.id === el.dataset.prog); if (p) applyProgramMerge(p); return; }
-  if (action === 'toggle-lb-optout') { State.settings.leaderboardOptOut = !State.settings.leaderboardOptOut; Store.save('settings', State.settings); publishLeaderboard(); State.leaderboard = null; render(); return; }
+  if (action === 'retry-party-load') { State._partyError = ''; State.party = null; State._socialFocusAfterCommit = '#party-title, [role="alert"]'; render(); return; }
+  if (action === 'retry-leaderboard-load') { State._lbError = ''; State.leaderboard = null; State._socialFocusAfterCommit = '#leaderboard-title, [role="alert"]'; render(); return; }
+  if (action === 'set-leaderboard-consent') { setSocialConsent('leaderboard', el.dataset.value === 'true', '[data-action="set-leaderboard-consent"]'); return; }
+  if (action === 'set-party-consent') { setSocialConsent('party', el.dataset.value === 'true', '[data-action="set-party-consent"]'); return; }
   if (action === 'ob-ai-run') { obAiRun(); return; }
   if (action === 'ob-ai-apply') { obAiApply(); return; }
   if (action === 'ob-ai-reset') { _obItems = null; _obErr = ''; renderOnboardingScreen(); return; }
@@ -18343,12 +18601,14 @@ function onClick(e) {
   } else if (action === 'helper-to-settings') { const m = document.getElementById('helper-modal'); if (m) m.remove(); State.view = 'settings'; render();
   } else if (action === 'chat-suggest') { sendChat(el.dataset.q);
   } else if (action === 'habits-tab') { State.habitsTab = el.dataset.tab; render();
-  } else if (action === 'party-leave') {
-    if (!confirm('Покинуть пати?')) return;
-    fetch('/api/party/leave', { method: 'POST' }).then(() => { State.party = false; render(); }).catch(() => toast('Сетевая ошибка'));
+  } else if (action === 'open-party-leave') { showPartyExitDialog('leave', el);
+  } else if (action === 'open-party-delete') { showPartyExitDialog('delete', el);
+  } else if (action === 'close-party-dialog') { closeAccountDialog('social-party-dialog');
+  } else if (action === 'confirm-party-exit') { commitPartyExit(el.closest('#social-party-dialog'));
   } else if (action === 'party-cheer') {
     fetch('/api/party/cheer', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ to: el.dataset.to }) })
-      .then((r) => r.json()).then((d) => { if (d.party) { State.party = d.party; sfx('coin'); render(); } }).catch(() => toast('Сетевая ошибка'));
+      .then(async (r) => { const d = await r.json().catch(() => ({})); if (!r.ok || !d.party) throw new Error(d.error || 'failed'); State.party = d.party; sfx('coin'); State._socialFocusAfterCommit = `[data-action="party-cheer"][data-to="${CSS.escape(el.dataset.to)}"]`; render(); })
+      .catch(() => toast(t('Не удалось отправить поддержку. Повтори попытку.')));
   } else if (action === 'party-claim') {
     fetch('/api/party/claim', { method: 'POST' }).then((r) => r.json()).then((d) => {
       if (d.reward) {
@@ -18598,7 +18858,8 @@ function clearAllData() {
   State.purchases = null; State.achievements = null; State.weeks = null; State.lootbox = null;
   State.inbox = null; State.inboxOpen = false; State.antihabits = null; State.episodes = null;
   State.profile = null; State.aiKeys = null; State.strava = null; State.chatLog = [];
-  State.leaderboard = null; State.party = null; State.adminUsers = null; State.myFeedbackCount = 0;
+  State.leaderboard = null; State.party = null; State.adminUsers = null; State.socialPrivacy = null; State.myFeedbackCount = 0;
+  State._lbError = ''; State._partyError = ''; State._socialError = ''; State._socialBusy = '';
   State._stravaSyncing = false; State._chatBusy = false; State._lbLoading = false;
   State._partyLoading = false; State._adminUsersLoading = false;
   State._tasksLoadError = ''; State._tasksLoadBusy = false; State._tasksFocusAfterCommit = '';
@@ -18744,6 +19005,7 @@ async function initApp() {
   State.settings.gold = Object.assign({}, DEFAULT_SETTINGS.gold, State.settings.gold);
   State.settings.curve = Object.assign({}, DEFAULT_SETTINGS.curve, State.settings.curve);
   State.settings.focus = Object.assign({}, DEFAULT_SETTINGS.focus, State.settings.focus);
+  State.settings.social = Object.assign({}, DEFAULT_SETTINGS.social, State.settings.social);
   State.settings.body = State.settings.body || {};
   State.settings.imported = State.settings.imported || {};
   State.settings.avatar = State.settings.avatar || defaultAvatar();
@@ -18761,7 +19023,10 @@ async function initApp() {
   fetch('/api/feedback/mine').then((r) => r.json()).then((d) => { State.myFeedbackCount = d.count || 0; checkAchievements(); }).catch(() => {});
   // Пати — заранее, тихо (не только при заходе в «Племя»): иначе критический удар по боссу
   // не сработает всю сессию, если юзер ни разу не открыл вкладку и State.party всё ещё null.
-  fetch('/api/party').then((r) => r.json()).then((d) => { if (State.party === null) State.party = d.party || false; }).catch(() => {});
+  fetch('/api/party').then(async (response) => {
+    const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.error || 'failed');
+    rememberSocialConsent(data.consent); if (State.party === null) State.party = data.party || false;
+  }).catch(() => { if (State.party === null) State._partyError = t('Не удалось загрузить пати. Проверь соединение и повтори.'); });
 
   {
     const tasksLoad = await Store.loadChecked('tasks', [], validateTasksPayload);
@@ -18841,15 +19106,14 @@ async function initApp() {
   // отказ браузер запоминает, а пользователь ещё не выбирал reminders/push intent.
 }
 
-// Публикует публичный снапшот прогресса в лидерборд (приватные данные не уходят)
+// Просит сервер обновить разрешённые social-агрегаты. Клиент не отправляет XP,
+// cleanDays, habits, названия задач или идентификатор профиля: сервер выводит
+// значения из файлов текущей авторизованной учётной записи.
 function publishLeaderboard() {
-  if (!State.settings) return;
+  if (!State.settings || !State.settings.social) return;
+  if (State.settings.social.leaderboard !== true && State.settings.social.party !== true) return;
   try {
-    const c = State.settings.curve, oi = levelInfo(overallXp(), c.base, c.growth);
-    const ws = weekStart(todayStr()), st = rangeStats(ws, todayStr()); // недельный вклад для пати/рейда
-    const clean = Math.max(0, ...((State.antihabits || []).map((a) => antiCleanDays(a))), 0);
-    fetch('/api/leaderboard/publish', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ totalXp: overallXp(), level: oi.level, rank: charRank().name, optOut: !!State.settings.leaderboardOptOut, weekStart: ws, weekXp: st.xp, weekQuests: st.quests, cleanDays: clean, path: State.settings.path || null }) }).catch(() => {});
+    fetch('/api/leaderboard/publish', { method: 'POST' }).catch(() => {});
   } catch (e) {}
 }
 

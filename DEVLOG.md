@@ -2,6 +2,17 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-10] 👥 Party, leaderboard & social privacy v125 — прогресс публикуется только по согласию
+
+- Leaderboard и Party получили два независимых явных согласия, выключенных по умолчанию. Вступление в Party отдельно объясняет видимость имени/аватара, а weekly XP и число закрытых квестов показываются участникам только после отдельного согласия на progress sharing.
+- Публичные ответы не содержат `cleanDays`, привычки, названия задач или другие производные поведенческие данные. Отзыв согласия действует сразу: строка исчезает из leaderboard, а вклад участника Party становится приватным.
+- Клиент больше не отправляет XP, level, user id или формулу рейтинга. Сервер вычисляет lifetime XP из account-owned файлов, применяет существующие ограничения и публикует только минимальный профиль. UI прямо говорит, что lifetime XP отражает участие и стаж, а не навык, талант, продуктивность или ценность человека.
+- Все Party-операции выводят actor/party/member из серверной сессии и текущего membership. Чужие `userId`, `partyId`, `memberId`, `actorId` и `createdBy` отклоняются. `/api/users` закрыт для обычных пользователей. Cheer разрешён только реальному участнику той же Party и не допускает self-cheer.
+- Права и видимость стали явными: owner может удалить Party только после typed confirmation; обычный участник может выйти; выход owner передаёт роль следующему участнику, а пустая Party удаляется. Leave/delete не меняют UI до подтверждённой серверной записи.
+- Loading, error, empty и ready — разные состояния с Retry и возвратом focus. Destructive dialog — labelled `aria-modal` с inert background, focus trap, Escape/backdrop и возвратом focus. Новая social copy покрыта RU/EN/DE/UK/ES; mobile controls ≥42px, light-purpose colors и reduced-motion проверены.
+- QA: focused Account+Social **6/6 PASS**; полный `npm test` **92/92 PASS**; `node --check` app/server/SW, CSS braces и `git diff --check` — PASS. Live: 360×800, 375×812, 1280×900; dark/light; RU/EN/DE/UK/ES; consent on/off, hidden member contribution, owner/member permissions, transfer, typed delete, error/retry и focus flow.
+- PWA cache: `satoru-v124 → satoru-v125`. Финальные JPEG: `docs/design-qa/2026-08-10-party-v125/` (8 файлов, корректные MIME и размеры).
+
 ## [2026-08-10] 🎁 Rewards & economy v124 — earned cosmetic surprise без ставки и случайной силы
 
 - Сохранён эмоциональный hook сундука: за 1 и 3 реальных действия пользователь получает заранее известные `+40/+80` золота, за 5 — заработанный косметический сундук. Сгенерированный «Заход» в трек не входит.

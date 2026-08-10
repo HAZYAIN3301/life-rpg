@@ -153,6 +153,20 @@ const PARTIES_FILE = () => path.join(DATA_DIR, 'parties.json');
 function loadParties() { try { return JSON.parse(fs.readFileSync(PARTIES_FILE(), 'utf8')); } catch { return []; } }
 function saveParties(p) { writeJsonAtomic(PARTIES_FILE(), p); }
 function partyOf(uid, parties) { return (parties || loadParties()).find((p) => (p.members || []).includes(uid)) || null; }
+function socialConsentOf(user) {
+  const source = user && user.socialConsent && typeof user.socialConsent === 'object' ? user.socialConsent : {};
+  return { leaderboard: source.leaderboard === true, party: source.party === true };
+}
+function socialPayloadHasForeignIdentity(body) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return false;
+  return ['userId', 'uid', 'partyId', 'memberId', 'actorId', 'createdBy'].some((key) => Object.prototype.hasOwnProperty.call(body, key));
+}
+function saveUsersAndPartiesAtomic(users, parties) {
+  const usersSnapshot = fileSnapshot(USERS_FILE());
+  const partiesSnapshot = fileSnapshot(PARTIES_FILE());
+  try { saveUsers(users); saveParties(parties); }
+  catch (error) { restoreSnapshot(USERS_FILE(), usersSnapshot); restoreSnapshot(PARTIES_FILE(), partiesSnapshot); throw error; }
+}
 function removeUserFromParties(uid, parties) {
   const next = [];
   for (const source of parties || []) {
@@ -242,8 +256,13 @@ function refreshRaid(party) {
   party.season = party.season || { wins: 0 };
   const users = loadUsers();
   let total = 0;
-  // Урон боссу = bossXp (обычный XP + тематическая слабость ×2); фолбэк на xp для старых снапшотов
-  for (const id of (party.members || [])) { const u = users.find((x) => x.id === id); const w = u && u.pub && u.pub.week; if (w && w.ws === ws) total += (w.bossXp != null ? w.bossXp : (w.xp || 0)); }
+  // Урон пересчитывается из принадлежащих участнику файлов только для тех, кто
+  // отдельно разрешил видимость недельного вклада внутри своей пати.
+  for (const id of (party.members || [])) {
+    const user = users.find((entry) => entry.id === id);
+    if (!user || !socialConsentOf(user).party) continue;
+    total += computeUserXp(id).weekBossXp;
+  }
   const target = (party.members || []).length * RAID_PER_WEEK;
   let justWon = false;
   if (!party.raid.won && target > 0 && total >= target) { party.raid.won = true; party.season.wins = (party.season.wins || 0) + 1; justWon = true; }
@@ -1860,9 +1879,11 @@ const server = http.createServer(async (req, res) => {
     return res.end(ics);
   }
 
-  // ---- Public users list (for leaderboard) — requires session ----
+  // ---- Admin users list. Client-side hiding is not an authorization boundary. ----
   if (u === '/api/users' && req.method === 'GET') {
-    if (!sessionUserId(req)) return sendJson(res, 401, { error: 'not logged in' });
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const me = loadUsers().find((entry) => entry.id === uid);
+    if (!me || !me.isAdmin) return sendJson(res, 403, { error: 'admin_only' });
     return sendJson(res, 200, loadUsers().map(x => ({ id: x.id, name: x.name, avatar: x.avatar })));
   }
 
@@ -2188,37 +2209,66 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 404, { error: 'not found' });
   }
 
-  // ---- Лидерборд (соцфича) ----
-  // Клиент публикует ПУБЛИЧНЫЙ снапшот прогресса (XP/уровень/ранг). Приватные данные
-  // (задачи, рефлексия, тело и т.д.) НЕ покидают клиента — на сервере только агрегат.
+  // ---- Social privacy, leaderboard and party ----
+  // Consent is server-authoritative and channel-specific. The client never supplies XP,
+  // cleanDays, habits or task content: every visible aggregate is recomputed from the
+  // authenticated account's own files.
+  if (u === '/api/social/privacy' && req.method === 'GET') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const user = loadUsers().find((entry) => entry.id === uid);
+    if (!user) return sendJson(res, 401, { error: 'user not found' });
+    return sendJson(res, 200, { consent: socialConsentOf(user) });
+  }
+  if (u === '/api/social/consent' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let body = {}; try { body = JSON.parse(await readBody(req)); } catch { return sendJson(res, 400, { error: 'bad_json' }); }
+    if (socialPayloadHasForeignIdentity(body)) return sendJson(res, 400, { error: 'foreign_identity_not_allowed' });
+    const keys = Object.keys(body);
+    if (!keys.length || keys.some((key) => !['leaderboard', 'party'].includes(key)) || keys.some((key) => typeof body[key] !== 'boolean')) {
+      return sendJson(res, 400, { error: 'bad_consent' });
+    }
+    const users = loadUsers(); const user = users.find((entry) => entry.id === uid);
+    if (!user) return sendJson(res, 401, { error: 'user not found' });
+    const next = socialConsentOf(user);
+    if (Object.prototype.hasOwnProperty.call(body, 'leaderboard')) next.leaderboard = body.leaderboard;
+    if (Object.prototype.hasOwnProperty.call(body, 'party')) next.party = body.party;
+    user.socialConsent = next;
+    // Remove legacy retained snapshots (including old cleanDays). Views recompute safe
+    // aggregates on demand, so revocation is immediate and no derived habit data remains.
+    delete user.pub; delete user.leaderboardOptOut;
+    saveUsers(users);
+    return sendJson(res, 200, { ok: true, consent: next });
+  }
+
+  // Legacy route retained for clients that ask for a refresh. The request body is ignored;
+  // totals, level, rank, path and weekly contribution are all computed server-side.
   if (u === '/api/leaderboard/publish' && req.method === 'POST') {
     const uid = sessionUserId(req);
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
-    let b = {}; try { b = JSON.parse(await readBody(req)); } catch {}
     const users = loadUsers();
     const user = users.find(x => x.id === uid);
     if (!user) return sendJson(res, 401, { error: 'user not found' });
-    // СЕРВЕРНАЯ ВАЛИДАЦИЯ: XP/уровень/недельный вклад пересчитываем из сохранённых данных юзера,
-    // НЕ доверяя значениям из payload (анти-накрутка лидерборда/рейда). clean — некомпетитивно, берём с клиента.
+    const consent = socialConsentOf(user);
+    if (!consent.leaderboard && !consent.party) return sendJson(res, 403, { error: 'consent_required' });
     const xp = computeUserXp(uid);
-    user.pub = {
-      totalXp: xp.total, level: xp.level, rank: xp.rank, at: new Date().toISOString(),
-      path: (b.path === 'trust' || b.path === 'control') ? b.path : null, // сторона «Доверие/Контроль» — некомпетитивна, берём с клиента
-      week: { ws: mondayStr(), xp: xp.weekXp, bossXp: xp.weekBossXp, quests: xp.weekQuests, clean: Math.max(0, Math.round(Number(b.cleanDays) || 0)) },
-    };
-    user.leaderboardOptOut = !!b.optOut;
-    saveUsers(users);
-    return sendJson(res, 200, { ok: true, totalXp: xp.total, level: xp.level });
+    return sendJson(res, 200, { ok: true, consent, totalXp: xp.total, level: xp.level });
   }
-  // GET /api/leaderboard — рейтинг всех, кто опубликовал снапшот и не отписался
+  // GET /api/leaderboard — only users with explicit leaderboard consent.
   if (u === '/api/leaderboard' && req.method === 'GET') {
     const me = sessionUserId(req);
     if (!me) return sendJson(res, 401, { error: 'not logged in' });
-    const rows = loadUsers()
-      .filter(x => x.pub && !x.leaderboardOptOut)
-      .map(x => ({ id: x.id, name: x.name, avatar: x.avatar, totalXp: x.pub.totalXp, level: x.pub.level, rank: x.pub.rank, path: x.pub.path || null, weekXp: (x.pub.week && x.pub.week.xp) || 0, me: x.id === me }))
+    const users = loadUsers(); const current = users.find((entry) => entry.id === me);
+    if (!current) return sendJson(res, 401, { error: 'user not found' });
+    const rows = users
+      .filter((entry) => socialConsentOf(entry).leaderboard)
+      .map((entry) => {
+        const xp = computeUserXp(entry.id);
+        let settings = {}; try { settings = JSON.parse(fs.readFileSync(path.join(userDataDir(entry.id), 'settings.json'), 'utf8')); } catch {}
+        return { id: entry.id, name: entry.name, avatar: entry.avatar, totalXp: xp.total, level: xp.level, rank: xp.rank,
+          path: settings.path === 'trust' || settings.path === 'control' ? settings.path : null, me: entry.id === me };
+      })
       .sort((a, b) => b.totalXp - a.totalXp);
-    return sendJson(res, 200, rows);
+    return sendJson(res, 200, { consent: socialConsentOf(current), metric: 'lifetime_xp', rows });
   }
 
   // ---- Мультиплеер: пати (дуо/группа), кооп-рейд по недельному вкладу ----
@@ -2229,61 +2279,93 @@ const server = http.createServer(async (req, res) => {
     const r = refreshRaid(party);
     const users = loadUsers();
     const members = (party.members || []).map((id) => {
-      const u = users.find((x) => x.id === id) || {}; const w = (u.pub && u.pub.week) || {};
-      return { id, name: u.name || '—', avatar: u.avatar || '👤', level: (u.pub && u.pub.level) || 1, rank: (u.pub && u.pub.rank) || '', weekXp: w.xp || 0, weekQuests: w.quests || 0, cleanDays: w.clean || 0, cheers: (party.cheers && party.cheers[id]) || 0, me: id === me };
+      const member = users.find((entry) => entry.id === id) || {};
+      const shared = socialConsentOf(member).party;
+      const xp = shared ? computeUserXp(id) : null;
+      return { id, name: member.name || '—', avatar: member.avatar || '👤', shared,
+        ...(xp ? { weekXp: xp.weekXp, weekQuests: xp.weekQuests } : {}),
+        cheers: (party.cheers && party.cheers[id]) || 0, me: id === me, owner: id === party.createdBy };
     });
     return { id: party.id, name: party.name, code: party.code, createdBy: party.createdBy, members, max: PARTY_MAX, ws: r.ws,
       raid: { total: r.total, target: r.target, won: r.won, iClaimed: (r.claimed || []).includes(me), claimedCount: (r.claimed || []).length },
-      season: { wins: r.seasonWins, goal: SEASON_GOAL } };
+      season: { wins: r.seasonWins, goal: SEASON_GOAL },
+      permissions: { role: party.createdBy === me ? 'owner' : 'member', canDelete: party.createdBy === me, canLeave: true, canCheer: true },
+      visibility: { profile: 'party_members', progress: 'explicit_weekly_xp_and_quest_count' } };
   }
   if (u === '/api/party' && req.method === 'GET') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    const users = loadUsers(); const user = users.find((entry) => entry.id === me);
+    if (!user) return sendJson(res, 401, { error: 'user not found' });
     const parties = loadParties(); const party = partyOf(me, parties);
     const view = partyView(party, me); if (party) saveParties(parties); // persist раз пересчитали рейд/сезон
-    return sendJson(res, 200, { party: view });
+    return sendJson(res, 200, { party: view, consent: socialConsentOf(user) });
   }
   if (u === '/api/party/create' && req.method === 'POST') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
-    let b = {}; try { b = JSON.parse(await readBody(req)); } catch {}
+    let b = {}; try { b = JSON.parse(await readBody(req)); } catch { return sendJson(res, 400, { error: 'bad_json' }); }
+    if (socialPayloadHasForeignIdentity(b)) return sendJson(res, 400, { error: 'foreign_identity_not_allowed' });
+    if (b.shareProgress !== true || b.acknowledgedVisibility !== true) return sendJson(res, 412, { error: 'party_consent_required' });
+    const users = loadUsers(); const user = users.find((entry) => entry.id === me); if (!user) return sendJson(res, 401, { error: 'user not found' });
     const parties = loadParties();
     if (partyOf(me, parties)) return sendJson(res, 400, { error: 'already_in_party' });
     const party = { id: 'p_' + crypto.randomBytes(5).toString('hex'), name: String(b.name || 'Моя пати').slice(0, 40), code: genPartyCode(parties), members: [me], cheers: {}, season: { wins: 0 }, createdBy: me, createdAt: new Date().toISOString() };
-    parties.push(party); const view = partyView(party, me); saveParties(parties);
-    return sendJson(res, 200, { party: view });
+    user.socialConsent = { ...socialConsentOf(user), party: true };
+    delete user.pub; parties.push(party); saveUsersAndPartiesAtomic(users, parties); const view = partyView(party, me); saveParties(parties);
+    return sendJson(res, 200, { party: view, consent: socialConsentOf(user) });
   }
   if (u === '/api/party/join' && req.method === 'POST') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
-    let b = {}; try { b = JSON.parse(await readBody(req)); } catch {}
+    let b = {}; try { b = JSON.parse(await readBody(req)); } catch { return sendJson(res, 400, { error: 'bad_json' }); }
+    if (socialPayloadHasForeignIdentity(b)) return sendJson(res, 400, { error: 'foreign_identity_not_allowed' });
+    if (b.shareProgress !== true || b.acknowledgedVisibility !== true) return sendJson(res, 412, { error: 'party_consent_required' });
+    const users = loadUsers(); const user = users.find((entry) => entry.id === me); if (!user) return sendJson(res, 401, { error: 'user not found' });
     const parties = loadParties();
     if (partyOf(me, parties)) return sendJson(res, 400, { error: 'already_in_party' });
     const code = String(b.code || '').trim().toUpperCase();
     const party = parties.find((p) => p.code === code);
     if (!party) return sendJson(res, 404, { error: 'not_found' });
     if ((party.members || []).length >= PARTY_MAX) return sendJson(res, 400, { error: 'full' });
-    party.members.push(me); const view = partyView(party, me); saveParties(parties);
-    return sendJson(res, 200, { party: view });
+    user.socialConsent = { ...socialConsentOf(user), party: true };
+    delete user.pub; party.members.push(me); saveUsersAndPartiesAtomic(users, parties); const view = partyView(party, me); saveParties(parties);
+    return sendJson(res, 200, { party: view, consent: socialConsentOf(user) });
   }
   if (u === '/api/party/leave' && req.method === 'POST') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    let b = {}; try { const raw = await readBody(req); b = raw ? JSON.parse(raw) : {}; } catch { return sendJson(res, 400, { error: 'bad_json' }); }
+    if (socialPayloadHasForeignIdentity(b)) return sendJson(res, 400, { error: 'foreign_identity_not_allowed' });
     const parties = loadParties(); const party = partyOf(me, parties);
+    let transferredTo = null, deleted = false;
     if (party) {
       party.members = party.members.filter((x) => x !== me);
       if (party.cheers) delete party.cheers[me];
       if (party.raid && party.raid.claimed) party.raid.claimed = party.raid.claimed.filter((x) => x !== me);
       const idx = parties.indexOf(party);
-      if (!party.members.length) parties.splice(idx, 1); // пустая пати удаляется
-      else if (party.createdBy === me) party.createdBy = party.members[0]; // передаём «владельца»
+      if (!party.members.length) { parties.splice(idx, 1); deleted = true; }
+      else if (party.createdBy === me) { party.createdBy = party.members[0]; transferredTo = party.createdBy; }
       saveParties(parties);
     }
-    return sendJson(res, 200, { ok: true });
+    return sendJson(res, 200, { ok: true, left: !!party, deleted, transferredTo });
+  }
+  if (u === '/api/party/delete' && req.method === 'POST') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    let b = {}; try { b = JSON.parse(await readBody(req)); } catch { return sendJson(res, 400, { error: 'bad_json' }); }
+    if (socialPayloadHasForeignIdentity(b)) return sendJson(res, 400, { error: 'foreign_identity_not_allowed' });
+    const parties = loadParties(); const party = partyOf(me, parties);
+    if (!party) return sendJson(res, 404, { error: 'no_party' });
+    if (party.createdBy !== me) return sendJson(res, 403, { error: 'owner_only' });
+    if (String(b.confirmName || '') !== party.name) return sendJson(res, 400, { error: 'confirmation_mismatch' });
+    parties.splice(parties.indexOf(party), 1); saveParties(parties);
+    return sendJson(res, 200, { ok: true, deleted: true });
   }
   if (u === '/api/party/cheer' && req.method === 'POST') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
-    let b = {}; try { b = JSON.parse(await readBody(req)); } catch {}
+    let b = {}; try { b = JSON.parse(await readBody(req)); } catch { return sendJson(res, 400, { error: 'bad_json' }); }
+    if (socialPayloadHasForeignIdentity(b)) return sendJson(res, 400, { error: 'foreign_identity_not_allowed' });
     const parties = loadParties(); const party = partyOf(me, parties);
     if (!party) return sendJson(res, 404, { error: 'no_party' });
     const to = String(b.to || '');
     if (!party.members.includes(to)) return sendJson(res, 400, { error: 'not_member' });
+    if (to === me) return sendJson(res, 400, { error: 'self_cheer' });
     party.cheers = party.cheers || {}; party.cheers[to] = (party.cheers[to] || 0) + 1;
     const view = partyView(party, me); saveParties(parties);
     return sendJson(res, 200, { party: view });
