@@ -102,7 +102,7 @@ const I18N_EN = {
   'Язык': 'Language', '🌐 Язык / Language': '🌐 Language',
   'Название': 'App name',
   '🔊 Звук': '🔊 Sound',
-  'Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)': 'Interface sounds (quest completion, level up, chest drop, purchase)',
+  'Звуки интерфейса (выполнение квеста, левелап, награда, покупка)': 'Interface sounds (quest completion, level up, reward, purchase)',
   '▶ Проверить звук': '▶ Test sound',
   '🎨 Оформление': '🎨 Appearance',
   'Тема': 'Theme',
@@ -261,7 +261,7 @@ const I18N_DE = {
   'Язык': 'Sprache', '🌐 Язык / Language': '🌐 Sprache / Language',
   'Название': 'App-Name',
   '🔊 Звук': '🔊 Sound',
-  'Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)': 'Interface-Töne (Quest, Level-up, Truhe, Kauf)',
+  'Звуки интерфейса (выполнение квеста, левелап, награда, покупка)': 'Interface-Töne (Quest, Level-up, Belohnung, Kauf)',
   '▶ Проверить звук': '▶ Sound testen',
   '🎨 Оформление': '🎨 Erscheinungsbild',
   'Тема': 'Thema',
@@ -407,7 +407,7 @@ const I18N_UK = {
   '— или собери вручную —': '— або збери вручну —', 'Своя сфера…': 'Своя сфера…',
   'Язык': 'Мова', '🌐 Язык / Language': '🌐 Мова / Language', 'Название': 'Назва',
   '🔊 Звук': '🔊 Звук',
-  'Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)': 'Звуки інтерфейсу (виконання квесту, левелап, дроп зі скрині, покупка)',
+  'Звуки интерфейса (выполнение квеста, левелап, награда, покупка)': 'Звуки інтерфейсу (виконання квесту, левелап, нагорода, покупка)',
   '▶ Проверить звук': '▶ Перевірити звук', '🎨 Оформление': '🎨 Оформлення', 'Тема': 'Тема',
   '🌙 Тёмная': '🌙 Темна', '☀️ Светлая': '☀️ Світла', 'Акцент': 'Акцент',
   '⚡ Режим «Система»': '⚡ Режим «Система»', 'Навыки / сферы жизни': 'Навички / сфери життя',
@@ -480,7 +480,7 @@ const I18N_ES = {
   '— или собери вручную —': '— o monta manualmente —', 'Своя сфера…': 'Área propia…',
   'Язык': 'Idioma', '🌐 Язык / Language': '🌐 Idioma / Language', 'Название': 'Nombre de la app',
   '🔊 Звук': '🔊 Sonido',
-  'Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)': 'Sonidos de interfaz (completar misión, subir nivel, botín del cofre, compra)',
+  'Звуки интерфейса (выполнение квеста, левелап, награда, покупка)': 'Sonidos de interfaz (completar misión, subir nivel, recompensa, compra)',
   '▶ Проверить звук': '▶ Probar sonido', '🎨 Оформление': '🎨 Apariencia', 'Тема': 'Tema',
   '🌙 Тёмная': '🌙 Oscuro', '☀️ Светлая': '☀️ Claro', 'Акцент': 'Color de acento',
   '⚡ Режим «Система»': '⚡ Modo «Sistema»', 'Навыки / сферы жизни': 'Habilidades / áreas de vida',
@@ -910,13 +910,9 @@ const I18N_EXTRA = {
   'пополняют': { en: 'replenish', de: 'füllen auf', uk: 'поповнюють', es: 'reponen' },
   'её · ≈ оценка по задачам, точнее с Apple Watch / Garmin (позже)': { en: 'it · ≈ estimated from tasks, more precise with Apple Watch / Garmin (later)', de: 'sie · ≈ Schätzung aus Aufgaben, genauer mit Apple Watch / Garmin (später)', uk: 'її · ≈ оцінка за задачами, точніше з Apple Watch / Garmin (пізніше)', es: 'la · ≈ estimación por tareas, más preciso con Apple Watch / Garmin (luego)' },
   'отметь свой уровень в сферах → стартовый опыт': { en: 'mark your level in areas → starting XP', de: 'markiere dein Niveau in den Bereichen → Start-XP', uk: 'познач свій рівень у сферах → стартовий досвід', es: 'marca tu nivel en las áreas → XP inicial' },
-  'Pro: до 3 сундуков в день.': { en: 'Pro: up to 3 chests a day.', de: 'Pro: bis zu 3 Truhen pro Tag.', uk: 'Pro: до 3 скринь на день.', es: 'Pro: hasta 3 cofres al día.' },
-  'Free: 1 сундук в день.': { en: 'Free: 1 chest a day.', de: 'Free: 1 Truhe pro Tag.', uk: 'Free: 1 скриня на день.', es: 'Free: 1 cofre al día.' },
   // Import nudge (Today / Settings)
   '🎖 Не начинай с нуля — импортируй свой реальный опыт': { en: "🎖 Don't start from scratch — import your real experience", de: '🎖 Fang nicht bei null an — importiere deine echte Erfahrung', uk: '🎖 Не починай з нуля — імпортуй свій реальний досвід', es: '🎖 No empieces de cero — importa tu experiencia real' },
   '⚠️ Никогда не пропускай дважды: один пропуск — случайность, два — начало новой привычки. Отмечать привычки — на «Сегодня».': { en: '⚠️ Never miss twice: one miss is an accident, two is the start of a new habit. Mark habits on "Today".', de: '⚠️ Verpasse nie zweimal: einmal ist Zufall, zweimal der Beginn einer neuen Gewohnheit. Gewohnheiten markierst du unter „Heute".', uk: '⚠️ Ніколи не пропускай двічі: один пропуск — випадковість, два — початок нової звички. Відмічати звички — на «Сьогодні».', es: '⚠️ Nunca falles dos veces: una vez es accidente, dos es el inicio de un hábito nuevo. Marca los hábitos en «Hoy».' },
-  '. Pro: до 3 сундуков в день.': { en: '. Pro: up to 3 chests a day.', de: '. Pro: bis zu 3 Truhen pro Tag.', uk: '. Pro: до 3 скринь на день.', es: '. Pro: hasta 3 cofres al día.' },
-  '. Free: 1 сундук в день.': { en: '. Free: 1 chest a day.', de: '. Free: 1 Truhe pro Tag.', uk: '. Free: 1 скриня на день.', es: '. Free: 1 cofre al día.' },
   // Arsenal / gear
   '⚔️ Арсенал — снаряжение': { en: '⚔️ Arsenal — gear', de: '⚔️ Arsenal — Ausrüstung', uk: '⚔️ Арсенал — спорядження', es: '⚔️ Arsenal — equipo' },
   '⚔️ Оружие': { en: '⚔️ Weapon', de: '⚔️ Waffe', uk: '⚔️ Зброя', es: '⚔️ Arma' },
@@ -1347,14 +1343,15 @@ const I18N_EXTRA = {
   'Apple Календарь: добавь подписной календарь и вставь ссылку.': { en: 'Apple Calendar: add a subscription calendar and paste the link.', de: 'Apple Kalender: Füge einen Kalender mit Abonnement hinzu und setze den Link ein.', uk: 'Apple Календар: додай підписний календар і встав посилання.', es: 'Calendario de Apple: añade un calendario por suscripción y pega el enlace.' },
   'Google Календарь: открой «Другие календари» → «Добавить по URL» и вставь ссылку.': { en: 'Google Calendar: open “Other calendars” → “Add by URL” and paste the link.', de: 'Google Kalender: Öffne „Weitere Kalender“ → „Per URL“ und setze den Link ein.', uk: 'Google Календар: відкрий «Інші календарі» → «Додати за URL» і встав посилання.', es: 'Google Calendar: abre «Otros calendarios» → «Añadir mediante URL» y pega el enlace.' },
   'Насколько ты хотел это сделать?': { en: 'How much did you want to do this?', de: 'Wie sehr wolltest du das tun?', uk: 'Наскільки тобі хотілося це зробити?', es: '¿Cuánto querías hacerlo?' },
-  'Это сложный квест. Честный ответ влияет на XP и твою энергию.': { en: 'This is a hard quest. An honest answer affects XP and your energy.', de: 'Das ist ein schwieriger Quest. Eine ehrliche Antwort beeinflusst XP und deine Energie.', uk: 'Це складний квест. Чесна відповідь впливає на XP і твою енергію.', es: 'Es una misión difícil. Una respuesta honesta influye en los XP y en tu energía.' },
+  'Это сложный квест. Ответ сохраняет контекст, но не меняет XP, золото или энергию.': { en: 'This is a hard quest. Your answer records context but does not change XP, gold or energy.', de: 'Das ist ein schwieriger Quest. Deine Antwort hält den Kontext fest, verändert aber weder XP, Gold noch Energie.', uk: 'Це складний квест. Відповідь зберігає контекст, але не змінює XP, золото чи енергію.', es: 'Es una misión difícil. Tu respuesta registra el contexto, pero no cambia los XP, el oro ni la energía.' },
   'Через силу': { en: 'Pushed through', de: 'Mit Überwindung', uk: 'Через силу', es: 'A la fuerza' },
   'расход энергии ×1,5': { en: 'energy cost ×1.5', de: 'Energieverbrauch ×1,5', uk: 'витрати енергії ×1,5', es: 'gasto de energía ×1,5' },
   'Нормально': { en: 'Fine', de: 'Ganz normal', uk: 'Нормально', es: 'Normal' },
-  'обычные XP и энергия': { en: 'standard XP and energy', de: 'normale XP und Energie', uk: 'звичайні XP та енергія', es: 'XP y energía normales' },
+  'Контекст без бонуса или штрафа': { en: 'Context without a bonus or penalty', de: 'Kontext ohne Bonus oder Strafe', uk: 'Контекст без бонусу чи штрафу', es: 'Contexto sin bonificación ni penalización' },
   'В кураже!': { en: 'In the zone!', de: 'Voller Elan!', uk: 'У куражі!', es: '¡Con ganas!' },
   'Хайп · расход энергии ниже': { en: 'Hype · lower energy cost', de: 'Hype · geringerer Energieverbrauch', uk: 'Хайп · нижчі витрати енергії', es: 'Hype · menor gasto de energía' },
-  'Воля против сопротивления истощает сильнее (ego depletion), поток — меньше (flow). Поэтому здоровая середина устойчивее, чем вечный форсаж.': { en: 'Pushing against resistance is more draining (ego depletion); flow is less so. A healthy middle ground is more sustainable than constant overdrive.', de: 'Widerstand mit Willenskraft zu überwinden erschöpft stärker (Ego-Depletion), Flow weniger. Eine gesunde Mitte ist nachhaltiger als ständiger Vollgasmodus.', uk: 'Вольове подолання опору виснажує сильніше (ego depletion), стан потоку — менше (flow). Тому здорова середина стійкіша за постійний форсаж.', es: 'Forzar la voluntad contra la resistencia agota más (ego depletion); el flujo, menos (flow). Un punto medio sano es más sostenible que ir siempre al límite.' },
+  'Самооценка нужна для рефлексии, а не для оптимизации выплаты.': { en: 'Self-rating is for reflection, not for optimizing a payout.', de: 'Die Selbsteinschätzung dient der Reflexion, nicht der Optimierung einer Auszahlung.', uk: 'Самооцінка потрібна для рефлексії, а не для оптимізації виплати.', es: 'La autoevaluación sirve para reflexionar, no para optimizar una recompensa.' },
+  'Состояние отмечено. XP, золото и энергия не меняются от самооценки.': { en: 'State recorded. XP, gold and energy do not change based on self-rating.', de: 'Zustand erfasst. XP, Gold und Energie ändern sich nicht durch die Selbsteinschätzung.', uk: 'Стан відзначено. XP, золото й енергія не змінюються від самооцінки.', es: 'Estado registrado. Los XP, el oro y la energía no cambian según la autoevaluación.' },
   'Вернуть': { en: 'Undo', de: 'Rückgängig', uk: 'Повернути', es: 'Deshacer' },
   'Изменение отменено': { en: 'Change undone', de: 'Änderung rückgängig gemacht', uk: 'Зміну скасовано', es: 'Cambio deshecho' },
   'На desktop можно перетащить квест; тап, клик или Enter открывает точное расписание.': { en: 'On desktop you can drag a quest; tap, click, or Enter opens its exact schedule.', de: 'Am Desktop kannst du einen Quest ziehen; Tippen, Klicken oder Enter öffnet den genauen Zeitplan.', uk: 'На desktop квест можна перетягнути; тап, клік або Enter відкриває точний розклад.', es: 'En escritorio puedes arrastrar una misión; tocar, hacer clic o pulsar Enter abre su horario exacto.' },
@@ -1527,11 +1524,105 @@ const I18N_EXTRA = {
   // Settings — subscription
   'Подписка —': { en: 'Subscription —', de: 'Abo —', uk: 'Підписка —', es: 'Suscripción —' },
   '📊 Расширенная аналитика и Индекс баланса': { en: '📊 Advanced analytics and Balance index', de: '📊 Erweiterte Analytik und Balance-Index', uk: '📊 Розширена аналітика та Індекс балансу', es: '📊 Analítica avanzada e Índice de equilibrio' },
-  '🎁 До 3 сундуков в день + редкие дропы': { en: '🎁 Up to 3 chests a day + rare drops', de: '🎁 Bis zu 3 Truhen pro Tag + seltene Drops', uk: '🎁 До 3 скринь на день + рідкісні дропи', es: '🎁 Hasta 3 cofres al día + drops raros' },
+  '💛 Pro не меняет награды, вероятность, XP или золото': { en: '💛 Pro does not change rewards, odds, XP or gold', de: '💛 Pro verändert weder Belohnungen noch Chancen, XP oder Gold', uk: '💛 Pro не змінює нагороди, імовірність, XP чи золото', es: '💛 Pro no cambia recompensas, probabilidades, XP ni oro' },
   '🧍 Живой персонаж и кастомизация (скоро)': { en: '🧍 Live character and customization (soon)', de: '🧍 Lebendiger Charakter und Anpassung (bald)', uk: '🧍 Живий персонаж і кастомізація (скоро)', es: '🧍 Personaje vivo y personalización (pronto)' },
   '🤖 ИИ-ассистент (на своём ключе — есть бесплатные)': { en: '🤖 AI assistant (your own key — free ones exist)', de: '🤖 KI-Assistent (eigener Schlüssel — es gibt kostenlose)', uk: '🤖 ШІ-асистент (на своєму ключі — є безкоштовні)', es: '🤖 Asistente de IA (tu propia clave — las hay gratis)' },
   '🎨 Темы оформления (скоро)': { en: '🎨 Themes (soon)', de: '🎨 Designs (bald)', uk: '🎨 Теми оформлення (скоро)', es: '🎨 Temas (pronto)' },
   'Спасибо за поддержку 💛': { en: 'Thanks for your support 💛', de: 'Danke für deine Unterstützung 💛', uk: 'Дякую за підтримку 💛', es: 'Gracias por tu apoyo 💛' },
+  // Rewards v124 — earned value, disclosed cosmetic surprise and explicit spend
+  '+40 золота': { en: '+40 gold', de: '+40 Gold', uk: '+40 золота', es: '+40 de oro' },
+  '+80 золота': { en: '+80 gold', de: '+80 Gold', uk: '+80 золота', es: '+80 de oro' },
+  'Сундук образа': { en: 'Style chest', de: 'Stiltruhe', uk: 'Скриня образу', es: 'Cofre de estilo' },
+  'Шансы сундука открыты': { en: 'Chest odds disclosed', de: 'Truhenchancen offengelegt', uk: 'Шанси скрині відкриті', es: 'Probabilidades del cofre visibles' },
+  'предметов без дубликатов': { en: 'duplicate-free items', de: 'Gegenstände ohne Duplikate', uk: 'предметів без дублікатів', es: 'objetos sin duplicados' },
+  'Коллекция собрана': { en: 'Collection complete', de: 'Sammlung vollständig', uk: 'Колекцію зібрано', es: 'Colección completa' },
+  'вместо дубликата — ваучер личной награды': { en: 'a personal-reward voucher replaces a duplicate', de: 'ein Gutschein für eine persönliche Belohnung ersetzt ein Duplikat', uk: 'замість дубліката — ваучер особистої нагороди', es: 'un vale de recompensa personal sustituye al duplicado' },
+  'За 1 и 3 реальных действия выдаётся заранее известное золото. За 5 — заработанный сундук образа. Заход не считается.': { en: 'One and three real actions award known amounts of gold. Five earn a style chest. Entry does not count.', de: 'Eine und drei echte Handlungen geben vorher bekanntes Gold. Fünf verdienen eine Stiltruhe. Einstieg zählt nicht.', uk: 'За 1 і 3 реальні дії видається заздалегідь відоме золото. За 5 — зароблена скриня образу. «Захід» не рахується.', es: 'Una y tres acciones reales dan una cantidad de oro conocida. Cinco ganan un cofre de estilo. Entrada no cuenta.' },
+  'Сундук содержит только косметику, не даёт силу и не требует ставки. Free и Pro получают один и тот же набор и одну попытку.': { en: 'The chest contains cosmetics only, grants no power and requires no stake. Free and Pro use the same pool and one attempt.', de: 'Die Truhe enthält nur Kosmetik, verleiht keine Stärke und verlangt keinen Einsatz. Free und Pro nutzen denselben Pool und einen Versuch.', uk: 'Скриня містить лише косметику, не дає сили й не вимагає ставки. Free і Pro мають один набір та одну спробу.', es: 'El cofre solo contiene cosméticos, no da poder ni exige apuesta. Free y Pro usan el mismo conjunto y un intento.' },
+  'Вероятности сундука образа': { en: 'Style-chest odds', de: 'Chancen der Stiltruhe', uk: 'Імовірності скрині образу', es: 'Probabilidades del cofre de estilo' },
+  'Шанс выбирает редкость, затем один ещё не полученный предмет этой редкости. Дубликатов нет; косметику всегда можно купить напрямую.': { en: 'Chance selects a rarity, then one unowned item of that rarity. There are no duplicates; cosmetics can always be bought directly.', de: 'Der Zufall wählt eine Seltenheit und dann einen noch nicht besessenen Gegenstand dieser Seltenheit. Es gibt keine Duplikate; Kosmetik kann immer direkt gekauft werden.', uk: 'Випадок обирає рідкість, потім один ще не отриманий предмет цієї рідкості. Дублікатів немає; косметику завжди можна купити напряму.', es: 'El azar elige una rareza y después un objeto aún no obtenido de esa rareza. No hay duplicados; los cosméticos siempre pueden comprarse directamente.' },
+  'Сначала выбери личную ценность. Золото известно заранее, а заработанный сундук сохраняет короткий косметический сюрприз — без ставок, силы и платных попыток.': { en: 'Choose personal value first. Gold is known in advance, while an earned chest keeps a brief cosmetic surprise — without stakes, power or paid attempts.', de: 'Wähle zuerst deinen persönlichen Wert. Gold ist vorher bekannt, während eine verdiente Truhe eine kurze kosmetische Überraschung bewahrt — ohne Einsatz, Stärke oder bezahlte Versuche.', uk: 'Спершу обери особисту цінність. Золото відоме заздалегідь, а зароблена скриня зберігає короткий косметичний сюрприз — без ставок, сили й платних спроб.', es: 'Elige primero tu valor personal. El oro se conoce de antemano y el cofre ganado conserva una breve sorpresa cosmética, sin apuestas, poder ni intentos de pago.' },
+  'Награда сохранена. Открываем сундук…': { en: 'Reward saved. Opening chest…', de: 'Belohnung gespeichert. Truhe wird geöffnet…', uk: 'Нагороду збережено. Відкриваємо скриню…', es: 'Recompensa guardada. Abriendo el cofre…' },
+  'Сюрприз только косметический: без XP, золота или силы. Церемонию можно пропустить сразу.': { en: 'The surprise is cosmetic only: no XP, gold or power. You can skip the ceremony immediately.', de: 'Die Überraschung ist rein kosmetisch: keine XP, kein Gold und keine Stärke. Du kannst die Zeremonie sofort überspringen.', uk: 'Сюрприз лише косметичний: без XP, золота чи сили. Церемонію можна одразу пропустити.', es: 'La sorpresa es solo cosmética: sin XP, oro ni poder. Puedes saltar la ceremonia de inmediato.' },
+  'Эта награда была известна заранее.': { en: 'This reward was known in advance.', de: 'Diese Belohnung war vorher bekannt.', uk: 'Ця нагорода була відома заздалегідь.', es: 'Esta recompensa se conocía de antemano.' },
+  'Пропустить церемонию': { en: 'Skip ceremony', de: 'Zeremonie überspringen', uk: 'Пропустити церемонію', es: 'Saltar ceremonia' },
+  'Коллекция': { en: 'Collection', de: 'Sammlung', uk: 'Колекція', es: 'Colección' },
+  'собрано': { en: 'collected', de: 'gesammelt', uk: 'зібрано', es: 'obtenidos' },
+  'Так выглядит твой аватар': { en: 'This is how your avatar looks', de: 'So sieht dein Avatar aus', uk: 'Так виглядає твій аватар', es: 'Así se ve tu avatar' },
+  'Звания': { en: 'Titles', de: 'Titel', uk: 'Звання', es: 'Títulos' },
+  '— без звания —': { en: '— no title —', de: '— ohne Titel —', uk: '— без звання —', es: '— sin título —' },
+  'Каталог наград': { en: 'Reward catalog', de: 'Belohnungskatalog', uk: 'Каталог нагород', es: 'Catálogo de recompensas' },
+  'Сундук мечты': { en: 'Wish chest', de: 'Wunschtruhe', uk: 'Скриня мрії', es: 'Cofre de deseos' },
+  'Кофе': { en: 'Coffee', de: 'Kaffee', uk: 'Кава', es: 'Café' },
+  'Игры': { en: 'Games', de: 'Spiele', uk: 'Ігри', es: 'Juegos' },
+  'Кино': { en: 'Movie', de: 'Film', uk: 'Кіно', es: 'Película' },
+  'Книга': { en: 'Book', de: 'Buch', uk: 'Книга', es: 'Libro' },
+  'Прогулка': { en: 'Walk', de: 'Spaziergang', uk: 'Прогулянка', es: 'Paseo' },
+  'Путешествие': { en: 'Trip', de: 'Reise', uk: 'Подорож', es: 'Viaje' },
+  'Легендарная коллекция': { en: 'Legendary collection', de: 'Legendäre Sammlung', uk: 'Легендарна колекція', es: 'Colección legendaria' },
+  'Заработай или выбери легендарный предмет без случайной выдачи': { en: 'Earn or choose a legendary item without a random power drop', de: 'Verdiene oder wähle einen legendären Gegenstand ohne zufällige Stärkevergabe', uk: 'Зароби або обери легендарний предмет без випадкової видачі сили', es: 'Gana o elige un objeto legendario sin una entrega aleatoria de poder' },
+  'Ваучер: личная награда': { en: 'Voucher: personal reward', de: 'Gutschein: persönliche Belohnung', uk: 'Ваучер: особиста нагорода', es: 'Vale: recompensa personal' },
+  'золота': { en: 'gold', de: 'Gold', uk: 'золота', es: 'de oro' },
+  'Награды дня': { en: 'Daily rewards', de: 'Tagesbelohnungen', uk: 'Нагороди дня', es: 'Recompensas del día' },
+  'Случайность: 0%': { en: 'Randomness: 0%', de: 'Zufall: 0 %', uk: 'Випадковість: 0%', es: 'Aleatoriedad: 0 %' },
+  'Открыть награду': { en: 'Open reward', de: 'Belohnung öffnen', uk: 'Відкрити нагороду', es: 'Abrir recompensa' },
+  'Ещё': { en: 'Another', de: 'Noch', uk: 'Ще', es: 'Faltan' },
+  'до следующей награды': { en: 'until the next reward', de: 'bis zur nächsten Belohnung', uk: 'до наступної нагороди', es: 'para la siguiente recompensa' },
+  'Все награды дня получены': { en: 'All daily rewards collected', de: 'Alle Tagesbelohnungen erhalten', uk: 'Усі нагороди дня отримано', es: 'Todas las recompensas del día obtenidas' },
+  'Получено': { en: 'Collected', de: 'Erhalten', uk: 'Отримано', es: 'Obtenido' },
+  'Готово к получению': { en: 'Ready to collect', de: 'Abholbereit', uk: 'Готово до отримання', es: 'Lista para recoger' },
+  'Условие не выполнено': { en: 'Condition not met', de: 'Bedingung noch nicht erfüllt', uk: 'Умову не виконано', es: 'Condición no cumplida' },
+  'Следующая награда': { en: 'Next reward', de: 'Nächste Belohnung', uk: 'Наступна нагорода', es: 'Siguiente recompensa' },
+  'Награды выдаются за 1, 3 и 5 завершённых квестов или привычек. Заход не считается. Результат известен заранее; рулетки и скрытых вероятностей нет.': { en: 'Rewards unlock after 1, 3 and 5 completed quests or habits. Entry does not count. The result is known in advance; there is no reel or hidden probability.', de: 'Belohnungen werden nach 1, 3 und 5 abgeschlossenen Quests oder Gewohnheiten freigeschaltet. Einstieg zählt nicht. Das Ergebnis steht vorher fest; es gibt weder Roulette noch versteckte Wahrscheinlichkeiten.', uk: 'Нагороди відкриваються за 1, 3 і 5 завершених квестів або звичок. «Захід» не рахується. Результат відомий заздалегідь; рулетки й прихованих імовірностей немає.', es: 'Las recompensas se desbloquean tras 1, 3 y 5 misiones o hábitos completados. Entrada no cuenta. El resultado se conoce de antemano; no hay ruleta ni probabilidades ocultas.' },
+  'Free и Pro получают одинаковые награды. Pro не меняет попытки, вероятность, XP или золото.': { en: 'Free and Pro receive the same rewards. Pro does not change attempts, odds, XP or gold.', de: 'Free und Pro erhalten dieselben Belohnungen. Pro verändert weder Versuche noch Chancen, XP oder Gold.', uk: 'Free і Pro отримують однакові нагороди. Pro не змінює спроби, імовірність, XP чи золото.', es: 'Free y Pro reciben las mismas recompensas. Pro no cambia intentos, probabilidades, XP ni oro.' },
+  'Детерминированный бонус дерева': { en: 'Deterministic tree bonus', de: 'Deterministischer Baum-Bonus', uk: 'Детермінований бонус дерева', es: 'Bonus determinista del árbol' },
+  'к золоту наград дня': { en: 'to daily-reward gold', de: 'auf Gold aus Tagesbelohnungen', uk: 'до золота нагород дня', es: 'al oro de recompensas diarias' },
+  'Ваучер': { en: 'Voucher', de: 'Gutschein', uk: 'Ваучер', es: 'Vale' },
+  'выбрать личную награду': { en: 'choose a personal reward', de: 'persönliche Belohnung wählen', uk: 'вибрати особисту нагороду', es: 'elegir una recompensa personal' },
+  'История наград': { en: 'Reward history', de: 'Belohnungsverlauf', uk: 'Історія нагород', es: 'Historial de recompensas' },
+  'Сохраняю награду…': { en: 'Saving reward…', de: 'Belohnung wird gespeichert…', uk: 'Зберігаю нагороду…', es: 'Guardando recompensa…' },
+  'Награда не сохранена. Ничего не изменилось — повтори попытку.': { en: 'The reward was not saved. Nothing changed — try again.', de: 'Die Belohnung wurde nicht gespeichert. Nichts wurde geändert — versuche es erneut.', uk: 'Нагороду не збережено. Нічого не змінилося — спробуй ще раз.', es: 'La recompensa no se guardó. Nada cambió; inténtalo de nuevo.' },
+  'Награда сохранена': { en: 'Reward saved', de: 'Belohnung gespeichert', uk: 'Нагороду збережено', es: 'Recompensa guardada' },
+  'Наград пока нет — заверши следующее реальное дело': { en: 'No reward yet — complete the next real action', de: 'Noch keine Belohnung — schließe die nächste echte Aufgabe ab', uk: 'Нагороди поки немає — заверши наступну реальну справу', es: 'Aún no hay recompensa; completa la siguiente acción real' },
+  'Заработанная награда': { en: 'Earned reward', de: 'Verdiente Belohnung', uk: 'Зароблена нагорода', es: 'Recompensa ganada' },
+  'Результат был известен заранее. Случайность: 0%.': { en: 'The result was known in advance. Randomness: 0%.', de: 'Das Ergebnis stand vorher fest. Zufall: 0 %.', uk: 'Результат був відомий заздалегідь. Випадковість: 0%.', es: 'El resultado se conocía de antemano. Aleatoriedad: 0 %.' },
+  'Забрать': { en: 'Collect', de: 'Abholen', uk: 'Забрати', es: 'Recoger' },
+  'Ваучеров доступно': { en: 'Vouchers available', de: 'Verfügbare Gutscheine', uk: 'Доступно ваучерів', es: 'Vales disponibles' },
+  'Выбери одну личную награду; ваучер спишется только после подтверждения.': { en: 'Choose one personal reward; the voucher is consumed only after confirmation.', de: 'Wähle eine persönliche Belohnung; der Gutschein wird erst nach der Bestätigung verbraucht.', uk: 'Вибери одну особисту нагороду; ваучер спишеться лише після підтвердження.', es: 'Elige una recompensa personal; el vale se consume solo tras confirmar.' },
+  'Подтвердить трату': { en: 'Confirm spend', de: 'Ausgabe bestätigen', uk: 'Підтвердити витрату', es: 'Confirmar gasto' },
+  'Потратить': { en: 'Spend', de: 'Ausgeben', uk: 'Витратити', es: 'Gastar' },
+  'Удалить награду?': { en: 'Delete reward?', de: 'Belohnung löschen?', uk: 'Видалити нагороду?', es: '¿Eliminar recompensa?' },
+  'Использовать ваучер?': { en: 'Use voucher?', de: 'Gutschein verwenden?', uk: 'Використати ваучер?', es: '¿Usar el vale?' },
+  'Использовать 1 ваучер': { en: 'Use 1 voucher', de: '1 Gutschein verwenden', uk: 'Використати 1 ваучер', es: 'Usar 1 vale' },
+  'Награда исчезнет из магазина. История прошлых покупок останется.': { en: 'The reward will be removed from the shop. Previous purchase history remains.', de: 'Die Belohnung wird aus dem Shop entfernt. Der bisherige Kaufverlauf bleibt erhalten.', uk: 'Нагорода зникне з магазину. Історія минулих покупок залишиться.', es: 'La recompensa desaparecerá de la tienda. El historial de compras anterior se conservará.' },
+  'Ваучер будет списан, а выбранная награда добавлена в твой личный магазин бесплатно.': { en: 'The voucher will be consumed and the selected reward added to your personal shop for free.', de: 'Der Gutschein wird verbraucht und die gewählte Belohnung kostenlos zu deinem persönlichen Shop hinzugefügt.', uk: 'Ваучер буде списано, а вибрану нагороду безкоштовно додано до твого особистого магазину.', es: 'El vale se consumirá y la recompensa elegida se añadirá gratis a tu tienda personal.' },
+  'Баланс после покупки': { en: 'Balance after purchase', de: 'Guthaben nach dem Kauf', uk: 'Баланс після покупки', es: 'Saldo tras la compra' },
+  'Осознанное действие': { en: 'Deliberate action', de: 'Bewusste Handlung', uk: 'Усвідомлена дія', es: 'Acción consciente' },
+  'Сохраняю…': { en: 'Saving…', de: 'Wird gespeichert…', uk: 'Зберігаю…', es: 'Guardando…' },
+  'Куплено': { en: 'Purchased', de: 'Gekauft', uk: 'Куплено', es: 'Comprado' },
+  'Награда удалена': { en: 'Reward deleted', de: 'Belohnung gelöscht', uk: 'Нагороду видалено', es: 'Recompensa eliminada' },
+  'Не удалось сохранить. Ничего не списано — повтори попытку.': { en: 'Could not save. Nothing was charged — try again.', de: 'Speichern fehlgeschlagen. Es wurde nichts abgebucht — versuche es erneut.', uk: 'Не вдалося зберегти. Нічого не списано — спробуй ще раз.', es: 'No se pudo guardar. No se cobró nada; inténtalo de nuevo.' },
+  'в личном магазине': { en: 'is in your personal shop', de: 'ist in deinem persönlichen Shop', uk: 'в особистому магазині', es: 'está en tu tienda personal' },
+  'Честная экономика': { en: 'Fair economy', de: 'Faire Ökonomie', uk: 'Чесна економіка', es: 'Economía justa' },
+  'Награда следует за реальным действием.': { en: 'Reward follows real action.', de: 'Belohnung folgt auf echte Handlung.', uk: 'Нагорода йде за реальною дією.', es: 'La recompensa sigue a una acción real.' },
+  'Сначала выбери личную ценность, затем получай заранее известные дневные награды. Без рулетки, near-miss и платных попыток.': { en: 'Choose personal value first, then collect daily rewards known in advance. No roulette, near misses or paid attempts.', de: 'Wähle zuerst deinen persönlichen Wert und erhalte dann vorher bekannte Tagesbelohnungen. Ohne Roulette, Beinahe-Treffer oder bezahlte Versuche.', uk: 'Спершу обери особисту цінність, потім отримуй заздалегідь відомі денні нагороди. Без рулетки, near-miss і платних спроб.', es: 'Primero elige un valor personal y luego recoge recompensas diarias conocidas de antemano. Sin ruleta, casi aciertos ni intentos de pago.' },
+  'Получить награду': { en: 'Collect reward', de: 'Belohnung abholen', uk: 'Отримати нагороду', es: 'Recoger recompensa' },
+  'Заработанная награда ждёт — получить': { en: 'An earned reward is ready — collect', de: 'Eine verdiente Belohnung wartet — abholen', uk: 'Зароблена нагорода чекає — отримати', es: 'Hay una recompensa ganada — recoger' },
+  'Личные награды': { en: 'Personal rewards', de: 'Persönliche Belohnungen', uk: 'Особисті нагороди', es: 'Recompensas personales' },
+  'Главная ценность выбирается тобой: кино, прогулка, книга или собственная награда за честно заработанное золото.': { en: 'You choose the primary value: a movie, a walk, a book or your own reward for honestly earned gold.', de: 'Den eigentlichen Wert wählst du: Film, Spaziergang, Buch oder eine eigene Belohnung für ehrlich verdientes Gold.', uk: 'Головну цінність обираєш ти: кіно, прогулянка, книга або власна нагорода за чесно зароблене золото.', es: 'Tú eliges el valor principal: una película, un paseo, un libro o tu propia recompensa por oro ganado honestamente.' },
+  'Наград пока нет — выбери готовую из каталога или добавь свою.': { en: 'No rewards yet — choose one from the catalog or add your own.', de: 'Noch keine Belohnungen — wähle eine aus dem Katalog oder füge deine eigene hinzu.', uk: 'Нагород поки немає — обери готову з каталогу або додай свою.', es: 'Aún no hay recompensas: elige una del catálogo o añade la tuya.' },
+  'Название награды': { en: 'Reward name', de: 'Name der Belohnung', uk: 'Назва нагороди', es: 'Nombre de la recompensa' },
+  'Образ': { en: 'Icon', de: 'Symbol', uk: 'Образ', es: 'Icono' },
+  'Цена в золоте': { en: 'Price in gold', de: 'Preis in Gold', uk: 'Ціна в золоті', es: 'Precio en oro' },
+  'Границы экономики': { en: 'Economy limits', de: 'Grenzen der Ökonomie', uk: 'Межі економіки', es: 'Límites de la economía' },
+  'Самооценка сложности и настроения не меняет выплату.': { en: 'Self-rated difficulty and mood do not change the payout.', de: 'Selbsteingeschätzte Schwierigkeit und Stimmung verändern die Auszahlung nicht.', uk: 'Самооцінка складності й настрою не змінює виплату.', es: 'La dificultad y el ánimo autoevaluados no cambian la recompensa.' },
+  'Бонус XP ограничен +60%, бонус золота +40%, множитель сложности максимум ×1,75.': { en: 'XP bonus is capped at +60%, gold bonus at +40%, and the difficulty multiplier at ×1.75.', de: 'Der XP-Bonus ist auf +60 %, der Goldbonus auf +40 % und der Schwierigkeitsmultiplikator auf ×1,75 begrenzt.', uk: 'Бонус XP обмежено +60%, бонус золота +40%, множник складності максимум ×1,75.', es: 'La bonificación de XP se limita a +60 %, la de oro a +40 % y el multiplicador de dificultad a ×1,75.' },
+  'Любая трата или удаление требует подтверждения и сохраняется до изменения экрана.': { en: 'Every spend or deletion requires confirmation and is saved before the screen changes.', de: 'Jede Ausgabe oder Löschung erfordert eine Bestätigung und wird vor dem Bildschirmwechsel gespeichert.', uk: 'Кожна витрата або видалення потребує підтвердження й зберігається до зміни екрана.', es: 'Cada gasto o eliminación requiere confirmación y se guarda antes de cambiar de pantalla.' },
+  'Новые дневные награды не выдают случайную силу. Здесь остаются только ранее заработанные реликвии.': { en: 'New daily rewards do not grant random power. Only previously earned relics remain here.', de: 'Neue Tagesbelohnungen vergeben keine zufällige Stärke. Hier bleiben nur zuvor verdiente Relikte.', uk: 'Нові денні нагороди не дають випадкову силу. Тут залишаються лише раніше зароблені реліквії.', es: 'Las nuevas recompensas diarias no otorgan poder aleatorio. Aquí solo quedan reliquias ganadas anteriormente.' },
+  'Арсенал — снаряжение': { en: 'Arsenal — gear', de: 'Arsenal — Ausrüstung', uk: 'Арсенал — спорядження', es: 'Arsenal — equipo' },
+  'Снаряжение покупается за заранее указанную цену. Дневные награды не выдают случайную силу; Free и Pro используют одни правила.': { en: 'Gear is bought for a stated price. Daily rewards do not grant random power; Free and Pro use the same rules.', de: 'Ausrüstung wird zu einem angegebenen Preis gekauft. Tagesbelohnungen vergeben keine zufällige Stärke; für Free und Pro gelten dieselben Regeln.', uk: 'Спорядження купується за заздалегідь вказану ціну. Денні нагороди не дають випадкову силу; Free і Pro мають однакові правила.', es: 'El equipo se compra a un precio indicado. Las recompensas diarias no otorgan poder aleatorio; Free y Pro siguen las mismas reglas.' },
+  'Готовые личные награды с заранее указанной ценой. Добавь свою награду в форме на странице.': { en: 'Ready-made personal rewards with a stated price. Add your own reward in the page form.', de: 'Fertige persönliche Belohnungen mit angegebenem Preis. Füge deine eigene im Formular auf der Seite hinzu.', uk: 'Готові особисті нагороди із заздалегідь вказаною ціною. Додай власну нагороду у формі на сторінці.', es: 'Recompensas personales listas con un precio indicado. Añade la tuya en el formulario de la página.' },
+  '+ Добавить': { en: '+ Add', de: '+ Hinzufügen', uk: '+ Додати', es: '+ Añadir' },
   // Settings — security
   'Привяжи email+пароль — чтобы входить с любого устройства и иметь восстановление доступа (сейчас вход только по PIN).': { en: 'Link an email + password — to sign in from any device and have account recovery (currently PIN-only sign-in).', de: 'Verknüpfe E-Mail + Passwort — um dich von jedem Gerät anzumelden und eine Wiederherstellung zu haben (derzeit nur PIN-Anmeldung).', uk: 'Прив\'яжи email + пароль — щоб входити з будь-якого пристрою та мати відновлення доступу (зараз вхід лише за PIN).', es: 'Vincula email + contraseña — para entrar desde cualquier dispositivo y tener recuperación de cuenta (ahora solo acceso por PIN).' },
   '🔐 Сменить PIN': { en: '🔐 Change PIN', de: '🔐 PIN ändern', uk: '🔐 Змінити PIN', es: '🔐 Cambiar PIN' },
@@ -2129,7 +2220,7 @@ const I18N_EXTRA = {
   // ── 🌳 Гайд Тени по дереву навыков ──
   'Смотри, тут всё честно:': { en: 'Look, everything here is fair:', de: 'Schau, hier ist alles ehrlich:', uk: 'Дивись, тут усе чесно:', es: 'Mira, aquí todo es justo:' },
   'Дела в сфере поднимают её уровень. Каждый уровень даёт ◈ очко — оно уже твоё, заработано.': { en: 'Deeds in a sphere raise its level. Every level grants a ◈ point — already yours, already earned.', de: 'Taten in einer Sphäre heben ihr Level. Jedes Level gibt einen ◈ Punkt — der gehört schon dir, verdient.', uk: 'Справи у сфері піднімають її рівень. Кожен рівень дає ◈ очко — воно вже твоє, зароблене.', es: 'Las tareas de una esfera suben su nivel. Cada nivel da un ◈ punto — ya es tuyo, ya está ganado.' },
-  'Очко вкладываешь в узел — получаешь пассивный бонус: +XP, удача сундуков, щит серии, связь со мной…': { en: 'Invest a point into a node — get a passive bonus: +XP, chest luck, streak shield, bond with me…', de: 'Einen Punkt in einen Knoten stecken — passiver Bonus: +XP, Truhenglück, Serienschild, Bindung mit mir…', uk: 'Очко вкладаєш у вузол — отримуєш пасивний бонус: +XP, удача скринь, щит серії, звʼязок зі мною…', es: 'Inviertes un punto en un nodo — obtienes un bono pasivo: +XP, suerte de cofres, escudo de racha, vínculo conmigo…' },
+  'Очко вкладываешь в узел — получаешь пассивный бонус: +XP, бонус дневных наград, щит серии, связь со мной…': { en: 'Invest a point into a node — get a passive bonus: +XP, a daily-reward bonus, streak shield, bond with me…', de: 'Einen Punkt in einen Knoten stecken — passiver Bonus: +XP, Tagesbelohnungs-Bonus, Serienschild, Bindung mit mir…', uk: 'Очко вкладаєш у вузол — отримуєш пасивний бонус: +XP, бонус денних нагород, щит серії, звʼязок зі мною…', es: 'Inviertes un punto en un nodo — obtienes un bono pasivo: +XP, bonus de recompensa diaria, escudo de racha, vínculo conmigo…' },
   'Дорожки ведут к 👑 капстоуну — за него дают звание. Подсвеченный узел — мой совет: самый дешёвый из доступных.': { en: 'The paths lead to the 👑 capstone — it grants a title. The highlighted node is my tip: the cheapest one available.', de: 'Die Pfade führen zum 👑 Schlussstein — er verleiht einen Titel. Der markierte Knoten ist mein Tipp: der günstigste verfügbare.', uk: 'Доріжки ведуть до 👑 капстоуна — за нього дають звання. Підсвічений вузол — моя порада: найдешевший із доступних.', es: 'Los caminos llevan a la 👑 piedra angular — otorga un título. El nodo resaltado es mi consejo: el más barato disponible.' },
   'А в ✏️ Редакторе можно перестроить всю карту под себя — это твоё дерево, не моё.': { en: 'And in the ✏️ Editor you can rebuild the whole map for yourself — it is your tree, not mine.', de: 'Und im ✏️ Editor kannst du die ganze Karte für dich umbauen — es ist dein Baum, nicht meiner.', uk: 'А в ✏️ Редакторі можна перебудувати всю карту під себе — це твоє дерево, не моє.', es: 'Y en el ✏️ Editor puedes reconstruir todo el mapa a tu manera — es tu árbol, no el mío.' },
   'уже ждут — попробуй прямо сейчас': { en: 'already waiting — try it right now', de: 'warten schon — probier es gleich aus', uk: 'вже чекають — спробуй просто зараз', es: 'ya esperan — pruébalo ahora mismo' },
@@ -3042,7 +3133,7 @@ const ACHIEVEMENTS = [
   { id: 'clean_30', icon: '🦋', title: 'Чистый месяц', desc: '30 дней без срыва — крылья отрастают именно так', ttl: 'Перерождённый', test: () => (State.antihabits || []).some((a) => antiCleanDays(a) >= 30), prog: () => ({ cur: Math.max(0, ...(State.antihabits || []).map((a) => antiCleanDays(a)), 0), target: 30 }) },
   { id: 'first_note', icon: '📝', title: 'Первая мысль', desc: 'Сохрани первую заметку — мысль поймана и уже не улетит', ttl: 'Хроникёр', test: () => (State.inbox || []).length >= 1 },
   { id: 'collector_5', icon: '🎨', title: 'Коллекционер', desc: 'Собери 5 косметик — у коллекции появился характер', ttl: 'Коллекционер', test: () => COSMETICS.filter((c) => ownsCosmetic(c.id)).length >= 5, prog: () => ({ cur: COSMETICS.filter((c) => ownsCosmetic(c.id)).length, target: 5 }) },
-  { id: 'legendary_drop', icon: '🌟', title: 'Легендарная удача', desc: 'Выбей легендарку — вероятность склонилась перед упорством', ttl: 'Везунчик', test: () => COSMETICS.some((c) => c.rarity === 'legendary' && ownsCosmetic(c.id)) },
+  { id: 'legendary_drop', icon: '🌟', title: 'Легендарная коллекция', desc: 'Заработай или выбери легендарный предмет без случайной выдачи', ttl: 'Коллекционер', test: () => COSMETICS.some((c) => c.rarity === 'legendary' && ownsCosmetic(c.id)) },
   { id: 'avatar_custom', icon: '🪄', title: 'Свой облик', desc: 'Надень косметику или экипировку — образ узнаваем издалека', ttl: 'Неповторимый', test: () => { const w = State.settings && State.settings.wear; const g = State.settings && State.settings.gear; return !!(w && w.pet && Object.values(w.pet).some((sl) => sl && Object.values(sl).some(Boolean))) || !!(g && g.equipped && Object.values(g.equipped).some(Boolean)); } },
 ];
 
@@ -4246,8 +4337,8 @@ const PERK_TEXT = Object.freeze({
     de: (v) => `+${v} % Gold in diesem Bereich`, uk: (v) => `+${v}% золота у сфері`, es: (v) => `+${v}% de oro en esta área`,
   },
   lootLuck: {
-    ru: (v) => `+${v}% к буст-шансу сундука`, en: (v) => `+${v}% chest boost chance`,
-    de: (v) => `+${v} % auf die Bonuschance der Truhe`, uk: (v) => `+${v}% до шансу бонусу зі скрині`, es: (v) => `+${v}% a la probabilidad de bonus del cofre`,
+    ru: (v) => `+${v}% к золоту наград дня`, en: (v) => `+${v}% daily-reward gold`,
+    de: (v) => `+${v} % Gold aus Tagesbelohnungen`, uk: (v) => `+${v}% до золота нагород дня`, es: (v) => `+${v}% al oro de recompensas diarias`,
   },
   energyBack: {
     ru: (v) => `+${v} энергии за квест`, en: (v) => `+${v} energy per quest`,
@@ -4278,7 +4369,7 @@ function perkText(kind, value) {
 const PERK_KINDS = {
   xpPct:        { icon: '✨', label: 'опыт',     fmt: (v) => perkText('xpPct', v),        cap: 40 },
   goldPct:      { icon: '🪙', label: 'золото',   fmt: (v) => perkText('goldPct', v),      cap: 30 },
-  lootLuck:     { icon: '🎲', label: 'удача',    fmt: (v) => perkText('lootLuck', v),     cap: 30 },
+  lootLuck:     { icon: '🎁', label: 'награды',  fmt: (v) => perkText('lootLuck', v),     cap: 30 },
   energyBack:   { icon: '🔋', label: 'энергия',  fmt: (v) => perkText('energyBack', v),   cap: 10 },
   streakShield: { icon: '🛡', label: 'щит серии', fmt: (v) => perkText('streakShield', v), cap: 3 },
   petBoost:     { icon: '🐾', label: 'питомец',  fmt: (v) => perkText('petBoost', v),     cap: 60 },
@@ -4301,20 +4392,13 @@ function skillPerks(id) {
 // Глобальная сумма перка по всем сферам (для скоупа «вся игра»: щит серии, удача).
 function globalPerk(kind) { let s = 0; for (const id in (State.tree || {})) s += skillPerks(id)[kind] || 0; return s; }
 function skillPerkBonus(id) { return skillPerks(id).xpPct || 0; } // legacy-обёртка: только XP%
-function lootBoostPct() { const b = State.lootbox && State.lootbox.boost; if (b && new Date(b.until).getTime() > Date.now()) return b.pct || 0; return 0; }
-
-// ── Хайп: временный XP-бафф за ДОБРОВОЛЬНЫЙ выбор сложных квестов (идея 26).
-//    Философия «лезь в сложное» — челлендж компаундится. Хранится в lootbox (уже персист).
-const HYPE_PER_STACK = 15, HYPE_MAX_STACKS = 3, HYPE_DURATION_MS = 2 * 3600 * 1000;
-function hypeState() { const h = State.lootbox && State.lootbox.hype; if (h && h.stacks > 0 && new Date(h.until).getTime() > Date.now()) return h; return null; }
-function hypePct() { const h = hypeState(); return h ? Math.min(HYPE_MAX_STACKS, h.stacks) * HYPE_PER_STACK : 0; }
-function hypeMinLeft() { const h = hypeState(); return h ? Math.max(0, Math.ceil((new Date(h.until).getTime() - Date.now()) / 60000)) : 0; }
-function activateHype() {
-  const lb = ensureLootbox(), cur = hypeState();
-  lb.hype = { stacks: Math.min(HYPE_MAX_STACKS, (cur ? cur.stacks : 0) + 1), until: new Date(Date.now() + HYPE_DURATION_MS).toISOString() };
-  Store.save('lootbox', lb); return lb.hype;
-}
-const GRIT_BONUS = 0.10; // бонус за выполнение «через силу» — признание воли, но меньше Хайпа
+// Legacy random boosts and self-rated Hype no longer modify payout. Existing
+// records remain readable, but v124 keeps subjective mood separate from XP.
+function lootBoostPct() { return 0; }
+function hypeState() { return null; }
+function hypePct() { return 0; }
+function hypeMinLeft() { return 0; }
+const GRIT_BONUS = 0;
 // Завершить квест с учётом «желания» (desire): null | 'forced' | 'neutral' | 'hyped'
 // ⚠️ Параметр НЕ называть `t` — это затенило бы глобальную функцию перевода t() и уронило бы
 // всю функцию на первом же t(...) (баг fb_mrkzunjjmn61: энергия списана, квест не сохранён).
@@ -4331,7 +4415,6 @@ function completeTask(task, desire, onDate) {
   }
   task.done = true; task.completedAt = when.toISOString(); task.desire = desire || null;
   let xp = itemXp(task);
-  if (desire === 'forced') xp = Math.round(xp * (1 + GRIT_BONUS));
   // «Заход» (entry): НЕ платит опытом — платить XP за любимое дело значит превратить его в фарм.
   // Золото фиксированное, связь +2 ниже. Энергию не тратит: он бережный по определению.
   task.xpAwarded = task.entry ? 0 : Math.max(1, xp);
@@ -4352,10 +4435,9 @@ function completeTask(task, desire, onDate) {
   let msg = task.entry
     ? `🕯 +${task.goldAwarded} 🪙 · 💛 ${t('связь')} +2 — ${t(dayPick('entrydone', ENTRY_DONE_LINES))}`
     : `+${task.xpAwarded} XP · +${task.goldAwarded} 🪙${sk ? ' · ' + sk.name : ''}`;
-  if (desire === 'forced') msg += ` · 💪 через силу +${Math.round(GRIT_BONUS * 100)}% XP, но −энергия`;
   if (eDelta) msg += ` · ${eDelta > 0 ? '+' : ''}${eDelta} 🔋`;
   if (systemMode()) systemNarrate(task.entry ? 'ЗАХОД СОВЕРШЁН' : 'КВЕСТ ВЫПОЛНЕН', task.entry ? msg : `${msg} — ${t(systemVoice('quest'))}`); else toast(msg);
-  if (desire === 'hyped') { const h = activateHype(); toast(`⚔️ Хайп ×${h.stacks} · +${hypePct()}% XP на ${hypeMinLeft()} мин — ты захотел трудное!`); }
+  if (desire === 'forced' || desire === 'hyped') toast(t('Состояние отмечено. XP, золото и энергия не меняются от самооценки.'));
   const lvlNow = charLevel();
   if (lvlNow > lvlBefore) {
     const rb = rankFor(lvlBefore), ra = rankFor(lvlNow);
@@ -4473,13 +4555,13 @@ function openDesirePicker(taskId, returnFocus = document.activeElement) {
   overlay.innerHTML = `<div class="desire-box">
     <button type="button" class="modal-x" data-action="desire-cancel" aria-label="${esc(t('Закрыть'))}">✕</button>
     <h3 id="desire-title" tabindex="-1">${esc(t('Насколько ты хотел это сделать?'))}</h3>
-    <p class="muted" id="desire-task-summary"><span aria-hidden="true">🔥</span> <span data-noi18n>«${esc(task.title)}»</span> — ${esc(t('Это сложный квест. Честный ответ влияет на XP и твою энергию.'))}</p>
+    <p class="muted" id="desire-task-summary"><span aria-hidden="true">🔥</span> <span data-noi18n>«${esc(task.title)}»</span> — ${esc(t('Это сложный квест. Ответ сохраняет контекст, но не меняет XP, золото или энергию.'))}</p>
     <div class="desire-btns">
-      <button type="button" class="desire-opt forced" data-action="desire-pick" data-id="${task.id}" data-desire="forced"><span class="d-emoji" aria-hidden="true">😮‍💨</span><b>${esc(t('Через силу'))}</b><small>+${Math.round(GRIT_BONUS * 100)}% XP · ${esc(t('расход энергии ×1,5'))}</small></button>
-      <button type="button" class="desire-opt neutral" data-action="desire-pick" data-id="${task.id}" data-desire="neutral"><span class="d-emoji" aria-hidden="true">🙂</span><b>${esc(t('Нормально'))}</b><small>${esc(t('обычные XP и энергия'))}</small></button>
-      <button type="button" class="desire-opt hyped" data-action="desire-pick" data-id="${task.id}" data-desire="hyped"><span class="d-emoji" aria-hidden="true">⚔️</span><b>${esc(t('В кураже!'))}</b><small>🔥 ${esc(t('Хайп · расход энергии ниже'))}</small></button>
+      <button type="button" class="desire-opt forced" data-action="desire-pick" data-id="${task.id}" data-desire="forced"><span class="d-emoji" aria-hidden="true">😮‍💨</span><b>${esc(t('Через силу'))}</b><small>${esc(t('Контекст без бонуса или штрафа'))}</small></button>
+      <button type="button" class="desire-opt neutral" data-action="desire-pick" data-id="${task.id}" data-desire="neutral"><span class="d-emoji" aria-hidden="true">🙂</span><b>${esc(t('Нормально'))}</b><small>${esc(t('Контекст без бонуса или штрафа'))}</small></button>
+      <button type="button" class="desire-opt hyped" data-action="desire-pick" data-id="${task.id}" data-desire="hyped"><span class="d-emoji" aria-hidden="true">⚔️</span><b>${esc(t('В кураже!'))}</b><small>${esc(t('Контекст без бонуса или штрафа'))}</small></button>
     </div>
-    <p class="desire-sci muted" id="desire-science">${esc(t('Воля против сопротивления истощает сильнее (ego depletion), поток — меньше (flow). Поэтому здоровая середина устойчивее, чем вечный форсаж.'))}</p>
+    <p class="desire-sci muted" id="desire-science">${esc(t('Самооценка нужна для рефлексии, а не для оптимизации выплаты.'))}</p>
   </div>`;
   const appRoot = document.getElementById('app');
   overlay._desireApp = appRoot;
@@ -4523,16 +4605,30 @@ function openCategoryPicker(taskId) {
   document.body.appendChild(ov);
 }
 
+const ECONOMY_XP_BONUS_CAP_PCT = 60;
+const ECONOMY_GOLD_BONUS_CAP_PCT = 40;
+const ECONOMY_DIFFICULTY_MAX = Object.freeze({ easy: 1.1, normal: 1.5, hard: 1.75 });
+function economyDifficultyMultiplier(difficulty) {
+  const raw = Number(State.settings.xp && State.settings.xp.difficulty && State.settings.xp.difficulty[difficulty]);
+  return Math.max(0.5, Math.min(Number.isFinite(raw) ? raw : 1, ECONOMY_DIFFICULTY_MAX[difficulty] || 1.5));
+}
 function itemXp(it) {
-  const xp = State.settings.xp, mult = xp.difficulty[it.difficulty] ?? 1;
-  const base = (Number(it.estimateMin) || 0) * xp.perMinute * mult + xp.completionBonus;
-  const gb = gearBonus(it.skillId), gearMul = (1 + gb.xpPct / 100) * (it.difficulty === 'hard' ? (1 + gb.hardXpPct / 100) : 1); // гир бустит XP (реликвия — по сфере)
-  return Math.max(1, Math.round(base * (1 + skillPerkBonus(it.skillId) / 100) * (1 + lootBoostPct() / 100) * (1 + hypePct() / 100) * gearMul));
+  const xp = State.settings.xp || DEFAULT_SETTINGS.xp;
+  const perMinute = Math.max(0.1, Math.min(Number(xp.perMinute) || 1, 2));
+  const completion = Math.max(0, Math.min(Number(xp.completionBonus) || 0, 10));
+  const base = (Number(it.estimateMin) || 0) * perMinute * economyDifficultyMultiplier(it.difficulty) + completion;
+  const gb = gearBonus(it.skillId);
+  const bonusPct = Math.min(ECONOMY_XP_BONUS_CAP_PCT, Math.max(0,
+    skillPerkBonus(it.skillId) + (gb.xpPct || 0) + (it.difficulty === 'hard' ? (gb.hardXpPct || 0) : 0)));
+  return Math.max(1, Math.round(base * (1 + bonusPct / 100)));
 }
 function itemGold(it) {
-  const g = State.settings.gold || DEFAULT_SETTINGS.gold, mult = State.settings.xp.difficulty[it.difficulty] ?? 1;
-  const base = Math.round((Number(it.estimateMin) || 0) * g.perMinute * mult) + g.completionBonus;
-  return Math.max(1, Math.round(base * (1 + (gearBonus().goldPct + (skillPerks(it.skillId).goldPct || 0)) / 100))); // амулет + перк древа бустят золото
+  const gold = State.settings.gold || DEFAULT_SETTINGS.gold;
+  const perMinute = Math.max(0.05, Math.min(Number(gold.perMinute) || 0.4, 1));
+  const completion = Math.max(0, Math.min(Number(gold.completionBonus) || 0, 10));
+  const base = Math.round((Number(it.estimateMin) || 0) * perMinute * economyDifficultyMultiplier(it.difficulty)) + completion;
+  const bonusPct = Math.min(ECONOMY_GOLD_BONUS_CAP_PCT, Math.max(0, (gearBonus().goldPct || 0) + (skillPerks(it.skillId).goldPct || 0)));
+  return Math.max(1, Math.round(base * (1 + bonusPct / 100)));
 }
 
 // ---- Единый поток событий (квесты + привычки + цели) ----
@@ -7883,7 +7979,9 @@ const BACKGROUNDS = [
   { id: 'bg_void',   name: 'Бездна',     rarity: 'legendary', fill: '#160f2e' },
 ];
 const COSMETICS = FRAMES.concat(BACKGROUNDS); // единый каталог для коллекции
+const COSMETIC_PRICES = Object.freeze({ common: 200, rare: 450, epic: 900, legendary: 1800 });
 function cosmeticById(id) { return COSMETICS.find((c) => c.id === id) || null; }
+function cosmeticCost(item) { return COSMETIC_PRICES[(item && item.rarity) || 'common']; }
 function frameById(id) { return FRAMES.find((c) => c.id === id) || null; }
 function bgFill(id) { const b = BACKGROUNDS.find((c) => c.id === id); return b ? b.fill : null; }
 function cosmeticType(id) { return FRAMES.some((f) => f.id === id) ? 'frame' : 'background'; }
@@ -7909,39 +8007,61 @@ function earnedTitles() {
   return [...new Set([...fromAch, ...legacy, ...fromTree])];
 }
 function equippedTitle() { const eq = ensureCosmetics(); return eq.title || (State.lootbox && State.lootbox.equipped) || null; }
-const LOOT_POOL_DEFAULT = [
-  { w: 24, type: 'gold',           min: 15,  max: 45,  label: '🪙 Золото' },
-  { w: 16, type: 'gold',           min: 50,  max: 100, label: '🪙 Золото' },
-  { w: 15, type: 'cosmetic',       rarity: 'common',   label: '🎨 Косметика' },
-  { w: 11, type: 'energy',         min: 20,  max: 40,  label: '🔋 Заряд энергии' },
-  { w: 10, type: 'boost',          pct: 25,  hours: 6, label: '⚡ +25% XP' },
-  { w: 8,  type: 'reward_voucher',                     label: '🎁 Ваучер: бесплатная награда' },
-  { w: 8,  type: 'cosmetic',       rarity: 'rare',     label: '🎨 Редкая косметика' },
-  { w: 6,  type: 'boost',          pct: 50,  hours: 3, label: '🔥 +50% XP' },
-  { w: 5,  type: 'gold',           min: 120, max: 220, label: '🪙 Куча золота' },
-  { w: 5,  type: 'gear',                               label: '⚔️ Снаряжение' },
-  { w: 3.5,type: 'cosmetic',       rarity: 'epic',     label: '🎨 Эпическая косметика' },
-  { w: 3,  type: 'relic',                              label: '🔱 Реликвия сферы' },
-  { w: 2.5,type: 'gold',           min: 280, max: 450, label: '💎 Джекпот' },
-  { w: 1.2,type: 'cosmetic',       rarity: 'legendary',label: '🎨 Легендарная косметика' },
-];
-// rollLoot использует кастомный пул весов если задан (редактор лутбоксов)
-function buildLootPool() {
-  const custom = State.lootbox && State.lootbox.customWeights;
-  if (!custom) return LOOT_POOL_DEFAULT;
-  return LOOT_POOL_DEFAULT.map((it) => ({ ...it, w: custom[it.type] != null ? custom[it.type] : it.w }));
+// Rewards v124: deterministic gold plus one earned, disclosed, duplicate-free
+// cosmetic surprise. There is no stake, near-miss reel, random power or paid
+// trial advantage. Free and Pro share one pool and one attempt; legacy
+// "lootLuck" becomes a disclosed deterministic gold bonus only.
+const DAILY_REWARD_TRACK = Object.freeze([
+  Object.freeze({ threshold: 1, type: 'gold', amount: 40, rarity: 'common', labelKey: '+40 золота' }),
+  Object.freeze({ threshold: 3, type: 'gold', amount: 80, rarity: 'common', labelKey: '+80 золота' }),
+  Object.freeze({ threshold: 5, type: 'cosmetic_capsule', rarity: 'rare', labelKey: 'Сундук образа' }),
+]);
+const COSMETIC_CAPSULE_WEIGHTS = Object.freeze({ common: 60, rare: 28, epic: 10, legendary: 2 });
+const LOOT_THRESHOLDS = DAILY_REWARD_TRACK.map((reward) => reward.threshold);
+const LOOT_CARRY_CAP = 5; // earned rewards may wait; absence never creates new rewards
+function dailyRewardGoldBonusPct() { return Math.min(30, Math.max(0, globalPerk('lootLuck') || 0)); }
+function dailyRewardForOpenIndex(index) {
+  const base = DAILY_REWARD_TRACK[Math.max(0, Number(index) || 0) % DAILY_REWARD_TRACK.length];
+  if (base.type !== 'gold') return { ...base, label: t(base.labelKey) };
+  const bonusPct = dailyRewardGoldBonusPct();
+  const amount = Math.round(base.amount * (1 + bonusPct / 100));
+  return { ...base, amount, label: `+${amount} ${t('золота')}` };
 }
-const LOOT_POOL = LOOT_POOL_DEFAULT; // legacy alias
-const LOOT_THRESHOLDS = [1, 3, 5]; // активностей за день для сундука №1 / №2 / №3
-const LOOT_CARRY_CAP = 5; // потолок «переноса» — вернуть заработанное, но не превратить неделю отсутствия в джекпот
+function cosmeticCapsulePool() { return COSMETICS.filter((item) => !ownsCosmetic(item.id)); }
+function cosmeticCapsuleOdds() {
+  const pool = cosmeticCapsulePool();
+  const active = Object.keys(COSMETIC_CAPSULE_WEIGHTS).filter((rarity) => pool.some((item) => item.rarity === rarity));
+  const total = active.reduce((sum, rarity) => sum + COSMETIC_CAPSULE_WEIGHTS[rarity], 0);
+  return active.map((rarity) => ({ rarity, pct: total ? COSMETIC_CAPSULE_WEIGHTS[rarity] / total * 100 : 0, count: pool.filter((item) => item.rarity === rarity).length }));
+}
+function capsuleRandomUnit() {
+  try { const value = new Uint32Array(1); crypto.getRandomValues(value); return value[0] / 4294967296; }
+  catch { return Math.random(); }
+}
+function rollCosmeticCapsule() {
+  const pool = cosmeticCapsulePool(), odds = cosmeticCapsuleOdds();
+  if (!pool.length || !odds.length) return { type: 'reward_voucher', rarity: 'rare', label: t('Ваучер: личная награда') };
+  let cursor = capsuleRandomUnit() * 100, rarity = odds[odds.length - 1].rarity;
+  for (const row of odds) { cursor -= row.pct; if (cursor <= 0) { rarity = row.rarity; break; } }
+  const choices = pool.filter((item) => item.rarity === rarity);
+  const cosmetic = choices[Math.min(choices.length - 1, Math.floor(capsuleRandomUnit() * choices.length))];
+  return { type: 'cosmetic_capsule', rarity, cosmeticId: cosmetic.id, label: t('Сундук образа'), resultLabel: t(cosmetic.name) };
+}
 function ensureLootbox() {
   if (!State.lootbox) State.lootbox = { day: todayStr(), opened: 0, goldWon: 0, boost: null, titles: [], equipped: null, history: [], carry: 0 };
   if (State.lootbox.carry == null) State.lootbox.carry = 0;
+  if (!State.lootbox.economyV124) {
+    // Custom odds belonged to the removed random pool. Keep historical rewards,
+    // but remove the obsolete control rather than pretending it still matters.
+    delete State.lootbox.customWeights;
+    State.lootbox.economyV124 = true;
+    if (State.phase === 'app') Store.save('lootbox', State.lootbox);
+  }
   if (State.lootbox.day !== todayStr()) {
     // Банкуем неоткрытые сундуки прошлого дня, а не роняем их (fb: «неоткрытые вчера сундуки просто пропали»).
     // prevTotal — всё, что было доступно вчера (вчерашний лимит + то, что уже было перенесено раньше);
     // opened вычитается из ЭТОЙ суммы, поэтому carry не накапливается поверх уже открытого.
-    const prevEarned = Math.min(LOOT_THRESHOLDS.filter((th) => activityCountForDate(State.lootbox.day) >= th).length, lootTierCap());
+    const prevEarned = Math.min(LOOT_THRESHOLDS.filter((th) => rewardActivityCountForDate(State.lootbox.day) >= th).length, lootTierCap());
     const prevTotal = prevEarned + State.lootbox.carry;
     State.lootbox.carry = Math.min(LOOT_CARRY_CAP, Math.max(0, prevTotal - State.lootbox.opened));
     State.lootbox.day = todayStr(); State.lootbox.opened = 0;
@@ -7992,7 +8112,7 @@ function energyMeta() {
 //  forced (через силу) → дороже: волевое усилие против сопротивления истощает сильнее (ego depletion, Baumeister).
 //  hyped (в кураже)     → дешевле: добровольный челлендж/поток менее истощающ (flow, Csikszentmihalyi).
 //  neutral/обычный      → база: устойчивая «золотая середина» десятиборья.
-const DESIRE_ENERGY = { forced: 1.5, hyped: 0.8 };
+const DESIRE_ENERGY = { forced: 1, hyped: 1 };
 // Применяем энергию при выполнении квеста/привычки (только трата; восстановление — пассивное по времени).
 // Восстановительные дела (сон/отдых/медитация/прогулка/растяжка/баня…) — АКТИВНО дают энергию (фидбек #14).
 // Без \b — он в JS работает только для ASCII и ломает матч кириллицы. Стемы достаточно различимы.
@@ -8202,72 +8322,41 @@ function activityCountForDate(d) {
   return q + h;
 }
 function todayActivityCount() { return activityCountForDate(todayStr()); }
-function lootTierCap() { return isPro() ? 3 : 1; }
+function rewardActivityCountForDate(d) {
+  // Generated Entry is intentionally XP-free and cannot be farmed into the
+  // reward track. Ordinary completed quests and checked habits count once.
+  const quests = State.tasks.filter((x) => x.done && !x.entry && dayOf(x) === d).length;
+  const habits = State.habitlog[d] ? Object.keys(State.habitlog[d]).length : 0;
+  return quests + habits;
+}
+function todayRewardActivityCount() { return rewardActivityCountForDate(todayStr()); }
+function lootTierCap() { return DAILY_REWARD_TRACK.length; }
 function lootChestsAvailable() {
   const lb = ensureLootbox();
-  const earned = LOOT_THRESHOLDS.filter((th) => todayActivityCount() >= th).length;
+  const earned = LOOT_THRESHOLDS.filter((th) => todayRewardActivityCount() >= th).length;
   const total = Math.min(earned, lootTierCap()) + lb.carry;
   return Math.max(0, total - lb.opened);
 }
-function lootNextThreshold() { const act = todayActivityCount(); const th = LOOT_THRESHOLDS.find((x) => act < x); return th ? { need: th - act, at: th } : null; }
-function rollLoot() {
-  const pool = buildLootPool(), luck = (globalPerk('lootLuck') || 0) / 100; // 🎲 перк древа: буст шанса премиум-дропа
-  const isPremium = (it) => it.rarity === 'epic' || it.rarity === 'legendary' || it.type === 'gear' || it.type === 'relic' || it.type === 'reward_voucher' || (it.type === 'gold' && (it.min || 0) >= 120) || (it.type === 'boost' && (it.pct || 0) >= 50);
-  const weighted = pool.map((it) => ({ it, w: it.w * (luck && isPremium(it) ? 1 + luck : 1) }));
-  const total = weighted.reduce((s, x) => s + x.w, 0);
-  let r = Math.random() * total;
-  for (const x of weighted) { if ((r -= x.w) <= 0) return x.it; }
-  return pool[0];
+function lootNextThreshold() { const act = todayRewardActivityCount(); const th = LOOT_THRESHOLDS.find((x) => act < x); return th ? { need: th - act, at: th } : null; }
+function nextLootboxState(reward) {
+  const next = structuredClone(ensureLootbox());
+  if (reward.type === 'gold') next.goldWon = (Number(next.goldWon) || 0) + reward.amount;
+  else if (reward.type === 'reward_voucher') next.vouchers = (Number(next.vouchers) || 0) + 1;
+  else if (reward.type === 'cosmetic_capsule') next.cosmeticsWon = (Number(next.cosmeticsWon) || 0) + 1;
+  next.opened = (Number(next.opened) || 0) + 1;
+  next.history = Array.isArray(next.history) ? next.history : [];
+  next.history.unshift({ at: new Date().toISOString(), label: reward.resultLabel || reward.label, rarity: reward.rarity || 'common', deterministic: reward.type !== 'cosmetic_capsule', cosmeticId: reward.cosmeticId || null });
+  next.history = next.history.slice(0, 40);
+  return next;
 }
-function lootResolve(item) {
-  if (item.type === 'gold') { const amt = Math.round(item.min + Math.random() * (item.max - item.min)); const rar = amt >= 280 ? 'epic' : amt >= 120 ? 'rare' : 'common'; return { type: 'gold', amount: amt, rarity: rar, label: `+${amt} 🪙` }; }
-  if (item.type === 'energy') { const amt = Math.round(item.min + Math.random() * (item.max - item.min)); return { type: 'energy', amount: amt, rarity: 'common', label: `+${amt} 🔋 энергии` }; }
-  if (item.type === 'boost') return { type: 'boost', pct: item.pct, hours: item.hours, rarity: item.pct >= 50 ? 'epic' : 'rare', label: `+${item.pct}% XP · ${item.hours}ч` };
-  if (item.type === 'cosmetic') {
-    const rar = item.rarity || 'common', pool = COSMETICS.filter((c) => c.rarity === rar && !ownsCosmetic(c.id));
-    if (pool.length) { const c = pool[Math.floor(Math.random() * pool.length)]; return { type: 'cosmetic', id: c.id, rarity: rar, name: c.name, label: `🎨 ${c.name}` }; }
-    const dup = { common: 40, rare: 80, epic: 160, legendary: 320 }[rar] || 40; // дубль (всё собрано) → золото, Brawl-Stars-стиль
-    return { type: 'gold', amount: dup, rarity: rar, label: `+${dup} 🪙 (${RARITY[rar].label.toLowerCase()} собрано)` };
-  }
-  if (item.type === 'gear') { // v2: снаряжение падает из сундука
-    const g = ensureGear(), pool = GEAR.filter((x) => !g.owned.includes(x.id));
-    if (pool.length) { const it = pool[Math.floor(Math.random() * pool.length)]; return { type: 'gear', id: it.id, slot: it.slot, rarity: it.rarity, name: it.name, label: `${it.icon} ${it.name}` }; }
-    return { type: 'gold', amount: 150, rarity: 'rare', label: '+150 🪙 (снаряжение собрано)' };
-  }
-  if (item.type === 'relic') { // v2: сфера-привязанная реликвия
-    const r = Math.random(), rar = r < 0.6 ? 'common' : r < 0.9 ? 'rare' : 'epic', relic = genRelic(rar);
-    if (relic) return { type: 'relic', relic, rarity: rar, name: relic.name, label: `${relic.icon} ${relic.name} (+${relic.xpPct}% XP)` };
-    return { type: 'gold', amount: 80, rarity: 'common', label: '+80 🪙' };
-  }
-  if (item.type === 'reward_voucher') return { type: 'reward_voucher', rarity: 'rare', label: '🎁 Ваучер на бесплатную награду' };
-  return { type: 'gold', amount: 20, rarity: 'common', label: '+20 🪙' };
-}
-function applyLoot(reward) {
-  const lb = ensureLootbox();
-  if (reward.type === 'gold') lb.goldWon += reward.amount;
-  else if (reward.type === 'energy') { const e = ensureEnergy(); e.cur = Math.min(e.max, e.cur + reward.amount); Store.save('settings', State.settings); }
-  else if (reward.type === 'boost') lb.boost = { pct: reward.pct, until: new Date(Date.now() + reward.hours * 3600 * 1000).toISOString() };
-  else if (reward.type === 'cosmetic') {
-    ensureCosmetics();
-    if (!State.settings.cosmetics.includes(reward.id)) State.settings.cosmetics.push(reward.id);
-    const t = cosmeticType(reward.id); if (!State.settings.equipped[t]) State.settings.equipped[t] = reward.id; // авто-надеть, если слот пуст
-    Store.save('settings', State.settings);
-  }
-  else if (reward.type === 'gear') {
-    const g = ensureGear(); if (!g.owned.includes(reward.id)) g.owned.push(reward.id);
-    if (!g.equipped[reward.slot]) g.equipped[reward.slot] = reward.id; // авто-надеть в пустой слот
-    Store.save('settings', State.settings);
-  }
-  else if (reward.type === 'relic') {
-    const g = ensureGear(); g.relics.push(reward.relic);
-    if (!g.equipped.relic) g.equipped.relic = reward.relic.uid; // авто-надеть первую реликвию
-    Store.save('settings', State.settings);
-  }
-  else if (reward.type === 'reward_voucher') { lb.vouchers = (lb.vouchers || 0) + 1; }
-  lb.opened += 1;
-  lb.history.unshift({ at: new Date().toISOString(), label: reward.label, rarity: reward.rarity || 'common' });
-  lb.history = lb.history.slice(0, 40);
-  Store.save('lootbox', lb);
+async function economyCommit(data) {
+  try {
+    const response = await fetch('/api/economy/commit', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data }),
+    });
+    if (response.status === 401) { handleAccountSessionExpired(); return false; }
+    return response.ok;
+  } catch (error) { console.error('economy commit', error); return false; }
 }
 
 // ============================================================
@@ -10977,14 +11066,14 @@ function applyProposals(proposals, acceptedIdx) {
 const GOJO_MANUAL = `Ты — встроенный помощник приложения Satoru (геймификация жизни). Философия: «жизнь как десятиборье» — ценится баланс многих сфер, а не одна вертикаль; отдых и восстановление так же важны, как труд; уровень = доказанное мастерство, оно НЕ сгорает (как чёрный пояс). Твоя роль двойная. (1) Гид: помогаешь разобраться в функциях, подсказываешь, что юзер недоиспользует, объясняешь механики простыми словами. (2) Секретарь: в конце этого промпта — блоки «СОСТОЯНИЕ СЕЙЧАС» и «НЕДЕЛЯ …» с живыми данными ИМЕННО этого юзера (энергия, честный отдых, сегодняшние и просроченные дела, дедлайны целей, его собственная рефлексия своими словами). Когда юзер спрашивает о себе — «как у меня дела», «что мне сделать», «почему я выжат» — отвечай ПО ЭТИМ ДАННЫМ, конкретно и адресно, а не общими советами. Строка про отдых значит больше индекса баланса (баланс не отличает тренировку от отдыха). Рефлексия юзера — самый важный сигнал: отвечай на его собственную боль его же словами. Если данные тревожные (≥4 дней без отдыха, энергия у нуля, копятся просрочки) и юзер просит совета — назови это прямо, тепло и без вины, и предложи ОДИН маленький шаг (часто это «Заход» на 10 минут или явный отдых, а не ещё продуктивность). Цифры без запроса не вываливай; ничего сверх данных не выдумывай. Отвечай КРАТКО, по делу, дружелюбно. Кнопки в интерфейсе ты не нажимаешь, но умеешь ПРЕДЛАГАТЬ создание квестов/привычек/целей карточками (блок ACTIONS ниже) — применяет их юзер одним тапом. Если юзер описывает большой массив целей или прошлый опыт — посоветуй «🤖 Импорт целей» (вкладка Цели) или «🤖 Оценить через ИИ» (Настройки → Импорт).
 
 ФУНКЦИИ И ГДЕ ОНИ:
-• Сегодня — квесты на день (разовые дела), сложность 🌱лёгкая/⚔️обычная/🔥сложная. ▶ у квеста = фокус-таймер (помодоро + плавающее окно ↗ поверх всех окон). Галочка = XP + золото. Привычки — повторяющиеся дела со стриком. Энергия — индикатор дневной нагрузки, восстанавливается ПАССИВНО по времени (логировать отдых не нужно), ни на что не влияет, честная «оценка по задачам». Хайп — выполни 🔥сложный квест → временный бонус +15% XP за стак (до +45%, на 2 ч); «через силу» тратит больше энергии, «в кураже» меньше.
+• Сегодня — квесты на день (разовые дела), сложность 🌱лёгкая/⚔️обычная/🔥сложная. ▶ у квеста = фокус-таймер (помодоро + плавающее окно ↗ поверх всех окон). Галочка = XP + золото. Привычки — повторяющиеся дела со стриком. Энергия — индикатор дневной нагрузки, восстанавливается ПАССИВНО по времени (логировать отдых не нужно), ни на что не влияет, честная «оценка по задачам». Самооценка «через силу / нормально / в кураже» сохраняет контекст, но не меняет XP, золото или энергию.
 • Заметки — быстрый захват: текст / 🎤голос / 🎥видео, хранятся как в приложении «Заметки». Заметку можно превратить в квест (кнопка → Квест).
 • Календарь — Apple-стиль, неделя/месяц, перетаскивание, напоминалки.
 • Привычки (раздел 🔁) — по методу «Атомные привычки» Дж. Клира. Под-вкладки: Привычки (идентичность + 4 закона: очевидно/привлекательно/просто/приятно; поля у привычки — идентичность, сигнал-связка «После X я…», версия 2 минут), Срывы (анти-привычки/зависимости через инверсию 4 законов, «чистые дни» без стыда, никогда не пропускай дважды), Метод (справочник по методу). Отмечать привычки — на «Сегодня».
 • Персонаж — кастом-аватар (лицо/причёска/цвета), атрибуты (Сила/Интеллект/Дух…) растут из сфер → радар-билд и архетип; силуэт телосложения меняется от тренировок и веса.
 • Цели — горизонты: ★Миссия (полярная звезда, зачем всё) → видение 10–20 лет → путь 3–5 лет → долго / средне / кратко → повтор. Привязка к большей цели (parent) рисует цепочку «↑ зачем». Цель = чек-лист ИЛИ числовая (текущее→цель, лог рекордов, режим «держать» для KPI вроде жима/оценок). Статусы: активна / ⏳ ждёт события / ⏸ пауза.
 • Навыки (Дерево) — не магазин процентов, а КАРТА ПУТИ. 🚩 Вехи = реальные ступени мастерства сферы («5 км» → «полумарафон» → «марафон»); веха берётся ЖИЗНЬЮ, а не кликом — сделал в реальности, отметил, получил очко практик. Из очков открываются узлы с пассивными бонусами к XP сферы. «🤖 Личная карта» — ИИ собирает вехи под конкретную жизнь юзера из его слов (его Abitur, его проект), а не общий шаблон. Импорт достижений автоматически отмечает вехи до указанного тира. «✏️ Редактор» — конструктор узлов под себя.
-• Награды — магазин на золото (придумай свои награды!), сундуки за активность дня (рулетка: золото / XP-бусты / косметика / титулы), 50+ ачивок со званиями. Неоткрытые сундуки НЕ пропадают — переносятся на следующие дни.
+• Награды — сначала личный магазин на золото (придумай свои настоящие награды), затем трек за 1/3/5 реальных дел: +40 золота, +80 золота и заработанный сундук косметики. Его реальные шансы открыты, дублей нет, силу он не даёт; Free и Pro получают один набор и одну попытку, неоткрытые награды переносятся.
 • Неделя — недельный обзор и планирование.
 • Тень (спутник на «Сегодня») — живой компаньон: реагирует настроением, скучает при долгом отсутствии, связь Искра→Дух→Страж→Хранитель растёт от утренних/вечерних чек-инов и «погладить», ведёт летопись побед. Никогда не ругает. Кнопка 🔊 рядом с её репликой (и рядом с подсказкой, ответом чата, разбором недели) ОЗВУЧИВАЕТ текст голосом — бесплатно, встроено в браузер, ИИ-ключ не нужен; выключается в Настройках рядом со звуками интерфейса.
 • Подсказки на «Сегодня» — приложение показывает ОДНУ самую важную подсказку, а не все сразу; остальные ждут очереди. Если есть ИИ-ключ, Тень формулирует её своими словами под реальное состояние юзера.
@@ -13265,7 +13354,7 @@ function renderToday() {
   const chestsAvail = lootChestsAvailable(), activeBoost = lootBoostPct(), hp = hypePct();
   const chestCarry = ensureLootbox().carry; // сколько из доступных — перенесены с прошлых дней (не потеряны)
   const chestTitle = chestCarry > 0 ? `title="${esc(t('С прошлых дней сохранено'))}: ${chestCarry}"` : '';
-  const nudgeCard = (chestsAvail > 0 || activeBoost > 0 || hp > 0) ? `<div class="card nudge-card">${chestsAvail > 0 ? `<button class="nudge" data-action="goto-rewards" ${chestTitle}>${satoruIconHTML('system.rewards', 'button-emblem', '🎁')} ${chestsAvail} ${plural(chestsAvail, 'сундук', 'сундука', 'сундуков')} ждёт — открыть</button>` : ''}${activeBoost > 0 ? `<span class="nudge-boost">⚡ +${activeBoost}% XP активен</span>` : ''}${hp > 0 ? `<span class="nudge-boost">${satoruIconHTML('status.streak', 'inline-emblem', '🔥')} Хайп ×${hypeState().stacks} · +${hp}% XP · ${hypeMinLeft()}м</span>` : ''}</div>` : '';
+  const nudgeCard = chestsAvail > 0 ? `<div class="card nudge-card"><button class="nudge" data-action="goto-rewards" ${chestTitle}>${satoruIconHTML('system.rewards', 'button-emblem', '🎁')} ${t('Заработанная награда ждёт — получить')} · ${chestsAvail}</button></div>` : '';
   // Нудж новичку: не начинай с нуля — импортируй реальный опыт
   const noImports = !Object.keys((State.settings && State.settings.imported) || {}).length;
   const importNudge = (noImports && earnedXp() < 200) ? `<div class="card nudge-card"><button class="nudge" data-action="goto-import">🎖 Не начинай с нуля — импортируй свой реальный опыт</button><span class="nudge-boost">отметь свой уровень в сферах → стартовый опыт</span></div>` : '';
@@ -13880,7 +13969,7 @@ function renderTree() {
           <b>${t('Смотри, тут всё честно:')}</b>
           <ol>
             <li>${t('Дела в сфере поднимают её уровень. Каждый уровень даёт ◈ очко — оно уже твоё, заработано.')}</li>
-            <li>${t('Очко вкладываешь в узел — получаешь пассивный бонус: +XP, удача сундуков, щит серии, связь со мной…')}</li>
+            <li>${t('Очко вкладываешь в узел — получаешь пассивный бонус: +XP, бонус дневных наград, щит серии, связь со мной…')}</li>
             <li>${t('Дорожки ведут к 👑 капстоуну — за него дают звание. Подсвеченный узел — мой совет: самый дешёвый из доступных.')}</li>
             <li>${t('🚩 Вехи справа — реальные достижения сферы. Они берутся жизнью, не очками — и каждая взятая даёт +1 ◈.')}</li>
           </ol>
@@ -14146,31 +14235,43 @@ function renderCharacter() {
 }
 
 // ============================================================
-//  Лутбоксы — карточка + рулетка
+//  Награды дня — детерминированный earned track
 // ============================================================
 function lootboxCard() {
-  const lb = ensureLootbox(), avail = lootChestsAvailable(), act = todayActivityCount(), nextTh = lootNextThreshold();
-  const earned = LOOT_THRESHOLDS.filter((th) => act >= th).length;
-  const lockedExtra = Math.max(0, earned - lootTierCap());
-  const boost = lootBoostPct();
-  const hist = (lb.history || []).slice(0, 6).map((h) => `<li><span class="rar-dot" style="background:${(RARITY[h.rarity] || RARITY.common).color}"></span><span class="muted">${(h.at || '').slice(11, 16)}</span> ${esc(h.label)}</li>`).join('');
-  const statusTxt = avail > 0 ? `Открыть (${avail})` : (nextTh ? `Ещё ${nextTh.need} ${plural(nextTh.need, 'дело', 'дела', 'дел')} до сундука` : 'На сегодня всё ✓');
-  return `<div class="card lootbox-card">
-    <div class="lb-head"><h3>${satoruIconHTML('nav.rewards', 'heading-glyph', '◇')} Сундуки дня</h3>${boost ? `<span class="lb-boost">${satoruIconHTML('status.energy', 'inline-emblem', '⚡')} +${boost}% XP активен</span>` : ''}</div>
+  const lb = ensureLootbox(), avail = lootChestsAvailable(), act = todayRewardActivityCount(), nextTh = lootNextThreshold();
+  const nextReward = dailyRewardForOpenIndex(lb.opened);
+  const capsuleOdds = cosmeticCapsuleOdds();
+  const capsuleOddsHTML = capsuleOdds.length
+    ? capsuleOdds.map((row) => `<li class="r-${row.rarity}"><span>${t(RARITY[row.rarity].label)}</span><b>${Number(row.pct.toFixed(1)).toLocaleString(lang())}%</b><small>${row.count} ${t('предметов без дубликатов')}</small></li>`).join('')
+    : `<li><span>${t('Коллекция собрана')}</span><b>100%</b><small>${t('вместо дубликата — ваучер личной награды')}</small></li>`;
+  const hist = (lb.history || []).slice(0, 6).map((h) => `<li><span class="reward-history-mark" aria-hidden="true">✓</span><span class="muted">${(h.at || '').slice(0, 10)}</span> ${esc(h.label)}</li>`).join('');
+  const statusTxt = avail > 0
+    ? `${t('Открыть награду')} (${avail})`
+    : (nextTh ? `${t('Ещё')} ${nextTh.need} ${locThing(nextTh.need, lang())} ${t('до следующей награды')}` : t('Все награды дня получены'));
+  const track = DAILY_REWARD_TRACK.map((reward, index) => {
+    const reached = act >= reward.threshold;
+    const opened = index < Math.min(Number(lb.opened) || 0, DAILY_REWARD_TRACK.length);
+    const shown = dailyRewardForOpenIndex(index);
+    return `<li class="daily-reward-step${reached ? ' is-earned' : ''}${opened ? ' is-collected' : ''}"><span class="daily-reward-condition">${reward.threshold} ${locThing(reward.threshold, lang())}</span><b>${esc(shown.label)}</b><span>${opened ? t('Получено') : (reached ? t('Готово к получению') : t('Условие не выполнено'))}</span></li>`;
+  }).join('');
+  return `<section class="card lootbox-card daily-reward-card" aria-labelledby="daily-reward-title">
+    <div class="lb-head"><h3 id="daily-reward-title">${satoruIconHTML('nav.rewards', 'heading-glyph', '◇')} ${t('Награды дня')}</h3><span class="daily-reward-randomness">${t('Шансы сундука открыты')}</span></div>
     <div class="lb-body">
-      <div class="lb-chest ${avail > 0 ? 'ready' : 'empty'}" ${avail > 0 ? 'data-action="open-chest"' : ''}>
-        ${satoruIconHTML('system.rewards', `lb-emblem${avail > 0 ? ' is-ready' : ''}`, avail > 0 ? '🎁' : '📦')}<div class="lb-status">${statusTxt}</div>
-      </div>
+      <button type="button" class="lb-chest ${avail > 0 ? 'ready' : 'empty'}" ${avail > 0 ? 'data-action="open-chest"' : 'disabled'} aria-label="${esc(statusTxt)}">
+        ${satoruIconHTML('system.rewards', `lb-emblem${avail > 0 ? ' is-ready' : ''}`, avail > 0 ? '🎁' : '✓')}<span class="lb-status">${statusTxt}</span>
+        ${avail > 0 ? `<small>${t('Следующая награда')}: ${esc(nextReward.label)}</small>` : ''}
+      </button>
       <div class="lb-info">
-        <p class="muted" style="font-size:12px;margin:0 0 8px">Выполняй квесты и привычки — за активность дают сундуки. Внутри: золото, XP-бусты, заряд энергии, <b>косметика</b> и <b>ваучеры наград</b>. ${isPro() ? 'Pro: до 3 сундуков в день.' : 'Free: 1 сундук в день.'}</p>
-        ${(lb.vouchers || 0) > 0 ? `<div class="voucher-chip" data-action="use-voucher">${satoruIconHTML('reward.voucher', 'inline-glyph', '◇')} Ваучер ×${lb.vouchers} — забери награду бесплатно</div>` : ''}
-        ${lockedExtra > 0 && !isPro() ? `<button class="btn pro-cta sm" data-action="show-paywall" data-feature="Больше сундуков">${satoruIconHTML('status.lock', 'button-glyph', '🔒')} Ещё ${lockedExtra} ${plural(lockedExtra, 'сундук', 'сундука', 'сундуков')} — с Pro</button>` : ''}
+        <p>${t('За 1 и 3 реальных действия выдаётся заранее известное золото. За 5 — заработанный сундук образа. Заход не считается.')}</p>
+        <p class="daily-reward-fairness">${t('Сундук содержит только косметику, не даёт силу и не требует ставки. Free и Pro получают один и тот же набор и одну попытку.')}</p>
+        ${dailyRewardGoldBonusPct() ? `<p class="muted">${t('Детерминированный бонус дерева')}: +${dailyRewardGoldBonusPct()}% ${t('к золоту наград дня')}.</p>` : ''}
+        ${(lb.vouchers || 0) > 0 ? `<button type="button" class="voucher-chip" data-action="use-voucher">${satoruIconHTML('reward.voucher', 'inline-glyph', '◇')} ${t('Ваучер')} ×${lb.vouchers} — ${t('выбрать личную награду')}</button>` : ''}
       </div>
     </div>
-    <div class="lb-foot">
-      ${hist ? `<details class="lb-hist"><summary>История дропов</summary><ul class="reflections">${hist}</ul></details>` : ''}
-      <button class="btn ghost xs lb-edit-btn" data-action="open-loot-editor" title="Настроить вероятности дропа">${satoruIconHTML('nav.settings', 'button-glyph', '◇')} Дроп-рейты</button>
-    </div></div>`;
+    <ol class="daily-reward-track">${track}</ol>
+    <details class="capsule-odds"><summary>${t('Вероятности сундука образа')}</summary><p>${t('Шанс выбирает редкость, затем один ещё не полученный предмет этой редкости. Дубликатов нет; косметику всегда можно купить напрямую.')}</p><ul>${capsuleOddsHTML}</ul></details>
+    ${hist ? `<details class="lb-hist"><summary>${t('История наград')}</summary><ul class="reflections">${hist}</ul></details>` : ''}
+  </section>`;
 }
 // Brawl-Stars-коллекция: видимый прогресс + экипировка рамок/фонов/званий
 function collectionCard() {
@@ -14179,89 +14280,110 @@ function collectionCard() {
   const tile = (c) => {
     const owned = ownsCosmetic(c.id), r = RARITY[c.rarity], isEq = eq[cosmeticType(c.id)] === c.id;
     const swatch = c.ring ? `<span class="cos-prev cos-frame" style="border-color:${c.ring}"></span>` : `<span class="cos-prev cos-bg" style="background:${c.fill}"></span>`;
-    return `<button class="cos-tile r-${c.rarity} ${owned ? 'owned' : 'locked'} ${isEq ? 'eq' : ''}" ${owned ? `data-action="equip-cosmetic" data-id="${c.id}"` : 'disabled'} style="--rc:${r.color}" title="${esc(c.name)} · ${r.label}${owned ? (isEq ? ' · надето' : ' · нажми, чтобы надеть') : ' · ещё не выпало'}">
-      ${owned ? swatch : `<span class="cos-prev cos-lock">${satoruIconHTML('status.lock', 'cos-lock-icon', '◇')}</span>`}<span class="cos-name">${owned ? esc(c.name) : '???'}</span>${isEq ? '<span class="cos-eq">✓</span>' : ''}</button>`;
+    const action = owned ? 'equip-cosmetic' : 'buy-cosmetic';
+    const accessible = owned
+      ? `${t(c.name)} · ${t(r.label)} · ${isEq ? t('Надето') : t('Надеть')}`
+      : `${t(c.name)} · ${t(r.label)} · ${cosmeticCost(c)} ${t('золота')} · ${t('Купить')}`;
+    return `<button class="cos-tile r-${c.rarity} ${owned ? 'owned' : 'available'} ${isEq ? 'eq' : ''}" data-action="${action}" data-id="${c.id}" style="--rc:${r.color}" aria-label="${esc(accessible)}">
+      ${swatch}<span class="cos-name">${esc(t(c.name))}</span><span class="cos-rarity">${esc(t(r.label))}</span>${owned ? (isEq ? '<span class="cos-eq">✓</span>' : '') : `<span class="cos-cost">${satoruIconHTML('status.gold', 'inline-emblem', '◇')} ${cosmeticCost(c)}</span>`}</button>`;
   };
   const titles = earnedTitles();
   const titleChips = titles.length
-    ? `<button class="title-chip ${!eq.title ? 'eq' : ''}" data-action="equip-title" data-title="">— без звания —</button>` + titles.map((t) => `<button class="title-chip ${eq.title === t ? 'eq' : ''}" data-action="equip-title" data-title="${esc(t)}">${eq.title === t ? '★ ' : ''}${esc(t)}</button>`).join('')
-    : '<span class="muted">званий пока нет — открывай достижения ниже ↓</span>';
+    ? `<button class="title-chip ${!eq.title ? 'eq' : ''}" data-action="equip-title" data-title="">${t('— без звания —')}</button>` + titles.map((title) => `<button class="title-chip ${eq.title === title ? 'eq' : ''}" data-action="equip-title" data-title="${esc(title)}">${eq.title === title ? '★ ' : ''}${esc(title)}</button>`).join('')
+    : `<span class="muted">${t('званий пока нет — открывай достижения ниже ↓')}</span>`;
   return `<div class="card collection-card">
-    <div class="coll-head"><h3>${satoruIconHTML('achievement.collector_5', 'heading-emblem', '◇')} Коллекция</h3><span class="coll-prog">${ownedCount}/${COSMETICS.length} собрано</span></div>
+    <div class="coll-head"><h3>${satoruIconHTML('achievement.collector_5', 'heading-emblem', '◇')} ${t('Коллекция')}</h3><span class="coll-prog">${ownedCount}/${COSMETICS.length} ${t('собрано')}</span></div>
     <div class="coll-body">
-      <div class="coll-preview" title="Так выглядит твой аватар">${avatarPortraitHTML(equippedCosmeticsOpts())}</div>
+      <div class="coll-preview" title="${esc(t('Так выглядит твой аватар'))}">${avatarPortraitHTML(equippedCosmeticsOpts())}</div>
       <div class="coll-cats">
-        <h4 class="coll-sub">Рамки</h4><div class="cos-grid">${FRAMES.map(tile).join('')}</div>
-        <h4 class="coll-sub">Фоны</h4><div class="cos-grid">${BACKGROUNDS.map(tile).join('')}</div>
+        <h4 class="coll-sub">${t('Рамки')}</h4><div class="cos-grid">${FRAMES.map(tile).join('')}</div>
+        <h4 class="coll-sub">${t('Фоны')}</h4><div class="cos-grid">${BACKGROUNDS.map(tile).join('')}</div>
       </div>
     </div>
-    <h4 class="coll-sub">${satoruIconHTML('achievement.avatar_custom', 'slot-emblem', '◇')} Звания <span class="muted" style="font-size:12px;font-weight:400">— за достижения</span></h4>
+    <h4 class="coll-sub">${satoruIconHTML('achievement.avatar_custom', 'slot-emblem', '◇')} ${t('Звания')} <span class="muted" style="font-size:12px;font-weight:400">${t('— за достижения')}</span></h4>
     <div class="title-chips">${titleChips}</div>
   </div>`;
 }
-function openChest() {
-  if (lootChestsAvailable() <= 0) { toast('Сундуков нет — выполни ещё дела'); return; }
-  const reward = lootResolve(rollLoot());
-  const rar = RARITY[reward.rarity] || RARITY.common;
-  const ITEMW = 130, WINIDX = 34, N = 42;
-  const labels = [], rars = [];
-  for (let i = 0; i < N; i++) { if (i === WINIDX) { labels.push(reward.label); rars.push(reward.rarity || 'common'); } else { const r = lootResolve(rollLoot()); labels.push(r.label); rars.push(r.rarity || 'common'); } }
-  const strip = labels.map((l, i) => `<div class="loot-item r-${rars[i]} ${i === WINIDX ? 'win' : ''}" style="--rc:${(RARITY[rars[i]] || RARITY.common).color}">${esc(l)}</div>`).join('');
-  const ov = document.createElement('div'); ov.id = 'loot-modal'; ov.className = 'modal-overlay';
-  ov.innerHTML = `<div class="loot-box">
-    <h3>Открываем сундук…</h3>
-    <div class="loot-window"><div class="loot-pointer"></div><div class="loot-track" id="loot-track">${strip}</div></div>
-    <div class="loot-result" id="loot-result"></div>
-    <button class="btn" id="loot-claim" style="display:none">Забрать</button></div>`;
-  document.body.appendChild(ov);
-  const track = ov.querySelector('#loot-track'), win = ov.querySelector('.loot-window');
-  const target = WINIDX * ITEMW + ITEMW / 2 - win.clientWidth / 2 + (Math.random() * 36 - 18);
-  track.style.transform = 'translateX(0)';
-  requestAnimationFrame(() => { track.style.transition = 'transform 3.6s cubic-bezier(.12,.72,.16,1)'; track.style.transform = `translateX(${-target}px)`; });
-  setTimeout(() => {
-    applyLoot(reward);
-    if (typeof sfxLoot === 'function') sfxLoot(reward.rarity || 'common'); // звук по рарности (#23)
-    const rEl = ov.querySelector('#loot-result');
-    rEl.innerHTML = `<div class="loot-rarity" style="color:${rar.color}">${rar.label.toUpperCase()}</div><div class="loot-rline">${esc(reward.label)}</div>`;
-    rEl.classList.add('show'); rEl.style.setProperty('--rc', rar.color);
-    const box = ov.querySelector('.loot-box'); box.classList.add('reveal', `r-${reward.rarity || 'common'}`);
-    ov.querySelector('.loot-item.win')?.classList.add('flash');
-    const claim = ov.querySelector('#loot-claim'); claim.style.display = '';
-    claim.addEventListener('click', () => { ov.remove(); render(); });
-  }, 3750);
-}
-
-// ============================================================
-//  Лут-редактор — кастомные веса дропа
-// ============================================================
-function showLootEditor() {
-  if (document.getElementById('loot-editor-ov')) return;
-  const lb = ensureLootbox();
-  const custom = lb.customWeights || {};
-  const seen = new Set(), types = [];
-  for (const it of LOOT_POOL_DEFAULT) {
-    if (!seen.has(it.type)) { seen.add(it.type); types.push({ type: it.type, label: it.label, defaultW: it.w }); }
+async function commitDailyRewardDialog(overlay) {
+  if (!overlay || overlay._saving) return;
+  const reward = overlay._reward; if (!reward) return;
+  overlay._saving = true;
+  const status = overlay.querySelector('.loot-save-status');
+  const retry = overlay.querySelector('[data-action="retry-daily-reward"]');
+  const claim = overlay.querySelector('[data-action="claim-daily-reward"]');
+  const skip = overlay.querySelector('[data-action="skip-capsule-reveal"]');
+  const close = overlay.querySelector('[data-action="close-daily-reward"]');
+  if (status) { status.textContent = t('Сохраняю награду…'); status.classList.remove('is-error'); }
+  if (retry) retry.hidden = true;
+  if (claim) claim.disabled = true;
+  if (skip) skip.disabled = true;
+  if (close) close.disabled = true;
+  const next = nextLootboxState(reward);
+  let nextSettings = null;
+  if (reward.type === 'cosmetic_capsule' && reward.cosmeticId) {
+    nextSettings = structuredClone(State.settings);
+    nextSettings.cosmetics = Array.isArray(nextSettings.cosmetics) ? nextSettings.cosmetics : [];
+    if (!nextSettings.cosmetics.includes(reward.cosmeticId)) nextSettings.cosmetics.push(reward.cosmeticId);
   }
-  const rows = types.map(({ type, label, defaultW }) => {
-    const cur = custom[type] != null ? custom[type] : defaultW;
-    return `<div class="le-row">
-      <span class="le-label">${esc(label)}</span>
-      <input class="le-inp" type="number" min="0" max="200" step="0.5" value="${cur}" data-letype="${esc(type)}">
-    </div>`;
-  }).join('');
-  const ov = document.createElement('div');
-  ov.id = 'loot-editor-ov'; ov.className = 'modal-overlay';
-  ov.innerHTML = `<div class="guide-box">
-    <button class="modal-x" data-action="close-loot-editor">✕</button>
-    <h2>${t('⚙️ Дроп-рейты сундуков')}</h2>
-    <p class="muted" style="font-size:13px;margin-bottom:12px">Вес типа: 0 = никогда, выше = чаще. Шанс ≈ вес / сумма всех весов.</p>
-    <div class="le-rows">${rows}</div>
-    <div class="le-foot">
-      <button class="btn ghost sm" data-action="reset-loot-weights">${t('Сбросить к дефолту')}</button>
-      <button class="btn sm" data-action="save-loot-weights">${t('Сохранить')}</button>
+  const ok = await economyCommit(nextSettings ? { lootbox: next, settings: nextSettings } : { lootbox: next });
+  overlay._saving = false;
+  if (!overlay.isConnected) return;
+  if (!ok) {
+    if (status) { status.textContent = t('Награда не сохранена. Ничего не изменилось — повтори попытку.'); status.classList.add('is-error'); }
+    if (retry) { retry.hidden = false; retry.disabled = false; retry.focus(); }
+    if (close) close.disabled = false;
+    return;
+  }
+  State.lootbox = next;
+  if (nextSettings) State.settings = nextSettings;
+  if (reward.type === 'cosmetic_capsule') {
+    if (status) status.textContent = t('Награда сохранена. Открываем сундук…');
+    if (skip) { skip.hidden = false; skip.disabled = false; skip.focus(); }
+    overlay._revealTimer = setTimeout(() => revealCosmeticCapsule(overlay), 1000);
+  } else {
+    if (status) status.textContent = t('Награда сохранена');
+    if (claim) { claim.disabled = false; claim.focus(); }
+    if (typeof sfxLoot === 'function') sfxLoot(reward.rarity || 'common');
+  }
+  if (close) close.disabled = false;
+}
+function revealCosmeticCapsule(overlay) {
+  if (!overlay || !overlay.isConnected || overlay._revealed) return;
+  overlay._revealed = true; clearTimeout(overlay._revealTimer); overlay._revealTimer = null;
+  const reward = overlay._reward, result = overlay.querySelector('.loot-capsule-result');
+  const status = overlay.querySelector('.loot-save-status'), claim = overlay.querySelector('[data-action="claim-daily-reward"]');
+  const skip = overlay.querySelector('[data-action="skip-capsule-reveal"]');
+  overlay.querySelector('.loot-reveal-box')?.classList.add('is-revealed');
+  if (result) { result.hidden = false; result.classList.add('is-revealed'); }
+  if (status) status.textContent = t('Награда сохранена');
+  if (skip) skip.hidden = true;
+  if (claim) { claim.disabled = false; claim.focus(); }
+  if (typeof sfxLoot === 'function') sfxLoot(reward.rarity || 'common');
+}
+function openChest(returnFocus = document.activeElement) {
+  const existing = document.getElementById('loot-modal');
+  if (existing) { existing.querySelector('[data-action="claim-daily-reward"], [data-action="retry-daily-reward"]')?.focus(); return existing; }
+  if (lootChestsAvailable() <= 0) { toast(t('Наград пока нет — заверши следующее реальное дело')); return null; }
+  const lb = ensureLootbox(), baseReward = dailyRewardForOpenIndex(lb.opened);
+  const reward = baseReward.type === 'cosmetic_capsule' ? rollCosmeticCapsule() : baseReward;
+  const ov = document.createElement('div'); ov.id = 'loot-modal'; ov.className = 'modal-overlay loot-reveal-overlay';
+  ov._reward = reward;
+  ov.innerHTML = `<section class="loot-box loot-reveal-box ${reward.type === 'cosmetic_capsule' ? 'is-capsule' : ''}" role="dialog" aria-modal="true" aria-labelledby="daily-reward-reveal-title" aria-describedby="daily-reward-reveal-desc">
+    <button type="button" class="modal-x" data-action="close-daily-reward" aria-label="${esc(t('Закрыть'))}" disabled>✕</button>
+    <p class="loot-earned-label">${t('Заработанная награда')}</p>
+    <h2 id="daily-reward-reveal-title" tabindex="-1">${esc(reward.label)}</h2>
+    <p id="daily-reward-reveal-desc">${reward.type === 'cosmetic_capsule' ? t('Сюрприз только косметический: без XP, золота или силы. Церемонию можно пропустить сразу.') : t('Эта награда была известна заранее.')}</p>
+    ${reward.type === 'cosmetic_capsule' ? `<div class="loot-capsule-result r-${reward.rarity}" role="status" aria-live="polite" hidden><span>${t(RARITY[reward.rarity].label)}</span><strong>${esc(reward.resultLabel)}</strong></div>` : ''}
+    <div class="loot-save-status" role="status" aria-live="polite">${t('Сохраняю награду…')}</div>
+    <div class="loot-reveal-actions">
+      <button type="button" class="btn" data-action="claim-daily-reward" disabled>${t('Забрать')}</button>
+      ${reward.type === 'cosmetic_capsule' ? `<button type="button" class="btn ghost" data-action="skip-capsule-reveal" hidden disabled>${t('Пропустить церемонию')}</button>` : ''}
+      <button type="button" class="btn ghost" data-action="retry-daily-reward" hidden>${t('Повторить')}</button>
     </div>
-  </div>`;
-  document.body.appendChild(ov);
+  </section>`;
+  mountAccountDialog(ov, { initial: '#daily-reward-reveal-title', dismissible: false, returnFocus });
+  commitDailyRewardDialog(ov);
+  return ov;
 }
 
 function showVoucherReward() {
@@ -14269,19 +14391,131 @@ function showVoucherReward() {
   if (!lb.vouchers || lb.vouchers < 1) { toast(t('Нет ваучеров')); return; }
   if (document.getElementById('voucher-ov')) return;
   const rows = REWARD_CATALOG.map((c, i) => `<div class="rwc-row">
-    <span class="rwc-ic">${rewardIconHTML(c, 'reward-catalog-icon')}</span><span class="rwc-name">${esc(c.name)}</span>
-    <span class="muted rwc-free" style="font-size:11px;color:var(--accent)">${satoruIconHTML('reward.voucher', 'inline-glyph', '◇')} бесплатно</span>
-    <button class="btn ghost sm" data-action="redeem-voucher" data-idx="${i}">Взять</button>
+    <span class="rwc-ic">${rewardIconHTML(c, 'reward-catalog-icon')}</span><span class="rwc-name">${esc(t(c.name))}</span>
+    <span class="muted rwc-free">${satoruIconHTML('reward.voucher', 'inline-glyph', '◇')} ${t('бесплатно')}</span>
+    <button class="btn ghost sm" data-action="redeem-voucher" data-idx="${i}">${t('Взять')}</button>
   </div>`).join('');
   const ov = document.createElement('div');
   ov.id = 'voucher-ov'; ov.className = 'modal-overlay';
-  ov.innerHTML = `<div class="guide-box">
-    <button class="modal-x" data-action="close-voucher">✕</button>
-    <h2>${satoruIconHTML('reward.voucher', 'heading-glyph', '◇')} ${t('Ваучер — бесплатная награда')}</h2>
-    <p class="muted">У тебя ${lb.vouchers} ${plural(lb.vouchers, 'ваучер', 'ваучера', 'ваучеров')}. Выбери любую награду из каталога — бесплатно!</p>
+  ov.innerHTML = `<section class="guide-box voucher-box" role="dialog" aria-modal="true" aria-labelledby="voucher-title">
+    <button class="modal-x" data-action="close-voucher" aria-label="${esc(t('Закрыть'))}">✕</button>
+    <h2 id="voucher-title" tabindex="-1">${satoruIconHTML('reward.voucher', 'heading-glyph', '◇')} ${t('Ваучер — бесплатная награда')}</h2>
+    <p class="muted">${t('Ваучеров доступно')}: ${lb.vouchers}. ${t('Выбери одну личную награду; ваучер спишется только после подтверждения.')}</p>
     <div class="rwc-list">${rows}</div>
-  </div>`;
-  document.body.appendChild(ov);
+  </section>`;
+  mountAccountDialog(ov, { initial: '#voucher-title', returnFocus: document.activeElement });
+}
+
+function economyConfirmationData(kind, id) {
+  if (kind === 'reward') {
+    const item = State.rewards.find((reward) => reward.id === id); if (!item) return null;
+    return { kind, id, title: t('Подтвердить трату'), name: item.catalogNameKey ? t(item.catalogNameKey) : item.name, cost: Number(item.cost) || 0, confirm: `${t('Потратить')} ${Number(item.cost) || 0} ${t('золота')}` };
+  }
+  if (kind === 'gear') {
+    const item = gearById(id); if (!item) return null;
+    return { kind, id, title: t('Подтвердить трату'), name: t(item.name), cost: Number(item.cost) || 0, confirm: `${t('Потратить')} ${Number(item.cost) || 0} ${t('золота')}` };
+  }
+  if (kind === 'cosmetic') {
+    const item = cosmeticById(id); if (!item || ownsCosmetic(id)) return null;
+    const cost = cosmeticCost(item);
+    return { kind, id, title: t('Подтвердить трату'), name: `${t(item.name)} · ${t(RARITY[item.rarity].label)}`, cost, confirm: `${t('Потратить')} ${cost} ${t('золота')}` };
+  }
+  if (kind === 'delete-reward') {
+    const item = State.rewards.find((reward) => reward.id === id); if (!item) return null;
+    return { kind, id, title: t('Удалить награду?'), name: item.catalogNameKey ? t(item.catalogNameKey) : item.name, cost: null, confirm: t('Удалить') };
+  }
+  if (kind === 'voucher') {
+    const item = REWARD_CATALOG[Number(id)]; if (!item) return null;
+    return { kind, id: String(id), title: t('Использовать ваучер?'), name: t(item.name), cost: null, confirm: t('Использовать 1 ваучер') };
+  }
+  return null;
+}
+function showEconomyConfirm(kind, id, returnFocus = document.activeElement) {
+  const data = economyConfirmationData(kind, id); if (!data) return null;
+  if (data.cost != null && goldBalance() < data.cost) { toast(t('Недостаточно золота')); return null; }
+  closeAccountDialog('economy-confirm-modal', { restoreFocus: false });
+  const ov = document.createElement('div'); ov.id = 'economy-confirm-modal'; ov.className = 'modal-overlay';
+  ov.dataset.kind = data.kind; ov.dataset.item = data.id;
+  const detail = data.kind === 'delete-reward'
+    ? t('Награда исчезнет из магазина. История прошлых покупок останется.')
+    : data.kind === 'voucher'
+      ? t('Ваучер будет списан, а выбранная награда добавлена в твой личный магазин бесплатно.')
+      : `${t('Баланс после покупки')}: ${Math.max(0, goldBalance() - data.cost)} ${t('золота')}.`;
+  ov.innerHTML = `<section class="economy-confirm-box" role="dialog" aria-modal="true" aria-labelledby="economy-confirm-title" aria-describedby="economy-confirm-detail">
+    <button type="button" class="modal-x" data-action="close-economy-confirm" aria-label="${esc(t('Закрыть'))}">✕</button>
+    <p class="economy-confirm-kicker">${t('Осознанное действие')}</p>
+    <h2 id="economy-confirm-title" tabindex="-1">${esc(data.title)}</h2>
+    <p class="economy-confirm-item">${esc(data.name)}</p>
+    <p id="economy-confirm-detail">${esc(detail)}</p>
+    <p class="economy-confirm-status" role="status" aria-live="polite"></p>
+    <div class="economy-confirm-actions"><button type="button" class="btn" data-action="confirm-economy-action">${esc(data.confirm)}</button><button type="button" class="btn ghost" data-action="close-economy-confirm">${t('Отмена')}</button></div>
+  </section>`;
+  mountAccountDialog(ov, { initial: '#economy-confirm-title', returnFocus });
+  return ov;
+}
+async function commitEconomyConfirmation(overlay) {
+  if (!overlay || overlay._saving) return;
+  const data = economyConfirmationData(overlay.dataset.kind, overlay.dataset.item); if (!data) return;
+  const confirm = overlay.querySelector('[data-action="confirm-economy-action"]');
+  const cancel = overlay.querySelector('[data-action="close-economy-confirm"]:not(.modal-x)');
+  const status = overlay.querySelector('.economy-confirm-status');
+  overlay._saving = true; if (confirm) confirm.disabled = true; if (cancel) cancel.disabled = true;
+  if (status) status.textContent = t('Сохраняю…');
+  let payload = null, apply = null, success = '';
+  if (data.kind === 'reward') {
+    if (goldBalance() < data.cost) { payload = null; status.textContent = t('Недостаточно золота'); }
+    else {
+      const next = [...(State.purchases || []), { id: 'p_' + uid(), rewardId: data.id, name: data.name, cost: data.cost, at: new Date().toISOString() }];
+      payload = { purchases: next }; apply = () => { State.purchases = next; }; success = `${t('Куплено')}: ${data.name}`;
+    }
+  } else if (data.kind === 'gear') {
+    const item = gearById(data.id), currentGear = structuredClone(ensureGear());
+    if (!item || currentGear.owned.includes(data.id) || goldBalance() < data.cost) payload = null;
+    else {
+      currentGear.owned.push(data.id); if (!currentGear.equipped[item.slot]) currentGear.equipped[item.slot] = data.id;
+      const nextSettings = structuredClone(State.settings); nextSettings.gear = currentGear;
+      const nextPurchases = [...(State.purchases || []), { id: 'p_' + uid(), gearId: data.id, name: item.name, cost: data.cost, at: new Date().toISOString() }];
+      payload = { settings: nextSettings, purchases: nextPurchases };
+      apply = () => { State.settings = nextSettings; State.purchases = nextPurchases; }; success = `${t('Получено')}: ${t(item.name)}`;
+    }
+  } else if (data.kind === 'cosmetic') {
+    const item = cosmeticById(data.id);
+    if (!item || ownsCosmetic(data.id) || goldBalance() < data.cost) payload = null;
+    else {
+      const nextSettings = structuredClone(State.settings);
+      nextSettings.cosmetics = Array.isArray(nextSettings.cosmetics) ? nextSettings.cosmetics : [];
+      nextSettings.cosmetics.push(data.id);
+      const nextPurchases = [...(State.purchases || []), { id: 'p_' + uid(), cosmeticId: data.id, name: item.name, cost: data.cost, at: new Date().toISOString() }];
+      payload = { settings: nextSettings, purchases: nextPurchases };
+      apply = () => { State.settings = nextSettings; State.purchases = nextPurchases; }; success = `${t('Получено')}: ${t(item.name)}`;
+    }
+  } else if (data.kind === 'delete-reward') {
+    const next = State.rewards.filter((reward) => reward.id !== data.id);
+    payload = { rewards: next }; apply = () => { State.rewards = next; }; success = t('Награда удалена');
+  } else if (data.kind === 'voucher') {
+    const item = REWARD_CATALOG[Number(data.id)], current = ensureLootbox();
+    if (!item || (Number(current.vouchers) || 0) < 1 || (!isPro() && State.rewards.length >= FREE_REWARDS_MAX)) payload = null;
+    else {
+      const nextLootbox = structuredClone(current); nextLootbox.vouchers -= 1;
+      const nextRewards = [...State.rewards, { id: 'r_' + uid(), name: item.name, catalogNameKey: item.name, icon: item.icon, iconId: item.iconId, cost: item.cost, createdAt: new Date().toISOString() }];
+      payload = { lootbox: nextLootbox, rewards: nextRewards };
+      apply = () => { State.lootbox = nextLootbox; State.rewards = nextRewards; }; success = `${t('Получено')}: ${t(item.name)}`;
+    }
+  }
+  const ok = payload ? await economyCommit(payload) : false;
+  overlay._saving = false;
+  if (!overlay.isConnected) return;
+  if (!ok || !apply) {
+    if (status && !status.textContent.includes(t('Недостаточно золота'))) status.textContent = t('Не удалось сохранить. Ничего не списано — повтори попытку.');
+    if (confirm) { confirm.disabled = false; confirm.focus(); } if (cancel) cancel.disabled = false; return;
+  }
+  apply(); closeAccountDialog('economy-confirm-modal', { restoreFocus: false });
+  document.getElementById('voucher-ov')?.remove();
+  State._rewardsFocusAfterCommit = data.kind === 'reward' ? `[data-action="buy-reward"][data-id="${CSS.escape(data.id)}"]`
+    : data.kind === 'gear' ? `[data-action="equip-gear"][data-id="${CSS.escape(data.id)}"]`
+      : data.kind === 'cosmetic' ? `[data-action="equip-cosmetic"][data-id="${CSS.escape(data.id)}"]`
+        : data.kind === 'delete-reward' ? '.personal-reward-store input[name="name"]' : '.personal-reward-store h3';
+  toast(success); if (data.kind !== 'delete-reward') sfx('coin'); checkAchievements(); render();
 }
 
 // ============================================================
@@ -14394,7 +14628,7 @@ function subscriptionCard() {
   } else if (e.tier === 'trial') {
     cta += `<button class="btn pro-cta" data-action="show-paywall" data-feature="Pro">${t('💎 Оформить Pro насовсем')}</button>`;
   }
-  const feats = ['📊 Расширенная аналитика и Индекс баланса', '🎁 До 3 сундуков в день + редкие дропы', '🧍 Живой персонаж и кастомизация (скоро)', '🤖 ИИ-ассистент (на своём ключе — есть бесплатные)', '🎨 Темы оформления (скоро)'];
+  const feats = ['📊 Расширенная аналитика и Индекс баланса', '💛 Pro не меняет награды, вероятность, XP или золото', '🧍 Живой персонаж и кастомизация (скоро)', '🤖 ИИ-ассистент (на своём ключе — есть бесплатные)', '🎨 Темы оформления (скоро)'];
   return `<div class="card sub-card">
     <h3>${t('Подписка —')} <span class="tier-badge tier-${e.tier}">${tierLabel}</span></h3>
     <ul class="pro-feats">${feats.map((f) => `<li>${t(f)}</li>`).join('')}</ul>
@@ -14885,7 +15119,7 @@ const FEATURE_REGISTRY = [
   { ev: 'tree:aimap-apply', label: '🤖 Личная карта вех' },
   { ev: 'shortcut:dayrec', label: 'Ярлык «Итог дня» (телефон)' },
   { ev: 'shortcut:capture', label: 'Ярлык «Заметка» (телефон)' },
-  { ev: 'chest:open', label: 'Открыть сундук' },
+  { ev: 'reward:open', label: 'Получить дневную награду' },
   { ev: 'reward:buy', label: 'Купить награду' },
   { ev: 'pet:feed', label: 'Покормить питомца' },
   { ev: 'oath:take', label: 'Клятва Кремню' },
@@ -14945,7 +15179,7 @@ function showPaywall(feature) {
     <p class="muted">${t('Открой глубину игры. Ядро всегда бесплатно — Pro добавляет силу.')}</p>
     <ul class="pro-feats">
       <li>${t('📊 Расширенная аналитика и Индекс баланса')}</li>
-      <li>${t('🎁 До 3 сундуков в день + редкие дропы')}</li>
+      <li>${t('💛 Pro не меняет награды, вероятность, XP или золото')}</li>
       <li>${t('🧍 Живой персонаж и кастомизация (скоро)')}</li>
       <li>${t('🤖 ИИ-ассистент (на своём ключе — есть бесплатные)')}</li>
       <li>${t('🎨 Темы оформления (скоро)')}</li></ul>
@@ -14989,7 +15223,7 @@ const GUIDE_SECTIONS = [
   { group: 'Глубина', icon: '🐾', title: 'Питомцы', text: 'Каждая основная сфера — питомец. Кормишь его делами в этой сфере. Забросил — голодает; перекосил всё в одну сферу — разжиреет. Это мягкий сигнал держать десятиборье, а не расти в одну сторону.' },
 
   // ── Награды и азарт ──
-  { group: 'Награды и азарт', icon: '🎁', title: 'Награды и сундуки', text: 'Золото тратится в магазине наград — придумай свои, настоящие (кино, доставка, выходной без дел). За активность дня падают сундуки: золото, бусты опыта, косметика, титулы. Неоткрытые сундуки не пропадают — переносятся на следующие дни.' },
+  { group: 'Награды без ставок', icon: '🎁', title: 'Личные и дневные награды', text: 'Золото тратится в личном магазине — придумай настоящую ценность (кино, доставка, выходной без дел). За 1 и 3 реальных дела выдаётся известное золото; за 5 — заработанный сундук косметики с открытыми шансами и без дублей. Он не даёт силу, платных попыток нет, Free и Pro используют один набор.' },
   { group: 'Награды и азарт', icon: '🔥', title: 'Хайп', text: 'Выполнил 🔥 сложный квест — включается Хайп: +15% опыта за стак, до +45%, на два часа. Каждый следующий сложный квест усиливает и продлевает. Это награда за то, что лезешь в трудное, а не фармишь лёгкое.' },
   { group: 'Награды и азарт', icon: '🏅', title: 'Достижения и звания', text: 'Больше полусотни достижений, у каждого своё звание — их можно носить. Часть выдаётся за то, о чём не догадываешься: загляни в Награды.' },
 
@@ -15161,14 +15395,6 @@ function gearBonus(skillId) {
   if (relic && skillId && skillInSphere(skillId, relic.sphere)) xpPct += relic.xpPct || 0;
   return { xpPct, hardXpPct, goldPct };
 }
-const RELIC_ICONS = { common: '🔱', rare: '🔯', epic: '🔮' };
-// Сгенерировать реликвию, привязанную к случайной основной сфере (для дропа из сундука).
-function genRelic(rarity) {
-  const tops = topSkills(); if (!tops.length) return null;
-  const sphere = tops[Math.floor(Math.random() * tops.length)];
-  const xp = { common: 6, rare: 10, epic: 16 }[rarity] || 6;
-  return { uid: 'rel_' + uid(), sphere: sphere.id, xpPct: xp, rarity, name: `Реликвия: ${sphere.name}`, icon: RELIC_ICONS[rarity] || '🔱' };
-}
 function gearBonusLabel(it) { return it.xpPct ? `+${it.xpPct}% XP` : it.hardXpPct ? `+${it.hardXpPct}% XP к сложным` : `+${it.goldPct}% золота`; }
 function gearInventoryArtHTML(it) {
   if (!it.inventoryArt) return satoruIconHTML(`gear.${it.id}`, 'gear-content-icon', it.icon);
@@ -15199,13 +15425,13 @@ function arsenalCard() {
         <div class="gear-nm">${esc(skillById(r.sphere).name)}</div>
         <div class="gear-bonus" style="color:${rar.color}">+${r.xpPct}% XP сферы</div>
         <button class="btn ${on ? '' : 'ghost'} sm" data-action="equip-relic" data-uid="${r.uid}">${on ? '✓ Надето' : 'Надеть'}</button></div>`; }).join('')
-    : `<p class="muted" style="font-size:12px;margin:4px 2px 0">Реликвии падают из сундуков — каждая усиливает XP <b>конкретной сферы</b>.</p>`;
+    : `<p class="muted" style="font-size:12px;margin:4px 2px 0">${t('Новые дневные награды не выдают случайную силу. Здесь остаются только ранее заработанные реликвии.')}</p>`;
   const relicSlot = `<div class="gear-slot"><div class="gear-slot-h">${satoruIconHTML('gear.m3', 'slot-emblem', '◇')} Реликвии (сфера-привязка)</div><div class="gear-row">${relicItems}</div></div>`;
   const sum = (gb.xpPct || gb.hardXpPct || gb.goldPct)
     ? `<p class="gear-sum">Надето: ${[gb.xpPct ? `+${gb.xpPct}% XP` : '', gb.hardXpPct ? `+${gb.hardXpPct}% XP к сложным` : '', gb.goldPct ? `+${gb.goldPct}% золота` : ''].filter(Boolean).join(' · ')}</p>`
     : `<p class="gear-sum muted">Ничего не надето — снаряжение усилит рост.</p>`;
-  return `<div class="card"><h3>${satoruIconHTML('difficulty.normal', 'heading-emblem', '◇')} Арсенал — снаряжение</h3>
-    <p class="muted" style="font-size:12px;margin:0 0 6px">Покупай за золото <b>или выбивай из сундуков</b> и надевай гир — он пассивно усиливает XP и золото (сверх косметики). По 1 предмету на слот. Реликвии бустят конкретную сферу.</p>
+  return `<div class="card"><h3>${satoruIconHTML('difficulty.normal', 'heading-emblem', '◇')} ${t('Арсенал — снаряжение')}</h3>
+    <p class="muted" style="font-size:12px;margin:0 0 6px">${t('Снаряжение покупается за заранее указанную цену. Дневные награды не выдают случайную силу; Free и Pro используют одни правила.')}</p>
     ${sum}${slotHtml}${relicSlot}</div>`;
 }
 
@@ -15216,12 +15442,12 @@ function renderRewards() {
   const achGot = ACHIEVEMENTS.filter((a) => State.achievements[a.id]).length;
   const rewardHero = `<section class="card reward-hero">
       <div>
-        <span class="th-kicker">Season path</span>
-        <h2>Награды должны чувствоваться как прогресс.</h2>
-        <p class="muted">Сундуки, коллекция, арсенал и личные награды теперь собраны как единый locker / battle-pass слой, без казино-вайба.</p>
+        <span class="th-kicker">${t('Честная экономика')}</span>
+        <h2>${t('Награда следует за реальным действием.')}</h2>
+        <p class="muted">${t('Сначала выбери личную ценность. Золото известно заранее, а заработанный сундук сохраняет короткий косметический сюрприз — без ставок, силы и платных попыток.')}</p>
         <div class="th-actions">
-          ${chestReady ? `<button class="btn" data-action="open-chest">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} Открыть сундук ×${chestReady}</button>` : `<button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} Каталог наград</button>`}
-          <button class="btn ghost" data-action="goto-today">${satoruIconHTML('nav.today', 'button-glyph', '🎯')} К делам</button>
+          ${chestReady ? `<button class="btn" data-action="open-chest">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Получить награду')} ×${chestReady}</button>` : `<button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} ${t('Каталог наград')}</button>`}
+          <button class="btn ghost" data-action="goto-today">${satoruIconHTML('nav.today', 'button-glyph', '🎯')} ${t('К делам')}</button>
         </div>
       </div>
       <div class="reward-track-preview" aria-hidden="true">
@@ -15229,10 +15455,10 @@ function renderRewards() {
       </div>
     </section>`;
   const cards = State.rewards.map((r) => `<div class="reward">
-      <div class="rw-icon">${rewardIconHTML(r, 'reward-content-icon')}</div><div class="rw-name">${esc(r.name)}</div>
+      <div class="rw-icon">${rewardIconHTML(r, 'reward-content-icon')}</div><div class="rw-name">${esc(r.catalogNameKey ? t(r.catalogNameKey) : r.name)}</div>
       <div class="rw-cost">${satoruIconHTML('status.gold', 'cost-emblem', '🪙')} ${r.cost}</div>
-      <button class="btn ${bal >= r.cost ? '' : 'disabled'}" data-action="buy-reward" data-id="${r.id}" ${bal >= r.cost ? '' : 'disabled'}>Купить</button>
-      <button class="del" data-action="delete-reward" data-id="${r.id}" title="Удалить">✕</button></div>`).join('');
+      <button class="btn ${bal >= r.cost ? '' : 'disabled'}" data-action="buy-reward" data-id="${r.id}" ${bal >= r.cost ? '' : 'disabled'}>${t('Купить')}</button>
+      <button class="del" data-action="delete-reward" data-id="${r.id}" aria-label="${esc(t('Удалить'))}: ${esc(r.catalogNameKey ? t(r.catalogNameKey) : r.name)}">✕</button></div>`).join('');
   const history = (State.purchases || []).slice().reverse().slice(0, 8).map((p) => {
     const purchaseName = p.denNameKey ? `${t('Логово')}: ${t(p.denNameKey)}` : p.name;
     return `<li><span class="muted">${(p.at || '').slice(0, 10)}</span> ${esc(purchaseName)} — ${satoruIconHTML('status.gold', 'inline-emblem', '◇')} ${p.cost}</li>`;
@@ -15243,10 +15469,31 @@ function renderRewards() {
     if (!got && a.prog) { try { const p = a.prog(); pr = `<div class="ach-prog">${p.cur}/${p.target}</div>`; } catch {} }
     return `<div class="ach ${got ? 'got' : ''}"><div class="ach-icon">${satoruIconHTML(`achievement.${a.id}`, 'achievement-content-icon', a.icon)}</div><div class="ach-title">${esc(a.title)}</div><div class="ach-desc">${esc(a.desc)}</div>${got ? `<div class="ach-date">${State.achievements[a.id].slice(0, 10)}</div>` : pr}</div>`;
   }).join('');
+  const personalStore = `<section class="card personal-reward-store"><h3>${satoruIconHTML('reward.shop', 'heading-glyph', '◇')} ${t('Личные награды')}</h3>
+    <p class="muted">${t('Главная ценность выбирается тобой: кино, прогулка, книга или собственная награда за честно заработанное золото.')}</p>
+    <div class="rewards-grid">${cards || `<p class="muted">${t('Наград пока нет — выбери готовую из каталога или добавь свою.')}</p>`}</div>
+    <div class="settings-actions"><button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} ${t('Каталог наград')}</button>${!isPro() ? `<span class="muted reward-limit">${State.rewards.length}/${FREE_REWARDS_MAX} · Free</span>` : ''}</div>
+    <form id="add-reward" class="reward-form">
+      <label><span>${t('Название награды')}</span><input name="name" aria-label="${esc(t('Название награды'))}" autocomplete="off" maxlength="120" required /></label>
+      <label><span>${t('Образ')}</span><select name="iconId" class="reward-icon-select">
+        <option value="reward.wishlist">${t('Сундук мечты')}</option><option value="reward.coffee">${t('Кофе')}</option>
+        <option value="reward.game">${t('Игры')}</option><option value="reward.movie">${t('Кино')}</option>
+        <option value="reward.book">${t('Книга')}</option><option value="reward.walk">${t('Прогулка')}</option>
+        <option value="reward.music">${t('Музыка')}</option><option value="reward.vacation">${t('Путешествие')}</option>
+      </select></label>
+      <label><span>${t('Цена в золоте')}</span><input name="cost" type="number" min="1" max="100000" value="100" /></label>
+      <button type="submit">${t('+ Добавить награду')}</button>
+    </form></section>`;
+  const economyRules = `<section class="card economy-rules" aria-labelledby="economy-rules-title"><h3 id="economy-rules-title">${t('Границы экономики')}</h3><ul>
+    <li>${t('Самооценка сложности и настроения не меняет выплату.')}</li>
+    <li>${t('Бонус XP ограничен +60%, бонус золота +40%, множитель сложности максимум ×1,75.')}</li>
+    <li>${t('Любая трата или удаление требует подтверждения и сохраняется до изменения экрана.')}</li>
+  </ul></section>`;
   return `
     <div class="rewards-shell">
     ${rewardHero}
-    ${lootboxCard()}
+    <div class="rewards-primary-grid">${personalStore}${lootboxCard()}</div>
+    ${economyRules}
     ${collectionCard()}
     ${arsenalCard()}
     <div class="kpis">
@@ -15254,18 +15501,6 @@ function renderRewards() {
       <div class="kpi"><div class="v">${ownedCos}/${COSMETICS.length}</div><div class="l">${t('Косметики')}</div></div>
       <div class="kpi"><div class="v">${achGot}/${ACHIEVEMENTS.length}</div><div class="l">${t('Достижений')}</div></div>
     </div>
-    <div class="card"><h3>${satoruIconHTML('reward.shop', 'heading-glyph', '◇')} Магазин наград</h3><div class="rewards-grid">${cards || '<p class="muted">Наград пока нет — возьми готовые из каталога ↓</p>'}</div>
-      <div class="settings-actions" style="margin:10px 0 4px"><button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} ${t('Каталог наград')}</button>${!isPro() ? `<span class="muted" style="font-size:12px">${State.rewards.length}/${FREE_REWARDS_MAX} наград (Free)</span>` : ''}</div>
-      <form id="add-reward" class="reward-form">
-        <input name="name" placeholder="Своя награда…" autocomplete="off" required />
-        <select name="iconId" class="reward-icon-select" aria-label="Образ награды">
-          <option value="reward.wishlist">Сундук мечты</option><option value="reward.coffee">Кофе</option>
-          <option value="reward.game">Игры</option><option value="reward.movie">Кино</option>
-          <option value="reward.book">Книга</option><option value="reward.walk">Прогулка</option>
-          <option value="reward.music">Музыка</option><option value="reward.vacation">Путешествие</option>
-        </select>
-        <input name="cost" type="number" min="1" value="100" style="width:90px" />
-        <button type="submit">${t('+ Добавить награду')}</button></form></div>
     <div class="card"><h3>${t('История покупок')}</h3>${history ? `<ul class="reflections">${history}</ul>` : '<p class="muted">Пока ничего не куплено.</p>'}</div>
     <div class="card"><h3>${satoruIconHTML('system.achievement', 'heading-emblem', '🏆')} ${t('Достижения')}</h3><div class="ach-grid">${achs}</div></div></div>`;
 }
@@ -15635,7 +15870,7 @@ function renderSettings() {
     ${groupStart('experience', 'Опыт', 'Язык, тема, звук и присутствие Тени')}
     <div class="card"><h3>${t('Название')}</h3><label class="settings-inline-field"><span>${t('Имя приложения')}</span><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></label></div>
     <div class="card"><h3>${t('🔊 Звук')}</h3>
-      <label class="sound-toggle"><input type="checkbox" data-action="toggle-sound" ${sfxOn() ? 'checked' : ''}/> ${t('Звуки интерфейса (выполнение квеста, левелап, дроп из сундука, покупка)')}</label>
+      <label class="sound-toggle"><input type="checkbox" data-action="toggle-sound" ${sfxOn() ? 'checked' : ''}/> ${t('Звуки интерфейса (выполнение квеста, левелап, награда, покупка)')}</label>
       ${ttsOK() ? `<label class="sound-toggle"><input type="checkbox" data-action="toggle-tts" ${ttsOn() ? 'checked' : ''}/> ${t('Кнопка 🔊 — озвучить голосом Тени (реплики, подсказки, ответы Помощника)')}</label>` : ''}
       ${ttsOK() && ttsOn() ? `<div class="tts-settings">
         ${shadowVoiceSettingsHTML()}
@@ -16298,6 +16533,14 @@ function afterMainCommit() {
       if (target) focusPathChoiceTarget(target);
     });
   }
+  if (State._rewardsFocusAfterCommit && State.view === 'rewards') {
+    const selector = State._rewardsFocusAfterCommit;
+    State._rewardsFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const target = document.querySelector(selector) || document.getElementById('daily-reward-title') || document.querySelector('.rewards-shell h2');
+      if (target) focusPathChoiceTarget(target);
+    });
+  }
   if (State._calendarFocusAfterCommit && (State.view === 'calendar' || State.view === 'weekly')) {
     const selector = State._calendarFocusAfterCommit;
     State._calendarFocusAfterCommit = '';
@@ -16819,25 +17062,27 @@ async function onSubmit(e) {
   } else if (f.id === 'add-reward') {
     e.preventDefault(); const name = f.name.value.trim(); if (!name) return;
     if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
-    State.rewards.push({ id: 'r_' + uid(), name, iconId: f.iconId.value || 'reward.wishlist', cost: Math.max(1, Number(f.cost.value) || 1), createdAt: new Date().toISOString() });
-    Store.save('rewards', State.rewards); render();
+    const submit = f.querySelector('button[type="submit"]'); if (submit) submit.disabled = true;
+    const next = [...State.rewards, { id: 'r_' + uid(), name, iconId: f.iconId.value || 'reward.wishlist', cost: Math.max(1, Number(f.cost.value) || 1), createdAt: new Date().toISOString() }];
+    if (await economyCommit({ rewards: next })) { State.rewards = next; State._rewardsFocusAfterCommit = '.personal-reward-store input[name="name"]'; render(); }
+    else { toast(t('Не удалось сохранить. Ничего не изменилось — повтори попытку.')); if (submit) submit.disabled = false; }
   }
 }
 
 // Модалка каталога предустановленных наград
 function openRewardCatalog() {
   if (document.getElementById('rw-catalog')) return;
-  const have = new Set(State.rewards.map((r) => r.name));
+  const have = new Set(State.rewards.map((r) => r.catalogNameKey || r.name));
   const rows = REWARD_CATALOG.map((c, i) => `<div class="rwc-row">
-      <span class="rwc-ic">${rewardIconHTML(c, 'reward-catalog-icon')}</span><span class="rwc-name">${esc(c.name)}</span><span class="rwc-cost">${satoruIconHTML('status.gold', 'inline-emblem', '◇')} ${c.cost}</span>
-      ${have.has(c.name) ? '<span class="muted" style="font-size:12px">добавлено ✓</span>' : `<button class="btn ghost sm" data-action="add-catalog-reward" data-idx="${i}">+ Добавить</button>`}
+      <span class="rwc-ic">${rewardIconHTML(c, 'reward-catalog-icon')}</span><span class="rwc-name">${esc(t(c.name))}</span><span class="rwc-cost">${satoruIconHTML('status.gold', 'inline-emblem', '◇')} ${c.cost}</span>
+      ${have.has(c.name) ? `<span class="muted rwc-added">${t('Добавлено')} ✓</span>` : `<button class="btn ghost sm" data-action="add-catalog-reward" data-idx="${i}">${t('+ Добавить')}</button>`}
     </div>`).join('');
   const ov = document.createElement('div'); ov.id = 'rw-catalog'; ov.className = 'modal-overlay';
-  ov.innerHTML = `<div class="guide-box"><button class="modal-x" data-action="close-reward-catalog">✕</button>
-    <h2>${satoruIconHTML('nav.skills', 'heading-glyph', '◇')} ${t('Каталог наград')}</h2>
-    <p class="muted">Готовые награды с откалиброванными ценами — как дроп с босса. Добавь свои в форме на странице наград.</p>
-    <div class="rwc-list">${rows}</div></div>`;
-  document.body.appendChild(ov);
+  ov.innerHTML = `<section class="guide-box reward-catalog-box" role="dialog" aria-modal="true" aria-labelledby="reward-catalog-title" aria-describedby="reward-catalog-desc"><button type="button" class="modal-x" data-action="close-reward-catalog" aria-label="${esc(t('Закрыть'))}">✕</button>
+    <h2 id="reward-catalog-title" tabindex="-1">${satoruIconHTML('nav.skills', 'heading-glyph', '◇')} ${t('Каталог наград')}</h2>
+    <p class="muted" id="reward-catalog-desc">${t('Готовые личные награды с заранее указанной ценой. Добавь свою награду в форме на странице.')}</p>
+    <div class="rwc-list">${rows}</div></section>`;
+  mountAccountDialog(ov, { initial: '#reward-catalog-title', returnFocus: document.activeElement });
 }
 
 // ── Гайд «Тень ведёт тебя» (ONBOARDING-PLAN.md, Фаза 1+2) ──
@@ -17090,7 +17335,7 @@ function onClick(e) {
   }
 
   // --- Лутбоксы / Pro / Paywall ---
-  if (action === 'open-chest') { track('chest:open'); openChest(); return; }
+  if (action === 'open-chest') { track('reward:open'); openChest(el); return; }
   if (action === 'equip-title') {
     const eq = ensureCosmetics(), t = el.dataset.title || null;
     eq.title = (!t || eq.title === t) ? null : t; Store.save('settings', State.settings); render(); return;
@@ -17100,6 +17345,7 @@ function onClick(e) {
     const eq = ensureCosmetics(), ty = cosmeticType(el.dataset.id);
     eq[ty] = (eq[ty] === el.dataset.id) ? null : el.dataset.id; Store.save('settings', State.settings); render(); return;
   }
+  if (action === 'buy-cosmetic') { showEconomyConfirm('cosmetic', el.dataset.id, el); return; }
   if (action === 'toggle-sound') { State.settings.sound = !!el.checked; autosaveSettings(); if (el.checked) sfx('complete'); return; }
   if (action === 'tts') { ttsSpeak(ttsTextNear(el), el, ttsContextNear(el)); return; }
   if (action === 'tts-preview') {
@@ -17404,14 +17650,7 @@ function onClick(e) {
     const it = gearById(id); if (!it) return;
     const g = ensureGear(); if (g.owned.includes(id)) return;
     if (charLevel() < it.lvl) { toast(`🔒 Откроется на ур.${it.lvl}`); return; }
-    if (goldBalance() < it.cost) { toast('Недостаточно золота'); return; }
-    g.owned.push(id);
-    if (!g.equipped[it.slot]) g.equipped[it.slot] = id; // авто-надеть в пустой слот
-    State.purchases = State.purchases || [];
-    State.purchases.push({ id: 'p_' + uid(), gearId: id, name: it.name, cost: it.cost, at: new Date().toISOString() });
-    Store.save('settings', State.settings); Store.save('purchases', State.purchases);
-    if (systemMode()) systemNarrate('ПРЕДМЕТ ПОЛУЧЕН', `${it.icon} ${it.name} · ${gearBonusLabel(it)}`); else toast(`⚔️ Получено: ${it.name}`);
-    sfx('coin'); checkAchievements(); render(); return;
+    showEconomyConfirm('gear', id, el); return;
   }
   if (action === 'equip-gear') {
     const it = gearById(id); if (!it) return; const g = ensureGear();
@@ -17484,41 +17723,32 @@ function onClick(e) {
   if (action === 'close-reports') { const r = document.getElementById('reports'); if (r) r.remove(); return; }
   if (action === 'close-userdata') { const r = document.getElementById('userdata'); if (r) r.remove(); return; }
   if (action === 'open-reward-catalog') { openRewardCatalog(); return; }
-  if (action === 'close-reward-catalog') { const r = document.getElementById('rw-catalog'); if (r) r.remove(); render(); return; }
-  if (action === 'open-loot-editor') { showLootEditor(); return; }
-  if (action === 'close-loot-editor') { const e = document.getElementById('loot-editor-ov'); if (e) e.remove(); return; }
-  if (action === 'save-loot-weights') {
-    const edOv = document.getElementById('loot-editor-ov'); if (!edOv) return;
-    const lb = ensureLootbox(), weights = {};
-    edOv.querySelectorAll('.le-inp').forEach(inp => { const v = parseFloat(inp.value); if (!isNaN(v) && v >= 0) weights[inp.dataset.letype] = v; });
-    lb.customWeights = weights; Store.save('lootbox', lb);
-    edOv.remove(); toast(t('✓ Дроп-рейты сохранены')); return;
-  }
-  if (action === 'reset-loot-weights') {
-    if (!confirm('Сбросить настройки дропа к значениям по умолчанию?')) return;
-    const lb = ensureLootbox(); delete lb.customWeights; Store.save('lootbox', lb);
-    const edOv = document.getElementById('loot-editor-ov'); if (edOv) edOv.remove();
-    toast(t('Дроп-рейты сброшены')); return;
-  }
+  if (action === 'close-reward-catalog') { closeAccountDialog('rw-catalog'); return; }
+  if (action === 'retry-daily-reward') { commitDailyRewardDialog(el.closest('#loot-modal')); return; }
+  if (action === 'skip-capsule-reveal') { revealCosmeticCapsule(el.closest('#loot-modal')); return; }
+  if (action === 'claim-daily-reward' || action === 'close-daily-reward') { closeAccountDialog('loot-modal', { restoreFocus: false }); State._rewardsFocusAfterCommit = '.daily-reward-card .lb-chest, #daily-reward-title'; render(); return; }
+  if (action === 'close-economy-confirm') { closeAccountDialog('economy-confirm-modal'); return; }
+  if (action === 'confirm-economy-action') { commitEconomyConfirmation(el.closest('#economy-confirm-modal')); return; }
   if (action === 'use-voucher') { showVoucherReward(); return; }
-  if (action === 'close-voucher') { const v = document.getElementById('voucher-ov'); if (v) v.remove(); return; }
+  if (action === 'close-voucher') { closeAccountDialog('voucher-ov'); return; }
   if (action === 'redeem-voucher') {
     const lb = ensureLootbox();
     if (!lb.vouchers || lb.vouchers < 1) { toast(t('Нет ваучеров')); return; }
     const c = REWARD_CATALOG[Number(el.dataset.idx)]; if (!c) return;
     if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
-    lb.vouchers--; Store.save('lootbox', lb);
-    State.rewards.push({ id: 'r_' + uid(), name: c.name, icon: c.icon, iconId: c.iconId, cost: c.cost, createdAt: new Date().toISOString() });
-    Store.save('rewards', State.rewards);
-    const vOv = document.getElementById('voucher-ov'); if (vOv) vOv.remove();
-    toast(`«${c.name}» получено бесплатно!`); render(); return;
+    showEconomyConfirm('voucher', el.dataset.idx, el); return;
   }
   if (action === 'add-catalog-reward') {
     if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
     const c = REWARD_CATALOG[Number(el.dataset.idx)]; if (!c) return;
-    State.rewards.push({ id: 'r_' + uid(), name: c.name, icon: c.icon, iconId: c.iconId, cost: c.cost, createdAt: new Date().toISOString() });
-    Store.save('rewards', State.rewards); toast(`«${c.name}» в магазине`);
-    const m = document.getElementById('rw-catalog'); if (m) m.remove(); openRewardCatalog(); return;
+    const next = [...State.rewards, { id: 'r_' + uid(), name: c.name, catalogNameKey: c.name, icon: c.icon, iconId: c.iconId, cost: c.cost, createdAt: new Date().toISOString() }];
+    el.disabled = true;
+    economyCommit({ rewards: next }).then((ok) => {
+      if (!ok) { toast(t('Не удалось сохранить. Ничего не изменилось — повтори попытку.')); el.disabled = false; return; }
+      State.rewards = next; toast(`«${t(c.name)}» ${t('в личном магазине')}`);
+      closeAccountDialog('rw-catalog', { restoreFocus: false }); State._rewardsFocusAfterCommit = `[data-action="buy-reward"][data-id="${CSS.escape(next[next.length - 1].id)}"]`; render();
+    });
+    return;
   }
   if (action === 'restore-backup') {
     const name = el.dataset.name, user = el.dataset.user;
@@ -17901,11 +18131,9 @@ function onClick(e) {
   // --- Награды ---
   } else if (action === 'buy-reward') { track('reward:buy');
     const r = State.rewards.find((x) => x.id === id); if (!r) return;
-    if (goldBalance() < r.cost) { toast('Недостаточно золота'); return; }
-    State.purchases.push({ id: 'p_' + uid(), rewardId: r.id, name: r.name, cost: r.cost, at: new Date().toISOString() });
-    Store.save('purchases', State.purchases); toast(`Куплено: ${r.name} 🎉`); sfx('coin'); checkAchievements(); render();
+    showEconomyConfirm('reward', id, el); return;
   } else if (action === 'delete-reward') {
-    State.rewards = State.rewards.filter((x) => x.id !== id); Store.save('rewards', State.rewards); render();
+    showEconomyConfirm('delete-reward', id, el); return;
 
   // --- Неделя ---
   } else if (action === 'week-prev' || action === 'week-next') {

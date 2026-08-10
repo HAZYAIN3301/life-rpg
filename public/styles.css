@@ -5166,7 +5166,7 @@ html.avatar-forge-open body { overflow: hidden !important; }
   right: 18px;
   bottom: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent-2) 58%, transparent), color-mix(in srgb, var(--legendary) 36%, transparent), transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent-2) 58%, transparent), color-mix(in srgb, var(--rarity-legendary) 36%, transparent), transparent);
   opacity: .74;
   pointer-events: none;
 }
@@ -5261,7 +5261,7 @@ html.avatar-forge-open body { overflow: hidden !important; }
   grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   background:
-    linear-gradient(90deg, color-mix(in srgb, var(--legendary) 9%, transparent), transparent 40%),
+    linear-gradient(90deg, color-mix(in srgb, var(--rarity-legendary) 9%, transparent), transparent 40%),
     color-mix(in srgb, var(--surface-2) 94%, transparent);
 }
 
@@ -5518,12 +5518,12 @@ html.avatar-forge-open body { overflow: hidden !important; }
   border-radius: 13px;
   font-weight: 900;
   color: #08111c;
-  background: linear-gradient(135deg, var(--accent-2), var(--legendary));
+  background: linear-gradient(135deg, var(--accent-2), var(--rarity-legendary));
   box-shadow: 0 10px 24px rgba(0,0,0,.24);
 }
 
 .hb-law.break .hb-lawn {
-  background: linear-gradient(135deg, #ff7a8a, var(--epic));
+  background: linear-gradient(135deg, #ff7a8a, var(--rarity-epic));
   color: white;
 }
 
@@ -6051,7 +6051,7 @@ html.avatar-forge-open body { overflow: hidden !important; }
   display: block;
   height: 3px;
   margin: -16px -16px 14px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--legendary));
+  background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--rarity-legendary));
   opacity: .48;
 }
 
@@ -6225,7 +6225,7 @@ html.avatar-forge-open body { overflow: hidden !important; }
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent-2), var(--accent), var(--legendary));
+  background: linear-gradient(90deg, var(--accent-2), var(--accent), var(--rarity-legendary));
   box-shadow: 0 0 22px color-mix(in srgb, var(--accent) 30%, transparent);
 }
 
@@ -6322,9 +6322,9 @@ html.avatar-forge-open body { overflow: hidden !important; }
 }
 
 .raid-card.won {
-  border-color: color-mix(in srgb, var(--legendary) 58%, var(--line-soft));
+  border-color: color-mix(in srgb, var(--rarity-legendary) 58%, var(--line-soft));
   background:
-    radial-gradient(380px 200px at 50% 0%, color-mix(in srgb, var(--legendary) 20%, transparent), transparent 70%),
+    radial-gradient(380px 200px at 50% 0%, color-mix(in srgb, var(--rarity-legendary) 20%, transparent), transparent 70%),
     color-mix(in srgb, var(--surface-2) 92%, transparent);
 }
 
@@ -6350,7 +6350,7 @@ html.avatar-forge-open body { overflow: hidden !important; }
 }
 
 .raid-weak {
-  color: var(--legendary);
+  color: var(--rarity-legendary);
 }
 
 .raid-claim {
@@ -6472,7 +6472,7 @@ html.avatar-forge-open body { overflow: hidden !important; }
 }
 
 .lb-pos {
-  color: var(--legendary);
+  color: var(--rarity-legendary);
 }
 
 .lb-av {
@@ -6604,9 +6604,9 @@ html.avatar-forge-open body { overflow: hidden !important; }
 }
 
 .event-hero.is-won {
-  border-color: color-mix(in srgb, var(--legendary) 70%, var(--line-soft));
+  border-color: color-mix(in srgb, var(--rarity-legendary) 70%, var(--line-soft));
   background:
-    radial-gradient(440px 270px at 84% 34%, color-mix(in srgb, var(--legendary) 24%, transparent), transparent 70%),
+    radial-gradient(440px 270px at 84% 34%, color-mix(in srgb, var(--rarity-legendary) 24%, transparent), transparent 70%),
     radial-gradient(430px 240px at 2% 0%, color-mix(in srgb, var(--good) 16%, transparent), transparent 72%),
     linear-gradient(128deg, color-mix(in srgb, var(--surface-3) 92%, #050816), color-mix(in srgb, var(--surface-1) 96%, #050816));
 }
@@ -6829,7 +6829,7 @@ html.avatar-forge-open body { overflow: hidden !important; }
   min-height: 42px;
   margin-top: 12px;
   font-weight: 900;
-  box-shadow: 0 9px 22px color-mix(in srgb, var(--legendary) 22%, transparent);
+  box-shadow: 0 9px 22px color-mix(in srgb, var(--rarity-legendary) 22%, transparent);
 }
 
 .party-empty-hero {
@@ -14014,4 +14014,175 @@ html.calendar-task-open body {
   .account-dialog-box *,
   .account-dialog-box *::before,
   .account-dialog-box *::after { animation: none !important; transition-duration: 0ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important; }
+}
+
+/* ============================================================
+   Rewards & economy v124 — earned value and ethical surprise
+   ============================================================ */
+.rewards-shell { --reward-earned-fg: #ffd479; --reward-earned-border: var(--rarity-legendary); }
+:root[data-theme="light"] .rewards-shell { --reward-earned-fg: #6f4700; --reward-earned-border: #805100; }
+.rewards-shell .reward-hero .th-kicker,
+.economy-confirm-kicker,
+.loot-earned-label { color: var(--reward-earned-fg); }
+.daily-reward-card .lb-head { align-items: flex-start; }
+.daily-reward-randomness {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--good);
+  border-radius: var(--radius-pill);
+  color: var(--text-strong);
+  background: color-mix(in srgb, var(--good) 9%, var(--surface-2));
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+  font-weight: 800;
+}
+.daily-reward-card .lb-body { display: grid; grid-template-columns: minmax(130px, 160px) minmax(0, 1fr); align-items: stretch; }
+.daily-reward-card .lb-chest {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 132px;
+  margin: 0;
+  color: var(--text-strong);
+  font: inherit;
+}
+.daily-reward-card .lb-chest.ready {
+  border-color: var(--reward-earned-border);
+  background: color-mix(in srgb, var(--reward-earned-border) 9%, var(--surface-2));
+  animation: none;
+}
+.daily-reward-card .lb-chest.ready .lb-emoji,
+.daily-reward-card .lb-chest.ready .lb-emblem,
+.rewards-shell .reward-track-preview span.ready { animation: none; }
+.daily-reward-card .lb-info { min-width: 0; }
+.daily-reward-card .lb-next { margin: 0 0 var(--sp-2); color: var(--text-strong); }
+.daily-reward-fairness { margin: var(--sp-2) 0; padding: var(--sp-2); border-inline-start: 3px solid var(--good); color: var(--text-strong); background: color-mix(in srgb, var(--good) 7%, var(--surface-2)); }
+.daily-reward-track { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-2); margin: var(--sp-3) 0 0; padding: 0; list-style: none; }
+.daily-reward-step { display: grid; min-width: 0; gap: var(--sp-1); padding: var(--sp-2); border: 1px solid var(--line-soft); border-radius: var(--radius-sm); color: var(--text-soft); background: var(--surface-2); }
+.daily-reward-step.is-earned { border: 2px solid var(--reward-earned-border); color: var(--text-strong); }
+.daily-reward-step.is-collected { border-style: double; border-width: 3px; color: var(--text-strong); }
+.daily-reward-step .reward-step-state { font-size: var(--type-meta); line-height: var(--leading-label); font-weight: 800; }
+.capsule-odds { margin-top: var(--sp-3); border: 1px solid var(--line-soft); border-radius: var(--radius-sm); background: var(--surface-2); }
+.capsule-odds > summary { min-height: var(--touch-min); padding: var(--sp-2); color: var(--text-strong); font-weight: 800; cursor: pointer; }
+.capsule-odds > p { margin: 0; padding: 0 var(--sp-2) var(--sp-2); color: var(--text-soft); line-height: var(--leading-prose); }
+.capsule-odds ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); margin: 0; padding: 0 var(--sp-2) var(--sp-2); list-style: none; }
+.capsule-odds li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-1) var(--sp-2); min-width: 0; padding: var(--sp-2); border: 1px solid var(--rarity-common); border-radius: var(--radius-sm); color: var(--text-strong); background: var(--surface-1); }
+.capsule-odds li.r-rare { border-color: var(--rarity-rare); }
+.capsule-odds li.r-epic { border-color: var(--rarity-epic); border-width: 2px; }
+.capsule-odds li.r-legendary { border-color: var(--rarity-legendary); border-style: double; border-width: 3px; }
+.capsule-odds li b { font-variant-numeric: tabular-nums; }
+.capsule-odds li small { grid-column: 1 / -1; color: var(--text-soft); font-size: var(--type-meta); line-height: var(--leading-label); }
+.voucher-chip { min-height: var(--touch-min); border: 1px solid var(--reward-earned-border); color: var(--on-accent); background: var(--reward-earned-border); }
+.economy-rules ul { display: grid; gap: var(--sp-2); margin: 0; padding-inline-start: 1.25rem; color: var(--text-soft); }
+.rewards-primary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); align-items: start; }
+.rewards-primary-grid > .card { height: 100%; }
+.rewards-primary-grid .personal-reward-store .reward-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.rewards-primary-grid .personal-reward-store .reward-form label:first-child,
+.rewards-primary-grid .personal-reward-store .reward-form button[type="submit"] { grid-column: 1 / -1; }
+.rewards-shell .cos-tile.available { cursor: pointer; opacity: 1; }
+.rewards-shell .cos-tile.r-legendary { border-style: double; border-width: 3px; }
+.rewards-shell .cos-rarity,
+.rewards-shell .cos-cost { font-size: var(--type-meta); line-height: var(--leading-label); font-weight: 800; }
+.rewards-shell .cos-rarity { color: var(--text-soft); }
+.rewards-shell .cos-cost { color: var(--text-strong); }
+.personal-reward-store .settings-actions { margin: var(--sp-3) 0 var(--sp-2); }
+.reward-limit,
+.rwc-added { font-size: var(--type-meta); line-height: var(--leading-label); }
+.personal-reward-store .reward-form { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(130px, 1fr) minmax(110px, .65fr) auto; align-items: end; gap: var(--sp-2); }
+.personal-reward-store .reward-form label { display: grid; min-width: 0; gap: var(--sp-1); color: var(--text-soft); font-size: var(--type-meta); line-height: var(--leading-label); font-weight: 700; }
+.personal-reward-store .reward-form :is(input, select) { width: 100%; min-width: 0; min-height: var(--touch-min); font-size: var(--type-control); line-height: var(--leading-prose); }
+.personal-reward-store .reward .del { min-width: var(--touch-min); min-height: var(--touch-min); }
+.loot-reveal-box,
+.economy-confirm-box,
+.reward-catalog-box,
+.voucher-box { width: min(100%, 600px); max-height: min(calc(100dvh - 24px), 760px); overflow-y: auto; }
+.loot-reveal-box,
+.economy-confirm-box { position: relative; padding: clamp(var(--sp-4), 5vw, var(--sp-6)); text-align: start; }
+.loot-reveal-box.is-capsule::before {
+  content: "✦";
+  display: grid;
+  place-items: center;
+  inline-size: 72px;
+  block-size: 72px;
+  margin: 0 auto var(--sp-3);
+  border: 3px double var(--rarity-legendary);
+  border-radius: var(--radius-md);
+  color: var(--reward-earned-fg);
+  background: color-mix(in srgb, var(--rarity-legendary) 10%, var(--surface-2));
+  font-size: 34px;
+  animation: rewardCapsuleAnticipation 900ms cubic-bezier(.2, .8, .2, 1) both;
+}
+.loot-reveal-box.is-capsule.is-revealed::before { content: "✓"; animation: none; }
+.loot-capsule-result { display: grid; gap: var(--sp-1); margin-top: var(--sp-3); padding: var(--sp-3); border: 2px solid var(--rarity-common); border-radius: var(--radius-sm); color: var(--text-strong); background: var(--surface-2); }
+.loot-capsule-result[hidden] { display: none; }
+.loot-capsule-result.r-rare { border-color: var(--rarity-rare); }
+.loot-capsule-result.r-epic { border-color: var(--rarity-epic); }
+.loot-capsule-result.r-legendary { border: 4px double var(--rarity-legendary); }
+.loot-capsule-result > span { color: var(--text-soft); font-size: var(--type-meta); line-height: var(--leading-label); font-weight: 800; text-transform: uppercase; letter-spacing: var(--tracking-caps); }
+.loot-capsule-result > strong { overflow-wrap: anywhere; font-size: var(--type-heading); line-height: var(--leading-ui); }
+@keyframes rewardCapsuleAnticipation {
+  0% { transform: translateY(3px) scale(.96); filter: brightness(.88); }
+  65% { transform: translateY(-2px) scale(1.04); filter: brightness(1.12); }
+  100% { transform: none; filter: none; }
+}
+.loot-reveal-actions,
+.economy-confirm-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); margin-top: var(--sp-3); }
+.loot-save-status,
+.economy-confirm-status { min-height: 1.5em; color: var(--text-soft); }
+.loot-save-status.is-error,
+.economy-confirm-status.is-error { color: var(--bad); }
+.economy-confirm-item { padding: var(--sp-2); border: 1px solid var(--line-soft); border-radius: var(--radius-sm); color: var(--text-strong); background: var(--surface-2); font-weight: 800; overflow-wrap: anywhere; }
+.reward-catalog-box .rwc-list,
+.voucher-box .rwc-list { overflow-x: hidden; }
+.reward-catalog-box .rwc-row,
+.voucher-box .rwc-row { min-width: 0; }
+.rewards-shell :is(button, input, select, summary):focus-visible,
+:is(.loot-reveal-box, .economy-confirm-box, .reward-catalog-box, .voucher-box) :is(button, input, select, summary):focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+
+@media (max-width: 760px) {
+  .rewards-primary-grid { grid-template-columns: minmax(0, 1fr); }
+  .personal-reward-store .reward-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .personal-reward-store .reward-form label:first-child,
+  .personal-reward-store .reward-form button[type="submit"] { grid-column: 1 / -1; }
+}
+
+@media (max-width: 600px) {
+  body:has(.rewards-shell) #ai-fab { display: none; }
+  .rewards-shell summary { min-height: var(--touch-min); }
+  .daily-reward-card .lb-head { display: grid; }
+  .daily-reward-card .lb-body { grid-template-columns: minmax(0, 1fr); }
+  .daily-reward-card .lb-chest { min-height: var(--touch-min); grid-template-columns: auto minmax(0, 1fr); gap: var(--sp-2); text-align: start; }
+  .daily-reward-card .lb-emoji { font-size: 28px; }
+  .daily-reward-track { grid-template-columns: minmax(0, 1fr); }
+  .capsule-odds ul { grid-template-columns: minmax(0, 1fr); }
+  .rewards-shell .title-chip { min-height: var(--touch-min); padding-block: var(--sp-2); }
+  .personal-reward-store .reward-form { grid-template-columns: minmax(0, 1fr); }
+  .personal-reward-store .reward-form label:first-child,
+  .personal-reward-store .reward-form button[type="submit"] { grid-column: 1; }
+  .loot-reveal-actions,
+  .economy-confirm-actions { grid-template-columns: minmax(0, 1fr); }
+  .reward-catalog-box .rwc-row,
+  .voucher-box .rwc-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; }
+  .reward-catalog-box .rwc-row .btn,
+  .voucher-box .rwc-row .btn { grid-column: 2 / -1; }
+}
+
+@media (pointer: coarse) {
+  .rewards-shell :is(button, input, select, summary),
+  :is(.loot-reveal-box, .economy-confirm-box, .reward-catalog-box, .voucher-box) :is(button, input, select, summary) { min-inline-size: var(--touch-min); min-block-size: var(--touch-min); }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .daily-reward-card .lb-chest.ready:hover { transform: translateY(-2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rewards-shell *,
+  .rewards-shell *::before,
+  .rewards-shell *::after,
+  :is(.loot-reveal-box, .economy-confirm-box, .reward-catalog-box, .voucher-box) *,
+  :is(.loot-reveal-box, .economy-confirm-box, .reward-catalog-box, .voucher-box) *::before,
+  :is(.loot-reveal-box, .economy-confirm-box, .reward-catalog-box, .voucher-box) *::after { animation: none !important; transition-duration: 0ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important; }
 }

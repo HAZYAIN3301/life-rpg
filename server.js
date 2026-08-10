@@ -951,6 +951,39 @@ function importPortableAccountData(uid, payload) {
   return names;
 }
 
+const ECONOMY_COMMIT_TYPES = Object.freeze({
+  settings: 'object', purchases: 'array', rewards: 'array', lootbox: 'object',
+});
+function economyValueValid(name, value) {
+  const type = ECONOMY_COMMIT_TYPES[name];
+  if (!type || value == null) return false;
+  return type === 'array' ? Array.isArray(value) : (typeof value === 'object' && !Array.isArray(value));
+}
+// One user gesture may change two economy files (for example settings gear +
+// purchases, or voucher count + rewards). Commit them as one rollback-capable
+// unit so a network/disk failure never grants an item without its spend or
+// consumes a voucher without the authored reward.
+function commitEconomyData(uid, payload) {
+  if (!payload || !payload.data || typeof payload.data !== 'object' || Array.isArray(payload.data)) throw new Error('invalid_economy_commit');
+  const names = Object.keys(payload.data);
+  if (!names.length || names.some((name) => !economyValueValid(name, payload.data[name]))) throw new Error('invalid_economy_commit');
+  if (Buffer.byteLength(JSON.stringify(payload.data)) > 2 * 1024 * 1024) throw new Error('economy_commit_too_large');
+  const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
+  const snapshots = new Map(); const written = [];
+  for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
+  try {
+    for (const name of names) {
+      backupFile(dir, name);
+      writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
+      written.push(name);
+    }
+  } catch (error) {
+    for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
+    throw error;
+  }
+  return names;
+}
+
 // ============================================================
 //  Migration: root data/*.json  →  data/users/albert/*.json
 //  Runs once, only if no users.json exists yet.
@@ -2327,6 +2360,19 @@ const server = http.createServer(async (req, res) => {
     } catch (error) {
       const code = error && (error.message === 'invalid_archive' || error.message === 'archive_too_large') ? 400 : 500;
       return sendJson(res, code, { error: code === 500 ? 'import_failed_no_changes_lost' : error.message });
+    }
+  }
+
+  if (u === '/api/economy/commit' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload; try { payload = JSON.parse(await readBody(req, 3 * 1024 * 1024)); }
+    catch (error) { return sendJson(res, 400, { error: error && error.message === 'payload too large' ? 'economy_commit_too_large' : 'invalid_economy_commit' }); }
+    try {
+      const files = commitEconomyData(uid, payload);
+      return sendJson(res, 200, { ok: true, files });
+    } catch (error) {
+      const clientError = error && (error.message === 'invalid_economy_commit' || error.message === 'economy_commit_too_large');
+      return sendJson(res, clientError ? 400 : 500, { error: clientError ? error.message : 'economy_commit_failed_no_changes_lost' });
     }
   }
 
