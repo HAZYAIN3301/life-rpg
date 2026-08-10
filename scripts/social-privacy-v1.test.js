@@ -151,5 +151,6 @@ test('Social v125 five-locale, touch, theme and reduced-motion contract is prese
   assert.match(CSS, /@media \(pointer: coarse\)[^]*social-confirm-box/);
   assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)[^]*party-shell/);
   assert.match(CSS, /social-privacy-card\.is-consented/);
-  assert.match(SW, /const CACHE = 'satoru-v125'/);
+  const cacheVersion = Number((SW.match(/const CACHE = 'satoru-v(\d+)'/) || [])[1]);
+  assert.ok(cacheVersion >= 125, `expected cache version >=125, got ${cacheVersion}`);
 });

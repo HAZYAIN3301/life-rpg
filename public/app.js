@@ -529,6 +529,47 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // ── Habits v126: durable work surface + private anti-habits ──
+  'Привычки': { en: 'Habits', de: 'Gewohnheiten', uk: 'Звички', es: 'Hábitos' },
+  'Разделы привычек': { en: 'Habit sections', de: 'Gewohnheitsbereiche', uk: 'Розділи звичок', es: 'Secciones de hábitos' },
+  'Стрик — наблюдение, не долг. Пропуск не стирает сделанное.': { en: 'A streak is an observation, not a debt. A missed day does not erase your work.', de: 'Eine Serie ist eine Beobachtung, keine Schuld. Ein ausgelassener Tag löscht nichts aus.', uk: 'Серія — це спостереження, не борг. Пропуск не стирає зроблене.', es: 'La racha es una observación, no una deuda. Un día perdido no borra lo hecho.' },
+  'На сегодня привычек нет. Это не долг — следующий запланированный день останется в расписании.': { en: 'No habits are due today. This is not a debt; the next scheduled day stays in the plan.', de: 'Heute sind keine Gewohnheiten fällig. Das ist keine Schuld; der nächste geplante Tag bleibt im Plan.', uk: 'На сьогодні звичок немає. Це не борг — наступний запланований день лишається в розкладі.', es: 'Hoy no toca ningún hábito. No es una deuda; el próximo día programado sigue en el plan.' },
+  '+ Создать привычку': { en: '+ Create habit', de: '+ Gewohnheit erstellen', uk: '+ Створити звичку', es: '+ Crear hábito' },
+  'Название привычки': { en: 'Habit name', de: 'Name der Gewohnheit', uk: 'Назва звички', es: 'Nombre del hábito' },
+  'Минут': { en: 'Minutes', de: 'Minuten', uk: 'Хвилин', es: 'Minutos' },
+  'Дни недели': { en: 'Days of the week', de: 'Wochentage', uk: 'Дні тижня', es: 'Días de la semana' },
+  'Создать': { en: 'Create', de: 'Erstellen', uk: 'Створити', es: 'Crear' },
+  'Выбери хотя бы один день': { en: 'Choose at least one day', de: 'Wähle mindestens einen Tag', uk: 'Обери хоча б один день', es: 'Elige al menos un día' },
+  'Привычка создана': { en: 'Habit created', de: 'Gewohnheit erstellt', uk: 'Звичку створено', es: 'Hábito creado' },
+  'Привычка отмечена': { en: 'Habit marked', de: 'Gewohnheit markiert', uk: 'Звичку відмічено', es: 'Hábito marcado' },
+  'Отметка возвращена': { en: 'Habit mark restored', de: 'Markierung zurückgesetzt', uk: 'Позначку повернено', es: 'Marca restaurada' },
+  'Не удалось сохранить. Ничего не изменено — повтори попытку.': { en: 'Could not save. Nothing changed; try again.', de: 'Speichern fehlgeschlagen. Nichts wurde geändert; versuche es erneut.', uk: 'Не вдалося зберегти. Нічого не змінено — спробуй ще раз.', es: 'No se pudo guardar. Nada cambió; inténtalo de nuevo.' },
+  'Не удалось отменить. Запись сохранена, можно повторить.': { en: 'Undo failed. The entry is still saved; you can retry.', de: 'Rückgängig fehlgeschlagen. Der Eintrag bleibt gespeichert; du kannst es erneut versuchen.', uk: 'Не вдалося скасувати. Запис збережено, можна повторити.', es: 'No se pudo deshacer. La entrada sigue guardada; puedes reintentarlo.' },
+  'Изменения привычек заблокированы до восстановления данных': { en: 'Habit changes are blocked until the data is recovered', de: 'Änderungen an Gewohnheiten sind bis zur Datenwiederherstellung gesperrt', uk: 'Зміни звичок заблоковані до відновлення даних', es: 'Los cambios de hábitos están bloqueados hasta recuperar los datos' },
+  'Данные привычек повреждены': { en: 'Habit data is corrupted', de: 'Gewohnheitsdaten sind beschädigt', uk: 'Дані звичок пошкоджено', es: 'Los datos de hábitos están dañados' },
+  'Не удалось загрузить привычки': { en: 'Could not load habits', de: 'Gewohnheiten konnten nicht geladen werden', uk: 'Не вдалося завантажити звички', es: 'No se pudieron cargar los hábitos' },
+  'Мы не заменили исходные данные пустым списком. Исправь файл или восстанови резервную копию и повтори.': { en: 'We did not replace the source data with an empty list. Repair the file or restore a backup, then retry.', de: 'Die Quelldaten wurden nicht durch eine leere Liste ersetzt. Repariere die Datei oder stelle ein Backup wieder her und versuche es erneut.', uk: 'Ми не замінили вихідні дані порожнім списком. Виправ файл або віднови резервну копію й повтори.', es: 'No reemplazamos los datos originales por una lista vacía. Repara el archivo o restaura una copia y vuelve a intentarlo.' },
+  'Ничего не перезаписано. Проверь соединение и повтори загрузку.': { en: 'Nothing was overwritten. Check the connection and retry.', de: 'Nichts wurde überschrieben. Prüfe die Verbindung und versuche es erneut.', uk: 'Нічого не перезаписано. Перевір з’єднання й повтори.', es: 'No se sobrescribió nada. Comprueba la conexión y vuelve a intentarlo.' },
+  'Повторяю…': { en: 'Retrying…', de: 'Erneuter Versuch…', uk: 'Повторюю…', es: 'Reintentando…' },
+  'Возвращайся с версии на две минуты. Пропущенный день не отменяет ни прогресс, ни твою идентичность.': { en: 'Return with the two-minute version. A missed day cancels neither progress nor identity.', de: 'Kehre mit der Zwei-Minuten-Version zurück. Ein ausgelassener Tag löscht weder Fortschritt noch Identität.', uk: 'Повертайся з двохвилинної версії. Пропущений день не скасовує ні прогрес, ні ідентичність.', es: 'Vuelve con la versión de dos minutos. Un día perdido no anula ni el progreso ni tu identidad.' },
+  'Событие — это данные о контексте, не оценка личности. Здесь нет наказаний и долгов.': { en: 'An event is context data, not a judgment of you. There are no punishments or debts here.', de: 'Ein Ereignis liefert Kontextdaten und bewertet dich nicht. Hier gibt es weder Strafen noch Schulden.', uk: 'Подія — це дані про контекст, а не оцінка особистості. Тут немає покарань і боргів.', es: 'Un evento aporta contexto, no te juzga. Aquí no hay castigos ni deudas.' },
+  'Что наблюдаем': { en: 'What to observe', de: 'Was beobachten wir?', uk: 'Що спостерігаємо', es: 'Qué observamos' },
+  'Подход': { en: 'Approach', de: 'Ansatz', uk: 'Підхід', es: 'Enfoque' },
+  'Без ярлыка': { en: 'No label', de: 'Ohne Etikett', uk: 'Без ярлика', es: 'Sin etiqueta' },
+  'Блоки и лимиты': { en: 'Blocks and limits', de: 'Sperren und Limits', uk: 'Блоки та ліміти', es: 'Bloqueos y límites' },
+  'дней без записи': { en: 'days without an event', de: 'Tage ohne Ereignis', uk: 'днів без події', es: 'días sin evento' },
+  'длиннейший период': { en: 'longest period', de: 'längster Zeitraum', uk: 'найдовший період', es: 'periodo más largo' },
+  'Записать событие сегодня': { en: 'Record an event today', de: 'Ereignis für heute eintragen', uk: 'Записати подію сьогодні', es: 'Registrar un evento hoy' },
+  'Убрать сегодняшнюю запись': { en: "Remove today's entry", de: 'Heutigen Eintrag entfernen', uk: 'Прибрати сьогоднішній запис', es: 'Quitar la entrada de hoy' },
+  'Событие записано. Это данные, не оценка.': { en: 'Event recorded. It is data, not a judgment.', de: 'Ereignis gespeichert. Es sind Daten, keine Bewertung.', uk: 'Подію записано. Це дані, не оцінка.', es: 'Evento registrado. Son datos, no un juicio.' },
+  'Эти записи приватны: они не публикуются в Party, leaderboard и не отправляются в AI-разбор недели.': { en: 'These entries are private: they are not published to Party or the leaderboard and are not sent to the AI weekly review.', de: 'Diese Einträge sind privat: Sie werden weder in Party noch in der Bestenliste veröffentlicht und nicht an die KI-Wochenauswertung gesendet.', uk: 'Ці записи приватні: вони не публікуються в Party чи leaderboard і не надсилаються в AI-аналіз тижня.', es: 'Estas entradas son privadas: no se publican en Party ni en la clasificación y no se envían al análisis semanal con IA.' },
+  'Строим привычки': { en: 'Build habits', de: 'Gewohnheiten aufbauen', uk: 'Будуємо звички', es: 'Crear hábitos' },
+  'Свобода от привычек': { en: 'Freedom from habits', de: 'Freiheit von Gewohnheiten', uk: 'Свобода від звичок', es: 'Libertad de hábitos' },
+  'Трекер привычек: наблюдай ритм, но не превращай серию в долг.': { en: 'Habit tracker: observe the rhythm, but do not turn a streak into debt.', de: 'Gewohnheits-Tracker: Beobachte den Rhythmus, aber mach aus einer Serie keine Schuld.', uk: 'Трекер звичок: спостерігай ритм, але не перетворюй серію на борг.', es: 'Registro de hábitos: observa el ritmo, pero no conviertas la racha en deuda.' },
+  'После пропуска вернись с самой маленькой версии. Ничего наверстывать не нужно.': { en: 'After a missed day, return with the smallest version. There is nothing to catch up on.', de: 'Kehre nach einem ausgelassenen Tag mit der kleinsten Version zurück. Du musst nichts nachholen.', uk: 'Після пропуску повернися з найменшої версії. Нічого надолужувати не потрібно.', es: 'Tras un día perdido, vuelve con la versión más pequeña. No hay nada que recuperar.' },
+  'Попроси поддержки и добавь нейтральное трение. Никаких наказаний, публичного стыда или ставок.': { en: 'Ask for support and add neutral friction. No punishment, public shame or stakes.', de: 'Bitte um Unterstützung und füge neutrale Reibung hinzu. Keine Strafen, öffentliche Beschämung oder Einsätze.', uk: 'Попроси підтримки й додай нейтральне тертя. Жодних покарань, публічного сорому чи ставок.', es: 'Pide apoyo y añade fricción neutral. Sin castigos, vergüenza pública ni apuestas.' },
+  'Если система не подходит, уменьши шаг, измени среду или отдохни. Упорство не самоцель.': { en: 'If the system does not fit, reduce the step, change the environment or rest. Persistence is not the goal itself.', de: 'Wenn das System nicht passt, verkleinere den Schritt, ändere die Umgebung oder ruhe dich aus. Durchhalten ist kein Selbstzweck.', uk: 'Якщо система не підходить, зменш крок, зміни середовище або відпочинь. Наполегливість не самоціль.', es: 'Si el sistema no encaja, reduce el paso, cambia el entorno o descansa. Persistir no es un fin en sí mismo.' },
+  'Отслеживай периоды без события. Запись ничего не наказывает — это приватные данные о контексте.': { en: 'Track periods without an event. An entry punishes nothing; it is private context data.', de: 'Beobachte Zeiträume ohne Ereignis. Ein Eintrag bestraft nichts; es sind private Kontextdaten.', uk: 'Відстежуй періоди без події. Запис нічого не карає — це приватні дані про контекст.', es: 'Observa los periodos sin evento. Una entrada no castiga nada; son datos privados de contexto.' },
   // ── Питомцы: виды (kind) ──
   'Крепыш': { en: 'Sturdy', de: 'Kraftpaket', uk: 'Міцняк', es: 'Fortachón' },
   'Тихоня': { en: 'Serene', de: 'Sanftling', uk: 'Тихоня', es: 'Serenito' },
@@ -3024,6 +3065,41 @@ function settingsWriteAllowed(source, notify = false) {
   console.error(`${source} blocked`, 'settings', State._settingsLoadError);
   return false;
 }
+function validateHabitsPayload(value) {
+  if (!Array.isArray(value)) return false;
+  const ids = new Set();
+  return value.every((habit) => habit && typeof habit === 'object' && !Array.isArray(habit)
+    && typeof habit.id === 'string' && habit.id && !ids.has(habit.id) && (ids.add(habit.id), true)
+    && typeof habit.title === 'string' && Array.isArray(habit.days)
+    && habit.days.every((day) => Number.isInteger(day) && day >= 0 && day <= 6));
+}
+function validateHabitlogPayload(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  return Object.entries(value).every(([day, rows]) => /^\d{4}-\d{2}-\d{2}$/.test(day)
+    && rows && typeof rows === 'object' && !Array.isArray(rows)
+    && Object.values(rows).every((row) => row && typeof row === 'object' && !Array.isArray(row)));
+}
+function validateAntihabitsPayload(value) {
+  if (!Array.isArray(value)) return false;
+  const ids = new Set();
+  return value.every((anti) => anti && typeof anti === 'object' && !Array.isArray(anti)
+    && typeof anti.id === 'string' && anti.id && !ids.has(anti.id) && (ids.add(anti.id), true)
+    && typeof anti.title === 'string' && Array.isArray(anti.slips)
+    && anti.slips.every((day) => /^\d{4}-\d{2}-\d{2}$/.test(day)));
+}
+function habitWriteAllowed(source, notify = false) {
+  if (!State._habitsLoadError) return true;
+  for (const name of ['habits', 'habitlog', 'antihabits']) clearTimeout(Store._timers[name]);
+  if (notify) {
+    const now = Date.now();
+    if (now - (State._habitsWriteBlockedNoticeAt || 0) > 2000) {
+      State._habitsWriteBlockedNoticeAt = now;
+      toast(t('Изменения привычек заблокированы до восстановления данных'));
+    }
+  }
+  console.error(`${source} blocked`, 'habits', State._habitsLoadError);
+  return false;
+}
 const Store = {
   _timers: {},
   async load(name, fallback) {
@@ -3066,6 +3142,7 @@ const Store = {
   save(name, obj) {
     if (name === 'tasks' && !taskWriteAllowed('save', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('save', true)) return false;
+    if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('save', true)) return false;
     clearTimeout(this._timers[name]);
     this._timers[name] = setTimeout(() => this._put(name, obj), 250);
     return true;
@@ -3076,6 +3153,7 @@ const Store = {
   async saveNow(name, obj) {
     if (name === 'tasks' && !taskWriteAllowed('saveNow', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('saveNow', true)) return false;
+    if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('saveNow', true)) return false;
     clearTimeout(this._timers[name]);
     return this._put(name, obj);
   },
@@ -3084,6 +3162,7 @@ const Store = {
     // перезаписать повреждённый/недоступный файл fallback-массивом.
     if (name === 'tasks' && !taskWriteAllowed('_put', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('_put', true)) return false;
+    if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('_put', true)) return false;
     try {
       const r = await fetch(`/api/data/${name}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj),
@@ -4320,6 +4399,8 @@ const State = {
   adminUsers: null, _adminUsersLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null, calMode: 'day', habitsTab: 'build',
   _tasksLoadError: '', _tasksLoadBusy: false, _tasksWriteBlockedNoticeAt: 0, _tasksFocusAfterCommit: '',
+  _habitsLoadError: '', _habitsLoadBusy: false, _habitsWriteBlockedNoticeAt: 0,
+  _habitTxnBusy: '', _habitError: '', _habitUndo: null, _habitUndoTimer: null, _habitsFocusAfterCommit: '',
   _calendarUndo: null, _calendarUndoTimer: null, _calendarFocusAfterCommit: '',
   _calendarViewportNode: null, _calendarViewportDate: '', _calendarViewportScroll: null,
   aveCat: 'hair', // активная категория в редакторе аватара
@@ -8180,7 +8261,14 @@ function ensureEnergy() {
   const s = State.settings;
   if (!s.energy) s.energy = { day: todayStr(), cur: 100, max: 100, loadToday: 0, hitZero: false, tickAt: Date.now() };
   const e = s.energy, today = todayStr(), now = Date.now();
-  if (!e.tickAt) e.tickAt = now;
+  // Old profiles used `value` and may lack cur/max. Never let arithmetic turn
+  // those fields into NaN → JSON null during an otherwise valid habit commit.
+  if (!Number.isFinite(Number(e.max)) || Number(e.max) <= 0) e.max = 100;
+  if (e.cur == null || e.cur === '' || !Number.isFinite(Number(e.cur))) e.cur = Number.isFinite(Number(e.value)) ? Number(e.value) : e.max;
+  e.cur = Math.max(0, Math.min(e.max, Number(e.cur)));
+  if (!Number.isFinite(Number(e.loadToday))) e.loadToday = 0;
+  e.hitZero = !!e.hitZero;
+  if (!Number.isFinite(Number(e.tickAt)) || Number(e.tickAt) <= 0) e.tickAt = now;
   let dirty = false;
   // Пассивное восстановление по реальному времени — главный механизм отдыха (сон, паузы)
   const elapsedH = (now - e.tickAt) / 3600000;
@@ -8216,8 +8304,9 @@ const DESIRE_ENERGY = { forced: 1, hyped: 1 };
 // Без \b — он в JS работает только для ASCII и ломает матч кириллицы. Стемы достаточно различимы.
 const ENERGY_RESTORE_RE = /(сон|поспат|выспат|вздремн|отдых|отдохн|релакс|медитац|дыхани|прогул|растяж|разминк|мобилк|баня|сауна|массаж|ванна|nap|sleep|relax|medit|walk|stretch|yoga|йога)/i;
 function isRestActivity(it) { return ENERGY_RESTORE_RE.test(normRu(it.title || '')); }
-function applyEnergy(it, desire) {
-  const e = ensureEnergy(), min = Number(it.estimateMin) || 0;
+function habitEnergyChange(it, settings, desire) {
+  const e = settings.energy, min = Number(it.estimateMin) || 0;
+  const before = { cur: e.cur, loadToday: e.loadToday, hitZero: e.hitZero };
   let delta;
   if (isRestActivity(it)) {
     // отдых пополняет энергию (мягко, по длительности) — даёт агентность поверх пассивного восстановления
@@ -8232,6 +8321,12 @@ function applyEnergy(it, desire) {
     const back = skillPerks(it.skillId).energyBack || 0; // перк древа: частичный возврат энергии за квест в прокачанной сфере
     if (back) { e.cur = Math.min(e.max, e.cur + back); delta += back; }
   }
+  return { delta: e.cur - before.cur, loadDelta: e.loadToday - before.loadToday, hitZeroBefore: before.hitZero };
+}
+function habitEnergyDelta(it, settings, desire) { return habitEnergyChange(it, settings, desire).delta; }
+function applyEnergy(it, desire) {
+  ensureEnergy();
+  const delta = habitEnergyDelta(it, State.settings, desire);
   Store.save('settings', State.settings);
   return delta;
 }
@@ -8455,6 +8550,41 @@ async function economyCommit(data) {
     if (response.status === 401) { handleAccountSessionExpired(); return false; }
     return response.ok;
   } catch (error) { console.error('economy commit', error); return false; }
+}
+function habitDayKey(date = new Date()) { return fmtDate(date); }
+function localDayOrdinal(day) {
+  const d = typeof day === 'string' ? parseDate(day) : day;
+  return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
+}
+function localDayDistance(from, to) { return localDayOrdinal(to) - localDayOrdinal(from); }
+async function habitDataCommit(data) {
+  if (!habitWriteAllowed('habitDataCommit', true)) return false;
+  for (const name of Object.keys(data)) clearTimeout(Store._timers[name]);
+  try {
+    const response = await fetch('/api/habits/commit', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data }),
+    });
+    if (response.status === 401) { handleAccountSessionExpired(); return false; }
+    return response.ok;
+  } catch (error) { console.error('habit commit', error); return false; }
+}
+async function reloadHabitData(focusSelector = '#habits-title') {
+  if (State._habitsLoadBusy) return false;
+  State._habitsLoadBusy = true; State._habitError = ''; render();
+  const [habits, habitlog, antihabits] = await Promise.all([
+    Store.loadChecked('habits', [], validateHabitsPayload),
+    Store.loadChecked('habitlog', {}, validateHabitlogPayload),
+    Store.loadChecked('antihabits', [], validateAntihabitsPayload),
+  ]);
+  State._habitsLoadBusy = false;
+  const error = habits.error || habitlog.error || antihabits.error;
+  State._habitsLoadError = error;
+  if (!error) {
+    State.habits = habits.value; State.habitlog = habitlog.value; State.antihabits = antihabits.value;
+    State._habitsFocusAfterCommit = focusSelector;
+  }
+  render();
+  return !error;
 }
 
 // ============================================================
@@ -9573,15 +9703,92 @@ function scheduleQuestTitleDisclosures() {
 }
 window.addEventListener('resize', scheduleQuestTitleDisclosures, { passive: true });
 function habitRow(h) {
-  const sk = skillById(h.skillId), done = habitDone(h, todayStr()), hs = habitStreak(h);
+  const sk = skillById(h.skillId), done = habitDone(h, habitDayKey()), hs = habitStreak(h), busy = State._habitTxnBusy === `habit:${h.id}`;
   return `<li class="task habit ${done ? 'done' : ''}">
-    <button class="check" data-action="toggle-habit" data-id="${h.id}" aria-label="${t(done ? 'Снять выполнение привычки' : 'Выполнить привычку')}: ${esc(h.title)}" aria-pressed="${done ? 'true' : 'false'}">${done ? '✓' : ''}</button>
-    <span class="t-title">${esc(h.title)}</span>
+    <button class="check" data-action="toggle-habit" data-id="${h.id}" aria-label="${t(done ? 'Снять выполнение привычки' : 'Выполнить привычку')}: ${esc(h.title)}" aria-pressed="${done ? 'true' : 'false'}" ${busy ? 'disabled aria-busy="true"' : ''}>${busy ? '…' : done ? '✓' : ''}</button>
+    <span class="t-title" data-noi18n>${esc(h.title)}</span>
     <span class="t-skill" style="--c:${esc(sk.color)}">${esc(sk.name)}</span>
     <span class="t-time">${fmtDur(h.estimateMin)}</span>
     <span class="t-diff" title="${DIFF[h.difficulty] || ''}">${difficultyIconHTML(h.difficulty)}</span>
     <span class="t-xp">${done ? '+' + itemXp(h) : ''}</span>
     <span class="habit-streak" title="Серия">${hs ? satoruIconHTML('status.streak', 'habit-streak-icon', '🔥') + hs : ''}</span><span></span></li>`;
+}
+function clearHabitUndo() {
+  clearTimeout(State._habitUndoTimer); State._habitUndoTimer = null; State._habitUndo = null;
+}
+function setHabitUndo(receipt) {
+  clearHabitUndo(); State._habitUndo = receipt;
+  State._habitUndoTimer = setTimeout(() => { State._habitUndo = null; State._habitUndoTimer = null; render(); }, 9000);
+}
+function habitUndoHTML() {
+  const undo = State._habitUndo; if (!undo) return '';
+  return `<div class="habit-receipt" role="status"><span>${t(undo.label)}</span><button class="btn ghost sm" data-action="habit-undo" ${State._habitTxnBusy ? 'disabled' : ''}>${t('Отменить')}</button></div>`;
+}
+async function transactHabitCompletion(h) {
+  const key = `habit:${h.id}`; if (State._habitTxnBusy || State._habitsLoadError) return;
+  const day = habitDayKey(), wasDone = !!(State.habitlog[day] && State.habitlog[day][h.id]);
+  ensureEnergy(); clearTimeout(Store._timers.settings);
+  const beforeLog = structuredClone(State.habitlog), beforeSettings = structuredClone(State.settings);
+  const nextLog = structuredClone(beforeLog), nextSettings = structuredClone(beforeSettings);
+  nextLog[day] = nextLog[day] || {};
+  let energyDelta = 0;
+  if (wasDone) {
+    const record = nextLog[day][h.id], energy = record && record.energy;
+    if (energy && typeof energy === 'object') {
+      nextSettings.energy.cur = Math.max(0, Math.min(nextSettings.energy.max, nextSettings.energy.cur - (Number(energy.delta) || 0)));
+      nextSettings.energy.loadToday = Math.max(0, nextSettings.energy.loadToday - (Number(energy.loadDelta) || 0));
+      if (energy.hitZeroBefore !== undefined) nextSettings.energy.hitZero = !!energy.hitZeroBefore;
+    }
+    delete nextLog[day][h.id]; if (!Object.keys(nextLog[day]).length) delete nextLog[day];
+  } else {
+    const energy = habitEnergyChange(h, nextSettings); energyDelta = energy.delta;
+    nextLog[day][h.id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString(), energy };
+  }
+  State._habitTxnBusy = key; State._habitError = ''; render();
+  const saved = await habitDataCommit({ habitlog: nextLog, settings: nextSettings });
+  State._habitTxnBusy = '';
+  if (!saved) {
+    State._habitError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.');
+    State._habitsFocusAfterCommit = `[data-action="toggle-habit"][data-id="${CSS.escape(h.id)}"]`; render(); return;
+  }
+  State.habitlog = nextLog; State.settings = nextSettings;
+  setHabitUndo({ beforeLog, beforeSettings, afterLog: structuredClone(nextLog), afterSettings: structuredClone(nextSettings), label: wasDone ? 'Отметка возвращена' : 'Привычка отмечена' });
+  State._habitsFocusAfterCommit = '[data-action="habit-undo"]';
+  if (!wasDone) {
+    track('complete:habit'); const hsk = skillById(h.skillId);
+    toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${hsk.name}${energyDelta ? ` · ${energyDelta > 0 ? '+' : ''}${energyDelta} 🔋` : ''}`);
+    bossHitFeedback(bossHitCheck('habit', h, { sphereName: hsk ? hsk.name : '' }));
+    if (window.ShadowRig) window.ShadowRig.setTransient('happy', 900);
+    triggerAvatarReaction('happy', 'Привычка ✓');
+  }
+  checkAchievements(); render(); publishLeaderboard();
+}
+async function undoHabitCompletion() {
+  const undo = State._habitUndo; if (!undo || State._habitTxnBusy || State._habitsLoadError) return;
+  State._habitTxnBusy = 'habit:undo'; State._habitError = ''; render();
+  const saved = await habitDataCommit({ habitlog: undo.beforeLog, settings: undo.beforeSettings });
+  State._habitTxnBusy = '';
+  if (!saved) { State._habitError = t('Не удалось отменить. Запись сохранена, можно повторить.'); State._habitsFocusAfterCommit = '[data-action="habit-undo"]'; render(); return; }
+  State.habitlog = structuredClone(undo.beforeLog); State.settings = structuredClone(undo.beforeSettings);
+  clearHabitUndo(); State._habitsFocusAfterCommit = '#habits-title'; render();
+}
+async function deleteHabitData(habit) {
+  if (!habit || State._habitTxnBusy || State._habitsLoadError) return;
+  const nextHabits = State.habits.filter((item) => item.id !== habit.id), nextLog = structuredClone(State.habitlog);
+  for (const day of Object.keys(nextLog)) { delete nextLog[day][habit.id]; if (!Object.keys(nextLog[day]).length) delete nextLog[day]; }
+  State._habitTxnBusy = `habit:${habit.id}`; State._habitError = ''; render();
+  const saved = await habitDataCommit({ habits: nextHabits, habitlog: nextLog }); State._habitTxnBusy = '';
+  if (!saved) { State._habitError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._habitsFocusAfterCommit = '#habits-title'; render(); return; }
+  State.habits = nextHabits; State.habitlog = nextLog; State._habitsFocusAfterCommit = '#habits-title'; render();
+}
+async function updateHabitAtomic(id, field, value) {
+  if (State._habitTxnBusy || State._habitsLoadError) return;
+  const next = structuredClone(State.habits), habit = next.find((item) => item.id === id); if (!habit) return;
+  habit.atomic = habit.atomic || {}; habit.atomic[field] = value.slice(0, 200);
+  State._habitTxnBusy = `habit:${id}`;
+  const saved = await habitDataCommit({ habits: next }); State._habitTxnBusy = '';
+  if (!saved) { State._habitError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._habitsFocusAfterCommit = `[data-action="habit-atomic"][data-id="${id}"][data-field="${field}"]`; render(); return; }
+  State.habits = next;
 }
 // ============================================================
 //  Вид «Календарь» — день по часам (Apple-стиль), отдельная вкладка
@@ -10147,29 +10354,43 @@ function trainingWithoutMobility() {
 // ---- Анти-привычки (Блок 4): «чистые дни», без стыда. Срыв = данные, не провал. ----
 function antiDates(a) { return (a.slips || []).slice().sort(); }
 function antiLastSlip(a) { const s = antiDates(a); return s.length ? s[s.length - 1] : null; }
+function antiApproachLabel(value) { return value ? t({ доверие: 'Доверие к себе', 'доверие к себе': 'Доверие к себе', недоверие: 'Блоки и лимиты', 'блоки и лимиты': 'Блоки и лимиты', контекст: 'Смена среды', 'смена среды': 'Смена среды' }[String(value).toLowerCase()] || value) : ''; }
 function antiCleanDays(a) {
-  const last = antiLastSlip(a), from = last || (a.createdAt ? fmtDate(new Date(a.createdAt)) : todayStr());
-  return Math.max(0, Math.round((parseDate(todayStr()) - parseDate(from)) / 86400000));
+  const last = antiLastSlip(a), from = last || (a.createdAt ? habitDayKey(new Date(a.createdAt)) : habitDayKey());
+  return Math.max(0, localDayDistance(from, habitDayKey()));
 }
 function antiBestStreak(a) {
-  const start = a.createdAt ? fmtDate(new Date(a.createdAt)) : todayStr();
-  const pts = [start, ...antiDates(a), todayStr()];
-  let best = 0; for (let i = 1; i < pts.length; i++) { const gap = Math.round((parseDate(pts[i]) - parseDate(pts[i - 1])) / 86400000); if (gap > best) best = gap; }
+  const start = a.createdAt ? habitDayKey(new Date(a.createdAt)) : habitDayKey();
+  const pts = [start, ...antiDates(a), habitDayKey()];
+  let best = 0; for (let i = 1; i < pts.length; i++) { const gap = localDayDistance(pts[i - 1], pts[i]); if (gap > best) best = gap; }
   return best;
+}
+async function transactAntihabits(next, busyKey, focusSelector, successMessage = '') {
+  if (State._habitTxnBusy || State._habitsLoadError) return false;
+  State._habitTxnBusy = busyKey; State._habitError = ''; render();
+  const saved = await habitDataCommit({ antihabits: next });
+  State._habitTxnBusy = '';
+  if (!saved) {
+    State._habitError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.');
+    State._habitsFocusAfterCommit = focusSelector; render(); return false;
+  }
+  State.antihabits = next; State._habitsFocusAfterCommit = focusSelector;
+  if (successMessage) toast(t(successMessage));
+  render(); return true;
 }
 function antiHabitsCard() {
   const list = State.antihabits || []; if (!list.length) return '';
   const rows = list.map((a) => {
-    const clean = antiCleanDays(a), best = antiBestStreak(a), slippedToday = antiLastSlip(a) === todayStr();
+    const clean = antiCleanDays(a), best = antiBestStreak(a), slippedToday = antiLastSlip(a) === habitDayKey(), busy = State._habitTxnBusy === `anti:${a.id}`;
     return `<div class="anti-row">
-      <div class="anti-main"><span class="anti-title">${esc(a.title)}</span>
-        <span class="anti-stat">🟢 <b>${clean}</b> ${plural(clean, 'день', 'дня', 'дней')} чисто${best > clean ? ` · рекорд ${best}` : ''}</span></div>
+      <div class="anti-main"><span class="anti-title" data-noi18n>${esc(a.title)}</span>
+        <span class="anti-stat"><b>${clean}</b> ${t('дней без записи')}${best > clean ? ` · ${t('длиннейший период')} ${best}` : ''}</span></div>
       ${slippedToday
-        ? `<button class="btn ghost sm anti-undo" data-action="anti-unslip" data-id="${a.id}">сегодня был срыв · отменить</button>`
-        : `<button class="btn ghost sm" data-action="anti-slip" data-id="${a.id}">был срыв?</button>`}</div>`;
+        ? `<button class="btn ghost sm anti-undo" data-action="anti-unslip" data-id="${a.id}" aria-pressed="true" ${busy ? 'disabled aria-busy="true"' : ''}>${t('Убрать сегодняшнюю запись')}</button>`
+        : `<button class="btn ghost sm" data-action="anti-slip" data-id="${a.id}" aria-pressed="false" ${busy ? 'disabled aria-busy="true"' : ''}>${t('Записать событие сегодня')}</button>`}</div>`;
   }).join('');
-  return `<div class="card anti-card"><h3>🛡 Свобода от привычек</h3>${rows}
-    <p class="muted anti-note">Срыв — не провал, а данные. Без стыда: это копинг, а не ты. Заметь, что его вызвало — и иди дальше. Завтра новый чистый день 🌱</p></div>`;
+  return `<div class="card anti-card"><h3>🛡 ${t('Свобода от привычек')}</h3>${rows}
+    <p class="muted anti-note">${t('Эти записи приватны: они не публикуются в Party, leaderboard и не отправляются в AI-разбор недели.')}</p></div>`;
 }
 
 // ============================================================
@@ -10204,30 +10425,53 @@ const ATOMIC = {
     ] },
     { n: 4, law: 'Сделай приятным', cue: 'Награда', tactics: [
       'Немедленная награда — сделай так, чтобы было приятно сразу.',
-      'Трекер привычек: «не разрывай цепочку» (это и есть стрик 🔥 в Satoru).',
-      'Никогда не пропускай дважды: один пропуск — случайность, два — начало новой привычки.',
+      'Трекер привычек: наблюдай ритм, но не превращай серию в долг.',
+      'После пропуска вернись с самой маленькой версии. Ничего наверстывать не нужно.',
     ] },
   ],
   inversions: [
     { n: 1, law: 'Сделай незаметным', tactics: ['Убери сигнал из среды: телефон в другую комнату, удали приложение/ярлык.'] },
     { n: 2, law: 'Сделай непривлекательным', tactics: ['Переосмысли: подчеркни, что теряешь. Свяжи привычку с её настоящей ценой.'] },
     { n: 3, law: 'Сделай трудным', tactics: ['Увеличь трение: блокировщики, лимиты, «устройство-обязательство».'] },
-    { n: 4, law: 'Сделай неприятным', tactics: ['Партнёр-подотчётность; сделай цену срыва видимой и немедленной — но без стыда, срыв это данные.'] },
+    { n: 4, law: 'Сделай неприятным', tactics: ['Попроси поддержки и добавь нейтральное трение. Никаких наказаний, публичного стыда или ставок.'] },
   ],
   extra: [
-    { t: 'Плато скрытого потенциала', d: 'Результаты отстают от усилий — «долина разочарования», где большинство бросает. Лёд тает не на 25-м градусе, а после долгого нагрева. Продолжай.' },
+    { t: 'Плато скрытого потенциала', d: 'Если система не подходит, уменьши шаг, измени среду или отдохни. Упорство не самоцель.' },
     { t: 'Правило Златовласки', d: 'Мотивация держится на задачах ровно по краю возможностей — не слишком легко, не слишком трудно.' },
     { t: 'Системы важнее целей', d: 'Цели задают направление, но прогресс даёт система. Влюбись в процесс, а не только в результат.' },
   ],
 };
 function renderHabitsView() {
+  const title = `<h2 id="habits-title" class="route-title" tabindex="-1">${satoruIconHTML('nav.habits', 'heading-glyph', '🌱')} ${t('Привычки')}</h2>`;
+  if (State._habitsLoadError) return title + habitsRecoveryHTML();
   const tab = State.habitsTab || 'build';
-  const tabs = `<div class="navsub hsub">
-    <button class="navsubtab ${tab === 'build' ? 'active' : ''}" data-action="habits-tab" data-tab="build">${satoruIconHTML('nav.habits', 'tab-glyph', '🌱')} ${t('🌱 Привычки').replace(/^🌱\s*/, '')}</button>
-    <button class="navsubtab ${tab === 'break' ? 'active' : ''}" data-action="habits-tab" data-tab="break">${satoruIconHTML('difficulty.protected', 'tab-emblem', '🛡')} ${t('🛡 Срывы').replace(/^🛡\s*/, '')}</button>
-    <button class="navsubtab ${tab === 'method' ? 'active' : ''}" data-action="habits-tab" data-tab="method">${satoruIconHTML('nav.skills', 'tab-glyph', '📖')} ${t('📖 Метод').replace(/^📖\s*/, '')}</button></div>`;
+  const tabs = `<div class="navsub hsub" role="tablist" aria-label="${t('Разделы привычек')}">
+    <button role="tab" aria-selected="${tab === 'build'}" tabindex="${tab === 'build' ? '0' : '-1'}" class="navsubtab ${tab === 'build' ? 'active' : ''}" data-action="habits-tab" data-tab="build">${satoruIconHTML('nav.habits', 'tab-glyph', '🌱')} ${t('🌱 Привычки').replace(/^🌱\s*/, '')}</button>
+    <button role="tab" aria-selected="${tab === 'break'}" tabindex="${tab === 'break' ? '0' : '-1'}" class="navsubtab ${tab === 'break' ? 'active' : ''}" data-action="habits-tab" data-tab="break">${satoruIconHTML('difficulty.protected', 'tab-emblem', '🛡')} ${t('🛡 Срывы').replace(/^🛡\s*/, '')}</button>
+    <button role="tab" aria-selected="${tab === 'method'}" tabindex="${tab === 'method' ? '0' : '-1'}" class="navsubtab ${tab === 'method' ? 'active' : ''}" data-action="habits-tab" data-tab="method">${satoruIconHTML('nav.skills', 'tab-glyph', '📖')} ${t('📖 Метод').replace(/^📖\s*/, '')}</button></div>`;
   const body = tab === 'method' ? atomicMethodHTML() : tab === 'break' ? habitsBreakHTML() : habitsBuildHTML();
-  return tabs + body;
+  return `<section class="habits-shell" aria-labelledby="habits-title">${title}${habitsTodayHTML()}${habitUndoHTML()}${State._habitError ? `<p class="habits-error" role="alert">${esc(State._habitError)}</p>` : ''}${tabs}${body}</section>`;
+}
+function habitsRecoveryHTML() {
+  const invalid = State._habitsLoadError === 'invalid';
+  return `<div class="card habits-recovery" role="alert"><h3>${t(invalid ? 'Данные привычек повреждены' : 'Не удалось загрузить привычки')}</h3>
+    <p>${t(invalid ? 'Мы не заменили исходные данные пустым списком. Исправь файл или восстанови резервную копию и повтори.' : 'Ничего не перезаписано. Проверь соединение и повтори загрузку.')}</p>
+    <button class="btn" data-action="habits-retry" ${State._habitsLoadBusy ? 'disabled aria-busy="true"' : ''}>${t(State._habitsLoadBusy ? 'Повторяю…' : 'Повторить')}</button></div>`;
+}
+function habitsTodayHTML() {
+  const due = todaysHabits();
+  const rows = due.length ? `<ul class="tasks habits-today-list">${due.map(habitRow).join('')}</ul>` : `<p class="muted">${t('На сегодня привычек нет. Это не долг — следующий запланированный день останется в расписании.')}</p>`;
+  return `<div class="card habits-today"><div class="habits-work-head"><div><h3>${t('Сегодня')}</h3><p class="muted">${t('Стрик — наблюдение, не долг. Пропуск не стирает сделанное.')}</p></div><span>${due.length}</span></div>${rows}
+    <details class="habit-create"><summary>${t('+ Создать привычку')}</summary>${habitCreateFormHTML()}</details></div>`;
+}
+function habitCreateFormHTML() {
+  const skills = (State.settings.skills || []).map((skill) => `<option value="${esc(skill.id)}">${esc(skill.name)}</option>`).join('');
+  const days = [1,2,3,4,5,6,0].map((day) => `<label><input type="checkbox" name="days" value="${day}" checked><span>${t(['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][day])}</span></label>`).join('');
+  return `<form id="add-habit-v126" class="habit-create-form"><label><span>${t('Название привычки')}</span><input name="title" maxlength="160" required autocomplete="off"></label>
+    <label><span>${t('Сфера')}</span><select name="skillId">${skills}</select></label>
+    <label><span>${t('Минут')}</span><input name="estimateMin" type="number" min="1" max="1440" value="10" inputmode="numeric"></label>
+    <fieldset><legend>${t('Дни недели')}</legend><div class="habit-day-picks">${days}</div></fieldset>
+    <p class="habit-form-status" role="status"></p><button type="submit" class="btn">${t('Создать')}</button></form>`;
 }
 function lawsBlock(title, laws, kind) {
   return `<div class="card hb-laws"><h4>${title}</h4>${laws.map((l) => `<div class="hb-law ${kind}"><span class="hb-lawn">${l.n}</span><div><b>${esc(l.law)}</b>${l.cue ? ` <span class="muted">· ${esc(l.cue)}</span>` : ''}<ul>${l.tactics.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div></div>`).join('')}</div>`;
@@ -10244,32 +10488,31 @@ function habitsBuildHTML() {
       <label class="hb-field">⏱ Версия 2 минут <input data-action="habit-atomic" data-id="${h.id}" data-field="twoMin" value="${esc(a.twoMin || '')}" placeholder="Минимум, чтобы просто начать" /></label>
     </div>`;
   }).join('') : '<p class="muted">Пока нет привычек — добавь и спроектируй по 4 законам.</p>';
-  return `<div class="card hb-intro"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🌱')} Строим привычки</h3>
+  return `<div class="card hb-intro"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🌱')} ${t('Строим привычки')}</h3>
       <p class="muted">${esc(t('Выбери, кем хочешь стать. Каждое выполнение ниже — маленькое доказательство этой идентичности.'))}</p>
       <label class="hb-identity">Кем ты хочешь стать? <input id="identity-goal" data-action="save-identity" value="${esc(idg)}" placeholder="Напр.: дисциплинированный учёный в отличной форме" /></label></div>
     <div class="hb-list">${cards}</div>
-    <button class="btn ghost" data-action="add-habit" style="margin-top:8px">+ Новая привычка</button>
-    <p class="muted hb-nmt">⚠️ Никогда не пропускай дважды: один пропуск — случайность, два — начало новой привычки. Отмечать привычки — на «Сегодня».</p>`;
+    <p class="muted hb-nmt">${t('Возвращайся с версии на две минуты. Пропущенный день не отменяет ни прогресс, ни твою идентичность.')}</p>`;
 }
 function habitsBreakHTML() {
   const list = State.antihabits || [];
   const rows = list.length ? list.map((a) => {
-    const clean = antiCleanDays(a), best = antiBestStreak(a), slippedToday = antiLastSlip(a) === todayStr();
+    const clean = antiCleanDays(a), best = antiBestStreak(a), slippedToday = antiLastSlip(a) === habitDayKey(), busy = State._habitTxnBusy === `anti:${a.id}`;
     return `<div class="card anti-row2">
-      <div class="anti-main"><span class="anti-title">${esc(a.title)}</span>
-        <span class="anti-stat">🟢 <b>${clean}</b> ${plural(clean, 'день', 'дня', 'дней')} чисто${best > clean ? ` · рекорд ${best}` : ''}${a.approach ? ` · ${esc(a.approach)}` : ''}</span></div>
-      ${slippedToday ? `<button class="btn ghost sm" data-action="anti-unslip" data-id="${a.id}">сегодня был срыв · отменить</button>` : `<button class="btn ghost sm" data-action="anti-slip" data-id="${a.id}">был срыв?</button>`}
-      <button class="del" data-action="delete-antihabit" data-id="${a.id}" title="Удалить">✕</button></div>`;
+      <div class="anti-main"><span class="anti-title" data-noi18n>${esc(a.title)}</span>
+        <span class="anti-stat"><b>${clean}</b> ${t('дней без записи')}${best > clean ? ` · ${t('длиннейший период')} ${best}` : ''}${a.approach ? ` · ${esc(antiApproachLabel(a.approach))}` : ''}</span></div>
+      ${slippedToday ? `<button class="btn ghost sm" data-action="anti-unslip" data-id="${a.id}" aria-pressed="true" ${busy ? 'disabled aria-busy="true"' : ''}>${t('Убрать сегодняшнюю запись')}</button>` : `<button class="btn ghost sm" data-action="anti-slip" data-id="${a.id}" aria-pressed="false" ${busy ? 'disabled aria-busy="true"' : ''}>${t('Записать событие сегодня')}</button>`}
+      <button class="del" data-action="delete-antihabit" data-id="${a.id}" aria-label="${t('Удалить')}: ${esc(a.title)}" ${busy ? 'disabled' : ''}>✕</button></div>`;
   }).join('') : '<p class="muted">Пока пусто — добавь, с чем хочешь справиться.</p>';
-  return `<div class="card hb-intro"><h3>${satoruIconHTML('difficulty.protected', 'heading-emblem', '🛡')} Свобода от привычек</h3>
-      <p class="muted">Плохую привычку (зависимость) ломают <b>инверсией</b> 4 законов. Срыв — это данные, не провал. Без стыда.</p>
+  return `<div class="card hb-intro"><h3>${satoruIconHTML('difficulty.protected', 'heading-emblem', '🛡')} ${t('Свобода от привычек')}</h3>
+      <p class="muted">${t('Событие — это данные о контексте, не оценка личности. Здесь нет наказаний и долгов.')}</p>
+      <p class="muted anti-privacy">${t('Эти записи приватны: они не публикуются в Party, leaderboard и не отправляются в AI-разбор недели.')}</p>
       <form id="add-antihabit" class="add-row">
-        <input name="title" placeholder="Напр. без бессмысленного скролла" autocomplete="off" required />
-        <select name="approach" title="Подход"><option value="">— подход —</option><option value="доверие">Доверие к себе</option><option value="недоверие">Недоверие (блоки/лимиты)</option><option value="контекст">Смена среды</option></select>
+        <label><span>${t('Что наблюдаем')}</span><input name="title" autocomplete="off" required /></label>
+        <label><span>${t('Подход')}</span><select name="approach"><option value="">${t('Без ярлыка')}</option><option value="доверие">${t('Доверие к себе')}</option><option value="недоверие">${t('Блоки и лимиты')}</option><option value="контекст">${t('Смена среды')}</option></select></label>
         <button type="submit">+ Добавить</button></form></div>
     <div class="hb-list">${rows}</div>
-    ${lawsBlock('4 закона разрушения привычки (инверсия)', ATOMIC.inversions, 'break')}
-    <p class="muted hb-nmt">Срыв — не провал, а сигнал. Заметь триггер, убери его из среды — и иди дальше. Завтра новый чистый день 🌱</p>`;
+    ${lawsBlock('4 закона разрушения привычки (инверсия)', ATOMIC.inversions, 'break')}`;
 }
 function atomicMethodHTML() {
   return `<div class="card"><h3>📖 Атомные привычки — метод</h3><p class="muted">${esc(ATOMIC.intro)}</p></div>
@@ -10627,7 +10870,6 @@ function buildWeekContext() {
   const bal = balanceIndex();
   const en = ensureEnergy();
   const goals = (State.goals || []).filter((g) => !g.archived).map((g) => `  ${g.title} — ${goalStatusInfo(g).txt}${g.metric ? ` (${g.metric.current}/${g.metric.target}${g.metric.unit ? ' ' + g.metric.unit : ''})` : ''}`).join('\n') || '  (нет целей)';
-  const anti = (State.antihabits || []).map((a) => `  ${a.title}: ${antiCleanDays(a)} дней чисто`).join('\n');
   const radar = sphereScores().map((s) => `${s.name} ур.${s.value}`).join(', ');
   // Честное состояние (кирпич 2 AI-STRATEGY): баланс/уровни считаются по сфере и не видят разницы
   // между «тренировался» и «отдыхал», если оба лежат в «Здоровье» — эта строка чинит слепоту явно.
@@ -10650,7 +10892,10 @@ function buildWeekContext() {
   // не будет искать проблему там, где данные её не показывают.
   const bp = detectBoundaryPattern();
   const bpBlock = bp ? `\nНАЙДЕННЫЙ ПАТТЕРН (посчитан по данным, не выдумывай другой): ${bp.label}. Суть: ${bp.say} Что предложить: ${bp.offer}\nЕсли это совпадает с его собственной рефлексией выше — скажи об этом прямо. Предлагай ОДНО, мягко, без морали и без вины.` : '';
-  return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nЭнергия сейчас: ${en.cur}/${en.max} (потолок ${en.max} — растёт от суперкомпенсации, падает при выгорании)\nЧестное состояние отдыха: ${restLine} (ищется по тексту дел, не по сфере — тренировка ≠ отдых, даже если оба в «Здоровье»)\nРадар сфер: ${radar}\nЦели:\n${goals}${anti ? `\nАнти-привычки:\n${anti}` : ''}${reflBlock}${wkBlock}${bpBlock}`;
+  // Anti-habit titles and derived streaks stay private by default. They are not
+  // required to explain weekly time/energy and must never enter an AI prompt
+  // without a separate, explicit disclosure and consent surface.
+  return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nЭнергия сейчас: ${en.cur}/${en.max} (потолок ${en.max} — растёт от суперкомпенсации, падает при выгорании)\nЧестное состояние отдыха: ${restLine} (ищется по тексту дел, не по сфере — тренировка ≠ отдых, даже если оба в «Здоровье»)\nРадар сфер: ${radar}\nЦели:\n${goals}${reflBlock}${wkBlock}${bpBlock}`;
 }
 async function runWeeklyReview() {
   if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; render(); return; }
@@ -13640,8 +13885,11 @@ function renderToday() {
         <span>План: <b>${fmtDur(planned)}</b></span></div>
       ${todays.length ? `<ul class="tasks">${todays.map(questRow).join('')}</ul>` : emptyDayHTML()}</section>`;
   const scheduleCard = todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : '';
-  const habitsCard = `<div class="card card-habits"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🔁')} ${t('🔁 Привычки на сегодня').replace(/^🔁\s*/, '')}</h3>
-      ${habits.length ? `<ul class="tasks">${habits.map(habitRow).join('')}</ul>` : '<p class="muted">На сегодня привычек нет. Добавь их в «Настройках».</p>'}</div>`;
+  const habitsCard = State._habitsLoadError
+    ? habitsRecoveryHTML()
+    : `<div class="card card-habits"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🔁')} ${t('🔁 Привычки на сегодня').replace(/^🔁\s*/, '')}</h3>
+      ${habitUndoHTML()}${State._habitError ? `<p class="habits-error" role="alert">${esc(State._habitError)}</p>` : ''}
+      ${habits.length ? `<ul class="tasks">${habits.map(habitRow).join('')}</ul>` : `<p class="muted">${t('На сегодня привычек нет.')}</p>`}</div>`;
   const obs = dayObservationFor(today);
   const obsBlock = obs ? `<div class="day-obs" data-obs-id="${esc(obs.id)}">
       <p class="day-obs-q">🔎 ${esc(obs.question)}</p>
@@ -15348,7 +15596,7 @@ const GUIDE_SECTIONS = [
 
   // ── Каждый день ──
   { group: 'Каждый день', icon: '📅', title: 'Сегодня', text: 'Главный экран. Квесты — разовые дела на день, сложность 🌱лёгкая / ⚔️обычная / 🔥сложная. ▶ у квеста включает фокус-таймер (можно вынести плавающим окном поверх всех приложений). Галочка = опыт и золото. Ниже — привычки на сегодня и «Итог дня».' },
-  { group: 'Каждый день', icon: '🔁', title: 'Привычки', text: 'Повторяющиеся дела со стриком, построены по «Атомным привычкам» Клира: идентичность («я человек, который…»), связка-сигнал «После X я…», версия на 2 минуты. Отдельно — Срывы: вредные привычки через инверсию тех же законов, со счётом «чистых дней» и без стыда. Правило одно: никогда не пропускай дважды подряд.' },
+  { group: 'Каждый день', icon: '🔁', title: 'Привычки', text: 'Повторяющиеся дела со стриком, построены по «Атомным привычкам» Клира: идентичность («я человек, который…»), связка-сигнал «После X я…», версия на 2 минуты. Стрик показывает ритм, но не создаёт долг. Отдельно — приватные наблюдения за контекстом без наказаний и публичного стыда.' },
   { group: 'Каждый день', icon: '⚡', title: 'Энергия', text: 'Индикатор дневной нагрузки. Сложные квесты тратят, восстанавливается сама по реальному времени — паузы, вечер, сон. Логировать отдых не нужно. Она ничего не блокирует и на опыт не влияет. Ёмкость не бесконечна: потолок от 80 до 220 — растёт, когда чередуешь нагрузку и восстановление, и падает, если постоянно загонять себя в ноль. Это и есть выгорание, только в цифрах.' },
   { group: 'Каждый день', icon: '🎤', title: 'Итог дня голосом', text: 'Самое полезное, когда день уже прошёл. Нажми «Итог дня» и просто наговори своими словами, что делал — как другу. Тень разложит по делам, сферам и времени, покажет карточки, ты снимешь лишние галочки и запишешь. Можно закрыть и прошлый день: был в поездке — расскажешь потом.' },
   { group: 'Каждый день', icon: '📝', title: 'Заметки и захват', text: 'Строка захвата на «Сегодня»: быстрая мысль текстом, 🎤 голосом или 🎥 видео. Мысль не теряется, пока ты занят. Любую заметку можно потом превратить в квест или отдать ИИ, чтобы он сделал из неё цель.' },
@@ -16053,7 +16301,7 @@ function renderSettings() {
     ${importCard()}
     <div class="card"><h3>${t('🔁 Привычки (повторяющиеся)')}</h3><div id="habits-list">${habits || `<p class="muted">${t('Пока нет привычек.')}</p>`}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">${t('+ Добавить привычку')}</button></div>
     <div class="card"><h3>${t('🛡 Анти-привычки — с чем борешься')}</h3>
-      <p class="muted" style="font-size:12px;margin:0 0 10px">${t('Отслеживай «чистые дни». Срыв не наказывается — это данные, без стыда. Подход — твой фреймворк доверия/контекста.')}</p>
+      <p class="muted" style="font-size:12px;margin:0 0 10px">${t('Отслеживай периоды без события. Запись ничего не наказывает — это приватные данные о контексте.')}</p>
       <form id="add-antihabit" class="add-row">
         <input name="title" placeholder="${t('Напр. без бессмысленного скролла')}" autocomplete="off" required />
         <select name="approach" title="${t('Подход к борьбе')}">
@@ -16062,7 +16310,7 @@ function renderSettings() {
           <option value="недоверие">${t('Недоверие (блоки/лимиты)')}</option>
           <option value="контекст">${t('Смена контекста/среды')}</option></select>
         <button type="submit">${t('+ Добавить')}</button></form>
-      ${(State.antihabits || []).map((a) => `<div class="ah-edit"><span class="ah-name">${esc(a.title)}${a.approach ? ` · <span class="muted">${esc(a.approach)}</span>` : ''}</span><button class="del" data-action="delete-antihabit" data-id="${a.id}">✕</button></div>`).join('')}</div>
+      ${(State.antihabits || []).map((a) => `<div class="ah-edit"><span class="ah-name">${esc(a.title)}${a.approach ? ` · <span class="muted">${esc(antiApproachLabel(a.approach))}</span>` : ''}</span><button class="del" data-action="delete-antihabit" data-id="${a.id}">✕</button></div>`).join('')}</div>
     <div class="card"><h3>${t('📦 Программы-данжи')}</h3><p class="muted" style="margin:0 0 12px">${t('Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.')}</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
     ${groupEnd()}
     ${groupStart('connections', 'Связи', 'Помощник, профиль, Strava и импорт')}
@@ -16720,6 +16968,13 @@ function afterMainCommit() {
       if (target) focusPathChoiceTarget(target);
     });
   }
+  if (State._habitsFocusAfterCommit && (State.view === 'habits' || State.view === 'today')) {
+    const selector = State._habitsFocusAfterCommit; State._habitsFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const target = document.querySelector(selector) || document.querySelector('#habits-title') || document.querySelector('#main h2');
+      if (target) focusPathChoiceTarget(target);
+    });
+  }
   if (State._denFocusAfterCommit && State.view === 'den') {
     const selector = State._denFocusAfterCommit;
     State._denFocusAfterCommit = '';
@@ -17237,9 +17492,22 @@ async function onSubmit(e) {
   }
   if (f.id === 'add-antihabit') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
-    State.antihabits = State.antihabits || [];
-    State.antihabits.push({ id: 'ah_' + uid(), title, approach: (f.approach && f.approach.value) || '', slips: [], createdAt: new Date().toISOString() });
-    Store.save('antihabits', State.antihabits); render();
+    if (State._habitTxnBusy || State._habitsLoadError) return;
+    const next = structuredClone(State.antihabits || []), anti = { id: 'ah_' + uid(), title, approach: (f.approach && f.approach.value) || '', slips: [], createdAt: new Date().toISOString() };
+    next.push(anti); await transactAntihabits(next, `anti:${anti.id}`, `[data-action="anti-slip"][data-id="${anti.id}"]`);
+    return;
+  }
+  if (f.id === 'add-habit-v126') {
+    e.preventDefault(); const title = f.title.value.trim(); if (!title || State._habitTxnBusy || State._habitsLoadError) return;
+    const days = Array.from(f.querySelectorAll('input[name="days"]:checked')).map((input) => Number(input.value));
+    const status = f.querySelector('.habit-form-status');
+    if (!days.length) { if (status) { status.textContent = t('Выбери хотя бы один день'); status.setAttribute('role', 'alert'); } return; }
+    const habit = { id: 'h_' + uid(), title, skillId: f.skillId.value, estimateMin: Math.max(1, Math.min(1440, Math.round(Number(f.estimateMin.value) || 10))), difficulty: 'easy', days, archived: false, createdAt: new Date().toISOString(), atomic: {} };
+    const next = [...structuredClone(State.habits || []), habit];
+    State._habitTxnBusy = `habit:${habit.id}`; State._habitError = ''; render();
+    const saved = await habitDataCommit({ habits: next }); State._habitTxnBusy = '';
+    if (!saved) { State._habitError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._habitsFocusAfterCommit = '#add-habit-v126 input[name="title"]'; render(); return; }
+    State.habits = next; State._habitsFocusAfterCommit = `[data-action="toggle-habit"][data-id="${habit.id}"]`; toast(t('Привычка создана')); render();
     return;
   }
   if (f.id === 'ai-keys') {
@@ -18140,19 +18408,11 @@ function onClick(e) {
     completeTask(q, null, q.date);
     toast(`✓ ${t('Засчитано в')} ${dmShort(q.date)}`);
   } else if (action === 'toggle-habit') {
-    const h = habitById(id); if (!h) return;
-    State.habitlog[today] = State.habitlog[today] || {};
-    const habitWasDone = !!State.habitlog[today][id];
-    if (habitWasDone) { delete State.habitlog[today][id]; if (!Object.keys(State.habitlog[today]).length) delete State.habitlog[today]; }
-    else {
-      State.habitlog[today][id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() };
-      const eD = applyEnergy(h); track('complete:habit');
-      const hsk = skillById(h.skillId);
-      toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${hsk.name}${eD ? ` · ${eD > 0 ? '+' : ''}${eD} 🔋` : ''}`);
-      bossHitFeedback(bossHitCheck('habit', h, { sphereName: hsk ? hsk.name : '' }));
-    }
-    if (!habitWasDone && window.ShadowRig) window.ShadowRig.setTransient('happy', 900);
-    Store.save('habitlog', State.habitlog); checkAchievements(); render(); if (!habitWasDone) triggerAvatarReaction('happy', 'Привычка ✓'); publishLeaderboard();
+    const h = habitById(id); if (h) transactHabitCompletion(h);
+  } else if (action === 'habit-undo') {
+    undoHabitCompletion();
+  } else if (action === 'habits-retry') {
+    reloadHabitData(State.view === 'habits' ? '#habits-title' : '.card-habits h3');
   } else if (action === 'focus-task') { const q = questById(id); if (q && !q.done) { track('focus:start');
       // Помодоро выключен → таймер работает свободным секундомером, workMin ничего не значит,
       // и спрашивать нечего. «Заход» намеренно зовёт startFocus() напрямую, минуя пикер:
@@ -18229,13 +18489,18 @@ function onClick(e) {
     State.settings.prefs = Object.assign({}, State.settings.prefs, { noMobilityNudge: true }); Store.save('settings', State.settings); toast('Подсказки мобилки отключены'); render();
   } else if (action === 'anti-slip') {
     const a = (State.antihabits || []).find((x) => x.id === id); if (!a) return;
-    a.slips = a.slips || []; if (!a.slips.includes(today)) a.slips.push(today);
-    Store.save('antihabits', State.antihabits); toast('Записано. Без стыда — завтра новый чистый день 🌱'); render();
+    const next = structuredClone(State.antihabits), target = next.find((x) => x.id === id), day = habitDayKey();
+    target.slips = target.slips || []; if (!target.slips.includes(day)) target.slips.push(day);
+    transactAntihabits(next, `anti:${id}`, `[data-action="anti-unslip"][data-id="${id}"]`, 'Событие записано. Это данные, не оценка.');
   } else if (action === 'anti-unslip') {
     const a = (State.antihabits || []).find((x) => x.id === id); if (!a) return;
-    a.slips = (a.slips || []).filter((d) => d !== today); Store.save('antihabits', State.antihabits); render();
+    const next = structuredClone(State.antihabits), target = next.find((x) => x.id === id), day = habitDayKey();
+    target.slips = (target.slips || []).filter((d) => d !== day);
+    transactAntihabits(next, `anti:${id}`, `[data-action="anti-slip"][data-id="${id}"]`);
   } else if (action === 'delete-antihabit') {
-    State.antihabits = (State.antihabits || []).filter((x) => x.id !== id); Store.save('antihabits', State.antihabits); render();
+    const a = (State.antihabits || []).find((x) => x.id === id); if (!a || !confirm(`${t('Удалить')} «${a.title}»?`)) return;
+    const next = State.antihabits.filter((x) => x.id !== id);
+    transactAntihabits(next, `anti:${id}`, '#habits-title');
   } else if (action === 'move-overdue') {
     State.tasks.forEach((t) => { if (taskOverdue(t, today)) t.date = today; }); Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
   } else if (action === 'amnesty-overdue') {
@@ -18600,7 +18865,7 @@ function onClick(e) {
   } else if (action === 'helper-close') { ttsStop(); const m = document.getElementById('helper-modal'); if (m) m.remove();
   } else if (action === 'helper-to-settings') { const m = document.getElementById('helper-modal'); if (m) m.remove(); State.view = 'settings'; render();
   } else if (action === 'chat-suggest') { sendChat(el.dataset.q);
-  } else if (action === 'habits-tab') { State.habitsTab = el.dataset.tab; render();
+  } else if (action === 'habits-tab') { State.habitsTab = el.dataset.tab; State._habitsFocusAfterCommit = `[data-action="habits-tab"][data-tab="${el.dataset.tab}"]`; render();
   } else if (action === 'open-party-leave') { showPartyExitDialog('leave', el);
   } else if (action === 'open-party-delete') { showPartyExitDialog('delete', el);
   } else if (action === 'close-party-dialog') { closeAccountDialog('social-party-dialog');
@@ -18723,16 +18988,11 @@ function onClick(e) {
     }
     render();
   } else if (action === 'add-habit') {
-    captureSettingsForm();
-    const first = State.settings.skills[0];
-    State.habits.push({ id: 'h_' + uid(), title: 'Новая привычка', skillId: first ? first.id : 'life', difficulty: 'easy', estimateMin: 10, days: [1, 2, 3, 4, 5], archived: false, createdAt: new Date().toISOString() });
-    Store.save('habits', State.habits); render();
+    State.view = 'habits'; State.habitsTab = 'build'; State._habitsFocusAfterCommit = '.habit-create > summary'; render();
   } else if (action === 'delete-habit') {
     if (!confirm('Удалить привычку? Её отметки и опыт тоже удалятся.')) return;
     captureSettingsForm();
-    State.habits = State.habits.filter((h) => h.id !== id);
-    for (const d in State.habitlog) { delete State.habitlog[d][id]; if (!Object.keys(State.habitlog[d]).length) delete State.habitlog[d]; }
-    Store.save('habits', State.habits); Store.save('habitlog', State.habitlog); render();
+    deleteHabitData(habitById(id));
   } else if (action === 'save-settings') { saveSettingsFromForm();
   } else if (action === 'reset-data') {
     showResetDataDialog(el);
@@ -18863,6 +19123,7 @@ function clearAllData() {
   State._stravaSyncing = false; State._chatBusy = false; State._lbLoading = false;
   State._partyLoading = false; State._adminUsersLoading = false;
   State._tasksLoadError = ''; State._tasksLoadBusy = false; State._tasksFocusAfterCommit = '';
+  State._habitsLoadError = ''; State._habitsLoadBusy = false; State._habitTxnBusy = ''; State._habitError = ''; clearHabitUndo(); State._habitsFocusAfterCommit = '';
   State._settingsLoadError = ''; State._settingsLoadBusy = false; State._treeLoadError = '';
   State.timer = null; persistTimer(); stopTick(); closeFocusWidget(); removePill();
   State.selectedProfile = null; State.obSkills = new Set();
@@ -19036,8 +19297,17 @@ async function initApp() {
   }
   if (State._tasksLoadError === 'session' || State._accountSessionExpired) return;
   State.days = await Store.load('days', {});
-  State.habits = await Store.load('habits', []);
-  State.habitlog = await Store.load('habitlog', {});
+  {
+    const [habitsLoad, habitlogLoad, antihabitsLoad] = await Promise.all([
+      Store.loadChecked('habits', [], validateHabitsPayload),
+      Store.loadChecked('habitlog', {}, validateHabitlogPayload),
+      Store.loadChecked('antihabits', [], validateAntihabitsPayload),
+    ]);
+    State.habits = habitsLoad.value; State.habitlog = habitlogLoad.value; State.antihabits = antihabitsLoad.value;
+    State._habitsLoadError = habitsLoad.error || habitlogLoad.error || antihabitsLoad.error;
+    State._habitsLoadBusy = false;
+  }
+  if (State._habitsLoadError === 'session' || State._accountSessionExpired) return;
   State.goals = await Store.load('goals', []);
   State.goals.forEach((g) => { if (!g.type) g.type = 'mid'; if (g.xpReward === undefined) g.xpReward = GOAL_XP[g.type] != null ? GOAL_XP[g.type] : GOAL_BONUS.xp; if (g.parentId === undefined) g.parentId = null; if (g.status === undefined) g.status = 'active'; if (g.metric === undefined) g.metric = null; });
   {
@@ -19050,7 +19320,6 @@ async function initApp() {
   State.weeks = await Store.load('weeks', {});
   State.lootbox = await Store.load('lootbox', { day: todayStr(), opened: 0, goldWon: 0, boost: null, titles: [], equipped: null, history: [] });
   State.inbox = await Store.load('inbox', []);
-  State.antihabits = await Store.load('antihabits', []);
   State.episodes = await Store.load('episodes', []);
   State.profile = await Store.load('profile', { text: '', updatedAt: null, auto: true });
   ensureLootbox();
@@ -19244,7 +19513,7 @@ function onChange(e) {
   if (a === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
   if (a === 'set-ai-pref') { State.settings.aiPref = el.value; autosaveSettings(); toast('🤖 ИИ по умолчанию: ' + aiProviderLabel(el.value)); return; }
   if (a === 'set-strava-skill') { State.settings.stravaSkillId = el.value; autosaveSettings(); return; }
-  if (a === 'habit-atomic') { const h = habitById(el.dataset.id); if (h) { h.atomic = h.atomic || {}; h.atomic[el.dataset.field] = el.value.slice(0, 200); Store.save('habits', State.habits); } return; }
+  if (a === 'habit-atomic') { updateHabitAtomic(el.dataset.id, el.dataset.field, el.value); return; }
   if (a === 'save-identity') { State.settings.identityGoal = el.value.slice(0, 200); autosaveSettings(); return; }
   if (a === 'toggle-cat') {
     const t = questById(el.dataset.id); if (!t) return;
@@ -19494,6 +19763,13 @@ async function init() {
   document.addEventListener('focusout', (e) => { const f = e.target.closest && e.target.closest('.t-edit-form'); if (f && f.requestSubmit) setTimeout(() => { if (State._editTask) f.requestSubmit(); }, 100); });
   document.addEventListener('keydown', (e) => {
     if (handleTreeDialogKeydown(e)) return;
+    if (e.target.matches?.('.hsub[role="tablist"] [role="tab"]') && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+      const tabs = Array.from(e.target.closest('[role="tablist"]').querySelectorAll('[role="tab"]'));
+      const at = tabs.indexOf(e.target); let next = at;
+      if (e.key === 'Home') next = 0; else if (e.key === 'End') next = tabs.length - 1;
+      else next = (at + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+      e.preventDefault(); tabs[next].click(); return;
+    }
     if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('.character-secondary-panel > summary')) {
       e.preventDefault();
       const panel = e.target.parentElement;

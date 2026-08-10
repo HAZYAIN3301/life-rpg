@@ -1003,6 +1003,56 @@ function commitEconomyData(uid, payload) {
   return names;
 }
 
+const HABIT_COMMIT_TYPES = Object.freeze({
+  habits: 'array', habitlog: 'object', antihabits: 'array', settings: 'object',
+});
+function habitCommitValueValid(name, value) {
+  const type = HABIT_COMMIT_TYPES[name];
+  if (!type || value == null) return false;
+  if (type === 'array' ? !Array.isArray(value) : (typeof value !== 'object' || Array.isArray(value))) return false;
+  if (name === 'settings') return true;
+  if (name === 'habits') {
+    const ids = new Set();
+    return value.every((habit) => habit && typeof habit === 'object' && !Array.isArray(habit)
+      && typeof habit.id === 'string' && habit.id && !ids.has(habit.id) && (ids.add(habit.id), true)
+      && typeof habit.title === 'string' && Array.isArray(habit.days)
+      && habit.days.every((day) => Number.isInteger(day) && day >= 0 && day <= 6));
+  }
+  if (name === 'antihabits') {
+    const ids = new Set();
+    return value.every((anti) => anti && typeof anti === 'object' && !Array.isArray(anti)
+      && typeof anti.id === 'string' && anti.id && !ids.has(anti.id) && (ids.add(anti.id), true)
+      && typeof anti.title === 'string' && Array.isArray(anti.slips)
+      && anti.slips.every((day) => /^\d{4}-\d{2}-\d{2}$/.test(day)));
+  }
+  return Object.entries(value).every(([day, rows]) => /^\d{4}-\d{2}-\d{2}$/.test(day)
+    && rows && typeof rows === 'object' && !Array.isArray(rows)
+    && Object.values(rows).every((row) => row && typeof row === 'object' && !Array.isArray(row)));
+}
+// A habit gesture may update its log and the energy slice in settings. Keep the
+// files in one account-owned rollback unit so a disk/network failure cannot
+// record only half of a completion. Replaying the same candidate is idempotent.
+function commitHabitData(uid, payload) {
+  if (!payload || !payload.data || typeof payload.data !== 'object' || Array.isArray(payload.data)) throw new Error('invalid_habit_commit');
+  const names = Object.keys(payload.data);
+  if (!names.length || names.some((name) => !habitCommitValueValid(name, payload.data[name]))) throw new Error('invalid_habit_commit');
+  if (Buffer.byteLength(JSON.stringify(payload.data)) > 3 * 1024 * 1024) throw new Error('habit_commit_too_large');
+  const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
+  const snapshots = new Map(); const written = [];
+  for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
+  try {
+    for (const name of names) {
+      backupFile(dir, name);
+      writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
+      written.push(name);
+    }
+  } catch (error) {
+    for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
+    throw error;
+  }
+  return names;
+}
+
 // ============================================================
 //  Migration: root data/*.json  →  data/users/albert/*.json
 //  Runs once, only if no users.json exists yet.
@@ -2455,6 +2505,19 @@ const server = http.createServer(async (req, res) => {
     } catch (error) {
       const clientError = error && (error.message === 'invalid_economy_commit' || error.message === 'economy_commit_too_large');
       return sendJson(res, clientError ? 400 : 500, { error: clientError ? error.message : 'economy_commit_failed_no_changes_lost' });
+    }
+  }
+
+  if (u === '/api/habits/commit' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload; try { payload = JSON.parse(await readBody(req, 4 * 1024 * 1024)); }
+    catch (error) { return sendJson(res, 400, { error: error && error.message === 'payload too large' ? 'habit_commit_too_large' : 'invalid_habit_commit' }); }
+    try {
+      const files = commitHabitData(uid, payload);
+      return sendJson(res, 200, { ok: true, files });
+    } catch (error) {
+      const clientError = error && (error.message === 'invalid_habit_commit' || error.message === 'habit_commit_too_large');
+      return sendJson(res, clientError ? 400 : 500, { error: clientError ? error.message : 'habit_commit_failed_no_changes_lost' });
     }
   }
 
