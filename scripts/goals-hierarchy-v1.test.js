@@ -34,7 +34,9 @@ test('Goals v127 has one checked graph and no direct goal PUT path', () => {
   assert.doesNotMatch(APP, /Store\.(?:save|saveNow|_put)\('goals'/);
   assert.match(APP, /normalizeGoalTaskLinks/);
   assert.match(APP, /delete task\.goalId/);
-  assert.match(SW, /const CACHE = 'satoru-v127'/);
+  const cacheMatch = SW.match(/const CACHE = 'satoru-v(\d+)'/);
+  assert.ok(cacheMatch, 'service worker has a versioned cache name');
+  assert.ok(Number(cacheMatch[1]) >= 127, 'Goals v127 remains safe after later shell upgrades');
 });
 
 test('Progress source is exclusive and linked tasks are explicitly not counted', () => {

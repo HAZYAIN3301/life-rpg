@@ -44,7 +44,10 @@ test('Character rarity uses canonical tokens and non-colour frame grammars', () 
 test('Wardrobe navigation is inline, focus-restored, touch-sized, and offline-safe', () => {
   assert.match(app, /go-wardrobe'[\s\S]{0,180}_characterFocusAfterCommit = '#character-wardrobe'/);
   assert.doesNotMatch(app, /go-wardrobe'\) \{[^}]*setTimeout\(openAvatarForgeEditor/);
-  assert.match(app, /if \(action === 'go-wardrobe'\) sheet\._returnFocus = null/);
+  // A mobile-sheet transition owns the focus handoff centrally, rather than
+  // relying on a wardrobe-only special case.
+  assert.match(app, /const fromMobileSheet = !!secBtn\.closest\('#mobile-nav-sheet'\)/);
+  assert.match(app, /if \(fromMobileSheet\) closeMobileNavSheet\(\{ restoreFocus: false \}\)/);
   assert.match(app, /<h2 id="character-route-title">\$\{t\('Персонаж'\)\}<\/h2>/);
   assert.match(app, /data-character-panel="rhythm"\$\{secondaryOpen\('rhythm'\)\}/);
   assert.match(app, /State\._characterSecondaryOpen = 'rhythm'/);

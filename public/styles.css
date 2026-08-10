@@ -106,6 +106,7 @@
   .goals-shell :is(button,input,select,textarea,summary), .goal-delete-box :is(button,input,select,textarea) { min-height: var(--touch-min); }
   body:has(.goals-shell) #ai-fab { display: none; }
 }
+
 @media (hover: hover) and (pointer: fine) {
   .goal-summary, .goals-shell button { transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease; }
 }
@@ -14502,4 +14503,65 @@ html.calendar-task-open body {
     hyphens: auto;
     text-align: center;
   }
+}
+
+/* Mobile navigation v128 — four direct destinations + purpose-grouped More.
+   This is DOM-aligned navigation; no CSS `order` participates in its sequence. */
+.mobile-sheet-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 var(--touch-min);
+  inline-size: var(--touch-min);
+  block-size: var(--touch-min);
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface-4));
+}
+.mobile-sheet-profile h2 {
+  margin: 0;
+  color: var(--text-strong);
+  font: 750 var(--type-heading)/var(--leading-ui) var(--font-ui);
+}
+.mobile-sheet-profile h2:focus { outline: none; }
+.mobile-sheet-groups { display: grid; gap: var(--sp-2); }
+.mobile-sheet-group {
+  display: grid;
+  gap: var(--sp-1);
+  padding: var(--sp-2);
+  border: 1px solid var(--line-soft);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface-3) 72%, transparent);
+}
+.mobile-sheet-group > h3 {
+  margin: 0;
+  color: var(--muted);
+  font: 800 var(--type-meta)/var(--leading-label) var(--font-ui);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.mobile-sheet-group-entries { display: grid; gap: var(--sp-1); }
+.mobile-sheet-group .mobile-sheet-entry {
+  min-block-size: var(--touch-min);
+  border-color: color-mix(in srgb, var(--line-soft) 82%, transparent);
+  background: color-mix(in srgb, var(--surface-2) 88%, transparent);
+}
+.mobile-sheet-entry[aria-current="page"] {
+  border-color: color-mix(in srgb, var(--accent-2) 72%, var(--line));
+  background: color-mix(in srgb, var(--accent) 17%, var(--surface-3));
+  box-shadow: inset 3px 0 0 var(--accent-2);
+}
+.mobile-nav-sheet :is(button,.mobile-sheet-entry):focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+.mobile-sheet-utils { margin-top: 0; }
+.mobile-sheet-utils .btn { min-block-size: var(--touch-min); }
+@media (max-width: 600px), (pointer: coarse) {
+  .mobile-sheet { max-block-size: min(86svh, 720px); }
+  .mobile-sheet-entry { min-block-size: var(--touch-min); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav-overlay,
+  .mobile-nav-sheet { transition-duration: 0s; }
 }

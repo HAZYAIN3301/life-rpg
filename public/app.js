@@ -2914,6 +2914,12 @@ const I18N_EXTRA = {
   'побед недели': { en: 'weekly wins', de: 'Wochensiege', uk: 'перемог тижня', es: 'victorias semanales' },
   'пройдено': { en: 'completed', de: 'abgeschlossen', uk: 'пройдено', es: 'completado' },
   'ты': { en: 'you', de: 'du', uk: 'ти', es: 'tú' },
+  // ── Mobile More v128: назначение вместо одной бессмысленной сетки ──
+  'Развитие': { en: 'Growth', de: 'Entwicklung', uk: 'Розвиток', es: 'Crecimiento' },
+  'Сообщество': { en: 'Community', de: 'Gemeinschaft', uk: 'Спільнота', es: 'Comunidad' },
+  'Поддержка': { en: 'Support', de: 'Unterstützung', uk: 'Підтримка', es: 'Apoyo' },
+  'Аккаунт и доступ': { en: 'Account and access', de: 'Konto und Zugriff', uk: 'Акаунт і доступ', es: 'Cuenta y acceso' },
+  'Справка и сеанс': { en: 'Help and session', de: 'Hilfe und Sitzung', uk: 'Довідка й сеанс', es: 'Ayuda y sesión' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -4524,6 +4530,7 @@ const State = {
   _goalsLoadError: '', _goalsLoadBusy: false, _goalsWriteBlockedNoticeAt: 0,
   _goalTxnBusy: '', _goalsError: '', _goalsFocusAfterCommit: '', _goalOpenId: '', _goalDeepLinkId: '',
   _calendarUndo: null, _calendarUndoTimer: null, _calendarFocusAfterCommit: '',
+  _mobileNavFocusAfterCommit: '',
   _calendarViewportNode: null, _calendarViewportDate: '', _calendarViewportScroll: null,
   aveCat: 'hair', // активная категория в редакторе аватара
   _denEdit: false, // открыт ли редактор комнаты (эфемерно, сама обстановка хранится в settings.den)
@@ -16885,6 +16892,9 @@ const SECTIONS = [
   ] },
   { id: 'tribe', iconId: 'nav.tribe', label: 'Племя', gate: 3, views: [{ view: 'party', label: 'Пати' }, { view: 'leaderboard', label: 'Рейтинг' }] },
 ];
+// Канон mobile navigation: четыре прямых destination и один purpose-grouped More.
+const MOBILE_PRIMARY_SECTION_IDS = Object.freeze(['today', 'plan', 'habits', 'hero']);
+const MOBILE_MORE_SECTION_IDS = Object.freeze(['rewards', 'tribe']);
 function sectionOf(view) { for (const s of SECTIONS) if (s.views.some((v) => v.view === view)) return s.id; return null; } // settings (шестерёнка) и legacy weekly → null
 function navUnlockLevel() { return (State.me && State.me.isAdmin) ? 999 : charLevel(); } // админ видит всё (дог-фуддинг)
 // ── Дискаверабилити: мягко подсвечиваем разделы/фичи, куда юзер ещё не заходил ──
@@ -16906,13 +16916,13 @@ function renderNav() {
   if (!row || nav.dataset.primaryKey !== primaryKey) {
     const primary = SECTIONS.map((s) => {
       const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
-      const mobileClass = ['today', 'plan', 'habits', 'hero'].includes(s.id) ? ' mobile-primary' : ' mobile-secondary';
-      return `<button class="navsec${mobileClass}${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}" title="${locked ? 'Откроется на ур.' + s.gate : (isNew ? t(s.label) + ' — новое!' : t(s.label))}">${navMotionIconHTML(s.iconId)}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">${satoruIconHTML('status.lock', 'navsec-lock-icon', '🔒')}${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
+      const mobileClass = MOBILE_PRIMARY_SECTION_IDS.includes(s.id) ? ' mobile-primary' : ' mobile-secondary';
+      return `<button class="navsec${mobileClass}${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}" aria-current="${s.id === cur ? 'page' : 'false'}" title="${locked ? 'Откроется на ур.' + s.gate : (isNew ? t(s.label) + ' — новое!' : t(s.label))}">${navMotionIconHTML(s.iconId)}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">${satoruIconHTML('status.lock', 'navsec-lock-icon', '🔒')}${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
     }).join('');
     const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="${t('Настройки')}" aria-label="${t('Настройки')}">${satoruIconHTML('nav.settings', 'navgear-icon', '⚙️')}</button>`;
-    const moreActive = cur === 'rewards' || cur === 'tribe' || State.view === 'settings';
-    const moreNew = SECTIONS.filter((s) => s.id === 'rewards' || s.id === 'tribe').some((s) => sectionHasNew(s, lvl));
-    const more = `<button class="navsec mobile-nav-more${moreActive ? ' active' : ''}${moreNew && !moreActive ? ' navsec-new' : ''}" data-action="mobile-nav-more" aria-haspopup="dialog" aria-label="${t('Ещё')}"><span class="mobile-more-glyph" aria-hidden="true">•••</span><span class="navsec-l">${t('Ещё')}</span>${moreNew && !moreActive ? '<span class="navsec-dot"></span>' : ''}</button>`;
+    const moreActive = MOBILE_MORE_SECTION_IDS.includes(cur) || State.view === 'settings';
+    const moreNew = SECTIONS.filter((s) => MOBILE_MORE_SECTION_IDS.includes(s.id)).some((s) => sectionHasNew(s, lvl));
+    const more = `<button class="navsec mobile-nav-more${moreActive ? ' active' : ''}${moreNew && !moreActive ? ' navsec-new' : ''}" data-action="mobile-nav-more" aria-haspopup="dialog" aria-expanded="false" aria-current="${moreActive ? 'page' : 'false'}" aria-label="${t('Ещё')}"><span class="mobile-more-glyph" aria-hidden="true">•••</span><span class="navsec-l">${t('Ещё')}</span>${moreNew && !moreActive ? '<span class="navsec-dot"></span>' : ''}</button>`;
     if (row) row.remove();
     nav.insertAdjacentHTML('afterbegin', `<div class="navrow">${primary}${more}${gear}</div>`);
     row = nav.querySelector(':scope > .navrow');
@@ -16927,17 +16937,20 @@ function renderNav() {
     const locked = s.gate > lvl;
     const isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
     button.classList.toggle('active', s.id === cur);
+    button.setAttribute('aria-current', s.id === cur ? 'page' : 'false');
     button.classList.toggle('navsec-new', isNew);
     button.title = locked ? `Откроется на ур.${s.gate}` : (isNew ? `${t(s.label)} — новое!` : t(s.label));
     const dot = button.querySelector('.navsec-dot');
     if (isNew && !dot) button.insertAdjacentHTML('beforeend', '<span class="navsec-dot"></span>');
     if (!isNew && dot) dot.remove();
   }
-  const moreActive = cur === 'rewards' || cur === 'tribe' || State.view === 'settings';
-  const moreNew = SECTIONS.filter((s) => s.id === 'rewards' || s.id === 'tribe').some((s) => sectionHasNew(s, lvl));
+  const moreActive = MOBILE_MORE_SECTION_IDS.includes(cur) || State.view === 'settings';
+  const moreNew = SECTIONS.filter((s) => MOBILE_MORE_SECTION_IDS.includes(s.id)).some((s) => sectionHasNew(s, lvl));
   const moreButton = row && row.querySelector('.mobile-nav-more');
   if (moreButton) {
     moreButton.classList.toggle('active', moreActive);
+    moreButton.setAttribute('aria-current', moreActive ? 'page' : 'false');
+    moreButton.setAttribute('aria-expanded', String(!!document.getElementById('mobile-nav-sheet')));
     moreButton.classList.toggle('navsec-new', moreNew && !moreActive);
     const dot = moreButton.querySelector('.navsec-dot');
     if (moreNew && !moreActive && !dot) moreButton.insertAdjacentHTML('beforeend', '<span class="navsec-dot"></span>');
@@ -16955,49 +16968,79 @@ function renderNav() {
   }
 }
 
-function closeMobileNavSheet() {
+function mobileNavFocusable(sheet) {
+  return Array.from(sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')).filter((node) => !node.disabled && node.getClientRects().length);
+}
+function handleMobileNavSheetKeydown(event) {
+  const overlay = event.currentTarget;
+  if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeMobileNavSheet(); return; }
+  if (event.key !== 'Tab') return;
+  const focusable = mobileNavFocusable(overlay); if (!focusable.length) return;
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+  else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+}
+function closeMobileNavSheet({ restoreFocus = true, immediate = false } = {}) {
   const overlay = document.getElementById('mobile-nav-sheet');
   document.documentElement.classList.remove('mobile-nav-open');
   if (!overlay) return;
   const returnFocus = overlay._returnFocus;
+  document.querySelector('[data-action="mobile-nav-more"]')?.setAttribute('aria-expanded', 'false');
+  const appRoot = overlay._mobileNavApp;
+  if (appRoot) appRoot.inert = !!overlay._mobileNavAppWasInert;
   overlay.classList.remove('is-open');
-  setTimeout(() => {
+  const dispose = () => {
     overlay.remove();
-    if (returnFocus && returnFocus.isConnected) returnFocus.focus({ preventScroll: true });
-  }, 180);
+    // render() can run during the close animation; reassert the final ARIA
+    // state after the departing sheet no longer exists in the document.
+    document.querySelector('[data-action="mobile-nav-more"]')?.setAttribute('aria-expanded', 'false');
+    if (restoreFocus && returnFocus && returnFocus.isConnected) returnFocus.focus({ preventScroll: true });
+  };
+  if (immediate) dispose(); else setTimeout(dispose, 180);
 }
 
 function showMobileNavSheet() {
-  document.getElementById('mobile-nav-sheet')?.remove();
+  if (document.getElementById('mobile-nav-sheet')) closeMobileNavSheet({ restoreFocus: false, immediate: true });
   const lvl = navUnlockLevel(), cur = sectionOf(State.view), cr = charRank();
-  const menuSections = SECTIONS.filter((s) => s.id === 'rewards' || s.id === 'tribe').map((s) => {
+  const sectionEntry = (id) => {
+    const s = SECTIONS.find((section) => section.id === id); if (!s) return '';
     const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
-    return `<button class="mobile-sheet-entry${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}" data-action="go-section" data-sec="${s.id}">
+    return `<button class="mobile-sheet-entry${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}" data-action="go-section" data-sec="${s.id}" aria-current="${s.id === cur ? 'page' : 'false'}">
       <span class="mobile-sheet-icon">${satoruIconHTML(s.iconId, 'mobile-sheet-glyph', '')}</span><span><b>${t(s.label)}</b>${locked ? `<small>${satoruIconHTML('status.lock', 'inline-glyph', '🔒')} ${t('Уровень')} ${s.gate}</small>` : ''}</span>${isNew ? '<i class="mobile-sheet-new"></i>' : '<span class="mobile-sheet-chevron">›</span>'}
     </button>`;
-  }).join('');
+  };
+  const group = (id, label, entries) => `<section class="mobile-sheet-group" aria-labelledby="${id}"><h3 id="${id}">${t(label)}</h3><div class="mobile-sheet-group-entries">${entries}</div></section>`;
   const overlay = document.createElement('div');
   overlay.id = 'mobile-nav-sheet';
   overlay.className = 'mobile-nav-overlay';
   overlay._returnFocus = document.activeElement;
-  overlay.innerHTML = `<section class="mobile-nav-sheet" role="dialog" aria-modal="true" aria-label="${t('Ещё')}">
+  overlay._mobileNavApp = document.getElementById('app');
+  overlay._mobileNavAppWasInert = !!(overlay._mobileNavApp && overlay._mobileNavApp.inert);
+  overlay.innerHTML = `<section class="mobile-nav-sheet" role="dialog" aria-modal="true" aria-labelledby="mobile-nav-title">
     <div class="mobile-sheet-handle" aria-hidden="true"></div>
     <header class="mobile-sheet-head">
-      <div class="mobile-sheet-profile"><button class="mobile-sheet-avatar" data-action="go-wardrobe" aria-label="${t('Открыть персонажа')}">${avatarPortraitHTML({ motion: 'portrait' })}</button><div><b>${esc((State.me && State.me.name) || 'Satoru')}</b><small>${rankIconHTML(cr, 'rank-inline-icon')} ${esc(cr.name)} · ${t('Уровень')} ${charLevel()}</small></div></div>
+      <div class="mobile-sheet-profile"><button class="mobile-sheet-avatar" data-action="go-wardrobe" aria-label="${t('Открыть персонажа')}">${avatarPortraitHTML({ motion: 'portrait' })}</button><div><h2 id="mobile-nav-title" tabindex="-1">${t('Ещё')}</h2><small>${rankIconHTML(cr, 'rank-inline-icon')} ${esc(cr.name)} · ${t('Уровень')} ${charLevel()}</small></div></div>
       <button class="mobile-sheet-close" data-action="mobile-nav-close" aria-label="${t('Закрыть')}">✕</button>
     </header>
-    <div class="mobile-sheet-grid">${menuSections}
-      <button class="mobile-sheet-entry" data-action="open-helper"><span class="mobile-sheet-icon">${satoruIconHTML('nav.shadow', 'mobile-sheet-glyph', '🤖')}</span><span><b>${t('Помощник')}</b><small>Satoru AI</small></span><span class="mobile-sheet-chevron">›</span></button>
-      <button class="mobile-sheet-entry${State.view === 'settings' ? ' active' : ''}" data-action="mobile-go-settings"><span class="mobile-sheet-icon">${satoruIconHTML('nav.settings', 'mobile-sheet-glyph', '⚙️')}</span><span><b>${t('Настройки')}</b></span><span class="mobile-sheet-chevron">›</span></button>
-      <button class="mobile-sheet-entry" data-action="show-paywall" data-feature="Pro"><span class="mobile-sheet-icon">${satoruIconHTML('status.xp', 'mobile-sheet-glyph', '◇')}</span><span><b>Pro</b><small>${ent().tier === 'pro' ? 'PRO' : ent().tier === 'trial' ? `TRIAL · ${trialDaysLeft()}д` : 'FREE'}</small></span><span class="mobile-sheet-chevron">›</span></button>
+    <div class="mobile-sheet-groups">
+      ${group('mobile-more-growth', 'Развитие', sectionEntry('rewards'))}
+      ${group('mobile-more-community', 'Сообщество', sectionEntry('tribe'))}
+      ${group('mobile-more-support', 'Поддержка', `<button class="mobile-sheet-entry" data-action="open-helper"><span class="mobile-sheet-icon">${satoruIconHTML('nav.shadow', 'mobile-sheet-glyph', '🤖')}</span><span><b>${t('Помощник')}</b><small>Satoru AI</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
+      ${group('mobile-more-account', 'Аккаунт и доступ', `<button class="mobile-sheet-entry${State.view === 'settings' ? ' active' : ''}" data-action="mobile-go-settings" aria-current="${State.view === 'settings' ? 'page' : 'false'}"><span class="mobile-sheet-icon">${satoruIconHTML('nav.settings', 'mobile-sheet-glyph', '⚙️')}</span><span><b>${t('Настройки')}</b></span><span class="mobile-sheet-chevron">›</span></button><button class="mobile-sheet-entry" data-action="show-paywall" data-feature="Pro"><span class="mobile-sheet-icon">${satoruIconHTML('status.xp', 'mobile-sheet-glyph', '◇')}</span><span><b>Pro</b><small>${ent().tier === 'pro' ? 'PRO' : ent().tier === 'trial' ? `TRIAL · ${trialDaysLeft()}д` : 'FREE'}</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
+      ${group('mobile-more-session', 'Справка и сеанс', `<div class="mobile-sheet-utils"><button class="btn ghost" data-action="show-guide">? ${t('Как играть')}</button><button class="btn ghost" data-action="logout">⇦ ${t('Выйти')}</button></div>`) }
     </div>
-    <div class="mobile-sheet-utils"><button class="btn ghost" data-action="show-guide">? ${t('Как играть')}</button><button class="btn ghost" data-action="logout">⇦ ${t('Выйти')}</button></div>
   </section>`;
   document.documentElement.classList.add('mobile-nav-open');
+  if (overlay._mobileNavApp) overlay._mobileNavApp.inert = true;
   document.body.appendChild(overlay);
+  overlay.addEventListener('keydown', handleMobileNavSheetKeydown);
+  document.querySelector('[data-action="mobile-nav-more"]')?.setAttribute('aria-expanded', 'true');
+  // A drip/tutorial is advisory, while this is a modal navigation surface.
+  // Suppress it now; MutationObserver restores it after the sheet is gone.
+  try { tutorialPaint(); } catch {}
   requestAnimationFrame(() => {
     overlay.classList.add('is-open');
-    overlay.querySelector('.mobile-sheet-close')?.focus({ preventScroll: true });
+    overlay.querySelector('#mobile-nav-title')?.focus({ preventScroll: true });
   });
 }
 const ACCENTS = ['#6c8cff', '#22c1a4', '#e0526a', '#b06ff0', '#e0a23e', '#4f9ff7']; // палитра акцентов (#тема)
@@ -17101,6 +17144,14 @@ function afterMainCommit() {
   try { normalizeSettingsOutline(); } catch {}
   try { labelSettingsControls(); } catch {}
   try { if (State.view === 'settings') SettingsAutosave.paint(); } catch {}
+  if (State._mobileNavFocusAfterCommit) {
+    const selector = State._mobileNavFocusAfterCommit;
+    State._mobileNavFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const target = document.querySelector(selector) || document.querySelector('#main h2');
+      if (target) focusPathChoiceTarget(target);
+    });
+  }
   if (State._tasksFocusAfterCommit) {
     const selector = State._tasksFocusAfterCommit;
     State._tasksFocusAfterCommit = '';
@@ -17876,7 +17927,7 @@ function tutorialPaint() {
   // Пока открыт любой модал — гайда нет. #tut-overlay лежит на z-index 10001 против 200 у .modal-overlay,
   // так что пузырь накрывал бы кнопки открытого окна, а подсказка всё равно про другой элемент интерфейса.
   // Состояние не трогаем: закроют модал — MutationObserver перерисует и пузырь вернётся.
-  if (!tut.active || document.querySelector('.modal-overlay')) { if (ov) ov.remove(); return; }
+  if (!tut.active || document.querySelector('.modal-overlay, #mobile-nav-sheet')) { if (ov) ov.remove(); return; }
   if (!ov) { ov = document.createElement('div'); ov.id = 'tut-overlay'; document.body.appendChild(ov); }
   // drip-режим: нежный пузырь Тени без затемнения (нудж, не блокирует)
   if (tut.mode === 'drip') {
@@ -17973,8 +18024,10 @@ function onClick(e) {
   if (secBtn) {
     const s = SECTIONS.find((x) => x.id === secBtn.dataset.sec); if (!s) return;
     if (s.gate > navUnlockLevel()) { toast(`🔒 «${s.label}» откроется на ур.${s.gate}`); return; }
-    closeMobileNavSheet();
-    if (sectionOf(State.view) !== s.id) { flushSettingsForm(); State.view = s.views[0].view; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
+    const fromMobileSheet = !!secBtn.closest('#mobile-nav-sheet');
+    if (fromMobileSheet) closeMobileNavSheet({ restoreFocus: false });
+    else closeMobileNavSheet();
+    if (sectionOf(State.view) !== s.id) { flushSettingsForm(); State.view = s.views[0].view; if (fromMobileSheet) State._mobileNavFocusAfterCommit = '#main h2'; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
     return;
   }
   if (e.target.id === 'mobile-nav-sheet') { closeMobileNavSheet(); return; }
@@ -17993,14 +18046,14 @@ function onClick(e) {
   const action = el.dataset.action, id = el.dataset.id, today = todayStr();
 
   if (el.closest('#mobile-nav-sheet') && action !== 'mobile-nav-close') {
-    const sheet = el.closest('#mobile-nav-sheet');
-    if (action === 'go-wardrobe') sheet._returnFocus = null;
-    closeMobileNavSheet();
+    // Новый экран или диалог становится владельцем фокуса. Не возвращаемся к
+    // уже неактуальной кнопке More по таймеру закрытия sheet.
+    closeMobileNavSheet({ restoreFocus: false });
   }
   if (action === 'mobile-nav-more') { showMobileNavSheet(); return; }
   if (action === 'mobile-nav-close') { closeMobileNavSheet(); return; }
   if (action === 'mobile-go-settings') {
-    flushSettingsForm(); State.view = 'settings'; State.adminUsers = null; State.analytics = undefined; track('view:settings'); render(); return;
+    flushSettingsForm(); State.view = 'settings'; State._mobileNavFocusAfterCommit = '#settings-title, #main h2'; State.adminUsers = null; State.analytics = undefined; track('view:settings'); render(); return;
   }
   if (action === 'focus-add-task') {
     const input = document.querySelector('#add-task input[name="title"]');
