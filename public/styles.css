@@ -14606,3 +14606,30 @@ html.calendar-task-open body {
 @media (prefers-reduced-motion: reduce) {
   .notes-screen *, .note-delete-overlay * { animation-duration: 0ms !important; transition-duration: 0ms !important; }
 }
+
+/* ── «Первая строка назавтра» (DISCIPLINE-ARENA-PLAN §2) ──────────────────────
+   Утром экран ВЕДЁТ этой строкой, а не списком: поэтому сам текст берёт
+   --type-title, а всё вокруг него намеренно тихое. Роли только из восьми
+   существующих, новых токенов нет (DESIGN-CRAFT-RULES, единый token contract). */
+.first-line-card { border-left: 3px solid var(--accent, #e0a23e); }
+.fl-kicker { margin: 0 0 6px; font-size: var(--type-meta); color: var(--muted); }
+.fl-text {
+  margin: 0 0 14px; font-family: var(--font-display); font-size: var(--type-title);
+  line-height: var(--leading-display); max-width: var(--measure-compact);
+}
+.fl-acts { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Вечерний вопрос — часть «Итога дня», тон спокойный: это предложение, не форма. */
+.fl-ask { margin-top: 14px; }
+.fl-label { display: block; margin-bottom: 6px; font-size: var(--type-meta); color: var(--muted); }
+.fl-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.fl-input {
+  flex: 1 1 220px; min-width: 0; font-size: var(--type-control);
+  padding: 9px 12px; border-radius: var(--radius);
+  background: var(--bg, transparent); border: 1px solid var(--line); color: inherit;
+}
+/* Тач: цель не ниже 42px (неподвижная граница продукта). */
+@media (hover: none) {
+  .fl-input { min-height: 42px; }
+  .fl-acts .btn, .fl-row .btn { min-height: 42px; }
+}

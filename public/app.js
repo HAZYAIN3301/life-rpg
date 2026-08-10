@@ -2186,6 +2186,15 @@ const I18N_EXTRA = {
   'Засчитано в': { en: 'Counted on', de: 'Angerechnet auf', uk: 'Зараховано в', es: 'Contado el' },
   // ── «Итог дня»: выбор дня + нудж «жизнь шла, а записать было некогда» ──
   'Итог дня': { en: 'Day log', de: 'Tagesabschluss', uk: 'Підсумок дня', es: 'Resumen del día' },
+  // ── «Первая строка назавтра» (DISCIPLINE-ARENA-PLAN §2) ──
+  'Первое действие завтра — одной строкой': { en: 'Tomorrow’s first action — one line', de: 'Erste Handlung morgen — eine Zeile', uk: 'Перша дія завтра — одним рядком', es: 'Primera acción de mañana — una línea' },
+  'Например: открыть файл и написать один абзац': { en: 'For example: open the file and write one paragraph', de: 'Zum Beispiel: die Datei öffnen und einen Absatz schreiben', uk: 'Наприклад: відкрити файл і написати один абзац', es: 'Por ejemplo: abrir el archivo y escribir un párrafo' },
+  'Записать': { en: 'Save', de: 'Notieren', uk: 'Записати', es: 'Guardar' },
+  'Записано на завтра': { en: 'Saved for tomorrow', de: 'Für morgen notiert', uk: 'Записано на завтра', es: 'Guardado para mañana' },
+  'Строка убрана': { en: 'Line cleared', de: 'Zeile entfernt', uk: 'Рядок прибрано', es: 'Línea eliminada' },
+  'Вчера ты выбрал начать с этого': { en: 'Yesterday you chose to start with this', de: 'Gestern hast du dich entschieden, hiermit zu beginnen', uk: 'Учора ти обрав почати з цього', es: 'Ayer elegiste empezar con esto' },
+  'Сделано': { en: 'Done', de: 'Erledigt', uk: 'Зроблено', es: 'Hecho' },
+  'Не сегодня': { en: 'Not today', de: 'Heute nicht', uk: 'Не сьогодні', es: 'Hoy no' },
   // ── Эпизод: период вместо дней (LIFE-CAPTURE-PLAN.md) ──
   'Эпизод': { en: 'Episode', de: 'Episode', uk: 'Епізод', es: 'Episodio' },
   'Был период, когда записывать было некогда — поездка, интенсив, болезнь. Расскажи о нём целиком, одним куском. Разбивать по дням не надо.': { en: "There was a stretch when logging wasn't possible — a trip, an intensive, illness. Tell it as one piece. No need to split it by day.", de: 'Es gab eine Zeit, in der Aufschreiben nicht ging — Reise, Intensivkurs, Krankheit. Erzähl sie als Ganzes. Kein Aufteilen nach Tagen nötig.', uk: 'Був період, коли записувати було ніколи — поїздка, інтенсив, хвороба. Розкажи про нього цілком, одним шматком. Розбивати по днях не треба.', es: 'Hubo un tramo en que no se podía registrar — un viaje, un intensivo, una enfermedad. Cuéntalo entero, de una pieza. No hace falta dividirlo por días.' },
@@ -13967,6 +13976,59 @@ function applyNudgeVoice(html, voiced) {
   const i = html.indexOf('>');
   return i < 0 ? html : html.slice(0, i + 1) + `<p class="nudge-voice">${esc(voiced)}</p>` + html.slice(i + 1);
 }
+// ── «Первая строка назавтра» (DISCIPLINE-ARENA-PLAN §2) ──────────────────────
+// Главная стоимость старта — не работа, а РЕШЕНИЕ, что именно делать. Те самые
+// первые шестьдесят секунд за ноутбуком, когда надо выбрать, и есть генератор
+// скролла. Перенос решения на вчера снимает его целиком: вчерашний ты был
+// отдохнувшим, знал контекст и решал спокойно.
+//
+// Гейты §2, оба держатся здесь: одна строка, а не список (список — это опять
+// выбор, то есть та же стоимость); пропуск ничего не стоит и нигде не
+// отмечается — незаполненное поле не оставляет следа вообще.
+function firstLineGet() {
+  const v = State.settings && State.settings.tomorrowFirst;
+  return v && typeof v === 'object' && typeof v.text === 'string' ? v : null;
+}
+/** Строка, написанная вчера ИМЕННО на сегодня и ещё не закрытая. */
+function firstLineForToday() {
+  const v = firstLineGet();
+  return v && v.date === todayStr() && v.text.trim() && !v.doneAt ? v : null;
+}
+/** Строка, уже отложенная на завтра — чтобы вечером показать её вместо пустого поля. */
+function firstLinePending() {
+  const v = firstLineGet();
+  return v && v.date > todayStr() && v.text.trim() ? v : null;
+}
+function firstLineSave(text) {
+  const clean = String(text == null ? '' : text).trim().slice(0, 140);
+  if (!clean) delete State.settings.tomorrowFirst;
+  else State.settings.tomorrowFirst = { date: addDays(todayStr(), 1), text: clean, doneAt: null };
+  Store.save('settings', State.settings);
+}
+function firstLineMarkDone() {
+  const v = firstLineGet();
+  if (!v) return;
+  State.settings.tomorrowFirst = Object.assign({}, v, { doneAt: todayStr() });
+  Store.save('settings', State.settings);
+}
+// Отказ стирает строку начисто. Ни счётчика пропусков, ни истории «сколько раз
+// не сделал»: гейт §2 — пропуск не должен стоить ничего, а любая отметка о нём
+// немедленно превратилась бы в материал для упрёка.
+function firstLineDismiss() {
+  if (State.settings) delete State.settings.tomorrowFirst;
+  Store.save('settings', State.settings);
+}
+function firstLineCardHTML() {
+  const fl = firstLineForToday();
+  if (!fl) return '';
+  return `<div class="card first-line-card">
+    <p class="fl-kicker">${t('Вчера ты выбрал начать с этого')}</p>
+    <p class="fl-text">${esc(fl.text)}</p>
+    <div class="fl-acts">
+      <button class="btn" data-action="first-line-done">${t('Сделано')}</button>
+      <button class="btn ghost sm" data-action="first-line-skip">${t('Не сегодня')}</button>
+    </div></div>`;
+}
 function renderToday() {
   const today = todayStr();
   const todays = State.tasks.filter((t) => t.date === today);
@@ -14207,10 +14269,19 @@ function renderToday() {
       <p class="muted">Квестов ${doneCount}/${todays.length} · привычек ${habits.filter((h) => habitDone(h, today)).length}/${habits.length} · ${fmtDur(minToday)} · +${xpToday} XP · +${goldToday} ${satoruIconHTML('status.gold', 'inline-emblem', '◇')}</p>
       ${obsBlock}
       <textarea id="reflection" placeholder="Рефлексия: что получилось, что перенести, как себя чувствую…">${esc(day.reflection || '')}</textarea>
+      <div class="fl-ask">
+        <label class="fl-label" for="first-line">${t('Первое действие завтра — одной строкой')}</label>
+        <div class="fl-row">
+          <input id="first-line" class="fl-input" maxlength="140" autocomplete="off"
+            placeholder="${t('Например: открыть файл и написать один абзац')}"
+            value="${esc(firstLinePending() ? firstLinePending().text : '')}" />
+          <button class="btn ghost sm" data-action="first-line-save">${t('Записать')}</button>
+        </div>
+      </div>
       <div style="margin-top:10px"><button class="${day.closed ? 'btn ghost' : 'btn'}" data-action="${day.closed ? 'reopen-day' : 'close-day'}">${day.closed ? '✓ День закрыт — открыть заново' : 'Закрыть день'}</button></div></div>`;
   const deeperPath = `<button class="today-deeper" data-action="goto-rewards">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Награды')} <span aria-hidden="true">→</span></button>`;
   return `<div class="today-shell">
-    <div class="today-work">${todayHero}${overdueCard}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
+    <div class="today-work">${firstLineCardHTML()}${todayHero}${overdueCard}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
     <aside class="today-support" aria-label="Поддержка дня">${companionCard()}${deeperPath}${activeNudge}${nudgeCard}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${tm ? timerCard : ''}${energyCard}${installBanner()}</aside>
     <div class="today-footer">${antiHabitsCard()}${shutdownCard}</div>
   </div>`;
@@ -18917,6 +18988,18 @@ function onClick(e) {
       if (note) Object.assign(x, note);
     });
     Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
+  } else if (action === 'first-line-save') {
+    const field = document.getElementById('first-line');
+    const text = field ? field.value : '';
+    firstLineSave(text);
+    // Пустое поле — законный ответ: человек имеет право не решать за завтра.
+    toast(String(text).trim() ? t('Записано на завтра') : t('Строка убрана'));
+    render();
+  } else if (action === 'first-line-done') {
+    firstLineMarkDone(); render();
+  } else if (action === 'first-line-skip') {
+    // Молча, без «жаль» и без счётчика: отказ не должен стоить ничего.
+    firstLineDismiss(); render();
   } else if (action === 'amnesty-overdue') {
     // Ничего не удаляем и не переносим: дата остаётся прежней, дело остаётся в своём дне.
     // Меняется только одно — оно перестаёт считаться долгом. Это и есть разница между
