@@ -2920,6 +2920,27 @@ const I18N_EXTRA = {
   'Поддержка': { en: 'Support', de: 'Unterstützung', uk: 'Підтримка', es: 'Apoyo' },
   'Аккаунт и доступ': { en: 'Account and access', de: 'Konto und Zugriff', uk: 'Акаунт і доступ', es: 'Cuenta y acceso' },
   'Справка и сеанс': { en: 'Help and session', de: 'Hilfe und Sitzung', uk: 'Довідка й сеанс', es: 'Ayuda y sesión' },
+  // ── Notes v129: honest capture, recovery and destructive safety ──
+  'Быстрая мысль, идея, план — в Заметки…': { en: 'Quick thought, idea or plan — to Notes…', de: 'Schneller Gedanke, Idee oder Plan — in Notizen…', uk: 'Швидка думка, ідея чи план — у Нотатки…', es: 'Pensamiento, idea o plan rápido — a Notas…' },
+  'Текст заметки': { en: 'Note text', de: 'Notiztext', uk: 'Текст нотатки', es: 'Texto de la nota' },
+  'Подпиши заметку…': { en: 'Add a caption…', de: 'Beschriftung ergänzen…', uk: 'Додай підпис…', es: 'Añade un título…' },
+  'Сохранить заметку': { en: 'Save note', de: 'Notiz speichern', uk: 'Зберегти нотатку', es: 'Guardar nota' },
+  'Заметка': { en: 'Note', de: 'Notiz', uk: 'Нотатка', es: 'Nota' },
+  'Цель': { en: 'Goal', de: 'Ziel', uk: 'Ціль', es: 'Meta' },
+  '→ Квест': { en: '→ Quest', de: '→ Quest', uk: '→ Квест', es: '→ Misión' },
+  'Голосовая заметка': { en: 'Voice note', de: 'Sprachnotiz', uk: 'Голосова нотатка', es: 'Nota de voz' },
+  'Видео-заметка': { en: 'Video note', de: 'Videonotiz', uk: 'Відеонотатка', es: 'Nota de vídeo' },
+  'Сделать квестом на сегодня': { en: 'Make today’s quest', de: 'Als heutige Quest anlegen', uk: 'Зробити квестом на сьогодні', es: 'Convertir en misión de hoy' },
+  'Удалить заметку?': { en: 'Delete this note?', de: 'Diese Notiz löschen?', uk: 'Видалити цю нотатку?', es: '¿Eliminar esta nota?' },
+  'Запись, текст и медиа исчезнут без возможности восстановления.': { en: 'The recording, text and media will be removed permanently.', de: 'Aufnahme, Text und Medien werden dauerhaft entfernt.', uk: 'Запис, текст і медіа буде видалено без відновлення.', es: 'La grabación, el texto y el contenido multimedia se eliminarán de forma permanente.' },
+  'Не удалось сохранить заметку. Ничего не изменено — повтори попытку.': { en: 'The note could not be saved. Nothing changed — try again.', de: 'Die Notiz konnte nicht gespeichert werden. Nichts wurde geändert — versuche es erneut.', uk: 'Не вдалося зберегти нотатку. Нічого не змінено — спробуй ще раз.', es: 'No se pudo guardar la nota. Nada cambió; inténtalo de nuevo.' },
+  'Не удалось удалить заметку. Она осталась на месте.': { en: 'The note could not be deleted. It is still here.', de: 'Die Notiz konnte nicht gelöscht werden. Sie bleibt erhalten.', uk: 'Не вдалося видалити нотатку. Вона залишилася на місці.', es: 'No se pudo eliminar la nota. Sigue aquí.' },
+  'Лови любые мысли — идеи проектов, личное, планы. Всё хранится в одном месте. Потом примени в Satoru (→ Квест) или разберёшь с ИИ (скоро).': { en: 'Catch any thought — project ideas, personal notes or plans. They stay in one place. Turn one into a Satoru quest, or sort it with AI later.', de: 'Halte jeden Gedanken fest — Projektideen, Persönliches oder Pläne. Alles bleibt an einem Ort. Mach daraus eine Satoru-Quest oder sortiere es später mit KI.', uk: 'Лови будь-яку думку — ідеї проєктів, особисте чи плани. Усе зберігається в одному місці. Перетвори її на квест Satoru або розбери з ШІ пізніше.', es: 'Captura cualquier idea: proyectos, notas personales o planes. Todo queda en un solo lugar. Conviértela en una misión de Satoru o revísala con IA después.' },
+  'Пусто. Запиши первую мысль в строке выше ↑ (текст, 🎤 голос или 🎥 видео).': { en: 'Nothing here yet. Capture the first thought above — text, 🎤 voice or 🎥 video.', de: 'Noch leer. Halte oben den ersten Gedanken fest — Text, 🎤 Stimme oder 🎥 Video.', uk: 'Тут поки порожньо. Запиши першу думку вище — текст, 🎤 голос або 🎥 відео.', es: 'Aún está vacío. Captura arriba la primera idea: texto, 🎤 voz o 🎥 vídeo.' },
+  '→ В квестах на сегодня': { en: '→ In today’s quests', de: '→ In den heutigen Quests', uk: '→ У квестах на сьогодні', es: '→ En las misiones de hoy' },
+  'Заметки не загрузились': { en: 'Notes did not load', de: 'Notizen wurden nicht geladen', uk: 'Нотатки не завантажилися', es: 'Las notas no se cargaron' },
+  'Не показываем пустой список и не сохраняем поверх данных, пока соединение не восстановится.': { en: 'We do not show an empty list or overwrite anything until the connection recovers.', de: 'Wir zeigen keine leere Liste und überschreiben nichts, bis die Verbindung wiederhergestellt ist.', uk: 'Не показуємо порожній список і нічого не перезаписуємо, доки з’єднання не відновиться.', es: 'No mostramos una lista vacía ni sobrescribimos nada hasta que vuelva la conexión.' },
+  'Повторить загрузку заметок': { en: 'Retry loading notes', de: 'Notizen erneut laden', uk: 'Повторити завантаження нотаток', es: 'Reintentar cargar notas' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -4530,6 +4551,7 @@ const State = {
   _goalsLoadError: '', _goalsLoadBusy: false, _goalsWriteBlockedNoticeAt: 0,
   _goalTxnBusy: '', _goalsError: '', _goalsFocusAfterCommit: '', _goalOpenId: '', _goalDeepLinkId: '',
   _calendarUndo: null, _calendarUndoTimer: null, _calendarFocusAfterCommit: '',
+  _inboxLoadError: '', _inboxBusy: false, _inboxFocusAfterCommit: '',
   _mobileNavFocusAfterCommit: '',
   _calendarViewportNode: null, _calendarViewportDate: '', _calendarViewportScroll: null,
   aveCat: 'hair', // активная категория в редакторе аватара
@@ -11900,12 +11922,43 @@ function captureBar() {
   }
   return `<div class="card capture-card">
     <form id="capture-form" class="cap-row">
-      <input name="text" placeholder="Быстрая мысль, идея, план — в Заметки…" autocomplete="off" />
-      <button type="button" class="cap-btn" data-action="cap-voice" title="Голосовая заметка">${satoruIconHTML('media.microphone', 'capture-glyph', '🎤')}</button>
-      <button type="button" class="cap-btn" data-action="cap-video" title="Видео-заметка">${satoruIconHTML('media.video', 'capture-glyph', '🎥')}</button>
-      <button type="submit" class="cap-add" title="Сохранить заметку">${satoruIconHTML('action.add', 'capture-glyph', '↵')}</button>
+      <label class="sr-only" for="capture-text">${t('Текст заметки')}</label><input id="capture-text" name="text" maxlength="1000" placeholder="${t('Быстрая мысль, идея, план — в Заметки…')}" autocomplete="off" />
+      <button type="button" class="cap-btn" data-action="cap-voice" aria-label="${t('Голосовая заметка')}">${satoruIconHTML('media.microphone', 'capture-glyph', '🎤')}</button>
+      <button type="button" class="cap-btn" data-action="cap-video" aria-label="${t('Видео-заметка')}">${satoruIconHTML('media.video', 'capture-glyph', '🎥')}</button>
+      <button type="submit" class="cap-add" aria-label="${t('Сохранить заметку')}">${satoruIconHTML('action.add', 'capture-glyph', '↵')}</button>
+      <span class="capture-status" role="status" aria-live="polite"></span>
     </form>
     <button class="dayrec-btn" data-action="day-recap" title="Наговори день — Тень разложит по делам">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} Итог дня — расскажи, что сделал</button></div>`;
+}
+function validateInboxPayload(value) {
+  if (!Array.isArray(value)) return false;
+  const ids = new Set();
+  return value.every((item) => {
+    if (!item || typeof item !== 'object' || Array.isArray(item) || typeof item.id !== 'string' || !item.id || ids.has(item.id)) return false;
+    ids.add(item.id);
+    return ['text', 'voice', 'video'].includes(item.kind) && typeof (item.text || '') === 'string' && (!item.file || typeof item.file === 'string');
+  });
+}
+function inboxWriteAllowed(notify = false) {
+  if (!State._inboxLoadError) return true;
+  if (notify) toast(t('Заметки не загрузились'));
+  return false;
+}
+async function commitInbox(next) {
+  if (!inboxWriteAllowed(true) || State._inboxBusy) return false;
+  State._inboxBusy = true;
+  const saved = await Store.saveNow('inbox', next);
+  State._inboxBusy = false;
+  if (saved) State.inbox = next;
+  return saved;
+}
+function notesRecoveryCard() {
+  if (!State._inboxLoadError) return '';
+  return `<section class="card notes-recovery" role="alert"><h2 id="notes-title">${t('Заметки не загрузились')}</h2><p>${t('Не показываем пустой список и не сохраняем поверх данных, пока соединение не восстановится.')}</p><button class="btn" data-action="notes-retry">${t('Повторить загрузку заметок')}</button></section>`;
+}
+function noteTitle(it) {
+  const raw = String(it.text || '').trim();
+  return raw ? raw.slice(0, 72) : t(it.kind === 'voice' ? 'Голосовая заметка' : it.kind === 'video' ? 'Видео-заметка' : 'Заметка');
 }
 // Карточка-заметка: редактируемый текст + плеер (если медиа) + действия
 function noteCard(it) {
@@ -11914,11 +11967,11 @@ function noteCard(it) {
     : `<audio class="note-media" controls preload="metadata" src="/api/inbox/media/${esc(it.file)}"></audio>`) : '';
   const icon = it.kind === 'voice' ? satoruIconHTML('media.microphone', 'note-kind-icon', '🎤') : it.kind === 'video' ? satoruIconHTML('media.video', 'note-kind-icon', '🎥') : satoruIconHTML('media.notes', 'note-kind-icon', '📝');
   const when = (it.at || '').replace('T', ' ').slice(0, 16);
-  return `<div class="card note-card">
-    <div class="note-top"><span class="note-when muted">${icon} ${esc(when)}</span>
-      <span class="note-acts">${(it.text || '').trim() ? `<button class="btn ghost sm" data-action="note-to-goal" data-id="${it.id}" title="ИИ оформит заметку в цели/квесты">🤖 → Цель</button>` : ''}<button class="btn ghost sm" data-action="note-quest" data-id="${it.id}" title="Сделать квестом на сегодня">→ Квест</button><button class="del" data-action="note-del" data-id="${it.id}" title="Удалить">✕</button></span></div>
+  return `<article class="card note-card" aria-labelledby="note-${esc(it.id)}-title">
+    <div class="note-top"><div><h3 id="note-${esc(it.id)}-title">${esc(noteTitle(it))}</h3><span class="note-when muted">${icon} ${esc(when)}</span></div>
+      <span class="note-acts">${(it.text || '').trim() ? `<button class="btn ghost sm" data-action="note-to-goal" data-id="${it.id}">🤖 ${t('Цель')}</button>` : ''}<button class="btn ghost sm" data-action="note-quest" data-id="${it.id}">${t('→ Квест')}</button><button class="del" data-action="note-del" data-id="${it.id}" aria-label="${t('Удалить заметку?')}">✕</button></span></div>
     ${media}
-    <textarea class="note-text" data-action="note-edit" data-id="${it.id}" rows="2" placeholder="${it.file ? 'Подпиши заметку…' : 'Текст заметки…'}">${esc(it.text || '')}</textarea></div>`;
+    <label class="sr-only" for="note-${esc(it.id)}-text">${t('Текст заметки')}</label><textarea id="note-${esc(it.id)}-text" class="note-text" data-action="note-edit" data-id="${it.id}" rows="2" maxlength="1000" placeholder="${t(it.file ? 'Подпиши заметку…' : 'Текст заметки…')}">${esc(it.text || '')}</textarea><p class="note-save-status" data-note-status="${it.id}" role="status"></p></article>`;
 }
 function notesPeekToday() {
   const n = (State.inbox || []).length; if (!n) return '';
@@ -11926,13 +11979,61 @@ function notesPeekToday() {
 }
 function renderNotes() {
   const notes = State.inbox || [];
-  return `${captureBar()}
-    <div class="card"><p class="muted" style="margin:0">📝 Лови любые мысли — идеи проектов, личное, планы. Всё хранится в одном месте. Потом примени в Satoru (→ Квест) или разберёшь с ИИ (скоро).</p></div>
-    ${notes.length ? notes.map(noteCard).join('') : '<div class="card"><p class="muted">Пусто. Запиши первую мысль в строке выше ↑ (текст, 🎤 голос или 🎥 видео).</p></div>'}`;
+  if (State._inboxLoadError) return notesRecoveryCard();
+  return `<section class="notes-screen" aria-labelledby="notes-title"><header class="notes-header"><p class="eyebrow">${t('Сегодня')}</p><h2 id="notes-title">${t('Заметки')}</h2><p>${t('Лови любые мысли — идеи проектов, личное, планы. Всё хранится в одном месте. Потом примени в Satoru (→ Квест) или разберёшь с ИИ (скоро).')}</p></header>${captureBar()}
+    <section class="notes-list" aria-label="${t('Заметки')}">${notes.length ? notes.map(noteCard).join('') : `<div class="card notes-empty"><p>${t('Пусто. Запиши первую мысль в строке выше ↑ (текст, 🎤 голос или 🎥 видео).')}</p></div>`}</section></section>`;
+}
+function closeNoteDeleteDialog({ restoreFocus = true } = {}) {
+  const overlay = document.getElementById('note-delete-dialog'); if (!overlay) return;
+  const target = restoreFocus && overlay._returnFocus && overlay._returnFocus.isConnected ? overlay._returnFocus : null;
+  document.getElementById('app')?.removeAttribute('inert'); overlay.remove();
+  if (target) requestAnimationFrame(() => focusPathChoiceTarget(target));
+}
+function handleNoteDeleteDialogKeydown(event) {
+  const overlay = document.getElementById('note-delete-dialog'); if (!overlay) return;
+  if (event.key === 'Escape') { event.preventDefault(); closeNoteDeleteDialog(); return; }
+  if (event.key !== 'Tab') return;
+  const nodes = Array.from(overlay.querySelectorAll('button,[href],input,[tabindex]:not([tabindex="-1"])')).filter((node) => !node.disabled && node.getClientRects().length);
+  if (!nodes.length) return;
+  const first = nodes[0], last = nodes[nodes.length - 1];
+  if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+  else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+}
+function openNoteDeleteDialog(id, opener) {
+  const item = (State.inbox || []).find((note) => note.id === id); if (!item || !inboxWriteAllowed()) return;
+  closeNoteDeleteDialog({ restoreFocus: false });
+  const overlay = document.createElement('div'); overlay.id = 'note-delete-dialog'; overlay.className = 'modal-overlay note-delete-overlay'; overlay.dataset.id = id; overlay._returnFocus = opener || document.activeElement;
+  overlay.innerHTML = `<section class="note-delete-box" role="dialog" aria-modal="true" aria-labelledby="note-delete-title" aria-describedby="note-delete-desc"><button class="modal-x" data-action="note-delete-cancel" aria-label="${t('Закрыть')}">✕</button><h2 id="note-delete-title" tabindex="-1">${t('Удалить заметку?')}</h2><p id="note-delete-desc">${t('Запись, текст и медиа исчезнут без возможности восстановления.')}</p><div class="note-delete-actions"><button class="btn ghost" data-action="note-delete-cancel">${t('Отмена')}</button><button class="btn danger" data-action="note-delete-confirm">${t('Удалить')}</button></div></section>`;
+  overlay.addEventListener('keydown', handleNoteDeleteDialogKeydown); document.getElementById('app')?.setAttribute('inert', ''); document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.querySelector('#note-delete-title')?.focus({ preventScroll: true }));
+}
+async function confirmNoteDelete() {
+  const overlay = document.getElementById('note-delete-dialog'); if (!overlay || State._inboxBusy) return;
+  const id = overlay.dataset.id; const next = (State.inbox || []).filter((note) => note.id !== id);
+  const saved = await commitInbox(next);
+  if (!saved) { const desc = overlay.querySelector('#note-delete-desc'); if (desc) { desc.textContent = t('Не удалось удалить заметку. Она осталась на месте.'); desc.setAttribute('role', 'alert'); } return; }
+  closeNoteDeleteDialog({ restoreFocus: false }); State._inboxFocusAfterCommit = '#notes-title'; render();
+}
+async function noteToQuest(id) {
+  const note = (State.inbox || []).find((item) => item.id === id); if (!note || State._inboxBusy || State._tasksLoadError) return false;
+  // A failed second write never creates a second quest: the durable task carries
+  // its source note id and a retry only completes the pending inbox removal.
+  let task = (State.tasks || []).find((item) => item.noteSourceId === id);
+  if (!task) {
+    const sid = State.settings.skills[0] && State.settings.skills[0].id;
+    const title = (note.text || (note.kind === 'voice' ? t('Голосовая заметка') : note.kind === 'video' ? t('Видео-заметка') : t('Заметка'))).slice(0, 120);
+    task = { id: uid(), noteSourceId: id, title, skillId: sid, skillIds: sid ? [sid] : [], estimateMin: 30, difficulty: 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() };
+    const savedTask = await Store.saveNow('tasks', [...State.tasks, task]);
+    if (!savedTask) { toast(t('Не удалось сохранить квест')); return false; }
+    State.tasks = [...State.tasks, task];
+  }
+  const savedInbox = await commitInbox((State.inbox || []).filter((item) => item.id !== id));
+  if (!savedInbox) { toast(t('Не удалось сохранить заметку. Ничего не изменено — повтори попытку.')); return false; }
+  State._tasksFocusAfterCommit = '#main h2'; State.view = 'today'; toast(t('→ В квестах на сегодня')); render(); return true;
 }
 function blobToDataUrl(blob) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); }); }
 async function startCapture(kind) {
-  if (_rec) return;
+  if (_rec || !inboxWriteAllowed(true)) return;
   if (!navigator.mediaDevices || !window.MediaRecorder) { toast('Браузер не поддерживает запись'); return; }
   let stream;
   try { stream = await navigator.mediaDevices.getUserMedia(kind === 'video' ? { audio: true, video: { width: 640, height: 480 } } : { audio: true }); }
@@ -11958,13 +12059,16 @@ async function onCaptureStop() {
   const blob = new Blob(rec.chunks, { type: rec.recorder.mimeType || (rec.kind === 'video' ? 'video/webm' : 'audio/webm') });
   _rec = null; render();
   if (!blob.size) { toast('Пустая запись'); return; }
+  if (!inboxWriteAllowed(true)) return;
   try {
     const dataUrl = await blobToDataUrl(blob);
     const r = await fetch('/api/inbox/media', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataUrl, kind: rec.kind }) });
     if (!r.ok) { toast('Не удалось сохранить запись'); return; }
     const d = await r.json();
-    State.inbox.unshift({ id: uid(), kind: rec.kind, text: '', file: d.file, type: d.type, at: new Date().toISOString() });
-    Store.save('inbox', State.inbox); track('capture:' + rec.kind); toast(rec.kind === 'video' ? '🎥 Видео в Заметках' : '🎤 Голос в Заметках'); render();
+    const item = { id: uid(), kind: rec.kind, text: '', file: d.file, type: d.type, at: new Date().toISOString() };
+    const saved = await commitInbox([item, ...(State.inbox || [])]);
+    if (!saved) { toast(t('Не удалось сохранить заметку. Ничего не изменено — повтори попытку.')); return; }
+    State._inboxFocusAfterCommit = `#note-${CSS.escape(item.id)}-title`; track('capture:' + rec.kind); toast(rec.kind === 'video' ? '🎥 Видео в Заметках' : '🎤 Голос в Заметках'); render();
   } catch { toast('Ошибка сохранения записи'); }
 }
 // Nested-прогрессия (Brawl-Stars: «всегда что-то почти готово») — день → неделя → серия
@@ -17152,6 +17256,13 @@ function afterMainCommit() {
       if (target) focusPathChoiceTarget(target);
     });
   }
+  if (State._inboxFocusAfterCommit && State.view === 'notes') {
+    const selector = State._inboxFocusAfterCommit; State._inboxFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const target = document.querySelector(selector) || document.querySelector('#notes-title');
+      if (target) focusPathChoiceTarget(target);
+    });
+  }
   if (State._tasksFocusAfterCommit) {
     const selector = State._tasksFocusAfterCommit;
     State._tasksFocusAfterCommit = '';
@@ -17658,8 +17769,17 @@ async function onSubmit(e) {
 
   if (f.id === 'capture-form') {
     e.preventDefault(); const text = f.text.value.trim(); if (!text) return;
-    State.inbox.unshift({ id: uid(), kind: 'text', text, file: null, type: null, at: new Date().toISOString() });
-    Store.save('inbox', State.inbox); track('capture:text'); f.text.value = ''; toast('📝 В Заметках'); render();
+    if (!inboxWriteAllowed(true) || State._inboxBusy) return;
+    const controls = f.querySelectorAll('button, input'); const status = f.querySelector('.capture-status');
+    controls.forEach((control) => { control.disabled = true; }); if (status) status.textContent = t('Сохраняю…');
+    const item = { id: uid(), kind: 'text', text, file: null, type: null, at: new Date().toISOString() };
+    const saved = await commitInbox([item, ...(State.inbox || [])]);
+    if (!saved) {
+      controls.forEach((control) => { control.disabled = false; });
+      if (status) { status.textContent = t('Не удалось сохранить заметку. Ничего не изменено — повтори попытку.'); status.setAttribute('role', 'alert'); }
+      focusPathChoiceTarget(f.text); return;
+    }
+    State._inboxFocusAfterCommit = `#note-${CSS.escape(item.id)}-title`; track('capture:text'); toast('📝 В Заметках'); render();
     return;
   }
   if (f.id === 'chat-form') {
@@ -19195,18 +19315,23 @@ function onClick(e) {
     const sel = form && form.querySelector('select[name="skillId"]'); const box = card && card.querySelector('#cat-suggest');
     if (box && sel) aiCatSuggest(el.dataset.title, box, sel);
   } else if (action === 'ai-close') { const m = document.getElementById('ai-modal'); if (m) m.remove();
+  } else if (action === 'notes-retry') {
+    (async () => {
+      const loaded = await Store.loadChecked('inbox', [], validateInboxPayload);
+      State.inbox = loaded.value; State._inboxLoadError = loaded.error;
+      State._inboxFocusAfterCommit = loaded.error ? '[data-action="notes-retry"]' : '#notes-title'; render();
+    })();
   } else if (action === 'note-del') {
-    State.inbox = (State.inbox || []).filter((x) => x.id !== id); Store.save('inbox', State.inbox); render();
+    openNoteDeleteDialog(id, el);
+  } else if (action === 'note-delete-cancel') {
+    closeNoteDeleteDialog();
+  } else if (action === 'note-delete-confirm') {
+    confirmNoteDelete();
   } else if (action === 'note-to-goal') {
     const it = (State.inbox || []).find((x) => x.id === id); if (!it || !(it.text || '').trim()) return;
     openProposeModal('goals', it.text.trim()); // заметка → движок предложений (ИИ оформит в цели/сферы)
   } else if (action === 'note-quest') {
-    const it = (State.inbox || []).find((x) => x.id === id); if (!it) return;
-    const title = (it.text || (it.kind === 'voice' ? 'Голосовая заметка' : it.kind === 'video' ? 'Видео-заметка' : 'Заметка')).slice(0, 120);
-    const sid = State.settings.skills[0] && State.settings.skills[0].id;
-    State.tasks.push({ id: uid(), title, skillId: sid, skillIds: sid ? [sid] : [], estimateMin: 30, difficulty: 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
-    State.inbox = State.inbox.filter((x) => x.id !== id);
-    Store.save('tasks', State.tasks); Store.save('inbox', State.inbox); toast('→ В квестах на сегодня'); render();
+    noteToQuest(id);
   } else if (action === 'show-cal-subscribe') { showCalSubscribeModal(el);
   } else if (action === 'close-cal-subscribe') { closeCalSubscribeModal();
   } else if (action === 'cal-sub-retry') { loadCalSubscribeBody(document.getElementById('cal-sub-ov'), { focusAfter: true });
@@ -19620,7 +19745,10 @@ async function initApp() {
   State.achievements = await Store.load('achievements', {});
   State.weeks = await Store.load('weeks', {});
   State.lootbox = await Store.load('lootbox', { day: todayStr(), opened: 0, goldWon: 0, boost: null, titles: [], equipped: null, history: [] });
-  State.inbox = await Store.load('inbox', []);
+  {
+    const inboxLoad = await Store.loadChecked('inbox', [], validateInboxPayload);
+    State.inbox = inboxLoad.value; State._inboxLoadError = inboxLoad.error;
+  }
   State.episodes = await Store.load('episodes', []);
   State.profile = await Store.load('profile', { text: '', updatedAt: null, auto: true });
   ensureLootbox();
@@ -19734,7 +19862,15 @@ function onChange(e) {
   }
   // правка текста заметки (сохраняем на blur/change, без ререндера — не сбивая фокус)
   if (e.target.dataset && e.target.dataset.action === 'note-edit') {
-    const it = (State.inbox || []).find((x) => x.id === e.target.dataset.id); if (it) { it.text = e.target.value; Store.save('inbox', State.inbox); }
+    const input = e.target, id = input.dataset.id, item = (State.inbox || []).find((note) => note.id === id); if (!item || !inboxWriteAllowed(true) || State._inboxBusy) return;
+    const before = item.text, next = structuredClone(State.inbox); const changed = next.find((note) => note.id === id); changed.text = input.value;
+    const status = document.querySelector(`[data-note-status="${CSS.escape(id)}"]`); input.disabled = true; if (status) status.textContent = t('Сохраняю…');
+    (async () => {
+      const saved = await commitInbox(next);
+      input.disabled = false;
+      if (!saved) { if (status) { status.textContent = t('Не удалось сохранить заметку. Ничего не изменено — повтори попытку.'); status.setAttribute('role', 'alert'); } input.setAttribute('aria-invalid', 'true'); item.text = before; focusPathChoiceTarget(input); return; }
+      input.removeAttribute('aria-invalid'); if (status) status.textContent = t('Сохранено');
+    })();
     return;
   }
   // превью выбранных фото/видео в форме фидбека

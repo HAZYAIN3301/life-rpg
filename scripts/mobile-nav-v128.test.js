@@ -75,5 +75,6 @@ test('More copy has complete locale rows and nav CSS stays DOM-ordered', () => {
   assert.match(style, /\.mobile-sheet-entry\[aria-current="page"\]/);
   assert.match(style, /\.mobile-nav-sheet :is\(button,\.mobile-sheet-entry\):focus-visible/);
   assert.match(style, /@media \(prefers-reduced-motion: reduce\)/);
-  assert.match(SW, /const CACHE = 'satoru-v128'/);
+  const cache = SW.match(/const CACHE = 'satoru-v(\d+)'/);
+  assert.ok(cache && Number(cache[1]) >= 128, 'v128 navigation remains covered after later shell upgrades');
 });

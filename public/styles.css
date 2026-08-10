@@ -14565,3 +14565,44 @@ html.calendar-task-open body {
   .mobile-nav-overlay,
   .mobile-nav-sheet { transition-duration: 0s; }
 }
+
+/* Notes v129 — quiet capture, durable actions, and one readable list. */
+.notes-screen { display: grid; gap: var(--sp-3); max-width: var(--work-max, 720px); }
+.notes-header { max-width: var(--measure-compact, 55ch); }
+.notes-header .eyebrow { margin: 0 0 var(--sp-1); color: var(--today-kicker-fg, var(--accent)); font-size: var(--type-meta, 12px); line-height: var(--leading-label, 1.2); font-weight: 800; letter-spacing: var(--tracking-caps, .08em); text-transform: uppercase; }
+.notes-header h2 { margin: 0; font-size: var(--type-title, clamp(20px,3vw,34px)); line-height: var(--leading-display, 1.12); }
+.notes-header p { margin: var(--sp-1) 0 0; font-size: var(--type-body, 15px); line-height: var(--leading-prose, 1.5); color: var(--muted); }
+.notes-list { display: grid; gap: var(--sp-2); }
+.note-card { display: grid; gap: var(--sp-2); }
+.note-top { align-items: flex-start; }
+.note-top h3 { margin: 0; color: var(--text-strong); font-size: var(--type-heading, 16px); line-height: var(--leading-ui, 1.35); overflow-wrap: anywhere; }
+.note-when { display: inline-flex; gap: var(--sp-1); margin-top: 2px; font-size: var(--type-meta, 12px); line-height: var(--leading-label, 1.2); }
+.note-acts { flex-wrap: wrap; justify-content: flex-end; }
+.note-acts .del, .note-delete-box .modal-x { min-inline-size: var(--touch-min, 42px); min-block-size: var(--touch-min, 42px); }
+.note-text { font-size: var(--type-body, 15px); line-height: var(--leading-prose, 1.5); }
+.note-text:focus-visible, .note-acts button:focus-visible, .capture-card button:focus-visible, .notes-recovery button:focus-visible, .note-delete-box button:focus-visible { outline: var(--focus-ring, 2px solid var(--accent)); outline-offset: 3px; }
+.note-save-status, .capture-status { min-block-size: 1.2em; margin: 0; color: var(--muted); font-size: var(--type-meta, 12px); line-height: var(--leading-label, 1.2); }
+.notes-empty p, .notes-recovery p { margin: 0; font-size: var(--type-body, 15px); line-height: var(--leading-prose, 1.5); }
+.notes-recovery { display: grid; gap: var(--sp-2); }
+.notes-recovery h2 { margin: 0; font-size: var(--type-title, clamp(20px,3vw,34px)); line-height: var(--leading-display, 1.12); }
+.note-delete-overlay { display: grid; place-items: center; padding: var(--sp-3); }
+.note-delete-box { position: relative; inline-size: min(100%, var(--measure-dialog, 34ch)); padding: var(--sp-4); background: var(--surface-1, var(--panel)); color: var(--text); border: 1px solid var(--line); border-radius: var(--radius-card, 18px); box-shadow: var(--shadow-raised); }
+.note-delete-box h2 { margin: 0; padding-inline-end: 42px; font-size: var(--type-title, clamp(20px,3vw,34px)); line-height: var(--leading-display, 1.12); }
+.note-delete-box p { margin: var(--sp-2) 0 0; color: var(--muted); font-size: var(--type-body, 15px); line-height: var(--leading-prose, 1.5); }
+.note-delete-box .modal-x { position: absolute; inset: var(--sp-2) var(--sp-2) auto auto; }
+.note-delete-actions { display: flex; gap: var(--sp-2); justify-content: flex-end; margin-top: var(--sp-3); }
+@media (max-width: 600px) {
+  .notes-screen { gap: var(--sp-2); }
+  .cap-row { display: grid; grid-template-columns: minmax(0,1fr) var(--touch-min, 42px) var(--touch-min, 42px) var(--touch-min, 42px); }
+  .cap-row input[name="text"] { min-block-size: var(--touch-min, 42px); }
+  .cap-btn, .cap-add { inline-size: var(--touch-min, 42px); min-block-size: var(--touch-min, 42px); padding: 0; display: grid; place-items: center; }
+  .capture-status { grid-column: 1 / -1; }
+  .note-top { display: grid; grid-template-columns: minmax(0,1fr); }
+  .note-acts { justify-content: flex-start; }
+  .note-acts .btn { min-block-size: var(--touch-min, 42px); }
+  .note-delete-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .note-delete-actions .btn { min-block-size: var(--touch-min, 42px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .notes-screen *, .note-delete-overlay * { animation-duration: 0ms !important; transition-duration: 0ms !important; }
+}
