@@ -6,6 +6,113 @@
   font-display: swap;
 }
 
+/* ============================================================
+   Goals hierarchy v127 — one outline, one progress source
+   ============================================================ */
+:root {
+  --goals-active-fg: #8ed5ff;
+  --goals-line: color-mix(in srgb, var(--accent) 28%, var(--line-soft));
+}
+:root[data-theme="light"] {
+  --goals-active-fg: #075f78;
+  --goals-line: color-mix(in srgb, #075f78 35%, var(--line-soft));
+}
+.goals-shell { display: grid; gap: var(--sp-3); }
+.goals-route-head {
+  display: flex; align-items: end; justify-content: space-between; gap: var(--sp-3);
+  padding: var(--sp-3); border: 1px solid var(--line-soft); border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface-2) 92%, transparent);
+}
+.goals-route-head h2 { margin: 0; font-size: var(--type-title); line-height: var(--leading-display); }
+.goals-route-head p { margin: var(--sp-1) 0 0; max-width: var(--measure-compact); color: var(--text-soft); }
+.goals-kicker { color: var(--goals-active-fg) !important; font-size: var(--type-meta); line-height: var(--leading-label); font-weight: 900; letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.goals-counts { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+.goals-counts span { padding: var(--sp-1) var(--sp-2); border: 1px solid var(--line-soft); border-radius: var(--radius-pill); font-size: var(--type-meta); font-weight: 800; }
+.goals-error { padding: var(--sp-2); border: 1px solid var(--bad); border-radius: var(--radius-md); color: var(--bad); }
+.goals-outline { padding: 0; overflow: clip; background: color-mix(in srgb, var(--surface-2) 94%, transparent); }
+.goals-outline > h3 { margin: 0; padding: var(--sp-3); border-bottom: 1px solid var(--line-soft); font-size: var(--type-heading); }
+.goal-branch { position: relative; }
+.goal-item {
+  position: relative; margin-inline-start: min(calc(var(--goal-depth) * 22px), 66px);
+  border-bottom: 1px solid var(--line-soft); background: transparent;
+}
+.goal-item::before { content: ""; position: absolute; inset-inline-start: -12px; inset-block: 0 50%; border-inline-start: 1px solid var(--goals-line); pointer-events: none; }
+.goal-item[style*="--goal-depth:0"]::before { display: none; }
+.goal-detail > summary { list-style: none; }
+.goal-detail > summary::-webkit-details-marker { display: none; }
+.goal-summary {
+  min-height: 58px; display: grid; grid-template-columns: minmax(0,1fr) minmax(88px,140px);
+  gap: var(--sp-2); align-items: center; padding: var(--sp-2) var(--sp-3); cursor: pointer;
+}
+.goal-summary:hover { background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.goal-summary-main { min-width: 0; display: grid; gap: var(--sp-1); }
+.goal-title { color: var(--text-strong); font-family: var(--font-display); font-size: var(--type-heading); line-height: var(--leading-ui); font-weight: 800; overflow-wrap: anywhere; }
+.goal-summary-meta { display: flex; flex-wrap: wrap; gap: var(--sp-1); color: var(--muted); font-size: var(--type-meta); line-height: var(--leading-label); }
+.goal-summary progress { inline-size: 100%; block-size: 8px; accent-color: var(--goal-color); }
+.goal-detail[open] > .goal-summary { background: color-mix(in srgb, var(--goal-color) 8%, transparent); }
+.goal-body { padding: 0 var(--sp-3) var(--sp-3); display: grid; gap: var(--sp-3); }
+.goal-breadcrumb { display: flex; gap: var(--sp-1); flex-wrap: wrap; align-items: center; color: var(--muted); font-size: var(--type-meta); }
+.goal-breadcrumb a, .goal-deep-link, .task-menu-goal { color: var(--goals-active-fg); text-underline-offset: 3px; }
+.goal-source-note { margin: 0 0 var(--sp-2); color: var(--muted); font-size: var(--type-meta); line-height: var(--leading-prose); }
+.goal-linked { padding: var(--sp-2); border: 1px solid var(--line-soft); border-radius: var(--radius-md); }
+.goal-linked h4 { margin: 0 0 var(--sp-2); font-size: var(--type-heading); }
+.goal-linked-list { list-style: none; margin: 0 0 var(--sp-2); padding: 0; display: grid; gap: var(--sp-1); }
+.goal-linked-list li { display: flex; justify-content: space-between; gap: var(--sp-2); padding-block: var(--sp-1); border-bottom: 1px solid var(--line-soft); }
+.goal-linked-list a { min-width: 0; color: var(--text); overflow-wrap: anywhere; }
+.goal-linked-list span { color: var(--muted); font-size: var(--type-meta); white-space: nowrap; }
+.goal-task-form, .add-step-form, .metric-form { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: var(--sp-2); align-items: end; }
+.goal-task-form label, .add-step-form label, .metric-form label, .goal-form label, .goal-edit-form label { min-width: 0; display: grid; gap: var(--sp-1); color: var(--muted); font-size: var(--type-meta); font-weight: 800; }
+.goal-task-form input, .add-step-form input, .metric-form input { width: 100%; }
+.goal-edit { border-top: 1px solid var(--line-soft); padding-top: var(--sp-2); }
+.goal-edit > summary, .goals-create > summary, .goals-bulk > summary { min-height: var(--touch-min); display: flex; align-items: center; cursor: pointer; font-weight: 800; }
+.goal-edit-form, .goal-form { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--sp-2); padding: var(--sp-2); }
+.goal-edit-form label:first-child, .goal-edit-form label:nth-child(2), .goal-edit-form button, .goal-field-wide, .goal-extra, .goal-form > button, .goal-form-status { grid-column: 1 / -1; }
+.goal-edit-form textarea { min-height: 96px; resize: vertical; }
+.goal-actions { display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center; justify-content: flex-start; }
+.goal-actions > :is(button,a,label) { min-height: var(--touch-min); }
+.goal-pick-lbl { display: inline-flex; gap: var(--sp-1); align-items: center; }
+.goal-pick { inline-size: 20px; block-size: 20px; }
+.gstep { min-height: var(--touch-min); grid-template-columns: var(--touch-min) minmax(0,1fr) var(--touch-min); padding: 0; }
+.gstep .check, .gstep .del { inline-size: var(--touch-min); block-size: var(--touch-min); }
+.goals-create, .goals-bulk, .goals-empty { padding: var(--sp-3); }
+.goals-create > summary, .goals-bulk > summary { font-size: var(--type-heading); }
+.goals-bulk .bulk-bar { margin-block: var(--sp-2); }
+.goals-archive-list { border: 1px solid var(--line-soft); border-radius: var(--radius-md); overflow: hidden; }
+.goal-item.is-archived { opacity: .76; }
+.goal-item.is-done .goal-title { color: var(--text-soft); }
+.goals-empty h3 { margin-top: 0; }
+.goals-load-card { max-width: 720px; margin-inline: auto; }
+.goal-delete-overlay { padding: var(--sp-3); }
+.goal-delete-box { position: relative; width: min(100%, 520px); max-height: calc(100dvh - 32px); overflow: auto; padding: var(--sp-4); border: 1px solid var(--line-soft); border-radius: var(--radius-lg); background: var(--surface-1); color: var(--text); }
+.goal-delete-box h2 { margin-top: 0; }
+.goal-delete-actions { display: flex; justify-content: flex-end; gap: var(--sp-2); flex-wrap: wrap; }
+.goal-delete-box .modal-x { min-inline-size: var(--touch-min); min-block-size: var(--touch-min); }
+.goals-shell :is(button,a,input,select,textarea,summary):focus-visible, .goal-delete-box :is(button,a):focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
+.task-menu-goal { display: block; padding: var(--sp-2); border-bottom: 1px solid var(--line-soft); font-size: var(--type-control); line-height: var(--leading-ui); }
+@media (max-width: 600px) {
+  .goals-shell { gap: var(--sp-2); }
+  .goals-route-head { align-items: start; padding: var(--sp-2); }
+  .goals-counts { display: none; }
+  .gfilters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: var(--sp-1); scrollbar-width: thin; }
+  .gfilter { min-height: var(--touch-min); white-space: nowrap; }
+  .goals-outline > h3 { padding: var(--sp-2); }
+  .goal-item { margin-inline-start: min(calc(var(--goal-depth) * 12px), 36px); }
+  .goal-summary { min-height: var(--touch-min); grid-template-columns: minmax(0,1fr) 72px; padding: var(--sp-2); }
+  .goal-body { padding: 0 var(--sp-2) var(--sp-2); gap: var(--sp-2); }
+  .goal-edit-form, .goal-form, .goal-task-form, .add-step-form, .metric-form { grid-template-columns: minmax(0,1fr); }
+  .goal-edit-form > *, .goal-form > *, .goal-task-form > *, .add-step-form > *, .metric-form > * { grid-column: 1; }
+  .goal-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .goal-actions > * { width: 100%; }
+  .goals-shell :is(button,input,select,textarea,summary), .goal-delete-box :is(button,input,select,textarea) { min-height: var(--touch-min); }
+  body:has(.goals-shell) #ai-fab { display: none; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .goal-summary, .goals-shell button { transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .goals-shell *, .goal-delete-overlay * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
 /* ==========================================================
    Calendar data safety v117 — error is not an empty plan
    ========================================================== */
@@ -14334,4 +14441,65 @@ html.calendar-task-open body {
 
 @media (prefers-reduced-motion: reduce) {
   .habits-shell *, .habits-shell *::before, .habits-shell *::after { animation-duration: 0s !important; transition-duration: 0s !important; scroll-behavior: auto !important; }
+}
+
+/* Goals v127 cascade closure: legacy Goals rules live earlier in the product
+   history, so the migrated controls are reasserted at the final screen layer. */
+.goals-shell .goal-form,
+.goals-shell .goal-edit-form { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--sp-2); padding: var(--sp-2); align-items: end; }
+.goals-shell .goal-form input,
+.goals-shell .goal-form select { width: 100%; min-width: 0; }
+.goals-shell .goal-form label { display: grid; gap: var(--sp-1); min-width: 0; }
+.goals-shell .goal-form .goal-field-wide,
+.goals-shell .goal-form .goal-extra,
+.goals-shell .goal-form > button,
+.goals-shell .goal-form .goal-form-status,
+.goals-shell .goal-edit-form label:first-child,
+.goals-shell .goal-edit-form label:nth-child(2),
+.goals-shell .goal-edit-form > button { grid-column: 1 / -1; }
+.goals-shell .goal-actions { justify-content: flex-start; }
+.goals-shell .gstep { min-height: var(--touch-min); grid-template-columns: var(--touch-min) minmax(0,1fr) var(--touch-min); padding: 0; }
+.goals-shell .gstep .check,
+.goals-shell .gstep .del { inline-size: var(--touch-min); block-size: var(--touch-min); }
+.goals-shell .add-step-form,
+.goals-shell .metric-form { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: var(--sp-2); align-items: end; }
+.goals-shell .gfilter { min-height: var(--touch-min); }
+.goals-shell .goal-detail:not([open]) > .goal-body,
+.goals-shell .goal-edit:not([open]) > .goal-edit-form,
+.goals-shell .goals-create:not([open]) > :not(summary),
+.goals-shell .goals-bulk:not([open]) > :not(summary),
+.goals-shell .goal-extra:not([open]) > :not(summary) { display: none; }
+.goals-shell .goal-detail[open] > .goal-body { display: grid; }
+@media (min-width: 601px) {
+  .goals-shell .goal-form .goal-extra { grid-column: 1; }
+  .goals-shell .goal-form > button { grid-column: 2; align-self: end; }
+}
+@media (max-width: 600px) {
+  .goals-shell .goal-form,
+  .goals-shell .goal-edit-form,
+  .goals-shell .add-step-form,
+  .goals-shell .metric-form { grid-template-columns: minmax(0,1fr); }
+  .goals-shell :is(.goal-form,.goal-edit-form,.add-step-form,.metric-form) > * { grid-column: 1 / -1; }
+  .goals-shell .gfilters {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--sp-2);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding-block: var(--sp-1);
+    scrollbar-width: thin;
+  }
+  .goals-shell .gfilter { flex: 0 0 auto; white-space: nowrap; }
+  .goals-shell :is(.goal-breadcrumb,.goal-linked-list,.goal-actions) a {
+    display: inline-flex;
+    min-block-size: var(--touch-min);
+    align-items: center;
+  }
+  body:has(.goals-shell) .navrow .navsec-l {
+    max-inline-size: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+    text-align: center;
+  }
 }

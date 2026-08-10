@@ -1152,6 +1152,64 @@ const I18N_EXTRA = {
   '▶ Активна': { en: '▶ Active', de: '▶ Aktiv', uk: '▶ Активна', es: '▶ Activa' },
   '⏳ Жду события': { en: '⏳ Awaiting event', de: '⏳ Warte auf Ereignis', uk: '⏳ Чекаю події', es: '⏳ Esperando un evento' },
   'Нет активных целей этого типа. Добавь выше ↑': { en: 'No active goals of this type. Add one above ↑', de: 'Keine aktiven Ziele dieses Typs. Füge oben eines hinzu ↑', uk: 'Немає активних цілей цього типу. Додай вище ↑', es: 'No hay metas activas de este tipo. Añade una arriba ↑' },
+  // Goals v127 — hierarchy, exclusive progress, durable CRUD and recovery
+  'Самостоятельная цель': { en: 'Stand-alone goal', de: 'Eigenständiges Ziel', uk: 'Самостійна ціль', es: 'Meta independiente' },
+  'Outcome сверху, следующие действия внутри. Один источник прогресса на цель.': { en: 'Outcome at the top, next actions inside. One progress source per goal.', de: 'Das Ergebnis steht oben, die nächsten Schritte darunter. Eine Fortschrittsquelle pro Ziel.', uk: 'Результат зверху, наступні дії всередині. Одне джерело прогресу на ціль.', es: 'El resultado arriba y las siguientes acciones dentro. Una fuente de progreso por meta.' },
+  'Источник прогресса': { en: 'Progress source', de: 'Fortschrittsquelle', uk: 'Джерело прогресу', es: 'Fuente de progreso' },
+  'числовая метрика': { en: 'numeric metric', de: 'numerische Metrik', uk: 'числова метрика', es: 'métrica numérica' },
+  'чек-лист цели': { en: 'goal checklist', de: 'Ziel-Checkliste', uk: 'чекліст цілі', es: 'lista de la meta' },
+  'Связанные квесты не прибавляются повторно.': { en: 'Linked quests are not counted again.', de: 'Verknüpfte Quests werden nicht doppelt gezählt.', uk: 'Пов’язані квести не рахуються повторно.', es: 'Las misiones vinculadas no se cuentan de nuevo.' },
+  'Связанные квесты — действия, а не второй счётчик.': { en: 'Linked quests are actions, not a second counter.', de: 'Verknüpfte Quests sind Handlungen, kein zweiter Zähler.', uk: 'Пов’язані квести — це дії, а не другий лічильник.', es: 'Las misiones vinculadas son acciones, no un segundo contador.' },
+  'Новое значение': { en: 'New value', de: 'Neuer Wert', uk: 'Нове значення', es: 'Nuevo valor' },
+  'Новый пункт': { en: 'New item', de: 'Neuer Punkt', uk: 'Новий пункт', es: 'Nuevo punto' },
+  'Добавить': { en: 'Add', de: 'Hinzufügen', uk: 'Додати', es: 'Añadir' },
+  'Следующие действия': { en: 'Next actions', de: 'Nächste Schritte', uk: 'Наступні дії', es: 'Siguientes acciones' },
+  'Связанных квестов пока нет.': { en: 'No linked quests yet.', de: 'Noch keine verknüpften Quests.', uk: 'Пов’язаних квестів поки немає.', es: 'Aún no hay misiones vinculadas.' },
+  'Квест на сегодня': { en: 'Quest for today', de: 'Quest für heute', uk: 'Квест на сьогодні', es: 'Misión para hoy' },
+  'Создать квест': { en: 'Create quest', de: 'Quest erstellen', uk: 'Створити квест', es: 'Crear misión' },
+  'Изменить цель': { en: 'Edit goal', de: 'Ziel bearbeiten', uk: 'Змінити ціль', es: 'Editar meta' },
+  'Родительская цель': { en: 'Parent goal', de: 'Übergeordnetes Ziel', uk: 'Батьківська ціль', es: 'Meta superior' },
+  'Горизонт': { en: 'Horizon', de: 'Horizont', uk: 'Горизонт', es: 'Horizonte' },
+  'Дедлайн': { en: 'Deadline', de: 'Frist', uk: 'Дедлайн', es: 'Fecha límite' },
+  'Состояние': { en: 'State', de: 'Status', uk: 'Стан', es: 'Estado' },
+  'Сохранить изменения': { en: 'Save changes', de: 'Änderungen speichern', uk: 'Зберегти зміни', es: 'Guardar cambios' },
+  'Вернуть из архива': { en: 'Restore from archive', de: 'Aus Archiv wiederherstellen', uk: 'Повернути з архіву', es: 'Restaurar del archivo' },
+  'В архив': { en: 'Archive', de: 'Archivieren', uk: 'В архів', es: 'Archivar' },
+  'Удалить цель': { en: 'Delete goal', de: 'Ziel löschen', uk: 'Видалити ціль', es: 'Eliminar meta' },
+  'Ссылка на цель': { en: 'Goal link', de: 'Link zum Ziel', uk: 'Посилання на ціль', es: 'Enlace a la meta' },
+  'Цепочка цели': { en: 'Goal hierarchy', de: 'Zielhierarchie', uk: 'Ієрархія цілі', es: 'Jerarquía de la meta' },
+  'дочерних': { en: 'children', de: 'Unterziele', uk: 'дочірніх', es: 'submetas' },
+  'Без сферы': { en: 'No area', de: 'Ohne Bereich', uk: 'Без сфери', es: 'Sin área' },
+  'Цели временно недоступны': { en: 'Goals are temporarily unavailable', de: 'Ziele sind vorübergehend nicht verfügbar', uk: 'Цілі тимчасово недоступні', es: 'Las metas no están disponibles temporalmente' },
+  'Файл целей повреждён. Мы ничего не перезапишем до восстановления.': { en: 'The goals file is damaged. We will not overwrite anything until it is recovered.', de: 'Die Zieldatei ist beschädigt. Bis zur Wiederherstellung wird nichts überschrieben.', uk: 'Файл цілей пошкоджено. До відновлення ми нічого не перезапишемо.', es: 'El archivo de metas está dañado. No sobrescribiremos nada hasta recuperarlo.' },
+  'Не удалось загрузить цели. Мы ничего не перезапишем до восстановления.': { en: 'Goals could not be loaded. We will not overwrite anything until recovery.', de: 'Die Ziele konnten nicht geladen werden. Bis zur Wiederherstellung wird nichts überschrieben.', uk: 'Не вдалося завантажити цілі. До відновлення ми нічого не перезапишемо.', es: 'No se pudieron cargar las metas. No sobrescribiremos nada hasta recuperarlas.' },
+  'Числовая метрика — вместо чек-листа': { en: 'Numeric metric — instead of a checklist', de: 'Numerische Metrik — statt Checkliste', uk: 'Числова метрика — замість чекліста', es: 'Métrica numérica — en lugar de una lista' },
+  'Единица': { en: 'Unit', de: 'Einheit', uk: 'Одиниця', es: 'Unidad' },
+  'Создать цель': { en: 'Create goal', de: 'Ziel erstellen', uk: 'Створити ціль', es: 'Crear meta' },
+  'План': { en: 'Plan', de: 'Plan', uk: 'План', es: 'Plan' },
+  'активных': { en: 'active', de: 'aktiv', uk: 'активних', es: 'activas' },
+  'достигнуто': { en: 'achieved', de: 'erreicht', uk: 'досягнуто', es: 'logradas' },
+  'С чего начнём?': { en: 'Where do we start?', de: 'Womit beginnen wir?', uk: 'З чого почнемо?', es: '¿Por dónde empezamos?' },
+  'Создай один outcome. Подцели и квесты можно связать позже — без дублирования прогресса.': { en: 'Create one outcome. You can link subgoals and quests later — without duplicating progress.', de: 'Lege ein Ergebnis an. Unterziele und Quests kannst du später verknüpfen — ohne Fortschritt doppelt zu zählen.', uk: 'Створи один результат. Підцілі й квести можна пов’язати пізніше — без дублювання прогресу.', es: 'Crea un resultado. Podrás vincular submetas y misiones después, sin duplicar el progreso.' },
+  'Импортировать цели': { en: 'Import goals', de: 'Ziele importieren', uk: 'Імпортувати цілі', es: 'Importar metas' },
+  'Фильтр целей': { en: 'Goal filter', de: 'Zielfilter', uk: 'Фільтр цілей', es: 'Filtro de metas' },
+  'Карта целей': { en: 'Goal map', de: 'Zielkarte', uk: 'Карта цілей', es: 'Mapa de metas' },
+  'В этом горизонте целей нет.': { en: 'There are no goals on this horizon.', de: 'In diesem Horizont gibt es keine Ziele.', uk: 'На цьому горизонті цілей немає.', es: 'No hay metas en este horizonte.' },
+  'Создать новую цель': { en: 'Create a new goal', de: 'Neues Ziel erstellen', uk: 'Створити нову ціль', es: 'Crear una nueva meta' },
+  'Управление и архив': { en: 'Manage and archive', de: 'Verwalten und Archiv', uk: 'Керування та архів', es: 'Gestión y archivo' },
+  'Выбрать все': { en: 'Select all', de: 'Alle auswählen', uk: 'Вибрати все', es: 'Seleccionar todo' },
+  'Удалить выбранные': { en: 'Delete selected', de: 'Ausgewählte löschen', uk: 'Видалити вибрані', es: 'Eliminar seleccionadas' },
+  'Удалить цели?': { en: 'Delete goals?', de: 'Ziele löschen?', uk: 'Видалити цілі?', es: '¿Eliminar metas?' },
+  'целей будут удалены': { en: 'goals will be deleted', de: 'Ziele werden gelöscht', uk: 'цілей буде видалено', es: 'metas se eliminarán' },
+  'дочерних целей поднимутся на уровень выше': { en: 'child goals will move up one level', de: 'Unterziele rücken eine Ebene nach oben', uk: 'дочірніх цілей піднімуться на рівень вище', es: 'submetas subirán un nivel' },
+  'квестов останутся в плане, но потеряют ссылку на цель': { en: 'quests will stay in the plan but lose their goal link', de: 'Quests bleiben im Plan, verlieren aber ihre Zielverknüpfung', uk: 'квестів залишаться у плані, але втратять посилання на ціль', es: 'misiones seguirán en el plan, pero perderán el enlace a la meta' },
+  '✅ Достигнута': { en: '✅ Achieved', de: '✅ Erreicht', uk: '✅ Досягнута', es: '✅ Lograda' },
+  '🔄 Держу': { en: '🔄 Maintaining', de: '🔄 Gehalten', uk: '🔄 Тримаю', es: '🔄 Manteniendo' },
+  '⚠️ Просело': { en: '⚠️ Below target', de: '⚠️ Unter Ziel', uk: '⚠️ Просіло', es: '⚠️ Por debajo' },
+  '⏳ Жду': { en: '⏳ Waiting', de: '⏳ Warten', uk: '⏳ Чекаю', es: '⏳ En espera' },
+  'Активна': { en: 'Active', de: 'Aktiv', uk: 'Активна', es: 'Activa' },
+  'Жду': { en: 'Waiting', de: 'Warten', uk: 'Чекаю', es: 'En espera' },
+  'Пауза': { en: 'Paused', de: 'Pausiert', uk: 'Пауза', es: 'En pausa' },
   // Character view
   '🪞 Твой персонаж': { en: '🪞 Your character', de: '🪞 Dein Charakter', uk: '🪞 Твій персонаж', es: '🪞 Tu personaje' },
   'Причёска': { en: 'Hairstyle', de: 'Frisur', uk: 'Зачіска', es: 'Peinado' },
@@ -3087,6 +3145,65 @@ function validateAntihabitsPayload(value) {
     && typeof anti.title === 'string' && Array.isArray(anti.slips)
     && anti.slips.every((day) => /^\d{4}-\d{2}-\d{2}$/.test(day)));
 }
+function validateGoalsPayload(value) {
+  if (!Array.isArray(value)) return false;
+  const ids = new Set();
+  return value.every((goal) => {
+    if (!goal || typeof goal !== 'object' || Array.isArray(goal)) return false;
+    if (typeof goal.id !== 'string' || !goal.id.trim() || ids.has(goal.id)) return false;
+    if (typeof goal.title !== 'string' || !goal.title.trim() || !Array.isArray(goal.steps)) return false;
+    const stepIds = new Set();
+    if (!goal.steps.every((step) => step && typeof step === 'object' && !Array.isArray(step)
+      && typeof step.id === 'string' && step.id && !stepIds.has(step.id) && (stepIds.add(step.id), true)
+      && typeof step.title === 'string' && typeof step.done === 'boolean')) return false;
+    if (goal.parentId != null && typeof goal.parentId !== 'string') return false;
+    if (goal.metric != null && (!goal.metric || typeof goal.metric !== 'object' || Array.isArray(goal.metric)
+      || !Number.isFinite(Number(goal.metric.start)) || !Number.isFinite(Number(goal.metric.current)) || !Number.isFinite(Number(goal.metric.target)))) return false;
+    ids.add(goal.id); return true;
+  });
+}
+function normalizeLoadedGoals(value) {
+  const goals = Array.isArray(value) ? value : [];
+  const ids = new Set(goals.map((goal) => goal.id));
+  goals.forEach((goal) => {
+    goal.type = goal.type || 'mid';
+    if (goal.xpReward === undefined) goal.xpReward = GOAL_XP[goal.type] != null ? GOAL_XP[goal.type] : GOAL_BONUS.xp;
+    goal.parentId = typeof goal.parentId === 'string' && ids.has(goal.parentId) && goal.parentId !== goal.id ? goal.parentId : null;
+    goal.status = goal.status || 'active';
+    goal.metric = goal.metric && goal.metric.target != null ? goal.metric : null;
+    goal.steps = Array.isArray(goal.steps) ? goal.steps : [];
+    goal.progressKind = goal.metric ? 'metric' : 'checklist';
+  });
+  // Legacy cycles are detached in memory. The next explicit mutation commits
+  // the repaired graph; startup never overwrites a file behind the user's back.
+  for (const goal of goals) {
+    const seen = new Set([goal.id]); let parentId = goal.parentId; let depth = 0;
+    while (parentId) {
+      if (seen.has(parentId) || ++depth > 24) { goal.parentId = null; break; }
+      seen.add(parentId); const parent = goals.find((candidate) => candidate.id === parentId);
+      if (!parent) { goal.parentId = null; break; }
+      parentId = parent.parentId;
+    }
+  }
+  return goals;
+}
+function normalizeGoalTaskLinks() {
+  const ids = new Set((State.goals || []).map((goal) => goal.id));
+  for (const task of State.tasks || []) if (task.goalId != null && !ids.has(task.goalId)) delete task.goalId;
+}
+function goalWriteAllowed(source, notify = false) {
+  if (!State._goalsLoadError && !State._tasksLoadError) return true;
+  clearTimeout(Store._timers.goals); clearTimeout(Store._timers.tasks);
+  if (notify) {
+    const now = Date.now();
+    if (now - (State._goalsWriteBlockedNoticeAt || 0) > 2000) {
+      State._goalsWriteBlockedNoticeAt = now;
+      toast(t('Изменения целей заблокированы до восстановления данных'));
+    }
+  }
+  console.error(`${source} blocked`, 'goals', State._goalsLoadError || State._tasksLoadError);
+  return false;
+}
 function habitWriteAllowed(source, notify = false) {
   if (!State._habitsLoadError) return true;
   for (const name of ['habits', 'habitlog', 'antihabits']) clearTimeout(Store._timers[name]);
@@ -3141,6 +3258,7 @@ const Store = {
   },
   save(name, obj) {
     if (name === 'tasks' && !taskWriteAllowed('save', true)) return false;
+    if (name === 'goals' && !goalWriteAllowed('save', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('save', true)) return false;
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('save', true)) return false;
     clearTimeout(this._timers[name]);
@@ -3152,6 +3270,7 @@ const Store = {
   // Именно так онбординг терял выбранные сферы и подставлял вместо них дефолтные.
   async saveNow(name, obj) {
     if (name === 'tasks' && !taskWriteAllowed('saveNow', true)) return false;
+    if (name === 'goals' && !goalWriteAllowed('saveNow', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('saveNow', true)) return false;
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('saveNow', true)) return false;
     clearTimeout(this._timers[name]);
@@ -3161,6 +3280,7 @@ const Store = {
     // Последний рубеж: прямые Store._put('tasks', ...) тоже не могут
     // перезаписать повреждённый/недоступный файл fallback-массивом.
     if (name === 'tasks' && !taskWriteAllowed('_put', true)) return false;
+    if (name === 'goals' && !goalWriteAllowed('_put', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('_put', true)) return false;
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('_put', true)) return false;
     try {
@@ -3255,7 +3375,7 @@ const GOAL_TYPES = [
   { id: 'recurring', label: 'Повторяющиеся', timeframe: 'ежедневно · еженедельно',  hint: 'Регулярные практики без конечной даты: спорт каждый день, еженедельный обзор' },
 ];
 const GOAL_XP = { mission: 40000, vision: 12000, path: 4000, long: 1200, mid: 300, short: 75, recurring: 15 };
-function goalTypeLabel(t) { const x = GOAL_TYPES.find((g) => g.id === t); return x ? x.label : 'Цель'; }
+function goalTypeLabel(type) { const x = GOAL_TYPES.find((g) => g.id === type); return t(x ? x.label : 'Цель'); }
 
 // Достижения — описаны в коде, считаются на лету
 const ACHIEVEMENTS = [
@@ -4401,6 +4521,8 @@ const State = {
   _tasksLoadError: '', _tasksLoadBusy: false, _tasksWriteBlockedNoticeAt: 0, _tasksFocusAfterCommit: '',
   _habitsLoadError: '', _habitsLoadBusy: false, _habitsWriteBlockedNoticeAt: 0,
   _habitTxnBusy: '', _habitError: '', _habitUndo: null, _habitUndoTimer: null, _habitsFocusAfterCommit: '',
+  _goalsLoadError: '', _goalsLoadBusy: false, _goalsWriteBlockedNoticeAt: 0,
+  _goalTxnBusy: '', _goalsError: '', _goalsFocusAfterCommit: '', _goalOpenId: '', _goalDeepLinkId: '',
   _calendarUndo: null, _calendarUndoTimer: null, _calendarFocusAfterCommit: '',
   _calendarViewportNode: null, _calendarViewportDate: '', _calendarViewportScroll: null,
   aveCat: 'hair', // активная категория в редакторе аватара
@@ -6344,9 +6466,10 @@ function habitStreak(h) {
 // ---- Цели ----
 // Числовая цель достигнута? (lowerBetter — для оценок/времени, где меньше = лучше)
 function goalMetricReached(g) { const m = g.metric; if (!m || m.target == null) return false; return m.lowerBetter ? m.current <= m.target : m.current >= m.target; }
+function goalProgressKind(g) { return g.metric && g.metric.target != null ? 'metric' : 'checklist'; }
 function goalProgress(g) {
-  const m = g.metric;
-  if (m && m.target != null) {
+  const m = goalProgressKind(g) === 'metric' ? g.metric : null;
+  if (m) {
     const span = m.lowerBetter ? (m.start - m.target) : (m.target - m.start);
     if (!(span > 0)) return goalMetricReached(g) ? 100 : 0;
     const prog = m.lowerBetter ? (m.start - m.current) : (m.current - m.start);
@@ -6356,6 +6479,30 @@ function goalProgress(g) {
 }
 // Цепочка вверх до Севера (для хлебной крошки «зачем»)
 function goalChain(g) { const out = []; let cur = g.parentId ? goalById(g.parentId) : null, guard = 0; while (cur && guard++ < 12) { out.push(cur); cur = cur.parentId ? goalById(cur.parentId) : null; } return out; }
+function goalChildren(id, source = State.goals) { return (source || []).filter((goal) => goal.parentId === id); }
+function goalDescendantIds(ids, source = State.goals) {
+  const result = new Set(ids), queue = [...ids];
+  while (queue.length) for (const child of goalChildren(queue.shift(), source)) if (!result.has(child.id)) { result.add(child.id); queue.push(child.id); }
+  return result;
+}
+function goalLinkedTasks(id, source = State.tasks) { return (source || []).filter((task) => task.goalId === id); }
+function goalParentOptionsHTML(goal) {
+  const blocked = goal ? goalDescendantIds([goal.id]) : new Set();
+  return `<option value="">${t('Самостоятельная цель')}</option>` + (State.goals || [])
+    .filter((candidate) => !candidate.archived && (!goal || (!blocked.has(candidate.id) && candidate.id !== goal.id)))
+    .map((candidate) => `<option value="${candidate.id}" ${goal && goal.parentId === candidate.id ? 'selected' : ''}>${esc(candidate.title)}</option>`).join('');
+}
+function goalDeepLinkHref(id) {
+  const params = new URLSearchParams(location.search); params.set('view', 'goals'); params.set('goal', id);
+  return `${location.pathname}?${params.toString()}`;
+}
+function syncGoalDeepLink(id, view = 'goals') {
+  try {
+    const params = new URLSearchParams(location.search); params.set('view', view);
+    if (id) params.set('goal', id); else params.delete('goal');
+    history.replaceState(null, '', `${location.pathname}?${params.toString()}${location.hash}`);
+  } catch {}
+}
 // Статус-бейдж: достигнута / держу / просело / жду / пауза / активна
 function goalStatusInfo(g) {
   if (g.completedAt) return { txt: '✅ Достигнута', cls: 'gs-done' };
@@ -6374,17 +6521,21 @@ function goalMilestoneHint(g) {
     if (next) { setTimeout(() => { try { toast(`🚩 ${t('Похоже на веху')}: «${next.title}» — ${t('загляни в карту пути')}`); } catch {} }, 1600); track('tree:goal-hint'); }
   } catch {}
 }
-function refreshGoalCompletion(g) {
-  if (g.metric && g.metric.target != null) {
+function announceGoalCompletion(g) {
+  toast(`🎯 ${t('Цель достигнута')}: ${g.title} (+${g.xpReward != null ? g.xpReward : GOAL_BONUS.xp} XP)`);
+  goalMilestoneHint(g); bossHitFeedback(bossHitCheck('goal', g));
+}
+function refreshGoalCompletion(g, { announce = true } = {}) {
+  if (goalProgressKind(g) === 'metric') {
     const reached = goalMetricReached(g);
     if (reached) g.metric.everReached = true;
     // maintain-цель никогда не «завершается» — остаётся в режиме удержания
-    if (reached && !g.metric.maintain && !g.completedAt) { g.completedAt = new Date().toISOString(); toast(`🎯 Цель достигнута: ${g.title} (+${g.xpReward != null ? g.xpReward : GOAL_BONUS.xp} XP)`); goalMilestoneHint(g); bossHitFeedback(bossHitCheck('goal', g)); }
+    if (reached && !g.metric.maintain && !g.completedAt) { g.completedAt = new Date().toISOString(); if (announce) announceGoalCompletion(g); }
     else if (!reached && g.completedAt && !g.metric.maintain) g.completedAt = null;
     return;
   }
   const allDone = g.steps.length > 0 && g.steps.every((s) => s.done);
-  if (allDone && !g.completedAt) { g.completedAt = new Date().toISOString(); toast(`🎯 Цель достигнута: ${g.title} (+${g.xpReward != null ? g.xpReward : GOAL_BONUS.xp} XP)`); goalMilestoneHint(g); bossHitFeedback(bossHitCheck('goal', g)); }
+  if (allDone && !g.completedAt) { g.completedAt = new Date().toISOString(); if (announce) announceGoalCompletion(g); }
   else if (!allDone && g.completedAt) g.completedAt = null;
 }
 
@@ -8551,6 +8702,33 @@ async function economyCommit(data) {
     return response.ok;
   } catch (error) { console.error('economy commit', error); return false; }
 }
+async function goalDataCommit(nextGoals, nextTasks = State.tasks) {
+  if (!goalWriteAllowed('goalDataCommit', true)) return false;
+  clearTimeout(Store._timers.goals); clearTimeout(Store._timers.tasks);
+  try {
+    const response = await fetch('/api/goals/commit', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: { goals: nextGoals, tasks: nextTasks } }),
+    });
+    if (response.status === 401) { handleAccountSessionExpired(); return false; }
+    return response.ok;
+  } catch (error) { console.error('goal commit', error); return false; }
+}
+async function retryGoalsLoad() {
+  if (State._goalsLoadBusy) return false;
+  State._goalsLoadBusy = true; State._goalsError = ''; State._goalsFocusAfterCommit = '[data-action="goals-retry"]'; render();
+  const [goals, tasks] = await Promise.all([
+    Store.loadChecked('goals', [], validateGoalsPayload),
+    Store.loadChecked('tasks', [], validateTasksPayload),
+  ]);
+  State._goalsLoadBusy = false;
+  State._goalsLoadError = goals.error; State._tasksLoadError = tasks.error;
+  if (!goals.error && !tasks.error) {
+    State.goals = normalizeLoadedGoals(goals.value); State.tasks = normalizeLoadedTasks(tasks.value); normalizeGoalTaskLinks();
+    State._goalsWriteBlockedNoticeAt = 0; State._goalsFocusAfterCommit = '#goals-title';
+  }
+  render(); return !State._goalsLoadError && !State._tasksLoadError;
+}
 function habitDayKey(date = new Date()) { return fmtDate(date); }
 function localDayOrdinal(day) {
   const d = typeof day === 'string' ? parseDate(day) : day;
@@ -9670,8 +9848,10 @@ function questRow(q) {
     ? `<button class="t-backdate" data-action="toggle-task-backdated" data-id="${q.id}" title="${t('Сделал в тот день, забыл отметить — засчитать в')} ${dmShort(q.date)}">✓<sub>${dmShort(q.date)}</sub></button>`
     : '';
   const coreLabel = q.core ? t('Убрать из ядра дня') : t('В ядро дня — то, ради чего день считается состоявшимся');
+  const linkedGoal = q.goalId ? goalById(q.goalId) : null;
   const taskMenu = `<details class="task-more"><summary aria-label="${t('Полное название и действия квеста')}: ${esc(fullTitle)}"><span class="task-more-dots" aria-hidden="true">•••</span><span class="task-more-disclosure" aria-hidden="true">${t('Ещё')}</span></summary><div class="task-menu">
       <p class="task-menu-title" data-noi18n>${esc(fullTitle)}</p>
+      ${linkedGoal ? `<a class="task-menu-goal" href="${esc(goalDeepLinkHref(linkedGoal.id))}" data-action="goto-goal" data-id="${linkedGoal.id}">🎯 ${t('Открыть связанную цель')}: <span data-noi18n>${esc(linkedGoal.title)}</span></a>` : ''}
       ${!q.done ? `<button data-action="focus-task" data-id="${q.id}" aria-label="${t(active ? 'Открыть активный фокус' : 'Начать фокус')}: ${esc(fullTitle)}">${satoruIconHTML(active ? 'media.pause' : 'media.play', 'task-action-icon', active ? '⏱' : '▶')} ${t(active ? 'Открыть фокус' : 'Начать фокус')}</button>` : ''}
       ${q.date === todayStr() ? `<button data-action="toggle-core" data-id="${q.id}" aria-pressed="${q.core ? 'true' : 'false'}">◆ ${esc(coreLabel)}</button>` : ''}
       <button class="task-menu-delete" data-action="delete-task" data-id="${q.id}">${satoruIconHTML('action.close', 'task-action-icon', '✕')} ${t('Удалить квест')}</button>
@@ -9867,6 +10047,7 @@ function validateTasksPayload(value) {
     if (typeof item.title !== 'string' || !item.title.trim()) return false;
     if (!validDate(item.date) || !validTime(item.startTime)) return false;
     if (item.done != null && typeof item.done !== 'boolean') return false;
+    if (item.goalId != null && (typeof item.goalId !== 'string' || !item.goalId.trim())) return false;
     if (item.estimateMin != null && (!Number.isFinite(Number(item.estimateMin)) || Number(item.estimateMin) < 0)) return false;
     ids.add(item.id);
     return true;
@@ -11314,15 +11495,21 @@ function proposalLabel(p) {
   }
   return JSON.stringify(p).slice(0, 80);
 }
-function applyAcceptedProposals() {
+async function applyAcceptedProposals() {
   const set = new Set([...document.querySelectorAll('#propose-result input[data-prop]:checked')].map((el) => Number(el.dataset.prop)));
   if (!set.size) { toast('Ничего не выбрано'); return; }
   document.querySelectorAll('#propose-result [data-prop-parent]').forEach((sel) => {
     const i = Number(sel.dataset.propParent); if (_proposals[i]) _proposals[i]._parentId = sel.value || null;
   });
+  const beforeGoals = structuredClone(State.goals), beforeTasks = structuredClone(State.tasks);
   const n = applyProposals(_proposals, set);
+  const goalChanged = JSON.stringify(beforeGoals) !== JSON.stringify(State.goals) || JSON.stringify(beforeTasks) !== JSON.stringify(State.tasks);
+  if (goalChanged && !await goalDataCommit(State.goals, State.tasks)) {
+    State.goals = beforeGoals; State.tasks = beforeTasks;
+    State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); render(); return;
+  }
   const m = document.getElementById('propose-modal'); if (m) m.remove();
-  toast(`✓ Применено: ${n}`); checkAchievements(); render();
+  toast(`✓ ${t('Применено')}: ${n}`); checkAchievements(); render();
 }
 // Применяет принятые предложения. Порядок: сферы → уровни → цели (с резолвом родителей по имени).
 function applyProposals(proposals, acceptedIdx) {
@@ -11385,7 +11572,7 @@ function applyProposals(proposals, acceptedIdx) {
   made.forEach((g) => {
     if (g._parentTitle) { const par = State.goals.find((x) => x.id !== g.id && normRu(x.title) === normRu(g._parentTitle)); if (par) g.parentId = par.id; }
     delete g._parentTitle;
-    if (g.metric) refreshGoalCompletion(g);
+    if (g.metric) refreshGoalCompletion(g, { announce: false });
   });
   // 4) Квесты — нужны онбордингу v2: первый экран не должен встречать новичка пустотой.
   //    day: today|tomorrow (ИИ не знает сегодняшней даты — считаем на клиенте).
@@ -11401,7 +11588,7 @@ function applyProposals(proposals, acceptedIdx) {
     applied++; questsAdded++;
   });
   ensureTrees();
-  Store.save('settings', State.settings); Store.save('goals', State.goals); Store.save('skilltree', State.tree);
+  Store.save('settings', State.settings); Store.save('skilltree', State.tree);
   if (questsAdded) Store.save('tasks', State.tasks);
   return applied;
 }
@@ -11652,24 +11839,26 @@ function chatActionRow(a) {
   return `<label class="drc-row"><input type="checkbox" data-ca checked />
     <span><b>${icon} ${esc(a.title)}</b><br><span class="muted" style="font-size:12px">${meta}</span></span></label>`;
 }
-function applyChatActions(msg, checks) {
+async function applyChatActions(msg, checks) {
   let quests = 0, habits = 0, goals = 0;
+  const nextTasks = structuredClone(State.tasks), nextHabits = structuredClone(State.habits), nextGoals = structuredClone(State.goals);
   msg.actions.forEach((a, i) => {
     if (!checks[i]) return;
     if (a.kind === 'quest') {
-      State.tasks.push({ id: uid(), title: a.title, skillId: a.skillId, skillIds: [a.skillId], estimateMin: a.estimateMin, difficulty: a.difficulty, date: a.date, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
+      nextTasks.push({ id: uid(), title: a.title, skillId: a.skillId, skillIds: [a.skillId], estimateMin: a.estimateMin, difficulty: a.difficulty, date: a.date, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
       quests++;
     } else if (a.kind === 'habit') {
-      State.habits.push({ id: 'h_' + uid(), title: a.title, skillId: a.skillId, difficulty: 'easy', estimateMin: a.estimateMin, days: a.days, archived: false, createdAt: new Date().toISOString() });
+      nextHabits.push({ id: 'h_' + uid(), title: a.title, skillId: a.skillId, difficulty: 'easy', estimateMin: a.estimateMin, days: a.days, archived: false, createdAt: new Date().toISOString() });
       habits++;
     } else {
-      State.goals.push({ id: 'g_' + uid(), title: a.title, description: '', skillId: a.skillId, type: 'short', xpReward: GOAL_XP.short, parentId: null, targetDate: a.deadline, steps: [], metric: null, status: 'active', window: '', createdAt: new Date().toISOString(), completedAt: null, archived: false });
+      nextGoals.push({ id: 'g_' + uid(), title: a.title, description: '', skillId: a.skillId, type: 'short', xpReward: GOAL_XP.short, parentId: null, targetDate: a.deadline, steps: [], metric: null, progressKind: 'checklist', status: 'active', window: '', createdAt: new Date().toISOString(), completedAt: null, archived: false });
       goals++;
     }
   });
-  if (quests) Store.save('tasks', State.tasks);
-  if (habits) Store.save('habits', State.habits);
-  if (goals) Store.save('goals', State.goals);
+  if ((quests || goals) && await goalDataCommit(nextGoals, nextTasks)) { State.tasks = nextTasks; State.goals = nextGoals; }
+  else if (quests || goals) { quests = 0; goals = 0; }
+  if (habits && await habitDataCommit({ habits: nextHabits })) State.habits = nextHabits;
+  else if (habits) habits = 0;
   return { quests, habits, goals, total: quests + habits + goals };
 }
 async function sendChat(text) {
@@ -13913,111 +14102,63 @@ function renderToday() {
 // ============================================================
 //  Вид «Цели»
 // ============================================================
-function goalCard(g) {
-  const sk = skillById(g.skillId), prog = goalProgress(g), done = !!g.completedAt;
-  const chain = goalChain(g), st = goalStatusInfo(g);
-  const m = (g.metric && g.metric.target != null) ? g.metric : null;
-  const xpR = g.xpReward != null ? g.xpReward : (GOAL_XP[g.type] || 50);
-  let deadline = '';
-  if (g.targetDate) { const left = Math.round((parseDate(g.targetDate) - parseDate(todayStr())) / 86400000); deadline = `<span class="goal-deadline ${left < 0 ? 'overdue' : ''}">📅 ${g.targetDate}${left >= 0 ? ` · ${left} ${plural(left, 'день', 'дня', 'дней')}` : ' · просрочено'}</span>`; }
-  const breadcrumb = chain.length ? (() => {
-    const full = chain.map((p) => (p.type === 'mission' ? '★ ' : '') + esc(p.title)).join(' › ');
-    if (chain.length === 1) return `<div class="goal-why">↑ ${full}</div>`;
-    const direct = (chain[0].type === 'mission' ? '★ ' : '') + esc(chain[0].title);
-    return `<details class="goal-why-det"><summary class="goal-why">↑ ${direct} <span class="goal-why-more">···</span></summary><div class="goal-why-full">${full}</div></details>`;
-  })() : '';
-  const metricBlock = m ? `<div class="gm-block">
-      <div class="gm-head"><b>${m.current}</b> / ${m.target}${m.unit ? ' ' + esc(m.unit) : ''}${m.lowerBetter ? ' <span class="muted">↓ меньше лучше</span>' : ''}${m.maintain ? ' <span class="muted">· держать</span>' : ''}</div>
-      ${g.archived ? '' : `<form class="metric-form" data-goal="${g.id}"><input name="val" type="number" step="any" placeholder="новое значение" required /><button type="submit" class="btn ghost sm">Записать</button></form>`}
-      ${(m.log && m.log.length) ? `<div class="gm-log muted">рекорды: ${m.log.slice(0, 5).map((r) => `${r.value} <span>(${dmShort(r.date)})</span>`).join(' · ')}</div>` : ''}
-    </div>` : '';
-  const steps = g.steps.map((s) => `<li class="gstep ${s.done ? 'done' : ''}"><button class="check sm" data-action="toggle-step" data-goal="${g.id}" data-step="${s.id}">${s.done ? '✓' : ''}</button><span>${esc(s.title)}</span><button class="del" data-action="delete-step" data-goal="${g.id}" data-step="${s.id}">✕</button></li>`).join('');
-  const subline = m ? `прогресс ${prog}%` : `${g.steps.filter((s) => s.done).length}/${g.steps.length} пунктов · ${prog}%`;
-  const statusCtl = (done || g.archived) ? '' : `<select class="goal-status-sel" data-action="goal-status" data-id="${g.id}">
-      <option value="active" ${(!g.status || g.status === 'active') ? 'selected' : ''}>▶ Активна</option>
-      <option value="waiting" ${g.status === 'waiting' ? 'selected' : ''}>⏳ Жду</option>
-      <option value="paused" ${g.status === 'paused' ? 'selected' : ''}>⏸ Пауза</option></select>`;
-  const editCtl = (done || g.archived) ? '' : `<select class="goal-edit-sel" data-action="goal-sphere" data-id="${g.id}" title="Сфера">${skillOptionsHTML(g.skillId)}</select><select class="goal-edit-sel" data-action="goal-horizon" data-id="${g.id}" title="Горизонт">${GOAL_TYPES.map((tp) => `<option value="${tp.id}" ${(g.type || 'short') === tp.id ? 'selected' : ''}>${esc(tp.label)}</option>`).join('')}</select>`;
-  return `<div class="card goal ${done ? 'goal-done' : ''} ${g.archived ? 'goal-archived' : ''}">
-    <div class="goal-head"><div><h3>${done ? '✅ ' : ''}${esc(g.title)}</h3>
-        ${g.description ? `<div class="goal-desc">${esc(g.description)}</div>` : ''}
-        ${breadcrumb}
-        <div class="goal-meta">
-          <span class="t-skill" style="--c:${esc(sk.color)}">${esc(sk.name)}</span>
-          <span class="goal-type type-${g.type || 'short'}">${goalTypeLabel(g.type)}</span>
-          <span class="goal-status ${st.cls}">${st.txt}</span>
-          <span class="goal-xp">+${xpR} XP</span>
-          ${deadline}${g.why ? `<span class="muted">— ${esc(g.why)}</span>` : ''}
-        </div></div>
-      <div class="goal-actions">
-        ${statusCtl}
-        ${editCtl}
-        ${done || g.archived ? `<button class="btn ghost sm" data-action="${g.archived ? 'restore-goal' : 'archive-goal'}" data-id="${g.id}">${g.archived ? '↩ Вернуть' : '🗄 В архив'}</button>` : ''}
-        <label class="goal-pick-lbl" title="Выбрать для массового удаления"><input type="checkbox" class="goal-pick" data-pick="${g.id}"/></label>
-        <button class="del" data-action="delete-goal" data-id="${g.id}" title="Удалить">✕</button>
-      </div></div>
-    ${metricBlock}
-    <div class="progress"><span style="width:${prog}%;background:${esc(sk.color)}"></span></div>
-    <div class="muted" style="font-size:12px;margin:4px 0 8px">${subline}</div>
-    <ul class="gsteps">${steps}</ul>
-    ${g.archived ? '' : `<form class="add-step-form" data-goal="${g.id}"><input name="step" placeholder="+ пункт чек-листа…" autocomplete="off" /><button type="submit" class="btn ghost">Добавить</button></form>`}</div>`;
+function goalDeadlineHTML(g) {
+  if (!g.targetDate) return '';
+  const left = Math.round((parseDate(g.targetDate) - parseDate(todayStr())) / 86400000);
+  return `<span class="goal-deadline ${left < 0 && !g.completedAt ? 'overdue' : ''}">📅 ${g.targetDate}${left >= 0 ? ` · ${left} ${plural(left, 'день', 'дня', 'дней')}` : !g.completedAt ? ` · ${t('просрочено')}` : ''}</span>`;
+}
+function goalItem(g, depth = 0) {
+  const sk = skillById(g.skillId) || { name: t('Без сферы'), color: 'var(--muted)' };
+  const prog = goalProgress(g), done = !!g.completedAt, st = goalStatusInfo(g), metric = goalProgressKind(g) === 'metric' ? g.metric : null;
+  const statusText = st.txt.startsWith('⏳ Жду · ') ? `${t('⏳ Жду')} · ${st.txt.slice('⏳ Жду · '.length)}` : t(st.txt);
+  const children = goalChildren(g.id).filter((child) => !!child.archived === !!g.archived).length, linked = goalLinkedTasks(g.id), open = State._goalOpenId === g.id || State._goalDeepLinkId === g.id;
+  const chain = goalChain(g).slice().reverse();
+  const steps = !metric ? g.steps.map((step) => `<li class="gstep ${step.done ? 'done' : ''}"><button type="button" class="check sm" data-action="toggle-step" data-goal="${g.id}" data-step="${step.id}" aria-label="${esc(t(step.done ? 'Снять выполнение' : 'Выполнить'))}: ${esc(step.title)}" aria-pressed="${step.done ? 'true' : 'false'}">${step.done ? '✓' : ''}</button><span data-noi18n>${esc(step.title)}</span><button type="button" class="del" data-action="delete-step" data-goal="${g.id}" data-step="${step.id}" aria-label="${esc(t('Удалить'))}: ${esc(step.title)}">✕</button></li>`).join('') : '';
+  const progressBody = metric ? `<div class="gm-block"><p class="goal-source-note">${t('Источник прогресса')}: ${t('числовая метрика')}. ${t('Связанные квесты не прибавляются повторно.')}</p><div class="gm-head"><b>${metric.current}</b> / ${metric.target}${metric.unit ? ` ${esc(metric.unit)}` : ''}</div>${g.archived ? '' : `<form class="metric-form" data-goal="${g.id}"><label><span>${t('Новое значение')}</span><input name="val" type="number" step="any" required /></label><button type="submit" class="btn ghost sm">${t('Записать')}</button></form>`}</div>` : `<div class="goal-checklist"><p class="goal-source-note">${t('Источник прогресса')}: ${t('чек-лист цели')}. ${t('Связанные квесты — действия, а не второй счётчик.')}</p><ul class="gsteps">${steps}</ul>${g.archived ? '' : `<form class="add-step-form" data-goal="${g.id}"><label><span>${t('Новый пункт')}</span><input name="step" autocomplete="off" required /></label><button type="submit" class="btn ghost">${t('Добавить')}</button></form>`}</div>`;
+  const linkedHTML = linked.length ? `<ul class="goal-linked-list">${linked.slice(0, 8).map((task) => `<li><a href="?view=today" data-action="goto-task" data-id="${task.id}" data-noi18n>${task.done ? '✓ ' : ''}${esc(task.title)}</a><span>${dmShort(task.date)}</span></li>`).join('')}</ul>` : `<p class="muted">${t('Связанных квестов пока нет.')}</p>`;
+  return `<article class="goal-item ${done ? 'is-done' : ''} ${g.archived ? 'is-archived' : ''}" id="goal-${esc(g.id)}" data-goal-id="${esc(g.id)}" style="--goal-depth:${depth};--goal-color:${esc(sk.color)}" tabindex="-1">
+    <details class="goal-detail" ${open ? 'open' : ''}>
+      <summary class="goal-summary"><span class="goal-summary-main"><span class="goal-title" data-noi18n>${done ? '✓ ' : ''}${esc(g.title)}</span><span class="goal-summary-meta"><span class="goal-status ${st.cls}">${statusText}</span><span>${prog}%</span>${children ? `<span>${children} ${t('дочерних')}</span>` : ''}</span></span><progress max="100" value="${prog}" aria-label="${esc(t('Прогресс'))}: ${prog}%"></progress></summary>
+      <div class="goal-body">
+        ${chain.length ? `<nav class="goal-breadcrumb" aria-label="${t('Цепочка цели')}">${chain.map((parent) => `<a href="${esc(goalDeepLinkHref(parent.id))}" data-action="goto-goal" data-id="${parent.id}" data-noi18n>${esc(parent.title)}</a>`).join('<span aria-hidden="true">›</span>')}</nav>` : ''}
+        ${g.description ? `<p class="goal-desc" data-noi18n>${esc(g.description)}</p>` : ''}
+        <div class="goal-meta"><span class="t-skill" style="--c:${esc(sk.color)}">${esc(i18nWord(sk.name, lang()))}</span><span class="goal-type type-${g.type || 'short'}">${goalTypeLabel(g.type)}</span>${goalDeadlineHTML(g)}</div>
+        ${progressBody}
+        <section class="goal-linked" aria-labelledby="goal-linked-${g.id}"><h4 id="goal-linked-${g.id}">${t('Следующие действия')}</h4>${linkedHTML}${g.archived ? '' : `<form class="goal-task-form" data-goal="${g.id}"><label><span>${t('Квест на сегодня')}</span><input name="title" maxlength="160" required /></label><button type="submit" class="btn ghost">${t('Создать квест')}</button></form>`}</section>
+        <details class="goal-edit"><summary>${t('Изменить цель')}</summary><form class="goal-edit-form" data-goal="${g.id}"><label><span>${t('Название')}</span><input name="title" value="${esc(g.title)}" maxlength="160" required data-noi18n /></label><label><span>${t('Описание')}</span><textarea name="description" maxlength="800" data-noi18n>${esc(g.description || '')}</textarea></label><label><span>${t('Родительская цель')}</span><select name="parentId">${goalParentOptionsHTML(g)}</select></label><label><span>${t('Сфера')}</span><select name="skillId">${skillOptionsHTML(g.skillId)}</select></label><label><span>${t('Горизонт')}</span><select name="type">${GOAL_TYPES.map((type) => `<option value="${type.id}" ${type.id === g.type ? 'selected' : ''}>${esc(t(type.label))}</option>`).join('')}</select></label><label><span>${t('Дедлайн')}</span><input name="targetDate" type="date" value="${esc(g.targetDate || '')}" /></label><label><span>${t('Состояние')}</span><select name="status"><option value="active" ${g.status === 'active' ? 'selected' : ''}>${t('Активна')}</option><option value="waiting" ${g.status === 'waiting' ? 'selected' : ''}>${t('Жду')}</option><option value="paused" ${g.status === 'paused' ? 'selected' : ''}>${t('Пауза')}</option></select></label><button type="submit" class="btn">${t('Сохранить изменения')}</button></form></details>
+        <div class="goal-actions"><button type="button" class="btn ghost" data-action="${g.archived ? 'restore-goal' : 'archive-goal'}" data-id="${g.id}">${g.archived ? t('Вернуть из архива') : t('В архив')}</button><button type="button" class="btn ghost danger" data-action="delete-goal" data-id="${g.id}">${t('Удалить цель')}</button><label class="goal-pick-lbl"><input type="checkbox" class="goal-pick" data-pick="${g.id}" /> ${t('Выбрать')}</label><a class="goal-deep-link" href="${esc(goalDeepLinkHref(g.id))}">${t('Ссылка на цель')}</a></div>
+      </div>
+    </details>
+  </article>`;
+}
+function goalTreeHTML(source) {
+  const ids = new Set(source.map((goal) => goal.id));
+  const roots = source.filter((goal) => !goal.parentId || !ids.has(goal.parentId));
+  const walk = (goal, depth) => `<div class="goal-branch">${goalItem(goal, depth)}${source.filter((candidate) => candidate.parentId === goal.id).map((child) => walk(child, depth + 1)).join('')}</div>`;
+  return roots.map((goal) => walk(goal, 0)).join('');
+}
+function goalsLoadRecoveryHTML() {
+  const invalid = State._goalsLoadError === 'invalid' || State._tasksLoadError === 'invalid';
+  return `<section class="goals-load-card card" role="alert" aria-labelledby="goals-load-title"><h2 id="goals-load-title">${t('Цели временно недоступны')}</h2><p>${t(invalid ? 'Файл целей повреждён. Мы ничего не перезапишем до восстановления.' : 'Не удалось загрузить цели. Мы ничего не перезапишем до восстановления.')}</p><button type="button" class="btn" data-action="goals-retry" ${State._goalsLoadBusy ? 'disabled' : ''}>${t(State._goalsLoadBusy ? 'Проверяем данные…' : 'Повторить загрузку')}</button></section>`;
+}
+function goalCreateFormHTML() {
+  const typeOpts = GOAL_TYPES.map((type) => `<option value="${type.id}" ${type.id === 'short' ? 'selected' : ''}>${t(type.label)} · ${t(type.timeframe)}</option>`).join('');
+  return `<form id="add-goal" class="goal-form"><label class="goal-field-wide"><span>${t('Название')}</span><input name="title" maxlength="160" autocomplete="off" required /></label><label><span>${t('Сфера')}</span><select name="skillId">${skillOptionsHTML()}</select></label><label><span>${t('Горизонт')}</span><select name="type">${typeOpts}</select></label><label><span>${t('Родительская цель')}</span><select name="parentId">${goalParentOptionsHTML(null)}</select></label><label><span>${t('Дедлайн')}</span><input name="targetDate" type="date" /></label><details class="goal-extra"><summary>${t('Числовая метрика — вместо чек-листа')}</summary><div class="gx-grid"><label><span>${t('Сейчас')}</span><input name="mStart" type="number" step="any" /></label><label><span>${t('Цель')}</span><input name="mTarget" type="number" step="any" /></label><label><span>${t('Единица')}</span><input name="mUnit" maxlength="12" /></label><label class="gx-check"><input type="checkbox" name="mLower" /> ${t('меньше = лучше')}</label><label class="gx-check"><input type="checkbox" name="mMaintain" /> ${t('держать после')}</label></div></details><button type="submit" class="btn">${t('Создать цель')}</button><p class="goal-form-status" role="status"></p></form>`;
 }
 function renderGoals() {
-  const active = State.goals.filter((g) => !g.archived && !g.completedAt);
-  const completed = State.goals.filter((g) => g.completedAt && !g.archived);
-  const archived = State.goals.filter((g) => g.archived);
-  const nearest = active.filter((g) => g.targetDate).sort((a, b) => (a.targetDate < b.targetDate ? -1 : 1))[0];
-  const skillOpts = skillOptionsHTML();
-  const typeOpts = GOAL_TYPES.map((t) => `<option value="${t.id}" ${t.id === 'short' ? 'selected' : ''}>${t.label} · ${t.timeframe}</option>`).join('');
-  const parentOpts = '<option value="">— самостоятельная цель —</option>' + active.map((g) => `<option value="${g.id}">↳ часть цели: ${esc(g.title)}</option>`).join('');
-  const typeGuide = `<details class="gtype-guide"><summary>${satoruIconHTML('status.info', 'inline-glyph', 'ℹ️')} ${t('ℹ️ Как выбрать тип цели?').replace(/^ℹ️\s*/, '')}</summary><div class="gtype-rows">${GOAL_TYPES.map((t) => `<div class="gtype-row"><span class="goal-type type-${t.id}">${t.label}</span><span class="gtype-tf">${t.timeframe}</span><span class="muted">${t.hint}</span></div>`).join('')}</div></details>`;
-
-  const counts = { all: active.length };
-  GOAL_TYPES.forEach((t) => { counts[t.id] = active.filter((g) => (g.type || 'short') === t.id).length; });
-  const filterTabs = `<button class="gfilter ${State.goalFilter === 'all' ? 'active' : ''}" data-action="filter-goals" data-type="all">Все (${counts.all})</button>` +
-    GOAL_TYPES.map((t) => `<button class="gfilter ${State.goalFilter === t.id ? 'active' : ''}" data-action="filter-goals" data-type="${t.id}">${t.label} (${counts[t.id]})</button>`).join('');
-  const shown = State.goalFilter === 'all' ? active : active.filter((g) => (g.type || 'short') === State.goalFilter);
-
-  return `
-    <div class="kpis">
-      <div class="kpi"><div class="v">${active.length}</div><div class="l">${t('Активных целей')}</div></div>
-      <div class="kpi"><div class="v">${completed.length}</div><div class="l">${t('Достигнуто')}</div></div>
-      <div class="kpi"><div class="v">${nearest ? nearest.targetDate.slice(5) : '—'}</div><div class="l">${t('Ближайший дедлайн')}</div></div>
-    </div>
-    <div class="card ai-import-card">
-      <div class="ai-imp-l"><b>${satoruIconHTML('action.import', 'button-glyph', '📥')} Опиши цели текстом — ИИ оформит</b><span class="muted">расскажи словами, что хочешь; ИИ предложит цели и сферы, ты одобришь</span></div>
-      <button class="btn" data-action="ai-import-goals">${satoruIconHTML('nav.shadow', 'button-glyph', '🤖')} Импорт целей</button></div>
-    <div class="card"><h3>${satoruIconHTML('goal.completed', 'heading-emblem', '🎯')} ${t('Новая цель')}</h3>
-      ${typeGuide}
-      <form id="add-goal" class="goal-form">
-        <input name="title" placeholder="Чего хочешь достичь?" autocomplete="off" required />
-        <select name="skillId" title="Навык">${skillOpts}</select>
-        <select name="type" title="Тип цели">${typeOpts}</select>
-        <input name="xpReward" type="number" min="0" placeholder="XP" title="Награда XP (пусто = по типу)" />
-        <select name="parentId" title="Родительская цель — привязка к большей цели вверх до Севера">${parentOpts}</select>
-        <input name="targetDate" type="date" title="Дедлайн" />
-        <details class="goal-extra"><summary>📊 Число / состояние (опц.)</summary>
-          <div class="gx-grid">
-            <input name="mStart" type="number" step="any" placeholder="сейчас" title="Текущее значение" />
-            <span class="gx-arrow">→</span>
-            <input name="mTarget" type="number" step="any" placeholder="цель" title="Целевое значение — задай, чтобы цель стала числовой" />
-            <input name="mUnit" placeholder="ед. (кг, км…)" title="Единица" />
-            <label class="gx-check"><input type="checkbox" name="mLower" /> меньше = лучше</label>
-            <label class="gx-check"><input type="checkbox" name="mMaintain" /> держать после</label>
-            <select name="status" title="Состояние цели">
-              <option value="active">▶ Активна</option>
-              <option value="waiting">⏳ Жду события</option>
-              <option value="paused">⏸ Пауза</option></select>
-            <input name="window" placeholder="окно: лето / после 23.06…" title="Когда (для «жду события»)" />
-          </div>
-        </details>
-        <button type="submit">${satoruIconHTML('action.add', 'button-glyph', '+')} ${t('+ Цель').replace(/^\+\s*/, '')}</button></form>
-      <p class="diff-hint muted">💰 XP пусто = по типу цели: ${GOAL_TYPES.map((gt) => `${gt.label.toLowerCase()} ${GOAL_XP[gt.id]}`).join(' · ')}. Это «курс валюты» — не накручивай себе, иначе уровень потеряет смысл.</p></div>
-    <div class="card"><h3>${satoruIconHTML('nav.plan', 'heading-glyph', '📋')} ${t('📋 Сводка целей').replace(/^📋\s*/, '')}</h3><div class="gfilters">${filterTabs}</div>
-      <div class="bulk-bar"><button class="btn ghost sm" data-action="goals-pick-all">${satoruIconHTML('action.check', 'button-glyph', '☑')} Выбрать все</button><button class="btn ghost sm" data-action="goals-pick-none">${satoruIconHTML('action.close', 'button-glyph', '✕')} Снять</button><button class="btn ghost sm bulk-del" data-action="goals-del-selected">${satoruIconHTML('action.delete', 'button-glyph', '🗑')} Удалить выбранные</button></div></div>
-    ${shown.length ? shown.map(goalCard).join('') : '<div class="card"><p class="muted">Нет активных целей этого типа. Добавь выше ↑</p></div>'}
-    ${completed.length ? `<div class="section-title">${t('Достигнутые')}</div>${completed.map(goalCard).join('')}` : ''}
-    ${archived.length ? `<div class="section-title">🗄 Архив (${archived.length})</div>${archived.map(goalCard).join('')}` : ''}`;
+  if (State._goalsLoadError || State._tasksLoadError) return goalsLoadRecoveryHTML();
+  const all = State.goals || [], current = all.filter((goal) => !goal.archived), active = current.filter((goal) => !goal.completedAt), completed = current.filter((goal) => goal.completedAt), archived = all.filter((goal) => goal.archived);
+  const counts = { all: current.length }; GOAL_TYPES.forEach((type) => { counts[type.id] = current.filter((goal) => goal.type === type.id).length; });
+  const wanted = State.goalFilter === 'all' ? current : current.filter((goal) => goal.type === State.goalFilter);
+  const shownIds = new Set(wanted.map((goal) => goal.id));
+  for (const goal of wanted) for (const parent of goalChain(goal)) if (!parent.archived) shownIds.add(parent.id);
+  const shown = current.filter((goal) => shownIds.has(goal.id));
+  const filters = `<div class="gfilters" role="toolbar" aria-label="${t('Фильтр целей')}"><button class="gfilter ${State.goalFilter === 'all' ? 'active' : ''}" data-action="filter-goals" data-type="all">${t('Все')} (${counts.all})</button>${GOAL_TYPES.map((type) => `<button class="gfilter ${State.goalFilter === type.id ? 'active' : ''}" data-action="filter-goals" data-type="${type.id}">${t(type.label)} (${counts[type.id]})</button>`).join('')}</div>`;
+  const empty = !all.length;
+  return `<div class="goals-shell"><header class="goals-route-head"><div><p class="goals-kicker">${t('План')}</p><h2 id="goals-title" tabindex="-1">${t('Цели')}</h2><p>${t('Outcome сверху, следующие действия внутри. Один источник прогресса на цель.')}</p></div>${empty ? '' : `<div class="goals-counts"><span>${active.length} ${t('активных')}</span><span>${completed.length} ${t('достигнуто')}</span></div>`}</header>
+    ${State._goalsError ? `<div class="goals-error" role="alert">${esc(State._goalsError)}</div>` : ''}
+    ${empty ? `<section class="card goals-empty"><h3>${t('С чего начнём?')}</h3><p>${t('Создай один outcome. Подцели и квесты можно связать позже — без дублирования прогресса.')}</p>${goalCreateFormHTML()}<button class="btn ghost" data-action="ai-import-goals">${t('Импортировать цели')}</button></section>` : `${filters}<section class="card goals-outline" aria-labelledby="goals-outline-title"><h3 id="goals-outline-title">${t('Карта целей')}</h3>${shown.length ? goalTreeHTML(shown) : `<p class="muted">${t('В этом горизонте целей нет.')}</p>`}</section><details class="card goals-create"><summary>${t('Создать новую цель')}</summary>${goalCreateFormHTML()}<button class="btn ghost" data-action="ai-import-goals">${t('Импортировать цели')}</button></details><details class="card goals-bulk"><summary>${t('Управление и архив')} (${archived.length})</summary><div class="bulk-bar"><button class="btn ghost" data-action="goals-pick-all">${t('Выбрать все')}</button><button class="btn ghost" data-action="goals-pick-none">${t('Снять')}</button><button class="btn ghost danger" data-action="goals-del-selected">${t('Удалить выбранные')}</button></div>${archived.length ? `<div class="goals-archive-list">${goalTreeHTML(archived)}</div>` : ''}</details>`}
+  </div>`;
 }
 
 // ============================================================
@@ -16975,6 +17116,15 @@ function afterMainCommit() {
       if (target) focusPathChoiceTarget(target);
     });
   }
+  if (State._goalsFocusAfterCommit && State.view === 'goals') {
+    const selector = State._goalsFocusAfterCommit; State._goalsFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const target = document.querySelector(selector) || document.getElementById('goals-title');
+      if (!target) return;
+      target.scrollIntoView({ behavior: avatarMotionReduced() ? 'auto' : 'smooth', block: 'nearest' });
+      focusPathChoiceTarget(target);
+    });
+  }
   if (State._denFocusAfterCommit && State.view === 'den') {
     const selector = State._denFocusAfterCommit;
     State._denFocusAfterCommit = '';
@@ -17557,31 +17707,56 @@ async function onSubmit(e) {
     }
     Store.save('tasks', State.tasks); render();
   } else if (f.id === 'add-goal') {
-    e.preventDefault(); const title = f.title.value.trim(); if (!title) return;
+    e.preventDefault(); const title = f.title.value.trim(); if (!title || State._goalTxnBusy) return;
     const type = f.type.value || 'short';
-    const xpReward = f.xpReward.value !== '' ? Math.max(0, Number(f.xpReward.value)) : GOAL_XP[type];
     const tgt = (f.mTarget && f.mTarget.value !== '') ? Number(f.mTarget.value) : null;
     let metric = null;
     if (tgt != null && !isNaN(tgt)) {
       const cur = (f.mStart && f.mStart.value !== '') ? Number(f.mStart.value) : 0;
       metric = { start: cur, current: cur, target: tgt, unit: (f.mUnit.value || '').trim().slice(0, 12), lowerBetter: !!(f.mLower && f.mLower.checked), maintain: !!(f.mMaintain && f.mMaintain.checked), everReached: false, log: [] };
     }
-    const status = (f.status && f.status.value) || 'active';
-    const window = (f.window && f.window.value || '').trim().slice(0, 40);
-    const goal = { id: 'g_' + uid(), title, skillId: f.skillId.value, type, xpReward, parentId: f.parentId.value || null, targetDate: f.targetDate.value || null, steps: [], metric, status, window, createdAt: new Date().toISOString(), completedAt: null, archived: false };
-    State.goals.push(goal);
-    if (goal.metric) refreshGoalCompletion(goal); // вдруг уже достигнута на старте (напр. жим уже взят)
-    Store.save('goals', State.goals); render();
+    const goal = { id: 'g_' + uid(), title, description: '', skillId: f.skillId.value, type, xpReward: GOAL_XP[type], parentId: f.parentId.value || null, targetDate: f.targetDate.value || null, steps: [], metric, progressKind: metric ? 'metric' : 'checklist', status: 'active', window: '', createdAt: new Date().toISOString(), completedAt: null, archived: false };
+    const nextGoals = [...structuredClone(State.goals), goal];
+    if (goal.metric) refreshGoalCompletion(goal, { announce: false }); // success UI only after the server commit
+    const status = f.querySelector('.goal-form-status'), controls = f.querySelectorAll('button,input,select');
+    controls.forEach((control) => { control.disabled = true; }); if (status) status.textContent = t('Сохраняю…');
+    State._goalTxnBusy = `create:${goal.id}`;
+    const saved = await goalDataCommit(nextGoals, State.tasks); State._goalTxnBusy = '';
+    if (!saved) { controls.forEach((control) => { control.disabled = false; }); if (status) { status.textContent = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); status.setAttribute('role', 'alert'); } return; }
+    State.goals = nextGoals; if (goal.completedAt) announceGoalCompletion(goal); State._goalOpenId = goal.id; State._goalsFocusAfterCommit = `#goal-${CSS.escape(goal.id)}`; syncGoalDeepLink(goal.id); render();
   } else if (f.classList.contains('add-step-form')) {
-    e.preventDefault(); const g = goalById(f.dataset.goal); const v = f.step.value.trim(); if (!g || !v) return;
-    g.steps.push({ id: 's_' + uid(), title: v, done: false }); refreshGoalCompletion(g);
-    Store.save('goals', State.goals); render();
+    e.preventDefault(); const g = goalById(f.dataset.goal), title = f.step.value.trim(); if (!g || !title || State._goalTxnBusy || goalProgressKind(g) !== 'checklist') return;
+    const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((goal) => goal.id === g.id);
+    const step = { id: 's_' + uid(), title, done: false }; nextGoal.steps.push(step); refreshGoalCompletion(nextGoal, { announce: false });
+    State._goalTxnBusy = `step:${step.id}`; const saved = await goalDataCommit(nextGoals, State.tasks); State._goalTxnBusy = '';
+    if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = `#goal-${CSS.escape(g.id)}`; render(); return; }
+    State.goals = nextGoals; State._goalOpenId = g.id; State._goalsFocusAfterCommit = `[data-action="toggle-step"][data-goal="${CSS.escape(g.id)}"][data-step="${CSS.escape(step.id)}"]`; render();
   } else if (f.classList.contains('metric-form')) {
-    e.preventDefault(); const g = goalById(f.dataset.goal); if (!g || !g.metric || f.val.value === '') return;
+    e.preventDefault(); const g = goalById(f.dataset.goal); if (!g || !g.metric || f.val.value === '' || State._goalTxnBusy) return;
     const val = Number(f.val.value); if (isNaN(val)) return;
-    g.metric.current = val; g.metric.log = g.metric.log || [];
-    g.metric.log.unshift({ date: todayStr(), value: val }); g.metric.log = g.metric.log.slice(0, 50);
-    refreshGoalCompletion(g); Store.save('goals', State.goals); checkAchievements(); render(); publishLeaderboard();
+    const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((goal) => goal.id === g.id);
+    nextGoal.metric.current = val; nextGoal.metric.log = nextGoal.metric.log || [];
+    const wasCompleted = !!nextGoal.completedAt;
+    nextGoal.metric.log.unshift({ date: todayStr(), value: val }); nextGoal.metric.log = nextGoal.metric.log.slice(0, 50); refreshGoalCompletion(nextGoal, { announce: false });
+    State._goalTxnBusy = `metric:${g.id}`; const saved = await goalDataCommit(nextGoals, State.tasks); State._goalTxnBusy = '';
+    if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = `#goal-${CSS.escape(g.id)}`; render(); return; }
+    State.goals = nextGoals; if (!wasCompleted && nextGoal.completedAt) announceGoalCompletion(nextGoal); State._goalOpenId = g.id; State._goalsFocusAfterCommit = `.metric-form[data-goal="${CSS.escape(g.id)}"] input`; checkAchievements(); render(); publishLeaderboard();
+  } else if (f.classList.contains('goal-task-form')) {
+    e.preventDefault(); const goal = goalById(f.dataset.goal), title = f.title.value.trim(); if (!goal || !title || State._goalTxnBusy) return;
+    const task = { id: uid(), title, skillId: goal.skillId, skillIds: [goal.skillId], layers: [], estimateMin: 30, difficulty: 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, goalId: goal.id, createdAt: new Date().toISOString() };
+    const nextTasks = [...structuredClone(State.tasks), task]; State._goalTxnBusy = `task:${task.id}`;
+    const saved = await goalDataCommit(State.goals, nextTasks); State._goalTxnBusy = '';
+    if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = `#goal-${CSS.escape(goal.id)}`; render(); return; }
+    State.tasks = nextTasks; State._goalOpenId = goal.id; State._goalsFocusAfterCommit = `#goal-${CSS.escape(goal.id)} .goal-linked`; render();
+  } else if (f.classList.contains('goal-edit-form')) {
+    e.preventDefault(); const original = goalById(f.dataset.goal); if (!original || State._goalTxnBusy) return;
+    const nextGoals = structuredClone(State.goals), goal = nextGoals.find((item) => item.id === original.id);
+    goal.title = f.title.value.trim(); if (!goal.title) return;
+    goal.description = f.description.value.trim().slice(0, 800); goal.parentId = f.parentId.value || null;
+    goal.skillId = f.skillId.value; goal.type = f.type.value; goal.xpReward = GOAL_XP[goal.type]; goal.targetDate = f.targetDate.value || null; goal.status = f.status.value;
+    State._goalTxnBusy = `edit:${goal.id}`; const saved = await goalDataCommit(nextGoals, State.tasks); State._goalTxnBusy = '';
+    if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = `#goal-${CSS.escape(goal.id)}`; render(); return; }
+    State.goals = nextGoals; State._goalOpenId = goal.id; State._goalsFocusAfterCommit = `#goal-${CSS.escape(goal.id)}`; syncGoalDeepLink(goal.id); render();
   } else if (f.id === 'add-reward') {
     e.preventDefault(); const name = f.name.value.trim(); if (!name) return;
     if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
@@ -17735,13 +17910,65 @@ function tutMascotHTML() {
   const c = ensureCompanion(), ti = compTierIdx(c.bond);
   return `<span class="tut-mascot">${shadowVideo(ti, 'speaking', 'tutorial')}</span>`;
 }
+async function commitGoalMutation(key, nextGoals, nextTasks, focusSelector, success) {
+  if (State._goalTxnBusy) return false;
+  State._goalTxnBusy = key; State._goalsError = '';
+  const saved = await goalDataCommit(nextGoals, nextTasks); State._goalTxnBusy = '';
+  if (!saved) {
+    State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.');
+    State._goalsFocusAfterCommit = focusSelector || '#goals-title'; render(); return false;
+  }
+  State.goals = nextGoals; State.tasks = nextTasks;
+  if (success) success();
+  State._goalsFocusAfterCommit = focusSelector || '#goals-title'; render(); return true;
+}
+function closeGoalDeleteDialog({ restoreFocus = true } = {}) {
+  const overlay = document.getElementById('goal-delete-dialog'); if (!overlay) return;
+  const target = restoreFocus && overlay._returnFocus && overlay._returnFocus.isConnected ? overlay._returnFocus : null;
+  document.getElementById('app')?.removeAttribute('inert'); overlay.remove();
+  if (target) requestAnimationFrame(() => focusPathChoiceTarget(target));
+}
+function handleGoalDialogKeydown(event) {
+  const overlay = document.getElementById('goal-delete-dialog'); if (!overlay) return;
+  if (event.key === 'Escape') { event.preventDefault(); closeGoalDeleteDialog(); return; }
+  if (event.key !== 'Tab') return;
+  const focusable = Array.from(overlay.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')).filter((node) => !node.disabled && node.getClientRects().length);
+  if (!focusable.length) return;
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+  else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+}
+function openGoalDeleteDialog(ids, opener) {
+  const chosen = new Set(ids.filter((id) => goalById(id))); if (!chosen.size) return;
+  closeGoalDeleteDialog({ restoreFocus: false });
+  const reparented = (State.goals || []).filter((goal) => goal.parentId && chosen.has(goal.parentId) && !chosen.has(goal.id)).length;
+  const unlinked = (State.tasks || []).filter((task) => task.goalId && chosen.has(task.goalId)).length;
+  const overlay = document.createElement('div'); overlay.id = 'goal-delete-dialog'; overlay.className = 'modal-overlay goal-delete-overlay'; overlay.dataset.action = 'goal-delete-cancel'; overlay.dataset.ids = [...chosen].join(','); overlay._returnFocus = opener || document.activeElement;
+  overlay.innerHTML = `<section class="goal-delete-box" role="dialog" aria-modal="true" aria-labelledby="goal-delete-title" aria-describedby="goal-delete-desc"><button type="button" class="modal-x" data-action="goal-delete-cancel" aria-label="${t('Закрыть')}">✕</button><h2 id="goal-delete-title" tabindex="-1">${t('Удалить цели?')}</h2><p id="goal-delete-desc">${chosen.size} ${t('целей будут удалены')}. ${reparented} ${t('дочерних целей поднимутся на уровень выше')}. ${unlinked} ${t('квестов останутся в плане, но потеряют ссылку на цель')}.</p><p>${t('Это нельзя отменить.')}</p><div class="goal-delete-actions"><button type="button" class="btn ghost" data-action="goal-delete-cancel">${t('Отмена')}</button><button type="button" class="btn danger" data-action="goal-delete-confirm">${t('Удалить')}</button></div></section>`;
+  overlay.addEventListener('keydown', handleGoalDialogKeydown); document.getElementById('app')?.setAttribute('inert', ''); document.body.appendChild(overlay);
+  requestAnimationFrame(() => overlay.querySelector('#goal-delete-title')?.focus({ preventScroll: true }));
+}
+async function confirmGoalDelete() {
+  const overlay = document.getElementById('goal-delete-dialog'); if (!overlay || State._goalTxnBusy) return;
+  const removed = new Set(String(overlay.dataset.ids || '').split(',').filter(Boolean));
+  const before = State.goals || [], nextGoals = structuredClone(before).filter((goal) => !removed.has(goal.id));
+  const beforeById = new Map(before.map((goal) => [goal.id, goal]));
+  for (const goal of nextGoals) if (goal.parentId && removed.has(goal.parentId)) {
+    let parent = beforeById.get(goal.parentId), guard = 0;
+    while (parent && removed.has(parent.id) && guard++ < 24) parent = parent.parentId ? beforeById.get(parent.parentId) : null;
+    goal.parentId = parent && !removed.has(parent.id) ? parent.id : null;
+  }
+  const nextTasks = structuredClone(State.tasks); for (const task of nextTasks) if (task.goalId && removed.has(task.goalId)) delete task.goalId;
+  closeGoalDeleteDialog({ restoreFocus: false });
+  await commitGoalMutation('delete', nextGoals, nextTasks, '#goals-title', () => { State._goalOpenId = ''; syncGoalDeepLink(''); });
+}
 function onClick(e) {
   const targetTaskMenu = e.target.closest('.task-more');
   document.querySelectorAll('.task-more[open]').forEach((menu) => {
     if (menu !== targetTaskMenu) menu.removeAttribute('open');
   });
   const navBtn = e.target.closest('#nav button[data-view]');
-  if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
+  if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; if (State.view !== 'goals') { State._goalDeepLinkId = ''; syncGoalDeepLink('', State.view); } markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
   const secBtn = e.target.closest('[data-action="go-section"]');
   if (secBtn) {
     const s = SECTIONS.find((x) => x.id === secBtn.dataset.sec); if (!s) return;
@@ -17883,18 +18110,18 @@ function onClick(e) {
     if (!msg || !msg.actions || msg.actionsApplied != null) return;
     const wrap = el.closest('.chat-actions');
     const checks = [...(wrap ? wrap.querySelectorAll('[data-ca]') : [])].map((c) => c.checked);
-    const res = applyChatActions(msg, checks);
-    msg.actionsApplied = res.total;
-    if (res.total) {
-      const parts = [];
-      if (res.quests) parts.push(`${res.quests} ${plural(res.quests, 'квест', 'квеста', 'квестов')}`);
-      if (res.habits) parts.push(`${res.habits} ${plural(res.habits, 'привычка', 'привычки', 'привычек')}`);
-      if (res.goals) parts.push(`${res.goals} ${plural(res.goals, 'цель', 'цели', 'целей')}`);
-      toast(`✓ ${t('Добавлено')}: ${parts.join(' · ')}`);
-      sfx('complete'); track('ai:chatactions');
-    }
-    renderChatMessages(); render();
-    return;
+    el.disabled = true;
+    applyChatActions(msg, checks).then((res) => {
+      msg.actionsApplied = res.total;
+      if (res.total) {
+        const parts = [];
+        if (res.quests) parts.push(`${res.quests} ${plural(res.quests, 'квест', 'квеста', 'квестов')}`);
+        if (res.habits) parts.push(`${res.habits} ${plural(res.habits, 'привычка', 'привычки', 'привычек')}`);
+        if (res.goals) parts.push(`${res.goals} ${plural(res.goals, 'цель', 'цели', 'целей')}`);
+        toast(`✓ ${t('Добавлено')}: ${parts.join(' · ')}`); sfx('complete'); track('ai:chatactions');
+      } else toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.'));
+      renderChatMessages(); render();
+    }); return;
   }
   if (action === 'toggle-tts') { State.settings.tts = !!el.checked; autosaveSettings(); ttsStop(); render(); return; }
   if (action === 'set-ambient') {
@@ -18561,27 +18788,43 @@ function onClick(e) {
 
   // --- Цели ---
   } else if (action === 'toggle-step') {
-    const g = goalById(el.dataset.goal); if (!g) return; const st = g.steps.find((x) => x.id === el.dataset.step); if (!st) return;
-    st.done = !st.done; refreshGoalCompletion(g); Store.save('goals', State.goals); checkAchievements(); render(); if (st.done) triggerAvatarReaction('happy', 'Шаг цели ✓');
+    const goal = goalById(el.dataset.goal); if (!goal || State._goalTxnBusy || goalProgressKind(goal) !== 'checklist') return;
+    const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((item) => item.id === goal.id), step = nextGoal.steps.find((item) => item.id === el.dataset.step); if (!step) return;
+    const wasCompleted = !!nextGoal.completedAt; step.done = !step.done; refreshGoalCompletion(nextGoal, { announce: false });
+    commitGoalMutation(`step:${step.id}`, nextGoals, structuredClone(State.tasks), `[data-action="toggle-step"][data-goal="${CSS.escape(goal.id)}"][data-step="${CSS.escape(step.id)}"]`, () => { State._goalOpenId = goal.id; if (!wasCompleted && nextGoal.completedAt) announceGoalCompletion(nextGoal); checkAchievements(); if (step.done) triggerAvatarReaction('happy', 'Шаг цели ✓'); }); return;
   } else if (action === 'delete-step') {
-    const g = goalById(el.dataset.goal); if (!g) return; g.steps = g.steps.filter((x) => x.id !== el.dataset.step); refreshGoalCompletion(g); Store.save('goals', State.goals); render();
+    const goal = goalById(el.dataset.goal); if (!goal || State._goalTxnBusy) return;
+    const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((item) => item.id === goal.id); nextGoal.steps = nextGoal.steps.filter((step) => step.id !== el.dataset.step); refreshGoalCompletion(nextGoal, { announce: false });
+    commitGoalMutation(`delete-step:${el.dataset.step}`, nextGoals, structuredClone(State.tasks), `#goal-${CSS.escape(goal.id)}`, () => { State._goalOpenId = goal.id; }); return;
   } else if (action === 'delete-goal') {
-    if (!confirm('Удалить цель?')) return; State.goals = State.goals.filter((g) => g.id !== id); Store.save('goals', State.goals); render();
+    openGoalDeleteDialog([id], el); return;
+  } else if (action === 'goal-delete-cancel') {
+    if (el.id === 'goal-delete-dialog' && e.target !== el) return;
+    closeGoalDeleteDialog(); return;
+  } else if (action === 'goal-delete-confirm') {
+    confirmGoalDelete(); return;
+  } else if (action === 'goals-retry') {
+    retryGoalsLoad(); return;
+  } else if (action === 'goto-goal') {
+    e.preventDefault(); if (!goalById(id)) return; State.view = 'goals'; State._goalOpenId = id; State._goalDeepLinkId = id; State._goalsFocusAfterCommit = `#goal-${CSS.escape(id)}`; syncGoalDeepLink(id); render(); return;
+  } else if (action === 'goto-task') {
+    e.preventDefault(); const task = questById(id); if (!task) return; State.view = 'today'; State._goalDeepLinkId = ''; syncGoalDeepLink('', 'today'); State._tasksFocusAfterCommit = `[data-action="toggle-task"][data-id="${CSS.escape(id)}"]`; render(); return;
   } else if (action === 'goals-pick-all') {
     document.querySelectorAll('.goal-pick').forEach((c) => { c.checked = true; }); return;
   } else if (action === 'goals-pick-none') {
     document.querySelectorAll('.goal-pick').forEach((c) => { c.checked = false; }); return;
   } else if (action === 'goals-del-selected') {
     const ids = [...document.querySelectorAll('.goal-pick:checked')].map((c) => c.dataset.pick);
-    if (!ids.length) { toast('Ничего не выбрано — отметь галочки у целей'); return; }
-    if (!confirm(`Удалить выбранные цели: ${ids.length}?`)) return;
-    const s = new Set(ids); State.goals = State.goals.filter((g) => !s.has(g.id)); Store.save('goals', State.goals); toast(`🗑 Удалено: ${ids.length}`); render();
+    if (!ids.length) { toast(t('Ничего не выбрано — отметь цели')); return; }
+    openGoalDeleteDialog(ids, el); return;
   } else if (action === 'archive-goal') {
-    const g = goalById(id); if (g) { g.archived = true; Store.save('goals', State.goals); toast('🗄 В архиве'); render(); }
+    const goal = goalById(id); if (!goal || State._goalTxnBusy) return; const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((item) => item.id === id); nextGoal.archived = true;
+    commitGoalMutation(`archive:${id}`, nextGoals, structuredClone(State.tasks), '#goals-title', () => { State._goalOpenId = ''; toast(t('В архиве')); }); return;
   } else if (action === 'restore-goal') {
-    const g = goalById(id); if (g) { g.archived = false; Store.save('goals', State.goals); render(); }
+    const goal = goalById(id); if (!goal || State._goalTxnBusy) return; const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((item) => item.id === id); nextGoal.archived = false;
+    commitGoalMutation(`restore:${id}`, nextGoals, structuredClone(State.tasks), `#goal-${CSS.escape(id)}`, () => { State._goalOpenId = id; }); return;
   } else if (action === 'filter-goals') {
-    State.goalFilter = el.dataset.type; render();
+    State.goalFilter = el.dataset.type; State._goalsFocusAfterCommit = `[data-action="filter-goals"][data-type="${CSS.escape(el.dataset.type)}"]`; render(); return;
 
   // --- Дерево ---
   } else if (action === 'tree-retry-load') {
@@ -19124,6 +19367,7 @@ function clearAllData() {
   State._partyLoading = false; State._adminUsersLoading = false;
   State._tasksLoadError = ''; State._tasksLoadBusy = false; State._tasksFocusAfterCommit = '';
   State._habitsLoadError = ''; State._habitsLoadBusy = false; State._habitTxnBusy = ''; State._habitError = ''; clearHabitUndo(); State._habitsFocusAfterCommit = '';
+  State._goalsLoadError = ''; State._goalsLoadBusy = false; State._goalTxnBusy = ''; State._goalsError = ''; State._goalsFocusAfterCommit = ''; State._goalOpenId = ''; State._goalDeepLinkId = '';
   State._settingsLoadError = ''; State._settingsLoadBusy = false; State._treeLoadError = '';
   State.timer = null; persistTimer(); stopTick(); closeFocusWidget(); removePill();
   State.selectedProfile = null; State.obSkills = new Set();
@@ -19308,8 +19552,12 @@ async function initApp() {
     State._habitsLoadBusy = false;
   }
   if (State._habitsLoadError === 'session' || State._accountSessionExpired) return;
-  State.goals = await Store.load('goals', []);
-  State.goals.forEach((g) => { if (!g.type) g.type = 'mid'; if (g.xpReward === undefined) g.xpReward = GOAL_XP[g.type] != null ? GOAL_XP[g.type] : GOAL_BONUS.xp; if (g.parentId === undefined) g.parentId = null; if (g.status === undefined) g.status = 'active'; if (g.metric === undefined) g.metric = null; });
+  {
+    const goalsLoad = await Store.loadChecked('goals', [], validateGoalsPayload);
+    State.goals = normalizeLoadedGoals(goalsLoad.value); State._goalsLoadError = goalsLoad.error; State._goalsLoadBusy = false;
+    normalizeGoalTaskLinks();
+  }
+  if (State._goalsLoadError === 'session' || State._accountSessionExpired) return;
   {
     const treeLoad = await Store.loadChecked('skilltree', {}, validateSkillTreePayload);
     State.tree = treeLoad.value; State._treeLoadError = treeLoad.error; State._treeLoadBusy = false;
@@ -19333,7 +19581,11 @@ async function initApp() {
   if (State.timer) { State.timer.phase = State.timer.phase || 'work'; if (State.timer.phaseStartElapsed === undefined) State.timer.phaseStartElapsed = 0; updatePill(focusInfo()); if (State.timer.running) startTick(); }
   checkAchievements(true);
   // Deep-link от ярлыков приложения (manifest shortcuts): ?view=goals → открыть вкладку
-  try { const v = new URLSearchParams(location.search).get('view'); if (v && VIEWS[v]) State.view = v; } catch {}
+  try {
+    const params = new URLSearchParams(location.search), view = params.get('view'), goalId = params.get('goal');
+    if (view && VIEWS[view]) State.view = view;
+    if (State.view === 'goals' && goalId && goalById(goalId)) { State._goalDeepLinkId = goalId; State._goalOpenId = goalId; State._goalsFocusAfterCommit = `#goal-${CSS.escape(goalId)}`; }
+  } catch {}
   // Ярлыки-действия (?do=dayrec|capture): долгий тап по иконке на телефоне → сразу в действие.
   // Бэклог «Трение» (fb_mrnivhqrssjx): ноль тапов между «открыл» и «делаю». URL чистим, чтобы
   // перезагрузка не повторяла действие.
@@ -19416,15 +19668,15 @@ function onChange(e) {
   }
   // смена статуса цели (active/waiting/paused)
   if (e.target.dataset && e.target.dataset.action === 'goal-status') {
-    const g = goalById(e.target.dataset.id); if (g) { g.status = e.target.value; Store.save('goals', State.goals); render(); }
+    const goal = goalById(e.target.dataset.id); if (goal) { const next = structuredClone(State.goals), changed = next.find((item) => item.id === goal.id); changed.status = e.target.value; commitGoalMutation(`status:${goal.id}`, next, structuredClone(State.tasks), `#goal-${CSS.escape(goal.id)}`, () => { State._goalOpenId = goal.id; }); }
     return;
   }
   if (e.target.dataset && e.target.dataset.action === 'goal-sphere') {
-    const g = goalById(e.target.dataset.id); if (g) { g.skillId = e.target.value; Store.save('goals', State.goals); render(); }
+    const goal = goalById(e.target.dataset.id); if (goal) { const next = structuredClone(State.goals), changed = next.find((item) => item.id === goal.id); changed.skillId = e.target.value; commitGoalMutation(`sphere:${goal.id}`, next, structuredClone(State.tasks), `#goal-${CSS.escape(goal.id)}`, () => { State._goalOpenId = goal.id; }); }
     return;
   }
   if (e.target.dataset && e.target.dataset.action === 'goal-horizon') {
-    const g = goalById(e.target.dataset.id); if (g) { g.type = e.target.value; g.xpReward = GOAL_XP[e.target.value]; Store.save('goals', State.goals); render(); }
+    const goal = goalById(e.target.dataset.id); if (goal) { const next = structuredClone(State.goals), changed = next.find((item) => item.id === goal.id); changed.type = e.target.value; changed.xpReward = GOAL_XP[e.target.value]; commitGoalMutation(`horizon:${goal.id}`, next, structuredClone(State.tasks), `#goal-${CSS.escape(goal.id)}`, () => { State._goalOpenId = goal.id; }); }
     return;
   }
   // правка текста заметки (сохраняем на blur/change, без ререндера — не сбивая фокус)

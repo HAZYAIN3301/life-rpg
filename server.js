@@ -1053,6 +1053,69 @@ function commitHabitData(uid, payload) {
   return names;
 }
 
+function goalRecordValid(goal, ids) {
+  if (!goal || typeof goal !== 'object' || Array.isArray(goal)) return false;
+  if (typeof goal.id !== 'string' || !goal.id || ids.has(goal.id)) return false;
+  ids.add(goal.id);
+  if (typeof goal.title !== 'string' || !goal.title.trim()) return false;
+  if (goal.parentId != null && (typeof goal.parentId !== 'string' || goal.parentId === goal.id)) return false;
+  if (!Array.isArray(goal.steps)) return false;
+  const stepIds = new Set();
+  if (!goal.steps.every((step) => step && typeof step === 'object' && !Array.isArray(step)
+    && typeof step.id === 'string' && step.id && !stepIds.has(step.id) && (stepIds.add(step.id), true)
+    && typeof step.title === 'string' && typeof step.done === 'boolean')) return false;
+  if (goal.progressKind != null && !['checklist', 'metric'].includes(goal.progressKind)) return false;
+  if (goal.metric != null) {
+    if (!goal.metric || typeof goal.metric !== 'object' || Array.isArray(goal.metric)) return false;
+    for (const key of ['start', 'current', 'target']) if (!Number.isFinite(Number(goal.metric[key]))) return false;
+  }
+  return true;
+}
+function goalCommitPayloadValid(data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
+  if (Object.keys(data).length !== 2 || !Array.isArray(data.goals) || !Array.isArray(data.tasks)) return false;
+  const goalIds = new Set();
+  if (!data.goals.every((goal) => goalRecordValid(goal, goalIds))) return false;
+  for (const goal of data.goals) {
+    if (goal.parentId != null && !goalIds.has(goal.parentId)) return false;
+    const seen = new Set([goal.id]); let parentId = goal.parentId; let depth = 0;
+    while (parentId != null) {
+      if (seen.has(parentId) || ++depth > 24) return false;
+      seen.add(parentId);
+      const parent = data.goals.find((candidate) => candidate.id === parentId);
+      if (!parent) return false;
+      parentId = parent.parentId == null ? null : parent.parentId;
+    }
+  }
+  const taskIds = new Set();
+  return data.tasks.every((task) => task && typeof task === 'object' && !Array.isArray(task)
+    && typeof task.id === 'string' && task.id && !taskIds.has(task.id) && (taskIds.add(task.id), true)
+    && typeof task.title === 'string' && task.title.trim()
+    && (task.goalId == null || (typeof task.goalId === 'string' && goalIds.has(task.goalId))));
+}
+// Goals and their linked daily tasks are one graph. Every goal mutation sends
+// both files so deleting/reparenting cannot leave a task pointing at a missing
+// node. Replaying the same candidate is safe and produces the same files.
+function commitGoalData(uid, payload) {
+  if (!payload || !goalCommitPayloadValid(payload.data)) throw new Error('invalid_goal_commit');
+  if (Buffer.byteLength(JSON.stringify(payload.data)) > 4 * 1024 * 1024) throw new Error('goal_commit_too_large');
+  const names = ['goals', 'tasks'];
+  const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
+  const snapshots = new Map(); const written = [];
+  for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
+  try {
+    for (const name of names) {
+      backupFile(dir, name);
+      writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
+      written.push(name);
+    }
+  } catch (error) {
+    for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
+    throw error;
+  }
+  return names;
+}
+
 // ============================================================
 //  Migration: root data/*.json  →  data/users/albert/*.json
 //  Runs once, only if no users.json exists yet.
@@ -2518,6 +2581,19 @@ const server = http.createServer(async (req, res) => {
     } catch (error) {
       const clientError = error && (error.message === 'invalid_habit_commit' || error.message === 'habit_commit_too_large');
       return sendJson(res, clientError ? 400 : 500, { error: clientError ? error.message : 'habit_commit_failed_no_changes_lost' });
+    }
+  }
+
+  if (u === '/api/goals/commit' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload; try { payload = JSON.parse(await readBody(req, 5 * 1024 * 1024)); }
+    catch (error) { return sendJson(res, 400, { error: error && error.message === 'payload too large' ? 'goal_commit_too_large' : 'invalid_goal_commit' }); }
+    try {
+      const files = commitGoalData(uid, payload);
+      return sendJson(res, 200, { ok: true, files });
+    } catch (error) {
+      const clientError = error && (error.message === 'invalid_goal_commit' || error.message === 'goal_commit_too_large');
+      return sendJson(res, clientError ? 400 : 500, { error: clientError ? error.message : 'goal_commit_failed_no_changes_lost' });
     }
   }
 
