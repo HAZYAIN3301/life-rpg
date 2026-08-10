@@ -10163,14 +10163,20 @@ function calendarMoveReceiptHTML() {
 async function moveCalendarTask(command, { makeUndo = true, renderAfter = true } = {}) {
   const task = questById(command && command.id);
   if (!task || State._tasksLoadError) return false;
-  const before = { date: task.date, startTime: task.startTime || null, estimateMin: Number(task.estimateMin) || 30 };
+  // Счётчики переноса входят в снимок: иначе неудачная запись откатила бы дату,
+  // но оставила бы дело «отложенным ещё раз» — память соврала бы о том, чего не было.
+  const before = { date: task.date, startTime: task.startTime || null, estimateMin: Number(task.estimateMin) || 30, postponedCount: task.postponedCount, firstDate: task.firstDate };
   const nextDate = calendarDateValue(command.date, task.date || todayStr());
   const nextTime = command.startTime == null || command.startTime === '' ? null : calendarTimeValue(command.startTime);
   const nextDuration = Math.max(5, Math.min(18 * 60, Math.round(Number(command.estimateMin) || before.estimateMin)));
   if (command.startTime != null && command.startTime !== '' && !nextTime) return false;
+  // Считается ДО присваивания: notePostpone читает текущую task.date, чтобы
+  // отличить настоящий перенос от правки расписания будущего дела.
+  const postponeNote = window.StuckTaskV1 ? window.StuckTaskV1.notePostpone(task, nextDate, todayStr()) : null;
   task.date = nextDate;
   task.startTime = nextTime;
   task.estimateMin = nextDuration;
+  if (postponeNote) Object.assign(task, postponeNote);
   const saved = await Store.saveNow('tasks', State.tasks);
   if (!saved) {
     Object.assign(task, before);
@@ -18902,7 +18908,15 @@ function onClick(e) {
     const next = State.antihabits.filter((x) => x.id !== id);
     transactAntihabits(next, `anti:${id}`, '#habits-title');
   } else if (action === 'move-overdue') {
-    State.tasks.forEach((t) => { if (taskOverdue(t, today)) t.date = today; }); Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
+    // Параметр намеренно `x`, а не `t`: `t` — глобальная функция перевода, и её
+    // затенение внутри цикла уже однажды стоило нам молчаливо сломанных строк.
+    State.tasks.forEach((x) => {
+      if (!taskOverdue(x, today)) return;
+      const note = window.StuckTaskV1 ? window.StuckTaskV1.notePostpone(x, today, today) : null;
+      x.date = today;
+      if (note) Object.assign(x, note);
+    });
+    Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
   } else if (action === 'amnesty-overdue') {
     // Ничего не удаляем и не переносим: дата остаётся прежней, дело остаётся в своём дне.
     // Меняется только одно — оно перестаёт считаться долгом. Это и есть разница между

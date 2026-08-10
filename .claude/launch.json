@@ -6,7 +6,7 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["server.js"],
       "cwd": "/Users/al.prokopets/Documents/Obsidian Vault/life-rpg",
-      "port": 3000
+      "port": 4317
     }
   ]
 }
