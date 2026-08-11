@@ -14683,3 +14683,46 @@ html.calendar-task-open body {
 @media (hover: none) {
   .board-acts .btn, .board-offer .btn, .board-ask .btn { min-height: 42px; }
 }
+
+/* ── Pets v130: one semantic route surface; art stays authored, controls stay operable. ── */
+.pets-shell { display: grid; gap: var(--sp-3); }
+.pets-route-head { display: flex; align-items: center; min-height: 42px; }
+.pets-route-head h2 { margin: 0; color: var(--text-strong); font-size: var(--type-title); line-height: var(--leading-display); }
+.pet-art.pet-art-action,
+.pet-hint {
+  appearance: none;
+  box-sizing: border-box;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.pet-art.pet-art-action { padding: 0; border-radius: 18px; cursor: pointer; }
+.pet-art.pet-art-action:focus-visible,
+.pet-hint:focus-visible,
+.pet-edit:focus-visible,
+.pet-rename-form :is(input,button):focus-visible,
+.pet-species-picker select:focus-visible,
+.body-toad-card-actions button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+.pet-hint { display: inline-flex; align-items: center; justify-content: center; gap: 4px; padding: 0; cursor: help; text-align: center; }
+.pet-hint:hover { color: var(--text); opacity: 1; }
+.pet-rename-error { margin: 0; color: var(--bad); font-size: var(--type-meta); line-height: var(--leading-label); }
+
+@media (max-width: 600px), (pointer: coarse) {
+  .pets-route-head { min-height: var(--touch-min); }
+  .pet-edit { min-width: var(--touch-min); min-height: var(--touch-min); display: inline-grid; place-items: center; padding: 0; }
+  .pet-hint { min-height: var(--touch-min); padding-inline: var(--sp-2); }
+  .pet-species-picker select,
+  .pet-rename-form input,
+  .pet-rename-btns .btn,
+  .body-toad-card-actions .btn,
+  .pets-shell .tts-btn { min-width: var(--touch-min); min-height: var(--touch-min); }
+  .pet-rename-form input { font-size: max(16px, var(--type-control)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pet-art.pet-art-action:active .pet-svg { transform: none; }
+}

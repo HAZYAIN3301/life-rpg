@@ -2979,6 +2979,35 @@ const I18N_EXTRA = {
   'Заметки не загрузились': { en: 'Notes did not load', de: 'Notizen wurden nicht geladen', uk: 'Нотатки не завантажилися', es: 'Las notas no se cargaron' },
   'Не показываем пустой список и не сохраняем поверх данных, пока соединение не восстановится.': { en: 'We do not show an empty list or overwrite anything until the connection recovers.', de: 'Wir zeigen keine leere Liste und überschreiben nichts, bis die Verbindung wiederhergestellt ist.', uk: 'Не показуємо порожній список і нічого не перезаписуємо, доки з’єднання не відновиться.', es: 'No mostramos una lista vacía ni sobrescribimos nada hasta que vuelva la conexión.' },
   'Повторить загрузку заметок': { en: 'Retry loading notes', de: 'Notizen erneut laden', uk: 'Повторити завантаження нотаток', es: 'Reintentar cargar notas' },
+  // ── Pets v130: semantic actions and durable rename ──
+  'Что засчитывается в сферу': { en: 'What counts in this area', de: 'Was in diesem Bereich zählt', uk: 'Що зараховується до сфери', es: 'Qué cuenta en esta área' },
+  'Погладить питомца': { en: 'Pet companion', de: 'Haustier streicheln', uk: 'Погладити улюбленця', es: 'Acariciar mascota' },
+  'Имя питомца': { en: 'Pet name', de: 'Name des Haustiers', uk: 'Ім’я улюбленця', es: 'Nombre de la mascota' },
+  'Имя питомца сохранено': { en: 'Pet name saved', de: 'Name des Haustiers gespeichert', uk: 'Ім’я улюбленця збережено', es: 'Nombre de la mascota guardado' },
+  'Черты питомца': { en: 'Pet traits', de: 'Eigenschaften des Haustiers', uk: 'Риси улюбленця', es: 'Rasgos de la mascota' },
+  'Действия с хранителем тела': { en: 'Body guardian actions', de: 'Aktionen des Körperwächters', uk: 'Дії з охоронцем тіла', es: 'Acciones del guardián del cuerpo' },
+  'Действия с хранителем ресурсов': { en: 'Resources guardian actions', de: 'Aktionen des Ressourcenwächters', uk: 'Дії з охоронцем ресурсів', es: 'Acciones del guardián de recursos' },
+  'Размяться': { en: 'Warm up', de: 'Aufwärmen', uk: 'Розім’ятися', es: 'Calentar' },
+  'Передохнуть': { en: 'Take a breather', de: 'Durchatmen', uk: 'Перепочити', es: 'Tomar un respiro' },
+  'Монеты': { en: 'Coins', de: 'Münzen', uk: 'Монети', es: 'Monedas' },
+  'Гроссбух': { en: 'Ledger', de: 'Hauptbuch', uk: 'Гросбух', es: 'Libro mayor' },
+  'Резерв': { en: 'Reserve', de: 'Reserve', uk: 'Резерв', es: 'Reserva' },
+  'Побыть рядом с Кацую': { en: 'Spend time with Katsuyu', de: 'Bei Katsuyu sein', uk: 'Побути поруч із Кацую', es: 'Estar cerca de Katsuyu' },
+  'Кацую': { en: 'Katsuyu', de: 'Katsuyu', uk: 'Кацую', es: 'Katsuyu' },
+  'Хранительница отдыха · состояние считается по энергии и честным паузам': { en: 'Rest guardian · state follows energy and honest pauses', de: 'Wächterin der Erholung · ihr Zustand folgt Energie und ehrlichen Pausen', uk: 'Охоронниця відпочинку · стан залежить від енергії та чесних пауз', es: 'Guardiana del descanso · su estado sigue la energía y las pausas sinceras' },
+  'Побыть рядом': { en: 'Spend time together', de: 'Zeit zusammen verbringen', uk: 'Побути поруч', es: 'Estar cerca' },
+  'Спокойна': { en: 'Calm', de: 'Ruhig', uk: 'Спокійна', es: 'Tranquila' },
+  'Дышит медленно и хранит запас тишины.': { en: 'Breathing slowly and keeping a reserve of quiet.', de: 'Atmet langsam und bewahrt eine Reserve an Ruhe.', uk: 'Дихає повільно й береже запас тиші.', es: 'Respira despacio y guarda una reserva de calma.' },
+  'Наполнена': { en: 'Restored', de: 'Erholt', uk: 'Наповнена', es: 'Renovada' },
+  'Отдых действительно возвращает тебе силы.': { en: 'Rest is truly restoring your energy.', de: 'Erholung gibt dir wirklich Kraft zurück.', uk: 'Відпочинок справді повертає тобі сили.', es: 'El descanso realmente te devuelve energía.' },
+  'Тревожится': { en: 'Worried', de: 'Besorgt', uk: 'Тривожиться', es: 'Preocupada' },
+  'Слишком долго не было настоящей паузы.': { en: 'It has been too long without a real pause.', de: 'Es gab zu lange keine echte Pause.', uk: 'Надто довго не було справжньої паузи.', es: 'Hace demasiado que no hay una pausa real.' },
+  'Лечит': { en: 'Healing', de: 'Heilt', uk: 'Лікує', es: 'Sanando' },
+  'Не торопит: силы уже возвращаются.': { en: 'No rush: your energy is already returning.', de: 'Kein Druck: deine Kraft kommt schon zurück.', uk: 'Не квапить: сили вже повертаються.', es: 'Sin prisa: tu energía ya está volviendo.' },
+  'растёт и': { en: 'growing and', de: 'wächst und', uk: 'росте й', es: 'creciendo y' },
+  'BODY · канонический хранитель': { en: 'BODY · canonical guardian', de: 'BODY · kanonischer Wächter', uk: 'BODY · канонічний охоронець', es: 'BODY · guardián canónico' },
+  'MONEY / RESOURCES · канонический хранитель': { en: 'MONEY / RESOURCES · canonical guardian', de: 'MONEY / RESOURCES · kanonischer Wächter', uk: 'MONEY / RESOURCES · канонічний охоронець', es: 'MONEY / RESOURCES · guardián canónico' },
+  'RECOVERY · скрытый канонический сигнал': { en: 'RECOVERY · quiet canonical signal', de: 'RECOVERY · leises kanonisches Signal', uk: 'RECOVERY · тихий канонічний сигнал', es: 'RECOVERY · señal canónica discreta' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -13141,7 +13170,7 @@ function petSVG(color, state, traits, sphereId, idle = '') {
 function petName(id) { const pn = (State.settings && State.settings.petNames) || {}; return pn[id] || skillById(id).name; }
 function renderPets() {
   const spheres = topSkills();
-  if (!spheres.length) return `${companionCard()}<div class="card"><p class="muted">Сначала добавь основные сферы жизни (Настройки → Навыки) — у каждой появится свой питомец рядом с твоим спутником.</p></div>`;
+  if (!spheres.length) return `<section class="pets-shell" aria-labelledby="pets-title"><header class="pets-route-head"><h2 id="pets-title" tabindex="-1">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} ${t('Питомцы')}</h2></header>${companionCard()}<div class="card"><p class="muted">${t('Сначала добавь основные сферы жизни (Настройки → Навыки) — у каждой появится свой питомец рядом с твоим спутником.')}</p></div></section>`;
   const pets = spheres.map((s) => ({ s, st: petStats(s.id), traits: petTraits(s.id), nm: petName(s.id) }));
   const hungry = pets.filter((p) => p.st.state === 'hungry'), overfed = pets.filter((p) => p.st.state === 'overfed');
   let balance;
@@ -13156,55 +13185,56 @@ function renderPets() {
     // «живёт своей жизнью»: фраза дня из пула вида — стабильна в течение дня, своя у каждого питомца
     const idle = dayPick('petidle' + s.id, tr.idles || [tr.idle]);
     const line = st.state === 'hungry' ? (!st.lastFed ? `ждёт первой встречи — покорми делами` : st.daysSince >= 8 ? `не виделись ${st.daysSince} ${plural(st.daysSince, 'день', 'дня', 'дней')} — скучает` : `проголодался — покорми делами`)
-      : st.state === 'overfed' ? `объелся! пора и в другие сферы`
-        : st.state === 'full' ? `сыт и доволен` : `растёт и ${idle}`;
+      : st.state === 'overfed' ? t('объелся! пора и в другие сферы')
+        : st.state === 'full' ? t('сыт и доволен') : `${t('растёт и')} ${t(idle)}`;
     const renaming = State._petRename === s.id;
+    const renameError = renaming && State._petRenameError ? `<p class="pet-rename-error" role="alert">${t(State._petRenameError)}</p>` : '';
     const nameRow = renaming
-      ? `<form class="pet-rename-form" data-id="${s.id}"><input name="name" maxlength="20" value="${esc(nm)}" placeholder="${esc(s.name)}" /><div class="pet-rename-btns"><button type="submit" class="btn sm">✓</button><button type="button" class="btn ghost sm" data-action="pet-rename-cancel">✕</button></div></form>`
-      : `<div class="pet-name"><b>${esc(nm)}</b><button class="pet-edit" data-action="pet-rename" data-id="${s.id}" title="Переименовать">✎</button><span class="pet-badge" style="background:${meta.color}22;color:${meta.color}">${meta.label}</span></div>`;
+      ? `<form class="pet-rename-form" data-id="${s.id}" aria-label="${t('Переименовать')}: ${esc(nm)}"><label><span class="sr-only">${t('Имя питомца')}</span><input name="name" maxlength="20" value="${esc(nm)}" placeholder="${esc(s.name)}" aria-label="${t('Имя питомца')}"${renameError ? ' aria-describedby="pet-rename-error" aria-invalid="true"' : ''} /></label><div class="pet-rename-btns"><button type="submit" class="btn sm" aria-label="${t('Сохранить')}">✓</button><button type="button" class="btn ghost sm" data-action="pet-rename-cancel" aria-label="${t('Отмена')}">✕</button></div>${renameError ? renameError.replace('class="pet-rename-error"', 'class="pet-rename-error" id="pet-rename-error"') : ''}</form>`
+      : `<div class="pet-name"><b>${esc(nm)}</b><button class="pet-edit" data-action="pet-rename" data-id="${s.id}" aria-label="${t('Переименовать')}: ${esc(nm)}">✎</button><span class="pet-badge" style="background:${meta.color}22;color:${meta.color}">${t(meta.label)}</span></div>`;
     // Клик по виду — хинт «что засчитывать в эту сферу» (боль Виолы: «как считать уровень творчества»).
     // Кормить питомца = записывать дела; хинт объясняет, какие именно.
-    const sub = `<p class="pet-sphere muted" data-action="pet-hint" data-id="${s.id}" title="${esc(tr.hint || '')}" style="cursor:help">${esc(tr.kind || 'Зверёк')}${nm !== s.name ? ` · сфера: ${esc(s.name)}` : ''} ${satoruIconHTML('status.info', 'pet-hint-icon', '◇')}</p>`;
-    const guardianActions = activeSpecies === 'bodyToad' ? `<div class="body-toad-card-actions" aria-label="Действия с хранителем тела">
-      <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="greet">Поприветствовать</button>
-      <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="train">Размяться</button>
-      <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="rest">Передохнуть</button>
-    </div>` : activeSpecies === 'resourcesPenguin' ? `<div class="body-toad-card-actions resources-penguin-card-actions" aria-label="Действия с хранителем ресурсов">
-      <button class="btn ghost sm" data-action="resources-penguin-card-interact" data-id="${s.id}" data-mode="greet">Поприветствовать</button>
-      <button class="btn ghost sm" data-action="resources-penguin-card-interact" data-id="${s.id}" data-mode="coinSort">Монеты</button>
-      <button class="btn ghost sm" data-action="resources-penguin-card-interact" data-id="${s.id}" data-mode="ledger">Гроссбух</button>
-      <button class="btn ghost sm" data-action="resources-penguin-card-interact" data-id="${s.id}" data-mode="stash">Резерв</button>
+    const sub = `<button type="button" class="pet-sphere pet-hint muted" data-action="pet-hint" data-id="${s.id}" title="${esc(t(tr.hint || ''))}" aria-label="${t('Что засчитывается в сферу')}: ${esc(t(tr.hint || ''))}">${t(tr.kind || 'Зверёк')}${nm !== s.name ? ` · ${t('Сфера')}: ${esc(s.name)}` : ''} ${satoruIconHTML('status.info', 'pet-hint-icon', '◇')}</button>`;
+    const guardianActions = activeSpecies === 'bodyToad' ? `<div class="body-toad-card-actions" aria-label="${t('Действия с хранителем тела')}">
+      <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="greet">${t('Поприветствовать')}</button>
+      <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="train">${t('Размяться')}</button>
+      <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="rest">${t('Передохнуть')}</button>
+    </div>` : activeSpecies === 'resourcesPenguin' ? `<div class="body-toad-card-actions resources-penguin-card-actions" aria-label="${t('Действия с хранителем ресурсов')}">
+      <button class="btn ghost sm" data-action="resources-penguin-card-interact" data-id="${s.id}" data-mode="greet">${t('Поприветствовать')}</button>
+      <button class="btn ghost sm" data-action="resources-penguin-card-interact" data-id="${s.id}" data-mode="coinSort">${t('Монеты')}</button>
+      <button class="btn ghost sm" data-action="resources-penguin-card-interact" data-id="${s.id}" data-mode="ledger">${t('Гроссбух')}</button>
+      <button class="btn ghost sm" data-action="resources-penguin-card-interact" data-id="${s.id}" data-mode="stash">${t('Резерв')}</button>
     </div>` : '';
     const canonicalGuardian = activeSpecies === 'bodyToad' || activeSpecies === 'resourcesPenguin';
     const artAction = activeSpecies === 'resourcesPenguin' ? 'resources-penguin-card-interact' : 'pet-feed';
     return `<div class="card pet-card pet-card-${activeSpecies}${canonicalGuardian ? ' pet-card-canonical-guardian' : ''}${activeSpecies === 'bodyToad' ? ' pet-card-body-toad' : ''}">
-      <div class="pet-art" data-action="${artAction}" data-id="${s.id}"${activeSpecies === 'resourcesPenguin' ? ' data-mode="greet"' : ''} title="приласкать ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits, s.id, idle)}</div>
+      <button type="button" class="pet-art pet-art-action" data-action="${artAction}" data-id="${s.id}"${activeSpecies === 'resourcesPenguin' ? ' data-mode="greet"' : ''} aria-label="${t('Погладить питомца')}: ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits, s.id, idle)}</button>
       ${nameRow}${sub}
-      ${activeSpecies === 'bodyToad' ? '<div class="body-toad-domain-badge">BODY · канонический хранитель</div>' : activeSpecies === 'resourcesPenguin' ? '<div class="body-toad-domain-badge resources-penguin-domain-badge">MONEY / RESOURCES · канонический хранитель</div>' : `<label class="pet-species-picker"><span>${t('Облик')}</span><select data-action="set-pet-species" data-id="${s.id}" aria-label="${t('Облик')}: ${esc(nm)}">${petSpeciesOptions(selectedSpecies)}</select></label>`}
+      ${activeSpecies === 'bodyToad' ? `<div class="body-toad-domain-badge">${t('BODY · канонический хранитель')}</div>` : activeSpecies === 'resourcesPenguin' ? `<div class="body-toad-domain-badge resources-penguin-domain-badge">${t('MONEY / RESOURCES · канонический хранитель')}</div>` : `<label class="pet-species-picker"><span>${t('Облик')}</span><select data-action="set-pet-species" data-id="${s.id}" aria-label="${t('Облик')}: ${esc(nm)}">${petSpeciesOptions(selectedSpecies)}</select></label>`}
       ${activeSpecies === 'fortune' ? fortuneControlsHTML(s.id) : ''}
       <div class="pet-bar"><span style="width:${Math.min(100, Math.round(st.pct / 120 * 100))}%;background:${meta.color}"></span></div>
       <p class="pet-line muted">${line}</p>
-      <div class="pet-traits" aria-label="Черты питомца">${traits.map((trait) => `<span class="pet-trait-chip" title="${esc(trait.hint || trait.kind || '')}">${petTraitIconHTML(trait, 'pet-trait-icon')}<small>${esc(trait.kind || 'Черта')}</small></span>`).join('')}</div>
+      <div class="pet-traits" aria-label="${t('Черты питомца')}">${traits.map((trait) => `<span class="pet-trait-chip" title="${esc(t(trait.hint || trait.kind || ''))}">${petTraitIconHTML(trait, 'pet-trait-icon')}<small>${t(trait.kind || 'Черта')}</small></span>`).join('')}</div>
       ${guardianActions}
     </div>`;
   }).join('');
   const recoveryState = recoverySlugState();
   const recoveryMeta = window.RecoverySlugV1 && window.RecoverySlugV1.STATE_META[recoveryState];
   const recoveryCard = window.RecoverySlugV1 ? `<div class="card pet-card pet-card-recovery-slug">
-      <div class="pet-art" data-action="recovery-slug-react" title="Успокоить Кацую">${recoverySlugHTML({ className: 'recovery-slug-v1--card' })}</div>
-      <div class="pet-name"><b>Кацую</b><span class="pet-badge" style="background:#79b8aa22;color:#79b8aa">${esc(recoveryMeta.label)}</span></div>
-      <p class="pet-sphere muted">Хранительница отдыха · состояние считается по энергии и честным паузам</p>
-      <div class="body-toad-domain-badge recovery-slug-domain-badge">RECOVERY · скрытый канонический сигнал</div>
-      <p class="pet-line muted">${esc(recoveryMeta.line)}</p>
-      <div class="body-toad-card-actions"><button class="btn ghost sm" data-action="recovery-slug-react">Побыть рядом</button></div>
+      <button type="button" class="pet-art pet-art-action" data-action="recovery-slug-react" aria-label="${t('Побыть рядом с Кацую')}">${recoverySlugHTML({ className: 'recovery-slug-v1--card' })}</button>
+      <div class="pet-name"><b>${t('Кацую')}</b><span class="pet-badge" style="background:#79b8aa22;color:#79b8aa">${t(recoveryMeta.label)}</span></div>
+      <p class="pet-sphere muted">${t('Хранительница отдыха · состояние считается по энергии и честным паузам')}</p>
+      <div class="body-toad-domain-badge recovery-slug-domain-badge">${t('RECOVERY · скрытый канонический сигнал')}</div>
+      <p class="pet-line muted">${t(recoveryMeta.line)}</p>
+      <div class="body-toad-card-actions"><button class="btn ghost sm" data-action="recovery-slug-react">${t('Побыть рядом')}</button></div>
     </div>` : '';
-  return `${companionCard()}
+  return `<section class="pets-shell" aria-labelledby="pets-title"><header class="pets-route-head"><h2 id="pets-title" tabindex="-1">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} ${t('Питомцы')}</h2></header>${companionCard()}
     <div class="card pet-intro">
-      <h3 class="icon-heading">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} Зверинец сфер</h3>
-      <p class="muted">Твой спутник присматривает за зверинцем. Каждая основная сфера жизни — живой питомец: делаешь что-то в сфере — кормишь его; забыл — голодает; перекосил всё в одну — разжиреет. Здоровый зверинец = ты держишь <b>десятиборье</b> в балансе. Облик и повадки питомца зависят от твоих подсфер. Через заботу, не вину. <i>Погладь питомца — он будет рад.</i></p>
+      <h3 class="icon-heading">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} ${t('Зверинец')}</h3>
+      <p class="muted">${t('Твой спутник присматривает за зверинцем. Каждая основная сфера жизни — живой питомец: делаешь что-то в сфере — кормишь его; забыл — голодает; перекосил всё в одну — разжиреет. Здоровый зверинец = ты держишь')} <b>${t('десятиборье')}</b> ${t('в балансе. Облик и повадки питомца зависят от твоих подсфер. Через заботу, не вину.')} <i>${t('Погладь питомца — он будет рад.')}</i></p>
       <p class="pet-balance">${balance}</p>
     </div>
-    <div class="pet-grid">${recoveryCard}${cards}</div>`;
+    <div class="pet-grid">${recoveryCard}${cards}</div></section>`;
 }
 
 // ============================================================
@@ -17560,6 +17590,14 @@ function afterMainCommit() {
       target.focus({ preventScroll: true });
     });
   }
+  if (State._petsFocusAfterCommit && State.view === 'pets') {
+    const selector = State._petsFocusAfterCommit;
+    State._petsFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const target = document.querySelector(selector) || document.getElementById('pets-title');
+      if (target) focusPathChoiceTarget(target);
+    });
+  }
   if (State._pathFocusAfterCommit) {
     const selector = State._pathFocusAfterCommit;
     State._pathFocusAfterCommit = '';
@@ -17804,9 +17842,24 @@ async function onSubmit(e) {
   if (f.classList && f.classList.contains('pet-rename-form')) {
     e.preventDefault();
     const id = f.dataset.id, nm = (f.name.value || '').trim().slice(0, 20);
-    State.settings.petNames = State.settings.petNames || {};
-    if (nm && nm !== skillById(id).name) State.settings.petNames[id] = nm; else delete State.settings.petNames[id];
-    State._petRename = null; Store.save('settings', State.settings); toast('✨ Имя питомца сохранено'); render(); return;
+    const next = structuredClone(State.settings || {});
+    next.petNames = next.petNames || {};
+    if (nm && nm !== skillById(id).name) next.petNames[id] = nm; else delete next.petNames[id];
+    const saved = await Store.saveNow('settings', next);
+    if (!saved) {
+      State._petRename = id;
+      State._petRenameError = 'Не удалось сохранить. Ничего не изменено — повтори попытку.';
+      State._petsFocusAfterCommit = `.pet-rename-form[data-id="${CSS.escape(id)}"] input[name="name"]`;
+      render();
+      return;
+    }
+    State.settings = next;
+    State._petRename = null;
+    State._petRenameError = '';
+    State._petsFocusAfterCommit = '#pets-title';
+    toast('✨ ' + t('Имя питомца сохранено'));
+    render();
+    return;
   }
 
   // --- PIN login ---
@@ -18796,8 +18849,8 @@ function onClick(e) {
     return;
   }
   if (action === 'pet-hint') { const tr = petTraits(id)[0]; if (tr && tr.hint) toast(t(tr.hint)); return; }
-  if (action === 'pet-rename') { State._petRename = id; render(); return; }
-  if (action === 'pet-rename-cancel') { State._petRename = null; render(); return; }
+  if (action === 'pet-rename') { State._petRename = id; State._petRenameError = ''; State._petsFocusAfterCommit = `.pet-rename-form[data-id="${CSS.escape(id)}"] input[name="name"]`; render(); return; }
+  if (action === 'pet-rename-cancel') { State._petRename = null; State._petRenameError = ''; State._petsFocusAfterCommit = `[data-action="pet-rename"][data-id="${CSS.escape(id)}"]`; render(); return; }
   if (action === 'open-fortune-editor') { showFortuneEditor(id); return; }
   if (action === 'close-fortune-editor') { document.getElementById('fortune-editor')?.remove(); render(); return; }
   if (action === 'fortune-editor-tab') { showFortuneEditor(id, el.dataset.tab); return; }
