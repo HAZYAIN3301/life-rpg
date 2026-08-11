@@ -23,9 +23,9 @@ test('Stats v135 does not render missing rhythm or plans as a negative score', (
   assert.match(app, /Баланс появится, когда хотя бы две сферы получат внимание\. Это не оценка тебя\./);
 });
 
-test('Stats v135 keeps the mobile assistant out of the work surface and ships v135', () => {
+test('Stats v135 keeps the mobile assistant out of the work surface and ships the current offline shell', () => {
   assert.match(css, /body:has\(\.stats-shell\) #ai-fab \{ display: none; \}/);
-  assert.match(sw, /const CACHE = 'satoru-v135'/);
+  assert.match(sw, /const CACHE = 'satoru-v136'/);
 });
 
 test('Stats v135 additions are localized for every shipped locale', () => {

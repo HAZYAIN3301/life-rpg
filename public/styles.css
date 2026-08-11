@@ -2629,6 +2629,9 @@ html[data-system="on"] .task, html[data-system="on"] .gear-item, html[data-syste
 }
 .profile-text:focus { outline: none; border-color: var(--accent); }
 .profile-meta { font-size: 11.5px; margin-top: 6px; text-align: right; }
+.profile-save-status { min-height: 1.5em; margin: 6px 0 0; color: var(--muted); font-size: var(--type-meta); line-height: var(--leading-label); }
+.profile-save-status.is-error,
+.character-body-save-status.is-error { color: var(--bad); }
 .aikey-row { display: flex; flex-direction: column; gap: 5px; padding: 10px 12px; background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; }
 .aikey-row.has { border-color: #5fbf5f; }
 .aikey-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; }
@@ -10935,6 +10938,7 @@ body:has(.character-shell) #ai-fab { display: none; }
 .character-secondary .avatar-core-pose-button small { font-size: var(--type-meta); line-height: var(--leading-prose); }
 .character-secondary .body-form label { font-size: var(--type-meta); line-height: var(--leading-label); }
 .character-secondary .body-form :is(input, select, button) { font-size: var(--type-control); line-height: var(--leading-ui); }
+.character-secondary .character-body-save-status { grid-column: 1 / -1; min-height: 1.5em; margin: 0; color: var(--muted); font-size: var(--type-meta); line-height: var(--leading-label); }
 .character-secondary .bal-row { font-size: var(--type-control); line-height: var(--leading-ui); }
 .character-secondary .bal-row.is-sub { font-size: var(--type-meta); }
 

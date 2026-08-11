@@ -3012,6 +3012,12 @@ const I18N_EXTRA = {
   'Наблюдаем баланс': { en: 'Observing balance', de: 'Balance beobachten', uk: 'Спостерігаємо баланс', es: 'Observamos el equilibrio' },
   'Пока нет планов': { en: 'No plans yet', de: 'Noch keine Pläne', uk: 'Поки немає планів', es: 'Aún no hay planes' },
   'Баланс появится, когда хотя бы две сферы получат внимание. Это не оценка тебя.': { en: 'Balance appears once at least two areas receive attention. It is not a judgment of you.', de: 'Ein Gleichgewicht erscheint, sobald mindestens zwei Bereiche Aufmerksamkeit erhalten. Es ist keine Bewertung von dir.', uk: 'Баланс з’явиться, коли принаймні дві сфери отримають увагу. Це не оцінка тебе.', es: 'El equilibrio aparece cuando al menos dos áreas reciben atención. No es un juicio sobre ti.' },
+  // ── Profile / secondary Character v136: durable personal edits ──
+  'Текст профиля': { en: 'Profile text', de: 'Profiltext', uk: 'Текст профілю', es: 'Texto del perfil' },
+  'Изменения профиля не сохранены. Текст остался здесь — повтори попытку.': { en: 'Profile changes were not saved. The text is still here — try again.', de: 'Profiländerungen wurden nicht gespeichert. Der Text ist noch hier — versuche es erneut.', uk: 'Зміни профілю не збережено. Текст лишився тут — спробуй ще раз.', es: 'Los cambios del perfil no se guardaron. El texto sigue aquí; inténtalo de nuevo.' },
+  'Изменения телосложения не сохранены. Значения остались в форме — повтори попытку.': { en: 'Body changes were not saved. The values remain in the form — try again.', de: 'Körperdaten wurden nicht gespeichert. Die Werte bleiben im Formular — versuche es erneut.', uk: 'Зміни статури не збережено. Значення лишилися у формі — спробуй ще раз.', es: 'Los cambios corporales no se guardaron. Los valores siguen en el formulario; inténtalo de nuevo.' },
+  'Телосложение обновлено': { en: 'Body details updated', de: 'Körperdaten aktualisiert', uk: 'Статуру оновлено', es: 'Datos corporales actualizados' },
+  'Не удалось обновить профиль. Ничего не изменено — повтори попытку.': { en: 'Could not refresh the profile. Nothing changed — try again.', de: 'Das Profil konnte nicht aktualisiert werden. Nichts wurde geändert — versuche es erneut.', uk: 'Не вдалося оновити профіль. Нічого не змінено — спробуй ще раз.', es: 'No se pudo actualizar el perfil. Nada cambió; inténtalo de nuevo.' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -10857,17 +10863,19 @@ function aiHandleErr(d) {
 // ошибочных выводов ИИ, которые иначе тихо жили бы в каждом разговоре.
 function profileCard() {
   const mem = profileMem(); if (!mem) return '';
-  const prof = ensureProfile(), u = mem.usage(prof, mem.MAX_CHARS);
+  const prof = ensureProfile(), draft = typeof State._profileDraft === 'string' ? State._profileDraft : prof.text, u = mem.usage({ ...prof, text: draft }, mem.MAX_CHARS);
   const busy = !!State._profileBusy;
+  const saveError = State._profileSaveError || '';
   const when = prof.updatedAt ? new Date(prof.updatedAt).toLocaleDateString(({ ru: 'ru-RU', en: 'en-US', de: 'de-DE', uk: 'uk-UA', es: 'es-ES' })[lang()] || 'en-US', { day: '2-digit', month: '2-digit' }) : '';
-  return `<div class="card"><h3>${t('🧠 Что Тень о тебе помнит')}</h3>
+  return `<section class="card profile-memory-card" aria-labelledby="profile-title"><h3 id="profile-title">${t('🧠 Что Тень о тебе помнит')}</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 8px">${t('Это досье Тень берёт с собой в каждый разговор — поэтому оно короткое. Правь смело: твои правки важнее её выводов.')}</p>
-    <textarea id="profile-text" class="profile-text" rows="10" maxlength="${mem.MAX_CHARS}" placeholder="${esc(t('Пока пусто. Тень составит профиль после первого разбора недели — или нажми «Обновить через ИИ».'))}">${esc(prof.text)}</textarea>
-    <div class="profile-meta muted">${u.chars} / ${u.max}${when ? ` · ${t('обновлено')} ${when}` : ''}</div>
+    <textarea id="profile-text" class="profile-text" rows="10" maxlength="${mem.MAX_CHARS}" aria-label="${t('Текст профиля')}" aria-describedby="profile-meta profile-status" placeholder="${esc(t('Пока пусто. Тень составит профиль после первого разбора недели — или нажми «Обновить через ИИ».'))}">${esc(draft)}</textarea>
+    <div id="profile-meta" class="profile-meta muted">${u.chars} / ${u.max}${when ? ` · ${t('обновлено')} ${when}` : ''}</div>
+    <p id="profile-status" class="profile-save-status${saveError ? ' is-error' : ''}" role="status" aria-live="polite">${busy ? t('Сохраняю…') : esc(t(saveError))}</p>
     <div class="settings-actions" style="margin-top:8px">
-      <button class="btn ghost" data-action="profile-save">${t('Сохранить правки')}</button>
+      <button class="btn ghost" data-action="profile-save" ${busy ? 'disabled' : ''}>${t('Сохранить правки')}</button>
       <button class="btn ${busy ? 'disabled' : ''}" data-action="profile-refresh" ${busy ? 'disabled' : ''}>${busy ? '⏳ ' + t('Обновляю…') : '🤖 ' + t('Обновить через ИИ')}</button>
-    </div></div>`;
+    </div></section>`;
 }
 function aiKeysCard() {
   const k = State.aiKeys || {};
@@ -11794,21 +11802,50 @@ async function refreshProfile(opts) {
   State._profileBusy = true; if (!o.silent) render();
   try {
     const prof = ensureProfile();
+    const visibleDraft = document.getElementById('profile-text');
+    if (visibleDraft) State._profileDraft = String(visibleDraft.value || '');
     const system = 'Ты ведёшь краткое досье о человеке для приложения Satoru. Верни ТОЛЬКО текст профиля — без преамбулы, без код-блоков. ' + aiAnswerLangLine();
     const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ provider: aiProvider(), system, prompt: mem.buildPrompt(profileFacts(), prof.text, mem.MAX_CHARS) }) });
     const d = await r.json();
     if (d.error && aiHandleErr(d)) return false;
-    if (!r.ok || !d.text) { if (!o.silent) toast(t('Не удалось обновить профиль')); return false; }
+    if (!r.ok || !d.text) { State._profileSaveError = 'Не удалось обновить профиль. Ничего не изменено — повтори попытку.'; if (!o.silent) toast(t(State._profileSaveError)); return false; }
     // Бюджет режется на клиенте, а не доверием к модели: она регулярно промахивается
     // мимо лимита, а профиль, который только растёт, через полгода не влезет никуда.
-    prof.text = mem.enforceBudget(mem.normalize(d.text), mem.MAX_CHARS);
-    prof.updatedAt = new Date().toISOString(); prof.auto = true;
-    Store.save('profile', prof); track('profile:refresh');
+    const next = { ...prof, text: mem.enforceBudget(mem.normalize(d.text), mem.MAX_CHARS), updatedAt: new Date().toISOString(), auto: true };
+    const saved = await Store.saveNow('profile', next);
+    if (!saved) {
+      State._profileSaveError = 'Изменения профиля не сохранены. Текст остался здесь — повтори попытку.';
+      return false;
+    }
+    State.profile = next; State._profileSaveError = ''; delete State._profileDraft; track('profile:refresh');
     if (!o.silent) toast('🧠 ' + t('Профиль обновлён'));
     return true;
-  } catch { if (!o.silent) toast(t('Сетевая ошибка')); return false; }
+  } catch { State._profileSaveError = 'Не удалось обновить профиль. Ничего не изменено — повтори попытку.'; if (!o.silent) toast(t(State._profileSaveError)); return false; }
   finally { State._profileBusy = false; if (!o.silent) render(); }
+}
+async function saveProfileCard() {
+  const mem = profileMem(), ta = document.getElementById('profile-text');
+  if (!mem || !ta || State._profileBusy) return false;
+  const prof = ensureProfile();
+  const next = { ...prof, text: mem.enforceBudget(String(ta.value || '').trim(), mem.MAX_CHARS), updatedAt: new Date().toISOString(), auto: false };
+  const controls = document.querySelectorAll('.profile-memory-card [data-action="profile-save"], .profile-memory-card [data-action="profile-refresh"]');
+  const status = document.getElementById('profile-status');
+  controls.forEach((control) => { control.disabled = true; });
+  if (status) { status.textContent = t('Сохраняю…'); status.classList.remove('is-error'); }
+  const saved = await Store.saveNow('profile', next);
+  if (!saved) {
+    State._profileSaveError = 'Изменения профиля не сохранены. Текст остался здесь — повтори попытку.';
+    State._profileDraft = next.text;
+    controls.forEach((control) => { control.disabled = false; });
+    if (status) { status.textContent = t(State._profileSaveError); status.classList.add('is-error'); }
+    ta.focus();
+    return false;
+  }
+  State.profile = next; State._profileSaveError = ''; delete State._profileDraft;
+  State._settingsFocusAfterCommit = '#profile-text';
+  toast('🧠 ' + t('Профиль сохранён')); render();
+  return true;
 }
 // ── Наблюдение → просьба поправить (JARVIS-3-PLAN §5, правило 3) ──────────────
 // Логика в day-observation-v1.js: чистый модуль, узкий проверяемый факт вместо
@@ -15103,7 +15140,7 @@ function renderCharacter() {
       <label>${t('Вес, кг')}<input name="weight" type="number" min="30" max="300" step="0.1" value="${b.weight || ''}" placeholder="—" /></label>
       ${isPro() ? `<label>${t('% жира')}<input name="bodyfat" type="number" min="3" max="60" step="0.1" value="${b.bodyfat || ''}" placeholder="—" /></label>`
       : `<label class="locked-inline" data-action="show-paywall" data-feature="Состав тела">${t('% жира')} 🔒<input disabled placeholder="Pro" /></label>`}
-      <button type="submit" class="btn">${t('Сохранить')}</button></form>`;
+      <button type="submit" class="btn">${t('Сохранить')}</button><p class="character-body-save-status" role="status" aria-live="polite"></p></form>`;
   const secondaryOpen = (id) => State._characterSecondaryOpen === id ? ' open' : '';
   return `<div class="character-shell">
     ${characterWardrobeV1HTML(cr, oi, arch)}
@@ -18048,9 +18085,23 @@ async function onSubmit(e) {
   if (f.id === 'body-form') {
     e.preventDefault();
     const num = (v) => { const x = parseFloat(v); return isNaN(x) ? null : x; };
-    State.settings.body = Object.assign({}, State.settings.body, { height: num(f.height.value), weight: num(f.weight.value), sex: f.sex.value || '' });
-    if (f.bodyfat) State.settings.body.bodyfat = num(f.bodyfat.value);
-    Store.save('settings', State.settings); toast('🧍 Телосложение обновлено'); render();
+    const next = structuredClone(State.settings);
+    next.body = Object.assign({}, next.body, { height: num(f.height.value), weight: num(f.weight.value), sex: f.sex.value || '' });
+    if (f.bodyfat) next.body.bodyfat = num(f.bodyfat.value);
+    const controls = f.querySelectorAll('button, input, select');
+    const status = f.querySelector('.character-body-save-status');
+    controls.forEach((control) => { control.disabled = true; });
+    if (status) { status.textContent = t('Сохраняю…'); status.classList.remove('is-error'); }
+    const saved = await Store.saveNow('settings', next);
+    if (!saved) {
+      controls.forEach((control) => { control.disabled = false; });
+      if (status) { status.textContent = t('Изменения телосложения не сохранены. Значения остались в форме — повтори попытку.'); status.classList.add('is-error'); }
+      f.querySelector('input, select, button')?.focus();
+      return;
+    }
+    State.settings = next;
+    State._characterFocusAfterCommit = '#body-form button[type="submit"]';
+    toast('🧍 ' + t('Телосложение обновлено')); render();
     return;
   }
 
@@ -19135,16 +19186,7 @@ function onClick(e) {
   } else if (action === 'profile-save') {
     // Правка человека — источник истины поверх выводов ИИ, поэтому auto:false:
     // так видно, что текст трогали руками, и это не «сгенерированное».
-    const mem = profileMem(), ta = document.getElementById('profile-text');
-    if (mem && ta) {
-      const prof = ensureProfile();
-      prof.text = mem.enforceBudget(String(ta.value || '').trim(), mem.MAX_CHARS);
-      prof.updatedAt = new Date().toISOString(); prof.auto = false;
-      (async () => {
-        const saved = await Store.saveNow('profile', prof);
-        if (saved) { toast('🧠 ' + t('Профиль сохранён')); render(); }
-      })();
-    }
+    saveProfileCard();
   } else if (action === 'dayobs-yes') {
     // «Да» подставляет наблюдение в поле рефлексии КАК ЕСТЬ — это уже конкретный
     // факт про день, его же слова просить не нужно, только подтверждение.
