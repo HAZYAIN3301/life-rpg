@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenStage(root) {
   'use strict';
 
-  const VERSION = '1.8.0';
+  const VERSION = '1.9.0';
   const WORLD = Object.freeze({ width: 1536, height: 864 });
   const APPROACH_MS = 1800;
   const RETURN_MS = 1800;
@@ -135,6 +135,10 @@
 
   function clearResourcesMeetingClasses(scope) {
     scope.classList.remove('is-resources-pair-approaching', 'is-resources-pair-at-meeting', 'is-resources-pair-returning', 'is-resources-pair-settling');
+  }
+
+  function clearShadowMeetingClasses(scope) {
+    scope.classList.remove('is-shadow-pair-approaching', 'is-shadow-pair-at-meeting', 'is-shadow-pair-returning', 'is-shadow-pair-settling');
   }
 
   async function approachBodyPair(scope, play, options) {
@@ -287,6 +291,58 @@
     return true;
   }
 
+  async function approachShadowPair(scope, play, options) {
+    if (!scope || typeof play !== 'function') return false;
+    const config = options || {};
+    const avatar = scope.querySelector && scope.querySelector('.den-avatar-core');
+    const companion = scope.querySelector && scope.querySelector('.den-companion');
+    const rig = companion && companion.querySelector('[data-shadow-rig]');
+    const motion = root.TravellerMotionV3;
+    const shadowRig = root.ShadowRig;
+    const restoreState = rig ? String(rig.dataset.shadowState || 'calm') : 'calm';
+    const approachMs = Math.max(900, Number(config.approachMs) || 1800);
+    const returnMs = Math.max(900, Number(config.returnMs) || 1800);
+    const contactMs = Math.max(900, Number(config.duration) || 7600);
+    clearShadowMeetingClasses(scope);
+    if (avatar && motion) motion.installWalkFrames(avatar, 'right');
+    if (rig && shadowRig) shadowRig.setState(rig, 'listening');
+    scope.classList.add('is-shadow-pair-approaching');
+    await nextFrame();
+    await wait(approachMs);
+    if (!scope.isConnected) {
+      clearShadowMeetingClasses(scope);
+      if (avatar && motion) motion.clearWalkFrames(avatar);
+      if (rig && shadowRig) shadowRig.setState(rig, restoreState);
+      return false;
+    }
+    scope.classList.remove('is-shadow-pair-approaching');
+    scope.classList.add('is-shadow-pair-at-meeting');
+    if (avatar && motion) motion.clearWalkFrames(avatar);
+    const played = await play();
+    if (!played) {
+      clearShadowMeetingClasses(scope);
+      if (rig && shadowRig) shadowRig.setState(rig, restoreState);
+      return false;
+    }
+    scope.classList.add('is-shadow-pair-settling');
+    await wait(contactMs + 100);
+    if (!scope.isConnected) {
+      clearShadowMeetingClasses(scope);
+      return true;
+    }
+    scope.classList.remove('is-shadow-pair-settling');
+    scope.classList.add('is-shadow-pair-returning');
+    if (avatar && motion) motion.installWalkFrames(avatar, 'left');
+    if (rig && shadowRig) shadowRig.setState(rig, 'caring');
+    await nextFrame();
+    scope.classList.remove('is-shadow-pair-at-meeting');
+    await wait(returnMs);
+    scope.classList.remove('is-shadow-pair-returning');
+    if (avatar && motion) motion.clearWalkFrames(avatar);
+    if (rig && shadowRig) shadowRig.setState(rig, restoreState);
+    return true;
+  }
+
   return Object.freeze({
     VERSION,
     WORLD,
@@ -303,5 +359,6 @@
     approachBodyPair,
     approachRecoveryPair,
     approachResourcesPair,
+    approachShadowPair,
   });
 });

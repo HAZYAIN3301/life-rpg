@@ -14822,3 +14822,141 @@ html.calendar-task-open body {
 }
 .calib-acts { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
 @media (hover: none) { .calib-acts .btn, .calib-note { min-height: 42px; } }
+
+/* ============================================================
+   Shadow Den v1 — solo presence + atomic Traveller pair scenes.
+   The current evolution tier is always used; missing art never falls back
+   to Spark or to a scaled portrait from another form.
+   ============================================================ */
+.den-companion[data-shadow-den] {
+  translate: 0 0;
+  scale: 1;
+  transform-origin: 50% 78%;
+  transition: translate 1.8s cubic-bezier(.22,.72,.2,1), scale 1.8s cubic-bezier(.22,.72,.2,1), opacity .18s ease, visibility 0s linear 0s;
+}
+.den-companion[data-shadow-den].is-shadow-den-solo {
+  border-color: color-mix(in srgb, #c8a8ff 76%, white);
+  box-shadow: 0 0 22px color-mix(in srgb, #9d78eb 58%, transparent), 0 2px 8px rgba(0,0,0,.35);
+}
+.den-companion[data-shadow-den][data-shadow-den-mode="listen"] { scale: 1.04; }
+.den-companion[data-shadow-den][data-shadow-den-mode="think"] { translate: 0 -4%; }
+.den-companion[data-shadow-den][data-shadow-den-mode="speak"] { scale: 1.06; }
+
+.shadow-den-pair-v1 {
+  position: absolute;
+  left: 34.5%;
+  bottom: 1.8%;
+  z-index: 15;
+  display: block;
+  width: 47%;
+  aspect-ratio: 1;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform-origin: 50% 88%;
+}
+.shadow-den-pair-v1.is-active {
+  opacity: 1;
+  visibility: visible;
+  animation: shadowDenPairArrive .62s cubic-bezier(.2,.78,.2,1) both;
+}
+.shadow-den-pair-v1__stage,
+.shadow-den-pair-v1__frame {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.shadow-den-pair-v1__frame {
+  object-fit: contain;
+  object-position: 50% 100%;
+  filter: drop-shadow(0 12px 13px rgba(5,4,12,.4)) drop-shadow(0 0 10px rgba(157,120,235,.16));
+}
+.shadow-den-pair-v1[data-mode="rest"].is-active .shadow-den-pair-v1__stage {
+  animation: shadowDenPairBreathe 6.4s cubic-bezier(.45,0,.55,1) infinite;
+}
+.shadow-den-pair-v1[data-mode="silence"].is-active .shadow-den-pair-v1__stage {
+  animation: shadowDenPairQuiet 8.8s cubic-bezier(.45,0,.55,1) infinite;
+}
+.den-shell.is-shadow-pair-approaching .den-avatar-core,
+.den-shell.is-shadow-pair-at-meeting .den-avatar-core,
+.den-shell.is-shadow-pair-returning .den-avatar-core {
+  translate: 12% 1%;
+  scale: .96;
+}
+.den-shell.is-shadow-pair-approaching .den-companion[data-shadow-den],
+.den-shell.is-shadow-pair-at-meeting .den-companion[data-shadow-den],
+.den-shell.is-shadow-pair-returning .den-companion[data-shadow-den] {
+  translate: -176% 34%;
+  scale: 1.12;
+}
+.den-shell.is-shadow-pair-active .den-avatar-core,
+.den-shell.is-shadow-pair-active .den-companion[data-shadow-den],
+.den-shell.is-shadow-pair-active .traveller-room-v4,
+.den-shell.is-shadow-pair-active .den-tired-seat {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.den-shell.is-shadow-pair-active .den-scene > .den-pet {
+  opacity: .2;
+  pointer-events: none;
+}
+.den-shadow-actions {
+  border-color: color-mix(in srgb, #9d78eb 34%, var(--line-soft));
+  background: color-mix(in srgb, #9d78eb 5%, transparent);
+}
+
+@keyframes shadowDenPairArrive {
+  0% { opacity: 0; transform: translateY(2.4%) scale(.985); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes shadowDenPairBreathe {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-.45%) scale(1.003); }
+}
+@keyframes shadowDenPairQuiet {
+  0%,100% { transform: translateY(.2%) scale(.998); filter: brightness(.98); }
+  50% { transform: translateY(-.35%) scale(1.002); filter: brightness(1.025); }
+}
+
+@media (max-width: 720px) {
+  .shadow-den-pair-v1 { left: 32%; bottom: 1.1%; width: 51%; }
+  .den-shell.is-shadow-pair-approaching .den-companion[data-shadow-den],
+  .den-shell.is-shadow-pair-at-meeting .den-companion[data-shadow-den],
+  .den-shell.is-shadow-pair-returning .den-companion[data-shadow-den] {
+    translate: -148% 28%;
+    scale: 1.08;
+  }
+}
+
+@media (max-width: 560px) {
+  /* A running focus pill sits above the bottom navigation. Keep the resident
+     disclosure scrollable above both fixed surfaces so Shadow actions remain
+     reachable while a session is active. */
+  body:has(.focus-pill.show) .den-shell {
+    padding-bottom: calc(156px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .den-companion[data-shadow-den],
+  .shadow-den-pair-v1,
+  .shadow-den-pair-v1 *,
+  .den-shell.is-shadow-pair-approaching .den-avatar-core,
+  .den-shell.is-shadow-pair-at-meeting .den-avatar-core,
+  .den-shell.is-shadow-pair-returning .den-avatar-core {
+    animation: none !important;
+    transition: none !important;
+  }
+  .den-shell.is-shadow-pair-approaching .den-companion[data-shadow-den],
+  .den-shell.is-shadow-pair-at-meeting .den-companion[data-shadow-den],
+  .den-shell.is-shadow-pair-returning .den-companion[data-shadow-den],
+  .den-shell.is-shadow-pair-approaching .den-avatar-core,
+  .den-shell.is-shadow-pair-at-meeting .den-avatar-core,
+  .den-shell.is-shadow-pair-returning .den-avatar-core {
+    translate: 0 0 !important;
+    scale: 1 !important;
+  }
+}

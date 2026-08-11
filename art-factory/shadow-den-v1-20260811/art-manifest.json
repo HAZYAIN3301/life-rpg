@@ -1,0 +1,56 @@
+{
+  "id": "shadow-den-v1-20260811",
+  "version": "1.0.0",
+  "provider": "OpenAI built-in ImageGen",
+  "style": "Satoru matte layered cut-paper",
+  "canvas": {
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA"
+  },
+  "keying": {
+    "field": "#FF0000",
+    "method": "border hard key",
+    "tolerance": 35,
+    "force": true,
+    "despill": false
+  },
+  "assets": [
+    {
+      "form": "spark",
+      "tier": 0,
+      "source": "sources/pair-attune-spark-keyed.png",
+      "output": "outputs/pair-v1/attune-spark.png",
+      "runtime": "public/art/companions/shadow-den-v1/pair-v1/attune-spark.png",
+      "transparentPixels": 1178503,
+      "partialAlphaPixels": 0
+    },
+    {
+      "form": "spirit",
+      "tier": 1,
+      "source": "sources/pair-attune-spirit-keyed.png",
+      "output": "outputs/pair-v1/attune-spirit.png",
+      "runtime": "public/art/companions/shadow-den-v1/pair-v1/attune-spirit.png",
+      "transparentPixels": 1114086,
+      "partialAlphaPixels": 0
+    },
+    {
+      "form": "guardian",
+      "tier": 2,
+      "source": "sources/pair-attune-guardian-keyed.png",
+      "output": "outputs/pair-v1/attune-guardian.png",
+      "runtime": "public/art/companions/shadow-den-v1/pair-v1/attune-guardian.png",
+      "transparentPixels": 1091354,
+      "partialAlphaPixels": 0
+    },
+    {
+      "form": "keeper",
+      "tier": 3,
+      "source": "sources/pair-attune-keeper-keyed.png",
+      "output": "outputs/pair-v1/attune-keeper.png",
+      "runtime": "public/art/companions/shadow-den-v1/pair-v1/attune-keeper.png",
+      "transparentPixels": 1130227,
+      "partialAlphaPixels": 0
+    }
+  ]
+}

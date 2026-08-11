@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const stage = require('../public/den-stage-v1.js');
 
-assert.equal(stage.VERSION, '1.8.0');
+assert.equal(stage.VERSION, '1.9.0');
 assert.equal(stage.PROFILES.bodyToad.width, 19.2);
 assert.equal(stage.PROFILES.bodyToad.footprint, 15.7);
 const mixed = stage.layoutPets([
@@ -74,6 +74,8 @@ assert.match(stageSource, /installGlideFrames\(slug, 'meeting'\)/);
 assert.match(stageSource, /installGlideFrames\(slug, 'home'\)/);
 assert.match(stageSource, /installWaddleFrames\(penguin, 'meeting'\)/);
 assert.match(stageSource, /installWaddleFrames\(penguin, 'home'\)/);
+assert.equal(typeof stage.approachShadowPair, 'function');
+assert.match(stageSource, /is-shadow-pair-approaching/);
 assert.match(css, /is-body-pair-approaching \.den-avatar-core[\s\S]*translate: 24% 1%/);
 assert.match(css, /bodyToadMeetingArc/);
 assert.match(css, /bodyToadMeetingReturnArc/);
@@ -84,9 +86,9 @@ assert.match(read('public/app.js'), /function syncDenViewportGate\(\)/);
 assert.match(read('public/app.js'), /function pauseDenSceneForViewport\(shell\)/);
 assert.match(read('public/app.js'), /function denLifeCanAct\(shell\)[\s\S]*energyPct\(\) <= 30/);
 assert.match(read('public/app.js'), /options\.automatic && \(energyPct\(\) <= 30/);
-assert.match(read('public/index.html'), /20260808-den-stage-v1-8/);
+assert.match(read('public/index.html'), /20260811-den-stage-v1-9/);
 const swCache = read('public/sw.js').match(/const CACHE = 'satoru-v(\d+)'/);
 assert.ok(swCache, 'service-worker cache version must be declared');
 assert.ok(Number(swCache[1]) >= 105, 'den stage requires cache v105 or newer');
 
-console.log('den-stage-v1.8: ok');
+console.log('den-stage-v1.9: ok');

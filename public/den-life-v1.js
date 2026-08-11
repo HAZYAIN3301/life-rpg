@@ -11,11 +11,12 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenLife(root) {
   'use strict';
 
-  const VERSION = '2.5.0';
+  const VERSION = '2.6.0';
   const FIRST_AMBIENT_MS = 8000;
   const FIRST_FOCUS_MS = 3200;
   const RETRY_MS = 3000;
   const AMBIENT_SEQUENCE = Object.freeze([
+    Object.freeze({ id: 'shadow-listen', kind: 'shadow', gap: 18000 }),
     Object.freeze({ id: 'toad-blink', kind: 'toad', gap: 14000 }),
     Object.freeze({ id: 'recovery-stretch', kind: 'recovery', gap: 22000 }),
     Object.freeze({ id: 'window-visit', kind: 'window', gap: 24000 }),
@@ -28,6 +29,8 @@
     Object.freeze({ id: 'recovery-cushion-nap', kind: 'recovery', gap: 34000 }),
     Object.freeze({ id: 'resources-ledger', kind: 'resources', gap: 30000 }),
     Object.freeze({ id: 'resources-stash', kind: 'resources', gap: 32000 }),
+    Object.freeze({ id: 'shadow-think', kind: 'shadow', gap: 26000 }),
+    Object.freeze({ id: 'shadow-attune', kind: 'shadow-pair', duration: 7600, gap: 36000 }),
     Object.freeze({ id: 'toad-bench-nap', kind: 'toad', gap: 32000 }),
     Object.freeze({ id: 'resources-rest', kind: 'resources', gap: 36000 }),
   ]);
@@ -105,6 +108,8 @@
     if (action.kind === 'recovery') return state.onRecoveryBeat && state.onRecoveryBeat(action.id, { automatic: true });
     if (action.kind === 'resources') return state.onResourcesBeat && state.onResourcesBeat(action.id, { automatic: true });
     if (action.kind === 'resources-pair') return state.onResourcesPair && state.onResourcesPair(action.id, { automatic: true, duration: action.duration });
+    if (action.kind === 'shadow') return state.onShadowBeat && state.onShadowBeat(action.id, { automatic: true });
+    if (action.kind === 'shadow-pair') return state.onShadowPair && state.onShadowPair('attune', { automatic: true, duration: action.duration });
     return false;
   }
 
@@ -147,7 +152,7 @@
   function start(target, options) {
     const scope = target;
     const config = options || {};
-    if (!scope || !scope.querySelector || (!scope.querySelector('[data-body-toad]') && !scope.querySelector('[data-recovery-slug]') && !scope.querySelector('[data-resources-penguin]'))) return false;
+    if (!scope || !scope.querySelector || (!scope.querySelector('[data-body-toad]') && !scope.querySelector('[data-recovery-slug]') && !scope.querySelector('[data-resources-penguin]') && !scope.querySelector('[data-shadow-den]'))) return false;
     const context = normalizeContext(config.context);
     const key = contextKey(context);
     if (director && director.key === key) {
@@ -158,6 +163,8 @@
       director.onRecoveryBeat = config.onRecoveryBeat;
       director.onResourcesBeat = config.onResourcesBeat;
       director.onResourcesPair = config.onResourcesPair;
+      director.onShadowBeat = config.onShadowBeat;
+      director.onShadowPair = config.onShadowPair;
       director.onWindowVisit = config.onWindowVisit;
       director.onToadBeat = config.onToadBeat;
       if (!director.busy && !director.timer) schedule(director, Math.max(0, director.nextAt - Date.now()));
@@ -175,6 +182,8 @@
       onRecoveryBeat: config.onRecoveryBeat,
       onResourcesBeat: config.onResourcesBeat,
       onResourcesPair: config.onResourcesPair,
+      onShadowBeat: config.onShadowBeat,
+      onShadowPair: config.onShadowPair,
       onRoomAction: config.onRoomAction,
       onToadBeat: config.onToadBeat,
       onWindowVisit: config.onWindowVisit,
