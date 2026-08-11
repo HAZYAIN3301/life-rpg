@@ -1849,6 +1849,14 @@ const I18N_EXTRA = {
   'ошибка': { en: 'error', de: 'Fehler', uk: 'помилка', es: 'error' },
   'Сетевая ошибка': { en: 'Network error', de: 'Netzwerkfehler', uk: 'Помилка мережі', es: 'Error de red' },
   '📲 Satoru установлен!': { en: '📲 Satoru installed!', de: '📲 Satoru installiert!', uk: '📲 Satoru встановлено!', es: '📲 ¡Satoru instalado!' },
+  'Установка отменена — Satoru остаётся доступен в браузере.': { en: 'Installation was cancelled — Satoru remains available in the browser.', de: 'Die Installation wurde abgebrochen — Satoru bleibt im Browser verfügbar.', uk: 'Установлення скасовано — Satoru лишається доступним у браузері.', es: 'La instalación se canceló: Satoru sigue disponible en el navegador.' },
+  'Не удалось открыть установку. Попробуй из меню браузера.': { en: 'Could not open installation. Try the browser menu.', de: 'Die Installation konnte nicht geöffnet werden. Versuche das Browsermenü.', uk: 'Не вдалося відкрити встановлення. Спробуй меню браузера.', es: 'No se pudo abrir la instalación. Prueba el menú del navegador.' },
+  'Установка и уведомления включаются отдельно.': { en: 'Installation and notifications are enabled separately.', de: 'Installation und Benachrichtigungen werden getrennt aktiviert.', uk: 'Установлення й сповіщення вмикаються окремо.', es: 'La instalación y las notificaciones se activan por separado.' },
+  'Установи Satoru как приложение: иконка на телефоне и офлайн-режим. Уведомления — только по отдельному согласию ниже.': { en: 'Install Satoru as an app: a phone icon and offline mode. Notifications require your separate choice below.', de: 'Installiere Satoru als App: ein Icon auf dem Handy und Offline-Modus. Benachrichtigungen brauchen deine separate Wahl unten.', uk: 'Установи Satoru як застосунок: іконка на телефоні й офлайн-режим. Сповіщення — лише за окремою згодою нижче.', es: 'Instala Satoru como app: un icono en el teléfono y modo sin conexión. Las notificaciones requieren tu elección independiente abajo.' },
+  'Офлайн-режим готов.': { en: 'Offline mode is ready.', de: 'Der Offline-Modus ist bereit.', uk: 'Офлайн-режим готовий.', es: 'El modo sin conexión está listo.' },
+  'Офлайн-режим пока недоступен в этом браузере.': { en: 'Offline mode is not available in this browser yet.', de: 'Der Offline-Modus ist in diesem Browser noch nicht verfügbar.', uk: 'Офлайн-режим поки недоступний у цьому браузері.', es: 'El modo sin conexión aún no está disponible en este navegador.' },
+  'Проверяем офлайн-режим…': { en: 'Checking offline mode…', de: 'Offline-Modus wird geprüft…', uk: 'Перевіряємо офлайн-режим…', es: 'Comprobando el modo sin conexión…' },
+  'Не удалось полностью выключить уведомления. Повтори попытку.': { en: 'Notifications could not be fully disabled. Try again.', de: 'Benachrichtigungen konnten nicht vollständig deaktiviert werden. Versuche es erneut.', uk: 'Не вдалося повністю вимкнути сповіщення. Спробуй ще раз.', es: 'No se pudieron desactivar completamente las notificaciones. Inténtalo de nuevo.' },
   'Слабость': { en: 'Weakness', de: 'Schwachstelle', uk: 'Слабкість', es: 'Debilidad' },
   'урон ×2': { en: 'damage ×2', de: 'Schaden ×2', uk: 'шкода ×2', es: 'daño ×2' },
   'Тень греет пламя. Кремень его высекает. Две руки одного огня — выбери, чья ближе сегодня.': { en: 'Shadow warms the flame. Flint strikes it. Two hands of the same fire — choose whose hand feels closer today.', de: 'Schatten wärmt die Flamme. Feuerstein schlägt sie heraus. Zwei Hände desselben Feuers — wähle, wessen Hand dir heute näher ist.', uk: 'Тінь зігріває полумʼя. Кремінь його висікає. Дві руки одного вогню — обери, чия сьогодні ближча.', es: 'Sombra calienta la llama. Pedernal la enciende. Dos manos del mismo fuego — elige cuál sientes más cercana hoy.' },
@@ -9559,7 +9567,6 @@ function startFocus(taskId) {
   if (State.timer) { if (State.timer.taskId === taskId) { if (!State.timer.running) resumeFocus(); return; } stopFocus(true, true); }
   State.timer = { taskId, startedAt: Date.now(), accumulatedMs: 0, running: true, phase: 'work', phaseStartElapsed: 0, overrunNotified: false, bankedMin: 0 };
   persistTimer(); ensureAudio();
-  if (focusCfg().notify && 'Notification' in window && Notification.permission === 'default') { try { Notification.requestPermission(); } catch {} }
   openFocusWidget(); startTick(); render(); triggerAvatarReaction('focus', 'Фокус');
 }
 function pauseFocus() { const tm = State.timer; if (!tm || !tm.running) return; tm.accumulatedMs += Date.now() - tm.startedAt; tm.running = false; bankTimerProgress(); persistTimer(); updatePill(focusInfo()); updatePip(focusInfo()); render(); }
@@ -19739,7 +19746,7 @@ function onClick(e) {
       } else toast(d.error === 'already_claimed' ? 'Уже забрано' : d.error === 'not_won' ? 'Босс ещё не повержен' : 'Не удалось');
     }).catch(() => toast('Сетевая ошибка'));
   } else if (action === 'raidwin-close') { const m = document.getElementById('raidwin'); if (m) m.remove();
-  } else if (action === 'install-app') { if (_deferredInstall) { _deferredInstall.prompt(); _deferredInstall.userChoice.finally(() => { _deferredInstall = null; render(); }); }
+  } else if (action === 'install-app') { requestInstall();
   } else if (action === 'install-dismiss') { try { localStorage.setItem('gojo_install_dismiss', '1'); } catch {} render();
   } else if (action === 'push-enable') { pushEnable();
   } else if (action === 'push-disable') { pushDisable();
@@ -20572,21 +20579,26 @@ function pwaCard() {
   ensurePushState(); ensureApkState();
   const installed = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
   const canPush = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  const offline = _pwaRegistration === 'ready' ? t('Офлайн-режим готов.')
+    : (_pwaRegistration === 'failed' || _pwaRegistration === 'unsupported' ? t('Офлайн-режим пока недоступен в этом браузере.') : t('Проверяем офлайн-режим…'));
   const install = installed ? `<span class="muted">${t('✓ Уже установлено как приложение')}</span>`
-    : (_deferredInstall ? `<button class="btn" data-action="install-app">${t('📲 Установить приложение')}</button>`
+    : (_deferredInstall ? `<button class="btn" data-action="install-app" ${_pwaInstallBusy ? 'disabled' : ''}>${t('📲 Установить приложение')}</button>`
       : `<span class="muted" style="font-size:12px">${t('Меню браузера → «Установить приложение» / «На экран Домой»')}</span>`);
   const apk = State.apkAvailable ? `<div class="pwa-row" style="margin-top:10px"><a class="btn ghost" href="satoru.apk" download="Satoru.apk">${t('📥 Скачать для Android (.apk)')}</a><span class="muted" style="font-size:12px">${t('установка из файла')}</span></div>` : '';
   const push = !canPush ? `<p class="muted" style="font-size:11.5px;margin:10px 0 0">${t('Уведомления недоступны в этом браузере.')}</p>`
     : (Notification.permission === 'denied'
       ? `<p class="account-notice" role="status">${t('Уведомления заблокированы в браузере. Разреши их в настройках сайта, затем повтори.')}</p>`
     : (State.pushOn
-      ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-disable">${t('🔕 Выключить уведомления')}</button><button class="btn ghost sm" data-action="push-test">${t('Проверить')}</button><span class="muted" style="font-size:12px">${t('✓ компаньон зовёт 🌅 утром и 🌙 вечером')}</span></div>`
-      : `<div class="pwa-row" style="margin-top:10px"><button class="btn" data-action="push-enable">${t('🔔 Включить уведомления')}</button><span class="muted" style="font-size:12px">${t('позову вернуться — тепло, без вины')}</span></div>`));
-  return `<div class="card"><h3>${t('📲 Приложение')}</h3>
-    <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Установи Satoru как приложение: иконка на телефоне, работает офлайн, уведомления мягко зовут вернуться (чинит «триггер-дыру»).')}</p>
+      ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-disable" ${_pushBusy ? 'disabled' : ''}>${t('🔕 Выключить уведомления')}</button><button class="btn ghost sm" data-action="push-test" ${_pushBusy ? 'disabled' : ''}>${t('Проверить')}</button><span class="muted" style="font-size:12px">${t('✓ компаньон зовёт 🌅 утром и 🌙 вечером')}</span></div>`
+      : `<div class="pwa-row" style="margin-top:10px"><button class="btn" data-action="push-enable" ${_pushBusy ? 'disabled' : ''}>${t('🔔 Включить уведомления')}</button><span class="muted" style="font-size:12px">${t('позову вернуться — тепло, без вины')}</span></div>`));
+  return `<div class="card pwa-card" aria-busy="${_pwaInstallBusy || _pushBusy}"><h3>${t('📲 Приложение')}</h3>
+    <p class="muted" style="font-size:12.5px;margin:0 0 6px">${t('Установи Satoru как приложение: иконка на телефоне и офлайн-режим. Уведомления — только по отдельному согласию ниже.')}</p>
+    <p class="muted pwa-status" role="status">${offline} ${t('Установка и уведомления включаются отдельно.')}</p>
     <div class="pwa-row">${install}</div>${apk}${push}</div>`;
 }
 async function pushEnable() {
+  if (_pushBusy) return;
+  _pushBusy = true; render();
   let localSubscription = null;
   try {
     if (Notification.permission !== 'granted') { const p = await Notification.requestPermission(); if (p !== 'granted') { toast(t('Разреши уведомления в браузере')); return; } }
@@ -20597,25 +20609,48 @@ async function pushEnable() {
     let tz = 'Europe/Berlin'; try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || tz; } catch {}
     const { response } = await accountJson('/api/push/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subscription: localSubscription.toJSON(), tz }) });
     if (!response.ok) throw new Error('server');
-    State.pushOn = true; toast(t('🔔 Уведомления включены')); render();
-  } catch { try { if (localSubscription) await localSubscription.unsubscribe(); } catch {} State.pushOn = false; toast(t('Не удалось включить уведомления')); render(); }
+    State.pushOn = true; toast(t('🔔 Уведомления включены'));
+  } catch { try { if (localSubscription) await localSubscription.unsubscribe(); } catch {} State.pushOn = false; toast(t('Не удалось включить уведомления')); }
+  finally { _pushBusy = false; render(); }
 }
 async function pushDisable() {
+  if (_pushBusy) return;
+  _pushBusy = true; render();
   try {
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
     const { response } = await accountJson('/api/push/unsubscribe', { method: 'POST' });
     if (!response.ok) throw new Error('server');
-    const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); if (sub) await sub.unsubscribe();
-    State.pushOn = false; toast(t('🔕 Уведомления выключены')); render();
-  } catch { toast(t('Не удалось выключить уведомления. Подписка не изменена.')); }
+    if (sub && !await sub.unsubscribe()) throw new Error('browser');
+    State.pushOn = false; toast(t('🔕 Уведомления выключены'));
+  } catch { State.pushOn = true; toast(t('Не удалось полностью выключить уведомления. Повтори попытку.')); }
+  finally { _pushBusy = false; render(); }
 }
 async function pushTest() {
-  try { const r = await (await fetch('/api/push/test', { method: 'POST' })).json(); toast(r.status >= 200 && r.status < 300 ? t('✓ Отправлено — жди уведомление') : `${t('Не доставлено')} (${r.status || r.error || t('ошибка')})`); }
+  if (_pushBusy) return;
+  _pushBusy = true; render();
+  try { const response = await fetch('/api/push/test', { method: 'POST' }); const r = await response.json(); toast(response.ok && r.status >= 200 && r.status < 300 ? t('✓ Отправлено — жди уведомление') : `${t('Не доставлено')} (${r.status || r.error || response.status || t('ошибка')})`); }
   catch { toast(t('Сетевая ошибка')); }
+  finally { _pushBusy = false; render(); }
 }
 // PWA: сервис-воркер (офлайн + push) + перехват install-промпта
 let _deferredInstall = null;
+let _pwaInstallBusy = false;
+let _pushBusy = false;
+let _pwaRegistration = 'pending';
+async function requestInstall() {
+  if (!_deferredInstall || _pwaInstallBusy) return;
+  _pwaInstallBusy = true; render();
+  try {
+    await _deferredInstall.prompt();
+    const choice = await _deferredInstall.userChoice;
+    if (!choice || choice.outcome !== 'accepted') toast(t('Установка отменена — Satoru остаётся доступен в браузере.'));
+  } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
+  finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
+}
 function initPWA() {
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  if (!('serviceWorker' in navigator)) _pwaRegistration = 'unsupported';
+  else navigator.serviceWorker.register('sw.js').then(() => { _pwaRegistration = 'ready'; if (State.view === 'settings') render(); }).catch(() => { _pwaRegistration = 'failed'; if (State.view === 'settings') render(); });
   window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); _deferredInstall = e; if (State.view === 'settings') render(); });
   window.addEventListener('appinstalled', () => { _deferredInstall = null; toast(t('📲 Satoru установлен!')); });
 }

@@ -35,6 +35,6 @@ test('Pets has localized labels and mobile/coarse operability', () => {
   assert.match(css, /\.pets-shell \.tts-btn \{ min-width: var\(--touch-min\); min-height: var\(--touch-min\);/);
 });
 
-test('Pets ships with the v136 offline shell', () => {
-  assert.match(sw, /const CACHE = 'satoru-v136'/);
+test('Pets ships with the v137 offline shell', () => {
+  assert.match(sw, /const CACHE = 'satoru-v137'/);
 });
