@@ -14,34 +14,34 @@
   const COPY = {
     ru: {
       disclosure: 'Голос Тени сгенерирован ИИ.',
-      fallback: 'Облачный голос недоступен — включён стандартный голос устройства.',
+      fallback: 'Облачный голос недоступен — используется явно выбранный голос устройства.',
       failed: 'Не удалось воспроизвести голос Тени.',
     },
     uk: {
       disclosure: 'Голос Тіні згенеровано ШІ.',
-      fallback: 'Хмарний голос недоступний — увімкнено стандартний голос пристрою.',
+      fallback: 'Хмарний голос недоступний — використовується явно обраний голос пристрою.',
       failed: 'Не вдалося відтворити голос Тіні.',
     },
     en: {
       disclosure: 'The Shadow voice is AI-generated.',
-      fallback: 'Cloud voice is unavailable — using the device system voice.',
+      fallback: 'Cloud voice is unavailable — using the explicitly selected device voice.',
       failed: 'The Shadow voice could not be played.',
     },
     de: {
       disclosure: 'Die Stimme des Schattens wurde von KI erzeugt.',
-      fallback: 'Die Cloud-Stimme ist nicht verfügbar – die Systemstimme des Geräts wird verwendet.',
+      fallback: 'Die Cloud-Stimme ist nicht verfügbar – die ausdrücklich gewählte Systemstimme wird verwendet.',
       failed: 'Die Stimme des Schattens konnte nicht wiedergegeben werden.',
     },
     es: {
       disclosure: 'La voz de la Sombra está generada por IA.',
-      fallback: 'La voz en la nube no está disponible; se usa la voz del sistema del dispositivo.',
+      fallback: 'La voz en la nube no está disponible; se usa la voz del dispositivo elegida explícitamente.',
       failed: 'No se pudo reproducir la voz de la Sombra.',
     },
   };
   const config = {
     endpoint: '/api/shadow/voice',
     statusEndpoint: '/api/shadow/voice/status',
-    browserFallback: true,
+    browserFallback: false,
     requestTimeoutMs: 50000,
     memoryCacheEntries: 8,
   };
@@ -287,6 +287,8 @@
         blob,
         cache: response.headers.get('X-Shadow-Voice-Cache') || null,
         requestId: response.headers.get('X-Request-Id') || null,
+        mode: response.headers.get('X-Shadow-Voice-Mode') || 'server-neural',
+        provider: response.headers.get('X-Shadow-Voice-Provider') || null,
       };
       memoryCachePut(key, item);
       return item;
@@ -322,7 +324,7 @@
         if (token !== runId) return;
         showAiDisclosure(language);
         emit('playing', {
-          mode: 'cloud-ai',
+          mode: item.mode,
           language,
           reason: null,
           cache: item.cache,
@@ -332,7 +334,7 @@
         startPulse();
       };
       media.onended = () => settlePlayback(token, {
-        mode: 'cloud-ai',
+        mode: item.mode,
         language,
         cache: item.cache,
         requestId: item.requestId,
@@ -468,7 +470,7 @@
     setButtonPlaying(button, true);
     shadowRigState('speaking');
     emit('loading', {
-      mode: 'cloud-ai',
+      mode: 'server-neural',
       language,
       reason: null,
       cache: null,
@@ -484,11 +486,12 @@
       if (token !== runId || (error && error.name === 'AbortError')) return { mode: 'stopped' };
       const reason = error && (error.code || error.name) ? (error.code || error.name) : 'cloud_voice_failed';
       cleanupMedia(false);
-      if (config.browserFallback && opts.browserFallback !== false) {
+      const useBrowserFallback = opts.browserFallback === true || (config.browserFallback && opts.browserFallback !== false);
+      if (useBrowserFallback) {
         return playSystemFallback(text, language, reason, token);
       }
       resetUi();
-      emit('error', { mode: 'cloud-ai', language, reason, aiGenerated: true });
+      emit('error', { mode: 'server-neural', language, reason, aiGenerated: true });
       notify(COPY[language].failed);
       return { mode: 'unavailable', language, reason };
     }

@@ -55,6 +55,8 @@ let fetchImpl = async () => new Response(new Blob(['fake-mp3'], { type: 'audio/m
     'Content-Type': 'audio/mpeg',
     'X-Shadow-Voice-Cache': 'MISS',
     'X-Request-Id': 'qa-request',
+    'X-Shadow-Voice-Mode': 'server-neural',
+    'X-Shadow-Voice-Provider': 'piper',
   },
 });
 
@@ -107,12 +109,12 @@ assert.equal(voice.isBridgeInstalled(), true);
 assert.equal(windowObject.ttsSpeak.name, 'legacyBridgeSpeak');
 
 const cloud = await voice.speak('Я рядом.', { language: 'ru', context: 'calm', button });
-assert.equal(cloud.mode, 'cloud-ai');
+assert.equal(cloud.mode, 'server-neural');
 assert.equal(cloud.cache, 'MISS');
 assert.equal(cloud.requestId, 'qa-request');
 assert.equal(classNames.has('on'), false);
 assert.ok(notices.some((message) => message.includes('сгенерирован ИИ')));
-assert.ok(events.some((event) => event.type === 'shadowvoice:status' && event.detail.state === 'playing' && event.detail.mode === 'cloud-ai'));
+assert.ok(events.some((event) => event.type === 'shadowvoice:status' && event.detail.state === 'playing' && event.detail.mode === 'server-neural'));
 
 fetchImpl = async () => new Response(JSON.stringify({
   error: 'no_openai_key',
@@ -122,10 +124,15 @@ fetchImpl = async () => new Response(JSON.stringify({
   headers: { 'Content-Type': 'application/json' },
 });
 
-const fallback = await voice.speak('Системный резерв.', { language: 'ru', context: 'calm', button });
+const unavailable = await voice.speak('Облако недоступно.', { language: 'ru', context: 'calm', button });
+assert.equal(unavailable.mode, 'unavailable');
+assert.equal(unavailable.reason, 'no_openai_key');
+assert.ok(notices.some((message) => message.includes('Не удалось воспроизвести голос Тени')));
+assert.ok(!events.some((event) => event.type === 'shadowvoice:status' && event.detail.state === 'fallback'));
+
+const fallback = await voice.speak('Явный системный резерв.', { language: 'ru', context: 'calm', button, browserFallback: true });
 assert.equal(fallback.mode, 'browser-system-voice');
 assert.equal(fallback.reason, 'no_openai_key');
-assert.ok(notices.some((message) => message.includes('стандартный голос устройства')));
-assert.ok(events.some((event) => event.type === 'shadowvoice:status' && event.detail.state === 'fallback' && event.detail.mode === 'browser-system-voice'));
+assert.ok(notices.some((message) => message.includes('явно выбранный голос устройства')));
 
 console.log('shadow-voice-v2 client QA: ok');

@@ -13,6 +13,28 @@ const path = require('path');
 const crypto = require('crypto');
 
 const ROOT = __dirname;
+// Local development secrets live outside Git. Production providers inject the
+// same variables into process.env and always win over this optional file.
+function loadLocalEnv(file) {
+  let source = '';
+  try { source = fs.readFileSync(file, 'utf8'); } catch (error) {
+    if (error && error.code === 'ENOENT') return;
+    throw error;
+  }
+  for (const rawLine of source.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('#')) continue;
+    const match = line.match(/^([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
+    if (!match || process.env[match[1]] != null) continue;
+    let value = match[2].trim();
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+    process.env[match[1]] = value;
+  }
+}
+loadLocalEnv(path.join(ROOT, '.env.local'));
+
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const DATA_DIR = process.env.DATA_DIR
   ? path.resolve(process.env.DATA_DIR)
@@ -1318,21 +1340,32 @@ function mapStravaActivity(a) {
 }
 
 // ============================================================
-//  Голос Тени v2 — OpenAI Speech API, только через сервер
+//  Голос Тени v2.2 — локальный Piper по умолчанию, OpenAI только opt-in
 // ============================================================
-// Секрет никогда не отправляется в браузер. Приоритет: OpenAI BYOK конкретного
-// пользователя → общий OPENAI_API_KEY → уже используемый AI_HOUSE_KEY_OPENAI.
-// Встроенный speechSynthesis остаётся только честно обозначенным fallback на клиенте.
+// Piper работает отдельным приватным сервисом без пользовательских ключей и
+// поминутной оплаты. OpenAI сохраняется как явно включаемый совместимый provider.
+const SHADOW_TTS_PROVIDER = process.env.SHADOW_TTS_PROVIDER === 'openai' ? 'openai' : 'piper';
+let PIPER_TTS_URL;
+try { PIPER_TTS_URL = new URL(process.env.PIPER_TTS_URL || 'http://127.0.0.1:5000'); }
+catch { PIPER_TTS_URL = new URL('http://127.0.0.1:5000'); }
+if (!['http:', 'https:'].includes(PIPER_TTS_URL.protocol)) PIPER_TTS_URL = new URL('http://127.0.0.1:5000');
+const PIPER_TTS_VOICES = {
+  RU: 'ru_RU-denis-medium',
+  UK: 'uk_UA-mykyta-high',
+  EN: 'en_US-joe-medium',
+  DE: 'de_DE-thorsten-high',
+  ES: 'es_ES-davefx-medium',
+};
 const SHADOW_TTS_MODEL = /^[A-Za-z0-9._-]{1,80}$/.test(process.env.SHADOW_TTS_MODEL || '')
   ? process.env.SHADOW_TTS_MODEL
-  : 'gpt-4o-mini-tts';
+  : (SHADOW_TTS_PROVIDER === 'piper' ? 'piper-tts-1.6' : 'gpt-4o-mini-tts');
 const SHADOW_TTS_FORMATS = {
   mp3: { mime: 'audio/mpeg', ext: 'mp3' },
   opus: { mime: 'audio/ogg; codecs=opus', ext: 'opus' },
   aac: { mime: 'audio/aac', ext: 'aac' },
   wav: { mime: 'audio/wav', ext: 'wav' },
 };
-const SHADOW_TTS_FORMAT = SHADOW_TTS_FORMATS[process.env.SHADOW_TTS_FORMAT]
+const SHADOW_TTS_FORMAT = SHADOW_TTS_PROVIDER === 'piper' ? 'wav' : SHADOW_TTS_FORMATS[process.env.SHADOW_TTS_FORMAT]
   ? process.env.SHADOW_TTS_FORMAT
   : 'mp3';
 const SHADOW_TTS_VOICES = new Set([
@@ -1355,8 +1388,13 @@ const SHADOW_TTS_CACHE_MAX_BYTES = Math.max(8, Math.min(1024, Number(process.env
 const SHADOW_TTS_RATE = new Map();
 const SHADOW_TTS_ACTIVE_BY_USER = new Map();
 let shadowTtsActiveGlobal = 0;
+let shadowTtsPiperHealth = { checkedAt: 0, ok: false };
 
 function shadowTtsVoiceEnv(code) {
+  if (SHADOW_TTS_PROVIDER === 'piper') {
+    const voice = String(process.env['PIPER_TTS_VOICE_' + code] || PIPER_TTS_VOICES[code] || '').trim();
+    return /^[A-Za-z0-9_-]{3,96}$/.test(voice) ? voice : PIPER_TTS_VOICES[code];
+  }
   const voice = String(process.env['SHADOW_TTS_VOICE_' + code] || 'marin').toLowerCase();
   return SHADOW_TTS_VOICES.has(voice) ? voice : 'marin';
 }
@@ -1422,6 +1460,7 @@ function shadowTtsHouseKey() {
   return process.env.OPENAI_API_KEY || process.env.AI_HOUSE_KEY_OPENAI || '';
 }
 function shadowTtsAccess(user) {
+  if (SHADOW_TTS_PROVIDER === 'piper') return { ok: true, source: 'piper' };
   const byok = String(loadAiKeys(user.id).openai || '').trim();
   if (byok) return { ok: true, key: byok, source: 'byok' };
   const house = shadowTtsHouseKey();
@@ -1444,7 +1483,7 @@ function shadowTtsCacheInfo(uid, cacheKey) {
 function shadowTtsCacheKey(uid, language, context, text) {
   const cfg = SHADOW_TTS_LANG[language];
   return crypto.createHash('sha256').update(JSON.stringify({
-    v: 2, uid, model: SHADOW_TTS_MODEL, format: SHADOW_TTS_FORMAT,
+    v: 3, uid, provider: SHADOW_TTS_PROVIDER, model: SHADOW_TTS_MODEL, format: SHADOW_TTS_FORMAT,
     voice: cfg.voice, speed: cfg.speed, language, context, text,
   })).digest('hex');
 }
@@ -1520,7 +1559,8 @@ function shadowTtsHeaders(info, requestId, language, cacheState, length) {
     'Content-Disposition': `inline; filename="shadow-voice.${info.ext}"`,
     'X-Content-Type-Options': 'nosniff',
     'X-Request-Id': requestId,
-    'X-Shadow-Voice-Mode': 'cloud-ai',
+    'X-Shadow-Voice-Mode': SHADOW_TTS_PROVIDER === 'piper' ? 'server-neural' : 'cloud-ai',
+    'X-Shadow-Voice-Provider': SHADOW_TTS_PROVIDER,
     'X-Shadow-Voice-AI-Generated': 'true',
     'X-Shadow-Voice-Language': language,
     'X-Shadow-Voice-Cache': cacheState,
@@ -1533,6 +1573,98 @@ function shadowTtsServeCache(res, info, stat, requestId, language) {
   const stream = fs.createReadStream(info.file);
   stream.on('error', () => { if (!res.writableEnded) res.destroy(); });
   stream.pipe(res);
+}
+function shadowTtsPiperReady() {
+  if (SHADOW_TTS_PROVIDER !== 'piper') return Promise.resolve(true);
+  if (Date.now() - shadowTtsPiperHealth.checkedAt < 10000) return Promise.resolve(shadowTtsPiperHealth.ok);
+  return new Promise((resolve) => {
+    const target = new URL('/info', PIPER_TTS_URL);
+    const transport = target.protocol === 'https:' ? https : http;
+    let settled = false;
+    const finish = (ok) => {
+      if (settled) return;
+      settled = true;
+      shadowTtsPiperHealth = { checkedAt: Date.now(), ok };
+      resolve(ok);
+    };
+    const upstream = transport.request(target, { method: 'GET', headers: { Accept: 'application/json' } }, (providerRes) => {
+      const ok = Number(providerRes.statusCode) >= 200 && Number(providerRes.statusCode) < 300;
+      providerRes.resume();
+      providerRes.on('end', () => finish(ok));
+      providerRes.on('error', () => finish(false));
+    });
+    upstream.setTimeout(Math.min(2000, SHADOW_TTS_TIMEOUT_MS), () => upstream.destroy(new Error('Piper health timeout')));
+    upstream.on('error', () => finish(false));
+    upstream.end();
+  });
+}
+function shadowTtsPiper(res, payload, info, requestId, language) {
+  return new Promise((resolve) => {
+    const body = Buffer.from(JSON.stringify(payload));
+    const target = new URL('/synthesize', PIPER_TTS_URL);
+    const transport = target.protocol === 'https:' ? https : http;
+    let finished = false;
+    const finish = () => { if (!finished) { finished = true; resolve(); } };
+    const upstream = transport.request(target, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': body.length,
+        'Accept': 'audio/wav',
+      },
+    }, (providerRes) => {
+      const providerStatus = Number(providerRes.statusCode) || 502;
+      const chunks = [];
+      let bytes = 0;
+      let tooLarge = false;
+      providerRes.on('data', (chunk) => {
+        bytes += chunk.length;
+        if (bytes > SHADOW_TTS_MAX_AUDIO_BYTES) { tooLarge = true; providerRes.destroy(); return; }
+        chunks.push(chunk);
+      });
+      providerRes.on('error', (error) => {
+        if (!res.writableEnded) shadowTtsError(res, 502, 'local_voice_unreachable', requestId, { detail: String(error.message || error).slice(0, 160) });
+        finish();
+      });
+      providerRes.on('end', () => {
+        if (finished) return;
+        if (tooLarge) {
+          shadowTtsError(res, 502, 'local_voice_response_too_large', requestId);
+          finish();
+          return;
+        }
+        const audio = Buffer.concat(chunks);
+        if (providerStatus < 200 || providerStatus >= 300) {
+          shadowTtsError(res, 502, 'local_voice_provider_error', requestId, {
+            providerStatus,
+            detail: audio.toString('utf8').slice(0, 240),
+          });
+          finish();
+          return;
+        }
+        if (audio.length < 44 || audio.toString('ascii', 0, 4) !== 'RIFF') {
+          shadowTtsError(res, 502, 'local_voice_invalid_audio', requestId);
+          finish();
+          return;
+        }
+        try {
+          fs.mkdirSync(info.dir, { recursive: true });
+          const tempFile = info.file + '.tmp-' + process.pid + '-' + crypto.randomBytes(5).toString('hex');
+          fs.writeFileSync(tempFile, audio);
+          fs.renameSync(tempFile, info.file);
+          shadowTtsPruneCache(info.dir);
+        } catch {}
+        send(res, 200, audio, shadowTtsHeaders(info, requestId, language, 'MISS', audio.length));
+        finish();
+      });
+    });
+    upstream.setTimeout(SHADOW_TTS_TIMEOUT_MS, () => upstream.destroy(new Error('Piper TTS timeout')));
+    upstream.on('error', (error) => {
+      if (!res.writableEnded) shadowTtsError(res, 502, 'local_voice_unreachable', requestId, { detail: String(error.message || error).slice(0, 160) });
+      finish();
+    });
+    upstream.end(body);
+  });
 }
 function shadowTtsOpenAi(res, key, payload, info, requestId, language) {
   return new Promise((resolve) => {
@@ -1666,7 +1798,11 @@ async function handleShadowTts(req, res, user) {
   if (!shadowTtsAcquire(user.id)) return shadowTtsError(res, 429, 'voice_busy', requestId, { retryAfter: 2 }, { 'Retry-After': '2' });
 
   const cfg = SHADOW_TTS_LANG[language];
-  const payload = {
+  const payload = SHADOW_TTS_PROVIDER === 'piper' ? {
+    text,
+    voice: cfg.voice,
+    length_scale: Math.max(0.8, Math.min(1.3, 1 / cfg.speed)),
+  } : {
     model: SHADOW_TTS_MODEL,
     input: text,
     voice: cfg.voice,
@@ -1675,7 +1811,10 @@ async function handleShadowTts(req, res, user) {
     speed: cfg.speed,
     stream_format: 'audio',
   };
-  try { await shadowTtsOpenAi(res, access.key, payload, info, requestId, language); }
+  try {
+    if (SHADOW_TTS_PROVIDER === 'piper') await shadowTtsPiper(res, payload, info, requestId, language);
+    else await shadowTtsOpenAi(res, access.key, payload, info, requestId, language);
+  }
   finally { shadowTtsRelease(user.id); }
 }
 
@@ -2202,7 +2341,7 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  // ---- Голос Тени v2: облачный TTS. Только авторизованный same-origin запрос. ----
+  // ---- Голос Тени v2: Piper/OpenAI за авторизованным same-origin API. ----
   {
     const voicePath = u.split('?')[0];
     if (voicePath === '/api/shadow/voice/status' && req.method === 'GET') {
@@ -2211,16 +2350,17 @@ const server = http.createServer(async (req, res) => {
       const user = loadUsers().find((item) => item.id === uid);
       if (!user) return sendJson(res, 401, { error: 'user not found' });
       const access = shadowTtsAccess(user);
+      const providerReady = access.ok && (SHADOW_TTS_PROVIDER !== 'piper' || await shadowTtsPiperReady());
       const languages = {};
       for (const code of Object.keys(SHADOW_TTS_LANG)) {
         const cfg = SHADOW_TTS_LANG[code];
         languages[code] = { tag: cfg.tag, voice: cfg.voice, speed: cfg.speed };
       }
       return sendJson(res, 200, {
-        configured: access.ok,
-        reason: access.ok ? null : access.error,
-        mode: access.ok ? 'cloud-ai' : 'browser-system-fallback',
-        provider: 'openai',
+        configured: providerReady,
+        reason: providerReady ? null : (access.error || 'local_voice_unreachable'),
+        mode: providerReady ? (SHADOW_TTS_PROVIDER === 'piper' ? 'server-neural' : 'cloud-ai') : 'unavailable',
+        provider: SHADOW_TTS_PROVIDER,
         model: SHADOW_TTS_MODEL,
         format: SHADOW_TTS_FORMAT,
         languages,

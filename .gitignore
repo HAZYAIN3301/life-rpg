@@ -13,6 +13,7 @@ data/feedback-backups/
 # Node
 node_modules/
 npm-debug.log*
+.env.local
 
 # Runtime launcher (machine-specific)
 Запустить.command

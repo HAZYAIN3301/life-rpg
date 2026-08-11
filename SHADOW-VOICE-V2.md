@@ -1,57 +1,61 @@
-# Shadow Voice v2 — cloud TTS contract and QA
+# Shadow Voice v2.2 — локальный Piper TTS
 
-Status: implemented and fully wired in `integration-staging`; pending production deployment and listening QA against the configured Railway key.
+Status: runtime и отдельный Piper-сервис реализованы 2026-08-11. До production нужны отдельный deploy Piper, приватный service URL в Satoru и real-device listening QA.
 
-## Result
+## Решение
 
-The production path is now OpenAI Speech through Satoru's server. The browser never receives an OpenAI key. `speechSynthesis` is retained only as an explicitly labelled emergency fallback; it is no longer presented as the real Shadow voice.
+Тень говорит через Piper, работающий как отдельный приватный сервис. Пользователю не нужен API key, подписка на голос или дополнительная установка. Повторные реплики кэшируются сервером Satoru. Браузер получает только готовый WAV через авторизованный same-origin API.
 
-Files:
+Системный `speechSynthesis` не включается автоматически: при сбое текст остаётся на экране, интерфейс сообщает ошибку. Device voice доступен только явным вызовом с `browserFallback: true`.
 
-- `server.js` — authenticated `/api/shadow/voice` proxy, language profiles, rate/concurrency limits, streaming response and per-user disk cache.
-- `public/shadow-voice-v2.js` — playback controller, Shadow speaking state, app bridge, honest system-voice fallback and status events.
-- `deploy-icon-system-v1.sh` — copies both runtime files and this contract.
+OpenAI Speech сохранён как необязательный совместимый provider и не используется по умолчанию.
 
-## Official OpenAI basis checked on 2026-07-30
+## Состав
 
-- [Text-to-speech guide](https://developers.openai.com/api/docs/guides/text-to-speech): `gpt-4o-mini-tts` supports instruction-driven delivery and chunked audio streaming; `marin` and `cedar` are the recommended built-in voices.
-- [Create speech API reference](https://developers.openai.com/api/reference/resources/audio/subresources/speech/methods/create): `POST /v1/audio/speech`, 4096-character maximum input, `instructions`, `speed`, and MP3/Opus/AAC/FLAC/WAV/PCM output formats.
-- The guide lists Russian, Ukrainian, English, German and Spanish as supported. It also warns that built-in voices are optimized for English, so all five language profiles still require listening QA.
-- OpenAI requires a clear end-user disclosure that the heard voice is AI-generated. The client shows this disclosure on the first cloud playback of the session, exposes `aiGenerated: true` in its status event and keeps a persistent localized label in Settings.
+- `piper-tts/Dockerfile` — изолированный HTTP-сервис Piper и пять закреплённых голосов.
+- `piper-tts/README.md` — deploy и конфигурация.
+- `server.js` — `/api/shadow/voice`, health check Piper, лимиты и per-user cache.
+- `public/shadow-voice-v2.js` — загрузка, playback/stop, speaking state и explicit fallback.
+- `public/app.js` — локализованный статус и preview.
+- `scripts/shadow-voice-piper-v141.test.js` — fake-provider integration test.
 
-## Server API
+## Голоса
+
+| Язык | Piper voice | Лицензия датасета |
+|---|---|---|
+| RU | `ru_RU-denis-medium` | CC0 |
+| UK | `uk_UA-mykyta-high` | Apache-2.0 |
+| EN | `en_US-joe-medium` | CC0 |
+| DE | `de_DE-thorsten-high` | CC0 |
+| ES | `es_ES-davefx-medium` | CC0 |
+
+Источники: [Piper](https://github.com/OHF-Voice/piper1-gpl), [voice catalog](https://github.com/OHF-Voice/piper1-gpl/blob/main/docs/VOICES.md). Движок Piper имеет GPL-3.0; его отделение в самостоятельный сервис намеренное. Перед коммерческим релизом сохранить notices образа и повторно проверить model cards закреплённых голосов.
+
+## API Satoru
+
+Оба endpoint требуют обычную cookie `lrpg_sess`.
 
 ### `GET /api/shadow/voice/status`
 
-Requires the normal `lrpg_sess` session cookie.
-
-Example response:
+Status выполняет короткий `/info` health check и не заявляет `configured:true`, если Piper недоступен.
 
 ```json
 {
   "configured": true,
   "reason": null,
-  "mode": "cloud-ai",
-  "provider": "openai",
-  "model": "gpt-4o-mini-tts",
-  "format": "mp3",
+  "mode": "server-neural",
+  "provider": "piper",
+  "model": "piper-tts-1.6",
+  "format": "wav",
   "languages": {
-    "ru": { "tag": "ru-RU", "voice": "marin", "speed": 0.94 },
-    "uk": { "tag": "uk-UA", "voice": "marin", "speed": 0.94 },
-    "en": { "tag": "en-US", "voice": "marin", "speed": 0.96 },
-    "de": { "tag": "de-DE", "voice": "marin", "speed": 0.93 },
-    "es": { "tag": "es-ES", "voice": "marin", "speed": 0.96 }
+    "ru": { "tag": "ru-RU", "voice": "ru_RU-denis-medium", "speed": 0.94 }
   },
   "maxCharacters": 2400,
   "aiGeneratedDisclosureRequired": true
 }
 ```
 
-The route never returns a key or even a key fragment.
-
 ### `POST /api/shadow/voice`
-
-Requires the normal session cookie and `Content-Type: application/json`.
 
 ```json
 {
@@ -61,102 +65,55 @@ Requires the normal session cookie and `Content-Type: application/json`.
 }
 ```
 
-Supported languages: `ru`, `uk`, `en`, `de`, `es`.
+Языки: `ru`, `uk`, `en`, `de`, `es`. Контексты: `calm`, `morning`, `evening`, `focus`, `coach`, `celebrate`, `warning`.
 
-Supported contexts:
+Успех возвращает `audio/wav` и заголовки:
 
-- `calm`
-- `morning`
-- `evening`
-- `focus`
-- `coach`
-- `celebrate`
-- `warning`
-
-The client cannot set `model`, `voice`, `instructions`, `format` or `speed`. Those are trusted server settings.
-
-Success is an audio response with:
-
-- `X-Shadow-Voice-Mode: cloud-ai`
-- `X-Shadow-Voice-AI-Generated: true`
+- `X-Shadow-Voice-Mode: server-neural`
+- `X-Shadow-Voice-Provider: piper`
 - `X-Shadow-Voice-Cache: HIT|MISS`
 - `X-Shadow-Voice-Language: ru|uk|en|de|es`
 - `X-Request-Id: …`
 
-Errors are JSON and include `fallback: "browser-system-voice"`. Important codes:
+Основные ошибки: `not_logged_in` 401, invalid input 400/413, rate/concurrency 429, `local_voice_unreachable` или provider/invalid-audio error 502. Ошибка не запускает device voice автоматически.
 
-- `not_logged_in` — 401
-- `cloud_voice_requires_pro` — 402
-- `cloud_voice_requires_byok` — 403
-- `no_openai_key` — 503
-- `unsupported_language`, `empty_text`, `bad_json` — 400
-- `text_too_long` — 413
-- `voice_rate_limit`, `voice_busy` — 429
-- `cloud_voice_provider_error`, `cloud_voice_unreachable` — 502
+## Конфигурация
 
-## Secret and access policy
-
-Key resolution order:
-
-1. The signed-in user's existing server-side OpenAI BYOK value from `data/users/<id>/ai-keys.json`.
-2. `OPENAI_API_KEY`.
-3. The existing `AI_HOUSE_KEY_OPENAI`.
-
-Recommended Railway setup:
+Piper-сервис:
 
 ```text
-OPENAI_API_KEY=<Railway secret>
-SHADOW_TTS_ACCESS=authenticated
+PORT=5000
 ```
 
-`OPENAI_API_KEY` must be a Railway secret, never a client setting, HTML value, JavaScript constant or committed `.env` file.
-
-`SHADOW_TTS_ACCESS` values:
-
-- `authenticated` (default) — all signed-in users can use the house key.
-- `pro` — BYOK works for its owner; the house key is limited to Pro/trial/admin.
-- `byok` — cloud speech requires each user to save their own OpenAI key.
-
-Optional voice configuration:
+Satoru:
 
 ```text
-SHADOW_TTS_MODEL=gpt-4o-mini-tts
-SHADOW_TTS_FORMAT=mp3
-SHADOW_TTS_VOICE_RU=marin
-SHADOW_TTS_VOICE_UK=marin
-SHADOW_TTS_VOICE_EN=marin
-SHADOW_TTS_VOICE_DE=marin
-SHADOW_TTS_VOICE_ES=marin
-SHADOW_TTS_SPEED_RU=0.94
-SHADOW_TTS_SPEED_UK=0.94
-SHADOW_TTS_SPEED_EN=0.96
-SHADOW_TTS_SPEED_DE=0.93
-SHADOW_TTS_SPEED_ES=0.96
+SHADOW_TTS_PROVIDER=piper
+PIPER_TTS_URL=http://piper-private-service:5000
 ```
 
-Only official built-in voice names are accepted; an invalid value falls back to `marin`.
-
-Operational controls:
+Опциональная замена голосов:
 
 ```text
-SHADOW_TTS_RPM=24
-SHADOW_TTS_USER_CONCURRENCY=2
-SHADOW_TTS_GLOBAL_CONCURRENCY=10
-SHADOW_TTS_TIMEOUT_MS=45000
-SHADOW_TTS_MAX_CHARS=2400
-SHADOW_TTS_MAX_AUDIO_BYTES=8388608
-SHADOW_TTS_CACHE_DAYS=30
-SHADOW_TTS_CACHE_MAX_FILES=128
-SHADOW_TTS_CACHE_MAX_MB=96
+PIPER_TTS_VOICE_RU=ru_RU-denis-medium
+PIPER_TTS_VOICE_UK=uk_UA-mykyta-high
+PIPER_TTS_VOICE_EN=en_US-joe-medium
+PIPER_TTS_VOICE_DE=de_DE-thorsten-high
+PIPER_TTS_VOICE_ES=es_ES-davefx-medium
 ```
 
-Generated audio is cached per user under `DATA_DIR/shadow-voice-cache/<user-id>/`. Cache keys include the text, language, context, model, voice, speed and format. Cache writes are atomic and bounded by TTL, file count and byte size.
+Операционные лимиты: `SHADOW_TTS_RPM`, `SHADOW_TTS_USER_CONCURRENCY`, `SHADOW_TTS_GLOBAL_CONCURRENCY`, `SHADOW_TTS_TIMEOUT_MS`, `SHADOW_TTS_MAX_CHARS`, `SHADOW_TTS_MAX_AUDIO_BYTES`, `SHADOW_TTS_CACHE_DAYS`, `SHADOW_TTS_CACHE_MAX_FILES`, `SHADOW_TTS_CACHE_MAX_MB`.
 
-The server forwards provider audio as chunks while simultaneously filling the cache. The compatibility-first browser controller creates a Blob before playback, so the first uncached phrase does not begin mid-download on iOS. Repeated phrases use the server cache and a small in-memory client cache.
+Кэш хранится в `DATA_DIR/shadow-voice-cache/<user-id>/`. Ключ включает пользователя, provider, модель, формат, язык, voice, speed, context и текст. Запись атомарная, TTL/число/размер ограничены.
+
+OpenAI включается только явно:
+
+```text
+SHADOW_TTS_PROVIDER=openai
+OPENAI_API_KEY=<server secret>
+```
 
 ## Client API
-
-After the file is loaded:
 
 ```js
 await window.ShadowVoiceV2.speak(
@@ -168,66 +125,28 @@ window.ShadowVoiceV2.stop();
 const status = await window.ShadowVoiceV2.getStatus('ru');
 ```
 
-Every transition dispatches:
+Состояния: `loading`, `playing`, `fallback`, `ended`, `stopped`, `error`. Режимы: `server-neural`, `cloud-ai`, `browser-system-voice`, `unavailable`, `stopped`.
 
-```js
-window.addEventListener('shadowvoice:status', (event) => {
-  console.log(event.detail);
-});
-```
+## QA
 
-States include `loading`, `playing`, `fallback`, `ended`, `stopped` and `error`. Modes are always explicit:
+Автоматически:
 
-- `cloud-ai`
-- `browser-system-voice`
-- `unavailable`
-- `stopped`
-
-The module automatically replaces the existing global `ttsSpeak`/`ttsStop` functions after `app.js` is ready. It preserves the existing speaker buttons and Shadow speaking pulses.
-
-## Runtime integration
-
-All required runtime points are applied:
-
-1. `index.html` loads `shadow-voice-v2.js` after `app.js`.
-2. The service worker precaches the module and uses a bumped cache version.
-3. Settings show a localized `Cloud AI · natural voice` status or an explicitly labelled device-system fallback, plus the mandatory AI-generated disclosure.
-4. Speaker controls remain available when cloud speech exists even if the browser has no `speechSynthesis`.
-5. Morning, evening, focus, coach and celebration calls pass semantic contexts to the server profile.
-
-The old browser voice remains only as a clearly disclosed failure fallback. Production still requires either `OPENAI_API_KEY`, `AI_HOUSE_KEY_OPENAI`, or a user BYOK value.
-
-## QA checklist
-
-Automated:
-
-- `node --check integration-staging/server.js`
-- `node --check integration-staging/public/shadow-voice-v2.js`
-- `node integration-staging/qa-shadow-voice-v2.mjs`
-- unauthenticated status returns 401
-- authenticated status returns configuration without secrets
-- malformed/empty request is rejected before any provider call
-- unsupported language is rejected
-- over-limit text is rejected
-- response headers distinguish cloud AI and HIT/MISS
-- a second identical request uses the per-user cache
+- syntax check server/client;
+- authenticated status и отсутствие secrets;
+- реальный `/info` health check;
+- WAV/RIFF validation;
+- корректный voice для каждого языка;
+- per-user `MISS → HIT` без второго provider call;
+- system fallback отсутствует по умолчанию и работает только explicit opt-in.
 
 Listening matrix:
 
-| Language | Sample | Check |
-|---|---|---|
-| RU | «Доброе утро. Сегодня не нужно побеждать весь мир — выбери один честный шаг.» | Stress, native consonants, no English accent |
-| UK | «Доброго ранку. Обери один крок, який справді підтримає тебе сьогодні.» | Native vowels, no Russian phonetic drift |
-| EN | “Good morning. Pick one honest step and let the rest of the day unfold.” | Warm, close, not an announcer |
-| DE | „Guten Morgen. Wähle einen ehrlichen nächsten Schritt und beginne ruhig.“ | Compound-word clarity and natural pauses |
-| ES | «Buenos días. Elige un paso honesto y deja que el día avance desde ahí.» | Natural Spain pronunciation, no English rhythm |
+| Язык | Текст |
+|---|---|
+| RU | «Доброе утро. Сегодня не нужно побеждать весь мир — выбери один честный шаг.» |
+| UK | «Доброго ранку. Обери один крок, який справді підтримає тебе сьогодні.» |
+| EN | “Good morning. Pick one honest step and let the rest of the day unfold.” |
+| DE | „Guten Morgen. Wähle einen ehrlichen nächsten Schritt und beginne ruhig.“ |
+| ES | «Buenos días. Elige un paso honesto y deja que el día avance desde ahí.» |
 
-For every language, listen to all seven contexts and verify that identity stays recognizably the same. If one built-in voice does not stay coherent across all five languages, configure a different approved voice per language and repeat the matrix.
-
-Mobile:
-
-- iOS Safari and installed PWA: user-tap playback succeeds after network delay.
-- Android Chrome and installed PWA: playback, stop and replay work.
-- switching views calls `ttsStop()` and actually stops cloud audio.
-- a cloud failure shows the fallback notice and never labels the device voice as the Shadow cloud voice.
-- the first cloud playback clearly discloses that the voice is AI-generated.
+Release gates: iOS Safari/PWA и Android Chrome/PWA playback, stop/replay, переключение view останавливает звук, отказ Piper оставляет transcript и показывает error, первый playback содержит понятное раскрытие синтетического голоса.

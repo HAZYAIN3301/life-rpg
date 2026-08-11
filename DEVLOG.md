@@ -2,6 +2,19 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-11] 🔊 Shadow Voice v2.2 P0 — Piper без пользовательских ключей и платы за реплику
+
+- Скриншот реального iPhone подтвердил исходный разрыв: голос был фактически не настроен, а системный browser fallback не звучал. OpenAI-вариант отклонён как неподходящая продуктовая экономика: владелец не должен оплачивать каждую реплику, пользователь — покупать кредиты или устанавливать TTS.
+- Основной provider заменён на отдельный приватный Piper HTTP service. Пользователь слышит готовый WAV через авторизованный same-origin API; API key, отдельная подписка и установка ему не нужны. OpenAI сохранён только как явный opt-in `SHADOW_TTS_PROVIDER=openai`.
+- Закреплены пять прошедших лицензионный отбор голосов: RU `denis` (CC0), UK `mykyta` (Apache-2.0), EN `joe` (CC0), DE `thorsten` (CC0), ES `davefx` (CC0). GPL-движок изолирован в самостоятельном `piper-tts/` сервисе; notices/model cards остаются release gate.
+- `/api/shadow/voice/status` выполняет реальный `/info` health check: если Piper не поднят, UI честно показывает unavailable. Синтез проверяет HTTP status, размер и RIFF/WAV, сохраняет атомарный per-user cache и ограничен rate/concurrency/timeout.
+- `ShadowVoiceV2` не включает системный голос после сетевой ошибки. Transcript остаётся видимым, состояние становится `error`; device voice доступен только через явный `browserFallback:true`.
+- Settings и guide copy обновлены на RU/EN/DE/UK/ES: «Piper · локальный голос Тени», без ключа пользователя и платы за каждую фразу. PWA cache: `satoru-v140 → satoru-v141`.
+- Реальный локальный Piper E2E: status `configured:true`, provider `piper`, mode `server-neural`; RU/UK/EN/DE/ES вернули `200 audio/wav`, корректный voice и RIFF. Повтор RU дал `MISS → HIT`, байты совпали. Негативный health-check закрепляет `configured:false / local_voice_unreachable`.
+- Live browser QA: Settings → Опыт показывает Piper, preview получает `aria-pressed=true` во время реального WAV и возвращается в idle без ошибки. 375×812 и 1280×900: `scrollWidth === clientWidth`, voice card читается, control доступен; JPEG — `docs/design-qa/2026-08-11-shadow-voice-v141/`.
+- QA: syntax server/app/client — PASS; client contract — PASS; focused Piper **2/2 PASS**; полный suite **138/138 PASS**; scoped `git diff --check` — PASS. Открытая локальная PWA проверена с `satoru-v141`.
+- Затронуты: `.gitignore`, `server.js`, `public/shadow-voice-v2.js`, `public/app.js`, `public/sw.js`, `qa-shadow-voice-v2.mjs`, `scripts/shadow-voice-piper-v141.test.js`, SW-pin tests, `piper-tts/`, `SHADOW-VOICE-V2.md`, QA screenshots. Commit: `feat: add local Piper voice for Shadow`.
+
 ## [2026-08-11] 🪙 Admin self-gold v139 — быстрый рекламный кредит без доступа к чужим аккаунтам
 
 - В Settings у текущего администратора появилась компактная форма: положить или снять целое число монет со **своего** рекламного кредита. Обычный пользователь этой поверхности не видит.
