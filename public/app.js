@@ -2216,6 +2216,16 @@ const I18N_EXTRA = {
   'Мой': { en: 'Still mine', de: 'Bleibt meiner', uk: 'Моє', es: 'Sigue siendo mío' },
   'Три заказа сразу — уже список дел, а не приключение': { en: 'Three at once is a to-do list, not an adventure', de: 'Drei auf einmal sind eine To-do-Liste, kein Abenteuer', uk: 'Три замовлення разом — це вже список справ, а не пригода', es: 'Tres a la vez ya es una lista de tareas, no una aventura' },
   'Не удалось взять заказ': { en: 'Could not take the contract', de: 'Auftrag konnte nicht genommen werden', uk: 'Не вдалося взяти замовлення', es: 'No se pudo tomar el encargo' },
+  'Разделы дня': { en: 'Day sections', de: 'Bereiche des Tages', uk: 'Розділи дня', es: 'Secciones del día' },
+  'День': { en: 'Day', de: 'Tag', uk: 'День', es: 'Día' },
+  'Доска': { en: 'Board', de: 'Tafel', uk: 'Дошка', es: 'Tablón' },
+  'Доска недоступна': { en: 'The board is unavailable', de: 'Die Tafel ist nicht verfügbar', uk: 'Дошка недоступна', es: 'El tablón no está disponible' },
+  'Взято': { en: 'Taken', de: 'Genommen', uk: 'Узято', es: 'Tomado' },
+  'Выбери заказ, чтобы прочитать его целиком.': { en: 'Pick a contract to read it in full.', de: 'Wähle einen Auftrag, um ihn ganz zu lesen.', uk: 'Обери замовлення, щоб прочитати його повністю.', es: 'Elige un encargo para leerlo entero.' },
+  'Сезонный заказ': { en: 'Seasonal contract', de: 'Saisonaler Auftrag', uk: 'Сезонне замовлення', es: 'Encargo de temporada' },
+  'Личный заказ': { en: 'Personal contract', de: 'Persönlicher Auftrag', uk: 'Особисте замовлення', es: 'Encargo personal' },
+  'Заказ у тебя. Вернуть можно в любой момент — это ничего не стоит.': { en: 'The contract is yours. You can return it any time — it costs nothing.', de: 'Der Auftrag gehört dir. Du kannst ihn jederzeit zurückgeben — das kostet nichts.', uk: 'Замовлення в тебе. Повернути можна будь-коли — це нічого не варте.', es: 'El encargo es tuyo. Puedes devolverlo cuando quieras — no cuesta nada.' },
+  'Возьмёшь — он будет ждать тебя. Вернуть можно в любой момент, это ничего не стоит.': { en: 'Take it and it will wait for you. You can return it any time, it costs nothing.', de: 'Nimm ihn, und er wartet auf dich. Du kannst ihn jederzeit zurückgeben, das kostet nichts.', uk: 'Візьмеш — він чекатиме на тебе. Повернути можна будь-коли, це нічого не варте.', es: 'Tómalo y te esperará. Puedes devolverlo cuando quieras, no cuesta nada.' },
   // ── Схватки (DISCIPLINE-ARENA-PLAN §1) ──
   'Схватки': { en: 'Duels', de: 'Duelle', uk: 'Сутички', es: 'Duelos' },
   'День решают три-четыре коротких момента: встал или нет, взял телефон или нет, открыл файл или ленту. Назови свои — и у них появится счёт.': { en: 'Your day is decided by three or four short moments: got up or not, picked up the phone or not, opened the file or the feed. Name yours — and they get a score.', de: 'Über deinen Tag entscheiden drei, vier kurze Momente: aufgestanden oder nicht, zum Handy gegriffen oder nicht, die Datei geöffnet oder den Feed. Benenne deine — und sie bekommen einen Punktestand.', uk: 'День вирішують три-чотири короткі моменти: встав чи ні, узяв телефон чи ні, відкрив файл чи стрічку. Назви свої — і в них з’явиться рахунок.', es: 'Tu día lo deciden tres o cuatro momentos cortos: te levantaste o no, tomaste el teléfono o no, abriste el archivo o el feed. Nombra los tuyos — y tendrán marcador.' },
@@ -14201,53 +14211,87 @@ function boardNeglectedSpheres() {
   });
   return (State.settings.skills || []).map((s) => s.id).filter((id) => !touched.has(id));
 }
-function boardCardHTML() {
+// Наклон листа — детерминированный по id, а не случайный: доска не должна
+// «дёргаться» на каждом рендере. Диапазон узкий (±2.4°) — приколотая бумага
+// висит криво, но не разлетается.
+function boardTilt(id) {
+  let h = 5381;
+  for (let i = 0; i < id.length; i++) h = ((h * 33) ^ id.charCodeAt(i)) >>> 0;
+  return ((h % 49) - 24) / 10;
+}
+/** Полноэкранная доска — вкладка «Сегодня». Листы слева, развёрнутый заказ справа. */
+function boardScreenHTML() {
   const B = window.BoardV1, P = window.BoardPoolV1;
-  if (!B || !P) return '';
+  if (!B || !P) return `<p class="muted">${t('Доска недоступна')}</p>`;
   const today = todayStr();
-  let st = boardRead();
-  const swept = B.sweepExpired(st, today);
-  st = swept.state;
+  const st = B.sweepExpired(boardRead(), today).state;
 
   const mine = B.activeOrders(st);
   const view = B.board(P.ALL, {
     neglectedSpheres: boardNeglectedSpheres(),
     activeSpheres: (State.settings.skills || []).map((s) => s.id),
   }, st, today);
+  const offers = view.personal.concat(view.seasonal ? [view.seasonal] : []);
 
-  const takenRows = mine.map((a) => {
+  // Каждый лист — кнопка: доска обязана работать с клавиатуры, а не только мышью.
+  const sheet = (o, taken) => {
+    const sel = State._boardSel === o.id;
+    return `<button type="button" role="tab" aria-selected="${sel}"
+      class="bsheet${taken ? ' taken' : ''}${sel ? ' sel' : ''}"
+      style="--tilt:${boardTilt(o.id)}deg"
+      data-action="board-pick" data-id="${esc(o.id)}">
+      <span class="bsheet-text">${esc(o.title)}</span>
+      ${o.seasonal ? `<span class="bsheet-seal" aria-hidden="true"></span>` : ''}
+      ${taken ? `<span class="bsheet-mark">${t('Взято')}</span>` : ''}
+    </button>`;
+  };
+
+  const pinned = mine.map((a) => {
     const o = boardOrderById(a.orderId);
-    if (!o) return '';
-    return `<li class="board-mine">
-      <span class="board-title">${esc(o.title)}</span>
-      <span class="board-acts">
-        <button class="btn sm" data-action="board-done" data-id="${esc(a.orderId)}">${t('Выполнено')}</button>
-        <button class="btn ghost sm" data-action="board-return" data-id="${esc(a.orderId)}">${t('Вернуть')}</button>
-      </span></li>`;
-  }).join('');
+    return o ? sheet(o, true) : '';
+  }).join('') + offers.map((o) => sheet(o, false)).join('');
 
-  const offer = view.personal.concat(view.seasonal ? [view.seasonal] : []);
-  const offerRows = offer.map((o) => `<li class="board-offer">
-      <span class="board-title">${esc(o.title)}</span>
-      ${o.seasonal ? `<span class="board-tag">${t('Сезонный')}</span>` : ''}
-      <button class="btn ghost sm" data-action="board-take" data-id="${esc(o.id)}">${t('Беру')}</button>
-    </li>`).join('');
+  // Правая колонка — развёрнутый заказ. Пока ничего не выбрано, здесь живёт
+  // приглашение, а не пустота: доска должна объяснять себя без инструкции.
+  const selId = State._boardSel;
+  const selOrder = selId ? boardOrderById(selId) : null;
+  const selTaken = selOrder && mine.some((a) => a.orderId === selOrder.id);
+  const full = mine.length >= B.MAX_ACTIVE;
 
-  // Залежавшийся заказ: один вопрос, без срока и без упрёка.
+  let detail;
+  if (!selOrder) {
+    detail = `<p class="bdetail-empty">${t('Выбери заказ, чтобы прочитать его целиком.')}</p>`;
+  } else {
+    const sphere = selOrder.sphereId ? (State.settings.skills || []).find((s) => s.id === selOrder.sphereId) : null;
+    detail = `<h3 class="bdetail-title">${esc(selOrder.title)}</h3>
+      <p class="bdetail-meta">${selOrder.seasonal ? t('Сезонный заказ') : sphere ? esc(sphere.name) : t('Личный заказ')}</p>
+      <p class="bdetail-note">${selTaken
+        ? t('Заказ у тебя. Вернуть можно в любой момент — это ничего не стоит.')
+        : t('Возьмёшь — он будет ждать тебя. Вернуть можно в любой момент, это ничего не стоит.')}</p>
+      <div class="bdetail-acts">${selTaken
+        ? `<button class="btn" data-action="board-done" data-id="${esc(selOrder.id)}">${t('Выполнено')}</button>
+           <button class="btn ghost" data-action="board-return" data-id="${esc(selOrder.id)}">${t('Вернуть')}</button>`
+        : full
+          ? `<p class="bdetail-full">${t('Три заказа сразу — уже список дел, а не приключение')}</p>`
+          : `<button class="btn" data-action="board-take" data-id="${esc(selOrder.id)}">${t('Беру')}</button>`}</div>`;
+  }
+
   const ask = B.staleAsk(st, today);
   const askOrder = ask ? boardOrderById(ask.orderId) : null;
-  const askBlock = askOrder ? `<p class="board-ask">${t('Этот заказ у тебя уже давно')} — «${esc(askOrder.title)}». ${t('Всё ещё твой?')}
-      <button class="btn ghost sm" data-action="board-keep" data-id="${esc(ask.orderId)}">${t('Мой')}</button>
-      <button class="btn ghost sm" data-action="board-return" data-id="${esc(ask.orderId)}">${t('Вернуть')}</button></p>` : '';
 
-  return `<div class="card board-card">
-    <h3>${t('Доска заказов')}</h3>
-    ${mine.length ? `<ul class="board-list">${takenRows}</ul>` : ''}
-    ${askBlock}
-    ${mine.length < B.MAX_ACTIVE && offerRows
-      ? `<p class="board-hint">${t('Возьми, что откликается. Вернуть можно в любой момент — это ничего не стоит.')}</p><ul class="board-list">${offerRows}</ul>`
-      : ''}
-  </div>`;
+  // Заголовок ВНЕ грида: как первый ребёнок он занимал бы первую ячейку и
+  // сдвигал доску во вторую колонку, а панель — на второй ряд.
+  return `<section class="board-screen" aria-labelledby="board-title">
+    <h2 id="board-title" class="sr-only">${t('Доска заказов')}</h2>
+    <div class="board-scene">
+    <div class="board-wood" role="tablist" aria-label="${t('Доска заказов')}">${pinned}</div>
+    <aside class="board-detail" aria-live="polite">${detail}
+      ${askOrder ? `<p class="board-ask">${t('Этот заказ у тебя уже давно')} — «${esc(askOrder.title)}». ${t('Всё ещё твой?')}
+        <button class="btn ghost sm" data-action="board-keep" data-id="${esc(ask.orderId)}">${t('Мой')}</button>
+        <button class="btn ghost sm" data-action="board-return" data-id="${esc(ask.orderId)}">${t('Вернуть')}</button></p>` : ''}
+    </aside>
+    </div>
+  </section>`;
 }
 
 // ── Схватки (DISCIPLINE-ARENA-PLAN §1, решения §15) ──────────────────────────
@@ -14621,9 +14665,17 @@ function renderToday() {
       </div>
       <div style="margin-top:10px"><button class="${day.closed ? 'btn ghost' : 'btn'}" data-action="${day.closed ? 'reopen-day' : 'close-day'}">${day.closed ? '✓ День закрыт — открыть заново' : 'Закрыть день'}</button></div></div>`;
   const deeperPath = `<button class="today-deeper" data-action="goto-rewards">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Награды')} <span aria-hidden="true">→</span></button>`;
-  return `<div class="today-shell">
+  // Вкладки «Сегодня». Не новая nav-вкладка: неподвижная граница продукта —
+  // ровно 4 primary destinations + More, и доска живёт ВНУТРИ «Сегодня».
+  const tab = State._todayTab === 'board' ? 'board' : 'day';
+  const tabs = `<div class="today-tabs" role="tablist" aria-label="${t('Разделы дня')}">
+    <button type="button" role="tab" aria-selected="${tab === 'day'}" class="today-tab${tab === 'day' ? ' on' : ''}" data-action="today-tab" data-id="day">${t('День')}</button>
+    <button type="button" role="tab" aria-selected="${tab === 'board'}" class="today-tab${tab === 'board' ? ' on' : ''}" data-action="today-tab" data-id="board">${t('Доска')}</button>
+  </div>`;
+  if (tab === 'board') return `<div class="today-shell board-shell">${tabs}${boardScreenHTML()}</div>`;
+  return `<div class="today-shell">${tabs}
     <div class="today-work">${firstLineCardHTML()}${todayHero}${overdueCard}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
-    <aside class="today-support" aria-label="Поддержка дня">${companionCard()}${deeperPath}${fightsCardHTML()}${boardCardHTML()}${activeNudge}${nudgeCard}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${tm ? timerCard : ''}${energyCard}${installBanner()}</aside>
+    <aside class="today-support" aria-label="Поддержка дня">${companionCard()}${deeperPath}${fightsCardHTML()}${activeNudge}${nudgeCard}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${tm ? timerCard : ''}${energyCard}${installBanner()}</aside>
     <div class="today-footer">${antiHabitsCard()}${shutdownCard}</div>
   </div>`;
 }
@@ -19397,6 +19449,11 @@ function onClick(e) {
       if (note) Object.assign(x, note);
     });
     Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
+  } else if (action === 'today-tab') {
+    State._todayTab = id === 'board' ? 'board' : 'day'; render();
+  } else if (action === 'board-pick') {
+    // Повторный клик по выбранному листу закрывает его — как снять со стены.
+    State._boardSel = State._boardSel === id ? null : id; render();
   } else if (action === 'board-take') {
     const B = window.BoardV1, o = boardOrderById(id);
     if (!B || !o) return;
