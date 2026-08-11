@@ -14711,6 +14711,13 @@ html.calendar-task-open body {
 .pet-hint:hover { color: var(--text); opacity: 1; }
 .pet-rename-error { margin: 0; color: var(--bad); font-size: var(--type-meta); line-height: var(--leading-label); }
 
+/* ── Stats v135: a semantic observation surface, never a false deficit. ── */
+.stats-shell { display: grid; gap: var(--sp-3); }
+.stats-route-head { display: flex; align-items: center; min-height: 42px; }
+.stats-route-head h2 { margin: 0; color: var(--text-strong); font-size: var(--type-title); line-height: var(--leading-display); }
+.stats-shell .balance-card.is-observing .bal-score { color: var(--muted); }
+.stats-shell .balance-card.is-observing .bal-head { align-items: baseline; }
+
 @media (max-width: 600px), (pointer: coarse) {
   .pets-route-head { min-height: var(--touch-min); }
   .pet-edit { min-width: var(--touch-min); min-height: var(--touch-min); display: inline-grid; place-items: center; padding: 0; }
@@ -14721,6 +14728,8 @@ html.calendar-task-open body {
   .body-toad-card-actions .btn,
   .pets-shell .tts-btn { min-width: var(--touch-min); min-height: var(--touch-min); }
   .pet-rename-form input { font-size: max(16px, var(--type-control)); }
+  .stats-route-head { min-height: var(--touch-min); }
+  body:has(.stats-shell) #ai-fab { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

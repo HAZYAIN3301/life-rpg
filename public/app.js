@@ -3008,6 +3008,10 @@ const I18N_EXTRA = {
   'BODY · канонический хранитель': { en: 'BODY · canonical guardian', de: 'BODY · kanonischer Wächter', uk: 'BODY · канонічний охоронець', es: 'BODY · guardián canónico' },
   'MONEY / RESOURCES · канонический хранитель': { en: 'MONEY / RESOURCES · canonical guardian', de: 'MONEY / RESOURCES · kanonischer Wächter', uk: 'MONEY / RESOURCES · канонічний охоронець', es: 'MONEY / RESOURCES · guardián canónico' },
   'RECOVERY · скрытый канонический сигнал': { en: 'RECOVERY · quiet canonical signal', de: 'RECOVERY · leises kanonisches Signal', uk: 'RECOVERY · тихий канонічний сигнал', es: 'RECOVERY · señal canónica discreta' },
+  // ── Stats v135: observations, never a false negative ──
+  'Наблюдаем баланс': { en: 'Observing balance', de: 'Balance beobachten', uk: 'Спостерігаємо баланс', es: 'Observamos el equilibrio' },
+  'Пока нет планов': { en: 'No plans yet', de: 'Noch keine Pläne', uk: 'Поки немає планів', es: 'Aún no hay planes' },
+  'Баланс появится, когда хотя бы две сферы получат внимание. Это не оценка тебя.': { en: 'Balance appears once at least two areas receive attention. It is not a judgment of you.', de: 'Ein Gleichgewicht erscheint, sobald mindestens zwei Bereiche Aufmerksamkeit erhalten. Es ist keine Bewertung von dir.', uk: 'Баланс з’явиться, коли принаймні дві сфери отримають увагу. Це не оцінка тебе.', es: 'El equilibrio aparece cuando al menos dos áreas reciben atención. No es un juicio sobre ti.' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -16557,10 +16561,11 @@ function renderStats() {
   ensureAiKeys();
   const since = addDays(todayStr(), -13);
   const planned14 = (State.tasks || []).filter((t) => t.date >= since && t.date <= todayStr());
-  const rate = planned14.length ? Math.round((planned14.filter((t) => t.done).length / planned14.length) * 100) : 0;
+  const rate = planned14.length ? Math.round((planned14.filter((t) => t.done).length / planned14.length) * 100) : null;
   const reflections = Object.entries(State.days || {}).filter(([, v]) => v && v.reflection && v.reflection.trim()).sort((a, b) => (a[0] < b[0] ? 1 : -1)).slice(0, 7).map(([d, v]) => `<li><span class="date">${d}</span><br>${esc(v.reflection)}</li>`).join('');
   const cr = charRank(), bal = balanceIndex();
-  const balColor = bal.index >= 70 ? '#5fbf7a' : bal.index >= 40 ? '#e0a23e' : '#e0526a';
+  const hasBalanceSignal = bal.active >= 2 && bal.windowMin > 0;
+  const balColor = !hasBalanceSignal ? 'var(--muted)' : (bal.index >= 70 ? '#5fbf7a' : bal.index >= 40 ? '#e0a23e' : '#e0526a');
   const rankRow = (s, sub) => {
     const lvl = skillLevelOf(s.id), r = rankFor(lvl), rp = rankProgress(lvl);
     return `<div class="rank-row ${sub ? 'sub' : ''}">
@@ -16615,31 +16620,33 @@ function renderStats() {
       </div>`;
     }).join('')}</div>` : `<p class="muted" style="font-size:12.5px">${t('Пока пусто.')}</p>`}
     <div class="propose-actions"><button class="btn ghost" data-action="episode-open">🎒 ${t('Записать эпизод')}</button></div></div>`;
-  return `
+  return `<section class="stats-shell" aria-labelledby="stats-title">
+    <header class="stats-route-head"><h2 id="stats-title" tabindex="-1">${satoruIconHTML('nav.progress', 'heading-glyph', '◇')} ${t('Прогресс')}</h2></header>
     <div class="kpis">
       <div class="kpi"><div class="v">${rankIconHTML(cr, 'kpi-emblem')} ${charLevel()}</div><div class="l">${cr.name}</div></div>
-      <div class="kpi"><div class="v" style="color:${balColor}">${bal.index}</div><div class="l">${t('Индекс баланса')}</div></div>
+      <div class="kpi"><div class="v" style="color:${balColor}">${hasBalanceSignal ? bal.index : '—'}</div><div class="l">${hasBalanceSignal ? t('Индекс баланса') : t('Наблюдаем баланс')}</div></div>
       <div class="kpi"><div class="v">${overallXp()}</div><div class="l">${t('Всего опыта')}</div></div>
       <div class="kpi"><div class="v">${satoruIconHTML('status.gold', 'kpi-emblem', '◇')} ${goldBalance()}</div><div class="l">${t('Золото')}</div></div>
       <div class="kpi"><div class="v">${satoruIconHTML('status.streak', 'kpi-emblem', '◇')} ${currentStreak()}</div><div class="l">Серия · рекорд ${longestStreak()}</div></div>
-      <div class="kpi"><div class="v">${rate}%</div><div class="l">${t('Выполнение (14 дн.)')}</div></div>
+      <div class="kpi"><div class="v">${rate == null ? '—' : rate + '%'}</div><div class="l">${rate == null ? t('Пока нет планов') : t('Выполнение (14 дн.)')}</div></div>
     </div>
     <div class="card wrapped-card"><div><h3 style="margin:0">${satoruIconHTML('action.export', 'heading-glyph', '◇')} ${t('Твоя неделя')}</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">Красивая карточка итогов недели — поделись или сохрани PNG.</p></div>
       <button class="btn" data-action="share-week">${satoruIconHTML('action.export', 'button-glyph', '◇')} ${t('Открыть')}</button></div>
     <div class="card ai-review-card">
       <div><h3 style="margin:0">🤖 ИИ-разбор недели</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">${t('Как ты на самом деле, а не только цифры. + мягкие шаги.')} ${aiSourceHint()}</p></div>
       <button class="btn" data-action="ai-review">Разобрать неделю</button></div>
-    <div class="card balance-card">
-      <div class="bal-head"><h3>⚖️ Баланс сфер — твоё десятиборье</h3><div class="bal-score" style="color:${balColor}">${bal.index}<small>/100</small></div></div>
-      <div class="bal-meter"><span style="width:${bal.index}%;background:${balColor}"></span></div>
-      <p class="muted" style="font-size:13px;margin-bottom:0">Активных сфер: <b>${bal.active}/${bal.total}</b>. Индекс растёт, когда развиваешь жизнь как композицию, а не одну вертикаль. ${bal.weakest && bal.index < 80 ? `Сейчас проседает <b>${esc(bal.weakest.name)}</b> — дай ей внимание.` : (bal.index >= 80 ? 'Отличный баланс — так держать. ⚖️' : 'Добавь активность в несколько сфер, чтобы поднять индекс.')}</p>
+    <div class="card balance-card${hasBalanceSignal ? '' : ' is-observing'}">
+      <div class="bal-head"><h3>⚖️ Баланс сфер — твоё десятиборье</h3><div class="bal-score" style="color:${balColor}">${hasBalanceSignal ? `${bal.index}<small>/100</small>` : '—'}</div></div>
+      ${hasBalanceSignal ? `<div class="bal-meter" aria-hidden="true"><span style="width:${bal.index}%;background:${balColor}"></span></div>` : ''}
+      <p class="muted" style="font-size:13px;margin-bottom:0">${hasBalanceSignal ? `Активных сфер: <b>${bal.active}/${bal.total}</b>. Индекс растёт, когда развиваешь жизнь как композицию, а не одну вертикаль. ${bal.weakest && bal.index < 80 ? `Сейчас проседает <b>${esc(bal.weakest.name)}</b> — дай ей внимание.` : (bal.index >= 80 ? 'Отличный баланс — так держать. ⚖️' : 'Добавь активность в несколько сфер, чтобы поднять индекс.')}` : t('Баланс появится, когда хотя бы две сферы получат внимание. Это не оценка тебя.')}</p>
     </div>
     <div class="card"><h3>🎖 Ранги по сферам</h3>${skillRanksRows || '<p class="muted">Добавь навыки в Настройках.</p>'}</div>
     <div class="card"><h3>${t('XP по дням')}</h3>${barChartSVG(xpByDay(14), 2)}</div>
     ${advanced}
     ${loadCard}
     ${episodesCard}
-    <div class="card"><h3>${t('Рефлексии этой недели')}</h3>${reflections ? `<ul class="reflections">${reflections}</ul>` : '<p class="muted">Пока нет записей.</p>'}</div>`;
+    <div class="card"><h3>${t('Рефлексии этой недели')}</h3>${reflections ? `<ul class="reflections">${reflections}</ul>` : '<p class="muted">Пока нет записей.</p>'}</div>
+  </section>`;
 }
 
 // ============================================================
