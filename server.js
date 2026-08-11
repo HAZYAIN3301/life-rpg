@@ -1340,7 +1340,7 @@ function mapStravaActivity(a) {
 }
 
 // ============================================================
-//  Голос Тени v2.2 — локальный Piper по умолчанию, OpenAI только opt-in
+//  Голос Тени v2.3 — локальный Piper по умолчанию, OpenAI только opt-in
 // ============================================================
 // Piper работает отдельным приватным сервисом без пользовательских ключей и
 // поминутной оплаты. OpenAI сохраняется как явно включаемый совместимый provider.
@@ -1350,7 +1350,7 @@ try { PIPER_TTS_URL = new URL(process.env.PIPER_TTS_URL || 'http://127.0.0.1:500
 catch { PIPER_TTS_URL = new URL('http://127.0.0.1:5000'); }
 if (!['http:', 'https:'].includes(PIPER_TTS_URL.protocol)) PIPER_TTS_URL = new URL('http://127.0.0.1:5000');
 const PIPER_TTS_VOICES = {
-  RU: 'ru_RU-denis-medium',
+  RU: 'ru_RU-dmitri-medium',
   UK: 'uk_UA-mykyta-high',
   EN: 'en_US-joe-medium',
   DE: 'de_DE-thorsten-high',
@@ -1407,7 +1407,9 @@ const SHADOW_TTS_LANG = {
   ru: {
     tag: 'ru-RU',
     voice: shadowTtsVoiceEnv('RU'),
-    speed: shadowTtsSpeedEnv('RU', 0.94),
+    speed: shadowTtsSpeedEnv('RU', 1),
+    noiseScale: 0.667,
+    noiseWidthScale: 0.8,
     instruction: 'Speak in native Russian. Use a warm, composed, subtly mysterious feminine secretary voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
   },
   uk: {
@@ -1483,8 +1485,9 @@ function shadowTtsCacheInfo(uid, cacheKey) {
 function shadowTtsCacheKey(uid, language, context, text) {
   const cfg = SHADOW_TTS_LANG[language];
   return crypto.createHash('sha256').update(JSON.stringify({
-    v: 3, uid, provider: SHADOW_TTS_PROVIDER, model: SHADOW_TTS_MODEL, format: SHADOW_TTS_FORMAT,
-    voice: cfg.voice, speed: cfg.speed, language, context, text,
+    v: 4, uid, provider: SHADOW_TTS_PROVIDER, model: SHADOW_TTS_MODEL, format: SHADOW_TTS_FORMAT,
+    voice: cfg.voice, speed: cfg.speed, noiseScale: cfg.noiseScale,
+    noiseWidthScale: cfg.noiseWidthScale, language, context, text,
   })).digest('hex');
 }
 function shadowTtsFreshCache(info) {
@@ -1802,6 +1805,8 @@ async function handleShadowTts(req, res, user) {
     text,
     voice: cfg.voice,
     length_scale: Math.max(0.8, Math.min(1.3, 1 / cfg.speed)),
+    ...(Number.isFinite(cfg.noiseScale) ? { noise_scale: cfg.noiseScale } : {}),
+    ...(Number.isFinite(cfg.noiseWidthScale) ? { noise_w_scale: cfg.noiseWidthScale } : {}),
   } : {
     model: SHADOW_TTS_MODEL,
     input: text,

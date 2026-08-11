@@ -1,4 +1,4 @@
-# Shadow Voice v2.2 — локальный Piper TTS
+# Shadow Voice v2.3 — локальный Piper TTS
 
 Status: runtime и отдельный Piper-сервис реализованы 2026-08-11. До production нужны отдельный deploy Piper, приватный service URL в Satoru и real-device listening QA.
 
@@ -23,7 +23,7 @@ OpenAI Speech сохранён как необязательный совмес�
 
 | Язык | Piper voice | Лицензия датасета |
 |---|---|---|
-| RU | `ru_RU-denis-medium` | CC0 |
+| RU | `ru_RU-dmitri-medium` | CC0 |
 | UK | `uk_UA-mykyta-high` | Apache-2.0 |
 | EN | `en_US-joe-medium` | CC0 |
 | DE | `de_DE-thorsten-high` | CC0 |
@@ -48,7 +48,7 @@ Status выполняет короткий `/info` health check и не заяв
   "model": "piper-tts-1.6",
   "format": "wav",
   "languages": {
-    "ru": { "tag": "ru-RU", "voice": "ru_RU-denis-medium", "speed": 0.94 }
+    "ru": { "tag": "ru-RU", "voice": "ru_RU-dmitri-medium", "speed": 1 }
   },
   "maxCharacters": 2400,
   "aiGeneratedDisclosureRequired": true
@@ -95,7 +95,7 @@ PIPER_TTS_URL=http://piper-private-service:5000
 Опциональная замена голосов:
 
 ```text
-PIPER_TTS_VOICE_RU=ru_RU-denis-medium
+PIPER_TTS_VOICE_RU=ru_RU-dmitri-medium
 PIPER_TTS_VOICE_UK=uk_UA-mykyta-high
 PIPER_TTS_VOICE_EN=en_US-joe-medium
 PIPER_TTS_VOICE_DE=de_DE-thorsten-high
@@ -104,7 +104,11 @@ PIPER_TTS_VOICE_ES=es_ES-davefx-medium
 
 Операционные лимиты: `SHADOW_TTS_RPM`, `SHADOW_TTS_USER_CONCURRENCY`, `SHADOW_TTS_GLOBAL_CONCURRENCY`, `SHADOW_TTS_TIMEOUT_MS`, `SHADOW_TTS_MAX_CHARS`, `SHADOW_TTS_MAX_AUDIO_BYTES`, `SHADOW_TTS_CACHE_DAYS`, `SHADOW_TTS_CACHE_MAX_FILES`, `SHADOW_TTS_CACHE_MAX_MB`.
 
-Кэш хранится в `DATA_DIR/shadow-voice-cache/<user-id>/`. Ключ включает пользователя, provider, модель, формат, язык, voice, speed, context и текст. Запись атомарная, TTL/число/размер ограничены.
+Кэш хранится в `DATA_DIR/shadow-voice-cache/<user-id>/`. Ключ включает пользователя, provider, модель, формат, язык, voice, speed, Piper variability, context и текст. Запись атомарная, TTL/число/размер ограничены.
+
+RU-профиль использует нейтральный темп Piper (`length_scale=1`) и документированные значения вариативности для single-speaker voice: `noise_scale=0.667`, `noise_w_scale=0.8`. Это устраняет прежнее искусственное растягивание `Denis` при `speed=0.94`.
+
+`ru_RU-irina-medium` сохранён только как кандидат для дальнейшего слухового отбора: официальный model card указывает лицензию исходного датасета как `Unknown`, поэтому этот голос нельзя молча закреплять production-дефолтом.
 
 OpenAI включается только явно:
 

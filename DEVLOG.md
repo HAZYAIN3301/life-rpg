@@ -2,6 +2,14 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-11] 🔊 Shadow Voice v2.3 — естественный RU-профиль Piper
+
+- Реальная причина текущего плохого звука разделена на две части: production всё ещё не содержит локальный Piper-коммит, потому что push/deploy не выполнялись; в подготовленном runtime RU-дефолт дополнительно был неудачно закреплён на `Denis` и искусственно замедлен до `speed=0.94`.
+- На одной реплике локально синтезированы `Denis`, `Dmitri` и `Irina` Piper 1.6.0. Production-дефолт переведён на `ru_RU-dmitri-medium`: лицензия датасета CC0, нейтральный `length_scale=1`, явные `noise_scale=0.667` и `noise_w_scale=0.8`. Изменение профиля включено в cache key v4, поэтому старые WAV не маскируют новый голос.
+- Женский `Irina` остаётся сильным слуховым кандидатом, но не выдан за коммерчески безопасный: официальный model card сообщает `Dataset license: Unknown`. Для production он требует отдельного лицензионного решения или собственного разрешённого Piper voice.
+- Runtime UI и PWA shell не менялись; `public/app.js`, `public/styles.css`, `public/index.html`, `public/sw.js` и SW version не затронуты. Push/deploy не выполнялись.
+- QA: три реальных WAV на одной RU-реплике синтезированы Piper 1.6.0; server/test syntax — PASS; focused Piper **2/2 PASS**; полный suite **139/139 PASS**; scoped `git diff --check` — PASS. Затронуты `server.js`, `piper-tts/Dockerfile`, `piper-tts/README.md`, `SHADOW-VOICE-V2.md`, `scripts/shadow-voice-piper-v141.test.js`. Commit: `fix: improve Shadow Piper voice`.
+
 ## [2026-08-11] 🕯 Shadow Den v1 — самостоятельные и парные взаимодействия в Логове
 
 - Фактический разрыв: Тень в Логове была только одной кнопкой `comp-pet`, тогда как Гамабунта, Кацую и Мистер П уже имели самостоятельные биты, явные действия, подход к Traveller, атомарный совместный кадр и возврат. Добавлен отдельный `public/shadow-den-v1.js`, а `den-stage-v1` поднят `1.8.0 → 1.9.0`, `den-life-v1` — `2.5.0 → 2.6.0`.

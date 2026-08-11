@@ -99,7 +99,8 @@ test('Shadow Voice v141 uses private Piper, returns WAV and caches repeated spee
   assert.equal(statusBody.provider, 'piper');
   assert.equal(statusBody.mode, 'server-neural');
   assert.equal(statusBody.format, 'wav');
-  assert.equal(statusBody.languages.ru.voice, 'ru_RU-denis-medium');
+  assert.equal(statusBody.languages.ru.voice, 'ru_RU-dmitri-medium');
+  assert.equal(statusBody.languages.ru.speed, 1);
 
   const requestVoice = () => fetch(runtime.base + '/api/shadow/voice', {
     method: 'POST',
@@ -113,8 +114,10 @@ test('Shadow Voice v141 uses private Piper, returns WAV and caches repeated spee
   assert.equal(first.headers.get('x-shadow-voice-cache'), 'MISS');
   assert.equal(Buffer.from(await first.arrayBuffer()).subarray(0, 4).toString('ascii'), 'RIFF');
   assert.deepEqual(providerPayload.text, 'Я рядом.');
-  assert.equal(providerPayload.voice, 'ru_RU-denis-medium');
-  assert.ok(providerPayload.length_scale > 1);
+  assert.equal(providerPayload.voice, 'ru_RU-dmitri-medium');
+  assert.equal(providerPayload.length_scale, 1);
+  assert.equal(providerPayload.noise_scale, 0.667);
+  assert.equal(providerPayload.noise_w_scale, 0.8);
 
   const second = await requestVoice();
   assert.equal(second.status, 200); assert.equal(second.headers.get('x-shadow-voice-cache'), 'HIT');

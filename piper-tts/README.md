@@ -21,7 +21,7 @@ authenticated same-origin `/api/shadow/voice` route.
 
 | Locale | Piper voice | Dataset license |
 |---|---|---|
-| RU | `ru_RU-denis-medium` | CC0 |
+| RU | `ru_RU-dmitri-medium` | CC0 |
 | UK | `uk_UA-mykyta-high` | Apache-2.0 |
 | EN | `en_US-joe-medium` | CC0 |
 | DE | `de_DE-thorsten-high` | CC0 |
@@ -33,3 +33,9 @@ intentional. Voice model cards remain the source of truth for dataset licensing.
 
 - Engine and source: <https://github.com/OHF-Voice/piper1-gpl>
 - Voice catalog/model cards: <https://github.com/OHF-Voice/piper1-gpl/blob/main/docs/VOICES.md>
+
+The RU profile uses Piper's neutral tempo (`length_scale=1`) and its documented
+single-speaker variability defaults (`noise_scale=0.667`,
+`noise_w_scale=0.8`). `ru_RU-irina-medium` sounds more naturally feminine in
+the current audition, but is not a production default because its official
+model card lists the source dataset license as `Unknown`.
