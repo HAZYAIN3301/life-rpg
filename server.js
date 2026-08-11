@@ -148,6 +148,21 @@ function saveUsers(users) {
   writeJsonAtomic(USERS_FILE(), users);
 }
 function userDataDir(id) { return path.join(DATA_DIR, 'users', id); }
+// Рекламный кредит существует отдельно от пользовательских settings/economy-файлов:
+// обычный клиент не может подменить его сохранением настроек. Он доступен только
+// текущему серверно-проверенному администратору и никогда не адресуется userId из body.
+const ADMIN_GOLD_FILE = () => path.join(DATA_DIR, 'admin-gold.json');
+const ADMIN_GOLD_LIMIT = 1000000;
+function loadAdminGoldLedger() {
+  try {
+    const value = JSON.parse(fs.readFileSync(ADMIN_GOLD_FILE(), 'utf8'));
+    return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+  } catch { return {}; }
+}
+function adminGoldBalance(userId, ledger = loadAdminGoldLedger()) {
+  const value = Number(ledger[userId] && ledger[userId].balance);
+  return Number.isSafeInteger(value) && value >= 0 && value <= ADMIN_GOLD_LIMIT ? value : 0;
+}
 // ---- Мультиплеер: пати (общее состояние). Реестр в DATA_DIR/parties.json ----
 const PARTIES_FILE = () => path.join(DATA_DIR, 'parties.json');
 function loadParties() { try { return JSON.parse(fs.readFileSync(PARTIES_FILE(), 'utf8')); } catch { return []; } }
@@ -820,7 +835,13 @@ function entitlement(user) {
   return { tier: 'free', trialUsed: false };
 }
 function publicUser(user) {
-  return { id: user.id, name: user.name, avatar: user.avatar, isAdmin: !!user.isAdmin, email: user.email || null, hasPin: !!user.pinHash, entitlement: entitlement(user) };
+  return {
+    id: user.id, name: user.name, avatar: user.avatar, isAdmin: !!user.isAdmin,
+    // Только администратор видит свой серверный рекламный кредит. Обычным
+    // пользователям это поле вообще не выдаётся.
+    ...(user.isAdmin ? { adminGold: adminGoldBalance(user.id) } : {}),
+    email: user.email || null, hasPin: !!user.pinHash, entitlement: entitlement(user),
+  };
 }
 
 // ============================================================
@@ -885,10 +906,11 @@ function deleteAccountLifecycle(uid, users) {
   const partiesFile = PARTIES_FILE();
   const feedbackFile = path.join(DATA_DIR, 'feedback.json');
   const analyticsFile = path.join(DATA_DIR, 'analytics.json');
+  const adminGoldFile = ADMIN_GOLD_FILE();
   const feedbackBackupDir = path.join(DATA_DIR, 'feedback-backups');
   let feedbackBackupFiles = [];
   try { feedbackBackupFiles = fs.readdirSync(feedbackBackupDir).filter((name) => /^feedback-\d{4}-\d{2}-\d{2}\.json$/.test(name)).map((name) => path.join(feedbackBackupDir, name)); } catch {}
-  const protectedFiles = [USERS_FILE(), partiesFile, feedbackFile, analyticsFile, ...feedbackBackupFiles];
+  const protectedFiles = [USERS_FILE(), partiesFile, feedbackFile, analyticsFile, adminGoldFile, ...feedbackBackupFiles];
   const snapshots = new Map(protectedFiles.map((file) => [file, fileSnapshot(file)]));
   const userDir = userDataDir(uid);
   const trashDir = path.join(DATA_DIR, `.account-delete-${uid}-${crypto.randomBytes(5).toString('hex')}`);
@@ -910,6 +932,11 @@ function deleteAccountLifecycle(uid, users) {
     let analytics = {}; try { analytics = JSON.parse(fs.readFileSync(analyticsFile, 'utf8')); } catch {}
     for (const day of Object.values(analytics || {})) if (day && day.users) delete day.users[uid];
     writeJsonAtomic(analyticsFile, analytics || {});
+    const adminGold = loadAdminGoldLedger();
+    if (Object.prototype.hasOwnProperty.call(adminGold, uid)) {
+      delete adminGold[uid];
+      writeJsonAtomic(adminGoldFile, adminGold);
+    }
     saveUsers(users.filter((user) => user.id !== uid));
   } catch (error) {
     for (const [file, snapshot] of snapshots) { try { restoreSnapshot(file, snapshot); } catch {} }
@@ -1998,6 +2025,44 @@ const server = http.createServer(async (req, res) => {
     const me = loadUsers().find((entry) => entry.id === uid);
     if (!me || !me.isAdmin) return sendJson(res, 403, { error: 'admin_only' });
     return sendJson(res, 200, loadUsers().map(x => ({ id: x.id, name: x.name, avatar: x.avatar })));
+  }
+
+  // POST /api/admin/self-gold — рекламный кредит ТОЛЬКО для своего аккаунта.
+  // В body разрешён ровно signed delta; foreign userId/targetId специально
+  // отвергаются, а identity всегда берётся из подписанной сессии.
+  if (u === '/api/admin/self-gold' && req.method === 'POST') {
+    const uid = sessionUserId(req);
+    if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const users = loadUsers();
+    const me = users.find((entry) => entry.id === uid);
+    if (!me || !me.isAdmin) return sendJson(res, 403, { error: 'admin_only' });
+    let body = {};
+    try { body = JSON.parse(await readBody(req, 16 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
+    if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).some((key) => key !== 'delta')) {
+      return sendJson(res, 400, { error: 'invalid admin gold request' });
+    }
+    const delta = Number(body.delta);
+    if (!Number.isSafeInteger(delta) || delta === 0 || Math.abs(delta) > ADMIN_GOLD_LIMIT) {
+      return sendJson(res, 400, { error: 'invalid gold amount' });
+    }
+    const ledger = loadAdminGoldLedger();
+    const before = adminGoldBalance(uid, ledger);
+    const balance = before + delta;
+    if (!Number.isSafeInteger(balance) || balance < 0 || balance > ADMIN_GOLD_LIMIT) {
+      return sendJson(res, 400, { error: 'insufficient admin gold' });
+    }
+    const at = new Date().toISOString();
+    const previous = ledger[uid] && Array.isArray(ledger[uid].history) ? ledger[uid].history : [];
+    ledger[uid] = {
+      balance,
+      updatedAt: at,
+      // Короткий серверный журнал — для самопроверки рекламных выдач, без
+      // чужих аккаунтов и без персонального контента.
+      history: [...previous, { at, delta, balance }].slice(-50),
+    };
+    try { writeJsonAtomic(ADMIN_GOLD_FILE(), ledger); }
+    catch { return sendJson(res, 500, { error: 'admin gold save failed' }); }
+    return sendJson(res, 200, { ok: true, delta, adminGold: balance });
   }
 
   // ---- Feedback (баги/идеи/предложения + фото/видео) → data/feedback.json + data/feedback/ ----

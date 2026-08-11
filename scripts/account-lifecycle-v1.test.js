@@ -129,6 +129,31 @@ test('Account v123: auth, ownership, portable data, revocation and deletion are 
   assert.equal((await api(base, '/api/auth/me', { cookie: `lrpg_sess=${expiredPayload}.${expiredSig}` })).response.status, 401);
 });
 
+test('Admin gold v139 is server-owned and can adjust only the signed-in admin account', { timeout: 30000 }, async (t) => {
+  const runtime = await startServer();
+  t.after(() => { runtime.child.kill('SIGTERM'); fs.rmSync(runtime.dataDir, { recursive: true, force: true }); });
+  const { base, dataDir } = runtime;
+  const admin = await api(base, '/api/auth/register', { method: 'POST', body: { name: 'Admin', email: 'admin@example.test', password: 'admin-pass-123' } });
+  const member = await api(base, '/api/auth/register', { method: 'POST', body: { name: 'Member', email: 'member@example.test', password: 'member-pass-123' } });
+  assert.equal(admin.data.isAdmin, true); assert.equal(member.data.isAdmin, false);
+  assert.equal((await api(base, '/api/auth/me', { cookie: admin.cookie })).data.adminGold, 0);
+  assert.equal((await api(base, '/api/admin/self-gold', { method: 'POST', cookie: member.cookie, body: { delta: 50 } })).response.status, 403);
+  const foreignField = await api(base, '/api/admin/self-gold', { method: 'POST', cookie: admin.cookie, body: { delta: 50, userId: member.data.id } });
+  assert.equal(foreignField.response.status, 400, 'the endpoint must not accept a target identity');
+  const credited = await api(base, '/api/admin/self-gold', { method: 'POST', cookie: admin.cookie, body: { delta: 500 } });
+  assert.equal(credited.response.status, 200); assert.equal(credited.data.adminGold, 500);
+  assert.equal((await api(base, '/api/auth/me', { cookie: admin.cookie })).data.adminGold, 500, 'credit survives a new auth read');
+  const overdraft = await api(base, '/api/admin/self-gold', { method: 'POST', cookie: admin.cookie, body: { delta: -501 } });
+  assert.equal(overdraft.response.status, 400);
+  const debited = await api(base, '/api/admin/self-gold', { method: 'POST', cookie: admin.cookie, body: { delta: -200 } });
+  assert.equal(debited.response.status, 200); assert.equal(debited.data.adminGold, 300);
+  const ledger = JSON.parse(fs.readFileSync(path.join(dataDir, 'admin-gold.json'), 'utf8'));
+  assert.deepEqual(Object.keys(ledger), [admin.data.id], 'no member identity can be written through the self-only endpoint');
+  assert.equal(ledger[admin.data.id].balance, 300); assert.equal(ledger[admin.data.id].history.length, 2);
+  assert.equal((await api(base, '/api/auth/delete-account', { method: 'POST', cookie: admin.cookie, body: { password: 'admin-pass-123', confirm: 'DELETE' } })).response.status, 200);
+  assert.deepEqual(JSON.parse(fs.readFileSync(path.join(dataDir, 'admin-gold.json'), 'utf8')), {}, 'account deletion removes the server-only credit ledger entry');
+});
+
 test('Account v123 client contract has honest async states and accessible dialogs', () => {
   assert.match(APP, /\/api\/auth\/change-password/);
   assert.match(APP, /\/api\/account\/export/);
@@ -150,4 +175,8 @@ test('Account v123 client contract has honest async states and accessible dialog
   }
   assert.match(CSS, /Account & data lifecycle v123/);
   assert.match(CSS, /@media \(pointer: coarse\)[^]*account-dialog-box/);
+  assert.match(APP, /function adminGoldCredit\(\)/);
+  assert.match(APP, /\/api\/admin\/self-gold/);
+  assert.match(APP, /data-admin-gold-delta="1"/);
+  assert.match(APP, /data-admin-gold-delta="-1"/);
 });

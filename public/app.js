@@ -1782,6 +1782,15 @@ const I18N_EXTRA = {
   'Удаляю…': { en: 'Deleting…', de: 'Wird gelöscht…', uk: 'Видаляю…', es: 'Eliminando…' },
   'Мы храним только то, что ты вводишь сам: цели, квесты, дневник, привычки. Удаление аккаунта удаляет всё с сервера (DSGVO/GDPR).': { en: 'We store only what you enter yourself: goals, quests, journal, habits. Deleting the account removes everything from the server (GDPR).', de: 'Wir speichern nur, was du selbst eingibst: Ziele, Quests, Tagebuch, Gewohnheiten. Das Löschen des Kontos entfernt alles vom Server (DSGVO).', uk: 'Ми зберігаємо лише те, що ти вводиш сам: цілі, квести, щоденник, звички. Видалення акаунта видаляє все з сервера (GDPR).', es: 'Solo guardamos lo que tú introduces: metas, misiones, diario, hábitos. Eliminar la cuenta borra todo del servidor (RGPD).' },
   // Settings — admin
+  '🪙 Админ — золото для рекламы': { en: '🪙 Admin — promotional gold', de: '🪙 Admin — Werbegold', uk: '🪙 Адмін — рекламне золото', es: '🪙 Admin — oro promocional' },
+  'Только для вашего текущего админ-аккаунта; другие профили не затрагиваются.': { en: 'Only for your current admin account; other profiles are not affected.', de: 'Nur für dein aktuelles Admin-Konto; andere Profile bleiben unberührt.', uk: 'Лише для вашого поточного адмін-акаунта; інші профілі не зачіпаються.', es: 'Solo para tu cuenta de administrador actual; los demás perfiles no se ven afectados.' },
+  'Серверный рекламный кредит': { en: 'Server promotional credit', de: 'Server-Werbeguthaben', uk: 'Серверний рекламний кредит', es: 'Crédito promocional del servidor' },
+  'Сумма золота': { en: 'Gold amount', de: 'Goldbetrag', uk: 'Сума золота', es: 'Cantidad de oro' },
+  'Начислить себе': { en: 'Add to my account', de: 'Mir gutschreiben', uk: 'Нарахувати собі', es: 'Añadir a mi cuenta' },
+  'Списать у себя': { en: 'Remove from my account', de: 'Von meinem Konto abziehen', uk: 'Списати в себе', es: 'Retirar de mi cuenta' },
+  'Введи целое число от 1 до 1 000 000.': { en: 'Enter a whole number from 1 to 1,000,000.', de: 'Gib eine ganze Zahl von 1 bis 1.000.000 ein.', uk: 'Введіть ціле число від 1 до 1 000 000.', es: 'Introduce un número entero de 1 a 1.000.000.' },
+  'Рекламный кредит обновлён.': { en: 'Promotional credit updated.', de: 'Werbeguthaben aktualisiert.', uk: 'Рекламний кредит оновлено.', es: 'Crédito promocional actualizado.' },
+  'Не удалось изменить золото.': { en: 'Gold could not be changed.', de: 'Gold konnte nicht geändert werden.', uk: 'Не вдалося змінити золото.', es: 'No se pudo cambiar el oro.' },
   '🛠 Админ — выдать Pro': { en: '🛠 Admin — grant Pro', de: '🛠 Admin — Pro vergeben', uk: '🛠 Адмін — видати Pro', es: '🛠 Admin — conceder Pro' },
   'Выдать Pro': { en: 'Grant Pro', de: 'Pro vergeben', uk: 'Видати Pro', es: 'Conceder Pro' },
   'Выбери профиль из списка — поиск по имени или id. Пусто в «дней» = бессрочный Pro.': { en: 'Pick a profile from the list — search by name or id. Empty "days" = permanent Pro.', de: 'Wähle ein Profil aus der Liste — Suche nach Name oder ID. Leeres „Tage" = dauerhaftes Pro.', uk: 'Обери профіль зі списку — пошук за іменем або id. Порожньо в «днів» = безстроковий Pro.', es: 'Elige un perfil de la lista — busca por nombre o id. «Días» vacío = Pro permanente.' },
@@ -5175,7 +5184,11 @@ function overallXp() { return earnedXp() + totalImportedXp(); }
 function ownSkillXp(id) { return xpEvents().reduce((s, e) => s + (e.skillId === id ? e.xp : 0), 0) + importedXp(id); }
 // XP сферы. Для столба = собственный + сумма ВСЕХ потомков (агрегация вверх по дереву любой глубины).
 function skillXp(id) { let xp = ownSkillXp(id); for (const c of descendantSkills(id)) xp += ownSkillXp(c.id); return xp; }
-function goldEarned() { return xpEvents().reduce((s, e) => s + e.gold, 0) + (State.lootbox ? (State.lootbox.goldWon || 0) : 0); }
+function adminGoldCredit() {
+  const value = Number(State.me && State.me.isAdmin && State.me.adminGold);
+  return Number.isSafeInteger(value) && value > 0 ? value : 0;
+}
+function goldEarned() { return xpEvents().reduce((s, e) => s + e.gold, 0) + (State.lootbox ? (State.lootbox.goldWon || 0) : 0) + adminGoldCredit(); }
 function goldSpent() { return (State.purchases || []).reduce((s, p) => s + (p.cost || 0), 0); }
 function goldBalance() { return Math.round(goldEarned() - goldSpent()); }
 // ── Форма / Momentum (импорт v2): «свежесть» по активности. НЕ трогает уровень (Proven).
@@ -16132,7 +16145,17 @@ function adminCard() {
   const recoverList = users.length
     ? `<datalist id="recover-users-dl">${users.map((u) => `<option value="${esc(u.id)}">${esc(u.avatar || '')} ${esc(u.name)} (${esc(u.id)})</option>`).join('')}</datalist>`
     : '';
-  return `<div class="card"><h3>${t('🛠 Админ — выдать Pro')}</h3>
+  const ownCredit = adminGoldCredit();
+  return `<div class="card"><h3>${t('🪙 Админ — золото для рекламы')}</h3>
+    <p class="muted" style="font-size:12px;margin:0 0 8px">${t('Только для вашего текущего админ-аккаунта; другие профили не затрагиваются.')}</p>
+    <p style="margin:0 0 8px"><strong>${t('Серверный рекламный кредит')}:</strong> ${ownCredit} 🪙</p>
+    <form id="admin-gold-adjust" class="pin-change">
+      <label><span class="sr-only">${t('Сумма золота')}</span><input name="amount" type="number" inputmode="numeric" min="1" max="${1000000}" step="1" value="100" required /></label>
+      <button type="submit" class="btn" data-admin-gold-delta="1">${t('Начислить себе')}</button>
+      <button type="submit" class="btn ghost" data-admin-gold-delta="-1">${t('Списать у себя')}</button>
+      <span class="muted admin-gold-msg" role="status" aria-live="polite"></span>
+    </form>
+    <h3 style="margin-top:16px">${t('🛠 Админ — выдать Pro')}</h3>
     <form id="grant-pro" class="pin-change">
       ${userInput}
       <input name="days" type="number" placeholder="${t('дней (пусто=навсегда)')}" min="1" style="width:170px" />
@@ -18125,6 +18148,33 @@ async function onSubmit(e) {
     fetch('/api/auth/grant-pro', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: f.userId.value.trim(), days }) })
       .then(async (r) => { const d = await r.json(); if (r.ok) { msg.textContent = `✓ Pro выдан: ${d.name}`; msg.style.color = '#5fbf7a'; if (d.id === (State.me && State.me.id)) { State.me = d; render(); } } else { msg.textContent = d.error || 'Ошибка'; msg.style.color = '#e0526a'; } })
       .catch(() => { msg.textContent = t('Сетевая ошибка'); msg.style.color = '#e0526a'; });
+    return;
+  }
+  // --- Админ: рекламное золото только для самого себя ---
+  if (f.id === 'admin-gold-adjust') {
+    e.preventDefault();
+    const msg = f.querySelector('.admin-gold-msg');
+    const deltaSign = Number(e.submitter && e.submitter.dataset.adminGoldDelta);
+    const amount = Number(f.amount.value);
+    if (!Number.isSafeInteger(amount) || amount < 1 || amount > 1000000 || ![1, -1].includes(deltaSign)) {
+      msg.textContent = t('Введи целое число от 1 до 1 000 000.'); msg.setAttribute('role', 'alert'); return;
+    }
+    const buttons = [...f.querySelectorAll('button[type="submit"]')];
+    buttons.forEach((button) => { button.disabled = true; });
+    msg.textContent = t('Сохраняю…'); msg.setAttribute('role', 'status');
+    try {
+      const { response, data } = await accountJson('/api/admin/self-gold', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ delta: deltaSign * amount }),
+      });
+      if (!response.ok) {
+        msg.textContent = accountError(data, 'Не удалось изменить золото.'); msg.setAttribute('role', 'alert'); return;
+      }
+      State.me = { ...State.me, adminGold: data.adminGold };
+      toast(t('Рекламный кредит обновлён.'));
+      render();
+    } catch {
+      msg.textContent = t('Сетевая ошибка'); msg.setAttribute('role', 'alert');
+    } finally { buttons.forEach((button) => { if (button.isConnected) button.disabled = false; }); }
     return;
   }
   if (f.id === 'recover-data') {
