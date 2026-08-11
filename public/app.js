@@ -14076,6 +14076,11 @@ function applyNudgeVoice(html, voiced) {
   const i = html.indexOf('>');
   return i < 0 ? html : html.slice(0, i + 1) + `<p class="nudge-voice">${esc(voiced)}</p>` + html.slice(i + 1);
 }
+// Награда за закрытый заказ. Стартовое значение, а не выверенный баланс:
+// доля золота (35%) взята той же, что у целей, чтобы заказ не выбивался из
+// уже существующей экономики. Настраивать после первых живых выполнений.
+const BOARD_ORDER_XP = 40;
+
 // ── Доска заказов (BOARD-OF-CONTRACTS-PLAN, этап 1) ──────────────────────────
 // Люди не бездействуют потому, что ленивы: «сходи в приключение» просто не
 // является выполнимой инструкцией. Доска снимает стоимость РЕШЕНИЯ — то же, что
@@ -19274,11 +19279,23 @@ function onClick(e) {
   } else if (action === 'board-done') {
     const B = window.BoardV1;
     if (!B) return;
+    const order = boardOrderById(id);
     const res = B.completeOrder(boardRead(), id, today);
     if (!res.ok) return;
     boardWrite(res.state);
-    // Решение 10.08: выполненный заказ засчитывается в баланс сфер. Начисление —
-    // дело вызывающего, модуль только сообщает сферу.
+    // Решение 10.08: заказ засчитывается в баланс сфер. Опыт в системе не
+    // начисляется вызовом — он ВЫВОДИТСЯ из записей (xpEvents), поэтому
+    // закрытый заказ становится закрытым делом. Так он сам попадает и в опыт,
+    // и в нагрузку сферы, и в статистику, без отдельной проводки.
+    if (order) {
+      State.tasks.push({
+        id: uid(), title: order.title, skillId: res.sphereId, skillIds: res.sphereId ? [res.sphereId] : [],
+        estimateMin: 0, difficulty: 'normal', date: today, done: true, completedAt: new Date().toISOString(),
+        xpAwarded: BOARD_ORDER_XP, goldAwarded: Math.round(BOARD_ORDER_XP * 0.35),
+        actualMin: null, startTime: null, fromBoard: true, createdAt: new Date().toISOString(),
+      });
+      Store.save('tasks', State.tasks);
+    }
     toast(t('Заказ закрыт'));
     render();
   } else if (action === 'board-return') {
