@@ -2216,6 +2216,15 @@ const I18N_EXTRA = {
   'Мой': { en: 'Still mine', de: 'Bleibt meiner', uk: 'Моє', es: 'Sigue siendo mío' },
   'Три заказа сразу — уже список дел, а не приключение': { en: 'Three at once is a to-do list, not an adventure', de: 'Drei auf einmal sind eine To-do-Liste, kein Abenteuer', uk: 'Три замовлення разом — це вже список справ, а не пригода', es: 'Tres a la vez ya es una lista de tareas, no una aventura' },
   'Не удалось взять заказ': { en: 'Could not take the contract', de: 'Auftrag konnte nicht genommen werden', uk: 'Не вдалося взяти замовлення', es: 'No se pudo tomar el encargo' },
+  // ── Калибровка вкуса доски (BOARD-OF-CONTRACTS-PLAN §9) ──
+  'Что из этого — твоё?': { en: 'Which of these is yours?', de: 'Was davon ist deins?', uk: 'Що з цього — твоє?', es: '¿Cuál de estos es tuyo?' },
+  'Несколько заказов с доски. Отметь, что откликается, а что нет — дальше доска будет предлагать по-твоему. Пропустить можно в любой момент.': { en: 'A few contracts from the board. Mark what resonates and what does not — the board will then offer things your way. You can stop any time.', de: 'Ein paar Auftr\u00e4ge von der Tafel. Markiere, was dich anspricht und was nicht — danach schl\u00e4gt die Tafel nach deinem Geschmack vor. Du kannst jederzeit aufh\u00f6ren.', uk: '\u041a\u0456\u043b\u044c\u043a\u0430 \u0437\u0430\u043c\u043e\u0432\u043b\u0435\u043d\u044c \u0437 \u0434\u043e\u0448\u043a\u0438. \u041f\u043e\u0437\u043d\u0430\u0447, \u0449\u043e \u0432\u0456\u0434\u0433\u0443\u043a\u0443\u0454\u0442\u044c\u0441\u044f, \u0430 \u0449\u043e \u043d\u0456 — \u0434\u0430\u043b\u0456 \u0434\u043e\u0448\u043a\u0430 \u043f\u0440\u043e\u043f\u043e\u043d\u0443\u0432\u0430\u0442\u0438\u043c\u0435 \u043f\u043e-\u0442\u0432\u043e\u0454\u043c\u0443. \u041f\u0440\u043e\u043f\u0443\u0441\u0442\u0438\u0442\u0438 \u043c\u043e\u0436\u043d\u0430 \u0431\u0443\u0434\u044c-\u043a\u043e\u043b\u0438.', es: 'Algunos encargos del tabl\u00f3n. Marca lo que te resuena y lo que no — despu\u00e9s el tabl\u00f3n propondr\u00e1 a tu manera. Puedes parar cuando quieras.' },
+  'из': { en: 'of', de: 'von', uk: '\u0437', es: 'de' },
+  'Почему? Одной строкой, необязательно': { en: 'Why? One line, optional', de: 'Warum? Eine Zeile, optional', uk: '\u0427\u043e\u043c\u0443? \u041e\u0434\u043d\u0438\u043c \u0440\u044f\u0434\u043a\u043e\u043c, \u043d\u0435\u043e\u0431\u043e\u0432\u2019\u044f\u0437\u043a\u043e\u0432\u043e', es: '\u00bfPor qu\u00e9? Una l\u00ednea, opcional' },
+  'например: не люблю холод': { en: 'e.g. I do not like the cold', de: 'z.\u202fB. ich mag K\u00e4lte nicht', uk: '\u043d\u0430\u043f\u0440\u0438\u043a\u043b\u0430\u0434: \u043d\u0435 \u043b\u044e\u0431\u043b\u044e \u0445\u043e\u043b\u043e\u0434', es: 'p.\u202fej. no me gusta el fr\u00edo' },
+  'Моё': { en: 'Mine', de: 'Meins', uk: '\u041c\u043e\u0454', es: 'M\u00edo' },
+  'Не моё': { en: 'Not mine', de: 'Nicht meins', uk: '\u041d\u0435 \u043c\u043e\u0454', es: 'No es m\u00edo' },
+  'Хватит пока': { en: 'Enough for now', de: 'Genug f\u00fcr jetzt', uk: '\u0414\u043e\u0441\u0438\u0442\u044c \u043f\u043e\u043a\u0438', es: 'Suficiente por ahora' },
   'Разделы дня': { en: 'Day sections', de: 'Bereiche des Tages', uk: 'Розділи дня', es: 'Secciones del día' },
   'День': { en: 'Day', de: 'Tag', uk: 'День', es: 'Día' },
   'Доска': { en: 'Board', de: 'Tafel', uk: 'Дошка', es: 'Tablón' },
@@ -14219,17 +14228,64 @@ function boardTilt(id) {
   for (let i = 0; i < id.length; i++) h = ((h * 33) ^ id.charCodeAt(i)) >>> 0;
   return ((h % 49) - 24) / 10;
 }
+function tasteRead() {
+  return window.BoardTasteV1 ? window.BoardTasteV1.normalize(State.settings && State.settings.boardTaste) : null;
+}
+function tasteWrite(next) {
+  State.settings.boardTaste = next;
+  Store.save('settings', State.settings);
+}
+/**
+ * Первый заход на доску — калибровка вкуса (§9). Не анкета «какие приключения
+ * ты любишь»: на такой вопрос человек отвечает про желаемую жизнь, а не про
+ * фактическую. Вместо этого — настоящие заказы и «моё / не моё».
+ *
+ * По одному за раз: десять карточек сразу превращаются в форму, которую
+ * бросают на середине.
+ */
+function boardCalibrationHTML() {
+  const T = window.BoardTasteV1, P = window.BoardPoolV1;
+  const st = tasteRead();
+  const set = T.calibrationSet(P.ALL, st, T.CALIBRATION_SIZE);
+  const done = T.verdictCount(st);
+  const order = set[0];
+  if (!order) return '';
+  const total = done + set.length;
+  return `<section class="board-calib" aria-labelledby="calib-title">
+    <h2 id="calib-title">${t('Что из этого — твоё?')}</h2>
+    <p class="calib-lead">${t('Несколько заказов с доски. Отметь, что откликается, а что нет — дальше доска будет предлагать по-твоему. Пропустить можно в любой момент.')}</p>
+    <p class="calib-count">${done + 1} ${t('из')} ${total}</p>
+    <blockquote class="calib-order">${esc(order.title)}</blockquote>
+    <label class="calib-label" for="calib-note">${t('Почему? Одной строкой, необязательно')}</label>
+    <input id="calib-note" class="calib-note" maxlength="280" autocomplete="off" placeholder="${t('например: не люблю холод')}" />
+    <div class="calib-acts">
+      <button class="btn" data-action="calib-like" data-id="${esc(order.id)}">${t('Моё')}</button>
+      <button class="btn ghost" data-action="calib-skip" data-id="${esc(order.id)}">${t('Не моё')}</button>
+      <button class="btn ghost sm" data-action="calib-stop">${t('Хватит пока')}</button>
+    </div>
+  </section>`;
+}
 /** Полноэкранная доска — вкладка «Сегодня». Листы слева, развёрнутый заказ справа. */
 function boardScreenHTML() {
-  const B = window.BoardV1, P = window.BoardPoolV1;
+  const B = window.BoardV1, P = window.BoardPoolV1, T = window.BoardTasteV1;
   if (!B || !P) return `<p class="muted">${t('Доска недоступна')}</p>`;
   const today = todayStr();
+
+  // Первый заход: сначала калибровка, доска — после. Пока вкус неизвестен,
+  // подбор всё равно был бы вслепую.
+  if (T && !T.isCalibrated(tasteRead()) && !State._calibStopped) {
+    const calib = boardCalibrationHTML();
+    if (calib) return calib;
+  }
+
   const st = B.sweepExpired(boardRead(), today).state;
 
   const mine = B.activeOrders(st);
   const view = B.board(P.ALL, {
     neglectedSpheres: boardNeglectedSpheres(),
     activeSpheres: (State.settings.skills || []).map((s) => s.id),
+    tasteWeights: T ? T.tagWeights(tasteRead(), P.ALL, today) : null,
+    scoreOrder: T ? T.scoreOrder : null,
   }, st, today);
   const offers = view.personal.concat(view.seasonal ? [view.seasonal] : []);
 
@@ -19449,6 +19505,16 @@ function onClick(e) {
       if (note) Object.assign(x, note);
     });
     Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
+  } else if (action === 'calib-like' || action === 'calib-skip') {
+    const T = window.BoardTasteV1;
+    if (!T || !id) return;
+    const field = document.getElementById('calib-note');
+    tasteWrite(T.recordVerdict(tasteRead(), id, action === 'calib-like' ? T.LIKE : T.SKIP, field ? field.value : '', today));
+    render();
+  } else if (action === 'calib-stop') {
+    // «Хватит пока» не стирает уже сказанное и не считается отказом: вкус
+    // достраивается по ходу, а не за один присест.
+    State._calibStopped = true; render();
   } else if (action === 'today-tab') {
     State._todayTab = id === 'board' ? 'board' : 'day'; render();
   } else if (action === 'board-pick') {

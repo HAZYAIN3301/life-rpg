@@ -226,12 +226,24 @@
     const seasonalPool = available.filter((o) => o.seasonal && (!o.seasons || !season || o.seasons.includes(season)));
     const seasonal = pickStable(seasonalPool, BOARD_SEASONAL, key, () => 0)[0] || null;
 
-    // Личные: приоритет запущенным сферам, затем своим сферам вообще.
-    // Именно здесь закрывается замечание §3 — «нет питомца в этой сфере, и нет
-    // даже напоминания о ней». Заказ в пустую сферу и есть напоминание.
+    // Личные: сумма двух сигналов, а не строгий приоритет одного.
+    //
+    // Сфера (§3): заказ в пустую сферу — самый естественный способ напомнить о
+    // ней, не читая нотаций про баланс. Вкус (§9): подбор обязан быть личным,
+    // иначе доска предлагает вслепую.
+    //
+    // Вкус намеренно весит вдвое: сильное «не моё» должно перебивать запущенную
+    // сферу. Напоминание о заброшенном ремесле бесполезно, если человеку
+    // отвратительна сама форма заказа — он просто перестанет открывать доску.
     const personalPool = available.filter((o) => !o.seasonal && (!seasonal || o.id !== seasonal.id));
-    const rank = (o) => (neglected.has(o.sphereId) ? 0 : mine.has(o.sphereId) ? 1 : 2);
-    const personal = pickStable(personalPool, BOARD_PERSONAL, key, rank);
+    const taste = c.tasteWeights || null;
+    const scoreOf = (o) => {
+      const tier = neglected.has(o.sphereId) ? 2 : mine.has(o.sphereId) ? 1 : 0;
+      const tasteScore = taste && typeof c.scoreOrder === 'function' ? c.scoreOrder(o, taste) : 0;
+      return tier + tasteScore * 2;
+    };
+    // rank = «меньше значит раньше», поэтому оценку инвертируем.
+    const personal = pickStable(personalPool, BOARD_PERSONAL, key, (o) => -scoreOf(o));
 
     return { season, personal, seasonal };
   }
@@ -241,7 +253,9 @@
       .slice()
       .sort((a, b) => {
         const ra = rank(a), rb = rank(b);
-        if (ra !== rb) return ra - rb;
+        // Оценки — дробные, поэтому сравниваем с допуском: иначе разница в
+        // 1e-15 давала бы «разный» порядок и доска дрожала бы между рендерами.
+        if (Math.abs(ra - rb) > 1e-9) return ra - rb;
         const ha = hash(a.id + '#' + key), hb = hash(b.id + '#' + key);
         if (ha !== hb) return ha - hb;
         return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;

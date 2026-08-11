@@ -14802,3 +14802,23 @@ html.calendar-task-open body {
 @media (prefers-reduced-motion: reduce) {
   .bsheet, .bsheet:hover, .bsheet:focus-visible { transition: none; }
 }
+
+/* ── Калибровка вкуса доски ──────────────────────────────────────────────────
+   Один заказ за раз, крупно: это не форма, а вопрос. Шкала --sp-*, роли --type-*. */
+.board-calib { max-width: var(--measure-prose); padding: var(--sp-5); border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+.board-calib h2 { margin: 0 0 var(--sp-2); font-size: var(--type-heading); line-height: var(--leading-label); }
+.calib-lead { margin: 0 0 var(--sp-4); font-size: var(--type-control); color: var(--muted); max-width: var(--measure-compact); }
+.calib-count { margin: 0 0 var(--sp-2); font-family: var(--font-number); font-size: var(--type-meta); color: var(--muted); letter-spacing: var(--tracking-caps); }
+.calib-order {
+  margin: 0 0 var(--sp-4); padding: var(--sp-4); border-left: 3px solid var(--accent, #e0a23e);
+  font-family: var(--font-display); font-size: var(--type-title); line-height: var(--leading-display);
+  max-width: var(--measure-compact);
+}
+.calib-label { display: block; margin-bottom: var(--sp-2); font-size: var(--type-meta); color: var(--muted); }
+.calib-note {
+  width: 100%; box-sizing: border-box; margin-bottom: var(--sp-4); font-size: var(--type-control);
+  padding: var(--sp-2) var(--sp-3); border-radius: var(--radius);
+  background: var(--bg, transparent); border: 1px solid var(--line); color: inherit;
+}
+.calib-acts { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+@media (hover: none) { .calib-acts .btn, .calib-note { min-height: 42px; } }
