@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-11] 🌐 Product-wide locale gate v138 — системный текст не смешивает языки
+
+- Подтверждённые утечки русского системного текста закрыты в Today, Notes, Tree, Rewards, Pets, Stats и Settings. Авторские строки теперь проходят через `t()`/`t18()`; пользовательские названия квестов, привычек и заметок остаются в исходном языке и никогда не переводятся автоматически.
+- Today локализует hero title/subtitle, KPI, подсказки сложности, quest-board labels, check-in actions, recap и единицы долгого отсутствия. Локальная переменная даты в `companionCard()` не затеняет переводчик: этот путь закреплён через `t18()`.
+- Rewards локализует названия снаряжения, слоты, бонусы, новые звания и достижения. Pets локализует Fortune Cat skin/pose/equipment summary. Settings локализует ambient description/modes, Back и preview Shadow; Stats — weekly share card.
+- Добавлен `scripts/product-locale-v138.test.js`: четыре non-RU словаря, renderer contracts, отсутствие новых duplicate rows и текущий offline shell.
+- Live QA на изолированном preview: RU/EN/DE/UK/ES; проблемные семь экранов на 375×812; финальный DE-прогон на 360×800 и 1280×900. Все экраны открылись без error-boundary, `scrollWidth === clientWidth`, console warnings/errors = 0. EN/DE/ES не содержат русского системного текста; UK не содержит исходных RU-формулировок.
+- QA: `node --check` app/SW, `git diff --check`, focused locale **3/3 PASS**, полный `npm test` **134/134 PASS**. Первый непривилегированный прогон дал шесть `listen EPERM`; повтор с разрешёнными локальными test listeners прошёл полностью без assertion failures.
+- PWA cache: `satoru-v137 → satoru-v138`.
+
 ## [2026-08-11] 📲 Install / PWA / push UX v137 — отдельные, честные решения
 
 - Запрос browser notification больше не может появиться при старте фокуса. Его вызывают только явные действия пользователя: включение push в Settings либо включение запланированных напоминаний.

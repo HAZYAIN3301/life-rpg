@@ -3026,6 +3026,76 @@ const I18N_EXTRA = {
   'Изменения телосложения не сохранены. Значения остались в форме — повтори попытку.': { en: 'Body changes were not saved. The values remain in the form — try again.', de: 'Körperdaten wurden nicht gespeichert. Die Werte bleiben im Formular — versuche es erneut.', uk: 'Зміни статури не збережено. Значення лишилися у формі — спробуй ще раз.', es: 'Los cambios corporales no se guardaron. Los valores siguen en el formulario; inténtalo de nuevo.' },
   'Телосложение обновлено': { en: 'Body details updated', de: 'Körperdaten aktualisiert', uk: 'Статуру оновлено', es: 'Datos corporales actualizados' },
   'Не удалось обновить профиль. Ничего не изменено — повтори попытку.': { en: 'Could not refresh the profile. Nothing changed — try again.', de: 'Das Profil konnte nicht aktualisiert werden. Nichts wurde geändert — versuche es erneut.', uk: 'Не вдалося оновити профіль. Нічого не змінено — спробуй ще раз.', es: 'No se pudo actualizar el perfil. Nada cambió; inténtalo de nuevo.' },
+  // ── Product-wide locale gate v138: authored system copy, never user content ──
+  'Соберём первый квест на сегодня.': { en: 'Let’s build the first quest for today.', de: 'Stellen wir die erste Quest für heute zusammen.', uk: 'Зберімо перший квест на сьогодні.', es: 'Preparemos la primera misión de hoy.' },
+  'Следующий ход уже выбран.': { en: 'Your next move is already chosen.', de: 'Dein nächster Schritt steht schon fest.', uk: 'Наступний крок уже обрано.', es: 'Tu próximo paso ya está elegido.' },
+  'День почти собран.': { en: 'The day is almost set.', de: 'Der Tag steht fast.', uk: 'День майже зібрано.', es: 'El día está casi listo.' },
+  'Сейчас лучше не смотреть на всю систему — закрой следующий квест.': { en: 'Ignore the whole system for now and finish the next quest.', de: 'Blende jetzt das ganze System aus und schließe die nächste Quest ab.', uk: 'Зараз краще не дивитися на всю систему — закрий наступний квест.', es: 'Ignora por ahora todo el sistema y completa la siguiente misión.' },
+  'Основной список уже на месте. Добей хвосты, забери награды и закрой день спокойно.': { en: 'The main list is ready. Tie up loose ends, claim rewards and close the day calmly.', de: 'Die Hauptliste steht. Erledige offene Enden, hole Belohnungen ab und schließe den Tag ruhig.', uk: 'Основний список уже на місці. Закрий хвости, забери нагороди й спокійно заверши день.', es: 'La lista principal está lista. Cierra pendientes, recoge recompensas y termina el día con calma.' },
+  'Начни с одного понятного действия. Остальные системы подождут за кулисами.': { en: 'Start with one clear action. The other systems can wait backstage.', de: 'Beginne mit einer klaren Handlung. Die anderen Systeme können im Hintergrund warten.', uk: 'Почни з однієї зрозумілої дії. Решта систем зачекає за лаштунками.', es: 'Empieza con una acción clara. Los demás sistemas pueden esperar entre bastidores.' },
+  'готово': { en: 'done', de: 'erledigt', uk: 'готово', es: 'hecho' },
+  'энергия': { en: 'energy', de: 'Energie', uk: 'енергія', es: 'energía' },
+  'фокус': { en: 'focus', de: 'Fokus', uk: 'фокус', es: 'enfoque' },
+  'Лёгкая — рутина, механика': { en: 'Easy — routine, mechanical', de: 'Leicht — Routine, mechanisch', uk: 'Легка — рутина, механіка', es: 'Fácil — rutina, mecánica' },
+  'Обычная — требует фокуса': { en: 'Normal — requires focus', de: 'Normal — erfordert Fokus', uk: 'Звичайна — потребує фокусу', es: 'Normal — requiere concentración' },
+  'Сложная — вызов, выход из зоны комфорта → активирует Хайп': { en: 'Hard — a challenge beyond your comfort zone → activates Hype', de: 'Schwer — eine Herausforderung außerhalb der Komfortzone → aktiviert Hype', uk: 'Складна — виклик поза зоною комфорту → активує Хайп', es: 'Difícil — un reto fuera de tu zona de confort → activa Hype' },
+  'Квесты на сегодня': { en: 'Today’s quests', de: 'Heutige Quests', uk: 'Квести на сьогодні', es: 'Misiones de hoy' },
+  'План:': { en: 'Plan:', de: 'Plan:', uk: 'План:', es: 'Plan:' },
+  'На сегодня привычек нет.': { en: 'No habits for today.', de: 'Für heute gibt es keine Gewohnheiten.', uk: 'На сьогодні звичок немає.', es: 'No hay hábitos para hoy.' },
+  'Наговори день — Тень разложит по делам': { en: 'Talk through your day — Shadow will sort it into actions', de: 'Erzähle von deinem Tag — Schatten ordnet ihn in Aufgaben', uk: 'Розкажи про день — Тінь розкладе його на справи', es: 'Cuenta tu día: Sombra lo ordenará en acciones' },
+  'Итог дня — расскажи, что сделал': { en: 'Day recap — tell what you did', de: 'Tagesrückblick — erzähle, was du geschafft hast', uk: 'Підсумок дня — розкажи, що зробив', es: 'Resumen del día — cuenta qué hiciste' },
+  'Утренний чек-ин': { en: 'Morning check-in', de: 'Morgen-Check-in', uk: 'Ранковий чек-ін', es: 'Registro matutino' },
+  'Вечерний чек-ин': { en: 'Evening check-in', de: 'Abend-Check-in', uk: 'Вечірній чек-ін', es: 'Registro nocturno' },
+  'обнял сегодня': { en: 'hugged today', de: 'heute umarmt', uk: 'обійняв сьогодні', es: 'abrazo de hoy' },
+  'Погладить': { en: 'Pet', de: 'Streicheln', uk: 'Погладити', es: 'Acariciar' },
+  'Веха доступна': { en: 'Milestone available', de: 'Meilenstein verfügbar', uk: 'Віха доступна', es: 'Hito disponible' },
+  'Веха закрыта': { en: 'Milestone locked', de: 'Meilenstein gesperrt', uk: 'Віху закрито', es: 'Hito bloqueado' },
+  'Эмбиент-звук': { en: 'Ambient sound', de: 'Umgebungsgeräusche', uk: 'Ембієнт-звук', es: 'Sonido ambiente' },
+  'У каждого режима свой звуковой рисунок и реакция Логова: капли, треск камина, наушники или птица у окна.': { en: 'Each mode has its own soundscape and Lair response: drops, a crackling fire, headphones or a bird by the window.', de: 'Jeder Modus hat eine eigene Klangwelt und eine Reaktion im Versteck: Tropfen, Kaminfeuer, Kopfhörer oder ein Vogel am Fenster.', uk: 'Кожен режим має власний звуковий малюнок і реакцію Лігва: краплі, тріск каміна, навушники або птах біля вікна.', es: 'Cada modo tiene su propio paisaje sonoro y una reacción en la Guarida: gotas, chimenea, auriculares o un pájaro junto a la ventana.' },
+  'Прослушать Тень': { en: 'Preview Shadow', de: 'Schatten anhören', uk: 'Прослухати Тінь', es: 'Escuchar a Sombra' },
+  'Назад': { en: 'Back', de: 'Zurück', uk: 'Назад', es: 'Atrás' },
+  'Красивая карточка итогов недели — поделись или сохрани PNG.': { en: 'A polished weekly recap card — share it or save it as PNG.', de: 'Eine schöne Wochenrückblick-Karte — teilen oder als PNG speichern.', uk: 'Красива картка підсумків тижня — поділися або збережи PNG.', es: 'Una cuidada tarjeta del resumen semanal: compártela o guárdala como PNG.' },
+  'Обсидиан и золото': { en: 'Obsidian and gold', de: 'Obsidian und Gold', uk: 'Обсидіан і золото', es: 'Obsidiana y oro' },
+  'Слоновая кость и киноварь': { en: 'Ivory and vermilion', de: 'Elfenbein und Zinnober', uk: 'Слонова кістка й кіновар', es: 'Marfil y bermellón' },
+  'Считает монеты': { en: 'Counting coins', de: 'Zählt Münzen', uk: 'Рахує монети', es: 'Cuenta monedas' },
+  'Прячет заначку': { en: 'Hiding a reserve', de: 'Versteckt einen Vorrat', uk: 'Ховає запас', es: 'Esconde una reserva' },
+  'Проверяет курс': { en: 'Checking rates', de: 'Prüft die Kurse', uk: 'Перевіряє курс', es: 'Revisa el cambio' },
+  'занятие по настроению': { en: 'activity by mood', de: 'Aktivität nach Stimmung', uk: 'заняття за настроєм', es: 'actividad según el ánimo' },
+  'без экипировки': { en: 'no equipment', de: 'ohne Ausrüstung', uk: 'без спорядження', es: 'sin equipo' },
+  '1 предмет': { en: '1 item', de: '1 Gegenstand', uk: '1 предмет', es: '1 objeto' },
+  '2 предмета': { en: '2 items', de: '2 Gegenstände', uk: '2 предмети', es: '2 objetos' },
+  '3 предмета': { en: '3 items', de: '3 Gegenstände', uk: '3 предмети', es: '3 objetos' },
+  'Настроить облик': { en: 'Customize appearance', de: 'Aussehen anpassen', uk: 'Налаштувати вигляд', es: 'Personalizar aspecto' },
+  'Музыка': { en: 'Music', de: 'Musik', uk: 'Музика', es: 'Música' },
+  'Оружие': { en: 'Weapon', de: 'Waffe', uk: 'Зброя', es: 'Arma' },
+  'Броня': { en: 'Armor', de: 'Rüstung', uk: 'Броня', es: 'Armadura' },
+  'Амулет': { en: 'Amulet', de: 'Amulett', uk: 'Амулет', es: 'Amuleto' },
+  'Реликвии (сфера-привязка)': { en: 'Relics (area-bound)', de: 'Relikte (bereichsgebunden)', uk: 'Реліквії (прив’язка до сфери)', es: 'Reliquias (ligadas a un área)' },
+  'Кинжал Наживы': { en: 'Dagger of Profit', de: 'Dolch des Gewinns', uk: 'Кинджал Наживи', es: 'Daga del Beneficio' },
+  'Мантия Потока': { en: 'Mantle of Flow', de: 'Mantel des Flows', uk: 'Мантія Потоку', es: 'Manto del Flujo' },
+  'Кулон Испытаний': { en: 'Pendant of Trials', de: 'Anhänger der Prüfungen', uk: 'Кулон Випробувань', es: 'Colgante de las Pruebas' },
+  'Клинок Рассветной Клятвы': { en: 'Blade of the Dawn Oath', de: 'Klinge des Morgenschwurs', uk: 'Клинок Світанкової Клятви', es: 'Hoja del Juramento del Alba' },
+  'Доспех Несгибаемого': { en: 'Armor of the Unyielding', de: 'Rüstung des Unbeugsamen', uk: 'Обладунок Незламного', es: 'Armadura del Inquebrantable' },
+  'Сердце Десятиборца': { en: 'Heart of the Decathlete', de: 'Herz des Zehnkämpfers', uk: 'Серце Десятиборця', es: 'Corazón del Decatleta' },
+  'XP к сложным': { en: 'XP for hard quests', de: 'XP für schwere Quests', uk: 'XP за складні квести', es: 'XP por misiones difíciles' },
+  'XP сферы': { en: 'area XP', de: 'Bereichs-XP', uk: 'XP сфери', es: 'XP del área' },
+  'Достижения': { en: 'Achievements', de: 'Errungenschaften', uk: 'Досягнення', es: 'Logros' },
+  'Восходящий': { en: 'Ascendant', de: 'Aufsteigender', uk: 'Висхідний', es: 'Ascendente' },
+  'Покоритель': { en: 'Conqueror', de: 'Bezwinger', uk: 'Підкорювач', es: 'Conquistador' },
+  'Тысячник': { en: 'Thousander', de: 'Tausender', uk: 'Тисячник', es: 'Milenario' },
+  'Специалист': { en: 'Specialist', de: 'Spezialist', uk: 'Спеціаліст', es: 'Especialista' },
+  'Архонт': { en: 'Archon', de: 'Archon', uk: 'Архонт', es: 'Arconte' },
+  'Виртуоз': { en: 'Virtuoso', de: 'Virtuose', uk: 'Віртуоз', es: 'Virtuoso' },
+  'Глубоководный': { en: 'Deep Diver', de: 'Tiefseetaucher', uk: 'Глибоководний', es: 'Buzo de profundidad' },
+  'Вершина ветви': { en: 'Branch Summit', de: 'Gipfel des Zweigs', uk: 'Вершина гілки', es: 'Cima de la rama' },
+  'Древо в цвету': { en: 'Tree in Bloom', de: 'Baum in Blüte', uk: 'Дерево в цвіту', es: 'Árbol en flor' },
+  'Сторона выбрана': { en: 'Path Chosen', de: 'Weg gewählt', uk: 'Шлях обрано', es: 'Camino elegido' },
+  'Первый наряд': { en: 'First Outfit', de: 'Erstes Outfit', uk: 'Перше вбрання', es: 'Primer atuendo' },
+  'Полный доспех': { en: 'Full Armor', de: 'Volle Rüstung', uk: 'Повний обладунок', es: 'Armadura completa' },
+  'Десять вершин': { en: 'Ten Summits', de: 'Zehn Gipfel', uk: 'Десять вершин', es: 'Diez cumbres' },
+  'Кирпич за кирпичом': { en: 'Brick by Brick', de: 'Stein für Stein', uk: 'Цеглина за цеглиною', es: 'Ladrillo a ladrillo' },
+  'Глубина сферы': { en: 'Depth of an Area', de: 'Tiefe eines Bereichs', uk: 'Глибина сфери', es: 'Profundidad de un área' },
+  'Широта жизни': { en: 'Breadth of Life', de: 'Breite des Lebens', uk: 'Широта життя', es: 'Amplitud de vida' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -9439,10 +9509,10 @@ function applyAmbient() {
 function ambientCard() {
   const amb = (State.settings && State.settings.ambient) || {};
   const mode = amb.mode || 'off', vol = amb.vol != null ? amb.vol : 60;
-  const buttons = AMBIENT_MODES.map((item) => `<button class="btn${mode === item.id ? '' : ' ghost'} sm ambient-choice" data-action="set-ambient" data-mode="${item.id}">${satoruIconHTML(item.icon, 'button-glyph', '◇')} ${item.label}</button>`).join('');
+  const buttons = AMBIENT_MODES.map((item) => `<button class="btn${mode === item.id ? '' : ' ghost'} sm ambient-choice" data-action="set-ambient" data-mode="${item.id}">${satoruIconHTML(item.icon, 'button-glyph', '◇')} ${t(item.label)}</button>`).join('');
   return `<div class="card">
     <h3 class="icon-heading">${satoruIconHTML('media.sound', 'heading-emblem', '◇')} ${t('Эмбиент-звук')}</h3>
-    <p class="muted" style="font-size:13px;margin-bottom:10px">У каждого режима свой звуковой рисунок и реакция Логова: капли, треск камина, наушники или птица у окна.</p>
+    <p class="muted" style="font-size:13px;margin-bottom:10px">${t('У каждого режима свой звуковой рисунок и реакция Логова: капли, треск камина, наушники или птица у окна.')}</p>
     <div class="ambient-choices">${buttons}</div>
     ${mode !== 'off' ? `<label style="display:flex;align-items:center;gap:10px;font-size:13px">
       <span>${t('Громкость')}</span>
@@ -12049,7 +12119,7 @@ function captureBar() {
       <button type="submit" class="cap-add" aria-label="${t('Сохранить заметку')}">${satoruIconHTML('action.add', 'capture-glyph', '↵')}</button>
       <span class="capture-status" role="status" aria-live="polite"></span>
     </form>
-    <button class="dayrec-btn" data-action="day-recap" title="Наговори день — Тень разложит по делам">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} Итог дня — расскажи, что сделал</button></div>`;
+    <button class="dayrec-btn" data-action="day-recap" title="${t('Наговори день — Тень разложит по делам')}">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня — расскажи, что сделал')}</button></div>`;
 }
 function validateInboxPayload(value) {
   if (!Array.isArray(value)) return false;
@@ -12570,9 +12640,9 @@ function companionCard() {
     actions = `<form id="comp-rename" class="comp-form"><label>Как зовут твоего спутника?</label><input name="name" maxlength="24" value="${esc(c.name)}" /><div class="comp-form-btns"><button type="submit" class="btn">Назвать</button><button type="button" class="btn ghost" data-action="comp-cancel">Отмена</button></div></form>`;
   } else {
     const due = compCheckinDue(), b = [];
-    if (due.includes('m')) b.push(`<button class="btn comp-cta" data-action="comp-check" data-kind="m">${satoruIconHTML('nav.today', 'button-glyph', '◇')} Утренний чек-ин</button>`);
-    if (due.includes('e')) b.push(`<button class="btn comp-cta" data-action="comp-check" data-kind="e">${satoruIconHTML('system.day-end', 'button-glyph', '◇')} Вечерний чек-ин</button>`);
-    b.push(`<button class="btn ghost" data-action="comp-pet"${petToday ? ' disabled' : ''}>${satoruIconHTML('pet.trait.friend', 'button-emblem', '◇')} ${petToday ? 'обнял сегодня' : 'Погладить'}</button>`);
+    if (due.includes('m')) b.push(`<button class="btn comp-cta" data-action="comp-check" data-kind="m">${satoruIconHTML('nav.today', 'button-glyph', '◇')} ${t18('Утренний чек-ин')}</button>`);
+    if (due.includes('e')) b.push(`<button class="btn comp-cta" data-action="comp-check" data-kind="e">${satoruIconHTML('system.day-end', 'button-glyph', '◇')} ${t18('Вечерний чек-ин')}</button>`);
+    b.push(`<button class="btn ghost" data-action="comp-pet"${petToday ? ' disabled' : ''}>${satoruIconHTML('pet.trait.friend', 'button-emblem', '◇')} ${t18(petToday ? 'обнял сегодня' : 'Погладить')}</button>`);
     actions = `<div class="comp-actions">${b.join('')}</div>`;
   }
   const last = c.journal[c.journal.length - 1];
@@ -13042,9 +13112,9 @@ function fortuneAppearanceSummary(sphereId) {
   const manualProp = ensureFortuneProps()[sphereId];
   const worn = petWorn(sphereId);
   const equipped = ['head', 'neck', 'back'].filter((slot) => worn[slot]).length;
-  const propName = FORTUNE_PROPS[manualProp] ? FORTUNE_PROPS[manualProp].name : 'занятие по настроению';
-  const equipment = equipped ? `${equipped} ${equipped === 1 ? 'предмет' : 'предмета'}` : 'без экипировки';
-  return `${skin.name} · ${propName} · ${equipment}`;
+  const propName = t(FORTUNE_PROPS[manualProp] ? FORTUNE_PROPS[manualProp].name : 'занятие по настроению');
+  const equipment = t(equipped === 1 ? '1 предмет' : equipped === 2 ? '2 предмета' : equipped === 3 ? '3 предмета' : 'без экипировки');
+  return `${t(skin.name)} · ${propName} · ${equipment}`;
 }
 function fortuneControlsHTML(sphereId) {
   return `<div class="fortune-edit-launch">
@@ -14341,7 +14411,7 @@ function renderToday() {
   const quietLong = (State.tasks || []).length ? quietDaysBefore(30) : 0;
   const epNudge = quietLong >= 3
     ? `<div class="card nudge-card ep-nudge">
-        <button class="nudge" data-action="episode-open" data-from="${addDays(todayStr(), -quietLong)}" data-to="${addDays(todayStr(), -1)}">🎒 ${t('Тебя не было')} ${quietLong} ${plural(quietLong, 'день', 'дня', 'дней')} — ${t('что это было?')}</button>
+        <button class="nudge" data-action="episode-open" data-from="${addDays(todayStr(), -quietLong)}" data-to="${addDays(todayStr(), -1)}">🎒 ${t('Тебя не было')} ${quietLong} ${locDay(quietLong, lang())} — ${t('что это было?')}</button>
         <span class="nudge-boost">${t('Расскажи период целиком, одним куском — по дням разбивать не надо.')}</span></div>`
     : '';
   // Перегрев сферы (этап 3). Единственный нудж в приложении, который толкает делать МЕНЬШЕ, а не
@@ -14474,18 +14544,18 @@ function renderToday() {
   const heroTitle = closed ? t('На сегодня всё.')
     : cs.closed ? t('Ядро закрыто — дальше день твой.')
     : cs.total ? `${t('Ядро дня')}: ${cs.done}/${cs.total}`
-    : nextQuest ? 'Следующий ход уже выбран.' : todays.length ? 'День почти собран.' : 'Соберём первый квест на сегодня.';
+    : nextQuest ? t('Следующий ход уже выбран.') : todays.length ? t('День почти собран.') : t('Соберём первый квест на сегодня.');
   const heroSub = closed
     ? t('Что не сделано — осталось в дне, не в тебе. Ночью не отыгрываемся: завтра свежее.')
     : cs.closed
       ? t('Главное сделано. Остальное сегодня — уже бонус, а не долг.')
       : cs.total
         ? `${t('Закрой ядро — и день засчитан')}${cs.list.find((x) => !x.done) ? `: <b>${esc(cs.list.find((x) => !x.done).title)}</b>` : ''}`
-        : nextQuest ? 'Сейчас лучше не смотреть на всю систему — закрой следующий квест.' : todays.length ? 'Основной список уже на месте. Добей хвосты, забери награды и закрой день спокойно.' : 'Начни с одного понятного действия. Остальные системы подождут за кулисами.';
+        : nextQuest ? t('Сейчас лучше не смотреть на всю систему — закрой следующий квест.') : todays.length ? t('Основной список уже на месте. Добей хвосты, забери награды и закрой день спокойно.') : t('Начни с одного понятного действия. Остальные системы подождут за кулисами.');
   const heroStats = [
-    `<div class="th-stat"><b>${donePct}%</b><span>готово</span></div>`,
-    `<div class="th-stat"><b>${eP}%</b><span>энергия</span></div>`,
-    minToday > 0 ? `<div class="th-stat"><b>${fmtDur(minToday)}</b><span>фокус</span></div>` : '',
+    `<div class="th-stat"><b>${donePct}%</b><span>${t('готово')}</span></div>`,
+    `<div class="th-stat"><b>${eP}%</b><span>${t('энергия')}</span></div>`,
+    minToday > 0 ? `<div class="th-stat"><b>${fmtDur(minToday)}</b><span>${t('фокус')}</span></div>` : '',
     xpToday > 0 ? `<div class="th-stat"><b>+${xpToday}</b><span>XP</span></div>` : '',
   ].filter(Boolean).join('');
   const todayHero = `<section class="card today-hero${closed ? ' is-daydone' : cs.closed ? ' is-coredone' : ''}" aria-labelledby="today-title">
@@ -14504,11 +14574,11 @@ function renderToday() {
         <label class="add-field add-field-difficulty"><span class="add-field-label">${t('Сложность')}</span><select name="difficulty"><option value="easy">${t('Лёгкая')}</option><option value="normal" selected>${t('Обычная')}</option><option value="hard">${t('Сложная')}</option></select></label>
         <button class="add-submit" type="submit">${t('+ Квест')}</button></form>
       <div id="cat-suggest" class="cat-suggest"></div>
-      <p class="diff-hint muted"><span>${difficultyIconHTML('easy')} ${t('Лёгкая')} — рутина, механика</span><span>${difficultyIconHTML('normal')} ${t('Обычная')} — требует фокуса</span><span>${difficultyIconHTML('hard')} ${t('Сложная')} — вызов, выход из зоны комфорта → активирует Хайп <b>+15% XP</b></span></p>
+      <p class="diff-hint muted"><span>${difficultyIconHTML('easy')} ${t('Лёгкая — рутина, механика')}</span><span>${difficultyIconHTML('normal')} ${t('Обычная — требует фокуса')}</span><span>${difficultyIconHTML('hard')} ${t('Сложная — вызов, выход из зоны комфорта → активирует Хайп')} <b>+15% XP</b></span></p>
     </div>`;
-  const questBoard = `<section class="card card-quests" aria-label="Квесты на сегодня"><div class="daystat">
-        <span>Квестов: <b>${doneCount}/${todays.length}</b></span>
-        <span>План: <b>${fmtDur(planned)}</b></span></div>
+  const questBoard = `<section class="card card-quests" aria-label="${t('Квесты на сегодня')}"><div class="daystat">
+        <span>${t('Квестов:')} <b>${doneCount}/${todays.length}</b></span>
+        <span>${t('План:')} <b>${fmtDur(planned)}</b></span></div>
       ${todays.length ? `<ul class="tasks">${todays.map(questRow).join('')}</ul>` : emptyDayHTML()}</section>`;
   const scheduleCard = todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : '';
   const habitsCard = State._habitsLoadError
@@ -15222,7 +15292,7 @@ function collectionCard() {
   };
   const titles = earnedTitles();
   const titleChips = titles.length
-    ? `<button class="title-chip ${!eq.title ? 'eq' : ''}" data-action="equip-title" data-title="">${t('— без звания —')}</button>` + titles.map((title) => `<button class="title-chip ${eq.title === title ? 'eq' : ''}" data-action="equip-title" data-title="${esc(title)}">${eq.title === title ? '★ ' : ''}${esc(title)}</button>`).join('')
+    ? `<button class="title-chip ${!eq.title ? 'eq' : ''}" data-action="equip-title" data-title="">${t('— без звания —')}</button>` + titles.map((title) => `<button class="title-chip ${eq.title === title ? 'eq' : ''}" data-action="equip-title" data-title="${esc(title)}">${eq.title === title ? '★ ' : ''}${esc(t(title))}</button>`).join('')
     : `<span class="muted">${t('званий пока нет — открывай достижения ниже ↓')}</span>`;
   return `<div class="card collection-card">
     <div class="coll-head"><h3>${satoruIconHTML('achievement.collector_5', 'heading-emblem', '◇')} ${t('Коллекция')}</h3><span class="coll-prog">${ownedCount}/${COSMETICS.length} ${t('собрано')}</span></div>
@@ -16376,7 +16446,7 @@ function gearBonus(skillId) {
   if (relic && skillId && skillInSphere(skillId, relic.sphere)) xpPct += relic.xpPct || 0;
   return { xpPct, hardXpPct, goldPct };
 }
-function gearBonusLabel(it) { return it.xpPct ? `+${it.xpPct}% XP` : it.hardXpPct ? `+${it.hardXpPct}% XP к сложным` : `+${it.goldPct}% золота`; }
+function gearBonusLabel(it) { return it.xpPct ? `+${it.xpPct}% XP` : it.hardXpPct ? `+${it.hardXpPct}% ${t('XP к сложным')}` : `+${it.goldPct}% ${t('золота')}`; }
 function gearInventoryArtHTML(it) {
   if (!it.inventoryArt) return satoruIconHTML(`gear.${it.id}`, 'gear-content-icon', it.icon);
   return `<img class="satoru-icon satoru-icon--emblem gear-content-icon" data-gear-id="${esc(it.id)}" src="${esc(it.inventoryArt)}" alt="" aria-hidden="true" decoding="async" />`;
@@ -16393,10 +16463,10 @@ function arsenalCard() {
       else btn = `<button class="btn sm ${bal >= it.cost ? '' : 'disabled'}" data-action="buy-gear" data-id="${it.id}" ${bal >= it.cost ? '' : 'disabled'}>${satoruIconHTML('status.gold', 'button-emblem', '◇')} ${it.cost}</button>`;
       return `<div class="gear-item${equipped ? ' equipped' : ''}" style="${equipped ? `border-color:${rar.color}` : ''}">
         <div class="gear-ic" style="color:${rar.color}">${gearInventoryArtHTML(it)}</div>
-        <div class="gear-nm">${esc(it.name)}</div>
+        <div class="gear-nm">${esc(t(it.name))}</div>
         <div class="gear-bonus" style="color:${rar.color}">${gearBonusLabel(it)}</div>${btn}</div>`;
     }).join('');
-    return `<div class="gear-slot"><div class="gear-slot-h">${satoruIconHTML(s.iconId, s.iconId === 'gear.m1' ? 'slot-emblem' : 'slot-glyph', '◇')} ${s.label}</div><div class="gear-row">${items}</div></div>`;
+    return `<div class="gear-slot"><div class="gear-slot-h">${satoruIconHTML(s.iconId, s.iconId === 'gear.m1' ? 'slot-emblem' : 'slot-glyph', '◇')} ${t(s.label)}</div><div class="gear-row">${items}</div></div>`;
   }).join('');
   // v2: слот реликвий — динамические инстансы с сфера-привязкой (падают из сундуков)
   const eqR = g.equipped.relic;
@@ -16404,10 +16474,10 @@ function arsenalCard() {
     ? g.relics.map((r) => { const rar = RARITY[r.rarity] || RARITY.common, on = eqR === r.uid; return `<div class="gear-item${on ? ' equipped' : ''}" style="${on ? `border-color:${rar.color}` : ''}">
         <div class="gear-ic" style="color:${rar.color}">${satoruIconHTML('gear.m3', 'gear-content-icon', r.icon)}</div>
         <div class="gear-nm">${esc(skillById(r.sphere).name)}</div>
-        <div class="gear-bonus" style="color:${rar.color}">+${r.xpPct}% XP сферы</div>
+        <div class="gear-bonus" style="color:${rar.color}">+${r.xpPct}% ${t('XP сферы')}</div>
         <button class="btn ${on ? '' : 'ghost'} sm" data-action="equip-relic" data-uid="${r.uid}">${on ? '✓ Надето' : 'Надеть'}</button></div>`; }).join('')
     : `<p class="muted" style="font-size:12px;margin:4px 2px 0">${t('Новые дневные награды не выдают случайную силу. Здесь остаются только ранее заработанные реликвии.')}</p>`;
-  const relicSlot = `<div class="gear-slot"><div class="gear-slot-h">${satoruIconHTML('gear.m3', 'slot-emblem', '◇')} Реликвии (сфера-привязка)</div><div class="gear-row">${relicItems}</div></div>`;
+  const relicSlot = `<div class="gear-slot"><div class="gear-slot-h">${satoruIconHTML('gear.m3', 'slot-emblem', '◇')} ${t('Реликвии (сфера-привязка)')}</div><div class="gear-row">${relicItems}</div></div>`;
   const sum = (gb.xpPct || gb.hardXpPct || gb.goldPct)
     ? `<p class="gear-sum">Надето: ${[gb.xpPct ? `+${gb.xpPct}% XP` : '', gb.hardXpPct ? `+${gb.hardXpPct}% XP к сложным` : '', gb.goldPct ? `+${gb.goldPct}% золота` : ''].filter(Boolean).join(' · ')}</p>`
     : `<p class="gear-sum muted">Ничего не надето — снаряжение усилит рост.</p>`;
@@ -16448,7 +16518,7 @@ function renderRewards() {
     const got = !!State.achievements[a.id];
     let pr = '';
     if (!got && a.prog) { try { const p = a.prog(); pr = `<div class="ach-prog">${p.cur}/${p.target}</div>`; } catch {} }
-    return `<div class="ach ${got ? 'got' : ''}"><div class="ach-icon">${satoruIconHTML(`achievement.${a.id}`, 'achievement-content-icon', a.icon)}</div><div class="ach-title">${esc(a.title)}</div><div class="ach-desc">${esc(a.desc)}</div>${got ? `<div class="ach-date">${State.achievements[a.id].slice(0, 10)}</div>` : pr}</div>`;
+    return `<div class="ach ${got ? 'got' : ''}"><div class="ach-icon">${satoruIconHTML(`achievement.${a.id}`, 'achievement-content-icon', a.icon)}</div><div class="ach-title">${esc(t(a.title))}</div><div class="ach-desc">${esc(t(a.desc))}</div>${got ? `<div class="ach-date">${State.achievements[a.id].slice(0, 10)}</div>` : pr}</div>`;
   }).join('');
   const personalStore = `<section class="card personal-reward-store"><h3>${satoruIconHTML('reward.shop', 'heading-glyph', '◇')} ${t('Личные награды')}</h3>
     <p class="muted">${t('Главная ценность выбирается тобой: кино, прогулка, книга или собственная награда за честно заработанное золото.')}</p>
@@ -16679,7 +16749,7 @@ function renderStats() {
       <div class="kpi"><div class="v">${satoruIconHTML('status.streak', 'kpi-emblem', '◇')} ${currentStreak()}</div><div class="l">Серия · рекорд ${longestStreak()}</div></div>
       <div class="kpi"><div class="v">${rate == null ? '—' : rate + '%'}</div><div class="l">${rate == null ? t('Пока нет планов') : t('Выполнение (14 дн.)')}</div></div>
     </div>
-    <div class="card wrapped-card"><div><h3 style="margin:0">${satoruIconHTML('action.export', 'heading-glyph', '◇')} ${t('Твоя неделя')}</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">Красивая карточка итогов недели — поделись или сохрани PNG.</p></div>
+    <div class="card wrapped-card"><div><h3 style="margin:0">${satoruIconHTML('action.export', 'heading-glyph', '◇')} ${t('Твоя неделя')}</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">${t('Красивая карточка итогов недели — поделись или сохрани PNG.')}</p></div>
       <button class="btn" data-action="share-week">${satoruIconHTML('action.export', 'button-glyph', '◇')} ${t('Открыть')}</button></div>
     <div class="card ai-review-card">
       <div><h3 style="margin:0">🤖 ИИ-разбор недели</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">${t('Как ты на самом деле, а не только цифры. + мягкие шаги.')} ${aiSourceHint()}</p></div>
@@ -16858,7 +16928,7 @@ function renderSettings() {
       ${ttsOK() ? `<label class="sound-toggle"><input type="checkbox" data-action="toggle-tts" ${ttsOn() ? 'checked' : ''}/> ${t('Кнопка 🔊 — озвучить голосом Тени (реплики, подсказки, ответы Помощника)')}</label>` : ''}
       ${ttsOK() && ttsOn() ? `<div class="tts-settings">
         ${shadowVoiceSettingsHTML()}
-        <button class="btn ghost sm" data-action="tts-preview">${satoruIconHTML('media.sound', 'button-glyph', '◇')} Прослушать Тень</button>
+        <button class="btn ghost sm" data-action="tts-preview">${satoruIconHTML('media.sound', 'button-glyph', '◇')} ${t('Прослушать Тень')}</button>
       </div>` : ''}
       <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">${t('▶ Проверить звук')}</button></div>
     <div class="card"><h3>🕯 ${t('Тень')}</h3>
