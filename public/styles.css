@@ -14633,3 +14633,32 @@ html.calendar-task-open body {
   .fl-input { min-height: 42px; }
   .fl-acts .btn, .fl-row .btn { min-height: 42px; }
 }
+
+/* ── Схватки (DISCIPLINE-ARENA-PLAN §1) ──────────────────────────────────────
+   Гейт §1: проигранная схватка — второй акт, а не приговор. Поэтому «Проиграл»
+   не окрашен в красное и вообще ничем не выделен сильнее «Выиграл»: в любой
+   истории про Паркера первую схватку он проигрывает всегда. */
+.fights-score { font-family: var(--font-number); font-size: var(--type-heading); letter-spacing: var(--tracking-caps); }
+/* Секунды — главное число фичи, поэтому крупнее строк списка. */
+.fights-secs { margin: 0 0 10px; font-size: var(--type-body); color: var(--muted); }
+.fights-secs b { font-family: var(--font-number); color: inherit; }
+.fights-intro { margin: 0 0 12px; font-size: var(--type-control); color: var(--muted); max-width: var(--measure-compact); }
+.fights-list { list-style: none; margin: 0 0 10px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.fight-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.fight-row.marked { opacity: .72; }
+.fight-name { flex: 1 1 auto; min-width: 0; font-size: var(--type-control); }
+.fight-secs { font-family: var(--font-number); font-size: var(--type-meta); color: var(--muted); }
+.fight-acts { display: flex; gap: 6px; }
+/* Проигранная схватка отмечается нейтрально — тем же весом, что выигранная. */
+.fight-acts .is-lost { border-color: var(--line); font-weight: 700; }
+.fights-against { margin: 10px 0 0; font-size: var(--type-meta); color: var(--muted); max-width: var(--measure-compact); }
+.fight-add { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.fight-add input {
+  min-width: 0; font-size: var(--type-control); padding: 8px 10px;
+  border-radius: var(--radius); background: var(--bg, transparent); border: 1px solid var(--line); color: inherit;
+}
+#fight-title { flex: 1 1 180px; }
+#fight-secs { flex: 0 0 84px; }
+@media (hover: none) {
+  .fight-add input, .fight-add .btn, .fight-acts .btn { min-height: 42px; }
+}

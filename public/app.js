@@ -2186,6 +2186,22 @@ const I18N_EXTRA = {
   'Засчитано в': { en: 'Counted on', de: 'Angerechnet auf', uk: 'Зараховано в', es: 'Contado el' },
   // ── «Итог дня»: выбор дня + нудж «жизнь шла, а записать было некогда» ──
   'Итог дня': { en: 'Day log', de: 'Tagesabschluss', uk: 'Підсумок дня', es: 'Resumen del día' },
+  // ── Схватки (DISCIPLINE-ARENA-PLAN §1) ──
+  'Схватки': { en: 'Duels', de: 'Duelle', uk: 'Сутички', es: 'Duelos' },
+  'День решают три-четыре коротких момента: встал или нет, взял телефон или нет, открыл файл или ленту. Назови свои — и у них появится счёт.': { en: 'Your day is decided by three or four short moments: got up or not, picked up the phone or not, opened the file or the feed. Name yours — and they get a score.', de: 'Über deinen Tag entscheiden drei, vier kurze Momente: aufgestanden oder nicht, zum Handy gegriffen oder nicht, die Datei geöffnet oder den Feed. Benenne deine — und sie bekommen einen Punktestand.', uk: 'День вирішують три-чотири короткі моменти: встав чи ні, узяв телефон чи ні, відкрив файл чи стрічку. Назви свої — і в них з’явиться рахунок.', es: 'Tu día lo deciden tres o cuatro momentos cortos: te levantaste o no, tomaste el teléfono o no, abriste el archivo o el feed. Nombra los tuyos — y tendrán marcador.' },
+  'Твой день — это': { en: 'Your day is', de: 'Dein Tag ist', uk: 'Твій день — це', es: 'Tu día es' },
+  'настоящей борьбы': { en: 'of real fighting', de: 'echter Kampf', uk: 'справжньої боротьби', es: 'de lucha real' },
+  'Ты играешь не против себя. По ту сторону — система, которую тысячи инженеров строили, чтобы обыгрывать внимание.': { en: 'You are not playing against yourself. On the other side is a system thousands of engineers built to outplay attention.', de: 'Du spielst nicht gegen dich selbst. Auf der anderen Seite steht ein System, das Tausende Ingenieure gebaut haben, um Aufmerksamkeit zu schlagen.', uk: 'Ти граєш не проти себе. По той бік — система, яку тисячі інженерів будували, щоб обігрувати увагу.', es: 'No juegas contra ti mismo. Al otro lado hay un sistema que miles de ingenieros construyeron para ganarle a la atención.' },
+  'Выиграл': { en: 'Won', de: 'Gewonnen', uk: 'Виграв', es: 'Ganado' },
+  'Проиграл': { en: 'Lost', de: 'Verloren', uk: 'Програв', es: 'Perdido' },
+  'Название схватки': { en: 'Duel name', de: 'Name des Duells', uk: 'Назва сутички', es: 'Nombre del duelo' },
+  'Например: рука к телефону в 23:00': { en: 'For example: reaching for the phone at 23:00', de: 'Zum Beispiel: um 23:00 zum Handy greifen', uk: 'Наприклад: рука до телефона о 23:00', es: 'Por ejemplo: la mano al teléfono a las 23:00' },
+  'Сколько длится, секунд': { en: 'How long, in seconds', de: 'Wie lange, in Sekunden', uk: 'Скільки триває, секунд', es: 'Cuánto dura, en segundos' },
+  'сек': { en: 'sec', de: 'Sek.', uk: 'сек', es: 'seg' },
+  'мин': { en: 'min', de: 'Min.', uk: 'хв', es: 'min' },
+  'Добавить': { en: 'Add', de: 'Hinzufügen', uk: 'Додати', es: 'Añadir' },
+  'Больше пяти схваток — снова шум': { en: 'More than five duels is noise again', de: 'Mehr als fünf Duelle sind wieder Lärm', uk: 'Більше п’яти сутичок — знову шум', es: 'Más de cinco duelos vuelve a ser ruido' },
+  'Нужно название и длительность в секундах': { en: 'Needs a name and a duration in seconds', de: 'Name und Dauer in Sekunden nötig', uk: 'Потрібні назва і тривалість у секундах', es: 'Hacen falta un nombre y una duración en segundos' },
   // ── «Первая строка назавтра» (DISCIPLINE-ARENA-PLAN §2) ──
   'Первое действие завтра — одной строкой': { en: 'Tomorrow’s first action — one line', de: 'Erste Handlung morgen — eine Zeile', uk: 'Перша дія завтра — одним рядком', es: 'Primera acción de mañana — una línea' },
   'Например: открыть файл и написать один абзац': { en: 'For example: open the file and write one paragraph', de: 'Zum Beispiel: die Datei öffnen und einen Absatz schreiben', uk: 'Наприклад: відкрити файл і написати один абзац', es: 'Por ejemplo: abrir el archivo y escribir un párrafo' },
@@ -13976,6 +13992,73 @@ function applyNudgeVoice(html, voiced) {
   const i = html.indexOf('>');
   return i < 0 ? html : html.slice(0, i + 1) + `<p class="nudge-voice">${esc(voiced)}</p>` + html.slice(i + 1);
 }
+// ── Схватки (DISCIPLINE-ARENA-PLAN §1, решения §15) ──────────────────────────
+// Потерянный день не был восемнадцатью часами борьбы — он был четырьмя
+// короткими моментами, и всё остальное вытекло из них автоматически. Диффузная
+// рамка («я недисциплинированный») даёт стыд и бездействие; дискретная — счёт
+// и действие.
+//
+// Тон здесь важнее механики, и все три требования §1 держатся именно тут:
+// секунды показаны явно (без этого числа фича — обычный чеклист), проигранная
+// схватка не окрашена в красное и не считается грехом, и одна строка говорит,
+// против кого на самом деле идёт игра.
+function fightsRead() {
+  return window.FightsV1 ? window.FightsV1.normalize(State.settings && State.settings.fights) : null;
+}
+function fightsWrite(next) {
+  State.settings.fights = next;
+  Store.save('settings', State.settings);
+}
+function fightsCardHTML() {
+  const F = window.FightsV1;
+  if (!F) return '';
+  const st = fightsRead();
+  const live = F.activeFights(st);
+  const today = todayStr();
+
+  // Пусто — приглашение, а не пустая таблица. Объясняем идею один раз.
+  if (!live.length) {
+    return `<div class="card fights-card">
+      <h3>${t('Схватки')}</h3>
+      <p class="fights-intro">${t('День решают три-четыре коротких момента: встал или нет, взял телефон или нет, открыл файл или ленту. Назови свои — и у них появится счёт.')}</p>
+      ${fightsFormHTML()}</div>`;
+  }
+
+  const score = F.dayScore(st, today);
+  const secs = F.secondsPerDay(st);
+  const rows = live.map((f) => {
+    const mark = (st.log[today] || {})[f.id] || null;
+    return `<li class="fight-row${mark ? ' marked' : ''}">
+      <span class="fight-name">${esc(f.title)}</span>
+      <span class="fight-secs">${secondsLabel(f.seconds)}</span>
+      <span class="fight-acts">
+        <button class="btn sm${mark === 'won' ? '' : ' ghost'}" data-action="fight-won" data-id="${esc(f.id)}">${t('Выиграл')}</button>
+        <button class="btn ghost sm${mark === 'lost' ? ' is-lost' : ''}" data-action="fight-lost" data-id="${esc(f.id)}">${t('Проиграл')}</button>
+      </span></li>`;
+  }).join('');
+
+  return `<div class="card fights-card">
+    <h3>${t('Схватки')} <span class="fights-score">⚔ ${score.won}:${score.lost}</span></h3>
+    <p class="fights-secs">${t('Твой день — это')} <b>${secondsLabel(secs)}</b> ${t('настоящей борьбы')}</p>
+    <ul class="fights-list">${rows}</ul>
+    <p class="fights-against">${t('Ты играешь не против себя. По ту сторону — система, которую тысячи инженеров строили, чтобы обыгрывать внимание.')}</p>
+    ${live.length < F.MAX_FIGHTS ? fightsFormHTML() : ''}</div>`;
+}
+function secondsLabel(n) {
+  return n >= 60 && n % 60 === 0 ? `${n / 60} ${t('мин')}` : `${n} ${t('сек')}`;
+}
+function fightsFormHTML() {
+  // Кнопка, а не submit: клики уже делегируются одним обработчиком, и отдельный
+  // submit-путь пришлось бы страховать от перезагрузки страницы.
+  return `<div class="fight-add">
+    <label class="sr-only" for="fight-title">${t('Название схватки')}</label>
+    <input id="fight-title" maxlength="60" autocomplete="off" placeholder="${t('Например: рука к телефону в 23:00')}" />
+    <label class="sr-only" for="fight-secs">${t('Сколько длится, секунд')}</label>
+    <input id="fight-secs" type="number" min="1" max="300" inputmode="numeric" placeholder="${t('сек')}" />
+    <button type="button" class="btn sm" data-action="fight-add">${t('Добавить')}</button>
+  </div>`;
+}
+
 // ── «Первая строка назавтра» (DISCIPLINE-ARENA-PLAN §2) ──────────────────────
 // Главная стоимость старта — не работа, а РЕШЕНИЕ, что именно делать. Те самые
 // первые шестьдесят секунд за ноутбуком, когда надо выбрать, и есть генератор
@@ -14282,7 +14365,7 @@ function renderToday() {
   const deeperPath = `<button class="today-deeper" data-action="goto-rewards">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Награды')} <span aria-hidden="true">→</span></button>`;
   return `<div class="today-shell">
     <div class="today-work">${firstLineCardHTML()}${todayHero}${overdueCard}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
-    <aside class="today-support" aria-label="Поддержка дня">${companionCard()}${deeperPath}${activeNudge}${nudgeCard}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${tm ? timerCard : ''}${energyCard}${installBanner()}</aside>
+    <aside class="today-support" aria-label="Поддержка дня">${companionCard()}${deeperPath}${fightsCardHTML()}${activeNudge}${nudgeCard}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${tm ? timerCard : ''}${energyCard}${installBanner()}</aside>
     <div class="today-footer">${antiHabitsCard()}${shutdownCard}</div>
   </div>`;
 }
@@ -18988,6 +19071,28 @@ function onClick(e) {
       if (note) Object.assign(x, note);
     });
     Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
+  } else if (action === 'fight-add') {
+    const F = window.FightsV1;
+    const titleEl = document.getElementById('fight-title'), secsEl = document.getElementById('fight-secs');
+    if (!F || !titleEl) return;
+    const res = F.addFight(fightsRead(), {
+      id: uid(), title: titleEl.value, seconds: Number(secsEl && secsEl.value), createdAt: today,
+    });
+    if (!res.ok) {
+      // Потолок 5 (§15) и пустой ввод — разные вещи, и человек должен понимать, какая.
+      toast(res.error === 'limit' ? t('Больше пяти схваток — снова шум') : t('Нужно название и длительность в секундах'));
+      return;
+    }
+    fightsWrite(res.state); render();
+  } else if (action === 'fight-won' || action === 'fight-lost') {
+    const F = window.FightsV1;
+    if (!F || !id) return;
+    const st = fightsRead();
+    const cur = (st.log[today] || {})[id] || null;
+    const next = action === 'fight-won' ? 'won' : 'lost';
+    // Повторный тап по той же отметке снимает её: передумать можно без цены.
+    fightsWrite(cur === next ? F.clearMark(st, id, today) : F.mark(st, id, today, next));
+    render();
   } else if (action === 'first-line-save') {
     const field = document.getElementById('first-line');
     const text = field ? field.value : '';
