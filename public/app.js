@@ -2186,6 +2186,19 @@ const I18N_EXTRA = {
   'Засчитано в': { en: 'Counted on', de: 'Angerechnet auf', uk: 'Зараховано в', es: 'Contado el' },
   // ── «Итог дня»: выбор дня + нудж «жизнь шла, а записать было некогда» ──
   'Итог дня': { en: 'Day log', de: 'Tagesabschluss', uk: 'Підсумок дня', es: 'Resumen del día' },
+  // ── Доска заказов (BOARD-OF-CONTRACTS-PLAN) ──
+  'Доска заказов': { en: 'Contract board', de: 'Auftragstafel', uk: 'Дошка замовлень', es: 'Tablón de encargos' },
+  'Возьми, что откликается. Вернуть можно в любой момент — это ничего не стоит.': { en: 'Take whatever resonates. You can return it any time — it costs nothing.', de: 'Nimm, was dich anspricht. Du kannst es jederzeit zurückgeben — das kostet nichts.', uk: 'Візьми те, що відгукується. Повернути можна будь-коли — це нічого не варте.', es: 'Toma lo que te resuene. Puedes devolverlo cuando quieras — no cuesta nada.' },
+  'Беру': { en: 'Take it', de: 'Ich nehme ihn', uk: 'Беру', es: 'Lo tomo' },
+  'Выполнено': { en: 'Done', de: 'Erledigt', uk: 'Виконано', es: 'Completado' },
+  'Вернуть': { en: 'Return', de: 'Zurückgeben', uk: 'Повернути', es: 'Devolver' },
+  'Сезонный': { en: 'Seasonal', de: 'Saisonal', uk: 'Сезонний', es: 'De temporada' },
+  'Заказ закрыт': { en: 'Contract closed', de: 'Auftrag abgeschlossen', uk: 'Замовлення закрито', es: 'Encargo cerrado' },
+  'Этот заказ у тебя уже давно': { en: 'You have had this one for a while', de: 'Diesen Auftrag hast du schon lange', uk: 'Це замовлення в тебе вже давно', es: 'Llevas tiempo con este encargo' },
+  'Всё ещё твой?': { en: 'Still yours?', de: 'Immer noch deiner?', uk: 'Усе ще твоє?', es: '¿Sigue siendo tuyo?' },
+  'Мой': { en: 'Still mine', de: 'Bleibt meiner', uk: 'Моє', es: 'Sigue siendo mío' },
+  'Три заказа сразу — уже список дел, а не приключение': { en: 'Three at once is a to-do list, not an adventure', de: 'Drei auf einmal sind eine To-do-Liste, kein Abenteuer', uk: 'Три замовлення разом — це вже список справ, а не пригода', es: 'Tres a la vez ya es una lista de tareas, no una aventura' },
+  'Не удалось взять заказ': { en: 'Could not take the contract', de: 'Auftrag konnte nicht genommen werden', uk: 'Не вдалося взяти замовлення', es: 'No se pudo tomar el encargo' },
   // ── Схватки (DISCIPLINE-ARENA-PLAN §1) ──
   'Схватки': { en: 'Duels', de: 'Duelle', uk: 'Сутички', es: 'Duelos' },
   'День решают три-четыре коротких момента: встал или нет, взял телефон или нет, открыл файл или ленту. Назови свои — и у них появится счёт.': { en: 'Your day is decided by three or four short moments: got up or not, picked up the phone or not, opened the file or the feed. Name yours — and they get a score.', de: 'Über deinen Tag entscheiden drei, vier kurze Momente: aufgestanden oder nicht, zum Handy gegriffen oder nicht, die Datei geöffnet oder den Feed. Benenne deine — und sie bekommen einen Punktestand.', uk: 'День вирішують три-чотири короткі моменти: встав чи ні, узяв телефон чи ні, відкрив файл чи стрічку. Назви свої — і в них з’явиться рахунок.', es: 'Tu día lo deciden tres o cuatro momentos cortos: te levantaste o no, tomaste el teléfono o no, abriste el archivo o el feed. Nombra los tuyos — y tendrán marcador.' },
@@ -13992,6 +14005,85 @@ function applyNudgeVoice(html, voiced) {
   const i = html.indexOf('>');
   return i < 0 ? html : html.slice(0, i + 1) + `<p class="nudge-voice">${esc(voiced)}</p>` + html.slice(i + 1);
 }
+// ── Доска заказов (BOARD-OF-CONTRACTS-PLAN, этап 1) ──────────────────────────
+// Люди не бездействуют потому, что ленивы: «сходи в приключение» просто не
+// является выполнимой инструкцией. Доска снимает стоимость РЕШЕНИЯ — то же, что
+// делают «Заход» и «первая строка», только на масштабе жизненного опыта.
+//
+// Живёт карточкой на «Сегодня», а не отдельной вкладкой: неподвижная граница
+// продукта — ровно 4 primary destinations + More, и заводить пятую под
+// непроверенную фичу нельзя. Заслужит экран — переедет.
+function boardRead() {
+  return window.BoardV1 ? window.BoardV1.normalize(State.settings && State.settings.board) : null;
+}
+function boardWrite(next) {
+  State.settings.board = next;
+  Store.save('settings', State.settings);
+}
+function boardOrderById(id) {
+  const pool = window.BoardPoolV1 ? window.BoardPoolV1.ALL : [];
+  return pool.find((o) => o.id === String(id)) || null;
+}
+// Запущенная сфера = ни одного закрытого дела за неделю. Поля `targetPerWeek`
+// ещё нет (оно приедет со `sphere-frequency-v1`), но ждать его, чтобы доска
+// начала попадать в пустые сферы, незачем — это работающий пока прокси.
+function boardNeglectedSpheres() {
+  const since = addDays(todayStr(), -6);
+  const touched = new Set();
+  (State.tasks || []).forEach((x) => {
+    if (x.done && x.date >= since && x.skillId) touched.add(x.skillId);
+  });
+  return (State.settings.skills || []).map((s) => s.id).filter((id) => !touched.has(id));
+}
+function boardCardHTML() {
+  const B = window.BoardV1, P = window.BoardPoolV1;
+  if (!B || !P) return '';
+  const today = todayStr();
+  let st = boardRead();
+  const swept = B.sweepExpired(st, today);
+  st = swept.state;
+
+  const mine = B.activeOrders(st);
+  const view = B.board(P.ALL, {
+    neglectedSpheres: boardNeglectedSpheres(),
+    activeSpheres: (State.settings.skills || []).map((s) => s.id),
+  }, st, today);
+
+  const takenRows = mine.map((a) => {
+    const o = boardOrderById(a.orderId);
+    if (!o) return '';
+    return `<li class="board-mine">
+      <span class="board-title">${esc(o.title)}</span>
+      <span class="board-acts">
+        <button class="btn sm" data-action="board-done" data-id="${esc(a.orderId)}">${t('Выполнено')}</button>
+        <button class="btn ghost sm" data-action="board-return" data-id="${esc(a.orderId)}">${t('Вернуть')}</button>
+      </span></li>`;
+  }).join('');
+
+  const offer = view.personal.concat(view.seasonal ? [view.seasonal] : []);
+  const offerRows = offer.map((o) => `<li class="board-offer">
+      <span class="board-title">${esc(o.title)}</span>
+      ${o.seasonal ? `<span class="board-tag">${t('Сезонный')}</span>` : ''}
+      <button class="btn ghost sm" data-action="board-take" data-id="${esc(o.id)}">${t('Беру')}</button>
+    </li>`).join('');
+
+  // Залежавшийся заказ: один вопрос, без срока и без упрёка.
+  const ask = B.staleAsk(st, today);
+  const askOrder = ask ? boardOrderById(ask.orderId) : null;
+  const askBlock = askOrder ? `<p class="board-ask">${t('Этот заказ у тебя уже давно')} — «${esc(askOrder.title)}». ${t('Всё ещё твой?')}
+      <button class="btn ghost sm" data-action="board-keep" data-id="${esc(ask.orderId)}">${t('Мой')}</button>
+      <button class="btn ghost sm" data-action="board-return" data-id="${esc(ask.orderId)}">${t('Вернуть')}</button></p>` : '';
+
+  return `<div class="card board-card">
+    <h3>${t('Доска заказов')}</h3>
+    ${mine.length ? `<ul class="board-list">${takenRows}</ul>` : ''}
+    ${askBlock}
+    ${mine.length < B.MAX_ACTIVE && offerRows
+      ? `<p class="board-hint">${t('Возьми, что откликается. Вернуть можно в любой момент — это ничего не стоит.')}</p><ul class="board-list">${offerRows}</ul>`
+      : ''}
+  </div>`;
+}
+
 // ── Схватки (DISCIPLINE-ARENA-PLAN §1, решения §15) ──────────────────────────
 // Потерянный день не был восемнадцатью часами борьбы — он был четырьмя
 // короткими моментами, и всё остальное вытекло из них автоматически. Диффузная
@@ -14365,7 +14457,7 @@ function renderToday() {
   const deeperPath = `<button class="today-deeper" data-action="goto-rewards">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Награды')} <span aria-hidden="true">→</span></button>`;
   return `<div class="today-shell">
     <div class="today-work">${firstLineCardHTML()}${todayHero}${overdueCard}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
-    <aside class="today-support" aria-label="Поддержка дня">${companionCard()}${deeperPath}${fightsCardHTML()}${activeNudge}${nudgeCard}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${tm ? timerCard : ''}${energyCard}${installBanner()}</aside>
+    <aside class="today-support" aria-label="Поддержка дня">${companionCard()}${deeperPath}${fightsCardHTML()}${boardCardHTML()}${activeNudge}${nudgeCard}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${tm ? timerCard : ''}${energyCard}${installBanner()}</aside>
     <div class="today-footer">${antiHabitsCard()}${shutdownCard}</div>
   </div>`;
 }
@@ -19071,6 +19163,31 @@ function onClick(e) {
       if (note) Object.assign(x, note);
     });
     Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
+  } else if (action === 'board-take') {
+    const B = window.BoardV1, o = boardOrderById(id);
+    if (!B || !o) return;
+    const res = B.takeOrder(boardRead(), o, today);
+    if (!res.ok) { toast(res.error === 'limit' ? t('Три заказа сразу — уже список дел, а не приключение') : t('Не удалось взять заказ')); return; }
+    boardWrite(res.state); render();
+  } else if (action === 'board-done') {
+    const B = window.BoardV1;
+    if (!B) return;
+    const res = B.completeOrder(boardRead(), id, today);
+    if (!res.ok) return;
+    boardWrite(res.state);
+    // Решение 10.08: выполненный заказ засчитывается в баланс сфер. Начисление —
+    // дело вызывающего, модуль только сообщает сферу.
+    toast(t('Заказ закрыт'));
+    render();
+  } else if (action === 'board-return') {
+    // Гейт §3: без всяких последствий и без «жаль».
+    const B = window.BoardV1;
+    if (!B) return;
+    boardWrite(B.returnOrder(boardRead(), id, today)); render();
+  } else if (action === 'board-keep') {
+    const B = window.BoardV1;
+    if (!B) return;
+    boardWrite(B.noteAsked(boardRead(), id, today)); render();
   } else if (action === 'fight-add') {
     const F = window.FightsV1;
     const titleEl = document.getElementById('fight-title'), secsEl = document.getElementById('fight-secs');

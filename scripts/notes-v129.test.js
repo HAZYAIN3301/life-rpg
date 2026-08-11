@@ -47,5 +47,5 @@ test('Notes has a labelled mobile-first surface and v129 offline upgrade', () =>
   // Пин версии кэша живёт в самом свежем тесте — обновляет его тот, кто бампает.
   // Каждый новый модуль в SHELL требует бампа, иначе офлайн-клиенты его не получат:
   // v130 — stuck-task-v1.js, v131 — «Первая строка назавтра», v132 — fights-v1.js.
-  assert.match(sw, /const CACHE = 'satoru-v132'/);
+  assert.match(sw, /const CACHE = 'satoru-v133'/);
 });
