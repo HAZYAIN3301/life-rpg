@@ -1340,7 +1340,7 @@ function mapStravaActivity(a) {
 }
 
 // ============================================================
-//  Голос Тени v2.3 — локальный Piper по умолчанию, OpenAI только opt-in
+//  Голос Тени v2.4 — выбранная женская/мужская пара Piper на пяти языках
 // ============================================================
 // Piper работает отдельным приватным сервисом без пользовательских ключей и
 // поминутной оплаты. OpenAI сохраняется как явно включаемый совместимый provider.
@@ -1350,11 +1350,11 @@ try { PIPER_TTS_URL = new URL(process.env.PIPER_TTS_URL || 'http://127.0.0.1:500
 catch { PIPER_TTS_URL = new URL('http://127.0.0.1:5000'); }
 if (!['http:', 'https:'].includes(PIPER_TTS_URL.protocol)) PIPER_TTS_URL = new URL('http://127.0.0.1:5000');
 const PIPER_TTS_VOICES = {
-  RU: 'ru_RU-dmitri-medium',
-  UK: 'uk_UA-mykyta-high',
-  EN: 'en_US-joe-medium',
-  DE: 'de_DE-thorsten-high',
-  ES: 'es_ES-davefx-medium',
+  RU: { female: 'ru_RU-irina-medium', male: 'ru_RU-denis-medium' },
+  UK: { female: 'uk_UA-lada-x_low', male: 'uk_UA-oleksa-high' },
+  EN: { female: 'en_US-ljspeech-high', male: 'en_US-john-medium' },
+  DE: { female: 'de_DE-kerstin-low', male: 'de_DE-thorsten-high' },
+  ES: { female: 'es_AR-daniela-high', male: 'es_ES-davefx-medium' },
 };
 const SHADOW_TTS_MODEL = /^[A-Za-z0-9._-]{1,80}$/.test(process.env.SHADOW_TTS_MODEL || '')
   ? process.env.SHADOW_TTS_MODEL
@@ -1390,13 +1390,23 @@ const SHADOW_TTS_ACTIVE_BY_USER = new Map();
 let shadowTtsActiveGlobal = 0;
 let shadowTtsPiperHealth = { checkedAt: 0, ok: false };
 
-function shadowTtsVoiceEnv(code) {
+function shadowTtsGender(value) {
+  return value === 'male' ? 'male' : 'female';
+}
+function shadowTtsVoiceEnv(code, gender) {
+  const voiceGender = shadowTtsGender(gender);
   if (SHADOW_TTS_PROVIDER === 'piper') {
-    const voice = String(process.env['PIPER_TTS_VOICE_' + code] || PIPER_TTS_VOICES[code] || '').trim();
-    return /^[A-Za-z0-9_-]{3,96}$/.test(voice) ? voice : PIPER_TTS_VOICES[code];
+    const defaults = PIPER_TTS_VOICES[code] || PIPER_TTS_VOICES.RU;
+    const genderOverride = process.env['PIPER_TTS_VOICE_' + code + '_' + voiceGender.toUpperCase()];
+    const legacyOverride = voiceGender === 'female' ? process.env['PIPER_TTS_VOICE_' + code] : '';
+    const voice = String(genderOverride || legacyOverride || defaults[voiceGender] || '').trim();
+    return /^[A-Za-z0-9_-]{3,96}$/.test(voice) ? voice : defaults[voiceGender];
   }
-  const voice = String(process.env['SHADOW_TTS_VOICE_' + code] || 'marin').toLowerCase();
-  return SHADOW_TTS_VOICES.has(voice) ? voice : 'marin';
+  const fallback = voiceGender === 'male' ? 'cedar' : 'marin';
+  const genderOverride = process.env['SHADOW_TTS_VOICE_' + code + '_' + voiceGender.toUpperCase()];
+  const legacyOverride = voiceGender === 'female' ? process.env['SHADOW_TTS_VOICE_' + code] : '';
+  const voice = String(genderOverride || legacyOverride || fallback).toLowerCase();
+  return SHADOW_TTS_VOICES.has(voice) ? voice : fallback;
 }
 function shadowTtsSpeedEnv(code, fallback) {
   const speed = Number(process.env['SHADOW_TTS_SPEED_' + code]);
@@ -1406,35 +1416,35 @@ function shadowTtsSpeedEnv(code, fallback) {
 const SHADOW_TTS_LANG = {
   ru: {
     tag: 'ru-RU',
-    voice: shadowTtsVoiceEnv('RU'),
+    voices: { female: shadowTtsVoiceEnv('RU', 'female'), male: shadowTtsVoiceEnv('RU', 'male') },
     speed: shadowTtsSpeedEnv('RU', 1),
     noiseScale: 0.667,
     noiseWidthScale: 0.8,
-    instruction: 'Speak in native Russian. Use a warm, composed, subtly mysterious feminine secretary voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
+    instruction: 'Speak in native Russian. Use a warm, composed, subtly mysterious assistant voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
   },
   uk: {
     tag: 'uk-UA',
-    voice: shadowTtsVoiceEnv('UK'),
-    speed: shadowTtsSpeedEnv('UK', 0.94),
-    instruction: 'Speak in native Ukrainian. Use a warm, composed, subtly mysterious feminine secretary voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
+    voices: { female: shadowTtsVoiceEnv('UK', 'female'), male: shadowTtsVoiceEnv('UK', 'male') },
+    speed: shadowTtsSpeedEnv('UK', 1),
+    instruction: 'Speak in native Ukrainian. Use a warm, composed, subtly mysterious assistant voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
   },
   en: {
     tag: 'en-US',
-    voice: shadowTtsVoiceEnv('EN'),
-    speed: shadowTtsSpeedEnv('EN', 0.96),
-    instruction: 'Speak in natural English. Use a warm, composed, subtly mysterious feminine secretary voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
+    voices: { female: shadowTtsVoiceEnv('EN', 'female'), male: shadowTtsVoiceEnv('EN', 'male') },
+    speed: shadowTtsSpeedEnv('EN', 1),
+    instruction: 'Speak in natural English. Use a warm, composed, subtly mysterious assistant voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
   },
   de: {
     tag: 'de-DE',
-    voice: shadowTtsVoiceEnv('DE'),
-    speed: shadowTtsSpeedEnv('DE', 0.93),
-    instruction: 'Speak in native German. Use a warm, composed, subtly mysterious feminine secretary voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
+    voices: { female: shadowTtsVoiceEnv('DE', 'female'), male: shadowTtsVoiceEnv('DE', 'male') },
+    speed: shadowTtsSpeedEnv('DE', 1),
+    instruction: 'Speak in native German. Use a warm, composed, subtly mysterious assistant voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
   },
   es: {
     tag: 'es-ES',
-    voice: shadowTtsVoiceEnv('ES'),
-    speed: shadowTtsSpeedEnv('ES', 0.96),
-    instruction: 'Speak in native Spanish from Spain. Use a warm, composed, subtly mysterious feminine secretary voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
+    voices: { female: shadowTtsVoiceEnv('ES', 'female'), male: shadowTtsVoiceEnv('ES', 'male') },
+    speed: shadowTtsSpeedEnv('ES', 1),
+    instruction: 'Speak in natural Spanish. Use a warm, composed, subtly mysterious assistant voice. Sound human and close, never robotic or announcer-like. Keep natural pauses and clear diction. Do not translate or paraphrase the supplied text.',
   },
 };
 const SHADOW_TTS_CONTEXT_INSTRUCTION = {
@@ -1482,12 +1492,13 @@ function shadowTtsCacheInfo(uid, cacheKey) {
   const dir = shadowTtsCacheDir(uid);
   return { dir, file: path.join(dir, cacheKey + '.' + fmt.ext), mime: fmt.mime, ext: fmt.ext };
 }
-function shadowTtsCacheKey(uid, language, context, text) {
+function shadowTtsCacheKey(uid, language, gender, context, text) {
   const cfg = SHADOW_TTS_LANG[language];
+  const voiceGender = shadowTtsGender(gender);
   return crypto.createHash('sha256').update(JSON.stringify({
-    v: 4, uid, provider: SHADOW_TTS_PROVIDER, model: SHADOW_TTS_MODEL, format: SHADOW_TTS_FORMAT,
-    voice: cfg.voice, speed: cfg.speed, noiseScale: cfg.noiseScale,
-    noiseWidthScale: cfg.noiseWidthScale, language, context, text,
+    v: 5, uid, provider: SHADOW_TTS_PROVIDER, model: SHADOW_TTS_MODEL, format: SHADOW_TTS_FORMAT,
+    voice: cfg.voices[voiceGender], gender: voiceGender, speed: cfg.speed,
+    noiseScale: cfg.noiseScale, noiseWidthScale: cfg.noiseWidthScale, language, context, text,
   })).digest('hex');
 }
 function shadowTtsFreshCache(info) {
@@ -1555,7 +1566,7 @@ function shadowTtsError(res, status, error, requestId, extra, headers) {
     'X-Request-Id': requestId,
   }, headers || {}));
 }
-function shadowTtsHeaders(info, requestId, language, cacheState, length) {
+function shadowTtsHeaders(info, requestId, language, gender, cacheState, length) {
   const headers = {
     'Content-Type': info.mime,
     'Cache-Control': 'private, no-store',
@@ -1566,13 +1577,14 @@ function shadowTtsHeaders(info, requestId, language, cacheState, length) {
     'X-Shadow-Voice-Provider': SHADOW_TTS_PROVIDER,
     'X-Shadow-Voice-AI-Generated': 'true',
     'X-Shadow-Voice-Language': language,
+    'X-Shadow-Voice-Gender': shadowTtsGender(gender),
     'X-Shadow-Voice-Cache': cacheState,
   };
   if (length != null) headers['Content-Length'] = length;
   return headers;
 }
-function shadowTtsServeCache(res, info, stat, requestId, language) {
-  res.writeHead(200, shadowTtsHeaders(info, requestId, language, 'HIT', stat.size));
+function shadowTtsServeCache(res, info, stat, requestId, language, gender) {
+  res.writeHead(200, shadowTtsHeaders(info, requestId, language, gender, 'HIT', stat.size));
   const stream = fs.createReadStream(info.file);
   stream.on('error', () => { if (!res.writableEnded) res.destroy(); });
   stream.pipe(res);
@@ -1601,7 +1613,7 @@ function shadowTtsPiperReady() {
     upstream.end();
   });
 }
-function shadowTtsPiper(res, payload, info, requestId, language) {
+function shadowTtsPiper(res, payload, info, requestId, language, gender) {
   return new Promise((resolve) => {
     const body = Buffer.from(JSON.stringify(payload));
     const target = new URL('/synthesize', PIPER_TTS_URL);
@@ -1657,7 +1669,7 @@ function shadowTtsPiper(res, payload, info, requestId, language) {
           fs.renameSync(tempFile, info.file);
           shadowTtsPruneCache(info.dir);
         } catch {}
-        send(res, 200, audio, shadowTtsHeaders(info, requestId, language, 'MISS', audio.length));
+        send(res, 200, audio, shadowTtsHeaders(info, requestId, language, gender, 'MISS', audio.length));
         finish();
       });
     });
@@ -1669,7 +1681,7 @@ function shadowTtsPiper(res, payload, info, requestId, language) {
     upstream.end(body);
   });
 }
-function shadowTtsOpenAi(res, key, payload, info, requestId, language) {
+function shadowTtsOpenAi(res, key, payload, info, requestId, language, gender) {
   return new Promise((resolve) => {
     const body = Buffer.from(JSON.stringify(payload));
     let responseStarted = false;
@@ -1724,7 +1736,7 @@ function shadowTtsOpenAi(res, key, payload, info, requestId, language) {
         cacheStream.on('error', () => { cacheWritable = false; try { fs.unlinkSync(tempFile); } catch {} });
       } catch { cacheWritable = false; }
       res.on('close', () => { clientOpen = false; });
-      res.writeHead(200, shadowTtsHeaders(info, requestId, language, 'MISS'));
+      res.writeHead(200, shadowTtsHeaders(info, requestId, language, gender, 'MISS'));
       responseStarted = true;
 
       const abortStream = () => {
@@ -1786,6 +1798,7 @@ async function handleShadowTts(req, res, user) {
   try { body = JSON.parse(await readBody(req, 16 * 1024)); }
   catch { return shadowTtsError(res, 400, 'bad_json', requestId); }
   const language = shadowTtsLanguage(body.language);
+  const gender = shadowTtsGender(body.gender);
   const text = shadowTtsText(body.text);
   const context = SHADOW_TTS_CONTEXTS.has(body.context) ? body.context : 'calm';
   if (!language) return shadowTtsError(res, 400, 'unsupported_language', requestId, { supportedLanguages: Object.keys(SHADOW_TTS_LANG) });
@@ -1794,31 +1807,31 @@ async function handleShadowTts(req, res, user) {
 
   const retryAfter = shadowTtsRateLimit(user.id);
   if (retryAfter) return shadowTtsError(res, 429, 'voice_rate_limit', requestId, { retryAfter }, { 'Retry-After': String(retryAfter) });
-  const cacheKey = shadowTtsCacheKey(user.id, language, context, text);
+  const cacheKey = shadowTtsCacheKey(user.id, language, gender, context, text);
   const info = shadowTtsCacheInfo(user.id, cacheKey);
   const cached = shadowTtsFreshCache(info);
-  if (cached) return shadowTtsServeCache(res, info, cached, requestId, language);
+  if (cached) return shadowTtsServeCache(res, info, cached, requestId, language, gender);
   if (!shadowTtsAcquire(user.id)) return shadowTtsError(res, 429, 'voice_busy', requestId, { retryAfter: 2 }, { 'Retry-After': '2' });
 
   const cfg = SHADOW_TTS_LANG[language];
   const payload = SHADOW_TTS_PROVIDER === 'piper' ? {
     text,
-    voice: cfg.voice,
+    voice: cfg.voices[gender],
     length_scale: Math.max(0.8, Math.min(1.3, 1 / cfg.speed)),
     ...(Number.isFinite(cfg.noiseScale) ? { noise_scale: cfg.noiseScale } : {}),
     ...(Number.isFinite(cfg.noiseWidthScale) ? { noise_w_scale: cfg.noiseWidthScale } : {}),
   } : {
     model: SHADOW_TTS_MODEL,
     input: text,
-    voice: cfg.voice,
-    instructions: `${cfg.instruction} ${SHADOW_TTS_CONTEXT_INSTRUCTION[context]}`,
+    voice: cfg.voices[gender],
+    instructions: `${cfg.instruction} Use a ${gender === 'male' ? 'masculine' : 'feminine'} voice. ${SHADOW_TTS_CONTEXT_INSTRUCTION[context]}`,
     response_format: SHADOW_TTS_FORMAT,
     speed: cfg.speed,
     stream_format: 'audio',
   };
   try {
-    if (SHADOW_TTS_PROVIDER === 'piper') await shadowTtsPiper(res, payload, info, requestId, language);
-    else await shadowTtsOpenAi(res, access.key, payload, info, requestId, language);
+    if (SHADOW_TTS_PROVIDER === 'piper') await shadowTtsPiper(res, payload, info, requestId, language, gender);
+    else await shadowTtsOpenAi(res, access.key, payload, info, requestId, language, gender);
   }
   finally { shadowTtsRelease(user.id); }
 }
@@ -2359,7 +2372,7 @@ const server = http.createServer(async (req, res) => {
       const languages = {};
       for (const code of Object.keys(SHADOW_TTS_LANG)) {
         const cfg = SHADOW_TTS_LANG[code];
-        languages[code] = { tag: cfg.tag, voice: cfg.voice, speed: cfg.speed };
+        languages[code] = { tag: cfg.tag, voices: cfg.voices, speed: cfg.speed };
       }
       return sendJson(res, 200, {
         configured: providerReady,

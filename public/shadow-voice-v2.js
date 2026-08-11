@@ -1,7 +1,7 @@
 (function initShadowVoiceV2(global) {
   'use strict';
 
-  if (global.ShadowVoiceV2 && global.ShadowVoiceV2.version === '2.0.0') return;
+  if (global.ShadowVoiceV2 && global.ShadowVoiceV2.version === '2.1.1') return;
 
   const LANGUAGE_TAGS = {
     ru: 'ru-RU',
@@ -103,6 +103,10 @@
     return CONTEXTS.has(value) ? value : 'calm';
   }
 
+  function normalizeGender(value) {
+    return value === 'male' ? 'male' : 'female';
+  }
+
   function emit(nextState, detail) {
     state = Object.assign({}, state, detail || {}, { state: nextState, at: Date.now() });
     try {
@@ -154,9 +158,13 @@
     try {
       button.classList.toggle('on', !!playing);
       button.setAttribute('aria-pressed', playing ? 'true' : 'false');
-      button.innerHTML = playing
-        ? buttonIcon('media.stop', '■')
-        : buttonIcon('media.sound', '◇');
+      if (playing) {
+        button.dataset.shadowVoiceIdleHtml = button.innerHTML;
+        button.innerHTML = buttonIcon('media.stop', '■');
+      } else {
+        button.innerHTML = button.dataset.shadowVoiceIdleHtml || buttonIcon('media.sound', '◇');
+        delete button.dataset.shadowVoiceIdleHtml;
+      }
     } catch {}
   }
 
@@ -228,8 +236,8 @@
     return { mode: 'stopped' };
   }
 
-  function cacheKey(text, language, context) {
-    return `${language}\u0000${context}\u0000${text}`;
+  function cacheKey(text, language, gender, context) {
+    return `${language}\u0000${gender}\u0000${context}\u0000${text}`;
   }
 
   function memoryCacheGet(key) {
@@ -255,8 +263,8 @@
     return new ShadowVoiceError(code, code, response.status, payload);
   }
 
-  async function fetchCloudAudio(text, language, context, token) {
-    const key = cacheKey(text, language, context);
+  async function fetchCloudAudio(text, language, gender, context, token) {
+    const key = cacheKey(text, language, gender, context);
     const cached = memoryCacheGet(key);
     if (cached) return Object.assign({}, cached, { cache: 'MEMORY' });
 
@@ -271,7 +279,7 @@
         credentials: 'same-origin',
         cache: 'no-store',
         headers: { 'Content-Type': 'application/json', 'Accept': 'audio/*, application/json' },
-        body: JSON.stringify({ text, language, context }),
+        body: JSON.stringify({ text, language, gender, context }),
         signal: controller.signal,
       });
       if (token !== runId) throw new DOMException('Stopped', 'AbortError');
@@ -289,6 +297,7 @@
         requestId: response.headers.get('X-Request-Id') || null,
         mode: response.headers.get('X-Shadow-Voice-Mode') || 'server-neural',
         provider: response.headers.get('X-Shadow-Voice-Provider') || null,
+        gender: normalizeGender(response.headers.get('X-Shadow-Voice-Gender') || gender),
       };
       memoryCachePut(key, item);
       return item;
@@ -311,7 +320,7 @@
     notify(COPY[language].fallback);
   }
 
-  function playCloud(item, language, token) {
+  function playCloud(item, language, gender, token) {
     return new Promise((resolve, reject) => {
       if (token !== runId) return resolve({ mode: 'stopped' });
       pendingPlayback = { token, resolve, reject };
@@ -326,6 +335,7 @@
         emit('playing', {
           mode: item.mode,
           language,
+          gender: item.gender || gender,
           reason: null,
           cache: item.cache,
           requestId: item.requestId,
@@ -336,6 +346,7 @@
       media.onended = () => settlePlayback(token, {
         mode: item.mode,
         language,
+        gender: item.gender || gender,
         cache: item.cache,
         requestId: item.requestId,
         aiGenerated: true,
@@ -465,6 +476,7 @@
 
     const token = ++runId;
     const language = languageCode(opts.language || currentLanguage());
+    const gender = normalizeGender(opts.gender);
     const context = normalizeContext(opts.context);
     activeButton = button;
     setButtonPlaying(button, true);
@@ -472,6 +484,7 @@
     emit('loading', {
       mode: 'server-neural',
       language,
+      gender,
       reason: null,
       cache: null,
       requestId: null,
@@ -479,9 +492,9 @@
     });
 
     try {
-      const item = await fetchCloudAudio(text, language, context, token);
+      const item = await fetchCloudAudio(text, language, gender, context, token);
       if (token !== runId) return { mode: 'stopped' };
-      return await playCloud(item, language, token);
+      return await playCloud(item, language, gender, token);
     } catch (error) {
       if (token !== runId || (error && error.name === 'AbortError')) return { mode: 'stopped' };
       const reason = error && (error.code || error.name) ? (error.code || error.name) : 'cloud_voice_failed';
@@ -491,9 +504,9 @@
         return playSystemFallback(text, language, reason, token);
       }
       resetUi();
-      emit('error', { mode: 'server-neural', language, reason, aiGenerated: true });
+      emit('error', { mode: 'server-neural', language, gender, reason, aiGenerated: true });
       notify(COPY[language].failed);
-      return { mode: 'unavailable', language, reason };
+      return { mode: 'unavailable', language, gender, reason };
     }
   }
 
@@ -519,7 +532,11 @@
   }
 
   function legacyBridgeSpeak(text, button, context) {
-    return speak(text, { button, language: currentLanguage(), context: normalizeContext(context) });
+    let gender = 'female';
+    try {
+      if (typeof global.shadowVoiceGender === 'function') gender = global.shadowVoiceGender();
+    } catch {}
+    return speak(text, { button, language: currentLanguage(), gender: normalizeGender(gender), context: normalizeContext(context) });
   }
 
   function legacyBridgeStop() {
@@ -542,7 +559,7 @@
   }
 
   const api = {
-    version: '2.0.0',
+    version: '2.1.1',
     speak,
     stop,
     getStatus,

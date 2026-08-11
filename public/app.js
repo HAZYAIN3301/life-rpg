@@ -3540,6 +3540,7 @@ const DEFAULT_SETTINGS = {
   cosmetics: [], // id'шники выпавшей косметики (рамки/фоны) — #20
   equipped: { frame: null, background: null, title: null }, // надетые косметика + звание
   sound: true, // звуки интерфейса (#23)
+  shadowVoiceGender: 'female', // выбранный тембр Piper: единая женская/мужская пара для всех языков
   theme: 'dark', accent: '#6c8cff', // оформление (тема + акцент)
   companion: { name: 'Тень', born: null, bond: 0, lastSeen: null, journal: [], check: {} }, // живой компаньон (Finch-модель)
   path: null, pathChosenAt: null, pathAntagonistMuted: false, control: {}, // «Доверие vs Контроль» (см. DISCIPLINE-PATHS-PLAN.md) — null = ещё не выбран
@@ -9133,6 +9134,8 @@ function ttsSystemOK() { try { return 'speechSynthesis' in window && typeof Spee
 function ttsCloudOK() { return !!(window.ShadowVoiceV2 && typeof window.ShadowVoiceV2.speak === 'function'); }
 function ttsOK() { return ttsCloudOK() || ttsSystemOK(); }
 function ttsOn() { return !State.settings || State.settings.tts !== false; }
+function shadowVoiceGender() { return State.settings && State.settings.shadowVoiceGender === 'male' ? 'male' : 'female'; }
+window.shadowVoiceGender = shadowVoiceGender;
 function ttsPrefs() {
   const defaults = { voiceURI: '', rate: .92, pitch: .96 };
   return Object.assign(defaults, (State.settings && State.settings.ttsPrefs) || {});
@@ -9205,7 +9208,11 @@ function ttsChunks(text) {
 function ttsStop() {
   _ttsRunId++;
   try { speechSynthesis.cancel(); } catch {}
-  if (_ttsBtn) { _ttsBtn.classList.remove('on'); _ttsBtn.innerHTML = satoruIconHTML('media.sound', 'tts-glyph', '◇'); }
+  if (_ttsBtn) {
+    _ttsBtn.classList.remove('on');
+    _ttsBtn.innerHTML = _ttsBtn.dataset.ttsIdleHtml || satoruIconHTML('media.sound', 'tts-glyph', '◇');
+    delete _ttsBtn.dataset.ttsIdleHtml;
+  }
   _ttsBtn = null; _ttsView = null;
   if (window.ShadowRig) window.ShadowRig.clearGlobalState();
 }
@@ -9220,7 +9227,11 @@ function ttsSpeak(text, btn, context = 'calm') {
   const prefs = ttsPrefs(), voice = ttsVoiceFor(code);
   const runId = ++_ttsRunId;
   _ttsBtn = btn; _ttsView = State.view;
-  if (btn) { btn.classList.add('on'); btn.innerHTML = satoruIconHTML('media.stop', 'tts-glyph', '◇'); }
+  if (btn) {
+    btn.dataset.ttsIdleHtml = btn.innerHTML;
+    btn.classList.add('on');
+    btn.innerHTML = satoruIconHTML('media.stop', 'tts-glyph', '◇');
+  }
   if (window.ShadowRig) window.ShadowRig.setGlobalState('speaking');
   const speakChunk = (index, withVoice = true) => {
     if (runId !== _ttsRunId || index >= chunks.length) {
@@ -9278,11 +9289,16 @@ function ttsBtnHTML() {
   return `<button class="tts-btn" data-action="tts" title="${lbl}" aria-label="${lbl}">${satoruIconHTML('media.sound', 'tts-glyph', '◇')}</button>`;
 }
 const SHADOW_VOICE_COPY = {
-  ru: { checking: 'Проверяем голос Тени…', cloud: 'Cloud AI · естественный голос', piper: 'Piper · локальный голос Тени', detail: 'Русский, украинский, английский, немецкий и испанский выбираются автоматически. Голос синтезирован нейросетью.', piperDetail: 'Без пользовательского ключа и оплаты за фразу. Голос синтезируется нашим локальным Piper.', fallback: 'Голос Тени недоступен', unavailable: 'Текст останется на экране. Проверь соединение и попробуй ещё раз — системный голос не включится без твоего выбора.' },
-  uk: { checking: 'Перевіряємо голос Тіні…', cloud: 'Cloud AI · природний голос', piper: 'Piper · локальний голос Тіні', detail: 'Російська, українська, англійська, німецька та іспанська обираються автоматично. Голос синтезовано нейромережею.', piperDetail: 'Без користувацького ключа й оплати за фразу. Голос синтезує наш локальний Piper.', fallback: 'Голос Тіні недоступний', unavailable: 'Текст залишиться на екрані. Перевір з’єднання та спробуй ще раз — системний голос не ввімкнеться без твого вибору.' },
-  en: { checking: 'Checking Shadow voice…', cloud: 'Cloud AI · natural voice', piper: 'Piper · local Shadow voice', detail: 'Russian, Ukrainian, English, German and Spanish are selected automatically. The voice is neural speech synthesis.', piperDetail: 'No user key and no per-phrase charge. Our local Piper synthesizes the voice.', fallback: 'Shadow voice unavailable', unavailable: 'The text stays on screen. Check your connection and try again — the device voice will not start unless you choose it.' },
-  de: { checking: 'Stimme des Schattens wird geprüft…', cloud: 'Cloud AI · natürliche Stimme', piper: 'Piper · lokale Stimme des Schattens', detail: 'Russisch, Ukrainisch, Englisch, Deutsch und Spanisch werden automatisch gewählt. Die Stimme wird neuronal synthetisiert.', piperDetail: 'Kein Nutzerschlüssel und keine Gebühr pro Satz. Unser lokaler Piper erzeugt die Stimme.', fallback: 'Stimme des Schattens nicht verfügbar', unavailable: 'Der Text bleibt sichtbar. Prüfe die Verbindung und versuche es erneut – die Systemstimme startet nicht ohne deine Auswahl.' },
-  es: { checking: 'Comprobando la voz de la Sombra…', cloud: 'Cloud AI · voz natural', piper: 'Piper · voz local de la Sombra', detail: 'Ruso, ucraniano, inglés, alemán y español se eligen automáticamente. La voz se sintetiza con una red neuronal.', piperDetail: 'Sin clave del usuario ni pago por frase. Nuestro Piper local sintetiza la voz.', fallback: 'Voz de la Sombra no disponible', unavailable: 'El texto seguirá en pantalla. Comprueba la conexión e inténtalo de nuevo; la voz del dispositivo no se iniciará sin que la elijas.' },
+  ru: { checking: 'Проверяем голос Тени…', cloud: 'Cloud AI · естественный голос', piper: 'Piper · локальный голос Тени', detail: 'Язык выбирается автоматически, тембр — тобой. Голос синтезирован нейросетью.', piperDetail: 'Без пользовательского ключа и оплаты за фразу. Язык выбирается автоматически, тембр сохраняется.', fallback: 'Голос Тени недоступен', unavailable: 'Текст останется на экране. Проверь соединение и попробуй ещё раз — системный голос не включится без твоего выбора.', timbre: 'Тембр голоса', female: 'Женский', male: 'Мужской', selected: 'Выбранный голос' },
+  uk: { checking: 'Перевіряємо голос Тіні…', cloud: 'Cloud AI · природний голос', piper: 'Piper · локальний голос Тіні', detail: 'Мова обирається автоматично, тембр — тобою. Голос синтезовано нейромережею.', piperDetail: 'Без користувацького ключа й оплати за фразу. Мова обирається автоматично, тембр зберігається.', fallback: 'Голос Тіні недоступний', unavailable: 'Текст залишиться на екрані. Перевір з’єднання та спробуй ще раз — системний голос не ввімкнеться без твого вибору.', timbre: 'Тембр голосу', female: 'Жіночий', male: 'Чоловічий', selected: 'Обраний голос' },
+  en: { checking: 'Checking Shadow voice…', cloud: 'Cloud AI · natural voice', piper: 'Piper · local Shadow voice', detail: 'Language is automatic; you choose the voice. The speech is neural synthesis.', piperDetail: 'No user key and no per-phrase charge. Language is automatic and your voice choice is saved.', fallback: 'Shadow voice unavailable', unavailable: 'The text stays on screen. Check your connection and try again — the device voice will not start unless you choose it.', timbre: 'Voice', female: 'Female', male: 'Male', selected: 'Selected voice' },
+  de: { checking: 'Stimme des Schattens wird geprüft…', cloud: 'Cloud AI · natürliche Stimme', piper: 'Piper · lokale Stimme des Schattens', detail: 'Die Sprache wird automatisch gewählt, die Stimme wählst du. Sie wird neuronal synthetisiert.', piperDetail: 'Kein Nutzerschlüssel und keine Gebühr pro Satz. Sprache automatisch, Stimmenwahl gespeichert.', fallback: 'Stimme des Schattens nicht verfügbar', unavailable: 'Der Text bleibt sichtbar. Prüfe die Verbindung und versuche es erneut – die Systemstimme startet nicht ohne deine Auswahl.', timbre: 'Stimme', female: 'Weiblich', male: 'Männlich', selected: 'Gewählte Stimme' },
+  es: { checking: 'Comprobando la voz de la Sombra…', cloud: 'Cloud AI · voz natural', piper: 'Piper · voz local de la Sombra', detail: 'El idioma se elige automáticamente y tú eliges la voz. Es síntesis neuronal.', piperDetail: 'Sin clave del usuario ni pago por frase. El idioma es automático y la voz elegida se guarda.', fallback: 'Voz de la Sombra no disponible', unavailable: 'El texto seguirá en pantalla. Comprueba la conexión e inténtalo de nuevo; la voz del dispositivo no se iniciará sin que la elijas.', timbre: 'Voz', female: 'Femenina', male: 'Masculina', selected: 'Voz elegida' },
+};
+const SHADOW_VOICE_NAMES = {
+  ru: { female: 'Irina', male: 'Denis' }, uk: { female: 'Lada', male: 'Oleksa' },
+  en: { female: 'LJSpeech', male: 'John' }, de: { female: 'Kerstin', male: 'Thorsten' },
+  es: { female: 'Daniela', male: 'Davefx' },
 };
 function shadowVoiceCopy() { return SHADOW_VOICE_COPY[lang()] || SHADOW_VOICE_COPY.ru; }
 function shadowVoiceStatusMarkup() {
@@ -9310,7 +9326,15 @@ function refreshShadowVoiceStatus() {
 }
 function shadowVoiceSettingsHTML() {
   setTimeout(refreshShadowVoiceStatus, 0);
-  return `<div class="shadow-voice-status" id="shadow-voice-status">${shadowVoiceStatusMarkup()}</div>`;
+  const copy = shadowVoiceCopy(), gender = shadowVoiceGender();
+  const names = SHADOW_VOICE_NAMES[lang()] || SHADOW_VOICE_NAMES.ru;
+  return `<div class="shadow-voice-status" id="shadow-voice-status">${shadowVoiceStatusMarkup()}</div>
+    <fieldset class="shadow-voice-picker"><legend>${copy.timbre}</legend>
+      <div class="shadow-voice-choices" role="group" aria-label="${copy.timbre}">
+        <button type="button" class="shadow-voice-choice ${gender === 'female' ? 'active' : ''}" data-action="set-shadow-voice-gender" data-gender="female" aria-pressed="${gender === 'female'}">${copy.female}</button>
+        <button type="button" class="shadow-voice-choice ${gender === 'male' ? 'active' : ''}" data-action="set-shadow-voice-gender" data-gender="male" aria-pressed="${gender === 'male'}">${copy.male}</button>
+      </div><small>${copy.selected}: <b>${esc(names[gender])}</b></small>
+    </fieldset>`;
 }
 function ttsSyncVoiceSelect() {
   const select = document.getElementById('set-tts-voice');
@@ -18990,6 +19014,14 @@ function onClick(e) {
   if (action === 'tts') { ttsSpeak(ttsTextNear(el), el, ttsContextNear(el)); return; }
   if (action === 'tts-preview') {
     ttsSpeak(TTS_PREVIEW[lang()] || TTS_PREVIEW.ru, el, 'calm');
+    return;
+  }
+  if (action === 'set-shadow-voice-gender') {
+    const gender = el.dataset.gender === 'male' ? 'male' : 'female';
+    State.settings.shadowVoiceGender = gender;
+    autosaveSettings();
+    ttsStop();
+    render();
     return;
   }
   if (action === 'chat-actions-apply') {

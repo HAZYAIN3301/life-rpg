@@ -99,29 +99,41 @@ test('Shadow Voice v141 uses private Piper, returns WAV and caches repeated spee
   assert.equal(statusBody.provider, 'piper');
   assert.equal(statusBody.mode, 'server-neural');
   assert.equal(statusBody.format, 'wav');
-  assert.equal(statusBody.languages.ru.voice, 'ru_RU-dmitri-medium');
+  assert.deepEqual(statusBody.languages.ru.voices, { female: 'ru_RU-irina-medium', male: 'ru_RU-denis-medium' });
+  assert.deepEqual(statusBody.languages.uk.voices, { female: 'uk_UA-lada-x_low', male: 'uk_UA-oleksa-high' });
+  assert.deepEqual(statusBody.languages.en.voices, { female: 'en_US-ljspeech-high', male: 'en_US-john-medium' });
+  assert.deepEqual(statusBody.languages.de.voices, { female: 'de_DE-kerstin-low', male: 'de_DE-thorsten-high' });
+  assert.deepEqual(statusBody.languages.es.voices, { female: 'es_AR-daniela-high', male: 'es_ES-davefx-medium' });
   assert.equal(statusBody.languages.ru.speed, 1);
 
-  const requestVoice = () => fetch(runtime.base + '/api/shadow/voice', {
+  const requestVoice = (gender) => fetch(runtime.base + '/api/shadow/voice', {
     method: 'POST',
     headers: { Cookie: cookie, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: 'Я рядом.', language: 'ru', context: 'calm' }),
+    body: JSON.stringify({ text: 'Я рядом.', language: 'ru', gender, context: 'calm' }),
   });
-  const first = await requestVoice();
+  const first = await requestVoice('female');
   assert.equal(first.status, 200); assert.equal(first.headers.get('content-type'), 'audio/wav');
   assert.equal(first.headers.get('x-shadow-voice-provider'), 'piper');
   assert.equal(first.headers.get('x-shadow-voice-mode'), 'server-neural');
+  assert.equal(first.headers.get('x-shadow-voice-gender'), 'female');
   assert.equal(first.headers.get('x-shadow-voice-cache'), 'MISS');
   assert.equal(Buffer.from(await first.arrayBuffer()).subarray(0, 4).toString('ascii'), 'RIFF');
   assert.deepEqual(providerPayload.text, 'Я рядом.');
-  assert.equal(providerPayload.voice, 'ru_RU-dmitri-medium');
+  assert.equal(providerPayload.voice, 'ru_RU-irina-medium');
   assert.equal(providerPayload.length_scale, 1);
   assert.equal(providerPayload.noise_scale, 0.667);
   assert.equal(providerPayload.noise_w_scale, 0.8);
 
-  const second = await requestVoice();
+  const second = await requestVoice('female');
   assert.equal(second.status, 200); assert.equal(second.headers.get('x-shadow-voice-cache'), 'HIT');
   assert.equal(providerCalls, 1, 'identical speech must not call Piper twice');
+
+  const male = await requestVoice('male');
+  assert.equal(male.status, 200);
+  assert.equal(male.headers.get('x-shadow-voice-cache'), 'MISS');
+  assert.equal(male.headers.get('x-shadow-voice-gender'), 'male');
+  assert.equal(providerPayload.voice, 'ru_RU-denis-medium');
+  assert.equal(providerCalls, 2, 'gender must be part of the audio cache key');
 });
 
 test('Shadow Voice v141 reports Piper unavailable when health check fails', { timeout: 30000 }, async (t) => {
@@ -141,4 +153,30 @@ test('Shadow Voice v141 reports Piper unavailable when health check fails', { ti
   assert.equal(body.configured, false);
   assert.equal(body.mode, 'unavailable');
   assert.equal(body.reason, 'local_voice_unreachable');
+});
+
+test('Shadow Voice v145 exposes the approved gender pair accessibly and ships every model', () => {
+  const app = fs.readFileSync(path.join(ROOT, 'public', 'app.js'), 'utf8');
+  const voiceClient = fs.readFileSync(path.join(ROOT, 'public', 'shadow-voice-v2.js'), 'utf8');
+  const css = fs.readFileSync(path.join(ROOT, 'public', 'styles.css'), 'utf8');
+  const sw = fs.readFileSync(path.join(ROOT, 'public', 'sw.js'), 'utf8');
+  const docker = fs.readFileSync(path.join(ROOT, 'piper-tts', 'Dockerfile'), 'utf8');
+  const selected = [
+    'ru_RU-irina-medium', 'ru_RU-denis-medium',
+    'uk_UA-lada-x_low', 'uk_UA-oleksa-high',
+    'en_US-ljspeech-high', 'en_US-john-medium',
+    'de_DE-kerstin-low', 'de_DE-thorsten-high',
+    'es_AR-daniela-high', 'es_ES-davefx-medium',
+  ];
+  for (const voice of selected) assert.match(docker, new RegExp(voice));
+  assert.match(app, /shadowVoiceGender: 'female'/);
+  assert.match(app, /data-action="set-shadow-voice-gender"/);
+  assert.match(app, /aria-pressed="\$\{gender === 'female'\}"/);
+  assert.match(app, /ru: \{ female: 'Irina', male: 'Denis' \}/);
+  assert.match(app, /dataset\.ttsIdleHtml = btn\.innerHTML/);
+  assert.match(app, /innerHTML = _ttsBtn\.dataset\.ttsIdleHtml/);
+  assert.match(voiceClient, /dataset\.shadowVoiceIdleHtml = button\.innerHTML/);
+  assert.match(voiceClient, /innerHTML = button\.dataset\.shadowVoiceIdleHtml/);
+  assert.match(css, /\.shadow-voice-choice[\s\S]*?min-height: 42px/);
+  assert.match(sw, /const CACHE = 'satoru-v145'/);
 });

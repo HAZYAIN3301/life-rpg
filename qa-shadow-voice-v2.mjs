@@ -49,16 +49,22 @@ const speechSynthesis = {
     });
   },
 };
-let fetchImpl = async () => new Response(new Blob(['fake-mp3'], { type: 'audio/mpeg' }), {
-  status: 200,
-  headers: {
-    'Content-Type': 'audio/mpeg',
-    'X-Shadow-Voice-Cache': 'MISS',
-    'X-Request-Id': 'qa-request',
-    'X-Shadow-Voice-Mode': 'server-neural',
-    'X-Shadow-Voice-Provider': 'piper',
-  },
-});
+const requests = [];
+let fetchImpl = async (_url, options) => {
+  const payload = JSON.parse(options.body);
+  requests.push(payload);
+  return new Response(new Blob(['fake-mp3'], { type: 'audio/mpeg' }), {
+    status: 200,
+    headers: {
+      'Content-Type': 'audio/mpeg',
+      'X-Shadow-Voice-Cache': 'MISS',
+      'X-Request-Id': 'qa-request',
+      'X-Shadow-Voice-Mode': 'server-neural',
+      'X-Shadow-Voice-Provider': 'piper',
+      'X-Shadow-Voice-Gender': payload.gender,
+    },
+  });
+};
 
 const windowObject = {
   lang: () => 'ru',
@@ -104,17 +110,22 @@ const sandbox = {
 vm.runInNewContext(source, sandbox, { filename: 'shadow-voice-v2.js' });
 const voice = windowObject.ShadowVoiceV2;
 
-assert.equal(voice.version, '2.0.0');
+assert.equal(voice.version, '2.1.1');
 assert.equal(voice.isBridgeInstalled(), true);
 assert.equal(windowObject.ttsSpeak.name, 'legacyBridgeSpeak');
 
 const cloud = await voice.speak('Я рядом.', { language: 'ru', context: 'calm', button });
 assert.equal(cloud.mode, 'server-neural');
+assert.equal(cloud.gender, 'female');
 assert.equal(cloud.cache, 'MISS');
 assert.equal(cloud.requestId, 'qa-request');
 assert.equal(classNames.has('on'), false);
 assert.ok(notices.some((message) => message.includes('сгенерирован ИИ')));
 assert.ok(events.some((event) => event.type === 'shadowvoice:status' && event.detail.state === 'playing' && event.detail.mode === 'server-neural'));
+
+const male = await voice.speak('Я рядом.', { language: 'ru', gender: 'male', context: 'calm', button });
+assert.equal(male.gender, 'male');
+assert.deepEqual(requests.map((item) => item.gender), ['female', 'male']);
 
 fetchImpl = async () => new Response(JSON.stringify({
   error: 'no_openai_key',

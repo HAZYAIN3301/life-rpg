@@ -8659,6 +8659,40 @@ html.mobile-nav-open body {
 .tts-settings small { grid-column: 1 / -1; line-height: 1.45; }
 .shadow-voice-status { display: grid; gap: 4px; min-width: 0; }
 .shadow-voice-status small { grid-column: auto; color: var(--muted); }
+.shadow-voice-picker {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.shadow-voice-picker legend {
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+.shadow-voice-picker small { display: block; margin-top: 7px; color: var(--muted); line-height: 1.4; }
+.shadow-voice-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.shadow-voice-choice {
+  min-width: 0;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.shadow-voice-choice.active {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
+  background: color-mix(in srgb, var(--accent) 15%, var(--panel));
+  color: var(--text);
+}
+.shadow-voice-choice:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 48%, transparent); outline-offset: 2px; }
 .voice-mode { display: inline-flex; align-items: center; gap: 7px; color: var(--text); }
 .voice-mode::before {
   width: 8px;

@@ -2,6 +2,17 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-11] 🔊 Shadow Voice v2.4 — утверждённые женские и мужские Piper-голоса
+
+- Зафиксирован продуктовый выбор для всех пяти языков: RU `Irina / Denis`, UK `Lada / Oleksa`, EN `LJSpeech / John`, DE `Kerstin / Thorsten`, ES `Daniela / Davefx`. Женский тембр остаётся дефолтом; пользователь может в любой момент переключить тембр в Settings → Опыт → Звук, выбор сохраняется в settings.
+- `/api/shadow/voice` принимает только нормализованный `gender=female|male`, выбирает разрешённую пару для текущего языка и включает тембр и конкретную модель в cache key v5. Ответ подтверждает выбор через `X-Shadow-Voice-Gender`; status отдаёт обе модели каждого языка. Для самостоятельного production override добавлены `PIPER_TTS_VOICE_<LANG>_FEMALE|MALE` и парные OpenAI overrides.
+- `piper-tts/Dockerfile` теперь загружает все десять моделей. В документации отдельно оставлен инфраструктурный gate: Piper HTTP лениво держит загруженные голоса в памяти, поэтому перед production нужны замер RSS/latency и решение о размере/разделении сервиса.
+- Лицензии не замолчаны: `Irina` имеет `Dataset license: Unknown` и остаётся явным release blocker до разрешения; `Daniela` — CC BY-SA 4.0 и требует review атрибуции/share-alike. Остальные выбранные модели документированы как Apache-2.0, public domain или CC0 в `piper-tts/README.md` и `SHADOW-VOICE-V2.md`.
+- Settings-copy полностью покрыта RU/EN/DE/UK/ES. Переключатель — semantic fieldset с `aria-pressed`, visible focus и реальной высотой каждой кнопки `42px`; на `375×812` и `360×800` горизонтального overflow нет. Live QA поймал и закрыл отдельный дефект: после завершения/остановки TTS preview терял подпись; `ShadowVoiceV2 2.1.1` и legacy TTS теперь восстанавливают исходную разметку кнопки.
+- PWA cache: `satoru-v143 → satoru-v145`; `v144` был промежуточным локальным shell и заменён после исправления preview-кнопки. Cache-busting URL Shadow Voice обновлён, уже открытая локальная PWA перезагружена и проверена на финальном shell.
+- Реальный Piper QA: все **10/10** выбранных моделей синтезировали валидный mono PCM WAV; same-origin end-to-end API вернул десять `200 audio/wav`, правильный gender header и независимые MISS, повтор RU/Irina дал HIT. Live preview реально вызвал Piper `/synthesize`, переключение `Irina ↔ Denis` сохранилось после reload, console warnings/errors = 0.
+- QA: server/app/client syntax — PASS; client contract — PASS; focused Shadow Voice **3/3 PASS**; полный suite **140/140 PASS**. Responsive screenshots: `docs/design-qa/2026-08-11-shadow-voice-v145/` (`375×812`, `360×800`, `1280×900`). Затронуты `server.js`, `public/{app.js,styles.css,index.html,shadow-voice-v2.js,sw.js}`, `piper-tts/`, `SHADOW-VOICE-V2.md`, `qa-shadow-voice-v2.mjs`, focused/SW-pin tests и QA screenshots. Commit: `feat: add selectable Shadow voice pairs`. Push/deploy не выполнялись.
+
 ## [2026-08-11] 🔊 Shadow Voice v2.3 — естественный RU-профиль Piper
 
 - Реальная причина текущего плохого звука разделена на две части: production всё ещё не содержит локальный Piper-коммит, потому что push/deploy не выполнялись; в подготовленном runtime RU-дефолт дополнительно был неудачно закреплён на `Denis` и искусственно замедлен до `speed=0.94`.

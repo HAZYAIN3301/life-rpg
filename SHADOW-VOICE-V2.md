@@ -1,4 +1,4 @@
-# Shadow Voice v2.3 — локальный Piper TTS
+# Shadow Voice v2.4 — локальный Piper TTS, два тембра
 
 Status: runtime и отдельный Piper-сервис реализованы 2026-08-11. До production нужны отдельный deploy Piper, приватный service URL в Satoru и real-device listening QA.
 
@@ -12,7 +12,7 @@ OpenAI Speech сохранён как необязательный совмес�
 
 ## Состав
 
-- `piper-tts/Dockerfile` — изолированный HTTP-сервис Piper и пять закреплённых голосов.
+- `piper-tts/Dockerfile` — изолированный HTTP-сервис Piper и десять закреплённых голосов.
 - `piper-tts/README.md` — deploy и конфигурация.
 - `server.js` — `/api/shadow/voice`, health check Piper, лимиты и per-user cache.
 - `public/shadow-voice-v2.js` — загрузка, playback/stop, speaking state и explicit fallback.
@@ -21,13 +21,13 @@ OpenAI Speech сохранён как необязательный совмес�
 
 ## Голоса
 
-| Язык | Piper voice | Лицензия датасета |
-|---|---|---|
-| RU | `ru_RU-dmitri-medium` | CC0 |
-| UK | `uk_UA-mykyta-high` | Apache-2.0 |
-| EN | `en_US-joe-medium` | CC0 |
-| DE | `de_DE-thorsten-high` | CC0 |
-| ES | `es_ES-davefx-medium` | CC0 |
+| Язык | Женский | Лицензия | Мужской | Лицензия |
+|---|---|---|---|---|
+| RU | `ru_RU-irina-medium` | Unknown | `ru_RU-denis-medium` | CC0 |
+| UK | `uk_UA-lada-x_low` | Apache-2.0 | `uk_UA-oleksa-high` | Apache-2.0 |
+| EN | `en_US-ljspeech-high` | Public domain | `en_US-john-medium` | Public domain |
+| DE | `de_DE-kerstin-low` | CC0 | `de_DE-thorsten-high` | CC0 |
+| ES | `es_AR-daniela-high` | CC BY-SA 4.0 | `es_ES-davefx-medium` | CC0 |
 
 Источники: [Piper](https://github.com/OHF-Voice/piper1-gpl), [voice catalog](https://github.com/OHF-Voice/piper1-gpl/blob/main/docs/VOICES.md). Движок Piper имеет GPL-3.0; его отделение в самостоятельный сервис намеренное. Перед коммерческим релизом сохранить notices образа и повторно проверить model cards закреплённых голосов.
 
@@ -48,7 +48,7 @@ Status выполняет короткий `/info` health check и не заяв
   "model": "piper-tts-1.6",
   "format": "wav",
   "languages": {
-    "ru": { "tag": "ru-RU", "voice": "ru_RU-dmitri-medium", "speed": 1 }
+    "ru": { "tag": "ru-RU", "voices": { "female": "ru_RU-irina-medium", "male": "ru_RU-denis-medium" }, "speed": 1 }
   },
   "maxCharacters": 2400,
   "aiGeneratedDisclosureRequired": true
@@ -61,6 +61,7 @@ Status выполняет короткий `/info` health check и не заяв
 {
   "text": "Я рядом. Выберем один следующий шаг.",
   "language": "ru",
+  "gender": "female",
   "context": "calm"
 }
 ```
@@ -73,6 +74,7 @@ Status выполняет короткий `/info` health check и не заяв
 - `X-Shadow-Voice-Provider: piper`
 - `X-Shadow-Voice-Cache: HIT|MISS`
 - `X-Shadow-Voice-Language: ru|uk|en|de|es`
+- `X-Shadow-Voice-Gender: female|male`
 - `X-Request-Id: …`
 
 Основные ошибки: `not_logged_in` 401, invalid input 400/413, rate/concurrency 429, `local_voice_unreachable` или provider/invalid-audio error 502. Ошибка не запускает device voice автоматически.
@@ -95,20 +97,25 @@ PIPER_TTS_URL=http://piper-private-service:5000
 Опциональная замена голосов:
 
 ```text
-PIPER_TTS_VOICE_RU=ru_RU-dmitri-medium
-PIPER_TTS_VOICE_UK=uk_UA-mykyta-high
-PIPER_TTS_VOICE_EN=en_US-joe-medium
-PIPER_TTS_VOICE_DE=de_DE-thorsten-high
-PIPER_TTS_VOICE_ES=es_ES-davefx-medium
+PIPER_TTS_VOICE_RU_FEMALE=ru_RU-irina-medium
+PIPER_TTS_VOICE_RU_MALE=ru_RU-denis-medium
+PIPER_TTS_VOICE_UK_FEMALE=uk_UA-lada-x_low
+PIPER_TTS_VOICE_UK_MALE=uk_UA-oleksa-high
+PIPER_TTS_VOICE_EN_FEMALE=en_US-ljspeech-high
+PIPER_TTS_VOICE_EN_MALE=en_US-john-medium
+PIPER_TTS_VOICE_DE_FEMALE=de_DE-kerstin-low
+PIPER_TTS_VOICE_DE_MALE=de_DE-thorsten-high
+PIPER_TTS_VOICE_ES_FEMALE=es_AR-daniela-high
+PIPER_TTS_VOICE_ES_MALE=es_ES-davefx-medium
 ```
 
 Операционные лимиты: `SHADOW_TTS_RPM`, `SHADOW_TTS_USER_CONCURRENCY`, `SHADOW_TTS_GLOBAL_CONCURRENCY`, `SHADOW_TTS_TIMEOUT_MS`, `SHADOW_TTS_MAX_CHARS`, `SHADOW_TTS_MAX_AUDIO_BYTES`, `SHADOW_TTS_CACHE_DAYS`, `SHADOW_TTS_CACHE_MAX_FILES`, `SHADOW_TTS_CACHE_MAX_MB`.
 
-Кэш хранится в `DATA_DIR/shadow-voice-cache/<user-id>/`. Ключ включает пользователя, provider, модель, формат, язык, voice, speed, Piper variability, context и текст. Запись атомарная, TTL/число/размер ограничены.
+Кэш хранится в `DATA_DIR/shadow-voice-cache/<user-id>/`. Ключ включает пользователя, provider, модель, формат, язык, gender, voice, speed, Piper variability, context и текст. Женский и мужской WAV никогда не делят один cache key.
 
-RU-профиль использует нейтральный темп Piper (`length_scale=1`) и документированные значения вариативности для single-speaker voice: `noise_scale=0.667`, `noise_w_scale=0.8`. Это устраняет прежнее искусственное растягивание `Denis` при `speed=0.94`.
+Все профили используют нейтральный темп Piper (`length_scale=1`), соответствующий прослушанным официальным samples.
 
-`ru_RU-irina-medium` сохранён только как кандидат для дальнейшего слухового отбора: официальный model card указывает лицензию исходного датасета как `Unknown`, поэтому этот голос нельзя молча закреплять production-дефолтом.
+`ru_RU-irina-medium` выбран продуктово, но остаётся release blocker: официальный model card указывает лицензию исходного датасета как `Unknown`. `es_AR-daniela-high` требует отдельного CC BY-SA attribution/share-alike review.
 
 OpenAI включается только явно:
 
@@ -122,7 +129,7 @@ OPENAI_API_KEY=<server secret>
 ```js
 await window.ShadowVoiceV2.speak(
   'Я рядом. Выберем один следующий шаг.',
-  { language: 'ru', context: 'calm', button: event.currentTarget }
+  { language: 'ru', gender: 'female', context: 'calm', button: event.currentTarget }
 );
 
 window.ShadowVoiceV2.stop();
