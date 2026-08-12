@@ -529,6 +529,18 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // ── Арена v147: контекст провала (§4) и обычный день после срыва (§12) ──
+  // Числа стоят отдельными узлами и сюда не попадают: «22 обычных» согласуется с
+  // числительным по-разному в пяти языках, «обычных: 22» — ни с чем.
+  'дней в счёте': { en: 'days counted', de: 'gezählte Tage', uk: 'днів у рахунку', es: 'días contados' },
+  'обычных': { en: 'ordinary', de: 'gewöhnliche', uk: 'звичайних', es: 'normales' },
+  'хороших': { en: 'good', de: 'gute', uk: 'хороших', es: 'buenos' },
+  'таких, как сегодня': { en: 'like today', de: 'wie heute', uk: 'таких, як сьогодні', es: 'como hoy' },
+  'прошлый такой': { en: 'previous one', de: 'vorheriger', uk: 'попередній такий', es: 'el anterior' },
+  'Вчера день не сложился. Сегодня стоит обычный день, а не героический — отыгрываться не нужно.': { en: 'Yesterday did not come together. Today is an ordinary day, not a heroic one — there is nothing to make up for.', de: 'Gestern lief es nicht. Heute ist ein gewöhnlicher Tag, kein heldenhafter — es gibt nichts nachzuholen.', uk: 'Учора день не склався. Сьогодні звичайний день, а не героїчний — відігруватися не треба.', es: 'Ayer no salió. Hoy es un día normal, no heroico — no hay nada que compensar.' },
+  'заведено': { en: 'planned', de: 'eingetragen', uk: 'заведено', es: 'anotadas' },
+  'обычно': { en: 'usually', de: 'üblich', uk: 'зазвичай', es: 'de costumbre' },
+  'Если хочется опоры — выбери 1–3 дела в ядро дня. Остальное останется в списке и никуда не денется.': { en: 'If you want an anchor — pick 1–3 things for the day core. The rest stays in the list and is not going anywhere.', de: 'Wenn du Halt suchst — wähle 1–3 Dinge für den Tageskern. Der Rest bleibt in der Liste und verschwindet nicht.', uk: 'Якщо хочеться опори — обери 1–3 справи в ядро дня. Решта лишиться в списку й нікуди не подінеться.', es: 'Si quieres un ancla — elige 1–3 cosas para el núcleo del día. El resto se queda en la lista y no va a ninguna parte.' },
   // ── Habits v126: durable work surface + private anti-habits ──
   'Привычки': { en: 'Habits', de: 'Gewohnheiten', uk: 'Звички', es: 'Hábitos' },
   'Разделы привычек': { en: 'Habit sections', de: 'Gewohnheitsbereiche', uk: 'Розділи звичок', es: 'Secciones de hábitos' },
@@ -14681,6 +14693,145 @@ function firstLineCardHTML() {
       <button class="btn ghost sm" data-action="first-line-skip">${t('Не сегодня')}</button>
     </div></div>`;
 }
+// ── Контекст провала и обычный день после срыва (DISCIPLINE-ARENA-PLAN §4 и §12) ──
+// Оба модуля читают ОДИН список дней, и это не экономия. `after-lapse-v1` намеренно
+// отказывается сам решать, был ли вчерашний день потерян, ровно затем, чтобы два
+// модуля никогда не разошлись в ответе про один и тот же день. Общий список — вторая
+// половина того же решения: разойтись физически не на чем.
+const ARENA_WINDOW_DAYS = 30;
+/**
+ * Дни за окно: {date, doneCount, coreTotal, coreDone, planned}.
+ *
+ * Дни эпизода исключаются целиком, а не кладутся нулём. День на Хооге не содержит
+ * ни одного закрытого дела и по счётчику выглядит потерянным — но это ровно та
+ * ошибка, ради которой эпизоды и появились (LIFE-CAPTURE-PLAN). Исключённый день не
+ * считается ни плохим, ни хорошим и не двигает медиану; нулевой — назвал бы поездку
+ * провалом и заодно занизил бы норму.
+ */
+function arenaDayHistory(today) {
+  const end = today || todayStr();
+  const doneAt = Object.create(null);    // сколько реально закрыто в этот день
+  const plannedOn = Object.create(null); // сколько дел заведено НА этот день
+  const coreOn = Object.create(null);    // ядро дня: {total, done}
+  let first = null;
+  const sawDay = (ds) => { if (ds && (!first || ds < first)) first = ds; };
+
+  for (const q of State.tasks || []) {
+    if (q.date) {
+      plannedOn[q.date] = (plannedOn[q.date] || 0) + 1;
+      sawDay(q.date);
+      if (q.core) {
+        const c = coreOn[q.date] || (coreOn[q.date] = { total: 0, done: 0 });
+        c.total += 1; if (q.done) c.done += 1;
+      }
+    }
+    // Закрытое считается днём ВЫПОЛНЕНИЯ (`dayOf`), а заведённое — днём плана.
+    // Дело, сделанное с опозданием, наполняет тот день, в который его сделали.
+    if (q.done) { const ds = dayOf(q); if (ds) { doneAt[ds] = (doneAt[ds] || 0) + 1; sawDay(ds); } }
+  }
+  for (const ds in State.habitlog || {}) {
+    const n = Object.keys(State.habitlog[ds] || {}).length;
+    if (n) { doneAt[ds] = (doneAt[ds] || 0) + n; sawDay(ds); }
+  }
+  for (const g of State.goals || []) {
+    if (!g.completedAt) continue;
+    const d = new Date(g.completedAt); if (isNaN(d)) continue;
+    const ds = fmtDate(d); doneAt[ds] = (doneAt[ds] || 0) + 1; sawDay(ds);
+  }
+  for (const ds in State.days || {}) sawDay(ds);
+  for (const ep of State.episodes || []) if (ep) sawDay(ep.from);
+
+  // Окно не начинается раньше первого прожитого в приложении дня: иначе у новичка
+  // двадцать пять никогда не существовавших дней стали бы «потерянными», и первая
+  // же строка сообщила бы ему выдуманную статистику о нём самом.
+  const from = addDays(end, -(ARENA_WINDOW_DAYS - 1));
+  const start = first && first > from ? first : from;
+  const out = [];
+  for (let ds = start; ds <= end; ds = addDays(ds, 1)) {
+    if (episodeCoversDay(ds)) continue;
+    const c = coreOn[ds] || { total: 0, done: 0 };
+    out.push({ date: ds, doneCount: doneAt[ds] || 0, coreTotal: c.total, coreDone: c.done, planned: plannedOn[ds] || 0 });
+  }
+  return out;
+}
+/**
+ * §4 — арифметика вместо утешения. Ни одного слова поддержки: гейт плана прямой
+ * («никаких „не расстраивайся“ — только числа»), и модуль поэтому отдаёт голые
+ * счётчики. Собрать из них сочувственную фразу здесь было бы обходом гейта, а не
+ * улучшением тона.
+ */
+function failureContextHTML(hist, today) {
+  const F = window.FailureContextV1;
+  if (!F) return '';
+  // Час дня — гейт, которого у модуля нет и быть не может: он видит только дни.
+  // До вечера «сегодня ноль» означает «ещё не начал», а не «день потерян».
+  // Объявить провал в девять утра — ровно то обвинение, против которого продукт.
+  if (new Date().getHours() < 18 && !dayClosed(today)) return '';
+  const fc = F.failureContext(hist, today);
+  if (!fc) return '';
+  // Двоеточие вместо сказуемого — по той же причине, что у нуджа перегрева выше:
+  // «22 обычных» согласуется с числительным по-разному в пяти языках, а «обычных: 22»
+  // не согласуется ни с чем. Числа стоят отдельными узлами и переводом не трогаются;
+  // «11 дней» отдельным узлом ловится динамическим шаблоном I18N_DYN и склоняется.
+  const item = (k, v) => `<span class="fc-item"><span class="fc-k">${t(k)}</span><b class="fc-v">${v}</b></span>`;
+  const since = fc.sinceLastBad != null
+    ? item('прошлый такой', `${fc.sinceLastBad} ${plural(fc.sinceLastBad, 'день', 'дня', 'дней')}`)
+    : '';
+  return `<p class="fail-context">
+    ${item('дней в счёте', fc.observed)}
+    ${item('обычных', fc.normal)}
+    ${item('хороших', fc.good)}
+    ${item('таких, как сегодня', fc.bad)}
+    ${since}</p>`;
+}
+/**
+ * §12 — наутро после потерянного дня. Только наблюдение: гейт «ничего не блокировать»
+ * означает, что здесь нет и не может быть кнопки, урезающей план. Взрослый имеет
+ * право на героический день; приложение имеет право назвать вслух, что это качели.
+ *
+ * ⚠️ `saidOn` отдаётся модулю БЕЗ сегодняшней даты, хотя сегодня она в хранилище уже
+ * есть. Гейт §12 «сказать один раз» — про повтор в следующие дни, а не про повтор в
+ * пределах одного дня: карточка живёт на экране, который перерисовывается десятки раз
+ * за день, и запись «сегодня сказали» заставила бы её исчезнуть на первом же
+ * перерендере. Наружу это выглядело бы миганием, а не тактом.
+ */
+function afterLapseNudgeHTML(hist, today, todayPlanned) {
+  const A = window.AfterLapseV1, F = window.FailureContextV1;
+  if (!A || !F) return '';
+  const yEntry = hist.find((d) => d.date === addDays(today, -1));
+  // Вчера нет в списке — это день эпизода или день до установки. Ни то, ни другое
+  // не является потерянным днём, и спрашивать про компенсацию не о чем.
+  if (!yEntry) return '';
+  if (F.classifyDay(yEntry, F.typicalDone(hist)) !== 'bad') return '';
+  // Норма считается по прошлому, а не по сегодня: сегодняшний раздутый план — это
+  // то, что мы измеряем, и пускать его в собственный знаменатель нельзя.
+  const past = hist.filter((d) => d.date < today);
+  const res = A.afterLapseNudge({
+    today,
+    yesterdayLost: true,
+    todayPlanned,
+    history: past,
+    saidOn: ((State.settings && State.settings.afterLapseSaid) || []).filter((d) => d < today),
+  });
+  if (!res) return '';
+  const item = (k, v) => `<span class="fc-item"><span class="fc-k">${t(k)}</span><b class="fc-v">${v}</b></span>`;
+  const core = coreState(today);
+  return `<div class="card nudge-card lapse-nudge">
+    <span class="nudge-boost">${t('Вчера день не сложился. Сегодня стоит обычный день, а не героический — отыгрываться не нужно.')}</span>
+    <span class="lapse-nums">${item('заведено', res.todayPlanned)}${item('обычно', res.typical)}</span>
+    ${core.total ? '' : `<span class="lapse-core">${t('Если хочется опоры — выбери 1–3 дела в ядро дня. Остальное останется в списке и никуда не денется.')}</span>`}</div>`;
+}
+// Записывается ТОЛЬКО когда карточка реально победила в pickNudge. Записать при
+// сборке html значило бы молчать завтра из-за фразы, которую человек не видел.
+function afterLapseNoteSpoken(today) {
+  const A = window.AfterLapseV1, s = State.settings;
+  if (!A || !s) return;
+  const prev = Array.isArray(s.afterLapseSaid) ? s.afterLapseSaid : [];
+  if (prev.includes(today)) return;
+  // Хвоста в восемь дат хватает: COOLDOWN_DAYS смотрит только на свежие.
+  s.afterLapseSaid = A.noteSpoken(prev, today).slice(-8);
+  Store.save('settings', s);
+}
 function renderToday() {
   const today = todayStr();
   const todays = State.tasks.filter((t) => t.date === today);
@@ -14815,6 +14966,10 @@ function renderToday() {
   // Тизер режима «Система» — одноразово, после ур.2, если не включён (дискаверабилити)
   const sysTeaser = (!systemMode() && charLevel() >= 2 && !isDiscovered('teaser:system')) ? `<div class="card nudge-card sys-teaser"><span class="nudge-boost">⚡ Спрятанная фишка: режим «Система» (Solo Leveling-вайб) — нарратор объявляет твои победы.</span><div class="sys-teaser-btns"><button class="btn sm" data-action="enable-system-teaser">Включить</button><button class="btn ghost sm" data-action="dismiss-system-teaser">Позже</button></div></div>` : '';
 
+  // Один список дней на оба раздела арены (§4 и §12) — см. arenaDayHistory.
+  const arenaHist = arenaDayHistory(today);
+  const lapseNudge = afterLapseNudgeHTML(arenaHist, today, todays.length);
+
   // Джарвис-2 Фаза A (JARVIS-2-PLAN.md): раньше все 8 карточек ниже рендерились ОДНОВРЕМЕННО —
   // у уставшего юзера вечером могли гореть 5 советов подряд (fb #9 «панель нечитаема»). Секретарь
   // говорит одну фразу о главном, не зачитывает памятку целиком. `nudgeCard` (сундуки/буст/Хайп) —
@@ -14831,6 +14986,10 @@ function renderToday() {
     // Перегрев — рядом с «отдохни» по смыслу и по приоритету: оба про «сбавь», а не «поднажми».
     { id: 'load', tier: 2, html: loadNudge },
     { id: 'rest', tier: 2, html: restNudge },
+    // Тот же тир, что «перегрев» и «отдохни»: все три говорят «сбавь», а не «поднажми».
+    // Первое появление выигрывает у соседей по тиру само — тай-брейк pickNudge ставит
+    // невиданный сигнал впереди, а этот бывает только наутро после потерянного дня.
+    { id: 'afterLapse', tier: 2, html: lapseNudge },
     { id: 'dayLog', tier: 3, html: dayLogNudge },
     { id: 'lowEnergy', tier: 4, html: lowEnergyNudge },
     { id: 'stretch', tier: 5, html: stretchNudge },
@@ -14841,6 +15000,7 @@ function renderToday() {
   // Фаза B2: если Тень уже подобрала слова под этот сигнал — подставляем их; иначе показываем
   // статичный текст и в фоне просим фразу (без ключа запрос не уходит вовсе — остаётся статика).
   let activeNudge = '';
+  if (nudgeWin && nudgeWin.id === 'afterLapse') afterLapseNoteSpoken(today);
   if (nudgeWin) {
     activeNudge = withTts(applyNudgeVoice(nudgeWin.html, nudgeVoiceGet(nudgeWin.id)));
     if (canUseAi() && nudgeVoiceStale(nudgeWin.id)) {
@@ -14919,6 +15079,7 @@ function renderToday() {
       </div></div>` : '';
   const shutdownCard = `<div class="card shutdown"><h3>${satoruIconHTML('scene.day-summary', 'day-summary-emblem', '☾')} ${t('Итог дня')}</h3>
       <p class="muted">Квестов ${doneCount}/${todays.length} · привычек ${habits.filter((h) => habitDone(h, today)).length}/${habits.length} · ${fmtDur(minToday)} · +${xpToday} XP · +${goldToday} ${satoruIconHTML('status.gold', 'inline-emblem', '◇')}</p>
+      ${failureContextHTML(arenaHist, today)}
       ${obsBlock}
       <textarea id="reflection" placeholder="Рефлексия: что получилось, что перенести, как себя чувствую…">${esc(day.reflection || '')}</textarea>
       <div class="fl-ask">

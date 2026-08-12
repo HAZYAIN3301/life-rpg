@@ -14703,6 +14703,27 @@ html.calendar-task-open body {
   .fight-add input, .fight-add .btn, .fight-acts .btn { min-height: 42px; }
 }
 
+/* ── Контекст провала (§4) и обычный день после срыва (§12) ───────────────────
+   Тон обеих поверхностей приборный, а не сочувственный. Ни красного, ни акцентного
+   цвета: гейт §4 требует арифметики, а цвет здесь немедленно стал бы оценкой —
+   ровно тем «не расстраивайся», которое план запрещает. Числа набраны тем же
+   числовым шрифтом, что счёт схваток и таймер: это одна и та же порода данных. */
+.fail-context {
+  margin: var(--sp-2) 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-3);
+  font-size: var(--type-meta); color: var(--muted);
+}
+.fc-item { display: inline-flex; align-items: baseline; gap: 5px; }
+/* Двоеточие рисуется, а не пишется: подпись обязана остаться отдельным текст-узлом
+   ровно того вида, каким она лежит в словаре, иначе перевод её не находит. */
+.fc-k::after { content: ':'; }
+.fc-v { font-family: var(--font-number); font-weight: 700; color: var(--text-strong); }
+/* Карточка §12 — колонка: наблюдение, числа и предложение читаются сверху вниз,
+   а не сталкиваются в одну строку, как у обычного однострочного нуджа. */
+.lapse-nudge { flex-direction: column; align-items: flex-start; gap: var(--sp-2); }
+.lapse-nums { display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-3); font-size: var(--type-meta); color: var(--muted); }
+.lapse-core { font-size: var(--type-meta); color: var(--muted); max-width: var(--measure-compact); }
+
 /* ── Pets v130: one semantic route surface; art stays authored, controls stay operable. ── */
 .pets-shell { display: grid; gap: var(--sp-3); }
 .pets-route-head { display: flex; align-items: center; min-height: 42px; }
