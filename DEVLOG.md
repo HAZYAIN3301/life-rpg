@@ -2,6 +2,12 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-12] 🧭 Восстановлена каноническая сетка вкладки «День» v148
+
+- Регрессия: внутренние вкладки «День / Доска» стали первым элементом двухколоночной `.today-shell`, заняли рабочую колонку и вытолкнули прежний экран «Дня» в узкий support rail. Отсюда пустое поле, вертикальные слова и наложения на desktop.
+- Восстановление без перепроектирования: `.today-tabs` занимает отдельный полный grid-row `1 / -1`; исходные `today-work` и `today-support` снова стоят рядом. Разметка, карточки, данные и дизайн «Доски» не менялись.
+- QA: regression test **2/2 PASS**; функционально **157/157 PASS**. Desktop: tabs `1040px`, work `720px`, support `296px`. Mobile `375×812` и `360×800`: `scrollWidth === clientWidth`. PWA `satoru-v146 → satoru-v148`. Commit: `fix: restore Today grid`.
+
 ## [2026-08-12] 🧭 Release hotfix v146 — More focus, work-first drips and complete day labels
 
 - Закрыты три подтверждённых release-gate дефекта без изменения art, board или data transactions. Hotfix построен на чистом актуальном `master` (`ce00ac8`, Piper service configuration), а не поверх локальной dirty working copy.

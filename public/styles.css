@@ -14765,7 +14765,12 @@ html.calendar-task-open body {
    фототекстурой: STYLE-DECISION держит язык cut-paper, и пергамент в него
    ложится, а фотореалистичная древесина выбилась бы из всего приложения.
    Отступы — только шкала --sp-*, размеры — восемь ролей --type-*. */
-.today-tabs { display: flex; gap: var(--sp-2); margin-bottom: var(--sp-4); }
+.today-tabs {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-4);
+}
 .today-tab {
   font-size: var(--type-control); padding: var(--sp-2) var(--sp-4); min-height: 42px;
   border-radius: var(--radius); border: 1px solid var(--line);
