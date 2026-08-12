@@ -529,6 +529,24 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // ── Арена v150: развилка §7 «не хочу» ≠ «не знаю как» ──
+  // «Позже» уже есть в словаре выше и намеренно не дублируется.
+  'переносов': { en: 'postponed', de: 'verschoben', uk: 'перенесень', es: 'aplazada' },
+  'висит': { en: 'pending for', de: 'offen seit', uk: 'висить', es: 'pendiente' },
+  'Это «не хочу» — или «не знаю как»?': { en: 'Is this "I don\'t want to" — or "I don\'t know how"?', de: 'Ist das „Ich will nicht“ — oder „Ich weiß nicht wie“?', uk: 'Це «не хочу» — чи «не знаю як»?', es: '¿Es «no quiero» — o «no sé cómo»?' },
+  '«Не знаю как» — не про характер. Оно лечится не мотивацией, а первым шагом, в котором нет неоднозначности.': { en: '"I don\'t know how" is not about character. It is cured by a first step with no ambiguity in it, not by motivation.', de: '„Ich weiß nicht wie“ sagt nichts über den Charakter. Es hilft kein Antrieb, sondern ein erster Schritt ohne Mehrdeutigkeit.', uk: '«Не знаю як» — не про характер. Це лікується не мотивацією, а першим кроком, у якому немає двозначності.', es: '«No sé cómo» no habla de tu carácter. No se cura con motivación, sino con un primer paso sin ambigüedad.' },
+  'Не хочу': { en: "I don't want to", de: 'Ich will nicht', uk: 'Не хочу', es: 'No quiero' },
+  'Не знаю как': { en: "I don't know how", de: 'Ich weiß nicht wie', uk: 'Не знаю як', es: 'No sé cómo' },
+  'Первый шаг, после которого станет понятно, что делать дальше': { en: 'The first step that makes the next one obvious', de: 'Der erste Schritt, nach dem der nächste klar ist', uk: 'Перший крок, після якого стане зрозуміло, що далі', es: 'El primer paso que hace obvio el siguiente' },
+  'Например: открыть телефон и снять 15 секунд, ничего не публикуя': { en: 'For example: open the phone and film 15 seconds, publishing nothing', de: 'Zum Beispiel: Handy öffnen und 15 Sekunden filmen, nichts veröffentlichen', uk: 'Наприклад: відкрити телефон і зняти 15 секунд, нічого не публікуючи', es: 'Por ejemplo: abrir el móvil y grabar 15 segundos, sin publicar nada' },
+  'Добавить шаг': { en: 'Add the step', de: 'Schritt hinzufügen', uk: 'Додати крок', es: 'Añadir el paso' },
+  'Пусть Тень предложит шаг': { en: 'Let the Shadow suggest a step', de: 'Lass den Schatten einen Schritt vorschlagen', uk: 'Хай Тінь запропонує крок', es: 'Que la Sombra sugiera un paso' },
+  'Не сейчас': { en: 'Not now', de: 'Jetzt nicht', uk: 'Не зараз', es: 'Ahora no' },
+  'думаю…': { en: 'thinking…', de: 'denke nach…', uk: 'думаю…', es: 'pensando…' },
+  'Не получилось — напиши шаг сам': { en: 'That did not work — write the step yourself', de: 'Hat nicht geklappt — schreib den Schritt selbst', uk: 'Не вийшло — напиши крок сам', es: 'No funcionó — escribe el paso tú' },
+  'Проверь и поправь — добавится только по твоей кнопке': { en: 'Check and edit it — nothing is added until you press the button', de: 'Prüfe und ändere es — hinzugefügt wird erst auf deinen Knopfdruck', uk: 'Перевір і поправ — додасться лише за твоєю кнопкою', es: 'Revísalo y edítalo — no se añade hasta que pulses el botón' },
+  'Напиши шаг — одной строкой': { en: 'Write the step — one line', de: 'Schreib den Schritt — eine Zeile', uk: 'Напиши крок — одним рядком', es: 'Escribe el paso — una línea' },
+  'Шаг в плане на сегодня': { en: 'The step is in today\'s plan', de: 'Der Schritt steht im heutigen Plan', uk: 'Крок у плані на сьогодні', es: 'El paso está en el plan de hoy' },
   // ── Арена v147: контекст провала (§4) и обычный день после срыва (§12) ──
   // Числа стоят отдельными узлами и сюда не попадают: «22 обычных» согласуется с
   // числительным по-разному в пяти языках, «обычных: 22» — ни с чем.
@@ -14932,6 +14950,113 @@ function afterLapseNoteSpoken(today) {
   s.afterLapseSaid = A.noteSpoken(prev, today).slice(-8);
   Store.save('settings', s);
 }
+
+// ── Развилка §7: «не хочу» ≠ «не знаю как» (DISCIPLINE-ARENA-PLAN §7) ─────────
+// Слой данных подключён 10.08 — перенос перестал стирать сам себя и оставляет
+// след (`postponedCount`, `firstDate`). Здесь появляется то, ради чего след
+// собирался: один вопрос. До этого шага обещание из рекламы («приложение
+// заметит застрявшее дело») выполнено не было — числа существовали, но их никто
+// не произносил.
+//
+// Почему вопрос стоит целой фичи: незнание маскируется под лень чрезвычайно
+// убедительно, в том числе для самого человека. Лекарства у двух ответов разные
+// и несовместимые — «не хочу» лечится уменьшением входа, «не знаю как»
+// прояснением первого шага. Дать второму первое лекарство значит подтвердить
+// человеку, что он ленивый.
+function stuckAskedMap() {
+  const s = State.settings || {};
+  return (s.stuckAsked && typeof s.stuckAsked === 'object') ? s.stuckAsked : {};
+}
+// Спрашиваем ОДИН раз (гейт §7). Повторно — только если дело переехало ещё
+// ASK_AFTER раз: это новый эпизод, а не тот же вопрос по второму кругу.
+function stuckCandidate(today) {
+  const S = window.StuckTaskV1;
+  if (!S) return null;
+  const asked = stuckAskedMap();
+  const pool = (State.tasks || []).filter((q) => {
+    const a = Number(asked[q && q.id]);
+    if (!Number.isFinite(a)) return true;
+    return (Number(q.postponedCount) || 0) >= a + S.ASK_AFTER;
+  });
+  // Выбор одного дела и все его гейты («без единой минуты работы», детерминизм)
+  // остаются в модуле — здесь только фильтр «про это уже спрашивали».
+  return S.stuckPick(pool, today);
+}
+function stuckNoteAsked(id, count) {
+  const s = State.settings;
+  if (!s || id == null) return;
+  s.stuckAsked = Object.assign({}, stuckAskedMap(), { [id]: Number(count) || 0 });
+  Store.save('settings', s);
+}
+function stuckAskHTML(today) {
+  const S = window.StuckTaskV1;
+  if (!S) return '';
+  const pick = stuckCandidate(today);
+  if (!pick) return '';
+  const q = questById(pick.id);
+  if (!q) return '';
+
+  // Второй шаг развилки живёт в той же карточке, но выигрывает арбитраж
+  // безусловно (tier −1 при регистрации ниже): человек уже внутри ответа, и
+  // подменить ему форму другим советом значит потерять начатый ответ.
+  if (State._stuckSplit === pick.id) {
+    return `<div class="card nudge-card stuck-card">
+      <p class="stuck-title" data-noi18n>${esc(taskDisplayTitle(q))}</p>
+      <label class="fl-label" for="stuck-step">${t('Первый шаг, после которого станет понятно, что делать дальше')}</label>
+      <div class="fl-row">
+        <input id="stuck-step" class="fl-input" maxlength="110" autocomplete="off"
+          placeholder="${t('Например: открыть телефон и снять 15 секунд, ничего не публикуя')}" />
+        <button class="btn sm" data-action="stuck-step-add" data-id="${esc(String(pick.id))}">${t('Добавить шаг')}</button>
+      </div>
+      <div class="stuck-acts">
+        ${canUseAi() ? `<button class="btn ghost sm" data-action="stuck-ai-step" data-id="${esc(String(pick.id))}">🤖 ${t('Пусть Тень предложит шаг')}</button>` : ''}
+        <button class="btn ghost sm" data-action="stuck-cancel">${t('Не сейчас')}</button>
+      </div>
+      <span class="stuck-note" id="stuck-ai-note"></span></div>`;
+  }
+
+  const item = (k, v) => `<span class="fc-item"><span class="fc-k">${t(k)}</span><b class="fc-v">${v}</b></span>`;
+  // Числа названы, но не окрашены и ничем не подытожены: «переносов: 4» — это
+  // факт, а «ты снова отложил» — приговор. Модуль для того и хранит счётчик.
+  const nums = `<span class="stuck-nums">${item('переносов', pick.count)}${
+    pick.daysStuck ? item('висит', `${pick.daysStuck} ${plural(pick.daysStuck, 'день', 'дня', 'дней')}`) : ''}</span>`;
+  return `<div class="card nudge-card stuck-card">
+    <p class="stuck-title" data-noi18n>${esc(taskDisplayTitle(q))}</p>
+    ${nums}
+    <span class="nudge-boost">${t('Это «не хочу» — или «не знаю как»?')}</span>
+    <span class="stuck-note">${t('«Не знаю как» — не про характер. Оно лечится не мотивацией, а первым шагом, в котором нет неоднозначности.')}</span>
+    <div class="stuck-acts">
+      <button class="btn ghost sm" data-action="stuck-want" data-id="${esc(String(pick.id))}">${t('Не хочу')}</button>
+      <button class="btn ghost sm" data-action="stuck-how" data-id="${esc(String(pick.id))}">${t('Не знаю как')}</button>
+      <button class="btn ghost sm" data-action="stuck-later" data-id="${esc(String(pick.id))}">${t('Позже')}</button>
+    </div></div>`;
+}
+// ИИ здесь уместен по-настоящему (§7): превратить «снять видео» в «открыть
+// телефон, снять 15 секунд себя, ничего не публиковать». Но он только ЗАПОЛНЯЕТ
+// поле — дело создаёт всегда человек нажатием своей кнопки. Иначе приложение
+// начнёт назначать шаги, которых никто не выбирал, то есть производить ровно
+// тот долг, против которого оно построено. Без ключа форма работает целиком.
+async function stuckAiStep(id) {
+  const q = questById(id);
+  const note = document.getElementById('stuck-ai-note');
+  if (!q || !canUseAi()) return;
+  if (note) note.textContent = '🤖 ' + t('думаю…');
+  const sys = 'Ты помогаешь человеку сдвинуть отложенную задачу. Верни РОВНО ОДИН первый шаг: конкретное физическое действие на 5–15 минут, без подготовки и без принятия решений. Никаких списков, пояснений и кавычек — одна строка до 100 символов. ' + aiAnswerLangLine();
+  const prompt = `Задача, которую человек откладывает: «${taskDisplayTitle(q)}».\nОн не знает, КАК к ней подступиться.\n\nПервый шаг (одна строка):`;
+  try {
+    const r = await fetch('/api/ai/chat', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider: aiProvider(), system: sys, messages: [{ role: 'user', content: prompt }] }),
+    });
+    const d = await r.json();
+    const ans = String((d && d.text) || '').trim().replace(/^["«»\-–—•\s]+/, '').replace(/["«»\s]+$/, '').split('\n')[0];
+    if (!r.ok || !ans) { if (note) note.textContent = t('Не получилось — напиши шаг сам'); return; }
+    const field = document.getElementById('stuck-step');
+    if (field) { field.value = ans.slice(0, 110); field.focus(); }
+    if (note) note.textContent = t('Проверь и поправь — добавится только по твоей кнопке');
+    track('stuck:ai-step');
+  } catch { if (note) note.textContent = t('Не получилось — напиши шаг сам'); }
+}
 function renderToday() {
   const today = todayStr();
   const todays = State.tasks.filter((t) => t.date === today);
@@ -15069,6 +15194,7 @@ function renderToday() {
   // Один список дней на оба раздела арены (§4 и §12) — см. arenaDayHistory.
   const arenaHist = arenaDayHistory(today);
   const lapseNudge = afterLapseNudgeHTML(arenaHist, today, todays.length);
+  const stuckNudge = stuckAskHTML(today);
 
   // Джарвис-2 Фаза A (JARVIS-2-PLAN.md): раньше все 8 карточек ниже рендерились ОДНОВРЕМЕННО —
   // у уставшего юзера вечером могли гореть 5 советов подряд (fb #9 «панель нечитаема»). Секретарь
@@ -15078,6 +15204,15 @@ function renderToday() {
     // Возврат — выше «Захода»: пока над человеком висит стена просроченного, предложение
     // «войди на десять минут» разбивается об неё. Сначала убрать стену, потом звать внутрь.
     { id: 'return', tier: 0, html: returnNudge },
+    // Развилка §7 — ВЫШЕ «Захода», и это не вкусовщина: «Заход» и есть одно из
+    // двух её лекарств. Показать его до вопроса значит ответить за человека
+    // «не хочу» и увести того, у кого на самом деле «не знаю как». Пока форма
+    // разбиения открыта, карточка забирает арбитраж целиком (tier −1): человек
+    // внутри ответа, и подменить ему экран другим советом — потерять ответ.
+    // Дробный тир намеренно: он вставляет вопрос МЕЖДУ «возвратом» (0) и
+    // «Заходом» (1), не перенумеровывая остальные — их порядок откалиброван не
+    // здесь, и сдвигать его ради одной вставки значило бы менять чужие решения.
+    { id: 'stuckAsk', tier: State._stuckSplit ? -1 : 0.5, html: stuckNudge },
     { id: 'entry', tier: 1, html: entryNudge },
     // Эпизод выше посуточного разбора: если человека не было 3+ дня, предложить закрывать это
     // по одному дню — та самая стена, из-за которой не возвращаются вообще. Ниже «Захода»:
@@ -20433,6 +20568,50 @@ async function onClick(e) {
     render(); return;
   } else if (action === 'tree-guide-ok') {
     markDiscovered('guide:tree'); track('tree:guide-ok'); render();
+  } else if (action === 'stuck-want') {
+    // «Не хочу» = nostart, и лекарство уже построено. «Заход» по КОНКРЕТНОМУ
+    // делу запускает фокус на нём же и ничего рядом не плодит — именно поэтому
+    // маршрут ведёт в `_entryTask`, а не в общий ритуал по сфере.
+    const id = el.dataset.id, q = questById(id);
+    if (!q) return;
+    stuckNoteAsked(id, Number(q.postponedCount) || 0);
+    State._stuckSplit = null;
+    State._entryRoll = 0; State._entrySkill = null; State._entryTask = id;
+    openEntryRitual(); track('stuck:want');
+  } else if (action === 'stuck-how') {
+    State._stuckSplit = el.dataset.id; track('stuck:how'); render();
+  } else if (action === 'stuck-later') {
+    // Пропуск не стоит ничего и нигде не считается: отмечаем, что спросили, и
+    // молчим до следующего эпизода. Счётчика отказов нет и быть не должно —
+    // из него немедленно посчитали бы вину.
+    const id = el.dataset.id, q = questById(id);
+    stuckNoteAsked(id, q ? (Number(q.postponedCount) || 0) : 0);
+    State._stuckSplit = null; render();
+  } else if (action === 'stuck-cancel') {
+    State._stuckSplit = null; render();
+  } else if (action === 'stuck-ai-step') {
+    stuckAiStep(el.dataset.id);
+  } else if (action === 'stuck-step-add') {
+    const id = el.dataset.id, q = questById(id);
+    if (!q) return;
+    const field = document.getElementById('stuck-step');
+    const text = field ? String(field.value).trim() : '';
+    if (!text) { toast(t('Напиши шаг — одной строкой')); return; }
+    // Дробление и ЕСТЬ лекарство §7, поэтому шаг создаётся отдельным делом, а
+    // застрявшее остаётся жить: цель никуда не делась, изменился вход в неё.
+    // Этим ветка отличается от «Захода», который намеренно ничего не создаёт.
+    State.tasks.push({
+      id: uid(), title: text.slice(0, 110), skillId: q.skillId,
+      skillIds: (q.skillIds && q.skillIds.length) ? [...q.skillIds] : [q.skillId],
+      estimateMin: 10, difficulty: 'easy', date: todayStr(), done: false, completedAt: null,
+      xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString(),
+    });
+    Store.save('tasks', State.tasks);
+    stuckNoteAsked(id, Number(q.postponedCount) || 0);
+    State._stuckSplit = null;
+    track('stuck:step');
+    toast('◆ ' + t('Шаг в плане на сегодня'));
+    render();
   } else if (action === 'entry-open') {
     State._entryRoll = 0; State._entrySkill = null; State._entryTask = null; openEntryRitual(); track('entry:open');
   } else if (action === 'entry-pick') {

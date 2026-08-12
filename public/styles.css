@@ -14723,6 +14723,24 @@ html.calendar-task-open body {
    ровно того вида, каким она лежит в словаре, иначе перевод её не находит. */
 .fc-k::after { content: ':'; }
 .fc-v { font-family: var(--font-number); font-weight: 700; color: var(--text-strong); }
+/* ── Развилка §7 «не хочу» ≠ «не знаю как» ───────────────────────────────────
+   Оба ответа имеют РОВНО одинаковый вес: тот же класс, тот же размер, ни один
+   не подсвечен. Выделить любой значило бы поставить диагноз за человека — а вся
+   ценность фичи в том, что диагноз ставит он сам. Та же причина, по которой
+   «Проиграл» у схваток не окрашен красным. */
+.stuck-card { flex-direction: column; align-items: flex-start; gap: var(--sp-2); }
+.stuck-title {
+  margin: 0; font-size: var(--type-control); color: var(--text-strong);
+  max-width: var(--measure-compact); overflow-wrap: anywhere;
+}
+.stuck-nums { display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-3); font-size: var(--type-meta); color: var(--muted); }
+.stuck-note { font-size: var(--type-meta); color: var(--muted); max-width: var(--measure-compact); }
+.stuck-acts { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.stuck-card .fl-row { width: 100%; }
+@media (hover: none) {
+  .stuck-acts .btn, .stuck-card .fl-row .btn, .stuck-card .fl-input { min-height: 42px; }
+}
+
 /* Карточка §12 — колонка: наблюдение, числа и предложение читаются сверху вниз,
    а не сталкиваются в одну строку, как у обычного однострочного нуджа. */
 .lapse-nudge { flex-direction: column; align-items: flex-start; gap: var(--sp-2); }

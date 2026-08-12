@@ -40,7 +40,7 @@ assert.match(css, /is-shadow-pair-active/);
 assert.match(css, /body:has\(\.focus-pill\.show\) \.den-shell/);
 assert.match(css, /prefers-reduced-motion: reduce[\s\S]*shadow-den-pair-v1/);
 assert.match(index, /shadow-den-v1\.js\?v=20260811-shadow-den-v1-0/);
-  assert.match(sw, /const CACHE = 'satoru-v149'/);
+  assert.match(sw, /const CACHE = 'satoru-v150'/);
 assert.match(sw, /shadow-den-v1\/pair-v1\/attune-keeper\.png/);
 
 console.log('shadow-den-v1: ok');
