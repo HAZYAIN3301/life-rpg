@@ -30,7 +30,7 @@ test('оба модуля доехали в offline shell, а не только 
     assert.match(sw, new RegExp(`'${f}'`), `${f} нет в SHELL sw.js`);
   }
   // Без бампа офлайн-клиенты получили бы старый shell без новых файлов.
-  assert.match(sw, /const CACHE = 'satoru-v150'/);
+  assert.match(sw, /const CACHE = 'satoru-v151'/);
 });
 
 test('§4: контекст провала молчит до вечера, пока день не закрыт', () => {
@@ -141,12 +141,18 @@ test('новая copy покрыта всеми пятью языками', () =
 
 test('подпись остаётся отдельным текст-узлом — двоеточие рисует CSS', () => {
   // Со вшитым в разметку двоеточием строка перестала бы совпадать со словарём.
-  assert.match(css, /\.fc-k::after \{ content: ':'; \}/);
-  assert.match(app, /<span class="fc-k">\$\{t\(k\)\}<\/span><b class="fc-v">\$\{v\}<\/b>/);
+  assert.match(css, /\.kv-k::after \{ content: ':'; \}/);
+  assert.match(app, /<span class="kv-k">\$\{t\(k\)\}<\/span><b class="kv-v">\$\{v\}<\/b>/);
 });
 
 test('числа не окрашены: цвет здесь стал бы оценкой', () => {
-  const block = css.slice(css.indexOf('.fail-context {'), css.indexOf('/* ── Pets v130'));
+  // Собираем ИМЕННО свои правила по селекторам, а не срезом до далёкого маркера:
+  // срез ловил любую вставку соседа и падал на исправном чужом коде.
+  // ⚠️ Префикс `.fc-` брать НЕЛЬЗЯ: он занят ригом Кота Удачи (`.fc-rig`,
+  // `.fc-bell`, `fcV2TiredBody`), и широкий шаблон затягивал чужие правила.
+  // Из-за этого столкновения ключ-значение переименованы в `.kv-*`.
+  const block = (css.match(/^\.(fail-context|kv-[a-z]+|lapse-[a-z]+)\b[^\n]*\{[^}]*\}/gm) || []).join('\n');
+  assert.ok(block.includes('.fail-context') && block.includes('.lapse-'), 'правила §4/§12 не найдены');
   assert.ok(block.includes('var(--muted)') && block.includes('var(--text-strong)'));
   for (const bad of ['--danger', '--bad', 'red', '#f0', '#e0']) {
     assert.ok(!block.includes(bad), `акцентный цвет в приборной строке: «${bad}»`);

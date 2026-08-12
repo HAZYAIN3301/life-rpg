@@ -14707,6 +14707,15 @@ html.calendar-task-open body {
 @media (hover: none) {
   .fight-add input, .fight-add .btn, .fight-acts .btn { min-height: 42px; }
 }
+/* Предложение схватки из детектора (§1, вариант C). Отделено линией, а не
+   цветом: это ДРУГОЙ голос — приложение заметило, — и он не должен выглядеть
+   весомее собственных схваток человека. Они здесь главные, предложение лишь
+   подсказка, от которой можно отказаться одним словом. */
+.fight-suggest { margin-top: var(--sp-3); padding-top: var(--sp-3); border-top: 1px solid var(--line); }
+.fight-suggest-line { margin: 0 0 var(--sp-2); font-size: var(--type-meta); color: var(--muted); max-width: var(--measure-compact); }
+.fight-suggest-row { display: flex; align-items: baseline; gap: var(--sp-2); flex-wrap: wrap; margin-bottom: var(--sp-2); }
+.fight-suggest-acts { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+@media (hover: none) { .fight-suggest-acts .btn { min-height: 42px; } }
 
 /* ── Контекст провала (§4) и обычный день после срыва (§12) ───────────────────
    Тон обеих поверхностей приборный, а не сочувственный. Ни красного, ни акцентного
@@ -14718,11 +14727,11 @@ html.calendar-task-open body {
   display: flex; flex-wrap: wrap; gap: var(--sp-1) var(--sp-3);
   font-size: var(--type-meta); color: var(--muted);
 }
-.fc-item { display: inline-flex; align-items: baseline; gap: 5px; }
+.kv-item { display: inline-flex; align-items: baseline; gap: 5px; }
 /* Двоеточие рисуется, а не пишется: подпись обязана остаться отдельным текст-узлом
    ровно того вида, каким она лежит в словаре, иначе перевод её не находит. */
-.fc-k::after { content: ':'; }
-.fc-v { font-family: var(--font-number); font-weight: 700; color: var(--text-strong); }
+.kv-k::after { content: ':'; }
+.kv-v { font-family: var(--font-number); font-weight: 700; color: var(--text-strong); }
 /* ── Развилка §7 «не хочу» ≠ «не знаю как» ───────────────────────────────────
    Оба ответа имеют РОВНО одинаковый вес: тот же класс, тот же размер, ни один
    не подсвечен. Выделить любой значило бы поставить диагноз за человека — а вся

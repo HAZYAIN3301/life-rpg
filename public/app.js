@@ -529,6 +529,20 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // ── Арена v151: предложения схваток из детектора (§1, вариант C) ──
+  // Название фичи в словаре — «Duels / Duelle / Сутички / Duelos». Строка обязана
+  // говорить тем же словом: «fight / Kampf / combate» читались бы как другая
+  // механика, которой в продукте нет.
+  'Похоже, этот момент у тебя повторяется. Назвать его схваткой?': { en: 'This moment seems to repeat for you. Name it as a duel?', de: 'Dieser Moment scheint sich bei dir zu wiederholen. Als Duell benennen?', uk: 'Схоже, цей момент у тебе повторюється. Назвати його сутичкою?', es: 'Parece que este momento se te repite. ¿Nombrarlo como un duelo?' },
+  // «Моё» / «Не моё» уже есть в словаре — это вердикты калибровки вкуса доски,
+  // и пара переиспользуется намеренно: один и тот же жест выбора в продукте
+  // должен называться одним и тем же словом. Здесь они не дублируются.
+  'Не получилось добавить': { en: 'Could not add it', de: 'Konnte nicht hinzugefügt werden', uk: 'Не вдалося додати', es: 'No se pudo añadir' },
+  'Рука к телефону в 23:00': { en: 'Reaching for the phone at 23:00', de: 'Griff zum Handy um 23:00', uk: 'Рука до телефона о 23:00', es: 'La mano al móvil a las 23:00' },
+  'Первое действие, когда сел за дело': { en: 'The first action once you sit down', de: 'Die erste Handlung, wenn du dich hinsetzt', uk: 'Перша дія, коли сів до справи', es: 'La primera acción al sentarte' },
+  'Закрыть ноутбук в 21:00': { en: 'Closing the laptop at 21:00', de: 'Den Laptop um 21:00 zuklappen', uk: 'Закрити ноутбук о 21:00', es: 'Cerrar el portátil a las 21:00' },
+  'Первый шаг в выходной': { en: 'The first step on a day off', de: 'Der erste Schritt am freien Tag', uk: 'Перший крок у вихідний', es: 'El primer paso en un día libre' },
+  'Одно маленькое дело после паузы': { en: 'One small thing after a break', de: 'Eine kleine Sache nach der Pause', uk: 'Одна маленька справа після паузи', es: 'Una cosa pequeña tras la pausa' },
   // ── Арена v150: развилка §7 «не хочу» ≠ «не знаю как» ──
   // «Позже» уже есть в словаре выше и намеренно не дублируется.
   'переносов': { en: 'postponed', de: 'verschoben', uk: 'перенесень', es: 'aplazada' },
@@ -14715,12 +14729,14 @@ function fightsCardHTML() {
   const live = F.activeFights(st);
   const today = todayStr();
 
+  const suggest = fightSuggestHTML(st, live);
+
   // Пусто — приглашение, а не пустая таблица. Объясняем идею один раз.
   if (!live.length) {
     return `<div class="card fights-card">
       <h3>${t('Схватки')}</h3>
       <p class="fights-intro">${t('День решают три-четыре коротких момента: встал или нет, взял телефон или нет, открыл файл или ленту. Назови свои — и у них появится счёт.')}</p>
-      ${fightsFormHTML()}</div>`;
+      ${suggest}${fightsFormHTML()}</div>`;
   }
 
   const score = F.dayScore(st, today);
@@ -14741,7 +14757,58 @@ function fightsCardHTML() {
     <p class="fights-secs">${t('Твой день — это')} <b>${secondsLabel(secs)}</b> ${t('настоящей борьбы')}</p>
     <ul class="fights-list">${rows}</ul>
     <p class="fights-against">${t('Ты играешь не против себя. По ту сторону — система, которую тысячи инженеров строили, чтобы обыгрывать внимание.')}</p>
-    ${live.length < F.MAX_FIGHTS ? fightsFormHTML() : ''}</div>`;
+    ${live.length < F.MAX_FIGHTS ? suggest + fightsFormHTML() : ''}</div>`;
+}
+// ── Предложения схваток из детектора (DISCIPLINE-ARENA-PLAN §1, вариант C) ────
+// `detectBoundaryPattern()` уже находит доминирующий паттерн, но его выхлоп до
+// сих пор уходил только в промпт ИИ — то есть приложение знало, где у человека
+// повторяющийся срыв, и молчало об этом в единственном месте, где это чинится.
+//
+// Предложение НЕ создаёт схватку само: человек видит точное название и точную
+// длительность и нажимает свою кнопку. Автосоздание превратило бы счёт `⚔` в
+// чужой список, а весь смысл схваток в том, что человек называет СВОИ моменты.
+const FIGHT_SUGGEST_COPY = {
+  'evening-phone': 'Рука к телефону в 23:00',
+  'first-action': 'Первое действие, когда сел за дело',
+  'close-laptop': 'Закрыть ноутбук в 21:00',
+  'weekend-start': 'Первый шаг в выходной',
+  'return-one-small': 'Одно маленькое дело после паузы',
+};
+function fightSuggestSkipped() {
+  const v = State.settings && State.settings.fightSuggestSkipped;
+  return Array.isArray(v) ? v : [];
+}
+function fightSuggestPick(st, live) {
+  const F = window.FightsV1;
+  if (!F || !st) return null;
+  // Потолок: предложить то, что нельзя принять, — ловушка, а не помощь.
+  if (live.length >= F.MAX_FIGHTS) return null;
+  const pat = detectBoundaryPattern();
+  if (!pat) return null;
+  // `norest` намеренно без предложения (модуль возвращает null): отдых — не
+  // схватка, и превращать его в ещё один выигрываемый момент значит делать
+  // ровно то, от чего продукт уходит.
+  const sug = F.suggestFor(pat.id);
+  if (!sug || !FIGHT_SUGGEST_COPY[sug.suggestionId]) return null;
+  if (fightSuggestSkipped().includes(pat.id)) return null;
+  // Проверяем ВСЕ схватки, включая архив: архивированная — это «попробовал и
+  // отказался», и предложить её заново значит не заметить уже данный ответ.
+  if (F.normalize(st).fights.some((f) => f.fromPattern === pat.id)) return null;
+  return { pattern: pat.id, seconds: sug.seconds, trigger: sug.trigger, title: FIGHT_SUGGEST_COPY[sug.suggestionId] };
+}
+function fightSuggestHTML(st, live) {
+  const pick = fightSuggestPick(st, live);
+  if (!pick) return '';
+  return `<div class="fight-suggest">
+    <p class="fight-suggest-line">${t('Похоже, этот момент у тебя повторяется. Назвать его схваткой?')}</p>
+    <div class="fight-suggest-row">
+      <span class="fight-name">${esc(t(pick.title))}</span>
+      <span class="fight-secs">${secondsLabel(pick.seconds)}</span>
+    </div>
+    <div class="fight-suggest-acts">
+      <button type="button" class="btn sm" data-action="fight-suggest-add" data-pattern="${esc(pick.pattern)}">${t('Моё')}</button>
+      <button type="button" class="btn ghost sm" data-action="fight-suggest-skip" data-pattern="${esc(pick.pattern)}">${t('Не моё')}</button>
+    </div></div>`;
 }
 function secondsLabel(n) {
   return n >= 60 && n % 60 === 0 ? `${n / 60} ${t('мин')}` : `${n} ${t('сек')}`;
@@ -14891,7 +14958,7 @@ function failureContextHTML(hist, today) {
   // «22 обычных» согласуется с числительным по-разному в пяти языках, а «обычных: 22»
   // не согласуется ни с чем. Числа стоят отдельными узлами и переводом не трогаются;
   // «11 дней» отдельным узлом ловится динамическим шаблоном I18N_DYN и склоняется.
-  const item = (k, v) => `<span class="fc-item"><span class="fc-k">${t(k)}</span><b class="fc-v">${v}</b></span>`;
+  const item = (k, v) => `<span class="kv-item"><span class="kv-k">${t(k)}</span><b class="kv-v">${v}</b></span>`;
   const since = fc.sinceLastBad != null
     ? item('прошлый такой', `${fc.sinceLastBad} ${plural(fc.sinceLastBad, 'день', 'дня', 'дней')}`)
     : '';
@@ -14932,7 +14999,7 @@ function afterLapseNudgeHTML(hist, today, todayPlanned) {
     saidOn: ((State.settings && State.settings.afterLapseSaid) || []).filter((d) => d < today),
   });
   if (!res) return '';
-  const item = (k, v) => `<span class="fc-item"><span class="fc-k">${t(k)}</span><b class="fc-v">${v}</b></span>`;
+  const item = (k, v) => `<span class="kv-item"><span class="kv-k">${t(k)}</span><b class="kv-v">${v}</b></span>`;
   const core = coreState(today);
   return `<div class="card nudge-card lapse-nudge">
     <span class="nudge-boost">${t('Вчера день не сложился. Сегодня стоит обычный день, а не героический — отыгрываться не нужно.')}</span>
@@ -15015,7 +15082,7 @@ function stuckAskHTML(today) {
       <span class="stuck-note" id="stuck-ai-note"></span></div>`;
   }
 
-  const item = (k, v) => `<span class="fc-item"><span class="fc-k">${t(k)}</span><b class="fc-v">${v}</b></span>`;
+  const item = (k, v) => `<span class="kv-item"><span class="kv-k">${t(k)}</span><b class="kv-v">${v}</b></span>`;
   // Числа названы, но не окрашены и ничем не подытожены: «переносов: 4» — это
   // факт, а «ты снова отложил» — приговор. Модуль для того и хранит счётчик.
   const nums = `<span class="stuck-nums">${item('переносов', pick.count)}${
@@ -20263,6 +20330,31 @@ async function onClick(e) {
       return;
     }
     fightsWrite(res.state); render();
+  } else if (action === 'fight-suggest-add') {
+    const F = window.FightsV1;
+    const st = fightsRead();
+    if (!F || !st) return;
+    // Пересчитываем предложение заново, а не доверяем разметке: между рендером
+    // и кликом состояние могло измениться (потолок, та же схватка из другой
+    // вкладки), и `data-*` из DOM — не источник правды.
+    const pick = fightSuggestPick(st, F.activeFights(st));
+    if (!pick || pick.pattern !== el.dataset.pattern) { render(); return; }
+    // Название берётся через t() в момент принятия: дальше это уже СВОЯ схватка
+    // человека, и переводить её задним числом нельзя — как любое его слово.
+    const res = F.addFight(st, {
+      id: uid(), title: t(pick.title), seconds: pick.seconds,
+      trigger: pick.trigger, createdAt: today, fromPattern: pick.pattern,
+    });
+    if (!res.ok) { toast(res.error === 'limit' ? t('Больше пяти схваток — снова шум') : t('Не получилось добавить')); return; }
+    fightsWrite(res.state); track('fight:suggest-add'); render();
+  } else if (action === 'fight-suggest-skip') {
+    // «Не моё» — окончательный ответ по этому паттерну. Вернуться к нему можно
+    // руками через форму; переспрашивать самому значит не услышать сказанное.
+    const id = String(el.dataset.pattern || '');
+    if (!id || !State.settings) return;
+    State.settings.fightSuggestSkipped = fightSuggestSkipped().concat([id]).filter((v, i, a) => a.indexOf(v) === i);
+    Store.save('settings', State.settings);
+    track('fight:suggest-skip'); render();
   } else if (action === 'fight-won' || action === 'fight-lost') {
     const F = window.FightsV1;
     if (!F || !id) return;
