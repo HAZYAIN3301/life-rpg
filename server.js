@@ -856,6 +856,32 @@ function entitlement(user) {
   }
   return { tier: 'free', trialUsed: false };
 }
+// Адресат Pro вводится админом руками, и поле исторически ждало внутренний id
+// (`albert`, `user5`), тогда как на экране человек видит ИМЯ — у нас оно часто
+// не латиницей. Отсюда репорт fb_mq49778tspbi: «не даёт випку, хоть всё
+// написано правильно» — сервер честно не находил профиль с id «Виолетта».
+//
+// Точный id по-прежнему выигрывает и проверяется первым. Имя принимается, только
+// если совпадение РОВНО одно; неоднозначность не разрешается «первым похожим», а
+// возвращается списком, чтобы Pro не уехал случайному однофамильцу. Нормализация
+// NFC нужна для имён с комбинирующими знаками («Алёна», «Андрій»), где две
+// визуально одинаковые строки не равны по `===`.
+function normIdent(value) {
+  return String(value == null ? '' : value).normalize('NFC').trim().toLowerCase();
+}
+function resolveTargetUser(users, raw) {
+  const exact = users.find((x) => x.id === raw);
+  if (exact) return { user: exact };
+  const key = normIdent(raw);
+  if (!key) return { error: 'not_found' };
+  const byId = users.filter((x) => normIdent(x.id) === key);
+  if (byId.length === 1) return { user: byId[0] };
+  const byName = users.filter((x) => normIdent(x.name) === key);
+  if (byName.length === 1) return { user: byName[0] };
+  const matches = byId.length > 1 ? byId : byName;
+  if (matches.length > 1) return { error: 'ambiguous', matches: matches.map((x) => ({ id: x.id, name: x.name })) };
+  return { error: 'not_found' };
+}
 function publicUser(user) {
   return {
     id: user.id, name: user.name, avatar: user.avatar, isAdmin: !!user.isAdmin,
@@ -2079,8 +2105,10 @@ const server = http.createServer(async (req, res) => {
       const users = loadUsers();
       const me = users.find(x => x.id === uid);
       if (!me || !me.isAdmin) return sendJson(res, 403, { error: 'только админ' });
-      const target = users.find(x => x.id === body.userId);
-      if (!target) return sendJson(res, 404, { error: 'профиль не найден' });
+      const found = resolveTargetUser(users, body.userId);
+      if (found.error === 'ambiguous') return sendJson(res, 409, { error: 'таких профилей несколько — уточни id', matches: found.matches });
+      if (!found.user) return sendJson(res, 404, { error: 'профиль не найден' });
+      const target = found.user;
       target.plan = 'pro';
       target.proUntil = body.days ? new Date(Date.now() + Number(body.days) * 24 * 3600 * 1000).toISOString() : null;
       saveUsers(users);
@@ -2093,8 +2121,12 @@ const server = http.createServer(async (req, res) => {
       const users = loadUsers();
       const me = users.find(x => x.id === uid);
       if (!me || !me.isAdmin) return sendJson(res, 403, { error: 'только админ' });
-      const target = users.find(x => x.id === body.userId);
-      if (!target) return sendJson(res, 404, { error: 'профиль не найден' });
+      // Симметрия обязательна: выдавать по имени, а снимать только по id значило
+      // бы, что забрать выданное труднее, чем выдать.
+      const found = resolveTargetUser(users, body.userId);
+      if (found.error === 'ambiguous') return sendJson(res, 409, { error: 'таких профилей несколько — уточни id', matches: found.matches });
+      if (!found.user) return sendJson(res, 404, { error: 'профиль не найден' });
+      const target = found.user;
       target.plan = 'free'; target.proUntil = null;
       saveUsers(users);
       return sendJson(res, 200, publicUser(target));
