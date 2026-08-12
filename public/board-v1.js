@@ -383,8 +383,40 @@
     return { ...s, active: s.active.map((a) => (a.orderId === id ? { ...a, askedAt: today } : a)) };
   }
 
+  // ── Значки (этап 1 плана) ───────────────────────────────────────────────────
+  // Значок отмечает СЛУЧИВШЕЕСЯ, а не старание: он выдаётся за факт, который
+  // уже произошёл, и никогда не висит недостижимой целью на виду. Поэтому
+  // прогресс к невыполненному значку наружу не отдаётся — иначе доска
+  // превратится в чеклист достижений, то есть в ещё один источник долга.
+  const BADGES = [
+    { id: 'first-contract', need: (st) => st.done.length >= 1 },
+    { id: 'five-stories', need: (st) => st.done.length >= 5 },
+    { id: 'fifteen-stories', need: (st) => st.done.length >= 15 },
+    // Все четыре сезона — единственный значок, который нельзя получить быстро:
+    // он требует прожитого года, и в этом вся его ценность.
+    { id: 'four-seasons', need: (st) => new Set(st.done.map((d) => seasonOf(d.doneAt)).filter(Boolean)).size >= 4 },
+  ];
+
+  /**
+   * Заработанные значки. Считаются от состояния, а не хранятся: одно место
+   * правды, и задним числом ничего не рассыпается.
+   *
+   * `wideTaste` требует пул — значок за широту опыта, а не за количество.
+   * @returns {string[]}
+   */
+  function badges(state, pool) {
+    const st = normalize(state);
+    const out = BADGES.filter((b) => b.need(st)).map((b) => b.id);
+    const byId = {};
+    for (const o of Array.isArray(pool) ? pool : []) if (o && o.id != null) byId[String(o.id)] = o;
+    const tags = new Set();
+    for (const d of st.done) for (const tg of (byId[d.orderId] && byId[d.orderId].tags) || []) tags.add(tg);
+    if (tags.size >= 8) out.push('wide-taste');
+    return out;
+  }
+
   return {
-    VERSION, BOARD_PERSONAL, BOARD_SEASONAL, MAX_ACTIVE,
+    VERSION, BOARD_PERSONAL, BOARD_SEASONAL, MAX_ACTIVE, BADGES, badges,
     DONE_COOLDOWN_DAYS, RETURN_REST_DAYS, SEASON_MAX_DAYS, STALE_ASK_DAYS,
     emptyState, normalize, seasonOf, periodKey,
     board, activeOrders, takeOrder, completeOrder, returnOrder,

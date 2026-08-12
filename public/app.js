@@ -2225,6 +2225,20 @@ const I18N_EXTRA = {
   'Моё': { en: 'Mine', de: 'Meins', uk: '\u041c\u043e\u0454', es: 'M\u00edo' },
   'Не моё': { en: 'Not mine', de: 'Nicht meins', uk: '\u041d\u0435 \u043c\u043e\u0454', es: 'No es m\u00edo' },
   'Хватит пока': { en: 'Enough for now', de: 'Genug f\u00fcr jetzt', uk: '\u0414\u043e\u0441\u0438\u0442\u044c \u043f\u043e\u043a\u0438', es: 'Suficiente por ahora' },
+  // ── Сделанное на доске: значки и медиа ──
+  'Первый заказ': { en: 'First contract', de: 'Erster Auftrag', uk: '\u041f\u0435\u0440\u0448\u0435 \u0437\u0430\u043c\u043e\u0432\u043b\u0435\u043d\u043d\u044f', es: 'Primer encargo' },
+  'Пять историй': { en: 'Five stories', de: 'F\u00fcnf Geschichten', uk: '\u041f\u2019\u044f\u0442\u044c \u0456\u0441\u0442\u043e\u0440\u0456\u0439', es: 'Cinco historias' },
+  'Пятнадцать историй': { en: 'Fifteen stories', de: 'F\u00fcnfzehn Geschichten', uk: '\u041f\u2019\u044f\u0442\u043d\u0430\u0434\u0446\u044f\u0442\u044c \u0456\u0441\u0442\u043e\u0440\u0456\u0439', es: 'Quince historias' },
+  'Все четыре сезона': { en: 'All four seasons', de: 'Alle vier Jahreszeiten', uk: '\u0423\u0441\u0456 \u0447\u043e\u0442\u0438\u0440\u0438 \u0441\u0435\u0437\u043e\u043d\u0438', es: 'Las cuatro estaciones' },
+  'Широкий вкус': { en: 'Wide taste', de: 'Breiter Geschmack', uk: '\u0428\u0438\u0440\u043e\u043a\u0438\u0439 \u0441\u043c\u0430\u043a', es: 'Gusto amplio' },
+  'Видно только тебе. Никуда не отправляется.': { en: 'Visible only to you. Nothing is sent anywhere.', de: 'Nur f\u00fcr dich sichtbar. Es wird nichts versendet.', uk: '\u0412\u0438\u0434\u043d\u043e \u043b\u0438\u0448\u0435 \u0442\u043e\u0431\u0456. \u041d\u0456\u043a\u0443\u0434\u0438 \u043d\u0435 \u043d\u0430\u0434\u0441\u0438\u043b\u0430\u0454\u0442\u044c\u0441\u044f.', es: 'Solo visible para ti. No se env\u00eda a ninguna parte.' },
+  'Добавить фото и подпись': { en: 'Add a photo and a caption', de: 'Foto und Bildunterschrift hinzuf\u00fcgen', uk: '\u0414\u043e\u0434\u0430\u0442\u0438 \u0444\u043e\u0442\u043e \u0456 \u043f\u0456\u0434\u043f\u0438\u0441', es: 'A\u00f1adir foto y pie' },
+  'Изменить': { en: 'Edit', de: '\u00c4ndern', uk: '\u0417\u043c\u0456\u043d\u0438\u0442\u0438', es: 'Editar' },
+  'Подпись': { en: 'Caption', de: 'Bildunterschrift', uk: '\u041f\u0456\u0434\u043f\u0438\u0441', es: 'Pie de foto' },
+  'Как это было?': { en: 'How was it?', de: 'Wie war es?', uk: '\u042f\u043a \u0446\u0435 \u0431\u0443\u043b\u043e?', es: '\u00bfC\u00f3mo fue?' },
+  'Сохранить': { en: 'Save', de: 'Speichern', uk: '\u0417\u0431\u0435\u0440\u0435\u0433\u0442\u0438', es: 'Guardar' },
+  'Убрать': { en: 'Remove', de: 'Entfernen', uk: '\u041f\u0440\u0438\u0431\u0440\u0430\u0442\u0438', es: 'Quitar' },
+  'Только фото или видео': { en: 'Photo or video only', de: 'Nur Foto oder Video', uk: '\u041b\u0438\u0448\u0435 \u0444\u043e\u0442\u043e \u0430\u0431\u043e \u0432\u0456\u0434\u0435\u043e', es: 'Solo foto o v\u00eddeo' },
   'Разделы дня': { en: 'Day sections', de: 'Bereiche des Tages', uk: 'Розділи дня', es: 'Secciones del día' },
   'День': { en: 'Day', de: 'Tag', uk: 'День', es: 'Día' },
   'Доска': { en: 'Board', de: 'Tafel', uk: 'Дошка', es: 'Tablón' },
@@ -14363,6 +14377,67 @@ function boardTilt(id) {
   for (let i = 0; i < id.length; i++) h = ((h * 33) ^ id.charCodeAt(i)) >>> 0;
   return ((h % 49) - 24) / 10;
 }
+// ── Медиа к выполненному заказу (BOARD-OF-CONTRACTS-PLAN §4) ────────────────
+// Только локально и только себе. Гейт §6: у продукта аудитория школьного
+// возраста, а публичные медиа несовершеннолетних — отдельная юридическая тема
+// (DSGVO, возрастные ограничения). Публикация ждёт ответа юриста, поэтому здесь
+// нет ни одного пути наружу: ни шеринга, ни ленты, ни отправки на сервер.
+// Файл хранится тем же генерическим маршрутом данных, что и остальное, —
+// серверного кода эта фича не добавляет.
+const BOARD_MEDIA = {};
+function boardMediaAll() { return State.boardMedia && typeof State.boardMedia === 'object' ? State.boardMedia : BOARD_MEDIA; }
+function boardMediaFor(orderId) { return boardMediaAll()[String(orderId)] || null; }
+function boardMediaSave(orderId, patch) {
+  const all = Object.assign({}, boardMediaAll());
+  const cur = all[String(orderId)] || {};
+  const next = Object.assign({}, cur, patch);
+  if (!next.dataUrl && !next.caption) delete all[String(orderId)];
+  else all[String(orderId)] = next;
+  State.boardMedia = all;
+  Store.save('boardMedia', State.boardMedia);
+}
+function boardBadgeLabel(id) {
+  return {
+    'first-contract': t('Первый заказ'),
+    'five-stories': t('Пять историй'),
+    'fifteen-stories': t('Пятнадцать историй'),
+    'four-seasons': t('Все четыре сезона'),
+    'wide-taste': t('Широкий вкус'),
+  }[id] || id;
+}
+/** Выполненные заказы: память о сделанном, с фото и подписью. */
+function boardDoneHTML(st) {
+  const B = window.BoardV1;
+  const done = (st.done || []).slice().sort((a, b) => (a.doneAt < b.doneAt ? 1 : -1)).slice(0, 12);
+  if (!done.length) return '';
+  const rows = done.map((d) => {
+    const o = boardOrderById(d.orderId);
+    if (!o) return '';
+    const m = boardMediaFor(d.orderId) || {};
+    const open = State._boardMediaFor === d.orderId;
+    return `<li class="bdone">
+      <p class="bdone-title">${esc(o.title)}</p>
+      ${m.dataUrl ? `<img class="bdone-img" src="${esc(m.dataUrl)}" alt="${esc(m.caption || o.title)}" loading="lazy">` : ''}
+      ${m.caption ? `<p class="bdone-cap">${esc(m.caption)}</p>` : ''}
+      ${open ? `<div class="bdone-edit">
+          <label class="bdone-label" for="bdone-cap">${t('Подпись')}</label>
+          <input id="bdone-cap" class="bdone-input" maxlength="200" value="${esc(m.caption || '')}" placeholder="${t('Как это было?')}" />
+          <input id="bdone-file" class="bdone-file" type="file" accept="image/*,video/*" />
+          <div class="bdone-acts">
+            <button class="btn sm" data-action="bdone-save" data-id="${esc(d.orderId)}">${t('Сохранить')}</button>
+            ${m.dataUrl || m.caption ? `<button class="btn ghost sm" data-action="bdone-clear" data-id="${esc(d.orderId)}">${t('Убрать')}</button>` : ''}
+          </div></div>`
+      : `<button class="btn ghost sm" data-action="bdone-open" data-id="${esc(d.orderId)}">${m.dataUrl || m.caption ? t('Изменить') : t('Добавить фото и подпись')}</button>`}
+    </li>`;
+  }).join('');
+  const earned = B.badges(st, window.BoardPoolV1 ? window.BoardPoolV1.ALL : []);
+  return `<section class="board-done" aria-labelledby="bdone-title">
+    <h3 id="bdone-title">${t('Сделано')}</h3>
+    ${earned.length ? `<ul class="bdone-badges">${earned.map((b) => `<li class="bdone-badge">${esc(boardBadgeLabel(b))}</li>`).join('')}</ul>` : ''}
+    <p class="bdone-private">${t('Видно только тебе. Никуда не отправляется.')}</p>
+    <ul class="bdone-list">${rows}</ul>
+  </section>`;
+}
 function tasteRead() {
   return window.BoardTasteV1 ? window.BoardTasteV1.normalize(State.settings && State.settings.boardTaste) : null;
 }
@@ -14482,6 +14557,7 @@ function boardScreenHTML() {
         <button class="btn ghost sm" data-action="board-return" data-id="${esc(ask.orderId)}">${t('Вернуть')}</button></p>` : ''}
     </aside>
     </div>
+    ${boardDoneHTML(st)}
   </section>`;
 }
 
@@ -19667,6 +19743,23 @@ function onClick(e) {
       if (note) Object.assign(x, note);
     });
     Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
+  } else if (action === 'bdone-open') {
+    State._boardMediaFor = id; render();
+  } else if (action === 'bdone-clear') {
+    boardMediaSave(id, { dataUrl: null, caption: '' });
+    State._boardMediaFor = null; render();
+  } else if (action === 'bdone-save') {
+    const capEl = document.getElementById('bdone-cap'), fileEl = document.getElementById('bdone-file');
+    const caption = capEl ? capEl.value.trim().slice(0, 200) : '';
+    const file = fileEl && fileEl.files && fileEl.files[0];
+    const finish = (dataUrl) => {
+      boardMediaSave(id, dataUrl ? { dataUrl, caption } : { caption });
+      State._boardMediaFor = null; render();
+    };
+    if (!file) { finish(null); return; }
+    // Переиспользуем готовый downscale: полноразмерное фото с телефона раздуло
+    // бы файл данных на десятки мегабайт.
+    readAttachment(file).then((a) => finish(a.dataUrl)).catch((e) => toast(String(e && e.message) || t('Только фото или видео')));
   } else if (action === 'calib-like' || action === 'calib-skip') {
     const T = window.BoardTasteV1;
     if (!T || !id) return;
@@ -20590,6 +20683,7 @@ async function initApp() {
     const treeLoad = await Store.loadChecked('skilltree', {}, validateSkillTreePayload);
     State.tree = treeLoad.value; State._treeLoadError = treeLoad.error; State._treeLoadBusy = false;
   }
+  State.boardMedia = await Store.load('boardMedia', {});
   State.rewards = await Store.load('rewards', []);
   State.purchases = await Store.load('purchases', []);
   State.achievements = await Store.load('achievements', {});

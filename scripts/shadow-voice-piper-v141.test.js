@@ -178,5 +178,5 @@ test('Shadow Voice v145 exposes the approved gender pair accessibly and ships ev
   assert.match(voiceClient, /dataset\.shadowVoiceIdleHtml = button\.innerHTML/);
   assert.match(voiceClient, /innerHTML = button\.dataset\.shadowVoiceIdleHtml/);
   assert.match(css, /\.shadow-voice-choice[\s\S]*?min-height: 42px/);
-  assert.match(sw, /const CACHE = 'satoru-v145'/);
+  assert.match(sw, /const CACHE = 'satoru-v146'/);
 });

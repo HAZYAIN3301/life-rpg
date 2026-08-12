@@ -201,6 +201,43 @@ assert.equal(B.normalize({ active: [{ orderId: 'a', takenAt: T }, { orderId: 'a'
   assert.equal(B.staleAsk(many, T).orderId, 'p1');
 }
 
+// ── Значки: отмечают случившееся, а не старание ─────────────────────────────
+{
+  const tagged = [
+    { id: 'p1', tags: ['outdoor', 'body'] }, { id: 'p2', tags: ['people', 'care'] },
+    { id: 'p3', tags: ['mind', 'quiet'] }, { id: 'p4', tags: ['craft', 'creative'] },
+    { id: 'p5', tags: ['travel', 'bold'] },
+  ];
+  const doneOn = (ids, day) => ({ version: 1, active: [], rested: [],
+    done: ids.map((id) => ({ orderId: id, doneAt: day })) });
+
+  assert.deepEqual(B.badges(B.emptyState(), tagged), [], 'пусто — значков нет');
+  assert.deepEqual(B.badges(doneOn(['p1'], T), tagged), ['first-contract']);
+
+  const five = B.badges(doneOn(['p1', 'p2', 'p3', 'p4', 'p5'], T), tagged);
+  assert.ok(five.includes('first-contract') && five.includes('five-stories'));
+  assert.ok(!five.includes('fifteen-stories'));
+  // Пять заказов по два тега = десять граней → значок за широту, а не за счёт
+  assert.ok(five.includes('wide-taste'));
+
+  // Четыре сезона нельзя получить быстро — нужен прожитый год
+  const oneSeason = { version: 1, active: [], rested: [],
+    done: [{ orderId: 'p1', doneAt: '2026-08-01' }, { orderId: 'p2', doneAt: '2026-08-02' }] };
+  assert.ok(!B.badges(oneSeason, tagged).includes('four-seasons'));
+  const allSeasons = { version: 1, active: [], rested: [], done: [
+    { orderId: 'p1', doneAt: '2026-01-10' }, { orderId: 'p2', doneAt: '2026-04-10' },
+    { orderId: 'p3', doneAt: '2026-07-10' }, { orderId: 'p4', doneAt: '2026-10-10' },
+  ] };
+  assert.ok(B.badges(allSeasons, tagged).includes('four-seasons'));
+
+  // Прогресс к невыполненному значку наружу не отдаётся: доска не должна
+  // превращаться в чеклист достижений, то есть в ещё один источник долга.
+  assert.equal(typeof B.badges(doneOn(['p1'], T), tagged)[0], 'string');
+  assert.deepEqual(Object.keys(B).filter((k) => /progress|toNext|remaining/i.test(k)), []);
+
+  assert.deepEqual(B.badges(null, null), [], 'мусор не роняет');
+}
+
 // ── Гейт §5: доска не превращается в ленту ───────────────────────────────────
 // Мы строим приложение против доомскролла и не можем добавить в него ленту.
 // Если в API появится feed/like/follow/rank/popular/trending — тест сломается.
