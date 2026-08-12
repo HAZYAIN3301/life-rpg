@@ -9,7 +9,7 @@
 - Take / Complete / Return / Keep переведены на один owned `POST /api/board/commit`. Сервер валидирует settings/tasks, делает снимки и откатывает обе записи при ошибке. Клиент не мутирует состояние и не показывает success до ответа. Live offline-проверка: `active=0`, CTA остаётся, видна ошибка «Ничего не изменено».
 - Починен существовавший `boardMedia load 400`: запрещённый сервером mixed-case key `boardMedia` заменён на `boardmedia`, добавлены `loadChecked`, validator, write guard, Retry и account export/import/delete coverage. v1 принимает только изображения — прежнее обещание video убрано, потому что renderer умел показывать только `<img>`.
 - Выполненные заказы собраны в приватный «Путевой журнал» без likes, followers, ranking и infinite feed. Общая сезонная media-сеть сознательно не включена в этот релиз: до неё нужны отдельные consent/audience/moderation/delete/export/minors/DSGVO контракты. 31/31 order titles локализованы через stable ids для RU/EN/DE/UK/ES.
-- PWA cache: `satoru-v148 → satoru-v149`. QA: focused Board/data/account **12/12 PASS**; полный composed suite **164/164 PASS**; app/pool/server/SW syntax, CSS braces и whitespace — PASS. Live: `360×800`, `375×812`, `1280×900`; RU dark + DE light; document overflow `0`, mobile minimum target `42px`, console errors `0`, German Board без русских утечек. Финальные captures: `docs/design-qa/2026-08-12-board-v149/`. Подробный отчёт: `BOARD-V149-REPORT.md`. Art-деревья не менялись.
+- PWA cache: `satoru-v148 → satoru-v149`. QA: focused Board/data/account **12/12 PASS**; полный объединённый suite после merge с release-hotfix **168/168 PASS**; app/pool/server/SW syntax, CSS braces и whitespace — PASS. Live: `360×800`, `375×812`, `1280×900`; RU dark + DE light; document overflow `0`, mobile minimum target `42px`, console errors `0`, German Board без русских утечек. Финальные captures: `docs/design-qa/2026-08-12-board-v149/`. Подробный отчёт: `BOARD-V149-REPORT.md`. Art-деревья не менялись.
 
 ## [2026-08-12] 🧭 Восстановлена каноническая сетка вкладки «День» v148
 
@@ -53,6 +53,16 @@
 **Проверено.** `node --check` app/sw/оба модуля — PASS, баланс скобок CSS — 0, `git diff --check` — чисто. Новый `scripts/arena-context-v147.test.js` — **15/15 PASS** (включая пример плана: 22 обычных, 5 хороших, 3 таких). Полный `npm test` — **155/155 PASS** (было 140). Живая проверка на превью без входа: `Store.save` подменён на счётчик — **ноль попыток записи**; гейт часа сработал (09:41, день не закрыт → строки нет), закрытый день дал строку с числами, совпадающими с сырым ответом модуля; DE переведён полностью, русского не осталось; `375×812` и `1280×900`, тёмная и светлая — `docOverflow = 0`. `State` возвращён по снимку (`settings/tasks/days/episodes` снова `null`, как было), `find data -mmin -25` пуст — **данные не тронуты**, сервер погашен.
 
 **PWA cache:** `satoru-v146 → satoru-v147`; оба файла добавлены в SHELL, восемь жёстких пинов версии в тестах обновлены.
+
+## [2026-08-12] 🧭 Release hotfix v146 — More focus, work-first drips and complete day labels
+
+- Закрыты три подтверждённых release-gate дефекта без изменения art, board или data transactions. Hotfix построен на чистом актуальном `master` (`ce00ac8`, Piper service configuration), а не поверх локальной dirty working copy.
+- **More:** sheet повторно устанавливает initial focus после завершения opening transition. Если browser отверг фокус на заголовке во время `visibility:hidden`, fallback остаётся на close button внутри dialog — не на `document.body`. Existing Escape, trap, inert и return-focus contract сохранены.
+- **Contextual drips:** больше не запускаются на viewport `≤760px` и снимаются при route change с Today. На desktop advisory bubble закреплён в правом support rail (`296px`), а не поверх quest board. Это сохраняет contextual education на широком экране и first-work contour на телефоне.
+- **Locales:** day counts проходят через `localizedDayCount()`: русский compact badge остаётся `4д`, а EN/DE/UK/ES получают полное слово дня. Локализованы trial title, mobile More subscription state, settings trial label и activation toast; header streak/record больше не смешивает `Rekord` с русским `дней`.
+- PWA shell: `satoru-v145 → satoru-v146`. Обновлены старые SW-pin tests, которые должны проверять именно свежий shell.
+- QA: `node --check public/{app.js,sw.js}`, `git diff --check`, focused mobile-nav/locale/v146 **11/11 PASS**; полный suite **144/144 PASS**. Live local QA: 375×812 More initial focus находится на `#mobile-nav-title` внутри dialog; DE header показывает `Rekord: 0 Tage` / `0 Tage`, overflow `0`; 1280×900 drip стоит в right rail (`x=864…1160`) без пересечения с task rectangles.
+- Файлы: `public/app.js`, `public/styles.css`, `public/sw.js`, SW-pin tests и `scripts/release-hotfix-v146.test.js`; art paths не затронуты.
 
 ## [2026-08-11] 🔊 Shadow Voice v2.4 — утверждённые женские и мужские Piper-голоса
 

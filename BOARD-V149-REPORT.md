@@ -26,7 +26,7 @@
 ## QA
 
 - focused Board/data/account: `12/12 PASS`;
-- полный composed suite: `164/164 PASS`;
+- полный объединённый suite после merge с release-hotfix: `168/168 PASS`;
 - syntax app/pool/server/SW: PASS;
 - CSS braces и whitespace diff: PASS;
 - `360×800`: document overflow `0`, minimum Board target `42px`, CTA на `97.5px` выше fixed nav;
