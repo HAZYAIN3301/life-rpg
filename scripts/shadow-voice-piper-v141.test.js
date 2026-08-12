@@ -155,7 +155,7 @@ test('Shadow Voice v141 reports Piper unavailable when health check fails', { ti
   assert.equal(body.reason, 'local_voice_unreachable');
 });
 
-test('Shadow Voice v145 exposes the approved gender pair accessibly and ships every model', () => {
+test('Shadow Voice remains accessible after the v146 shell update', () => {
   const app = fs.readFileSync(path.join(ROOT, 'public', 'app.js'), 'utf8');
   const voiceClient = fs.readFileSync(path.join(ROOT, 'public', 'shadow-voice-v2.js'), 'utf8');
   const css = fs.readFileSync(path.join(ROOT, 'public', 'styles.css'), 'utf8');
@@ -178,5 +178,5 @@ test('Shadow Voice v145 exposes the approved gender pair accessibly and ships ev
   assert.match(voiceClient, /dataset\.shadowVoiceIdleHtml = button\.innerHTML/);
   assert.match(voiceClient, /innerHTML = button\.dataset\.shadowVoiceIdleHtml/);
   assert.match(css, /\.shadow-voice-choice[\s\S]*?min-height: 42px/);
-  assert.match(sw, /const CACHE = 'satoru-v145'/);
+  assert.match(sw, /const CACHE = 'satoru-v146'/);
 });

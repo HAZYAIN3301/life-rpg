@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-12] 🧭 Release hotfix v146 — More focus, work-first drips and complete day labels
+
+- Закрыты три подтверждённых release-gate дефекта без изменения art, board или data transactions. Hotfix построен на чистом актуальном `master` (`ce00ac8`, Piper service configuration), а не поверх локальной dirty working copy.
+- **More:** sheet повторно устанавливает initial focus после завершения opening transition. Если browser отверг фокус на заголовке во время `visibility:hidden`, fallback остаётся на close button внутри dialog — не на `document.body`. Existing Escape, trap, inert и return-focus contract сохранены.
+- **Contextual drips:** больше не запускаются на viewport `≤760px` и снимаются при route change с Today. На desktop advisory bubble закреплён в правом support rail (`296px`), а не поверх quest board. Это сохраняет contextual education на широком экране и first-work contour на телефоне.
+- **Locales:** day counts проходят через `localizedDayCount()`: русский compact badge остаётся `4д`, а EN/DE/UK/ES получают полное слово дня. Локализованы trial title, mobile More subscription state, settings trial label и activation toast; header streak/record больше не смешивает `Rekord` с русским `дней`.
+- PWA shell: `satoru-v145 → satoru-v146`. Обновлены старые SW-pin tests, которые должны проверять именно свежий shell.
+- QA: `node --check public/{app.js,sw.js}`, `git diff --check`, focused mobile-nav/locale/v146 **11/11 PASS**; полный suite **144/144 PASS**. Live local QA: 375×812 More initial focus находится на `#mobile-nav-title` внутри dialog; DE header показывает `Rekord: 0 Tage` / `0 Tage`, overflow `0`; 1280×900 drip стоит в right rail (`x=864…1160`) без пересечения с task rectangles.
+- Файлы: `public/app.js`, `public/styles.css`, `public/sw.js`, SW-pin tests и `scripts/release-hotfix-v146.test.js`; art paths не затронуты.
+
 ## [2026-08-11] 🔊 Shadow Voice v2.4 — утверждённые женские и мужские Piper-голоса
 
 - Зафиксирован продуктовый выбор для всех пяти языков: RU `Irina / Denis`, UK `Lada / Oleksa`, EN `LJSpeech / John`, DE `Kerstin / Thorsten`, ES `Daniela / Davefx`. Женский тембр остаётся дефолтом; пользователь может в любой момент переключить тембр в Settings → Опыт → Звук, выбор сохраняется в settings.

@@ -734,6 +734,8 @@ const I18N_EXTRA = {
   'Рекорд:': { en: 'Record:', de: 'Rekord:', uk: 'Рекорд:', es: 'Récord:' },
   'Как играть': { en: 'How to play', de: 'Spielanleitung', uk: 'Як грати', es: 'Cómo jugar' },
   'Pro активен': { en: 'Pro active', de: 'Pro aktiv', uk: 'Pro активний', es: 'Pro activo' },
+  'Pro-триал': { en: 'Pro trial', de: 'Pro-Testphase', uk: 'Pro-пробний період', es: 'Prueba Pro' },
+  'Pro-триал активирован на 7 дней!': { en: 'Your 7-day Pro trial is active!', de: 'Deine 7-tägige Pro-Testphase ist aktiv!', uk: 'Твій 7-денний Pro-пробний період активний!', es: '¡Tu prueba Pro de 7 días está activa!' },
   'Сменить профиль': { en: 'Switch profile', de: 'Profil wechseln', uk: 'Змінити профіль', es: 'Cambiar perfil' },
   'под-навыков': { en: 'sub-skills', de: 'Unterfähigkeiten', uk: 'піднавичок', es: 'subhabilidades' },
   'новое!': { en: 'new!', de: 'neu!', uk: 'нове!', es: 'nuevo!' },
@@ -3156,6 +3158,13 @@ function i18nDay(n, l) {
   if (l === 'es') return n === 1 ? 'día' : 'días';
   if (l === 'uk') { const a = n % 10, b = n % 100; if (a === 1 && b !== 11) return 'день'; if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return 'дні'; return 'днів'; }
   return 'дней';
+}
+function localizedDayCount(n, compact = false) {
+  const count = Math.max(0, Math.floor(Number(n) || 0));
+  // Russian keeps the compact badge form. Every other locale gets a complete
+  // translated word rather than an orphaned Russian "д" suffix.
+  if (lang() === 'ru') return compact ? `${count}д` : `${count} ${plural(count, 'день', 'дня', 'дней')}`;
+  return `${count} ${i18nDay(count, lang())}`;
 }
 function i18nNote(n, l) {
   n = Math.abs(Number(n));
@@ -10118,7 +10127,7 @@ function renderHeader(force = false) {
       <span class="sk-bar"><span style="width:${si.pct}%;background:${esc(s.color)}"></span></span></div>`;
   }).join('');
   const proBadge = e.tier === 'pro' ? `<span class="plan-badge pro" title="${t('Pro активен')}">PRO</span>`
-    : e.tier === 'trial' ? `<span class="plan-badge trial" title="Pro-триал">PRO ${trialDaysLeft()}д</span>`
+    : e.tier === 'trial' ? `<span class="plan-badge trial" title="${t('Pro-триал')}">PRO ${localizedDayCount(trialDaysLeft(), true)}</span>`
     : `<button class="plan-badge free" data-action="show-paywall" data-feature="Pro" title="Открыть Pro — сейчас у тебя Free">${satoruIconHTML('status.unlock', 'inline-glyph', '◇')} Pro?</button>`;
   document.getElementById('appName').textContent = State.settings.appName || 'Satoru';
   header.innerHTML = `
@@ -10130,7 +10139,7 @@ function renderHeader(force = false) {
       <div class="char-level">Уровень <b>${oi.level}</b></div>
       <div class="xp-bar"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
       <div class="gold-pill" title="Золото">${satoruIconHTML('status.gold', 'header-emblem', '🪙')} ${goldBalance()}</div>
-      <div class="streak" title="${t('Рекорд:')} ${longestStreak()} ${plural(longestStreak(), 'день', 'дня', 'дней')}">${satoruIconHTML('status.streak', 'header-emblem header-emblem--streak', '🔥')} ${streak} ${plural(streak, 'день', 'дня', 'дней')}</div>
+      <div class="streak" title="${t('Рекорд:')} ${localizedDayCount(longestStreak())}">${satoruIconHTML('status.streak', 'header-emblem header-emblem--streak', '🔥')} ${localizedDayCount(streak, true)}</div>
       ${hypePct() > 0 ? `<div class="hype-chip" title="Хайп ×${hypeState().stacks}: бонус XP за добровольный выбор сложных квестов. Осталось ${hypeMinLeft()} мин.">${satoruIconHTML('status.streak', 'header-emblem', '🔥')} Хайп +${hypePct()}%</div>` : ''}
       <button class="help-btn" data-action="show-guide" title="${t('Как играть')}" aria-label="${t('Как играть')}">${satoruIconHTML('status.info', 'help-glyph', '?')}</button>
       ${proBadge}
@@ -15878,8 +15887,7 @@ function svgToPng(svgStr, w, h) {
 // ============================================================
 function subscriptionCard() {
   const e = ent(), dl = trialDaysLeft();
-  const dayLabel = lang() === 'ru' ? plural(dl, 'день', 'дня', 'дней') : i18nDay(dl, lang());
-  const tierLabel = e.tier === 'pro' ? '💎 Pro' : (e.tier === 'trial' ? `✨ Pro-trial · ${dl} ${dayLabel}` : t('Free'));
+  const tierLabel = e.tier === 'pro' ? '💎 Pro' : (e.tier === 'trial' ? `✨ ${t('Pro-триал')} · ${localizedDayCount(dl)}` : t('Free'));
   let cta = '';
   if (e.tier === 'free') {
     if (!e.trialUsed) cta += `<button class="btn" data-action="start-trial">${t('✨ 7 дней Pro бесплатно')}</button>`;
@@ -17749,6 +17757,16 @@ function renderNav() {
 function mobileNavFocusable(sheet) {
   return Array.from(sheet.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])')).filter((node) => !node.disabled && node.getClientRects().length);
 }
+function focusMobileNavInitialTarget(overlay) {
+  if (!overlay || !overlay.isConnected) return;
+  const heading = overlay.querySelector('#mobile-nav-title');
+  const fallback = overlay.querySelector('.mobile-sheet-close') || mobileNavFocusable(overlay)[0];
+  const target = heading || fallback;
+  target?.focus({ preventScroll: true });
+  // Some browsers discard the first focus attempt while an inert tree is
+  // changing. A real control is a reliable fallback, never document.body.
+  if (!overlay.contains(document.activeElement)) fallback?.focus({ preventScroll: true });
+}
 function handleMobileNavSheetKeydown(event) {
   const overlay = event.currentTarget;
   if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeMobileNavSheet(); return; }
@@ -17804,7 +17822,7 @@ function showMobileNavSheet() {
       ${group('mobile-more-growth', 'Развитие', sectionEntry('rewards'))}
       ${group('mobile-more-community', 'Сообщество', sectionEntry('tribe'))}
       ${group('mobile-more-support', 'Поддержка', `<button class="mobile-sheet-entry" data-action="open-helper"><span class="mobile-sheet-icon">${satoruIconHTML('nav.shadow', 'mobile-sheet-glyph', '🤖')}</span><span><b>${t('Помощник')}</b><small>Satoru AI</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
-      ${group('mobile-more-account', 'Аккаунт и доступ', `<button class="mobile-sheet-entry${State.view === 'settings' ? ' active' : ''}" data-action="mobile-go-settings" aria-current="${State.view === 'settings' ? 'page' : 'false'}"><span class="mobile-sheet-icon">${satoruIconHTML('nav.settings', 'mobile-sheet-glyph', '⚙️')}</span><span><b>${t('Настройки')}</b></span><span class="mobile-sheet-chevron">›</span></button><button class="mobile-sheet-entry" data-action="show-paywall" data-feature="Pro"><span class="mobile-sheet-icon">${satoruIconHTML('status.xp', 'mobile-sheet-glyph', '◇')}</span><span><b>Pro</b><small>${ent().tier === 'pro' ? 'PRO' : ent().tier === 'trial' ? `TRIAL · ${trialDaysLeft()}д` : 'FREE'}</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
+      ${group('mobile-more-account', 'Аккаунт и доступ', `<button class="mobile-sheet-entry${State.view === 'settings' ? ' active' : ''}" data-action="mobile-go-settings" aria-current="${State.view === 'settings' ? 'page' : 'false'}"><span class="mobile-sheet-icon">${satoruIconHTML('nav.settings', 'mobile-sheet-glyph', '⚙️')}</span><span><b>${t('Настройки')}</b></span><span class="mobile-sheet-chevron">›</span></button><button class="mobile-sheet-entry" data-action="show-paywall" data-feature="Pro"><span class="mobile-sheet-icon">${satoruIconHTML('status.xp', 'mobile-sheet-glyph', '◇')}</span><span><b>Pro</b><small>${ent().tier === 'pro' ? 'PRO' : ent().tier === 'trial' ? `${t('Pro-триал')} · ${localizedDayCount(trialDaysLeft(), true)}` : 'FREE'}</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
       ${group('mobile-more-session', 'Справка и сеанс', `<div class="mobile-sheet-utils"><button class="btn ghost" data-action="show-guide">? ${t('Как играть')}</button><button class="btn ghost" data-action="logout">⇦ ${t('Выйти')}</button></div>`) }
     </div>
   </section>`;
@@ -17816,9 +17834,14 @@ function showMobileNavSheet() {
   // A drip/tutorial is advisory, while this is a modal navigation surface.
   // Suppress it now; MutationObserver restores it after the sheet is gone.
   try { tutorialPaint(); } catch {}
+  focusMobileNavInitialTarget(overlay);
   requestAnimationFrame(() => {
     overlay.classList.add('is-open');
-    overlay.querySelector('#mobile-nav-title')?.focus({ preventScroll: true });
+    focusMobileNavInitialTarget(overlay);
+    requestAnimationFrame(() => focusMobileNavInitialTarget(overlay));
+    // The sheet starts at visibility:hidden. Safari and embedded webviews may
+    // reject focus until that opening transition has completed.
+    setTimeout(() => focusMobileNavInitialTarget(overlay), 190);
   });
 }
 const ACCENTS = ['#6c8cff', '#22c1a4', '#e0526a', '#b06ff0', '#e0a23e', '#4f9ff7']; // палитра акцентов (#тема)
@@ -18732,7 +18755,7 @@ const DRIPS = [
 let _dripShownThisLoad = false;
 function dripCheck() {
   const t = ensureTutorial();
-  if (t.active || _dripShownThisLoad || State.view !== 'today') return;
+  if (t.active || _dripShownThisLoad || State.view !== 'today' || window.matchMedia('(max-width: 760px)').matches) return;
   for (const d of DRIPS) {
     if (t.seenDrips.includes(d.id)) continue;
     let ok = false; try { ok = !!d.when(); } catch {}
@@ -18789,6 +18812,9 @@ function tutorialPaint() {
   if (!ov) { ov = document.createElement('div'); ov.id = 'tut-overlay'; document.body.appendChild(ov); }
   // drip-режим: нежный пузырь Тени без затемнения (нудж, не блокирует)
   if (tut.mode === 'drip') {
+    // A fixed advisory must never cover the first work contour on a phone or
+    // survive a route change into Calendar/another work surface.
+    if (State.view !== 'today' || window.matchMedia('(max-width: 760px)').matches) { ov.remove(); return; }
     const d = DRIPS.find((x) => x.id === tut.dripId); if (!d) { ov.remove(); return; }
     const acts = (d.view || d.modal)
       ? `<button class="btn sm" data-action="drip-open">${t('Открыть →')}</button><button class="btn ghost sm" data-action="drip-dismiss">${t('Позже')}</button>`
@@ -19547,7 +19573,7 @@ function onClick(e) {
   if (action === 'start-trial') {
     fetch('/api/auth/start-trial', { method: 'POST' }).then(async (r) => {
       const d = await r.json();
-      if (r.ok) { State.me = d; const p = document.getElementById('paywall'); if (p) p.remove(); toast('✨ Pro-триал активирован на 7 дней!'); render(); }
+      if (r.ok) { State.me = d; const p = document.getElementById('paywall'); if (p) p.remove(); toast(`✨ ${t('Pro-триал активирован на 7 дней!')}`); render(); }
       else toast(accountError(d, 'Не удалось'));
     }).catch(() => toast(t('Сетевая ошибка')));
     return;
