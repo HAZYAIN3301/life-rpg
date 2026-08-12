@@ -1,7 +1,7 @@
 /* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    App shell: network-first. Art/media: cache-first. /api/: always live network.
    Bump CACHE whenever the shell or a stable asset URL changes. */
-const CACHE = 'satoru-v151';
+const CACHE = 'satoru-v152';
 const SHELL = [
   './', 'index.html', 'app.js', 'canon-domains.js', 'den-stage-v1.js', 'den-life-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js', 'resources-penguin-v1.js', 'profile-memory-v1.js', 'day-observation-v1.js', 'stuck-task-v1.js', 'fights-v1.js', 'board-v1.js', 'board-pool-v1.js', 'board-taste-v1.js', 'failure-context-v1.js', 'after-lapse-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js', 'styles.css', 'fonts/podkova/Podkova-wght.woff2', 'shadow-rig-v2.js', 'shadow-den-v1.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
   'avatar-forge-v1.html', 'avatar-forge-v1.css', 'avatar-forge-v1.js',

@@ -529,6 +529,8 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // ── v152: ИИ-ключи больше не «отключаются» сами (fb_msi18cbi65qh) ──
+  'Проверяю подключение…': { en: 'Checking the connection…', de: 'Verbindung wird geprüft…', uk: 'Перевіряю підключення…', es: 'Comprobando la conexión…' },
   // ── Арена v151: предложения схваток из детектора (§1, вариант C) ──
   // Название фичи в словаре — «Duels / Duelle / Сутички / Duelos». Строка обязана
   // говорить тем же словом: «fight / Kampf / combate» читались бы как другая
@@ -11163,7 +11165,34 @@ function aiProvider() {
   return AI_ORDER.find((id) => k[id]) || null;
 }
 function aiProviderLabel(id) { const p = AI_PROVIDERS.find((x) => x.id === id); return p ? p.label : id; }
-function ensureAiKeys() { if (State.aiKeys === null) { State.aiKeys = {}; fetch('/api/ai/keys').then((r) => r.json()).then((d) => { State.aiKeys = d || {}; render(); }).catch(() => {}); } }
+// ⚠️ Гонка, из-за которой ИИ просил «подключить ключ» у того, у кого ключ уже
+// подключён (fb_msi18cbi65qh). Прежняя версия ставила `State.aiKeys = {}`
+// СИНХРОННО, до ответа сервера, — а пустой объект неотличим от «ключей нет».
+// Любой гейт, отрисованный в это окно, честно сообщал неправду. Хуже того,
+// загрузку дёргали ровно три экрана (онбординг, Прогресс, Настройки), тогда как
+// `canUseAi()` спрашивают из двух десятков мест: не зайдя в Настройки, ответа
+// можно было не получить вовсе. Отсюда и репро из репорта — «перекидывает в
+// настройки, вернулся ничего не меняя, и работает»: этот поход и был загрузкой.
+//
+// Теперь `null` значит ровно «ещё не знаем» и держится до ответа; одновременные
+// вызовы схлопывает флаг, поэтому запрос уходит один раз за сессию. 401 —
+// определённый ответ («сессии нет»), сетевая ошибка оставляет «не знаем» и
+// разрешает повтор, а не выдаёт молчание за пустой список ключей.
+let _aiKeysBusy = false;
+function aiKeysKnown() { return State.aiKeys !== null; }
+function ensureAiKeys() {
+  if (State.aiKeys !== null || _aiKeysBusy) return Promise.resolve();
+  _aiKeysBusy = true;
+  return fetch('/api/ai/keys')
+    .then((r) => (r.status === 401 ? {} : r.json()))
+    .then((d) => {
+      State.aiKeys = d || {};
+      // Во время initApp перерисовывать нечего — он сам вызовет render() ниже.
+      if (State.phase === 'app') render();
+    })
+    .catch(() => {})
+    .finally(() => { _aiKeysBusy = false; });
+}
 // Дом.ИИ (включён в Pro) доступен: сервер настроил дом.ключ И юзер Pro/триал И есть остаток квоты.
 function aiHouseOK() { const k = State.aiKeys || {}; const q = k.quota || {}; return !!k.houseAvailable && isPro() && (q.remaining == null || q.remaining > 0); }
 // Можно ли пользоваться ИИ: свой ключ ИЛИ дом.ключ (Pro). Используется вместо голого aiProvider() в гейтах.
@@ -11172,6 +11201,9 @@ function canUseAi() { return !!aiProvider() || aiHouseOK(); }
 function aiSourceHint() {
   const p = aiProvider(); if (p) return t('Твой ключ') + ' ' + aiProviderLabel(p) + '.';
   if (aiHouseOK()) return t('✓ Включено в Pro — ключ не нужен.');
+  // Пока ответ не пришёл, сказать «добавь ключ» — соврать тому, у кого он есть.
+  // Незнание называется незнанием; фраза сама исчезнет с приходом ответа.
+  if (!aiKeysKnown()) return t('Проверяю подключение…');
   const k = State.aiKeys || {};
   if (k.houseAvailable && !isPro()) return t('Доступно в Pro — или добавь бесплатный ключ.');
   return t('Добавь ключ в Настройках.');
@@ -21191,6 +21223,10 @@ async function initApp() {
     render();
     return;
   }
+  // Запрос уходит здесь и ждём его перед первой отрисовкой (см. ниже): так он
+  // перекрывается остальными загрузками и не добавляет отдельного круга, но к
+  // моменту первого render() ответ уже есть — и ни один гейт не успевает соврать.
+  const aiKeysReady = ensureAiKeys();
   State.settings.appName = State.settings.appName || DEFAULT_SETTINGS.appName;
   if (State.settings.appName === 'Gojo') { State.settings.appName = 'Satoru'; Store.save('settings', State.settings); } // ребренд Gojo->Satoru для старых юзеров
   State.settings.skills = State.settings.skills || [];
@@ -21312,6 +21348,10 @@ async function initApp() {
       sp.delete('strava'); history.replaceState(null, '', location.pathname + (sp.toString() ? '?' + sp : '') + location.hash);
     }
   } catch {}
+  // Ответ про ключи должен быть на руках ДО первой отрисовки: иначе ИИ-гейты
+  // успевают сказать «добавь ключ» тому, у кого он есть (fb_msi18cbi65qh).
+  // Запрос стартовал в начале initApp, так что ждать здесь почти нечего.
+  await aiKeysReady;
   State.phase = 'app';
   render();
   scheduleArtWarmup();
