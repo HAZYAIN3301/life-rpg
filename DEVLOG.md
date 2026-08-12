@@ -2,6 +2,15 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-12] 📌 Board of Contracts v149 — игровая доска заказов вместо карточечной ленты
+
+- «Сегодня → Доска» пересобрана по метафоре Witcher/Skyrim: единая деревянная рама, приколотые cut-paper заказы, один сезонный лист с повышенной иерархией, три личных листа и отдельный reading rail выбранного заказа. Фотореалистичная грязь, мелкий псевдопочерк и hover-only взаимодействие из референсов не переносились: текст и controls остаются продуктными и доступными.
+- Пустого detail-state больше нет: active order выбирается первым, затем сезонный, затем личный. На телефоне reading rail и CTA находятся перед декоративной раскладкой бумаг; на desktop доска и rail читаются как одно authored целое. Native buttons получили `aria-pressed`, visible focus, coarse/mobile minimum `42×42`; fine-pointer hover и reduced-motion разведены.
+- Take / Complete / Return / Keep переведены на один owned `POST /api/board/commit`. Сервер валидирует settings/tasks, делает снимки и откатывает обе записи при ошибке. Клиент не мутирует состояние и не показывает success до ответа. Live offline-проверка: `active=0`, CTA остаётся, видна ошибка «Ничего не изменено».
+- Починен существовавший `boardMedia load 400`: запрещённый сервером mixed-case key `boardMedia` заменён на `boardmedia`, добавлены `loadChecked`, validator, write guard, Retry и account export/import/delete coverage. v1 принимает только изображения — прежнее обещание video убрано, потому что renderer умел показывать только `<img>`.
+- Выполненные заказы собраны в приватный «Путевой журнал» без likes, followers, ranking и infinite feed. Общая сезонная media-сеть сознательно не включена в этот релиз: до неё нужны отдельные consent/audience/moderation/delete/export/minors/DSGVO контракты. 31/31 order titles локализованы через stable ids для RU/EN/DE/UK/ES.
+- PWA cache: `satoru-v148 → satoru-v149`. QA: focused Board/data/account **12/12 PASS**; полный composed suite **164/164 PASS**; app/pool/server/SW syntax, CSS braces и whitespace — PASS. Live: `360×800`, `375×812`, `1280×900`; RU dark + DE light; document overflow `0`, mobile minimum target `42px`, console errors `0`, German Board без русских утечек. Финальные captures: `docs/design-qa/2026-08-12-board-v149/`. Подробный отчёт: `BOARD-V149-REPORT.md`. Art-деревья не менялись.
+
 ## [2026-08-12] 🧭 Восстановлена каноническая сетка вкладки «День» v148
 
 - После добавления внутренних вкладок «День / Доска» их контейнер стал первым элементом двухколоночной `.today-shell`: вкладки заняли рабочую колонку, прежний экран «Дня» уехал в узкий support rail, а поддержка — на следующий ряд. Это и создавало пустое поле, вертикальные слова и наложения на desktop.

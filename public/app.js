@@ -2261,6 +2261,35 @@ const I18N_EXTRA = {
   'Личный заказ': { en: 'Personal contract', de: 'Persönlicher Auftrag', uk: 'Особисте замовлення', es: 'Encargo personal' },
   'Заказ у тебя. Вернуть можно в любой момент — это ничего не стоит.': { en: 'The contract is yours. You can return it any time — it costs nothing.', de: 'Der Auftrag gehört dir. Du kannst ihn jederzeit zurückgeben — das kostet nichts.', uk: 'Замовлення в тебе. Повернути можна будь-коли — це нічого не варте.', es: 'El encargo es tuyo. Puedes devolverlo cuando quieras — no cuesta nada.' },
   'Возьмёшь — он будет ждать тебя. Вернуть можно в любой момент, это ничего не стоит.': { en: 'Take it and it will wait for you. You can return it any time, it costs nothing.', de: 'Nimm ihn, und er wartet auf dich. Du kannst ihn jederzeit zurückgeben, das kostet nichts.', uk: 'Візьмеш — він чекатиме на тебе. Повернути можна будь-коли, це нічого не варте.', es: 'Tómalo y te esperará. Puedes devolverlo cuando quieras, no cuesta nada.' },
+  'ПРИКЛЮЧЕНИЯ ЭТОЙ НЕДЕЛИ': { en: 'ADVENTURES THIS WEEK', de: 'ABENTEUER DIESER WOCHE', uk: 'ПРИГОДИ ЦЬОГО ТИЖНЯ', es: 'AVENTURAS DE ESTA SEMANA' },
+  'Не список дел. Несколько ясных поводов выйти из привычного маршрута.': { en: 'Not a to-do list. A few clear reasons to leave the familiar route.', de: 'Keine To-do-Liste. Ein paar klare Gründe, die gewohnte Route zu verlassen.', uk: 'Не список справ. Кілька ясних приводів вийти зі звичного маршруту.', es: 'No es una lista de tareas. Son unas pocas razones claras para salir de la ruta habitual.' },
+  'На руках': { en: 'In progress', de: 'Unterwegs', uk: 'У роботі', es: 'En curso' },
+  'заказа из трёх': { en: 'of three contracts', de: 'von drei Aufträgen', uk: 'із трьох замовлень', es: 'de tres encargos' },
+  'Твои текущие заказы': { en: 'Your current contracts', de: 'Deine laufenden Aufträge', uk: 'Твої поточні замовлення', es: 'Tus encargos actuales' },
+  'Приколото для тебя': { en: 'Pinned for you', de: 'Für dich angeheftet', uk: 'Приколото для тебе', es: 'Fijado para ti' },
+  'Три личных и один общий сезонный заказ. Состав доски меняется раз в неделю.': { en: 'Three personal contracts and one shared seasonal contract. The board changes once a week.', de: 'Drei persönliche und ein gemeinsamer saisonaler Auftrag. Die Tafel wechselt einmal pro Woche.', uk: 'Три особисті й одне спільне сезонне замовлення. Дошка змінюється раз на тиждень.', es: 'Tres encargos personales y uno de temporada compartido. El tablón cambia una vez por semana.' },
+  'ОБЩИЙ СЕЗОННЫЙ': { en: 'SHARED SEASONAL', de: 'GEMEINSAM SAISONAL', uk: 'СПІЛЬНЕ СЕЗОННЕ', es: 'DE TEMPORADA COMÚN' },
+  'ЛИЧНЫЙ': { en: 'PERSONAL', de: 'PERSÖNLICH', uk: 'ОСОБИСТЕ', es: 'PERSONAL' },
+  'У ТЕБЯ': { en: 'IN PROGRESS', de: 'UNTERWEGS', uk: 'У ТЕБЕ', es: 'EN CURSO' },
+  'Читать заказ': { en: 'Read contract', de: 'Auftrag lesen', uk: 'Читати замовлення', es: 'Leer encargo' },
+  'КАК ЗАКРЫТЬ': { en: 'HOW TO COMPLETE', de: 'SO SCHLIESST DU AB', uk: 'ЯК ЗАКРИТИ', es: 'CÓMO COMPLETARLO' },
+  'Сделай это в реальной жизни и отметь здесь. Самоотчёта достаточно; фотографию можно добавить потом.': { en: 'Do it in real life and mark it here. Your own report is enough; a photo can be added later.', de: 'Tu es im echten Leben und markiere es hier. Deine eigene Bestätigung genügt; ein Foto kannst du später ergänzen.', uk: 'Зроби це в реальному житті й відміть тут. Власного звіту достатньо; фото можна додати пізніше.', es: 'Hazlo en la vida real y márcalo aquí. Tu propio registro basta; puedes añadir una foto después.' },
+  'НАГРАДА': { en: 'REWARD', de: 'BELOHNUNG', uk: 'НАГОРОДА', es: 'RECOMPENSA' },
+  'опыта': { en: 'XP', de: 'EP', uk: 'досвіду', es: 'XP' },
+  'золота': { en: 'gold', de: 'Gold', uk: 'золота', es: 'de oro' },
+  'Общий для всех заказ. Твоё выполнение и фото остаются приватными.': { en: 'A contract shared by everyone. Your completion and photo remain private.', de: 'Ein gemeinsamer Auftrag für alle. Dein Abschluss und dein Foto bleiben privat.', uk: 'Спільне для всіх замовлення. Твоє виконання й фото залишаються приватними.', es: 'Un encargo común para todos. Tu realización y tu foto siguen siendo privadas.' },
+  'ПУТЕВОЙ ЖУРНАЛ': { en: 'TRAVEL JOURNAL', de: 'REISETAGEBUCH', uk: 'ПОДОРОЖНІЙ ЖУРНАЛ', es: 'DIARIO DE VIAJE' },
+  'То, что уже стало частью твоей истории. Без лайков, рейтинга и чужих глаз.': { en: 'What has already become part of your story. No likes, ranking, or outside eyes.', de: 'Was bereits Teil deiner Geschichte geworden ist. Ohne Likes, Rangliste oder fremde Blicke.', uk: 'Те, що вже стало частиною твоєї історії. Без лайків, рейтингу й чужих очей.', es: 'Lo que ya forma parte de tu historia. Sin me gusta, clasificación ni miradas ajenas.' },
+  'Личная запись': { en: 'Private entry', de: 'Privater Eintrag', uk: 'Особистий запис', es: 'Entrada privada' },
+  'Фото необязательно': { en: 'Photo optional', de: 'Foto optional', uk: 'Фото необов’язкове', es: 'Foto opcional' },
+  'Выбрать фотографию': { en: 'Choose a photo', de: 'Foto auswählen', uk: 'Обрати фотографію', es: 'Elegir una foto' },
+  'Только фотография': { en: 'Photo only', de: 'Nur ein Foto', uk: 'Лише фотографія', es: 'Solo una foto' },
+  'Путевой журнал не загрузился': { en: 'Travel journal could not load', de: 'Reisetagebuch konnte nicht geladen werden', uk: 'Подорожній журнал не завантажився', es: 'No se pudo cargar el diario de viaje' },
+  'Не показываем пустой журнал и не сохраняем поверх данных, пока соединение не восстановится.': { en: 'We will not show an empty journal or save over your data until the connection recovers.', de: 'Wir zeigen kein leeres Tagebuch und überschreiben keine Daten, bis die Verbindung wiederhergestellt ist.', uk: 'Ми не показуємо порожній журнал і не зберігаємо поверх даних, доки з’єднання не відновиться.', es: 'No mostraremos un diario vacío ni guardaremos sobre tus datos hasta recuperar la conexión.' },
+  'Повторить загрузку журнала': { en: 'Retry journal load', de: 'Tagebuch erneut laden', uk: 'Повторити завантаження журналу', es: 'Reintentar la carga del diario' },
+  'Не удалось сохранить запись. Ничего не потеряно.': { en: 'Could not save the entry. Nothing was lost.', de: 'Eintrag konnte nicht gespeichert werden. Nichts ging verloren.', uk: 'Не вдалося зберегти запис. Нічого не втрачено.', es: 'No se pudo guardar la entrada. No se perdió nada.' },
+  'Твоя доска': { en: 'Your board', de: 'Deine Tafel', uk: 'Твоя дошка', es: 'Tu tablón' },
+  'Не удалось сохранить изменение доски. Ничего не изменено — попробуй ещё раз.': { en: 'Could not save the board change. Nothing changed — try again.', de: 'Die Änderung an der Tafel konnte nicht gespeichert werden. Nichts wurde geändert — versuch es erneut.', uk: 'Не вдалося зберегти зміну дошки. Нічого не змінено — спробуй ще раз.', es: 'No se pudo guardar el cambio del tablón. No cambió nada; inténtalo de nuevo.' },
   // ── Схватки (DISCIPLINE-ARENA-PLAN §1) ──
   'Схватки': { en: 'Duels', de: 'Duelle', uk: 'Сутички', es: 'Duelos' },
   'День решают три-четыре коротких момента: встал или нет, взял телефон или нет, открыл файл или ленту. Назови свои — и у них появится счёт.': { en: 'Your day is decided by three or four short moments: got up or not, picked up the phone or not, opened the file or the feed. Name yours — and they get a score.', de: 'Über deinen Tag entscheiden drei, vier kurze Momente: aufgestanden oder nicht, zum Handy gegriffen oder nicht, die Datei geöffnet oder den Feed. Benenne deine — und sie bekommen einen Punktestand.', uk: 'День вирішують три-чотири короткі моменти: встав чи ні, узяв телефон чи ні, відкрив файл чи стрічку. Назви свої — і в них з’явиться рахунок.', es: 'Tu día lo deciden tres o cuatro momentos cortos: te levantaste o no, tomaste el teléfono o no, abriste el archivo o el feed. Nombra los tuyos — y tendrán marcador.' },
@@ -4761,6 +4790,7 @@ const State = {
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
   goals: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
   lootbox: null, inbox: null, inboxOpen: false, antihabits: null, aiKeys: null, episodes: null,
+  boardMedia: null, _boardMediaLoadError: '', _boardMediaBusy: false, _boardBusy: false, _boardError: '', _boardFocusAfterCommit: '',
   strava: null, _stravaSyncing: false,
   chatLog: [], _chatBusy: false,
   leaderboard: null, _lbLoading: false, _lbError: '', party: null, _partyLoading: false, _partyError: '',
@@ -14362,13 +14392,40 @@ const BOARD_ORDER_XP = 40;
 function boardRead() {
   return window.BoardV1 ? window.BoardV1.normalize(State.settings && State.settings.board) : null;
 }
-function boardWrite(next) {
-  State.settings.board = next;
-  Store.save('settings', State.settings);
+async function commitBoardState(nextBoard, nextTasks = null) {
+  if (State._boardBusy) return false;
+  const settings = structuredClone(State.settings);
+  settings.board = nextBoard;
+  const data = { settings };
+  if (nextTasks) data.tasks = nextTasks;
+  State._boardBusy = true;
+  State._boardError = '';
+  try {
+    const response = await fetch('/api/board/commit', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data }),
+    });
+    if (response.status === 401) { handleAccountSessionExpired(); throw new Error('session'); }
+    if (!response.ok) throw new Error(`board commit ${response.status}`);
+    State.settings = settings;
+    if (nextTasks) State.tasks = nextTasks;
+    return true;
+  } catch (error) {
+    console.error('board commit', error);
+    State._boardError = t('Не удалось сохранить изменение доски. Ничего не изменено — попробуй ещё раз.');
+    return false;
+  } finally {
+    State._boardBusy = false;
+  }
 }
 function boardOrderById(id) {
   const pool = window.BoardPoolV1 ? window.BoardPoolV1.ALL : [];
   return pool.find((o) => o.id === String(id)) || null;
+}
+function boardOrderTitle(order) {
+  if (!order) return '';
+  return window.BoardPoolV1 && typeof window.BoardPoolV1.titleFor === 'function'
+    ? window.BoardPoolV1.titleFor(order, lang())
+    : String(order.title || '');
 }
 // Запущенная сфера = ни одного закрытого дела за неделю. Поля `targetPerWeek`
 // ещё нет (оно приедет со `sphere-frequency-v1`), но ждать его, чтобы доска
@@ -14399,14 +14456,37 @@ function boardTilt(id) {
 const BOARD_MEDIA = {};
 function boardMediaAll() { return State.boardMedia && typeof State.boardMedia === 'object' ? State.boardMedia : BOARD_MEDIA; }
 function boardMediaFor(orderId) { return boardMediaAll()[String(orderId)] || null; }
-function boardMediaSave(orderId, patch) {
+function validateBoardMediaPayload(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  return Object.entries(value).every(([id, entry]) => {
+    if (!id || !entry || typeof entry !== 'object' || Array.isArray(entry)) return false;
+    if (entry.caption != null && (typeof entry.caption !== 'string' || entry.caption.length > 200)) return false;
+    if (entry.dataUrl != null && (typeof entry.dataUrl !== 'string' || !entry.dataUrl.startsWith('data:image/'))) return false;
+    return true;
+  });
+}
+async function boardMediaSave(orderId, patch) {
+  if (State._boardMediaLoadError || State._boardMediaBusy) return false;
   const all = Object.assign({}, boardMediaAll());
   const cur = all[String(orderId)] || {};
   const next = Object.assign({}, cur, patch);
   if (!next.dataUrl && !next.caption) delete all[String(orderId)];
   else all[String(orderId)] = next;
-  State.boardMedia = all;
-  Store.save('boardMedia', State.boardMedia);
+  State._boardMediaBusy = true;
+  const saved = await Store.saveNow('boardmedia', all);
+  State._boardMediaBusy = false;
+  if (saved) State.boardMedia = all;
+  return saved;
+}
+async function retryBoardMediaLoad() {
+  if (State._boardMediaBusy) return;
+  State._boardMediaBusy = true;
+  const result = await Store.loadChecked('boardmedia', {}, validateBoardMediaPayload);
+  State._boardMediaBusy = false;
+  State.boardMedia = result.value;
+  State._boardMediaLoadError = result.error;
+  State._boardFocusAfterCommit = result.error ? '[data-action="board-media-retry"]' : '#board-journal-title';
+  render();
 }
 function boardBadgeLabel(id) {
   return {
@@ -14420,33 +14500,43 @@ function boardBadgeLabel(id) {
 /** Выполненные заказы: память о сделанном, с фото и подписью. */
 function boardDoneHTML(st) {
   const B = window.BoardV1;
-  const done = (st.done || []).slice().sort((a, b) => (a.doneAt < b.doneAt ? 1 : -1)).slice(0, 12);
+  const done = (st.done || []).slice().sort((a, b) => (a.doneAt < b.doneAt ? 1 : -1)).slice(0, 8);
   if (!done.length) return '';
+  if (State._boardMediaLoadError) return `<section class="board-journal-recovery" role="alert" aria-labelledby="board-journal-title">
+    <p class="board-kicker">${t('ПУТЕВОЙ ЖУРНАЛ')}</p>
+    <h3 id="board-journal-title" tabindex="-1">${t('Путевой журнал не загрузился')}</h3>
+    <p>${t('Не показываем пустой журнал и не сохраняем поверх данных, пока соединение не восстановится.')}</p>
+    <button class="btn" data-action="board-media-retry">${t('Повторить загрузку журнала')}</button>
+  </section>`;
   const rows = done.map((d) => {
     const o = boardOrderById(d.orderId);
     if (!o) return '';
     const m = boardMediaFor(d.orderId) || {};
     const open = State._boardMediaFor === d.orderId;
-    return `<li class="bdone">
-      <p class="bdone-title">${esc(o.title)}</p>
-      ${m.dataUrl ? `<img class="bdone-img" src="${esc(m.dataUrl)}" alt="${esc(m.caption || o.title)}" loading="lazy">` : ''}
+    const title = boardOrderTitle(o);
+    return `<li class="bdone${m.dataUrl ? ' has-photo' : ''}">
+      <article aria-labelledby="bdone-${esc(o.id)}-title">
+      <div class="bdone-top"><p class="bdone-kind">${t('Личная запись')}</p><time datetime="${esc(d.doneAt)}">${esc(d.doneAt)}</time></div>
+      <h4 class="bdone-title" id="bdone-${esc(o.id)}-title">${esc(title)}</h4>
+      ${m.dataUrl ? `<figure class="bdone-figure"><img class="bdone-img" src="${esc(m.dataUrl)}" alt="${esc(m.caption || title)}" loading="lazy"></figure>` : ''}
       ${m.caption ? `<p class="bdone-cap">${esc(m.caption)}</p>` : ''}
       ${open ? `<div class="bdone-edit">
           <label class="bdone-label" for="bdone-cap">${t('Подпись')}</label>
           <input id="bdone-cap" class="bdone-input" maxlength="200" value="${esc(m.caption || '')}" placeholder="${t('Как это было?')}" />
-          <input id="bdone-file" class="bdone-file" type="file" accept="image/*,video/*" />
+          <label class="bdone-label" for="bdone-file">${t('Выбрать фотографию')}</label>
+          <input id="bdone-file" class="bdone-file" type="file" accept="image/*" />
           <div class="bdone-acts">
             <button class="btn sm" data-action="bdone-save" data-id="${esc(d.orderId)}">${t('Сохранить')}</button>
             ${m.dataUrl || m.caption ? `<button class="btn ghost sm" data-action="bdone-clear" data-id="${esc(d.orderId)}">${t('Убрать')}</button>` : ''}
           </div></div>`
       : `<button class="btn ghost sm" data-action="bdone-open" data-id="${esc(d.orderId)}">${m.dataUrl || m.caption ? t('Изменить') : t('Добавить фото и подпись')}</button>`}
-    </li>`;
+      </article></li>`;
   }).join('');
   const earned = B.badges(st, window.BoardPoolV1 ? window.BoardPoolV1.ALL : []);
-  return `<section class="board-done" aria-labelledby="bdone-title">
-    <h3 id="bdone-title">${t('Сделано')}</h3>
+  return `<section class="board-done" aria-labelledby="board-journal-title">
+    <header class="board-journal-head"><div><p class="board-kicker">${t('ПУТЕВОЙ ЖУРНАЛ')}</p><h3 id="board-journal-title" tabindex="-1">${t('Сделано')}</h3>
+    <p>${t('То, что уже стало частью твоей истории. Без лайков, рейтинга и чужих глаз.')}</p></div><span class="board-private-mark">⌾ ${t('Фото необязательно')}</span></header>
     ${earned.length ? `<ul class="bdone-badges">${earned.map((b) => `<li class="bdone-badge">${esc(boardBadgeLabel(b))}</li>`).join('')}</ul>` : ''}
-    <p class="bdone-private">${t('Видно только тебе. Никуда не отправляется.')}</p>
     <ul class="bdone-list">${rows}</ul>
   </section>`;
 }
@@ -14474,34 +14564,33 @@ function boardCalibrationHTML() {
   if (!order) return '';
   const total = done + set.length;
   return `<section class="board-calib" aria-labelledby="calib-title">
-    <h2 id="calib-title">${t('Что из этого — твоё?')}</h2>
-    <p class="calib-lead">${t('Несколько заказов с доски. Отметь, что откликается, а что нет — дальше доска будет предлагать по-твоему. Пропустить можно в любой момент.')}</p>
-    <p class="calib-count">${done + 1} ${t('из')} ${total}</p>
-    <blockquote class="calib-order">${esc(order.title)}</blockquote>
-    <label class="calib-label" for="calib-note">${t('Почему? Одной строкой, необязательно')}</label>
-    <input id="calib-note" class="calib-note" maxlength="280" autocomplete="off" placeholder="${t('например: не люблю холод')}" />
-    <div class="calib-acts">
-      <button class="btn" data-action="calib-like" data-id="${esc(order.id)}">${t('Моё')}</button>
-      <button class="btn ghost" data-action="calib-skip" data-id="${esc(order.id)}">${t('Не моё')}</button>
-      <button class="btn ghost sm" data-action="calib-stop">${t('Хватит пока')}</button>
-    </div>
+    <header class="board-calib-head"><p class="board-kicker">${t('Твоя доска')}</p><h2 id="calib-title">${t('Что из этого — твоё?')}</h2>
+    <p class="calib-lead">${t('Несколько заказов с доски. Отметь, что откликается, а что нет — дальше доска будет предлагать по-твоему. Пропустить можно в любой момент.')}</p></header>
+    <div class="board-calib-frame"><div class="calib-paper">
+      <p class="calib-count">${done + 1} ${t('из')} ${total}</p>
+      <blockquote class="calib-order">${esc(boardOrderTitle(order))}</blockquote>
+      <label class="calib-label" for="calib-note">${t('Почему? Одной строкой, необязательно')}</label>
+      <input id="calib-note" class="calib-note" maxlength="280" autocomplete="off" placeholder="${t('например: не люблю холод')}" />
+      <div class="calib-acts">
+        <button class="btn" data-action="calib-like" data-id="${esc(order.id)}">${t('Моё')}</button>
+        <button class="btn ghost" data-action="calib-skip" data-id="${esc(order.id)}">${t('Не моё')}</button>
+        <button class="btn ghost sm" data-action="calib-stop">${t('Хватит пока')}</button>
+      </div>
+    </div></div>
   </section>`;
 }
-/** Полноэкранная доска — вкладка «Сегодня». Листы слева, развёрнутый заказ справа. */
+/** Полноэкранная доска — вкладка «Сегодня». Доска выбора, чтение и журнал — три ясных слоя. */
 function boardScreenHTML() {
   const B = window.BoardV1, P = window.BoardPoolV1, T = window.BoardTasteV1;
   if (!B || !P) return `<p class="muted">${t('Доска недоступна')}</p>`;
   const today = todayStr();
 
-  // Первый заход: сначала калибровка, доска — после. Пока вкус неизвестен,
-  // подбор всё равно был бы вслепую.
   if (T && !T.isCalibrated(tasteRead()) && !State._calibStopped) {
     const calib = boardCalibrationHTML();
     if (calib) return calib;
   }
 
   const st = B.sweepExpired(boardRead(), today).state;
-
   const mine = B.activeOrders(st);
   const view = B.board(P.ALL, {
     neglectedSpheres: boardNeglectedSpheres(),
@@ -14509,65 +14598,67 @@ function boardScreenHTML() {
     tasteWeights: T ? T.tagWeights(tasteRead(), P.ALL, today) : null,
     scoreOrder: T ? T.scoreOrder : null,
   }, st, today);
-  const offers = view.personal.concat(view.seasonal ? [view.seasonal] : []);
+  const offers = (view.seasonal ? [view.seasonal] : []).concat(view.personal);
+  const activeOrders = mine.map((entry) => boardOrderById(entry.orderId)).filter(Boolean);
+  const selectable = activeOrders.concat(offers);
+  const requested = State._boardSel ? selectable.find((order) => order.id === State._boardSel) : null;
+  const selOrder = requested || activeOrders[0] || view.seasonal || view.personal[0] || null;
+  const selTaken = !!(selOrder && mine.some((entry) => entry.orderId === selOrder.id));
+  const full = mine.length >= B.MAX_ACTIVE;
 
-  // Каждый лист — кнопка: доска обязана работать с клавиатуры, а не только мышью.
-  const sheet = (o, taken) => {
-    const sel = State._boardSel === o.id;
-    return `<button type="button" role="tab" aria-selected="${sel}"
-      class="bsheet${taken ? ' taken' : ''}${sel ? ' sel' : ''}"
-      style="--tilt:${boardTilt(o.id)}deg"
-      data-action="board-pick" data-id="${esc(o.id)}">
-      <span class="bsheet-text">${esc(o.title)}</span>
-      ${o.seasonal ? `<span class="bsheet-seal" aria-hidden="true"></span>` : ''}
-      ${taken ? `<span class="bsheet-mark">${t('Взято')}</span>` : ''}
+  const sheet = (order) => {
+    const selected = !!(selOrder && selOrder.id === order.id);
+    const label = order.seasonal ? t('ОБЩИЙ СЕЗОННЫЙ') : t('ЛИЧНЫЙ');
+    return `<button type="button" aria-pressed="${selected}" aria-label="${esc(t('Читать заказ') + ': ' + boardOrderTitle(order))}"
+      class="bsheet${order.seasonal ? ' is-seasonal' : ''}${selected ? ' is-selected' : ''}"
+      style="--tilt:${boardTilt(order.id)}deg" data-action="board-pick" data-id="${esc(order.id)}">
+      <span class="bsheet-pin" aria-hidden="true"></span><span class="bsheet-kind">${label}</span>
+      <span class="bsheet-text">${esc(boardOrderTitle(order))}</span>
+      ${order.seasonal ? `<span class="bsheet-seal" aria-hidden="true">S</span>` : ''}
     </button>`;
   };
 
-  const pinned = mine.map((a) => {
-    const o = boardOrderById(a.orderId);
-    return o ? sheet(o, true) : '';
-  }).join('') + offers.map((o) => sheet(o, false)).join('');
+  const active = activeOrders.length ? `<section class="board-active" aria-labelledby="board-active-title">
+    <div class="board-active-label"><h3 id="board-active-title">${t('Твои текущие заказы')}</h3><span>${mine.length}/${B.MAX_ACTIVE}</span></div>
+    <div class="board-active-list">${activeOrders.map((order) => {
+      const selected = !!(selOrder && selOrder.id === order.id);
+      return `<button type="button" class="board-active-ticket${selected ? ' is-selected' : ''}" aria-pressed="${selected}" data-action="board-pick" data-id="${esc(order.id)}"><span>${t('У ТЕБЯ')}</span>${esc(boardOrderTitle(order))}</button>`;
+    }).join('')}</div></section>` : '';
 
-  // Правая колонка — развёрнутый заказ. Пока ничего не выбрано, здесь живёт
-  // приглашение, а не пустота: доска должна объяснять себя без инструкции.
-  const selId = State._boardSel;
-  const selOrder = selId ? boardOrderById(selId) : null;
-  const selTaken = selOrder && mine.some((a) => a.orderId === selOrder.id);
-  const full = mine.length >= B.MAX_ACTIVE;
-
-  let detail;
-  if (!selOrder) {
-    detail = `<p class="bdetail-empty">${t('Выбери заказ, чтобы прочитать его целиком.')}</p>`;
-  } else {
-    const sphere = selOrder.sphereId ? (State.settings.skills || []).find((s) => s.id === selOrder.sphereId) : null;
-    detail = `<h3 class="bdetail-title">${esc(selOrder.title)}</h3>
-      <p class="bdetail-meta">${selOrder.seasonal ? t('Сезонный заказ') : sphere ? esc(sphere.name) : t('Личный заказ')}</p>
-      <p class="bdetail-note">${selTaken
-        ? t('Заказ у тебя. Вернуть можно в любой момент — это ничего не стоит.')
-        : t('Возьмёшь — он будет ждать тебя. Вернуть можно в любой момент, это ничего не стоит.')}</p>
+  let detail = `<p class="bdetail-empty">${t('Выбери заказ, чтобы прочитать его целиком.')}</p>`;
+  if (selOrder) {
+    const sphere = selOrder.sphereId ? (State.settings.skills || []).find((item) => item.id === selOrder.sphereId) : null;
+    const meta = selOrder.seasonal ? t('Сезонный заказ') : sphere ? sphere.name : t('Личный заказ');
+    detail = `<div class="bdetail-copy">
+      <p class="bdetail-meta">${esc(meta)}</p>
+      <h3 class="bdetail-title" id="board-detail-title" tabindex="-1">${esc(boardOrderTitle(selOrder))}</h3>
+      <p class="bdetail-state">${selTaken ? t('Заказ у тебя. Вернуть можно в любой момент — это ничего не стоит.') : t('Возьмёшь — он будет ждать тебя. Вернуть можно в любой момент, это ничего не стоит.')}</p>
       <div class="bdetail-acts">${selTaken
-        ? `<button class="btn" data-action="board-done" data-id="${esc(selOrder.id)}">${t('Выполнено')}</button>
-           <button class="btn ghost" data-action="board-return" data-id="${esc(selOrder.id)}">${t('Вернуть')}</button>`
+        ? `<button class="btn" data-action="board-done" data-id="${esc(selOrder.id)}">${t('Выполнено')}</button><button class="btn ghost" data-action="board-return" data-id="${esc(selOrder.id)}">${t('Вернуть')}</button>`
         : full
           ? `<p class="bdetail-full">${t('Три заказа сразу — уже список дел, а не приключение')}</p>`
-          : `<button class="btn" data-action="board-take" data-id="${esc(selOrder.id)}">${t('Беру')}</button>`}</div>`;
+          : `<button class="btn" data-action="board-take" data-id="${esc(selOrder.id)}">${t('Беру')}</button>`}</div>
+      <section class="bdetail-instruction" aria-labelledby="board-how-title"><h4 id="board-how-title">${t('КАК ЗАКРЫТЬ')}</h4><p>${t('Сделай это в реальной жизни и отметь здесь. Самоотчёта достаточно; фотографию можно добавить потом.')}</p></section>
+      ${selOrder.seasonal ? `<p class="bdetail-privacy">◉ ${t('Общий для всех заказ. Твоё выполнение и фото остаются приватными.')}</p>` : ''}
+      <div class="bdetail-reward" aria-label="${t('НАГРАДА')}"><span>${t('НАГРАДА')}</span><b>+${BOARD_ORDER_XP} ${t('опыта')}</b><b>+${Math.round(BOARD_ORDER_XP * .35)} ${t('золота')}</b></div>
+    </div>`;
   }
 
   const ask = B.staleAsk(st, today);
   const askOrder = ask ? boardOrderById(ask.orderId) : null;
-
-  // Заголовок ВНЕ грида: как первый ребёнок он занимал бы первую ячейку и
-  // сдвигал доску во вторую колонку, а панель — на второй ряд.
   return `<section class="board-screen" aria-labelledby="board-title">
-    <h2 id="board-title" class="sr-only">${t('Доска заказов')}</h2>
-    <div class="board-scene">
-    <div class="board-wood" role="tablist" aria-label="${t('Доска заказов')}">${pinned}</div>
-    <aside class="board-detail" aria-live="polite">${detail}
-      ${askOrder ? `<p class="board-ask">${t('Этот заказ у тебя уже давно')} — «${esc(askOrder.title)}». ${t('Всё ещё твой?')}
-        <button class="btn ghost sm" data-action="board-keep" data-id="${esc(ask.orderId)}">${t('Мой')}</button>
-        <button class="btn ghost sm" data-action="board-return" data-id="${esc(ask.orderId)}">${t('Вернуть')}</button></p>` : ''}
-    </aside>
+    <header class="board-head"><div><p class="board-kicker">${t('ПРИКЛЮЧЕНИЯ ЭТОЙ НЕДЕЛИ')}</p><h2 id="board-title" tabindex="-1">${t('Доска заказов')}</h2><p>${t('Не список дел. Несколько ясных поводов выйти из привычного маршрута.')}</p></div>
+      <p class="board-count"><b>${mine.length}/${B.MAX_ACTIVE}</b><span>${t('На руках')}<br>${t('заказа из трёх')}</span></p></header>
+    ${State._boardError ? `<p class="board-error" role="alert">${esc(State._boardError)}</p>` : ''}
+    ${active}
+    <div class="board-frame"><div class="board-frame-cap" aria-hidden="true"><span></span><i></i><span></span></div>
+      <div class="board-scene">
+        <section class="board-wall" aria-labelledby="board-pinned-title"><header class="board-wall-head"><h3 id="board-pinned-title">${t('Приколото для тебя')}</h3><p>${t('Три личных и один общий сезонный заказ. Состав доски меняется раз в неделю.')}</p></header>
+          <div class="board-papers">${offers.map(sheet).join('')}</div></section>
+        <aside class="board-detail" aria-live="polite" aria-labelledby="board-detail-title">${detail}
+          ${askOrder ? `<div class="board-ask"><p>${t('Этот заказ у тебя уже давно')} — «${esc(boardOrderTitle(askOrder))}». ${t('Всё ещё твой?')}</p><div><button class="btn ghost sm" data-action="board-keep" data-id="${esc(ask.orderId)}">${t('Мой')}</button><button class="btn ghost sm" data-action="board-return" data-id="${esc(ask.orderId)}">${t('Вернуть')}</button></div></div>` : ''}
+        </aside>
+      </div>
     </div>
     ${boardDoneHTML(st)}
   </section>`;
@@ -18174,6 +18265,17 @@ function afterMainCommit() {
       if (target) focusPathChoiceTarget(target);
     });
   }
+  if (State._boardFocusAfterCommit && State.view === 'today' && State._todayTab === 'board') {
+    const selector = State._boardFocusAfterCommit;
+    State._boardFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const candidates = Array.from(document.querySelectorAll(selector));
+      const target = candidates.find((node) => node.getClientRects().length) || candidates[0] || document.getElementById('board-title');
+      if (!target) return;
+      target.scrollIntoView({ behavior: avatarMotionReduced() ? 'auto' : 'smooth', block: 'nearest' });
+      focusPathChoiceTarget(target);
+    });
+  }
   if (State._tasksFocusAfterCommit) {
     const selector = State._tasksFocusAfterCommit;
     State._tasksFocusAfterCommit = '';
@@ -19108,7 +19210,7 @@ async function confirmGoalDelete() {
   closeGoalDeleteDialog({ restoreFocus: false });
   await commitGoalMutation('delete', nextGoals, nextTasks, '#goals-title', () => { State._goalOpenId = ''; syncGoalDeepLink(''); });
 }
-function onClick(e) {
+async function onClick(e) {
   const targetTaskMenu = e.target.closest('.task-more');
   document.querySelectorAll('.task-more[open]').forEach((menu) => {
     if (menu !== targetTaskMenu) menu.removeAttribute('open');
@@ -19905,22 +20007,27 @@ function onClick(e) {
     });
     Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
   } else if (action === 'bdone-open') {
-    State._boardMediaFor = id; render();
+    State._boardMediaFor = id; State._boardFocusAfterCommit = '#bdone-cap'; render();
   } else if (action === 'bdone-clear') {
-    boardMediaSave(id, { dataUrl: null, caption: '' });
-    State._boardMediaFor = null; render();
+    const saved = await boardMediaSave(id, { dataUrl: null, caption: '' });
+    if (!saved) { toast(t('Не удалось сохранить запись. Ничего не потеряно.')); return; }
+    State._boardMediaFor = null; State._boardFocusAfterCommit = `#bdone-${CSS.escape(id)}-title`; render();
   } else if (action === 'bdone-save') {
     const capEl = document.getElementById('bdone-cap'), fileEl = document.getElementById('bdone-file');
     const caption = capEl ? capEl.value.trim().slice(0, 200) : '';
     const file = fileEl && fileEl.files && fileEl.files[0];
-    const finish = (dataUrl) => {
-      boardMediaSave(id, dataUrl ? { dataUrl, caption } : { caption });
-      State._boardMediaFor = null; render();
+    const finish = async (dataUrl) => {
+      const saved = await boardMediaSave(id, dataUrl ? { dataUrl, caption } : { caption });
+      if (!saved) { toast(t('Не удалось сохранить запись. Ничего не потеряно.')); return; }
+      State._boardMediaFor = null; State._boardFocusAfterCommit = `#bdone-${CSS.escape(id)}-title`; render();
     };
-    if (!file) { finish(null); return; }
+    if (!file) { await finish(null); return; }
+    if (!file.type.startsWith('image/')) { toast(t('Только фотография')); return; }
     // Переиспользуем готовый downscale: полноразмерное фото с телефона раздуло
     // бы файл данных на десятки мегабайт.
-    readAttachment(file).then((a) => finish(a.dataUrl)).catch((e) => toast(String(e && e.message) || t('Только фото или видео')));
+    readAttachment(file).then((attachment) => finish(attachment.dataUrl)).catch((error) => toast(String(error && error.message) || t('Только фотография')));
+  } else if (action === 'board-media-retry') {
+    await retryBoardMediaLoad();
   } else if (action === 'calib-like' || action === 'calib-skip') {
     const T = window.BoardTasteV1;
     if (!T || !id) return;
@@ -19932,47 +20039,56 @@ function onClick(e) {
     // достраивается по ходу, а не за один присест.
     State._calibStopped = true; render();
   } else if (action === 'today-tab') {
-    State._todayTab = id === 'board' ? 'board' : 'day'; render();
+    State._todayTab = id === 'board' ? 'board' : 'day';
+    if (State._todayTab === 'board') State._boardFocusAfterCommit = '#board-title, #calib-title';
+    render();
   } else if (action === 'board-pick') {
-    // Повторный клик по выбранному листу закрывает его — как снять со стены.
-    State._boardSel = State._boardSel === id ? null : id; render();
+    State._boardSel = id; State._boardFocusAfterCommit = '#board-detail-title'; render();
   } else if (action === 'board-take') {
     const B = window.BoardV1, o = boardOrderById(id);
     if (!B || !o) return;
     const res = B.takeOrder(boardRead(), o, today);
     if (!res.ok) { toast(res.error === 'limit' ? t('Три заказа сразу — уже список дел, а не приключение') : t('Не удалось взять заказ')); return; }
-    boardWrite(res.state); render();
+    const saved = await commitBoardState(res.state);
+    State._boardSel = id; State._boardFocusAfterCommit = saved ? '#board-detail-title' : '.board-error'; render();
   } else if (action === 'board-done') {
     const B = window.BoardV1;
     if (!B) return;
     const order = boardOrderById(id);
     const res = B.completeOrder(boardRead(), id, today);
     if (!res.ok) return;
-    boardWrite(res.state);
     // Решение 10.08: заказ засчитывается в баланс сфер. Опыт в системе не
     // начисляется вызовом — он ВЫВОДИТСЯ из записей (xpEvents), поэтому
     // закрытый заказ становится закрытым делом. Так он сам попадает и в опыт,
     // и в нагрузку сферы, и в статистику, без отдельной проводки.
     if (order) {
-      State.tasks.push({
-        id: uid(), title: order.title, skillId: res.sphereId, skillIds: res.sphereId ? [res.sphereId] : [],
+      const nextTasks = State.tasks.concat({
+        id: uid(), title: boardOrderTitle(order), skillId: res.sphereId, skillIds: res.sphereId ? [res.sphereId] : [],
         estimateMin: 0, difficulty: 'normal', date: today, done: true, completedAt: new Date().toISOString(),
         xpAwarded: BOARD_ORDER_XP, goldAwarded: Math.round(BOARD_ORDER_XP * 0.35),
         actualMin: null, startTime: null, fromBoard: true, createdAt: new Date().toISOString(),
       });
-      Store.save('tasks', State.tasks);
+      const saved = await commitBoardState(res.state, nextTasks);
+      if (!saved) { State._boardFocusAfterCommit = '.board-error'; render(); return; }
+    } else {
+      const saved = await commitBoardState(res.state);
+      if (!saved) { State._boardFocusAfterCommit = '.board-error'; render(); return; }
     }
+    State._boardSel = null; State._boardFocusAfterCommit = '#board-journal-title, #board-title';
     toast(t('Заказ закрыт'));
     render();
   } else if (action === 'board-return') {
     // Гейт §3: без всяких последствий и без «жаль».
     const B = window.BoardV1;
     if (!B) return;
-    boardWrite(B.returnOrder(boardRead(), id, today)); render();
+    const saved = await commitBoardState(B.returnOrder(boardRead(), id, today));
+    if (saved) State._boardSel = null;
+    State._boardFocusAfterCommit = saved ? '#board-title' : '.board-error'; render();
   } else if (action === 'board-keep') {
     const B = window.BoardV1;
     if (!B) return;
-    boardWrite(B.noteAsked(boardRead(), id, today)); render();
+    const saved = await commitBoardState(B.noteAsked(boardRead(), id, today));
+    State._boardFocusAfterCommit = saved ? '#board-detail-title' : '.board-error'; render();
   } else if (action === 'fight-add') {
     const F = window.FightsV1;
     const titleEl = document.getElementById('fight-title'), secsEl = document.getElementById('fight-secs');
@@ -20844,7 +20960,9 @@ async function initApp() {
     const treeLoad = await Store.loadChecked('skilltree', {}, validateSkillTreePayload);
     State.tree = treeLoad.value; State._treeLoadError = treeLoad.error; State._treeLoadBusy = false;
   }
-  State.boardMedia = await Store.load('boardMedia', {});
+  const boardMediaLoad = await Store.loadChecked('boardmedia', {}, validateBoardMediaPayload);
+  State.boardMedia = boardMediaLoad.value;
+  State._boardMediaLoadError = boardMediaLoad.error;
   State.rewards = await Store.load('rewards', []);
   State.purchases = await Store.load('purchases', []);
   State.achievements = await Store.load('achievements', {});

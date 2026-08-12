@@ -66,13 +66,13 @@ const USER_DATA_FILES = [
 // tokens, push endpoint, recovery/password hashes). Эти данные либо нужно
 // привязать заново, либо они остаются частью серверной учётной записи.
 const ACCOUNT_PORTABLE_FILES = [
-  ...USER_DATA_FILES, 'lootbox', 'inbox', 'antihabits', 'episodes', 'profile',
+  ...USER_DATA_FILES, 'lootbox', 'inbox', 'antihabits', 'episodes', 'profile', 'boardmedia',
 ];
 const ACCOUNT_PORTABLE_TYPES = {
   settings: 'object', tasks: 'array', habits: 'array', habitlog: 'object', goals: 'array',
   skilltree: 'object', rewards: 'array', purchases: 'array', achievements: 'object',
   days: 'object', weeks: 'object', lootbox: 'object', inbox: 'array', antihabits: 'array',
-  episodes: 'array', profile: 'object',
+  episodes: 'array', profile: 'object', boardmedia: 'object',
 };
 const PASSWORD_MIN = 8;
 
@@ -1149,6 +1149,40 @@ function commitGoalData(uid, payload) {
   if (!payload || !goalCommitPayloadValid(payload.data)) throw new Error('invalid_goal_commit');
   if (Buffer.byteLength(JSON.stringify(payload.data)) > 4 * 1024 * 1024) throw new Error('goal_commit_too_large');
   const names = ['goals', 'tasks'];
+  const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
+  const snapshots = new Map(); const written = [];
+  for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
+  try {
+    for (const name of names) {
+      backupFile(dir, name);
+      writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
+      written.push(name);
+    }
+  } catch (error) {
+    for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
+    throw error;
+  }
+  return names;
+}
+
+function boardCommitPayloadValid(data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
+  const names = Object.keys(data).sort();
+  if (names.join(',') !== 'settings' && names.join(',') !== 'settings,tasks') return false;
+  if (!data.settings || typeof data.settings !== 'object' || Array.isArray(data.settings)) return false;
+  const board = data.settings.board;
+  if (!board || typeof board !== 'object' || Array.isArray(board)) return false;
+  for (const key of ['active', 'done', 'rested']) if (!Array.isArray(board[key])) return false;
+  if (!data.tasks) return true;
+  const ids = new Set();
+  return Array.isArray(data.tasks) && data.tasks.every((task) => task && typeof task === 'object' && !Array.isArray(task)
+    && typeof task.id === 'string' && task.id && !ids.has(task.id) && (ids.add(task.id), true)
+    && typeof task.title === 'string' && task.title.trim());
+}
+function commitBoardData(uid, payload) {
+  if (!payload || !boardCommitPayloadValid(payload.data)) throw new Error('invalid_board_commit');
+  if (Buffer.byteLength(JSON.stringify(payload.data)) > 5 * 1024 * 1024) throw new Error('board_commit_too_large');
+  const names = Object.keys(payload.data);
   const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
   const snapshots = new Map(); const written = [];
   for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
@@ -2820,6 +2854,19 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  if (u === '/api/board/commit' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload; try { payload = JSON.parse(await readBody(req, 6 * 1024 * 1024)); }
+    catch (error) { return sendJson(res, 400, { error: error && error.message === 'payload too large' ? 'board_commit_too_large' : 'invalid_board_commit' }); }
+    try {
+      const files = commitBoardData(uid, payload);
+      return sendJson(res, 200, { ok: true, files });
+    } catch (error) {
+      const clientError = error && (error.message === 'invalid_board_commit' || error.message === 'board_commit_too_large');
+      return sendJson(res, clientError ? 400 : 500, { error: clientError ? error.message : 'board_commit_failed_no_changes_lost' });
+    }
+  }
+
   // ---- Per-user data API ----
   const m = u.match(/^\/api\/data\/([^/?]+)/);
   if (m) {
@@ -2854,7 +2901,7 @@ const server = http.createServer(async (req, res) => {
   {
     const me = loadUsers().find(x => x.id === sessionUserId(req));
     const isAdmin = me && me.isAdmin;
-    const DATA_NAMES = ['settings', 'tasks', 'habits', 'goals', 'days', 'habitlog', 'weeks', 'lootbox', 'skilltree', 'purchases', 'achievements'];
+    const DATA_NAMES = ['settings', 'tasks', 'habits', 'goals', 'days', 'habitlog', 'weeks', 'lootbox', 'skilltree', 'purchases', 'achievements', 'boardmedia'];
 
     // GET /api/admin/userdata/<userId> — текущее содержимое всех файлов + список бэкапов
     let am = u.match(/^\/api\/admin\/userdata\/([a-z0-9_-]{1,32})$/);

@@ -71,11 +71,14 @@ test('Account v123: auth, ownership, portable data, revocation and deletion are 
 
   const alphaTasks = [{ id: 'alpha-task', title: 'Owned by Alpha', date: '2026-08-09', done: false }];
   assert.equal((await api(base, '/api/data/tasks', { method: 'PUT', cookie: cookieA, body: alphaTasks })).response.status, 200);
+  const alphaBoardMedia = { 'b-place-city': { caption: 'Alpha private story', dataUrl: 'data:image/jpeg;base64,AA==' } };
+  assert.equal((await api(base, '/api/data/boardmedia', { method: 'PUT', cookie: cookieA, body: alphaBoardMedia })).response.status, 200);
   assert.equal((await api(base, '/api/data/tasks?userId=alpha', { cookie: cookieB })).response.status, 404, 'query injection must not cross ownership');
 
   const exported = await api(base, '/api/account/export', { cookie: cookieA });
   assert.equal(exported.response.status, 200); assert.equal(exported.data.format, 'satoru-account');
   assert.deepEqual(exported.data.data.tasks, alphaTasks);
+  assert.deepEqual(exported.data.data.boardmedia, alphaBoardMedia, 'private board journal is portable account data');
   assert.equal('aiKeys' in exported.data.data, false); assert.equal('strava' in exported.data.data, false); assert.equal('push' in exported.data.data, false);
 
   const invalidArchive = structuredClone(exported.data);
@@ -84,6 +87,7 @@ test('Account v123: auth, ownership, portable data, revocation and deletion are 
   assert.equal((await api(base, '/api/data/tasks', { cookie: cookieB })).response.status, 404, 'invalid import must write nothing');
   assert.equal((await api(base, '/api/account/import', { method: 'POST', cookie: cookieB, body: exported.data })).response.status, 200);
   assert.deepEqual((await api(base, '/api/data/tasks', { cookie: cookieB })).data, alphaTasks, 'archive imports only into the authenticated account');
+  assert.deepEqual((await api(base, '/api/data/boardmedia', { cookie: cookieB })).data, alphaBoardMedia, 'journal imports only into the authenticated account');
 
   const oldCookieA = cookieA;
   const changed = await api(base, '/api/auth/change-password', { method: 'POST', cookie: cookieA, body: { currentPassword: 'alpha-pass-123', newPassword: 'alpha-pass-456' } });
