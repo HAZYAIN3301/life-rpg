@@ -152,3 +152,21 @@ test('модуль не читает State и не зовёт переводчи
 test('тач-цель кнопки не меньше 42px', () => {
   assert.match(src, /width:42px;height:42px/);
 });
+
+test('модуль подключается сам — «везде» не зависит от чужой памяти', () => {
+  // Иначе фича снова превращается в список мест, который надо не забыть
+  // пополнять. Подключение сводится к одному тегу <script>.
+  assert.match(src, /function autoAttach\(\)/);
+  assert.match(src, /w\.SATORU_NO_VOICE/, 'должен быть способ отказаться заранее');
+  assert.match(src, /readyState === 'loading'/, 'кнопку нельзя ставить до появления body');
+  // В Node окна нет — самоподключение обязано пройти молча, иначе require упадёт.
+  assert.doesNotThrow(() => { delete require.cache[require.resolve('../public/voice-input-v1.js')]; require('../public/voice-input-v1.js'); });
+});
+
+test('подписи можно прислать после того, как кнопка уже стоит', () => {
+  // Модуль стартует сам, а переводы у приложения появляются позже — без этого
+  // кнопка навсегда осталась бы на языке по умолчанию.
+  const labels = src.slice(src.indexOf('function setLabels('), src.indexOf('function attach('));
+  assert.match(labels, /getElementById\('voice-input-btn'\)/);
+  assert.match(labels, /aria-pressed'\) !== 'true'/, 'во время записи подпись менять нельзя — там «Остановить»');
+});

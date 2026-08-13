@@ -149,7 +149,18 @@
 
   // ── Всё ниже требует DOM и в тестах не исполняется ───────────────────────────
   const LABELS = { start: 'Записать голосом', stop: 'Остановить запись', denied: 'Нет доступа к микрофону' };
-  function setLabels(next) { Object.assign(LABELS, next || {}); }
+  // Подписи можно прислать и ПОСЛЕ создания кнопки: модуль подключается сам при
+  // загрузке, а переводы у приложения появляются позже. Поэтому setLabels чинит
+  // и уже стоящую кнопку, иначе она навсегда осталась бы на языке по умолчанию.
+  function setLabels(next) {
+    Object.assign(LABELS, next || {});
+    const w = typeof window !== 'undefined' ? window : null;
+    const btn = w && w.document && w.document.getElementById('voice-input-btn');
+    if (btn && btn.getAttribute('aria-pressed') !== 'true') {
+      btn.setAttribute('aria-label', LABELS.start);
+      btn.title = LABELS.start;
+    }
+  }
 
   function attach(win) {
     const w = win || (typeof window !== 'undefined' ? window : null);
@@ -258,6 +269,20 @@
 
     return btn;
   }
+
+  // Самоподключение. «Везде» не должно зависеть от того, вспомнил ли кто-то
+  // позвать attach() — иначе фича снова становится списком мест, который надо
+  // не забыть пополнять. Так подключение сводится к одному тегу <script>, и
+  // `app.js` для него не нужен вовсе. Отказаться можно заранее:
+  // window.SATORU_NO_VOICE = true.
+  (function autoAttach() {
+    const w = typeof window !== 'undefined' ? window : null;
+    if (!w || !w.document || w.SATORU_NO_VOICE) return;
+    if (!supported(w)) return;                       // без поддержки — молча ничего
+    const run = () => { try { attach(w); } catch {} };
+    if (w.document.readyState === 'loading') w.document.addEventListener('DOMContentLoaded', run, { once: true });
+    else run();
+  })();
 
   return {
     VERSION, SECRET_HINTS, SECRET_AUTOCOMPLETE, NON_TEXT_TYPES, LANGS,
