@@ -11,28 +11,34 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenLife(root) {
   'use strict';
 
-  const VERSION = '2.6.0';
-  const FIRST_AMBIENT_MS = 8000;
+  const VERSION = '2.8.0';
+  const FIRST_AMBIENT_MS = 2800;
   const FIRST_FOCUS_MS = 3200;
   const RETRY_MS = 3000;
   const AMBIENT_SEQUENCE = Object.freeze([
-    Object.freeze({ id: 'shadow-listen', kind: 'shadow', gap: 18000 }),
-    Object.freeze({ id: 'toad-blink', kind: 'toad', gap: 14000 }),
-    Object.freeze({ id: 'recovery-stretch', kind: 'recovery', gap: 22000 }),
-    Object.freeze({ id: 'window-visit', kind: 'window', gap: 24000 }),
-    Object.freeze({ id: 'bench-read', kind: 'room', gap: 30000 }),
-    Object.freeze({ id: 'recovery-glide-tour', kind: 'recovery', gap: 28000 }),
-    Object.freeze({ id: 'toad-stretch', kind: 'toad', gap: 22000 }),
-    Object.freeze({ id: 'recovery-helpers', kind: 'recovery', gap: 26000 }),
-    Object.freeze({ id: 'toad-hop-tour', kind: 'toad', gap: 26000 }),
-    Object.freeze({ id: 'bench-rest', kind: 'room', gap: 26000 }),
-    Object.freeze({ id: 'recovery-cushion-nap', kind: 'recovery', gap: 34000 }),
-    Object.freeze({ id: 'resources-ledger', kind: 'resources', gap: 30000 }),
-    Object.freeze({ id: 'resources-stash', kind: 'resources', gap: 32000 }),
-    Object.freeze({ id: 'shadow-think', kind: 'shadow', gap: 26000 }),
-    Object.freeze({ id: 'shadow-attune', kind: 'shadow-pair', duration: 7600, gap: 36000 }),
-    Object.freeze({ id: 'toad-bench-nap', kind: 'toad', gap: 32000 }),
-    Object.freeze({ id: 'resources-rest', kind: 'resources', gap: 36000 }),
+    // The first four beats are a fairness round: every resident gets one
+    // legible authored action in under a minute, never simultaneously.
+    Object.freeze({ id: 'toad-stretch', kind: 'toad', gap: 2800 }),
+    Object.freeze({ id: 'shadow-greet', kind: 'shadow', gap: 2800 }),
+    // A blink was technically motion but visually too easy to miss.  The
+    // jacket reset makes Mr P's first fairness beat legible without bustle.
+    Object.freeze({ id: 'resources-jacket', kind: 'resources', gap: 2800 }),
+    Object.freeze({ id: 'recovery-stretch', kind: 'recovery', gap: 4200 }),
+    Object.freeze({ id: 'window-visit', kind: 'window', gap: 5200 }),
+    Object.freeze({ id: 'resources-ledger', kind: 'resources', gap: 4200 }),
+    Object.freeze({ id: 'toad-hop-tour', kind: 'toad', gap: 4200 }),
+    Object.freeze({ id: 'shadow-listen', kind: 'shadow', gap: 4200 }),
+    Object.freeze({ id: 'recovery-glide-tour', kind: 'recovery', gap: 5200 }),
+    Object.freeze({ id: 'bench-read', kind: 'room', gap: 6000 }),
+    Object.freeze({ id: 'resources-stash', kind: 'resources', gap: 5000 }),
+    Object.freeze({ id: 'toad-bench-nap', kind: 'toad', gap: 6000 }),
+    Object.freeze({ id: 'recovery-helpers', kind: 'recovery', gap: 5200 }),
+    Object.freeze({ id: 'shadow-think', kind: 'shadow', gap: 4800 }),
+    Object.freeze({ id: 'bench-rest', kind: 'room', gap: 5600 }),
+    Object.freeze({ id: 'recovery-cushion-nap', kind: 'recovery', gap: 6000 }),
+    Object.freeze({ id: 'shadow-attune', kind: 'shadow-pair', duration: 7600, gap: 6200 }),
+    Object.freeze({ id: 'resources-blink', kind: 'resources', gap: 5200 }),
+    Object.freeze({ id: 'resources-rest', kind: 'resources', gap: 6200 }),
   ]);
   const BODY_FOCUS_SEQUENCE = Object.freeze([
     Object.freeze({ id: 'whistle', kind: 'pair', duration: 12000, gap: 5000 }),
@@ -188,7 +194,7 @@
       onToadBeat: config.onToadBeat,
       onWindowVisit: config.onWindowVisit,
       scope,
-      step: sequenceSeed++,
+      step: modeFor(context) === 'ambient' ? 0 : sequenceSeed++,
       timer: 0,
     };
     schedule(director, modeFor(context) === 'ambient' ? FIRST_AMBIENT_MS : FIRST_FOCUS_MS);

@@ -1,7 +1,7 @@
 (function initTravellerRoomV4(global) {
   'use strict';
 
-  const VERSION = '4.1.0';
+  const VERSION = '4.2.0';
   const BASE = '/art/avatars/traveller-core-v1/male/room-actions-v4';
   const STORAGE_KEY = 'satoru.traveller-room-v4.active';
   const ACTIONS = Object.freeze({
@@ -174,6 +174,26 @@
     return attach(shell, record, options);
   }
 
+  async function transition(target, actionId, options = {}) {
+    const shell = shellFrom(target);
+    const action = ACTIONS[actionId];
+    const previous = shell && active.get(shell);
+    if (!shell || !action || !previous) return play(target, actionId, options);
+    const ready = await preload(actionId);
+    if (!ready || !shell.isConnected || active.get(shell) !== previous) return false;
+    clearTimeout(previous.timer);
+    const record = {
+      actionId,
+      expiresAt: Date.now() + action.duration,
+      id: previous.id,
+    };
+    writePersisted(record);
+    return attach(shell, record, {
+      ...options,
+      onFinish: options.onFinish || previous.onFinish,
+    });
+  }
+
   global.TravellerRoomV4 = Object.freeze({
     VERSION,
     BASE,
@@ -181,6 +201,7 @@
     markup,
     preload,
     play,
+    transition,
     restore,
     cancel,
     isPlaying,

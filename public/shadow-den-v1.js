@@ -1,8 +1,8 @@
 /* Satoru Shadow Den v1.
  *
  * Gives the current Shadow form the same Den contract as canonical guardians:
- * authored solo beats, an atomic Traveller pair frame, deterministic cleanup,
- * and no identity fallback to a different evolution tier.
+ * authored solo beats, live room-scale Traveller meetings, deterministic
+ * cleanup, and no identity fallback to a different evolution tier.
  */
 (function exposeShadowDen(root, factory) {
   const api = factory(root);
@@ -14,7 +14,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildShadowDen(root) {
   'use strict';
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.2.0';
   const ART_ROOT = '/art/companions/shadow-den-v1/pair-v1/';
   const FORMS = Object.freeze(['spark', 'spirit', 'guardian', 'keeper']);
   const SOLO = Object.freeze({
@@ -55,7 +55,10 @@
     return ready;
   }
 
-  function prefetch() { return Promise.allSettled(FORMS.map((_, tier) => preload(pairSrc(tier)))); }
+  // Pair posters are retained as archive/reference art only. Runtime meetings
+  // use the live canonical Traveller and the current Shadow rig so scale,
+  // left/right order, eyes and evolution tier cannot drift between renders.
+  function prefetch() { return Promise.resolve([]); }
 
   function escapeHTML(value) {
     return String(value == null ? '' : value)
@@ -67,7 +70,7 @@
     const config = options || {};
     const tier = normalizeTier(config.tier);
     const classes = ['shadow-den-pair-v1', config.className || ''].filter(Boolean).join(' ');
-    return `<span class="${escapeHTML(classes)}" data-shadow-den-pair data-tier="${tier}" data-form="${formForTier(tier)}" data-mode="attune" aria-hidden="true"><span class="shadow-den-pair-v1__stage"></span></span>`;
+    return `<span class="${escapeHTML(classes)}" data-shadow-den-pair data-tier="${tier}" data-form="${formForTier(tier)}" data-mode="attune" aria-hidden="true"></span>`;
   }
 
   function rigInside(element) {
@@ -118,16 +121,28 @@
 
   function pairElement(scope) { return scope && scope.querySelector ? scope.querySelector('[data-shadow-den-pair]') : null; }
 
-  function cancelPair(scope) {
+  function cancelPair(scope, restore = true) {
     const pair = pairElement(scope);
     if (!pair) return false;
     const controller = pairControllers.get(pair);
-    if (controller) clearTimeout(controller.timer);
+    if (controller) controller.timers.forEach(clearTimeout);
     pairControllers.delete(pair);
     pair.classList.remove('is-active');
     pair.setAttribute('aria-hidden', 'true');
     if (scope && scope.classList) scope.classList.remove('is-shadow-pair-active');
+    if (scope && scope.dataset) delete scope.dataset.shadowPairPhase;
+    const companion = scope && scope.querySelector ? scope.querySelector('[data-shadow-den]') : null;
+    if (companion) delete companion.dataset.shadowPairPhase;
+    if (restore !== false && controller && controller.rig && root.ShadowRig) {
+      root.ShadowRig.setState(controller.rig, controller.restoreState);
+    }
     return Boolean(controller);
+  }
+
+  function pairStates(mode) {
+    if (mode === 'rest') return ['caring', 'sleepy', 'caring'];
+    if (mode === 'silence') return ['listening', 'thinking', 'calm'];
+    return ['listening', 'caring', 'happy'];
   }
 
   function playPair(scope, mode, options) {
@@ -137,35 +152,40 @@
     const config = options || {};
     const tier = normalizeTier(config.tier == null ? pair.dataset.tier : config.tier);
     const duration = Math.max(900, Number(config.duration) || meta.duration);
-    const src = pairSrc(tier);
-    cancelPair(scope);
-    return preload(src).then(() => {
-      if (!scope.isConnected || !pair.isConnected) return false;
-      const stage = pair.querySelector('.shadow-den-pair-v1__stage');
-      if (!stage) return false;
-      const image = root.document.createElement('img');
-      image.className = 'shadow-den-pair-v1__frame';
-      image.src = src;
-      image.alt = '';
-      image.setAttribute('aria-hidden', 'true');
-      image.draggable = false;
-      image.decoding = 'async';
-      stage.replaceChildren(image);
+    const companion = scope.querySelector('[data-shadow-den]');
+    const rig = rigInside(companion);
+    const restoreState = String((rig && rig.dataset.shadowState) || 'calm');
+    cancelPair(scope, true);
+    return Promise.resolve().then(() => {
+      if (!scope.isConnected || !pair.isConnected || !companion || !rig) return false;
       pair.dataset.tier = String(tier);
       pair.dataset.form = formForTier(tier);
       pair.dataset.mode = mode;
       pair.classList.add('is-active');
-      pair.setAttribute('aria-hidden', 'false');
+      pair.setAttribute('aria-hidden', 'true');
       scope.classList.add('is-shadow-pair-active');
-      const controller = { timer: setTimeout(() => {
+      const states = pairStates(mode);
+      const controller = { timers: [], rig, restoreState };
+      states.forEach((state, index) => {
+        controller.timers.push(setTimeout(() => {
+          if (pairControllers.get(pair) !== controller || !rig.isConnected) return;
+          if (root.ShadowRig) root.ShadowRig.setState(rig, state);
+          companion.dataset.shadowPairPhase = String(index + 1);
+          scope.dataset.shadowPairPhase = String(index + 1);
+        }, Math.round(index * duration / states.length)));
+      });
+      controller.timers.push(setTimeout(() => {
         if (pairControllers.get(pair) !== controller) return;
         pairControllers.delete(pair);
         if (pair.isConnected) {
           pair.classList.remove('is-active');
           pair.setAttribute('aria-hidden', 'true');
         }
+        if (companion.isConnected) delete companion.dataset.shadowPairPhase;
+        if (scope.isConnected) delete scope.dataset.shadowPairPhase;
         if (scope.isConnected) scope.classList.remove('is-shadow-pair-active');
-      }, duration) };
+        if (rig.isConnected && root.ShadowRig) root.ShadowRig.setState(rig, restoreState);
+      }, duration));
       pairControllers.set(pair, controller);
       return true;
     });
@@ -185,6 +205,7 @@
     pairMarkup,
     playSolo,
     cancelSolo,
+    pairStates,
     playPair,
     cancelPair,
   });

@@ -1,9 +1,9 @@
 /* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    App shell: network-first. Art/media: cache-first. /api/: always live network.
    Bump CACHE whenever the shell or a stable asset URL changes. */
-const CACHE = 'satoru-v152';
+const CACHE = 'satoru-v155';
 const SHELL = [
-  './', 'index.html', 'app.js', 'canon-domains.js', 'den-stage-v1.js', 'den-life-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js', 'resources-penguin-v1.js', 'profile-memory-v1.js', 'day-observation-v1.js', 'stuck-task-v1.js', 'fights-v1.js', 'board-v1.js', 'board-pool-v1.js', 'board-taste-v1.js', 'failure-context-v1.js', 'after-lapse-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js', 'styles.css', 'fonts/podkova/Podkova-wght.woff2', 'shadow-rig-v2.js', 'shadow-den-v1.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
+  './', 'index.html', 'app.js', 'canon-domains.js', 'den-stage-v1.js', 'den-life-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js', 'resources-penguin-v1.js', 'profile-memory-v1.js', 'day-observation-v1.js', 'stuck-task-v1.js', 'fights-v1.js', 'board-v1.js', 'board-pool-v1.js', 'board-taste-v1.js', 'failure-context-v1.js', 'after-lapse-v1.js', 'chest-reveal-v1.js', 'sphere-search-v1.js', 'chart-labels-v1.js', 'md-lite-v1.js', 'voice-input-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js', 'styles.css', 'fonts/podkova/Podkova-wght.woff2', 'shadow-rig-v2.js', 'shadow-den-v1.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
   'avatar-forge-v1.html', 'avatar-forge-v1.css', 'avatar-forge-v1.js',
   'art/icons/icon-registry.js', 'art/icons/scenes/day-summary-fisher.png',
   'art/gear/inventory/w1-training-blade.png',
@@ -11,10 +11,6 @@ const SHELL = [
   'art/companions/shadow-v3-20260730/shadow-spirit-calm.png',
   'art/companions/shadow-v3-20260730/shadow-guardian-calm.png',
   'art/companions/shadow-v3-20260730/shadow-keeper-calm.png',
-  'art/companions/shadow-den-v1/pair-v1/attune-spark.png',
-  'art/companions/shadow-den-v1/pair-v1/attune-spirit.png',
-  'art/companions/shadow-den-v1/pair-v1/attune-guardian.png',
-  'art/companions/shadow-den-v1/pair-v1/attune-keeper.png',
   'art/den/v3/den-v3-runtime-1536x864.png',
   'art/den/v3/furniture/wall-map.png',
   'art/den/v3/furniture/seat-cushion.png',
@@ -29,7 +25,6 @@ const SHELL = [
   'art/den/actors/prop-portal-rim.png',
   'art/den/actors/prop-portal-core.png',
   'art/den/actors/traveller-portal-reach.png',
-  'art/pets/body-toad-v1/motion-v4/idle-breath.gif',
   'art/pets/body-toad-v1/motion-v4/idle-blink.png',
   'art/pets/body-toad-v1/motion-v4/hop-crouch.png',
   'art/pets/body-toad-v1/motion-v4/hop-air.png',
@@ -63,7 +58,6 @@ const SHELL = [
   'art/pets/recovery-slug-v1/states/thriving.png',
   'art/pets/recovery-slug-v1/states/strained.png',
   'art/pets/recovery-slug-v1/states/restoring.png',
-  'art/pets/recovery-slug-v1/motion/idle-softbody.gif',
   'art/pets/recovery-slug-v1/motion-v2/glide-compress.png',
   'art/pets/recovery-slug-v1/motion-v2/glide-extend.png',
   'art/pets/recovery-slug-v1/motion-v2/stretch-up.png',
@@ -74,7 +68,7 @@ const SHELL = [
   'art/pets/recovery-slug-v1/pair-v2/breathe-out.png',
   'art/pets/recovery-slug-v1/pair-v2/restore-contact.png',
   'art/pets/recovery-slug-v1/pair-v2/stretch-a.png',
-  'art/pets/recovery-slug-v1/pair-v2/stretch-b.png',
+  'art/pets/recovery-slug-v1/pair-v3/stretch-soft-b-v155.png',
   'art/pets/resources-penguin-v1/states/calm.png',
   'art/pets/resources-penguin-v1/states/thriving.png',
   'art/pets/resources-penguin-v1/states/strained.png',
@@ -104,7 +98,6 @@ const SHELL = [
   'art/pets/resources-penguin-v1/pair-v1/focus-check.png',
   'art/pets/resources-penguin-v1/pair-v1/focus-nod.png',
   'art/pets/resources-penguin-v1/pair-v1/close-stamp.png',
-  'art/pets/body-toad-v1/motion/idle-breath.gif',
   'art/pets/body-toad-v1/pair-v2/manifest.json',
   'art/pets/body-toad-v1/pair-v2/greet-contact.png',
   'art/pets/body-toad-v1/pair-v2/train-low.png',

@@ -1368,7 +1368,7 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .resources-pair-v1.is-active {
   opacity: 1;
   visibility: visible;
-  transition-delay: 0s;
+  transition: none;
 }
 .resources-pair-v1__stage,
 .resources-pair-v1__frame {
@@ -1462,6 +1462,10 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
   transition: opacity .22s ease;
   pointer-events: none;
   user-select: none;
+  --actor-frame-scale: 1;
+  --actor-facing: 1;
+  transform-origin: 50% 89.84375%;
+  transform: scale(var(--actor-frame-scale)) scaleX(var(--actor-facing));
 }
 .body-toad-v1__frame.is-active { opacity: 1; }
 .body-toad-v1__frame.is-incoming { opacity: 0; }
@@ -1519,7 +1523,9 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
   opacity: 1;
   visibility: visible;
   transform: scale(1);
-  transition-delay: 0s;
+  /* The live actors are hidden in the same commit. Opacity must therefore be
+     immediate or a decoded contact plate still produces one blank paint. */
+  transition: transform .24s cubic-bezier(.2,.78,.22,1), visibility 0s;
 }
 .body-pair-v2__stage,
 .body-pair-v2__frame { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
@@ -9993,7 +9999,7 @@ html.mobile-nav-open body {
 .den-shell.is-body-pair-returning .den-body-toad {
   animation: bodyToadMeetingReturnArc 1.8s cubic-bezier(.34,.02,.24,1) both;
 }
-.den-body-toad[data-toad-direction="left"] .body-toad-v1__frame { transform: scaleX(-1); }
+.den-body-toad[data-toad-direction="left"] .body-toad-v1__frame { --actor-facing: -1; }
 @keyframes bodyToadMeetingArc {
   0% { translate: 0 0; scale: 1; }
   23% { translate: 30% -17%; scale: 1; }
@@ -10044,16 +10050,16 @@ html.mobile-nav-open body {
 }
 @keyframes bodyToadTourAway {
   0% { translate: 0 0; scale: 1; }
-  22% { translate: 22% -16%; scale: 1; }
-  44% { translate: 40% 0; scale: 1; }
-  67% { translate: 58% -13%; scale: 1; }
-  100% { translate: 76% 0; scale: 1; }
+  22% { translate: 22% -16%; scale: .97; }
+  44% { translate: 40% 0; scale: .94; }
+  67% { translate: 58% -13%; scale: .91; }
+  100% { translate: 76% 0; scale: .88; }
 }
 @keyframes bodyToadTourHome {
-  0% { translate: 76% 0; scale: 1; }
-  22% { translate: 58% -13%; scale: 1; }
-  44% { translate: 40% 0; scale: 1; }
-  67% { translate: 22% -16%; scale: 1; }
+  0% { translate: 76% 0; scale: .88; }
+  22% { translate: 58% -13%; scale: .91; }
+  44% { translate: 40% 0; scale: .94; }
+  67% { translate: 22% -16%; scale: .97; }
   100% { translate: 0 0; scale: 1; }
 }
 @keyframes bodyToadBenchAway {
@@ -10063,10 +10069,10 @@ html.mobile-nav-open body {
   50% { translate: 136% -22%; scale: .99; }
   66% { translate: 176% -2%; scale: .98; }
   82% { translate: 218% -45%; scale: .95; }
-  100% { translate: 248% -58%; scale: .92; }
+  100% { translate: 248% -58%; scale: .86; }
 }
 @keyframes bodyToadBenchHome {
-  0% { translate: 248% -58%; scale: .92; }
+  0% { translate: 248% -58%; scale: .86; }
   18% { translate: 218% -45%; scale: .95; }
   34% { translate: 176% -2%; scale: .98; }
   50% { translate: 136% -22%; scale: .99; }
@@ -10074,7 +10080,7 @@ html.mobile-nav-open body {
   82% { translate: 48% -18%; scale: 1; }
   100% { translate: 0 0; scale: 1; }
 }
-@keyframes bodyToadStretchSide { 0%,47.999%,100% { opacity: 1; } 48%,84% { opacity: 0; } }
+@keyframes bodyToadStretchSide { 0%,47.999%,84.001%,100% { opacity: 1; } 48%,84% { opacity: 0; } }
 @keyframes bodyToadStretchUp { 0%,47.999%,84.001%,100% { opacity: 0; } 48%,84% { opacity: 1; } }
 @keyframes bodyToadNapBreath { 0%,100% { translate: 0 0; } 50% { translate: 0 -1.2%; } }
 
@@ -10114,7 +10120,9 @@ html.mobile-nav-open body {
 .den-prop-portal__rim { z-index: 1; }
 .den-shell.is-den-prop-portal-active .den-prop-portal {
   visibility: visible;
-  animation: denPropPortalOpenV4 2.5s cubic-bezier(.2,.78,.2,1) both;
+  /* Extraction happens at 3.1s. Keep the portal visible across that handoff
+     so the book is already in Traveller's hand while the rim closes. */
+  animation: denPropPortalOpenV4 3.7s cubic-bezier(.2,.78,.2,1) both;
 }
 .den-shell.is-den-prop-portal-active .den-prop-portal__core {
   animation: denPropPortalCoreFlow 2.8s ease-in-out infinite;
@@ -10137,8 +10145,12 @@ html.mobile-nav-open body {
   visibility: visible;
   animation: denPropReachV4 3.75s cubic-bezier(.2,.72,.2,1) both;
 }
+.den-shell.is-den-prop-portal-extracting .den-prop-reach {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
 .den-shell.is-den-prop-portal-reaching .den-avatar-core,
-.den-shell.is-den-prop-portal-reaching .traveller-room-v4 {
+.den-shell.is-den-prop-portal-reaching:not(.is-den-prop-portal-extracting) .traveller-room-v4 {
   opacity: 0 !important;
   visibility: hidden !important;
 }
@@ -10150,7 +10162,7 @@ html.mobile-nav-open body {
 @keyframes denPropPortalOpenV4 {
   0% { opacity: 0; transform: scale(.035,.72); }
   18% { opacity: 1; transform: scale(1.02,.96); }
-  30%,78% { opacity: 1; transform: scale(1); }
+  30%,84% { opacity: 1; transform: scale(1); }
   100% { opacity: 0; transform: scale(.035,.74); }
 }
 @keyframes denPropPortalCoreFlow {
@@ -10186,6 +10198,10 @@ html.mobile-nav-open body {
   opacity: 0;
   transition: opacity .28s ease;
   filter: drop-shadow(0 9px 9px rgba(4, 8, 12, .34));
+  --actor-frame-scale: 1;
+  --actor-facing: 1;
+  transform-origin: 50% 89.84375%;
+  transform: scale(var(--actor-frame-scale)) scaleX(var(--actor-facing));
 }
 .recovery-slug-v1__frame.is-active { opacity: 1; }
 .recovery-slug-v1__frame.is-incoming { opacity: 0; }
@@ -10223,11 +10239,11 @@ html.mobile-nav-open body {
    ============================================================ */
 .recovery-pair-v2 {
   position: absolute;
-  left: 31%;
+  left: 35.5%;
   bottom: 1.8%;
   z-index: 22;
   display: block;
-  width: 49%;
+  width: 46%;
   aspect-ratio: 1;
   opacity: 0;
   visibility: hidden;
@@ -10237,7 +10253,7 @@ html.mobile-nav-open body {
 .recovery-pair-v2.is-active {
   opacity: 1;
   visibility: visible;
-  transition-delay: 0s;
+  transition: none;
 }
 .recovery-pair-v2__stage,
 .recovery-pair-v2__frame {
@@ -10252,6 +10268,18 @@ html.mobile-nav-open body {
   object-position: 50% 100%;
   transform: scaleX(-1);
   filter: drop-shadow(0 13px 13px rgba(4, 7, 12, .42));
+}
+/* All pair plates share the same 1536px source stage, but older RECOVERY
+   exports left different transparent gutters below their feet.  Normalize the
+   authored ground line here instead of changing wrapper size per action. */
+.recovery-pair-v2[data-mode="greet"] .recovery-pair-v2__frame { transform: translateY(7.3%) scaleX(-1); }
+.recovery-pair-v2[data-mode="breathe"] .recovery-pair-v2__frame { transform: translateY(8.2%) scaleX(-1); }
+.recovery-pair-v2[data-mode="restore"] .recovery-pair-v2__frame { transform: translateY(7.7%) scaleX(-1); }
+.recovery-pair-v2[data-mode="stretch"] .recovery-pair-v2__frame { transform: translateY(11.5%) scaleX(-1); }
+.recovery-pair-v2[data-mode="stretch"] .recovery-pair-v2__frame[data-pair-frame="stretch-soft-b"] {
+  /* The replacement plate has a 4.8% wider alpha bbox than frame A. Keep the
+     room-scale host fixed and calibrate only the authored source silhouette. */
+  transform: translateY(11.9%) scaleX(-1) scale(.96);
 }
 .recovery-pair-v2__frame--a { opacity: 1; }
 .recovery-pair-v2__frame--b { opacity: 0; }
@@ -10270,9 +10298,9 @@ html.mobile-nav-open body {
 .recovery-pair-v2[data-mode="restore"].is-active .recovery-pair-v2__stage {
   animation: recoveryPairWarmth 6.4s ease-in-out infinite;
 }
-@keyframes recoveryPairBreatheA { 0%,47.999%,100% { opacity: 1; } 48%,91% { opacity: 0; } }
+@keyframes recoveryPairBreatheA { 0%,47.999%,91.001%,100% { opacity: 1; } 48%,91% { opacity: 0; } }
 @keyframes recoveryPairBreatheB { 0%,47.999%,91.001%,100% { opacity: 0; } 48%,91% { opacity: 1; } }
-@keyframes recoveryPairStretchA { 0%,45.999%,100% { opacity: 1; } 46%,90% { opacity: 0; } }
+@keyframes recoveryPairStretchA { 0%,45.999%,90.001%,100% { opacity: 1; } 46%,90% { opacity: 0; } }
 @keyframes recoveryPairStretchB { 0%,45.999%,90.001%,100% { opacity: 0; } 46%,90% { opacity: 1; } }
 @keyframes recoveryPairWarmth {
   0%,100% { filter: brightness(1) drop-shadow(0 0 0 rgba(151, 222, 203, 0)); }
@@ -10325,7 +10353,7 @@ html.mobile-nav-open body {
 .recovery-slug-v1[data-motion="glide-tour"] .recovery-slug-v1__motion-frame--b {
   animation: recoverySlugExtend 2.6s steps(1,end) infinite;
 }
-.den-recovery-slug[data-slug-direction="left"] .recovery-slug-v1__frame { transform: scaleX(-1); }
+.den-recovery-slug[data-slug-direction="left"] .recovery-slug-v1__frame { --actor-facing: -1; }
 .den-recovery-slug[data-slug-motion="glide-tour"][data-slug-route="away"] {
   animation: recoverySlugTourAway 5.2s cubic-bezier(.28,.62,.22,1) both;
 }
@@ -10338,10 +10366,10 @@ html.mobile-nav-open body {
 .recovery-slug-v1[data-motion="helpers"] .recovery-slug-v1__stage {
   animation: recoverySlugHelperGlow 6.8s ease-in-out infinite !important;
 }
-@keyframes recoverySlugCompress { 0%,34.999%,100% { opacity: 1; } 35%,82% { opacity: 0; } }
+@keyframes recoverySlugCompress { 0%,34.999%,82.001%,100% { opacity: 1; } 35%,82% { opacity: 0; } }
 @keyframes recoverySlugExtend { 0%,34.999%,82.001%,100% { opacity: 0; } 35%,82% { opacity: 1; } }
-@keyframes recoverySlugTourAway { 0% { translate: 0 0; } 100% { translate: -38% 0; } }
-@keyframes recoverySlugTourHome { 0% { translate: -38% 0; } 100% { translate: 0 0; } }
+@keyframes recoverySlugTourAway { 0% { translate: 0 0; scale: 1; } 100% { translate: -38% 0; scale: .9; } }
+@keyframes recoverySlugTourHome { 0% { translate: -38% 0; scale: .9; } 100% { translate: 0 0; scale: 1; } }
 @keyframes recoverySlugSleepWarmth { 0%,100% { filter: brightness(.98); } 50% { filter: brightness(1.035); } }
 @keyframes recoverySlugHelperGlow { 0%,100% { filter: drop-shadow(0 0 0 rgba(151,222,203,0)); } 50% { filter: drop-shadow(0 0 11px rgba(151,222,203,.3)); } }
 
@@ -10349,7 +10377,7 @@ html.mobile-nav-open body {
 .den-recovery-actions > span b { color: #bce6dc; }
 
 @media (max-width: 720px) {
-  .recovery-pair-v2 { left: 29%; bottom: 1.4%; width: 53%; }
+  .recovery-pair-v2 { left: 35.5%; bottom: 1.4%; width: 46%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -10374,8 +10402,7 @@ html.mobile-nav-open body {
 /* The protagonist is the static focal anchor while the in-room Shadow owns
    the one continuous idle group. Walk and authored interaction frames remain
    available because they use separate transient classes/layers. */
-.den-shell .den-avatar-core .avatar-core-motion,
-.den-shell .den-avatar-core .avatar-core-blink-layer {
+.den-shell .den-avatar-core .avatar-core-motion {
   animation: none;
 }
 
@@ -10693,10 +10720,10 @@ html.mobile-nav-open body {
    home lane. Authored contact/pair choreography remains a separate state. */
 @keyframes recoverySlugTourAway {
   from { translate: 0 0; scale: 1; }
-  to { translate: 0 -18%; scale: .96; }
+  to { translate: 0 -18%; scale: .9; }
 }
 @keyframes recoverySlugTourHome {
-  from { translate: 0 -18%; scale: .96; }
+  from { translate: 0 -18%; scale: .9; }
   to { translate: 0 0; scale: 1; }
 }
 
@@ -14916,83 +14943,75 @@ html.calendar-task-open body {
 @media (hover: none) { .calib-acts .btn, .calib-note { min-height: 42px; } }
 
 /* ============================================================
-   Shadow Den v1 — solo presence + atomic Traveller pair scenes.
-   The current evolution tier is always used; missing art never falls back
-   to Spark or to a scaled portrait from another form.
+   Shadow Den v1.1 — room-scale meetings on the live canonical rigs.
+   Pair posters remain reference art only: contact never swaps sides, changes
+   the Traveller face, or magnifies two actors into a full-room illustration.
    ============================================================ */
 .den-companion[data-shadow-den] {
+  background: transparent;
+  border-color: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
   translate: 0 0;
   scale: 1;
   transform-origin: 50% 78%;
-  transition: translate 1.8s cubic-bezier(.22,.72,.2,1), scale 1.8s cubic-bezier(.22,.72,.2,1), opacity .18s ease, visibility 0s linear 0s;
+  transition:
+    left .82s cubic-bezier(.22,.72,.2,1),
+    top .82s cubic-bezier(.22,.72,.2,1),
+    translate 1.8s cubic-bezier(.22,.72,.2,1),
+    scale 1.8s cubic-bezier(.22,.72,.2,1),
+    opacity .18s ease,
+    visibility 0s linear 0s;
 }
+.den-companion[data-shadow-tier="0"] .shadow-rig { transform: scale(.72); }
+.den-companion[data-shadow-tier="1"] .shadow-rig { transform: scale(.82); }
+.den-companion[data-shadow-tier="2"] .shadow-rig { transform: scale(.91); }
+.den-companion[data-shadow-tier="3"] .shadow-rig { transform: scale(1); }
 .den-companion[data-shadow-den].is-shadow-den-solo {
-  border-color: color-mix(in srgb, #c8a8ff 76%, white);
-  box-shadow: 0 0 22px color-mix(in srgb, #9d78eb 58%, transparent), 0 2px 8px rgba(0,0,0,.35);
+  filter: drop-shadow(0 0 12px color-mix(in srgb, #9d78eb 58%, transparent));
 }
-.den-companion[data-shadow-den][data-shadow-den-mode="listen"] { scale: 1.04; }
 .den-companion[data-shadow-den][data-shadow-den-mode="think"] { translate: 0 -4%; }
-.den-companion[data-shadow-den][data-shadow-den-mode="speak"] { scale: 1.06; }
 
 .shadow-den-pair-v1 {
-  position: absolute;
-  left: 34.5%;
-  bottom: 1.8%;
-  z-index: 15;
-  display: block;
-  width: 47%;
-  aspect-ratio: 1;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform-origin: 50% 88%;
-}
-.shadow-den-pair-v1.is-active {
-  opacity: 1;
-  visibility: visible;
-  animation: shadowDenPairArrive .62s cubic-bezier(.2,.78,.2,1) both;
-}
-.shadow-den-pair-v1__stage,
-.shadow-den-pair-v1__frame {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-.shadow-den-pair-v1__frame {
-  object-fit: contain;
-  object-position: 50% 100%;
-  filter: drop-shadow(0 12px 13px rgba(5,4,12,.4)) drop-shadow(0 0 10px rgba(157,120,235,.16));
-}
-.shadow-den-pair-v1[data-mode="rest"].is-active .shadow-den-pair-v1__stage {
-  animation: shadowDenPairBreathe 6.4s cubic-bezier(.45,0,.55,1) infinite;
-}
-.shadow-den-pair-v1[data-mode="silence"].is-active .shadow-den-pair-v1__stage {
-  animation: shadowDenPairQuiet 8.8s cubic-bezier(.45,0,.55,1) infinite;
+  display: none !important;
 }
 .den-shell.is-shadow-pair-approaching .den-avatar-core,
 .den-shell.is-shadow-pair-at-meeting .den-avatar-core,
 .den-shell.is-shadow-pair-returning .den-avatar-core {
   translate: 12% 1%;
-  scale: .96;
+  scale: 1;
 }
 .den-shell.is-shadow-pair-approaching .den-companion[data-shadow-den],
 .den-shell.is-shadow-pair-at-meeting .den-companion[data-shadow-den],
 .den-shell.is-shadow-pair-returning .den-companion[data-shadow-den] {
-  translate: -176% 34%;
-  scale: 1.12;
+  translate: -150% 30%;
+  scale: 1;
 }
-.den-shell.is-shadow-pair-active .den-avatar-core,
-.den-shell.is-shadow-pair-active .den-companion[data-shadow-den],
-.den-shell.is-shadow-pair-active .traveller-room-v4,
-.den-shell.is-shadow-pair-active .den-tired-seat {
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
+.den-shell.is-shadow-pair-approaching .den-companion .shadow-rig-body,
+.den-shell.is-shadow-pair-returning .den-companion .shadow-rig-body {
+  animation: shadowDenLiveFlight .72s cubic-bezier(.35,0,.3,1) infinite;
+}
+.den-shell.is-shadow-pair-at-meeting .den-companion .shadow-rig-body {
+  animation: shadowDenLiveContact 2.8s cubic-bezier(.45,0,.55,1) infinite;
+}
+.den-shell[data-shadow-pair-phase="1"] .den-avatar-core { translate: 10% 1%; }
+.den-shell[data-shadow-pair-phase="2"] .den-avatar-core { translate: 12% 1%; }
+.den-shell[data-shadow-pair-phase="3"] .den-avatar-core { translate: 11% 1%; }
+.den-shell[data-shadow-pair-phase="1"] .den-companion[data-shadow-den] { translate: -142% 27%; }
+.den-shell[data-shadow-pair-phase="2"] .den-companion[data-shadow-den] { translate: -150% 30%; }
+.den-shell[data-shadow-pair-phase="3"] .den-companion[data-shadow-den] { translate: -146% 26%; }
+.den-shell[data-shadow-pair-phase="1"] .den-companion .shadow-rig-body {
+  animation: shadowDenPhaseListen 1.55s cubic-bezier(.42,0,.3,1) infinite;
+}
+.den-shell[data-shadow-pair-phase="2"] .den-companion .shadow-rig-body {
+  animation: shadowDenPhaseCare 1.7s cubic-bezier(.42,0,.3,1) infinite;
+}
+.den-shell[data-shadow-pair-phase="3"] .den-companion .shadow-rig-body {
+  animation: shadowDenPhaseAnswer 1.45s cubic-bezier(.42,0,.3,1) infinite;
 }
 .den-shell.is-shadow-pair-active .den-scene > .den-pet {
-  opacity: .2;
+  opacity: .58;
   pointer-events: none;
 }
 .den-shadow-actions {
@@ -15000,26 +15019,36 @@ html.calendar-task-open body {
   background: color-mix(in srgb, #9d78eb 5%, transparent);
 }
 
-@keyframes shadowDenPairArrive {
-  0% { opacity: 0; transform: translateY(2.4%) scale(.985); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes shadowDenLiveFlight {
+  0%,100% { transform: translateY(1.5%) rotate(-2deg) skewX(0deg); }
+  45% { transform: translateY(-3.5%) rotate(2deg) skewX(-1.6deg); }
+  68% { transform: translateY(-1%) rotate(.4deg) skewX(.8deg); }
 }
-@keyframes shadowDenPairBreathe {
-  0%,100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-.45%) scale(1.003); }
+@keyframes shadowDenLiveContact {
+  0%,100% { transform: translateY(0) rotate(-.35deg); }
+  45% { transform: translateY(-2%) rotate(.6deg); }
+  72% { transform: translateY(-.5%) rotate(0deg); }
 }
-@keyframes shadowDenPairQuiet {
-  0%,100% { transform: translateY(.2%) scale(.998); filter: brightness(.98); }
-  50% { transform: translateY(-.35%) scale(1.002); filter: brightness(1.025); }
+@keyframes shadowDenPhaseListen {
+  0%,100% { transform: translateY(0) rotate(-1deg); }
+  48% { transform: translateY(-3.2%) rotate(1.2deg); }
+}
+@keyframes shadowDenPhaseCare {
+  0%,100% { transform: translateY(-.5%) rotate(.4deg); }
+  46% { transform: translateY(-1.8%) rotate(-1.1deg); }
+}
+@keyframes shadowDenPhaseAnswer {
+  0%,100% { transform: translateY(-1%) rotate(-.4deg); }
+  42% { transform: translateY(-4%) rotate(1.5deg); }
+  68% { transform: translateY(-2%) rotate(.2deg); }
 }
 
 @media (max-width: 720px) {
-  .shadow-den-pair-v1 { left: 32%; bottom: 1.1%; width: 51%; }
   .den-shell.is-shadow-pair-approaching .den-companion[data-shadow-den],
   .den-shell.is-shadow-pair-at-meeting .den-companion[data-shadow-den],
   .den-shell.is-shadow-pair-returning .den-companion[data-shadow-den] {
-    translate: -148% 28%;
-    scale: 1.08;
+    translate: -124% 26%;
+    scale: 1;
   }
 }
 
@@ -15034,8 +15063,7 @@ html.calendar-task-open body {
 
 @media (prefers-reduced-motion: reduce) {
   .den-companion[data-shadow-den],
-  .shadow-den-pair-v1,
-  .shadow-den-pair-v1 *,
+  .den-companion[data-shadow-den] *,
   .den-shell.is-shadow-pair-approaching .den-avatar-core,
   .den-shell.is-shadow-pair-at-meeting .den-avatar-core,
   .den-shell.is-shadow-pair-returning .den-avatar-core {

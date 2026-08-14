@@ -14,7 +14,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildResourcesPenguin(root) {
   'use strict';
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
   const ART_ROOT = '/art/pets/resources-penguin-v1/';
   const STATES = Object.freeze(['calm', 'thriving', 'strained', 'restoring']);
   const STATE_META = Object.freeze({
@@ -192,12 +192,24 @@
     return true;
   }
 
+  function cancelPair(scope) {
+    if (!scope || !scope.querySelector) return false;
+    const pair = scope.querySelector('[data-resources-pair-v1]');
+    if (!pair) return false;
+    const timers = pairControllers.get(pair);
+    if (timers) timers.forEach(clearTimeout);
+    pairControllers.delete(pair);
+    pair.classList.remove('is-active');
+    pair.setAttribute('aria-hidden', 'true');
+    if (scope.classList) scope.classList.remove('is-resources-pair-active');
+    return Boolean(timers);
+  }
+
   function playPair(scope, mode, options) {
     const meta = INTERACTIONS[mode];
     const pair = scope && scope.querySelector('[data-resources-pair-v1]');
     if (!scope || !pair || !meta) return Promise.resolve(false);
-    const previous = pairControllers.get(pair);
-    if (previous) previous.forEach(clearTimeout);
+    cancelPair(scope);
     const duration = Math.max(900, Number(options && options.duration) || meta.duration);
     const sources = meta.frames.map(pairSrc);
     return Promise.all(sources.map(preload)).then(() => {
@@ -241,6 +253,7 @@
     setState,
     playSolo,
     playPair,
+    cancelPair,
     installWaddleFrames,
     clearWaddleFrames,
     cancel,

@@ -18,7 +18,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildBodyToadV1() {
   'use strict';
 
-  const VERSION = '3.1.0';
+  const VERSION = '3.4.0';
   const ART_ROOT = '/art/pets/body-toad-v1/';
   const PAIR_ART_ROOT = `${ART_ROOT}pair-v4/`;
   const ACTION_PAIR_ART_ROOT = PAIR_ART_ROOT;
@@ -50,12 +50,24 @@
   const preloads = new Map();
   const MOTION_FRAMES = Object.freeze({
     blink: 'idle-blink.png',
-    breath: 'idle-breath.gif',
+    calm: '../states/calm.png',
     crouch: 'hop-crouch.png',
     air: 'hop-air.png',
     stretch: 'solo-stretch.png',
     stretchUp: 'solo-stretch-up.png',
     sleep: 'bench-sleep.png',
+  });
+  // Full-frame art keeps one 1024px stage.  Calibration corrects source crop
+  // variance inside that stage; room perspective remains solely on the outer
+  // actor host.  In-place acting can therefore never resize the room actor.
+  const FRAME_CALIBRATION = Object.freeze({
+    blink: Object.freeze({ scale: 1 }),
+    calm: Object.freeze({ scale: 1 }),
+    crouch: Object.freeze({ scale: 1.01 }),
+    air: Object.freeze({ scale: 1.12 }),
+    stretch: Object.freeze({ scale: 1.12 }),
+    stretchUp: Object.freeze({ scale: 1.04 }),
+    sleep: Object.freeze({ scale: 1.02 }),
   });
 
   function normalizeState(value) {
@@ -76,7 +88,6 @@
 
   function frameSrc(state, animated) {
     const safe = normalizeState(state);
-    if (safe === 'calm' && animated !== false) return motionFrameSrc('breath');
     return stateSrc(safe);
   }
 
@@ -164,6 +175,22 @@
     });
   }
 
+  function cancelPair(scope, restore = true) {
+    if (!scope || !scope.querySelector) return false;
+    const pair = scope.querySelector('[data-body-pair-v2]');
+    if (!pair) return false;
+    const controller = pairTimers.get(pair);
+    if (controller && controller.timer) clearTimeout(controller.timer);
+    pairTimers.delete(pair);
+    pair.classList.remove('is-active');
+    pair.setAttribute('aria-hidden', 'true');
+    if (scope.classList) scope.classList.remove('is-body-pair-active');
+    if (restore !== false && controller && controller.toad) {
+      setState(controller.toad, controller.restoreState, { animated: true }).catch(() => {});
+    }
+    return Boolean(controller);
+  }
+
   function playPair(scope, mode, options) {
     if (!scope || !INTERACTIONS[mode]) return Promise.resolve(false);
     const pair = scope.querySelector('[data-body-pair-v2]');
@@ -172,8 +199,7 @@
     const duration = Math.max(400, Number(config.duration) || INTERACTIONS[mode].duration);
     const toad = config.toad || scope.querySelector('[data-body-toad]');
     const previousState = toad ? normalizeState(config.restoreState || toad.dataset.state) : 'calm';
-    const oldTimer = pairTimers.get(pair);
-    if (oldTimer) clearTimeout(oldTimer);
+    cancelPair(scope, true);
     return setPairMode(pair, mode).then((ready) => {
       if (!ready || !pair.isConnected || !scope.isConnected) return false;
       scope.classList.add('is-body-pair-active');
@@ -182,7 +208,9 @@
       pair.classList.add('is-active');
       pair.setAttribute('aria-hidden', 'false');
       if (toad) setState(toad, INTERACTIONS[mode].state, { animated: false }).catch(() => {});
-      const timer = setTimeout(() => {
+      const controller = { timer: 0, toad, restoreState: previousState };
+      controller.timer = setTimeout(() => {
+        if (pairTimers.get(pair) !== controller) return;
         pair.classList.remove('is-active');
         pair.setAttribute('aria-hidden', 'true');
         scope.classList.remove('is-body-pair-active');
@@ -190,7 +218,7 @@
         pairTimers.delete(pair);
         if (typeof config.onFinish === 'function') config.onFinish(mode);
       }, duration);
-      pairTimers.set(pair, timer);
+      pairTimers.set(pair, controller);
       return true;
     });
   }
@@ -261,9 +289,13 @@
       const stage = element.querySelector('.body-toad-v1__stage');
       if (!stage) return false;
       const frames = sources.map((src, index) => {
+        const key = safeKeys[index];
+        const calibration = FRAME_CALIBRATION[key] || FRAME_CALIBRATION.blink;
         const image = document.createElement('img');
         image.className = `body-toad-v1__frame body-toad-v1__motion-frame body-toad-v1__motion-frame--${index === 0 ? 'a' : 'b'} is-active`;
         image.src = src;
+        image.dataset.actorFrame = key;
+        image.style.setProperty('--actor-frame-scale', String(calibration.scale));
         image.alt = '';
         image.setAttribute('aria-hidden', 'true');
         image.draggable = false;
@@ -341,7 +373,7 @@
     try {
       if (mode === 'blink') {
         if (!(await show('blink'))) return false;
-        return await wait(165);
+        return await wait(520);
       }
       if (mode === 'solo-stretch') {
         if (!(await show(['stretch', 'stretchUp']))) return false;
@@ -368,7 +400,7 @@
         await show('air');
         if (host && host.dataset) host.dataset.toadRoute = 'away';
         if (!(await wait(1500))) return false;
-        await show('breath');
+        await show('calm');
         if (!(await wait(Math.max(6000, Number(config.dwellMs) || 8200)))) return false;
         await show('crouch');
         if (!(await wait(320))) return false;
@@ -419,6 +451,7 @@
     ACTION_PAIR_ART_ROOT,
     MOTION_ART_ROOT,
     MOTION_FRAMES,
+    FRAME_CALIBRATION,
     STATES,
     STATE_META,
     INTERACTIONS,
@@ -435,6 +468,7 @@
     playInteraction,
     setPairMode,
     playPair,
+    cancelPair,
     installHopFrames,
     clearHopFrames,
     playAmbient,

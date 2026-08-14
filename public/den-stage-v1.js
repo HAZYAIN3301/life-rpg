@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildDenStage(root) {
   'use strict';
 
-  const VERSION = '1.9.0';
+  const VERSION = '1.10.0';
   const WORLD = Object.freeze({ width: 1536, height: 864 });
   const APPROACH_MS = 1800;
   const RETURN_MS = 1800;
@@ -114,14 +114,43 @@
     return Math.max(a0, b0) < Math.min(a1, b1);
   }
 
-  function wait(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
-
   function nextFrame() {
     return new Promise((resolve) => {
       const raf = root.requestAnimationFrame || ((callback) => setTimeout(callback, 16));
       raf(() => raf(resolve));
+    });
+  }
+
+  // A scene owner can revoke its turn when the Den leaves the viewport or a
+  // controller aborts. The stage never resumes an old route after that point:
+  // a stale continuation is worse than a skipped decorative beat because it
+  // can reintroduce an actor after a newer home snapshot has rendered.
+  function actionCurrent(scope, config) {
+    return Boolean(scope && scope.isConnected && (!config || typeof config.isCurrent !== 'function' || config.isCurrent() !== false));
+  }
+
+  function nextActionFrame(scope, config) {
+    return nextFrame().then(() => actionCurrent(scope, config));
+  }
+
+  function waitForAction(scope, config, ms) {
+    if (!actionCurrent(scope, config)) return Promise.resolve(false);
+    const raf = root.requestAnimationFrame || ((callback) => setTimeout(callback, 16));
+    return new Promise((resolve) => {
+      let done = false;
+      const finish = (value) => {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        resolve(value);
+      };
+      const poll = () => {
+        if (done) return;
+        if (!actionCurrent(scope, config)) return finish(false);
+        raf(poll);
+      };
+      const timer = setTimeout(() => finish(actionCurrent(scope, config)), ms);
+      poll();
     });
   }
 
@@ -144,6 +173,7 @@
   async function approachBodyPair(scope, play, options) {
     if (!scope || typeof play !== 'function') return false;
     const config = options || {};
+    if (!actionCurrent(scope, config)) return false;
     const avatar = scope.querySelector && scope.querySelector('.den-avatar-core');
     const toad = scope.querySelector && scope.querySelector('[data-body-toad]');
     const motion = root.TravellerMotionV3;
@@ -154,10 +184,10 @@
     clearMeetingClasses(scope);
     if (avatar && motion) motion.installWalkFrames(avatar, 'right');
     if (toad && toadMotion && toadMotion.installHopFrames) await toadMotion.installHopFrames(toad, 'meeting');
+    if (!actionCurrent(scope, config)) return false;
     scope.classList.add('is-body-pair-approaching');
-    await nextFrame();
-    await wait(approachMs);
-    if (!scope.isConnected) {
+    if (!(await nextActionFrame(scope, config)) || !(await waitForAction(scope, config, approachMs))) return false;
+    if (!actionCurrent(scope, config)) {
       clearMeetingClasses(scope);
       if (avatar && motion) motion.clearWalkFrames(avatar);
       if (toad && toadMotion && toadMotion.clearHopFrames) toadMotion.clearHopFrames(toad).catch(() => {});
@@ -167,14 +197,15 @@
     scope.classList.add('is-body-pair-at-meeting');
     if (avatar && motion) motion.clearWalkFrames(avatar);
     if (toad && toadMotion && toadMotion.clearHopFrames) await toadMotion.clearHopFrames(toad);
+    if (!actionCurrent(scope, config)) return false;
     const played = await play();
-    if (!played) {
+    if (!actionCurrent(scope, config) || !played) {
       clearMeetingClasses(scope);
       return false;
     }
     scope.classList.add('is-body-pair-settling');
-    await wait(contactMs + 80);
-    if (!scope.isConnected) {
+    if (!(await waitForAction(scope, config, contactMs + 80))) return false;
+    if (!actionCurrent(scope, config)) {
       clearMeetingClasses(scope);
       return true;
     }
@@ -182,9 +213,11 @@
     scope.classList.add('is-body-pair-returning');
     if (avatar && motion) motion.installWalkFrames(avatar, 'left');
     if (toad && toadMotion && toadMotion.installHopFrames) await toadMotion.installHopFrames(toad, 'home');
-    await nextFrame();
+    if (!actionCurrent(scope, config)) return false;
+    if (!(await nextActionFrame(scope, config))) return false;
     scope.classList.remove('is-body-pair-at-meeting');
-    await wait(returnMs);
+    if (!(await waitForAction(scope, config, returnMs))) return false;
+    if (!actionCurrent(scope, config)) return false;
     scope.classList.remove('is-body-pair-returning');
     if (avatar && motion) motion.clearWalkFrames(avatar);
     if (toad && toadMotion && toadMotion.clearHopFrames) await toadMotion.clearHopFrames(toad);
@@ -194,6 +227,7 @@
   async function approachRecoveryPair(scope, play, options) {
     if (!scope || typeof play !== 'function') return false;
     const config = options || {};
+    if (!actionCurrent(scope, config)) return false;
     const avatar = scope.querySelector && scope.querySelector('.den-avatar-core');
     const slug = scope.querySelector && scope.querySelector('[data-recovery-slug]');
     const motion = root.TravellerMotionV3;
@@ -204,10 +238,10 @@
     clearRecoveryMeetingClasses(scope);
     if (avatar && motion) motion.installWalkFrames(avatar, 'right');
     if (slug && slugMotion && slugMotion.installGlideFrames) await slugMotion.installGlideFrames(slug, 'meeting');
+    if (!actionCurrent(scope, config)) return false;
     scope.classList.add('is-recovery-pair-approaching');
-    await nextFrame();
-    await wait(approachMs);
-    if (!scope.isConnected) {
+    if (!(await nextActionFrame(scope, config)) || !(await waitForAction(scope, config, approachMs))) return false;
+    if (!actionCurrent(scope, config)) {
       clearRecoveryMeetingClasses(scope);
       if (avatar && motion) motion.clearWalkFrames(avatar);
       if (slug && slugMotion && slugMotion.clearGlideFrames) slugMotion.clearGlideFrames(slug).catch(() => {});
@@ -217,14 +251,15 @@
     scope.classList.add('is-recovery-pair-at-meeting');
     if (avatar && motion) motion.clearWalkFrames(avatar);
     if (slug && slugMotion && slugMotion.clearGlideFrames) await slugMotion.clearGlideFrames(slug);
+    if (!actionCurrent(scope, config)) return false;
     const played = await play();
-    if (!played) {
+    if (!actionCurrent(scope, config) || !played) {
       clearRecoveryMeetingClasses(scope);
       return false;
     }
     scope.classList.add('is-recovery-pair-settling');
-    await wait(contactMs + 100);
-    if (!scope.isConnected) {
+    if (!(await waitForAction(scope, config, contactMs + 100))) return false;
+    if (!actionCurrent(scope, config)) {
       clearRecoveryMeetingClasses(scope);
       return true;
     }
@@ -232,9 +267,11 @@
     scope.classList.add('is-recovery-pair-returning');
     if (avatar && motion) motion.installWalkFrames(avatar, 'left');
     if (slug && slugMotion && slugMotion.installGlideFrames) await slugMotion.installGlideFrames(slug, 'home');
-    await nextFrame();
+    if (!actionCurrent(scope, config)) return false;
+    if (!(await nextActionFrame(scope, config))) return false;
     scope.classList.remove('is-recovery-pair-at-meeting');
-    await wait(returnMs);
+    if (!(await waitForAction(scope, config, returnMs))) return false;
+    if (!actionCurrent(scope, config)) return false;
     scope.classList.remove('is-recovery-pair-returning');
     if (avatar && motion) motion.clearWalkFrames(avatar);
     if (slug && slugMotion && slugMotion.clearGlideFrames) await slugMotion.clearGlideFrames(slug);
@@ -244,6 +281,7 @@
   async function approachResourcesPair(scope, play, options) {
     if (!scope || typeof play !== 'function') return false;
     const config = options || {};
+    if (!actionCurrent(scope, config)) return false;
     const avatar = scope.querySelector && scope.querySelector('.den-avatar-core');
     const penguin = scope.querySelector && scope.querySelector('[data-resources-penguin]');
     const motion = root.TravellerMotionV3;
@@ -254,10 +292,10 @@
     clearResourcesMeetingClasses(scope);
     if (avatar && motion) motion.installWalkFrames(avatar, 'right');
     if (penguin && penguinMotion && penguinMotion.installWaddleFrames) await penguinMotion.installWaddleFrames(penguin, 'meeting');
+    if (!actionCurrent(scope, config)) return false;
     scope.classList.add('is-resources-pair-approaching');
-    await nextFrame();
-    await wait(approachMs);
-    if (!scope.isConnected) {
+    if (!(await nextActionFrame(scope, config)) || !(await waitForAction(scope, config, approachMs))) return false;
+    if (!actionCurrent(scope, config)) {
       clearResourcesMeetingClasses(scope);
       if (avatar && motion) motion.clearWalkFrames(avatar);
       if (penguin && penguinMotion && penguinMotion.clearWaddleFrames) penguinMotion.clearWaddleFrames(penguin).catch(() => {});
@@ -267,14 +305,15 @@
     scope.classList.add('is-resources-pair-at-meeting');
     if (avatar && motion) motion.clearWalkFrames(avatar);
     if (penguin && penguinMotion && penguinMotion.clearWaddleFrames) await penguinMotion.clearWaddleFrames(penguin);
+    if (!actionCurrent(scope, config)) return false;
     const played = await play();
-    if (!played) {
+    if (!actionCurrent(scope, config) || !played) {
       clearResourcesMeetingClasses(scope);
       return false;
     }
     scope.classList.add('is-resources-pair-settling');
-    await wait(contactMs + 100);
-    if (!scope.isConnected) {
+    if (!(await waitForAction(scope, config, contactMs + 100))) return false;
+    if (!actionCurrent(scope, config)) {
       clearResourcesMeetingClasses(scope);
       return true;
     }
@@ -282,9 +321,11 @@
     scope.classList.add('is-resources-pair-returning');
     if (avatar && motion) motion.installWalkFrames(avatar, 'left');
     if (penguin && penguinMotion && penguinMotion.installWaddleFrames) await penguinMotion.installWaddleFrames(penguin, 'home');
-    await nextFrame();
+    if (!actionCurrent(scope, config)) return false;
+    if (!(await nextActionFrame(scope, config))) return false;
     scope.classList.remove('is-resources-pair-at-meeting');
-    await wait(returnMs);
+    if (!(await waitForAction(scope, config, returnMs))) return false;
+    if (!actionCurrent(scope, config)) return false;
     scope.classList.remove('is-resources-pair-returning');
     if (avatar && motion) motion.clearWalkFrames(avatar);
     if (penguin && penguinMotion && penguinMotion.clearWaddleFrames) await penguinMotion.clearWaddleFrames(penguin);
@@ -294,6 +335,7 @@
   async function approachShadowPair(scope, play, options) {
     if (!scope || typeof play !== 'function') return false;
     const config = options || {};
+    if (!actionCurrent(scope, config)) return false;
     const avatar = scope.querySelector && scope.querySelector('.den-avatar-core');
     const companion = scope.querySelector && scope.querySelector('.den-companion');
     const rig = companion && companion.querySelector('[data-shadow-rig]');
@@ -306,10 +348,10 @@
     clearShadowMeetingClasses(scope);
     if (avatar && motion) motion.installWalkFrames(avatar, 'right');
     if (rig && shadowRig) shadowRig.setState(rig, 'listening');
+    if (!actionCurrent(scope, config)) return false;
     scope.classList.add('is-shadow-pair-approaching');
-    await nextFrame();
-    await wait(approachMs);
-    if (!scope.isConnected) {
+    if (!(await nextActionFrame(scope, config)) || !(await waitForAction(scope, config, approachMs))) return false;
+    if (!actionCurrent(scope, config)) {
       clearShadowMeetingClasses(scope);
       if (avatar && motion) motion.clearWalkFrames(avatar);
       if (rig && shadowRig) shadowRig.setState(rig, restoreState);
@@ -318,15 +360,16 @@
     scope.classList.remove('is-shadow-pair-approaching');
     scope.classList.add('is-shadow-pair-at-meeting');
     if (avatar && motion) motion.clearWalkFrames(avatar);
+    if (!actionCurrent(scope, config)) return false;
     const played = await play();
-    if (!played) {
+    if (!actionCurrent(scope, config) || !played) {
       clearShadowMeetingClasses(scope);
       if (rig && shadowRig) shadowRig.setState(rig, restoreState);
       return false;
     }
     scope.classList.add('is-shadow-pair-settling');
-    await wait(contactMs + 100);
-    if (!scope.isConnected) {
+    if (!(await waitForAction(scope, config, contactMs + 100))) return false;
+    if (!actionCurrent(scope, config)) {
       clearShadowMeetingClasses(scope);
       return true;
     }
@@ -334,9 +377,11 @@
     scope.classList.add('is-shadow-pair-returning');
     if (avatar && motion) motion.installWalkFrames(avatar, 'left');
     if (rig && shadowRig) shadowRig.setState(rig, 'caring');
-    await nextFrame();
+    if (!actionCurrent(scope, config)) return false;
+    if (!(await nextActionFrame(scope, config))) return false;
     scope.classList.remove('is-shadow-pair-at-meeting');
-    await wait(returnMs);
+    if (!(await waitForAction(scope, config, returnMs))) return false;
+    if (!actionCurrent(scope, config)) return false;
     scope.classList.remove('is-shadow-pair-returning');
     if (avatar && motion) motion.clearWalkFrames(avatar);
     if (rig && shadowRig) shadowRig.setState(rig, restoreState);

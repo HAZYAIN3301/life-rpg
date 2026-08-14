@@ -17,10 +17,11 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildRecoverySlugV1() {
   'use strict';
 
-  const VERSION = '2.0.0';
+  const VERSION = '2.4.0';
   const ART_ROOT = '/art/pets/recovery-slug-v1/';
   const MOTION_ART_ROOT = `${ART_ROOT}motion-v2/`;
   const PAIR_ART_ROOT = `${ART_ROOT}pair-v2/`;
+  const PAIR_V155_ART_ROOT = `${ART_ROOT}pair-v3/`;
   const STATES = Object.freeze(['calm', 'thriving', 'strained', 'restoring']);
   const STATE_META = Object.freeze({
     calm: { label: 'Спокойна', line: 'Дышит медленно и хранит запас тишины.' },
@@ -39,7 +40,17 @@
     greet: { label: 'Поздороваться', duration: 6800, state: 'calm', pairFrames: ['greet-contact'] },
     breathe: { label: 'Подышать вместе', duration: 16000, state: 'restoring', pairFrames: ['breathe-in', 'breathe-out'] },
     restore: { label: 'Восстановиться рядом', duration: 16000, state: 'restoring', pairFrames: ['restore-contact'] },
-    stretch: { label: 'Мягкая растяжка', duration: 16000, state: 'restoring', pairFrames: ['stretch-a', 'stretch-b'] },
+    // The original pair-v2/stretch-b remains quarantined because its low-alpha
+    // black matte covered almost the whole source stage. The v155 sibling is a
+    // separately generated, alpha-audited frame on the same 1536px contract.
+    stretch: { label: 'Мягкая растяжка', duration: 16000, state: 'restoring', pairFrames: ['stretch-a', 'stretch-soft-b'] },
+  });
+  const FRAME_CALIBRATION = Object.freeze({
+    compress: Object.freeze({ scale: 1.1 }),
+    extend: Object.freeze({ scale: 1 }),
+    stretch: Object.freeze({ scale: 1 }),
+    sleep: Object.freeze({ scale: 1.02 }),
+    helpers: Object.freeze({ scale: 1 }),
   });
 
   const preloads = new Map();
@@ -62,14 +73,16 @@
   function pairFrameSrc(frame) {
     const allowed = new Set(Object.values(INTERACTIONS).flatMap((item) => item.pairFrames));
     const safe = allowed.has(frame) ? frame : 'greet-contact';
+    if (safe === 'stretch-soft-b') return `${PAIR_V155_ART_ROOT}stretch-soft-b-v155.png?v=20260814-1`;
     return `${PAIR_ART_ROOT}${safe}.png?v=20260806-2`;
   }
 
   function frameSrc(state, animated) {
     const safe = normalizeState(state);
-    return safe === 'calm' && animated !== false
-      ? `${ART_ROOT}motion/idle-softbody.gif?v=20260806-1`
-      : stateSrc(safe);
+    // The original GIF was exported on an opaque black preview plate.  A calm
+    // resident must therefore use the canonical transparent state plate; its
+    // visible motion is scheduled from the authored solo frames below.
+    return stateSrc(safe);
   }
 
   function deriveState(signal) {
@@ -171,6 +184,7 @@
       const image = document.createElement('img');
       image.className = `recovery-pair-v2__frame recovery-pair-v2__frame--${index === 0 ? 'a' : 'b'}`;
       image.src = pairFrameSrc(frame);
+      image.dataset.pairFrame = frame;
       image.alt = '';
       image.setAttribute('aria-hidden', 'true');
       image.draggable = false;
@@ -192,6 +206,22 @@
     });
   }
 
+  function cancelPair(scope, restore = true) {
+    if (!scope || !scope.querySelector) return false;
+    const pair = scope.querySelector('[data-recovery-pair-v2]');
+    if (!pair) return false;
+    const controller = pairTimers.get(pair);
+    if (controller && controller.timer) clearTimeout(controller.timer);
+    pairTimers.delete(pair);
+    pair.classList.remove('is-active');
+    pair.setAttribute('aria-hidden', 'true');
+    if (scope.classList) scope.classList.remove('is-recovery-pair-active');
+    if (restore !== false && controller && controller.slug) {
+      setState(controller.slug, controller.restoreState, { animated: true }).catch(() => {});
+    }
+    return Boolean(controller);
+  }
+
   function playPair(scope, mode, options) {
     if (!scope || !INTERACTIONS[mode]) return Promise.resolve(false);
     const pair = scope.querySelector('[data-recovery-pair-v2]');
@@ -200,8 +230,7 @@
     const slug = config.slug || scope.querySelector('[data-recovery-slug]');
     const restoreState = slug ? normalizeState(config.restoreState || slug.dataset.state) : 'calm';
     const duration = Math.max(800, Number(config.duration) || INTERACTIONS[mode].duration);
-    const oldTimer = pairTimers.get(pair);
-    if (oldTimer) clearTimeout(oldTimer);
+    cancelPair(scope, true);
     return setPairMode(pair, mode).then((ready) => {
       if (!ready || !pair.isConnected || !scope.isConnected) return false;
       scope.classList.add('is-recovery-pair-active');
@@ -210,7 +239,9 @@
       pair.classList.add('is-active');
       pair.setAttribute('aria-hidden', 'false');
       if (slug) setState(slug, INTERACTIONS[mode].state, { animated: false }).catch(() => {});
-      const timer = setTimeout(() => {
+      const controller = { timer: 0, slug, restoreState };
+      controller.timer = setTimeout(() => {
+        if (pairTimers.get(pair) !== controller) return;
         pair.classList.remove('is-active');
         pair.setAttribute('aria-hidden', 'true');
         scope.classList.remove('is-recovery-pair-active');
@@ -218,7 +249,7 @@
         pairTimers.delete(pair);
         if (typeof config.onFinish === 'function') config.onFinish(mode);
       }, duration);
-      pairTimers.set(pair, timer);
+      pairTimers.set(pair, controller);
       return true;
     });
   }
@@ -236,9 +267,13 @@
       const stage = element.querySelector('.recovery-slug-v1__stage');
       if (!stage) return false;
       const frames = sources.map((src, index) => {
+        const key = safeKeys[index];
+        const calibration = FRAME_CALIBRATION[key] || FRAME_CALIBRATION.extend;
         const image = document.createElement('img');
         image.className = `recovery-slug-v1__frame recovery-slug-v1__motion-frame recovery-slug-v1__motion-frame--${index === 0 ? 'a' : 'b'} is-active`;
         image.src = src;
+        image.dataset.actorFrame = key;
+        image.style.setProperty('--actor-frame-scale', String(calibration.scale));
         image.alt = '';
         image.setAttribute('aria-hidden', 'true');
         image.draggable = false;
@@ -378,9 +413,11 @@
     ART_ROOT,
     MOTION_ART_ROOT,
     PAIR_ART_ROOT,
+    PAIR_V155_ART_ROOT,
     STATES,
     STATE_META,
     MOTION_FRAMES,
+    FRAME_CALIBRATION,
     INTERACTIONS,
     normalizeState,
     stateSrc,
@@ -394,6 +431,7 @@
     setState,
     setPairMode,
     playPair,
+    cancelPair,
     playInteraction,
     reassure,
     playAmbient,

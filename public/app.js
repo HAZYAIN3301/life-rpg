@@ -6240,36 +6240,188 @@ function playDenPropPortal(shell, duration = 4600, options = {}) {
   const layer = shell && shell.querySelector('[data-den-prop-portal]');
   if (!shell || !layer) return Promise.resolve(false);
   const config = options || {};
+  const isCurrent = typeof config.isCurrent === 'function' ? config.isCurrent : () => true;
+  if (!isCurrent()) return Promise.resolve(false);
   shell.classList.remove('is-den-prop-portal-active', 'is-den-prop-portal-reaching', 'is-den-prop-portal-extracting');
   void layer.offsetWidth;
   shell.classList.add('is-den-prop-portal-active');
   layer.setAttribute('aria-hidden', 'false');
   return new Promise((resolve) => {
+    let finished = false;
+    const finish = (value) => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(reaching);
+      clearTimeout(extracting);
+      clearTimeout(closing);
+      if (shell.isConnected) shell.classList.remove('is-den-prop-portal-active', 'is-den-prop-portal-reaching', 'is-den-prop-portal-extracting');
+      if (layer.isConnected) layer.setAttribute('aria-hidden', 'true');
+      resolve(Boolean(value));
+    };
     const reaching = setTimeout(() => {
+      if (!isCurrent()) return finish(false);
       if (shell.isConnected) shell.classList.add('is-den-prop-portal-reaching');
     }, 850);
     const extracting = setTimeout(() => {
-      if (!shell.isConnected) return;
+      if (!isCurrent()) return finish(false);
+      if (!shell.isConnected) return finish(false);
       shell.classList.add('is-den-prop-portal-extracting');
       if (typeof config.onExtract === 'function') {
         try { config.onExtract(); } catch {}
       }
     }, 3100);
-    setTimeout(() => {
-      clearTimeout(reaching);
-      clearTimeout(extracting);
-      if (shell.isConnected) shell.classList.remove('is-den-prop-portal-active', 'is-den-prop-portal-reaching', 'is-den-prop-portal-extracting');
-      if (layer.isConnected) layer.setAttribute('aria-hidden', 'true');
-      resolve(true);
-    }, Math.max(3800, Number(duration) || 4600));
+    const closing = setTimeout(() => finish(isCurrent()), Math.max(3800, Number(duration) || 4600));
   });
 }
 
-function waitDenMoment(ms) {
-  return new Promise((resolve) => setTimeout(resolve, Math.max(0, Number(ms) || 0)));
+// A Den scene is a single authored tableau, not a queue of independent
+// animations. Keep one ownership token from the first approach frame through
+// the return home frame so a second tap, the director, or an offscreen abort
+// cannot leave two whole-character plates visible at once.
+let _denSceneActionSeed = 0;
+const _denSceneActions = new WeakMap();
+const DEN_SCENE_BUSY_CLASSES = Object.freeze([
+  'is-body-pair-active', 'is-body-pair-approaching', 'is-body-pair-at-meeting', 'is-body-pair-settling', 'is-body-pair-returning',
+  'is-recovery-pair-active', 'is-recovery-pair-approaching', 'is-recovery-pair-at-meeting', 'is-recovery-pair-settling', 'is-recovery-pair-returning',
+  'is-resources-pair-active', 'is-resources-pair-approaching', 'is-resources-pair-at-meeting', 'is-resources-pair-settling', 'is-resources-pair-returning',
+  'is-shadow-pair-active', 'is-shadow-pair-approaching', 'is-shadow-pair-at-meeting', 'is-shadow-pair-settling', 'is-shadow-pair-returning',
+  'is-room-action-v4-active', 'is-toad-ambient-active', 'is-recovery-ambient-active', 'is-resources-ambient-active', 'is-shadow-ambient-active',
+]);
+const DEN_SCENE_TRANSITION_CLASSES = Object.freeze(DEN_SCENE_BUSY_CLASSES.filter((className) => !className.includes('ambient')));
+
+function denSceneActionCurrent(token) {
+  return Boolean(token && !token.cancelled && token.shell && token.shell.isConnected && _denSceneActions.get(token.shell) === token);
 }
 
-function playDenRoomLayerAndReturn(shell, host, actionId, walkOptions, waitForFinish) {
+function denSceneHasVisibleActivity(shell) {
+  if (!shell || !shell.isConnected) return true;
+  if (DEN_SCENE_TRANSITION_CLASSES.some((className) => shell.classList.contains(className))) return true;
+  if (window.TravellerRoomV4 && window.TravellerRoomV4.isPlaying(shell)) return true;
+  const avatar = shell.querySelector('.den-avatar-core');
+  return Boolean(avatar && window.TravellerMotionV3 && window.TravellerMotionV3.isPlaying(avatar));
+}
+
+function denSceneBusy(shell) {
+  return Boolean(!shell || !shell.isConnected || _denSceneActions.get(shell) || denSceneHasVisibleActivity(shell));
+}
+
+function beginDenSceneAction(shell, owner) {
+  if (denSceneBusy(shell)) return null;
+  const token = {
+    id: ++_denSceneActionSeed,
+    owner: String(owner || 'scene'),
+    shell,
+    cancelled: false,
+    waiters: new Set(),
+  };
+  _denSceneActions.set(shell, token);
+  return token;
+}
+
+function releaseDenSceneAction(token) {
+  if (!token || _denSceneActions.get(token.shell) !== token) return false;
+  token.waiters.forEach((finish) => finish(false));
+  token.waiters.clear();
+  _denSceneActions.delete(token.shell);
+  if (token.shell.isConnected && !token.shell.classList.contains('is-den-offscreen')) syncAvatarMotion();
+  return true;
+}
+
+function waitForDenSceneAction(token, ms) {
+  if (!denSceneActionCurrent(token)) return Promise.resolve(false);
+  return new Promise((resolve) => {
+    let settled = false;
+    const done = (value) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      token.waiters.delete(done);
+      resolve(Boolean(value) && denSceneActionCurrent(token));
+    };
+    const timer = setTimeout(() => done(true), Math.max(0, Number(ms) || 0));
+    token.waiters.add(done);
+  });
+}
+
+function clearDenSceneVisuals(shell) {
+  if (!shell) return;
+  shell.classList.remove(...DEN_SCENE_BUSY_CLASSES);
+  shell.classList.remove('is-energy-motion-active');
+  shell.classList.remove('is-den-prop-portal-active', 'is-den-prop-portal-reaching', 'is-den-prop-portal-extracting');
+  shell.querySelectorAll('[data-body-pair-v2], [data-recovery-pair-v2], [data-resources-pair-v1], [data-shadow-den-pair-v1], [data-traveller-room-v4]').forEach((layer) => {
+    layer.classList.remove('is-active');
+    layer.setAttribute('aria-hidden', 'true');
+  });
+  const portal = shell.querySelector('[data-den-prop-portal]');
+  if (portal) portal.setAttribute('aria-hidden', 'true');
+}
+
+async function abortDenSceneAction(shell, reason = 'cancelled') {
+  if (!shell || !shell.isConnected) return Promise.resolve(false);
+  const token = _denSceneActions.get(shell);
+  if (token) {
+    token.cancelled = true;
+    token.reason = reason;
+    token.waiters.forEach((finish) => finish(false));
+    token.waiters.clear();
+  }
+  clearDenAvatarWanderTimer();
+  cancelDenRoomAction(true);
+  cancelDenAvatarLocomotion(true);
+  const toad = shell.querySelector('[data-body-toad]');
+  const slug = shell.querySelector('[data-recovery-slug]');
+  const penguin = shell.querySelector('[data-resources-penguin]');
+  const shadow = shell.querySelector('[data-shadow-den]');
+  const resets = [];
+  if (window.BodyToadV1) {
+    if (window.BodyToadV1.cancelPair) window.BodyToadV1.cancelPair(shell, false);
+    if (toad && window.BodyToadV1.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
+    if (toad && window.BodyToadV1.clearHopFrames) resets.push(window.BodyToadV1.clearHopFrames(toad, bodyToadStateForSphere(bodyGuardianSphereId())));
+  }
+  if (window.RecoverySlugV1) {
+    if (window.RecoverySlugV1.cancelPair) window.RecoverySlugV1.cancelPair(shell, false);
+    if (slug && window.RecoverySlugV1.cancelAmbient) window.RecoverySlugV1.cancelAmbient(slug);
+    if (slug && window.RecoverySlugV1.clearGlideFrames) resets.push(window.RecoverySlugV1.clearGlideFrames(slug, recoverySlugState()));
+  }
+  if (window.ResourcesPenguinV1) {
+    if (window.ResourcesPenguinV1.cancelPair) window.ResourcesPenguinV1.cancelPair(shell);
+    if (penguin && window.ResourcesPenguinV1.cancel) window.ResourcesPenguinV1.cancel(penguin, true);
+    if (penguin && window.ResourcesPenguinV1.clearWaddleFrames) resets.push(window.ResourcesPenguinV1.clearWaddleFrames(penguin, resourcesPenguinStateForSphere(resourcesGuardianSphereId())));
+  }
+  if (shadow && window.ShadowDenV1) {
+    window.ShadowDenV1.cancelSolo(shadow, true);
+    window.ShadowDenV1.cancelPair(shell);
+  }
+  clearDenSceneVisuals(shell);
+  if (window.DenLifeV1) window.DenLifeV1.postpone(shell, 5000);
+  await Promise.allSettled(resets);
+  if (token && _denSceneActions.get(shell) === token) _denSceneActions.delete(shell);
+  return true;
+}
+
+async function runDenSceneAction(shell, owner, work, options = {}) {
+  // A deliberate resident/room action always outranks decorative ambient.
+  // Previously the click handlers returned while an idle beat was active,
+  // making a valid tap look broken for up to twenty seconds.  Manual actions
+  // use `reveal`; automatic director beats do not, so only the former preempt.
+  if (options.reveal === true && denSceneBusy(shell)) {
+    await abortDenSceneAction(shell, 'manual-preempt');
+  }
+  const token = beginDenSceneAction(shell, owner);
+  if (!token) return false;
+  try {
+    if (options.reveal === true) await revealDenSceneForInteraction(shell);
+    if (!denSceneActionCurrent(token)) return false;
+    const result = await work(token);
+    return denSceneActionCurrent(token) && result !== false;
+  } catch {
+    return false;
+  } finally {
+    if (!token.cancelled && _denSceneActions.get(shell) === token) releaseDenSceneAction(token);
+  }
+}
+
+function playDenRoomLayerAndReturn(shell, host, actionId, walkOptions, isCurrent, transition = false) {
   return new Promise((resolve) => {
     let resolved = false;
     const finish = (value) => {
@@ -6278,19 +6430,22 @@ function playDenRoomLayerAndReturn(shell, host, actionId, walkOptions, waitForFi
       syncAvatarMotion();
       resolve(value);
     };
-    window.TravellerRoomV4.play(shell, actionId, {
+    const start = transition && typeof window.TravellerRoomV4.transition === 'function'
+      ? window.TravellerRoomV4.transition
+      : window.TravellerRoomV4.play;
+    start(shell, actionId, {
       onFinish: () => {
+        if (typeof isCurrent === 'function' && !isCurrent()) return finish(false);
         window.TravellerMotionV3.walkTo(host, 'home', walkOptions)
-          .then(() => finish(true))
-          .catch(() => finish(true));
+          .then(() => finish(typeof isCurrent !== 'function' || isCurrent()))
+          .catch(() => finish(false));
       },
     }).then((played) => {
       if (!played) {
+        if (typeof isCurrent === 'function' && !isCurrent()) return finish(false);
         window.TravellerMotionV3.walkTo(host, 'home', walkOptions)
           .then(() => finish(false))
           .catch(() => finish(false));
-      } else if (!waitForFinish) {
-        finish(true);
       }
     }).catch(() => finish(false));
   });
@@ -6300,36 +6455,57 @@ function runDenRoomAction(actionId, options = {}) {
   const shell = document.querySelector('.den-shell');
   if (State.view !== 'den' || !shell || !window.TravellerRoomV4) return Promise.resolve(false);
   if (options.automatic && (energyPct() <= 30 || shell.classList.contains('is-den-offscreen'))) return Promise.resolve(false);
-  if (!options.automatic && window.DenLifeV1) window.DenLifeV1.postpone(shell, 11000);
-  clearDenAvatarWanderTimer();
-  const host = shell.querySelector('.den-avatar-core');
-  if (!host || !window.TravellerMotionV3) return Promise.resolve(false);
-  const restoresTiredState = shell.classList.contains('is-energy-tired') && !options.automatic;
-  if (restoresTiredState) shell.classList.add('is-energy-motion-active');
-  if (window.TravellerMotionV3.isPlaying(host)) window.TravellerMotionV3.cancel(host);
-  State._denAvatarPose = 'idle';
-  const walkOptions = { preload: preloadAvatarImage };
-  return syncDenCorePose('idle')
-    .then(() => window.TravellerMotionV3.walkTo(host, 'bench', walkOptions))
-    .then(async (arrived) => {
-      if (!arrived || !shell.isConnected) return false;
+  return runDenSceneAction(shell, `room:${actionId}`, async (token) => {
+    if (!options.automatic && window.DenLifeV1) window.DenLifeV1.postpone(shell, 11000);
+    clearDenAvatarWanderTimer();
+    const host = shell.querySelector('.den-avatar-core');
+    if (!host || !window.TravellerMotionV3) return false;
+    const restoresTiredState = shell.classList.contains('is-energy-tired') && !options.automatic;
+    if (restoresTiredState) shell.classList.add('is-energy-motion-active');
+    State._denAvatarPose = 'idle';
+    const walkOptions = { preload: preloadAvatarImage };
+    try {
+      await syncDenCorePose('idle').catch(() => false);
+      if (!denSceneActionCurrent(token)) return false;
+      const arrived = await window.TravellerMotionV3.walkTo(host, 'bench', walkOptions);
+      if (!arrived || !denSceneActionCurrent(token)) return false;
       if (actionId !== 'bench-read') {
-        return playDenRoomLayerAndReturn(shell, host, actionId, walkOptions, options.waitForFinish === true);
+        return playDenRoomLayerAndReturn(shell, host, actionId, walkOptions, () => denSceneActionCurrent(token));
       }
 
       // Sit first. The portal replaces the seated-rest frame with an authored
       // seated reach pose; only after it closes do we install the reading pose.
       const seated = await window.TravellerRoomV4.play(shell, 'bench-rest');
-      if (!seated || !shell.isConnected) return false;
-      await waitDenMoment(1100);
-      // Keep the seated reach pose visible until the portal has fully closed.
-      // Swapping to the reading plate while the reach plate is still visible
-      // creates a double torso / four-arm ghost, which reads as teleportation.
-      await playDenPropPortal(shell, 4600);
-      return playDenRoomLayerAndReturn(shell, host, 'bench-read', walkOptions, options.waitForFinish === true);
-    }).finally(() => {
+      if (!seated || !denSceneActionCurrent(token)) return false;
+      if (!(await waitForDenSceneAction(token, 1100))) return false;
+      // Decode the reading plate before the portal opens. At extraction the
+      // same seated room session changes to the book-in-hand pose, so the
+      // portal can close over an already present book without a blank frame or
+      // a second Traveller appearing after the fact.
+      await window.TravellerRoomV4.preload('bench-read');
+      let reading = null;
+      const beginReading = () => {
+        if (reading || !denSceneActionCurrent(token)) return;
+        reading = playDenRoomLayerAndReturn(
+          shell,
+          host,
+          'bench-read',
+          walkOptions,
+          () => denSceneActionCurrent(token),
+          true,
+        );
+      };
+      const closed = await playDenPropPortal(shell, 4600, {
+        isCurrent: () => denSceneActionCurrent(token),
+        onExtract: beginReading,
+      });
+      if (!closed || !denSceneActionCurrent(token)) return false;
+      beginReading();
+      return reading;
+    } finally {
       if (restoresTiredState && shell.isConnected) shell.classList.remove('is-energy-motion-active');
-    });
+    }
+  }, { reveal: !options.automatic });
 }
 function scheduleDenAvatarWander(delay = 16000) {
   clearDenAvatarWanderTimer();
@@ -6340,24 +6516,26 @@ function runDenAvatarWindowVisit(options = {}) {
   clearDenAvatarWanderTimer();
   const host = document.querySelector('.den-avatar-core');
   const shell = host && host.closest('.den-shell');
-  const pair = document.querySelector('.body-pair-v2.is-active, .recovery-pair-v2.is-active, .resources-pair-v1.is-active, .shadow-den-pair-v1.is-active');
-  const roomAction = window.TravellerRoomV4 && window.TravellerRoomV4.isPlaying(document.querySelector('.den-shell'));
-  if (State.view !== 'den' || !host || pair || roomAction || !window.TravellerMotionV3 || avatarMotionReduced() || (options.automatic && (energyPct() <= 30 || (shell && shell.classList.contains('is-den-offscreen'))))) {
+  if (State.view !== 'den' || !host || !shell || !window.TravellerMotionV3 || avatarMotionReduced() || (options.automatic && (energyPct() <= 30 || shell.classList.contains('is-den-offscreen')))) {
     if (options.reschedule !== false) scheduleDenAvatarWander(6500);
     return Promise.resolve(false);
   }
-  if (window.TravellerMotionV3.isPlaying(host)) return Promise.resolve(false);
-  if (!options.automatic && window.DenLifeV1 && shell) window.DenLifeV1.postpone(shell, 12000);
-  const restoresTiredState = Boolean(shell && shell.classList.contains('is-energy-tired') && !options.automatic);
-  if (restoresTiredState) shell.classList.add('is-energy-motion-active');
-  State._denAvatarPose = 'idle';
-  return window.TravellerMotionV3.playWindowVisit(host, {
-    preload: preloadAvatarImage,
-    swapPose: (pose) => syncDenCorePose(pose),
-  }).finally(() => {
-    if (restoresTiredState && shell && shell.isConnected) shell.classList.remove('is-energy-motion-active');
-    if (options.reschedule !== false) scheduleDenAvatarWander(18000);
-  });
+  return runDenSceneAction(shell, 'window-visit', async (token) => {
+    if (!options.automatic && window.DenLifeV1) window.DenLifeV1.postpone(shell, 12000);
+    const restoresTiredState = shell.classList.contains('is-energy-tired') && !options.automatic;
+    if (restoresTiredState) shell.classList.add('is-energy-motion-active');
+    State._denAvatarPose = 'idle';
+    try {
+      const played = await window.TravellerMotionV3.playWindowVisit(host, {
+        preload: preloadAvatarImage,
+        swapPose: (pose) => denSceneActionCurrent(token) ? syncDenCorePose(pose) : Promise.resolve(false),
+      });
+      return Boolean(played) && denSceneActionCurrent(token);
+    } finally {
+      if (restoresTiredState && shell.isConnected) shell.classList.remove('is-energy-motion-active');
+      if (options.reschedule !== false && denSceneActionCurrent(token)) scheduleDenAvatarWander(18000);
+    }
+  }, { reveal: !options.automatic });
 }
 function syncAvatarMotion() {
   clearDenAvatarWanderTimer();
@@ -6365,7 +6543,7 @@ function syncAvatarMotion() {
   const host = document.querySelector('.den-avatar-core');
   const shell = document.querySelector('.den-shell');
   const roomAction = window.TravellerRoomV4 && window.TravellerRoomV4.isPlaying(shell);
-  if (!host || !shell || shell.classList.contains('is-den-offscreen') || roomAction || (State._denAvatarPose && State._denAvatarPose !== 'idle')) return;
+  if (!host || !shell || denSceneBusy(shell) || shell.classList.contains('is-den-offscreen') || roomAction || (State._denAvatarPose && State._denAvatarPose !== 'idle')) return;
   if (window.DenLifeV1 && document.querySelector('[data-body-toad], [data-recovery-slug], [data-resources-penguin], [data-shadow-den]')) return;
   scheduleDenAvatarWander(6500);
 }
@@ -6389,10 +6567,11 @@ function denLifeContext() {
 function denLifeCanAct(shell) {
   if (!shell || !shell.isConnected || State.view !== 'den' || document.hidden || avatarMotionReduced()) return false;
   if (energyPct() <= 30 || shell.classList.contains('is-energy-tired') || shell.classList.contains('is-den-offscreen')) return false;
+  if (denSceneBusy(shell)) return false;
   const sceneRect = shell.querySelector('.den-scene')?.getBoundingClientRect();
   if (sceneRect && (sceneRect.bottom <= 0 || sceneRect.top >= window.innerHeight)) return false;
   if (document.querySelector('.modal-overlay, .tut-bubble')) return false;
-  if (State._denEdit || shell.classList.contains('is-body-pair-active') || shell.classList.contains('is-body-pair-approaching') || shell.classList.contains('is-recovery-pair-active') || shell.classList.contains('is-recovery-pair-approaching') || shell.classList.contains('is-resources-pair-active') || shell.classList.contains('is-resources-pair-approaching') || shell.classList.contains('is-shadow-pair-active') || shell.classList.contains('is-shadow-pair-approaching') || shell.classList.contains('is-room-action-v4-active') || shell.classList.contains('is-toad-ambient-active') || shell.classList.contains('is-recovery-ambient-active') || shell.classList.contains('is-resources-ambient-active') || shell.classList.contains('is-shadow-ambient-active')) return false;
+  if (State._denEdit || shell.classList.contains('is-toad-ambient-active') || shell.classList.contains('is-recovery-ambient-active') || shell.classList.contains('is-resources-ambient-active') || shell.classList.contains('is-shadow-ambient-active')) return false;
   const avatar = shell.querySelector('.den-avatar-core');
   if (avatar && window.TravellerMotionV3 && window.TravellerMotionV3.isPlaying(avatar)) return false;
   return true;
@@ -6407,19 +6586,31 @@ function playBodyToadScene(scope, sphereId, mode, options = {}) {
   const duration = automatic
     ? Math.max(meta.duration, Number(options.duration) || meta.duration)
     : meta.duration;
-  if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, meta.duration + 9000);
-  cancelDenRoomAction(false);
-  cancelDenAvatarLocomotion(true);
-  if (window.BodyToadV1.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
-  const restoreState = bodyToadStateForSphere(sphereId);
-  const playPair = () => window.BodyToadV1.playPair(scope, mode, { toad, restoreState, duration });
-  return syncDenCorePose('idle').catch(() => false).then(() => (window.DenStageV1
-    ? window.DenStageV1.approachBodyPair(scope, playPair, { duration })
-    : playPair())).then((played) => {
+  return runDenSceneAction(scope, `body:${mode}`, async (token) => {
+    if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, meta.duration + 9000);
+    cancelDenRoomAction(false);
+    cancelDenAvatarLocomotion(true);
+    if (window.BodyToadV1.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
+    const slug = scope.querySelector('[data-recovery-slug]');
+    const penguin = scope.querySelector('[data-resources-penguin]');
+    const shadow = scope.querySelector('[data-shadow-den]');
+    if (slug && window.RecoverySlugV1 && window.RecoverySlugV1.cancelAmbient) window.RecoverySlugV1.cancelAmbient(slug);
+    if (penguin && window.ResourcesPenguinV1 && window.ResourcesPenguinV1.cancel) window.ResourcesPenguinV1.cancel(penguin, true);
+    if (shadow && window.ShadowDenV1) window.ShadowDenV1.cancelSolo(shadow, true);
+    const restoreState = bodyToadStateForSphere(sphereId);
+    const playPair = () => denSceneActionCurrent(token)
+      ? window.BodyToadV1.playPair(scope, mode, { toad, restoreState, duration })
+      : Promise.resolve(false);
+    await syncDenCorePose('idle').catch(() => false);
+    if (!denSceneActionCurrent(token)) return false;
+    const played = await (window.DenStageV1
+      ? window.DenStageV1.approachBodyPair(scope, playPair, { duration, isCurrent: () => denSceneActionCurrent(token) })
+      : playPair());
     if (played) return true;
-    return window.BodyToadV1.playInteraction(toad, mode, { restoreState });
-  }).catch(() => window.BodyToadV1.playInteraction(toad, mode, { restoreState }))
-    .finally(() => syncAvatarMotion());
+    return denSceneActionCurrent(token)
+      ? window.BodyToadV1.playInteraction(toad, mode, { restoreState })
+      : false;
+  }, { reveal: !automatic });
 }
 
 function playDenToadBeat(scope, sphereId, beatId) {
@@ -6443,27 +6634,36 @@ function playDenToadBeat(scope, sphereId, beatId) {
 
 function playRecoverySlugScene(scope, mode, options = {}) {
   if (!scope || !window.RecoverySlugV1 || !window.RecoverySlugV1.INTERACTIONS[mode]) return Promise.resolve(false);
-  if (scope.classList.contains('is-body-pair-active') || scope.classList.contains('is-body-pair-approaching')) return Promise.resolve(false);
   const slug = scope.querySelector('[data-recovery-slug]');
   if (!slug) return Promise.resolve(false);
   const automatic = options.automatic === true;
   const meta = window.RecoverySlugV1.INTERACTIONS[mode];
   const duration = automatic ? Math.max(meta.duration, Number(options.duration) || meta.duration) : meta.duration;
-  if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, duration + 10000);
-  cancelDenRoomAction(false);
-  cancelDenAvatarLocomotion(true);
-  if (window.RecoverySlugV1.cancelAmbient) window.RecoverySlugV1.cancelAmbient(slug);
-  const toad = scope.querySelector('[data-body-toad]');
-  if (toad && window.BodyToadV1 && window.BodyToadV1.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
-  const restoreState = recoverySlugState();
-  const playPair = () => window.RecoverySlugV1.playPair(scope, mode, { slug, restoreState, duration });
-  return syncDenCorePose('idle').catch(() => false).then(() => (window.DenStageV1 && window.DenStageV1.approachRecoveryPair
-    ? window.DenStageV1.approachRecoveryPair(scope, playPair, { duration })
-    : playPair())).then((played) => {
+  return runDenSceneAction(scope, `recovery:${mode}`, async (token) => {
+    if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, duration + 10000);
+    cancelDenRoomAction(false);
+    cancelDenAvatarLocomotion(true);
+    if (window.RecoverySlugV1.cancelAmbient) window.RecoverySlugV1.cancelAmbient(slug);
+    const toad = scope.querySelector('[data-body-toad]');
+    const penguin = scope.querySelector('[data-resources-penguin]');
+    const shadow = scope.querySelector('[data-shadow-den]');
+    if (toad && window.BodyToadV1 && window.BodyToadV1.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
+    if (penguin && window.ResourcesPenguinV1 && window.ResourcesPenguinV1.cancel) window.ResourcesPenguinV1.cancel(penguin, true);
+    if (shadow && window.ShadowDenV1) window.ShadowDenV1.cancelSolo(shadow, true);
+    const restoreState = recoverySlugState();
+    const playPair = () => denSceneActionCurrent(token)
+      ? window.RecoverySlugV1.playPair(scope, mode, { slug, restoreState, duration })
+      : Promise.resolve(false);
+    await syncDenCorePose('idle').catch(() => false);
+    if (!denSceneActionCurrent(token)) return false;
+    const played = await (window.DenStageV1 && window.DenStageV1.approachRecoveryPair
+      ? window.DenStageV1.approachRecoveryPair(scope, playPair, { duration, isCurrent: () => denSceneActionCurrent(token) })
+      : playPair());
     if (played) return true;
-    return window.RecoverySlugV1.playInteraction(slug, mode, { restoreState });
-  }).catch(() => window.RecoverySlugV1.playInteraction(slug, mode, { restoreState }))
-    .finally(() => syncAvatarMotion());
+    return denSceneActionCurrent(token)
+      ? window.RecoverySlugV1.playInteraction(slug, mode, { restoreState })
+      : false;
+  }, { reveal: !automatic });
 }
 
 function playDenRecoveryBeat(scope, beatId) {
@@ -6482,29 +6682,37 @@ function playDenRecoveryBeat(scope, beatId) {
 
 function playResourcesPenguinScene(scope, sphereId, mode, options = {}) {
   if (!scope || !window.ResourcesPenguinV1 || !window.ResourcesPenguinV1.INTERACTIONS[mode]) return Promise.resolve(false);
-  if (scope.classList.contains('is-body-pair-active') || scope.classList.contains('is-body-pair-approaching') || scope.classList.contains('is-recovery-pair-active') || scope.classList.contains('is-recovery-pair-approaching')) return Promise.resolve(false);
   const penguin = scope.querySelector('[data-resources-penguin]');
   if (!penguin) return Promise.resolve(false);
   const automatic = options.automatic === true;
   const meta = window.ResourcesPenguinV1.INTERACTIONS[mode];
   const duration = automatic ? Math.max(meta.duration, Number(options.duration) || meta.duration) : meta.duration;
-  if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, duration + 10000);
-  cancelDenRoomAction(false);
-  cancelDenAvatarLocomotion(true);
-  window.ResourcesPenguinV1.cancel(penguin, false);
-  const toad = scope.querySelector('[data-body-toad]');
-  if (toad && window.BodyToadV1 && window.BodyToadV1.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
-  const slug = scope.querySelector('[data-recovery-slug]');
-  if (slug && window.RecoverySlugV1 && window.RecoverySlugV1.cancelAmbient) window.RecoverySlugV1.cancelAmbient(slug);
-  const restoreState = resourcesPenguinStateForSphere(sphereId);
-  const playPair = () => window.ResourcesPenguinV1.playPair(scope, mode, { duration });
-  return syncDenCorePose('idle').catch(() => false).then(() => (window.DenStageV1 && window.DenStageV1.approachResourcesPair
-    ? window.DenStageV1.approachResourcesPair(scope, playPair, { duration })
-    : playPair())).then((played) => {
+  return runDenSceneAction(scope, `resources:${mode}`, async (token) => {
+    if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, duration + 10000);
+    cancelDenRoomAction(false);
+    cancelDenAvatarLocomotion(true);
+    window.ResourcesPenguinV1.cancel(penguin, false);
+    const toad = scope.querySelector('[data-body-toad]');
+    const slug = scope.querySelector('[data-recovery-slug]');
+    const shadow = scope.querySelector('[data-shadow-den]');
+    if (toad && window.BodyToadV1 && window.BodyToadV1.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
+    if (slug && window.RecoverySlugV1 && window.RecoverySlugV1.cancelAmbient) window.RecoverySlugV1.cancelAmbient(slug);
+    if (shadow && window.ShadowDenV1) window.ShadowDenV1.cancelSolo(shadow, true);
+    const restoreState = resourcesPenguinStateForSphere(sphereId);
+    const playPair = () => denSceneActionCurrent(token)
+      ? window.ResourcesPenguinV1.playPair(scope, mode, { duration })
+      : Promise.resolve(false);
+    await syncDenCorePose('idle').catch(() => false);
+    if (!denSceneActionCurrent(token)) return false;
+    const played = await (window.DenStageV1 && window.DenStageV1.approachResourcesPair
+      ? window.DenStageV1.approachResourcesPair(scope, playPair, { duration, isCurrent: () => denSceneActionCurrent(token) })
+      : playPair());
     if (played) return true;
     const fallback = mode === 'greet' ? 'blink' : mode === 'reserve' ? 'stash' : mode === 'focus' ? 'ledger' : 'coinSort';
-    return window.ResourcesPenguinV1.playSolo(penguin, fallback, { restoreState });
-  }).catch(() => false).finally(() => syncAvatarMotion());
+    return denSceneActionCurrent(token)
+      ? window.ResourcesPenguinV1.playSolo(penguin, fallback, { restoreState })
+      : false;
+  }, { reveal: !automatic });
 }
 
 function playDenResourcesBeat(scope, sphereId, beatId) {
@@ -6512,6 +6720,8 @@ function playDenResourcesBeat(scope, sphereId, beatId) {
   const penguin = scope.querySelector('[data-resources-penguin]');
   if (!penguin) return Promise.resolve(false);
   const mode = {
+    'resources-blink': 'blink',
+    'resources-jacket': 'jacketReset',
     'resources-ledger': 'ledger',
     'resources-stash': 'stash',
     'resources-rest': 'quietRest',
@@ -6528,7 +6738,7 @@ function revealDenSceneForInteraction(scope) {
   if (!scene || typeof scene.scrollIntoView !== 'function') return Promise.resolve();
   const rect = scene.getBoundingClientRect();
   const viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-  if (rect.bottom > 72 && rect.top < viewportHeight - 72) return Promise.resolve();
+  if (rect.top >= 72 && rect.bottom <= viewportHeight - 72) return Promise.resolve();
   const reduced = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   scene.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
   return new Promise((resolve) => setTimeout(resolve, reduced ? 0 : 420));
@@ -6536,63 +6746,66 @@ function revealDenSceneForInteraction(scope) {
 
 async function playShadowSoloScene(scope, mode, options = {}) {
   if (!scope || !window.ShadowDenV1 || !window.ShadowDenV1.SOLO[mode]) return Promise.resolve(false);
-  if (scope.classList.contains('is-shadow-pair-active') || scope.classList.contains('is-shadow-pair-approaching') || scope.classList.contains('is-shadow-pair-at-meeting') || scope.classList.contains('is-shadow-pair-returning')) return Promise.resolve(false);
   const companion = scope.querySelector('[data-shadow-den]');
   if (!companion) return Promise.resolve(false);
   const automatic = options.automatic === true;
   const meta = window.ShadowDenV1.SOLO[mode];
   const duration = automatic ? Math.max(meta.duration, Number(options.duration) || meta.duration) : meta.duration;
-  if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, duration + 7000);
-  if (!automatic) await revealDenSceneForInteraction(scope);
-  cancelDenRoomAction(false);
-  cancelDenAvatarLocomotion(true);
-  scope.classList.add('is-shadow-ambient-active');
-  const rig = companion.querySelector('[data-shadow-rig]');
-  const restoreState = rig ? rig.dataset.shadowState : compMood().face;
-  try {
-    return await window.ShadowDenV1.playSolo(companion, mode, { duration, restoreState });
-  } catch {
-    return false;
-  } finally {
-    scope.classList.remove('is-shadow-ambient-active');
-  }
+  return runDenSceneAction(scope, `shadow-solo:${mode}`, async (token) => {
+    if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, duration + 7000);
+    cancelDenRoomAction(false);
+    cancelDenAvatarLocomotion(true);
+    scope.classList.add('is-shadow-ambient-active');
+    const toad = scope.querySelector('[data-body-toad]');
+    const slug = scope.querySelector('[data-recovery-slug]');
+    const penguin = scope.querySelector('[data-resources-penguin]');
+    if (toad && window.BodyToadV1 && window.BodyToadV1.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
+    if (slug && window.RecoverySlugV1 && window.RecoverySlugV1.cancelAmbient) window.RecoverySlugV1.cancelAmbient(slug);
+    if (penguin && window.ResourcesPenguinV1 && window.ResourcesPenguinV1.cancel) window.ResourcesPenguinV1.cancel(penguin, true);
+    const rig = companion.querySelector('[data-shadow-rig]');
+    const restoreState = rig ? rig.dataset.shadowState : compMood().face;
+    try {
+      const played = await window.ShadowDenV1.playSolo(companion, mode, { duration, restoreState });
+      return Boolean(played) && denSceneActionCurrent(token);
+    } finally {
+      if (scope.isConnected) scope.classList.remove('is-shadow-ambient-active');
+    }
+  }, { reveal: !automatic });
 }
 
 async function playShadowPairScene(scope, mode, options = {}) {
   if (!scope || !window.ShadowDenV1 || !window.ShadowDenV1.INTERACTIONS[mode]) return Promise.resolve(false);
-  if (scope.classList.contains('is-body-pair-active') || scope.classList.contains('is-body-pair-approaching') || scope.classList.contains('is-recovery-pair-active') || scope.classList.contains('is-recovery-pair-approaching') || scope.classList.contains('is-resources-pair-active') || scope.classList.contains('is-resources-pair-approaching') || scope.classList.contains('is-shadow-pair-active') || scope.classList.contains('is-shadow-pair-approaching') || scope.classList.contains('is-shadow-pair-at-meeting') || scope.classList.contains('is-shadow-pair-returning')) return Promise.resolve(false);
   const companion = scope.querySelector('[data-shadow-den]');
   if (!companion) return Promise.resolve(false);
   const automatic = options.automatic === true;
   const meta = window.ShadowDenV1.INTERACTIONS[mode];
   const duration = automatic ? Math.max(meta.duration, Number(options.duration) || meta.duration) : meta.duration;
-  if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, duration + 9000);
-  if (!automatic) await revealDenSceneForInteraction(scope);
-  cancelDenRoomAction(false);
-  cancelDenAvatarLocomotion(true);
-  window.ShadowDenV1.cancelSolo(companion, true);
-  const toad = scope.querySelector('[data-body-toad]');
-  if (toad && window.BodyToadV1 && window.BodyToadV1.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
-  const slug = scope.querySelector('[data-recovery-slug]');
-  if (slug && window.RecoverySlugV1 && window.RecoverySlugV1.cancelAmbient) window.RecoverySlugV1.cancelAmbient(slug);
-  const penguin = scope.querySelector('[data-resources-penguin]');
-  if (penguin && window.ResourcesPenguinV1 && window.ResourcesPenguinV1.cancel) window.ResourcesPenguinV1.cancel(penguin, true);
-  const tier = compTierIdx(ensureCompanion().bond);
-  const playPair = () => window.ShadowDenV1.playPair(scope, mode, { tier, duration });
-  try {
+  return runDenSceneAction(scope, `shadow-pair:${mode}`, async (token) => {
+    if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, duration + 9000);
+    cancelDenRoomAction(false);
+    cancelDenAvatarLocomotion(true);
+    window.ShadowDenV1.cancelSolo(companion, true);
+    const toad = scope.querySelector('[data-body-toad]');
+    const slug = scope.querySelector('[data-recovery-slug]');
+    const penguin = scope.querySelector('[data-resources-penguin]');
+    if (toad && window.BodyToadV1 && window.BodyToadV1.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
+    if (slug && window.RecoverySlugV1 && window.RecoverySlugV1.cancelAmbient) window.RecoverySlugV1.cancelAmbient(slug);
+    if (penguin && window.ResourcesPenguinV1 && window.ResourcesPenguinV1.cancel) window.ResourcesPenguinV1.cancel(penguin, true);
+    const tier = compTierIdx(ensureCompanion().bond);
+    const playPair = () => denSceneActionCurrent(token)
+      ? window.ShadowDenV1.playPair(scope, mode, { tier, duration })
+      : Promise.resolve(false);
     await syncDenCorePose('idle').catch(() => false);
-    return await (window.DenStageV1 && window.DenStageV1.approachShadowPair
-      ? window.DenStageV1.approachShadowPair(scope, playPair, { duration })
-      : playPair());
-  } catch {
-    return false;
-  } finally {
-    syncAvatarMotion();
-  }
+    if (!denSceneActionCurrent(token)) return false;
+    return window.DenStageV1 && window.DenStageV1.approachShadowPair
+      ? window.DenStageV1.approachShadowPair(scope, playPair, { duration, isCurrent: () => denSceneActionCurrent(token) })
+      : playPair();
+  }, { reveal: !automatic });
 }
 
 function playDenShadowBeat(scope, beatId) {
   const mode = {
+    'shadow-greet': 'greet',
     'shadow-listen': 'listen',
     'shadow-think': 'think',
   }[beatId];
@@ -6629,21 +6842,7 @@ let _denViewportObserver = null;
 function pauseDenSceneForViewport(shell) {
   if (!shell || !shell.isConnected) return;
   shell.classList.add('is-den-offscreen');
-  clearDenAvatarWanderTimer();
-  cancelDenRoomAction(true);
-  cancelDenAvatarLocomotion(true);
-  const toad = shell.querySelector('[data-body-toad]');
-  if (toad && window.BodyToadV1 && window.BodyToadV1.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
-  const slug = shell.querySelector('[data-recovery-slug]');
-  if (slug && window.RecoverySlugV1 && window.RecoverySlugV1.cancelAmbient) window.RecoverySlugV1.cancelAmbient(slug);
-  const penguin = shell.querySelector('[data-resources-penguin]');
-  if (penguin && window.ResourcesPenguinV1 && window.ResourcesPenguinV1.cancel) window.ResourcesPenguinV1.cancel(penguin, true);
-  const shadow = shell.querySelector('[data-shadow-den]');
-  if (shadow && window.ShadowDenV1) {
-    window.ShadowDenV1.cancelSolo(shadow, true);
-    window.ShadowDenV1.cancelPair(shell);
-  }
-  if (window.DenLifeV1) window.DenLifeV1.postpone(shell, 5000);
+  abortDenSceneAction(shell, 'offscreen').catch(() => {});
 }
 function syncDenViewportGate() {
   if (_denViewportObserver) {
@@ -14338,7 +14537,7 @@ function renderDen() {
         <button data-action="den-ambient-cycle" title="${esc(ambientLabel)}" aria-label="${esc(ambientLabel)}">${satoruIconHTML(ambient.icon, 'den-tool-glyph', '◇')}<span>${t(ambient.label)}</span></button>
         <button class="${State._denEdit ? 'is-active' : ''}" data-action="den-toggle-edit" title="${esc(editorLabel)}" aria-label="${esc(editorLabel)}" aria-expanded="${State._denEdit ? 'true' : 'false'}"${State._denEdit ? ' aria-controls="den-editor"' : ''}>${satoruIconHTML('action.edit', 'den-tool-glyph', '◇')}<span>${State._denEdit ? t('Готово') : t('Обставить')}</span></button>
       </div>
-      <button class="den-companion" data-shadow-den data-action="shadow-den-solo" data-mode="greet" title="${esc(companionLabel)}" aria-label="${esc(companionLabel)}">${shadowVideo(ti, mood.face, 'den')}<span class="den-companion-name">${esc(c.name)}</span></button>
+      <button class="den-companion" data-shadow-den data-shadow-tier="${ti}" data-action="shadow-den-solo" data-mode="greet" title="${esc(companionLabel)}" aria-label="${esc(companionLabel)}">${shadowVideo(ti, mood.face, 'den')}</button>
       ${window.ShadowDenV1 ? window.ShadowDenV1.pairMarkup({ tier: ti, className: 'shadow-den-pair-v1--den' }) : ''}
       ${bodyGuardian ? window.BodyToadV1.pairMarkup({ className: 'body-pair-v2--den' }) : ''}
       ${resourcesGuardian ? window.ResourcesPenguinV1.pairMarkup({ className: 'resources-pair-v1--den' }) : ''}
@@ -14351,7 +14550,6 @@ function renderDen() {
     </div>
     <div class="den-console">
     <div class="den-life-strip">
-      <p class="den-mood"><strong>${esc(c.name)}</strong><span>${esc(mood.line)}</span></p>
       <div class="den-stats">
         <span title="${t('Энергия')}">${satoruIconHTML('status.energy', 'den-stat-glyph', eM.icon)} ${eP}%</span>
         <span title="${t('Дела сегодня')}">${satoruIconHTML('system.day-end', 'den-stat-glyph', '◇')} ${p.dayDone}/${p.dayTot || 0}</span>
@@ -19772,6 +19970,8 @@ async function onClick(e) {
     return;
   }
   if (action === 'den-avatar-pose') {
+    const scope = el.closest('.den-shell');
+    if (denSceneBusy(scope)) return;
     cancelDenRoomAction(false);
     cancelDenAvatarLocomotion(false);
     const current = normalizedAvatarCorePose(el.dataset.pose || State._denAvatarPose || 'idle');
@@ -19796,6 +19996,7 @@ async function onClick(e) {
     const scope = el.closest('.den-shell, .pet-card') || document;
     const slug = el.matches('[data-recovery-slug]') ? el : scope.querySelector('[data-recovery-slug]');
     if (slug && window.RecoverySlugV1) {
+      if (scope.matches && scope.matches('.den-shell') && denSceneBusy(scope)) return;
       window.RecoverySlugV1.reassure(slug, recoverySlugState()).catch(() => {});
       toast(`🌿 ${t('Кацую замедляет дыхание рядом с тобой')}`);
       try { sfx('click'); } catch {}
@@ -19850,6 +20051,8 @@ async function onClick(e) {
     return;
   }
   if (action === 'den-pet-react') {
+    const denShell = el.closest('.den-shell');
+    if (denShell && denSceneBusy(denShell)) return;
     el.classList.remove('is-reacting'); void el.offsetWidth; el.classList.add('is-reacting');
     setTimeout(() => el.classList.remove('is-reacting'), 1100);
     try { sfx('complete'); } catch {}
