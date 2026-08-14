@@ -824,8 +824,17 @@ function hashPin(userId, pin) {
 }
 // ---- Email + пароль (scrypt) + код восстановления (zero-dep, без email-инфры) ----
 function normEmail(e) { return String(e || '').trim().toLowerCase(); }
+// fb_msjex84y8ffb — «трудности со входом... данные вроде правильные». Пароль
+// нигде не обрезался от пробелов: мобильная клавиатура/автозаполнение/вставка
+// из заметок легко добавляют пробел в начале или конце ровно один раз из двух
+// вводов, и такие пароли выглядят «неправильными», хотя введены верно. Пробелы
+// внутри пароля НЕ трогаются — обрезаются только края, как email выше.
+function normPw(p) { return String(p == null ? '' : p).trim(); }
 function validEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
-function hashPw(password, salt) { return crypto.scryptSync(String(password), salt, 64).toString('hex'); }
+// Обрезка — единственное место: register, login, reset, change-password и
+// подтверждение удаления аккаунта все идут через hashPw/verifyPw, поэтому
+// починка здесь закрывает пробел сразу везде, а не в шести местах по отдельности.
+function hashPw(password, salt) { return crypto.scryptSync(normPw(password), salt, 64).toString('hex'); }
 function verifyPw(password, salt, hash) {
   try { const h = hashPw(password, salt); return h.length === hash.length && crypto.timingSafeEqual(Buffer.from(h, 'hex'), Buffer.from(hash, 'hex')); } catch { return false; }
 }
@@ -1948,7 +1957,7 @@ const server = http.createServer(async (req, res) => {
     if (u === '/api/auth/reset' && req.method === 'POST') {
       const { email, code, newPassword } = body;
       if (!email || !code || !newPassword) return sendJson(res, 400, { error: 'email, код и новый пароль обязательны' });
-      if (String(newPassword).length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
+      if (normPw(newPassword).length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
       const users = loadUsers();
       const user = users.find(x => x.email && x.email === normEmail(email));
       if (!user || !user.recoveryHash) return sendJson(res, 401, { error: 'аккаунт не найден' });
@@ -1969,7 +1978,7 @@ const server = http.createServer(async (req, res) => {
       const { email, password } = body;
       if (!email || !password) return sendJson(res, 400, { error: 'email и пароль обязательны' });
       if (!validEmail(email)) return sendJson(res, 400, { error: 'некорректный email' });
-      if (String(password).length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
+      if (normPw(password).length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
       const users = loadUsers();
       if (users.find(x => x.email === normEmail(email) && x.id !== uid)) return sendJson(res, 400, { error: 'этот email уже занят' });
       const user = users.find(x => x.id === uid);
@@ -1993,7 +2002,7 @@ const server = http.createServer(async (req, res) => {
       const users = loadUsers();
       if (hasEmail) {
         if (!validEmail(email)) return sendJson(res, 400, { error: 'некорректный email' });
-        if (String(password).length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
+        if (normPw(password).length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
         if (users.find(x => x.email === normEmail(email))) return sendJson(res, 400, { error: 'этот email уже зарегистрирован' });
       }
       let id = name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 16) || 'user';
@@ -2063,7 +2072,7 @@ const server = http.createServer(async (req, res) => {
       const users = loadUsers(); const user = users.find((item) => item.id === uid);
       if (!user || !user.pwHash) return sendJson(res, 400, { error: 'password sign-in is not configured' });
       if (!verifyPw(currentPassword, user.pwSalt, user.pwHash)) return sendJson(res, 401, { error: 'неверный текущий пароль' });
-      if (String(newPassword || '').length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
+      if (normPw(newPassword).length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
       const recoveryCode = setEmailPassword(user, user.email, newPassword);
       rotateSessionVersion(user); saveUsers(users);
       const token = makeSession(user);
