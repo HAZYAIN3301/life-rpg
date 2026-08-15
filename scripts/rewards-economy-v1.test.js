@@ -70,27 +70,66 @@ test('Rewards v124 economy commit is authenticated, allowlisted and account-owne
   assert.deepEqual((await api(base, '/api/data/purchases', { cookie: alpha.cookie })).data, purchases, 'paired file remains unchanged');
 });
 
-test('daily rewards keep an earned, disclosed and power-free cosmetic surprise', () => {
-  assert.match(APP, /threshold: 1, type: 'gold', amount: 40/);
-  assert.match(APP, /threshold: 3, type: 'gold', amount: 80/);
-  assert.match(APP, /threshold: 5, type: 'cosmetic_capsule'/);
-  assert.match(APP, /COSMETIC_CAPSULE_WEIGHTS = Object\.freeze\(\{ common: 60, rare: 28, epic: 10, legendary: 2 \}\)/);
+test('daily rewards keep an earned, disclosed and power-free surprise', () => {
+  // v159: расписание заменено настоящим розыгрышем на КАЖДОМ открытии. Всё, что ниже про
+  // честность, обязано пережить эту замену — иначе «больше драмы» превратилось бы в казино.
+  assert.match(APP, /CHEST_RARITY_WEIGHTS = Object\.freeze\(\{ common: 60, rare: 28, epic: 10, legendary: 2 \}\)/);
+  assert.match(APP, /CHEST_TYPE_WEIGHTS = Object\.freeze\(\{ gold: 55, cosmetic: 30, voucher: 15 \}\)/);
   assert.match(APP, /COSMETIC_PRICES = Object\.freeze\(\{ common: 200, rare: 450, epic: 900, legendary: 1800 \}\)/);
   assert.match(functionBody('rewardActivityCountForDate'), /!x\.entry/);
   assert.doesNotMatch(functionBody('lootTierCap'), /isPro/);
   assert.match(functionBody('cosmeticCapsulePool'), /!ownsCosmetic\(item\.id\)/);
   assert.match(functionBody('capsuleRandomUnit'), /crypto\.getRandomValues/);
-  assert.match(functionBody('rollCosmeticCapsule'), /cosmeticCapsuleOdds/);
+  assert.match(functionBody('rollChestPrize'), /chestOdds/);
   assert.match(functionBody('lootboxCard'), /Шансы сундука открыты/);
   assert.match(functionBody('lootboxCard'), /Free и Pro получают один и тот же набор и одну попытку/);
-  assert.match(functionBody('lootboxCard'), /не даёт силу и не требует ставки/);
+  assert.match(functionBody('lootboxCard'), /Ставки нет, силу предметы не дают, дубликатов косметики нет/);
   assert.doesNotMatch(APP, /function (?:rollLoot|lootResolve|applyLoot|showLootEditor)\s*\(/);
-  assert.match(functionBody('openChest'), /rollCosmeticCapsule/);
+  assert.match(functionBody('openChest'), /rollChestPrize/);
   assert.doesNotMatch(functionBody('openChest'), /loot-track|loot-window|Math\.random/);
   assert.match(functionBody('commitDailyRewardDialog'), /startChestReel\(overlay\)/);
   assert.match(functionBody('commitDailyRewardDialog'), /skip\.hidden = false; skip\.disabled = false/);
-  assert.match(functionBody('openChest'), /без XP, золота или силы/);
   assert.doesNotMatch(APP, /data-action="(?:open-loot-editor|save-loot-editor|reset-loot-editor)"/);
+});
+
+test('шанс не подкручивается: вес не знает ни про Pro, ни про серию неудач, ни про время', () => {
+  // Ровно то, что Альберт просил не делать: «без искусственного подкручивания шансов».
+  for (const name of ['chestOdds', 'rollChestPrize', 'chestTypesFor']) {
+    const body = functionBody(name);
+    assert.doesNotMatch(body, /isPro|entitlement|pity|streak|Date\.now|getHours|opened|history/, `${name} подглядывает в состояние игрока`);
+  }
+  // Веса — замороженные константы, а не переменные, которые кто-то мог бы подвинуть.
+  assert.match(APP, /const CHEST_RARITY_WEIGHTS = Object\.freeze/);
+  assert.match(APP, /const CHEST_TYPE_WEIGHTS = Object\.freeze/);
+  assert.match(APP, /const CHEST_GOLD_BY_RARITY = Object\.freeze/);
+});
+
+test('прокрутка идёт при каждом открытии, а лента набрана из настоящего пула', () => {
+  const commit = functionBody('commitDailyRewardDialog');
+  // Ветки «косметике барабан, золоту нет» больше не существует.
+  assert.doesNotMatch(commit, /reward\.type === 'cosmetic_capsule'\) \{[\s\S]{0,120}startChestReel/);
+  assert.match(functionBody('openChest'), /chestReelPool\(\)/);
+  const pool = functionBody('chestReelPool');
+  // Все три типа приза реально попадают на ленту — иначе барабан врал бы о шансах.
+  assert.match(pool, /cosmeticCapsulePool\(\)/);
+  assert.match(pool, /REWARD_CATALOG/);
+  assert.match(pool, /CHEST_GOLD_BY_RARITY/);
+  // Заголовок до остановки ленты не называет приз.
+  assert.doesNotMatch(functionBody('openChest'), /daily-reward-reveal-title" tabindex="-1">\$\{esc\(reward/);
+});
+
+test('редкость награды берётся из её цены, и ваучер не открывает то, что выше его тира', () => {
+  const grade = functionBody('rewardRarityByCost');
+  // Второго прайс-листа нет: границы те же, что у косметики.
+  assert.match(grade, /COSMETIC_PRICES\.legendary/);
+  assert.match(grade, /COSMETIC_PRICES\.epic/);
+  assert.match(grade, /COSMETIC_PRICES\.rare/);
+  assert.match(functionBody('voucherAllowsReward'), /RARITY_ORDER\.indexOf\(rewardRarityByCost\(item\.cost\)\) <= RARITY_ORDER\.indexOf\(voucherRarity\)/);
+  assert.match(functionBody('showVoucherReward'), /voucherAllowsReward/);
+  // Списывается самый дешёвый подходящий ваучер, а не первый попавшийся.
+  assert.match(APP, /RARITY_ORDER\.filter\(\(r\) => owned\.includes\(r\) && voucherAllowsReward\(r, item\)\)\[0\]/);
+  // Старые безымянные ваучеры не пропадают и не превращаются в легендарные.
+  assert.match(functionBody('ensureLootbox'), /Array\.from\(\{ length: legacy \}, \(\) => 'common'\)/);
 });
 
 test('XP and gold payouts have explicit caps and no self-rating multiplier', () => {

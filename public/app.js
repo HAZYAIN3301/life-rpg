@@ -546,6 +546,19 @@ const I18N_EXTRA = {
   'Выбрать профиль…': { en: 'Select profile…', de: 'Profil wählen…', uk: 'Обрати профіль…', es: 'Elegir perfil…' },
   'Список пуст': { en: 'List is empty', de: 'Liste ist leer', uk: 'Список порожній', es: 'La lista está vacía' },
   'Искать профиль': { en: 'Search profile', de: 'Profil suchen', uk: 'Шукати профіль', es: 'Buscar perfil' },
+  // ── v159 15.08: сундук — честный розыгрыш каждое открытие ──
+  'Сундук': { en: 'Chest', de: 'Truhe', uk: 'Скриня', es: 'Cofre' },
+  'Ваучер награды': { en: 'Reward voucher', de: 'Belohnungsgutschein', uk: 'Ваучер нагороди', es: 'Vale de recompensa' },
+  'Розыгрыш при открытии': { en: 'Drawn when opened', de: 'Wird beim Öffnen gezogen', uk: 'Розіграш при відкритті', es: 'Se sortea al abrir' },
+  'Вероятности сундука': { en: 'Chest odds', de: 'Truhen-Wahrscheinlichkeiten', uk: 'Ймовірності скрині', es: 'Probabilidades del cofre' },
+  'золото': { en: 'gold', de: 'Gold', uk: 'золото', es: 'oro' },
+  'образ': { en: 'look', de: 'Look', uk: 'образ', es: 'aspecto' },
+  'ваучер награды': { en: 'reward voucher', de: 'Belohnungsgutschein', uk: 'ваучер нагороди', es: 'vale de recompensa' },
+  'лучший': { en: 'best', de: 'bester', uk: 'найкращий', es: 'mejor' },
+  'Сундук зарабатывается за 1, 3 и 5 реальных действий. Заход не считается.': { en: 'A chest is earned at 1, 3 and 5 real actions. The entry step does not count.', de: 'Eine Truhe gibt es bei 1, 3 und 5 echten Handlungen. Der Einstieg zählt nicht.', uk: 'Скриня заробляється за 1, 3 і 5 реальних дій. Захід не рахується.', es: 'Un cofre se gana con 1, 3 y 5 acciones reales. La entrada no cuenta.' },
+  'Внутри — золото, образ или ваучер награды. Шансы открыты до открытия и не меняются от серии неудач, от Pro и от времени суток. Ставки нет, силу предметы не дают, дубликатов косметики нет. Free и Pro получают один и тот же набор и одну попытку.': { en: 'Inside: gold, a look or a reward voucher. Odds are disclosed before you open and never shift with a losing streak, with Pro or with the time of day. There is no stake, items grant no power, and cosmetics never duplicate. Free and Pro get the same pool and one attempt.', de: 'Drin: Gold, ein Look oder ein Belohnungsgutschein. Die Chancen stehen vor dem Öffnen fest und ändern sich weder durch Pechsträhnen noch durch Pro oder Tageszeit. Kein Einsatz, keine Macht durch Gegenstände, keine Duplikate. Free und Pro erhalten denselben Pool und einen Versuch.', uk: 'Всередині — золото, образ або ваучер нагороди. Шанси відкриті до відкриття і не змінюються від серії невдач, від Pro чи від часу доби. Ставки немає, предмети не дають сили, дублікатів косметики немає. Free і Pro отримують той самий набір і одну спробу.', es: 'Dentro: oro, un aspecto o un vale de recompensa. Las probabilidades se muestran antes de abrir y no cambian por una mala racha, por Pro ni por la hora. No hay apuesta, los objetos no dan poder y la cosmética no se duplica. Free y Pro reciben el mismo conjunto y un intento.' },
+  'Сначала розыгрыш выбирает редкость, потом — что именно: золото, ещё не полученный образ или ваучер награды этой цены. Косметику всегда можно купить напрямую, не открывая сундук.': { en: 'The draw picks a rarity first, then what it is: gold, a look you do not own yet, or a voucher for a reward at that price. Cosmetics can always be bought directly without opening a chest.', de: 'Die Ziehung wählt zuerst die Seltenheit, dann den Inhalt: Gold, einen Look, den du noch nicht hast, oder einen Gutschein für eine Belohnung dieses Preises. Kosmetik lässt sich immer direkt kaufen, ganz ohne Truhe.', uk: 'Спершу розіграш обирає рідкість, потім — що саме: золото, ще не отриманий образ або ваучер нагороди цієї ціни. Косметику завжди можна купити напряму, не відкриваючи скриню.', es: 'El sorteo elige primero la rareza y luego el contenido: oro, un aspecto que aún no tienes o un vale de recompensa de ese precio. La cosmética siempre se puede comprar directamente sin abrir un cofre.' },
+  'Золото, образ или ваучер награды — шансы открыты заранее и одинаковы для всех. Церемонию можно пропустить сразу.': { en: 'Gold, a look or a reward voucher — odds are disclosed up front and identical for everyone. The ceremony can be skipped right away.', de: 'Gold, ein Look oder ein Belohnungsgutschein — die Chancen sind vorab offengelegt und für alle gleich. Die Zeremonie lässt sich sofort überspringen.', uk: 'Золото, образ або ваучер нагороди — шанси відкриті заздалегідь і однакові для всіх. Церемонію можна пропустити одразу.', es: 'Oro, un aspecto o un vale de recompensa: las probabilidades se muestran de antemano y son iguales para todos. La ceremonia se puede omitir enseguida.' },
   'Записать голосом': { en: 'Record with voice', de: 'Mit Stimme aufnehmen', uk: 'Записати голосом', es: 'Grabar con voz' },
   'Остановить запись': { en: 'Stop recording', de: 'Aufnahme stoppen', uk: 'Зупинити запис', es: 'Detener grabación' },
   'Нет доступа к микрофону': { en: 'No microphone access', de: 'Kein Mikrofonzugriff', uk: 'Немає доступу до мікрофона', es: 'Sin acceso al micrófono' },
@@ -9048,45 +9061,125 @@ function equippedTitle() { const eq = ensureCosmetics(); return eq.title || (Sta
 // cosmetic surprise. There is no stake, near-miss reel, random power or paid
 // trial advantage. Free and Pro share one pool and one attempt; legacy
 // "lootLuck" becomes a disclosed deterministic gold bonus only.
+// ── Экономика сундука v159 (решение Альберта 15.08) ──────────────────────────────
+// Было: расписание. Два открытия из трёх выдавали заранее названную сумму золота, и
+// церемония им была не нужна по смыслу — крутить барабан ради известного числа это
+// театр, а не розыгрыш. Стало: КАЖДОЕ открытие — настоящий розыгрыш, поэтому прокрутка
+// и звук честны каждый раз.
+//
+// Что при этом НЕ изменилось и не должно (§ решение 12.08 + регуляторный риск лутбоксов):
+//  — шансы раскрыты в интерфейсе до открытия и не зависят от Pro;
+//  — никакого near-miss: барабан показывает честную ленту, а не «почти легендарка»;
+//  — ставки нет, силы предметы не дают, дубликатов косметики нет;
+//  — «подкрутки» нет вообще: вес не меняется от серии неудач, от платности и от времени.
+const CHEST_RARITY_WEIGHTS = Object.freeze({ common: 60, rare: 28, epic: 10, legendary: 2 });
+// Внутри выпавшей редкости решается, ЧЕМ именно наградить. Золото держит долю большой
+// намеренно: раньше день гарантировал 120 золота, и если бы золото стало одним из трёх
+// равновероятных исходов, дневной доход упал бы втрое — это не «больше драмы», это скрытый
+// нерф. При 55% и суммах ниже средний день остаётся примерно там же, где был.
+const CHEST_TYPE_WEIGHTS = Object.freeze({ gold: 55, cosmetic: 30, voucher: 15 });
+const CHEST_GOLD_BY_RARITY = Object.freeze({ common: 40, rare: 80, epic: 150, legendary: 300 });
 const DAILY_REWARD_TRACK = Object.freeze([
-  Object.freeze({ threshold: 1, type: 'gold', amount: 40, rarity: 'common', labelKey: '+40 золота' }),
-  Object.freeze({ threshold: 3, type: 'gold', amount: 80, rarity: 'common', labelKey: '+80 золота' }),
-  Object.freeze({ threshold: 5, type: 'cosmetic_capsule', rarity: 'rare', labelKey: 'Сундук образа' }),
+  Object.freeze({ threshold: 1 }), Object.freeze({ threshold: 3 }), Object.freeze({ threshold: 5 }),
 ]);
-const COSMETIC_CAPSULE_WEIGHTS = Object.freeze({ common: 60, rare: 28, epic: 10, legendary: 2 });
 const LOOT_THRESHOLDS = DAILY_REWARD_TRACK.map((reward) => reward.threshold);
 const LOOT_CARRY_CAP = 5; // earned rewards may wait; absence never creates new rewards
 function dailyRewardGoldBonusPct() { return Math.min(30, Math.max(0, globalPerk('lootLuck') || 0)); }
-function dailyRewardForOpenIndex(index) {
-  const base = DAILY_REWARD_TRACK[Math.max(0, Number(index) || 0) % DAILY_REWARD_TRACK.length];
-  if (base.type !== 'gold') return { ...base, label: t(base.labelKey) };
-  const bonusPct = dailyRewardGoldBonusPct();
-  const amount = Math.round(base.amount * (1 + bonusPct / 100));
-  return { ...base, amount, label: `+${amount} ${t('золота')}` };
+// Редкость личной награды выводится из её цены в золоте — по тем же границам, что и
+// косметика. Никакого второго прайс-листа: «сколько стоит» и есть «насколько редкое».
+function rewardRarityByCost(cost) {
+  const gold = Number(cost) || 0;
+  if (gold >= COSMETIC_PRICES.legendary) return 'legendary';
+  if (gold >= COSMETIC_PRICES.epic) return 'epic';
+  if (gold >= COSMETIC_PRICES.rare) return 'rare';
+  return 'common';
 }
+const RARITY_ORDER = ['common', 'rare', 'epic', 'legendary'];
+function rewardCatalogByRarity(rarity) { return REWARD_CATALOG.filter((item) => rewardRarityByCost(item.cost) === rarity); }
 function cosmeticCapsulePool() { return COSMETICS.filter((item) => !ownsCosmetic(item.id)); }
-function cosmeticCapsuleOdds() {
-  const pool = cosmeticCapsulePool();
-  const active = Object.keys(COSMETIC_CAPSULE_WEIGHTS).filter((rarity) => pool.some((item) => item.rarity === rarity));
-  const total = active.reduce((sum, rarity) => sum + COSMETIC_CAPSULE_WEIGHTS[rarity], 0);
-  return active.map((rarity) => ({ rarity, pct: total ? COSMETIC_CAPSULE_WEIGHTS[rarity] / total * 100 : 0, count: pool.filter((item) => item.rarity === rarity).length }));
+// Что реально может выпасть в этой редкости прямо сейчас. Золото есть всегда, косметика —
+// пока коллекция не собрана, ваучер — пока в каталоге есть награда этой цены. Пустые типы
+// выпадают из розыгрыша, а их вес перераспределяется между оставшимися: иначе барабан
+// иногда «выигрывал» бы то, чего нет.
+function chestTypesFor(rarity) {
+  const types = ['gold'];
+  if (cosmeticCapsulePool().some((item) => item.rarity === rarity)) types.push('cosmetic');
+  if (rewardCatalogByRarity(rarity).length) types.push('voucher');
+  return types;
+}
+function chestOdds() {
+  const active = RARITY_ORDER.filter((rarity) => chestTypesFor(rarity).length);
+  const total = active.reduce((sum, rarity) => sum + CHEST_RARITY_WEIGHTS[rarity], 0);
+  return active.map((rarity) => {
+    const types = chestTypesFor(rarity);
+    const typeTotal = types.reduce((sum, kind) => sum + CHEST_TYPE_WEIGHTS[kind], 0);
+    return {
+      rarity,
+      pct: total ? CHEST_RARITY_WEIGHTS[rarity] / total * 100 : 0,
+      types: types.map((kind) => ({ kind, pct: typeTotal ? CHEST_TYPE_WEIGHTS[kind] / typeTotal * 100 : 0 })),
+      cosmetics: cosmeticCapsulePool().filter((item) => item.rarity === rarity).length,
+      rewards: rewardCatalogByRarity(rarity).length,
+      gold: CHEST_GOLD_BY_RARITY[rarity],
+    };
+  });
 }
 function capsuleRandomUnit() {
   try { const value = new Uint32Array(1); crypto.getRandomValues(value); return value[0] / 4294967296; }
   catch { return Math.random(); }
 }
-function rollCosmeticCapsule() {
-  const pool = cosmeticCapsulePool(), odds = cosmeticCapsuleOdds();
-  if (!pool.length || !odds.length) return { type: 'reward_voucher', rarity: 'rare', label: t('Ваучер: личная награда') };
-  let cursor = capsuleRandomUnit() * 100, rarity = odds[odds.length - 1].rarity;
-  for (const row of odds) { cursor -= row.pct; if (cursor <= 0) { rarity = row.rarity; break; } }
-  const choices = pool.filter((item) => item.rarity === rarity);
-  const cosmetic = choices[Math.min(choices.length - 1, Math.floor(capsuleRandomUnit() * choices.length))];
-  return { type: 'cosmetic_capsule', rarity, cosmeticId: cosmetic.id, label: t('Сундук образа'), resultLabel: t(cosmetic.name) };
+// Лента показывает НАСТОЯЩИЙ пул этого открытия: ту же косметику, те же награды и то же
+// золото, которые реально могли выпасть. Декоративных плиток, которых нет в розыгрыше,
+// здесь быть не должно — иначе барабан врёт о шансах, а это ровно то, чего мы избегаем.
+function chestReelPool() {
+  const out = [];
+  for (const item of cosmeticCapsulePool()) out.push({ id: 'c_' + item.id, name: item.name, rarity: item.rarity, fill: item.ring || item.fill });
+  for (const item of REWARD_CATALOG) out.push({ id: 'v_' + item.name, name: item.name, rarity: rewardRarityByCost(item.cost) });
+  for (const rarity of RARITY_ORDER) out.push({ id: 'g_' + rarity, name: `+${CHEST_GOLD_BY_RARITY[rarity]} ${t('золота')}`, rarity, noTranslate: true });
+  return out;
+}
+function chestPrizeDisplay(reward) {
+  if (!reward) return null;
+  if (reward.type === 'cosmetic_capsule') {
+    const c = cosmeticById(reward.cosmeticId);
+    return c ? { id: 'c_' + c.id, name: c.name, rarity: c.rarity, fill: c.ring || c.fill } : null;
+  }
+  if (reward.type === 'reward_voucher') return { id: 'v_' + reward.rewardName, name: reward.rewardName, rarity: reward.rarity };
+  return { id: 'g_' + reward.rarity, name: reward.label, rarity: reward.rarity, noTranslate: true };
+}
+function pickWeighted(rows) { // rows: [{ pct }] — сумма 100
+  let cursor = capsuleRandomUnit() * 100;
+  for (const row of rows) { cursor -= row.pct; if (cursor <= 0) return row; }
+  return rows[rows.length - 1];
+}
+function rollChestPrize() {
+  const odds = chestOdds();
+  if (!odds.length) return { type: 'gold', rarity: 'common', amount: CHEST_GOLD_BY_RARITY.common, label: `+${CHEST_GOLD_BY_RARITY.common} ${t('золота')}` };
+  const rarity = pickWeighted(odds).rarity;
+  const kind = pickWeighted(odds.find((row) => row.rarity === rarity).types).kind;
+  if (kind === 'cosmetic') {
+    const choices = cosmeticCapsulePool().filter((item) => item.rarity === rarity);
+    const cosmetic = choices[Math.min(choices.length - 1, Math.floor(capsuleRandomUnit() * choices.length))];
+    return { type: 'cosmetic_capsule', rarity, cosmeticId: cosmetic.id, label: t('Образ'), resultLabel: t(cosmetic.name) };
+  }
+  if (kind === 'voucher') {
+    const choices = rewardCatalogByRarity(rarity);
+    const item = choices[Math.min(choices.length - 1, Math.floor(capsuleRandomUnit() * choices.length))];
+    return { type: 'reward_voucher', rarity, rewardName: item.name, label: t('Ваучер награды'), resultLabel: t(item.name) };
+  }
+  const bonusPct = dailyRewardGoldBonusPct();
+  const amount = Math.round(CHEST_GOLD_BY_RARITY[rarity] * (1 + bonusPct / 100));
+  return { type: 'gold', rarity, amount, label: `+${amount} ${t('золота')}`, resultLabel: `+${amount} ${t('золота')}` };
 }
 function ensureLootbox() {
   if (!State.lootbox) State.lootbox = { day: todayStr(), opened: 0, goldWon: 0, boost: null, titles: [], equipped: null, history: [], carry: 0 };
   if (State.lootbox.carry == null) State.lootbox.carry = 0;
+  // v159: ваучер стал именным по редкости — она решает, какую награду им можно взять.
+  // Старые накопленные ваучеры были безымянным числом; поднимаем их как обычные, чтобы
+  // никто не потерял уже заработанное и чтобы старый ваучер не открыл вдруг легендарку.
+  if (!Array.isArray(State.lootbox.vouchers)) {
+    const legacy = Math.max(0, Number(State.lootbox.vouchers) || 0);
+    State.lootbox.vouchers = Array.from({ length: legacy }, () => 'common');
+  }
   if (!State.lootbox.economyV124) {
     // Custom odds belonged to the removed random pool. Keep historical rewards,
     // but remove the obsolete control rather than pretending it still matters.
@@ -9392,11 +9485,12 @@ function lootNextThreshold() { const act = todayRewardActivityCount(); const th 
 function nextLootboxState(reward) {
   const next = structuredClone(ensureLootbox());
   if (reward.type === 'gold') next.goldWon = (Number(next.goldWon) || 0) + reward.amount;
-  else if (reward.type === 'reward_voucher') next.vouchers = (Number(next.vouchers) || 0) + 1;
+  else if (reward.type === 'reward_voucher') next.vouchers = [...(Array.isArray(next.vouchers) ? next.vouchers : []), reward.rarity || 'common'];
   else if (reward.type === 'cosmetic_capsule') next.cosmeticsWon = (Number(next.cosmeticsWon) || 0) + 1;
   next.opened = (Number(next.opened) || 0) + 1;
   next.history = Array.isArray(next.history) ? next.history : [];
-  next.history.unshift({ at: new Date().toISOString(), label: reward.resultLabel || reward.label, rarity: reward.rarity || 'common', deterministic: reward.type !== 'cosmetic_capsule', cosmeticId: reward.cosmeticId || null });
+  // deterministic:false у всех — с v159 заранее известного исхода не осталось ни у одного слота.
+  next.history.unshift({ at: new Date().toISOString(), label: reward.resultLabel || reward.label, rarity: reward.rarity || 'common', deterministic: false, cosmeticId: reward.cosmeticId || null });
   next.history = next.history.slice(0, 40);
   return next;
 }
@@ -16391,11 +16485,12 @@ function renderCharacter() {
 // ============================================================
 function lootboxCard() {
   const lb = ensureLootbox(), avail = lootChestsAvailable(), act = todayRewardActivityCount(), nextTh = lootNextThreshold();
-  const nextReward = dailyRewardForOpenIndex(lb.opened);
-  const capsuleOdds = cosmeticCapsuleOdds();
-  const capsuleOddsHTML = capsuleOdds.length
-    ? capsuleOdds.map((row) => `<li class="r-${row.rarity}"><span>${t(RARITY[row.rarity].label)}</span><b>${Number(row.pct.toFixed(1)).toLocaleString(lang())}%</b><small>${row.count} ${t('предметов без дубликатов')}</small></li>`).join('')
-    : `<li><span>${t('Коллекция собрана')}</span><b>100%</b><small>${t('вместо дубликата — ваучер личной награды')}</small></li>`;
+  const capsuleOdds = chestOdds();
+  const kindLabel = { gold: 'золото', cosmetic: 'образ', voucher: 'ваучер награды' };
+  const capsuleOddsHTML = capsuleOdds.map((row) => {
+    const inner = row.types.map((x) => `${t(kindLabel[x.kind])} ${Math.round(x.pct)}%`).join(' · ');
+    return `<li class="r-${row.rarity}"><span>${t(RARITY[row.rarity].label)}</span><b>${Number(row.pct.toFixed(1)).toLocaleString(lang())}%</b><small>${esc(inner)}</small></li>`;
+  }).join('');
   const hist = (lb.history || []).slice(0, 6).map((h) => `<li><span class="reward-history-mark" aria-hidden="true">✓</span><span class="muted">${(h.at || '').slice(0, 10)}</span> ${esc(h.label)}</li>`).join('');
   const statusTxt = avail > 0
     ? `${t('Открыть награду')} (${avail})`
@@ -16403,25 +16498,24 @@ function lootboxCard() {
   const track = DAILY_REWARD_TRACK.map((reward, index) => {
     const reached = act >= reward.threshold;
     const opened = index < Math.min(Number(lb.opened) || 0, DAILY_REWARD_TRACK.length);
-    const shown = dailyRewardForOpenIndex(index);
-    return `<li class="daily-reward-step${reached ? ' is-earned' : ''}${opened ? ' is-collected' : ''}"><span class="daily-reward-condition">${reward.threshold} ${locThing(reward.threshold, lang())}</span><b>${esc(shown.label)}</b><span>${opened ? t('Получено') : (reached ? t('Готово к получению') : t('Условие не выполнено'))}</span></li>`;
+    return `<li class="daily-reward-step${reached ? ' is-earned' : ''}${opened ? ' is-collected' : ''}"><span class="daily-reward-condition">${reward.threshold} ${locThing(reward.threshold, lang())}</span><b>${t('Сундук')}</b><span>${opened ? t('Получено') : (reached ? t('Готово к получению') : t('Условие не выполнено'))}</span></li>`;
   }).join('');
   return `<section class="card lootbox-card daily-reward-card" aria-labelledby="daily-reward-title">
     <div class="lb-head"><h3 id="daily-reward-title">${satoruIconHTML('nav.rewards', 'heading-glyph', '◇')} ${t('Награды дня')}</h3><span class="daily-reward-randomness">${t('Шансы сундука открыты')}</span></div>
     <div class="lb-body">
       <button type="button" class="lb-chest ${avail > 0 ? 'ready' : 'empty'}" ${avail > 0 ? 'data-action="open-chest"' : 'disabled'} aria-label="${esc(statusTxt)}">
         ${satoruIconHTML('system.rewards', `lb-emblem${avail > 0 ? ' is-ready' : ''}`, avail > 0 ? '🎁' : '✓')}<span class="lb-status">${statusTxt}</span>
-        ${avail > 0 ? `<small>${t('Следующая награда')}: ${esc(nextReward.label)}</small>` : ''}
+        ${avail > 0 ? `<small>${t('Розыгрыш при открытии')}</small>` : ''}
       </button>
       <div class="lb-info">
-        <p>${t('За 1 и 3 реальных действия выдаётся заранее известное золото. За 5 — заработанный сундук образа. Заход не считается.')}</p>
-        <p class="daily-reward-fairness">${t('Сундук содержит только косметику, не даёт силу и не требует ставки. Free и Pro получают один и тот же набор и одну попытку.')}</p>
+        <p>${t('Сундук зарабатывается за 1, 3 и 5 реальных действий. Заход не считается.')}</p>
+        <p class="daily-reward-fairness">${t('Внутри — золото, образ или ваучер награды. Шансы открыты до открытия и не меняются от серии неудач, от Pro и от времени суток. Ставки нет, силу предметы не дают, дубликатов косметики нет. Free и Pro получают один и тот же набор и одну попытку.')}</p>
         ${dailyRewardGoldBonusPct() ? `<p class="muted">${t('Детерминированный бонус дерева')}: +${dailyRewardGoldBonusPct()}% ${t('к золоту наград дня')}.</p>` : ''}
-        ${(lb.vouchers || 0) > 0 ? `<button type="button" class="voucher-chip" data-action="use-voucher">${satoruIconHTML('reward.voucher', 'inline-glyph', '◇')} ${t('Ваучер')} ×${lb.vouchers} — ${t('выбрать личную награду')}</button>` : ''}
+        ${(lb.vouchers || []).length > 0 ? `<button type="button" class="voucher-chip" data-action="use-voucher">${satoruIconHTML('reward.voucher', 'inline-glyph', '◇')} ${t('Ваучер')} ×${lb.vouchers.length} — ${t('выбрать личную награду')}</button>` : ''}
       </div>
     </div>
     <ol class="daily-reward-track">${track}</ol>
-    <details class="capsule-odds"><summary>${t('Вероятности сундука образа')}</summary><p>${t('Шанс выбирает редкость, затем один ещё не полученный предмет этой редкости. Дубликатов нет; косметику всегда можно купить напрямую.')}</p><ul>${capsuleOddsHTML}</ul></details>
+    <details class="capsule-odds"><summary>${t('Вероятности сундука')}</summary><p>${t('Сначала розыгрыш выбирает редкость, потом — что именно: золото, ещё не полученный образ или ваучер награды этой цены. Косметику всегда можно купить напрямую, не открывая сундук.')}</p><ul>${capsuleOddsHTML}</ul></details>
     ${hist ? `<details class="lb-hist"><summary>${t('История наград')}</summary><ul class="reflections">${hist}</ul></details>` : ''}
   </section>`;
 }
@@ -16488,15 +16582,12 @@ async function commitDailyRewardDialog(overlay) {
   }
   State.lootbox = next;
   if (nextSettings) State.settings = nextSettings;
-  if (reward.type === 'cosmetic_capsule') {
-    if (status) status.textContent = t('Награда сохранена. Открываем сундук…');
-    if (skip) { skip.hidden = false; skip.disabled = false; skip.focus(); }
-    startChestReel(overlay);
-  } else {
-    if (status) status.textContent = t('Награда сохранена');
-    if (claim) { claim.disabled = false; claim.focus(); }
-    if (typeof sfxLoot === 'function') sfxLoot(reward.rarity || 'common');
-  }
+  // v159: прокрутка у КАЖДОГО открытия, а не только у косметики. Раньше золото было
+  // известно заранее, и барабан ради известного числа был бы театром; теперь исход
+  // случайный у всех трёх типов, поэтому церемония честна везде.
+  if (status) status.textContent = t('Награда сохранена. Открываем сундук…');
+  if (skip) { skip.hidden = false; skip.disabled = false; skip.focus(); }
+  startChestReel(overlay);
   if (close) close.disabled = false;
 }
 // ── Честная лента сундука (chest-reveal-v1, решение Альберта 12.08: «возвращаем
@@ -16512,18 +16603,18 @@ function startChestReel(overlay) {
     overlay._revealTimer = setTimeout(() => revealCosmeticCapsule(overlay), 1000);
     return;
   }
-  const result = cosmeticById(overlay._reward.cosmeticId);
+  const result = chestPrizeDisplay(overlay._reward);
   if (!result) { overlay._revealTimer = setTimeout(() => revealCosmeticCapsule(overlay), 1000); return; }
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const reel_ = C.buildReel({
-    pool: overlay._capsulePool, result, seed: overlay._reward.cosmeticId,
+    pool: overlay._capsulePool, result, seed: result.id,
     durationMs: reduceMotion ? C.MIN_DURATION_MS : C.DEFAULT_DURATION_MS,
   });
   overlay._reel = reel_;
-  const swatch = (item) => item.ring || item.fill || (RARITY[item.rarity] && RARITY[item.rarity].color) || 'var(--muted)';
+  const swatch = (item) => item.fill || (RARITY[item.rarity] && RARITY[item.rarity].color) || 'var(--muted)';
   reel.hidden = false;
   reel.innerHTML = `<div class="loot-reel-track">${reel_.strip.map((item, i) =>
-    `<span class="loot-reel-tile r-${item.rarity}${i === reel_.winnerIndex ? ' is-winner' : ''}" style="--tile:${swatch(item)}">${esc(t(item.name))}</span>`
+    `<span class="loot-reel-tile r-${item.rarity}${i === reel_.winnerIndex ? ' is-winner' : ''}" style="--tile:${swatch(item)}">${esc(item.noTranslate ? item.name : t(item.name))}</span>`
   ).join('')}<span class="loot-reel-marker" aria-hidden="true"></span></div>`;
   const track = reel.querySelector('.loot-reel-track');
   // Позиция считается уже ПОСЛЕ вставки в DOM — ширина плитки известна только теперь.
@@ -16583,25 +16674,29 @@ function openChest(returnFocus = document.activeElement) {
   const existing = document.getElementById('loot-modal');
   if (existing) { existing.querySelector('[data-action="claim-daily-reward"], [data-action="retry-daily-reward"]')?.focus(); return existing; }
   if (lootChestsAvailable() <= 0) { toast(t('Наград пока нет — заверши следующее реальное дело')); return null; }
-  const lb = ensureLootbox(), baseReward = dailyRewardForOpenIndex(lb.opened);
+  ensureLootbox();
   // Пул захватывается ДО коммита. После коммита выигранный предмет уже входит в
   // cosmetics владельца, и cosmeticCapsulePool() (которая берёт !ownsCosmetic)
   // исключила бы его — лента осталась бы без своего же победителя.
-  const capsulePool = cosmeticCapsulePool();
-  const reward = baseReward.type === 'cosmetic_capsule' ? rollCosmeticCapsule() : baseReward;
+  const capsulePool = chestReelPool();
+  const reward = rollChestPrize();
   const ov = document.createElement('div'); ov.id = 'loot-modal'; ov.className = 'modal-overlay loot-reveal-overlay';
   ov._reward = reward;
   ov._capsulePool = capsulePool;
-  ov.innerHTML = `<section class="loot-box loot-reveal-box ${reward.type === 'cosmetic_capsule' ? 'is-capsule' : ''}" role="dialog" aria-modal="true" aria-labelledby="daily-reward-reveal-title" aria-describedby="daily-reward-reveal-desc">
+  // Заголовок до прокрутки НЕ называет приз: с v159 исход случайный, и написать его
+  // сверху значило бы отдать результат раньше барабана. Приз появляется в .loot-capsule-result
+  // ровно в тот момент, когда лента остановилась.
+  ov.innerHTML = `<section class="loot-box loot-reveal-box is-capsule" role="dialog" aria-modal="true" aria-labelledby="daily-reward-reveal-title" aria-describedby="daily-reward-reveal-desc">
     <button type="button" class="modal-x" data-action="close-daily-reward" aria-label="${esc(t('Закрыть'))}" disabled>✕</button>
     <p class="loot-earned-label">${t('Заработанная награда')}</p>
-    <h2 id="daily-reward-reveal-title" tabindex="-1">${esc(reward.label)}</h2>
-    <p id="daily-reward-reveal-desc">${reward.type === 'cosmetic_capsule' ? t('Сюрприз только косметический: без XP, золота или силы. Церемонию можно пропустить сразу.') : t('Эта награда была известна заранее.')}</p>
-    ${reward.type === 'cosmetic_capsule' ? `<div class="loot-reel" aria-hidden="true" hidden></div><div class="loot-capsule-result r-${reward.rarity}" role="status" aria-live="polite" hidden><span>${t(RARITY[reward.rarity].label)}</span><strong>${esc(reward.resultLabel)}</strong></div>` : ''}
+    <h2 id="daily-reward-reveal-title" tabindex="-1">${t('Сундук')}</h2>
+    <p id="daily-reward-reveal-desc">${t('Золото, образ или ваучер награды — шансы открыты заранее и одинаковы для всех. Церемонию можно пропустить сразу.')}</p>
+    <div class="loot-reel" aria-hidden="true" hidden></div>
+    <div class="loot-capsule-result r-${reward.rarity}" role="status" aria-live="polite" hidden><span>${t(RARITY[reward.rarity].label)}</span><strong>${esc(reward.resultLabel || reward.label)}</strong></div>
     <div class="loot-save-status" role="status" aria-live="polite">${t('Сохраняю награду…')}</div>
     <div class="loot-reveal-actions">
       <button type="button" class="btn" data-action="claim-daily-reward" disabled>${t('Забрать')}</button>
-      ${reward.type === 'cosmetic_capsule' ? `<button type="button" class="btn ghost" data-action="skip-capsule-reveal" hidden disabled>${t('Пропустить церемонию')}</button>` : ''}
+      <button type="button" class="btn ghost" data-action="skip-capsule-reveal" hidden disabled>${t('Пропустить церемонию')}</button>
       <button type="button" class="btn ghost" data-action="retry-daily-reward" hidden>${t('Повторить')}</button>
     </div>
   </section>`;
@@ -16610,11 +16705,24 @@ function openChest(returnFocus = document.activeElement) {
   return ov;
 }
 
+// Ваучер именной: его редкость решает, какую награду им можно взять. Тир и всё, что ниже —
+// иначе редкость ваучера ничего не значила бы, и обычный открывал бы восьмитысячную награду.
+function bestVoucherRarity(list) {
+  const owned = Array.isArray(list) ? list : [];
+  let best = null;
+  for (const r of owned) if (best === null || RARITY_ORDER.indexOf(r) > RARITY_ORDER.indexOf(best)) best = r;
+  return best;
+}
+function voucherAllowsReward(voucherRarity, item) {
+  return RARITY_ORDER.indexOf(rewardRarityByCost(item.cost)) <= RARITY_ORDER.indexOf(voucherRarity);
+}
 function showVoucherReward() {
   const lb = ensureLootbox();
-  if (!lb.vouchers || lb.vouchers < 1) { toast(t('Нет ваучеров')); return; }
+  const owned = Array.isArray(lb.vouchers) ? lb.vouchers : [];
+  if (!owned.length) { toast(t('Нет ваучеров')); return; }
   if (document.getElementById('voucher-ov')) return;
-  const rows = REWARD_CATALOG.map((c, i) => `<div class="rwc-row">
+  const tier = bestVoucherRarity(owned);
+  const rows = REWARD_CATALOG.map((c, i) => ({ c, i })).filter(({ c }) => voucherAllowsReward(tier, c)).map(({ c, i }) => `<div class="rwc-row">
     <span class="rwc-ic">${rewardIconHTML(c, 'reward-catalog-icon')}</span><span class="rwc-name">${esc(t(c.name))}</span>
     <span class="muted rwc-free">${satoruIconHTML('reward.voucher', 'inline-glyph', '◇')} ${t('бесплатно')}</span>
     <button class="btn ghost sm" data-action="redeem-voucher" data-idx="${i}">${t('Взять')}</button>
@@ -16624,7 +16732,7 @@ function showVoucherReward() {
   ov.innerHTML = `<section class="guide-box voucher-box" role="dialog" aria-modal="true" aria-labelledby="voucher-title">
     <button class="modal-x" data-action="close-voucher" aria-label="${esc(t('Закрыть'))}">✕</button>
     <h2 id="voucher-title" tabindex="-1">${satoruIconHTML('reward.voucher', 'heading-glyph', '◇')} ${t('Ваучер — бесплатная награда')}</h2>
-    <p class="muted">${t('Ваучеров доступно')}: ${lb.vouchers}. ${t('Выбери одну личную награду; ваучер спишется только после подтверждения.')}</p>
+    <p class="muted">${t('Ваучеров доступно')}: ${owned.length} · ${t('лучший')}: ${esc(t(RARITY[tier].label))}. ${t('Выбери одну личную награду; ваучер спишется только после подтверждения.')}</p>
     <div class="rwc-list">${rows}</div>
   </section>`;
   mountAccountDialog(ov, { initial: '#voucher-title', returnFocus: document.activeElement });
@@ -16718,9 +16826,14 @@ async function commitEconomyConfirmation(overlay) {
     payload = { rewards: next }; apply = () => { State.rewards = next; }; success = t('Награда удалена');
   } else if (data.kind === 'voucher') {
     const item = REWARD_CATALOG[Number(data.id)], current = ensureLootbox();
-    if (!item || (Number(current.vouchers) || 0) < 1 || (!isPro() && State.rewards.length >= FREE_REWARDS_MAX)) payload = null;
+    const owned = Array.isArray(current.vouchers) ? current.vouchers : [];
+    // Списывается САМЫЙ ДЕШЁВЫЙ ваучер, которым эта награда ещё берётся: легендарный
+    // не должен сгорать на награду за 50 золота, если в кармане лежит обычный.
+    const spend = RARITY_ORDER.filter((r) => owned.includes(r) && voucherAllowsReward(r, item))[0];
+    if (!item || !spend || (!isPro() && State.rewards.length >= FREE_REWARDS_MAX)) payload = null;
     else {
-      const nextLootbox = structuredClone(current); nextLootbox.vouchers -= 1;
+      const nextLootbox = structuredClone(current);
+      nextLootbox.vouchers = [...owned]; nextLootbox.vouchers.splice(nextLootbox.vouchers.indexOf(spend), 1);
       const nextRewards = [...State.rewards, { id: 'r_' + uid(), name: item.name, catalogNameKey: item.name, icon: item.icon, iconId: item.iconId, cost: item.cost, createdAt: new Date().toISOString() }];
       payload = { lootbox: nextLootbox, rewards: nextRewards };
       apply = () => { State.lootbox = nextLootbox; State.rewards = nextRewards; }; success = `${t('Получено')}: ${t(item.name)}`;
@@ -20498,7 +20611,7 @@ async function onClick(e) {
   if (action === 'close-voucher') { closeAccountDialog('voucher-ov'); return; }
   if (action === 'redeem-voucher') {
     const lb = ensureLootbox();
-    if (!lb.vouchers || lb.vouchers < 1) { toast(t('Нет ваучеров')); return; }
+    if (!Array.isArray(lb.vouchers) || !lb.vouchers.length) { toast(t('Нет ваучеров')); return; }
     const c = REWARD_CATALOG[Number(el.dataset.idx)]; if (!c) return;
     if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
     showEconomyConfirm('voucher', el.dataset.idx, el); return;
