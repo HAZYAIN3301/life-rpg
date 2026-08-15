@@ -12,8 +12,8 @@ function pngSize(file) {
   return [header.readUInt32BE(16), header.readUInt32BE(20)];
 }
 
-assert.equal(toad.VERSION, '3.1.0');
-assert.equal(toad.frameSrc('calm', true), '/art/pets/body-toad-v1/motion-v4/idle-breath.gif?v=20260806-3');
+assert.equal(toad.VERSION, '3.4.0');
+assert.equal(toad.frameSrc('calm', true), '/art/pets/body-toad-v1/states/calm.png');
 assert.equal(toad.frameSrc('strained', true), '/art/pets/body-toad-v1/states/strained.png');
 assert.equal(toad.motionFrameSrc('air'), '/art/pets/body-toad-v1/motion-v4/hop-air.png?v=20260806-3');
 assert.equal(toad.pairFrameSrc('greet-contact'), '/art/pets/body-toad-v1/pair-v4/greet-contact.png?v=20260806-3');
@@ -21,12 +21,13 @@ assert.equal(toad.pairFrameSrc('unknown'), '/art/pets/body-toad-v1/pair-v4/rest-
 assert.deepEqual(toad.INTERACTIONS.whistle.pairFrames, ['whistle-a', 'whistle-b', 'whistle-c', 'whistle-d']);
 assert.equal(typeof toad.playAmbient, 'function');
 assert.equal(typeof toad.installHopFrames, 'function');
+assert.equal(typeof toad.cancelPair, 'function');
+assert.equal(toad.FRAME_CALIBRATION.stretch.scale, 1.12);
 
 const motionRoot = path.join(root, 'public/art/pets/body-toad-v1/motion-v4');
 for (const file of ['idle-blink.png', 'hop-crouch.png', 'hop-air.png', 'solo-stretch.png', 'solo-stretch-up.png', 'bench-sleep.png']) {
   assert.deepEqual(pngSize(path.join(motionRoot, file)), [1024, 1024]);
 }
-assert.ok(fs.statSync(path.join(motionRoot, 'idle-breath.gif')).size > 1000);
 
 const pairRoot = path.join(root, 'public/art/pets/body-toad-v1/pair-v4');
 for (const interaction of Object.values(toad.INTERACTIONS)) {

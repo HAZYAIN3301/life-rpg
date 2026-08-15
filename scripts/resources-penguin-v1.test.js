@@ -15,7 +15,7 @@ function pngInfo(file) {
   };
 }
 
-assert.equal(penguin.VERSION, '1.0.0');
+assert.equal(penguin.VERSION, '1.1.0');
 assert.deepEqual(penguin.STATES, ['calm', 'thriving', 'strained', 'restoring']);
 assert.equal(penguin.stateFromPetState('hungry'), 'strained');
 assert.equal(penguin.stateFromPetState('full'), 'thriving');
@@ -23,6 +23,7 @@ assert.equal(penguin.stateFromPetState('overfed'), 'restoring');
 assert.equal(typeof penguin.installWaddleFrames, 'function');
 assert.equal(typeof penguin.playSolo, 'function');
 assert.equal(typeof penguin.playPair, 'function');
+assert.equal(typeof penguin.cancelPair, 'function');
 assert.deepEqual(Object.keys(penguin.INTERACTIONS), ['greet', 'budget', 'count', 'reserve', 'focus', 'close']);
 
 const artRoot = path.join(root, 'public/art/pets/resources-penguin-v1');

@@ -12,16 +12,18 @@ function pngSize(file) {
   return [header.readUInt32BE(16), header.readUInt32BE(20)];
 }
 
-assert.equal(slug.VERSION, '2.0.0');
+assert.equal(slug.VERSION, '2.4.0');
 assert.equal(slug.deriveState({ restGapDays: 7, energyPct: 90 }), 'strained');
 assert.equal(slug.deriveState({ restGapDays: 0, energyPct: 48 }), 'restoring');
 assert.equal(slug.deriveState({ restGapDays: 0, energyPct: 88 }), 'thriving');
 assert.equal(slug.deriveState({ restGapDays: 3, energyPct: 70 }), 'calm');
-assert.match(slug.frameSrc('calm', true), /idle-softbody\.gif/);
+assert.equal(slug.frameSrc('calm', true), '/art/pets/recovery-slug-v1/states/calm.png');
+assert.equal(typeof slug.cancelPair, 'function');
+assert.deepEqual(slug.INTERACTIONS.stretch.pairFrames, ['stretch-a', 'stretch-soft-b']);
+assert.equal(slug.FRAME_CALIBRATION.compress.scale, 1.1);
 
 const artRoot = path.join(root, 'public/art/pets/recovery-slug-v1');
 for (const state of slug.STATES) assert.deepEqual(pngSize(path.join(artRoot, 'states', `${state}.png`)), [1024, 1024]);
-assert.ok(fs.statSync(path.join(artRoot, 'motion', 'idle-softbody.gif')).size > 1000);
 assert.deepEqual(Object.keys(slug.MOTION_FRAMES), ['compress', 'extend', 'stretch', 'sleep', 'helpers']);
 assert.deepEqual(Object.keys(slug.INTERACTIONS), ['greet', 'breathe', 'restore', 'stretch']);
 for (const file of Object.values(slug.MOTION_FRAMES)) {
@@ -29,7 +31,8 @@ for (const file of Object.values(slug.MOTION_FRAMES)) {
 }
 for (const interaction of Object.values(slug.INTERACTIONS)) {
   for (const frame of interaction.pairFrames) {
-    assert.deepEqual(pngSize(path.join(artRoot, 'pair-v2', `${frame}.png`)), [1536, 1536]);
+    const resolved = path.join(root, 'public', slug.pairFrameSrc(frame).split('?')[0].replace(/^\/+/, ''));
+    assert.deepEqual(pngSize(resolved), [1536, 1536]);
   }
 }
 
@@ -44,7 +47,7 @@ assert.match(styles, /\.den-recovery-slug\s*\{[\s\S]*aspect-ratio:\s*1\s*\/\s*1;
 assert.match(styles, /\.recovery-pair-v2/);
 assert.match(styles, /recoverySlugTourAway/);
 assert.match(fs.readFileSync(path.join(root, 'public/index.html'), 'utf8'), /recovery-slug-v1\.js/);
-assert.match(fs.readFileSync(path.join(root, 'public/sw.js'), 'utf8'), /recovery-slug-v1\/motion\/idle-softbody\.gif/);
+assert.doesNotMatch(fs.readFileSync(path.join(root, 'public/sw.js'), 'utf8'), /recovery-slug-v1\/motion\/idle-softbody\.gif/);
 assert.match(fs.readFileSync(path.join(root, 'public/sw.js'), 'utf8'), /recovery-slug-v1\/pair-v2\/restore-contact\.png/);
 
 console.log('RECOVERY Guardian v2: contract checks passed');
