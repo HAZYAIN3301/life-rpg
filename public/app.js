@@ -546,6 +546,25 @@ const I18N_EXTRA = {
   'Выбрать профиль…': { en: 'Select profile…', de: 'Profil wählen…', uk: 'Обрати профіль…', es: 'Elegir perfil…' },
   'Список пуст': { en: 'List is empty', de: 'Liste ist leer', uk: 'Список порожній', es: 'La lista está vacía' },
   'Искать профиль': { en: 'Search profile', de: 'Profil suchen', uk: 'Шукати профіль', es: 'Buscar perfil' },
+  // ── v159 15.08: живые события неба на доске ──
+  'ТОЛЬКО СЕЙЧАС': { en: 'RIGHT NOW ONLY', de: 'NUR JETZT', uk: 'ТІЛЬКИ ЗАРАЗ', es: 'SOLO AHORA' },
+  'НЕБО НАД ТОБОЙ': { en: 'THE SKY ABOVE YOU', de: 'DER HIMMEL ÜBER DIR', uk: 'НЕБО НАД ТОБОЮ', es: 'EL CIELO SOBRE TI' },
+  'Небо': { en: 'Sky', de: 'Himmel', uk: 'Небо', es: 'Cielo' },
+  'Город': { en: 'City', de: 'Stadt', uk: 'Місто', es: 'Ciudad' },
+  'Выбери город…': { en: 'Pick a city…', de: 'Stadt wählen…', uk: 'Обери місто…', es: 'Elige una ciudad…' },
+  'Определить': { en: 'Detect', de: 'Ermitteln', uk: 'Визначити', es: 'Detectar' },
+  'моё место': { en: 'my place', de: 'mein Ort', uk: 'моє місце', es: 'mi lugar' },
+  'сегодня ночью': { en: 'tonight', de: 'heute Nacht', uk: 'сьогодні вночі', es: 'esta noche' },
+  'Скажи, где ты, — и доска добавит то, что видно только отсюда и только сегодня.': { en: 'Tell it where you are and the board adds what is visible only here and only today.', de: 'Sag, wo du bist — und das Brett ergänzt, was nur von hier und nur heute zu sehen ist.', uk: 'Скажи, де ти, — і дошка додасть те, що видно лише звідси і лише сьогодні.', es: 'Di dónde estás y el tablón añadirá lo que solo se ve aquí y solo hoy.' },
+  'Координаты остаются на твоём аккаунте и никуда не отправляются.': { en: 'The coordinates stay on your account and go nowhere else.', de: 'Die Koordinaten bleiben in deinem Konto und gehen nirgendwo hin.', uk: 'Координати лишаються у твоєму акаунті й нікуди не відправляються.', es: 'Las coordenadas se quedan en tu cuenta y no van a ninguna parte.' },
+  'Выйди туда, где меньше фонарей, и посмотри вверх': { en: 'Get somewhere with fewer streetlights and look up', de: 'Geh dahin, wo weniger Laternen stehen, und schau nach oben', uk: 'Вийди туди, де менше ліхтарів, і подивись угору', es: 'Ve a donde haya menos farolas y mira hacia arriba' },
+  'Браузер не умеет определять место': { en: 'This browser cannot detect your location', de: 'Dieser Browser kann den Standort nicht ermitteln', uk: 'Браузер не вміє визначати місце', es: 'Este navegador no puede detectar tu ubicación' },
+  'Не удалось определить место': { en: 'Could not detect your location', de: 'Standort konnte nicht ermittelt werden', uk: 'Не вдалося визначити місце', es: 'No se pudo detectar tu ubicación' },
+  'Выбери город из списка или нажми «Определить»': { en: 'Pick a city from the list or tap Detect', de: 'Wähle eine Stadt aus der Liste oder tippe auf Ermitteln', uk: 'Обери місто зі списку або натисни «Визначити»', es: 'Elige una ciudad de la lista o pulsa Detectar' },
+  'отличные': { en: 'excellent', de: 'ausgezeichnet', uk: 'відмінні', es: 'excelentes' },
+  'хорошие': { en: 'good', de: 'gut', uk: 'добрі', es: 'buenas' },
+  'мешает луна': { en: 'the moon is in the way', de: 'der Mond stört', uk: 'заважає місяць', es: 'la luna estorba' },
+  'видно везде': { en: 'visible everywhere', de: 'überall sichtbar', uk: 'видно всюди', es: 'visible en todas partes' },
   // ── v159 15.08: свой заказ на доске ──
   'ТВОЙ': { en: 'YOURS', de: 'DEINS', uk: 'ТВІЙ', es: 'TUYO' },
   'ПУСТОЙ ЛИСТ': { en: 'BLANK SHEET', de: 'LEERES BLATT', uk: 'ПОРОЖНІЙ АРКУШ', es: 'HOJA EN BLANCO' },
@@ -14963,10 +14982,65 @@ function boardCustomOrders() {
 }
 function boardOrderById(id) {
   const key = String(id);
+  // Порядок важен: взятое небесное событие лежит СНИМКОМ в custom, и после того как
+  // ночь прошла, вычисляемый список его уже не содержит. Снимок первый — иначе у
+  // активного заказа однажды утром пропал бы текст.
   const custom = boardCustomOrders().find((o) => o.id === key);
   if (custom) return custom;
+  const sky = boardSkyOrders().find((o) => o.id === key);
+  if (sky) return sky;
   const pool = window.BoardPoolV1 ? window.BoardPoolV1.ALL : [];
   return pool.find((o) => o.id === key) || null;
+}
+// ── Живые события неба на доске (идея Альберта 15.08) ────────────────────────
+// Заказы из пула доступны всегда, и в этом их слабость: отложить можно любой. Событие,
+// которое работает только сегодня ночью и только здесь, отложить нельзя — оно и двигает.
+//
+// Спрашиваем место ЗДЕСЬ, а не в настройках: вопрос задаётся ровно там, где сразу видно,
+// зачем он. Это и есть просьба Альберта «чтобы не выглядело подозрительно» — разрешение
+// просится в момент пользы, а не при первом запуске впрок.
+const BOARD_PLACES = Object.freeze([
+  { id: 'dresden', name: 'Дрезден', lat: 51.05, lon: 13.74 },
+  { id: 'berlin', name: 'Берлин', lat: 52.52, lon: 13.40 },
+  { id: 'hamburg', name: 'Гамбург', lat: 53.55, lon: 9.99 },
+  { id: 'munich', name: 'Мюнхен', lat: 48.14, lon: 11.58 },
+  { id: 'koeln', name: 'Кёльн', lat: 50.94, lon: 6.96 },
+  { id: 'frankfurt', name: 'Франкфурт', lat: 50.11, lon: 8.68 },
+  { id: 'vienna', name: 'Вена', lat: 48.21, lon: 16.37 },
+  { id: 'zurich', name: 'Цюрих', lat: 47.38, lon: 8.54 },
+  { id: 'prague', name: 'Прага', lat: 50.08, lon: 14.44 },
+  { id: 'warsaw', name: 'Варшава', lat: 52.23, lon: 21.01 },
+  { id: 'kyiv', name: 'Киев', lat: 50.45, lon: 30.52 },
+  { id: 'split', name: 'Сплит', lat: 43.51, lon: 16.44 },
+]);
+function boardPlace() {
+  const p = State.settings && State.settings.place;
+  if (p && Number.isFinite(Number(p.lat)) && Number.isFinite(Number(p.lon))) {
+    return { name: String(p.name || ''), lat: Number(p.lat), lon: Number(p.lon) };
+  }
+  return null;
+}
+// Часовой пояс берётся у браузера: модуль считает всё в UTC намеренно (он не должен
+// знать про пользователя), а показать надо местное время.
+function boardLocalHHMM(day, minutesUtc) {
+  if (minutesUtc == null) return null;
+  const at = new Date(Date.parse(day + 'T00:00:00Z') + minutesUtc * 60000);
+  return at.toLocaleTimeString(lang(), { hour: '2-digit', minute: '2-digit' });
+}
+function boardSkyOrders() {
+  const S = window.SkyEventsV1, place = boardPlace();
+  if (!S || !place) return [];
+  const today = todayStr();
+  return S.skyEvents({ lat: place.lat, lon: place.lon, from: today, days: 10 }).map((ev) => {
+    const from = boardLocalHHMM(ev.day, ev.startMin), to = boardLocalHHMM(ev.day, ev.endMin);
+    const when = ev.day === today ? t('сегодня ночью') : ev.day;
+    const window_ = from && to ? ` (${from}–${to})` : '';
+    return {
+      id: ev.id, sky: true, custom: true, tags: ['outdoor', 'quiet', 'solo'], sphereId: null,
+      title: `${ev.title}${when ? ' — ' + when : ''}${window_}. ${t('Выйди туда, где меньше фонарей, и посмотри вверх')}`,
+      skyDetail: ev.detail, skyQuality: ev.quality, skyDay: ev.day, skyPlace: place.name,
+    };
+  });
 }
 function boardOrderTitle(order) {
   if (!order) return '';
@@ -15151,7 +15225,9 @@ function boardScreenHTML() {
   // взятые и без того видны в «Твои текущие заказы» выше, дублировать их незачем.
   const takenIds = new Set(mine.map((entry) => entry.orderId));
   const customOffers = boardCustomOrders().filter((o) => !takenIds.has(o.id));
-  const offers = (view.seasonal ? [view.seasonal] : []).concat(view.personal).concat(customOffers);
+  // Небо показывается первым, когда событие сегодня: у него единственного есть срок.
+  const skyOffers = boardSkyOrders().filter((o) => !takenIds.has(o.id)).slice(0, 2);
+  const offers = skyOffers.concat(view.seasonal ? [view.seasonal] : []).concat(view.personal).concat(customOffers);
   const activeOrders = mine.map((entry) => boardOrderById(entry.orderId)).filter(Boolean);
   const selectable = activeOrders.concat(offers);
   const requested = State._boardSel ? selectable.find((order) => order.id === State._boardSel) : null;
@@ -15161,15 +15237,31 @@ function boardScreenHTML() {
 
   const sheet = (order) => {
     const selected = !!(selOrder && selOrder.id === order.id);
-    const label = order.seasonal ? t('ОБЩИЙ СЕЗОННЫЙ') : order.custom ? t('ТВОЙ') : t('ЛИЧНЫЙ');
+    const label = order.seasonal ? t('ОБЩИЙ СЕЗОННЫЙ') : order.sky ? t('ТОЛЬКО СЕЙЧАС') : order.custom ? t('ТВОЙ') : t('ЛИЧНЫЙ');
     return `<button type="button" aria-pressed="${selected}" aria-label="${esc(t('Читать заказ') + ': ' + boardOrderTitle(order))}"
-      class="bsheet${order.seasonal ? ' is-seasonal' : ''}${order.custom ? ' is-custom' : ''}${selected ? ' is-selected' : ''}"
+      class="bsheet${order.seasonal ? ' is-seasonal' : ''}${order.sky ? ' is-sky' : ''}${order.custom && !order.sky ? ' is-custom' : ''}${selected ? ' is-selected' : ''}"
       style="--tilt:${boardTilt(order.id)}deg" data-action="board-pick" data-id="${esc(order.id)}">
       <span class="bsheet-pin" aria-hidden="true"></span><span class="bsheet-kind">${label}</span>
       <span class="bsheet-text"${order.custom ? ' data-noi18n' : ''}>${esc(boardOrderTitle(order))}</span>
       ${order.seasonal ? `<span class="bsheet-seal" aria-hidden="true">S</span>` : ''}
     </button>`;
   };
+  // Место спрашивается один раз и только здесь — рядом с тем, ради чего оно нужно.
+  const placeSheet = boardPlace() ? '' : `
+    <form class="bsheet bsheet-place" id="board-place-form" style="--tilt:${boardTilt('place')}deg">
+      <span class="bsheet-pin" aria-hidden="true"></span><span class="bsheet-kind">${t('НЕБО НАД ТОБОЙ')}</span>
+      <p class="bsheet-text">${t('Скажи, где ты, — и доска добавит то, что видно только отсюда и только сегодня.')}</p>
+      <label class="sr-only" for="board-place-city">${t('Город')}</label>
+      <select id="board-place-city" name="city">
+        <option value="">${t('Выбери город…')}</option>
+        ${BOARD_PLACES.map((p) => `<option value="${esc(p.id)}">${esc(t(p.name))}</option>`).join('')}
+      </select>
+      <div class="bsheet-place-acts">
+        <button type="submit" class="btn ghost sm">${t('Сохранить')}</button>
+        <button type="button" class="btn ghost sm" data-action="board-place-geo">${t('Определить')}</button>
+      </div>
+      <p class="bsheet-place-note muted">${t('Координаты остаются на твоём аккаунте и никуда не отправляются.')}</p>
+    </form>`;
   // Пустой лист: доска предлагает, но не знает, чего человек хочет прямо сейчас.
   const blankSheet = boardCustomOrders().length >= BOARD_CUSTOM_MAX ? '' : `
     <form class="bsheet bsheet-blank" id="board-custom-form" style="--tilt:${boardTilt('blank')}deg">
@@ -15190,7 +15282,9 @@ function boardScreenHTML() {
   let detail = `<p class="bdetail-empty">${t('Выбери заказ, чтобы прочитать его целиком.')}</p>`;
   if (selOrder) {
     const sphere = selOrder.sphereId ? (State.settings.skills || []).find((item) => item.id === selOrder.sphereId) : null;
-    const meta = selOrder.seasonal ? t('Сезонный заказ') : selOrder.custom ? t('Твой заказ') : sphere ? sphere.name : t('Личный заказ');
+    const meta = selOrder.seasonal ? t('Сезонный заказ')
+      : selOrder.sky ? `${t('Небо')} · ${esc(selOrder.skyPlace || '')} · ${esc(t(selOrder.skyQuality || ''))}`
+        : selOrder.custom ? t('Твой заказ') : sphere ? sphere.name : t('Личный заказ');
     detail = `<div class="bdetail-copy">
       <p class="bdetail-meta">${esc(meta)}</p>
       <h3 class="bdetail-title" id="board-detail-title" tabindex="-1"${selOrder.custom ? ' data-noi18n' : ''}>${esc(boardOrderTitle(selOrder))}</h3>
@@ -15217,7 +15311,7 @@ function boardScreenHTML() {
     <div class="board-frame"><div class="board-frame-cap" aria-hidden="true"><span></span><i></i><span></span></div>
       <div class="board-scene">
         <section class="board-wall" aria-labelledby="board-pinned-title"><header class="board-wall-head"><h3 id="board-pinned-title">${t('Приколото для тебя')}</h3><p>${t('Три личных и один общий сезонный заказ. Состав доски меняется раз в неделю.')}</p></header>
-          <div class="board-papers">${offers.map(sheet).join('')}${blankSheet}</div></section>
+          <div class="board-papers">${offers.map(sheet).join('')}${placeSheet}${blankSheet}</div></section>
         <aside class="board-detail" aria-live="polite" aria-labelledby="board-detail-title">${detail}
           ${askOrder ? `<div class="board-ask"><p>${t('Этот заказ у тебя уже давно')} — «${esc(boardOrderTitle(askOrder))}». ${t('Всё ещё твой?')}</p><div><button class="btn ghost sm" data-action="board-keep" data-id="${esc(ask.orderId)}">${t('Мой')}</button><button class="btn ghost sm" data-action="board-return" data-id="${esc(ask.orderId)}">${t('Вернуть')}</button></div></div>` : ''}
         </aside>
@@ -19556,6 +19650,18 @@ async function onSubmit(e) {
     return;
   }
 
+  // --- Город для событий неба ---
+  if (f.id === 'board-place-form') {
+    e.preventDefault();
+    const place = BOARD_PLACES.find((p) => p.id === f.city.value);
+    if (!place) { toast(t('Выбери город из списка или нажми «Определить»')); return; }
+    const settings = structuredClone(State.settings);
+    settings.place = { name: place.name, lat: place.lat, lon: place.lon };
+    State.settings = settings; Store.save('settings', State.settings);
+    State._boardFocusAfterCommit = '#board-title'; render();
+    return;
+  }
+
   // --- Свой заказ на доске ---
   if (f.id === 'board-custom-form') {
     e.preventDefault();
@@ -21051,8 +21157,28 @@ async function onClick(e) {
     if (!B || !o) return;
     const res = B.takeOrder(boardRead(), o, today);
     if (!res.ok) { toast(res.error === 'limit' ? t('Три заказа сразу — уже список дел, а не приключение') : t('Не удалось взять заказ')); return; }
-    const saved = await commitBoardState(res.state);
+    // Небесное событие вычисляется от сегодняшней даты, поэтому завтра его в списке уже
+    // не будет. Взятое — сохраняем снимком рядом со своими заказами, иначе у активной
+    // записи однажды утром пропал бы текст, а закрыть её стало бы нечем.
+    const next = { ...res.state };
+    if (o.sky && !boardCustomOrders().some((c) => c.id === o.id)) {
+      next.custom = boardCustomOrders().concat([{ ...o, takenSnapshot: true }]);
+    }
+    const saved = await commitBoardState(next);
     State._boardSel = id; State._boardFocusAfterCommit = saved ? '#board-detail-title' : '.board-error'; render();
+  } else if (action === 'board-place-geo') {
+    // «Во время использования»: разрешение спрашивается по явному нажатию и ровно там,
+    // где сразу видно зачем. Координаты округляются до 0.1° (~11 км) — для расчёта неба
+    // этого с запасом хватает, а точный адрес хранить незачем.
+    if (!navigator.geolocation) { toast(t('Браузер не умеет определять место')); return; }
+    el.disabled = true;
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const lat = Math.round(pos.coords.latitude * 10) / 10, lon = Math.round(pos.coords.longitude * 10) / 10;
+      const settings = structuredClone(State.settings);
+      settings.place = { name: t('моё место'), lat, lon };
+      State.settings = settings; Store.save('settings', State.settings);
+      State._boardFocusAfterCommit = '#board-title'; render();
+    }, () => { if (el.isConnected) el.disabled = false; toast(t('Не удалось определить место')); }, { timeout: 10000, maximumAge: 600000 });
   } else if (action === 'board-custom-remove') {
     // Снять можно только не взятый заказ — иначе у активной записи пропал бы текст.
     const list = boardCustomOrders();

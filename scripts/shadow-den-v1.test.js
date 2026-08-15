@@ -44,7 +44,7 @@ assert.match(css, /is-shadow-pair-active/);
 assert.match(css, /body:has\(\.focus-pill\.show\) \.den-shell/);
 assert.match(css, /prefers-reduced-motion: reduce[\s\S]*shadow-den-pair-v1/);
 assert.match(index, /shadow-den-v1\.js\?v=20260814-lair-actors-v155-1/);
-assert.match(sw, /const CACHE = 'satoru-v158'/);
+assert.match(sw, /const CACHE = 'satoru-v159'/);
 assert.doesNotMatch(sw, /shadow-den-v1\/pair-v1\/attune-keeper\.png/);
 assert.match(css, /\.shadow-den-pair-v1\s*\{\s*display: none !important/);
 assert.doesNotMatch(shadow.playPair.toString(), /createElement\(['"]img['"]\)/);

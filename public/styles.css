@@ -15479,6 +15479,14 @@ html.calendar-task-open body {
 .board-screen .bsheet-blank input::placeholder { color: #7d6a48; }
 .board-screen .bsheet-blank input:focus-visible { outline: 2px solid #c9a227; outline-offset: 1px; }
 .board-screen .bsheet-blank button { align-self: flex-start; }
+/* Небесное событие: единственный лист со сроком, поэтому он темнее остальных —
+   ночная бумага среди дневной, а не просто ещё один цвет. */
+.board-screen .bsheet.is-sky { background: linear-gradient(160deg, #2b3550, #1e2740 70%, #171e33); color: #e7ecf8; }
+.board-screen .bsheet.is-sky .bsheet-kind { color: #a9bde8; }
+.board-screen .bsheet-place { display: flex; flex-direction: column; gap: var(--sp-2); cursor: default; background: linear-gradient(160deg, #e9edf6, #d8dfee); }
+.board-screen .bsheet-place select { width: 100%; min-width: 0; min-height: var(--touch-min); padding: var(--sp-2); border: 1px solid #8d99b5; border-radius: 2px; background: rgba(255,255,255,.65); color: #23293a; font-family: var(--font-ui); font-size: var(--type-control); }
+.board-screen .bsheet-place-acts { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.board-screen .bsheet-place-note { font-size: var(--type-meta); line-height: var(--leading-label); color: #4c5468; }
 
 .board-detail {
   position: relative;
