@@ -15166,9 +15166,8 @@ html.calendar-task-open body {
 @media (hover: none) { .calib-acts .btn, .calib-note { min-height: 42px; } }
 
 /* ============================================================
-   Shadow Den v1.1 — room-scale meetings on the live canonical rigs.
-   Pair posters remain reference art only: contact never swaps sides, changes
-   the Traveller face, or magnifies two actors into a full-room illustration.
+   Shadow Den v1.3 — live approach, authored atomic palm contact.
+   The current evolution is selected before contact; no Spark fallback.
    ============================================================ */
 .den-companion[data-shadow-den] {
   background: transparent;
@@ -15203,7 +15202,29 @@ html.calendar-task-open body {
 .den-companion[data-shadow-den][data-shadow-den-mode="think"] { translate: 0 -4%; }
 
 .shadow-den-pair-v1 {
-  display: none !important;
+  display: none;
+  position: absolute;
+  left: 35%;
+  bottom: 1.5%;
+  width: 43%;
+  aspect-ratio: 1;
+  z-index: 12;
+  pointer-events: none;
+}
+.shadow-den-pair-v1.is-active { display: block; }
+.shadow-den-pair-v1__stage,
+.shadow-den-pair-v1__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.shadow-den-pair-v1__frame {
+  object-fit: contain;
+  object-position: 50% 100%;
+  filter: drop-shadow(0 12px 13px rgba(4,6,12,.4));
+  animation: shadowDenAtomicBreath 3.2s ease-in-out infinite;
 }
 .den-shell.is-shadow-pair-approaching .den-avatar-core,
 .den-shell.is-shadow-pair-at-meeting .den-avatar-core,
@@ -15240,7 +15261,13 @@ html.calendar-task-open body {
   animation: shadowDenPhaseAnswer 1.45s cubic-bezier(.42,0,.3,1) infinite;
 }
 .den-shell.is-shadow-pair-active .den-scene > .den-pet {
-  opacity: .58;
+  opacity: 1;
+  pointer-events: none;
+}
+.den-shell.is-shadow-pair-active .den-avatar-core,
+.den-shell.is-shadow-pair-active .den-companion[data-shadow-den] {
+  opacity: 0 !important;
+  visibility: hidden;
   pointer-events: none;
 }
 .den-shadow-actions {
@@ -15282,8 +15309,13 @@ html.calendar-task-open body {
   42% { transform: translateY(-4%) rotate(1.5deg); }
   68% { transform: translateY(-2%) rotate(.2deg); }
 }
+@keyframes shadowDenAtomicBreath {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-.7%) scale(1.004); }
+}
 
 @media (max-width: 720px) {
+  .shadow-den-pair-v1 { left: 27%; bottom: 1%; width: 57%; }
   .den-shell.is-shadow-pair-approaching .den-companion[data-shadow-den],
   .den-shell.is-shadow-pair-at-meeting .den-companion[data-shadow-den],
   .den-shell.is-shadow-pair-returning .den-companion[data-shadow-den] {
@@ -15304,6 +15336,7 @@ html.calendar-task-open body {
 @media (prefers-reduced-motion: reduce) {
   .den-companion[data-shadow-den],
   .den-companion[data-shadow-den] *,
+  .shadow-den-pair-v1 *,
   .den-shell.is-shadow-pair-approaching .den-avatar-core,
   .den-shell.is-shadow-pair-at-meeting .den-avatar-core,
   .den-shell.is-shadow-pair-returning .den-avatar-core {
@@ -15318,6 +15351,78 @@ html.calendar-task-open body {
   .den-shell.is-shadow-pair-returning .den-avatar-core {
     translate: 0 0 !important;
     scale: 1 !important;
+  }
+}
+
+/* ============================================================
+   Den pet-pet scenes v1 — authored pair replaces participants only.
+   Traveller and every non-participating resident remain in the room.
+   ============================================================ */
+.den-pet-pair-v1 {
+  display: none;
+  position: absolute;
+  left: 1.5%;
+  bottom: .8%;
+  width: 38%;
+  aspect-ratio: 1;
+  z-index: 12;
+  pointer-events: none;
+}
+.den-pet-pair-v1.is-active { display: block; }
+.den-pet-pair-v1__stage,
+.den-pet-pair-v1__frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.den-pet-pair-v1__frame {
+  object-fit: contain;
+  object-position: 50% 100%;
+  filter: drop-shadow(0 11px 12px rgba(4,6,12,.42));
+}
+.den-pet-pair-v1__frame--a { opacity: 1; }
+.den-pet-pair-v1__frame--b { opacity: 0; }
+.den-pet-pair-v1.is-active .den-pet-pair-v1__frame--a { animation: denPetRecoveryA 2.4s steps(1,end) infinite; }
+.den-pet-pair-v1.is-active .den-pet-pair-v1__frame--b { animation: denPetRecoveryB 2.4s steps(1,end) infinite; }
+@keyframes denPetRecoveryA { 0%,48%,100% { opacity: 1; } 48.001%,92% { opacity: 0; } }
+@keyframes denPetRecoveryB { 0%,48%,92.001%,100% { opacity: 0; } 48.001%,92% { opacity: 1; } }
+
+.den-shell:is(.is-pet-pair-approaching,.is-pet-pair-at-meeting) .den-body-toad {
+  translate: -52% 0 !important;
+  transition: translate 2.2s cubic-bezier(.28,.62,.22,1) !important;
+}
+.den-shell:is(.is-pet-pair-approaching,.is-pet-pair-at-meeting) .den-recovery-slug {
+  translate: -306% 0 !important;
+  transition: translate 2.2s cubic-bezier(.28,.62,.22,1) !important;
+}
+.den-shell.is-pet-pair-returning .den-body-toad,
+.den-shell.is-pet-pair-returning .den-recovery-slug {
+  translate: 0 0 !important;
+  transition: translate 2.3s cubic-bezier(.28,.62,.22,1) !important;
+}
+.den-shell.is-pet-pair-active .den-body-toad,
+.den-shell.is-pet-pair-active .den-recovery-slug {
+  opacity: 0 !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+.den-shell.is-pet-pair-active .den-avatar-core,
+.den-shell.is-pet-pair-active .den-companion[data-shadow-den],
+.den-shell.is-pet-pair-active .den-resources-penguin {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+@media (max-width: 720px) {
+  .den-pet-pair-v1 { left: -.5%; bottom: .5%; width: 46%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .den-pet-pair-v1,
+  .den-pet-pair-v1 *,
+  .den-shell:is(.is-pet-pair-approaching,.is-pet-pair-at-meeting,.is-pet-pair-returning) .den-pet {
+    animation: none !important;
+    transition: none !important;
   }
 }
 

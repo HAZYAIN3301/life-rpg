@@ -1,0 +1,543 @@
+[
+  {
+    "spec": {
+      "label": "shadow-call",
+      "width": 375,
+      "height": 812,
+      "action": "shadow-den-pair",
+      "mode": "attune",
+      "approachAt": 920,
+      "contactAt": 3150
+    },
+    "approach": {
+      "viewport": [
+        375,
+        812
+      ],
+      "overflow": 0,
+      "meeting": "shadow",
+      "laneMotion": "",
+      "classes": "den-shell is-shadow-pair-approaching",
+      "visibleGround": 3,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "right",
+      "avatarPosition": "",
+      "toadDirection": "",
+      "toadMotion": "",
+      "toadRoute": "",
+      "slugDirection": "",
+      "resourceDirection": "",
+      "shadowActions": [
+        "Позвать Тень",
+        "Поговорить",
+        "Проверить курс"
+      ],
+      "scene": {
+        "x": 13,
+        "y": 208.5,
+        "w": 349,
+        "h": 196.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 174.5,
+        "y": 270.9,
+        "w": 96,
+        "h": 134.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "body": {
+        "x": 77.9,
+        "y": 330.7,
+        "w": 65.7,
+        "h": 65.7,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 246.8,
+        "y": 347.1,
+        "w": 48.9,
+        "h": 48.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 302.6,
+        "y": 352.7,
+        "w": 43.3,
+        "h": 43.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 227,
+        "y": 259.6,
+        "w": 42,
+        "h": 49.5,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": null
+    },
+    "contact": {
+      "viewport": [
+        375,
+        812
+      ],
+      "overflow": 0,
+      "meeting": "shadow",
+      "laneMotion": "",
+      "classes": "den-shell is-shadow-pair-at-meeting is-shadow-pair-active is-shadow-pair-settling",
+      "visibleGround": 3,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "right",
+      "avatarPosition": "",
+      "toadDirection": "",
+      "toadMotion": "",
+      "toadRoute": "",
+      "slugDirection": "",
+      "resourceDirection": "",
+      "shadowActions": [
+        "Позвать Тень",
+        "Поговорить",
+        "Проверить курс"
+      ],
+      "scene": {
+        "x": 13,
+        "y": 208.5,
+        "w": 349,
+        "h": 196.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 176.5,
+        "y": 270.9,
+        "w": 96,
+        "h": 134.8,
+        "opacity": "0",
+        "visibility": "hidden",
+        "display": "block"
+      },
+      "body": {
+        "x": 77.9,
+        "y": 330.7,
+        "w": 65.7,
+        "h": 65.7,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 246.8,
+        "y": 347.1,
+        "w": 48.9,
+        "h": 48.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 302.6,
+        "y": 352.7,
+        "w": 43.3,
+        "h": 43.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 225,
+        "y": 259.6,
+        "w": 42,
+        "h": 49.5,
+        "opacity": "0",
+        "visibility": "hidden",
+        "display": "block"
+      },
+      "pair": {
+        "x": 107.2,
+        "y": 202.9,
+        "w": 198.9,
+        "h": 198.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      }
+    }
+  },
+  {
+    "spec": {
+      "label": "pet-recovery-compact",
+      "width": 360,
+      "height": 800,
+      "invoke": "(() => { const shell=document.querySelector('.den-shell'); if(!shell||typeof playPetPairScene!=='function')return false; void playPetPairScene(shell,'body-recovery',{automatic:false,duration:8400}); return true; })()",
+      "approachAt": 920,
+      "contactAt": 3100
+    },
+    "approach": {
+      "viewport": [
+        360,
+        800
+      ],
+      "overflow": 0,
+      "meeting": "",
+      "laneMotion": "",
+      "classes": "den-shell is-pet-pair-approaching",
+      "visibleGround": 3,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "",
+      "avatarPosition": "",
+      "toadDirection": "left",
+      "toadMotion": "",
+      "toadRoute": "",
+      "slugDirection": "left",
+      "resourceDirection": "",
+      "shadowActions": [
+        "Позвать Тень",
+        "Поговорить",
+        "Проверить курс"
+      ],
+      "scene": {
+        "x": 13,
+        "y": 208.5,
+        "w": 334,
+        "h": 187.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 140.9,
+        "y": 268.2,
+        "w": 91.8,
+        "h": 128.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "body": {
+        "x": 45.9,
+        "y": 325.4,
+        "w": 62.8,
+        "h": 62.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 109,
+        "y": 341.1,
+        "w": 46.8,
+        "h": 46.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 289.3,
+        "y": 345.9,
+        "w": 42,
+        "h": 42,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 244.1,
+        "y": 251,
+        "w": 42.4,
+        "h": 47.7,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": null
+    },
+    "contact": {
+      "viewport": [
+        360,
+        800
+      ],
+      "overflow": 0,
+      "meeting": "",
+      "laneMotion": "",
+      "classes": "den-shell is-pet-pair-at-meeting is-pet-pair-active",
+      "visibleGround": 1,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "",
+      "avatarPosition": "",
+      "toadDirection": "",
+      "toadMotion": "",
+      "toadRoute": "",
+      "slugDirection": "",
+      "resourceDirection": "",
+      "shadowActions": [
+        "Позвать Тень",
+        "Поговорить",
+        "Проверить курс"
+      ],
+      "scene": {
+        "x": 13,
+        "y": 208.5,
+        "w": 334,
+        "h": 187.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 140.9,
+        "y": 268.2,
+        "w": 91.8,
+        "h": 128.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "body": {
+        "x": 42.4,
+        "y": 325.4,
+        "w": 62.8,
+        "h": 62.8,
+        "opacity": "0",
+        "visibility": "hidden",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 93.5,
+        "y": 341.1,
+        "w": 46.8,
+        "h": 46.8,
+        "opacity": "0",
+        "visibility": "hidden",
+        "display": "block"
+      },
+      "resources": {
+        "x": 289.3,
+        "y": 345.9,
+        "w": 42,
+        "h": 42,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 243.8,
+        "y": 256,
+        "w": 42.4,
+        "h": 47.7,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": {
+        "x": 11.3,
+        "y": 240.8,
+        "w": 153.6,
+        "h": 153.6,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      }
+    }
+  },
+  {
+    "spec": {
+      "label": "pet-recovery-desktop",
+      "width": 1280,
+      "height": 900,
+      "invoke": "(() => { const shell=document.querySelector('.den-shell'); if(!shell||typeof playPetPairScene!=='function')return false; void playPetPairScene(shell,'body-recovery',{automatic:false,duration:8400}); return true; })()",
+      "approachAt": 1050,
+      "contactAt": 3250
+    },
+    "approach": {
+      "viewport": [
+        1280,
+        900
+      ],
+      "overflow": 0,
+      "meeting": "",
+      "laneMotion": "",
+      "classes": "den-shell is-pet-pair-approaching",
+      "visibleGround": 3,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "",
+      "avatarPosition": "",
+      "toadDirection": "left",
+      "toadMotion": "",
+      "toadRoute": "",
+      "slugDirection": "left",
+      "resourceDirection": "",
+      "shadowActions": [
+        "Позвать Тень",
+        "Поговорить",
+        "Проверить курс"
+      ],
+      "scene": {
+        "x": 121,
+        "y": 366.3,
+        "w": 720,
+        "h": 405,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 396.2,
+        "y": 495.7,
+        "w": 197.7,
+        "h": 279.4,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "body": {
+        "x": 194.1,
+        "y": 620.6,
+        "w": 135.3,
+        "h": 135.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 337,
+        "y": 654.3,
+        "w": 100.8,
+        "h": 100.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 716.3,
+        "y": 665.8,
+        "w": 89.3,
+        "h": 89.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 618.4,
+        "y": 465.8,
+        "w": 82.2,
+        "h": 103.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": null
+    },
+    "contact": {
+      "viewport": [
+        1280,
+        900
+      ],
+      "overflow": 0,
+      "meeting": "",
+      "laneMotion": "",
+      "classes": "den-shell is-pet-pair-at-meeting is-pet-pair-active",
+      "visibleGround": 1,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "",
+      "avatarPosition": "",
+      "toadDirection": "",
+      "toadMotion": "",
+      "toadRoute": "",
+      "slugDirection": "",
+      "resourceDirection": "",
+      "shadowActions": [
+        "Позвать Тень",
+        "Поговорить",
+        "Проверить курс"
+      ],
+      "scene": {
+        "x": 121,
+        "y": 366.3,
+        "w": 720,
+        "h": 405,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 396.2,
+        "y": 495.7,
+        "w": 197.7,
+        "h": 279.4,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "body": {
+        "x": 184.3,
+        "y": 620.6,
+        "w": 135.3,
+        "h": 135.3,
+        "opacity": "0",
+        "visibility": "hidden",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 294.3,
+        "y": 654.3,
+        "w": 100.8,
+        "h": 100.8,
+        "opacity": "0",
+        "visibility": "hidden",
+        "display": "block"
+      },
+      "resources": {
+        "x": 716.3,
+        "y": 665.8,
+        "w": 89.3,
+        "h": 89.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 617.6,
+        "y": 471.7,
+        "w": 82.7,
+        "h": 103.6,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": {
+        "x": 131.8,
+        "y": 494.8,
+        "w": 273.2,
+        "h": 273.2,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      }
+    }
+  }
+]

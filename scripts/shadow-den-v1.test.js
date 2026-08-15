@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const shadow = require('../public/shadow-den-v1.js');
 
-assert.equal(shadow.VERSION, '1.2.0');
+assert.equal(shadow.VERSION, '1.3.0');
 assert.deepEqual(shadow.FORMS, ['spark', 'spirit', 'guardian', 'keeper']);
 assert.deepEqual(Object.keys(shadow.SOLO), ['greet', 'listen', 'think', 'speak']);
 assert.deepEqual(Object.keys(shadow.INTERACTIONS), ['attune', 'rest', 'silence']);
@@ -27,8 +27,8 @@ const app = read('public/app.js');
 const css = read('public/styles.css');
 const index = read('public/index.html');
 const sw = read('public/sw.js');
-for (const action of ['shadow-den-solo', 'shadow-den-pair']) assert.match(app, new RegExp(action));
-for (const key of ['Взаимодействие с Тенью', 'Откликнуться', 'Поговорить']) {
+for (const action of ['shadow-den-solo', 'shadow-den-pair', 'shadow-den-course']) assert.match(app, new RegExp(action));
+for (const key of ['Взаимодействие с Тенью', 'Позвать Тень', 'Поговорить', 'Проверить курс']) {
   assert.match(app, new RegExp(key));
 }
 const denSection = app.slice(app.indexOf('den-shadow-actions'), app.indexOf("if (bodyGuardian) guardianSections.push"));
@@ -43,10 +43,10 @@ assert.match(css, /\.shadow-den-pair-v1/);
 assert.match(css, /is-shadow-pair-active/);
 assert.match(css, /body:has\(\.focus-pill\.show\) \.den-shell/);
 assert.match(css, /prefers-reduced-motion: reduce[\s\S]*shadow-den-pair-v1/);
-assert.match(index, /shadow-den-v1\.js\?v=20260814-lair-actors-v155-1/);
-assert.match(sw, /const CACHE = 'satoru-v159'/);
-assert.doesNotMatch(sw, /shadow-den-v1\/pair-v1\/attune-keeper\.png/);
-assert.match(css, /\.shadow-den-pair-v1\s*\{\s*display: none !important/);
-assert.doesNotMatch(shadow.playPair.toString(), /createElement\(['"]img['"]\)/);
+assert.match(index, /shadow-den-v1\.js\?v=20260815-shadow-pet-v160-1/);
+assert.match(sw, /const CACHE = 'satoru-v160'/);
+for (const form of shadow.FORMS) assert.match(sw, new RegExp(`shadow-den-v1/pair-v1/attune-${form}\\.png`));
+assert.match(css, /\.shadow-den-pair-v1\.is-active \{ display: block; \}/);
+assert.match(shadow.playPair.toString(), /installPairImage/);
 
 console.log('shadow-den-v1: ok');

@@ -14,7 +14,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildShadowDen(root) {
   'use strict';
 
-  const VERSION = '1.2.0';
+  const VERSION = '1.3.0';
   const ART_ROOT = '/art/companions/shadow-den-v1/pair-v1/';
   const FORMS = Object.freeze(['spark', 'spirit', 'guardian', 'keeper']);
   const SOLO = Object.freeze({
@@ -55,10 +55,10 @@
     return ready;
   }
 
-  // Pair posters are retained as archive/reference art only. Runtime meetings
-  // use the live canonical Traveller and the current Shadow rig so scale,
-  // left/right order, eyes and evolution tier cannot drift between renders.
-  function prefetch() { return Promise.resolve([]); }
+  // Approach and return use live rigs; contact uses one authored atomic plate.
+  // This keeps locomotion directional while making the hand touch, gaze and
+  // shared lighting readable without a caption for all four evolutions.
+  function prefetch() { return Promise.allSettled(FORMS.map((_, tier) => preload(pairSrc(tier)))); }
 
   function escapeHTML(value) {
     return String(value == null ? '' : value)
@@ -70,7 +70,25 @@
     const config = options || {};
     const tier = normalizeTier(config.tier);
     const classes = ['shadow-den-pair-v1', config.className || ''].filter(Boolean).join(' ');
-    return `<span class="${escapeHTML(classes)}" data-shadow-den-pair data-tier="${tier}" data-form="${formForTier(tier)}" data-mode="attune" aria-hidden="true"></span>`;
+    return `<span class="${escapeHTML(classes)}" data-shadow-den-pair data-tier="${tier}" data-form="${formForTier(tier)}" data-mode="attune" aria-hidden="true"><span class="shadow-den-pair-v1__stage"></span></span>`;
+  }
+
+  function installPairImage(pair, tier) {
+    const src = pairSrc(tier);
+    return preload(src).then(() => {
+      if (!pair || !pair.isConnected || !root.document) return false;
+      const stage = pair.querySelector('.shadow-den-pair-v1__stage');
+      if (!stage) return false;
+      const image = root.document.createElement('img');
+      image.className = 'shadow-den-pair-v1__frame';
+      image.src = src;
+      image.alt = '';
+      image.setAttribute('aria-hidden', 'true');
+      image.draggable = false;
+      image.decoding = 'async';
+      stage.replaceChildren(image);
+      return true;
+    });
   }
 
   function rigInside(element) {
@@ -156,7 +174,8 @@
     const rig = rigInside(companion);
     const restoreState = String((rig && rig.dataset.shadowState) || 'calm');
     cancelPair(scope, true);
-    return Promise.resolve().then(() => {
+    return installPairImage(pair, tier).then((ready) => {
+      if (!ready) return false;
       if (!scope.isConnected || !pair.isConnected || !companion || !rig) return false;
       pair.dataset.tier = String(tier);
       pair.dataset.form = formForTier(tier);

@@ -1,0 +1,54 @@
+{
+  "id": "den-pet-pairs-v1-20260815",
+  "version": "1.0.0",
+  "canvas": [
+    1536,
+    1536
+  ],
+  "key": "#0000FF",
+  "frames": [
+    {
+      "id": "body-recovery-stretch-a",
+      "source": "sources/body-recovery-stretch-a-keyed.png",
+      "output": "outputs/body-recovery/body-recovery-stretch-a.png",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "mode": "RGBA",
+      "bbox": [
+        31,
+        313,
+        1514,
+        1323
+      ],
+      "visiblePixels": 842937,
+      "transparentPixels": 1516359,
+      "partialAlphaPixels": 22800,
+      "edgeAlphaPixels": 0,
+      "pass": true
+    },
+    {
+      "id": "body-recovery-stretch-b",
+      "source": "sources/body-recovery-stretch-b-keyed.png",
+      "output": "outputs/body-recovery/body-recovery-stretch-b.png",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "mode": "RGBA",
+      "bbox": [
+        39,
+        274,
+        1485,
+        1268
+      ],
+      "visiblePixels": 848070,
+      "transparentPixels": 1511226,
+      "partialAlphaPixels": 28574,
+      "edgeAlphaPixels": 0,
+      "pass": true
+    }
+  ],
+  "pass": true
+}

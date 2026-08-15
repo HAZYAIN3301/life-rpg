@@ -3192,6 +3192,10 @@ const I18N_EXTRA = {
   'Тень действует сама и вместе с Traveller — спокойно, без награды за повтор.': { en: 'Shadow acts alone and with Traveller — calmly, with no reward for repeating it.', de: 'Der Schatten handelt allein und gemeinsam mit Traveller — ruhig und ohne Belohnung fürs Wiederholen.', uk: 'Тінь діє сама й разом із Traveller — спокійно, без нагороди за повтор.', es: 'La Sombra actúa sola y junto a Traveller, con calma y sin recompensa por repetir.' },
   'Тень: откликнуться': { en: 'Shadow: respond', de: 'Schatten: antworten', uk: 'Тінь: відгукнутися', es: 'Sombra: responder' },
   'Откликнуться': { en: 'Respond', de: 'Antworten', uk: 'Відгукнутися', es: 'Responder' },
+  'Тень: позвать': { en: 'Shadow: call', de: 'Schatten: rufen', uk: 'Тінь: покликати', es: 'Sombra: llamar' },
+  'Позвать Тень': { en: 'Call Shadow', de: 'Schatten rufen', uk: 'Покликати Тінь', es: 'Llamar a Sombra' },
+  'Проверить курс': { en: 'Check course', de: 'Kurs prüfen', uk: 'Перевірити курс', es: 'Revisar el rumbo' },
+  'Посмотри на мой сегодняшний план и состояние. Назови один конкретный следующий шаг, который сейчас даст больше всего движения без перегруза. Сначала задай один уточняющий вопрос, только если без него действительно нельзя выбрать.': { en: 'Look at my plan and state today. Name one concrete next step that will create the most movement without overload. Ask one clarifying question first only if choosing is genuinely impossible without it.', de: 'Sieh dir meinen heutigen Plan und Zustand an. Nenne einen konkreten nächsten Schritt, der jetzt ohne Überlastung am meisten Bewegung bringt. Stelle zuerst nur dann eine Rückfrage, wenn die Wahl ohne sie wirklich unmöglich ist.', uk: 'Подивися на мій сьогоднішній план і стан. Назви один конкретний наступний крок, який зараз дасть найбільше руху без перевантаження. Спочатку постав одне уточнювальне питання, лише якщо без нього справді неможливо обрати.', es: 'Mira mi plan y mi estado de hoy. Nombra un siguiente paso concreto que ahora produzca el mayor avance sin sobrecarga. Haz primero una sola pregunta aclaratoria únicamente si de verdad es imposible elegir sin ella.' },
   'Прислушаться': { en: 'Listen closely', de: 'Zuhören', uk: 'Прислухатися', es: 'Escuchar' },
   'Подумать вместе': { en: 'Think together', de: 'Gemeinsam nachdenken', uk: 'Подумати разом', es: 'Pensar juntos' },
   'Поговорить': { en: 'Talk', de: 'Sprechen', uk: 'Поговорити', es: 'Hablar' },
@@ -6427,6 +6431,7 @@ const DEN_SCENE_BUSY_CLASSES = Object.freeze([
   'is-recovery-pair-active', 'is-recovery-pair-approaching', 'is-recovery-pair-at-meeting', 'is-recovery-pair-settling', 'is-recovery-pair-returning',
   'is-resources-pair-active', 'is-resources-pair-approaching', 'is-resources-pair-at-meeting', 'is-resources-pair-settling', 'is-resources-pair-returning',
   'is-shadow-pair-active', 'is-shadow-pair-approaching', 'is-shadow-pair-at-meeting', 'is-shadow-pair-settling', 'is-shadow-pair-returning',
+  'is-pet-pair-active', 'is-pet-pair-approaching', 'is-pet-pair-at-meeting', 'is-pet-pair-returning',
   'is-room-action-v4-active', 'is-toad-ambient-active', 'is-recovery-ambient-active', 'is-resources-ambient-active', 'is-shadow-ambient-active',
 ]);
 const DEN_SCENE_TRANSITION_CLASSES = Object.freeze(DEN_SCENE_BUSY_CLASSES.filter((className) => !className.includes('ambient')));
@@ -6490,7 +6495,7 @@ function clearDenSceneVisuals(shell) {
   shell.classList.remove(...DEN_SCENE_BUSY_CLASSES);
   shell.classList.remove('is-energy-motion-active');
   shell.classList.remove('is-den-prop-portal-active', 'is-den-prop-portal-reaching', 'is-den-prop-portal-extracting');
-  shell.querySelectorAll('[data-body-pair-v2], [data-recovery-pair-v2], [data-resources-pair-v1], [data-shadow-den-pair-v1], [data-traveller-room-v4]').forEach((layer) => {
+  shell.querySelectorAll('[data-body-pair-v2], [data-recovery-pair-v2], [data-resources-pair-v1], [data-shadow-den-pair-v1], [data-den-pet-pair-v1], [data-traveller-room-v4]').forEach((layer) => {
     layer.classList.remove('is-active');
     layer.setAttribute('aria-hidden', 'true');
   });
@@ -6534,6 +6539,7 @@ async function abortDenSceneAction(shell, reason = 'cancelled') {
     window.ShadowDenV1.cancelSolo(shadow, true);
     window.ShadowDenV1.cancelPair(shell);
   }
+  if (window.DenPetPairV1) window.DenPetPairV1.cancelPair(shell);
   clearDenSceneVisuals(shell);
   if (window.DenLifeV1) window.DenLifeV1.postpone(shell, 5000);
   await Promise.allSettled(resets);
@@ -6948,6 +6954,32 @@ async function playShadowPairScene(scope, mode, options = {}) {
   }, { reveal: !automatic });
 }
 
+async function playPetPairScene(scope, sceneId, options = {}) {
+  if (!scope || !window.DenPetPairV1 || !window.DenPetPairV1.sceneFor(sceneId)?.ready) return false;
+  const automatic = options.automatic !== false;
+  const scene = window.DenPetPairV1.sceneFor(sceneId);
+  const duration = Math.max(scene.duration, Number(options.duration) || scene.duration);
+  return runDenSceneAction(scope, `pet-pet:${sceneId}`, async (token) => {
+    cancelDenRoomAction(false);
+    cancelDenAvatarLocomotion(true);
+    const toad = scope.querySelector('[data-body-toad]');
+    const slug = scope.querySelector('[data-recovery-slug]');
+    const penguin = scope.querySelector('[data-resources-penguin]');
+    const shadow = scope.querySelector('[data-shadow-den]');
+    if (toad && window.BodyToadV1?.cancelAmbient) window.BodyToadV1.cancelAmbient(toad);
+    if (slug && window.RecoverySlugV1?.cancelAmbient) window.RecoverySlugV1.cancelAmbient(slug);
+    if (penguin && window.ResourcesPenguinV1?.cancel) window.ResourcesPenguinV1.cancel(penguin, true);
+    if (shadow && window.ShadowDenV1) window.ShadowDenV1.cancelSolo(shadow, true);
+    const play = () => denSceneActionCurrent(token)
+      ? window.DenPetPairV1.playPair(scope, sceneId, { duration })
+      : Promise.resolve(false);
+    return window.DenPetPairV1.approachPair(scope, sceneId, play, {
+      duration,
+      isCurrent: () => denSceneActionCurrent(token),
+    });
+  }, { reveal: !automatic });
+}
+
 function playDenShadowBeat(scope, beatId) {
   const mode = {
     'shadow-greet': 'greet',
@@ -6959,7 +6991,10 @@ function playDenShadowBeat(scope, beatId) {
 
 function syncDenLife() {
   if (!window.DenLifeV1) return false;
-  if (State.view !== 'den') return window.DenLifeV1.stop();
+  if (State.view !== 'den') {
+    if (window.DenPetPairV1) window.DenPetPairV1.stop();
+    return window.DenLifeV1.stop();
+  }
   const shell = document.querySelector('.den-shell');
   const sphereId = bodyGuardianSphereId();
   const resourcesSphereId = resourcesGuardianSphereId();
@@ -6967,8 +7002,11 @@ function syncDenLife() {
   const hasRecoveryGuardian = Boolean(shell && shell.querySelector('[data-recovery-slug]'));
   const hasResourcesGuardian = Boolean(shell && resourcesSphereId && shell.querySelector('[data-resources-penguin]'));
   const hasShadow = Boolean(shell && shell.querySelector('[data-shadow-den]') && window.ShadowDenV1);
-  if (!shell || (!hasBodyGuardian && !hasRecoveryGuardian && !hasResourcesGuardian && !hasShadow)) return window.DenLifeV1.stop();
-  return window.DenLifeV1.start(shell, {
+  if (!shell || (!hasBodyGuardian && !hasRecoveryGuardian && !hasResourcesGuardian && !hasShadow)) {
+    if (window.DenPetPairV1) window.DenPetPairV1.stop();
+    return window.DenLifeV1.stop();
+  }
+  const started = window.DenLifeV1.start(shell, {
     context: denLifeContext(),
     canAct: () => denLifeCanAct(shell),
     onPair: (mode, options) => hasBodyGuardian ? playBodyToadScene(shell, sphereId, mode, options) : false,
@@ -6981,6 +7019,20 @@ function syncDenLife() {
     onWindowVisit: () => runDenAvatarWindowVisit({ automatic: true, reschedule: false }),
     onToadBeat: (beatId) => playDenToadBeat(shell, sphereId, beatId),
   });
+  if (window.DenPetPairV1) {
+    window.DenPetPairV1.start(shell, {
+      ready: () => Number(window.DenLifeV1.inspect()?.step || 0) >= 4,
+      canAct: () => denLifeCanAct(shell),
+      context: () => ({
+        energyPct: energyPct(),
+        focusCanon: denLifeContext().focusCanon,
+        residents: [hasBodyGuardian && 'body', hasRecoveryGuardian && 'recovery', hasResourcesGuardian && 'resources', hasShadow && 'shadow'].filter(Boolean),
+        returning: false,
+      }),
+      onScene: (sceneId, options) => playPetPairScene(shell, sceneId, options),
+    });
+  }
+  return started;
 }
 
 let _denViewportObserver = null;
@@ -14745,7 +14797,7 @@ function renderDen() {
   const ambientMode = amb.mode || 'off';
   const ambient = ambientMeta(ambientMode);
   const avatarLabel = denAvatarActionLabel(avatarPose);
-  const companionLabel = `${t('Тень: откликнуться')} · ${c.name}`;
+  const companionLabel = `${t('Тень: позвать')} · ${c.name}`;
   const ambientLabel = `${t('Эмбиент')}: ${t(ambient.label)}`;
   const editorLabel = State._denEdit ? t('Закрыть редактор комнаты') : t('Обставить комнату');
   const focusRow = tm
@@ -14755,9 +14807,9 @@ function renderDen() {
   if (window.ShadowDenV1) guardianSections.push(`<section class="den-guardian-actions den-shadow-actions" aria-label="${t('Взаимодействие с Тенью')}">
     <span><b>${esc(c.name)} · ${t((COMP_TIERS[ti] || COMP_TIERS[0]).name)}</b><small>${t('Тень действует сама и вместе с Traveller — спокойно, без награды за повтор.')}</small></span>
     <div>
-      <button class="btn ghost sm" data-action="shadow-den-solo" data-mode="greet">${t('Откликнуться')}</button>
+      <button class="btn ghost sm" data-action="shadow-den-pair" data-mode="attune">${t('Позвать Тень')}</button>
       <button class="btn ghost sm" data-action="shadow-den-solo" data-mode="speak">${t('Поговорить')}</button>
-      <button class="btn ghost sm" data-action="comp-pet"${c.pet === todayStr() ? ' disabled' : ''}>${t(c.pet === todayStr() ? 'Сегодня уже встретились' : 'Коснуться')}</button>
+      <button class="btn ghost sm" data-action="shadow-den-course">${t('Проверить курс')}</button>
     </div>
   </section>`);
   if (bodyGuardian) guardianSections.push(`<section class="den-guardian-actions" aria-label="${t('Взаимодействие с хранителем тела')}">
@@ -14806,8 +14858,9 @@ function renderDen() {
         <button data-action="den-ambient-cycle" title="${esc(ambientLabel)}" aria-label="${esc(ambientLabel)}">${satoruIconHTML(ambient.icon, 'den-tool-glyph', '◇')}<span>${t(ambient.label)}</span></button>
         <button class="${State._denEdit ? 'is-active' : ''}" data-action="den-toggle-edit" title="${esc(editorLabel)}" aria-label="${esc(editorLabel)}" aria-expanded="${State._denEdit ? 'true' : 'false'}"${State._denEdit ? ' aria-controls="den-editor"' : ''}>${satoruIconHTML('action.edit', 'den-tool-glyph', '◇')}<span>${State._denEdit ? t('Готово') : t('Обставить')}</span></button>
       </div>
-      <button class="den-companion" data-shadow-den data-shadow-tier="${ti}" data-action="shadow-den-solo" data-mode="greet" title="${esc(companionLabel)}" aria-label="${esc(companionLabel)}">${shadowVideo(ti, mood.face, 'den')}</button>
+      <button class="den-companion" data-shadow-den data-shadow-tier="${ti}" data-action="shadow-den-pair" data-mode="attune" title="${esc(companionLabel)}" aria-label="${esc(companionLabel)}">${shadowVideo(ti, mood.face, 'den')}</button>
       ${window.ShadowDenV1 ? window.ShadowDenV1.pairMarkup({ tier: ti, className: 'shadow-den-pair-v1--den' }) : ''}
+      ${window.DenPetPairV1 ? window.DenPetPairV1.pairMarkup({ className: 'den-pet-pair-v1--den' }) : ''}
       ${bodyGuardian ? window.BodyToadV1.pairMarkup({ className: 'body-pair-v2--den' }) : ''}
       ${resourcesGuardian ? window.ResourcesPenguinV1.pairMarkup({ className: 'resources-pair-v1--den' }) : ''}
       ${recoveryGuardianActive ? window.RecoverySlugV1.pairMarkup({ className: 'recovery-pair-v2--den' }) : ''}
@@ -20537,6 +20590,17 @@ async function onClick(e) {
     if (scope && window.ShadowDenV1 && window.ShadowDenV1.INTERACTIONS[mode]) {
       playShadowPairScene(scope, mode).catch(() => false);
       track(`shadow-den:pair:${mode}`);
+    }
+    return;
+  }
+  if (action === 'shadow-den-course') {
+    const scope = el.closest('.den-shell');
+    if (scope && window.ShadowDenV1) {
+      playShadowSoloScene(scope, 'think', { duration: 1500 }).finally(() => {
+        openHelperChat();
+        sendChat(t('Посмотри на мой сегодняшний план и состояние. Назови один конкретный следующий шаг, который сейчас даст больше всего движения без перегруза. Сначала задай один уточняющий вопрос, только если без него действительно нельзя выбрать.'));
+      });
+      track('shadow-den:course');
     }
     return;
   }
