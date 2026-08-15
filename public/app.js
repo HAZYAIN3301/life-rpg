@@ -546,6 +546,14 @@ const I18N_EXTRA = {
   'Выбрать профиль…': { en: 'Select profile…', de: 'Profil wählen…', uk: 'Обрати профіль…', es: 'Elegir perfil…' },
   'Список пуст': { en: 'List is empty', de: 'Liste ist leer', uk: 'Список порожній', es: 'La lista está vacía' },
   'Искать профиль': { en: 'Search profile', de: 'Profil suchen', uk: 'Шукати профіль', es: 'Buscar perfil' },
+  // ── v159 15.08: сброс пароля письмом (Q17, fb_mspzme8vixjf) ──
+  'Прислать ссылку на почту': { en: 'Email me a link', de: 'Link per E-Mail schicken', uk: 'Надіслати посилання на пошту', es: 'Enviarme un enlace' },
+  'Прислать письмо': { en: 'Send the email', de: 'E-Mail senden', uk: 'Надіслати лист', es: 'Enviar el correo' },
+  '— или по коду восстановления —': { en: '— or with a recovery code —', de: '— oder mit Wiederherstellungscode —', uk: '— або за кодом відновлення —', es: '— o con el código de recuperación —' },
+  'Если такой аккаунт есть — письмо уже в пути. Ссылка живёт час.': { en: 'If that account exists, the email is on its way. The link lasts an hour.', de: 'Falls es dieses Konto gibt, ist die E-Mail unterwegs. Der Link gilt eine Stunde.', uk: 'Якщо такий акаунт є — лист уже в дорозі. Посилання живе годину.', es: 'Si esa cuenta existe, el correo ya va en camino. El enlace dura una hora.' },
+  'Ссылка подтверждена. Задай новый пароль — он заменит старый, и другие устройства выйдут из аккаунта.': { en: 'Link confirmed. Set a new password — it replaces the old one and signs other devices out.', de: 'Link bestätigt. Vergib ein neues Passwort — es ersetzt das alte und meldet andere Geräte ab.', uk: 'Посилання підтверджено. Задай новий пароль — він замінить старий, і інші пристрої вийдуть з акаунта.', es: 'Enlace confirmado. Define una nueva contraseña: reemplaza la anterior y cierra sesión en otros dispositivos.' },
+  'Ссылка недействительна или истекла': { en: 'The link is invalid or has expired', de: 'Der Link ist ungültig oder abgelaufen', uk: 'Посилання недійсне або застаріло', es: 'El enlace no es válido o ha caducado' },
+  'Не удалось отправить': { en: 'Could not send', de: 'Konnte nicht gesendet werden', uk: 'Не вдалося надіслати', es: 'No se pudo enviar' },
   // ── v159 15.08: сундук — честный розыгрыш каждое открытие ──
   'Сундук': { en: 'Chest', de: 'Truhe', uk: 'Скриня', es: 'Cofre' },
   'Ваучер награды': { en: 'Reward voucher', de: 'Belohnungsgutschein', uk: 'Ваучер нагороди', es: 'Vale de recompensa' },
@@ -10382,11 +10390,48 @@ function renderRegisterScreen() {
     <div id="toasts"></div>`;
 }
 
+// Экран «пришла ссылка из письма»: токен и email лежат в URL, человеку остаётся только
+// придумать пароль. Показывается вместо обычного восстановления, когда в адресе есть ?reset=.
+function renderResetTokenScreen() {
+  document.getElementById('app').innerHTML = `
+    <div class="auth-screen">
+      <div class="auth-logo"><span class="auth-brand-mark">${brandMarkHTML()}</span><h1>Satoru</h1><p>${t('Новый пароль')}</p></div>
+      <div class="auth-box">
+        <p class="muted" style="font-size:13px;margin:0 0 12px">${t('Ссылка подтверждена. Задай новый пароль — он заменит старый, и другие устройства выйдут из аккаунта.')}</p>
+        <form id="reset-token-form">
+          <label>${t('Новый пароль (минимум 8)')}</label>
+          <input name="newPassword" type="password" placeholder="${t('Новый пароль')}" autocomplete="new-password" required />
+          <div id="reset-token-error" class="pin-error"></div>
+          <button type="submit" class="btn" style="margin-top:14px;width:100%">${t('Сбросить пароль и войти')}</button>
+        </form>
+        <button class="btn ghost" data-action="go-login" style="margin-top:10px;width:100%">${t('← Вход')}</button>
+      </div>
+    </div>
+    <div id="toasts"></div>`;
+}
 function renderResetScreen() {
+  // Кнопка письма показывается, только если сервер умеет его отправить: обещать письмо,
+  // которое некому послать, хуже, чем не предлагать его вовсе. Ответ кэшируется в State.
+  if (State._resetMailConfigured === undefined) {
+    State._resetMailConfigured = null;
+    fetch('/api/auth/reset-available').then((r) => r.json()).then((d) => {
+      State._resetMailConfigured = !!d.configured;
+      if (State.phase === 'reset') render();
+    }).catch(() => { State._resetMailConfigured = false; });
+  }
+  const mailBlock = State._resetMailConfigured ? `
+        <form id="forgot-form" style="margin:0 0 14px">
+          <label>${t('Прислать ссылку на почту')}</label>
+          <input name="email" type="email" placeholder="you@mail.com" autocomplete="username" required />
+          <button type="submit" class="btn ghost" style="margin-top:8px;width:100%">${t('Прислать письмо')}</button>
+          <p id="forgot-msg" class="muted" style="font-size:12.5px;margin:8px 0 0" role="status" aria-live="polite"></p>
+        </form>
+        <p class="muted" style="font-size:12px;margin:0 0 12px;text-align:center">${t('— или по коду восстановления —')}</p>` : '';
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
       <div class="auth-logo"><span class="auth-brand-mark">${brandMarkHTML()}</span><h1>Satoru</h1><p>${t('Восстановление доступа')}</p></div>
       <div class="auth-box">
+        ${mailBlock}
         <p class="muted" style="font-size:13px;margin:0 0 12px">${t('Введи email и код восстановления, который выдали при регистрации.')} ${t('Не сохранил код — напиши нам, восстановим вручную.')}</p>
         <form id="reset-form">
           <label>Email</label>
@@ -10565,6 +10610,7 @@ function showAuthScreen() {
   if (State.phase === 'login') renderLoginScreen();
   else if (State.phase === 'register') renderRegisterScreen();
   else if (State.phase === 'reset') renderResetScreen();
+  else if (State.phase === 'reset-token') renderResetTokenScreen();
   else if (State.phase === 'onboarding') renderOnboardingScreen();
 }
 
@@ -19459,6 +19505,41 @@ async function onSubmit(e) {
     return;
   }
 
+  // --- Попросить письмо со ссылкой сброса ---
+  if (f.id === 'forgot-form') {
+    e.preventDefault();
+    const msg = f.querySelector('#forgot-msg'), btn = f.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    try {
+      const { response, data } = await accountJson('/api/auth/forgot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: f.email.value.trim() }) }, { authenticated: false });
+      // Сервер намеренно отвечает одинаково для существующего и несуществующего адреса,
+      // поэтому и текст здесь один — иначе форма стала бы проверялкой чужих регистраций.
+      if (response.ok && data.configured) msg.textContent = t('Если такой аккаунт есть — письмо уже в пути. Ссылка живёт час.');
+      else msg.textContent = accountError(data, 'Не удалось отправить');
+    } catch { msg.textContent = t('Сетевая ошибка'); }
+    finally { if (btn.isConnected) btn.disabled = false; }
+    return;
+  }
+
+  // --- Новый пароль по ссылке из письма ---
+  if (f.id === 'reset-token-form') {
+    e.preventDefault();
+    const errEl = f.querySelector('#reset-token-error'), btn = f.querySelector('button[type="submit"]');
+    errEl.setAttribute('role', 'alert');
+    if (f.newPassword.value.length < 8) { errEl.textContent = t('Пароль (минимум 8 символов)'); return; }
+    btn.disabled = true;
+    try {
+      const { response, data } = await accountJson('/api/auth/reset-token', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: State._resetEmail, token: State._resetToken, newPassword: f.newPassword.value }) }, { authenticated: false });
+      if (response.ok) {
+        State._resetToken = ''; State._resetEmail = ''; // токен одноразовый, в памяти не держим
+        State._accountSessionExpired = false; State.me = data;
+        const code = data.recoveryCode; await initApp(); if (code) showRecoveryModal(code);
+      } else errEl.textContent = accountError(data, 'Ссылка недействительна или истекла');
+    } catch { errEl.textContent = t('Сетевая ошибка'); }
+    finally { if (btn.isConnected) btn.disabled = false; }
+    return;
+  }
+
   // --- Привязать email+пароль к существующему аккаунту ---
   if (f.id === 'add-email') {
     e.preventDefault();
@@ -22504,6 +22585,19 @@ async function init() {
     const opt = (o) => ({ method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(o), keepalive: true });
     try { fetch('/api/data/settings', opt(State.settings)); fetch('/api/data/habits', opt(State.habits)); } catch {}
   });
+
+  // Ссылка из письма о сбросе пароля перебивает всё, включая живую сессию: человек мог
+  // просить сброс именно потому, что в аккаунт зашёл кто-то другой. Токен сразу убирается
+  // из адресной строки — иначе он останется в истории браузера и в заголовке Referer.
+  const resetParams = new URLSearchParams(location.search);
+  const resetToken = resetParams.get('reset'), resetEmail = resetParams.get('email');
+  if (resetToken && resetEmail) {
+    State._resetToken = resetToken; State._resetEmail = resetEmail;
+    resetParams.delete('reset'); resetParams.delete('email');
+    const rest = resetParams.toString();
+    history.replaceState(null, '', location.pathname + (rest ? '?' + rest : ''));
+    State.phase = 'reset-token'; render(); return;
+  }
 
   // Проверяем текущую сессию
   try {

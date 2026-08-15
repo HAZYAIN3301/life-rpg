@@ -847,6 +847,60 @@ function setEmailPassword(user, email, password) {
   return code; // вернуть открытый код ОДИН раз
 }
 
+// ---- Сброс пароля письмом (Q17: Resend, 3000 писем/мес бесплатно) ----------------
+// Репорт fb_mspzme8vixjf: «код легко потерять». Код восстановления остаётся и продолжает
+// работать — письмо это ВТОРОЙ путь, а не замена: если ключа нет, всё ведёт себя как раньше.
+const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+// Адрес вынесен в env не ради гибкости, а ради проверяемости: тест поднимает локальную
+// ловушку писем и гоняет через неё НАСТОЯЩИЙ код отправки, а не свою копию.
+const RESEND_API_BASE = process.env.RESEND_API_BASE || 'https://api.resend.com/emails';
+const RESET_FROM = process.env.RESET_MAIL_FROM || 'Satoru <onboarding@resend.dev>';
+const RESET_TTL_MS = 60 * 60 * 1000;          // час: достаточно, чтобы дойти до почты, мало для кражи
+const RESET_COOLDOWN_MS = 2 * 60 * 1000;      // не чаще письма в 2 минуты на аккаунт
+function emailResetConfigured() { return !!RESEND_API_KEY; }
+// Токен хранится ТОЛЬКО в виде HMAC — как и код восстановления. Утечка users.json не даёт
+// возможности сбросить чужой пароль.
+function hashResetToken(token) { return crypto.createHmac('sha256', SECRET).update('reset.' + String(token)).digest('hex'); }
+function issueResetToken(user) {
+  const token = crypto.randomBytes(32).toString('base64url');
+  user.resetHash = hashResetToken(token);
+  user.resetExp = Date.now() + RESET_TTL_MS;
+  user.resetSentAt = Date.now();
+  return token;
+}
+function resetTokenValid(user, token) {
+  if (!user || !user.resetHash || !user.resetExp || Date.now() > user.resetExp) return false;
+  const given = hashResetToken(token);
+  try {
+    return given.length === user.resetHash.length
+      && crypto.timingSafeEqual(Buffer.from(given, 'hex'), Buffer.from(user.resetHash, 'hex'));
+  } catch { return false; }
+}
+function clearResetToken(user) { delete user.resetHash; delete user.resetExp; delete user.resetSentAt; }
+function resetMailHtml(link, name) {
+  const who = String(name || '').replace(/[<>&]/g, '');
+  // Письмо намеренно короткое и без картинок: длинные HTML-письма от незнакомого домена
+  // чаще уезжают в спам, а нам важна доставляемость, а не оформление.
+  return `<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:15px;line-height:1.5;color:#16181d">
+    <p>${who ? who + ', п' : 'П'}ривет. Кто-то попросил сбросить пароль в Satoru.</p>
+    <p><a href="${link}" style="display:inline-block;padding:10px 16px;background:#6c8cff;color:#fff;border-radius:6px;text-decoration:none">Задать новый пароль</a></p>
+    <p style="color:#5a5d66;font-size:13px">Ссылка живёт час и работает один раз. Если это был не ты — просто не открывай её, пароль останется прежним.</p>
+  </div>`;
+}
+async function sendResetMail(to, link, name) {
+  if (!emailResetConfigured()) return false;
+  try {
+    const r = await fetch(RESEND_API_BASE, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from: RESET_FROM, to: [to], subject: 'Сброс пароля — Satoru', html: resetMailHtml(link, name) }),
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!r.ok) { console.error('[reset-mail] resend', r.status, (await r.text()).slice(0, 200)); return false; }
+    return true;
+  } catch (e) { console.error('[reset-mail]', e && e.message); return false; }
+}
+
 // ---- Подписка / entitlement (Pro + 7-дневный триал) ----
 const TRIAL_MS = 7 * 24 * 3600 * 1000;
 function entitlement(user) {
@@ -1971,6 +2025,50 @@ const server = http.createServer(async (req, res) => {
       return res.end(JSON.stringify(Object.assign({ ok: true, recoveryCode: newCode }, publicUser(user))));
     }
 
+    // POST /api/auth/forgot — попросить письмо со ссылкой сброса
+    if (u === '/api/auth/forgot' && req.method === 'POST') {
+      const email = normEmail(body && body.email);
+      if (!validEmail(email)) return sendJson(res, 400, { error: 'некорректный email' });
+      if (!emailResetConfigured()) return sendJson(res, 200, { ok: true, mailed: false, configured: false });
+      const users = loadUsers();
+      const user = users.find(x => x.email && x.email === email);
+      // Ответ ОДИНАКОВЫЙ независимо от того, есть ли такой аккаунт: иначе форма
+      // превращается в проверялку «зарегистрирован ли этот человек в Satoru».
+      // По той же причине не отличается и ответ при попадании в кулдаун.
+      if (user && !(user.resetSentAt && Date.now() - user.resetSentAt < RESET_COOLDOWN_MS)) {
+        const token = issueResetToken(user);
+        saveUsers(users);
+        const link = `${publicBaseUrl(req)}/?reset=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`;
+        const sent = await sendResetMail(email, link, user.name);
+        // Письмо не ушло (упал Resend) — токен не оставляем висеть: пусть человек
+        // нажмёт ещё раз и получит свежий, вместо тихо протухающего в базе.
+        if (!sent) { clearResetToken(user); saveUsers(users); }
+      }
+      return sendJson(res, 200, { ok: true, mailed: true, configured: true });
+    }
+
+    // POST /api/auth/reset-token — задать новый пароль по ссылке из письма
+    if (u === '/api/auth/reset-token' && req.method === 'POST') {
+      const { email, token, newPassword } = body;
+      if (!email || !token || !newPassword) return sendJson(res, 400, { error: 'email, ссылка и новый пароль обязательны' });
+      if (normPw(newPassword).length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
+      const users = loadUsers();
+      const user = users.find(x => x.email && x.email === normEmail(email));
+      if (!resetTokenValid(user, token)) return sendJson(res, 401, { error: 'ссылка недействительна или истекла' });
+      const newCode = setEmailPassword(user, user.email, newPassword); // пароль + ротация кода
+      clearResetToken(user);          // одноразовость: второй переход по той же ссылке не сработает
+      rotateSessionVersion(user);     // чужие живые сессии выкидываются
+      saveUsers(users);
+      const sessionToken = makeSession(user);
+      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(req, sessionToken), 'Cache-Control': 'no-store' });
+      return res.end(JSON.stringify(Object.assign({ ok: true, recoveryCode: newCode }, publicUser(user))));
+    }
+
+    // GET /api/auth/reset-available — знает ли сервер, как отправить письмо
+    if (u === '/api/auth/reset-available' && req.method === 'GET') {
+      return sendJson(res, 200, { configured: emailResetConfigured() });
+    }
+
     // POST /api/auth/add-email — существующий (PIN) аккаунт добавляет email+пароль
     if (u === '/api/auth/add-email' && req.method === 'POST') {
       const uid = sessionUserId(req);
@@ -2837,7 +2935,7 @@ const server = http.createServer(async (req, res) => {
       format: 'satoru-account', version: 1, exportedAt: new Date().toISOString(),
       account: { id: user.id, name: user.name, email: user.email || null },
       data: readPortableAccountData(uid),
-      excludedSecrets: ['password', 'recoveryCode', 'session', 'aiKeys', 'stravaTokens', 'pushSubscription', 'noteMedia'],
+      excludedSecrets: ['password', 'recoveryCode', 'resetToken', 'session', 'aiKeys', 'stravaTokens', 'pushSubscription', 'noteMedia'],
     };
     const filename = `satoru-account-${new Date().toISOString().slice(0, 10)}.json`;
     res.writeHead(200, { 'Content-Type': MIME['.json'], 'Content-Disposition': `attachment; filename="${filename}"`, 'Cache-Control': 'no-store' });
