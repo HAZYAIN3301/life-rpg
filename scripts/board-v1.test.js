@@ -253,3 +253,40 @@ assert.deepEqual(
 );
 
 console.log('board-v1: все проверки прошли');
+
+// ── Свой заказ (просьба Альберта 15.08) ──────────────────────────────────────────
+const APP_SRC = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'public/app.js'), 'utf8');
+function appFn(name) {
+  const start = APP_SRC.indexOf(`function ${name}(`);
+  assert.notEqual(start, -1, `${name} должна быть в app.js`);
+  const brace = APP_SRC.indexOf('{', start); let depth = 0;
+  for (let i = brace; i < APP_SRC.length; i += 1) {
+    if (APP_SRC[i] === '{') depth += 1;
+    else if (APP_SRC[i] === '}' && --depth === 0) return APP_SRC.slice(start, i + 1);
+  }
+  throw new Error(`не закрыта ${name}`);
+}
+
+// Корень возможного бага, а не придирка к стилю: takeOrder/completeOrder/returnOrder все
+// возвращают { ...normalize(state) }, а normalize отдаёт РОВНО свои четыре поля. Значит
+// «Беру» на любом заказе записал бы состояние без custom и стёр все свои заказы разом.
+assert.equal(B.normalize({ active: [], done: [], rested: [], custom: [{ id: 'bc_1', title: 'моё' }] }).custom, undefined,
+  'normalize вдруг сохраняет custom — перенос в commitBoardState можно упростить');
+const takenWithCustom = B.takeOrder({ active: [], done: [], rested: [], custom: [{ id: 'bc_1', title: 'моё' }] }, order('b-x'), T);
+assert.equal(takenWithCustom.ok, true);
+assert.equal(takenWithCustom.state.custom, undefined, 'состояние из takeOrder не несёт custom — перенос обязателен');
+
+// Единственная точка записи обязана его вернуть.
+const commitSrc = appFn('commitBoardState');
+assert.match(commitSrc, /board\.custom === undefined/);
+assert.match(commitSrc, /boardCustomOrders\(\)/);
+
+// Свой заказ резолвится наравне с пуловым и не переводится.
+assert.match(appFn('boardOrderById'), /boardCustomOrders\(\)\.find/);
+assert.match(appFn('boardOrderTitle'), /if \(order\.custom\) return String\(order\.title \|\| ''\)/);
+// Взятый свой заказ не дублируется на доске — он уже виден в «Твои текущие заказы».
+assert.match(APP_SRC, /const customOffers = boardCustomOrders\(\)\.filter\(\(o\) => !takenIds\.has\(o\.id\)\)/);
+// Снять можно только не взятый: иначе у активной записи пропал бы текст.
+assert.match(APP_SRC, /if \(st2\.active\.some\(\(a\) => a\.orderId === id\)\) return;/);
+
+console.log('Board v1: свой заказ — контракт переноса custom проверен');

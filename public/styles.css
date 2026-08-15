@@ -15466,6 +15466,19 @@ html.calendar-task-open body {
 .bsheet-text { display: block; font-weight: 650; }
 .bsheet-seal { position: absolute; right: 18px; bottom: 17px; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle at 36% 28%, #c8564e 0 14%, #96352f 46%, #65221f 100%); color: rgba(255,235,215,.78); font: 800 12px/1 var(--font-display); box-shadow: 0 3px 5px rgba(0,0,0,.38), inset 0 0 0 2px rgba(255,216,184,.17); }
 .board-screen .bsheet.is-selected { z-index: 3; outline: 2px solid #f0c767; outline-offset: 3px; box-shadow: 0 10px 20px rgba(7,5,3,.55); transform: rotate(0deg) translateY(-2px); }
+/* Свой заказ: тот же лист, но кнопка снята — цвет чуть холоднее бумаги пула, чтобы
+   отличать «мной написанное» от «предложенного», не вводя новой формы. */
+.board-screen .bsheet.is-custom { background: linear-gradient(160deg, #eef0e4, #dfe2d0 70%, #cdd2bb); }
+/* Пустой лист — форма, а не кнопка: писать надо прямо на нём. */
+.board-screen .bsheet-blank { display: flex; flex-direction: column; gap: var(--sp-2); cursor: default; background: linear-gradient(160deg, #f2efe4, #e3e0d2); }
+.board-screen .bsheet-blank input {
+  width: 100%; min-width: 0; min-height: var(--touch-min); padding: var(--sp-2);
+  border: 1px dashed #a08a5e; border-radius: 2px; background: rgba(255,255,255,.5);
+  color: #2f2517; font-family: var(--font-ui); font-size: var(--type-control);
+}
+.board-screen .bsheet-blank input::placeholder { color: #7d6a48; }
+.board-screen .bsheet-blank input:focus-visible { outline: 2px solid #c9a227; outline-offset: 1px; }
+.board-screen .bsheet-blank button { align-self: flex-start; }
 
 .board-detail {
   position: relative;

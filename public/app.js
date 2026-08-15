@@ -546,6 +546,15 @@ const I18N_EXTRA = {
   'Выбрать профиль…': { en: 'Select profile…', de: 'Profil wählen…', uk: 'Обрати профіль…', es: 'Elegir perfil…' },
   'Список пуст': { en: 'List is empty', de: 'Liste ist leer', uk: 'Список порожній', es: 'La lista está vacía' },
   'Искать профиль': { en: 'Search profile', de: 'Profil suchen', uk: 'Шукати профіль', es: 'Buscar perfil' },
+  // ── v159 15.08: свой заказ на доске ──
+  'ТВОЙ': { en: 'YOURS', de: 'DEINS', uk: 'ТВІЙ', es: 'TUYO' },
+  'ПУСТОЙ ЛИСТ': { en: 'BLANK SHEET', de: 'LEERES BLATT', uk: 'ПОРОЖНІЙ АРКУШ', es: 'HOJA EN BLANCO' },
+  'Свой заказ': { en: 'Your own order', de: 'Eigener Auftrag', uk: 'Своє замовлення', es: 'Tu propio encargo' },
+  'Твой заказ': { en: 'Your order', de: 'Dein Auftrag', uk: 'Твоє замовлення', es: 'Tu encargo' },
+  'Впиши свой заказ…': { en: 'Write your own order…', de: 'Eigenen Auftrag eintragen…', uk: 'Впиши своє замовлення…', es: 'Escribe tu encargo…' },
+  'Приколоть': { en: 'Pin it', de: 'Anheften', uk: 'Приколоти', es: 'Clavar' },
+  'Снять с доски': { en: 'Take off the board', de: 'Vom Brett nehmen', uk: 'Зняти з дошки', es: 'Quitar del tablón' },
+  'На доске уже много своих заказов': { en: 'That is a lot of your own orders already', de: 'Das sind schon viele eigene Aufträge', uk: 'На дошці вже багато своїх замовлень', es: 'Ya hay muchos encargos tuyos' },
   // ── v159 15.08: сброс пароля письмом (Q17, fb_mspzme8vixjf) ──
   'Прислать ссылку на почту': { en: 'Email me a link', de: 'Link per E-Mail schicken', uk: 'Надіслати посилання на пошту', es: 'Enviarme un enlace' },
   'Прислать письмо': { en: 'Send the email', de: 'E-Mail senden', uk: 'Надіслати лист', es: 'Enviar el correo' },
@@ -14907,7 +14916,16 @@ function boardRead() {
 async function commitBoardState(nextBoard, nextTasks = null) {
   if (State._boardBusy) return false;
   const settings = structuredClone(State.settings);
-  settings.board = nextBoard;
+  // BoardV1.normalize() возвращает РОВНО свои четыре поля, поэтому любое состояние,
+  // пришедшее из takeOrder/completeOrder/returnOrder, приходит уже без `custom`.
+  // Записать его как есть значило бы стирать все свои заказы при первом же «Беру».
+  // Переносим их здесь — в единственной точке, через которую идут все записи доски.
+  const board = { ...nextBoard };
+  if (board.custom === undefined) {
+    const kept = boardCustomOrders();
+    if (kept.length) board.custom = kept;
+  }
+  settings.board = board;
   const data = { settings };
   if (nextTasks) data.tasks = nextTasks;
   State._boardBusy = true;
@@ -14929,12 +14947,31 @@ async function commitBoardState(nextBoard, nextTasks = null) {
     State._boardBusy = false;
   }
 }
+// ── Свой заказ (просьба Альберта 15.08) ──────────────────────────────────────
+// Один лист на доске оставлен пустым: авторский пул хорош тем, что снимает стоимость
+// решения, но он не знает, что человек как раз сейчас хочет сделать. Свой заказ — это
+// тот же приём («выполнимая инструкция самому себе»), только формулирует её человек.
+//
+// Живёт в settings.board.custom, а не в пуле: пул — это файл, общий для всех, и писать
+// туда чужой текст нельзя. Резолвится наравне с пуловыми, поэтому взять/выполнить/вернуть
+// работают без единой правки в board-v1.
+const BOARD_CUSTOM_MAX = 12;    // больше — это уже список дел, а доска не про него
+const BOARD_CUSTOM_LEN = 160;
+function boardCustomOrders() {
+  const list = State.settings && State.settings.board && State.settings.board.custom;
+  return Array.isArray(list) ? list.filter((o) => o && typeof o.id === 'string' && typeof o.title === 'string') : [];
+}
 function boardOrderById(id) {
+  const key = String(id);
+  const custom = boardCustomOrders().find((o) => o.id === key);
+  if (custom) return custom;
   const pool = window.BoardPoolV1 ? window.BoardPoolV1.ALL : [];
-  return pool.find((o) => o.id === String(id)) || null;
+  return pool.find((o) => o.id === key) || null;
 }
 function boardOrderTitle(order) {
   if (!order) return '';
+  // Свой заказ переводить нечем и незачем — это слова человека, как и имена сфер.
+  if (order.custom) return String(order.title || '');
   return window.BoardPoolV1 && typeof window.BoardPoolV1.titleFor === 'function'
     ? window.BoardPoolV1.titleFor(order, lang())
     : String(order.title || '');
@@ -15110,7 +15147,11 @@ function boardScreenHTML() {
     tasteWeights: T ? T.tagWeights(tasteRead(), P.ALL, today) : null,
     scoreOrder: T ? T.scoreOrder : null,
   }, st, today);
-  const offers = (view.seasonal ? [view.seasonal] : []).concat(view.personal);
+  // Свои заказы показываются на доске рядом с предложенными, но только пока не взяты:
+  // взятые и без того видны в «Твои текущие заказы» выше, дублировать их незачем.
+  const takenIds = new Set(mine.map((entry) => entry.orderId));
+  const customOffers = boardCustomOrders().filter((o) => !takenIds.has(o.id));
+  const offers = (view.seasonal ? [view.seasonal] : []).concat(view.personal).concat(customOffers);
   const activeOrders = mine.map((entry) => boardOrderById(entry.orderId)).filter(Boolean);
   const selectable = activeOrders.concat(offers);
   const requested = State._boardSel ? selectable.find((order) => order.id === State._boardSel) : null;
@@ -15120,15 +15161,24 @@ function boardScreenHTML() {
 
   const sheet = (order) => {
     const selected = !!(selOrder && selOrder.id === order.id);
-    const label = order.seasonal ? t('ОБЩИЙ СЕЗОННЫЙ') : t('ЛИЧНЫЙ');
+    const label = order.seasonal ? t('ОБЩИЙ СЕЗОННЫЙ') : order.custom ? t('ТВОЙ') : t('ЛИЧНЫЙ');
     return `<button type="button" aria-pressed="${selected}" aria-label="${esc(t('Читать заказ') + ': ' + boardOrderTitle(order))}"
-      class="bsheet${order.seasonal ? ' is-seasonal' : ''}${selected ? ' is-selected' : ''}"
+      class="bsheet${order.seasonal ? ' is-seasonal' : ''}${order.custom ? ' is-custom' : ''}${selected ? ' is-selected' : ''}"
       style="--tilt:${boardTilt(order.id)}deg" data-action="board-pick" data-id="${esc(order.id)}">
       <span class="bsheet-pin" aria-hidden="true"></span><span class="bsheet-kind">${label}</span>
-      <span class="bsheet-text">${esc(boardOrderTitle(order))}</span>
+      <span class="bsheet-text"${order.custom ? ' data-noi18n' : ''}>${esc(boardOrderTitle(order))}</span>
       ${order.seasonal ? `<span class="bsheet-seal" aria-hidden="true">S</span>` : ''}
     </button>`;
   };
+  // Пустой лист: доска предлагает, но не знает, чего человек хочет прямо сейчас.
+  const blankSheet = boardCustomOrders().length >= BOARD_CUSTOM_MAX ? '' : `
+    <form class="bsheet bsheet-blank" id="board-custom-form" style="--tilt:${boardTilt('blank')}deg">
+      <span class="bsheet-pin" aria-hidden="true"></span><span class="bsheet-kind">${t('ПУСТОЙ ЛИСТ')}</span>
+      <label class="sr-only" for="board-custom-input">${t('Свой заказ')}</label>
+      <input id="board-custom-input" name="title" maxlength="${BOARD_CUSTOM_LEN}" autocomplete="off" required
+        placeholder="${esc(t('Впиши свой заказ…'))}" data-noi18n />
+      <button type="submit" class="btn ghost sm">${t('Приколоть')}</button>
+    </form>`;
 
   const active = activeOrders.length ? `<section class="board-active" aria-labelledby="board-active-title">
     <div class="board-active-label"><h3 id="board-active-title">${t('Твои текущие заказы')}</h3><span>${mine.length}/${B.MAX_ACTIVE}</span></div>
@@ -15140,10 +15190,10 @@ function boardScreenHTML() {
   let detail = `<p class="bdetail-empty">${t('Выбери заказ, чтобы прочитать его целиком.')}</p>`;
   if (selOrder) {
     const sphere = selOrder.sphereId ? (State.settings.skills || []).find((item) => item.id === selOrder.sphereId) : null;
-    const meta = selOrder.seasonal ? t('Сезонный заказ') : sphere ? sphere.name : t('Личный заказ');
+    const meta = selOrder.seasonal ? t('Сезонный заказ') : selOrder.custom ? t('Твой заказ') : sphere ? sphere.name : t('Личный заказ');
     detail = `<div class="bdetail-copy">
       <p class="bdetail-meta">${esc(meta)}</p>
-      <h3 class="bdetail-title" id="board-detail-title" tabindex="-1">${esc(boardOrderTitle(selOrder))}</h3>
+      <h3 class="bdetail-title" id="board-detail-title" tabindex="-1"${selOrder.custom ? ' data-noi18n' : ''}>${esc(boardOrderTitle(selOrder))}</h3>
       <p class="bdetail-state">${selTaken ? t('Заказ у тебя. Вернуть можно в любой момент — это ничего не стоит.') : t('Возьмёшь — он будет ждать тебя. Вернуть можно в любой момент, это ничего не стоит.')}</p>
       <div class="bdetail-acts">${selTaken
         ? `<button class="btn" data-action="board-done" data-id="${esc(selOrder.id)}">${t('Выполнено')}</button><button class="btn ghost" data-action="board-return" data-id="${esc(selOrder.id)}">${t('Вернуть')}</button>`
@@ -15152,6 +15202,7 @@ function boardScreenHTML() {
           : `<button class="btn" data-action="board-take" data-id="${esc(selOrder.id)}">${t('Беру')}</button>`}</div>
       <section class="bdetail-instruction" aria-labelledby="board-how-title"><h4 id="board-how-title">${t('КАК ЗАКРЫТЬ')}</h4><p>${t('Сделай это в реальной жизни и отметь здесь. Самоотчёта достаточно; фотографию можно добавить потом.')}</p></section>
       ${selOrder.seasonal ? `<p class="bdetail-privacy">◉ ${t('Общий для всех заказ. Твоё выполнение и фото остаются приватными.')}</p>` : ''}
+      ${selOrder.custom && !selTaken ? `<p class="bdetail-privacy"><button type="button" class="link-btn" data-action="board-custom-remove" data-id="${esc(selOrder.id)}">${t('Снять с доски')}</button></p>` : ''}
       <div class="bdetail-reward" aria-label="${t('НАГРАДА')}"><span>${t('НАГРАДА')}</span><b>+${BOARD_ORDER_XP} ${t('опыта')}</b><b>+${Math.round(BOARD_ORDER_XP * .35)} ${t('золота')}</b></div>
     </div>`;
   }
@@ -15166,7 +15217,7 @@ function boardScreenHTML() {
     <div class="board-frame"><div class="board-frame-cap" aria-hidden="true"><span></span><i></i><span></span></div>
       <div class="board-scene">
         <section class="board-wall" aria-labelledby="board-pinned-title"><header class="board-wall-head"><h3 id="board-pinned-title">${t('Приколото для тебя')}</h3><p>${t('Три личных и один общий сезонный заказ. Состав доски меняется раз в неделю.')}</p></header>
-          <div class="board-papers">${offers.map(sheet).join('')}</div></section>
+          <div class="board-papers">${offers.map(sheet).join('')}${blankSheet}</div></section>
         <aside class="board-detail" aria-live="polite" aria-labelledby="board-detail-title">${detail}
           ${askOrder ? `<div class="board-ask"><p>${t('Этот заказ у тебя уже давно')} — «${esc(boardOrderTitle(askOrder))}». ${t('Всё ещё твой?')}</p><div><button class="btn ghost sm" data-action="board-keep" data-id="${esc(ask.orderId)}">${t('Мой')}</button><button class="btn ghost sm" data-action="board-return" data-id="${esc(ask.orderId)}">${t('Вернуть')}</button></div></div>` : ''}
         </aside>
@@ -19505,6 +19556,28 @@ async function onSubmit(e) {
     return;
   }
 
+  // --- Свой заказ на доске ---
+  if (f.id === 'board-custom-form') {
+    e.preventDefault();
+    const title = f.title.value.trim().slice(0, BOARD_CUSTOM_LEN);
+    if (!title) return;
+    if (boardCustomOrders().length >= BOARD_CUSTOM_MAX) { toast(t('На доске уже много своих заказов')); return; }
+    const btn = f.querySelector('button[type="submit"]'); btn.disabled = true;
+    // Теги пустые намеренно: они кормят подбор по вкусу (board-taste-v1), а свой
+    // заказ подбирать не нужно — человек уже выбрал. Сфера тоже не спрашивается:
+    // лишний вопрос на пустом листе и есть та самая стоимость решения, которую
+    // доска существует чтобы убирать.
+    const order = { id: 'bc_' + uid(), title, tags: [], sphereId: null, custom: true, createdAt: new Date().toISOString() };
+    const st = boardRead(); if (!st) { if (btn.isConnected) btn.disabled = false; return; }
+    const next = structuredClone(st); next.custom = boardCustomOrders().concat([order]);
+    const saved = await commitBoardState(next);
+    if (btn.isConnected) btn.disabled = false;
+    State._boardSel = saved ? order.id : null;
+    State._boardFocusAfterCommit = saved ? '#board-detail-title' : '.board-error';
+    render();
+    return;
+  }
+
   // --- Попросить письмо со ссылкой сброса ---
   if (f.id === 'forgot-form') {
     e.preventDefault();
@@ -20980,6 +21053,15 @@ async function onClick(e) {
     if (!res.ok) { toast(res.error === 'limit' ? t('Три заказа сразу — уже список дел, а не приключение') : t('Не удалось взять заказ')); return; }
     const saved = await commitBoardState(res.state);
     State._boardSel = id; State._boardFocusAfterCommit = saved ? '#board-detail-title' : '.board-error'; render();
+  } else if (action === 'board-custom-remove') {
+    // Снять можно только не взятый заказ — иначе у активной записи пропал бы текст.
+    const list = boardCustomOrders();
+    if (!list.some((o) => o.id === id)) return;
+    const st2 = boardRead(); if (!st2) return;   // без BoardV1 писать нечего: сервер ждёт active/done/rested
+    if (st2.active.some((a) => a.orderId === id)) return;
+    const next = structuredClone(st2); next.custom = list.filter((o) => o.id !== id);
+    const saved = await commitBoardState(next);
+    State._boardSel = null; State._boardFocusAfterCommit = saved ? '#board-title' : '.board-error'; render();
   } else if (action === 'board-done') {
     const B = window.BoardV1;
     if (!B) return;
