@@ -321,6 +321,15 @@
 
 * { box-sizing: border-box; }
 
+/* Стандартный визуально-скрытый, но доступный скринридеру паттерн. Класс уже
+   использовался в разметке (заметки, схватки, переименование питомца, теперь и
+   пикер сферы) — но нигде не был определён, поэтому все эти подписи были видны
+   на экране вместо того, чтобы озвучиваться. Одно определение чинит все места. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+
 body {
   margin: 0;
   background: radial-gradient(1200px 600px at 80% -10%, rgba(108, 140, 255, 0.1), transparent 60%), var(--bg);
@@ -684,6 +693,8 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .skill-edit .del { flex: 0 0 auto; }
 .skill-edit.is-sub { margin-left: 22px; border-left: 2px solid var(--line); padding-left: 8px; }
 .skill-edit.se-hidden { display: none; }
+.skill-edit.is-archived { opacity: .6; }
+.se-archived-badge { flex: 0 0 auto; font-size: 11.5px; color: var(--muted); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 3px 8px; white-space: nowrap; }
 .se-move { display: inline-flex; flex-direction: column; gap: 1px; flex: 0 0 auto; }
 .se-move button { background: var(--panel2); border: 1px solid var(--line); color: var(--muted); border-radius: 5px; width: 22px; height: 17px; line-height: 1; font-size: 9px; cursor: pointer; padding: 0; }
 .se-move button:hover { color: var(--text); border-color: var(--accent); }
@@ -3678,6 +3689,49 @@ textarea:focus {
 .task-menu .task-menu-delete {
   color: var(--bad);
 }
+.task-menu-diff { padding: 4px var(--sp-2) 2px; border-top: 1px solid var(--line-soft); margin-top: 2px; }
+.task-menu-diff-label { margin: 0 0 4px; font-size: var(--type-meta); line-height: var(--leading-label); }
+.task-diff-row { display: flex; gap: 4px; }
+.task-diff-btn { flex: 1; min-height: var(--touch-min); display: inline-flex; align-items: center; justify-content: center; gap: 4px; border: 1px solid var(--line-soft); border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; padding: 6px 10px; }
+.task-diff-btn.is-active { border-color: var(--accent); background: var(--surface-3); }
+
+/* ── Пикер сферы (sphere-search-v1) — дерево + поиск вместо <select> ──────────
+   Тот же паттерн раскрытия, что у .task-more/.task-menu: <details>, абсолютная
+   панель, свои токены не заводим. */
+.sphere-field { position: relative; }
+.sphere-trigger {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2);
+  min-height: var(--touch-min); padding: 8px 10px; border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm); background: var(--surface); color: var(--text-strong);
+  font-size: var(--type-control); line-height: var(--leading-ui); cursor: pointer; list-style: none;
+}
+.sphere-trigger::-webkit-details-marker { display: none; }
+.sphere-field[open] > .sphere-trigger { border-color: var(--line-strong); }
+.sphere-trigger-value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right; }
+.sphere-panel {
+  position: absolute; top: calc(100% + 4px); left: 0; z-index: 30;
+  width: min(280px, calc(100vw - 40px)); max-height: min(340px, 60vh); overflow-y: auto;
+  display: grid; gap: 4px; padding: 6px; border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md); background: var(--surface-2); box-shadow: var(--shadow-raised);
+}
+.sphere-search-input {
+  min-height: var(--touch-min); padding: 8px 10px; border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm); background: var(--surface); color: var(--text);
+  font-size: var(--type-control); font-family: var(--font-ui);
+}
+.sphere-panel-results { display: grid; gap: 2px; }
+.sphere-row { border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text); font-family: var(--font-ui); text-align: left; cursor: pointer; }
+button.sphere-row { min-height: var(--touch-min); padding: 8px 10px; font-size: var(--type-control); line-height: var(--leading-ui); }
+button.sphere-row:hover, button.sphere-row:focus-visible { background: var(--surface-3); }
+.sphere-row.is-selected { color: var(--accent); font-weight: 700; }
+.admin-user-field { flex: 1 1 240px; min-width: 0; max-width: 320px; }
+.sphere-branch > summary { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); min-height: var(--touch-min); padding: 4px 4px 4px 10px; list-style: none; cursor: pointer; }
+.sphere-branch > summary::-webkit-details-marker { display: none; }
+.sphere-branch-name { font-size: var(--type-control); color: var(--text-strong); flex: 1; }
+.sphere-pick-btn { min-height: var(--touch-min); padding: 6px 10px; border: 1px solid var(--line-soft); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-size: var(--type-meta); font-family: var(--font-ui); cursor: pointer; flex: none; }
+.sphere-pick-btn.is-selected { border-color: var(--accent); color: var(--accent); }
+.sphere-branch-kids { padding-left: var(--sp-3); border-left: 1px solid var(--line-soft); margin-left: 10px; }
+.sphere-empty { padding: 8px 10px; font-size: var(--type-meta); }
 
 .empty-day,
 .empty-repeat {
@@ -3741,6 +3795,16 @@ textarea:focus {
   flex-direction: column;
   gap: 2px;
 }
+
+.day-nav { display: flex; gap: var(--sp-2); margin-bottom: var(--sp-2); }
+.day-nav-btn {
+  flex: 1; display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2);
+  min-height: var(--touch-min); padding: 6px var(--sp-2); border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm); background: var(--surface); color: var(--muted);
+  font-family: var(--font-ui); font-size: var(--type-meta); cursor: pointer;
+}
+.day-nav-btn:hover, .day-nav-btn:focus-visible { color: var(--text-strong); border-color: var(--line-strong); }
+.day-nav-sum { font-variant-numeric: tabular-nums; color: var(--text); font-weight: 600; }
 
 .today-footer {
   grid-column: 1 / -1;
@@ -14309,6 +14373,158 @@ html.calendar-task-open body {
 .loot-capsule-result.r-legendary { border: 4px double var(--rarity-legendary); }
 .loot-capsule-result > span { color: var(--text-soft); font-size: var(--type-meta); line-height: var(--leading-label); font-weight: 800; text-transform: uppercase; letter-spacing: var(--tracking-caps); }
 .loot-capsule-result > strong { overflow-wrap: anywhere; font-size: var(--type-heading); line-height: var(--leading-ui); }
+
+/* ── Честная лента сундука (chest-reveal-v1) ─────────────────────────────────
+   Тот же контракт, что у самого модуля: лента едет по реальному пулу и
+   останавливается на реально выигранном предмете — никакого near-miss,
+   никакой подкрутки соседей. Маркер неподвижен, едет только лента. */
+.loot-reel { position: relative; margin-top: var(--sp-3); height: 68px; overflow: hidden; border-radius: var(--radius-sm); background: var(--surface-2); }
+.loot-reel[hidden] { display: none; }
+.loot-reel-track { position: absolute; top: 0; left: 50%; height: 100%; display: flex; align-items: center; gap: var(--sp-2); will-change: transform; }
+.loot-reel-tile {
+  flex: none; display: grid; place-items: center; width: 88px; height: 52px; padding: 0 var(--sp-2);
+  border-radius: var(--radius-sm); border: 2px solid var(--tile, var(--rarity-common));
+  background: color-mix(in srgb, var(--tile, var(--rarity-common)) 18%, var(--surface-2));
+  color: var(--text-strong); font-size: var(--type-meta); font-weight: 700; text-align: center;
+  line-height: var(--leading-label); overflow-wrap: anywhere;
+}
+.loot-reel-track.is-landed .loot-reel-tile.is-winner {
+  border-width: 3px; box-shadow: 0 0 0 2px color-mix(in srgb, var(--tile, var(--rarity-common)) 55%, transparent);
+}
+.loot-reel-marker {
+  position: absolute; top: -4px; bottom: -4px; left: 50%; width: 2px; transform: translateX(-1px);
+  background: var(--text-strong); opacity: .55; pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) { .loot-reel-track { transition: none !important; } }
+
+/* ============================================================
+   Den spatial director v1.12 — position → facing → free meeting zone.
+   Pair actions use the actors' measured room positions. Residents that are not
+   taking part stay in the room; only a spectator whose footprint intersects
+   the authored pair plate moves to the nearest free anchor.
+   ============================================================ */
+.den-shell[data-den-meeting] .den-avatar-core,
+.den-shell[data-den-meeting] .den-body-toad,
+.den-shell[data-den-meeting] .den-recovery-slug,
+.den-shell[data-den-meeting] .den-resources-penguin,
+.den-shell[data-den-meeting] .den-companion[data-shadow-den],
+.den-shell[data-den-meeting] .den-pet.is-den-spectator-reflow {
+  transition: translate 1.8s cubic-bezier(.3,.68,.22,1), scale 1.8s cubic-bezier(.3,.68,.22,1), opacity .18s ease, visibility 0s linear 0s !important;
+}
+
+.den-shell[data-den-meeting="body"].is-body-pair-approaching .den-avatar-core,
+.den-shell[data-den-meeting="body"].is-body-pair-at-meeting .den-avatar-core,
+.den-shell[data-den-meeting="recovery"].is-recovery-pair-approaching .den-avatar-core,
+.den-shell[data-den-meeting="recovery"].is-recovery-pair-at-meeting .den-avatar-core,
+.den-shell[data-den-meeting="resources"].is-resources-pair-approaching .den-avatar-core,
+.den-shell[data-den-meeting="resources"].is-resources-pair-at-meeting .den-avatar-core,
+.den-shell[data-den-meeting="shadow"].is-shadow-pair-approaching .den-avatar-core,
+.den-shell[data-den-meeting="shadow"].is-shadow-pair-at-meeting .den-avatar-core {
+  translate: var(--den-meeting-avatar-shift) 0 !important;
+  scale: 1 !important;
+}
+
+.den-shell[data-den-meeting="body"].is-body-pair-approaching .den-body-toad,
+.den-shell[data-den-meeting="body"].is-body-pair-at-meeting .den-body-toad,
+.den-shell[data-den-meeting="recovery"].is-recovery-pair-approaching .den-recovery-slug,
+.den-shell[data-den-meeting="recovery"].is-recovery-pair-at-meeting .den-recovery-slug,
+.den-shell[data-den-meeting="resources"].is-resources-pair-approaching .den-resources-penguin,
+.den-shell[data-den-meeting="resources"].is-resources-pair-at-meeting .den-resources-penguin,
+.den-shell[data-den-meeting="shadow"].is-shadow-pair-approaching .den-companion[data-shadow-den],
+.den-shell[data-den-meeting="shadow"].is-shadow-pair-at-meeting .den-companion[data-shadow-den] {
+  translate: var(--den-meeting-actor-shift) 0 !important;
+  scale: 1 !important;
+  animation: none !important;
+}
+
+.den-shell[data-den-meeting].is-body-pair-returning .den-avatar-core,
+.den-shell[data-den-meeting].is-body-pair-returning .den-body-toad,
+.den-shell[data-den-meeting].is-recovery-pair-returning .den-avatar-core,
+.den-shell[data-den-meeting].is-recovery-pair-returning .den-recovery-slug,
+.den-shell[data-den-meeting].is-resources-pair-returning .den-avatar-core,
+.den-shell[data-den-meeting].is-resources-pair-returning .den-resources-penguin,
+.den-shell[data-den-meeting].is-shadow-pair-returning .den-avatar-core,
+.den-shell[data-den-meeting].is-shadow-pair-returning .den-companion[data-shadow-den] {
+  translate: 0 0 !important;
+  scale: 1 !important;
+  animation: none !important;
+}
+
+.den-shell[data-den-meeting="body"] .den-scene[data-den-renderer="v5"] .body-pair-v2,
+.den-shell[data-den-meeting="recovery"] .recovery-pair-v2,
+.den-shell[data-den-meeting="resources"] .resources-pair-v1 {
+  left: var(--den-meeting-pair-left) !important;
+  width: var(--den-meeting-pair-width) !important;
+}
+
+.den-shell[data-den-meeting] .den-pet.is-den-spectator-reflow {
+  translate: var(--den-spectator-shift) 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+}
+.den-shell[data-den-meeting] .den-pet.is-den-spectator-returning { translate: 0 0 !important; }
+
+/* A pair plate replaces only its two participants. Other residents witness the
+   interaction from their own footprint instead of vanishing from the room. */
+.den-shell.is-body-pair-active .den-scene > .den-pet:not(.den-body-toad),
+.den-shell.is-recovery-pair-active .den-scene > .den-pet:not(.den-recovery-slug),
+.den-shell.is-resources-pair-active .den-scene > .den-pet:not(.den-resources-penguin) {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+}
+
+.den-resources-penguin[data-resources-direction="home"] .resources-penguin-v1__frame,
+.den-resources-penguin[data-resources-direction="left"] .resources-penguin-v1__frame { transform: scaleX(-1); }
+.den-companion[data-shadow-flight] .shadow-rig-body {
+  animation: shadowDenLiveFlight .72s cubic-bezier(.35,0,.3,1) infinite !important;
+  animation-play-state: running !important;
+}
+
+/* Traveller's east-lane visits now announce their route. Katsuya uses her
+   authored compress/extend crawl while yielding the lane; every Shadow tier
+   uses the same restrained flight cycle for this first locomotion pool. */
+.den-shell[data-den-lane-motion] .den-recovery-slug {
+  transition: translate 2.2s cubic-bezier(.28,.62,.22,1), scale 2.2s linear !important;
+}
+.den-shell[data-den-lane-motion] .den-companion[data-shadow-den] {
+  transition: left 2.2s cubic-bezier(.28,.62,.22,1), top 2.2s cubic-bezier(.28,.62,.22,1), translate 2.2s cubic-bezier(.28,.62,.22,1) !important;
+}
+.den-shell[data-den-lane-motion] .den-companion[data-shadow-flight] .shadow-rig-body {
+  animation: shadowDenLiveFlight .72s cubic-bezier(.35,0,.3,1) infinite !important;
+  animation-play-state: running !important;
+}
+
+/* The four canonical Shadow posters have different face heights. A form-
+   specific paper eyelid closes over the existing lavender eyes, so this reads
+   as a blink of the same character rather than a whole-poster squash. */
+.den-companion .shadow-rig-body::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 6.4% 3.4% at var(--shadow-eye-left) var(--shadow-eye-y), #342443 0 72%, #76588e 78% 86%, transparent 92%),
+    radial-gradient(ellipse 6.4% 3.4% at var(--shadow-eye-right) var(--shadow-eye-y), #342443 0 72%, #76588e 78% 86%, transparent 92%);
+}
+.den-companion .shadow-form-spark { --shadow-eye-left: 36.4%; --shadow-eye-right: 53.1%; --shadow-eye-y: 76.1%; }
+.den-companion .shadow-form-spirit { --shadow-eye-left: 41.4%; --shadow-eye-right: 55.7%; --shadow-eye-y: 51.5%; }
+.den-companion .shadow-form-guardian { --shadow-eye-left: 43.1%; --shadow-eye-right: 55.7%; --shadow-eye-y: 43.4%; }
+.den-companion .shadow-form-keeper { --shadow-eye-left: 43.1%; --shadow-eye-right: 56.1%; --shadow-eye-y: 49.2%; }
+.den-companion[data-shadow-blink="closed"] .shadow-rig-body::after { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .den-shell[data-den-meeting] .den-avatar-core,
+  .den-shell[data-den-meeting] .den-pet,
+  .den-shell[data-den-meeting] .den-companion[data-shadow-den] {
+    transition: none !important;
+    animation: none !important;
+  }
+  .den-companion .shadow-rig-body::after { display: none; }
+}
 @keyframes rewardCapsuleAnticipation {
   0% { transform: translateY(3px) scale(.96); filter: brightness(.88); }
   65% { transform: translateY(-2px) scale(1.04); filter: brightness(1.12); }
@@ -14948,135 +15164,6 @@ html.calendar-task-open body {
 }
 .calib-acts { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
 @media (hover: none) { .calib-acts .btn, .calib-note { min-height: 42px; } }
-
-/* ============================================================
-   Den spatial director v1.12 — position → facing → free meeting zone.
-   Pair actions use the actors' measured room positions. Residents that are not
-   taking part stay in the room; only a spectator whose footprint intersects
-   the authored pair plate moves to the nearest free anchor.
-   ============================================================ */
-.den-shell[data-den-meeting] .den-avatar-core,
-.den-shell[data-den-meeting] .den-body-toad,
-.den-shell[data-den-meeting] .den-recovery-slug,
-.den-shell[data-den-meeting] .den-resources-penguin,
-.den-shell[data-den-meeting] .den-companion[data-shadow-den],
-.den-shell[data-den-meeting] .den-pet.is-den-spectator-reflow {
-  transition: translate 1.8s cubic-bezier(.3,.68,.22,1), scale 1.8s cubic-bezier(.3,.68,.22,1), opacity .18s ease, visibility 0s linear 0s !important;
-}
-
-.den-shell[data-den-meeting="body"].is-body-pair-approaching .den-avatar-core,
-.den-shell[data-den-meeting="body"].is-body-pair-at-meeting .den-avatar-core,
-.den-shell[data-den-meeting="recovery"].is-recovery-pair-approaching .den-avatar-core,
-.den-shell[data-den-meeting="recovery"].is-recovery-pair-at-meeting .den-avatar-core,
-.den-shell[data-den-meeting="resources"].is-resources-pair-approaching .den-avatar-core,
-.den-shell[data-den-meeting="resources"].is-resources-pair-at-meeting .den-avatar-core,
-.den-shell[data-den-meeting="shadow"].is-shadow-pair-approaching .den-avatar-core,
-.den-shell[data-den-meeting="shadow"].is-shadow-pair-at-meeting .den-avatar-core {
-  translate: var(--den-meeting-avatar-shift) 0 !important;
-  scale: 1 !important;
-}
-
-.den-shell[data-den-meeting="body"].is-body-pair-approaching .den-body-toad,
-.den-shell[data-den-meeting="body"].is-body-pair-at-meeting .den-body-toad,
-.den-shell[data-den-meeting="recovery"].is-recovery-pair-approaching .den-recovery-slug,
-.den-shell[data-den-meeting="recovery"].is-recovery-pair-at-meeting .den-recovery-slug,
-.den-shell[data-den-meeting="resources"].is-resources-pair-approaching .den-resources-penguin,
-.den-shell[data-den-meeting="resources"].is-resources-pair-at-meeting .den-resources-penguin,
-.den-shell[data-den-meeting="shadow"].is-shadow-pair-approaching .den-companion[data-shadow-den],
-.den-shell[data-den-meeting="shadow"].is-shadow-pair-at-meeting .den-companion[data-shadow-den] {
-  translate: var(--den-meeting-actor-shift) 0 !important;
-  scale: 1 !important;
-  animation: none !important;
-}
-
-.den-shell[data-den-meeting].is-body-pair-returning .den-avatar-core,
-.den-shell[data-den-meeting].is-body-pair-returning .den-body-toad,
-.den-shell[data-den-meeting].is-recovery-pair-returning .den-avatar-core,
-.den-shell[data-den-meeting].is-recovery-pair-returning .den-recovery-slug,
-.den-shell[data-den-meeting].is-resources-pair-returning .den-avatar-core,
-.den-shell[data-den-meeting].is-resources-pair-returning .den-resources-penguin,
-.den-shell[data-den-meeting].is-shadow-pair-returning .den-avatar-core,
-.den-shell[data-den-meeting].is-shadow-pair-returning .den-companion[data-shadow-den] {
-  translate: 0 0 !important;
-  scale: 1 !important;
-  animation: none !important;
-}
-
-.den-shell[data-den-meeting="body"] .den-scene[data-den-renderer="v5"] .body-pair-v2,
-.den-shell[data-den-meeting="recovery"] .recovery-pair-v2,
-.den-shell[data-den-meeting="resources"] .resources-pair-v1 {
-  left: var(--den-meeting-pair-left) !important;
-  width: var(--den-meeting-pair-width) !important;
-}
-
-.den-shell[data-den-meeting] .den-pet.is-den-spectator-reflow {
-  translate: var(--den-spectator-shift) 0 !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  pointer-events: none !important;
-}
-.den-shell[data-den-meeting] .den-pet.is-den-spectator-returning { translate: 0 0 !important; }
-
-/* A pair plate replaces only its two participants. Other residents witness the
-   interaction from their own footprint instead of vanishing from the room. */
-.den-shell.is-body-pair-active .den-scene > .den-pet:not(.den-body-toad),
-.den-shell.is-recovery-pair-active .den-scene > .den-pet:not(.den-recovery-slug),
-.den-shell.is-resources-pair-active .den-scene > .den-pet:not(.den-resources-penguin) {
-  opacity: 1 !important;
-  visibility: visible !important;
-  pointer-events: none !important;
-}
-
-.den-resources-penguin[data-resources-direction="home"] .resources-penguin-v1__frame,
-.den-resources-penguin[data-resources-direction="left"] .resources-penguin-v1__frame { transform: scaleX(-1); }
-.den-companion[data-shadow-flight] .shadow-rig-body {
-  animation: shadowDenLiveFlight .72s cubic-bezier(.35,0,.3,1) infinite !important;
-  animation-play-state: running !important;
-}
-
-/* Traveller's east-lane visits now announce their route. Katsuya uses her
-   authored compress/extend crawl while yielding the lane; every Shadow tier
-   uses the same restrained flight cycle for this first locomotion pool. */
-.den-shell[data-den-lane-motion] .den-recovery-slug {
-  transition: translate 2.2s cubic-bezier(.28,.62,.22,1), scale 2.2s linear !important;
-}
-.den-shell[data-den-lane-motion] .den-companion[data-shadow-den] {
-  transition: left 2.2s cubic-bezier(.28,.62,.22,1), top 2.2s cubic-bezier(.28,.62,.22,1), translate 2.2s cubic-bezier(.28,.62,.22,1) !important;
-}
-.den-shell[data-den-lane-motion] .den-companion[data-shadow-flight] .shadow-rig-body {
-  animation: shadowDenLiveFlight .72s cubic-bezier(.35,0,.3,1) infinite !important;
-  animation-play-state: running !important;
-}
-
-/* The four canonical Shadow posters have different face heights. A form-
-   specific paper eyelid closes over the existing lavender eyes, so this reads
-   as a blink of the same character rather than a whole-poster squash. */
-.den-companion .shadow-rig-body::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  opacity: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 6.4% 3.4% at var(--shadow-eye-left) var(--shadow-eye-y), #342443 0 72%, #76588e 78% 86%, transparent 92%),
-    radial-gradient(ellipse 6.4% 3.4% at var(--shadow-eye-right) var(--shadow-eye-y), #342443 0 72%, #76588e 78% 86%, transparent 92%);
-}
-.den-companion .shadow-form-spark { --shadow-eye-left: 36.4%; --shadow-eye-right: 53.1%; --shadow-eye-y: 76.1%; }
-.den-companion .shadow-form-spirit { --shadow-eye-left: 41.4%; --shadow-eye-right: 55.7%; --shadow-eye-y: 51.5%; }
-.den-companion .shadow-form-guardian { --shadow-eye-left: 43.1%; --shadow-eye-right: 55.7%; --shadow-eye-y: 43.4%; }
-.den-companion .shadow-form-keeper { --shadow-eye-left: 43.1%; --shadow-eye-right: 56.1%; --shadow-eye-y: 49.2%; }
-.den-companion[data-shadow-blink="closed"] .shadow-rig-body::after { opacity: 1; }
-
-@media (prefers-reduced-motion: reduce) {
-  .den-shell[data-den-meeting] .den-avatar-core,
-  .den-shell[data-den-meeting] .den-pet,
-  .den-shell[data-den-meeting] .den-companion[data-shadow-den] {
-    transition: none !important;
-    animation: none !important;
-  }
-  .den-companion .shadow-rig-body::after { display: none; }
-}
 
 /* ============================================================
    Shadow Den v1.1 — room-scale meetings on the live canonical rigs.

@@ -94,3 +94,37 @@ test('модуль не назначает сферу и не переводит
   // ловила `.test(` и падала на исправном коде.
   assert.equal(/\bt\(/.test(src), false, 'модуль зовёт переводчик — имена сфер это слова пользователя');
 });
+
+// ── Поверхность в app.js: пикер заменил <select>, и это ломало соседей ────────────
+// Регресс 15.08: sphereFieldHTML() отдаёт скрытый input вместо <select name="skillId">,
+// а авто-подсказка сферы и ИИ-подбор продолжали искать именно `select[name="skillId"]`.
+// querySelector молча возвращал null, каждая ветка была загейчена на `sel` — и вся
+// авто-категория тихо умерла в обеих формах, без ошибки в консоли.
+test('никто не ищет сферу как <select> — поле давно скрытый input', () => {
+  const app = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'public/app.js'), 'utf8');
+  assert.doesNotMatch(app, /select\[name=["']skillId["']\]/, 'осталась выборка сферы через <select>');
+  assert.match(app, /function sphereFieldInput\(form\)/);
+  assert.match(app, /form\.querySelector\('\[name="skillId"\]'\)/);
+});
+
+test('запись сферы обновляет и подпись пикера, а не только значение', () => {
+  const app = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'public/app.js'), 'utf8');
+  const fn = app.slice(app.indexOf('function setSphereFieldValue'), app.indexOf('function updateCatSuggest'));
+  // Иначе авто-подстановка меняет skillId молча: человек видит на кнопке старую сферу.
+  assert.match(fn, /\.sphere-trigger-value/);
+  assert.match(fn, /label\.textContent = skillLabel\(skillId\)/);
+  // Все три места записи ходят через хелпер, а не присваивают .value напрямую.
+  for (const site of ['g.skillId', 'd.skillId', 'el.dataset.skill']) {
+    assert.match(app, new RegExp('setSphereFieldValue\\(form, ' + site.replace(/\./g, '\\.') + '\\)'));
+  }
+});
+
+test('ручной выбор гасит авто-подстановку, авто-подстановка — нет', () => {
+  const app = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'public/app.js'), 'utf8');
+  // Ручной тап шлёт 'change' — тот же сигнал, что слал <select>, его ловит catTouched.
+  assert.match(app, /hidden\.dispatchEvent\(new Event\('change', \{ bubbles: true \}\)\)/);
+  assert.match(app, /e\.target\.name === 'skillId'.*catTouched = '1'/);
+  // А программная подстановка события НЕ шлёт — иначе сама себя бы и выключила.
+  const setter = app.slice(app.indexOf('function setSphereFieldValue'), app.indexOf('function updateCatSuggest'));
+  assert.doesNotMatch(setter, /dispatchEvent/);
+});

@@ -529,6 +529,26 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // ── v156 14.08: пикер сферы, сложность в тот же день, навигация дней ──
+  'Искать сферу': { en: 'Search sphere', de: 'Bereich suchen', uk: 'Шукати сферу', es: 'Buscar ámbito' },
+  'Искать сферу…': { en: 'Search sphere…', de: 'Bereich suchen…', uk: 'Шукати сферу…', es: 'Buscar ámbito…' },
+  'Выбрать': { en: 'Select', de: 'Auswählen', uk: 'Обрати', es: 'Elegir' },
+  'Ничего не нашлось': { en: 'Nothing found', de: 'Nichts gefunden', uk: 'Нічого не знайдено', es: 'No se encontró nada' },
+  'Сложность — можно поменять сегодня': { en: 'Difficulty — changeable today', de: 'Schwierigkeit — heute noch änderbar', uk: 'Складність — можна змінити сьогодні', es: 'Dificultad — se puede cambiar hoy' },
+  'Соседние дни': { en: 'Nearby days', de: 'Nachbartage', uk: 'Сусідні дні', es: 'Días cercanos' },
+  'Вчера': { en: 'Yesterday', de: 'Gestern', uk: 'Вчора', es: 'Ayer' },
+  'Завтра': { en: 'Tomorrow', de: 'Morgen', uk: 'Завтра', es: 'Mañana' },
+  'пусто': { en: 'empty', de: 'leer', uk: 'порожньо', es: 'vacío' },
+  'Точно? Отменить это действие нельзя.': { en: 'Sure? This cannot be undone.', de: 'Sicher? Das lässt sich nicht rückgängig machen.', uk: 'Точно? Це не можна скасувати.', es: '¿Seguro? No se puede deshacer.' },
+  'Сфера в архиве': { en: 'Sphere archived', de: 'Bereich archiviert', uk: 'Сфера в архіві', es: 'Ámbito archivado' },
+  'Пропадает из пикеров выбора сферы, но история и опыт остаются': { en: 'Hidden from sphere pickers, history and XP stay intact', de: 'Verschwindet aus der Bereichsauswahl, Verlauf und XP bleiben erhalten', uk: 'Зникає з пікерів вибору сфери, історія і досвід лишаються', es: 'Desaparece de los selectores de ámbito, el historial y la XP se mantienen' },
+  'Удалить совсем — вместе с историей и опытом': { en: 'Delete permanently — along with history and XP', de: 'Endgültig löschen — inklusive Verlauf und XP', uk: 'Видалити назавжди — разом з історією і досвідом', es: 'Eliminar definitivamente — junto con el historial y la XP' },
+  'Выбрать профиль…': { en: 'Select profile…', de: 'Profil wählen…', uk: 'Обрати профіль…', es: 'Elegir perfil…' },
+  'Список пуст': { en: 'List is empty', de: 'Liste ist leer', uk: 'Список порожній', es: 'La lista está vacía' },
+  'Искать профиль': { en: 'Search profile', de: 'Profil suchen', uk: 'Шукати профіль', es: 'Buscar perfil' },
+  'Записать голосом': { en: 'Record with voice', de: 'Mit Stimme aufnehmen', uk: 'Записати голосом', es: 'Grabar con voz' },
+  'Остановить запись': { en: 'Stop recording', de: 'Aufnahme stoppen', uk: 'Зупинити запис', es: 'Detener grabación' },
+  'Нет доступа к микрофону': { en: 'No microphone access', de: 'Kein Mikrofonzugriff', uk: 'Немає доступу до мікрофона', es: 'Sin acceso al micrófono' },
   // ── v152: ИИ-ключи больше не «отключаются» сами (fb_msi18cbi65qh) ──
   'Проверяю подключение…': { en: 'Checking the connection…', de: 'Verbindung wird geprüft…', uk: 'Перевіряю підключення…', es: 'Comprobando la conexión…' },
   // ── Арена v151: предложения схваток из детектора (§1, вариант C) ──
@@ -4727,10 +4747,22 @@ function guessCategoryFromHistory(title) {
   return { skillId: ranked[0][0], score: ranked[0][1], layers };
 }
 // Обновляет чип-подсказку под полем ввода квеста (вызывается на input)
+// Поле сферы в форме квеста — уже не <select>, а sphereFieldHTML(): скрытый input плюс
+// видимая подпись в <summary>. Поэтому «прочитать значение» и «записать значение» больше не
+// одно и то же действие: запись обязана обновить ещё и подпись, иначе авто-подстановка сферы
+// молча меняет skillId, а человек продолжает видеть на кнопке старое имя.
+function sphereFieldInput(form) { return form && form.querySelector('[name="skillId"]'); }
+function setSphereFieldValue(form, skillId) {
+  const input = sphereFieldInput(form); if (!input || !skillId) return;
+  input.value = skillId;
+  const field = input.closest('.sphere-field');
+  const label = field && field.querySelector('.sphere-trigger-value');
+  if (label) label.textContent = skillLabel(skillId);
+}
 function updateCatSuggest(inputEl) {
   const form = inputEl.closest('form'); if (!form) return;
   const box = form.parentElement.querySelector('#cat-suggest'); if (!box) return;
-  const sel = form.querySelector('select[name="skillId"]');
+  const sel = sphereFieldInput(form);
   const txt = inputEl.value.trim();
   const g = guessCategoryFromHistory(txt);
   // Бэклог «Трение» (fb_mrnivhqrssjx): раньше подсказка была чипом «применить» — лишний тап на
@@ -4738,7 +4770,7 @@ function updateCatSuggest(inputEl) {
   // свободен). Тронул селект руками (catTouched ставит onChange) — авто выключается, чип
   // возвращается кнопкой-подсказкой, ничего не перебиваем.
   if (g && sel && !form.dataset.catTouched) {
-    if (sel.value !== g.skillId) sel.value = g.skillId;
+    if (sel.value !== g.skillId) setSphereFieldValue(form, g.skillId);
     box.innerHTML = `<span class="cat-chip cat-chip-auto">💡 ${esc(t('Сфера подставлена'))}: <b>${esc(skillLabel(g.skillId))}</b></span>`;
   } else if (g && sel && sel.value !== g.skillId) { // локальная эвристика по истории — мгновенно, бесплатно
     box.innerHTML = `<button type="button" class="cat-chip" data-action="apply-cat" data-skill="${esc(g.skillId)}">💡 Обычно сюда: <b>${esc(skillLabel(g.skillId))}</b> · применить</button>`;
@@ -4746,7 +4778,7 @@ function updateCatSuggest(inputEl) {
     // Истории нет (новый юзер / новое дело) → словарь частых активностей. Мгновенно и бесплатно,
     // до всякого ИИ: у новичка история пуста по определению, и без этого он не увидел бы подсказок вовсе.
     const d = guessFromDictionary(txt);
-    if (sel.value !== d.skillId) sel.value = d.skillId;
+    if (sel.value !== d.skillId) setSphereFieldValue(form, d.skillId);
     box.innerHTML = `<span class="cat-chip cat-chip-auto">💡 ${esc(t('Сфера подставлена'))}: <b>${esc(skillLabel(d.skillId))}</b></span>`;
   } else if (!g && txt.length >= 4 && canUseAi()) { // нет в истории + ИИ доступен (свой ключ или Pro) → предложить спросить ИИ
     box.innerHTML = `<button type="button" class="cat-chip cat-chip-ai" data-action="ai-cat-suggest" data-title="${esc(txt)}">🤖 Подобрать сферу через ИИ</button>`;
@@ -4923,12 +4955,73 @@ function skillLabel(id) {
   while (cur && g++ < 8) { parts.unshift(cur.name); cur = cur.parentId ? State.settings.skills.find((x) => x.id === cur.parentId) : null; }
   return parts.length ? parts.join(' › ') : id;
 }
+// ── Пикер сферы v1: дерево с раскрытием + поиск (fb_msi16wnqpyrs, fb_mqdgi36249e4) ──
+// Заменяет плоский <select> в форме создания квеста. Причина жалобы была буквальной:
+// нативный <select> с сотней вложенных строк — это просто длинный список без поиска
+// и без сворачивания, и третий уровень вложенности («Учёба › Школа › Математика»)
+// в нём физически не отличить от первого. sphere-search-v1 отдаёт ранжирование и
+// путь, само дерево строится здесь — модуль ничего не знает про DOM.
+//
+// Форма читает значение как `f.skillId.value` — это работает одинаково для <select>
+// и для <input type="hidden">, поэтому обработчики сабмита не тронуты вообще.
+// Архивная сфера (и вся её ветка потомков) прячется из пикеров выбора, но не из истории/опыта
+// (skillById/skillLabel её по-прежнему резолвят как обычно) — см. archive-skill в onClick.
+function pickerVisibleSkills() {
+  const hidden = new Set(State.settings.skills.filter((s) => s.archived).map((s) => s.id));
+  let grew = true;
+  while (grew) {
+    grew = false;
+    for (const s of State.settings.skills) if (!hidden.has(s.id) && s.parentId && hidden.has(s.parentId)) { hidden.add(s.id); grew = true; }
+  }
+  return State.settings.skills.filter((s) => !hidden.has(s.id));
+}
+function sphereTreeHTML(parentId, selectedId, chain, depth) {
+  if (depth > 6) return '';
+  const kids = pickerVisibleSkills().filter((s) => (s.parentId || null) === parentId);
+  return kids.map((s) => {
+    const path = [...chain, s.name];
+    const label = path.join(' › ');
+    const selCls = s.id === selectedId ? ' is-selected' : '';
+    if (!isPillar(s.id)) {
+      return `<button type="button" class="sphere-row sphere-leaf${selCls}" data-action="sphere-pick" data-id="${esc(s.id)}" data-label="${esc(label)}">${esc(s.name)}</button>`;
+    }
+    // Столб раскрывается тапом по имени (нативный <details>), но остаётся и
+    // самостоятельным выбором — «Здоровье» без подсфер законный выбор (см.
+    // sphere-search-v1). Поэтому у него отдельная кнопка «Выбрать» внутри summary,
+    // а не сам тап по summary — иначе раскрытие и выбор конкурировали бы за один жест.
+    return `<details class="sphere-row sphere-branch"${s.id === selectedId ? ' open' : ''}>
+      <summary><span class="sphere-branch-name">${esc(s.name)}</span><button type="button" class="sphere-pick-btn${selCls}" data-action="sphere-pick" data-id="${esc(s.id)}" data-label="${esc(label)}">${esc(t('Выбрать'))}</button></summary>
+      <div class="sphere-branch-kids">${sphereTreeHTML(s.id, selectedId, path, depth + 1)}</div>
+    </details>`;
+  }).join('');
+}
+function sphereResultsHTML(query, selectedId) {
+  const S = window.SphereSearchV1;
+  if (!S) return sphereTreeHTML(null, selectedId, [], 0); // без модуля — дерево и без поиска, не пусто
+  const q = String(query || '').trim();
+  if (!q) return sphereTreeHTML(null, selectedId, [], 0);
+  const rows = S.search(pickerVisibleSkills(), q, { limit: 24 });
+  if (!rows.length) return `<p class="sphere-empty muted">${esc(t('Ничего не нашлось'))}</p>`;
+  return rows.map((r) => `<button type="button" class="sphere-row sphere-leaf${r.id === selectedId ? ' is-selected' : ''}" data-action="sphere-pick" data-id="${esc(r.id)}" data-label="${esc(r.label)}">${esc(r.label)}</button>`).join('');
+}
+function sphereFieldHTML(selectedId) {
+  const sel = selectedId || (State.settings.skills[0] && State.settings.skills[0].id) || '';
+  return `<details class="add-field add-field-skill sphere-field">
+    <summary class="sphere-trigger"><span class="add-field-label">${esc(t('Сфера'))}</span><span class="sphere-trigger-value" data-noi18n>${esc(skillLabel(sel))}</span></summary>
+    <div class="sphere-panel">
+      <label class="sr-only" for="sphere-search-${sel}">${esc(t('Искать сферу'))}</label>
+      <input type="text" id="sphere-search-${sel}" class="sphere-search-input" placeholder="${esc(t('Искать сферу…'))}" autocomplete="off" />
+      <div class="sphere-panel-results">${sphereResultsHTML('', sel)}</div>
+    </div>
+    <input type="hidden" name="skillId" value="${esc(sel)}" /></details>`;
+}
 // Опции <select> в иерархическом порядке: столб, затем его под-навыки («Столб › Под»)
 function skillOptionsHTML(sel) {
   let html = '';
+  const visible = pickerVisibleSkills();
   const walk = (parentId, chain, depth) => {
     if (depth > 6) return;
-    for (const s of State.settings.skills.filter((x) => (x.parentId || null) === parentId)) {
+    for (const s of visible.filter((x) => (x.parentId || null) === parentId)) {
       html += `<option value="${s.id}" ${s.id === sel ? 'selected' : ''}>${esc([...chain, s.name].join(' › '))}${isPillar(s.id) ? ' (общее)' : ''}</option>`;
       walk(s.id, [...chain, s.name], depth + 1);
     }
@@ -10491,6 +10584,10 @@ function questRow(q) {
       ${linkedGoal ? `<a class="task-menu-goal" href="${esc(goalDeepLinkHref(linkedGoal.id))}" data-action="goto-goal" data-id="${linkedGoal.id}">🎯 ${t('Открыть связанную цель')}: <span data-noi18n>${esc(linkedGoal.title)}</span></a>` : ''}
       ${!q.done ? `<button data-action="focus-task" data-id="${q.id}" aria-label="${t(active ? 'Открыть активный фокус' : 'Начать фокус')}: ${esc(fullTitle)}">${satoruIconHTML(active ? 'media.pause' : 'media.play', 'task-action-icon', active ? '⏱' : '▶')} ${t(active ? 'Открыть фокус' : 'Начать фокус')}</button>` : ''}
       ${q.date === todayStr() ? `<button data-action="toggle-core" data-id="${q.id}" aria-pressed="${q.core ? 'true' : 'false'}">◆ ${esc(coreLabel)}</button>` : ''}
+      ${!q.done && q.createdAt && fmtDate(new Date(q.createdAt)) === todayStr() ? `<div class="task-menu-diff">
+        <p class="task-menu-diff-label muted">${esc(t('Сложность — можно поменять сегодня'))}</p>
+        <div class="task-diff-row" role="group" aria-label="${esc(t('Сложность'))}">${['easy', 'normal', 'hard'].map((d) => `<button type="button" class="task-diff-btn${q.difficulty === d ? ' is-active' : ''}" data-action="edit-difficulty" data-id="${q.id}" data-difficulty="${d}" aria-pressed="${q.difficulty === d ? 'true' : 'false'}" title="${esc(DIFF[d] || '')}">${difficultyIconHTML(d)}</button>`).join('')}</div>
+      </div>` : ''}
       <button class="task-menu-delete" data-action="delete-task" data-id="${q.id}">${satoruIconHTML('action.close', 'task-action-icon', '✕')} ${t('Удалить квест')}</button>
     </div></details>`;
   return `<li class="task ${q.done ? 'done' : ''} ${q.core ? 'is-core' : ''}">
@@ -11149,11 +11246,12 @@ function renderCalendarView() {
           <input type="hidden" name="date" value="${date}" />
           <label class="add-field add-field-title"><span class="add-field-label">${esc(t('Название квеста'))}</span><input name="title" placeholder="${esc(t('Новый квест на этот день…'))}" autocomplete="off" maxlength="160" required /></label>
           <label class="add-field add-field-time"><span class="add-field-label">${esc(t('Начало'))}</span><input name="startTime" type="time" min="00:00" max="23:45" step="900" /></label>
-          <label class="add-field add-field-skill"><span class="add-field-label">${esc(t('Сфера'))}</span><select name="skillId">${skillOptionsHTML()}</select></label>
+          ${sphereFieldHTML()}
           <div class="add-field add-field-duration" role="group" aria-label="${esc(t('Длительность'))}">${durInputHTML('estimateMin', 30, true)}</div>
           <label class="add-field add-field-difficulty"><span class="add-field-label">${esc(t('Сложность'))}</span><select name="difficulty"><option value="easy">${esc(t('Лёгкая'))}</option><option value="normal" selected>${esc(t('Обычная'))}</option><option value="hard">${esc(t('Сложная'))}</option></select></label>
           <p class="calendar-add-status muted" aria-live="polite"></p>
-          <button type="submit">${satoruIconHTML('action.add', 'button-glyph', '+')} ${esc(t('Добавить квест'))}</button></form></section>
+          <button type="submit">${satoruIconHTML('action.add', 'button-glyph', '+')} ${esc(t('Добавить квест'))}</button></form>
+          <div id="cat-suggest" class="cat-suggest"></div></section>
         ${unscheduled.length ? `<details class="card calv-tray"><summary><span class="calv-tray-title">${satoruIconHTML('system.calendar', 'heading-glyph', '📥')} ${esc(t('Квесты без времени'))}</span><span class="calv-tray-count">${unscheduled.length}</span></summary><div class="calv-chips">${trayTasks}</div></details>` : ''}
       </aside>
     </div>
@@ -11762,7 +11860,8 @@ async function runWeeklyReview() {
     const d = await r.json();
     if (d.error && aiHandleErr(d)) { const m = document.getElementById('ai-modal'); if (m) m.remove(); return; }
     if (!r.ok || !d.text) { openAiModal('🤖 Разбор недели', `<p class="muted">Не удалось: ${esc(d.detail || d.error || 'ошибка')}.</p>`); return; }
-    openAiModal('🤖 Разбор недели', `<div class="ai-out" data-tts>${esc(d.text).replace(/\n/g, '<br>')}${ttsBtnHTML()}</div>`);
+    const weekBody = window.MdLiteV1 ? window.MdLiteV1.render(d.text) : esc(d.text).replace(/\n/g, '<br>');
+    openAiModal('🤖 Разбор недели', `<div class="ai-out" data-tts>${weekBody}${ttsBtnHTML()}</div>`);
     track('ai:weekly');
     // Недельный разбор — естественная точка обновления профиля: раз в неделю, когда
     // человек и так пришёл смотреть итоги, а не на каждый рендер. silent, чтобы
@@ -12493,7 +12592,11 @@ function renderChatMessages() {
         : `<div class="chat-actions" data-mi="${mi}"><div class="dayrec-list">${m.actions.map(chatActionRow).join('')}</div>
             <button class="btn sm" data-action="chat-actions-apply" data-mi="${mi}">✓ ${t('Применить выбранное')}</button></div>`;
     }
-    return `<div class="chat-msg ai" data-tts>${esc(m.content).replace(/\n/g, '<br>')}${ttsBtnHTML()}${acts}</div>`;
+    // md-lite-v1 экранирует сам, до появления собственных тегов — второй esc() здесь
+    // задвоил бы разметку в текст. Ответ ИИ — недоверенный ввод (fb_ms4lg28wwpe4:
+    // «пытается использовать неподдерживаемое форматирование, звёздочки видны как есть»).
+    const body = window.MdLiteV1 ? window.MdLiteV1.render(m.content) : esc(m.content).replace(/\n/g, '<br>');
+    return `<div class="chat-msg ai" data-tts>${body}${ttsBtnHTML()}${acts}</div>`;
   }).join('') + (State._chatBusy ? '<div class="chat-msg ai typing">…</div>' : '');
   box.scrollTop = box.scrollHeight;
 }
@@ -15095,6 +15198,30 @@ function firstLineDismiss() {
   if (State.settings) delete State.settings.tomorrowFirst;
   Store.save('settings', State.settings);
 }
+// ── Навигация вчера/завтра на «Сегодня» ───────────────────────────────────────
+// Просьба Альберта: «чтобы можно было переключить на вчерашний, завтрашний
+// день. Именно во вкладке Сегодня». Полностью пересобрать renderToday() под
+// произвольную дату — не тот масштаб: закрытие дня, таймер фокуса, нуджи вида
+// «пропущенный день» устроены вокруг понятия «сейчас», а не «просматриваемый
+// день», и растащить это без риска не выйдет за один заход. Вместо этого —
+// лёгкая полоска-превью прямо на «Сегодня», а полный просмотр/правка того дня
+// уже умеет делать Календарь (State.calDate) — ничего не дублируем.
+function dayNavStripHTML(today) {
+  const y = addDays(today, -1), tmr = addDays(today, 1);
+  const yTasks = State.tasks.filter((t) => t.date === y);
+  const yDone = yTasks.filter((t) => t.done).length;
+  const tmrTasks = State.tasks.filter((t) => t.date === tmr);
+  return `<div class="day-nav" role="group" aria-label="${esc(t('Соседние дни'))}">
+    <button type="button" class="day-nav-btn" data-action="goto-calendar" data-date="${y}" aria-label="${esc(t('Вчера'))}: ${yDone}/${yTasks.length}">
+      <span class="day-nav-dir">← ${esc(t('Вчера'))}</span>
+      <span class="day-nav-sum">${yTasks.length ? `${yDone}/${yTasks.length}` : t('пусто')}</span>
+    </button>
+    <button type="button" class="day-nav-btn" data-action="goto-calendar" data-date="${tmr}" aria-label="${esc(t('Завтра'))}: ${tmrTasks.length}">
+      <span class="day-nav-sum">${tmrTasks.length ? tmrTasks.length : t('пусто')}</span>
+      <span class="day-nav-dir">${esc(t('Завтра'))} →</span>
+    </button>
+  </div>`;
+}
 function firstLineCardHTML() {
   const fl = firstLineForToday();
   if (!fl) return '';
@@ -15364,7 +15491,6 @@ function renderToday() {
   const xpToday = todayEv.reduce((s, e) => s + e.xp, 0), goldToday = todayEv.reduce((s, e) => s + e.gold, 0), minToday = todayEv.reduce((s, e) => s + e.min, 0);
   const donePct = todays.length ? Math.round(doneCount / todays.length * 100) : 0;
   const nextQuest = todays.find((t) => !t.done);
-  const skillOpts = skillOptionsHTML();
   const tm = State.timer, tmTask = tm ? questById(tm.taskId) : null;
 
   const timerCard = `<div class="card timer-card">
@@ -15583,7 +15709,7 @@ function renderToday() {
     </section>`;
   const addQuestCard = `<div class="card card-addquest"><form id="add-task" class="add-row">
         <label class="add-field add-field-title"><span class="add-field-label">${t('Квест')}</span><input name="title" placeholder="${t('Новый квест на сегодня…')}" maxlength="160" autocomplete="off" required /></label>
-        <label class="add-field add-field-skill"><span class="add-field-label">${t('Сфера')}</span><select name="skillId">${skillOpts}</select></label>
+        ${sphereFieldHTML()}
         <span class="add-field add-field-duration" role="group" aria-label="${t('Длительность')}">${durInputHTML('estimateMin', 30, true)}</span>
         <label class="add-field add-field-difficulty"><span class="add-field-label">${t('Сложность')}</span><select name="difficulty"><option value="easy">${t('Лёгкая')}</option><option value="normal" selected>${t('Обычная')}</option><option value="hard">${t('Сложная')}</option></select></label>
         <button class="add-submit" type="submit">${t('+ Квест')}</button></form>
@@ -15632,7 +15758,7 @@ function renderToday() {
   </div>`;
   if (tab === 'board') return `<div class="today-shell board-shell">${tabs}${boardScreenHTML()}</div>`;
   return `<div class="today-shell">${tabs}
-    <div class="today-work">${firstLineCardHTML()}${todayHero}${overdueCard}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
+    <div class="today-work">${dayNavStripHTML(today)}${firstLineCardHTML()}${todayHero}${overdueCard}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
     <aside class="today-support" aria-label="Поддержка дня">${companionCard()}${deeperPath}${fightsCardHTML()}${activeNudge}${nudgeCard}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${tm ? timerCard : ''}${energyCard}${installBanner()}</aside>
     <div class="today-footer">${antiHabitsCard()}${shutdownCard}</div>
   </div>`;
@@ -16365,13 +16491,80 @@ async function commitDailyRewardDialog(overlay) {
   if (reward.type === 'cosmetic_capsule') {
     if (status) status.textContent = t('Награда сохранена. Открываем сундук…');
     if (skip) { skip.hidden = false; skip.disabled = false; skip.focus(); }
-    overlay._revealTimer = setTimeout(() => revealCosmeticCapsule(overlay), 1000);
+    startChestReel(overlay);
   } else {
     if (status) status.textContent = t('Награда сохранена');
     if (claim) { claim.disabled = false; claim.focus(); }
     if (typeof sfxLoot === 'function') sfxLoot(reward.rarity || 'common');
   }
   if (close) close.disabled = false;
+}
+// ── Честная лента сундука (chest-reveal-v1, решение Альберта 12.08: «возвращаем
+// драму, но hooking-механизмы используем во благо») ──────────────────────────
+// Модуль строит ленту, эта функция только показывает её и не решает исход:
+// `reward` уже пришёл готовым и уже сохранён на сервере до первого кадра.
+function startChestReel(overlay) {
+  const C = window.ChestRevealV1;
+  const reel = overlay.querySelector('.loot-reel');
+  // Без модуля или без пула — старое поведение (пауза и текстовый reveal), а не
+  // сломанный экран. Тот же приём деградации, что у остальных v1-модулей сессии.
+  if (!C || !reel || !Array.isArray(overlay._capsulePool) || !overlay._capsulePool.length) {
+    overlay._revealTimer = setTimeout(() => revealCosmeticCapsule(overlay), 1000);
+    return;
+  }
+  const result = cosmeticById(overlay._reward.cosmeticId);
+  if (!result) { overlay._revealTimer = setTimeout(() => revealCosmeticCapsule(overlay), 1000); return; }
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reel_ = C.buildReel({
+    pool: overlay._capsulePool, result, seed: overlay._reward.cosmeticId,
+    durationMs: reduceMotion ? C.MIN_DURATION_MS : C.DEFAULT_DURATION_MS,
+  });
+  overlay._reel = reel_;
+  const swatch = (item) => item.ring || item.fill || (RARITY[item.rarity] && RARITY[item.rarity].color) || 'var(--muted)';
+  reel.hidden = false;
+  reel.innerHTML = `<div class="loot-reel-track">${reel_.strip.map((item, i) =>
+    `<span class="loot-reel-tile r-${item.rarity}${i === reel_.winnerIndex ? ' is-winner' : ''}" style="--tile:${swatch(item)}">${esc(t(item.name))}</span>`
+  ).join('')}<span class="loot-reel-marker" aria-hidden="true"></span></div>`;
+  const track = reel.querySelector('.loot-reel-track');
+  // Позиция считается уже ПОСЛЕ вставки в DOM — ширина плитки известна только теперь.
+  requestAnimationFrame(() => {
+    if (!overlay.isConnected) return;
+    const tile = track.querySelector('.loot-reel-tile');
+    const tileW = tile ? tile.getBoundingClientRect().width + 8 : 96; // 8 — gap из CSS
+    const offset = reel_.winnerIndex * tileW - (reel.clientWidth / 2) + tileW / 2;
+    if (reduceMotion) {
+      track.style.transition = 'none';
+      track.style.transform = `translateX(${-offset}px)`;
+      finishChestReel(overlay);
+      return;
+    }
+    track.style.transition = `transform ${reel_.durationMs}ms ${C.easing()}`;
+    // Второй кадр — иначе браузер схлопывает transform:0→transform:final в один
+    // шаг без анимации, потому что оба присваивания попали бы в один рендер.
+    requestAnimationFrame(() => { track.style.transform = `translateX(${-offset}px)`; });
+    overlay._reelTimer = setTimeout(() => finishChestReel(overlay), reel_.durationMs + 60);
+  });
+}
+// Пропуск (существующая кнопка `skip-capsule-reveal`) обязан мгновенно доехать
+// до посадочной позиции, а не просто показать текст поверх едущей ленты —
+// иначе пропуск выглядел бы как баг, а не как честное «покажи сразу».
+function finishChestReel(overlay) {
+  if (!overlay || overlay._reelDone) return;
+  overlay._reelDone = true;
+  clearTimeout(overlay._reelTimer); overlay._reelTimer = null;
+  const track = overlay.querySelector('.loot-reel-track');
+  if (track) {
+    track.style.transition = 'none';
+    const tile = track.querySelector('.loot-reel-tile');
+    const reel = overlay.querySelector('.loot-reel');
+    if (tile && reel && overlay._reel) {
+      const tileW = tile.getBoundingClientRect().width + 8;
+      const offset = overlay._reel.winnerIndex * tileW - (reel.clientWidth / 2) + tileW / 2;
+      track.style.transform = `translateX(${-offset}px)`;
+    }
+    track.classList.add('is-landed');
+  }
+  revealCosmeticCapsule(overlay);
 }
 function revealCosmeticCapsule(overlay) {
   if (!overlay || !overlay.isConnected || overlay._revealed) return;
@@ -16391,15 +16584,20 @@ function openChest(returnFocus = document.activeElement) {
   if (existing) { existing.querySelector('[data-action="claim-daily-reward"], [data-action="retry-daily-reward"]')?.focus(); return existing; }
   if (lootChestsAvailable() <= 0) { toast(t('Наград пока нет — заверши следующее реальное дело')); return null; }
   const lb = ensureLootbox(), baseReward = dailyRewardForOpenIndex(lb.opened);
+  // Пул захватывается ДО коммита. После коммита выигранный предмет уже входит в
+  // cosmetics владельца, и cosmeticCapsulePool() (которая берёт !ownsCosmetic)
+  // исключила бы его — лента осталась бы без своего же победителя.
+  const capsulePool = cosmeticCapsulePool();
   const reward = baseReward.type === 'cosmetic_capsule' ? rollCosmeticCapsule() : baseReward;
   const ov = document.createElement('div'); ov.id = 'loot-modal'; ov.className = 'modal-overlay loot-reveal-overlay';
   ov._reward = reward;
+  ov._capsulePool = capsulePool;
   ov.innerHTML = `<section class="loot-box loot-reveal-box ${reward.type === 'cosmetic_capsule' ? 'is-capsule' : ''}" role="dialog" aria-modal="true" aria-labelledby="daily-reward-reveal-title" aria-describedby="daily-reward-reveal-desc">
     <button type="button" class="modal-x" data-action="close-daily-reward" aria-label="${esc(t('Закрыть'))}" disabled>✕</button>
     <p class="loot-earned-label">${t('Заработанная награда')}</p>
     <h2 id="daily-reward-reveal-title" tabindex="-1">${esc(reward.label)}</h2>
     <p id="daily-reward-reveal-desc">${reward.type === 'cosmetic_capsule' ? t('Сюрприз только косметический: без XP, золота или силы. Церемонию можно пропустить сразу.') : t('Эта награда была известна заранее.')}</p>
-    ${reward.type === 'cosmetic_capsule' ? `<div class="loot-capsule-result r-${reward.rarity}" role="status" aria-live="polite" hidden><span>${t(RARITY[reward.rarity].label)}</span><strong>${esc(reward.resultLabel)}</strong></div>` : ''}
+    ${reward.type === 'cosmetic_capsule' ? `<div class="loot-reel" aria-hidden="true" hidden></div><div class="loot-capsule-result r-${reward.rarity}" role="status" aria-live="polite" hidden><span>${t(RARITY[reward.rarity].label)}</span><strong>${esc(reward.resultLabel)}</strong></div>` : ''}
     <div class="loot-save-status" role="status" aria-live="polite">${t('Сохраняю награду…')}</div>
     <div class="loot-reveal-actions">
       <button type="button" class="btn" data-action="claim-daily-reward" disabled>${t('Забрать')}</button>
@@ -17133,9 +17331,37 @@ function pathCard() {
     ${cur ? '' : `<p class="muted" style="margin:10px 0 0;font-size:13px">${t('Пока путь не выбран — поведение тёплое, как Доверие.')}</p>`}
     ${controlExtras}${muteExtra}</div>`;
 }
+// Пикер профиля для админ-форм (выдать Pro / бэкапы) — тот же приём, что sphere-field
+// (Q16, BACKLOG 13.08): список + живой поиск по имени, без нативного <datalist>, который
+// матчит по value (id), а не по видимому имени. Ранжирование берём готовое из
+// sphere-search-v1 — список плоский (parentId нет ни у кого), дерево модулю не мешает.
+function adminUserResultsHTML(query, selectedId) {
+  const users = State.adminUsers || [];
+  if (!users.length) return `<p class="sphere-empty muted">${esc(State._adminUsersLoading ? t('Загружаю…') : t('Список пуст'))}</p>`;
+  const S = window.SphereSearchV1;
+  const q = String(query || '').trim();
+  const list = users.map((u) => ({ id: u.id, name: u.name }));
+  const rows = S ? S.search(list, q, { limit: 20 }) : list.slice(0, 20).map((u) => ({ id: u.id, name: u.name }));
+  if (!rows.length) return `<p class="sphere-empty muted">${esc(t('Ничего не нашлось'))}</p>`;
+  return rows.map((r) => {
+    const u = users.find((x) => x.id === r.id) || {};
+    return `<button type="button" class="sphere-row sphere-leaf${r.id === selectedId ? ' is-selected' : ''}" data-action="admin-user-pick" data-id="${esc(r.id)}">${esc(u.avatar || '')} ${esc(r.name)} <span class="muted" data-noi18n>(${esc(r.id)})</span></button>`;
+  }).join('');
+}
+function adminUserFieldHTML(fieldId, placeholder) {
+  const users = State.adminUsers || [];
+  return `<details class="sphere-field admin-user-field" id="${esc(fieldId)}">
+    <summary class="sphere-trigger"><span class="sphere-trigger-value" data-noi18n>${esc(placeholder)}</span></summary>
+    <div class="sphere-panel">
+      <label class="sr-only" for="${esc(fieldId)}-search">${esc(t('Искать профиль'))}</label>
+      <input type="text" id="${esc(fieldId)}-search" class="sphere-search-input admin-user-search-input" placeholder="${esc(t('Найди друга по имени…'))}" autocomplete="off" ${users.length ? '' : 'disabled'} />
+      <div class="sphere-panel-results">${adminUserResultsHTML('', '')}</div>
+    </div>
+    <input type="hidden" name="userId" value="" required /></details>`;
+}
 function adminCard() {
   if (!State.me || !State.me.isAdmin) return '';
-  // Загружаем список пользователей для select
+  // Загружаем список пользователей для пикера
   if (State.adminUsers === null && !State._adminUsersLoading) {
     State._adminUsersLoading = true;
     fetch('/api/users').then((r) => r.json()).then((d) => {
@@ -17144,16 +17370,8 @@ function adminCard() {
       if (State.view === 'settings') render();
     }).catch(() => { State.adminUsers = []; State._adminUsersLoading = false; });
   }
-  const users = State.adminUsers || [];
-  const datalist = users.length
-    ? `<datalist id="admin-users-dl">${users.map((u) => `<option value="${esc(u.id)}">${esc(u.avatar || '')} ${esc(u.name)} (${esc(u.id)})</option>`).join('')}</datalist>`
-    : '';
-  const userInput = users.length
-    ? `<input name="userId" list="admin-users-dl" placeholder="${t('Найди друга по имени…')}" autocomplete="off" required />${datalist}`
-    : `<input name="userId" placeholder="${State._adminUsersLoading ? t('Загружаю…') : t('id профиля')}" required />`;
-  const recoverList = users.length
-    ? `<datalist id="recover-users-dl">${users.map((u) => `<option value="${esc(u.id)}">${esc(u.avatar || '')} ${esc(u.name)} (${esc(u.id)})</option>`).join('')}</datalist>`
-    : '';
+  const userInput = adminUserFieldHTML('grant-pro-user', t('Выбрать профиль…'));
+  const recoverInput = adminUserFieldHTML('recover-data-user', t('Выбрать профиль…'));
   const ownCredit = adminGoldCredit();
   return `<div class="card"><h3>${t('🪙 Админ — золото для рекламы')}</h3>
     <p class="muted" style="font-size:12px;margin:0 0 8px">${t('Только для вашего текущего админ-аккаунта; другие профили не затрагиваются.')}</p>
@@ -17172,7 +17390,7 @@ function adminCard() {
     <p class="muted" style="font-size:12px">${t('Выбери профиль из списка — поиск по имени или id. Пусто в «дней» = бессрочный Pro.')}</p>
     <h3 style="margin-top:16px">${t('🗂 Данные и бэкапы юзера')}</h3>
     <form id="recover-data" class="pin-change">
-      <input name="userId" ${users.length ? 'list="recover-users-dl"' : ''} placeholder="${t('id или имя профиля')}" autocomplete="off" required />${recoverList}
+      ${recoverInput}
       <button type="submit" class="btn ghost">${t('Открыть')}</button></form>
     <p class="muted" style="font-size:12px">${t('Посмотреть текущие данные и восстановить из автоснимка (бэкапы делаются перед каждой записью).')}</p>
     <h3 style="margin-top:16px">${t('📊 Активность (аналитика)')}</h3>
@@ -17699,11 +17917,25 @@ function xpByDay(n) {
 }
 function weekStart(s) { const wd = (parseDate(s).getDay() + 6) % 7; return addDays(s, -wd); }
 function timeByAreaThisWeek() { const ws = weekStart(todayStr()); return rangeStats(ws, addDays(ws, 6)).byArea; }
-function barChartSVG(data, showEvery = 1) {
+// chart-labels-v1: подписи столбцов не слипаются (fb_ms4m1ur2m1ip). Даты можно
+// прореживать (пропуск восстанавливается по соседям), имена сфер — никогда
+// (столбец без подписи никто не опознает) — решает вызывающий через opts.thinnable,
+// сама функция не выбирает, потому что не знает, что именно подписано.
+function barChartSVG(data, opts) {
+  const o = opts || {};
   const w = 600, h = 190, pad = 26, bw = (w - pad * 2) / Math.max(1, data.length), max = Math.max(1, ...data.map((d) => d.value));
+  const L = window.ChartLabelsV1;
+  const layout = L ? L.layout({ labels: data.map((d) => d.label), width: w, pad, fontSize: 9, thinnable: !!o.thinnable })
+    : { mode: 'horizontal', angle: 0, every: 1, maxChars: null };
   const bars = data.map((d, i) => {
     const bh = Math.round((d.value / max) * (h - pad * 2)), x = pad + i * bw + bw * 0.15, y = h - pad - bh, ww = bw * 0.7, color = d.color || 'var(--accent)';
-    const lbl = i % showEvery === 0 ? `<text class="bar-lbl" x="${x + ww / 2}" y="${h - pad + 14}" text-anchor="middle">${esc(d.label)}</text>` : '';
+    let lbl = '';
+    if (i % layout.every === 0) {
+      const text = layout.mode === 'truncated' && L ? L.clip(d.label, layout.maxChars) : d.label;
+      const cx = x + ww / 2, cy = h - pad + 14;
+      const rotate = layout.angle ? ` transform="rotate(${layout.angle} ${cx} ${cy})"` : '';
+      lbl = `<text class="bar-lbl" x="${cx}" y="${cy}" text-anchor="${layout.angle ? 'end' : 'middle'}"${rotate}>${esc(text)}</text>`;
+    }
     return `<rect x="${x}" y="${y}" width="${ww}" height="${bh}" rx="3" fill="${color}"></rect>${d.value ? `<text class="bar-val" x="${x + ww / 2}" y="${y - 4}" text-anchor="middle">${d.value}</text>` : ''}${lbl}`;
   }).join('');
   return `<svg viewBox="0 0 ${w} ${h}" class="chart" preserveAspectRatio="xMidYMid meet">${bars}</svg>`;
@@ -17792,7 +18024,7 @@ function renderStats() {
       <p class="muted" style="font-size:13px;margin-bottom:0">${hasBalanceSignal ? `Активных сфер: <b>${bal.active}/${bal.total}</b>. Индекс растёт, когда развиваешь жизнь как композицию, а не одну вертикаль. ${bal.weakest && bal.index < 80 ? `Сейчас проседает <b>${esc(bal.weakest.name)}</b> — дай ей внимание.` : (bal.index >= 80 ? 'Отличный баланс — так держать. ⚖️' : 'Добавь активность в несколько сфер, чтобы поднять индекс.')}` : t('Баланс появится, когда хотя бы две сферы получат внимание. Это не оценка тебя.')}</p>
     </div>
     <div class="card"><h3>🎖 Ранги по сферам</h3>${skillRanksRows || '<p class="muted">Добавь навыки в Настройках.</p>'}</div>
-    <div class="card"><h3>${t('XP по дням')}</h3>${barChartSVG(xpByDay(14), 2)}</div>
+    <div class="card"><h3>${t('XP по дням')}</h3>${barChartSVG(xpByDay(14), { thinnable: true })}</div>
     ${advanced}
     ${loadCard}
     ${episodesCard}
@@ -17897,13 +18129,14 @@ function renderSettings() {
         </select>
         <label class="se-proj" title="${t('Проект — не ось колеса баланса (живёт в Целях)')}"><input type="checkbox" data-field="noBalance" ${sk.noBalance ? 'checked' : ''}/> ${t('🏁 проект')}</label>
       </div>` : '';
-    return `<div class="skill-edit ${depth > 0 ? 'is-sub' : ''} ${hidden ? 'se-hidden' : ''}" data-id="${sk.id}" style="--d:${depth}">
+    return `<div class="skill-edit ${depth > 0 ? 'is-sub' : ''} ${hidden ? 'se-hidden' : ''} ${sk.archived ? 'is-archived' : ''}" data-id="${sk.id}" style="--d:${depth}">
       <span class="se-move"><button data-action="skill-move" data-id="${sk.id}" data-dir="-1" title="${t('Выше')}">▲</button><button data-action="skill-move" data-id="${sk.id}" data-dir="1" title="${t('Ниже')}">▼</button></span>
       ${pillar ? `<button class="se-collapse" data-action="skill-collapse" data-id="${sk.id}" title="${t('Свернуть/развернуть под-навыки')}">${collapsed[sk.id] ? '▸' : '▾'}</button>` : '<span class="se-collapse-spacer"></span>'}
       <input type="color" value="${esc(sk.color)}" data-field="color" />
       <input type="text" value="${esc(sk.name)}" data-field="name" />
       <select data-field="parentId" title="${t('Вложенность сферы')}">${parentOptions(sk)}</select>
-      <button class="del" data-action="delete-skill" data-id="${sk.id}">✕</button>
+      ${sk.archived ? `<span class="se-archived-badge" title="${t('Сфера в архиве')}">${t('Сфера в архиве')}</span><button class="btn ghost sm" data-action="restore-skill" data-id="${sk.id}">${t('Вернуть из архива')}</button>` : `<button class="btn ghost sm" data-action="archive-skill" data-id="${sk.id}" title="${t('Пропадает из пикеров выбора сферы, но история и опыт остаются')}">${t('В архив')}</button>`}
+      <button class="del" data-action="delete-skill" data-id="${sk.id}" title="${t('Удалить совсем — вместе с историей и опытом')}">✕</button>
       ${topExtra}</div>`;
   };
   // Рекурсивный рендер дерева сфер: глубина любая, свёрнутый узел прячет всё поддерево
@@ -18937,6 +19170,10 @@ function render() {
   if (State.phase !== 'app') { showAuthScreen(); return; }
   try { normalizeCoreState(); } catch (e) { console.error('normalizeCoreState', e); }
   try { applyTheme(); } catch (e) { console.error('applyTheme', e); }
+  // Голосовой ввод подключается сам, но свои подписи знает только по-русски: модуль
+  // намеренно не зовёт переводчик (он не должен читать State). Отдаём переводы отсюда —
+  // и на каждом рендере, потому что язык меняется в настройках без перезагрузки.
+  try { if (window.VoiceInputV1) window.VoiceInputV1.setLabels({ start: t('Записать голосом'), stop: t('Остановить запись'), denied: t('Нет доступа к микрофону') }); } catch (e) { /* голос не блокирует рендер */ }
   try { pathReckoning(); } catch (e) { /* расчёт Контроля — не критично для рендера */ }
   // Восстановить app shell если auth-экран его перезаписал
   if (!document.getElementById('main')) document.getElementById('app').innerHTML = APP_SHELL;
@@ -19671,6 +19908,10 @@ async function onClick(e) {
   document.querySelectorAll('.task-more[open]').forEach((menu) => {
     if (menu !== targetTaskMenu) menu.removeAttribute('open');
   });
+  const targetSphereField = e.target.closest('.sphere-field');
+  document.querySelectorAll('.sphere-field[open]').forEach((field) => {
+    if (field !== targetSphereField) field.removeAttribute('open');
+  });
   const navBtn = e.target.closest('#nav button[data-view]');
   if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; if (State.view !== 'goals') { State._goalDeepLinkId = ''; syncGoalDeepLink('', State.view); } markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
   const secBtn = e.target.closest('[data-action="go-section"]');
@@ -20215,6 +20456,16 @@ async function onClick(e) {
     }).catch(() => { result.textContent = t('Импорт не завершён. Исходные данные сохранены — повтори попытку.'); el.disabled = false; });
     return;
   }
+  if (action === 'admin-user-pick') {
+    const field = el.closest('.sphere-field'); if (!field) return;
+    const hidden = field.querySelector('input[name="userId"]');
+    const label = field.querySelector('.sphere-trigger-value');
+    const u = (State.adminUsers || []).find((x) => x.id === el.dataset.id);
+    if (hidden) { hidden.value = el.dataset.id; hidden.dispatchEvent(new Event('change', { bubbles: true })); }
+    if (label) label.textContent = u ? `${u.avatar || ''} ${u.name}`.trim() : el.dataset.id;
+    field.removeAttribute('open');
+    return;
+  }
   if (action === 'show-guide') { showGuide(); return; }
   if (action === 'close-guide') { const g = document.getElementById('guide'); if (g) g.remove(); return; }
   if (action === 'show-reports') { showReports(); return; }
@@ -20223,7 +20474,23 @@ async function onClick(e) {
   if (action === 'open-reward-catalog') { openRewardCatalog(); return; }
   if (action === 'close-reward-catalog') { closeAccountDialog('rw-catalog'); return; }
   if (action === 'retry-daily-reward') { commitDailyRewardDialog(el.closest('#loot-modal')); return; }
-  if (action === 'skip-capsule-reveal') { revealCosmeticCapsule(el.closest('#loot-modal')); return; }
+  if (action === 'skip-capsule-reveal') { finishChestReel(el.closest('#loot-modal')); return; }
+  if (action === 'sphere-pick') {
+    // Кнопка живёт внутри <summary> у столбов — без preventDefault клик по ней
+    // ЗАКРЫЛ/открыл бы <details> раскрытия следом за выбором: два эффекта одним
+    // тапом, второй незапрошенный.
+    e.preventDefault();
+    const field = el.closest('.sphere-field'); if (!field) return;
+    const hidden = field.querySelector('input[name="skillId"]');
+    const label = field.querySelector('.sphere-trigger-value');
+    if (hidden) hidden.value = el.dataset.id;
+    if (label) label.textContent = el.dataset.label;
+    field.removeAttribute('open');
+    // 'change' — тот же сигнал, что слал <select>: выключает авто-подстановку по
+    // истории (catTouched), поведение при ручном выборе не меняется.
+    hidden && hidden.dispatchEvent(new Event('change', { bubbles: true }));
+    return;
+  }
   if (action === 'claim-daily-reward' || action === 'close-daily-reward') { closeAccountDialog('loot-modal', { restoreFocus: false }); State._rewardsFocusAfterCommit = '.daily-reward-card .lb-chest, #daily-reward-title'; render(); return; }
   if (action === 'close-economy-confirm') { closeAccountDialog('economy-confirm-modal'); return; }
   if (action === 'confirm-economy-action') { commitEconomyConfirmation(el.closest('#economy-confirm-modal')); return; }
@@ -20663,6 +20930,18 @@ async function onClick(e) {
     if (q.core && coreState().total === 1) toast(`◆ ${t('Ядро дня — то, ради чего день считается состоявшимся')}`);
     track('core:toggle'); render();
 
+  } else if (action === 'edit-difficulty') {
+    // fb_mr0x23rddu7t / fb_msi16wnqpyrs: раньше сложность нельзя было поменять вообще
+    // после создания — мисклик оставался навсегда. Гейт «тот же день» — не UI-декорация,
+    // перепроверяется здесь: DOM мог отрисоваться раньше, чем наступила полночь.
+    const q = questById(id); if (!q) return;
+    if (q.done || !q.createdAt || fmtDate(new Date(q.createdAt)) !== todayStr()) return;
+    const d = el.dataset.difficulty;
+    if (!DIFF[d] || q.difficulty === d) return;
+    q.difficulty = d;
+    Store.save('tasks', State.tasks);
+    track('difficulty:edit'); render();
+
   } else if (action === 'close-day' || action === 'reopen-day') {
     const ref = document.getElementById('reflection'); State.days[today] = State.days[today] || { reflection: '', closed: false };
     if (ref) State.days[today].reflection = ref.value; State.days[today].closed = action === 'close-day';
@@ -20831,7 +21110,7 @@ async function onClick(e) {
   } else if (action === 'cal-date') { State.calDate = el.dataset.date; if (State.calMode === 'week') State.weekStart = weekStart(State.calDate); State._calendarFocusAfterCommit = `.calv-day[data-date="${CSS.escape(State.calDate)}"]`; render();
   } else if (action === 'cal-shift') { State.calDate = addDays(State.calDate || todayStr(), Number(el.dataset.days)); State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
   } else if (action === 'cal-today') { State.calDate = todayStr(); State._calendarFocusAfterCommit = `.calv-day[data-date="${CSS.escape(State.calDate)}"]`; render();
-  } else if (action === 'goto-calendar') { State.calDate = todayStr(); State.view = 'calendar'; render();
+  } else if (action === 'goto-calendar') { State.calDate = el.dataset.date || todayStr(); State.view = 'calendar'; render();
 
   // --- Инбокс / быстрый захват (Блок 2) ---
   } else if (action === 'cap-voice') { startCapture('voice');
@@ -21064,12 +21343,12 @@ async function onClick(e) {
   } else if (action === 'push-disable') { pushDisable();
   } else if (action === 'push-test') { pushTest();
   } else if (action === 'apply-cat') {
-    const form = el.closest('.card').querySelector('#add-task'); const sel = form && form.querySelector('select[name="skillId"]');
-    if (sel) { sel.value = el.dataset.skill; const ti = form.querySelector('input[name="title"]'); if (ti) ti.focus(); }
+    const form = el.closest('.card').querySelector('#add-task'); const sel = sphereFieldInput(form);
+    if (sel) { setSphereFieldValue(form, el.dataset.skill); const ti = form.querySelector('input[name="title"]'); if (ti) ti.focus(); }
     el.parentElement.innerHTML = '';
   } else if (action === 'ai-cat-suggest') {
     const card = el.closest('.card'); const form = card && card.querySelector('#add-task');
-    const sel = form && form.querySelector('select[name="skillId"]'); const box = card && card.querySelector('#cat-suggest');
+    const sel = sphereFieldInput(form); const box = card && card.querySelector('#cat-suggest');
     if (box && sel) aiCatSuggest(el.dataset.title, box, sel);
   } else if (action === 'ai-close') { const m = document.getElementById('ai-modal'); if (m) m.remove();
   } else if (action === 'notes-retry') {
@@ -21119,22 +21398,79 @@ async function onClick(e) {
     captureSettingsForm(); // сохранить текущие правки формы, чтобы не потерять
     State.settings.skills.push({ id: 'sk_' + uid(), name: 'Новая сфера', color: '#6c8cff' }); ensureTrees();
     Store.save('settings', State.settings); Store.save('skilltree', State.tree); render();
+  } else if (action === 'archive-skill') {
+    captureSettingsForm();
+    const sk = State.settings.skills.find((x) => x.id === id); if (!sk) return;
+    sk.archived = true;
+    Store.save('settings', State.settings); render();
+  } else if (action === 'restore-skill') {
+    captureSettingsForm();
+    const sk = State.settings.skills.find((x) => x.id === id); if (!sk) return;
+    delete sk.archived;
+    Store.save('settings', State.settings); render();
   } else if (action === 'delete-skill') {
+    // Удаление — необратимо и стирает историю (Q13, BACKLOG 13.08): в отличие от «Архивировать»,
+    // сфера пропадает совсем, а не только из пикеров. XP считается динамически из xpEvents() —
+    // «удалить опыт» значит удалить/обнулить сами исторические записи (квесты/лог привычек/цели),
+    // а не только указатель на сферу, как раньше. Поэтому здесь два отдельных confirm(), а не один.
     captureSettingsForm();
     const sk = State.settings.skills.find((x) => x.id === id);
-    // СОХРАНЯЕМ планы: квесты/привычки/цели НЕ удаляются — просто теряют категорию (переназначаются потом).
-    const affected = State.tasks.filter((t) => t.skillId === id).length
-      + State.habits.filter((h) => h.skillId === id).length
-      + (State.goals || []).filter((g) => g.skillId === id).length;
+    const taskHit = (t) => taskSkills(t).includes(id) || (t.layers || []).includes(id);
+    const affectedTasks = State.tasks.filter(taskHit).length;
+    const affectedHabits = State.habits.filter((h) => h.skillId === id).length;
+    const affectedGoals = (State.goals || []).filter((g) => g.skillId === id).length;
+    const affected = affectedTasks + affectedHabits + affectedGoals;
     const msg = affected
-      ? `Удалить сферу «${sk ? sk.name : id}»?\n\nЕё ${affected} квестов / привычек / целей НЕ удалятся — останутся без категории, переназначишь их потом. Опыт сохранится.`
-      : `Удалить сферу «${sk ? sk.name : id}»?`;
+      ? `Удалить сферу «${sk ? sk.name : id}» НАВСЕГДА?\n\nЕё ${affected} квестов / привычек / целей будут удалены вместе со сферой — это сотрёт и связанные с ней записи (в т.ч. опыт). Отменить нельзя.`
+      : `Удалить сферу «${sk ? sk.name : id}»? Это необратимо.`;
     if (!confirm(msg)) return;
+    if (!confirm(t('Точно? Отменить это действие нельзя.'))) return;
+    // Цели идут первыми и отдельно: State.goals никогда не пишется напрямую через Store.save —
+    // единственный путь тот же, что у обычного удаления цели, — commitGoalMutation → /api/goals/commit
+    // (см. confirmGoalDelete выше). Сеть может отказать, поэтому если коммит не прошёл — прерываемся
+    // здесь, ничего больше не трогая; commitGoalMutation сам покажет ошибку и оставит повтор.
+    const deadGoalIds = new Set((State.goals || []).filter((g) => g.skillId === id).map((g) => g.id));
+    if (deadGoalIds.size) {
+      const beforeById = new Map((State.goals || []).map((g) => [g.id, g]));
+      const nextGoals = structuredClone(State.goals).filter((g) => !deadGoalIds.has(g.id));
+      for (const g2 of nextGoals) if (g2.parentId && deadGoalIds.has(g2.parentId)) {
+        let parent = beforeById.get(g2.parentId), guard = 0;
+        while (parent && deadGoalIds.has(parent.id) && guard++ < 24) parent = parent.parentId ? beforeById.get(parent.parentId) : null;
+        g2.parentId = parent && !deadGoalIds.has(parent.id) ? parent.id : null;
+      }
+      const nextTasks = structuredClone(State.tasks);
+      for (const tk of nextTasks) if (tk.goalId && deadGoalIds.has(tk.goalId)) delete tk.goalId;
+      const ok = await commitGoalMutation('delete-skill-goals', nextGoals, nextTasks, '#skills-list');
+      if (!ok) return;
+    }
+    // Квесты: сфера была единственной привязкой → удаляем квест целиком вместе с его опытом;
+    // сфера была одной из нескольких (co-skill/фоновый слой) → просто убираем её оттуда,
+    // опыт по остальным сферам этого квеста остаётся как есть.
+    State.tasks = State.tasks.filter((tk) => {
+      if (!taskHit(tk)) return true;
+      const skills = taskSkills(tk).filter((sid) => sid !== id);
+      const layers = (tk.layers || []).filter((sid) => sid !== id);
+      if (!skills.length) return false;
+      tk.skillIds = skills; tk.skillId = skills[0]; tk.layers = layers;
+      return true;
+    });
+    // Привычки: одна сфера на привычку в этой модели данных — удаляем привычку и весь её лог
+    // целиком, иначе опыт останется висеть на уже несуществующей сфере.
+    const deadHabitIds = new Set(State.habits.filter((h) => h.skillId === id).map((h) => h.id));
+    if (deadHabitIds.size) {
+      State.habits = State.habits.filter((h) => !deadHabitIds.has(h.id));
+      for (const date of Object.keys(State.habitlog || {})) {
+        for (const hid of deadHabitIds) delete State.habitlog[date][hid];
+        if (!Object.keys(State.habitlog[date]).length) delete State.habitlog[date];
+      }
+    }
     State.settings.skills = State.settings.skills.filter((x) => x.id !== id);
     for (const s2 of State.settings.skills) if (s2.parentId === id) s2.parentId = null;
     if (State.tree) delete State.tree[id];
     if (State.settings.imported) delete State.settings.imported[id];
-    Store.save('settings', State.settings); Store.save('skilltree', State.tree); render();
+    Store.save('settings', State.settings); Store.save('skilltree', State.tree);
+    Store.save('tasks', State.tasks); Store.save('habits', State.habits); Store.save('habitlog', State.habitlog);
+    render();
   } else if (action === 'skill-collapse') {
     captureSettingsForm();
     State.settingsCollapsed = State.settingsCollapsed || {};
@@ -21763,6 +22099,19 @@ function onChange(e) {
 function onSettingsInput(e) {
   if (e.target.closest('#skills-list, #habits-list, .knob') || e.target.id === 'set-appName') autosaveSettings();
   if (e.target.matches('#add-task input[name="title"]')) updateCatSuggest(e.target);
+  if (e.target.matches('.sphere-search-input')) {
+    // Точечная замена результатов, не render(): полный рендер убил бы фокус и
+    // позицию курсора в поле прямо во время набора — тот же приём, что у
+    // ползунков эпизода ниже.
+    const field = e.target.closest('.sphere-field'), results = field && field.querySelector('.sphere-panel-results');
+    const hidden = field && field.querySelector('input[name="skillId"]');
+    if (results) results.innerHTML = sphereResultsHTML(e.target.value, hidden ? hidden.value : null);
+  }
+  if (e.target.matches('.admin-user-search-input')) {
+    const field = e.target.closest('.sphere-field'), results = field && field.querySelector('.sphere-panel-results');
+    const hidden = field && field.querySelector('input[name="userId"]');
+    if (results) results.innerHTML = adminUserResultsHTML(e.target.value, hidden ? hidden.value : null);
+  }
   // Ползунки интенсивности эпизода: обновляем подпись на лету, без перерисовки модалки
   // (перерисовка сбросила бы фокус и позицию пальца прямо во время перетаскивания).
   if (e.target.dataset && e.target.dataset.epLvl !== undefined) epSetLevel(Number(e.target.dataset.epLvl), e.target.value);

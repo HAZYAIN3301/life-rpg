@@ -214,9 +214,13 @@ test('desktop timeline preserves per-date scroll and composes overlaps into trut
 
 test('new Calendar quest has persistent labels and optional exact start time', () => {
   const view = functionBody('renderCalendarView');
-  for (const field of ['title', 'startTime', 'skillId', 'difficulty']) {
+  for (const field of ['title', 'startTime', 'difficulty']) {
     assert.match(view, new RegExp(`name="${field}"`), `missing ${field}`);
   }
+  // skillId больше не инлайновый <select> — это sphereFieldHTML() (дерево сфер с поиском, Q14),
+  // сама она рендерит `name="skillId"` в своё собственное тело функции, проверено отдельно.
+  assert.match(view, /\$\{sphereFieldHTML\(\)\}/, 'missing skillId sphere field');
+  assert.match(functionBody('sphereFieldHTML'), /name="skillId"/);
   assert.match(view, /durInputHTML\('estimateMin', 30, true\)/);
   assert.match(view, /class="add-field-label"/);
   assert.match(app, /const startTime = f\.startTime \? calendarTimeValue\(f\.startTime\.value\) : null/);

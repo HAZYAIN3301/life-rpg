@@ -87,7 +87,7 @@ test('daily rewards keep an earned, disclosed and power-free cosmetic surprise',
   assert.doesNotMatch(APP, /function (?:rollLoot|lootResolve|applyLoot|showLootEditor)\s*\(/);
   assert.match(functionBody('openChest'), /rollCosmeticCapsule/);
   assert.doesNotMatch(functionBody('openChest'), /loot-track|loot-window|Math\.random/);
-  assert.match(functionBody('commitDailyRewardDialog'), /setTimeout\(\(\) => revealCosmeticCapsule\(overlay\), 1000\)/);
+  assert.match(functionBody('commitDailyRewardDialog'), /startChestReel\(overlay\)/);
   assert.match(functionBody('commitDailyRewardDialog'), /skip\.hidden = false; skip\.disabled = false/);
   assert.match(functionBody('openChest'), /без XP, золота или силы/);
   assert.doesNotMatch(APP, /data-action="(?:open-loot-editor|save-loot-editor|reset-loot-editor)"/);
