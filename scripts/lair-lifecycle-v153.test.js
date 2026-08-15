@@ -14,7 +14,7 @@ const toad = require('../public/body-toad-v1.js');
 const slug = require('../public/recovery-slug-v1.js');
 const penguin = require('../public/resources-penguin-v1.js');
 
-assert.equal(stage.VERSION, '1.10.0');
+assert.equal(stage.VERSION, '1.12.0');
 assert.equal(toad.VERSION, '3.4.0');
 assert.equal(slug.VERSION, '2.4.0');
 assert.equal(penguin.VERSION, '1.1.0');
@@ -44,11 +44,11 @@ assert.match(app, /runDenSceneAction\(shell, `room:\$\{actionId\}`/);
 assert.match(app, /if \(denSceneBusy\(scope\)\) return;/);
 assert.match(app, /denSceneBusy\(shell\)\) return false/);
 
-assert.match(index, /den-stage-v1\.js\?v=20260812-lair-actors-v154-2/);
+assert.match(index, /den-stage-v1\.js\?v=20260815-den-life-v158-1/);
 assert.match(index, /body-toad-v1\.js\?v=20260812-lair-actors-v154-2/);
 assert.match(index, /recovery-slug-v1\.js\?v=20260814-lair-actors-v155-1/);
 assert.match(index, /resources-penguin-v1\.js\?v=20260812-lair-actors-v154-2/);
-assert.match(sw, /const CACHE = 'satoru-v155';/);
+assert.match(sw, /const CACHE = 'satoru-v158';/);
 
 function classList() {
   const values = new Set();

@@ -1,0 +1,1001 @@
+[
+  {
+    "spec": {
+      "label": "body-train",
+      "width": 360,
+      "height": 800,
+      "action": "body-toad-interact",
+      "mode": "train",
+      "approachAt": 820,
+      "contactAt": 2250
+    },
+    "approach": {
+      "viewport": [
+        360,
+        800
+      ],
+      "overflow": 0,
+      "meeting": "body",
+      "laneMotion": "",
+      "classes": "den-shell is-body-pair-approaching",
+      "visibleGround": 3,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "left",
+      "avatarPosition": "",
+      "toadDirection": "right",
+      "toadMotion": "",
+      "toadRoute": "",
+      "slugDirection": "",
+      "resourceDirection": "",
+      "scene": {
+        "x": 13,
+        "y": 208.5,
+        "w": 334,
+        "h": 187.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 116.6,
+        "y": 268.2,
+        "w": 91.8,
+        "h": 128.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "body": {
+        "x": 99.3,
+        "y": 325.4,
+        "w": 62.8,
+        "h": 62.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 236.8,
+        "y": 341.1,
+        "w": 46.8,
+        "h": 46.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 289.3,
+        "y": 345.9,
+        "w": 42,
+        "h": 42,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 243.8,
+        "y": 256.4,
+        "w": 42.5,
+        "h": 47.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": null
+    },
+    "contact": {
+      "viewport": [
+        360,
+        800
+      ],
+      "overflow": 0,
+      "meeting": "body",
+      "laneMotion": "",
+      "classes": "den-shell is-body-pair-at-meeting is-body-pair-active is-body-pair-settling",
+      "visibleGround": 2,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "left",
+      "avatarPosition": "",
+      "toadDirection": "",
+      "toadMotion": "",
+      "toadRoute": "",
+      "slugDirection": "",
+      "resourceDirection": "",
+      "scene": {
+        "x": 13,
+        "y": 208.5,
+        "w": 334,
+        "h": 187.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 114.1,
+        "y": 268.2,
+        "w": 91.8,
+        "h": 128.9,
+        "opacity": "0",
+        "visibility": "hidden",
+        "display": "block"
+      },
+      "body": {
+        "x": 101.9,
+        "y": 325.4,
+        "w": 62.8,
+        "h": 62.8,
+        "opacity": "0",
+        "visibility": "hidden",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 236.8,
+        "y": 341.1,
+        "w": 46.8,
+        "h": 46.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 289.3,
+        "y": 345.9,
+        "w": 42,
+        "h": 42,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 243.8,
+        "y": 256.4,
+        "w": 42.5,
+        "h": 47.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": {
+        "x": 83.2,
+        "y": 262.5,
+        "w": 126.9,
+        "h": 126.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      }
+    }
+  },
+  {
+    "spec": {
+      "label": "resources-greet",
+      "width": 375,
+      "height": 812,
+      "action": "resources-penguin-interact",
+      "mode": "greet",
+      "approachAt": 900,
+      "contactAt": 2650
+    },
+    "approach": {
+      "viewport": [
+        375,
+        812
+      ],
+      "overflow": 0,
+      "meeting": "resources",
+      "laneMotion": "",
+      "classes": "den-shell is-resources-pair-approaching",
+      "visibleGround": 3,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "right",
+      "avatarPosition": "",
+      "toadDirection": "",
+      "toadMotion": "",
+      "toadRoute": "",
+      "slugDirection": "left",
+      "resourceDirection": "meeting",
+      "scene": {
+        "x": 13,
+        "y": 208.5,
+        "w": 349,
+        "h": 196.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 194,
+        "y": 270.9,
+        "w": 96,
+        "h": 134.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "body": {
+        "x": 77.9,
+        "y": 330.7,
+        "w": 65.7,
+        "h": 65.7,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 142.8,
+        "y": 347.1,
+        "w": 48.9,
+        "h": 48.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 255.2,
+        "y": 352.7,
+        "w": 43.3,
+        "h": 43.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 254.1,
+        "y": 259,
+        "w": 42.5,
+        "h": 50,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": null
+    },
+    "contact": {
+      "viewport": [
+        375,
+        812
+      ],
+      "overflow": 0,
+      "meeting": "resources",
+      "laneMotion": "",
+      "classes": "den-shell is-resources-pair-at-meeting is-resources-pair-active is-resources-pair-settling",
+      "visibleGround": 2,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "right",
+      "avatarPosition": "",
+      "toadDirection": "",
+      "toadMotion": "",
+      "toadRoute": "",
+      "slugDirection": "",
+      "resourceDirection": "",
+      "scene": {
+        "x": 13,
+        "y": 208.5,
+        "w": 349,
+        "h": 196.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 197.5,
+        "y": 270.9,
+        "w": 96,
+        "h": 134.8,
+        "opacity": "0",
+        "visibility": "hidden",
+        "display": "block"
+      },
+      "body": {
+        "x": 77.9,
+        "y": 330.7,
+        "w": 65.7,
+        "h": 65.7,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 135.1,
+        "y": 347.1,
+        "w": 48.9,
+        "h": 48.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 251.7,
+        "y": 352.7,
+        "w": 43.3,
+        "h": 43.3,
+        "opacity": "0",
+        "visibility": "hidden",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 254.1,
+        "y": 259,
+        "w": 42.5,
+        "h": 50,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": {
+        "x": 184.4,
+        "y": 251.6,
+        "w": 150.1,
+        "h": 150.1,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      }
+    }
+  },
+  {
+    "spec": {
+      "label": "recovery-greet",
+      "width": 1280,
+      "height": 900,
+      "action": "recovery-slug-interact",
+      "mode": "greet",
+      "approachAt": 1050,
+      "contactAt": 3050
+    },
+    "approach": {
+      "viewport": [
+        1280,
+        900
+      ],
+      "overflow": 0,
+      "meeting": "recovery",
+      "laneMotion": "",
+      "classes": "den-shell is-recovery-pair-approaching",
+      "visibleGround": 3,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "right",
+      "avatarPosition": "",
+      "toadDirection": "",
+      "toadMotion": "",
+      "toadRoute": "",
+      "slugDirection": "left",
+      "resourceDirection": "home",
+      "scene": {
+        "x": 121,
+        "y": 366.3,
+        "w": 720,
+        "h": 405,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 444.8,
+        "y": 495.7,
+        "w": 197.7,
+        "h": 279.4,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "body": {
+        "x": 254.7,
+        "y": 620.6,
+        "w": 135.3,
+        "h": 135.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 554.1,
+        "y": 654.3,
+        "w": 100.8,
+        "h": 100.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 755.4,
+        "y": 665.8,
+        "w": 89.3,
+        "h": 89.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 617.7,
+        "y": 471.5,
+        "w": 82.6,
+        "h": 103.6,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": null
+    },
+    "contact": {
+      "viewport": [
+        1280,
+        900
+      ],
+      "overflow": 0,
+      "meeting": "recovery",
+      "laneMotion": "",
+      "classes": "den-shell is-recovery-pair-at-meeting is-recovery-pair-active is-recovery-pair-settling",
+      "visibleGround": 2,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "right",
+      "avatarPosition": "",
+      "toadDirection": "",
+      "toadMotion": "",
+      "toadRoute": "",
+      "slugDirection": "",
+      "resourceDirection": "",
+      "scene": {
+        "x": 121,
+        "y": 366.3,
+        "w": 720,
+        "h": 405,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 446.4,
+        "y": 495.7,
+        "w": 197.7,
+        "h": 279.4,
+        "opacity": "0",
+        "visibility": "hidden",
+        "display": "block"
+      },
+      "body": {
+        "x": 254.7,
+        "y": 620.6,
+        "w": 135.3,
+        "h": 135.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 552.5,
+        "y": 654.3,
+        "w": 100.8,
+        "h": 100.8,
+        "opacity": "0",
+        "visibility": "hidden",
+        "display": "block"
+      },
+      "resources": {
+        "x": 756.8,
+        "y": 665.8,
+        "w": 89.3,
+        "h": 89.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 617.7,
+        "y": 471.5,
+        "w": 82.6,
+        "h": 103.6,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": {
+        "x": 408.1,
+        "y": 433.3,
+        "w": 330.7,
+        "h": 330.7,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      }
+    }
+  },
+  {
+    "spec": {
+      "label": "window-lane",
+      "width": 375,
+      "height": 812,
+      "action": "den-avatar-walk",
+      "approachAt": 880,
+      "contactAt": 2480
+    },
+    "approach": {
+      "viewport": [
+        375,
+        812
+      ],
+      "overflow": 0,
+      "meeting": "",
+      "laneMotion": "away",
+      "classes": "den-shell is-toad-ambient-active",
+      "visibleGround": 3,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "right",
+      "avatarPosition": "window",
+      "toadDirection": "",
+      "toadMotion": "solo-stretch",
+      "toadRoute": "",
+      "slugDirection": "left",
+      "resourceDirection": "",
+      "scene": {
+        "x": 13,
+        "y": 208.5,
+        "w": 349,
+        "h": 196.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 188.5,
+        "y": 276.7,
+        "w": 87.7,
+        "h": 123.1,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "body": {
+        "x": 77.9,
+        "y": 330.7,
+        "w": 65.7,
+        "h": 65.7,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 193.4,
+        "y": 347.1,
+        "w": 48.9,
+        "h": 48.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 302.6,
+        "y": 352.7,
+        "w": 43.3,
+        "h": 43.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 204.8,
+        "y": 247.8,
+        "w": 42.2,
+        "h": 49.7,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": null
+    },
+    "contact": {
+      "viewport": [
+        375,
+        812
+      ],
+      "overflow": 0,
+      "meeting": "",
+      "laneMotion": "away",
+      "classes": "den-shell is-toad-ambient-active",
+      "visibleGround": 3,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "",
+      "avatarPosition": "window",
+      "toadDirection": "",
+      "toadMotion": "solo-stretch",
+      "toadRoute": "",
+      "slugDirection": "",
+      "resourceDirection": "",
+      "scene": {
+        "x": 13,
+        "y": 208.5,
+        "w": 349,
+        "h": 196.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 253.1,
+        "y": 285.7,
+        "w": 74.9,
+        "h": 105.1,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "body": {
+        "x": 77.9,
+        "y": 330.7,
+        "w": 65.7,
+        "h": 65.7,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 182.2,
+        "y": 347.1,
+        "w": 48.9,
+        "h": 48.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 302.6,
+        "y": 352.7,
+        "w": 43.3,
+        "h": 43.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 194.4,
+        "y": 245.8,
+        "w": 42.3,
+        "h": 49.7,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": null
+    }
+  },
+  {
+    "spec": {
+      "label": "body-bench-nap",
+      "width": 1280,
+      "height": 900,
+      "invoke": "(() => { const toad=document.querySelector('[data-body-toad]'); if(!toad)return false; void BodyToadV1.playAmbient(toad,'bench-nap',{restoreState:toad.dataset.state,duration:14000}); return true; })()",
+      "approachAt": 1150,
+      "contactAt": 2550
+    },
+    "approach": {
+      "viewport": [
+        1280,
+        900
+      ],
+      "overflow": 0,
+      "meeting": "",
+      "laneMotion": "",
+      "classes": "den-shell is-toad-ambient-active",
+      "visibleGround": 3,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "",
+      "avatarPosition": "",
+      "toadDirection": "right",
+      "toadMotion": "bench-nap",
+      "toadRoute": "bench",
+      "slugDirection": "",
+      "resourceDirection": "",
+      "scene": {
+        "x": 121,
+        "y": 366.3,
+        "w": 720,
+        "h": 405,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 396.2,
+        "y": 495.7,
+        "w": 197.7,
+        "h": 279.4,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "body": {
+        "x": 436.9,
+        "y": 593.3,
+        "w": 134,
+        "h": 134,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 602.7,
+        "y": 654.3,
+        "w": 100.8,
+        "h": 100.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 716.3,
+        "y": 665.8,
+        "w": 89.3,
+        "h": 89.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 618.4,
+        "y": 465.9,
+        "w": 82.2,
+        "h": 103.2,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": null
+    },
+    "contact": {
+      "viewport": [
+        1280,
+        900
+      ],
+      "overflow": 0,
+      "meeting": "",
+      "laneMotion": "",
+      "classes": "den-shell is-toad-ambient-active",
+      "visibleGround": 3,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "",
+      "avatarPosition": "",
+      "toadDirection": "right",
+      "toadMotion": "bench-nap",
+      "toadRoute": "bench",
+      "slugDirection": "",
+      "resourceDirection": "",
+      "scene": {
+        "x": 121,
+        "y": 366.3,
+        "w": 720,
+        "h": 405,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 396.2,
+        "y": 495.7,
+        "w": 197.7,
+        "h": 279.4,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "body": {
+        "x": 632.1,
+        "y": 534.1,
+        "w": 116.3,
+        "h": 116.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 602.7,
+        "y": 654.3,
+        "w": 100.8,
+        "h": 100.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 716.3,
+        "y": 665.8,
+        "w": 89.3,
+        "h": 89.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 618.5,
+        "y": 466.6,
+        "w": 82,
+        "h": 103.1,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": null
+    }
+  },
+  {
+    "spec": {
+      "label": "shadow-blink",
+      "width": 375,
+      "height": 812,
+      "invoke": "(() => { const shadow=document.querySelector('[data-shadow-den]'); if(!shadow)return false; shadow.dataset.shadowBlink='closed'; return true; })()",
+      "approachAt": 120,
+      "contactAt": 260
+    },
+    "approach": {
+      "viewport": [
+        375,
+        812
+      ],
+      "overflow": 0,
+      "meeting": "",
+      "laneMotion": "",
+      "classes": "den-shell",
+      "visibleGround": 3,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "",
+      "avatarPosition": "",
+      "toadDirection": "",
+      "toadMotion": "",
+      "toadRoute": "",
+      "slugDirection": "",
+      "resourceDirection": "",
+      "scene": {
+        "x": 13,
+        "y": 208.5,
+        "w": 349,
+        "h": 196.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 146.6,
+        "y": 270.9,
+        "w": 96,
+        "h": 134.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "body": {
+        "x": 77.9,
+        "y": 330.7,
+        "w": 65.7,
+        "h": 65.7,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 246.8,
+        "y": 347.1,
+        "w": 48.9,
+        "h": 48.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 302.6,
+        "y": 352.7,
+        "w": 43.3,
+        "h": 43.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 254.1,
+        "y": 258.6,
+        "w": 42.5,
+        "h": 49.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": null
+    },
+    "contact": {
+      "viewport": [
+        375,
+        812
+      ],
+      "overflow": 0,
+      "meeting": "",
+      "laneMotion": "",
+      "classes": "den-shell",
+      "visibleGround": 3,
+      "groundTotal": 3,
+      "minTarget": 42,
+      "smallTargets": [],
+      "avatarDirection": "",
+      "avatarPosition": "",
+      "toadDirection": "",
+      "toadMotion": "",
+      "toadRoute": "",
+      "slugDirection": "",
+      "resourceDirection": "",
+      "scene": {
+        "x": 13,
+        "y": 208.5,
+        "w": 349,
+        "h": 196.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "avatar": {
+        "x": 146.6,
+        "y": 270.9,
+        "w": 96,
+        "h": 134.8,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "body": {
+        "x": 77.9,
+        "y": 330.7,
+        "w": 65.7,
+        "h": 65.7,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "recovery": {
+        "x": 246.8,
+        "y": 347.1,
+        "w": 48.9,
+        "h": 48.9,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "resources": {
+        "x": 302.6,
+        "y": 352.7,
+        "w": 43.3,
+        "h": 43.3,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "shadow": {
+        "x": 254.3,
+        "y": 257.4,
+        "w": 42.3,
+        "h": 49.7,
+        "opacity": "1",
+        "visibility": "visible",
+        "display": "block"
+      },
+      "pair": null
+    }
+  }
+]

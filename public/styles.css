@@ -9718,7 +9718,10 @@ html.mobile-nav-open body {
 .avatar-core-stack[data-avatar-core-pose="window-back"] .avatar-core-motion { animation-duration: 5.8s; }
 @keyframes avatarCoreBreathing { 0%,100% { transform: scale(1); } 50% { transform: scale(.999,1.004); } }
 @keyframes avatarCoreVictorySettle { 0% { transform: scale(.992,1.008); } 62% { transform: scale(1.002,.998); } 100% { transform: scale(1); } }
-@keyframes avatarCoreBlink { 0%,91.999%,94%,100% { opacity: 0; } 92%,93.999% { opacity: 1; } }
+@keyframes avatarCoreBlink {
+  0%,85.999%,88%,89.199%,92%,100% { opacity: 0; }
+  86%,87.999%,89.2%,91.999% { opacity: 1; }
+}
 @keyframes avatarCoreWalkA { 0%,49.999%,100% { opacity: 1; } 50%,99.999% { opacity: 0; } }
 @keyframes avatarCoreWalkB { 0%,49.999%,100% { opacity: 0; } 50%,99.999% { opacity: 1; } }
 
@@ -10068,12 +10071,12 @@ html.mobile-nav-open body {
   34% { translate: 88% 0; scale: 1; }
   50% { translate: 136% -22%; scale: .99; }
   66% { translate: 176% -2%; scale: .98; }
-  82% { translate: 218% -45%; scale: .95; }
-  100% { translate: 248% -58%; scale: .86; }
+  82% { translate: 228% -51%; scale: .95; }
+  100% { translate: 272% -78%; scale: .86; }
 }
 @keyframes bodyToadBenchHome {
-  0% { translate: 248% -58%; scale: .86; }
-  18% { translate: 218% -45%; scale: .95; }
+  0% { translate: 272% -78%; scale: .86; }
+  18% { translate: 228% -51%; scale: .95; }
   34% { translate: 176% -2%; scale: .98; }
   50% { translate: 136% -22%; scale: .99; }
   66% { translate: 88% 0; scale: 1; }
@@ -10520,6 +10523,10 @@ html.mobile-nav-open body {
   font-family: var(--font-ui);
   font-size: var(--type-control);
   line-height: var(--leading-ui);
+}
+.den-shell .btn,
+.den-scene-tools button {
+  min-block-size: var(--touch-min);
 }
 .den-shell .btn:not(.ghost):not(.danger):not(.pro-cta) { color: var(--on-accent); }
 .den-drawer,
@@ -14943,6 +14950,135 @@ html.calendar-task-open body {
 @media (hover: none) { .calib-acts .btn, .calib-note { min-height: 42px; } }
 
 /* ============================================================
+   Den spatial director v1.12 — position → facing → free meeting zone.
+   Pair actions use the actors' measured room positions. Residents that are not
+   taking part stay in the room; only a spectator whose footprint intersects
+   the authored pair plate moves to the nearest free anchor.
+   ============================================================ */
+.den-shell[data-den-meeting] .den-avatar-core,
+.den-shell[data-den-meeting] .den-body-toad,
+.den-shell[data-den-meeting] .den-recovery-slug,
+.den-shell[data-den-meeting] .den-resources-penguin,
+.den-shell[data-den-meeting] .den-companion[data-shadow-den],
+.den-shell[data-den-meeting] .den-pet.is-den-spectator-reflow {
+  transition: translate 1.8s cubic-bezier(.3,.68,.22,1), scale 1.8s cubic-bezier(.3,.68,.22,1), opacity .18s ease, visibility 0s linear 0s !important;
+}
+
+.den-shell[data-den-meeting="body"].is-body-pair-approaching .den-avatar-core,
+.den-shell[data-den-meeting="body"].is-body-pair-at-meeting .den-avatar-core,
+.den-shell[data-den-meeting="recovery"].is-recovery-pair-approaching .den-avatar-core,
+.den-shell[data-den-meeting="recovery"].is-recovery-pair-at-meeting .den-avatar-core,
+.den-shell[data-den-meeting="resources"].is-resources-pair-approaching .den-avatar-core,
+.den-shell[data-den-meeting="resources"].is-resources-pair-at-meeting .den-avatar-core,
+.den-shell[data-den-meeting="shadow"].is-shadow-pair-approaching .den-avatar-core,
+.den-shell[data-den-meeting="shadow"].is-shadow-pair-at-meeting .den-avatar-core {
+  translate: var(--den-meeting-avatar-shift) 0 !important;
+  scale: 1 !important;
+}
+
+.den-shell[data-den-meeting="body"].is-body-pair-approaching .den-body-toad,
+.den-shell[data-den-meeting="body"].is-body-pair-at-meeting .den-body-toad,
+.den-shell[data-den-meeting="recovery"].is-recovery-pair-approaching .den-recovery-slug,
+.den-shell[data-den-meeting="recovery"].is-recovery-pair-at-meeting .den-recovery-slug,
+.den-shell[data-den-meeting="resources"].is-resources-pair-approaching .den-resources-penguin,
+.den-shell[data-den-meeting="resources"].is-resources-pair-at-meeting .den-resources-penguin,
+.den-shell[data-den-meeting="shadow"].is-shadow-pair-approaching .den-companion[data-shadow-den],
+.den-shell[data-den-meeting="shadow"].is-shadow-pair-at-meeting .den-companion[data-shadow-den] {
+  translate: var(--den-meeting-actor-shift) 0 !important;
+  scale: 1 !important;
+  animation: none !important;
+}
+
+.den-shell[data-den-meeting].is-body-pair-returning .den-avatar-core,
+.den-shell[data-den-meeting].is-body-pair-returning .den-body-toad,
+.den-shell[data-den-meeting].is-recovery-pair-returning .den-avatar-core,
+.den-shell[data-den-meeting].is-recovery-pair-returning .den-recovery-slug,
+.den-shell[data-den-meeting].is-resources-pair-returning .den-avatar-core,
+.den-shell[data-den-meeting].is-resources-pair-returning .den-resources-penguin,
+.den-shell[data-den-meeting].is-shadow-pair-returning .den-avatar-core,
+.den-shell[data-den-meeting].is-shadow-pair-returning .den-companion[data-shadow-den] {
+  translate: 0 0 !important;
+  scale: 1 !important;
+  animation: none !important;
+}
+
+.den-shell[data-den-meeting="body"] .den-scene[data-den-renderer="v5"] .body-pair-v2,
+.den-shell[data-den-meeting="recovery"] .recovery-pair-v2,
+.den-shell[data-den-meeting="resources"] .resources-pair-v1 {
+  left: var(--den-meeting-pair-left) !important;
+  width: var(--den-meeting-pair-width) !important;
+}
+
+.den-shell[data-den-meeting] .den-pet.is-den-spectator-reflow {
+  translate: var(--den-spectator-shift) 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+}
+.den-shell[data-den-meeting] .den-pet.is-den-spectator-returning { translate: 0 0 !important; }
+
+/* A pair plate replaces only its two participants. Other residents witness the
+   interaction from their own footprint instead of vanishing from the room. */
+.den-shell.is-body-pair-active .den-scene > .den-pet:not(.den-body-toad),
+.den-shell.is-recovery-pair-active .den-scene > .den-pet:not(.den-recovery-slug),
+.den-shell.is-resources-pair-active .den-scene > .den-pet:not(.den-resources-penguin) {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+}
+
+.den-resources-penguin[data-resources-direction="home"] .resources-penguin-v1__frame,
+.den-resources-penguin[data-resources-direction="left"] .resources-penguin-v1__frame { transform: scaleX(-1); }
+.den-companion[data-shadow-flight] .shadow-rig-body {
+  animation: shadowDenLiveFlight .72s cubic-bezier(.35,0,.3,1) infinite !important;
+  animation-play-state: running !important;
+}
+
+/* Traveller's east-lane visits now announce their route. Katsuya uses her
+   authored compress/extend crawl while yielding the lane; every Shadow tier
+   uses the same restrained flight cycle for this first locomotion pool. */
+.den-shell[data-den-lane-motion] .den-recovery-slug {
+  transition: translate 2.2s cubic-bezier(.28,.62,.22,1), scale 2.2s linear !important;
+}
+.den-shell[data-den-lane-motion] .den-companion[data-shadow-den] {
+  transition: left 2.2s cubic-bezier(.28,.62,.22,1), top 2.2s cubic-bezier(.28,.62,.22,1), translate 2.2s cubic-bezier(.28,.62,.22,1) !important;
+}
+.den-shell[data-den-lane-motion] .den-companion[data-shadow-flight] .shadow-rig-body {
+  animation: shadowDenLiveFlight .72s cubic-bezier(.35,0,.3,1) infinite !important;
+  animation-play-state: running !important;
+}
+
+/* The four canonical Shadow posters have different face heights. A form-
+   specific paper eyelid closes over the existing lavender eyes, so this reads
+   as a blink of the same character rather than a whole-poster squash. */
+.den-companion .shadow-rig-body::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 6.4% 3.4% at var(--shadow-eye-left) var(--shadow-eye-y), #342443 0 72%, #76588e 78% 86%, transparent 92%),
+    radial-gradient(ellipse 6.4% 3.4% at var(--shadow-eye-right) var(--shadow-eye-y), #342443 0 72%, #76588e 78% 86%, transparent 92%);
+}
+.den-companion .shadow-form-spark { --shadow-eye-left: 36.4%; --shadow-eye-right: 53.1%; --shadow-eye-y: 76.1%; }
+.den-companion .shadow-form-spirit { --shadow-eye-left: 41.4%; --shadow-eye-right: 55.7%; --shadow-eye-y: 51.5%; }
+.den-companion .shadow-form-guardian { --shadow-eye-left: 43.1%; --shadow-eye-right: 55.7%; --shadow-eye-y: 43.4%; }
+.den-companion .shadow-form-keeper { --shadow-eye-left: 43.1%; --shadow-eye-right: 56.1%; --shadow-eye-y: 49.2%; }
+.den-companion[data-shadow-blink="closed"] .shadow-rig-body::after { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .den-shell[data-den-meeting] .den-avatar-core,
+  .den-shell[data-den-meeting] .den-pet,
+  .den-shell[data-den-meeting] .den-companion[data-shadow-den] {
+    transition: none !important;
+    animation: none !important;
+  }
+  .den-companion .shadow-rig-body::after { display: none; }
+}
+
+/* ============================================================
    Shadow Den v1.1 — room-scale meetings on the live canonical rigs.
    Pair posters remain reference art only: contact never swaps sides, changes
    the Traveller face, or magnifies two actors into a full-room illustration.
@@ -14970,6 +15106,12 @@ html.calendar-task-open body {
 .den-companion[data-shadow-tier="3"] .shadow-rig { transform: scale(1); }
 .den-companion[data-shadow-den].is-shadow-den-solo {
   filter: drop-shadow(0 0 12px color-mix(in srgb, #9d78eb 58%, transparent));
+}
+.den-companion[data-shadow-den][data-shadow-den-mode="greet"] .shadow-rig-body {
+  animation: shadowDenAnswer 1.55s cubic-bezier(.2,.82,.22,1) 2 !important;
+}
+.den-companion[data-shadow-den][data-shadow-den-mode="speak"] .shadow-rig-body {
+  animation: shadowDenLeanIn 1.4s cubic-bezier(.22,.72,.2,1) both !important;
 }
 .den-companion[data-shadow-den][data-shadow-den-mode="think"] { translate: 0 -4%; }
 
@@ -15023,6 +15165,17 @@ html.calendar-task-open body {
   0%,100% { transform: translateY(1.5%) rotate(-2deg) skewX(0deg); }
   45% { transform: translateY(-3.5%) rotate(2deg) skewX(-1.6deg); }
   68% { transform: translateY(-1%) rotate(.4deg) skewX(.8deg); }
+}
+@keyframes shadowDenAnswer {
+  0%,100% { transform: translateY(0) rotate(0) scale(1); }
+  24% { transform: translateY(-11%) rotate(-3deg) scale(1.08); }
+  48% { transform: translateY(-5%) rotate(3deg) scale(1.045); }
+  72% { transform: translateY(-8%) rotate(-1deg) scale(1.065); }
+}
+@keyframes shadowDenLeanIn {
+  0% { transform: translateY(0) scale(1); }
+  38% { transform: translateY(-8%) scale(1.1); }
+  100% { transform: translateY(-4%) scale(1.055); }
 }
 @keyframes shadowDenLiveContact {
   0%,100% { transform: translateY(0) rotate(-.35deg); }

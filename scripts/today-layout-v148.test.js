@@ -14,5 +14,5 @@ test('Today tabs occupy their own full grid row', () => {
 
 test('Today layout restoration advances the PWA shell', () => {
   const sw = fs.readFileSync(path.join(root, 'public', 'sw.js'), 'utf8');
-  assert.match(sw, /const CACHE = 'satoru-v152'/);
+  assert.match(sw, /const CACHE = 'satoru-v158'/);
 });

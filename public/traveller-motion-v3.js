@@ -5,7 +5,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function (root) {
   'use strict';
 
-  const VERSION = '3.1.0';
+  const VERSION = '3.2.0';
   const ART_ROOT = '/art/avatars/traveller-core-v1/male/motion-v3/';
   const ASSETS = Object.freeze({
     blink: 'idle-blink.png',
@@ -63,6 +63,15 @@
     });
   }
 
+  function announceLeg(host, phase, destination, direction) {
+    if (!host || typeof host.dispatchEvent !== 'function' || typeof root.CustomEvent !== 'function') return false;
+    host.dispatchEvent(new root.CustomEvent('satoru:den-traveller-motion', {
+      bubbles: true,
+      detail: { phase, destination, direction },
+    }));
+    return true;
+  }
+
   function pause(controller, ms) {
     return new Promise((resolve) => {
       controller.waitResolve = resolve;
@@ -76,6 +85,7 @@
 
   function resetHost(host) {
     if (!host || !host.dataset) return;
+    announceLeg(host, 'reset', 'home', 'left');
     host.classList.add('is-locomotion-resetting');
     delete host.dataset.locomotion;
     delete host.dataset.locomotionDirection;
@@ -95,11 +105,13 @@
     host.classList.remove('is-locomotion-resetting');
     if (!host.dataset.locomotionPosition && destination !== 'home') host.dataset.locomotionPosition = 'home';
     if (!installWalkFrames(host, direction)) return false;
+    announceLeg(host, 'depart', destination, direction);
     await nextFrame();
     if (controller.cancelled) return false;
     host.dataset.locomotionPosition = destination;
     if (!(await pause(controller, Number(config.walkMs) || WALK_MS))) return false;
     clearWalkFrames(host);
+    announceLeg(host, 'arrive', destination, direction);
     if (destination === 'home') {
       delete host.dataset.locomotion;
       delete host.dataset.locomotionDirection;
@@ -192,6 +204,7 @@
     DWELL_MS,
     frameSrc,
     blinkMarkup,
+    announceLeg,
     installWalkFrames,
     clearWalkFrames,
     walkTo,

@@ -243,7 +243,7 @@ test('frame switches have no empty interval and portal hands directly to reading
 test('room depth owns travel scale while in-place acting stays on a fixed host', () => {
   const css = read('public/styles.css');
   assert.match(css, /bodyToadTourAway[\s\S]*100% \{ translate: 76% 0; scale: \.88; \}/);
-  assert.match(css, /bodyToadBenchAway[\s\S]*100% \{ translate: 248% -58%; scale: \.86; \}/);
+  assert.match(css, /bodyToadBenchAway[\s\S]*100% \{ translate: 272% -78%; scale: \.86; \}/);
   assert.match(css, /recoverySlugTourAway[\s\S]*translate: 0 -18%; scale: \.9/);
   assert.match(css, /den-companion\[data-shadow-den\]\s*\{[\s\S]*scale: 1/);
   assert.match(css, /den-companion\[data-shadow-den\]\s*\{[\s\S]{0,520}left \.82s cubic-bezier/);
@@ -253,15 +253,17 @@ test('room depth owns travel scale while in-place acting stays on a fixed host',
 test('v155 shell revision and cache-busting are coherent', () => {
   const index = read('public/index.html');
   const sw = read('public/sw.js');
-  assert.match(sw, /const CACHE = 'satoru-v155'/);
-  for (const script of ['den-stage-v1', 'den-life-v1', 'body-toad-v1', 'resources-penguin-v1', 'traveller-room-v4']) {
+  assert.match(sw, /const CACHE = 'satoru-v158'/);
+  for (const script of ['body-toad-v1', 'resources-penguin-v1', 'traveller-room-v4']) {
     assert.match(index, new RegExp(`${script}\\.js\\?v=20260812-lair-actors-v154-2`));
   }
+  assert.match(index, /den-life-v1\.js\?v=20260815-den-life-v158-1/);
+  assert.match(index, /den-stage-v1\.js\?v=20260815-den-life-v158-1/);
   for (const script of ['shadow-den-v1', 'recovery-slug-v1']) {
     assert.match(index, new RegExp(`${script}\\.js\\?v=20260814-lair-actors-v155-1`));
   }
-  assert.match(index, /styles\.css\?v=20260814-lair-actors-v155-1/);
-  assert.match(index, /app\.js\?v=20260812-lair-actors-v154-2/);
+  assert.match(index, /styles\.css\?v=20260815-den-life-v158-1/);
+  assert.match(index, /app\.js\?v=20260815-den-life-v158-1/);
   assert.doesNotMatch(sw, /recovery-slug-v1\/pair-v2\/stretch-b\.png/);
   assert.match(sw, /recovery-slug-v1\/pair-v3\/stretch-soft-b-v155\.png/);
 });

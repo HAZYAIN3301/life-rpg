@@ -6750,7 +6750,10 @@ async function playShadowSoloScene(scope, mode, options = {}) {
   if (!companion) return Promise.resolve(false);
   const automatic = options.automatic === true;
   const meta = window.ShadowDenV1.SOLO[mode];
-  const duration = automatic ? Math.max(meta.duration, Number(options.duration) || meta.duration) : meta.duration;
+  const requestedDuration = Number(options.duration) || 0;
+  const duration = automatic
+    ? Math.max(meta.duration, requestedDuration || meta.duration)
+    : (requestedDuration ? Math.max(600, Math.min(meta.duration, requestedDuration)) : meta.duration);
   return runDenSceneAction(scope, `shadow-solo:${mode}`, async (token) => {
     if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, duration + 7000);
     cancelDenRoomAction(false);
@@ -14482,12 +14485,7 @@ function renderDen() {
     <span><b>${esc(c.name)} · ${t((COMP_TIERS[ti] || COMP_TIERS[0]).name)}</b><small>${t('Тень действует сама и вместе с Traveller — спокойно, без награды за повтор.')}</small></span>
     <div>
       <button class="btn ghost sm" data-action="shadow-den-solo" data-mode="greet">${t('Откликнуться')}</button>
-      <button class="btn ghost sm" data-action="shadow-den-solo" data-mode="listen">${t('Прислушаться')}</button>
-      <button class="btn ghost sm" data-action="shadow-den-solo" data-mode="think">${t('Подумать вместе')}</button>
       <button class="btn ghost sm" data-action="shadow-den-solo" data-mode="speak">${t('Поговорить')}</button>
-      <button class="btn ghost sm" data-action="shadow-den-pair" data-mode="attune">${t('Свериться')}</button>
-      <button class="btn ghost sm" data-action="shadow-den-pair" data-mode="rest">${t('Побыть рядом')}</button>
-      <button class="btn ghost sm" data-action="shadow-den-pair" data-mode="silence">${t('Разделить тишину')}</button>
       <button class="btn ghost sm" data-action="comp-pet"${c.pet === todayStr() ? ' disabled' : ''}>${t(c.pet === todayStr() ? 'Сегодня уже встретились' : 'Коснуться')}</button>
     </div>
   </section>`);
@@ -19906,8 +19904,15 @@ async function onClick(e) {
     const scope = el.closest('.den-shell');
     const mode = el.dataset.mode || 'greet';
     if (scope && window.ShadowDenV1 && window.ShadowDenV1.SOLO[mode]) {
-      playShadowSoloScene(scope, mode).catch(() => false);
-      if (mode === 'speak') ttsSpeak(t('Я рядом. Скажи, что сейчас важнее всего.'), el, 'caring');
+      if (mode === 'speak') {
+        // "Поговорить" is a doorway into a real two-way conversation. The old
+        // handler replayed one canned sentence, so repeated taps could never
+        // become a dialogue and sounded like a broken toy.
+        playShadowSoloScene(scope, mode, { duration: 1400 })
+          .finally(() => openHelperChat());
+      } else {
+        playShadowSoloScene(scope, mode).catch(() => false);
+      }
       track(`shadow-den:solo:${mode}`);
     }
     return;

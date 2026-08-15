@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const shadow = require('../public/shadow-den-v1.js');
 
-assert.equal(shadow.VERSION, '1.0.0');
+assert.equal(shadow.VERSION, '1.2.0');
 assert.deepEqual(shadow.FORMS, ['spark', 'spirit', 'guardian', 'keeper']);
 assert.deepEqual(Object.keys(shadow.SOLO), ['greet', 'listen', 'think', 'speak']);
 assert.deepEqual(Object.keys(shadow.INTERACTIONS), ['attune', 'rest', 'silence']);
@@ -28,8 +28,12 @@ const css = read('public/styles.css');
 const index = read('public/index.html');
 const sw = read('public/sw.js');
 for (const action of ['shadow-den-solo', 'shadow-den-pair']) assert.match(app, new RegExp(action));
-for (const key of ['Взаимодействие с Тенью', 'Откликнуться', 'Прислушаться', 'Подумать вместе', 'Поговорить', 'Свериться', 'Разделить тишину']) {
+for (const key of ['Взаимодействие с Тенью', 'Откликнуться', 'Поговорить']) {
   assert.match(app, new RegExp(key));
+}
+const denSection = app.slice(app.indexOf('den-shadow-actions'), app.indexOf("if (bodyGuardian) guardianSections.push"));
+for (const hiddenUntilAuthored of ['Прислушаться', 'Подумать вместе', 'Свериться', 'Разделить тишину']) {
+  assert.doesNotMatch(denSection, new RegExp(hiddenUntilAuthored));
 }
 assert.match(app, /onShadowBeat/);
 assert.match(app, /onShadowPair/);
@@ -39,8 +43,10 @@ assert.match(css, /\.shadow-den-pair-v1/);
 assert.match(css, /is-shadow-pair-active/);
 assert.match(css, /body:has\(\.focus-pill\.show\) \.den-shell/);
 assert.match(css, /prefers-reduced-motion: reduce[\s\S]*shadow-den-pair-v1/);
-assert.match(index, /shadow-den-v1\.js\?v=20260811-shadow-den-v1-0/);
-  assert.match(sw, /const CACHE = 'satoru-v152'/);
-assert.match(sw, /shadow-den-v1\/pair-v1\/attune-keeper\.png/);
+assert.match(index, /shadow-den-v1\.js\?v=20260814-lair-actors-v155-1/);
+assert.match(sw, /const CACHE = 'satoru-v158'/);
+assert.doesNotMatch(sw, /shadow-den-v1\/pair-v1\/attune-keeper\.png/);
+assert.match(css, /\.shadow-den-pair-v1\s*\{\s*display: none !important/);
+assert.doesNotMatch(shadow.playPair.toString(), /createElement\(['"]img['"]\)/);
 
 console.log('shadow-den-v1: ok');
