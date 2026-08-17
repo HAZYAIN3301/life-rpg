@@ -3055,6 +3055,38 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { userId: am[1], files, backups });
     }
 
+    // GET /api/admin/crash-export/<userId> — МИНИМАЛЬНЫЙ срез для разбора краша.
+    //
+    // Отличие от /userdata выше принципиальное. Тот отдаёт всё, включая дневник: заметки,
+    // рефлексии, записи дня, эпизоды. Для починки краша Календаря и Статистики нужна только
+    // механика — задачи, сферы, привычки, цели. Читать чужие личные записи, чтобы поймать
+    // TypeError, незачем, поэтому лишнее отрезается ЗДЕСЬ, на сервере: то, что не ушло с
+    // машины, невозможно случайно увидеть.
+    //
+    // Отдаётся файлом, а не на экран: разбирающему нужен репро локально, а владельцу
+    // админки — один тап вместо копирования простыни из модалки.
+    am = u.match(/^\/api\/admin\/crash-export\/([a-z0-9_-]{1,32})$/);
+    if (am && req.method === 'GET') {
+      if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
+      // Белый список, а не чёрный: новый файл с личным содержимым не утечёт по забывчивости.
+      const MECHANICS = ['settings', 'tasks', 'habits', 'habitlog', 'goals', 'skilltree', 'achievements', 'lootbox'];
+      const EXCLUDED = ['days', 'weeks', 'inbox', 'episodes', 'profile', 'boardmedia', 'antihabits'];
+      const dir = userDataDir(am[1]);
+      const files = {};
+      for (const n of MECHANICS) {
+        try { files[n] = JSON.parse(fs.readFileSync(path.join(dir, n + '.json'), 'utf8')); } catch { files[n] = null; }
+      }
+      const archive = {
+        format: 'satoru-crash-repro', version: 1, exportedAt: new Date().toISOString(),
+        userId: am[1], files,
+        excluded: EXCLUDED,
+        note: 'Только механика для воспроизведения сбоя. Дневник, заметки, рефлексии и эпизоды намеренно НЕ включены.',
+      };
+      const filename = `satoru-crash-${am[1]}-${new Date().toISOString().slice(0, 10)}.json`;
+      res.writeHead(200, { 'Content-Type': MIME['.json'], 'Content-Disposition': `attachment; filename="${filename}"`, 'Cache-Control': 'no-store' });
+      return res.end(JSON.stringify(archive, null, 2));
+    }
+
     // GET /api/admin/userdata/<userId>/backup/<name>/<stamp> — содержимое конкретного бэкапа
     am = u.match(/^\/api\/admin\/userdata\/([a-z0-9_-]{1,32})\/backup\/([a-z0-9_-]+)\/([0-9TZ-]+)$/);
     if (am && req.method === 'GET') {

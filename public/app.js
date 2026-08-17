@@ -546,6 +546,10 @@ const I18N_EXTRA = {
   'Выбрать профиль…': { en: 'Select profile…', de: 'Profil wählen…', uk: 'Обрати профіль…', es: 'Elegir perfil…' },
   'Список пуст': { en: 'List is empty', de: 'Liste ist leer', uk: 'Список порожній', es: 'La lista está vacía' },
   'Искать профиль': { en: 'Search profile', de: 'Profil suchen', uk: 'Шукати профіль', es: 'Buscar perfil' },
+  // ── v160 17.08: выгрузка для разбора чужого сбоя ──
+  'Выгрузить для разбора сбоя': { en: 'Export for crash triage', de: 'Für Fehleranalyse exportieren', uk: 'Вивантажити для розбору збою', es: 'Exportar para analizar el fallo' },
+  'Сначала выбери профиль в списке выше': { en: 'Pick a profile in the list above first', de: 'Wähle zuerst ein Profil in der Liste oben', uk: 'Спершу обери профіль у списку вище', es: 'Primero elige un perfil en la lista de arriba' },
+  'Выгрузка содержит только механику: сферы, квесты, привычки, цели. Заметки, рефлексии и записи дня в неё намеренно не входят.': { en: 'The export carries mechanics only: spheres, quests, habits, goals. Notes, reflections and day records are deliberately left out.', de: 'Der Export enthält nur Mechanik: Bereiche, Quests, Gewohnheiten, Ziele. Notizen, Reflexionen und Tageseinträge bleiben bewusst draußen.', uk: 'Вивантаження містить лише механіку: сфери, квести, звички, цілі. Нотатки, рефлексії та записи дня навмисно не входять.', es: 'La exportación solo lleva mecánica: ámbitos, misiones, hábitos, objetivos. Notas, reflexiones y registros del día quedan fuera a propósito.' },
   // ── v159 15.08: живые события неба на доске ──
   'ТОЛЬКО СЕЙЧАС': { en: 'RIGHT NOW ONLY', de: 'NUR JETZT', uk: 'ТІЛЬКИ ЗАРАЗ', es: 'SOLO AHORA' },
   'НЕБО НАД ТОБОЙ': { en: 'THE SKY ABOVE YOU', de: 'DER HIMMEL ÜBER DIR', uk: 'НЕБО НАД ТОБОЮ', es: 'EL CIELO SOBRE TI' },
@@ -17748,7 +17752,9 @@ function adminCard() {
     <h3 style="margin-top:16px">${t('🗂 Данные и бэкапы юзера')}</h3>
     <form id="recover-data" class="pin-change">
       ${recoverInput}
-      <button type="submit" class="btn ghost">${t('Открыть')}</button></form>
+      <button type="submit" class="btn ghost">${t('Открыть')}</button>
+      <button type="button" class="btn ghost" data-action="crash-export">${t('Выгрузить для разбора сбоя')}</button></form>
+    <p class="muted" style="font-size:12px">${t('Выгрузка содержит только механику: сферы, квесты, привычки, цели. Заметки, рефлексии и записи дня в неё намеренно не входят.')}</p>
     <p class="muted" style="font-size:12px">${t('Посмотреть текущие данные и восстановить из автоснимка (бэкапы делаются перед каждой записью).')}</p>
     <h3 style="margin-top:16px">${t('📊 Активность (аналитика)')}</h3>
     ${analyticsHTML()}
@@ -20891,6 +20897,18 @@ async function onClick(e) {
       result.textContent = t('Архив импортирован');
       setTimeout(() => location.reload(), 350);
     }).catch(() => { result.textContent = t('Импорт не завершён. Исходные данные сохранены — повтори попытку.'); el.disabled = false; });
+    return;
+  }
+  if (action === 'crash-export') {
+    const form = document.getElementById('recover-data');
+    const uid = form && form.userId ? form.userId.value.trim() : '';
+    if (!uid) { toast(t('Сначала выбери профиль в списке выше')); return; }
+    // Обычная ссылка на скачивание: сервер уже отдаёт Content-Disposition, поэтому
+    // браузер сам предложит сохранить файл, и никакой сборки Blob в памяти не нужно.
+    const a = document.createElement('a');
+    a.href = `/api/admin/crash-export/${encodeURIComponent(uid)}`;
+    a.rel = 'noopener';
+    document.body.appendChild(a); a.click(); a.remove();
     return;
   }
   if (action === 'admin-user-pick') {
