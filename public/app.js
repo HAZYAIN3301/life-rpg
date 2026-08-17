@@ -546,6 +546,60 @@ const I18N_EXTRA = {
   'Выбрать профиль…': { en: 'Select profile…', de: 'Profil wählen…', uk: 'Обрати профіль…', es: 'Elegir perfil…' },
   'Список пуст': { en: 'List is empty', de: 'Liste ist leer', uk: 'Список порожній', es: 'La lista está vacía' },
   'Искать профиль': { en: 'Search profile', de: 'Profil suchen', uk: 'Шукати профіль', es: 'Buscar perfil' },
+  // ── v160 17.08: тосты и подтверждения заговорили на пяти языках (запуск RU+DE) ──
+  'Время подставлено в форму': { en: 'Time filled into the form', de: 'Zeit ins Formular eingetragen', uk: 'Час підставлено у форму', es: 'Hora rellenada en el formulario' },
+  'Клятва Кремню: завершить до конца дня': { en: 'Flint Oath: finish it before the day ends', de: 'Feuerstein-Eid: bis zum Tagesende abschließen', uk: 'Клятва Кременю: завершити до кінця дня', es: 'Juramento de Pedernal: terminarlo antes de que acabe el día' },
+  'Сдержишь — золото за квест ×1.5. Провалишь — сгорит': { en: 'Keep it and the quest pays ×1.5 gold. Break it and you lose', de: 'Hältst du ihn, zahlt die Quest ×1,5 Gold. Brichst du ihn, verlierst du', uk: 'Дотримаєш — золото за квест ×1.5. Провалиш — згорить', es: 'Si lo cumples, la misión paga ×1,5 de oro. Si no, pierdes' },
+  'Даёшь слово?': { en: 'Do you give your word?', de: 'Gibst du dein Wort?', uk: 'Даєш слово?', es: '¿Das tu palabra?' },
+  'Программа добавлена': { en: 'Program added', de: 'Programm hinzugefügt', uk: 'Програму додано', es: 'Programa añadido' },
+  'Нужен доступ к камере': { en: 'Camera access needed', de: 'Zugriff auf die Kamera nötig', uk: 'Потрібен доступ до камери', es: 'Se necesita acceso a la cámara' },
+  'Нужен доступ к микрофону': { en: 'Microphone access needed', de: 'Zugriff auf das Mikrofon nötig', uk: 'Потрібен доступ до мікрофона', es: 'Se necesita acceso al micrófono' },
+  'Восстановлено': { en: 'Restored', de: 'Wiederhergestellt', uk: 'Відновлено', es: 'Restaurado' },
+  'Награда пати': { en: 'Party reward', de: 'Party-Belohnung', uk: 'Нагорода паті', es: 'Recompensa del grupo' },
+  'убрана с колеса: это проект, веди его в Целях': { en: 'off the wheel: it is a project, track it in Goals', de: 'vom Rad genommen: das ist ein Projekt, führ es in den Zielen', uk: 'знято з колеса: це проєкт, веди його в Цілях', es: 'fuera de la rueda: es un proyecto, llévalo en Objetivos' },
+  'ИИ по умолчанию': { en: 'Default AI', de: 'Standard-KI', uk: 'ШІ за замовчуванням', es: 'IA por defecto' },
+  '⚠️ Не удалось сохранить': { en: '⚠️ Could not save', de: '⚠️ Konnte nicht gespeichert werden', uk: '⚠️ Не вдалося зберегти', es: '⚠️ No se pudo guardar' },
+  'Не удалось загрузить слой аватара': { en: 'Could not load an avatar layer', de: 'Avatar-Ebene konnte nicht geladen werden', uk: 'Не вдалося завантажити шар аватара', es: 'No se pudo cargar una capa del avatar' },
+  'Редактор вернул неверную схему образа': { en: 'The editor returned an invalid look schema', de: 'Der Editor lieferte ein ungültiges Look-Schema', uk: 'Редактор повернув неправильну схему образу', es: 'El editor devolvió un esquema de aspecto inválido' },
+  'Образ сохранён': { en: 'Look saved', de: 'Look gespeichert', uk: 'Образ збережено', es: 'Aspecto guardado' },
+  'Не удалось запустить выбранный голос — выбери другой в Настройках': { en: 'Could not start that voice — pick another one in Settings', de: 'Diese Stimme ließ sich nicht starten — wähle in den Einstellungen eine andere', uk: 'Не вдалося запустити обраний голос — обери інший у Налаштуваннях', es: 'No se pudo iniciar esa voz: elige otra en Ajustes' },
+  'Не удалось запустить эмбиент в этом браузере': { en: 'Ambient sound will not start in this browser', de: 'Ambient-Sound startet in diesem Browser nicht', uk: 'Не вдалося запустити ембієнт у цьому браузері', es: 'El sonido ambiente no se inicia en este navegador' },
+  'Плавающее окно недоступно в этом браузере — показываю плашку': { en: 'Floating window is not available in this browser — showing a panel instead', de: 'Schwebendes Fenster gibt es in diesem Browser nicht — zeige stattdessen eine Leiste', uk: 'Плаваюче вікно недоступне в цьому браузері — показую панель', es: 'La ventana flotante no está disponible en este navegador: muestro un panel' },
+  'Расскажи или впиши, что делал': { en: 'Say or type what you did', de: 'Erzähl oder tippe, was du gemacht hast', uk: 'Розкажи або впиши, що робив', es: 'Cuenta o escribe qué hiciste' },
+  'Напиши текст': { en: 'Write something', de: 'Schreib etwas', uk: 'Напиши текст', es: 'Escribe algo' },
+  'Сначала опиши в поле выше — что за цели/уровни': { en: 'Describe it in the field above first — what goals or levels', de: 'Beschreib es erst im Feld oben — welche Ziele oder Stufen', uk: 'Спочатку опиши в полі вище — що за цілі чи рівні', es: 'Descríbelo primero en el campo de arriba: qué objetivos o niveles' },
+  '📋 Промпт скопирован — вставь своему ИИ': { en: '📋 Prompt copied — paste it into your AI', de: '📋 Prompt kopiert — füg ihn in deine KI ein', uk: '📋 Промпт скопійовано — встав своєму ШІ', es: '📋 Prompt copiado: pégalo en tu IA' },
+  'Вставь ответ ИИ': { en: 'Paste the AI\'s reply', de: 'Füg die Antwort der KI ein', uk: 'Встав відповідь ШІ', es: 'Pega la respuesta de la IA' },
+  'Браузер не поддерживает запись': { en: 'This browser cannot record', de: 'Dieser Browser kann nicht aufnehmen', uk: 'Браузер не підтримує запис', es: 'Este navegador no puede grabar' },
+  'Пустая запись': { en: 'The recording is empty', de: 'Die Aufnahme ist leer', uk: 'Порожній запис', es: 'La grabación está vacía' },
+  'Не удалось сохранить запись': { en: 'Could not save the recording', de: 'Aufnahme konnte nicht gespeichert werden', uk: 'Не вдалося зберегти запис', es: 'No se pudo guardar la grabación' },
+  'Ошибка сохранения записи': { en: 'Error while saving the recording', de: 'Fehler beim Speichern der Aufnahme', uk: 'Помилка збереження запису', es: 'Error al guardar la grabación' },
+  'Не удалось загрузить (нужен админ / нет юзера)': { en: 'Could not load — admin required, or no such user', de: 'Konnte nicht laden — Admin nötig oder Nutzer existiert nicht', uk: 'Не вдалося завантажити — потрібен адмін або немає юзера', es: 'No se pudo cargar: se requiere admin o el usuario no existe' },
+  'Не удалось загрузить (нужен админ)': { en: 'Could not load — admin required', de: 'Konnte nicht laden — Admin nötig', uk: 'Не вдалося завантажити — потрібен адмін', es: 'No se pudo cargar: se requiere admin' },
+  '✨ Имя сохранено': { en: '✨ Name saved', de: '✨ Name gespeichert', uk: '✨ Ім\'я збережено', es: '✨ Nombre guardado' },
+  '📝 В Заметках': { en: '📝 Saved to Notes', de: '📝 In den Notizen', uk: '📝 У Нотатках', es: '📝 Guardado en Notas' },
+  '🤖 Ключ сохранён': { en: '🤖 Key saved', de: '🤖 Schlüssel gespeichert', uk: '🤖 Ключ збережено', es: '🤖 Clave guardada' },
+  'Не удалось загрузить аватар': { en: 'Could not load the avatar', de: 'Avatar konnte nicht geladen werden', uk: 'Не вдалося завантажити аватар', es: 'No se pudo cargar el avatar' },
+  'Отключить Strava? Уже импортированные тренировки останутся, новые синхронизироваться не будут.': { en: 'Disconnect Strava? Workouts already imported stay; new ones will not sync.', de: 'Strava trennen? Bereits importierte Workouts bleiben, neue werden nicht mehr synchronisiert.', uk: 'Відключити Strava? Уже імпортовані тренування лишаться, нові не синхронізуватимуться.', es: '¿Desconectar Strava? Los entrenamientos ya importados se quedan; los nuevos no se sincronizarán.' },
+  'Strava отключён': { en: 'Strava disconnected', de: 'Strava getrennt', uk: 'Strava відключено', es: 'Strava desconectado' },
+  'Нет снимка': { en: 'No snapshot', de: 'Kein Snapshot', uk: 'Немає знімка', es: 'No hay instantánea' },
+  'Ошибка сети': { en: 'Network error', de: 'Netzwerkfehler', uk: 'Помилка мережі', es: 'Error de red' },
+  'Ошибка доступа': { en: 'Access error', de: 'Zugriffsfehler', uk: 'Помилка доступу', es: 'Error de acceso' },
+  'Репортов пока нет': { en: 'No reports yet', de: 'Noch keine Meldungen', uk: 'Репортів поки немає', es: 'Todavía no hay reportes' },
+  '📋 Скопировано! Вставь в чат с Claude.': { en: '📋 Copied. Paste it into your Claude chat.', de: '📋 Kopiert. Füg es in deinen Claude-Chat ein.', uk: '📋 Скопійовано! Встав у чат з Claude.', es: '📋 Copiado. Pégalo en tu chat con Claude.' },
+  '🤸 Разминка в плане — тело скажет спасибо': { en: '🤸 Warm-up is in the plan — your body will thank you', de: '🤸 Aufwärmen steht im Plan — dein Körper dankt es dir', uk: '🤸 Розминка в плані — тіло скаже дякую', es: '🤸 El calentamiento está en el plan: tu cuerpo lo agradecerá' },
+  '🧘 Мобилка в плане — спина и плечи скажут спасибо': { en: '🧘 Mobility is in the plan — your back and shoulders will thank you', de: '🧘 Mobility steht im Plan — Rücken und Schultern danken es dir', uk: '🧘 Мобілка в плані — спина і плечі скажуть дякую', es: '🧘 La movilidad está en el plan: tu espalda y hombros lo agradecerán' },
+  'Подсказки мобилки отключены': { en: 'Mobility hints are off', de: 'Mobility-Hinweise sind aus', uk: 'Підказки мобілки вимкнені', es: 'Los avisos de movilidad están desactivados' },
+  'Перенесено на сегодня': { en: 'Moved to today', de: 'Auf heute verschoben', uk: 'Перенесено на сьогодні', es: 'Movido a hoy' },
+  'Нет квестов со временем — поставь их в Календаре': { en: 'No quests have a time yet — set it in the Calendar', de: 'Keine Quest hat eine Uhrzeit — leg sie im Kalender fest', uk: 'Немає квестів з часом — постав їх у Календарі', es: 'Ninguna misión tiene hora: ponla en el Calendario' },
+  '📆 .ics скачан — открой его в Календаре для импорта': { en: '📆 .ics downloaded — open it in your calendar app to import', de: '📆 .ics heruntergeladen — zum Importieren in deiner Kalender-App öffnen', uk: '📆 .ics завантажено — відкрий його в Календарі для імпорту', es: '📆 .ics descargado: ábrelo en tu calendario para importarlo' },
+  'Не удалось создать файл': { en: 'Could not create the file', de: 'Datei konnte nicht erstellt werden', uk: 'Не вдалося створити файл', es: 'No se pudo crear el archivo' },
+  'Удалить привычку? Её отметки и опыт тоже удалятся.': { en: 'Delete this habit? Its check-ins and XP go with it.', de: 'Diese Gewohnheit löschen? Ihre Einträge und XP verschwinden mit.', uk: 'Видалити звичку? Її позначки і досвід теж зникнуть.', es: '¿Eliminar este hábito? Sus registros y XP se van con él.' },
+  'Нужна хотя бы одна категория': { en: 'Pick at least one category', de: 'Wähle mindestens eine Kategorie', uk: 'Потрібна хоча б одна категорія', es: 'Elige al menos una categoría' },
+  'Браузер не поддерживает уведомления': { en: 'This browser does not support notifications', de: 'Dieser Browser unterstützt keine Benachrichtigungen', uk: 'Браузер не підтримує сповіщення', es: 'Este navegador no admite notificaciones' },
+  '🔕 Напоминания выключены': { en: '🔕 Reminders off', de: '🔕 Erinnerungen aus', uk: '🔕 Нагадування вимкнені', es: '🔕 Recordatorios desactivados' },
+  '🔔 Напоминания включены · работают пока вкладка открыта': { en: '🔔 Reminders on · they work while this tab stays open', de: '🔔 Erinnerungen an · sie laufen, solange dieser Tab offen bleibt', uk: '🔔 Нагадування увімкнені · працюють поки вкладка відкрита', es: '🔔 Recordatorios activados · funcionan mientras esta pestaña siga abierta' },
+  'Нужно разрешить уведомления в браузере': { en: 'Allow notifications in your browser first', de: 'Erlaube zuerst Benachrichtigungen im Browser', uk: 'Потрібно дозволити сповіщення в браузері', es: 'Primero permite las notificaciones en tu navegador' },
   // ── v160 17.08: выгрузка для разбора чужого сбоя ──
   'Выгрузить для разбора сбоя': { en: 'Export for crash triage', de: 'Für Fehleranalyse exportieren', uk: 'Вивантажити для розбору збою', es: 'Exportar para analizar el fallo' },
   'Сначала выбери профиль в списке выше': { en: 'Pick a profile in the list above first', de: 'Wähle zuerst ein Profil in der Liste oben', uk: 'Спершу обери профіль у списку вище', es: 'Primero elige un perfil en la lista de arriba' },
@@ -3687,7 +3741,7 @@ const Store = {
       if (r.status === 401) { handleAccountSessionExpired(); return false; }
       if (!r.ok) throw new Error('save ' + r.status);
       return true;
-    } catch (e) { console.error('save', name, e); toast('⚠️ Не удалось сохранить'); return false; }
+    } catch (e) { console.error('save', name, e); toast(t('⚠️ Не удалось сохранить')); return false; }
   },
 };
 
@@ -4103,7 +4157,7 @@ function applyProgramMerge(prog) {
   State.habits.push(...programHabits(prog, map));
   State.tasks.push(...programTasks(prog, map));
   Store.save('settings', State.settings); Store.save('habits', State.habits); Store.save('tasks', State.tasks);
-  toast(`📦 Программа «${prog.name}» добавлена`); render();
+  toast(`📦 ${t('Программа добавлена')}: ${prog.name}`); render();
 }
 function programCard(p, action) {
   // aria-label: внутри кнопки только спаны — без него скринридер видит безымянную кнопку (a11y-находка альфа-аудита)
@@ -6245,7 +6299,7 @@ function queueAvatarAppearanceRender(next) {
         editor.classList.remove('is-avatar-swapping');
         editor.removeAttribute('aria-busy');
       });
-      toast('Не удалось загрузить слой аватара');
+      toast(t('Не удалось загрузить слой аватара'));
     }
     throw error;
   });
@@ -7112,7 +7166,7 @@ async function onAvatarForgeMessage(event) {
   if (message.type !== 'apply') return;
   const next = validateAvatarForgeAppearance(message.appearance);
   if (!next) {
-    toast('Редактор вернул неверную схему образа');
+    toast(t('Редактор вернул неверную схему образа'));
     return;
   }
   const overlay = document.getElementById('avatar-forge-overlay');
@@ -7121,7 +7175,7 @@ async function onAvatarForgeMessage(event) {
   try {
     await queueAvatarAppearanceRender(next);
     closeAvatarForgeEditor();
-    toast('Образ сохранён');
+    toast(t('Образ сохранён'));
   } catch {
     overlay?.classList.remove('is-applying');
   }
@@ -9828,7 +9882,7 @@ function ttsSpeak(text, btn, context = 'calm') {
     u.onerror = () => {
       if (runId !== _ttsRunId) return;
       if (voice && withVoice) { speakChunk(index, false); return; }
-      toast('Не удалось запустить выбранный голос — выбери другой в Настройках');
+      toast(t('Не удалось запустить выбранный голос — выбери другой в Настройках'));
       ttsStop();
     };
     try { speechSynthesis.speak(u); } catch {
@@ -10235,7 +10289,7 @@ function applyAmbient() {
     else if (mode === 'noise') _startNoise(vol);
   } catch {
     _ambientMode = 'off';
-    toast('Не удалось запустить эмбиент в этом браузере');
+    toast(t('Не удалось запустить эмбиент в этом браузере'));
   }
 }
 
@@ -10323,7 +10377,7 @@ const PIP_CSS = `body{margin:0;font:13px -apple-system,'Segoe UI',Roboto,sans-se
 
 async function openFocusWidget() {
   if (!State.timer) return;
-  if (!('documentPictureInPicture' in window)) { toast('Плавающее окно недоступно в этом браузере — показываю плашку'); return; }
+  if (!('documentPictureInPicture' in window)) { toast(t('Плавающее окно недоступно в этом браузере — показываю плашку')); return; }
   if (pipWindow) { try { pipWindow.focus(); } catch {} return; }
   try {
     pipWindow = await documentPictureInPicture.requestWindow({ width: 232, height: 148 }); // компактнее — меньше мешает (fb)
@@ -10377,7 +10431,7 @@ function resumeFocus() { const tm = State.timer; if (!tm || tm.running) return; 
 function stopFocus(log = true, skipRender = false) {
   const tm = State.timer; if (!tm) return;
   const t = questById(tm.taskId);
-  if (log) { const added = bankTimerProgress(); if (added > 0 && t) toast(`⏱ ${fmtDur(t.actualMin)} записано в «${t.title}»`); }
+  if (log) { const added = bankTimerProgress(); if (added > 0 && t) toast(`⏱ ${fmtDur(t.actualMin)} → «${t.title}»`); }
   State.timer = null; persistTimer(); stopTick(); closeFocusWidget(); removePill();
   if (!skipRender) render();
 }
@@ -11736,7 +11790,7 @@ function aiSourceHint() {
 function aiHandleErr(d) {
   if (!d || !d.error) return false;
   if (d.error === 'not_pro') { showPaywall('ИИ-ассистент'); return true; }
-  if (d.error === 'quota') { toast('🤖 Лимит ИИ на месяц исчерпан — добавь свой ключ в Настройках'); State.view = 'settings'; State.settingsSection = 'connections'; render(); return true; }
+  if (d.error === 'quota') { toast(t('🤖 Лимит ИИ на месяц исчерпан — добавь свой ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; render(); return true; }
   if (d.error === 'no_key') { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; render(); return true; }
   return false;
 }
@@ -12142,7 +12196,7 @@ function dayRecMicToggle() {
 }
 async function dayRecRun() {
   const ta = document.getElementById('dayrec-text'), text = (ta && ta.value || '').trim();
-  if (!text) { toast('Расскажи или впиши, что делал'); return; }
+  if (!text) { toast(t('Расскажи или впиши, что делал')); return; }
   if (_dayRec) dayRecMicToggle();
   const res = document.getElementById('dayrec-result'); if (res) res.innerHTML = '<p class="muted">🤖 Разбираю…</p>';
   try {
@@ -12186,7 +12240,7 @@ function dayRecApply() {
     task.xpAwarded = Math.max(1, itemXp(task)); task.goldAwarded = itemGold(task);
     State.tasks.push(task); n++;
   });
-  if (!n) { toast('Ничего не выбрано'); return; }
+  if (!n) { toast(t('Ничего не выбрано')); return; }
   Store.save('tasks', State.tasks); const m = document.getElementById('dayrec-modal'); if (m) m.remove();
   toast(`✅ ${t('Записано')} ${n} ${plural(n, 'дело', 'дела', 'дел')} — ${day === today ? t('за сегодня') : dmShort(day)}`);
   checkAchievements(); render(); triggerAvatarReaction('happy', `Записано: ${n}`); publishLeaderboard();
@@ -12412,7 +12466,7 @@ function renderProposalCards(res) {
 async function runPropose(kind) {
   const ta = document.getElementById('propose-text');
   const text = ((ta && ta.value) || '').trim();
-  if (!text) { toast('Напиши текст'); return; }
+  if (!text) { toast(t('Напиши текст')); return; }
   const res = document.getElementById('propose-result');
   if (res) res.innerHTML = '<div class="ai-spin">⏳ ИИ думает…</div>';
   try {
@@ -12456,10 +12510,10 @@ const BRIDGE_CALIB = `Ты калибруешь уровни в приложен
 function copyBridgePrompt(kind) {
   const ta = document.getElementById('propose-text');
   const text = ((ta && ta.value) || '').trim();
-  if (!text) { toast('Сначала опиши в поле выше — что за цели/уровни'); return; }
+  if (!text) { toast(t('Сначала опиши в поле выше — что за цели/уровни')); return; }
   const instr = kind === 'calibrate' ? BRIDGE_CALIB : BRIDGE_GOALS;
   const prompt = `${instr}\n\nСегодня: ${todayStr()}.\n\nТЕКУЩИЕ СФЕРЫ И ЦЕЛИ ЮЗЕРА:\n${proposeContext()}\n\nОПИСАНИЕ ОТ ЮЗЕРА:\n${text}\n\nВерни ТОЛЬКО JSON по схеме.`;
-  const done = () => toast('📋 Промпт скопирован — вставь своему ИИ');
+  const done = () => toast(t('📋 Промпт скопирован — вставь своему ИИ'));
   if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(prompt).then(done, () => {});
   const res = document.getElementById('propose-result'); if (!res) return;
   res.innerHTML = `<div class="bridge-steps">
@@ -12476,7 +12530,7 @@ function parseBridgeResponse() {
   const ta = document.getElementById('bridge-json');
   const raw = (ta && ta.value || '').trim();
   const res = document.getElementById('propose-result');
-  if (!raw) { toast('Вставь ответ ИИ'); return; }
+  if (!raw) { toast(t('Вставь ответ ИИ')); return; }
   const parsed = extractJsonClient(raw);
   if (!parsed || !Array.isArray(parsed.proposals)) { if (res) res.insertAdjacentHTML('beforeend', '<p class="muted" style="margin-top:8px">Не нашёл корректный JSON в ответе. Скопируй ответ ИИ целиком (он должен содержать {"proposals":[…]}).</p>'); return; }
   _proposals = parsed.proposals.slice(0, 120);
@@ -12495,7 +12549,7 @@ function proposalLabel(p) {
 }
 async function applyAcceptedProposals() {
   const set = new Set([...document.querySelectorAll('#propose-result input[data-prop]:checked')].map((el) => Number(el.dataset.prop)));
-  if (!set.size) { toast('Ничего не выбрано'); return; }
+  if (!set.size) { toast(t('Ничего не выбрано')); return; }
   document.querySelectorAll('#propose-result [data-prop-parent]').forEach((sel) => {
     const i = Number(sel.dataset.propParent); if (_proposals[i]) _proposals[i]._parentId = sel.value || null;
   });
@@ -13036,10 +13090,10 @@ async function noteToQuest(id) {
 function blobToDataUrl(blob) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); }); }
 async function startCapture(kind) {
   if (_rec || !inboxWriteAllowed(true)) return;
-  if (!navigator.mediaDevices || !window.MediaRecorder) { toast('Браузер не поддерживает запись'); return; }
+  if (!navigator.mediaDevices || !window.MediaRecorder) { toast(t('Браузер не поддерживает запись')); return; }
   let stream;
   try { stream = await navigator.mediaDevices.getUserMedia(kind === 'video' ? { audio: true, video: { width: 640, height: 480 } } : { audio: true }); }
-  catch { toast('Нужен доступ к ' + (kind === 'video' ? 'камере' : 'микрофону')); return; }
+  catch { toast(kind === 'video' ? t('Нужен доступ к камере') : t('Нужен доступ к микрофону')); return; }
   const recorder = new MediaRecorder(stream);
   _rec = { kind, recorder, chunks: [], stream, startedAt: Date.now(), timer: null };
   recorder.ondataavailable = (e) => { if (e.data && e.data.size) _rec.chunks.push(e.data); };
@@ -13060,18 +13114,18 @@ async function onCaptureStop() {
   rec.stream.getTracks().forEach((t) => t.stop());
   const blob = new Blob(rec.chunks, { type: rec.recorder.mimeType || (rec.kind === 'video' ? 'video/webm' : 'audio/webm') });
   _rec = null; render();
-  if (!blob.size) { toast('Пустая запись'); return; }
+  if (!blob.size) { toast(t('Пустая запись')); return; }
   if (!inboxWriteAllowed(true)) return;
   try {
     const dataUrl = await blobToDataUrl(blob);
     const r = await fetch('/api/inbox/media', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataUrl, kind: rec.kind }) });
-    if (!r.ok) { toast('Не удалось сохранить запись'); return; }
+    if (!r.ok) { toast(t('Не удалось сохранить запись')); return; }
     const d = await r.json();
     const item = { id: uid(), kind: rec.kind, text: '', file: d.file, type: d.type, at: new Date().toISOString() };
     const saved = await commitInbox([item, ...(State.inbox || [])]);
     if (!saved) { toast(t('Не удалось сохранить заметку. Ничего не изменено — повтори попытку.')); return; }
     State._inboxFocusAfterCommit = `#note-${CSS.escape(item.id)}-title`; track('capture:' + rec.kind); toast(rec.kind === 'video' ? '🎥 Видео в Заметках' : '🎤 Голос в Заметках'); render();
-  } catch { toast('Ошибка сохранения записи'); }
+  } catch { toast(t('Ошибка сохранения записи')); }
 }
 // Nested-прогрессия (Brawl-Stars: «всегда что-то почти готово») — день → неделя → серия
 function nestedProgress() {
@@ -17938,7 +17992,7 @@ async function showUserData(userId) {
   const old = document.getElementById('userdata'); if (old) old.remove();
   let d;
   try { const r = await fetch(`/api/admin/userdata/${encodeURIComponent(userId)}`); if (!r.ok) throw 0; d = await r.json(); }
-  catch { toast('Не удалось загрузить (нужен админ / нет юзера)'); return; }
+  catch { toast(t('Не удалось загрузить (нужен админ / нет юзера)')); return; }
   const rows = Object.keys(d.files).map((name) => {
     const backups = d.backups[name] || [];
     const bopts = backups.length
@@ -17958,7 +18012,7 @@ async function showUserData(userId) {
 async function showReports() {
   if (document.getElementById('reports')) return;
   let list = [];
-  try { const r = await fetch('/api/feedback'); if (!r.ok) throw 0; list = await r.json(); } catch { toast('Не удалось загрузить (нужен админ)'); return; }
+  try { const r = await fetch('/api/feedback'); if (!r.ok) throw 0; list = await r.json(); } catch { toast(t('Не удалось загрузить (нужен админ)')); return; }
   const KIND = { bug: '🐞 Баг', idea: '💡 Идея', other: '💬 Другое' };
   const items = list.length ? list.map((f) => {
     // ⬇ скачать — чтобы быстро отдать скрин/видео Claude'у для починки бага (Claude видит картинки)
@@ -19057,7 +19111,7 @@ function renderNav() {
     const primary = SECTIONS.map((s) => {
       const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
       const mobileClass = MOBILE_PRIMARY_SECTION_IDS.includes(s.id) ? ' mobile-primary' : ' mobile-secondary';
-      return `<button class="navsec${mobileClass}${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}" aria-current="${s.id === cur ? 'page' : 'false'}" title="${locked ? 'Откроется на ур.' + s.gate : (isNew ? t(s.label) + ' — новое!' : t(s.label))}">${navMotionIconHTML(s.iconId)}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">${satoruIconHTML('status.lock', 'navsec-lock-icon', '🔒')}${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
+      return `<button class="navsec${mobileClass}${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}" aria-current="${s.id === cur ? 'page' : 'false'}" title="${locked ? `${t('Откроется на уровне')} ${s.gate}` : (isNew ? `${t(s.label)} — ${t('новое!')}` : t(s.label))}">${navMotionIconHTML(s.iconId)}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">${satoruIconHTML('status.lock', 'navsec-lock-icon', '🔒')}${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
     }).join('');
     const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="${t('Настройки')}" aria-label="${t('Настройки')}">${satoruIconHTML('nav.settings', 'navgear-icon', '⚙️')}</button>`;
     const moreActive = MOBILE_MORE_SECTION_IDS.includes(cur) || State.view === 'settings';
@@ -19079,7 +19133,7 @@ function renderNav() {
     button.classList.toggle('active', s.id === cur);
     button.setAttribute('aria-current', s.id === cur ? 'page' : 'false');
     button.classList.toggle('navsec-new', isNew);
-    button.title = locked ? `Откроется на ур.${s.gate}` : (isNew ? `${t(s.label)} — новое!` : t(s.label));
+    button.title = locked ? `${t('Откроется на уровне')} ${s.gate}` : (isNew ? `${t(s.label)} — ${t('новое!')}` : t(s.label));
     const dot = button.querySelector('.navsec-dot');
     if (isNew && !dot) button.insertAdjacentHTML('beforeend', '<span class="navsec-dot"></span>');
     if (!isNew && dot) dot.remove();
@@ -19613,7 +19667,7 @@ async function onSubmit(e) {
   if (f.id === 'comp-rename') {
     e.preventDefault();
     const c = ensureCompanion(); c.name = (f.name.value || '').trim().slice(0, 24) || 'Тень';
-    State._compForm = null; Store.save('settings', State.settings); toast('✨ Имя сохранено'); render(); return;
+    State._compForm = null; Store.save('settings', State.settings); toast(t('✨ Имя сохранено')); render(); return;
   }
   // --- Квест: правка текста ---
   if (f.classList && f.classList.contains('t-edit-form')) {
@@ -19978,7 +20032,7 @@ async function onSubmit(e) {
       if (status) { status.textContent = t('Не удалось сохранить заметку. Ничего не изменено — повтори попытку.'); status.setAttribute('role', 'alert'); }
       focusPathChoiceTarget(f.text); return;
     }
-    State._inboxFocusAfterCommit = `#note-${CSS.escape(item.id)}-title`; track('capture:text'); toast('📝 В Заметках'); render();
+    State._inboxFocusAfterCommit = `#note-${CSS.escape(item.id)}-title`; track('capture:text'); toast(t('📝 В Заметках')); render();
     return;
   }
   if (f.id === 'chat-form') {
@@ -20037,7 +20091,7 @@ async function onSubmit(e) {
     if (!Object.keys(body).length) { const m0 = document.getElementById('ai-keys-msg'); if (m0) m0.textContent = 'Вставь хотя бы один ключ'; return; }
     const msg = document.getElementById('ai-keys-msg'); if (msg) msg.textContent = 'Сохраняю…';
     fetch('/api/ai/keys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-      .then((r) => r.json()).then((d) => { const m = {}; AI_PROVIDERS.forEach((p) => m[p.id] = !!d[p.id]); State.aiKeys = m; toast('🤖 Ключ сохранён'); render(); })
+      .then((r) => r.json()).then((d) => { const m = {}; AI_PROVIDERS.forEach((p) => m[p.id] = !!d[p.id]); State.aiKeys = m; toast(t('🤖 Ключ сохранён')); render(); })
       .catch(() => { if (msg) msg.textContent = 'Ошибка'; });
     return;
   }
@@ -20349,7 +20403,7 @@ async function onClick(e) {
   const secBtn = e.target.closest('[data-action="go-section"]');
   if (secBtn) {
     const s = SECTIONS.find((x) => x.id === secBtn.dataset.sec); if (!s) return;
-    if (s.gate > navUnlockLevel()) { toast(`🔒 «${s.label}» откроется на ур.${s.gate}`); return; }
+    if (s.gate > navUnlockLevel()) { toast(`🔒 «${t(s.label)}» — ${t('Откроется на уровне')} ${s.gate}`); return; }
     const fromMobileSheet = !!secBtn.closest('#mobile-nav-sheet');
     if (fromMobileSheet) closeMobileNavSheet({ restoreFocus: false });
     else closeMobileNavSheet();
@@ -20365,7 +20419,7 @@ async function onClick(e) {
     if (calGrid && !e.target.closest('.cal-block')) {
       const min = calYtoMin(e.clientY - calGrid.getBoundingClientRect().top);
       const ti = document.getElementById('cal-time');
-      if (ti) { ti.value = fmtHM(min); toast(`Время ${fmtHM(min)} подставлено в форму`); }
+      if (ti) { ti.value = fmtHM(min); toast(`${t('Время подставлено в форму')}: ${fmtHM(min)}`); }
     }
     return;
   }
@@ -20736,7 +20790,7 @@ async function onClick(e) {
     return;
   }
   if (action === 'avatar-core-gender') {
-    setAvatarCoreGender(el.dataset.gender).catch(() => toast('Не удалось загрузить аватар'));
+    setAvatarCoreGender(el.dataset.gender).catch(() => toast(t('Не удалось загрузить аватар')));
     return;
   }
   if (action === 'den-pet-react') {
@@ -20831,7 +20885,7 @@ async function onClick(e) {
   if (action === 'buy-gear') {
     const it = gearById(id); if (!it) return;
     const g = ensureGear(); if (g.owned.includes(id)) return;
-    if (charLevel() < it.lvl) { toast(`🔒 Откроется на ур.${it.lvl}`); return; }
+    if (charLevel() < it.lvl) { toast(`🔒 ${t('Откроется на уровне')} ${it.lvl}`); return; }
     showEconomyConfirm('gear', id, el); return;
   }
   if (action === 'equip-gear') {
@@ -20850,8 +20904,8 @@ async function onClick(e) {
   if (action === 'strava-connect') { window.location.href = '/api/strava/connect'; return; }
   if (action === 'strava-sync') { stravaSync(); return; }
   if (action === 'strava-disconnect') {
-    if (!confirm('Отключить Strava? Уже импортированные тренировки останутся, новые синхронизироваться не будут.')) return;
-    fetch('/api/strava/disconnect', { method: 'POST' }).then(() => { State.strava = null; toast('Strava отключён'); render(); }).catch(() => toast('Ошибка'));
+    if (!confirm(t('Отключить Strava? Уже импортированные тренировки останутся, новые синхронизироваться не будут.'))) return;
+    fetch('/api/strava/disconnect', { method: 'POST' }).then(() => { State.strava = null; toast(t('Strava отключён')); render(); }).catch(() => toast(t('Ошибка')));
     return;
   }
   if (action === 'open-path-choice') { showPathChoiceModal({ pendingPath: el.dataset.path || null, source: 'settings', returnFocus: el }); return; }
@@ -20973,14 +21027,15 @@ async function onClick(e) {
   if (action === 'restore-backup') {
     const name = el.dataset.name, user = el.dataset.user;
     const sel = el.parentElement.querySelector('.ud-stamp'); const stamp = sel ? sel.value : null;
-    if (!stamp) { toast('Нет снимка'); return; }
+    if (!stamp) { toast(t('Нет снимка')); return; }
+    // Админское окно: единственный админ — Альберт, поэтому строка намеренно не переводится.
     if (!confirm(`Восстановить «${name}» для ${user} из снимка ${stamp.slice(0, 19).replace('T', ' ')}?\nТекущее состояние сохранится в новый бэкап.`)) return;
     (async () => {
       try {
         const r = await fetch(`/api/admin/userdata/${encodeURIComponent(user)}/restore`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, stamp }) });
         const d = await r.json();
-        if (r.ok) { toast(`✓ Восстановлено: ${name}`); showUserData(user); } else { toast(d.error || 'Ошибка'); }
-      } catch { toast('Ошибка сети'); }
+        if (r.ok) { toast(`✓ ${t('Восстановлено')}: ${name}`); showUserData(user); } else { toast(d.error || 'Ошибка'); }
+      } catch { toast(t('Ошибка сети')); }
     })();
     return;
   }
@@ -21000,9 +21055,9 @@ async function onClick(e) {
   if (action === 'copy-feedback-for-claude') {
     (async () => {
       try {
-        const r = await fetch('/api/feedback'); if (!r.ok) { toast('Ошибка доступа'); return; }
+        const r = await fetch('/api/feedback'); if (!r.ok) { toast(t('Ошибка доступа')); return; }
         const list = await r.json();
-        if (!list.length) { toast('Репортов пока нет'); return; }
+        if (!list.length) { toast(t('Репортов пока нет')); return; }
         const KIND = { bug: '🐞 Баг', idea: '💡 Идея', praise: '💛 Похвала', other: '💬 Другое' };
         const lines = list.map((f, i) => [
           `## [${i + 1}] ${KIND[f.kind] || f.kind} | ${(f.at || '').slice(0, 16).replace('T', ' ')} | ${f.userId}`,
@@ -21011,8 +21066,8 @@ async function onClick(e) {
         ].filter(Boolean).join('\n'));
         const text = `# Satoru Feedback — ${list.length} репортов\nЭкспорт: ${new Date().toLocaleString('ru')}\n\n` + lines.join('\n\n---\n\n');
         await navigator.clipboard.writeText(text);
-        toast('📋 Скопировано! Вставь в чат с Claude.');
-      } catch (e) { toast('Ошибка: ' + e.message); }
+        toast(t('📋 Скопировано! Вставь в чат с Claude.'));
+      } catch (e) { toast(`${t('Ошибка')}: ${e.message}`); }
     })();
     return;
   }
@@ -21082,7 +21137,7 @@ async function onClick(e) {
     return;
   }
   if (action === 'do-upgrade') {
-    fetch('/api/auth/upgrade', { method: 'POST' }).then(async (r) => { const d = await r.json(); toast(d.message || 'Скоро'); }).catch(() => toast('Ошибка сети'));
+    fetch('/api/auth/upgrade', { method: 'POST' }).then(async (r) => { const d = await r.json(); toast(d.message || 'Скоро'); }).catch(() => toast(t('Ошибка сети')));
     return;
   }
 
@@ -21149,29 +21204,29 @@ async function onClick(e) {
   } else if (action === 'quest-oath') { track('oath:take');
     // Клятва Кремню (только путь Контроля): заверши сегодня → золото за квест ×1.5; провали → −oathGold в горн
     const q = questById(id); if (!q || q.done || q.oath) return;
-    if (!confirm(`⚔️ Клятва Кремню: завершить «${q.title}» до конца дня.\nСдержишь — золото за квест ×1.5. Провалишь — сгорит ${CONTROL.oathGold} 🪙.\n\nДаёшь слово?`)) return;
+    if (!confirm(`⚔️ ${t('Клятва Кремню: завершить до конца дня')} — «${q.title}».\n${t('Сдержишь — золото за квест ×1.5. Провалишь — сгорит')} ${CONTROL.oathGold} 🪙.\n\n${t('Даёшь слово?')}`)) return;
     q.oath = { gold: CONTROL.oathGold, at: new Date().toISOString() };
     Store.save('tasks', State.tasks);
     toast('⚔️ ' + t(FLINT_LINES.oathTaken[Math.floor(Math.random() * FLINT_LINES.oathTaken.length)]));
     try { sfx('levelup'); } catch {}
     render();
   } else if (action === 'delete-task') {
-    const t = questById(id); if (t && t.done && !confirm(`Удалить «${t.title}»?`)) return;
+    const t = questById(id); if (t && t.done && !confirm(`${t('Удалить')} «${t.title}»?`)) return;
     if (State.timer && State.timer.taskId === id) { State.timer = null; persistTimer(); stopTick(); }
     State.tasks = State.tasks.filter((x) => x.id !== id); Store.save('tasks', State.tasks); render();
   } else if (action === 'add-stretch') {
     const sk = State.settings.skills.find((s) => /спорт|здоров|sport|health/i.test(s.name)) || State.settings.skills.find((s) => ['str', 'end'].includes(guessAttr(s.name))) || State.settings.skills[0];
     if (!sk) return;
     State.tasks.push({ id: uid(), title: 'Разминка / прогулка', skillId: sk.id, skillIds: [sk.id], estimateMin: 10, difficulty: 'easy', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
-    Store.save('tasks', State.tasks); toast('🤸 Разминка в плане — тело скажет спасибо'); render();
+    Store.save('tasks', State.tasks); toast(t('🤸 Разминка в плане — тело скажет спасибо')); render();
   } else if (action === 'add-mobility') {
     const sk = State.settings.skills.find((s) => /спорт|здоров|тело|sport|health/i.test(s.name)) || State.settings.skills.find((s) => ['str', 'end'].includes(guessAttr(s.name))) || State.settings.skills[0];
     if (!sk) return;
     State.tasks.push({ id: uid(), title: 'Мобилка спины и плеч', skillId: sk.id, skillIds: [sk.id], estimateMin: 10, difficulty: 'easy', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
-    _mobilSnoozeDay = today; Store.save('tasks', State.tasks); toast('🧘 Мобилка в плане — спина и плечи скажут спасибо'); render();
+    _mobilSnoozeDay = today; Store.save('tasks', State.tasks); toast(t('🧘 Мобилка в плане — спина и плечи скажут спасибо')); render();
   } else if (action === 'mobil-later') { _mobilSnoozeDay = today; render();
   } else if (action === 'mobil-never') {
-    State.settings.prefs = Object.assign({}, State.settings.prefs, { noMobilityNudge: true }); Store.save('settings', State.settings); toast('Подсказки мобилки отключены'); render();
+    State.settings.prefs = Object.assign({}, State.settings.prefs, { noMobilityNudge: true }); Store.save('settings', State.settings); toast(t('Подсказки мобилки отключены')); render();
   } else if (action === 'anti-slip') {
     const a = (State.antihabits || []).find((x) => x.id === id); if (!a) return;
     const next = structuredClone(State.antihabits), target = next.find((x) => x.id === id), day = habitDayKey();
@@ -21195,7 +21250,7 @@ async function onClick(e) {
       x.date = today;
       if (note) Object.assign(x, note);
     });
-    Store.save('tasks', State.tasks); toast('Перенесено на сегодня'); render();
+    Store.save('tasks', State.tasks); toast(t('Перенесено на сегодня')); render();
   } else if (action === 'bdone-open') {
     State._boardMediaFor = id; State._boardFocusAfterCommit = '#bdone-cap'; render();
   } else if (action === 'bdone-clear') {
@@ -21816,10 +21871,10 @@ async function onClick(e) {
         const lb = ensureLootbox(); lb.goldWon += d.reward.gold;
         lb.boost = { pct: d.reward.boostPct, until: new Date(Date.now() + d.reward.boostHours * 3600 * 1000).toISOString() };
         Store.save('lootbox', lb); sfx('coin');
-        toast(`🎁 Награда пати: +${d.reward.gold} 🪙 · +${d.reward.boostPct}% XP на ${d.reward.boostHours}ч`);
+        toast(`🎁 ${t('Награда пати')}: +${d.reward.gold} 🪙 · +${d.reward.boostPct}% XP · ${d.reward.boostHours}${t('ч')}`);
         if (d.party) State.party = d.party; render();
       } else toast(d.error === 'already_claimed' ? 'Уже забрано' : d.error === 'not_won' ? 'Босс ещё не повержен' : 'Не удалось');
-    }).catch(() => toast('Сетевая ошибка'));
+    }).catch(() => toast(t('Сетевая ошибка')));
   } else if (action === 'raidwin-close') { const m = document.getElementById('raidwin'); if (m) m.remove();
   } else if (action === 'install-app') { requestInstall();
   } else if (action === 'install-dismiss') { try { localStorage.setItem('gojo_install_dismiss', '1'); } catch {} render();
@@ -21862,8 +21917,8 @@ async function onClick(e) {
     });
   } else if (action === 'export-ics') {
     const ics = buildICS();
-    if (!/BEGIN:VEVENT/.test(ics)) { toast('Нет квестов со временем — поставь их в Календаре'); return; }
-    try { const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'gojo-calendar.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); toast('📆 .ics скачан — открой его в Календаре для импорта'); } catch { toast('Не удалось создать файл'); }
+    if (!/BEGIN:VEVENT/.test(ics)) { toast(t('Нет квестов со временем — поставь их в Календаре')); return; }
+    try { const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'gojo-calendar.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); toast(t('📆 .ics скачан — открой его в Календаре для импорта')); } catch { toast(t('Не удалось создать файл')); }
   } else if (action === 'cal-mode') { cleanupWkDrag(); State.calMode = el.dataset.mode; State.view = 'calendar'; if (State.calMode === 'week') State.weekStart = weekStart(State.calDate || todayStr()); State._calendarFocusAfterCommit = `.cal-mode[data-mode="${CSS.escape(State.calMode)}"]`; render();
   } else if (action === 'cal-month-date') { State.calDate = el.dataset.date; State.wkAddDate = null; State._calendarFocusAfterCommit = '#month-detail-title'; render();
   } else if (action === 'month-open-day') { State.calMode = 'day'; State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
@@ -21974,7 +22029,7 @@ async function onClick(e) {
     setTimeout(() => { const el2 = document.getElementById('skills-list'); if (el2) el2.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
   } else if (action === 'mark-project') {
     const sk = State.settings.skills.find((x) => x.id === id);
-    if (sk) { sk.noBalance = true; Store.save('settings', State.settings); toast(`🏁 «${sk.name}» убрана с колеса — это проект. Веди её в Целях.`); render(); }
+    if (sk) { sk.noBalance = true; Store.save('settings', State.settings); toast(`🏁 «${sk.name}» — ${t('убрана с колеса: это проект, веди его в Целях')}`); render(); }
   } else if (action === 'skill-move') {
     captureSettingsForm();
     const arr = State.settings.skills, sk = arr.find((x) => x.id === id);
@@ -21988,7 +22043,7 @@ async function onClick(e) {
   } else if (action === 'add-habit') {
     State.view = 'habits'; State.habitsTab = 'build'; State._habitsFocusAfterCommit = '.habit-create > summary'; render();
   } else if (action === 'delete-habit') {
-    if (!confirm('Удалить привычку? Её отметки и опыт тоже удалятся.')) return;
+    if (!confirm(t('Удалить привычку? Её отметки и опыт тоже удалятся.'))) return;
     captureSettingsForm();
     deleteHabitData(habitById(id));
   } else if (action === 'save-settings') { saveSettingsFromForm();
@@ -22540,7 +22595,7 @@ function onChange(e) {
     return;
   }
   if (a === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
-  if (a === 'set-ai-pref') { State.settings.aiPref = el.value; autosaveSettings(); toast('🤖 ИИ по умолчанию: ' + aiProviderLabel(el.value)); return; }
+  if (a === 'set-ai-pref') { State.settings.aiPref = el.value; autosaveSettings(); toast(`🤖 ${t('ИИ по умолчанию')}: ${aiProviderLabel(el.value)}`); return; }
   if (a === 'set-strava-skill') { State.settings.stravaSkillId = el.value; autosaveSettings(); return; }
   if (a === 'habit-atomic') { updateHabitAtomic(el.dataset.id, el.dataset.field, el.value); return; }
   if (a === 'save-identity') { State.settings.identityGoal = el.value.slice(0, 200); autosaveSettings(); return; }
@@ -22549,7 +22604,7 @@ function onChange(e) {
     let ids = taskSkills(t).slice(); const sid = el.dataset.skill;
     if (el.checked) { if (!ids.includes(sid)) ids.push(sid); }
     else ids = ids.filter((x) => x !== sid);
-    if (!ids.length) { el.checked = true; toast('Нужна хотя бы одна категория'); return; } // нельзя снять последнюю
+    if (!ids.length) { el.checked = true; toast(t('Нужна хотя бы одна категория')); return; } // нельзя снять последнюю
     t.skillIds = ids; t.skillId = ids[0]; // основная = первая
     // Сфера не может быть одновременно основной и фоновой — сделали основной, убираем из фона.
     // (taskLayers это и так отфильтровал бы, но оставлять противоречие в данных не стоит.)
@@ -22699,11 +22754,11 @@ function scheduleReminders() {
   }
 }
 function toggleReminders() {
-  if (!('Notification' in window)) { toast('Браузер не поддерживает уведомления'); return; }
-  if (State.settings.remind) { State.settings.remind = false; Store.save('settings', State.settings); scheduleReminders(); toast('🔕 Напоминания выключены'); render(); return; }
-  const apply = () => { State.settings.remind = true; Store.save('settings', State.settings); scheduleReminders(); toast('🔔 Напоминания включены · работают пока вкладка открыта'); render(); };
+  if (!('Notification' in window)) { toast(t('Браузер не поддерживает уведомления')); return; }
+  if (State.settings.remind) { State.settings.remind = false; Store.save('settings', State.settings); scheduleReminders(); toast(t('🔕 Напоминания выключены')); render(); return; }
+  const apply = () => { State.settings.remind = true; Store.save('settings', State.settings); scheduleReminders(); toast(t('🔔 Напоминания включены · работают пока вкладка открыта')); render(); };
   if (Notification.permission === 'granted') apply();
-  else Notification.requestPermission().then((p) => { if (p === 'granted') apply(); else toast('Нужно разрешить уведомления в браузере'); });
+  else Notification.requestPermission().then((p) => { if (p === 'granted') apply(); else toast(t('Нужно разрешить уведомления в браузере')); });
 }
 
 // Точка входа — проверяем сессию, потом грузим нужный экран
