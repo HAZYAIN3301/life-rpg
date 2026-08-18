@@ -1,0 +1,71 @@
+{
+  "schema": "satoru.traveller-female-approval-batch/1",
+  "id": "female-poses-01",
+  "morphology": "female",
+  "status": "awaiting-manual-art-approval",
+  "runtimeEligible": false,
+  "publicArtWrites": false,
+  "canvas": [
+    640,
+    900
+  ],
+  "floorY": 860,
+  "normalization": {
+    "key": "#FF00FF",
+    "strategy": "per-frame-profile",
+    "requestedProfile": "auto",
+    "profiles": {
+      "arms-up": {
+        "profile": "pose",
+        "targetHeight": 829,
+        "maxWidth": 590
+      }
+    }
+  },
+  "eyeBoxes": [],
+  "blink": {
+    "method": "deterministic-local-inpaint-and-lid-curves",
+    "maxChangedRatio": 0.006
+  },
+  "assets": {
+    "arms-up": "arms-up.png"
+  },
+  "frames": {
+    "arms-up": {
+      "file": "sources/approval-batches/female-poses-01/arms-up-keyed.png",
+      "sha256": "a2240cbd3e373a260d81cf0498b2e9cf7b99d69b11d37fbf65328ff342eaa837",
+      "keyedBorderRatio": 1.0,
+      "profile": "pose",
+      "targetHeight": 829,
+      "maxWidth": 590,
+      "sourceCanvas": [
+        1051,
+        1497
+      ],
+      "sourceBbox": [
+        238,
+        83,
+        810,
+        1413
+      ],
+      "scale": 0.6233083,
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        141,
+        31,
+        498,
+        860
+      ],
+      "floorY": 860,
+      "mode": "RGBA",
+      "transparentCorners": 4
+    }
+  },
+  "qa": {
+    "required": true,
+    "command": "python3 art-factory/traveller-female-v1-20260818/factory_qa.py --batch female-poses-01"
+  }
+}

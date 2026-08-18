@@ -1,0 +1,61 @@
+{
+  "schema": "satoru.traveller-female-contact-qa/1",
+  "batch": "female-gamabunta-01",
+  "family": "gamabunta",
+  "canvas": [
+    1536,
+    1536
+  ],
+  "groundY": 1470,
+  "automatedContractPassed": true,
+  "manualContactApprovalRequired": true,
+  "runtimeEligible": false,
+  "frames": {
+    "greet-contact": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-01/greet-contact.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/greet-contact.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        178,
+        740,
+        1357,
+        1470
+      ],
+      "referenceBbox": [
+        158,
+        740,
+        1377,
+        1470
+      ],
+      "centerDeltaPx": 0.0,
+      "centerXDeltaPx": 0.0,
+      "widthRatioToReference": 0.967186,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 487404,
+      "transparentPixels": 1866292,
+      "partialAlphaPixels": 20134,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    }
+  },
+  "passed": true
+}

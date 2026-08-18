@@ -1,0 +1,204 @@
+{
+  "schema": "satoru.traveller-female-approval-qa/1",
+  "batch": "female-core-01",
+  "canvas": [
+    640,
+    900
+  ],
+  "floorY": 860,
+  "automatedContractPassed": true,
+  "manualArtApprovalRequired": true,
+  "runtimeEligible": false,
+  "frames": {
+    "idle": {
+      "file": "outputs/approval-batches/female-core-01/idle.png",
+      "mode": "RGBA",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        179,
+        64,
+        460,
+        860
+      ],
+      "floorY": 860,
+      "visiblePixels": 125299,
+      "transparentPixels": 446945,
+      "partialAlphaPixels": 12261,
+      "edgeAlphaPixels": 0,
+      "magentaPixels": 0,
+      "magentaRatio": 0.0,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "floorY": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "magentaContamination": true
+      },
+      "passed": true
+    },
+    "walk-a": {
+      "file": "outputs/approval-batches/female-core-01/walk-a.png",
+      "mode": "RGBA",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        169,
+        64,
+        471,
+        860
+      ],
+      "floorY": 860,
+      "visiblePixels": 117306,
+      "transparentPixels": 455288,
+      "partialAlphaPixels": 10673,
+      "edgeAlphaPixels": 0,
+      "magentaPixels": 0,
+      "magentaRatio": 0.0,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "floorY": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "magentaContamination": true
+      },
+      "passed": true
+    },
+    "walk-b": {
+      "file": "outputs/approval-batches/female-core-01/walk-b.png",
+      "mode": "RGBA",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        178,
+        64,
+        462,
+        860
+      ],
+      "floorY": 860,
+      "visiblePixels": 115383,
+      "transparentPixels": 457364,
+      "partialAlphaPixels": 10344,
+      "edgeAlphaPixels": 0,
+      "magentaPixels": 0,
+      "magentaRatio": 0.0,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "floorY": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "magentaContamination": true
+      },
+      "passed": true
+    },
+    "window-back": {
+      "file": "outputs/approval-batches/female-core-01/window-back.png",
+      "mode": "RGBA",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        212,
+        60,
+        428,
+        860
+      ],
+      "floorY": 860,
+      "visiblePixels": 113990,
+      "transparentPixels": 459115,
+      "partialAlphaPixels": 9323,
+      "edgeAlphaPixels": 0,
+      "magentaPixels": 0,
+      "magentaRatio": 0.0,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "floorY": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "magentaContamination": true
+      },
+      "passed": true
+    },
+    "idle-blink": {
+      "file": "outputs/approval-batches/female-core-01/idle-blink.png",
+      "mode": "RGBA",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        179,
+        64,
+        460,
+        860
+      ],
+      "floorY": 860,
+      "visiblePixels": 125299,
+      "transparentPixels": 446945,
+      "partialAlphaPixels": 12261,
+      "edgeAlphaPixels": 0,
+      "magentaPixels": 0,
+      "magentaRatio": 0.0,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "floorY": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "magentaContamination": true
+      },
+      "passed": true
+    }
+  },
+  "blink": {
+    "changedPixels": 659,
+    "changedRatio": 0.0011441,
+    "changedOutsideEyeBoxes": 0,
+    "alphaIdenticalToIdle": true,
+    "maxChangedRatio": 0.006,
+    "eyeBoxes": [
+      [
+        286,
+        161,
+        302,
+        187
+      ],
+      [
+        330,
+        161,
+        346,
+        187
+      ]
+    ],
+    "checks": {
+      "twoMeasuredEyeBoxes": true,
+      "hasVisibleChange": true,
+      "withinChangeBudget": true,
+      "changesConfinedToEyeBoxes": true,
+      "alphaIdenticalToIdle": true
+    },
+    "passed": true
+  },
+  "passed": true
+}

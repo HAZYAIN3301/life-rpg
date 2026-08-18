@@ -1,0 +1,71 @@
+{
+  "schema": "satoru.traveller-female-approval-batch/1",
+  "id": "female-room-01",
+  "morphology": "female",
+  "status": "awaiting-manual-art-approval",
+  "runtimeEligible": false,
+  "publicArtWrites": false,
+  "canvas": [
+    640,
+    900
+  ],
+  "floorY": 860,
+  "normalization": {
+    "key": "#FF00FF",
+    "strategy": "per-frame-profile",
+    "requestedProfile": "auto",
+    "profiles": {
+      "bench-read-a": {
+        "profile": "room",
+        "targetHeight": 790,
+        "maxWidth": 500
+      }
+    }
+  },
+  "eyeBoxes": [],
+  "blink": {
+    "method": "deterministic-local-inpaint-and-lid-curves",
+    "maxChangedRatio": 0.006
+  },
+  "assets": {
+    "bench-read-a": "bench-read-a.png"
+  },
+  "frames": {
+    "bench-read-a": {
+      "file": "sources/approval-batches/female-room-01/bench-read-a-keyed.png",
+      "sha256": "c7da73debc411d7c5510100ec937ea762da02d14b2b73b150aa3e93e6de0df4c",
+      "keyedBorderRatio": 1.0,
+      "profile": "room",
+      "targetHeight": 790,
+      "maxWidth": 500,
+      "sourceCanvas": [
+        1054,
+        1492
+      ],
+      "sourceBbox": [
+        183,
+        170,
+        839,
+        1389
+      ],
+      "scale": 0.6480722,
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        107,
+        70,
+        532,
+        860
+      ],
+      "floorY": 860,
+      "mode": "RGBA",
+      "transparentCorners": 4
+    }
+  },
+  "qa": {
+    "required": true,
+    "command": "python3 art-factory/traveller-female-v1-20260818/factory_qa.py --batch female-room-01"
+  }
+}

@@ -1,0 +1,253 @@
+{
+  "schema": "satoru.traveller-female-approval-batch/1",
+  "id": "female-core-01",
+  "morphology": "female",
+  "status": "awaiting-manual-art-approval",
+  "runtimeEligible": false,
+  "publicArtWrites": false,
+  "canvas": [
+    640,
+    900
+  ],
+  "floorY": 860,
+  "normalization": {
+    "key": "#FF00FF",
+    "strategy": "per-frame-profile",
+    "requestedProfile": "auto",
+    "profiles": {
+      "idle": {
+        "profile": "core",
+        "targetHeight": 796,
+        "maxWidth": 590
+      },
+      "walk-a": {
+        "profile": "core",
+        "targetHeight": 796,
+        "maxWidth": 590
+      },
+      "walk-b": {
+        "profile": "core",
+        "targetHeight": 796,
+        "maxWidth": 590
+      },
+      "window-back": {
+        "profile": "core",
+        "targetHeight": 800,
+        "maxWidth": 590
+      }
+    }
+  },
+  "eyeBoxes": [
+    [
+      286,
+      161,
+      302,
+      187
+    ],
+    [
+      330,
+      161,
+      346,
+      187
+    ]
+  ],
+  "blink": {
+    "method": "deterministic-local-inpaint-and-lid-curves",
+    "maxChangedRatio": 0.006,
+    "eyeBoxes": [
+      [
+        286,
+        161,
+        302,
+        187
+      ],
+      [
+        330,
+        161,
+        346,
+        187
+      ]
+    ],
+    "maskedPixels": 659,
+    "changedPixels": 659,
+    "changedRatio": 0.0011441,
+    "changedOutsideEyeBoxes": 0,
+    "alphaIdenticalToIdle": true
+  },
+  "assets": {
+    "idle": "idle.png",
+    "walk-a": "walk-a.png",
+    "walk-b": "walk-b.png",
+    "window-back": "window-back.png",
+    "idle-blink": "idle-blink.png"
+  },
+  "frames": {
+    "idle": {
+      "file": "sources/approval-batches/female-core-01/idle-keyed.png",
+      "sha256": "cc93f92242a4d5d770baa918f8fee8aaa65f4f800bca4f4f178fe91b5f628235",
+      "keyedBorderRatio": 1.0,
+      "profile": "core",
+      "targetHeight": 796,
+      "maxWidth": 590,
+      "sourceCanvas": [
+        1050,
+        1498
+      ],
+      "sourceBbox": [
+        306,
+        119,
+        765,
+        1418
+      ],
+      "scale": 0.6127791,
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        179,
+        64,
+        460,
+        860
+      ],
+      "floorY": 860,
+      "mode": "RGBA",
+      "transparentCorners": 4
+    },
+    "walk-a": {
+      "file": "sources/approval-batches/female-core-01/walk-a-keyed.png",
+      "sha256": "9cff976c39d4c4a1c325295ceacada9f50774b18cbf2204fe34f77ab28405358",
+      "keyedBorderRatio": 1.0,
+      "profile": "core",
+      "targetHeight": 796,
+      "maxWidth": 590,
+      "sourceCanvas": [
+        1055,
+        1491
+      ],
+      "sourceBbox": [
+        259,
+        92,
+        759,
+        1408
+      ],
+      "scale": 0.6048632,
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        169,
+        64,
+        471,
+        860
+      ],
+      "floorY": 860,
+      "mode": "RGBA",
+      "transparentCorners": 4
+    },
+    "walk-b": {
+      "file": "sources/approval-batches/female-core-01/walk-b-keyed.png",
+      "sha256": "3e79ecffb07084d483690ba834b605cafdcdf1840187cd41ffc536ad3837047c",
+      "keyedBorderRatio": 1.0,
+      "profile": "core",
+      "targetHeight": 796,
+      "maxWidth": 590,
+      "sourceCanvas": [
+        1055,
+        1491
+      ],
+      "sourceBbox": [
+        258,
+        98,
+        733,
+        1429
+      ],
+      "scale": 0.5980466,
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        178,
+        64,
+        462,
+        860
+      ],
+      "floorY": 860,
+      "mode": "RGBA",
+      "transparentCorners": 4
+    },
+    "window-back": {
+      "file": "sources/approval-batches/female-core-01/window-back-keyed.png",
+      "sha256": "fd16770b22c5ead6f9775e50ebb93bd7730c49f71c4fc294278606068895758f",
+      "keyedBorderRatio": 1.0,
+      "profile": "core",
+      "targetHeight": 800,
+      "maxWidth": 590,
+      "sourceCanvas": [
+        1051,
+        1497
+      ],
+      "sourceBbox": [
+        347,
+        108,
+        697,
+        1405
+      ],
+      "scale": 0.616808,
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        212,
+        60,
+        428,
+        860
+      ],
+      "floorY": 860,
+      "mode": "RGBA",
+      "transparentCorners": 4
+    },
+    "idle-blink": {
+      "derivedFrom": "idle.png",
+      "canvas": [
+        640,
+        900
+      ],
+      "mode": "RGBA",
+      "bbox": [
+        179,
+        64,
+        460,
+        860
+      ],
+      "floorY": 860,
+      "transparentCorners": 4,
+      "eyeBoxes": [
+        [
+          286,
+          161,
+          302,
+          187
+        ],
+        [
+          330,
+          161,
+          346,
+          187
+        ]
+      ],
+      "maskedPixels": 659,
+      "changedPixels": 659,
+      "changedRatio": 0.0011441,
+      "changedOutsideEyeBoxes": 0,
+      "alphaIdenticalToIdle": true
+    }
+  },
+  "qa": {
+    "required": true,
+    "command": "python3 art-factory/traveller-female-v1-20260818/factory_qa.py --batch female-core-01"
+  }
+}

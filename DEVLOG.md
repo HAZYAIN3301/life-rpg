@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-18] 🎨 Traveller female v1 — первый approval-батч и воспроизводимая фабрика
+
+- Создан изолированный `art-factory/traveller-female-v1-20260818/`: production-contract, canonical prompts, manifest-driven builders для core/poses/room и atomic contacts, chroma-to-alpha/despill, deterministic blink, measurable QA, synthetic smoke и review contact sheets. Фабрика не пишет в `public/art`.
+- Произведены восемь контрольных keyed-source сцен: idle, walk A/B, back view, arms-up, bench-read, Gamabunta greeting и Shadow Spark contact; blink детерминированно выведен из idle. Это проверяет одну идентичность спереди/сзади, суставы, походку, prop-contact, большого наземного питомца и малую летающую форму до масштабирования на оставшийся pack.
+- Core/pose/room и Gamabunta проходят технический QA; видимая маджента во всех исходах `0%`, общие холсты/ground lines и reference X сохранены. Shadow честно остаётся **FAIL**: центр и ширина совпадают, но высота пары `0.676251×` референса и сама композиция контакта недостаточно близка. Гейт не ослаблялся, растягивание запрещено; этот кадр нужно перегенерировать.
+- Единый verdict и пути review: `art-factory/traveller-female-v1-20260818/APPROVAL-REVIEW.md`. Все кадры остаются approval-only; selector не включён и production male-pack не затронут.
+- QA: factory smoke PASS (`publicWrites:false`); Python syntax PASS; 7/8 реальных keyed sources проходят автоматический gate, derived blink PASS, Shadow содержит точный измеримый FAIL и не может быть promoted.
+
+Commit: `art: build female Traveller approval batch` (этот коммит). Push выполняется сразу; runtime/deploy не меняются.
+
 ## [2026-08-18] 🧬 Traveller gender routing v165 — безопасный runtime до female-pack
 
 - Весь действующий Traveller runtime переведён с неявного `male` на явный authored-gender contract: core/blink, walk, workshop room actions, Gamabunta, Katsuya, Mister P и четыре формы Shadow получают один и тот же `avatarCoreGender`. Селектор намеренно ещё не показывается: `female` известен системе, но не selectable до полного набора прошедших QA кадров.

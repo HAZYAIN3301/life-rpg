@@ -1,0 +1,48 @@
+{
+  "schema": "satoru.traveller-female-approval-qa/1",
+  "batch": "female-poses-01",
+  "canvas": [
+    640,
+    900
+  ],
+  "floorY": 860,
+  "automatedContractPassed": true,
+  "manualArtApprovalRequired": true,
+  "runtimeEligible": false,
+  "frames": {
+    "arms-up": {
+      "file": "outputs/approval-batches/female-poses-01/arms-up.png",
+      "mode": "RGBA",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        141,
+        31,
+        498,
+        860
+      ],
+      "floorY": 860,
+      "visiblePixels": 123609,
+      "transparentPixels": 448775,
+      "partialAlphaPixels": 11475,
+      "edgeAlphaPixels": 0,
+      "magentaPixels": 0,
+      "magentaRatio": 0.0,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "floorY": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "magentaContamination": true
+      },
+      "passed": true
+    }
+  },
+  "blink": null,
+  "passed": true
+}

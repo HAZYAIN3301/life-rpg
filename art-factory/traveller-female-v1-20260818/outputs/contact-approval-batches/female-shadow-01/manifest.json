@@ -1,0 +1,71 @@
+{
+  "schema": "satoru.traveller-female-contact-approval-batch/1",
+  "id": "female-shadow-01",
+  "family": "shadow",
+  "morphology": "female",
+  "status": "awaiting-manual-contact-approval",
+  "runtimeEligible": false,
+  "publicArtWrites": false,
+  "canvas": [
+    1254,
+    1254
+  ],
+  "groundY": null,
+  "key": "#FF00FF",
+  "preserveMagentaSubject": true,
+  "normalization": "reference-bbox-fit",
+  "familyFrames": [
+    "attune-spark",
+    "attune-spirit",
+    "attune-guardian",
+    "attune-keeper"
+  ],
+  "requiredFrames": [
+    "attune-spark"
+  ],
+  "runtimeTemplate": "public/art/companions/shadow-den-v1/pair-v1/female/{frame}.png",
+  "assets": {
+    "attune-spark": "attune-spark.png"
+  },
+  "frames": {
+    "attune-spark": {
+      "source": "sources/approval-batches/female-shadow-01/attune-spark-keyed.png",
+      "sourceSha256": "8f727c5e8f4fd3184a0533c9c128c636e560998acca0b8731edfbc2c128e7313",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-spark.png",
+      "referenceSha256": "826351c5d7cea1904db7aafbe50d52c89abe82d7cb8af5f205528bc9db354e9d",
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "referenceBbox": [
+        309,
+        205,
+        1060,
+        1144
+      ],
+      "canvas": [
+        1254,
+        1254
+      ],
+      "bbox": [
+        309,
+        357,
+        1060,
+        992
+      ],
+      "scale": 0.5988836,
+      "normalization": "reference-bbox-fit"
+    }
+  },
+  "qa": {
+    "required": true,
+    "command": "python3 art-factory/traveller-female-v1-20260818/contact_qa.py --batch female-shadow-01"
+  }
+}

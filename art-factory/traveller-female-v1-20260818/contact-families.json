@@ -1,0 +1,46 @@
+{
+  "schema": "satoru.traveller-female-contact-families/1",
+  "families": {
+    "gamabunta": {
+      "canvas": [1536, 1536],
+      "groundY": 1470,
+      "normalization": "reference-x-grounded",
+      "contentPad": 16,
+      "key": "#FF00FF",
+      "preserveMagentaSubject": false,
+      "referenceRoot": "public/art/pets/body-toad-v1/pair-v4",
+      "runtimeTemplate": "public/art/pets/body-toad-v1/pair-v4/female/{frame}.png",
+      "frames": [
+        "greet-contact",
+        "train-low",
+        "train-high",
+        "whistle-a",
+        "whistle-b",
+        "whistle-c",
+        "whistle-d",
+        "pushup-down",
+        "pushup-up",
+        "stretch-a",
+        "stretch-b",
+        "rest-contact",
+        "rest-pet"
+      ]
+    },
+    "shadow": {
+      "canvas": [1254, 1254],
+      "groundY": null,
+      "normalization": "reference-bbox-fit",
+      "contentPad": 16,
+      "key": "#FF00FF",
+      "preserveMagentaSubject": true,
+      "referenceRoot": "public/art/companions/shadow-den-v1/pair-v1",
+      "runtimeTemplate": "public/art/companions/shadow-den-v1/pair-v1/female/{frame}.png",
+      "frames": [
+        "attune-spark",
+        "attune-spirit",
+        "attune-guardian",
+        "attune-keeper"
+      ]
+    }
+  }
+}
