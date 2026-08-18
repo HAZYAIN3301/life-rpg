@@ -919,6 +919,7 @@ const I18N_EXTRA = {
   'Профиль': { en: 'Profile', de: 'Profil', uk: 'Профіль', es: 'Perfil' },
   'Рекорд:': { en: 'Record:', de: 'Rekord:', uk: 'Рекорд:', es: 'Récord:' },
   'Как играть': { en: 'How to play', de: 'Spielanleitung', uk: 'Як грати', es: 'Cómo jugar' },
+  'Обновлённый гайд пока готовится на твоём языке. Основные функции доступны без него.': { en: 'The updated guide is still being prepared in your language. The core features remain available without it.', de: 'Der aktualisierte Guide wird für deine Sprache noch vorbereitet. Die Kernfunktionen bleiben auch ohne ihn verfügbar.', uk: 'Оновлений гайд ще готується твоєю мовою. Основні функції доступні й без нього.', es: 'La guía actualizada todavía se está preparando en tu idioma. Las funciones principales siguen disponibles sin ella.' },
   'Pro активен': { en: 'Pro active', de: 'Pro aktiv', uk: 'Pro активний', es: 'Pro activo' },
   'Pro-триал': { en: 'Pro trial', de: 'Pro-Testphase', uk: 'Pro-пробний період', es: 'Prueba Pro' },
   'Pro-триал активирован на 7 дней!': { en: 'Your 7-day Pro trial is active!', de: 'Deine 7-tägige Pro-Testphase ist aktiv!', uk: 'Твій 7-денний Pro-пробний період активний!', es: '¡Tu prueba Pro de 7 días está activa!' },
@@ -5002,7 +5003,9 @@ const State = {
   _goalTxnBusy: '', _goalsError: '', _goalsFocusAfterCommit: '', _goalOpenId: '', _goalDeepLinkId: '',
   _calendarUndo: null, _calendarUndoTimer: null, _calendarFocusAfterCommit: '',
   _inboxLoadError: '', _inboxBusy: false, _inboxFocusAfterCommit: '',
-  _guideV3Error: '', _guideV3SessionPrompted: false,
+  _guideV3Error: '', _guideV3SessionPrompted: false, _guideV3StartBusy: false,
+  _guideV3ChooseOther: false, _guideV3FocusPending: '', _guideV3VoiceActive: false,
+  _guideV3ForceOpen: false, _guideV3ShowTeaser: false,
   _mobileNavFocusAfterCommit: '',
   _calendarViewportNode: null, _calendarViewportDate: '', _calendarViewportScroll: null,
   aveCat: 'hair', // активная категория в редакторе аватара
@@ -5247,7 +5250,10 @@ const GRIT_BONUS = 0;
 // onDate (YYYY-MM-DD) — задним числом засчитать квест в ЕГО день, а не в сегодня (fb_mr4qhq6gy30w):
 // «сделал вчера, записать забыл». dayOf() смотрит на completedAt — значит его и нужно поставить
 // на нужный день (полдень, чтобы не поймать TZ-край суток).
-function completeTask(task, desire, onDate) {
+async function completeTask(task, desire, onDate) {
+  const taskIndex = State.tasks.findIndex((item) => item.id === task.id);
+  if (taskIndex < 0) return false;
+  const beforeTask = structuredClone(task);
   if (State.timer && State.timer.taskId === task.id) stopFocus(true, true);
   const lvlBefore = charLevel();
   let when = new Date();
@@ -5268,7 +5274,23 @@ function completeTask(task, desire, onDate) {
 
   // 🔴 Персист СРАЗУ: энергия уже списана — квест обязан быть сохранён раньше любой косметики
   // (нарратор/тосты/звук). Иначе сбой в UI-слое стоит игроку выполненного квеста.
-  Store.save('tasks', State.tasks);
+  const saved = await Store.saveNow('tasks', State.tasks);
+  if (!saved) {
+    State.tasks[taskIndex] = beforeTask;
+    State._tasksFocusAfterCommit = `[data-action="toggle-task"][data-id="${CSS.escape(String(task.id))}"]`;
+    toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.'));
+    render();
+    return false;
+  }
+  const guide = guideV3State();
+  if (guideV3RuntimeAllowed() && guide?.currentChapter === window.GuideV3?.FIRST_CHAPTER
+    && ['start', 'wait'].includes(guide.currentStep) && guide.selectedTaskId === String(task.id)) {
+    if (guide.currentStep === 'start') await reconcileGuideV3AfterTaskLoad();
+    else {
+      const guideSaved = await guideV3Commit({ type: 'task:completed', taskId: String(task.id), persisted: true }, { repaint: false });
+      if (!guideSaved) await reconcileGuideV3AfterTaskLoad();
+    }
+  }
   if (task.entry) { // 💛 связь — валюта захода; сохраняем сразу же, до косметики
     try { const c = ensureCompanion(); c.bond += 2; c.lastSeen = todayStr(); Store.save('settings', State.settings); } catch {}
   }
@@ -5303,6 +5325,8 @@ function completeTask(task, desire, onDate) {
   const avatarReactionLabel = lvlNow > lvlBefore ? `Уровень ${lvlNow}` : (task.entry ? 'Шаг сделан' : `+${task.xpAwarded} XP`);
   if (window.ShadowRig) window.ShadowRig.setTransient(lvlNow > lvlBefore ? 'radiant' : 'happy', lvlNow > lvlBefore ? 2200 : 1100);
   checkAchievements(); render(); triggerAvatarReaction(avatarReaction, avatarReactionLabel); publishLeaderboard();
+  setTimeout(() => { try { guideV3Paint(); } catch {} }, 420);
+  return true;
 }
 function taskCompletionFocusPlan(taskId, source = document.activeElement) {
   const selector = `[data-action="toggle-task"][data-id="${CSS.escape(String(taskId))}"]`;
@@ -10776,7 +10800,7 @@ function renderHeader(force = false) {
         <span class="up-meta"><span class="up-name">${esc(State.me.name)}${eqTitle ? ` <span class="eq-title">${satoruIconHTML('achievement.avatar_custom', 'inline-emblem', '◇')} ${esc(eqTitle)}</span>` : ''}</span>
         <span class="up-rank" style="--rc:${cr.color}">${rankIconHTML(cr, 'rank-inline-icon')} ${cr.name}</span></span></div>` : ''}
       <div class="char-level">Уровень <b>${oi.level}</b></div>
-      <div class="xp-bar"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
+      <div class="xp-bar" data-guide-target="first-level-form"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
       <div class="gold-pill" title="Золото">${satoruIconHTML('status.gold', 'header-emblem', '🪙')} ${goldBalance()}</div>
       <div class="streak" title="${t('Рекорд:')} ${localizedDayCount(longestStreak())}">${satoruIconHTML('status.streak', 'header-emblem header-emblem--streak', '🔥')} ${localizedDayCount(streak, true)}</div>
       ${hypePct() > 0 ? `<div class="hype-chip" title="Хайп ×${hypeState().stacks}: бонус XP за добровольный выбор сложных квестов. Осталось ${hypeMinLeft()} мин.">${satoruIconHTML('status.streak', 'header-emblem', '🔥')} Хайп +${hypePct()}%</div>` : ''}
@@ -10820,6 +10844,10 @@ function questRow(q) {
   const time = q.actualMin ? `${fmtDur(q.actualMin)} / ${fmtDur(estMin)}` : fmtDur(estMin);
   const active = State.timer && State.timer.taskId === q.id;
   const fullTitle = taskDisplayTitle(q);
+  const guideTarget = guideV3TaskTarget(q.id);
+  const guideRowTarget = ['first-task-select', 'first-task-focus'].includes(guideTarget) ? ` data-guide-target="${guideTarget}"` : '';
+  const guideCompleteTarget = guideTarget === 'first-task-complete' ? ' data-guide-target="first-task-complete"' : '';
+  const guideRewardTarget = guideTarget === 'first-task-reward' ? ' data-guide-target="first-task-reward"' : '';
   const skSel = `<button class="t-cats" data-action="edit-cats" data-id="${q.id}" aria-label="${t('Изменить сферы квеста')}: ${esc(fullTitle)}" title="${t('Категории квеста — клик чтобы изменить (можно несколько)')}">${catChips(q)}</button>`;
   const titleCell = State._editTask === q.id
     ? `<form class="t-edit-form" data-id="${q.id}"><input name="title" value="${esc(q.title)}" maxlength="160" autocomplete="off" aria-label="${t('Квест')}" /></form>`
@@ -10844,13 +10872,13 @@ function questRow(q) {
       </div>` : ''}
       <button class="task-menu-delete" data-action="delete-task" data-id="${q.id}">${satoruIconHTML('action.close', 'task-action-icon', '✕')} ${t('Удалить квест')}</button>
     </div></details>`;
-  return `<li class="task ${q.done ? 'done' : ''} ${q.core ? 'is-core' : ''}">
-    <button class="check" data-action="toggle-task" data-id="${q.id}" aria-label="${t(q.done ? 'Снять выполнение' : 'Выполнить')}: ${esc(fullTitle)}" aria-pressed="${q.done ? 'true' : 'false'}">${q.done ? '✓' : ''}</button>
+  return `<li class="task ${q.done ? 'done' : ''} ${q.core ? 'is-core' : ''}" data-id="${esc(q.id)}"${guideRowTarget}>
+    <button class="check" data-action="toggle-task" data-id="${q.id}"${guideCompleteTarget} aria-label="${t(q.done ? 'Снять выполнение' : 'Выполнить')}: ${esc(fullTitle)}" aria-pressed="${q.done ? 'true' : 'false'}">${q.done ? '✓' : ''}</button>
     ${titleCell}
     ${skSel}
     <button class="t-time" data-action="edit-actual" data-id="${q.id}" aria-label="${t('Изменить фактическое время квеста')} ${esc(fullTitle)}: ${time}" title="${t('Клик — фактическое время')}">${time}</button>
     <span class="t-diff" title="${DIFF[q.difficulty] || ''}">${difficultyIconHTML(q.difficulty)}</span>
-    <span class="t-xp">${q.done ? (q.entry ? '💛' : '+' + (q.xpAwarded || 0)) : ''}</span>
+    <span class="t-xp"${guideRewardTarget}>${q.done ? (q.entry ? '💛' : '+' + (q.xpAwarded || 0)) : ''}</span>
     ${backdate}
     ${q.oath && !q.done ? `<span class="t-oath" title="Клятва Кремню: заверши сегодня или −${q.oath.gold} 🪙">⚔️${q.oath.gold}</span>` : (!q.done && currentPath() === 'control' && q.date === todayStr() && goldBalance() >= CONTROL.oathGold ? `<button class="t-oath-btn" data-action="quest-oath" data-id="${q.id}" title="Клятва Кремню: заверши до конца дня — золото за квест ×1.5; провали — сгорит ${CONTROL.oathGold} 🪙">⚔️</button>` : '')}
     ${taskMenu}</li>`;
@@ -13442,8 +13470,9 @@ function closeMoment() { document.getElementById('moment')?.remove(); }
 let _momentTimer = null;
 function momentCheck() {
   if (State.view !== 'today' || State.phase !== 'app') return;
-  const tut = ensureTutorial();
-  if (tut.active || !tutDoneOrSkipped()) return;
+  const guide = guideV3State();
+  if (guideV3RuntimeAllowed() && guide
+    && (guide.currentChapter || !window.GuideV3.chapterResolved(guide, window.GuideV3.FIRST_CHAPTER))) return;
   if (document.getElementById('moment') || _momentTimer || _momentBusy) return;
   const kind = momentDue();
   if (!kind) return;
@@ -13483,9 +13512,16 @@ function companionCard() {
     ? `🚩 ${last.skillId ? skillLabel(last.skillId) : ''}: ${treeNodeCopy(last, 'title')}`
     : last && last.text;
   const peek = (last && last.date === t) ? `<p class="comp-peek muted" data-noi18n>${satoruIconHTML(last.kind === 'm' ? 'nav.today' : last.kind === 'ms' ? 'status.milestone' : 'system.day-end', 'inline-glyph', '◇')} «${esc(lastText)}»</p>` : '';
+  const guide = guideV3State();
+  const guideContactTarget = guideV3RuntimeAllowed()
+    && guide?.currentChapter === window.GuideV3?.FIRST_CHAPTER && guide.currentStep === 'bond'
+    ? ' data-guide-target="first-shadow-contact"' : '';
+  const companionArt = guideContactTarget
+    ? `<button type="button" class="comp-art guide-shadow-contact" data-action="guide-shadow-contact"${guideContactTarget} aria-label="${esc(guideV3Copy('system.action.touch_shadow'))}">${shadowVideo(ti, mood.face, 'card')}</button>`
+    : `<div class="comp-art">${shadowVideo(ti, mood.face, 'card')}</div>`;
   return `<div class="card comp-card">
     <div class="comp-row">
-      <div class="comp-art">${shadowVideo(ti, mood.face, 'card')}</div>
+      ${companionArt}
       <div class="comp-body">
         <div class="comp-name"><b>${esc(c.name)}</b><button class="comp-rename" data-action="comp-rename" title="Переименовать">✎</button></div>
         <div class="comp-line-row" data-tts><p class="comp-line">${mood.line}</p>${ttsBtnHTML()}</div>
@@ -16074,7 +16110,7 @@ function renderToday() {
       </div>
       <div class="th-stats" aria-label="${t('Состояние дня')}">${heroStats}</div>
     </section>`;
-  const addQuestCard = `<div class="card card-addquest"><form id="add-task" class="add-row">
+  const addQuestCard = `<div class="card card-addquest"><form id="add-task" class="add-row" data-guide-target="first-task-create">
         <label class="add-field add-field-title"><span class="add-field-label">${t('Квест')}</span><input name="title" placeholder="${t('Новый квест на сегодня…')}" maxlength="160" autocomplete="off" required /></label>
         ${sphereFieldHTML()}
         <span class="add-field add-field-duration" role="group" aria-label="${t('Длительность')}">${durInputHTML('estimateMin', 30, true)}</span>
@@ -17244,12 +17280,19 @@ function subscriptionCard() {
     <div class="settings-actions">${cta || `<span class="muted">${t('Спасибо за поддержку 💛')}</span>`}</div></div>`;
 }
 let _accountDialogReturnFocus = null;
+function repaintGuideV3AfterBlockingSurface() {
+  requestAnimationFrame(() => {
+    if (document.querySelector('.modal-overlay, #mobile-nav-sheet')) return;
+    try { guideV3Paint(); } catch {}
+  });
+}
 function closeAccountDialog(id, { restoreFocus = true } = {}) {
   const overlay = document.getElementById(id); if (!overlay) return false;
   const target = restoreFocus && _accountDialogReturnFocus && _accountDialogReturnFocus.isConnected ? _accountDialogReturnFocus : null;
   const app = document.getElementById('app'); if (app) app.inert = false;
   overlay.remove(); _accountDialogReturnFocus = null; unlockCalendarDialogScroll();
   if (target) requestAnimationFrame(() => target.focus());
+  repaintGuideV3AfterBlockingSurface();
   return true;
 }
 function mountAccountDialog(overlay, { initial, dismissible = true, returnFocus = document.activeElement } = {}) {
@@ -17882,53 +17925,26 @@ function showPaywall(feature) {
 // ============================================================
 // Гайд «Как играть». Сгруппирован: 20+ разделов подряд не читаются, а по группам —
 // человек находит нужное. Порядок групп = порядок знакомства с игрой, а не порядок разработки.
-const GUIDE_SECTIONS = [
-  // ── С чего начать ──
-  { group: 'С чего начать', icon: '⚔️', title: 'Что это', text: 'Satoru превращает твою жизнь в ролевую игру. Дела дают опыт и золото, сферы жизни растут уровнями, персонаж отражает прогресс. Философия — «жизнь как десятиборье»: ценится баланс многих сфер, а не одна вертикаль. И всё это через любовь, а не через вину: тут нет наказаний за пропуск.' },
-  { group: 'С чего начать', icon: '🎖', title: 'Уровень не сгорает', text: 'Уровень = доказанное мастерство, и оно не исчезает — как чёрный пояс: не тренировался месяц, но пояс твой. Отдельно есть Форма — свежесть активности: мягко падает, если забросил сферу, и быстро возвращается. Так пауза не обнуляет годы работы.' },
-  { group: 'С чего начать', icon: '🌗', title: 'Не начинай с нуля', text: 'Настройки → Импорт достижений: отметь, где ты уже находишься в каждой сфере (бегаешь 10 км, язык на B2, третий год кодишь) — и получишь стартовый опыт и уровни. Не помнишь, как оценить, — есть «🤖 Оценить через ИИ»: опиши словами, он предложит уровни. Начинать «нулевым» человеком, имея за плечами годы, — самый быстрый способ забросить приложение.' },
-  { group: 'С чего начать', icon: '🧭', title: 'Сферы жизни', text: 'Сферы — это твои области жизни, ты задаёшь их сам (Настройки → Сферы). Можно вкладывать: Учёба → Школа → Биология. Опыт под-сферы поднимается наверх. У каждой сферы есть подсказка, что в ней измерять и что считать.' },
-
-  // ── Каждый день ──
-  { group: 'Каждый день', icon: '📅', title: 'Сегодня', text: 'Главный экран. Квесты — разовые дела на день, сложность 🌱лёгкая / ⚔️обычная / 🔥сложная. ▶ у квеста включает фокус-таймер (можно вынести плавающим окном поверх всех приложений). Галочка = опыт и золото. Ниже — привычки на сегодня и «Итог дня».' },
-  { group: 'Каждый день', icon: '🔁', title: 'Привычки', text: 'Повторяющиеся дела со стриком, построены по «Атомным привычкам» Клира: идентичность («я человек, который…»), связка-сигнал «После X я…», версия на 2 минуты. Стрик показывает ритм, но не создаёт долг. Отдельно — приватные наблюдения за контекстом без наказаний и публичного стыда.' },
-  { group: 'Каждый день', icon: '⚡', title: 'Энергия', text: 'Индикатор дневной нагрузки. Сложные квесты тратят, восстанавливается сама по реальному времени — паузы, вечер, сон. Логировать отдых не нужно. Она ничего не блокирует и на опыт не влияет. Ёмкость не бесконечна: потолок от 80 до 220 — растёт, когда чередуешь нагрузку и восстановление, и падает, если постоянно загонять себя в ноль. Это и есть выгорание, только в цифрах.' },
-  { group: 'Каждый день', icon: '🎤', title: 'Итог дня голосом', text: 'Самое полезное, когда день уже прошёл. Нажми «Итог дня» и просто наговори своими словами, что делал — как другу. Тень разложит по делам, сферам и времени, покажет карточки, ты снимешь лишние галочки и запишешь. Можно закрыть и прошлый день: был в поездке — расскажешь потом.' },
-  { group: 'Каждый день', icon: '📝', title: 'Заметки и захват', text: 'Строка захвата на «Сегодня»: быстрая мысль текстом, 🎤 голосом или 🎥 видео. Мысль не теряется, пока ты занят. Любую заметку можно потом превратить в квест или отдать ИИ, чтобы он сделал из неё цель.' },
-  { group: 'Каждый день', icon: '🗓', title: 'Календарь', text: 'Неделя и месяц. Перетаскивай квесты между днями, ставь время, включай напоминалки. Можно подписаться на свои квесты из Apple Calendar или Google (кнопка «Подписка») — тогда они видны в обычном календаре телефона.' },
-
-  // ── Тень ──
-  { group: 'Тень — твой спутник', icon: '🕯', title: 'Кто такая Тень', text: 'Живой спутник на «Сегодня». Реагирует настроением, скучает, если пропал, радуется твоим делам. Связь растёт от утренних и вечерних чек-инов и от «погладить»: Искра → Дух → Страж → Хранитель. Тень ведёт летопись твоих побед и никогда не ругает — это принципиально.' },
-  { group: 'Тень — твой спутник', icon: '💬', title: 'Одна подсказка, а не десять', text: 'Раньше приложение могло вывалить пять советов подряд. Теперь оно выбирает ОДИН — самый важный именно сейчас — а остальные ждут своей очереди. Секретарь не зачитывает список напоминаний, он говорит про главное.' },
-  { group: 'Тень — твой спутник', icon: '🔊', title: 'Тень умеет говорить', text: 'Кнопка 🔊 рядом с репликой Тени, подсказкой, ответом Помощника или разбором недели озвучит текст постоянным голосом. Его синтезирует локальный Piper: пользователю не нужен ключ и нет платы за каждую фразу. Выключается в Настройках рядом со звуками интерфейса.' },
-  { group: 'Тень — твой спутник', icon: '🌿', title: 'Честный отдых', text: 'Обычные трекеры считают действия, а не состояние: тренировка и отдых для них одинаково «активность в сфере Здоровье». Поэтому приложение может показывать «всё отлично», когда ты выжат. Satoru смотрит на то, что ты реально делал, и умеет сказать: столько-то дней без явного отдыха. Это приглашение, а не упрёк — отдых такая же часть десятиборья, как труд.' },
-  { group: 'Тень — твой спутник', icon: '🕯', title: '«Заход» — когда сил нет', text: 'Вечер уплывает, устал так, что даже приставка не радует, остаётся только листать ленту? Тень предложит крошечный вход — десять минут в то, что ты и так любишь. Без опыта, без обязательств, отказаться ничего не стоит. Цель не «заставить работать», а не дать вечеру утечь совсем.' },
-
-  // ── Глубина ──
-  { group: 'Глубина', icon: '🎯', title: 'Цели и горизонты', text: 'Сверху вниз: ★ Миссия (зачем всё) → видение 10–20 лет → путь 3–5 лет → долгие / средние / короткие → повторяющиеся. Привязывай цель к большей — на карточке появится цепочка «↑ зачем», и в трудный день видно, ради чего это. Цель бывает чек-листом или числовой (текущее → цель, с логом рекордов и режимом «держать» для показателей вроде жима или оценок).' },
-  { group: 'Глубина', icon: '🌳', title: 'Дерево навыков', text: 'Не магазин процентов, а карта пути. 🚩 Вехи — реальные ступени мастерства сферы: «5 км» → «полумарафон» → «марафон». Веха берётся жизнью, а не кликом: сделал в реальности — отмечаешь, и она даёт очко практик. Из очков открываются узлы с пассивными бонусами. А кнопка «🤖 Личная карта» соберёт вехи под тебя: не «бегай больше вообще», а твой Abitur и твой проект.' },
-  { group: 'Глубина', icon: '⚖️', title: 'Баланс и статистика', text: 'Индекс баланса показывает, развиваешь ли ты жизнь как композицию или одну вертикаль. Радар сфер, ранги, графики опыта и времени. Тут же «🤖 Разбор недели» — ИИ читает твою реальную неделю вместе с твоей рефлексией и отвечает на неё, а не общими фразами.' },
-  { group: 'Глубина', icon: '🧍', title: 'Персонаж и Логово', text: 'Аватар собирается из черт (лицо, причёска, цвета), атрибуты (Сила, Интеллект, Дух…) растут сами из твоих сфер и рисуют радар-билд. 🏠 Логово — комната, где живёшь ты, Тень и питомцы: окно меняется по времени суток, тут же таймер фокуса.' },
-  { group: 'Глубина', icon: '🐾', title: 'Питомцы', text: 'Каждая основная сфера — питомец. Кормишь его делами в этой сфере. Забросил — голодает; перекосил всё в одну сферу — разжиреет. Это мягкий сигнал держать десятиборье, а не расти в одну сторону.' },
-
-  // ── Награды и азарт ──
-  { group: 'Награды без ставок', icon: '🎁', title: 'Личные и дневные награды', text: 'Золото тратится в личном магазине — придумай настоящую ценность (кино, доставка, выходной без дел). За 1 и 3 реальных дела выдаётся известное золото; за 5 — заработанный сундук косметики с открытыми шансами и без дублей. Он не даёт силу, платных попыток нет, Free и Pro используют один набор.' },
-  { group: 'Награды и азарт', icon: '🔥', title: 'Хайп', text: 'Выполнил 🔥 сложный квест — включается Хайп: +15% опыта за стак, до +45%, на два часа. Каждый следующий сложный квест усиливает и продлевает. Это награда за то, что лезешь в трудное, а не фармишь лёгкое.' },
-  { group: 'Награды и азарт', icon: '🏅', title: 'Достижения и звания', text: 'Больше полусотни достижений, у каждого своё звание — их можно носить. Часть выдаётся за то, о чём не догадываешься: загляни в Награды.' },
-
-  // ── Вместе ──
-  { group: 'Вместе', icon: '🤝', title: 'Племя: пати и рейды', text: 'Собери пати до шести человек по коду. Недельный вклад каждого суммируется в общий урон боссу — пропуск не штрафует, помощь просто складывается. Раз в неделю тематический босс, за победу — общий сундук. Можно подбадривать своих.' },
-  { group: 'Вместе', icon: '🏆', title: 'Рейтинг', text: 'Соревнование по опыту со всеми на сервере. Видны только имя, аватар, уровень и ранг — задачи, цели и заметки приватны всегда. Из рейтинга можно скрыться галочкой в Настройках.' },
-
-  // ── ИИ ──
-  { group: 'ИИ-помощник', icon: '🤖', title: 'Помощник знает, как у тебя дела', text: 'Кнопка 🤖 — не просто справка по кнопкам. Помощник видит твоё реальное состояние: энергию, сколько дней без отдыха, что горит по срокам, что осталось на сегодня, и твою собственную рефлексию. Спроси «как у меня дела на самом деле» или «что мне сделать прямо сейчас» — ответит по твоим данным, а не общими советами.' },
-  { group: 'ИИ-помощник', icon: '✨', title: 'Что ещё умеет ИИ', text: '«🤖 Импорт целей» (вкладка Цели) — оформит цели из свободного текста. «🤖 Оценить через ИИ» (Настройки → Импорт) — откалибрует стартовые уровни. «🤖 Разбор недели» (Статистика) — зеркало твоей недели. «🤖 Личная карта» (Дерево) — вехи под твою жизнь. «Итог дня» — разложит наговоренное по делам. Всё это подтверждаешь ты: ИИ предлагает, применяешь ты.' },
-  { group: 'ИИ-помощник', icon: '🔑', title: 'Ключ для ИИ (можно бесплатно)', text: 'ИИ-функции работают на твоём ключе. Есть бесплатные без карты — Google Gemini и Groq, в Настройках пошаговый гид на две минуты. Можно и платные Claude или OpenAI. Ключ хранится у тебя и питает все ИИ-функции сразу. Без ключа приложение работает полностью — просто без ИИ-слоя.' },
-
-  // ── Деньги ──
-  { group: 'Деньги', icon: '💎', title: 'Free и Pro', text: 'Вся игра бесплатна навсегда: квесты, сферы, дерево, Тень, рейды, достижения. Платить есть смысл только за одно — чтобы ИИ работал без возни с ключами, за наш счёт. Это единственное, что реально стоит денег. Со своим ключом (в том числе бесплатным) ты получаешь все ИИ-функции даром.' },
-  { group: 'Деньги', icon: '🔒', title: 'Твои данные', text: 'Мы храним только то, что ты вводишь сам: цели, квесты, привычки, дневник. Данные на сервере, чтобы синхронизироваться между устройствами. Удалить аккаунт и всё вместе с ним можно в Настройках, в один клик, без переписки.' },
-];
+// The Guide v3 library is registry-driven. Keep this explicit empty compatibility
+// constant so old source-level integrations cannot revive the removed card wall.
+const GUIDE_SECTIONS = Object.freeze([]);
+function guideV3ReviewPreviewRequested() {
+  try { return new URLSearchParams(location.search).get('guidePreview') === '1'; }
+  catch { return false; }
+}
+function guideV3RuntimeAllowed() {
+  const copy = window.GuideV3CopyRu;
+  return lang() === 'ru' && (copy?.RUNTIME_APPROVED === true || guideV3ReviewPreviewRequested());
+}
+function showGuideUnavailable() {
+  const ov = document.createElement('div'); ov.id = 'guide'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<section class="guide-box" role="dialog" aria-modal="true" aria-labelledby="guide-title" aria-describedby="guide-subtitle">
+    <button type="button" class="modal-x" data-action="close-guide" aria-label="${esc(t('Закрыть'))}">✕</button>
+    <h2 id="guide-title" tabindex="-1">${esc(t('Как играть'))}</h2>
+    <p id="guide-subtitle" class="muted">${esc(t('Обновлённый гайд пока готовится на твоём языке. Основные функции доступны без него.'))}</p>
+  </section>`;
+  mountAccountDialog(ov, { initial: '#guide-title', returnFocus: document.activeElement });
+}
 // ── Вложения к репортам: фото ужимаем (canvas), видео — как есть с лимитом ──
 function fileToDataURL(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); }); }
 function downscaleImage(file, maxDim = 1280, quality = 0.82) {
@@ -18014,21 +18030,31 @@ async function showReports() {
 }
 function showGuide() {
   if (document.getElementById('guide')) return;
-  // Группы разделяем заголовком — 20+ карточек подряд читаются как стена текста.
-  let lastGroup = null;
-  const secs = GUIDE_SECTIONS.map((s) => {
-    const head = (s.group && s.group !== lastGroup) ? `<h3 class="guide-group">${esc(s.group)}</h3>` : '';
-    lastGroup = s.group || lastGroup;
-    return `${head}<div class="guide-sec"><div class="gs-ic">${s.icon}</div><div><h4>${esc(s.title)}</h4><p>${esc(s.text)}</p></div></div>`;
+  if (lang() !== 'ru' || !guideV3RuntimeAllowed()) { showGuideUnavailable(); return; }
+  guideV3Close({ restoreFocus: false });
+  const state = guideV3State() || window.GuideV3.defaultState();
+  const cards = window.GuidePresenterV1.libraryCards(state, {
+    availableChapters: [window.GuideV3.FIRST_CHAPTER],
+    deferredChapters: ['goals'],
+  }, window.GuideV3.REGISTRY, window.GuideV3CopyRu);
+  const cardHtml = cards.map((card) => {
+    const action = !state.enabled ? '' : card.current ? 'guide-resume' : card.replay ? 'guide-replay' : (card.available ? 'guide-start' : '');
+    const button = action && card.actionLabel
+      ? `<button type="button" class="btn ghost guide-v3-card__action guide-v3-card-action" data-action="${action}" data-chapter="${esc(card.id)}">${esc(card.actionLabel)}</button>` : '';
+    return `<article class="guide-v3-card is-${esc(card.status)}" data-guide-chapter="${esc(card.id)}">
+      <div class="guide-v3-card__copy"><h3>${esc(card.title)}</h3><p class="guide-v3-card__status guide-v3-card-status">${esc(card.statusLabel)}</p>${card.description ? `<p class="guide-v3-card-description">${esc(card.description)}</p>` : ''}</div>${button}
+    </article>`;
   }).join('');
   const ov = document.createElement('div'); ov.id = 'guide'; ov.className = 'modal-overlay';
-  ov.innerHTML = `<div class="guide-box">
-    <button class="modal-x" data-action="close-guide">✕</button>
-    <h2>📖 Как играть в Satoru</h2>
-    <p class="muted">Коротко по разделам. Лучший способ понять — добавить первый квест и выполнить его.</p>
-    <button class="btn" data-action="tut-restart" style="margin:2px 0 12px">${t('✨ Пройти интерактивное обучение с Тенью')}</button>
-    <div class="guide-list">${secs}</div>
-    <h3 style="margin:6px 0 8px">💬 Нашёл баг или есть идея?</h3>
+  ov.innerHTML = `<section class="guide-box guide-v3-library" role="dialog" aria-modal="true" aria-labelledby="guide-title" aria-describedby="guide-subtitle">
+    <button type="button" class="modal-x" data-action="close-guide" aria-label="${esc(guideV3Copy('system.action.close'))}">✕</button>
+    <header class="guide-v3-library__header guide-v3-library-header"><p class="guide-v3-library__eyebrow guide-v3-library-eyebrow">SATORU GUIDE</p><h2 id="guide-title" tabindex="-1">${esc(guideV3Copy('library.title'))}</h2><p id="guide-subtitle" class="guide-v3-library-copy">${esc(guideV3Copy('library.subtitle'))}</p></header>
+    <div class="guide-v3-library__cards guide-v3-library-grid">${cardHtml}</div>
+    <p class="guide-v3-library__note guide-v3-library-copy">${esc(guideV3Copy('library.replay_note'))}</p>
+    ${state.enabled
+      ? `<button type="button" class="btn ghost guide-v3-library__disable guide-v3-library-action" data-action="guide-disable">${esc(guideV3Copy('system.action.disable_prompts'))}</button>`
+      : `<button type="button" class="btn guide-v3-library__enable guide-v3-library-action" data-action="guide-enable">${esc(guideV3Copy('system.action.enable_prompts'))}</button>`}
+    <h3 class="guide-v3-library__feedback-title">💬 Нашёл баг или есть идея?</h3>
     <form id="feedback-form" class="feedback-form">
       <select name="kind"><option value="bug">🐞 Баг</option><option value="idea">💡 Идея</option><option value="other">💬 Другое</option></select>
       <textarea name="text" placeholder="Опиши, что случилось или что предлагаешь…"></textarea>
@@ -18039,8 +18065,8 @@ function showGuide() {
       <div class="fb-actions"><button type="submit" class="btn">Отправить</button><span id="fb-msg" class="muted"></span></div>
     </form>
     ${State.me && State.me.isAdmin ? '<button class="btn ghost" data-action="show-reports" style="margin-top:10px">🐞 Смотреть все репорты (админ)</button>' : ''}
-    </div>`;
-  document.body.appendChild(ov);
+    </section>`;
+  mountAccountDialog(ov, { initial: '#guide-title', returnFocus: document.activeElement });
 }
 
 // ============================================================
@@ -19170,6 +19196,7 @@ function closeMobileNavSheet({ restoreFocus = true, immediate = false } = {}) {
     // state after the departing sheet no longer exists in the document.
     document.querySelector('[data-action="mobile-nav-more"]')?.setAttribute('aria-expanded', 'false');
     if (restoreFocus && returnFocus && returnFocus.isConnected) returnFocus.focus({ preventScroll: true });
+    repaintGuideV3AfterBlockingSurface();
   };
   if (immediate) dispose(); else setTimeout(dispose, 180);
 }
@@ -19212,7 +19239,7 @@ function showMobileNavSheet() {
   document.querySelector('[data-action="mobile-nav-more"]')?.setAttribute('aria-expanded', 'true');
   // A drip/tutorial is advisory, while this is a modal navigation surface.
   // Suppress it now; MutationObserver restores it after the sheet is gone.
-  try { tutorialPaint(); } catch {}
+  try { guideV3Close({ restoreFocus: false }); } catch {}
   focusMobileNavInitialTarget(overlay);
   requestAnimationFrame(() => {
     overlay.classList.add('is-open');
@@ -19318,7 +19345,7 @@ function afterMainCommit() {
   try { syncDenViewportGate(); } catch {}
   try { syncDenLife(); } catch {}
   try { scheduleDenPhaseBoundary(); } catch {}
-  try { tutorialPaint(); } catch {}
+  try { guideV3Paint(); } catch {}
   try { scheduleQuestTitleDisclosures(); } catch {}
   try { syncCalendarDayViewport(); } catch {}
   try { normalizeSettingsOutline(); } catch {}
@@ -19581,8 +19608,7 @@ function render() {
   try { scheduleReminders(); } catch (e) { console.error('scheduleReminders', e); }
   try { kickCompVideo(); } catch (e) { /* видео-автоплей — не критично */ }
   try { syncAvatarMotion(); } catch (e) { /* motion-слой не должен ломать основной рендер */ }
-  try { tutorialPaint(); } catch (e) { /* гайд-оверлей — не критично */ }
-  try { dripCheck(); } catch (e) { /* капельница гайда — не критично */ }
+  try { guideV3MaybeStart(); guideV3Paint(); } catch (e) { /* Guide v3 не блокирует основной рендер */ }
   try { momentCheck(); } catch (e) { /* момент дня — тоже не критично для рендера */ }
   // Стрик прямо на кнопке Тени: маленькая цифра вместо отдельной карточки на экране
   try {
@@ -20100,7 +20126,22 @@ async function onSubmit(e) {
       render();
       return;
     }
-    Store.save('tasks', State.tasks); render();
+    const controls = f.querySelectorAll('button, input, select');
+    controls.forEach((control) => { control.disabled = true; });
+    const saved = await Store.saveNow('tasks', State.tasks);
+    if (!saved) {
+      State.tasks = State.tasks.filter((item) => item !== task);
+      controls.forEach((control) => { control.disabled = false; });
+      toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.'));
+      f.title.focus();
+      return;
+    }
+    const guide = guideV3State();
+    if (guideV3RuntimeAllowed() && guide?.currentChapter === window.GuideV3?.FIRST_CHAPTER && guide.currentStep === 'recognize') {
+      await guideV3Commit({ type: 'guide:recognize-task', taskId: String(task.id), persisted: true }, { repaint: false });
+    }
+    State._tasksFocusAfterCommit = `[data-guide-target="first-task-select"][data-id="${CSS.escape(task.id)}"]`;
+    render();
   } else if (f.id === 'add-goal') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title || State._goalTxnBusy) return;
     const type = f.type.value || 'short';
@@ -20200,12 +20241,297 @@ async function initializeGuideV3State() {
 }
 async function reconcileGuideV3AfterTaskLoad() {
   if (!State.settings?.guideV3 || !window.GuideV3 || !Array.isArray(State.tasks)) return false;
-  const result = window.GuideV3.reconcile(State.settings.guideV3, { tasks: State.tasks });
+  const prior = State.settings.guideV3;
+  const result = window.GuideV3.reconcile(prior, { tasks: State.tasks });
   if (!result.changed) return true;
   State.settings.guideV3 = result.state;
   const saved = await Store.saveNow('settings', State.settings);
+  if (!saved) State.settings.guideV3 = prior;
   State._guideV3Error = saved ? '' : 'persist';
   return saved;
+}
+function guideV3Copy(key, variables) {
+  const copy = window.GuideV3CopyRu;
+  return copy && typeof copy.format === 'function' ? (copy.format(key, variables) || '') : '';
+}
+function guideV3Seed() {
+  if (!window.GuideV3) return { branch: 'blank', taskId: null };
+  return window.GuideV3.guideSeed({ today: todayStr(), tasks: State.tasks || [], skills: State.settings?.skills || [], goals: State.goals || [] });
+}
+function guideV3CandidateTaskId() {
+  const guide = guideV3State();
+  return guide?.chapterMeta?.[window.GuideV3?.FIRST_CHAPTER]?.candidateTaskId || guideV3Seed().taskId || null;
+}
+function guideV3TaskTarget(taskId) {
+  const guide = guideV3State();
+  if (!guideV3RuntimeAllowed() || !guide || guide.currentChapter !== window.GuideV3?.FIRST_CHAPTER) return '';
+  if (['recognize', 'choose'].includes(guide.currentStep) && String(taskId) === String(guideV3CandidateTaskId() || '')) return 'first-task-select';
+  if (String(taskId) !== String(guide.selectedTaskId || '')) return '';
+  if (guide.currentStep === 'start') return 'first-task-focus';
+  if (guide.currentStep === 'wait') return 'first-task-complete';
+  if (guide.currentStep === 'victory') return 'first-task-reward';
+  return '';
+}
+async function guideV3Commit(event, options = {}) {
+  if (!State.settings || !window.GuideV3) return false;
+  const prior = State.settings.guideV3;
+  const result = window.GuideV3.reduce(prior, event);
+  if (!result.accepted) return false;
+  State.settings.guideV3 = result.state;
+  const saved = await Store.saveNow('settings', State.settings);
+  if (!saved) {
+    State.settings.guideV3 = prior; State._guideV3Error = 'persist';
+    if (options.repaint !== false) guideV3Paint();
+    return false;
+  }
+  State._guideV3Error = '';
+  if (result.metric) track(result.metric);
+  if (options.repaint !== false) guideV3Paint();
+  return true;
+}
+
+let _guideV3SurfaceKey = '';
+let _guideV3ReplayTimer = null;
+function guideV3Close(options = {}) {
+  clearTimeout(_guideV3ReplayTimer); _guideV3ReplayTimer = null; _guideV3SurfaceKey = '';
+  State._guideV3VoiceActive = false;
+  try { window.ShadowVoiceV2?.stop({ silent: true, reason: 'guide_transition' }); } catch {}
+  try { window.GuideSurfaceV1?.close(options); } catch {}
+}
+function guideV3TargetSelector(viewModel) {
+  const vm = viewModel || {}, taskId = String(vm.taskId || '');
+  if (vm.step === 'recognize' && vm.candidateTaskId) {
+    return `[data-guide-target="first-task-select"][data-id="${CSS.escape(String(vm.candidateTaskId))}"]`;
+  }
+  if (vm.step === 'choose' && (vm.candidateTaskId || taskId)) {
+    return `[data-guide-target="first-task-select"][data-id="${CSS.escape(String(vm.candidateTaskId || taskId))}"]`;
+  }
+  if (vm.step === 'start' && taskId) return `[data-guide-target="first-task-focus"][data-id="${CSS.escape(taskId)}"]`;
+  if (vm.step === 'victory' && taskId) return `[data-guide-target="first-task-reward"]`;
+  if (vm.step === 'mastery') return '[data-guide-target="first-level-form"]';
+  if (vm.step === 'bond') return '[data-guide-target="first-shadow-contact"]';
+  if (vm.step === 'recognize' && vm.branch !== 'task') return '[data-guide-target="first-task-create"]';
+  return vm.targetSelector || null;
+}
+function guideV3RevealTarget(selector, { focus = false, forceScroll = false, block = 'center' } = {}) {
+  requestAnimationFrame(() => {
+    const target = selector ? document.querySelector(selector) : null;
+    if (!target) return;
+    const rect = target.getBoundingClientRect();
+    const outside = rect.bottom < 0 || rect.top > window.innerHeight || rect.right < 0 || rect.left > window.innerWidth;
+    if ((outside || forceScroll) && typeof target.scrollIntoView === 'function') {
+      const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      target.scrollIntoView({ block, inline: 'nearest', behavior: reduced ? 'auto' : 'smooth' });
+    }
+    if (focus) try { target.focus({ preventScroll: true }); } catch { target.focus(); }
+  });
+}
+function guideV3SurfaceAction(item) {
+  const source = item || {};
+  const byId = {
+    start: 'guide-next', later: 'guide-later', speaker: 'guide-voice', skip: 'guide-skip',
+    'recognize-task': 'guide-recognize-task', 'save-task': 'guide-focus-create',
+    'select-task': 'guide-select-task', 'choose-other': 'guide-choose-other',
+    'start-focus': 'guide-start-focus', 'without-timer': 'guide-without-timer',
+    next: 'guide-next', understood: 'guide-next', finish: 'guide-finish',
+    'finish-replay': 'guide-finish', 'replay-next': 'guide-next',
+    'skip-replay': 'guide-skip', 'show-teaser': 'guide-show-teaser',
+  };
+  if (source.targetOnly) return null;
+  const action = byId[source.id]; if (!action) return null;
+  const speaking = action === 'guide-voice' && State._guideV3VoiceActive;
+  return {
+    action,
+    id: source.taskId || '',
+    label: speaking ? guideV3Copy('system.action.stop_voice') : source.label,
+    ariaLabel: speaking ? guideV3Copy('system.action.stop_voice') : source.label,
+    pressed: action === 'guide-voice' ? speaking : undefined,
+    kind: ['guide-later', 'guide-skip'].includes(action) ? 'quiet' : (action === 'guide-voice' ? 'voice' : 'primary'),
+  };
+}
+function guideV3CurrentForm() {
+  let tier = 0;
+  try { tier = compTierIdx(ensureCompanion().bond); } catch {}
+  return ['spark', 'spirit', 'guardian', 'keeper'][Math.max(0, Math.min(3, Number(tier) || 0))];
+}
+function guideV3Paint() {
+  const model = window.GuideV3, presenter = window.GuidePresenterV1, surface = window.GuideSurfaceV1;
+  const state = guideV3State();
+  const blocked = State.phase !== 'app' || State.view !== 'today'
+    || document.querySelector('.modal-overlay, #mobile-nav-sheet');
+  if (!model || !presenter || !surface || !guideV3RuntimeAllowed() || !state?.currentChapter || blocked
+    || (state.snoozedUntil && Date.now() < state.snoozedUntil && !State._guideV3ForceOpen)) {
+    guideV3Close({ restoreFocus: false }); return;
+  }
+  const vm = presenter.present({ state, seed: guideV3Seed(), tasks: State.tasks, chapter: state.currentChapter, copy: window.GuideV3CopyRu });
+  if (!vm) { guideV3Close({ restoreFocus: false }); return; }
+  if (vm.hidden) {
+    guideV3Close({ restoreFocus: false });
+    if (vm.replay && vm.step === 'wait') _guideV3ReplayTimer = setTimeout(() => {
+      const latest = guideV3State();
+      if (latest?.currentChapter === model.FIRST_CHAPTER && latest.currentStep === 'wait'
+        && latest.chapterMeta?.[model.FIRST_CHAPTER]?.replay) guideV3Commit({ type: 'guide:next', at: Date.now() });
+    }, 500);
+    return;
+  }
+  const key = `${vm.chapter}:${vm.step}:${vm.replay ? 'replay' : 'live'}`;
+  if (_guideV3SurfaceKey && _guideV3SurfaceKey !== key) {
+    State._guideV3VoiceActive = false;
+    try { window.ShadowVoiceV2?.stop({ silent: true, reason: 'guide_step' }); } catch {}
+  }
+  _guideV3SurfaceKey = key;
+  const form = guideV3CurrentForm();
+  const formLabel = guideV3Copy(`a11y.form.${form}`) || form;
+  const stateLabel = guideV3Copy(`a11y.state.${vm.step === 'victory' ? 'celebrate' : vm.step === 'recognize' ? 'recognize' : vm.step === 'bond' ? 'listen' : 'close_speak'}`);
+  let transcript = vm.transcript;
+  if (vm.step === 'release' && !vm.replay) transcript = `${guideV3Copy('first.bond.complete')}\n\n${transcript}`;
+  if (State._guideV3ShowTeaser && vm.teaser) transcript = `${transcript}\n\n${vm.teaser}`;
+  if (State._guideV3Error === 'persist') transcript = `${transcript}\n\n${guideV3Copy('system.save_failed')}`;
+  if (State._guideV3Error === 'voice') transcript = `${transcript}\n\n${guideV3Copy('system.voice_unavailable')}`;
+  const actions = vm.actions.map(guideV3SurfaceAction).filter(Boolean);
+  const choices = vm.step === 'choose' && State._guideV3ChooseOther
+    ? vm.choices.map((task) => ({ action: 'guide-task-choice', id: task.id, label: task.title, selected: task.selected, noI18n: true })) : [];
+  surface.paint({
+    surfaceLabel: guideV3Copy('a11y.guide_dialog'), chapterId: vm.chapter, stepId: vm.step,
+    chapterLabel: vm.chapterTitle, title: vm.title, progressLabel: vm.progress,
+    transcript, visualLabel: guideV3Copy('a11y.shadow_visual', { form: formLabel }),
+    visualAriaLabel: guideV3Copy('a11y.shadow_alt', { form: formLabel, state: stateLabel }),
+    targetSelector: guideV3TargetSelector(vm), fallback: 'safe-bubble', actions, choices,
+    choiceAction: 'guide-task-choice', returnFocus: document.activeElement,
+    focusInitial: vm.step !== 'bond',
+    onEscape: () => {
+      if (vm.replay) guideV3AbandonReplay(vm.chapter);
+      else guideV3Snooze();
+      return false;
+    },
+  });
+  if (vm.step === 'mastery') guideV3RevealTarget('[data-guide-target="first-level-form"]');
+  if (vm.step === 'bond') guideV3RevealTarget('[data-guide-target="first-shadow-contact"]', { focus: true, forceScroll: true, block: 'end' });
+}
+function guideV3MaybeStart() {
+  const model = window.GuideV3, state = guideV3State();
+  if (!model || !state || State._guideV3StartBusy || State.phase !== 'app' || State.view !== 'today'
+    || !guideV3RuntimeAllowed() || state.currentChapter || model.chapterResolved(state, model.FIRST_CHAPTER)) return;
+  const entry = model.REGISTRY.find((item) => item.id === model.FIRST_CHAPTER);
+  if (!entry || !model.entryEligible(entry, state, { now: Date.now(), seedApplied: !!State.settings?.skills?.length, view: State.view })) return;
+  State._guideV3StartBusy = true;
+  Promise.resolve().then(async () => {
+    await guideV3Commit({ type: 'guide:start', chapter: model.FIRST_CHAPTER, at: Date.now() });
+    State._guideV3StartBusy = false;
+  }).catch(() => { State._guideV3StartBusy = false; });
+}
+async function guideV3Snooze() {
+  const ok = await guideV3Commit({ type: 'guide:snooze', now: Date.now(), until: Date.now() + 24 * 60 * 60 * 1000 }, { repaint: false });
+  if (ok) { State._guideV3ForceOpen = false; guideV3Close(); toast(guideV3Copy('system.chapter_snoozed')); }
+  return ok;
+}
+async function guideV3AbandonReplay(chapter) {
+  const ok = await guideV3Commit({ type: 'guide:skip', chapter, at: Date.now() }, { repaint: false });
+  if (ok) { State._guideV3ForceOpen = false; guideV3Close(); }
+  else guideV3Paint();
+  return ok;
+}
+async function guideV3Speak(button) {
+  if (State._guideV3VoiceActive) {
+    try { window.ShadowVoiceV2?.stop({ silent: true, reason: 'guide_user_stop' }); } catch {}
+    State._guideV3VoiceActive = false; guideV3Paint(); return true;
+  }
+  const state = guideV3State(), vm = window.GuidePresenterV1?.present({ state, seed: guideV3Seed(), tasks: State.tasks, chapter: state?.currentChapter, copy: window.GuideV3CopyRu });
+  if (!vm?.transcript || !window.ShadowVoiceV2?.speak) { State._guideV3Error = 'voice'; guideV3Paint(); return false; }
+  if (state.voiceConsent !== true) {
+    const consentSaved = await guideV3Commit({ type: 'guide:voice-consent', value: true }, { repaint: false });
+    if (!consentSaved) return false;
+  }
+  State._guideV3Error = ''; State._guideV3VoiceActive = true;
+  guideV3Paint();
+  const mountedButton = document.querySelector('.guide-surface-v1 [data-action="guide-voice"]') || button;
+  const result = await window.ShadowVoiceV2.speak(vm.transcript, {
+    button: mountedButton, language: lang(), gender: shadowVoiceGender(), context: 'guide', browserFallback: false,
+  });
+  State._guideV3VoiceActive = false;
+  if (result?.mode === 'unavailable') State._guideV3Error = 'voice';
+  guideV3Paint();
+  return result?.mode !== 'unavailable';
+}
+async function guideV3CompleteShadowContact() {
+  const model = window.GuideV3, state = guideV3State();
+  const replay = state?.chapterMeta?.[model?.FIRST_CHAPTER]?.replay === true;
+  if (!model || !State.settings || replay) return false;
+  const priorGuide = State.settings.guideV3;
+  const hadCompanion = !!State.settings.companion;
+  const priorCompanion = hadCompanion ? JSON.parse(JSON.stringify(State.settings.companion)) : null;
+  const result = model.reduce(priorGuide, { type: 'guide:bond', persisted: true, at: Date.now() });
+  if (!result.accepted) return false;
+  const companion = ensureCompanion(), today = todayStr();
+  companion.bond = Math.max(0, Number(companion.bond) || 0) + 1;
+  companion.pet = today; companion.lastSeen = today;
+  State.settings.guideV3 = result.state;
+  const saved = await Store.saveNow('settings', State.settings);
+  if (!saved) {
+    State.settings.guideV3 = priorGuide;
+    if (hadCompanion) State.settings.companion = priorCompanion;
+    else delete State.settings.companion;
+    State._guideV3Error = 'persist'; guideV3Paint(); return false;
+  }
+  State._compAway = 0; State._guideV3Error = '';
+  if (result.metric) track(result.metric);
+  return true;
+}
+async function guideV3StartFocus(taskId) {
+  const id = String(taskId || ''), task = questById(id); if (!task || task.done) return false;
+  if (focusCfg().pomodoro) {
+    State._guideV3FocusPending = id; guideV3Close({ restoreFocus: false }); openFocusDurationPicker(id);
+  } else {
+    startFocus(id);
+    await guideV3Commit({ type: 'guide:started', focus: true, persisted: true, at: Date.now() });
+  }
+  return true;
+}
+async function guideV3HandleAction(action, el) {
+  const state = guideV3State(), chapter = state?.currentChapter || window.GuideV3?.FIRST_CHAPTER;
+  if (action === 'guide-voice') { await guideV3Speak(el); return true; }
+  if (action === 'guide-next') {
+    State._guideV3ChooseOther = false; State._guideV3ShowTeaser = false;
+    const enteringBond = state?.currentStep === 'mastery';
+    const advanced = await guideV3Commit({ type: 'guide:next', at: Date.now() }, { repaint: !enteringBond });
+    if (advanced && enteringBond) render();
+    return true;
+  }
+  if (action === 'guide-later') { await guideV3Snooze(); return true; }
+  if (action === 'guide-skip') { if (await guideV3Commit({ type: 'guide:skip', chapter, at: Date.now() }, { repaint: false })) guideV3Close(); else guideV3Paint(); return true; }
+  if (action === 'guide-focus-create') { const form = document.getElementById('add-task'); form?.querySelector('input[name="title"]')?.focus(); form?.requestSubmit(); return true; }
+  if (action === 'guide-recognize-task') { await guideV3Commit({ type: 'guide:recognize-task', taskId: el.dataset.id || guideV3CandidateTaskId(), persisted: true, at: Date.now() }); return true; }
+  if (action === 'guide-select-task' || action === 'guide-task-choice') { await guideV3Commit({ type: 'guide:select-task', taskId: el.dataset.id || guideV3CandidateTaskId(), persisted: true, at: Date.now() }); State._guideV3ChooseOther = false; return true; }
+  if (action === 'guide-choose-other') { State._guideV3ChooseOther = !State._guideV3ChooseOther; guideV3Paint(); return true; }
+  if (action === 'guide-start-focus') { await guideV3StartFocus(el.dataset.id || state?.selectedTaskId); return true; }
+  if (action === 'guide-without-timer') { await guideV3Commit({ type: 'guide:started', focus: false, persisted: true, at: Date.now() }); return true; }
+  if (action === 'guide-shadow-contact') {
+    const ok = await guideV3CompleteShadowContact();
+    if (ok) {
+      try { sfx('complete'); } catch {}
+      try { window.ShadowRig?.setTransient('happy', 1100); } catch {}
+      render();
+    }
+    return true;
+  }
+  if (action === 'guide-show-teaser') { State._guideV3ShowTeaser = !State._guideV3ShowTeaser; guideV3Paint(); return true; }
+  if (action === 'guide-finish') { if (await guideV3Commit({ type: 'guide:finish', at: Date.now() }, { repaint: false })) guideV3Close(); else guideV3Paint(); return true; }
+  if (action === 'guide-resume') { State._guideV3ForceOpen = true; State.view = 'today'; closeAccountDialog('guide', { restoreFocus: false }); render(); return true; }
+  if (action === 'guide-replay') { closeAccountDialog('guide', { restoreFocus: false }); State.view = 'today'; await guideV3Commit({ type: 'guide:replay', chapter: el.dataset.chapter, at: Date.now() }, { repaint: false }); render(); return true; }
+  if (action === 'guide-start') { closeAccountDialog('guide', { restoreFocus: false }); State.view = 'today'; await guideV3Commit({ type: 'guide:start', chapter: el.dataset.chapter || window.GuideV3.FIRST_CHAPTER, at: Date.now() }, { repaint: false }); render(); return true; }
+  if (action === 'guide-enable') {
+    const enabled = await guideV3Commit({ type: 'guide:enable', at: Date.now() }, { repaint: false });
+    if (enabled) { closeAccountDialog('guide', { restoreFocus: false }); showGuide(); }
+    return true;
+  }
+  if (action === 'guide-disable') {
+    if (confirm(guideV3Copy('system.global_disable_confirm'))) {
+      const disabled = await guideV3Commit({ type: 'guide:disable', at: Date.now() }, { repaint: false });
+      if (disabled) { closeAccountDialog('guide'); guideV3Close({ restoreFocus: false }); }
+    }
+    return true;
+  }
+  return false;
 }
 
 // ── Legacy guide v2 (migration-only until Guide v3 replaces its library UI) ──
@@ -20441,6 +20767,7 @@ async function onClick(e) {
     if (input) { input.scrollIntoView({ block: 'center' }); input.focus({ preventScroll: true }); }
     return;
   }
+  if (action.startsWith('guide-') && await guideV3HandleAction(action, el)) return;
   // --- Гайд (туториал) ---
   if (action === 'tut-next') { tutorialNext(); return; }
   if (action === 'tut-skip') { tutorialSkip(); return; }
@@ -20452,8 +20779,6 @@ async function onClick(e) {
   if (action === 'close-path-choice') { closePathChoiceModal(); return; }
   if (action === 'path-teaser-switch') { showPathChoiceModal({ pendingPath: el.dataset.path, source: 'teaser', returnFocus: el }); return; }
   if (action === 'path-teaser-dismiss') { State.settings.pathTeaserAt = todayStr(); Store.save('settings', State.settings); render(); return; }
-  try { tutorialAdvance(action); } catch {} // продвигает шаг гайда, если это его триггер (действие выполнится ниже)
-
   // --- Auth actions ---
   if (action === 'select-profile') {
     if (e.target.closest('#pin-form')) return; // клик внутри формы — не схлопываем
@@ -20977,7 +21302,7 @@ async function onClick(e) {
     return;
   }
   if (action === 'show-guide') { showGuide(); return; }
-  if (action === 'close-guide') { const g = document.getElementById('guide'); if (g) g.remove(); return; }
+  if (action === 'close-guide') { closeAccountDialog('guide'); return; }
   if (action === 'show-reports') { showReports(); return; }
   if (action === 'close-reports') { const r = document.getElementById('reports'); if (r) r.remove(); return; }
   if (action === 'close-userdata') { const r = document.getElementById('userdata'); if (r) r.remove(); return; }
@@ -21050,7 +21375,7 @@ async function onClick(e) {
     const focusPlan = overlay && overlay._completionFocus;
     closeDesirePicker({ restoreFocus: false });
     if (focusPlan) State[focusPlan.stateKey] = focusPlan.selector;
-    completeTask(task, el.dataset.desire);
+    await completeTask(task, el.dataset.desire);
     return;
   }
   if (action === 'copy-feedback-for-claude') {
@@ -21148,14 +21473,14 @@ async function onClick(e) {
       // Сложный квест → спрашиваем «насколько хотел» (Хайп за добровольный выбор трудного). Лёгкий/обычный — сразу.
       if (q.difficulty === 'hard') { openDesirePicker(id, el); return; }
       queueTaskCompletionFocus(id, el);
-      completeTask(q, null);
+      await completeTask(q, null);
     } else { queueTaskCompletionFocus(id, el); q.done = false; q.completedAt = null; q.xpAwarded = 0; q.goldAwarded = 0; q.desire = null;
       Store.save('tasks', State.tasks); checkAchievements(); render(); publishLeaderboard(); }
   } else if (action === 'toggle-task-backdated') {
     // «Сделал в тот день, отметить забыл» — засчитываем в дату плана, а не в сегодня (fb_mr4qhq6gy30w).
     // Про Хайп не спрашиваем: задним числом «насколько хотел» — недостоверная реконструкция.
     const q = questById(id); if (!q || q.done) return;
-    completeTask(q, null, q.date);
+    await completeTask(q, null, q.date);
     toast(`✓ ${t('Засчитано в')} ${dmShort(q.date)}`);
   } else if (action === 'toggle-habit') {
     const h = habitById(id); if (h) transactHabitCompletion(h);
@@ -21167,7 +21492,16 @@ async function onClick(e) {
       // Помодоро выключен → таймер работает свободным секундомером, workMin ничего не значит,
       // и спрашивать нечего. «Заход» намеренно зовёт startFocus() напрямую, минуя пикер:
       // там весь смысл в нулевом пороге входа между «вечер уплывает» и «я уже внутри».
-      if (focusCfg().pomodoro) openFocusDurationPicker(id); else startFocus(id); }
+      const guide = guideV3State();
+      const guideOwnsStart = guideV3RuntimeAllowed() && guide?.currentChapter === window.GuideV3?.FIRST_CHAPTER
+        && guide.currentStep === 'start' && guide.selectedTaskId === String(id);
+      if (focusCfg().pomodoro) {
+        if (guideOwnsStart) State._guideV3FocusPending = String(id);
+        openFocusDurationPicker(id);
+      } else {
+        startFocus(id);
+        if (guideOwnsStart) await guideV3Commit({ type: 'guide:started', focus: true, persisted: true });
+      } }
   } else if (action === 'profile-refresh') {
     refreshProfile();
   } else if (action === 'profile-save') {
@@ -21193,8 +21527,15 @@ async function onClick(e) {
     Store.save('settings', State.settings);
     document.getElementById('focus-dur-modal')?.remove();
     startFocus(el.dataset.task);
+    if (State._guideV3FocusPending === String(el.dataset.task || '')) {
+      State._guideV3FocusPending = '';
+      await guideV3Commit({ type: 'guide:started', focus: true, persisted: true });
+    }
   } else if (action === 'focus-duration-close') {
+    const restoreGuide = !!State._guideV3FocusPending;
+    State._guideV3FocusPending = '';
     document.getElementById('focus-dur-modal')?.remove();
+    if (restoreGuide) guideV3Paint();
   } else if (action === 'timer-pause') { pauseFocus();
   } else if (action === 'timer-resume') { resumeFocus();
   } else if (action === 'timer-stop') { stopFocus(true);

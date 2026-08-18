@@ -82,7 +82,7 @@ test('First Journey advances only on a persisted real task loop', () => {
   let r = G.reduce(G.defaultState(), { type: 'guide:start' });
   assert.equal(r.state.currentStep, 'welcome');
   r = G.reduce(r.state, { type: 'guide:next' });
-  r = G.reduce(r.state, { type: 'guide:next' });
+  r = G.reduce(r.state, { type: 'guide:recognize-task', taskId: 'q1', persisted: true });
   assert.equal(r.state.currentStep, 'choose');
 
   const rejectedSelect = G.reduce(r.state, { type: 'guide:select-task', taskId: 'q1', persisted: false });
@@ -113,8 +113,11 @@ test('First Journey advances only on a persisted real task loop', () => {
 test('hydration reconciles a persisted completion or a deleted selection after reload', () => {
   let state = G.reduce(G.defaultState(), { type: 'guide:start' }).state;
   state = G.reduce(state, { type: 'guide:next' }).state;
-  state = G.reduce(state, { type: 'guide:next' }).state;
+  state = G.reduce(state, { type: 'guide:recognize-task', taskId: 'q1', persisted: true }).state;
   state = G.reduce(state, { type: 'guide:select-task', taskId: 'q1', persisted: true }).state;
+  const completedWithoutTimerChoice = G.reconcile(state, { tasks: [{ id: 'q1', done: true }] });
+  assert.equal(completedWithoutTimerChoice.state.currentStep, 'victory', 'real completion outranks the optional timer choice');
+
   state = G.reduce(state, { type: 'guide:started', focus: false, persisted: true }).state;
   const done = G.reconcile(state, { tasks: [{ id: 'q1', done: true }] });
   assert.equal(done.changed, true);
@@ -192,17 +195,17 @@ test('pure module has no application or DOM dependencies', () => {
   }
 });
 
-test('account-owned model is loaded before app and shipped in the v162 offline shell', () => {
+test('account-owned model is loaded before app and shipped in the v163 offline shell', () => {
   const root = path.resolve(__dirname, '..');
   const index = fs.readFileSync(path.join(root, 'public/index.html'), 'utf8');
   const app = fs.readFileSync(path.join(root, 'public/app.js'), 'utf8');
   const sw = fs.readFileSync(path.join(root, 'public/sw.js'), 'utf8');
   assert.ok(index.indexOf('guide-v3.js') < index.indexOf('app.js'));
-  assert.match(sw, /const CACHE = 'satoru-v162'/);
+  assert.match(sw, /const CACHE = 'satoru-v163'/);
   assert.match(sw, /'guide-v3\.js'/);
   assert.doesNotMatch(app, /liferpg_seen_guide/);
   assert.match(app, /GuideV3\.migrate\(State\.settings\.guideV3, State\.settings\.tutorial\)/);
   assert.match(app, /await Store\.saveNow\('settings', State\.settings\)/);
-  assert.match(app, /GuideV3\.reconcile\(State\.settings\.guideV3, \{ tasks: State\.tasks \}\)/);
+  assert.match(app, /GuideV3\.reconcile\(prior, \{ tasks: State\.tasks \}\)/);
   assert.match(app, /guideV3 = Object\.assign\(window\.GuideV3\.defaultState\(\), \{ enabled: false \}\)/);
 });

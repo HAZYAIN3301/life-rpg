@@ -39,7 +39,7 @@ test('More is purpose-grouped and exposes current states instead of one meaningl
   assert.doesNotMatch(sheet, /mobile-sheet-grid/);
   assert.match(sheet, /aria-labelledby="mobile-nav-title"/);
   assert.match(sheet, /setAttribute\('aria-expanded', 'true'\)/);
-  assert.match(sheet, /tutorialPaint\(\)/, 'advisory tutorial is suppressed while the modal sheet owns interaction');
+  assert.match(sheet, /guideV3Close\(\{ restoreFocus: false \}\)/, 'advisory Guide is suppressed while the modal sheet owns interaction');
 });
 
 test('More sheet owns keyboard focus and never steals it after a navigation transition', () => {
@@ -59,8 +59,8 @@ test('More sheet owns keyboard focus and never steals it after a navigation tran
   const commit = between(APP, 'function afterMainCommit()', '\n  if (State._tasksFocusAfterCommit)');
   assert.match(commit, /State\._mobileNavFocusAfterCommit/);
   assert.match(commit, /focusPathChoiceTarget\(target\)/);
-  const tutorial = between(APP, 'function tutorialPaint()', '\nfunction tutMascotHTML');
-  assert.match(tutorial, /\.modal-overlay, #mobile-nav-sheet/);
+  const guide = between(APP, 'function guideV3Paint()', '\nfunction guideV3MaybeStart');
+  assert.match(guide, /\.modal-overlay, #mobile-nav-sheet/);
 });
 
 test('More copy has complete locale rows and nav CSS stays DOM-ordered', () => {

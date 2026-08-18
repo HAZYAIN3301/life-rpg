@@ -296,6 +296,11 @@
       return accepted(state, 'guide:disable');
     }
     if (type === 'guide:enable') { state.enabled = true; return accepted(state, 'guide:enable'); }
+    if (type === 'guide:voice-consent') {
+      if (typeof ev.value !== 'boolean') return rejected(state, 'invalid-voice-consent');
+      state.voiceConsent = ev.value;
+      return accepted(state, 'guide:voice_choice');
+    }
     if (type === 'guide:snooze') {
       const until = Number(ev.until); if (!Number.isFinite(until) || until <= Number(ev.now || 0)) return rejected(state, 'invalid-snooze');
       state.snoozedUntil = until; return accepted(state, 'guide:snooze');
@@ -351,6 +356,12 @@
 
     if (state.currentChapter && state.currentChapter !== FIRST_CHAPTER) {
       const entry = entryForChapter(state.currentChapter);
+      const replay = state.chapterMeta[state.currentChapter]?.replay === true;
+      if (replay && type === 'guide:next') {
+        state.currentChapter = null; state.currentStep = null; state.waitingFor = null;
+        state.chapterMeta[entry.chapter] = { ...(state.chapterMeta[entry.chapter] || {}), replay: false, lastReplayedAt: Number(ev.at) || null };
+        return accepted(state, 'guide:replay_complete');
+      }
       if (type !== 'guide:context-complete') return rejected(state, 'context-completion-required');
       if (!ev.persisted) return rejected(state, 'not-persisted');
       if (!entry || String(ev.completion || '') !== entry.completion) return rejected(state, 'wrong-completion');
@@ -366,11 +377,20 @@
       const replay = state.chapterMeta[FIRST_CHAPTER]?.replay === true;
       const next = (replay
         ? { welcome: 'recognize', recognize: 'choose', choose: 'start', start: 'wait', wait: 'victory', victory: 'mastery', mastery: 'bond', bond: 'release' }
-        : { welcome: 'recognize', recognize: 'choose', victory: 'mastery', mastery: 'bond' })[step];
+        : { welcome: 'recognize', victory: 'mastery', mastery: 'bond' })[step];
       if (!next) return rejected(state, 'next-not-allowed');
       state.completedSteps = uniqStrings([...state.completedSteps, stepKey(FIRST_CHAPTER, step)]);
       state.currentStep = next;
       return accepted(state, replay ? 'guide:replay_step' : 'guide:action');
+    }
+    if (type === 'guide:recognize-task') {
+      if (step !== 'recognize') return rejected(state, 'wrong-step');
+      if (!ev.persisted) return rejected(state, 'not-persisted');
+      if (!ev.taskId) return rejected(state, 'missing-task');
+      state.chapterMeta[FIRST_CHAPTER] = { ...(state.chapterMeta[FIRST_CHAPTER] || {}), candidateTaskId: String(ev.taskId) };
+      state.completedSteps = uniqStrings([...state.completedSteps, stepKey(FIRST_CHAPTER, step)]);
+      state.currentStep = 'choose';
+      return accepted(state, 'guide:first_task_recognized');
     }
     if (type === 'guide:select-task') {
       if (step !== 'choose') return rejected(state, 'wrong-step');

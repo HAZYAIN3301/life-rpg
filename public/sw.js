@@ -1,9 +1,9 @@
 /* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    App shell: network-first. Art/media: cache-first. /api/: always live network.
    Bump CACHE whenever the shell or a stable asset URL changes. */
-const CACHE = 'satoru-v162';
+const CACHE = 'satoru-v163';
 const SHELL = [
-  './', 'index.html', 'app.js', 'guide-v3.js', 'canon-domains.js', 'den-stage-v1.js', 'den-life-v1.js', 'den-resident-life-v1.js', 'den-pet-pair-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js', 'resources-penguin-v1.js', 'profile-memory-v1.js', 'day-observation-v1.js', 'stuck-task-v1.js', 'fights-v1.js', 'board-v1.js', 'board-pool-v1.js', 'board-taste-v1.js', 'failure-context-v1.js', 'after-lapse-v1.js', 'chest-reveal-v1.js', 'sphere-search-v1.js', 'chart-labels-v1.js', 'md-lite-v1.js', 'voice-input-v1.js', 'sky-events-v1.js', 'day-load-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js', 'styles.css', 'fonts/podkova/Podkova-wght.woff2', 'shadow-rig-v2.js', 'shadow-den-v1.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
+  './', 'index.html', 'app.js', 'guide-v3.js', 'guide-v3-copy-ru.js', 'guide-presenter-v1.js', 'guide-surface-v1.js', 'canon-domains.js', 'den-stage-v1.js', 'den-life-v1.js', 'den-resident-life-v1.js', 'den-pet-pair-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js', 'resources-penguin-v1.js', 'profile-memory-v1.js', 'day-observation-v1.js', 'stuck-task-v1.js', 'fights-v1.js', 'board-v1.js', 'board-pool-v1.js', 'board-taste-v1.js', 'failure-context-v1.js', 'after-lapse-v1.js', 'chest-reveal-v1.js', 'sphere-search-v1.js', 'chart-labels-v1.js', 'md-lite-v1.js', 'voice-input-v1.js', 'sky-events-v1.js', 'day-load-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js', 'styles.css', 'fonts/podkova/Podkova-wght.woff2', 'shadow-rig-v2.js', 'shadow-den-v1.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
   'avatar-forge-v1.html', 'avatar-forge-v1.css', 'avatar-forge-v1.js',
   'art/icons/icon-registry.js', 'art/icons/scenes/day-summary-fisher.png',
   'art/gear/inventory/w1-training-blade.png',
