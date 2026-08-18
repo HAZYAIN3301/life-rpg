@@ -15609,6 +15609,12 @@ html.calendar-task-open body {
 .board-screen .bsheet-place select { width: 100%; min-width: 0; min-height: var(--touch-min); padding: var(--sp-2); border: 1px solid #8d99b5; border-radius: 2px; background: rgba(255,255,255,.65); color: #23293a; font-family: var(--font-ui); font-size: var(--type-control); }
 .board-screen .bsheet-place-acts { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
 .board-screen .bsheet-place-note { font-size: var(--type-meta); line-height: var(--leading-label); color: #4c5468; }
+/* Правка своего заказа — прямо в детали, без ухода на другой экран. */
+.bdetail-edit { display: grid; gap: var(--sp-2); margin-top: var(--sp-3); }
+.bdetail-edit input { width: 100%; min-width: 0; min-height: var(--touch-min); padding: var(--sp-2);
+  border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface);
+  color: var(--text); font-family: var(--font-ui); font-size: var(--type-control); }
+.bdetail-edit-acts { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
 
 .board-detail {
   position: relative;
@@ -16229,4 +16235,22 @@ html.calendar-task-open body {
     transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ── Режим съёмки виджета (?widget=) ─────────────────────────────────────────
+   Одна карточка на чистом фоне, без шапки, навигации и всплывашек. Размер под
+   вертикальный кадр: карточка по центру, вокруг воздух — при обрезке в 9:16
+   ничего важного не срежется. */
+html.is-capture, html.is-capture body { background: var(--bg); }
+html.is-capture #topbar, html.is-capture #nav, html.is-capture #ai-fab,
+html.is-capture #toasts, html.is-capture .satoru-boot { display: none !important; }
+html.is-capture .capture-stage {
+  min-height: 100vh; display: grid; place-items: center;
+  padding: clamp(24px, 6vw, 72px);
+}
+html.is-capture .capture-stage > * { width: min(680px, 100%); margin: 0; }
+/* Анимации в кадре не нужны: съёмка должна быть повторяемой, а не «как повезёт». */
+html.is-capture *, html.is-capture *::before, html.is-capture *::after {
+  animation-duration: 0s !important; animation-delay: 0s !important;
+  transition-duration: 0s !important; transition-delay: 0s !important;
 }

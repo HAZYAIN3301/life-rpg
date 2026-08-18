@@ -642,6 +642,7 @@ const I18N_EXTRA = {
   'мешает луна': { en: 'the moon is in the way', de: 'der Mond stört', uk: 'заважає місяць', es: 'la luna estorba' },
   'видно везде': { en: 'visible everywhere', de: 'überall sichtbar', uk: 'видно всюди', es: 'visible en todas partes' },
   // ── v159 15.08: свой заказ на доске ──
+  'Изменить текст': { en: 'Edit the text', de: 'Text ändern', uk: 'Змінити текст', es: 'Editar el texto' },
   'ТВОЙ': { en: 'YOURS', de: 'DEINS', uk: 'ТВІЙ', es: 'TUYO' },
   'ПУСТОЙ ЛИСТ': { en: 'BLANK SHEET', de: 'LEERES BLATT', uk: 'ПОРОЖНІЙ АРКУШ', es: 'HOJA EN BLANCO' },
   'Свой заказ': { en: 'Your own order', de: 'Eigener Auftrag', uk: 'Своє замовлення', es: 'Tu propio encargo' },
@@ -15532,7 +15533,14 @@ function boardScreenHTML() {
           : `<button class="btn" data-action="board-take" data-id="${esc(selOrder.id)}">${t('Беру')}</button>`}</div>
       <section class="bdetail-instruction" aria-labelledby="board-how-title"><h4 id="board-how-title">${t('КАК ЗАКРЫТЬ')}</h4><p>${t('Сделай это в реальной жизни и отметь здесь. Самоотчёта достаточно; фотографию можно добавить потом.')}</p></section>
       ${selOrder.seasonal ? `<p class="bdetail-privacy">◉ ${t('Общий для всех заказ. Твоё выполнение и фото остаются приватными.')}</p>` : ''}
-      ${selOrder.custom && !selTaken ? `<p class="bdetail-privacy"><button type="button" class="link-btn" data-action="board-custom-remove" data-id="${esc(selOrder.id)}">${t('Снять с доски')}</button></p>` : ''}
+      ${selOrder.custom && !selTaken ? (State._boardEditId === selOrder.id
+        ? `<form class="bdetail-edit" id="board-custom-edit" data-id="${esc(selOrder.id)}">
+             <label class="sr-only" for="board-edit-input">${t('Свой заказ')}</label>
+             <input id="board-edit-input" name="title" maxlength="${BOARD_CUSTOM_LEN}" required autocomplete="off" data-noi18n value="${esc(selOrder.title)}" />
+             <div class="bdetail-edit-acts"><button type="submit" class="btn sm">${t('Сохранить')}</button>
+               <button type="button" class="btn ghost sm" data-action="board-edit-cancel">${t('Отмена')}</button></div>
+           </form>`
+        : `<p class="bdetail-privacy"><button type="button" class="link-btn" data-action="board-custom-edit" data-id="${esc(selOrder.id)}">${t('Изменить текст')}</button> · <button type="button" class="link-btn" data-action="board-custom-remove" data-id="${esc(selOrder.id)}">${t('Снять с доски')}</button></p>`) : ''}
       <div class="bdetail-reward" aria-label="${t('НАГРАДА')}"><span>${t('НАГРАДА')}</span><b>+${BOARD_ORDER_XP} ${t('опыта')}</b><b>+${Math.round(BOARD_ORDER_XP * .35)} ${t('золота')}</b></div>
     </div>`;
   }
@@ -19702,7 +19710,47 @@ function renderMainView(main) {
   });
 }
 
+// ── Режим съёмки виджета (?widget=имя) ───────────────────────────────────────
+//
+// Зачем. Скриншоты фич для роликов делались со всей страницы, и фича терялась среди
+// навигации, шапки и соседних карточек — отсюда претензия «вырезано и непонятно».
+// STUDIO-V5-PLAN прямо говорит снимать конкретные виджеты, а не страницу.
+//
+// Это НЕ отдельная сборка и не дубль вёрстки: рендерятся те же самые функции карточек,
+// что и в приложении. Иначе реклама показывала бы не то, что человек увидит, — а именно
+// это в проекте уже случалось (панель рекламировала удалённую шкалу энергии).
+//
+// Режим только показывает. Ничего не сохраняет, ничего не отправляет и живёт ровно
+// столько, сколько открыта вкладка с параметром.
+const CAPTURE_WIDGETS = {
+  chest:    { title: 'Сундук дня', render: () => lootboxCard() },
+  dayload:  { title: 'Нагрузка дня', render: () => { const l = dayLoadNow(), m = dayLoadMeta(l);
+    return `<section class="card energy-card"><div class="en-head">${satoruIconHTML('status.energy', 'energy-emblem', '◔')}<b>${t('Нагрузка дня')}</b><span class="en-num" style="color:${m.color}">${l.known ? `${l.done} / ${l.typical}` : String(l.done)}</span><span class="en-text muted">· ${esc(t(m.text))}</span></div>
+      <div class="en-bar"><span style="width:${l.known ? Math.min(100, Math.round((l.ratio || 0) / 2 * 100)) : 0}%;background:${m.color}"></span></div></section>`; } },
+  board:    { title: 'Доска заказов', render: () => boardScreenHTML() },
+  companion:{ title: 'Тень', render: () => companionCard() },
+  progress: { title: 'Прогресс', render: () => progressTrioCard() },
+  collection:{ title: 'Коллекция', render: () => collectionCard() },
+  daynav:   { title: 'Соседние дни', render: () => `<section class="card">${dayNavStripHTML(todayStr())}</section>` },
+};
+function captureWidgetRequested() {
+  try { const w = new URLSearchParams(location.search).get('widget'); return w && CAPTURE_WIDGETS[w] ? w : null; }
+  catch { return null; }
+}
+function renderCaptureWidget(name) {
+  const app = document.getElementById('app');
+  const entry = CAPTURE_WIDGETS[name];
+  document.documentElement.classList.add('is-capture');
+  let inner = '';
+  // Карточка может упасть на нестандартных данных — в съёмке это должно быть видно
+  // сразу и явно, а не превратиться в пустой кадр, который потом уедет в ролик.
+  try { inner = entry.render(); }
+  catch (e) { console.error('capture', name, e); inner = `<section class="card"><p class="muted">${esc(String(e && e.message))}</p></section>`; }
+  app.innerHTML = `<div class="capture-stage" data-widget="${esc(name)}">${inner}</div>`;
+}
 function render() {
+  const capture = captureWidgetRequested();
+  if (capture && State.phase === 'app') { renderCaptureWidget(capture); return; }
   if (State.phase !== 'app') { showAuthScreen(); return; }
   syncDocumentLanguage();
   try { normalizeCoreState(); } catch (e) { console.error('normalizeCoreState', e); }
@@ -19898,6 +19946,27 @@ async function onSubmit(e) {
     settings.place = { name: place.name, lat: place.lat, lon: place.lon };
     State.settings = settings; Store.save('settings', State.settings);
     State._boardFocusAfterCommit = '#board-title'; render();
+    return;
+  }
+
+  // --- Правка своего заказа ---
+  if (f.id === 'board-custom-edit') {
+    e.preventDefault();
+    const id = f.dataset.id, title = f.title.value.trim().slice(0, BOARD_CUSTOM_LEN);
+    if (!title) return;
+    const list = boardCustomOrders();
+    const order = list.find((o) => o.id === id); if (!order) return;
+    const st = boardRead(); if (!st) return;
+    // Меняем ТОЛЬКО текст. id остаётся прежним: на нём висят отметки взятия и выполнения,
+    // и новый id превратил бы правку опечатки в потерю истории.
+    const next = structuredClone(st);
+    next.custom = list.map((o) => (o.id === id ? { ...o, title, editedAt: new Date().toISOString() } : o));
+    const btn = f.querySelector('button[type="submit"]'); btn.disabled = true;
+    const saved = await commitBoardState(next);
+    if (btn.isConnected) btn.disabled = false;
+    if (saved) State._boardEditId = '';
+    State._boardFocusAfterCommit = saved ? '#board-detail-title' : '.board-error';
+    render();
     return;
   }
 
@@ -21792,6 +21861,11 @@ async function onClick(e) {
       State.settings = settings; Store.save('settings', State.settings);
       State._boardFocusAfterCommit = '#board-title'; render();
     }, () => { if (el.isConnected) el.disabled = false; toast(t('Не удалось определить место')); }, { timeout: 10000, maximumAge: 600000 });
+  } else if (action === 'board-custom-edit') {
+    State._boardEditId = id; State._boardSel = id;
+    State._boardFocusAfterCommit = '#board-edit-input'; render();
+  } else if (action === 'board-edit-cancel') {
+    State._boardEditId = ''; State._boardFocusAfterCommit = '#board-detail-title'; render();
   } else if (action === 'board-custom-remove') {
     // Снять можно только не взятый заказ — иначе у активной записи пропал бы текст.
     const list = boardCustomOrders();

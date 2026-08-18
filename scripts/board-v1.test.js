@@ -290,3 +290,16 @@ assert.match(APP_SRC, /const customOffers = boardCustomOrders\(\)\.filter\(\(o\)
 assert.match(APP_SRC, /if \(st2\.active\.some\(\(a\) => a\.orderId === id\)\) return;/);
 
 console.log('Board v1: свой заказ — контракт переноса custom проверен');
+
+// ── Правка своего заказа (19.08) ─────────────────────────────────────────────
+// Раньше опечатку можно было исправить только «снять и написать заново», а это теряло
+// историю: отметки взятия и выполнения висят на id.
+assert.match(APP_SRC, /if \(f\.id === 'board-custom-edit'\)/);
+assert.match(APP_SRC, /next\.custom = list\.map\(\(o\) => \(o\.id === id \? \{ \.\.\.o, title, editedAt/);
+// id при правке НЕ меняется — иначе правка опечатки стирала бы историю заказа.
+const editBlock = APP_SRC.slice(APP_SRC.indexOf("f.id === 'board-custom-edit'"), APP_SRC.indexOf("// --- Свой заказ на доске ---"));
+assert.doesNotMatch(editBlock, /id: 'bc_'|uid\(\)/, 'правка выдаёт заказу новый id');
+// Правка доступна только пока заказ не взят: у активной записи текст менять нельзя.
+assert.match(APP_SRC, /selOrder\.custom && !selTaken/);
+
+console.log('Board v1: правка своего заказа — id сохраняется');
