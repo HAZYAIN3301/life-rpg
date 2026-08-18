@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-18] 🧭 Guide v3 Commit B — чистая модель, миграция и реальные event-гейты
+
+- Начата runtime-реализация `GUIDE-V3-PLAN.md` по `TASK-CODEX-GUIDE-V3.md`. Новый `public/guide-v3.js` — чистый UMD-модуль без DOM, `State`, `Store` и сети: схема `settings.guideV3`, нормализация, миграция старого `settings.tutorial`, seed-adapter, feature registry, eligibility и reducer событий.
+- First Journey формализован как `welcome → recognize → choose → start → wait → victory → mastery → bond → release`. Выбор/создание дела, запуск фокуса, completion и контакт с Тенью не могут продвинуть guide без `persisted:true`; completion другого task id игнорируется. Это намеренно не переиспользует старый `tutorialAdvance(action)`, который срабатывал до фактического действия.
+- Старые `tutorial.done/skipped/seenDrips` мигрируют без повторного автостарта. Skip закрывает только текущую главу и не выключает contextual help; глобальное выключение отдельно. Replay сохраняет историю и не имеет feature/economy effects.
+- Registry задаёт порядок First Journey, Habits, deferred Goals, Calendar, Notes, Voice/Jarvis, Rewards и level-3 глав. Одновременно выбирается не больше одной contextual главы; UI и persistence-adapter будут следующим коротким коммитом.
+- QA: `node --check public/guide-v3.js`; `node --test scripts/guide-v3.test.js` — **9/9 PASS**; полный текущий `npm test` — **343/343 PASS**. В этом коммите module ещё не подключён к app shell, поэтому SW остаётся `satoru-v161`.
+
+Commit: `feat: add Guide v3 state model` (этот коммит). Push/deploy не выполнялись.
+
 ## [2026-08-15] 🔥 Shadow/Pet scenes v160 — три действия Тени и первая настоящая pet↔pet сцена
 
 - У Тени теперь ровно три постоянных действия: `Позвать Тень`, `Поговорить`, `Проверить курс`. `Прислушаться` и `Подумать вместе` остаются внутренними фазами разговора; `Свериться`, `Побыть рядом`, `Разделить тишину` не возвращены ложными кнопками. Все новые строки добавлены для RU/EN/DE/UK/ES.
