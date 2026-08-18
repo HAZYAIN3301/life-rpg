@@ -120,10 +120,30 @@ def test_contact_profiles() -> None:
     assert opaque_purple > 10_000, "semantic Shadow purple was removed"
 
 
+def test_shadow_connected_matte_regression() -> None:
+    source = Image.new("RGBA", (180, 180), (0, 0, 0, 0))
+    pixels = source.load()
+    for y in range(source.height):
+        for x in range(source.width):
+            drift = (x * 5 + y * 9) % 32
+            pixels[x, y] = (226 + drift // 2, 15 + drift, 213 + drift // 3, 255)
+    draw = ImageDraw.Draw(source)
+    draw.ellipse((48, 30, 132, 154), fill=(104, 44, 146, 255))
+    draw.ellipse((75, 62, 105, 92), fill=(211, 99, 239, 255))
+    extracted = core.remove_magenta_key(source, preserve_magenta_subject=True)
+    bbox = core.alpha_bbox(extracted)
+    assert bbox == (48, 30, 133, 155), f"border key leaked into Shadow bbox: {bbox}"
+    assert extracted.getpixel((90, 78)) == (211, 99, 239, 255)
+    assert extracted.getpixel((90, 110)) == (104, 44, 146, 255)
+    assert extracted.getpixel((0, 0))[3] == 0
+    assert extracted.getpixel((179, 179))[3] == 0
+
+
 def main() -> None:
     test_core_key_and_profiles()
     test_blink()
     test_contact_profiles()
+    test_shadow_connected_matte_regression()
     print(json.dumps({"factorySmoke": "PASS", "publicWrites": False}, indent=2))
 
 

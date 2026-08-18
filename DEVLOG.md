@@ -2,6 +2,15 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-19] 🔮 Female Shadow v2 — честный matte и канонический contact scale
+
+- Проваленный Shadow v1 не растянут и не удалён: он остаётся rejected control. Новый `female-shadow-02` перегенерирован с той же female identity и точной хореографией male-reference: Traveller сидит в полном каноническом масштабе, Искра держится над открытой ладонью.
+- Исправлен P0 самого factory: при `preserveMagentaSubject` неоднородный magenta-фон мог сохранять слабую alpha по всему холсту (`sourceBbox=[0,0,1254,1254]`), затем нормализация сжимала настоящего персонажа, а общий pair-bbox мог дать ложный PASS. Border-connected matte теперь отделяет только техническое поле, сохраняет disconnected semantic-purple actor и чистит малые key-like компоненты; synthetic regression фиксирует этот случай.
+- Результат v2 без растяжения: source bbox `[298,199,1023,1142]`, output `[324,205,1046,1144]`, height ratio `1.0`, width ratio `0.961385`, centre delta `0.5px`, visible technical key `0.044126%` при неизменном лимите `0.05%`. Automated QA PASS, но ручной art approval и запрет на `public/art` остаются.
+- QA: factory smoke PASS (`publicWrites:false`); Shadow v2 contact QA PASS; Python syntax и `git diff --check` PASS.
+
+Commit: `art: repair female Shadow approval geometry` (этот коммит). Push выполняется сразу; runtime/deploy не меняются.
+
 ## [2026-08-18] 🎨 Traveller female v1 — первый approval-батч и воспроизводимая фабрика
 
 - Создан изолированный `art-factory/traveller-female-v1-20260818/`: production-contract, canonical prompts, manifest-driven builders для core/poses/room и atomic contacts, chroma-to-alpha/despill, deterministic blink, measurable QA, synthetic smoke и review contact sheets. Фабрика не пишет в `public/art`.

@@ -14,6 +14,7 @@ import json
 import math
 import re
 import statistics
+from collections import deque
 from pathlib import Path
 from typing import Iterable
 
@@ -142,6 +143,102 @@ def keyed_border_ratio(image: Image.Image, border: int = 6) -> float:
     return keyed / sampled if sampled else 0.0
 
 
+def connected_preserve_key_zones(image: Image.Image) -> bytearray:
+    """Find technical magenta connected to the canvas border.
+
+    Semantic Shadow violet can be chromatically close to the key, so colour
+    alone is not a safe matte. Only a conservative magenta field reachable
+    from a canvas edge becomes hard background. Two surrounding rings are
+    marked for local antialias cleanup; enclosed purple remains untouched.
+    Zone values are 1=background, 2=first fringe, 3=second fringe.
+    """
+    width, height = image.size
+    pixels = image.load()
+    seen = bytearray(width * height)
+    zones = bytearray(width * height)
+    queue: deque[int] = deque()
+
+    def candidate(index: int) -> bool:
+        x = index % width
+        y = index // width
+        red, green, blue, alpha = pixels[x, y]
+        lower_magenta = min(red, blue)
+        dominance = lower_magenta - green
+        return (
+            alpha > 0
+            and lower_magenta >= 170
+            and dominance >= 62
+            and green <= 122
+            and abs(red - blue) <= 92
+        )
+
+    def seed(index: int) -> None:
+        if seen[index]:
+            return
+        seen[index] = 1
+        if candidate(index):
+            zones[index] = 1
+            queue.append(index)
+
+    for x in range(width):
+        seed(x)
+        seed((height - 1) * width + x)
+    for y in range(1, height - 1):
+        seed(y * width)
+        seed(y * width + width - 1)
+
+    while queue:
+        index = queue.popleft()
+        x = index % width
+        y = index // width
+        neighbours = []
+        if x:
+            neighbours.append(index - 1)
+        if x + 1 < width:
+            neighbours.append(index + 1)
+        if y:
+            neighbours.append(index - width)
+        if y + 1 < height:
+            neighbours.append(index + width)
+        for neighbour in neighbours:
+            if seen[neighbour]:
+                continue
+            seen[neighbour] = 1
+            if candidate(neighbour):
+                zones[neighbour] = 1
+                queue.append(neighbour)
+
+    for ring in (2, 3):
+        previous = ring - 1
+        additions: list[int] = []
+        for y in range(height):
+            row = y * width
+            for x in range(width):
+                index = row + x
+                if zones[index]:
+                    continue
+                adjacent = False
+                for delta_y in (-1, 0, 1):
+                    neighbour_y = y + delta_y
+                    if not 0 <= neighbour_y < height:
+                        continue
+                    for delta_x in (-1, 0, 1):
+                        neighbour_x = x + delta_x
+                        if not 0 <= neighbour_x < width:
+                            continue
+                        neighbour = neighbour_y * width + neighbour_x
+                        if zones[neighbour] == previous:
+                            adjacent = True
+                            break
+                    if adjacent:
+                        break
+                if adjacent:
+                    additions.append(index)
+        for index in additions:
+            zones[index] = ring
+    return zones
+
+
 def remove_magenta_key(
     source: Image.Image,
     *,
@@ -157,32 +254,47 @@ def remove_magenta_key(
     output = Image.new("RGBA", image.size, (0, 0, 0, 0))
     src = image.load()
     dst = output.load()
+    preserve_zones = connected_preserve_key_zones(image) if preserve_magenta_subject else None
     for y in range(image.height):
         for x in range(image.width):
             red, green, blue, source_alpha = src[x, y]
             if source_alpha == 0:
                 continue
+            if preserve_zones is not None:
+                zone = preserve_zones[y * image.width + x]
+                if zone == 1:
+                    continue
+                if zone == 0:
+                    dst[x, y] = (red, green, blue, source_alpha)
+                    continue
+                dominance = min(red, blue) - green
+                chroma = smoothstep(30, 105, dominance)
+                brightness = smoothstep(125, 225, min(red, blue))
+                ring_weight = 0.9 if zone == 2 else 0.42
+                key_strength = chroma * brightness * ring_weight
+                alpha = round(source_alpha * (1.0 - key_strength))
+                if alpha <= 6:
+                    continue
+                correction = round(max(0, dominance) * key_strength * 0.64)
+                dst[x, y] = (
+                    max(0, red - correction),
+                    green,
+                    max(0, blue - correction),
+                    alpha,
+                )
+                continue
             distance = math.sqrt((255 - red) ** 2 + green**2 + (255 - blue) ** 2)
             dominance = min(red, blue) - green
             field = (1.0 - smoothstep(26, 120, distance)) * smoothstep(18, 82, dominance)
-            if preserve_magenta_subject:
-                fringe = smoothstep(42, 112, dominance) * smoothstep(176, 232, min(red, blue))
-            else:
-                fringe = smoothstep(24, 88, dominance) * smoothstep(104, 210, min(red, blue))
+            fringe = smoothstep(24, 88, dominance) * smoothstep(104, 210, min(red, blue))
             key_strength = max(field, fringe)
             alpha = round(source_alpha * (1.0 - key_strength))
-            if not preserve_magenta_subject and min(red, blue) >= 172 and dominance >= 58:
+            if min(red, blue) >= 172 and dominance >= 58:
                 bright_field = smoothstep(172, 238, min(red, blue)) * smoothstep(48, 116, dominance)
                 alpha = round(alpha * (1.0 - 0.92 * bright_field))
-            cutoff = 6 if preserve_magenta_subject else 12
-            if alpha <= cutoff:
+            if alpha <= 12:
                 continue
-            if preserve_magenta_subject:
-                if key_strength > 0.05 and dominance > 0 and alpha < 245:
-                    correction = round(dominance * key_strength * 0.58)
-                    red = max(0, red - correction)
-                    blue = max(0, blue - correction)
-            elif dominance > 0:
+            if dominance > 0:
                 # Only colours with both R and B ahead of G are touched. The
                 # canonical teal and rust families cannot enter this branch.
                 excess = max(0, min(red, blue) - (green + 36))

@@ -10,11 +10,12 @@ Status: **NOT RUNTIME ELIGIBLE**. No file from this factory has been copied to `
 | Pose: arms up | PASS | Required | Review candidate |
 | Room: bench read A | PASS | Required | Review candidate and prop contact |
 | Gamabunta: greet contact | PASS | Required | Review candidate and fist contact |
-| Shadow Spark: attune | **FAIL** | Required | **Regenerate; do not promote or stretch** |
+| Shadow Spark v1: attune | **FAIL** | Archived as rejected | Do not promote or stretch |
+| Shadow Spark v2: attune | PASS | Required | Review corrected candidate |
 
 All eight real keyed inputs normalized to true alpha with `0%` visible magenta residue. The deterministic blink changes only the measured eye boxes and preserves alpha exactly.
 
-The Shadow candidate is centered and preserves the intended width, but its visible height is only `0.676251×` the male reference (`[309,357,1060,992]` versus `[309,205,1060,1144]`). Its seated composition also does not reproduce the reference contact at the canonical scale. This is a generation problem, not a key-removal problem; the QA threshold was not weakened and the art was not stretched.
+Shadow v1 remains preserved as an honest rejected control: its visible height was only `0.676251×` the male reference (`[309,357,1060,992]` versus `[309,205,1060,1144]`). Shadow v2 was regenerated rather than stretched. A border-connected matte fix removes the non-uniform technical background without erasing the semantic purple actor; its normalized bbox is `[324,205,1046,1144]`, reference height ratio `1.0`, width ratio `0.961385`, centre delta `0.5px` and technical-key residue `0.044126%` against a `0.05%` gate.
 
 ## Review surfaces
 
@@ -22,12 +23,13 @@ The Shadow candidate is centered and preserves the intended width, but its visib
 - Arms-up pose: `previews/approval-batches/female-poses-01/contact-sheet.png`
 - Reading pose: `previews/approval-batches/female-room-01/contact-sheet.png`
 - Gamabunta contact: `previews/contact-approval-batches/female-gamabunta-01/contact-sheet.png`
-- Shadow contact: `previews/contact-approval-batches/female-shadow-01/contact-sheet.png`
+- Shadow rejected control: `previews/contact-approval-batches/female-shadow-01/contact-sheet.png`
+- Shadow corrected candidate: `previews/contact-approval-batches/female-shadow-02/contact-sheet.png`
 
 ## Promotion gate
 
 1. Albert approves or corrects the female identity, costume, proportions and current four candidate groups.
-2. Regenerate Shadow Spark contact against the exact reference scale/choreography and pass automated plus manual review.
+2. Manually approve the corrected Shadow Spark contact; its automated geometry/alpha/chroma gate now passes.
 3. Produce the remaining launch inventory on the approved identity: core/locomotion/workshop and all Gamabunta, Katsuya, Mister P and Shadow contact plates.
 4. Run full canvas/grounding/alpha/reference QA and runtime screenshots with zero male-path requests.
 5. Only then copy a complete pack to `public/art`, mark `female` selectable and expose the 42px gender control.
