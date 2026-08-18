@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-18] 🧬 Traveller Appearance v1 — гибридный контракт без смешения пола
+
+- Зафиксировано решение Альберта: перед запуском производится отдельный female morphology-pack, а цвета кожи/волос/глаз позднее накладываются semantic palette masks. Перебирать и генерировать все комбинации нельзя; хореография, props, фон и пространственные anchors остаются общими.
+- Новый чистый `public/traveller-appearance-v1.js` разделяет **известную** морфологию (`male/female`) и **доступный целиком** runtime-pack. Пока 46 обязательных female-кадров не прошли QA, selectable остаётся только `male`; explicit female authoring-path при этом строится как female path и никогда не подменяется мужским.
+- Capability gate включает core, locomotion, workshop room actions и четыре семейства Traveller-contact plates: Gamabunta, Katsuya, Mister P и четыре формы Shadow. Сохранённый старой версией незавершённый `female` безопасно нормализуется в действующий male pack, но после полноты inventory тот же schema принимает female без миграции.
+- Palette schema уже существует, но честно содержит только произведённые default-варианты. Это предотвращает UI, который обещает перекраску до появления alpha-identical masks.
+- QA: `node --check public/traveller-appearance-v1.js`; `node --test scripts/traveller-appearance-v1.test.js` — **5/5 PASS**; `git diff --check` — PASS. Модуль пока намеренно не включён в app shell: следующий короткий коммит параметризует motion/room/contact resolvers, не показывая незавершённый female selector.
+
+Commit: `feat: define Traveller appearance capabilities` (этот коммит). Push выполняется сразу; runtime/PWA не меняются до routing-коммита.
+
 ## [2026-08-18] 🌐 Язык стал первым шагом регистрации — English default, PWA v164
 
 - Регистрация больше не начинается с русского имени/email-экрана. Любой новый пользователь сначала видит отдельный выбор `English / Русский / Deutsch / Українська / Español`; стартовый выбор — English. Только после явного `Continue` появляются имя, аватар, email и пароль. Переключение языка сразу меняет copy и корректный `html[lang]`; существующие аккаунты с сохранённым `settings.lang` не затрагиваются, а legacy-аккаунты без этого поля сохраняют исторический русский fallback после входа.
