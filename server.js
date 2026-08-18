@@ -822,6 +822,98 @@ function backupFile(dir, name) {
 function hashPin(userId, pin) {
   return crypto.createHmac('sha256', SECRET).update(userId + ':' + String(pin)).digest('hex');
 }
+// ---- Ограничение частоты для авторизации ------------------------------------
+//
+// До этого 429 во всём сервере стоял ровно в одном месте — на озвучке. Вход, регистрация и
+// сброс пароля не были ограничены ничем.
+//
+// Опаснее всего здесь НЕ подбор пароля (он и так упирается в scrypt), а сам scrypt: каждая
+// попытка входа стоит десятки миллисекунд процессора по построению. Несколько тысяч запросов
+// в минуту с одного адреса кладут инстанс Railway для всех остальных — это отказ в
+// обслуживании, который не требует ни уязвимости, ни умысла, достаточно скрипта.
+//
+// Считаем по двум ключам сразу:
+//   по адресу  — чтобы один источник не мог занять весь процессор;
+//   по учётке  — чтобы перебор паролей одного человека не растворялся в смене адресов.
+// Щедрого порога по учётке НЕДОСТАТОЧНО, и это поймал собственный тест: пока счётчик растёт
+// от любой попытки, чужой человек перебором по знакомому email запирает хозяину вход — лимит
+// становится оружием против того, кого защищает. Поэтому слои разделены по смыслу:
+//
+//   по адресу — проверяется ДО scrypt и защищает процессор;
+//   по учётке — считает ТОЛЬКО неудачные попытки и никогда не отклоняет верный пароль.
+//
+// Человек, который знает свой пароль, войдёт всегда, сколько бы по нему ни перебирали.
+const AUTH_RATE = new Map();
+const AUTH_RULES = {
+  login:    { ip: 30, id: 10, windowMs: 60000 },   // вход: см. authNoteLoginFailure — id считает ТОЛЬКО неудачи
+  register: { ip: 5,  id: 0,  windowMs: 60000 },   // регистрация создаёт папку на диске
+  reset:    { ip: 10, id: 5,  windowMs: 60000 },   // подбор кода восстановления
+  forgot:   { ip: 10, id: 0,  windowMs: 60000 },   // письма (у самой отправки есть свой кулдаун)
+};
+// За обратным прокси Railway настоящий адрес приходит в x-forwarded-for. Берём ПЕРВЫЙ элемент:
+// последующие может дописать кто угодно, а первый ставит сам прокси.
+function clientIp(req) {
+  const fwd = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  return fwd || (req.socket && req.socket.remoteAddress) || 'unknown';
+}
+function authRateHit(kind, key) {
+  const rule = AUTH_RULES[kind]; if (!rule) return null;
+  const now = Date.now();
+  // Уборка редкая и дешёвая: карта не должна расти бесконечно на длинном аптайме.
+  if (AUTH_RATE.size > 5000) {
+    for (const [k, v] of AUTH_RATE) if (now - v.start >= 300000) AUTH_RATE.delete(k);
+  }
+  const id = `${kind}:${key}`;
+  let rec = AUTH_RATE.get(id);
+  if (!rec || now - rec.start >= rule.windowMs) rec = { start: now, count: 0 };
+  rec.count += 1;
+  AUTH_RATE.set(id, rec);
+  return rec;
+}
+/**
+ * @returns {number|null} секунды до снятия ограничения, либо null если можно пропускать
+ */
+function authRateLimited(req, kind, accountKey) {
+  const rule = AUTH_RULES[kind]; if (!rule) return null;
+  const checks = [[clientIp(req), rule.ip]];
+  if (accountKey && rule.id) checks.push([`acct:${String(accountKey).toLowerCase()}`, rule.id]);
+  let worst = null;
+  for (const [key, limit] of checks) {
+    if (!limit) continue;
+    const rec = authRateHit(kind, key);
+    if (rec.count > limit) {
+      const left = Math.max(1, Math.ceil((rule.windowMs - (Date.now() - rec.start)) / 1000));
+      if (worst === null || left > worst) worst = left;
+    }
+  }
+  return worst;
+}
+// Счёт НЕУДАЧНЫХ входов по учётке. Отдельно от общего счётчика намеренно: тот считает
+// обращения, а этот — только промахи, и поэтому не может задеть того, кто знает свой пароль.
+const LOGIN_FAILS = new Map();
+const LOGIN_FAIL_LIMIT = AUTH_RULES.login.id;
+function loginFailKey(acctKey) { return String(acctKey || '').trim().toLowerCase(); }
+/** @returns {boolean} превышен ли порог промахов по этой учётке */
+function authNoteLoginFailure(acctKey) {
+  const key = loginFailKey(acctKey); if (!key) return false;
+  const now = Date.now();
+  if (LOGIN_FAILS.size > 5000) {
+    for (const [k, v] of LOGIN_FAILS) if (now - v.start >= 300000) LOGIN_FAILS.delete(k);
+  }
+  let rec = LOGIN_FAILS.get(key);
+  if (!rec || now - rec.start >= AUTH_RULES.login.windowMs) rec = { start: now, count: 0 };
+  rec.count += 1;
+  LOGIN_FAILS.set(key, rec);
+  return rec.count > LOGIN_FAIL_LIMIT;
+}
+function authClearLoginFailures(acctKey) { const key = loginFailKey(acctKey); if (key) LOGIN_FAILS.delete(key); }
+function tooManyAuth(res, retryAfter) {
+  res.writeHead(429, { 'Content-Type': MIME['.json'], 'Retry-After': String(retryAfter), 'Cache-Control': 'no-store' });
+  // Формулировка одинаковая для всех причин: она не должна подсказывать, существует ли
+  // учётка и какой именно порог сработал.
+  return res.end(JSON.stringify({ error: 'слишком много попыток, попробуй позже', retryAfter }));
+}
+
 // ---- Email + пароль (scrypt) + код восстановления (zero-dep, без email-инфры) ----
 function normEmail(e) { return String(e || '').trim().toLowerCase(); }
 // fb_msjex84y8ffb — «трудности со входом... данные вроде правильные». Пароль
@@ -1991,16 +2083,29 @@ const server = http.createServer(async (req, res) => {
     // POST /api/auth/login — email+пароль (новое) ИЛИ userId+PIN (legacy)
     if (u === '/api/auth/login' && req.method === 'POST') {
       const { userId, pin, email, password } = body;
+      // Только по адресу и ДО scrypt: это защита процессора. Ключ по учётке здесь НЕ трогаем,
+      // иначе чужой перебор запер бы хозяина (см. шапку AUTH_RULES).
+      { const wait = authRateLimited(req, 'login'); if (wait) return tooManyAuth(res, wait); }
+      const acctKey = email || userId;
       const users = loadUsers();
       let user = null;
       if (email && password !== undefined) {
         user = users.find(x => x.email && x.email === normEmail(email));
-        if (!user || !user.pwHash || !verifyPw(password, user.pwSalt, user.pwHash)) return sendJson(res, 401, { error: 'неверный email или пароль' });
+        if (!user || !user.pwHash || !verifyPw(password, user.pwSalt, user.pwHash)) {
+          // Считаем ПОСЛЕ проверки: верный пароль до этой ветки не доходит, поэтому счётчик
+          // физически не может отказать хозяину. Перебор же упирается в 429 вместо 401.
+          if (authNoteLoginFailure(acctKey)) return tooManyAuth(res, 60);
+          return sendJson(res, 401, { error: 'неверный email или пароль' });
+        }
       } else {
         if (!userId || pin === undefined) return sendJson(res, 400, { error: 'нужен email+пароль или профиль+PIN' });
         user = users.find(x => x.id === userId);
-        if (!user || !user.pinHash || user.pinHash !== hashPin(userId, String(pin))) return sendJson(res, 401, { error: 'неверный PIN' });
+        if (!user || !user.pinHash || user.pinHash !== hashPin(userId, String(pin))) {
+          if (authNoteLoginFailure(acctKey)) return tooManyAuth(res, 60);
+          return sendJson(res, 401, { error: 'неверный PIN' });
+        }
       }
+      authClearLoginFailures(acctKey);   // верный вход обнуляет счёт: серия неудач не тянется за человеком
       if (!user.sessionVersion) { rotateSessionVersion(user); saveUsers(users); }
       const token = makeSession(user);
       res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(req, token), 'Cache-Control': 'no-store' });
@@ -2010,6 +2115,7 @@ const server = http.createServer(async (req, res) => {
     // POST /api/auth/reset — сброс пароля по коду восстановления (без email-инфры)
     if (u === '/api/auth/reset' && req.method === 'POST') {
       const { email, code, newPassword } = body;
+      { const wait = authRateLimited(req, 'reset', email); if (wait) return tooManyAuth(res, wait); }
       if (!email || !code || !newPassword) return sendJson(res, 400, { error: 'email, код и новый пароль обязательны' });
       if (normPw(newPassword).length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
       const users = loadUsers();
@@ -2028,6 +2134,9 @@ const server = http.createServer(async (req, res) => {
     // POST /api/auth/forgot — попросить письмо со ссылкой сброса
     if (u === '/api/auth/forgot' && req.method === 'POST') {
       const email = normEmail(body && body.email);
+      // Лимит по адресу, а не по учётке: у самой отправки уже есть свой кулдаун на аккаунт,
+      // а здесь надо остановить перебор чужих адресов с одного источника.
+      { const wait = authRateLimited(req, 'forgot'); if (wait) return tooManyAuth(res, wait); }
       if (!validEmail(email)) return sendJson(res, 400, { error: 'некорректный email' });
       if (!emailResetConfigured()) return sendJson(res, 200, { ok: true, mailed: false, configured: false });
       const users = loadUsers();
@@ -2050,6 +2159,7 @@ const server = http.createServer(async (req, res) => {
     // POST /api/auth/reset-token — задать новый пароль по ссылке из письма
     if (u === '/api/auth/reset-token' && req.method === 'POST') {
       const { email, token, newPassword } = body;
+      { const wait = authRateLimited(req, 'reset', email); if (wait) return tooManyAuth(res, wait); }
       if (!email || !token || !newPassword) return sendJson(res, 400, { error: 'email, ссылка и новый пароль обязательны' });
       if (normPw(newPassword).length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
       const users = loadUsers();
@@ -2092,6 +2202,8 @@ const server = http.createServer(async (req, res) => {
     // POST /api/auth/register — поддерживает email+пароль (новое) ИЛИ PIN (legacy-киоск)
     if (u === '/api/auth/register' && req.method === 'POST') {
       const { name, pin, email, password } = body;
+      // Каждая регистрация создаёт папку на диске — это самый дешёвый способ его засорить.
+      { const wait = authRateLimited(req, 'register'); if (wait) return tooManyAuth(res, wait); }
       const hasPin = pin !== undefined && pin !== '';
       const hasEmail = email && password;
       if (!name) return sendJson(res, 400, { error: 'имя обязательно' });
