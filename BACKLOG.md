@@ -4,6 +4,12 @@
 
 _Создан 2026-06-14. Актуализирован 24.07 — секции ниже не обновлялись с ~01.07, часть уже закрыта в DEVLOG._
 
+## 🌐 Registration locale + Traveller appearance (решение 18.08)
+
+- [x] **Язык до любых регистрационных вопросов** ✅ 2026-08-18, v164: отдельный первый экран EN/RU/DE/UK/ES, English по умолчанию, account-owned сохранение до онбординга, все три onboarding-ветки наследуют выбор, legacy-аккаунты не переключаются молча.
+- [ ] **Нужен выбор Альберта перед производством женского Traveller:** безопасный launch-вариант — отдельный female morphology-set на том же rig/anchor/manifest-контракте; долгосрочный вариант — hybrid rig, где `body/head/hair` являются дискретными наборами, а `skin/hair/eyes` меняются palette-mask слоями. Полностью параметрический avatar из текущих flattened raster interaction plates без нового authoring/QA-контракта нереалистичен и не должен начинаться скрытым рефакторингом.
+- [ ] **После решения:** либо сначала female launch-set с теми же `idle/blink/locomotion/window/read/pair` сценами и measured QA, либо отдельный утверждённый этап semantic masks + slot resolver. Не генерировать все комбинации пола × кожи × волос × глаз; props/effects/background и choreography должны переиспользоваться.
+
 ## 🧭 Guide v3 — P0 перед запуском
 
 - [x] **Commit A — продуктовый контракт и RU-черновик** ✅ `GUIDE-V3-PLAN.md`, `GUIDE-V3-FIRST-SCRIPT-RU.md`, `TASK-CODEX-GUIDE-V3.md`; guide-close Искры остаётся неутверждённым concept и не подключается в runtime.

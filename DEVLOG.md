@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-18] 🌐 Язык стал первым шагом регистрации — English default, PWA v164
+
+- Регистрация больше не начинается с русского имени/email-экрана. Любой новый пользователь сначала видит отдельный выбор `English / Русский / Deutsch / Українська / Español`; стартовый выбор — English. Только после явного `Continue` появляются имя, аватар, email и пароль. Переключение языка сразу меняет copy и корректный `html[lang]`; существующие аккаунты с сохранённым `settings.lang` не затрагиваются, а legacy-аккаунты без этого поля сохраняют исторический русский fallback после входа.
+- Выбор — не device-only декорация. После успешного `/api/auth/register` начальные account-owned settings с `skills:[]` и выбранным `lang` сохраняются через awaited `Store.saveNow` **до** показа онбординга. Ручная ветка, готовая программа и AI-ветка создают настройки через один `freshOnboardingSettings`, поэтому язык не теряется при завершении регистрации и не откатывается на русский.
+- Новые строки полностью покрыты RU/EN/DE/UK/ES. Пять языковых кнопок — нативные `button` с `aria-pressed`, group-label, touch height `52px` и реально видимым keyboard focus. Новый auth-root сбрасывает общий app padding только на этом экране, поэтому он полностью помещается без лишнего вертикального/горизонтального scroll на мобильных.
+- PWA: `satoru-v163 → satoru-v164`; `app.js`/`styles.css` получили новый cache-bust, все точные SW-пины синхронизированы.
+- Live QA в изолированном локальном профиле: English first render; `EN → RU`; `html[lang] en → ru`; account-поля отсутствуют до Continue и появляются после него; option height `52px`; keyboard focus computed `outline: 2px solid` + canonical focus shadow; horizontal overflow `0`, scroll height точно равна viewport. Скриншоты: `docs/design-qa/onboarding-language-v164/` (`360×800`, `375×812`, `1280×900`). QA: `node --check public/app.js public/sw.js` — PASS; новый контракт — **5/5 PASS**; release-owned suite без чужого `scripts/first-journey-v1.test.js` — **396/396 PASS**; полный shared worktree — **399/399 PASS**; `git diff --check` — PASS.
+
+Commit: `feat: put language first in registration` (этот коммит). Push/deploy выполняются сразу после коммита по явной команде Альберта.
+
 ## [2026-08-18] 🧭 Guide v3 Commit C1 — настоящий First Journey, Piper и Guide Library v163
 
 - Вступительный путь больше не является туром по кнопкам. Чистый аккаунт проходит настоящий цикл `welcome → recognize/create → choose → optional focus → wait → persisted completion → victory → mastery → one-time live Shadow contact → release`: Guide продвигается только после успешного `Store.saveNow`, ждёт выбранный task id и восстанавливает шаг после reload/другого устройства. Ошибка записи откатывает данные и не выдаёт ложный успех.

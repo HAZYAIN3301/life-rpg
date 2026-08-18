@@ -63,6 +63,6 @@ test('runtime pins the new director and micro-life bytes', () => {
   for (const script of ['den-stage-v1', 'traveller-motion-v3', 'den-resident-life-v1', 'den-life-v1']) {
     assert.match(index, new RegExp(`${script}\\.js\\?v=20260815-den-life-v158-1`));
   }
-  assert.match(index, /app\.js\?v=20260818-guide-v163-1/);
-  assert.match(index, /styles\.css\?v=20260818-guide-v163-1/);
+  assert.match(index, /app\.js\?v=20260818-onboarding-language-v164-1/);
+  assert.match(index, /styles\.css\?v=20260818-onboarding-language-v164-1/);
 });

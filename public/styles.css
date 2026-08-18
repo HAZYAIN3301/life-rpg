@@ -1058,6 +1058,23 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .auth-box label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 5px; }
 .auth-box input { width: 100%; display: block; margin-bottom: 0; }
 
+.registration-language-screen { justify-content: center; min-height: 100svh; box-sizing: border-box; padding-top: 24px; }
+#app:has(> .registration-language-screen) { max-width: none; padding: 0; }
+.registration-language-screen .auth-logo { margin-bottom: 22px; }
+.registration-language-box { max-width: 460px; }
+.registration-language-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.registration-language-option {
+  min-height: 52px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px;
+  background: var(--panel2); color: var(--text); display: flex; align-items: center; gap: 9px;
+  font: inherit; text-align: left; cursor: pointer;
+}
+.registration-language-option:last-child { grid-column: 1 / -1; }
+.registration-language-option.active { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--panel2)); }
+.registration-language-option:focus-visible { outline: 2px solid var(--text-strong); outline-offset: 3px; box-shadow: var(--focus-ring); }
+@media (hover:hover) and (pointer:fine) { .registration-language-option:hover { border-color: var(--accent); } }
+.registration-language-note { margin: 16px 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+@media (max-width: 380px) { .registration-language-options { grid-template-columns: 1fr; } .registration-language-option:last-child { grid-column: auto; } }
+
 /* Profile cards */
 .profiles-grid { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; width: 100%; max-width: 640px; }
 .profile-card { background: var(--panel); border: 2px solid var(--line); border-radius: var(--radius); padding: 18px 16px; min-width: 130px; text-align: center; cursor: pointer; transition: border-color 0.18s, transform 0.15s; }

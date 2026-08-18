@@ -529,6 +529,11 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // ── v164 18.08: язык — первый шаг регистрации, English по умолчанию ──
+  'Выбери язык': { en: 'Choose your language', de: 'Wähle deine Sprache', uk: 'Обери мову', es: 'Elige tu idioma' },
+  'На нём пройдёт регистрация и откроется приложение. Позже язык можно поменять в Настройках.': { en: 'Registration and the app will use it. You can change the language later in Settings.', de: 'Registrierung und App verwenden diese Sprache. Du kannst sie später in den Einstellungen ändern.', uk: 'Цією мовою пройде реєстрація й відкриється застосунок. Пізніше мову можна змінити в Налаштуваннях.', es: 'El registro y la aplicación usarán este idioma. Puedes cambiarlo más tarde en Ajustes.' },
+  'Продолжить': { en: 'Continue', de: 'Weiter', uk: 'Продовжити', es: 'Continuar' },
+  'Аккаунт создан, но язык пока не сохранился. Выбор закрепится после следующего шага.': { en: 'Your account was created, but the language has not been saved yet. It will be saved after the next step.', de: 'Dein Konto wurde erstellt, aber die Sprache wurde noch nicht gespeichert. Sie wird nach dem nächsten Schritt gespeichert.', uk: 'Акаунт створено, але мову ще не збережено. Вибір закріпиться після наступного кроку.', es: 'Tu cuenta se creó, pero el idioma aún no se guardó. Se guardará después del siguiente paso.' },
   // ── v156 14.08: пикер сферы, сложность в тот же день, навигация дней ──
   'Искать сферу': { en: 'Search sphere', de: 'Bereich suchen', uk: 'Шукати сферу', es: 'Buscar ámbito' },
   'Искать сферу…': { en: 'Search sphere…', de: 'Bereich suchen…', uk: 'Шукати сферу…', es: 'Buscar ámbito…' },
@@ -3377,7 +3382,16 @@ const I18N_EXTRA = {
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
 for (const ru in I18N_EXTRA) { const row = I18N_EXTRA[ru]; for (const l of ['en', 'de', 'uk', 'es']) { if (row[l]) I18N[l][ru] = row[l]; } }
 
-function lang() { return (State.settings && State.settings.lang) || 'ru'; }
+const APP_LANGS = Object.freeze(['en', 'ru', 'de', 'uk', 'es']);
+function registrationLang() { return APP_LANGS.includes(State.authLang) ? State.authLang : 'en'; }
+function lang() {
+  const saved = State.settings && State.settings.lang;
+  if (APP_LANGS.includes(saved)) return saved;
+  if (State.phase !== 'app') return registrationLang();
+  // Legacy accounts without an explicit language keep their historical Russian UI.
+  return 'ru';
+}
+function syncDocumentLanguage() { document.documentElement.lang = lang(); }
 function t(k) { const l = lang(); if (l === 'ru') return k; const d = I18N[l]; return (d && d[k]) || k; }
 // Алиас перевода для функций, где `t` занята задачей (task). Это не стиль, а защита: в проекте
 // уже был data-losing баг ровно из-за того, что локальная `const t = task` молча ломала все
@@ -3766,6 +3780,7 @@ const Store = {
 // Existing users see their own settings.json instead (your personal skills are safe there).
 const DEFAULT_SETTINGS = {
   appName: 'Satoru',
+  lang: 'en',
   skills: [
     { id: 'study', name: 'Учёба', color: '#4f86f7' },
     { id: 'work', name: 'Работа', color: '#22c1a4' },
@@ -3789,6 +3804,10 @@ const DEFAULT_SETTINGS = {
   path: null, pathChosenAt: null, pathAntagonistMuted: false, control: {}, // «Доверие vs Контроль» (см. DISCIPLINE-PATHS-PLAN.md) — null = ещё не выбран
   social: { leaderboard: false, party: false }, // два независимых explicit-consent; отсутствие поля всегда означает «не публиковать»
 };
+
+function freshOnboardingSettings(skills = []) {
+  return Object.assign(structuredClone(DEFAULT_SETTINGS), { lang: registrationLang(), skills });
+}
 
 // ── Две системы дисциплины: 🕊 Доверие vs ⚔️ Контроль (DISCIPLINE-PATHS-PLAN.md) ──
 // Факции механически РАВНЫ по силе (урок Ingress/Pokémon GO) — разница в эстетике/тоне/строгости, не в объёме наград.
@@ -4114,7 +4133,7 @@ function programTasks(prog, map) { return (prog.quests || []).map((pq) => ({ id:
 // Онбординг: чистый профиль из программы. Пишем файлы НАПРЯМУЮ (await), чтобы initApp их загрузил без гонки.
 async function applyProgramFresh(prog) {
   const { skills, map } = programSkillMap(prog, []);
-  const settings = Object.assign(structuredClone(DEFAULT_SETTINGS), { skills });
+  const settings = freshOnboardingSettings(skills);
   // Публичный X7 — отдельный showcase-профиль на каждый браузер. Даём ему достаточно
   // импортированного опыта, чтобы ревьюер мог открыть все разделы, но исключаем из
   // лидерборда: демонстрационный прогресс не должен соревноваться с живыми игроками.
@@ -4981,7 +5000,8 @@ const State = {
   // auth
   me: null,           // { id, name, avatar, isAdmin } | null
   profiles: [],       // [{ id, name, avatar }] для экрана логина
-  phase: 'boot',      // 'boot' | 'login' | 'register' | 'onboarding' | 'app'
+  phase: 'boot',      // 'boot' | 'login' | 'register-language' | 'register' | 'onboarding' | 'app'
+  authLang: 'en',     // English is the explicit first-run default; saved per account after registration.
   selectedProfile: null,
   _accountSessionExpired: false,
   obSkills: new Set(), // выбранные шаблоны на онбординге
@@ -10502,6 +10522,24 @@ function renderLoginScreen() {
     <div id="toasts"></div>`;
 }
 
+function renderRegistrationLanguageScreen() {
+  const options = [
+    ['en', '🇬🇧', 'English'], ['ru', '🇷🇺', 'Русский'], ['de', '🇩🇪', 'Deutsch'],
+    ['uk', '🇺🇦', 'Українська'], ['es', '🇪🇸', 'Español'],
+  ].map(([code, flag, label]) => `<button type="button" class="registration-language-option ${registrationLang() === code ? 'active' : ''}" data-action="pick-registration-language" data-lang="${code}" aria-pressed="${registrationLang() === code}"><span aria-hidden="true">${flag}</span><b>${label}</b></button>`).join('');
+  document.getElementById('app').innerHTML = `
+    <div class="auth-screen registration-language-screen">
+      <div class="auth-logo"><span class="auth-brand-mark">${brandMarkHTML()}</span><h1>Satoru</h1><p>${t('Выбери язык')}</p></div>
+      <div class="auth-box registration-language-box">
+        <div class="registration-language-options" role="group" aria-label="${t('Язык')}">${options}</div>
+        <p class="registration-language-note">${t('На нём пройдёт регистрация и откроется приложение. Позже язык можно поменять в Настройках.')}</p>
+        <button class="btn" data-action="registration-language-continue" style="width:100%">${t('Продолжить')}</button>
+        <button class="btn ghost" data-action="go-login" style="margin-top:10px;width:100%">${t('Назад')}</button>
+      </div>
+    </div>
+    <div id="toasts"></div>`;
+}
+
 function renderRegisterScreen() {
   const avatarPicker = AVATARS.map((a) => `<button type="button" class="av-btn ${a === State.regAvatar ? 'sel' : ''}" data-action="pick-avatar" data-av="${a}">${avatarOriginIconHTML(a, 'avatar-origin-icon')}</button>`).join('');
   document.getElementById('app').innerHTML = `
@@ -10686,8 +10724,7 @@ async function obAiApply() {
   // Стартуем с ЧИСТЫХ настроек: applyProposals пишет в State.settings.skills / State.tasks,
   // а до онбординга State ещё не инициализирован приложением. Дефолтные 6 сфер обязательно
   // затираем — иначе человек получит вперемешку свои и те, которых не выбирал.
-  State.settings = structuredClone(DEFAULT_SETTINGS);
-  State.settings.skills = [];
+  State.settings = freshOnboardingSettings([]);
   State.tasks = []; State.goals = []; State.tree = {};
   applyProposals(_obItems, accepted);
   // saveNow, а не save: следом initApp() читает данные с сервера, и дебаунс их не догонит.
@@ -10746,10 +10783,13 @@ function renderOnboardingScreen() {
 
 function showAuthScreen() {
   if (State.phase === 'login') renderLoginScreen();
+  else if (State.phase === 'register-language') renderRegistrationLanguageScreen();
   else if (State.phase === 'register') renderRegisterScreen();
   else if (State.phase === 'reset') renderResetScreen();
   else if (State.phase === 'reset-token') renderResetTokenScreen();
   else if (State.phase === 'onboarding') renderOnboardingScreen();
+  syncDocumentLanguage();
+  if (lang() !== 'ru') { try { translateDOM(document.getElementById('app')); } catch {} }
 }
 
 // ============================================================
@@ -19583,6 +19623,7 @@ function renderMainView(main) {
 
 function render() {
   if (State.phase !== 'app') { showAuthScreen(); return; }
+  syncDocumentLanguage();
   try { normalizeCoreState(); } catch (e) { console.error('normalizeCoreState', e); }
   try { applyTheme(); } catch (e) { console.error('applyTheme', e); }
   // Голосовой ввод подключается сам, но свои подписи знает только по-русски: модуль
@@ -19737,7 +19778,14 @@ async function onSubmit(e) {
     btn.disabled = true;
     try {
       const { response, data } = await accountJson('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password: pw, avatar: State.regAvatar || '⚡' }) }, { authenticated: false });
-      if (response.ok) { State._accountSessionExpired = false; State.me = data; State.phase = 'onboarding'; render(); if (data.recoveryCode) showRecoveryModal(data.recoveryCode); }
+      if (response.ok) {
+        State._accountSessionExpired = false; State.me = data;
+        State.settings = freshOnboardingSettings([]);
+        const languageSaved = await Store.saveNow('settings', State.settings);
+        State.phase = 'onboarding'; render();
+        if (!languageSaved) toast(t('Аккаунт создан, но язык пока не сохранился. Выбор закрепится после следующего шага.'));
+        if (data.recoveryCode) showRecoveryModal(data.recoveryCode);
+      }
       else errEl.textContent = accountError(data, 'Ошибка регистрации');
     } catch { errEl.textContent = t('Сетевая ошибка'); }
     finally { if (btn.isConnected) btn.disabled = false; }
@@ -20785,7 +20833,12 @@ async function onClick(e) {
     State.selectedProfile = State.selectedProfile === id ? null : id;
     renderLoginScreen(); return;
   }
-  if (action === 'go-register') { State.phase = 'register'; State.regAvatar = '⚡'; State.regName = ''; render(); return; }
+  if (action === 'go-register') { State.phase = 'register-language'; State.regAvatar = '⚡'; State.regName = ''; render(); return; }
+  if (action === 'pick-registration-language') {
+    if (APP_LANGS.includes(el.dataset.lang)) State.authLang = el.dataset.lang;
+    render(); return;
+  }
+  if (action === 'registration-language-continue') { State.phase = 'register'; render(); return; }
   if (action === 'go-login') { State.phase = 'login'; render(); return; }
   if (action === 'go-reset') { State.phase = 'reset'; render(); return; }
   if (action === 'test-login') { loginAsTestUser(); return; }
@@ -20837,7 +20890,7 @@ async function onClick(e) {
       const tpl = SKILL_TEMPLATES.find(t => t.name === name);
       return { id: 'sk_' + name.toLowerCase().replace(/[^a-z0-9]/g, '') + '_' + Date.now().toString(36), name, color: color || (tpl ? tpl.color : '#6c8cff') };
     });
-    const settings = Object.assign(structuredClone(DEFAULT_SETTINGS), { skills });
+    const settings = freshOnboardingSettings(skills);
     // saveNow: save() дебаунсится на 250 мс, а initApp() читает настройки с сервера сразу —
     // выбранные сферы не успевали записаться, и юзер получал дефолтные шесть вместо своих.
     Store.saveNow('settings', settings).then(() => {
