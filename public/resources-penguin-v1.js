@@ -16,6 +16,9 @@
 
   const VERSION = '1.1.0';
   const ART_ROOT = '/art/pets/resources-penguin-v1/';
+  const PAIR_ART_ROOT = `${ART_ROOT}pair-v1/`;
+  const TRAVELLER_GENDERS = Object.freeze(['male', 'female']);
+  const AUTHORED_PAIR_GENDERS = Object.freeze(['male']);
   const STATES = Object.freeze(['calm', 'thriving', 'strained', 'restoring']);
   const STATE_META = Object.freeze({
     calm: { label: 'Собран', line: 'Держит цифры в порядке и не путает деньги с делом.' },
@@ -48,7 +51,28 @@
   function normalizeState(value) { return STATES.includes(value) ? value : 'calm'; }
   function stateSrc(state) { return `${ART_ROOT}states/${normalizeState(state)}.png?v=20260807-1`; }
   function assetSrc(path) { return `${ART_ROOT}${path}?v=20260807-1`; }
-  function pairSrc(frame) { return assetSrc(`pair-v1/${frame}.png`); }
+  function normalizeTravellerGender(value) {
+    if (value === undefined) return 'male';
+    const candidate = typeof value === 'string' ? value.trim().toLowerCase() : '';
+    return TRAVELLER_GENDERS.includes(candidate) ? candidate : null;
+  }
+  function pairGender(value, element) {
+    if (value !== undefined && (value === null || typeof value !== 'object' || Array.isArray(value))) return normalizeTravellerGender(value);
+    const config = value && typeof value === 'object' ? value : null;
+    if (config && Object.prototype.hasOwnProperty.call(config, 'gender')) return normalizeTravellerGender(config.gender);
+    if (config && Object.prototype.hasOwnProperty.call(config, 'travellerGender')) return normalizeTravellerGender(config.travellerGender);
+    const authored = element && element.dataset && element.dataset.travellerGender;
+    return normalizeTravellerGender(authored);
+  }
+  function hasPairArt(gender) {
+    return AUTHORED_PAIR_GENDERS.includes(normalizeTravellerGender(gender));
+  }
+  function pairSrc(frame, gender) {
+    const safeGender = normalizeTravellerGender(gender);
+    if (!safeGender) return null;
+    const genderPath = safeGender === 'female' ? 'female/' : '';
+    return `${PAIR_ART_ROOT}${genderPath}${frame}.png?v=20260807-1`;
+  }
   function stateFromPetState(value) {
     return ({ hungry: 'strained', thriving: 'calm', full: 'thriving', overfed: 'restoring' })[value] || 'calm';
   }
@@ -67,10 +91,14 @@
     return ready;
   }
 
-  function prefetch() {
+  function prefetch(options) {
+    const gender = pairGender(options);
+    const pairSources = hasPairArt(gender)
+      ? Object.values(INTERACTIONS).flatMap((item) => item.frames.map((frame) => pairSrc(frame, gender)))
+      : [];
     const sources = STATES.map(stateSrc)
       .concat(Object.values(SOLO).flatMap((item) => item.frames.map(assetSrc)))
-      .concat(Object.values(INTERACTIONS).flatMap((item) => item.frames.map(pairSrc)));
+      .concat(pairSources);
     return Promise.allSettled(sources.map(preload));
   }
 
@@ -89,8 +117,11 @@
   }
 
   function pairMarkup(options) {
-    const classes = ['resources-pair-v1', (options && options.className) || ''].filter(Boolean).join(' ');
-    return `<span class="${escapeHTML(classes)}" data-resources-pair-v1 aria-hidden="true"><span class="resources-pair-v1__stage"></span></span>`;
+    const config = options && typeof options === 'object' ? options : {};
+    const gender = pairGender(options);
+    if (!gender) return '';
+    const classes = ['resources-pair-v1', config.className || ''].filter(Boolean).join(' ');
+    return `<span class="${escapeHTML(classes)}" data-resources-pair-v1 data-traveller-gender="${gender}" aria-hidden="true"><span class="resources-pair-v1__stage"></span></span>`;
   }
 
   function imageFor(src, className) {
@@ -184,12 +215,25 @@
     });
   }
 
-  function setPairFrame(pair, frame) {
+  function setPairFrame(pair, frame, gender) {
     const stage = pair && pair.querySelector('.resources-pair-v1__stage');
     if (!stage) return false;
-    stage.replaceChildren(imageFor(pairSrc(frame), 'resources-pair-v1__frame'));
+    stage.replaceChildren(imageFor(pairSrc(frame, gender), 'resources-pair-v1__frame'));
     pair.dataset.frame = frame;
+    pair.dataset.travellerGender = normalizeTravellerGender(gender);
     return true;
+  }
+
+  function clearPairElement(pair, gender) {
+    const stage = pair && pair.querySelector && pair.querySelector('.resources-pair-v1__stage');
+    if (stage) stage.replaceChildren();
+    if (pair && pair.classList) pair.classList.remove('is-active');
+    if (pair && pair.setAttribute) pair.setAttribute('aria-hidden', 'true');
+    if (pair && pair.dataset) {
+      if (gender) pair.dataset.travellerGender = gender;
+      else delete pair.dataset.travellerGender;
+    }
+    return false;
   }
 
   function cancelPair(scope) {
@@ -210,20 +254,23 @@
     const pair = scope && scope.querySelector('[data-resources-pair-v1]');
     if (!scope || !pair || !meta) return Promise.resolve(false);
     cancelPair(scope);
-    const duration = Math.max(900, Number(options && options.duration) || meta.duration);
-    const sources = meta.frames.map(pairSrc);
+    const config = options && typeof options === 'object' ? options : {};
+    const gender = pairGender(options, pair);
+    if (!hasPairArt(gender)) return Promise.resolve(clearPairElement(pair, gender));
+    const duration = Math.max(900, Number(config.duration) || meta.duration);
+    const sources = meta.frames.map((frame) => pairSrc(frame, gender));
     return Promise.all(sources.map(preload)).then(() => {
       if (!scope.isConnected || !pair.isConnected) return false;
       const timers = [];
       pairControllers.set(pair, timers);
       pair.dataset.mode = mode;
-      setPairFrame(pair, meta.frames[0]);
+      setPairFrame(pair, meta.frames[0], gender);
       scope.classList.add('is-resources-pair-active');
       pair.classList.add('is-active');
       pair.setAttribute('aria-hidden', 'false');
       const step = duration / meta.frames.length;
       meta.frames.slice(1).forEach((frame, offset) => {
-        timers.push(setTimeout(() => pair.isConnected && setPairFrame(pair, frame), Math.round((offset + 1) * step)));
+        timers.push(setTimeout(() => pair.isConnected && setPairFrame(pair, frame, gender), Math.round((offset + 1) * step)));
       });
       timers.push(setTimeout(() => {
         pair.classList.remove('is-active');
@@ -232,12 +279,18 @@
         pairControllers.delete(pair);
       }, duration));
       return true;
+    }).catch(() => {
+      if (scope.classList) scope.classList.remove('is-resources-pair-active');
+      return clearPairElement(pair, gender);
     });
   }
 
   return Object.freeze({
     VERSION,
     ART_ROOT,
+    PAIR_ART_ROOT,
+    TRAVELLER_GENDERS,
+    AUTHORED_PAIR_GENDERS,
     STATES,
     STATE_META,
     SOLO,
@@ -245,6 +298,8 @@
     stateFromPetState,
     stateSrc,
     assetSrc,
+    normalizeTravellerGender,
+    hasPairArt,
     pairSrc,
     preload,
     prefetch,

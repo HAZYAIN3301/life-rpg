@@ -13,11 +13,26 @@ function pngSize(file) {
 }
 
 assert.equal(toad.VERSION, '3.4.0');
+assert.deepEqual(toad.TRAVELLER_GENDERS, ['male', 'female']);
+assert.deepEqual(toad.AUTHORED_PAIR_GENDERS, ['male']);
+assert.equal(toad.normalizeTravellerGender(), 'male');
+assert.equal(toad.normalizeTravellerGender('female'), 'female');
+assert.equal(toad.normalizeTravellerGender('unknown'), null);
+assert.equal(toad.normalizeTravellerGender(''), null);
+assert.equal(toad.normalizeTravellerGender(null), null);
+assert.equal(toad.hasPairArt('male'), true);
+assert.equal(toad.hasPairArt('female'), false);
+assert.equal(toad.hasPairArt('unknown'), false);
 assert.equal(toad.frameSrc('calm', true), '/art/pets/body-toad-v1/states/calm.png');
 assert.equal(toad.frameSrc('strained', true), '/art/pets/body-toad-v1/states/strained.png');
 assert.equal(toad.motionFrameSrc('air'), '/art/pets/body-toad-v1/motion-v4/hop-air.png?v=20260806-3');
 assert.equal(toad.pairFrameSrc('greet-contact'), '/art/pets/body-toad-v1/pair-v4/greet-contact.png?v=20260806-3');
+assert.equal(toad.pairFrameSrc('greet-contact', 'female'), '/art/pets/body-toad-v1/pair-v4/female/greet-contact.png?v=20260806-3');
+assert.equal(toad.pairFrameSrc('greet-contact', ''), null);
 assert.equal(toad.pairFrameSrc('unknown'), '/art/pets/body-toad-v1/pair-v4/rest-contact.png?v=20260806-3');
+assert.match(toad.pairMarkup({ gender: 'female' }), /data-traveller-gender="female"/);
+assert.equal(toad.pairMarkup({ gender: '' }), '');
+assert.equal(toad.pairMarkup(null), '');
 assert.deepEqual(toad.INTERACTIONS.whistle.pairFrames, ['whistle-a', 'whistle-b', 'whistle-c', 'whistle-d']);
 assert.equal(typeof toad.playAmbient, 'function');
 assert.equal(typeof toad.installHopFrames, 'function');
@@ -41,4 +56,63 @@ for (const file of ['prop-portal-rim.png', 'prop-portal-core.png', 'traveller-po
 }
 assert.deepEqual(pngSize(path.join(root, 'public/art/avatars/traveller-core-v1/male/room-actions-v4/bench-portal-reach.png')), [640, 900]);
 
-console.log('BODY Guardian life v4: contract checks passed');
+const blockedClasses = new Set(['is-active']);
+const blockedAttributes = { 'aria-hidden': 'false' };
+const blockedStage = { cleared: false, replaceChildren() { this.cleared = true; } };
+const blockedPair = {
+  dataset: {},
+  isConnected: true,
+  classList: {
+    add(...names) { names.forEach((name) => blockedClasses.add(name)); },
+    remove(...names) { names.forEach((name) => blockedClasses.delete(name)); },
+  },
+  setAttribute(name, value) { blockedAttributes[name] = String(value); },
+  querySelector(selector) { return selector === '.body-pair-v2__stage' ? blockedStage : null; },
+};
+
+class FailingImage {
+  constructor() { this.listeners = {}; this.complete = false; this.naturalWidth = 0; }
+  addEventListener(type, handler) { this.listeners[type] = handler; }
+  set src(value) {
+    this._src = value;
+    queueMicrotask(() => (this.listeners.error ? this.listeners.error() : this.onerror && this.onerror()));
+  }
+  get src() { return this._src; }
+}
+
+(async () => {
+  assert.equal(await toad.setPairMode(blockedPair, 'greet', { gender: 'female' }), false);
+  assert.equal(blockedStage.cleared, true);
+  assert.equal(blockedPair.dataset.travellerGender, 'female');
+
+  blockedStage.cleared = false;
+  assert.equal(await toad.setPairMode(blockedPair, 'greet', { gender: '' }), false);
+  assert.equal(blockedStage.cleared, true);
+  assert.equal('travellerGender' in blockedPair.dataset, false);
+
+  const malePrefetch = await toad.prefetch();
+  const femalePrefetch = await toad.prefetch({ gender: 'female' });
+  const invalidPrefetch = await toad.prefetch({ gender: '' });
+  assert.equal(malePrefetch.some((result) => String(result.value || '').includes('/pair-v4/')), true);
+  assert.equal(femalePrefetch.some((result) => String(result.value || '').includes('/pair-v4/')), false);
+  assert.equal(invalidPrefetch.some((result) => String(result.value || '').includes('/pair-v4/')), false);
+
+  const originalImage = global.Image;
+  global.Image = FailingImage;
+  blockedStage.cleared = false;
+  blockedClasses.add('is-active');
+  blockedAttributes['aria-hidden'] = 'false';
+  try {
+    assert.equal(await toad.setPairMode(blockedPair, 'greet', { gender: 'male' }), false);
+  } finally {
+    if (originalImage === undefined) delete global.Image;
+    else global.Image = originalImage;
+  }
+  assert.equal(blockedStage.cleared, true);
+  assert.equal(blockedClasses.has('is-active'), false);
+  assert.equal(blockedAttributes['aria-hidden'], 'true');
+  console.log('BODY Guardian life v4: contract checks passed');
+})().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

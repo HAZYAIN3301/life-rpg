@@ -3799,6 +3799,7 @@ const DEFAULT_SETTINGS = {
   equipped: { frame: null, background: null, title: null }, // надетые косметика + звание
   sound: true, // звуки интерфейса (#23)
   shadowVoiceGender: 'female', // выбранный тембр Piper: единая женская/мужская пара для всех языков
+  avatarCoreGender: 'male', // morphology Traveller; выбор доступен только для полного QA-pack без cross-gender fallback
   theme: 'dark', accent: '#6c8cff', // оформление (тема + акцент)
   companion: { name: 'Тень', born: null, bond: 0, lastSeen: null, journal: [], check: {} }, // живой компаньон (Finch-модель)
   path: null, pathChosenAt: null, pathAntagonistMuted: false, control: {}, // «Доверие vs Контроль» (см. DISCIPLINE-PATHS-PLAN.md) — null = ещё не выбран
@@ -5916,11 +5917,18 @@ const AVATAR_FORGE_BATCH_ID = 'avatar-forge-v1-20260801';
 const AVATAR_ART_ROOT = '/art/avatars/avatar-forge-v1/';
 const AVATAR_ART_RUNTIME_ROOT = `${AVATAR_ART_ROOT}runtime/512/`;
 const AVATAR_CORE_ROOT = '/art/avatars/traveller-core-v1/';
-// V2 ships one visually approved protagonist. The rejected female draft stays
-// archived on disk for audit, but is neither selectable nor prefetched.
-const AVATAR_CORE_GENDERS = ['male'];
+// Known morphology and selectable runtime packs are deliberately different.
+// Female becomes selectable only after every core/room/contact capability has
+// authored art; an incomplete pack must never borrow a male animation frame.
+const AVATAR_CORE_KNOWN_GENDERS = window.TravellerAppearanceV1
+  ? [...window.TravellerAppearanceV1.KNOWN_GENDERS]
+  : ['male', 'female'];
+const AVATAR_CORE_GENDERS = window.TravellerAppearanceV1
+  ? [...window.TravellerAppearanceV1.selectableGenders()]
+  : ['male'];
 const AVATAR_CORE_GENDER_META = {
   male: { label: 'Мужской', description: 'Traveller' },
+  female: { label: 'Женский', description: 'Traveller' },
 };
 const AVATAR_CORE_POSES = ['idle', 'arms-up', 'window-back'];
 const AVATAR_CORE_RENDER_POSES = [...AVATAR_CORE_POSES, 'seated'];
@@ -6300,12 +6308,15 @@ function scheduleArtWarmup() {
         preloadAvatarImage(avatarCorePoseSrc(pose, gender)).catch(() => {});
       }));
       if (window.TravellerMotionV3) {
+        const gender = avatarCoreGender();
         Object.keys(window.TravellerMotionV3.ASSETS).forEach((key) => {
-          preloadAvatarImage(window.TravellerMotionV3.frameSrc(key)).catch(() => {});
+          const src = window.TravellerMotionV3.frameSrc(key, gender);
+          if (src) preloadAvatarImage(src).catch(() => {});
         });
       }
       if (window.TravellerRoomV4) {
-        Object.values(window.TravellerRoomV4.ACTIONS).forEach((action) => {
+        const actions = window.TravellerRoomV4.actionsFor(avatarCoreGender()) || {};
+        Object.values(actions).forEach((action) => {
           action.frames.forEach((url) => preloadAvatarImage(url).catch(() => {}));
         });
       }
@@ -6385,17 +6396,23 @@ function normalizedAvatarCoreGender(value) {
 }
 function avatarCoreGender() {
   const saved = State.settings && State.settings.avatarCoreGender;
-  if (AVATAR_CORE_GENDERS.includes(saved)) return saved;
-  return 'male';
+  if (window.TravellerAppearanceV1) {
+    return window.TravellerAppearanceV1.normalize({ avatarCoreGender: saved }).gender;
+  }
+  return AVATAR_CORE_GENDERS.includes(saved) ? saved : 'male';
 }
 function avatarCorePoseSrc(pose = 'idle', gender = avatarCoreGender()) {
-  return `${AVATAR_CORE_ROOT}${normalizedAvatarCoreGender(gender)}/poses/${normalizedAvatarCorePose(pose)}.png`;
+  const safeGender = normalizedAvatarCoreGender(gender);
+  const file = `${normalizedAvatarCorePose(pose)}.png`;
+  return window.TravellerAppearanceV1
+    ? window.TravellerAppearanceV1.assetPath(safeGender, 'core', file)
+    : `${AVATAR_CORE_ROOT}${safeGender}/poses/${file}`;
 }
 function avatarCorePoseHTML(pose = 'idle', options = {}) {
   const safePose = normalizedAvatarCorePose(pose);
   const safeGender = normalizedAvatarCoreGender(options.gender || avatarCoreGender());
   const classes = ['avatar-core-stack', options.className || ''].filter(Boolean).join(' ');
-  const blink = window.TravellerMotionV3 ? window.TravellerMotionV3.blinkMarkup() : '';
+  const blink = window.TravellerMotionV3 ? window.TravellerMotionV3.blinkMarkup(safeGender) : '';
   return `<span class="${classes}" data-avatar-core-pose="${safePose}" data-avatar-core-gender="${safeGender}" role="img" aria-label="${esc(t(AVATAR_CORE_GENDER_META[safeGender].label))} Traveller: ${esc(t(AVATAR_CORE_POSE_META[safePose].label))}"><span class="avatar-core-motion"><img class="avatar-core-frame is-active" src="${avatarCorePoseSrc(safePose, safeGender)}" alt="" aria-hidden="true" draggable="false" decoding="async"></span>${blink}</span>`;
 }
 function swapAvatarCoreStack(stack, pose, gender = avatarCoreGender()) {
@@ -6439,22 +6456,52 @@ function swapAvatarCoreStack(stack, pose, gender = avatarCoreGender()) {
     return true;
   });
 }
-function setAvatarCoreGender(gender) {
-  const safeGender = normalizedAvatarCoreGender(gender);
-  return Promise.all(AVATAR_CORE_RENDER_POSES.map((pose) => preloadAvatarImage(avatarCorePoseSrc(pose, safeGender)))).then(() => {
+let _avatarCoreGenderChangeQueue = Promise.resolve();
+async function setAvatarCoreGender(gender) {
+  if (!AVATAR_CORE_GENDERS.includes(gender)) throw new Error('incomplete Traveller pack');
+  let releaseQueue;
+  const previousQueue = _avatarCoreGenderChangeQueue;
+  _avatarCoreGenderChangeQueue = new Promise((resolve) => { releaseQueue = resolve; });
+  await previousQueue.catch(() => {});
+  const safeGender = gender;
+  try {
+    if (avatarCoreGender() === safeGender) return safeGender;
+    const urls = AVATAR_CORE_RENDER_POSES.map((pose) => avatarCorePoseSrc(pose, safeGender));
+    if (window.TravellerMotionV3) {
+      Object.keys(window.TravellerMotionV3.ASSETS).forEach((key) => {
+        const src = window.TravellerMotionV3.frameSrc(key, safeGender);
+        if (src) urls.push(src);
+      });
+    }
+    if (window.TravellerRoomV4) {
+      Object.values(window.TravellerRoomV4.actionsFor(safeGender) || {}).forEach((action) => urls.push(...action.frames));
+    }
+    await Promise.all(urls.map(preloadAvatarImage));
     if (!State.settings) return safeGender;
+    const previous = avatarCoreGender();
+    const shell = document.querySelector('.den-shell');
+    if (shell) await abortDenSceneAction(shell, 'avatar-gender-change');
+    cancelDenRoomAction(false);
+    cancelDenAvatarLocomotion(true);
     State.settings.avatarCoreGender = safeGender;
-    Store.save('settings', State.settings);
-    document.querySelectorAll('.avatar-core-stack').forEach((stack) => {
-      swapAvatarCoreStack(stack, stack.dataset.avatarCorePose || 'idle', safeGender).catch(() => {});
-    });
+    const saved = await Store.saveNow('settings', State.settings);
+    if (!saved) {
+      State.settings.avatarCoreGender = previous;
+      throw new Error('Traveller gender save failed');
+    }
+    const swaps = [...document.querySelectorAll('.avatar-core-stack')].map((stack) => (
+      swapAvatarCoreStack(stack, stack.dataset.avatarCorePose || 'idle', safeGender)
+    ));
+    await Promise.allSettled(swaps);
     document.querySelectorAll('[data-action="avatar-core-gender"]').forEach((button) => {
       const selected = button.dataset.gender === safeGender;
       button.classList.toggle('is-selected', selected);
       button.setAttribute('aria-pressed', String(selected));
     });
     return safeGender;
-  });
+  } finally {
+    releaseQueue();
+  }
 }
 // V3 uses complete authored walk poses and a deterministic blink frame. It
 // never rotates sliced joints or asks CSS to invent missing anatomy.
@@ -6696,6 +6743,7 @@ function playDenRoomLayerAndReturn(shell, host, actionId, walkOptions, isCurrent
       ? window.TravellerRoomV4.transition
       : window.TravellerRoomV4.play;
     start(shell, actionId, {
+      gender: avatarCoreGender(),
       onFinish: () => {
         if (typeof isCurrent === 'function' && !isCurrent()) return finish(false);
         window.TravellerMotionV3.walkTo(host, 'home', walkOptions)
@@ -6725,7 +6773,8 @@ function runDenRoomAction(actionId, options = {}) {
     const restoresTiredState = shell.classList.contains('is-energy-tired') && !options.automatic;
     if (restoresTiredState) shell.classList.add('is-energy-motion-active');
     State._denAvatarPose = 'idle';
-    const walkOptions = { preload: preloadAvatarImage };
+    const gender = avatarCoreGender();
+    const walkOptions = { preload: preloadAvatarImage, gender };
     try {
       await syncDenCorePose('idle').catch(() => false);
       if (!denSceneActionCurrent(token)) return false;
@@ -6737,14 +6786,14 @@ function runDenRoomAction(actionId, options = {}) {
 
       // Sit first. The portal replaces the seated-rest frame with an authored
       // seated reach pose; only after it closes do we install the reading pose.
-      const seated = await window.TravellerRoomV4.play(shell, 'bench-rest');
+      const seated = await window.TravellerRoomV4.play(shell, 'bench-rest', { gender });
       if (!seated || !denSceneActionCurrent(token)) return false;
       if (!(await waitForDenSceneAction(token, 1100))) return false;
       // Decode the reading plate before the portal opens. At extraction the
       // same seated room session changes to the book-in-hand pose, so the
       // portal can close over an already present book without a blank frame or
       // a second Traveller appearing after the fact.
-      await window.TravellerRoomV4.preload('bench-read');
+      await window.TravellerRoomV4.preload('bench-read', { gender });
       let reading = null;
       const beginReading = () => {
         if (reading || !denSceneActionCurrent(token)) return;
@@ -6789,6 +6838,7 @@ function runDenAvatarWindowVisit(options = {}) {
     State._denAvatarPose = 'idle';
     try {
       const played = await window.TravellerMotionV3.playWindowVisit(host, {
+        gender: avatarCoreGender(),
         preload: preloadAvatarImage,
         swapPose: (pose) => denSceneActionCurrent(token) ? syncDenCorePose(pose) : Promise.resolve(false),
       });
@@ -6860,8 +6910,14 @@ function playBodyToadScene(scope, sphereId, mode, options = {}) {
     if (penguin && window.ResourcesPenguinV1 && window.ResourcesPenguinV1.cancel) window.ResourcesPenguinV1.cancel(penguin, true);
     if (shadow && window.ShadowDenV1) window.ShadowDenV1.cancelSolo(shadow, true);
     const restoreState = bodyToadStateForSphere(sphereId);
+    const gender = avatarCoreGender();
+    if (window.BodyToadV1.hasPairArt && !window.BodyToadV1.hasPairArt(gender)) {
+      return denSceneActionCurrent(token)
+        ? window.BodyToadV1.playInteraction(toad, mode, { restoreState })
+        : false;
+    }
     const playPair = () => denSceneActionCurrent(token)
-      ? window.BodyToadV1.playPair(scope, mode, { toad, restoreState, duration })
+      ? window.BodyToadV1.playPair(scope, mode, { gender, toad, restoreState, duration })
       : Promise.resolve(false);
     await syncDenCorePose('idle').catch(() => false);
     if (!denSceneActionCurrent(token)) return false;
@@ -6913,8 +6969,14 @@ function playRecoverySlugScene(scope, mode, options = {}) {
     if (penguin && window.ResourcesPenguinV1 && window.ResourcesPenguinV1.cancel) window.ResourcesPenguinV1.cancel(penguin, true);
     if (shadow && window.ShadowDenV1) window.ShadowDenV1.cancelSolo(shadow, true);
     const restoreState = recoverySlugState();
+    const gender = avatarCoreGender();
+    if (window.RecoverySlugV1.hasPairArt && !window.RecoverySlugV1.hasPairArt(gender)) {
+      return denSceneActionCurrent(token)
+        ? window.RecoverySlugV1.playInteraction(slug, mode, { restoreState })
+        : false;
+    }
     const playPair = () => denSceneActionCurrent(token)
-      ? window.RecoverySlugV1.playPair(scope, mode, { slug, restoreState, duration })
+      ? window.RecoverySlugV1.playPair(scope, mode, { gender, slug, restoreState, duration })
       : Promise.resolve(false);
     await syncDenCorePose('idle').catch(() => false);
     if (!denSceneActionCurrent(token)) return false;
@@ -6961,8 +7023,15 @@ function playResourcesPenguinScene(scope, sphereId, mode, options = {}) {
     if (slug && window.RecoverySlugV1 && window.RecoverySlugV1.cancelAmbient) window.RecoverySlugV1.cancelAmbient(slug);
     if (shadow && window.ShadowDenV1) window.ShadowDenV1.cancelSolo(shadow, true);
     const restoreState = resourcesPenguinStateForSphere(sphereId);
+    const gender = avatarCoreGender();
+    if (window.ResourcesPenguinV1.hasPairArt && !window.ResourcesPenguinV1.hasPairArt(gender)) {
+      const fallback = mode === 'greet' ? 'blink' : mode === 'reserve' ? 'stash' : mode === 'focus' ? 'ledger' : 'coinSort';
+      return denSceneActionCurrent(token)
+        ? window.ResourcesPenguinV1.playSolo(penguin, fallback, { restoreState })
+        : false;
+    }
     const playPair = () => denSceneActionCurrent(token)
-      ? window.ResourcesPenguinV1.playPair(scope, mode, { duration })
+      ? window.ResourcesPenguinV1.playPair(scope, mode, { gender, duration })
       : Promise.resolve(false);
     await syncDenCorePose('idle').catch(() => false);
     if (!denSceneActionCurrent(token)) return false;
@@ -7045,6 +7114,11 @@ async function playShadowPairScene(scope, mode, options = {}) {
   const automatic = options.automatic === true;
   const meta = window.ShadowDenV1.INTERACTIONS[mode];
   const duration = automatic ? Math.max(meta.duration, Number(options.duration) || meta.duration) : meta.duration;
+  const gender = avatarCoreGender();
+  if (window.ShadowDenV1.hasPairArt && !window.ShadowDenV1.hasPairArt(gender)) {
+    const fallback = mode === 'silence' ? 'think' : mode === 'rest' ? 'greet' : 'listen';
+    return playShadowSoloScene(scope, fallback, { automatic, duration });
+  }
   return runDenSceneAction(scope, `shadow-pair:${mode}`, async (token) => {
     if (!automatic && window.DenLifeV1) window.DenLifeV1.postpone(scope, duration + 9000);
     cancelDenRoomAction(false);
@@ -7058,7 +7132,7 @@ async function playShadowPairScene(scope, mode, options = {}) {
     if (penguin && window.ResourcesPenguinV1 && window.ResourcesPenguinV1.cancel) window.ResourcesPenguinV1.cancel(penguin, true);
     const tier = compTierIdx(ensureCompanion().bond);
     const playPair = () => denSceneActionCurrent(token)
-      ? window.ShadowDenV1.playPair(scope, mode, { tier, duration })
+      ? window.ShadowDenV1.playPair(scope, mode, { gender, tier, duration })
       : Promise.resolve(false);
     await syncDenCorePose('idle').catch(() => false);
     if (!denSceneActionCurrent(token)) return false;
@@ -14824,6 +14898,13 @@ function syncDenCorePose(pose) {
 function renderDen() {
   const den = ensureDen(), theme = denTheme();
   const coherentV5 = denUsesCoherentV5(den);
+  const travellerGender = avatarCoreGender();
+  const roomRestSrc = window.TravellerRoomV4 && window.TravellerRoomV4.frameSrc
+    ? window.TravellerRoomV4.frameSrc('bench-rest.png', travellerGender)
+    : null;
+  const roomReachSrc = window.TravellerRoomV4 && window.TravellerRoomV4.frameSrc
+    ? window.TravellerRoomV4.frameSrc('bench-portal-reach.png', travellerGender)
+    : null;
   preloadDenMasterCandidates();
   const c = ensureCompanion(), mood = compMood(), ti = compTierIdx(c.bond);
   const cr = charRank(), nm = (State.me && State.me.name) || t('Герой');
@@ -14961,14 +15042,14 @@ function renderDen() {
         <button class="${State._denEdit ? 'is-active' : ''}" data-action="den-toggle-edit" title="${esc(editorLabel)}" aria-label="${esc(editorLabel)}" aria-expanded="${State._denEdit ? 'true' : 'false'}"${State._denEdit ? ' aria-controls="den-editor"' : ''}>${satoruIconHTML('action.edit', 'den-tool-glyph', '◇')}<span>${State._denEdit ? t('Готово') : t('Обставить')}</span></button>
       </div>
       <button class="den-companion" data-shadow-den data-shadow-tier="${ti}" data-action="shadow-den-pair" data-mode="attune" title="${esc(companionLabel)}" aria-label="${esc(companionLabel)}">${shadowVideo(ti, mood.face, 'den')}</button>
-      ${window.ShadowDenV1 ? window.ShadowDenV1.pairMarkup({ tier: ti, className: 'shadow-den-pair-v1--den' }) : ''}
+      ${window.ShadowDenV1 ? window.ShadowDenV1.pairMarkup({ gender: travellerGender, tier: ti, className: 'shadow-den-pair-v1--den' }) : ''}
       ${window.DenPetPairV1 ? window.DenPetPairV1.pairMarkup({ className: 'den-pet-pair-v1--den' }) : ''}
-      ${bodyGuardian ? window.BodyToadV1.pairMarkup({ className: 'body-pair-v2--den' }) : ''}
-      ${resourcesGuardian ? window.ResourcesPenguinV1.pairMarkup({ className: 'resources-pair-v1--den' }) : ''}
-      ${recoveryGuardianActive ? window.RecoverySlugV1.pairMarkup({ className: 'recovery-pair-v2--den' }) : ''}
-      ${coherentV5 && window.TravellerRoomV4 ? window.TravellerRoomV4.markup({ className: 'traveller-room-v4--den' }) : ''}
-      ${coherentV5 && avatarState === 'tired' ? '<span class="den-tired-seat" aria-hidden="true"><img src="/art/avatars/traveller-core-v1/male/room-actions-v4/bench-rest.png" alt="" aria-hidden="true" draggable="false" decoding="async"></span>' : ''}
-      ${coherentV5 ? '<span class="den-prop-reach" aria-hidden="true"><img src="/art/avatars/traveller-core-v1/male/room-actions-v4/bench-portal-reach.png?v=20260806-2" alt="" aria-hidden="true" draggable="false" decoding="async"></span><span class="den-prop-portal" data-den-prop-portal aria-hidden="true"><img class="den-prop-portal__core" src="/art/den/actors/prop-portal-core.png?v=20260806-2" alt="" aria-hidden="true" draggable="false" decoding="async"><img class="den-prop-portal__rim" src="/art/den/actors/prop-portal-rim.png?v=20260806-2" alt="" aria-hidden="true" draggable="false" decoding="async"></span>' : ''}
+      ${bodyGuardian ? window.BodyToadV1.pairMarkup({ gender: travellerGender, className: 'body-pair-v2--den' }) : ''}
+      ${resourcesGuardian ? window.ResourcesPenguinV1.pairMarkup({ gender: travellerGender, className: 'resources-pair-v1--den' }) : ''}
+      ${recoveryGuardianActive ? window.RecoverySlugV1.pairMarkup({ gender: travellerGender, className: 'recovery-pair-v2--den' }) : ''}
+      ${coherentV5 && window.TravellerRoomV4 ? window.TravellerRoomV4.markup({ gender: travellerGender, className: 'traveller-room-v4--den' }) : ''}
+      ${coherentV5 && avatarState === 'tired' && roomRestSrc ? `<span class="den-tired-seat" aria-hidden="true"><img src="${esc(roomRestSrc)}" alt="" aria-hidden="true" draggable="false" decoding="async"></span>` : ''}
+      ${coherentV5 && roomReachSrc ? `<span class="den-prop-reach" aria-hidden="true"><img src="${esc(roomReachSrc)}" alt="" aria-hidden="true" draggable="false" decoding="async"></span><span class="den-prop-portal" data-den-prop-portal aria-hidden="true"><img class="den-prop-portal__core" src="/art/den/actors/prop-portal-core.png?v=20260806-2" alt="" aria-hidden="true" draggable="false" decoding="async"><img class="den-prop-portal__rim" src="/art/den/actors/prop-portal-rim.png?v=20260806-2" alt="" aria-hidden="true" draggable="false" decoding="async"></span>` : ''}
       <button class="den-avatar den-avatar-raster den-avatar-core" data-action="den-avatar-pose" data-state="${avatarState}" data-pose="${avatarPose}" title="${esc(avatarLabel)}" aria-label="${esc(avatarLabel)}">${avatarCorePoseHTML(avatarPose, { className: 'avatar-core-stack--den' })}<span class="den-avatar-shadow"></span></button>
       ${petLayer}${recoveryLayer}
     </div>
@@ -19378,7 +19459,7 @@ function afterMainCommit() {
   try { kickCompVideo(); } catch {}
   try {
     if (State.view === 'den' && window.TravellerRoomV4) {
-      window.TravellerRoomV4.restore(document.querySelector('.den-shell'), { onFinish: () => syncAvatarMotion() });
+      window.TravellerRoomV4.restore(document.querySelector('.den-shell'), { gender: avatarCoreGender(), onFinish: () => syncAvatarMotion() });
     }
   } catch {}
   try { syncAvatarMotion(); } catch {}

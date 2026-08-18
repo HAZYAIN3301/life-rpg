@@ -16,6 +16,8 @@
 
   const VERSION = '1.3.0';
   const ART_ROOT = '/art/companions/shadow-den-v1/pair-v1/';
+  const TRAVELLER_GENDERS = Object.freeze(['male', 'female']);
+  const AUTHORED_PAIR_GENDERS = Object.freeze(['male']);
   const FORMS = Object.freeze(['spark', 'spirit', 'guardian', 'keeper']);
   const SOLO = Object.freeze({
     greet: Object.freeze({ label: 'Откликнуться', state: 'happy', duration: 3200 }),
@@ -39,7 +41,28 @@
   }
 
   function formForTier(value) { return FORMS[normalizeTier(value)]; }
-  function pairSrc(value) { return `${ART_ROOT}attune-${formForTier(value)}.png?v=20260811-1`; }
+  function normalizeTravellerGender(value) {
+    if (value === undefined) return 'male';
+    const candidate = typeof value === 'string' ? value.trim().toLowerCase() : '';
+    return TRAVELLER_GENDERS.includes(candidate) ? candidate : null;
+  }
+  function pairGender(value, element) {
+    if (value !== undefined && (value === null || typeof value !== 'object' || Array.isArray(value))) return normalizeTravellerGender(value);
+    const config = value && typeof value === 'object' ? value : null;
+    if (config && Object.prototype.hasOwnProperty.call(config, 'gender')) return normalizeTravellerGender(config.gender);
+    if (config && Object.prototype.hasOwnProperty.call(config, 'travellerGender')) return normalizeTravellerGender(config.travellerGender);
+    const authored = element && element.dataset && element.dataset.travellerGender;
+    return normalizeTravellerGender(authored);
+  }
+  function hasPairArt(gender) {
+    return AUTHORED_PAIR_GENDERS.includes(normalizeTravellerGender(gender));
+  }
+  function pairSrc(value, gender) {
+    const safeGender = normalizeTravellerGender(gender);
+    if (!safeGender) return null;
+    const genderPath = safeGender === 'female' ? 'female/' : '';
+    return `${ART_ROOT}${genderPath}attune-${formForTier(value)}.png?v=20260811-1`;
+  }
 
   function preload(src) {
     if (!src || typeof root.Image === 'undefined') return Promise.resolve(src);
@@ -58,7 +81,11 @@
   // Approach and return use live rigs; contact uses one authored atomic plate.
   // This keeps locomotion directional while making the hand touch, gaze and
   // shared lighting readable without a caption for all four evolutions.
-  function prefetch() { return Promise.allSettled(FORMS.map((_, tier) => preload(pairSrc(tier)))); }
+  function prefetch(options) {
+    const gender = pairGender(options);
+    const sources = hasPairArt(gender) ? FORMS.map((_, tier) => pairSrc(tier, gender)) : [];
+    return Promise.allSettled(sources.map(preload));
+  }
 
   function escapeHTML(value) {
     return String(value == null ? '' : value)
@@ -67,14 +94,30 @@
   }
 
   function pairMarkup(options) {
-    const config = options || {};
+    const config = options && typeof options === 'object' ? options : {};
     const tier = normalizeTier(config.tier);
+    const gender = pairGender(options);
+    if (!gender) return '';
     const classes = ['shadow-den-pair-v1', config.className || ''].filter(Boolean).join(' ');
-    return `<span class="${escapeHTML(classes)}" data-shadow-den-pair data-tier="${tier}" data-form="${formForTier(tier)}" data-mode="attune" aria-hidden="true"><span class="shadow-den-pair-v1__stage"></span></span>`;
+    return `<span class="${escapeHTML(classes)}" data-shadow-den-pair data-tier="${tier}" data-form="${formForTier(tier)}" data-mode="attune" data-traveller-gender="${gender}" aria-hidden="true"><span class="shadow-den-pair-v1__stage"></span></span>`;
   }
 
-  function installPairImage(pair, tier) {
-    const src = pairSrc(tier);
+  function clearPairElement(pair, gender) {
+    const stage = pair && pair.querySelector && pair.querySelector('.shadow-den-pair-v1__stage');
+    if (stage) stage.replaceChildren();
+    if (pair && pair.classList) pair.classList.remove('is-active');
+    if (pair && pair.setAttribute) pair.setAttribute('aria-hidden', 'true');
+    if (pair && pair.dataset) {
+      if (gender) pair.dataset.travellerGender = gender;
+      else delete pair.dataset.travellerGender;
+    }
+    return false;
+  }
+
+  function installPairImage(pair, tier, options) {
+    const gender = pairGender(options, pair);
+    if (!hasPairArt(gender)) return Promise.resolve(clearPairElement(pair, gender));
+    const src = pairSrc(tier, gender);
     return preload(src).then(() => {
       if (!pair || !pair.isConnected || !root.document) return false;
       const stage = pair.querySelector('.shadow-den-pair-v1__stage');
@@ -87,8 +130,9 @@
       image.draggable = false;
       image.decoding = 'async';
       stage.replaceChildren(image);
+      pair.dataset.travellerGender = gender;
       return true;
-    });
+    }).catch(() => clearPairElement(pair, gender));
   }
 
   function rigInside(element) {
@@ -167,14 +211,16 @@
     const meta = INTERACTIONS[mode];
     const pair = pairElement(scope);
     if (!scope || !pair || !meta) return Promise.resolve(false);
-    const config = options || {};
+    const config = options && typeof options === 'object' ? options : {};
     const tier = normalizeTier(config.tier == null ? pair.dataset.tier : config.tier);
+    const gender = pairGender(options, pair);
     const duration = Math.max(900, Number(config.duration) || meta.duration);
     const companion = scope.querySelector('[data-shadow-den]');
     const rig = rigInside(companion);
     const restoreState = String((rig && rig.dataset.shadowState) || 'calm');
     cancelPair(scope, true);
-    return installPairImage(pair, tier).then((ready) => {
+    if (!hasPairArt(gender)) return Promise.resolve(clearPairElement(pair, gender));
+    return installPairImage(pair, tier, { gender }).then((ready) => {
       if (!ready) return false;
       if (!scope.isConnected || !pair.isConnected || !companion || !rig) return false;
       pair.dataset.tier = String(tier);
@@ -213,11 +259,15 @@
   return Object.freeze({
     VERSION,
     ART_ROOT,
+    TRAVELLER_GENDERS,
+    AUTHORED_PAIR_GENDERS,
     FORMS,
     SOLO,
     INTERACTIONS,
     normalizeTier,
     formForTier,
+    normalizeTravellerGender,
+    hasPairArt,
     pairSrc,
     preload,
     prefetch,

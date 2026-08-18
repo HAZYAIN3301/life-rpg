@@ -8,6 +8,7 @@ _Создан 2026-06-14. Актуализирован 24.07 — секции н
 
 - [x] **Язык до любых регистрационных вопросов** ✅ 2026-08-18, v164: отдельный первый экран EN/RU/DE/UK/ES, English по умолчанию, account-owned сохранение до онбординга, все три onboarding-ветки наследуют выбор, legacy-аккаунты не переключаются молча.
 - [x] **Архитектурный выбор Альберта сделан 18.08:** отдельный female morphology-set на том же rig/anchor/manifest-контракте; затем hybrid rig, где morphology дискретна, а `skin/hair/eyes` меняются palette-mask слоями. Комбинации пола × кожи × волос × глаз не генерируются; props/effects/background/choreography переиспользуются.
+- [x] **Gender-safe runtime routing** ✅ 2026-08-18, v165: core/blink/walk/room и все четыре Traveller-contact семейства получают явный gender; female никогда не падает обратно на male, room-record сверяет morphology, смена сериализована и откатывается при ошибке записи. UI остаётся male-only, пока pack неполон.
 - [ ] **Traveller female launch-pack — в работе:** capability/schema foundation готов в `traveller-appearance-v1.js`; до включения selector нужны 46 QA-кадров: core 11, Gamabunta 13, Katsuya 6, Mister P 12, Shadow forms 4. Первый approval-батч: idle/arms-up/window-back/walk-A/bench-read-A/Gamabunta greet/Shadow Spark + deterministic blink. Никакого fallback на male.
 - [ ] **Semantic palette masks после female launch-pack:** alpha-identical каналы кожи/волос/глаз и slot resolver. Не показывать варианты в UI раньше фактического производства и QA масок.
 

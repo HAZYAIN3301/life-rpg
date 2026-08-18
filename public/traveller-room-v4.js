@@ -2,20 +2,71 @@
   'use strict';
 
   const VERSION = '4.2.0';
-  const BASE = '/art/avatars/traveller-core-v1/male/room-actions-v4';
+  const DEFAULT_GENDER = 'male';
+  const GENDERS = Object.freeze(['male', 'female']);
+  const BASES = Object.freeze({
+    male: '/art/avatars/traveller-core-v1/male/room-actions-v4',
+    female: '/art/avatars/traveller-core-v1/female/room-actions-v4',
+  });
+  // Compatibility alias for integrations that still inspect the original
+  // single-pack constant. New callers must route through `actionFor`.
+  const BASE = BASES[DEFAULT_GENDER];
   const STORAGE_KEY = 'satoru.traveller-room-v4.active';
-  const ACTIONS = Object.freeze({
+  const ACTION_DEFINITIONS = Object.freeze({
     'bench-rest': Object.freeze({
       label: 'Сесть у окна',
       duration: 26000,
-      frames: Object.freeze([`${BASE}/bench-rest.png`]),
+      files: Object.freeze(['bench-rest.png']),
     }),
     'bench-read': Object.freeze({
       label: 'Почитать',
       duration: 42000,
-      frames: Object.freeze([`${BASE}/bench-read-a.png`, `${BASE}/bench-read-b.png`]),
+      files: Object.freeze(['bench-read-a.png', 'bench-read-b.png']),
     }),
   });
+
+  function genderInput(value) {
+    if (typeof value === 'string') return value;
+    if (value && typeof value === 'object' && Object.prototype.hasOwnProperty.call(value, 'gender')) return value.gender;
+    return undefined;
+  }
+
+  function resolveGender(value, fallback = DEFAULT_GENDER) {
+    const candidate = genderInput(value);
+    if (candidate === undefined) return fallback;
+    return GENDERS.includes(candidate) ? candidate : null;
+  }
+
+  function frameSrc(file, gender = DEFAULT_GENDER) {
+    const safeGender = resolveGender(gender);
+    if (!safeGender || typeof file !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*\.png$/.test(file)) return null;
+    return `${BASES[safeGender]}/${file}`;
+  }
+
+  function buildActions(gender) {
+    return Object.freeze(Object.fromEntries(Object.entries(ACTION_DEFINITIONS).map(([id, definition]) => [id, Object.freeze({
+      label: definition.label,
+      duration: definition.duration,
+      gender,
+      frames: Object.freeze(definition.files.map((file) => frameSrc(file, gender))),
+    })])));
+  }
+
+  const ACTIONS_BY_GENDER = Object.freeze({
+    male: buildActions('male'),
+    female: buildActions('female'),
+  });
+  const ACTIONS = ACTIONS_BY_GENDER[DEFAULT_GENDER];
+
+  function actionsFor(gender = DEFAULT_GENDER) {
+    const safeGender = resolveGender(gender);
+    return safeGender ? ACTIONS_BY_GENDER[safeGender] : null;
+  }
+
+  function actionFor(actionId, gender = DEFAULT_GENDER) {
+    const actions = actionsFor(gender);
+    return actions && actions[actionId] ? actions[actionId] : null;
+  }
 
   const active = new WeakMap();
   let tokenSeed = 0;
@@ -27,14 +78,26 @@
     return target.closest ? target.closest('.den-shell') : null;
   }
 
+  function genderForShell(shell, options) {
+    const explicit = genderInput(options);
+    if (explicit !== undefined) return resolveGender(explicit, null);
+    const stack = shell && shell.querySelector && shell.querySelector('.avatar-core-stack');
+    const authored = (stack && stack.dataset && stack.dataset.avatarCoreGender)
+      || (shell && shell.dataset && shell.dataset.avatarCoreGender);
+    return authored ? resolveGender(authored, null) : DEFAULT_GENDER;
+  }
+
   function readPersisted() {
     try {
       const record = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-      if (!record || !ACTIONS[record.actionId] || !record.id || Number(record.expiresAt) <= Date.now()) {
+      const gender = record && record.gender === undefined
+        ? DEFAULT_GENDER
+        : resolveGender(record && record.gender, null);
+      if (!record || !ACTION_DEFINITIONS[record.actionId] || !record.id || !gender || Number(record.expiresAt) <= Date.now()) {
         localStorage.removeItem(STORAGE_KEY);
         return null;
       }
-      return record;
+      return { ...record, gender };
     } catch {
       return null;
     }
@@ -53,9 +116,15 @@
 
   function markup(options = {}) {
     const extra = options.className ? ` ${options.className}` : '';
-    const record = readPersisted();
-    const action = record ? ACTIONS[record.actionId] : ACTIONS['bench-rest'];
-    return `<div class="traveller-room-v4${extra}${record ? ' is-active' : ''}" data-traveller-room-v4 data-action="${record ? record.actionId : 'bench-rest'}" aria-hidden="${record ? 'false' : 'true'}">
+    const gender = resolveGender(options);
+    if (!gender) return '';
+    let record = readPersisted();
+    if (record && record.gender !== gender) {
+      clearPersisted(record.id);
+      record = null;
+    }
+    const action = actionFor(record ? record.actionId : 'bench-rest', gender);
+    return `<div class="traveller-room-v4${extra}${record ? ' is-active' : ''}" data-traveller-room-v4 data-action="${record ? record.actionId : 'bench-rest'}" data-traveller-gender="${gender}" aria-hidden="${record ? 'false' : 'true'}">
       <img class="traveller-room-v4__frame traveller-room-v4__frame--a" src="${action.frames[0]}" alt="" aria-hidden="true" draggable="false" decoding="async" />
       <img class="traveller-room-v4__frame traveller-room-v4__frame--b" src="${action.frames[1] || action.frames[0]}" alt="" aria-hidden="true" draggable="false" decoding="async" />
     </div>`;
@@ -71,8 +140,8 @@
     });
   }
 
-  function preload(actionId) {
-    const action = ACTIONS[actionId];
+  function preload(actionId, options = DEFAULT_GENDER) {
+    const action = actionFor(actionId, options);
     return action ? Promise.all(action.frames.map(decode)).then((values) => values.every(Boolean)) : Promise.resolve(false);
   }
 
@@ -94,6 +163,7 @@
       layer.classList.remove('is-active');
       layer.setAttribute('aria-hidden', 'true');
       delete layer.dataset.action;
+      delete layer.dataset.travellerGender;
     }
     if (notify && typeof state.onFinish === 'function') state.onFinish(state.actionId);
     return true;
@@ -113,7 +183,8 @@
   }
 
   function attach(shell, record, options = {}) {
-    const action = ACTIONS[record.actionId];
+    const gender = resolveGender(record && record.gender, null);
+    const action = actionFor(record && record.actionId, gender);
     if (!action) return false;
     if (liveShell && liveShell !== shell) {
       const previous = active.get(liveShell);
@@ -130,13 +201,14 @@
     frames[0].src = action.frames[0];
     frames[1].src = action.frames[1] || action.frames[0];
     layer.dataset.action = record.actionId;
+    layer.dataset.travellerGender = gender;
     layer.setAttribute('aria-hidden', 'false');
     layer.classList.add('is-active');
     shell.classList.add('is-room-action-v4-active');
     const token = ++tokenSeed;
     const remaining = Math.max(0, Number(record.expiresAt) - Date.now());
     const timer = setTimeout(() => finish(shell, token, true), remaining);
-    active.set(shell, { actionId: record.actionId, id: record.id, onFinish: options.onFinish, timer, token });
+    active.set(shell, { actionId: record.actionId, gender, id: record.id, onFinish: options.onFinish, timer, token });
     liveShell = shell;
     return true;
   }
@@ -145,6 +217,17 @@
     const shell = shellFrom(target);
     const record = readPersisted();
     if (!shell || !record) return false;
+    const gender = genderForShell(shell, options);
+    if (!gender || record.gender !== gender) {
+      clearPersisted(record.id);
+      shell.classList.remove('is-room-action-v4-active');
+      const staleLayer = shell.querySelector('[data-traveller-room-v4]');
+      if (staleLayer) {
+        staleLayer.classList.remove('is-active');
+        staleLayer.setAttribute('aria-hidden', 'true');
+      }
+      return false;
+    }
     const scene = shell.querySelector('.den-scene');
     if (!scene || scene.dataset.denRenderer !== 'v5' || scene.dataset.denTheme !== 'workshop' || shell.classList.contains('is-body-pair-active')) {
       clearPersisted(record.id);
@@ -155,7 +238,8 @@
 
   async function play(target, actionId, options = {}) {
     const shell = shellFrom(target);
-    const action = ACTIONS[actionId];
+    const gender = genderForShell(shell, options);
+    const action = actionFor(actionId, gender);
     if (!shell || !action) return false;
     const scene = shell.querySelector('.den-scene');
     if (!scene || scene.dataset.denRenderer !== 'v5' || scene.dataset.denTheme !== 'workshop') return false;
@@ -167,23 +251,29 @@
       global.TravellerMotionV3.cancel(avatar, { restore: true });
     }
 
-    const ready = await preload(actionId);
+    const ready = await preload(actionId, { gender });
     if (!ready || !shell.isConnected || shell.classList.contains('is-body-pair-active')) return false;
-    const record = { actionId, expiresAt: Date.now() + action.duration, id: `${Date.now()}-${++tokenSeed}` };
+    const record = { actionId, gender, expiresAt: Date.now() + action.duration, id: `${Date.now()}-${++tokenSeed}` };
     writePersisted(record);
     return attach(shell, record, options);
   }
 
   async function transition(target, actionId, options = {}) {
     const shell = shellFrom(target);
-    const action = ACTIONS[actionId];
+    const gender = genderForShell(shell, options);
+    const action = actionFor(actionId, gender);
     const previous = shell && active.get(shell);
     if (!shell || !action || !previous) return play(target, actionId, options);
-    const ready = await preload(actionId);
+    if (previous.gender !== gender) {
+      finish(shell, previous.token, false);
+      return false;
+    }
+    const ready = await preload(actionId, { gender });
     if (!ready || !shell.isConnected || active.get(shell) !== previous) return false;
     clearTimeout(previous.timer);
     const record = {
       actionId,
+      gender,
       expiresAt: Date.now() + action.duration,
       id: previous.id,
     };
@@ -196,8 +286,16 @@
 
   global.TravellerRoomV4 = Object.freeze({
     VERSION,
+    DEFAULT_GENDER,
+    GENDERS,
     BASE,
+    BASES,
     ACTIONS,
+    ACTIONS_BY_GENDER,
+    actionFor,
+    actionsFor,
+    frameSrc,
+    resolveGender,
     markup,
     preload,
     play,

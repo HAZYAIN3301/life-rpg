@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-18] 🧬 Traveller gender routing v165 — безопасный runtime до female-pack
+
+- Весь действующий Traveller runtime переведён с неявного `male` на явный authored-gender contract: core/blink, walk, workshop room actions, Gamabunta, Katsuya, Mister P и четыре формы Shadow получают один и тот же `avatarCoreGender`. Селектор намеренно ещё не показывается: `female` известен системе, но не selectable до полного набора прошедших QA кадров.
+- Ни один resolver не подменяет явно запрошенный `female` мужским файлом. Motion/room строят female-path; контактные модули резервируют собственные `female/` каталоги и возвращают `false`, если authored plate отсутствует. App проверяет наличие plate **до** подхода актёров и запускает самостоятельную pet/Shadow-сцену, поэтому нет мужской вспышки, пустого contact-момента или бессмысленного подхода.
+- Room-action persistence теперь хранит пол; legacy-запись без поля считается мужской, а несовпадающая с текущим Traveller сцена очищается вместо восстановления чужой морфологии. Смена пола сериализована очередью, полностью preloads выбранный pack, ждёт все DOM-swaps и только затем фиксирует UI; `Store.saveNow` awaited, при ошибке settings откатываются.
+- PWA: `satoru-v164 → satoru-v165`; gender-aware modules и `traveller-appearance-v1.js` загружаются в правильном порядке и входят в offline SHELL. Действующий male-pack не перемещался и визуально не изменялся.
+- QA: все syntax/source contracts PASS; focused runtime — **35/35 PASS**; полный `npm test` — **421/421 PASS**. Live Den QA: `375×812` и `1280×900`, horizontal overflow `0`, broken images `0`, все смонтированные Traveller stacks явно `male`, female network paths `0`; кадры в `docs/design-qa/traveller-gender-v165/`.
+
+Commit: `feat: route Traveller runtime by authored gender` (этот коммит). Push/deploy выполняются сразу; female selector остаётся закрыт до отдельного art approval и полного production-pack.
+
 ## [2026-08-18] 🧬 Traveller Appearance v1 — гибридный контракт без смешения пола
 
 - Зафиксировано решение Альберта: перед запуском производится отдельный female morphology-pack, а цвета кожи/волос/глаз позднее накладываются semantic palette masks. Перебирать и генерировать все комбинации нельзя; хореография, props, фон и пространственные anchors остаются общими.

@@ -15,18 +15,28 @@ function pngSize(file) {
 }
 
 assert.equal(motion.VERSION, '3.2.0');
+assert.equal(motion.DEFAULT_GENDER, 'male');
+assert.deepEqual([...motion.GENDERS], ['male', 'female']);
+assert.equal(motion.ART_ROOT, '/art/avatars/traveller-core-v1/male/motion-v3/');
+assert.equal(motion.ART_ROOTS.female, '/art/avatars/traveller-core-v1/female/motion-v3/');
 assert.equal(motion.WALK_MS, 2200);
 assert.equal(typeof motion.walkTo, 'function');
 assert.equal(typeof motion.announceLeg, 'function');
 assert.equal(motion.frameSrc('blink'), '/art/avatars/traveller-core-v1/male/motion-v3/idle-blink.png');
 assert.equal(motion.frameSrc('walkA'), '/art/avatars/traveller-core-v1/male/motion-v3/walk-a.png');
 assert.equal(motion.frameSrc('walkB'), '/art/avatars/traveller-core-v1/male/motion-v3/walk-b.png');
+assert.equal(motion.frameSrc('blink', 'female'), '/art/avatars/traveller-core-v1/female/motion-v3/idle-blink.png');
+assert.equal(motion.frameSrc('walkA', { gender: 'female' }), '/art/avatars/traveller-core-v1/female/motion-v3/walk-a.png');
+assert.equal(motion.frameSrc('walkB', { gender: 'female' }), '/art/avatars/traveller-core-v1/female/motion-v3/walk-b.png');
+assert.equal(motion.frameSrc('walkA', 'unknown'), null, 'an explicit unknown gender must never fall back to male');
+assert.equal(motion.frameSrc('walkA', { gender: '' }), null, 'an explicit empty gender must never fall back to male');
 assert.match(motion.blinkMarkup(), /avatar-core-blink-layer/);
+assert.match(motion.blinkMarkup({ gender: 'female' }), /traveller-core-v1\/female\/motion-v3\/idle-blink\.png/);
+assert.equal(motion.blinkMarkup({ gender: 'unknown' }), '');
 
 const motionRoot = path.join(projectRoot, 'public', 'art', 'avatars', 'traveller-core-v1', 'male', 'motion-v3');
 const manifest = JSON.parse(fs.readFileSync(path.join(motionRoot, 'manifest.json'), 'utf8'));
 assert.equal(manifest.avatar, 'male-traveller-core-v2');
-assert.equal(manifest.femaleRuntime, false);
 assert.equal(manifest.floorY, 860);
 assert.equal(manifest.passed, true);
 for (const file of [manifest.assets.blink, ...manifest.assets.walk]) {

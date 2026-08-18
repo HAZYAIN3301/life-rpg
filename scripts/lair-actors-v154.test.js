@@ -96,13 +96,13 @@ function unique(values) { return [...new Set(values)]; }
 function actorAssets() {
   const bodyAssets = body.STATES.map(body.stateSrc)
     .concat(Object.keys(body.MOTION_FRAMES).map(body.motionFrameSrc))
-    .concat(Object.values(body.INTERACTIONS).flatMap((entry) => entry.pairFrames.map(body.pairFrameSrc)));
+    .concat(Object.values(body.INTERACTIONS).flatMap((entry) => entry.pairFrames.map((frame) => body.pairFrameSrc(frame))));
   const recoveryAssets = recovery.STATES.map(recovery.stateSrc)
     .concat(Object.keys(recovery.MOTION_FRAMES).map(recovery.motionFrameSrc))
-    .concat(Object.values(recovery.INTERACTIONS).flatMap((entry) => entry.pairFrames.map(recovery.pairFrameSrc)));
+    .concat(Object.values(recovery.INTERACTIONS).flatMap((entry) => entry.pairFrames.map((frame) => recovery.pairFrameSrc(frame))));
   const resourceAssets = resources.STATES.map(resources.stateSrc)
     .concat(Object.values(resources.SOLO).flatMap((entry) => entry.frames.map(resources.assetSrc)))
-    .concat(Object.values(resources.INTERACTIONS).flatMap((entry) => entry.frames.map(resources.pairSrc)));
+    .concat(Object.values(resources.INTERACTIONS).flatMap((entry) => entry.frames.map((frame) => resources.pairSrc(frame))));
   return unique(bodyAssets.concat(recoveryAssets, resourceAssets)).map(assetPath);
 }
 
@@ -234,7 +234,7 @@ test('frame switches have no empty interval and portal hands directly to reading
   assert.match(css, /body-pair-v2\.is-active[\s\S]{0,260}transition: transform \.24s/);
   assert.match(css, /recovery-pair-v2\.is-active[\s\S]{0,120}transition: none/);
   assert.match(room, /async function transition/);
-  assert.match(app, /preload\('bench-read'\)[\s\S]*onExtract: beginReading/);
+  assert.match(app, /preload\('bench-read', \{ gender \}\)[\s\S]*onExtract: beginReading/);
   assert.match(css, /is-den-prop-portal-reaching:not\(\.is-den-prop-portal-extracting\) \.traveller-room-v4/);
   assert.match(css, /denPropPortalOpenV4 3\.7s/);
   assert.match(css, /30%,84% \{ opacity: 1; transform: scale\(1\); \}/);
@@ -251,20 +251,20 @@ test('room depth owns travel scale while in-place acting stays on a fixed host',
   assert.match(css, /recovery-pair-v2\[data-mode="stretch"\][\s\S]*translateY\(11\.5%\)/);
 });
 
-test('v160 shell revision and cache-busting are coherent', () => {
+test('v165 shell revision and cache-busting are coherent', () => {
   const index = read('public/index.html');
   const sw = read('public/sw.js');
-  assert.match(sw, /const CACHE = 'satoru-v164'/);
+  assert.match(sw, /const CACHE = 'satoru-v165'/);
   for (const script of ['body-toad-v1', 'resources-penguin-v1', 'traveller-room-v4']) {
-    assert.match(index, new RegExp(`${script}\\.js\\?v=20260812-lair-actors-v154-2`));
+    assert.match(index, new RegExp(`${script}\\.js\\?v=20260818-traveller-gender-v165-1`));
   }
   assert.match(index, /den-life-v1\.js\?v=20260815-den-life-v158-1/);
   assert.match(index, /den-stage-v1\.js\?v=20260815-den-life-v158-1/);
-  assert.match(index, /recovery-slug-v1\.js\?v=20260814-lair-actors-v155-1/);
-  assert.match(index, /shadow-den-v1\.js\?v=20260815-shadow-pet-v160-1/);
+  assert.match(index, /recovery-slug-v1\.js\?v=20260818-traveller-gender-v165-1/);
+  assert.match(index, /shadow-den-v1\.js\?v=20260818-traveller-gender-v165-1/);
   assert.match(index, /den-pet-pair-v1\.js\?v=20260815-shadow-pet-v160-1/);
   assert.match(index, /styles\.css\?v=20260818-onboarding-language-v164-1/);
-  assert.match(index, /app\.js\?v=20260818-onboarding-language-v164-1/);
+  assert.match(index, /app\.js\?v=20260818-traveller-gender-v165-1/);
   assert.doesNotMatch(sw, /recovery-slug-v1\/pair-v2\/stretch-b\.png/);
   assert.match(sw, /recovery-slug-v1\/pair-v3\/stretch-soft-b-v155\.png/);
 });

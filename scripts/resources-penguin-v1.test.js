@@ -16,6 +16,22 @@ function pngInfo(file) {
 }
 
 assert.equal(penguin.VERSION, '1.1.0');
+assert.deepEqual(penguin.TRAVELLER_GENDERS, ['male', 'female']);
+assert.deepEqual(penguin.AUTHORED_PAIR_GENDERS, ['male']);
+assert.equal(penguin.normalizeTravellerGender(), 'male');
+assert.equal(penguin.normalizeTravellerGender('female'), 'female');
+assert.equal(penguin.normalizeTravellerGender('unknown'), null);
+assert.equal(penguin.normalizeTravellerGender(''), null);
+assert.equal(penguin.normalizeTravellerGender(null), null);
+assert.equal(penguin.hasPairArt('male'), true);
+assert.equal(penguin.hasPairArt('female'), false);
+assert.equal(penguin.hasPairArt('unknown'), false);
+assert.equal(penguin.pairSrc('greet-contact'), '/art/pets/resources-penguin-v1/pair-v1/greet-contact.png?v=20260807-1');
+assert.equal(penguin.pairSrc('greet-contact', 'female'), '/art/pets/resources-penguin-v1/pair-v1/female/greet-contact.png?v=20260807-1');
+assert.equal(penguin.pairSrc('greet-contact', ''), null);
+assert.match(penguin.pairMarkup({ gender: 'female' }), /data-traveller-gender="female"/);
+assert.equal(penguin.pairMarkup({ gender: '' }), '');
+assert.equal(penguin.pairMarkup(null), '');
 assert.deepEqual(penguin.STATES, ['calm', 'thriving', 'strained', 'restoring']);
 assert.equal(penguin.stateFromPetState('hungry'), 'strained');
 assert.equal(penguin.stateFromPetState('full'), 'thriving');
@@ -59,4 +75,69 @@ assert.match(styles, /resourcesWaddleA/);
 assert.match(fs.readFileSync(path.join(root, 'public/index.html'), 'utf8'), /resources-penguin-v1\.js/);
 assert.match(fs.readFileSync(path.join(root, 'public/sw.js'), 'utf8'), /resources-penguin-v1\/pair-v1\/focus-work\.png/);
 
-console.log('MONEY / RESOURCES Guardian v1: contract checks passed');
+const blockedClasses = new Set(['is-active']);
+const inertClassList = {
+  add(...names) { names.forEach((name) => blockedClasses.add(name)); },
+  remove(...names) { names.forEach((name) => blockedClasses.delete(name)); },
+};
+const blockedAttributes = { 'aria-hidden': 'false' };
+const blockedStage = { cleared: false, replaceChildren() { this.cleared = true; } };
+const blockedPair = {
+  dataset: {},
+  isConnected: true,
+  classList: inertClassList,
+  setAttribute(name, value) { blockedAttributes[name] = String(value); },
+  querySelector(selector) { return selector === '.resources-pair-v1__stage' ? blockedStage : null; },
+};
+const blockedScope = {
+  classList: inertClassList,
+  querySelector(selector) { return selector === '[data-resources-pair-v1]' ? blockedPair : null; },
+};
+
+class FailingImage {
+  constructor() { this.listeners = {}; this.complete = false; this.naturalWidth = 0; }
+  addEventListener(type, handler) { this.listeners[type] = handler; }
+  set src(value) {
+    this._src = value;
+    queueMicrotask(() => (this.listeners.error ? this.listeners.error() : this.onerror && this.onerror()));
+  }
+  get src() { return this._src; }
+}
+
+(async () => {
+  assert.equal(await penguin.playPair(blockedScope, 'greet', { gender: 'female' }), false);
+  assert.equal(blockedStage.cleared, true);
+  assert.equal(blockedPair.dataset.travellerGender, 'female');
+
+  blockedStage.cleared = false;
+  assert.equal(await penguin.playPair(blockedScope, 'greet', { gender: '' }), false);
+  assert.equal(blockedStage.cleared, true);
+  assert.equal('travellerGender' in blockedPair.dataset, false);
+
+  const malePrefetch = await penguin.prefetch();
+  const femalePrefetch = await penguin.prefetch({ gender: 'female' });
+  const invalidPrefetch = await penguin.prefetch({ gender: '' });
+  const isPair = (result) => String(result.value || '').includes('/pair-v1/');
+  assert.equal(malePrefetch.some(isPair), true);
+  assert.equal(femalePrefetch.some(isPair), false);
+  assert.equal(invalidPrefetch.some(isPair), false);
+
+  const originalImage = global.Image;
+  global.Image = FailingImage;
+  blockedStage.cleared = false;
+  blockedClasses.add('is-active');
+  blockedAttributes['aria-hidden'] = 'false';
+  try {
+    assert.equal(await penguin.playPair(blockedScope, 'greet', { gender: 'male' }), false);
+  } finally {
+    if (originalImage === undefined) delete global.Image;
+    else global.Image = originalImage;
+  }
+  assert.equal(blockedStage.cleared, true);
+  assert.equal(blockedClasses.has('is-active'), false);
+  assert.equal(blockedAttributes['aria-hidden'], 'true');
+  console.log('MONEY / RESOURCES Guardian v1: contract checks passed');
+})().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
