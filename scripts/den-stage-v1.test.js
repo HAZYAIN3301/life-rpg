@@ -86,8 +86,9 @@ assert.match(css, /recoverySlugTourAway[\s\S]*translate: 0 -18%/);
 assert.match(css, /is-energy-tired\.is-energy-motion-active/);
 assert.match(read('public/app.js'), /function syncDenViewportGate\(\)/);
 assert.match(read('public/app.js'), /function pauseDenSceneForViewport\(shell\)/);
-assert.match(read('public/app.js'), /function denLifeCanAct\(shell\)[\s\S]*energyPct\(\) <= 30/);
-assert.match(read('public/app.js'), /options\.automatic && \(energyPct\(\) <= 30/);
+// v161: «устал» больше не значит «полоска низкая» — оно значит «сегодня сделано много».
+assert.match(read('public/app.js'), /function denLifeCanAct\(shell\)[\s\S]*dayLoadTired\(\)/);
+assert.match(read('public/app.js'), /options\.automatic && \(dayLoadTired\(\)/);
 assert.match(read('public/app.js'), /isCurrent: \(\) => denSceneActionCurrent\(token\)/);
 assert.match(read('public/index.html'), /den-stage-v1\.js\?v=20260815-den-life-v158-1/);
 const swCache = read('public/sw.js').match(/const CACHE = 'satoru-v(\d+)'/);

@@ -600,6 +600,19 @@ const I18N_EXTRA = {
   '🔕 Напоминания выключены': { en: '🔕 Reminders off', de: '🔕 Erinnerungen aus', uk: '🔕 Нагадування вимкнені', es: '🔕 Recordatorios desactivados' },
   '🔔 Напоминания включены · работают пока вкладка открыта': { en: '🔔 Reminders on · they work while this tab stays open', de: '🔔 Erinnerungen an · sie laufen, solange dieser Tab offen bleibt', uk: '🔔 Нагадування увімкнені · працюють поки вкладка відкрита', es: '🔔 Recordatorios activados · funcionan mientras esta pestaña siga abierta' },
   'Нужно разрешить уведомления в браузере': { en: 'Allow notifications in your browser first', de: 'Erlaube zuerst Benachrichtigungen im Browser', uk: 'Потрібно дозволити сповіщення в браузері', es: 'Primero permite las notificaciones en tu navegador' },
+  // ── v161 17.08: нагрузка дня вместо выдуманной шкалы энергии ──
+  'Нагрузка дня': { en: 'Day load', de: 'Tagesbelastung', uk: 'Навантаження дня', es: 'Carga del día' },
+  'день лёгкий': { en: 'a light day', de: 'ein leichter Tag', uk: 'день легкий', es: 'un día ligero' },
+  'обычный день': { en: 'an ordinary day', de: 'ein gewöhnlicher Tag', uk: 'звичайний день', es: 'un día normal' },
+  'нагруженный день': { en: 'a loaded day', de: 'ein voller Tag', uk: 'навантажений день', es: 'un día cargado' },
+  'много для одного дня': { en: 'a lot for one day', de: 'viel für einen Tag', uk: 'багато для одного дня', es: 'mucho para un solo día' },
+  'ещё присматриваюсь': { en: 'still getting to know you', de: 'ich schau noch hin', uk: 'ще придивляюся', es: 'todavía te estoy conociendo' },
+  'сделано сегодня': { en: 'done today', de: 'heute erledigt', uk: 'зроблено сьогодні', es: 'hecho hoy' },
+  'Слева — сегодня, справа — твой обычный день.': { en: 'On the left is today, on the right is your ordinary day.', de: 'Links ist heute, rechts dein gewöhnlicher Tag.', uk: 'Ліворуч — сьогодні, праворуч — твій звичайний день.', es: 'A la izquierda hoy, a la derecha tu día normal.' },
+  'Обычный день определится, когда наберётся история.': { en: 'Your ordinary day will be worked out once there is enough history.', de: 'Dein gewöhnlicher Tag ergibt sich, sobald genug Verlauf da ist.', uk: 'Звичайний день визначиться, коли набереться історія.', es: 'Tu día normal se calculará cuando haya suficiente historial.' },
+  'Сколько закрыто сегодня по сравнению с твоим обычным днём. Норма считается по твоей же истории и меняется вместе с тобой. Ни на что не влияет и ничего не блокирует — это зеркало, а не счётчик.': { en: 'How much you closed today compared with your own ordinary day. The baseline comes from your own history and moves as you do. It affects nothing and blocks nothing — it is a mirror, not a meter.', de: 'Wie viel du heute geschafft hast, verglichen mit deinem gewöhnlichen Tag. Der Richtwert kommt aus deinem eigenen Verlauf und verschiebt sich mit dir. Er beeinflusst nichts und blockiert nichts — ein Spiegel, kein Zähler.', uk: 'Скільки закрито сьогодні порівняно з твоїм звичайним днем. Норма рахується з твоєї ж історії і змінюється разом з тобою. Ні на що не впливає і нічого не блокує — це дзеркало, а не лічильник.', es: 'Cuánto has cerrado hoy comparado con tu día normal. La referencia sale de tu propio historial y se mueve contigo. No afecta ni bloquea nada: es un espejo, no un contador.' },
+  'Сегодня сделано заметно больше обычного. Остановиться сейчас — не слабость, а расчёт: завтра тоже день.': { en: 'Today is noticeably fuller than usual. Stopping now is not weakness, it is arithmetic: tomorrow is a day too.', de: 'Heute war deutlich mehr los als sonst. Jetzt aufzuhören ist keine Schwäche, sondern Rechnen: morgen ist auch ein Tag.', uk: 'Сьогодні зроблено помітно більше, ніж зазвичай. Зупинитися зараз — не слабкість, а розрахунок: завтра теж день.', es: 'Hoy has hecho bastante más de lo habitual. Parar ahora no es debilidad, es cálculo: mañana también es un día.' },
+  'Расчёт Кремня': { en: 'Flint\'s reckoning', de: 'Feuerstein-Abrechnung', uk: 'Розрахунок Кременя', es: 'Ajuste de Pedernal' },
   // ── v160 17.08: выгрузка для разбора чужого сбоя ──
   'Выгрузить для разбора сбоя': { en: 'Export for crash triage', de: 'Für Fehleranalyse exportieren', uk: 'Вивантажити для розбору збою', es: 'Exportar para analizar el fallo' },
   'Сначала выбери профиль в списке выше': { en: 'Pick a profile in the list above first', de: 'Wähle zuerst ein Profil in der Liste oben', uk: 'Спершу обери профіль у списку вище', es: 'Primero elige un perfil en la lista de arriba' },
@@ -3802,7 +3815,7 @@ const PATH_CONSEQUENCES = Object.freeze({
   ]),
 });
 // Поведенческий дефолт для не выбравших (null) — тёплый Доверие (бренд Satoru). Явный выбор различает грейс серии.
-const CONTROL = { energyPenaltyPer: 5, energyPenaltyCap: 15, oathGold: 25 }; // штраф: −5 энергии/дедлайн, кап −15/сутки; oathGold — ставка «Клятвы Кремню»
+const CONTROL = { goldPenaltyPer: 5, goldPenaltyCap: 15, oathGold: 25 }; // штраф: −5 энергии/дедлайн, кап −15/сутки; oathGold — ставка «Клятвы Кремню»
 function currentPath() { return (State.settings && State.settings.path === 'control') ? 'control' : 'trust'; }
 function pathIdValid(id) { return id === 'trust' || id === 'control'; }
 function pathChosen() { return !!(State.settings && (State.settings.path === 'trust' || State.settings.path === 'control')); }
@@ -5252,7 +5265,7 @@ function completeTask(task, desire, onDate) {
     task.goldAwarded = Math.round(task.goldAwarded * 1.5); task.oath.kept = true;
     setTimeout(() => { try { toast('⚔️ ' + t(FLINT_LINES.oathKept[Math.floor(Math.random() * FLINT_LINES.oathKept.length)])); } catch {} }, 1200);
   }
-  const eDelta = task.entry ? 0 : applyEnergy(task, desire);
+
   // 🔴 Персист СРАЗУ: энергия уже списана — квест обязан быть сохранён раньше любой косметики
   // (нарратор/тосты/звук). Иначе сбой в UI-слое стоит игроку выполненного квеста.
   Store.save('tasks', State.tasks);
@@ -5264,7 +5277,6 @@ function completeTask(task, desire, onDate) {
   let msg = task.entry
     ? `🕯 +${task.goldAwarded} 🪙 · 💛 ${t('связь')} +2 — ${t(dayPick('entrydone', ENTRY_DONE_LINES))}`
     : `+${task.xpAwarded} XP · +${task.goldAwarded} 🪙${sk ? ' · ' + sk.name : ''}`;
-  if (eDelta) msg += ` · ${eDelta > 0 ? '+' : ''}${eDelta} 🔋`;
   if (systemMode()) systemNarrate(task.entry ? 'ЗАХОД СОВЕРШЁН' : 'КВЕСТ ВЫПОЛНЕН', task.entry ? msg : `${msg} — ${t(systemVoice('quest'))}`); else toast(msg);
   if (desire === 'forced' || desire === 'hyped') toast(t('Состояние отмечено. XP, золото и энергия не меняются от самооценки.'));
   const lvlNow = charLevel();
@@ -6660,7 +6672,7 @@ function playDenRoomLayerAndReturn(shell, host, actionId, walkOptions, isCurrent
 function runDenRoomAction(actionId, options = {}) {
   const shell = document.querySelector('.den-shell');
   if (State.view !== 'den' || !shell || !window.TravellerRoomV4) return Promise.resolve(false);
-  if (options.automatic && (energyPct() <= 30 || shell.classList.contains('is-den-offscreen'))) return Promise.resolve(false);
+  if (options.automatic && (dayLoadTired() || shell.classList.contains('is-den-offscreen'))) return Promise.resolve(false);
   return runDenSceneAction(shell, `room:${actionId}`, async (token) => {
     if (!options.automatic && window.DenLifeV1) window.DenLifeV1.postpone(shell, 11000);
     clearDenAvatarWanderTimer();
@@ -6715,14 +6727,14 @@ function runDenRoomAction(actionId, options = {}) {
 }
 function scheduleDenAvatarWander(delay = 16000) {
   clearDenAvatarWanderTimer();
-  if (State.view !== 'den' || avatarMotionReduced() || energyPct() <= 30) return;
+  if (State.view !== 'den' || avatarMotionReduced() || dayLoadTired()) return;
   _denAvatarWanderTimer = setTimeout(() => runDenAvatarWindowVisit({ automatic: true, reschedule: true }), delay);
 }
 function runDenAvatarWindowVisit(options = {}) {
   clearDenAvatarWanderTimer();
   const host = document.querySelector('.den-avatar-core');
   const shell = host && host.closest('.den-shell');
-  if (State.view !== 'den' || !host || !shell || !window.TravellerMotionV3 || avatarMotionReduced() || (options.automatic && (energyPct() <= 30 || shell.classList.contains('is-den-offscreen')))) {
+  if (State.view !== 'den' || !host || !shell || !window.TravellerMotionV3 || avatarMotionReduced() || (options.automatic && (dayLoadTired() || shell.classList.contains('is-den-offscreen')))) {
     if (options.reschedule !== false) scheduleDenAvatarWander(6500);
     return Promise.resolve(false);
   }
@@ -6745,7 +6757,7 @@ function runDenAvatarWindowVisit(options = {}) {
 }
 function syncAvatarMotion() {
   clearDenAvatarWanderTimer();
-  if (State.view !== 'den' || avatarMotionReduced() || energyPct() <= 30) return;
+  if (State.view !== 'den' || avatarMotionReduced() || dayLoadTired()) return;
   const host = document.querySelector('.den-avatar-core');
   const shell = document.querySelector('.den-shell');
   const roomAction = window.TravellerRoomV4 && window.TravellerRoomV4.isPlaying(shell);
@@ -6772,7 +6784,7 @@ function denLifeContext() {
 
 function denLifeCanAct(shell) {
   if (!shell || !shell.isConnected || State.view !== 'den' || document.hidden || avatarMotionReduced()) return false;
-  if (energyPct() <= 30 || shell.classList.contains('is-energy-tired') || shell.classList.contains('is-den-offscreen')) return false;
+  if (dayLoadTired() || shell.classList.contains('is-energy-tired') || shell.classList.contains('is-den-offscreen')) return false;
   if (denSceneBusy(shell)) return false;
   const sceneRect = shell.querySelector('.den-scene')?.getBoundingClientRect();
   if (sceneRect && (sceneRect.bottom <= 0 || sceneRect.top >= window.innerHeight)) return false;
@@ -7082,7 +7094,7 @@ function syncDenLife() {
       ready: () => Number(window.DenLifeV1.inspect()?.step || 0) >= 4,
       canAct: () => denLifeCanAct(shell),
       context: () => ({
-        energyPct: energyPct(),
+        dayLoad: dayLoadNow().state,
         focusCanon: denLifeContext().focusCanon,
         residents: [hasBodyGuardian && 'body', hasRecoveryGuardian && 'recovery', hasResourcesGuardian && 'resources', hasShadow && 'shadow'].filter(Boolean),
         returning: false,
@@ -9352,81 +9364,41 @@ function ensureLootbox() {
 //  Логировать отдых/сон НЕ нужно. Это оценка по задачам; точные данные — позже через часы (Apple Watch/Garmin).
 //  Ёмкость (max) растёт по суперкомпенсации: нагрузка + отдых → адаптация.
 // ============================================================
-const ENERGY = { perHour: 7, maxFloor: 80, maxCeil: 220, grow: 2, shrink: 1, loadForGrowth: 12,
-  cost: { easy: 1, normal: 6, hard: 11 }, costCap: 45 }; // тяжёлый/длинный день заметнее тратит (фидбек: 10ч учёбы ≠ 85%)
-function ensureEnergy() {
-  const s = State.settings;
-  if (!s.energy) s.energy = { day: todayStr(), cur: 100, max: 100, loadToday: 0, hitZero: false, tickAt: Date.now() };
-  const e = s.energy, today = todayStr(), now = Date.now();
-  // Old profiles used `value` and may lack cur/max. Never let arithmetic turn
-  // those fields into NaN → JSON null during an otherwise valid habit commit.
-  if (!Number.isFinite(Number(e.max)) || Number(e.max) <= 0) e.max = 100;
-  if (e.cur == null || e.cur === '' || !Number.isFinite(Number(e.cur))) e.cur = Number.isFinite(Number(e.value)) ? Number(e.value) : e.max;
-  e.cur = Math.max(0, Math.min(e.max, Number(e.cur)));
-  if (!Number.isFinite(Number(e.loadToday))) e.loadToday = 0;
-  e.hitZero = !!e.hitZero;
-  if (!Number.isFinite(Number(e.tickAt)) || Number(e.tickAt) <= 0) e.tickAt = now;
-  let dirty = false;
-  // Пассивное восстановление по реальному времени — главный механизм отдыха (сон, паузы)
-  const elapsedH = (now - e.tickAt) / 3600000;
-  if (elapsedH > 0) { e.cur = Math.min(e.max, e.cur + ENERGY.perHour * elapsedH); e.tickAt = now; if (elapsedH > 0.05) dirty = true; }
-  if (e.day !== today) {
-    // Суперкомпенсация по вчерашнему дню: была нагрузка и не ушёл в ноль → ёмкость растёт; загнал в ноль → падает.
-    if (e.day) {
-      if (e.loadToday >= ENERGY.loadForGrowth && !e.hitZero) e.max = Math.min(ENERGY.maxCeil, e.max + ENERGY.grow);
-      else if (e.hitZero) e.max = Math.max(ENERGY.maxFloor, e.max - ENERGY.shrink);
-    }
-    e.loadToday = 0; e.hitZero = false; e.day = today; e.cur = Math.min(e.max, e.cur); dirty = true;
-  }
-  e.cur = Math.round(e.cur);
-  // Персист свежих tickAt/cur/max (раз в ~3 мин регена или на дневной сброс), чтобы шкала синкалась между устройствами
-  // (раньше регенерация жила только в памяти → device B грузил старое значение). Store.save дебаунсится.
-  if (dirty && State.phase === 'app') { try { Store.save('settings', State.settings); } catch {} }
-  return e;
+// ── Нагрузка дня вместо шкалы энергии (решение Альберта 17.08) ───────────────
+// Шкала энергии удалена: она ничего не мерила. 100 условных единиц, −6 за обычное дело,
+// +7 в час — это число, которое приложение придумало про человека, не спросив его тело.
+// Хуже того, полоска падала от ПРОСТОЯ: не заходил неделю — аватар «устал», хотя человек
+// как раз отдыхал. Без настоящего источника (Garmin, сон, пульс) честнее не показывать.
+//
+// На замену — две вещи, обе выведенные из реального поведения:
+//   сегодня  → dayLoadNow(): сколько закрыто против ОБЫЧНОГО дня самого человека;
+//   по сферам → petStats(): сытость питомца, уже считается из опыта сферы за 10 дней,
+//               и сложность в неё уже входит через множитель XP.
+// Норма берётся из того же typicalDone(), которым живут контекст провала и подсказка
+// после срыва — второго расчёта «обычного дня» в проекте быть не должно.
+function dayLoadNow(today) {
+  const day = today || todayStr();
+  const D = window.DayLoadV1;
+  if (!D) return { state: 'unknown', done: 0, typical: null, ratio: null, known: false };
+  let typical = null, done = 0;
+  try {
+    const history = arenaDayHistory(day);
+    const F = window.FailureContextV1;
+    if (F && typeof F.typicalDone === 'function') typical = F.typicalDone(history);
+    const todayRow = history.find((d) => d.date === day);
+    done = todayRow ? todayRow.doneCount : 0;
+  } catch { /* нет истории — модуль честно ответит «не знаю» */ }
+  return D.dayLoad({ done, typical });
 }
-function energyPct() { const e = ensureEnergy(); return e.max ? Math.round(e.cur / e.max * 100) : 0; }
-function energyMeta() {
-  const p = energyPct();
-  if (p >= 60) return { color: '#5fbf7a', text: 'свежесть', icon: '🔋' };
-  if (p >= 25) return { color: '#e0a23e', text: 'на исходе', icon: '🔋' };
-  return { color: '#e0526a', text: 'нужен отдых', icon: '🪫' };
-}
-// Множитель траты энергии по «желанию» (фидбек #6 + наука):
-//  forced (через силу) → дороже: волевое усилие против сопротивления истощает сильнее (ego depletion, Baumeister).
-//  hyped (в кураже)     → дешевле: добровольный челлендж/поток менее истощающ (flow, Csikszentmihalyi).
-//  neutral/обычный      → база: устойчивая «золотая середина» десятиборья.
-const DESIRE_ENERGY = { forced: 1, hyped: 1 };
-// Применяем энергию при выполнении квеста/привычки (только трата; восстановление — пассивное по времени).
-// Восстановительные дела (сон/отдых/медитация/прогулка/растяжка/баня…) — АКТИВНО дают энергию (фидбек #14).
-// Без \b — он в JS работает только для ASCII и ломает матч кириллицы. Стемы достаточно различимы.
-const ENERGY_RESTORE_RE = /(сон|поспат|выспат|вздремн|отдых|отдохн|релакс|медитац|дыхани|прогул|растяж|разминк|мобилк|баня|сауна|массаж|ванна|nap|sleep|relax|medit|walk|stretch|yoga|йога)/i;
-function isRestActivity(it) { return ENERGY_RESTORE_RE.test(normRu(it.title || '')); }
-function habitEnergyChange(it, settings, desire) {
-  const e = settings.energy, min = Number(it.estimateMin) || 0;
-  const before = { cur: e.cur, loadToday: e.loadToday, hitZero: e.hitZero };
-  let delta;
-  if (isRestActivity(it)) {
-    // отдых пополняет энергию (мягко, по длительности) — даёт агентность поверх пассивного восстановления
-    delta = Math.min(ENERGY.costCap, Math.max(6, Math.round(min / 30 * 12)));
-    e.cur = Math.min(e.max, e.cur + delta);
-  } else {
-    const w = ENERGY.cost[it.difficulty] ?? ENERGY.cost.normal, m = DESIRE_ENERGY[desire] || 1;
-    delta = -Math.min(ENERGY.costCap, Math.round(w * Math.max(0.5, min / 30) * m));
-    e.loadToday += -delta;
-    e.cur = Math.max(0, e.cur + delta);
-    if (e.cur <= 0) e.hitZero = true;
-    const back = skillPerks(it.skillId).energyBack || 0; // перк древа: частичный возврат энергии за квест в прокачанной сфере
-    if (back) { e.cur = Math.min(e.max, e.cur + back); delta += back; }
-  }
-  return { delta: e.cur - before.cur, loadDelta: e.loadToday - before.loadToday, hitZeroBefore: before.hitZero };
-}
-function habitEnergyDelta(it, settings, desire) { return habitEnergyChange(it, settings, desire).delta; }
-function applyEnergy(it, desire) {
-  ensureEnergy();
-  const delta = habitEnergyDelta(it, State.settings, desire);
-  Store.save('settings', State.settings);
-  return delta;
-}
+function dayLoadTired() { const D = window.DayLoadV1; return !!(D && D.isTired(dayLoadNow())); }
+const DAY_LOAD_META = {
+  light:   { color: '#5fbf7a', text: 'день лёгкий' },
+  normal:  { color: '#5fbf7a', text: 'обычный день' },
+  heavy:   { color: '#e0a23e', text: 'нагруженный день' },
+  over:    { color: '#e0526a', text: 'много для одного дня' },
+  unknown: { color: '#8b97b5', text: 'ещё присматриваюсь' },
+};
+function dayLoadMeta(load) { return DAY_LOAD_META[(load && load.state) || 'unknown'] || DAY_LOAD_META.unknown; }
 // Ежедневный «расчёт» Контроля: пропущенные дедлайны бьют по ЭНЕРГИИ (только себе, никогда по пати — урок Habitica).
 // Каждый пропущенный дедлайн заряжается ОДИН раз (не компаундится день за днём), суммарно ограничено CONTROL.energyPenaltyCap.
 // Прозрачно, без стыда — «ты выбрал этот путь». Trust/не-выбравшие — не трогаем.
@@ -9440,9 +9412,13 @@ function pathReckoning() {
   // Дедлайны, ставшие просроченными в окне (prev..today) и всё ещё не выполненные — каждый заряжается однократно
   const missed = (State.tasks || []).filter((x) => taskOverdue(x, today) && x.date >= prev).length;
   if (missed <= 0) { Store.save('settings', State.settings); return 0; }
-  const e = ensureEnergy();
-  const pen = Math.min(CONTROL.energyPenaltyCap, missed * CONTROL.energyPenaltyPer);
-  e.cur = Math.max(0, e.cur - pen);
+  // Раньше штраф списывался с выдуманной шкалы энергии. Её больше нет, и это к лучшему:
+  // золото — настоящий заработанный ресурс, а сгоревшая клятва уже жжёт именно его. Один
+  // путь, одна валюта, один понятный механизм.
+  const pen = Math.min(CONTROL.goldPenaltyCap, missed * CONTROL.goldPenaltyPer);
+  State.purchases = State.purchases || [];
+  State.purchases.push({ id: 'reckon_' + today, title: '⚔️ ' + t('Расчёт Кремня') + ': ' + missed, cost: pen, at: new Date().toISOString() });
+  Store.save('purchases', State.purchases);
   Store.save('settings', State.settings);
   // Голос Кремня: факты + требование, ноль стыда (жёстко о деле — никогда о личности)
   try {
@@ -10919,22 +10895,14 @@ function habitUndoHTML() {
 async function transactHabitCompletion(h) {
   const key = `habit:${h.id}`; if (State._habitTxnBusy || State._habitsLoadError) return;
   const day = habitDayKey(), wasDone = !!(State.habitlog[day] && State.habitlog[day][h.id]);
-  ensureEnergy(); clearTimeout(Store._timers.settings);
+  clearTimeout(Store._timers.settings);
   const beforeLog = structuredClone(State.habitlog), beforeSettings = structuredClone(State.settings);
   const nextLog = structuredClone(beforeLog), nextSettings = structuredClone(beforeSettings);
   nextLog[day] = nextLog[day] || {};
-  let energyDelta = 0;
   if (wasDone) {
-    const record = nextLog[day][h.id], energy = record && record.energy;
-    if (energy && typeof energy === 'object') {
-      nextSettings.energy.cur = Math.max(0, Math.min(nextSettings.energy.max, nextSettings.energy.cur - (Number(energy.delta) || 0)));
-      nextSettings.energy.loadToday = Math.max(0, nextSettings.energy.loadToday - (Number(energy.loadDelta) || 0));
-      if (energy.hitZeroBefore !== undefined) nextSettings.energy.hitZero = !!energy.hitZeroBefore;
-    }
     delete nextLog[day][h.id]; if (!Object.keys(nextLog[day]).length) delete nextLog[day];
   } else {
-    const energy = habitEnergyChange(h, nextSettings); energyDelta = energy.delta;
-    nextLog[day][h.id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString(), energy };
+    nextLog[day][h.id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() };
   }
   State._habitTxnBusy = key; State._habitError = ''; render();
   const saved = await habitDataCommit({ habitlog: nextLog, settings: nextSettings });
@@ -10948,7 +10916,7 @@ async function transactHabitCompletion(h) {
   State._habitsFocusAfterCommit = '[data-action="habit-undo"]';
   if (!wasDone) {
     track('complete:habit'); const hsk = skillById(h.skillId);
-    toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${hsk.name}${energyDelta ? ` · ${energyDelta > 0 ? '+' : ''}${energyDelta} 🔋` : ''}`);
+    toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${hsk.name}`);
     bossHitFeedback(bossHitCheck('habit', h, { sphereName: hsk ? hsk.name : '' }));
     if (window.ShadowRig) window.ShadowRig.setTransient('happy', 900);
     triggerAvatarReaction('happy', 'Привычка ✓');
@@ -12077,7 +12045,7 @@ function boundarySignals() {
   const hadRunBefore = allEv.some((e) => e.date <= addDays(today, -(quiet + 1)));
   return {
     nightdebt: debtDays.length,
-    noend: lateDone.length >= 4 && energyPct() < 45 ? lateDone.length : 0,
+    noend: lateDone.length >= 4 && dayLoadTired() ? lateDone.length : 0,
     norest: (closed >= 5 && restGap >= 6) ? restGap : 0,
     nostart: (created >= 8 && closed / created < 0.4) ? Math.round((1 - closed / created) * 10) : 0,
     weekend: (weekdayDays.size >= 6 && weekendDays.size === 0) ? weekdayDays.size : 0,
@@ -12100,7 +12068,7 @@ function buildWeekContext() {
   for (const e of ev) { const n = e.skillId ? (skillById(e.skillId).name) : '—'; bySphere[n] = bySphere[n] || { xp: 0, min: 0 }; bySphere[n].xp += e.xp; bySphere[n].min += e.min; }
   const sphereLines = Object.entries(bySphere).sort((a, b) => b[1].min - a[1].min).map(([n, v]) => `  ${n}: ${fmtDur(v.min)}, ${v.xp} XP`).join('\n') || '  (нет активности)';
   const bal = balanceIndex();
-  const en = ensureEnergy();
+  const load = dayLoadNow();
   const goals = (State.goals || []).filter((g) => !g.archived).map((g) => `  ${g.title} — ${goalStatusInfo(g).txt}${g.metric ? ` (${g.metric.current}/${g.metric.target}${g.metric.unit ? ' ' + g.metric.unit : ''})` : ''}`).join('\n') || '  (нет целей)';
   const radar = sphereScores().map((s) => `${s.name} ур.${s.value}`).join(', ');
   // Честное состояние (кирпич 2 AI-STRATEGY): баланс/уровни считаются по сфере и не видят разницы
@@ -12127,7 +12095,7 @@ function buildWeekContext() {
   // Anti-habit titles and derived streaks stay private by default. They are not
   // required to explain weekly time/energy and must never enter an AI prompt
   // without a separate, explicit disclosure and consent surface.
-  return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nЭнергия сейчас: ${en.cur}/${en.max} (потолок ${en.max} — растёт от суперкомпенсации, падает при выгорании)\nЧестное состояние отдыха: ${restLine} (ищется по тексту дел, не по сфере — тренировка ≠ отдых, даже если оба в «Здоровье»)\nРадар сфер: ${radar}\nЦели:\n${goals}${reflBlock}${wkBlock}${bpBlock}`;
+  return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nСегодня закрыто: ${load.done}${load.known ? ` при обычных ${load.typical} (${dayLoadMeta(load).text})` : ' (обычный день ещё не известен — мало наблюдений)'}\nЧестное состояние отдыха: ${restLine} (ищется по тексту дел, не по сфере — тренировка ≠ отдых, даже если оба в «Здоровье»)\nРадар сфер: ${radar}\nЦели:\n${goals}${reflBlock}${wkBlock}${bpBlock}`;
 }
 async function runWeeklyReview() {
   if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; render(); return; }
@@ -12424,8 +12392,8 @@ function proposeContext() {
   const goals = (State.goals || []).filter((g) => !g.archived).map((g) => g.title).slice(0, 40).join('; ');
   // Фон состояния (Джарвис-слой): помогает ИИ соизмерять масштаб предложений с реальной нагрузкой.
   // Явно помечен «НЕ превращать в предложения» — иначе движок начнёт сочинять цели из самого фона.
-  const en = ensureEnergy();
-  return `Сферы: ${spheres || '(нет)'}\nЦели: ${goals || '(нет)'}\nФОН (учитывай масштаб и нагрузку, но НЕ превращай сам фон в предложения): энергия ${en.cur}/${en.max}; ${restStateLine()}`;
+  const load = dayLoadNow();
+  return `Сферы: ${spheres || '(нет)'}\nЦели: ${goals || '(нет)'}\nФОН (учитывай масштаб и нагрузку, но НЕ превращай сам фон в предложения): сегодня закрыто ${load.done}${load.known ? ` при обычных ${load.typical}` : ''}; ${restStateLine()}`;
 }
 function openProposeModal(kind, prefill) {
   _proposals = [];
@@ -12690,14 +12658,14 @@ function stateNowContext() {
   const doneN = todays.filter((x) => x.done).length;
   const left = todays.filter((x) => !x.done).slice(0, 3).map((x) => `«${x.title}»`).join(', ');
   const overdue = (State.tasks || []).filter((x) => taskOverdue(x, today));
-  const en = ensureEnergy();
+  const load = dayLoadNow();
   const hb = todaysHabits(), hbDone = hb.filter((h) => habitDone(h, today)).length;
   const dls = (State.goals || []).filter((g) => !g.archived && !g.completedAt && g.targetDate)
     .sort((a, b) => (a.targetDate < b.targetDate ? -1 : 1)).slice(0, 3)
     .map((g) => { const dl = Math.round((parseDate(g.targetDate) - parseDate(today)) / 86400000); return `«${g.title}» — ${dl < 0 ? `просрочена на ${-dl} дн.` : `через ${dl} дн.`}`; });
   return `СОСТОЯНИЕ СЕЙЧАС (живые данные юзера, не выдумка):
   Сегодня: квестов ${doneN}/${todays.length}${left ? ` · осталось: ${left}` : ''} · привычек ${hbDone}/${hb.length}${overdue.length ? ` · ПРОСРОЧЕНО с прошлых дней: ${overdue.length}` : ''}
-  Энергия: ${en.cur}/${en.max} · отдых: ${restStateLine()}${dls.length ? `\n  Ближайшие дедлайны целей: ${dls.join('; ')}` : ''}
+  Сегодня закрыто: ${load.done}${load.known ? ` при обычных ${load.typical}` : ''} · отдых: ${restStateLine()}${dls.length ? `\n  Ближайшие дедлайны целей: ${dls.join('; ')}` : ''}
   Серия: ${currentStreak()} дн. · открытая вкладка: ${State.view}`;
 }
 // ── Профиль-память (JARVIS-3-PLAN §2) ─────────────────────────────────────────
@@ -12719,7 +12687,7 @@ function profileFacts() {
   const goals = (State.goals || []).filter((g) => !g.archived && !g.completedAt).slice(0, 6)
     .map((g) => `«${g.title}»${g.targetDate ? ` — до ${g.targetDate}` : ''}`).join('\n');
   const bp = (typeof detectBoundaryPattern === 'function') ? detectBoundaryPattern() : null;
-  const en = ensureEnergy();
+  const load = dayLoadNow();
   // Дословные слова юзера — самый сильный сигнал (AI-STRATEGY), в пересказе теряются.
   const refl = Object.entries(State.days || {})
     .filter(([, v]) => v && v.reflection && String(v.reflection).trim())
@@ -12728,7 +12696,7 @@ function profileFacts() {
   return {
     lang: lang(), spheres, goals,
     pattern: bp ? `${bp.label}. ${bp.say}` : '',
-    state: `энергия ${en.cur}/${en.max} · ${restStateLine()} · серия ${currentStreak()} дн. (рекорд ${longestStreak()})`,
+    state: `сегодня закрыто ${load.done}${load.known ? ` при обычных ${load.typical}` : ''} · ${restStateLine()} · серия ${currentStreak()} дн. (рекорд ${longestStreak()})`,
     reflections: refl,
   };
 }
@@ -13284,11 +13252,11 @@ function compMood() {
   const c = ensureCompanion(), ti = compTierIdx(c.bond);
   const away = (typeof State._compAway === 'number') ? State._compAway : daysBetween(c.lastSeen || todayStr(), todayStr());
   const act = todayActivityCount(), hr = new Date().getHours();
-  const eP = (typeof energyPct === 'function') ? energyPct() : 100;
+  const tired = (typeof dayLoadTired === 'function') ? dayLoadTired() : false;
   const st = (typeof currentStreak === 'function') ? currentStreak() : 0;
   if (away >= 2) return { face: 'longing', line: compLine('longing', ti) };
   // v3: забота при истощении — тепло, без вины
-  if (eP < 22 && act > 0) return { face: 'caring', line: compLine('caring', ti) };
+  if (tired && act > 0) return { face: 'caring', line: compLine('caring', ti) };
   if (act >= 3) return { face: 'radiant', line: compLine('radiant', ti, { actP: act + ' ' + locThing(act, lang()) }) };
   if (st >= 3 && act >= 1) return { face: 'happy', line: compLine('streak', ti, { stP: st + ' ' + locDay(st, lang()) }) };
   const lonely = compLonelyPetName();
@@ -13805,7 +13773,7 @@ function recoverySlugState() {
   if (!window.RecoverySlugV1) return 'calm';
   return window.RecoverySlugV1.deriveState({
     restGapDays: restGapDays(),
-    energyPct: energyPct(),
+    dayLoad: dayLoadNow().state,
   });
 }
 function recoverySlugHTML(options = {}) {
@@ -14738,9 +14706,9 @@ function satoruRigSVG() {
     </g>
   </svg>`;
 }
-function denAvatarState(eP, p, tm) {
+function denAvatarState(load, p, tm) {
   if (tm) return 'focus';
-  if (eP <= 30) return 'tired';
+  if (window.DayLoadV1 && window.DayLoadV1.isTired(load)) return 'tired';
   if (p.dayTot && p.dayDone >= p.dayTot) return 'victory';
   if (p.dayDone > 0) return 'happy';
   return 'idle';
@@ -14845,11 +14813,11 @@ function renderDen() {
     : '';
   const bodyGuardian = pets.find((pet) => pet.species === 'bodyToad');
   const resourcesGuardian = pets.find((pet) => pet.species === 'resourcesPenguin');
-  const p = nestedProgress(), eP = energyPct(), eM = energyMeta(), tm = State.timer;
+  const p = nestedProgress(), load = dayLoadNow(), eM = dayLoadMeta(load), tm = State.timer;
   const lifeContext = denLifeContext();
   const bodyFocusActive = lifeContext.focusRunning && lifeContext.focusCanon === 'body';
   const resourcesFocusActive = lifeContext.focusRunning && lifeContext.focusCanon === 'money';
-  const avatarState = denAvatarState(eP, p, tm);
+  const avatarState = denAvatarState(load, p, tm);
   const avatarPose = denCorePose(avatarState);
   const amb = (State.settings && State.settings.ambient) || {};
   const ambientMode = amb.mode || 'off';
@@ -14931,7 +14899,7 @@ function renderDen() {
     <div class="den-console">
     <div class="den-life-strip">
       <div class="den-stats">
-        <span title="${t('Энергия')}">${satoruIconHTML('status.energy', 'den-stat-glyph', eM.icon)} ${eP}%</span>
+        <span title="${t('Нагрузка дня')}">${satoruIconHTML('status.energy', 'den-stat-glyph', '◔')} ${esc(t(eM.text))}</span>
         <span title="${t('Дела сегодня')}">${satoruIconHTML('system.day-end', 'den-stat-glyph', '◇')} ${p.dayDone}/${p.dayTot || 0}</span>
         <span title="${t('Серия')}">${satoruIconHTML('status.streak', 'den-stat-glyph', '◇')} ${p.streak}</span>
       </div>
@@ -15894,13 +15862,15 @@ function renderToday() {
         <div class="timer-task">${tm ? (tmTask ? satoruIconHTML('nav.today', 'timer-task-icon', '🎯') + ' ' + esc(tmTask.title) : '(задача удалена)') : t('Таймер фокуса — нажми ▶ у квеста')}</div></div>
       <div class="timer-controls">${tm ? `${tm.running ? `<button class="btn ghost" data-action="timer-pause">${t('⏸ Пауза')}</button>` : `<button class="btn" data-action="timer-resume">${t('▶ Продолжить')}</button>`}<button class="btn" data-action="timer-stop">${t('⏹ Стоп · записать')}</button><button class="btn ghost" data-action="open-pip" title="Плавающее окно поверх всех приложений">${t('↗ Окно')}</button>` : ''}</div></div>`;
 
-  // Энергия (идея 19) — индикатор нагрузки/восстановления
-  const en = ensureEnergy(), eP = energyPct(), eM = energyMeta();
-  const energyCard = `<div class="card energy-card" title="Энергия — индикатор нагрузки за день. Сложные квесты тратят. Восстановление ПАССИВНОЕ: идёт само по реальному времени (паузы, вечер, сон ночью) — логировать отдых не нужно. Не блокирует ничего, на XP не влияет. Ёмкость не бесконечна: потолок от 80 до 220 (сейчас у тебя ${en.max}) — растёт, когда чередуешь нагрузку и восстановление (как в тренировках), и падает, если постоянно загонять себя в ноль — это и есть выгорание. Это оценка по задачам — точнее будет позже через часы.">
-      <div class="en-head">${satoruIconHTML('status.energy', 'energy-emblem', eM.icon)}<b>${t('Энергия')}</b><span class="en-num" style="color:${eM.color}">${en.cur} / ${en.max}</span><span class="en-text muted">· ${eM.text}</span></div>
-      <div class="en-bar"><span style="width:${eP}%;background:${eM.color}"></span></div>
-      <p class="en-note muted">Восстанавливается сама со временем + дела вроде сна / прогулки / растяжки / медитации <b>пополняют</b> её · ≈ оценка по задачам, точнее с Apple Watch / Garmin (позже)</p></div>`;
-  const lowEnergyNudge = (eP < 25 && doneCount > 0) ? `<div class="card nudge-card en-low"><span class="nudge-boost">${satoruIconHTML('status.warning', 'inline-glyph', '🪫')} Много нагрузки сегодня. Отдых ценнее форсажа — энергия восстановится сама за паузами и ночью, а ёмкость вырастет.</span></div>` : '';
+  // Нагрузка дня вместо шкалы энергии. Карточка больше ничего не обещает про «ёмкость»
+  // и «суперкомпенсацию» — она сравнивает сегодня с обычным днём самого человека, и это
+  // единственное, что мы про его состояние действительно знаем.
+  const load = dayLoadNow(), eM = dayLoadMeta(load);
+  const energyCard = `<div class="card energy-card" title="${esc(t('Сколько закрыто сегодня по сравнению с твоим обычным днём. Норма считается по твоей же истории и меняется вместе с тобой. Ни на что не влияет и ничего не блокирует — это зеркало, а не счётчик.'))}">
+      <div class="en-head">${satoruIconHTML('status.energy', 'energy-emblem', '◔')}<b>${t('Нагрузка дня')}</b><span class="en-num" style="color:${eM.color}">${load.known ? `${load.done} / ${load.typical}` : String(load.done)}</span><span class="en-text muted">· ${esc(t(eM.text))}</span></div>
+      <div class="en-bar"><span style="width:${load.known ? Math.min(100, Math.round((load.ratio || 0) / 2 * 100)) : 0}%;background:${eM.color}"></span></div>
+      <p class="en-note muted">${load.known ? esc(t('Слева — сегодня, справа — твой обычный день.')) : esc(t('Обычный день определится, когда наберётся история.'))}</p></div>`;
+  const lowEnergyNudge = (window.DayLoadV1 && window.DayLoadV1.shouldSuggestStop(load)) ? `<div class="card nudge-card en-low"><span class="nudge-boost">${satoruIconHTML('status.warning', 'inline-glyph', '◔')} ${esc(t('Сегодня сделано заметно больше обычного. Остановиться сейчас — не слабость, а расчёт: завтра тоже день.'))}</span></div>` : '';
   // Честное состояние (fb #6): «тренируюсь → Здоровье растёт → баланс выглядит хорошим, хотя
   // явного отдыха давно не было». Показываем ТОЛЬКО когда набралась история (иначе на старте зря
   // пугаем нулём дней) и порог значим (≥4) — приглашение, не счётчик вины.
@@ -15981,7 +15951,7 @@ function renderToday() {
     ...todays.filter((x) => x.done && x.completedAt).map((x) => Date.parse(x.completedAt) || 0),
     ...Object.values(State.habitlog[today] || {}).map((h) => Date.parse(h.at) || 0));
   const entryStale = !lastActTs || (Date.now() - lastActTs > 90 * 60000);
-  const entryLow = eP < 45 && hrE >= 14;
+  const entryLow = !dayLoadTired() && hrE >= 14;
   // Гейт расширен (DISCIPLINE-BOUNDARIES-PLAN §6 п.3). Раньше дверь открывалась только вечером
   // или на низкой энергии — то есть лечила ровно паттерн 1 («вечер уплывает»). Но «не могу
   // начать» не явление 18:00: дело, которое обходят, обходят и в полдень. Поэтому если детектор
@@ -16088,9 +16058,10 @@ function renderToday() {
       : cs.total
         ? `${t('Закрой ядро — и день засчитан')}${cs.list.find((x) => !x.done) ? `: <b>${esc(cs.list.find((x) => !x.done).title)}</b>` : ''}`
         : nextQuest ? t('Сейчас лучше не смотреть на всю систему — закрой следующий квест.') : todays.length ? t('Основной список уже на месте. Добей хвосты, забери награды и закрой день спокойно.') : t('Начни с одного понятного действия. Остальные системы подождут за кулисами.');
+  const thLoad = dayLoadNow();
   const heroStats = [
     `<div class="th-stat"><b>${donePct}%</b><span>${t('готово')}</span></div>`,
-    `<div class="th-stat"><b>${eP}%</b><span>${t('энергия')}</span></div>`,
+    `<div class="th-stat"><b>${thLoad.done}</b><span>${t('сделано сегодня')}</span></div>`,
     minToday > 0 ? `<div class="th-stat"><b>${fmtDur(minToday)}</b><span>${t('фокус')}</span></div>` : '',
     xpToday > 0 ? `<div class="th-stat"><b>+${xpToday}</b><span>XP</span></div>` : '',
   ].filter(Boolean).join('');
@@ -22391,7 +22362,6 @@ async function initApp() {
   State.episodes = await Store.load('episodes', []);
   State.profile = await Store.load('profile', { text: '', updatedAt: null, auto: true });
   ensureLootbox();
-  ensureEnergy();
   applyAmbient();
 
   if (!State._treeLoadError) ensureTrees();

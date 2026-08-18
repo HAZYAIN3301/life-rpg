@@ -35,9 +35,11 @@ test('Habits v126 uses checked load, global write fences and one atomic client t
   assert.match(APP, /\['habits', 'habitlog', 'antihabits'\]\.includes\(name\).*habitWriteAllowed\('_put'/s);
   assert.match(APP, /fetch\('\/api\/habits\/commit'/);
   assert.match(APP, /habitDataCommit\(\{ habitlog: nextLog, settings: nextSettings \}\)/);
-  assert.match(APP, /e\.cur == null[\s\S]*Number\(e\.value\)/);
-  assert.match(APP, /at: new Date\(\)\.toISOString\(\), energy \}/);
-  assert.match(APP, /nextSettings\.energy\.cur = Math\.max[\s\S]*energy\.delta/);
+  // v161: шкала энергии удалена, и транзакция привычки от этого стала ЧИЩЕ — раньше она
+  // правила settings.energy и требовала защиты от NaN→null. Теперь настройки в этой
+  // транзакции не меняются вовсе, и проверять надо именно это.
+  assert.match(APP, /nextLog\[day\]\[h\.id\] = \{ xp: itemXp\(h\), gold: itemGold\(h\), min: [^}]*at: new Date\(\)\.toISOString\(\) \}/);
+  assert.doesNotMatch(APP, /nextSettings\.energy/, 'транзакция привычки снова трогает энергию');
   assert.match(APP, /State\._habitTxnBusy = key;[\s\S]*await habitDataCommit/);
   assert.match(APP, /async function undoHabitCompletion/);
 });

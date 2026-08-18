@@ -254,7 +254,7 @@ test('room depth owns travel scale while in-place acting stays on a fixed host',
 test('v160 shell revision and cache-busting are coherent', () => {
   const index = read('public/index.html');
   const sw = read('public/sw.js');
-  assert.match(sw, /const CACHE = 'satoru-v160'/);
+  assert.match(sw, /const CACHE = 'satoru-v161'/);
   for (const script of ['body-toad-v1', 'resources-penguin-v1', 'traveller-room-v4']) {
     assert.match(index, new RegExp(`${script}\\.js\\?v=20260812-lair-actors-v154-2`));
   }

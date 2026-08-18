@@ -53,7 +53,7 @@ test('the shell loads and caches the module and every first-batch asset', () => 
   const index = read('public/index.html');
   const sw = read('public/sw.js');
   assert.match(index, /den-pet-pair-v1\.js\?v=20260815-shadow-pet-v160-1/);
-  assert.match(sw, /const CACHE = 'satoru-v160'/);
+  assert.match(sw, /const CACHE = 'satoru-v161'/);
   assert.match(sw, /den-pet-pair-v1\.js/);
   for (const frame of ['body-recovery-stretch-a', 'body-recovery-stretch-b']) {
     assert.match(sw, new RegExp(`den-pet-pairs-v1/body-recovery/${frame}\\.png`));

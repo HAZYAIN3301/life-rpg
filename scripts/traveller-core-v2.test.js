@@ -21,8 +21,9 @@ test('Traveller Core archive stays auditable while active V4 is male-only', () =
   assert.match(appSource, /const AVATAR_CORE_RENDER_POSES = \[\.\.\.AVATAR_CORE_POSES, 'seated'\];/);
   assert.match(appSource, /if \(state === 'tired'\) return 'seated';/);
   assert.match(appSource, /class="den-tired-seat"[\s\S]*bench-rest\.png/);
-  assert.match(appSource, /options\.automatic && \(energyPct\(\) <= 30/);
-  assert.match(appSource, /function denLifeCanAct\(shell\)[\s\S]*energyPct\(\) <= 30/);
+  // v161: автопаузу анимаций держит нагрузка дня, а не удалённая шкала энергии.
+  assert.match(appSource, /options\.automatic && \(dayLoadTired\(\)/);
+  assert.match(appSource, /function denLifeCanAct\(shell\)[\s\S]*dayLoadTired\(\)/);
   assert.match(appSource, /function pauseDenSceneForViewport\(shell\)/);
   assert.doesNotMatch(appSource, /female:\s*\{ label: 'Женский'/);
   assert.equal(manifest.animation, 'authored-full-pose-runtime-css-js');

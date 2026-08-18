@@ -139,7 +139,9 @@ test('XP and gold payouts have explicit caps and no self-rating multiplier', () 
   assert.match(functionBody('itemXp'), /Math\.min\(ECONOMY_XP_BONUS_CAP_PCT/);
   assert.match(functionBody('itemGold'), /Math\.min\(ECONOMY_GOLD_BONUS_CAP_PCT/);
   assert.doesNotMatch(functionBody('itemXp'), /hypePct|lootBoostPct/);
-  assert.deepEqual(APP.match(/const DESIRE_ENERGY = \{ forced: 1, hyped: 1 \}/)?.[0], 'const DESIRE_ENERGY = { forced: 1, hyped: 1 }');
+  // DESIRE_ENERGY жил только ради шкалы энергии и удалён вместе с ней (v161). Смысл
+  // проверки сохраняем: самооценка по-прежнему не должна умножать выплату.
+  assert.doesNotMatch(APP, /DESIRE_ENERGY/);
   assert.match(APP, /Самооценка нужна для рефлексии, а не для оптимизации выплаты/);
 });
 
