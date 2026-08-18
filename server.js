@@ -666,12 +666,37 @@ async function aiCallForUser(user, requestedProvider, system, messages, maxToken
   if (r.ok && res.source === 'house') bumpAiUsage(user.id, r.tokens || estimateTokens(system, messages, r.text));
   return Object.assign({}, r, { source: res.source, provider: res.provider });
 }
+// Ключи в тексте ошибок. Провайдеры любят возвращать «Incorrect API key provided: sk-...XYZ»,
+// и такой текст нельзя показывать никому: даже частичный ключ не должен покидать сервер.
+const SECRET_SHAPES = [
+  /\bsk-[A-Za-z0-9_-]{8,}/g,          // OpenAI и совместимые
+  /\bAIza[0-9A-Za-z_-]{10,}/g,        // Google
+  /\bgsk_[A-Za-z0-9]{10,}/g,          // Groq
+  /\bre_[A-Za-z0-9_-]{10,}/g,         // Resend
+  /\bBearer\s+[A-Za-z0-9._-]{12,}/gi,
+];
+function scrubSecrets(text) {
+  let out = String(text == null ? '' : text);
+  for (const re of SECRET_SHAPES) out = out.replace(re, '[скрыто]');
+  return out;
+}
 // Маппинг ошибок aiCallForUser → HTTP-ответ. true = ошибка обработана (вызывающий должен return), false = всё ок.
 function aiErr(res, r) {
   if (r.error === 'no_key') { sendJson(res, 400, { error: 'no_key' }); return true; }
   if (r.error === 'not_pro') { sendJson(res, 402, { error: 'not_pro' }); return true; }
   if (r.error === 'quota') { sendJson(res, 402, { error: 'quota', quota: r.quota }); return true; }
-  if (!r.ok) { sendJson(res, 502, { error: 'provider', status: r.status, detail: r.detail }); return true; }
+  if (!r.ok) {
+    // Чей ключ сломался, тот и видит подробности. На СВОЁМ ключе текст провайдера — самая
+    // полезная подсказка («ключ неверный», «кончился баланс»), и это его собственный ключ.
+    // На ДОМАШНЕМ ключе тот же текст — это чужой секрет и внутренности сервера, поэтому
+    // наружу уходит только код, а подробность остаётся в логах.
+    const own = r.source && r.source !== 'house';
+    if (!own) console.error('[ai provider]', r.status, scrubSecrets(r.detail));
+    sendJson(res, 502, own
+      ? { error: 'provider', status: r.status, detail: scrubSecrets(r.detail) }
+      : { error: 'provider', status: r.status });
+    return true;
+  }
   return false;
 }
 // Единый вызов: системный промпт + история [{role,content}]. Диспатч по форме провайдера.
@@ -2793,7 +2818,7 @@ const server = http.createServer(async (req, res) => {
       const r = await aiCallForUser(user, provider, system, [{ role: 'user', content: prompt }], 2000);
       if (aiErr(res, r)) return;
       return sendJson(res, 200, { text: r.text, source: r.source });
-    } catch (e) { return sendJson(res, 502, { error: String(e.message || e) }); }
+    } catch (e) { console.error('[ai]', scrubSecrets(e && e.message)); return sendJson(res, 502, { error: 'provider_unavailable' }); }
   }
   // Движок «Предложений»: импорт целей/сфер из текста (kind:goals) или калибровка уровней (kind:calibrate)
   if (u === '/api/ai/propose' && req.method === 'POST') {
@@ -2820,7 +2845,7 @@ const server = http.createServer(async (req, res) => {
         out.social = ['high', 'normal', 'low'].includes(parsed.social) ? parsed.social : null;
       }
       return sendJson(res, 200, out);
-    } catch (e) { return sendJson(res, 502, { error: String(e.message || e) }); }
+    } catch (e) { console.error('[ai]', scrubSecrets(e && e.message)); return sendJson(res, 502, { error: 'provider_unavailable' }); }
   }
   // Тех-поддержка / гид: многоходовой чат, знающий функции и философию (манифест шлёт клиент)
   if (u === '/api/ai/chat' && req.method === 'POST') {
@@ -2836,7 +2861,7 @@ const server = http.createServer(async (req, res) => {
       const r = await aiCallForUser(user, provider, system, messages, 1500);
       if (aiErr(res, r)) return;
       return sendJson(res, 200, { text: r.text, source: r.source });
-    } catch (e) { return sendJson(res, 502, { error: String(e.message || e) }); }
+    } catch (e) { console.error('[ai]', scrubSecrets(e && e.message)); return sendJson(res, 502, { error: 'provider_unavailable' }); }
   }
 
   // ---- Strava (OAuth2 — авто-импорт тренировок) ----
@@ -3296,7 +3321,7 @@ const server = http.createServer(async (req, res) => {
         backupFile(dir, name); // снимок текущего перед откатом
         fs.copyFileSync(bfile, path.join(dir, name + '.json'));
         return sendJson(res, 200, { ok: true, restored: name, from: b.stamp });
-      } catch (e) { return sendJson(res, 500, { error: String(e.message || e) }); }
+      } catch (e) { console.error('[restore]', e); return sendJson(res, 500, { error: scrubSecrets(e && e.message) || 'restore_failed' }); }
     }
   }
 
