@@ -2571,6 +2571,80 @@ const server = http.createServer(async (req, res) => {
     try { fs.writeFileSync(file, JSON.stringify(data)); } catch {}
     return sendJson(res, 200, { ok: true });
   }
+  // ---- Воронка первого пути (агрегат, считается из уже лежащих данных) ----
+  //
+  // Почему НЕ внешняя аналитика. В проекте уже есть своя (`/api/analytics`): клиент шлёт
+  // только имя события, сервер считает по дням, хранит 60 суток, читает один админ. Плюс
+  // обещание в интерфейсе — «только агрегат, без личного контента» — и правило «ноль внешних
+  // зависимостей: нечему ломаться». PostHog нарушил бы все три сразу.
+  //
+  // Почему НЕ новые события с клиента. Шаги воронки уже видны по данным, которые человек и
+  // так создал: есть ли у него дела, есть ли закрытые, открывал ли сундук, приходил ли на
+  // второй день. Считать это на сервере значит: ничего не менять в `app.js` (там сейчас
+  // работает другой агент), получить историю задним числом для всех, кто зарегистрировался
+  // раньше, и не заводить событий, которые потом придётся поддерживать.
+  //
+  // Наружу уходят ТОЛЬКО количества. Ни имён, ни email, ни идентификаторов.
+  if (u === '/api/admin/funnel' && req.method === 'GET') {
+    const me = loadUsers().find(x => x.id === sessionUserId(req));
+    if (!me || !me.isAdmin) return sendJson(res, 403, { error: 'только админ' });
+
+    const readUser = (uid, name) => {
+      try { return JSON.parse(fs.readFileSync(path.join(userDataDir(uid), name + '.json'), 'utf8')); } catch { return null; }
+    };
+    const dayOf = (v) => { const d = new Date(v); return Number.isFinite(d.getTime()) ? d.toISOString().slice(0, 10) : null; };
+
+    const steps = ['registered', 'setup', 'firstTask', 'firstDone', 'firstReward', 'returned', 'day7'];
+    const counts = Object.fromEntries(steps.map(k => [k, 0]));
+    const cohorts = Object.create(null);   // по неделе регистрации: видно, лучше ли новым, чем старым
+
+    for (const user of loadUsers()) {
+      const uid = user.id;
+      counts.registered += 1;
+      const born = user.createdAt ? new Date(user.createdAt) : null;
+      const week = born ? new Date(born.getTime() - ((born.getUTCDay() + 6) % 7) * 86400000).toISOString().slice(0, 10) : 'unknown';
+      const row = cohorts[week] || (cohorts[week] = Object.fromEntries(steps.map(k => [k, 0])));
+      row.registered += 1;
+
+      const settings = readUser(uid, 'settings');
+      const tasks = readUser(uid, 'tasks') || [];
+      const lootbox = readUser(uid, 'lootbox');
+      const purchases = readUser(uid, 'purchases') || [];
+
+      // Настроил старт: сферы отличаются от пустого состояния.
+      if (settings && Array.isArray(settings.skills) && settings.skills.length) { counts.setup += 1; row.setup += 1; }
+      if (Array.isArray(tasks) && tasks.length) { counts.firstTask += 1; row.firstTask += 1; }
+
+      const done = Array.isArray(tasks) ? tasks.filter(t => t && t.done) : [];
+      if (done.length) { counts.firstDone += 1; row.firstDone += 1; }
+
+      // Награда: открытый сундук ИЛИ покупка за золото. Любое из двух значит, что человек
+      // дошёл до момента, ради которого всё и делается.
+      const opened = lootbox && Number(lootbox.opened) > 0;
+      if (opened || purchases.length) { counts.firstReward += 1; row.firstReward += 1; }
+
+      // Возврат: активность в 2+ разных дня. Считаем по датам закрытия — это единственный
+      // след, который человек оставляет самим фактом использования.
+      const days = new Set();
+      for (const t of done) { const d = dayOf(t.completedAt) || t.date; if (d) days.add(d); }
+      if (days.size >= 2) { counts.returned += 1; row.returned += 1; }
+
+      // Удержание на седьмой день: была активность через неделю после регистрации.
+      if (born) {
+        const weekLater = new Date(born.getTime() + 7 * 86400000).toISOString().slice(0, 10);
+        if ([...days].some(d => d >= weekLater)) { counts.day7 += 1; row.day7 += 1; }
+      }
+    }
+
+    const pct = (n) => counts.registered ? Math.round(n / counts.registered * 1000) / 10 : 0;
+    return sendJson(res, 200, {
+      generatedAt: new Date().toISOString(),
+      steps: steps.map((key) => ({ key, count: counts[key], pctOfRegistered: pct(counts[key]) })),
+      cohortsByWeek: Object.fromEntries(Object.entries(cohorts).sort(([a], [b]) => a < b ? 1 : -1).slice(0, 12)),
+      note: 'Агрегат по данным аккаунтов. Ни имён, ни email, ни идентификаторов наружу не уходит.',
+    });
+  }
+
   if (u === '/api/admin/analytics' && req.method === 'GET') {
     const me = loadUsers().find(x => x.id === sessionUserId(req));
     if (!me || !me.isAdmin) return sendJson(res, 403, { error: 'только админ' });
