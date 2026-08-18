@@ -4125,7 +4125,7 @@ async function applyProgramFresh(prog) {
     settings.social = { leaderboard: false, party: false };
     settings.demoMode = 'x7';
     settings.tutorial = { i: 0, active: false, done: false, skipped: true, seenDrips: [], mode: 'day1', dripId: null };
-    try { localStorage.setItem('liferpg_seen_guide', '1'); } catch {}
+    if (window.GuideV3) settings.guideV3 = Object.assign(window.GuideV3.defaultState(), { enabled: false });
   }
   await Promise.all([ Store._put('settings', settings), Store._put('habits', programHabits(prog, map)), Store._put('tasks', programTasks(prog, map)) ]);
   State.phase = 'app'; initApp();
@@ -4140,7 +4140,6 @@ async function loginAsTestUser() {
     let d = await r.json();
     if (r.ok) {
       State.me = d;
-      if (demoX7Requested()) try { localStorage.setItem('liferpg_seen_guide', '1'); } catch {}
       initApp();
       return;
     }
@@ -5003,6 +5002,7 @@ const State = {
   _goalTxnBusy: '', _goalsError: '', _goalsFocusAfterCommit: '', _goalOpenId: '', _goalDeepLinkId: '',
   _calendarUndo: null, _calendarUndoTimer: null, _calendarFocusAfterCommit: '',
   _inboxLoadError: '', _inboxBusy: false, _inboxFocusAfterCommit: '',
+  _guideV3Error: '', _guideV3SessionPrompted: false,
   _mobileNavFocusAfterCommit: '',
   _calendarViewportNode: null, _calendarViewportDate: '', _calendarViewportScroll: null,
   aveCat: 'hair', // активная категория в редакторе аватара
@@ -20178,7 +20178,37 @@ function openRewardCatalog() {
   mountAccountDialog(ov, { initial: '#reward-catalog-title', returnFocus: document.activeElement });
 }
 
-// ── Гайд «Тень ведёт тебя» (ONBOARDING-PLAN.md, Фаза 1+2) ──
+// Guide v3 хранится внутри аккаунта. Старый device-local флаг намеренно не участвует:
+// один браузер может обслуживать несколько профилей, а состояние обязано переживать другое устройство.
+function guideV3State() {
+  if (!State.settings || !window.GuideV3) return null;
+  return window.GuideV3.normalize(State.settings.guideV3);
+}
+async function initializeGuideV3State() {
+  if (!State.settings || !window.GuideV3) { State._guideV3Error = 'module'; return false; }
+  const before = JSON.stringify({ guideV3: State.settings.guideV3 || null, legacyActive: !!State.settings.tutorial?.active });
+  const next = window.GuideV3.migrate(State.settings.guideV3, State.settings.tutorial);
+  if (demoX7Requested()) next.enabled = false;
+  State.settings.guideV3 = next;
+  // Legacy overlay becomes inert after migration; its fields remain only as an auditable source.
+  if (State.settings.tutorial) State.settings.tutorial.active = false;
+  const after = JSON.stringify({ guideV3: State.settings.guideV3, legacyActive: !!State.settings.tutorial?.active });
+  if (before === after) { State._guideV3Error = ''; return true; }
+  const saved = await Store.saveNow('settings', State.settings);
+  State._guideV3Error = saved ? '' : 'persist';
+  return saved;
+}
+async function reconcileGuideV3AfterTaskLoad() {
+  if (!State.settings?.guideV3 || !window.GuideV3 || !Array.isArray(State.tasks)) return false;
+  const result = window.GuideV3.reconcile(State.settings.guideV3, { tasks: State.tasks });
+  if (!result.changed) return true;
+  State.settings.guideV3 = result.state;
+  const saved = await Store.saveNow('settings', State.settings);
+  State._guideV3Error = saved ? '' : 'persist';
+  return saved;
+}
+
+// ── Legacy guide v2 (migration-only until Guide v3 replaces its library UI) ──
 // Пошаговый туториал: спотлайт нужного элемента + пузырь Тени, продвижение по реальному действию.
 function ensureTutorial() {
   const s = State.settings;
@@ -22296,6 +22326,7 @@ async function initApp() {
   State.settings.curve = Object.assign({}, DEFAULT_SETTINGS.curve, State.settings.curve);
   State.settings.focus = Object.assign({}, DEFAULT_SETTINGS.focus, State.settings.focus);
   State.settings.social = Object.assign({}, DEFAULT_SETTINGS.social, State.settings.social);
+  await initializeGuideV3State();
   State.settings.body = State.settings.body || {};
   State.settings.imported = State.settings.imported || {};
   State.settings.avatar = State.settings.avatar || defaultAvatar();
@@ -22325,6 +22356,7 @@ async function initApp() {
     State._tasksLoadBusy = false;
   }
   if (State._tasksLoadError === 'session' || State._accountSessionExpired) return;
+  await reconcileGuideV3AfterTaskLoad();
   State.days = await Store.load('days', {});
   {
     const [habitsLoad, habitlogLoad, antihabitsLoad] = await Promise.all([
@@ -22409,13 +22441,8 @@ async function initApp() {
   render();
   scheduleArtWarmup();
   publishLeaderboard();
-  // Первый запуск на устройстве → игровой гайд «Тень ведёт» (не статичная стена текста).
-  // Флаг читаем ДО того, как этот же блок его выставит — иначе следующая проверка (авто-пуш) увидит
-  // guide уже «показанным» в этом же самом запуске и столкнётся с ним нативным диалогом разрешения.
-  const guideAlreadySeen = !!localStorage.getItem('liferpg_seen_guide');
-  if (!guideAlreadySeen && !ensureTutorial().done && !ensureTutorial().skipped) {
-    localStorage.setItem('liferpg_seen_guide', '1'); setTimeout(() => { try { tutorialStart(); } catch {} }, 600);
-  }
+  // Guide v3 запускается только из account-owned settings после полной загрузки задач.
+  // Surface подключается отдельным адаптером; миграция выше уже гарантирует, что legacy overlay не оживёт.
   // Notification permission запрашивается только после явного нажатия человека
   // в Settings. Контекстный native prompt нельзя планировать по таймеру после входа:
   // отказ браузер запоминает, а пользователь ещё не выбирал reminders/push intent.

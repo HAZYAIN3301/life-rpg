@@ -19,6 +19,14 @@
     'victory', 'mastery', 'bond', 'release',
   ]);
   const FORMS = Object.freeze(['spark', 'spirit', 'guardian', 'keeper']);
+  const CHAPTERS = Object.freeze([
+    FIRST_CHAPTER, 'habits', 'goals', 'calendar', 'notes', 'voice', 'jarvis',
+    'rewards', 'hero', 'den', 'pets', 'tree', 'stats', 'tribe',
+  ]);
+  const LEGACY_PROMPT_MAP = Object.freeze({
+    d_habits: 'habits@1', d_den: 'den@1', d_tree: 'tree@1',
+    d_rewards: 'rewards@1', d_stats: 'stats@1', d_helper: 'jarvis@1',
+  });
 
   function uniqStrings(value) {
     const out = [], seen = new Set();
@@ -31,6 +39,23 @@
 
   function cleanNullableString(value) {
     return typeof value === 'string' && value ? value : null;
+  }
+
+  function positiveIntegerOrNull(value) {
+    if (value === null || value === undefined || value === '') return null;
+    const n = Number(value);
+    return Number.isInteger(n) && n > 0 ? n : null;
+  }
+
+  function cleanChapterMeta(value) {
+    const src = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+    const out = {};
+    for (const chapter of CHAPTERS) {
+      const meta = src[chapter];
+      if (!meta || typeof meta !== 'object' || Array.isArray(meta)) continue;
+      try { out[chapter] = structuredClone(meta); } catch { out[chapter] = {}; }
+    }
+    return out;
   }
 
   function defaultState() {
@@ -58,11 +83,13 @@
     const src = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
     const out = defaultState();
     out.enabled = src.enabled !== false;
-    out.currentChapter = cleanNullableString(src.currentChapter);
+    const requestedChapter = cleanNullableString(src.currentChapter);
+    out.currentChapter = CHAPTERS.includes(requestedChapter) ? requestedChapter : null;
     out.currentStep = cleanNullableString(src.currentStep);
     out.completedSteps = uniqStrings(src.completedSteps);
-    out.completedChapters = uniqStrings(src.completedChapters);
-    out.skippedChapters = uniqStrings(src.skippedChapters);
+    out.completedChapters = uniqStrings(src.completedChapters).filter((id) => CHAPTERS.includes(id));
+    out.skippedChapters = uniqStrings(src.skippedChapters)
+      .filter((id) => CHAPTERS.includes(id) && !out.completedChapters.includes(id));
     out.seenPrompts = uniqStrings(src.seenPrompts);
     out.snoozedUntil = Number.isFinite(Number(src.snoozedUntil)) && Number(src.snoozedUntil) > 0
       ? Number(src.snoozedUntil) : null;
@@ -70,20 +97,27 @@
       ? Number(src.lastPromptAt) : null;
     out.firstRunForm = FORMS.includes(src.firstRunForm) ? src.firstRunForm : 'spark';
     out.voiceConsent = typeof src.voiceConsent === 'boolean' ? src.voiceConsent : null;
-    out.questionnaireVersion = Number.isFinite(Number(src.questionnaireVersion))
-      ? Number(src.questionnaireVersion) : null;
+    out.questionnaireVersion = positiveIntegerOrNull(src.questionnaireVersion);
     out.selectedTaskId = cleanNullableString(src.selectedTaskId);
     out.waitingFor = cleanNullableString(src.waitingFor);
-    out.chapterMeta = src.chapterMeta && typeof src.chapterMeta === 'object' && !Array.isArray(src.chapterMeta)
-      ? structuredClone(src.chapterMeta) : {};
+    out.chapterMeta = cleanChapterMeta(src.chapterMeta);
 
-    // A chapter cannot be both actively running and already resolved. Corrupt legacy state
-    // is made safe in memory; startup never writes until the caller explicitly persists it.
+    // A chapter cannot be both active and resolved unless this is an explicit presentation-only replay.
     const activeReplay = out.currentChapter && out.chapterMeta[out.currentChapter] && out.chapterMeta[out.currentChapter].replay === true;
     if (out.currentChapter && chapterResolved(out, out.currentChapter) && !activeReplay) {
       out.currentChapter = null; out.currentStep = null; out.waitingFor = null;
     }
-    if (!out.currentChapter) { out.currentStep = null; out.waitingFor = null; }
+    if (!out.currentChapter) {
+      out.currentStep = null; out.waitingFor = null;
+    } else if (out.currentChapter === FIRST_CHAPTER) {
+      if (!FIRST_STEPS.includes(out.currentStep)) out.currentStep = 'welcome';
+      if (!activeReplay && ['start', 'wait', 'victory', 'mastery', 'bond', 'release'].includes(out.currentStep) && !out.selectedTaskId) {
+        out.currentStep = 'choose'; out.waitingFor = null;
+      } else if (!activeReplay && out.currentStep === 'wait') out.waitingFor = 'task:completed';
+      else out.waitingFor = null;
+    } else {
+      out.currentStep = 'intro'; out.waitingFor = null;
+    }
     return out;
   }
 
@@ -91,7 +125,7 @@
     if (rawGuide && Number(rawGuide.version) === VERSION) return normalize(rawGuide);
     const out = normalize(rawGuide);
     const legacy = legacyTutorial && typeof legacyTutorial === 'object' ? legacyTutorial : {};
-    const seenDrips = uniqStrings(legacy.seenDrips).map((id) => `legacy:${id}`);
+    const seenDrips = uniqStrings(legacy.seenDrips).map((id) => LEGACY_PROMPT_MAP[id] || `legacy:${id}`);
     out.seenPrompts = uniqStrings([...out.seenPrompts, ...seenDrips]);
 
     if (legacy.done) {
@@ -103,7 +137,10 @@
       out.chapterMeta[FIRST_CHAPTER] = { ...(out.chapterMeta[FIRST_CHAPTER] || {}), migrated: 'skipped' };
     } else if (legacy.active && legacy.mode !== 'drip') {
       out.currentChapter = FIRST_CHAPTER;
-      out.currentStep = FIRST_STEPS[Math.max(0, Math.min(FIRST_STEPS.length - 1, Number(legacy.i) || 0))];
+      // The five legacy positions describe a different tour. Mapping their index into the
+      // nine-step real-action journey can strand a user in `wait` without a selected task.
+      out.currentStep = 'welcome'; out.selectedTaskId = null; out.waitingFor = null;
+      out.chapterMeta[FIRST_CHAPTER] = { ...(out.chapterMeta[FIRST_CHAPTER] || {}), migrated: 'active-restart' };
     }
     out.version = VERSION;
     return normalize(out);
@@ -118,7 +155,9 @@
 
   function guideSeed(input) {
     const src = input || {}, today = typeof src.today === 'string' ? src.today : '';
-    const tasks = (Array.isArray(src.tasks) ? src.tasks : []).filter((task) => task && !task.done);
+    const validId = (value) => typeof value === 'string' && value.trim().length > 0;
+    const tasks = (Array.isArray(src.tasks) ? src.tasks : [])
+      .filter((task) => task && typeof task === 'object' && validId(task.id) && !task.done);
     const dated = tasks.filter((task) => !task.date || task.date === today);
     const ordered = (dated.length ? dated : tasks).slice().sort((a, b) => {
       const ac = String(a.createdAt || ''), bc = String(b.createdAt || '');
@@ -126,8 +165,10 @@
       return String(a.id || '').localeCompare(String(b.id || ''));
     });
     const task = ordered[0] || null;
-    const skills = Array.isArray(src.skills) ? src.skills : [];
-    const goals = Array.isArray(src.goals) ? src.goals : [];
+    const skills = (Array.isArray(src.skills) ? src.skills : [])
+      .filter((item) => item && typeof item === 'object' && validId(item.id));
+    const goals = (Array.isArray(src.goals) ? src.goals : [])
+      .filter((item) => item && typeof item === 'object' && validId(item.id));
     if (task) {
       const skill = skills.find((item) => item && item.id === task.skillId) || null;
       const goal = goals.find((item) => item && item.id === task.goalId) || null;
@@ -145,12 +186,14 @@
   }
 
   function registryEntry(entry) {
-    return Object.freeze({
+    const value = {
       version: 1, prerequisites: [], target: null, action: null, completion: null,
       pose: 'guide-close-speak', voiceContext: 'guide', rewardPolicy: 'none',
       cooldown: 0, once: true, replayPolicy: 'manual-no-reward', fallback: 'safe-bubble',
       ...entry,
-    });
+    };
+    value.prerequisites = Object.freeze([...(Array.isArray(value.prerequisites) ? value.prerequisites : [])]);
+    return Object.freeze(value);
   }
 
   const REGISTRY = Object.freeze([
@@ -170,6 +213,9 @@
     registryEntry({ id: 'tribe', chapter: 'tribe', prerequisites: ['hero'], copyKey: 'guide.tribe', target: 'party', action: 'review-social-consent', completion: 'social-choice-made', cooldown: 86400000 }),
   ]);
 
+  function entryForChapter(chapter) { return REGISTRY.find((entry) => entry.chapter === chapter) || null; }
+  function promptKey(entry) { return entry ? `${entry.id}@${entry.version}` : ''; }
+
   function prerequisitesMet(entry, state) {
     return entry.prerequisites.every((id) => chapterResolved(state, id));
   }
@@ -177,11 +223,16 @@
   function entryEligible(entry, state, context) {
     const s = normalize(state), c = context || {};
     if (!s.enabled || chapterResolved(s, entry.chapter) || !prerequisitesMet(entry, s)) return false;
-    if (s.snoozedUntil && Number(c.now || Date.now()) < s.snoozedUntil) return false;
+    const now = Number(c.now || Date.now()), key = promptKey(entry);
+    if (s.snoozedUntil && now < s.snoozedUntil) return false;
+    if (entry.id !== FIRST_CHAPTER && c.sessionPrompted) return false;
+    if (entry.once && s.seenPrompts.includes(key)) return false;
+    const promptedAt = Number(s.chapterMeta[entry.chapter]?.lastPromptAt || 0);
+    if (entry.cooldown > 0 && promptedAt > 0 && now - promptedAt < entry.cooldown) return false;
     switch (entry.id) {
       case FIRST_CHAPTER: return !!c.seedApplied && c.view === 'today';
       case 'habits': return Number(c.completedTasks) >= 2 || Number(c.activeDays) >= 2;
-      case 'goals': return !!c.hasGoalSeed && !!c.returnedAfterFirst;
+      case 'goals': return !!c.questionnaireReady && !!c.hasGoalSeed && !!c.returnedAfterFirst;
       case 'calendar': return Number(c.futureTasks) >= 3 || !!c.hasDeadline;
       case 'notes': return !!c.hasLooseNote || (Number(c.completedTasks) >= 4 && Number(c.inboxCount) === 0);
       case 'voice': return Number(c.level) >= 2 && !!c.ttsReady;
@@ -204,11 +255,35 @@
     return list.find((entry) => entry.id !== FIRST_CHAPTER && entryEligible(entry, current, context)) || null;
   }
 
+  function reconcile(rawState, context) {
+    const state = normalize(rawState), before = JSON.stringify(state), c = context || {};
+    const replay = !!state.chapterMeta[state.currentChapter]?.replay;
+    if (state.currentChapter === FIRST_CHAPTER && !replay && Array.isArray(c.tasks)
+      && state.selectedTaskId && ['start', 'wait'].includes(state.currentStep)) {
+      const selected = c.tasks.find((task) => task && String(task.id || '') === state.selectedTaskId);
+      if (!selected) {
+        state.selectedTaskId = null; state.currentStep = 'choose'; state.waitingFor = null;
+      } else if (selected.done === true) {
+        state.completedSteps = uniqStrings([
+          ...state.completedSteps,
+          stepKey(FIRST_CHAPTER, 'start'), stepKey(FIRST_CHAPTER, 'wait'),
+        ]);
+        state.currentStep = 'victory'; state.waitingFor = null;
+      }
+    }
+    const next = normalize(state);
+    return { state: next, changed: before !== JSON.stringify(next) };
+  }
+
   function accepted(state, metric, effects) {
-    return { state: normalize(state), accepted: true, reason: null, metric: metric || null, effects: effects || [] };
+    const next = normalize(state);
+    return {
+      state: next, accepted: true, reason: null, metric: metric || null, effects: effects || [],
+      replay: !!next.currentChapter && next.chapterMeta[next.currentChapter]?.replay === true,
+    };
   }
   function rejected(state, reason) {
-    return { state: normalize(state), accepted: false, reason: reason || 'invalid-event', metric: null, effects: [] };
+    return { state: normalize(state), accepted: false, reason: reason || 'invalid-event', metric: null, effects: [], replay: false };
   }
 
   function reduce(rawState, event) {
@@ -226,23 +301,32 @@
       state.snoozedUntil = until; return accepted(state, 'guide:snooze');
     }
     if (type === 'guide:prompt-seen') {
-      if (!ev.promptId) return rejected(state, 'missing-prompt');
-      state.seenPrompts = uniqStrings([...state.seenPrompts, String(ev.promptId)]);
-      state.lastPromptAt = Number(ev.at) || state.lastPromptAt;
+      const entry = REGISTRY.find((item) => promptKey(item) === String(ev.promptId || '') || item.id === String(ev.promptId || ''));
+      if (!entry) return rejected(state, 'unknown-prompt');
+      const at = Number(ev.at) || null;
+      state.seenPrompts = uniqStrings([...state.seenPrompts, promptKey(entry)]);
+      state.lastPromptAt = at || state.lastPromptAt;
+      state.chapterMeta[entry.chapter] = { ...(state.chapterMeta[entry.chapter] || {}), lastPromptAt: at };
       return accepted(state, 'guide:step_view');
     }
     if (type === 'guide:replay') {
       const chapter = String(ev.chapter || FIRST_CHAPTER);
+      if (!CHAPTERS.includes(chapter)) return rejected(state, 'unknown-chapter');
+      if (state.currentChapter) return rejected(state, 'chapter-active');
+      if (!chapterResolved(state, chapter)) return rejected(state, 'chapter-not-resolved');
       state.enabled = true; state.currentChapter = chapter;
       state.currentStep = chapter === FIRST_CHAPTER ? FIRST_STEPS[0] : 'intro';
       state.waitingFor = null; state.snoozedUntil = null;
-      state.chapterMeta[chapter] = { ...(state.chapterMeta[chapter] || {}), replay: true };
+      state.chapterMeta[chapter] = { ...(state.chapterMeta[chapter] || {}), replay: true, replayStartedAt: Number(ev.at) || null };
       return accepted(state, 'guide:replay');
     }
     if (type === 'guide:start') {
       const chapter = String(ev.chapter || FIRST_CHAPTER);
+      if (!CHAPTERS.includes(chapter)) return rejected(state, 'unknown-chapter');
+      if (ev.replay) return rejected(state, 'use-guide-replay');
       if (!state.enabled) return rejected(state, 'disabled');
-      if (chapterResolved(state, chapter) && !ev.replay) return rejected(state, 'chapter-resolved');
+      if (state.currentChapter) return rejected(state, 'chapter-active');
+      if (chapterResolved(state, chapter)) return rejected(state, 'chapter-resolved');
       state.currentChapter = chapter;
       state.currentStep = chapter === FIRST_CHAPTER ? FIRST_STEPS[0] : 'intro';
       state.waitingFor = null; state.snoozedUntil = null;
@@ -250,20 +334,43 @@
     }
     if (type === 'guide:skip') {
       const chapter = String(ev.chapter || state.currentChapter || ''); if (!chapter) return rejected(state, 'missing-chapter');
+      if (!CHAPTERS.includes(chapter)) return rejected(state, 'unknown-chapter');
+      if (state.currentChapter && state.currentChapter !== chapter) return rejected(state, 'different-active-chapter');
+      const replay = state.currentChapter === chapter && state.chapterMeta[chapter]?.replay === true;
+      if (replay) {
+        state.currentChapter = null; state.currentStep = null; state.waitingFor = null;
+        state.chapterMeta[chapter] = { ...(state.chapterMeta[chapter] || {}), replay: false, lastReplayAbandonedAt: Number(ev.at) || null };
+        return accepted(state, 'guide:replay_abandoned');
+      }
+      if (state.completedChapters.includes(chapter)) return rejected(state, 'chapter-completed');
       state.skippedChapters = uniqStrings([...state.skippedChapters, chapter]);
       state.currentChapter = null; state.currentStep = null; state.waitingFor = null;
       state.chapterMeta[chapter] = { ...(state.chapterMeta[chapter] || {}), skippedAt: Number(ev.at) || null };
       return accepted(state, 'guide:skip');
     }
 
+    if (state.currentChapter && state.currentChapter !== FIRST_CHAPTER) {
+      const entry = entryForChapter(state.currentChapter);
+      if (type !== 'guide:context-complete') return rejected(state, 'context-completion-required');
+      if (!ev.persisted) return rejected(state, 'not-persisted');
+      if (!entry || String(ev.completion || '') !== entry.completion) return rejected(state, 'wrong-completion');
+      state.completedChapters = uniqStrings([...state.completedChapters, entry.chapter]);
+      state.completedSteps = uniqStrings([...state.completedSteps, stepKey(entry.chapter, 'intro')]);
+      state.currentChapter = null; state.currentStep = null; state.waitingFor = null;
+      state.chapterMeta[entry.chapter] = { ...(state.chapterMeta[entry.chapter] || {}), completedAt: Number(ev.at) || null };
+      return accepted(state, 'guide:chapter_complete');
+    }
     if (state.currentChapter !== FIRST_CHAPTER) return rejected(state, 'first-journey-not-active');
     const step = state.currentStep;
     if (type === 'guide:next') {
-      const next = { welcome: 'recognize', recognize: 'choose', victory: 'mastery', mastery: 'bond' }[step];
+      const replay = state.chapterMeta[FIRST_CHAPTER]?.replay === true;
+      const next = (replay
+        ? { welcome: 'recognize', recognize: 'choose', choose: 'start', start: 'wait', wait: 'victory', victory: 'mastery', mastery: 'bond', bond: 'release' }
+        : { welcome: 'recognize', recognize: 'choose', victory: 'mastery', mastery: 'bond' })[step];
       if (!next) return rejected(state, 'next-not-allowed');
       state.completedSteps = uniqStrings([...state.completedSteps, stepKey(FIRST_CHAPTER, step)]);
       state.currentStep = next;
-      return accepted(state, 'guide:action');
+      return accepted(state, replay ? 'guide:replay_step' : 'guide:action');
     }
     if (type === 'guide:select-task') {
       if (step !== 'choose') return rejected(state, 'wrong-step');
@@ -298,18 +405,22 @@
     }
     if (type === 'guide:finish') {
       if (step !== 'release') return rejected(state, 'wrong-step');
+      const replay = state.chapterMeta[FIRST_CHAPTER]?.replay === true;
       state.completedSteps = uniqStrings([...state.completedSteps, stepKey(FIRST_CHAPTER, step)]);
-      state.completedChapters = uniqStrings([...state.completedChapters, FIRST_CHAPTER]);
+      if (!replay) state.completedChapters = uniqStrings([...state.completedChapters, FIRST_CHAPTER]);
       state.currentChapter = null; state.currentStep = null; state.waitingFor = null;
-      state.chapterMeta[FIRST_CHAPTER] = { ...(state.chapterMeta[FIRST_CHAPTER] || {}), completedAt: Number(ev.at) || null, replay: false };
-      return accepted(state, 'guide:chapter_complete');
+      const oldMeta = state.chapterMeta[FIRST_CHAPTER] || {};
+      state.chapterMeta[FIRST_CHAPTER] = replay
+        ? { ...oldMeta, replay: false, lastReplayedAt: Number(ev.at) || null }
+        : { ...oldMeta, completedAt: oldMeta.completedAt || Number(ev.at) || null, replay: false };
+      return accepted(state, replay ? 'guide:replay_complete' : 'guide:chapter_complete');
     }
     return rejected(state, 'unsupported-event');
   }
 
   return {
-    VERSION, FIRST_CHAPTER, FIRST_STEPS, FORMS, REGISTRY,
+    VERSION, FIRST_CHAPTER, FIRST_STEPS, FORMS, CHAPTERS, REGISTRY,
     defaultState, normalize, migrate, chapterResolved, guideSeed,
-    prerequisitesMet, entryEligible, nextContextual, reduce,
+    prerequisitesMet, entryEligible, nextContextual, promptKey, reconcile, reduce,
   };
 });

@@ -8,6 +8,7 @@ _Создан 2026-06-14. Актуализирован 24.07 — секции н
 
 - [x] **Commit A — продуктовый контракт и RU-черновик** ✅ `GUIDE-V3-PLAN.md`, `GUIDE-V3-FIRST-SCRIPT-RU.md`, `TASK-CODEX-GUIDE-V3.md`; guide-close Искры остаётся неутверждённым concept и не подключается в runtime.
 - [x] **Commit B — data model без UI** ✅ 2026-08-18: `public/guide-v3.js` + `scripts/guide-v3.test.js`; migration старого tutorial, seed branches, registry/eligibility, persisted-event reducer, skip/snooze/replay. Модуль пока не включён в app shell.
+- [x] **Commit C0 — account state + shell** ✅ 2026-08-18: per-account migration через `Store.saveNow`, legacy/device-global auto-start выключен, `guide-v3.js` в shell `satoru-v162`; новый surface ещё не показывается.
 - [ ] **Commit C1 — First Journey runtime:** per-account state, реальный select/create → optional focus → пауза → persisted completion → XP/gold explanation → no-reward contact → самостоятельный Today; Piper + transcript, keyboard, reduced motion, mobile/desktop QA.
 - [ ] **Tone gate:** собрать всю RU-copy в `GUIDE-V3-RU-COPY-REVIEW.md`; не переводить и не выдавать черновик за утверждённый runtime-текст до правки Альберта.
 - [ ] **Commit C2 — локализация:** после tone gate EN → DE → UK → ES, длинный DE и все visual QA-гейты.

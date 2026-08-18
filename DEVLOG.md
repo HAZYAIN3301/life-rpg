@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-18] 🧭 Guide v3 Commit C0 — account-owned migration и offline shell v162
+
+- `guide-v3.js` подключён до `app.js` и добавлен в offline SHELL. Версия SW поднята `satoru-v161 → satoru-v162`, все точные test pins синхронизированы.
+- Device-global `localStorage.liferpg_seen_guide` удалён из onboarding/init. Guide v3 теперь нормализуется и мигрирует внутри `settings` конкретного аккаунта, а результат сохраняется через awaitable `Store.saveNow` до показа любого нового surface.
+- Legacy overlay после миграции принудительно становится неактивным, но исходные поля остаются для аудита. X7 получает явный `guideV3.enabled=false`, а не общий браузерный флаг.
+- Модель усилена по pre-integration review: active legacy всегда возвращается в безопасный `welcome`, completion восстанавливается из persisted task после reload/другого устройства, старые drip-id сопоставляются новым prompt-version, применяются one-per-session/cooldown-гейты, Goals остаётся закрыт до questionnaire, replay не меняет историю/награды, неизвестные главы и malformed seed отбрасываются.
+- Это транспортный коммит без нового UI: surface/First Journey/Piper следуют в C1. QA: `node --check public/app.js public/guide-v3.js`; `scripts/guide-v3.test.js` — **18/18 PASS**; полный `npm test` — **352/352 PASS**.
+
+Commit: `feat: connect Guide v3 account state` (этот коммит). Push/deploy не выполнялись.
+
 ## [2026-08-18] 🧭 Guide v3 Commit B — чистая модель, миграция и реальные event-гейты
 
 - Начата runtime-реализация `GUIDE-V3-PLAN.md` по `TASK-CODEX-GUIDE-V3.md`. Новый `public/guide-v3.js` — чистый UMD-модуль без DOM, `State`, `Store` и сети: схема `settings.guideV3`, нормализация, миграция старого `settings.tutorial`, seed-adapter, feature registry, eligibility и reducer событий.
