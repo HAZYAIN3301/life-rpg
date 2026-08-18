@@ -47,9 +47,12 @@ test('Taking and completing a contract use one rollback-capable board commit', (
   assert.match(server, /for \(const name of written\)[\s\S]*restoreSnapshot/);
 });
 
-test('All 31 authored orders have complete stable-id locale rows', () => {
-  assert.equal(POOL.ALL.length, 31);
-  assert.equal(Object.keys(POOL.TITLES).length, 31);
+test('every authored order has a complete stable-id locale row', () => {
+  // Число не фиксируем: пул растёт по мере авторской работы, и тест, который падает от
+  // добавления заказа, учит только одному — не добавлять заказы. Стережём инвариант:
+  // у КАЖДОГО заказа есть все локали, и ни одна не пустая.
+  assert.ok(POOL.ALL.length >= 31, `пул усох до ${POOL.ALL.length}`);
+  assert.equal(Object.keys(POOL.TITLES).length, POOL.ALL.length);
   for (const order of POOL.ALL) {
     assert.deepEqual(Object.keys(POOL.TITLES[order.id] || {}).sort(), ['de', 'en', 'es', 'uk']);
     for (const locale of ['de', 'en', 'es', 'uk']) assert.ok(POOL.titleFor(order, locale).trim());

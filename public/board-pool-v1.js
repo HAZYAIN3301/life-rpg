@@ -53,6 +53,57 @@
     { id: 'b-place-city', tags: ['travel', 'outdoor', 'bold', 'solo'], sphereId: null, title: 'Съезди туда, где ни разу не был, и привези оттуда одну фотографию' },
     { id: 'b-place-sunrise', tags: ['outdoor', 'early', 'quiet', 'solo'], sphereId: null, title: 'Встреть рассвет вне дома' },
     { id: 'b-place-lost', tags: ['travel', 'outdoor', 'bold', 'solo'], sphereId: null, title: 'Выйди на незнакомой остановке и дойди домой пешком' },
+
+    // ── Батч 2 (17.08): расширение пула до рабочего объёма ─────────────────────
+    // Проверка каждого: можно ли начать сегодня, не приняв ни одного доп. решения.
+
+    // Тело и движение
+    { id: 'b-body-stairs', tags: ['body', 'indoor', 'solo', 'bold'], sphereId: 'sport', title: 'Поднимись пешком туда, куда обычно едешь на лифте, — и не один раз' },
+    { id: 'b-body-carry', tags: ['body', 'outdoor', 'solo'], sphereId: 'sport', title: 'Донеси покупки домой пешком, без транспорта' },
+    { id: 'b-body-morning', tags: ['body', 'early', 'solo'], sphereId: 'sport', title: 'Сделай первое движение дня раньше, чем возьмёшь телефон' },
+    { id: 'b-body-limit', tags: ['body', 'bold', 'solo'], sphereId: 'sport', title: 'Найди свой предел в одном упражнении и запиши число' },
+    { id: 'b-body-barefoot', tags: ['outdoor', 'body', 'quiet'], sphereId: 'health', title: 'Пройди сто шагов босиком по земле, траве или песку' },
+
+    // Люди
+    { id: 'b-ppl-thanks', tags: ['people', 'care', 'quiet'], sphereId: 'mind', title: 'Скажи человеку спасибо за то, за что никогда не благодарил' },
+    { id: 'b-ppl-listen', tags: ['people', 'care', 'quiet'], sphereId: 'mind', title: 'Проведи разговор, в котором ты только слушаешь' },
+    { id: 'b-ppl-invite', tags: ['people', 'bold', 'outdoor'], sphereId: 'mind', title: 'Позови кого-нибудь туда, куда обычно ходишь один' },
+    { id: 'b-ppl-help', tags: ['people', 'care', 'craft'], sphereId: 'life', title: 'Сделай за кого-то дело, о котором он не просил' },
+    { id: 'b-ppl-old', tags: ['people', 'care', 'quiet'], sphereId: 'mind', title: 'Позвони тому, кто старше тебя, и спроси, как было в его двадцать' },
+
+    // Мастерство и созидание
+    { id: 'b-craft-repair', tags: ['craft', 'indoor', 'solo'], sphereId: 'life', title: 'Почини вещь, которую собирался выбросить' },
+    { id: 'b-craft-copy', tags: ['craft', 'creative', 'solo'], sphereId: 'mind', title: 'Скопируй чужую работу, которая тебе нравится, — целиком и честно' },
+    { id: 'b-craft-ship', tags: ['craft', 'bold', 'solo'], sphereId: 'work', title: 'Покажи кому-нибудь незаконченное' },
+    { id: 'b-craft-hour', tags: ['craft', 'solo', 'quiet'], sphereId: 'work', title: 'Работай час над одним делом, не переключаясь ни разу' },
+    { id: 'b-craft-worst', tags: ['craft', 'creative', 'solo', 'bold'], sphereId: 'mind', title: 'Сделай нарочно плохо и быстро — просто чтобы оно существовало' },
+
+    // Ум и внимание
+    { id: 'b-mind-hard', tags: ['mind', 'solo', 'quiet'], sphereId: 'study', title: 'Разберись в том, что откладывал, потому что казалось сложным' },
+    { id: 'b-mind-teachback', tags: ['mind', 'people'], sphereId: 'study', title: 'Перескажи вслух то, что учил, — без конспекта' },
+    { id: 'b-mind-wrong', tags: ['mind', 'solo', 'bold'], sphereId: 'mind', title: 'Найди аргумент против того, во что веришь, и дочитай до конца' },
+    { id: 'b-mind-question', tags: ['mind', 'solo', 'quiet'], sphereId: 'study', title: 'Запиши вопрос, на который у тебя нет ответа, и поищи его час' },
+    { id: 'b-mind-boring', tags: ['mind', 'detox', 'quiet', 'solo'], sphereId: 'mind', title: 'Побудь двадцать минут в скуке — без музыки, экрана и книги' },
+
+    // Быт и порядок
+    { id: 'b-life-drawer', tags: ['craft', 'indoor', 'solo'], sphereId: 'life', title: 'Разбери один ящик до конца, а не наполовину' },
+    { id: 'b-life-give', tags: ['care', 'craft', 'indoor'], sphereId: 'life', title: 'Отдай пять вещей, которыми не пользовался год' },
+    { id: 'b-life-money', tags: ['mind', 'indoor', 'solo'], sphereId: 'life', title: 'Посчитай, куда ушли деньги за последний месяц. Без выводов, просто цифры' },
+    { id: 'b-life-cook', tags: ['craft', 'indoor', 'care'], sphereId: 'health', title: 'Приготовь то, что раньше только заказывал' },
+    { id: 'b-life-early', tags: ['early', 'solo', 'quiet'], sphereId: 'health', title: 'Ляг спать на час раньше обычного' },
+
+    // Детокс и внимание к себе
+    { id: 'b-detox-grey', tags: ['detox', 'solo'], sphereId: 'mind', title: 'Сделай экран телефона чёрно-белым на один день' },
+    { id: 'b-detox-unfollow', tags: ['detox', 'solo', 'quiet'], sphereId: 'mind', title: 'Отпишись от десяти аккаунтов, после которых тебе хуже' },
+    { id: 'b-detox-nomorning', tags: ['detox', 'early', 'solo'], sphereId: 'mind', title: 'Не бери телефон, пока не выйдешь из дома' },
+    { id: 'b-detox-silence', tags: ['detox', 'quiet', 'solo', 'outdoor'], sphereId: 'mind', title: 'Пройди дорогу без наушников' },
+
+    // Место и взгляд
+    { id: 'b-place-roof', tags: ['outdoor', 'bold', 'quiet'], sphereId: null, title: 'Найди в своём городе точку, откуда его видно целиком' },
+    { id: 'b-place-old', tags: ['travel', 'outdoor', 'quiet'], sphereId: null, title: 'Вернись туда, где не был с детства' },
+    { id: 'b-place-water', tags: ['outdoor', 'water', 'quiet'], sphereId: null, title: 'Найди ближайшую воду и дойди до неё пешком' },
+    { id: 'b-place-night', tags: ['outdoor', 'quiet', 'solo', 'bold'], sphereId: null, title: 'Пройди по знакомой улице ночью и посмотри, что изменилось' },
+    { id: 'b-place-museum', tags: ['indoor', 'mind', 'solo'], sphereId: 'mind', title: 'Зайди в музей на сорок минут и посмотри три вещи вместо сорока' },
   ];
 
   // Сезонные — общие для всех, тон по §7 плана.
@@ -85,6 +136,40 @@
   // Authored orders are content, not UI chrome. Stable ids let each locale keep
   // a natural sentence without using the Russian source text as a translation key.
   const TITLES = {
+    'b-body-stairs': { en: 'Take the stairs where you normally take the lift — and not just once', de: 'Nimm die Treppe, wo du sonst den Aufzug nimmst — und nicht nur einmal', uk: 'Піднімись пішки туди, куди зазвичай їдеш ліфтом, — і не один раз', es: 'Sube por las escaleras donde normalmente tomas el ascensor, y no solo una vez' },
+    'b-body-carry': { en: 'Carry the groceries home on foot, no transport', de: 'Trag den Einkauf zu Fuß nach Hause, ohne Verkehrsmittel', uk: 'Донеси покупки додому пішки, без транспорту', es: 'Lleva la compra a casa a pie, sin transporte' },
+    'b-body-morning': { en: 'Make the first movement of the day before you pick up your phone', de: 'Mach die erste Bewegung des Tages, bevor du zum Handy greifst', uk: 'Зроби перший рух дня раніше, ніж візьмеш телефон', es: 'Haz el primer movimiento del día antes de coger el móvil' },
+    'b-body-limit': { en: 'Find your limit in one exercise and write the number down', de: 'Finde in einer Übung dein Limit und schreib die Zahl auf', uk: 'Знайди свою межу в одній вправі й запиши число', es: 'Encuentra tu límite en un ejercicio y anota el número' },
+    'b-body-barefoot': { en: 'Walk a hundred steps barefoot on earth, grass or sand', de: 'Geh hundert Schritte barfuß über Erde, Gras oder Sand', uk: 'Пройди сто кроків босоніж по землі, траві чи піску', es: 'Da cien pasos descalzo sobre tierra, hierba o arena' },
+    'b-ppl-thanks': { en: 'Thank someone for something you have never thanked them for', de: 'Bedank dich bei jemandem für etwas, wofür du dich nie bedankt hast', uk: 'Скажи людині дякую за те, за що ніколи не дякував', es: 'Da las gracias a alguien por algo que nunca le agradeciste' },
+    'b-ppl-listen': { en: 'Have a conversation where you only listen', de: 'Führ ein Gespräch, in dem du nur zuhörst', uk: 'Проведи розмову, в якій ти лише слухаєш', es: 'Ten una conversación en la que solo escuches' },
+    'b-ppl-invite': { en: 'Invite someone to a place you usually go alone', de: 'Lade jemanden dorthin ein, wo du sonst allein hingehst', uk: 'Поклич когось туди, куди зазвичай ходиш сам', es: 'Invita a alguien a un sitio al que sueles ir solo' },
+    'b-ppl-help': { en: 'Do something for someone who did not ask for it', de: 'Tu etwas für jemanden, der nicht darum gebeten hat', uk: 'Зроби за когось справу, про яку він не просив', es: 'Haz algo por alguien que no te lo pidió' },
+    'b-ppl-old': { en: 'Call someone older than you and ask what their twenties were like', de: 'Ruf jemanden an, der älter ist als du, und frag, wie es mit zwanzig war', uk: 'Зателефонуй тому, хто старший за тебе, і спитай, як було в його двадцять', es: 'Llama a alguien mayor que tú y pregúntale cómo fueron sus veinte' },
+    'b-craft-repair': { en: 'Repair something you were about to throw away', de: 'Repariere etwas, das du wegwerfen wolltest', uk: 'Полагодь річ, яку збирався викинути', es: 'Repara algo que ibas a tirar' },
+    'b-craft-copy': { en: 'Copy a piece of work you admire — fully and honestly', de: 'Kopiere eine Arbeit, die dir gefällt — ganz und ehrlich', uk: 'Скопіюй чужу роботу, яка тобі подобається, — цілком і чесно', es: 'Copia un trabajo ajeno que te guste, entero y con honestidad' },
+    'b-craft-ship': { en: 'Show someone something unfinished', de: 'Zeig jemandem etwas Unfertiges', uk: 'Покажи комусь незакінчене', es: 'Enséñale a alguien algo sin terminar' },
+    'b-craft-hour': { en: 'Work an hour on one thing without switching once', de: 'Arbeite eine Stunde an einer Sache, ohne ein einziges Mal zu wechseln', uk: 'Працюй годину над однією справою, не перемикаючись жодного разу', es: 'Trabaja una hora en una sola cosa sin cambiar ni una vez' },
+    'b-craft-worst': { en: 'Make it deliberately bad and fast — just so it exists', de: 'Mach es absichtlich schlecht und schnell — nur damit es existiert', uk: 'Зроби навмисне погано і швидко — просто щоб воно існувало', es: 'Hazlo mal y rápido a propósito, solo para que exista' },
+    'b-mind-hard': { en: 'Get to grips with the thing you postponed because it looked hard', de: 'Nimm dir das vor, was du aufgeschoben hast, weil es schwer aussah', uk: 'Розберися в тому, що відкладав, бо здавалося складним', es: 'Métete con eso que aplazabas porque parecía difícil' },
+    'b-mind-teachback': { en: 'Say out loud what you studied — without your notes', de: 'Sag laut, was du gelernt hast — ohne Notizen', uk: 'Перекажи вголос те, що вчив, — без конспекту', es: 'Di en voz alta lo que estudiaste, sin apuntes' },
+    'b-mind-wrong': { en: 'Find an argument against something you believe and read it to the end', de: 'Such ein Argument gegen etwas, das du glaubst, und lies es zu Ende', uk: 'Знайди аргумент проти того, у що віриш, і дочитай до кінця', es: 'Busca un argumento contra algo que crees y léelo hasta el final' },
+    'b-mind-question': { en: 'Write down a question you cannot answer, then spend an hour looking', de: 'Schreib eine Frage auf, die du nicht beantworten kannst, und such eine Stunde lang', uk: 'Запиши питання, на яке в тебе немає відповіді, і пошукай його годину', es: 'Anota una pregunta que no sepas responder y búscala durante una hora' },
+    'b-mind-boring': { en: 'Spend twenty minutes bored — no music, no screen, no book', de: 'Verbring zwanzig Minuten in Langeweile — ohne Musik, Bildschirm und Buch', uk: 'Побудь двадцять хвилин у нудьзі — без музики, екрана і книги', es: 'Pasa veinte minutos aburrido: sin música, sin pantalla, sin libro' },
+    'b-life-drawer': { en: 'Clear out one drawer completely, not halfway', de: 'Räum eine Schublade ganz aus, nicht halb', uk: 'Розбери одну шухляду до кінця, а не наполовину', es: 'Vacía un cajón del todo, no a medias' },
+    'b-life-give': { en: 'Give away five things you have not used in a year', de: 'Verschenk fünf Dinge, die du seit einem Jahr nicht benutzt hast', uk: 'Віддай пʼять речей, якими не користувався рік', es: 'Regala cinco cosas que no hayas usado en un año' },
+    'b-life-money': { en: 'Add up where your money went last month. No conclusions, just the numbers', de: 'Rechne zusammen, wohin dein Geld letzten Monat ging. Keine Schlüsse, nur Zahlen', uk: 'Порахуй, куди пішли гроші за останній місяць. Без висновків, просто цифри', es: 'Suma en qué se fue tu dinero el mes pasado. Sin conclusiones, solo cifras' },
+    'b-life-cook': { en: 'Cook something you have only ever ordered', de: 'Koch etwas, das du bisher nur bestellt hast', uk: 'Приготуй те, що раніше тільки замовляв', es: 'Cocina algo que hasta ahora solo habías pedido' },
+    'b-life-early': { en: 'Go to bed an hour earlier than usual', de: 'Geh eine Stunde früher ins Bett als sonst', uk: 'Лягай спати на годину раніше, ніж зазвичай', es: 'Acuéstate una hora antes de lo habitual' },
+    'b-detox-grey': { en: 'Set your phone screen to greyscale for a day', de: 'Stell deinen Handybildschirm für einen Tag auf Graustufen', uk: 'Зроби екран телефона чорно-білим на один день', es: 'Pon la pantalla del móvil en blanco y negro durante un día' },
+    'b-detox-unfollow': { en: 'Unfollow ten accounts that leave you feeling worse', de: 'Entfolge zehn Accounts, nach denen es dir schlechter geht', uk: 'Відпишись від десяти акаунтів, після яких тобі гірше', es: 'Deja de seguir a diez cuentas que te dejan peor' },
+    'b-detox-nomorning': { en: 'Do not touch your phone until you have left the house', de: 'Fass dein Handy nicht an, bis du aus dem Haus bist', uk: 'Не бери телефон, поки не вийдеш з дому', es: 'No toques el móvil hasta que salgas de casa' },
+    'b-detox-silence': { en: 'Walk the route without headphones', de: 'Geh den Weg ohne Kopfhörer', uk: 'Пройди дорогу без навушників', es: 'Haz el camino sin auriculares' },
+    'b-place-roof': { en: 'Find the spot in your city where you can see the whole of it', de: 'Finde den Punkt in deiner Stadt, von dem aus du sie ganz siehst', uk: 'Знайди у своєму місті точку, звідки його видно цілком', es: 'Encuentra el punto de tu ciudad desde donde se ve entera' },
+    'b-place-old': { en: 'Go back somewhere you have not been since childhood', de: 'Geh zurück an einen Ort, an dem du seit deiner Kindheit nicht warst', uk: 'Повернись туди, де не був з дитинства', es: 'Vuelve a un sitio en el que no has estado desde la infancia' },
+    'b-place-water': { en: 'Find the nearest water and walk to it', de: 'Finde das nächste Gewässer und geh zu Fuß hin', uk: 'Знайди найближчу воду і дійди до неї пішки', es: 'Encuentra el agua más cercana y ve caminando' },
+    'b-place-night': { en: 'Walk a familiar street at night and see what changed', de: 'Geh nachts eine vertraute Straße entlang und sieh, was sich ändert', uk: 'Пройди знайомою вулицею вночі й подивись, що змінилося', es: 'Recorre de noche una calle conocida y mira qué cambia' },
+    'b-place-museum': { en: 'Go to a museum for forty minutes and look at three things instead of forty', de: 'Geh vierzig Minuten ins Museum und sieh dir drei Dinge an statt vierzig', uk: 'Зайди в музей на сорок хвилин і подивись три речі замість сорока', es: 'Ve a un museo cuarenta minutos y mira tres cosas en vez de cuarenta' },
     'b-body-newroute': { en: 'Walk a route you have never taken before — at least twenty minutes', de: 'Geh mindestens zwanzig Minuten einen Weg, den du noch nie genommen hast', uk: 'Пройди пішки маршрутом, яким ніколи не ходив, — щонайменше двадцять хвилин', es: 'Camina al menos veinte minutos por una ruta que nunca hayas recorrido' },
     'b-body-outside': { en: 'Do your usual workout outside instead of indoors', de: 'Mach dein übliches Training draußen statt drinnen', uk: 'Зроби своє звичне тренування надворі, а не в приміщенні', es: 'Haz tu entrenamiento habitual al aire libre en vez de dentro' },
     'b-body-water': { en: 'Swim in water colder than you would like', de: 'Bade in Wasser, das kälter ist, als dir lieb ist', uk: 'Скупайся у воді, холоднішій, ніж тобі хотілося б', es: 'Báñate en agua más fría de lo que te gustaría' },
