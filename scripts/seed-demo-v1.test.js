@@ -106,6 +106,37 @@ test('приложение принимает всё, что засеял сид
   assert.deepEqual(broken, [], `приложение отбракует засеянные файлы:\n  ${broken.join('\n  ')}`);
 });
 
+test('засеянная доска показывает доску, а не калибровку вкуса', { timeout: 90000 }, async (t) => {
+  // Пустая доска отдаёт не доску, а опросник «что из этого — твоё?»: до шести
+  // вердиктов board-taste держит экран себе. Для съёмки виджета `?widget=board`
+  // это ловушка — в кадр попадает калибровка вместо доски, которую и рекламируем.
+  const rt = await startServer();
+  t.after(() => { rt.child.kill('SIGTERM'); fs.rmSync(rt.dataDir, { recursive: true, force: true }); });
+
+  const email = 'demo-board@example.test', password = 'seed-pass-1234';
+  await runSeeder(rt.base, email, password);
+  const login = await fetch(`${rt.base}/api/auth/login`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }),
+  });
+  const cookie = (login.headers.get('set-cookie') || '').split(';')[0];
+  const settings = await (await fetch(`${rt.base}/api/data/settings`, { headers: { Cookie: cookie } })).json();
+
+  const taste = require(path.join(ROOT, 'public/board-taste-v1.js'));
+  assert.ok(taste.isCalibrated(settings.boardTaste),
+    `вкус не откалиброван (${taste.verdictCount(settings.boardTaste)} из ${taste.CALIBRATED_AT}) — виджет снимет опросник вместо доски`);
+
+  const board = require(path.join(ROOT, 'public/board-v1.js')).normalize(settings.board);
+  assert.ok(board.done.length >= 1, 'на доске нет ни одного выполненного заказа');
+  assert.ok(board.active.length >= 1, 'на доске нет ни одного взятого заказа');
+
+  // Заказы обязаны существовать в пуле: id из головы отрисуется пустой карточкой.
+  const pool = require(path.join(ROOT, 'public/board-pool-v1.js')).ALL;
+  const known = new Set(pool.map((o) => o.id));
+  for (const entry of [...board.active, ...board.done, ...board.rested]) {
+    assert.ok(known.has(entry.orderId), `заказа ${entry.orderId} нет в пуле`);
+  }
+});
+
 test('засеянные привычки видны, а не отбракованы целиком', { timeout: 90000 }, async (t) => {
   // Отдельным тестом, потому что поломка была именно здесь и стоила молчаливого
   // пустого экрана: валидатор привычек отбраковывает файл целиком, поэтому одна

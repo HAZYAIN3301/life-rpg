@@ -174,6 +174,38 @@ function buildDays() {
   return days;
 }
 
+// ── доска заказов ────────────────────────────────────────────────────────────
+// Пустая доска показывает не доску, а калибровку вкуса: первый заход спрашивает
+// «что из этого — твоё?» и до шести вердиктов саму доску не отдаёт. Для ручной
+// проверки и для съёмки виджета `?widget=board` это ловушка — в кадр попадает
+// опросник вместо доски, которую и рекламируем. Поэтому вкус засеян калиброванным.
+const BOARD_TASTE = {
+  version: 1,
+  verdicts: {
+    'b-mind-book': { v: 'like', at: back(24) },
+    'b-place-sunrise': { v: 'like', at: back(24) },
+    'b-body-water': { v: 'like', at: back(24) },
+    'b-craft-copy': { v: 'like', at: back(23) },
+    'b-detox-grey': { v: 'skip', note: 'экран и так почти не трогаю', at: back(23) },
+    'b-ppl-oldfriend': { v: 'skip', at: back(23) },
+    'b-life-drawer': { v: 'like', at: back(22) },
+    'b-body-outside': { v: 'skip', at: back(22) },
+  },
+};
+
+// Месяц на доске: два заказа закрыты, один на руках, один возвращён. Возврат — не
+// провал и не штраф (board-v1 §3), он здесь ровно затем, чтобы засеянный аккаунт
+// показывал живую доску, а не идеальную.
+const BOARD = {
+  version: 1,
+  active: [{ orderId: 'b-place-sunrise', takenAt: back(5) }],
+  done: [
+    { orderId: 'b-mind-book', doneAt: back(20), sphereId: 'study' },
+    { orderId: 'b-body-water', doneAt: back(9), sphereId: 'health' },
+  ],
+  rested: [{ orderId: 'b-craft-finish', restedAt: back(14) }],
+};
+
 const SETTINGS = {
   appName: 'Satoru',
   skills: SKILLS,
@@ -184,7 +216,8 @@ const SETTINGS = {
   imported: {},
   lang: 'ru',
   place: { name: 'Дрезден', lat: 51.05, lon: 13.74 },
-  board: { version: 1, active: [], done: [], rested: [] },
+  board: BOARD,
+  boardTaste: BOARD_TASTE,
   cosmetics: [],
 };
 
