@@ -2,6 +2,14 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-19] 🎭 Traveller female identity variants 02 — взрослое лицо вместо cute-аниме
+
+- Первый female-кандидат технически работал, но Альберт отклонил его как недостаточно симпатичный. Полный pack не размножался: вместо этого произведены четыре независимых full-body identity-направления с тем же costume/palette/cut-paper contract.
+- A — уверенная полевая лидерка; B — спокойная картограф; C — более дерзкая механик с веснушками; D — строгая экспедиционная лидерка. Во всех четырёх убраны детское круглое лицо, oversized head и белки anime-eyes; сохранены взрослые пропорции, goggles/scarf/teal coat и технический magenta field.
+- Исходники и review-контракт: `art-factory/traveller-female-v1-20260818/IDENTITY-VARIANTS-02.md` и `sources/identity-variants-02/`. Это concept-only: normalization/runtime/public art не менялись, selector остаётся закрыт до выбора одного лица.
+
+Commit: `art: explore mature female Traveller identities` (этот коммит). Push выполняется сразу; runtime не меняется.
+
 ## [2026-08-19] 🔮 Female Shadow v2 — честный matte и канонический contact scale
 
 - Проваленный Shadow v1 не растянут и не удалён: он остаётся rejected control. Новый `female-shadow-02` перегенерирован с той же female identity и точной хореографией male-reference: Traveller сидит в полном каноническом масштабе, Искра держится над открытой ладонью.
