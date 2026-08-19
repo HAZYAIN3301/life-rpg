@@ -2623,6 +2623,15 @@ const server = http.createServer(async (req, res) => {
     const counts = Object.fromEntries(steps.map(k => [k, 0]));
     const cohorts = Object.create(null);   // по неделе регистрации: видно, лучше ли новым, чем старым
 
+    // Воронка доски заказов считается отдельным блоком, а не шагами общей. Причина —
+    // знаменатель: общая идёт от всех зарегистрированных, доска — от тех, кто вообще
+    // добрался до «Сегодня» и её увидел. Смешать значило бы вечно показывать провал
+    // доски там, где человек просто не дошёл до приложения.
+    const boardSteps = ['sawBoard', 'took', 'completed', 'photo'];
+    const boardCounts = Object.fromEntries(boardSteps.map(k => [k, 0]));
+    let boardOwn = 0;
+    const listLen = (v) => (Array.isArray(v) ? v.length : 0);
+
     for (const user of loadUsers()) {
       const uid = user.id;
       counts.registered += 1;
@@ -2659,13 +2668,61 @@ const server = http.createServer(async (req, res) => {
         const weekLater = new Date(born.getTime() + 7 * 86400000).toISOString().slice(0, 10);
         if ([...days].some(d => d >= weekLater)) { counts.day7 += 1; row.day7 += 1; }
       }
+
+      // ── Доска заказов: показ → взял → выполнил → фото ────────────────────────
+      //
+      // Возвраты здесь НЕ считаются, и это не упущение. `returnOrder` в board-v1
+      // намеренно не оставляет следа, по которому можно посчитать брошенные заказы:
+      // «доска приключений превратилась бы в ещё один источник вины». Воронка меряет
+      // только продвижение вперёд — сколько людей прошло очередной шаг, а не сколько
+      // сорвалось на нём.
+      //
+      // Истёкшие сезонные заказы следа тоже не оставляют (`sweepExpired` удаляет их
+      // молча, потому что конец сезона — не провал). Значит `took` слегка занижен:
+      // человек, взявший летний заказ и не успевший до осени, здесь не виден.
+      const board = settings && settings.board && typeof settings.board === 'object' && !Array.isArray(settings.board)
+        ? settings.board : null;
+      const tookAny = board ? listLen(board.active) + listLen(board.done) + listLen(board.rested) > 0 : false;
+      const doneAny = board ? listLen(board.done) > 0 : false;
+
+      // Точного следа «показа» в данных нет: доска живёт карточкой на «Сегодня», а не
+      // отдельным экраном, и её открытие никуда не пишется. Ближайшее, что есть, —
+      // человек прошёл онбординг, а значит видел «Сегодня». Взятый заказ засчитывается
+      // сам по себе: взять, не увидев, нельзя. В ответе шаг помечен как оценка.
+      const sawBoard = tookAny || !!(settings && Array.isArray(settings.skills) && settings.skills.length);
+      if (sawBoard) boardCounts.sawBoard += 1;
+      if (tookAny) boardCounts.took += 1;
+      if (doneAny) boardCounts.completed += 1;
+
+      // Фото засчитывается только вместе с выполненным заказом. Снимок предлагается
+      // именно на выполненном, и без этой сверки шаг мог бы однажды стать шире
+      // предыдущего — воронка, которая расширяется, врёт молча.
+      const media = readUser(uid, 'boardmedia');
+      const withPhoto = !!(media && typeof media === 'object' && !Array.isArray(media)
+        && Object.values(media).some(e => e && typeof e === 'object'
+          && typeof e.dataUrl === 'string' && e.dataUrl.startsWith('data:image/')));
+      if (doneAny && withPhoto) boardCounts.photo += 1;
+
+      // Свой заказ — не шаг воронки: его пишут вместо пулового, а не после фото.
+      // Поэтому отдельным числом, чтобы не ломать сужение.
+      if (board && listLen(board.custom) > 0) boardOwn += 1;
     }
 
     const pct = (n) => counts.registered ? Math.round(n / counts.registered * 1000) / 10 : 0;
+    const boardPct = (n) => boardCounts.sawBoard ? Math.round(n / boardCounts.sawBoard * 1000) / 10 : 0;
     return sendJson(res, 200, {
       generatedAt: new Date().toISOString(),
       steps: steps.map((key) => ({ key, count: counts[key], pctOfRegistered: pct(counts[key]) })),
       cohortsByWeek: Object.fromEntries(Object.entries(cohorts).sort(([a], [b]) => a < b ? 1 : -1).slice(0, 12)),
+      boardFunnel: {
+        steps: boardSteps.map((key) => ({ key, count: boardCounts[key], pctOfSaw: boardPct(boardCounts[key]) })),
+        wroteOwnOrder: boardOwn,
+        // Шаг «поделился» Альберт просил, но делиться пока нечем: карточка выполненного
+        // заказа не построена. Ноль здесь означал бы «никто не делится», а правда —
+        // «действия не существует». Поэтому число не выдаём вовсе.
+        shared: { available: false, note: 'Действия «поделиться» ещё нет — карточка выполненного заказа не построена. Числа не будет, пока действие не появится.' },
+        note: 'Знаменатель — увидевшие доску, а не все зарегистрированные. sawBoard — оценка по онбордингу: точного следа показа в данных нет. Возвраты и истёкшие сезонные не считаются намеренно (board-v1 §3).',
+      },
       note: 'Агрегат по данным аккаунтов. Ни имён, ни email, ни идентификаторов наружу не уходит.',
     });
   }

@@ -137,3 +137,144 @@ test('внешней аналитики не заводили', () => {
   }
   assert.match(JSON.parse(pkg).dependencies ? JSON.stringify(JSON.parse(pkg).dependencies) : '{}', /^\{\}$/, 'появилась внешняя зависимость');
 });
+
+/* ── Воронка доски заказов: показ → взял → выполнил → фото ───────────────────
+ *
+ * Считается из тех же данных аккаунта, без новых событий с клиента. Тест строит
+ * аккаунты на разных стадиях доски и проверяет, что отчёт их различает, что воронка
+ * сужается, и что фотография выполненного заказа не утекает в отчёт вместе со счётом.
+ */
+const PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+
+test('воронка доски различает стадии и сужается', { timeout: 40000 }, async (t) => {
+  const rt = await startServer();
+  t.after(() => { rt.child.kill('SIGTERM'); fs.rmSync(rt.dataDir, { recursive: true, force: true }); });
+  const { base } = rt;
+  const today = iso(Date.now());
+  const skills = [{ id: 'body', name: 'Тело' }];
+
+  // Админ: дошёл до конца — взял, выполнил, приложил фото, да ещё и написал свой заказ.
+  const admin = client(base);
+  await admin('/api/auth/register', { method: 'POST', body: { name: 'Админ', email: 'bf-admin@example.test', password: 'funnel-pass-11' } });
+  await admin('/api/data/settings', { method: 'PUT', body: { skills, board: {
+    version: 1, active: [], done: [{ orderId: 'b-body-water', doneAt: today }], rested: [],
+    custom: [{ id: 'own-1', title: 'Свой заказ' }],
+  } } });
+  await admin('/api/data/boardmedia', { method: 'PUT', body: {
+    'b-body-water': { dataUrl: PNG, caption: 'озеро на рассвете, вода ледяная' },
+  } });
+
+  // Взял и выполнил, но фото не приложил.
+  const b = client(base);
+  await b('/api/auth/register', { method: 'POST', body: { name: 'Б', email: 'bf-b@example.test', password: 'funnel-pass-11' } });
+  await b('/api/data/settings', { method: 'PUT', body: { skills, board: {
+    version: 1, active: [], done: [{ orderId: 'b-mind-book', doneAt: today }], rested: [],
+  } } });
+
+  // Взял и держит — до выполнения не дошёл.
+  const c = client(base);
+  await c('/api/auth/register', { method: 'POST', body: { name: 'В', email: 'bf-c@example.test', password: 'funnel-pass-11' } });
+  await c('/api/data/settings', { method: 'PUT', body: { skills, board: {
+    version: 1, active: [{ orderId: 'b-place-sunrise', takenAt: today }], done: [], rested: [],
+  } } });
+
+  // Прошёл онбординг, доску видел, но не тронул.
+  const d = client(base);
+  await d('/api/auth/register', { method: 'POST', body: { name: 'Г', email: 'bf-d@example.test', password: 'funnel-pass-11' } });
+  await d('/api/data/settings', { method: 'PUT', body: { skills } });
+
+  // Зарегистрировался и пропал: до «Сегодня» не дошёл, доски не видел.
+  const e = client(base);
+  await e('/api/auth/register', { method: 'POST', body: { name: 'Д', email: 'bf-e@example.test', password: 'funnel-pass-11' } });
+
+  const rep = await admin('/api/admin/funnel');
+  assert.equal(rep.status, 200);
+  const bf = rep.data.boardFunnel;
+  assert.ok(bf, 'блока boardFunnel нет в отчёте');
+  const by = Object.fromEntries(bf.steps.map((s) => [s.key, s.count]));
+
+  assert.equal(by.sawBoard, 4, 'доску видели четверо — пятый не дошёл до Сегодня');
+  assert.equal(by.took, 3, 'заказ брали трое');
+  assert.equal(by.completed, 2, 'выполнили двое');
+  assert.equal(by.photo, 1, 'фото приложил один');
+  assert.equal(bf.wroteOwnOrder, 1, 'свой заказ написал один');
+
+  // Воронка обязана сужаться. Расширяющаяся воронка врёт молча, поэтому проверяем шагами.
+  const order = ['sawBoard', 'took', 'completed', 'photo'];
+  for (let i = 1; i < order.length; i += 1) {
+    assert.ok(by[order[i]] <= by[order[i - 1]], `${order[i]} больше, чем ${order[i - 1]}`);
+  }
+  for (const s of bf.steps) {
+    assert.ok(Number.isFinite(s.pctOfSaw) && s.pctOfSaw >= 0 && s.pctOfSaw <= 100, `${s.key} даёт негодный процент`);
+  }
+  assert.equal(bf.steps.find((s) => s.key === 'sawBoard').pctOfSaw, 100, 'знаменатель — увидевшие доску');
+
+  // 🔴 Шага «поделился» нет как действия. Ноль означал бы «никто не делится» —
+  // это неправда, поэтому числа быть не должно вовсе.
+  assert.equal(bf.shared.available, false, 'появился счёт «поделился» без самого действия');
+  assert.equal(Object.prototype.hasOwnProperty.call(bf.shared, 'count'), false, 'выдано число там, где действия ещё нет');
+
+  // 🔴 Фотография и подпись к ней — личный контент. Наружу уходит только счёт.
+  const raw = JSON.stringify(rep.data);
+  for (const leak of [PNG.slice(0, 40), 'озеро на рассвете', 'Свой заказ', 'b-body-water', 'bf-admin@example.test']) {
+    assert.equal(raw.includes(leak), false, `в отчёт утекло: ${leak}`);
+  }
+});
+
+test('взятый заказ засчитывает показ даже без пройденного онбординга', { timeout: 40000 }, async (t) => {
+  // Показ точного следа не оставляет и считается по онбордингу. Но взять заказ,
+  // не увидев доски, нельзя — иначе `took` оказался бы больше `sawBoard`,
+  // и воронка расширилась бы на первом же шаге.
+  const rt = await startServer();
+  t.after(() => { rt.child.kill('SIGTERM'); fs.rmSync(rt.dataDir, { recursive: true, force: true }); });
+  const admin = client(rt.base);
+  await admin('/api/auth/register', { method: 'POST', body: { name: 'A', email: 'bg-admin@example.test', password: 'funnel-pass-11' } });
+  await admin('/api/data/settings', { method: 'PUT', body: { board: {
+    version: 1, active: [{ orderId: 'b-body-stairs', takenAt: iso(Date.now()) }], done: [], rested: [],
+  } } });
+
+  const bf = (await admin('/api/admin/funnel')).data.boardFunnel;
+  const by = Object.fromEntries(bf.steps.map((s) => [s.key, s.count]));
+  assert.equal(by.sawBoard, 1, 'взявший заказ обязан считаться увидевшим доску');
+  assert.equal(by.took, 1);
+});
+
+test('возвращённые заказы воронка не считает', { timeout: 40000 }, async (t) => {
+  // board-v1 намеренно не оставляет следа, по которому можно посчитать брошенные:
+  // «доска приключений превратилась бы в ещё один источник вины». Возврат обязан
+  // выглядеть как взятый и невыполненный — и никак иначе.
+  const rt = await startServer();
+  t.after(() => { rt.child.kill('SIGTERM'); fs.rmSync(rt.dataDir, { recursive: true, force: true }); });
+  const admin = client(rt.base);
+  await admin('/api/auth/register', { method: 'POST', body: { name: 'A', email: 'bh-admin@example.test', password: 'funnel-pass-11' } });
+  await admin('/api/data/settings', { method: 'PUT', body: { skills: [{ id: 'body', name: 'Тело' }], board: {
+    version: 1, active: [], done: [], rested: [{ orderId: 'b-body-water', restedAt: iso(Date.now()) }],
+  } } });
+
+  const rep = await admin('/api/admin/funnel');
+  const bf = rep.data.boardFunnel;
+  const by = Object.fromEntries(bf.steps.map((s) => [s.key, s.count]));
+  assert.equal(by.took, 1, 'возвращённый заказ всё-таки был взят');
+  assert.equal(by.completed, 0);
+  // Ни одного поля со словом «вернул»/«бросил»: считать возвраты здесь нельзя.
+  assert.doesNotMatch(JSON.stringify(bf).toLowerCase(), /returned|rested|abandon|броше|верну/);
+});
+
+test('пустая доска не роняет отчёт', { timeout: 40000 }, async (t) => {
+  const rt = await startServer();
+  t.after(() => { rt.child.kill('SIGTERM'); fs.rmSync(rt.dataDir, { recursive: true, force: true }); });
+  const admin = client(rt.base);
+  await admin('/api/auth/register', { method: 'POST', body: { name: 'Один', email: 'bi@example.test', password: 'funnel-pass-11' } });
+  // Мусор вместо доски: старый аккаунт, битая миграция, ручная правка файла.
+  await admin('/api/data/settings', { method: 'PUT', body: { board: 'не объект' } });
+  await admin('/api/data/boardmedia', { method: 'PUT', body: [] });
+
+  const rep = await admin('/api/admin/funnel');
+  assert.equal(rep.status, 200, 'битая доска уронила отчёт');
+  const bf = rep.data.boardFunnel;
+  for (const s of bf.steps) {
+    assert.ok(Number.isFinite(s.count) && Number.isFinite(s.pctOfSaw), `${s.key} даёт NaN`);
+  }
+  assert.equal(bf.steps.find((s) => s.key === 'took').count, 0);
+  assert.equal(bf.wroteOwnOrder, 0);
+});
