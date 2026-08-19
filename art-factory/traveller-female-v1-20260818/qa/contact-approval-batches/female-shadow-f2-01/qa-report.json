@@ -1,0 +1,60 @@
+{
+  "schema": "satoru.traveller-female-contact-qa/1",
+  "batch": "female-shadow-f2-01",
+  "family": "shadow",
+  "canvas": [
+    1254,
+    1254
+  ],
+  "groundY": null,
+  "automatedContractPassed": true,
+  "manualContactApprovalRequired": true,
+  "runtimeEligible": false,
+  "frames": {
+    "attune-spark": {
+      "file": "outputs/contact-approval-batches/female-shadow-f2-01/attune-spark.png",
+      "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-spark.png",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "bbox": [
+        342,
+        205,
+        1026,
+        1144
+      ],
+      "referenceBbox": [
+        309,
+        205,
+        1060,
+        1144
+      ],
+      "centerDeltaPx": 0.5,
+      "centerXDeltaPx": 0.5,
+      "widthRatioToReference": 0.910786,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 394962,
+      "transparentPixels": 1173114,
+      "partialAlphaPixels": 16226,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 28,
+      "technicalKeyRatio": 7.089e-05,
+      "semanticMagentaPreserved": true,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceScale": true,
+        "referenceCenter": true
+      },
+      "passed": true
+    }
+  },
+  "passed": true
+}

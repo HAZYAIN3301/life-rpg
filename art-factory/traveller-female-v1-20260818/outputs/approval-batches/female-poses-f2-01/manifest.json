@@ -1,0 +1,77 @@
+{
+  "schema": "satoru.traveller-female-approval-batch/1",
+  "id": "female-poses-f2-01",
+  "morphology": "female",
+  "status": "awaiting-manual-art-approval",
+  "runtimeEligible": false,
+  "publicArtWrites": false,
+  "approvedIdentity": {
+    "id": "female-f2-high-ponytail",
+    "path": "sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png",
+    "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+    "status": "identity-approved/runtime-not-yet"
+  },
+  "canvas": [
+    640,
+    900
+  ],
+  "floorY": 860,
+  "normalization": {
+    "key": "#FF00FF",
+    "strategy": "per-frame-profile",
+    "requestedProfile": "auto",
+    "profiles": {
+      "arms-up": {
+        "profile": "pose",
+        "targetHeight": 829,
+        "maxWidth": 590
+      }
+    }
+  },
+  "eyeBoxes": [],
+  "blink": {
+    "method": "deterministic-local-inpaint-and-lid-curves",
+    "maxChangedRatio": 0.006
+  },
+  "assets": {
+    "arms-up": "arms-up.png"
+  },
+  "frames": {
+    "arms-up": {
+      "file": "sources/approval-batches/female-poses-f2-01/arms-up-keyed.png",
+      "sha256": "5a74b4d00b124e2dbd2f8c8a15cda14440c1ba4286189735277803853ace6f50",
+      "keyedBorderRatio": 1.0,
+      "profile": "pose",
+      "targetHeight": 829,
+      "maxWidth": 590,
+      "sourceCanvas": [
+        978,
+        1608
+      ],
+      "sourceBbox": [
+        258,
+        110,
+        722,
+        1514
+      ],
+      "scale": 0.5904558,
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        183,
+        31,
+        457,
+        860
+      ],
+      "floorY": 860,
+      "mode": "RGBA",
+      "transparentCorners": 4
+    }
+  },
+  "qa": {
+    "required": true,
+    "command": "python3 art-factory/traveller-female-v1-20260818/factory_qa.py --batch female-poses-f2-01"
+  }
+}

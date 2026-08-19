@@ -11,6 +11,28 @@ import build_contact_pack as contacts
 import build_core_pack as core
 
 
+def test_approved_identity_pin() -> None:
+    identity = core.load_approved_identity()
+    assert identity == {
+        "id": "female-f2-high-ponytail",
+        "path": "sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png",
+        "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+        "status": "identity-approved/runtime-not-yet",
+    }
+    assert contacts.load_approved_identity() == identity
+    real_sha256 = core.sha256
+    try:
+        core.sha256 = lambda _path: "0" * 64
+        try:
+            core.load_approved_identity()
+        except ValueError as error:
+            assert "SHA-256 mismatch" in str(error)
+        else:
+            raise AssertionError("approved identity accepted a mismatched SHA-256")
+    finally:
+        core.sha256 = real_sha256
+
+
 def keyed_canvas(size: tuple[int, int]) -> Image.Image:
     image = Image.new("RGBA", size, (255, 0, 255, 255))
     pixels = image.load()
@@ -130,16 +152,28 @@ def test_shadow_connected_matte_regression() -> None:
     draw = ImageDraw.Draw(source)
     draw.ellipse((48, 30, 132, 154), fill=(104, 44, 146, 255))
     draw.ellipse((75, 62, 105, 92), fill=(211, 99, 239, 255))
+    draw.rectangle((55, 108, 65, 118), fill=(20, 130, 140, 255))
+    draw.rectangle((115, 108, 125, 118), fill=(180, 70, 35, 255))
+    # Reproduce a generator-created technical-field hole enclosed by the
+    # Shadow actor. Its non-uniform colours recur in the border field.
+    for y in range(112, 136):
+        for x in range(78, 103):
+            drift = (x * 5 + y * 9) % 32
+            pixels[x, y] = (226 + drift // 2, 15 + drift, 213 + drift // 3, 255)
     extracted = core.remove_magenta_key(source, preserve_magenta_subject=True)
     bbox = core.alpha_bbox(extracted)
     assert bbox == (48, 30, 133, 155), f"border key leaked into Shadow bbox: {bbox}"
     assert extracted.getpixel((90, 78)) == (211, 99, 239, 255)
-    assert extracted.getpixel((90, 110)) == (104, 44, 146, 255)
+    assert extracted.getpixel((90, 145)) == (104, 44, 146, 255)
+    assert extracted.getpixel((60, 113)) == (20, 130, 140, 255)
+    assert extracted.getpixel((120, 113)) == (180, 70, 35, 255)
+    assert extracted.getpixel((90, 124))[3] == 0, "enclosed technical key was preserved"
     assert extracted.getpixel((0, 0))[3] == 0
     assert extracted.getpixel((179, 179))[3] == 0
 
 
 def main() -> None:
+    test_approved_identity_pin()
     test_core_key_and_profiles()
     test_blink()
     test_contact_profiles()

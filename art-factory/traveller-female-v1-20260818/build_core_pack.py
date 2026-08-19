@@ -14,7 +14,7 @@ import json
 import math
 import re
 import statistics
-from collections import deque
+from collections import Counter, deque
 from pathlib import Path
 from typing import Iterable
 
@@ -24,6 +24,7 @@ from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parent
 SOURCE_ROOT = ROOT / "sources" / "approval-batches"
 OUTPUT_ROOT = ROOT / "outputs" / "approval-batches"
+APPROVED_IDENTITY_PATH = ROOT / "APPROVED-IDENTITY.json"
 CANVAS = (640, 900)
 FLOOR_Y = 860
 DEFAULT_TARGET_HEIGHT = 796
@@ -115,6 +116,47 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def load_approved_identity() -> dict[str, object]:
+    """Load and verify the one identity allowed to seed new factory batches."""
+    try:
+        payload = json.loads(APPROVED_IDENTITY_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise ValueError(f"cannot read {APPROVED_IDENTITY_PATH.name}: {error}") from error
+    if payload.get("schema") != "satoru.traveller-female-approved-identity/1":
+        raise ValueError("unsupported approved identity schema")
+    identity_id = safe_id(str(payload.get("id", "")), "approved identity id")
+    if (
+        payload.get("morphology") != "female"
+        or payload.get("status") != "identity-approved/runtime-not-yet"
+        or payload.get("runtimeEligible") is not False
+    ):
+        raise ValueError("approved identity status is unsafe for factory authoring")
+    source = payload.get("source")
+    if not isinstance(source, dict):
+        raise ValueError("approved identity source record is missing")
+    relative = source.get("path")
+    expected_sha = source.get("sha256")
+    if not isinstance(relative, str) or not relative or Path(relative).is_absolute():
+        raise ValueError("approved identity source path must be factory-relative")
+    if not isinstance(expected_sha, str) or not re.fullmatch(r"[a-f0-9]{64}", expected_sha):
+        raise ValueError("approved identity SHA-256 is invalid")
+    source_path = inside_factory(ROOT / relative)
+    if not source_path.is_file():
+        raise ValueError(f"approved identity source is missing: {relative}")
+    actual_sha = sha256(source_path)
+    if actual_sha != expected_sha:
+        raise ValueError(
+            f"approved identity SHA-256 mismatch for {relative}: "
+            f"expected {expected_sha}, got {actual_sha}"
+        )
+    return {
+        "id": identity_id,
+        "path": str(source_path.relative_to(ROOT)),
+        "sha256": actual_sha,
+        "status": payload["status"],
+    }
+
+
 def smoothstep(edge0: float, edge1: float, value: float) -> float:
     if edge1 <= edge0:
         return 1.0 if value >= edge1 else 0.0
@@ -147,10 +189,12 @@ def connected_preserve_key_zones(image: Image.Image) -> bytearray:
     """Find technical magenta connected to the canvas border.
 
     Semantic Shadow violet can be chromatically close to the key, so colour
-    alone is not a safe matte. Only a conservative magenta field reachable
-    from a canvas edge becomes hard background. Two surrounding rings are
-    marked for local antialias cleanup; enclosed purple remains untouched.
-    Zone values are 1=background, 2=first fringe, 3=second fringe.
+    alone is not a safe matte. A conservative magenta field reachable from a
+    canvas edge becomes hard background. Enclosed candidate components become
+    background only when their colours overwhelmingly repeat the measured
+    border field; this removes genuine key holes without erasing independent
+    violet artwork. Two surrounding rings are marked for local antialias
+    cleanup. Zone values are 1=background, 2=first fringe, 3=second fringe.
     """
     width, height = image.size
     pixels = image.load()
@@ -207,6 +251,55 @@ def connected_preserve_key_zones(image: Image.Image) -> bytearray:
             if candidate(neighbour):
                 zones[neighbour] = 1
                 queue.append(neighbour)
+
+    # Image generators can leave islands of the technical field completely
+    # enclosed by a hand, hair, prop, or Shadow silhouette. Connectivity alone
+    # cannot classify those holes. Exact colour recurrence against the large
+    # border-connected field is deliberately stricter than another chroma
+    # threshold: semantic violet may be key-like, but it does not repeat the
+    # technical field palette at scale.
+    border_colours = Counter(
+        pixels[index % width, index // width][:3]
+        for index, zone in enumerate(zones)
+        if zone == 1
+    )
+    recurrent_border_colours = {
+        colour for colour, count in border_colours.items() if count >= 8
+    }
+    component_seen = bytearray(width * height)
+    for start in range(width * height):
+        if zones[start] or component_seen[start] or not candidate(start):
+            continue
+        component: list[int] = []
+        component_queue: deque[int] = deque((start,))
+        component_seen[start] = 1
+        recurrent_matches = 0
+        while component_queue:
+            index = component_queue.popleft()
+            component.append(index)
+            x = index % width
+            y = index // width
+            recurrent_matches += int(pixels[x, y][:3] in recurrent_border_colours)
+            neighbours = []
+            if x:
+                neighbours.append(index - 1)
+            if x + 1 < width:
+                neighbours.append(index + 1)
+            if y:
+                neighbours.append(index - width)
+            if y + 1 < height:
+                neighbours.append(index + width)
+            for neighbour in neighbours:
+                if (
+                    not zones[neighbour]
+                    and not component_seen[neighbour]
+                    and candidate(neighbour)
+                ):
+                    component_seen[neighbour] = 1
+                    component_queue.append(neighbour)
+        if len(component) >= 16 and recurrent_matches / len(component) >= 0.45:
+            for index in component:
+                zones[index] = 1
 
     for ring in (2, 3):
         previous = ring - 1
@@ -533,6 +626,10 @@ def parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = parser().parse_args()
     batch = safe_id(args.batch, "batch id")
+    try:
+        approved_identity = load_approved_identity()
+    except ValueError as error:
+        raise SystemExit(f"approved identity preflight failed; nothing was written: {error}") from error
     frames = parse_frames(args.frames)
     boxes = parse_eye_boxes(args.eye_boxes, required="idle" in frames)
     if args.target_height is not None and not (64 <= args.target_height <= FLOOR_Y):
@@ -624,6 +721,7 @@ def main() -> None:
         "status": "awaiting-manual-art-approval",
         "runtimeEligible": False,
         "publicArtWrites": False,
+        "approvedIdentity": approved_identity,
         "canvas": list(CANVAS),
         "floorY": FLOOR_Y,
         "normalization": {

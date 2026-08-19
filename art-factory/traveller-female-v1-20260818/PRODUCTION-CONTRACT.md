@@ -1,7 +1,7 @@
 # Traveller female v1 — production contract
 
-Date: 2026-08-18
-Status: factory scaffold / no approved art
+Date: 2026-08-19
+Status: F2 identity approved / first approval wave QA PASS / not runtime eligible
 Runtime integration: closed
 
 This factory produces a second canonical Traveller morphology. It does not
@@ -32,13 +32,19 @@ magenta despill branch and are covered by the synthetic smoke test.
 
 ## Identity and style
 
-- Adult female Traveller; serious life-OS protagonist, not a child or chibi.
+- The only approved identity is `female-f2-high-ponytail`, pinned by
+  `APPROVED-IDENTITY.json` to
+  `sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png` and SHA-256
+  `5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da`.
+- Young-adult female Traveller; confident mechanic-adventurer, not a child,
+  chibi, mature redesign or pin-up.
 - Same cut-paper vector family, material depth, lighting direction and detail
   density as the approved Traveller.
-- Stable face, proportions, hair silhouette, costume construction and palette
-  across every authored pose.
-- The silhouette may be recognisably female, but must not be sexualised or
-  exaggerated and must remain compatible with the existing Den scale.
+- Stable solid-black oval eyes without sclera, high ponytail with two
+  face-framing locks, narrower shoulders, defined waist, fuller athletic
+  hips/thighs, costume construction and palette across every authored pose.
+- The silhouette is recognisably female inside the practical full-coverage
+  costume and remains compatible with the existing Den scale.
 - Complete connected anatomy in every pose: no sliced joints, floating hands,
   detached boots or prop-dependent body parts.
 
@@ -62,7 +68,7 @@ The first approval batch is intentionally narrow:
 3. `walk-a` and `walk-b` — complementary connected locomotion poses;
 4. `window-back` — the existing window-dwell contract.
 
-Suggested batch id: `female-core-01`.
+Approved F2 batch id: `female-core-f2-01`.
 
 Automated QA passing means only that the files satisfy the measurable stage
 contract. It never changes `runtimeEligible` to true. Visual approval must
@@ -107,18 +113,22 @@ idle alpha channel byte-for-byte. QA requires:
 
 ## Commands after generation
 
-Place the four keyed core sources in the suggested source route, then run:
+The approved F2 core batch is reproduced with the pinned identity and measured
+eye boxes:
 
 ```bash
 python3 art-factory/traveller-female-v1-20260818/build_core_pack.py \
-  --batch female-core-01 \
-  --eye-boxes '[[L1,T1,R1,B1],[L2,T2,R2,B2]]'
+  --batch female-core-f2-01 \
+  --frames idle,walk-a,walk-b,window-back \
+  --eye-boxes '[[278,166,295,194],[322,165,340,193]]'
 
 python3 art-factory/traveller-female-v1-20260818/factory_qa.py \
-  --batch female-core-01
+  --batch female-core-f2-01
 ```
 
-Do not substitute sample coordinates for the measured values.
+Do not substitute other identity files or guessed eye coordinates. Both core
+and contact builders fail before writing when the pinned identity path or SHA
+does not match.
 
 ## Later batches
 
@@ -166,5 +176,8 @@ python3 art-factory/traveller-female-v1-20260818/contact_qa.py \
   --batch female-shadow-01
 ```
 
-Palette masks for hair, skin, eyes and clothing are a later layer contract.
-They must not be baked into this morphology approval batch.
+The first F2 approval wave is summarized in
+`previews/female-f2-approval-overview.png`: eight authored frames plus the
+deterministic blink all pass measurable QA, but remain approval-only. Palette
+masks for hair, skin, eyes and clothing are a later layer contract. They must
+not be baked into this morphology approval batch.

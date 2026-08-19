@@ -1,0 +1,86 @@
+{
+  "schema": "satoru.traveller-female-contact-approval-batch/1",
+  "id": "female-gamabunta-f2-01",
+  "family": "gamabunta",
+  "morphology": "female",
+  "status": "awaiting-manual-contact-approval",
+  "runtimeEligible": false,
+  "publicArtWrites": false,
+  "approvedIdentity": {
+    "id": "female-f2-high-ponytail",
+    "path": "sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png",
+    "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+    "status": "identity-approved/runtime-not-yet"
+  },
+  "canvas": [
+    1536,
+    1536
+  ],
+  "groundY": 1470,
+  "key": "#FF00FF",
+  "preserveMagentaSubject": false,
+  "normalization": "reference-x-grounded",
+  "familyFrames": [
+    "greet-contact",
+    "train-low",
+    "train-high",
+    "whistle-a",
+    "whistle-b",
+    "whistle-c",
+    "whistle-d",
+    "pushup-down",
+    "pushup-up",
+    "stretch-a",
+    "stretch-b",
+    "rest-contact",
+    "rest-pet"
+  ],
+  "requiredFrames": [
+    "greet-contact"
+  ],
+  "runtimeTemplate": "public/art/pets/body-toad-v1/pair-v4/female/{frame}.png",
+  "assets": {
+    "greet-contact": "greet-contact.png"
+  },
+  "frames": {
+    "greet-contact": {
+      "source": "sources/approval-batches/female-gamabunta-f2-01/greet-contact-keyed.png",
+      "sourceSha256": "98052eadadaebb4ff0ed7c4dea8338059514f7a1e25afb73957b27e047f3c6bb",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/greet-contact.png",
+      "referenceSha256": "e513da955a717b785c0b601b7fb8867d95a3a35fa3b81ec64f158c1cad3a724a",
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        61,
+        351,
+        1147,
+        1091
+      ],
+      "referenceBbox": [
+        158,
+        740,
+        1377,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        232,
+        740,
+        1303,
+        1470
+      ],
+      "scale": 0.9864865,
+      "normalization": "reference-x-grounded"
+    }
+  },
+  "qa": {
+    "required": true,
+    "command": "python3 art-factory/traveller-female-v1-20260818/contact_qa.py --batch female-gamabunta-f2-01"
+  }
+}

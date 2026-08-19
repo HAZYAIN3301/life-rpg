@@ -1,6 +1,30 @@
-# Traveller female v1 — approval review
+# Traveller female F2 — approval review
 
-Status: **NOT RUNTIME ELIGIBLE**. No file from this factory has been copied to `public/art` and the female selector remains disabled.
+Status: **IDENTITY APPROVED; APPROVAL WAVE READY; NOT RUNTIME ELIGIBLE**. Albert approved F2 (`candidate-f2-high-ponytail-keyed.png`) on 2026-08-19. No F2 file from this factory has been copied to `public/art`; the female selector remains disabled until the complete 46-frame inventory passes QA.
+
+## Canonical identity
+
+- Identity id: `female-f2-high-ponytail`
+- Source: `sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png`
+- SHA-256: `5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da`
+- Locked traits: young adult high ponytail, two face-framing locks, solid-black oval eyes without sclera, canonical cut-paper costume, narrower shoulders, defined waist and fuller athletic hips/thighs.
+- All earlier short-haired female approval batches are historical controls and cannot be promoted or mixed into F2.
+
+## F2 approval-wave result
+
+| Batch | Automated QA | Manual art gate | Decision |
+|---|---|---|---|
+| `female-core-f2-01`: idle, walk A/B, back + derived blink | PASS | Review continuity | Ready for review |
+| `female-poses-f2-01`: arms up | PASS | Review expression/anatomy | Ready for review |
+| `female-room-f2-01`: bench read A | PASS | Review seat/book contact | Ready for review |
+| `female-gamabunta-f2-01`: greet contact | PASS | Review fist contact/occlusion | Ready for review |
+| `female-shadow-f2-01`: Spark attune | PASS | Review hand distance/Shadow identity | Ready for review |
+
+All outputs have real alpha, transparent corners, canonical canvases and measurable placement. Core/pose/room bottom is exactly `y=860`; Gamabunta is grounded at `y=1470`; Shadow matches the male reference height with `0.5px` centre delta. The initial F2 Shadow build exposed an enclosed technical-magenta hole behind the hair: the factory now removes only enclosed components demonstrably sampled from the border key palette, while preserving semantic Shadow violet. Final technical-key residue is below the unchanged `0.05%` gate.
+
+Combined cross-batch review: `previews/female-f2-approval-overview.png`.
+
+## Historical first wave
 
 ## Batch result
 
@@ -28,8 +52,8 @@ Shadow v1 remains preserved as an honest rejected control: its visible height wa
 
 ## Promotion gate
 
-1. Albert approves or corrects the female identity, costume, proportions and current four candidate groups.
-2. Manually approve the corrected Shadow Spark contact; its automated geometry/alpha/chroma gate now passes.
-3. Produce the remaining launch inventory on the approved identity: core/locomotion/workshop and all Gamabunta, Katsuya, Mister P and Shadow contact plates.
-4. Run full canvas/grounding/alpha/reference QA and runtime screenshots with zero male-path requests.
-5. Only then copy a complete pack to `public/art`, mark `female` selectable and expose the 42px gender control.
+1. Manually review the combined F2 approval wave for identity continuity, ponytail construction, anatomy, prop/contact occlusion and readable choreography.
+2. Produce the remaining launch inventory on F2 only: core/locomotion/workshop and all Gamabunta, Katsuya, Mister P and Shadow contact plates.
+3. Run full canvas/grounding/alpha/reference QA and runtime screenshots with zero male-path requests.
+4. Promote to new immutable F2 URLs; never overwrite the cached rejected female pose URLs in place.
+5. Only then mark `female` selectable and expose the accessible gender control.

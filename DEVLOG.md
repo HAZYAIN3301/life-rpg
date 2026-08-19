@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-19] 🎭 Traveller female F2 — утверждённая identity и первый production gate
+
+- Альберт утвердил `female-f2-high-ponytail` как канон женского Traveller: молодой confident mechanic-adventurer, высокий длинный хвост, две пряди у лица, цельные чёрные глаза без белков, более узкие плечи, читаемая талия и athletic hips/thighs при полностью практичном canonical outfit. Источник закреплён без регенерации: `sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png`, SHA-256 `5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da`.
+- Добавлен `APPROVED-IDENTITY.json`. Оба builder-а до любых записей проверяют id/path/status и точный SHA канона; каждый новый manifest содержит `approvedIdentity`. Старые short-hair female-батчи остаются historical/rejected и не могут смешиваться с F2.
+- На F2 произведён узкий approval-wave: authored `idle`, `walk-a`, `walk-b`, `window-back`, `arms-up`, `bench-read-a`, `Gamabunta greet-contact`, `Shadow attune-spark`; `idle-blink` детерминированно выведен из idle с alpha-identical силуэтом. Единый cross-batch review: `art-factory/traveller-female-v1-20260818/previews/female-f2-approval-overview.png`.
+- Исправлен matte для F2 Shadow: замкнутая technical-magenta область удаляется только при доказанном совпадении с измеренной border-key palette; semantic violet, teal и rust защищены smoke-regression. Финальный visible technical-key residue Shadow `0.007089%` при неизменном лимите `0.05%`.
+- QA: core/motion PASS, pose PASS, room PASS, Gamabunta contact PASS, Shadow contact PASS; factory smoke PASS; все manifests pin-ят точную F2 identity. Все кадры остаются `runtimeEligible:false`: `public/art`, selector, SW `v165` и production runtime не менялись. Следующий обязательный gate — ручное утверждение overview; только затем масштабирование до полного inventory из 46 authored кадров без male fallback.
+
+Commit: `art: build approved F2 Traveller gate` (этот коммит). Push выполняется сразу; runtime/deploy не меняются.
+
 ## [2026-08-19] 🎭 Traveller female identity variants 04 — young long-hair refinement
 
 - Альберт выбрал E3 как самый точный по стилю, но отклонил возрастное впечатление, короткую причёску и недостаточно читаемую женскую фигуру. Два новых внешних референса использованы только как vibe: молодая уверенная mechanic-adventurer, не как лицо, костюм или anime-eye grammar.

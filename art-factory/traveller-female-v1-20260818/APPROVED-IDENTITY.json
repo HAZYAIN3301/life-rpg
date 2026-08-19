@@ -1,0 +1,11 @@
+{
+  "schema": "satoru.traveller-female-approved-identity/1",
+  "id": "female-f2-high-ponytail",
+  "morphology": "female",
+  "status": "identity-approved/runtime-not-yet",
+  "runtimeEligible": false,
+  "source": {
+    "path": "sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png",
+    "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da"
+  }
+}

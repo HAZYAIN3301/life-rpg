@@ -1,0 +1,48 @@
+{
+  "schema": "satoru.traveller-female-approval-qa/1",
+  "batch": "female-room-f2-01",
+  "canvas": [
+    640,
+    900
+  ],
+  "floorY": 860,
+  "automatedContractPassed": true,
+  "manualArtApprovalRequired": true,
+  "runtimeEligible": false,
+  "frames": {
+    "bench-read-a": {
+      "file": "outputs/approval-batches/female-room-f2-01/bench-read-a.png",
+      "mode": "RGBA",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        107,
+        70,
+        532,
+        860
+      ],
+      "floorY": 860,
+      "visiblePixels": 145297,
+      "transparentPixels": 427491,
+      "partialAlphaPixels": 10474,
+      "edgeAlphaPixels": 0,
+      "magentaPixels": 0,
+      "magentaRatio": 0.0,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "floorY": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "magentaContamination": true
+      },
+      "passed": true
+    }
+  },
+  "blink": null,
+  "passed": true
+}

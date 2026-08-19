@@ -7,12 +7,16 @@ normalization and alpha extraction. Do not generate `idle-blink`.
 
 ## Shared reference block
 
-Use the approved Traveller and the approved female identity frame together as
-visual references after the identity gate exists.
+Use the approved Traveller and the exact approved F2 identity frame together:
+`sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png`
+(SHA-256 `5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da`).
+No earlier short-haired female batch is a valid identity reference.
 
-> Draw the exact same adult female Traveller from the approved identity
+> Draw the exact same young adult female Traveller from the approved F2
 > reference, in Satoru's premium cut-paper vector illustration style. Preserve
-> her face, head and hair silhouette, slim adult proportions, costume
+> her face, two isolated solid-black oval paper eyes without sclera/iris/pupil,
+> high long dark-brown ponytail, two face-framing locks, narrower shoulders,
+> defined waist, coat flare and fuller athletic hips/thighs, costume
 > construction, teal coat, cream shirt, red scarf, dark cropped trousers,
 > gloves, boots, brass goggles, restrained palette, paper fibres, layered edges
 > and lighting direction. Full connected body with generous clear padding on a
@@ -22,8 +26,10 @@ visual references after the identity gate exists.
 > chibi proportions, glossy 3D, generic game UI or geometric SVG drift.
 
 The female design must remain recognisable without caricature or sexualisation.
-Clothing may accommodate the new morphology, but its identity and construction
-must not change between poses.
+The practical clothing accommodates the approved morphology, but its identity,
+pony-tail attachment/length, eye grammar and construction must not change
+between poses. Gravity may move the ponytail; it may never become short hair,
+loose waist-length hair or a different tie position.
 
 ## Approval batch 01
 

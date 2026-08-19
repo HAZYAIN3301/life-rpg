@@ -1,0 +1,77 @@
+{
+  "schema": "satoru.traveller-female-contact-approval-batch/1",
+  "id": "female-shadow-f2-01",
+  "family": "shadow",
+  "morphology": "female",
+  "status": "awaiting-manual-contact-approval",
+  "runtimeEligible": false,
+  "publicArtWrites": false,
+  "approvedIdentity": {
+    "id": "female-f2-high-ponytail",
+    "path": "sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png",
+    "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+    "status": "identity-approved/runtime-not-yet"
+  },
+  "canvas": [
+    1254,
+    1254
+  ],
+  "groundY": null,
+  "key": "#FF00FF",
+  "preserveMagentaSubject": true,
+  "normalization": "reference-bbox-fit",
+  "familyFrames": [
+    "attune-spark",
+    "attune-spirit",
+    "attune-guardian",
+    "attune-keeper"
+  ],
+  "requiredFrames": [
+    "attune-spark"
+  ],
+  "runtimeTemplate": "public/art/companions/shadow-den-v1/pair-v1/female/{frame}.png",
+  "assets": {
+    "attune-spark": "attune-spark.png"
+  },
+  "frames": {
+    "attune-spark": {
+      "source": "sources/approval-batches/female-shadow-f2-01/attune-spark-keyed.png",
+      "sourceSha256": "dfe9955c21e71d42909a0f07d6645bc5238d66604eb22203171ed42f5e7a0737",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-spark.png",
+      "referenceSha256": "826351c5d7cea1904db7aafbe50d52c89abe82d7cb8af5f205528bc9db354e9d",
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        290,
+        131,
+        1025,
+        1140
+      ],
+      "referenceBbox": [
+        309,
+        205,
+        1060,
+        1144
+      ],
+      "canvas": [
+        1254,
+        1254
+      ],
+      "bbox": [
+        342,
+        205,
+        1026,
+        1144
+      ],
+      "scale": 0.9306244,
+      "normalization": "reference-bbox-fit"
+    }
+  },
+  "qa": {
+    "required": true,
+    "command": "python3 art-factory/traveller-female-v1-20260818/contact_qa.py --batch female-shadow-f2-01"
+  }
+}

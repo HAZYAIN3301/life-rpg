@@ -16,6 +16,7 @@ from build_core_pack import (
     inside_factory,
     is_key_like,
     keyed_border_ratio,
+    load_approved_identity,
     remove_magenta_key,
     safe_id,
     sha256,
@@ -227,6 +228,10 @@ def selected_frames(
 def main() -> None:
     args = parser().parse_args()
     batch = safe_id(args.batch, "batch id")
+    try:
+        approved_identity = load_approved_identity()
+    except ValueError as error:
+        raise SystemExit(f"approved identity preflight failed; nothing was written: {error}") from error
     families = load_families()
     config = families[args.family]
     if config.get("key") != "#FF00FF":
@@ -296,6 +301,7 @@ def main() -> None:
         "status": "awaiting-manual-contact-approval",
         "runtimeEligible": False,
         "publicArtWrites": False,
+        "approvedIdentity": approved_identity,
         "canvas": config["canvas"],
         "groundY": config.get("groundY"),
         "key": config["key"],

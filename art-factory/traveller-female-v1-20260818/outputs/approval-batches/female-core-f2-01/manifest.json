@@ -1,0 +1,259 @@
+{
+  "schema": "satoru.traveller-female-approval-batch/1",
+  "id": "female-core-f2-01",
+  "morphology": "female",
+  "status": "awaiting-manual-art-approval",
+  "runtimeEligible": false,
+  "publicArtWrites": false,
+  "approvedIdentity": {
+    "id": "female-f2-high-ponytail",
+    "path": "sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png",
+    "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+    "status": "identity-approved/runtime-not-yet"
+  },
+  "canvas": [
+    640,
+    900
+  ],
+  "floorY": 860,
+  "normalization": {
+    "key": "#FF00FF",
+    "strategy": "per-frame-profile",
+    "requestedProfile": "auto",
+    "profiles": {
+      "idle": {
+        "profile": "core",
+        "targetHeight": 796,
+        "maxWidth": 590
+      },
+      "walk-a": {
+        "profile": "core",
+        "targetHeight": 796,
+        "maxWidth": 590
+      },
+      "walk-b": {
+        "profile": "core",
+        "targetHeight": 796,
+        "maxWidth": 590
+      },
+      "window-back": {
+        "profile": "core",
+        "targetHeight": 800,
+        "maxWidth": 590
+      }
+    }
+  },
+  "eyeBoxes": [
+    [
+      278,
+      166,
+      295,
+      194
+    ],
+    [
+      322,
+      165,
+      340,
+      193
+    ]
+  ],
+  "blink": {
+    "method": "deterministic-local-inpaint-and-lid-curves",
+    "maxChangedRatio": 0.006,
+    "eyeBoxes": [
+      [
+        278,
+        166,
+        295,
+        194
+      ],
+      [
+        322,
+        165,
+        340,
+        193
+      ]
+    ],
+    "maskedPixels": 714,
+    "changedPixels": 713,
+    "changedRatio": 0.00123785,
+    "changedOutsideEyeBoxes": 0,
+    "alphaIdenticalToIdle": true
+  },
+  "assets": {
+    "idle": "idle.png",
+    "walk-a": "walk-a.png",
+    "walk-b": "walk-b.png",
+    "window-back": "window-back.png",
+    "idle-blink": "idle-blink.png"
+  },
+  "frames": {
+    "idle": {
+      "file": "sources/approval-batches/female-core-f2-01/idle-keyed.png",
+      "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+      "keyedBorderRatio": 1.0,
+      "profile": "core",
+      "targetHeight": 796,
+      "maxWidth": 590,
+      "sourceCanvas": [
+        978,
+        1609
+      ],
+      "sourceBbox": [
+        245,
+        102,
+        715,
+        1525
+      ],
+      "scale": 0.5593816,
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        188,
+        64,
+        451,
+        860
+      ],
+      "floorY": 860,
+      "mode": "RGBA",
+      "transparentCorners": 4
+    },
+    "walk-a": {
+      "file": "sources/approval-batches/female-core-f2-01/walk-a-keyed.png",
+      "sha256": "09a8081596d64ab0e5788fd34265e72594d644898f768cb2caffa781488c1227",
+      "keyedBorderRatio": 1.0,
+      "profile": "core",
+      "targetHeight": 796,
+      "maxWidth": 590,
+      "sourceCanvas": [
+        979,
+        1607
+      ],
+      "sourceBbox": [
+        196,
+        105,
+        757,
+        1533
+      ],
+      "scale": 0.557423,
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        163,
+        64,
+        476,
+        860
+      ],
+      "floorY": 860,
+      "mode": "RGBA",
+      "transparentCorners": 4
+    },
+    "walk-b": {
+      "file": "sources/approval-batches/female-core-f2-01/walk-b-keyed.png",
+      "sha256": "98c2d752998aadc3697b877e48799e32744701f166403b25f1e3fed728331c30",
+      "keyedBorderRatio": 1.0,
+      "profile": "core",
+      "targetHeight": 796,
+      "maxWidth": 590,
+      "sourceCanvas": [
+        979,
+        1607
+      ],
+      "sourceBbox": [
+        183,
+        98,
+        745,
+        1546
+      ],
+      "scale": 0.5497238,
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        165,
+        64,
+        474,
+        860
+      ],
+      "floorY": 860,
+      "mode": "RGBA",
+      "transparentCorners": 4
+    },
+    "window-back": {
+      "file": "sources/approval-batches/female-core-f2-01/window-back-keyed.png",
+      "sha256": "9159066f69eca7b57f8cd3584df3524658285d1c4f674e6f1ed63f20a7c0cfda",
+      "keyedBorderRatio": 1.0,
+      "profile": "core",
+      "targetHeight": 800,
+      "maxWidth": 590,
+      "sourceCanvas": [
+        1068,
+        1473
+      ],
+      "sourceBbox": [
+        354,
+        66,
+        753,
+        1376
+      ],
+      "scale": 0.610687,
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        198,
+        60,
+        442,
+        860
+      ],
+      "floorY": 860,
+      "mode": "RGBA",
+      "transparentCorners": 4
+    },
+    "idle-blink": {
+      "derivedFrom": "idle.png",
+      "canvas": [
+        640,
+        900
+      ],
+      "mode": "RGBA",
+      "bbox": [
+        188,
+        64,
+        451,
+        860
+      ],
+      "floorY": 860,
+      "transparentCorners": 4,
+      "eyeBoxes": [
+        [
+          278,
+          166,
+          295,
+          194
+        ],
+        [
+          322,
+          165,
+          340,
+          193
+        ]
+      ],
+      "maskedPixels": 714,
+      "changedPixels": 713,
+      "changedRatio": 0.00123785,
+      "changedOutsideEyeBoxes": 0,
+      "alphaIdenticalToIdle": true
+    }
+  },
+  "qa": {
+    "required": true,
+    "command": "python3 art-factory/traveller-female-v1-20260818/factory_qa.py --batch female-core-f2-01"
+  }
+}
