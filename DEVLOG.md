@@ -2,6 +2,15 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-19] 🎭 Traveller female identity variants 03 — возврат в канонический cut-paper
+
+- После review Альберта предыдущие взрослые A/B/C/D не масштабировались дальше: они слишком ушли в semi-real/anime, потеряли пропорции Traveller и местами вернули белки глаз. Новый батч буквально опирается на `traveller1.png` как authority для головы, тела, толщины конечностей, бумажной геометрии и глаз.
+- Произведены три близких варианта одной арт-семьи: layered pixie-bob, asymmetric bob и shaggy bob. Во всех глаза — только две цельные чёрные бумажные формы без белков/радужки/бликов; рюкзак, фонарь, ремни и подсумки отсутствуют; canonical outfit/palette и нейтральная full-body стойка сохранены.
+- Один промежуточный chin-bob сознательно исключён до сохранения: генератор добавил светлую enclosing eye-shape и ресницы. В factory попали только три варианта, прошедшие этот визуальный контракт.
+- Review-батч: `art-factory/traveller-female-v1-20260818/sources/identity-variants-03/IDENTITY-VARIANTS-03.md`. Это concept-only: normalization, `public/art`, selector и runtime не менялись.
+
+Commit: `art: restore canonical female Traveller style` (этот коммит). Push выполняется сразу; runtime/deploy не меняются.
+
 ## [2026-08-19] 🎭 Traveller female identity variants 02 — взрослое лицо вместо cute-аниме
 
 - Первый female-кандидат технически работал, но Альберт отклонил его как недостаточно симпатичный. Полный pack не размножался: вместо этого произведены четыре независимых full-body identity-направления с тем же costume/palette/cut-paper contract.
