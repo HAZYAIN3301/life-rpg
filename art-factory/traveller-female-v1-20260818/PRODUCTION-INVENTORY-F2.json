@@ -1,0 +1,663 @@
+{
+  "schema": "satoru.traveller-female-production-ledger/2",
+  "identity": {
+    "id": "f2-high-ponytail",
+    "file": "sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png",
+    "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+    "immutableForEveryFrame": true
+  },
+  "status": "production-complete-qa-pass-manual-review-complete-promotion-pending",
+  "runtimeEligible": false,
+  "counts": {
+    "runtimeDeliverables": 46,
+    "authoredDeliverables": 45,
+    "deterministicDerivedDeliverables": 1,
+    "producedAuthoredDeliverables": 45,
+    "producedDerivedDeliverables": 1,
+    "qaPassedDeliverables": 46,
+    "manualReviewedDeliverables": 46,
+    "currentlyPendingImageGenerations": 0,
+    "pendingPromotionDeliverables": 46
+  },
+  "arithmetic": "10 authored core/room + 1 deterministic idle-blink + 13 Gamabunta + 6 Recovery/Katsuya + 12 Resources/Mister P + 4 Shadow = 46 runtime deliverables. All 45 authored frames and the one deterministic derivative are produced, QA PASS and manually reviewed. No image generations remain; only promotion is pending.",
+  "contracts": {
+    "coreRoom": {
+      "canvas": [
+        640,
+        900
+      ],
+      "floorY": 860,
+      "key": "#FF00FF",
+      "normalization": "per-frame-profile"
+    },
+    "gamabunta": {
+      "canvas": [
+        1536,
+        1536
+      ],
+      "groundY": 1470,
+      "normalization": "reference-x-grounded"
+    },
+    "recovery": {
+      "canvas": [
+        1536,
+        1536
+      ],
+      "normalization": "exact-active-reference-composition"
+    },
+    "resources": {
+      "canvas": [
+        1536,
+        1536
+      ],
+      "groundY": 1470,
+      "normalization": "reference-x-grounded"
+    },
+    "shadow": {
+      "canvas": [
+        1254,
+        1254
+      ],
+      "normalization": "reference-bbox-fit",
+      "preserveSemanticViolet": true
+    }
+  },
+  "productionGates": {
+    "allBatchesQaPassed": true,
+    "manualVisualReview": "completed-by-parent",
+    "promotion": "pending",
+    "publicArtWrites": false
+  },
+  "runtimeTargetOrder": [
+    "public/art/avatars/traveller-core-v1/female/f2-v1/poses/idle.png",
+    "public/art/avatars/traveller-core-v1/female/f2-v1/poses/arms-up.png",
+    "public/art/avatars/traveller-core-v1/female/f2-v1/poses/seated.png",
+    "public/art/avatars/traveller-core-v1/female/f2-v1/poses/window-back.png",
+    "public/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/idle-blink.png",
+    "public/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/walk-a.png",
+    "public/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/walk-b.png",
+    "public/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-rest.png",
+    "public/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-read-a.png",
+    "public/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-read-b.png",
+    "public/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-portal-reach.png",
+    "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/greet-contact.png",
+    "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/train-low.png",
+    "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/train-high.png",
+    "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-a.png",
+    "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-b.png",
+    "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-c.png",
+    "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-d.png",
+    "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/pushup-down.png",
+    "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/pushup-up.png",
+    "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/stretch-a.png",
+    "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/stretch-b.png",
+    "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/rest-contact.png",
+    "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/rest-pet.png",
+    "public/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/greet-contact.png",
+    "public/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/breathe-in.png",
+    "public/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/breathe-out.png",
+    "public/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/restore-contact.png",
+    "public/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/stretch-a.png",
+    "public/art/pets/recovery-slug-v1/pair-v3/female/f2-v1/stretch-soft-b-v155.png",
+    "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/greet-contact.png",
+    "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/budget-point.png",
+    "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/budget-reserve.png",
+    "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/count-pass.png",
+    "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/count-place.png",
+    "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/count-stack.png",
+    "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/reserve-offer.png",
+    "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/reserve-accept.png",
+    "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/focus-work.png",
+    "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/focus-check.png",
+    "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/focus-nod.png",
+    "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/close-stamp.png",
+    "public/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-spark.png",
+    "public/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-spirit.png",
+    "public/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-guardian.png",
+    "public/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-keeper.png"
+  ],
+  "batches": [
+    {
+      "id": "female-core-f2-01",
+      "family": "core",
+      "sourceRoot": "sources/approval-batches/female-core-f2-01",
+      "outputRoot": "outputs/approval-batches/female-core-f2-01",
+      "qaReport": "qa/approval-batches/female-core-f2-01/qa-report.json",
+      "status": "produced-qa-pass-manual-review-complete-promotion-pending",
+      "qa": "PASS",
+      "runtimeEligible": false,
+      "frames": [
+        {
+          "id": "idle",
+          "mode": "authored-produced",
+          "source": "idle-keyed.png",
+          "reference": "public/art/avatars/traveller-core-v1/male/poses/idle.png",
+          "runtimeTarget": "public/art/avatars/traveller-core-v1/female/f2-v1/poses/idle.png",
+          "continuityGroup": "idle-blink",
+          "continuityOrder": 1
+        },
+        {
+          "id": "idle-blink",
+          "mode": "deterministic-derived-produced",
+          "reference": "public/art/avatars/traveller-core-v1/male/motion-v3/idle-blink.png",
+          "runtimeTarget": "public/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/idle-blink.png",
+          "continuityGroup": "idle-blink",
+          "continuityOrder": 2,
+          "derivedFrom": "idle"
+        },
+        {
+          "id": "walk-a",
+          "mode": "authored-produced",
+          "source": "walk-a-keyed.png",
+          "reference": "public/art/avatars/traveller-core-v1/male/motion-v3/walk-a.png",
+          "runtimeTarget": "public/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/walk-a.png",
+          "continuityGroup": "walk",
+          "continuityOrder": 1
+        },
+        {
+          "id": "walk-b",
+          "mode": "authored-produced",
+          "source": "walk-b-keyed.png",
+          "reference": "public/art/avatars/traveller-core-v1/male/motion-v3/walk-b.png",
+          "runtimeTarget": "public/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/walk-b.png",
+          "continuityGroup": "walk",
+          "continuityOrder": 2
+        },
+        {
+          "id": "window-back",
+          "mode": "authored-produced",
+          "source": "window-back-keyed.png",
+          "reference": "public/art/avatars/traveller-core-v1/male/poses/window-back.png",
+          "runtimeTarget": "public/art/avatars/traveller-core-v1/female/f2-v1/poses/window-back.png",
+          "continuityGroup": "window",
+          "continuityOrder": 1
+        }
+      ]
+    },
+    {
+      "id": "female-poses-f2-01",
+      "family": "core",
+      "sourceRoot": "sources/approval-batches/female-poses-f2-01",
+      "outputRoot": "outputs/approval-batches/female-poses-f2-01",
+      "qaReport": "qa/approval-batches/female-poses-f2-01/qa-report.json",
+      "status": "produced-qa-pass-manual-review-complete-promotion-pending",
+      "qa": "PASS",
+      "runtimeEligible": false,
+      "frames": [
+        {
+          "id": "arms-up",
+          "mode": "authored-produced",
+          "source": "arms-up-keyed.png",
+          "reference": "public/art/avatars/traveller-core-v1/male/poses/arms-up.png",
+          "runtimeTarget": "public/art/avatars/traveller-core-v1/female/f2-v1/poses/arms-up.png",
+          "continuityGroup": "mobility-stretch",
+          "continuityOrder": 1
+        }
+      ]
+    },
+    {
+      "id": "female-poses-f2-full-01",
+      "family": "core",
+      "sourceRoot": "sources/approval-batches/female-poses-f2-full-01",
+      "outputRoot": "outputs/approval-batches/female-poses-f2-full-01",
+      "qaReport": "qa/approval-batches/female-poses-f2-full-01/qa-report.json",
+      "status": "produced-qa-pass-manual-review-complete-promotion-pending",
+      "qa": "PASS",
+      "runtimeEligible": false,
+      "frames": [
+        {
+          "id": "seated",
+          "mode": "authored-produced",
+          "source": "seated-keyed.png",
+          "reference": "public/art/avatars/traveller-core-v1/male/poses/seated.png",
+          "runtimeTarget": "public/art/avatars/traveller-core-v1/female/f2-v1/poses/seated.png",
+          "continuityGroup": "seated-base",
+          "continuityOrder": 1,
+          "profile": {
+            "targetHeight": 693,
+            "maxWidth": 590
+          }
+        }
+      ]
+    },
+    {
+      "id": "female-room-f2-01",
+      "family": "room",
+      "sourceRoot": "sources/approval-batches/female-room-f2-01",
+      "outputRoot": "outputs/approval-batches/female-room-f2-01",
+      "qaReport": "qa/approval-batches/female-room-f2-01/qa-report.json",
+      "status": "produced-qa-pass-manual-review-complete-promotion-pending",
+      "qa": "PASS",
+      "runtimeEligible": false,
+      "frames": [
+        {
+          "id": "bench-read-a",
+          "mode": "authored-produced",
+          "source": "bench-read-a-keyed.png",
+          "reference": "public/art/avatars/traveller-core-v1/male/room-actions-v4/bench-read-a.png",
+          "runtimeTarget": "public/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-read-a.png",
+          "continuityGroup": "bench-read",
+          "continuityOrder": 1,
+          "continuityAlso": {
+            "group": "bench-portal-transition",
+            "order": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "female-room-f2-full-01",
+      "family": "room",
+      "sourceRoot": "sources/approval-batches/female-room-f2-full-01",
+      "outputRoot": "outputs/approval-batches/female-room-f2-full-01",
+      "qaReport": "qa/approval-batches/female-room-f2-full-01/qa-report.json",
+      "status": "produced-qa-pass-manual-review-complete-promotion-pending",
+      "qa": "PASS",
+      "runtimeEligible": false,
+      "frames": [
+        {
+          "id": "bench-rest",
+          "mode": "authored-produced",
+          "source": "bench-rest-keyed.png",
+          "reference": "public/art/avatars/traveller-core-v1/male/room-actions-v4/bench-rest.png",
+          "runtimeTarget": "public/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-rest.png",
+          "continuityGroup": "bench-portal-transition",
+          "continuityOrder": 1,
+          "profile": {
+            "targetHeight": 790,
+            "maxWidth": 500
+          }
+        },
+        {
+          "id": "bench-portal-reach",
+          "mode": "authored-produced",
+          "source": "bench-portal-reach-keyed.png",
+          "reference": "public/art/avatars/traveller-core-v1/male/room-actions-v4/bench-portal-reach.png",
+          "runtimeTarget": "public/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-portal-reach.png",
+          "continuityGroup": "bench-portal-transition",
+          "continuityOrder": 2,
+          "profile": {
+            "targetHeight": 790,
+            "maxWidth": 500
+          }
+        },
+        {
+          "id": "bench-read-b",
+          "mode": "authored-produced-edit",
+          "source": "bench-read-b-keyed.png",
+          "reference": "public/art/avatars/traveller-core-v1/male/room-actions-v4/bench-read-b.png",
+          "runtimeTarget": "public/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-read-b.png",
+          "continuityGroup": "bench-read",
+          "continuityOrder": 2,
+          "profile": {
+            "targetHeight": 790,
+            "maxWidth": 500
+          }
+        }
+      ]
+    },
+    {
+      "id": "female-gamabunta-f2-full-01",
+      "family": "gamabunta",
+      "sourceRoot": "sources/approval-batches/female-gamabunta-f2-full-01",
+      "outputRoot": "outputs/contact-approval-batches/female-gamabunta-f2-full-01",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "status": "produced-qa-pass-manual-review-complete-promotion-pending",
+      "qa": "PASS",
+      "runtimeEligible": false,
+      "frames": [
+        {
+          "id": "greet-contact",
+          "mode": "authored-produced",
+          "source": "greet-contact-keyed.png",
+          "reference": "public/art/pets/body-toad-v1/pair-v4/greet-contact.png",
+          "runtimeTarget": "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/greet-contact.png",
+          "continuityGroup": "gamabunta-greet",
+          "continuityOrder": 1
+        },
+        {
+          "id": "train-low",
+          "mode": "authored-produced",
+          "source": "train-low-keyed.png",
+          "reference": "public/art/pets/body-toad-v1/pair-v4/train-low.png",
+          "runtimeTarget": "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/train-low.png",
+          "continuityGroup": "gamabunta-train",
+          "continuityOrder": 1
+        },
+        {
+          "id": "train-high",
+          "mode": "authored-produced-edit",
+          "source": "train-high-keyed.png",
+          "reference": "public/art/pets/body-toad-v1/pair-v4/train-high.png",
+          "runtimeTarget": "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/train-high.png",
+          "continuityGroup": "gamabunta-train",
+          "continuityOrder": 2
+        },
+        {
+          "id": "whistle-a",
+          "mode": "authored-produced",
+          "source": "whistle-a-keyed.png",
+          "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-a.png",
+          "runtimeTarget": "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-a.png",
+          "continuityGroup": "gamabunta-whistle",
+          "continuityOrder": 1
+        },
+        {
+          "id": "whistle-b",
+          "mode": "authored-produced-edit",
+          "source": "whistle-b-keyed.png",
+          "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-b.png",
+          "runtimeTarget": "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-b.png",
+          "continuityGroup": "gamabunta-whistle",
+          "continuityOrder": 2
+        },
+        {
+          "id": "whistle-c",
+          "mode": "authored-produced-edit",
+          "source": "whistle-c-keyed.png",
+          "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-c.png",
+          "runtimeTarget": "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-c.png",
+          "continuityGroup": "gamabunta-whistle",
+          "continuityOrder": 3
+        },
+        {
+          "id": "whistle-d",
+          "mode": "authored-produced-edit",
+          "source": "whistle-d-keyed.png",
+          "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-d.png",
+          "runtimeTarget": "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-d.png",
+          "continuityGroup": "gamabunta-whistle",
+          "continuityOrder": 4
+        },
+        {
+          "id": "pushup-down",
+          "mode": "authored-produced",
+          "source": "pushup-down-keyed.png",
+          "reference": "public/art/pets/body-toad-v1/pair-v4/pushup-down.png",
+          "runtimeTarget": "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/pushup-down.png",
+          "continuityGroup": "gamabunta-pushup",
+          "continuityOrder": 1
+        },
+        {
+          "id": "pushup-up",
+          "mode": "authored-produced-edit",
+          "source": "pushup-up-keyed.png",
+          "reference": "public/art/pets/body-toad-v1/pair-v4/pushup-up.png",
+          "runtimeTarget": "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/pushup-up.png",
+          "continuityGroup": "gamabunta-pushup",
+          "continuityOrder": 2
+        },
+        {
+          "id": "stretch-a",
+          "mode": "authored-produced",
+          "source": "stretch-a-keyed.png",
+          "reference": "public/art/pets/body-toad-v1/pair-v4/stretch-a.png",
+          "runtimeTarget": "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/stretch-a.png",
+          "continuityGroup": "gamabunta-stretch",
+          "continuityOrder": 1
+        },
+        {
+          "id": "stretch-b",
+          "mode": "authored-produced-edit",
+          "source": "stretch-b-keyed.png",
+          "reference": "public/art/pets/body-toad-v1/pair-v4/stretch-b.png",
+          "runtimeTarget": "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/stretch-b.png",
+          "continuityGroup": "gamabunta-stretch",
+          "continuityOrder": 2
+        },
+        {
+          "id": "rest-contact",
+          "mode": "authored-produced",
+          "source": "rest-contact-keyed.png",
+          "reference": "public/art/pets/body-toad-v1/pair-v4/rest-contact.png",
+          "runtimeTarget": "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/rest-contact.png",
+          "continuityGroup": "gamabunta-rest",
+          "continuityOrder": 1
+        },
+        {
+          "id": "rest-pet",
+          "mode": "authored-produced-edit",
+          "source": "rest-pet-keyed.png",
+          "reference": "public/art/pets/body-toad-v1/pair-v4/rest-pet.png",
+          "runtimeTarget": "public/art/pets/body-toad-v1/pair-v4/female/f2-v1/rest-pet.png",
+          "continuityGroup": "gamabunta-rest",
+          "continuityOrder": 2
+        }
+      ]
+    },
+    {
+      "id": "female-recovery-f2-full-01",
+      "family": "recovery",
+      "sourceRoot": "sources/approval-batches/female-recovery-f2-full-01",
+      "outputRoot": "outputs/contact-approval-batches/female-recovery-f2-full-01",
+      "qaReport": "qa/contact-approval-batches/female-recovery-f2-full-01/qa-report.json",
+      "status": "produced-qa-pass-manual-review-complete-promotion-pending",
+      "qa": "PASS",
+      "runtimeEligible": false,
+      "frames": [
+        {
+          "id": "greet-contact",
+          "mode": "authored-produced",
+          "source": "greet-contact-keyed.png",
+          "reference": "public/art/pets/recovery-slug-v1/pair-v2/greet-contact.png",
+          "runtimeTarget": "public/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/greet-contact.png",
+          "continuityGroup": "recovery-greet",
+          "continuityOrder": 1
+        },
+        {
+          "id": "breathe-in",
+          "mode": "authored-produced",
+          "source": "breathe-in-keyed.png",
+          "reference": "public/art/pets/recovery-slug-v1/pair-v2/breathe-in.png",
+          "runtimeTarget": "public/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/breathe-in.png",
+          "continuityGroup": "recovery-breathe",
+          "continuityOrder": 1
+        },
+        {
+          "id": "breathe-out",
+          "mode": "authored-produced-edit",
+          "source": "breathe-out-keyed.png",
+          "reference": "public/art/pets/recovery-slug-v1/pair-v2/breathe-out.png",
+          "runtimeTarget": "public/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/breathe-out.png",
+          "continuityGroup": "recovery-breathe",
+          "continuityOrder": 2
+        },
+        {
+          "id": "restore-contact",
+          "mode": "authored-produced",
+          "source": "restore-contact-keyed.png",
+          "reference": "public/art/pets/recovery-slug-v1/pair-v2/restore-contact.png",
+          "runtimeTarget": "public/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/restore-contact.png",
+          "continuityGroup": "recovery-restore",
+          "continuityOrder": 1
+        },
+        {
+          "id": "stretch-a",
+          "mode": "authored-produced",
+          "source": "stretch-a-keyed.png",
+          "reference": "public/art/pets/recovery-slug-v1/pair-v2/stretch-a.png",
+          "runtimeTarget": "public/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/stretch-a.png",
+          "continuityGroup": "recovery-stretch",
+          "continuityOrder": 1
+        },
+        {
+          "id": "stretch-soft-b",
+          "mode": "authored-produced-edit",
+          "source": "stretch-soft-b-keyed.png",
+          "reference": "public/art/pets/recovery-slug-v1/pair-v3/stretch-soft-b-v155.png",
+          "runtimeTarget": "public/art/pets/recovery-slug-v1/pair-v3/female/f2-v1/stretch-soft-b-v155.png",
+          "continuityGroup": "recovery-stretch",
+          "continuityOrder": 2
+        }
+      ]
+    },
+    {
+      "id": "female-resources-f2-full-01",
+      "family": "resources",
+      "sourceRoot": "sources/approval-batches/female-resources-f2-full-01",
+      "outputRoot": "outputs/contact-approval-batches/female-resources-f2-full-01",
+      "qaReport": "qa/contact-approval-batches/female-resources-f2-full-01/qa-report.json",
+      "status": "produced-qa-pass-manual-review-complete-promotion-pending",
+      "qa": "PASS",
+      "runtimeEligible": false,
+      "frames": [
+        {
+          "id": "greet-contact",
+          "mode": "authored-produced",
+          "source": "greet-contact-keyed.png",
+          "reference": "public/art/pets/resources-penguin-v1/pair-v1/greet-contact.png",
+          "runtimeTarget": "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/greet-contact.png",
+          "continuityGroup": "resources-greet",
+          "continuityOrder": 1
+        },
+        {
+          "id": "budget-point",
+          "mode": "authored-produced",
+          "source": "budget-point-keyed.png",
+          "reference": "public/art/pets/resources-penguin-v1/pair-v1/budget-point.png",
+          "runtimeTarget": "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/budget-point.png",
+          "continuityGroup": "resources-budget",
+          "continuityOrder": 1
+        },
+        {
+          "id": "budget-reserve",
+          "mode": "authored-produced-edit",
+          "source": "budget-reserve-keyed.png",
+          "reference": "public/art/pets/resources-penguin-v1/pair-v1/budget-reserve.png",
+          "runtimeTarget": "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/budget-reserve.png",
+          "continuityGroup": "resources-budget",
+          "continuityOrder": 2
+        },
+        {
+          "id": "count-pass",
+          "mode": "authored-produced",
+          "source": "count-pass-keyed.png",
+          "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-pass.png",
+          "runtimeTarget": "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/count-pass.png",
+          "continuityGroup": "resources-count",
+          "continuityOrder": 1
+        },
+        {
+          "id": "count-place",
+          "mode": "authored-produced-edit",
+          "source": "count-place-keyed.png",
+          "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-place.png",
+          "runtimeTarget": "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/count-place.png",
+          "continuityGroup": "resources-count",
+          "continuityOrder": 2
+        },
+        {
+          "id": "count-stack",
+          "mode": "authored-produced-edit",
+          "source": "count-stack-keyed.png",
+          "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-stack.png",
+          "runtimeTarget": "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/count-stack.png",
+          "continuityGroup": "resources-count",
+          "continuityOrder": 3
+        },
+        {
+          "id": "reserve-offer",
+          "mode": "authored-produced",
+          "source": "reserve-offer-keyed.png",
+          "reference": "public/art/pets/resources-penguin-v1/pair-v1/reserve-offer.png",
+          "runtimeTarget": "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/reserve-offer.png",
+          "continuityGroup": "resources-reserve",
+          "continuityOrder": 1
+        },
+        {
+          "id": "reserve-accept",
+          "mode": "authored-produced-edit",
+          "source": "reserve-accept-keyed.png",
+          "reference": "public/art/pets/resources-penguin-v1/pair-v1/reserve-accept.png",
+          "runtimeTarget": "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/reserve-accept.png",
+          "continuityGroup": "resources-reserve",
+          "continuityOrder": 2
+        },
+        {
+          "id": "focus-work",
+          "mode": "authored-produced",
+          "source": "focus-work-keyed.png",
+          "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-work.png",
+          "runtimeTarget": "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/focus-work.png",
+          "continuityGroup": "resources-focus",
+          "continuityOrder": 1
+        },
+        {
+          "id": "focus-check",
+          "mode": "authored-produced-edit",
+          "source": "focus-check-keyed.png",
+          "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-check.png",
+          "runtimeTarget": "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/focus-check.png",
+          "continuityGroup": "resources-focus",
+          "continuityOrder": 2
+        },
+        {
+          "id": "focus-nod",
+          "mode": "authored-produced-edit",
+          "source": "focus-nod-keyed.png",
+          "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-nod.png",
+          "runtimeTarget": "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/focus-nod.png",
+          "continuityGroup": "resources-focus",
+          "continuityOrder": 3
+        },
+        {
+          "id": "close-stamp",
+          "mode": "authored-produced",
+          "source": "close-stamp-keyed.png",
+          "reference": "public/art/pets/resources-penguin-v1/pair-v1/close-stamp.png",
+          "runtimeTarget": "public/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/close-stamp.png",
+          "continuityGroup": "resources-close",
+          "continuityOrder": 1
+        }
+      ]
+    },
+    {
+      "id": "female-shadow-f2-full-01",
+      "family": "shadow",
+      "sourceRoot": "sources/approval-batches/female-shadow-f2-full-01",
+      "outputRoot": "outputs/contact-approval-batches/female-shadow-f2-full-01",
+      "qaReport": "qa/contact-approval-batches/female-shadow-f2-full-01/qa-report.json",
+      "status": "produced-qa-pass-manual-review-complete-promotion-pending",
+      "qa": "PASS",
+      "runtimeEligible": false,
+      "frames": [
+        {
+          "id": "attune-spark",
+          "mode": "authored-produced",
+          "source": "attune-spark-keyed.png",
+          "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-spark.png",
+          "runtimeTarget": "public/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-spark.png",
+          "continuityGroup": "shadow-forms",
+          "continuityOrder": 1
+        },
+        {
+          "id": "attune-spirit",
+          "mode": "authored-produced",
+          "source": "attune-spirit-keyed.png",
+          "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-spirit.png",
+          "runtimeTarget": "public/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-spirit.png",
+          "continuityGroup": "shadow-forms",
+          "continuityOrder": 2
+        },
+        {
+          "id": "attune-guardian",
+          "mode": "authored-produced",
+          "source": "attune-guardian-keyed.png",
+          "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-guardian.png",
+          "runtimeTarget": "public/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-guardian.png",
+          "continuityGroup": "shadow-forms",
+          "continuityOrder": 3
+        },
+        {
+          "id": "attune-keeper",
+          "mode": "authored-produced",
+          "source": "attune-keeper-keyed.png",
+          "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-keeper.png",
+          "runtimeTarget": "public/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-keeper.png",
+          "continuityGroup": "shadow-forms",
+          "continuityOrder": 4
+        }
+      ]
+    }
+  ]
+}

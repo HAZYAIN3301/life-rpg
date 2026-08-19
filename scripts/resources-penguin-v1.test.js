@@ -15,19 +15,19 @@ function pngInfo(file) {
   };
 }
 
-assert.equal(penguin.VERSION, '1.1.0');
+assert.equal(penguin.VERSION, '1.3.0');
 assert.deepEqual(penguin.TRAVELLER_GENDERS, ['male', 'female']);
-assert.deepEqual(penguin.AUTHORED_PAIR_GENDERS, ['male']);
+assert.deepEqual(penguin.AUTHORED_PAIR_GENDERS, ['male', 'female']);
 assert.equal(penguin.normalizeTravellerGender(), 'male');
 assert.equal(penguin.normalizeTravellerGender('female'), 'female');
 assert.equal(penguin.normalizeTravellerGender('unknown'), null);
 assert.equal(penguin.normalizeTravellerGender(''), null);
 assert.equal(penguin.normalizeTravellerGender(null), null);
 assert.equal(penguin.hasPairArt('male'), true);
-assert.equal(penguin.hasPairArt('female'), false);
+assert.equal(penguin.hasPairArt('female'), true);
 assert.equal(penguin.hasPairArt('unknown'), false);
 assert.equal(penguin.pairSrc('greet-contact'), '/art/pets/resources-penguin-v1/pair-v1/greet-contact.png?v=20260807-1');
-assert.equal(penguin.pairSrc('greet-contact', 'female'), '/art/pets/resources-penguin-v1/pair-v1/female/greet-contact.png?v=20260807-1');
+assert.equal(penguin.pairSrc('greet-contact', 'female'), '/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/greet-contact.png?v=20260807-1');
 assert.equal(penguin.pairSrc('greet-contact', ''), null);
 assert.match(penguin.pairMarkup({ gender: 'female' }), /data-traveller-gender="female"/);
 assert.equal(penguin.pairMarkup({ gender: '' }), '');
@@ -105,9 +105,11 @@ class FailingImage {
 }
 
 (async () => {
+  // Authored F2 passes the pair-art gate; this disconnected fixture exits
+  // without pretending that the female pack is missing.
   assert.equal(await penguin.playPair(blockedScope, 'greet', { gender: 'female' }), false);
-  assert.equal(blockedStage.cleared, true);
-  assert.equal(blockedPair.dataset.travellerGender, 'female');
+  assert.equal(blockedStage.cleared, false);
+  assert.equal('travellerGender' in blockedPair.dataset, false);
 
   blockedStage.cleared = false;
   assert.equal(await penguin.playPair(blockedScope, 'greet', { gender: '' }), false);
@@ -119,7 +121,7 @@ class FailingImage {
   const invalidPrefetch = await penguin.prefetch({ gender: '' });
   const isPair = (result) => String(result.value || '').includes('/pair-v1/');
   assert.equal(malePrefetch.some(isPair), true);
-  assert.equal(femalePrefetch.some(isPair), false);
+  assert.equal(femalePrefetch.some((result) => String(result.value || '').includes('/pair-v1/female/f2-v1/')), true);
   assert.equal(invalidPrefetch.some(isPair), false);
 
   const originalImage = global.Image;

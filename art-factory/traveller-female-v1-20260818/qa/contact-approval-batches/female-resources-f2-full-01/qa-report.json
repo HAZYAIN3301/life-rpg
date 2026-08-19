@@ -1,0 +1,717 @@
+{
+  "schema": "satoru.traveller-female-contact-qa/1",
+  "batch": "female-resources-f2-full-01",
+  "family": "resources",
+  "canvas": [
+    1536,
+    1536
+  ],
+  "groundY": 1470,
+  "geometry": {
+    "minWidthRatio": 0.9,
+    "maxWidthRatio": 1.1,
+    "minHeightRatio": 0.9,
+    "maxHeightRatio": 1.1,
+    "maxCenterDeltaPx": 4.0,
+    "maxCenterXDeltaPx": 4.0,
+    "maxContinuityRatioSpread": 0.08,
+    "maxContinuityCenterSpreadPx": 4.0
+  },
+  "automatedContractPassed": true,
+  "manualContactApprovalRequired": true,
+  "runtimeEligible": false,
+  "frames": {
+    "greet-contact": {
+      "file": "outputs/contact-approval-batches/female-resources-f2-full-01/greet-contact.png",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/greet-contact.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        69,
+        436,
+        1468,
+        1470
+      ],
+      "referenceBbox": [
+        60,
+        436,
+        1477,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.0
+      ],
+      "widthRatioToReference": 0.987297,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 764055,
+      "transparentPixels": 1586526,
+      "partialAlphaPixels": 31448,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "budget-point": {
+      "file": "outputs/contact-approval-batches/female-resources-f2-full-01/budget-point.png",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/budget-point.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        178,
+        376,
+        1357,
+        1470
+      ],
+      "referenceBbox": [
+        120,
+        376,
+        1415,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.0
+      ],
+      "widthRatioToReference": 0.910425,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 646687,
+      "transparentPixels": 1706387,
+      "partialAlphaPixels": 21550,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "budget-reserve": {
+      "file": "outputs/contact-approval-batches/female-resources-f2-full-01/budget-reserve.png",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/budget-reserve.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        158,
+        379,
+        1378,
+        1470
+      ],
+      "referenceBbox": [
+        120,
+        379,
+        1415,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.5,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        0.5,
+        0.0
+      ],
+      "widthRatioToReference": 0.942085,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 855359,
+      "transparentPixels": 1496444,
+      "partialAlphaPixels": 26938,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "count-pass": {
+      "file": "outputs/contact-approval-batches/female-resources-f2-full-01/count-pass.png",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-pass.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        88,
+        480,
+        1448,
+        1470
+      ],
+      "referenceBbox": [
+        46,
+        480,
+        1490,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.0
+      ],
+      "widthRatioToReference": 0.941828,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 751115,
+      "transparentPixels": 1599983,
+      "partialAlphaPixels": 40929,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "count-place": {
+      "file": "outputs/contact-approval-batches/female-resources-f2-full-01/count-place.png",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-place.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        90,
+        487,
+        1445,
+        1470
+      ],
+      "referenceBbox": [
+        48,
+        487,
+        1487,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.0
+      ],
+      "widthRatioToReference": 0.941626,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 742959,
+      "transparentPixels": 1608281,
+      "partialAlphaPixels": 41945,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "count-stack": {
+      "file": "outputs/contact-approval-batches/female-resources-f2-full-01/count-stack.png",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-stack.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        82,
+        525,
+        1454,
+        1470
+      ],
+      "referenceBbox": [
+        50,
+        525,
+        1487,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.5,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        -0.5,
+        0.0
+      ],
+      "widthRatioToReference": 0.954767,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 734736,
+      "transparentPixels": 1616507,
+      "partialAlphaPixels": 39558,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "reserve-offer": {
+      "file": "outputs/contact-approval-batches/female-resources-f2-full-01/reserve-offer.png",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/reserve-offer.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        32,
+        429,
+        1504,
+        1470
+      ],
+      "referenceBbox": [
+        32,
+        419,
+        1504,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 5.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        5.0
+      ],
+      "widthRatioToReference": 1.0,
+      "heightRatioToReference": 0.990485,
+      "visiblePixels": 836602,
+      "transparentPixels": 1513563,
+      "partialAlphaPixels": 37641,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "reserve-accept": {
+      "file": "outputs/contact-approval-batches/female-resources-f2-full-01/reserve-accept.png",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/reserve-accept.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        32,
+        432,
+        1504,
+        1470
+      ],
+      "referenceBbox": [
+        32,
+        427,
+        1504,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 2.5,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        2.5
+      ],
+      "widthRatioToReference": 1.0,
+      "heightRatioToReference": 0.995206,
+      "visiblePixels": 825188,
+      "transparentPixels": 1525789,
+      "partialAlphaPixels": 34824,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "focus-work": {
+      "file": "outputs/contact-approval-batches/female-resources-f2-full-01/focus-work.png",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-work.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        113,
+        464,
+        1424,
+        1470
+      ],
+      "referenceBbox": [
+        62,
+        464,
+        1475,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.0
+      ],
+      "widthRatioToReference": 0.927813,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 809534,
+      "transparentPixels": 1543237,
+      "partialAlphaPixels": 23031,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 2,
+      "technicalKeyRatio": 2.47e-06,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "focus-check": {
+      "file": "outputs/contact-approval-batches/female-resources-f2-full-01/focus-check.png",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-check.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        131,
+        476,
+        1404,
+        1470
+      ],
+      "referenceBbox": [
+        62,
+        476,
+        1473,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.0
+      ],
+      "widthRatioToReference": 0.902197,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 800023,
+      "transparentPixels": 1552846,
+      "partialAlphaPixels": 23054,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "focus-nod": {
+      "file": "outputs/contact-approval-batches/female-resources-f2-full-01/focus-nod.png",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-nod.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        110,
+        457,
+        1425,
+        1470
+      ],
+      "referenceBbox": [
+        63,
+        457,
+        1473,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.5,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        -0.5,
+        0.0
+      ],
+      "widthRatioToReference": 0.932624,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 823780,
+      "transparentPixels": 1528840,
+      "partialAlphaPixels": 23711,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "close-stamp": {
+      "file": "outputs/contact-approval-batches/female-resources-f2-full-01/close-stamp.png",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/close-stamp.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        156,
+        414,
+        1379,
+        1470
+      ],
+      "referenceBbox": [
+        120,
+        414,
+        1415,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.0
+      ],
+      "widthRatioToReference": 0.944402,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 817307,
+      "transparentPixels": 1535025,
+      "partialAlphaPixels": 30569,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 1,
+      "technicalKeyRatio": 1.22e-06,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    }
+  },
+  "continuity": {
+    "groups": {
+      "budget": {
+        "frames": [
+          "budget-point",
+          "budget-reserve"
+        ],
+        "evaluated": true,
+        "status": "evaluated",
+        "widthRatioSpread": 0.03166,
+        "heightRatioSpread": 0.0,
+        "centerXOffsetSpreadPx": 0.5,
+        "centerYOffsetSpreadPx": 0.0,
+        "checks": {
+          "widthRatioContinuity": true,
+          "heightRatioContinuity": true,
+          "centerContinuity": true
+        },
+        "passed": true
+      },
+      "count": {
+        "frames": [
+          "count-pass",
+          "count-place",
+          "count-stack"
+        ],
+        "evaluated": true,
+        "status": "evaluated",
+        "widthRatioSpread": 0.013141,
+        "heightRatioSpread": 0.0,
+        "centerXOffsetSpreadPx": 0.5,
+        "centerYOffsetSpreadPx": 0.0,
+        "checks": {
+          "widthRatioContinuity": true,
+          "heightRatioContinuity": true,
+          "centerContinuity": true
+        },
+        "passed": true
+      },
+      "reserve": {
+        "frames": [
+          "reserve-offer",
+          "reserve-accept"
+        ],
+        "evaluated": true,
+        "status": "evaluated",
+        "widthRatioSpread": 0.0,
+        "heightRatioSpread": 0.004721,
+        "centerXOffsetSpreadPx": 0.0,
+        "centerYOffsetSpreadPx": 2.5,
+        "checks": {
+          "widthRatioContinuity": true,
+          "heightRatioContinuity": true,
+          "centerContinuity": true
+        },
+        "passed": true
+      },
+      "focus": {
+        "frames": [
+          "focus-work",
+          "focus-check",
+          "focus-nod"
+        ],
+        "evaluated": true,
+        "status": "evaluated",
+        "widthRatioSpread": 0.030427,
+        "heightRatioSpread": 0.0,
+        "centerXOffsetSpreadPx": 0.5,
+        "centerYOffsetSpreadPx": 0.0,
+        "checks": {
+          "widthRatioContinuity": true,
+          "heightRatioContinuity": true,
+          "centerContinuity": true
+        },
+        "passed": true
+      }
+    },
+    "passed": true
+  },
+  "passed": true
+}

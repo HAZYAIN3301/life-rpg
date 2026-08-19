@@ -1,0 +1,1497 @@
+{
+  "schema": "satoru.traveller-female-f2-combined-review/1",
+  "id": "female-f2-full-46-review",
+  "status": "manual-review-approved",
+  "approvedIdentity": {
+    "id": "female-f2-high-ponytail",
+    "path": "sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png",
+    "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+    "status": "identity-approved/runtime-not-yet"
+  },
+  "runtimeExpectation": {
+    "source": "public/traveller-appearance-v1.js",
+    "revision": "f2-v1",
+    "immutable": true,
+    "exactOrderedMatch": true
+  },
+  "automatedReviewPassed": true,
+  "manualReviewRequired": false,
+  "manualReviewApproved": true,
+  "manualReview": {
+    "source": "PRODUCTION-INVENTORY-F2.json",
+    "sourceSha256": "47831e877e1b6d5958cab9e96046129ace4a0feeaf469f80896b0465f821c4bf",
+    "reviewerRecord": "completed-by-parent",
+    "qaPassedFrames": 46,
+    "manuallyReviewedFrames": 46,
+    "batches": 9,
+    "approved": true
+  },
+  "runtimeEligible": true,
+  "promotionRequired": true,
+  "runtimePromotionState": "approved-by-review-not-copied",
+  "publicArtWrites": false,
+  "counts": {
+    "frames": 46,
+    "uniqueRuntimeTargets": 46,
+    "uniqueFemaleOutputs": 46,
+    "families": {
+      "core": 7,
+      "room": 4,
+      "gamabunta": 13,
+      "recovery": 6,
+      "resources": 12,
+      "shadow": 4
+    },
+    "batches": 9
+  },
+  "families": {
+    "core": {
+      "frames": 7,
+      "sheet": "previews/female-f2-full-46-review/01-core.png",
+      "orders": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "room": {
+      "frames": 4,
+      "sheet": "previews/female-f2-full-46-review/02-room.png",
+      "orders": [
+        8,
+        9,
+        10,
+        11
+      ]
+    },
+    "gamabunta": {
+      "frames": 13,
+      "sheet": "previews/female-f2-full-46-review/03-gamabunta.png",
+      "orders": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ]
+    },
+    "recovery": {
+      "frames": 6,
+      "sheet": "previews/female-f2-full-46-review/04-recovery.png",
+      "orders": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30
+      ]
+    },
+    "resources": {
+      "frames": 12,
+      "sheet": "previews/female-f2-full-46-review/05-resources.png",
+      "orders": [
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42
+      ]
+    },
+    "shadow": {
+      "frames": 4,
+      "sheet": "previews/female-f2-full-46-review/06-shadow.png",
+      "orders": [
+        43,
+        44,
+        45,
+        46
+      ]
+    }
+  },
+  "batches": [
+    {
+      "batch": "female-core-f2-01",
+      "kind": "standard",
+      "family": "core",
+      "frames": 5,
+      "manifest": "outputs/approval-batches/female-core-f2-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-core-f2-01/qa-report.json",
+      "automatedQaPassed": true,
+      "runtimeEligible": false
+    },
+    {
+      "batch": "female-poses-f2-01",
+      "kind": "standard",
+      "family": "core",
+      "frames": 1,
+      "manifest": "outputs/approval-batches/female-poses-f2-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-poses-f2-01/qa-report.json",
+      "automatedQaPassed": true,
+      "runtimeEligible": false
+    },
+    {
+      "batch": "female-poses-f2-full-01",
+      "kind": "standard",
+      "family": "core",
+      "frames": 1,
+      "manifest": "outputs/approval-batches/female-poses-f2-full-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-poses-f2-full-01/qa-report.json",
+      "automatedQaPassed": true,
+      "runtimeEligible": false
+    },
+    {
+      "batch": "female-room-f2-full-01",
+      "kind": "standard",
+      "family": "room",
+      "frames": 3,
+      "manifest": "outputs/approval-batches/female-room-f2-full-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-room-f2-full-01/qa-report.json",
+      "automatedQaPassed": true,
+      "runtimeEligible": false
+    },
+    {
+      "batch": "female-room-f2-01",
+      "kind": "standard",
+      "family": "room",
+      "frames": 1,
+      "manifest": "outputs/approval-batches/female-room-f2-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-room-f2-01/qa-report.json",
+      "automatedQaPassed": true,
+      "runtimeEligible": false
+    },
+    {
+      "batch": "female-gamabunta-f2-full-01",
+      "kind": "contact",
+      "family": "gamabunta",
+      "frames": 13,
+      "manifest": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "automatedQaPassed": true,
+      "runtimeEligible": false
+    },
+    {
+      "batch": "female-recovery-f2-full-01",
+      "kind": "contact",
+      "family": "recovery",
+      "frames": 6,
+      "manifest": "outputs/contact-approval-batches/female-recovery-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-recovery-f2-full-01/qa-report.json",
+      "automatedQaPassed": true,
+      "runtimeEligible": false
+    },
+    {
+      "batch": "female-resources-f2-full-01",
+      "kind": "contact",
+      "family": "resources",
+      "frames": 12,
+      "manifest": "outputs/contact-approval-batches/female-resources-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-resources-f2-full-01/qa-report.json",
+      "automatedQaPassed": true,
+      "runtimeEligible": false
+    },
+    {
+      "batch": "female-shadow-f2-full-01",
+      "kind": "contact",
+      "family": "shadow",
+      "frames": 4,
+      "manifest": "outputs/contact-approval-batches/female-shadow-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-shadow-f2-full-01/qa-report.json",
+      "automatedQaPassed": true,
+      "runtimeEligible": false
+    }
+  ],
+  "manualReviewChecklist": [
+    {
+      "item": "F2 identity is stable in every frame: youthful no-sclera face, canonical high ponytail, goggles, palette and cut-paper proportions.",
+      "checked": true
+    },
+    {
+      "item": "Each female frame preserves the male reference's action, facing, silhouette, staging and relative actor scale.",
+      "checked": true
+    },
+    {
+      "item": "Physical contacts and occlusions are readable: hands, feet, props, pets and Shadow overlap in the intended order.",
+      "checked": true
+    },
+    {
+      "item": "Paired and multi-phase motion reads continuously without identity, costume, handedness or framing jumps.",
+      "checked": true
+    },
+    {
+      "item": "Gamabunta, Katsuya, Mister P and all four Shadow forms retain their canonical identities and markings.",
+      "checked": true
+    },
+    {
+      "item": "No chroma fringe, dirty matte, clipped silhouette, duplicate limb, broken hand, floor drift or accidental cast-shadow plate remains.",
+      "checked": true
+    },
+    {
+      "item": "Every listed runtime target is the intended unique destination; manual approval is recorded before any public/art copy.",
+      "checked": true
+    }
+  ],
+  "frames": [
+    {
+      "family": "core",
+      "frame": "idle",
+      "batch": "female-core-f2-01",
+      "kind": "standard",
+      "manifest": "outputs/approval-batches/female-core-f2-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-core-f2-01/qa-report.json",
+      "reference": "public/art/avatars/traveller-core-v1/male/poses/idle.png",
+      "runtimeTarget": "/art/avatars/traveller-core-v1/female/f2-v1/poses/idle.png",
+      "order": 1,
+      "targetKey": "core/idle",
+      "referenceSha256": "6d952b7ddcc1c485cbb9ec54bcff2cbd530d4e3908f3fe0398b2bb88b88b8958",
+      "referenceCanvas": [
+        640,
+        900
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/approval-batches/female-core-f2-01/idle.png",
+      "femaleOutputSha256": "fadc3c72e5ca515584aa46dd4028dff1b0371566990f4912a262cc7b90d40298",
+      "femaleCanvas": [
+        640,
+        900
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "core",
+      "frame": "arms-up",
+      "batch": "female-poses-f2-01",
+      "kind": "standard",
+      "manifest": "outputs/approval-batches/female-poses-f2-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-poses-f2-01/qa-report.json",
+      "reference": "public/art/avatars/traveller-core-v1/male/poses/arms-up.png",
+      "runtimeTarget": "/art/avatars/traveller-core-v1/female/f2-v1/poses/arms-up.png",
+      "order": 2,
+      "targetKey": "core/arms-up",
+      "referenceSha256": "abb3d8ca52f15a2ae7a306cd35398398073786090e5e47aa6ce791737d6797c9",
+      "referenceCanvas": [
+        640,
+        900
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/approval-batches/female-poses-f2-01/arms-up.png",
+      "femaleOutputSha256": "48818b57b9964ce0694a64e30dc4c17282f040dd2d1cc77d7b59647b1a163cdf",
+      "femaleCanvas": [
+        640,
+        900
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "core",
+      "frame": "seated",
+      "batch": "female-poses-f2-full-01",
+      "kind": "standard",
+      "manifest": "outputs/approval-batches/female-poses-f2-full-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-poses-f2-full-01/qa-report.json",
+      "reference": "public/art/avatars/traveller-core-v1/male/poses/seated.png",
+      "runtimeTarget": "/art/avatars/traveller-core-v1/female/f2-v1/poses/seated.png",
+      "order": 3,
+      "targetKey": "core/seated",
+      "referenceSha256": "9b8a724998a98a8ed0d4f66cefe099fc5553790e81171f4399fb234ad3fc2d30",
+      "referenceCanvas": [
+        640,
+        900
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/approval-batches/female-poses-f2-full-01/seated.png",
+      "femaleOutputSha256": "e3abe90c47db535c7363ce9b03275cf4ea17f0081e75256be7e7830165ce6464",
+      "femaleCanvas": [
+        640,
+        900
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "core",
+      "frame": "window-back",
+      "batch": "female-core-f2-01",
+      "kind": "standard",
+      "manifest": "outputs/approval-batches/female-core-f2-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-core-f2-01/qa-report.json",
+      "reference": "public/art/avatars/traveller-core-v1/male/poses/window-back.png",
+      "runtimeTarget": "/art/avatars/traveller-core-v1/female/f2-v1/poses/window-back.png",
+      "order": 4,
+      "targetKey": "core/window-back",
+      "referenceSha256": "82e7d1a80f5415e0319f9e907e954554df214a7bdfb10a820ac9d3d6141f89f5",
+      "referenceCanvas": [
+        640,
+        900
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/approval-batches/female-core-f2-01/window-back.png",
+      "femaleOutputSha256": "4e9609aa5401a5076eae37ca886ec7972816e38544259c209f1c21ca927be96f",
+      "femaleCanvas": [
+        640,
+        900
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "core",
+      "frame": "idle-blink",
+      "batch": "female-core-f2-01",
+      "kind": "standard",
+      "manifest": "outputs/approval-batches/female-core-f2-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-core-f2-01/qa-report.json",
+      "reference": "public/art/avatars/traveller-core-v1/male/motion-v3/idle-blink.png",
+      "runtimeTarget": "/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/idle-blink.png",
+      "order": 5,
+      "targetKey": "core/idle-blink",
+      "referenceSha256": "21d723668702098a1aa03358080e1224fa7c20a2e270b85828cbe1f92bceb518",
+      "referenceCanvas": [
+        640,
+        900
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/approval-batches/female-core-f2-01/idle-blink.png",
+      "femaleOutputSha256": "afbe591998555c91e905347d6d99dd7f13c0aa2b139192cc93ff035b7609f14d",
+      "femaleCanvas": [
+        640,
+        900
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "core",
+      "frame": "walk-a",
+      "batch": "female-core-f2-01",
+      "kind": "standard",
+      "manifest": "outputs/approval-batches/female-core-f2-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-core-f2-01/qa-report.json",
+      "reference": "public/art/avatars/traveller-core-v1/male/motion-v3/walk-a.png",
+      "runtimeTarget": "/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/walk-a.png",
+      "order": 6,
+      "targetKey": "core/walk-a",
+      "referenceSha256": "290dbaa4f82e2fca64b73e9b9e6718de61bd8ace7c5136393b4d2b608bdaa6d9",
+      "referenceCanvas": [
+        640,
+        900
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/approval-batches/female-core-f2-01/walk-a.png",
+      "femaleOutputSha256": "3298d693d088fe1cc912d5beb9e5c2f756977b76f927fee22c353d47f78eed2a",
+      "femaleCanvas": [
+        640,
+        900
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "core",
+      "frame": "walk-b",
+      "batch": "female-core-f2-01",
+      "kind": "standard",
+      "manifest": "outputs/approval-batches/female-core-f2-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-core-f2-01/qa-report.json",
+      "reference": "public/art/avatars/traveller-core-v1/male/motion-v3/walk-b.png",
+      "runtimeTarget": "/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/walk-b.png",
+      "order": 7,
+      "targetKey": "core/walk-b",
+      "referenceSha256": "e3f3fe434fc83671b6407021134912a8de0604ab92f72ec82eb0a187f024a301",
+      "referenceCanvas": [
+        640,
+        900
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/approval-batches/female-core-f2-01/walk-b.png",
+      "femaleOutputSha256": "1296f1a0ad73f304f5afa02f35c422862951168d38d9ce107e749e7d8ebb8f44",
+      "femaleCanvas": [
+        640,
+        900
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "room",
+      "frame": "bench-rest",
+      "batch": "female-room-f2-full-01",
+      "kind": "standard",
+      "manifest": "outputs/approval-batches/female-room-f2-full-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-room-f2-full-01/qa-report.json",
+      "reference": "public/art/avatars/traveller-core-v1/male/room-actions-v4/bench-rest.png",
+      "runtimeTarget": "/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-rest.png",
+      "order": 8,
+      "targetKey": "room/bench-rest",
+      "referenceSha256": "8b49bdaf09af1261cbbbca5f803ce703f1c42b92c825c0ee7c4aaa8c08cee452",
+      "referenceCanvas": [
+        640,
+        900
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/approval-batches/female-room-f2-full-01/bench-rest.png",
+      "femaleOutputSha256": "d20bc617517769f4d30b4391cb4059d93c226782928c5f3930fac095548563a9",
+      "femaleCanvas": [
+        640,
+        900
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "room",
+      "frame": "bench-read-a",
+      "batch": "female-room-f2-01",
+      "kind": "standard",
+      "manifest": "outputs/approval-batches/female-room-f2-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-room-f2-01/qa-report.json",
+      "reference": "public/art/avatars/traveller-core-v1/male/room-actions-v4/bench-read-a.png",
+      "runtimeTarget": "/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-read-a.png",
+      "order": 9,
+      "targetKey": "room/bench-read-a",
+      "referenceSha256": "8e5dac27c29955085807a3fbf707f888a66a43172879f2a92ee0b6dacf9f1613",
+      "referenceCanvas": [
+        640,
+        900
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/approval-batches/female-room-f2-01/bench-read-a.png",
+      "femaleOutputSha256": "50a55ee1170f32c5ad7877f65934447c32c79d06b3f07ee869f5115864809c06",
+      "femaleCanvas": [
+        640,
+        900
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "room",
+      "frame": "bench-read-b",
+      "batch": "female-room-f2-full-01",
+      "kind": "standard",
+      "manifest": "outputs/approval-batches/female-room-f2-full-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-room-f2-full-01/qa-report.json",
+      "reference": "public/art/avatars/traveller-core-v1/male/room-actions-v4/bench-read-b.png",
+      "runtimeTarget": "/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-read-b.png",
+      "order": 10,
+      "targetKey": "room/bench-read-b",
+      "referenceSha256": "95071e68b1f57505bff3a8b13e81cf6d336867bb953725be5c3325117fba3685",
+      "referenceCanvas": [
+        640,
+        900
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/approval-batches/female-room-f2-full-01/bench-read-b.png",
+      "femaleOutputSha256": "f69cca0b4c7881d81d4913d2f684253d9c3a53f2ae0625ca38906f3c7ebb9f46",
+      "femaleCanvas": [
+        640,
+        900
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "room",
+      "frame": "bench-portal-reach",
+      "batch": "female-room-f2-full-01",
+      "kind": "standard",
+      "manifest": "outputs/approval-batches/female-room-f2-full-01/manifest.json",
+      "qaReport": "qa/approval-batches/female-room-f2-full-01/qa-report.json",
+      "reference": "public/art/avatars/traveller-core-v1/male/room-actions-v4/bench-portal-reach.png",
+      "runtimeTarget": "/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-portal-reach.png",
+      "order": 11,
+      "targetKey": "room/bench-portal-reach",
+      "referenceSha256": "1d137a9034436c21a4d1fed4e98bd87eb46de2dfb2184e07bf80a555167b4967",
+      "referenceCanvas": [
+        640,
+        900
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/approval-batches/female-room-f2-full-01/bench-portal-reach.png",
+      "femaleOutputSha256": "4bc19be71e9d0d23e702e9c3236f121ed8a06ba3c60811b875f893c97a5871ff",
+      "femaleCanvas": [
+        640,
+        900
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "gamabunta",
+      "frame": "greet-contact",
+      "batch": "female-gamabunta-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/greet-contact.png",
+      "runtimeTarget": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/greet-contact.png",
+      "order": 12,
+      "targetKey": "gamabunta/greet-contact",
+      "referenceSha256": "e513da955a717b785c0b601b7fb8867d95a3a35fa3b81ec64f158c1cad3a724a",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/greet-contact.png",
+      "femaleOutputSha256": "1940daf846b3c4904fc5fc244154bb5442462046715088cd452e49df0a7d1f23",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "gamabunta",
+      "frame": "train-low",
+      "batch": "female-gamabunta-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/train-low.png",
+      "runtimeTarget": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/train-low.png",
+      "order": 13,
+      "targetKey": "gamabunta/train-low",
+      "referenceSha256": "71be21065b3945cc3096a06834f5a79ab6af6043dd2fb513c4292811e57e9e11",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/train-low.png",
+      "femaleOutputSha256": "59edaad5e442d7d9043b695e613e0f83e9cdad2c24ac94c04c1e0f9097f31727",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "gamabunta",
+      "frame": "train-high",
+      "batch": "female-gamabunta-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/train-high.png",
+      "runtimeTarget": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/train-high.png",
+      "order": 14,
+      "targetKey": "gamabunta/train-high",
+      "referenceSha256": "3dd622da0c7b9e12cc5518b7dbf5c76a5ab0311f627b4ff35e5811bc5cde218e",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/train-high.png",
+      "femaleOutputSha256": "6ef99024273c81f4a6bccbf324fa20192e8675ee7b126e58e6a56254ce9e946e",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "gamabunta",
+      "frame": "whistle-a",
+      "batch": "female-gamabunta-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-a.png",
+      "runtimeTarget": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-a.png",
+      "order": 15,
+      "targetKey": "gamabunta/whistle-a",
+      "referenceSha256": "04e895e89a8593171424d5492a049740efe85057a6d5e14b5e266ba92b715c83",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/whistle-a.png",
+      "femaleOutputSha256": "91167e033c72ecc9a385e73d901f88010a0b3c1f84f1f31365359a4bb040c86f",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "gamabunta",
+      "frame": "whistle-b",
+      "batch": "female-gamabunta-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-b.png",
+      "runtimeTarget": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-b.png",
+      "order": 16,
+      "targetKey": "gamabunta/whistle-b",
+      "referenceSha256": "e7b7d2504d02cd5c1989f9825271dbd0632e7a95e007314fdc0759ade6627d66",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/whistle-b.png",
+      "femaleOutputSha256": "1407c75f1d8249b6dd5d07f23b516bbde8232aaad696a11aabca549bf8229689",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "gamabunta",
+      "frame": "whistle-c",
+      "batch": "female-gamabunta-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-c.png",
+      "runtimeTarget": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-c.png",
+      "order": 17,
+      "targetKey": "gamabunta/whistle-c",
+      "referenceSha256": "955dc4fbdd406022fdf3acba6c8373ccbb61d57a803d8c70bf2faf14ae46b988",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/whistle-c.png",
+      "femaleOutputSha256": "94272f78a9ae34a22e41524ab23a869ac8c8826acb3013eaf306691cb282fb00",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "gamabunta",
+      "frame": "whistle-d",
+      "batch": "female-gamabunta-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-d.png",
+      "runtimeTarget": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-d.png",
+      "order": 18,
+      "targetKey": "gamabunta/whistle-d",
+      "referenceSha256": "fa0f52dff3b0837895aa58e6c29be3add6b1672931039372694e56c0085ab136",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/whistle-d.png",
+      "femaleOutputSha256": "3c3664928cff746b1b438756e5df94ef7e20bec2cd6fca352d849ba890b987ec",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "gamabunta",
+      "frame": "pushup-down",
+      "batch": "female-gamabunta-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/pushup-down.png",
+      "runtimeTarget": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/pushup-down.png",
+      "order": 19,
+      "targetKey": "gamabunta/pushup-down",
+      "referenceSha256": "cc7c8856a47b6b8a257200c90c9b86f9c0ff4bce2a06f63111fc428df815c01b",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/pushup-down.png",
+      "femaleOutputSha256": "5e4d902eed3ab681c75ef560746cbd187316e8bdef8d41f9dd73e3cb9a538443",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "gamabunta",
+      "frame": "pushup-up",
+      "batch": "female-gamabunta-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/pushup-up.png",
+      "runtimeTarget": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/pushup-up.png",
+      "order": 20,
+      "targetKey": "gamabunta/pushup-up",
+      "referenceSha256": "1157946d12ded065d0739637c83d471328488d83e9a3a127cefa644e9a5884bd",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/pushup-up.png",
+      "femaleOutputSha256": "b58ae7f3a3edb03501ae8f6309cf2374a4a432404f786e3ba5343347cc718f34",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "gamabunta",
+      "frame": "stretch-a",
+      "batch": "female-gamabunta-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/stretch-a.png",
+      "runtimeTarget": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/stretch-a.png",
+      "order": 21,
+      "targetKey": "gamabunta/stretch-a",
+      "referenceSha256": "dedf4556b12a752939d1763b4a08a3d624a3f980518575d6ec31719e5576dd08",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/stretch-a.png",
+      "femaleOutputSha256": "439760a22ee7dfe54b5d4d2add9f5293b2d28dcac41c8b8a6d0d8ec6e1c7116a",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "gamabunta",
+      "frame": "stretch-b",
+      "batch": "female-gamabunta-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/stretch-b.png",
+      "runtimeTarget": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/stretch-b.png",
+      "order": 22,
+      "targetKey": "gamabunta/stretch-b",
+      "referenceSha256": "c863e475efde41f59db829565f70f54f714b134df14fc9448067e2af7f76f7c8",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/stretch-b.png",
+      "femaleOutputSha256": "a6cd0d9694c0cd89b41bbef365b6d0e6afa9c2602c67b2e41628d95a4b0aef01",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "gamabunta",
+      "frame": "rest-contact",
+      "batch": "female-gamabunta-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/rest-contact.png",
+      "runtimeTarget": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/rest-contact.png",
+      "order": 23,
+      "targetKey": "gamabunta/rest-contact",
+      "referenceSha256": "f61de1816b694d6f35460cc5a5d8b107ab66cb4ff9c04b80cecbac5248ac8f26",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/rest-contact.png",
+      "femaleOutputSha256": "e10f384888369dbbb01b0a859679030a410a4e8d6653a52cd0118370f0abaa58",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "gamabunta",
+      "frame": "rest-pet",
+      "batch": "female-gamabunta-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-gamabunta-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/rest-pet.png",
+      "runtimeTarget": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/rest-pet.png",
+      "order": 24,
+      "targetKey": "gamabunta/rest-pet",
+      "referenceSha256": "ed83d20c9dae682952dacd093d6306289d8b60980e6d012ef87984a05caa9920",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/rest-pet.png",
+      "femaleOutputSha256": "f599dec7c149bd90d3ef10263bb5f514e7edad2b67a3fba565716020e25a5214",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "recovery",
+      "frame": "greet-contact",
+      "batch": "female-recovery-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-recovery-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-recovery-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/greet-contact.png",
+      "runtimeTarget": "/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/greet-contact.png",
+      "order": 25,
+      "targetKey": "recovery/greet-contact",
+      "referenceSha256": "84ee49e183523ad5618a49b61ce3ede5a6db3d9ba780cd9161f1d680858ca108",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-recovery-f2-full-01/greet-contact.png",
+      "femaleOutputSha256": "eaa0d2f7783656e602379e8aa63d75424517e25004fdb8af5bf5be40ddbb9e0c",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "recovery",
+      "frame": "breathe-in",
+      "batch": "female-recovery-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-recovery-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-recovery-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/breathe-in.png",
+      "runtimeTarget": "/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/breathe-in.png",
+      "order": 26,
+      "targetKey": "recovery/breathe-in",
+      "referenceSha256": "d24f86344072a80aa89a0a3a39dbfa4abf6a7b119fc926e31b3984c11b3386e1",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-recovery-f2-full-01/breathe-in.png",
+      "femaleOutputSha256": "294b4384d5f6c5a8ce9f41b2a34d9b20fa397efad2388683338b09dcd9e8daf0",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "recovery",
+      "frame": "breathe-out",
+      "batch": "female-recovery-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-recovery-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-recovery-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/breathe-out.png",
+      "runtimeTarget": "/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/breathe-out.png",
+      "order": 27,
+      "targetKey": "recovery/breathe-out",
+      "referenceSha256": "279ed20a08efb17fe946fdaf05d54ecb24aa26097957dea3e4716307d72c7603",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-recovery-f2-full-01/breathe-out.png",
+      "femaleOutputSha256": "c72d6fb404ae7db38eb795e3ef087ff25e0b5a0aab9c036afc11fd53db58f665",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "recovery",
+      "frame": "restore-contact",
+      "batch": "female-recovery-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-recovery-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-recovery-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/restore-contact.png",
+      "runtimeTarget": "/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/restore-contact.png",
+      "order": 28,
+      "targetKey": "recovery/restore-contact",
+      "referenceSha256": "12909454c6f55d0b4b54263df4a2b1de8291be1fc861add5fae921cb35f1d525",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-recovery-f2-full-01/restore-contact.png",
+      "femaleOutputSha256": "3e654f46ed742c3f17e0af877fded63fcbbca1f25a36fe22e0312a36498d2e6a",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "recovery",
+      "frame": "stretch-a",
+      "batch": "female-recovery-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-recovery-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-recovery-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/stretch-a.png",
+      "runtimeTarget": "/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/stretch-a.png",
+      "order": 29,
+      "targetKey": "recovery/stretch-a",
+      "referenceSha256": "a07c5bb1fdff0b9c1506354f295fdcf6bfd32171d4534d8d04963f3c3260d2ab",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-recovery-f2-full-01/stretch-a.png",
+      "femaleOutputSha256": "ddeec5dbae5b7ac81d100f45e487f1f8d023c0cae959d8d0ec9b12f343645f4b",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "recovery",
+      "frame": "stretch-soft-b",
+      "batch": "female-recovery-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-recovery-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-recovery-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/recovery-slug-v1/pair-v3/stretch-soft-b-v155.png",
+      "runtimeTarget": "/art/pets/recovery-slug-v1/pair-v3/female/f2-v1/stretch-soft-b-v155.png",
+      "order": 30,
+      "targetKey": "recovery/stretch-soft-b",
+      "referenceSha256": "4e8d698c8a1d24fa35334e21eda161bd2a81fa3f141c8fb944b9a6e8c675608d",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-recovery-f2-full-01/stretch-soft-b.png",
+      "femaleOutputSha256": "33633927fa725ce723771b356fb58555a86b99a707381f20b9d92d7418619d3b",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "resources",
+      "frame": "greet-contact",
+      "batch": "female-resources-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-resources-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-resources-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/greet-contact.png",
+      "runtimeTarget": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/greet-contact.png",
+      "order": 31,
+      "targetKey": "resources/greet-contact",
+      "referenceSha256": "7c59922234d91e52d383fcf001ce26e3d29fee7b124c4af4c68e3d375d6526a6",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-resources-f2-full-01/greet-contact.png",
+      "femaleOutputSha256": "aebfe5c1af55b1643458ff4dd5d2e33c4ecc1a189fd6a8e6deb0bd2050f06d04",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "resources",
+      "frame": "budget-point",
+      "batch": "female-resources-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-resources-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-resources-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/budget-point.png",
+      "runtimeTarget": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/budget-point.png",
+      "order": 32,
+      "targetKey": "resources/budget-point",
+      "referenceSha256": "3fd0e500efb46f3b82caad1c843352a715c2d3dfd43772d1ee037a92d62e297f",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-resources-f2-full-01/budget-point.png",
+      "femaleOutputSha256": "714b3a6466fc47dd207e75ada5422ae985ae5f5df42a716d5132c39b443cd546",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "resources",
+      "frame": "budget-reserve",
+      "batch": "female-resources-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-resources-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-resources-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/budget-reserve.png",
+      "runtimeTarget": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/budget-reserve.png",
+      "order": 33,
+      "targetKey": "resources/budget-reserve",
+      "referenceSha256": "a74c9a55fc59822f96309db17e9aa3ad73055c1ded8eefaadd036878a89a380f",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-resources-f2-full-01/budget-reserve.png",
+      "femaleOutputSha256": "d526baef6508a8e74321e3dddb770186d0e60fa1900157b080e432efcb648ffb",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "resources",
+      "frame": "count-pass",
+      "batch": "female-resources-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-resources-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-resources-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-pass.png",
+      "runtimeTarget": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/count-pass.png",
+      "order": 34,
+      "targetKey": "resources/count-pass",
+      "referenceSha256": "765ba94f54976503f50a7cfb095703b52ce1d80e0393bb4869b1abb4f9c811db",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-resources-f2-full-01/count-pass.png",
+      "femaleOutputSha256": "21c52e15a05a36bdac8e982a3b66741883cb336fd1e505af005df15fcdd37cd9",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "resources",
+      "frame": "count-place",
+      "batch": "female-resources-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-resources-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-resources-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-place.png",
+      "runtimeTarget": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/count-place.png",
+      "order": 35,
+      "targetKey": "resources/count-place",
+      "referenceSha256": "3b00417db7d217eae892321c0af00927bca63be8948ea18a74daa0748d869dec",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-resources-f2-full-01/count-place.png",
+      "femaleOutputSha256": "923d1661091042008eebed58a93958fdaf87c5303f0da6223957748e57a44d24",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "resources",
+      "frame": "count-stack",
+      "batch": "female-resources-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-resources-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-resources-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-stack.png",
+      "runtimeTarget": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/count-stack.png",
+      "order": 36,
+      "targetKey": "resources/count-stack",
+      "referenceSha256": "68f85144fa0af9ab7c611ac1c3103d78a77bc6a2f09efee7286c1d726ba3fb3a",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-resources-f2-full-01/count-stack.png",
+      "femaleOutputSha256": "3ae5615c96b9dc106b4368e83e6d9b36c2c1492119d43eb06240af5186c393c3",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "resources",
+      "frame": "reserve-offer",
+      "batch": "female-resources-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-resources-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-resources-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/reserve-offer.png",
+      "runtimeTarget": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/reserve-offer.png",
+      "order": 37,
+      "targetKey": "resources/reserve-offer",
+      "referenceSha256": "c1b6881dc6c028add0027e094d1550edd4e3aa958286307af178b5e7fba5e03e",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-resources-f2-full-01/reserve-offer.png",
+      "femaleOutputSha256": "159cce1cc2e1090d65b5e37bb520d63e0a47f79de1c46ad9a16e938eec823fcb",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "resources",
+      "frame": "reserve-accept",
+      "batch": "female-resources-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-resources-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-resources-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/reserve-accept.png",
+      "runtimeTarget": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/reserve-accept.png",
+      "order": 38,
+      "targetKey": "resources/reserve-accept",
+      "referenceSha256": "b737b0cb73c033fe7bf98bf43d46d9b232dba51d27eaed4b679b75f1bce5a185",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-resources-f2-full-01/reserve-accept.png",
+      "femaleOutputSha256": "2ee4de86b4aaa13c8d7f2adcd878008c9872ed03ac72ed144a614f42e60b2b6a",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "resources",
+      "frame": "focus-work",
+      "batch": "female-resources-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-resources-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-resources-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-work.png",
+      "runtimeTarget": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/focus-work.png",
+      "order": 39,
+      "targetKey": "resources/focus-work",
+      "referenceSha256": "43e1f84b034dbcafdc6baf831648f61b7b976a844cedb2bd684485abc44cad1a",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-resources-f2-full-01/focus-work.png",
+      "femaleOutputSha256": "17250d38431551b65eb59490f1890f5e77e871c522303d8f61b05c34edf56991",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "resources",
+      "frame": "focus-check",
+      "batch": "female-resources-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-resources-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-resources-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-check.png",
+      "runtimeTarget": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/focus-check.png",
+      "order": 40,
+      "targetKey": "resources/focus-check",
+      "referenceSha256": "c3a93bfc47c91f7f621e5b73074efb5a68482a938b21f2f019abe518cad908f6",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-resources-f2-full-01/focus-check.png",
+      "femaleOutputSha256": "1c009d4868256137183e0ca1e9366e800205c8b643b04f9086f3344b2abd3f50",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "resources",
+      "frame": "focus-nod",
+      "batch": "female-resources-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-resources-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-resources-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-nod.png",
+      "runtimeTarget": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/focus-nod.png",
+      "order": 41,
+      "targetKey": "resources/focus-nod",
+      "referenceSha256": "e0dff2de2fd6aacf400b4a189c559522595e359bed04184ec8a127da59b72197",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-resources-f2-full-01/focus-nod.png",
+      "femaleOutputSha256": "a23473478ff3d6b4624561fc81f56651f29caae62fc7dafa7b7da3084c4eb696",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "resources",
+      "frame": "close-stamp",
+      "batch": "female-resources-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-resources-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-resources-f2-full-01/qa-report.json",
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/close-stamp.png",
+      "runtimeTarget": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/close-stamp.png",
+      "order": 42,
+      "targetKey": "resources/close-stamp",
+      "referenceSha256": "75162d7b46b9b947023b531280961397a5e174c9304ed40401d2147511781d8a",
+      "referenceCanvas": [
+        1536,
+        1536
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-resources-f2-full-01/close-stamp.png",
+      "femaleOutputSha256": "2aa2730bb3d1f6cf3af6ede2b2d82dec84ba21b7e7b0776440ca78f02de1632c",
+      "femaleCanvas": [
+        1536,
+        1536
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "shadow",
+      "frame": "attune-spark",
+      "batch": "female-shadow-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-shadow-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-shadow-f2-full-01/qa-report.json",
+      "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-spark.png",
+      "runtimeTarget": "/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-spark.png",
+      "order": 43,
+      "targetKey": "shadow/attune-spark",
+      "referenceSha256": "826351c5d7cea1904db7aafbe50d52c89abe82d7cb8af5f205528bc9db354e9d",
+      "referenceCanvas": [
+        1254,
+        1254
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-shadow-f2-full-01/attune-spark.png",
+      "femaleOutputSha256": "b0e628b8caac274f46da0d651c8dd44dbc726a6a615de62195648593b3101c54",
+      "femaleCanvas": [
+        1254,
+        1254
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "shadow",
+      "frame": "attune-spirit",
+      "batch": "female-shadow-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-shadow-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-shadow-f2-full-01/qa-report.json",
+      "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-spirit.png",
+      "runtimeTarget": "/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-spirit.png",
+      "order": 44,
+      "targetKey": "shadow/attune-spirit",
+      "referenceSha256": "fa5db625a4fc729803206277f8d06382af168cb5f9a074586749fcd347568163",
+      "referenceCanvas": [
+        1254,
+        1254
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-shadow-f2-full-01/attune-spirit.png",
+      "femaleOutputSha256": "33c422b3894aa2e719ab8a21de12e837d257cf07dd595da2480e9d6b56c4843d",
+      "femaleCanvas": [
+        1254,
+        1254
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "shadow",
+      "frame": "attune-guardian",
+      "batch": "female-shadow-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-shadow-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-shadow-f2-full-01/qa-report.json",
+      "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-guardian.png",
+      "runtimeTarget": "/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-guardian.png",
+      "order": 45,
+      "targetKey": "shadow/attune-guardian",
+      "referenceSha256": "94cdf3079884ff337a24d15b7439eab05fbfd13afe717f13cd82bd62de60c5f2",
+      "referenceCanvas": [
+        1254,
+        1254
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-shadow-f2-full-01/attune-guardian.png",
+      "femaleOutputSha256": "bc8614f2fdbbfcfd91a35ee9caebd08e715f2e3ee42a21d86b9dc368a900e47e",
+      "femaleCanvas": [
+        1254,
+        1254
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    },
+    {
+      "family": "shadow",
+      "frame": "attune-keeper",
+      "batch": "female-shadow-f2-full-01",
+      "kind": "contact",
+      "manifest": "outputs/contact-approval-batches/female-shadow-f2-full-01/manifest.json",
+      "qaReport": "qa/contact-approval-batches/female-shadow-f2-full-01/qa-report.json",
+      "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-keeper.png",
+      "runtimeTarget": "/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-keeper.png",
+      "order": 46,
+      "targetKey": "shadow/attune-keeper",
+      "referenceSha256": "79f2b4292e28f45488d8d6b886520d15078089d5cfe4311c13dc14f60938f13a",
+      "referenceCanvas": [
+        1254,
+        1254
+      ],
+      "referenceMode": "RGBA",
+      "femaleOutput": "outputs/contact-approval-batches/female-shadow-f2-full-01/attune-keeper.png",
+      "femaleOutputSha256": "39e3262c5a5ec3f619dd4dea129da14e9ab8ae582bfa95bb94e357c25acfe551",
+      "femaleCanvas": [
+        1254,
+        1254
+      ],
+      "femaleMode": "RGBA",
+      "batchQaPassed": true,
+      "manualReview": "approved"
+    }
+  ]
+}

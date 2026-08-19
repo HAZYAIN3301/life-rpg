@@ -1,0 +1,572 @@
+{
+  "schema": "satoru.traveller-female-contact-approval-batch/1",
+  "id": "female-resources-f2-full-01",
+  "family": "resources",
+  "morphology": "female",
+  "status": "awaiting-manual-contact-approval",
+  "runtimeEligible": false,
+  "publicArtWrites": false,
+  "approvedIdentity": {
+    "id": "female-f2-high-ponytail",
+    "path": "sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png",
+    "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+    "status": "identity-approved/runtime-not-yet"
+  },
+  "canvas": [
+    1536,
+    1536
+  ],
+  "groundY": 1470,
+  "key": "#FF00FF",
+  "preserveMagentaSubject": false,
+  "normalization": "reference-x-grounded",
+  "familyFrames": [
+    "greet-contact",
+    "budget-point",
+    "budget-reserve",
+    "count-pass",
+    "count-place",
+    "count-stack",
+    "reserve-offer",
+    "reserve-accept",
+    "focus-work",
+    "focus-check",
+    "focus-nod",
+    "close-stamp"
+  ],
+  "requiredFrames": [
+    "greet-contact",
+    "budget-point",
+    "budget-reserve",
+    "count-pass",
+    "count-place",
+    "count-stack",
+    "reserve-offer",
+    "reserve-accept",
+    "focus-work",
+    "focus-check",
+    "focus-nod",
+    "close-stamp"
+  ],
+  "runtimeTemplate": "public/art/pets/resources-penguin-v1/pair-v1/female/{frame}.png",
+  "runtimeRoutes": {
+    "greet-contact": "public/art/pets/resources-penguin-v1/pair-v1/female/greet-contact.png",
+    "budget-point": "public/art/pets/resources-penguin-v1/pair-v1/female/budget-point.png",
+    "budget-reserve": "public/art/pets/resources-penguin-v1/pair-v1/female/budget-reserve.png",
+    "count-pass": "public/art/pets/resources-penguin-v1/pair-v1/female/count-pass.png",
+    "count-place": "public/art/pets/resources-penguin-v1/pair-v1/female/count-place.png",
+    "count-stack": "public/art/pets/resources-penguin-v1/pair-v1/female/count-stack.png",
+    "reserve-offer": "public/art/pets/resources-penguin-v1/pair-v1/female/reserve-offer.png",
+    "reserve-accept": "public/art/pets/resources-penguin-v1/pair-v1/female/reserve-accept.png",
+    "focus-work": "public/art/pets/resources-penguin-v1/pair-v1/female/focus-work.png",
+    "focus-check": "public/art/pets/resources-penguin-v1/pair-v1/female/focus-check.png",
+    "focus-nod": "public/art/pets/resources-penguin-v1/pair-v1/female/focus-nod.png",
+    "close-stamp": "public/art/pets/resources-penguin-v1/pair-v1/female/close-stamp.png"
+  },
+  "geometry": {
+    "minWidthRatio": 0.9,
+    "maxWidthRatio": 1.1,
+    "minHeightRatio": 0.9,
+    "maxHeightRatio": 1.1,
+    "maxCenterDeltaPx": 4,
+    "maxCenterXDeltaPx": 4,
+    "maxContinuityRatioSpread": 0.08,
+    "maxContinuityCenterSpreadPx": 4
+  },
+  "continuityGroups": {
+    "budget": [
+      "budget-point",
+      "budget-reserve"
+    ],
+    "count": [
+      "count-pass",
+      "count-place",
+      "count-stack"
+    ],
+    "reserve": [
+      "reserve-offer",
+      "reserve-accept"
+    ],
+    "focus": [
+      "focus-work",
+      "focus-check",
+      "focus-nod"
+    ]
+  },
+  "assets": {
+    "greet-contact": "greet-contact.png",
+    "budget-point": "budget-point.png",
+    "budget-reserve": "budget-reserve.png",
+    "count-pass": "count-pass.png",
+    "count-place": "count-place.png",
+    "count-stack": "count-stack.png",
+    "reserve-offer": "reserve-offer.png",
+    "reserve-accept": "reserve-accept.png",
+    "focus-work": "focus-work.png",
+    "focus-check": "focus-check.png",
+    "focus-nod": "focus-nod.png",
+    "close-stamp": "close-stamp.png"
+  },
+  "frames": {
+    "greet-contact": {
+      "source": "sources/approval-batches/female-resources-f2-full-01/greet-contact-keyed.png",
+      "sourceRoute": "greet-contact-keyed.png",
+      "sourceSha256": "7f4755690bc4171b17131a305352c217a4c46855b9d4cd2d4523a4358c0db06d",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/greet-contact.png",
+      "referenceSha256": "7c59922234d91e52d383fcf001ce26e3d29fee7b124c4af4c68e3d375d6526a6",
+      "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/greet-contact.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        38,
+        216,
+        1235,
+        1101
+      ],
+      "referenceBbox": [
+        60,
+        436,
+        1477,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        69,
+        436,
+        1468,
+        1470
+      ],
+      "scale": 1.1683616,
+      "normalization": "reference-x-grounded"
+    },
+    "budget-point": {
+      "source": "sources/approval-batches/female-resources-f2-full-01/budget-point-keyed.png",
+      "sourceRoute": "budget-point-keyed.png",
+      "sourceSha256": "3fceb1ed3ef60f189b6275e4ce4dc93d6d12cafc85fb5d191e61001b2232cc51",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/budget-point.png",
+      "referenceSha256": "3fd0e500efb46f3b82caad1c843352a715c2d3dfd43772d1ee037a92d62e297f",
+      "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/budget-point.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        0,
+        163,
+        1176,
+        1254
+      ],
+      "referenceBbox": [
+        120,
+        376,
+        1415,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        178,
+        376,
+        1357,
+        1470
+      ],
+      "scale": 1.0027498,
+      "normalization": "reference-x-grounded"
+    },
+    "budget-reserve": {
+      "source": "sources/approval-batches/female-resources-f2-full-01/budget-reserve-keyed.png",
+      "sourceRoute": "budget-reserve-keyed.png",
+      "sourceSha256": "36c2564b8ced8e49a9d8236b91d4953bf63e30d3412366e9e04cab30526d6306",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/budget-reserve.png",
+      "referenceSha256": "a74c9a55fc59822f96309db17e9aa3ad73055c1ded8eefaadd036878a89a380f",
+      "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/budget-reserve.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        92,
+        148,
+        1179,
+        1120
+      ],
+      "referenceBbox": [
+        120,
+        379,
+        1415,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        158,
+        379,
+        1378,
+        1470
+      ],
+      "scale": 1.122428,
+      "normalization": "reference-x-grounded"
+    },
+    "count-pass": {
+      "source": "sources/approval-batches/female-resources-f2-full-01/count-pass-keyed.png",
+      "sourceRoute": "count-pass-keyed.png",
+      "sourceSha256": "c9fe4c7d2c8b305505afcd08324d21bdd0c2ac7970606110240a61bafbc0bbdb",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-pass.png",
+      "referenceSha256": "765ba94f54976503f50a7cfb095703b52ce1d80e0393bb4869b1abb4f9c811db",
+      "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/count-pass.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        36,
+        224,
+        1246,
+        1105
+      ],
+      "referenceBbox": [
+        46,
+        480,
+        1490,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        88,
+        480,
+        1448,
+        1470
+      ],
+      "scale": 1.123723,
+      "normalization": "reference-x-grounded"
+    },
+    "count-place": {
+      "source": "sources/approval-batches/female-resources-f2-full-01/count-place-keyed.png",
+      "sourceRoute": "count-place-keyed.png",
+      "sourceSha256": "f763476192caf0e5acf5f6de55c5503974eac1519a7038549de20bfb8423ae2a",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-place.png",
+      "referenceSha256": "3b00417db7d217eae892321c0af00927bca63be8948ea18a74daa0748d869dec",
+      "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/count-place.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        37,
+        226,
+        1249,
+        1105
+      ],
+      "referenceBbox": [
+        48,
+        487,
+        1487,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        90,
+        487,
+        1445,
+        1470
+      ],
+      "scale": 1.1183163,
+      "normalization": "reference-x-grounded"
+    },
+    "count-stack": {
+      "source": "sources/approval-batches/female-resources-f2-full-01/count-stack-keyed.png",
+      "sourceRoute": "count-stack-keyed.png",
+      "sourceSha256": "d2008bb6d953613336bf0bc6adb12292ceb437f4d8ef3f705864eb75946cd1d9",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-stack.png",
+      "referenceSha256": "68f85144fa0af9ab7c611ac1c3103d78a77bc6a2f09efee7286c1d726ba3fb3a",
+      "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/count-stack.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        19,
+        227,
+        1240,
+        1068
+      ],
+      "referenceBbox": [
+        50,
+        525,
+        1487,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        82,
+        525,
+        1454,
+        1470
+      ],
+      "scale": 1.1236623,
+      "normalization": "reference-x-grounded"
+    },
+    "reserve-offer": {
+      "source": "sources/approval-batches/female-resources-f2-full-01/reserve-offer-keyed.png",
+      "sourceRoute": "reserve-offer-keyed.png",
+      "sourceSha256": "6c4937e94104e26059f36bdda73f909f26906d7f53ccabb2fdb09ee0dcdb5cab",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/reserve-offer.png",
+      "referenceSha256": "c1b6881dc6c028add0027e094d1550edd4e3aa958286307af178b5e7fba5e03e",
+      "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/reserve-offer.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        28,
+        214,
+        1238,
+        1070
+      ],
+      "referenceBbox": [
+        32,
+        419,
+        1504,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        32,
+        429,
+        1504,
+        1470
+      ],
+      "scale": 1.2165289,
+      "normalization": "reference-x-grounded"
+    },
+    "reserve-accept": {
+      "source": "sources/approval-batches/female-resources-f2-full-01/reserve-accept-keyed.png",
+      "sourceRoute": "reserve-accept-keyed.png",
+      "sourceSha256": "3ebc3cd72d638c3906f3e6a2841aec3c7a39b58646714b65f0498839e33d623f",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/reserve-accept.png",
+      "referenceSha256": "b737b0cb73c033fe7bf98bf43d46d9b232dba51d27eaed4b679b75f1bce5a185",
+      "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/reserve-accept.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        27,
+        217,
+        1237,
+        1070
+      ],
+      "referenceBbox": [
+        32,
+        427,
+        1504,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        32,
+        432,
+        1504,
+        1470
+      ],
+      "scale": 1.2165289,
+      "normalization": "reference-x-grounded"
+    },
+    "focus-work": {
+      "source": "sources/approval-batches/female-resources-f2-full-01/focus-work-keyed.png",
+      "sourceRoute": "focus-work-keyed.png",
+      "sourceSha256": "504cc2de0a6261d4e07f3571aad867dadf1fd6b257ed398e606d116f126697a7",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-work.png",
+      "referenceSha256": "43e1f84b034dbcafdc6baf831648f61b7b976a844cedb2bd684485abc44cad1a",
+      "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/focus-work.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        54,
+        170,
+        1224,
+        1068
+      ],
+      "referenceBbox": [
+        62,
+        464,
+        1475,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        113,
+        464,
+        1424,
+        1470
+      ],
+      "scale": 1.1202673,
+      "normalization": "reference-x-grounded"
+    },
+    "focus-check": {
+      "source": "sources/approval-batches/female-resources-f2-full-01/focus-check-keyed.png",
+      "sourceRoute": "focus-check-keyed.png",
+      "sourceSha256": "ad9cfaf0f06cfdc7ef12ffe8e60db42727c2a5efe7217852c587c50afcb0793a",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-check.png",
+      "referenceSha256": "c3a93bfc47c91f7f621e5b73074efb5a68482a938b21f2f019abe518cad908f6",
+      "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/focus-check.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        46,
+        179,
+        1208,
+        1086
+      ],
+      "referenceBbox": [
+        62,
+        476,
+        1473,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        131,
+        476,
+        1404,
+        1470
+      ],
+      "scale": 1.0959206,
+      "normalization": "reference-x-grounded"
+    },
+    "focus-nod": {
+      "source": "sources/approval-batches/female-resources-f2-full-01/focus-nod-keyed.png",
+      "sourceRoute": "focus-nod-keyed.png",
+      "sourceSha256": "db0fd7a0e16fbff695add18ef024ad671c596655b0ef8a9c7e60824e8d6be187",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-nod.png",
+      "referenceSha256": "e0dff2de2fd6aacf400b4a189c559522595e359bed04184ec8a127da59b72197",
+      "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/focus-nod.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        54,
+        190,
+        1209,
+        1080
+      ],
+      "referenceBbox": [
+        63,
+        457,
+        1473,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        110,
+        457,
+        1425,
+        1470
+      ],
+      "scale": 1.1382022,
+      "normalization": "reference-x-grounded"
+    },
+    "close-stamp": {
+      "source": "sources/approval-batches/female-resources-f2-full-01/close-stamp-keyed.png",
+      "sourceRoute": "close-stamp-keyed.png",
+      "sourceSha256": "693bacf88deddd4b2fd30725b9632e3a9c3b14b207c03b636435f62c1e93c723",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/resources-penguin-v1/pair-v1/close-stamp.png",
+      "referenceSha256": "75162d7b46b9b947023b531280961397a5e174c9304ed40401d2147511781d8a",
+      "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/close-stamp.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        110,
+        253,
+        1149,
+        1150
+      ],
+      "referenceBbox": [
+        120,
+        414,
+        1415,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        156,
+        414,
+        1379,
+        1470
+      ],
+      "scale": 1.1772575,
+      "normalization": "reference-x-grounded"
+    }
+  },
+  "qa": {
+    "required": true,
+    "command": "python3 art-factory/traveller-female-v1-20260818/contact_qa.py --batch female-resources-f2-full-01"
+  }
+}

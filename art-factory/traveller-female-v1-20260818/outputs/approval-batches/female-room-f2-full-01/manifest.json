@@ -1,0 +1,153 @@
+{
+  "schema": "satoru.traveller-female-approval-batch/1",
+  "id": "female-room-f2-full-01",
+  "morphology": "female",
+  "status": "awaiting-manual-art-approval",
+  "runtimeEligible": false,
+  "publicArtWrites": false,
+  "approvedIdentity": {
+    "id": "female-f2-high-ponytail",
+    "path": "sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png",
+    "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+    "status": "identity-approved/runtime-not-yet"
+  },
+  "canvas": [
+    640,
+    900
+  ],
+  "floorY": 860,
+  "normalization": {
+    "key": "#FF00FF",
+    "strategy": "per-frame-profile",
+    "requestedProfile": "auto",
+    "profiles": {
+      "bench-rest": {
+        "profile": "room",
+        "targetHeight": 790,
+        "maxWidth": 500
+      },
+      "bench-read-b": {
+        "profile": "room",
+        "targetHeight": 790,
+        "maxWidth": 500
+      },
+      "bench-portal-reach": {
+        "profile": "room",
+        "targetHeight": 790,
+        "maxWidth": 500
+      }
+    }
+  },
+  "eyeBoxes": [],
+  "blink": {
+    "method": "deterministic-local-inpaint-and-lid-curves",
+    "maxChangedRatio": 0.006
+  },
+  "assets": {
+    "bench-rest": "bench-rest.png",
+    "bench-read-b": "bench-read-b.png",
+    "bench-portal-reach": "bench-portal-reach.png"
+  },
+  "frames": {
+    "bench-rest": {
+      "file": "sources/approval-batches/female-room-f2-full-01/bench-rest-keyed.png",
+      "sha256": "46ce95df6b97ad92faa7798b2f3ca80a0cc9e4a377f848b114d478cfd348697c",
+      "keyedBorderRatio": 1.0,
+      "profile": "room",
+      "targetHeight": 790,
+      "maxWidth": 500,
+      "sourceCanvas": [
+        1054,
+        1492
+      ],
+      "sourceBbox": [
+        161,
+        110,
+        869,
+        1441
+      ],
+      "scale": 0.5935387,
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        110,
+        70,
+        530,
+        860
+      ],
+      "floorY": 860,
+      "mode": "RGBA",
+      "transparentCorners": 4
+    },
+    "bench-read-b": {
+      "file": "sources/approval-batches/female-room-f2-full-01/bench-read-b-keyed.png",
+      "sha256": "e2cd434115d51231e3ce09a592a59f9b59da21b1667604a5c4ca7fad29aff769",
+      "keyedBorderRatio": 1.0,
+      "profile": "room",
+      "targetHeight": 790,
+      "maxWidth": 500,
+      "sourceCanvas": [
+        1054,
+        1492
+      ],
+      "sourceBbox": [
+        155,
+        110,
+        870,
+        1458
+      ],
+      "scale": 0.5860534,
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        110,
+        70,
+        529,
+        860
+      ],
+      "floorY": 860,
+      "mode": "RGBA",
+      "transparentCorners": 4
+    },
+    "bench-portal-reach": {
+      "file": "sources/approval-batches/female-room-f2-full-01/bench-portal-reach-keyed.png",
+      "sha256": "457e47233bf8adb49b1debe7ce2b46005c1ecf80c9e6a40af3b4b95994765316",
+      "keyedBorderRatio": 1.0,
+      "profile": "room",
+      "targetHeight": 790,
+      "maxWidth": 500,
+      "sourceCanvas": [
+        1102,
+        1428
+      ],
+      "sourceBbox": [
+        108,
+        91,
+        1031,
+        1352
+      ],
+      "scale": 0.5417118,
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        70,
+        177,
+        570,
+        860
+      ],
+      "floorY": 860,
+      "mode": "RGBA",
+      "transparentCorners": 4
+    }
+  },
+  "qa": {
+    "required": true,
+    "command": "python3 art-factory/traveller-female-v1-20260818/factory_qa.py --batch female-room-f2-full-01"
+  }
+}

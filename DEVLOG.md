@@ -2,6 +2,19 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-19] 👩 Traveller female F2 — полный runtime-pack и выбор облика, PWA v167
+
+- Утверждённая identity `female-f2-high-ponytail` доведена до полного launch-pack: **46/46 runtime-кадров** (`45` authored + детерминированный `idle-blink`). Покрыты core/позы/ходьба, четыре workshop-состояния, 13 сцен с Гамабунтой, 6 с Кацую, 12 с Мистером Пи и 4 формы контакта с Тенью. Все девять production-batch прошли неизменённые geometry/alpha/chroma/continuity QA и единый ручной review.
+- Pack опубликован атомарно только в новых immutable-каталогах `female/f2-v1`; старые rejected female-позы не перезаписывались. Runtime authority — `public/art/avatars/traveller-core-v1/female/f2-v1/manifest.json`: `runtime-approved`, 46 ordered assets, canvas и SHA каждого PNG, identity SHA `5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da`.
+- В «Персонаж → Живые позы» появился выбор `Мужской / Женский` с RU/EN/DE/UK/ES, native buttons, `aria-pressed`, live-status, visible focus и touch target `42px`. Выбор account-owned, сериализован, сохраняется через `saveNow`, откатывается при ошибке и не связан с медицинским полем `body.sex`.
+- Один gender проходит через весь runtime: portrait, idle, blink, walk, окно, workshop и все четыре atomic contact-controller. Explicit female URL никогда не падает обратно на male; активная сцена отменяется до смены morphology, а новая полностью preloaded до сохранения.
+- Живой браузерный QA поймал P0, которого не видел source-contract: после in-place смены idle уже был женским, но скрытый blink оставался мужским. `swapAvatarCoreStack` теперь меняет blink-src в той же visual transaction; добавлен постоянный regression gate. После reload оба слоя остаются F2.
+- Реальный QA: selector/save/reload; все четыре контакта (`Gamabunta`, `Katsuya`, `Mister P`, `Shadow`) загрузили только `female/f2-v1`, свидетели остались в комнате; horizontal overflow `0` на `360×800`, `375×812`, `390×844`, `844×390`, `1280×900`. Кадры — `docs/design-qa/traveller-female-f2-v167/`.
+- Проверки: promotion `--verify` — `46/46`, `7/7` capabilities; combined review smoke PASS; factory smoke PASS (`publicWrites:false`); focused runtime **17/17**; полный suite **434/434**; `node --check` и `git diff --check` PASS.
+- PWA: production cache `satoru-v165 → satoru-v167` (`v166` был только внутренним незадеплоенным gate); manifest и все 46 immutable F2 assets входят в `SHELL`, все изменённые runtime-файлы pin-нуты `20260819-traveller-f2-runtime-v167-1`.
+
+Commit: `feat: ship female Traveller F2 runtime` (этот коммит). Push и Railway deploy выполняются сразу после release-gate.
+
 ## [2026-08-19] 🎭 Traveller female F2 — утверждённая identity и первый production gate
 
 - Альберт утвердил `female-f2-high-ponytail` как канон женского Traveller: молодой confident mechanic-adventurer, высокий длинный хвост, две пряди у лица, цельные чёрные глаза без белков, более узкие плечи, читаемая талия и athletic hips/thighs при полностью практичном canonical outfit. Источник закреплён без регенерации: `sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png`, SHA-256 `5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da`.

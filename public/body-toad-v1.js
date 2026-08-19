@@ -4,7 +4,7 @@
  * - one approved 1024x1024 cut-paper character;
  * - four authored visual states;
  * - one deterministic seamless idle loop;
- * - authored male-Traveller contact frames share one 1536x1536 stage;
+ * - authored male and F2-female Traveller contact frames share one 1536x1536 stage;
  * - no sliced-joint theatre and no viewport-specific coordinates;
  * - image swaps are decoded before the visible frame changes.
  */
@@ -18,16 +18,15 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildBodyToadV1() {
   'use strict';
 
-  const VERSION = '3.4.0';
+  const VERSION = '3.6.0';
   const ART_ROOT = '/art/pets/body-toad-v1/';
   const PAIR_ART_ROOT = `${ART_ROOT}pair-v4/`;
   const ACTION_PAIR_ART_ROOT = PAIR_ART_ROOT;
   const MOTION_ART_ROOT = `${ART_ROOT}motion-v4/`;
   const TRAVELLER_GENDERS = Object.freeze(['male', 'female']);
-  // Contact plates currently exist only for the canonical male Traveller.
-  // Female URLs are nevertheless deterministic so production can fill the
-  // reserved subtree without changing runtime routing.
-  const AUTHORED_PAIR_GENDERS = Object.freeze(['male']);
+  // Both entries are complete authored packs. Explicit female requests stay
+  // on the immutable F2 subtree and may never borrow a male contact plate.
+  const AUTHORED_PAIR_GENDERS = Object.freeze(['male', 'female']);
   const STATES = Object.freeze(['calm', 'thriving', 'strained', 'restoring']);
   const STATE_META = Object.freeze({
     calm: { label: 'Спокоен', line: 'Держит стойку и следит за ритмом.' },
@@ -120,7 +119,7 @@
     const safe = allowed.has(frame) ? frame : 'rest-contact';
     const safeGender = normalizeTravellerGender(gender);
     if (!safeGender) return null;
-    const genderPath = safeGender === 'female' ? 'female/' : '';
+    const genderPath = safeGender === 'female' ? 'female/f2-v1/' : '';
     return `${PAIR_ART_ROOT}${genderPath}${safe}.png?v=20260806-3`;
   }
 

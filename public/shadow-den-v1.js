@@ -14,10 +14,10 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildShadowDen(root) {
   'use strict';
 
-  const VERSION = '1.3.0';
+  const VERSION = '1.5.0';
   const ART_ROOT = '/art/companions/shadow-den-v1/pair-v1/';
   const TRAVELLER_GENDERS = Object.freeze(['male', 'female']);
-  const AUTHORED_PAIR_GENDERS = Object.freeze(['male']);
+  const AUTHORED_PAIR_GENDERS = Object.freeze(['male', 'female']);
   const FORMS = Object.freeze(['spark', 'spirit', 'guardian', 'keeper']);
   const SOLO = Object.freeze({
     greet: Object.freeze({ label: 'Откликнуться', state: 'happy', duration: 3200 }),
@@ -60,7 +60,7 @@
   function pairSrc(value, gender) {
     const safeGender = normalizeTravellerGender(gender);
     if (!safeGender) return null;
-    const genderPath = safeGender === 'female' ? 'female/' : '';
+    const genderPath = safeGender === 'female' ? 'female/f2-v1/' : '';
     return `${ART_ROOT}${genderPath}attune-${formForTier(value)}.png?v=20260811-1`;
   }
 

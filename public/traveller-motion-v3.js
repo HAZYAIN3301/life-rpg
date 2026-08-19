@@ -5,12 +5,12 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function (root) {
   'use strict';
 
-  const VERSION = '3.2.0';
+  const VERSION = '3.3.0';
   const DEFAULT_GENDER = 'male';
   const GENDERS = Object.freeze(['male', 'female']);
   const ART_ROOTS = Object.freeze({
     male: '/art/avatars/traveller-core-v1/male/motion-v3/',
-    female: '/art/avatars/traveller-core-v1/female/motion-v3/',
+    female: '/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/',
   });
   // Compatibility alias for integrations that still inspect the original
   // single-pack constant. New callers must route through `frameSrc`.

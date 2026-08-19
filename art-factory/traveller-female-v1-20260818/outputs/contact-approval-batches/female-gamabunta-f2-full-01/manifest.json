@@ -1,0 +1,618 @@
+{
+  "schema": "satoru.traveller-female-contact-approval-batch/1",
+  "id": "female-gamabunta-f2-full-01",
+  "family": "gamabunta",
+  "morphology": "female",
+  "status": "awaiting-manual-contact-approval",
+  "runtimeEligible": false,
+  "publicArtWrites": false,
+  "approvedIdentity": {
+    "id": "female-f2-high-ponytail",
+    "path": "sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png",
+    "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+    "status": "identity-approved/runtime-not-yet"
+  },
+  "canvas": [
+    1536,
+    1536
+  ],
+  "groundY": 1470,
+  "key": "#FF00FF",
+  "preserveMagentaSubject": false,
+  "normalization": "reference-x-grounded",
+  "familyFrames": [
+    "greet-contact",
+    "train-low",
+    "train-high",
+    "whistle-a",
+    "whistle-b",
+    "whistle-c",
+    "whistle-d",
+    "pushup-down",
+    "pushup-up",
+    "stretch-a",
+    "stretch-b",
+    "rest-contact",
+    "rest-pet"
+  ],
+  "requiredFrames": [
+    "greet-contact",
+    "train-low",
+    "train-high",
+    "whistle-a",
+    "whistle-b",
+    "whistle-c",
+    "whistle-d",
+    "pushup-down",
+    "pushup-up",
+    "stretch-a",
+    "stretch-b",
+    "rest-contact",
+    "rest-pet"
+  ],
+  "runtimeTemplate": "public/art/pets/body-toad-v1/pair-v4/female/{frame}.png",
+  "runtimeRoutes": {
+    "greet-contact": "public/art/pets/body-toad-v1/pair-v4/female/greet-contact.png",
+    "train-low": "public/art/pets/body-toad-v1/pair-v4/female/train-low.png",
+    "train-high": "public/art/pets/body-toad-v1/pair-v4/female/train-high.png",
+    "whistle-a": "public/art/pets/body-toad-v1/pair-v4/female/whistle-a.png",
+    "whistle-b": "public/art/pets/body-toad-v1/pair-v4/female/whistle-b.png",
+    "whistle-c": "public/art/pets/body-toad-v1/pair-v4/female/whistle-c.png",
+    "whistle-d": "public/art/pets/body-toad-v1/pair-v4/female/whistle-d.png",
+    "pushup-down": "public/art/pets/body-toad-v1/pair-v4/female/pushup-down.png",
+    "pushup-up": "public/art/pets/body-toad-v1/pair-v4/female/pushup-up.png",
+    "stretch-a": "public/art/pets/body-toad-v1/pair-v4/female/stretch-a.png",
+    "stretch-b": "public/art/pets/body-toad-v1/pair-v4/female/stretch-b.png",
+    "rest-contact": "public/art/pets/body-toad-v1/pair-v4/female/rest-contact.png",
+    "rest-pet": "public/art/pets/body-toad-v1/pair-v4/female/rest-pet.png"
+  },
+  "geometry": {
+    "minWidthRatio": 0.9,
+    "maxWidthRatio": 1.1,
+    "minHeightRatio": 0.9,
+    "maxHeightRatio": 1.1,
+    "maxCenterDeltaPx": 4,
+    "maxCenterXDeltaPx": 4,
+    "maxContinuityRatioSpread": 0.08,
+    "maxContinuityCenterSpreadPx": 4
+  },
+  "continuityGroups": {
+    "train": [
+      "train-low",
+      "train-high"
+    ],
+    "whistle": [
+      "whistle-a",
+      "whistle-b",
+      "whistle-c",
+      "whistle-d"
+    ],
+    "pushup": [
+      "pushup-down",
+      "pushup-up"
+    ],
+    "stretch": [
+      "stretch-a",
+      "stretch-b"
+    ],
+    "rest": [
+      "rest-contact",
+      "rest-pet"
+    ]
+  },
+  "assets": {
+    "greet-contact": "greet-contact.png",
+    "train-low": "train-low.png",
+    "train-high": "train-high.png",
+    "whistle-a": "whistle-a.png",
+    "whistle-b": "whistle-b.png",
+    "whistle-c": "whistle-c.png",
+    "whistle-d": "whistle-d.png",
+    "pushup-down": "pushup-down.png",
+    "pushup-up": "pushup-up.png",
+    "stretch-a": "stretch-a.png",
+    "stretch-b": "stretch-b.png",
+    "rest-contact": "rest-contact.png",
+    "rest-pet": "rest-pet.png"
+  },
+  "frames": {
+    "greet-contact": {
+      "source": "sources/approval-batches/female-gamabunta-f2-full-01/greet-contact-keyed.png",
+      "sourceRoute": "greet-contact-keyed.png",
+      "sourceSha256": "38ec4f40764e73ab0c08733ac66269e1a39308af944b26b4872cc55c907697a6",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/greet-contact.png",
+      "referenceSha256": "e513da955a717b785c0b601b7fb8867d95a3a35fa3b81ec64f158c1cad3a724a",
+      "runtime": "public/art/pets/body-toad-v1/pair-v4/female/greet-contact.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1402,
+        1122
+      ],
+      "sourceBbox": [
+        62,
+        236,
+        1296,
+        981
+      ],
+      "referenceBbox": [
+        158,
+        740,
+        1377,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        163,
+        740,
+        1372,
+        1470
+      ],
+      "scale": 0.9798658,
+      "normalization": "reference-x-grounded"
+    },
+    "train-low": {
+      "source": "sources/approval-batches/female-gamabunta-f2-full-01/train-low-keyed.png",
+      "sourceRoute": "train-low-keyed.png",
+      "sourceSha256": "3e664b8d1af95d73c2fdad3d00041ffb592cbbedacc1da5b915b4ddc835b01b7",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/train-low.png",
+      "referenceSha256": "71be21065b3945cc3096a06834f5a79ab6af6043dd2fb513c4292811e57e9e11",
+      "runtime": "public/art/pets/body-toad-v1/pair-v4/female/train-low.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        91,
+        368,
+        1154,
+        1112
+      ],
+      "referenceBbox": [
+        154,
+        539,
+        1481,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        154,
+        541,
+        1481,
+        1470
+      ],
+      "scale": 1.2483537,
+      "normalization": "reference-x-grounded"
+    },
+    "train-high": {
+      "source": "sources/approval-batches/female-gamabunta-f2-full-01/train-high-keyed.png",
+      "sourceRoute": "train-high-keyed.png",
+      "sourceSha256": "68f9093d636131893a97027e5e47422d67d302a20768f5ac3cce980fef18562e",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/train-high.png",
+      "referenceSha256": "3dd622da0c7b9e12cc5518b7dbf5c76a5ab0311f627b4ff35e5811bc5cde218e",
+      "runtime": "public/art/pets/body-toad-v1/pair-v4/female/train-high.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        64,
+        102,
+        1161,
+        1199
+      ],
+      "referenceBbox": [
+        153,
+        226,
+        1423,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        166,
+        226,
+        1410,
+        1470
+      ],
+      "scale": 1.1340018,
+      "normalization": "reference-x-grounded"
+    },
+    "whistle-a": {
+      "source": "sources/approval-batches/female-gamabunta-f2-full-01/whistle-a-keyed.png",
+      "sourceRoute": "whistle-a-keyed.png",
+      "sourceSha256": "76dfe8ae311476fe15c1375cc7a9986d5d0b469a9e70e6718b696b5e73530001",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-a.png",
+      "referenceSha256": "04e895e89a8593171424d5492a049740efe85057a6d5e14b5e266ba92b715c83",
+      "runtime": "public/art/pets/body-toad-v1/pair-v4/female/whistle-a.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        91,
+        223,
+        1145,
+        1106
+      ],
+      "referenceBbox": [
+        159,
+        511,
+        1379,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        196,
+        511,
+        1341,
+        1470
+      ],
+      "scale": 1.0860702,
+      "normalization": "reference-x-grounded"
+    },
+    "whistle-b": {
+      "source": "sources/approval-batches/female-gamabunta-f2-full-01/whistle-b-keyed.png",
+      "sourceRoute": "whistle-b-keyed.png",
+      "sourceSha256": "b0727c97d3c4ab2daf079cc99cc20e97a599b5cebed445c5ec6277617b1c1a35",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-b.png",
+      "referenceSha256": "e7b7d2504d02cd5c1989f9825271dbd0632e7a95e007314fdc0759ade6627d66",
+      "runtime": "public/art/pets/body-toad-v1/pair-v4/female/whistle-b.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        92,
+        248,
+        1146,
+        1127
+      ],
+      "referenceBbox": [
+        161,
+        511,
+        1374,
+        1468
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        194,
+        513,
+        1342,
+        1470
+      ],
+      "scale": 1.0887372,
+      "normalization": "reference-x-grounded"
+    },
+    "whistle-c": {
+      "source": "sources/approval-batches/female-gamabunta-f2-full-01/whistle-c-keyed.png",
+      "sourceRoute": "whistle-c-keyed.png",
+      "sourceSha256": "1f8972f4f60862c8733fcc14edc040498d3ddadb91bdf612f080ea31697ca20c",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-c.png",
+      "referenceSha256": "955dc4fbdd406022fdf3acba6c8373ccbb61d57a803d8c70bf2faf14ae46b988",
+      "runtime": "public/art/pets/body-toad-v1/pair-v4/female/whistle-c.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        116,
+        260,
+        1169,
+        1147
+      ],
+      "referenceBbox": [
+        157,
+        524,
+        1379,
+        1468
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        208,
+        526,
+        1329,
+        1470
+      ],
+      "scale": 1.0642616,
+      "normalization": "reference-x-grounded"
+    },
+    "whistle-d": {
+      "source": "sources/approval-batches/female-gamabunta-f2-full-01/whistle-d-keyed.png",
+      "sourceRoute": "whistle-d-keyed.png",
+      "sourceSha256": "5324d999e58623f26905d0328ebc845be09728d5637a24f1c86ee8d1a077aa1e",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-d.png",
+      "referenceSha256": "fa0f52dff3b0837895aa58e6c29be3add6b1672931039372694e56c0085ab136",
+      "runtime": "public/art/pets/body-toad-v1/pair-v4/female/whistle-d.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        135,
+        326,
+        1135,
+        1133
+      ],
+      "referenceBbox": [
+        157,
+        563,
+        1379,
+        1469
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        206,
+        564,
+        1329,
+        1470
+      ],
+      "scale": 1.1226766,
+      "normalization": "reference-x-grounded"
+    },
+    "pushup-down": {
+      "source": "sources/approval-batches/female-gamabunta-f2-full-01/pushup-down-keyed.png",
+      "sourceRoute": "pushup-down-keyed.png",
+      "sourceSha256": "db38f0a5adb63e11ecd7871b5960b1e4a05b667c47d03f6ea134a1238262b1e5",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/pushup-down.png",
+      "referenceSha256": "cc7c8856a47b6b8a257200c90c9b86f9c0ff4bce2a06f63111fc428df815c01b",
+      "runtime": "public/art/pets/body-toad-v1/pair-v4/female/pushup-down.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1402,
+        1122
+      ],
+      "sourceBbox": [
+        58,
+        407,
+        1368,
+        980
+      ],
+      "referenceBbox": [
+        17,
+        868,
+        1527,
+        1469
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        85,
+        869,
+        1459,
+        1470
+      ],
+      "scale": 1.0488656,
+      "normalization": "reference-x-grounded"
+    },
+    "pushup-up": {
+      "source": "sources/approval-batches/female-gamabunta-f2-full-01/pushup-up-keyed.png",
+      "sourceRoute": "pushup-up-keyed.png",
+      "sourceSha256": "9fab6814144a9ff501b59729ed046e835c28d3e695d719dffc0ebe479830f640",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/pushup-up.png",
+      "referenceSha256": "1157946d12ded065d0739637c83d471328488d83e9a3a127cefa644e9a5884bd",
+      "runtime": "public/art/pets/body-toad-v1/pair-v4/female/pushup-up.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1672,
+        941
+      ],
+      "sourceBbox": [
+        83,
+        130,
+        1605,
+        831
+      ],
+      "referenceBbox": [
+        17,
+        824,
+        1526,
+        1469
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        72,
+        825,
+        1472,
+        1470
+      ],
+      "scale": 0.9201141,
+      "normalization": "reference-x-grounded"
+    },
+    "stretch-a": {
+      "source": "sources/approval-batches/female-gamabunta-f2-full-01/stretch-a-keyed.png",
+      "sourceRoute": "stretch-a-keyed.png",
+      "sourceSha256": "4c2f777ba9bc7ab56cadfeb4736f1f248597a2dfad56bcebab6e1d7476345ce0",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/stretch-a.png",
+      "referenceSha256": "dedf4556b12a752939d1763b4a08a3d624a3f980518575d6ec31719e5576dd08",
+      "runtime": "public/art/pets/body-toad-v1/pair-v4/female/stretch-a.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        0,
+        395,
+        1134,
+        1254
+      ],
+      "referenceBbox": [
+        250,
+        697,
+        1288,
+        1468
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        260,
+        699,
+        1278,
+        1470
+      ],
+      "scale": 0.8975553,
+      "normalization": "reference-x-grounded"
+    },
+    "stretch-b": {
+      "source": "sources/approval-batches/female-gamabunta-f2-full-01/stretch-b-keyed.png",
+      "sourceRoute": "stretch-b-keyed.png",
+      "sourceSha256": "e1d4ad1f68266ff9a6187101ed2843a7cef16661202cfbcb30f556e48d243f98",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/stretch-b.png",
+      "referenceSha256": "c863e475efde41f59db829565f70f54f714b134df14fc9448067e2af7f76f7c8",
+      "runtime": "public/art/pets/body-toad-v1/pair-v4/female/stretch-b.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        0,
+        410,
+        1184,
+        1254
+      ],
+      "referenceBbox": [
+        250,
+        735,
+        1285,
+        1468
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        254,
+        737,
+        1282,
+        1470
+      ],
+      "scale": 0.8684834,
+      "normalization": "reference-x-grounded"
+    },
+    "rest-contact": {
+      "source": "sources/approval-batches/female-gamabunta-f2-full-01/rest-contact-keyed.png",
+      "sourceRoute": "rest-contact-keyed.png",
+      "sourceSha256": "dcc3541ccdbe188491f12e95533420a06636e20e7681eaf4278d440327bf2309",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/rest-contact.png",
+      "referenceSha256": "f61de1816b694d6f35460cc5a5d8b107ab66cb4ff9c04b80cecbac5248ac8f26",
+      "runtime": "public/art/pets/body-toad-v1/pair-v4/female/rest-contact.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        0,
+        333,
+        1254,
+        1254
+      ],
+      "referenceBbox": [
+        144,
+        642,
+        1391,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        204,
+        642,
+        1331,
+        1470
+      ],
+      "scale": 0.8990228,
+      "normalization": "reference-x-grounded"
+    },
+    "rest-pet": {
+      "source": "sources/approval-batches/female-gamabunta-f2-full-01/rest-pet-keyed.png",
+      "sourceRoute": "rest-pet-keyed.png",
+      "sourceSha256": "1d882b925fda8f4294b1b656c5324c918ea407e904cb758d465accb3f087bcf3",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/rest-pet.png",
+      "referenceSha256": "ed83d20c9dae682952dacd093d6306289d8b60980e6d012ef87984a05caa9920",
+      "runtime": "public/art/pets/body-toad-v1/pair-v4/female/rest-pet.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        0,
+        329,
+        1254,
+        1254
+      ],
+      "referenceBbox": [
+        144,
+        628,
+        1392,
+        1470
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        198,
+        628,
+        1339,
+        1470
+      ],
+      "scale": 0.9102703,
+      "normalization": "reference-x-grounded"
+    }
+  },
+  "qa": {
+    "required": true,
+    "command": "python3 art-factory/traveller-female-v1-20260818/contact_qa.py --batch female-gamabunta-f2-full-01"
+  }
+}

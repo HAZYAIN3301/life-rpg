@@ -1,15 +1,33 @@
 {
-  "schema": "satoru.traveller-female-contact-families/1",
+  "schema": "satoru.traveller-female-contact-families/2",
   "families": {
     "gamabunta": {
       "canvas": [1536, 1536],
       "groundY": 1470,
       "normalization": "reference-x-grounded",
       "contentPad": 16,
+      "bboxAlphaThreshold": 8,
       "key": "#FF00FF",
       "preserveMagentaSubject": false,
       "referenceRoot": "public/art/pets/body-toad-v1/pair-v4",
       "runtimeTemplate": "public/art/pets/body-toad-v1/pair-v4/female/{frame}.png",
+      "geometry": {
+        "minWidthRatio": 0.9,
+        "maxWidthRatio": 1.1,
+        "minHeightRatio": 0.9,
+        "maxHeightRatio": 1.1,
+        "maxCenterDeltaPx": 4,
+        "maxCenterXDeltaPx": 4,
+        "maxContinuityRatioSpread": 0.08,
+        "maxContinuityCenterSpreadPx": 4
+      },
+      "continuityGroups": {
+        "train": ["train-low", "train-high"],
+        "whistle": ["whistle-a", "whistle-b", "whistle-c", "whistle-d"],
+        "pushup": ["pushup-down", "pushup-up"],
+        "stretch": ["stretch-a", "stretch-b"],
+        "rest": ["rest-contact", "rest-pet"]
+      },
       "frames": [
         "greet-contact",
         "train-low",
@@ -26,15 +44,151 @@
         "rest-pet"
       ]
     },
+    "recovery": {
+      "canvas": [1536, 1536],
+      "groundY": null,
+      "normalization": "reference-bbox-fit",
+      "contentPad": 16,
+      "bboxAlphaThreshold": 32,
+      "key": "#FF00FF",
+      "preserveMagentaSubject": false,
+      "geometry": {
+        "minWidthRatio": 0.9,
+        "maxWidthRatio": 1.1,
+        "minHeightRatio": 0.9,
+        "maxHeightRatio": 1.1,
+        "maxCenterDeltaPx": 4,
+        "maxCenterXDeltaPx": 4,
+        "maxContinuityRatioSpread": 0.08,
+        "maxContinuityCenterSpreadPx": 4
+      },
+      "continuityGroups": {
+        "breathe": ["breathe-in", "breathe-out"],
+        "stretch": ["stretch-a", "stretch-soft-b"]
+      },
+      "frames": [
+        "greet-contact",
+        "breathe-in",
+        "breathe-out",
+        "restore-contact",
+        "stretch-a",
+        "stretch-soft-b"
+      ],
+      "routes": {
+        "greet-contact": {
+          "source": "greet-contact-keyed.png",
+          "reference": "public/art/pets/recovery-slug-v1/pair-v2/greet-contact.png",
+          "runtime": "public/art/pets/recovery-slug-v1/pair-v2/female/greet-contact.png",
+          "bboxAlphaThreshold": 32
+        },
+        "breathe-in": {
+          "source": "breathe-in-keyed.png",
+          "reference": "public/art/pets/recovery-slug-v1/pair-v2/breathe-in.png",
+          "runtime": "public/art/pets/recovery-slug-v1/pair-v2/female/breathe-in.png",
+          "bboxAlphaThreshold": 32
+        },
+        "breathe-out": {
+          "source": "breathe-out-keyed.png",
+          "reference": "public/art/pets/recovery-slug-v1/pair-v2/breathe-out.png",
+          "runtime": "public/art/pets/recovery-slug-v1/pair-v2/female/breathe-out.png",
+          "bboxAlphaThreshold": 32
+        },
+        "restore-contact": {
+          "source": "restore-contact-keyed.png",
+          "reference": "public/art/pets/recovery-slug-v1/pair-v2/restore-contact.png",
+          "runtime": "public/art/pets/recovery-slug-v1/pair-v2/female/restore-contact.png",
+          "bboxAlphaThreshold": 32
+        },
+        "stretch-a": {
+          "source": "stretch-a-keyed.png",
+          "reference": "public/art/pets/recovery-slug-v1/pair-v2/stretch-a.png",
+          "runtime": "public/art/pets/recovery-slug-v1/pair-v2/female/stretch-a.png",
+          "bboxAlphaThreshold": 32
+        },
+        "stretch-soft-b": {
+          "source": "stretch-soft-b-keyed.png",
+          "reference": "public/art/pets/recovery-slug-v1/pair-v3/stretch-soft-b-v155.png",
+          "runtime": "public/art/pets/recovery-slug-v1/pair-v3/female/stretch-soft-b-v155.png",
+          "bboxAlphaThreshold": 32
+        }
+      }
+    },
+    "resources": {
+      "canvas": [1536, 1536],
+      "groundY": 1470,
+      "normalization": "reference-x-grounded",
+      "contentPad": 16,
+      "bboxAlphaThreshold": 8,
+      "key": "#FF00FF",
+      "preserveMagentaSubject": false,
+      "referenceRoot": "public/art/pets/resources-penguin-v1/pair-v1",
+      "runtimeTemplate": "public/art/pets/resources-penguin-v1/pair-v1/female/{frame}.png",
+      "geometry": {
+        "minWidthRatio": 0.9,
+        "maxWidthRatio": 1.1,
+        "minHeightRatio": 0.9,
+        "maxHeightRatio": 1.1,
+        "maxCenterDeltaPx": 4,
+        "maxCenterXDeltaPx": 4,
+        "maxContinuityRatioSpread": 0.08,
+        "maxContinuityCenterSpreadPx": 4
+      },
+      "continuityGroups": {
+        "budget": ["budget-point", "budget-reserve"],
+        "count": ["count-pass", "count-place", "count-stack"],
+        "reserve": ["reserve-offer", "reserve-accept"],
+        "focus": ["focus-work", "focus-check", "focus-nod"]
+      },
+      "frames": [
+        "greet-contact",
+        "budget-point",
+        "budget-reserve",
+        "count-pass",
+        "count-place",
+        "count-stack",
+        "reserve-offer",
+        "reserve-accept",
+        "focus-work",
+        "focus-check",
+        "focus-nod",
+        "close-stamp"
+      ],
+      "routes": {
+        "greet-contact": {"source": "greet-contact-keyed.png", "reference": "public/art/pets/resources-penguin-v1/pair-v1/greet-contact.png", "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/greet-contact.png"},
+        "budget-point": {"source": "budget-point-keyed.png", "reference": "public/art/pets/resources-penguin-v1/pair-v1/budget-point.png", "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/budget-point.png"},
+        "budget-reserve": {"source": "budget-reserve-keyed.png", "reference": "public/art/pets/resources-penguin-v1/pair-v1/budget-reserve.png", "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/budget-reserve.png"},
+        "count-pass": {"source": "count-pass-keyed.png", "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-pass.png", "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/count-pass.png"},
+        "count-place": {"source": "count-place-keyed.png", "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-place.png", "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/count-place.png"},
+        "count-stack": {"source": "count-stack-keyed.png", "reference": "public/art/pets/resources-penguin-v1/pair-v1/count-stack.png", "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/count-stack.png"},
+        "reserve-offer": {"source": "reserve-offer-keyed.png", "reference": "public/art/pets/resources-penguin-v1/pair-v1/reserve-offer.png", "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/reserve-offer.png"},
+        "reserve-accept": {"source": "reserve-accept-keyed.png", "reference": "public/art/pets/resources-penguin-v1/pair-v1/reserve-accept.png", "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/reserve-accept.png"},
+        "focus-work": {"source": "focus-work-keyed.png", "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-work.png", "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/focus-work.png"},
+        "focus-check": {"source": "focus-check-keyed.png", "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-check.png", "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/focus-check.png"},
+        "focus-nod": {"source": "focus-nod-keyed.png", "reference": "public/art/pets/resources-penguin-v1/pair-v1/focus-nod.png", "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/focus-nod.png"},
+        "close-stamp": {"source": "close-stamp-keyed.png", "reference": "public/art/pets/resources-penguin-v1/pair-v1/close-stamp.png", "runtime": "public/art/pets/resources-penguin-v1/pair-v1/female/close-stamp.png"}
+      }
+    },
     "shadow": {
       "canvas": [1254, 1254],
       "groundY": null,
       "normalization": "reference-bbox-fit",
       "contentPad": 16,
+      "bboxAlphaThreshold": 8,
       "key": "#FF00FF",
       "preserveMagentaSubject": true,
       "referenceRoot": "public/art/companions/shadow-den-v1/pair-v1",
       "runtimeTemplate": "public/art/companions/shadow-den-v1/pair-v1/female/{frame}.png",
+      "geometry": {
+        "minWidthRatio": 0.9,
+        "maxWidthRatio": 1.1,
+        "minHeightRatio": 0.9,
+        "maxHeightRatio": 1.1,
+        "maxCenterDeltaPx": 4,
+        "maxCenterXDeltaPx": 4,
+        "maxContinuityRatioSpread": 0.08,
+        "maxContinuityCenterSpreadPx": 4
+      },
+      "continuityGroups": {},
       "frames": [
         "attune-spark",
         "attune-spirit",

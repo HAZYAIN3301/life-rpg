@@ -14,11 +14,11 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildResourcesPenguin(root) {
   'use strict';
 
-  const VERSION = '1.1.0';
+  const VERSION = '1.3.0';
   const ART_ROOT = '/art/pets/resources-penguin-v1/';
   const PAIR_ART_ROOT = `${ART_ROOT}pair-v1/`;
   const TRAVELLER_GENDERS = Object.freeze(['male', 'female']);
-  const AUTHORED_PAIR_GENDERS = Object.freeze(['male']);
+  const AUTHORED_PAIR_GENDERS = Object.freeze(['male', 'female']);
   const STATES = Object.freeze(['calm', 'thriving', 'strained', 'restoring']);
   const STATE_META = Object.freeze({
     calm: { label: 'Собран', line: 'Держит цифры в порядке и не путает деньги с делом.' },
@@ -70,7 +70,7 @@
   function pairSrc(frame, gender) {
     const safeGender = normalizeTravellerGender(gender);
     if (!safeGender) return null;
-    const genderPath = safeGender === 'female' ? 'female/' : '';
+    const genderPath = safeGender === 'female' ? 'female/f2-v1/' : '';
     return `${PAIR_ART_ROOT}${genderPath}${frame}.png?v=20260807-1`;
   }
   function stateFromPetState(value) {

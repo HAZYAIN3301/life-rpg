@@ -12,16 +12,16 @@ function pngSize(file) {
   return [header.readUInt32BE(16), header.readUInt32BE(20)];
 }
 
-assert.equal(slug.VERSION, '2.4.0');
+assert.equal(slug.VERSION, '2.6.0');
 assert.deepEqual(slug.TRAVELLER_GENDERS, ['male', 'female']);
-assert.deepEqual(slug.AUTHORED_PAIR_GENDERS, ['male']);
+assert.deepEqual(slug.AUTHORED_PAIR_GENDERS, ['male', 'female']);
 assert.equal(slug.normalizeTravellerGender(), 'male');
 assert.equal(slug.normalizeTravellerGender('female'), 'female');
 assert.equal(slug.normalizeTravellerGender('unknown'), null);
 assert.equal(slug.normalizeTravellerGender(''), null);
 assert.equal(slug.normalizeTravellerGender(null), null);
 assert.equal(slug.hasPairArt('male'), true);
-assert.equal(slug.hasPairArt('female'), false);
+assert.equal(slug.hasPairArt('female'), true);
 assert.equal(slug.hasPairArt('unknown'), false);
 assert.equal(slug.deriveState({ restGapDays: 7, energyPct: 90 }), 'strained');
 assert.equal(slug.deriveState({ restGapDays: 0, energyPct: 48 }), 'restoring');
@@ -29,8 +29,8 @@ assert.equal(slug.deriveState({ restGapDays: 0, energyPct: 88 }), 'thriving');
 assert.equal(slug.deriveState({ restGapDays: 3, energyPct: 70 }), 'calm');
 assert.equal(slug.frameSrc('calm', true), '/art/pets/recovery-slug-v1/states/calm.png');
 assert.equal(slug.pairFrameSrc('greet-contact'), '/art/pets/recovery-slug-v1/pair-v2/greet-contact.png?v=20260806-2');
-assert.equal(slug.pairFrameSrc('greet-contact', 'female'), '/art/pets/recovery-slug-v1/pair-v2/female/greet-contact.png?v=20260806-2');
-assert.equal(slug.pairFrameSrc('stretch-soft-b', 'female'), '/art/pets/recovery-slug-v1/pair-v3/female/stretch-soft-b-v155.png?v=20260814-1');
+assert.equal(slug.pairFrameSrc('greet-contact', 'female'), '/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/greet-contact.png?v=20260806-2');
+assert.equal(slug.pairFrameSrc('stretch-soft-b', 'female'), '/art/pets/recovery-slug-v1/pair-v3/female/f2-v1/stretch-soft-b-v155.png?v=20260814-1');
 assert.equal(slug.pairFrameSrc('greet-contact', ''), null);
 assert.match(slug.pairMarkup({ gender: 'female' }), /data-traveller-gender="female"/);
 assert.equal(slug.pairMarkup({ gender: '' }), '');
@@ -106,7 +106,7 @@ class FailingImage {
   const invalidPrefetch = await slug.prefetch({ gender: '' });
   const isPair = (result) => /\/pair-v[23]\//.test(String(result.value || ''));
   assert.equal(malePrefetch.some(isPair), true);
-  assert.equal(femalePrefetch.some(isPair), false);
+  assert.equal(femalePrefetch.some((result) => /\/pair-v[23]\/female\/f2-v1\//.test(String(result.value || ''))), true);
   assert.equal(invalidPrefetch.some(isPair), false);
 
   const originalImage = global.Image;

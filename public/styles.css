@@ -9810,11 +9810,16 @@ html.mobile-nav-open body {
 .avatar-core-stack--figure { width: min(92%, 462px); }
 .avatar-core-portrait { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
 .avatar-core-stack--portrait { position: absolute; left: 50%; top: -12%; width: 280%; transform: translateX(-50%); }
+.avatar-core-gender-picker { min-width: 0; margin: 14px 0 0; padding: 0; border: 0; }
+.avatar-core-gender-picker .avatar-core-control-label { padding: 0; }
 .avatar-core-control-label { margin: 14px 0 7px; color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .avatar-core-gender-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; max-width: 460px; }
 .avatar-core-pose-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-top: 14px; }
 .avatar-core-gender-button,
 .avatar-core-pose-button { min-width: 0; padding: 10px 9px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel2); color: var(--fg); text-align: left; cursor: pointer; }
+.avatar-core-gender-button { min-block-size: var(--touch-min); }
+.avatar-core-gender-button:focus-visible { outline: var(--focus-ring); outline-offset: 2px; }
+.avatar-core-gender-button:disabled { cursor: wait; opacity: .72; }
 .avatar-core-gender-button strong,
 .avatar-core-gender-button small,
 .avatar-core-pose-button strong,

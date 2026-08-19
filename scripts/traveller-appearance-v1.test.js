@@ -4,14 +4,14 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const appearance = require('../public/traveller-appearance-v1.js');
 
-test('Traveller appearance separates known morphologies from complete selectable packs', () => {
+test('Traveller appearance exposes both complete selectable packs', () => {
   assert.deepEqual(appearance.KNOWN_GENDERS, ['male', 'female']);
   assert.equal(appearance.isSelectable('male'), true);
-  assert.equal(appearance.isSelectable('female'), false);
-  assert.deepEqual(appearance.selectableGenders(), ['male']);
+  assert.equal(appearance.isSelectable('female'), true);
+  assert.deepEqual(appearance.selectableGenders(), ['male', 'female']);
   assert.deepEqual(appearance.selectionResult('female'), {
-    ok: false,
-    reason: 'incomplete-pack',
+    ok: true,
+    reason: null,
     gender: 'female',
   });
 });
@@ -19,24 +19,24 @@ test('Traveller appearance separates known morphologies from complete selectable
 test('explicit female authoring paths never fall back to male', () => {
   assert.equal(
     appearance.assetPath('female', 'motion', 'walk-a.png'),
-    '/art/avatars/traveller-core-v1/female/motion-v3/walk-a.png',
+    '/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/walk-a.png',
   );
   assert.equal(
     appearance.assetPath('female', 'room', 'bench-read-a.png'),
-    '/art/avatars/traveller-core-v1/female/room-actions-v4/bench-read-a.png',
+    '/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-read-a.png',
   );
   assert.equal(appearance.assetPath('unknown', 'core', 'idle.png'), null);
   assert.equal(appearance.assetPath('female', 'motion', '../male/walk-a.png'), null);
 });
 
-test('legacy or incomplete saved gender normalizes to the safe active pack', () => {
+test('saved gender uses a complete pack and partial custom status still fails closed', () => {
   assert.equal(appearance.normalize({ avatarCoreGender: 'male' }).gender, 'male');
-  assert.equal(appearance.normalize({ avatarCoreGender: 'female' }).gender, 'male');
-  const completeFemale = {
+  assert.equal(appearance.normalize({ avatarCoreGender: 'female' }).gender, 'female');
+  const incompleteFemale = {
     male: appearance.PACK_STATUS.male,
-    female: Object.fromEntries(appearance.CAPABILITY_KEYS.map((key) => [key, true])),
+    female: { ...appearance.PACK_STATUS.female, shadow: false },
   };
-  assert.equal(appearance.normalize({ gender: 'female' }, completeFemale).gender, 'female');
+  assert.equal(appearance.normalize({ gender: 'female' }, incompleteFemale).gender, 'male');
 });
 
 test('palette schema is deterministic and does not claim unproduced variants', () => {

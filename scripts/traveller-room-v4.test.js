@@ -62,24 +62,24 @@ const roomContext = {
 roomContext.window = roomContext;
 vm.runInNewContext(controller, roomContext, { filename: 'traveller-room-v4.js' });
 const room = roomContext.TravellerRoomV4;
-assert.equal(room.VERSION, '4.2.0');
+assert.equal(room.VERSION, '4.3.0');
 assert.equal(room.DEFAULT_GENDER, 'male');
 assert.deepEqual([...room.GENDERS], ['male', 'female']);
 assert.equal(room.BASE, '/art/avatars/traveller-core-v1/male/room-actions-v4');
-assert.equal(room.BASES.female, '/art/avatars/traveller-core-v1/female/room-actions-v4');
+assert.equal(room.BASES.female, '/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4');
 assert.equal(room.frameSrc('bench-portal-reach.png'), '/art/avatars/traveller-core-v1/male/room-actions-v4/bench-portal-reach.png');
-assert.equal(room.frameSrc('bench-portal-reach.png', 'female'), '/art/avatars/traveller-core-v1/female/room-actions-v4/bench-portal-reach.png');
-assert.equal(room.frameSrc('bench-portal-reach.png', { gender: 'female' }), '/art/avatars/traveller-core-v1/female/room-actions-v4/bench-portal-reach.png');
+assert.equal(room.frameSrc('bench-portal-reach.png', 'female'), '/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-portal-reach.png');
+assert.equal(room.frameSrc('bench-portal-reach.png', { gender: 'female' }), '/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-portal-reach.png');
 assert.equal(room.frameSrc('bench-portal-reach.png', 'unknown'), null, 'an explicit unknown gender must never fall back to male');
 assert.equal(room.frameSrc('../male/bench-portal-reach.png', 'female'), null, 'frame paths must be safe basenames');
 assert.equal(room.frameSrc('nested/bench-portal-reach.png', 'female'), null, 'nested frame paths must be rejected');
 assert.equal(room.frameSrc('bench-portal-reach.svg', 'female'), null, 'room plates must stay normalized PNG files');
 assert.equal(room.actionFor('bench-rest').frames[0], '/art/avatars/traveller-core-v1/male/room-actions-v4/bench-rest.png');
-assert.equal(room.actionFor('bench-rest', 'female').frames[0], '/art/avatars/traveller-core-v1/female/room-actions-v4/bench-rest.png');
-assert.equal(room.actionFor('bench-read', { gender: 'female' }).frames[1], '/art/avatars/traveller-core-v1/female/room-actions-v4/bench-read-b.png');
+assert.equal(room.actionFor('bench-rest', 'female').frames[0], '/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-rest.png');
+assert.equal(room.actionFor('bench-read', { gender: 'female' }).frames[1], '/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-read-b.png');
 assert.equal(room.actionFor('bench-read', 'unknown'), null, 'an explicit unknown gender must never fall back to male');
 assert.match(room.markup({ gender: 'female' }), /data-traveller-gender="female"/);
-assert.match(room.markup({ gender: 'female' }), /traveller-core-v1\/female\/room-actions-v4\/bench-rest\.png/);
+assert.match(room.markup({ gender: 'female' }), /traveller-core-v1\/female\/f2-v1\/room-actions-v4\/bench-rest\.png/);
 assert.equal(room.markup({ gender: 'unknown' }), '');
 
 function fakeClassList() {
@@ -135,8 +135,8 @@ assert.equal(room.cancel(maleShell.shell), true);
 
 localStorage.setItem(STORAGE_KEY, JSON.stringify({ actionId: 'bench-read', gender: 'female', expiresAt: future(), id: 'female-ok' }));
 assert.equal(room.restore(femaleShell.shell), true);
-assert.match(femaleShell.frames[0].src, /traveller-core-v1\/female\/room-actions-v4\/bench-read-a\.png/);
-assert.match(femaleShell.frames[1].src, /traveller-core-v1\/female\/room-actions-v4\/bench-read-b\.png/);
+assert.match(femaleShell.frames[0].src, /traveller-core-v1\/female\/f2-v1\/room-actions-v4\/bench-read-a\.png/);
+assert.match(femaleShell.frames[1].src, /traveller-core-v1\/female\/f2-v1\/room-actions-v4\/bench-read-b\.png/);
 assert.equal(femaleShell.layer.dataset.travellerGender, 'female');
 assert.equal(room.cancel(femaleShell.shell), true);
 

@@ -12,22 +12,22 @@ function pngSize(file) {
   return [header.readUInt32BE(16), header.readUInt32BE(20)];
 }
 
-assert.equal(toad.VERSION, '3.4.0');
+assert.equal(toad.VERSION, '3.6.0');
 assert.deepEqual(toad.TRAVELLER_GENDERS, ['male', 'female']);
-assert.deepEqual(toad.AUTHORED_PAIR_GENDERS, ['male']);
+assert.deepEqual(toad.AUTHORED_PAIR_GENDERS, ['male', 'female']);
 assert.equal(toad.normalizeTravellerGender(), 'male');
 assert.equal(toad.normalizeTravellerGender('female'), 'female');
 assert.equal(toad.normalizeTravellerGender('unknown'), null);
 assert.equal(toad.normalizeTravellerGender(''), null);
 assert.equal(toad.normalizeTravellerGender(null), null);
 assert.equal(toad.hasPairArt('male'), true);
-assert.equal(toad.hasPairArt('female'), false);
+assert.equal(toad.hasPairArt('female'), true);
 assert.equal(toad.hasPairArt('unknown'), false);
 assert.equal(toad.frameSrc('calm', true), '/art/pets/body-toad-v1/states/calm.png');
 assert.equal(toad.frameSrc('strained', true), '/art/pets/body-toad-v1/states/strained.png');
 assert.equal(toad.motionFrameSrc('air'), '/art/pets/body-toad-v1/motion-v4/hop-air.png?v=20260806-3');
 assert.equal(toad.pairFrameSrc('greet-contact'), '/art/pets/body-toad-v1/pair-v4/greet-contact.png?v=20260806-3');
-assert.equal(toad.pairFrameSrc('greet-contact', 'female'), '/art/pets/body-toad-v1/pair-v4/female/greet-contact.png?v=20260806-3');
+assert.equal(toad.pairFrameSrc('greet-contact', 'female'), '/art/pets/body-toad-v1/pair-v4/female/f2-v1/greet-contact.png?v=20260806-3');
 assert.equal(toad.pairFrameSrc('greet-contact', ''), null);
 assert.equal(toad.pairFrameSrc('unknown'), '/art/pets/body-toad-v1/pair-v4/rest-contact.png?v=20260806-3');
 assert.match(toad.pairMarkup({ gender: 'female' }), /data-traveller-gender="female"/);
@@ -94,7 +94,7 @@ class FailingImage {
   const femalePrefetch = await toad.prefetch({ gender: 'female' });
   const invalidPrefetch = await toad.prefetch({ gender: '' });
   assert.equal(malePrefetch.some((result) => String(result.value || '').includes('/pair-v4/')), true);
-  assert.equal(femalePrefetch.some((result) => String(result.value || '').includes('/pair-v4/')), false);
+  assert.equal(femalePrefetch.some((result) => String(result.value || '').includes('/pair-v4/female/f2-v1/')), true);
   assert.equal(invalidPrefetch.some((result) => String(result.value || '').includes('/pair-v4/')), false);
 
   const originalImage = global.Image;

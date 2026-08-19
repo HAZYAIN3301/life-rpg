@@ -1,0 +1,112 @@
+{
+  "schema": "satoru.traveller-female-approval-qa/1",
+  "batch": "female-room-f2-full-01",
+  "canvas": [
+    640,
+    900
+  ],
+  "floorY": 860,
+  "automatedContractPassed": true,
+  "manualArtApprovalRequired": true,
+  "runtimeEligible": false,
+  "frames": {
+    "bench-rest": {
+      "file": "outputs/approval-batches/female-room-f2-full-01/bench-rest.png",
+      "mode": "RGBA",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        110,
+        70,
+        530,
+        860
+      ],
+      "floorY": 860,
+      "visiblePixels": 141794,
+      "transparentPixels": 430901,
+      "partialAlphaPixels": 10995,
+      "edgeAlphaPixels": 0,
+      "magentaPixels": 0,
+      "magentaRatio": 0.0,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "floorY": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "magentaContamination": true
+      },
+      "passed": true
+    },
+    "bench-read-b": {
+      "file": "outputs/approval-batches/female-room-f2-full-01/bench-read-b.png",
+      "mode": "RGBA",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        110,
+        70,
+        529,
+        860
+      ],
+      "floorY": 860,
+      "visiblePixels": 145475,
+      "transparentPixels": 427189,
+      "partialAlphaPixels": 10673,
+      "edgeAlphaPixels": 0,
+      "magentaPixels": 0,
+      "magentaRatio": 0.0,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "floorY": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "magentaContamination": true
+      },
+      "passed": true
+    },
+    "bench-portal-reach": {
+      "file": "outputs/approval-batches/female-room-f2-full-01/bench-portal-reach.png",
+      "mode": "RGBA",
+      "canvas": [
+        640,
+        900
+      ],
+      "bbox": [
+        70,
+        177,
+        570,
+        860
+      ],
+      "floorY": 860,
+      "visiblePixels": 109405,
+      "transparentPixels": 463458,
+      "partialAlphaPixels": 10209,
+      "edgeAlphaPixels": 0,
+      "magentaPixels": 0,
+      "magentaRatio": 0.0,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "floorY": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "magentaContamination": true
+      },
+      "passed": true
+    }
+  },
+  "blink": null,
+  "passed": true
+}

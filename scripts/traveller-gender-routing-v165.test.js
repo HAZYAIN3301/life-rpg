@@ -51,12 +51,12 @@ function functionSource(source, name) {
   throw new Error(`${name} has no closing brace`);
 }
 
-test('female morphology is known but stays unselectable until every authored capability exists', () => {
+test('female morphology is selectable only because every authored capability is complete', () => {
   assert.deepEqual(appearance.KNOWN_GENDERS, ['male', 'female']);
-  assert.deepEqual(appearance.selectableGenders(), ['male']);
+  assert.deepEqual(appearance.selectableGenders(), ['male', 'female']);
   assert.deepEqual(appearance.selectionResult('female'), {
-    ok: false,
-    reason: 'incomplete-pack',
+    ok: true,
+    reason: null,
     gender: 'female',
   });
   assert.match(app, /AVATAR_CORE_KNOWN_GENDERS[\s\S]*TravellerAppearanceV1\.KNOWN_GENDERS/);
@@ -83,7 +83,7 @@ test('an explicit female route never borrows an active male frame', () => {
   assert.equal(motion.frameSrc('walkA', 'unknown'), null);
   assert.equal(room.frameSrc('bench-rest.png', 'unknown'), null);
   for (const guardian of [bodyToad, recoverySlug, resourcesPenguin, shadowDen]) {
-    assert.equal(guardian.hasPairArt('female'), false, 'an unauthored female contact plate must abort instead of borrowing male art');
+    assert.equal(guardian.hasPairArt('female'), true, 'every female contact controller must use its authored F2 pack');
   }
   assert.doesNotMatch(app, /\/art\/avatars\/traveller-core-v1\/male\//);
 });
@@ -159,10 +159,13 @@ test('gender changes are durable and roll back before any visual commit when per
   assert.match(source, /if \(!saved\) \{[\s\S]*State\.settings\.avatarCoreGender = previous;[\s\S]*throw new Error\('Traveller gender save failed'\)/);
   assert.match(source, /await Promise\.allSettled\(swaps\)/);
   assert.doesNotMatch(source, /Store\.save\('settings'/);
+  assert.match(app, /const blinkImage = stack\.querySelector\('\.avatar-core-blink-layer img'\);/);
+  assert.match(app, /const blinkSrc = window\.TravellerMotionV3 && window\.TravellerMotionV3\.frameSrc\('blink', safeGender\);/);
+  assert.match(app, /if \(blinkImage && blinkSrc\) blinkImage\.src = blinkSrc;/);
 });
 
-test('v165 app shell loads the resolver before consumers and pins every changed runtime', () => {
-  const revision = '20260818-traveller-gender-v165-1';
+test('v167 app shell loads the resolver before consumers and pins every changed runtime', () => {
+  const revision = '20260819-traveller-f2-runtime-v167-1';
   const pinned = [
     'shadow-den-v1.js',
     'body-toad-v1.js',
@@ -173,7 +176,7 @@ test('v165 app shell loads the resolver before consumers and pins every changed 
     'traveller-room-v4.js',
     'app.js',
   ];
-  pinned.forEach((file) => assert.match(html, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=${revision}`), `${file} must use the v165 pin`));
+  pinned.forEach((file) => assert.match(html, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=${revision}`), `${file} must use the v167 pin`));
   const appearanceIndex = html.indexOf('traveller-appearance-v1.js');
   const motionIndex = html.indexOf('traveller-motion-v3.js');
   const roomIndex = html.indexOf('traveller-room-v4.js');
@@ -182,6 +185,6 @@ test('v165 app shell loads the resolver before consumers and pins every changed 
   for (const file of ['shadow-den-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js', 'resources-penguin-v1.js']) {
     assert.ok(html.indexOf(file) < appIndex, `${file} must load before app.js`);
   }
-  assert.match(sw, /const CACHE = 'satoru-v165';/);
+  assert.match(sw, /const CACHE = 'satoru-v167';/);
   assert.match(sw, /'traveller-appearance-v1\.js', 'traveller-motion-v3\.js', 'traveller-room-v4\.js'/);
 });

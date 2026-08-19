@@ -4,7 +4,7 @@
  * Runtime rules:
  * - authored whole-character frames; no sliced joints;
  * - glide motion always swaps compression/extension frames;
- * - male-Traveller contact scenes are single 1536x1536 images;
+ * - male and F2-female Traveller contact scenes are single 1536x1536 images;
  * - long, quiet holds instead of rapid action montage.
  */
 (function exposeRecoverySlug(root, factory) {
@@ -17,13 +17,13 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildRecoverySlugV1() {
   'use strict';
 
-  const VERSION = '2.4.0';
+  const VERSION = '2.6.0';
   const ART_ROOT = '/art/pets/recovery-slug-v1/';
   const MOTION_ART_ROOT = `${ART_ROOT}motion-v2/`;
   const PAIR_ART_ROOT = `${ART_ROOT}pair-v2/`;
   const PAIR_V155_ART_ROOT = `${ART_ROOT}pair-v3/`;
   const TRAVELLER_GENDERS = Object.freeze(['male', 'female']);
-  const AUTHORED_PAIR_GENDERS = Object.freeze(['male']);
+  const AUTHORED_PAIR_GENDERS = Object.freeze(['male', 'female']);
   const STATES = Object.freeze(['calm', 'thriving', 'strained', 'restoring']);
   const STATE_META = Object.freeze({
     calm: { label: 'Спокойна', line: 'Дышит медленно и хранит запас тишины.' },
@@ -96,7 +96,7 @@
     const safe = allowed.has(frame) ? frame : 'greet-contact';
     const safeGender = normalizeTravellerGender(gender);
     if (!safeGender) return null;
-    const genderPath = safeGender === 'female' ? 'female/' : '';
+    const genderPath = safeGender === 'female' ? 'female/f2-v1/' : '';
     if (safe === 'stretch-soft-b') return `${PAIR_V155_ART_ROOT}${genderPath}stretch-soft-b-v155.png?v=20260814-1`;
     return `${PAIR_ART_ROOT}${genderPath}${safe}.png?v=20260806-2`;
   }

@@ -1,0 +1,367 @@
+{
+  "schema": "satoru.traveller-female-contact-qa/1",
+  "batch": "female-recovery-f2-full-01",
+  "family": "recovery",
+  "canvas": [
+    1536,
+    1536
+  ],
+  "groundY": null,
+  "geometry": {
+    "minWidthRatio": 0.9,
+    "maxWidthRatio": 1.1,
+    "minHeightRatio": 0.9,
+    "maxHeightRatio": 1.1,
+    "maxCenterDeltaPx": 4.0,
+    "maxCenterXDeltaPx": 4.0,
+    "maxContinuityRatioSpread": 0.08,
+    "maxContinuityCenterSpreadPx": 4.0
+  },
+  "automatedContractPassed": true,
+  "manualContactApprovalRequired": true,
+  "runtimeEligible": false,
+  "frames": {
+    "greet-contact": {
+      "file": "outputs/contact-approval-batches/female-recovery-f2-full-01/greet-contact.png",
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/greet-contact.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        94,
+        296,
+        1441,
+        1359
+      ],
+      "referenceBbox": [
+        44,
+        296,
+        1492,
+        1360
+      ],
+      "bboxAlphaThreshold": 32,
+      "centerDeltaPx": 0.7071,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        -0.5,
+        -0.5
+      ],
+      "widthRatioToReference": 0.930249,
+      "heightRatioToReference": 0.99906,
+      "visiblePixels": 824628,
+      "transparentPixels": 1527141,
+      "partialAlphaPixels": 31837,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "referenceCenter": true
+      },
+      "passed": true
+    },
+    "breathe-in": {
+      "file": "outputs/contact-approval-batches/female-recovery-f2-full-01/breathe-in.png",
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/breathe-in.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        30,
+        232,
+        1510,
+        1317
+      ],
+      "referenceBbox": [
+        30,
+        215,
+        1510,
+        1333
+      ],
+      "bboxAlphaThreshold": 32,
+      "centerDeltaPx": 0.5,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.5
+      ],
+      "widthRatioToReference": 1.0,
+      "heightRatioToReference": 0.970483,
+      "visiblePixels": 813096,
+      "transparentPixels": 1536987,
+      "partialAlphaPixels": 40627,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "referenceCenter": true
+      },
+      "passed": true
+    },
+    "breathe-out": {
+      "file": "outputs/contact-approval-batches/female-recovery-f2-full-01/breathe-out.png",
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/breathe-out.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        35,
+        359,
+        1482,
+        1362
+      ],
+      "referenceBbox": [
+        32,
+        359,
+        1485,
+        1362
+      ],
+      "bboxAlphaThreshold": 32,
+      "centerDeltaPx": 0.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.0
+      ],
+      "widthRatioToReference": 0.995871,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 719549,
+      "transparentPixels": 1631036,
+      "partialAlphaPixels": 49378,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "referenceCenter": true
+      },
+      "passed": true
+    },
+    "restore-contact": {
+      "file": "outputs/contact-approval-batches/female-recovery-f2-full-01/restore-contact.png",
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/restore-contact.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        72,
+        377,
+        1476,
+        1356
+      ],
+      "referenceBbox": [
+        40,
+        377,
+        1508,
+        1356
+      ],
+      "bboxAlphaThreshold": 32,
+      "centerDeltaPx": 0.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.0
+      ],
+      "widthRatioToReference": 0.956403,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 716410,
+      "transparentPixels": 1637218,
+      "partialAlphaPixels": 33054,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "referenceCenter": true
+      },
+      "passed": true
+    },
+    "stretch-a": {
+      "file": "outputs/contact-approval-batches/female-recovery-f2-full-01/stretch-a.png",
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/stretch-a.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        78,
+        402,
+        1473,
+        1297
+      ],
+      "referenceBbox": [
+        64,
+        402,
+        1488,
+        1297
+      ],
+      "bboxAlphaThreshold": 32,
+      "centerDeltaPx": 0.5,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        -0.5,
+        0.0
+      ],
+      "widthRatioToReference": 0.979635,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 661047,
+      "transparentPixels": 1690700,
+      "partialAlphaPixels": 27330,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "referenceCenter": true
+      },
+      "passed": true
+    },
+    "stretch-soft-b": {
+      "file": "outputs/contact-approval-batches/female-recovery-f2-full-01/stretch-soft-b.png",
+      "reference": "public/art/pets/recovery-slug-v1/pair-v3/stretch-soft-b-v155.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        40,
+        394,
+        1499,
+        1303
+      ],
+      "referenceBbox": [
+        24,
+        394,
+        1515,
+        1304
+      ],
+      "bboxAlphaThreshold": 32,
+      "centerDeltaPx": 0.5,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        -0.5
+      ],
+      "widthRatioToReference": 0.978538,
+      "heightRatioToReference": 0.998901,
+      "visiblePixels": 752740,
+      "transparentPixels": 1597677,
+      "partialAlphaPixels": 32140,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 1,
+      "technicalKeyRatio": 1.33e-06,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "referenceCenter": true
+      },
+      "passed": true
+    }
+  },
+  "continuity": {
+    "groups": {
+      "breathe": {
+        "frames": [
+          "breathe-in",
+          "breathe-out"
+        ],
+        "evaluated": true,
+        "status": "evaluated",
+        "widthRatioSpread": 0.004129,
+        "heightRatioSpread": 0.029517,
+        "centerXOffsetSpreadPx": 0.0,
+        "centerYOffsetSpreadPx": 0.5,
+        "checks": {
+          "widthRatioContinuity": true,
+          "heightRatioContinuity": true,
+          "centerContinuity": true
+        },
+        "passed": true
+      },
+      "stretch": {
+        "frames": [
+          "stretch-a",
+          "stretch-soft-b"
+        ],
+        "evaluated": true,
+        "status": "evaluated",
+        "widthRatioSpread": 0.001097,
+        "heightRatioSpread": 0.001099,
+        "centerXOffsetSpreadPx": 0.5,
+        "centerYOffsetSpreadPx": 0.5,
+        "checks": {
+          "widthRatioContinuity": true,
+          "heightRatioContinuity": true,
+          "centerContinuity": true
+        },
+        "passed": true
+      }
+    },
+    "passed": true
+  },
+  "passed": true
+}

@@ -6443,6 +6443,9 @@ function swapAvatarCoreStack(stack, pose, gender = avatarCoreGender()) {
     stack.dataset.avatarCorePose = safePose;
     stack.dataset.avatarCoreGender = safeGender;
     stack.setAttribute('aria-label', `${t(AVATAR_CORE_GENDER_META[safeGender].label)} Traveller: ${t(AVATAR_CORE_POSE_META[safePose].label)}`);
+    const blinkImage = stack.querySelector('.avatar-core-blink-layer img');
+    const blinkSrc = window.TravellerMotionV3 && window.TravellerMotionV3.frameSrc('blink', safeGender);
+    if (blinkImage && blinkSrc) blinkImage.src = blinkSrc;
     requestAnimationFrame(() => {
       if (!stack.isConnected || stack.dataset.swapToken !== token) return;
       previousFrames.forEach((frame) => frame.classList.remove('is-active'));
@@ -16731,6 +16734,21 @@ function onTreePointerDown(e) {
 // ============================================================
 //  Вид «Персонаж» — живой аватар, атрибуты, телосложение
 // ============================================================
+function avatarCoreGenderSelectorHTML(gender = avatarCoreGender()) {
+  // The control must not exist until every authored female capability is ready.
+  // TravellerAppearanceV1 owns that gate, so a partial pack cannot become a UI choice.
+  if (AVATAR_CORE_GENDERS.length < 2) return '';
+  const buttons = AVATAR_CORE_GENDERS.map((id) => {
+    const selected = id === gender;
+    const meta = AVATAR_CORE_GENDER_META[id];
+    return `<button type="button" class="avatar-core-gender-button ${selected ? 'is-selected' : ''}" data-action="avatar-core-gender" data-gender="${id}" aria-pressed="${selected}"><strong>${esc(t(meta.label))}</strong><small>${esc(meta.description)}</small></button>`;
+  }).join('');
+  return `<fieldset class="avatar-core-gender-picker" data-avatar-core-gender-picker>
+    <legend class="avatar-core-control-label">${esc(t('Облик'))}</legend>
+    <div class="avatar-core-gender-grid">${buttons}</div>
+    <span class="sr-only" data-avatar-core-gender-status aria-live="polite"></span>
+  </fieldset>`;
+}
 function avatarEditor() {
   const pose = normalizedAvatarCorePose(State._avatarCorePose || 'idle');
   const gender = avatarCoreGender();
@@ -16738,6 +16756,7 @@ function avatarEditor() {
   return `<div class="card avatar-editor" id="avatar-editor">
     <div class="avatar-editor-head"><div><h3>${satoruIconHTML('nav.hero', 'inline-glyph', '◇')} Traveller</h3><p>${t('Позы для работы, разминки и отдыха.')}</p></div><span class="avatar-editor-badge">${t('Локально')}</span></div>
     <div class="ave-stage ave-stage-figure avatar-core-stage">${avatarCorePoseHTML(pose, { gender, className: 'avatar-core-stack--figure' })}</div>
+    ${avatarCoreGenderSelectorHTML(gender)}
     <div class="avatar-core-pose-grid">${poseButtons}</div>
     <p class="avatar-editor-note">${t('Позы меняют состояние персонажа, а экипировка остаётся на месте.')}</p>
   </div>`;
@@ -21319,7 +21338,22 @@ async function onClick(e) {
     return;
   }
   if (action === 'avatar-core-gender') {
-    setAvatarCoreGender(el.dataset.gender).catch(() => toast(t('Не удалось загрузить аватар')));
+    const picker = el.closest('[data-avatar-core-gender-picker]');
+    const controls = picker ? [...picker.querySelectorAll('[data-action="avatar-core-gender"]')] : [el];
+    const status = picker && picker.querySelector('[data-avatar-core-gender-status]');
+    if (picker) picker.setAttribute('aria-busy', 'true');
+    controls.forEach((button) => { button.disabled = true; });
+    setAvatarCoreGender(el.dataset.gender).then((selected) => {
+      if (status) status.textContent = `${t(AVATAR_CORE_GENDER_META[selected].label)} Traveller`;
+    }).catch(() => {
+      const message = t('Не удалось загрузить аватар');
+      if (status) status.textContent = message;
+      toast(message);
+    }).finally(() => {
+      if (!picker || !picker.isConnected) return;
+      picker.removeAttribute('aria-busy');
+      controls.forEach((button) => { button.disabled = false; });
+    });
     return;
   }
   if (action === 'den-pet-react') {

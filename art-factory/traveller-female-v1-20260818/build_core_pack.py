@@ -45,6 +45,7 @@ FRAME_SPECS = {
     "bench-rest": {"profile": "room", "targetHeight": 790, "maxWidth": 500},
     "bench-read-a": {"profile": "room", "targetHeight": 790, "maxWidth": 500},
     "bench-read-b": {"profile": "room", "targetHeight": 790, "maxWidth": 500},
+    "bench-portal-reach": {"profile": "room", "targetHeight": 790, "maxWidth": 500},
 }
 SAFE_ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
 

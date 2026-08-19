@@ -1,0 +1,230 @@
+{
+  "schema": "satoru.traveller-female-contact-qa/1",
+  "batch": "female-shadow-f2-full-01",
+  "family": "shadow",
+  "canvas": [
+    1254,
+    1254
+  ],
+  "groundY": null,
+  "geometry": {
+    "minWidthRatio": 0.9,
+    "maxWidthRatio": 1.1,
+    "minHeightRatio": 0.9,
+    "maxHeightRatio": 1.1,
+    "maxCenterDeltaPx": 4.0,
+    "maxCenterXDeltaPx": 4.0,
+    "maxContinuityRatioSpread": 0.08,
+    "maxContinuityCenterSpreadPx": 4.0
+  },
+  "automatedContractPassed": true,
+  "manualContactApprovalRequired": true,
+  "runtimeEligible": false,
+  "frames": {
+    "attune-spark": {
+      "file": "outputs/contact-approval-batches/female-shadow-f2-full-01/attune-spark.png",
+      "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-spark.png",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "bbox": [
+        342,
+        205,
+        1026,
+        1144
+      ],
+      "referenceBbox": [
+        309,
+        205,
+        1060,
+        1144
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.5,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        -0.5,
+        0.0
+      ],
+      "widthRatioToReference": 0.910786,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 394962,
+      "transparentPixels": 1173114,
+      "partialAlphaPixels": 16226,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 28,
+      "technicalKeyRatio": 7.089e-05,
+      "semanticMagentaPreserved": true,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "referenceCenter": true
+      },
+      "passed": true
+    },
+    "attune-spirit": {
+      "file": "outputs/contact-approval-batches/female-shadow-f2-full-01/attune-spirit.png",
+      "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-spirit.png",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "bbox": [
+        288,
+        202,
+        1058,
+        1166
+      ],
+      "referenceBbox": [
+        272,
+        202,
+        1073,
+        1166
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.5,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        0.5,
+        0.0
+      ],
+      "widthRatioToReference": 0.961298,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 445354,
+      "transparentPixels": 1121454,
+      "partialAlphaPixels": 20965,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 165,
+      "technicalKeyRatio": 0.00037049,
+      "semanticMagentaPreserved": true,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "referenceCenter": true
+      },
+      "passed": true
+    },
+    "attune-guardian": {
+      "file": "outputs/contact-approval-batches/female-shadow-f2-full-01/attune-guardian.png",
+      "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-guardian.png",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "bbox": [
+        290,
+        116,
+        1050,
+        1195
+      ],
+      "referenceBbox": [
+        263,
+        116,
+        1078,
+        1195
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.5,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        -0.5,
+        0.0
+      ],
+      "widthRatioToReference": 0.932515,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 430629,
+      "transparentPixels": 1135894,
+      "partialAlphaPixels": 24262,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 126,
+      "technicalKeyRatio": 0.0002926,
+      "semanticMagentaPreserved": true,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "referenceCenter": true
+      },
+      "passed": true
+    },
+    "attune-keeper": {
+      "file": "outputs/contact-approval-batches/female-shadow-f2-full-01/attune-keeper.png",
+      "reference": "public/art/companions/shadow-den-v1/pair-v1/attune-keeper.png",
+      "mode": "RGBA",
+      "canvas": [
+        1254,
+        1254
+      ],
+      "bbox": [
+        236,
+        122,
+        1071,
+        1152
+      ],
+      "referenceBbox": [
+        236,
+        117,
+        1071,
+        1157
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.0
+      ],
+      "widthRatioToReference": 1.0,
+      "heightRatioToReference": 0.990385,
+      "visiblePixels": 438824,
+      "transparentPixels": 1125770,
+      "partialAlphaPixels": 31025,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 24,
+      "technicalKeyRatio": 5.469e-05,
+      "semanticMagentaPreserved": true,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "referenceCenter": true
+      },
+      "passed": true
+    }
+  },
+  "continuity": {
+    "groups": {},
+    "passed": true
+  },
+  "passed": true
+}

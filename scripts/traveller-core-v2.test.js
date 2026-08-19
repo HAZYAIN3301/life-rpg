@@ -14,12 +14,12 @@ function pngSize(file) {
   return [header.readUInt32BE(16), header.readUInt32BE(20)];
 }
 
-test('Traveller Core keeps female known but gated until its complete runtime pack passes QA', () => {
+test('Traveller Core exposes the complete QA-approved female runtime pack', () => {
   assert.deepEqual(manifest.genders, ['male', 'female']);
   assert.deepEqual(manifest.poses, ['idle', 'arms-up', 'seated', 'window-back']);
   assert.deepEqual(appearance.KNOWN_GENDERS, ['male', 'female']);
-  assert.deepEqual(appearance.selectableGenders(), ['male']);
-  assert.equal(appearance.isSelectable('female'), false);
+  assert.deepEqual(appearance.selectableGenders(), ['male', 'female']);
+  assert.equal(appearance.isSelectable('female'), true);
   assert.match(appSource, /const AVATAR_CORE_KNOWN_GENDERS = window\.TravellerAppearanceV1[\s\S]*KNOWN_GENDERS/);
   assert.match(appSource, /const AVATAR_CORE_GENDERS = window\.TravellerAppearanceV1[\s\S]*selectableGenders\(\)/);
   assert.match(appSource, /const AVATAR_CORE_POSES = \['idle', 'arms-up', 'window-back'\];/);

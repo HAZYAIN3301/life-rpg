@@ -1,12 +1,12 @@
 (function initTravellerRoomV4(global) {
   'use strict';
 
-  const VERSION = '4.2.0';
+  const VERSION = '4.3.0';
   const DEFAULT_GENDER = 'male';
   const GENDERS = Object.freeze(['male', 'female']);
   const BASES = Object.freeze({
     male: '/art/avatars/traveller-core-v1/male/room-actions-v4',
-    female: '/art/avatars/traveller-core-v1/female/room-actions-v4',
+    female: '/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4',
   });
   // Compatibility alias for integrations that still inspect the original
   // single-pack constant. New callers must route through `actionFor`.

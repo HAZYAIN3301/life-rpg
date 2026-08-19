@@ -15,9 +15,9 @@ const slug = require('../public/recovery-slug-v1.js');
 const penguin = require('../public/resources-penguin-v1.js');
 
 assert.equal(stage.VERSION, '1.12.0');
-assert.equal(toad.VERSION, '3.4.0');
-assert.equal(slug.VERSION, '2.4.0');
-assert.equal(penguin.VERSION, '1.1.0');
+assert.equal(toad.VERSION, '3.6.0');
+assert.equal(slug.VERSION, '2.6.0');
+assert.equal(penguin.VERSION, '1.3.0');
 assert.equal(typeof toad.cancelPair, 'function');
 assert.equal(typeof slug.cancelPair, 'function');
 assert.equal(typeof penguin.cancelPair, 'function');
@@ -45,10 +45,10 @@ assert.match(app, /if \(denSceneBusy\(scope\)\) return;/);
 assert.match(app, /denSceneBusy\(shell\)\) return false/);
 
 assert.match(index, /den-stage-v1\.js\?v=20260815-den-life-v158-1/);
-assert.match(index, /body-toad-v1\.js\?v=20260818-traveller-gender-v165-1/);
-assert.match(index, /recovery-slug-v1\.js\?v=20260818-traveller-gender-v165-1/);
-assert.match(index, /resources-penguin-v1\.js\?v=20260818-traveller-gender-v165-1/);
-assert.match(sw, /const CACHE = 'satoru-v165';/);
+assert.match(index, /body-toad-v1\.js\?v=20260819-traveller-f2-runtime-v167-1/);
+assert.match(index, /recovery-slug-v1\.js\?v=20260819-traveller-f2-runtime-v167-1/);
+assert.match(index, /resources-penguin-v1\.js\?v=20260819-traveller-f2-runtime-v167-1/);
+assert.match(sw, /const CACHE = 'satoru-v167';/);
 
 function classList() {
   const values = new Set();

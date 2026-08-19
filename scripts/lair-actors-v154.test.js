@@ -125,7 +125,7 @@ test('runtime uses transparent normalized PNG plates, never the opaque idle GIFs
 });
 
 test('the defective Katsuyu matte is quarantined and its v155 sibling is alpha-safe', () => {
-  assert.equal(recovery.VERSION, '2.4.0');
+  assert.equal(recovery.VERSION, '2.6.0');
   assert.deepEqual(recovery.INTERACTIONS.stretch.pairFrames, ['stretch-a', 'stretch-soft-b']);
   const damaged = inspectPngCached(path.join(ROOT, 'public/art/pets/recovery-slug-v1/pair-v2/stretch-b.png'));
   assert.ok(damaged.edgeAlpha > 1000, 'fixture should prove why the rejected plate is unsafe');
@@ -182,7 +182,7 @@ test('first idle round gives every resident a legible, exclusive action', () => 
 test('Shadow meetings use a live approach and authored tier-specific contact frames', () => {
   const css = read('public/styles.css');
   const moduleSource = read('public/shadow-den-v1.js');
-  assert.equal(shadow.VERSION, '1.3.0');
+  assert.equal(shadow.VERSION, '1.5.0');
   assert.match(css, /\.shadow-den-pair-v1\.is-active \{ display: block; \}/);
   assert.match(css, /is-shadow-pair-approaching \.den-avatar-core[\s\S]*scale: 1/);
   assert.match(css, /is-shadow-pair-approaching \.den-companion\[data-shadow-den\][\s\S]{0,320}scale: 1/);
@@ -251,20 +251,20 @@ test('room depth owns travel scale while in-place acting stays on a fixed host',
   assert.match(css, /recovery-pair-v2\[data-mode="stretch"\][\s\S]*translateY\(11\.5%\)/);
 });
 
-test('v165 shell revision and cache-busting are coherent', () => {
+test('v167 shell revision and cache-busting are coherent', () => {
   const index = read('public/index.html');
   const sw = read('public/sw.js');
-  assert.match(sw, /const CACHE = 'satoru-v165'/);
+  assert.match(sw, /const CACHE = 'satoru-v167'/);
   for (const script of ['body-toad-v1', 'resources-penguin-v1', 'traveller-room-v4']) {
-    assert.match(index, new RegExp(`${script}\\.js\\?v=20260818-traveller-gender-v165-1`));
+    assert.match(index, new RegExp(`${script}\\.js\\?v=20260819-traveller-f2-runtime-v167-1`));
   }
   assert.match(index, /den-life-v1\.js\?v=20260815-den-life-v158-1/);
   assert.match(index, /den-stage-v1\.js\?v=20260815-den-life-v158-1/);
-  assert.match(index, /recovery-slug-v1\.js\?v=20260818-traveller-gender-v165-1/);
-  assert.match(index, /shadow-den-v1\.js\?v=20260818-traveller-gender-v165-1/);
+  assert.match(index, /recovery-slug-v1\.js\?v=20260819-traveller-f2-runtime-v167-1/);
+  assert.match(index, /shadow-den-v1\.js\?v=20260819-traveller-f2-runtime-v167-1/);
   assert.match(index, /den-pet-pair-v1\.js\?v=20260815-shadow-pet-v160-1/);
-  assert.match(index, /styles\.css\?v=20260818-onboarding-language-v164-1/);
-  assert.match(index, /app\.js\?v=20260818-traveller-gender-v165-1/);
+  assert.match(index, /styles\.css\?v=20260819-traveller-f2-runtime-v167-1/);
+  assert.match(index, /app\.js\?v=20260819-traveller-f2-runtime-v167-1/);
   assert.doesNotMatch(sw, /recovery-slug-v1\/pair-v2\/stretch-b\.png/);
   assert.match(sw, /recovery-slug-v1\/pair-v3\/stretch-soft-b-v155\.png/);
 });

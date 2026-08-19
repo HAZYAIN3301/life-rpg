@@ -14,24 +14,24 @@ function pngSize(file) {
   return [header.readUInt32BE(16), header.readUInt32BE(20)];
 }
 
-assert.equal(motion.VERSION, '3.2.0');
+assert.equal(motion.VERSION, '3.3.0');
 assert.equal(motion.DEFAULT_GENDER, 'male');
 assert.deepEqual([...motion.GENDERS], ['male', 'female']);
 assert.equal(motion.ART_ROOT, '/art/avatars/traveller-core-v1/male/motion-v3/');
-assert.equal(motion.ART_ROOTS.female, '/art/avatars/traveller-core-v1/female/motion-v3/');
+assert.equal(motion.ART_ROOTS.female, '/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/');
 assert.equal(motion.WALK_MS, 2200);
 assert.equal(typeof motion.walkTo, 'function');
 assert.equal(typeof motion.announceLeg, 'function');
 assert.equal(motion.frameSrc('blink'), '/art/avatars/traveller-core-v1/male/motion-v3/idle-blink.png');
 assert.equal(motion.frameSrc('walkA'), '/art/avatars/traveller-core-v1/male/motion-v3/walk-a.png');
 assert.equal(motion.frameSrc('walkB'), '/art/avatars/traveller-core-v1/male/motion-v3/walk-b.png');
-assert.equal(motion.frameSrc('blink', 'female'), '/art/avatars/traveller-core-v1/female/motion-v3/idle-blink.png');
-assert.equal(motion.frameSrc('walkA', { gender: 'female' }), '/art/avatars/traveller-core-v1/female/motion-v3/walk-a.png');
-assert.equal(motion.frameSrc('walkB', { gender: 'female' }), '/art/avatars/traveller-core-v1/female/motion-v3/walk-b.png');
+assert.equal(motion.frameSrc('blink', 'female'), '/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/idle-blink.png');
+assert.equal(motion.frameSrc('walkA', { gender: 'female' }), '/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/walk-a.png');
+assert.equal(motion.frameSrc('walkB', { gender: 'female' }), '/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/walk-b.png');
 assert.equal(motion.frameSrc('walkA', 'unknown'), null, 'an explicit unknown gender must never fall back to male');
 assert.equal(motion.frameSrc('walkA', { gender: '' }), null, 'an explicit empty gender must never fall back to male');
 assert.match(motion.blinkMarkup(), /avatar-core-blink-layer/);
-assert.match(motion.blinkMarkup({ gender: 'female' }), /traveller-core-v1\/female\/motion-v3\/idle-blink\.png/);
+assert.match(motion.blinkMarkup({ gender: 'female' }), /traveller-core-v1\/female\/f2-v1\/motion-v3\/idle-blink\.png/);
 assert.equal(motion.blinkMarkup({ gender: 'unknown' }), '');
 
 const motionRoot = path.join(projectRoot, 'public', 'art', 'avatars', 'traveller-core-v1', 'male', 'motion-v3');

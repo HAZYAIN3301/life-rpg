@@ -22,7 +22,7 @@ test('micro-life uses authored blinks and never invents human eyes for Katsuya',
 });
 
 test('east-lane movement is announced once and delegated by species', () => {
-  assert.equal(traveller.VERSION, '3.2.0');
+  assert.equal(traveller.VERSION, '3.3.0');
   assert.equal(stage.VERSION, '1.12.0');
   const travellerSource = read('public/traveller-motion-v3.js');
   const stageSource = read('public/den-stage-v1.js');
@@ -63,7 +63,7 @@ test('runtime pins the new director and micro-life bytes', () => {
   for (const script of ['den-stage-v1', 'den-resident-life-v1', 'den-life-v1']) {
     assert.match(index, new RegExp(`${script}\\.js\\?v=20260815-den-life-v158-1`));
   }
-  assert.match(index, /traveller-motion-v3\.js\?v=20260818-traveller-gender-v165-1/);
-  assert.match(index, /app\.js\?v=20260818-traveller-gender-v165-1/);
-  assert.match(index, /styles\.css\?v=20260818-onboarding-language-v164-1/);
+  assert.match(index, /traveller-motion-v3\.js\?v=20260819-traveller-f2-runtime-v167-1/);
+  assert.match(index, /app\.js\?v=20260819-traveller-f2-runtime-v167-1/);
+  assert.match(index, /styles\.css\?v=20260819-traveller-f2-runtime-v167-1/);
 });

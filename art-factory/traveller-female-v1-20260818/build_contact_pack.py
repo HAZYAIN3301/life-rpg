@@ -11,7 +11,6 @@ from PIL import Image
 
 from build_core_pack import (
     ROOT,
-    alpha_bbox,
     clean_resampled_magenta_fringe,
     inside_factory,
     is_key_like,
@@ -24,6 +23,7 @@ from build_core_pack import (
 
 
 REPO_ROOT = ROOT.parents[1]
+PUBLIC_ART_ROOT = (REPO_ROOT / "public" / "art").resolve()
 CONFIG_PATH = ROOT / "contact-families.json"
 SOURCE_ROOT = ROOT / "sources" / "approval-batches"
 OUTPUT_ROOT = ROOT / "outputs" / "contact-approval-batches"
@@ -31,12 +31,52 @@ OUTPUT_ROOT = ROOT / "outputs" / "contact-approval-batches"
 
 def load_families() -> dict[str, dict[str, object]]:
     payload = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-    if payload.get("schema") != "satoru.traveller-female-contact-families/1":
+    if payload.get("schema") not in {
+        "satoru.traveller-female-contact-families/1",
+        "satoru.traveller-female-contact-families/2",
+    }:
         raise ValueError("unsupported contact family manifest")
     families = payload.get("families")
     if not isinstance(families, dict) or not families:
         raise ValueError("contact family manifest has no families")
+    for family, config in families.items():
+        safe_id(str(family), "contact family id")
+        if not isinstance(config, dict):
+            raise ValueError(f"contact family {family} must be an object")
+        raw_frames = config.get("frames")
+        if not isinstance(raw_frames, list) or not raw_frames:
+            raise ValueError(f"contact family {family} has no frames")
+        frames = tuple(safe_id(str(frame), "frame id") for frame in raw_frames)
+        if len(set(frames)) != len(frames):
+            raise ValueError(f"contact family {family} has duplicate frames")
+        routes = config.get("routes")
+        if routes is not None and (
+            not isinstance(routes, dict) or set(routes) != set(frames)
+        ):
+            raise ValueError(f"contact family {family} route set is incomplete")
+        groups = config.get("continuityGroups", {})
+        if not isinstance(groups, dict) or any(
+            not isinstance(members, list)
+            or not members
+            or any(str(frame) not in frames for frame in members)
+            for members in groups.values()
+        ):
+            raise ValueError(f"contact family {family} has invalid continuity groups")
     return families
+
+
+def alpha_bbox_at(image: Image.Image, threshold: int = 8) -> tuple[int, int, int, int]:
+    """Return the visible bbox at the family's reviewed alpha threshold."""
+    if not 1 <= threshold <= 255:
+        raise ValueError(f"bbox alpha threshold must be 1..255, got {threshold}")
+    bbox = image.getchannel("A").point(
+        lambda value: 255 if value >= threshold else 0
+    ).getbbox()
+    if not bbox:
+        raise ValueError(
+            f"source has no visible subject at alpha threshold {threshold}"
+        )
+    return bbox
 
 
 def repo_read_path(relative: str) -> Path:
@@ -48,21 +88,68 @@ def repo_read_path(relative: str) -> Path:
     return path
 
 
+def repo_runtime_path(relative: str) -> Path:
+    path = repo_read_path(relative)
+    try:
+        path.relative_to(PUBLIC_ART_ROOT)
+    except ValueError as error:
+        raise ValueError(f"contact runtime route escapes public/art: {relative}") from error
+    return path
+
+
+def frame_route(config: dict[str, object], frame: str) -> dict[str, object]:
+    """Resolve schema-v2 explicit routes with a schema-v1 compatibility path."""
+    routes = config.get("routes")
+    if routes is not None:
+        if not isinstance(routes, dict) or frame not in routes:
+            raise ValueError(f"missing contact route for frame {frame}")
+        raw = routes[frame]
+        if not isinstance(raw, dict):
+            raise ValueError(f"contact route for {frame} must be an object")
+        route = dict(raw)
+    else:
+        route = {
+            "source": f"{frame}-keyed.png",
+            "reference": f"{config['referenceRoot']}/{frame}.png",
+            "runtime": str(config["runtimeTemplate"]).format(frame=frame),
+        }
+    for field in ("source", "reference", "runtime"):
+        value = route.get(field)
+        if not isinstance(value, str) or not value or Path(value).is_absolute():
+            raise ValueError(f"invalid {field} route for contact frame {frame}")
+        if Path(value).suffix.lower() != ".png":
+            raise ValueError(f"contact {field} route must be a PNG: {value}")
+    threshold = int(route.get("bboxAlphaThreshold", config.get("bboxAlphaThreshold", 8)))
+    if not 1 <= threshold <= 255:
+        raise ValueError(f"invalid bbox alpha threshold for {frame}: {threshold}")
+    route["bboxAlphaThreshold"] = threshold
+    return route
+
+
+def source_path(source_dir: Path, relative: str) -> Path:
+    path = inside_factory(source_dir / relative)
+    try:
+        path.relative_to(source_dir.resolve())
+    except ValueError as error:
+        raise ValueError(f"contact source escapes approval batch: {relative}") from error
+    return path
+
+
 def reference_path(config: dict[str, object], frame: str) -> Path:
-    root = repo_read_path(str(config["referenceRoot"]))
-    return root / f"{frame}.png"
+    return repo_read_path(str(frame_route(config, frame)["reference"]))
 
 
 def extract_contact(
     source: Image.Image,
     *,
     preserve_magenta_subject: bool,
+    bbox_alpha_threshold: int = 8,
 ) -> tuple[Image.Image, tuple[int, int, int, int]]:
     extracted = remove_magenta_key(
         source,
         preserve_magenta_subject=preserve_magenta_subject,
     )
-    bbox = alpha_bbox(extracted)
+    bbox = alpha_bbox_at(extracted, bbox_alpha_threshold)
     return extracted.crop(bbox), bbox
 
 
@@ -93,6 +180,7 @@ def resize_clean(
     size: tuple[int, int],
     *,
     preserve_magenta_subject: bool,
+    bbox_alpha_threshold: int = 8,
 ) -> Image.Image:
     resized = content.resize(size, Image.Resampling.LANCZOS)
     resized = (
@@ -100,7 +188,7 @@ def resize_clean(
         if preserve_magenta_subject
         else clean_resampled_magenta_fringe(resized)
     )
-    return resized.crop(alpha_bbox(resized))
+    return resized.crop(alpha_bbox_at(resized, bbox_alpha_threshold))
 
 
 def fit_scale(content: Image.Image, max_size: tuple[int, int]) -> float:
@@ -111,15 +199,26 @@ def normalize_contact(
     source: Image.Image,
     reference: Image.Image,
     config: dict[str, object],
+    *,
+    bbox_alpha_threshold: int | None = None,
 ) -> tuple[Image.Image, dict[str, object]]:
     canvas = tuple(int(value) for value in config["canvas"])
     if len(canvas) != 2:
         raise ValueError("contact canvas must have two dimensions")
     if reference.size != canvas:
         raise ValueError(f"reference must be {canvas}, got {reference.size}")
-    reference_bbox = alpha_bbox(reference.convert("RGBA"))
+    threshold = int(
+        config.get("bboxAlphaThreshold", 8)
+        if bbox_alpha_threshold is None
+        else bbox_alpha_threshold
+    )
+    reference_bbox = alpha_bbox_at(reference.convert("RGBA"), threshold)
     preserve = bool(config.get("preserveMagentaSubject"))
-    content, source_bbox = extract_contact(source, preserve_magenta_subject=preserve)
+    content, source_bbox = extract_contact(
+        source,
+        preserve_magenta_subject=preserve,
+        bbox_alpha_threshold=threshold,
+    )
     pad = int(config.get("contentPad", 16))
     strategy = str(config["normalization"])
 
@@ -142,6 +241,7 @@ def normalize_contact(
             content,
             target,
             preserve_magenta_subject=preserve,
+            bbox_alpha_threshold=threshold,
         )
         reference_center_x = (reference_bbox[0] + reference_bbox[2]) / 2
         left = round(reference_center_x - content.width / 2)
@@ -161,6 +261,7 @@ def normalize_contact(
             content,
             target,
             preserve_magenta_subject=preserve,
+            bbox_alpha_threshold=threshold,
         )
         reference_center = (
             (reference_bbox[0] + reference_bbox[2]) / 2,
@@ -175,7 +276,7 @@ def normalize_contact(
 
     stage = Image.new("RGBA", canvas, (0, 0, 0, 0))
     stage.alpha_composite(content, (left, top))
-    final_bbox = alpha_bbox(stage)
+    final_bbox = alpha_bbox_at(stage, threshold)
     if config.get("groundY") is not None and final_bbox[3] != int(config["groundY"]):
         raise RuntimeError(f"contact frame missed ground line: {final_bbox}")
     return stage, {
@@ -184,6 +285,7 @@ def normalize_contact(
         "referenceBbox": list(reference_bbox),
         "canvas": list(stage.size),
         "bbox": list(final_bbox),
+        "bboxAlphaThreshold": threshold,
         "scale": round(scale, 7),
         "normalization": strategy,
     }
@@ -243,8 +345,24 @@ def main() -> None:
         raise SystemExit(str(error)) from error
     source_dir = inside_factory(SOURCE_ROOT / batch)
     output_dir = inside_factory(OUTPUT_ROOT / batch)
-    sources = {frame: inside_factory(source_dir / f"{frame}-keyed.png") for frame in frames}
-    references = {frame: reference_path(config, frame) for frame in frames}
+    try:
+        routes = {frame: frame_route(config, frame) for frame in frames}
+        sources = {
+            frame: source_path(source_dir, str(routes[frame]["source"]))
+            for frame in frames
+        }
+        references = {
+            frame: repo_read_path(str(routes[frame]["reference"]))
+            for frame in frames
+        }
+        runtime_routes = {
+            frame: str(
+                repo_runtime_path(str(routes[frame]["runtime"])).relative_to(REPO_ROOT)
+            )
+            for frame in frames
+        }
+    except ValueError as error:
+        raise SystemExit(f"invalid contact route; nothing was written: {error}") from error
     missing_sources = [str(path.relative_to(ROOT)) for path in sources.values() if not path.is_file()]
     missing_references = [str(path.relative_to(REPO_ROOT)) for path in references.values() if not path.is_file()]
     if missing_sources or missing_references:
@@ -271,10 +389,13 @@ def main() -> None:
         reference_images[frame] = reference
         source_facts[frame] = {
             "source": str(sources[frame].relative_to(ROOT)),
+            "sourceRoute": str(routes[frame]["source"]),
             "sourceSha256": sha256(sources[frame]),
             "keyedBorderRatio": round(ratio, 6),
             "reference": str(references[frame].relative_to(REPO_ROOT)),
             "referenceSha256": sha256(references[frame]),
+            "runtime": runtime_routes[frame],
+            "bboxAlphaThreshold": int(routes[frame]["bboxAlphaThreshold"]),
         }
 
     expected = [output_dir / f"{frame}.png" for frame in frames]
@@ -286,7 +407,12 @@ def main() -> None:
     normalized: dict[str, Image.Image] = {}
     reports: dict[str, dict[str, object]] = {}
     for frame in frames:
-        stage, facts = normalize_contact(opened[frame], reference_images[frame], config)
+        stage, facts = normalize_contact(
+            opened[frame],
+            reference_images[frame],
+            config,
+            bbox_alpha_threshold=int(routes[frame]["bboxAlphaThreshold"]),
+        )
         normalized[frame] = stage
         reports[frame] = {**source_facts[frame], **facts}
 
@@ -309,7 +435,10 @@ def main() -> None:
         "normalization": config["normalization"],
         "familyFrames": list(manifest_frames),
         "requiredFrames": list(frames),
-        "runtimeTemplate": config["runtimeTemplate"],
+        "runtimeTemplate": config.get("runtimeTemplate"),
+        "runtimeRoutes": runtime_routes,
+        "geometry": config.get("geometry", {}),
+        "continuityGroups": config.get("continuityGroups", {}),
         "assets": {frame: f"{frame}.png" for frame in frames},
         "frames": reports,
         "qa": {

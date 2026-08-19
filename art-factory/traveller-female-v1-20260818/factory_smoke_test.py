@@ -9,6 +9,7 @@ from PIL import Image, ImageDraw
 
 import build_contact_pack as contacts
 import build_core_pack as core
+import contact_qa as contact_quality
 
 
 def test_approved_identity_pin() -> None:
@@ -142,6 +143,151 @@ def test_contact_profiles() -> None:
     assert opaque_purple > 10_000, "semantic Shadow purple was removed"
 
 
+def test_contact_family_routes() -> None:
+    families = contacts.load_families()
+    assert set(families) == {"gamabunta", "recovery", "resources", "shadow"}
+    assert contacts.frame_route(families["gamabunta"], "pushup-up")["runtime"] == (
+        "public/art/pets/body-toad-v1/pair-v4/female/pushup-up.png"
+    )
+    assert contacts.frame_route(families["shadow"], "attune-keeper")["reference"] == (
+        "public/art/companions/shadow-den-v1/pair-v1/attune-keeper.png"
+    )
+    recovery = families["recovery"]
+    assert tuple(recovery["frames"]) == (
+        "greet-contact",
+        "breathe-in",
+        "breathe-out",
+        "restore-contact",
+        "stretch-a",
+        "stretch-soft-b",
+    )
+    soft = contacts.frame_route(recovery, "stretch-soft-b")
+    assert soft == {
+        "source": "stretch-soft-b-keyed.png",
+        "reference": "public/art/pets/recovery-slug-v1/pair-v3/stretch-soft-b-v155.png",
+        "runtime": "public/art/pets/recovery-slug-v1/pair-v3/female/stretch-soft-b-v155.png",
+        "bboxAlphaThreshold": 32,
+    }
+    assert "pair-v2/stretch-b.png" not in json.dumps(recovery)
+    resources = families["resources"]
+    assert len(resources["frames"]) == 12
+    route = contacts.frame_route(resources, "close-stamp")
+    assert route["source"] == "close-stamp-keyed.png"
+    assert route["reference"] == (
+        "public/art/pets/resources-penguin-v1/pair-v1/close-stamp.png"
+    )
+    assert route["runtime"] == (
+        "public/art/pets/resources-penguin-v1/pair-v1/female/close-stamp.png"
+    )
+    assert contacts.selected_frames(
+        "stretch-soft-b,breathe-in", tuple(recovery["frames"])
+    ) == ("stretch-soft-b", "breathe-in")
+
+
+def test_contact_reference_geometry_contract() -> None:
+    families = contacts.load_families()
+    recovery = families["recovery"]
+    expected_recovery = {
+        "greet-contact": (44, 296, 1492, 1360),
+        "breathe-in": (30, 215, 1510, 1333),
+        "breathe-out": (32, 359, 1485, 1362),
+        "restore-contact": (40, 377, 1508, 1356),
+        "stretch-a": (64, 402, 1488, 1297),
+        "stretch-soft-b": (24, 394, 1515, 1304),
+    }
+    for frame, expected_bbox in expected_recovery.items():
+        with Image.open(contacts.reference_path(recovery, frame)) as image:
+            assert contacts.alpha_bbox_at(image.convert("RGBA"), 32) == expected_bbox
+    with Image.open(contacts.reference_path(recovery, "breathe-out")) as image:
+        assert contacts.alpha_bbox_at(image.convert("RGBA"), 8) == (5, 2, 1534, 1534)
+
+    resources = families["resources"]
+    for frame in resources["frames"]:
+        with Image.open(contacts.reference_path(resources, frame)) as image:
+            assert contacts.alpha_bbox_at(image.convert("RGBA"), 8)[3] == 1470
+
+
+def test_recovery_threshold_reference_bbox() -> None:
+    recovery = contacts.load_families()["recovery"]
+    source = keyed_canvas((900, 900))
+    source_draw = ImageDraw.Draw(source)
+    source_draw.rectangle((94, 244, 815, 755), fill=(90, 100, 105, 12))
+    source_draw.rectangle((100, 250, 809, 749), fill=(20, 125, 135, 255))
+    recovery_reference = Image.new("RGBA", (1536, 1536), (0, 0, 0, 0))
+    reference_draw = ImageDraw.Draw(recovery_reference)
+    reference_draw.rectangle((2, 2, 1533, 1533), fill=(90, 100, 105, 12))
+    reference_draw.rectangle((200, 400, 1335, 1199), fill=(20, 125, 135, 255))
+    stage, report = contacts.normalize_contact(
+        source,
+        recovery_reference,
+        recovery,
+        bbox_alpha_threshold=32,
+    )
+    assert stage.size == (1536, 1536)
+    assert report["bboxAlphaThreshold"] == 32
+    assert report["referenceBbox"] == [200, 400, 1336, 1200]
+    assert report["bbox"] == [200, 400, 1336, 1200]
+    raw_bbox = contacts.alpha_bbox_at(recovery_reference, 8)
+    assert raw_bbox == (2, 2, 1534, 1534), "test fixture lost its faint matte"
+
+
+def test_resources_grounded_normalization() -> None:
+    resources = contacts.load_families()["resources"]
+    source = keyed_canvas((900, 900))
+    ImageDraw.Draw(source).rectangle((150, 180, 749, 779), fill=(20, 125, 135, 255))
+    resource_reference = reference(
+        (1536, 1536),
+        (320, 570, 1220, 1470),
+        (20, 125, 135, 255),
+    )
+    stage, report = contacts.normalize_contact(source, resource_reference, resources)
+    assert stage.size == (1536, 1536)
+    assert report["bbox"][3] == 1470
+    assert report["referenceBbox"] == [320, 570, 1220, 1470]
+
+
+def test_contact_continuity_contract() -> None:
+    geometry = contact_quality.geometry_contract({})
+    stable = {
+        "a": {
+            "widthRatioToReference": 0.99,
+            "heightRatioToReference": 1.0,
+            "centerOffsetPx": [0.0, 0.0],
+        },
+        "b": {
+            "widthRatioToReference": 1.01,
+            "heightRatioToReference": 0.98,
+            "centerOffsetPx": [1.0, 2.0],
+        },
+    }
+    result = contact_quality.evaluate_continuity(
+        stable,
+        {"motion": ["a", "b"]},
+        grounded=False,
+        geometry=geometry,
+    )
+    assert result["passed"] is True
+    assert result["groups"]["motion"]["evaluated"] is True
+    drift = {name: dict(facts) for name, facts in stable.items()}
+    drift["b"] = dict(drift["b"], widthRatioToReference=1.12)
+    result = contact_quality.evaluate_continuity(
+        drift,
+        {"motion": ["a", "b"]},
+        grounded=False,
+        geometry=geometry,
+    )
+    assert result["passed"] is False
+    partial = contact_quality.evaluate_continuity(
+        {"a": stable["a"]},
+        {"motion": ["a", "b"]},
+        grounded=False,
+        geometry=geometry,
+    )
+    assert partial["passed"] is True
+    assert partial["groups"]["motion"]["evaluated"] is False
+    assert partial["groups"]["motion"]["status"] == "partial-selection"
+
+
 def test_shadow_connected_matte_regression() -> None:
     source = Image.new("RGBA", (180, 180), (0, 0, 0, 0))
     pixels = source.load()
@@ -177,6 +323,11 @@ def main() -> None:
     test_core_key_and_profiles()
     test_blink()
     test_contact_profiles()
+    test_contact_family_routes()
+    test_contact_reference_geometry_contract()
+    test_recovery_threshold_reference_bbox()
+    test_resources_grounded_normalization()
+    test_contact_continuity_contract()
     test_shadow_connected_matte_regression()
     print(json.dumps({"factorySmoke": "PASS", "publicWrites": False}, indent=2))
 

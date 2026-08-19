@@ -100,7 +100,7 @@ test('the RU tone-gate review is an exact mirror of centralized runtime copy', (
 });
 
 test('v163 offline shell pins all Guide runtime scripts', () => {
-  sourceMatches(SW, /const CACHE = 'satoru-v165';/);
+  sourceMatches(SW, /const CACHE = 'satoru-v167';/);
   for (const file of ['guide-v3.js', COPY_FILE, 'guide-presenter-v1.js', 'guide-surface-v1.js']) {
     assert.ok(file, 'Guide runtime file must be discoverable before checking SHELL');
     assert.ok(SW.includes(`'${file}'`) || SW.includes(`"${file}"`), `${file} must be pinned in SHELL`);

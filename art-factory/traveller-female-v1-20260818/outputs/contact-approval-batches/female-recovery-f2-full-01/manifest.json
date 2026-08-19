@@ -1,0 +1,310 @@
+{
+  "schema": "satoru.traveller-female-contact-approval-batch/1",
+  "id": "female-recovery-f2-full-01",
+  "family": "recovery",
+  "morphology": "female",
+  "status": "awaiting-manual-contact-approval",
+  "runtimeEligible": false,
+  "publicArtWrites": false,
+  "approvedIdentity": {
+    "id": "female-f2-high-ponytail",
+    "path": "sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png",
+    "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+    "status": "identity-approved/runtime-not-yet"
+  },
+  "canvas": [
+    1536,
+    1536
+  ],
+  "groundY": null,
+  "key": "#FF00FF",
+  "preserveMagentaSubject": false,
+  "normalization": "reference-bbox-fit",
+  "familyFrames": [
+    "greet-contact",
+    "breathe-in",
+    "breathe-out",
+    "restore-contact",
+    "stretch-a",
+    "stretch-soft-b"
+  ],
+  "requiredFrames": [
+    "greet-contact",
+    "breathe-in",
+    "breathe-out",
+    "restore-contact",
+    "stretch-a",
+    "stretch-soft-b"
+  ],
+  "runtimeTemplate": null,
+  "runtimeRoutes": {
+    "greet-contact": "public/art/pets/recovery-slug-v1/pair-v2/female/greet-contact.png",
+    "breathe-in": "public/art/pets/recovery-slug-v1/pair-v2/female/breathe-in.png",
+    "breathe-out": "public/art/pets/recovery-slug-v1/pair-v2/female/breathe-out.png",
+    "restore-contact": "public/art/pets/recovery-slug-v1/pair-v2/female/restore-contact.png",
+    "stretch-a": "public/art/pets/recovery-slug-v1/pair-v2/female/stretch-a.png",
+    "stretch-soft-b": "public/art/pets/recovery-slug-v1/pair-v3/female/stretch-soft-b-v155.png"
+  },
+  "geometry": {
+    "minWidthRatio": 0.9,
+    "maxWidthRatio": 1.1,
+    "minHeightRatio": 0.9,
+    "maxHeightRatio": 1.1,
+    "maxCenterDeltaPx": 4,
+    "maxCenterXDeltaPx": 4,
+    "maxContinuityRatioSpread": 0.08,
+    "maxContinuityCenterSpreadPx": 4
+  },
+  "continuityGroups": {
+    "breathe": [
+      "breathe-in",
+      "breathe-out"
+    ],
+    "stretch": [
+      "stretch-a",
+      "stretch-soft-b"
+    ]
+  },
+  "assets": {
+    "greet-contact": "greet-contact.png",
+    "breathe-in": "breathe-in.png",
+    "breathe-out": "breathe-out.png",
+    "restore-contact": "restore-contact.png",
+    "stretch-a": "stretch-a.png",
+    "stretch-soft-b": "stretch-soft-b.png"
+  },
+  "frames": {
+    "greet-contact": {
+      "source": "sources/approval-batches/female-recovery-f2-full-01/greet-contact-keyed.png",
+      "sourceRoute": "greet-contact-keyed.png",
+      "sourceSha256": "b802dc41479a95211cdca45835cfae5576cf05aadbd5d46a04ceeeb356eef3c3",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/greet-contact.png",
+      "referenceSha256": "84ee49e183523ad5618a49b61ce3ede5a6db3d9ba780cd9161f1d680858ca108",
+      "runtime": "public/art/pets/recovery-slug-v1/pair-v2/female/greet-contact.png",
+      "bboxAlphaThreshold": 32,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        37,
+        208,
+        1180,
+        1111
+      ],
+      "referenceBbox": [
+        44,
+        296,
+        1492,
+        1360
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        94,
+        296,
+        1441,
+        1359
+      ],
+      "scale": 1.1782946,
+      "normalization": "reference-bbox-fit"
+    },
+    "breathe-in": {
+      "source": "sources/approval-batches/female-recovery-f2-full-01/breathe-in-keyed.png",
+      "sourceRoute": "breathe-in-keyed.png",
+      "sourceSha256": "28c37b62effe4d152d81dd676ed09cfa021f18a43cd8260eb9b9054e8107c425",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/breathe-in.png",
+      "referenceSha256": "d24f86344072a80aa89a0a3a39dbfa4abf6a7b119fc926e31b3984c11b3386e1",
+      "runtime": "public/art/pets/recovery-slug-v1/pair-v2/female/breathe-in.png",
+      "bboxAlphaThreshold": 32,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        24,
+        196,
+        1232,
+        1082
+      ],
+      "referenceBbox": [
+        30,
+        215,
+        1510,
+        1333
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        30,
+        232,
+        1510,
+        1317
+      ],
+      "scale": 1.2251656,
+      "normalization": "reference-bbox-fit"
+    },
+    "breathe-out": {
+      "source": "sources/approval-batches/female-recovery-f2-full-01/breathe-out-keyed.png",
+      "sourceRoute": "breathe-out-keyed.png",
+      "sourceSha256": "1db2c6a2d0823acafdae6102e98912d72636427801e76b627449ad22d8279c47",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/breathe-out.png",
+      "referenceSha256": "279ed20a08efb17fe946fdaf05d54ecb24aa26097957dea3e4716307d72c7603",
+      "runtime": "public/art/pets/recovery-slug-v1/pair-v2/female/breathe-out.png",
+      "bboxAlphaThreshold": 32,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        27,
+        266,
+        1218,
+        1091
+      ],
+      "referenceBbox": [
+        32,
+        359,
+        1485,
+        1362
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        35,
+        359,
+        1482,
+        1362
+      ],
+      "scale": 1.2157576,
+      "normalization": "reference-bbox-fit"
+    },
+    "restore-contact": {
+      "source": "sources/approval-batches/female-recovery-f2-full-01/restore-contact-keyed.png",
+      "sourceRoute": "restore-contact-keyed.png",
+      "sourceSha256": "b5ba2af4a42de81f4d4e22c27c391814b681dc93546bf9ad3ef3211b1d9e54d8",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/restore-contact.png",
+      "referenceSha256": "12909454c6f55d0b4b54263df4a2b1de8291be1fc861add5fae921cb35f1d525",
+      "runtime": "public/art/pets/recovery-slug-v1/pair-v2/female/restore-contact.png",
+      "bboxAlphaThreshold": 32,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        31,
+        247,
+        1224,
+        1079
+      ],
+      "referenceBbox": [
+        40,
+        377,
+        1508,
+        1356
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        72,
+        377,
+        1476,
+        1356
+      ],
+      "scale": 1.1766827,
+      "normalization": "reference-bbox-fit"
+    },
+    "stretch-a": {
+      "source": "sources/approval-batches/female-recovery-f2-full-01/stretch-a-keyed.png",
+      "sourceRoute": "stretch-a-keyed.png",
+      "sourceSha256": "7440ca5774dc69ce28ea998a089c150a0d8f22022b5c210ec0d819236981cde8",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/recovery-slug-v1/pair-v2/stretch-a.png",
+      "referenceSha256": "a07c5bb1fdff0b9c1506354f295fdcf6bfd32171d4534d8d04963f3c3260d2ab",
+      "runtime": "public/art/pets/recovery-slug-v1/pair-v2/female/stretch-a.png",
+      "bboxAlphaThreshold": 32,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        44,
+        298,
+        1218,
+        1051
+      ],
+      "referenceBbox": [
+        64,
+        402,
+        1488,
+        1297
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        78,
+        402,
+        1473,
+        1297
+      ],
+      "scale": 1.188579,
+      "normalization": "reference-bbox-fit"
+    },
+    "stretch-soft-b": {
+      "source": "sources/approval-batches/female-recovery-f2-full-01/stretch-soft-b-keyed.png",
+      "sourceRoute": "stretch-soft-b-keyed.png",
+      "sourceSha256": "868e1a72832db2e90d155c780c71ccce9b86e12f8a1bc21df27bec399f31f780",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/recovery-slug-v1/pair-v3/stretch-soft-b-v155.png",
+      "referenceSha256": "4e8d698c8a1d24fa35334e21eda161bd2a81fa3f141c8fb944b9a6e8c675608d",
+      "runtime": "public/art/pets/recovery-slug-v1/pair-v3/female/stretch-soft-b-v155.png",
+      "bboxAlphaThreshold": 32,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        22,
+        302,
+        1223,
+        1051
+      ],
+      "referenceBbox": [
+        24,
+        394,
+        1515,
+        1304
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        40,
+        394,
+        1499,
+        1303
+      ],
+      "scale": 1.2149533,
+      "normalization": "reference-bbox-fit"
+    }
+  },
+  "qa": {
+    "required": true,
+    "command": "python3 art-factory/traveller-female-v1-20260818/contact_qa.py --batch female-recovery-f2-full-01"
+  }
+}

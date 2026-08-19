@@ -1,0 +1,387 @@
+{
+  "schema": "satoru.traveller-runtime-asset-manifest/1",
+  "id": "female-f2-high-ponytail",
+  "revision": "f2-v1",
+  "identitySha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+  "status": "runtime-approved",
+  "runtimeEligible": true,
+  "capabilities": {
+    "core": true,
+    "motion": true,
+    "room": true,
+    "bodyToad": true,
+    "recoverySlug": true,
+    "resourcesPenguin": true,
+    "shadow": true
+  },
+  "assets": [
+    {
+      "path": "/art/avatars/traveller-core-v1/female/f2-v1/poses/idle.png",
+      "sha256": "fadc3c72e5ca515584aa46dd4028dff1b0371566990f4912a262cc7b90d40298",
+      "canvas": [
+        640,
+        900
+      ]
+    },
+    {
+      "path": "/art/avatars/traveller-core-v1/female/f2-v1/poses/arms-up.png",
+      "sha256": "48818b57b9964ce0694a64e30dc4c17282f040dd2d1cc77d7b59647b1a163cdf",
+      "canvas": [
+        640,
+        900
+      ]
+    },
+    {
+      "path": "/art/avatars/traveller-core-v1/female/f2-v1/poses/seated.png",
+      "sha256": "e3abe90c47db535c7363ce9b03275cf4ea17f0081e75256be7e7830165ce6464",
+      "canvas": [
+        640,
+        900
+      ]
+    },
+    {
+      "path": "/art/avatars/traveller-core-v1/female/f2-v1/poses/window-back.png",
+      "sha256": "4e9609aa5401a5076eae37ca886ec7972816e38544259c209f1c21ca927be96f",
+      "canvas": [
+        640,
+        900
+      ]
+    },
+    {
+      "path": "/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/idle-blink.png",
+      "sha256": "afbe591998555c91e905347d6d99dd7f13c0aa2b139192cc93ff035b7609f14d",
+      "canvas": [
+        640,
+        900
+      ]
+    },
+    {
+      "path": "/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/walk-a.png",
+      "sha256": "3298d693d088fe1cc912d5beb9e5c2f756977b76f927fee22c353d47f78eed2a",
+      "canvas": [
+        640,
+        900
+      ]
+    },
+    {
+      "path": "/art/avatars/traveller-core-v1/female/f2-v1/motion-v3/walk-b.png",
+      "sha256": "1296f1a0ad73f304f5afa02f35c422862951168d38d9ce107e749e7d8ebb8f44",
+      "canvas": [
+        640,
+        900
+      ]
+    },
+    {
+      "path": "/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-rest.png",
+      "sha256": "d20bc617517769f4d30b4391cb4059d93c226782928c5f3930fac095548563a9",
+      "canvas": [
+        640,
+        900
+      ]
+    },
+    {
+      "path": "/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-read-a.png",
+      "sha256": "50a55ee1170f32c5ad7877f65934447c32c79d06b3f07ee869f5115864809c06",
+      "canvas": [
+        640,
+        900
+      ]
+    },
+    {
+      "path": "/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-read-b.png",
+      "sha256": "f69cca0b4c7881d81d4913d2f684253d9c3a53f2ae0625ca38906f3c7ebb9f46",
+      "canvas": [
+        640,
+        900
+      ]
+    },
+    {
+      "path": "/art/avatars/traveller-core-v1/female/f2-v1/room-actions-v4/bench-portal-reach.png",
+      "sha256": "4bc19be71e9d0d23e702e9c3236f121ed8a06ba3c60811b875f893c97a5871ff",
+      "canvas": [
+        640,
+        900
+      ]
+    },
+    {
+      "path": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/greet-contact.png",
+      "sha256": "1940daf846b3c4904fc5fc244154bb5442462046715088cd452e49df0a7d1f23",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/train-low.png",
+      "sha256": "59edaad5e442d7d9043b695e613e0f83e9cdad2c24ac94c04c1e0f9097f31727",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/train-high.png",
+      "sha256": "6ef99024273c81f4a6bccbf324fa20192e8675ee7b126e58e6a56254ce9e946e",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-a.png",
+      "sha256": "91167e033c72ecc9a385e73d901f88010a0b3c1f84f1f31365359a4bb040c86f",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-b.png",
+      "sha256": "1407c75f1d8249b6dd5d07f23b516bbde8232aaad696a11aabca549bf8229689",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-c.png",
+      "sha256": "94272f78a9ae34a22e41524ab23a869ac8c8826acb3013eaf306691cb282fb00",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/whistle-d.png",
+      "sha256": "3c3664928cff746b1b438756e5df94ef7e20bec2cd6fca352d849ba890b987ec",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/pushup-down.png",
+      "sha256": "5e4d902eed3ab681c75ef560746cbd187316e8bdef8d41f9dd73e3cb9a538443",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/pushup-up.png",
+      "sha256": "b58ae7f3a3edb03501ae8f6309cf2374a4a432404f786e3ba5343347cc718f34",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/stretch-a.png",
+      "sha256": "439760a22ee7dfe54b5d4d2add9f5293b2d28dcac41c8b8a6d0d8ec6e1c7116a",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/stretch-b.png",
+      "sha256": "a6cd0d9694c0cd89b41bbef365b6d0e6afa9c2602c67b2e41628d95a4b0aef01",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/rest-contact.png",
+      "sha256": "e10f384888369dbbb01b0a859679030a410a4e8d6653a52cd0118370f0abaa58",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/body-toad-v1/pair-v4/female/f2-v1/rest-pet.png",
+      "sha256": "f599dec7c149bd90d3ef10263bb5f514e7edad2b67a3fba565716020e25a5214",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/greet-contact.png",
+      "sha256": "eaa0d2f7783656e602379e8aa63d75424517e25004fdb8af5bf5be40ddbb9e0c",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/breathe-in.png",
+      "sha256": "294b4384d5f6c5a8ce9f41b2a34d9b20fa397efad2388683338b09dcd9e8daf0",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/breathe-out.png",
+      "sha256": "c72d6fb404ae7db38eb795e3ef087ff25e0b5a0aab9c036afc11fd53db58f665",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/restore-contact.png",
+      "sha256": "3e654f46ed742c3f17e0af877fded63fcbbca1f25a36fe22e0312a36498d2e6a",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/stretch-a.png",
+      "sha256": "ddeec5dbae5b7ac81d100f45e487f1f8d023c0cae959d8d0ec9b12f343645f4b",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/recovery-slug-v1/pair-v3/female/f2-v1/stretch-soft-b-v155.png",
+      "sha256": "33633927fa725ce723771b356fb58555a86b99a707381f20b9d92d7418619d3b",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/greet-contact.png",
+      "sha256": "aebfe5c1af55b1643458ff4dd5d2e33c4ecc1a189fd6a8e6deb0bd2050f06d04",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/budget-point.png",
+      "sha256": "714b3a6466fc47dd207e75ada5422ae985ae5f5df42a716d5132c39b443cd546",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/budget-reserve.png",
+      "sha256": "d526baef6508a8e74321e3dddb770186d0e60fa1900157b080e432efcb648ffb",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/count-pass.png",
+      "sha256": "21c52e15a05a36bdac8e982a3b66741883cb336fd1e505af005df15fcdd37cd9",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/count-place.png",
+      "sha256": "923d1661091042008eebed58a93958fdaf87c5303f0da6223957748e57a44d24",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/count-stack.png",
+      "sha256": "3ae5615c96b9dc106b4368e83e6d9b36c2c1492119d43eb06240af5186c393c3",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/reserve-offer.png",
+      "sha256": "159cce1cc2e1090d65b5e37bb520d63e0a47f79de1c46ad9a16e938eec823fcb",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/reserve-accept.png",
+      "sha256": "2ee4de86b4aaa13c8d7f2adcd878008c9872ed03ac72ed144a614f42e60b2b6a",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/focus-work.png",
+      "sha256": "17250d38431551b65eb59490f1890f5e77e871c522303d8f61b05c34edf56991",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/focus-check.png",
+      "sha256": "1c009d4868256137183e0ca1e9366e800205c8b643b04f9086f3344b2abd3f50",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/focus-nod.png",
+      "sha256": "a23473478ff3d6b4624561fc81f56651f29caae62fc7dafa7b7da3084c4eb696",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/pets/resources-penguin-v1/pair-v1/female/f2-v1/close-stamp.png",
+      "sha256": "2aa2730bb3d1f6cf3af6ede2b2d82dec84ba21b7e7b0776440ca78f02de1632c",
+      "canvas": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "path": "/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-spark.png",
+      "sha256": "b0e628b8caac274f46da0d651c8dd44dbc726a6a615de62195648593b3101c54",
+      "canvas": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "path": "/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-spirit.png",
+      "sha256": "33c422b3894aa2e719ab8a21de12e837d257cf07dd595da2480e9d6b56c4843d",
+      "canvas": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "path": "/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-guardian.png",
+      "sha256": "bc8614f2fdbbfcfd91a35ee9caebd08e715f2e3ee42a21d86b9dc368a900e47e",
+      "canvas": [
+        1254,
+        1254
+      ]
+    },
+    {
+      "path": "/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-keeper.png",
+      "sha256": "39e3262c5a5ec3f619dd4dea129da14e9ab8ae582bfa95bb94e357c25acfe551",
+      "canvas": [
+        1254,
+        1254
+      ]
+    }
+  ]
+}

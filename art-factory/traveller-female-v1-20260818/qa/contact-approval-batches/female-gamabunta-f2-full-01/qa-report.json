@@ -1,0 +1,786 @@
+{
+  "schema": "satoru.traveller-female-contact-qa/1",
+  "batch": "female-gamabunta-f2-full-01",
+  "family": "gamabunta",
+  "canvas": [
+    1536,
+    1536
+  ],
+  "groundY": 1470,
+  "geometry": {
+    "minWidthRatio": 0.9,
+    "maxWidthRatio": 1.1,
+    "minHeightRatio": 0.9,
+    "maxHeightRatio": 1.1,
+    "maxCenterDeltaPx": 4.0,
+    "maxCenterXDeltaPx": 4.0,
+    "maxContinuityRatioSpread": 0.08,
+    "maxContinuityCenterSpreadPx": 4.0
+  },
+  "automatedContractPassed": true,
+  "manualContactApprovalRequired": true,
+  "runtimeEligible": false,
+  "frames": {
+    "greet-contact": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/greet-contact.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/greet-contact.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        163,
+        740,
+        1372,
+        1470
+      ],
+      "referenceBbox": [
+        158,
+        740,
+        1377,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.0
+      ],
+      "widthRatioToReference": 0.991797,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 513894,
+      "transparentPixels": 1840239,
+      "partialAlphaPixels": 30927,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "train-low": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/train-low.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/train-low.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        154,
+        541,
+        1481,
+        1470
+      ],
+      "referenceBbox": [
+        154,
+        539,
+        1481,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 1.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        1.0
+      ],
+      "widthRatioToReference": 1.0,
+      "heightRatioToReference": 0.997852,
+      "visiblePixels": 695018,
+      "transparentPixels": 1655488,
+      "partialAlphaPixels": 49969,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "train-high": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/train-high.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/train-high.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        166,
+        226,
+        1410,
+        1470
+      ],
+      "referenceBbox": [
+        153,
+        226,
+        1423,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.0
+      ],
+      "widthRatioToReference": 0.979528,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 726988,
+      "transparentPixels": 1622073,
+      "partialAlphaPixels": 36449,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "whistle-a": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/whistle-a.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-a.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        196,
+        511,
+        1341,
+        1470
+      ],
+      "referenceBbox": [
+        159,
+        511,
+        1379,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.5,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        -0.5,
+        0.0
+      ],
+      "widthRatioToReference": 0.938525,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 533662,
+      "transparentPixels": 1818384,
+      "partialAlphaPixels": 37579,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 1,
+      "technicalKeyRatio": 1.87e-06,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "whistle-b": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/whistle-b.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-b.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        194,
+        513,
+        1342,
+        1470
+      ],
+      "referenceBbox": [
+        161,
+        511,
+        1374,
+        1468
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 2.0616,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        0.5,
+        2.0
+      ],
+      "widthRatioToReference": 0.946414,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 530681,
+      "transparentPixels": 1821125,
+      "partialAlphaPixels": 38295,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "whistle-c": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/whistle-c.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-c.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        208,
+        526,
+        1329,
+        1470
+      ],
+      "referenceBbox": [
+        157,
+        524,
+        1379,
+        1468
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 2.0616,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        0.5,
+        2.0
+      ],
+      "widthRatioToReference": 0.917349,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 415452,
+      "transparentPixels": 1936979,
+      "partialAlphaPixels": 30058,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 1,
+      "technicalKeyRatio": 2.41e-06,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "whistle-d": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/whistle-d.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/whistle-d.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        206,
+        564,
+        1329,
+        1470
+      ],
+      "referenceBbox": [
+        157,
+        563,
+        1379,
+        1469
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 1.118,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        -0.5,
+        1.0
+      ],
+      "widthRatioToReference": 0.918985,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 359333,
+      "transparentPixels": 1993806,
+      "partialAlphaPixels": 26412,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "pushup-down": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/pushup-down.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/pushup-down.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        85,
+        869,
+        1459,
+        1470
+      ],
+      "referenceBbox": [
+        17,
+        868,
+        1527,
+        1469
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 1.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        1.0
+      ],
+      "widthRatioToReference": 0.909934,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 420940,
+      "transparentPixels": 1933389,
+      "partialAlphaPixels": 42207,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "pushup-up": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/pushup-up.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/pushup-up.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        72,
+        825,
+        1472,
+        1470
+      ],
+      "referenceBbox": [
+        17,
+        824,
+        1526,
+        1469
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 1.118,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        0.5,
+        1.0
+      ],
+      "widthRatioToReference": 0.927767,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 447442,
+      "transparentPixels": 1905843,
+      "partialAlphaPixels": 21099,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "stretch-a": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/stretch-a.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/stretch-a.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        260,
+        699,
+        1278,
+        1470
+      ],
+      "referenceBbox": [
+        250,
+        697,
+        1288,
+        1468
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 2.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        2.0
+      ],
+      "widthRatioToReference": 0.980732,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 367192,
+      "transparentPixels": 1988798,
+      "partialAlphaPixels": 22010,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "stretch-b": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/stretch-b.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/stretch-b.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        254,
+        737,
+        1282,
+        1470
+      ],
+      "referenceBbox": [
+        250,
+        735,
+        1285,
+        1468
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 2.0616,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        0.5,
+        2.0
+      ],
+      "widthRatioToReference": 0.993237,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 349088,
+      "transparentPixels": 2006700,
+      "partialAlphaPixels": 21355,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "rest-contact": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/rest-contact.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/rest-contact.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        204,
+        642,
+        1331,
+        1470
+      ],
+      "referenceBbox": [
+        144,
+        642,
+        1391,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.0
+      ],
+      "widthRatioToReference": 0.903769,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 453238,
+      "transparentPixels": 1902254,
+      "partialAlphaPixels": 29011,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    },
+    "rest-pet": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-f2-full-01/rest-pet.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/rest-pet.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        198,
+        628,
+        1339,
+        1470
+      ],
+      "referenceBbox": [
+        144,
+        628,
+        1392,
+        1470
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 0.5,
+      "centerXDeltaPx": 0.5,
+      "centerOffsetPx": [
+        0.5,
+        0.0
+      ],
+      "widthRatioToReference": 0.914263,
+      "heightRatioToReference": 1.0,
+      "visiblePixels": 461893,
+      "transparentPixels": 1891934,
+      "partialAlphaPixels": 40427,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    }
+  },
+  "continuity": {
+    "groups": {
+      "train": {
+        "frames": [
+          "train-low",
+          "train-high"
+        ],
+        "evaluated": true,
+        "status": "evaluated",
+        "widthRatioSpread": 0.020472,
+        "heightRatioSpread": 0.002148,
+        "centerXOffsetSpreadPx": 0.0,
+        "centerYOffsetSpreadPx": 1.0,
+        "checks": {
+          "widthRatioContinuity": true,
+          "heightRatioContinuity": true,
+          "centerContinuity": true
+        },
+        "passed": true
+      },
+      "whistle": {
+        "frames": [
+          "whistle-a",
+          "whistle-b",
+          "whistle-c",
+          "whistle-d"
+        ],
+        "evaluated": true,
+        "status": "evaluated",
+        "widthRatioSpread": 0.029065,
+        "heightRatioSpread": 0.0,
+        "centerXOffsetSpreadPx": 1.0,
+        "centerYOffsetSpreadPx": 2.0,
+        "checks": {
+          "widthRatioContinuity": true,
+          "heightRatioContinuity": true,
+          "centerContinuity": true
+        },
+        "passed": true
+      },
+      "pushup": {
+        "frames": [
+          "pushup-down",
+          "pushup-up"
+        ],
+        "evaluated": true,
+        "status": "evaluated",
+        "widthRatioSpread": 0.017833,
+        "heightRatioSpread": 0.0,
+        "centerXOffsetSpreadPx": 0.5,
+        "centerYOffsetSpreadPx": 0.0,
+        "checks": {
+          "widthRatioContinuity": true,
+          "heightRatioContinuity": true,
+          "centerContinuity": true
+        },
+        "passed": true
+      },
+      "stretch": {
+        "frames": [
+          "stretch-a",
+          "stretch-b"
+        ],
+        "evaluated": true,
+        "status": "evaluated",
+        "widthRatioSpread": 0.012505,
+        "heightRatioSpread": 0.0,
+        "centerXOffsetSpreadPx": 0.5,
+        "centerYOffsetSpreadPx": 0.0,
+        "checks": {
+          "widthRatioContinuity": true,
+          "heightRatioContinuity": true,
+          "centerContinuity": true
+        },
+        "passed": true
+      },
+      "rest": {
+        "frames": [
+          "rest-contact",
+          "rest-pet"
+        ],
+        "evaluated": true,
+        "status": "evaluated",
+        "widthRatioSpread": 0.010494,
+        "heightRatioSpread": 0.0,
+        "centerXOffsetSpreadPx": 0.5,
+        "centerYOffsetSpreadPx": 0.0,
+        "checks": {
+          "widthRatioContinuity": true,
+          "heightRatioContinuity": true,
+          "centerContinuity": true
+        },
+        "passed": true
+      }
+    },
+    "passed": true
+  },
+  "passed": true
+}
