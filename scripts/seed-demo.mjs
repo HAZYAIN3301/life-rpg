@@ -104,13 +104,30 @@ function buildTasks() {
   return out;
 }
 
+// Форма привычки — ровно та, что пишет редактор настроек: id, title, skillId,
+// difficulty, estimateMin, days, archived, createdAt. Раньше здесь стояли
+// name/xp/gold/min, и это тихо ломало весь засев: `validateHabitsPayload` требует
+// `title` и отбраковывает НЕ отдельную запись, а файл целиком — засеянный аккаунт
+// открывался с пустыми привычками и баннером восстановления. В интерфейсе это
+// выглядело как «привычек просто нет», ошибка была только в консоли, поэтому и
+// дожила до первой ручной проверки. Менять поля здесь — только вместе с редактором.
 const HABITS = [
-  { id: uid(), name: 'Вода утром', skillId: 'health', days: [1, 2, 3, 4, 5, 6, 0], xp: 8, gold: 3, min: 2 },
-  { id: uid(), name: 'Немецкий 15 минут', skillId: 'study', days: [1, 2, 3, 4, 5], xp: 15, gold: 6, min: 15 },
-  { id: uid(), name: 'Зарядка', skillId: 'sport', days: [1, 3, 5], xp: 12, gold: 5, min: 10 },
+  { id: uid(), title: 'Вода утром', skillId: 'health', difficulty: 'easy', estimateMin: 2, days: [1, 2, 3, 4, 5, 6, 0], archived: false, createdAt: at(27, 8, 0) },
+  { id: uid(), title: 'Немецкий 15 минут', skillId: 'study', difficulty: 'normal', estimateMin: 15, days: [1, 2, 3, 4, 5], archived: false, createdAt: at(27, 8, 5) },
+  { id: uid(), title: 'Зарядка', skillId: 'sport', difficulty: 'normal', estimateMin: 10, days: [1, 3, 5], archived: false, createdAt: at(26, 9, 0) },
   // Брошенная — чтобы было видно, как выглядит привычка, которую забросили.
-  { id: uid(), name: 'Медитация', skillId: 'mind', days: [1, 2, 3, 4, 5, 6, 0], xp: 10, gold: 4, min: 10, archived: true },
+  { id: uid(), title: 'Медитация', skillId: 'mind', difficulty: 'easy', estimateMin: 10, days: [1, 2, 3, 4, 5, 6, 0], archived: true, createdAt: at(27, 8, 10) },
 ];
+
+// Награда в журнале — историческая запись, а не пересчёт. Живое приложение считает
+// её через itemXp/itemGold, где участвуют экономика настроек, перки и снаряжение;
+// воспроизводить всю формулу в сидере незачем — журналу нужны правдоподобные числа.
+const HABIT_LOG_REWARD = {
+  'Вода утром': { xp: 8, gold: 3 },
+  'Немецкий 15 минут': { xp: 15, gold: 6 },
+  'Зарядка': { xp: 12, gold: 5 },
+  'Медитация': { xp: 10, gold: 4 },
+};
 
 function buildHabitLog() {
   const log = {};
@@ -123,7 +140,8 @@ function buildHabitLog() {
       if (!h.days.includes(wd)) continue;
       if (d === 12 || d === 11) continue;                 // те же дырки
       if (Math.random() > (d >= 18 && d <= 22 ? 0.5 : 0.85)) continue;
-      rec[h.id] = { xp: h.xp, gold: h.gold, min: h.min };
+      const reward = HABIT_LOG_REWARD[h.title] || { xp: 10, gold: 4 };
+      rec[h.id] = { xp: reward.xp, gold: reward.gold, min: h.estimateMin, at: at(d, 8, 30) };
     }
     if (Object.keys(rec).length) log[date] = rec;
   }
