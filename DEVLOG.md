@@ -2,6 +2,15 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-20] 🐸 Traveller Appearance v2 — полный BODY semantic pack
+
+- Для всех 13 atomic-сцен Traveller × Гамабунта произведены packed semantic masks и отдельные factory-only Traveller mattes в обеих morphology: **26/26 mask + 26/26 matte**. Покрыты приветствие, тренировка, свисток, отжимания, растяжка и передышка.
+- Авторинг не полагается на общий цветовой threshold: отдельные owner-геометрии и connected-component gates исключают Гамабунту, реквизит, ремни, перчатки и тени пола. Последний adversarial 2× review закрыл захват женского ремня волосами, pet-fragments в push-up и обрезанные ботинки в whistle-c/d.
+- Повторный no-write preflight: **26/26 PASS**, `factoryWrites:false`, `publicArtWrites:false`; exact validators и семейный QA также **26/26 PASS**. Review-листы показывают base, cyan matte, packed RGB и diagnostic recolour.
+- Это только machine/adversarial-pass семейства. Общий `manual-approvals.json` намеренно остаётся `pending`; runtime manifest, `public/art`, app shell, SW и production не менялись.
+
+Commit: `art: author Traveller BODY semantic masks` (этот коммит). Следующий gate — общий ручной review всех 92 кадров после завершения Recovery/Shadow и Resources.
+
 ## [2026-08-20] 🔒 Traveller appearance controller — одна durable-очередь gender + palette
 
 - Добавлен dormant `public/traveller-appearance-controller-v2.js`. Он принимает change из Look v2, глубоко клонирует account settings, подготавливает exact base paths/цветные кадры, останавливает активную сцену, делает один `persistSettings`, публикует settings и только затем применяет заранее подготовленную visual-транзакцию. Старый Avatar Forge envelope и любые неизвестные settings сохраняются отдельно и не получают mutable alias.
