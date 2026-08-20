@@ -2,6 +2,15 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-20] 🧩 Traveller palette runtime — dormant fail-closed compositor
+
+- Добавлен отдельный pure-runtime `public/traveller-palette-v1.js`, но он намеренно **не подключён** к `index.html`, `app.js` или `sw.js`: текущий интерфейс и production остаются неизменными, пока не готовы и не утверждены все 92 маски.
+- Parser принимает только финальный вложенный manifest `satoru.traveller-semantic-mask-runtime/1` со статусом `runtime-approved`. Он закрепляет exact `palette-masks-v1`, обе morphology, 7 capabilities, 92 frame-id, canvas, base/mask routes и SHA, canonical palette/golden payload и identity женского F2. Candidate, поддельный compiled-флаг, неизвестный frame, cross-gender fallback, query/hash/path traversal и coordinated payload drift отклоняются.
+- Browser compositor всегда проверяет SHA base и mask до перекраски, повторяет byte-exact factory-алгоритм `oklab-paper-preserving-v1`, сохраняет alpha и неизменённые пиксели. Default `original/original/original` возвращает существующий immutable base без композиции и остаётся пиксельно идентичным текущему приложению.
+- LRU/refcount, parallel prefetch и abort-path освобождают object URLs и уже декодированные bitmap даже при частичном failure; внешний `force clear` отсутствует. Проверки: syntax PASS, focused suite **31/31**, включая три byte-exact golden vector, forged-sentinel, integrity mismatch, decode/abort cleanup и no-cross-morphology.
+
+Commit: `feat: add fail-closed Traveller palette runtime` (этот коммит). Модуль dormant; SW остаётся `satoru-v167` до интеграционного change-set.
+
 ## [2026-08-20] 🎨 Traveller Appearance v2 — fail-closed semantic-mask foundation
 
 - Зафиксирован полный инвентарь **92 неизменяемых base-кадров**: 46 кадров мужского `male-v1` и те же 46 capability/frame-слотов утверждённой женской morphology `female-f2-v1`. Для каждого кадра записаны точные runtime-route, canvas и SHA; инвентарь не допускает пропуск, дубликат, перестановку или подмену `palette-masks-v1` другим revision.
