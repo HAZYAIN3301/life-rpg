@@ -2,6 +2,17 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-20] 🎨 Traveller Appearance v2 — fail-closed semantic-mask foundation
+
+- Зафиксирован полный инвентарь **92 неизменяемых base-кадров**: 46 кадров мужского `male-v1` и те же 46 capability/frame-слотов утверждённой женской morphology `female-f2-v1`. Для каждого кадра записаны точные runtime-route, canvas и SHA; инвентарь не допускает пропуск, дубликат, перестановку или подмену `palette-masks-v1` другим revision.
+- Цвет не требует генерации комбинаций персонажа. Один packed RGB-mask на кадр хранит независимое покрытие `R=skin`, `G=hair`, `B=eyes`; отдельный factory-only L-matte доказывает, что маска принадлежит Traveller, а не питомцу, Тени, порталу, реквизиту или фону. Публичные маски живут только под новым immutable root `/art/avatars/traveller-appearance-v2/palette-masks-v1/`; mattes никогда не попадают в runtime.
+- Построен детерминированный factory: строгая проверка PNG/canvas/SHA/alpha, `R+G+B≤255`, непустых каналов (кроме явно разрешённых глаз в двух back-view), отсутствие цветовых metadata, partial/orphan-файлов и загрязнения guardian/background. Default-render обязан быть пиксельно идентичен base; варианты сохраняют alpha, нетронутые пиксели и бумажную светотень.
+- Канонический recolour — общий `oklab-paper-preserving-v1`: 17 целевых оттенков, сохранение остаточной светотени/бумажной фактуры и три byte-exact golden vector. Factory умеет собрать review-sheet и финальный runtime-manifest только после machine QA **и отдельного manual-approval файла**.
+- Первый cross-family approval batch произведён для 12 кадров: оба gender × `idle`, `window-back`, контакт с Гамабунтой, дыхание с Кацую, приветствие Мистера Пи и `Shadow Guardian`. Все **12/12** проходят machine QA; четыре панели показывают base, cyan Traveller matte, packed RGB и diagnostic recolour. `manual-approvals.json` намеренно остаётся `pending` (`0/92`), поэтому promotion и runtime остаются fail-closed; остальные 80 масок ещё не произведены.
+- Factory smoke больше не зависит от текущего числа файлов: negative-path проверки используют изолированный temp-root, а live gate честно проверяет `12/92`. Проверки: foundation 92/92, golden parity 3/3, approval QA 12/12, smoke **19/19** из repo root и чужого cwd. `public/art`, app shell и SW не менялись; production остаётся `satoru-v167`.
+
+Commit: `art: build Traveller semantic-mask foundation` (этот коммит). Push выполняется сразу; пользовательский runtime не меняется.
+
 ## [2026-08-19] 👩 Traveller female F2 — полный runtime-pack и выбор облика, PWA v167
 
 - Утверждённая identity `female-f2-high-ponytail` доведена до полного launch-pack: **46/46 runtime-кадров** (`45` authored + детерминированный `idle-blink`). Покрыты core/позы/ходьба, четыре workshop-состояния, 13 сцен с Гамабунтой, 6 с Кацую, 12 с Мистером Пи и 4 формы контакта с Тенью. Все девять production-batch прошли неизменённые geometry/alpha/chroma/continuity QA и единый ручной review.

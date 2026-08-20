@@ -1,0 +1,321 @@
+{
+  "schema": "satoru.traveller-semantic-mask-qa/1",
+  "factory": "traveller-appearance-v2-20260820",
+  "scope": "approval",
+  "foundation": {
+    "passed": true,
+    "errors": [],
+    "facts": {
+      "assets": 92,
+      "frameKeys": 46,
+      "verifiedBaseAssets": 92,
+      "approvalAssets": 12,
+      "paletteContractPassed": true,
+      "paletteCatalogPassed": true,
+      "producedMasks": 12,
+      "productionStatus": "manual-mask-production-in-progress",
+      "approvalProducedMasks": 12,
+      "approvalStatus": "manual-masks-complete",
+      "partialAssetIds": [],
+      "orphanMaskFiles": [],
+      "orphanMatteFiles": [],
+      "capabilityCountsPerVariant": {
+        "core": 4,
+        "motion": 3,
+        "room": 4,
+        "body-toad": 13,
+        "recovery-slug": 6,
+        "resources-penguin": 12,
+        "shadow": 4
+      }
+    }
+  },
+  "goldenParity": {
+    "passed": true,
+    "errors": [],
+    "facts": {
+      "vectors": 3,
+      "passed": 3,
+      "algorithm": "oklab-paper-preserving-v1"
+    }
+  },
+  "publicArtWrites": false,
+  "runtimeEligible": false,
+  "maskGate": {
+    "evaluated": true,
+    "passed": true,
+    "errors": [],
+    "facts": {
+      "required": 12,
+      "passed": 12,
+      "missing": 0,
+      "frames": [
+        {
+          "passed": true,
+          "errors": [],
+          "facts": {
+            "asset": "male-v1:core:idle",
+            "canvas": [
+              640,
+              900
+            ],
+            "baseSha256": "6d952b7ddcc1c485cbb9ec54bcff2cbd530d4e3908f3fe0398b2bb88b88b8958",
+            "maskSha256": "3a3d301de134eba81eba47f520372c09b1cc8f78db724fdc0db451ebbcfc5ceb",
+            "matteSha256": "07e1cde77ff1776128fe75c2a9ac82492bb0a73ef78f284c4541f8c751273813",
+            "travellerPixels": 131375,
+            "semanticPixels": 33313,
+            "channelPixels": {
+              "skin": 23005,
+              "hair": 9802,
+              "eyes": 506
+            },
+            "maximumChannelSum": 255
+          }
+        },
+        {
+          "passed": true,
+          "errors": [],
+          "facts": {
+            "asset": "female-f2-v1:core:idle",
+            "canvas": [
+              640,
+              900
+            ],
+            "baseSha256": "fadc3c72e5ca515584aa46dd4028dff1b0371566990f4912a262cc7b90d40298",
+            "maskSha256": "db1bfda349b844b045c2609908e7854a701f84d29a38e33da7b000b5e6bd7153",
+            "matteSha256": "4fcbe2117b659dd61d16c6fe8a10dfd1e3daf05bdfa15fcc5fbbdd4cc648e534",
+            "travellerPixels": 132108,
+            "semanticPixels": 40957,
+            "channelPixels": {
+              "skin": 19169,
+              "hair": 21375,
+              "eyes": 413
+            },
+            "maximumChannelSum": 255
+          }
+        },
+        {
+          "passed": true,
+          "errors": [],
+          "facts": {
+            "asset": "male-v1:core:window-back",
+            "canvas": [
+              640,
+              900
+            ],
+            "baseSha256": "82e7d1a80f5415e0319f9e907e954554df214a7bdfb10a820ac9d3d6141f89f5",
+            "maskSha256": "e5653a3b66013632b5e1ee2b045c1a70cafdf5a3ea74c6ca6119beb0276113bc",
+            "matteSha256": "d352bc552fd76dd115cf5f9d98177e7e1a3f95ca3ba032728e57152972a79c41",
+            "travellerPixels": 119675,
+            "semanticPixels": 22335,
+            "channelPixels": {
+              "skin": 11188,
+              "hair": 11147,
+              "eyes": 0
+            },
+            "maximumChannelSum": 255
+          }
+        },
+        {
+          "passed": true,
+          "errors": [],
+          "facts": {
+            "asset": "female-f2-v1:core:window-back",
+            "canvas": [
+              640,
+              900
+            ],
+            "baseSha256": "4e9609aa5401a5076eae37ca886ec7972816e38544259c209f1c21ca927be96f",
+            "maskSha256": "5f5b3a8a413e30b62cab8ade2bc46ca6b50a107f05b4c5c3eb1fdc94e2eae2b2",
+            "matteSha256": "d0de2b82827114285bf655c89ee7e57285818533cc73bac801ae4baa12bb1f06",
+            "travellerPixels": 118488,
+            "semanticPixels": 36093,
+            "channelPixels": {
+              "skin": 9985,
+              "hair": 26108,
+              "eyes": 0
+            },
+            "maximumChannelSum": 255
+          }
+        },
+        {
+          "passed": true,
+          "errors": [],
+          "facts": {
+            "asset": "male-v1:body-toad:greet-contact",
+            "canvas": [
+              1536,
+              1536
+            ],
+            "baseSha256": "e513da955a717b785c0b601b7fb8867d95a3a35fa3b81ec64f158c1cad3a724a",
+            "maskSha256": "30626e044d80aa9dfb6446a80a1aa92c068a1316cb718c06f3d9dea62b81b269",
+            "matteSha256": "6c64badbc7e55a2718a71c9b9ebc976b8781b82c14ea8d849dcd057333a468ad",
+            "travellerPixels": 220924,
+            "semanticPixels": 49711,
+            "channelPixels": {
+              "skin": 26423,
+              "hair": 22300,
+              "eyes": 988
+            },
+            "maximumChannelSum": 255
+          }
+        },
+        {
+          "passed": true,
+          "errors": [],
+          "facts": {
+            "asset": "female-f2-v1:body-toad:greet-contact",
+            "canvas": [
+              1536,
+              1536
+            ],
+            "baseSha256": "1940daf846b3c4904fc5fc244154bb5442462046715088cd452e49df0a7d1f23",
+            "maskSha256": "56fa87786609d62ec5b832e9aa07b1557de12c7107e50ed44c4ff6d263552ada",
+            "matteSha256": "dfd098b6e2416fa628b996dfc7ab43f657a15bbae9c5e06b2871d72f4d74cfaa",
+            "travellerPixels": 237068,
+            "semanticPixels": 70516,
+            "channelPixels": {
+              "skin": 28012,
+              "hair": 41006,
+              "eyes": 1498
+            },
+            "maximumChannelSum": 255
+          }
+        },
+        {
+          "passed": true,
+          "errors": [],
+          "facts": {
+            "asset": "male-v1:recovery-slug:breathe-in",
+            "canvas": [
+              1536,
+              1536
+            ],
+            "baseSha256": "d24f86344072a80aa89a0a3a39dbfa4abf6a7b119fc926e31b3984c11b3386e1",
+            "maskSha256": "a0e48ee3c8b79bf68482a35c741052964d4b1912bee0d9c40738812fa8297e39",
+            "matteSha256": "7b6572acde26a3dd2ba582138143f7393c504155867e86284adb5344337b5497",
+            "travellerPixels": 419732,
+            "semanticPixels": 97266,
+            "channelPixels": {
+              "skin": 53602,
+              "hair": 39476,
+              "eyes": 4188
+            },
+            "maximumChannelSum": 255
+          }
+        },
+        {
+          "passed": true,
+          "errors": [],
+          "facts": {
+            "asset": "female-f2-v1:recovery-slug:breathe-in",
+            "canvas": [
+              1536,
+              1536
+            ],
+            "baseSha256": "294b4384d5f6c5a8ce9f41b2a34d9b20fa397efad2388683338b09dcd9e8daf0",
+            "maskSha256": "add359e974083bec4ca86d6455addaf7e5a51e90289dd500cecf9c6f488fe31b",
+            "matteSha256": "a9a59bb36a04081e7e2f301aeda9611649fa04691e78574ab974478166124b67",
+            "travellerPixels": 435656,
+            "semanticPixels": 142948,
+            "channelPixels": {
+              "skin": 63411,
+              "hair": 78535,
+              "eyes": 1002
+            },
+            "maximumChannelSum": 255
+          }
+        },
+        {
+          "passed": true,
+          "errors": [],
+          "facts": {
+            "asset": "male-v1:resources-penguin:greet-contact",
+            "canvas": [
+              1536,
+              1536
+            ],
+            "baseSha256": "7c59922234d91e52d383fcf001ce26e3d29fee7b124c4af4c68e3d375d6526a6",
+            "maskSha256": "223c83b0662ed1477c8e782369f4da387fa024375e8e1743de473e5943384dcd",
+            "matteSha256": "fec23e2682316ad47bb3ad6a3d4fdeb8081f80ec5fc430f40e7e926440927e72",
+            "travellerPixels": 410656,
+            "semanticPixels": 88716,
+            "channelPixels": {
+              "skin": 43650,
+              "hair": 44101,
+              "eyes": 965
+            },
+            "maximumChannelSum": 255
+          }
+        },
+        {
+          "passed": true,
+          "errors": [],
+          "facts": {
+            "asset": "female-f2-v1:resources-penguin:greet-contact",
+            "canvas": [
+              1536,
+              1536
+            ],
+            "baseSha256": "aebfe5c1af55b1643458ff4dd5d2e33c4ecc1a189fd6a8e6deb0bd2050f06d04",
+            "maskSha256": "201d82c32ba05be61b6db070267a2fff0fb7046a410f8f0dc06de8076dc85080",
+            "matteSha256": "ee38e04af400ae9f3657143cfee541bcbe2e16963fb688538ac1e92529ea4071",
+            "travellerPixels": 432718,
+            "semanticPixels": 128754,
+            "channelPixels": {
+              "skin": 40518,
+              "hair": 86820,
+              "eyes": 1416
+            },
+            "maximumChannelSum": 255
+          }
+        },
+        {
+          "passed": true,
+          "errors": [],
+          "facts": {
+            "asset": "male-v1:shadow:attune-guardian",
+            "canvas": [
+              1254,
+              1254
+            ],
+            "baseSha256": "94cdf3079884ff337a24d15b7439eab05fbfd13afe717f13cd82bd62de60c5f2",
+            "maskSha256": "8cb4a7bd6d0d6b2602bd8fd1e13bcd01110d98ab1540b785b517310004cb2fd6",
+            "matteSha256": "37e34c2c423d1c6d21ac567747e95b18eaa08f6c49e17bdf8decb9fd94db6f6d",
+            "travellerPixels": 397601,
+            "semanticPixels": 103771,
+            "channelPixels": {
+              "skin": 61101,
+              "hair": 41056,
+              "eyes": 1614
+            },
+            "maximumChannelSum": 255
+          }
+        },
+        {
+          "passed": true,
+          "errors": [],
+          "facts": {
+            "asset": "female-f2-v1:shadow:attune-guardian",
+            "canvas": [
+              1254,
+              1254
+            ],
+            "baseSha256": "bc8614f2fdbbfcfd91a35ee9caebd08e715f2e3ee42a21d86b9dc368a900e47e",
+            "maskSha256": "5c5d59a9e40cb9c4eba6fb62023f3085fe0d4b4d452b194194f49153d439f79f",
+            "matteSha256": "dadb682cc24c40607d62cbd66d34956977140918246b26801d37a06bc4f4fbbd",
+            "travellerPixels": 336953,
+            "semanticPixels": 103720,
+            "channelPixels": {
+              "skin": 39108,
+              "hair": 63362,
+              "eyes": 1250
+            },
+            "maximumChannelSum": 255
+          }
+        }
+      ]
+    }
+  },
+  "passed": true
+}

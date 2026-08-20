@@ -1,0 +1,84 @@
+{
+  "schema": "satoru.traveller-semantic-palette-catalog/1",
+  "id": "traveller-palette-catalog-v1",
+  "status": "authored-factory-contract",
+  "colourSpace": "OKLab",
+  "inputEncoding": "unmanaged-sRGB-8",
+  "identityOption": {
+    "id": "original",
+    "mode": "identity",
+    "contract": "return the immutable base PNG without canvas pixel processing"
+  },
+  "algorithm": {
+    "id": "oklab-paper-preserving-v1",
+    "srgbTransfer": {
+      "decodeThreshold": 0.04045,
+      "decodeDivisor": 12.92,
+      "decodeOffset": 0.055,
+      "decodeScale": 1.055,
+      "decodeExponent": 2.4,
+      "encodeThreshold": 0.0031308,
+      "encodeMultiplier": 12.92,
+      "encodeOffset": 0.055,
+      "encodeScale": 1.055,
+      "encodeExponent": 0.4166666666666667
+    },
+    "linearSrgbToLms": [
+      [0.4122214708, 0.5363325363, 0.0514459929],
+      [0.2119034982, 0.6806995451, 0.1073969566],
+      [0.0883024619, 0.2817188376, 0.6299787005]
+    ],
+    "lmsRootToOklab": [
+      [0.2104542553, 0.7936177850, -0.0040720468],
+      [1.9779984951, -2.4285922050, 0.4505937099],
+      [0.0259040371, 0.7827717662, -0.8086757660]
+    ],
+    "oklabToLmsRoot": [
+      [1.0, 0.3963377774, 0.2158037573],
+      [1.0, -0.1055613458, -0.0638541728],
+      [1.0, -0.0894841775, -1.2914855480]
+    ],
+    "lmsToLinearSrgb": [
+      [4.0767416621, -3.3077115913, 0.2309699292],
+      [-1.2684380046, 2.6097574011, -0.3413193965],
+      [-0.0041960863, -0.7034186147, 1.7076147010]
+    ],
+    "paperResidual": {
+      "lightness": 0.92,
+      "chromaA": 0.35,
+      "chromaB": 0.35
+    },
+    "linearClip": [0.0, 1.0],
+    "byteRounding": "floor(value * 255 + 0.5)"
+  },
+  "diagnosticTargets": {
+    "skin": "skin-umber",
+    "hair": "hair-violet",
+    "eyes": "eyes-ocean"
+  },
+  "ramps": {
+    "skin": [
+      {"id": "skin-porcelain", "hex": "#f2c6a0", "oklab": [0.855730329, 0.032868286, 0.063051914]},
+      {"id": "skin-warm", "hex": "#d89a70", "oklab": [0.736710366, 0.053876517, 0.076499067]},
+      {"id": "skin-bronze", "hex": "#b8744e", "oklab": [0.623292827, 0.065674309, 0.076468945]},
+      {"id": "skin-umber", "hex": "#8f6249", "oklab": [0.537669293, 0.044797847, 0.053054554]},
+      {"id": "skin-deep", "hex": "#5b3a2a", "oklab": [0.383098658, 0.036979322, 0.039010587]}
+    ],
+    "hair": [
+      {"id": "hair-ink", "hex": "#241d1a", "oklab": [0.237884596, 0.008817441, 0.008674474]},
+      {"id": "hair-chestnut", "hex": "#4a2e22", "oklab": [0.332125984, 0.033293416, 0.032068547]},
+      {"id": "hair-walnut", "hex": "#5a3b29", "oklab": [0.383661643, 0.033271367, 0.040720012]},
+      {"id": "hair-auburn", "hex": "#7a3528", "oklab": [0.419953144, 0.084142832, 0.053254122]},
+      {"id": "hair-honey", "hex": "#b87932", "oklab": [0.629018153, 0.047680927, 0.105811323]},
+      {"id": "hair-ash", "hex": "#756b62", "oklab": [0.534310643, 0.008066347, 0.016858690]},
+      {"id": "hair-violet", "hex": "#66508f", "oklab": [0.481855110, 0.048394440, -0.088563565]}
+    ],
+    "eyes": [
+      {"id": "eyes-ink", "hex": "#11151a", "oklab": [0.193809855, -0.003259019, -0.011452161]},
+      {"id": "eyes-ocean", "hex": "#285466", "oklab": [0.422536988, -0.038706895, -0.041769060]},
+      {"id": "eyes-jade", "hex": "#2f6f62", "oklab": [0.495977044, -0.069038846, 0.002457736]},
+      {"id": "eyes-amber", "hex": "#93642d", "oklab": [0.542213900, 0.035400557, 0.086273312]},
+      {"id": "eyes-violet", "hex": "#66508f", "oklab": [0.481855110, 0.048394440, -0.088563565]}
+    ]
+  }
+}

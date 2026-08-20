@@ -1,0 +1,54 @@
+{
+  "schema": "satoru.traveller-semantic-palette-contract/1",
+  "id": "traveller-appearance-v2",
+  "status": "factory-only",
+  "routes": {
+    "publicMaskRoot": "/art/avatars/traveller-appearance-v2/palette-masks-v1/",
+    "factoryMaskRoot": "palette-masks-v1/",
+    "factoryMatteRoot": "traveller-mattes-v1/"
+  },
+  "palette": {
+    "catalogFile": "palette-catalog.json",
+    "catalogSchema": "satoru.traveller-semantic-palette-catalog/1",
+    "algorithm": "oklab-paper-preserving-v1",
+    "goldenVectorsFile": "palette-golden-vectors.json",
+    "goldenVectorsSchema": "satoru.traveller-semantic-palette-golden-vectors/1"
+  },
+  "mask": {
+    "format": "PNG",
+    "mode": "RGB",
+    "sameCanvasAsBase": true,
+    "channels": {
+      "red": "skin",
+      "green": "hair",
+      "blue": "eyes"
+    },
+    "coverage": {
+      "minimum": 0,
+      "maximum": 255,
+      "sumMaximum": 255
+    },
+    "nonSemanticPixel": [0, 0, 0]
+  },
+  "matte": {
+    "factoryOnly": true,
+    "format": "PNG",
+    "mode": "L",
+    "sameCanvasAsBase": true,
+    "meaning": "Traveller-only coverage; excludes guardians, Shadow, furniture and scene props"
+  },
+  "slots": {
+    "skin": "face, ears, neck, exposed arms, hands, fingers and exposed legs",
+    "hair": "all authored hair and eyebrows; excludes leather, wood, straps and boots",
+    "eyes": "only canonical black Traveller eye marks, including authored closed-eye lines; never sclera, iris, highlights, mouth, nose, outline or guardian eyes"
+  },
+  "invariants": [
+    "default palette returns the original base asset without pixel processing",
+    "base alpha is copied pixel-for-pixel",
+    "RGB outside the semantic channel union is copied pixel-for-pixel",
+    "semantic coverage is a subset of the approved Traveller matte",
+    "all mattes and masks contain coverage; skin and hair are always non-empty; eyes are empty only for an explicitly declared back view",
+    "mask and matte PNGs contain no ICC, gAMA, sRGB, cHRM or transparency metadata",
+    "an incomplete or missing mask fails closed and cannot authorize runtime options"
+  ]
+}

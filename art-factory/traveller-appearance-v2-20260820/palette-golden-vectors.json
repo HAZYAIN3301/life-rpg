@@ -1,0 +1,34 @@
+{
+  "schema": "satoru.traveller-semantic-palette-golden-vectors/1",
+  "algorithm": "oklab-paper-preserving-v1",
+  "byteRounding": "floor(value * 255 + 0.5)",
+  "vectors": [
+    {
+      "id": "slot-targets-and-alpha",
+      "width": 2,
+      "height": 2,
+      "sourceRgba": [[201,145,103,255],[62,42,31,255],[45,84,102,200],[10,20,30,0]],
+      "maskRgb": [[255,0,0],[0,255,0],[0,0,255],[0,0,0]],
+      "targetIds": {"skin":"skin-umber","hair":"hair-violet","eyes":"eyes-ocean"},
+      "expectedRgba": [[143,98,73,255],[102,80,143,255],[40,84,102,200],[10,20,30,0]]
+    },
+    {
+      "id": "paper-lightness-residual",
+      "width": 3,
+      "height": 1,
+      "sourceRgba": [[220,165,120,255],[180,120,80,240],[135,85,55,180]],
+      "maskRgb": [[255,0,0],[255,0,0],[255,0,0]],
+      "targetIds": {"skin":"skin-bronze"},
+      "expectedRgba": [[224,154,113,255],[184,114,76,240],[145,81,46,180]]
+    },
+    {
+      "id": "packed-weighted-blend",
+      "width": 3,
+      "height": 1,
+      "sourceRgba": [[173,119,82,255],[89,61,45,128],[33,42,50,255]],
+      "maskRgb": [[128,127,0],[64,64,127],[0,0,0]],
+      "targetIds": {"skin":"skin-warm","hair":"hair-chestnut","eyes":"eyes-jade"},
+      "expectedRgba": [[169,120,90,255],[74,87,70,128],[33,42,50,255]]
+    }
+  ]
+}
