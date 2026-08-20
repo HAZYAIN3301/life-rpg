@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-20] 🧵 Traveller palette worker — тяжёлая перекраска вне UI-потока
+
+- Добавлены отдельные dormant-модули `public/traveller-palette-worker-v1.js` и `public/traveller-palette-worker-client-v1.js`. Они пока не подключены к `index.html`, `app.js` или `sw.js`: production и offline shell остаются без изменений до утверждения 92 масок и финального manifest.
+- Worker сам повторно компилирует только `runtime-approved` manifest, загружает точные base/mask assets, всегда сверяет оба SHA-256, декодирует semantic mask с `colorSpaceConversion:none`/`premultiplyAlpha:none`, выполняет byte-exact `TravellerPaletteV1.recolorPixels()` на `OffscreenCanvas` и возвращает PNG Blob. Default palette до worker не доходит — её обязан пиксельно идентично обойти основной runtime.
+- Main-thread broker держит строго один тяжёлый кадр в работе, ограниченную очередь и immutable snapshot manifest. Отмена queued-job не трогает текущий рендер; отмена active-job физически завершает worker и продолжает очередь в новой generation. Late result старой generation игнорируется, init/render имеют timeout, fatal manifest/runtime failure закрывает очередь без restart-loop.
+- Закрыты cleanup-paths: оба ImageBitmap освобождаются при success, peer failure и encode failure; worker termination снимает listeners/timers; object URL создаётся только из валидного `image/png`, а его дальнейший refcount/revoke остаётся у уже построенного palette runtime.
+- Проверки: worker/client syntax PASS; focused palette+worker **43/43**; полный suite вне sandbox **477/477**. В sandbox те же 442 client/pure tests прошли, а 35 server tests ожидаемо получили только `listen EPERM`; повторный loopback-прогон зелёный целиком.
+
+Commit: `feat: move Traveller palette rendering off the UI thread` (этот коммит). Модули dormant; SW остаётся `satoru-v167` до интеграционного change-set.
+
 ## [2026-08-20] 🧩 Traveller palette runtime — dormant fail-closed compositor
 
 - Добавлен отдельный pure-runtime `public/traveller-palette-v1.js`, но он намеренно **не подключён** к `index.html`, `app.js` или `sw.js`: текущий интерфейс и production остаются неизменными, пока не готовы и не утверждены все 92 маски.
