@@ -253,6 +253,7 @@ function renderContext(signal) {
 
 test('client sends one render at a time and returns worker blobs as object URLs', async () => {
   const { client } = clientHarness();
+  assert.deepEqual(await client.whenReady(), { ready: true, generation: 1 });
   const first = client.renderFrame(renderContext());
   const second = client.renderFrame(renderContext());
   await tick();
@@ -318,6 +319,7 @@ test('fatal initialization rejects queued jobs and remains fail closed', async (
   const pending = client.renderFrame(renderContext());
   const worker = FakeWorker.instances[0];
   worker.fatal('manifest-not-approved');
+  await assert.rejects(client.whenReady(), (error) => error.code === 'manifest-not-approved');
   await assert.rejects(pending, (error) => error.code === 'manifest-not-approved');
   await assert.rejects(client.renderFrame(renderContext()), (error) => error.code === 'manifest-not-approved');
   assert.equal(FakeWorker.instances.length, 1);
@@ -354,6 +356,24 @@ test('dispose terminates the worker and rejects active and queued jobs', async (
   await assert.rejects(second, (error) => error.code === 'disposed');
   assert.equal(worker.terminated, true);
   assert.equal(client.stats().disposed, true);
+});
+
+test('dispose before worker readiness rejects the readiness contract without restart', async () => {
+  FakeWorker.instances = [];
+  class NeverReadyWorker extends FakeWorker {
+    postMessage(message) { this.messages.push(message); }
+  }
+  const client = WorkerClient.createRenderer({
+    manifest: { schema: 'approved-test' },
+    WorkerImpl: NeverReadyWorker,
+    URLImpl: { createObjectURL() { return 'blob:x'; } },
+    initTimeoutMs: 5000,
+    jobTimeoutMs: 5000,
+  });
+  client.dispose();
+  await assert.rejects(client.whenReady(), (error) => error.code === 'disposed');
+  assert.equal(FakeWorker.instances.length, 1);
+  assert.equal(FakeWorker.instances[0].terminated, true);
 });
 
 test('client rejects cross-origin and traversal worker URLs', () => {

@@ -86,6 +86,21 @@
     let initTimer = null;
     let nextJobId = 1;
     const queue = [];
+    let resolveReadiness;
+    let rejectReadiness;
+    let readinessSettled = false;
+    const readiness = new Promise((resolve, reject) => {
+      resolveReadiness = resolve;
+      rejectReadiness = reject;
+    });
+    readiness.catch(() => {});
+
+    function settleReadiness(method, value) {
+      if (readinessSettled) return;
+      readinessSettled = true;
+      if (method === 'resolve') resolveReadiness(value);
+      else rejectReadiness(value);
+    }
 
     function clearInitTimer() {
       if (initTimer !== null) clearTimer(initTimer);
@@ -123,6 +138,7 @@
 
     function failFatal(error) {
       fatal = error;
+      settleReadiness('reject', error);
       stopWorker();
       if (active) {
         const failed = active;
@@ -168,6 +184,7 @@
       if (message.type === 'ready') {
         clearInitTimer();
         ready = true;
+        settleReadiness('resolve', Object.freeze({ ready: true, generation }));
         dispatch();
         return;
       }
@@ -283,10 +300,15 @@
       });
     }
 
+    function whenReady() {
+      return readiness;
+    }
+
     function dispose() {
       if (disposed) return;
       disposed = true;
       const error = clientError('disposed', 'Traveller palette worker renderer is disposed');
+      settleReadiness('reject', error);
       if (active) {
         const failed = active;
         active = null;
@@ -311,7 +333,7 @@
     }
 
     startWorker();
-    return Object.freeze({ renderFrame, dispose, stats });
+    return Object.freeze({ renderFrame, whenReady, dispose, stats });
   }
 
   return Object.freeze({ VERSION, PROTOCOL, DEFAULT_WORKER_URL, createRenderer });

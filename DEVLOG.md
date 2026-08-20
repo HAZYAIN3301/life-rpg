@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-20] 🔌 Traveller palette session — lifecycle и честная готовность worker
+
+- Добавлен dormant-адаптер `public/traveller-palette-session-v1.js`: он единолично загружает immutable manifest `/art/avatars/traveller-appearance-v2/palette-masks-v1/manifest.json`, компилирует и повторно сверяет его через Look v2, запускает worker-broker и только после реального worker `ready` создаёт palette runtime. До этого `resolve/prefetch/catalog/manifest` fail-closed возвращают `not-ready`.
+- Manifest запрашивается только same-origin через `force-cache`, обязан прийти как `application/json`, не может быть переопределён remote/query URL и никогда не выдаётся наружу в сыром виде. Ошибка остаётся стабильной до явного `retry()`, чтобы render-loop не создавал сетевой шторм.
+- В `TravellerPaletteWorkerClientV1` добавлен явный `whenReady()`: fatal init, timeout, crash и dispose отклоняют readiness, а не оставляют UI с ложным зелёным состоянием. Readiness не доверяет факту создания объекта Worker.
+- Закрыта отмена в самой опасной щели lifecycle: если manifest уже загружен, но worker ещё не ответил, создающиеся broker/runtime принадлежат session и уничтожаются при `dispose()`. Late `ready` не может воскресить session, object URLs освобождаются раньше worker termination, повторный dispose идемпотентен.
+- Проверки: session+worker **24/24**, весь Appearance v2 stack **66/66**, syntax PASS; полный suite **500/500**. Модули остаются dormant: `index.html`, `app.js`, `sw.js`, публичный manifest и production не менялись.
+
+Commit: `feat: gate Traveller palette sessions on worker readiness` (этот коммит). Следующий слой — единая сериализованная account transaction для preview/commit/rollback gender+palette; подключение shell остаётся закрыто manual approval 92/92.
+
 ## [2026-08-20] 🧬 Traveller look v2 — account-owned модель внешнего вида
 
 - Добавлен чистый dormant-модуль `public/traveller-look-v2.js`; он не подключён к shell и пока не меняет интерфейс. Модуль задаёт единственный settings-контракт: существующий `avatarCoreGender` плюс отдельный `avatarCorePalette {schemaVersion,skin,hair,eyes}`. Старый Avatar Forge `avatarAppearance` не читается и не перезаписывается.
