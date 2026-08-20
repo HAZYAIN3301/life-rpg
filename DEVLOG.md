@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-20] 🔒 Traveller appearance controller — одна durable-очередь gender + palette
+
+- Добавлен dormant `public/traveller-appearance-controller-v2.js`. Он принимает change из Look v2, глубоко клонирует account settings, подготавливает exact base paths/цветные кадры, останавливает активную сцену, делает один `persistSettings`, публикует settings и только затем применяет заранее подготовленную visual-транзакцию. Старый Avatar Forge envelope и любые неизвестные settings сохраняются отдельно и не получают mutable alias.
+- Все быстрые клики идут строго последовательно: следующий intent читает уже durable результат предыдущего. Exact no-op не загружает art, не останавливает сцену и не пишет settings. `save !== true` не публикует и не показывает новый look.
+- Ошибка visual apply запускает настоящий второй durable save предыдущих settings, затем visual rollback. Если этот save назад не удался, controller переходит в `recovery-required`, блокирует уже поставленные и будущие изменения и никогда не выдаёт последующий success поверх рассинхронизации.
+- `dispose()` abort-race-ит только безопасные предперсистентные точки (`session.load`, path discovery, prefetch, visual prepare, scene stop). Поздняя visual-транзакция освобождается ровно один раз. Durable persist/apply/rollback механически не бросаются посередине: controller сначала узнаёт фактический исход и только потом восстанавливает состояние.
+- Независимый adversarial review нашёл и закрыл 7 lifecycle-классов: recovery fence, nested settings alias, cleanup exception, frozen causal Error, dispose/no-op race, вечный session load и четыре вечных pre-persist hooks. Проверки controller **19/19**, Appearance v2 stack без ещё незафиксированного frame registry **85/85**; syntax PASS. Модуль dormant, app/shell/SW/production не менялись.
+
+Commit: `feat: serialize durable Traveller appearance changes` (этот коммит). Следующий слой — lifetime registry для подготовленных core/scene blob URLs и thin app adapter после manual mask approval.
+
 ## [2026-08-20] 🔌 Traveller palette session — lifecycle и честная готовность worker
 
 - Добавлен dormant-адаптер `public/traveller-palette-session-v1.js`: он единолично загружает immutable manifest `/art/avatars/traveller-appearance-v2/palette-masks-v1/manifest.json`, компилирует и повторно сверяет его через Look v2, запускает worker-broker и только после реального worker `ready` создаёт palette runtime. До этого `resolve/prefetch/catalog/manifest` fail-closed возвращают `not-ready`.
