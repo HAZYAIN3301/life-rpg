@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-20] 🧬 Traveller look v2 — account-owned модель внешнего вида
+
+- Добавлен чистый dormant-модуль `public/traveller-look-v2.js`; он не подключён к shell и пока не меняет интерфейс. Модуль задаёт единственный settings-контракт: существующий `avatarCoreGender` плюс отдельный `avatarCorePalette {schemaVersion,skin,hair,eyes}`. Старый Avatar Forge `avatarAppearance` не читается и не перезаписывается.
+- Runtime-look всегда однозначен: `male → male-v1`, `female → female-f2-v1`, morphology остаётся `male/female`, а каждый semantic channel принимает только точный authored id. Старые placeholder-значения `warm-02/brown-02/umber-01`, неизвестный gender и устаревший отдельный цвет мигрируют в `original` по каналу, не подбирая «похожий» оттенок и не ломая остальные валидные выборы.
+- `request()` строит immutable before/after/look/settingsPatch для будущей транзакции `Store.saveNow`, но сам не знает про State, Store или DOM. Unknown gender/channel/palette на пользовательском действии отклоняются fail-closed; silent fallback разрешён только при восстановлении старого сохранённого settings.
+- UI-catalog принимается только из уже скомпилированного approved palette manifest: ровно две identity, `original` и точные 5 skin / 7 hair / 5 eyes targets. Модуль отдаёт swatch hex и exact 46 base-paths morphology для preload, не читая factory и не дублируя пиксельный алгоритм.
+- Проверки: focused **11/11**, syntax PASS; полный suite **488/488**. Следующий integration adapter обязан разделить preview и durable commit, сериализовать его с gender-сменой и сохранять только через `Store.saveNow`, потому что старый Character autosave на этом route недолговечен.
+
+Commit: `feat: model account-owned Traveller looks` (этот коммит). Модуль dormant; SW остаётся `satoru-v167`.
+
 ## [2026-08-20] 🧵 Traveller palette worker — тяжёлая перекраска вне UI-потока
 
 - Добавлены отдельные dormant-модули `public/traveller-palette-worker-v1.js` и `public/traveller-palette-worker-client-v1.js`. Они пока не подключены к `index.html`, `app.js` или `sw.js`: production и offline shell остаются без изменений до утверждения 92 масок и финального manifest.
