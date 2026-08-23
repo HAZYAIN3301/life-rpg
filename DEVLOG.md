@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-20] 🧷 Traveller frame registry — lifetime composited-кадров
+
+- Добавлен dormant `public/traveller-frame-registry-v2.js`: подготовленный набор blob/base URL невидим до `commit`, прежнее активное поколение живёт до `finalize`, а `rollback` возвращает его без повторного рендера. Scene lease владеет отдельными handles и переживает смену core-look.
+- Registry принимает только точные authored `male/male-v1` и `female/female-f2-v1`, разрешённые 5/7/5 palette ids и canonical `/art/*.png`. Runtime handle теперь несёт exact `lookKey`; default palette может вернуть base URL, любой цветной вариант обязан быть `blob:` и совпасть по morphology, identity, palette и base path.
+- Каждый release идемпотентен даже для враждебного повторно выданного handle. Abort/dispose и peer failure освобождают late results, не ждут вечный соседний resolve и не публикуют stage/lease в TOCTOU-щели. После rollback/abort/release ни один отозванный URL больше нельзя получить.
+- State-transition всегда завершается до вызова внешнего `release`, поэтому reentrant cleanup не способен восстановить уже освобождённое поколение. Внутренний disposer не экспортируется.
+- Проверки registry **21/21**, registry + palette runtime **52/52**, полный suite **540/540**, syntax/diff PASS. Модули остаются dormant: app/index/SW/public masks/production не менялись.
+
+Commit: `feat: own Traveller frame URL lifetimes` (этот коммит). Следующий слой — thin transaction bridge между durable controller, registry и DOM-view после общего manual approval масок.
+
 ## [2026-08-20] 🐸 Traveller Appearance v2 — полный BODY semantic pack
 
 - Для всех 13 atomic-сцен Traveller × Гамабунта произведены packed semantic masks и отдельные factory-only Traveller mattes в обеих morphology: **26/26 mask + 26/26 matte**. Покрыты приветствие, тренировка, свисток, отжимания, растяжка и передышка.

@@ -367,6 +367,7 @@ test('default palette bypasses rendering but still requires an authored exact fr
   const handle = await runtime.resolve(FEMALE_IDLE, defaultLook('female'));
   assert.equal(handle.url, FEMALE_IDLE);
   assert.equal(handle.bypass, true);
+  assert.equal(handle.lookKey, 'female|female-f2-v1|skin:original|hair:original|eyes:original');
   assert.equal(renderCalls, 0);
   assert.equal(runtime.stats().size, 0);
   await assert.rejects(
@@ -595,6 +596,8 @@ test('concurrent resolves share one render and release is idempotent', async () 
   const [first, second] = await Promise.all([firstPromise, secondPromise]);
   assert.equal(renderCalls, 1);
   assert.equal(first.url, second.url);
+  assert.equal(first.lookKey, 'female|female-f2-v1|skin:skin-umber|hair:hair-violet|eyes:eyes-ocean');
+  assert.equal(second.lookKey, first.lookKey);
   assert.equal(runtime.stats().referenced, 2);
   first.release();
   first.release();
