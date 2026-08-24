@@ -1,0 +1,547 @@
+{
+  "schema": "satoru.traveller-appearance.factory-batch-qa/1",
+  "batch": "recovery-shadow-full-01",
+  "scope": {
+    "capabilities": [
+      "recovery-slug",
+      "shadow"
+    ],
+    "required": 20,
+    "counts": {
+      "recovery-slug": 12,
+      "shadow": 8
+    }
+  },
+  "machineGate": {
+    "passed": true,
+    "passedAssets": 20,
+    "requiredAssets": 20
+  },
+  "ownershipContract": "explicit-positive-negative-geometry; no colour-based actor exclusion",
+  "publicArtWrites": false,
+  "manualVisualReview": "completed-native-full-and-high-risk-zoom-2026-08-20",
+  "assets": [
+    {
+      "id": "female-f2-v1:recovery-slug:breathe-in",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "female-f2-v1:recovery-slug:breathe-in",
+        "canvas": [
+          1536,
+          1536
+        ],
+        "baseSha256": "294b4384d5f6c5a8ce9f41b2a34d9b20fa397efad2388683338b09dcd9e8daf0",
+        "maskSha256": "dad8179ea1551cd2d111b99400eeeeba27b9d7d004d1508f1f2a86622722d105",
+        "matteSha256": "e7b0586ceb2c96b26002442426f16925abc7bf44268a2c99830328b9ce8b5234",
+        "travellerPixels": 441881,
+        "semanticPixels": 145088,
+        "channelPixels": {
+          "skin": 65548,
+          "hair": 78514,
+          "eyes": 1026
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "dad8179ea1551cd2d111b99400eeeeba27b9d7d004d1508f1f2a86622722d105",
+      "matteSha256": "e7b0586ceb2c96b26002442426f16925abc7bf44268a2c99830328b9ce8b5234"
+    },
+    {
+      "id": "female-f2-v1:recovery-slug:breathe-out",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "female-f2-v1:recovery-slug:breathe-out",
+        "canvas": [
+          1536,
+          1536
+        ],
+        "baseSha256": "c72d6fb404ae7db38eb795e3ef087ff25e0b5a0aab9c036afc11fd53db58f665",
+        "maskSha256": "0633bcf9c9b53a1f574dd78ab2473ae8cc19b624cc4e4617f21af8690c79b345",
+        "matteSha256": "729c49c6cffc964a8a9184f92d33cb739755e827f6d71ece8f31b2461800098d",
+        "travellerPixels": 397845,
+        "semanticPixels": 126819,
+        "channelPixels": {
+          "skin": 57252,
+          "hair": 69140,
+          "eyes": 427
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "0633bcf9c9b53a1f574dd78ab2473ae8cc19b624cc4e4617f21af8690c79b345",
+      "matteSha256": "729c49c6cffc964a8a9184f92d33cb739755e827f6d71ece8f31b2461800098d"
+    },
+    {
+      "id": "female-f2-v1:recovery-slug:greet-contact",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "female-f2-v1:recovery-slug:greet-contact",
+        "canvas": [
+          1536,
+          1536
+        ],
+        "baseSha256": "eaa0d2f7783656e602379e8aa63d75424517e25004fdb8af5bf5be40ddbb9e0c",
+        "maskSha256": "6fba440b98fd0ab118fd9bc814d6388f4d9ea8717c3003c8767e2b731f4acca1",
+        "matteSha256": "c8cb8b4cea17c1a99270777d247186d1be3cf260e667a9146e25c95b9992de7a",
+        "travellerPixels": 444682,
+        "semanticPixels": 148182,
+        "channelPixels": {
+          "skin": 60046,
+          "hair": 86190,
+          "eyes": 1946
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "6fba440b98fd0ab118fd9bc814d6388f4d9ea8717c3003c8767e2b731f4acca1",
+      "matteSha256": "c8cb8b4cea17c1a99270777d247186d1be3cf260e667a9146e25c95b9992de7a"
+    },
+    {
+      "id": "female-f2-v1:recovery-slug:restore-contact",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "female-f2-v1:recovery-slug:restore-contact",
+        "canvas": [
+          1536,
+          1536
+        ],
+        "baseSha256": "3e654f46ed742c3f17e0af877fded63fcbbca1f25a36fe22e0312a36498d2e6a",
+        "maskSha256": "c650d160a173ae941cb1f1b1faa530fefb6e55a8fbb2fd68fd6821efdfd79265",
+        "matteSha256": "d68ecd4b7b7b8602557ec0526589322e8f7494eab8905e178010817849dd32fb",
+        "travellerPixels": 302278,
+        "semanticPixels": 87182,
+        "channelPixels": {
+          "skin": 42389,
+          "hair": 43623,
+          "eyes": 1170
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "c650d160a173ae941cb1f1b1faa530fefb6e55a8fbb2fd68fd6821efdfd79265",
+      "matteSha256": "d68ecd4b7b7b8602557ec0526589322e8f7494eab8905e178010817849dd32fb"
+    },
+    {
+      "id": "female-f2-v1:recovery-slug:stretch-a",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "female-f2-v1:recovery-slug:stretch-a",
+        "canvas": [
+          1536,
+          1536
+        ],
+        "baseSha256": "ddeec5dbae5b7ac81d100f45e487f1f8d023c0cae959d8d0ec9b12f343645f4b",
+        "maskSha256": "5a39d741386e8a39c49470728fde4fbf0a16e3c9b88fc6ca0288cf475483e390",
+        "matteSha256": "6e91c5c629bf1d1bac27e4ebfb107407a4eb7c92807f5a87ed1069ed68e64d3e",
+        "travellerPixels": 370285,
+        "semanticPixels": 119412,
+        "channelPixels": {
+          "skin": 50418,
+          "hair": 67125,
+          "eyes": 1869
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "5a39d741386e8a39c49470728fde4fbf0a16e3c9b88fc6ca0288cf475483e390",
+      "matteSha256": "6e91c5c629bf1d1bac27e4ebfb107407a4eb7c92807f5a87ed1069ed68e64d3e"
+    },
+    {
+      "id": "female-f2-v1:recovery-slug:stretch-soft-b",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "female-f2-v1:recovery-slug:stretch-soft-b",
+        "canvas": [
+          1536,
+          1536
+        ],
+        "baseSha256": "33633927fa725ce723771b356fb58555a86b99a707381f20b9d92d7418619d3b",
+        "maskSha256": "2b70f99d3acef560c0985f207e67420f8fa233bbb087c4d823e1159a0cf75341",
+        "matteSha256": "d6e818875713ae101aa5eb2af237de25feb2900e2a958fad72cb2bd9f6da6bde",
+        "travellerPixels": 402657,
+        "semanticPixels": 132627,
+        "channelPixels": {
+          "skin": 50053,
+          "hair": 80478,
+          "eyes": 2096
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "2b70f99d3acef560c0985f207e67420f8fa233bbb087c4d823e1159a0cf75341",
+      "matteSha256": "d6e818875713ae101aa5eb2af237de25feb2900e2a958fad72cb2bd9f6da6bde"
+    },
+    {
+      "id": "female-f2-v1:shadow:attune-guardian",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "female-f2-v1:shadow:attune-guardian",
+        "canvas": [
+          1254,
+          1254
+        ],
+        "baseSha256": "bc8614f2fdbbfcfd91a35ee9caebd08e715f2e3ee42a21d86b9dc368a900e47e",
+        "maskSha256": "da9cb36709c3df4542f92a1338bd21c839bdd80cadb914c2c8783360263fd033",
+        "matteSha256": "a96afbc523184577d1c0696d89b21fd0f9ead759ebfb94687c9449c19582cd32",
+        "travellerPixels": 338237,
+        "semanticPixels": 106256,
+        "channelPixels": {
+          "skin": 41070,
+          "hair": 63924,
+          "eyes": 1262
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "da9cb36709c3df4542f92a1338bd21c839bdd80cadb914c2c8783360263fd033",
+      "matteSha256": "a96afbc523184577d1c0696d89b21fd0f9ead759ebfb94687c9449c19582cd32"
+    },
+    {
+      "id": "female-f2-v1:shadow:attune-keeper",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "female-f2-v1:shadow:attune-keeper",
+        "canvas": [
+          1254,
+          1254
+        ],
+        "baseSha256": "39e3262c5a5ec3f619dd4dea129da14e9ab8ae582bfa95bb94e357c25acfe551",
+        "maskSha256": "073cc2bb3c4f30a0cb633d291d5e67609b7244ef9e0de169447a1629a109cfab",
+        "matteSha256": "1fb16eb3026b51f0feb80202209df2399b28e67eabbbb5aa21ffb638362fb1aa",
+        "travellerPixels": 343912,
+        "semanticPixels": 109296,
+        "channelPixels": {
+          "skin": 40994,
+          "hair": 67320,
+          "eyes": 982
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "073cc2bb3c4f30a0cb633d291d5e67609b7244ef9e0de169447a1629a109cfab",
+      "matteSha256": "1fb16eb3026b51f0feb80202209df2399b28e67eabbbb5aa21ffb638362fb1aa"
+    },
+    {
+      "id": "female-f2-v1:shadow:attune-spark",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "female-f2-v1:shadow:attune-spark",
+        "canvas": [
+          1254,
+          1254
+        ],
+        "baseSha256": "b0e628b8caac274f46da0d651c8dd44dbc726a6a615de62195648593b3101c54",
+        "maskSha256": "96abe212a677549c87d54843789902f20a5534827973e55d58348b66021966f7",
+        "matteSha256": "4ced66850296c66725928ae2d28eec3c4478108e5acbb895d0bbd3f4c509141c",
+        "travellerPixels": 363906,
+        "semanticPixels": 122776,
+        "channelPixels": {
+          "skin": 46406,
+          "hair": 75947,
+          "eyes": 423
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "96abe212a677549c87d54843789902f20a5534827973e55d58348b66021966f7",
+      "matteSha256": "4ced66850296c66725928ae2d28eec3c4478108e5acbb895d0bbd3f4c509141c"
+    },
+    {
+      "id": "female-f2-v1:shadow:attune-spirit",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "female-f2-v1:shadow:attune-spirit",
+        "canvas": [
+          1254,
+          1254
+        ],
+        "baseSha256": "33c422b3894aa2e719ab8a21de12e837d257cf07dd595da2480e9d6b56c4843d",
+        "maskSha256": "640e6db820c7ffadece43218b7a66fbd22b1b4f6a2cda3650f5752b45b7a0188",
+        "matteSha256": "6930414adcd1cf0a5dd41feb8b85cabe76c00a91a9f550f80effad0e80702f73",
+        "travellerPixels": 365471,
+        "semanticPixels": 116662,
+        "channelPixels": {
+          "skin": 45090,
+          "hair": 71555,
+          "eyes": 17
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "640e6db820c7ffadece43218b7a66fbd22b1b4f6a2cda3650f5752b45b7a0188",
+      "matteSha256": "6930414adcd1cf0a5dd41feb8b85cabe76c00a91a9f550f80effad0e80702f73"
+    },
+    {
+      "id": "male-v1:recovery-slug:breathe-in",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "male-v1:recovery-slug:breathe-in",
+        "canvas": [
+          1536,
+          1536
+        ],
+        "baseSha256": "d24f86344072a80aa89a0a3a39dbfa4abf6a7b119fc926e31b3984c11b3386e1",
+        "maskSha256": "3f999790949e4699c96ff360b4bda86d7f45b6c726cf85ae93c8fe0f820d2ea7",
+        "matteSha256": "1d4c17113843db76c9dd1592e241de4f3bd55c80e9efb0b9cced1ef227efdfe4",
+        "travellerPixels": 423167,
+        "semanticPixels": 101706,
+        "channelPixels": {
+          "skin": 58106,
+          "hair": 39385,
+          "eyes": 4215
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "3f999790949e4699c96ff360b4bda86d7f45b6c726cf85ae93c8fe0f820d2ea7",
+      "matteSha256": "1d4c17113843db76c9dd1592e241de4f3bd55c80e9efb0b9cced1ef227efdfe4"
+    },
+    {
+      "id": "male-v1:recovery-slug:breathe-out",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "male-v1:recovery-slug:breathe-out",
+        "canvas": [
+          1536,
+          1536
+        ],
+        "baseSha256": "279ed20a08efb17fe946fdaf05d54ecb24aa26097957dea3e4716307d72c7603",
+        "maskSha256": "e9f16386265d9b9718024f4195b062cf1f230e41648374f7c1a0d8136923c36a",
+        "matteSha256": "fea9e671a0b7dc5e06b1562294a2cdd30e8c7e89dbaf6032495ae2e3ea0f88b3",
+        "travellerPixels": 389141,
+        "semanticPixels": 77880,
+        "channelPixels": {
+          "skin": 46772,
+          "hair": 30528,
+          "eyes": 580
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "e9f16386265d9b9718024f4195b062cf1f230e41648374f7c1a0d8136923c36a",
+      "matteSha256": "fea9e671a0b7dc5e06b1562294a2cdd30e8c7e89dbaf6032495ae2e3ea0f88b3"
+    },
+    {
+      "id": "male-v1:recovery-slug:greet-contact",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "male-v1:recovery-slug:greet-contact",
+        "canvas": [
+          1536,
+          1536
+        ],
+        "baseSha256": "84ee49e183523ad5618a49b61ce3ede5a6db3d9ba780cd9161f1d680858ca108",
+        "maskSha256": "2dad041fd64991e8980a5a8d9899dad57446c20707c26a412d31e2d358b25821",
+        "matteSha256": "5258d6e1a5d92ed6e3d01f89fcb2fbf804ba2d25a4fea3a50291f233172f7f84",
+        "travellerPixels": 455529,
+        "semanticPixels": 107158,
+        "channelPixels": {
+          "skin": 62137,
+          "hair": 43389,
+          "eyes": 1632
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "2dad041fd64991e8980a5a8d9899dad57446c20707c26a412d31e2d358b25821",
+      "matteSha256": "5258d6e1a5d92ed6e3d01f89fcb2fbf804ba2d25a4fea3a50291f233172f7f84"
+    },
+    {
+      "id": "male-v1:recovery-slug:restore-contact",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "male-v1:recovery-slug:restore-contact",
+        "canvas": [
+          1536,
+          1536
+        ],
+        "baseSha256": "12909454c6f55d0b4b54263df4a2b1de8291be1fc861add5fae921cb35f1d525",
+        "maskSha256": "c69379c6eab6b7eaa4b77694c2a119106c331dafbf8bd015398bda494e111504",
+        "matteSha256": "6817e3a011e7cd33674cb6bd312daba174e6c15289417f7be121f480990497d5",
+        "travellerPixels": 319496,
+        "semanticPixels": 77126,
+        "channelPixels": {
+          "skin": 42505,
+          "hair": 33204,
+          "eyes": 1417
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "c69379c6eab6b7eaa4b77694c2a119106c331dafbf8bd015398bda494e111504",
+      "matteSha256": "6817e3a011e7cd33674cb6bd312daba174e6c15289417f7be121f480990497d5"
+    },
+    {
+      "id": "male-v1:recovery-slug:stretch-a",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "male-v1:recovery-slug:stretch-a",
+        "canvas": [
+          1536,
+          1536
+        ],
+        "baseSha256": "a07c5bb1fdff0b9c1506354f295fdcf6bfd32171d4534d8d04963f3c3260d2ab",
+        "maskSha256": "3ad0e507036f8c7359dd9ebc689b6942fcfc2cfa13a3c03279b61d471dd5205a",
+        "matteSha256": "c03edf467161be0bf09c2e0cdd825e561ae028180f13fc998b482f3ad121cf55",
+        "travellerPixels": 351859,
+        "semanticPixels": 86647,
+        "channelPixels": {
+          "skin": 48112,
+          "hair": 35426,
+          "eyes": 3109
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "3ad0e507036f8c7359dd9ebc689b6942fcfc2cfa13a3c03279b61d471dd5205a",
+      "matteSha256": "c03edf467161be0bf09c2e0cdd825e561ae028180f13fc998b482f3ad121cf55"
+    },
+    {
+      "id": "male-v1:recovery-slug:stretch-soft-b",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "male-v1:recovery-slug:stretch-soft-b",
+        "canvas": [
+          1536,
+          1536
+        ],
+        "baseSha256": "4e8d698c8a1d24fa35334e21eda161bd2a81fa3f141c8fb944b9a6e8c675608d",
+        "maskSha256": "61aae47601202888ea79c506dd6e0641e88dcb3ddebb5f3c764f2748fa089a41",
+        "matteSha256": "331dc3a0b3e2ee899c77f31ea3ba76a971111e35805d83a72eed925dcb4d3511",
+        "travellerPixels": 386745,
+        "semanticPixels": 87724,
+        "channelPixels": {
+          "skin": 48688,
+          "hair": 37869,
+          "eyes": 1167
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "61aae47601202888ea79c506dd6e0641e88dcb3ddebb5f3c764f2748fa089a41",
+      "matteSha256": "331dc3a0b3e2ee899c77f31ea3ba76a971111e35805d83a72eed925dcb4d3511"
+    },
+    {
+      "id": "male-v1:shadow:attune-guardian",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "male-v1:shadow:attune-guardian",
+        "canvas": [
+          1254,
+          1254
+        ],
+        "baseSha256": "94cdf3079884ff337a24d15b7439eab05fbfd13afe717f13cd82bd62de60c5f2",
+        "maskSha256": "ea96fff8255bac963428fffae5158a76dc897464f35a423bf62860415cdc9c50",
+        "matteSha256": "d0919198d7cb3abc1e0d89f27e99af39a89e105e6639bec2f05de12528d17ac7",
+        "travellerPixels": 397555,
+        "semanticPixels": 105930,
+        "channelPixels": {
+          "skin": 63866,
+          "hair": 40386,
+          "eyes": 1678
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "ea96fff8255bac963428fffae5158a76dc897464f35a423bf62860415cdc9c50",
+      "matteSha256": "d0919198d7cb3abc1e0d89f27e99af39a89e105e6639bec2f05de12528d17ac7"
+    },
+    {
+      "id": "male-v1:shadow:attune-keeper",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "male-v1:shadow:attune-keeper",
+        "canvas": [
+          1254,
+          1254
+        ],
+        "baseSha256": "79f2b4292e28f45488d8d6b886520d15078089d5cfe4311c13dc14f60938f13a",
+        "maskSha256": "e212a30bf9820e20c706189e5a5bcfa1c4f729f1621f9ccfbd08528d468294a5",
+        "matteSha256": "594846d41bbf4dc13c415cf5311e78e9eda625d01ed9f83885826b27bc974d29",
+        "travellerPixels": 361934,
+        "semanticPixels": 97936,
+        "channelPixels": {
+          "skin": 60191,
+          "hair": 36188,
+          "eyes": 1557
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "e212a30bf9820e20c706189e5a5bcfa1c4f729f1621f9ccfbd08528d468294a5",
+      "matteSha256": "594846d41bbf4dc13c415cf5311e78e9eda625d01ed9f83885826b27bc974d29"
+    },
+    {
+      "id": "male-v1:shadow:attune-spark",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "male-v1:shadow:attune-spark",
+        "canvas": [
+          1254,
+          1254
+        ],
+        "baseSha256": "826351c5d7cea1904db7aafbe50d52c89abe82d7cb8af5f205528bc9db354e9d",
+        "maskSha256": "75cb2eae79d72dca6a99bfbb43549e06bc6d543218836e5b1feca68c858339f0",
+        "matteSha256": "a900a415859ae9e5418d0148e26cca1487a68e3690d056741162970c1883bffb",
+        "travellerPixels": 363475,
+        "semanticPixels": 97222,
+        "channelPixels": {
+          "skin": 59249,
+          "hair": 36577,
+          "eyes": 1396
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "75cb2eae79d72dca6a99bfbb43549e06bc6d543218836e5b1feca68c858339f0",
+      "matteSha256": "a900a415859ae9e5418d0148e26cca1487a68e3690d056741162970c1883bffb"
+    },
+    {
+      "id": "male-v1:shadow:attune-spirit",
+      "passed": true,
+      "errors": [],
+      "facts": {
+        "asset": "male-v1:shadow:attune-spirit",
+        "canvas": [
+          1254,
+          1254
+        ],
+        "baseSha256": "fa5db625a4fc729803206277f8d06382af168cb5f9a074586749fcd347568163",
+        "maskSha256": "43f6dfb6ae77ec83ff14bea84f8d10b50cae74e27c63f4629c815f5b5bef9554",
+        "matteSha256": "9e6a636b91290c7318bf6b1b525b15979673708f3ce049d01c2e73eaf82f018a",
+        "travellerPixels": 380022,
+        "semanticPixels": 99988,
+        "channelPixels": {
+          "skin": 60603,
+          "hair": 37872,
+          "eyes": 1513
+        },
+        "maximumChannelSum": 255
+      },
+      "maskSha256": "43f6dfb6ae77ec83ff14bea84f8d10b50cae74e27c63f4629c815f5b5bef9554",
+      "matteSha256": "9e6a636b91290c7318bf6b1b525b15979673708f3ce049d01c2e73eaf82f018a"
+    }
+  ],
+  "previews": [
+    "previews/recovery-shadow-full-01/male-v1-recovery-slug-native-contact-sheet.png",
+    "previews/recovery-shadow-full-01/male-v1-shadow-native-contact-sheet.png",
+    "previews/recovery-shadow-full-01/female-f2-v1-recovery-slug-native-contact-sheet.png",
+    "previews/recovery-shadow-full-01/female-f2-v1-shadow-native-contact-sheet.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/male-v1--recovery-slug--breathe-in-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/female-f2-v1--recovery-slug--breathe-in-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/male-v1--recovery-slug--restore-contact-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/female-f2-v1--recovery-slug--restore-contact-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/male-v1--recovery-slug--stretch-a-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/female-f2-v1--recovery-slug--stretch-a-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/male-v1--recovery-slug--stretch-soft-b-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/female-f2-v1--recovery-slug--stretch-soft-b-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/male-v1--shadow--attune-spark-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/female-f2-v1--shadow--attune-spark-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/male-v1--shadow--attune-spirit-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/female-f2-v1--shadow--attune-spirit-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/male-v1--shadow--attune-guardian-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/female-f2-v1--shadow--attune-guardian-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/male-v1--shadow--attune-keeper-matte-3x.png",
+    "previews/recovery-shadow-full-01/high-risk-contacts/female-f2-v1--shadow--attune-keeper-matte-3x.png"
+  ]
+}

@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-24] 🎨 Traveller Appearance v2 — полный factory-pack 92/92
+
+- Завершён semantic-pack для всех **92 authored-кадров Traveller**: 46 мужских и 46 женских. Для каждого кадра есть immutable packed RGB-mask (`R=skin`, `G=hair`, `B=eyes`) и отдельный factory-only Traveller matte, который не даёт перекрашивать Гамабунту, Кацую, Мистера Пи, Тень, портал, книги, монеты, мебель и тени пола.
+- Полный состав: core/motion/room **22**, Traveller × Гамабунта **26**, Traveller × Кацую **12**, Traveller × Мистер Пи **24**, Traveller × Тень **8**. Все четыре production-authoring скрипта повторно проходят no-write preflight; outputs детерминированы и не пишут в `public/art`.
+- Resources/Mister P переавторен после независимого adversarial review: восстановлены реальные пальцы/кожа в greet, count, reserve и close; мужские волосы ограничены authored head-геометрией; очки, перчатки Пи, монеты, мешок, ноутбук, журнал и стол исключены из semantic ownership.
+- Общий factory QA: foundation/base **92/92**, semantic masks **92/92**, missing/partial/orphan **0**, OKLab golden parity **3/3**, smoke **19/19**. Общий четырёхпанельный review (`base → cyan Traveller matte → RGB mask → extreme recolour`) собран в `previews/full-92-review.png`.
+- Promotion намеренно остановлен на human gate: `manual-approvals.json` остаётся `pending` (**0/92**), отчёт возвращает `manual-gate-failed`, runtime manifest не создаётся, `runtimeEligible:false`, public writes отсутствуют. Поэтому текущий интерфейс и production пока визуально не меняются.
+
+Commit: `art: complete Traveller palette mask factory` (этот коммит). Следующий gate — явное одобрение общего review Альбертом; только затем разрешены immutable public masks/manifest и подключение dormant runtime/controller/frame-registry к app + PWA shell.
+
 ## [2026-08-20] 🧷 Traveller frame registry — lifetime composited-кадров
 
 - Добавлен dormant `public/traveller-frame-registry-v2.js`: подготовленный набор blob/base URL невидим до `commit`, прежнее активное поколение живёт до `finalize`, а `rollback` возвращает его без повторного рендера. Scene lease владеет отдельными handles и переживает смену core-look.

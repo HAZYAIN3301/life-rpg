@@ -1,8 +1,9 @@
 # Traveller Appearance v2 — semantic-mask foundation
 
 Factory-only foundation for deterministic skin, hair and eye recolouring. It
-does not write to `public/` or enable runtime controls. The first 12 masks pass
-machine QA and visual factory review, but no mask is runtime-approved yet.
+does not write to `public/` or enable runtime controls. All 92 mask/matte pairs
+have now been authored and are eligible for whole-inventory machine QA. Manual
+review remains a separate closed gate, so no mask is runtime-approved yet.
 
 ## Pinned inventory
 
@@ -85,8 +86,9 @@ python3 -B promote_runtime_manifest.py
 python3 -B factory_smoke_test.py
 ```
 
-The approval commands pass for the current 12-frame batch. Full promotion still
-fails closed at 12/92 and while `manual-approvals.json` remains `pending`.
+The approval commands continue to cover the frozen 12-frame risk sample. Use
+`--scope all` for the complete 92-frame machine gate and review sheet. Full
+promotion still fails closed while `manual-approvals.json` remains `pending`.
 `--scope all --write-candidate <path>` is gated on strict validation of all 92
 assets and still emits a runtime-ineligible factory candidate requiring a
 separate final approval.

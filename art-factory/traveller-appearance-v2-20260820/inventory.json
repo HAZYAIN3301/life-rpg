@@ -1,7 +1,7 @@
 {
   "schema": "satoru.traveller-semantic-mask-inventory/1",
   "id": "traveller-appearance-v2-20260820",
-  "status": "manual-mask-production-in-progress",
+  "status": "manual-mask-production-complete",
   "runtimeEligible": false,
   "publicArtWrites": false,
   "variantOrder": ["male-v1", "female-f2-v1"],
@@ -10,7 +10,7 @@
     "female-f2-v1": {"gender": "female", "morphologyRevision": "f2-v1", "identitySha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da"}
   },
   "channels": {"red": "skin", "green": "hair", "blue": "eyes", "encoding": "linear-coverage-0-255", "constraint": "red + green + blue <= 255"},
-  "counts": {"frameKeys": 46, "variants": 2, "baseAssets": 92, "requiredMasks": 92, "approvalBaseAssets": 12, "producedMasks": 12},
+  "counts": {"frameKeys": 46, "variants": 2, "baseAssets": 92, "requiredMasks": 92, "approvalBaseAssets": 12, "producedMasks": 92},
   "approvalBatch": {
     "id": "semantic-mask-approval-01",
     "status": "manual-masks-complete",
