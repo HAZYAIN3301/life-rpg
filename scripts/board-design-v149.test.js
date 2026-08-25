@@ -23,7 +23,7 @@ test('Board v149 keeps one board, one reading rail and a bounded private journal
 });
 
 test('Board papers are buttons with a default selected contract, not a broken tablist', () => {
-  assert.match(BOARD_SCREEN, /const selOrder = requested \|\| activeOrders\[0\] \|\| view\.seasonal \|\| view\.personal\[0\]/);
+  assert.match(BOARD_SCREEN, /const selOrder = requested \|\| activeOrders\[0\] \|\| exactOffers\[0\] \|\| view\.seasonal \|\| view\.personal\[0\]/);
   assert.match(BOARD_SCREEN, /type="button" aria-pressed="\$\{selected\}"/);
   assert.doesNotMatch(BOARD_SCREEN, /role="tablist"/);
   assert.doesNotMatch(BOARD_SCREEN, /role="tab"/);

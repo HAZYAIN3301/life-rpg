@@ -133,9 +133,9 @@ test('corrupt state is bounded and unknown snapshots fail closed', () => {
   assert.equal(Offers.snapshotById(state, 'missing', Pacing), null);
 });
 
-test('offer persistence stays dormant until Board v2 UI integration', () => {
+test('offer persistence is loaded before the Board v2 runtime bridge', () => {
   const index = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
   const sw = fs.readFileSync(path.join(ROOT, 'public/sw.js'), 'utf8');
-  assert.doesNotMatch(index, /board-v2-offers\.js/);
-  assert.doesNotMatch(sw, /board-v2-offers\.js/);
+  assert.ok(index.indexOf('board-v2-offers.js') < index.indexOf('board-v2-runtime.js'));
+  assert.match(sw, /'board-v2-offers\.js'/);
 });

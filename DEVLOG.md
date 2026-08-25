@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-25] Board v2 C0.12 — атомарный account-runtime для точных заказов
+
+- Новый pure-модуль `public/board-v2-runtime.js` соединяет три уже проверенные модели: стабильный snapshot предложения, completion/proof и старый bounded active-ledger Board v1. `take`, `return` и `complete` выпускают immutable transaction; произвольный объект не может выдать себя за разрешённое изменение.
+- Браузер отправляет один существующий `POST /api/board/commit`, ждёт успешный ответ и только затем публикует новые `State.settings`/`State.tasks`. При HTTP/network failure интерфейс сохраняет прежнее состояние. Completion одним commit сохраняет authored XP/gold, private proof reference, pending follow-up Тени и title-unlock; взять заказ не означает получить награду.
+- Exact Board v2 snapshots теперь читаются и после перезагрузки, попадают в текущие заказы и используют собственные название, подробности, CTA и награду. До перевода каталога новые карточки намеренно видимы только в RU; Board v1 остаётся рабочим fallback, а пользовательские заказы не теряются.
+- PWA shell поднят `satoru-v168 → satoru-v169`; v2 model/pacing/offers/completion/runtime загружаются в порядке зависимостей. Сам каталог и автоматическая выдача ещё не подключены: этот commit умеет безопасно прожить уже выпущенный snapshot, следующий — выпустить его из утверждённого профиля/контекста.
+- Для обязательного фото/видео модель уже fail-closed, но отдельный UI выбора private media ещё нужен; то же относится к экрану ответа на follow-up Тени и экипировке полученного звания.
+
+Focused Board v2 suite — **174/174 PASS**; полный suite — **722/722 PASS**. App/runtime/SW syntax и `git diff --check` — PASS.
+
 ## [2026-08-25] Board v2 C0.11 — community evidence без ленты и рейтинга людей
 
 - Новый server-only модуль `server-board-v2-community-v1.js` принимает ровно два поля: ID сохранённого snapshot и структурированный результат `matched/changed/closed`. Snapshot обязан быть локальным, иметь канонический HTTPS CTA и уже существовать в account-owned `settings.boardV2Offers`; сигнал принимается только после выполненной задачи с тем же `boardSnapshotId`.

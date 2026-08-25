@@ -181,11 +181,12 @@ test('v167 shell pins and pre-caches the complete immutable F2 runtime', () => {
   for (const file of [
     'styles.css', 'shadow-den-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js',
     'resources-penguin-v1.js', 'traveller-appearance-v1.js', 'traveller-motion-v3.js',
-    'traveller-room-v4.js', 'app.js',
+    'traveller-room-v4.js',
   ]) {
     assert.match(html, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=${revision}`));
   }
-  assert.match(sw, /const CACHE = 'satoru-v168';/);
+  assert.match(html, /app\.js\?v=20260825-board-v2-runtime-v169-1/);
+  assert.match(sw, /const CACHE = 'satoru-v169';/);
   const shellRoutes = [appearance.assetManifest('female').runtimeManifest, ...appearance.expectedAssets('female')]
     .map((route) => route.replace(/^\//, ''));
   for (const route of shellRoutes) {

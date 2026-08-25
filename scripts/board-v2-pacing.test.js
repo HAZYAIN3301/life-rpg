@@ -151,9 +151,9 @@ test('повреждённое pacing state нормализуется fail-clos
   assert.deepEqual(state.rejections, []);
 });
 
-test('pacing остаётся dormant и не загружается app shell до Board v2 UI', () => {
+test('pacing загружен до offer/runtime bridge и доступен offline', () => {
   const index = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
   const sw = fs.readFileSync(path.join(ROOT, 'public/sw.js'), 'utf8');
-  assert.doesNotMatch(index, /board-v2-pacing\.js/);
-  assert.doesNotMatch(sw, /board-v2-pacing\.js/);
+  assert.ok(index.indexOf('board-v2-pacing.js') < index.indexOf('board-v2-offers.js'));
+  assert.match(sw, /'board-v2-pacing\.js'/);
 });

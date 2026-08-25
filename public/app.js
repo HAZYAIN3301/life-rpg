@@ -3839,6 +3839,9 @@ const DEFAULT_SETTINGS = {
   sound: true, // звуки интерфейса (#23)
   shadowVoiceGender: 'female', // выбранный тембр Piper: единая женская/мужская пара для всех языков
   avatarCoreGender: 'male', // morphology Traveller; выбор доступен только для полного QA-pack без cross-gender fallback
+  boardV2Offers: { schema: 'satoru.board-offers/2', current: null, snapshots: [], history: [], pacing: { schema: 'satoru.board-pacing/2', passiveWeeks: [], offers: [], rejections: [] } },
+  boardV2Completion: { schema: 'satoru.board-completion/2', pending: [], records: [] },
+  boardV2Titles: [],
   theme: 'dark', accent: '#6c8cff', // оформление (тема + акцент)
   companion: { name: 'Тень', born: null, bond: 0, lastSeen: null, journal: [], check: {} }, // живой компаньон (Finch-модель)
   path: null, pathChosenAt: null, pathAntagonistMuted: false, control: {}, // «Доверие vs Контроль» (см. DISCIPLINE-PATHS-PLAN.md) — null = ещё не выбран
@@ -15210,6 +15213,52 @@ const BOARD_ORDER_XP = 40;
 function boardRead() {
   return window.BoardV1 ? window.BoardV1.normalize(State.settings && State.settings.board) : null;
 }
+function boardV2OffersRead() {
+  return window.BoardV2Offers
+    ? window.BoardV2Offers.normalizeState(State.settings && State.settings.boardV2Offers, window.BoardV2Pacing)
+    : null;
+}
+function boardV2CompletionRead() {
+  return window.BoardV2Completion ? window.BoardV2Completion.normalizeState(State.settings && State.settings.boardV2Completion) : null;
+}
+function boardV2SnapshotById(id) {
+  const offers = boardV2OffersRead();
+  return offers && window.BoardV2Offers ? window.BoardV2Offers.snapshotById(offers, id, window.BoardV2Pacing) : null;
+}
+function boardV2CurrentOffers() {
+  const state = boardV2OffersRead();
+  if (!state || !state.current) return [];
+  return state.current.snapshotIds.map((id) => state.snapshots.find((item) => item.id === id)).filter(Boolean);
+}
+function prepareBoardV2Action(action, snapshotId, options = {}) {
+  const R = window.BoardV2Runtime;
+  if (!R || !window.BoardV1 || !window.BoardV2Offers || !window.BoardV2Completion) return { ok: false, reason: 'runtime-unavailable' };
+  return R.prepare({
+    action, boardApi: window.BoardV1, offersApi: window.BoardV2Offers,
+    completionApi: window.BoardV2Completion, pacingApi: window.BoardV2Pacing,
+    settings: State.settings, tasks: State.tasks, snapshotId, today: todayStr(),
+    taskId: options.taskId, completedAt: options.completedAt, skillId: options.skillId, proof: options.proof,
+  });
+}
+async function commitBoardV2Transaction(transaction) {
+  const R = window.BoardV2Runtime, payload = R && R.payload(transaction), next = R && R.result(transaction);
+  if (!payload || !next || State._boardBusy) return false;
+  State._boardBusy = true; State._boardError = '';
+  try {
+    const response = await fetch('/api/board/commit', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
+    });
+    if (response.status === 401) { handleAccountSessionExpired(); throw new Error('session'); }
+    if (!response.ok) throw new Error(`board v2 commit ${response.status}`);
+    State.settings = next.settings;
+    if (next.tasks) State.tasks = next.tasks;
+    return true;
+  } catch (error) {
+    console.error('board v2 commit', error);
+    State._boardError = t('Не удалось сохранить изменение доски. Ничего не изменено — попробуй ещё раз.');
+    return false;
+  } finally { State._boardBusy = false; }
+}
 async function commitBoardState(nextBoard, nextTasks = null) {
   if (State._boardBusy) return false;
   const settings = structuredClone(State.settings);
@@ -15260,6 +15309,8 @@ function boardCustomOrders() {
 }
 function boardOrderById(id) {
   const key = String(id);
+  const boardV2 = boardV2SnapshotById(key);
+  if (boardV2) return { ...boardV2, boardV2: true };
   // Порядок важен: взятое небесное событие лежит СНИМКОМ в custom, и после того как
   // ночь прошла, вычисляемый список его уже не содержит. Снимок первый — иначе у
   // активного заказа однажды утром пропал бы текст.
@@ -15322,6 +15373,7 @@ function boardSkyOrders() {
 }
 function boardOrderTitle(order) {
   if (!order) return '';
+  if (order.boardV2) return String(order.title || '');
   // Свой заказ переводить нечем и незачем — это слова человека, как и имена сфер.
   if (order.custom) return String(order.title || '');
   return window.BoardPoolV1 && typeof window.BoardPoolV1.titleFor === 'function'
@@ -15502,25 +15554,26 @@ function boardScreenHTML() {
   // Свои заказы показываются на доске рядом с предложенными, но только пока не взяты:
   // взятые и без того видны в «Твои текущие заказы» выше, дублировать их незачем.
   const takenIds = new Set(mine.map((entry) => entry.orderId));
+  const exactOffers = lang() === 'ru' ? boardV2CurrentOffers().filter((order) => !takenIds.has(order.id)).map((order) => ({ ...order, boardV2: true })) : [];
   const customOffers = boardCustomOrders().filter((o) => !takenIds.has(o.id));
   // Небо показывается первым, когда событие сегодня: у него единственного есть срок.
   const skyOffers = boardSkyOrders().filter((o) => !takenIds.has(o.id)).slice(0, 2);
-  const offers = skyOffers.concat(view.seasonal ? [view.seasonal] : []).concat(view.personal).concat(customOffers);
+  const offers = exactOffers.concat(skyOffers).concat(view.seasonal ? [view.seasonal] : []).concat(view.personal).concat(customOffers);
   const activeOrders = mine.map((entry) => boardOrderById(entry.orderId)).filter(Boolean);
   const selectable = activeOrders.concat(offers);
   const requested = State._boardSel ? selectable.find((order) => order.id === State._boardSel) : null;
-  const selOrder = requested || activeOrders[0] || view.seasonal || view.personal[0] || null;
+  const selOrder = requested || activeOrders[0] || exactOffers[0] || view.seasonal || view.personal[0] || null;
   const selTaken = !!(selOrder && mine.some((entry) => entry.orderId === selOrder.id));
   const full = mine.length >= B.MAX_ACTIVE;
 
   const sheet = (order) => {
     const selected = !!(selOrder && selOrder.id === order.id);
-    const label = order.seasonal ? t('ОБЩИЙ СЕЗОННЫЙ') : order.sky ? t('ТОЛЬКО СЕЙЧАС') : order.custom ? t('ТВОЙ') : t('ЛИЧНЫЙ');
+    const label = order.boardV2 ? 'ПОДОБРАНО ДЛЯ ТЕБЯ' : order.seasonal ? t('ОБЩИЙ СЕЗОННЫЙ') : order.sky ? t('ТОЛЬКО СЕЙЧАС') : order.custom ? t('ТВОЙ') : t('ЛИЧНЫЙ');
     return `<button type="button" aria-pressed="${selected}" aria-label="${esc(t('Читать заказ') + ': ' + boardOrderTitle(order))}"
       class="bsheet${order.seasonal ? ' is-seasonal' : ''}${order.sky ? ' is-sky' : ''}${order.custom && !order.sky ? ' is-custom' : ''}${selected ? ' is-selected' : ''}"
       style="--tilt:${boardTilt(order.id)}deg" data-action="board-pick" data-id="${esc(order.id)}">
       <span class="bsheet-pin" aria-hidden="true"></span><span class="bsheet-kind">${label}</span>
-      <span class="bsheet-text"${order.custom ? ' data-noi18n' : ''}>${esc(boardOrderTitle(order))}</span>
+      <span class="bsheet-text"${order.custom || order.boardV2 ? ' data-noi18n' : ''}>${esc(boardOrderTitle(order))}</span>
       ${order.seasonal ? `<span class="bsheet-seal" aria-hidden="true">S</span>` : ''}
     </button>`;
   };
@@ -15560,12 +15613,14 @@ function boardScreenHTML() {
   let detail = `<p class="bdetail-empty">${t('Выбери заказ, чтобы прочитать его целиком.')}</p>`;
   if (selOrder) {
     const sphere = selOrder.sphereId ? (State.settings.skills || []).find((item) => item.id === selOrder.sphereId) : null;
-    const meta = selOrder.seasonal ? t('Сезонный заказ')
+    const meta = selOrder.boardV2 ? 'Конкретный заказ'
+      : selOrder.seasonal ? t('Сезонный заказ')
       : selOrder.sky ? `${t('Небо')} · ${esc(selOrder.skyPlace || '')} · ${esc(t(selOrder.skyQuality || ''))}`
         : selOrder.custom ? t('Твой заказ') : sphere ? sphere.name : t('Личный заказ');
     detail = `<div class="bdetail-copy">
       <p class="bdetail-meta">${esc(meta)}</p>
-      <h3 class="bdetail-title" id="board-detail-title" tabindex="-1"${selOrder.custom ? ' data-noi18n' : ''}>${esc(boardOrderTitle(selOrder))}</h3>
+      <h3 class="bdetail-title" id="board-detail-title" tabindex="-1"${selOrder.custom || selOrder.boardV2 ? ' data-noi18n' : ''}>${esc(boardOrderTitle(selOrder))}</h3>
+      ${selOrder.boardV2 && selOrder.details ? `<p class="bdetail-state" data-noi18n>${esc(selOrder.details)}</p>` : ''}
       <p class="bdetail-state">${selTaken ? t('Заказ у тебя. Вернуть можно в любой момент — это ничего не стоит.') : t('Возьмёшь — он будет ждать тебя. Вернуть можно в любой момент, это ничего не стоит.')}</p>
       <div class="bdetail-acts">${selTaken
         ? `<button class="btn" data-action="board-done" data-id="${esc(selOrder.id)}">${t('Выполнено')}</button><button class="btn ghost" data-action="board-return" data-id="${esc(selOrder.id)}">${t('Вернуть')}</button>`
@@ -15573,6 +15628,7 @@ function boardScreenHTML() {
           ? `<p class="bdetail-full">${t('Три заказа сразу — уже список дел, а не приключение')}</p>`
           : `<button class="btn" data-action="board-take" data-id="${esc(selOrder.id)}">${t('Беру')}</button>`}</div>
       <section class="bdetail-instruction" aria-labelledby="board-how-title"><h4 id="board-how-title">${t('КАК ЗАКРЫТЬ')}</h4><p>${t('Сделай это в реальной жизни и отметь здесь. Самоотчёта достаточно; фотографию можно добавить потом.')}</p></section>
+      ${selOrder.boardV2 && selOrder.primaryAction ? `<p class="bdetail-privacy"><a class="btn ghost sm" href="${esc(selOrder.primaryAction.url)}" target="_blank" rel="noopener noreferrer" data-noi18n>${esc(selOrder.primaryAction.label)}</a></p>` : ''}
       ${selOrder.seasonal ? `<p class="bdetail-privacy">◉ ${t('Общий для всех заказ. Твоё выполнение и фото остаются приватными.')}</p>` : ''}
       ${selOrder.custom && !selTaken ? (State._boardEditId === selOrder.id
         ? `<form class="bdetail-edit" id="board-custom-edit" data-id="${esc(selOrder.id)}">
@@ -15582,7 +15638,7 @@ function boardScreenHTML() {
                <button type="button" class="btn ghost sm" data-action="board-edit-cancel">${t('Отмена')}</button></div>
            </form>`
         : `<p class="bdetail-privacy"><button type="button" class="link-btn" data-action="board-custom-edit" data-id="${esc(selOrder.id)}">${t('Изменить текст')}</button> · <button type="button" class="link-btn" data-action="board-custom-remove" data-id="${esc(selOrder.id)}">${t('Снять с доски')}</button></p>`) : ''}
-      <div class="bdetail-reward" aria-label="${t('НАГРАДА')}"><span>${t('НАГРАДА')}</span><b>+${BOARD_ORDER_XP} ${t('опыта')}</b><b>+${Math.round(BOARD_ORDER_XP * .35)} ${t('золота')}</b></div>
+      <div class="bdetail-reward" aria-label="${t('НАГРАДА')}"><span>${t('НАГРАДА')}</span><b>+${selOrder.boardV2 ? selOrder.reward.xp : BOARD_ORDER_XP} ${t('опыта')}</b><b>+${Math.round((selOrder.boardV2 ? selOrder.reward.xp : BOARD_ORDER_XP) * .35)} ${t('золота')}</b></div>
     </div>`;
   }
 
@@ -22003,6 +22059,12 @@ async function onClick(e) {
   } else if (action === 'board-pick') {
     State._boardSel = id; State._boardFocusAfterCommit = '#board-detail-title'; render();
   } else if (action === 'board-take') {
+    if (boardV2SnapshotById(id)) {
+      const prepared = prepareBoardV2Action('take', id);
+      if (!prepared.ok) { toast(t('Не удалось взять заказ')); return; }
+      const saved = await commitBoardV2Transaction(prepared.transaction);
+      State._boardSel = id; State._boardFocusAfterCommit = saved ? '#board-detail-title' : '.board-error'; render(); return;
+    }
     const B = window.BoardV1, o = boardOrderById(id);
     if (!B || !o) return;
     const res = B.takeOrder(boardRead(), o, today);
@@ -22044,6 +22106,16 @@ async function onClick(e) {
     const saved = await commitBoardState(next);
     State._boardSel = null; State._boardFocusAfterCommit = saved ? '#board-title' : '.board-error'; render();
   } else if (action === 'board-done') {
+    if (boardV2SnapshotById(id)) {
+      const prepared = prepareBoardV2Action('complete', id, { taskId: uid(), completedAt: new Date().toISOString(), proof: null });
+      if (!prepared.ok) {
+        toast(prepared.reason === 'proof-required' ? 'Для этого заказа сначала нужно добавить подтверждение.' : t('Не удалось сохранить изменение доски. Ничего не изменено — попробуй ещё раз.'));
+        return;
+      }
+      const saved = await commitBoardV2Transaction(prepared.transaction);
+      if (!saved) { State._boardFocusAfterCommit = '.board-error'; render(); return; }
+      State._boardSel = null; State._boardFocusAfterCommit = '#board-journal-title, #board-title'; toast(t('Заказ закрыт')); render(); return;
+    }
     const B = window.BoardV1;
     if (!B) return;
     const order = boardOrderById(id);
@@ -22070,6 +22142,13 @@ async function onClick(e) {
     toast(t('Заказ закрыт'));
     render();
   } else if (action === 'board-return') {
+    if (boardV2SnapshotById(id)) {
+      const prepared = prepareBoardV2Action('return', id);
+      if (!prepared.ok) return;
+      const saved = await commitBoardV2Transaction(prepared.transaction);
+      if (saved) State._boardSel = null;
+      State._boardFocusAfterCommit = saved ? '#board-title' : '.board-error'; render(); return;
+    }
     // Гейт §3: без всяких последствий и без «жаль».
     const B = window.BoardV1;
     if (!B) return;
@@ -23060,6 +23139,9 @@ async function initApp() {
   State.settings.curve = Object.assign({}, DEFAULT_SETTINGS.curve, State.settings.curve);
   State.settings.focus = Object.assign({}, DEFAULT_SETTINGS.focus, State.settings.focus);
   State.settings.social = Object.assign({}, DEFAULT_SETTINGS.social, State.settings.social);
+  if (window.BoardV2Offers) State.settings.boardV2Offers = window.BoardV2Offers.normalizeState(State.settings.boardV2Offers, window.BoardV2Pacing);
+  if (window.BoardV2Completion) State.settings.boardV2Completion = window.BoardV2Completion.normalizeState(State.settings.boardV2Completion);
+  State.settings.boardV2Titles = Array.isArray(State.settings.boardV2Titles) ? State.settings.boardV2Titles.filter((title) => typeof title === 'string').slice(-50) : [];
   await initializeGuideV3State();
   State.settings.body = State.settings.body || {};
   State.settings.imported = State.settings.imported || {};
