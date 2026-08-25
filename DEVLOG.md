@@ -2,6 +2,17 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-25] 🛡 Board v2 C0.6 — direct official-page verifier
+
+- Новый dormant `server-board-v2-page-verifier-v1.js` открывает Brave lead только после city-level server request, разрешает лишь public HTTPS:443, отклоняет credentials/local/private/link-local/documentation ranges и повторяет DNS/SSRF-проверку на каждом из максимум двух redirect. DNS-ответ закрепляется в HTTPS dial, mixed public/private answer закрывается целиком.
+- HTML ограничен 512 KiB и 8 секундами; non-HTML, oversized, abort, network/HTTP error и битый JSON-LD дают `null`, а не частичный квест. Страница не может подменить проверенный URL, source kind или timestamp.
+- Первый extractor намеренно строгий: принимает только Event/CourseInstance/Place JSON-LD, где домен совпадает с явно указанным organizer/venue URL. Для class/event обязательны адрес, будущее время, цена/`бесплатно`, неснятая доступность и HTTPS action. Aggregator self-link, sold out, неизвестная цена и route без отдельного route-contract отбрасываются.
+- Это ещё не универсальный HTML/AI extractor и не endpoint: сайты без достаточного JSON-LD пока честно не дают рекомендацию. `server.js`, Board UI, SW и provider key не затронуты.
+
+Focused verifier/discovery/adapter suite — **35/35 PASS**, syntax/diff PASS. Следующий change-set: server-owned template→search registry, account consent/cache endpoint и только затем live Brave/Bielefeld smoke.
+
+Commit: `feat: verify Board v2 direct source pages`.
+
 ## [2026-08-25] 🔎 Board v2 C0.5 — bounded Brave server adapter
 
 - Новый dormant `server-board-v2-discovery-v1.js` собирает ровно один Brave Web Search request из authored tags + city/country. Ни interests, ни свободный текст, ни GPS в query не попадают; private key остаётся только в `X-Subscription-Token` и не возвращается в result/error.

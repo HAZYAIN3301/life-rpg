@@ -1,6 +1,6 @@
 # Board v2 — discovery provider и city-level privacy
 
-Дата решения: 2026-08-25. Статус: архитектурный контракт и bounded Brave adapter готовы; `server.js` endpoint, официальный extractor и UI ещё не подключены.
+Дата решения: 2026-08-25. Статус: архитектурный контракт, bounded Brave adapter и строгий JSON-LD verifier готовы; `server.js` endpoint, fallback extractor и UI ещё не подключены.
 
 ## Решение
 
@@ -90,4 +90,6 @@ Resolver возвращает:
 5. возвращает primary + один reserve и безопасный billing/audit;
 6. честно выключен без server key.
 
-Следующий change-set: официальный page extractor/verifier + account-owned endpoint/cache. Он не подключается к Board UI, пока реальные Bielefeld fixtures не проходят end-to-end QA.
+`server-board-v2-page-verifier-v1.js` уже добавляет public-HTTPS/DNS/redirect/size/timeout gates и принимает только прямой organizer/venue JSON-LD. Это намеренно узкий первый слой: сайт без достаточного structured data не превращается в квест через догадку.
+
+Следующий change-set: server-owned template→search registry + account-owned consent/cache endpoint, затем fallback extractor для официальных страниц без JSON-LD. Board UI не подключается, пока реальный Bielefeld smoke не проходит end-to-end QA.
