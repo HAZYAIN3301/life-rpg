@@ -2,6 +2,15 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-25] Board v2 C0.16b — server-owned варианты поиска и eligibility community-сигнала
+
+- Closed server registry теперь отдаёт четыре production-варианта, которые реально можно целиком разрешить одним verified local slot: пробное занятие, другой зал, выставка и открытая лекция. В каждом варианте ограниченный approved interest list; клиент по-прежнему не может прислать query, URL, GPS или собственные search terms.
+- Discovery status возвращает эти варианты вместе с city consent, доступностью provider, свежестью cache и дневным billing cap. Поэтому UI не держит второй расходящийся список и может честно показать, когда server key не подключён.
+- Community summary теперь сообщает только account-local eligibility: `canMark` и `alreadyMarked`. Кнопки обратной связи можно показать после фактического completion и убрать навсегда после одного голоса, не раскрывая личности, URL, текст или media в aggregate.
+- Порог публичного aggregate не менялся: статус места появляется только после трёх разных аккаунтов; один пользователь влияет на subject ровно один раз.
+
+Service/community suite — **27/27 PASS** (23 pure + 4 loopback endpoint); syntax и `git diff --check` — PASS.
+
 ## [2026-08-25] Board v2 C0.16a — immutable-мост из verified discovery в локальный заказ
 
 - Новый pure-модуль `public/board-v2-local-issuer.js` принимает только уже проверенный сервером recommendation contract, заново гидратит direct-source evidence и разрешает ровно один approved шаблон с одним обязательным local-slot. Клиентский query, URL, GPS и свободный текст места не являются входами.

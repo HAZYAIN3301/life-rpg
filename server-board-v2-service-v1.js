@@ -106,6 +106,7 @@ function createService(options) {
       schema: ACCOUNT_SCHEMA,
       consent: state.consent,
       providerAvailable: !!(adapter && adapter.available),
+      options: typeof registry.publicOptions === 'function' ? registry.publicOptions() : [],
       cache: { freshCandidates: fresh.length },
       billing: { day: state.ledger.day, searches: state.ledger.searches, limit: dailyLimit },
     };

@@ -141,9 +141,17 @@ function createService(options) {
   function summary(uid, snapshotId) {
     const found = lookup(uid, text(snapshotId, 120), false);
     if (!found.ok) return found;
+    const at = now();
+    const account = normalizeAccount(readAccount(uid), at);
+    const alreadyMarked = account.subjectKeys.includes(found.subject.key);
+    const completed = isCompleted(uid, snapshotId);
     const aggregate = normalizeAggregate(readAggregate());
     const subject = aggregate.subjects.find((item) => item.key === found.subject.key);
-    return { ok: true, summary: publicSummary(subject) };
+    return {
+      ok: true, summary: publicSummary(subject),
+      canMark: completed && !alreadyMarked,
+      alreadyMarked,
+    };
   }
   function mark(uid, raw) {
     return locked(async () => {
@@ -173,7 +181,10 @@ function createService(options) {
         try { writeAggregate(aggregateBefore); } catch {}
         throw error;
       }
-      return { ok: true, accepted: input.signal, summary: publicSummary(subject) };
+      return {
+        ok: true, accepted: input.signal, summary: publicSummary(subject),
+        canMark: false, alreadyMarked: true,
+      };
     });
   }
   return Object.freeze({ VERSION, summary, mark });

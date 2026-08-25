@@ -89,6 +89,8 @@ test('three distinct accounts unlock only a structured aggregate, never identiti
   assert.deepEqual(summary.summary, {
     reports: 3, status: 'details-may-have-changed', matched: 2, changed: 1, closed: 0, updatedAt: NOW,
   });
+  assert.equal(summary.canMark, false);
+  assert.equal(summary.alreadyMarked, true);
   const serialized = JSON.stringify(f.aggregate());
   assert.doesNotMatch(serialized, /alpha|beta|gamma|snapshot|example\.test|https/);
 });
@@ -98,6 +100,23 @@ test('community signal exposes only structured availability evidence', () => {
   const summary = Community.publicSummary({ matched: 2, changed: 1, closed: 0, updatedAt: NOW });
   assert.deepEqual(Object.keys(summary).sort(), ['changed', 'closed', 'matched', 'reports', 'status', 'updatedAt']);
   assert.equal(Object.values(summary).some((value) => value && typeof value === 'object'), false);
+});
+
+test('summary exposes only current-account feedback eligibility', async () => {
+  const f = fixture();
+  f.add('alpha', 'snapshot-a', 'https://example.test/class');
+  assert.deepEqual(f.service.summary('alpha', 'snapshot-a'), {
+    ok: true, summary: null, canMark: false, alreadyMarked: false,
+  });
+  f.completed.add('alpha:snapshot-a');
+  assert.deepEqual(f.service.summary('alpha', 'snapshot-a'), {
+    ok: true, summary: null, canMark: true, alreadyMarked: false,
+  });
+  const accepted = await f.service.mark('alpha', { snapshotId: 'snapshot-a', signal: 'matched' });
+  assert.equal(accepted.canMark, false); assert.equal(accepted.alreadyMarked, true);
+  assert.deepEqual(f.service.summary('alpha', 'snapshot-a'), {
+    ok: true, summary: null, canMark: false, alreadyMarked: true,
+  });
 });
 
 test('parallel marks from one account serialize and cannot double count', async () => {

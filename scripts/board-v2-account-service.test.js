@@ -60,6 +60,12 @@ test('registry enumerates all approved catalogs but resolves only known local sl
   assert.deepEqual(Registry.localSlots('try-specific-local-class'), [{ id: 'class', type: 'local-class', intent: 'class' }]);
   assert.throws(() => Registry.createSpec({ templateId: 'write-letter-to-future-self', slotId: 'date' }, 'request-1'), /unknown-local-slot/);
   assert.throws(() => Registry.createSpec({ templateId: 'made-up', slotId: 'class' }, 'request-1'), /unknown-board-template/);
+  const options = Registry.publicOptions();
+  assert.equal(options.length, 4);
+  assert.deepEqual(options.map((item) => item.id), ['trial-class', 'another-gym', 'exhibition', 'open-lecture']);
+  assert.equal(options.every((item) => item.interests.length > 0), true);
+  options[0].label = 'attacker';
+  assert.equal(Registry.PUBLIC_OPTIONS[0].label, 'Пробное занятие');
 });
 
 test('client cannot submit query, URL, GPS, arbitrary text or foreign identity', () => {
@@ -79,6 +85,7 @@ test('city consent is account-owned and strips GPS/home address', async () => {
   await grant(service, 'beta', 'Berlin');
   assert.equal(service.status('alpha').consent.city, 'Bielefeld');
   assert.equal(service.status('beta').consent.city, 'Berlin');
+  assert.equal(service.status('alpha').options.length, 4);
   const serialized = JSON.stringify(rows.get('alpha'));
   assert.doesNotMatch(serialized, /52\.03|8\.53|private home|latitude|longitude|address/);
 });

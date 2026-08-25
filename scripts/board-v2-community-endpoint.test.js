@@ -64,6 +64,7 @@ test('Board v2 community endpoint accepts only a completed local account snapsho
   assert.equal((await api(runtime.base, '/api/data/tasks', { method: 'PUT', cookie, body: [] })).status, 200);
   const before = await api(runtime.base, `/api/board-v2/community?snapshotId=${encodeURIComponent(snapshotId)}`, { cookie });
   assert.equal(before.status, 200); assert.equal(before.data.summary, null);
+  assert.equal(before.data.canMark, false); assert.equal(before.data.alreadyMarked, false);
   const incomplete = await api(runtime.base, '/api/board-v2/community/mark', {
     method: 'POST', cookie, body: { snapshotId, signal: 'matched' },
   });
@@ -84,6 +85,7 @@ test('Board v2 community endpoint accepts only a completed local account snapsho
     method: 'POST', cookie, body: { snapshotId, signal: 'matched' },
   });
   assert.equal(accepted.status, 200); assert.equal(accepted.data.accepted, 'matched'); assert.equal(accepted.data.summary, null);
+  assert.equal(accepted.data.canMark, false); assert.equal(accepted.data.alreadyMarked, true);
   const duplicate = await api(runtime.base, '/api/board-v2/community/mark', {
     method: 'POST', cookie, body: { snapshotId, signal: 'closed' },
   });

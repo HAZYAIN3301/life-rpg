@@ -35,6 +35,38 @@ const INTEREST_TAXONOMY = Object.freeze({
   diy: ['diy'], creative: ['creative'],
 });
 const ALLOWED_INPUT = Object.freeze(['templateId', 'slotId', 'interestId']);
+const PUBLIC_OPTIONS = deepFreeze([
+  {
+    id: 'trial-class', label: 'Пробное занятие',
+    description: 'Доска найдёт конкретное занятие, время, цену и официальную запись.',
+    templateId: 'try-specific-local-class', slotId: 'class',
+    interests: [
+      ['boxing', 'Бокс'], ['martial-arts', 'Единоборства'], ['climbing', 'Скалолазание'],
+      ['bouldering', 'Боулдеринг'], ['swimming', 'Плавание'], ['yoga', 'Йога'], ['dance', 'Танцы'],
+    ].map(([id, label]) => ({ id, label })),
+  },
+  {
+    id: 'another-gym', label: 'Другой зал',
+    description: 'Конкретный зал с разовым входом или доступным пробным слотом.',
+    templateId: 'train-at-another-gym', slotId: 'gym',
+    interests: [
+      ['boxing', 'Бокс'], ['martial-arts', 'Единоборства'], ['climbing', 'Скалолазание'],
+      ['bouldering', 'Боулдеринг'], ['swimming', 'Плавание'], ['yoga', 'Йога'],
+    ].map(([id, label]) => ({ id, label })),
+  },
+  {
+    id: 'exhibition', label: 'Выставка',
+    description: 'Конкретная выставка с адресом, временем, ценой и официальным источником.',
+    templateId: 'visit-exhibition-three-works', slotId: 'exhibition',
+    interests: [['art', 'Искусство'], ['culture', 'Культура']].map(([id, label]) => ({ id, label })),
+  },
+  {
+    id: 'open-lecture', label: 'Открытая лекция',
+    description: 'Одна подходящая лекция рядом — без списка из двадцати вариантов.',
+    templateId: 'attend-specific-open-lecture', slotId: 'lecture',
+    interests: [['learning', 'Обучение']].map(([id, label]) => ({ id, label })),
+  },
+]);
 
 function deepFreeze(value) {
   if (!value || typeof value !== 'object' || Object.isFrozen(value)) return value;
@@ -120,13 +152,18 @@ function createSpec(raw, requestId) {
     },
   });
 }
+function publicOptions() {
+  return structuredClone(PUBLIC_OPTIONS);
+}
 
 module.exports = deepFreeze({
   VERSION,
   LOCAL_SLOT_INTENTS,
   INTEREST_TAXONOMY,
   ALLOWED_INPUT,
+  PUBLIC_OPTIONS,
   entryById,
   localSlots,
+  publicOptions,
   createSpec,
 });
