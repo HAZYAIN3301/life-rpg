@@ -1405,6 +1405,44 @@ const I18N_EXTRA = {
   'Активна': { en: 'Active', de: 'Aktiv', uk: 'Активна', es: 'Activa' },
   'Жду': { en: 'Waiting', de: 'Warten', uk: 'Чекаю', es: 'En espera' },
   'Пауза': { en: 'Paused', de: 'Pausiert', uk: 'Пауза', es: 'En pausa' },
+  // Goals IA v168 — exact horizons, compact rows and a focused detail surface
+  'Фокус': { en: 'Focus', de: 'Fokus', uk: 'Фокус', es: 'Enfoque' },
+  'Горизонты': { en: 'Horizons', de: 'Horizonte', uk: 'Горизонти', es: 'Horizontes' },
+  'Карта': { en: 'Map', de: 'Karte', uk: 'Карта', es: 'Mapa' },
+  'Архив': { en: 'Archive', de: 'Archiv', uk: 'Архів', es: 'Archivo' },
+  'Разобрать с Тенью': { en: 'Plan with Shadow', de: 'Mit Schatten planen', uk: 'Розібрати з Тінню', es: 'Planificar con Sombra' },
+  'Ближайшие активные цели': { en: 'Nearest active goals', de: 'Nächste aktive Ziele', uk: 'Найближчі активні цілі', es: 'Metas activas más próximas' },
+  'У каждой строки — один результат и один следующий шаг.': { en: 'Each row shows one outcome and one next action.', de: 'Jede Zeile zeigt ein Ergebnis und einen nächsten Schritt.', uk: 'Кожен рядок показує один результат і одну наступну дію.', es: 'Cada fila muestra un resultado y una siguiente acción.' },
+  'Только цели выбранного горизонта. Полная цепочка — в Карте.': { en: 'Only goals from the selected horizon. The full chain is in Map.', de: 'Nur Ziele des gewählten Horizonts. Die vollständige Kette steht in der Karte.', uk: 'Лише цілі вибраного горизонту. Повний ланцюг — у Карті.', es: 'Solo metas del horizonte elegido. La cadena completa está en Mapa.' },
+  'Полная цепочка целей': { en: 'Full goal chain', de: 'Vollständige Zielkette', uk: 'Повний ланцюг цілей', es: 'Cadena completa de metas' },
+  'Достигнутые цели': { en: 'Achieved goals', de: 'Erreichte Ziele', uk: 'Досягнуті цілі', es: 'Metas logradas' },
+  'Архивированные цели': { en: 'Archived goals', de: 'Archivierte Ziele', uk: 'Архівовані цілі', es: 'Metas archivadas' },
+  'Здесь появятся достигнутые и архивированные цели.': { en: 'Achieved and archived goals will appear here.', de: 'Erreichte und archivierte Ziele erscheinen hier.', uk: 'Тут з’являться досягнуті й архівовані цілі.', es: 'Aquí aparecerán las metas logradas y archivadas.' },
+  'Следующий шаг': { en: 'Next action', de: 'Nächster Schritt', uk: 'Наступний крок', es: 'Siguiente paso' },
+  'Нет следующего шага': { en: 'No next action', de: 'Kein nächster Schritt', uk: 'Немає наступного кроку', es: 'Sin siguiente paso' },
+  'У этой цели пока нет следующего шага.': { en: 'This goal has no next action yet.', de: 'Dieses Ziel hat noch keinen nächsten Schritt.', uk: 'Ця ціль поки не має наступного кроку.', es: 'Esta meta aún no tiene una siguiente acción.' },
+  'План цели': { en: 'Goal plan', de: 'Zielplan', uk: 'План цілі', es: 'Plan de la meta' },
+  'Контекст цели': { en: 'Goal context', de: 'Zielkontext', uk: 'Контекст цілі', es: 'Contexto de la meta' },
+  'Дополнительные настройки': { en: 'Additional settings', de: 'Weitere Einstellungen', uk: 'Додаткові налаштування', es: 'Ajustes adicionales' },
+  'Как измерять': { en: 'How to measure', de: 'Wie messen', uk: 'Як вимірювати', es: 'Cómo medir' },
+  'Этапы': { en: 'Checklist', de: 'Etappen', uk: 'Етапи', es: 'Etapas' },
+  'Достичь числа': { en: 'Reach a number', de: 'Eine Zahl erreichen', uk: 'Досягти числа', es: 'Alcanzar un número' },
+  'Снизить число': { en: 'Lower a number', de: 'Eine Zahl senken', uk: 'Знизити число', es: 'Reducir un número' },
+  'Держать значение': { en: 'Maintain a value', de: 'Einen Wert halten', uk: 'Тримати значення', es: 'Mantener un valor' },
+  'Текущее значение': { en: 'Current value', de: 'Aktueller Wert', uk: 'Поточне значення', es: 'Valor actual' },
+  'Целевое значение': { en: 'Target value', de: 'Zielwert', uk: 'Цільове значення', es: 'Valor objetivo' },
+  'этапов': { en: 'items', de: 'Etappen', uk: 'етапів', es: 'etapas' },
+  'Этапы ещё не добавлены': { en: 'No checklist items yet', de: 'Noch keine Etappen', uk: 'Етапи ще не додані', es: 'Aún no hay etapas' },
+  'Держать': { en: 'Maintain', de: 'Halten', uk: 'Тримати', es: 'Mantener' },
+  'снизить на': { en: 'lower by', de: 'senken um', uk: 'знизити на', es: 'reducir en' },
+  'осталось': { en: 'remaining', de: 'verbleibend', uk: 'залишилося', es: 'restante' },
+  'Открыть цель': { en: 'Open goal', de: 'Ziel öffnen', uk: 'Відкрити ціль', es: 'Abrir meta' },
+  'Скопировать ссылку': { en: 'Copy link', de: 'Link kopieren', uk: 'Скопіювати посилання', es: 'Copiar enlace' },
+  'Закрыть цель': { en: 'Close goal', de: 'Ziel schließen', uk: 'Закрити ціль', es: 'Cerrar meta' },
+  'Показать форму новой цели': { en: 'Show new goal form', de: 'Formular für ein neues Ziel öffnen', uk: 'Показати форму нової цілі', es: 'Mostrar formulario de nueva meta' },
+  'Закрыть создание': { en: 'Close creation form', de: 'Erstellung schließen', uk: 'Закрити створення', es: 'Cerrar creación' },
+  'Основные данные': { en: 'Essentials', de: 'Grunddaten', uk: 'Основні дані', es: 'Datos esenciales' },
+  'Вся цепочка видна в Карте; здесь остаётся только контекст выбранной цели.': { en: 'The full chain is visible in Map; this view keeps only the selected goal context.', de: 'Die ganze Kette ist in der Karte sichtbar; hier bleibt nur der Kontext des gewählten Ziels.', uk: 'Увесь ланцюг видно в Карті; тут залишається лише контекст вибраної цілі.', es: 'La cadena completa se ve en Mapa; aquí queda solo el contexto de la meta elegida.' },
   // Character view
   '🪞 Твой персонаж': { en: '🪞 Your character', de: '🪞 Dein Charakter', uk: '🪞 Твій персонаж', es: '🪞 Tu personaje' },
   'Причёска': { en: 'Hairstyle', de: 'Frisur', uk: 'Зачіска', es: 'Peinado' },
@@ -5017,12 +5055,12 @@ const State = {
   leaderboard: null, _lbLoading: false, _lbError: '', party: null, _partyLoading: false, _partyError: '',
   socialPrivacy: null, _socialBusy: '', _socialError: '', _socialFocusAfterCommit: '',
   adminUsers: null, _adminUsersLoading: false,
-  timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', wkAddDate: null, calDate: null, calMode: 'day', habitsTab: 'build',
+  timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', goalView: 'focus', wkAddDate: null, calDate: null, calMode: 'day', habitsTab: 'build',
   _tasksLoadError: '', _tasksLoadBusy: false, _tasksWriteBlockedNoticeAt: 0, _tasksFocusAfterCommit: '',
   _habitsLoadError: '', _habitsLoadBusy: false, _habitsWriteBlockedNoticeAt: 0,
   _habitTxnBusy: '', _habitError: '', _habitUndo: null, _habitUndoTimer: null, _habitsFocusAfterCommit: '',
   _goalsLoadError: '', _goalsLoadBusy: false, _goalsWriteBlockedNoticeAt: 0,
-  _goalTxnBusy: '', _goalsError: '', _goalsFocusAfterCommit: '', _goalOpenId: '', _goalDeepLinkId: '',
+  _goalTxnBusy: '', _goalsError: '', _goalsFocusAfterCommit: '', _goalOpenId: '', _goalDeepLinkId: '', _goalsComposerOpen: false,
   _calendarUndo: null, _calendarUndoTimer: null, _calendarFocusAfterCommit: '',
   _inboxLoadError: '', _inboxBusy: false, _inboxFocusAfterCommit: '',
   _guideV3Error: '', _guideV3SessionPrompted: false, _guideV3StartBusy: false,
@@ -5395,7 +5433,7 @@ function unlockCalendarDialogScroll() {
 function closeDesirePicker({ restoreFocus = true } = {}) {
   const overlay = document.getElementById('desire-pop');
   if (!overlay) return false;
-  const target = restoreFocus && overlay._returnFocus && overlay._returnFocus.isConnected ? overlay._returnFocus : null;
+  const target = restoreFocus ? (overlay._returnFocus && overlay._returnFocus.isConnected ? overlay._returnFocus : document.querySelector(`#goal-${CSS.escape(overlay.dataset.goalId || '')} .goal-summary`) || document.getElementById('goals-title')) : null;
   if (overlay._desireApp) overlay._desireApp.inert = !!overlay._desireAppWasInert;
   document.documentElement.classList.remove('desire-picker-open');
   overlay.remove();
@@ -16307,28 +16345,48 @@ function goalDeadlineHTML(g) {
   const left = Math.round((parseDate(g.targetDate) - parseDate(todayStr())) / 86400000);
   return `<span class="goal-deadline ${left < 0 && !g.completedAt ? 'overdue' : ''}">📅 ${g.targetDate}${left >= 0 ? ` · ${left} ${plural(left, 'день', 'дня', 'дней')}` : !g.completedAt ? ` · ${t('просрочено')}` : ''}</span>`;
 }
+function goalStatusText(g) {
+  const st = goalStatusInfo(g);
+  return st.txt.startsWith('⏳ Жду · ') ? `${t('⏳ Жду')} · ${st.txt.slice('⏳ Жду · '.length)}` : t(st.txt);
+}
+function goalProgressText(g) {
+  if (goalProgressKind(g) === 'checklist') {
+    const total = (g.steps || []).length;
+    return total ? `${(g.steps || []).filter((step) => step.done).length}/${total} ${t('этапов')}` : t('Этапы ещё не добавлены');
+  }
+  const m = g.metric || {}, current = Number(m.current) || 0, target = Number(m.target) || 0;
+  const unit = m.unit ? ` ${m.unit}` : '';
+  if (m.maintain) return `${t('Держать')}: ${target}${unit} · ${t('Сейчас')}: ${current}${unit}`;
+  const gap = m.lowerBetter ? Math.max(0, current - target) : Math.max(0, target - current);
+  return `${t('Сейчас')}: ${current}${unit} → ${target}${unit}${gap ? ` · ${t(m.lowerBetter ? 'снизить на' : 'осталось')} ${gap}${unit}` : ''}`;
+}
+function goalNextAction(g) {
+  const tasks = goalLinkedTasks(g.id).filter((task) => !task.done).sort((a, b) => {
+    const at = a.date === todayStr() ? 0 : 1, bt = b.date === todayStr() ? 0 : 1;
+    return at - bt || String(a.date || '9999-12-31').localeCompare(String(b.date || '9999-12-31')) || String(a.createdAt || '').localeCompare(String(b.createdAt || ''));
+  });
+  if (tasks[0]) return { kind: 'task', id: tasks[0].id, title: tasks[0].title, date: tasks[0].date };
+  const step = goalProgressKind(g) === 'checklist' && (g.steps || []).find((item) => !item.done);
+  return step ? { kind: 'step', id: step.id, title: step.title } : null;
+}
+function goalFocusList(goals) {
+  const typeRank = { short: 0, recurring: 1, mid: 2, long: 3, path: 4, vision: 5, mission: 6 };
+  return [...goals].sort((a, b) => {
+    const ad = a.targetDate ? String(a.targetDate) : '9999-12-31', bd = b.targetDate ? String(b.targetDate) : '9999-12-31';
+    const ao = a.targetDate && a.targetDate < todayStr() ? 0 : 1, bo = b.targetDate && b.targetDate < todayStr() ? 0 : 1;
+    const an = goalNextAction(a) ? 0 : 1, bn = goalNextAction(b) ? 0 : 1;
+    return ao - bo || ad.localeCompare(bd) || an - bn || (typeRank[a.type] ?? 9) - (typeRank[b.type] ?? 9) || String(a.createdAt || '').localeCompare(String(b.createdAt || ''));
+  }).slice(0, 5);
+}
 function goalItem(g, depth = 0) {
   const sk = skillById(g.skillId) || { name: t('Без сферы'), color: 'var(--muted)' };
-  const prog = goalProgress(g), done = !!g.completedAt, st = goalStatusInfo(g), metric = goalProgressKind(g) === 'metric' ? g.metric : null;
-  const statusText = st.txt.startsWith('⏳ Жду · ') ? `${t('⏳ Жду')} · ${st.txt.slice('⏳ Жду · '.length)}` : t(st.txt);
-  const children = goalChildren(g.id).filter((child) => !!child.archived === !!g.archived).length, linked = goalLinkedTasks(g.id), open = State._goalOpenId === g.id || State._goalDeepLinkId === g.id;
-  const chain = goalChain(g).slice().reverse();
-  const steps = !metric ? g.steps.map((step) => `<li class="gstep ${step.done ? 'done' : ''}"><button type="button" class="check sm" data-action="toggle-step" data-goal="${g.id}" data-step="${step.id}" aria-label="${esc(t(step.done ? 'Снять выполнение' : 'Выполнить'))}: ${esc(step.title)}" aria-pressed="${step.done ? 'true' : 'false'}">${step.done ? '✓' : ''}</button><span data-noi18n>${esc(step.title)}</span><button type="button" class="del" data-action="delete-step" data-goal="${g.id}" data-step="${step.id}" aria-label="${esc(t('Удалить'))}: ${esc(step.title)}">✕</button></li>`).join('') : '';
-  const progressBody = metric ? `<div class="gm-block"><p class="goal-source-note">${t('Источник прогресса')}: ${t('числовая метрика')}. ${t('Связанные квесты не прибавляются повторно.')}</p><div class="gm-head"><b>${metric.current}</b> / ${metric.target}${metric.unit ? ` ${esc(metric.unit)}` : ''}</div>${g.archived ? '' : `<form class="metric-form" data-goal="${g.id}"><label><span>${t('Новое значение')}</span><input name="val" type="number" step="any" required /></label><button type="submit" class="btn ghost sm">${t('Записать')}</button></form>`}</div>` : `<div class="goal-checklist"><p class="goal-source-note">${t('Источник прогресса')}: ${t('чек-лист цели')}. ${t('Связанные квесты — действия, а не второй счётчик.')}</p><ul class="gsteps">${steps}</ul>${g.archived ? '' : `<form class="add-step-form" data-goal="${g.id}"><label><span>${t('Новый пункт')}</span><input name="step" autocomplete="off" required /></label><button type="submit" class="btn ghost">${t('Добавить')}</button></form>`}</div>`;
-  const linkedHTML = linked.length ? `<ul class="goal-linked-list">${linked.slice(0, 8).map((task) => `<li><a href="?view=today" data-action="goto-task" data-id="${task.id}" data-noi18n>${task.done ? '✓ ' : ''}${esc(task.title)}</a><span>${dmShort(task.date)}</span></li>`).join('')}</ul>` : `<p class="muted">${t('Связанных квестов пока нет.')}</p>`;
-  return `<article class="goal-item ${done ? 'is-done' : ''} ${g.archived ? 'is-archived' : ''}" id="goal-${esc(g.id)}" data-goal-id="${esc(g.id)}" style="--goal-depth:${depth};--goal-color:${esc(sk.color)}" tabindex="-1">
-    <details class="goal-detail" ${open ? 'open' : ''}>
-      <summary class="goal-summary"><span class="goal-summary-main"><span class="goal-title" data-noi18n>${done ? '✓ ' : ''}${esc(g.title)}</span><span class="goal-summary-meta"><span class="goal-status ${st.cls}">${statusText}</span><span>${prog}%</span>${children ? `<span>${children} ${t('дочерних')}</span>` : ''}</span></span><progress max="100" value="${prog}" aria-label="${esc(t('Прогресс'))}: ${prog}%"></progress></summary>
-      <div class="goal-body">
-        ${chain.length ? `<nav class="goal-breadcrumb" aria-label="${t('Цепочка цели')}">${chain.map((parent) => `<a href="${esc(goalDeepLinkHref(parent.id))}" data-action="goto-goal" data-id="${parent.id}" data-noi18n>${esc(parent.title)}</a>`).join('<span aria-hidden="true">›</span>')}</nav>` : ''}
-        ${g.description ? `<p class="goal-desc" data-noi18n>${esc(g.description)}</p>` : ''}
-        <div class="goal-meta"><span class="t-skill" style="--c:${esc(sk.color)}">${esc(i18nWord(sk.name, lang()))}</span><span class="goal-type type-${g.type || 'short'}">${goalTypeLabel(g.type)}</span>${goalDeadlineHTML(g)}</div>
-        ${progressBody}
-        <section class="goal-linked" aria-labelledby="goal-linked-${g.id}"><h4 id="goal-linked-${g.id}">${t('Следующие действия')}</h4>${linkedHTML}${g.archived ? '' : `<form class="goal-task-form" data-goal="${g.id}"><label><span>${t('Квест на сегодня')}</span><input name="title" maxlength="160" required /></label><button type="submit" class="btn ghost">${t('Создать квест')}</button></form>`}</section>
-        <details class="goal-edit"><summary>${t('Изменить цель')}</summary><form class="goal-edit-form" data-goal="${g.id}"><label><span>${t('Название')}</span><input name="title" value="${esc(g.title)}" maxlength="160" required data-noi18n /></label><label><span>${t('Описание')}</span><textarea name="description" maxlength="800" data-noi18n>${esc(g.description || '')}</textarea></label><label><span>${t('Родительская цель')}</span><select name="parentId">${goalParentOptionsHTML(g)}</select></label><label><span>${t('Сфера')}</span><select name="skillId">${skillOptionsHTML(g.skillId)}</select></label><label><span>${t('Горизонт')}</span><select name="type">${GOAL_TYPES.map((type) => `<option value="${type.id}" ${type.id === g.type ? 'selected' : ''}>${esc(t(type.label))}</option>`).join('')}</select></label><label><span>${t('Дедлайн')}</span><input name="targetDate" type="date" value="${esc(g.targetDate || '')}" /></label><label><span>${t('Состояние')}</span><select name="status"><option value="active" ${g.status === 'active' ? 'selected' : ''}>${t('Активна')}</option><option value="waiting" ${g.status === 'waiting' ? 'selected' : ''}>${t('Жду')}</option><option value="paused" ${g.status === 'paused' ? 'selected' : ''}>${t('Пауза')}</option></select></label><button type="submit" class="btn">${t('Сохранить изменения')}</button></form></details>
-        <div class="goal-actions"><button type="button" class="btn ghost" data-action="${g.archived ? 'restore-goal' : 'archive-goal'}" data-id="${g.id}">${g.archived ? t('Вернуть из архива') : t('В архив')}</button><button type="button" class="btn ghost danger" data-action="delete-goal" data-id="${g.id}">${t('Удалить цель')}</button><label class="goal-pick-lbl"><input type="checkbox" class="goal-pick" data-pick="${g.id}" /> ${t('Выбрать')}</label><a class="goal-deep-link" href="${esc(goalDeepLinkHref(g.id))}">${t('Ссылка на цель')}</a></div>
-      </div>
-    </details>
+  const prog = goalProgress(g), done = !!g.completedAt, st = goalStatusInfo(g), children = goalChildren(g.id).filter((child) => !!child.archived === !!g.archived).length;
+  const next = goalNextAction(g);
+  return `<article class="goal-item ${done ? 'is-done' : ''} ${g.archived ? 'is-archived' : ''}" id="goal-${esc(g.id)}" data-goal-id="${esc(g.id)}" style="--goal-depth:${depth};--goal-color:${esc(sk.color)}">
+    <button type="button" class="goal-summary" data-action="open-goal-detail" data-id="${esc(g.id)}" aria-label="${esc(t('Открыть цель'))}: ${esc(g.title)}">
+      <span class="goal-summary-main"><span class="goal-title" data-noi18n>${done ? '✓ ' : ''}${esc(g.title)}</span><span class="goal-summary-meta"><span class="goal-status ${st.cls}">${esc(goalStatusText(g))}</span><span>${esc(goalProgressText(g))}</span>${children ? `<span>${children} ${t('дочерних')}</span>` : ''}</span><span class="goal-next"><b>${t('Следующий шаг')}:</b> <span data-noi18n>${esc(next ? next.title : t('Нет следующего шага'))}</span></span></span>
+      <span class="goal-progress"><progress max="100" value="${prog}" aria-label="${esc(t('Прогресс'))}: ${prog}%"></progress><span>${prog}%</span></span>
+    </button>
   </article>`;
 }
 function goalTreeHTML(source) {
@@ -16341,24 +16399,93 @@ function goalsLoadRecoveryHTML() {
   const invalid = State._goalsLoadError === 'invalid' || State._tasksLoadError === 'invalid';
   return `<section class="goals-load-card card" role="alert" aria-labelledby="goals-load-title"><h2 id="goals-load-title">${t('Цели временно недоступны')}</h2><p>${t(invalid ? 'Файл целей повреждён. Мы ничего не перезапишем до восстановления.' : 'Не удалось загрузить цели. Мы ничего не перезапишем до восстановления.')}</p><button type="button" class="btn" data-action="goals-retry" ${State._goalsLoadBusy ? 'disabled' : ''}>${t(State._goalsLoadBusy ? 'Проверяем данные…' : 'Повторить загрузку')}</button></section>`;
 }
-function goalCreateFormHTML() {
-  const typeOpts = GOAL_TYPES.map((type) => `<option value="${type.id}" ${type.id === 'short' ? 'selected' : ''}>${t(type.label)} · ${t(type.timeframe)}</option>`).join('');
-  return `<form id="add-goal" class="goal-form"><label class="goal-field-wide"><span>${t('Название')}</span><input name="title" maxlength="160" autocomplete="off" required /></label><label><span>${t('Сфера')}</span><select name="skillId">${skillOptionsHTML()}</select></label><label><span>${t('Горизонт')}</span><select name="type">${typeOpts}</select></label><label><span>${t('Родительская цель')}</span><select name="parentId">${goalParentOptionsHTML(null)}</select></label><label><span>${t('Дедлайн')}</span><input name="targetDate" type="date" /></label><details class="goal-extra"><summary>${t('Числовая метрика — вместо чек-листа')}</summary><div class="gx-grid"><label><span>${t('Сейчас')}</span><input name="mStart" type="number" step="any" /></label><label><span>${t('Цель')}</span><input name="mTarget" type="number" step="any" /></label><label><span>${t('Единица')}</span><input name="mUnit" maxlength="12" /></label><label class="gx-check"><input type="checkbox" name="mLower" /> ${t('меньше = лучше')}</label><label class="gx-check"><input type="checkbox" name="mMaintain" /> ${t('держать после')}</label></div></details><button type="submit" class="btn">${t('Создать цель')}</button><p class="goal-form-status" role="status"></p></form>`;
+function goalProgressBodyHTML(g) {
+  const metric = goalProgressKind(g) === 'metric' ? g.metric : null;
+  if (metric) return `<div class="gm-block"><p class="goal-source-note">${t('Источник прогресса')}: ${t('числовая метрика')}. ${t('Связанные квесты не прибавляются повторно.')}</p><div class="gm-head"><b>${metric.current}</b> / ${metric.target}${metric.unit ? ` ${esc(metric.unit)}` : ''}</div>${g.archived ? '' : `<form class="metric-form" data-goal="${g.id}"><label><span>${t('Новое значение')}</span><input name="val" type="number" step="any" required /></label><button type="submit" class="btn ghost sm">${t('Записать')}</button></form>`}</div>`;
+  const steps = (g.steps || []).map((step) => `<li class="gstep ${step.done ? 'done' : ''}"><button type="button" class="check sm" data-action="toggle-step" data-goal="${g.id}" data-step="${step.id}" aria-label="${esc(t(step.done ? 'Снять выполнение' : 'Выполнить'))}: ${esc(step.title)}" aria-pressed="${step.done ? 'true' : 'false'}">${step.done ? '✓' : ''}</button><span data-noi18n>${esc(step.title)}</span><button type="button" class="del" data-action="delete-step" data-goal="${g.id}" data-step="${step.id}" aria-label="${esc(t('Удалить'))}: ${esc(step.title)}">✕</button></li>`).join('');
+  return `<div class="goal-checklist"><p class="goal-source-note">${t('Источник прогресса')}: ${t('чек-лист цели')}. ${t('Связанные квесты — действия, а не второй счётчик.')}</p><ul class="gsteps">${steps}</ul>${g.archived ? '' : `<form class="add-step-form" data-goal="${g.id}"><label><span>${t('Новый пункт')}</span><input name="step" autocomplete="off" required /></label><button type="submit" class="btn ghost">${t('Добавить')}</button></form>`}</div>`;
+}
+function goalLinkedBodyHTML(g) {
+  const linked = goalLinkedTasks(g.id);
+  const list = linked.length ? `<ul class="goal-linked-list">${linked.slice(0, 8).map((task) => `<li><a href="?view=today" data-action="goto-task" data-id="${task.id}" data-noi18n>${task.done ? '✓ ' : ''}${esc(task.title)}</a><span>${dmShort(task.date)}</span></li>`).join('')}</ul>` : `<p class="muted">${t('Связанных квестов пока нет.')}</p>`;
+  return `<section class="goal-linked" aria-labelledby="goal-linked-${g.id}"><h4 id="goal-linked-${g.id}">${t('Следующие действия')}</h4>${list}${g.archived ? '' : `<form class="goal-task-form" data-goal="${g.id}"><label><span>${t('Квест на сегодня')}</span><input name="title" maxlength="160" required /></label><button type="submit" class="btn ghost">${t('Создать квест')}</button></form>`}</section>`;
+}
+function goalDetailContentHTML(g) {
+  const sk = skillById(g.skillId) || { name: t('Без сферы'), color: 'var(--muted)' }, chain = goalChain(g).slice().reverse(), next = goalNextAction(g), prog = goalProgress(g), st = goalStatusInfo(g);
+  const nextHTML = next ? (next.kind === 'task' ? `<a href="?view=today" data-action="goto-task" data-id="${esc(next.id)}" data-noi18n>${esc(next.title)}</a>` : `<span data-noi18n>${esc(next.title)}</span>`) : `<span>${t('У этой цели пока нет следующего шага.')}</span>`;
+  return `<button type="button" class="modal-x" data-action="goal-detail-close" aria-label="${t('Закрыть цель')}">✕</button>${State._goalsError ? `<div class="goals-error" role="alert">${esc(State._goalsError)}</div>` : ''}
+    <header class="goal-detail-head"><p class="goals-kicker">${goalTypeLabel(g.type)}</p><h2 id="goal-detail-title" tabindex="-1" data-noi18n>${esc(g.title)}</h2><p id="goal-detail-summary"><span class="goal-status ${st.cls}">${esc(goalStatusText(g))}</span> · ${esc(goalProgressText(g))}</p><div class="goal-detail-progress"><progress max="100" value="${prog}" aria-label="${esc(t('Прогресс'))}: ${prog}%"></progress><span>${prog}%</span></div></header>
+    <section class="goal-next-card" aria-labelledby="goal-next-title"><h3 id="goal-next-title">${t('Следующий шаг')}</h3>${nextHTML}</section>
+    <details class="goal-detail-section" open><summary>${t('План цели')}</summary><div class="goal-detail-section-body">${goalProgressBodyHTML(g)}${goalLinkedBodyHTML(g)}</div></details>
+    <details class="goal-detail-section"><summary>${t('Контекст цели')}</summary><div class="goal-detail-section-body">${chain.length ? `<nav class="goal-breadcrumb" aria-label="${t('Цепочка цели')}">${chain.map((parent) => `<a href="${esc(goalDeepLinkHref(parent.id))}" data-action="goto-goal" data-id="${parent.id}" data-noi18n>${esc(parent.title)}</a>`).join('<span aria-hidden="true">›</span>')}</nav>` : ''}${g.description ? `<p class="goal-desc" data-noi18n>${esc(g.description)}</p>` : ''}<div class="goal-meta"><span class="t-skill" style="--c:${esc(sk.color)}">${esc(i18nWord(sk.name, lang()))}</span><span class="goal-type type-${g.type || 'short'}">${goalTypeLabel(g.type)}</span>${goalDeadlineHTML(g)}</div><p class="goal-source-note">${t('Вся цепочка видна в Карте; здесь остаётся только контекст выбранной цели.')}</p></div></details>
+    <details class="goal-detail-section goal-detail-more"><summary>${t('Ещё')}</summary><div class="goal-detail-section-body"><form class="goal-edit-form" data-goal="${g.id}"><label><span>${t('Название')}</span><input name="title" value="${esc(g.title)}" maxlength="160" required data-noi18n /></label><label><span>${t('Описание')}</span><textarea name="description" maxlength="800" data-noi18n>${esc(g.description || '')}</textarea></label><label><span>${t('Родительская цель')}</span><select name="parentId">${goalParentOptionsHTML(g)}</select></label><label><span>${t('Сфера')}</span><select name="skillId">${skillOptionsHTML(g.skillId)}</select></label><label><span>${t('Горизонт')}</span><select name="type">${GOAL_TYPES.map((type) => `<option value="${type.id}" ${type.id === g.type ? 'selected' : ''}>${esc(t(type.label))}</option>`).join('')}</select></label><label><span>${t('Дедлайн')}</span><input name="targetDate" type="date" value="${esc(g.targetDate || '')}" /></label><label><span>${t('Состояние')}</span><select name="status"><option value="active" ${g.status === 'active' ? 'selected' : ''}>${t('Активна')}</option><option value="waiting" ${g.status === 'waiting' ? 'selected' : ''}>${t('Жду')}</option><option value="paused" ${g.status === 'paused' ? 'selected' : ''}>${t('Пауза')}</option></select></label><button type="submit" class="btn">${t('Сохранить изменения')}</button></form><div class="goal-actions"><button type="button" class="btn ghost" data-action="copy-goal-link" data-id="${g.id}">${t('Скопировать ссылку')}</button><button type="button" class="btn ghost" data-action="${g.archived ? 'restore-goal' : 'archive-goal'}" data-id="${g.id}">${g.archived ? t('Вернуть из архива') : t('В архив')}</button><button type="button" class="btn ghost danger" data-action="delete-goal" data-id="${g.id}">${t('Удалить цель')}</button></div></div></details>`;
+}
+function goalCreateFormHTML(defaultType = 'short') {
+  const selectedType = GOAL_TYPES.some((type) => type.id === defaultType) ? defaultType : 'short';
+  const typeOpts = GOAL_TYPES.map((type) => `<option value="${type.id}" ${type.id === selectedType ? 'selected' : ''}>${t(type.label)} · ${t(type.timeframe)}</option>`).join('');
+  return `<form id="add-goal" class="goal-form"><div class="goal-form-main"><label class="goal-field-wide"><span>${t('Название')}</span><input name="title" maxlength="160" autocomplete="off" required /></label><label><span>${t('Сфера')}</span><select name="skillId">${skillOptionsHTML()}</select></label><label><span>${t('Горизонт')}</span><select name="type">${typeOpts}</select></label></div><details class="goal-extra"><summary>${t('Дополнительные настройки')}</summary><div class="gx-grid"><label><span>${t('Родительская цель')}</span><select name="parentId">${goalParentOptionsHTML(null)}</select></label><label><span>${t('Дедлайн')}</span><input name="targetDate" type="date" /></label><label><span>${t('Как измерять')}</span><select name="metricMode"><option value="checklist">${t('Этапы')}</option><option value="increase">${t('Достичь числа')}</option><option value="decrease">${t('Снизить число')}</option><option value="maintain">${t('Держать значение')}</option></select></label><label><span>${t('Текущее значение')}</span><input name="mStart" type="number" step="any" /></label><label><span>${t('Целевое значение')}</span><input name="mTarget" type="number" step="any" /></label><label><span>${t('Единица')}</span><input name="mUnit" maxlength="12" /></label></div></details><button type="submit" class="btn">${t('Создать цель')}</button><p class="goal-form-status" role="status"></p></form>`;
 }
 function renderGoals() {
   if (State._goalsLoadError || State._tasksLoadError) return goalsLoadRecoveryHTML();
   const all = State.goals || [], current = all.filter((goal) => !goal.archived), active = current.filter((goal) => !goal.completedAt), completed = current.filter((goal) => goal.completedAt), archived = all.filter((goal) => goal.archived);
-  const counts = { all: current.length }; GOAL_TYPES.forEach((type) => { counts[type.id] = current.filter((goal) => goal.type === type.id).length; });
-  const wanted = State.goalFilter === 'all' ? current : current.filter((goal) => goal.type === State.goalFilter);
-  const shownIds = new Set(wanted.map((goal) => goal.id));
-  for (const goal of wanted) for (const parent of goalChain(goal)) if (!parent.archived) shownIds.add(parent.id);
-  const shown = current.filter((goal) => shownIds.has(goal.id));
+  const views = ['focus', 'horizons', 'map', 'archive']; if (!views.includes(State.goalView)) State.goalView = 'focus';
+  const counts = { all: active.length }; GOAL_TYPES.forEach((type) => { counts[type.id] = active.filter((goal) => goal.type === type.id).length; });
+  const wanted = State.goalFilter === 'all' ? active : active.filter((goal) => goal.type === State.goalFilter);
   const filters = `<div class="gfilters" role="toolbar" aria-label="${t('Фильтр целей')}"><button class="gfilter ${State.goalFilter === 'all' ? 'active' : ''}" data-action="filter-goals" data-type="all">${t('Все')} (${counts.all})</button>${GOAL_TYPES.map((type) => `<button class="gfilter ${State.goalFilter === type.id ? 'active' : ''}" data-action="filter-goals" data-type="${type.id}">${t(type.label)} (${counts[type.id]})</button>`).join('')}</div>`;
   const empty = !all.length;
-  return `<div class="goals-shell"><header class="goals-route-head"><div><p class="goals-kicker">${t('План')}</p><h2 id="goals-title" tabindex="-1">${t('Цели')}</h2><p>${t('Outcome сверху, следующие действия внутри. Один источник прогресса на цель.')}</p></div>${empty ? '' : `<div class="goals-counts"><span>${active.length} ${t('активных')}</span><span>${completed.length} ${t('достигнуто')}</span></div>`}</header>
-    ${State._goalsError ? `<div class="goals-error" role="alert">${esc(State._goalsError)}</div>` : ''}
-    ${empty ? `<section class="card goals-empty"><h3>${t('С чего начнём?')}</h3><p>${t('Создай один outcome. Подцели и квесты можно связать позже — без дублирования прогресса.')}</p>${goalCreateFormHTML()}<button class="btn ghost" data-action="ai-import-goals">${t('Импортировать цели')}</button></section>` : `${filters}<section class="card goals-outline" aria-labelledby="goals-outline-title"><h3 id="goals-outline-title">${t('Карта целей')}</h3>${shown.length ? goalTreeHTML(shown) : `<p class="muted">${t('В этом горизонте целей нет.')}</p>`}</section><details class="card goals-create"><summary>${t('Создать новую цель')}</summary>${goalCreateFormHTML()}<button class="btn ghost" data-action="ai-import-goals">${t('Импортировать цели')}</button></details><details class="card goals-bulk"><summary>${t('Управление и архив')} (${archived.length})</summary><div class="bulk-bar"><button class="btn ghost" data-action="goals-pick-all">${t('Выбрать все')}</button><button class="btn ghost" data-action="goals-pick-none">${t('Снять')}</button><button class="btn ghost danger" data-action="goals-del-selected">${t('Удалить выбранные')}</button></div>${archived.length ? `<div class="goals-archive-list">${goalTreeHTML(archived)}</div>` : ''}</details>`}
+  const tabs = `<div class="goals-view-tabs" role="tablist" aria-label="${t('Цели')}">${[['focus','Фокус'],['horizons','Горизонты'],['map','Карта'],['archive','Архив']].map(([id, label]) => `<button type="button" role="tab" aria-selected="${State.goalView === id}" class="goals-view-tab${State.goalView === id ? ' active' : ''}" data-action="set-goal-view" data-view="${id}">${t(label)}${id === 'archive' && (completed.length + archived.length) ? ` <span>${completed.length + archived.length}</span>` : ''}</button>`).join('')}</div>`;
+  const defaultType = State.goalFilter !== 'all' ? State.goalFilter : 'short';
+  const composer = (empty || State._goalsComposerOpen) ? `<section class="card goals-composer" aria-labelledby="goals-composer-title"><div class="goals-composer-head"><h3 id="goals-composer-title">${t('Новая цель')}</h3>${empty ? '' : `<button type="button" class="btn ghost sm" data-action="goals-toggle-create" aria-label="${t('Закрыть создание')}">✕</button>`}</div>${goalCreateFormHTML(defaultType)}</section>` : '';
+  let body = '';
+  if (State.goalView === 'horizons') body = `${filters}<section class="card goals-outline goals-exact-list" aria-labelledby="goals-outline-title"><div class="goals-section-head"><h3 id="goals-outline-title">${State.goalFilter === 'all' ? t('Горизонты') : goalTypeLabel(State.goalFilter)}</h3><p>${t('Только цели выбранного горизонта. Полная цепочка — в Карте.')}</p></div>${wanted.length ? wanted.map((goal) => goalItem(goal, 0)).join('') : `<p class="goals-empty-copy">${t('В этом горизонте целей нет.')}</p>`}</section>`;
+  else if (State.goalView === 'map') body = `<section class="card goals-outline goals-map" aria-labelledby="goals-outline-title"><div class="goals-section-head"><h3 id="goals-outline-title">${t('Полная цепочка целей')}</h3><p>${t('Outcome сверху, следующие действия внутри. Один источник прогресса на цель.')}</p></div>${current.length ? goalTreeHTML(current) : `<p class="goals-empty-copy">${t('В этом горизонте целей нет.')}</p>`}</section>`;
+  else if (State.goalView === 'archive') body = `<div class="goals-archive"><section class="card goals-outline" aria-labelledby="goals-completed-title"><div class="goals-section-head"><h3 id="goals-completed-title">${t('Достигнутые цели')}</h3></div>${completed.length ? completed.map((goal) => goalItem(goal, 0)).join('') : `<p class="goals-empty-copy">${t('Здесь появятся достигнутые и архивированные цели.')}</p>`}</section>${archived.length ? `<section class="card goals-outline" aria-labelledby="goals-archived-title"><div class="goals-section-head"><h3 id="goals-archived-title">${t('Архивированные цели')}</h3></div>${archived.map((goal) => goalItem(goal, 0)).join('')}</section>` : ''}</div>`;
+  else { const focused = goalFocusList(active); body = `<section class="card goals-outline goals-focus" aria-labelledby="goals-focus-title"><div class="goals-section-head"><h3 id="goals-focus-title">${t('Ближайшие активные цели')}</h3><p>${t('У каждой строки — один результат и один следующий шаг.')}</p></div>${focused.length ? focused.map((goal) => goalItem(goal, 0)).join('') : `<p class="goals-empty-copy">${t('В этом горизонте целей нет.')}</p>`}</section>`; }
+  return `<div class="goals-shell"><header class="goals-route-head"><div><p class="goals-kicker">${t('План')}</p><h2 id="goals-title" tabindex="-1">${t('Цели')}</h2><p>${t('Outcome сверху, следующие действия внутри. Один источник прогресса на цель.')}</p></div><div class="goals-head-side">${empty ? '' : `<div class="goals-counts"><span>${active.length} ${t('активных')}</span><span>${completed.length} ${t('достигнуто')}</span></div>`}<div class="goals-head-actions"><button type="button" class="btn" data-action="goals-toggle-create" aria-expanded="${empty || State._goalsComposerOpen}" aria-controls="goals-composer-title">${empty ? t('+ Цель') : State._goalsComposerOpen ? t('Закрыть создание') : t('+ Цель')}</button><button type="button" class="btn ghost" data-action="ai-import-goals">✨ ${t('Разобрать с Тенью')}</button></div></div></header>
+    ${State._goalsError ? `<div class="goals-error" role="alert">${esc(State._goalsError)}</div>` : ''}${composer}${empty ? '' : tabs}${empty ? `<section class="card goals-empty"><h3>${t('С чего начнём?')}</h3><p>${t('Создай один outcome. Подцели и квесты можно связать позже — без дублирования прогресса.')}</p></section>` : body}
   </div>`;
+}
+
+let _goalDetailScrollLock = null;
+function lockGoalDetailScroll() {
+  if (_goalDetailScrollLock || !document.body) return;
+  const body = document.body; _goalDetailScrollLock = { x: window.scrollX, y: window.scrollY, position: body.style.position, top: body.style.top, left: body.style.left, right: body.style.right, width: body.style.width, overflow: body.style.overflow };
+  document.documentElement.classList.add('goal-detail-open'); body.style.position = 'fixed'; body.style.top = `-${_goalDetailScrollLock.y}px`; body.style.left = `-${_goalDetailScrollLock.x}px`; body.style.right = '0'; body.style.width = '100%'; body.style.overflow = 'hidden';
+}
+function unlockGoalDetailScroll() {
+  const lock = _goalDetailScrollLock; _goalDetailScrollLock = null; document.documentElement.classList.remove('goal-detail-open');
+  if (!lock || !document.body) return; const body = document.body; body.style.position = lock.position; body.style.top = lock.top; body.style.left = lock.left; body.style.right = lock.right; body.style.width = lock.width; body.style.overflow = lock.overflow; window.scrollTo(lock.x, lock.y);
+}
+function closeGoalDetailDialog({ restoreFocus = true, clearState = true } = {}) {
+  const overlay = document.getElementById('goal-detail-dialog'); if (!overlay) { if (clearState) { State._goalOpenId = ''; State._goalDeepLinkId = ''; syncGoalDeepLink(''); } return; }
+  const target = restoreFocus && overlay._returnFocus && overlay._returnFocus.isConnected ? overlay._returnFocus : null;
+  overlay.remove(); document.getElementById('app')?.removeAttribute('inert'); unlockGoalDetailScroll();
+  if (clearState) { State._goalOpenId = ''; State._goalDeepLinkId = ''; syncGoalDeepLink(''); }
+  if (target) requestAnimationFrame(() => focusPathChoiceTarget(target));
+}
+function handleGoalDetailKeydown(event) {
+  const overlay = document.getElementById('goal-detail-dialog'); if (!overlay || !overlay.contains(event.target)) return false;
+  if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeGoalDetailDialog(); return true; }
+  if (event.key !== 'Tab') return false;
+  const focusable = pathChoiceFocusable(overlay).filter((node) => node.getClientRects().length); if (!focusable.length) { event.preventDefault(); focusPathChoiceTarget(document.getElementById('goal-detail-title')); return true; }
+  const at = focusable.indexOf(document.activeElement); if (at < 0 || (!event.shiftKey && at === focusable.length - 1) || (event.shiftKey && at === 0)) { event.preventDefault(); focusPathChoiceTarget(event.shiftKey ? focusable[focusable.length - 1] : focusable[0]); }
+  return true;
+}
+function openGoalDetailDialog(id, opener = document.activeElement) {
+  const goal = goalById(id); if (!goal) return;
+  closeGoalDetailDialog({ restoreFocus: false, clearState: false });
+  State._goalOpenId = goal.id; State._goalDeepLinkId = goal.id; syncGoalDeepLink(goal.id);
+  const overlay = document.createElement('div'); overlay.id = 'goal-detail-dialog'; overlay.className = 'modal-overlay goal-detail-overlay'; overlay.dataset.action = 'goal-detail-close'; overlay.dataset.goalId = goal.id; overlay._returnFocus = opener;
+  overlay.innerHTML = `<section class="goal-detail-box" role="dialog" aria-modal="true" aria-labelledby="goal-detail-title" aria-describedby="goal-detail-summary">${goalDetailContentHTML(goal)}</section>`;
+  overlay.addEventListener('keydown', handleGoalDetailKeydown); document.getElementById('app')?.setAttribute('inert', ''); document.body.appendChild(overlay); lockGoalDetailScroll();
+  requestAnimationFrame(() => focusPathChoiceTarget(document.getElementById('goal-detail-title')));
+}
+function syncGoalDetailDialog() {
+  const overlay = document.getElementById('goal-detail-dialog');
+  if (State.view !== 'goals' || !State._goalOpenId) { if (overlay) closeGoalDetailDialog({ restoreFocus: false, clearState: false }); return; }
+  const goal = goalById(State._goalOpenId); if (!goal) { closeGoalDetailDialog({ restoreFocus: false }); return; }
+  if (!overlay) { openGoalDetailDialog(goal.id, document.querySelector(`#goal-${CSS.escape(goal.id)} .goal-summary`) || document.getElementById('goals-title')); return; }
+  const box = overlay.querySelector('.goal-detail-box'); if (box) box.innerHTML = goalDetailContentHTML(goal); overlay.dataset.goalId = goal.id;
 }
 
 // ============================================================
@@ -19499,6 +19626,7 @@ function afterMainCommit() {
   try { normalizeSettingsOutline(); } catch {}
   try { labelSettingsControls(); } catch {}
   try { if (State.view === 'settings') SettingsAutosave.paint(); } catch {}
+  try { syncGoalDetailDialog(); } catch {}
   if (State._mobileNavFocusAfterCommit) {
     const selector = State._mobileNavFocusAfterCommit;
     State._mobileNavFocusAfterCommit = '';
@@ -20361,12 +20489,14 @@ async function onSubmit(e) {
     render();
   } else if (f.id === 'add-goal') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title || State._goalTxnBusy) return;
+    State._goalsError = '';
     const type = f.type.value || 'short';
-    const tgt = (f.mTarget && f.mTarget.value !== '') ? Number(f.mTarget.value) : null;
+    const metricMode = f.metricMode ? f.metricMode.value : 'checklist';
+    const tgt = metricMode !== 'checklist' && f.mTarget && f.mTarget.value !== '' ? Number(f.mTarget.value) : null;
     let metric = null;
     if (tgt != null && !isNaN(tgt)) {
       const cur = (f.mStart && f.mStart.value !== '') ? Number(f.mStart.value) : 0;
-      metric = { start: cur, current: cur, target: tgt, unit: (f.mUnit.value || '').trim().slice(0, 12), lowerBetter: !!(f.mLower && f.mLower.checked), maintain: !!(f.mMaintain && f.mMaintain.checked), everReached: false, log: [] };
+      metric = { start: cur, current: cur, target: tgt, unit: (f.mUnit.value || '').trim().slice(0, 12), lowerBetter: metricMode === 'decrease', maintain: metricMode === 'maintain', everReached: false, log: [] };
     }
     const goal = { id: 'g_' + uid(), title, description: '', skillId: f.skillId.value, type, xpReward: GOAL_XP[type], parentId: f.parentId.value || null, targetDate: f.targetDate.value || null, steps: [], metric, progressKind: metric ? 'metric' : 'checklist', status: 'active', window: '', createdAt: new Date().toISOString(), completedAt: null, archived: false };
     const nextGoals = [...structuredClone(State.goals), goal];
@@ -20376,40 +20506,44 @@ async function onSubmit(e) {
     State._goalTxnBusy = `create:${goal.id}`;
     const saved = await goalDataCommit(nextGoals, State.tasks); State._goalTxnBusy = '';
     if (!saved) { controls.forEach((control) => { control.disabled = false; }); if (status) { status.textContent = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); status.setAttribute('role', 'alert'); } return; }
-    State.goals = nextGoals; if (goal.completedAt) announceGoalCompletion(goal); State._goalOpenId = goal.id; State._goalsFocusAfterCommit = `#goal-${CSS.escape(goal.id)}`; syncGoalDeepLink(goal.id); render();
+    State.goals = nextGoals; if (goal.completedAt) announceGoalCompletion(goal); State._goalsComposerOpen = false; State._goalOpenId = goal.id; State._goalsFocusAfterCommit = '#goal-detail-title'; syncGoalDeepLink(goal.id); render();
   } else if (f.classList.contains('add-step-form')) {
     e.preventDefault(); const g = goalById(f.dataset.goal), title = f.step.value.trim(); if (!g || !title || State._goalTxnBusy || goalProgressKind(g) !== 'checklist') return;
+    State._goalsError = '';
     const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((goal) => goal.id === g.id);
     const step = { id: 's_' + uid(), title, done: false }; nextGoal.steps.push(step); refreshGoalCompletion(nextGoal, { announce: false });
     State._goalTxnBusy = `step:${step.id}`; const saved = await goalDataCommit(nextGoals, State.tasks); State._goalTxnBusy = '';
-    if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = `#goal-${CSS.escape(g.id)}`; render(); return; }
+    if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = '#goal-detail-title'; render(); return; }
     State.goals = nextGoals; State._goalOpenId = g.id; State._goalsFocusAfterCommit = `[data-action="toggle-step"][data-goal="${CSS.escape(g.id)}"][data-step="${CSS.escape(step.id)}"]`; render();
   } else if (f.classList.contains('metric-form')) {
     e.preventDefault(); const g = goalById(f.dataset.goal); if (!g || !g.metric || f.val.value === '' || State._goalTxnBusy) return;
+    State._goalsError = '';
     const val = Number(f.val.value); if (isNaN(val)) return;
     const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((goal) => goal.id === g.id);
     nextGoal.metric.current = val; nextGoal.metric.log = nextGoal.metric.log || [];
     const wasCompleted = !!nextGoal.completedAt;
     nextGoal.metric.log.unshift({ date: todayStr(), value: val }); nextGoal.metric.log = nextGoal.metric.log.slice(0, 50); refreshGoalCompletion(nextGoal, { announce: false });
     State._goalTxnBusy = `metric:${g.id}`; const saved = await goalDataCommit(nextGoals, State.tasks); State._goalTxnBusy = '';
-    if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = `#goal-${CSS.escape(g.id)}`; render(); return; }
+    if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = '#goal-detail-title'; render(); return; }
     State.goals = nextGoals; if (!wasCompleted && nextGoal.completedAt) announceGoalCompletion(nextGoal); State._goalOpenId = g.id; State._goalsFocusAfterCommit = `.metric-form[data-goal="${CSS.escape(g.id)}"] input`; checkAchievements(); render(); publishLeaderboard();
   } else if (f.classList.contains('goal-task-form')) {
     e.preventDefault(); const goal = goalById(f.dataset.goal), title = f.title.value.trim(); if (!goal || !title || State._goalTxnBusy) return;
+    State._goalsError = '';
     const task = { id: uid(), title, skillId: goal.skillId, skillIds: [goal.skillId], layers: [], estimateMin: 30, difficulty: 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, goalId: goal.id, createdAt: new Date().toISOString() };
     const nextTasks = [...structuredClone(State.tasks), task]; State._goalTxnBusy = `task:${task.id}`;
     const saved = await goalDataCommit(State.goals, nextTasks); State._goalTxnBusy = '';
-    if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = `#goal-${CSS.escape(goal.id)}`; render(); return; }
-    State.tasks = nextTasks; State._goalOpenId = goal.id; State._goalsFocusAfterCommit = `#goal-${CSS.escape(goal.id)} .goal-linked`; render();
+    if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = '#goal-detail-title'; render(); return; }
+    State.tasks = nextTasks; State._goalOpenId = goal.id; State._goalsFocusAfterCommit = `.goal-task-form[data-goal="${CSS.escape(goal.id)}"] input`; render();
   } else if (f.classList.contains('goal-edit-form')) {
     e.preventDefault(); const original = goalById(f.dataset.goal); if (!original || State._goalTxnBusy) return;
+    State._goalsError = '';
     const nextGoals = structuredClone(State.goals), goal = nextGoals.find((item) => item.id === original.id);
     goal.title = f.title.value.trim(); if (!goal.title) return;
     goal.description = f.description.value.trim().slice(0, 800); goal.parentId = f.parentId.value || null;
     goal.skillId = f.skillId.value; goal.type = f.type.value; goal.xpReward = GOAL_XP[goal.type]; goal.targetDate = f.targetDate.value || null; goal.status = f.status.value;
     State._goalTxnBusy = `edit:${goal.id}`; const saved = await goalDataCommit(nextGoals, State.tasks); State._goalTxnBusy = '';
-    if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = `#goal-${CSS.escape(goal.id)}`; render(); return; }
-    State.goals = nextGoals; State._goalOpenId = goal.id; State._goalsFocusAfterCommit = `#goal-${CSS.escape(goal.id)}`; syncGoalDeepLink(goal.id); render();
+    if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = '#goal-detail-title'; render(); return; }
+    State.goals = nextGoals; State._goalOpenId = goal.id; State._goalsFocusAfterCommit = '#goal-detail-title'; syncGoalDeepLink(goal.id); render();
   } else if (f.id === 'add-reward') {
     e.preventDefault(); const name = f.name.value.trim(); if (!name) return;
     if (!isPro() && State.rewards.length >= FREE_REWARDS_MAX) { showPaywall('Больше наград'); return; }
@@ -20931,7 +21065,7 @@ async function confirmGoalDelete() {
   }
   const nextTasks = structuredClone(State.tasks); for (const task of nextTasks) if (task.goalId && removed.has(task.goalId)) delete task.goalId;
   closeGoalDeleteDialog({ restoreFocus: false });
-  await commitGoalMutation('delete', nextGoals, nextTasks, '#goals-title', () => { State._goalOpenId = ''; syncGoalDeepLink(''); });
+  await commitGoalMutation('delete', nextGoals, nextTasks, '#goals-title', () => { State._goalOpenId = ''; State._goalDeepLinkId = ''; syncGoalDeepLink(''); });
 }
 async function onClick(e) {
   const targetTaskMenu = e.target.closest('.task-more');
@@ -20943,7 +21077,7 @@ async function onClick(e) {
     if (field !== targetSphereField) field.removeAttribute('open');
   });
   const navBtn = e.target.closest('#nav button[data-view]');
-  if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; if (State.view !== 'goals') { State._goalDeepLinkId = ''; syncGoalDeepLink('', State.view); } markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
+  if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); State._goalDeepLinkId = ''; syncGoalDeepLink('', State.view); } markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
   const secBtn = e.target.closest('[data-action="go-section"]');
   if (secBtn) {
     const s = SECTIONS.find((x) => x.id === secBtn.dataset.sec); if (!s) return;
@@ -20951,7 +21085,7 @@ async function onClick(e) {
     const fromMobileSheet = !!secBtn.closest('#mobile-nav-sheet');
     if (fromMobileSheet) closeMobileNavSheet({ restoreFocus: false });
     else closeMobileNavSheet();
-    if (sectionOf(State.view) !== s.id) { flushSettingsForm(); State.view = s.views[0].view; if (fromMobileSheet) State._mobileNavFocusAfterCommit = '#main h2'; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
+    if (sectionOf(State.view) !== s.id) { flushSettingsForm(); State.view = s.views[0].view; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); syncGoalDeepLink('', State.view); } if (fromMobileSheet) State._mobileNavFocusAfterCommit = '#main h2'; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
     return;
   }
   if (e.target.id === 'mobile-nav-sheet') { closeMobileNavSheet(); return; }
@@ -22083,9 +22217,9 @@ async function onClick(e) {
   } else if (action === 'delete-step') {
     const goal = goalById(el.dataset.goal); if (!goal || State._goalTxnBusy) return;
     const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((item) => item.id === goal.id); nextGoal.steps = nextGoal.steps.filter((step) => step.id !== el.dataset.step); refreshGoalCompletion(nextGoal, { announce: false });
-    commitGoalMutation(`delete-step:${el.dataset.step}`, nextGoals, structuredClone(State.tasks), `#goal-${CSS.escape(goal.id)}`, () => { State._goalOpenId = goal.id; }); return;
+    commitGoalMutation(`delete-step:${el.dataset.step}`, nextGoals, structuredClone(State.tasks), '#goal-detail-title', () => { State._goalOpenId = goal.id; }); return;
   } else if (action === 'delete-goal') {
-    openGoalDeleteDialog([id], el); return;
+    { const row = document.querySelector(`#goal-${CSS.escape(id)} .goal-summary`); closeGoalDetailDialog({ restoreFocus: false, clearState: false }); openGoalDeleteDialog([id], row || el); } return;
   } else if (action === 'goal-delete-cancel') {
     if (el.id === 'goal-delete-dialog' && e.target !== el) return;
     closeGoalDeleteDialog(); return;
@@ -22093,10 +22227,27 @@ async function onClick(e) {
     confirmGoalDelete(); return;
   } else if (action === 'goals-retry') {
     retryGoalsLoad(); return;
+  } else if (action === 'goals-toggle-create') {
+    if (!(State.goals || []).length) { State._goalsComposerOpen = true; State._goalsFocusAfterCommit = '#add-goal input[name="title"]'; render(); return; }
+    State._goalsComposerOpen = !State._goalsComposerOpen;
+    State._goalsFocusAfterCommit = State._goalsComposerOpen ? '#add-goal input[name="title"]' : '[data-action="goals-toggle-create"]'; render(); return;
+  } else if (action === 'set-goal-view') {
+    const view = el.dataset.view; if (!['focus', 'horizons', 'map', 'archive'].includes(view)) return;
+    State.goalView = view; State._goalsFocusAfterCommit = `[data-action="set-goal-view"][data-view="${CSS.escape(view)}"]`; render(); return;
+  } else if (action === 'open-goal-detail') {
+    openGoalDetailDialog(id, el); return;
+  } else if (action === 'goal-detail-close') {
+    if (el.id === 'goal-detail-dialog' && e.target !== el) return;
+    closeGoalDetailDialog(); return;
+  } else if (action === 'copy-goal-link') {
+    const goal = goalById(id); if (!goal) return;
+    const url = new URL(goalDeepLinkHref(goal.id), location.href).href;
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(() => toast(t('✓ Ссылка скопирована'))).catch(() => toast(url)); else toast(url);
+    return;
   } else if (action === 'goto-goal') {
-    e.preventDefault(); if (!goalById(id)) return; State.view = 'goals'; State._goalOpenId = id; State._goalDeepLinkId = id; State._goalsFocusAfterCommit = `#goal-${CSS.escape(id)}`; syncGoalDeepLink(id); render(); return;
+    e.preventDefault(); if (!goalById(id)) return; State.view = 'goals'; State._goalOpenId = id; State._goalDeepLinkId = id; State._goalsFocusAfterCommit = '#goal-detail-title'; syncGoalDeepLink(id); render(); return;
   } else if (action === 'goto-task') {
-    e.preventDefault(); const task = questById(id); if (!task) return; State.view = 'today'; State._goalDeepLinkId = ''; syncGoalDeepLink('', 'today'); State._tasksFocusAfterCommit = `[data-action="toggle-task"][data-id="${CSS.escape(id)}"]`; render(); return;
+    e.preventDefault(); const task = questById(id); if (!task) return; closeGoalDetailDialog({ restoreFocus: false }); State.view = 'today'; State._goalDeepLinkId = ''; syncGoalDeepLink('', 'today'); State._tasksFocusAfterCommit = `[data-action="toggle-task"][data-id="${CSS.escape(id)}"]`; render(); return;
   } else if (action === 'goals-pick-all') {
     document.querySelectorAll('.goal-pick').forEach((c) => { c.checked = true; }); return;
   } else if (action === 'goals-pick-none') {
@@ -22107,12 +22258,12 @@ async function onClick(e) {
     openGoalDeleteDialog(ids, el); return;
   } else if (action === 'archive-goal') {
     const goal = goalById(id); if (!goal || State._goalTxnBusy) return; const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((item) => item.id === id); nextGoal.archived = true;
-    commitGoalMutation(`archive:${id}`, nextGoals, structuredClone(State.tasks), '#goals-title', () => { State._goalOpenId = ''; toast(t('В архиве')); }); return;
+    closeGoalDetailDialog({ restoreFocus: false, clearState: false }); commitGoalMutation(`archive:${id}`, nextGoals, structuredClone(State.tasks), '#goals-title', () => { State._goalOpenId = ''; State._goalDeepLinkId = ''; syncGoalDeepLink(''); toast(t('В архиве')); }); return;
   } else if (action === 'restore-goal') {
     const goal = goalById(id); if (!goal || State._goalTxnBusy) return; const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((item) => item.id === id); nextGoal.archived = false;
-    commitGoalMutation(`restore:${id}`, nextGoals, structuredClone(State.tasks), `#goal-${CSS.escape(id)}`, () => { State._goalOpenId = id; }); return;
+    commitGoalMutation(`restore:${id}`, nextGoals, structuredClone(State.tasks), '#goal-detail-title', () => { State._goalOpenId = id; }); return;
   } else if (action === 'filter-goals') {
-    State.goalFilter = el.dataset.type; State._goalsFocusAfterCommit = `[data-action="filter-goals"][data-type="${CSS.escape(el.dataset.type)}"]`; render(); return;
+    State.goalFilter = el.dataset.type; State.goalView = 'horizons'; State._goalsFocusAfterCommit = `[data-action="filter-goals"][data-type="${CSS.escape(el.dataset.type)}"]`; render(); return;
 
   // --- Дерево ---
   } else if (action === 'tree-retry-load') {
@@ -22761,7 +22912,7 @@ function clearAllData() {
   State._partyLoading = false; State._adminUsersLoading = false;
   State._tasksLoadError = ''; State._tasksLoadBusy = false; State._tasksFocusAfterCommit = '';
   State._habitsLoadError = ''; State._habitsLoadBusy = false; State._habitTxnBusy = ''; State._habitError = ''; clearHabitUndo(); State._habitsFocusAfterCommit = '';
-  State._goalsLoadError = ''; State._goalsLoadBusy = false; State._goalTxnBusy = ''; State._goalsError = ''; State._goalsFocusAfterCommit = ''; State._goalOpenId = ''; State._goalDeepLinkId = '';
+  State._goalsLoadError = ''; State._goalsLoadBusy = false; State._goalTxnBusy = ''; State._goalsError = ''; State._goalsFocusAfterCommit = ''; State._goalOpenId = ''; State._goalDeepLinkId = ''; State.goalView = 'focus'; State.goalFilter = 'all'; State._goalsComposerOpen = false;
   State._settingsLoadError = ''; State._settingsLoadBusy = false; State._treeLoadError = '';
   State.timer = null; persistTimer(); stopTick(); closeFocusWidget(); removePill();
   State.selectedProfile = null; State.obSkills = new Set();
@@ -22989,7 +23140,7 @@ async function initApp() {
   try {
     const params = new URLSearchParams(location.search), view = params.get('view'), goalId = params.get('goal');
     if (view && VIEWS[view]) State.view = view;
-    if (State.view === 'goals' && goalId && goalById(goalId)) { State._goalDeepLinkId = goalId; State._goalOpenId = goalId; State._goalsFocusAfterCommit = `#goal-${CSS.escape(goalId)}`; }
+    if (State.view === 'goals' && goalId && goalById(goalId)) { State._goalDeepLinkId = goalId; State._goalOpenId = goalId; State._goalsFocusAfterCommit = '#goal-detail-title'; }
   } catch {}
   // Ярлыки-действия (?do=dayrec|capture): долгий тап по иконке на телефоне → сразу в действие.
   // Бэклог «Трение» (fb_mrnivhqrssjx): ноль тапов между «открыл» и «делаю». URL чистим, чтобы
@@ -23072,15 +23223,15 @@ function onChange(e) {
   }
   // смена статуса цели (active/waiting/paused)
   if (e.target.dataset && e.target.dataset.action === 'goal-status') {
-    const goal = goalById(e.target.dataset.id); if (goal) { const next = structuredClone(State.goals), changed = next.find((item) => item.id === goal.id); changed.status = e.target.value; commitGoalMutation(`status:${goal.id}`, next, structuredClone(State.tasks), `#goal-${CSS.escape(goal.id)}`, () => { State._goalOpenId = goal.id; }); }
+    const goal = goalById(e.target.dataset.id); if (goal) { const next = structuredClone(State.goals), changed = next.find((item) => item.id === goal.id); changed.status = e.target.value; commitGoalMutation(`status:${goal.id}`, next, structuredClone(State.tasks), '.goal-edit-form select[name="status"]', () => { State._goalOpenId = goal.id; }); }
     return;
   }
   if (e.target.dataset && e.target.dataset.action === 'goal-sphere') {
-    const goal = goalById(e.target.dataset.id); if (goal) { const next = structuredClone(State.goals), changed = next.find((item) => item.id === goal.id); changed.skillId = e.target.value; commitGoalMutation(`sphere:${goal.id}`, next, structuredClone(State.tasks), `#goal-${CSS.escape(goal.id)}`, () => { State._goalOpenId = goal.id; }); }
+    const goal = goalById(e.target.dataset.id); if (goal) { const next = structuredClone(State.goals), changed = next.find((item) => item.id === goal.id); changed.skillId = e.target.value; commitGoalMutation(`sphere:${goal.id}`, next, structuredClone(State.tasks), '.goal-edit-form [name="skillId"]', () => { State._goalOpenId = goal.id; }); }
     return;
   }
   if (e.target.dataset && e.target.dataset.action === 'goal-horizon') {
-    const goal = goalById(e.target.dataset.id); if (goal) { const next = structuredClone(State.goals), changed = next.find((item) => item.id === goal.id); changed.type = e.target.value; changed.xpReward = GOAL_XP[e.target.value]; commitGoalMutation(`horizon:${goal.id}`, next, structuredClone(State.tasks), `#goal-${CSS.escape(goal.id)}`, () => { State._goalOpenId = goal.id; }); }
+    const goal = goalById(e.target.dataset.id); if (goal) { const next = structuredClone(State.goals), changed = next.find((item) => item.id === goal.id); changed.type = e.target.value; changed.xpReward = GOAL_XP[e.target.value]; commitGoalMutation(`horizon:${goal.id}`, next, structuredClone(State.tasks), '.goal-edit-form select[name="type"]', () => { State._goalOpenId = goal.id; }); }
     return;
   }
   // правка текста заметки (сохраняем на blur/change, без ререндера — не сбивая фокус)
@@ -23468,7 +23619,7 @@ async function init() {
   document.addEventListener('focusout', (e) => { const f = e.target.closest && e.target.closest('.t-edit-form'); if (f && f.requestSubmit) setTimeout(() => { if (State._editTask) f.requestSubmit(); }, 100); });
   document.addEventListener('keydown', (e) => {
     if (handleTreeDialogKeydown(e)) return;
-    if (e.target.matches?.('.hsub[role="tablist"] [role="tab"]') && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+    if (e.target.matches?.(':is(.hsub,.goals-view-tabs)[role="tablist"] [role="tab"]') && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
       const tabs = Array.from(e.target.closest('[role="tablist"]').querySelectorAll('[role="tab"]'));
       const at = tabs.indexOf(e.target); let next = at;
       if (e.key === 'Home') next = 0; else if (e.key === 'End') next = tabs.length - 1;

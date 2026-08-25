@@ -48,21 +48,48 @@ test('Progress source is exclusive and linked tasks are explicitly not counted',
   assert.match(APP, /goalProgressKind\(g\) !== 'checklist'/);
 });
 
-test('Hierarchy UI is one outline with persistent labels, focus and deep links', () => {
-  assert.match(APP, /class="card goals-outline"/);
+test('Goals hierarchy keeps durable edit paths, focus and deep links', () => {
+  assert.match(APP, /class="card goals-outline/);
   assert.match(APP, /function goalTreeHTML/);
   assert.match(APP, /class="goal-edit-form"/);
   assert.match(APP, /class="goal-task-form"/);
   assert.match(APP, /function syncGoalDeepLink/);
   assert.match(APP, /State\._goalsFocusAfterCommit/);
   assert.match(APP, /role="dialog" aria-modal="true" aria-labelledby="goal-delete-title"/);
-  assert.match(CSS, /\.goal-summary \{[\s\S]*min-height: 58px/);
-  assert.match(CSS, /\.goals-shell :is\(button,input,select,textarea,summary\).*min-height: var\(--touch-min\)/);
+  assert.match(CSS, /\.goals-shell \.goal-summary \{[\s\S]*min-height: 76px/);
+  assert.match(CSS, /\.goals-shell :is\(button, input, select, textarea, summary, a\),[\s\S]*min-height: var\(--touch-min\)/);
   assert.match(CSS, /body:has\(\.goals-shell\) #ai-fab \{ display: none; \}/);
-  assert.match(CSS, /\.goals-shell \.goal-detail:not\(\[open\]\) > \.goal-body/);
   assert.match(CSS, /\.goals-shell \.gfilters \{[\s\S]*flex-wrap: nowrap;[\s\S]*overflow-x: auto/);
   assert.match(CSS, /body:has\(\.goals-shell\) \.navrow \.navsec-l/);
   assert.match(APP, /goalChildren\(g\.id\)\.filter\(\(child\) => !!child\.archived === !!g\.archived\)/);
+});
+
+test('Goals v168 separates focus, exact horizons, map and archive', () => {
+  assert.match(APP, /goalView: 'focus'/);
+  for (const view of ['focus', 'horizons', 'map', 'archive']) assert.match(APP, new RegExp(`'${view}'`));
+  assert.match(APP, /const wanted = State\.goalFilter === 'all' \? active : active\.filter\(\(goal\) => goal\.type === State\.goalFilter\)/);
+  const renderGoals = APP.slice(APP.indexOf('function renderGoals'), APP.indexOf('// ============================================================\n//  Вид «Навыки»'));
+  assert.doesNotMatch(renderGoals, /shownIds|for \(const parent of goalChain/);
+  assert.match(APP, /data-action="set-goal-view"/);
+  assert.match(APP, /data-action="goals-toggle-create"/);
+  assert.match(APP, /✨ \$\{t\('Разобрать с Тенью'\)\}/);
+  assert.match(APP, /data-action="open-goal-detail"/);
+  assert.doesNotMatch(APP.slice(APP.indexOf('function goalItem'), APP.indexOf('function goalTreeHTML')), /<details class="goal-detail"/);
+});
+
+test('Goals v168 uses one accessible detail dialog and human metric modes', () => {
+  assert.match(APP, /overlay\.id = 'goal-detail-dialog'/);
+  assert.match(APP, /role="dialog" aria-modal="true" aria-labelledby="goal-detail-title" aria-describedby="goal-detail-summary"/);
+  assert.match(APP, /document\.getElementById\('app'\)\?\.setAttribute\('inert', ''\)/);
+  assert.match(APP, /function handleGoalDetailKeydown/);
+  assert.match(APP, /event\.key === 'Escape'/);
+  assert.match(APP, /pathChoiceFocusable\(overlay\)/);
+  assert.match(APP, /name="metricMode"/);
+  for (const mode of ['checklist', 'increase', 'decrease', 'maintain']) assert.match(APP, new RegExp(`value="${mode}"`));
+  assert.doesNotMatch(APP, /name="mLower"|name="mMaintain"/);
+  assert.match(APP, /lowerBetter: metricMode === 'decrease'/);
+  assert.match(APP, /maintain: metricMode === 'maintain'/);
+  assert.match(CSS, /html\.goal-detail-open \{ overflow: hidden; \}/);
 });
 
 test('Goals v127 authored hierarchy and recovery copy covers every supported locale', () => {
@@ -77,6 +104,21 @@ test('Goals v127 authored hierarchy and recovery copy covers every supported loc
     assert.match(APP, new RegExp(`'${escaped}': \\{ en: '[^']+', de: '[^']+', uk: '[^']+', es: '[^']+' \\}`));
   }
   assert.match(APP, /\$\{t\(type\.label\)\} · \$\{t\(type\.timeframe\)\}/);
+});
+
+test('Goals v168 navigation and composer copy covers every supported locale', () => {
+  for (const key of [
+    'Фокус',
+    'Горизонты',
+    'Разобрать с Тенью',
+    'Только цели выбранного горизонта. Полная цепочка — в Карте.',
+    'Следующий шаг',
+    'Дополнительные настройки',
+    'Держать значение',
+  ]) {
+    const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    assert.match(APP, new RegExp(`'${escaped}': \\{ en: '[^']+', de: '[^']+', uk: '[^']+', es: '[^']+' \\}`));
+  }
 });
 
 test('Delete contract reparents surviving children and detaches linked tasks', () => {
