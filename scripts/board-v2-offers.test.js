@@ -117,6 +117,22 @@ test('latest manual Wildcard remains visible until a terminal outcome', () => {
   assert.equal(Offers.latestUnexpected(rejected, Pacing), null);
 });
 
+test('verified local snapshot is a distinct durable mode with one reserve', () => {
+  const local = quest('local-now', 'standard', 1, {
+    primaryAction: { label: 'Открыть официальный сайт', url: 'https://venue.example/class' },
+  }).quest;
+  const withReserve = { ...local, alternative: { label: 'Запасной клуб', url: 'https://reserve.example/class' } };
+  // A spread clone is not a Board-issued quest and cannot forge a snapshot.
+  assert.equal(Offers.snapshotQuest(BoardV2, withReserve, { day: '2026-08-25', mode: 'manual-local' }), null);
+  const snapshot = Offers.snapshotQuest(BoardV2, local, { day: '2026-08-25', mode: 'manual-local' });
+  let state = Offers.recordLocalDisplayed(Offers.emptyState(Pacing), snapshot, Pacing);
+  assert.equal(Offers.latestLocal(state, Pacing).id, snapshot.id);
+  state = Offers.recordOutcome(state, snapshot.id, 'taken', '2026-08-25', Pacing);
+  assert.equal(Offers.latestLocal(state, Pacing).id, snapshot.id);
+  state = Offers.recordOutcome(state, snapshot.id, 'completed', '2026-08-25', Pacing);
+  assert.equal(Offers.latestLocal(state, Pacing), null);
+});
+
 test('rejecting the newest manual Wildcard never resurrects an older card', () => {
   const firstQuest = quest('older-surprise', 'wildcard', 1).quest;
   const secondQuest = quest('newer-surprise', 'wildcard', 1).quest;

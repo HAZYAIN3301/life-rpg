@@ -85,7 +85,7 @@
     const id = text(value.id, 120), questId = text(value.questId, 100), templateId = text(value.templateId, 80);
     const title = text(value.title, 180), details = text(value.details, 360), issuedAt = day(value.issuedAt);
     const mode = text(value.mode, 24), reward = normalizeReward(value.reward);
-    if (!/^[a-z0-9@.-]+$/.test(id) || !questId || !templateId || !title || !issuedAt || !['standard', 'passive', 'manual-unexpected'].includes(mode) || !reward) return null;
+    if (!/^[a-z0-9@.-]+$/.test(id) || !questId || !templateId || !title || !issuedAt || !['standard', 'passive', 'manual-unexpected', 'manual-local'].includes(mode) || !reward) return null;
     const proofModes = uniqueStrings(value.completion && value.completion.proofModes, 32).slice(0, 5);
     if (!proofModes.length) return null;
     const snapshot = {
@@ -151,7 +151,7 @@
   function snapshotQuest(boardApi, quest, context) {
     const source = plain(context) ? context : {};
     const issuedAt = day(source.day), mode = text(source.mode, 24);
-    if (!isResolved(boardApi, quest) || !issuedAt || !['standard', 'passive', 'manual-unexpected'].includes(mode)) return null;
+    if (!isResolved(boardApi, quest) || !issuedAt || !['standard', 'passive', 'manual-unexpected', 'manual-local'].includes(mode)) return null;
     const fingerprint = JSON.stringify([quest.id, quest.title, quest.details, quest.resolvedSlots, quest.primaryAction, quest.reward]);
     return deepFreeze(normalizeSnapshot({
       schema: SNAPSHOT_SCHEMA, id: `${quest.templateId}@${quest.id.split('@').pop()}.${hash(fingerprint)}`,
@@ -221,6 +221,21 @@
     const byId = new Map(state.snapshots.map((item) => [item.id, item])); byId.set(snapshot.id, snapshot);
     return normalizeState({ ...state, snapshots: [...byId.values()].slice(-MAX_SNAPSHOTS), pacing: nextPacing, history: state.history.concat([{ snapshotId: snapshot.id, templateId: snapshot.templateId, at: snapshot.issuedAt, outcome: 'displayed' }]).slice(-MAX_HISTORY) }, pacingApi);
   }
+  function recordLocalDisplayed(rawState, rawSnapshot, pacingApi) {
+    const state = normalizeState(rawState, pacingApi);
+    const snapshot = normalizeSnapshot(rawSnapshot);
+    if (!snapshot || snapshot.mode !== 'manual-local') return state;
+    const byId = new Map(state.snapshots.map((item) => [item.id, item]));
+    byId.set(snapshot.id, snapshot);
+    return normalizeState({
+      ...state,
+      snapshots: [...byId.values()].slice(-MAX_SNAPSHOTS),
+      history: state.history.concat([{
+        snapshotId: snapshot.id, templateId: snapshot.templateId,
+        at: snapshot.issuedAt, outcome: 'displayed',
+      }]).slice(-MAX_HISTORY),
+    }, pacingApi);
+  }
   function recordOutcome(rawState, snapshotId, outcome, at, pacingApi) {
     const state = normalizeState(rawState, pacingApi), id = text(snapshotId, 120), when = day(at);
     if (!id || !when || !['taken', 'completed', 'returned', 'rejected'].includes(outcome)) return state;
@@ -239,10 +254,18 @@
     const outcome = state.history.slice().reverse().find((entry) => entry.snapshotId === snapshot.id);
     return outcome && ['displayed', 'taken'].includes(outcome.outcome) ? snapshot : null;
   }
+  function latestLocal(rawState, pacingApi) {
+    const state = normalizeState(rawState, pacingApi);
+    const snapshot = state.snapshots.slice().reverse().find((item) => item.mode === 'manual-local');
+    if (!snapshot) return null;
+    const outcome = state.history.slice().reverse().find((entry) => entry.snapshotId === snapshot.id);
+    return outcome && ['displayed', 'taken'].includes(outcome.outcome) ? snapshot : null;
+  }
 
   return deepFreeze({
     VERSION, STATE_SCHEMA, SNAPSHOT_SCHEMA, PLAN_SCHEMA, MAX_SNAPSHOTS, MAX_HISTORY,
     emptyState, normalizeState, normalizeSnapshot, snapshotQuest, planStandard, recordStandardDisplayed,
-    planUnexpected, recordUnexpectedDisplayed, recordOutcome, snapshotById, latestUnexpected,
+    planUnexpected, recordUnexpectedDisplayed, recordLocalDisplayed, recordOutcome,
+    snapshotById, latestUnexpected, latestLocal,
   });
 });

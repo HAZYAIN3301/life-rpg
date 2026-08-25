@@ -12,7 +12,7 @@
   'use strict';
 
   const VERSION = '1.2.0';
-  const ACTIONS = Object.freeze(['issue-standard', 'issue-unexpected', 'take', 'return', 'reject', 'complete']);
+  const ACTIONS = Object.freeze(['issue-standard', 'issue-unexpected', 'issue-local', 'take', 'return', 'reject', 'complete']);
   const MAX_TITLES = 50;
   const issued = new WeakSet();
 
@@ -126,12 +126,17 @@
     if (!source.issue.changed) return { ok: false, reason: 'no-change' };
     const offers = source.offersApi.normalizeState(issue.nextOffers, source.pacingApi);
     const unexpected = source.issue.mode === 'manual-unexpected';
+    const local = source.issue.mode === 'manual-local';
     const issuedSnapshot = offers.snapshots.find((snapshot) => snapshot.id === source.issue.primary.id);
     const standardStored = offers.current && offers.current.snapshotIds.length
       && offers.current.snapshotIds[0] === source.issue.primary.id;
     const unexpectedStored = unexpected && issuedSnapshot && issuedSnapshot.mode === 'manual-unexpected'
       && offers.history.some((entry) => entry.snapshotId === issuedSnapshot.id && entry.outcome === 'displayed');
-    if ((!unexpected && !standardStored) || (unexpected && !unexpectedStored)) return { ok: false, reason: 'invalid-issue-state' };
+    const localStored = local && issuedSnapshot && issuedSnapshot.mode === 'manual-local'
+      && offers.history.some((entry) => entry.snapshotId === issuedSnapshot.id && entry.outcome === 'displayed');
+    if ((!unexpected && !local && !standardStored) || (unexpected && !unexpectedStored) || (local && !localStored)) {
+      return { ok: false, reason: 'invalid-issue-state' };
+    }
     const settings = clone(source.settings);
     // Legacy accounts can have no persisted Board v1 envelope because the old
     // renderer normalized it only in memory. The atomic endpoint deliberately
@@ -140,7 +145,7 @@
     settings.board = preserveCustom(source.boardApi.normalize(source.settings.board), source.settings.board);
     settings.boardV2Offers = clone(offers);
     const transaction = deepFreeze({
-      schema: 'satoru.board-runtime-transaction/2', action: unexpected ? 'issue-unexpected' : 'issue-standard', snapshotId: source.issue.primary.id,
+      schema: 'satoru.board-runtime-transaction/2', action: unexpected ? 'issue-unexpected' : local ? 'issue-local' : 'issue-standard', snapshotId: source.issue.primary.id,
       data: { settings }, next: { settings, tasks: null }, effects: { unlock: null, proofPlan: null },
     });
     issued.add(transaction);

@@ -12,6 +12,8 @@ const Catalog = require('../public/board-v2-catalog.js');
 const Issuer = require('../public/board-v2-issuer.js');
 const WildcardCatalog = require('../public/board-v2-wildcard-catalog.js');
 const WildcardIssuer = require('../public/board-v2-wildcard-issuer.js');
+const Discovery = require('../public/board-v2-discovery.js');
+const LocalIssuer = require('../public/board-v2-local-issuer.js');
 const Runtime = require('../public/board-v2-runtime.js');
 const BoardV1 = require('../public/board-v1.js');
 
@@ -42,6 +44,22 @@ function context(action) {
     today: DAY, taskId: 'board-v2-task', completedAt: AT, skillId: 'sport',
     proof: { mode: 'photo', referenceId: 'board-media-private-1', raw: 'drop-me' },
   };
+}
+function localRecommendation() {
+  const consent = { enabled: true, city: 'Bielefeld', countryCode: 'DE', timezone: 'Europe/Berlin', locale: 'de-DE', approvedAt: AT };
+  const request = Discovery.createRequest(consent, {
+    requestId: 'runtime-local-request', templateId: 'try-specific-local-class', slotId: 'class', intent: 'class',
+    searchTerms: ['official', 'boxing'], constraints: { maxTravelMinutes: 60 },
+  });
+  const url = 'https://hsp.example/boxing';
+  const candidate = Discovery.verifyCandidate(request, {
+    candidateId: 'runtime-local-boxing', title: 'Пробная тренировка по боксу',
+    address: 'Universitätsstraße 25, Bielefeld', startsAt: '2026-08-27T18:00:00.000Z',
+    price: { type: 'fixed', amount: 12, currency: 'EUR', label: '12 EUR' },
+    availability: 'confirmed', action: { label: 'Открыть официальный сайт', url }, relevance: 0.9, checkedAt: AT,
+    sources: [{ kind: 'venue', url, checkedAt: AT, fields: ['title', 'address', 'startsAt', 'price', 'actionUrl', 'availability'] }],
+  });
+  return structuredClone({ schema: Discovery.RECOMMENDATION_SCHEMA, requestId: request.requestId, primary: candidate, reserve: null });
 }
 
 test('take creates one settings-only commit and preserves custom orders without mutating input', () => {
@@ -103,6 +121,21 @@ test('manual Wildcard is persisted without replacing the stable standard issue',
   assert.equal(prepared.transaction.action, 'issue-unexpected');
   assert.equal(next.current.snapshotIds[0], standardId);
   assert.equal(Offers.latestUnexpected(next, Pacing).id, offer.primary.id);
+});
+
+test('verified local issue persists as a distinct account transaction', () => {
+  const input = context('take');
+  const issue = LocalIssuer.issue(Board, Catalog, Offers, Pacing, Discovery, input.settings.boardV2Offers,
+    localRecommendation(), { day: DAY, at: AT });
+  const prepared = Runtime.prepareIssue({
+    issuerApi: LocalIssuer, boardApi: BoardV1, offersApi: Offers, pacingApi: Pacing, issue,
+    settings: input.settings, tasks: input.tasks,
+  });
+  assert.equal(prepared.ok, true);
+  assert.equal(prepared.transaction.action, 'issue-local');
+  const next = Runtime.result(prepared.transaction).settings.boardV2Offers;
+  assert.equal(Offers.latestLocal(next, Pacing).id, issue.primary.id);
+  assert.equal(next.current, null);
 });
 
 test('reject hides only a manual Wildcard and records the pacing signal', () => {

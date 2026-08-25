@@ -2,6 +2,15 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-25] Board v2 C0.16a — immutable-мост из verified discovery в локальный заказ
+
+- Новый pure-модуль `public/board-v2-local-issuer.js` принимает только уже проверенный сервером recommendation contract, заново гидратит direct-source evidence и разрешает ровно один approved шаблон с одним обязательным local-slot. Клиентский query, URL, GPS и свободный текст места не являются входами.
+- В snapshots добавлен отдельный режим `manual-local`: локальный поиск не заменяет стабильную недельную выдачу и не маскируется под `Неожиданный`. Основной результат становится immutable-карточкой, максимум один reserve сохраняется как отдельная официальная ссылка.
+- `BoardV2Runtime.prepareIssue()` выпускает отдельную account-транзакцию `issue-local`; forged handle, неполный evidence, шаблон с дополнительными незаполненными slots и readiness, требующий решения человека, fail-closed.
+- Это механический commit перед общей UI-интеграцией: модуль ещё не добавлен в PWA SHELL и пользовательскую кнопку не показывает. Следующий commit подключает city-consent/status/options, resolve UI и community feedback.
+
+Focused model/runtime suite — **28/28 PASS**; syntax и `git diff --check` — PASS.
+
 ## [2026-08-25] Board v2 C0.15 — Minecraft, косплей и Dungeon Master в ручном Wildcard
 
 - Production-пул кнопки `Дай что-нибудь неожиданное` расширен с трёх до шести полностью разрешимых сценариев. Добавлены: Minecraft-сервер на 30 дней, косплей выбранного персонажа и мини-кампания из трёх сессий в роли Dungeon Master.
