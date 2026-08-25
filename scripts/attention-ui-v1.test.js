@@ -9,10 +9,12 @@ const UI = require('../public/attention-ui-v1.js');
 const t = (value) => value;
 
 test('setup is one bounded rule with persistent labels and explicit modes', () => {
-  const html = UI.renderSetup({ targetLabel: '<TikTok>', purposeLabel: 'Опубликовать', mode: 'control', minutes: 10 }, t);
+  const html = UI.renderSetup({ targetLabel: '<TikTok>', purpose: 'publish', mode: 'control', minutes: 10 }, t);
   assert.match(html, /id="attention-setup-form"/);
   assert.match(html, /name="targetLabel"/);
-  assert.match(html, /name="purposeLabel"/);
+  assert.match(html, /name="purpose"/);
+  assert.match(html, /value="publish" selected/);
+  assert.match(html, /value="research"/);
   assert.match(html, /name="outcomeHint"/);
   assert.match(html, /name="mode" value="trust"/);
   assert.match(html, /name="mode" value="adaptive"/);
@@ -25,7 +27,8 @@ test('setup is one bounded rule with persistent labels and explicit modes', () =
 test('empty setup uses examples instead of saveable fake values', () => {
   const html = UI.renderSetup({}, t);
   assert.match(html, /name="targetLabel"[^>]*value=""[^>]*placeholder="Например: TikTok"/);
-  assert.match(html, /name="purposeLabel"[^>]*value=""[^>]*placeholder="Например: опубликовать ролик"/);
+  assert.match(html, /name="purpose"/);
+  assert.doesNotMatch(html, /value="Приложение или сайт"/);
 });
 
 test('entry shows honest calibration denominator and never invents it below five records', () => {
@@ -39,6 +42,14 @@ test('entry shows honest calibration denominator and never invents it below five
   assert.match(visible, /4 из 5 записанных заходов закончились вне плана/);
   assert.match(visible, /5 записано из 8/);
   assert.match(visible, /data-action="start-attention-session"/);
+});
+
+test('research entry asks for a bounded topic while other purposes keep it hidden', () => {
+  const research = UI.renderEntry({ policyId: 'p1', targetLabel: 'TikTok', purposes: [{ id: 'research', label: 'Референсы', minutes: 10, selected: true }] }, t);
+  assert.match(research, /data-attention-topic[^>]*>\s*<span>Тема поиска/);
+  assert.match(research, /name="topic"[^>]*maxlength="80"[^>]*required/);
+  const publish = UI.renderEntry({ policyId: 'p1', targetLabel: 'TikTok', purposes: [{ id: 'publish', label: 'Публикация', minutes: 10, selected: true }] }, t);
+  assert.match(publish, /data-attention-topic hidden/);
 });
 
 test('boundary provides done, bounded extension, escape and delayed emergency without rewards', () => {

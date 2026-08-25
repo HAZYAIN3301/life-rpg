@@ -15,6 +15,7 @@
 
   const VERSION = '1.0.0';
   const MODES = Object.freeze(['trust', 'adaptive', 'control']);
+  const PURPOSES = Object.freeze(['publish', 'create', 'reply', 'research', 'watch', 'rest', 'unsure']);
   const DEFAULT_DURATIONS = Object.freeze([3, 10, 20]);
 
   function esc(value) {
@@ -43,6 +44,17 @@
   function cleanMode(value) { return MODES.includes(value) ? value : 'adaptive'; }
   function modeLabel(mode) {
     return mode === 'trust' ? 'Доверие' : mode === 'control' ? 'Контроль' : 'Адаптивный';
+  }
+  function purposeLabel(purpose) {
+    return ({
+      publish: 'Опубликовать готовое',
+      create: 'Создать или смонтировать',
+      reply: 'Ответить людям',
+      research: 'Найти конкретные референсы',
+      watch: 'Посмотреть сохранённый материал',
+      rest: 'Осознанно отдохнуть',
+      unsure: 'Пока не знаю',
+    })[purpose] || 'Пока не знаю';
   }
 
   function purposeRows(raw) {
@@ -80,7 +92,7 @@
 
   function renderSetup(vm = {}, t) {
     const targetLabel = boundedText(vm.targetLabel, '', 80);
-    const purposeLabel = boundedText(vm.purposeLabel, '', 80);
+    const selectedPurpose = PURPOSES.includes(vm.purpose) ? vm.purpose : 'publish';
     const outcomeHint = boundedText(vm.outcomeHint, '', 120);
     const durations = cleanDurations(vm.durations);
     return `<form id="attention-setup-form" class="attention-flow attention-setup" data-attention-screen="setup">
@@ -96,7 +108,7 @@
         </label>
         <label class="attention-field attention-field-wide">
           <span>${tr(t, 'Зачем открываешь')}</span>
-          <input name="purposeLabel" maxlength="80" required value="${esc(purposeLabel)}" placeholder="${tr(t, 'Например: опубликовать ролик')}" autocomplete="off" />
+          <select name="purpose" required>${PURPOSES.map((purpose) => `<option value="${purpose}" ${purpose === selectedPurpose ? 'selected' : ''}>${tr(t, purposeLabel(purpose))}</option>`).join('')}</select>
         </label>
         <fieldset class="attention-fieldset attention-field-wide">
           <legend>${tr(t, 'Сколько времени')}</legend>
@@ -134,13 +146,16 @@
       ${purposes.length ? `<fieldset class="attention-fieldset">
         <legend>${tr(t, 'Цель этого входа')}</legend>
         <div class="attention-purpose-grid">${purposes.map((row, index) => `<label class="attention-choice attention-purpose-choice">
-          <input type="radio" name="purposeId" value="${esc(row.id)}" data-minutes="${row.minutes}" ${row === selected || (!selected && index === 0) ? 'checked' : ''} />
+          <input type="radio" name="purposeId" value="${esc(row.id)}" data-minutes="${row.minutes}" data-outcome="${esc(row.outcomeHint)}" ${row === selected || (!selected && index === 0) ? 'checked' : ''} />
           <span><b>${esc(row.label)}</b><small>${row.minutes} ${tr(t, 'мин')}${row.outcomeHint ? ` · ${esc(row.outcomeHint)}` : ''}</small></span>
         </label>`).join('')}</div>
       </fieldset>` : `<div class="attention-empty" role="status"><p>${tr(t, 'Для этого приложения ещё нет правила.')}</p><button type="button" class="btn" data-action="attention-open-setup">${tr(t, 'Настроить за две минуты')}</button></div>`}
       ${selected ? `<label class="attention-field">
         <span>${tr(t, 'Конкретный результат')}</span>
         <input name="expectedOutcome" maxlength="120" value="${esc(selected.outcomeHint)}" placeholder="${tr(t, 'Что будет готово к выходу')}" autocomplete="off" />
+      </label><label class="attention-field attention-topic-field" data-attention-topic ${selected.id === 'research' ? '' : 'hidden'}>
+        <span>${tr(t, 'Тема поиска')}</span>
+        <input name="topic" maxlength="80" placeholder="${tr(t, 'Что именно ищешь')}" autocomplete="off" ${selected.id === 'research' ? 'required' : ''} />
       </label>` : ''}
       ${calibration ? `<p class="attention-calibration" role="note"><b>${esc(calibration.label || targetLabel)}:</b> ${esc(calibration.outsidePlan)} ${tr(t, 'из')} ${esc(calibration.recorded)} ${tr(t, 'записанных заходов закончились вне плана')}${Number(calibration.started) > Number(calibration.recorded) ? `. ${esc(calibration.recorded)} ${tr(t, 'записано из')} ${esc(calibration.started)}.` : '.'}</p>` : ''}
       <p class="attention-form-status" data-attention-status role="status" aria-live="polite"></p>
@@ -197,7 +212,7 @@
         <button type="button" class="btn" data-action="start-attention-return" data-action-id="${esc(vm.actionId || '')}">${tr(t, 'Начать этот шаг')}</button>
         <button type="button" class="btn ghost" data-action="choose-attention-return">${tr(t, 'Выбрать другой')}</button>
         <button type="button" class="btn ghost" data-action="attention-care-first">${tr(t, 'Сначала позаботиться о себе')}</button>
-        <button type="button" class="btn ghost" data-action="close-attention-dialog">${tr(t, 'Сегодня отдых')}</button>
+        <button type="button" class="btn ghost" data-action="attention-rest-today">${tr(t, 'Сегодня отдых')}</button>
       </div>
       <p class="attention-form-status" data-attention-status role="status" aria-live="polite"></p>
     </section>`;
@@ -216,7 +231,7 @@
   }
 
   return Object.freeze({
-    VERSION, MODES, DEFAULT_DURATIONS,
+    VERSION, MODES, PURPOSES, DEFAULT_DURATIONS, purposeLabel,
     renderSetup, renderEntry, renderBoundary, renderReturn, renderLoadError,
   });
 });

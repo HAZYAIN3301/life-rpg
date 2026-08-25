@@ -537,6 +537,15 @@ const I18N_EXTRA = {
   'Например: TikTok': { en: 'For example: TikTok', de: 'Zum Beispiel: TikTok', uk: 'Наприклад: TikTok', es: 'Por ejemplo: TikTok' },
   'Зачем открываешь': { en: 'Why you are opening it', de: 'Wofür du sie öffnest', uk: 'Навіщо відкриваєш', es: 'Para qué la abres' },
   'Например: опубликовать ролик': { en: 'For example: publish a video', de: 'Zum Beispiel: ein Video veröffentlichen', uk: 'Наприклад: опублікувати відео', es: 'Por ejemplo: publicar un vídeo' },
+  'Опубликовать готовое': { en: 'Publish something ready', de: 'Etwas Fertiges veröffentlichen', uk: 'Опублікувати готове', es: 'Publicar algo terminado' },
+  'Создать или смонтировать': { en: 'Create or edit', de: 'Erstellen oder schneiden', uk: 'Створити або змонтувати', es: 'Crear o editar' },
+  'Ответить людям': { en: 'Reply to people', de: 'Menschen antworten', uk: 'Відповісти людям', es: 'Responder a personas' },
+  'Найти конкретные референсы': { en: 'Find specific references', de: 'Konkrete Referenzen finden', uk: 'Знайти конкретні референси', es: 'Buscar referencias concretas' },
+  'Посмотреть сохранённый материал': { en: 'Watch saved material', de: 'Gespeichertes Material ansehen', uk: 'Переглянути збережений матеріал', es: 'Ver material guardado' },
+  'Осознанно отдохнуть': { en: 'Rest intentionally', de: 'Bewusst ausruhen', uk: 'Свідомо відпочити', es: 'Descansar conscientemente' },
+  'Пока не знаю': { en: 'Not sure yet', de: 'Noch nicht sicher', uk: 'Поки не знаю', es: 'Aún no lo sé' },
+  'Тема поиска': { en: 'Search topic', de: 'Suchthema', uk: 'Тема пошуку', es: 'Tema de búsqueda' },
+  'Что именно ищешь': { en: 'What exactly are you looking for', de: 'Wonach genau suchst du', uk: 'Що саме шукаєш', es: 'Qué buscas exactamente' },
   'Сколько времени': { en: 'How much time', de: 'Wie viel Zeit', uk: 'Скільки часу', es: 'Cuánto tiempo' },
   'Что должно остаться после выхода': { en: 'What should be done when you leave', de: 'Was beim Verlassen fertig sein soll', uk: 'Що має залишитися після виходу', es: 'Qué debería quedar hecho al salir' },
   'Например: ролик опубликован': { en: 'For example: video published', de: 'Zum Beispiel: Video veröffentlicht', uk: 'Наприклад: відео опубліковано', es: 'Por ejemplo: vídeo publicado' },
@@ -582,6 +591,41 @@ const I18N_EXTRA = {
   'Данные внимания повреждены': { en: 'Attention data is corrupted', de: 'Aufmerksamkeitsdaten sind beschädigt', uk: 'Дані уваги пошкоджено', es: 'Los datos de atención están dañados' },
   'Не удалось загрузить правила внимания': { en: 'Could not load attention rules', de: 'Aufmerksamkeitsregeln konnten nicht geladen werden', uk: 'Не вдалося завантажити правила уваги', es: 'No se pudieron cargar las reglas de atención' },
   'Это не пустой список. Мы не будем ничего перезаписывать, пока данные не восстановлены.': { en: 'This is not an empty list. Nothing will be overwritten until the data is restored.', de: 'Das ist keine leere Liste. Nichts wird überschrieben, bis die Daten wiederhergestellt sind.', uk: 'Це не порожній список. Ми нічого не перезаписуватимемо, доки дані не відновлено.', es: 'No es una lista vacía. No sobrescribiremos nada hasta que se restauren los datos.' },
+  'Внимание и границы': { en: 'Attention and boundaries', de: 'Aufmerksamkeit und Grenzen', uk: 'Увага й межі', es: 'Atención y límites' },
+  'Заранее реши, зачем входишь и где остановишься. Satoru не меняет правило без тебя.': { en: 'Decide in advance why you are entering and where you will stop. Satoru never changes the rule without you.', de: 'Entscheide vorher, warum du hineingehst und wo du aufhörst. Satoru ändert die Regel nie ohne dich.', uk: 'Заздалегідь виріши, навіщо входиш і де зупинишся. Satoru не змінює правило без тебе.', es: 'Decide de antemano por qué entras y dónde te detendrás. Satoru nunca cambia la regla sin ti.' },
+  'Добавить одно правило': { en: 'Add one rule', de: 'Eine Regel hinzufügen', uk: 'Додати одне правило', es: 'Añadir una regla' },
+  'Сейчас идёт ограниченное окно': { en: 'A limited window is active', de: 'Ein begrenztes Zeitfenster ist aktiv', uk: 'Зараз триває обмежене вікно', es: 'Hay una ventana limitada activa' },
+  'Проверить вход': { en: 'Check entry', de: 'Öffnen prüfen', uk: 'Перевірити вхід', es: 'Comprobar entrada' },
+  'Правил пока нет. Начни с одного приложения и одной цели — это займёт до двух минут.': { en: 'There are no rules yet. Start with one app and one purpose — it takes under two minutes.', de: 'Es gibt noch keine Regeln. Beginne mit einer App und einem Zweck — das dauert weniger als zwei Minuten.', uk: 'Правил ще немає. Почни з одного застосунку й однієї мети — це займе до двох хвилин.', es: 'Todavía no hay reglas. Empieza con una aplicación y un propósito: tardarás menos de dos minutos.' },
+  'Подробная история устройства остаётся локальной. Синхронизация агрегатов — только по отдельному согласию.': { en: 'Detailed device history stays local. Aggregate sync requires separate consent.', de: 'Der detaillierte Geräteverlauf bleibt lokal. Die Synchronisierung von Aggregaten erfordert eine separate Zustimmung.', uk: 'Докладна історія пристрою лишається локальною. Синхронізація агрегатів — лише за окремою згодою.', es: 'El historial detallado del dispositivo se queda en local. La sincronización de agregados requiere un consentimiento aparte.' },
+  'Модуль внимания не загрузился. Обнови страницу.': { en: 'The attention module did not load. Refresh the page.', de: 'Das Aufmerksamkeitsmodul wurde nicht geladen. Aktualisiere die Seite.', uk: 'Модуль уваги не завантажився. Онови сторінку.', es: 'El módulo de atención no se cargó. Actualiza la página.' },
+  'Данные внимания недоступны. Ничего не перезаписываем.': { en: 'Attention data is unavailable. Nothing will be overwritten.', de: 'Aufmerksamkeitsdaten sind nicht verfügbar. Nichts wird überschrieben.', uk: 'Дані уваги недоступні. Нічого не перезаписуємо.', es: 'Los datos de atención no están disponibles. No se sobrescribirá nada.' },
+  'Данные пока не восстановлены. Повтори после проверки соединения.': { en: 'The data is not restored yet. Try again after checking the connection.', de: 'Die Daten sind noch nicht wiederhergestellt. Prüfe die Verbindung und versuche es erneut.', uk: 'Дані ще не відновлено. Повтори після перевірки з\'єднання.', es: 'Los datos aún no se han restaurado. Comprueba la conexión y vuelve a intentarlo.' },
+  'Правило внимания сохранено': { en: 'Attention rule saved', de: 'Aufmerksamkeitsregel gespeichert', uk: 'Правило уваги збережено', es: 'Regla de atención guardada' },
+  'Назови конкретную тему поиска.': { en: 'Name the specific topic you are searching for.', de: 'Nenne das konkrete Suchthema.', uk: 'Назви конкретну тему пошуку.', es: 'Indica el tema concreto que buscas.' },
+  'Назови конкретный результат.': { en: 'Name the concrete outcome.', de: 'Nenne das konkrete Ergebnis.', uk: 'Назви конкретний результат.', es: 'Indica el resultado concreto.' },
+  'Одно окно внимания уже идёт': { en: 'An attention window is already active', de: 'Ein Aufmerksamkeitsfenster ist bereits aktiv', uk: 'Одне вікно уваги вже триває', es: 'Ya hay una ventana de atención activa' },
+  'В режиме Контроля сначала нужно выбрать цель.': { en: 'In Control mode, choose a purpose first.', de: 'Im Kontrollmodus musst du zuerst einen Zweck wählen.', uk: 'У режимі Контролю спочатку треба обрати мету.', es: 'En el modo Control, primero debes elegir un propósito.' },
+  'Не удалось начать окно. Проверь правило.': { en: 'The window could not be started. Check the rule.', de: 'Das Zeitfenster konnte nicht gestartet werden. Prüfe die Regel.', uk: 'Не вдалося почати вікно. Перевір правило.', es: 'No se pudo iniciar la ventana. Comprueba la regla.' },
+  'Не удалось сохранить. Окно не началось — повтори попытку.': { en: 'Could not save. The window did not start — try again.', de: 'Speichern fehlgeschlagen. Das Zeitfenster wurde nicht gestartet — versuche es erneut.', uk: 'Не вдалося зберегти. Вікно не почалося — повтори спробу.', es: 'No se pudo guardar. La ventana no se inició; inténtalo de nuevo.' },
+  'Окно внимания началось': { en: 'Attention window started', de: 'Aufmerksamkeitsfenster gestartet', uk: 'Вікно уваги почалося', es: 'Ventana de atención iniciada' },
+  'Окно уже изменилось на другом устройстве. Обнови данные.': { en: 'The window changed on another device. Refresh the data.', de: 'Das Zeitfenster wurde auf einem anderen Gerät geändert. Aktualisiere die Daten.', uk: 'Вікно вже змінено на іншому пристрої. Онови дані.', es: 'La ventana cambió en otro dispositivo. Actualiza los datos.' },
+  'Продление больше недоступно.': { en: 'No more extensions are available.', de: 'Keine weitere Verlängerung ist verfügbar.', uk: 'Продовження більше недоступне.', es: 'No hay más prórrogas disponibles.' },
+  'Не удалось сохранить продление — время не добавлено.': { en: 'Could not save the extension — no time was added.', de: 'Die Verlängerung konnte nicht gespeichert werden — es wurde keine Zeit hinzugefügt.', uk: 'Не вдалося зберегти продовження — час не додано.', es: 'No se pudo guardar la prórroga; no se añadió tiempo.' },
+  'Окно продлено один раз': { en: 'Window extended once', de: 'Zeitfenster einmal verlängert', uk: 'Вікно продовжено один раз', es: 'Ventana prorrogada una vez' },
+  'Окно уже изменилось. Повтори после обновления.': { en: 'The window has already changed. Refresh and try again.', de: 'Das Zeitfenster wurde bereits geändert. Aktualisiere und versuche es erneut.', uk: 'Вікно вже змінилося. Онови дані та спробуй ще раз.', es: 'La ventana ya ha cambiado. Actualiza e inténtalo de nuevo.' },
+  'Не удалось сохранить исход. Окно остаётся открытым — данные не потеряны.': { en: 'Could not save the outcome. The window stays open — no data was lost.', de: 'Das Ergebnis konnte nicht gespeichert werden. Das Zeitfenster bleibt offen — keine Daten gingen verloren.', uk: 'Не вдалося зберегти результат. Вікно лишається відкритим — дані не втрачено.', es: 'No se pudo guardar el resultado. La ventana permanece abierta; no se perdieron datos.' },
+  'Окно завершено': { en: 'Window completed', de: 'Zeitfenster beendet', uk: 'Вікно завершено', es: 'Ventana completada' },
+  'Подожди': { en: 'Wait', de: 'Warte', uk: 'Зачекай', es: 'Espera' },
+  'Выйти аварийно': { en: 'Use emergency exit', de: 'Notausstieg verwenden', uk: 'Вийти аварійно', es: 'Usar salida de emergencia' },
+  'Коротко назови причину аварийного выхода.': { en: 'Briefly name the reason for the emergency exit.', de: 'Nenne kurz den Grund für den Notausstieg.', uk: 'Коротко назви причину аварійного виходу.', es: 'Indica brevemente el motivo de la salida de emergencia.' },
+  'Аварийный выход уже использован в этом периоде.': { en: 'The emergency exit has already been used in this period.', de: 'Der Notausstieg wurde in diesem Zeitraum bereits verwendet.', uk: 'Аварійний вихід уже використано в цьому періоді.', es: 'La salida de emergencia ya se usó en este periodo.' },
+  'Не удалось подтвердить аварийный выход.': { en: 'Could not confirm the emergency exit.', de: 'Der Notausstieg konnte nicht bestätigt werden.', uk: 'Не вдалося підтвердити аварійний вихід.', es: 'No se pudo confirmar la salida de emergencia.' },
+  'Не удалось сохранить выход. Окно остаётся открытым — повтори попытку.': { en: 'Could not save the exit. The window stays open — try again.', de: 'Der Ausstieg konnte nicht gespeichert werden. Das Zeitfenster bleibt offen — versuche es erneut.', uk: 'Не вдалося зберегти вихід. Вікно лишається відкритим — повтори спробу.', es: 'No se pudo guardar la salida. La ventana permanece abierta; inténtalo de nuevo.' },
+  'Аварийный выход записан без наказания': { en: 'Emergency exit recorded without punishment', de: 'Notausstieg ohne Strafe erfasst', uk: 'Аварійний вихід записано без покарання', es: 'Salida de emergencia registrada sin castigo' },
+  'Не удалось сохранить возвращение. Попробуй ещё раз.': { en: 'Could not save the return. Try again.', de: 'Die Rückkehr konnte nicht gespeichert werden. Versuche es erneut.', uk: 'Не вдалося зберегти повернення. Спробуй ще раз.', es: 'No se pudo guardar el regreso. Inténtalo de nuevo.' },
+  'Открыть план на сегодня': { en: 'Open today\'s plan', de: 'Heutigen Plan öffnen', uk: 'Відкрити план на сьогодні', es: 'Abrir el plan de hoy' },
+  'Отдых тоже может быть выбранным действием': { en: 'Rest can also be an intentional choice', de: 'Auch Ruhe kann eine bewusste Entscheidung sein', uk: 'Відпочинок теж може бути обраною дією', es: 'Descansar también puede ser una elección intencional' },
   // ── v164 18.08: язык — первый шаг регистрации, English по умолчанию ──
   'Выбери язык': { en: 'Choose your language', de: 'Wähle deine Sprache', uk: 'Обери мову', es: 'Elige tu idioma' },
   'На нём пройдёт регистрация и откроется приложение. Позже язык можно поменять в Настройках.': { en: 'Registration and the app will use it. You can change the language later in Settings.', de: 'Registrierung und App verwenden diese Sprache. Du kannst sie später in den Einstellungen ändern.', uk: 'Цією мовою пройде реєстрація й відкриється застосунок. Пізніше мову можна змінити в Налаштуваннях.', es: 'El registro y la aplicación usarán este idioma. Puedes cambiarlo más tarde en Ajustes.' },
@@ -3840,6 +3884,23 @@ function habitWriteAllowed(source, notify = false) {
   console.error(`${source} blocked`, 'habits', State._habitsLoadError);
   return false;
 }
+function attentionDatasetSlot(name) {
+  return ({ 'attention-policies': 'policies', 'attention-sessions': 'sessions', 'attention-episodes': 'episodes' })[name] || '';
+}
+function attentionWriteAllowed(name, source, notify = false) {
+  const slot = attentionDatasetSlot(name);
+  if (!slot || !(State._attentionLoadErrors && State._attentionLoadErrors[slot])) return true;
+  clearTimeout(Store._timers[name]);
+  if (notify) {
+    const now = Date.now();
+    if (now - (State._attentionWriteBlockedNoticeAt || 0) > 2000) {
+      State._attentionWriteBlockedNoticeAt = now;
+      toast(t('Изменения внимания заблокированы до восстановления данных'));
+    }
+  }
+  console.error(`${source} blocked`, name, State._attentionLoadErrors[slot]);
+  return false;
+}
 const Store = {
   _timers: {},
   async load(name, fallback) {
@@ -3884,6 +3945,7 @@ const Store = {
     if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('save', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('save', true)) return false;
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('save', true)) return false;
+    if (attentionDatasetSlot(name) && !attentionWriteAllowed(name, 'save', true)) return false;
     clearTimeout(this._timers[name]);
     this._timers[name] = setTimeout(() => this._put(name, obj), 250);
     return true;
@@ -3896,6 +3958,7 @@ const Store = {
     if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('saveNow', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('saveNow', true)) return false;
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('saveNow', true)) return false;
+    if (attentionDatasetSlot(name) && !attentionWriteAllowed(name, 'saveNow', true)) return false;
     clearTimeout(this._timers[name]);
     return this._put(name, obj);
   },
@@ -3906,6 +3969,7 @@ const Store = {
     if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('_put', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('_put', true)) return false;
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('_put', true)) return false;
+    if (attentionDatasetSlot(name) && !attentionWriteAllowed(name, '_put', true)) return false;
     try {
       const r = await fetch(`/api/data/${name}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj),
@@ -5157,6 +5221,9 @@ const State = {
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
   goals: null, goalGroups: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
   lootbox: null, inbox: null, inboxOpen: false, antihabits: null, aiKeys: null, episodes: null,
+  attentionPolicies: null, attentionSessions: null, attentionEpisodes: null,
+  _attentionLoadErrors: { policies: '', sessions: '', episodes: '' }, _attentionLoadBusy: false, _attentionWriteBlockedNoticeAt: 0,
+  _attentionDeepLink: null, _attentionReturnIndex: 0,
   boardMedia: null, _boardMediaLoadError: '', _boardMediaBusy: false, _boardBusy: false, _boardError: '', _boardFocusAfterCommit: '',
   _boardComplete: null, _boardV2Receipt: null,
   strava: null, _stravaSyncing: false,
@@ -19366,6 +19433,362 @@ function settingsRecoveryCard() {
     <button class="btn" data-action="retry-settings-load" ${State._settingsLoadBusy ? 'disabled' : ''}>${State._settingsLoadBusy ? t('Проверяю…') : t('Повторить чтение')}</button>
   </div>`;
 }
+
+// ============================================================
+//  Attention R1 — видимая сцепка policy → session → episode.
+// ============================================================
+let _attentionDialogReturnFocus = null;
+let _attentionScrollLock = null;
+let _attentionBoundaryTimer = null;
+let _attentionEmergencyTimer = null;
+
+function attentionController() {
+  const C = window.AttentionControllerV1;
+  return C && C.ready && C.ready() ? C : null;
+}
+function attentionBundle() {
+  const C = attentionController();
+  const empty = C ? C.emptyBundle() : { policies: { version: 1, policies: [] }, sessions: { version: 1, sessions: [] }, episodes: { version: 1, episodes: [] } };
+  return {
+    policies: State.attentionPolicies || empty.policies,
+    sessions: State.attentionSessions || empty.sessions,
+    episodes: State.attentionEpisodes || empty.episodes,
+  };
+}
+function attentionHasLoadError() { return Object.values(State._attentionLoadErrors || {}).some(Boolean); }
+function attentionPurposeName(id) {
+  const UI = window.AttentionUIV1;
+  return t(UI && UI.purposeLabel ? UI.purposeLabel(id) : 'Пока не знаю');
+}
+function attentionPolicyId(name) {
+  const base = String(name || 'app').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24) || 'app';
+  return `${base}-${uid()}`.slice(0, 40);
+}
+function attentionNow() { return new Date().toISOString(); }
+function attentionHHMM() { const d = new Date(); return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`; }
+
+function lockAttentionScroll() {
+  if (_attentionScrollLock || !document.body) return;
+  const body = document.body;
+  _attentionScrollLock = {
+    x: window.scrollX, y: window.scrollY,
+    position: body.style.position, top: body.style.top, left: body.style.left,
+    right: body.style.right, width: body.style.width, overflow: body.style.overflow,
+  };
+  document.documentElement.classList.add('attention-dialog-open');
+  body.style.position = 'fixed'; body.style.top = `-${_attentionScrollLock.y}px`;
+  body.style.left = `-${_attentionScrollLock.x}px`; body.style.right = '0';
+  body.style.width = '100%'; body.style.overflow = 'hidden';
+}
+function unlockAttentionScroll() {
+  const lock = _attentionScrollLock; _attentionScrollLock = null;
+  document.documentElement.classList.remove('attention-dialog-open');
+  if (!lock || !document.body) return;
+  const body = document.body;
+  body.style.position = lock.position; body.style.top = lock.top; body.style.left = lock.left;
+  body.style.right = lock.right; body.style.width = lock.width; body.style.overflow = lock.overflow;
+  window.scrollTo(lock.x, lock.y);
+}
+function attentionFocusable(overlay) {
+  return Array.from(overlay.querySelectorAll('button,[href],input,select,textarea,summary,[tabindex]:not([tabindex="-1"])'))
+    .filter((node) => !node.disabled && !node.hidden && node.getClientRects().length);
+}
+function handleAttentionDialogKeydown(event) {
+  const overlay = event.currentTarget;
+  if (event.key === 'Escape') {
+    if (overlay.dataset.dismissible === 'true') { event.preventDefault(); closeAttentionDialog(); }
+    return;
+  }
+  if (event.key !== 'Tab') return;
+  const focusable = attentionFocusable(overlay);
+  if (!focusable.length) { event.preventDefault(); overlay.querySelector('#attention-dialog-title')?.focus(); return; }
+  const at = focusable.indexOf(document.activeElement);
+  if (at < 0 || (!event.shiftKey && at === focusable.length - 1) || (event.shiftKey && at === 0)) {
+    event.preventDefault(); focusable[event.shiftKey ? focusable.length - 1 : 0].focus();
+  }
+}
+function clearAttentionEmergencyTimer() {
+  if (_attentionEmergencyTimer) clearInterval(_attentionEmergencyTimer);
+  _attentionEmergencyTimer = null;
+}
+function closeAttentionDialog({ restoreFocus = true, force = false } = {}) {
+  const overlay = document.getElementById('attention-dialog-overlay');
+  if (!overlay || (!force && overlay.dataset.dismissible !== 'true')) return false;
+  clearAttentionEmergencyTimer();
+  overlay.remove();
+  const app = document.getElementById('app');
+  if (app && !overlay._attentionAppWasInert) app.inert = false;
+  unlockAttentionScroll();
+  const target = _attentionDialogReturnFocus; _attentionDialogReturnFocus = null;
+  if (restoreFocus) requestAnimationFrame(() => {
+    const fallback = document.querySelector('#settings-title, #main h2, #nav button.active');
+    const next = target && target.isConnected ? target : fallback;
+    if (next) focusPathChoiceTarget(next);
+  });
+  return true;
+}
+function showAttentionDialog(screen, viewModel, options = {}) {
+  const UI = window.AttentionUIV1;
+  if (!UI) { toast(t('Модуль внимания не загрузился. Обнови страницу.')); return null; }
+  closeAttentionDialog({ restoreFocus: false, force: true });
+  const renderers = { setup: UI.renderSetup, entry: UI.renderEntry, boundary: UI.renderBoundary, return: UI.renderReturn, error: UI.renderLoadError };
+  const renderScreen = renderers[screen];
+  if (!renderScreen) return null;
+  const dismissible = options.dismissible !== false;
+  const overlay = document.createElement('div');
+  overlay.id = 'attention-dialog-overlay'; overlay.className = 'attention-overlay';
+  overlay.dataset.dismissible = String(dismissible); overlay.dataset.attentionScreen = screen;
+  overlay.dataset.attentionSource = options.source || 'manual';
+  overlay._attentionVM = viewModel;
+  overlay.innerHTML = `<section class="attention-dialog" role="dialog" aria-modal="true" aria-labelledby="attention-dialog-title" aria-describedby="attention-dialog-description">
+    ${dismissible ? `<button type="button" class="modal-x" data-action="close-attention-dialog" aria-label="${t('Закрыть')}">✕</button>` : ''}
+    ${renderScreen(viewModel, t)}
+  </section>`;
+  overlay.addEventListener('keydown', handleAttentionDialogKeydown);
+  overlay.addEventListener('pointerdown', (event) => { if (event.target === overlay && dismissible) closeAttentionDialog(); });
+  const app = document.getElementById('app');
+  overlay._attentionAppWasInert = !!(app && app.inert);
+  if (app) app.inert = true;
+  _attentionDialogReturnFocus = options.opener || document.activeElement;
+  document.body.appendChild(overlay); lockAttentionScroll();
+  requestAnimationFrame(() => focusPathChoiceTarget(overlay.querySelector('#attention-dialog-title') || attentionFocusable(overlay)[0]));
+  return overlay;
+}
+function attentionStatus(message, isError = false) {
+  const status = document.querySelector('#attention-dialog-overlay [data-attention-status]');
+  if (!status) return;
+  status.textContent = t(message); status.dataset.error = isError ? 'true' : 'false';
+}
+function attentionBusy(busy) {
+  document.querySelectorAll('#attention-dialog-overlay :is(button,input,select,textarea)').forEach((node) => { node.disabled = !!busy; });
+}
+function attentionOpenError(opener) {
+  const error = Object.values(State._attentionLoadErrors || {}).find(Boolean) || 'load';
+  showAttentionDialog('error', { error, busy: State._attentionLoadBusy }, { opener });
+}
+function openAttentionSetup(opener, defaults = {}) {
+  if (attentionHasLoadError()) { attentionOpenError(opener); return; }
+  showAttentionDialog('setup', {
+    targetLabel: defaults.targetLabel || '', purpose: defaults.purpose || 'publish',
+    minutes: defaults.minutes || 10, mode: defaults.mode || 'adaptive', outcomeHint: defaults.outcomeHint || '',
+  }, { opener });
+}
+function attentionPolicyForTarget(target) {
+  const C = attentionController(); if (!C) return null;
+  const policies = C.emptyBundle && (State.attentionPolicies || C.emptyBundle().policies).policies || [];
+  const key = String(target || '').trim().toLowerCase();
+  return policies.find((policy) => policy.id.toLowerCase() === key || policy.name.toLowerCase() === key)
+    || (key ? policies.find((policy) => policy.id.toLowerCase().includes(key) || policy.name.toLowerCase().includes(key)) : policies[0]) || null;
+}
+function openAttentionEntry(policyId, source = 'manual', opener = null) {
+  const C = attentionController();
+  if (!C) { toast(t('Модуль внимания не загрузился. Обнови страницу.')); return; }
+  if (attentionHasLoadError()) { attentionOpenError(opener); return; }
+  const policy = window.AttentionPolicyV1.policyById(State.attentionPolicies, policyId);
+  if (!policy) { openAttentionSetup(opener, { targetLabel: policyId || '' }); return; }
+  const purposes = policy.purposes.filter((rule) => rule.enabled !== false).map((rule, index) => ({
+    id: rule.purpose, label: attentionPurposeName(rule.purpose), minutes: rule.defaultMinutes,
+    outcomeHint: rule.outcome || '', selected: index === 0,
+  }));
+  const selected = purposes[0];
+  const calibration = selected ? C.calibrationFor(State.attentionEpisodes, policy.id, selected.id, attentionNow()) : null;
+  showAttentionDialog('entry', { policyId: policy.id, targetLabel: policy.name, purposes, calibration }, { opener, source });
+}
+function openAttentionBoundary(sessionId) {
+  const C = attentionController(); if (!C || attentionHasLoadError()) return;
+  const vm = C.boundaryViewModel(attentionBundle(), sessionId, attentionNow());
+  if (!vm || !vm.over) return;
+  showAttentionDialog('boundary', vm, { dismissible: vm.mode !== 'control' });
+}
+function attentionReturnCandidates() {
+  const rows = (State.tasks || []).filter((task) => !task.completedAt && !task.done && !task.archived);
+  return rows.sort((a, b) => {
+    const ad = a.date === todayStr() ? 0 : a.date ? 1 : 2, bd = b.date === todayStr() ? 0 : b.date ? 1 : 2;
+    return ad - bd;
+  }).slice(0, 8);
+}
+function openAttentionReturn(opener = null) {
+  const rows = attentionReturnCandidates();
+  const at = rows.length ? State._attentionReturnIndex % rows.length : 0;
+  const task = rows[at] || null;
+  showAttentionDialog('return', {
+    actionId: task ? task.id : '', actionLabel: task ? task.title : t('Открыть план на сегодня'),
+    actionMinutes: task ? (Number(task.estimateMin) || 10) : 10,
+  }, { opener });
+}
+function scheduleAttentionBoundary() {
+  clearTimeout(_attentionBoundaryTimer); _attentionBoundaryTimer = null;
+  const S = window.AttentionSessionV1; if (!S || !State.attentionSessions) return;
+  const active = S.active(State.attentionSessions); if (!active) return;
+  const remaining = S.remainingMs(active, attentionNow());
+  if (remaining === null) return;
+  if (remaining <= 0) {
+    if (State.phase === 'app' && !document.getElementById('attention-dialog-overlay')) openAttentionBoundary(active.id);
+    return;
+  }
+  _attentionBoundaryTimer = setTimeout(() => {
+    _attentionBoundaryTimer = null;
+    if (document.visibilityState === 'visible') openAttentionBoundary(active.id);
+  }, Math.min(remaining + 50, 2147483000));
+}
+function runAttentionDeepLink() {
+  const link = State._attentionDeepLink; State._attentionDeepLink = null;
+  if (!link) return;
+  if (link.action === 'return') { openAttentionReturn(); return; }
+  const active = window.AttentionSessionV1 && window.AttentionSessionV1.active(State.attentionSessions);
+  if (active) {
+    if (window.AttentionSessionV1.isOver(active, attentionNow())) openAttentionBoundary(active.id);
+    else toast(t('Одно окно внимания уже идёт'));
+    return;
+  }
+  const policy = attentionPolicyForTarget(link.target);
+  if (policy) openAttentionEntry(policy.id, 'shortcut');
+  else openAttentionSetup(null, { targetLabel: link.target || '' });
+}
+function attentionSettingsCard() {
+  const C = attentionController();
+  if (!C) return `<div class="card attention-settings-card" role="alert"><h4>${t('Внимание и границы')}</h4><p class="muted">${t('Модуль внимания не загрузился. Обнови страницу.')}</p></div>`;
+  const errors = State._attentionLoadErrors || {};
+  if (Object.values(errors).some(Boolean)) return `<div class="card attention-settings-card" role="alert"><h4>${t('Внимание и границы')}</h4><p class="muted">${t('Данные внимания недоступны. Ничего не перезаписываем.')}</p><button class="btn" data-action="retry-attention-load" ${State._attentionLoadBusy ? 'disabled' : ''}>${State._attentionLoadBusy ? t('Проверяю…') : t('Повторить чтение')}</button></div>`;
+  const policies = (State.attentionPolicies && State.attentionPolicies.policies) || [];
+  const active = window.AttentionSessionV1 && window.AttentionSessionV1.active(State.attentionSessions);
+  return `<div class="card attention-settings-card"><div class="attention-settings-head"><div><h4>${t('Внимание и границы')}</h4><p class="muted">${t('Заранее реши, зачем входишь и где остановишься. Satoru не меняет правило без тебя.')}</p></div><button class="btn" data-action="attention-open-setup">${t('Добавить одно правило')}</button></div>
+    ${active ? `<p class="attention-active-note" role="status">${t('Сейчас идёт ограниченное окно')}: <b>${esc((attentionPolicyForTarget(active.policyId) || {}).name || active.policyId)}</b> · ${fmtDur(window.AttentionSessionV1.grantedMinutes(active))}</p>` : ''}
+    ${policies.length ? `<div class="attention-policy-list">${policies.map((policy) => `<div class="attention-policy-row"><div><b>${esc(policy.name)}</b><small>${policy.purposes.filter((rule) => rule.enabled !== false).map((rule) => `${esc(attentionPurposeName(rule.purpose))} · ${fmtDur(rule.defaultMinutes)}`).join(' · ')}</small></div><button class="btn ghost" data-action="attention-open-entry" data-policy-id="${esc(policy.id)}">${t('Проверить вход')}</button></div>`).join('')}</div>` : `<p class="muted">${t('Правил пока нет. Начни с одного приложения и одной цели — это займёт до двух минут.')}</p>`}
+    <p class="attention-privacy-note">${t('Подробная история устройства остаётся локальной. Синхронизация агрегатов — только по отдельному согласию.')}</p></div>`;
+}
+
+async function retryAttentionLoad() {
+  const C = attentionController(); if (!C || State._attentionLoadBusy) return;
+  State._attentionLoadBusy = true; attentionBusy(true); attentionStatus('Проверяю…');
+  const empty = C.emptyBundle();
+  const [policiesLoad, sessionsLoad, episodesLoad] = await Promise.all([
+    Store.loadChecked('attention-policies', empty.policies, C.validatePolicies),
+    Store.loadChecked('attention-sessions', empty.sessions, C.validateSessions),
+    Store.loadChecked('attention-episodes', empty.episodes, C.validateEpisodes),
+  ]);
+  State._attentionLoadBusy = false;
+  State._attentionLoadErrors = { policies: policiesLoad.error, sessions: sessionsLoad.error, episodes: episodesLoad.error };
+  if (attentionHasLoadError()) { attentionBusy(false); attentionStatus('Данные пока не восстановлены. Повтори после проверки соединения.', true); return; }
+  State.attentionPolicies = policiesLoad.value; State.attentionSessions = sessionsLoad.value; State.attentionEpisodes = episodesLoad.value;
+  closeAttentionDialog({ restoreFocus: false, force: true });
+  State._settingsFocusAfterCommit = '.attention-settings-card'; render(); scheduleAttentionBoundary();
+}
+
+async function saveAttentionSetup(form) {
+  const C = attentionController(); if (!C || attentionHasLoadError()) return;
+  const input = {
+    targetLabel: form.targetLabel.value, purpose: form.purpose.value, minutes: form.minutes.value,
+    mode: form.mode.value, outcome: form.outcomeHint.value,
+  };
+  const next = C.upsertPolicy(State.attentionPolicies, input, form.dataset.policyId || attentionPolicyId(input.targetLabel));
+  if (!next.ok) { attentionStatus(next.error === 'outcome_required' ? 'Для рабочей цели нужен конкретный результат.' : 'Проверь заполненные поля.', true); return; }
+  attentionBusy(true); attentionStatus('Сохраняю…');
+  const saved = await Store.saveNow('attention-policies', next.state);
+  if (!saved) { attentionBusy(false); attentionStatus('Не удалось сохранить. Ничего не изменено — повтори попытку.', true); return; }
+  State.attentionPolicies = next.state;
+  closeAttentionDialog({ restoreFocus: false, force: true });
+  State._settingsFocusAfterCommit = '.attention-settings-card'; render(); toast(t('Правило внимания сохранено'));
+}
+
+async function startAttentionEntry(form) {
+  const C = attentionController(); if (!C || attentionHasLoadError()) return;
+  const overlay = form.closest('#attention-dialog-overlay');
+  const purpose = form.purposeId && form.purposeId.value;
+  const started = C.startSession(attentionBundle(), {
+    id: `att-${uid()}`, policyId: form.dataset.policyId, purpose,
+    expectedOutcome: form.expectedOutcome ? form.expectedOutcome.value : '', topic: form.topic ? form.topic.value : '',
+    hhmm: attentionHHMM(),
+  }, attentionNow());
+  if (!started.ok) {
+    const message = ({ topic_required: 'Назови конкретную тему поиска.', outcome_required: 'Назови конкретный результат.', already_open: 'Одно окно внимания уже идёт.', unsure_in_control: 'В режиме Контроля сначала нужно выбрать цель.' })[started.error] || 'Не удалось начать окно. Проверь правило.';
+    attentionStatus(message, true); return;
+  }
+  attentionBusy(true); attentionStatus('Сохраняю…');
+  const saved = await Store.saveNow('attention-sessions', started.sessions);
+  if (!saved) { attentionBusy(false); attentionStatus('Не удалось сохранить. Окно не началось — повтори попытку.', true); return; }
+  State.attentionSessions = started.sessions;
+  closeAttentionDialog({ restoreFocus: false, force: true });
+  scheduleAttentionBoundary(); track(`attention:start:${overlay?.dataset.attentionSource === 'shortcut' ? 'shortcut' : 'manual'}`);
+  toast(t('Окно внимания началось'));
+}
+
+async function extendAttentionSession(button) {
+  const C = attentionController(); const overlay = button.closest('#attention-dialog-overlay'); const vm = overlay && overlay._attentionVM;
+  if (!C || !vm) return;
+  const next = C.extendSession(State.attentionSessions, vm.sessionId, vm.extensionSeq, button.dataset.minutes, attentionNow());
+  if (!next.ok) { attentionStatus(next.error === 'stale' ? 'Окно уже изменилось на другом устройстве. Обнови данные.' : 'Продление больше недоступно.', true); return; }
+  attentionBusy(true); const saved = await Store.saveNow('attention-sessions', next.state);
+  if (!saved) { attentionBusy(false); attentionStatus('Не удалось сохранить продление — время не добавлено.', true); return; }
+  State.attentionSessions = next.state; closeAttentionDialog({ restoreFocus: false, force: true }); scheduleAttentionBoundary();
+  toast(t('Окно продлено один раз'));
+}
+
+async function persistAttentionClose(next) {
+  if (!next || !next.ok) return false;
+  // Episode first: если вторая запись не пройдёт, повтор перезапишет тот же episode id,
+  // а открытая session останется видимой. Обратный порядок мог бы потерять эпизод навсегда.
+  if (!await Store.saveNow('attention-episodes', next.episodes)) return false;
+  if (!await Store.saveNow('attention-sessions', next.sessions)) return false;
+  State.attentionEpisodes = next.episodes; State.attentionSessions = next.sessions;
+  return true;
+}
+async function finishAttentionSession(button) {
+  const C = attentionController(); const overlay = button.closest('#attention-dialog-overlay'); const vm = overlay && overlay._attentionVM;
+  if (!C || !vm) return;
+  const outcome = button.dataset.outcome === 'escaped' ? 'escaped' : 'done';
+  const next = C.closeSession(attentionBundle(), vm.sessionId, outcome, attentionNow(), overlay.dataset.attentionSource || 'manual');
+  if (!next.ok) { attentionStatus('Окно уже изменилось. Повтори после обновления.', true); return; }
+  attentionBusy(true);
+  if (!await persistAttentionClose(next)) { attentionBusy(false); attentionStatus('Не удалось сохранить исход. Окно остаётся открытым — данные не потеряны.', true); return; }
+  closeAttentionDialog({ restoreFocus: false, force: true }); clearTimeout(_attentionBoundaryTimer);
+  if (outcome === 'escaped') openAttentionReturn(); else toast(t('Окно завершено'));
+}
+
+function paintAttentionEmergencyCountdown(overlay) {
+  const button = overlay.querySelector('[data-action="start-attention-emergency"]');
+  if (!button) return;
+  const left = Math.max(0, Math.ceil((Number(overlay.dataset.emergencyReadyAt) - Date.now()) / 1000));
+  if (left > 0) { button.disabled = true; button.textContent = `${t('Подожди')} · ${left} ${t('сек')}`; }
+  else { button.disabled = false; button.textContent = t('Выйти аварийно'); clearAttentionEmergencyTimer(); }
+}
+async function startAttentionEmergency(button) {
+  const C = attentionController(); const overlay = button.closest('#attention-dialog-overlay'); const vm = overlay && overlay._attentionVM;
+  if (!C || !vm) return;
+  const reason = overlay.querySelector('input[name="emergencyReason"]')?.value.trim() || '';
+  if (!reason) { attentionStatus('Коротко назови причину аварийного выхода.', true); overlay.querySelector('input[name="emergencyReason"]')?.focus(); return; }
+  const readyAt = Number(overlay.dataset.emergencyReadyAt || 0);
+  if (!readyAt) {
+    overlay.dataset.emergencyReadyAt = String(Date.now() + Math.max(0, Number(vm.emergencyDelaySeconds) || 0) * 1000);
+    paintAttentionEmergencyCountdown(overlay);
+    _attentionEmergencyTimer = setInterval(() => paintAttentionEmergencyCountdown(overlay), 250);
+    return;
+  }
+  if (Date.now() < readyAt) return;
+  const next = C.emergencyClose(attentionBundle(), vm.sessionId, reason, attentionNow(), vm.policyEmergency);
+  if (!next.ok) { attentionStatus(next.error === 'budget_spent' ? 'Аварийный выход уже использован в этом периоде.' : 'Не удалось подтвердить аварийный выход.', true); return; }
+  attentionBusy(true);
+  if (!await persistAttentionClose(next)) { attentionBusy(false); attentionStatus('Не удалось сохранить выход. Окно остаётся открытым — повтори попытку.', true); return; }
+  closeAttentionDialog({ restoreFocus: false, force: true }); toast(t('Аварийный выход записан без наказания'));
+}
+
+async function markAttentionReturned(taskId) {
+  const E = window.AttentionEpisodeV1; if (!E || attentionHasLoadError()) return true;
+  const candidate = [...E.normalize(State.attentionEpisodes).episodes].reverse().find((episode) => episode.outcome === 'escaped' && !episode.returnedAt);
+  if (!candidate) return true;
+  const amended = E.amend(State.attentionEpisodes, candidate.id, { returnedAt: attentionNow(), returnActionId: taskId || undefined });
+  if (!amended.ok) return false;
+  if (!await Store.saveNow('attention-episodes', amended.state)) return false;
+  State.attentionEpisodes = amended.state; return true;
+}
+async function startAttentionReturn(button) {
+  attentionBusy(true);
+  if (!await markAttentionReturned(button.dataset.actionId || '')) { attentionBusy(false); attentionStatus('Не удалось сохранить возвращение. Попробуй ещё раз.', true); return; }
+  const id = button.dataset.actionId || '';
+  closeAttentionDialog({ restoreFocus: false, force: true });
+  State.view = 'today'; if (id) State._tasksFocusAfterCommit = `.task[data-id="${CSS.escape(id)}"] .t-title-edit, .task[data-id="${CSS.escape(id)}"]`;
+  render();
+}
 function renderSettings() {
   ensureAiKeys();
   ensureStravaStatus();
@@ -19475,6 +19898,7 @@ function renderSettings() {
       <button class="btn ghost sm" data-action="moment-replay">${t('Показать встречу сейчас')}</button></div>
     ${ambientCard()}
     ${pwaCard()}
+    ${attentionSettingsCard()}
     <div class="card"><h3>🌐 ${t('Язык')}</h3>
       <div class="theme-toggle" data-noi18n>
         <button class="theme-opt ${lang() === 'ru' ? 'active' : ''}" data-action="set-lang" data-lang="ru">🇷🇺 Русский</button>
@@ -20541,6 +20965,13 @@ function kickCompVideo() {
 // ============================================================
 async function onSubmit(e) {
   const f = e.target;
+
+  if (f.id === 'attention-setup-form') {
+    e.preventDefault(); await saveAttentionSetup(f); return;
+  }
+  if (f.id === 'attention-entry-form') {
+    e.preventDefault(); await startAttentionEntry(f); return;
+  }
 
   if (f.id === 'cal-task-form') {
     e.preventDefault();
@@ -21867,6 +22298,21 @@ async function onClick(e) {
     return;
   }
   const action = el.dataset.action, id = el.dataset.id, today = todayStr();
+
+  if (action === 'close-attention-dialog') { closeAttentionDialog(); return; }
+  if (action === 'attention-open-setup') { openAttentionSetup(el); return; }
+  if (action === 'attention-open-entry') { openAttentionEntry(el.dataset.policyId, 'manual', el); return; }
+  if (action === 'retry-attention-load') { retryAttentionLoad(); return; }
+  if (action === 'extend-attention-session') { await extendAttentionSession(el); return; }
+  if (action === 'finish-attention-session') { await finishAttentionSession(el); return; }
+  if (action === 'start-attention-emergency') { await startAttentionEmergency(el); return; }
+  if (action === 'start-attention-return') { await startAttentionReturn(el); return; }
+  if (action === 'choose-attention-return') { State._attentionReturnIndex += 1; openAttentionReturn(_attentionDialogReturnFocus); return; }
+  if (action === 'attention-care-first') {
+    closeAttentionDialog({ restoreFocus: false, force: true });
+    setTimeout(() => document.getElementById('ai-fab')?.click(), 0); return;
+  }
+  if (action === 'attention-rest-today') { closeAttentionDialog({ force: true }); toast(t('Отдых тоже может быть выбранным действием')); return; }
 
   if (el.closest('#mobile-nav-sheet') && action !== 'mobile-nav-close') {
     // Новый экран или диалог становится владельцем фокуса. Не возвращаемся к
@@ -23973,6 +24419,23 @@ async function initApp() {
   }
   if (State._habitsLoadError === 'session' || State._accountSessionExpired) return;
   {
+    const C = window.AttentionControllerV1;
+    const empty = C ? C.emptyBundle() : {
+      policies: { version: 1, policies: [] }, sessions: { version: 1, sessions: [] }, episodes: { version: 1, episodes: [] },
+    };
+    const [policiesLoad, sessionsLoad, episodesLoad] = await Promise.all([
+      Store.loadChecked('attention-policies', empty.policies, C && C.validatePolicies),
+      Store.loadChecked('attention-sessions', empty.sessions, C && C.validateSessions),
+      Store.loadChecked('attention-episodes', empty.episodes, C && C.validateEpisodes),
+    ]);
+    State.attentionPolicies = policiesLoad.value;
+    State.attentionSessions = sessionsLoad.value;
+    State.attentionEpisodes = episodesLoad.value;
+    State._attentionLoadErrors = { policies: policiesLoad.error, sessions: sessionsLoad.error, episodes: episodesLoad.error };
+    State._attentionLoadBusy = false;
+    if (Object.values(State._attentionLoadErrors).includes('session') || State._accountSessionExpired) return;
+  }
+  {
     const [goalsLoad, groupsLoad] = await Promise.all([
       Store.loadChecked('goals', [], validateGoalsPayload),
       Store.loadChecked('goal-groups', [], validateGoalGroupsPayload),
@@ -24015,7 +24478,7 @@ async function initApp() {
     if (view && VIEWS[view]) State.view = view;
     if (State.view === 'goals' && goalId && goalById(goalId)) { State._goalDeepLinkId = goalId; State._goalOpenId = goalId; State._goalsFocusAfterCommit = '#goal-detail-title'; }
   } catch {}
-  // Ярлыки-действия (?do=dayrec|capture): долгий тап по иконке на телефоне → сразу в действие.
+  // Ярлыки-действия (?do=dayrec|capture|gate|return): долгий тап/Shortcut → сразу в действие.
   // Бэклог «Трение» (fb_mrnivhqrssjx): ноль тапов между «открыл» и «делаю». URL чистим, чтобы
   // перезагрузка не повторяла действие.
   try {
@@ -24029,6 +24492,10 @@ async function initApp() {
         } catch {}
       }, 350);
       sp.delete('do'); history.replaceState(null, '', location.pathname + (sp.toString() ? '?' + sp : '') + location.hash);
+    } else if (act === 'gate' || act === 'return') {
+      State._attentionDeepLink = { action: act, target: String(sp.get('app') || '').slice(0, 80) };
+      sp.delete('do'); sp.delete('app');
+      history.replaceState(null, '', location.pathname + (sp.toString() ? '?' + sp : '') + location.hash);
     }
   } catch {}
   // Возврат с OAuth Strava → открыть Настройки + тост, и почистить URL от ?strava=...
@@ -24046,6 +24513,8 @@ async function initApp() {
   await aiKeysReady;
   State.phase = 'app';
   render();
+  scheduleAttentionBoundary();
+  if (State._attentionDeepLink) setTimeout(() => runAttentionDeepLink(), 80);
   scheduleArtWarmup();
   publishLeaderboard();
   // Guide v3 запускается только из account-owned settings после полной загрузки задач.
@@ -24068,6 +24537,14 @@ function publishLeaderboard() {
 
 // Делегированный обработчик change (для select-ов вне форм — напр. импорт достижений)
 function onChange(e) {
+  if (e.target.matches?.('#attention-entry-form input[name="purposeId"]')) {
+    const form = e.target.form, field = form && form.querySelector('[data-attention-topic]'), topic = form && form.elements.topic;
+    const needed = e.target.value === 'research';
+    if (field) field.hidden = !needed;
+    if (topic) { topic.required = needed; if (needed) topic.focus(); }
+    if (form && form.elements.expectedOutcome) form.elements.expectedOutcome.value = e.target.dataset.outcome || '';
+    return;
+  }
   if (e.target.dataset && e.target.dataset.action === 'board-complete-mode') {
     const session = State._boardComplete; if (!session || session.busy) return;
     const result = document.querySelector('#board-v2-complete-form [name="result"]');
@@ -24501,6 +24978,9 @@ async function init() {
   }, true);
   document.addEventListener('change', onChange);
   document.addEventListener('input', onSettingsInput);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && State.phase === 'app') scheduleAttentionBoundary();
+  });
   document.addEventListener('pointerdown', onTreePointerDown);
   // Инлайн-правка текста квеста: клик мимо → сохранить; Esc → отмена
   document.addEventListener('focusout', (e) => { const f = e.target.closest && e.target.closest('.t-edit-form'); if (f && f.requestSubmit) setTimeout(() => { if (State._editTask) f.requestSubmit(); }, 100); });

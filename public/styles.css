@@ -16876,6 +16876,7 @@ html.attention-dialog-open body { overscroll-behavior: none; }
 }
 
 .attention-fieldset > legend { margin-block-end: var(--sp-2); }
+.attention-topic-field[hidden] { display: none; }
 
 .attention-field :is(input, select, textarea) {
   width: 100%;
@@ -16966,6 +16967,40 @@ html.attention-dialog-open body { overscroll-behavior: none; }
 .attention-form-status:empty { display: none; }
 .attention-form-status[data-error="true"] { color: var(--bad); }
 
+.attention-settings-card { display: grid; gap: var(--sp-3); }
+.attention-settings-head {
+  min-width: 0;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+.attention-settings-head h4 { margin: 0; color: var(--text-strong); font-size: var(--type-heading); line-height: var(--leading-ui); }
+.attention-settings-head p { max-width: var(--measure-compact); margin: var(--sp-1) 0 0; line-height: var(--leading-prose); }
+.attention-settings-head > .btn { flex: 0 0 auto; min-height: var(--touch-min); }
+.attention-policy-list { min-width: 0; display: grid; border-block: 1px solid var(--line-soft); }
+.attention-policy-row {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+}
+.attention-policy-row + .attention-policy-row { border-top: 1px solid var(--line-soft); }
+.attention-policy-row :is(b, small) { min-width: 0; display: block; overflow-wrap: anywhere; }
+.attention-policy-row b { color: var(--text-strong); font: 850 var(--type-control)/var(--leading-ui) var(--font-ui); }
+.attention-policy-row small { margin-block-start: 3px; color: var(--text-soft); font: var(--type-meta)/var(--leading-ui) var(--font-ui); }
+.attention-policy-row .btn { min-height: var(--touch-min); }
+.attention-active-note {
+  margin: 0;
+  padding: var(--sp-2) var(--sp-3);
+  border-inline-start: 3px solid var(--accent);
+  color: var(--text-soft);
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface-2));
+  font: var(--type-meta)/var(--leading-prose) var(--font-ui);
+}
+
 .attention-actions,
 .attention-boundary-actions {
   min-width: 0;
@@ -17048,6 +17083,9 @@ html.attention-dialog-open body { overscroll-behavior: none; }
   .attention-boundary-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .attention-actions > *,
   .attention-boundary-actions > * { width: 100%; }
+  .attention-settings-head { display: grid; }
+  .attention-settings-head > .btn { justify-self: start; }
+  .attention-policy-row { align-items: start; }
 }
 
 @media (max-width: 370px) {
