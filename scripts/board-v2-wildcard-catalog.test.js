@@ -98,11 +98,13 @@ test('все Wildcard gates принадлежат закрытым словар
   }
 });
 
-test('Wildcard catalog immutable и остаётся dormant до UI integration', () => {
+test('Wildcard catalog immutable и подключён только через ручной fail-closed issuer', () => {
   assert.equal(Object.isFrozen(Catalog.ENTRIES), true);
   assert.equal(Object.isFrozen(Catalog.ENTRIES[0].template), true);
   const index = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
   const sw = fs.readFileSync(path.join(ROOT, 'public/sw.js'), 'utf8');
-  assert.doesNotMatch(index, /board-v2-wildcard-catalog\.js/);
-  assert.doesNotMatch(sw, /board-v2-wildcard-catalog\.js/);
+  assert.ok(index.indexOf('board-v2-wildcard-catalog.js') < index.indexOf('board-v2-wildcard-issuer.js'));
+  assert.ok(index.indexOf('board-v2-wildcard-issuer.js') < index.indexOf('board-v2-runtime.js'));
+  assert.equal((sw.match(/'board-v2-wildcard-catalog\.js'/g) || []).length, 1);
+  assert.equal((sw.match(/'board-v2-wildcard-issuer\.js'/g) || []).length, 1);
 });

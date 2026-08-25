@@ -11,8 +11,8 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildBoardV2Runtime() {
   'use strict';
 
-  const VERSION = '1.1.0';
-  const ACTIONS = Object.freeze(['issue-standard', 'take', 'return', 'complete']);
+  const VERSION = '1.2.0';
+  const ACTIONS = Object.freeze(['issue-standard', 'issue-unexpected', 'take', 'return', 'reject', 'complete']);
   const MAX_TITLES = 50;
   const issued = new WeakSet();
 
@@ -58,6 +58,23 @@
       today: source.today,
     };
     let prepared;
+    if (action === 'reject') {
+      const snapshot = source.offersApi.snapshotById(common.offers, common.snapshotId, source.pacingApi);
+      if (!snapshot || snapshot.mode !== 'manual-unexpected') return { ok: false, reason: 'unexpected-snapshot-required' };
+      const offers = source.offersApi.recordOutcome(common.offers, snapshot.id, 'rejected', common.today, source.pacingApi);
+      const settings = clone(source.settings);
+      settings.board = preserveCustom(source.boardApi.normalize(source.settings.board), source.settings.board);
+      settings.boardV2Offers = clone(offers);
+      settings.boardV2Completion = clone(source.completionApi.normalizeState(source.settings.boardV2Completion));
+      settings.boardV2Titles = titles(settings.boardV2Titles);
+      const transaction = deepFreeze({
+        schema: 'satoru.board-runtime-transaction/2', action, snapshotId: snapshot.id,
+        data: { settings }, next: { settings, tasks: null },
+        effects: { unlock: null, proofPlan: null },
+      });
+      issued.add(transaction);
+      return { ok: true, transaction };
+    }
     if (action === 'take') prepared = source.completionApi.prepareTake(common);
     else if (action === 'return') prepared = source.completionApi.prepareReturn(common);
     else {
@@ -108,8 +125,13 @@
     if (!issue || !source.issue || source.issue.ok !== true) return { ok: false, reason: 'invalid-issue' };
     if (!source.issue.changed) return { ok: false, reason: 'no-change' };
     const offers = source.offersApi.normalizeState(issue.nextOffers, source.pacingApi);
-    if (!offers.current || !offers.current.snapshotIds.length
-      || offers.current.snapshotIds[0] !== source.issue.primary.id) return { ok: false, reason: 'invalid-issue-state' };
+    const unexpected = source.issue.mode === 'manual-unexpected';
+    const issuedSnapshot = offers.snapshots.find((snapshot) => snapshot.id === source.issue.primary.id);
+    const standardStored = offers.current && offers.current.snapshotIds.length
+      && offers.current.snapshotIds[0] === source.issue.primary.id;
+    const unexpectedStored = unexpected && issuedSnapshot && issuedSnapshot.mode === 'manual-unexpected'
+      && offers.history.some((entry) => entry.snapshotId === issuedSnapshot.id && entry.outcome === 'displayed');
+    if ((!unexpected && !standardStored) || (unexpected && !unexpectedStored)) return { ok: false, reason: 'invalid-issue-state' };
     const settings = clone(source.settings);
     // Legacy accounts can have no persisted Board v1 envelope because the old
     // renderer normalized it only in memory. The atomic endpoint deliberately
@@ -118,7 +140,7 @@
     settings.board = preserveCustom(source.boardApi.normalize(source.settings.board), source.settings.board);
     settings.boardV2Offers = clone(offers);
     const transaction = deepFreeze({
-      schema: 'satoru.board-runtime-transaction/2', action: 'issue-standard', snapshotId: source.issue.primary.id,
+      schema: 'satoru.board-runtime-transaction/2', action: unexpected ? 'issue-unexpected' : 'issue-standard', snapshotId: source.issue.primary.id,
       data: { settings }, next: { settings, tasks: null }, effects: { unlock: null, proofPlan: null },
     });
     issued.add(transaction);

@@ -176,17 +176,18 @@ test('gender selector is localized, accessible and visible for both complete pac
   }
 });
 
-test('v167 shell pins and pre-caches the complete immutable F2 runtime', () => {
+test('v172 shell retains the complete immutable F2 runtime and pins changed shell files', () => {
   const revision = '20260819-traveller-f2-runtime-v167-1';
   for (const file of [
-    'styles.css', 'shadow-den-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js',
+    'shadow-den-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js',
     'resources-penguin-v1.js', 'traveller-appearance-v1.js', 'traveller-motion-v3.js',
     'traveller-room-v4.js',
   ]) {
     assert.match(html, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=${revision}`));
   }
-  assert.match(html, /app\.js\?v=20260825-board-v2-issuer-v171-1/);
-  assert.match(sw, /const CACHE = 'satoru-v171';/);
+  assert.match(html, /styles\.css\?v=20260825-board-v2-wildcard-v172-1/);
+  assert.match(html, /app\.js\?v=20260825-board-v2-wildcard-v172-1/);
+  assert.match(sw, /const CACHE = 'satoru-v172';/);
   const shellRoutes = [appearance.assetManifest('female').runtimeManifest, ...appearance.expectedAssets('female')]
     .map((route) => route.replace(/^\//, ''));
   for (const route of shellRoutes) {

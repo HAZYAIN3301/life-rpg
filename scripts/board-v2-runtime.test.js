@@ -10,6 +10,8 @@ const Offers = require('../public/board-v2-offers.js');
 const Completion = require('../public/board-v2-completion.js');
 const Catalog = require('../public/board-v2-catalog.js');
 const Issuer = require('../public/board-v2-issuer.js');
+const WildcardCatalog = require('../public/board-v2-wildcard-catalog.js');
+const WildcardIssuer = require('../public/board-v2-wildcard-issuer.js');
 const Runtime = require('../public/board-v2-runtime.js');
 const BoardV1 = require('../public/board-v1.js');
 
@@ -82,6 +84,39 @@ test('standard issue materializes Board v1 state for a legacy account', () => {
   assert.equal(prepared.ok, true);
   assert.deepEqual(Runtime.payload(prepared.transaction).data.settings.board, BoardV1.normalize(null));
   assert.equal(input.settings.board, undefined);
+});
+
+test('manual Wildcard is persisted without replacing the stable standard issue', () => {
+  const input = context('take');
+  const standard = Issuer.issueStandard(Board, Catalog, Offers, Pacing, {}, input.settings.boardV2Offers, { day: DAY, periodKey: DAY });
+  input.settings.boardV2Offers = Issuer.result(standard).nextOffers;
+  const standardId = input.settings.boardV2Offers.current.snapshotIds[0];
+  const offer = WildcardIssuer.issueManual(Board, WildcardCatalog, Offers, Pacing, {}, input.settings.boardV2Offers, {
+    offline: { enabled: true, apps: 'TikTok' },
+  }, { day: DAY, seed: 'manual-one' });
+  const prepared = Runtime.prepareIssue({
+    issuerApi: WildcardIssuer, boardApi: BoardV1, offersApi: Offers, pacingApi: Pacing, issue: offer,
+    settings: input.settings, tasks: input.tasks,
+  });
+  assert.equal(prepared.ok, true);
+  const next = Runtime.result(prepared.transaction).settings.boardV2Offers;
+  assert.equal(prepared.transaction.action, 'issue-unexpected');
+  assert.equal(next.current.snapshotIds[0], standardId);
+  assert.equal(Offers.latestUnexpected(next, Pacing).id, offer.primary.id);
+});
+
+test('reject hides only a manual Wildcard and records the pacing signal', () => {
+  const input = context('take');
+  const offer = WildcardIssuer.issueManual(Board, WildcardCatalog, Offers, Pacing, {}, input.settings.boardV2Offers, {
+    offline: { enabled: true, apps: 'TikTok' },
+  }, { day: DAY, seed: 'manual-reject' });
+  input.settings.boardV2Offers = WildcardIssuer.result(offer).nextOffers;
+  input.action = 'reject'; input.snapshotId = offer.primary.id;
+  const prepared = Runtime.prepare(input);
+  assert.equal(prepared.ok, true);
+  const next = Runtime.result(prepared.transaction).settings.boardV2Offers;
+  assert.equal(Offers.latestUnexpected(next, Pacing), null);
+  assert.deepEqual(next.pacing.rejections.at(-1), { templateId: offer.primary.templateId, at: DAY });
 });
 
 test('forged and already-stored issues cannot create another commit', () => {

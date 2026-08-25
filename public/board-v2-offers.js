@@ -232,10 +232,17 @@
   function snapshotById(rawState, snapshotId, pacingApi) {
     return normalizeState(rawState, pacingApi).snapshots.find((item) => item.id === String(snapshotId)) || null;
   }
+  function latestUnexpected(rawState, pacingApi) {
+    const state = normalizeState(rawState, pacingApi);
+    const snapshot = state.snapshots.slice().reverse().find((item) => item.mode === 'manual-unexpected');
+    if (!snapshot) return null;
+    const outcome = state.history.slice().reverse().find((entry) => entry.snapshotId === snapshot.id);
+    return outcome && ['displayed', 'taken'].includes(outcome.outcome) ? snapshot : null;
+  }
 
   return deepFreeze({
     VERSION, STATE_SCHEMA, SNAPSHOT_SCHEMA, PLAN_SCHEMA, MAX_SNAPSHOTS, MAX_HISTORY,
     emptyState, normalizeState, normalizeSnapshot, snapshotQuest, planStandard, recordStandardDisplayed,
-    planUnexpected, recordUnexpectedDisplayed, recordOutcome, snapshotById,
+    planUnexpected, recordUnexpectedDisplayed, recordOutcome, snapshotById, latestUnexpected,
   });
 });

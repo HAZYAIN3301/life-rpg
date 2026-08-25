@@ -126,7 +126,7 @@ test('особые согласия не растворены в тексте и
 test('approved source catalog загружается только через conservative issuer', () => {
   const index = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
   const sw = fs.readFileSync(path.join(ROOT, 'public/sw.js'), 'utf8');
-  assert.match(index, /board-v2-catalog\.js\?v=20260825-board-v2-issuer-v171-1/);
+  assert.match(index, /board-v2-catalog\.js\?v=20260825-board-v2-wildcard-v172-1/);
   assert.match(index, /board-v2-catalog\.js[\s\S]*board-v2-issuer\.js[\s\S]*board-v2-runtime\.js/);
   assert.equal((sw.match(/'board-v2-catalog\.js'/g) || []).length, 1);
   assert.equal((sw.match(/'board-v2-issuer\.js'/g) || []).length, 1);

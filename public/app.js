@@ -15280,8 +15280,12 @@ function boardV2SnapshotById(id) {
 }
 function boardV2CurrentOffers() {
   const state = boardV2OffersRead();
-  if (!state || !state.current) return [];
-  return state.current.snapshotIds.map((id) => state.snapshots.find((item) => item.id === id)).filter(Boolean);
+  if (!state) return [];
+  const standard = state.current
+    ? state.current.snapshotIds.map((id) => state.snapshots.find((item) => item.id === id)).filter(Boolean)
+    : [];
+  const unexpected = window.BoardV2Offers && window.BoardV2Offers.latestUnexpected(state, window.BoardV2Pacing);
+  return unexpected ? [unexpected].concat(standard.filter((item) => item.id !== unexpected.id)).slice(0, 2) : standard;
 }
 function boardV2IssuerProfile() {
   const taste = window.BoardTasteV1 && window.BoardPoolV1
@@ -15321,6 +15325,57 @@ async function boardV2IssueStandardOffers() {
     if (saved) State._boardSel = issue.primary.id;
     return saved;
   } finally { State._boardIssueBusy = false; }
+}
+async function boardV2IssueUnexpected(setup) {
+  const I = window.BoardV2WildcardIssuer, R = window.BoardV2Runtime;
+  if (lang() !== 'ru' || State._boardIssueBusy || !I || !R || !window.BoardV2WildcardCatalog
+    || !window.BoardV2Offers || !window.BoardV2Pacing) return { ok: false, reason: 'unavailable' };
+  State._boardIssueBusy = true;
+  try {
+    const issue = I.issueManual(window.BoardV2, window.BoardV2WildcardCatalog, window.BoardV2Offers,
+      window.BoardV2Pacing, boardV2IssuerProfile(), boardV2OffersRead(), setup,
+      { day: todayStr(), seed: `account:${todayStr()}:${uid()}` });
+    if (!issue.ok) return issue;
+    const prepared = R.prepareIssue({ issuerApi: I, boardApi: window.BoardV1,
+      offersApi: window.BoardV2Offers, pacingApi: window.BoardV2Pacing,
+      issue, settings: State.settings, tasks: State.tasks });
+    if (!prepared.ok) return prepared;
+    const saved = await commitBoardV2Transaction(prepared.transaction);
+    if (!saved) return { ok: false, reason: 'commit-failed' };
+    State._boardSel = issue.primary.id;
+    return { ok: true, snapshotId: issue.primary.id };
+  } finally { State._boardIssueBusy = false; }
+}
+function boardV2UnexpectedDeadline() {
+  const deadline = new Date(Date.now() + 48 * 60 * 60 * 1000);
+  return deadline.toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+}
+function boardV2WildcardPanelHTML() {
+  if (lang() !== 'ru' || !State._boardWildcardOpen) return '';
+  const draft = State._boardWildcardDraft || {};
+  const checked = (key) => draft[key] ? ' checked' : '';
+  const value = (key) => esc(draft[key] || '');
+  return `<section class="board-wildcard" aria-labelledby="board-wildcard-title">
+    <header><div><p class="board-kicker">РУЧНОЙ WILDCARD</p><h3 id="board-wildcard-title">Что реально доступно?</h3></div>
+      <button type="button" class="btn ghost sm" data-action="board-unexpected-close" aria-label="Закрыть неожиданный заказ">Закрыть</button></header>
+    <p>Подготовь хотя бы один вариант. Доска случайно выберет только из заполненных — ничего абстрактного и небезопасного.</p>
+    ${State._boardWildcardError ? `<p class="board-wildcard-error" role="alert">${esc(State._boardWildcardError)}</p>` : ''}
+    <form id="board-wildcard-form">
+      <fieldset><legend><label><input type="checkbox" name="filmEnabled"${checked('filmEnabled')}> Я готов снять короткий фильм за 48 часов</label></legend>
+        <label>Тема фильма<input name="filmTheme" maxlength="100" autocomplete="off" value="${value('filmTheme')}" placeholder="например: один звонок меняет маршрут" data-noi18n></label>
+        <small>Дедлайн будет зафиксирован ровно через 48 часов. Публиковать фильм не обязательно.</small></fieldset>
+      <fieldset><legend><label><input type="checkbox" name="offlineEnabled"${checked('offlineEnabled')}> Я готов удалить выбранные соцсети на 30 дней</label></legend>
+        <label>Какие именно<input name="offlineApps" maxlength="120" autocomplete="off" value="${value('offlineApps')}" placeholder="например: TikTok и Instagram" data-noi18n></label>
+        <small>Перед удалением сохрани нужные контакты и способ связи.</small></fieldset>
+      <fieldset><legend><label><input type="checkbox" name="roomEnabled"${checked('roomEnabled')}> Я готов сделать перестановку</label></legend>
+        <label>Где<input name="roomName" maxlength="80" autocomplete="off" value="${value('roomName')}" placeholder="например: рабочую комнату" data-noi18n></label>
+        <label>Зачем<input name="roomGoal" maxlength="120" autocomplete="off" value="${value('roomGoal')}" placeholder="например: освободить место для тренировок" data-noi18n></label>
+        <label>Готовый план<input name="roomLayout" maxlength="160" autocomplete="off" value="${value('roomLayout')}" placeholder="например: стол к окну, диван к дальней стене" data-noi18n></label>
+        <label class="board-wildcard-check"><input type="checkbox" name="roomReady"${checked('roomReady')}> Я проверил размеры и могу безопасно передвинуть мебель</label></fieldset>
+      <div class="board-wildcard-actions"><button type="submit" class="btn">Дай что-нибудь неожиданное</button>
+        <span>Без недельного лимита, но отклонённый тип не вернётся 30 дней.</span></div>
+    </form>
+  </section>`;
 }
 function prepareBoardV2Action(action, snapshotId, options = {}) {
   const R = window.BoardV2Runtime;
@@ -15666,7 +15721,8 @@ function boardScreenHTML() {
 
   const sheet = (order) => {
     const selected = !!(selOrder && selOrder.id === order.id);
-    const label = order.boardV2 ? 'ПОДОБРАНО ДЛЯ ТЕБЯ' : order.seasonal ? t('ОБЩИЙ СЕЗОННЫЙ') : order.sky ? t('ТОЛЬКО СЕЙЧАС') : order.custom ? t('ТВОЙ') : t('ЛИЧНЫЙ');
+    const label = order.mode === 'manual-unexpected' ? 'НЕОЖИДАННЫЙ'
+      : order.boardV2 ? 'ПОДОБРАНО ДЛЯ ТЕБЯ' : order.seasonal ? t('ОБЩИЙ СЕЗОННЫЙ') : order.sky ? t('ТОЛЬКО СЕЙЧАС') : order.custom ? t('ТВОЙ') : t('ЛИЧНЫЙ');
     return `<button type="button" aria-pressed="${selected}" aria-label="${esc(t('Читать заказ') + ': ' + boardOrderTitle(order))}"
       class="bsheet${order.seasonal ? ' is-seasonal' : ''}${order.sky ? ' is-sky' : ''}${order.custom && !order.sky ? ' is-custom' : ''}${selected ? ' is-selected' : ''}"
       style="--tilt:${boardTilt(order.id)}deg" data-action="board-pick" data-id="${esc(order.id)}">
@@ -15711,7 +15767,8 @@ function boardScreenHTML() {
   let detail = `<p class="bdetail-empty">${t('Выбери заказ, чтобы прочитать его целиком.')}</p>`;
   if (selOrder) {
     const sphere = selOrder.sphereId ? (State.settings.skills || []).find((item) => item.id === selOrder.sphereId) : null;
-    const meta = selOrder.boardV2 ? 'Конкретный заказ'
+    const meta = selOrder.mode === 'manual-unexpected' ? 'Неожиданный заказ'
+      : selOrder.boardV2 ? 'Конкретный заказ'
       : selOrder.seasonal ? t('Сезонный заказ')
       : selOrder.sky ? `${t('Небо')} · ${esc(selOrder.skyPlace || '')} · ${esc(t(selOrder.skyQuality || ''))}`
         : selOrder.custom ? t('Твой заказ') : sphere ? sphere.name : t('Личный заказ');
@@ -15724,7 +15781,7 @@ function boardScreenHTML() {
         ? `<button class="btn" data-action="board-done" data-id="${esc(selOrder.id)}">${t('Выполнено')}</button><button class="btn ghost" data-action="board-return" data-id="${esc(selOrder.id)}">${t('Вернуть')}</button>`
         : full
           ? `<p class="bdetail-full">${t('Три заказа сразу — уже список дел, а не приключение')}</p>`
-          : `<button class="btn" data-action="board-take" data-id="${esc(selOrder.id)}">${t('Беру')}</button>`}</div>
+          : `<button class="btn" data-action="board-take" data-id="${esc(selOrder.id)}">${t('Беру')}</button>${selOrder.mode === 'manual-unexpected' ? `<button class="btn ghost" data-action="board-unexpected-reject" data-id="${esc(selOrder.id)}">Не моё</button>` : ''}`}</div>
       <section class="bdetail-instruction" aria-labelledby="board-how-title"><h4 id="board-how-title">${t('КАК ЗАКРЫТЬ')}</h4><p>${t('Сделай это в реальной жизни и отметь здесь. Самоотчёта достаточно; фотографию можно добавить потом.')}</p></section>
       ${selOrder.boardV2 && selOrder.primaryAction ? `<p class="bdetail-privacy"><a class="btn ghost sm" href="${esc(selOrder.primaryAction.url)}" target="_blank" rel="noopener noreferrer" data-noi18n>${esc(selOrder.primaryAction.label)}</a></p>` : ''}
       ${selOrder.seasonal ? `<p class="bdetail-privacy">◉ ${t('Общий для всех заказ. Твоё выполнение и фото остаются приватными.')}</p>` : ''}
@@ -15744,8 +15801,10 @@ function boardScreenHTML() {
   const askOrder = ask ? boardOrderById(ask.orderId) : null;
   return `<section class="board-screen" aria-labelledby="board-title">
     <header class="board-head"><div><p class="board-kicker">${t('ПРИКЛЮЧЕНИЯ ЭТОЙ НЕДЕЛИ')}</p><h2 id="board-title" tabindex="-1">${t('Доска заказов')}</h2><p>${t('Не список дел. Несколько ясных поводов выйти из привычного маршрута.')}</p></div>
-      <p class="board-count"><b>${mine.length}/${B.MAX_ACTIVE}</b><span>${t('На руках')}<br>${t('заказа из трёх')}</span></p></header>
+      <div class="board-head-actions">${lang() === 'ru' ? `<button type="button" class="btn ghost" data-action="board-unexpected-open" aria-expanded="${State._boardWildcardOpen ? 'true' : 'false'}" aria-controls="board-wildcard-title">Дай что-нибудь неожиданное</button>` : ''}
+        <p class="board-count"><b>${mine.length}/${B.MAX_ACTIVE}</b><span>${t('На руках')}<br>${t('заказа из трёх')}</span></p></div></header>
     ${State._boardError ? `<p class="board-error" role="alert">${esc(State._boardError)}</p>` : ''}
+    ${boardV2WildcardPanelHTML()}
     ${active}
     <div class="board-frame"><div class="board-frame-cap" aria-hidden="true"><span></span><i></i><span></span></div>
       <div class="board-scene">
@@ -20283,6 +20342,36 @@ async function onSubmit(e) {
     return;
   }
 
+  if (f.id === 'board-wildcard-form') {
+    e.preventDefault();
+    const data = new FormData(f);
+    const draft = {
+      filmEnabled: data.has('filmEnabled'), filmTheme: String(data.get('filmTheme') || '').trim(),
+      offlineEnabled: data.has('offlineEnabled'), offlineApps: String(data.get('offlineApps') || '').trim(),
+      roomEnabled: data.has('roomEnabled'), roomName: String(data.get('roomName') || '').trim(),
+      roomGoal: String(data.get('roomGoal') || '').trim(), roomLayout: String(data.get('roomLayout') || '').trim(),
+      roomReady: data.has('roomReady'),
+    };
+    State._boardWildcardDraft = draft; State._boardWildcardError = '';
+    const setup = {
+      film: { enabled: draft.filmEnabled, filmingOptIn: draft.filmEnabled, theme: draft.filmTheme, deadline: boardV2UnexpectedDeadline() },
+      offline: { enabled: draft.offlineEnabled, apps: draft.offlineApps },
+      room: { enabled: draft.roomEnabled, room: draft.roomName, goal: draft.roomGoal, layout: draft.roomLayout,
+        equipmentReady: draft.roomReady, safeContext: draft.roomReady },
+    };
+    const btn = f.querySelector('button[type="submit"]'); if (btn) btn.disabled = true;
+    const issued = await boardV2IssueUnexpected(setup);
+    if (btn && btn.isConnected) btn.disabled = false;
+    if (!issued.ok) {
+      State._boardWildcardError = issued.reason === 'no-eligible-quest'
+        ? 'Все подготовленные типы недавно уже показывались или были отклонены. Выбери другой вариант.'
+        : 'Заполни хотя бы один вариант полностью. Для перестановки также подтверди размеры и безопасность.';
+      State._boardFocusAfterCommit = '.board-wildcard-error'; render(); return;
+    }
+    State._boardWildcardOpen = false; State._boardWildcardDraft = null; State._boardWildcardError = '';
+    State._boardFocusAfterCommit = '#board-detail-title'; render(); return;
+  }
+
   // --- Правка своего заказа ---
   if (f.id === 'board-custom-edit') {
     e.preventDefault();
@@ -22237,6 +22326,18 @@ async function onClick(e) {
     }
   } else if (action === 'board-pick') {
     State._boardSel = id; State._boardFocusAfterCommit = '#board-detail-title'; render();
+  } else if (action === 'board-unexpected-open') {
+    State._boardWildcardOpen = true; State._boardWildcardError = '';
+    State._boardFocusAfterCommit = '#board-wildcard-title'; render();
+  } else if (action === 'board-unexpected-close') {
+    State._boardWildcardOpen = false; State._boardWildcardError = ''; State._boardWildcardDraft = null;
+    State._boardFocusAfterCommit = '[data-action="board-unexpected-open"]'; render();
+  } else if (action === 'board-unexpected-reject') {
+    const prepared = prepareBoardV2Action('reject', id);
+    if (!prepared.ok) return;
+    const saved = await commitBoardV2Transaction(prepared.transaction);
+    if (saved) State._boardSel = null;
+    State._boardFocusAfterCommit = saved ? '[data-action="board-unexpected-open"]' : '.board-error'; render();
   } else if (action === 'board-take') {
     if (boardV2SnapshotById(id)) {
       const prepared = prepareBoardV2Action('take', id);

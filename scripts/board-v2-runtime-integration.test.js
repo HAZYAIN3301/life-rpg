@@ -11,17 +11,17 @@ const index = fs.readFileSync(path.join(ROOT, 'public', 'index.html'), 'utf8');
 const sw = fs.readFileSync(path.join(ROOT, 'public', 'sw.js'), 'utf8');
 const runtime = fs.readFileSync(path.join(ROOT, 'public', 'board-v2-runtime.js'), 'utf8');
 
-test('Board v2 model, catalog, pacing, offers, completion, issuer and runtime load in dependency order', () => {
-  const files = ['board-v2.js', 'board-v2-catalog.js', 'board-v2-pacing.js', 'board-v2-offers.js', 'board-v2-completion.js', 'board-v2-issuer.js', 'board-v2-runtime.js', 'app.js'];
+test('Board v2 standard and Wildcard issuers load in dependency order', () => {
+  const files = ['board-v2.js', 'board-v2-catalog.js', 'board-v2-pacing.js', 'board-v2-offers.js', 'board-v2-completion.js', 'board-v2-issuer.js', 'board-v2-wildcard-catalog.js', 'board-v2-wildcard-issuer.js', 'board-v2-runtime.js', 'app.js'];
   const positions = files.map((file) => index.indexOf(file));
   assert.equal(positions.every((position) => position >= 0), true);
   assert.deepEqual(positions, positions.slice().sort((a, b) => a - b));
   for (const file of files.slice(0, -1)) {
-    assert.match(index, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=20260825-board-v2-issuer-v171-1`));
+    assert.match(index, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=20260825-board-v2-wildcard-v172-1`));
     assert.equal((sw.match(new RegExp(`'${file.replaceAll('.', '\\.')}'`, 'g')) || []).length, 1);
   }
-  assert.match(index, /app\.js\?v=20260825-board-v2-issuer-v171-1/);
-  assert.match(sw, /const CACHE = 'satoru-v171';/);
+  assert.match(index, /app\.js\?v=20260825-board-v2-wildcard-v172-1/);
+  assert.match(sw, /const CACHE = 'satoru-v172';/);
 });
 
 test('account defaults and hydration normalize offers, completion and titles', () => {
@@ -51,6 +51,17 @@ test('all three existing Board buttons route exact v2 snapshots through the brid
   assert.match(app, /if \(boardV2SnapshotById\(id\)\)/);
   assert.match(app, /commitBoardV2Transaction\(prepared\.transaction\)/);
   assert.match(runtime, /task\.boardProof = clone\(prepared\.proof\)/);
+});
+
+test('manual Wildcard has explicit setup, exact persistence and rejection instead of infinite rerolls', () => {
+  assert.match(app, /Дай что-нибудь неожиданное/);
+  assert.match(app, /id="board-wildcard-form"/);
+  assert.match(app, /boardV2IssueUnexpected\(setup\)/);
+  assert.match(app, /I\.issueManual/);
+  assert.match(app, /R\.prepareIssue/);
+  assert.match(app, /prepareBoardV2Action\('reject', id\)/);
+  assert.match(app, /отклонённый тип не вернётся 30 дней/);
+  assert.doesNotMatch(app.slice(app.indexOf('function boardV2WildcardPanelHTML'), app.indexOf('function prepareBoardV2Action')), /navigator|geolocation|fetch\(/);
 });
 
 test('exact offers are RU-gated and replace the rejected legacy wall when available', () => {

@@ -104,6 +104,34 @@ test('manual unexpected and passive weekly paths share snapshot contract', () =>
   }).reason, 'weekly-cap');
 });
 
+test('latest manual Wildcard remains visible until a terminal outcome', () => {
+  const wildcard = quest('latest-surprise', 'wildcard', 1).quest;
+  const planned = Offers.planUnexpected(BoardV2, Pacing, [wildcard], {}, Offers.emptyState(Pacing), {
+    mode: 'manual-unexpected', day: '2026-08-25', seed: 'latest',
+  });
+  const shown = Offers.recordUnexpectedDisplayed(Offers.emptyState(Pacing), planned, Pacing);
+  assert.equal(Offers.latestUnexpected(shown, Pacing).id, planned.snapshot.id);
+  const taken = Offers.recordOutcome(shown, planned.snapshot.id, 'taken', '2026-08-25', Pacing);
+  assert.equal(Offers.latestUnexpected(taken, Pacing).id, planned.snapshot.id);
+  const rejected = Offers.recordOutcome(taken, planned.snapshot.id, 'rejected', '2026-08-25', Pacing);
+  assert.equal(Offers.latestUnexpected(rejected, Pacing), null);
+});
+
+test('rejecting the newest manual Wildcard never resurrects an older card', () => {
+  const firstQuest = quest('older-surprise', 'wildcard', 1).quest;
+  const secondQuest = quest('newer-surprise', 'wildcard', 1).quest;
+  const firstPlan = Offers.planUnexpected(BoardV2, Pacing, [firstQuest], {}, Offers.emptyState(Pacing), {
+    mode: 'manual-unexpected', day: '2026-08-01', seed: 'first',
+  });
+  let state = Offers.recordUnexpectedDisplayed(Offers.emptyState(Pacing), firstPlan, Pacing);
+  const secondPlan = Offers.planUnexpected(BoardV2, Pacing, [secondQuest], {}, state, {
+    mode: 'manual-unexpected', day: '2026-08-09', seed: 'second',
+  });
+  state = Offers.recordUnexpectedDisplayed(state, secondPlan, Pacing);
+  state = Offers.recordOutcome(state, secondPlan.snapshot.id, 'rejected', '2026-08-09', Pacing);
+  assert.equal(Offers.latestUnexpected(state, Pacing), null);
+});
+
 test('return, reject and completion have distinct cooldowns', () => {
   const resolved = quest('cooldown-target', 'standard', 1).quest;
   const plan = Offers.planStandard(BoardV2, [resolved], {}, Offers.emptyState(Pacing), { day: '2026-08-01', periodKey: 'p1' });
