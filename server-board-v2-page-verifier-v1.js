@@ -12,8 +12,9 @@ const crypto = require('node:crypto');
 const dns = require('node:dns').promises;
 const https = require('node:https');
 const net = require('node:net');
+const BoardV2Microdata = require('./server-board-v2-microdata-v1.js');
 
-const VERSION = '1.0.0';
+const VERSION = '1.1.0';
 const MAX_BYTES = 512 * 1024;
 const MAX_REDIRECTS = 2;
 const TIMEOUT_MS = 8000;
@@ -312,7 +313,8 @@ function priceFrom(node, offer) {
 }
 function offerAvailable(offer) {
   const value = text(offer && offer.availability, 300).toLowerCase();
-  return !!offer && !/(soldout|discontinued|outofstock)/.test(value);
+  return !!offer && /(instock|onlineonly|instoreonly|limitedavailability|preorder|presale)/.test(value)
+    && !/(soldout|discontinued|outofstock)/.test(value);
 }
 function stableCandidateId(pageUrl, title) {
   const prefix = String(title).toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50) || 'local-option';
@@ -326,6 +328,8 @@ function extractDirectCandidate(input) {
   if (!pageUrl || !Number.isFinite(Date.parse(checkedAt))) return null;
   const nodes = [];
   for (const document of jsonLdDocuments(String(input.html || ''))) flattenLd(document, nodes);
+  const microdata = BoardV2Microdata.microdataDocuments(String(input.html || ''), pageUrl);
+  if (microdata.length === 1) flattenLd(microdata[0], nodes);
   for (const node of nodes) {
     const nodeTypes = types(node);
     const isEvent = nodeTypes.some((type) => type === 'event' || type.endsWith('event') || type === 'courseinstance');
@@ -341,7 +345,9 @@ function extractDirectCandidate(input) {
     if (isEvent && organizerUrl && sameHost(organizerUrl, pageUrl)) sourceKind = 'organizer';
     else if (isEvent && location.url && sameHost(location.url, pageUrl)) sourceKind = 'venue';
     else if (isPlace && nodeUrl && sameHost(nodeUrl, pageUrl)) sourceKind = 'venue';
-    if (!sourceKind || !title || !location.address) continue;
+    const city = text(request.city, 100).toLocaleLowerCase('und');
+    const normalizedAddress = location.address.toLocaleLowerCase('und');
+    if (!sourceKind || !title || !location.address || !city || !normalizedAddress.includes(city)) continue;
     const offer = offerFrom(node);
     const startsAt = isEvent ? text(node.startDate, 40) : '';
     const price = isEvent ? priceFrom(node, offer) : null;

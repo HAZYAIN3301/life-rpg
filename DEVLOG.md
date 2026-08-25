@@ -2,6 +2,17 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-25] 🧾 Board v2 C0.8 — bounded schema.org Microdata fallback
+
+- Новый dormant `server-board-v2-microdata-v1.js` читает только явные schema.org `itemscope/itemtype/itemprop` из уже ограниченного official-page HTML. Это собственный bounded parser: 512 KiB, 5000 узлов, depth 32, максимум 16 документов; script/style/template/hidden/textarea/iframe/object не являются доказательством.
+- `server-board-v2-page-verifier-v1.js` v1.1 сначала использует прежний JSON-LD, а при одном Microdata event/place применяет тот же direct organizer/venue contract. Несколько событий на listing page не угадываются в одно; произвольный `attacker/Event`, неструктурированный текст, другой город, отсутствующие цена/availability и sold-out закрываются.
+- Live smoke официальной страницы Universität Bielefeld записан в `BOARD-V2-BIELEFELD-SMOKE-2026-08-25.md`: HTTP 200 и видимая таблица расписания есть, но JSON-LD/Microdata и общедоступная booking availability отсутствуют; бесплатность ограничена группами университета. Verifier правильно вернул `null`, а не ложное «бесплатное занятие для всех».
+- Следующий слой для такого сайта — exact-domain source adapter с audience/eligibility gate и DOM-version fail-closed. Общий prose/AI extractor не добавлен. Board UI, app shell и SW не изменены.
+
+Focused Board v2 suite — **130/130 PASS**; полный suite — **678/678 PASS**.
+
+Commit: `feat: add Board v2 Microdata evidence fallback`.
+
 ## [2026-08-25] 🎯 Goals v168 — результат сначала, структура по запросу
 
 - Экран больше не показывает всю иерархию в каждом горизонте. Появились четыре явных режима: **Фокус** (до пяти ближайших активных результатов), **Горизонты** (строго выбранный уровень без родителей из других уровней), **Карта** (полная parent/child-структура) и **Архив**.
