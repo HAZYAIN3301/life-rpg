@@ -73,13 +73,13 @@ const USER_DATA_FILES = [
 // tokens, push endpoint, recovery/password hashes). Эти данные либо нужно
 // привязать заново, либо они остаются частью серверной учётной записи.
 const ACCOUNT_PORTABLE_FILES = [
-  ...USER_DATA_FILES, 'lootbox', 'inbox', 'antihabits', 'episodes', 'profile', 'boardmedia', 'attention',
+  ...USER_DATA_FILES, 'lootbox', 'inbox', 'antihabits', 'episodes', 'profile', 'boardmedia', 'attention', 'shelf',
 ];
 const ACCOUNT_PORTABLE_TYPES = {
   settings: 'object', tasks: 'array', habits: 'array', habitlog: 'object', goals: 'array', 'goal-groups': 'array',
   skilltree: 'object', rewards: 'array', purchases: 'array', achievements: 'object',
   days: 'object', weeks: 'object', lootbox: 'object', inbox: 'array', antihabits: 'array',
-  episodes: 'array', profile: 'object', boardmedia: 'object', attention: 'object',
+  episodes: 'array', profile: 'object', boardmedia: 'object', attention: 'object', shelf: 'object',
 };
 const PASSWORD_MIN = 8;
 
@@ -324,6 +324,72 @@ function attentionCleanSession(raw) {
   }
   const ended = attnIso(raw.endedAt);
   if (ended) { out.endedAt = ended; out.outcome = ATTENTION_OUTCOMES.includes(raw.outcome) ? raw.outcome : 'unknown'; }
+  return out;
+}
+
+// ---- Полка возвращения: серверная санитизация (DISCIPLINE-ESCAPE-PLAN §13) ----
+//
+// Тот же whitelist-принцип, что и у контрактов внимания, плюс одно специфичное для
+// Полки правило: **чужое медиа сюда не заливается**. §13 разрешает хранить ссылку,
+// разрешённое preview и СВОЮ заметку — и только. Поэтому `data:`-URI отбрасываются
+// не как «неподдерживаемый формат», а как попытка положить на наш сервер чужой файл
+// без правового основания; и поэтому же есть жёсткий потолок на длину полей.
+const SHELF_MAX_BYTES = 512 * 1024;
+const SHELF_MAX_ITEMS = 40;
+const SHELF_KINDS = ['energy', 'practical'];
+const SHELF_ACTIONS = ['quest', 'focus', 'note', 'project', 'postpone'];
+
+function shelfEmpty() { return { version: 1, items: [] }; }
+
+// Только http/https. `javascript:` и `data:` в поле, которое потом попадёт в разметку,
+// это XSS и обход правила про чужое медиа соответственно.
+function shelfCleanUrl(v) {
+  const s = attnStr(v, 500);
+  return s && /^https?:\/\/[^\s]+$/i.test(s) ? s : null;
+}
+
+function shelfCleanItem(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const id = attnStr(raw.id, 40);
+  const title = attnStr(raw.title, 120);
+  const why = attnStr(raw.why, 200);
+  if (!id || !title || !why) return null;
+  if (!SHELF_KINDS.includes(raw.kind)) return null;
+
+  const out = { id, kind: raw.kind, title, why, seenCount: attnInt(raw.seenCount, 0, 99) ?? 0 };
+  const url = shelfCleanUrl(raw.url); if (url) out.url = url;
+  for (const [k, max] of [['note', 500], ['source', 40], ['stopAt', 60],
+    ['goalId', 40], ['taskId', 40], ['projectId', 40]]) {
+    const v = attnStr(raw[k], max); if (v) out[k] = v;
+  }
+  // Практический обязан нести ожидаемый вывод — без него это потребление под
+  // уважительным предлогом, и сервер такой материал не принимает (§13).
+  if (raw.kind === 'practical') {
+    const expect = attnStr(raw.expect, 200);
+    if (!expect) return null;
+    out.expect = expect;
+    const mins = attnInt(raw.minutes, 1, 240); if (mins !== null) out.minutes = mins;
+  }
+  for (const k of ['addedOn', 'expiresOn', 'archivedOn']) {
+    const v = attnStr(raw[k], 10);
+    if (v && /^\d{4}-\d{2}-\d{2}$/.test(v)) out[k] = v;
+  }
+  const seenAt = attnIso(raw.lastSeenAt); if (seenAt) out.lastSeenAt = seenAt;
+  if (SHELF_ACTIONS.includes(raw.lastAction)) out.lastAction = raw.lastAction;
+  return out;
+}
+
+function shelfSanitize(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const out = shelfEmpty();
+  const seen = new Set();
+  for (const it of Array.isArray(raw.items) ? raw.items : []) {
+    const c = shelfCleanItem(it);
+    if (!c || seen.has(c.id)) continue;
+    seen.add(c.id);
+    out.items.push(c);
+    if (out.items.length >= SHELF_MAX_ITEMS) break;
+  }
   return out;
 }
 
@@ -2876,6 +2942,64 @@ const server = http.createServer(async (req, res) => {
     try { fs.writeFileSync(file, JSON.stringify(data)); } catch {}
     return sendJson(res, 200, { ok: true });
   }
+  // ---- Полка возвращения (DISCIPLINE-ESCAPE-PLAN §13) ------------------------
+  //
+  // Та же форма, что у /api/attention, и по тем же причинам: ownership, границы,
+  // идемпотентность, write guard. Отдельный POST на один материал нужен для
+  // share target и paste-fallback — класть одну ссылку, не перезаписывая всю Полку.
+  if (u === '/api/shelf' || u === '/api/shelf/item') {
+    const uid = sessionUserId(req);
+    if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const file = path.join(userDataDir(uid), 'shelf.json');
+    const readNow = () => { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return null; } };
+    const persist = (value) => {
+      fs.mkdirSync(userDataDir(uid), { recursive: true });
+      backupFile(userDataDir(uid), 'shelf');
+      writeJsonAtomic(file, value);
+    };
+
+    if (u === '/api/shelf' && req.method === 'GET') return sendJson(res, 200, readNow() || shelfEmpty());
+
+    if (u === '/api/shelf' && req.method === 'PUT') {
+      let body = {};
+      try { body = JSON.parse(await readBody(req, SHELF_MAX_BYTES)); }
+      catch { return sendJson(res, 400, { error: 'too large / bad json' }); }
+      const next = shelfSanitize(body && body.data);
+      if (!next) return sendJson(res, 400, { error: 'invalid_shelf' });
+      const cur = shelfSanitize(readNow()) || shelfEmpty();
+      // Тот же write guard: пустая Полка поверх непустой почти всегда означает
+      // клиента, который не смог загрузить и «сохраняет» пустоту.
+      if (!body.allowEmpty && cur.items.length > 0 && next.items.length === 0) {
+        return sendJson(res, 409, { error: 'refuses_to_empty', have: cur.items.length });
+      }
+      try { persist(next); }
+      catch (e) { console.error('[shelf]', e && e.message); return sendJson(res, 500, { error: 'save_failed' }); }
+      return sendJson(res, 200, { ok: true, count: next.items.length });
+    }
+
+    if (u === '/api/shelf/item' && req.method === 'POST') {
+      let body = {};
+      try { body = JSON.parse(await readBody(req, 64 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
+      const item = shelfCleanItem(body && body.item);
+      if (!item) return sendJson(res, 400, { error: 'invalid_item' });
+      const cur = shelfSanitize(readNow()) || shelfEmpty();
+      const at = cur.items.findIndex((i) => i.id === item.id);
+      if (at < 0) {
+        // Полка не склад (§13): переполнение — отказ, а не молчаливое вытеснение.
+        // Тихо выбросить чужой сохранённый материал хуже, чем сказать «убери лишнее».
+        if (cur.items.filter((i) => !i.archivedOn).length >= SHELF_MAX_ITEMS) {
+          return sendJson(res, 409, { error: 'shelf_full', max: SHELF_MAX_ITEMS });
+        }
+        cur.items.push(item);
+      } else cur.items[at] = item;
+      try { persist(cur); }
+      catch (e) { console.error('[shelf]', e && e.message); return sendJson(res, 500, { error: 'save_failed' }); }
+      return sendJson(res, 200, { ok: true, stored: item.id, count: cur.items.length });
+    }
+
+    return sendJson(res, 405, { error: 'method not allowed' });
+  }
+
   // ---- Контракты внимания (DISCIPLINE-ESCAPE-PLAN §14, §15) ------------------
   //
   // Отдельный store, а не generic /api/data/<name>, ровно по причинам §15: нужны
