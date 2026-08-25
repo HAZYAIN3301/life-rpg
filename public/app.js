@@ -15372,6 +15372,21 @@ function boardV2WildcardPanelHTML() {
         <label>Зачем<input name="roomGoal" maxlength="120" autocomplete="off" value="${value('roomGoal')}" placeholder="например: освободить место для тренировок" data-noi18n></label>
         <label>Готовый план<input name="roomLayout" maxlength="160" autocomplete="off" value="${value('roomLayout')}" placeholder="например: стол к окну, диван к дальней стене" data-noi18n></label>
         <label class="board-wildcard-check"><input type="checkbox" name="roomReady"${checked('roomReady')}> Я проверил размеры и могу безопасно передвинуть мебель</label></fieldset>
+      <fieldset><legend><label><input type="checkbox" name="minecraftEnabled"${checked('minecraftEnabled')}> Я готов запустить Minecraft-сервер на 30 дней</label></legend>
+        <label>Название сервера<input name="minecraftName" maxlength="80" autocomplete="off" value="${value('minecraftName')}" placeholder="например: Новый континент" data-noi18n></label>
+        <label>Кого позовёшь<input name="minecraftPlayers" maxlength="120" autocomplete="off" value="${value('minecraftPlayers')}" placeholder="например: Макса, Диму и Леру" data-noi18n></label>
+        <label>Общая цель<input name="minecraftGoal" maxlength="160" autocomplete="off" value="${value('minecraftGoal')}" placeholder="например: построить город и победить дракона" data-noi18n></label>
+        <label class="board-wildcard-check"><input type="checkbox" name="minecraftReady"${checked('minecraftReady')}> Я действительно могу связаться с этой компанией</label></fieldset>
+      <fieldset><legend><label><input type="checkbox" name="cosplayEnabled"${checked('cosplayEnabled')}> Я готов сделать косплей</label></legend>
+        <label>Персонаж<input name="cosplayCharacter" maxlength="100" autocomplete="off" value="${value('cosplayCharacter')}" placeholder="например: Макима" data-noi18n></label>
+        <label>К какой дате<input type="date" name="cosplayDate" min="${todayStr()}" value="${value('cosplayDate')}" data-noi18n></label>
+        <label>Первый элемент образа<input name="cosplayPiece" maxlength="120" autocomplete="off" value="${value('cosplayPiece')}" placeholder="например: парик и укладка" data-noi18n></label>
+        <label class="board-wildcard-check"><input type="checkbox" name="cosplayBudget"${checked('cosplayBudget')}> Я определил допустимый бюджет, включая вариант 0 €</label></fieldset>
+      <fieldset><legend><label><input type="checkbox" name="dmEnabled"${checked('dmEnabled')}> Я готов провести мини-кампанию как Dungeon Master</label></legend>
+        <label>Игра или система<input name="dmGame" maxlength="100" autocomplete="off" value="${value('dmGame')}" placeholder="например: D&amp;D 5e" data-noi18n></label>
+        <label>Для кого<input name="dmPlayers" maxlength="120" autocomplete="off" value="${value('dmPlayers')}" placeholder="например: четыре друга из нашей компании" data-noi18n></label>
+        <label>Стартовый модуль<input name="dmModule" maxlength="160" autocomplete="off" value="${value('dmModule')}" placeholder="например: Lost Mine of Phandelver" data-noi18n></label>
+        <label class="board-wildcard-check"><input type="checkbox" name="dmReady"${checked('dmReady')}> Я могу отправить игрокам конкретное приглашение</label></fieldset>
       <div class="board-wildcard-actions"><button type="submit" class="btn">Дай что-нибудь неожиданное</button>
         <span>Без недельного лимита, но отклонённый тип не вернётся 30 дней.</span></div>
     </form>
@@ -20351,6 +20366,15 @@ async function onSubmit(e) {
       roomEnabled: data.has('roomEnabled'), roomName: String(data.get('roomName') || '').trim(),
       roomGoal: String(data.get('roomGoal') || '').trim(), roomLayout: String(data.get('roomLayout') || '').trim(),
       roomReady: data.has('roomReady'),
+      minecraftEnabled: data.has('minecraftEnabled'), minecraftName: String(data.get('minecraftName') || '').trim(),
+      minecraftPlayers: String(data.get('minecraftPlayers') || '').trim(), minecraftGoal: String(data.get('minecraftGoal') || '').trim(),
+      minecraftReady: data.has('minecraftReady'),
+      cosplayEnabled: data.has('cosplayEnabled'), cosplayCharacter: String(data.get('cosplayCharacter') || '').trim(),
+      cosplayDate: String(data.get('cosplayDate') || '').trim(), cosplayPiece: String(data.get('cosplayPiece') || '').trim(),
+      cosplayBudget: data.has('cosplayBudget'),
+      dmEnabled: data.has('dmEnabled'), dmGame: String(data.get('dmGame') || '').trim(),
+      dmPlayers: String(data.get('dmPlayers') || '').trim(), dmModule: String(data.get('dmModule') || '').trim(),
+      dmReady: data.has('dmReady'),
     };
     State._boardWildcardDraft = draft; State._boardWildcardError = '';
     const setup = {
@@ -20358,6 +20382,12 @@ async function onSubmit(e) {
       offline: { enabled: draft.offlineEnabled, apps: draft.offlineApps },
       room: { enabled: draft.roomEnabled, room: draft.roomName, goal: draft.roomGoal, layout: draft.roomLayout,
         equipmentReady: draft.roomReady, safeContext: draft.roomReady },
+      minecraft: { enabled: draft.minecraftEnabled, name: draft.minecraftName, players: draft.minecraftPlayers,
+        goal: draft.minecraftGoal, socialReady: draft.minecraftReady },
+      cosplay: { enabled: draft.cosplayEnabled, character: draft.cosplayCharacter, date: draft.cosplayDate,
+        piece: draft.cosplayPiece, budgetConfirmed: draft.cosplayBudget },
+      dungeonMaster: { enabled: draft.dmEnabled, game: draft.dmGame, players: draft.dmPlayers,
+        module: draft.dmModule, socialReady: draft.dmReady },
     };
     const btn = f.querySelector('button[type="submit"]'); if (btn) btn.disabled = true;
     const issued = await boardV2IssueUnexpected(setup);
@@ -20365,7 +20395,7 @@ async function onSubmit(e) {
     if (!issued.ok) {
       State._boardWildcardError = issued.reason === 'no-eligible-quest'
         ? 'Все подготовленные типы недавно уже показывались или были отклонены. Выбери другой вариант.'
-        : 'Заполни хотя бы один вариант полностью. Для перестановки также подтверди размеры и безопасность.';
+        : 'Заполни хотя бы один вариант полностью и подтверди его условия: безопасность, бюджет или возможность связаться с участниками.';
       State._boardFocusAfterCommit = '.board-wildcard-error'; render(); return;
     }
     State._boardWildcardOpen = false; State._boardWildcardDraft = null; State._boardWildcardError = '';

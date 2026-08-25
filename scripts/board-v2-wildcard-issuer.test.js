@@ -15,14 +15,23 @@ const full = {
   film: { enabled: true, filmingOptIn: true, theme: 'один звонок меняет маршрут', deadline: '27 августа, 19:00' },
   offline: { enabled: true, apps: 'TikTok и Instagram' },
   room: { enabled: true, room: 'рабочую комнату', goal: 'освободить место для тренировок', layout: 'стол к окну, диван к дальней стене', equipmentReady: true, safeContext: true },
+  minecraft: { enabled: true, name: 'Новый континент', players: 'Макса, Диму и Леру', goal: 'построить город и победить дракона', socialReady: true },
+  cosplay: { enabled: true, character: 'Макимы', date: '2026-10-31', piece: 'парик и укладка', budgetConfirmed: true },
+  dungeonMaster: { enabled: true, game: 'D&D 5e', players: 'четырёх друзей', module: 'Lost Mine of Phandelver', socialReady: true },
 };
 
-test('only three owner-approved manual packs can resolve', () => {
+test('all six owner-approved manual packs resolve to exact quests', () => {
   const quests = Issuer.resolvedInstances(Board, Catalog, full);
   assert.deepEqual(quests.map((quest) => quest.templateId).sort(), Issuer.SUPPORTED_TEMPLATE_IDS.slice().sort());
   assert.match(quests.find((quest) => quest.templateId.includes('film')).details, /27 августа, 19:00/);
   assert.match(quests.find((quest) => quest.templateId.includes('social')).title, /TikTok и Instagram/);
   assert.match(quests.find((quest) => quest.templateId.includes('room')).details, /освободить место/);
+  assert.match(quests.find((quest) => quest.templateId.includes('minecraft')).details, /победить дракона/);
+  const cosplay = quests.find((quest) => quest.templateId.includes('cosplay'));
+  assert.match(cosplay.title, /Макимы/); assert.match(cosplay.details, /31 октября 2026/);
+  assert.equal(cosplay.reward.title, 'Shapeshifter');
+  const dungeonMaster = quests.find((quest) => quest.templateId.includes('mini-campaign'));
+  assert.match(dungeonMaster.details, /D&D 5e/); assert.equal(dungeonMaster.reward.title, 'Dungeon Master');
 });
 
 test('partial, unsafe and non-consensual packs fail closed instead of becoming vague quests', () => {
@@ -30,8 +39,12 @@ test('partial, unsafe and non-consensual packs fail closed instead of becoming v
     film: { enabled: true, theme: 'ночной город', deadline: 'завтра' },
     offline: { enabled: true, apps: '' },
     room: { enabled: true, room: 'комнату', goal: 'больше воздуха', layout: 'стол к окну', equipmentReady: true },
+    minecraft: { enabled: true, name: 'Мир', players: 'друзей', goal: 'город' },
+    cosplay: { enabled: true, character: 'Макима', date: '2026-02-30', piece: 'парик', budgetConfirmed: true },
+    dungeonMaster: { enabled: true, game: 'D&D', players: 'друзей', module: 'свой модуль' },
   }), []);
   assert.equal(Issuer.normalizeSetup({ offline: { enabled: true, apps: '<script>' } }).offline.apps, '');
+  assert.equal(Issuer.normalizeSetup({ cosplay: { enabled: true, date: '2026-02-30' } }).cosplay.date, '');
 });
 
 test('manual request picks one exact snapshot, persists pacing and cannot be forged', () => {

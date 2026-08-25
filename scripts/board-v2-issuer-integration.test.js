@@ -18,7 +18,7 @@ test('production shell loads approved standard and Wildcard issuers before runti
   for (const file of files.slice(0, -1)) {
     assert.equal((sw.match(new RegExp(`'${file.replaceAll('.', '\\.')} '`.replace(' ', ''), 'g')) || []).length, 1);
   }
-  assert.match(sw, /const CACHE = 'satoru-v172';/);
+  assert.match(sw, /const CACHE = 'satoru-v173';/);
 });
 
 test('issuer profile consumes structured taste, spheres and recent sport completion only', () => {

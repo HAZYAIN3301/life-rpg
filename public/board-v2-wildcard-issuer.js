@@ -1,7 +1,7 @@
 /* Satoru Board v2 — manual Wildcard issuer.
  *
  * A manual request is still not permission to show an unresolved idea. This
- * issuer accepts only three reviewed, fully user-resolved packs and hands the
+ * issuer accepts only reviewed, fully user-resolved packs and hands the
  * resulting quests to the shared pacing/snapshot engine. Pure module: no DOM,
  * clock, State, fetch, geolocation or persistence.
  */
@@ -12,12 +12,15 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildBoardV2WildcardIssuer() {
   'use strict';
 
-  const VERSION = '1.0.0';
-  const SETUP_SCHEMA = 'satoru.board-wildcard-setup/2';
+  const VERSION = '1.1.0';
+  const SETUP_SCHEMA = 'satoru.board-wildcard-setup/3';
   const SUPPORTED_TEMPLATE_IDS = Object.freeze([
     'forty-eight-hour-film-challenge',
     'delete-social-apps-thirty-days',
     'rearrange-room-approved-layout',
+    'minecraft-server-thirty-days',
+    'make-favorite-character-cosplay',
+    'run-three-session-mini-campaign',
   ]);
   const issued = new WeakMap();
 
@@ -29,7 +32,16 @@
   }
   function day(value) {
     const out = cleanText(value, 10);
-    return /^\d{4}-\d{2}-\d{2}$/.test(out) && Number.isFinite(Date.parse(`${out}T00:00:00Z`)) ? out : '';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(out)) return '';
+    const parsed = new Date(`${out}T00:00:00Z`);
+    return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === out ? out : '';
+  }
+  function dateLabel(value) {
+    const iso = day(value);
+    if (!iso) return '';
+    const [year, month, date] = iso.split('-').map(Number);
+    const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+    return `${date} ${months[month - 1]} ${year}`;
   }
   function deepFreeze(value) {
     if (!value || typeof value !== 'object' || Object.isFrozen(value)) return value;
@@ -62,7 +74,28 @@
       equipmentReady: source.room.equipmentReady === true,
       safeContext: source.room.safeContext === true,
     } : { enabled: false, room: '', goal: '', layout: '', equipmentReady: false, safeContext: false };
-    return deepFreeze({ schema: SETUP_SCHEMA, film, offline, room });
+    const minecraft = plain(source.minecraft) && source.minecraft.enabled === true ? {
+      enabled: true,
+      name: cleanText(source.minecraft.name, 80),
+      players: cleanText(source.minecraft.players, 120),
+      goal: cleanText(source.minecraft.goal, 160),
+      socialReady: source.minecraft.socialReady === true,
+    } : { enabled: false, name: '', players: '', goal: '', socialReady: false };
+    const cosplay = plain(source.cosplay) && source.cosplay.enabled === true ? {
+      enabled: true,
+      character: cleanText(source.cosplay.character, 100),
+      date: day(source.cosplay.date),
+      piece: cleanText(source.cosplay.piece, 120),
+      budgetConfirmed: source.cosplay.budgetConfirmed === true,
+    } : { enabled: false, character: '', date: '', piece: '', budgetConfirmed: false };
+    const dungeonMaster = plain(source.dungeonMaster) && source.dungeonMaster.enabled === true ? {
+      enabled: true,
+      game: cleanText(source.dungeonMaster.game, 100),
+      players: cleanText(source.dungeonMaster.players, 120),
+      module: cleanText(source.dungeonMaster.module, 160),
+      socialReady: source.dungeonMaster.socialReady === true,
+    } : { enabled: false, game: '', players: '', module: '', socialReady: false };
+    return deepFreeze({ schema: SETUP_SCHEMA, film, offline, room, minecraft, cosplay, dungeonMaster });
   }
   function entryIndex(catalogApi, templateId) {
     return catalogApi.ENTRIES.findIndex((entry) => entry && entry.template && entry.template.id === templateId);
@@ -96,6 +129,30 @@
       const quest = buildInstance(boardApi, compiled, catalogApi, 'rearrange-room-approved-layout', {
         slots: { room: setup.room.room, goal: setup.room.goal, layout: setup.room.layout },
         readinessFlags: ['equipment-ready'], fit: { confidence: 1, interest: 0.5 },
+      });
+      if (quest) quests.push(quest);
+    }
+    if (setup.minecraft.enabled && setup.minecraft.name && setup.minecraft.players
+      && setup.minecraft.goal && setup.minecraft.socialReady) {
+      const quest = buildInstance(boardApi, compiled, catalogApi, 'minecraft-server-thirty-days', {
+        slots: { name: setup.minecraft.name, players: setup.minecraft.players, goal: setup.minecraft.goal },
+        fit: { confidence: 1, interest: 0.5 },
+      });
+      if (quest) quests.push(quest);
+    }
+    if (setup.cosplay.enabled && setup.cosplay.character && setup.cosplay.date
+      && setup.cosplay.piece && setup.cosplay.budgetConfirmed) {
+      const quest = buildInstance(boardApi, compiled, catalogApi, 'make-favorite-character-cosplay', {
+        slots: { character: setup.cosplay.character, date: dateLabel(setup.cosplay.date), piece: setup.cosplay.piece },
+        readinessFlags: ['budget-confirmed'], fit: { confidence: 1, interest: 0.5 },
+      });
+      if (quest) quests.push(quest);
+    }
+    if (setup.dungeonMaster.enabled && setup.dungeonMaster.game && setup.dungeonMaster.players
+      && setup.dungeonMaster.module && setup.dungeonMaster.socialReady) {
+      const quest = buildInstance(boardApi, compiled, catalogApi, 'run-three-session-mini-campaign', {
+        slots: { game: setup.dungeonMaster.game, players: setup.dungeonMaster.players, module: setup.dungeonMaster.module },
+        fit: { confidence: 1, interest: 0.5 },
       });
       if (quest) quests.push(quest);
     }

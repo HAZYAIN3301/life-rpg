@@ -17,11 +17,11 @@ test('Board v2 standard and Wildcard issuers load in dependency order', () => {
   assert.equal(positions.every((position) => position >= 0), true);
   assert.deepEqual(positions, positions.slice().sort((a, b) => a - b));
   for (const file of files.slice(0, -1)) {
-    assert.match(index, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=20260825-board-v2-wildcard-v172-1`));
+    assert.match(index, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=20260825-board-v2-wildcard-v173-1`));
     assert.equal((sw.match(new RegExp(`'${file.replaceAll('.', '\\.')}'`, 'g')) || []).length, 1);
   }
-  assert.match(index, /app\.js\?v=20260825-board-v2-wildcard-v172-1/);
-  assert.match(sw, /const CACHE = 'satoru-v172';/);
+  assert.match(index, /app\.js\?v=20260825-board-v2-wildcard-v173-1/);
+  assert.match(sw, /const CACHE = 'satoru-v173';/);
 });
 
 test('account defaults and hydration normalize offers, completion and titles', () => {
@@ -61,6 +61,11 @@ test('manual Wildcard has explicit setup, exact persistence and rejection instea
   assert.match(app, /R\.prepareIssue/);
   assert.match(app, /prepareBoardV2Action\('reject', id\)/);
   assert.match(app, /отклонённый тип не вернётся 30 дней/);
+  for (const field of ['minecraftName', 'minecraftPlayers', 'minecraftGoal', 'cosplayCharacter', 'cosplayDate',
+    'cosplayPiece', 'dmGame', 'dmPlayers', 'dmModule']) {
+    assert.match(app, new RegExp(`name="${field}"`));
+  }
+  assert.match(app, /minecraftReady/); assert.match(app, /cosplayBudget/); assert.match(app, /dmReady/);
   assert.doesNotMatch(app.slice(app.indexOf('function boardV2WildcardPanelHTML'), app.indexOf('function prepareBoardV2Action')), /navigator|geolocation|fetch\(/);
 });
 
