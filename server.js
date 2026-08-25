@@ -73,13 +73,13 @@ const USER_DATA_FILES = [
 // tokens, push endpoint, recovery/password hashes). Эти данные либо нужно
 // привязать заново, либо они остаются частью серверной учётной записи.
 const ACCOUNT_PORTABLE_FILES = [
-  ...USER_DATA_FILES, 'lootbox', 'inbox', 'antihabits', 'episodes', 'profile', 'boardmedia',
+  ...USER_DATA_FILES, 'lootbox', 'inbox', 'antihabits', 'episodes', 'profile', 'boardmedia', 'attention',
 ];
 const ACCOUNT_PORTABLE_TYPES = {
   settings: 'object', tasks: 'array', habits: 'array', habitlog: 'object', goals: 'array', 'goal-groups': 'array',
   skilltree: 'object', rewards: 'array', purchases: 'array', achievements: 'object',
   days: 'object', weeks: 'object', lootbox: 'object', inbox: 'array', antihabits: 'array',
-  episodes: 'array', profile: 'object', boardmedia: 'object',
+  episodes: 'array', profile: 'object', boardmedia: 'object', attention: 'object',
 };
 const PASSWORD_MIN = 8;
 
@@ -202,6 +202,157 @@ function saveUsers(users) {
   writeJsonAtomic(USERS_FILE(), users);
 }
 function userDataDir(id) { return path.join(DATA_DIR, 'users', id); }
+// ---- Контракты внимания: серверная санитизация (DISCIPLINE-ESCAPE-PLAN §14) ----
+//
+// Whitelist, а не blacklist. Обещание §14 звучит как «сервер НЕ получает содержимое
+// сообщений, поисковые запросы, историю сайтов, просмотренные ролики, поминутный
+// журнал, accessibility tree и текст экрана». Blacklist такое обещание не держит:
+// достаточно поля, которого мы не предусмотрели. Поэтому наружу проходит только то,
+// что перечислено здесь поимённо, а всё незнакомое отбрасывается молча.
+//
+// Дублирование с public/attention-*-v1.js осознанное: клиент нормализует для себя,
+// сервер — для себя. Часть записей придёт от нативных компаньонов (R4/R5), которые
+// пишет не этот код, и полагаться на их вежливость нельзя.
+const ATTENTION_MAX_BYTES = 2 * 1024 * 1024;
+const ATTENTION_MAX_POLICIES = 24;
+const ATTENTION_MAX_SESSIONS = 500;
+const ATTENTION_MAX_EPISODES = 2000;
+const ATTENTION_MODES = ['local', 'contracts', 'aggregates'];
+const ATTENTION_OUTCOMES = ['done', 'rested', 'escaped', 'unknown'];
+const ATTENTION_SOURCES = ['manual', 'shortcut', 'ios', 'android'];
+
+function attentionEmpty() { return { version: 1, mode: 'local', policies: [], sessions: [], episodes: [] }; }
+function attnStr(v, max) {
+  return typeof v === 'string' && v.trim() ? v.trim().slice(0, max) : null;
+}
+function attnInt(v, lo, hi) {
+  const n = Math.floor(Number(v));
+  return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : null;
+}
+function attnIso(v) { return typeof v === 'string' && !Number.isNaN(Date.parse(v)) ? v : null; }
+
+function attentionCleanEpisode(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const id = attnStr(raw.id, 40), policyId = attnStr(raw.sourcePolicyId, 40);
+  const purpose = attnStr(raw.declaredPurpose, 24), started = attnIso(raw.startedAt);
+  if (!id || !policyId || !purpose || !started) return null;
+  const out = {
+    id, sourcePolicyId: policyId, declaredPurpose: purpose, startedAt: started,
+    outcome: ATTENTION_OUTCOMES.includes(raw.outcome) ? raw.outcome : 'unknown',
+    extensionCount: attnInt(raw.extensionCount, 0, 10) ?? 0,
+    emergencyUsed: raw.emergencyUsed === true,
+    source: ATTENTION_SOURCES.includes(raw.source) ? raw.source : 'manual',
+  };
+  const ended = attnIso(raw.endedAt); if (ended) out.endedAt = ended;
+  const returned = attnIso(raw.returnedAt); if (returned) out.returnedAt = returned;
+  const planned = attnInt(raw.plannedMinutes, 0, 1440); if (planned !== null) out.plannedMinutes = planned;
+  // null здесь законен и значим: платформа могла не знать длительность (iOS Украина,
+  // §2). Пишем честный null вместо догадки.
+  if (raw.actualMinutes === null) out.actualMinutes = null;
+  else { const a = attnInt(raw.actualMinutes, 0, 1440); if (a !== null) out.actualMinutes = a; }
+  for (const [k, max] of [['timezone', 40], ['expectedOutcome', 120], ['topic', 80],
+    ['avoidedThingId', 40], ['returnActionId', 40], ['note', 280]]) {
+    const v = attnStr(raw[k], max); if (v) out[k] = v;
+  }
+  return out;
+}
+
+function attentionCleanPolicy(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const id = attnStr(raw.id, 40), name = attnStr(raw.name, 60);
+  if (!id || !name) return null;
+  const purposes = [];
+  for (const p of Array.isArray(raw.purposes) ? raw.purposes : []) {
+    if (!p || typeof p !== 'object') continue;
+    const purpose = attnStr(p.purpose, 24); if (!purpose) continue;
+    const rule = { purpose, enabled: p.enabled !== false };
+    if (rule.enabled) {
+      rule.defaultMinutes = attnInt(p.defaultMinutes, 1, 240) ?? 10;
+      rule.maxMinutes = attnInt(p.maxMinutes, 1, 240) ?? rule.defaultMinutes;
+      rule.mode = ['trust', 'adaptive', 'control'].includes(p.mode) ? p.mode : 'adaptive';
+      rule.extensions = attnInt(p.extensions, 0, 3) ?? 1;
+      rule.extensionMinutes = attnInt(p.extensionMinutes, 1, 60) ?? 5;
+      const oc = attnStr(p.outcome, 120); if (oc) rule.outcome = oc;
+      const cap = attnInt(p.captureCap, 1, 10); if (cap !== null) rule.captureCap = cap;
+      if (p.requiresTopic === true) rule.requiresTopic = true;
+    }
+    purposes.push(rule);
+    if (purposes.length >= 8) break;
+  }
+  if (!purposes.length) return null;
+  const out = { id, name, purposes, sync: raw.sync === true };
+  if (raw.emergency && typeof raw.emergency === 'object' && !Array.isArray(raw.emergency)) {
+    out.emergency = {
+      passes: attnInt(raw.emergency.passes, 0, 7) ?? 1,
+      perDays: attnInt(raw.emergency.perDays, 1, 60) ?? 7,
+      delaySeconds: attnInt(raw.emergency.delaySeconds, 0, 600) ?? 90,
+    };
+  }
+  if (Array.isArray(raw.modes)) {
+    out.modes = [...new Set(raw.modes.map((m) => attnStr(m, 24)).filter(Boolean))].slice(0, 8);
+  }
+  const token = attnStr(raw.platformToken, 200); if (token) out.platformToken = token;
+  if (raw.quietHours && typeof raw.quietHours === 'object') {
+    const from = attnStr(raw.quietHours.from, 5), to = attnStr(raw.quietHours.to, 5);
+    if (/^\d{2}:\d{2}$/.test(from || '') && /^\d{2}:\d{2}$/.test(to || '')) out.quietHours = { from, to };
+  }
+  return out;
+}
+
+function attentionCleanSession(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const id = attnStr(raw.id, 40), policyId = attnStr(raw.policyId, 40);
+  const purpose = attnStr(raw.purpose, 24), started = attnIso(raw.startedAt);
+  if (!id || !policyId || !purpose || !started) return null;
+  const out = {
+    id, policyId, purpose, startedAt: started,
+    plannedMinutes: attnInt(raw.plannedMinutes, 1, 240) ?? 10,
+    mode: ['trust', 'adaptive', 'control'].includes(raw.mode) ? raw.mode : 'adaptive',
+    extensionsAllowed: attnInt(raw.extensionsAllowed, 0, 3) ?? 0,
+    extensionMinutes: attnInt(raw.extensionMinutes, 1, 60) ?? 5,
+    extensions: [],
+  };
+  for (const e of Array.isArray(raw.extensions) ? raw.extensions : []) {
+    const at = e && attnIso(e.at), m = e && attnInt(e.minutes, 1, 60);
+    if (at && m !== null && out.extensions.length < out.extensionsAllowed) out.extensions.push({ at, minutes: m });
+  }
+  const exp = attnStr(raw.expectedOutcome, 120); if (exp) out.expectedOutcome = exp;
+  const topic = attnStr(raw.topic, 80); if (topic) out.topic = topic;
+  if (raw.emergency && typeof raw.emergency === 'object') {
+    const at = attnIso(raw.emergency.at);
+    if (at) { out.emergency = { at }; const r = attnStr(raw.emergency.reason, 200); if (r) out.emergency.reason = r; }
+  }
+  const ended = attnIso(raw.endedAt);
+  if (ended) { out.endedAt = ended; out.outcome = ATTENTION_OUTCOMES.includes(raw.outcome) ? raw.outcome : 'unknown'; }
+  return out;
+}
+
+function attentionSanitize(raw) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const out = attentionEmpty();
+  if (ATTENTION_MODES.includes(raw.mode)) out.mode = raw.mode;
+  const seenP = new Set(), seenS = new Set(), seenE = new Set();
+  for (const p of Array.isArray(raw.policies) ? raw.policies : []) {
+    const c = attentionCleanPolicy(p);
+    if (!c || seenP.has(c.id)) continue;
+    seenP.add(c.id); out.policies.push(c);
+    if (out.policies.length >= ATTENTION_MAX_POLICIES) break;
+  }
+  for (const s of Array.isArray(raw.sessions) ? raw.sessions : []) {
+    const c = attentionCleanSession(s);
+    if (!c || seenS.has(c.id)) continue;
+    seenS.add(c.id); out.sessions.push(c);
+    if (out.sessions.length >= ATTENTION_MAX_SESSIONS) break;
+  }
+  for (const e of Array.isArray(raw.episodes) ? raw.episodes : []) {
+    const c = attentionCleanEpisode(e);
+    if (!c || seenE.has(c.id)) continue;
+    seenE.add(c.id); out.episodes.push(c);
+    if (out.episodes.length >= ATTENTION_MAX_EPISODES) break;
+  }
+  return out;
+}
+
 const BOARD_V2_ACCOUNT_FILE = 'board-discovery.json';
 function readBoardV2Account(uid) {
   try { return JSON.parse(fs.readFileSync(path.join(userDataDir(uid), BOARD_V2_ACCOUNT_FILE), 'utf8')); }
@@ -2712,6 +2863,82 @@ const server = http.createServer(async (req, res) => {
     try { fs.writeFileSync(file, JSON.stringify(data)); } catch {}
     return sendJson(res, 200, { ok: true });
   }
+  // ---- Контракты внимания (DISCIPLINE-ESCAPE-PLAN §14, §15) ------------------
+  //
+  // Отдельный store, а не generic /api/data/<name>, ровно по причинам §15: нужны
+  // ownership, границы payload, идемпотентность и write guard. Generic-эндпоинт
+  // принимает что угодно и пишет как есть — для журнала внимания это неприемлемо.
+  //
+  // Почему сервер САНИТИЗИРУЕТ, хотя модули уже нормализуют на клиенте. Клиенту
+  // здесь доверять нельзя по построению: часть эпизодов придёт от нативных
+  // компаньонов (R4/R5), которые пишет не этот код. Обещание §14 — «содержимое
+  // сообщений, запросы, история сайтов и просмотренные ролики не отправляются» —
+  // должно держаться сервером, а не вежливостью отправителя. Поэтому whitelist
+  // полей, а не blacklist: неизвестное поле отбрасывается молча.
+  if (u === '/api/attention' || u === '/api/attention/episode') {
+    const uid = sessionUserId(req);
+    if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const file = path.join(userDataDir(uid), 'attention.json');
+    const readNow = () => { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return null; } };
+
+    if (u === '/api/attention' && req.method === 'GET') {
+      return sendJson(res, 200, readNow() || attentionEmpty());
+    }
+
+    if (u === '/api/attention' && req.method === 'PUT') {
+      let body = {};
+      try { body = JSON.parse(await readBody(req, ATTENTION_MAX_BYTES)); }
+      catch { return sendJson(res, 400, { error: 'too large / bad json' }); }
+      const next = attentionSanitize(body && body.data);
+      if (!next) return sendJson(res, 400, { error: 'invalid_attention' });
+
+      // Write guard (§15): пустой PUT поверх непустого хранилища — почти всегда
+      // клиент, который не смог загрузить и «сохраняет» пустоту. Ровно так в этом
+      // проекте уже терялись данные. Требуем явного намерения.
+      const cur = attentionSanitize(readNow()) || attentionEmpty();
+      const shrinks = (a, b) => a.length > 0 && b.length === 0;
+      if (!body.allowEmpty && (shrinks(cur.policies, next.policies)
+        || shrinks(cur.episodes, next.episodes) || shrinks(cur.sessions, next.sessions))) {
+        return sendJson(res, 409, { error: 'refuses_to_empty', have: {
+          policies: cur.policies.length, sessions: cur.sessions.length, episodes: cur.episodes.length } });
+      }
+      try {
+        fs.mkdirSync(userDataDir(uid), { recursive: true });
+        backupFile(userDataDir(uid), 'attention');
+        writeJsonAtomic(file, next);
+      } catch (e) { console.error('[attention]', e && e.message); return sendJson(res, 500, { error: 'save_failed' }); }
+      return sendJson(res, 200, { ok: true, counts: {
+        policies: next.policies.length, sessions: next.sessions.length, episodes: next.episodes.length } });
+    }
+
+    // Идемпотентный приём одного эпизода (§17: retry не теряет и не дублирует).
+    // Отдельный вход нужен нативным компаньонам: они присылают по одному факту и
+    // не должны для этого перезаписывать весь журнал целиком.
+    if (u === '/api/attention/episode' && req.method === 'POST') {
+      let body = {};
+      try { body = JSON.parse(await readBody(req, 64 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
+      const ep = attentionCleanEpisode(body && body.episode);
+      if (!ep) return sendJson(res, 400, { error: 'invalid_episode' });
+      const cur = attentionSanitize(readNow()) || attentionEmpty();
+      // Режим данных решает человек. `local` означает, что журнал не покидает
+      // устройство, и сервер обязан отказать, а не тихо принять (§14).
+      if (cur.mode === 'local') return sendJson(res, 403, { error: 'local_only' });
+      const at = cur.episodes.findIndex((e) => e.id === ep.id);
+      if (at < 0) {
+        if (cur.episodes.length >= ATTENTION_MAX_EPISODES) cur.episodes.shift();
+        cur.episodes.push(ep);
+      } else cur.episodes[at] = ep;
+      try {
+        fs.mkdirSync(userDataDir(uid), { recursive: true });
+        backupFile(userDataDir(uid), 'attention');
+        writeJsonAtomic(file, cur);
+      } catch (e) { console.error('[attention]', e && e.message); return sendJson(res, 500, { error: 'save_failed' }); }
+      return sendJson(res, 200, { ok: true, stored: ep.id, total: cur.episodes.length });
+    }
+
+    return sendJson(res, 405, { error: 'method not allowed' });
+  }
+
   // ---- Воронка первого пути (агрегат, считается из уже лежащих данных) ----
   //
   // Почему НЕ внешняя аналитика. В проекте уже есть своя (`/api/analytics`): клиент шлёт
