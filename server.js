@@ -361,6 +361,9 @@ function readBoardV2Account(uid) {
 function writeBoardV2Account(uid, value) {
   writeJsonAtomic(path.join(userDataDir(uid), BOARD_V2_ACCOUNT_FILE), value);
 }
+const AttentionNudge = require('./server-attention-nudge-v1.js');
+const attentionQuietAsk = AttentionNudge.createQuietAsk();
+
 const boardV2PageVerifier = BoardV2PageVerifier.createPageVerifier();
 const boardV2Adapter = BoardV2BraveAdapter.createAdapter({
   apiKey: BRAVE_SEARCH_API_KEY,
@@ -769,6 +772,15 @@ function pickVariant(pool, lastIdx) {
   const idx = ((Number.isInteger(lastIdx) ? lastIdx : -1) + 1) % pool.length;
   return { text: pool[idx], idx };
 }
+// Тихий вопрос после отсутствия (§5 слой A). Все варианты — вопросы: §8 п.1 запрещает
+// угадывать болезнь, отдых, поездку или работу вне Satoru. Дверь открыта, вывода нет.
+// Язык русский, как и остальной NUDGE_TEXT — общий языковой долг пушей, отдельная задача.
+const QUIET_ASK_TEXT = [
+  'Давно тебя не видел. Это был отдых, занятость или что-то тяжёлое?',
+  'Тебя не было пару дней. Как оно — по-хорошему тихо или наоборот?',
+  'Ты пропал, и я не знаю почему. Расскажешь одной строкой?',
+];
+
 async function pushTick() {
   let users; try { users = loadUsers(); } catch { return; }
   let changed = false;
@@ -800,6 +812,22 @@ async function pushTick() {
         vIdx.p = idx; user.push.variantIdx = vIdx;
         payload = { title: `🐾 ${pet} заскучал`, body: text.replace(/\{pet\}/g, pet), url: './?view=pets', tag: 'satoru-pet' };
         log.p = true; user.push.petAt = date;
+      }
+    }
+    // Тихий вопрос — последним по приоритету: он уместен только когда сказать больше
+    // нечего. Перебивать им утренний чек-ин значило бы менять тёплое на тревожное.
+    if (!payload) {
+      const away = daysBetween((comp && comp.lastSeen) || date, date);
+      const verdict = attentionQuietAsk.decide({
+        quietDays: away, hour, today: date,
+        askedAt: user.push.quietAskAt || null,
+        askedToday: !!(log.m || log.e || log.p || log.q),
+      });
+      if (verdict.ask) {
+        const { text, idx } = pickVariant(QUIET_ASK_TEXT, vIdx.q);
+        vIdx.q = idx; user.push.variantIdx = vIdx;
+        payload = { title: `${name}`, body: text, url: './?view=today', tag: 'satoru-quiet' };
+        log.q = true; user.push.quietAskAt = date;
       }
     }
     if (!payload) { if (user.push.log !== log) { user.push.log = log; changed = true; } continue; }
