@@ -20,8 +20,8 @@ test('Board v2 model, pacing, offers, completion and runtime load in dependency 
     assert.match(index, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=20260825-board-v2-runtime-v169-1`));
     assert.equal((sw.match(new RegExp(`'${file.replaceAll('.', '\\.')}'`, 'g')) || []).length, 1);
   }
-  assert.match(index, /app\.js\?v=20260825-board-v2-runtime-v169-1/);
-  assert.match(sw, /const CACHE = 'satoru-v169';/);
+  assert.match(index, /app\.js\?v=20260825-goals-v169-2/);
+  assert.match(sw, /const CACHE = 'satoru-v170';/);
 });
 
 test('account defaults and hydration normalize offers, completion and titles', () => {

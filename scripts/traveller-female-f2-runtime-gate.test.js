@@ -185,8 +185,8 @@ test('v167 shell pins and pre-caches the complete immutable F2 runtime', () => {
   ]) {
     assert.match(html, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=${revision}`));
   }
-  assert.match(html, /app\.js\?v=20260825-board-v2-runtime-v169-1/);
-  assert.match(sw, /const CACHE = 'satoru-v169';/);
+  assert.match(html, /app\.js\?v=20260825-goals-v169-2/);
+  assert.match(sw, /const CACHE = 'satoru-v170';/);
   const shellRoutes = [appearance.assetManifest('female').runtimeManifest, ...appearance.expectedAssets('female')]
     .map((route) => route.replace(/^\//, ''));
   for (const route of shellRoutes) {

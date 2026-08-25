@@ -2,6 +2,18 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-25] 🎯 Goals v169 — инициативы вместо стены целей
+
+- Первый экран Goals теперь отвечает только на вопрос «что двигать сейчас»: максимум три активные инициативы, внутри каждой одна ближайшая цель и одно следующее действие. Mission/Vision/Path, waiting и paused состояния не просачиваются в этот контур; полная parent/child-цепочка остаётся в `Карта целей`.
+- Навигация сокращена до двух первичных режимов `Сейчас` / `Все цели`. Карта, архив, создание инициативы и разбор с Тенью собраны в purpose-меню `Ещё`; отдельный FAB Тени на Goals скрыт. В `Все цели` работает точный горизонтальный фильтр, поэтому `Краткосрочные` больше не показывает миссию.
+- Добавлен account-owned `goal-groups.json`: стабильные ID, active/paused/archived, create/edit/pause/archive/restore и безопасное связывание с целями. Архивирование затрагивает только активные незавершённые цели этой инициативы и помечает их источником архива, поэтому restore не поднимает ранее архивированные вручную цели.
+- `/api/goals/commit` теперь атомарно записывает три файла — goals, goal-groups и linked tasks — с ownership, graph validation, orphan/cycle rejection и rollback. Payload старой v168-вкладки из двух файлов остаётся допустимым и не стирает инициативы.
+- Деталь цели стала одним доступным dialog: initial focus, inert-фон, настоящий scroll lock, Tab trap, Escape/backdrop и return focus. Снаружи видны только статус и следующий шаг; план, контекст и destructive management закрыты в трёх disclosure. Создание цели поднято наверх, технические флаги метрики заменены режимами «этапы / достичь / снизить / держать».
+- Recovery различает corrupted/load state от empty, запрещает запись до успешной загрузки и сохраняет фокус на Retry после ошибки. Новая copy покрыта RU/EN/DE/UK/ES; mobile/coarse controls имеют минимум 42 px, reduced-motion и hover ограничены scoped-контрактами.
+- Board transaction уже занял `satoru-v169`, поэтому этот отдельный shell-change честно поднят `satoru-v169 → satoru-v170`; новый pure-модуль `public/goals-initiatives-v1.js` добавлен в index/SW shell без удаления Board v2 runtime.
+
+QA: Goals **14/14 PASS**; полный post-rebase `npm test` — **716/716 PASS**. Live Browser: 360×800, 375×812, 1280×900; RU/EN/DE, dark/light, keyboard/dialog flow, create→pause→archive→restore, malformed→failed Retry→successful Retry, 42 px и zero horizontal overflow. Публикуемые JPEG и полный отчёт: `docs/design-qa/2026-08-25-goals-v169/` и `work/goals-v169-live-review.md`.
+
 ## [2026-08-25] Board v2 C0.12 — атомарный account-runtime для точных заказов
 
 - Новый pure-модуль `public/board-v2-runtime.js` соединяет три уже проверенные модели: стабильный snapshot предложения, completion/proof и старый bounded active-ledger Board v1. `take`, `return` и `complete` выпускают immutable transaction; произвольный объект не может выдать себя за разрешённое изменение.

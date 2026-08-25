@@ -1406,6 +1406,48 @@ const I18N_EXTRA = {
   'Жду': { en: 'Waiting', de: 'Warten', uk: 'Чекаю', es: 'En espera' },
   'Пауза': { en: 'Paused', de: 'Pausiert', uk: 'Пауза', es: 'En pausa' },
   // Goals IA v168 — exact horizons, compact rows and a focused detail surface
+  // Goals v169 — initiatives and a calm "what matters now" contour
+  'Сейчас': { en: 'Now', de: 'Jetzt', uk: 'Зараз', es: 'Ahora' },
+  'Все цели': { en: 'All goals', de: 'Alle Ziele', uk: 'Усі цілі', es: 'Todas las metas' },
+  '+ Инициатива': { en: '+ Initiative', de: '+ Initiative', uk: '+ Ініціатива', es: '+ Iniciativa' },
+  '+ Первая цель': { en: '+ First goal', de: '+ Erstes Ziel', uk: '+ Перша ціль', es: '+ Primera meta' },
+  'Инициатива': { en: 'Initiative', de: 'Initiative', uk: 'Ініціатива', es: 'Iniciativa' },
+  'Новая инициатива': { en: 'New initiative', de: 'Neue Initiative', uk: 'Нова ініціатива', es: 'Nueva iniciativa' },
+  'Название инициативы': { en: 'Initiative name', de: 'Name der Initiative', uk: 'Назва ініціативи', es: 'Nombre de la iniciativa' },
+  'Создать инициативу': { en: 'Create initiative', de: 'Initiative erstellen', uk: 'Створити ініціативу', es: 'Crear iniciativa' },
+  'Без инициативы': { en: 'No initiative', de: 'Ohne Initiative', uk: 'Без ініціативи', es: 'Sin iniciativa' },
+  'Все инициативы': { en: 'All initiatives', de: 'Alle Initiativen', uk: 'Усі ініціативи', es: 'Todas las iniciativas' },
+  'Все активные цели': { en: 'All active goals', de: 'Alle aktiven Ziele', uk: 'Усі активні цілі', es: 'Todas las metas activas' },
+  'активных целей': { en: 'active goals', de: 'aktive Ziele', uk: 'активних цілей', es: 'metas activas' },
+  'Что важно сейчас': { en: 'What matters now', de: 'Was jetzt wichtig ist', uk: 'Що важливо зараз', es: 'Lo que importa ahora' },
+  'До трёх активных инициатив. В каждой — одно ближайшее действие.': { en: 'Up to three active initiatives. One next action in each.', de: 'Bis zu drei aktive Initiativen. Jeweils eine nächste Handlung.', uk: 'До трьох активних ініціатив. У кожній — одна найближча дія.', es: 'Hasta tres iniciativas activas. Una siguiente acción en cada una.' },
+  'До трёх ближайших целей. Миссия и видение остаются в Карте.': { en: 'Up to three nearest goals. Mission and vision stay in Map.', de: 'Bis zu drei nächste Ziele. Mission und Vision bleiben in der Karte.', uk: 'До трьох найближчих цілей. Місія й бачення залишаються на Карті.', es: 'Hasta tres metas próximas. La misión y la visión permanecen en el Mapa.' },
+  'Здесь появятся цели, которые можно двигать сейчас.': { en: 'Goals you can move now will appear here.', de: 'Hier erscheinen Ziele, die du jetzt bewegen kannst.', uk: 'Тут з’являться цілі, які можна рухати зараз.', es: 'Aquí aparecerán las metas que puedes mover ahora.' },
+  'Найти следующий шаг с Тенью': { en: 'Find the next step with Shadow', de: 'Nächsten Schritt mit Schatten finden', uk: 'Знайти наступний крок із Тінню', es: 'Encontrar el siguiente paso con Sombra' },
+  'Показать остальные': { en: 'Show the rest', de: 'Weitere anzeigen', uk: 'Показати решту', es: 'Mostrar el resto' },
+  'Показать': { en: 'Show', de: 'Anzeigen', uk: 'Показати', es: 'Mostrar' },
+  'Здесь можно разбирать структуру; на первом экране остаются только ближайшие действия.': { en: 'Work with the structure here; the first screen keeps only next actions.', de: 'Hier bearbeitest du die Struktur; auf dem ersten Bildschirm bleiben nur nächste Handlungen.', uk: 'Тут можна розбирати структуру; на першому екрані лишаються тільки найближчі дії.', es: 'Aquí puedes trabajar la estructura; la primera pantalla conserva solo las siguientes acciones.' },
+  'По этому фильтру целей нет.': { en: 'No goals match this filter.', de: 'Keine Ziele entsprechen diesem Filter.', uk: 'За цим фільтром цілей немає.', es: 'No hay metas con este filtro.' },
+  'Миссия, видение и путь живут здесь — не в списке ближайших действий.': { en: 'Mission, vision and path live here — not in the next-action list.', de: 'Mission, Vision und Weg leben hier — nicht in der Liste der nächsten Handlungen.', uk: 'Місія, бачення й шлях живуть тут — не у списку найближчих дій.', es: 'La misión, la visión y el camino viven aquí, no en la lista de siguientes acciones.' },
+  'Управление': { en: 'Manage', de: 'Verwalten', uk: 'Керування', es: 'Gestionar' },
+  'Открыть инициативу': { en: 'Open initiative', de: 'Initiative öffnen', uk: 'Відкрити ініціативу', es: 'Abrir iniciativa' },
+  'Управлять инициативой': { en: 'Manage initiative', de: 'Initiative verwalten', uk: 'Керувати ініціативою', es: 'Gestionar iniciativa' },
+  'На паузе': { en: 'Paused', de: 'Pausiert', uk: 'На паузі', es: 'En pausa' },
+  'В архиве': { en: 'Archived', de: 'Archiviert', uk: 'В архіві', es: 'Archivada' },
+  'В этой инициативе пока нет активных целей.': { en: 'This initiative has no active goals yet.', de: 'Diese Initiative hat noch keine aktiven Ziele.', uk: 'У цій ініціативі поки немає активних цілей.', es: 'Esta iniciativa aún no tiene metas activas.' },
+  'В этой инициативе нет архивированных целей.': { en: 'This initiative has no archived goals.', de: 'Diese Initiative hat keine archivierten Ziele.', uk: 'У цій ініціативі немає архівованих цілей.', es: 'Esta iniciativa no tiene metas archivadas.' },
+  'Инициатива объединяет цели одного реального проекта, не меняя их иерархию.': { en: 'An initiative groups goals from one real project without changing their hierarchy.', de: 'Eine Initiative bündelt Ziele eines realen Projekts, ohne ihre Hierarchie zu verändern.', uk: 'Ініціатива об’єднує цілі одного реального проєкту, не змінюючи їхньої ієрархії.', es: 'Una iniciativa agrupa metas de un proyecto real sin cambiar su jerarquía.' },
+  'Убрать инициативу из активных?': { en: 'Remove this initiative from active work?', de: 'Diese Initiative aus der aktiven Arbeit entfernen?', uk: 'Прибрати цю ініціативу з активної роботи?', es: '¿Quitar esta iniciativa del trabajo activo?' },
+  'Инициатива и связанные с ней активные цели перейдут в архив. Это можно вернуть.': { en: 'The initiative and its linked active goals will move to the archive. You can restore them.', de: 'Die Initiative und ihre verknüpften aktiven Ziele werden archiviert. Du kannst sie wiederherstellen.', uk: 'Ініціатива та пов’язані з нею активні цілі перейдуть до архіву. Їх можна повернути.', es: 'La iniciativa y sus metas activas vinculadas pasarán al archivo. Puedes restaurarlas.' },
+  'В архив вместе с целями': { en: 'Archive with goals', de: 'Mit Zielen archivieren', uk: 'В архів разом із цілями', es: 'Archivar con las metas' },
+  'Вернуть инициативу и цели': { en: 'Restore initiative and goals', de: 'Initiative und Ziele wiederherstellen', uk: 'Повернути ініціативу та цілі', es: 'Restaurar iniciativa y metas' },
+  'Приостановить': { en: 'Pause', de: 'Pausieren', uk: 'Призупинити', es: 'Pausar' },
+  'Возобновить': { en: 'Resume', de: 'Fortsetzen', uk: 'Відновити', es: 'Reanudar' },
+  'Инициатива и её цели в архиве': { en: 'Initiative and its goals archived', de: 'Initiative und Ziele archiviert', uk: 'Ініціативу та її цілі архівовано', es: 'Iniciativa y metas archivadas' },
+  'Инициатива возвращена': { en: 'Initiative restored', de: 'Initiative wiederhergestellt', uk: 'Ініціативу повернено', es: 'Iniciativa restaurada' },
+  'Этапы — отмечать выполненное': { en: 'Checklist — mark completed items', de: 'Etappen — Erledigtes markieren', uk: 'Етапи — позначати виконане', es: 'Etapas — marcar lo completado' },
+  'Выбери число только если прогресс действительно измеряется числом.': { en: 'Choose a number only when progress is genuinely numeric.', de: 'Wähle eine Zahl nur, wenn der Fortschritt wirklich numerisch ist.', uk: 'Обирай число лише тоді, коли прогрес справді вимірюється числом.', es: 'Elige un número solo si el progreso se mide realmente con una cifra.' },
+  'Создай одну конкретную цель или попроси Тень разложить замысел на ближайший шаг.': { en: 'Create one concrete goal, or ask Shadow to turn an intention into a next step.', de: 'Lege ein konkretes Ziel an oder bitte Schatten, eine Absicht in den nächsten Schritt zu übersetzen.', uk: 'Створи одну конкретну ціль або попроси Тінь перетворити задум на найближчий крок.', es: 'Crea una meta concreta o pide a Sombra que convierta una intención en el siguiente paso.' },
   'Фокус': { en: 'Focus', de: 'Fokus', uk: 'Фокус', es: 'Enfoque' },
   'Горизонты': { en: 'Horizons', de: 'Horizonte', uk: 'Горизонти', es: 'Horizontes' },
   'Карта': { en: 'Map', de: 'Karte', uk: 'Карта', es: 'Mapa' },
@@ -3675,10 +3717,17 @@ function validateGoalsPayload(value) {
       && typeof step.id === 'string' && step.id && !stepIds.has(step.id) && (stepIds.add(step.id), true)
       && typeof step.title === 'string' && typeof step.done === 'boolean')) return false;
     if (goal.parentId != null && typeof goal.parentId !== 'string') return false;
+    if (goal.groupId != null && (typeof goal.groupId !== 'string' || !goal.groupId.trim())) return false;
     if (goal.metric != null && (!goal.metric || typeof goal.metric !== 'object' || Array.isArray(goal.metric)
       || !Number.isFinite(Number(goal.metric.start)) || !Number.isFinite(Number(goal.metric.current)) || !Number.isFinite(Number(goal.metric.target)))) return false;
     ids.add(goal.id); return true;
   });
+}
+function validateGoalGroupsPayload(value) {
+  return !!(window.GoalsInitiativesV1 && window.GoalsInitiativesV1.validateGroups(value));
+}
+function normalizeLoadedGoalGroups(value) {
+  return window.GoalsInitiativesV1 ? window.GoalsInitiativesV1.normalizeGroups(value) : [];
 }
 function normalizeLoadedGoals(value) {
   const goals = Array.isArray(value) ? value : [];
@@ -3705,13 +3754,16 @@ function normalizeLoadedGoals(value) {
   }
   return goals;
 }
+function normalizeGoalGroupLinks() {
+  if (window.GoalsInitiativesV1) window.GoalsInitiativesV1.reconcileGoalLinks(State.goals, State.goalGroups);
+}
 function normalizeGoalTaskLinks() {
   const ids = new Set((State.goals || []).map((goal) => goal.id));
   for (const task of State.tasks || []) if (task.goalId != null && !ids.has(task.goalId)) delete task.goalId;
 }
 function goalWriteAllowed(source, notify = false) {
-  if (!State._goalsLoadError && !State._tasksLoadError) return true;
-  clearTimeout(Store._timers.goals); clearTimeout(Store._timers.tasks);
+  if (!State._goalsLoadError && !State._goalGroupsLoadError && !State._tasksLoadError) return true;
+  clearTimeout(Store._timers.goals); clearTimeout(Store._timers['goal-groups']); clearTimeout(Store._timers.tasks);
   if (notify) {
     const now = Date.now();
     if (now - (State._goalsWriteBlockedNoticeAt || 0) > 2000) {
@@ -3719,7 +3771,7 @@ function goalWriteAllowed(source, notify = false) {
       toast(t('Изменения целей заблокированы до восстановления данных'));
     }
   }
-  console.error(`${source} blocked`, 'goals', State._goalsLoadError || State._tasksLoadError);
+  console.error(`${source} blocked`, 'goals', State._goalsLoadError || State._goalGroupsLoadError || State._tasksLoadError);
   return false;
 }
 function habitWriteAllowed(source, notify = false) {
@@ -3776,7 +3828,7 @@ const Store = {
   },
   save(name, obj) {
     if (name === 'tasks' && !taskWriteAllowed('save', true)) return false;
-    if (name === 'goals' && !goalWriteAllowed('save', true)) return false;
+    if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('save', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('save', true)) return false;
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('save', true)) return false;
     clearTimeout(this._timers[name]);
@@ -3788,7 +3840,7 @@ const Store = {
   // Именно так онбординг терял выбранные сферы и подставлял вместо них дефолтные.
   async saveNow(name, obj) {
     if (name === 'tasks' && !taskWriteAllowed('saveNow', true)) return false;
-    if (name === 'goals' && !goalWriteAllowed('saveNow', true)) return false;
+    if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('saveNow', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('saveNow', true)) return false;
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('saveNow', true)) return false;
     clearTimeout(this._timers[name]);
@@ -3798,7 +3850,7 @@ const Store = {
     // Последний рубеж: прямые Store._put('tasks', ...) тоже не могут
     // перезаписать повреждённый/недоступный файл fallback-массивом.
     if (name === 'tasks' && !taskWriteAllowed('_put', true)) return false;
-    if (name === 'goals' && !goalWriteAllowed('_put', true)) return false;
+    if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('_put', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('_put', true)) return false;
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('_put', true)) return false;
     try {
@@ -5050,7 +5102,7 @@ const State = {
   obSkills: new Set(), // выбранные шаблоны на онбординге
   // app data
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
-  goals: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
+  goals: null, goalGroups: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
   lootbox: null, inbox: null, inboxOpen: false, antihabits: null, aiKeys: null, episodes: null,
   boardMedia: null, _boardMediaLoadError: '', _boardMediaBusy: false, _boardBusy: false, _boardError: '', _boardFocusAfterCommit: '',
   strava: null, _stravaSyncing: false,
@@ -5062,8 +5114,8 @@ const State = {
   _tasksLoadError: '', _tasksLoadBusy: false, _tasksWriteBlockedNoticeAt: 0, _tasksFocusAfterCommit: '',
   _habitsLoadError: '', _habitsLoadBusy: false, _habitsWriteBlockedNoticeAt: 0,
   _habitTxnBusy: '', _habitError: '', _habitUndo: null, _habitUndoTimer: null, _habitsFocusAfterCommit: '',
-  _goalsLoadError: '', _goalsLoadBusy: false, _goalsWriteBlockedNoticeAt: 0,
-  _goalTxnBusy: '', _goalsError: '', _goalsFocusAfterCommit: '', _goalOpenId: '', _goalDeepLinkId: '', _goalsComposerOpen: false,
+  _goalsLoadError: '', _goalGroupsLoadError: '', _goalsLoadBusy: false, _goalsWriteBlockedNoticeAt: 0,
+  _goalTxnBusy: '', _goalsError: '', _goalsFocusAfterCommit: '', _goalOpenId: '', _goalDeepLinkId: '', _goalsComposerOpen: false, _goalGroupFilter: '',
   _calendarUndo: null, _calendarUndoTimer: null, _calendarFocusAfterCommit: '',
   _inboxLoadError: '', _inboxBusy: false, _inboxFocusAfterCommit: '',
   _guideV3Error: '', _guideV3SessionPrompted: false, _guideV3StartBusy: false,
@@ -9788,13 +9840,13 @@ async function economyCommit(data) {
     return response.ok;
   } catch (error) { console.error('economy commit', error); return false; }
 }
-async function goalDataCommit(nextGoals, nextTasks = State.tasks) {
+async function goalDataCommit(nextGoals, nextTasks = State.tasks, nextGroups = State.goalGroups) {
   if (!goalWriteAllowed('goalDataCommit', true)) return false;
-  clearTimeout(Store._timers.goals); clearTimeout(Store._timers.tasks);
+  clearTimeout(Store._timers.goals); clearTimeout(Store._timers['goal-groups']); clearTimeout(Store._timers.tasks);
   try {
     const response = await fetch('/api/goals/commit', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data: { goals: nextGoals, tasks: nextTasks } }),
+      body: JSON.stringify({ data: { goals: nextGoals, tasks: nextTasks, groups: nextGroups || [] } }),
     });
     if (response.status === 401) { handleAccountSessionExpired(); return false; }
     return response.ok;
@@ -9803,17 +9855,18 @@ async function goalDataCommit(nextGoals, nextTasks = State.tasks) {
 async function retryGoalsLoad() {
   if (State._goalsLoadBusy) return false;
   State._goalsLoadBusy = true; State._goalsError = ''; State._goalsFocusAfterCommit = '[data-action="goals-retry"]'; render();
-  const [goals, tasks] = await Promise.all([
+  const [goals, groups, tasks] = await Promise.all([
     Store.loadChecked('goals', [], validateGoalsPayload),
+    Store.loadChecked('goal-groups', [], validateGoalGroupsPayload),
     Store.loadChecked('tasks', [], validateTasksPayload),
   ]);
   State._goalsLoadBusy = false;
-  State._goalsLoadError = goals.error; State._tasksLoadError = tasks.error;
-  if (!goals.error && !tasks.error) {
-    State.goals = normalizeLoadedGoals(goals.value); State.tasks = normalizeLoadedTasks(tasks.value); normalizeGoalTaskLinks();
+  State._goalsLoadError = goals.error; State._goalGroupsLoadError = groups.error; State._tasksLoadError = tasks.error;
+  if (!goals.error && !groups.error && !tasks.error) {
+    State.goals = normalizeLoadedGoals(goals.value); State.goalGroups = normalizeLoadedGoalGroups(groups.value); State.tasks = normalizeLoadedTasks(tasks.value); normalizeGoalGroupLinks(); normalizeGoalTaskLinks();
     State._goalsWriteBlockedNoticeAt = 0; State._goalsFocusAfterCommit = '#goals-title';
-  }
-  render(); return !State._goalsLoadError && !State._tasksLoadError;
+  } else State._goalsFocusAfterCommit = '[data-action="goals-retry"]';
+  render(); return !State._goalsLoadError && !State._goalGroupsLoadError && !State._tasksLoadError;
 }
 function habitDayKey(date = new Date()) { return fmtDate(date); }
 function localDayOrdinal(day) {
@@ -10844,7 +10897,7 @@ async function obAiApply() {
   // а до онбординга State ещё не инициализирован приложением. Дефолтные 6 сфер обязательно
   // затираем — иначе человек получит вперемешку свои и те, которых не выбирал.
   State.settings = freshOnboardingSettings([]);
-  State.tasks = []; State.goals = []; State.tree = {};
+  State.tasks = []; State.goals = []; State.goalGroups = []; State.tree = {};
   applyProposals(_obItems, accepted);
   // saveNow, а не save: следом initApp() читает данные с сервера, и дебаунс их не догонит.
   await Store.saveNow('settings', State.settings);
@@ -16426,33 +16479,37 @@ function goalNextAction(g) {
   return step ? { kind: 'step', id: step.id, title: step.title } : null;
 }
 function goalFocusList(goals) {
-  const typeRank = { short: 0, recurring: 1, mid: 2, long: 3, path: 4, vision: 5, mission: 6 };
-  return [...goals].sort((a, b) => {
-    const ad = a.targetDate ? String(a.targetDate) : '9999-12-31', bd = b.targetDate ? String(b.targetDate) : '9999-12-31';
-    const ao = a.targetDate && a.targetDate < todayStr() ? 0 : 1, bo = b.targetDate && b.targetDate < todayStr() ? 0 : 1;
-    const an = goalNextAction(a) ? 0 : 1, bn = goalNextAction(b) ? 0 : 1;
-    return ao - bo || ad.localeCompare(bd) || an - bn || (typeRank[a.type] ?? 9) - (typeRank[b.type] ?? 9) || String(a.createdAt || '').localeCompare(String(b.createdAt || ''));
-  }).slice(0, 5);
+  return window.GoalsInitiativesV1.rankGoals(goals, { today: todayStr(), nextAction: goalNextAction }).slice(0, 3);
 }
-function goalItem(g, depth = 0) {
+function goalGroupById(id) { return (State.goalGroups || []).find((group) => group.id === id) || null; }
+function goalGroupOptionsHTML(selectedId = '') {
+  const groups = (State.goalGroups || []).filter((group) => group.status !== 'archived');
+  return `<option value="">${t('Без инициативы')}</option>` + groups.map((group) => `<option value="${esc(group.id)}" ${group.id === selectedId ? 'selected' : ''}>${esc(group.title)}${group.status === 'paused' ? ` · ${t('Пауза')}` : ''}</option>`).join('');
+}
+function goalMeaningfulProgress(g) {
+  return goalProgressKind(g) === 'metric' || (Array.isArray(g.steps) && g.steps.length > 0);
+}
+function goalItem(g, depth = 0, variant = 'standard') {
   const sk = skillById(g.skillId) || { name: t('Без сферы'), color: 'var(--muted)' };
-  const prog = goalProgress(g), done = !!g.completedAt, st = goalStatusInfo(g), children = goalChildren(g.id).filter((child) => !!child.archived === !!g.archived).length;
-  const next = goalNextAction(g);
-  return `<article class="goal-item ${done ? 'is-done' : ''} ${g.archived ? 'is-archived' : ''}" id="goal-${esc(g.id)}" data-goal-id="${esc(g.id)}" style="--goal-depth:${depth};--goal-color:${esc(sk.color)}">
+  const done = !!g.completedAt, children = goalChildren(g.id).filter((child) => !!child.archived === !!g.archived).length, next = goalNextAction(g), group = goalGroupById(g.groupId);
+  const state = g.status === 'waiting' || g.status === 'paused' || done || g.archived ? `<span class="goal-status ${goalStatusInfo(g).cls}">${esc(goalStatusText(g))}</span>` : '';
+  const progress = goalMeaningfulProgress(g) ? `<span>${esc(goalProgressText(g))}</span>` : '';
+  const meta = [state, group ? `<span class="goal-group-chip" data-noi18n>${esc(group.title)}</span>` : '', `<span>${goalTypeLabel(g.type)}</span>`, progress, children && variant === 'tree' ? `<span>${children} ${t('дочерних')}</span>` : '', goalDeadlineHTML(g)].filter(Boolean).join('');
+  return `<article class="goal-item goal-item-${variant} ${done ? 'is-done' : ''} ${g.archived ? 'is-archived' : ''}" id="goal-${esc(g.id)}" data-goal-id="${esc(g.id)}" style="--goal-depth:${depth};--goal-color:${esc(sk.color)}">
     <button type="button" class="goal-summary" data-action="open-goal-detail" data-id="${esc(g.id)}" aria-label="${esc(t('Открыть цель'))}: ${esc(g.title)}">
-      <span class="goal-summary-main"><span class="goal-title" data-noi18n>${done ? '✓ ' : ''}${esc(g.title)}</span><span class="goal-summary-meta"><span class="goal-status ${st.cls}">${esc(goalStatusText(g))}</span><span>${esc(goalProgressText(g))}</span>${children ? `<span>${children} ${t('дочерних')}</span>` : ''}</span><span class="goal-next"><b>${t('Следующий шаг')}:</b> <span data-noi18n>${esc(next ? next.title : t('Нет следующего шага'))}</span></span></span>
-      <span class="goal-progress"><progress max="100" value="${prog}" aria-label="${esc(t('Прогресс'))}: ${prog}%"></progress><span>${prog}%</span></span>
+      <span class="goal-summary-main"><span class="goal-title" data-noi18n>${done ? '✓ ' : ''}${esc(g.title)}</span>${meta ? `<span class="goal-summary-meta">${meta}</span>` : ''}${next ? `<span class="goal-next"><span class="goal-next-mark" aria-hidden="true">→</span><span data-noi18n>${esc(next.title)}</span></span>` : ''}</span>
+      <span class="goal-open-mark" aria-hidden="true">›</span>
     </button>
   </article>`;
 }
 function goalTreeHTML(source) {
   const ids = new Set(source.map((goal) => goal.id));
   const roots = source.filter((goal) => !goal.parentId || !ids.has(goal.parentId));
-  const walk = (goal, depth) => `<div class="goal-branch">${goalItem(goal, depth)}${source.filter((candidate) => candidate.parentId === goal.id).map((child) => walk(child, depth + 1)).join('')}</div>`;
+  const walk = (goal, depth) => `<div class="goal-branch">${goalItem(goal, depth, 'tree')}${source.filter((candidate) => candidate.parentId === goal.id).map((child) => walk(child, depth + 1)).join('')}</div>`;
   return roots.map((goal) => walk(goal, 0)).join('');
 }
 function goalsLoadRecoveryHTML() {
-  const invalid = State._goalsLoadError === 'invalid' || State._tasksLoadError === 'invalid';
+  const invalid = State._goalsLoadError === 'invalid' || State._goalGroupsLoadError === 'invalid' || State._tasksLoadError === 'invalid';
   return `<section class="goals-load-card card" role="alert" aria-labelledby="goals-load-title"><h2 id="goals-load-title">${t('Цели временно недоступны')}</h2><p>${t(invalid ? 'Файл целей повреждён. Мы ничего не перезапишем до восстановления.' : 'Не удалось загрузить цели. Мы ничего не перезапишем до восстановления.')}</p><button type="button" class="btn" data-action="goals-retry" ${State._goalsLoadBusy ? 'disabled' : ''}>${t(State._goalsLoadBusy ? 'Проверяем данные…' : 'Повторить загрузку')}</button></section>`;
 }
 function goalProgressBodyHTML(g) {
@@ -16467,38 +16524,67 @@ function goalLinkedBodyHTML(g) {
   return `<section class="goal-linked" aria-labelledby="goal-linked-${g.id}"><h4 id="goal-linked-${g.id}">${t('Следующие действия')}</h4>${list}${g.archived ? '' : `<form class="goal-task-form" data-goal="${g.id}"><label><span>${t('Квест на сегодня')}</span><input name="title" maxlength="160" required /></label><button type="submit" class="btn ghost">${t('Создать квест')}</button></form>`}</section>`;
 }
 function goalDetailContentHTML(g) {
-  const sk = skillById(g.skillId) || { name: t('Без сферы'), color: 'var(--muted)' }, chain = goalChain(g).slice().reverse(), next = goalNextAction(g), prog = goalProgress(g), st = goalStatusInfo(g);
+  const sk = skillById(g.skillId) || { name: t('Без сферы'), color: 'var(--muted)' }, chain = goalChain(g).slice().reverse(), next = goalNextAction(g), st = goalStatusInfo(g), group = goalGroupById(g.groupId);
   const nextHTML = next ? (next.kind === 'task' ? `<a href="?view=today" data-action="goto-task" data-id="${esc(next.id)}" data-noi18n>${esc(next.title)}</a>` : `<span data-noi18n>${esc(next.title)}</span>`) : `<span>${t('У этой цели пока нет следующего шага.')}</span>`;
   return `<button type="button" class="modal-x" data-action="goal-detail-close" aria-label="${t('Закрыть цель')}">✕</button>${State._goalsError ? `<div class="goals-error" role="alert">${esc(State._goalsError)}</div>` : ''}
-    <header class="goal-detail-head"><p class="goals-kicker">${goalTypeLabel(g.type)}</p><h2 id="goal-detail-title" tabindex="-1" data-noi18n>${esc(g.title)}</h2><p id="goal-detail-summary"><span class="goal-status ${st.cls}">${esc(goalStatusText(g))}</span> · ${esc(goalProgressText(g))}</p><div class="goal-detail-progress"><progress max="100" value="${prog}" aria-label="${esc(t('Прогресс'))}: ${prog}%"></progress><span>${prog}%</span></div></header>
+    <header class="goal-detail-head"><p class="goals-kicker">${group ? `<span data-noi18n>${esc(group.title)}</span> · ` : ''}${goalTypeLabel(g.type)}</p><h2 id="goal-detail-title" tabindex="-1" data-noi18n>${esc(g.title)}</h2><p id="goal-detail-summary"><span class="goal-status ${st.cls}">${esc(goalStatusText(g))}</span>${goalMeaningfulProgress(g) ? ` · ${esc(goalProgressText(g))}` : ''}</p></header>
     <section class="goal-next-card" aria-labelledby="goal-next-title"><h3 id="goal-next-title">${t('Следующий шаг')}</h3>${nextHTML}</section>
-    <details class="goal-detail-section" open><summary>${t('План цели')}</summary><div class="goal-detail-section-body">${goalProgressBodyHTML(g)}${goalLinkedBodyHTML(g)}</div></details>
-    <details class="goal-detail-section"><summary>${t('Контекст цели')}</summary><div class="goal-detail-section-body">${chain.length ? `<nav class="goal-breadcrumb" aria-label="${t('Цепочка цели')}">${chain.map((parent) => `<a href="${esc(goalDeepLinkHref(parent.id))}" data-action="goto-goal" data-id="${parent.id}" data-noi18n>${esc(parent.title)}</a>`).join('<span aria-hidden="true">›</span>')}</nav>` : ''}${g.description ? `<p class="goal-desc" data-noi18n>${esc(g.description)}</p>` : ''}<div class="goal-meta"><span class="t-skill" style="--c:${esc(sk.color)}">${esc(i18nWord(sk.name, lang()))}</span><span class="goal-type type-${g.type || 'short'}">${goalTypeLabel(g.type)}</span>${goalDeadlineHTML(g)}</div><p class="goal-source-note">${t('Вся цепочка видна в Карте; здесь остаётся только контекст выбранной цели.')}</p></div></details>
-    <details class="goal-detail-section goal-detail-more"><summary>${t('Ещё')}</summary><div class="goal-detail-section-body"><form class="goal-edit-form" data-goal="${g.id}"><label><span>${t('Название')}</span><input name="title" value="${esc(g.title)}" maxlength="160" required data-noi18n /></label><label><span>${t('Описание')}</span><textarea name="description" maxlength="800" data-noi18n>${esc(g.description || '')}</textarea></label><label><span>${t('Родительская цель')}</span><select name="parentId">${goalParentOptionsHTML(g)}</select></label><label><span>${t('Сфера')}</span><select name="skillId">${skillOptionsHTML(g.skillId)}</select></label><label><span>${t('Горизонт')}</span><select name="type">${GOAL_TYPES.map((type) => `<option value="${type.id}" ${type.id === g.type ? 'selected' : ''}>${esc(t(type.label))}</option>`).join('')}</select></label><label><span>${t('Дедлайн')}</span><input name="targetDate" type="date" value="${esc(g.targetDate || '')}" /></label><label><span>${t('Состояние')}</span><select name="status"><option value="active" ${g.status === 'active' ? 'selected' : ''}>${t('Активна')}</option><option value="waiting" ${g.status === 'waiting' ? 'selected' : ''}>${t('Жду')}</option><option value="paused" ${g.status === 'paused' ? 'selected' : ''}>${t('Пауза')}</option></select></label><button type="submit" class="btn">${t('Сохранить изменения')}</button></form><div class="goal-actions"><button type="button" class="btn ghost" data-action="copy-goal-link" data-id="${g.id}">${t('Скопировать ссылку')}</button><button type="button" class="btn ghost" data-action="${g.archived ? 'restore-goal' : 'archive-goal'}" data-id="${g.id}">${g.archived ? t('Вернуть из архива') : t('В архив')}</button><button type="button" class="btn ghost danger" data-action="delete-goal" data-id="${g.id}">${t('Удалить цель')}</button></div></div></details>`;
+    <details class="goal-detail-section"><summary>${t('План цели')}</summary><div class="goal-detail-section-body">${goalProgressBodyHTML(g)}${goalLinkedBodyHTML(g)}</div></details>
+    <details class="goal-detail-section"><summary>${t('Контекст цели')}</summary><div class="goal-detail-section-body">${chain.length ? `<nav class="goal-breadcrumb" aria-label="${t('Цепочка цели')}">${chain.map((parent) => `<a href="${esc(goalDeepLinkHref(parent.id))}" data-action="goto-goal" data-id="${parent.id}" data-noi18n>${esc(parent.title)}</a>`).join('<span aria-hidden="true">›</span>')}</nav>` : ''}${g.description ? `<p class="goal-desc" data-noi18n>${esc(g.description)}</p>` : ''}<div class="goal-meta">${group ? `<span class="goal-group-chip" data-noi18n>${esc(group.title)}</span>` : ''}<span class="t-skill" style="--c:${esc(sk.color)}">${esc(i18nWord(sk.name, lang()))}</span><span class="goal-type type-${g.type || 'short'}">${goalTypeLabel(g.type)}</span>${goalDeadlineHTML(g)}</div><p class="goal-source-note">${t('Вся цепочка видна в Карте; здесь остаётся только контекст выбранной цели.')}</p></div></details>
+    <details class="goal-detail-section goal-detail-more"><summary>${t('Управление')}</summary><div class="goal-detail-section-body"><form class="goal-edit-form" data-goal="${g.id}"><label><span>${t('Название')}</span><input name="title" value="${esc(g.title)}" maxlength="160" required data-noi18n /></label><label><span>${t('Описание')}</span><textarea name="description" maxlength="800" data-noi18n>${esc(g.description || '')}</textarea></label><label><span>${t('Инициатива')}</span><select name="groupId">${goalGroupOptionsHTML(g.groupId || '')}</select></label><label><span>${t('Родительская цель')}</span><select name="parentId">${goalParentOptionsHTML(g)}</select></label><label><span>${t('Сфера')}</span><select name="skillId">${skillOptionsHTML(g.skillId)}</select></label><label><span>${t('Горизонт')}</span><select name="type">${GOAL_TYPES.map((type) => `<option value="${type.id}" ${type.id === g.type ? 'selected' : ''}>${esc(t(type.label))}</option>`).join('')}</select></label><label><span>${t('Дедлайн')}</span><input name="targetDate" type="date" value="${esc(g.targetDate || '')}" /></label><label><span>${t('Состояние')}</span><select name="status"><option value="active" ${g.status === 'active' ? 'selected' : ''}>${t('Активна')}</option><option value="waiting" ${g.status === 'waiting' ? 'selected' : ''}>${t('Жду')}</option><option value="paused" ${g.status === 'paused' ? 'selected' : ''}>${t('Пауза')}</option></select></label><button type="submit" class="btn">${t('Сохранить изменения')}</button></form><div class="goal-actions"><button type="button" class="btn ghost" data-action="copy-goal-link" data-id="${g.id}">${t('Скопировать ссылку')}</button><button type="button" class="btn ghost" data-action="${g.archived ? 'restore-goal' : 'archive-goal'}" data-id="${g.id}">${g.archived ? t('Вернуть из архива') : t('В архив')}</button><button type="button" class="btn ghost danger" data-action="delete-goal" data-id="${g.id}">${t('Удалить цель')}</button></div></div></details>`;
 }
-function goalCreateFormHTML(defaultType = 'short') {
+function goalCreateFormHTML(defaultType = 'short', defaultGroupId = '') {
   const selectedType = GOAL_TYPES.some((type) => type.id === defaultType) ? defaultType : 'short';
   const typeOpts = GOAL_TYPES.map((type) => `<option value="${type.id}" ${type.id === selectedType ? 'selected' : ''}>${t(type.label)} · ${t(type.timeframe)}</option>`).join('');
-  return `<form id="add-goal" class="goal-form"><div class="goal-form-main"><label class="goal-field-wide"><span>${t('Название')}</span><input name="title" maxlength="160" autocomplete="off" required /></label><label><span>${t('Сфера')}</span><select name="skillId">${skillOptionsHTML()}</select></label><label><span>${t('Горизонт')}</span><select name="type">${typeOpts}</select></label></div><details class="goal-extra"><summary>${t('Дополнительные настройки')}</summary><div class="gx-grid"><label><span>${t('Родительская цель')}</span><select name="parentId">${goalParentOptionsHTML(null)}</select></label><label><span>${t('Дедлайн')}</span><input name="targetDate" type="date" /></label><label><span>${t('Как измерять')}</span><select name="metricMode"><option value="checklist">${t('Этапы')}</option><option value="increase">${t('Достичь числа')}</option><option value="decrease">${t('Снизить число')}</option><option value="maintain">${t('Держать значение')}</option></select></label><label><span>${t('Текущее значение')}</span><input name="mStart" type="number" step="any" /></label><label><span>${t('Целевое значение')}</span><input name="mTarget" type="number" step="any" /></label><label><span>${t('Единица')}</span><input name="mUnit" maxlength="12" /></label></div></details><button type="submit" class="btn">${t('Создать цель')}</button><p class="goal-form-status" role="status"></p></form>`;
+  return `<form id="add-goal" class="goal-form"><div class="goal-form-main"><label class="goal-field-wide"><span>${t('Название')}</span><input name="title" maxlength="160" autocomplete="off" required /></label><label><span>${t('Инициатива')}</span><select name="groupId">${goalGroupOptionsHTML(defaultGroupId)}</select></label></div><details class="goal-extra"><summary>${t('Дополнительные настройки')}</summary><div class="gx-grid"><label><span>${t('Сфера')}</span><select name="skillId">${skillOptionsHTML()}</select></label><label><span>${t('Горизонт')}</span><select name="type">${typeOpts}</select></label><label><span>${t('Родительская цель')}</span><select name="parentId">${goalParentOptionsHTML(null)}</select></label><label><span>${t('Дедлайн')}</span><input name="targetDate" type="date" /></label><label><span>${t('Как измерять')}</span><select name="metricMode" aria-describedby="goal-metric-help"><option value="checklist">${t('Этапы — отмечать выполненное')}</option><option value="increase">${t('Достичь числа')}</option><option value="decrease">${t('Снизить число')}</option><option value="maintain">${t('Держать значение')}</option></select><small id="goal-metric-help">${t('Выбери число только если прогресс действительно измеряется числом.')}</small></label><label><span>${t('Текущее значение')}</span><input name="mStart" type="number" step="any" /></label><label><span>${t('Целевое значение')}</span><input name="mTarget" type="number" step="any" /></label><label><span>${t('Единица')}</span><input name="mUnit" maxlength="12" /></label></div></details><button type="submit" class="btn">${t('Создать цель')}</button><p class="goal-form-status" role="status"></p></form>`;
+}
+function goalInitiativeCardHTML(entry) {
+  const { group, goal, total } = entry;
+  return `<article class="goals-initiative" data-group-id="${esc(group.id)}"><header class="goals-initiative-head"><button type="button" data-action="show-goal-group" data-id="${esc(group.id)}" aria-label="${esc(t('Открыть инициативу'))}: ${esc(group.title)}"><span data-noi18n>${esc(group.title)}</span><small>${total} ${t('активных целей')}</small></button></header>${goalItem(goal, 0, 'focus')}</article>`;
+}
+function goalGroupSectionHTML(group, goals, { archived = false } = {}) {
+  const emptyCopy = archived ? t('В этой инициативе нет архивированных целей.') : t('В этой инициативе пока нет активных целей.');
+  return `<section class="goals-group-section${group.status === 'paused' ? ' is-paused' : ''}" aria-labelledby="goal-group-${esc(group.id)}"><header class="goals-group-head"><div><h3 id="goal-group-${esc(group.id)}" tabindex="-1" data-noi18n>${esc(group.title)}</h3><p>${group.status === 'paused' ? t('На паузе') : archived ? t('В архиве') : `${goals.length} ${t('активных целей')}`}</p></div><button type="button" class="btn ghost sm" data-action="edit-goal-group" data-id="${esc(group.id)}" aria-label="${esc(t('Управлять инициативой'))}: ${esc(group.title)}">${t('Управление')}</button></header><div class="goals-group-list">${goals.length ? goals.map((goal) => goalItem(goal, 0, 'compact')).join('') : `<p class="goals-empty-copy">${emptyCopy}</p>`}</div></section>`;
+}
+function goalsExactFilterHTML() {
+  return `<label class="goals-exact-filter"><span>${t('Показать')}</span><select data-action="goal-filter-select" aria-label="${t('Фильтр целей')}"><option value="all" ${State.goalFilter === 'all' ? 'selected' : ''}>${t('Все активные цели')}</option>${GOAL_TYPES.map((type) => `<option value="${type.id}" ${State.goalFilter === type.id ? 'selected' : ''}>${t(type.label)}</option>`).join('')}</select></label>`;
 }
 function renderGoals() {
-  if (State._goalsLoadError || State._tasksLoadError) return goalsLoadRecoveryHTML();
+  if (State._goalsLoadError || State._goalGroupsLoadError || State._tasksLoadError) return goalsLoadRecoveryHTML();
   const all = State.goals || [], current = all.filter((goal) => !goal.archived), active = current.filter((goal) => !goal.completedAt), completed = current.filter((goal) => goal.completedAt), archived = all.filter((goal) => goal.archived);
-  const views = ['focus', 'horizons', 'map', 'archive']; if (!views.includes(State.goalView)) State.goalView = 'focus';
-  const counts = { all: active.length }; GOAL_TYPES.forEach((type) => { counts[type.id] = active.filter((goal) => goal.type === type.id).length; });
+  const groups = State.goalGroups || [], views = ['focus', 'all', 'map', 'archive']; if (!views.includes(State.goalView)) State.goalView = 'focus';
   const wanted = State.goalFilter === 'all' ? active : active.filter((goal) => goal.type === State.goalFilter);
-  const filters = `<div class="gfilters" role="toolbar" aria-label="${t('Фильтр целей')}"><button class="gfilter ${State.goalFilter === 'all' ? 'active' : ''}" data-action="filter-goals" data-type="all">${t('Все')} (${counts.all})</button>${GOAL_TYPES.map((type) => `<button class="gfilter ${State.goalFilter === type.id ? 'active' : ''}" data-action="filter-goals" data-type="${type.id}">${t(type.label)} (${counts[type.id]})</button>`).join('')}</div>`;
   const empty = !all.length;
-  const tabs = `<div class="goals-view-tabs" role="tablist" aria-label="${t('Цели')}">${[['focus','Фокус'],['horizons','Горизонты'],['map','Карта'],['archive','Архив']].map(([id, label]) => `<button type="button" role="tab" aria-selected="${State.goalView === id}" class="goals-view-tab${State.goalView === id ? ' active' : ''}" data-action="set-goal-view" data-view="${id}">${t(label)}${id === 'archive' && (completed.length + archived.length) ? ` <span>${completed.length + archived.length}</span>` : ''}</button>`).join('')}</div>`;
+  const focusSelected = State.goalView === 'focus', allSelected = State.goalView === 'all', secondarySelected = State.goalView === 'map' || State.goalView === 'archive';
+  const tabs = `<nav class="goals-view-tabs" aria-label="${t('Цели')}"><button type="button" ${focusSelected ? 'aria-current="page"' : ''} class="goals-view-tab${focusSelected ? ' active' : ''}" data-action="set-goal-view" data-view="focus">${t('Сейчас')}</button><button type="button" ${allSelected ? 'aria-current="page"' : ''} class="goals-view-tab${allSelected ? ' active' : ''}" data-action="set-goal-view" data-view="all">${t('Все цели')}</button></nav>`;
+  const more = `<details class="goals-more-nav${secondarySelected ? ' is-current' : ''}"><summary ${secondarySelected ? 'aria-current="page"' : ''}>${t('Ещё')}</summary><div class="goals-more-menu"><button type="button" ${State.goalView === 'map' ? 'aria-current="page"' : ''} data-action="set-goal-view" data-view="map">${t('Карта целей')}</button><button type="button" ${State.goalView === 'archive' ? 'aria-current="page"' : ''} data-action="set-goal-view" data-view="archive">${t('Архив')} ${completed.length + archived.length ? `<span>${completed.length + archived.length}</span>` : ''}</button><button type="button" data-action="new-goal-group">${t('+ Инициатива')}</button><button type="button" data-action="ai-import-goals">${t('Разобрать с Тенью')}</button></div></details>`;
   const defaultType = State.goalFilter !== 'all' ? State.goalFilter : 'short';
-  const composer = (empty || State._goalsComposerOpen) ? `<section class="card goals-composer" aria-labelledby="goals-composer-title"><div class="goals-composer-head"><h3 id="goals-composer-title">${t('Новая цель')}</h3>${empty ? '' : `<button type="button" class="btn ghost sm" data-action="goals-toggle-create" aria-label="${t('Закрыть создание')}">✕</button>`}</div>${goalCreateFormHTML(defaultType)}</section>` : '';
+  const composer = State._goalsComposerOpen ? `<section class="card goals-composer" aria-labelledby="goals-composer-title"><div class="goals-composer-head"><h3 id="goals-composer-title">${t('Новая цель')}</h3><button type="button" class="btn ghost sm" data-action="goals-toggle-create" aria-label="${t('Закрыть создание')}">✕</button></div>${goalCreateFormHTML(defaultType, State._goalGroupFilter || '')}</section>` : '';
   let body = '';
-  if (State.goalView === 'horizons') body = `${filters}<section class="card goals-outline goals-exact-list" aria-labelledby="goals-outline-title"><div class="goals-section-head"><h3 id="goals-outline-title">${State.goalFilter === 'all' ? t('Горизонты') : goalTypeLabel(State.goalFilter)}</h3><p>${t('Только цели выбранного горизонта. Полная цепочка — в Карте.')}</p></div>${wanted.length ? wanted.map((goal) => goalItem(goal, 0)).join('') : `<p class="goals-empty-copy">${t('В этом горизонте целей нет.')}</p>`}</section>`;
-  else if (State.goalView === 'map') body = `<section class="card goals-outline goals-map" aria-labelledby="goals-outline-title"><div class="goals-section-head"><h3 id="goals-outline-title">${t('Полная цепочка целей')}</h3><p>${t('Outcome сверху, следующие действия внутри. Один источник прогресса на цель.')}</p></div>${current.length ? goalTreeHTML(current) : `<p class="goals-empty-copy">${t('В этом горизонте целей нет.')}</p>`}</section>`;
-  else if (State.goalView === 'archive') body = `<div class="goals-archive"><section class="card goals-outline" aria-labelledby="goals-completed-title"><div class="goals-section-head"><h3 id="goals-completed-title">${t('Достигнутые цели')}</h3></div>${completed.length ? completed.map((goal) => goalItem(goal, 0)).join('') : `<p class="goals-empty-copy">${t('Здесь появятся достигнутые и архивированные цели.')}</p>`}</section>${archived.length ? `<section class="card goals-outline" aria-labelledby="goals-archived-title"><div class="goals-section-head"><h3 id="goals-archived-title">${t('Архивированные цели')}</h3></div>${archived.map((goal) => goalItem(goal, 0)).join('')}</section>` : ''}</div>`;
-  else { const focused = goalFocusList(active); body = `<section class="card goals-outline goals-focus" aria-labelledby="goals-focus-title"><div class="goals-section-head"><h3 id="goals-focus-title">${t('Ближайшие активные цели')}</h3><p>${t('У каждой строки — один результат и один следующий шаг.')}</p></div>${focused.length ? focused.map((goal) => goalItem(goal, 0)).join('') : `<p class="goals-empty-copy">${t('В этом горизонте целей нет.')}</p>`}</section>`; }
-  return `<div class="goals-shell"><header class="goals-route-head"><div><p class="goals-kicker">${t('План')}</p><h2 id="goals-title" tabindex="-1">${t('Цели')}</h2><p>${t('Outcome сверху, следующие действия внутри. Один источник прогресса на цель.')}</p></div><div class="goals-head-side">${empty ? '' : `<div class="goals-counts"><span>${active.length} ${t('активных')}</span><span>${completed.length} ${t('достигнуто')}</span></div>`}<div class="goals-head-actions"><button type="button" class="btn" data-action="goals-toggle-create" aria-expanded="${empty || State._goalsComposerOpen}" aria-controls="goals-composer-title">${empty ? t('+ Цель') : State._goalsComposerOpen ? t('Закрыть создание') : t('+ Цель')}</button><button type="button" class="btn ghost" data-action="ai-import-goals">✨ ${t('Разобрать с Тенью')}</button></div></div></header>
-    ${State._goalsError ? `<div class="goals-error" role="alert">${esc(State._goalsError)}</div>` : ''}${composer}${empty ? '' : tabs}${empty ? `<section class="card goals-empty"><h3>${t('С чего начнём?')}</h3><p>${t('Создай один outcome. Подцели и квесты можно связать позже — без дублирования прогресса.')}</p></section>` : body}
+  if (State.goalView === 'map') body = `<section class="card goals-outline goals-map" aria-labelledby="goals-outline-title"><div class="goals-section-head"><h3 id="goals-outline-title">${t('Полная цепочка целей')}</h3><p>${t('Миссия, видение и путь живут здесь — не в списке ближайших действий.')}</p></div>${current.length ? goalTreeHTML(current) : `<p class="goals-empty-copy">${t('В этом горизонте целей нет.')}</p>`}</section>`;
+  else if (State.goalView === 'archive') {
+    const archivedGroups = groups.filter((group) => group.status === 'archived');
+    const groupedIds = new Set(archivedGroups.map((group) => group.id));
+    const looseArchived = archived.filter((goal) => !goal.groupId || !groupedIds.has(goal.groupId));
+    body = `<div class="goals-archive"><section class="card goals-outline" aria-labelledby="goals-completed-title"><div class="goals-section-head"><h3 id="goals-completed-title">${t('Достигнутые цели')}</h3></div>${completed.length ? completed.map((goal) => goalItem(goal, 0, 'compact')).join('') : `<p class="goals-empty-copy">${t('Здесь появятся достигнутые и архивированные цели.')}</p>`}</section>${archivedGroups.map((group) => goalGroupSectionHTML(group, archived.filter((goal) => goal.groupId === group.id), { archived: true })).join('')}${looseArchived.length ? `<section class="card goals-outline" aria-labelledby="goals-archived-title"><div class="goals-section-head"><h3 id="goals-archived-title">${t('Архивированные цели')}</h3></div>${looseArchived.map((goal) => goalItem(goal, 0, 'compact')).join('')}</section>` : ''}</div>`;
+  }
+  else if (State.goalView === 'all') {
+    const selectedGroup = State._goalGroupFilter ? goalGroupById(State._goalGroupFilter) : null;
+    const visibleGroups = groups.filter((group) => group.status !== 'archived' && (!selectedGroup || group.id === selectedGroup.id));
+    const groupSections = visibleGroups.map((group) => goalGroupSectionHTML(group, wanted.filter((goal) => goal.groupId === group.id))).join('');
+    const ungrouped = selectedGroup ? [] : wanted.filter((goal) => !goal.groupId);
+    body = `<section class="goals-all" aria-labelledby="goals-all-title"><header class="goals-all-head"><div><h3 id="goals-all-title">${selectedGroup ? `<span data-noi18n>${esc(selectedGroup.title)}</span>` : t('Все активные цели')}</h3><p>${t('Здесь можно разбирать структуру; на первом экране остаются только ближайшие действия.')}</p></div>${goalsExactFilterHTML()}</header>${selectedGroup ? `<button type="button" class="goals-clear-group" data-action="clear-goal-group">← ${t('Все инициативы')}</button>` : ''}${groupSections}${ungrouped.length ? `<section class="goals-group-section" aria-labelledby="goals-ungrouped-title"><header class="goals-group-head"><div><h3 id="goals-ungrouped-title">${t('Без инициативы')}</h3><p>${ungrouped.length} ${t('активных целей')}</p></div></header><div class="goals-group-list">${ungrouped.map((goal) => goalItem(goal, 0, 'compact')).join('')}</div></section>` : ''}${!groupSections && !ungrouped.length ? `<p class="goals-empty-copy">${t('По этому фильтру целей нет.')}</p>` : ''}</section>`;
+  } else {
+    const model = window.GoalsInitiativesV1.focusModel({ goals: active, groups, today: todayStr(), nextAction: goalNextAction, maxInitiatives: 3, maxUngrouped: 3 });
+    const useInitiatives = model.initiatives.length > 0;
+    const focusRows = useInitiatives ? model.initiatives.map(goalInitiativeCardHTML).join('') : model.ungrouped.map((goal) => goalItem(goal, 0, 'focus')).join('');
+    const shownIds = new Set(useInitiatives ? model.initiatives.map((entry) => entry.goal.id) : model.ungrouped.map((goal) => goal.id));
+    const hidden = active.filter((goal) => window.GoalsInitiativesV1.focusEligible(goal) && !shownIds.has(goal.id)).length;
+    body = `<section class="goals-focus-board" aria-labelledby="goals-focus-title"><header class="goals-focus-head"><h3 id="goals-focus-title">${t('Что важно сейчас')}</h3><p>${useInitiatives ? t('До трёх активных инициатив. В каждой — одно ближайшее действие.') : t('До трёх ближайших целей. Миссия и видение остаются в Карте.')}</p></header><div class="goals-focus-list">${focusRows || `<div class="goals-focus-empty"><p>${t('Здесь появятся цели, которые можно двигать сейчас.')}</p><button type="button" class="btn ghost" data-action="ai-import-goals">${t('Найти следующий шаг с Тенью')}</button></div>`}</div>${hidden ? `<button type="button" class="goals-show-all" data-action="set-goal-view" data-view="all">${t('Показать остальные')} · ${hidden}</button>` : ''}</section>`;
+  }
+  const emptyState = `<section class="card goals-empty"><h3>${t('С чего начнём?')}</h3><p>${t('Создай одну конкретную цель или попроси Тень разложить замысел на ближайший шаг.')}</p><div><button type="button" class="btn" data-action="goals-toggle-create">${t('+ Первая цель')}</button><button type="button" class="btn ghost" data-action="ai-import-goals">${t('Разобрать с Тенью')}</button></div></section>`;
+  return `<div class="goals-shell"><header class="goals-route-head"><div><p class="goals-kicker">${t('План')}</p><h2 id="goals-title" tabindex="-1">${t('Цели')}</h2></div>${empty ? '' : `<button type="button" class="btn" data-action="goals-toggle-create" aria-expanded="${State._goalsComposerOpen}" aria-controls="goals-composer-title">${State._goalsComposerOpen ? t('Закрыть создание') : t('+ Цель')}</button>`}</header><div class="goals-route-nav">${tabs}${more}</div>
+    ${State._goalsError ? `<div class="goals-error" role="alert">${esc(State._goalsError)}</div>` : ''}${composer}${empty ? (State._goalsComposerOpen ? '' : emptyState) : body}
   </div>`;
 }
 
@@ -20543,6 +20629,17 @@ async function onSubmit(e) {
     }
     State._tasksFocusAfterCommit = `[data-guide-target="first-task-select"][data-id="${CSS.escape(task.id)}"]`;
     render();
+  } else if (f.classList.contains('goal-group-form')) {
+    e.preventDefault(); const title = f.title.value.trim().slice(0, 80); if (!title || State._goalTxnBusy) return;
+    const existingId = f.dataset.group || '', nextGroups = structuredClone(State.goalGroups || []);
+    let group = existingId ? nextGroups.find((item) => item.id === existingId) : null;
+    if (existingId && !group) return;
+    if (group) group.title = title;
+    else { group = { id: 'grp_' + uid(), title, status: 'active', createdAt: new Date().toISOString() }; nextGroups.push(group); }
+    const controls = f.querySelectorAll('button,input'); controls.forEach((control) => { control.disabled = true; });
+    State._goalTxnBusy = `group:${group.id}`; const saved = await goalDataCommit(State.goals, State.tasks, nextGroups); State._goalTxnBusy = '';
+    if (!saved) { controls.forEach((control) => { control.disabled = false; }); let error = f.querySelector('.goal-form-status'); if (!error) { error = document.createElement('p'); error.className = 'goal-form-status'; error.setAttribute('role', 'alert'); f.appendChild(error); } error.textContent = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); return; }
+    State.goalGroups = nextGroups; State.goalView = 'all'; State._goalGroupFilter = group.id; closeGoalGroupDialog({ restoreFocus: false }); State._goalsFocusAfterCommit = `#goal-group-${CSS.escape(group.id)}`; render();
   } else if (f.id === 'add-goal') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title || State._goalTxnBusy) return;
     State._goalsError = '';
@@ -20554,7 +20651,7 @@ async function onSubmit(e) {
       const cur = (f.mStart && f.mStart.value !== '') ? Number(f.mStart.value) : 0;
       metric = { start: cur, current: cur, target: tgt, unit: (f.mUnit.value || '').trim().slice(0, 12), lowerBetter: metricMode === 'decrease', maintain: metricMode === 'maintain', everReached: false, log: [] };
     }
-    const goal = { id: 'g_' + uid(), title, description: '', skillId: f.skillId.value, type, xpReward: GOAL_XP[type], parentId: f.parentId.value || null, targetDate: f.targetDate.value || null, steps: [], metric, progressKind: metric ? 'metric' : 'checklist', status: 'active', window: '', createdAt: new Date().toISOString(), completedAt: null, archived: false };
+    const goal = { id: 'g_' + uid(), title, description: '', skillId: f.skillId.value, type, xpReward: GOAL_XP[type], parentId: f.parentId.value || null, groupId: f.groupId.value || null, targetDate: f.targetDate.value || null, steps: [], metric, progressKind: metric ? 'metric' : 'checklist', status: 'active', window: '', createdAt: new Date().toISOString(), completedAt: null, archived: false };
     const nextGoals = [...structuredClone(State.goals), goal];
     if (goal.metric) refreshGoalCompletion(goal, { announce: false }); // success UI only after the server commit
     const status = f.querySelector('.goal-form-status'), controls = f.querySelectorAll('button,input,select');
@@ -20595,7 +20692,7 @@ async function onSubmit(e) {
     State._goalsError = '';
     const nextGoals = structuredClone(State.goals), goal = nextGoals.find((item) => item.id === original.id);
     goal.title = f.title.value.trim(); if (!goal.title) return;
-    goal.description = f.description.value.trim().slice(0, 800); goal.parentId = f.parentId.value || null;
+    goal.description = f.description.value.trim().slice(0, 800); goal.parentId = f.parentId.value || null; goal.groupId = f.groupId.value || null;
     goal.skillId = f.skillId.value; goal.type = f.type.value; goal.xpReward = GOAL_XP[goal.type]; goal.targetDate = f.targetDate.value || null; goal.status = f.status.value;
     State._goalTxnBusy = `edit:${goal.id}`; const saved = await goalDataCommit(nextGoals, State.tasks); State._goalTxnBusy = '';
     if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = '#goal-detail-title'; render(); return; }
@@ -21071,17 +21168,51 @@ function tutMascotHTML() {
   const c = ensureCompanion(), ti = compTierIdx(c.bond);
   return `<span class="tut-mascot">${shadowVideo(ti, 'speaking', 'tutorial')}</span>`;
 }
-async function commitGoalMutation(key, nextGoals, nextTasks, focusSelector, success) {
+async function commitGoalMutation(key, nextGoals, nextTasks, focusSelector, success, nextGroups = State.goalGroups) {
   if (State._goalTxnBusy) return false;
   State._goalTxnBusy = key; State._goalsError = '';
-  const saved = await goalDataCommit(nextGoals, nextTasks); State._goalTxnBusy = '';
+  const saved = await goalDataCommit(nextGoals, nextTasks, nextGroups); State._goalTxnBusy = '';
   if (!saved) {
     State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.');
     State._goalsFocusAfterCommit = focusSelector || '#goals-title'; render(); return false;
   }
-  State.goals = nextGoals; State.tasks = nextTasks;
+  State.goals = nextGoals; State.tasks = nextTasks; State.goalGroups = nextGroups;
   if (success) success();
   State._goalsFocusAfterCommit = focusSelector || '#goals-title'; render(); return true;
+}
+function closeGoalGroupDialog({ restoreFocus = true } = {}) {
+  const overlay = document.getElementById('goal-group-dialog'); if (!overlay) return;
+  const target = restoreFocus && overlay._returnFocus && overlay._returnFocus.isConnected ? overlay._returnFocus : null;
+  document.getElementById('app')?.removeAttribute('inert'); overlay.remove(); unlockGoalDetailScroll();
+  if (target) requestAnimationFrame(() => focusPathChoiceTarget(target));
+}
+function handleGoalGroupDialogKeydown(event) {
+  const overlay = document.getElementById('goal-group-dialog'); if (!overlay) return;
+  if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeGoalGroupDialog(); return; }
+  if (event.key !== 'Tab') return;
+  const focusable = pathChoiceFocusable(overlay).filter((node) => node.getClientRects().length);
+  if (!focusable.length) return;
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+  else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+}
+function openGoalGroupDialog(id = '', opener = document.activeElement, mode = 'edit') {
+  closeGoalGroupDialog({ restoreFocus: false });
+  const group = id ? goalGroupById(id) : null; if (id && !group) return;
+  const linked = group ? (State.goals || []).filter((goal) => goal.groupId === group.id && !goal.archived && !goal.completedAt).length : 0;
+  const overlay = document.createElement('div'); overlay.id = 'goal-group-dialog'; overlay.className = 'modal-overlay goal-group-overlay'; overlay.dataset.action = 'goal-group-cancel'; overlay.dataset.groupId = group ? group.id : ''; overlay.dataset.mode = mode; overlay._returnFocus = opener;
+  if (mode === 'archive' && group) {
+    overlay.innerHTML = `<section class="goal-group-box" role="dialog" aria-modal="true" aria-labelledby="goal-group-title" aria-describedby="goal-group-desc"><button type="button" class="modal-x" data-action="goal-group-cancel" aria-label="${t('Закрыть')}">✕</button><h2 id="goal-group-title" tabindex="-1">${t('Убрать инициативу из активных?')}</h2><p id="goal-group-desc">${t('Инициатива и связанные с ней активные цели перейдут в архив. Это можно вернуть.')} ${linked ? `${linked} ${t('активных целей')}.` : ''}</p><div class="goal-group-dialog-actions"><button type="button" class="btn ghost" data-action="goal-group-cancel">${t('Отмена')}</button><button type="button" class="btn" data-action="archive-goal-group-confirm" data-id="${esc(group.id)}">${t('В архив вместе с целями')}</button></div></section>`;
+  } else {
+    const title = group ? t('Инициатива') : t('Новая инициатива');
+    const stateActions = !group ? '' : group.status === 'archived'
+      ? `<button type="button" class="btn ghost" data-action="restore-goal-group" data-id="${esc(group.id)}">${t('Вернуть инициативу и цели')}</button>`
+      : `<button type="button" class="btn ghost" data-action="toggle-goal-group" data-id="${esc(group.id)}">${group.status === 'paused' ? t('Возобновить') : t('Приостановить')}</button><button type="button" class="btn ghost danger" data-action="archive-goal-group" data-id="${esc(group.id)}">${t('В архив вместе с целями')}</button>`;
+    overlay.innerHTML = `<section class="goal-group-box" role="dialog" aria-modal="true" aria-labelledby="goal-group-title" aria-describedby="goal-group-desc"><button type="button" class="modal-x" data-action="goal-group-cancel" aria-label="${t('Закрыть')}">✕</button><h2 id="goal-group-title" tabindex="-1">${title}</h2><p id="goal-group-desc">${t('Инициатива объединяет цели одного реального проекта, не меняя их иерархию.')}</p><form class="goal-group-form" data-group="${group ? esc(group.id) : ''}"><label><span>${t('Название инициативы')}</span><input name="title" maxlength="80" value="${group ? esc(group.title) : ''}" required data-noi18n /></label><div class="goal-group-dialog-actions"><button type="button" class="btn ghost" data-action="goal-group-cancel">${t('Отмена')}</button><button type="submit" class="btn">${group ? t('Сохранить изменения') : t('Создать инициативу')}</button></div></form>${stateActions ? `<div class="goal-group-state-actions">${stateActions}</div>` : ''}</section>`;
+  }
+  overlay.addEventListener('keydown', handleGoalGroupDialogKeydown); document.getElementById('app')?.setAttribute('inert', ''); document.body.appendChild(overlay); lockGoalDetailScroll();
+  const initialSelector = group || mode === 'archive' ? '#goal-group-title' : 'input[name="title"]';
+  requestAnimationFrame(() => focusPathChoiceTarget(overlay.querySelector(initialSelector)));
 }
 function closeGoalDeleteDialog({ restoreFocus = true } = {}) {
   const overlay = document.getElementById('goal-delete-dialog'); if (!overlay) return;
@@ -22311,8 +22442,39 @@ async function onClick(e) {
     State._goalsComposerOpen = !State._goalsComposerOpen;
     State._goalsFocusAfterCommit = State._goalsComposerOpen ? '#add-goal input[name="title"]' : '[data-action="goals-toggle-create"]'; render(); return;
   } else if (action === 'set-goal-view') {
-    const view = el.dataset.view; if (!['focus', 'horizons', 'map', 'archive'].includes(view)) return;
+    const view = el.dataset.view; if (!['focus', 'all', 'map', 'archive'].includes(view)) return;
+    if (view !== 'all') State._goalGroupFilter = '';
     State.goalView = view; State._goalsFocusAfterCommit = `[data-action="set-goal-view"][data-view="${CSS.escape(view)}"]`; render(); return;
+  } else if (action === 'new-goal-group') {
+    openGoalGroupDialog('', el); return;
+  } else if (action === 'edit-goal-group') {
+    openGoalGroupDialog(id, el); return;
+  } else if (action === 'goal-group-cancel') {
+    if (el.id === 'goal-group-dialog' && e.target !== el) return;
+    closeGoalGroupDialog(); return;
+  } else if (action === 'show-goal-group') {
+    if (!goalGroupById(id)) return; State.goalView = 'all'; State._goalGroupFilter = id; State._goalsFocusAfterCommit = `#goal-group-${CSS.escape(id)}`; render(); return;
+  } else if (action === 'clear-goal-group') {
+    State._goalGroupFilter = ''; State._goalsFocusAfterCommit = '#goals-all-title'; render(); return;
+  } else if (action === 'toggle-goal-group') {
+    const group = goalGroupById(id); if (!group || group.status === 'archived' || State._goalTxnBusy) return;
+    const nextGroups = structuredClone(State.goalGroups), nextGroup = nextGroups.find((item) => item.id === id); nextGroup.status = nextGroup.status === 'paused' ? 'active' : 'paused';
+    closeGoalGroupDialog({ restoreFocus: false }); State.goalView = 'all'; State._goalGroupFilter = id;
+    commitGoalMutation(`group-state:${id}`, structuredClone(State.goals), structuredClone(State.tasks), `#goal-group-${CSS.escape(id)}`, null, nextGroups); return;
+  } else if (action === 'archive-goal-group') {
+    const group = goalGroupById(id); if (!group || group.status === 'archived') return; openGoalGroupDialog(id, el, 'archive'); return;
+  } else if (action === 'archive-goal-group-confirm') {
+    const group = goalGroupById(id); if (!group || State._goalTxnBusy) return;
+    const nextGroups = structuredClone(State.goalGroups), nextGroup = nextGroups.find((item) => item.id === id); nextGroup.status = 'archived';
+    const nextGoals = structuredClone(State.goals); for (const goal of nextGoals) if (goal.groupId === id && !goal.archived && !goal.completedAt) { goal.archived = true; goal.archivedByGroup = id; }
+    closeGoalGroupDialog({ restoreFocus: false }); State.goalView = 'all'; State._goalGroupFilter = '';
+    commitGoalMutation(`group-archive:${id}`, nextGoals, structuredClone(State.tasks), '#goals-all-title', () => toast(t('Инициатива и её цели в архиве')), nextGroups); return;
+  } else if (action === 'restore-goal-group') {
+    const group = goalGroupById(id); if (!group || group.status !== 'archived' || State._goalTxnBusy) return;
+    const nextGroups = structuredClone(State.goalGroups), nextGroup = nextGroups.find((item) => item.id === id); nextGroup.status = 'active';
+    const nextGoals = structuredClone(State.goals); for (const goal of nextGoals) if (goal.archivedByGroup === id) { goal.archived = false; delete goal.archivedByGroup; }
+    closeGoalGroupDialog({ restoreFocus: false }); State.goalView = 'all'; State._goalGroupFilter = id;
+    commitGoalMutation(`group-restore:${id}`, nextGoals, structuredClone(State.tasks), `#goal-group-${CSS.escape(id)}`, () => toast(t('Инициатива возвращена')), nextGroups); return;
   } else if (action === 'open-goal-detail') {
     openGoalDetailDialog(id, el); return;
   } else if (action === 'goal-detail-close') {
@@ -22342,7 +22504,7 @@ async function onClick(e) {
     const goal = goalById(id); if (!goal || State._goalTxnBusy) return; const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((item) => item.id === id); nextGoal.archived = false;
     commitGoalMutation(`restore:${id}`, nextGoals, structuredClone(State.tasks), '#goal-detail-title', () => { State._goalOpenId = id; }); return;
   } else if (action === 'filter-goals') {
-    State.goalFilter = el.dataset.type; State.goalView = 'horizons'; State._goalsFocusAfterCommit = `[data-action="filter-goals"][data-type="${CSS.escape(el.dataset.type)}"]`; render(); return;
+    State.goalFilter = el.dataset.type; State.goalView = 'all'; State._goalsFocusAfterCommit = '[data-action="goal-filter-select"]'; render(); return;
 
   // --- Дерево ---
   } else if (action === 'tree-retry-load') {
@@ -22981,7 +23143,7 @@ function flushSettingsForm() { return SettingsAutosave.flush(); }
 
 function clearAllData() {
   State.settings = null; State.tasks = null; State.days = null; State.habits = null;
-  State.habitlog = null; State.goals = null; State.tree = null; State.rewards = null;
+  State.habitlog = null; State.goals = null; State.goalGroups = null; State.tree = null; State.rewards = null;
   State.purchases = null; State.achievements = null; State.weeks = null; State.lootbox = null;
   State.inbox = null; State.inboxOpen = false; State.antihabits = null; State.episodes = null;
   State.profile = null; State.aiKeys = null; State.strava = null; State.chatLog = [];
@@ -22991,7 +23153,7 @@ function clearAllData() {
   State._partyLoading = false; State._adminUsersLoading = false;
   State._tasksLoadError = ''; State._tasksLoadBusy = false; State._tasksFocusAfterCommit = '';
   State._habitsLoadError = ''; State._habitsLoadBusy = false; State._habitTxnBusy = ''; State._habitError = ''; clearHabitUndo(); State._habitsFocusAfterCommit = '';
-  State._goalsLoadError = ''; State._goalsLoadBusy = false; State._goalTxnBusy = ''; State._goalsError = ''; State._goalsFocusAfterCommit = ''; State._goalOpenId = ''; State._goalDeepLinkId = ''; State.goalView = 'focus'; State.goalFilter = 'all'; State._goalsComposerOpen = false;
+  State._goalsLoadError = ''; State._goalGroupsLoadError = ''; State._goalsLoadBusy = false; State._goalTxnBusy = ''; State._goalsError = ''; State._goalsFocusAfterCommit = ''; State._goalOpenId = ''; State._goalDeepLinkId = ''; State.goalView = 'focus'; State.goalFilter = 'all'; State._goalsComposerOpen = false; State._goalGroupFilter = '';
   State._settingsLoadError = ''; State._settingsLoadBusy = false; State._treeLoadError = '';
   State.timer = null; persistTimer(); stopTick(); closeFocusWidget(); removePill();
   State.selectedProfile = null; State.obSkills = new Set();
@@ -23186,11 +23348,15 @@ async function initApp() {
   }
   if (State._habitsLoadError === 'session' || State._accountSessionExpired) return;
   {
-    const goalsLoad = await Store.loadChecked('goals', [], validateGoalsPayload);
-    State.goals = normalizeLoadedGoals(goalsLoad.value); State._goalsLoadError = goalsLoad.error; State._goalsLoadBusy = false;
-    normalizeGoalTaskLinks();
+    const [goalsLoad, groupsLoad] = await Promise.all([
+      Store.loadChecked('goals', [], validateGoalsPayload),
+      Store.loadChecked('goal-groups', [], validateGoalGroupsPayload),
+    ]);
+    State.goals = normalizeLoadedGoals(goalsLoad.value); State.goalGroups = normalizeLoadedGoalGroups(groupsLoad.value);
+    State._goalsLoadError = goalsLoad.error; State._goalGroupsLoadError = groupsLoad.error; State._goalsLoadBusy = false;
+    normalizeGoalGroupLinks(); normalizeGoalTaskLinks();
   }
-  if (State._goalsLoadError === 'session' || State._accountSessionExpired) return;
+  if (State._goalsLoadError === 'session' || State._goalGroupsLoadError === 'session' || State._accountSessionExpired) return;
   {
     const treeLoad = await Store.loadChecked('skilltree', {}, validateSkillTreePayload);
     State.tree = treeLoad.value; State._treeLoadError = treeLoad.error; State._treeLoadBusy = false;
@@ -23302,6 +23468,10 @@ function onChange(e) {
     const files = [...(e.target.files || [])]; e.target.value = '';
     if (files.length) importWorkoutFiles(files);
     return;
+  }
+  if (e.target.dataset && e.target.dataset.action === 'goal-filter-select') {
+    const type = e.target.value; if (type !== 'all' && !GOAL_TYPES.some((item) => item.id === type)) return;
+    State.goalFilter = type; State._goalsFocusAfterCommit = '[data-action="goal-filter-select"]'; render(); return;
   }
   // смена статуса цели (active/waiting/paused)
   if (e.target.dataset && e.target.dataset.action === 'goal-status') {
@@ -23720,6 +23890,8 @@ async function init() {
       return;
     }
     if (e.key !== 'Escape') return;
+    const goalsMore = document.querySelector('.goals-more-nav[open]');
+    if (goalsMore) { goalsMore.removeAttribute('open'); goalsMore.querySelector('summary')?.focus({ preventScroll: true }); return; }
     if (_wkDragId) { cleanupWkDrag(); return; }
     if (document.getElementById('avatar-forge-overlay')) { closeAvatarForgeEditor(); return; }
     if (document.getElementById('mobile-nav-sheet')) { closeMobileNavSheet(); return; }

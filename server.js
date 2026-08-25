@@ -16,6 +16,7 @@ const BoardV2PageVerifier = require('./server-board-v2-page-verifier-v1.js');
 const BoardV2AccountService = require('./server-board-v2-service-v1.js');
 const BoardV2Community = require('./server-board-v2-community-v1.js');
 const BoardV2Offers = require('./public/board-v2-offers.js');
+const GoalsInitiativesV1 = require('./public/goals-initiatives-v1.js');
 
 const ROOT = __dirname;
 // Local development secrets live outside Git. Production providers inject the
@@ -65,7 +66,7 @@ const MIME = {
 };
 
 const USER_DATA_FILES = [
-  'settings', 'tasks', 'habits', 'habitlog', 'goals',
+  'settings', 'tasks', 'habits', 'habitlog', 'goals', 'goal-groups',
   'skilltree', 'rewards', 'purchases', 'achievements', 'days', 'weeks',
 ];
 // Переносимый архив намеренно не содержит серверные секреты (AI keys, Strava
@@ -75,7 +76,7 @@ const ACCOUNT_PORTABLE_FILES = [
   ...USER_DATA_FILES, 'lootbox', 'inbox', 'antihabits', 'episodes', 'profile', 'boardmedia',
 ];
 const ACCOUNT_PORTABLE_TYPES = {
-  settings: 'object', tasks: 'array', habits: 'array', habitlog: 'object', goals: 'array',
+  settings: 'object', tasks: 'array', habits: 'array', habitlog: 'object', goals: 'array', 'goal-groups': 'array',
   skilltree: 'object', rewards: 'array', purchases: 'array', achievements: 'object',
   days: 'object', weeks: 'object', lootbox: 'object', inbox: 'array', antihabits: 'array',
   episodes: 'array', profile: 'object', boardmedia: 'object',
@@ -1420,6 +1421,7 @@ function goalRecordValid(goal, ids) {
   ids.add(goal.id);
   if (typeof goal.title !== 'string' || !goal.title.trim()) return false;
   if (goal.parentId != null && (typeof goal.parentId !== 'string' || goal.parentId === goal.id)) return false;
+  if (goal.groupId != null && (typeof goal.groupId !== 'string' || !goal.groupId.trim())) return false;
   if (!Array.isArray(goal.steps)) return false;
   const stepIds = new Set();
   if (!goal.steps.every((step) => step && typeof step === 'object' && !Array.isArray(step)
@@ -1434,11 +1436,18 @@ function goalRecordValid(goal, ids) {
 }
 function goalCommitPayloadValid(data) {
   if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
-  if (Object.keys(data).length !== 2 || !Array.isArray(data.goals) || !Array.isArray(data.tasks)) return false;
+  const names = Object.keys(data).sort().join(',');
+  // Two-file commits remain valid for an already-open v168 tab during the
+  // v169 rollout. New clients always include groups and get full referential
+  // validation across all three files.
+  if (!['goals,tasks', 'goals,groups,tasks'].includes(names) || !Array.isArray(data.goals) || !Array.isArray(data.tasks)) return false;
+  if (data.groups !== undefined && !GoalsInitiativesV1.validateGroups(data.groups)) return false;
   const goalIds = new Set();
   if (!data.goals.every((goal) => goalRecordValid(goal, goalIds))) return false;
+  const groupIds = data.groups === undefined ? null : new Set(data.groups.map((group) => group.id));
   for (const goal of data.goals) {
     if (goal.parentId != null && !goalIds.has(goal.parentId)) return false;
+    if (groupIds && goal.groupId != null && !groupIds.has(goal.groupId)) return false;
     const seen = new Set([goal.id]); let parentId = goal.parentId; let depth = 0;
     while (parentId != null) {
       if (seen.has(parentId) || ++depth > 24) return false;
@@ -1460,21 +1469,22 @@ function goalCommitPayloadValid(data) {
 function commitGoalData(uid, payload) {
   if (!payload || !goalCommitPayloadValid(payload.data)) throw new Error('invalid_goal_commit');
   if (Buffer.byteLength(JSON.stringify(payload.data)) > 4 * 1024 * 1024) throw new Error('goal_commit_too_large');
-  const names = ['goals', 'tasks'];
+  const entries = [['goals', 'goals'], ['tasks', 'tasks']];
+  if (payload.data.groups !== undefined) entries.push(['groups', 'goal-groups']);
   const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
   const snapshots = new Map(); const written = [];
-  for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
+  for (const [, fileName] of entries) snapshots.set(fileName, fileSnapshot(path.join(dir, `${fileName}.json`)));
   try {
-    for (const name of names) {
-      backupFile(dir, name);
-      writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
-      written.push(name);
+    for (const [payloadName, fileName] of entries) {
+      backupFile(dir, fileName);
+      writeJsonAtomic(path.join(dir, `${fileName}.json`), payload.data[payloadName]);
+      written.push(fileName);
     }
   } catch (error) {
     for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
     throw error;
   }
-  return names;
+  return entries.map(([, fileName]) => fileName);
 }
 
 function boardCommitPayloadValid(data) {
@@ -3470,7 +3480,7 @@ const server = http.createServer(async (req, res) => {
   {
     const me = loadUsers().find(x => x.id === sessionUserId(req));
     const isAdmin = me && me.isAdmin;
-    const DATA_NAMES = ['settings', 'tasks', 'habits', 'goals', 'days', 'habitlog', 'weeks', 'lootbox', 'skilltree', 'purchases', 'achievements', 'boardmedia'];
+    const DATA_NAMES = ['settings', 'tasks', 'habits', 'goals', 'goal-groups', 'days', 'habitlog', 'weeks', 'lootbox', 'skilltree', 'purchases', 'achievements', 'boardmedia'];
 
     // GET /api/admin/userdata/<userId> — текущее содержимое всех файлов + список бэкапов
     let am = u.match(/^\/api\/admin\/userdata\/([a-z0-9_-]{1,32})$/);
