@@ -55,6 +55,7 @@ test('Board v2 endpoint owns consent/cache and stays dormant without Brave key',
     method: 'PUT', cookie,
     body: {
       enabled: true, city: 'Bielefeld', countryCode: 'DE', timezone: 'Europe/Berlin', locale: 'de-DE',
+      provider: 'brave-web-v1', shareCityWithProvider: true,
       latitude: 52.03, longitude: 8.53, address: 'private home',
     },
   });

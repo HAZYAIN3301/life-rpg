@@ -124,6 +124,8 @@ function createService(options) {
         timezone: source.timezone,
         locale: source.locale,
         approvedAt: at,
+        provider: BoardDiscovery.PROVIDER_ID,
+        shareCityWithProvider: source.shareCityWithProvider === true,
       }) : BoardDiscovery.normalizeConsent({ enabled: false });
       if (source.enabled === true && !consent.enabled) throw new Error('invalid-city-consent');
       if (consentChanged(state.consent, consent)) state.cache = emptyCache(at);

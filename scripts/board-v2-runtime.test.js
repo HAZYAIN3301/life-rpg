@@ -46,7 +46,8 @@ function context(action) {
   };
 }
 function localRecommendation() {
-  const consent = { enabled: true, city: 'Bielefeld', countryCode: 'DE', timezone: 'Europe/Berlin', locale: 'de-DE', approvedAt: AT };
+  const consent = { enabled: true, city: 'Bielefeld', countryCode: 'DE', timezone: 'Europe/Berlin', locale: 'de-DE', approvedAt: AT,
+    provider: Discovery.PROVIDER_ID, shareCityWithProvider: true };
   const request = Discovery.createRequest(consent, {
     requestId: 'runtime-local-request', templateId: 'try-specific-local-class', slotId: 'class', intent: 'class',
     searchTerms: ['official', 'boxing'], constraints: { maxTravelMinutes: 60 },

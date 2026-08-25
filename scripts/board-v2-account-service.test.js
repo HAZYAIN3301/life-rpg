@@ -50,6 +50,7 @@ function memoryService(options) {
 function grant(service, uid, city) {
   return service.setConsent(uid, {
     enabled: true, city: city || 'Bielefeld', countryCode: 'DE', timezone: 'Europe/Berlin', locale: 'de-DE',
+    provider: BoardDiscovery.PROVIDER_ID, shareCityWithProvider: true,
     latitude: 52.03, longitude: 8.53, address: 'private home',
   });
 }

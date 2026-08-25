@@ -16,6 +16,8 @@ function request(intent) {
     timezone: 'Europe/Berlin',
     locale: 'de-DE',
     approvedAt: '2026-08-25T13:00:00.000Z',
+    provider: BoardDiscovery.PROVIDER_ID,
+    shareCityWithProvider: true,
   }, {
     requestId: `bielefeld-${intent}-01`,
     templateId: 'try-specific-local-class',

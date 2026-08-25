@@ -15,7 +15,7 @@ const ROOT = path.resolve(__dirname, '..');
 const AT = '2026-08-25T12:00:00.000Z';
 const CONSENT = {
   enabled: true, city: 'Bielefeld', countryCode: 'DE', timezone: 'Europe/Berlin',
-  locale: 'de-DE', approvedAt: AT,
+  locale: 'de-DE', approvedAt: AT, provider: Discovery.PROVIDER_ID, shareCityWithProvider: true,
 };
 function recommendation(templateId, slotId, intent) {
   const request = Discovery.createRequest(CONSENT, {

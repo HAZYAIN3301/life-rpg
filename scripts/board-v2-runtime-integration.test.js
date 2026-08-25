@@ -17,11 +17,11 @@ test('Board v2 standard and Wildcard issuers load in dependency order', () => {
   assert.equal(positions.every((position) => position >= 0), true);
   assert.deepEqual(positions, positions.slice().sort((a, b) => a - b));
   for (const file of files.slice(0, -1)) {
-    assert.match(index, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=20260825-board-v2-wildcard-v173-1`));
+    assert.match(index, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=20260825-board-v2-local-v174-1`));
     assert.equal((sw.match(new RegExp(`'${file.replaceAll('.', '\\.')}'`, 'g')) || []).length, 1);
   }
-  assert.match(index, /app\.js\?v=20260825-board-v2-wildcard-v173-1/);
-  assert.match(sw, /const CACHE = 'satoru-v173';/);
+  assert.match(index, /app\.js\?v=20260825-board-v2-local-v174-1/);
+  assert.match(sw, /const CACHE = 'satoru-v174';/);
 });
 
 test('account defaults and hydration normalize offers, completion and titles', () => {

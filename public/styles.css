@@ -15543,6 +15543,49 @@ html.calendar-task-open body {
 .board-wildcard-actions .btn { min-height: var(--touch-min); }
 .board-wildcard-actions span { color: var(--muted); font-size: var(--type-meta); line-height: var(--leading-ui); }
 
+.board-local,
+.board-community {
+  display: grid;
+  gap: var(--sp-3);
+  min-width: 0;
+  padding: var(--sp-4);
+  border: 1px solid color-mix(in srgb, var(--accent-2) 48%, var(--line));
+  border-radius: var(--radius);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--surface-1) 94%, var(--accent-2)), var(--surface-1));
+}
+.board-local > header,
+.board-community { grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
+.board-local > header { display: grid; gap: var(--sp-3); }
+.board-local h3,
+.board-community h3 { margin: 0; color: var(--text-strong); font-size: var(--type-heading); line-height: var(--leading-label); }
+.board-local > p,
+.board-community p { max-width: var(--measure-prose); margin: 0; color: var(--muted); line-height: var(--leading-prose); }
+.board-local form { display: grid; gap: var(--sp-3); min-width: 0; }
+.board-local-city-grid,
+.board-local-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
+.board-local label { display: grid; gap: var(--sp-1); min-width: 0; color: var(--text); font-size: var(--type-meta); font-weight: 700; line-height: var(--leading-label); }
+.board-local :is(input:not([type="checkbox"]):not([type="radio"]),select) {
+  width: 100%; min-width: 0; min-height: var(--touch-min); padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-1); color: var(--text); font: inherit;
+}
+.board-local-check { grid-template-columns: 22px minmax(0, 1fr); align-items: start; gap: var(--sp-2) !important; cursor: pointer; }
+.board-local :is(input[type="checkbox"],input[type="radio"]) { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--accent); }
+.board-local-option { min-width: 0; margin: 0; padding: var(--sp-3); border: 1px solid var(--line-soft); border-radius: var(--radius-sm); background: var(--surface); }
+.board-local-option legend { max-width: 100%; padding: 0 var(--sp-1); color: var(--text-strong); }
+.board-local-option legend label { grid-template-columns: auto minmax(0, 1fr); align-items: center; cursor: pointer; }
+.board-local-option p { margin: 0 0 var(--sp-2); color: var(--muted); font-size: var(--type-meta); line-height: var(--leading-ui); }
+.board-local-actions,
+.board-community-actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--sp-2); }
+.board-local-actions span { color: var(--muted); font-size: var(--type-meta); line-height: var(--leading-ui); }
+.board-local :is(.btn,.link-btn),
+.board-community .btn { min-height: var(--touch-min); }
+.board-local-revoke { justify-self: start; padding-block: var(--sp-2); color: var(--muted); }
+.board-local-error { margin: 0; padding: var(--sp-2) var(--sp-3); border-left: 3px solid var(--bad); background: color-mix(in srgb, var(--bad) 8%, transparent); color: var(--text-strong) !important; }
+.board-local-unavailable { padding: var(--sp-3); border: 1px dashed var(--line); border-radius: var(--radius-sm); background: var(--surface); color: var(--text) !important; }
+.board-community { border-color: color-mix(in srgb, var(--ok) 45%, var(--line)); }
+.board-community-actions { justify-content: flex-end; max-width: 360px; }
+.bdetail-alternative { display: inline-flex; align-items: center; min-height: var(--touch-min); margin-top: var(--sp-2); color: var(--accent-2); font-weight: 750; }
+
 .board-active { display: grid; grid-template-columns: minmax(150px, .3fr) minmax(0, 1fr); gap: var(--sp-3); align-items: stretch; }
 .board-active-label { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); padding: var(--sp-3); border: 1px solid var(--line-soft); border-radius: var(--radius); background: var(--surface-1); }
 .board-active-label h3 { margin: 0; font-size: var(--type-control); line-height: var(--leading-ui); }
@@ -15715,7 +15758,7 @@ html.calendar-task-open body {
 .calib-note { background: rgba(255,255,255,.34); border-color: #aa9064; color: var(--board-ink); }
 .calib-paper .btn:not(.ghost) { color: var(--on-accent); }
 
-.board-screen :is(.bsheet,.board-active-ticket,.btn,input):focus-visible,
+.board-screen :is(.bsheet,.board-active-ticket,.btn,.link-btn,input,select):focus-visible,
 .board-calib :is(.btn,input):focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
 @media (hover: hover) and (pointer: fine) {
@@ -15728,6 +15771,7 @@ html.calendar-task-open body {
   .board-detail { border-left: 0; border-top: 6px double #5d4630; }
   .board-wildcard form { grid-template-columns: 1fr; }
   .board-wildcard-actions { grid-column: auto; }
+  .board-local-options { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
   body:has(.board-screen) #ai-fab,
@@ -15753,13 +15797,17 @@ html.calendar-task-open body {
   .bdone-list { grid-template-columns: 1fr; }
   .board-calib-frame { padding: var(--sp-3); border-width: 5px; }
   .calib-paper { padding: var(--sp-4) var(--sp-3); }
+  .board-local,
+  .board-community { grid-template-columns: 1fr; padding: var(--sp-3); }
+  .board-local-city-grid { grid-template-columns: 1fr; }
+  .board-community-actions { justify-content: flex-start; max-width: none; }
 }
 @media (max-width: 370px) {
   .board-papers { grid-template-columns: 1fr; }
   .board-screen .bsheet.is-seasonal { grid-column: auto; }
 }
 @media (max-width: 600px), (pointer: coarse) {
-  .board-screen :is(.bsheet,.board-active-ticket,.bdetail-acts .btn,.board-ask .btn,.bdone .btn,.bdone-input,.bdone-file,.board-journal-recovery .btn,.board-head-actions .btn,.board-wildcard .btn,.board-wildcard input),
+  .board-screen :is(.bsheet,.board-active-ticket,.bdetail-acts .btn,.board-ask .btn,.bdone .btn,.bdone-input,.bdone-file,.board-journal-recovery .btn,.board-head-actions .btn,.board-wildcard .btn,.board-wildcard input,.board-local .btn,.board-local .link-btn,.board-local input,.board-local select,.board-community .btn),
   .board-calib :is(.btn,.calib-note) { min-height: var(--touch-min); }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -1,4 +1,4 @@
-/* Satoru Board v2 — local discovery/privacy contract (dormant).
+/* Satoru Board v2 — local discovery/privacy contract.
  *
  * Search providers may suggest URLs, but they cannot create a quest. A local
  * candidate becomes usable only after direct source evidence confirms every
@@ -81,7 +81,7 @@
   }
   function timezone(value) {
     const out = text(value, 80);
-    if (!/^[A-Za-z_]+(?:\/[A-Za-z0-9_+\-]+)+$/.test(out)) return '';
+    if (!/^(?:UTC|GMT|[A-Za-z_]+(?:\/[A-Za-z0-9_+\-]+)+)$/.test(out)) return '';
     try {
       new Intl.DateTimeFormat('en', { timeZone: out }).format(0);
       return out;
@@ -131,7 +131,9 @@
     const zone = timezone(source.timezone);
     const language = locale(source.locale);
     const approvedAt = iso(source.approvedAt);
-    if (!city || !/^[A-Z]{2}$/.test(countryCode) || !zone || !language || !approvedAt) {
+    const provider = text(source.provider, 40);
+    if (!city || !/^[A-Z]{2}$/.test(countryCode) || !zone || !language || !approvedAt
+      || provider !== PROVIDER_ID || source.shareCityWithProvider !== true) {
       return disabledConsent();
     }
     return deepFreeze({
@@ -142,6 +144,8 @@
       timezone: zone,
       locale: language,
       approvedAt,
+      provider: PROVIDER_ID,
+      shareCityWithProvider: true,
     });
   }
 

@@ -15,6 +15,7 @@ const URL = 'https://hsp.sport.uni-bielefeld.de/course/boxing';
 function request(intent) {
   return BoardDiscovery.createRequest({
     enabled: true, city: 'Bielefeld', countryCode: 'DE', timezone: 'Europe/Berlin', locale: 'de-DE', approvedAt: NOW,
+    provider: BoardDiscovery.PROVIDER_ID, shareCityWithProvider: true,
   }, {
     requestId: `microdata-${intent}-01`, templateId: 'try-specific-local-class', slotId: 'class',
     intent, searchTerms: ['trial-class', 'boxing'],

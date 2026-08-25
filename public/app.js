@@ -15284,6 +15284,8 @@ function boardV2CurrentOffers() {
   const standard = state.current
     ? state.current.snapshotIds.map((id) => state.snapshots.find((item) => item.id === id)).filter(Boolean)
     : [];
+  const local = window.BoardV2Offers && window.BoardV2Offers.latestLocal(state, window.BoardV2Pacing);
+  if (local) return [local];
   const unexpected = window.BoardV2Offers && window.BoardV2Offers.latestUnexpected(state, window.BoardV2Pacing);
   return unexpected ? [unexpected].concat(standard.filter((item) => item.id !== unexpected.id)).slice(0, 2) : standard;
 }
@@ -15346,9 +15348,199 @@ async function boardV2IssueUnexpected(setup) {
     return { ok: true, snapshotId: issue.primary.id };
   } finally { State._boardIssueBusy = false; }
 }
+function boardV2LocalSession() {
+  if (!State._boardLocal || typeof State._boardLocal !== 'object') {
+    State._boardLocal = { open: false, loading: false, loaded: false, busy: false, status: null, error: '' };
+  }
+  return State._boardLocal;
+}
+function boardV2LocaleTag() {
+  return ({ ru: 'ru-RU', en: 'en-US', de: 'de-DE', uk: 'uk-UA', es: 'es-ES' })[lang()] || 'en-US';
+}
+async function boardV2LoadCommunity(force = false) {
+  const U = window.BoardV2LocalUI;
+  if (lang() !== 'ru' || !U) return false;
+  const target = U.feedbackTarget(State.settings && State.settings.boardV2Offers, State.tasks);
+  if (!target) { State._boardCommunity = null; return false; }
+  const current = State._boardCommunity;
+  if (!force && current && current.snapshotId === target.snapshotId && (current.loading || current.loaded)) return current.loaded;
+  State._boardCommunity = { snapshotId: target.snapshotId, completed: target.completed, loading: true, loaded: false, error: '', data: null, justMarked: false };
+  try {
+    const response = await fetch(`/api/board-v2/community?snapshotId=${encodeURIComponent(target.snapshotId)}`);
+    if (response.status === 401) { handleAccountSessionExpired(); return false; }
+    const raw = await response.json().catch(() => null);
+    const data = response.ok ? U.normalizeCommunity(raw) : null;
+    if (!data) throw new Error('invalid-community-status');
+    Object.assign(State._boardCommunity, { loading: false, loaded: true, data });
+    return true;
+  } catch {
+    Object.assign(State._boardCommunity, { loading: false, loaded: true, error: 'Не удалось проверить свежие отметки.' });
+    return false;
+  } finally {
+    if (State.view === 'today' && State._todayTab === 'board') render();
+  }
+}
+async function boardV2LoadLocalStatus(force = false) {
+  const U = window.BoardV2LocalUI, session = boardV2LocalSession();
+  if (lang() !== 'ru' || !U || session.loading || (!force && session.loaded)) return session.loaded;
+  session.loading = true; session.error = '';
+  if (session.open && State.view === 'today' && State._todayTab === 'board') render();
+  try {
+    const response = await fetch('/api/board-v2/discovery');
+    if (response.status === 401) { handleAccountSessionExpired(); return false; }
+    const raw = await response.json().catch(() => null), status = response.ok ? U.normalizeStatus(raw) : null;
+    if (!status) throw new Error('invalid-discovery-status');
+    session.status = status; session.loaded = true;
+    return true;
+  } catch {
+    session.loaded = true; session.error = 'Не удалось загрузить поиск рядом.';
+    return false;
+  } finally {
+    session.loading = false;
+    if (State.view === 'today' && State._todayTab === 'board') render();
+    await boardV2LoadCommunity(force);
+  }
+}
+async function boardV2SaveCityConsent(payload) {
+  const U = window.BoardV2LocalUI, session = boardV2LocalSession();
+  if (!U || !payload || session.busy) return false;
+  session.busy = true; session.error = ''; render();
+  try {
+    const response = await fetch('/api/board-v2/discovery/consent', {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
+    });
+    if (response.status === 401) { handleAccountSessionExpired(); return false; }
+    const raw = await response.json().catch(() => null), status = response.ok ? U.normalizeStatus(raw) : null;
+    if (!status) throw new Error('invalid-city-consent');
+    session.status = status; session.loaded = true;
+    return true;
+  } catch {
+    session.error = payload.enabled === false ? 'Не удалось отключить использование города.' : 'Проверь название города и код страны.';
+    return false;
+  } finally {
+    session.busy = false; render();
+  }
+}
+async function boardV2ResolveLocal(payload) {
+  const U = window.BoardV2LocalUI, L = window.BoardV2LocalIssuer, R = window.BoardV2Runtime;
+  const session = boardV2LocalSession();
+  if (!U || !L || !R || !payload || session.busy) return false;
+  session.busy = true; session.error = ''; render();
+  try {
+    const response = await fetch('/api/board-v2/discovery/resolve', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
+    });
+    if (response.status === 401) { handleAccountSessionExpired(); return false; }
+    const raw = await response.json().catch(() => null);
+    if (!response.ok || !raw || raw.ok !== true) {
+      session.error = U.failureMessage(raw && raw.reason);
+      return false;
+    }
+    const issue = L.issue(window.BoardV2, window.BoardV2Catalog, window.BoardV2Offers, window.BoardV2Pacing,
+      window.BoardV2Discovery, boardV2OffersRead(), raw.recommendation,
+      { day: todayStr(), at: new Date().toISOString() });
+    if (!issue.ok) { session.error = U.failureMessage(issue.reason); return false; }
+    const prepared = R.prepareIssue({ issuerApi: L, boardApi: window.BoardV1,
+      offersApi: window.BoardV2Offers, pacingApi: window.BoardV2Pacing,
+      issue, settings: State.settings, tasks: State.tasks });
+    if (!prepared.ok) { session.error = U.failureMessage(prepared.reason); return false; }
+    const saved = await commitBoardV2Transaction(prepared.transaction);
+    if (!saved) { session.error = U.failureMessage('commit-failed'); return false; }
+    State._boardSel = issue.primary.id; State._boardCommunity = null;
+    await boardV2LoadCommunity(true);
+    return true;
+  } catch {
+    session.error = U.failureMessage('provider-error');
+    return false;
+  } finally {
+    session.busy = false;
+    State._boardFocusAfterCommit = session.error ? '.board-local-error' : '#board-detail-title';
+    render();
+  }
+}
+async function boardV2MarkCommunity(signal) {
+  const U = window.BoardV2LocalUI, state = State._boardCommunity;
+  if (!U || !state || state.loading || !state.data || !state.data.canMark) return false;
+  state.loading = true; state.error = ''; render();
+  try {
+    const response = await fetch('/api/board-v2/community/mark', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ snapshotId: state.snapshotId, signal }),
+    });
+    if (response.status === 401) { handleAccountSessionExpired(); return false; }
+    const raw = await response.json().catch(() => null);
+    if (response.status === 409) {
+      state.data = { summary: state.data.summary, canMark: false, alreadyMarked: true };
+      state.justMarked = true; return true;
+    }
+    const data = response.ok ? U.normalizeCommunity(raw) : null;
+    if (!data) throw new Error('invalid-community-mark');
+    state.data = data; state.justMarked = true;
+    return true;
+  } catch {
+    state.error = 'Отметка не сохранилась. Попробуй ещё раз.';
+    return false;
+  } finally { state.loading = false; render(); }
+}
 function boardV2UnexpectedDeadline() {
   const deadline = new Date(Date.now() + 48 * 60 * 60 * 1000);
   return deadline.toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+}
+function boardV2LocalPanelHTML() {
+  if (lang() !== 'ru') return '';
+  const session = boardV2LocalSession();
+  if (!session.open) return '';
+  const close = '<button type="button" class="btn ghost sm" data-action="board-local-close" aria-label="Закрыть поиск рядом">Закрыть</button>';
+  if (session.loading && !session.loaded) return `<section class="board-local" aria-labelledby="board-local-title" aria-busy="true">
+    <header><div><p class="board-kicker">ПОИСК РЯДОМ</p><h3 id="board-local-title" tabindex="-1">Проверяю доступность…</h3></div>${close}</header>
+    <p role="status">Загружаю сохранённое согласие и доступные категории.</p></section>`;
+  const status = session.status;
+  if (!status || !status.consent.enabled) {
+    return `<section class="board-local" aria-labelledby="board-local-title">
+      <header><div><p class="board-kicker">ПОИСК РЯДОМ</p><h3 id="board-local-title" tabindex="-1">Где искать?</h3></div>${close}</header>
+      <p>Доска попробует найти один конкретный вариант и проверить его по официальной странице. Без разрешения внешний поиск не запускается.</p>
+      ${session.error ? `<p class="board-local-error" role="alert">${esc(session.error)}</p>` : ''}
+      <form id="board-local-consent-form">
+        <div class="board-local-city-grid"><label>Город<input name="city" maxlength="100" autocomplete="address-level2" required placeholder="Bielefeld" data-noi18n></label>
+          <label>Код страны<input name="countryCode" maxlength="2" minlength="2" autocomplete="country" required placeholder="DE" autocapitalize="characters" data-noi18n></label></div>
+        <label class="board-local-check"><input type="checkbox" name="accepted" required> Сохранить название города и код страны в моём аккаунте Satoru.</label>
+        <label class="board-local-check"><input type="checkbox" name="providerConfirmed" required> Разрешаю серверу Satoru передавать в Brave Search только название города, код страны и выбранную категорию. Координаты, домашний адрес, профиль, дневник и мои формулировки не передаются.</label>
+        <div class="board-local-actions"><button type="submit" class="btn"${session.busy ? ' disabled' : ''}>Разрешить и продолжить</button></div>
+      </form></section>`;
+  }
+  const optionRows = status.options.map((option, index) => `<fieldset class="board-local-option">
+    <legend><label><input type="radio" name="optionId" value="${esc(option.id)}"${index === 0 ? ' checked' : ''}> <b>${esc(option.label)}</b></label></legend>
+    <p>${esc(option.description)}</p>
+    <label>Что ближе<select name="interest:${esc(option.id)}">${option.interests.map((interest) => `<option value="${esc(interest.id)}">${esc(interest.label)}</option>`).join('')}</select></label>
+  </fieldset>`).join('');
+  const provider = status.providerAvailable
+    ? `<form id="board-local-resolve-form"><div class="board-local-options">${optionRows}</div>
+        <div class="board-local-actions"><button type="submit" class="btn"${session.busy ? ' disabled' : ''}>Найти один вариант</button>
+          <span>${status.billing.searches}/${status.billing.limit} поисков сегодня${status.cache.freshCandidates ? ` · ${status.cache.freshCandidates} в свежем кэше` : ''}</span></div></form>`
+    : '<p class="board-local-unavailable" role="status">Поиск по официальным источникам сейчас не подключён на сервере. Город сохранён, но доска не будет придумывать место.</p>';
+  return `<section class="board-local" aria-labelledby="board-local-title"${session.busy ? ' aria-busy="true"' : ''}>
+    <header><div><p class="board-kicker">ПОИСК РЯДОМ</p><h3 id="board-local-title" tabindex="-1">${esc(status.consent.city)} · ${esc(status.consent.countryCode)}</h3></div>${close}</header>
+    <p>Выбери направление. На доску попадёт только вариант с подтверждённым адресом, временем, ценой и официальной ссылкой.</p>
+    ${session.error ? `<p class="board-local-error" role="alert">${esc(session.error)}</p>` : ''}
+    ${provider}
+    <button type="button" class="link-btn board-local-revoke" data-action="board-local-revoke"${session.busy ? ' disabled' : ''}>Отключить и удалить город из поиска</button>
+  </section>`;
+}
+function boardV2CommunityHTML() {
+  const U = window.BoardV2LocalUI, state = State._boardCommunity;
+  if (lang() !== 'ru' || !U || !state || !state.loaded || (!state.data && !state.error)) return '';
+  const data = state.data, summary = data && U.summaryMessage(data.summary);
+  if (!summary && data && !data.canMark && !state.justMarked) return '';
+  return `<section class="board-community" aria-labelledby="board-community-title">
+    <div><p class="board-kicker">ПРОВЕРЕНО ЛЮДЬМИ</p><h3 id="board-community-title">${data && data.canMark ? 'Информация совпала?' : 'Свежесть места'}</h3>
+      ${summary ? `<p>${esc(summary)}</p>` : ''}${state.justMarked ? '<p role="status">Спасибо. Отметка сохранена без текста, имени и фотографии.</p>' : ''}
+      ${state.error ? `<p class="board-local-error" role="alert">${esc(state.error)}</p>` : ''}</div>
+    ${data && data.canMark ? `<div class="board-community-actions">
+      <button type="button" class="btn ghost sm" data-action="board-community-mark" data-signal="matched"${state.loading ? ' disabled' : ''}>Всё совпало</button>
+      <button type="button" class="btn ghost sm" data-action="board-community-mark" data-signal="changed"${state.loading ? ' disabled' : ''}>Детали изменились</button>
+      <button type="button" class="btn ghost sm" data-action="board-community-mark" data-signal="closed"${state.loading ? ' disabled' : ''}>Место закрылось</button>
+    </div>` : ''}
+  </section>`;
 }
 function boardV2WildcardPanelHTML() {
   if (lang() !== 'ru' || !State._boardWildcardOpen) return '';
@@ -15736,7 +15928,8 @@ function boardScreenHTML() {
 
   const sheet = (order) => {
     const selected = !!(selOrder && selOrder.id === order.id);
-    const label = order.mode === 'manual-unexpected' ? 'НЕОЖИДАННЫЙ'
+    const label = order.mode === 'manual-local' ? 'ЛОКАЛЬНЫЙ'
+      : order.mode === 'manual-unexpected' ? 'НЕОЖИДАННЫЙ'
       : order.boardV2 ? 'ПОДОБРАНО ДЛЯ ТЕБЯ' : order.seasonal ? t('ОБЩИЙ СЕЗОННЫЙ') : order.sky ? t('ТОЛЬКО СЕЙЧАС') : order.custom ? t('ТВОЙ') : t('ЛИЧНЫЙ');
     return `<button type="button" aria-pressed="${selected}" aria-label="${esc(t('Читать заказ') + ': ' + boardOrderTitle(order))}"
       class="bsheet${order.seasonal ? ' is-seasonal' : ''}${order.sky ? ' is-sky' : ''}${order.custom && !order.sky ? ' is-custom' : ''}${selected ? ' is-selected' : ''}"
@@ -15782,7 +15975,8 @@ function boardScreenHTML() {
   let detail = `<p class="bdetail-empty">${t('Выбери заказ, чтобы прочитать его целиком.')}</p>`;
   if (selOrder) {
     const sphere = selOrder.sphereId ? (State.settings.skills || []).find((item) => item.id === selOrder.sphereId) : null;
-    const meta = selOrder.mode === 'manual-unexpected' ? 'Неожиданный заказ'
+    const meta = selOrder.mode === 'manual-local' ? 'Проверено по официальному источнику'
+      : selOrder.mode === 'manual-unexpected' ? 'Неожиданный заказ'
       : selOrder.boardV2 ? 'Конкретный заказ'
       : selOrder.seasonal ? t('Сезонный заказ')
       : selOrder.sky ? `${t('Небо')} · ${esc(selOrder.skyPlace || '')} · ${esc(t(selOrder.skyQuality || ''))}`
@@ -15799,6 +15993,7 @@ function boardScreenHTML() {
           : `<button class="btn" data-action="board-take" data-id="${esc(selOrder.id)}">${t('Беру')}</button>${selOrder.mode === 'manual-unexpected' ? `<button class="btn ghost" data-action="board-unexpected-reject" data-id="${esc(selOrder.id)}">Не моё</button>` : ''}`}</div>
       <section class="bdetail-instruction" aria-labelledby="board-how-title"><h4 id="board-how-title">${t('КАК ЗАКРЫТЬ')}</h4><p>${t('Сделай это в реальной жизни и отметь здесь. Самоотчёта достаточно; фотографию можно добавить потом.')}</p></section>
       ${selOrder.boardV2 && selOrder.primaryAction ? `<p class="bdetail-privacy"><a class="btn ghost sm" href="${esc(selOrder.primaryAction.url)}" target="_blank" rel="noopener noreferrer" data-noi18n>${esc(selOrder.primaryAction.label)}</a></p>` : ''}
+      ${selOrder.boardV2 && selOrder.alternative ? `<p class="bdetail-alternative"><span>Запасной вариант</span><a href="${esc(selOrder.alternative.url)}" target="_blank" rel="noopener noreferrer" data-noi18n>${esc(selOrder.alternative.label)}</a></p>` : ''}
       ${selOrder.seasonal ? `<p class="bdetail-privacy">◉ ${t('Общий для всех заказ. Твоё выполнение и фото остаются приватными.')}</p>` : ''}
       ${selOrder.custom && !selTaken ? (State._boardEditId === selOrder.id
         ? `<form class="bdetail-edit" id="board-custom-edit" data-id="${esc(selOrder.id)}">
@@ -15816,9 +16011,10 @@ function boardScreenHTML() {
   const askOrder = ask ? boardOrderById(ask.orderId) : null;
   return `<section class="board-screen" aria-labelledby="board-title">
     <header class="board-head"><div><p class="board-kicker">${t('ПРИКЛЮЧЕНИЯ ЭТОЙ НЕДЕЛИ')}</p><h2 id="board-title" tabindex="-1">${t('Доска заказов')}</h2><p>${t('Не список дел. Несколько ясных поводов выйти из привычного маршрута.')}</p></div>
-      <div class="board-head-actions">${lang() === 'ru' ? `<button type="button" class="btn ghost" data-action="board-unexpected-open" aria-expanded="${State._boardWildcardOpen ? 'true' : 'false'}" aria-controls="board-wildcard-title">Дай что-нибудь неожиданное</button>` : ''}
+      <div class="board-head-actions">${lang() === 'ru' ? `<button type="button" class="btn ghost" data-action="board-local-open" aria-expanded="${boardV2LocalSession().open ? 'true' : 'false'}" aria-controls="board-local-title">Найти рядом</button><button type="button" class="btn ghost" data-action="board-unexpected-open" aria-expanded="${State._boardWildcardOpen ? 'true' : 'false'}" aria-controls="board-wildcard-title">Дай что-нибудь неожиданное</button>` : ''}
         <p class="board-count"><b>${mine.length}/${B.MAX_ACTIVE}</b><span>${t('На руках')}<br>${t('заказа из трёх')}</span></p></div></header>
     ${State._boardError ? `<p class="board-error" role="alert">${esc(State._boardError)}</p>` : ''}
+    ${boardV2LocalPanelHTML()}
     ${boardV2WildcardPanelHTML()}
     ${active}
     <div class="board-frame"><div class="board-frame-cap" aria-hidden="true"><span></span><i></i><span></span></div>
@@ -15830,6 +16026,7 @@ function boardScreenHTML() {
         </aside>
       </div>
     </div>
+    ${boardV2CommunityHTML()}
     ${boardDoneHTML(st)}
   </section>`;
 }
@@ -20357,6 +20554,47 @@ async function onSubmit(e) {
     return;
   }
 
+  if (f.id === 'board-local-consent-form') {
+    e.preventDefault();
+    const U = window.BoardV2LocalUI;
+    if (!U) return;
+    const data = new FormData(f);
+    const payload = U.consentPayload({
+      accepted: data.has('accepted'),
+      providerConfirmed: data.has('providerConfirmed'),
+      city: String(data.get('city') || '').trim(),
+      countryCode: String(data.get('countryCode') || '').trim(),
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      locale: boardV2LocaleTag(),
+    });
+    if (!payload) {
+      const session = boardV2LocalSession();
+      session.error = 'Укажи город и код страны, затем подтверди оба разрешения.';
+      State._boardFocusAfterCommit = '.board-local-error'; render(); return;
+    }
+    const saved = await boardV2SaveCityConsent(payload);
+    State._boardFocusAfterCommit = saved ? '#board-local-title' : '.board-local-error';
+    render();
+    return;
+  }
+
+  if (f.id === 'board-local-resolve-form') {
+    e.preventDefault();
+    const U = window.BoardV2LocalUI, session = boardV2LocalSession();
+    if (!U || !session.status) return;
+    const data = new FormData(f), optionId = String(data.get('optionId') || '');
+    const payload = U.resolvePayload(session.status, {
+      optionId,
+      interestId: String(data.get(`interest:${optionId}`) || ''),
+    });
+    if (!payload) {
+      session.error = 'Выбери направление из доступного списка.';
+      State._boardFocusAfterCommit = '.board-local-error'; render(); return;
+    }
+    await boardV2ResolveLocal(payload);
+    return;
+  }
+
   if (f.id === 'board-wildcard-form') {
     e.preventDefault();
     const data = new FormData(f);
@@ -22354,10 +22592,25 @@ async function onClick(e) {
     if (State._todayTab === 'board' && await boardV2IssueStandardOffers()) {
       State._boardFocusAfterCommit = '#board-detail-title, #board-title'; render();
     }
+    if (State._todayTab === 'board') await boardV2LoadLocalStatus();
   } else if (action === 'board-pick') {
     State._boardSel = id; State._boardFocusAfterCommit = '#board-detail-title'; render();
+  } else if (action === 'board-local-open') {
+    const session = boardV2LocalSession(); session.open = true; session.error = '';
+    State._boardWildcardOpen = false; State._boardFocusAfterCommit = '#board-local-title'; render();
+    await boardV2LoadLocalStatus();
+  } else if (action === 'board-local-close') {
+    const session = boardV2LocalSession(); session.open = false; session.error = '';
+    State._boardFocusAfterCommit = '[data-action="board-local-open"]'; render();
+  } else if (action === 'board-local-revoke') {
+    const saved = await boardV2SaveCityConsent({ enabled: false });
+    if (saved) { State._boardFocusAfterCommit = '#board-local-title'; render(); }
+  } else if (action === 'board-community-mark') {
+    if (!['matched', 'changed', 'closed'].includes(el.dataset.signal)) return;
+    await boardV2MarkCommunity(el.dataset.signal);
   } else if (action === 'board-unexpected-open') {
     State._boardWildcardOpen = true; State._boardWildcardError = '';
+    boardV2LocalSession().open = false;
     State._boardFocusAfterCommit = '#board-wildcard-title'; render();
   } else if (action === 'board-unexpected-close') {
     State._boardWildcardOpen = false; State._boardWildcardError = ''; State._boardWildcardDraft = null;
@@ -22424,7 +22677,9 @@ async function onClick(e) {
       }
       const saved = await commitBoardV2Transaction(prepared.transaction);
       if (!saved) { State._boardFocusAfterCommit = '.board-error'; render(); return; }
-      State._boardSel = null; State._boardFocusAfterCommit = '#board-journal-title, #board-title'; toast(t('Заказ закрыт')); render(); return;
+      State._boardSel = null; State._boardCommunity = null;
+      await boardV2LoadCommunity(true);
+      State._boardFocusAfterCommit = '#board-community-title, #board-journal-title, #board-title'; toast(t('Заказ закрыт')); render(); return;
     }
     const B = window.BoardV1;
     if (!B) return;

@@ -17,6 +17,8 @@ function consent(overrides) {
     timezone: 'Europe/Berlin',
     locale: 'de-DE',
     approvedAt: '2026-08-25T10:00:00.000Z',
+    provider: Discovery.PROVIDER_ID,
+    shareCityWithProvider: true,
     latitude: 52.0302,
     longitude: 8.5325,
     exactAddress: 'private',
@@ -84,13 +86,16 @@ test('city-level consent хранит город, но выкидывает то
     timezone: 'Europe/Berlin',
     locale: 'de-DE',
     approvedAt: '2026-08-25T10:00:00.000Z',
+    provider: Discovery.PROVIDER_ID,
+    shareCityWithProvider: true,
   });
   assert.equal('latitude' in normalized, false);
   assert.equal('exactAddress' in normalized, false);
 });
 
 test('без явного полноценного согласия локальный discovery выключен', () => {
-  for (const raw of [{}, consent({ enabled: false }), consent({ city: '' }), consent({ approvedAt: '' })]) {
+  for (const raw of [{}, consent({ enabled: false }), consent({ city: '' }), consent({ approvedAt: '' }),
+    consent({ provider: '' }), consent({ shareCityWithProvider: false })]) {
     assert.deepEqual(Discovery.normalizeConsent(raw), { schema: Discovery.CONSENT_SCHEMA, enabled: false });
   }
   assert.throws(() => Discovery.createRequest({}, {}), { code: 'city-consent-required' });
@@ -100,10 +105,12 @@ test('город не может быть скрытым query/control payload',
   assert.deepEqual(Discovery.normalizeConsent({
     enabled: true, city: 'Bielefeld\nsite:private.example', countryCode: 'DE',
     timezone: 'Europe/Berlin', locale: 'de-DE', approvedAt: NOW,
+    provider: Discovery.PROVIDER_ID, shareCityWithProvider: true,
   }), { schema: Discovery.CONSENT_SCHEMA, enabled: false });
   assert.equal(Discovery.normalizeConsent({
     enabled: true, city: 'Horn-Bad Meinberg', countryCode: 'DE',
     timezone: 'Europe/Berlin', locale: 'de-DE', approvedAt: NOW,
+    provider: Discovery.PROVIDER_ID, shareCityWithProvider: true,
   }).city, 'Horn-Bad Meinberg');
 });
 
@@ -300,9 +307,12 @@ test('Brave policy запрещает raw result persistence без storage righ
   });
 });
 
-test('discovery остаётся dormant и не загружается app shell', () => {
+test('discovery загружается до local issuer/UI/runtime и доступен офлайн', () => {
   const index = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
   const sw = fs.readFileSync(path.join(ROOT, 'public/sw.js'), 'utf8');
-  assert.doesNotMatch(index, /board-v2-discovery\.js/);
-  assert.doesNotMatch(sw, /board-v2-discovery\.js/);
+  const files = ['board-v2-discovery.js', 'board-v2-local-issuer.js', 'board-v2-local-ui.js', 'board-v2-runtime.js', 'app.js'];
+  const positions = files.map((file) => index.indexOf(file));
+  assert.equal(positions.every((position) => position >= 0), true);
+  assert.deepEqual(positions, positions.slice().sort((a, b) => a - b));
+  for (const file of files.slice(0, -1)) assert.match(sw, new RegExp(`'${file.replaceAll('.', '\\.')}''?`.replace("''", "'")));
 });
