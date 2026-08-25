@@ -13,7 +13,7 @@ const sw = fs.readFileSync(path.join(ROOT, 'public/sw.js'), 'utf8');
 const localUI = fs.readFileSync(path.join(ROOT, 'public/board-v2-local-ui.js'), 'utf8');
 const serverRegistry = fs.readFileSync(path.join(ROOT, 'server-board-v2-registry-v1.js'), 'utf8');
 
-test('v175 shell retains local Board contracts before runtime and caches each once', () => {
+test('v176 shell retains local Board contracts before runtime and caches each once', () => {
   const files = ['board-v2-discovery.js', 'board-v2-local-issuer.js', 'board-v2-local-ui.js', 'board-v2-runtime.js', 'app.js'];
   const positions = files.map((file) => index.indexOf(file));
   assert.equal(positions.every((position) => position >= 0), true);
@@ -21,9 +21,9 @@ test('v175 shell retains local Board contracts before runtime and caches each on
   for (const file of files.slice(0, -1)) {
     assert.equal((sw.match(new RegExp(`'${file.replaceAll('.', '\\.')}''?`.replace("''", "'"), 'g')) || []).length, 1);
   }
-  assert.match(sw, /const CACHE = 'satoru-v175';/);
-  assert.match(index, /styles\.css\?v=20260825-board-v2-complete-v175-1/);
-  assert.match(index, /app\.js\?v=20260825-board-v2-complete-v175-1/);
+  assert.match(sw, /const CACHE = 'satoru-v176';/);
+  assert.match(index, /styles\.css\?v=20260825-attention-r1-v176-1/);
+  assert.match(index, /app\.js\?v=20260825-attention-r1-v176-1/);
 });
 
 test('city discovery requires two explicit approvals and names Brave as recipient', () => {

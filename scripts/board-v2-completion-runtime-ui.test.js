@@ -13,13 +13,13 @@ const styles = fs.readFileSync(path.join(ROOT, 'public/styles.css'), 'utf8');
 const server = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
 const completionUi = fs.readFileSync(path.join(ROOT, 'public/board-v2-completion-ui.js'), 'utf8');
 
-test('v175 loads completion presentation before runtime and caches it exactly once', () => {
+test('v176 loads completion presentation before runtime and caches it exactly once', () => {
   const completion = index.indexOf('board-v2-completion.js'), ui = index.indexOf('board-v2-completion-ui.js');
   const runtime = index.indexOf('board-v2-runtime.js'), appPos = index.indexOf('app.js?v=');
   assert.ok(completion >= 0 && completion < ui && ui < runtime && runtime < appPos);
   assert.equal((sw.match(/'board-v2-completion-ui\.js'/g) || []).length, 1);
-  assert.match(sw, /const CACHE = 'satoru-v175';/);
-  assert.match(index, /app\.js\?v=20260825-board-v2-complete-v175-1/);
+  assert.match(sw, /const CACHE = 'satoru-v176';/);
+  assert.match(index, /app\.js\?v=20260825-attention-r1-v176-1/);
 });
 
 test('Board completion opens a real form instead of attempting a null proof', () => {

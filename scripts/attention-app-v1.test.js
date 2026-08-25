@@ -14,7 +14,7 @@ const SW = read('public/sw.js');
 const CSS = read('public/styles.css');
 const SERVER = read('server.js');
 
-test('attention engine, controller and renderer load before app and stay in the v175 shell', () => {
+test('attention engine, controller and renderer load before app and stay in the v176 shell', () => {
   const files = ['attention-policy-v1.js', 'attention-session-v1.js', 'attention-episode-v1.js', 'attention-controller-v1.js', 'attention-ui-v1.js'];
   let prior = -1;
   for (const file of files) {
@@ -24,7 +24,7 @@ test('attention engine, controller and renderer load before app and stay in the 
     assert.equal((SW.match(new RegExp(`'${file.replaceAll('.', '\\.')}'`, 'g')) || []).length, 1, `${file} must appear once in SHELL`);
   }
   assert.ok(INDEX.indexOf('src="app.js') > prior, 'app.js must run after every attention dependency');
-  assert.match(SW, /const CACHE = 'satoru-v175'/);
+  assert.match(SW, /const CACHE = 'satoru-v176'/);
 });
 
 test('client uses the dedicated checked envelope and never generic attention data files', () => {
@@ -35,6 +35,8 @@ test('client uses the dedicated checked envelope and never generic attention dat
     'malformed local data must not silently become an empty remote state');
   assert.doesNotMatch(APP, /Store\.loadChecked\('attention-(?:policies|sessions|episodes)'/);
   assert.doesNotMatch(APP, /Store\.saveNow\('attention-(?:policies|sessions|episodes)'/);
+  assert.match(APP, /\['attention-policies', 'attention-sessions', 'attention-episodes'\]\.includes\(name\)[\s\S]{0,90}attentionWriteAllowed\(name, '_put', true\)/,
+    'direct generic Store._put calls must fail closed for every legacy Attention dataset');
   assert.match(APP, /legacy attention dataset endpoint/, 'old generic writes must fail closed');
 });
 

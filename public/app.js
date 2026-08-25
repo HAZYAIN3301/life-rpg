@@ -3981,7 +3981,8 @@ const Store = {
     if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('_put', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('_put', true)) return false;
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('_put', true)) return false;
-    if (attentionDatasetSlot(name) && !attentionWriteAllowed(name, '_put', true)) return false;
+    if (['attention-policies', 'attention-sessions', 'attention-episodes'].includes(name)
+      && !attentionWriteAllowed(name, '_put', true)) return false;
     try {
       const r = await fetch(`/api/data/${name}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj),

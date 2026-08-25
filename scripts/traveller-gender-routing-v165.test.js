@@ -176,7 +176,7 @@ test('v167 app shell loads the resolver before consumers and pins every changed 
     'traveller-room-v4.js',
   ];
   pinned.forEach((file) => assert.match(html, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=${revision}`), `${file} must use the v167 pin`));
-  assert.match(html, /app\.js\?v=20260825-board-v2-complete-v175-1/);
+  assert.match(html, /app\.js\?v=20260825-attention-r1-v176-1/);
   const appearanceIndex = html.indexOf('traveller-appearance-v1.js');
   const motionIndex = html.indexOf('traveller-motion-v3.js');
   const roomIndex = html.indexOf('traveller-room-v4.js');
@@ -185,6 +185,6 @@ test('v167 app shell loads the resolver before consumers and pins every changed 
   for (const file of ['shadow-den-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js', 'resources-penguin-v1.js']) {
     assert.ok(html.indexOf(file) < appIndex, `${file} must load before app.js`);
   }
-  assert.match(sw, /const CACHE = 'satoru-v175';/);
+  assert.match(sw, /const CACHE = 'satoru-v176';/);
   assert.match(sw, /'traveller-appearance-v1\.js', 'traveller-motion-v3\.js', 'traveller-room-v4\.js'/);
 });
