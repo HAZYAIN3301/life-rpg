@@ -95,6 +95,7 @@
     const selectedPurpose = PURPOSES.includes(vm.purpose) ? vm.purpose : 'publish';
     const outcomeHint = boundedText(vm.outcomeHint, '', 120);
     const durations = cleanDurations(vm.durations);
+    const storageMode = vm.storageMode === 'contracts' ? 'contracts' : 'local';
     return `<form id="attention-setup-form" class="attention-flow attention-setup" data-attention-screen="setup">
       <header class="attention-flow-head">
         <p class="attention-kicker">${tr(t, 'Граница внимания')}</p>
@@ -123,6 +124,14 @@
           <div class="attention-mode-grid">${renderModeChoices(vm.mode, t)}</div>
         </fieldset>
       </div>
+      <details class="attention-data-choice">
+        <summary>${tr(t, 'Данные и приватность')}</summary>
+        <fieldset class="attention-fieldset">
+          <legend>${tr(t, 'Где хранить контракты и исходы')}</legend>
+          <label class="attention-choice"><input type="radio" name="storageMode" value="local" ${storageMode === 'local' ? 'checked' : ''} /><span><b>${tr(t, 'Только на этом устройстве')}</b><small>${tr(t, 'Ничего не отправляется в Satoru Cloud.')}</small></span></label>
+          <label class="attention-choice"><input type="radio" name="storageMode" value="contracts" ${storageMode === 'contracts' ? 'checked' : ''} /><span><b>${tr(t, 'Синхронизировать контракты')}</b><small>${tr(t, 'Синхронизируются правила, окна и записанные исходы — без истории сайтов и содержимого экрана.')}</small></span></label>
+        </fieldset>
+      </details>
       <p class="attention-privacy-note">${tr(t, 'Подробная история устройства остаётся локальной. Синхронизация включается отдельно.')}</p>
       <p class="attention-form-status" data-attention-status role="status" aria-live="polite"></p>
       <div class="attention-actions">

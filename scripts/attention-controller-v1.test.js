@@ -18,6 +18,18 @@ test('strict validators reject corrupt rows and duplicate ids instead of normali
   assert.equal(C.validateEpisodes({ version: 1, episodes: 'bad' }), false);
 });
 
+test('one checked envelope preserves local-only consent and rejects unknown sync modes', () => {
+  const empty = C.emptyBundle();
+  const local = C.toEnvelope({ ...empty, mode: 'local' });
+  assert.deepEqual(local, { version: 1, mode: 'local', policies: [], sessions: [], episodes: [] });
+  assert.equal(C.validateEnvelope(local), true);
+  assert.equal(C.validateEnvelope({ ...local, mode: 'aggregates' }), false, 'R1 must not promise aggregate sync before the server projects aggregates');
+  assert.equal(C.validateEnvelope({ ...local, policies: [{}] }), false);
+  const split = C.fromEnvelope(local);
+  assert.equal(split.mode, 'local');
+  assert.deepEqual(split.policies, empty.policies);
+});
+
 test('setup creates one canonical purpose without trusting a freeform purpose id', () => {
   const good = C.upsertPolicy(P.emptyState(), {
     targetLabel: 'TikTok', purpose: 'publish', minutes: 12, mode: 'control', outcome: 'ролик опубликован',

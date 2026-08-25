@@ -598,10 +598,22 @@ const I18N_EXTRA = {
   'Проверить вход': { en: 'Check entry', de: 'Öffnen prüfen', uk: 'Перевірити вхід', es: 'Comprobar entrada' },
   'Правил пока нет. Начни с одного приложения и одной цели — это займёт до двух минут.': { en: 'There are no rules yet. Start with one app and one purpose — it takes under two minutes.', de: 'Es gibt noch keine Regeln. Beginne mit einer App und einem Zweck — das dauert weniger als zwei Minuten.', uk: 'Правил ще немає. Почни з одного застосунку й однієї мети — це займе до двох хвилин.', es: 'Todavía no hay reglas. Empieza con una aplicación y un propósito: tardarás menos de dos minutos.' },
   'Подробная история устройства остаётся локальной. Синхронизация агрегатов — только по отдельному согласию.': { en: 'Detailed device history stays local. Aggregate sync requires separate consent.', de: 'Der detaillierte Geräteverlauf bleibt lokal. Die Synchronisierung von Aggregaten erfordert eine separate Zustimmung.', uk: 'Докладна історія пристрою лишається локальною. Синхронізація агрегатів — лише за окремою згодою.', es: 'El historial detallado del dispositivo se queda en local. La sincronización de agregados requiere un consentimiento aparte.' },
+  'Данные и приватность': { en: 'Data and privacy', de: 'Daten und Privatsphäre', uk: 'Дані та приватність', es: 'Datos y privacidad' },
+  'Где хранить контракты и исходы': { en: 'Where to store contracts and outcomes', de: 'Wo Verträge und Ergebnisse gespeichert werden', uk: 'Де зберігати контракти та результати', es: 'Dónde guardar contratos y resultados' },
+  'Только на этом устройстве': { en: 'Only on this device', de: 'Nur auf diesem Gerät', uk: 'Лише на цьому пристрої', es: 'Solo en este dispositivo' },
+  'Ничего не отправляется в Satoru Cloud.': { en: 'Nothing is sent to Satoru Cloud.', de: 'Nichts wird an Satoru Cloud gesendet.', uk: 'Нічого не надсилається до Satoru Cloud.', es: 'No se envía nada a Satoru Cloud.' },
+  'Синхронизировать контракты': { en: 'Sync contracts', de: 'Verträge synchronisieren', uk: 'Синхронізувати контракти', es: 'Sincronizar contratos' },
+  'Синхронизируются правила, окна и записанные исходы — без истории сайтов и содержимого экрана.': { en: 'Rules, windows and recorded outcomes are synced — without website history or screen contents.', de: 'Regeln, Zeitfenster und erfasste Ergebnisse werden synchronisiert — ohne Website-Verlauf oder Bildschirminhalte.', uk: 'Синхронізуються правила, вікна та записані результати — без історії сайтів і вмісту екрана.', es: 'Se sincronizan reglas, ventanas y resultados registrados, sin historial de sitios ni contenido de pantalla.' },
+  'Синхронизация контрактов включена': { en: 'Contract sync is on', de: 'Vertragssynchronisierung ist aktiv', uk: 'Синхронізацію контрактів увімкнено', es: 'La sincronización de contratos está activa' },
+  'Данные внимания остаются на этом устройстве': { en: 'Attention data stays on this device', de: 'Aufmerksamkeitsdaten bleiben auf diesem Gerät', uk: 'Дані уваги залишаються на цьому пристрої', es: 'Los datos de atención permanecen en este dispositivo' },
+  'Изменения внимания идут только через защищённое хранилище': { en: 'Attention changes only use the protected store', de: 'Änderungen an Aufmerksamkeitsdaten laufen nur über den geschützten Speicher', uk: 'Зміни даних уваги відбуваються лише через захищене сховище', es: 'Los cambios de atención solo usan el almacenamiento protegido' },
   'Модуль внимания не загрузился. Обнови страницу.': { en: 'The attention module did not load. Refresh the page.', de: 'Das Aufmerksamkeitsmodul wurde nicht geladen. Aktualisiere die Seite.', uk: 'Модуль уваги не завантажився. Онови сторінку.', es: 'El módulo de atención no se cargó. Actualiza la página.' },
   'Данные внимания недоступны. Ничего не перезаписываем.': { en: 'Attention data is unavailable. Nothing will be overwritten.', de: 'Aufmerksamkeitsdaten sind nicht verfügbar. Nichts wird überschrieben.', uk: 'Дані уваги недоступні. Нічого не перезаписуємо.', es: 'Los datos de atención no están disponibles. No se sobrescribirá nada.' },
   'Данные пока не восстановлены. Повтори после проверки соединения.': { en: 'The data is not restored yet. Try again after checking the connection.', de: 'Die Daten sind noch nicht wiederhergestellt. Prüfe die Verbindung und versuche es erneut.', uk: 'Дані ще не відновлено. Повтори після перевірки з\'єднання.', es: 'Los datos aún no se han restaurado. Comprueba la conexión y vuelve a intentarlo.' },
   'Правило внимания сохранено': { en: 'Attention rule saved', de: 'Aufmerksamkeitsregel gespeichert', uk: 'Правило уваги збережено', es: 'Regla de atención guardada' },
+  'Для рабочей цели нужен конкретный результат.': { en: 'A work purpose needs a concrete outcome.', de: 'Ein Arbeitszweck braucht ein konkretes Ergebnis.', uk: 'Для робочої мети потрібен конкретний результат.', es: 'Un propósito de trabajo necesita un resultado concreto.' },
+  'Проверь заполненные поля.': { en: 'Check the completed fields.', de: 'Überprüfe die ausgefüllten Felder.', uk: 'Перевір заповнені поля.', es: 'Revisa los campos completados.' },
+  'Одно окно внимания уже идёт.': { en: 'An attention window is already active.', de: 'Ein Aufmerksamkeitsfenster ist bereits aktiv.', uk: 'Одне вікно уваги вже триває.', es: 'Ya hay una ventana de atención activa.' },
   'Назови конкретную тему поиска.': { en: 'Name the specific topic you are searching for.', de: 'Nenne das konkrete Suchthema.', uk: 'Назви конкретну тему пошуку.', es: 'Indica el tema concreto que buscas.' },
   'Назови конкретный результат.': { en: 'Name the concrete outcome.', de: 'Nenne das konkrete Ergebnis.', uk: 'Назви конкретний результат.', es: 'Indica el resultado concreto.' },
   'Одно окно внимания уже идёт': { en: 'An attention window is already active', de: 'Ein Aufmerksamkeitsfenster ist bereits aktiv', uk: 'Одне вікно уваги вже триває', es: 'Ya hay una ventana de atención activa' },
@@ -3889,16 +3901,16 @@ function attentionDatasetSlot(name) {
 }
 function attentionWriteAllowed(name, source, notify = false) {
   const slot = attentionDatasetSlot(name);
-  if (!slot || !(State._attentionLoadErrors && State._attentionLoadErrors[slot])) return true;
+  if (!slot) return true;
   clearTimeout(Store._timers[name]);
   if (notify) {
     const now = Date.now();
     if (now - (State._attentionWriteBlockedNoticeAt || 0) > 2000) {
       State._attentionWriteBlockedNoticeAt = now;
-      toast(t('Изменения внимания заблокированы до восстановления данных'));
+      toast(t('Изменения внимания идут только через защищённое хранилище'));
     }
   }
-  console.error(`${source} blocked`, name, State._attentionLoadErrors[slot]);
+  console.error(`${source} blocked`, name, 'legacy attention dataset endpoint');
   return false;
 }
 const Store = {
@@ -3978,6 +3990,88 @@ const Store = {
       if (!r.ok) throw new Error('save ' + r.status);
       return true;
     } catch (e) { console.error('save', name, e); toast(t('⚠️ Не удалось сохранить')); return false; }
+  },
+};
+
+// Attention keeps one checked envelope. Local-only means exactly that: no
+// generic /api/data write and no silent server copy. Opt-in contract sync uses
+// the dedicated whitelisted endpoint published by the server layer.
+const AttentionStore = {
+  key() { return `satoru_attention_v1:${String(State.me && State.me.id || 'device')}`; },
+  emptyEnvelope() {
+    const C = window.AttentionControllerV1;
+    return C && C.toEnvelope ? C.toEnvelope({ ...C.emptyBundle(), mode: 'local' }) : { version: 1, mode: 'local', policies: [], sessions: [], episodes: [] };
+  },
+  readLocal() {
+    const C = window.AttentionControllerV1;
+    try {
+      const raw = localStorage.getItem(this.key());
+      if (raw == null) return { exists: false, value: null, error: '' };
+      const value = JSON.parse(raw);
+      if (!C || !C.validateEnvelope(value)) return { exists: true, value: null, error: 'invalid' };
+      return { exists: true, value, error: '' };
+    } catch (error) { return { exists: true, value: null, error: error && error.name === 'SyntaxError' ? 'invalid' : 'load' }; }
+  },
+  writeLocal(value) {
+    try { localStorage.setItem(this.key(), JSON.stringify(value)); return true; }
+    catch (error) { console.error('attention local save', error); return false; }
+  },
+  async readServer() {
+    try {
+      const response = await fetch('/api/attention');
+      if (response.status === 401) { handleAccountSessionExpired(); return { value: null, error: 'session' }; }
+      if (!response.ok) throw new Error('load ' + response.status);
+      const value = await response.json();
+      const C = window.AttentionControllerV1;
+      if (!C || !C.validateEnvelope(value)) return { value: null, error: 'invalid' };
+      return { value, error: '' };
+    } catch (error) {
+      console.error('attention load', error);
+      return { value: null, error: error && error.name === 'SyntaxError' ? 'invalid' : 'load' };
+    }
+  },
+  hasContent(value) { return !!(value && (value.policies.length || value.sessions.length || value.episodes.length)); },
+  async load() {
+    const local = this.readLocal();
+    if (local.value && local.value.mode === 'local') return { value: local.value, error: '' };
+    const remote = await this.readServer();
+    if (remote.value) {
+      if (local.error && !this.hasContent(remote.value)) return { value: this.emptyEnvelope(), error: local.error };
+      if (local.value && local.value.mode === 'contracts' && !this.hasContent(remote.value) && this.hasContent(local.value)) {
+        return { value: local.value, error: 'load' };
+      }
+      this.writeLocal(remote.value);
+      return remote;
+    }
+    if (local.value) return { value: local.value, error: remote.error || local.error || 'load' };
+    return { value: this.emptyEnvelope(), error: local.error || remote.error };
+  },
+  async putServer(value, allowEmpty = false) {
+    try {
+      const response = await fetch('/api/attention', {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: value, allowEmpty: !!allowEmpty }),
+      });
+      if (response.status === 401) { handleAccountSessionExpired(); return false; }
+      if (!response.ok) throw new Error('save ' + response.status);
+      return true;
+    } catch (error) { console.error('attention save', error); toast(t('⚠️ Не удалось сохранить')); return false; }
+  },
+  async save(bundle, { allowEmpty = false } = {}) {
+    if (State._attentionLoadError) return false;
+    const C = window.AttentionControllerV1;
+    const value = C && C.toEnvelope ? C.toEnvelope(bundle, bundle && bundle.mode) : null;
+    if (!value) return false;
+    const previousMode = State.attentionMode || 'local';
+    if (value.mode === 'local') {
+      if (previousMode === 'contracts') {
+        const cleared = { version: 1, mode: 'local', policies: [], sessions: [], episodes: [] };
+        if (!await this.putServer(cleared, true)) return false;
+      }
+      return this.writeLocal(value);
+    }
+    if (!await this.putServer(value, allowEmpty)) return false;
+    this.writeLocal(value); // best-effort offline cache; the durable server write already succeeded.
+    return true;
   },
 };
 
@@ -5221,8 +5315,8 @@ const State = {
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
   goals: null, goalGroups: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
   lootbox: null, inbox: null, inboxOpen: false, antihabits: null, aiKeys: null, episodes: null,
-  attentionPolicies: null, attentionSessions: null, attentionEpisodes: null,
-  _attentionLoadErrors: { policies: '', sessions: '', episodes: '' }, _attentionLoadBusy: false, _attentionWriteBlockedNoticeAt: 0,
+  attentionMode: 'local', attentionPolicies: null, attentionSessions: null, attentionEpisodes: null,
+  _attentionLoadError: '', _attentionLoadBusy: false, _attentionWriteBlockedNoticeAt: 0,
   _attentionDeepLink: null, _attentionReturnIndex: 0,
   boardMedia: null, _boardMediaLoadError: '', _boardMediaBusy: false, _boardBusy: false, _boardError: '', _boardFocusAfterCommit: '',
   _boardComplete: null, _boardV2Receipt: null,
@@ -19450,12 +19544,19 @@ function attentionBundle() {
   const C = attentionController();
   const empty = C ? C.emptyBundle() : { policies: { version: 1, policies: [] }, sessions: { version: 1, sessions: [] }, episodes: { version: 1, episodes: [] } };
   return {
+    mode: State.attentionMode || 'local',
     policies: State.attentionPolicies || empty.policies,
     sessions: State.attentionSessions || empty.sessions,
     episodes: State.attentionEpisodes || empty.episodes,
   };
 }
-function attentionHasLoadError() { return Object.values(State._attentionLoadErrors || {}).some(Boolean); }
+function applyAttentionBundle(bundle) {
+  State.attentionMode = bundle.mode || 'local';
+  State.attentionPolicies = bundle.policies;
+  State.attentionSessions = bundle.sessions;
+  State.attentionEpisodes = bundle.episodes;
+}
+function attentionHasLoadError() { return !!State._attentionLoadError; }
 function attentionPurposeName(id) {
   const UI = window.AttentionUIV1;
   return t(UI && UI.purposeLabel ? UI.purposeLabel(id) : 'Пока не знаю');
@@ -19563,7 +19664,7 @@ function attentionBusy(busy) {
   document.querySelectorAll('#attention-dialog-overlay :is(button,input,select,textarea)').forEach((node) => { node.disabled = !!busy; });
 }
 function attentionOpenError(opener) {
-  const error = Object.values(State._attentionLoadErrors || {}).find(Boolean) || 'load';
+  const error = State._attentionLoadError || 'load';
   showAttentionDialog('error', { error, busy: State._attentionLoadBusy }, { opener });
 }
 function openAttentionSetup(opener, defaults = {}) {
@@ -19571,6 +19672,7 @@ function openAttentionSetup(opener, defaults = {}) {
   showAttentionDialog('setup', {
     targetLabel: defaults.targetLabel || '', purpose: defaults.purpose || 'publish',
     minutes: defaults.minutes || 10, mode: defaults.mode || 'adaptive', outcomeHint: defaults.outcomeHint || '',
+    storageMode: defaults.storageMode || State.attentionMode || 'local',
   }, { opener });
 }
 function attentionPolicyForTarget(target) {
@@ -19648,11 +19750,11 @@ function runAttentionDeepLink() {
 function attentionSettingsCard() {
   const C = attentionController();
   if (!C) return `<div class="card attention-settings-card" role="alert"><h4>${t('Внимание и границы')}</h4><p class="muted">${t('Модуль внимания не загрузился. Обнови страницу.')}</p></div>`;
-  const errors = State._attentionLoadErrors || {};
-  if (Object.values(errors).some(Boolean)) return `<div class="card attention-settings-card" role="alert"><h4>${t('Внимание и границы')}</h4><p class="muted">${t('Данные внимания недоступны. Ничего не перезаписываем.')}</p><button class="btn" data-action="retry-attention-load" ${State._attentionLoadBusy ? 'disabled' : ''}>${State._attentionLoadBusy ? t('Проверяю…') : t('Повторить чтение')}</button></div>`;
+  if (State._attentionLoadError) return `<div class="card attention-settings-card" role="alert"><h4>${t('Внимание и границы')}</h4><p class="muted">${t('Данные внимания недоступны. Ничего не перезаписываем.')}</p><button class="btn" data-action="retry-attention-load" ${State._attentionLoadBusy ? 'disabled' : ''}>${State._attentionLoadBusy ? t('Проверяю…') : t('Повторить чтение')}</button></div>`;
   const policies = (State.attentionPolicies && State.attentionPolicies.policies) || [];
   const active = window.AttentionSessionV1 && window.AttentionSessionV1.active(State.attentionSessions);
   return `<div class="card attention-settings-card"><div class="attention-settings-head"><div><h4>${t('Внимание и границы')}</h4><p class="muted">${t('Заранее реши, зачем входишь и где остановишься. Satoru не меняет правило без тебя.')}</p></div><button class="btn" data-action="attention-open-setup">${t('Добавить одно правило')}</button></div>
+    <p class="attention-storage-state">${State.attentionMode === 'contracts' ? t('Синхронизация контрактов включена') : t('Данные внимания остаются на этом устройстве')}</p>
     ${active ? `<p class="attention-active-note" role="status">${t('Сейчас идёт ограниченное окно')}: <b>${esc((attentionPolicyForTarget(active.policyId) || {}).name || active.policyId)}</b> · ${fmtDur(window.AttentionSessionV1.grantedMinutes(active))}</p>` : ''}
     ${policies.length ? `<div class="attention-policy-list">${policies.map((policy) => `<div class="attention-policy-row"><div><b>${esc(policy.name)}</b><small>${policy.purposes.filter((rule) => rule.enabled !== false).map((rule) => `${esc(attentionPurposeName(rule.purpose))} · ${fmtDur(rule.defaultMinutes)}`).join(' · ')}</small></div><button class="btn ghost" data-action="attention-open-entry" data-policy-id="${esc(policy.id)}">${t('Проверить вход')}</button></div>`).join('')}</div>` : `<p class="muted">${t('Правил пока нет. Начни с одного приложения и одной цели — это займёт до двух минут.')}</p>`}
     <p class="attention-privacy-note">${t('Подробная история устройства остаётся локальной. Синхронизация агрегатов — только по отдельному согласию.')}</p></div>`;
@@ -19661,16 +19763,12 @@ function attentionSettingsCard() {
 async function retryAttentionLoad() {
   const C = attentionController(); if (!C || State._attentionLoadBusy) return;
   State._attentionLoadBusy = true; attentionBusy(true); attentionStatus('Проверяю…');
-  const empty = C.emptyBundle();
-  const [policiesLoad, sessionsLoad, episodesLoad] = await Promise.all([
-    Store.loadChecked('attention-policies', empty.policies, C.validatePolicies),
-    Store.loadChecked('attention-sessions', empty.sessions, C.validateSessions),
-    Store.loadChecked('attention-episodes', empty.episodes, C.validateEpisodes),
-  ]);
+  const loaded = await AttentionStore.load();
   State._attentionLoadBusy = false;
-  State._attentionLoadErrors = { policies: policiesLoad.error, sessions: sessionsLoad.error, episodes: episodesLoad.error };
+  State._attentionLoadError = loaded.error;
   if (attentionHasLoadError()) { attentionBusy(false); attentionStatus('Данные пока не восстановлены. Повтори после проверки соединения.', true); return; }
-  State.attentionPolicies = policiesLoad.value; State.attentionSessions = sessionsLoad.value; State.attentionEpisodes = episodesLoad.value;
+  const bundle = C.fromEnvelope(loaded.value); if (!bundle) { State._attentionLoadError = 'invalid'; attentionBusy(false); attentionStatus('Данные пока не восстановлены. Повтори после проверки соединения.', true); return; }
+  applyAttentionBundle(bundle);
   closeAttentionDialog({ restoreFocus: false, force: true });
   State._settingsFocusAfterCommit = '.attention-settings-card'; render(); scheduleAttentionBoundary();
 }
@@ -19681,12 +19779,14 @@ async function saveAttentionSetup(form) {
     targetLabel: form.targetLabel.value, purpose: form.purpose.value, minutes: form.minutes.value,
     mode: form.mode.value, outcome: form.outcomeHint.value,
   };
+  const storageMode = C.storageMode(form.storageMode && form.storageMode.value);
   const next = C.upsertPolicy(State.attentionPolicies, input, form.dataset.policyId || attentionPolicyId(input.targetLabel));
   if (!next.ok) { attentionStatus(next.error === 'outcome_required' ? 'Для рабочей цели нужен конкретный результат.' : 'Проверь заполненные поля.', true); return; }
   attentionBusy(true); attentionStatus('Сохраняю…');
-  const saved = await Store.saveNow('attention-policies', next.state);
+  const bundle = { ...attentionBundle(), mode: storageMode, policies: next.state };
+  const saved = await AttentionStore.save(bundle);
   if (!saved) { attentionBusy(false); attentionStatus('Не удалось сохранить. Ничего не изменено — повтори попытку.', true); return; }
-  State.attentionPolicies = next.state;
+  applyAttentionBundle(bundle);
   closeAttentionDialog({ restoreFocus: false, force: true });
   State._settingsFocusAfterCommit = '.attention-settings-card'; render(); toast(t('Правило внимания сохранено'));
 }
@@ -19705,10 +19805,13 @@ async function startAttentionEntry(form) {
     attentionStatus(message, true); return;
   }
   attentionBusy(true); attentionStatus('Сохраняю…');
-  const saved = await Store.saveNow('attention-sessions', started.sessions);
+  const bundle = { ...attentionBundle(), sessions: started.sessions };
+  const saved = await AttentionStore.save(bundle);
   if (!saved) { attentionBusy(false); attentionStatus('Не удалось сохранить. Окно не началось — повтори попытку.', true); return; }
-  State.attentionSessions = started.sessions;
-  closeAttentionDialog({ restoreFocus: false, force: true });
+  applyAttentionBundle(bundle);
+  const refreshSettings = State.view === 'settings';
+  closeAttentionDialog({ restoreFocus: !refreshSettings, force: true });
+  if (refreshSettings) { State._settingsFocusAfterCommit = '.attention-settings-card'; render(); }
   scheduleAttentionBoundary(); track(`attention:start:${overlay?.dataset.attentionSource === 'shortcut' ? 'shortcut' : 'manual'}`);
   toast(t('Окно внимания началось'));
 }
@@ -19718,19 +19821,19 @@ async function extendAttentionSession(button) {
   if (!C || !vm) return;
   const next = C.extendSession(State.attentionSessions, vm.sessionId, vm.extensionSeq, button.dataset.minutes, attentionNow());
   if (!next.ok) { attentionStatus(next.error === 'stale' ? 'Окно уже изменилось на другом устройстве. Обнови данные.' : 'Продление больше недоступно.', true); return; }
-  attentionBusy(true); const saved = await Store.saveNow('attention-sessions', next.state);
+  attentionBusy(true); const bundle = { ...attentionBundle(), sessions: next.state }; const saved = await AttentionStore.save(bundle);
   if (!saved) { attentionBusy(false); attentionStatus('Не удалось сохранить продление — время не добавлено.', true); return; }
-  State.attentionSessions = next.state; closeAttentionDialog({ restoreFocus: false, force: true }); scheduleAttentionBoundary();
+  applyAttentionBundle(bundle); closeAttentionDialog({ force: true }); scheduleAttentionBoundary();
   toast(t('Окно продлено один раз'));
 }
 
 async function persistAttentionClose(next) {
   if (!next || !next.ok) return false;
-  // Episode first: если вторая запись не пройдёт, повтор перезапишет тот же episode id,
-  // а открытая session останется видимой. Обратный порядок мог бы потерять эпизод навсегда.
-  if (!await Store.saveNow('attention-episodes', next.episodes)) return false;
-  if (!await Store.saveNow('attention-sessions', next.sessions)) return false;
-  State.attentionEpisodes = next.episodes; State.attentionSessions = next.sessions;
+  // The dedicated endpoint receives one checked envelope, so session close and
+  // its idempotent episode cannot split across two unrelated generic files.
+  const bundle = { ...attentionBundle(), sessions: next.sessions, episodes: next.episodes };
+  if (!await AttentionStore.save(bundle)) return false;
+  applyAttentionBundle(bundle);
   return true;
 }
 async function finishAttentionSession(button) {
@@ -19741,7 +19844,7 @@ async function finishAttentionSession(button) {
   if (!next.ok) { attentionStatus('Окно уже изменилось. Повтори после обновления.', true); return; }
   attentionBusy(true);
   if (!await persistAttentionClose(next)) { attentionBusy(false); attentionStatus('Не удалось сохранить исход. Окно остаётся открытым — данные не потеряны.', true); return; }
-  closeAttentionDialog({ restoreFocus: false, force: true }); clearTimeout(_attentionBoundaryTimer);
+  closeAttentionDialog({ force: true }); clearTimeout(_attentionBoundaryTimer);
   if (outcome === 'escaped') openAttentionReturn(); else toast(t('Окно завершено'));
 }
 
@@ -19769,7 +19872,7 @@ async function startAttentionEmergency(button) {
   if (!next.ok) { attentionStatus(next.error === 'budget_spent' ? 'Аварийный выход уже использован в этом периоде.' : 'Не удалось подтвердить аварийный выход.', true); return; }
   attentionBusy(true);
   if (!await persistAttentionClose(next)) { attentionBusy(false); attentionStatus('Не удалось сохранить выход. Окно остаётся открытым — повтори попытку.', true); return; }
-  closeAttentionDialog({ restoreFocus: false, force: true }); toast(t('Аварийный выход записан без наказания'));
+  closeAttentionDialog({ force: true }); toast(t('Аварийный выход записан без наказания'));
 }
 
 async function markAttentionReturned(taskId) {
@@ -19778,8 +19881,9 @@ async function markAttentionReturned(taskId) {
   if (!candidate) return true;
   const amended = E.amend(State.attentionEpisodes, candidate.id, { returnedAt: attentionNow(), returnActionId: taskId || undefined });
   if (!amended.ok) return false;
-  if (!await Store.saveNow('attention-episodes', amended.state)) return false;
-  State.attentionEpisodes = amended.state; return true;
+  const bundle = { ...attentionBundle(), episodes: amended.state };
+  if (!await AttentionStore.save(bundle)) return false;
+  applyAttentionBundle(bundle); return true;
 }
 async function startAttentionReturn(button) {
   attentionBusy(true);
@@ -21351,10 +21455,12 @@ async function onSubmit(e) {
     if (f.password) body.password = f.password.value;
     if (f.pin) body.pin = f.pin.value;
     body.confirm = f.confirm.value.trim();
+    const attentionLocalKey = AttentionStore.key();
     try {
       const { response, data } = await accountJson('/api/auth/delete-account', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       if (response.ok) {
         closeAccountDialog('del-account-modal', { restoreFocus: false });
+        try { localStorage.removeItem(attentionLocalKey); } catch {}
         State.me = null; State.phase = 'login'; stopFocus(false); clearAllData(); State._accountSessionExpired = false;
         try { const profiles = await fetch('/api/auth/profiles'); State.profiles = profiles.ok ? await profiles.json() : []; } catch { State.profiles = []; }
         render();
@@ -24217,6 +24323,7 @@ function clearAllData() {
   State.habitlog = null; State.goals = null; State.goalGroups = null; State.tree = null; State.rewards = null;
   State.purchases = null; State.achievements = null; State.weeks = null; State.lootbox = null;
   State.inbox = null; State.inboxOpen = false; State.antihabits = null; State.episodes = null;
+  State.attentionMode = 'local'; State.attentionPolicies = null; State.attentionSessions = null; State.attentionEpisodes = null;
   State.profile = null; State.aiKeys = null; State.strava = null; State.chatLog = [];
   State.leaderboard = null; State.party = null; State.adminUsers = null; State.socialPrivacy = null; State.myFeedbackCount = 0;
   State._lbError = ''; State._partyError = ''; State._socialError = ''; State._socialBusy = '';
@@ -24226,6 +24333,8 @@ function clearAllData() {
   State._habitsLoadError = ''; State._habitsLoadBusy = false; State._habitTxnBusy = ''; State._habitError = ''; clearHabitUndo(); State._habitsFocusAfterCommit = '';
   State._goalsLoadError = ''; State._goalGroupsLoadError = ''; State._goalsLoadBusy = false; State._goalTxnBusy = ''; State._goalsError = ''; State._goalsFocusAfterCommit = ''; State._goalOpenId = ''; State._goalDeepLinkId = ''; State.goalView = 'focus'; State.goalFilter = 'all'; State._goalsComposerOpen = false; State._goalGroupFilter = '';
   State._settingsLoadError = ''; State._settingsLoadBusy = false; State._treeLoadError = '';
+  State._attentionLoadError = ''; State._attentionLoadBusy = false; State._attentionWriteBlockedNoticeAt = 0; State._attentionDeepLink = null; State._attentionReturnIndex = 0;
+  clearTimeout(_attentionBoundaryTimer); _attentionBoundaryTimer = null; closeAttentionDialog({ restoreFocus: false, force: true });
   State.timer = null; persistTimer(); stopTick(); closeFocusWidget(); removePill();
   State.selectedProfile = null; State.obSkills = new Set();
 }
@@ -24420,20 +24529,13 @@ async function initApp() {
   if (State._habitsLoadError === 'session' || State._accountSessionExpired) return;
   {
     const C = window.AttentionControllerV1;
-    const empty = C ? C.emptyBundle() : {
-      policies: { version: 1, policies: [] }, sessions: { version: 1, sessions: [] }, episodes: { version: 1, episodes: [] },
-    };
-    const [policiesLoad, sessionsLoad, episodesLoad] = await Promise.all([
-      Store.loadChecked('attention-policies', empty.policies, C && C.validatePolicies),
-      Store.loadChecked('attention-sessions', empty.sessions, C && C.validateSessions),
-      Store.loadChecked('attention-episodes', empty.episodes, C && C.validateEpisodes),
-    ]);
-    State.attentionPolicies = policiesLoad.value;
-    State.attentionSessions = sessionsLoad.value;
-    State.attentionEpisodes = episodesLoad.value;
-    State._attentionLoadErrors = { policies: policiesLoad.error, sessions: sessionsLoad.error, episodes: episodesLoad.error };
+    const loaded = await AttentionStore.load();
+    const bundle = C && C.fromEnvelope(loaded.value);
+    State._attentionLoadError = loaded.error || (bundle ? '' : 'invalid');
     State._attentionLoadBusy = false;
-    if (Object.values(State._attentionLoadErrors).includes('session') || State._accountSessionExpired) return;
+    if (loaded.error === 'session' || State._accountSessionExpired) return;
+    if (bundle) applyAttentionBundle(bundle);
+    else applyAttentionBundle({ mode: 'local', ...(C ? C.emptyBundle() : { policies: { version: 1, policies: [] }, sessions: { version: 1, sessions: [] }, episodes: { version: 1, episodes: [] } }) });
   }
   {
     const [goalsLoad, groupsLoad] = await Promise.all([

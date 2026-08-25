@@ -16774,6 +16774,9 @@ body:has(.goals-shell) #ai-fab { display: none; }
 html.attention-dialog-open,
 html.attention-dialog-open body { overscroll-behavior: none; }
 
+:root { --attention-kicker-fg: var(--accent-2); }
+:root[data-theme="light"] { --attention-kicker-fg: #075f78; }
+
 .attention-overlay {
   position: fixed;
   inset: 0;
@@ -16824,7 +16827,7 @@ html.attention-dialog-open body { overscroll-behavior: none; }
 
 .attention-kicker {
   margin: 0 0 var(--sp-1);
-  color: var(--accent-2);
+  color: var(--attention-kicker-fg);
   font: 850 var(--type-meta)/var(--leading-label) var(--font-ui);
   letter-spacing: var(--tracking-caps);
   text-transform: uppercase;
@@ -16978,6 +16981,8 @@ html.attention-dialog-open body { overscroll-behavior: none; }
 .attention-settings-head h4 { margin: 0; color: var(--text-strong); font-size: var(--type-heading); line-height: var(--leading-ui); }
 .attention-settings-head p { max-width: var(--measure-compact); margin: var(--sp-1) 0 0; line-height: var(--leading-prose); }
 .attention-settings-head > .btn { flex: 0 0 auto; min-height: var(--touch-min); }
+.attention-dialog .btn:not(.ghost):not(.danger),
+.attention-settings-card .btn:not(.ghost):not(.danger) { color: var(--on-accent); }
 .attention-policy-list { min-width: 0; display: grid; border-block: 1px solid var(--line-soft); }
 .attention-policy-row {
   min-width: 0;
@@ -17000,6 +17005,16 @@ html.attention-dialog-open body { overscroll-behavior: none; }
   background: color-mix(in srgb, var(--accent) 7%, var(--surface-2));
   font: var(--type-meta)/var(--leading-prose) var(--font-ui);
 }
+.attention-storage-state {
+  width: fit-content;
+  margin: 0;
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--line-soft);
+  border-radius: 999px;
+  color: var(--text-soft);
+  background: var(--surface-2);
+  font: 800 var(--type-meta)/var(--leading-label) var(--font-ui);
+}
 
 .attention-actions,
 .attention-boundary-actions {
@@ -17015,7 +17030,8 @@ html.attention-dialog-open body { overscroll-behavior: none; }
 
 .attention-empty,
 .attention-return-action,
-.attention-emergency {
+.attention-emergency,
+.attention-data-choice {
   min-width: 0;
   padding: var(--sp-3);
   border: 1px solid var(--line-soft);
@@ -17033,7 +17049,7 @@ html.attention-dialog-open body { overscroll-behavior: none; }
 }
 
 .attention-return-action > span {
-  color: var(--accent-2);
+  color: var(--attention-kicker-fg);
   font-size: var(--type-title);
   line-height: var(--leading-tight);
 }
@@ -17043,8 +17059,10 @@ html.attention-dialog-open body { overscroll-behavior: none; }
 .attention-return-action b { color: var(--text-strong); font: 850 var(--type-body)/var(--leading-ui) var(--font-ui); }
 .attention-return-action small { margin-block-start: 3px; color: var(--text-soft); font: var(--type-meta)/var(--leading-label) var(--font-ui); }
 
-.attention-emergency { padding: 0; }
-.attention-emergency > summary {
+.attention-emergency,
+.attention-data-choice { padding: 0; }
+.attention-emergency > summary,
+.attention-data-choice > summary {
   min-height: var(--touch-min);
   display: flex;
   align-items: center;
@@ -17055,6 +17073,10 @@ html.attention-dialog-open body { overscroll-behavior: none; }
 }
 .attention-emergency-body { padding: 0 var(--sp-3) var(--sp-3); }
 .attention-emergency-body .btn { justify-self: start; min-height: var(--touch-min); }
+.attention-data-choice > .attention-fieldset {
+  gap: var(--sp-2);
+  padding: 0 var(--sp-3) var(--sp-3);
+}
 
 .attention-dialog :is(button, input, select, textarea, summary):focus-visible {
   outline: none;

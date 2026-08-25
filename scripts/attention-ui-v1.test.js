@@ -19,6 +19,9 @@ test('setup is one bounded rule with persistent labels and explicit modes', () =
   assert.match(html, /name="mode" value="trust"/);
   assert.match(html, /name="mode" value="adaptive"/);
   assert.match(html, /name="mode" value="control"[^>]*checked/);
+  assert.match(html, /name="storageMode" value="local"[^>]*checked/);
+  assert.match(html, /name="storageMode" value="contracts"/);
+  assert.match(html, /Ничего не отправляется в Satoru Cloud/);
   assert.match(html, /Одно приложение, одна цель, одна граница/);
   assert.doesNotMatch(html, /<TikTok>/);
   assert.match(html, /&lt;TikTok&gt;/);
@@ -94,5 +97,13 @@ test('the Attention R1 locale block is complete and introduces no duplicate keys
     for (const locale of ['en', 'de', 'uk', 'es']) assert.match(values, new RegExp(`\\b${locale}:\\s*'`), `${key}: missing ${locale}`);
     const encoded = rawKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     assert.equal((app.match(new RegExp(`^\\s*'${encoded}':`, 'gm')) || []).length, 1, `${key}: duplicate translation key`);
+  }
+  const adapterStart = app.indexOf('//  Attention R1 —');
+  const adapterEnd = app.indexOf('function renderSettings()', adapterStart);
+  const adapter = app.slice(adapterStart, adapterEnd);
+  const visibleKeys = new Set([...adapter.matchAll(/'([^'\n]*[\u0400-\u04ff][^'\n]*)'/g)].map((match) => match[1]));
+  const localeKeys = new Set(rows.map(([, rawKey]) => rawKey.replace(/\\'/g, "'")));
+  for (const key of visibleKeys) {
+    assert.equal(localeKeys.has(key) || app.includes(`'${key}':`), true, `Attention adapter string is not localized: ${key}`);
   }
 });

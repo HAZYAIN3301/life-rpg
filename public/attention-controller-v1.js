@@ -23,6 +23,7 @@
 
   const VERSION = '1.0.0';
   const DATASETS = Object.freeze({ policies: 'attention-policies', sessions: 'attention-sessions', episodes: 'attention-episodes' });
+  const STORAGE_MODES = Object.freeze(['local', 'contracts']);
 
   function ready() { return !!(P && S && E); }
   function own(obj, key) { return Object.prototype.hasOwnProperty.call(obj || {}, key); }
@@ -46,6 +47,37 @@
   function validatePolicies(value) { return ready() && strictState(value, 'policies', P.normalize); }
   function validateSessions(value) { return ready() && strictState(value, 'sessions', S.normalize); }
   function validateEpisodes(value) { return ready() && strictState(value, 'episodes', E.normalize); }
+
+  function storageMode(value) { return STORAGE_MODES.includes(value) ? value : 'local'; }
+  function validateEnvelope(value) {
+    if (!value || typeof value !== 'object' || Array.isArray(value) || Number(value.version) !== 1) return false;
+    if (!STORAGE_MODES.includes(value.mode)) return false;
+    return validatePolicies({ version: 1, policies: value.policies })
+      && validateSessions({ version: 1, sessions: value.sessions })
+      && validateEpisodes({ version: 1, episodes: value.episodes });
+  }
+
+  function fromEnvelope(value) {
+    if (!validateEnvelope(value)) return null;
+    return {
+      mode: storageMode(value.mode),
+      policies: P.normalize({ version: 1, policies: value.policies }),
+      sessions: S.normalize({ version: 1, sessions: value.sessions }),
+      episodes: E.normalize({ version: 1, episodes: value.episodes }),
+    };
+  }
+
+  function toEnvelope(bundle, mode) {
+    if (!ready() || !bundle) return null;
+    const value = {
+      version: 1,
+      mode: storageMode(mode || bundle.mode),
+      policies: P.normalize(bundle.policies).policies,
+      sessions: S.normalize(bundle.sessions).sessions,
+      episodes: E.normalize(bundle.episodes).episodes,
+    };
+    return validateEnvelope(value) ? value : null;
+  }
 
   function emptyBundle() {
     return {
@@ -175,8 +207,8 @@
   }
 
   return Object.freeze({
-    VERSION, DATASETS, ready,
-    validatePolicies, validateSessions, validateEpisodes, emptyBundle,
+    VERSION, DATASETS, STORAGE_MODES, ready,
+    validatePolicies, validateSessions, validateEpisodes, validateEnvelope, storageMode, fromEnvelope, toEnvelope, emptyBundle,
     policyDraftFromSetup, upsertPolicy, calibrationFor,
     startSession, extendSession, closeSession, emergencyClose, boundaryViewModel,
   });
