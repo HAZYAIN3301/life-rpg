@@ -15,12 +15,20 @@ test('wildcard review содержит ровно 45 последователь�
   assert.deepEqual(headings, Array.from({ length: 45 }, (_, index) => index + 1));
 });
 
-test('review остаётся обсуждением и не подключается в runtime shell', () => {
-  assert.match(review, /текст для обсуждения, не runtime-copy/i);
+test('review фиксирует content approval и остаётся вне runtime shell', () => {
+  assert.match(review, /45\/45 направлений content-approved/i);
+  assert.match(review, /runtime-copy ещё не подключена/i);
   const index = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
   const sw = fs.readFileSync(path.join(ROOT, 'public/sw.js'), 'utf8');
   assert.doesNotMatch(index, new RegExp(FILE, 'i'));
   assert.doesNotMatch(sw, new RegExp(FILE, 'i'));
+});
+
+test('утверждены оба режима выдачи и списание только после реального показа', () => {
+  assert.match(review, /пассивный Wildcard.+максимум один.+за локальную неделю/i);
+  assert.match(review, /Дай что-нибудь неожиданное.+без недельного лимита/i);
+  assert.match(review, /пассивная выдача не подсовывает Legendary/i);
+  assert.match(review, /недельный шанс расходуется после успешного показа/i);
 });
 
 test('в review присутствуют все идеи владельца, а не только безопасные бытовые задачи', () => {

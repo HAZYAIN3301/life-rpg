@@ -2,6 +2,18 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-25] 🎲 Board v2 C0.3 — 81 machine template + два режима Wildcard
+
+- Все 36 утверждённых обычных заказов перенесены из Markdown-review в dormant pure-каталог `public/board-v2-catalog.js`. У каждого есть стабильный ID, Board kind/scale, slots, completion, теги, resolver sources и machine gates согласия/доступности. Каталог не угадывает недостающие данные и не подключён к UI/SW.
+- Все 45 одобренных Wildcard/Legendary-направлений собраны в отдельный `public/board-v2-wildcard-catalog.js`. Высота, вода, сальто, via ferrata, дайвинг, парус и другие опасные действия требуют `professional-supervision + permitted-venue` и своих readiness-флагов. Пять Legendary остаются только крупными `arc` и дают 700–1000 XP.
+- `public/board-v2.js` поднят до `2.2.0`: authored XP разрешён только внутри безопасного диапазона масштаба (`micro 30–60`, `session 80–150`, `expedition 220–400`, `arc 500–1000`), поэтому редкая еда может дать 100 XP, а чудо света — 1000, но template не может напечатать себе миллион опыта.
+- `public/board-v2-pacing.js` фиксирует оба выбранных режима. Пассивный Wildcard — максимум один успешно показанный заказ за локальную ISO-неделю и никогда не Legendary. Ручная кнопка «Дай что-нибудь неожиданное» не имеет недельного cap и может выбрать Legendary, но сохраняет hard avoid, readiness, 7-дневный cooldown показа и 30-дневный cooldown явного отказа. Выбор детерминирован по seed; фоновой подбор не расходует недельный шанс.
+- Новые source suites компилируют и разрешают все **81/81** template, проверяют safety, локальные slots, consent gates, anti-cringe copy, immutable catalog, детерминированность, cooldown и dormant app-shell boundary. Focused Board suite — **73/73 PASS**; полный `npm test` с разрешённым loopback — **645/645 PASS**. Первый sandbox-run дал только ожидаемые `listen EPERM` у серверных тестов.
+
+Runtime/UI/SW не изменены. Следующий слой: discovery/provider + city-level privacy/cache contract, затем primary recommendation/one reserve, completion/Shadow memory и только после этого Board v1 UI replacement.
+
+Commit: `feat: compile Board v2 quest catalogs and pacing`.
+
 ## [2026-08-25] 🎲 Board v2 C0.2 — 36/36 approved + отдельный Wildcard/Legendary слой
 
 - Альберт утвердил все 36 пунктов `BOARD-V2-QUEST-REVIEW-02.md`. Файл переведён из discussion-only в `content-approved`, но по-прежнему не используется как runtime-copy напрямую: следующий этап компилирует утверждённые смыслы в templates и locale-copy.

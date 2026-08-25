@@ -268,6 +268,27 @@ test('большой квест получает заметно больше XP 
   });
 });
 
+test('authored Wildcard XP поддерживает крупный масштаб, но не произвольную экономику', () => {
+  const rareMeal = BoardV2.compileTemplate(rawTemplate({
+    id: 'rare-local-meal',
+    reward: { xp: 100 },
+  }));
+  const legendary = BoardV2.compileTemplate(rawTemplate({
+    id: 'world-wonder-arc',
+    scale: 'arc',
+    adventure: { class: 'legendary' },
+    reward: { xp: 1000, title: 'Первопроходец' },
+  }));
+  assert.equal(rareMeal.reward.xp, 100);
+  assert.equal(legendary.reward.xp, 1000);
+  assert.throws(() => BoardV2.compileTemplate(rawTemplate({ reward: { xp: 1000 } })), {
+    code: 'invalid-authored-xp',
+  });
+  assert.throws(() => BoardV2.compileTemplate(rawTemplate({
+    id: 'inflated-arc', scale: 'arc', reward: { xp: 5000 },
+  })), { code: 'invalid-authored-xp' });
+});
+
 test('легендарный заказ не маскируется под короткую session-задачу', () => {
   assert.throws(() => BoardV2.compileTemplate(rawTemplate({
     adventure: { class: 'legendary' },

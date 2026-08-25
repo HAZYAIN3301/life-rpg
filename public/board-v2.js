@@ -14,7 +14,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildBoardV2() {
   'use strict';
 
-  const VERSION = '2.1.0';
+  const VERSION = '2.2.0';
   const TEMPLATE_SCHEMA = 'satoru.board-template/2';
   const MEMORY_SCHEMA = 'satoru.board-outcome-memory/1';
   const KINDS = Object.freeze(['experience', 'challenge', 'social', 'creation', 'expedition', 'recovery']);
@@ -97,6 +97,22 @@
     throw new BoardV2Error('invalid-scale');
   }
 
+  function authoredRewardXp(scale, value) {
+    if (value == null) return rewardFor(scale).xp;
+    const xp = Number(value);
+    const ranges = {
+      micro: [30, 60],
+      session: [80, 150],
+      expedition: [220, 400],
+      arc: [500, 1000],
+    };
+    const range = ranges[scale];
+    if (!Number.isInteger(xp) || !range || xp < range[0] || xp > range[1]) {
+      throw new BoardV2Error('invalid-authored-xp');
+    }
+    return xp;
+  }
+
   function compileAdventure(raw, scale) {
     const source = raw == null ? {} : raw;
     if (!plain(source)) throw new BoardV2Error('invalid-adventure');
@@ -164,6 +180,7 @@
     const adventure = compileAdventure(raw.adventure, scale);
     const baseReward = rewardFor(scale);
     const reward = Object.assign({}, baseReward);
+    reward.xp = authoredRewardXp(scale, raw.reward && raw.reward.xp);
     const titleReward = text(raw.reward && raw.reward.title, 80);
     if (titleReward && !baseReward.titleEligible) throw new BoardV2Error('title-requires-large-quest');
     if (titleReward) reward.title = titleReward;
@@ -398,6 +415,7 @@
     BoardV2Error,
     lintCopy,
     rewardFor,
+    authoredRewardXp,
     compileTemplate,
     instantiate,
     questScore,
