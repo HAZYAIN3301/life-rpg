@@ -5105,6 +5105,7 @@ const State = {
   goals: null, goalGroups: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
   lootbox: null, inbox: null, inboxOpen: false, antihabits: null, aiKeys: null, episodes: null,
   boardMedia: null, _boardMediaLoadError: '', _boardMediaBusy: false, _boardBusy: false, _boardError: '', _boardFocusAfterCommit: '',
+  _boardComplete: null, _boardV2Receipt: null,
   strava: null, _stravaSyncing: false,
   chatLog: [], _chatBusy: false,
   leaderboard: null, _lbLoading: false, _lbError: '', party: null, _partyLoading: false, _partyError: '',
@@ -9422,12 +9423,13 @@ function equippedCosmeticsOpts() { const eq = ensureCosmetics(); return { bg: bg
 function earnedTitles() {
   const fromAch = ACHIEVEMENTS.filter((a) => State.achievements[a.id] && a.ttl).map((a) => a.ttl);
   const legacy = (State.lootbox && State.lootbox.titles) || [];
+  const fromBoard = Array.isArray(State.settings && State.settings.boardV2Titles) ? State.settings.boardV2Titles : [];
   // звания-капстоуны древа навыков (узел с перком title открыт)
   const fromTree = [];
   for (const id in (State.tree || {})) for (const n of (State.tree[id].nodes || [])) {
     if (n.unlocked && n.capstone && nodePerks(n).some((p) => p.kind === 'title')) fromTree.push(n.title.replace(/^⚜\s*/, ''));
   }
-  return [...new Set([...fromAch, ...legacy, ...fromTree])];
+  return [...new Set([...fromAch, ...legacy, ...fromTree, ...fromBoard])];
 }
 function equippedTitle() { const eq = ensureCosmetics(); return eq.title || (State.lootbox && State.lootbox.equipped) || null; }
 // Rewards v124: deterministic gold plus one earned, disclosed, duplicate-free
@@ -15482,6 +15484,68 @@ async function boardV2MarkCommunity(signal) {
     return false;
   } finally { state.loading = false; render(); }
 }
+function boardV2CompletionStart(snapshotId) {
+  const snapshot = boardV2SnapshotById(snapshotId), U = window.BoardV2CompletionUI;
+  const view = U && U.completionView(snapshot, window.BoardV2Completion);
+  if (!snapshot || !view) return false;
+  State._boardComplete = { snapshotId, mode: view.defaultMode, result: '', error: '', busy: false };
+  State._boardFocusAfterCommit = '#board-completion-title'; render();
+  return true;
+}
+function boardV2CompletionHTML() {
+  const session = State._boardComplete, U = window.BoardV2CompletionUI;
+  if (lang() !== 'ru' || !session || !U) return '';
+  const snapshot = boardV2SnapshotById(session.snapshotId), view = U.completionView(snapshot, window.BoardV2Completion);
+  if (!snapshot || !view) return '';
+  const modes = (view.canSkip ? [{ id: 'none', kind: 'none', label: 'Без подтверждения', description: 'Можно просто закрыть заказ.' }] : []).concat(view.modes);
+  const choices = modes.map((mode) => `<label class="board-proof-choice${mode.kind === 'unavailable' ? ' is-unavailable' : ''}">
+    <input type="radio" name="mode" value="${esc(mode.id)}" data-action="board-complete-mode"${session.mode === mode.id ? ' checked' : ''}${mode.kind === 'unavailable' ? ' disabled' : ''}>
+    <span><b>${esc(mode.label)}</b><small>${esc(mode.description)}</small></span></label>`).join('');
+  const selected = modes.find((mode) => mode.id === session.mode);
+  const input = selected && selected.kind === 'text'
+    ? `<label class="board-proof-field">Что получилось<textarea name="result" maxlength="280" required data-noi18n>${esc(session.result || '')}</textarea></label>`
+    : selected && selected.kind === 'photo'
+      ? '<label class="board-proof-field">Приватное фото<input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required></label>' : '';
+  return `<section class="board-completion" aria-labelledby="board-completion-title"${session.busy ? ' aria-busy="true"' : ''}>
+    <div class="board-completion-head"><div><p class="board-kicker">ЗАВЕРШЕНИЕ</p><h3 id="board-completion-title" tabindex="-1">${esc(snapshot.title)}</h3></div>
+      <div class="board-completion-reward"><b>+${view.reward.xp} опыта</b><span>+${view.reward.gold} золота</span>${view.reward.title ? `<span data-noi18n>Звание «${esc(view.reward.title)}»</span>` : ''}</div></div>
+    <p>${view.required ? 'Для этого заказа нужно одно подтверждение из разрешённых вариантов.' : 'Подтверждение необязательно. Выбери его только если хочешь сохранить результат в личной истории.'}</p>
+    ${session.error ? `<p class="board-proof-error" role="alert">${esc(session.error)}</p>` : ''}
+    <form id="board-v2-complete-form" data-snapshot-id="${esc(snapshot.id)}"><fieldset><legend>Как закрыть заказ</legend><div class="board-proof-choices">${choices}</div></fieldset>
+      ${input}<p class="board-proof-private">Фото и ответы остаются в твоём аккаунте. Публикации и награды за публикацию здесь нет.</p>
+      <div class="board-proof-actions"><button type="submit" class="btn"${session.busy ? ' disabled' : ''}>Подтвердить выполнение</button>
+        <button type="button" class="btn ghost" data-action="board-complete-cancel"${session.busy ? ' disabled' : ''}>Отмена</button></div></form>
+  </section>`;
+}
+function boardV2FollowUpHTML() {
+  const U = window.BoardV2CompletionUI, C = window.BoardV2Completion;
+  if (lang() !== 'ru' || !U || !C) return '';
+  const pending = U.pendingFollowUp(C.normalizeState(State.settings && State.settings.boardV2Completion));
+  if (!pending) return '';
+  return `<section class="board-follow-up" aria-labelledby="board-follow-up-title"><div><p class="board-kicker">ТЕНЬ СПРАШИВАЕТ</p>
+    <h3 id="board-follow-up-title" tabindex="-1" data-noi18n>${esc(pending.question)}</h3>
+    <p>Ответ сохранит связь между твоим состоянием и реально опробованным действием. Если это помогло, Тень сможет предложить такой способ снова.</p></div>
+    <div class="board-follow-up-actions">${pending.outcomes.map((row) => `<button type="button" class="btn ghost" data-action="board-follow-up-answer" data-id="${esc(pending.snapshotId)}" data-outcome="${esc(row.id)}">${esc(row.label)}</button>`).join('')}</div></section>`;
+}
+function boardV2ReceiptHTML() {
+  const receipt = State._boardV2Receipt;
+  if (lang() !== 'ru' || !receipt) return '';
+  return `<section class="board-receipt" aria-labelledby="board-receipt-title"><div><p class="board-kicker">ЗАКАЗ ЗАКРЫТ</p>
+    <h3 id="board-receipt-title" tabindex="-1" data-noi18n>${esc(receipt.title)}</h3><p><b>+${receipt.xp} опыта</b> · +${receipt.gold} золота</p>
+    ${receipt.unlock ? `<p data-noi18n>Открыто звание «${esc(receipt.unlock)}».</p>` : ''}</div><div class="board-receipt-actions">
+    ${receipt.unlock ? `<button type="button" class="btn" data-action="board-title-equip" data-title="${esc(receipt.unlock)}">Надеть звание</button>` : ''}
+    <button type="button" class="btn ghost" data-action="board-receipt-close">Закрыть</button></div></section>`;
+}
+async function boardV2EquipTitle(title) {
+  const owned = Array.isArray(State.settings && State.settings.boardV2Titles) ? State.settings.boardV2Titles : [];
+  if (!owned.includes(title)) return false;
+  const settings = structuredClone(State.settings);
+  settings.equipped = settings.equipped && typeof settings.equipped === 'object'
+    ? { ...settings.equipped, title } : { frame: null, background: null, title };
+  const saved = await Store.saveNow('settings', settings);
+  if (saved) State.settings = settings;
+  return saved;
+}
 function boardV2UnexpectedDeadline() {
   const deadline = new Date(Date.now() + 48 * 60 * 60 * 1000);
   return deadline.toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
@@ -15592,6 +15656,7 @@ function prepareBoardV2Action(action, snapshotId, options = {}) {
     completionApi: window.BoardV2Completion, pacingApi: window.BoardV2Pacing,
     settings: State.settings, tasks: State.tasks, snapshotId, today: todayStr(),
     taskId: options.taskId, completedAt: options.completedAt, skillId: options.skillId, proof: options.proof,
+    boardMedia: options.boardMedia, outcome: options.outcome,
   });
 }
 async function commitBoardV2Transaction(transaction) {
@@ -15606,6 +15671,7 @@ async function commitBoardV2Transaction(transaction) {
     if (!response.ok) throw new Error(`board v2 commit ${response.status}`);
     State.settings = next.settings;
     if (next.tasks) State.tasks = next.tasks;
+    if (next.boardMedia) State.boardMedia = next.boardMedia;
     return true;
   } catch (error) {
     console.error('board v2 commit', error);
@@ -15754,12 +15820,12 @@ function boardTilt(id) {
   return ((h % 49) - 24) / 10;
 }
 // ── Медиа к выполненному заказу (BOARD-OF-CONTRACTS-PLAN §4) ────────────────
-// Только локально и только себе. Гейт §6: у продукта аудитория школьного
+// Только в приватных данных аккаунта и только для самого пользователя. Гейт §6: у продукта аудитория школьного
 // возраста, а публичные медиа несовершеннолетних — отдельная юридическая тема
 // (DSGVO, возрастные ограничения). Публикация ждёт ответа юриста, поэтому здесь
 // нет ни одного пути наружу: ни шеринга, ни ленты, ни отправки на сервер.
-// Файл хранится тем же генерическим маршрутом данных, что и остальное, —
-// серверного кода эта фича не добавляет.
+// Файл хранится тем же account-owned маршрутом данных, что и остальное. Публичного
+// URL, ленты, community-сигнала по фото и передачи поисковому provider здесь нет.
 const BOARD_MEDIA = {};
 function boardMediaAll() { return State.boardMedia && typeof State.boardMedia === 'object' ? State.boardMedia : BOARD_MEDIA; }
 function boardMediaFor(orderId) { return boardMediaAll()[String(orderId)] || null; }
@@ -15819,6 +15885,9 @@ function boardDoneHTML(st) {
     const o = boardOrderById(d.orderId);
     if (!o) return '';
     const m = boardMediaFor(d.orderId) || {};
+    const completedTask = (State.tasks || []).find((task) => task && task.fromBoardV2 === true && task.boardSnapshotId === d.orderId && task.done === true);
+    const proofResult = completedTask && completedTask.boardProof && typeof completedTask.boardProof.result === 'string'
+      ? completedTask.boardProof.result.trim().slice(0, 280) : '';
     const open = State._boardMediaFor === d.orderId;
     const title = boardOrderTitle(o);
     return `<li class="bdone${m.dataUrl ? ' has-photo' : ''}">
@@ -15827,6 +15896,7 @@ function boardDoneHTML(st) {
       <h4 class="bdone-title" id="bdone-${esc(o.id)}-title">${esc(title)}</h4>
       ${m.dataUrl ? `<figure class="bdone-figure"><img class="bdone-img" src="${esc(m.dataUrl)}" alt="${esc(m.caption || title)}" loading="lazy"></figure>` : ''}
       ${m.caption ? `<p class="bdone-cap">${esc(m.caption)}</p>` : ''}
+      ${proofResult && !m.caption ? `<p class="bdone-cap" data-noi18n>${esc(proofResult)}</p>` : ''}
       ${open ? `<div class="bdone-edit">
           <label class="bdone-label" for="bdone-cap">${t('Подпись')}</label>
           <input id="bdone-cap" class="bdone-input" maxlength="200" value="${esc(m.caption || '')}" placeholder="${t('Как это было?')}" />
@@ -15909,8 +15979,9 @@ function boardScreenHTML() {
   // взятые и без того видны в «Твои текущие заказы» выше, дублировать их незачем.
   const takenIds = new Set(mine.map((entry) => entry.orderId));
   const currentExact = lang() === 'ru' ? boardV2CurrentOffers() : [];
-  const exactBoard = currentExact.length > 0;
-  const exactOffers = currentExact.filter((order) => !takenIds.has(order.id)).map((order) => ({ ...order, boardV2: true }));
+  const completedIds = new Set(st.done.map((entry) => entry.orderId));
+  const exactOffers = currentExact.filter((order) => !takenIds.has(order.id) && !completedIds.has(order.id)).map((order) => ({ ...order, boardV2: true }));
+  const exactBoard = exactOffers.length > 0;
   const customOffers = boardCustomOrders().filter((o) => !takenIds.has(o.id));
   // Небо показывается первым, когда событие сегодня: у него единственного есть срок.
   const skyOffers = boardSkyOrders().filter((o) => !takenIds.has(o.id)).slice(0, 2);
@@ -16014,6 +16085,7 @@ function boardScreenHTML() {
       <div class="board-head-actions">${lang() === 'ru' ? `<button type="button" class="btn ghost" data-action="board-local-open" aria-expanded="${boardV2LocalSession().open ? 'true' : 'false'}" aria-controls="board-local-title">Найти рядом</button><button type="button" class="btn ghost" data-action="board-unexpected-open" aria-expanded="${State._boardWildcardOpen ? 'true' : 'false'}" aria-controls="board-wildcard-title">Дай что-нибудь неожиданное</button>` : ''}
         <p class="board-count"><b>${mine.length}/${B.MAX_ACTIVE}</b><span>${t('На руках')}<br>${t('заказа из трёх')}</span></p></div></header>
     ${State._boardError ? `<p class="board-error" role="alert">${esc(State._boardError)}</p>` : ''}
+    ${boardV2ReceiptHTML()}
     ${boardV2LocalPanelHTML()}
     ${boardV2WildcardPanelHTML()}
     ${active}
@@ -16026,6 +16098,8 @@ function boardScreenHTML() {
         </aside>
       </div>
     </div>
+    ${boardV2CompletionHTML()}
+    ${boardV2FollowUpHTML()}
     ${boardV2CommunityHTML()}
     ${boardDoneHTML(st)}
   </section>`;
@@ -20595,6 +20669,55 @@ async function onSubmit(e) {
     return;
   }
 
+  if (f.id === 'board-v2-complete-form') {
+    e.preventDefault();
+    const U = window.BoardV2CompletionUI, R = window.BoardV2Runtime, session = State._boardComplete;
+    const snapshotId = String(f.dataset.snapshotId || ''), snapshot = boardV2SnapshotById(snapshotId);
+    const view = U && U.completionView(snapshot, window.BoardV2Completion);
+    if (!U || !R || !session || session.snapshotId !== snapshotId || !view || session.busy) return;
+    const mode = String(new FormData(f).get('mode') || ''), resultField = f.elements.result;
+    session.mode = mode; session.result = resultField ? resultField.value : session.result; session.error = ''; session.busy = true;
+    const submitter = e.submitter; if (submitter) submitter.disabled = true;
+    try {
+      let boardMedia = null, referenceId = '';
+      if (mode === 'photo') {
+        if (State._boardMediaLoadError) throw new Error('Путевой журнал не загрузился. Сначала восстанови его, чтобы не перезаписать фото.');
+        const file = f.elements.photo && f.elements.photo.files && f.elements.photo.files[0];
+        if (!file || !file.type.startsWith('image/')) throw new Error('Выбери фотографию.');
+        const attachment = await readAttachment(file);
+        if (!attachment || !attachment.dataUrl || attachment.dataUrl.length > 4 * 1024 * 1024) throw new Error('Фото получилось слишком большим. Выбери другое изображение.');
+        referenceId = `boardmedia:${snapshotId}`;
+        boardMedia = { ...boardMediaAll(), [snapshotId]: { dataUrl: attachment.dataUrl } };
+      }
+      const draft = U.proofDraft(view, { mode, result: session.result, referenceId });
+      if (!draft.ok) {
+        const messages = {
+          'proof-required': 'Выбери один способ подтверждения.',
+          'result-required': 'Коротко зафиксируй конкретный результат.',
+          'media-reference-required': 'Выбери фотографию.',
+          'unsupported-proof': 'Этот способ подтверждения пока недоступен.',
+        };
+        throw new Error(messages[draft.reason] || 'Не удалось подготовить подтверждение.');
+      }
+      const prepared = prepareBoardV2Action('complete', snapshotId, {
+        taskId: uid(), completedAt: new Date().toISOString(), proof: draft.proof, boardMedia,
+      });
+      if (!prepared.ok) throw new Error(prepared.reason === 'invalid-private-photo'
+        ? 'Фото не прошло локальную проверку и не было сохранено.' : 'Не удалось подготовить завершение заказа.');
+      const receipt = U.receipt(snapshot, R.effects(prepared.transaction));
+      const saved = await commitBoardV2Transaction(prepared.transaction);
+      if (!saved) throw new Error('Не удалось сохранить выполнение. Ничего не изменено — попробуй ещё раз.');
+      State._boardComplete = null; State._boardV2Receipt = receipt; State._boardSel = null; State._boardCommunity = null;
+      await boardV2LoadCommunity(true);
+      State._boardFocusAfterCommit = '#board-receipt-title, #board-follow-up-title, #board-community-title, #board-journal-title, #board-title';
+      toast(t('Заказ закрыт')); render();
+    } catch (error) {
+      session.busy = false; session.error = String(error && error.message || 'Не удалось закрыть заказ.');
+      State._boardFocusAfterCommit = '.board-proof-error'; render();
+    }
+    return;
+  }
+
   if (f.id === 'board-wildcard-form') {
     e.preventDefault();
     const data = new FormData(f);
@@ -21794,8 +21917,14 @@ async function onClick(e) {
   // --- Лутбоксы / Pro / Paywall ---
   if (action === 'open-chest') { track('reward:open'); openChest(el); return; }
   if (action === 'equip-title') {
-    const eq = ensureCosmetics(), t = el.dataset.title || null;
-    eq.title = (!t || eq.title === t) ? null : t; Store.save('settings', State.settings); render(); return;
+    const selected = el.dataset.title || null;
+    if (selected && !earnedTitles().includes(selected)) return;
+    const settings = structuredClone(State.settings);
+    settings.equipped = settings.equipped && typeof settings.equipped === 'object'
+      ? { ...settings.equipped } : { frame: null, background: null, title: null };
+    settings.equipped.title = (!selected || settings.equipped.title === selected) ? null : selected;
+    if (await Store.saveNow('settings', settings)) State.settings = settings;
+    render(); return;
   }
   if (action === 'equip-cosmetic') {
     if (!ownsCosmetic(el.dataset.id)) return;
@@ -22608,6 +22737,23 @@ async function onClick(e) {
   } else if (action === 'board-community-mark') {
     if (!['matched', 'changed', 'closed'].includes(el.dataset.signal)) return;
     await boardV2MarkCommunity(el.dataset.signal);
+  } else if (action === 'board-complete-cancel') {
+    if (State._boardComplete && State._boardComplete.busy) return;
+    State._boardComplete = null; State._boardFocusAfterCommit = '#board-detail-title'; render();
+  } else if (action === 'board-follow-up-answer') {
+    if (!window.BoardV2Completion || !window.BoardV2Completion.OUTCOMES.includes(el.dataset.outcome)) return;
+    const prepared = prepareBoardV2Action('answer-follow-up', id, { outcome: el.dataset.outcome });
+    if (!prepared.ok) { toast('Ответ не сохранился. Попробуй ещё раз.'); return; }
+    const saved = await commitBoardV2Transaction(prepared.transaction);
+    State._boardFocusAfterCommit = saved ? '#board-receipt-title, #board-title' : '.board-error';
+    if (saved) toast('Тень запомнила ответ.'); render();
+  } else if (action === 'board-receipt-close') {
+    State._boardV2Receipt = null; State._boardFocusAfterCommit = '#board-title'; render();
+  } else if (action === 'board-title-equip') {
+    const title = String(el.dataset.title || '');
+    const saved = await boardV2EquipTitle(title);
+    if (!saved) { toast('Не удалось надеть звание.'); return; }
+    State._boardFocusAfterCommit = '#board-receipt-title'; toast(`Звание «${title}» надето.`); render();
   } else if (action === 'board-unexpected-open') {
     State._boardWildcardOpen = true; State._boardWildcardError = '';
     boardV2LocalSession().open = false;
@@ -22670,16 +22816,8 @@ async function onClick(e) {
     State._boardSel = null; State._boardFocusAfterCommit = saved ? '#board-title' : '.board-error'; render();
   } else if (action === 'board-done') {
     if (boardV2SnapshotById(id)) {
-      const prepared = prepareBoardV2Action('complete', id, { taskId: uid(), completedAt: new Date().toISOString(), proof: null });
-      if (!prepared.ok) {
-        toast(prepared.reason === 'proof-required' ? 'Для этого заказа сначала нужно добавить подтверждение.' : t('Не удалось сохранить изменение доски. Ничего не изменено — попробуй ещё раз.'));
-        return;
-      }
-      const saved = await commitBoardV2Transaction(prepared.transaction);
-      if (!saved) { State._boardFocusAfterCommit = '.board-error'; render(); return; }
-      State._boardSel = null; State._boardCommunity = null;
-      await boardV2LoadCommunity(true);
-      State._boardFocusAfterCommit = '#board-community-title, #board-journal-title, #board-title'; toast(t('Заказ закрыт')); render(); return;
+      if (!boardV2CompletionStart(id)) toast('Не удалось открыть завершение заказа.');
+      return;
     }
     const B = window.BoardV1;
     if (!B) return;
@@ -23877,6 +24015,16 @@ function publishLeaderboard() {
 
 // Делегированный обработчик change (для select-ов вне форм — напр. импорт достижений)
 function onChange(e) {
+  if (e.target.dataset && e.target.dataset.action === 'board-complete-mode') {
+    const session = State._boardComplete; if (!session || session.busy) return;
+    const result = document.querySelector('#board-v2-complete-form [name="result"]');
+    if (result) session.result = result.value;
+    session.mode = e.target.value; session.error = '';
+    State._boardFocusAfterCommit = session.mode === 'photo' ? '#board-v2-complete-form [name="photo"]'
+      : window.BoardV2CompletionUI && window.BoardV2CompletionUI.TEXT_MODES.includes(session.mode)
+        ? '#board-v2-complete-form [name="result"]' : '#board-v2-complete-form button[type="submit"]';
+    render(); return;
+  }
   if (e.target.id === 'account-import-file') {
     const input = e.target, file = input.files && input.files[0], status = document.getElementById('account-import-status');
     input.value = '';

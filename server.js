@@ -1720,20 +1720,34 @@ function commitGoalData(uid, payload) {
 function boardCommitPayloadValid(data) {
   if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
   const names = Object.keys(data).sort();
-  if (names.join(',') !== 'settings' && names.join(',') !== 'settings,tasks') return false;
+  if (!['settings', 'settings,tasks', 'boardmedia,settings,tasks'].includes(names.join(','))) return false;
   if (!data.settings || typeof data.settings !== 'object' || Array.isArray(data.settings)) return false;
   const board = data.settings.board;
   if (!board || typeof board !== 'object' || Array.isArray(board)) return false;
   for (const key of ['active', 'done', 'rested']) if (!Array.isArray(board[key])) return false;
-  if (!data.tasks) return true;
+  if (data.boardmedia !== undefined && !boardMediaCommitPayloadValid(data.boardmedia)) return false;
+  if (!Object.prototype.hasOwnProperty.call(data, 'tasks')) return true;
   const ids = new Set();
   return Array.isArray(data.tasks) && data.tasks.every((task) => task && typeof task === 'object' && !Array.isArray(task)
     && typeof task.id === 'string' && task.id && !ids.has(task.id) && (ids.add(task.id), true)
     && typeof task.title === 'string' && task.title.trim());
 }
+function boardMediaCommitPayloadValid(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const entries = Object.entries(value); if (entries.length > 100) return false;
+  return entries.every(([id, row]) => {
+    if (!id || id.length > 120 || /[\u0000-\u001f<>]/.test(id)
+      || !row || typeof row !== 'object' || Array.isArray(row)) return false;
+    const keys = Object.keys(row); if (!keys.length || keys.some((key) => !['caption', 'dataUrl'].includes(key))) return false;
+    if (row.caption != null && (typeof row.caption !== 'string' || !row.caption.trim() || row.caption.length > 200)) return false;
+    if (row.dataUrl != null && (typeof row.dataUrl !== 'string' || row.dataUrl.length > 4 * 1024 * 1024
+      || !/^data:image\/(?:jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(row.dataUrl))) return false;
+    return !!(row.caption || row.dataUrl);
+  });
+}
 function commitBoardData(uid, payload) {
   if (!payload || !boardCommitPayloadValid(payload.data)) throw new Error('invalid_board_commit');
-  if (Buffer.byteLength(JSON.stringify(payload.data)) > 5 * 1024 * 1024) throw new Error('board_commit_too_large');
+  if (Buffer.byteLength(JSON.stringify(payload.data)) > 8 * 1024 * 1024) throw new Error('board_commit_too_large');
   const names = Object.keys(payload.data);
   const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
   const snapshots = new Map(); const written = [];

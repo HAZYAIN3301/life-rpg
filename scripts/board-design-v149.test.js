@@ -18,7 +18,7 @@ test('Board v149 keeps one board, one reading rail and a bounded private journal
   assert.match(APP, /class="board-wall"/);
   assert.match(APP, /class="board-detail"/);
   assert.match(APP, /slice\(0, 8\)/);
-  assert.doesNotMatch(APP, /board-(?:feed|like|follow|ranking)/);
+  assert.doesNotMatch(APP, /board-(?:feed|like|follow(?:["'\s>]|$)|ranking)/);
   assert.match(APP, /Общий для всех заказ\. Твоё выполнение и фото остаются приватными\./);
 });
 

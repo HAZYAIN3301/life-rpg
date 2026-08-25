@@ -19,11 +19,11 @@ const BoardV1 = require('../public/board-v1.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const DAY = '2026-08-25', AT = `${DAY}T18:00:00.000Z`;
-function snapshot() {
+function snapshot(proofModes = ['photo']) {
   const compiled = Board.compileTemplate({
     schema: 'satoru.board-template/2', id: 'runtime-local', revision: 1, kind: 'experience', scale: 'expedition',
     tags: ['local', 'sport'], interests: ['sport'], slots: [], copy: { title: 'Попробуй конкретную секцию', details: 'Время и запись проверены.' },
-    completion: { proofModes: ['photo'], proofRequired: true, share: 'optional' },
+    completion: { proofModes, proofRequired: true, share: 'optional' },
     followUp: { interventionId: 'runtime-local', question: 'Это стоило повторить?', contextTags: ['sport', 'novelty'] },
     adventure: { class: 'standard', safetyTier: 'ordinary', requiredFlags: [] },
     reward: { tier: 3, xp: 220, titleEligible: true, title: 'Проводник' },
@@ -31,8 +31,8 @@ function snapshot() {
   const quest = Board.instantiate(compiled, {}).quest;
   return Offers.snapshotQuest(Board, quest, { day: DAY, mode: 'standard' });
 }
-function context(action) {
-  const item = snapshot();
+function context(action, proofModes) {
+  const item = snapshot(proofModes);
   const settings = {
     board: { version: 1, active: [], done: [], rested: [], custom: [{ id: 'mine', title: 'Мой заказ' }] },
     boardV2Offers: { schema: Offers.STATE_SCHEMA, current: null, snapshots: [item], history: [], pacing: Pacing.emptyState() },
@@ -42,7 +42,8 @@ function context(action) {
     action, boardApi: BoardV1, offersApi: Offers, completionApi: Completion, pacingApi: Pacing,
     settings, tasks: [{ id: 'existing', title: 'До заказа', done: false }], snapshotId: item.id,
     today: DAY, taskId: 'board-v2-task', completedAt: AT, skillId: 'sport',
-    proof: { mode: 'photo', referenceId: 'board-media-private-1', raw: 'drop-me' },
+    proof: { mode: 'photo', referenceId: `boardmedia:${item.id}`, raw: 'drop-me' },
+    boardMedia: { [item.id]: { dataUrl: 'data:image/png;base64,AA==' } },
   };
 }
 function localRecommendation() {
@@ -185,9 +186,11 @@ test('completion atomically stores authored reward, private proof, Shadow follow
   const prepared = Runtime.prepare(input);
   assert.equal(prepared.ok, true);
   const payload = Runtime.payload(prepared.transaction), task = payload.data.tasks.at(-1);
-  assert.deepEqual(Object.keys(payload.data).sort(), ['settings', 'tasks']);
+  assert.deepEqual(Object.keys(payload.data).sort(), ['boardmedia', 'settings', 'tasks']);
   assert.equal(task.xpAwarded, 220); assert.equal(task.goldAwarded, 77);
-  assert.deepEqual(task.boardProof, { mode: 'photo', referenceId: 'board-media-private-1' });
+  assert.deepEqual(task.boardProof, { mode: 'photo', referenceId: `boardmedia:${input.snapshotId}` });
+  assert.deepEqual(payload.data.boardmedia, input.boardMedia);
+  assert.deepEqual(Runtime.result(prepared.transaction).boardMedia, input.boardMedia);
   assert.deepEqual(payload.data.settings.boardV2Titles, ['Проводник']);
   assert.equal(payload.data.settings.boardV2Completion.pending[0].snapshotId, input.snapshotId);
   assert.equal(payload.data.settings.marker, 'preserved');
@@ -199,6 +202,27 @@ test('required proof and duplicate completion fail before a transaction exists',
   assert.equal(Runtime.prepare(missing).reason, 'proof-required');
   const duplicate = context('complete'); duplicate.tasks.push({ id: 'old-board', fromBoardV2: true, boardSnapshotId: duplicate.snapshotId });
   assert.equal(Runtime.prepare(duplicate).reason, 'already-completed');
+});
+
+test('photo proof must bind the exact snapshot media and video fails closed', () => {
+  const forged = context('complete'); forged.settings.board = BoardV1.takeOrder(forged.settings.board, { id: forged.snapshotId }, DAY).state;
+  forged.proof.referenceId = 'boardmedia:another';
+  assert.equal(Runtime.prepare(forged).reason, 'invalid-private-photo');
+  const video = context('complete', ['video']); video.settings.board = BoardV1.takeOrder(video.settings.board, { id: video.snapshotId }, DAY).state;
+  video.proof = { mode: 'video', referenceId: 'private:video' };
+  assert.equal(Runtime.prepare(video).reason, 'video-proof-unavailable');
+});
+
+test('Shadow follow-up answer is one issued settings-only transaction', () => {
+  const input = context('complete'); input.settings.board = BoardV1.takeOrder(input.settings.board, { id: input.snapshotId }, DAY).state;
+  const completed = Runtime.prepare(input); input.settings = Runtime.result(completed.transaction).settings;
+  input.action = 'answer-follow-up'; input.outcome = 'helped';
+  const answered = Runtime.prepare(input);
+  assert.equal(answered.ok, true);
+  const payload = Runtime.payload(answered.transaction);
+  assert.deepEqual(Object.keys(payload.data), ['settings']);
+  assert.equal(payload.data.settings.boardV2Completion.pending.length, 0);
+  assert.deepEqual(payload.data.settings.boardV2Completion.records[0].outcome, 'helped');
 });
 
 test('only a module-issued immutable transaction can produce commit data', () => {

@@ -17,11 +17,11 @@ test('Board v2 standard and Wildcard issuers load in dependency order', () => {
   assert.equal(positions.every((position) => position >= 0), true);
   assert.deepEqual(positions, positions.slice().sort((a, b) => a - b));
   for (const file of files.slice(0, -1)) {
-    assert.match(index, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=20260825-board-v2-local-v174-1`));
+    assert.match(index, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=20260825-board-v2-complete-v175-1`));
     assert.equal((sw.match(new RegExp(`'${file.replaceAll('.', '\\.')}'`, 'g')) || []).length, 1);
   }
-  assert.match(index, /app\.js\?v=20260825-board-v2-local-v174-1/);
-  assert.match(sw, /const CACHE = 'satoru-v174';/);
+  assert.match(index, /app\.js\?v=20260825-board-v2-complete-v175-1/);
+  assert.match(sw, /const CACHE = 'satoru-v175';/);
 });
 
 test('account defaults and hydration normalize offers, completion and titles', () => {
@@ -44,10 +44,11 @@ test('browser persists an issued transaction before publishing settings or tasks
   assert.doesNotMatch(source, /Store\.(?:save|saveNow)/);
 });
 
-test('all three existing Board buttons route exact v2 snapshots through the bridge', () => {
-  for (const action of ['take', 'complete', 'return']) {
+test('take, return and confirmed completion route exact v2 snapshots through the bridge', () => {
+  for (const action of ['take', 'return']) {
     assert.match(app, new RegExp(`prepareBoardV2Action\\('${action}', id`));
   }
+  assert.match(app, /prepareBoardV2Action\('complete', snapshotId/);
   assert.match(app, /if \(boardV2SnapshotById\(id\)\)/);
   assert.match(app, /commitBoardV2Transaction\(prepared\.transaction\)/);
   assert.match(runtime, /task\.boardProof = clone\(prepared\.proof\)/);
@@ -71,7 +72,9 @@ test('manual Wildcard has explicit setup, exact persistence and rejection instea
 
 test('exact offers are RU-gated and replace the rejected legacy wall when available', () => {
   assert.match(app, /const currentExact = lang\(\) === 'ru' \? boardV2CurrentOffers\(\)/);
-  assert.match(app, /const exactBoard = currentExact\.length > 0/);
+  assert.match(app, /const completedIds = new Set\(st\.done\.map\(\(entry\) => entry\.orderId\)\)/);
+  assert.match(app, /const exactOffers = currentExact\.filter\(\(order\) => !takenIds\.has\(order\.id\) && !completedIds\.has\(order\.id\)\)/);
+  assert.match(app, /const exactBoard = exactOffers\.length > 0/);
   assert.match(app, /const offers = exactBoard \? exactOffers\s*: skyOffers\.concat\(view\.seasonal/s);
   assert.match(app, /const placeSheet = exactBoard \|\| boardPlace\(\) \? ''/);
   assert.match(app, /Один основной заказ и максимум один запасной\. Без стены вариантов\./);

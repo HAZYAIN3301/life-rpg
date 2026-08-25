@@ -46,6 +46,15 @@ test('Board v149 commits board state and completion task as one owned unit', { t
   assert.deepEqual((await json(runtime.base, '/api/data/settings', { cookie })).data, nextSettings);
   assert.deepEqual((await json(runtime.base, '/api/data/tasks', { cookie })).data, nextTasks);
 
+  const nextMedia = { 'b-place-city': { dataUrl: 'data:image/png;base64,AA==' } };
+  const withProof = await json(runtime.base, '/api/board/commit', { method: 'POST', cookie, body: { data: { settings: nextSettings, tasks: nextTasks, boardmedia: nextMedia } } });
+  assert.equal(withProof.response.status, 200); assert.deepEqual(withProof.data.files.sort(), ['boardmedia', 'settings', 'tasks']);
+  assert.deepEqual((await json(runtime.base, '/api/data/boardmedia', { cookie })).data, nextMedia);
+
+  const unsafeMedia = { 'b-place-city': { dataUrl: 'data:image/svg+xml;base64,PHN2Zy8+' } };
+  assert.equal((await json(runtime.base, '/api/board/commit', { method: 'POST', cookie, body: { data: { settings: nextSettings, tasks: nextTasks, boardmedia: unsafeMedia } } })).response.status, 400);
+  assert.equal((await json(runtime.base, '/api/board/commit', { method: 'POST', cookie, body: { data: { settings: nextSettings, tasks: null } } })).response.status, 400, 'an explicit tasks field must remain an array');
+
   const bad = await json(runtime.base, '/api/board/commit', { method: 'POST', cookie, body: { data: { settings: { board: { active: 'bad', done: [], rested: [] } }, tasks: [] } } });
   assert.equal(bad.response.status, 400);
   assert.deepEqual((await json(runtime.base, '/api/data/settings', { cookie })).data, nextSettings, 'invalid commit changes nothing');

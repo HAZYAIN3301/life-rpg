@@ -102,7 +102,15 @@ Commit: `feat: keep the attention privacy promise on the server, not in client m
 Дальше по разделению: серверная часть (хранение политик/эпизодов, opt-in синк агрегатов, каскадное удаление, один нейтральный тихий push) — за мной; экраны входа/границы/возврата, deep-link `?do=gate`, подключение в `index.html` и бамп `sw.js` — за Codex.
 
 Commit: `feat: build the attention contract engine — policy, session, episode`.
+## [2026-08-25] Board v2 C0.18 — настоящее завершение, приватное доказательство и память Тени
 
+- Кнопка выполнения v2-заказа больше не пытается закрыть его с пустым proof. Она открывает отдельную поверхность завершения с authored-вариантами конкретного snapshot: простое подтверждение, короткий результат/рефлексия/история либо приватное фото. Необязательное подтверждение можно пропустить; required-режимы fail-closed. Видео показано честно недоступным до появления отдельного bounded-хранилища, а не имитируется текстом или data URL без контракта.
+- Фото проходит существующий client-side downscale и сохраняется вместе с настройками Board v2 и completion-task одним `/api/board/commit`. Сервер допускает только JPEG/PNG/WebP/GIF data URL, ограничивает одну запись 4 МБ, журнал 100 записями и весь transaction 8 МБ. При любой ошибке три файла откатываются; reward, task и photo не могут разъехаться.
+- После commit показывается точная квитанция `XP + gold + title`. Board-title попадает в общую Коллекцию, может быть надет только владельцем и сохраняется через awaited `Store.saveNow`; подделанный title игнорируется.
+- Для authored follow-up Тень задаёт один конкретный вопрос и принимает только три структурированных ответа: помогло / не уверен / не помогло. Ответ идёт отдельной module-issued settings transaction; свободного текста и психологической интерпретации клиент не выдумывает. Положительный результат остаётся intervention-memory для будущих подсказок, neutral/negative не превращаются в рекомендацию.
+- Добавлены pure presentation module `public/board-v2-completion-ui.js`, runtime action `answer-follow-up`, responsive/touch/focus CSS и PWA SHELL `satoru-v175` с pin `20260825-board-v2-complete-v175-1`. Старый приватный журнал остаётся account-owned; media не попадает в community feedback, Brave/provider, ленту или публичный URL.
+
+Focused completion/runtime/server suite — **49/49 PASS**; объединённый полный suite после rebase — **921/921 PASS**. App/modules/server/SW syntax и `git diff --check` — PASS.
 ## [2026-08-25] Board v2 C0.17 — проверенный поиск рядом и обезличенная свежесть места
 
 - На RU Board подключён первый полный local vertical slice: `Найти рядом` → явное city-consent → один серверный вариант → direct-source verification → immutable `manual-local` snapshot → выполнение → структурированная отметка свежести. Локальная карточка не заменяет стабильный недельный заказ и хранит максимум одну резервную официальную ссылку.

@@ -12,7 +12,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildBoardV2Completion() {
   'use strict';
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
   const STATE_SCHEMA = 'satoru.board-completion/2';
   const MAX_PENDING = 20;
   const MAX_RECORDS = 100;
@@ -106,7 +106,9 @@
     const source = dependencies(input); if (!source) return { ok: false, reason: 'dependencies-required' };
     const questSnapshot = snapshot(source), today = day(source.today);
     if (!questSnapshot || !today) return { ok: false, reason: 'snapshot-required' };
-    const taken = source.boardApi.takeOrder(source.board, { id: questSnapshot.id }, today);
+    const board = source.boardApi.normalize(source.board);
+    if (board.done.some((entry) => entry.orderId === questSnapshot.id)) return { ok: false, reason: 'already-completed' };
+    const taken = source.boardApi.takeOrder(board, { id: questSnapshot.id }, today);
     if (!taken.ok) return { ok: false, reason: taken.error };
     return {
       ok: true, snapshot: questSnapshot,

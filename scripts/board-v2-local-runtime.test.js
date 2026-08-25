@@ -13,7 +13,7 @@ const sw = fs.readFileSync(path.join(ROOT, 'public/sw.js'), 'utf8');
 const localUI = fs.readFileSync(path.join(ROOT, 'public/board-v2-local-ui.js'), 'utf8');
 const serverRegistry = fs.readFileSync(path.join(ROOT, 'server-board-v2-registry-v1.js'), 'utf8');
 
-test('v174 shell loads local Board contracts before runtime and caches each once', () => {
+test('v175 shell retains local Board contracts before runtime and caches each once', () => {
   const files = ['board-v2-discovery.js', 'board-v2-local-issuer.js', 'board-v2-local-ui.js', 'board-v2-runtime.js', 'app.js'];
   const positions = files.map((file) => index.indexOf(file));
   assert.equal(positions.every((position) => position >= 0), true);
@@ -21,9 +21,9 @@ test('v174 shell loads local Board contracts before runtime and caches each once
   for (const file of files.slice(0, -1)) {
     assert.equal((sw.match(new RegExp(`'${file.replaceAll('.', '\\.')}''?`.replace("''", "'"), 'g')) || []).length, 1);
   }
-  assert.match(sw, /const CACHE = 'satoru-v174';/);
-  assert.match(index, /styles\.css\?v=20260825-board-v2-local-v174-1/);
-  assert.match(index, /app\.js\?v=20260825-board-v2-local-v174-1/);
+  assert.match(sw, /const CACHE = 'satoru-v175';/);
+  assert.match(index, /styles\.css\?v=20260825-board-v2-complete-v175-1/);
+  assert.match(index, /app\.js\?v=20260825-board-v2-complete-v175-1/);
 });
 
 test('city discovery requires two explicit approvals and names Brave as recipient', () => {
@@ -62,7 +62,7 @@ test('local detail exposes verified source/reserve and completion opens structur
   assert.match(app, /data-signal="closed"/);
   assert.match(app, /await boardV2LoadCommunity\(true\)/);
   const markStart = app.indexOf('async function boardV2MarkCommunity(signal)');
-  const markEnd = app.indexOf('\nfunction boardV2UnexpectedDeadline()', markStart);
+  const markEnd = app.indexOf('\nfunction boardV2CompletionStart', markStart);
   const mark = app.slice(markStart, markEnd);
   assert.match(mark, /JSON\.stringify\(\{ snapshotId: state\.snapshotId, signal \}\)/);
   assert.doesNotMatch(mark, /FormData|textarea|caption|photo|file|name:/);
@@ -70,7 +70,7 @@ test('local detail exposes verified source/reserve and completion opens structur
 
 test('local Board controls meet touch, focus and mobile layout contracts', () => {
   assert.match(styles, /\.board-local\s+:is\(\.btn,\.link-btn\)[\s\S]*min-height:\s*var\(--touch-min\)/);
-  assert.match(styles, /\.board-screen :is\([^}]*select\):focus-visible[\s\S]*var\(--focus-ring\)/);
+  assert.match(styles, /\.board-screen :is\([^}]*select[^}]*\):focus-visible,[\s\S]*var\(--focus-ring\)/);
   assert.match(styles, /@media \(max-width: 600px\)[\s\S]*\.board-local-city-grid\s*\{\s*grid-template-columns:\s*1fr/);
   assert.match(styles, /\.board-local-options\s*\{[^}]*minmax\(0, 1fr\)/);
   assert.match(app, /aria-busy="true"/);

@@ -11,8 +11,8 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildBoardV2Runtime() {
   'use strict';
 
-  const VERSION = '1.2.0';
-  const ACTIONS = Object.freeze(['issue-standard', 'issue-unexpected', 'issue-local', 'take', 'return', 'reject', 'complete']);
+  const VERSION = '1.3.0';
+  const ACTIONS = Object.freeze(['issue-standard', 'issue-unexpected', 'issue-local', 'take', 'return', 'reject', 'complete', 'answer-follow-up']);
   const MAX_TITLES = 50;
   const issued = new WeakSet();
 
@@ -31,7 +31,7 @@
   function dependencies(source) {
     if (!plain(source) || !source.boardApi || !source.offersApi || !source.completionApi) return null;
     if (typeof source.boardApi.normalize !== 'function' || typeof source.offersApi.normalizeState !== 'function'
-      || typeof source.completionApi.normalizeState !== 'function') return null;
+      || typeof source.completionApi.normalizeState !== 'function' || typeof source.completionApi.answerFollowUp !== 'function') return null;
     return source;
   }
   function preserveCustom(nextBoard, previousBoard) {
@@ -46,6 +46,24 @@
     }
     return out.slice(-MAX_TITLES);
   }
+  function proofMedia(value, snapshotId, referenceId) {
+    if (!plain(value) || !snapshotId || referenceId !== `boardmedia:${snapshotId}`) return null;
+    const keys = Object.keys(value); if (keys.length > 100 || !keys.includes(snapshotId)) return null;
+    const out = {};
+    for (const key of keys) {
+      const row = value[key];
+      if (!text(key, 120) || !plain(row)) return null;
+      const caption = row.caption == null ? '' : text(row.caption, 200);
+      const dataUrl = row.dataUrl == null ? '' : text(row.dataUrl, 4 * 1024 * 1024);
+      if (row.caption != null && !caption) return null;
+      if (row.dataUrl != null && !/^data:image\/(?:jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(dataUrl)) return null;
+      if (!caption && !dataUrl) return null;
+      out[key] = {};
+      if (caption) out[key].caption = caption;
+      if (dataUrl) out[key].dataUrl = dataUrl;
+    }
+    return out[snapshotId] && out[snapshotId].dataUrl ? out : null;
+  }
   function prepare(raw) {
     const source = dependencies(raw), action = text(raw && raw.action, 16);
     if (!source || !ACTIONS.includes(action) || !plain(source.settings) || !Array.isArray(source.tasks)) {
@@ -58,6 +76,23 @@
       today: source.today,
     };
     let prepared;
+    if (action === 'answer-follow-up') {
+      const answered = source.completionApi.answerFollowUp(
+        source.settings.boardV2Completion, source.snapshotId, source.outcome, source.today,
+      );
+      if (!answered || answered.ok !== true) return answered || { ok: false, reason: 'answer-failed' };
+      const settings = clone(source.settings);
+      settings.board = preserveCustom(source.boardApi.normalize(source.settings.board), source.settings.board);
+      settings.boardV2Completion = clone(answered.state);
+      settings.boardV2Titles = titles(settings.boardV2Titles);
+      const transaction = deepFreeze({
+        schema: 'satoru.board-runtime-transaction/2', action, snapshotId: source.snapshotId,
+        data: { settings }, next: { settings, tasks: null, boardMedia: null },
+        effects: { unlock: null, proofPlan: null, followUp: { outcome: source.outcome } },
+      });
+      issued.add(transaction);
+      return { ok: true, transaction };
+    }
     if (action === 'reject') {
       const snapshot = source.offersApi.snapshotById(common.offers, common.snapshotId, source.pacingApi);
       if (!snapshot || snapshot.mode !== 'manual-unexpected') return { ok: false, reason: 'unexpected-snapshot-required' };
@@ -104,10 +139,19 @@
       tasks.push(task);
     }
     const data = { settings };
-    if (action === 'complete') data.tasks = tasks;
+    let nextBoardMedia = null;
+    if (action === 'complete') {
+      data.tasks = tasks;
+      if (prepared.proof && prepared.proof.mode === 'video') return { ok: false, reason: 'video-proof-unavailable' };
+      if (prepared.proof && prepared.proof.mode === 'photo') {
+        nextBoardMedia = proofMedia(source.boardMedia, prepared.snapshot.id, prepared.proof.referenceId);
+        if (!nextBoardMedia) return { ok: false, reason: 'invalid-private-photo' };
+        data.boardmedia = clone(nextBoardMedia);
+      }
+    }
     const transaction = deepFreeze({
       schema: 'satoru.board-runtime-transaction/2', action, snapshotId: prepared.snapshot.id,
-      data, next: { settings, tasks: action === 'complete' ? tasks : null },
+      data, next: { settings, tasks: action === 'complete' ? tasks : null, boardMedia: nextBoardMedia },
       effects: { unlock: prepared.unlock || null, proofPlan: prepared.proofPlan || null },
     });
     issued.add(transaction);

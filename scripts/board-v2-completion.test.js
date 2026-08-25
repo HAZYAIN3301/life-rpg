@@ -55,6 +55,20 @@ test('take advances legacy active ledger and exact Board v2 snapshot together', 
   assert.equal(taken.snapshot.title, state.snapshot.title);
 });
 
+test('a completed exact snapshot cannot return to the board or be taken again', () => {
+  const state = setup({ proofModes: ['checkin'] });
+  const base = input(state);
+  const taken = Completion.prepareTake(base);
+  const completed = Completion.prepareCompletion({
+    ...base, board: taken.board, offers: taken.offers,
+    taskId: 'finished-once', completedAt: AT, proof: { mode: 'checkin' },
+  });
+  assert.equal(completed.ok, true);
+  assert.equal(Completion.prepareTake({
+    ...base, board: completed.board, offers: completed.offers,
+  }).reason, 'already-completed');
+});
+
 test('return is consequence-free but rests the exact snapshot for fourteen days', () => {
   const state = setup();
   const taken = Completion.prepareTake(input(state));
