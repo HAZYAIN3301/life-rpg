@@ -163,8 +163,8 @@
 1. ✅ Утвердить resolver/model тестами.
 2. ✅ Перевести одобренные идеи из калибровки в templates со slots.
 3. ✅ Выбрать локальный discovery provider и стоимость запросов — Brave Web Search; решение в `BOARD-V2-DISCOVERY-DECISION.md`.
-4. 🟡 Добавить city-level opt-in и кеш найденных мест/секций — pure privacy/source/TTL contract готов, сетевой adapter ещё не подключён.
-5. 🟡 Сделать primary recommendation + один запасной вариант — pure selection contract готов, production adapter/UI ещё не подключены.
+4. 🟡 Добавить city-level opt-in и кеш найденных мест/секций — privacy/source/TTL contract и bounded Brave adapter готовы, account endpoint/cache ещё не подключены.
+5. 🟡 Сделать primary recommendation + один запасной вариант — selection и adapter contracts готовы, production UI ещё не подключён.
 6. Подключить завершение, медиа и память Тени.
 7. Добавить локальные community hints без ленты.
 8. Только затем заменить Board v1 UI.

@@ -1,6 +1,6 @@
 # Board v2 — discovery provider и city-level privacy
 
-Дата решения: 2026-08-25. Статус: архитектурный контракт готов; реальный сетевой адаптер и UI ещё не подключены.
+Дата решения: 2026-08-25. Статус: архитектурный контракт и bounded Brave adapter готовы; `server.js` endpoint, официальный extractor и UI ещё не подключены.
 
 ## Решение
 
@@ -79,13 +79,15 @@ Resolver возвращает:
 
 Никакой стены вариантов и никакого «попробуй что-нибудь похожее».
 
-## Следующий change-set
+## Текущий adapter boundary
 
-Сетевой adapter на сервере:
+`server-board-v2-discovery-v1.js` уже:
 
 1. собирает Brave-запрос только из authored tags + city/country;
-2. ищет официальные URL;
-3. проверяет страницу организатора;
-4. нормализует не больше двух кандидатов через `BoardV2Discovery`;
-5. логирует стоимость, freshness и причину fail-closed без личного текста;
-6. не подключается к Board UI, пока реальные Bielefeld fixtures не проходят end-to-end QA.
+2. ищет не больше восьми HTTPS URL и отправляет verifier не больше четырёх;
+3. не возвращает и не кеширует raw provider response;
+4. принимает candidate только через `BoardV2Discovery`;
+5. возвращает primary + один reserve и безопасный billing/audit;
+6. честно выключен без server key.
+
+Следующий change-set: официальный page extractor/verifier + account-owned endpoint/cache. Он не подключается к Board UI, пока реальные Bielefeld fixtures не проходят end-to-end QA.

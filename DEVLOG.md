@@ -2,6 +2,17 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-25] 🔎 Board v2 C0.5 — bounded Brave server adapter
+
+- Новый dormant `server-board-v2-discovery-v1.js` собирает ровно один Brave Web Search request из authored tags + city/country. Ни interests, ни свободный текст, ни GPS в query не попадают; private key остаётся только в `X-Subscription-Token` и не возвращается в result/error.
+- Adapter хранит provider response только в памяти, дедуплицирует HTTPS URL и проверяет максимум четыре lead. Каждый lead проходит отдельный injected official-page verifier и затем весь `BoardV2Discovery.verifyCandidate`; aggregator/malformed extractor не получает обходного пути.
+- Результат содержит только verified primary + один reserve, billable call count/оценку `$0.005` и безопасный audit без snippet/ID/key. HTTP/network failure не раскрывает provider diagnostics; abort до запроса ничего не тратит, abort после ответа не запускает verifier.
+- Bielefeld fixture использует реальную официальную страницу Universität Bielefeld Hochschulsport — Boxen. Без `BRAVE_SEARCH_API_KEY` adapter честно спит; `server.js`/UI/SW пока не подключены.
+
+Focused Board v2 suite — **99/99 PASS**, syntax/diff PASS. Следующий change-set: official-page extractor/verifier и server endpoint с account-owned consent/cache; живой Brave smoke только после установки server key.
+
+Commit: `feat: add dormant Board v2 Brave adapter`.
+
 ## [2026-08-25] 📍 Board v2 C0.4 — Brave discovery + city-level privacy/source contract
 
 - Provider decision зафиксирован в `BOARD-V2-DISCOVERY-DECISION.md`: первый адаптер строится на Brave Web Search ($5/1000 web-запросов на дату решения), Google Custom Search уже закрыт для новых клиентов, Tavily/OpenAI search дороже для этого среза. Brave только находит возможные официальные URL — его snippet или rank никогда не считаются доказательством квеста.
