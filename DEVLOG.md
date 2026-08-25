@@ -2,6 +2,18 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-25] 📍 Board v2 C0.4 — Brave discovery + city-level privacy/source contract
+
+- Provider decision зафиксирован в `BOARD-V2-DISCOVERY-DECISION.md`: первый адаптер строится на Brave Web Search ($5/1000 web-запросов на дату решения), Google Custom Search уже закрыт для новых клиентов, Tavily/OpenAI search дороже для этого среза. Brave только находит возможные официальные URL — его snippet или rank никогда не считаются доказательством квеста.
+- Новый dormant pure-модуль `public/board-v2-discovery.js` вводит отдельное согласие на город/страну/language/timezone. GPS, домашний адрес, произвольный пользовательский текст, provider payload/snippet и временный POI-ID в запрос/кеш не проходят. Запрос строится только из authored tags шаблона и city-level context.
+- Локальный candidate становится verified только по прямому источнику организатора/площадки: название, адрес, будущие дата/время, подтверждённая цена/`бесплатно`, доступность и HTTPS CTA. Aggregator-only, старый source-check, неизвестная цена, прошедшее событие, превышенный travel limit и любой неполный вариант закрываются без vague fallback.
+- TTL держит свежесть: class/event 12 часов и никогда не позже начала, place 24 часа, route 7 дней. Кеш повторно валидируется, не может продлить `expiresAt` подделкой и хранит только минимальный direct-source snapshot. Shared cross-user cache остаётся выключенным до подтверждения storage rights тарифа.
+- `recommend()` возвращает ровно один primary и максимум один reserve; при отсутствии свежих verified candidates возвращает `no-verified-candidate`. Контракт пока не загружен `index.html`/SW и не меняет Board v1.
+
+Focused Board suite — **76/76 PASS**, JS syntax и whitespace PASS. Следующий change-set: server-side Brave adapter + official-source verifier на реальных Bielefeld fixtures, затем endpoint/cache integration.
+
+Commit: `feat: define Board v2 local discovery contract`.
+
 ## [2026-08-25] 🎲 Board v2 C0.3 — 81 machine template + два режима Wildcard
 
 - Все 36 утверждённых обычных заказов перенесены из Markdown-review в dormant pure-каталог `public/board-v2-catalog.js`. У каждого есть стабильный ID, Board kind/scale, slots, completion, теги, resolver sources и machine gates согласия/доступности. Каталог не угадывает недостающие данные и не подключён к UI/SW.
