@@ -2,6 +2,19 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-25] 🎲 Board v2 C0.2 — 36/36 approved + отдельный Wildcard/Legendary слой
+
+- Альберт утвердил все 36 пунктов `BOARD-V2-QUEST-REVIEW-02.md`. Файл переведён из discussion-only в `content-approved`, но по-прежнему не используется как runtime-copy напрямую: следующий этап компилирует утверждённые смыслы в templates и locale-copy.
+- Пункт про растяжку теперь содержит три конкретных открываемых варианта (40 минут для новичка, 40-минутный full-body flow, 30-минутный вариант), при этом resolver показывает ровно один комплекс под опыт и ограничения. Пункт про маршрут получил точный Bielefeld proof: Hermannshöhen, этап 7, Sparrenburg → Oerlinghausen, 14,78 км, ~3:15, средняя сложность, официальный GPX/source.
+- Новый `BOARD-V2-WILDCARD-REVIEW-01.md` даёт 45 более редких и крупных заказов: Zugspitze в доступной и альпинистской версиях, swordfish/local food, surfing/diving/skiing, 5-метровая вышка, сальто, марафон, 30 дней без соцсетей, Minecraft-сервер, £1,000 from zero, косплей, рыбалка, барахолка, библиотека, погоня за радугой и другие. Это новый numbered review-пакет, не runtime-copy.
+- Pure-модуль `public/board-v2.js` поднят до `2.1.0`: добавлены классы `standard/wildcard/legendary`, safety tiers, allowlist readiness flags и fail-closed проверка. Опасный заказ невозможно скомпилировать без `professional-supervision + permitted-venue`; unresolved readiness не превращается в квест. Legendary обязан быть `expedition/arc`.
+- Обычный `select()` по умолчанию видит только `standard`. Wildcard/Legendary включаются явным `adventureClasses`; `avoidTags` теперь полностью исключают несовместимое, а не оставляют его возможным при пустой выдаче. Новый `local-route` требует адрес/URL, положительную длину и сложность; `video` требует открываемую HTTPS-ссылку и CTA.
+- `scripts/board-v2-wildcard-review-01.test.js` удерживает 45/45 порядок, идеи владельца, safety/financial/nature fail-closed формулировки, отсутствие обязательной публикации и dormant boundary. Расширенные Board/review suites — **45/45 PASS**, полный suite — **617/617 PASS**, JS syntax PASS.
+
+Runtime/UI/SW не изменены; Board v1 продолжает работать как прежде. Следующее продуктовое решение: feedback по 45 пунктам и частота Wildcard — по кнопке, раз в неделю или оба режима.
+
+Commit: `feat: add Board v2 wildcard safety layer`.
+
 ## [2026-08-24] 🎙 Голосовой ввод есть везде — усилены и остальные три ИИ-промпта
 
 - Проверил код `voice-input-v1`: кнопка `🎤` навешивается на **любое** подходящее поле по глобальному `focusin`, без привязки к конкретному экрану. Значит нераспознанная-без-пунктуации речь долетает не только до «Итога дня» и «Эпизода» (закрыты этой же ночью выше), но и до импорта целей, онбординга, калибровки уровней и картографа вех дерева — все четыре идут через тот же `text` в `/api/ai/propose`.

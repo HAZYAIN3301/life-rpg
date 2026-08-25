@@ -11,9 +11,10 @@ const review = fs.readFileSync(path.join(ROOT, 'BOARD-V2-QUEST-REVIEW-02.md'), '
 const primary = review.match(/## A\. Основной пул[\s\S]*?(?=\n## B\.)/)?.[0] || '';
 const examples = review.match(/## D\. Как это выглядит[\s\S]*?(?=\n## E\.)/)?.[0] || '';
 
-test('review остаётся обсуждением и не выдаёт неутверждённую copy за runtime', () => {
-  assert.match(review, /текст для обсуждения, не runtime-copy/i);
-  assert.match(review, /неутверждённый review-файл в runtime не подключается/i);
+test('review фиксирует approval 36/36, но не подключает Markdown как runtime-copy', () => {
+  assert.match(review, /36\/36 пунктов content-approved/i);
+  assert.match(review, /файл всё ещё не подключается в runtime напрямую/i);
+  assert.match(review, /Markdown-файл в runtime не подключается/i);
 });
 
 test('основной review содержит ровно 36 конкретных шаблонов', () => {
@@ -36,6 +37,16 @@ test('Bielefeld proof-of-concept даёт пять открываемых офи
   assert.equal(sampleHeadings.length, 5);
   assert.equal(urls.length, 5);
   assert.equal(urls.every((url) => new URL(url).protocol === 'https:'), true);
+});
+
+test('растяжка содержит конкретные открываемые видео, а маршрут — точные параметры', () => {
+  assert.match(primary, /Yoga For Beginners/);
+  assert.match(primary, /Yoga Kiss/);
+  assert.match(primary, /Move With Nicole/);
+  assert.match(primary, /14,78 км/);
+  assert.match(primary, /3:15/);
+  assert.match(primary, /средняя сложность/);
+  assert.match(primary, /официальная страница маршрута с GPX/);
 });
 
 test('review остаётся dormant и не попадает в app shell', () => {

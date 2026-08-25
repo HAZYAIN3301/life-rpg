@@ -110,6 +110,47 @@ test('для локальной секции недостаточно одног
   assert.equal(result.error, 'unresolved-slot');
 });
 
+test('маршрут обязан быть готовым маршрутом, а не абстрактным направлением', () => {
+  const compiled = BoardV2.compileTemplate(rawTemplate({
+    id: 'walk-exact-route',
+    slots: [{ id: 'route', type: 'local-route', required: true }],
+    copy: { title: 'Пройди {route}', details: 'Старт и сложность уже выбраны.' },
+  }));
+  const vague = BoardV2.instantiate(compiled, {
+    slots: { route: { name: 'что-нибудь в лесу', url: 'https://example.test/route' } },
+    primaryAction: { label: 'Открыть маршрут', url: 'https://example.test/route' },
+  });
+  assert.deepEqual(vague, { ok: false, error: 'unresolved-slot', slot: 'route' });
+  const exact = BoardV2.instantiate(compiled, {
+    slots: { route: {
+      name: 'Hermannshöhen: Bielefeld — Oerlinghausen',
+      address: 'Sparrenburg, Bielefeld',
+      url: 'https://example.test/route',
+      distanceKm: 14.78,
+      difficulty: 'средняя',
+    } },
+    primaryAction: { label: 'Открыть маршрут', url: 'https://example.test/route' },
+  });
+  assert.equal(exact.ok, true);
+  assert.equal(exact.quest.resolvedSlots.route.distanceKm, 14.78);
+  assert.equal(exact.quest.resolvedSlots.route.difficulty, 'средняя');
+});
+
+test('видео-комплекс обязан иметь конкретную HTTPS-ссылку и кнопку запуска', () => {
+  const compiled = BoardV2.compileTemplate(rawTemplate({
+    id: 'long-stretch-video',
+    kind: 'recovery',
+    slots: [{ id: 'routine', type: 'video', required: true }],
+    copy: { title: 'Сделай растяжку по {routine}', details: 'Остановись, если появилась боль.' },
+  }));
+  assert.equal(BoardV2.instantiate(compiled, { slots: { routine: 'любое видео' } }).ok, false);
+  const result = BoardV2.instantiate(compiled, {
+    slots: { routine: { name: '40-минутная растяжка', url: 'https://example.test/stretch' } },
+    primaryAction: { label: 'Открыть видео', url: 'https://example.test/stretch' },
+  });
+  assert.equal(result.ok, true);
+});
+
 test('«вечером» не считается конкретным расписанием локального события', () => {
   const compiled = BoardV2.compileTemplate(rawTemplate());
   const result = BoardV2.instantiate(compiled, {
@@ -227,6 +268,49 @@ test('большой квест получает заметно больше XP 
   });
 });
 
+test('легендарный заказ не маскируется под короткую session-задачу', () => {
+  assert.throws(() => BoardV2.compileTemplate(rawTemplate({
+    adventure: { class: 'legendary' },
+  })), { code: 'legendary-requires-large-quest' });
+  const compiled = BoardV2.compileTemplate(rawTemplate({
+    id: 'run-a-marathon',
+    scale: 'arc',
+    adventure: { class: 'legendary', safetyTier: 'planned', requiredFlags: ['health-ready'] },
+  }));
+  assert.equal(compiled.adventure.class, 'legendary');
+  assert.equal(compiled.reward.xp, 500);
+});
+
+test('опасный wildcard fail-closed без разрешённого места и профессионального контроля', () => {
+  assert.throws(() => BoardV2.compileTemplate(rawTemplate({
+    id: 'learn-a-flip-unsafe',
+    scale: 'expedition',
+    slots: [],
+    copy: { title: 'Научись делать сальто с тренером', details: 'Только в оборудованном зале.' },
+    adventure: { class: 'wildcard', safetyTier: 'professional-supervision', requiredFlags: [] },
+  })), { code: 'unsafe-supervised-quest' });
+
+  const compiled = BoardV2.compileTemplate(rawTemplate({
+    id: 'learn-a-flip-with-coach',
+    scale: 'expedition',
+    slots: [],
+    copy: { title: 'Научись делать сальто с тренером', details: 'Только в оборудованном зале.' },
+    adventure: {
+      class: 'wildcard',
+      safetyTier: 'professional-supervision',
+      requiredFlags: ['professional-supervision', 'permitted-venue', 'health-ready'],
+    },
+  }));
+  assert.deepEqual(BoardV2.instantiate(compiled, {}), {
+    ok: false,
+    error: 'readiness-required',
+    missingFlags: ['professional-supervision', 'permitted-venue', 'health-ready'],
+  });
+  assert.equal(BoardV2.instantiate(compiled, {
+    readinessFlags: ['professional-supervision', 'permitted-venue', 'health-ready'],
+  }).ok, true);
+});
+
 test('selection отдаёт одну основную рекомендацию и не больше двух резервных', () => {
   const a = resolvedQuest({ id: 'quest-a' }, { fit: { interest: 0, confidence: 0.2, distanceKm: 2 } });
   const b = resolvedQuest({ id: 'quest-b' }, { fit: { interest: 1, confidence: 1, distanceKm: 3 } });
@@ -235,6 +319,26 @@ test('selection отдаёт одну основную рекомендацию 
   const picked = BoardV2.select([a, b, c, d], { interests: ['body'] }, { reserveLimit: 99 });
   assert.equal(picked.primary.templateId, 'quest-b');
   assert.equal(picked.reserves.length, 2);
+});
+
+test('wildcard и legendary не попадают в обычную выдачу без явного режима', () => {
+  const standard = resolvedQuest({ id: 'standard-quest' });
+  const wildcard = resolvedQuest({
+    id: 'wildcard-quest',
+    scale: 'expedition',
+    adventure: { class: 'wildcard' },
+  }, { fit: { interest: 10, confidence: 1, distanceKm: 0 } });
+  assert.equal(BoardV2.select([wildcard, standard], {}).primary.templateId, 'standard-quest');
+  assert.equal(BoardV2.select([wildcard, standard], {}, {
+    adventureClasses: ['wildcard'],
+  }).primary.templateId, 'wildcard-quest');
+});
+
+test('жёсткое «не моё» полностью убирает квест, а не только снижает score', () => {
+  const quest = resolvedQuest({ id: 'hard-avoid', tags: ['heights', 'travel'] });
+  const picked = BoardV2.select([quest], { avoidTags: ['heights'] });
+  assert.equal(picked.primary, null);
+  assert.deepEqual(picked.reserves, []);
 });
 
 test('selection не доверяет поддельному quest schema', () => {

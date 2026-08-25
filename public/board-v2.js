@@ -14,14 +14,29 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildBoardV2() {
   'use strict';
 
-  const VERSION = '2.0.0';
+  const VERSION = '2.1.0';
   const TEMPLATE_SCHEMA = 'satoru.board-template/2';
   const MEMORY_SCHEMA = 'satoru.board-outcome-memory/1';
   const KINDS = Object.freeze(['experience', 'challenge', 'social', 'creation', 'expedition', 'recovery']);
   const SCALES = Object.freeze(['micro', 'session', 'expedition', 'arc']);
-  const SLOT_TYPES = Object.freeze(['local-place', 'local-event', 'local-class', 'person', 'recipe', 'content', 'custom']);
+  const SLOT_TYPES = Object.freeze(['local-place', 'local-event', 'local-class', 'local-route', 'person', 'recipe', 'content', 'video', 'custom']);
   const PROOF_MODES = Object.freeze(['photo', 'video', 'result', 'checkin', 'story', 'reflection', 'none']);
   const OUTCOMES = Object.freeze(['helped', 'neutral', 'did-not-help']);
+  const ADVENTURE_CLASSES = Object.freeze(['standard', 'wildcard', 'legendary']);
+  const SAFETY_TIERS = Object.freeze(['ordinary', 'planned', 'professional-supervision']);
+  const READINESS_FLAGS = Object.freeze([
+    'age-eligible',
+    'booking-confirmed',
+    'budget-confirmed',
+    'current-availability',
+    'equipment-ready',
+    'health-ready',
+    'permitted-venue',
+    'professional-supervision',
+    'swim-ready',
+    'travel-ready',
+    'weather-checked',
+  ]);
   const compiledTemplates = new WeakSet();
   const resolvedQuests = new WeakSet();
 
@@ -82,6 +97,27 @@
     throw new BoardV2Error('invalid-scale');
   }
 
+  function compileAdventure(raw, scale) {
+    const source = raw == null ? {} : raw;
+    if (!plain(source)) throw new BoardV2Error('invalid-adventure');
+    const adventureClass = text(source.class, 24) || 'standard';
+    const safetyTier = text(source.safetyTier, 32) || 'ordinary';
+    if (!ADVENTURE_CLASSES.includes(adventureClass)) throw new BoardV2Error('invalid-adventure-class');
+    if (!SAFETY_TIERS.includes(safetyTier)) throw new BoardV2Error('invalid-safety-tier');
+    const requiredFlags = uniqueStrings(source.requiredFlags, READINESS_FLAGS);
+    const suppliedFlags = Array.isArray(source.requiredFlags) ? source.requiredFlags.length : 0;
+    if (requiredFlags.length !== suppliedFlags) throw new BoardV2Error('invalid-readiness-flag');
+    if (adventureClass === 'legendary' && !['expedition', 'arc'].includes(scale)) {
+      throw new BoardV2Error('legendary-requires-large-quest');
+    }
+    if (safetyTier === 'professional-supervision') {
+      for (const flag of ['professional-supervision', 'permitted-venue']) {
+        if (!requiredFlags.includes(flag)) throw new BoardV2Error('unsafe-supervised-quest', flag);
+      }
+    }
+    return { class: adventureClass, safetyTier, requiredFlags };
+  }
+
   function compileTemplate(raw) {
     if (!plain(raw) || raw.schema !== TEMPLATE_SCHEMA) throw new BoardV2Error('invalid-schema');
     const id = text(raw.id, 80);
@@ -125,6 +161,7 @@
       followUp = { interventionId, question, contextTags };
     }
 
+    const adventure = compileAdventure(raw.adventure, scale);
     const baseReward = rewardFor(scale);
     const reward = Object.assign({}, baseReward);
     const titleReward = text(raw.reward && raw.reward.title, 80);
@@ -143,6 +180,7 @@
       copy: { title, details },
       completion: { proofModes, proofRequired: completion.proofRequired === true, share },
       followUp,
+      adventure,
       reward,
     };
     deepFreeze(compiled);
@@ -172,18 +210,25 @@
     return Number.isFinite(timestamp) && /[T ]\d{2}:\d{2}/.test(source);
   }
   function validLocalResolution(value, type) {
-    if (!['local-place', 'local-event', 'local-class'].includes(type)) return !!slotLabel(value);
+    if (type === 'video') return plain(value) && !!slotLabel(value) && safeHttps(value.url);
+    if (!['local-place', 'local-event', 'local-class', 'local-route'].includes(type)) return !!slotLabel(value);
     if (!plain(value) || !slotLabel(value)) return false;
     const hasWhere = !!(text(value.address, 220) || safeHttps(value.url));
     const hasWhen = concreteStart(value.startsAt);
     if (type === 'local-class' || type === 'local-event') return hasWhere && hasWhen;
+    if (type === 'local-route') {
+      return hasWhere
+        && Number.isFinite(Number(value.distanceKm))
+        && Number(value.distanceKm) > 0
+        && !!text(value.difficulty, 80);
+    }
     return hasWhere;
   }
   function cleanSlotResolution(value) {
     if (typeof value === 'string') return text(value, 160);
     if (!plain(value)) return null;
     const out = {};
-    for (const key of ['label', 'name', 'title', 'address', 'startsAt', 'price', 'sourceId', 'source']) {
+    for (const key of ['label', 'name', 'title', 'address', 'startsAt', 'price', 'sourceId', 'source', 'difficulty', 'duration', 'travelTime', 'status']) {
       const clean = text(value[key], key === 'address' ? 220 : 160);
       if (clean) out[key] = clean;
     }
@@ -219,7 +264,8 @@
     const primaryAction = plain(source.primaryAction) ? source.primaryAction : {};
     const actionLabel = text(primaryAction.label, 80);
     const actionUrl = text(primaryAction.url, 500);
-    if (template.slots.some((slot) => slot.type.startsWith('local-')) && (!actionLabel || !safeHttps(actionUrl))) {
+    if (template.slots.some((slot) => slot.type.startsWith('local-') || slot.type === 'video')
+      && (!actionLabel || !safeHttps(actionUrl))) {
       return { ok: false, error: 'missing-primary-action' };
     }
     const alternatives = (Array.isArray(source.alternatives) ? source.alternatives : [])
@@ -229,6 +275,10 @@
     if (alternatives.length && (!slotLabel(alternatives[0]) || !safeHttps(alternatives[0].url))) {
       return { ok: false, error: 'invalid-alternative' };
     }
+
+    const readiness = new Set(uniqueStrings(source.readinessFlags, READINESS_FLAGS));
+    const missingFlags = template.adventure.requiredFlags.filter((flag) => !readiness.has(flag));
+    if (missingFlags.length) return { ok: false, error: 'readiness-required', missingFlags };
 
     const instance = deepFreeze({
       schema: 'satoru.board-quest/2',
@@ -244,6 +294,7 @@
       alternative: alternatives[0] || null,
       completion: template.completion,
       followUp: template.followUp,
+      adventure: template.adventure,
       reward: template.reward,
       fit: plain(source.fit) ? {
         interest: Number(source.fit.interest) || 0,
@@ -272,8 +323,14 @@
   function select(instances, profile, options) {
     const opts = plain(options) ? options : {};
     const hidden = new Set(uniqueStrings(opts.hiddenTemplateIds));
+    const avoids = new Set(uniqueStrings(plain(profile) ? profile.avoidTags : []));
+    const allowedAdventureClasses = new Set(uniqueStrings(opts.adventureClasses, ADVENTURE_CLASSES));
+    if (!allowedAdventureClasses.size) allowedAdventureClasses.add('standard');
     const ranked = (Array.isArray(instances) ? instances : [])
-      .filter((quest) => resolvedQuests.has(quest) && !hidden.has(quest.templateId))
+      .filter((quest) => resolvedQuests.has(quest)
+        && !hidden.has(quest.templateId)
+        && allowedAdventureClasses.has(quest.adventure.class)
+        && !quest.tags.some((tag) => avoids.has(tag)))
       .slice()
       .sort((a, b) => {
         const delta = questScore(b, profile) - questScore(a, profile);
@@ -335,6 +392,9 @@
     SLOT_TYPES,
     PROOF_MODES,
     OUTCOMES,
+    ADVENTURE_CLASSES,
+    SAFETY_TIERS,
+    READINESS_FLAGS,
     BoardV2Error,
     lintCopy,
     rewardFor,
