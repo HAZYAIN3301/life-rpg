@@ -16765,3 +16765,312 @@ body:has(.goals-shell) #ai-fab { display: none; }
     animation: none !important; transition-duration: 0ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important;
   }
 }
+
+/* ==========================================================
+   Attention contract v1 — bounded entry, boundary and return.
+   The engine owns policy/session truth; this block owns only the
+   calm, accessible presentation of its four explicit UI states.
+   ========================================================== */
+html.attention-dialog-open,
+html.attention-dialog-open body { overscroll-behavior: none; }
+
+.attention-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10040;
+  min-width: 0;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--sp-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: color-mix(in srgb, var(--surface-0) 82%, transparent);
+}
+
+.attention-dialog {
+  position: relative;
+  width: min(100%, 640px);
+  max-height: calc(100dvh - (var(--sp-4) * 2));
+  overflow: auto;
+  padding: var(--sp-5);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-xl);
+  color: var(--text);
+  background: var(--surface-1);
+  box-shadow: var(--shadow-raise);
+  scrollbar-gutter: stable;
+}
+
+.attention-dialog > .modal-x {
+  position: absolute;
+  inset-block-start: var(--sp-3);
+  inset-inline-end: var(--sp-3);
+  z-index: 2;
+  min-inline-size: var(--touch-min);
+  min-block-size: var(--touch-min);
+}
+
+.attention-flow {
+  min-width: 0;
+  display: grid;
+  gap: var(--sp-4);
+}
+
+.attention-flow-head {
+  min-width: 0;
+  padding-inline-end: calc(var(--touch-min) + var(--sp-2));
+}
+
+.attention-kicker {
+  margin: 0 0 var(--sp-1);
+  color: var(--accent-2);
+  font: 850 var(--type-meta)/var(--leading-label) var(--font-ui);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+
+.attention-flow-head h2 {
+  max-width: var(--measure-compact);
+  margin: 0;
+  color: var(--text-strong);
+  font-family: var(--font-display);
+  font-size: var(--type-title);
+  line-height: var(--leading-display);
+  font-synthesis: none;
+  font-kerning: normal;
+  overflow-wrap: anywhere;
+}
+
+.attention-flow-head h2:focus { outline: none; }
+
+.attention-flow-head > p:last-child {
+  max-width: var(--measure-compact);
+  margin: var(--sp-2) 0 0;
+  color: var(--text-soft);
+  font: var(--type-body)/var(--leading-prose) var(--font-ui);
+}
+
+.attention-field-grid,
+.attention-field,
+.attention-fieldset,
+.attention-emergency-body {
+  min-width: 0;
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.attention-field-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.attention-field-wide { grid-column: 1 / -1; }
+
+.attention-field > span,
+.attention-fieldset > legend {
+  color: var(--text-soft);
+  font: 800 var(--type-meta)/var(--leading-label) var(--font-ui);
+}
+
+.attention-fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.attention-fieldset > legend { margin-block-end: var(--sp-2); }
+
+.attention-field :is(input, select, textarea) {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--touch-min);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  color: var(--text-strong);
+  background: var(--surface-2);
+  font: var(--type-control)/var(--leading-prose) var(--font-ui);
+}
+
+.attention-choice-row,
+.attention-purpose-grid,
+.attention-mode-grid {
+  min-width: 0;
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.attention-choice-row { grid-template-columns: repeat(auto-fit, minmax(78px, 1fr)); }
+.attention-purpose-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.attention-mode-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.attention-choice {
+  position: relative;
+  min-width: 0;
+  min-height: var(--touch-min);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  color: var(--text);
+  background: var(--surface-2);
+  cursor: pointer;
+}
+
+.attention-choice:has(input:checked) {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
+  box-shadow: inset 3px 0 var(--accent);
+}
+
+.attention-choice > input {
+  flex: 0 0 auto;
+  inline-size: 18px;
+  block-size: 18px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.attention-choice > span,
+.attention-choice > span > :is(b, small) {
+  min-width: 0;
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.attention-choice b {
+  color: var(--text-strong);
+  font: 800 var(--type-control)/var(--leading-ui) var(--font-ui);
+}
+
+.attention-choice small {
+  margin-block-start: 3px;
+  color: var(--text-soft);
+  font: var(--type-meta)/var(--leading-ui) var(--font-ui);
+}
+
+.attention-privacy-note,
+.attention-calibration,
+.attention-form-status,
+.attention-emergency-body > p {
+  margin: 0;
+  color: var(--text-soft);
+  font: var(--type-meta)/var(--leading-prose) var(--font-ui);
+}
+
+.attention-calibration {
+  padding: var(--sp-3);
+  border-inline-start: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface-2));
+}
+
+.attention-form-status:empty { display: none; }
+.attention-form-status[data-error="true"] { color: var(--bad); }
+
+.attention-actions,
+.attention-boundary-actions {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+}
+
+.attention-actions > *,
+.attention-boundary-actions > * { min-height: var(--touch-min); }
+
+.attention-empty,
+.attention-return-action,
+.attention-emergency {
+  min-width: 0;
+  padding: var(--sp-3);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+}
+
+.attention-empty p { margin: 0 0 var(--sp-2); color: var(--text-soft); line-height: var(--leading-prose); }
+
+.attention-return-action {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.attention-return-action > span {
+  color: var(--accent-2);
+  font-size: var(--type-title);
+  line-height: var(--leading-tight);
+}
+
+.attention-return-action b,
+.attention-return-action small { display: block; overflow-wrap: anywhere; }
+.attention-return-action b { color: var(--text-strong); font: 850 var(--type-body)/var(--leading-ui) var(--font-ui); }
+.attention-return-action small { margin-block-start: 3px; color: var(--text-soft); font: var(--type-meta)/var(--leading-label) var(--font-ui); }
+
+.attention-emergency { padding: 0; }
+.attention-emergency > summary {
+  min-height: var(--touch-min);
+  display: flex;
+  align-items: center;
+  padding: var(--sp-2) var(--sp-3);
+  color: var(--text-soft);
+  font: 800 var(--type-control)/var(--leading-ui) var(--font-ui);
+  cursor: pointer;
+}
+.attention-emergency-body { padding: 0 var(--sp-3) var(--sp-3); }
+.attention-emergency-body .btn { justify-self: start; min-height: var(--touch-min); }
+
+.attention-dialog :is(button, input, select, textarea, summary):focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .attention-choice:hover { border-color: var(--line-strong); background: var(--surface-3); }
+  .attention-choice:has(input:checked):hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, var(--surface-2)); }
+}
+
+@media (max-width: 700px) {
+  .attention-overlay { place-items: end center; padding: var(--sp-2); }
+  .attention-dialog {
+    width: 100%;
+    max-height: calc(100dvh - var(--sp-2));
+    padding: var(--sp-3);
+    border-radius: var(--radius-xl) var(--radius-xl) var(--radius-md) var(--radius-md);
+  }
+  .attention-flow { gap: var(--sp-3); }
+  .attention-field-grid,
+  .attention-purpose-grid,
+  .attention-mode-grid { grid-template-columns: minmax(0, 1fr); }
+  .attention-choice-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .attention-actions,
+  .attention-boundary-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .attention-actions > *,
+  .attention-boundary-actions > * { width: 100%; }
+}
+
+@media (max-width: 370px) {
+  .attention-overlay { padding: var(--sp-1); }
+  .attention-dialog { max-height: calc(100dvh - var(--sp-1)); padding: var(--sp-2); }
+  .attention-choice-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .attention-actions,
+  .attention-boundary-actions { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (pointer: coarse), (max-width: 600px) {
+  .attention-dialog :is(button, input, select, textarea, summary),
+  .attention-choice { min-height: var(--touch-min); }
+  .attention-field :is(input, select, textarea) { font-size: max(16px, var(--type-control)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .attention-overlay *,
+  .attention-overlay *::before,
+  .attention-overlay *::after {
+    animation: none !important;
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
