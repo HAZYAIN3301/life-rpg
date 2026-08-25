@@ -8,6 +8,8 @@ const Board = require('../public/board-v2.js');
 const Pacing = require('../public/board-v2-pacing.js');
 const Offers = require('../public/board-v2-offers.js');
 const Completion = require('../public/board-v2-completion.js');
+const Catalog = require('../public/board-v2-catalog.js');
+const Issuer = require('../public/board-v2-issuer.js');
 const Runtime = require('../public/board-v2-runtime.js');
 const BoardV1 = require('../public/board-v1.js');
 
@@ -49,6 +51,52 @@ test('take creates one settings-only commit and preserves custom orders without 
   assert.equal(payload.data.settings.board.active[0].orderId, input.snapshotId);
   assert.deepEqual(payload.data.settings.board.custom, [{ id: 'mine', title: 'Мой заказ' }]);
   assert.deepEqual({ settings: input.settings, tasks: input.tasks }, before);
+});
+
+test('standard issue becomes one settings-only account transaction', () => {
+  const input = context('take');
+  const offer = Issuer.issueStandard(Board, Catalog, Offers, Pacing, {}, input.settings.boardV2Offers, {
+    day: DAY, periodKey: DAY,
+  });
+  const prepared = Runtime.prepareIssue({
+    issuerApi: Issuer, boardApi: BoardV1, offersApi: Offers, pacingApi: Pacing, issue: offer,
+    settings: input.settings, tasks: input.tasks,
+  });
+  assert.equal(prepared.ok, true);
+  const payload = Runtime.payload(prepared.transaction);
+  assert.deepEqual(Object.keys(payload.data), ['settings']);
+  assert.equal(payload.data.settings.boardV2Offers.current.snapshotIds[0], offer.primary.id);
+  assert.deepEqual(input.settings.boardV2Offers.snapshots.length, 1);
+});
+
+test('standard issue materializes Board v1 state for a legacy account', () => {
+  const input = context('take');
+  delete input.settings.board;
+  const offer = Issuer.issueStandard(Board, Catalog, Offers, Pacing, {}, input.settings.boardV2Offers, {
+    day: DAY, periodKey: DAY,
+  });
+  const prepared = Runtime.prepareIssue({
+    issuerApi: Issuer, boardApi: BoardV1, offersApi: Offers, pacingApi: Pacing, issue: offer,
+    settings: input.settings, tasks: input.tasks,
+  });
+  assert.equal(prepared.ok, true);
+  assert.deepEqual(Runtime.payload(prepared.transaction).data.settings.board, BoardV1.normalize(null));
+  assert.equal(input.settings.board, undefined);
+});
+
+test('forged and already-stored issues cannot create another commit', () => {
+  const input = context('take');
+  assert.equal(Runtime.prepareIssue({
+    issuerApi: Issuer, boardApi: BoardV1, offersApi: Offers, pacingApi: Pacing, issue: { ok: true, changed: true },
+    settings: input.settings, tasks: input.tasks,
+  }).reason, 'invalid-issue');
+  const first = Issuer.issueStandard(Board, Catalog, Offers, Pacing, {}, Offers.emptyState(Pacing), { day: DAY, periodKey: DAY });
+  const stored = Issuer.result(first).nextOffers;
+  const second = Issuer.issueStandard(Board, Catalog, Offers, Pacing, {}, stored, { day: DAY, periodKey: DAY });
+  assert.equal(Runtime.prepareIssue({
+    issuerApi: Issuer, boardApi: BoardV1, offersApi: Offers, pacingApi: Pacing, issue: second,
+    settings: { ...input.settings, boardV2Offers: stored }, tasks: input.tasks,
+  }).reason, 'no-change');
 });
 
 test('return keeps tasks untouched and records the exact snapshot outcome', () => {

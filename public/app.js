@@ -15283,6 +15283,45 @@ function boardV2CurrentOffers() {
   if (!state || !state.current) return [];
   return state.current.snapshotIds.map((id) => state.snapshots.find((item) => item.id === id)).filter(Boolean);
 }
+function boardV2IssuerProfile() {
+  const taste = window.BoardTasteV1 && window.BoardPoolV1
+    ? window.BoardTasteV1.tagWeights(tasteRead(), window.BoardPoolV1.ALL, todayStr()) : {};
+  const names = (State.settings.skills || []).map((skill) => [skill.id, String(skill.name || '').toLowerCase()]);
+  const mappings = [
+    [/спорт|трен|фитнес|sport|fitness|gym/, ['sport', 'movement']],
+    [/йог|растяж|mobility|yoga|stretch/, ['yoga', 'mobility', 'recovery']],
+    [/бег|run/, ['running', 'sport']], [/ходь|прогул|walk|hiking/, ['walking', 'hiking']],
+    [/готов|кулинар|cook|food/, ['cooking', 'food']], [/книг|чтен|read|book/, ['reading', 'learning']],
+    [/твор|рис|видео|музык|creative|video|music/, ['creative', 'video', 'content']],
+    [/игр|minecraft|настол|game|tabletop/, ['games', 'board-games']], [/путеш|travel/, ['travel']],
+  ];
+  const interests = [];
+  for (const [, name] of names) {
+    for (const [pattern, tags] of mappings) if (pattern.test(name)) for (const tag of tags) if (!interests.includes(tag)) interests.push(tag);
+  }
+  const sportSkillIds = new Set(names.filter(([, name]) => /спорт|трен|фитнес|sport|fitness|gym/.test(name)).map(([id]) => id));
+  const cutoff = addDays(todayStr(), -60);
+  const sportRoutine = State.tasks.some((task) => task && task.done && task.date >= cutoff && sportSkillIds.has(task.skillId));
+  const load = dayLoadNow();
+  return { interests, tasteWeights: taste, gates: sportRoutine ? ['sport-routine'] : [], videoFit: load.known && load.done >= load.typical ? 'shorter' : sportRoutine ? 'regular' : 'beginner' };
+}
+async function boardV2IssueStandardOffers() {
+  const I = window.BoardV2Issuer, R = window.BoardV2Runtime;
+  if (lang() !== 'ru' || State._boardIssueBusy || !I || !R || !window.BoardV2Catalog || !window.BoardV2Offers) return false;
+  State._boardIssueBusy = true;
+  try {
+    const issue = I.issueStandard(window.BoardV2, window.BoardV2Catalog, window.BoardV2Offers, window.BoardV2Pacing,
+      boardV2IssuerProfile(), boardV2OffersRead(), { day: todayStr(), periodKey: weekStart(todayStr()) });
+    if (!issue.ok || !issue.changed) return false;
+    const prepared = R.prepareIssue({ issuerApi: I, boardApi: window.BoardV1,
+      offersApi: window.BoardV2Offers, pacingApi: window.BoardV2Pacing,
+      issue, settings: State.settings, tasks: State.tasks });
+    if (!prepared.ok) return false;
+    const saved = await commitBoardV2Transaction(prepared.transaction);
+    if (saved) State._boardSel = issue.primary.id;
+    return saved;
+  } finally { State._boardIssueBusy = false; }
+}
 function prepareBoardV2Action(action, snapshotId, options = {}) {
   const R = window.BoardV2Runtime;
   if (!R || !window.BoardV1 || !window.BoardV2Offers || !window.BoardV2Completion) return { ok: false, reason: 'runtime-unavailable' };
@@ -15607,11 +15646,17 @@ function boardScreenHTML() {
   // Свои заказы показываются на доске рядом с предложенными, но только пока не взяты:
   // взятые и без того видны в «Твои текущие заказы» выше, дублировать их незачем.
   const takenIds = new Set(mine.map((entry) => entry.orderId));
-  const exactOffers = lang() === 'ru' ? boardV2CurrentOffers().filter((order) => !takenIds.has(order.id)).map((order) => ({ ...order, boardV2: true })) : [];
+  const currentExact = lang() === 'ru' ? boardV2CurrentOffers() : [];
+  const exactBoard = currentExact.length > 0;
+  const exactOffers = currentExact.filter((order) => !takenIds.has(order.id)).map((order) => ({ ...order, boardV2: true }));
   const customOffers = boardCustomOrders().filter((o) => !takenIds.has(o.id));
   // Небо показывается первым, когда событие сегодня: у него единственного есть срок.
   const skyOffers = boardSkyOrders().filter((o) => !takenIds.has(o.id)).slice(0, 2);
-  const offers = exactOffers.concat(skyOffers).concat(view.seasonal ? [view.seasonal] : []).concat(view.personal).concat(customOffers);
+  // Once a precise v2 issue exists, do not surround it with the rejected v1
+  // wall. Board v2 is one primary and at most one reserve; v1 remains only as
+  // a safe fallback for locales/context that cannot resolve v2 yet.
+  const offers = exactBoard ? exactOffers
+    : skyOffers.concat(view.seasonal ? [view.seasonal] : []).concat(view.personal).concat(customOffers);
   const activeOrders = mine.map((entry) => boardOrderById(entry.orderId)).filter(Boolean);
   const selectable = activeOrders.concat(offers);
   const requested = State._boardSel ? selectable.find((order) => order.id === State._boardSel) : null;
@@ -15631,7 +15676,7 @@ function boardScreenHTML() {
     </button>`;
   };
   // Место спрашивается один раз и только здесь — рядом с тем, ради чего оно нужно.
-  const placeSheet = boardPlace() ? '' : `
+  const placeSheet = exactBoard || boardPlace() ? '' : `
     <form class="bsheet bsheet-place" id="board-place-form" style="--tilt:${boardTilt('place')}deg">
       <span class="bsheet-pin" aria-hidden="true"></span><span class="bsheet-kind">${t('НЕБО НАД ТОБОЙ')}</span>
       <p class="bsheet-text">${t('Скажи, где ты, — и доска добавит то, что видно только отсюда и только сегодня.')}</p>
@@ -15647,7 +15692,7 @@ function boardScreenHTML() {
       <p class="bsheet-place-note muted">${t('Координаты остаются на твоём аккаунте и никуда не отправляются.')}</p>
     </form>`;
   // Пустой лист: доска предлагает, но не знает, чего человек хочет прямо сейчас.
-  const blankSheet = boardCustomOrders().length >= BOARD_CUSTOM_MAX ? '' : `
+  const blankSheet = exactBoard || boardCustomOrders().length >= BOARD_CUSTOM_MAX ? '' : `
     <form class="bsheet bsheet-blank" id="board-custom-form" style="--tilt:${boardTilt('blank')}deg">
       <span class="bsheet-pin" aria-hidden="true"></span><span class="bsheet-kind">${t('ПУСТОЙ ЛИСТ')}</span>
       <label class="sr-only" for="board-custom-input">${t('Свой заказ')}</label>
@@ -15704,7 +15749,7 @@ function boardScreenHTML() {
     ${active}
     <div class="board-frame"><div class="board-frame-cap" aria-hidden="true"><span></span><i></i><span></span></div>
       <div class="board-scene">
-        <section class="board-wall" aria-labelledby="board-pinned-title"><header class="board-wall-head"><h3 id="board-pinned-title">${t('Приколото для тебя')}</h3><p>${t('Три личных и один общий сезонный заказ. Состав доски меняется раз в неделю.')}</p></header>
+        <section class="board-wall" aria-labelledby="board-pinned-title"><header class="board-wall-head"><h3 id="board-pinned-title">${exactBoard ? 'Подобрано для тебя' : t('Приколото для тебя')}</h3><p>${exactBoard ? 'Один основной заказ и максимум один запасной. Без стены вариантов.' : t('Три личных и один общий сезонный заказ. Состав доски меняется раз в неделю.')}</p></header>
           <div class="board-papers">${offers.map(sheet).join('')}${placeSheet}${blankSheet}</div></section>
         <aside class="board-detail" aria-live="polite" aria-labelledby="board-detail-title">${detail}
           ${askOrder ? `<div class="board-ask"><p>${t('Этот заказ у тебя уже давно')} — «${esc(boardOrderTitle(askOrder))}». ${t('Всё ещё твой?')}</p><div><button class="btn ghost sm" data-action="board-keep" data-id="${esc(ask.orderId)}">${t('Мой')}</button><button class="btn ghost sm" data-action="board-return" data-id="${esc(ask.orderId)}">${t('Вернуть')}</button></div></div>` : ''}
@@ -22187,6 +22232,9 @@ async function onClick(e) {
     State._todayTab = id === 'board' ? 'board' : 'day';
     if (State._todayTab === 'board') State._boardFocusAfterCommit = '#board-title, #calib-title';
     render();
+    if (State._todayTab === 'board' && await boardV2IssueStandardOffers()) {
+      State._boardFocusAfterCommit = '#board-detail-title, #board-title'; render();
+    }
   } else if (action === 'board-pick') {
     State._boardSel = id; State._boardFocusAfterCommit = '#board-detail-title'; render();
   } else if (action === 'board-take') {

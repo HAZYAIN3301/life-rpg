@@ -11,8 +11,8 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildBoardV2Runtime() {
   'use strict';
 
-  const VERSION = '1.0.0';
-  const ACTIONS = Object.freeze(['take', 'return', 'complete']);
+  const VERSION = '1.1.0';
+  const ACTIONS = Object.freeze(['issue-standard', 'take', 'return', 'complete']);
   const MAX_TITLES = 50;
   const issued = new WeakSet();
 
@@ -96,6 +96,34 @@
     issued.add(transaction);
     return { ok: true, transaction };
   }
+  function prepareIssue(raw) {
+    const source = plain(raw) ? raw : {};
+    if (!plain(source.settings) || !Array.isArray(source.tasks)
+      || !source.issuerApi || typeof source.issuerApi.result !== 'function'
+      || !source.boardApi || typeof source.boardApi.normalize !== 'function'
+      || !source.offersApi || typeof source.offersApi.normalizeState !== 'function') {
+      return { ok: false, reason: 'invalid-runtime-context' };
+    }
+    const issue = source.issuerApi.result(source.issue);
+    if (!issue || !source.issue || source.issue.ok !== true) return { ok: false, reason: 'invalid-issue' };
+    if (!source.issue.changed) return { ok: false, reason: 'no-change' };
+    const offers = source.offersApi.normalizeState(issue.nextOffers, source.pacingApi);
+    if (!offers.current || !offers.current.snapshotIds.length
+      || offers.current.snapshotIds[0] !== source.issue.primary.id) return { ok: false, reason: 'invalid-issue-state' };
+    const settings = clone(source.settings);
+    // Legacy accounts can have no persisted Board v1 envelope because the old
+    // renderer normalized it only in memory. The atomic endpoint deliberately
+    // requires the complete envelope, so materialize that canonical default
+    // in the same transaction as the first Board v2 snapshot.
+    settings.board = preserveCustom(source.boardApi.normalize(source.settings.board), source.settings.board);
+    settings.boardV2Offers = clone(offers);
+    const transaction = deepFreeze({
+      schema: 'satoru.board-runtime-transaction/2', action: 'issue-standard', snapshotId: source.issue.primary.id,
+      data: { settings }, next: { settings, tasks: null }, effects: { unlock: null, proofPlan: null },
+    });
+    issued.add(transaction);
+    return { ok: true, transaction };
+  }
   function payload(transaction) {
     return issued.has(transaction) ? { data: clone(transaction.data) } : null;
   }
@@ -106,5 +134,5 @@
     return issued.has(transaction) ? clone(transaction.effects) : null;
   }
 
-  return Object.freeze({ VERSION, ACTIONS, MAX_TITLES, prepare, payload, result, effects });
+  return Object.freeze({ VERSION, ACTIONS, MAX_TITLES, prepare, prepareIssue, payload, result, effects });
 });
