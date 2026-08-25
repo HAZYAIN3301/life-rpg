@@ -6,6 +6,7 @@ _Создан 2026-06-14. Актуализирован 24.07 — секции н
 
 - [x] **Board v2 C0.9 — offer snapshot/session model** ✅ 2026-08-25: один primary + максимум один reserve, стабильный снимок конкретизированного заказа на период, отдельные standard/passive/manual-unexpected режимы, cooldown по исходу и fail-closed для unresolved local slots. Pure module пока не включён в shell; следующий шаг — completion/media/Shadow bridge, затем UI.
 - [x] **Board v2 C0.10 — completion transaction model** ✅ 2026-08-25: take/return/complete двигают старый active ledger и v2 snapshot вместе; XP берётся из authored scale, large quest может вернуть title unlock, required proof проверяется до награды, private media хранится только ссылкой, а вопрос Тени становится intervention memory только после ответа. Thin runtime adapter ещё dormant.
+- [x] **Board v2 C0.11 — structured community evidence** ✅ 2026-08-25: сервер принимает только `matched/changed/closed` после завершённого локального snapshot; один аккаунт влияет на место один раз, публичная сводка открывается с трёх разных аккаунтов, URL/личности/free text/media/GPS не сохраняются в общем агрегате. Ranking/UI ещё dormant.
 
 ## 🌐 Registration locale + Traveller appearance (решение 18.08)
 

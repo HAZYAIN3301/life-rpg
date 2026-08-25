@@ -14,6 +14,8 @@ const crypto = require('crypto');
 const BoardV2BraveAdapter = require('./server-board-v2-discovery-v1.js');
 const BoardV2PageVerifier = require('./server-board-v2-page-verifier-v1.js');
 const BoardV2AccountService = require('./server-board-v2-service-v1.js');
+const BoardV2Community = require('./server-board-v2-community-v1.js');
+const BoardV2Offers = require('./public/board-v2-offers.js');
 
 const ROOT = __dirname;
 // Local development secrets live outside Git. Production providers inject the
@@ -217,6 +219,39 @@ const boardV2Service = BoardV2AccountService.createService({
   adapter: boardV2Adapter,
   readAccount: readBoardV2Account,
   writeAccount: writeBoardV2Account,
+});
+const BOARD_V2_COMMUNITY_ACCOUNT_FILE = 'board-community.json';
+const BOARD_V2_COMMUNITY_AGGREGATE_FILE = () => path.join(DATA_DIR, 'board-community-aggregate.json');
+function readBoardV2CommunityAccount(uid) {
+  try { return JSON.parse(fs.readFileSync(path.join(userDataDir(uid), BOARD_V2_COMMUNITY_ACCOUNT_FILE), 'utf8')); }
+  catch { return null; }
+}
+function writeBoardV2CommunityAccount(uid, value) {
+  writeJsonAtomic(path.join(userDataDir(uid), BOARD_V2_COMMUNITY_ACCOUNT_FILE), value);
+}
+function readBoardV2CommunityAggregate() {
+  try { return JSON.parse(fs.readFileSync(BOARD_V2_COMMUNITY_AGGREGATE_FILE(), 'utf8')); }
+  catch { return null; }
+}
+function writeBoardV2CommunityAggregate(value) {
+  writeJsonAtomic(BOARD_V2_COMMUNITY_AGGREGATE_FILE(), value);
+}
+function findBoardV2Snapshot(uid, snapshotId) {
+  const settings = readUserJson(uid, 'settings');
+  return BoardV2Offers.snapshotById(settings && settings.boardV2Offers, snapshotId, null);
+}
+function completedBoardV2Snapshot(uid, snapshotId) {
+  const tasks = readUserJson(uid, 'tasks');
+  return Array.isArray(tasks) && tasks.some((task) => task && task.done === true && task.fromBoardV2 === true
+    && task.boardSnapshotId === snapshotId && typeof task.completedAt === 'string' && Number.isFinite(Date.parse(task.completedAt)));
+}
+const boardV2CommunityService = BoardV2Community.createService({
+  readAccount: readBoardV2CommunityAccount,
+  writeAccount: writeBoardV2CommunityAccount,
+  readAggregate: readBoardV2CommunityAggregate,
+  writeAggregate: writeBoardV2CommunityAggregate,
+  findSnapshot: findBoardV2Snapshot,
+  isCompleted: completedBoardV2Snapshot,
 });
 // Рекламный кредит существует отдельно от пользовательских settings/economy-файлов:
 // обычный клиент не может подменить его сохранением настроек. Он доступен только
@@ -3379,6 +3414,27 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, status, result);
   }
 
+  // ---- Board v2 structured community evidence: completed local snapshot only ----
+  if (u.split('?')[0] === '/api/board-v2/community' && req.method === 'GET') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const snapshotId = new URL(u, 'http://satoru.local').searchParams.get('snapshotId') || '';
+    try {
+      const result = boardV2CommunityService.summary(uid, snapshotId);
+      return sendJson(res, result.ok ? 200 : 400, result);
+    } catch { return sendJson(res, 500, { error: 'board_community_summary_failed' }); }
+  }
+  if (u === '/api/board-v2/community/mark' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload; try { payload = JSON.parse(await readBody(req, 8 * 1024)); }
+    catch { return sendJson(res, 400, { error: 'invalid_community_mark' }); }
+    try {
+      const result = await boardV2CommunityService.mark(uid, payload);
+      if (result.ok) return sendJson(res, 200, result);
+      const status = result.reason === 'already-marked' ? 409 : result.reason === 'daily-mark-limit' ? 429 : 400;
+      return sendJson(res, status, result);
+    } catch { return sendJson(res, 500, { error: 'board_community_mark_failed' }); }
+  }
+
   // ---- Per-user data API ----
   const m = u.match(/^\/api\/data\/([^/?]+)/);
   if (m) {
@@ -3386,7 +3442,7 @@ const server = http.createServer(async (req, res) => {
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const name = safeName(m[1].replace(/\.json$/, ''));
     if (!name) return sendJson(res, 400, { error: 'bad name' });
-    if (name === 'board-discovery') return sendJson(res, 403, { error: 'server_owned_data' });
+    if (name === 'board-discovery' || name === 'board-community') return sendJson(res, 403, { error: 'server_owned_data' });
     const dir = userDataDir(uid);
     const file = path.join(dir, name + '.json');
 

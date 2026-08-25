@@ -2,6 +2,15 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-25] Board v2 C0.11 — community evidence без ленты и рейтинга людей
+
+- Новый server-only модуль `server-board-v2-community-v1.js` принимает ровно два поля: ID сохранённого snapshot и структурированный результат `matched/changed/closed`. Snapshot обязан быть локальным, иметь канонический HTTPS CTA и уже существовать в account-owned `settings.boardV2Offers`; сигнал принимается только после выполненной задачи с тем же `boardSnapshotId`.
+- Один аккаунт может повлиять на один и тот же источник только один раз — отдельный bounded subject ledger не забывает это при ротации короткого audit-журнала. Параллельные вкладки сериализованы, суточный cap равен 10, обе записи откатываются при ошибке account persistence.
+- Общий `board-community-aggregate.json` хранит только необратимый subject hash, authored template ID, три счётчика и время обновления. URL, account ID, текст, фото/видео, GPS и provider payload туда не попадают. Публичная сводка скрыта до трёх разных аккаунтов; наружу выходят только количество и статус доступности.
+- `server.js` подключил authenticated `GET /api/board-v2/community?snapshotId=...` и `POST /api/board-v2/community/mark`. Персональный `board-community.json` нельзя прочитать или переписать через общий `/api/data/*`. Свободные советы, лента и рейтинги не добавлены; ranking/UI Board v2 пока не потребляют агрегат.
+
+Focused Board v2 suite — **163/163 PASS**; полный suite — **711/711 PASS**.
+
 ## [2026-08-25] Board v2 C0.10 — завершение, доказательство и память Тени
 
 - Новый dormant pure-модуль `public/board-v2-completion.js` готовит один атомарный change-set для существующего `/api/board/commit`: старый active ledger и точный Board v2 snapshot берутся/возвращаются/закрываются вместе, а выполненная задача создаётся из snapshot, не из обновившегося каталога.
