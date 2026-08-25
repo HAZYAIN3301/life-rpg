@@ -164,7 +164,7 @@
 2. ✅ Перевести одобренные идеи из калибровки в templates со slots.
 3. ✅ Выбрать локальный discovery provider и стоимость запросов — Brave Web Search; решение в `BOARD-V2-DISCOVERY-DECISION.md`.
 4. ✅ Добавить city-level opt-in и кеш найденных мест/секций — authenticated account endpoint/cache подключён; сервер не принимает client query/GPS/userId, лимит 10/day резервируется до provider call, JSON-LD/Microdata verifier готов, без ключа provider dormant.
-5. 🟡 Сделать primary recommendation + один запасной вариант — selection и adapter contracts готовы, production UI ещё не подключён.
+5. ✅ Сделать primary recommendation + один запасной вариант — `board-v2-offers.js` хранит точный account-safe snapshot, возвращает тот же заказ в пределах периода, объединяет Standard/Wildcard pacing и не допускает unresolved local quest; production UI ещё не подключён.
 6. Подключить завершение, медиа и память Тени.
 7. Добавить локальные community hints без ленты.
 8. Только затем заменить Board v1 UI.

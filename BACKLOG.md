@@ -4,6 +4,8 @@
 
 _Создан 2026-06-14. Актуализирован 24.07 — секции ниже не обновлялись с ~01.07, часть уже закрыта в DEVLOG._
 
+- [x] **Board v2 C0.9 — offer snapshot/session model** ✅ 2026-08-25: один primary + максимум один reserve, стабильный снимок конкретизированного заказа на период, отдельные standard/passive/manual-unexpected режимы, cooldown по исходу и fail-closed для unresolved local slots. Pure module пока не включён в shell; следующий шаг — completion/media/Shadow bridge, затем UI.
+
 ## 🌐 Registration locale + Traveller appearance (решение 18.08)
 
 - [x] **Язык до любых регистрационных вопросов** ✅ 2026-08-18, v164: отдельный первый экран EN/RU/DE/UK/ES, English по умолчанию, account-owned сохранение до онбординга, все три onboarding-ветки наследуют выбор, legacy-аккаунты не переключаются молча.
