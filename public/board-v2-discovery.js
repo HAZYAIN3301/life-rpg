@@ -93,6 +93,10 @@
     const out = text(value, 12);
     return /^[a-z]{2}(?:-[A-Z]{2})?$/.test(out) ? out : '';
   }
+  function cityName(value) {
+    const out = text(value, 100).replace(/\s+/g, ' ');
+    return /^[\p{L}\p{M}][\p{L}\p{M} .’'\-]{0,99}$/u.test(out) ? out : '';
+  }
   function safeHttps(value) {
     const source = text(value, 600);
     if (!source) return '';
@@ -122,7 +126,7 @@
   function normalizeConsent(raw) {
     const source = plain(raw) ? raw : {};
     if (source.enabled !== true) return disabledConsent();
-    const city = text(source.city, 100);
+    const city = cityName(source.city);
     const countryCode = text(source.countryCode, 2).toUpperCase();
     const zone = timezone(source.timezone);
     const language = locale(source.locale);

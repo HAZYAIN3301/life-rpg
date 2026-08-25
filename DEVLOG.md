@@ -13,6 +13,17 @@
 
 QA на финальных локальных байтах: Goals **9/9 PASS**, sphere-search **14/14 PASS**, полный `npm test` **674/674 PASS**, app/SW syntax, CSS structure и whitespace/conflict-check релизных файлов PASS. Live Browser: 360×800, 375×812, 1280×900; RU dark + DE light; exact horizon, map depth, dialog/focus/Escape/return, composer labels, 42 px, no horizontal overflow, 0 console errors. На 360 px первый результат заканчивается за 43 px до mobile nav. Production deploy и commit на момент записи ещё не выполнялись.
 
+## [2026-08-25] 🔐 Board v2 C0.7 — account-owned discovery endpoint
+
+- `server-board-v2-registry-v1.js` связал все 81 утверждённый template с закрытым словарём локальных slots и интересов. Клиент передаёт только `templateId`, `slotId` и опциональный `interestId`; произвольные query/URL/free text/GPS/userId и неизвестные поля отклоняются. Поисковая фраза собирается только сервером из authored terms, города и страны.
+- `server-board-v2-service-v1.js` добавил отдельное account-owned состояние `board-discovery.json`: city-level consent, максимум два нормализованных свежих cache entry и суточный billing ledger. На один аккаунт действует очередь транзакций, поэтому параллельные вкладки не могут дважды потратить один и тот же запрос; лимит **10 billable searches/day** резервируется и сохраняется до вызова Brave.
+- `server.js` получил authenticated `GET /api/board-v2/discovery`, `PUT /api/board-v2/discovery/consent` и `POST /api/board-v2/discovery/resolve`. Server-owned файл нельзя прочитать или переписать через общий `/api/data/*`; отзыв согласия и смена города очищают cache. Координаты и домашний адрес не сохраняются.
+- Без `BRAVE_SEARCH_API_KEY` endpoint остаётся честно dormant: согласие сохраняется, но provider не вызывается и billing slot не расходуется. Board v1, публичный UI, `index.html` и SW не изменены.
+
+Focused Board v2 suite — **122/122 PASS**; полный suite после объединения с параллельным Goals v168 — **670/670 PASS**. Следующий change-set: live Brave/Bielefeld smoke после установки server key, затем bounded fallback extractor для официальных страниц без JSON-LD и только потом consent/recommendation UI.
+
+Commit: `feat: add Board v2 account discovery endpoint`.
+
 ## [2026-08-25] 🛡 Board v2 C0.6 — direct official-page verifier
 
 - Новый dormant `server-board-v2-page-verifier-v1.js` открывает Brave lead только после city-level server request, разрешает лишь public HTTPS:443, отклоняет credentials/local/private/link-local/documentation ranges и повторяет DNS/SSRF-проверку на каждом из максимум двух redirect. DNS-ответ закрепляется в HTTPS dial, mixed public/private answer закрывается целиком.

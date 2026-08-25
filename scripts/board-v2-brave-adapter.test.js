@@ -215,11 +215,13 @@ test('abort до поиска не тратит запрос, abort после �
   assert.equal(verifyCalls, 0);
 });
 
-test('adapter dormant: server.js его ещё не вызывает до endpoint/account cache change-set', () => {
+test('server endpoint подключает adapter, но public app/SW остаются dormant', () => {
   const server = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
   const index = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
   const sw = fs.readFileSync(path.join(ROOT, 'public/sw.js'), 'utf8');
-  assert.doesNotMatch(server, /server-board-v2-discovery-v1/);
+  assert.match(server, /server-board-v2-discovery-v1/);
+  assert.match(server, /BRAVE_SEARCH_API_KEY/);
+  assert.match(server, /\/api\/board-v2\/discovery\/resolve/);
   assert.doesNotMatch(index, /board-v2-discovery/);
   assert.doesNotMatch(sw, /board-v2-discovery/);
 });

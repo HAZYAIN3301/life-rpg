@@ -11,6 +11,9 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const BoardV2BraveAdapter = require('./server-board-v2-discovery-v1.js');
+const BoardV2PageVerifier = require('./server-board-v2-page-verifier-v1.js');
+const BoardV2AccountService = require('./server-board-v2-service-v1.js');
 
 const ROOT = __dirname;
 // Local development secrets live outside Git. Production providers inject the
@@ -41,6 +44,7 @@ const DATA_DIR = process.env.DATA_DIR
   : path.join(ROOT, 'data');
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4317;
 const HOST = process.env.HOST || (process.env.PORT ? '0.0.0.0' : '127.0.0.1');
+const BRAVE_SEARCH_API_KEY = String(process.env.BRAVE_SEARCH_API_KEY || '').trim();
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -130,6 +134,31 @@ function readBody(req, maxBytes) {
     req.on('error', reject);
   });
 }
+async function boardV2RequestJson(input) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+  const abort = () => controller.abort();
+  if (input.signal) input.signal.addEventListener('abort', abort, { once: true });
+  try {
+    const response = await fetch(input.url, { method: 'GET', headers: input.headers, signal: controller.signal });
+    const reader = response.body && response.body.getReader ? response.body.getReader() : null;
+    if (!reader) throw new Error('provider-response-unreadable');
+    const chunks = []; let bytes = 0;
+    for (;;) {
+      const part = await reader.read();
+      if (part.done) break;
+      bytes += part.value.byteLength;
+      if (bytes > 1024 * 1024) { await reader.cancel(); throw new Error('provider-response-too-large'); }
+      chunks.push(part.value);
+    }
+    const body = new TextDecoder().decode(Buffer.concat(chunks.map((chunk) => Buffer.from(chunk))));
+    let json = null; try { json = JSON.parse(body); } catch {}
+    return { status: response.status, json };
+  } finally {
+    clearTimeout(timeout);
+    if (input.signal) input.signal.removeEventListener('abort', abort);
+  }
+}
 const FB_EXT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'video/mp4': 'mp4', 'video/webm': 'webm', 'video/quicktime': 'mov' };
 function serveStatic(req, res, urlPath, headOnly) {
   let rel = decodeURIComponent(urlPath.split('?')[0]);
@@ -170,6 +199,25 @@ function saveUsers(users) {
   writeJsonAtomic(USERS_FILE(), users);
 }
 function userDataDir(id) { return path.join(DATA_DIR, 'users', id); }
+const BOARD_V2_ACCOUNT_FILE = 'board-discovery.json';
+function readBoardV2Account(uid) {
+  try { return JSON.parse(fs.readFileSync(path.join(userDataDir(uid), BOARD_V2_ACCOUNT_FILE), 'utf8')); }
+  catch { return null; }
+}
+function writeBoardV2Account(uid, value) {
+  writeJsonAtomic(path.join(userDataDir(uid), BOARD_V2_ACCOUNT_FILE), value);
+}
+const boardV2PageVerifier = BoardV2PageVerifier.createPageVerifier();
+const boardV2Adapter = BoardV2BraveAdapter.createAdapter({
+  apiKey: BRAVE_SEARCH_API_KEY,
+  requestJson: boardV2RequestJson,
+  verifyOfficialPage: boardV2PageVerifier.verifyOfficialPage,
+});
+const boardV2Service = BoardV2AccountService.createService({
+  adapter: boardV2Adapter,
+  readAccount: readBoardV2Account,
+  writeAccount: writeBoardV2Account,
+});
 // Рекламный кредит существует отдельно от пользовательских settings/economy-файлов:
 // обычный клиент не может подменить его сохранением настроек. Он доступен только
 // текущему серверно-проверенному администратору и никогда не адресуется userId из body.
@@ -3297,6 +3345,40 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // ---- Board v2 local discovery: current account only, no client query/URL ----
+  if (u === '/api/board-v2/discovery' && req.method === 'GET') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    try { return sendJson(res, 200, boardV2Service.status(uid)); }
+    catch { return sendJson(res, 500, { error: 'board_discovery_status_failed' }); }
+  }
+  if (u === '/api/board-v2/discovery/consent' && req.method === 'PUT') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload; try { payload = JSON.parse(await readBody(req, 16 * 1024)); }
+    catch { return sendJson(res, 400, { error: 'invalid_city_consent' }); }
+    try { return sendJson(res, 200, await boardV2Service.setConsent(uid, payload)); }
+    catch { return sendJson(res, 400, { error: 'invalid_city_consent' }); }
+  }
+  if (u === '/api/board-v2/discovery/resolve' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload; try { payload = JSON.parse(await readBody(req, 8 * 1024)); }
+    catch { return sendJson(res, 400, { error: 'invalid_board_discovery_request' }); }
+    const controller = new AbortController();
+    const stop = () => { if (!res.writableEnded) controller.abort(); };
+    req.once('aborted', stop); res.once('close', stop);
+    let result;
+    try { result = await boardV2Service.resolve(uid, payload, { signal: controller.signal }); }
+    catch { result = { ok: false, reason: 'provider-error' }; }
+    finally { req.removeListener('aborted', stop); res.removeListener('close', stop); }
+    if (result.ok) return sendJson(res, 200, result);
+    const status = result.reason === 'city-consent-required' ? 412
+      : result.reason === 'provider-unavailable' ? 503
+        : result.reason === 'daily-search-limit' ? 429
+          : result.reason === 'no-verified-candidate' ? 404
+            : result.reason === 'provider-error' ? 502
+              : result.reason === 'aborted' ? 408 : 400;
+    return sendJson(res, status, result);
+  }
+
   // ---- Per-user data API ----
   const m = u.match(/^\/api\/data\/([^/?]+)/);
   if (m) {
@@ -3304,6 +3386,7 @@ const server = http.createServer(async (req, res) => {
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const name = safeName(m[1].replace(/\.json$/, ''));
     if (!name) return sendJson(res, 400, { error: 'bad name' });
+    if (name === 'board-discovery') return sendJson(res, 403, { error: 'server_owned_data' });
     const dir = userDataDir(uid);
     const file = path.join(dir, name + '.json');
 

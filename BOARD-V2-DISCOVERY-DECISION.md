@@ -1,6 +1,6 @@
 # Board v2 — discovery provider и city-level privacy
 
-Дата решения: 2026-08-25. Статус: архитектурный контракт, bounded Brave adapter и строгий JSON-LD verifier готовы; `server.js` endpoint, fallback extractor и UI ещё не подключены.
+Дата решения: 2026-08-25. Статус: архитектурный контракт, bounded Brave adapter, строгий JSON-LD verifier и account-owned `server.js` endpoint/cache готовы; fallback extractor и UI ещё не подключены.
 
 ## Решение
 
@@ -92,4 +92,6 @@ Resolver возвращает:
 
 `server-board-v2-page-verifier-v1.js` уже добавляет public-HTTPS/DNS/redirect/size/timeout gates и принимает только прямой organizer/venue JSON-LD. Это намеренно узкий первый слой: сайт без достаточного structured data не превращается в квест через догадку.
 
-Следующий change-set: server-owned template→search registry + account-owned consent/cache endpoint, затем fallback extractor для официальных страниц без JSON-LD. Board UI не подключается, пока реальный Bielefeld smoke не проходит end-to-end QA.
+`server-board-v2-registry-v1.js` и `server-board-v2-service-v1.js` подключены к authenticated endpoint. Они принимают только server-known template/slot/interest IDs, хранят отдельное согласие на город и максимум два свежих нормализованных результата на аккаунт, сериализуют параллельные запросы и резервируют лимит 10 billable searches/day до provider call. Server-owned cache/ledger недоступен через общий `/api/data/*`; без `BRAVE_SEARCH_API_KEY` provider не вызывается и лимит не расходуется.
+
+Следующий change-set: live Brave/Bielefeld smoke после установки server key, затем bounded fallback extractor для официальных страниц без JSON-LD. Board UI не подключается, пока реальный smoke не проходит end-to-end QA.

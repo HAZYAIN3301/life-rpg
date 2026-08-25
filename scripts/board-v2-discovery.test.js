@@ -96,6 +96,17 @@ test('без явного полноценного согласия локаль
   assert.throws(() => Discovery.createRequest({}, {}), { code: 'city-consent-required' });
 });
 
+test('город не может быть скрытым query/control payload', () => {
+  assert.deepEqual(Discovery.normalizeConsent({
+    enabled: true, city: 'Bielefeld\nsite:private.example', countryCode: 'DE',
+    timezone: 'Europe/Berlin', locale: 'de-DE', approvedAt: NOW,
+  }), { schema: Discovery.CONSENT_SCHEMA, enabled: false });
+  assert.equal(Discovery.normalizeConsent({
+    enabled: true, city: 'Horn-Bad Meinberg', countryCode: 'DE',
+    timezone: 'Europe/Berlin', locale: 'de-DE', approvedAt: NOW,
+  }).city, 'Horn-Bad Meinberg');
+});
+
 test('request содержит только authored tags и city-level context, не free text/GPS', () => {
   const req = request();
   assert.equal(req.provider, 'brave-web-v1');
