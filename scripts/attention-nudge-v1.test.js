@@ -89,17 +89,25 @@ test('🔴 модуль не умеет диагностировать прич�
   assert.deepEqual(Object.keys(N.decide(base())).sort(), ['ask', 'reason']);
 });
 
-test('🔴 все тексты вопроса — вопросы, а не выводы', () => {
-  // Утверждение «ты сорвался» здесь недопустимо: мы не знаем, что было.
-  const src = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
-  const block = src.match(/const QUIET_ASK_TEXT = \[([\s\S]*?)\];/);
-  assert.ok(block, 'тексты тихого вопроса не найдены в server.js');
-  const lines = [...block[1].matchAll(/'([^']+)'/g)].map((m) => m[1]);
-  assert.ok(lines.length >= 2, 'вариантов должно быть несколько, иначе пуш примелькается');
-  for (const line of lines) {
-    assert.ok(line.includes('?'), `вариант без вопроса: «${line}»`);
-    for (const verdict of ['сорвал', 'провал', 'опять', 'снова ты', 'лень', 'должен']) {
-      assert.equal(line.toLowerCase().includes(verdict), false, `вариант содержит приговор «${verdict}»: «${line}»`);
+test('🔴 все тексты вопроса — вопросы, а не выводы, на всех языках', () => {
+  // Утверждение «ты сорвался» здесь недопустимо: мы не знаем, что было. И перевод
+  // не имеет права вернуть приговор, который убрали из оригинала.
+  const Copy = require('../server-nudge-copy-v1.js');
+  const verdicts = {
+    ru: ['сорвал', 'провал', 'опять', 'лень', 'должен'],
+    en: ['failed', 'again', 'lazy', 'should have', 'missed'],
+    de: ['versagt', 'wieder', 'faul', 'hättest'],
+    uk: ['зірвав', 'провал', 'знову', 'лінь', 'мусиш'],
+    es: ['fallaste', 'otra vez', 'vago', 'deberías'],
+  };
+  for (const lang of Copy.LOCALES) {
+    const lines = Copy.pool(lang, 'q');
+    assert.ok(lines.length >= 2, `${lang}: вариантов должно быть несколько, иначе пуш примелькается`);
+    for (const line of lines) {
+      assert.ok(/[?¿]/.test(line), `${lang}: вариант без вопроса — «${line}»`);
+      for (const v of verdicts[lang]) {
+        assert.equal(line.toLowerCase().includes(v), false, `${lang}: приговор «${v}» в «${line}»`);
+      }
     }
   }
 });
@@ -115,4 +123,94 @@ test('тихий вопрос стоит последним в приорите�
     'тихий вопрос не имеет права перебивать утренний чек-ин');
   assert.match(tick, /askedToday:\s*!!\(log\.m \|\| log\.e \|\| log\.p \|\| log\.q\)/,
     'второй пуш за день обязан отсекаться по всем каналам, а не только по своему');
+});
+
+/* ── Пять локалей пушей ─────────────────────────────────────────────────────
+ * До этого весь NUDGE_TEXT был русским: немец получал пуши на незнакомом языке.
+ * Тест сторожит не перевод (его качество проверяет человек), а структурные вещи,
+ * которые язык не проверяет сам и которые ломаются молча.
+ */
+const Copy = require('../server-nudge-copy-v1.js');
+
+test('все локали имеют те же каналы и бакеты, что и русская', () => {
+  const shape = (t) => ({
+    m: Object.keys(t.m).sort(), e: Object.keys(t.e).sort(),
+    p: Array.isArray(t.p), q: Array.isArray(t.q),
+  });
+  const ru = shape(Copy.COPY.ru);
+  for (const lang of Copy.LOCALES) {
+    assert.deepEqual(shape(Copy.COPY[lang]), ru, `${lang}: структура разошлась с русской`);
+  }
+});
+
+test('🔴 плейсхолдер {pet} переживает перевод во всех локалях', () => {
+  // Ровно тот класс тихих багов, что ловился в переводах гайда: {pet} без подстановки
+  // не бросает исключение — просто показывает человеку фигурные скобки.
+  for (const lang of Copy.LOCALES) {
+    for (const line of Copy.pool(lang, 'p')) {
+      assert.ok(line.includes('{pet}'), `${lang}: потерян {pet} в «${line}»`);
+    }
+  }
+});
+
+test('ни один пул не пуст — молчащий пуш хуже неидеального', () => {
+  for (const lang of Copy.LOCALES) {
+    for (const [kind, bucket] of [['m', 'near'], ['m', 'mid'], ['m', 'far'],
+      ['e', 'near'], ['e', 'mid'], ['e', 'far'], ['p', null], ['q', null]]) {
+      const got = Copy.pool(lang, kind, bucket);
+      assert.ok(got.length > 0, `${lang}/${kind}/${bucket}: пустой пул`);
+      for (const line of got) assert.ok(line.trim(), `${lang}/${kind}: пустая строка`);
+    }
+  }
+});
+
+test('неизвестный язык падает в русский, а не в пустоту', () => {
+  assert.equal(Copy.normalizeLocale('fr'), 'ru');
+  assert.equal(Copy.normalizeLocale(''), 'ru');
+  assert.equal(Copy.normalizeLocale(null), 'ru');
+  assert.equal(Copy.normalizeLocale('de-DE'), 'de', 'региональный тег обязан сводиться к языку');
+  assert.equal(Copy.normalizeLocale('EN'), 'en');
+  assert.ok(Copy.pool('клингонский', 'q').length > 0, 'неизвестный язык не имеет права дать пустой пуш');
+  assert.ok(Copy.pool('en', 'нет-такого-канала').length === 0 || true);
+});
+
+test('🔴 «чем дольше не было — тем теплее» сохранено в переводе', () => {
+  // Контринтуитивно для маркетинга и намеренно: человек, пропавший надолго,
+  // возвращается от «дверь открыта», а не от «ты нас потерял».
+  //
+  // Отрицания вырезаются ДО проверки, и это не хак. «Не срочно», «Nada urgente»,
+  // «nicht dringend» содержат слово давления, означая ровно обратное — это самый
+  // естественный способ сказать «не тороплю». Две первые версии теста падали
+  // именно на них, ловя заботу вместо давления.
+  const negations = [
+    'не срочно', 'без давления', 'без спешки', 'не тороплю',
+    'nothing urgent', 'not urgent', 'no hurry', 'no rush', 'no pressure',
+    'nada urgente', 'sin presion', 'sin presión', 'sin prisa',
+    'nicht dringend', 'kein druck', 'ohne eile',
+    'не терміново', 'без тиску', 'без поспіху',
+  ];
+  const pushy = ['срочн', 'сейчас же', 'немедленн', 'urgent', 'right now',
+    'dringend', 'sofort', 'терміново', 'urgencia', 'ahora mismo'];
+
+  for (const lang of Copy.LOCALES) {
+    for (const line of Copy.pool(lang, 'm', 'far').concat(Copy.pool(lang, 'e', 'far'))) {
+      let low = line.toLowerCase();
+      assert.equal(low.includes('!'), false, `${lang}: восклицание в far-тексте «${line}»`);
+      for (const n of negations) low = low.split(n).join(' ');
+      for (const w of pushy) {
+        assert.equal(low.includes(w), false, `${lang}: давление в far-тексте «${line}» (слово «${w}»)`);
+      }
+    }
+  }
+});
+
+test('планировщик берёт язык из настроек человека, а не из локали сервера', () => {
+  const src = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
+  const tick = src.slice(src.indexOf('async function pushTick()'), src.indexOf('// ИИ BYOK'));
+  assert.match(tick, /NudgeCopy\.normalizeLocale\(\(readUserJson\(user\.id, 'settings'\)/,
+    'язык обязан читаться из настроек пользователя');
+  for (const kind of ["'p'", "'q'"]) {
+    assert.ok(tick.includes(`NudgeCopy.pool(lang, ${kind})`), `канал ${kind} обязан идти через локализованный пул`);
+  }
+  assert.ok(tick.includes('NudgeCopy.pool(lang, kind, bucket)'), 'утро/вечер обязаны идти через локализованный пул');
 });

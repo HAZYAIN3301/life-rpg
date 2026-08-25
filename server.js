@@ -753,34 +753,16 @@ function daysBetween(a, b) { const x = Date.parse(a), y = Date.parse(b); if (Num
 // Текст нуджей: варианты по «сколько дней юзера не было» (near ≤1, mid 2-3, far ≥4) — тон теплее,
 // но НИКОГДА не виноватит (принцип «через любовь, не вину»). Гендерно-нейтрально: избегаем
 // прошедшего времени/прилагательных, согласующихся с полом юзера (которого мы не знаем).
-const NUDGE_TEXT = {
-  m: {
-    near: ['Доброе утро! Чем наполним сегодня?', 'Утро. Один маленький шаг — и день уже не пустой.', 'С добрым утром! Что сегодня в фокусе?', 'Новый день, чистый лист. Куда посмотрим?', 'Утро — хорошее время начать с малого.'],
-    mid: ['Давно не виделись — как ты вообще?', 'Тут стало тихо в последние дни. Есть пару минут?', 'Не тороплю — просто загляни, когда будет момент.', 'Соскучились по тебе твои сферы. Как оно?'],
-    far: ['Сколько бы ни прошло — здесь по-прежнему ждут. Без спешки.', 'Ничего не пропало и не сгорело. Возвращайся в свой темп.', 'Будет минутка — заглядывай, в любой момент, без спешки.', 'Без вины, правда: просто будет свободная минута — заглядывай.'],
-  },
-  e: {
-    near: ['Как прошёл день? Загляни на минутку 💛', 'Вечер — время подвести итог дня, даже коротко.', 'Как всё сегодня? Пара слов — и уже что-то.', 'День почти закончился. Что в нём было хорошего?'],
-    mid: ['Несколько дней тишины. Как ты?', 'Не пропадай совсем — даже пара минут вечером считается.', 'Вечер — хороший момент вернуться, без спешки.'],
-    far: ['Вечер. Здесь всё так же спокойно ждут — без вины за паузу.', 'Сколько бы дней ни прошло, дверь открыта в любое время.', 'Не срочно и без давления — просто напоминаю, что жду.'],
-  },
-  p: ['{pet} давно тебя не видел в этой сфере — загляни на минутку 💛', 'Кажется, {pet} немного скучает без тебя в этой сфере.', '{pet} ждёт хоть немного внимания здесь.', 'Загляни к {pet} — тут давно ничего не происходило.'],
-};
+// Тексты пушей на пяти языках вынесены в отдельный модуль: 150 строк копирайта в
+// server.js делали нечитаемым сам планировщик. Тон там важнее буквальности — см. шапку.
+const NudgeCopy = require('./server-nudge-copy-v1.js');
+
 // Ротация без повторов подряд: индекс последнего варианта persist-ится в user.push.variantIdx.
 function pickVariant(pool, lastIdx) {
   if (!pool || !pool.length) return { text: '', idx: 0 };
   const idx = ((Number.isInteger(lastIdx) ? lastIdx : -1) + 1) % pool.length;
   return { text: pool[idx], idx };
 }
-// Тихий вопрос после отсутствия (§5 слой A). Все варианты — вопросы: §8 п.1 запрещает
-// угадывать болезнь, отдых, поездку или работу вне Satoru. Дверь открыта, вывода нет.
-// Язык русский, как и остальной NUDGE_TEXT — общий языковой долг пушей, отдельная задача.
-const QUIET_ASK_TEXT = [
-  'Давно тебя не видел. Это был отдых, занятость или что-то тяжёлое?',
-  'Тебя не было пару дней. Как оно — по-хорошему тихо или наоборот?',
-  'Ты пропал, и я не знаю почему. Расскажешь одной строкой?',
-];
-
 async function pushTick() {
   let users; try { users = loadUsers(); } catch { return; }
   let changed = false;
@@ -790,6 +772,9 @@ async function pushTick() {
     const tz = user.push.tz || 'Europe/Berlin';
     const { date, hour } = userLocalParts(tz);
     const log = (user.push.log && user.push.log.date === date) ? user.push.log : { date, m: false, e: false, p: false };
+    // Язык пуша — из настроек человека, а не из локали сервера. До этого весь
+    // NUDGE_TEXT был русским, и немец получал пуши на незнакомом языке.
+    const lang = NudgeCopy.normalizeLocale((readUserJson(user.id, 'settings') || {}).lang);
     const comp = readUserCompanion(user.id);
     const name = (comp && comp.name) || 'Тень';
     const checked = (comp && comp.check && comp.check[date]) || {};
@@ -799,7 +784,7 @@ async function pushTick() {
     if (kind === 'm' || kind === 'e') {
       const away = daysBetween((comp && comp.lastSeen) || date, date);
       const bucket = away <= 1 ? 'near' : (away <= 3 ? 'mid' : 'far');
-      const { text, idx } = pickVariant(NUDGE_TEXT[kind][bucket], vIdx[kind]);
+      const { text, idx } = pickVariant(NudgeCopy.pool(lang, kind, bucket), vIdx[kind]);
       vIdx[kind] = idx; user.push.variantIdx = vIdx;
       const title = kind === 'm' ? `🌅 ${name} ждёт тебя` : `🌙 ${name}`;
       payload = { title, body: text, url: './?view=today', tag: 'satoru-checkin' };
@@ -808,7 +793,7 @@ async function pushTick() {
     else if (hour >= 13 && hour < 17 && !log.p && (!user.push.petAt || (Date.parse(date) - Date.parse(user.push.petAt)) / 86400000 >= 2)) {
       const pet = lonelyPet(user.id);
       if (pet) {
-        const { text, idx } = pickVariant(NUDGE_TEXT.p, vIdx.p);
+        const { text, idx } = pickVariant(NudgeCopy.pool(lang, 'p'), vIdx.p);
         vIdx.p = idx; user.push.variantIdx = vIdx;
         payload = { title: `🐾 ${pet} заскучал`, body: text.replace(/\{pet\}/g, pet), url: './?view=pets', tag: 'satoru-pet' };
         log.p = true; user.push.petAt = date;
@@ -824,7 +809,7 @@ async function pushTick() {
         askedToday: !!(log.m || log.e || log.p || log.q),
       });
       if (verdict.ask) {
-        const { text, idx } = pickVariant(QUIET_ASK_TEXT, vIdx.q);
+        const { text, idx } = pickVariant(NudgeCopy.pool(lang, 'q'), vIdx.q);
         vIdx.q = idx; user.push.variantIdx = vIdx;
         payload = { title: `${name}`, body: text, url: './?view=today', tag: 'satoru-quiet' };
         log.q = true; user.push.quietAskAt = date;
