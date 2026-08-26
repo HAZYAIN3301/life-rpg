@@ -17,6 +17,7 @@ const BoardV2AccountService = require('./server-board-v2-service-v1.js');
 const BoardV2Community = require('./server-board-v2-community-v1.js');
 const BoardV2Offers = require('./public/board-v2-offers.js');
 const GoalsInitiativesV1 = require('./public/goals-initiatives-v1.js');
+const ServerUserRegistryV1 = require('./server-user-registry-v1.js');
 
 const ROOT = __dirname;
 // Local development secrets live outside Git. Production providers inject the
@@ -204,9 +205,15 @@ function loadSecret() {
 // ============================================================
 const USERS_FILE = () => path.join(DATA_DIR, 'users.json');
 function loadUsers() {
-  try { return JSON.parse(fs.readFileSync(USERS_FILE(), 'utf8')); } catch { return []; }
+  try { return ServerUserRegistryV1.parse(fs.readFileSync(USERS_FILE(), 'utf8')); }
+  catch (error) {
+    if (error && error.code === 'ENOENT') return [];
+    console.error('[users-registry] refusing corrupt registry:', error && error.reason ? error.reason : error && error.message);
+    throw error;
+  }
 }
 function saveUsers(users) {
+  ServerUserRegistryV1.assertValid(users);
   writeJsonAtomic(USERS_FILE(), users);
 }
 function userDataDir(id) { return path.join(DATA_DIR, 'users', id); }

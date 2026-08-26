@@ -2,7 +2,7 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
-## [2026-08-26] 🧪 Launch Hardening Lab C0 — повреждённый аккаунт больше не маскируется под пустой
+## [2026-08-26] 🧪 Launch Hardening Lab C0–C1 — повреждённый аккаунт больше не маскируется под пустой
 
 - Начат следующий launch-critical контур после Board v2: не новая механика, а воспроизводимый путь `регистрация → язык → onboarding → первый квест → награда → возврат` и fuzz входных данных вокруг него.
 - Найдены и закрыты два реальных crash-класса. Публичный `/api/auth/register` принимал `null`, массив или объект вместо имени и мог закончить запрос `500`; те же формы тела роняли destructuring в `login/reset/reset-token`. Теперь весь auth-контур принимает только plain-object, malformed shape получает контролируемый `4xx`, не создаёт ghost account/директорию и не убивает процесс.
@@ -11,10 +11,12 @@
 - Tasks получили верхнюю границу 10 000 строк и bounds для id/title; invalid date/time, дубликаты и crash-shaped rows отклоняются без исключений. Legacy-аккаунты без новых полей и неизвестные будущие поля по-прежнему принимаются.
 - Новый `scripts/launch-hardening-v1.test.js` исполняет реальные validators из `app.js`, fuzzит malformed payloads, поднимает настоящий локальный сервер, проверяет отсутствие ghost state и убеждается, что нормальная регистрация работает после атакующих запросов.
 - PWA shell `satoru-v176 → satoru-v177`; `app.js/styles.css` получили единый release pin `20260826-launch-hardening-v177-1`.
+- C1 закрывает самый дорогой серверный сценарий: `loadUsers()` раньше ловил **любую** ошибку `users.json` и возвращал `[]`. Следующая регистрация могла принять существующую установку за пустую и атомарно записать новый реестр поверх единственного индекса всех аккаунтов. Новый pure-контракт `server-user-registry-v1.js` различает честный `ENOENT` и corruption, ограничивает размер/число строк, проверяет уникальные safe id и crash-sensitive поля как при чтении, так и непосредственно перед записью.
+- Corrupt registry теперь fail-closed останавливает startup с явной причиной. Это намеренно лучше, чем доступный сервер, который тихо потерял аккаунты: Railway сохранит предыдущий healthy deployment, а исходный файл останется доступен для восстановления. Интеграционный тест запускает сервер против трёх реальных corrupt-файлов и доказывает byte-identical сохранность каждого.
 
-Проверки: hardening + first journey + registration language **13/13**, focused shell/integration **54/54**, полный suite **947/947**, app/server/SW syntax и `git diff --check` — PASS.
+Проверки: hardening + first journey + registration language **13/13**, users-registry/account/auth focused **24/24**, shell/integration **54/54**, полный suite **950/950**, app/server/SW syntax и `git diff --check` — PASS.
 
-Следующий срез Lab: fail-closed registry/accounts при повреждённом `users.json`, fuzz остальных per-account файлов и upgrade/reload/offline матрица старого установленного PWA.
+Следующий срез Lab: fuzz остальных per-account файлов и upgrade/reload/offline матрица старого установленного PWA.
 
 ## [2026-08-26] 🧭 Attention R1 UI — предрешение, честная граница и дешёвый возврат
 
