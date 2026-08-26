@@ -3451,7 +3451,12 @@ const server = http.createServer(async (req, res) => {
     let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
     const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
     const provider = AI_PROVIDERS[b.provider] ? b.provider : null;
-    const system = String(b.system || '').slice(0, 12000);
+    // Assistant v180 can receive a user-picked plan excerpt plus exact owned-object
+    // ids. The former 12k-character ceiling silently cut off that context after the
+    // long product manual, producing generic advice while pretending to have read the
+    // plan. 48k is still bounded inside the 256k request limit and fits the supported
+    // providers' practical context windows together with the capped chat history.
+    const system = String(b.system || '').slice(0, 48000);
     let messages = Array.isArray(b.messages) ? b.messages.slice(-20) : [];
     while (messages.length && messages[0].role === 'assistant') messages.shift(); // история должна начинаться с user
     if (!messages.length) return sendJson(res, 400, { error: 'empty' });

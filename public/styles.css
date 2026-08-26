@@ -6,6 +6,124 @@
   font-display: swap;
 }
 
+/* ========================================================================== */
+/* Assistant v181 — safe actions, visible network thinking and opt-in wake.   */
+/* ========================================================================== */
+html.helper-open { overflow: hidden; }
+#helper-modal {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: max(var(--sp-3), env(safe-area-inset-top)) var(--sp-3) max(var(--sp-3), env(safe-area-inset-bottom));
+}
+#helper-modal .chat-box {
+  width: min(640px, 100%);
+  max-height: min(900px, calc(100dvh - (var(--sp-3) * 2)));
+  overflow: hidden;
+}
+#helper-modal .modal-x { min-inline-size: var(--touch-min); min-block-size: var(--touch-min); }
+#helper-modal :is(button, input):focus-visible {
+  outline: 2px solid var(--focus-ring, var(--accent));
+  outline-offset: 2px;
+}
+.shadow-chat-head h2 { margin: 0; font-size: var(--type-heading); line-height: var(--leading-tight); }
+.shadow-chat-head p { margin: var(--sp-1) 0 0; font-size: var(--type-meta); line-height: var(--leading-label); }
+.chat-context-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: center;
+  margin-top: var(--sp-2);
+}
+.chat-context-note,
+.chat-wake-status,
+.chat-wake-unsupported {
+  margin: var(--sp-1) 0 0;
+  color: var(--muted);
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+}
+.chat-wake-status { min-block-size: calc(var(--type-meta) * var(--leading-label)); }
+.chat-file-chip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--panel2);
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+}
+.chat-file-chip span { min-width: 0; overflow-wrap: anywhere; }
+.assistant-wake-toggle[aria-pressed="true"] {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+#ai-fab.is-wake-listening {
+  box-shadow: 0 0 0 3px var(--panel), 0 0 0 6px var(--accent), 0 6px 22px rgba(0,0,0,.4);
+}
+.chat-msg.typing {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  letter-spacing: var(--tracking-natural);
+  color: var(--muted);
+  font-size: var(--type-control);
+  line-height: var(--leading-ui);
+}
+.typing-dots { display: inline-flex; align-items: center; gap: var(--sp-1); min-inline-size: 32px; }
+.typing-dots i {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: assistantThinkingDot 900ms ease-in-out infinite alternate;
+}
+.typing-dots i:nth-child(2) { animation-delay: 150ms; }
+.typing-dots i:nth-child(3) { animation-delay: 300ms; }
+@keyframes assistantThinkingDot { from { opacity: .35; transform: translateY(1px); } to { opacity: 1; transform: translateY(-2px); } }
+.chat-actions {
+  display: grid;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--line);
+}
+.chat-action-row { align-items: start; }
+.chat-action-row > span { display: grid; min-width: 0; gap: var(--sp-1); }
+.chat-action-meta,
+.chat-action-state {
+  display: block;
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+}
+.chat-action-meta { color: var(--muted); }
+.chat-action-state { font-weight: 700; color: var(--muted); }
+.chat-action-state.is-done { color: var(--good); }
+.chat-action-state.is-failed,
+.chat-action-state.is-refused,
+.chat-action-refused { color: var(--bad); }
+.chat-action-refused { margin: var(--sp-2) 0 0; font-size: var(--type-meta); line-height: var(--leading-label); }
+.chat-actions.applied { opacity: 1; }
+.chat-form input { min-width: 0; font-size: var(--type-control); line-height: var(--leading-prose); }
+
+@media (max-width: 600px), (pointer: coarse) {
+  #helper-modal { align-items: flex-start; padding-inline: var(--sp-2); }
+  #helper-modal .chat-box { max-height: calc(100dvh - (var(--sp-2) * 2)); }
+  #helper-modal :is(button, input, label.drc-row) { min-block-size: var(--touch-min); }
+  #helper-modal .chat-context-tools > * { flex: 1 1 100%; }
+  #helper-modal .chat-context-tools button { inline-size: 100%; }
+  #helper-modal .chat-form input { font-size: max(16px, var(--type-control)); }
+  #helper-modal .chat-msg { max-width: 94%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typing-dots i { animation: none; opacity: .72; transform: none; }
+  #helper-modal *, #ai-fab { transition-duration: 0ms !important; }
+}
+
 /* ============================================================
    Goals hierarchy v127 — one outline, one progress source
    ============================================================ */
@@ -17513,3 +17631,8 @@ html.attention-dialog-open body { overscroll-behavior: none; }
 @media (prefers-reduced-motion: reduce) {
   .pwa-lifecycle-surface { animation: none; transition: none; }
 }
+
+/* Assistant v181 cascade closure: keep the scoped contract after legacy chat. */
+#helper-modal .chat-msg.typing { letter-spacing: var(--tracking-natural); }
+#helper-modal .chat-actions { display: grid; gap: var(--sp-2); margin-top: var(--sp-3); padding-top: var(--sp-3); border-top: 1px solid var(--line); }
+#helper-modal .chat-actions.applied { padding-top: var(--sp-3); font-size: inherit; opacity: 1; }

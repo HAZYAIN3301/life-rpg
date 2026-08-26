@@ -66,7 +66,8 @@ test('внутренности сбоя не подставляются в от�
   // Раньше три обработчика ИИ отвечали текстом исключения: там оказываются адреса, таймауты
   // и имена хостов. Клиенту нужен стабильный код, подробность — в логи.
   assert.doesNotMatch(SERVER, /sendJson\(res, 502, \{ error: String\(e\.message/);
-  const chat = SERVER.slice(SERVER.indexOf("u === '/api/ai/chat'"), SERVER.indexOf("u === '/api/ai/chat'") + 1400);
+  const chatStart = SERVER.indexOf("u === '/api/ai/chat'");
+  const chat = SERVER.slice(chatStart, SERVER.indexOf("\n  if (", chatStart + 1));
   assert.match(chat, /error: 'provider_unavailable'/);
   assert.match(chat, /console\.error\('\[ai\]', scrubSecrets/);
 });

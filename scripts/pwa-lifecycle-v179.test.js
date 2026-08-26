@@ -55,7 +55,7 @@ test('failed explicit refresh stays visible above a deferred update or reconnect
 });
 
 test('service worker install is fail-closed and activated version reaches every open client', () => {
-  assert.match(SW, /const CACHE = 'satoru-v180'/);
+  assert.match(SW, /const CACHE = 'satoru-v181'/);
   const install = SW.slice(SW.indexOf("self.addEventListener('install'"), SW.indexOf("self.addEventListener('activate'"));
   assert.match(install, /c\.addAll\(SHELL\)/);
   assert.doesNotMatch(install, /catch\s*\(/, 'failed addAll must reject installation instead of activating a partial shell');
@@ -76,7 +76,7 @@ test('every service-worker shell entry resolves to a real production file', () =
 });
 
 test('runtime exposes an accessible update/offline surface and fences writes while offline', () => {
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v180'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v181'/);
   assert.match(APP, /window\.addEventListener\('offline'/);
   assert.match(APP, /window\.addEventListener\('online'/);
   assert.match(APP, /navigator\.serviceWorker\.addEventListener\('message'/);
@@ -115,7 +115,7 @@ test('registration language survives a settings write failure and missing settin
   assert.match(SERVER, /function publicUser\(user\)[\s\S]{0,500}lang/);
 });
 
-test('five-language lifecycle copy and v180 shell order are complete', () => {
+test('five-language lifecycle copy and v181 shell order are complete', () => {
   for (const key of ['Нет соединения', 'Связь восстановлена', 'Доступно обновление Satoru', 'Обновить данные', 'Позже', 'Не удалось сохранить старт. Ничего не потеряно — повтори попытку.']) {
     const at = APP.indexOf(`'${key}'`);
     assert.notEqual(at, -1, key);
@@ -123,8 +123,8 @@ test('five-language lifecycle copy and v180 shell order are complete', () => {
     for (const locale of ['en:', 'de:', 'uk:', 'es:']) assert.match(row, new RegExp(locale));
   }
   const moduleAt = INDEX.indexOf('pwa-lifecycle-v1.js?v=20260826-launch-hardening-v180-1');
-  const appAt = INDEX.indexOf('app.js?v=20260826-launch-hardening-v180-1');
+  const appAt = INDEX.indexOf('app.js?v=20260826-assistant-v181-1');
   assert.ok(moduleAt >= 0 && appAt > moduleAt);
-  assert.match(INDEX, /styles\.css\?v=20260826-launch-hardening-v180-1/);
+  assert.match(INDEX, /styles\.css\?v=20260826-assistant-v181-1/);
   assert.match(SW, /'pwa-lifecycle-v1\.js'/);
 });

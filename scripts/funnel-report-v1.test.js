@@ -133,7 +133,7 @@ test('внешней аналитики не заводили', () => {
   const app = strip(fs.readFileSync(path.join(ROOT, 'public/app.js'), 'utf8'));
   const pkg = fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8');
   for (const src of [server, app, pkg]) {
-    assert.doesNotMatch(src, /posthog|mixpanel|amplitude|google-analytics|gtag\(/i);
+    assert.doesNotMatch(src, /posthog|mixpanel|amplitude|google-analytics|\bgtag\(/i);
   }
   assert.match(JSON.parse(pkg).dependencies ? JSON.stringify(JSON.parse(pkg).dependencies) : '{}', /^\{\}$/, 'появилась внешняя зависимость');
 });

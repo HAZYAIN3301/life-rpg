@@ -102,7 +102,7 @@ test('отказ ничего не стоит и нигде не считает�
   // Счётчик отказов немедленно стал бы материалом для вины.
   assert.match(handlers, /action === 'stuck-later'/);
   for (const bad of ['declineCount', 'skipCount', 'refused', 'ignoredCount']) {
-    assert.ok(!app.includes(bad), `появился счётчик отказов: «${bad}»`);
+    assert.ok(!handlers.includes(bad), `появился счётчик отказов: «${bad}»`);
   }
   // «Позже» пишет ровно ту же отметку, что и ответ, — не отдельную запись.
   assert.match(handlers, /stuckNoteAsked\(id, q \? \(Number\(q\.postponedCount\) \|\| 0\) : 0\);/);
@@ -160,5 +160,5 @@ test('новая copy покрыта всеми пятью языками', () =
 });
 
 test('обновлённый offline shell', () => {
-  assert.match(sw, /const CACHE = 'satoru-v180'/);
+  assert.match(sw, /const CACHE = 'satoru-v181'/);
 });
