@@ -26,7 +26,7 @@ test('settings load uses checked recovery and a final write fence', () => {
   assert.match(store, /name === 'settings' && !settingsWriteAllowed\('saveNow', true\)/);
   assert.match(store, /name === 'settings' && !settingsWriteAllowed\('_put', true\)/);
   const init = block('async function initApp()', '\n  State\.settings\.appName');
-  assert.match(init, /Store\.loadChecked\('settings', DEFAULT_SETTINGS, validateSettingsPayload\)/);
+  assert.match(init, /Store\.loadChecked\('settings', freshOnboardingSettings\(\[\], State\.me && State\.me\.lang\), validateSettingsPayload\)/);
   assert.match(init, /State\._settingsLoadError = settingsLoad\.error/);
   assert.match(init, /State\.settingsSection = 'data'/);
 });

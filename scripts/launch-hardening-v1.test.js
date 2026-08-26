@@ -60,7 +60,7 @@ test('settings recovery fence runs before startup can mutate a corrupt fallback'
   const start = APP.indexOf('async function initApp()');
   const ai = APP.indexOf('const aiKeysReady = ensureAiKeys()', start);
   const prefix = APP.slice(start, ai);
-  assert.match(prefix, /Store\.loadChecked\('settings', DEFAULT_SETTINGS, validateSettingsPayload\)/);
+  assert.match(prefix, /Store\.loadChecked\('settings', freshOnboardingSettings\(\[\], State\.me && State\.me\.lang\), validateSettingsPayload\)/);
   assert.match(prefix, /if \(State\._settingsLoadError\) \{[\s\S]*State\.view = 'settings';[\s\S]*render\(\);[\s\S]*return;/);
   assert.doesNotMatch(prefix, /Store\.save|Store\._put|saveNow/);
 });

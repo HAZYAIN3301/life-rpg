@@ -1420,7 +1420,8 @@ function publicUser(user) {
     // Только администратор видит свой серверный рекламный кредит. Обычным
     // пользователям это поле вообще не выдаётся.
     ...(user.isAdmin ? { adminGold: adminGoldBalance(user.id) } : {}),
-    email: user.email || null, hasPin: !!user.pinHash, entitlement: entitlement(user),
+    email: user.email || null, hasPin: !!user.pinHash, lang: ['en', 'ru', 'de', 'uk', 'es'].includes(user.lang) ? user.lang : null,
+    entitlement: entitlement(user),
   };
 }
 
@@ -2611,6 +2612,7 @@ const server = http.createServer(async (req, res) => {
       const source = body && typeof body === 'object' && !Array.isArray(body) ? body : {};
       const name = typeof source.name === 'string' ? source.name.trim().slice(0, 32) : '';
       const pin = source.pin, email = source.email, password = source.password;
+      const lang = ['en', 'ru', 'de', 'uk', 'es'].includes(source.lang) ? source.lang : 'en';
       // Каждая регистрация создаёт папку на диске — это самый дешёвый способ его засорить.
       { const wait = authRateLimited(req, 'register'); if (wait) return tooManyAuth(res, wait); }
       const hasPin = pin !== undefined && pin !== '';
@@ -2629,7 +2631,7 @@ const server = http.createServer(async (req, res) => {
       while (users.find(x => x.id === id)) id += Math.floor(Math.random() * 9 + 1);
       if (!safeId(id)) id = 'u' + crypto.randomBytes(4).toString('hex');
       const user = {
-        id, name,
+        id, name, lang,
         avatar: typeof source.avatar === 'string' && source.avatar ? source.avatar.slice(0, 4) : '⚡',
         createdAt: new Date().toISOString(),
         isAdmin: users.length === 0,

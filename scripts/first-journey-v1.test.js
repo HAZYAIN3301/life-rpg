@@ -141,6 +141,46 @@ test('первый путь: регистрация → дело → награ�
   }
 });
 
+test('пять языков: регистрация → onboarding settings → первый квест → новая сессия', { timeout: 40000 }, async (t) => {
+  let base = REMOTE, rt = null;
+  if (!base) { rt = await startLocal(); base = rt.base; }
+  const locales = ['en', 'ru', 'de', 'uk', 'es'];
+  const accounts = [];
+  t.after(async () => {
+    if (REMOTE) {
+      for (const account of accounts) {
+        try { await account.api('/api/auth/delete-account', { method: 'POST', body: { password: account.password, confirm: 'DELETE' } }); } catch {}
+      }
+    }
+    if (rt) { rt.child.kill('SIGTERM'); fs.rmSync(rt.dataDir, { recursive: true, force: true }); }
+  });
+
+  for (const [index, lang] of locales.entries()) {
+    const stamp = `${Date.now().toString(36)}-${index}`;
+    const email = `journey-${lang}-${stamp}@example.test`;
+    const password = `journey-${lang}-pass-88`;
+    const api = client(base); accounts.push({ api, password });
+    const registered = await api('/api/auth/register', { method: 'POST', body: { name: `Journey ${lang}`, email, password, lang } });
+    assert.equal(registered.status, 200, `${lang}: registration`);
+    assert.equal(registered.data.lang, lang, `${lang}: server must remember first-run language before settings exists`);
+
+    const skill = { id: `skill-${lang}`, name: `Area ${lang}`, color: '#6c8cff' };
+    const settings = { appName: 'Satoru', lang, skills: [skill] };
+    const task = { id: `first-${lang}`, title: `First ${lang}`, skillId: skill.id, skillIds: [skill.id], date: today, estimateMin: 15, difficulty: 'easy', done: false, createdAt: new Date().toISOString() };
+    assert.equal((await api('/api/data/settings', { method: 'PUT', body: settings })).status, 200, `${lang}: onboarding settings`);
+    assert.equal((await api('/api/data/tasks', { method: 'PUT', body: [task] })).status, 200, `${lang}: first task`);
+
+    const returned = client(base);
+    const login = await returned('/api/auth/login', { method: 'POST', body: { email, password } });
+    assert.equal(login.status, 200, `${lang}: new session`);
+    assert.equal(login.data.lang, lang, `${lang}: language survives session restart`);
+    assert.equal((await returned('/api/data/settings')).data.lang, lang, `${lang}: settings language survives`);
+    const tasks = (await returned('/api/data/tasks')).data;
+    assert.equal(tasks.length, 1, `${lang}: first task survives`);
+    assert.equal(tasks[0].id, task.id, `${lang}: correct first task survives`);
+  }
+});
+
 test('второй день: вчерашнее не пропадает и не засчитывается сегодняшним', { timeout: 40000 }, async (t) => {
   let base = REMOTE, rt = null;
   if (!base) { rt = await startLocal(); base = rt.base; }

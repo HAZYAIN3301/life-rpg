@@ -73,12 +73,12 @@ test('task writes are blocked at the lowest Store primitive', async () => {
   assert.match(putSource, /name === 'tasks' && !taskWriteAllowed\('_put', true\)/);
 
   let fetches = 0;
-  const makePut = Function('fetch', 'taskWriteAllowed', 'accountDataWriteAllowed', 'accountDataPayloadAllowed', 'console', 'toast', `return (${putSource})`);
-  const blockedPut = makePut(async () => { fetches += 1; return { ok: true }; }, () => false, () => true, () => true, { error() {} }, () => {});
+  const makePut = Function('fetch', 'pwaWriteAllowed', 'taskWriteAllowed', 'accountDataWriteAllowed', 'accountDataPayloadAllowed', 'console', 'toast', `return (${putSource})`);
+  const blockedPut = makePut(async () => { fetches += 1; return { ok: true }; }, () => true, () => false, () => true, () => true, { error() {} }, () => {});
   assert.equal(await blockedPut('tasks', []), false);
   assert.equal(fetches, 0);
 
-  const allowedPut = makePut(async () => { fetches += 1; return { ok: true }; }, () => true, () => true, () => true, { error() {} }, () => {});
+  const allowedPut = makePut(async () => { fetches += 1; return { ok: true }; }, () => true, () => true, () => true, () => true, { error() {} }, () => {});
   assert.equal(await allowedPut('tasks', []), true);
   assert.equal(fetches, 1);
 });

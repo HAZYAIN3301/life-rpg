@@ -45,6 +45,7 @@
       }
       if (row.isAdmin != null && typeof row.isAdmin !== 'boolean') fail(`row-${index}-bad-admin`);
       if (row.plan != null && !['free', 'pro'].includes(row.plan)) fail(`row-${index}-bad-plan`);
+      if (row.lang != null && !['en', 'ru', 'de', 'uk', 'es'].includes(row.lang)) fail(`row-${index}-bad-lang`);
       if (row.socialConsent != null && (!row.socialConsent || typeof row.socialConsent !== 'object' || Array.isArray(row.socialConsent))) {
         fail(`row-${index}-bad-consent`);
       }

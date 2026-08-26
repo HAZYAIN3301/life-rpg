@@ -15,7 +15,7 @@ function legacyUser(overrides = {}) {
 }
 
 test('missing future fields remain compatible while crash-shaped registries fail closed', () => {
-  const valid = [legacyUser({ unknownFutureField: { retained: true } })];
+  const valid = [legacyUser({ lang: 'de', unknownFutureField: { retained: true } })];
   assert.equal(Registry.assertValid(valid), valid);
   assert.deepEqual(Registry.parse(JSON.stringify(valid)), valid);
 
@@ -23,6 +23,7 @@ test('missing future fields remain compatible while crash-shaped registries fail
     null, {}, [null], [[]], [{}], [legacyUser({ id: '../escape' })],
     [legacyUser({ name: {} })], [legacyUser({ avatar: {} })],
     [legacyUser(), legacyUser()], [legacyUser({ plan: 'enterprise' })],
+    [legacyUser({ lang: 'xx' })],
     [legacyUser({ socialConsent: [] })],
   ];
   for (const value of invalid) {

@@ -2319,6 +2319,15 @@ const I18N_EXTRA = {
   'Офлайн-режим пока недоступен в этом браузере.': { en: 'Offline mode is not available in this browser yet.', de: 'Der Offline-Modus ist in diesem Browser noch nicht verfügbar.', uk: 'Офлайн-режим поки недоступний у цьому браузері.', es: 'El modo sin conexión aún no está disponible en este navegador.' },
   'Проверяем офлайн-режим…': { en: 'Checking offline mode…', de: 'Offline-Modus wird geprüft…', uk: 'Перевіряємо офлайн-режим…', es: 'Comprobando el modo sin conexión…' },
   'Не удалось полностью выключить уведомления. Повтори попытку.': { en: 'Notifications could not be fully disabled. Try again.', de: 'Benachrichtigungen konnten nicht vollständig deaktiviert werden. Versuche es erneut.', uk: 'Не вдалося повністю вимкнути сповіщення. Спробуй ще раз.', es: 'No se pudieron desactivar completamente las notificaciones. Inténtalo de nuevo.' },
+  'Нет соединения': { en: 'No connection', de: 'Keine Verbindung', uk: 'Немає зʼєднання', es: 'Sin conexión' },
+  'Аккаунт и новые изменения требуют соединения. Уже открытый экран можно просматривать.': { en: 'Your account and new changes require a connection. You can still view the open screen.', de: 'Dein Konto und neue Änderungen brauchen eine Verbindung. Den geöffneten Bildschirm kannst du weiter ansehen.', uk: 'Акаунт і нові зміни потребують зʼєднання. Відкритий екран можна переглядати.', es: 'Tu cuenta y los nuevos cambios necesitan conexión. Puedes seguir viendo la pantalla abierta.' },
+  'Связь восстановлена': { en: 'Connection restored', de: 'Verbindung wiederhergestellt', uk: 'Зʼєднання відновлено', es: 'Conexión restablecida' },
+  'Обнови данные, когда закончишь текущую правку.': { en: 'Refresh the data when you finish your current edit.', de: 'Aktualisiere die Daten, wenn du deine aktuelle Bearbeitung beendet hast.', uk: 'Онови дані, коли завершиш поточне редагування.', es: 'Actualiza los datos cuando termines tu edición actual.' },
+  'Доступно обновление Satoru': { en: 'A Satoru update is ready', de: 'Ein Satoru-Update ist bereit', uk: 'Доступне оновлення Satoru', es: 'Hay una actualización de Satoru' },
+  'Новая версия уже загружена. Обнови экран в удобный момент.': { en: 'The new version is already downloaded. Refresh when it suits you.', de: 'Die neue Version ist bereits geladen. Aktualisiere, wenn es für dich passt.', uk: 'Нову версію вже завантажено. Онови екран у зручний момент.', es: 'La nueva versión ya está descargada. Actualiza cuando te venga bien.' },
+  'Обновить данные': { en: 'Refresh data', de: 'Daten aktualisieren', uk: 'Оновити дані', es: 'Actualizar datos' },
+  'Не удалось обновить экран. Проверь соединение и повтори.': { en: 'Could not refresh the screen. Check your connection and try again.', de: 'Der Bildschirm konnte nicht aktualisiert werden. Prüfe die Verbindung und versuche es erneut.', uk: 'Не вдалося оновити екран. Перевір зʼєднання й повтори.', es: 'No se pudo actualizar la pantalla. Comprueba la conexión e inténtalo de nuevo.' },
+  'Не удалось сохранить старт. Ничего не потеряно — повтори попытку.': { en: 'Could not save your start. Nothing was lost — try again.', de: 'Dein Start konnte nicht gespeichert werden. Nichts ging verloren — versuche es erneut.', uk: 'Не вдалося зберегти старт. Нічого не втрачено — повтори спробу.', es: 'No se pudo guardar tu inicio. No se perdió nada: inténtalo de nuevo.' },
   'Слабость': { en: 'Weakness', de: 'Schwachstelle', uk: 'Слабкість', es: 'Debilidad' },
   'урон ×2': { en: 'damage ×2', de: 'Schaden ×2', uk: 'шкода ×2', es: 'daño ×2' },
   'Тень греет пламя. Кремень его высекает. Две руки одного огня — выбери, чья ближе сегодня.': { en: 'Shadow warms the flame. Flint strikes it. Two hands of the same fire — choose whose hand feels closer today.', de: 'Schatten wärmt die Flamme. Feuerstein schlägt sie heraus. Zwei Hände desselben Feuers — wähle, wessen Hand dir heute näher ist.', uk: 'Тінь зігріває полумʼя. Кремінь його висікає. Дві руки одного вогню — обери, чия сьогодні ближча.', es: 'Sombra calienta la llama. Pedernal la enciende. Dos manos del mismo fuego — elige cuál sientes más cercana hoy.' },
@@ -4092,6 +4101,7 @@ const Store = {
     }
   },
   save(name, obj) {
+    if (!pwaWriteAllowed('save', true)) return false;
     if (!accountDataWriteAllowed(name, 'save', true)) return false;
     if (!accountDataPayloadAllowed(name, obj, 'save', true)) return false;
     if (name === 'tasks' && !taskWriteAllowed('save', true)) return false;
@@ -4107,6 +4117,7 @@ const Store = {
   // save() дебаунсится на 250 мс, а initApp() читает мгновенно — и получает ещё не сохранённое.
   // Именно так онбординг терял выбранные сферы и подставлял вместо них дефолтные.
   async saveNow(name, obj) {
+    if (!pwaWriteAllowed('saveNow', true)) return false;
     if (!accountDataWriteAllowed(name, 'saveNow', true)) return false;
     if (!accountDataPayloadAllowed(name, obj, 'saveNow', true)) return false;
     if (name === 'tasks' && !taskWriteAllowed('saveNow', true)) return false;
@@ -4120,6 +4131,7 @@ const Store = {
   async _put(name, obj) {
     // Последний рубеж: прямые Store._put('tasks', ...) тоже не могут
     // перезаписать повреждённый/недоступный файл fallback-массивом.
+    if (!pwaWriteAllowed('_put', true)) return false;
     if (!accountDataWriteAllowed(name, '_put', true)) return false;
     if (!accountDataPayloadAllowed(name, obj, '_put', true)) return false;
     if (name === 'tasks' && !taskWriteAllowed('_put', true)) return false;
@@ -4308,8 +4320,9 @@ const DEFAULT_SETTINGS = {
   social: { leaderboard: false, party: false }, // два независимых explicit-consent; отсутствие поля всегда означает «не публиковать»
 };
 
-function freshOnboardingSettings(skills = []) {
-  return Object.assign(structuredClone(DEFAULT_SETTINGS), { lang: registrationLang(), skills });
+function freshOnboardingSettings(skills = [], preferredLang = null) {
+  const selectedLang = APP_LANGS.includes(preferredLang) ? preferredLang : registrationLang();
+  return Object.assign(structuredClone(DEFAULT_SETTINGS), { lang: selectedLang, skills });
 }
 
 // ── Две системы дисциплины: 🕊 Доверие vs ⚔️ Контроль (DISCIPLINE-PATHS-PLAN.md) ──
@@ -4635,6 +4648,7 @@ function programTasks(prog, map) { return (prog.quests || []).map((pq) => ({ id:
 
 // Онбординг: чистый профиль из программы. Пишем файлы НАПРЯМУЮ (await), чтобы initApp их загрузил без гонки.
 async function applyProgramFresh(prog) {
+  if (State._onboardingSaveBusy) return;
   const { skills, map } = programSkillMap(prog, []);
   const settings = freshOnboardingSettings(skills);
   // Публичный X7 — отдельный showcase-профиль на каждый браузер. Даём ему достаточно
@@ -4650,7 +4664,10 @@ async function applyProgramFresh(prog) {
     settings.tutorial = { i: 0, active: false, done: false, skipped: true, seenDrips: [], mode: 'day1', dripId: null };
     if (window.GuideV3) settings.guideV3 = Object.assign(window.GuideV3.defaultState(), { enabled: false });
   }
-  await Promise.all([ Store._put('settings', settings), Store._put('habits', programHabits(prog, map)), Store._put('tasks', programTasks(prog, map)) ]);
+  const result = await onboardingSave([
+    ['settings', settings], ['habits', programHabits(prog, map)], ['tasks', programTasks(prog, map)],
+  ]);
+  if (!result.ok) return;
   State.phase = 'app'; initApp();
 }
 async function loginAsTestUser() {
@@ -5508,6 +5525,7 @@ const State = {
   selectedProfile: null,
   _accountSessionExpired: false,
   obSkills: new Set(), // выбранные шаблоны на онбординге
+  _onboardingSaveBusy: false, _onboardingSaveError: '',
   // app data
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
   goals: null, goalGroups: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
@@ -11313,7 +11331,7 @@ async function obAiRun() {
   } catch { _obBusy = false; _obErr = t('Сетевая ошибка — попробуй ещё раз.'); _obItems = null; renderOnboardingScreen(); }
 }
 async function obAiApply() {
-  if (!_obItems) return;
+  if (!_obItems || State._onboardingSaveBusy) return;
   const checks = [...document.querySelectorAll('[data-ob-item]')].map((c) => c.checked);
   const accepted = new Set(); _obItems.forEach((_, i) => { if (checks[i]) accepted.add(i); });
   if (!_obItems.some((p, i) => accepted.has(i) && p.type === 'sphere')) { toast(t('Оставь хотя бы одну сферу')); return; }
@@ -11324,10 +11342,28 @@ async function obAiApply() {
   State.tasks = []; State.goals = []; State.goalGroups = []; State.tree = {};
   applyProposals(_obItems, accepted);
   // saveNow, а не save: следом initApp() читает данные с сервера, и дебаунс их не догонит.
-  await Store.saveNow('settings', State.settings);
-  await Store.saveNow('tasks', State.tasks);
+  const result = await onboardingSave([['settings', State.settings], ['tasks', State.tasks]]);
+  if (!result.ok) return;
   _obItems = null; _obErr = '';
   State.phase = 'app'; initApp();
+}
+
+async function onboardingSave(entries) {
+  if (State._onboardingSaveBusy) return { ok: false, reason: 'busy' };
+  if (!pwaWriteAllowed('onboardingSave', true)) {
+    State._onboardingSaveError = t('Не удалось сохранить старт. Ничего не потеряно — повтори попытку.');
+    render(); return { ok: false, reason: 'offline' };
+  }
+  State._onboardingSaveBusy = true; State._onboardingSaveError = ''; render();
+  let ok = false;
+  try {
+    const results = await Promise.all(entries.map(([name, value]) => Store.saveNow(name, value)));
+    ok = results.length > 0 && results.every((saved) => saved === true);
+  } catch { ok = false; }
+  State._onboardingSaveBusy = false;
+  if (!ok) State._onboardingSaveError = t('Не удалось сохранить старт. Ничего не потеряно — повтори попытку.');
+  if (State.phase === 'onboarding') render();
+  return { ok, reason: ok ? '' : 'save' };
 }
 function renderOnboardingScreen() {
   // Ключи нужны ЗДЕСЬ, а не в initApp: до онбординга приложение не инициализировано, а без них
@@ -11351,7 +11387,8 @@ function renderOnboardingScreen() {
         <h1>Привет, ${esc(State.me && State.me.name || '')}!</h1>
         <p>${t('Выбери свои сферы развития — их всегда можно изменить')}</p>
       </div>
-      <div class="auth-box">
+      <div class="auth-box" aria-busy="${State._onboardingSaveBusy}">
+        ${State._onboardingSaveError ? `<p class="account-notice" role="alert" data-onboarding-save-error>${esc(State._onboardingSaveError)}</p>` : ''}
         ${obAiBlock()}
         <div class="ob-section">${t('📦 Быстрый старт — готовая программа')}</div>
         <div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'ob-program')).join('')}</div>
@@ -11369,7 +11406,7 @@ function renderOnboardingScreen() {
             ? '<p class="ob-canon-hint">🧭 Пока нет сферы про <b>❤️ Отношения</b> — а это одна из самых весомых частей сбалансированной жизни. Можно добавить «Отношения», «Семью» или «Друзей».</p>'
             : '';
         })()}
-        <button class="btn" data-action="ob-finish" style="margin-top:18px;width:100%" ${State.obSkills.size === 0 ? 'disabled' : ''}>
+        <button class="btn" data-action="ob-finish" style="margin-top:18px;width:100%" ${State.obSkills.size === 0 || State._onboardingSaveBusy ? 'disabled' : ''}>
           Поехали! (${State.obSkills.size} сфер${State.obSkills.size === 1 ? 'а' : State.obSkills.size < 5 ? 'ы' : ''})
         </button>
       </div>
@@ -11386,6 +11423,7 @@ function showAuthScreen() {
   else if (State.phase === 'onboarding') renderOnboardingScreen();
   syncDocumentLanguage();
   if (lang() !== 'ru') { try { translateDOM(document.getElementById('app')); } catch {} }
+  paintPwaLifecycleSurface();
 }
 
 // ============================================================
@@ -21442,6 +21480,7 @@ function render() {
     const fs = document.getElementById('fab-streak'), st = currentStreak();
     if (fs) { if (st > 0) { fs.textContent = '🔥' + st; fs.hidden = false; } else fs.hidden = true; }
   } catch {}
+  paintPwaLifecycleSurface();
   dismissBootLoader();
 }
 function dismissBootLoader() {
@@ -21576,13 +21615,13 @@ async function onSubmit(e) {
     if (pw.length < 8) { errEl.textContent = t('Пароль (минимум 8 символов)'); return; }
     btn.disabled = true;
     try {
-      const { response, data } = await accountJson('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password: pw, avatar: State.regAvatar || '⚡' }) }, { authenticated: false });
+      const { response, data } = await accountJson('/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, password: pw, avatar: State.regAvatar || '⚡', lang: registrationLang() }) }, { authenticated: false });
       if (response.ok) {
         State._accountSessionExpired = false; State.me = data;
-        State.settings = freshOnboardingSettings([]);
+        State.settings = freshOnboardingSettings([], data.lang);
         const languageSaved = await Store.saveNow('settings', State.settings);
+        State._onboardingSaveError = languageSaved ? '' : t('Не удалось сохранить старт. Ничего не потеряно — повтори попытку.');
         State.phase = 'onboarding'; render();
-        if (!languageSaved) toast(t('Аккаунт создан, но язык пока не сохранился. Выбор закрепится после следующего шага.'));
         if (data.recoveryCode) showRecoveryModal(data.recoveryCode);
       }
       else errEl.textContent = accountError(data, 'Ошибка регистрации');
@@ -22808,6 +22847,9 @@ async function onClick(e) {
   }
   const action = el.dataset.action, id = el.dataset.id, today = todayStr();
 
+  if (action === 'pwa-lifecycle-refresh') { await refreshPwaData(); return; }
+  if (action === 'pwa-lifecycle-later') { pwaLifecycleDispatch({ type: 'update:defer' }); return; }
+  if (action === 'pwa-lifecycle-dismiss') { pwaLifecycleDispatch({ type: 'reconnect:dismiss' }); return; }
   if (action === 'close-attention-dialog') { closeAttentionDialog(); return; }
   if (action === 'attention-open-setup') { openAttentionSetup(el); return; }
   if (action === 'attention-open-entry') { openAttentionEntry(el.dataset.policyId, 'manual', el); return; }
@@ -22918,7 +22960,7 @@ async function onClick(e) {
   if (action === 'ob-ai-apply') { obAiApply(); return; }
   if (action === 'ob-ai-reset') { _obItems = null; _obErr = ''; renderOnboardingScreen(); return; }
   if (action === 'ob-finish') {
-    if (State.obSkills.size === 0) return;
+    if (State.obSkills.size === 0 || State._onboardingSaveBusy) return;
     const skills = [...State.obSkills].map((entry) => {
       const [name, color] = entry.split('|');
       const tpl = SKILL_TEMPLATES.find(t => t.name === name);
@@ -22927,9 +22969,9 @@ async function onClick(e) {
     const settings = freshOnboardingSettings(skills);
     // saveNow: save() дебаунсится на 250 мс, а initApp() читает настройки с сервера сразу —
     // выбранные сферы не успевали записаться, и юзер получал дефолтные шесть вместо своих.
-    Store.saveNow('settings', settings).then(() => {
-      State.phase = 'app'; initApp(); // initApp на первом запуске сам запустит гайд «Тень ведёт» (см. конец initApp)
-    });
+    const saved = await onboardingSave([['settings', settings]]);
+    if (!saved.ok) return;
+    State.phase = 'app'; initApp(); // initApp на первом запуске сам запустит гайд «Тень ведёт» (см. конец initApp)
     return;
   }
 
@@ -24776,6 +24818,7 @@ function clearAllData() {
   State._goalsLoadError = ''; State._goalGroupsLoadError = ''; State._goalsLoadBusy = false; State._goalTxnBusy = ''; State._goalsError = ''; State._goalsFocusAfterCommit = ''; State._goalOpenId = ''; State._goalDeepLinkId = ''; State.goalView = 'focus'; State.goalFilter = 'all'; State._goalsComposerOpen = false; State._goalGroupFilter = '';
   State._settingsLoadError = ''; State._settingsLoadBusy = false; State._treeLoadError = '';
   State._accountDataLoadErrors = {}; State._accountDataLoadBusy = false; State._accountDataWriteBlockedNoticeAt = 0;
+  State._onboardingSaveBusy = false; State._onboardingSaveError = '';
   State._attentionLoadError = ''; State._attentionLoadBusy = false; State._attentionWriteBlockedNoticeAt = 0; State._attentionDeepLink = null; State._attentionReturnIndex = 0;
   clearTimeout(_attentionBoundaryTimer); _attentionBoundaryTimer = null; closeAttentionDialog({ restoreFocus: false, force: true });
   State.timer = null; persistTimer(); stopTick(); closeFocusWidget(); removePill();
@@ -24890,7 +24933,7 @@ function showLevelUpEpic(lvlBefore, lvlNow, rb, ra) {
 // Загружает данные пользователя и переходит в основное приложение
 async function initApp() {
   {
-    const settingsLoad = await Store.loadChecked('settings', DEFAULT_SETTINGS, validateSettingsPayload);
+    const settingsLoad = await Store.loadChecked('settings', freshOnboardingSettings([], State.me && State.me.lang), validateSettingsPayload);
     State.settings = settingsLoad.value;
     State._settingsLoadError = settingsLoad.error;
     State._settingsLoadBusy = false;
@@ -25511,9 +25554,75 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
+const PWA_CACHE_VERSION = 'satoru-v180';
+let _pwaLifecycle = window.PwaLifecycleV1
+  ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
+  : null;
+let _pwaWriteBlockedNoticeAt = 0;
+function pwaLifecycleDispatch(event) {
+  if (!window.PwaLifecycleV1 || !_pwaLifecycle) return;
+  _pwaLifecycle = window.PwaLifecycleV1.reduce(_pwaLifecycle, event);
+  paintPwaLifecycleSurface();
+}
+function pwaWriteAllowed(source, notify = false) {
+  const allowed = window.PwaLifecycleV1 && _pwaLifecycle
+    ? window.PwaLifecycleV1.canWrite(_pwaLifecycle) : navigator.onLine !== false;
+  if (allowed) return true;
+  if (notify && Date.now() - _pwaWriteBlockedNoticeAt > 2000) {
+    _pwaWriteBlockedNoticeAt = Date.now();
+    toast(t('Нет соединения'));
+  }
+  console.error(`${source} blocked`, 'offline');
+  return false;
+}
+function pwaLifecycleCopy(kind) {
+  if (kind === 'offline') return ['Нет соединения', 'Аккаунт и новые изменения требуют соединения. Уже открытый экран можно просматривать.'];
+  if (kind === 'update') return ['Доступно обновление Satoru', 'Новая версия уже загружена. Обнови экран в удобный момент.'];
+  if (kind === 'reconnected') return ['Связь восстановлена', 'Обнови данные, когда закончишь текущую правку.'];
+  return ['Не удалось обновить экран. Проверь соединение и повтори.', 'Обнови данные, когда закончишь текущую правку.'];
+}
+function paintPwaLifecycleSurface() {
+  const model = window.PwaLifecycleV1 && _pwaLifecycle ? window.PwaLifecycleV1.surface(_pwaLifecycle) : null;
+  let host = document.getElementById('pwa-lifecycle-region');
+  if (!model) { if (host) host.remove(); return; }
+  if (!host) { host = document.createElement('div'); host.id = 'pwa-lifecycle-region'; document.body.appendChild(host); }
+  const [title, detail] = pwaLifecycleCopy(model.kind);
+  const refresh = model.actions.includes('refresh') ? `<button type="button" class="btn pwa-lifecycle-action" data-action="pwa-lifecycle-refresh" ${_pwaLifecycle.refreshing ? 'disabled' : ''}>${esc(t('Обновить данные'))}</button>` : '';
+  const secondary = model.actions.includes('later') ? `<button type="button" class="btn ghost pwa-lifecycle-action" data-action="pwa-lifecycle-later">${esc(t('Позже'))}</button>`
+    : (model.actions.includes('dismiss') ? `<button type="button" class="btn ghost pwa-lifecycle-action" data-action="pwa-lifecycle-dismiss">${esc(t('Закрыть'))}</button>` : '');
+  host.innerHTML = `<section class="pwa-lifecycle-surface is-${esc(model.kind)}" role="status" aria-live="polite" aria-atomic="true"><div><strong>${esc(t(title))}</strong><p>${esc(t(detail))}</p></div><div class="pwa-lifecycle-actions">${refresh}${secondary}</div></section>`;
+}
+async function refreshPwaData() {
+  if (!window.PwaLifecycleV1 || !_pwaLifecycle || !window.PwaLifecycleV1.canWrite(_pwaLifecycle)) return;
+  pwaLifecycleDispatch({ type: 'refresh:start' });
+  try {
+    if (State.phase === 'app' && document.getElementById('skills-list') && !State._settingsLoadError && !State._habitsLoadError) {
+      captureSettingsForm();
+      const saved = await Promise.all([Store.saveNow('settings', State.settings), Store.saveNow('habits', State.habits)]);
+      if (!saved.every(Boolean)) throw new Error('save');
+    }
+    location.reload();
+  } catch {
+    pwaLifecycleDispatch({ type: 'refresh:failed', error: 'refresh-failed' });
+  }
+}
 function initPWA() {
   if (!('serviceWorker' in navigator)) _pwaRegistration = 'unsupported';
-  else navigator.serviceWorker.register('sw.js').then(() => { _pwaRegistration = 'ready'; if (State.view === 'settings') render(); }).catch(() => { _pwaRegistration = 'failed'; if (State.view === 'settings') render(); });
+  else {
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'satoru:worker-version') pwaLifecycleDispatch({ type: 'worker:version', version: event.data.version });
+    });
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      navigator.serviceWorker.controller?.postMessage({ type: 'satoru:version-request' });
+    });
+    navigator.serviceWorker.register('sw.js').then((registration) => {
+      _pwaRegistration = 'ready'; registration.update().catch(() => {});
+      (navigator.serviceWorker.controller || registration.active)?.postMessage({ type: 'satoru:version-request' });
+      if (State.view === 'settings') render();
+    }).catch(() => { _pwaRegistration = 'failed'; if (State.view === 'settings') render(); });
+  }
+  window.addEventListener('offline', () => pwaLifecycleDispatch({ type: 'network:offline' }));
+  window.addEventListener('online', () => pwaLifecycleDispatch({ type: 'network:online' }));
   window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); _deferredInstall = e; if (State.view === 'settings') render(); });
   window.addEventListener('appinstalled', () => { _deferredInstall = null; toast(t('📲 Satoru установлен!')); });
 }

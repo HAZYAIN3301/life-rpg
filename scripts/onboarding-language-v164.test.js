@@ -45,7 +45,7 @@ test('registration opens with a dedicated five-language step before account fiel
 });
 
 test('chosen language is persisted before onboarding and retained by every onboarding path', () => {
-  assert.match(APP, /function freshOnboardingSettings\(skills = \[\]\)[\s\S]*lang: registrationLang\(\), skills/);
+  assert.match(APP, /function freshOnboardingSettings\(skills = \[\], preferredLang = null\)[\s\S]*APP_LANGS\.includes\(preferredLang\)[\s\S]*lang: selectedLang, skills/);
   const registration = between("if (f.id === 'register-form')", "// --- Reset (по коду восстановления) ---");
   const saveAt = registration.indexOf("await Store.saveNow('settings', State.settings)");
   const onboardingAt = registration.indexOf("State.phase = 'onboarding'");
@@ -68,7 +68,7 @@ test('language step has complete locale copy and accessible touch targets', () =
 });
 
 test('v164 invalidates the PWA shell and cache-busts app and styles', () => {
-  assert.match(SW, /const CACHE = 'satoru-v179'/);
-  assert.match(INDEX, /styles\.css\?v=20260826-return-shelf-r2-v179-1/);
-  assert.match(INDEX, /app\.js\?v=20260826-return-shelf-r2-v179-1/);
+  assert.match(SW, /const CACHE = 'satoru-v180'/);
+  assert.match(INDEX, /styles\.css\?v=20260826-launch-hardening-v180-1/);
+  assert.match(INDEX, /app\.js\?v=20260826-launch-hardening-v180-1/);
 });

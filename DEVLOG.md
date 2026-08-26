@@ -20,9 +20,7 @@
 
 Commit: `feat: give the assistant verbs it cannot abuse`.
 
-## [2026-08-26] 🧪 Launch Hardening Lab C0–C1 — повреждённый аккаунт больше не маскируется под пустой
-
-## [2026-08-26] 🧪 Launch Hardening Lab C0–C2 — повреждённый аккаунт больше не маскируется под пустой
+## [2026-08-26] 🧪 Launch Hardening Lab C0–C3 — повреждённый аккаунт больше не маскируется под пустой
 
 - Начат следующий launch-critical контур после Board v2: не новая механика, а воспроизводимый путь `регистрация → язык → onboarding → первый квест → награда → возврат` и fuzz входных данных вокруг него.
 - Найдены и закрыты два реальных crash-класса. Публичный `/api/auth/register` принимал `null`, массив или объект вместо имени и мог закончить запрос `500`; те же формы тела роняли destructuring в `login/reset/reset-token`. Теперь весь auth-контур принимает только plain-object, malformed shape получает контролируемый `4xx`, не создаёт ghost account/директорию и не убивает процесс.
@@ -37,10 +35,16 @@ Commit: `feat: give the assistant verbs it cannot abuse`.
 - Ошибка одного из восьми файлов блокирует запись **только в этот файл**. Остальные разделы аккаунта продолжают работать; `Store.save/saveNow/_put` и `/api/economy/commit` имеют общий последний рубеж, поэтому пустой fallback не может попасть на сервер ни прямым PUT, ни атомарной покупкой. Проверка достижений также не мутирует fallback при повреждённом `achievements.json`.
 - В `Настройки → Данные` показывается `role=alert` со списком затронутых разделов без личного содержимого и безопасным Retry. Успешное повторное чтение делает полный reload, чтобы не смешивать восстановленный файл с временным состоянием. Copy закрыта RU/EN/DE/UK/ES.
 - PWA shell `satoru-v177 → satoru-v178`; `account-data-v1.js` загружается до `app.js`, а app/styles имеют единый pin `20260826-launch-hardening-v178-1`.
+- C3 закрыл upgrade/offline seam. Новый pure-модуль `pwa-lifecycle-v1.js` детерминированно различает offline, reconnect, готовое обновление и ошибку явного refresh. Offline блокирует все три уровня `Store.save/saveNow/_put`, но не подменяет уже открытые данные пустыми; reconnect и новая версия показывают неблокирующую `role=status`-поверхность с явными действиями. Перед reload экран Настроек дожидается сохранения текущей формы, при отказе остаётся на месте с Retry.
+- Service Worker больше не проглатывает ошибку `cache.addAll`: неполный app-shell не активируется. После успешной активации worker сообщает точную cache-version открытым вкладкам и отвечает на version probe. Permanent-тест разворачивает статический `SHELL` и проверяет существование каждого файла до релиза.
+- Выбранный до регистрации язык теперь принадлежит серверной учётной записи, а не только первому `settings.json`: `/api/auth/register` принимает только один из EN/RU/DE/UK/ES, `publicUser` возвращает сохранённый locale, а отсутствие settings после новой сессии возвращает человека в onboarding с тем же языком вместо создания шести чужих дефолтных сфер.
+- Все три выхода из onboarding (`program`, AI proposal, manual skills) используют общий awaitable retry-контур. Частичная/неуспешная запись больше не переводит человека в приложение; выбранный старт остаётся на экране и может быть сохранён повторно.
+- Live Browser QA: язык действительно выбирается первым; English selected по умолчанию, Russian переключает всю следующую форму; `360×800`, `375×812`, `1280×900` без horizontal overflow, mobile actions 44–52 px, консоль чистая.
+- После параллельного Return Shelf v179 C3 поднял shell `satoru-v179 → satoru-v180`; новый модуль загружается до `app.js`, app/styles имеют pin `20260826-launch-hardening-v180-1`.
 
-Проверки: account-data C2 **7/7**, calendar/account/economy/hardening focused **29/29**, полный suite **957/957**, app/module/server/SW syntax и `git diff --check` — PASS.
+Проверки после безопасного rebase поверх Return Shelf и assistant-actions: PWA/onboarding/registry/first-journey focused **58/58**, объединённый полный suite **1001/1001**, app/module/server/SW syntax, physical shell inventory и `git diff --check` — PASS.
 
-Следующий срез Lab: upgrade/reload/offline матрица старого установленного PWA, затем полный пятиъязычный и accessibility-маршрут от регистрации до возврата.
+Следующий срез Lab: полный пятиъязычный и accessibility-маршрут от регистрации до возврата, затем повреждённые legacy-аккаунты и offline-upgrade на реальных мобильных браузерах.
 
 ## [2026-08-26] 📚 Attention R2 — конечная Полка возвращения доведена до действия
 
