@@ -128,13 +128,21 @@ function staticCacheControl(urlPath, rel, ext) {
 function readBody(req, maxBytes) {
   const cap = maxBytes || 5 * 1024 * 1024;
   return new Promise((resolve, reject) => {
-    let data = '';
+    let data = '', bytes = 0, rejected = false;
     req.on('data', c => {
+      if (rejected) return;
+      bytes += Buffer.byteLength(c);
+      if (bytes > cap) {
+        rejected = true;
+        const error = new Error('payload too large');
+        error.code = 'PAYLOAD_TOO_LARGE';
+        reject(error);
+        return;
+      }
       data += c;
-      if (data.length > cap) { req.destroy(); reject(new Error('payload too large')); }
     });
-    req.on('end', () => resolve(data));
-    req.on('error', reject);
+    req.on('end', () => { if (!rejected) resolve(data); });
+    req.on('error', error => { if (!rejected) reject(error); });
   });
 }
 async function boardV2RequestJson(input) {
@@ -2447,8 +2455,15 @@ const server = http.createServer(async (req, res) => {
   if (u.startsWith('/api/auth/')) {
     let body = {};
     if (req.method === 'POST') {
-      const raw = await readBody(req);
+      let raw = '';
+      try { raw = await readBody(req, 64 * 1024); }
+      catch (error) {
+        return sendJson(res, error && error.code === 'PAYLOAD_TOO_LARGE' ? 413 : 400, {
+          error: error && error.code === 'PAYLOAD_TOO_LARGE' ? 'payload too large' : 'bad request',
+        });
+      }
       if (raw) { try { body = JSON.parse(raw); } catch { return sendJson(res, 400, { error: 'bad json' }); } }
+      if (!body || typeof body !== 'object' || Array.isArray(body)) body = {};
     }
 
     // GET /api/auth/me
@@ -2586,11 +2601,13 @@ const server = http.createServer(async (req, res) => {
 
     // POST /api/auth/register — поддерживает email+пароль (новое) ИЛИ PIN (legacy-киоск)
     if (u === '/api/auth/register' && req.method === 'POST') {
-      const { name, pin, email, password } = body;
+      const source = body && typeof body === 'object' && !Array.isArray(body) ? body : {};
+      const name = typeof source.name === 'string' ? source.name.trim().slice(0, 32) : '';
+      const pin = source.pin, email = source.email, password = source.password;
       // Каждая регистрация создаёт папку на диске — это самый дешёвый способ его засорить.
       { const wait = authRateLimited(req, 'register'); if (wait) return tooManyAuth(res, wait); }
       const hasPin = pin !== undefined && pin !== '';
-      const hasEmail = email && password;
+      const hasEmail = typeof email === 'string' && typeof password === 'string' && !!email && !!password;
       if (!name) return sendJson(res, 400, { error: 'имя обязательно' });
       if (!hasPin && !hasEmail) return sendJson(res, 400, { error: 'нужен email+пароль или PIN' });
       if (hasPin && String(pin).length < 4) return sendJson(res, 400, { error: 'PIN минимум 4 символа' });
@@ -2605,8 +2622,8 @@ const server = http.createServer(async (req, res) => {
       while (users.find(x => x.id === id)) id += Math.floor(Math.random() * 9 + 1);
       if (!safeId(id)) id = 'u' + crypto.randomBytes(4).toString('hex');
       const user = {
-        id, name: String(name).slice(0, 32),
-        avatar: body.avatar || '⚡',
+        id, name,
+        avatar: typeof source.avatar === 'string' && source.avatar ? source.avatar.slice(0, 4) : '⚡',
         createdAt: new Date().toISOString(),
         isAdmin: users.length === 0,
         // Триал стартует СРАЗУ при регистрации, а не по кнопке. Причина: без него новый юзер —

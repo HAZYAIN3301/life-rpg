@@ -3773,7 +3773,19 @@ function taskWriteAllowed(source, notify = false) {
 }
 function validateSettingsPayload(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
-  if (value.skills !== undefined && !Array.isArray(value.skills)) return false;
+  if (value.skills !== undefined) {
+    if (!Array.isArray(value.skills) || value.skills.length > 500) return false;
+    const skillIds = new Set();
+    for (const skill of value.skills) {
+      if (!skill || typeof skill !== 'object' || Array.isArray(skill)) return false;
+      const id = typeof skill.id === 'string' ? skill.id.trim() : '';
+      const name = typeof skill.name === 'string' ? skill.name.trim() : '';
+      if (!id || id.length > 120 || skillIds.has(id) || !name || name.length > 160) return false;
+      if (skill.parentId != null && (typeof skill.parentId !== 'string' || !skill.parentId.trim() || skill.parentId.length > 120)) return false;
+      if (skill.color != null && (typeof skill.color !== 'string' || skill.color.length > 64)) return false;
+      skillIds.add(id);
+    }
+  }
   for (const key of ['xp', 'gold', 'curve', 'focus', 'social']) {
     if (value[key] !== undefined && (!value[key] || typeof value[key] !== 'object' || Array.isArray(value[key]))) return false;
   }
@@ -11467,7 +11479,7 @@ function calendarToolsHTML() {
 }
 
 function validateTasksPayload(value) {
-  if (!Array.isArray(value)) return false;
+  if (!Array.isArray(value) || value.length > 10000) return false;
   const ids = new Set();
   const validDate = (raw) => {
     if (typeof raw !== 'string') return false;
@@ -11480,8 +11492,8 @@ function validateTasksPayload(value) {
   const validTime = (raw) => raw == null || (typeof raw === 'string' && /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(raw));
   return value.every((item) => {
     if (!item || typeof item !== 'object' || Array.isArray(item)) return false;
-    if (typeof item.id !== 'string' || !item.id.trim() || ids.has(item.id)) return false;
-    if (typeof item.title !== 'string' || !item.title.trim()) return false;
+    if (typeof item.id !== 'string' || !item.id.trim() || item.id.length > 180 || ids.has(item.id)) return false;
+    if (typeof item.title !== 'string' || !item.title.trim() || item.title.length > 1000) return false;
     if (!validDate(item.date) || !validTime(item.startTime)) return false;
     if (item.done != null && typeof item.done !== 'boolean') return false;
     if (item.goalId != null && (typeof item.goalId !== 'string' || !item.goalId.trim())) return false;
