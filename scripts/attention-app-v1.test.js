@@ -89,3 +89,26 @@ test('dialog contract covers modal semantics, focus, scroll lock, touch and redu
   const attentionCss = CSS.slice(CSS.indexOf('Attention contract v1'));
   assert.match(attentionCss, /prefers-reduced-motion: reduce/);
 });
+
+test('Shadow\'s daily moment yields to an attention dialog instead of burning itself behind one', () => {
+  // Заход приходит по deep-link из шортката: человек открыл TikTok, у него пять секунд.
+  // Момент, показанный поверх, не просто мешает — momentSeen() помечает его увиденным,
+  // и приветствие сгорает на сегодня, хотя человек смотрел на другой диалог.
+  const guard = APP.match(/function attentionHoldsAttention\(\)\s*\{([\s\S]*?)\n\}/);
+  assert.ok(guard, 'attentionHoldsAttention() must exist');
+  assert.match(guard[1], /_attentionDeepLink/, 'the routing→mount gap must be covered');
+  assert.match(guard[1], /attention-dialog-overlay/, 'a mounted attention dialog must count');
+
+  const check = APP.match(/function momentCheck\(\)\s*\{([\s\S]*?)\n\}/);
+  assert.ok(check, 'momentCheck() must exist');
+  const body = check[1];
+  const guarded = body.indexOf('attentionHoldsAttention()');
+  const scheduled = body.indexOf('_momentTimer = setTimeout');
+  assert.ok(guarded > -1, 'momentCheck must consult attentionHoldsAttention()');
+  assert.ok(scheduled > -1, 'momentCheck must still schedule the moment');
+  assert.ok(guarded < scheduled, 'the guard must run before the moment is scheduled');
+  assert.ok(
+    body.slice(scheduled).includes('attentionHoldsAttention()'),
+    'the deferred callback must re-check: a dialog can open during the 400ms wait',
+  );
+});

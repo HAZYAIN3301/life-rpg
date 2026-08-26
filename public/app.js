@@ -14142,18 +14142,29 @@ async function showMoment(kind) {
 function closeMoment() { document.getElementById('moment')?.remove(); }
 // Проверка на рендере «Сегодня»: момент не спорит с туториалом и дрипами за внимание.
 let _momentTimer = null;
+// Диалог внимания уже на экране или вот-вот откроется по deep-link из шортката.
+// `_attentionDeepLink` закрывает зазор между роутингом URL и монтированием диалога.
+function attentionHoldsAttention() {
+  return !!State._attentionDeepLink || !!document.getElementById('attention-dialog-overlay');
+}
 function momentCheck() {
   if (State.view !== 'today' || State.phase !== 'app') return;
   const guide = guideV3State();
   if (guideV3RuntimeAllowed() && guide
     && (guide.currentChapter || !window.GuideV3.chapterResolved(guide, window.GuideV3.FIRST_CHAPTER))) return;
   if (document.getElementById('moment') || _momentTimer || _momentBusy) return;
+  // Та же причина, что и у гайда выше, но цена выше. Заход внимания приходит по прямой
+  // ссылке из шортката в момент импульса: человек открыл TikTok и у него есть пять секунд.
+  // Момент, вставший сверху, не просто мешает — он ещё и СГОРАЕТ (momentSeen помечает его
+  // показанным), хотя человек смотрел на другой диалог.
+  if (attentionHoldsAttention()) return;
   const kind = momentDue();
   if (!kind) return;
   // Один таймер на всё: render() вызывается часто (тик таймера, тосты, применение
   // изменений), и без этого замка каждый вызов плодил бы свой отложенный показ.
   _momentTimer = setTimeout(() => {
     _momentTimer = null;
+    if (attentionHoldsAttention()) return;
     try { showMoment(kind); } catch {}
   }, 400);
 }
