@@ -42,6 +42,18 @@ Commit: `feat: give the assistant verbs it cannot abuse`.
 
 Следующий срез Lab: upgrade/reload/offline матрица старого установленного PWA, затем полный пятиъязычный и accessibility-маршрут от регистрации до возврата.
 
+## [2026-08-26] 📚 Attention R2 — конечная Полка возвращения доведена до действия
+
+- Pure-модуль `return-shelf-v1.js` и защищённый `/api/shelf` получили полноценную видимую поверхность `return-shelf-ui-v1.js`. Полка находится в purpose-группе `Ещё → Поддержка`, показывает за визит конечную пачку из трёх материалов (жёсткий максимум пять) и не содержит feed, autoplay, рекомендаций, популярности или кнопки «ещё».
+- Добавление не прячется в Settings: на первом экране есть одна явная кнопка. Каждый материал обязан содержать «что я отсюда беру»; практический материал дополнительно требует ожидаемый результат, точку остановки и ограничение времени. Поддержаны ссылка/paste fallback, связь с квестом или целью, срок хранения, фильтры, архив и удаление.
+- Открытие внешнего источника идёт через уже опубликованную Attention-границу. Завершить материал можно только выбранным переходом в реальность: создать квест, начать фокус, открыть заметку, открыть проект/цель либо отложить без наказания. Просмотр не даёт XP или золото; practical после действия архивируется, energy остаётся доступным.
+- Data-safety закрыта с обеих сторон. Клиент использует отдельный проверяемый envelope; сервер различает отсутствующий файл и syntactically/structurally malformed файл. Повреждение возвращает `422 invalid_shelf`, блокирует запись `409 shelf_unavailable`, не превращается в empty и не меняет исходные байты после Retry. Ownership, whitelist, ограничения объёма, идемпотентность, portable export и каскадное удаление остаются server-owned.
+- UI полностью локализован для RU/EN/DE/UK/ES. Диалог удаления имеет label, inert-фон, trap, Escape и возврат фокуса; все переходы после commit восстанавливают фокус в Notes/Goals/Today. На mobile пункт `Возвращение` остаётся внутри More, а не создаёт шестую primary destination.
+- Responsive/craft gate на финальных байтах: `360×800`, `375×812`, `1280×900`; dark/light; настоящий empty, dense и malformed/error. Horizontal overflow = 0; видимых целей меньше 42px = 0; mobile FAB скрыт только на Полке; на desktop первое основное действие заканчивается на `876.06px` при gate `884px`. Reduced-motion контракт статически обнуляет Shelf animation/transition. Скриншоты и точные результаты: `docs/design-qa/2026-08-26-return-shelf-v179/`.
+- После безопасного rebase сохранён весь Launch Hardening v178 (`account-data-v1`, auth/account recovery fences, corrupt registry fail-closed). Offline shell поднят `satoru-v178 → satoru-v179`; Shelf domain/UI подключены после `account-data-v1.js` и до `app.js`. Exact release-assertions существующих тестов механически обновлены на v179 без изменения их продуктовой семантики.
+
+Проверки после rebase на Launch Hardening и independent assistant-actions foundation: Shelf domain/UI/Attention/navigation **42/42**, Shelf server integrity/ownership **11/11**, полный suite **990/990**, app/UI/server/SW syntax, CSS balance и `git diff --check` — PASS. Live console errors/warnings — 0.
+
 ## [2026-08-26] 🧭 Attention R1 UI — предрешение, честная граница и дешёвый возврат
 
 - Подключён весь видимый контур поверх опубликованных pure-модулей `attention-policy/session/episode-v1`: настройка одного правила за один короткий экран, пятисекундная проверка входа, граница по настоящему таймеру и экран возврата к одному малому действию. Вход доступен вручную в `Настройки → Опыт → Внимание и границы` и через `?do=gate&app=…`; `?do=return` открывает возврат без долговой стены.

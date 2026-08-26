@@ -168,6 +168,29 @@ test('мусор внутри валидной структуры отбрасы
   assert.equal((await c('/api/shelf', { method: 'PUT', body: { data: 'строка' } })).status, 400);
 });
 
+test('🔴 повреждённый shelf.json не становится пустой Полкой и блокирует запись до восстановления', { timeout: 40000 }, async (t) => {
+  const rt = await startServer();
+  t.after(() => { rt.child.kill('SIGTERM'); fs.rmSync(rt.dataDir, { recursive: true, force: true }); });
+  const c = await signedIn(rt.base, 'broken@example.test');
+  await c('/api/shelf/item', { method: 'POST', body: { item: ENERGY() } });
+  const dirs = fs.readdirSync(path.join(rt.dataDir, 'users'));
+  const file = path.join(rt.dataDir, 'users', dirs[0], 'shelf.json');
+  fs.writeFileSync(file, JSON.stringify({ version: 1, items: [{}] }));
+  const structural = await c('/api/shelf');
+  assert.equal(structural.status, 422, 'структурно битый JSON тоже не является пустой Полкой');
+  assert.equal(structural.data.error, 'invalid_shelf');
+  assert.equal((await c('/api/shelf', { method: 'PUT', body: { data: { version: 1, items: [] }, allowEmpty: true } })).status, 409);
+  assert.equal(fs.readFileSync(file, 'utf8'), JSON.stringify({ version: 1, items: [{}] }));
+  fs.writeFileSync(file, '{broken json');
+  const load = await c('/api/shelf');
+  assert.equal(load.status, 422);
+  assert.equal(load.data.error, 'invalid_shelf');
+  const put = await c('/api/shelf', { method: 'PUT', body: { data: { version: 1, items: [] }, allowEmpty: true } });
+  assert.equal(put.status, 409, 'даже allowEmpty не должен перезаписывать повреждённый источник');
+  assert.equal(put.data.error, 'shelf_unavailable');
+  assert.equal(fs.readFileSync(file, 'utf8'), '{broken json');
+});
+
 test('🔴 сервер не принимает начисления за материал', { timeout: 40000 }, async (t) => {
   // §13: просмотр не даёт XP и золота. Клиент может прислать что угодно — сервер
   // не имеет права это сохранить, иначе обещание держится вежливостью клиента.

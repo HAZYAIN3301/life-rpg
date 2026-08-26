@@ -638,6 +638,75 @@ const I18N_EXTRA = {
   'Не удалось сохранить возвращение. Попробуй ещё раз.': { en: 'Could not save the return. Try again.', de: 'Die Rückkehr konnte nicht gespeichert werden. Versuche es erneut.', uk: 'Не вдалося зберегти повернення. Спробуй ще раз.', es: 'No se pudo guardar el regreso. Inténtalo de nuevo.' },
   'Открыть план на сегодня': { en: 'Open today\'s plan', de: 'Heutigen Plan öffnen', uk: 'Відкрити план на сьогодні', es: 'Abrir el plan de hoy' },
   'Отдых тоже может быть выбранным действием': { en: 'Rest can also be an intentional choice', de: 'Auch Ruhe kann eine bewusste Entscheidung sein', uk: 'Відпочинок теж може бути обраною дією', es: 'Descansar también puede ser una elección intencional' },
+  // ── Return Shelf R2: конечная библиотека вместо ещё одной ленты ──
+  'Полка возвращения': { en: 'Return Shelf', de: 'Rückkehr-Regal', uk: 'Полиця повернення', es: 'Estante de regreso' },
+  'Конечная библиотека, которая возвращает к выбранному действию.': { en: 'A finite library that returns you to a chosen action.', de: 'Eine endliche Bibliothek, die dich zu einer gewählten Handlung zurückführt.', uk: 'Скінченна бібліотека, що повертає до обраної дії.', es: 'Una biblioteca finita que te devuelve a una acción elegida.' },
+  'Загружаем сохранённые материалы…': { en: 'Loading saved materials…', de: 'Gespeicherte Materialien werden geladen…', uk: 'Завантажуємо збережені матеріали…', es: 'Cargando materiales guardados…' },
+  'Данные Полки повреждены': { en: 'Shelf data is corrupted', de: 'Regaldaten sind beschädigt', uk: 'Дані Полиці пошкоджено', es: 'Los datos del Estante están dañados' },
+  'Не удалось загрузить Полку': { en: 'Could not load the Shelf', de: 'Das Regal konnte nicht geladen werden', uk: 'Не вдалося завантажити Полицю', es: 'No se pudo cargar el Estante' },
+  'Это не пустая Полка. Ничего не перезаписываем, пока данные не восстановлены.': { en: 'This is not an empty Shelf. Nothing will be overwritten until the data is recovered.', de: 'Das ist kein leeres Regal. Bis zur Wiederherstellung wird nichts überschrieben.', uk: 'Це не порожня Полиця. Нічого не буде перезаписано, доки дані не відновлено.', es: 'Esto no es un Estante vacío. No se sobrescribirá nada hasta recuperar los datos.' },
+  'Новый материал': { en: 'New material', de: 'Neues Material', uk: 'Новий матеріал', es: 'Nuevo material' },
+  'Сохрани результат, а не новую бесконечность': { en: 'Save an outcome, not a new infinity', de: 'Speichere ein Ergebnis, keine neue Unendlichkeit', uk: 'Збережи результат, а не нову нескінченність', es: 'Guarda un resultado, no un nuevo infinito' },
+  'Ссылка — можно просто вставить': { en: 'Link — paste is enough', de: 'Link — Einfügen genügt', uk: 'Посилання — можна просто вставити', es: 'Enlace: basta con pegarlo' },
+  'Что я отсюда беру': { en: 'What I take from this', de: 'Was ich daraus mitnehme', uk: 'Що я звідси беру', es: 'Qué me llevo de esto' },
+  'Тип материала': { en: 'Material type', de: 'Materialart', uk: 'Тип матеріалу', es: 'Tipo de material' },
+  'Энергетический · 30–90 секунд': { en: 'Energy · 30–90 seconds', de: 'Energie · 30–90 Sekunden', uk: 'Енергетичний · 30–90 секунд', es: 'Energía · 30–90 segundos' },
+  'Практический · с конкретным выводом': { en: 'Practical · with a concrete output', de: 'Praktisch · mit konkretem Ergebnis', uk: 'Практичний · з конкретним результатом', es: 'Práctico · con un resultado concreto' },
+  'Связать с делом': { en: 'Link to work', de: 'Mit einer Aufgabe verknüpfen', uk: 'Пов’язати зі справою', es: 'Vincular con una tarea' },
+  'Без связи': { en: 'No link', de: 'Keine Verknüpfung', uk: 'Без зв’язку', es: 'Sin vínculo' },
+  'Ожидаемый практический вывод': { en: 'Expected practical output', de: 'Erwartetes praktisches Ergebnis', uk: 'Очікуваний практичний результат', es: 'Resultado práctico esperado' },
+  'Точка остановки': { en: 'Stopping point', de: 'Stopp-Punkt', uk: 'Точка зупинки', es: 'Punto de parada' },
+  'Убрать после даты': { en: 'Remove after date', de: 'Nach Datum ausblenden', uk: 'Прибрати після дати', es: 'Retirar después de la fecha' },
+  'Satoru хранит ссылку и твою заметку, а не копию чужого видео или аудио.': { en: 'Satoru stores the link and your note, not a copy of someone else\'s video or audio.', de: 'Satoru speichert den Link und deine Notiz, nicht die Kopie fremder Videos oder Audios.', uk: 'Satoru зберігає посилання й твою нотатку, а не копію чужого відео чи аудіо.', es: 'Satoru guarda el enlace y tu nota, no una copia del vídeo o audio de otra persona.' },
+  'Положить на Полку': { en: 'Add to Shelf', de: 'Ins Regal legen', uk: 'Покласти на Полицю', es: 'Añadir al Estante' },
+  'Энергетический': { en: 'Energy', de: 'Energie', uk: 'Енергетичний', es: 'Energético' },
+  'Практический': { en: 'Practical', de: 'Praktisch', uk: 'Практичний', es: 'Práctico' },
+  'Архивировать': { en: 'Archive', de: 'Archivieren', uk: 'Архівувати', es: 'Archivar' },
+  'Беру с собой': { en: 'I take with me', de: 'Das nehme ich mit', uk: 'Беру із собою', es: 'Me llevo' },
+  'Вывод': { en: 'Output', de: 'Ergebnis', uk: 'Результат', es: 'Resultado' },
+  'Время': { en: 'Time', de: 'Zeit', uk: 'Час', es: 'Tiempo' },
+  'Связано': { en: 'Linked', de: 'Verknüpft', uk: 'Пов’язано', es: 'Vinculado' },
+  'Открыть через границу': { en: 'Open through boundary', de: 'Über die Grenze öffnen', uk: 'Відкрити через межу', es: 'Abrir mediante el límite' },
+  'После материала': { en: 'After this material', de: 'Nach diesem Material', uk: 'Після матеріалу', es: 'Después del material' },
+  'Перейти к квесту': { en: 'Go to quest', de: 'Zur Quest', uk: 'Перейти до квесту', es: 'Ir a la misión' },
+  'Запустить фокус': { en: 'Start focus', de: 'Fokus starten', uk: 'Запустити фокус', es: 'Iniciar enfoque' },
+  'Записать мысль': { en: 'Write down a thought', de: 'Gedanken notieren', uk: 'Записати думку', es: 'Anotar una idea' },
+  'Отложить без наказания': { en: 'Postpone without penalty', de: 'Ohne Strafe verschieben', uk: 'Відкласти без покарання', es: 'Posponer sin penalización' },
+  'Перейти к действию': { en: 'Move to action', de: 'Zur Handlung', uk: 'Перейти до дії', es: 'Pasar a la acción' },
+  'Архив Полки': { en: 'Shelf archive', de: 'Regalarchiv', uk: 'Архів Полиці', es: 'Archivo del Estante' },
+  'Удалить навсегда': { en: 'Delete permanently', de: 'Dauerhaft löschen', uk: 'Видалити назавжди', es: 'Eliminar permanentemente' },
+  'Три сохранённых материала за один вход. Никакой ленты, autoplay и наград за просмотр.': { en: 'Three saved materials per visit. No feed, autoplay or rewards for watching.', de: 'Drei gespeicherte Materialien pro Besuch. Kein Feed, Autoplay oder Belohnungen fürs Ansehen.', uk: 'Три збережені матеріали за один вхід. Жодної стрічки, autoplay чи нагород за перегляд.', es: 'Tres materiales guardados por visita. Sin feed, reproducción automática ni recompensas por mirar.' },
+  'Добавить материал': { en: 'Add material', de: 'Material hinzufügen', uk: 'Додати матеріал', es: 'Añadir material' },
+  'Закрыть добавление': { en: 'Close add form', de: 'Hinzufügen schließen', uk: 'Закрити додавання', es: 'Cerrar formulario' },
+  'Состояние Полки': { en: 'Shelf status', de: 'Regalstatus', uk: 'Стан Полиці', es: 'Estado del Estante' },
+  'на Полке': { en: 'on the Shelf', de: 'im Regal', uk: 'на Полиці', es: 'en el Estante' },
+  'свободных мест': { en: 'free places', de: 'freie Plätze', uk: 'вільних місць', es: 'espacios libres' },
+  'перешли к действию': { en: 'led to action', de: 'führten zur Handlung', uk: 'перейшли до дії', es: 'llevaron a la acción' },
+  'Истёкших материалов': { en: 'Expired materials', de: 'Abgelaufene Materialien', uk: 'Протермінованих матеріалів', es: 'Materiales caducados' },
+  'Они уже не попадают в пачку.': { en: 'They no longer appear in the batch.', de: 'Sie erscheinen nicht mehr in der Auswahl.', uk: 'Вони більше не потрапляють до добірки.', es: 'Ya no aparecen en el lote.' },
+  'Убрать в архив': { en: 'Move to archive', de: 'Ins Archiv verschieben', uk: 'Прибрати в архів', es: 'Mover al archivo' },
+  'Фильтр материалов': { en: 'Material filter', de: 'Materialfilter', uk: 'Фільтр матеріалів', es: 'Filtro de materiales' },
+  'Пачка конечна': { en: 'Finite batch', de: 'Endliche Auswahl', uk: 'Скінченна добірка', es: 'Lote finito' },
+  'Всё': { en: 'All', de: 'Alle', uk: 'Усе', es: 'Todo' },
+  'Практика': { en: 'Practical', de: 'Praxis', uk: 'Практика', es: 'Práctica' },
+  'Пока не измерено': { en: 'Not measured yet', de: 'Noch nicht gemessen', uk: 'Ще не виміряно', es: 'Aún no medido' },
+  'Полка пока пуста': { en: 'The Shelf is empty for now', de: 'Das Regal ist noch leer', uk: 'Полиця поки порожня', es: 'El Estante está vacío por ahora' },
+  'В этом типе пока пусто': { en: 'Nothing in this type yet', de: 'In dieser Art ist noch nichts', uk: 'У цьому типі поки порожньо', es: 'Aún no hay nada de este tipo' },
+  'Сохрани один материал вместе с тем, что хочешь забрать в реальную жизнь.': { en: 'Save one material together with what you want to take into real life.', de: 'Speichere ein Material zusammen mit dem, was du ins echte Leben mitnehmen willst.', uk: 'Збережи один матеріал разом із тим, що хочеш забрати в реальне життя.', es: 'Guarda un material junto con lo que quieres llevarte a la vida real.' },
+  'Просмотр не даёт XP или золото. Отложить можно без наказания.': { en: 'Watching gives no XP or gold. You can postpone without penalty.', de: 'Ansehen gibt weder XP noch Gold. Verschieben ist ohne Strafe möglich.', uk: 'Перегляд не дає XP чи золота. Відкласти можна без покарання.', es: 'Mirar no da XP ni oro. Puedes posponer sin penalización.' },
+  'Экспорт и удаление данных': { en: 'Export and delete data', de: 'Daten exportieren und löschen', uk: 'Експорт і видалення даних', es: 'Exportar y eliminar datos' },
+  'Материал сохранён на Полке': { en: 'Material saved to the Shelf', de: 'Material im Regal gespeichert', uk: 'Матеріал збережено на Полиці', es: 'Material guardado en el Estante' },
+  'Не удалось сохранить материал. Ничего не изменено.': { en: 'Could not save the material. Nothing changed.', de: 'Das Material konnte nicht gespeichert werden. Nichts wurde geändert.', uk: 'Не вдалося зберегти матеріал. Нічого не змінено.', es: 'No se pudo guardar el material. No cambió nada.' },
+  'Полка заполнена. Сначала архивируй или удали материал.': { en: 'The Shelf is full. Archive or delete a material first.', de: 'Das Regal ist voll. Archiviere oder lösche zuerst ein Material.', uk: 'Полицю заповнено. Спочатку архівуй або видали матеріал.', es: 'El Estante está lleno. Archiva o elimina primero un material.' },
+  'Проверь ссылку и обязательные поля.': { en: 'Check the link and required fields.', de: 'Prüfe den Link und die Pflichtfelder.', uk: 'Перевір посилання й обов’язкові поля.', es: 'Comprueba el enlace y los campos obligatorios.' },
+  'Для практического материала нужен ожидаемый вывод.': { en: 'A practical material needs an expected output.', de: 'Ein praktisches Material braucht ein erwartetes Ergebnis.', uk: 'Для практичного матеріалу потрібен очікуваний результат.', es: 'Un material práctico necesita un resultado esperado.' },
+  'Не удалось изменить Полку. Данные остались на месте.': { en: 'Could not change the Shelf. The data stayed in place.', de: 'Das Regal konnte nicht geändert werden. Die Daten blieben erhalten.', uk: 'Не вдалося змінити Полицю. Дані залишилися на місці.', es: 'No se pudo cambiar el Estante. Los datos permanecieron intactos.' },
+  'Материал отложен без наказания': { en: 'Material postponed without penalty', de: 'Material ohne Strafe verschoben', uk: 'Матеріал відкладено без покарання', es: 'Material pospuesto sin penalización' },
+  'Материал перенесён в архив': { en: 'Material moved to archive', de: 'Material ins Archiv verschoben', uk: 'Матеріал перенесено в архів', es: 'Material movido al archivo' },
+  'Удалить материал с Полки?': { en: 'Delete material from the Shelf?', de: 'Material aus dem Regal löschen?', uk: 'Видалити матеріал із Полиці?', es: '¿Eliminar material del Estante?' },
+  'Ссылка и личная заметка исчезнут без возможности восстановления.': { en: 'The link and personal note will be permanently removed.', de: 'Link und persönliche Notiz werden unwiderruflich entfernt.', uk: 'Посилання й особиста нотатка зникнуть без можливості відновлення.', es: 'El enlace y la nota personal desaparecerán sin posibilidad de recuperación.' },
+  'Материал удалён': { en: 'Material deleted', de: 'Material gelöscht', uk: 'Матеріал видалено', es: 'Material eliminado' },
+  'Источник откроется после короткого решения о цели и времени.': { en: 'The source will open after a brief decision about purpose and time.', de: 'Die Quelle öffnet sich nach einer kurzen Entscheidung über Zweck und Zeit.', uk: 'Джерело відкриється після короткого рішення про мету й час.', es: 'La fuente se abrirá tras una breve decisión sobre propósito y tiempo.' },
   // ── v164 18.08: язык — первый шаг регистрации, English по умолчанию ──
   'Выбери язык': { en: 'Choose your language', de: 'Wähle deine Sprache', uk: 'Обери мову', es: 'Elige tu idioma' },
   'На нём пройдёт регистрация и откроется приложение. Позже язык можно поменять в Настройках.': { en: 'Registration and the app will use it. You can change the language later in Settings.', de: 'Registrierung und App verwenden diese Sprache. Du kannst sie später in den Einstellungen ändern.', uk: 'Цією мовою пройде реєстрація й відкриється застосунок. Пізніше мову можна змінити в Налаштуваннях.', es: 'El registro y la aplicación usarán este idioma. Puedes cambiarlo más tarde en Ajustes.' },
@@ -4152,6 +4221,57 @@ const AttentionStore = {
   },
 };
 
+// Return Shelf uses its dedicated account-owned endpoint. A failed or malformed
+// load is a write fence, never an empty library that the next click may persist.
+function validateShelfEnvelope(value) {
+  const S = window.ReturnShelfV1;
+  if (!S || !value || typeof value !== 'object' || Array.isArray(value) || Number(value.version) !== 1 || !Array.isArray(value.items) || value.items.length > S.MAX_ITEMS) return false;
+  const normalized = S.normalize(value);
+  if (normalized.items.length !== value.items.length) return false;
+  return normalized.items.every((item, index) => item.id === value.items[index].id);
+}
+const ShelfStore = {
+  empty() { return window.ReturnShelfV1 ? window.ReturnShelfV1.emptyState() : { version: 1, items: [] }; },
+  async load() {
+    try {
+      const response = await fetch('/api/shelf');
+      if (response.status === 401) { handleAccountSessionExpired(); return { value: this.empty(), error: 'session' }; }
+      if (response.status === 422) return { value: this.empty(), error: 'invalid' };
+      if (!response.ok) throw new Error('load ' + response.status);
+      const value = await response.json();
+      if (!validateShelfEnvelope(value)) return { value: this.empty(), error: 'invalid' };
+      return { value: window.ReturnShelfV1.normalize(value), error: '' };
+    } catch (error) {
+      console.error('shelf load', error);
+      return { value: this.empty(), error: error && error.name === 'SyntaxError' ? 'invalid' : 'load' };
+    }
+  },
+  async save(value, { allowEmpty = false } = {}) {
+    if (State._shelfLoadError || !validateShelfEnvelope(value)) return false;
+    try {
+      const response = await fetch('/api/shelf', {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: value, allowEmpty: !!allowEmpty }),
+      });
+      if (response.status === 401) { handleAccountSessionExpired(); return false; }
+      if (!response.ok) throw new Error('save ' + response.status);
+      return true;
+    } catch (error) { console.error('shelf save', error); return false; }
+  },
+  async add(item) {
+    if (State._shelfLoadError) return { ok: false, error: 'blocked' };
+    try {
+      const response = await fetch('/api/shelf/item', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ item }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (response.status === 401) { handleAccountSessionExpired(); return { ok: false, error: 'session' }; }
+      if (!response.ok) return { ok: false, error: data.error || `save_${response.status}` };
+      return { ok: true };
+    } catch (error) { console.error('shelf add', error); return { ok: false, error: 'save_failed' }; }
+  },
+};
+
 // ============================================================
 //  Дефолты и константы
 // ============================================================
@@ -5396,6 +5516,9 @@ const State = {
   attentionMode: 'local', attentionPolicies: null, attentionSessions: null, attentionEpisodes: null,
   _attentionLoadError: '', _attentionLoadBusy: false, _attentionWriteBlockedNoticeAt: 0,
   _attentionDeepLink: null, _attentionReturnIndex: 0,
+  shelf: null, _shelfLoadError: '', _shelfLoadBusy: false, _shelfBusy: '', _shelfError: '',
+  _shelfComposerOpen: false, _shelfFilter: 'all', _shelfFocusAfterCommit: '',
+  _shelfPendingSource: null, _shelfNoteDraft: '',
   boardMedia: null, _boardMediaLoadError: '', _boardMediaBusy: false, _boardBusy: false, _boardError: '', _boardFocusAfterCommit: '',
   _boardComplete: null, _boardV2Receipt: null,
   strava: null, _stravaSyncing: false,
@@ -19771,7 +19894,7 @@ function openAttentionSetup(opener, defaults = {}) {
     targetLabel: defaults.targetLabel || '', purpose: defaults.purpose || 'publish',
     minutes: defaults.minutes || 10, mode: defaults.mode || 'adaptive', outcomeHint: defaults.outcomeHint || '',
     storageMode: defaults.storageMode || State.attentionMode || 'local',
-  }, { opener });
+  }, { opener, source: defaults.source || 'manual' });
 }
 function attentionPolicyForTarget(target) {
   const C = attentionController(); if (!C) return null;
@@ -19873,12 +19996,14 @@ async function retryAttentionLoad() {
 
 async function saveAttentionSetup(form) {
   const C = attentionController(); if (!C || attentionHasLoadError()) return;
+  const overlay = form.closest('#attention-dialog-overlay');
   const input = {
     targetLabel: form.targetLabel.value, purpose: form.purpose.value, minutes: form.minutes.value,
     mode: form.mode.value, outcome: form.outcomeHint.value,
   };
   const storageMode = C.storageMode(form.storageMode && form.storageMode.value);
-  const next = C.upsertPolicy(State.attentionPolicies, input, form.dataset.policyId || attentionPolicyId(input.targetLabel));
+  const policyId = form.dataset.policyId || attentionPolicyId(input.targetLabel);
+  const next = C.upsertPolicy(State.attentionPolicies, input, policyId);
   if (!next.ok) { attentionStatus(next.error === 'outcome_required' ? 'Для рабочей цели нужен конкретный результат.' : 'Проверь заполненные поля.', true); return; }
   attentionBusy(true); attentionStatus('Сохраняю…');
   const bundle = { ...attentionBundle(), mode: storageMode, policies: next.state };
@@ -19886,7 +20011,9 @@ async function saveAttentionSetup(form) {
   if (!saved) { attentionBusy(false); attentionStatus('Не удалось сохранить. Ничего не изменено — повтори попытку.', true); return; }
   applyAttentionBundle(bundle);
   closeAttentionDialog({ restoreFocus: false, force: true });
-  State._settingsFocusAfterCommit = '.attention-settings-card'; render(); toast(t('Правило внимания сохранено'));
+  if (overlay?.dataset.attentionSource === 'shelf' && State._shelfPendingSource) openAttentionEntry(policyId, 'shelf', State._shelfPendingSource.opener);
+  else { State._settingsFocusAfterCommit = '.attention-settings-card'; render(); }
+  toast(t('Правило внимания сохранено'));
 }
 
 async function startAttentionEntry(form) {
@@ -19907,11 +20034,16 @@ async function startAttentionEntry(form) {
   const saved = await AttentionStore.save(bundle);
   if (!saved) { attentionBusy(false); attentionStatus('Не удалось сохранить. Окно не началось — повтори попытку.', true); return; }
   applyAttentionBundle(bundle);
+  const shelfSource = overlay?.dataset.attentionSource === 'shelf' && State._shelfPendingSource;
   const refreshSettings = State.view === 'settings';
   closeAttentionDialog({ restoreFocus: !refreshSettings, force: true });
   if (refreshSettings) { State._settingsFocusAfterCommit = '.attention-settings-card'; render(); }
   scheduleAttentionBoundary(); track(`attention:start:${overlay?.dataset.attentionSource === 'shortcut' ? 'shortcut' : 'manual'}`);
   toast(t('Окно внимания началось'));
+  if (shelfSource) {
+    const url = shelfSource.url; State._shelfPendingSource = null;
+    try { location.assign(url); } catch { State._shelfError = 'Не удалось изменить Полку. Данные остались на месте.'; }
+  }
 }
 
 async function extendAttentionSession(button) {
@@ -19991,6 +20123,160 @@ async function startAttentionReturn(button) {
   State.view = 'today'; if (id) State._tasksFocusAfterCommit = `.task[data-id="${CSS.escape(id)}"] .t-title-edit, .task[data-id="${CSS.escape(id)}"]`;
   render();
 }
+
+// ============================================================
+//  Return Shelf R2 — finite saved batch → one chosen action.
+// ============================================================
+function shelfEngine() { return window.ReturnShelfV1 || null; }
+function shelfState() { const S = shelfEngine(); return S ? S.normalize(State.shelf || S.emptyState()) : { version: 1, items: [] }; }
+function shelfLinkLabel(item) {
+  if (item.taskId) { const task = (State.tasks || []).find((row) => row.id === item.taskId); if (task) return task.title; }
+  if (item.goalId) { const goal = (State.goals || []).find((row) => row.id === item.goalId); if (goal) return goal.title; }
+  return '';
+}
+function shelfViewModel() {
+  const S = shelfEngine(), UI = window.ReturnShelfUIV1;
+  if (!S || !UI) return { state: 'error', error: 'load' };
+  if (State._shelfLoadBusy && !State.shelf) return { state: 'loading' };
+  if (State._shelfLoadError) return { state: 'error', error: State._shelfLoadError, busy: State._shelfLoadBusy };
+  const state = shelfState(), filter = UI.FILTERS.includes(State._shelfFilter) ? State._shelfFilter : 'all';
+  const live = S.liveItems(state, todayStr());
+  const items = S.batch(state, todayStr(), { size: S.BATCH_DEFAULT, kind: filter === 'all' ? null : filter })
+    .map((item) => ({ ...item, linkLabel: shelfLinkLabel(item), busy: State._shelfBusy === item.id }));
+  const archived = state.items.filter((item) => item.archivedOn || !S.isLive(item, todayStr()));
+  return {
+    state: 'ready', items, archived, filter, liveCount: live.length,
+    freeCount: Math.max(0, S.MAX_ITEMS - state.items.filter((item) => !item.archivedOn).length),
+    expiredCount: S.expired(state, todayStr()).length, rate: S.actionRate(state),
+    composerOpen: State._shelfComposerOpen,
+    errorMessage: State._shelfError, tasks: (State.tasks || []).filter((task) => !task.done && !task.archived).slice(0, 30),
+    goals: (State.goals || []).filter((goal) => !goal.completedAt && goal.status !== 'archived').slice(0, 30),
+  };
+}
+function renderShelf() {
+  const UI = window.ReturnShelfUIV1;
+  if (!UI) return `<section class="card" role="alert"><h2 id="return-shelf-title">${t('Полка возвращения')}</h2><p>${t('Модуль внимания не загрузился. Обнови страницу.')}</p></section>`;
+  return UI.render(shelfViewModel(), t);
+}
+async function retryShelfLoad() {
+  if (State._shelfLoadBusy) return;
+  State._shelfLoadBusy = true; State._shelfError = ''; State._shelfFocusAfterCommit = '[data-action="shelf-retry"]'; render();
+  const loaded = await ShelfStore.load();
+  State._shelfLoadBusy = false; State._shelfLoadError = loaded.error; State.shelf = loaded.value;
+  State._shelfFocusAfterCommit = loaded.error ? '[data-action="shelf-retry"]' : '#return-shelf-title'; render();
+}
+function shelfDraftFromForm(form) {
+  const link = String(form.link && form.link.value || '');
+  const draft = {
+    id: `shelf-${uid()}`, kind: form.kind.value, title: form.title.value,
+    why: form.why.value, url: form.url.value, addedOn: todayStr(), expiresOn: form.expiresOn.value,
+  };
+  if (draft.kind === 'practical') {
+    draft.expect = form.expect.value; draft.stopAt = form.stopAt.value; draft.minutes = form.minutes.value;
+  }
+  if (link.startsWith('task:')) draft.taskId = link.slice(5);
+  if (link.startsWith('goal:')) draft.goalId = link.slice(5);
+  return draft;
+}
+function shelfFormStatus(message, isError = false) {
+  const status = document.querySelector('[data-shelf-form-status]'); if (!status) return;
+  status.textContent = t(message); status.dataset.error = isError ? 'true' : 'false';
+}
+async function addShelfItem(form) {
+  const S = shelfEngine(); if (!S || State._shelfBusy || State._shelfLoadError) return;
+  const draft = shelfDraftFromForm(form);
+  const local = S.add(shelfState(), draft);
+  if (!local.ok) {
+    const message = local.error === 'full' ? 'Полка заполнена. Сначала архивируй или удали материал.'
+      : draft.kind === 'practical' && !String(draft.expect || '').trim() ? 'Для практического материала нужен ожидаемый вывод.' : 'Проверь ссылку и обязательные поля.';
+    shelfFormStatus(message, true); return;
+  }
+  State._shelfBusy = 'add'; form.querySelectorAll(':is(button,input,select,textarea)').forEach((node) => { node.disabled = true; }); shelfFormStatus('Сохраняю…');
+  const stored = await ShelfStore.add(local.state.items[local.state.items.length - 1]);
+  State._shelfBusy = '';
+  if (!stored.ok) {
+    form.querySelectorAll(':is(button,input,select,textarea)').forEach((node) => { node.disabled = false; });
+    shelfFormStatus(stored.error === 'shelf_full' ? 'Полка заполнена. Сначала архивируй или удали материал.' : 'Не удалось сохранить материал. Ничего не изменено.', true); return;
+  }
+  State.shelf = local.state; State._shelfComposerOpen = false; State._shelfError = '';
+  State._shelfFocusAfterCommit = `[data-shelf-id="${CSS.escape(draft.id)}"] h3`; render(); toast(t('Материал сохранён на Полке')); track('shelf:add');
+}
+async function commitShelf(next, { focus = '#return-shelf-title', allowEmpty = false, toastKey = '' } = {}) {
+  if (State._shelfBusy || State._shelfLoadError) return false;
+  State._shelfBusy = 'save'; State._shelfError = ''; render();
+  const saved = await ShelfStore.save(next, { allowEmpty });
+  State._shelfBusy = '';
+  if (!saved) { State._shelfError = 'Не удалось изменить Полку. Данные остались на месте.'; State._shelfFocusAfterCommit = focus; render(); return false; }
+  State.shelf = next; State._shelfError = ''; State._shelfFocusAfterCommit = focus; render();
+  if (toastKey) toast(t(toastKey));
+  return true;
+}
+async function archiveShelfItem(id) {
+  const S = shelfEngine(); if (!S) return;
+  await commitShelf(S.archive(shelfState(), id, todayStr()), { toastKey: 'Материал перенесён в архив' });
+}
+async function archiveExpiredShelfItems() {
+  const S = shelfEngine(); if (!S) return;
+  let next = shelfState(); for (const item of S.expired(next, todayStr())) next = S.archive(next, item.id, todayStr());
+  await commitShelf(next, { toastKey: 'Материал перенесён в архив' });
+}
+function openShelfDeleteDialog(id, opener) {
+  const item = shelfState().items.find((row) => row.id === id); if (!item) return;
+  closeAccountDialog('return-shelf-delete-dialog', { restoreFocus: false });
+  const overlay = document.createElement('div'); overlay.id = 'return-shelf-delete-dialog'; overlay.className = 'modal-overlay return-shelf-delete-overlay'; overlay.dataset.id = id;
+  overlay.innerHTML = `<section class="return-shelf-delete-dialog" role="dialog" aria-modal="true" aria-labelledby="return-shelf-delete-title" aria-describedby="return-shelf-delete-description"><button type="button" class="modal-x" data-action="shelf-delete-cancel" aria-label="${t('Закрыть')}">✕</button><h2 id="return-shelf-delete-title" tabindex="-1">${t('Удалить материал с Полки?')}</h2><p id="return-shelf-delete-description">${t('Ссылка и личная заметка исчезнут без возможности восстановления.')}</p><p class="return-shelf-delete-name" data-noi18n>${esc(item.title)}</p><div><button type="button" class="btn ghost" data-action="shelf-delete-cancel">${t('Отмена')}</button><button type="button" class="btn danger" data-action="shelf-delete-confirm">${t('Удалить')}</button></div></section>`;
+  mountAccountDialog(overlay, { initial: '#return-shelf-delete-title', returnFocus: opener });
+}
+async function confirmShelfDelete() {
+  const overlay = document.getElementById('return-shelf-delete-dialog'), S = shelfEngine(); if (!overlay || !S) return;
+  const id = overlay.dataset.id, next = S.remove(shelfState(), id);
+  overlay.querySelectorAll('button').forEach((node) => { node.disabled = true; });
+  const saved = await ShelfStore.save(next, { allowEmpty: next.items.length === 0 });
+  if (!saved) { const p = overlay.querySelector('#return-shelf-delete-description'); p.textContent = t('Не удалось изменить Полку. Данные остались на месте.'); p.setAttribute('role', 'alert'); overlay.querySelectorAll('button').forEach((node) => { node.disabled = false; }); return; }
+  State.shelf = next; closeAccountDialog('return-shelf-delete-dialog', { restoreFocus: false }); State._shelfFocusAfterCommit = '#return-shelf-title'; render(); toast(t('Материал удалён'));
+}
+function shelfSourceTarget(item) {
+  try { return new URL(item.url).hostname.replace(/^www\./, '').slice(0, 80); } catch { return ''; }
+}
+function openShelfSource(id, opener) {
+  const item = shelfState().items.find((row) => row.id === id); if (!item || !item.url) return;
+  const active = window.AttentionSessionV1 && window.AttentionSessionV1.active(State.attentionSessions);
+  if (active) { if (window.AttentionSessionV1.isOver(active, attentionNow())) openAttentionBoundary(active.id); else toast(t('Одно окно внимания уже идёт')); return; }
+  const target = shelfSourceTarget(item); if (!target) return;
+  State._shelfPendingSource = { id: item.id, url: item.url, opener };
+  const policy = attentionPolicyForTarget(target);
+  if (policy) openAttentionEntry(policy.id, 'shelf', opener);
+  else openAttentionSetup(opener, { targetLabel: target, purpose: 'watch', minutes: item.kind === 'energy' ? 3 : Math.min(180, item.minutes || 20), outcomeHint: item.expect || item.why, source: 'shelf' });
+  toast(t('Источник откроется после короткого решения о цели и времени.'));
+}
+async function completeShelfItem(form) {
+  const S = shelfEngine(), id = form.dataset.id, action = form.action.value; if (!S || State._shelfBusy) return;
+  const item = shelfState().items.find((row) => row.id === id); if (!item) return;
+  const result = S.complete(shelfState(), id, action, attentionNow(), todayStr()); if (!result.ok) return;
+  if (!await commitShelf(result.state, { focus: action === 'postpone' ? `[data-shelf-id="${CSS.escape(id)}"] h3` : '#return-shelf-title' })) return;
+  track(`shelf:action:${action}`);
+  if (action === 'postpone') { toast(t('Материал отложен без наказания')); return; }
+  if (action === 'focus') {
+    const task = item.taskId && questById(item.taskId); if (task && !task.done) { startFocus(task.id); return; }
+    State.view = 'today'; State._tasksFocusAfterCommit = '[data-action="focus-add-task"]'; render(); return;
+  }
+  if (action === 'quest') {
+    State.view = 'today'; State._tasksFocusAfterCommit = item.taskId ? `.task[data-id="${CSS.escape(item.taskId)}"] .t-title-edit` : '#add-task input[name="title"]'; render(); return;
+  }
+  if (action === 'note') {
+    State._shelfNoteDraft = `${item.title} — ${item.why}`.slice(0, 1000); State.view = 'notes'; State._inboxFocusAfterCommit = '#capture-form input[name="text"]'; render(); return;
+  }
+  if (action === 'project') {
+    State.view = 'goals';
+    if (item.goalId && goalById(item.goalId)) {
+      State._goalOpenId = item.goalId; State._goalsFocusAfterCommit = '#goal-detail-title'; syncGoalDeepLink(item.goalId);
+    } else {
+      State._goalsComposerOpen = true; State._goalsFocusAfterCommit = '#add-goal input[name="title"]';
+    }
+    render();
+  }
+}
+
 function renderSettings() {
   ensureAiKeys();
   ensureStravaStatus();
@@ -20554,12 +20840,13 @@ function renderLeaderboard() {
     </section>`;
 }
 
-const VIEWS = { today: renderToday, notes: renderNotes, calendar: renderCalendarView, habits: renderHabitsView, den: renderDen, character: renderCharacter, pets: renderPets, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, party: renderParty, leaderboard: renderLeaderboard, settings: renderSettings };
+const VIEWS = { today: renderToday, notes: renderNotes, calendar: renderCalendarView, habits: renderHabitsView, shelf: renderShelf, den: renderDen, character: renderCharacter, pets: renderPets, goals: renderGoals, tree: renderTree, rewards: renderRewards, weekly: renderWeekly, stats: renderStats, party: renderParty, leaderboard: renderLeaderboard, settings: renderSettings };
 // Разгрузка дизайна: 11 вкладок → 5 разделов с под-вкладками. Прогрессивное раскрытие через гейт уровня.
 const SECTIONS = [
   { id: 'today', iconId: 'nav.today', label: 'Сегодня', gate: 0, views: [{ view: 'today', label: 'День' }, { view: 'notes', label: 'Заметки' }] },
   { id: 'plan', iconId: 'nav.plan', label: 'План', gate: 0, views: [{ view: 'calendar', label: 'Календарь' }, { view: 'goals', label: 'Цели' }] },
   { id: 'habits', iconId: 'nav.habits', label: 'Привычки', gate: 0, views: [{ view: 'habits', label: 'Привычки' }] },
+  { id: 'library', iconId: 'nav.notes', label: 'Возвращение', gate: 0, views: [{ view: 'shelf', label: 'Полка возвращения' }] },
   { id: 'rewards', iconId: 'nav.rewards', label: 'Награды', gate: 0, views: [{ view: 'rewards', label: 'Награды' }] },
   { id: 'hero', iconId: 'nav.hero', label: 'Герой', gate: 3, views: [
     { view: 'den', label: 'Логово', iconId: 'nav.lair' },
@@ -20572,11 +20859,11 @@ const SECTIONS = [
 ];
 // Канон mobile navigation: четыре прямых destination и один purpose-grouped More.
 const MOBILE_PRIMARY_SECTION_IDS = Object.freeze(['today', 'plan', 'habits', 'hero']);
-const MOBILE_MORE_SECTION_IDS = Object.freeze(['rewards', 'tribe']);
+const MOBILE_MORE_SECTION_IDS = Object.freeze(['library', 'rewards', 'tribe']);
 function sectionOf(view) { for (const s of SECTIONS) if (s.views.some((v) => v.view === view)) return s.id; return null; } // settings (шестерёнка) и legacy weekly → null
 function navUnlockLevel() { return (State.me && State.me.isAdmin) ? 999 : charLevel(); } // админ видит всё (дог-фуддинг)
 // ── Дискаверабилити: мягко подсвечиваем разделы/фичи, куда юзер ещё не заходил ──
-const NEW_VIEWS = ['den', 'pets']; // спотлайт новых фич (точка «NEW» на под-вкладке)
+const NEW_VIEWS = ['den', 'pets', 'shelf']; // спотлайт новых фич (точка «NEW» на под-вкладке)
 function isDiscovered(v) { return ((State.settings && State.settings.discovered) || []).includes(v); }
 function markDiscovered(v) { const s = State.settings; if (!s) return; if (!Array.isArray(s.discovered)) s.discovered = []; if (!s.discovered.includes(v)) { s.discovered.push(v); Store.save('settings', s); } }
 function sectionHasNew(s, lvl) {
@@ -20714,7 +21001,7 @@ function showMobileNavSheet() {
     <div class="mobile-sheet-groups">
       ${group('mobile-more-growth', 'Развитие', sectionEntry('rewards'))}
       ${group('mobile-more-community', 'Сообщество', sectionEntry('tribe'))}
-      ${group('mobile-more-support', 'Поддержка', `<button class="mobile-sheet-entry" data-action="open-helper"><span class="mobile-sheet-icon">${satoruIconHTML('nav.shadow', 'mobile-sheet-glyph', '🤖')}</span><span><b>${t('Помощник')}</b><small>Satoru AI</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
+      ${group('mobile-more-support', 'Поддержка', `${sectionEntry('library')}<button class="mobile-sheet-entry" data-action="open-helper"><span class="mobile-sheet-icon">${satoruIconHTML('nav.shadow', 'mobile-sheet-glyph', '🤖')}</span><span><b>${t('Помощник')}</b><small>Satoru AI</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
       ${group('mobile-more-account', 'Аккаунт и доступ', `<button class="mobile-sheet-entry${State.view === 'settings' ? ' active' : ''}" data-action="mobile-go-settings" aria-current="${State.view === 'settings' ? 'page' : 'false'}"><span class="mobile-sheet-icon">${satoruIconHTML('nav.settings', 'mobile-sheet-glyph', '⚙️')}</span><span><b>${t('Настройки')}</b></span><span class="mobile-sheet-chevron">›</span></button><button class="mobile-sheet-entry" data-action="show-paywall" data-feature="Pro"><span class="mobile-sheet-icon">${satoruIconHTML('status.xp', 'mobile-sheet-glyph', '◇')}</span><span><b>Pro</b><small>${ent().tier === 'pro' ? 'PRO' : ent().tier === 'trial' ? `${t('Pro-триал')} · ${localizedDayCount(trialDaysLeft(), true)}` : 'FREE'}</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
       ${group('mobile-more-session', 'Справка и сеанс', `<div class="mobile-sheet-utils"><button class="btn ghost" data-action="show-guide">? ${t('Как играть')}</button><button class="btn ghost" data-action="logout">⇦ ${t('Выйти')}</button></div>`) }
     </div>
@@ -20845,6 +21132,17 @@ function afterMainCommit() {
     requestAnimationFrame(() => {
       const target = document.querySelector(selector) || document.querySelector('#main h2');
       if (target) focusPathChoiceTarget(target);
+    });
+  }
+  if (State._shelfNoteDraft && State.view === 'notes') {
+    const draft = State._shelfNoteDraft; State._shelfNoteDraft = '';
+    requestAnimationFrame(() => { const input = document.querySelector('#capture-form input[name="text"]'); if (input) { input.value = draft; focusPathChoiceTarget(input); } });
+  }
+  if (State._shelfFocusAfterCommit && State.view === 'shelf') {
+    const selector = State._shelfFocusAfterCommit; State._shelfFocusAfterCommit = '';
+    requestAnimationFrame(() => {
+      const target = document.querySelector(selector) || document.getElementById('return-shelf-title');
+      if (target) { target.scrollIntoView({ behavior: avatarMotionReduced() ? 'auto' : 'smooth', block: 'nearest' }); focusPathChoiceTarget(target); }
     });
   }
   if (State._inboxFocusAfterCommit && State.view === 'notes') {
@@ -21174,6 +21472,12 @@ async function onSubmit(e) {
   }
   if (f.id === 'attention-entry-form') {
     e.preventDefault(); await startAttentionEntry(f); return;
+  }
+  if (f.id === 'return-shelf-add-form') {
+    e.preventDefault(); await addShelfItem(f); return;
+  }
+  if (f.classList?.contains('return-shelf-complete-form')) {
+    e.preventDefault(); await completeShelfItem(f); return;
   }
 
   if (f.id === 'cal-task-form') {
@@ -22518,6 +22822,17 @@ async function onClick(e) {
     setTimeout(() => document.getElementById('ai-fab')?.click(), 0); return;
   }
   if (action === 'attention-rest-today') { closeAttentionDialog({ force: true }); toast(t('Отдых тоже может быть выбранным действием')); return; }
+
+  if (action === 'shelf-toggle-composer') { State._shelfComposerOpen = !State._shelfComposerOpen; State._shelfError = ''; State._shelfFocusAfterCommit = State._shelfComposerOpen ? '#return-shelf-add-form input[name="title"]' : '#return-shelf-title'; render(); return; }
+  if (action === 'shelf-filter') { State._shelfFilter = el.dataset.filter || 'all'; State._shelfFocusAfterCommit = `[data-action="shelf-filter"][data-filter="${CSS.escape(State._shelfFilter)}"]`; render(); return; }
+  if (action === 'shelf-retry') { await retryShelfLoad(); return; }
+  if (action === 'shelf-open-source') { openShelfSource(id, el); return; }
+  if (action === 'shelf-archive') { await archiveShelfItem(id); return; }
+  if (action === 'shelf-archive-expired') { await archiveExpiredShelfItems(); return; }
+  if (action === 'shelf-delete') { openShelfDeleteDialog(id, el); return; }
+  if (action === 'shelf-delete-cancel') { closeAccountDialog('return-shelf-delete-dialog'); return; }
+  if (action === 'shelf-delete-confirm') { await confirmShelfDelete(); return; }
+  if (action === 'shelf-open-export') { State.view = 'settings'; State.settingsSection = 'data'; State._settingsFocusAfterCommit = '.account-data-card, #settings-title'; render(); return; }
 
   if (el.closest('#mobile-nav-sheet') && action !== 'mobile-nav-close') {
     // Новый экран или диалог становится владельцем фокуса. Не возвращаемся к
@@ -24449,6 +24764,8 @@ function clearAllData() {
   State.purchases = null; State.achievements = null; State.weeks = null; State.lootbox = null;
   State.inbox = null; State.inboxOpen = false; State.antihabits = null; State.episodes = null;
   State.attentionMode = 'local'; State.attentionPolicies = null; State.attentionSessions = null; State.attentionEpisodes = null;
+  State.shelf = null; State._shelfLoadError = ''; State._shelfLoadBusy = false; State._shelfBusy = ''; State._shelfError = '';
+  State._shelfComposerOpen = false; State._shelfFilter = 'all'; State._shelfFocusAfterCommit = ''; State._shelfPendingSource = null; State._shelfNoteDraft = '';
   State.profile = null; State.aiKeys = null; State.strava = null; State.chatLog = [];
   State.leaderboard = null; State.party = null; State.adminUsers = null; State.socialPrivacy = null; State.myFeedbackCount = 0;
   State._lbError = ''; State._partyError = ''; State._socialError = ''; State._socialBusy = '';
@@ -24670,6 +24987,12 @@ async function initApp() {
     else applyAttentionBundle({ mode: 'local', ...(C ? C.emptyBundle() : { policies: { version: 1, policies: [] }, sessions: { version: 1, sessions: [] }, episodes: { version: 1, episodes: [] } }) });
   }
   {
+    State._shelfLoadBusy = true;
+    const loaded = await ShelfStore.load();
+    State._shelfLoadBusy = false; State._shelfLoadError = loaded.error; State.shelf = loaded.value;
+    if (loaded.error === 'session' || State._accountSessionExpired) return;
+  }
+  {
     const [goalsLoad, groupsLoad] = await Promise.all([
       Store.loadChecked('goals', [], validateGoalsPayload),
       Store.loadChecked('goal-groups', [], validateGoalGroupsPayload),
@@ -24764,6 +25087,13 @@ function publishLeaderboard() {
 
 // Делегированный обработчик change (для select-ов вне форм — напр. импорт достижений)
 function onChange(e) {
+  if (e.target.matches?.('#return-shelf-add-form [data-action="shelf-kind"]')) {
+    const form = e.target.form, practical = e.target.value === 'practical';
+    if (form) form.dataset.shelfKind = practical ? 'practical' : 'energy';
+    form?.querySelectorAll('[data-shelf-practical]').forEach((field) => { field.hidden = !practical; });
+    const expect = form?.elements.expect; if (expect) expect.required = practical;
+    return;
+  }
   if (e.target.matches?.('#attention-entry-form input[name="purposeId"]')) {
     const form = e.target.form, field = form && form.querySelector('[data-attention-topic]'), topic = form && form.elements.topic;
     const needed = e.target.value === 'research';

@@ -19,7 +19,7 @@ function escaped(value) { return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
 test('Mobile navigation v128 preserves exactly four primary destinations plus labelled More', () => {
   assert.match(APP, /const MOBILE_PRIMARY_SECTION_IDS = Object\.freeze\(\['today', 'plan', 'habits', 'hero'\]\)/);
-  assert.match(APP, /const MOBILE_MORE_SECTION_IDS = Object\.freeze\(\['rewards', 'tribe'\]\)/);
+  assert.match(APP, /const MOBILE_MORE_SECTION_IDS = Object\.freeze\(\['library', 'rewards', 'tribe'\]\)/);
   const nav = between(APP, 'function renderNav()', '\nfunction mobileNavFocusable');
   assert.match(nav, /MOBILE_PRIMARY_SECTION_IDS\.includes\(s\.id\)/);
   assert.match(nav, /aria-haspopup="dialog" aria-expanded="false" aria-current=/);

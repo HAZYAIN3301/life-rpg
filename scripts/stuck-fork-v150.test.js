@@ -160,5 +160,5 @@ test('новая copy покрыта всеми пятью языками', () =
 });
 
 test('обновлённый offline shell', () => {
-  assert.match(sw, /const CACHE = 'satoru-v178'/);
+  assert.match(sw, /const CACHE = 'satoru-v179'/);
 });

@@ -2989,14 +2989,31 @@ const server = http.createServer(async (req, res) => {
     const uid = sessionUserId(req);
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const file = path.join(userDataDir(uid), 'shelf.json');
-    const readNow = () => { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return null; } };
+    const readNow = () => {
+      if (!fs.existsSync(file)) return { exists: false, value: shelfEmpty(), error: '' };
+      try {
+        const raw = JSON.parse(fs.readFileSync(file, 'utf8'));
+        const value = shelfSanitize(raw);
+        // Stored bytes are expected to be the server's own whitelist output. If
+        // manual corruption would make sanitization drop rows, returning [] would
+        // lie to the client and unlock a destructive overwrite.
+        if (!value || Number(raw.version) !== 1 || !Array.isArray(raw.items) || value.items.length !== raw.items.length) {
+          return { exists: true, value: shelfEmpty(), error: 'invalid' };
+        }
+        return { exists: true, value, error: '' };
+      } catch { return { exists: true, value: shelfEmpty(), error: 'invalid' }; }
+    };
     const persist = (value) => {
       fs.mkdirSync(userDataDir(uid), { recursive: true });
       backupFile(userDataDir(uid), 'shelf');
       writeJsonAtomic(file, value);
     };
 
-    if (u === '/api/shelf' && req.method === 'GET') return sendJson(res, 200, readNow() || shelfEmpty());
+    if (u === '/api/shelf' && req.method === 'GET') {
+      const stored = readNow();
+      if (stored.error) return sendJson(res, 422, { error: 'invalid_shelf' });
+      return sendJson(res, 200, stored.value);
+    }
 
     if (u === '/api/shelf' && req.method === 'PUT') {
       let body = {};
@@ -3004,7 +3021,9 @@ const server = http.createServer(async (req, res) => {
       catch { return sendJson(res, 400, { error: 'too large / bad json' }); }
       const next = shelfSanitize(body && body.data);
       if (!next) return sendJson(res, 400, { error: 'invalid_shelf' });
-      const cur = shelfSanitize(readNow()) || shelfEmpty();
+      const stored = readNow();
+      if (stored.error) return sendJson(res, 409, { error: 'shelf_unavailable' });
+      const cur = stored.value;
       // Тот же write guard: пустая Полка поверх непустой почти всегда означает
       // клиента, который не смог загрузить и «сохраняет» пустоту.
       if (!body.allowEmpty && cur.items.length > 0 && next.items.length === 0) {
@@ -3020,7 +3039,9 @@ const server = http.createServer(async (req, res) => {
       try { body = JSON.parse(await readBody(req, 64 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
       const item = shelfCleanItem(body && body.item);
       if (!item) return sendJson(res, 400, { error: 'invalid_item' });
-      const cur = shelfSanitize(readNow()) || shelfEmpty();
+      const stored = readNow();
+      if (stored.error) return sendJson(res, 409, { error: 'shelf_unavailable' });
+      const cur = stored.value;
       const at = cur.items.findIndex((i) => i.id === item.id);
       if (at < 0) {
         // Полка не склад (§13): переполнение — отказ, а не молчаливое вытеснение.
