@@ -89,18 +89,18 @@ test('Guide model, copy, presenter and surface load before app.js', () => {
   assert.ok(surface < app, 'Guide surface must be available before app.js starts');
 });
 
-test('the RU tone-gate review is an exact mirror of centralized runtime copy', () => {
+test('the approved RU review is an exact mirror of centralized runtime copy', () => {
   const mirror = COPY_REVIEW.match(/## Точное зеркало ключей[\s\S]*?```json\s*([\s\S]*?)\s*```/);
   assert.ok(mirror, 'missing machine-readable RU copy mirror');
   const reviewCopy = JSON.parse(mirror[1]);
   assert.equal(Object.keys(reviewCopy).length, Object.keys(COPY_RU.COPY).length);
   assert.deepEqual(reviewCopy, COPY_RU.COPY);
-  assert.match(COPY_REVIEW, /Это не утверждённая runtime-copy/);
-  assert.match(COPY_REVIEW, /нельзя переводить на EN\/DE\/UK\/ES/);
+  assert.match(COPY_REVIEW, /runtime утверждён 2026-08-26/);
+  assert.match(COPY_REVIEW, /RUNTIME_APPROVED` поднят намеренно/);
 });
 
 test('v163 offline shell pins all Guide runtime scripts', () => {
-  sourceMatches(SW, /const CACHE = 'satoru-v181';/);
+  sourceMatches(SW, /const CACHE = 'satoru-v182';/);
   for (const file of ['guide-v3.js', COPY_FILE, 'guide-presenter-v1.js', 'guide-surface-v1.js']) {
     assert.ok(file, 'Guide runtime file must be discoverable before checking SHELL');
     assert.ok(SW.includes(`'${file}'`) || SW.includes(`"${file}"`), `${file} must be pinned in SHELL`);
@@ -257,9 +257,10 @@ test('Escape abandons replay but snoozes a live chapter', () => {
     'the replay abandonment helper must never enter the live snooze path');
 });
 
-test('unapproved RU draft cannot auto-start or leak into another locale library', () => {
-  assert.equal(COPY_RU.RUNTIME_APPROVED, false,
-    'the RU draft must remain explicitly runtime-blocked until the tone gate is approved');
+test('approved RU copy can run while another locale still cannot receive the RU library', () => {
+  assert.equal(COPY_RU.RUNTIME_APPROVED, true,
+    'the owner-approved RU Guide must be available in normal runtime');
+  assert.equal(COPY_RU.STATUS, 'runtime-approved');
   const runtimeAllowed = between(APP, 'function guideV3RuntimeAllowed()', '\nfunction showGuideUnavailable');
   sourceMatches(runtimeAllowed, /lang\(\)\s*===\s*['"]ru['"]/,
     'Guide runtime eligibility must be locale-scoped');
@@ -272,6 +273,18 @@ test('unapproved RU draft cannot auto-start or leak into another locale library'
   const library = between(APP, 'function showGuide()', '\n// ============================================================\n//  Вид «Награды»');
   sourceMatches(library, /if\s*\(\s*lang\(\)\s*!==\s*['"]ru['"][^)]*\|\|\s*!guideV3RuntimeAllowed\(\)\s*\)/,
     'the RU-only draft library must not mount for EN/DE/UK/ES users');
+});
+
+test('feedback remains reachable even when the localized Guide is unavailable', () => {
+  const panel = between(APP, 'function feedbackPanelHTML()', '\nfunction showGuideUnavailable');
+  sourceMatches(panel, /id="feedback-form"/,
+    'the durable feedback form must have one shared renderer');
+  const unavailable = between(APP, 'function showGuideUnavailable()', '\n\/\/ ── Вложения');
+  sourceMatches(unavailable, /feedbackPanelHTML\(\)/,
+    'a missing Guide translation must never hide bug and idea reporting');
+  const library = between(APP, 'function showGuide()', '\n\/\/ ============================================================\n\/\/  Вид «Награды»');
+  sourceMatches(library, /feedbackPanelHTML\(\)/,
+    'the full Guide library must reuse the same feedback panel');
 });
 
 test('the post-contact bond acknowledgement is surfaced before release', () => {

@@ -110,7 +110,7 @@ test('Tree state, touch, light contrast, and reduced motion have scoped contract
   assert.match(css, /\.tree-node\.locked[\s\S]{0,240}border-style:\s*dashed/);
   assert.match(css, /\.tree-node\.capstone\.unlocked[\s\S]{0,220}var\(--glow-legendary\)/);
   assert.match(css, /\.tree-node\.capstone:not\(\.unlocked\)[\s\S]{0,180}box-shadow:\s*none/);
-  assert.match(css, /#main:has\(\.tree-shell\) ~ #ai-fab\s*\{\s*display:\s*none/);
+  assert.doesNotMatch(css, /#main:has\(\.tree-shell\) ~ #ai-fab[^}]*display:\s*none/);
   assert.match(css, /\.tree-active \.ta-label,[\s\S]{0,100}\.perk-active[\s\S]{0,180}flex:\s*0 0 auto[\s\S]{0,180}white-space:\s*nowrap/);
   assert.match(css, /:root\[data-theme="light"\][\s\S]*--tree-available-fg:/);
   assert.match(css, /@media \(pointer: coarse\), \(max-width: 600px\)[\s\S]*\.tree-tab[\s\S]*var\(--touch-min\)/);

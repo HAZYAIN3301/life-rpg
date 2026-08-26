@@ -74,9 +74,9 @@ test('интеграция держит Полку в More и подключае
   assert.match(app, /group\('mobile-more-support'[\s\S]{0,500}sectionEntry\('library'\)/);
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20260826-assistant-v181');
+  const appAt = index.indexOf('app.js?v=20260826-guide-assistant-v182');
   assert.ok(domainAt >= 0 && uiAt > domainAt && appAt > uiAt);
-  assert.match(sw, /satoru-v181/);
+  assert.match(sw, /satoru-v182/);
   assert.match(sw, /return-shelf-v1\.js/);
   assert.match(sw, /return-shelf-ui-v1\.js/);
 });
@@ -109,7 +109,7 @@ test('визуальный контракт Полки сохраняет touch 
   const css = fs.readFileSync(path.join(__dirname, '..', 'public/styles.css'), 'utf8');
   const shelfAt = css.indexOf('Return Shelf R2');
   const shelfCss = css.slice(shelfAt, shelfAt + 18000);
-  assert.match(shelfCss, /body:has\(\.return-shelf-shell\) #ai-fab\s*\{\s*display:\s*none/);
+  assert.doesNotMatch(shelfCss, /body:has\(\.return-shelf-shell\) #ai-fab[^}]*display:\s*none/);
   assert.match(shelfCss, /min-height:\s*var\(--touch-min\)/);
   assert.match(shelfCss, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.return-shelf-shell \*[\s\S]*?animation:\s*none !important/);
   assert.match(shelfCss, /@media \(min-width: 901px\)[\s\S]*?\.return-shelf-complete-form\s*\{[^}]*grid-template-columns:/);

@@ -64,5 +64,5 @@ test('Board v149 has scoped mobile, pointer and reduced-motion contracts', () =>
   assert.match(CSS, /@media \(hover: hover\) and \(pointer: fine\)[\s\S]*\.board-screen \.bsheet:hover/);
   assert.match(CSS, /@media \(max-width: 600px\), \(pointer: coarse\)[\s\S]*min-height: var\(--touch-min\)/);
   assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.board-screen \.bsheet[\s\S]*transform: none/);
-  assert.match(CSS, /body:has\(\.board-screen\) #ai-fab/);
+  assert.doesNotMatch(CSS, /body:has\(\.board-screen\) #ai-fab[^}]*display:\s*none/);
 });

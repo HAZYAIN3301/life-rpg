@@ -1,7 +1,7 @@
-/* Satoru Guide v3 — centralized Russian draft copy.
+/* Satoru Guide v3 — centralized approved Russian runtime copy.
  *
- * IMPORTANT: this is tone-review material, not approved runtime wording.
- * Albert must approve the Russian lines before any EN/DE/UK/ES translation.
+ * Albert approved the Guide v3 wording and its runtime use. Translations keep
+ * their own review lifecycle; this flag enables only the Russian guide.
  *
  * Pure UMD module: no DOM, State, storage, network, or translator access.
  * Callers must escape user-provided substitutions before inserting formatted
@@ -14,10 +14,10 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuideV3CopyRu() {
   'use strict';
 
-  const VERSION = '0.2.0-draft';
+  const VERSION = '1.0.0';
   const LOCALE = 'ru';
-  const STATUS = 'tone-review-required';
-  const RUNTIME_APPROVED = false;
+  const STATUS = 'runtime-approved';
+  const RUNTIME_APPROVED = true;
 
   const CONTEXTUAL_STATUS = Object.freeze({
     habits: 'draft-ready',

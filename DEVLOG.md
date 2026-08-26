@@ -2,6 +2,17 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-26] 🧭 Guide v3 approved + глобальный вход в Тень
+
+- Продовый RU Guide оставался закрыт старым copy-gate после завершения механики и утверждения текста: `GuideV3CopyRu.RUNTIME_APPROVED=false` всегда отправлял обычного пользователя в заглушку «гайд готовится». Флаг поднят намеренно, версия RU copy стала `1.0.0`, статус — `runtime-approved`.
+- Форма репортов раньше была продублирована неявной зависимостью от полного Guide runtime: при locale/runtime fallback исчезала вместе с библиотекой. Теперь у неё один shared renderer, который присутствует и в полной библиотеке, и в fallback-диалоге. Фото/видео, admin reports и существующая серверная запись не менялись.
+- Кнопка Тени исчезала не из-за рендера: её сознательно скрывали пятнадцать CSS-правил на Goals, Today, Den, Character, Tree, Calendar, Rewards, Party, Habits, Stats, Board и Return Shelf. Эта политика удалена. `#ai-fab` теперь глобальный функциональный вход на каждом обычном экране; скрытие разрешено только в специальном screenshot/capture mode.
+- Permanent regression `scripts/global-assistant-entry-v182.test.js` перечисляет все CSS-правила, способные скрыть сам FAB, и запрещает любые исключения кроме capture mode. Guide runtime test закрепляет approved gate и доступность feedback при fallback.
+- Live Browser QA: в RU `Как играть` показывает 14 chapter cards и видимую форму репорта без заглушки; на `Цели` `#ai-fab` имеет `display:flex` и реальную геометрию; console warn/error пуст.
+- Полный объединённый suite после rebase на Assistant v181: **1024/1024**, 0 fail; app/SW/copy syntax и release-pin проверки — PASS.
+
+Release: после сохранения параллельного Assistant v181 PWA shell поднят `satoru-v181 → satoru-v182`; app/styles pin `20260826-guide-assistant-v182-1`, RU copy pin `20260826-guide-approved-v182-1`.
+
 ## [2026-08-26] 🗣 Assistant v181 — безопасные действия, живое ожидание, «Сатору…» и настоящий контекст плана
 
 - Опубликованный в `1606cf4` контракт `assistant-actions-v1.js` подключён к живому помощнику. Ответ модели больше не исполняется доверчиво: первый ACTIONS-блок проходит whitelist, модификация требует точный `targetId` собственного объекта, затем человек видит карточку и отдельно нажимает Apply. Непосредственно перед записью `app.js` снова проверяет свежий State; commit ожидается, ошибка откатывается и остаётся Retry. У ассистента физически нет delete/account/admin/privacy-команд.
@@ -66,7 +77,7 @@ Commit: `feat: give the assistant verbs it cannot abuse`.
 - Live Browser QA: язык действительно выбирается первым; English selected по умолчанию, Russian переключает всю следующую форму; `360×800`, `375×812`, `1280×900` без horizontal overflow, mobile actions 44–52 px, консоль чистая.
 - После параллельного Return Shelf v179 C3 поднял shell `satoru-v179 → satoru-v180`; новый модуль загружается до `app.js`, app/styles имеют pin `20260826-launch-hardening-v180-1`.
 
-Проверки после безопасного rebase поверх Return Shelf и assistant-actions: PWA/onboarding/registry/first-journey focused **58/58**, объединённый полный suite **1001/1001**, app/module/server/SW syntax, physical shell inventory и `git diff --check` — PASS.
+Проверки после безопасного rebase поверх Return Shelf и assistant-actions: PWA/onboarding/registry/first-journey focused **58/58**, объединённый полный suite **1001/1001**, app/module/server/SW syntax, physical shell inventory и `git diff --check` — PASS. Следующий v181 hotfix добавляет свои итоговые числа отдельной записью выше.
 
 Следующий срез Lab: полный пятиъязычный и accessibility-маршрут от регистрации до возврата, затем повреждённые legacy-аккаунты и offline-upgrade на реальных мобильных браузерах.
 

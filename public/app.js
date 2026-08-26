@@ -19458,12 +19458,26 @@ function guideV3RuntimeAllowed() {
   const copy = window.GuideV3CopyRu;
   return lang() === 'ru' && (copy?.RUNTIME_APPROVED === true || guideV3ReviewPreviewRequested());
 }
+function feedbackPanelHTML() {
+  return `<h3 class="guide-v3-library__feedback-title">💬 Нашёл баг или есть идея?</h3>
+    <form id="feedback-form" class="feedback-form">
+      <select name="kind"><option value="bug">🐞 Баг</option><option value="idea">💡 Идея</option><option value="other">💬 Другое</option></select>
+      <textarea name="text" placeholder="Опиши, что случилось или что предлагаешь…"></textarea>
+      <label class="fb-file">📎 Прикрепить фото/видео
+        <input type="file" name="files" accept="image/*,video/*" multiple />
+      </label>
+      <div id="fb-previews" class="fb-previews"></div>
+      <div class="fb-actions"><button type="submit" class="btn">Отправить</button><span id="fb-msg" class="muted" role="status"></span></div>
+    </form>
+    ${State.me && State.me.isAdmin ? '<button class="btn ghost" data-action="show-reports" style="margin-top:10px">🐞 Смотреть все репорты (админ)</button>' : ''}`;
+}
 function showGuideUnavailable() {
   const ov = document.createElement('div'); ov.id = 'guide'; ov.className = 'modal-overlay';
   ov.innerHTML = `<section class="guide-box" role="dialog" aria-modal="true" aria-labelledby="guide-title" aria-describedby="guide-subtitle">
     <button type="button" class="modal-x" data-action="close-guide" aria-label="${esc(t('Закрыть'))}">✕</button>
     <h2 id="guide-title" tabindex="-1">${esc(t('Как играть'))}</h2>
     <p id="guide-subtitle" class="muted">${esc(t('Обновлённый гайд пока готовится на твоём языке. Основные функции доступны без него.'))}</p>
+    ${feedbackPanelHTML()}
   </section>`;
   mountAccountDialog(ov, { initial: '#guide-title', returnFocus: document.activeElement });
 }
@@ -19576,17 +19590,7 @@ function showGuide() {
     ${state.enabled
       ? `<button type="button" class="btn ghost guide-v3-library__disable guide-v3-library-action" data-action="guide-disable">${esc(guideV3Copy('system.action.disable_prompts'))}</button>`
       : `<button type="button" class="btn guide-v3-library__enable guide-v3-library-action" data-action="guide-enable">${esc(guideV3Copy('system.action.enable_prompts'))}</button>`}
-    <h3 class="guide-v3-library__feedback-title">💬 Нашёл баг или есть идея?</h3>
-    <form id="feedback-form" class="feedback-form">
-      <select name="kind"><option value="bug">🐞 Баг</option><option value="idea">💡 Идея</option><option value="other">💬 Другое</option></select>
-      <textarea name="text" placeholder="Опиши, что случилось или что предлагаешь…"></textarea>
-      <label class="fb-file">📎 Прикрепить фото/видео
-        <input type="file" name="files" accept="image/*,video/*" multiple />
-      </label>
-      <div id="fb-previews" class="fb-previews"></div>
-      <div class="fb-actions"><button type="submit" class="btn">Отправить</button><span id="fb-msg" class="muted"></span></div>
-    </form>
-    ${State.me && State.me.isAdmin ? '<button class="btn ghost" data-action="show-reports" style="margin-top:10px">🐞 Смотреть все репорты (админ)</button>' : ''}
+    ${feedbackPanelHTML()}
     </section>`;
   mountAccountDialog(ov, { initial: '#guide-title', returnFocus: document.activeElement });
 }
@@ -25809,7 +25813,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v181';
+const PWA_CACHE_VERSION = 'satoru-v182';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -63,7 +63,7 @@ test('Habits v126 exposes work-first, keyboard and touch state', () => {
   assert.match(APP, /id="add-habit-v126"/);
   assert.match(CSS, /\.hsub\[role="tablist"\] \.navsubtab \{ min-height: var\(--touch-min\)/);
   assert.match(CSS, /\.anti-row2 \.del \{ min-inline-size: var\(--touch-min\); min-block-size: var\(--touch-min\)/);
-  assert.match(CSS, /body:has\(\.habits-shell\) #ai-fab \{ display: none; \}/);
+  assert.doesNotMatch(CSS, /body:has\(\.habits-shell\) #ai-fab[^}]*display:\s*none/);
   assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.habits-shell/);
   const cacheVersion = Number(SW.match(/const CACHE = 'satoru-v(\d+)'/)?.[1] || 0);
   assert.ok(cacheVersion >= 126, `expected SW cache v126 or newer, got v${cacheVersion}`);

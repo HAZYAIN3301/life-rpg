@@ -253,7 +253,7 @@ test('mobile is agenda-first, labelled, unclipped, and reduced-motion safe', () 
   assert.match(css, /\.calendar-shell \.cal-tools > button\s*\{[\s\S]*white-space:\s*nowrap;[\s\S]*hyphens:\s*none/);
   assert.match(css, /\.calendar-shell \.cal-tool-icon \{ display:\s*none; \}/);
   assert.match(css, /\.calendar-shell \.calv-title-main \.wk-load \{ display:\s*none; \}/);
-  assert.match(css, /@media \(max-width:\s*600px\)[\s\S]*body:has\(\.calendar-day-shell\) #ai-fab \{ display:\s*none; \}/);
+  assert.doesNotMatch(css, /body:has\(\.calendar-day-shell\) #ai-fab[^}]*display:\s*none/);
   assert.match(css, /\.calv-grid-viewport \{ display:\s*none; \}/);
   assert.match(css, /\.calv-agenda\s*\{[\s\S]*display:\s*grid/);
   assert.match(css, /\.cal-agenda-title\s*\{[\s\S]*-webkit-line-clamp:\s*3/);

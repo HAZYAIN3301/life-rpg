@@ -41,7 +41,7 @@ test('Goals v169 has one checked goals/initiatives/tasks graph and no direct cli
   assert.match(INDEX, /<script src="goals-initiatives-v1\.js\?v=20260825-goals-v169-1"><\/script>[\s\S]*<script src="app\.js/);
   assert.match(SW, /'goals-initiatives-v1\.js'/);
   assert.match(INITIATIVES, /function focusModel/);
-  assert.match(SW, /const CACHE = 'satoru-v181'/);
+  assert.match(SW, /const CACHE = 'satoru-v182'/);
 });
 
 test('Progress source is exclusive and linked tasks are explicitly not counted', () => {
@@ -64,7 +64,7 @@ test('Goals hierarchy keeps durable edit paths, focus and deep links', () => {
   assert.match(CSS, /Goals v169[\s\S]*\.goals-shell \.goal-summary \{[\s\S]*min-height: 58px/);
   assert.match(CSS, /\.goals-shell :is\(button, input, select, textarea, summary, a\),[\s\S]*min-height: var\(--touch-min\)/);
   assert.match(CSS, /\.goal-next-card a \{ display: inline-flex; align-items: center; \}/);
-  assert.match(CSS, /body:has\(\.goals-shell\) #ai-fab \{ display: none; \}/);
+  assert.doesNotMatch(CSS, /body:has\(\.goals-shell\) #ai-fab[^}]*display:\s*none/);
   assert.match(CSS, /body:has\(\.goals-shell\) \.navrow \.navsec-l/);
   assert.match(APP, /goalChildren\(g\.id\)\.filter\(\(child\) => !!child\.archived === !!g\.archived\)/);
 });

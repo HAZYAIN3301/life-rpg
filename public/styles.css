@@ -222,7 +222,6 @@ html.helper-open { overflow: hidden; }
   .goal-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
   .goal-actions > * { width: 100%; }
   .goals-shell :is(button,input,select,textarea,summary), .goal-delete-box :is(button,input,select,textarea) { min-height: var(--touch-min); }
-  body:has(.goals-shell) #ai-fab { display: none; }
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -590,7 +589,6 @@ html.helper-open { overflow: hidden; }
 }
 
 @media (max-width: 600px) {
-  body:has(.return-shelf-shell) #ai-fab { display: none; }
   body:has(.return-shelf-shell) .navrow .navsec-l { max-inline-size: 100%; overflow-wrap: anywhere; hyphens: auto; }
   .return-shelf-shell { gap: var(--sp-3); padding-block-end: calc(76px + env(safe-area-inset-bottom)); }
   .return-shelf-head { display: grid; align-items: start; padding: var(--sp-3); }
@@ -4494,13 +4492,8 @@ button.sphere-row:hover, button.sphere-row:focus-visible { background: var(--sur
 .today-shell .entry-nudge .nudge { color: inherit; }
 .today-shell .en-low .nudge-boost { color: var(--today-nudge-danger-fg); }
 
-/* На Today полноценная cut-paper Тень уже живёт в support rail; второй glowing
-   FAB дублировал персонажа и создавал конкурирующий фокус. На других экранах
-   плавающий вход в помощника остаётся прежним. */
-#main:has(.today-shell) ~ #ai-fab,
-#main:has(.den-shell) ~ #ai-fab {
-  display: none;
-}
+/* Тень — глобальный вход в помощника. Она остаётся доступной на каждом игровом
+   экране; локальные сцены и support rail не заменяют её функционально. */
 
 @media (hover: hover) and (pointer: fine) {
   .card-quests .task:hover {
@@ -11356,7 +11349,6 @@ html.mobile-nav-open body {
 
 /* Character / Wardrobe v1: one authored preview, three public slots, one
    inventory drawer. The advanced nine-slot Forge remains an internal module. */
-body:has(.character-shell) #ai-fab { display: none; }
 .character-shell .btn:not(.ghost):not(.danger):not(.pro-cta) { color: var(--on-accent); }
 :root:not([data-system="on"]) body:has(.character-shell) .navsubtab.active {
   color: var(--character-subtab-active-fg);
@@ -11696,9 +11688,6 @@ body:has(.character-shell) #ai-fab { display: none; }
   font-family: var(--font-ui);
 }
 
-/* The map already exposes its authored Personal Map action; the global Shadow
-   orb would cover pannable nodes and create a duplicate focal assistant. */
-#main:has(.tree-shell) ~ #ai-fab { display: none; }
 
 .tree-hero {
   min-block-size: 0;
@@ -13907,7 +13896,6 @@ html.calendar-task-open body {
 }
 
 @media (max-width: 600px) {
-  body:has(.calendar-day-shell) #ai-fab { display: none; }
   .calendar-shell { gap: var(--sp-2); }
   .calendar-shell .calv-head,
   .calendar-work-card,
@@ -14424,7 +14412,6 @@ html.calendar-task-open body {
   .calendar-week-shell .week-secondary { grid-template-columns: minmax(0, 1fr); }
   .calendar-week-shell .week-secondary > * { grid-column: 1 !important; }
   .calendar-week-shell .week-summary-card .kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  body:has(.calendar-week-shell) #ai-fab { display: none; }
 }
 
 @media (max-width: 600px) {
@@ -14651,7 +14638,6 @@ html.calendar-task-open body {
 @media (max-width: 900px) {
   .calendar-month-shell .month-work { grid-template-columns: minmax(0, 1fr); }
   .calendar-month-shell .month-detail-card { position: static; }
-  body:has(.calendar-month-shell) #ai-fab { display: none; }
 }
 
 @media (max-width: 600px) {
@@ -15033,7 +15019,6 @@ html.calendar-task-open body {
 }
 
 @media (max-width: 600px) {
-  body:has(.rewards-shell) #ai-fab { display: none; }
   .rewards-shell summary { min-height: var(--touch-min); }
   .daily-reward-card .lb-head { display: grid; }
   .daily-reward-card .lb-body { grid-template-columns: minmax(0, 1fr); }
@@ -15133,9 +15118,6 @@ html.calendar-task-open body {
 }
 
 @media (max-width: 600px) {
-  body:has(.party-shell) #ai-fab,
-  body:has(.party-empty-hero) #ai-fab,
-  body:has(.leaderboard-card) #ai-fab { display: none; }
   .party-exit-actions { display: grid; grid-template-columns: minmax(0, 1fr); }
   :is(.party-shell, .party-empty-hero, .leaderboard-card, .social-privacy-card, .social-confirm-box) :is(button, summary) { min-inline-size: var(--touch-min); min-block-size: var(--touch-min); }
   :is(.party-shell, .party-empty-hero, .leaderboard-card, .social-privacy-card, .social-confirm-box) input:not([type="checkbox"]),
@@ -15212,7 +15194,6 @@ html.calendar-task-open body {
 }
 
 @media (max-width: 600px) {
-  body:has(.habits-shell) #ai-fab { display: none; }
   body:has(.habits-shell) .navrow .navsec-l { max-inline-size: 100%; white-space: normal; overflow-wrap: anywhere; hyphens: auto; text-align: center; }
 }
 
@@ -15532,7 +15513,6 @@ html.calendar-task-open body {
   .pets-shell .tts-btn { min-width: var(--touch-min); min-height: var(--touch-min); }
   .pet-rename-form input { font-size: max(16px, var(--type-control)); }
   .stats-route-head { min-height: var(--touch-min); }
-  body:has(.stats-shell) #ai-fab { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -16281,8 +16261,6 @@ html.calendar-task-open body {
   .board-local-options { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
-  body:has(.board-screen) #ai-fab,
-  body:has(.board-calib) #ai-fab { display: none; }
   .board-head { align-items: start; }
   .board-head-actions { flex-direction: column-reverse; align-items: end; }
   .board-head > div > p:last-child { font-size: var(--type-control); }
@@ -16982,7 +16960,6 @@ html.goal-detail-open { overflow: hidden; }
   margin-inline: auto;
   gap: var(--sp-2);
 }
-body:has(.goals-shell) #ai-fab { display: none; }
 .goals-shell .goals-route-head {
   display: flex;
   min-height: 54px;
