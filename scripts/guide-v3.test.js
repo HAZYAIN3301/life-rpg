@@ -201,7 +201,7 @@ test('account-owned model is loaded before app and shipped in the v163 offline s
   const app = fs.readFileSync(path.join(root, 'public/app.js'), 'utf8');
   const sw = fs.readFileSync(path.join(root, 'public/sw.js'), 'utf8');
   assert.ok(index.indexOf('guide-v3.js') < index.indexOf('app.js'));
-  assert.match(sw, /const CACHE = 'satoru-v177'/);
+  assert.match(sw, /const CACHE = 'satoru-v178'/);
   assert.match(sw, /'guide-v3\.js'/);
   assert.doesNotMatch(app, /liferpg_seen_guide/);
   assert.match(app, /GuideV3\.migrate\(State\.settings\.guideV3, State\.settings\.tutorial\)/);

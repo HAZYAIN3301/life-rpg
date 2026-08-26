@@ -3313,6 +3313,16 @@ const I18N_EXTRA = {
   'Настройки требуют восстановления': { en: 'Settings need recovery', de: 'Einstellungen müssen wiederhergestellt werden', uk: 'Налаштування потребують відновлення', es: 'Los ajustes necesitan recuperación' },
   'Файл настроек повреждён или имеет неверную структуру. Ничего не перезаписываем.': { en: 'The settings file is damaged or has an invalid structure. Nothing will be overwritten.', de: 'Die Einstellungsdatei ist beschädigt oder hat eine ungültige Struktur. Nichts wird überschrieben.', uk: 'Файл налаштувань пошкоджено або має хибну структуру. Нічого не перезаписуємо.', es: 'El archivo de ajustes está dañado o tiene una estructura no válida. No se sobrescribirá nada.' },
   'Настройки сейчас недоступны. Ничего не перезаписываем, пока чтение не восстановится.': { en: 'Settings are unavailable right now. Nothing will be overwritten until reading recovers.', de: 'Einstellungen sind gerade nicht verfügbar. Nichts wird überschrieben, bis das Lesen wieder funktioniert.', uk: 'Налаштування зараз недоступні. Нічого не перезаписуємо, доки читання не відновиться.', es: 'Los ajustes no están disponibles ahora. No se sobrescribirá nada hasta que se recupere la lectura.' },
+  'Часть данных требует восстановления': { en: 'Some data needs recovery', de: 'Einige Daten müssen wiederhergestellt werden', uk: 'Частина даних потребує відновлення', es: 'Algunos datos necesitan recuperación' },
+  'Повреждены или недоступны: {files}. Эти разделы временно нельзя изменять; остальные данные работают как обычно. Ничего не перезаписываем.': { en: 'Damaged or unavailable: {files}. These sections cannot be changed for now; all other data keeps working normally. Nothing will be overwritten.', de: 'Beschädigt oder nicht verfügbar: {files}. Diese Bereiche können vorerst nicht geändert werden; alle anderen Daten funktionieren normal weiter. Nichts wird überschrieben.', uk: 'Пошкоджені або недоступні: {files}. Ці розділи тимчасово не можна змінювати; решта даних працює як завжди. Нічого не перезаписуємо.', es: 'Dañados o no disponibles: {files}. Estas secciones no se pueden cambiar por ahora; los demás datos siguen funcionando con normalidad. No se sobrescribirá nada.' },
+  'Изменения этого раздела заблокированы до восстановления данных': { en: 'Changes in this section are blocked until the data recovers', de: 'Änderungen in diesem Bereich sind bis zur Datenwiederherstellung gesperrt', uk: 'Зміни цього розділу заблоковано до відновлення даних', es: 'Los cambios de esta sección están bloqueados hasta recuperar los datos' },
+  'Дни': { en: 'Days', de: 'Tage', uk: 'Дні', es: 'Días' },
+  'Недели': { en: 'Weeks', de: 'Wochen', uk: 'Тижні', es: 'Semanas' },
+  'Покупки': { en: 'Purchases', de: 'Käufe', uk: 'Покупки', es: 'Compras' },
+  'Достижения': { en: 'Achievements', de: 'Erfolge', uk: 'Досягнення', es: 'Logros' },
+  'Сундуки': { en: 'Chests', de: 'Truhen', uk: 'Скрині', es: 'Cofres' },
+  'Эпизоды': { en: 'Episodes', de: 'Episoden', uk: 'Епізоди', es: 'Episodios' },
+  'Профиль': { en: 'Profile', de: 'Profil', uk: 'Профіль', es: 'Perfil' },
   'Повторить чтение': { en: 'Retry reading', de: 'Lesen erneut versuchen', uk: 'Повторити читання', es: 'Reintentar lectura' },
   'Проверяю…': { en: 'Checking…', de: 'Prüfe…', uk: 'Перевіряю…', es: 'Comprobando…' },
   'Изменения настроек заблокированы до восстановления данных': { en: 'Settings changes are blocked until data recovers', de: 'Einstellungsänderungen sind bis zur Datenwiederherstellung gesperrt', uk: 'Зміни налаштувань заблоковано до відновлення даних', es: 'Los cambios de ajustes están bloqueados hasta recuperar los datos' },
@@ -3758,6 +3768,54 @@ function startI18nObserver() {
 // ============================================================
 //  Store — общение с локальным сервером. Данные = JSON-файлы в vault.
 // ============================================================
+const ACCOUNT_DATA_SLOTS = Object.freeze(['days', 'weeks', 'rewards', 'purchases', 'achievements', 'lootbox', 'episodes', 'profile']);
+const accountDataLabels = Object.freeze({
+  days: 'Дни', weeks: 'Недели', rewards: 'Награды', purchases: 'Покупки',
+  achievements: 'Достижения', lootbox: 'Сундуки', episodes: 'Эпизоды', profile: 'Профиль',
+});
+function accountDataFallback(name) {
+  if (name === 'days' || name === 'weeks' || name === 'achievements') return {};
+  if (name === 'rewards' || name === 'purchases' || name === 'episodes') return [];
+  if (name === 'lootbox') return { day: todayStr(), opened: 0, goldWon: 0, boost: null, titles: [], equipped: null, history: [], carry: 0, vouchers: [], economyV124: true };
+  if (name === 'profile') return { text: '', updatedAt: null, auto: true };
+  return null;
+}
+function validateAccountDataPayload(name, value) {
+  const contract = window.AccountDataV1;
+  return !!(contract && contract.validate(name, value));
+}
+async function loadAccountDataSlots(names = ACCOUNT_DATA_SLOTS) {
+  const pairs = await Promise.all(names.map(async (name) => [name, await Store.loadChecked(
+    name, accountDataFallback(name), (value) => validateAccountDataPayload(name, value),
+  )]));
+  const values = {}; const errors = {};
+  for (const [name, result] of pairs) {
+    values[name] = result.value;
+    if (result.error) errors[name] = result.error;
+  }
+  return { values, errors };
+}
+function accountDataWriteAllowed(name, source, notify = true) {
+  if (!ACCOUNT_DATA_SLOTS.includes(name) || !State._accountDataLoadErrors[name]) return true;
+  clearTimeout(Store._timers[name]);
+  if (notify) {
+    const now = Date.now();
+    if (now - (State._accountDataWriteBlockedNoticeAt || 0) > 2000) {
+      State._accountDataWriteBlockedNoticeAt = now;
+      toast(t('Изменения этого раздела заблокированы до восстановления данных'));
+    }
+  }
+  console.error(`${source} blocked`, name, State._accountDataLoadErrors[name]);
+  return false;
+}
+function accountDataPayloadAllowed(name, value, source, notify = true) {
+  if (!ACCOUNT_DATA_SLOTS.includes(name)) return true;
+  if (!accountDataWriteAllowed(name, source, notify)) return false;
+  if (validateAccountDataPayload(name, value)) return true;
+  if (notify) toast(t('⚠️ Не удалось сохранить'));
+  console.error(`${source} blocked`, name, 'invalid outgoing data');
+  return false;
+}
 function taskWriteAllowed(source, notify = false) {
   if (!State._tasksLoadError) return true;
   clearTimeout(Store._timers.tasks);
@@ -3965,6 +4023,8 @@ const Store = {
     }
   },
   save(name, obj) {
+    if (!accountDataWriteAllowed(name, 'save', true)) return false;
+    if (!accountDataPayloadAllowed(name, obj, 'save', true)) return false;
     if (name === 'tasks' && !taskWriteAllowed('save', true)) return false;
     if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('save', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('save', true)) return false;
@@ -3978,6 +4038,8 @@ const Store = {
   // save() дебаунсится на 250 мс, а initApp() читает мгновенно — и получает ещё не сохранённое.
   // Именно так онбординг терял выбранные сферы и подставлял вместо них дефолтные.
   async saveNow(name, obj) {
+    if (!accountDataWriteAllowed(name, 'saveNow', true)) return false;
+    if (!accountDataPayloadAllowed(name, obj, 'saveNow', true)) return false;
     if (name === 'tasks' && !taskWriteAllowed('saveNow', true)) return false;
     if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('saveNow', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('saveNow', true)) return false;
@@ -3989,6 +4051,8 @@ const Store = {
   async _put(name, obj) {
     // Последний рубеж: прямые Store._put('tasks', ...) тоже не могут
     // перезаписать повреждённый/недоступный файл fallback-массивом.
+    if (!accountDataWriteAllowed(name, '_put', true)) return false;
+    if (!accountDataPayloadAllowed(name, obj, '_put', true)) return false;
     if (name === 'tasks' && !taskWriteAllowed('_put', true)) return false;
     if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('_put', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('_put', true)) return false;
@@ -5328,6 +5392,7 @@ const State = {
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
   goals: null, goalGroups: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
   lootbox: null, inbox: null, inboxOpen: false, antihabits: null, aiKeys: null, episodes: null,
+  _accountDataLoadErrors: {}, _accountDataLoadBusy: false, _accountDataWriteBlockedNoticeAt: 0,
   attentionMode: 'local', attentionPolicies: null, attentionSessions: null, attentionEpisodes: null,
   _attentionLoadError: '', _attentionLoadBusy: false, _attentionWriteBlockedNoticeAt: 0,
   _attentionDeepLink: null, _attentionReturnIndex: 0,
@@ -9588,6 +9653,7 @@ function arrangeTreeOverlaps(tree) {
 // ---- Достижения ----
 function achUnlocked(a) { try { return !!a.test(); } catch { return false; } }
 function checkAchievements(silent) {
+  if (!State.achievements || State._accountDataLoadErrors.achievements) return;
   let changed = false;
   for (const a of ACHIEVEMENTS) if (achUnlocked(a) && !State.achievements[a.id]) { State.achievements[a.id] = new Date().toISOString(); changed = true; if (!silent) { announce('ДОСТИЖЕНИЕ РАЗБЛОКИРОВАНО', `${a.icon || '🏆'} ${a.title}${a.ttl ? ' · звание «' + a.ttl + '»' : ''}`, `🏆 Достижение: ${a.title}`); if (!systemMode()) sfx('achievement'); } }
   if (changed) Store.save('achievements', State.achievements);
@@ -10061,6 +10127,12 @@ function nextLootboxState(reward) {
   return next;
 }
 async function economyCommit(data) {
+  const contract = window.AccountDataV1;
+  if (!contract) { console.error('economyCommit blocked', 'account data contract unavailable'); return false; }
+  const affected = contract.affectedSlots(data);
+  if (affected.some((name) => !accountDataWriteAllowed(name, 'economyCommit', true))) return false;
+  if (affected.some((name) => !validateAccountDataPayload(name, data[name]))) return false;
+  if (data && Object.prototype.hasOwnProperty.call(data, 'settings') && !settingsWriteAllowed('economyCommit', true)) return false;
   try {
     const response = await fetch('/api/economy/commit', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data }),
@@ -18458,6 +18530,19 @@ function showDeleteAccountModal() {
   mountAccountDialog(ov, { initial: '#delete-account-title' });
 }
 
+function accountDataRecoveryCard() {
+  const names = ACCOUNT_DATA_SLOTS.filter((name) => State._accountDataLoadErrors[name]);
+  if (!names.length) return '';
+  const files = names.map((name) => t(accountDataLabels[name])).join(', ');
+  const copy = t('Повреждены или недоступны: {files}. Эти разделы временно нельзя изменять; остальные данные работают как обычно. Ничего не перезаписываем.')
+    .replace('{files}', files);
+  return `<div class="card settings-recovery account-data-recovery" role="alert" aria-live="assertive">
+    <h3>${t('Часть данных требует восстановления')}</h3>
+    <p>${esc(copy)}</p>
+    <button class="btn" data-action="retry-account-data-load" ${State._accountDataLoadBusy ? 'disabled' : ''}>${State._accountDataLoadBusy ? t('Проверяю…') : t('Повторить чтение')}</button>
+  </div>`;
+}
+
 function accountDataCard() {
   return `<div class="card settings-data-card account-data-card"><h4>${t('Экспорт и импорт аккаунта')}</h4>
     <p class="muted">${t('Архив содержит твои JSON-данные. Медиафайлы заметок, пароли, ключи ИИ, Strava-токены и push-подписка не экспортируются.')}</p>
@@ -20083,6 +20168,7 @@ function renderSettings() {
     ${groupEnd()}
     ${groupStart('data', 'Данные', 'Сброс и локальное хранилище')}
     ${settingsRecoveryCard()}
+    ${accountDataRecoveryCard()}
     ${accountDataCard()}
     <div class="card settings-data-card"><h4>${t('Данные')}</h4><p class="muted">${t('Данные лежат в')} <code>life-rpg/data/</code> ${t('внутри твоего vault — это обычные JSON-файлы.')}</p><div class="settings-actions"><button class="btn danger" data-action="reset-data">${t('Сбросить квесты и дни')}</button></div></div>
     ${groupEnd()}
@@ -23155,6 +23241,32 @@ async function onClick(e) {
     })();
     return;
   }
+  if (action === 'retry-account-data-load') {
+    if (State._accountDataLoadBusy) return;
+    const names = ACCOUNT_DATA_SLOTS.filter((name) => State._accountDataLoadErrors[name]);
+    if (!names.length) return;
+    State._accountDataLoadBusy = true;
+    State._settingsFocusAfterCommit = '[data-action="retry-account-data-load"]';
+    render();
+    (async () => {
+      const fresh = await loadAccountDataSlots(names);
+      const errors = { ...State._accountDataLoadErrors };
+      for (const name of names) {
+        delete errors[name];
+        if (fresh.errors[name]) errors[name] = fresh.errors[name];
+      }
+      State._accountDataLoadErrors = errors;
+      State._accountDataLoadBusy = false;
+      if (Object.values(errors).includes('session') || State._accountSessionExpired) return;
+      if (!Object.keys(errors).length) { location.reload(); return; }
+      render();
+    })().catch((error) => {
+      console.error('retry account data', error);
+      State._accountDataLoadBusy = false;
+      render();
+    });
+    return;
+  }
   if (action === 'retry-settings-save') {
     SettingsAutosave.failed = false;
     SettingsAutosave.paint();
@@ -24346,6 +24458,7 @@ function clearAllData() {
   State._habitsLoadError = ''; State._habitsLoadBusy = false; State._habitTxnBusy = ''; State._habitError = ''; clearHabitUndo(); State._habitsFocusAfterCommit = '';
   State._goalsLoadError = ''; State._goalGroupsLoadError = ''; State._goalsLoadBusy = false; State._goalTxnBusy = ''; State._goalsError = ''; State._goalsFocusAfterCommit = ''; State._goalOpenId = ''; State._goalDeepLinkId = ''; State.goalView = 'focus'; State.goalFilter = 'all'; State._goalsComposerOpen = false; State._goalGroupFilter = '';
   State._settingsLoadError = ''; State._settingsLoadBusy = false; State._treeLoadError = '';
+  State._accountDataLoadErrors = {}; State._accountDataLoadBusy = false; State._accountDataWriteBlockedNoticeAt = 0;
   State._attentionLoadError = ''; State._attentionLoadBusy = false; State._attentionWriteBlockedNoticeAt = 0; State._attentionDeepLink = null; State._attentionReturnIndex = 0;
   clearTimeout(_attentionBoundaryTimer); _attentionBoundaryTimer = null; closeAttentionDialog({ restoreFocus: false, force: true });
   State.timer = null; persistTimer(); stopTick(); closeFocusWidget(); removePill();
@@ -24528,7 +24641,13 @@ async function initApp() {
   }
   if (State._tasksLoadError === 'session' || State._accountSessionExpired) return;
   await reconcileGuideV3AfterTaskLoad();
-  State.days = await Store.load('days', {});
+  {
+    const accountDataLoad = await loadAccountDataSlots();
+    for (const name of ACCOUNT_DATA_SLOTS) State[name] = accountDataLoad.values[name];
+    State._accountDataLoadErrors = accountDataLoad.errors;
+    State._accountDataLoadBusy = false;
+  }
+  if (Object.values(State._accountDataLoadErrors).includes('session') || State._accountSessionExpired) return;
   {
     const [habitsLoad, habitlogLoad, antihabitsLoad] = await Promise.all([
       Store.loadChecked('habits', [], validateHabitsPayload),
@@ -24567,17 +24686,10 @@ async function initApp() {
   const boardMediaLoad = await Store.loadChecked('boardmedia', {}, validateBoardMediaPayload);
   State.boardMedia = boardMediaLoad.value;
   State._boardMediaLoadError = boardMediaLoad.error;
-  State.rewards = await Store.load('rewards', []);
-  State.purchases = await Store.load('purchases', []);
-  State.achievements = await Store.load('achievements', {});
-  State.weeks = await Store.load('weeks', {});
-  State.lootbox = await Store.load('lootbox', { day: todayStr(), opened: 0, goldWon: 0, boost: null, titles: [], equipped: null, history: [] });
   {
     const inboxLoad = await Store.loadChecked('inbox', [], validateInboxPayload);
     State.inbox = inboxLoad.value; State._inboxLoadError = inboxLoad.error;
   }
-  State.episodes = await Store.load('episodes', []);
-  State.profile = await Store.load('profile', { text: '', updatedAt: null, auto: true });
   ensureLootbox();
   applyAmbient();
 
