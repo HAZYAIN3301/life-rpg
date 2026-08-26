@@ -4115,3 +4115,9 @@ Solo-Leveling-вайб под бренд Satoru/«?». Опционально (�
   `BodyToadV1 2.3.0`, PWA `satoru-v95`.
 - Automated QA: `15/15` PASS; desktop action acceptance passed. Mobile and
   production smoke are recorded after deployment.
+# 2026-08-26 — Apple Developer future handoff
+
+- Добавлен `APPLE-DEVELOPER-FUTURE-HANDOFF.md`: единая карта всех уже обнаруженных web/PWA-ограничений и будущих native iOS-контуров — Family Controls/Device Activity/Managed Settings, регион Украина, Siri/App Intents, файлы, HealthKit, геолокация, notifications/background, widgets, StoreKit, account/privacy и cross-device.
+- Явно разделено: что открывает paid membership, что требует отдельного entitlement/согласия, и что останется невозможным или негарантированным после оплаты.
+- Зафиксированы рекомендуемая архитектура, порядок подачи Family Controls request, real-device QA matrix и privacy/data contract. `START-HERE.md` теперь ссылается на handoff и существующий `APPLE-ENTITLEMENT-REQUEST.md`.
+- Код продукта, SW и art-деревья не менялись; это документационный handoff без деплоя.

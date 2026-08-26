@@ -46,6 +46,8 @@
 | **COMPETITORS-2.md** | разбор Skillion/SelfQuest/Spirit City/Gizmo — «Логово»/комната, аватар/гир |
 | **DESIGN-DIRECTION.md** | визуальный north star, референсы, IA и зафиксированный мобильный контракт |
 | **ASSISTANT-V181.md** | контракт безопасных действий ассистента, голосового вызова и явного файлового контекста |
+| **APPLE-DEVELOPER-FUTURE-HANDOFF.md** | единая карта ограничений PWA/iOS и точный handoff после оплаты Apple Developer Program |
+| **APPLE-ENTITLEMENT-REQUEST.md** | готовый черновик заявки на Family Controls distribution entitlement |
 | **STYLE-DECISION.md** | финал арт-стиля + выбор рантайма (SVG vs Rive) |
 | **ART-PIPELINE.md** | производственный путь графики от и до: AI-спрайты (боссы/питомцы) → Rive (компаньон/аватар) |
 | **ART-BRIEF.md / ART-INTERVIEW.md** | ТЗ художнице + её ответы/профиль |
