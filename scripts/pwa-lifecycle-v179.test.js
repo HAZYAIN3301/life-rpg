@@ -15,11 +15,11 @@ const INDEX = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
 const SW = fs.readFileSync(path.join(ROOT, 'public/sw.js'), 'utf8');
 
 test('lifecycle reducer prioritizes offline, update and explicit reconnect recovery', () => {
-  let state = PWA.create({ currentVersion: 'satoru-v182', online: true });
+  let state = PWA.create({ currentVersion: 'satoru-v183', online: true });
   state = PWA.reduce(state, { type: 'network:offline' });
   assert.equal(PWA.canWrite(state), false);
   assert.equal(PWA.surface(state).kind, 'offline');
-  state = PWA.reduce(state, { type: 'worker:version', version: 'satoru-v183' });
+  state = PWA.reduce(state, { type: 'worker:version', version: 'satoru-v184' });
   assert.equal(PWA.surface(state).kind, 'offline', 'offline warning stays the highest priority');
   state = PWA.reduce(state, { type: 'network:online' });
   assert.equal(PWA.surface(state).kind, 'update');
@@ -30,32 +30,32 @@ test('lifecycle reducer prioritizes offline, update and explicit reconnect recov
 });
 
 test('invalid messages and forged cache versions fail closed without throwing', () => {
-  const state = PWA.create({ currentVersion: 'satoru-v182' });
+  const state = PWA.create({ currentVersion: 'satoru-v183' });
   for (const value of [null, [], 'satoru-v999', { type: 'worker:version', version: '../v180' }, { type: 'worker:version', version: 'https://x' }]) {
     assert.doesNotThrow(() => PWA.reduce(state, value));
     assert.equal(PWA.reduce(state, value).updateReady, false);
   }
-  assert.equal(PWA.cacheVersion('satoru-v182'), 'satoru-v182');
-  assert.equal(PWA.cacheVersion(' satoru-v182 '), 'satoru-v182');
+  assert.equal(PWA.cacheVersion('satoru-v183'), 'satoru-v183');
+  assert.equal(PWA.cacheVersion(' satoru-v183 '), 'satoru-v183');
 });
 
 test('same worker version is quiet and refresh cannot start offline', () => {
-  let state = PWA.create({ currentVersion: 'satoru-v182', online: false });
-  state = PWA.reduce(state, { type: 'worker:version', version: 'satoru-v182' });
+  let state = PWA.create({ currentVersion: 'satoru-v183', online: false });
+  state = PWA.reduce(state, { type: 'worker:version', version: 'satoru-v183' });
   assert.equal(state.updateReady, false);
   assert.equal(PWA.reduce(state, { type: 'refresh:start' }).refreshing, false);
 });
 
 test('failed explicit refresh stays visible above a deferred update or reconnect notice', () => {
-  let state = PWA.create({ currentVersion: 'satoru-v182', online: true });
-  state = PWA.reduce(state, { type: 'worker:version', version: 'satoru-v182' });
+  let state = PWA.create({ currentVersion: 'satoru-v183', online: true });
+  state = PWA.reduce(state, { type: 'worker:version', version: 'satoru-v183' });
   state = PWA.reduce(state, { type: 'refresh:start' });
   state = PWA.reduce(state, { type: 'refresh:failed', error: 'save' });
   assert.equal(PWA.surface(state).kind, 'refresh-error');
 });
 
 test('service worker install is fail-closed and activated version reaches every open client', () => {
-  assert.match(SW, /const CACHE = 'satoru-v182'/);
+  assert.match(SW, /const CACHE = 'satoru-v183'/);
   const install = SW.slice(SW.indexOf("self.addEventListener('install'"), SW.indexOf("self.addEventListener('activate'"));
   assert.match(install, /c\.addAll\(SHELL\)/);
   assert.doesNotMatch(install, /catch\s*\(/, 'failed addAll must reject installation instead of activating a partial shell');
@@ -76,7 +76,7 @@ test('every service-worker shell entry resolves to a real production file', () =
 });
 
 test('runtime exposes an accessible update/offline surface and fences writes while offline', () => {
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v182'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v183'/);
   assert.match(APP, /window\.addEventListener\('offline'/);
   assert.match(APP, /window\.addEventListener\('online'/);
   assert.match(APP, /navigator\.serviceWorker\.addEventListener\('message'/);
@@ -123,7 +123,7 @@ test('five-language lifecycle copy and v181 shell order are complete', () => {
     for (const locale of ['en:', 'de:', 'uk:', 'es:']) assert.match(row, new RegExp(locale));
   }
   const moduleAt = INDEX.indexOf('pwa-lifecycle-v1.js?v=20260826-launch-hardening-v180-1');
-  const appAt = INDEX.indexOf('app.js?v=20260826-guide-assistant-v182-1');
+  const appAt = INDEX.indexOf('app.js?v=20260826-appearance-feedback-v183-1');
   assert.ok(moduleAt >= 0 && appAt > moduleAt);
   assert.match(INDEX, /styles\.css\?v=20260826-guide-assistant-v182-1/);
   assert.match(SW, /'pwa-lifecycle-v1\.js'/);

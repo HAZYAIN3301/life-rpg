@@ -2,6 +2,14 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-26] 🎨 Appearance v2 — переразметка 92 кадров по обратной связи Альберта
+
+- Все `92/92` packed semantic masks (`R=skin`, `G=hair`, `B=eyes`) и Traveller mattes пересобраны по анатомии и принадлежности материала, а не по похожему цвету. Белая рубашка и рукава, шарф, пояс, перчатки, орнамент, книга, реквизит, питомцы и тени пола больше не считаются кожей/волосами/Traveller; пальцы, уши, шея, ноги и боковые пряди восстановлены покадрово. Закрытые глаза намеренно не входят в eye-mask, поэтому ресницы остаются чёрными.
+- Для каждой семьи добавлены воспроизводимые authored-builders: core/motion/room, Gamabunta, Katsuya+Shadow и Mister P. Финальный factory gate: foundation/base `92/92`, semantic ownership `92/92`, golden parity `3/3`, smoke `19/19`, missing/partial/orphan `0`; public writes от mask factory — `false`.
+- Исправлены два дефекта не масок, а исходной женской анимации. Новый immutable `female/f2-v1/stretch-b-v183.png` оставляет Traveller две ноги и заставляет Гамабунту помогать тянуть ту же ногу; `stretch-soft-b-v183.png` возвращает Кацую две отдельные антенны без лишнего гребня. Runtime resolvers, F2 manifest и PWA shell переведены на эти URL, cache поднят `satoru-v182 → satoru-v183`.
+- Исправленный общий review: `art-factory/traveller-appearance-v2-20260820/previews/traveller-appearance-v2-feedback-corrected.png`. `manual-approvals.json` намеренно остаётся `pending`: новые palette masks ещё не опубликованы в `public/art` и UI перекраски не включён до повторного визуального утверждения Альбертом.
+- Runtime syntax, focused F2/guardian/PWA regression `39/39`, palette integrity suite `31/31`, полный проектный suite **1024/1024** и `git diff --check` — PASS.
+
 ## [2026-08-26] 🧭 Guide v3 approved + глобальный вход в Тень
 
 - Продовый RU Guide оставался закрыт старым copy-gate после завершения механики и утверждения текста: `GuideV3CopyRu.RUNTIME_APPROVED=false` всегда отправлял обычного пользователя в заглушку «гайд готовится». Флаг поднят намеренно, версия RU copy стала `1.0.0`, статус — `runtime-approved`.

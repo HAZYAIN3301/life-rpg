@@ -164,19 +164,16 @@ test('gender changes are durable and roll back before any visual commit when per
   assert.match(app, /if \(blinkImage && blinkSrc\) blinkImage\.src = blinkSrc;/);
 });
 
-test('v167 app shell loads the resolver before consumers and pins every changed runtime', () => {
-  const revision = '20260819-traveller-f2-runtime-v167-1';
-  const pinned = [
-    'shadow-den-v1.js',
-    'body-toad-v1.js',
-    'recovery-slug-v1.js',
-    'resources-penguin-v1.js',
-    'traveller-appearance-v1.js',
-    'traveller-motion-v3.js',
-    'traveller-room-v4.js',
-  ];
-  pinned.forEach((file) => assert.match(html, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=${revision}`), `${file} must use the v167 pin`));
-  assert.match(html, /app\.js\?v=20260826-guide-assistant-v182-1/);
+test('v183 app shell loads the resolver before consumers and pins changed runtime files', () => {
+  const originalRevision = '20260819-traveller-f2-runtime-v167-1';
+  const feedbackRevision = '20260826-appearance-feedback-v183-1';
+  for (const file of ['body-toad-v1.js', 'recovery-slug-v1.js', 'traveller-appearance-v1.js']) {
+    assert.match(html, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=${feedbackRevision}`), `${file} must use the v183 feedback pin`);
+  }
+  for (const file of ['shadow-den-v1.js', 'resources-penguin-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js']) {
+    assert.match(html, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=${originalRevision}`), `${file} must retain the v167 pin`);
+  }
+  assert.match(html, /app\.js\?v=20260826-appearance-feedback-v183-1/);
   const appearanceIndex = html.indexOf('traveller-appearance-v1.js');
   const motionIndex = html.indexOf('traveller-motion-v3.js');
   const roomIndex = html.indexOf('traveller-room-v4.js');
@@ -185,6 +182,6 @@ test('v167 app shell loads the resolver before consumers and pins every changed 
   for (const file of ['shadow-den-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js', 'resources-penguin-v1.js']) {
     assert.ok(html.indexOf(file) < appIndex, `${file} must load before app.js`);
   }
-  assert.match(sw, /const CACHE = 'satoru-v182';/);
+  assert.match(sw, /const CACHE = 'satoru-v183';/);
   assert.match(sw, /'traveller-appearance-v1\.js', 'traveller-motion-v3\.js', 'traveller-room-v4\.js'/);
 });

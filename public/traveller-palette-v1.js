@@ -5,7 +5,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function (root) {
   'use strict';
 
-  const VERSION = '1.1.0';
+  const VERSION = '1.1.1';
   const MANIFEST_SCHEMA = 'satoru.traveller-semantic-mask-runtime/1';
   const PALETTE_CATALOG_SCHEMA = 'satoru.traveller-semantic-palette-catalog/1';
   const GOLDEN_VECTORS_SCHEMA = 'satoru.traveller-semantic-palette-golden-vectors/1';
@@ -29,7 +29,7 @@
   const EXPECTED_CATALOG_PAYLOAD_SHA256 = 'dc1ce311afec1be1ac70d104741d5c87eb8b2fdca177244853ecc07a5defacad';
   const EXPECTED_GOLDEN_PAYLOAD_SHA256 = '4025da3e91e23fa4a2cf430b9c99dcfa87c3e2b3de34942060896215c2f84a4e';
   const EXPECTED_FEMALE_IDENTITY_SHA256 = '5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da';
-  const EXPECTED_FOUNDATION_SHA256 = '7c7f2b1fae0dbd3d20b4ffbf916facfeeb6b3126b7316cbb8a7f9fea5a6b6a32';
+  const EXPECTED_FOUNDATION_SHA256 = '47cffa1c4a3edb3cc49a20b1947e39e9282669e7a2361c3d2382b38f7cc4e3ec';
   const EXPECTED_VARIANTS = Object.freeze({
     'male-v1': Object.freeze({ gender: 'male', morphologyRevision: 'male-v1' }),
     'female-f2-v1': Object.freeze({ gender: 'female', morphologyRevision: 'f2-v1' }),

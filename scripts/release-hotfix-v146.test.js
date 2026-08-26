@@ -49,5 +49,5 @@ test('v146 keeps advisory drips out of mobile work and off the desktop quest boa
 });
 
 test('v146 invalidates the PWA shell', () => {
-  assert.match(SW, /const CACHE = 'satoru-v182';/);
+  assert.match(SW, /const CACHE = 'satoru-v183';/);
 });

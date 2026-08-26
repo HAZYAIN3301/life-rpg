@@ -17,7 +17,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildRecoverySlugV1() {
   'use strict';
 
-  const VERSION = '2.6.0';
+  const VERSION = '2.6.1';
   const ART_ROOT = '/art/pets/recovery-slug-v1/';
   const MOTION_ART_ROOT = `${ART_ROOT}motion-v2/`;
   const PAIR_ART_ROOT = `${ART_ROOT}pair-v2/`;
@@ -97,7 +97,10 @@
     const safeGender = normalizeTravellerGender(gender);
     if (!safeGender) return null;
     const genderPath = safeGender === 'female' ? 'female/f2-v1/' : '';
-    if (safe === 'stretch-soft-b') return `${PAIR_V155_ART_ROOT}${genderPath}stretch-soft-b-v155.png?v=20260814-1`;
+    if (safe === 'stretch-soft-b') {
+      const file = safeGender === 'female' ? 'stretch-soft-b-v183.png' : 'stretch-soft-b-v155.png?v=20260814-1';
+      return `${PAIR_V155_ART_ROOT}${genderPath}${file}`;
+    }
     return `${PAIR_ART_ROOT}${genderPath}${safe}.png?v=20260806-2`;
   }
 

@@ -67,7 +67,7 @@
       assets: frozenAssets(`/art/pets/body-toad-v1/pair-v4/female/${FEMALE_F2_REVISION}`, [
         'greet-contact.png', 'train-low.png', 'train-high.png', 'whistle-a.png', 'whistle-b.png',
         'whistle-c.png', 'whistle-d.png', 'pushup-down.png', 'pushup-up.png', 'stretch-a.png',
-        'stretch-b.png', 'rest-contact.png', 'rest-pet.png',
+        'stretch-b-v183.png', 'rest-contact.png', 'rest-pet.png',
       ]),
     }),
     recoverySlug: Object.freeze({
@@ -77,7 +77,7 @@
         ...frozenAssets(`/art/pets/recovery-slug-v1/pair-v2/female/${FEMALE_F2_REVISION}`, [
           'greet-contact.png', 'breathe-in.png', 'breathe-out.png', 'restore-contact.png', 'stretch-a.png',
         ]),
-        `/art/pets/recovery-slug-v1/pair-v3/female/${FEMALE_F2_REVISION}/stretch-soft-b-v155.png`,
+        `/art/pets/recovery-slug-v1/pair-v3/female/${FEMALE_F2_REVISION}/stretch-soft-b-v183.png`,
       ]),
     }),
     resourcesPenguin: Object.freeze({

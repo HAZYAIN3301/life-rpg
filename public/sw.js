@@ -1,7 +1,7 @@
 /* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    App shell: network-first. Art/media: cache-first. /api/: always live network.
    Bump CACHE whenever the shell or a stable asset URL changes. */
-const CACHE = 'satoru-v182';
+const CACHE = 'satoru-v183';
 const SHELL = [
   'pwa-lifecycle-v1.js',
   './', 'index.html', 'app.js', 'account-data-v1.js', 'attention-policy-v1.js', 'attention-session-v1.js', 'attention-episode-v1.js', 'attention-controller-v1.js', 'attention-ui-v1.js', 'return-shelf-v1.js', 'return-shelf-ui-v1.js', 'assistant-actions-v1.js', 'assistant-wake-v1.js', 'goals-initiatives-v1.js', 'guide-v3.js', 'guide-v3-copy-ru.js', 'guide-presenter-v1.js', 'guide-surface-v1.js', 'canon-domains.js', 'den-stage-v1.js', 'den-life-v1.js', 'den-resident-life-v1.js', 'den-pet-pair-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js', 'resources-penguin-v1.js', 'profile-memory-v1.js', 'day-observation-v1.js', 'stuck-task-v1.js', 'fights-v1.js', 'board-v1.js', 'board-v2.js', 'board-v2-catalog.js', 'board-v2-pacing.js', 'board-v2-offers.js', 'board-v2-completion.js', 'board-v2-completion-ui.js', 'board-v2-issuer.js', 'board-v2-discovery.js', 'board-v2-local-issuer.js', 'board-v2-local-ui.js', 'board-v2-wildcard-catalog.js', 'board-v2-wildcard-issuer.js', 'board-v2-runtime.js', 'board-pool-v1.js', 'board-taste-v1.js', 'failure-context-v1.js', 'after-lapse-v1.js', 'chest-reveal-v1.js', 'sphere-search-v1.js', 'chart-labels-v1.js', 'md-lite-v1.js', 'voice-input-v1.js', 'sky-events-v1.js', 'day-load-v1.js', 'traveller-appearance-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js', 'styles.css', 'fonts/podkova/Podkova-wght.woff2', 'shadow-rig-v2.js', 'shadow-den-v1.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
@@ -147,7 +147,7 @@ const SHELL = [
   'art/pets/body-toad-v1/pair-v4/female/f2-v1/pushup-down.png',
   'art/pets/body-toad-v1/pair-v4/female/f2-v1/pushup-up.png',
   'art/pets/body-toad-v1/pair-v4/female/f2-v1/stretch-a.png',
-  'art/pets/body-toad-v1/pair-v4/female/f2-v1/stretch-b.png',
+  'art/pets/body-toad-v1/pair-v4/female/f2-v1/stretch-b-v183.png',
   'art/pets/body-toad-v1/pair-v4/female/f2-v1/rest-contact.png',
   'art/pets/body-toad-v1/pair-v4/female/f2-v1/rest-pet.png',
   'art/pets/recovery-slug-v1/pair-v2/female/f2-v1/greet-contact.png',
@@ -155,7 +155,7 @@ const SHELL = [
   'art/pets/recovery-slug-v1/pair-v2/female/f2-v1/breathe-out.png',
   'art/pets/recovery-slug-v1/pair-v2/female/f2-v1/restore-contact.png',
   'art/pets/recovery-slug-v1/pair-v2/female/f2-v1/stretch-a.png',
-  'art/pets/recovery-slug-v1/pair-v3/female/f2-v1/stretch-soft-b-v155.png',
+  'art/pets/recovery-slug-v1/pair-v3/female/f2-v1/stretch-soft-b-v183.png',
   'art/pets/resources-penguin-v1/pair-v1/female/f2-v1/greet-contact.png',
   'art/pets/resources-penguin-v1/pair-v1/female/f2-v1/budget-point.png',
   'art/pets/resources-penguin-v1/pair-v1/female/f2-v1/budget-reserve.png',

@@ -12,7 +12,7 @@ function pngSize(file) {
   return [header.readUInt32BE(16), header.readUInt32BE(20)];
 }
 
-assert.equal(toad.VERSION, '3.6.0');
+assert.equal(toad.VERSION, '3.6.1');
 assert.deepEqual(toad.TRAVELLER_GENDERS, ['male', 'female']);
 assert.deepEqual(toad.AUTHORED_PAIR_GENDERS, ['male', 'female']);
 assert.equal(toad.normalizeTravellerGender(), 'male');
@@ -28,6 +28,7 @@ assert.equal(toad.frameSrc('strained', true), '/art/pets/body-toad-v1/states/str
 assert.equal(toad.motionFrameSrc('air'), '/art/pets/body-toad-v1/motion-v4/hop-air.png?v=20260806-3');
 assert.equal(toad.pairFrameSrc('greet-contact'), '/art/pets/body-toad-v1/pair-v4/greet-contact.png?v=20260806-3');
 assert.equal(toad.pairFrameSrc('greet-contact', 'female'), '/art/pets/body-toad-v1/pair-v4/female/f2-v1/greet-contact.png?v=20260806-3');
+assert.equal(toad.pairFrameSrc('stretch-b', 'female'), '/art/pets/body-toad-v1/pair-v4/female/f2-v1/stretch-b-v183.png');
 assert.equal(toad.pairFrameSrc('greet-contact', ''), null);
 assert.equal(toad.pairFrameSrc('unknown'), '/art/pets/body-toad-v1/pair-v4/rest-contact.png?v=20260806-3');
 assert.match(toad.pairMarkup({ gender: 'female' }), /data-traveller-gender="female"/);

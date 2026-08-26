@@ -18,7 +18,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildBodyToadV1() {
   'use strict';
 
-  const VERSION = '3.6.0';
+  const VERSION = '3.6.1';
   const ART_ROOT = '/art/pets/body-toad-v1/';
   const PAIR_ART_ROOT = `${ART_ROOT}pair-v4/`;
   const ACTION_PAIR_ART_ROOT = PAIR_ART_ROOT;
@@ -120,6 +120,9 @@
     const safeGender = normalizeTravellerGender(gender);
     if (!safeGender) return null;
     const genderPath = safeGender === 'female' ? 'female/f2-v1/' : '';
+    if (safeGender === 'female' && safe === 'stretch-b') {
+      return `${PAIR_ART_ROOT}${genderPath}stretch-b-v183.png`;
+    }
     return `${PAIR_ART_ROOT}${genderPath}${safe}.png?v=20260806-3`;
   }
 
