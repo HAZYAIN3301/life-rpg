@@ -768,13 +768,13 @@ def author(base: Image.Image, variant: str, asset_id: str, frame: str) -> tuple[
 
     broad_skin = (
         matte_bool
-        & (hue >= 0.052)
-        & (hue <= 0.125)
-        & (saturation >= 0.28)
-        & (saturation <= 0.68)
-        & (value >= 0.58)
-        & (green / np.maximum(red, 1) >= 0.54)
-        & (blue / np.maximum(green, 1) >= 0.42)
+        & (hue >= 0.045)
+        & (hue <= 0.098)
+        & (saturation >= 0.37)
+        & (saturation <= 0.72)
+        & (value >= 0.52)
+        & (red >= green * 1.13)
+        & (green >= blue * 1.18)
     )
 
     rows = np.indices(value.shape)[0]

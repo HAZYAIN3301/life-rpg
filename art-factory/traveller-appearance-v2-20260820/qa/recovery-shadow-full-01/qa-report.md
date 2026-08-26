@@ -7,23 +7,23 @@
 
 | Asset | Gate | Traveller px | Semantic px |
 |---|---:|---:|---:|
-| `female-f2-v1:recovery-slug:breathe-in` | PASS | 441881 | 145088 |
-| `female-f2-v1:recovery-slug:breathe-out` | PASS | 397845 | 126819 |
-| `female-f2-v1:recovery-slug:greet-contact` | PASS | 444682 | 148182 |
-| `female-f2-v1:recovery-slug:restore-contact` | PASS | 302278 | 87182 |
-| `female-f2-v1:recovery-slug:stretch-a` | PASS | 370285 | 119412 |
-| `female-f2-v1:recovery-slug:stretch-soft-b` | PASS | 402657 | 132627 |
-| `female-f2-v1:shadow:attune-guardian` | PASS | 338237 | 106256 |
-| `female-f2-v1:shadow:attune-keeper` | PASS | 343912 | 109296 |
-| `female-f2-v1:shadow:attune-spark` | PASS | 363906 | 122776 |
-| `female-f2-v1:shadow:attune-spirit` | PASS | 365471 | 116662 |
-| `male-v1:recovery-slug:breathe-in` | PASS | 423167 | 101706 |
-| `male-v1:recovery-slug:breathe-out` | PASS | 389141 | 77880 |
-| `male-v1:recovery-slug:greet-contact` | PASS | 455529 | 107158 |
-| `male-v1:recovery-slug:restore-contact` | PASS | 319496 | 77126 |
-| `male-v1:recovery-slug:stretch-a` | PASS | 351859 | 86647 |
-| `male-v1:recovery-slug:stretch-soft-b` | PASS | 386745 | 87724 |
-| `male-v1:shadow:attune-guardian` | PASS | 397555 | 105930 |
-| `male-v1:shadow:attune-keeper` | PASS | 361934 | 97936 |
-| `male-v1:shadow:attune-spark` | PASS | 363475 | 97222 |
-| `male-v1:shadow:attune-spirit` | PASS | 380022 | 99988 |
+| `female-f2-v1:recovery-slug:breathe-in` | PASS | 441881 | 125589 |
+| `female-f2-v1:recovery-slug:breathe-out` | PASS | 397845 | 113066 |
+| `female-f2-v1:recovery-slug:greet-contact` | PASS | 444682 | 123461 |
+| `female-f2-v1:recovery-slug:restore-contact` | PASS | 302278 | 70720 |
+| `female-f2-v1:recovery-slug:stretch-a` | PASS | 370285 | 101752 |
+| `female-f2-v1:recovery-slug:stretch-soft-b` | PASS | 423795 | 121301 |
+| `female-f2-v1:shadow:attune-guardian` | PASS | 338237 | 77197 |
+| `female-f2-v1:shadow:attune-keeper` | PASS | 343912 | 99661 |
+| `female-f2-v1:shadow:attune-spark` | PASS | 363906 | 107580 |
+| `female-f2-v1:shadow:attune-spirit` | PASS | 365471 | 105138 |
+| `male-v1:recovery-slug:breathe-in` | PASS | 423167 | 84028 |
+| `male-v1:recovery-slug:breathe-out` | PASS | 389141 | 73883 |
+| `male-v1:recovery-slug:greet-contact` | PASS | 455529 | 84570 |
+| `male-v1:recovery-slug:restore-contact` | PASS | 319496 | 56861 |
+| `male-v1:recovery-slug:stretch-a` | PASS | 351859 | 76748 |
+| `male-v1:recovery-slug:stretch-soft-b` | PASS | 386745 | 70904 |
+| `male-v1:shadow:attune-guardian` | PASS | 397555 | 92062 |
+| `male-v1:shadow:attune-keeper` | PASS | 361934 | 81776 |
+| `male-v1:shadow:attune-spark` | PASS | 363475 | 84474 |
+| `male-v1:shadow:attune-spirit` | PASS | 380022 | 81995 |

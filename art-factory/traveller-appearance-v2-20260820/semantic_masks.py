@@ -60,6 +60,28 @@ CAPABILITY_FRAMES = {
     ),
     "shadow": ("attune-spark", "attune-spirit", "attune-guardian", "attune-keeper"),
 }
+
+# Iris colour exists only while an eye is visibly open.  Closed black paper
+# eyelid/lash strokes are authored line art and must never be recoloured as an
+# iris.  The inventory must explicitly declare these exact frames empty so an
+# accidental blue blink cannot silently return.
+EXPECTED_EMPTY_EYE_FRAMES = frozenset({
+    ("core", "window-back"),
+    ("motion", "idle-blink"),
+    ("room", "bench-read-b", "male-v1"),
+    ("recovery-slug", "breathe-in"),
+    ("recovery-slug", "breathe-out"),
+    ("recovery-slug", "restore-contact"),
+    ("recovery-slug", "stretch-a"),
+    ("recovery-slug", "stretch-soft-b"),
+})
+
+
+def expects_empty_eyes(variant: str, capability: str, frame: str) -> bool:
+    return (
+        (capability, frame) in EXPECTED_EMPTY_EYE_FRAMES
+        or (capability, frame, variant) in EXPECTED_EMPTY_EYE_FRAMES
+    )
 CAPABILITY_CANVASES = {
     "core": (640, 900),
     "motion": (640, 900),
@@ -326,6 +348,8 @@ def _expected_base_route(variant: str, capability: str, frame: str) -> str:
         return f"/art/avatars/traveller-core-v1/{variant_root}/{folder}/{frame}.png"
     female_suffix = "/female/f2-v1" if female else ""
     if capability == "body-toad":
+        if female and frame == "stretch-b":
+            return "/art/pets/body-toad-v1/pair-v4/female/f2-v1/stretch-b-v183.png"
         return f"/art/pets/body-toad-v1/pair-v4{female_suffix}/{frame}.png"
     if capability == "resources-penguin":
         return f"/art/pets/resources-penguin-v1/pair-v1{female_suffix}/{frame}.png"
@@ -333,6 +357,8 @@ def _expected_base_route(variant: str, capability: str, frame: str) -> str:
         return f"/art/companions/shadow-den-v1/pair-v1{female_suffix}/{frame}.png"
     if capability == "recovery-slug":
         if frame == "stretch-soft-b":
+            if female:
+                return "/art/pets/recovery-slug-v1/pair-v3/female/f2-v1/stretch-soft-b-v183.png"
             return f"/art/pets/recovery-slug-v1/pair-v3{female_suffix}/stretch-soft-b-v155.png"
         return f"/art/pets/recovery-slug-v1/pair-v2{female_suffix}/{frame}.png"
     raise ValueError(f"unknown capability: {capability}")
@@ -474,11 +500,11 @@ def validate_inventory(
         if not isinstance(expected_empty, list) or any(value not in CHANNEL_INDEX for value in expected_empty):
             errors.append(f"{asset_id}: invalid expectedEmptyChannels")
         elif expected_empty and not (
-            capability == "core" and frame == "window-back" and expected_empty == ["eyes"]
+            expects_empty_eyes(variant, capability, frame) and expected_empty == ["eyes"]
         ):
-            errors.append(f"{asset_id}: only the back-view eye channel may be declared empty")
-        elif capability == "core" and frame == "window-back" and expected_empty != ["eyes"]:
-            errors.append(f"{asset_id}: back view must explicitly declare its empty eye channel")
+            errors.append(f"{asset_id}: only an audited closed/back-view eye channel may be declared empty")
+        elif expects_empty_eyes(variant, capability, frame) and expected_empty != ["eyes"]:
+            errors.append(f"{asset_id}: closed/back view must explicitly declare its empty eye channel")
         expected_canvas = CAPABILITY_CANVASES[capability]
         if asset.get("canvas") != list(expected_canvas):
             errors.append(f"{asset_id}: canvas contract mismatch")

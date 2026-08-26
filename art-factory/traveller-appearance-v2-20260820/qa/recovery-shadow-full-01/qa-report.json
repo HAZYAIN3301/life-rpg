@@ -32,18 +32,18 @@
           1536
         ],
         "baseSha256": "294b4384d5f6c5a8ce9f41b2a34d9b20fa397efad2388683338b09dcd9e8daf0",
-        "maskSha256": "dad8179ea1551cd2d111b99400eeeeba27b9d7d004d1508f1f2a86622722d105",
+        "maskSha256": "ca95f53d66b4c840339f7f1be493b609b6f764c7d1cb9118c87a95af9a5ae90f",
         "matteSha256": "e7b0586ceb2c96b26002442426f16925abc7bf44268a2c99830328b9ce8b5234",
         "travellerPixels": 441881,
-        "semanticPixels": 145088,
+        "semanticPixels": 125589,
         "channelPixels": {
-          "skin": 65548,
-          "hair": 78514,
-          "eyes": 1026
+          "skin": 47676,
+          "hair": 77913,
+          "eyes": 0
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "dad8179ea1551cd2d111b99400eeeeba27b9d7d004d1508f1f2a86622722d105",
+      "maskSha256": "ca95f53d66b4c840339f7f1be493b609b6f764c7d1cb9118c87a95af9a5ae90f",
       "matteSha256": "e7b0586ceb2c96b26002442426f16925abc7bf44268a2c99830328b9ce8b5234"
     },
     {
@@ -57,18 +57,18 @@
           1536
         ],
         "baseSha256": "c72d6fb404ae7db38eb795e3ef087ff25e0b5a0aab9c036afc11fd53db58f665",
-        "maskSha256": "0633bcf9c9b53a1f574dd78ab2473ae8cc19b624cc4e4617f21af8690c79b345",
+        "maskSha256": "5fee3430e394a84ab4c5fa1f7f3cd1a1d7ff9e58927b8550e8c00a20cfdde0ed",
         "matteSha256": "729c49c6cffc964a8a9184f92d33cb739755e827f6d71ece8f31b2461800098d",
         "travellerPixels": 397845,
-        "semanticPixels": 126819,
+        "semanticPixels": 113066,
         "channelPixels": {
-          "skin": 57252,
-          "hair": 69140,
-          "eyes": 427
+          "skin": 44327,
+          "hair": 68739,
+          "eyes": 0
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "0633bcf9c9b53a1f574dd78ab2473ae8cc19b624cc4e4617f21af8690c79b345",
+      "maskSha256": "5fee3430e394a84ab4c5fa1f7f3cd1a1d7ff9e58927b8550e8c00a20cfdde0ed",
       "matteSha256": "729c49c6cffc964a8a9184f92d33cb739755e827f6d71ece8f31b2461800098d"
     },
     {
@@ -82,18 +82,18 @@
           1536
         ],
         "baseSha256": "eaa0d2f7783656e602379e8aa63d75424517e25004fdb8af5bf5be40ddbb9e0c",
-        "maskSha256": "6fba440b98fd0ab118fd9bc814d6388f4d9ea8717c3003c8767e2b731f4acca1",
+        "maskSha256": "0c2b3dd93f87841ef2bdbbb3e2cc9caf6cffc716a3d9c0d32ebbab3b72f0a75f",
         "matteSha256": "c8cb8b4cea17c1a99270777d247186d1be3cf260e667a9146e25c95b9992de7a",
         "travellerPixels": 444682,
-        "semanticPixels": 148182,
+        "semanticPixels": 123461,
         "channelPixels": {
-          "skin": 60046,
-          "hair": 86190,
+          "skin": 36258,
+          "hair": 85257,
           "eyes": 1946
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "6fba440b98fd0ab118fd9bc814d6388f4d9ea8717c3003c8767e2b731f4acca1",
+      "maskSha256": "0c2b3dd93f87841ef2bdbbb3e2cc9caf6cffc716a3d9c0d32ebbab3b72f0a75f",
       "matteSha256": "c8cb8b4cea17c1a99270777d247186d1be3cf260e667a9146e25c95b9992de7a"
     },
     {
@@ -107,18 +107,18 @@
           1536
         ],
         "baseSha256": "3e654f46ed742c3f17e0af877fded63fcbbca1f25a36fe22e0312a36498d2e6a",
-        "maskSha256": "c650d160a173ae941cb1f1b1faa530fefb6e55a8fbb2fd68fd6821efdfd79265",
+        "maskSha256": "5961ae861bee33df0045a3e1533aa8cef531f1828ed14fd3f1300bea39d72cb6",
         "matteSha256": "d68ecd4b7b7b8602557ec0526589322e8f7494eab8905e178010817849dd32fb",
         "travellerPixels": 302278,
-        "semanticPixels": 87182,
+        "semanticPixels": 70720,
         "channelPixels": {
-          "skin": 42389,
-          "hair": 43623,
-          "eyes": 1170
+          "skin": 26986,
+          "hair": 43734,
+          "eyes": 0
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "c650d160a173ae941cb1f1b1faa530fefb6e55a8fbb2fd68fd6821efdfd79265",
+      "maskSha256": "5961ae861bee33df0045a3e1533aa8cef531f1828ed14fd3f1300bea39d72cb6",
       "matteSha256": "d68ecd4b7b7b8602557ec0526589322e8f7494eab8905e178010817849dd32fb"
     },
     {
@@ -132,18 +132,18 @@
           1536
         ],
         "baseSha256": "ddeec5dbae5b7ac81d100f45e487f1f8d023c0cae959d8d0ec9b12f343645f4b",
-        "maskSha256": "5a39d741386e8a39c49470728fde4fbf0a16e3c9b88fc6ca0288cf475483e390",
+        "maskSha256": "1e529a88e6dbcb9023101df5dbb38168f3cb6447cd1749be30b8ecd9f37c9301",
         "matteSha256": "6e91c5c629bf1d1bac27e4ebfb107407a4eb7c92807f5a87ed1069ed68e64d3e",
         "travellerPixels": 370285,
-        "semanticPixels": 119412,
+        "semanticPixels": 101752,
         "channelPixels": {
-          "skin": 50418,
-          "hair": 67125,
-          "eyes": 1869
+          "skin": 34992,
+          "hair": 66760,
+          "eyes": 0
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "5a39d741386e8a39c49470728fde4fbf0a16e3c9b88fc6ca0288cf475483e390",
+      "maskSha256": "1e529a88e6dbcb9023101df5dbb38168f3cb6447cd1749be30b8ecd9f37c9301",
       "matteSha256": "6e91c5c629bf1d1bac27e4ebfb107407a4eb7c92807f5a87ed1069ed68e64d3e"
     },
     {
@@ -156,20 +156,20 @@
           1536,
           1536
         ],
-        "baseSha256": "33633927fa725ce723771b356fb58555a86b99a707381f20b9d92d7418619d3b",
-        "maskSha256": "2b70f99d3acef560c0985f207e67420f8fa233bbb087c4d823e1159a0cf75341",
-        "matteSha256": "d6e818875713ae101aa5eb2af237de25feb2900e2a958fad72cb2bd9f6da6bde",
-        "travellerPixels": 402657,
-        "semanticPixels": 132627,
+        "baseSha256": "c4233fd423425272c84e212e68ac10da113d5c7c6dcfc47e264cb7b3feb735f5",
+        "maskSha256": "717934cfcac9caf545783d35c90ad3c5a67632706e9dc8d78fdc72ec5f9e67f0",
+        "matteSha256": "5f7523fb6d05ce4ca9e6516168a32b0ac780a911e9e741126275267b1f57e9e3",
+        "travellerPixels": 423795,
+        "semanticPixels": 121301,
         "channelPixels": {
-          "skin": 50053,
-          "hair": 80478,
-          "eyes": 2096
+          "skin": 42048,
+          "hair": 79253,
+          "eyes": 0
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "2b70f99d3acef560c0985f207e67420f8fa233bbb087c4d823e1159a0cf75341",
-      "matteSha256": "d6e818875713ae101aa5eb2af237de25feb2900e2a958fad72cb2bd9f6da6bde"
+      "maskSha256": "717934cfcac9caf545783d35c90ad3c5a67632706e9dc8d78fdc72ec5f9e67f0",
+      "matteSha256": "5f7523fb6d05ce4ca9e6516168a32b0ac780a911e9e741126275267b1f57e9e3"
     },
     {
       "id": "female-f2-v1:shadow:attune-guardian",
@@ -182,18 +182,18 @@
           1254
         ],
         "baseSha256": "bc8614f2fdbbfcfd91a35ee9caebd08e715f2e3ee42a21d86b9dc368a900e47e",
-        "maskSha256": "da9cb36709c3df4542f92a1338bd21c839bdd80cadb914c2c8783360263fd033",
+        "maskSha256": "4f8ea56247d7498f4a589f707dd5096e8fa8960fec7ff1b013fae2c820dc3d47",
         "matteSha256": "a96afbc523184577d1c0696d89b21fd0f9ead759ebfb94687c9449c19582cd32",
         "travellerPixels": 338237,
-        "semanticPixels": 106256,
+        "semanticPixels": 77197,
         "channelPixels": {
-          "skin": 41070,
-          "hair": 63924,
+          "skin": 14685,
+          "hair": 61250,
           "eyes": 1262
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "da9cb36709c3df4542f92a1338bd21c839bdd80cadb914c2c8783360263fd033",
+      "maskSha256": "4f8ea56247d7498f4a589f707dd5096e8fa8960fec7ff1b013fae2c820dc3d47",
       "matteSha256": "a96afbc523184577d1c0696d89b21fd0f9ead759ebfb94687c9449c19582cd32"
     },
     {
@@ -207,18 +207,18 @@
           1254
         ],
         "baseSha256": "39e3262c5a5ec3f619dd4dea129da14e9ab8ae582bfa95bb94e357c25acfe551",
-        "maskSha256": "073cc2bb3c4f30a0cb633d291d5e67609b7244ef9e0de169447a1629a109cfab",
+        "maskSha256": "0a953e4c00ec685417272d6ca448238acf05a67a62918c1199640c6d6b5302d1",
         "matteSha256": "1fb16eb3026b51f0feb80202209df2399b28e67eabbbb5aa21ffb638362fb1aa",
         "travellerPixels": 343912,
-        "semanticPixels": 109296,
+        "semanticPixels": 99661,
         "channelPixels": {
-          "skin": 40994,
-          "hair": 67320,
+          "skin": 34968,
+          "hair": 63711,
           "eyes": 982
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "073cc2bb3c4f30a0cb633d291d5e67609b7244ef9e0de169447a1629a109cfab",
+      "maskSha256": "0a953e4c00ec685417272d6ca448238acf05a67a62918c1199640c6d6b5302d1",
       "matteSha256": "1fb16eb3026b51f0feb80202209df2399b28e67eabbbb5aa21ffb638362fb1aa"
     },
     {
@@ -232,18 +232,18 @@
           1254
         ],
         "baseSha256": "b0e628b8caac274f46da0d651c8dd44dbc726a6a615de62195648593b3101c54",
-        "maskSha256": "96abe212a677549c87d54843789902f20a5534827973e55d58348b66021966f7",
+        "maskSha256": "c4f386e5018b78de7c43bbfbc44de01f5e63d76af8c3a22aa976680ed3c45646",
         "matteSha256": "4ced66850296c66725928ae2d28eec3c4478108e5acbb895d0bbd3f4c509141c",
         "travellerPixels": 363906,
-        "semanticPixels": 122776,
+        "semanticPixels": 107580,
         "channelPixels": {
-          "skin": 46406,
-          "hair": 75947,
+          "skin": 35396,
+          "hair": 71761,
           "eyes": 423
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "96abe212a677549c87d54843789902f20a5534827973e55d58348b66021966f7",
+      "maskSha256": "c4f386e5018b78de7c43bbfbc44de01f5e63d76af8c3a22aa976680ed3c45646",
       "matteSha256": "4ced66850296c66725928ae2d28eec3c4478108e5acbb895d0bbd3f4c509141c"
     },
     {
@@ -257,18 +257,18 @@
           1254
         ],
         "baseSha256": "33c422b3894aa2e719ab8a21de12e837d257cf07dd595da2480e9d6b56c4843d",
-        "maskSha256": "640e6db820c7ffadece43218b7a66fbd22b1b4f6a2cda3650f5752b45b7a0188",
+        "maskSha256": "d4031e5176c8b5196806b9031e40674e3b437ccb2e3ad135ac33cb3b75273660",
         "matteSha256": "6930414adcd1cf0a5dd41feb8b85cabe76c00a91a9f550f80effad0e80702f73",
         "travellerPixels": 365471,
-        "semanticPixels": 116662,
+        "semanticPixels": 105138,
         "channelPixels": {
-          "skin": 45090,
-          "hair": 71555,
+          "skin": 36459,
+          "hair": 68662,
           "eyes": 17
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "640e6db820c7ffadece43218b7a66fbd22b1b4f6a2cda3650f5752b45b7a0188",
+      "maskSha256": "d4031e5176c8b5196806b9031e40674e3b437ccb2e3ad135ac33cb3b75273660",
       "matteSha256": "6930414adcd1cf0a5dd41feb8b85cabe76c00a91a9f550f80effad0e80702f73"
     },
     {
@@ -282,18 +282,18 @@
           1536
         ],
         "baseSha256": "d24f86344072a80aa89a0a3a39dbfa4abf6a7b119fc926e31b3984c11b3386e1",
-        "maskSha256": "3f999790949e4699c96ff360b4bda86d7f45b6c726cf85ae93c8fe0f820d2ea7",
+        "maskSha256": "79466e158ef0ca508b3abebd92066000783ba627f7f5347638ed914659004431",
         "matteSha256": "1d4c17113843db76c9dd1592e241de4f3bd55c80e9efb0b9cced1ef227efdfe4",
         "travellerPixels": 423167,
-        "semanticPixels": 101706,
+        "semanticPixels": 84028,
         "channelPixels": {
-          "skin": 58106,
-          "hair": 39385,
-          "eyes": 4215
+          "skin": 44314,
+          "hair": 39714,
+          "eyes": 0
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "3f999790949e4699c96ff360b4bda86d7f45b6c726cf85ae93c8fe0f820d2ea7",
+      "maskSha256": "79466e158ef0ca508b3abebd92066000783ba627f7f5347638ed914659004431",
       "matteSha256": "1d4c17113843db76c9dd1592e241de4f3bd55c80e9efb0b9cced1ef227efdfe4"
     },
     {
@@ -307,18 +307,18 @@
           1536
         ],
         "baseSha256": "279ed20a08efb17fe946fdaf05d54ecb24aa26097957dea3e4716307d72c7603",
-        "maskSha256": "e9f16386265d9b9718024f4195b062cf1f230e41648374f7c1a0d8136923c36a",
+        "maskSha256": "4b93f94ecfd10030436d2c94efcbafb2d097ee154b585536343a737dc5f47fa8",
         "matteSha256": "fea9e671a0b7dc5e06b1562294a2cdd30e8c7e89dbaf6032495ae2e3ea0f88b3",
         "travellerPixels": 389141,
-        "semanticPixels": 77880,
+        "semanticPixels": 73883,
         "channelPixels": {
-          "skin": 46772,
-          "hair": 30528,
-          "eyes": 580
+          "skin": 43265,
+          "hair": 30618,
+          "eyes": 0
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "e9f16386265d9b9718024f4195b062cf1f230e41648374f7c1a0d8136923c36a",
+      "maskSha256": "4b93f94ecfd10030436d2c94efcbafb2d097ee154b585536343a737dc5f47fa8",
       "matteSha256": "fea9e671a0b7dc5e06b1562294a2cdd30e8c7e89dbaf6032495ae2e3ea0f88b3"
     },
     {
@@ -332,18 +332,18 @@
           1536
         ],
         "baseSha256": "84ee49e183523ad5618a49b61ce3ede5a6db3d9ba780cd9161f1d680858ca108",
-        "maskSha256": "2dad041fd64991e8980a5a8d9899dad57446c20707c26a412d31e2d358b25821",
+        "maskSha256": "7f38db20af54bc5e21dabd79dcf7e7cad845cd40bb64565628b4f9b94bb765d6",
         "matteSha256": "5258d6e1a5d92ed6e3d01f89fcb2fbf804ba2d25a4fea3a50291f233172f7f84",
         "travellerPixels": 455529,
-        "semanticPixels": 107158,
+        "semanticPixels": 84570,
         "channelPixels": {
-          "skin": 62137,
-          "hair": 43389,
+          "skin": 40164,
+          "hair": 42774,
           "eyes": 1632
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "2dad041fd64991e8980a5a8d9899dad57446c20707c26a412d31e2d358b25821",
+      "maskSha256": "7f38db20af54bc5e21dabd79dcf7e7cad845cd40bb64565628b4f9b94bb765d6",
       "matteSha256": "5258d6e1a5d92ed6e3d01f89fcb2fbf804ba2d25a4fea3a50291f233172f7f84"
     },
     {
@@ -357,18 +357,18 @@
           1536
         ],
         "baseSha256": "12909454c6f55d0b4b54263df4a2b1de8291be1fc861add5fae921cb35f1d525",
-        "maskSha256": "c69379c6eab6b7eaa4b77694c2a119106c331dafbf8bd015398bda494e111504",
+        "maskSha256": "af55ff1c2df42ad2b647217c5e7176d939e9ea7ea29de590a9de0364631b16b2",
         "matteSha256": "6817e3a011e7cd33674cb6bd312daba174e6c15289417f7be121f480990497d5",
         "travellerPixels": 319496,
-        "semanticPixels": 77126,
+        "semanticPixels": 56861,
         "channelPixels": {
-          "skin": 42505,
-          "hair": 33204,
-          "eyes": 1417
+          "skin": 22629,
+          "hair": 34232,
+          "eyes": 0
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "c69379c6eab6b7eaa4b77694c2a119106c331dafbf8bd015398bda494e111504",
+      "maskSha256": "af55ff1c2df42ad2b647217c5e7176d939e9ea7ea29de590a9de0364631b16b2",
       "matteSha256": "6817e3a011e7cd33674cb6bd312daba174e6c15289417f7be121f480990497d5"
     },
     {
@@ -382,18 +382,18 @@
           1536
         ],
         "baseSha256": "a07c5bb1fdff0b9c1506354f295fdcf6bfd32171d4534d8d04963f3c3260d2ab",
-        "maskSha256": "3ad0e507036f8c7359dd9ebc689b6942fcfc2cfa13a3c03279b61d471dd5205a",
+        "maskSha256": "e9c29e91db899a082f87618a4cc52d3d1be38b1d88dd843829fd6eba9dca5a04",
         "matteSha256": "c03edf467161be0bf09c2e0cdd825e561ae028180f13fc998b482f3ad121cf55",
         "travellerPixels": 351859,
-        "semanticPixels": 86647,
+        "semanticPixels": 76748,
         "channelPixels": {
-          "skin": 48112,
-          "hair": 35426,
-          "eyes": 3109
+          "skin": 39376,
+          "hair": 37372,
+          "eyes": 0
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "3ad0e507036f8c7359dd9ebc689b6942fcfc2cfa13a3c03279b61d471dd5205a",
+      "maskSha256": "e9c29e91db899a082f87618a4cc52d3d1be38b1d88dd843829fd6eba9dca5a04",
       "matteSha256": "c03edf467161be0bf09c2e0cdd825e561ae028180f13fc998b482f3ad121cf55"
     },
     {
@@ -407,18 +407,18 @@
           1536
         ],
         "baseSha256": "4e8d698c8a1d24fa35334e21eda161bd2a81fa3f141c8fb944b9a6e8c675608d",
-        "maskSha256": "61aae47601202888ea79c506dd6e0641e88dcb3ddebb5f3c764f2748fa089a41",
+        "maskSha256": "260033bb739076aa31f1eaef2df94f6df4de421a85d492b74f620054a02082db",
         "matteSha256": "331dc3a0b3e2ee899c77f31ea3ba76a971111e35805d83a72eed925dcb4d3511",
         "travellerPixels": 386745,
-        "semanticPixels": 87724,
+        "semanticPixels": 70904,
         "channelPixels": {
-          "skin": 48688,
-          "hair": 37869,
-          "eyes": 1167
+          "skin": 33616,
+          "hair": 37288,
+          "eyes": 0
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "61aae47601202888ea79c506dd6e0641e88dcb3ddebb5f3c764f2748fa089a41",
+      "maskSha256": "260033bb739076aa31f1eaef2df94f6df4de421a85d492b74f620054a02082db",
       "matteSha256": "331dc3a0b3e2ee899c77f31ea3ba76a971111e35805d83a72eed925dcb4d3511"
     },
     {
@@ -432,18 +432,18 @@
           1254
         ],
         "baseSha256": "94cdf3079884ff337a24d15b7439eab05fbfd13afe717f13cd82bd62de60c5f2",
-        "maskSha256": "ea96fff8255bac963428fffae5158a76dc897464f35a423bf62860415cdc9c50",
+        "maskSha256": "735b78ceec6169836e072137f05bb4a613d8a2092983c846dba15d889b2957e3",
         "matteSha256": "d0919198d7cb3abc1e0d89f27e99af39a89e105e6639bec2f05de12528d17ac7",
         "travellerPixels": 397555,
-        "semanticPixels": 105930,
+        "semanticPixels": 92062,
         "channelPixels": {
-          "skin": 63866,
-          "hair": 40386,
+          "skin": 51136,
+          "hair": 39248,
           "eyes": 1678
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "ea96fff8255bac963428fffae5158a76dc897464f35a423bf62860415cdc9c50",
+      "maskSha256": "735b78ceec6169836e072137f05bb4a613d8a2092983c846dba15d889b2957e3",
       "matteSha256": "d0919198d7cb3abc1e0d89f27e99af39a89e105e6639bec2f05de12528d17ac7"
     },
     {
@@ -457,18 +457,18 @@
           1254
         ],
         "baseSha256": "79f2b4292e28f45488d8d6b886520d15078089d5cfe4311c13dc14f60938f13a",
-        "maskSha256": "e212a30bf9820e20c706189e5a5bcfa1c4f729f1621f9ccfbd08528d468294a5",
+        "maskSha256": "bd2c56c34a9aa3740c68f1db56e91eb168ed3592fef0f80baa82e4d97af9e259",
         "matteSha256": "594846d41bbf4dc13c415cf5311e78e9eda625d01ed9f83885826b27bc974d29",
         "travellerPixels": 361934,
-        "semanticPixels": 97936,
+        "semanticPixels": 81776,
         "channelPixels": {
-          "skin": 60191,
-          "hair": 36188,
+          "skin": 45066,
+          "hair": 35153,
           "eyes": 1557
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "e212a30bf9820e20c706189e5a5bcfa1c4f729f1621f9ccfbd08528d468294a5",
+      "maskSha256": "bd2c56c34a9aa3740c68f1db56e91eb168ed3592fef0f80baa82e4d97af9e259",
       "matteSha256": "594846d41bbf4dc13c415cf5311e78e9eda625d01ed9f83885826b27bc974d29"
     },
     {
@@ -482,18 +482,18 @@
           1254
         ],
         "baseSha256": "826351c5d7cea1904db7aafbe50d52c89abe82d7cb8af5f205528bc9db354e9d",
-        "maskSha256": "75cb2eae79d72dca6a99bfbb43549e06bc6d543218836e5b1feca68c858339f0",
+        "maskSha256": "e54287b84c913c8fdeed62c62de23c25671db7eda8eb7194ec1dc8c41a1f4287",
         "matteSha256": "a900a415859ae9e5418d0148e26cca1487a68e3690d056741162970c1883bffb",
         "travellerPixels": 363475,
-        "semanticPixels": 97222,
+        "semanticPixels": 84474,
         "channelPixels": {
-          "skin": 59249,
-          "hair": 36577,
+          "skin": 47307,
+          "hair": 35771,
           "eyes": 1396
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "75cb2eae79d72dca6a99bfbb43549e06bc6d543218836e5b1feca68c858339f0",
+      "maskSha256": "e54287b84c913c8fdeed62c62de23c25671db7eda8eb7194ec1dc8c41a1f4287",
       "matteSha256": "a900a415859ae9e5418d0148e26cca1487a68e3690d056741162970c1883bffb"
     },
     {
@@ -507,18 +507,18 @@
           1254
         ],
         "baseSha256": "fa5db625a4fc729803206277f8d06382af168cb5f9a074586749fcd347568163",
-        "maskSha256": "43f6dfb6ae77ec83ff14bea84f8d10b50cae74e27c63f4629c815f5b5bef9554",
+        "maskSha256": "104b2905230c25fec40de65c922390a888a132f029d8aed01004649dbfdb6a61",
         "matteSha256": "9e6a636b91290c7318bf6b1b525b15979673708f3ce049d01c2e73eaf82f018a",
         "travellerPixels": 380022,
-        "semanticPixels": 99988,
+        "semanticPixels": 81995,
         "channelPixels": {
-          "skin": 60603,
-          "hair": 37872,
+          "skin": 43594,
+          "hair": 36888,
           "eyes": 1513
         },
         "maximumChannelSum": 255
       },
-      "maskSha256": "43f6dfb6ae77ec83ff14bea84f8d10b50cae74e27c63f4629c815f5b5bef9554",
+      "maskSha256": "104b2905230c25fec40de65c922390a888a132f029d8aed01004649dbfdb6a61",
       "matteSha256": "9e6a636b91290c7318bf6b1b525b15979673708f3ce049d01c2e73eaf82f018a"
     }
   ],

@@ -12,8 +12,8 @@
       "id": "male-v1:body-toad:greet-contact",
       "authoring": {
         "travellerPixels": 224208,
-        "skinPixels": 13924,
-        "hairPixels": 23453,
+        "skinPixels": 12536,
+        "hairPixels": 33521,
         "eyePixels": 1459,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -28,13 +28,13 @@
             1536
           ],
           "baseSha256": "e513da955a717b785c0b601b7fb8867d95a3a35fa3b81ec64f158c1cad3a724a",
-          "maskSha256": "c1b266575f0a5016ecc81825ff135da8274c48a3fc9286f1eeb0e8bd8822f20a",
+          "maskSha256": "2585885a4fa8da6c9ae572f8b4c3b95bd8b3cfc17a2b60fa3a3f04e166fe9f23",
           "matteSha256": "9d5a99c985af9f3c102372d41c74b55081d3c7b1e3f30e448854fd786147d88f",
           "travellerPixels": 224208,
-          "semanticPixels": 38836,
+          "semanticPixels": 47516,
           "channelPixels": {
-            "skin": 13924,
-            "hair": 23453,
+            "skin": 12536,
+            "hair": 33521,
             "eyes": 1459
           },
           "maximumChannelSum": 255
@@ -45,8 +45,8 @@
       "id": "male-v1:body-toad:train-low",
       "authoring": {
         "travellerPixels": 350529,
-        "skinPixels": 21232,
-        "hairPixels": 35112,
+        "skinPixels": 19251,
+        "hairPixels": 42289,
         "eyePixels": 1849,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -61,13 +61,13 @@
             1536
           ],
           "baseSha256": "71be21065b3945cc3096a06834f5a79ab6af6043dd2fb513c4292811e57e9e11",
-          "maskSha256": "fc3ba7d38e4222dd35c79afd55adcf4d6ffb53e09cb47e34527afa093a00f63c",
+          "maskSha256": "682bd30870f5bcf8eddfd23e7934b056beaaf1fae57d73ab5b68d5c85e775baf",
           "matteSha256": "a80c318b7d473864be2df0314a782a02893d40011170a5977ab583acb81474a0",
           "travellerPixels": 350529,
-          "semanticPixels": 58193,
+          "semanticPixels": 63389,
           "channelPixels": {
-            "skin": 21232,
-            "hair": 35112,
+            "skin": 19251,
+            "hair": 42289,
             "eyes": 1849
           },
           "maximumChannelSum": 255
@@ -78,8 +78,8 @@
       "id": "male-v1:body-toad:train-high",
       "authoring": {
         "travellerPixels": 416854,
-        "skinPixels": 16337,
-        "hairPixels": 32197,
+        "skinPixels": 15318,
+        "hairPixels": 37672,
         "eyePixels": 1935,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -94,13 +94,13 @@
             1536
           ],
           "baseSha256": "3dd622da0c7b9e12cc5518b7dbf5c76a5ab0311f627b4ff35e5811bc5cde218e",
-          "maskSha256": "063c22b378f99b38425c62c3581aa3ec9a6d9859de5aaf37f1362543023a93c7",
+          "maskSha256": "e44ed8b6ad9086ba5d9d71eb4cda6e74063590c6c15664a1e95ebba8ad01a665",
           "matteSha256": "b6e0836517a925a7e265b47a82d2ed0e5742f5db65f9bd5b1400ee58d8117e5f",
           "travellerPixels": 416854,
-          "semanticPixels": 50469,
+          "semanticPixels": 54925,
           "channelPixels": {
-            "skin": 16337,
-            "hair": 32197,
+            "skin": 15318,
+            "hair": 37672,
             "eyes": 1935
           },
           "maximumChannelSum": 255
@@ -111,8 +111,8 @@
       "id": "male-v1:body-toad:whistle-a",
       "authoring": {
         "travellerPixels": 216188,
-        "skinPixels": 14033,
-        "hairPixels": 20629,
+        "skinPixels": 12825,
+        "hairPixels": 19996,
         "eyePixels": 697,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -127,13 +127,13 @@
             1536
           ],
           "baseSha256": "04e895e89a8593171424d5492a049740efe85057a6d5e14b5e266ba92b715c83",
-          "maskSha256": "63ce8320f01efe5a2729ce22207e2ef35874f3d0f5b3833c35c7e0fbc27bbd06",
+          "maskSha256": "47c8fb02eb33a6044269589d5a405d71569adfbc45d2bad275df9243a090ec19",
           "matteSha256": "7b671c768c913b3c50403109279c4b85b4f72baf2cf874ac585318776577bf24",
           "travellerPixels": 216188,
-          "semanticPixels": 35359,
+          "semanticPixels": 33518,
           "channelPixels": {
-            "skin": 14033,
-            "hair": 20629,
+            "skin": 12825,
+            "hair": 19996,
             "eyes": 697
           },
           "maximumChannelSum": 255
@@ -144,8 +144,8 @@
       "id": "male-v1:body-toad:whistle-b",
       "authoring": {
         "travellerPixels": 216943,
-        "skinPixels": 15072,
-        "hairPixels": 20378,
+        "skinPixels": 12339,
+        "hairPixels": 22731,
         "eyePixels": 741,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -160,13 +160,13 @@
             1536
           ],
           "baseSha256": "e7b7d2504d02cd5c1989f9825271dbd0632e7a95e007314fdc0759ade6627d66",
-          "maskSha256": "ff8468aacc5d8a7561c1cf18f9b61b365a07a1265cfddc6d7473899a4a0b4e13",
+          "maskSha256": "28b21bbf898b145a55409de03d3d23570376c0bfec662dd43b69424398d2b445",
           "matteSha256": "65292f3c43c1d30495af54b3c5f5c8c52481d3f95d195cf9397346bfaf6fbcf7",
           "travellerPixels": 216943,
-          "semanticPixels": 36191,
+          "semanticPixels": 35811,
           "channelPixels": {
-            "skin": 15072,
-            "hair": 20378,
+            "skin": 12339,
+            "hair": 22731,
             "eyes": 741
           },
           "maximumChannelSum": 255
@@ -177,8 +177,8 @@
       "id": "male-v1:body-toad:whistle-c",
       "authoring": {
         "travellerPixels": 226104,
-        "skinPixels": 11676,
-        "hairPixels": 18798,
+        "skinPixels": 9089,
+        "hairPixels": 19846,
         "eyePixels": 910,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -193,13 +193,13 @@
             1536
           ],
           "baseSha256": "955dc4fbdd406022fdf3acba6c8373ccbb61d57a803d8c70bf2faf14ae46b988",
-          "maskSha256": "fc467d5c0d40ac1486422a35f86d6de5b3b254a973fe3d8908eebc5ddc9aa45c",
+          "maskSha256": "d1bb0862901d93f6d1d9380b5a8d9b9597354f62923d15cfeb0406703d29ba53",
           "matteSha256": "96856a528c5382dfe4254ac2c58423d2e5f4aca193409c4e44f549b9e002a6c0",
           "travellerPixels": 226104,
-          "semanticPixels": 31384,
+          "semanticPixels": 29845,
           "channelPixels": {
-            "skin": 11676,
-            "hair": 18798,
+            "skin": 9089,
+            "hair": 19846,
             "eyes": 910
           },
           "maximumChannelSum": 255
@@ -210,8 +210,8 @@
       "id": "male-v1:body-toad:whistle-d",
       "authoring": {
         "travellerPixels": 199451,
-        "skinPixels": 10236,
-        "hairPixels": 21807,
+        "skinPixels": 8807,
+        "hairPixels": 1010,
         "eyePixels": 807,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -226,13 +226,13 @@
             1536
           ],
           "baseSha256": "fa0f52dff3b0837895aa58e6c29be3add6b1672931039372694e56c0085ab136",
-          "maskSha256": "79ddc6584c3591902bd201819e697c9683ad9555049ba2fcf3a5703fac270ef0",
+          "maskSha256": "a0414d2487e22a7f8d5bb7884afe2f7edfa7a6d2fb752ad8b839f7ac976a7c90",
           "matteSha256": "61e3f18baec96012eadc1f442d288d7fda118020c5f68692d0ffcc6b6e8a8dad",
           "travellerPixels": 199451,
-          "semanticPixels": 32850,
+          "semanticPixels": 10624,
           "channelPixels": {
-            "skin": 10236,
-            "hair": 21807,
+            "skin": 8807,
+            "hair": 1010,
             "eyes": 807
           },
           "maximumChannelSum": 255
@@ -243,8 +243,8 @@
       "id": "male-v1:body-toad:pushup-down",
       "authoring": {
         "travellerPixels": 297914,
-        "skinPixels": 17478,
-        "hairPixels": 44976,
+        "skinPixels": 15346,
+        "hairPixels": 49173,
         "eyePixels": 2512,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -259,13 +259,13 @@
             1536
           ],
           "baseSha256": "cc7c8856a47b6b8a257200c90c9b86f9c0ff4bce2a06f63111fc428df815c01b",
-          "maskSha256": "0f1399f0390f6cf4dc81d8abe175ae0f8a23894ec11233bf36eacb628b7bb984",
+          "maskSha256": "323e8fc3b3da8e5d8e67529ae172d264cac532e363af284ae99d527a07bc25dd",
           "matteSha256": "dbf792542458123267a926661eb1d99a031f744a0702532acefad00f53604b3a",
           "travellerPixels": 297914,
-          "semanticPixels": 64966,
+          "semanticPixels": 67031,
           "channelPixels": {
-            "skin": 17478,
-            "hair": 44976,
+            "skin": 15346,
+            "hair": 49173,
             "eyes": 2512
           },
           "maximumChannelSum": 255
@@ -276,8 +276,8 @@
       "id": "male-v1:body-toad:pushup-up",
       "authoring": {
         "travellerPixels": 298227,
-        "skinPixels": 17007,
-        "hairPixels": 43940,
+        "skinPixels": 14533,
+        "hairPixels": 46976,
         "eyePixels": 1744,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -292,13 +292,13 @@
             1536
           ],
           "baseSha256": "1157946d12ded065d0739637c83d471328488d83e9a3a127cefa644e9a5884bd",
-          "maskSha256": "2c299fbc0508e49fcd36c711d799d4e86ed6496465d51d62ecec7816772adf29",
+          "maskSha256": "be874a82f6a529faa6c0e3ab6124cf69e6e1be18fb084cac1bec27e7c19be50b",
           "matteSha256": "f38f947ac2e806c5bde2a9de7466c0f6b9f81ba6e9106fce5cb5cd37ff60b825",
           "travellerPixels": 298227,
-          "semanticPixels": 62691,
+          "semanticPixels": 63253,
           "channelPixels": {
-            "skin": 17007,
-            "hair": 43940,
+            "skin": 14533,
+            "hair": 46976,
             "eyes": 1744
           },
           "maximumChannelSum": 255
@@ -309,8 +309,8 @@
       "id": "male-v1:body-toad:stretch-a",
       "authoring": {
         "travellerPixels": 293493,
-        "skinPixels": 19629,
-        "hairPixels": 41142,
+        "skinPixels": 16444,
+        "hairPixels": 46254,
         "eyePixels": 2834,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -325,13 +325,13 @@
             1536
           ],
           "baseSha256": "dedf4556b12a752939d1763b4a08a3d624a3f980518575d6ec31719e5576dd08",
-          "maskSha256": "ea95f9f06460d788769f5ef070c54e231153d2eff00525388c0073a131e29cb5",
+          "maskSha256": "b4f8d9a895650961e6a9a08c8d91056797416d68d87a63e19255de7a8943c23b",
           "matteSha256": "df35199d23aeb3e185e6409b1b5deae6dc30b6cf131bc58e23b1bbeee9c9f1d0",
           "travellerPixels": 293493,
-          "semanticPixels": 63605,
+          "semanticPixels": 65532,
           "channelPixels": {
-            "skin": 19629,
-            "hair": 41142,
+            "skin": 16444,
+            "hair": 46254,
             "eyes": 2834
           },
           "maximumChannelSum": 255
@@ -342,8 +342,8 @@
       "id": "male-v1:body-toad:stretch-b",
       "authoring": {
         "travellerPixels": 289890,
-        "skinPixels": 17771,
-        "hairPixels": 46598,
+        "skinPixels": 7098,
+        "hairPixels": 52028,
         "eyePixels": 2229,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -358,13 +358,13 @@
             1536
           ],
           "baseSha256": "c863e475efde41f59db829565f70f54f714b134df14fc9448067e2af7f76f7c8",
-          "maskSha256": "5bae8a5ee418afc86aa8899537a9df05de1404139a7b27acebee2e61caea3597",
+          "maskSha256": "1854a96acc8e56350f7383b7fe8517e5630ca3cf310bfd4fa10fdc7bed4f4c41",
           "matteSha256": "6c4edf20cd6ab47b44098677d6d069ff90e5f3b74ae98247e7aefc8690766ddf",
           "travellerPixels": 289890,
-          "semanticPixels": 66598,
+          "semanticPixels": 61355,
           "channelPixels": {
-            "skin": 17771,
-            "hair": 46598,
+            "skin": 7098,
+            "hair": 52028,
             "eyes": 2229
           },
           "maximumChannelSum": 255
@@ -375,8 +375,8 @@
       "id": "male-v1:body-toad:rest-contact",
       "authoring": {
         "travellerPixels": 262095,
-        "skinPixels": 16467,
-        "hairPixels": 24210,
+        "skinPixels": 16231,
+        "hairPixels": 37964,
         "eyePixels": 1734,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -391,13 +391,13 @@
             1536
           ],
           "baseSha256": "f61de1816b694d6f35460cc5a5d8b107ab66cb4ff9c04b80cecbac5248ac8f26",
-          "maskSha256": "d5bb9776b9dee9ef14fc6e8a7b66650cbb4059bcd0610a29a2e0ee730cba6d94",
+          "maskSha256": "64b5f1be845806e52c338f17bf52f17423291a0b0965fabc2d918fcb9549dcff",
           "matteSha256": "5b5813f4059183c9a71dac22decfc9bed2973346fd53aa64c932b389f2032055",
           "travellerPixels": 262095,
-          "semanticPixels": 42411,
+          "semanticPixels": 55929,
           "channelPixels": {
-            "skin": 16467,
-            "hair": 24210,
+            "skin": 16231,
+            "hair": 37964,
             "eyes": 1734
           },
           "maximumChannelSum": 255
@@ -408,8 +408,8 @@
       "id": "male-v1:body-toad:rest-pet",
       "authoring": {
         "travellerPixels": 273757,
-        "skinPixels": 14277,
-        "hairPixels": 22678,
+        "skinPixels": 13946,
+        "hairPixels": 36650,
         "eyePixels": 787,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -424,13 +424,13 @@
             1536
           ],
           "baseSha256": "ed83d20c9dae682952dacd093d6306289d8b60980e6d012ef87984a05caa9920",
-          "maskSha256": "05bc89b5e096c32b9ebb36d9a3020e824a9b88226590241f69096156b228ec87",
+          "maskSha256": "a9bef781fb8fa7c15ee46fccf53e81830d632e607bc62ffd6d51d221025ccf7b",
           "matteSha256": "76551407b743b4b4f1008cad0c5ac14e488a466fac915e772643d8ce8f45986c",
           "travellerPixels": 273757,
-          "semanticPixels": 37742,
+          "semanticPixels": 51383,
           "channelPixels": {
-            "skin": 14277,
-            "hair": 22678,
+            "skin": 13946,
+            "hair": 36650,
             "eyes": 787
           },
           "maximumChannelSum": 255
@@ -441,8 +441,8 @@
       "id": "female-f2-v1:body-toad:greet-contact",
       "authoring": {
         "travellerPixels": 234626,
-        "skinPixels": 16878,
-        "hairPixels": 41304,
+        "skinPixels": 10213,
+        "hairPixels": 48891,
         "eyePixels": 2538,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -457,13 +457,13 @@
             1536
           ],
           "baseSha256": "1940daf846b3c4904fc5fc244154bb5442462046715088cd452e49df0a7d1f23",
-          "maskSha256": "f68e7eebe00159ff583b7c723af47913463bb5357e7f113961aaa7512d572f4a",
+          "maskSha256": "b18753b53c439cce32cb6af105a1a52c0567c63904acbf13dc100eec79cd627c",
           "matteSha256": "66a9768d6b257e56eca7dafa8db429161b988818eb64382098a86f9754418ad0",
           "travellerPixels": 234626,
-          "semanticPixels": 60720,
+          "semanticPixels": 61642,
           "channelPixels": {
-            "skin": 16878,
-            "hair": 41304,
+            "skin": 10213,
+            "hair": 48891,
             "eyes": 2538
           },
           "maximumChannelSum": 255
@@ -474,8 +474,8 @@
       "id": "female-f2-v1:body-toad:train-low",
       "authoring": {
         "travellerPixels": 354400,
-        "skinPixels": 22467,
-        "hairPixels": 69843,
+        "skinPixels": 20048,
+        "hairPixels": 80369,
         "eyePixels": 1769,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -490,13 +490,13 @@
             1536
           ],
           "baseSha256": "59edaad5e442d7d9043b695e613e0f83e9cdad2c24ac94c04c1e0f9097f31727",
-          "maskSha256": "6698033a489600bda82792252446571b28e6716e6c4eb8c4d614e04c4ee50445",
+          "maskSha256": "ee45eb96927b2f9219777c486694cfeb8c24296b5e7e589e407b0b0ebf61e744",
           "matteSha256": "e587cd664bba96acb7e7a041f8298868d5cde3a05b5ac4f11363d350ca1af58d",
           "travellerPixels": 354400,
-          "semanticPixels": 94079,
+          "semanticPixels": 102186,
           "channelPixels": {
-            "skin": 22467,
-            "hair": 69843,
+            "skin": 20048,
+            "hair": 80369,
             "eyes": 1769
           },
           "maximumChannelSum": 255
@@ -507,8 +507,8 @@
       "id": "female-f2-v1:body-toad:train-high",
       "authoring": {
         "travellerPixels": 387646,
-        "skinPixels": 17097,
-        "hairPixels": 61361,
+        "skinPixels": 15726,
+        "hairPixels": 76843,
         "eyePixels": 1899,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -523,13 +523,13 @@
             1536
           ],
           "baseSha256": "6ef99024273c81f4a6bccbf324fa20192e8675ee7b126e58e6a56254ce9e946e",
-          "maskSha256": "4250641e09b635fff16efae714b3cdb808c893080013c987997d4c73994b862f",
+          "maskSha256": "e924c4701e7f47d8370876b051fd2e130af81d7645957d6346605cde44949fb8",
           "matteSha256": "fd3bc23a4acec5bb449986f54415795271f701371ee499623803bc2f576ad3e6",
           "travellerPixels": 387646,
-          "semanticPixels": 80357,
+          "semanticPixels": 94468,
           "channelPixels": {
-            "skin": 17097,
-            "hair": 61361,
+            "skin": 15726,
+            "hair": 76843,
             "eyes": 1899
           },
           "maximumChannelSum": 255
@@ -540,8 +540,8 @@
       "id": "female-f2-v1:body-toad:whistle-a",
       "authoring": {
         "travellerPixels": 232177,
-        "skinPixels": 15022,
-        "hairPixels": 43907,
+        "skinPixels": 11635,
+        "hairPixels": 1761,
         "eyePixels": 525,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -556,13 +556,13 @@
             1536
           ],
           "baseSha256": "91167e033c72ecc9a385e73d901f88010a0b3c1f84f1f31365359a4bb040c86f",
-          "maskSha256": "1f62fa0634e4399b388cc83e1b88b8e6ae234c794407094a2d819d45e45200e2",
+          "maskSha256": "3a42256d31d6d02774d4c7fa9c0d776193ba809aeeaa58c583bf31e9bd00a394",
           "matteSha256": "ebb42f11cd6b2ee8cd54c6dc6e609aeae8f0f8ad1fd6832d0a2f339aa2be4bba",
           "travellerPixels": 232177,
-          "semanticPixels": 59454,
+          "semanticPixels": 13921,
           "channelPixels": {
-            "skin": 15022,
-            "hair": 43907,
+            "skin": 11635,
+            "hair": 1761,
             "eyes": 525
           },
           "maximumChannelSum": 255
@@ -573,8 +573,8 @@
       "id": "female-f2-v1:body-toad:whistle-b",
       "authoring": {
         "travellerPixels": 229445,
-        "skinPixels": 15724,
-        "hairPixels": 44942,
+        "skinPixels": 5694,
+        "hairPixels": 1777,
         "eyePixels": 519,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -589,13 +589,13 @@
             1536
           ],
           "baseSha256": "1407c75f1d8249b6dd5d07f23b516bbde8232aaad696a11aabca549bf8229689",
-          "maskSha256": "a3276da815171d9a429e253c18c748949bc9a200c17738e04de944c116c59eaf",
+          "maskSha256": "760cd6f79af6236bcb46dafdb40c7e14426985dd827f62c73f9a52d0a1f70d35",
           "matteSha256": "feac6603c65f63dc3372162985087c3a3e4c9fb02f55086641d73d1496fdd753",
           "travellerPixels": 229445,
-          "semanticPixels": 61185,
+          "semanticPixels": 7990,
           "channelPixels": {
-            "skin": 15724,
-            "hair": 44942,
+            "skin": 5694,
+            "hair": 1777,
             "eyes": 519
           },
           "maximumChannelSum": 255
@@ -606,8 +606,8 @@
       "id": "female-f2-v1:body-toad:whistle-c",
       "authoring": {
         "travellerPixels": 234547,
-        "skinPixels": 12979,
-        "hairPixels": 37813,
+        "skinPixels": 7890,
+        "hairPixels": 1322,
         "eyePixels": 643,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -622,13 +622,13 @@
             1536
           ],
           "baseSha256": "94272f78a9ae34a22e41524ab23a869ac8c8826acb3013eaf306691cb282fb00",
-          "maskSha256": "02e9f40b163ff28c1389e0e8e4ee72ec6fd99d5735c0a870ae4981a50ce8e60b",
+          "maskSha256": "7f2d542ab9b27419bd4630c646e87481b1e04790505afb99ee918a6db6484dc6",
           "matteSha256": "7a4d8727bc26058e19e3b47e71f7adae32d0421607ee263e3b55bddfc212ac79",
           "travellerPixels": 234547,
-          "semanticPixels": 51435,
+          "semanticPixels": 9855,
           "channelPixels": {
-            "skin": 12979,
-            "hair": 37813,
+            "skin": 7890,
+            "hair": 1322,
             "eyes": 643
           },
           "maximumChannelSum": 255
@@ -639,8 +639,8 @@
       "id": "female-f2-v1:body-toad:whistle-d",
       "authoring": {
         "travellerPixels": 213708,
-        "skinPixels": 11544,
-        "hairPixels": 40482,
+        "skinPixels": 9145,
+        "hairPixels": 1219,
         "eyePixels": 388,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -655,13 +655,13 @@
             1536
           ],
           "baseSha256": "3c3664928cff746b1b438756e5df94ef7e20bec2cd6fca352d849ba890b987ec",
-          "maskSha256": "37f5dcac981ce76e6150f6f3094e6a25fc4dfb1461b4019fdc0e3580258e965e",
+          "maskSha256": "d363c55027d931f1a3521c9a29973bb2e0806dc34bf692e9816ea02e4535bd45",
           "matteSha256": "874bfb19837ecf75a16b5606c038b05eb426468ad30d35a3df300983e4b25d05",
           "travellerPixels": 213708,
-          "semanticPixels": 52414,
+          "semanticPixels": 10752,
           "channelPixels": {
-            "skin": 11544,
-            "hair": 40482,
+            "skin": 9145,
+            "hair": 1219,
             "eyes": 388
           },
           "maximumChannelSum": 255
@@ -672,8 +672,8 @@
       "id": "female-f2-v1:body-toad:pushup-down",
       "authoring": {
         "travellerPixels": 207228,
-        "skinPixels": 16327,
-        "hairPixels": 51854,
+        "skinPixels": 10932,
+        "hairPixels": 56456,
         "eyePixels": 2950,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -688,13 +688,13 @@
             1536
           ],
           "baseSha256": "5e4d902eed3ab681c75ef560746cbd187316e8bdef8d41f9dd73e3cb9a538443",
-          "maskSha256": "468911ad1f38365e990a7623def47023a6aa56029ff48d9a23de962e1d4cee5d",
+          "maskSha256": "6297d93d91c944f9cf41970abd8c207d1e2b7d725aa6d188a6a7f532b6fcc5a4",
           "matteSha256": "6b7619ad2dfd3b617a410050199f0d311097e0d510ab4dc708424c785f9ed5d6",
           "travellerPixels": 207228,
-          "semanticPixels": 71131,
+          "semanticPixels": 70338,
           "channelPixels": {
-            "skin": 16327,
-            "hair": 51854,
+            "skin": 10932,
+            "hair": 56456,
             "eyes": 2950
           },
           "maximumChannelSum": 255
@@ -705,8 +705,8 @@
       "id": "female-f2-v1:body-toad:pushup-up",
       "authoring": {
         "travellerPixels": 211120,
-        "skinPixels": 11541,
-        "hairPixels": 52965,
+        "skinPixels": 9828,
+        "hairPixels": 56058,
         "eyePixels": 1404,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -721,13 +721,13 @@
             1536
           ],
           "baseSha256": "b58ae7f3a3edb03501ae8f6309cf2374a4a432404f786e3ba5343347cc718f34",
-          "maskSha256": "2204e9dda86813235c55f94a54f9fc68fb0226d7045b323a9fbfd524a10893c7",
+          "maskSha256": "d8ff01d6263c052794c51ef9cc258ed0a2af2a799571e8d603b9c5eab55d4afa",
           "matteSha256": "c4c5dd44e57d9ae332e26516dca3459dc97cf53e454a24581482ab08161c312e",
           "travellerPixels": 211120,
-          "semanticPixels": 65910,
+          "semanticPixels": 67290,
           "channelPixels": {
-            "skin": 11541,
-            "hair": 52965,
+            "skin": 9828,
+            "hair": 56058,
             "eyes": 1404
           },
           "maximumChannelSum": 255
@@ -738,8 +738,8 @@
       "id": "female-f2-v1:body-toad:stretch-a",
       "authoring": {
         "travellerPixels": 247044,
-        "skinPixels": 13513,
-        "hairPixels": 45694,
+        "skinPixels": 11233,
+        "hairPixels": 59270,
         "eyePixels": 1856,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -754,13 +754,13 @@
             1536
           ],
           "baseSha256": "439760a22ee7dfe54b5d4d2add9f5293b2d28dcac41c8b8a6d0d8ec6e1c7116a",
-          "maskSha256": "d8a7b913e6976b2ddca19e6601b178ece0608f91f3b8e6c6d514d80f461e8090",
+          "maskSha256": "756b480a5ab0668ab0590ba0760089ee0c6179ffe3379dc3f60b8ba28cb98e26",
           "matteSha256": "9ea8e157cbd76b0c2440c93876c7e5736c21b7a18554f99cf43795924ed05564",
           "travellerPixels": 247044,
-          "semanticPixels": 61063,
+          "semanticPixels": 72359,
           "channelPixels": {
-            "skin": 13513,
-            "hair": 45694,
+            "skin": 11233,
+            "hair": 59270,
             "eyes": 1856
           },
           "maximumChannelSum": 255
@@ -770,10 +770,10 @@
     {
       "id": "female-f2-v1:body-toad:stretch-b",
       "authoring": {
-        "travellerPixels": 235641,
-        "skinPixels": 18855,
-        "hairPixels": 43444,
-        "eyePixels": 1325,
+        "travellerPixels": 261355,
+        "skinPixels": 5102,
+        "hairPixels": 36868,
+        "eyePixels": 1249,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
       },
@@ -786,15 +786,15 @@
             1536,
             1536
           ],
-          "baseSha256": "a6cd0d9694c0cd89b41bbef365b6d0e6afa9c2602c67b2e41628d95a4b0aef01",
-          "maskSha256": "f68015ac1fe1b89bd41fa6234b044b87d680b601820289a93f23c4c48a66f0cd",
-          "matteSha256": "8a5ba49406da3abc3e24ec37d2a0b889c54c047a12c668e05745c5e5630a6daa",
-          "travellerPixels": 235641,
-          "semanticPixels": 63624,
+          "baseSha256": "cb73cd0df08eb743c0ef1930ea370f1072e1daa6bf52e436d8f3d9d5af7a7b58",
+          "maskSha256": "f7afe20cac6f611458c2a4df68377b889c68d5643af5e6c63bc8f87ef1e3dc1e",
+          "matteSha256": "005493c5342d51247d2591436c919f60bdf94de8e2f5b18309ecbee880afe188",
+          "travellerPixels": 261355,
+          "semanticPixels": 43219,
           "channelPixels": {
-            "skin": 18855,
-            "hair": 43444,
-            "eyes": 1325
+            "skin": 5102,
+            "hair": 36868,
+            "eyes": 1249
           },
           "maximumChannelSum": 255
         }
@@ -804,8 +804,8 @@
       "id": "female-f2-v1:body-toad:rest-contact",
       "authoring": {
         "travellerPixels": 207672,
-        "skinPixels": 13451,
-        "hairPixels": 36558,
+        "skinPixels": 10007,
+        "hairPixels": 46089,
         "eyePixels": 1134,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -820,13 +820,13 @@
             1536
           ],
           "baseSha256": "e10f384888369dbbb01b0a859679030a410a4e8d6653a52cd0118370f0abaa58",
-          "maskSha256": "debe596439ca4bc68c53d7d23705e116806c6dcc04232764def249180899912e",
+          "maskSha256": "8d03791f88f3f37bc4eeee563161c67e3b00dd94a299b99553f0899632746a51",
           "matteSha256": "7a9f35cad3e54de469588b1a5e0d6da47d085352abde3a3ac61bf3d8f4d272f8",
           "travellerPixels": 207672,
-          "semanticPixels": 51143,
+          "semanticPixels": 57230,
           "channelPixels": {
-            "skin": 13451,
-            "hair": 36558,
+            "skin": 10007,
+            "hair": 46089,
             "eyes": 1134
           },
           "maximumChannelSum": 255
@@ -837,8 +837,8 @@
       "id": "female-f2-v1:body-toad:rest-pet",
       "authoring": {
         "travellerPixels": 214990,
-        "skinPixels": 12316,
-        "hairPixels": 37448,
+        "skinPixels": 7874,
+        "hairPixels": 43682,
         "eyePixels": 944,
         "tealOutsideMattePixels": 0,
         "shadowLikeMattePixels": 0
@@ -853,13 +853,13 @@
             1536
           ],
           "baseSha256": "f599dec7c149bd90d3ef10263bb5f514e7edad2b67a3fba565716020e25a5214",
-          "maskSha256": "c9d48d08272bb09430f0a80516e5a630bcd6aa62ac0eb8dbf8ebd655f758fe1d",
+          "maskSha256": "9fa2edd9e9b1784de937049bf58986c4ceb79dcb49a84b5ea075276ccf539de5",
           "matteSha256": "a9ef570d97f336965eb8f8c957359508d58db29469160bc2382132535e1d4b7c",
           "travellerPixels": 214990,
-          "semanticPixels": 50708,
+          "semanticPixels": 52500,
           "channelPixels": {
-            "skin": 12316,
-            "hair": 37448,
+            "skin": 7874,
+            "hair": 43682,
             "eyes": 944
           },
           "maximumChannelSum": 255

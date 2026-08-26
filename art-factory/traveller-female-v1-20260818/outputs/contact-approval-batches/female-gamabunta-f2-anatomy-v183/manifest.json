@@ -1,0 +1,126 @@
+{
+  "schema": "satoru.traveller-female-contact-approval-batch/1",
+  "id": "female-gamabunta-f2-anatomy-v183",
+  "family": "gamabunta",
+  "morphology": "female",
+  "status": "awaiting-manual-contact-approval",
+  "runtimeEligible": false,
+  "publicArtWrites": false,
+  "approvedIdentity": {
+    "id": "female-f2-high-ponytail",
+    "path": "sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png",
+    "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+    "status": "identity-approved/runtime-not-yet"
+  },
+  "canvas": [
+    1536,
+    1536
+  ],
+  "groundY": 1470,
+  "key": "#FF00FF",
+  "preserveMagentaSubject": false,
+  "normalization": "reference-x-grounded",
+  "familyFrames": [
+    "greet-contact",
+    "train-low",
+    "train-high",
+    "whistle-a",
+    "whistle-b",
+    "whistle-c",
+    "whistle-d",
+    "pushup-down",
+    "pushup-up",
+    "stretch-a",
+    "stretch-b",
+    "rest-contact",
+    "rest-pet"
+  ],
+  "requiredFrames": [
+    "stretch-b"
+  ],
+  "runtimeTemplate": "public/art/pets/body-toad-v1/pair-v4/female/{frame}.png",
+  "runtimeRoutes": {
+    "stretch-b": "public/art/pets/body-toad-v1/pair-v4/female/stretch-b.png"
+  },
+  "geometry": {
+    "minWidthRatio": 0.9,
+    "maxWidthRatio": 1.1,
+    "minHeightRatio": 0.9,
+    "maxHeightRatio": 1.1,
+    "maxCenterDeltaPx": 4,
+    "maxCenterXDeltaPx": 4,
+    "maxContinuityRatioSpread": 0.08,
+    "maxContinuityCenterSpreadPx": 4
+  },
+  "continuityGroups": {
+    "train": [
+      "train-low",
+      "train-high"
+    ],
+    "whistle": [
+      "whistle-a",
+      "whistle-b",
+      "whistle-c",
+      "whistle-d"
+    ],
+    "pushup": [
+      "pushup-down",
+      "pushup-up"
+    ],
+    "stretch": [
+      "stretch-a",
+      "stretch-b"
+    ],
+    "rest": [
+      "rest-contact",
+      "rest-pet"
+    ]
+  },
+  "assets": {
+    "stretch-b": "stretch-b.png"
+  },
+  "frames": {
+    "stretch-b": {
+      "source": "sources/approval-batches/female-gamabunta-f2-anatomy-v183/stretch-b-keyed.png",
+      "sourceRoute": "stretch-b-keyed.png",
+      "sourceSha256": "f067748c48301bd0d803ecc4e7beb3f89d1ba13d94232a5e643a342e74d8ccfd",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/body-toad-v1/pair-v4/stretch-b.png",
+      "referenceSha256": "c863e475efde41f59db829565f70f54f714b134df14fc9448067e2af7f76f7c8",
+      "runtime": "public/art/pets/body-toad-v1/pair-v4/female/stretch-b.png",
+      "bboxAlphaThreshold": 8,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        96,
+        310,
+        1195,
+        1069
+      ],
+      "referenceBbox": [
+        250,
+        735,
+        1285,
+        1468
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        250,
+        755,
+        1285,
+        1470
+      ],
+      "scale": 0.9417652,
+      "normalization": "reference-x-grounded"
+    }
+  },
+  "qa": {
+    "required": true,
+    "command": "python3 art-factory/traveller-female-v1-20260818/contact_qa.py --batch female-gamabunta-f2-anatomy-v183"
+  }
+}

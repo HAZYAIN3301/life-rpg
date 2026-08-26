@@ -1,0 +1,155 @@
+{
+  "schema": "satoru.traveller-female-contact-qa/1",
+  "batch": "female-gamabunta-f2-anatomy-v183",
+  "family": "gamabunta",
+  "canvas": [
+    1536,
+    1536
+  ],
+  "groundY": 1470,
+  "geometry": {
+    "minWidthRatio": 0.9,
+    "maxWidthRatio": 1.1,
+    "minHeightRatio": 0.9,
+    "maxHeightRatio": 1.1,
+    "maxCenterDeltaPx": 4.0,
+    "maxCenterXDeltaPx": 4.0,
+    "maxContinuityRatioSpread": 0.08,
+    "maxContinuityCenterSpreadPx": 4.0
+  },
+  "automatedContractPassed": true,
+  "manualContactApprovalRequired": true,
+  "runtimeEligible": false,
+  "frames": {
+    "stretch-b": {
+      "file": "outputs/contact-approval-batches/female-gamabunta-f2-anatomy-v183/stretch-b.png",
+      "reference": "public/art/pets/body-toad-v1/pair-v4/stretch-b.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        250,
+        755,
+        1285,
+        1470
+      ],
+      "referenceBbox": [
+        250,
+        735,
+        1285,
+        1468
+      ],
+      "bboxAlphaThreshold": 8,
+      "centerDeltaPx": 11.0,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        11.0
+      ],
+      "widthRatioToReference": 1.0,
+      "heightRatioToReference": 0.975443,
+      "visiblePixels": 424544,
+      "transparentPixels": 1930309,
+      "partialAlphaPixels": 15675,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 0,
+      "technicalKeyRatio": 0.0,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "groundY": true,
+        "referenceCenterX": true
+      },
+      "passed": true
+    }
+  },
+  "continuity": {
+    "groups": {
+      "train": {
+        "frames": [
+          "train-low",
+          "train-high"
+        ],
+        "evaluated": false,
+        "status": "partial-selection",
+        "missingFrames": [
+          "train-low",
+          "train-high"
+        ],
+        "checks": {},
+        "passed": true
+      },
+      "whistle": {
+        "frames": [
+          "whistle-a",
+          "whistle-b",
+          "whistle-c",
+          "whistle-d"
+        ],
+        "evaluated": false,
+        "status": "partial-selection",
+        "missingFrames": [
+          "whistle-a",
+          "whistle-b",
+          "whistle-c",
+          "whistle-d"
+        ],
+        "checks": {},
+        "passed": true
+      },
+      "pushup": {
+        "frames": [
+          "pushup-down",
+          "pushup-up"
+        ],
+        "evaluated": false,
+        "status": "partial-selection",
+        "missingFrames": [
+          "pushup-down",
+          "pushup-up"
+        ],
+        "checks": {},
+        "passed": true
+      },
+      "stretch": {
+        "frames": [
+          "stretch-a",
+          "stretch-b"
+        ],
+        "evaluated": false,
+        "status": "partial-selection",
+        "missingFrames": [
+          "stretch-a"
+        ],
+        "checks": {},
+        "passed": true
+      },
+      "rest": {
+        "frames": [
+          "rest-contact",
+          "rest-pet"
+        ],
+        "evaluated": false,
+        "status": "partial-selection",
+        "missingFrames": [
+          "rest-contact",
+          "rest-pet"
+        ],
+        "checks": {},
+        "passed": true
+      }
+    },
+    "passed": true
+  },
+  "passed": true
+}

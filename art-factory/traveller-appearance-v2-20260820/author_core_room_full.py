@@ -10,7 +10,7 @@ frame-owned geometry; the room reading props are removed by explicit polygons.
 from __future__ import annotations
 
 import argparse
-import hashlib
+from collections import deque
 from pathlib import Path
 from typing import Iterable, Sequence
 
@@ -30,14 +30,6 @@ from semantic_masks import (
 
 PREVIEW_ROOT = ROOT / "previews" / "core-room-full-v1"
 CAPABILITIES = frozenset({"core", "motion", "room"})
-PROTECTED_IDS = frozenset({
-    "male-v1:core:idle",
-    "female-f2-v1:core:idle",
-    "male-v1:core:window-back",
-    "female-f2-v1:core:window-back",
-})
-
-
 def _cfg(
     *,
     matte: Sequence[tuple[int, int]],
@@ -61,6 +53,52 @@ def _cfg(
 # cover the complete base-alpha actor.  Semantic owners are substantially
 # tighter: face/ears, exposed forearms/hands and exposed calves only.
 FRAME_CONFIGS: dict[str, dict[str, object]] = {
+    "male-v1:core:idle": _cfg(
+        matte=[(0, 0), (639, 0), (639, 899), (0, 899)],
+        hair=[(195, 42), (445, 42), (445, 292), (190, 292)],
+        skin=[
+            [(240, 125), (400, 125), (400, 285), (240, 285)],
+            [(150, 350), (240, 350), (240, 565), (150, 565)],
+            [(400, 350), (490, 350), (490, 565), (400, 565)],
+            [(215, 640), (300, 640), (300, 765), (215, 765)],
+            [(340, 640), (425, 640), (425, 765), (340, 765)],
+        ],
+        eyes=[(288, 172, 307, 202), (334, 172, 354, 202)],
+    ),
+    "female-f2-v1:core:idle": _cfg(
+        matte=[(0, 0), (639, 0), (639, 899), (0, 899)],
+        hair=[(185, 35), (482, 35), (482, 438), (185, 438)],
+        skin=[
+            [(235, 115), (405, 115), (405, 300), (235, 300)],
+            [(155, 350), (245, 350), (245, 570), (155, 570)],
+            [(395, 350), (485, 350), (485, 570), (395, 570)],
+            [(215, 640), (300, 640), (300, 765), (215, 765)],
+            [(340, 640), (425, 640), (425, 765), (340, 765)],
+        ],
+        eyes=[(276, 165, 296, 196), (320, 164, 341, 196)],
+    ),
+    "male-v1:core:window-back": _cfg(
+        matte=[(0, 0), (639, 0), (639, 899), (0, 899)],
+        hair=[(195, 35), (445, 35), (445, 300), (195, 300)],
+        skin=[
+            [(225, 105), (415, 105), (415, 305), (225, 305)],
+            [(225, 350), (415, 350), (415, 575), (225, 575)],
+            [(215, 640), (300, 640), (300, 765), (215, 765)],
+            [(340, 640), (425, 640), (425, 765), (340, 765)],
+        ],
+        eyes=[],
+    ),
+    "female-f2-v1:core:window-back": _cfg(
+        matte=[(0, 0), (639, 0), (639, 899), (0, 899)],
+        hair=[(175, 25), (485, 25), (485, 445), (175, 445)],
+        skin=[
+            [(215, 95), (425, 95), (425, 335), (215, 335)],
+            [(215, 350), (425, 350), (425, 585), (215, 585)],
+            [(215, 640), (300, 640), (300, 765), (215, 765)],
+            [(340, 640), (425, 640), (425, 765), (340, 765)],
+        ],
+        eyes=[],
+    ),
     "male-v1:core:arms-up": _cfg(
         matte=[(160, 30), (480, 30), (480, 860), (160, 860)],
         hair=[(200, 85), (440, 85), (440, 250), (200, 250)],
@@ -367,6 +405,28 @@ def rectangles(size: tuple[int, int], values: Iterable[tuple[int, int, int, int]
     return np.asarray(image, dtype=np.uint8) > 0
 
 
+def keep_components_touching(mask: np.ndarray, seeds: np.ndarray) -> np.ndarray:
+    """Keep original candidate pixels belonging to an 8-connected seeded component."""
+
+    height, width = mask.shape
+    visited = np.zeros_like(mask, dtype=bool)
+    queue: deque[tuple[int, int]] = deque()
+    for y, x in zip(*np.where(mask & seeds)):
+        visited[y, x] = True
+        queue.append((int(y), int(x)))
+    while queue:
+        y, x = queue.popleft()
+        for dy in (-1, 0, 1):
+            for dx in (-1, 0, 1):
+                if not (dx or dy):
+                    continue
+                ny, nx = y + dy, x + dx
+                if 0 <= ny < height and 0 <= nx < width and mask[ny, nx] and not visited[ny, nx]:
+                    visited[ny, nx] = True
+                    queue.append((ny, nx))
+    return visited
+
+
 def author(base: Image.Image, config: dict[str, object]) -> tuple[Image.Image, Image.Image]:
     rgba = np.asarray(base.convert("RGBA"), dtype=np.uint8)
     rgb = rgba[..., :3]
@@ -389,20 +449,20 @@ def author(base: Image.Image, config: dict[str, object]) -> tuple[Image.Image, I
     skin = (
         visible
         & skin_owner
-        & (hue >= 0.052)
-        & (hue <= 0.125)
-        & (saturation >= 0.25)
-        & (saturation <= 0.70)
-        & (value >= 0.55)
-        & (green / np.maximum(red, 1) >= 0.52)
-        & (blue / np.maximum(green, 1) >= 0.40)
+        & (hue >= 0.045)
+        & (hue <= 0.098)
+        & (saturation >= 0.37)
+        & (saturation <= 0.72)
+        & (value >= 0.52)
+        & (red >= green * 1.13)
+        & (green >= blue * 1.18)
     )
     # Visible skin painted over a held prop is actor-owned and must survive the
     # prop subtraction.  Nothing else is restored inside the prop polygons.
     matte_membership |= skin
 
     hair_owner = polygons(size, config["hair_polygons"])
-    hair = (
+    hair_candidates = (
         visible
         & hair_owner
         & matte_membership
@@ -415,16 +475,34 @@ def author(base: Image.Image, config: dict[str, object]) -> tuple[Image.Image, I
         & (green >= blue * 1.02)
     )
 
+    # Hair ownership is geometric, not chromatic. Gloves, belts and leather
+    # props use the same brown paper, so only components rooted in the inner
+    # crown may grow into locks or the F2 ponytail. Edge-raised hands are never
+    # hair seeds. Brows are admitted separately around the exact eye boxes.
+    ys, xs = np.where(hair_owner)
+    hair_seeds = np.zeros_like(visible)
+    if xs.size:
+        left, right = int(xs.min()), int(xs.max()) + 1
+        top, bottom = int(ys.min()), int(ys.max()) + 1
+        inset = max(6, int((right - left) * 0.15))
+        seed_bottom = min(bottom, top + max(24, int((bottom - top) * 0.48)))
+        hair_seeds[top:seed_bottom, left + inset:right - inset] = True
+    hair = keep_components_touching(hair_candidates, hair_seeds)
+    brow_owner = np.zeros_like(visible)
+    for left, top, right, _bottom in config["eye_boxes"]:
+        brow_owner[max(0, top - 18):top + 3, max(0, left - 6):min(size[0], right + 6)] = True
+    hair |= hair_candidates & brow_owner
+
     eyes = np.zeros_like(visible)
     closed = bool(config.get("closed_eyes"))
-    for box in config["eye_boxes"]:
+    for box in (() if closed else config["eye_boxes"]):
         owner = rectangles(size, [box])
         eyes |= (
             visible
             & owner
             & matte_membership
-            & (value <= (0.58 if closed else 0.34))
-            & (saturation <= (1.0 if closed else 0.92))
+            & (value <= 0.34)
+            & (saturation <= 0.92)
         )
 
     hair &= ~eyes
@@ -439,31 +517,6 @@ def author(base: Image.Image, config: dict[str, object]) -> tuple[Image.Image, I
     if np.any(packed.max(axis=2) > matte):
         raise ValueError("semantic annotation escapes Traveller matte")
     return Image.fromarray(packed, "RGB"), Image.fromarray(matte, "L")
-
-
-def file_sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def protected_hashes(assets: Sequence[dict[str, object]]) -> dict[Path, str]:
-    hashes: dict[Path, str] = {}
-    for asset in assets:
-        if asset["id"] not in PROTECTED_IDS:
-            continue
-        for key in ("maskFile", "matteFile"):
-            path = safe_relative(ROOT, asset[key])
-            if not path.is_file():
-                raise FileNotFoundError(f"protected approval input missing: {path.relative_to(ROOT)}")
-            hashes[path] = file_sha(path)
-    if len(hashes) != 8:
-        raise ValueError("expected eight protected idle/window-back files")
-    return hashes
-
-
-def assert_protected_unchanged(before: dict[Path, str]) -> None:
-    changed = [str(path.relative_to(ROOT)) for path, digest in before.items() if file_sha(path) != digest]
-    if changed:
-        raise RuntimeError(f"protected approval inputs changed: {changed}")
 
 
 def write_png(path: Path, image: Image.Image, *, overwrite_owned: bool) -> None:
@@ -545,8 +598,8 @@ def write_contact_sheet(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--write", action="store_true", help="write the exact 18-frame batch and review sheets")
-    parser.add_argument("--overwrite-owned", action="store_true", help="replace only the 18 files owned by this authoring batch")
+    parser.add_argument("--write", action="store_true", help="write the exact 22-frame batch and review sheets")
+    parser.add_argument("--overwrite-owned", action="store_true", help="replace only the 22 files owned by this authoring batch")
     args = parser.parse_args()
 
     inventory = load_inventory()
@@ -554,12 +607,11 @@ def main() -> None:
         asset for asset in inventory["assets"]
         if asset["capability"] in CAPABILITIES
     ]
-    if len(scoped) != 22 or len(TARGET_IDS) != 18:
+    if len(scoped) != 22 or len(TARGET_IDS) != 22:
         raise SystemExit("core/motion/room inventory or target count drifted")
     by_id = {str(asset["id"]): asset for asset in scoped}
-    if set(by_id) != TARGET_IDS | PROTECTED_IDS:
+    if set(by_id) != TARGET_IDS:
         raise SystemExit("authoring batch does not match exact 22-frame scope")
-    protected = protected_hashes(scoped)
 
     authored: list[tuple[dict[str, object], Image.Image, Image.Image]] = []
     for asset_id in sorted(TARGET_IDS):
@@ -569,18 +621,14 @@ def main() -> None:
             opened.load()
             semantic, matte = author(opened.convert("RGBA"), FRAME_CONFIGS[asset_id])
         authored.append((asset, semantic, matte))
-    assert_protected_unchanged(protected)
-    print(f"preflight: PASS ({len(authored)} masks + {len(authored)} mattes; protected=8 unchanged)")
+    print(f"preflight: PASS ({len(authored)} masks + {len(authored)} mattes; exactScope=22)")
     if not args.write:
         print("factoryWrites: false; publicArtWrites: false")
         return
 
     for asset, semantic, matte in authored:
-        if str(asset["id"]) in PROTECTED_IDS:
-            raise RuntimeError("protected id entered write loop")
         write_png(safe_relative(ROOT, asset["maskFile"]), semantic, overwrite_owned=args.overwrite_owned)
         write_png(safe_relative(ROOT, asset["matteFile"]), matte, overwrite_owned=args.overwrite_owned)
-    assert_protected_unchanged(protected)
 
     measured = [validate_semantic_mask(asset) for asset in scoped]
     validation = validate_mask_set(scoped, results=measured)
@@ -601,7 +649,6 @@ def main() -> None:
             print(f"  ERROR: {error}")
     for sheet in sheets:
         print(f"preview: {sheet.relative_to(ROOT)}")
-    assert_protected_unchanged(protected)
     if not validation.passed:
         raise SystemExit(1)
 

@@ -74,7 +74,7 @@ class FoundationTests(unittest.TestCase):
             "male-v1:shadow:attune-guardian", "female-f2-v1:shadow:attune-guardian",
         ])
 
-    def test_only_back_views_declare_empty_eyes(self) -> None:
+    def test_only_audited_closed_or_back_views_declare_empty_eyes(self) -> None:
         declared = {
             asset["id"]: asset["expectedEmptyChannels"]
             for asset in self.inventory["assets"]
@@ -83,6 +83,19 @@ class FoundationTests(unittest.TestCase):
         self.assertEqual(declared, {
             "male-v1:core:window-back": ["eyes"],
             "female-f2-v1:core:window-back": ["eyes"],
+            "male-v1:motion:idle-blink": ["eyes"],
+            "female-f2-v1:motion:idle-blink": ["eyes"],
+            "male-v1:room:bench-read-b": ["eyes"],
+            "male-v1:recovery-slug:breathe-in": ["eyes"],
+            "female-f2-v1:recovery-slug:breathe-in": ["eyes"],
+            "male-v1:recovery-slug:breathe-out": ["eyes"],
+            "female-f2-v1:recovery-slug:breathe-out": ["eyes"],
+            "male-v1:recovery-slug:restore-contact": ["eyes"],
+            "female-f2-v1:recovery-slug:restore-contact": ["eyes"],
+            "male-v1:recovery-slug:stretch-a": ["eyes"],
+            "female-f2-v1:recovery-slug:stretch-a": ["eyes"],
+            "male-v1:recovery-slug:stretch-soft-b": ["eyes"],
+            "female-f2-v1:recovery-slug:stretch-soft-b": ["eyes"],
         })
 
     def test_authored_palette_and_golden_vectors_pass(self) -> None:

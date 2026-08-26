@@ -61,6 +61,8 @@ class FrameConfig:
     eyes: tuple[Box, ...]
     skin_keep_seeds: tuple[Box, ...]
     hair_reject_seeds: tuple[Box, ...] = ()
+    hair_exclude: tuple[tuple[Point, ...], ...] = ()
+    hair_exclude_ellipses: tuple[Box, ...] = ()
     owner_exclude: tuple[tuple[Point, ...], ...] = ()
     reuse_clean_matte: bool = False
 
@@ -423,13 +425,30 @@ CONFIGS: dict[str, FrameConfig] = {
                       (1250, 1270), (1150, 1380), (950, 1380), (840, 1340),
                       (700, 1450), (580, 1410), (535, 1290), (590, 1170),
                       (680, 1030))),
-        hair=shapes((800, 700, 1165, 1110)),
+        # v183 has the rust scarf and gold coat ornament directly touching the
+        # long hair.  Use three positive, actor-reviewed lobes instead of one
+        # broad rectangle so those garment materials can never join the hair
+        # component through anti-aliased contact pixels.
+        hair=shapes(
+            (780, 760, 1165, 950),
+            (805, 880, 875, 1090),
+            (950, 875, 1005, 1070),
+            (980, 780, 1165, 1130),
+        ),
         skin=shapes((805, 915, 1010, 1150), (520, 1080, 880, 1310),
                     (610, 1190, 920, 1420)),
-        eyes=((845, 980, 895, 1065), (925, 980, 975, 1065)),
+        eyes=((828, 920, 875, 990), (890, 910, 940, 980)),
         skin_keep_seeds=((815, 925, 1000, 1140), (530, 1170, 740, 1270),
                          (680, 1190, 900, 1310)),
-        hair_reject_seeds=((835, 1075, 860, 1100), (970, 1075, 995, 1100)),
+        # v183 moved the approved F2 ponytail into the old leather-rejection
+        # boxes.  Component ownership already keeps the disconnected glove and
+        # belt out, so no negative seed is valid for this authored frame.
+        hair_reject_seeds=(),
+        hair_exclude=shapes(
+            (850, 990, 950, 1120),
+            (760, 1030, 815, 1150),
+        ),
+        hair_exclude_ellipses=((800, 845, 895, 930), (890, 850, 995, 935)),
         owner_exclude=shapes(((230, 720), (760, 720), (760, 920), (690, 1030),
                               (570, 1110), (230, 1110))),
     ),
@@ -475,6 +494,14 @@ def boxes_mask(size: tuple[int, int], values: Iterable[Box]) -> np.ndarray:
     for left, top, right, bottom in values:
         result[max(0, top):min(size[1], bottom), max(0, left):min(size[0], right)] = True
     return result
+
+
+def ellipses_mask(size: tuple[int, int], values: Iterable[Box]) -> np.ndarray:
+    image = Image.new("L", size, 0)
+    draw = ImageDraw.Draw(image)
+    for left, top, right, bottom in values:
+        draw.ellipse((left, top, right, bottom), fill=255)
+    return np.asarray(image, dtype=np.uint8) > 0
 
 
 def remove_seeded_components(mask: np.ndarray, seeds: Iterable[Box]) -> np.ndarray:
@@ -568,6 +595,39 @@ def keep_components_touching(mask: np.ndarray, seed_mask: np.ndarray) -> np.ndar
                 ):
                     result[next_y, next_x] = True
                     stack.append((next_y, next_x))
+    return result
+
+
+def components(mask: np.ndarray) -> list[np.ndarray]:
+    """Return 8-connected components as flattened pixel indexes."""
+    remaining = mask.copy()
+    height, width = mask.shape
+    found: list[np.ndarray] = []
+    while np.any(remaining):
+        start_y, start_x = np.argwhere(remaining)[0]
+        remaining[start_y, start_x] = False
+        stack = [(int(start_y), int(start_x))]
+        indexes: list[int] = []
+        while stack:
+            y, x = stack.pop()
+            indexes.append(y * width + x)
+            for delta_y in (-1, 0, 1):
+                for delta_x in (-1, 0, 1):
+                    if delta_x == 0 and delta_y == 0:
+                        continue
+                    next_y, next_x = y + delta_y, x + delta_x
+                    if 0 <= next_y < height and 0 <= next_x < width and remaining[next_y, next_x]:
+                        remaining[next_y, next_x] = False
+                        stack.append((next_y, next_x))
+        found.append(np.asarray(indexes, dtype=np.int64))
+    return found
+
+
+def component_mask(shape: tuple[int, int], values: Iterable[np.ndarray]) -> np.ndarray:
+    result = np.zeros(shape, dtype=bool)
+    flattened = result.reshape(-1)
+    for value in values:
+        flattened[value] = True
     return result
 
 
@@ -666,26 +726,65 @@ def author_semantics(
     hair = (
         traveller
         & hair_zone
-        & (hue >= 0.045)
+        & (hue >= 0.015)
         & (hue <= 0.165)
-        & (saturation >= 0.22)
+        & (saturation >= 0.28)
         & (value >= 0.045)
-        & (value <= 0.62)
+        & (value <= 0.78)
         & (red >= green * 1.015)
         & (green >= blue * 0.98)
+        & ~((hue < 0.085) & (saturation >= 0.95) & (value >= 0.45))
     )
+    # Brown leather, the rust scarf and the Traveller's hair deliberately
+    # share a paper palette.  Colour alone therefore cannot establish hair
+    # ownership.  Keep only the dominant connected hair mass inside the
+    # authored head zone, then restore tiny brows in tight boxes above the
+    # reviewed eyes.  This prevents gloves, belts and sleeve ornaments from
+    # becoming hair while retaining side locks and the F2 ponytail.
+    hair_components = sorted(components(hair), key=lambda item: item.size, reverse=True)
+    if not hair_components:
+        raise ValueError("authored hair component is empty")
+    dominant = hair_components[0]
+    dominant_rows, dominant_columns = np.divmod(dominant, hair.shape[1])
+    selected_hair = [dominant]
+    for item in hair_components[1:]:
+        item_rows, item_columns = np.divmod(item, hair.shape[1])
+        horizontal_gap = max(
+            0,
+            int(dominant_columns.min()) - int(item_columns.max()),
+            int(item_columns.min()) - int(dominant_columns.max()),
+        )
+        vertical_gap = max(
+            0,
+            int(dominant_rows.min()) - int(item_rows.max()),
+            int(item_rows.min()) - int(dominant_rows.max()),
+        )
+        if item.size >= 120 and horizontal_gap <= 24 and vertical_gap <= 24:
+            selected_hair.append(item)
+    hair = component_mask(hair.shape, selected_hair)
+    brow_boxes = tuple((left - 12, top - 28, right + 12, top + 5) for left, top, right, _ in config.eyes)
+    hair |= (
+        traveller
+        & boxes_mask(size, brow_boxes)
+        & (value <= 0.48)
+        & ~eyes
+    )
+    if config.hair_exclude:
+        hair &= ~polygon_mask(size, config.hair_exclude)
+    if config.hair_exclude_ellipses:
+        hair &= ~ellipses_mask(size, config.hair_exclude_ellipses)
     hair = remove_seeded_components(hair, config.hair_reject_seeds)
     hair &= ~eyes
     skin = (
         traveller
         & skin_zone
-        & (hue >= 0.035)
-        & (hue <= 0.135)
-        & (saturation >= 0.35)
+        & (hue >= 0.045)
+        & (hue <= 0.098)
+        & (saturation >= 0.37)
         & (saturation <= 0.72)
-        & (value >= 0.60)
-        & (green / np.maximum(red, 1) >= 0.48)
-        & (blue / np.maximum(green, 1) >= 0.45)
+        & (value >= 0.52)
+        & (red >= green * 1.13)
+        & (green >= blue * 1.18)
     )
     skin = keep_seeded_components(skin, config.skin_keep_seeds)
     skin &= ~(hair | eyes)

@@ -1,0 +1,108 @@
+{
+  "schema": "satoru.traveller-female-contact-qa/1",
+  "batch": "female-recovery-f2-anatomy-v183",
+  "family": "recovery",
+  "canvas": [
+    1536,
+    1536
+  ],
+  "groundY": null,
+  "geometry": {
+    "minWidthRatio": 0.9,
+    "maxWidthRatio": 1.1,
+    "minHeightRatio": 0.9,
+    "maxHeightRatio": 1.1,
+    "maxCenterDeltaPx": 4.0,
+    "maxCenterXDeltaPx": 4.0,
+    "maxContinuityRatioSpread": 0.08,
+    "maxContinuityCenterSpreadPx": 4.0
+  },
+  "automatedContractPassed": true,
+  "manualContactApprovalRequired": true,
+  "runtimeEligible": false,
+  "frames": {
+    "stretch-soft-b": {
+      "file": "outputs/contact-approval-batches/female-recovery-f2-anatomy-v183/stretch-soft-b.png",
+      "reference": "public/art/pets/recovery-slug-v1/pair-v3/stretch-soft-b-v155.png",
+      "mode": "RGBA",
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        24,
+        396,
+        1515,
+        1303
+      ],
+      "referenceBbox": [
+        24,
+        394,
+        1515,
+        1304
+      ],
+      "bboxAlphaThreshold": 32,
+      "centerDeltaPx": 0.5,
+      "centerXDeltaPx": 0.0,
+      "centerOffsetPx": [
+        0.0,
+        0.5
+      ],
+      "widthRatioToReference": 1.0,
+      "heightRatioToReference": 0.996703,
+      "visiblePixels": 781807,
+      "transparentPixels": 1568073,
+      "partialAlphaPixels": 34033,
+      "edgeAlphaPixels": 0,
+      "technicalKeyPixels": 3,
+      "technicalKeyRatio": 3.84e-06,
+      "semanticMagentaPreserved": false,
+      "checks": {
+        "rgba": true,
+        "canvas": true,
+        "visibleSubject": true,
+        "realTransparency": true,
+        "transparentCorners": true,
+        "clearCanvasEdge": true,
+        "technicalKeyResidual": true,
+        "referenceWidthScale": true,
+        "referenceHeightScale": true,
+        "referenceCenter": true
+      },
+      "passed": true
+    }
+  },
+  "continuity": {
+    "groups": {
+      "breathe": {
+        "frames": [
+          "breathe-in",
+          "breathe-out"
+        ],
+        "evaluated": false,
+        "status": "partial-selection",
+        "missingFrames": [
+          "breathe-in",
+          "breathe-out"
+        ],
+        "checks": {},
+        "passed": true
+      },
+      "stretch": {
+        "frames": [
+          "stretch-a",
+          "stretch-soft-b"
+        ],
+        "evaluated": false,
+        "status": "partial-selection",
+        "missingFrames": [
+          "stretch-a"
+        ],
+        "checks": {},
+        "passed": true
+      }
+    },
+    "passed": true
+  },
+  "passed": true
+}

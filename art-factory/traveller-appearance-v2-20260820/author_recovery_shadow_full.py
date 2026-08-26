@@ -1623,6 +1623,39 @@ def rectangles(size: tuple[int, int], values: Iterable[tuple[int, int, int, int]
     return np.asarray(image, dtype=np.uint8) > 0
 
 
+def connected_components(mask: np.ndarray) -> list[np.ndarray]:
+    """Return 8-connected material components as flattened indexes."""
+    remaining = mask.copy()
+    height, width = mask.shape
+    found: list[np.ndarray] = []
+    while np.any(remaining):
+        start_y, start_x = np.argwhere(remaining)[0]
+        remaining[start_y, start_x] = False
+        stack = [(int(start_y), int(start_x))]
+        indexes: list[int] = []
+        while stack:
+            y, x = stack.pop()
+            indexes.append(y * width + x)
+            for delta_y in (-1, 0, 1):
+                for delta_x in (-1, 0, 1):
+                    if delta_x == 0 and delta_y == 0:
+                        continue
+                    next_y, next_x = y + delta_y, x + delta_x
+                    if 0 <= next_y < height and 0 <= next_x < width and remaining[next_y, next_x]:
+                        remaining[next_y, next_x] = False
+                        stack.append((next_y, next_x))
+        found.append(np.asarray(indexes, dtype=np.int64))
+    return found
+
+
+def component_mask(shape: tuple[int, int], values: Iterable[np.ndarray]) -> np.ndarray:
+    result = np.zeros(shape, dtype=bool)
+    flat = result.reshape(-1)
+    for value in values:
+        flat[value] = True
+    return result
+
+
 def author(base: Image.Image, config: dict[str, object]) -> tuple[Image.Image, Image.Image]:
     rgba = np.asarray(base.convert("RGBA"), dtype=np.uint8)
     rgb = rgba[..., :3]
@@ -1664,11 +1697,11 @@ def author(base: Image.Image, config: dict[str, object]) -> tuple[Image.Image, I
     skin_owner = polygons(size, config["skin_polygons"])
     skin = (
         matte_membership & skin_owner
-        & (hue >= 0.052) & (hue <= 0.125)
-        & (saturation >= 0.25) & (saturation <= 0.70)
-        & (value >= 0.55)
-        & (green / np.maximum(red, 1) >= 0.52)
-        & (blue / np.maximum(green, 1) >= 0.40)
+        & (hue >= 0.045) & (hue <= 0.098)
+        & (saturation >= 0.37) & (saturation <= 0.72)
+        & (value >= 0.52)
+        & (red >= green * 1.13)
+        & (green >= blue * 1.18)
     )
 
     hair_owner = polygons(size, [config["hair_polygon"]])
@@ -1681,15 +1714,44 @@ def author(base: Image.Image, config: dict[str, object]) -> tuple[Image.Image, I
         & (red >= green * 1.02) & (green >= blue * 1.02)
     )
 
+    # Leather gloves, belts and Shadow ornamentation share the same brown
+    # ramp.  Hair ownership is therefore the connected crown/lock mass, not
+    # every brown pixel inside a coarse head rectangle.
+    hair_components = sorted(connected_components(hair), key=lambda item: item.size, reverse=True)
+    if not hair_components:
+        raise ValueError("authored hair component is empty")
+    dominant = hair_components[0]
+    dominant_rows, dominant_columns = np.divmod(dominant, hair.shape[1])
+    selected_hair = [dominant]
+    for item in hair_components[1:]:
+        item_rows, item_columns = np.divmod(item, hair.shape[1])
+        horizontal_gap = max(
+            0,
+            int(dominant_columns.min()) - int(item_columns.max()),
+            int(item_columns.min()) - int(dominant_columns.max()),
+        )
+        vertical_gap = max(
+            0,
+            int(dominant_rows.min()) - int(item_rows.max()),
+            int(item_rows.min()) - int(dominant_rows.max()),
+        )
+        if item.size >= 120 and horizontal_gap <= 28 and vertical_gap <= 28:
+            selected_hair.append(item)
+    hair = component_mask(hair.shape, selected_hair)
+
     eyes = np.zeros_like(visible)
     closed = bool(config.get("closed_eyes"))
-    for box in config["eye_boxes"]:
+    for box in (() if closed else config["eye_boxes"]):
         owner = rectangles(size, [box])
         eyes |= (
             matte_membership & owner
-            & (value <= (0.58 if closed else 0.34))
-            & (saturation <= (1.0 if closed else 0.92))
+            & (value <= 0.34)
+            & (saturation <= 0.92)
         )
+
+    if not closed:
+        brow_boxes = tuple((left - 14, top - 34, right + 14, top + 5) for left, top, right, _ in config["eye_boxes"])
+        hair |= matte_membership & rectangles(size, brow_boxes) & (value <= 0.48) & ~eyes
 
     hair &= ~eyes
     skin &= ~(hair | eyes)

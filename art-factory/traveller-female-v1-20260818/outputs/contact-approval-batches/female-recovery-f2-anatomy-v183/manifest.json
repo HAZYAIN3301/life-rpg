@@ -1,0 +1,105 @@
+{
+  "schema": "satoru.traveller-female-contact-approval-batch/1",
+  "id": "female-recovery-f2-anatomy-v183",
+  "family": "recovery",
+  "morphology": "female",
+  "status": "awaiting-manual-contact-approval",
+  "runtimeEligible": false,
+  "publicArtWrites": false,
+  "approvedIdentity": {
+    "id": "female-f2-high-ponytail",
+    "path": "sources/identity-variants-04/candidate-f2-high-ponytail-keyed.png",
+    "sha256": "5d811618fc851eec48eb910c7efc98eec46e23a94919b376d3c64f5ae24d62da",
+    "status": "identity-approved/runtime-not-yet"
+  },
+  "canvas": [
+    1536,
+    1536
+  ],
+  "groundY": null,
+  "key": "#FF00FF",
+  "preserveMagentaSubject": false,
+  "normalization": "reference-bbox-fit",
+  "familyFrames": [
+    "greet-contact",
+    "breathe-in",
+    "breathe-out",
+    "restore-contact",
+    "stretch-a",
+    "stretch-soft-b"
+  ],
+  "requiredFrames": [
+    "stretch-soft-b"
+  ],
+  "runtimeTemplate": null,
+  "runtimeRoutes": {
+    "stretch-soft-b": "public/art/pets/recovery-slug-v1/pair-v3/female/stretch-soft-b-v155.png"
+  },
+  "geometry": {
+    "minWidthRatio": 0.9,
+    "maxWidthRatio": 1.1,
+    "minHeightRatio": 0.9,
+    "maxHeightRatio": 1.1,
+    "maxCenterDeltaPx": 4,
+    "maxCenterXDeltaPx": 4,
+    "maxContinuityRatioSpread": 0.08,
+    "maxContinuityCenterSpreadPx": 4
+  },
+  "continuityGroups": {
+    "breathe": [
+      "breathe-in",
+      "breathe-out"
+    ],
+    "stretch": [
+      "stretch-a",
+      "stretch-soft-b"
+    ]
+  },
+  "assets": {
+    "stretch-soft-b": "stretch-soft-b.png"
+  },
+  "frames": {
+    "stretch-soft-b": {
+      "source": "sources/approval-batches/female-recovery-f2-anatomy-v183/stretch-soft-b-keyed.png",
+      "sourceRoute": "stretch-soft-b-keyed.png",
+      "sourceSha256": "2002ac33d7b35a252110fdc4aed83a6bc10c8b5b0246e8886b4841286d82b7af",
+      "keyedBorderRatio": 1.0,
+      "reference": "public/art/pets/recovery-slug-v1/pair-v3/stretch-soft-b-v155.png",
+      "referenceSha256": "4e8d698c8a1d24fa35334e21eda161bd2a81fa3f141c8fb944b9a6e8c675608d",
+      "runtime": "public/art/pets/recovery-slug-v1/pair-v3/female/stretch-soft-b-v155.png",
+      "bboxAlphaThreshold": 32,
+      "sourceCanvas": [
+        1254,
+        1254
+      ],
+      "sourceBbox": [
+        36,
+        343,
+        1220,
+        1063
+      ],
+      "referenceBbox": [
+        24,
+        394,
+        1515,
+        1304
+      ],
+      "canvas": [
+        1536,
+        1536
+      ],
+      "bbox": [
+        24,
+        396,
+        1515,
+        1303
+      ],
+      "scale": 1.2592905,
+      "normalization": "reference-bbox-fit"
+    }
+  },
+  "qa": {
+    "required": true,
+    "command": "python3 art-factory/traveller-female-v1-20260818/contact_qa.py --batch female-recovery-f2-anatomy-v183"
+  }
+}
