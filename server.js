@@ -913,7 +913,17 @@ function httpsPostJson(host, pathName, headers, bodyObj) {
   return new Promise((resolve, reject) => {
     const body = Buffer.from(JSON.stringify(bodyObj));
     const r = https.request({ host, path: pathName, method: 'POST', headers: Object.assign({ 'Content-Type': 'application/json', 'Content-Length': body.length }, headers) }, (resp) => {
-      let data = ''; resp.on('data', (c) => data += c); resp.on('end', () => { let json = {}; try { json = JSON.parse(data || '{}'); } catch { json = { raw: data.slice(0, 500) }; } resolve({ status: resp.statusCode, json }); });
+      // A UTF-8 code point may be split between arbitrary TCP chunks. Concatenating
+      // each Buffer into a JS string decoded every chunk separately and turned split
+      // Cyrillic letters into U+FFFD (the visible "��" reported in Assistant chat).
+      // Preserve bytes until the complete response is available, then decode once.
+      const chunks = [];
+      resp.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+      resp.on('end', () => {
+        const data = Buffer.concat(chunks).toString('utf8');
+        let json = {}; try { json = JSON.parse(data || '{}'); } catch { json = { raw: data.slice(0, 500) }; }
+        resolve({ status: resp.statusCode, json });
+      });
     });
     r.on('error', reject); r.write(body); r.end();
   });

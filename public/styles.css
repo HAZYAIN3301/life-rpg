@@ -17126,6 +17126,24 @@ html.goal-detail-open { overflow: hidden; }
 .goals-shell .goals-map .goal-item { margin-inline-start: min(calc(var(--goal-depth) * 22px), 66px); }
 .goals-shell .goals-map .goal-item::before { display: block; }
 .goals-shell .goals-map .goal-item[style*="--goal-depth:0"]::before { display: none; }
+.goals-all-tools { min-width: min(100%, 230px); display: grid; gap: var(--sp-2); }
+.goals-bulk-toolbar {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2);
+  padding: var(--sp-2); border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line-soft));
+  border-radius: var(--radius-lg); background: color-mix(in srgb, var(--accent) 7%, var(--surface-2));
+}
+.goals-bulk-toolbar > strong { color: var(--text-strong); font-size: var(--type-control); line-height: var(--leading-ui); }
+.goals-bulk-toolbar > strong:focus { outline: none; }
+.goals-bulk-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--sp-1); }
+.goals-shell .goal-item.is-selectable { display: grid; grid-template-columns: var(--touch-min) minmax(0, 1fr); align-items: stretch; }
+.goals-shell .goal-item.is-selectable.is-selected { background: color-mix(in srgb, var(--accent) 9%, transparent); }
+.goals-shell .goal-bulk-pick {
+  min-width: var(--touch-min); min-height: var(--touch-min); border: 0; border-inline-end: 1px solid var(--line-soft);
+  color: var(--text-strong); background: transparent; font: 900 var(--type-control)/1 var(--font-ui);
+}
+.goals-shell .goal-bulk-pick::before { content: ""; display: inline-grid; width: 20px; height: 20px; place-items: center; border: 2px solid var(--line); border-radius: 6px; }
+.goals-shell .goal-bulk-pick[aria-pressed="true"]::before { content: "✓"; border-color: var(--accent); background: var(--accent); color: var(--on-accent); }
+.goals-shell .goal-bulk-pick[aria-pressed="true"] > span { display: none; }
 .goal-detail-head .goals-kicker span { letter-spacing: var(--tracking-natural); text-transform: none; }
 .goal-detail-box .goal-edit-form > :is(label:first-child, label:nth-child(2), button) { grid-column: auto; }
 .goal-detail-box .goal-edit-form > :is(label:first-child, label:nth-child(2), button:last-child) { grid-column: 1 / -1; }
@@ -17167,6 +17185,9 @@ html.goal-detail-open { overflow: hidden; }
   .goals-shell .goals-view-tabs { width: min(100%, 240px); grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .goals-shell .goals-view-tab { font-size: var(--type-control); }
   .goals-focus-head, .goals-all-head { display: grid; align-items: start; padding: var(--sp-2) var(--sp-1); }
+  .goals-all-tools { width: 100%; min-width: 0; grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+  .goals-bulk-toolbar { align-items: stretch; display: grid; margin-inline: var(--sp-1); }
+  .goals-bulk-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .goals-focus-head p, .goals-all-head p { font-size: var(--type-control); line-height: var(--leading-prose); }
   .goals-focus-list { gap: var(--sp-2); }
   .goals-initiative-head > button { min-height: var(--touch-min); padding: var(--sp-2); }
@@ -17187,6 +17208,7 @@ html.goal-detail-open { overflow: hidden; }
   .goals-more-nav > summary { padding-inline: var(--sp-2); }
   .goals-group-head { display: grid; }
   .goals-group-head .btn { justify-self: start; }
+  .goals-all-tools { grid-template-columns: minmax(0, 1fr); }
 }
 @media (pointer: coarse), (max-width: 600px) {
   .goals-more-nav > summary,
@@ -17194,10 +17216,13 @@ html.goal-detail-open { overflow: hidden; }
   .goals-initiative-head > button,
   .goals-group-box :is(button, input),
   .goals-show-all,
-  .goals-clear-group { min-height: var(--touch-min); }
+  .goals-clear-group,
+  .goals-bulk-toolbar button,
+  .goals-shell .goal-bulk-pick { min-height: var(--touch-min); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .goal-group-overlay *, .goal-group-overlay *::before, .goal-group-overlay *::after {
+  .goal-group-overlay *, .goal-group-overlay *::before, .goal-group-overlay *::after,
+  .goals-bulk-toolbar *, .goals-bulk-toolbar *::before, .goals-bulk-toolbar *::after {
     animation: none !important; transition-duration: 0ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important;
   }
 }

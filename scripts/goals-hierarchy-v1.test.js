@@ -87,6 +87,19 @@ test('Goals v169 keeps two primary modes and moves map/archive into More', () =>
   assert.doesNotMatch(APP.slice(APP.indexOf('function goalItem'), APP.indexOf('function goalTreeHTML')), /<details class="goal-detail/);
 });
 
+test('Goals supports explicit multi-select with atomic pause, archive and confirmed delete', () => {
+  assert.match(APP, /data-action="goals-toggle-bulk"/);
+  assert.match(APP, /data-action="goal-bulk-toggle"/);
+  assert.match(APP, /data-action="goals-bulk-archive"/);
+  assert.match(APP, /data-action="goals-bulk-delete"/);
+  assert.match(APP, /aria-pressed="\$\{selected \? 'true' : 'false'\}"/);
+  const bulk = APP.slice(APP.indexOf('async function applyGoalsBulkState'), APP.indexOf('function assistantActionsModule'));
+  assert.match(bulk, /commitGoalMutation/);
+  assert.match(bulk, /kind === 'archive'/);
+  assert.match(CSS, /\.goal-bulk-pick/);
+  assert.match(CSS, /\.goals-bulk-toolbar/);
+});
+
 test('Goals v169 uses one progressively disclosed detail dialog and human metric modes', () => {
   assert.match(APP, /overlay\.id = 'goal-detail-dialog'/);
   assert.match(APP, /role="dialog" aria-modal="true" aria-labelledby="goal-detail-title" aria-describedby="goal-detail-summary"/);

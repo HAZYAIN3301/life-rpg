@@ -104,6 +104,22 @@ test('пример Альберта: «убери цели про Jugend Forscht
   assert.equal(r.refused.length, 0);
 });
 
+test('массовый архив принимает до 100 своих целей одним атомарным действием', () => {
+  const r = A.validate({ kind: 'goal_archive_many', targetIds: ['g1', 'g2', 'g1'] }, CTX);
+  assert.equal(r.ok, true);
+  assert.deepEqual(r.action.targetIds, ['g1', 'g2']);
+  assert.deepEqual(r.action.targetTitles, [
+    'Подготовить инженерную часть Jugend Forscht',
+    'Запустить Satoru',
+  ]);
+});
+
+test('🔴 массовое изменение all-or-nothing: один чужой id блокирует всю пачку', () => {
+  const r = A.validate({ kind: 'goal_pause_many', targetIds: ['g1', 'foreign-goal'] }, CTX);
+  assert.equal(r.ok, false);
+  assert.equal(r.reason, A.REASONS.TARGET_NOT_FOUND);
+});
+
 test('создание квеста нормализуется и не доверяет числам модели', () => {
   const r = A.validate({ kind: 'quest', title: 'Смонтировать первый дубль', sphere: 'Работа', estimateMin: 99999, difficulty: 'адская', date: '2020-01-01' }, CTX);
   assert.equal(r.ok, true);
@@ -178,6 +194,15 @@ test('ответ без блока проходит нетронутым', () =>
   assert.equal(r.clean, 'Просто ответ без действий.');
   assert.deepEqual(r.actions, []);
   assert.equal(r.extraBlocks, 0);
+});
+
+test('внутренняя инструкция модели и повреждённый UTF-8 не показываются человеку', () => {
+  const leaked = A.fromReply('Хорошо.\n| goal_archive | quest_reschedule | quest_done |\nMax 5 items? Exactly 5 items.', CTX);
+  assert.equal(leaked.clean, 'Хорошо.');
+  assert.equal(leaked.leaked, true);
+  const damaged = A.fromReply('Архивирую �� выбранные �� цели', CTX);
+  assert.equal(damaged.clean, '');
+  assert.equal(damaged.leaked, true);
 });
 
 test('пачка ограничена пятью', () => {

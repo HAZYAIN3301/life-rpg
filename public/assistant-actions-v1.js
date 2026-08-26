@@ -51,6 +51,7 @@
   // Столько же, сколько принимал старый парсер: больше пяти карточек за ответ —
   // это уже не помощь, а список дел, который человек не прочитает.
   const MAX_ACTIONS = 5;
+  const MAX_BULK_TARGETS = 100;
   const MAX_TITLE = 120;
 
   /**
@@ -69,6 +70,8 @@
     goal_pause:       { tier: 'modify', target: 'goal' },
     goal_resume:      { tier: 'modify', target: 'goal' },
     goal_archive:     { tier: 'modify', target: 'goal' },   // обратимо: цель уходит из активных, история цела
+    goal_pause_many:  { tier: 'modify', target: 'goal', many: true },
+    goal_archive_many:{ tier: 'modify', target: 'goal', many: true },
     quest_reschedule: { tier: 'modify', target: 'quest' },
     quest_done:       { tier: 'modify', target: 'quest' },
     habit_pause:      { tier: 'modify', target: 'habit' },
@@ -141,6 +144,21 @@
     const spec = KINDS[kind];
 
     if (spec.tier === 'modify') {
+      if (spec.many) {
+        const ids = Array.isArray(raw.targetIds)
+          ? [...new Set(raw.targetIds.map((value) => str(value, 40)).filter(Boolean))].slice(0, MAX_BULK_TARGETS)
+          : [];
+        if (!ids.length) return { ok: false, reason: REASONS.NO_TARGET, kind };
+        const pool = Array.isArray(c.goals) ? c.goals : [];
+        const goals = ids.map((id) => pool.find((item) => item && String(item.id) === id));
+        // A bulk action is all-or-nothing: one invented/foreign id invalidates the
+        // complete preview instead of silently applying a surprising subset.
+        if (goals.some((goal) => !goal)) return { ok: false, reason: REASONS.TARGET_NOT_FOUND, kind };
+        return { ok: true, action: {
+          kind, tier: spec.tier, targetKind: 'goal', targetIds: ids,
+          targetTitles: goals.map((goal) => str(goal.title, MAX_TITLE) || ''),
+        } };
+      }
       // Цель адресуется ТОЛЬКО по id из списка своих объектов. Свободный текст здесь
       // не принимается: именно так задевают не то, что имелось в виду.
       const id = str(raw.targetId, 40);
@@ -232,22 +250,35 @@
     return { clean, raw: Array.isArray(raw) ? raw : [], extraBlocks: hits.length - 1 };
   }
 
+  /** Never render provider/system-contract leakage as a chat answer. */
+  function visibleText(text) {
+    const src = typeof text === 'string' ? text.trim() : '';
+    const leak = /(?:КОНТРАКТ ИСПОЛНИТЕЛЯ|Правила блока:\s*JSON|kind\s*[∈∈]|goal_archive\s*\|\s*quest_reschedule|Max\s+5\s+items|Exactly\s+5\s+items|ACTIONS>>)/i;
+    const lines = src.split('\n');
+    const at = lines.findIndex((line) => leak.test(line));
+    const damaged = (src.match(/\uFFFD/g) || []).length >= 2;
+    const clean = (at >= 0 ? lines.slice(0, at).join('\n') : src).trim();
+    return { text: damaged ? '' : clean, leaked: at >= 0 || damaged };
+  }
+
   /** Полный путь: текст модели → готовые к показу действия. */
   function fromReply(text, ctx) {
     const { clean, raw, extraBlocks } = extract(text);
     const { actions, refused } = validateAll(raw, ctx);
-    return { clean, actions, refused, extraBlocks };
+    const visible = visibleText(clean);
+    return { clean: visible.text, actions, refused, extraBlocks, leaked: visible.leaked };
   }
 
   /** Строка для системного промпта — чтобы список видов был в одном месте, а не в двух. */
   function promptContract() {
     return 'kind ∈ ' + KIND_LIST.join(' | ')
       + '. Изменяющие виды требуют targetId — точный id объекта из контекста; по описанию адресовать нельзя.'
+      + ' Для массовой паузы/архива используй один goal_pause_many/goal_archive_many с targetIds — массивом точных id (до 100); перечисли все выбранные цели, не заменяй массив свободным фильтром.'
       + ' Удаление любого рода недоступно: предложи паузу или архив, а необратимое человек делает сам в интерфейсе.';
   }
 
   return Object.freeze({
-    VERSION, KINDS, KIND_LIST, REASONS, MAX_ACTIONS, KNOWN_REFUSALS,
-    validate, validateAll, extract, fromReply, looksRefused, promptContract,
+    VERSION, KINDS, KIND_LIST, REASONS, MAX_ACTIONS, MAX_BULK_TARGETS, KNOWN_REFUSALS,
+    validate, validateAll, extract, visibleText, fromReply, looksRefused, promptContract,
   });
 });

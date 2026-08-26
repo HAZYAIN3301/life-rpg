@@ -107,7 +107,26 @@ test('real Satoru plan context carries exact owned ids and hierarchy', () => {
   assert.match(context, /quest id=/);
   assert.match(context, /habit id=/);
   assert.match(context, /parentId=/);
+  assert.match(context, /horizon=/);
   assert.match(app, /Для планирования сначала назови конкретную цель\/квест/);
+});
+
+test('assistant supports one reviewed bulk goal action and hides provider contract leakage', () => {
+  const apply = between('async function applyChatActions', 'async function sendChat');
+  assert.match(apply, /goal_pause_many/);
+  assert.match(apply, /goal_archive_many/);
+  assert.match(apply, /affected\.length !== wanted\.size/);
+  assert.match(apply, /goalDataCommit\(nextGoals, nextTasks\)/);
+  const send = between('async function sendChat', 'function captureBar');
+  assert.match(send, /chat-contract-leak-blocked/);
+  assert.doesNotMatch(send, /parsed\.clean \|\| d\.text/);
+});
+
+test('provider UTF-8 is decoded once after complete response buffering', () => {
+  const post = server.slice(server.indexOf('function httpsPostJson'), server.indexOf('function resolveAiProvider'));
+  assert.match(post, /const chunks = \[\]/);
+  assert.match(post, /Buffer\.concat\(chunks\)\.toString\('utf8'\)/);
+  assert.doesNotMatch(post, /data \+=/);
 });
 
 test('new assistant copy has complete EN DE UK ES rows with no duplicates', () => {
