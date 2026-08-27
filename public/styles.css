@@ -14774,6 +14774,63 @@ html.calendar-task-open body {
    ============================================================ */
 .rewards-shell { --reward-earned-fg: #ffd479; --reward-earned-border: var(--rarity-legendary); }
 :root[data-theme="light"] .rewards-shell { --reward-earned-fg: #6f4700; --reward-earned-border: #805100; }
+.reward-object-art {
+  display: block;
+  flex: none;
+  inline-size: 96px;
+  block-size: 96px;
+  background-image: url('/art/rewards/reward-atlas-v1.png?v=1');
+  background-repeat: no-repeat;
+  background-size: 200% 200%;
+  filter: drop-shadow(0 13px 18px rgba(0, 0, 0, .34));
+}
+.reward-object-art.is-chest { background-position: 0 0; }
+.reward-object-art.is-gold { background-position: 100% 0; }
+.reward-object-art.is-cosmetic { background-position: 0 100%; }
+.reward-object-art.is-voucher { background-position: 100% 100%; }
+.reward-hero-v189 {
+  min-height: clamp(210px, 25vw, 300px);
+  grid-template-columns: minmax(0, 1fr) minmax(190px, 33%);
+  align-items: center;
+  isolation: isolate;
+}
+.reward-hero-v189::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: auto -8% -48% 42%;
+  block-size: 88%;
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--accent-warm) 24%, transparent), transparent 68%);
+  pointer-events: none;
+}
+.reward-hero-copy { max-inline-size: 720px; }
+.reward-hero-visual {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-block-size: 180px;
+}
+.hero-reward-chest { inline-size: clamp(180px, 23vw, 260px); block-size: clamp(180px, 23vw, 260px); animation: rewardEarnedBreath 3.8s ease-in-out infinite; }
+.hero-reward-gold { position: absolute; inline-size: 80px; block-size: 80px; inset: auto 8% 4% auto; transform: rotate(8deg); }
+.reward-hero-balance {
+  position: absolute;
+  inset: auto 4% 0 auto;
+  min-inline-size: 58px;
+  padding: 7px 12px;
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 58%, var(--line-soft));
+  border-radius: var(--radius-pill);
+  color: var(--text-strong);
+  background: color-mix(in srgb, var(--surface-1) 90%, transparent);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .25);
+  font-family: var(--font-number);
+  font-weight: 900;
+  text-align: center;
+}
+.reward-primary-cta { box-shadow: 0 10px 34px color-mix(in srgb, var(--accent-warm) 24%, transparent); }
+@keyframes rewardEarnedBreath {
+  0%, 100% { transform: translateY(2px) rotate(-.6deg); filter: drop-shadow(0 12px 16px rgba(0, 0, 0, .3)); }
+  50% { transform: translateY(-5px) rotate(.6deg); filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .44)); }
+}
 .rewards-shell .reward-hero .th-kicker,
 .economy-confirm-kicker,
 .loot-earned-label { color: var(--reward-earned-fg); }
@@ -14801,6 +14858,9 @@ html.calendar-task-open body {
   color: var(--text-strong);
   font: inherit;
 }
+.daily-chest-art { inline-size: 116px; block-size: 116px; }
+.daily-reward-card .lb-chest.ready .daily-chest-art { animation: rewardEarnedBreath 3.4s ease-in-out infinite; }
+.daily-reward-card .lb-chest small { max-inline-size: 19ch; color: var(--text-soft); font-size: 11px; line-height: 1.25; }
 .daily-reward-card .lb-chest.ready {
   border-color: var(--reward-earned-border);
   background: color-mix(in srgb, var(--reward-earned-border) 9%, var(--surface-2));
@@ -14841,6 +14901,26 @@ html.calendar-task-open body {
 .rewards-shell .cos-rarity { color: var(--text-soft); }
 .rewards-shell .cos-cost { color: var(--text-strong); }
 .personal-reward-store .settings-actions { margin: var(--sp-3) 0 var(--sp-2); }
+.reward-create-details,
+.rewards-disclosure { border: 1px solid var(--line-soft); border-radius: var(--radius-sm); background: var(--surface-2); }
+.reward-create-details { margin-block-start: var(--sp-2); }
+.reward-create-details > summary,
+.rewards-disclosure > summary {
+  display: flex;
+  align-items: center;
+  min-block-size: var(--touch-min);
+  padding: var(--sp-2) var(--sp-3);
+  color: var(--text-strong);
+  font-weight: 850;
+  cursor: pointer;
+}
+.reward-create-details > .reward-form { padding: 0 var(--sp-3) var(--sp-3); }
+.rewards-disclosure { padding: 0; overflow: clip; }
+.rewards-disclosure > summary { font-size: var(--type-heading); }
+.rewards-disclosure > .ach-grid,
+.rewards-disclosure-body { margin: 0; padding: 0 var(--sp-3) var(--sp-3); }
+.rewards-disclosure-body { display: grid; gap: var(--sp-3); }
+.rewards-disclosure-body > .economy-rules { padding: 0; border: 0; background: none; box-shadow: none; }
 .reward-limit,
 .rwc-added { font-size: var(--type-meta); line-height: var(--leading-label); }
 .personal-reward-store .reward-form { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(130px, 1fr) minmax(110px, .65fr) auto; align-items: end; gap: var(--sp-2); }
@@ -14853,49 +14933,44 @@ html.calendar-task-open body {
 .voucher-box { width: min(100%, 600px); max-height: min(calc(100dvh - 24px), 760px); overflow-y: auto; }
 .loot-reveal-box,
 .economy-confirm-box { position: relative; padding: clamp(var(--sp-4), 5vw, var(--sp-6)); text-align: start; }
-.loot-reveal-box.is-capsule::before {
-  content: "✦";
-  display: grid;
-  place-items: center;
-  inline-size: 72px;
-  block-size: 72px;
-  margin: 0 auto var(--sp-3);
-  border: 3px double var(--rarity-legendary);
-  border-radius: var(--radius-md);
-  color: var(--reward-earned-fg);
-  background: color-mix(in srgb, var(--rarity-legendary) 10%, var(--surface-2));
-  font-size: 34px;
-  animation: rewardCapsuleAnticipation 900ms cubic-bezier(.2, .8, .2, 1) both;
-}
-.loot-reveal-box.is-capsule.is-revealed::before { content: "✓"; animation: none; }
-.loot-capsule-result { display: grid; gap: var(--sp-1); margin-top: var(--sp-3); padding: var(--sp-3); border: 2px solid var(--rarity-common); border-radius: var(--radius-sm); color: var(--text-strong); background: var(--surface-2); }
+.loot-reveal-box.is-capsule::before { content: none; }
+.loot-ceremony-head { display: flex; align-items: center; gap: var(--sp-3); min-width: 0; }
+.loot-ceremony-head h2 { margin: 2px 0 0; }
+.loot-earned-label { margin: 0; font-size: var(--type-meta); font-weight: 900; letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.loot-chest-art { inline-size: 118px; block-size: 118px; animation: rewardEarnedBreath 2.8s ease-in-out infinite; }
+.loot-ceremony-copy { margin-block: var(--sp-2) 0; color: var(--text-soft); line-height: var(--leading-prose); }
+.loot-capsule-result { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: var(--sp-3); margin-top: var(--sp-3); padding: var(--sp-3); border: 2px solid var(--rarity-common); border-radius: var(--radius-sm); color: var(--text-strong); background: var(--surface-2); overflow: hidden; }
 .loot-capsule-result[hidden] { display: none; }
 .loot-capsule-result.r-rare { border-color: var(--rarity-rare); }
 .loot-capsule-result.r-epic { border-color: var(--rarity-epic); }
 .loot-capsule-result.r-legendary { border: 4px double var(--rarity-legendary); }
-.loot-capsule-result > span { color: var(--text-soft); font-size: var(--type-meta); line-height: var(--leading-label); font-weight: 800; text-transform: uppercase; letter-spacing: var(--tracking-caps); }
-.loot-capsule-result > strong { overflow-wrap: anywhere; font-size: var(--type-heading); line-height: var(--leading-ui); }
+.loot-result-object { inline-size: 108px; block-size: 108px; }
+.loot-capsule-result > div { display: grid; gap: var(--sp-1); min-width: 0; }
+.loot-capsule-result > div > span { color: var(--text-soft); font-size: var(--type-meta); line-height: var(--leading-label); font-weight: 800; text-transform: uppercase; letter-spacing: var(--tracking-caps); }
+.loot-capsule-result > div > strong { overflow-wrap: anywhere; font-size: var(--type-heading); line-height: var(--leading-ui); }
+.loot-capsule-result.is-revealed .loot-result-object { animation: rewardResultLand 560ms cubic-bezier(.16, 1.18, .28, 1) both; }
+@keyframes rewardResultLand { 0% { opacity: 0; transform: scale(.62) rotate(-6deg); } 62% { opacity: 1; transform: scale(1.07) rotate(1deg); } 100% { opacity: 1; transform: none; } }
 
 /* ── Честная лента сундука (chest-reveal-v1) ─────────────────────────────────
    Тот же контракт, что у самого модуля: лента едет по реальному пулу и
    останавливается на реально выигранном предмете — никакого near-miss,
    никакой подкрутки соседей. Маркер неподвижен, едет только лента. */
-.loot-reel { position: relative; margin-top: var(--sp-3); height: 68px; overflow: hidden; border-radius: var(--radius-sm); background: var(--surface-2); }
+.loot-reel { position: relative; margin-top: var(--sp-3); height: 104px; overflow: hidden; border: 1px solid var(--line-soft); border-radius: var(--radius-sm); background: radial-gradient(circle at 50% 48%, color-mix(in srgb, var(--accent-warm) 12%, var(--surface-2)), var(--surface-2) 65%); }
 .loot-reel[hidden] { display: none; }
 .loot-reel-track { position: absolute; top: 0; left: 50%; height: 100%; display: flex; align-items: center; gap: var(--sp-2); will-change: transform; }
 .loot-reel-tile {
-  flex: none; display: grid; place-items: center; width: 88px; height: 52px; padding: 0 var(--sp-2);
+  flex: none; display: grid; place-items: center; width: 88px; height: 88px; padding: 0;
   border-radius: var(--radius-sm); border: 2px solid var(--tile, var(--rarity-common));
   background: color-mix(in srgb, var(--tile, var(--rarity-common)) 18%, var(--surface-2));
-  color: var(--text-strong); font-size: var(--type-meta); font-weight: 700; text-align: center;
-  line-height: var(--leading-label); overflow-wrap: anywhere;
+  color: var(--text-strong); text-align: center; overflow: hidden;
 }
+.loot-reel-object { inline-size: 80px; block-size: 80px; filter: drop-shadow(0 7px 9px rgba(0, 0, 0, .3)); }
 .loot-reel-track.is-landed .loot-reel-tile.is-winner {
   border-width: 3px; box-shadow: 0 0 0 2px color-mix(in srgb, var(--tile, var(--rarity-common)) 55%, transparent);
 }
 .loot-reel-marker {
-  position: absolute; top: -4px; bottom: -4px; left: 50%; width: 2px; transform: translateX(-1px);
-  background: var(--text-strong); opacity: .55; pointer-events: none;
+  position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; transform: translateX(-1.5px);
+  background: linear-gradient(180deg, var(--reward-earned-border), transparent 16% 84%, var(--reward-earned-border)); opacity: .88; pointer-events: none;
 }
 @media (prefers-reduced-motion: reduce) { .loot-reel-track { transition: none !important; } }
 
@@ -15048,6 +15123,8 @@ html.calendar-task-open body {
 
 @media (max-width: 760px) {
   .rewards-primary-grid { grid-template-columns: minmax(0, 1fr); }
+  .reward-hero-v189 { grid-template-columns: minmax(0, 1fr) minmax(130px, 34%); }
+  .hero-reward-chest { inline-size: 170px; block-size: 170px; }
   .personal-reward-store .reward-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .personal-reward-store .reward-form label:first-child,
   .personal-reward-store .reward-form button[type="submit"] { grid-column: 1 / -1; }
@@ -15057,7 +15134,16 @@ html.calendar-task-open body {
   .rewards-shell summary { min-height: var(--touch-min); }
   .daily-reward-card .lb-head { display: grid; }
   .daily-reward-card .lb-body { grid-template-columns: minmax(0, 1fr); }
-  .daily-reward-card .lb-chest { min-height: var(--touch-min); grid-template-columns: auto minmax(0, 1fr); gap: var(--sp-2); text-align: start; }
+  .reward-hero-v189 { min-height: 260px; grid-template-columns: minmax(0, 1fr) 112px; align-items: center; gap: var(--sp-2); }
+  .reward-hero-v189 h2 { font-size: clamp(25px, 7.5vw, 31px); }
+  .reward-hero-copy > p { display: none; }
+  .reward-hero-visual { min-block-size: 128px; }
+  .hero-reward-chest { inline-size: 132px; block-size: 132px; }
+  .hero-reward-gold { inline-size: 54px; block-size: 54px; inset: auto 0 2% auto; }
+  .reward-hero-balance { inset-inline-end: 0; padding: 5px 9px; }
+  .daily-reward-card .lb-chest { min-height: 112px; grid-template-columns: 92px minmax(0, 1fr); gap: var(--sp-2); text-align: start; }
+  .daily-chest-art { grid-row: 1 / span 2; inline-size: 92px; block-size: 92px; }
+  .daily-reward-card .lb-chest small { max-inline-size: none; }
   .daily-reward-card .lb-emoji { font-size: 28px; }
   .daily-reward-track { grid-template-columns: minmax(0, 1fr); }
   .capsule-odds ul { grid-template-columns: minmax(0, 1fr); }
@@ -15071,6 +15157,10 @@ html.calendar-task-open body {
   .voucher-box .rwc-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; }
   .reward-catalog-box .rwc-row .btn,
   .voucher-box .rwc-row .btn { grid-column: 2 / -1; }
+  .loot-ceremony-head { align-items: flex-start; }
+  .loot-chest-art { inline-size: 86px; block-size: 86px; }
+  .loot-capsule-result { grid-template-columns: 82px minmax(0, 1fr); gap: var(--sp-2); }
+  .loot-result-object { inline-size: 82px; block-size: 82px; }
 }
 
 @media (pointer: coarse) {
@@ -15089,6 +15179,15 @@ html.calendar-task-open body {
   :is(.loot-reveal-box, .economy-confirm-box, .reward-catalog-box, .voucher-box) *,
   :is(.loot-reveal-box, .economy-confirm-box, .reward-catalog-box, .voucher-box) *::before,
   :is(.loot-reveal-box, .economy-confirm-box, .reward-catalog-box, .voucher-box) *::after { animation: none !important; transition-duration: 0ms !important; transition-delay: 0ms !important; scroll-behavior: auto !important; }
+}
+
+.sound-mode-row { display: grid; grid-template-columns: minmax(110px, auto) minmax(0, 1fr); align-items: center; gap: var(--sp-3); }
+.sound-mode-toggle { justify-self: start; flex-wrap: wrap; }
+.sound-mode-help { max-inline-size: 68ch; margin: var(--sp-2) 0 0; }
+@media (max-width: 600px) {
+  .sound-mode-row { grid-template-columns: minmax(0, 1fr); gap: var(--sp-2); }
+  .sound-mode-toggle { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .sound-mode-toggle .theme-opt { min-inline-size: 0; padding-inline: var(--sp-1); }
 }
 
 /* ---------- Party, leaderboard & social privacy v125 ---------- */

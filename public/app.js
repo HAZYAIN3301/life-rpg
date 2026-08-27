@@ -529,6 +529,17 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // ── Motion & Sound v189: explicit PWA audio contract ──
+  'Режим звука': { en: 'Sound mode', de: 'Klangmodus', uk: 'Режим звуку', es: 'Modo de sonido' },
+  'Выкл': { en: 'Off', de: 'Aus', uk: 'Вимкнено', es: 'Desactivado' },
+  'Только важное': { en: 'Important only', de: 'Nur Wichtiges', uk: 'Лише важливе', es: 'Solo lo importante' },
+  'Полный': { en: 'Full', de: 'Voll', uk: 'Повний', es: 'Completo' },
+  'Навигация и выбор звучат только в полном режиме. Веб-приложение не видит беззвучный переключатель iPhone.': { en: 'Navigation and selection sound only in Full mode. A web app cannot read the iPhone silent switch.', de: 'Navigation und Auswahl klingen nur im Modus „Voll“. Eine Web-App kann den Stummschalter des iPhone nicht erkennen.', uk: 'Навігація та вибір звучать лише в повному режимі. Вебзастосунок не бачить беззвучний перемикач iPhone.', es: 'La navegación y la selección solo suenan en el modo Completo. Una aplicación web no puede leer el interruptor de silencio del iPhone.' },
+  'Открытие': { en: 'Reveal', de: 'Enthüllung', uk: 'Відкриття', es: 'Revelación' },
+  'Результат уже сохранён до начала анимации.': { en: 'The result is saved before the animation starts.', de: 'Das Ergebnis wird vor Beginn der Animation gespeichert.', uk: 'Результат збережено до початку анімації.', es: 'El resultado se guarda antes de que empiece la animación.' },
+  'Результат уже сохранён. Можно посмотреть церемонию или сразу пропустить.': { en: 'The result is already saved. Watch the ceremony or skip it immediately.', de: 'Das Ergebnis ist bereits gespeichert. Sieh dir die Zeremonie an oder überspringe sie sofort.', uk: 'Результат уже збережено. Можна переглянути церемонію або одразу пропустити.', es: 'El resultado ya está guardado. Mira la ceremonia o sáltala de inmediato.' },
+  'Добавить свою награду': { en: 'Add your own reward', de: 'Eigene Belohnung hinzufügen', uk: 'Додати власну нагороду', es: 'Añadir tu propia recompensa' },
+  'Правила и история': { en: 'Rules and history', de: 'Regeln und Verlauf', uk: 'Правила та історія', es: 'Reglas e historial' },
   // ── Goals v184: bulk management + assistant repair ──
   'Выбрать несколько': { en: 'Select multiple', de: 'Mehrere auswählen', uk: 'Вибрати кілька', es: 'Seleccionar varias' },
   'Массовое управление целями': { en: 'Bulk goal management', de: 'Mehrere Ziele verwalten', uk: 'Масове керування цілями', es: 'Gestión múltiple de metas' },
@@ -10776,40 +10787,43 @@ function withTts(html) {
   return i < 0 ? out : out.slice(0, i) + btn + out.slice(i);
 }
 
-// ---- SFX (#23): синтезированные звуки интерфейса через Web Audio, без файлов ----
-function sfxOn() { return !State.settings || State.settings.sound !== false; }
-function sfxTone(freq, t0, dur, opts) {
-  if (!audioCtx) return; opts = opts || {};
-  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-  o.type = opts.type || 'sine'; o.frequency.setValueAtTime(freq, t0);
-  if (opts.slideTo) o.frequency.exponentialRampToValueAtTime(opts.slideTo, t0 + dur);
-  const peak = opts.gain || 0.15;
-  g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(peak, t0 + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  o.connect(g).connect(audioCtx.destination); o.start(t0); o.stop(t0 + dur + 0.03);
+// ---- Sound OS v1: meaning first, then a restrained tactile/cinematic voice. ----
+// A browser/PWA cannot read the iPhone hardware silent switch. The explicit app
+// mode is therefore the honest contract: Off / Important only / Full feedback.
+let _sfxEngine = null;
+function sfxMode() {
+  if (!State.settings || State.settings.sound === false) return 'off';
+  return ['essential', 'full'].includes(State.settings.soundMode) ? State.settings.soundMode : 'full';
 }
-function sfx(name, rarity) {
-  if (!sfxOn()) return; ensureAudio(); if (!audioCtx) return;
-  const t = audioCtx.currentTime;
-  if (name === 'complete') { [[660, 0], [880, 0.07], [1320, 0.15]].forEach(([f, d]) => sfxTone(f, t + d, 0.18, { type: 'triangle', gain: 0.13 })); }
-  else if (name === 'levelup') { [523, 659, 784, 1046, 1318].forEach((f, i) => sfxTone(f, t + i * 0.085, 0.3, { type: 'sawtooth', gain: 0.11 })); sfxTone(1046, t + 0.45, 0.5, { type: 'sine', gain: 0.1 }); }
-  else if (name === 'coin') { sfxTone(988, t, 0.06, { type: 'square', gain: 0.09 }); sfxTone(1319, t + 0.055, 0.1, { type: 'square', gain: 0.09 }); }
-  else if (name === 'achievement') { [784, 1046, 1318, 1568].forEach((f, i) => sfxTone(f, t + i * 0.1, 0.32, { type: 'triangle', gain: 0.12 })); }
-  else if (name === 'loot') {
-    const map = { common: [523, 659], rare: [523, 659, 784], epic: [523, 659, 784, 1046], legendary: [392, 523, 659, 784, 1046, 1318] };
-    const notes = map[rarity] || map.common, leg = rarity === 'legendary';
-    notes.forEach((f, i) => sfxTone(f, t + i * 0.08, 0.36, { type: leg ? 'sawtooth' : 'triangle', gain: leg ? 0.15 : 0.11 }));
-    if (rarity === 'epic' || leg) sfxTone(notes[notes.length - 1] * 2, t + notes.length * 0.08, 0.55, { type: 'sine', gain: 0.1 });
-  }
-  else if (name === 'raidwin') { // эпичная фанфара победы над боссом (#22)
-    [392, 523, 659, 784, 784, 1046].forEach((f, i) => sfxTone(f, t + i * 0.14, 0.5, { type: 'sawtooth', gain: 0.12 }));
-    [523, 659, 784, 1046].forEach((f) => sfxTone(f, t + 0.14 * 6, 1.0, { type: 'triangle', gain: 0.1 })); // финальный аккорд
-  }
-  else if (name === 'bosshit') { // критический удар по слабости босса — заметно отличается от 'complete'
-    sfxTone(180, t, 0.09, { type: 'square', slideTo: 90, gain: 0.16 });
-    sfxTone(1046, t + 0.08, 0.22, { type: 'sine', gain: 0.13 });
-  }
+function sfxOn() { return sfxMode() !== 'off'; }
+function sfxEngine() {
+  const Sound = window.SatoruSoundV1;
+  if (!Sound || typeof Sound.create !== 'function') return null;
+  if (!_sfxEngine) _sfxEngine = Sound.create({ mode: sfxMode(), gain: .52 });
+  _sfxEngine.setMode(sfxMode());
+  return _sfxEngine;
 }
-function sfxLoot(rarity) { sfx('loot', rarity); } // вызывается из openChest (#20)
+function sfx(name, rarity, detail) {
+  const engine = sfxEngine();
+  if (!engine) return false;
+  return engine.play(name, Object.assign({ rarity: rarity || 'common', mode: sfxMode() }, detail || {}));
+}
+function sfxLoot(rarity) { return sfx('loot', rarity); }
+function clearChestReelSounds(overlay) {
+  if (!overlay || !Array.isArray(overlay._reelSoundTimers)) return;
+  overlay._reelSoundTimers.forEach(clearTimeout); overlay._reelSoundTimers = [];
+}
+function scheduleChestReelSounds(overlay, durationMs) {
+  clearChestReelSounds(overlay);
+  if (!overlay || sfxMode() !== 'full') return;
+  // Dense at launch, then increasingly spaced: the ear hears deceleration even
+  // with its eyes closed. Times are bounded by the same honest reel duration.
+  const curve = [.06, .12, .18, .25, .33, .42, .52, .63, .74, .84, .92, .975];
+  overlay._reelSoundTimers = curve.map((point, index) => setTimeout(() => {
+    if (!overlay.isConnected || overlay._reelDone) return;
+    sfx('reward_tick', 'common', { progress: point, pan: index % 2 ? .12 : -.12 });
+  }, Math.max(24, Math.round(durationMs * point))));
+}
 
 // ============================================================
 //  Эмбиент-звук: натуральные локальные записи + процедурный мягкий шум.
@@ -18516,18 +18530,17 @@ function lootboxCard() {
     <div class="lb-head"><h3 id="daily-reward-title">${satoruIconHTML('nav.rewards', 'heading-glyph', '◇')} ${t('Награды дня')}</h3><span class="daily-reward-randomness">${t('Шансы сундука открыты')}</span></div>
     <div class="lb-body">
       <button type="button" class="lb-chest ${avail > 0 ? 'ready' : 'empty'}" ${avail > 0 ? 'data-action="open-chest"' : 'disabled'} aria-label="${esc(statusTxt)}">
-        ${satoruIconHTML('system.rewards', `lb-emblem${avail > 0 ? ' is-ready' : ''}`, avail > 0 ? '🎁' : '✓')}<span class="lb-status">${statusTxt}</span>
-        ${avail > 0 ? `<small>${t('Розыгрыш при открытии')}</small>` : ''}
+        <span class="reward-object-art is-chest daily-chest-art" aria-hidden="true"></span><span class="lb-status">${statusTxt}</span>
+        ${avail > 0 ? `<small>${t('Результат уже сохранён до начала анимации.')}</small>` : ''}
       </button>
       <div class="lb-info">
         <p>${t('Сундук зарабатывается за 1, 3 и 5 реальных действий. Заход не считается.')}</p>
-        <p class="daily-reward-fairness">${t('Внутри — золото, образ или ваучер награды. Шансы открыты до открытия и не меняются от серии неудач, от Pro и от времени суток. Ставки нет, силу предметы не дают, дубликатов косметики нет. Free и Pro получают один и тот же набор и одну попытку.')}</p>
         ${dailyRewardGoldBonusPct() ? `<p class="muted">${t('Детерминированный бонус дерева')}: +${dailyRewardGoldBonusPct()}% ${t('к золоту наград дня')}.</p>` : ''}
         ${(lb.vouchers || []).length > 0 ? `<button type="button" class="voucher-chip" data-action="use-voucher">${satoruIconHTML('reward.voucher', 'inline-glyph', '◇')} ${t('Ваучер')} ×${lb.vouchers.length} — ${t('выбрать личную награду')}</button>` : ''}
       </div>
     </div>
     <ol class="daily-reward-track">${track}</ol>
-    <details class="capsule-odds"><summary>${t('Вероятности сундука')}</summary><p>${t('Сначала розыгрыш выбирает редкость, потом — что именно: золото, ещё не полученный образ или ваучер награды этой цены. Косметику всегда можно купить напрямую, не открывая сундук.')}</p><ul>${capsuleOddsHTML}</ul></details>
+    <details class="capsule-odds"><summary>${t('Вероятности сундука')}</summary><p>${t('Сначала розыгрыш выбирает редкость, потом — что именно: золото, ещё не полученный образ или ваучер награды этой цены. Косметику всегда можно купить напрямую, не открывая сундук.')}</p><p class="daily-reward-fairness">${t('Внутри — золото, образ или ваучер награды. Шансы открыты до открытия и не меняются от серии неудач, от Pro и от времени суток. Ставки нет, силу предметы не дают, дубликатов косметики нет. Free и Pro получают один и тот же набор и одну попытку.')}</p><ul>${capsuleOddsHTML}</ul></details>
     ${hist ? `<details class="lb-hist"><summary>${t('История наград')}</summary><ul class="reflections">${hist}</ul></details>` : ''}
   </section>`;
 }
@@ -18626,21 +18639,28 @@ function startChestReel(overlay) {
   const swatch = (item) => item.fill || (RARITY[item.rarity] && RARITY[item.rarity].color) || 'var(--muted)';
   reel.hidden = false;
   reel.innerHTML = `<div class="loot-reel-track">${reel_.strip.map((item, i) =>
-    `<span class="loot-reel-tile r-${item.rarity}${i === reel_.winnerIndex ? ' is-winner' : ''}" style="--tile:${swatch(item)}">${esc(item.noTranslate ? item.name : t(item.name))}</span>`
+    `<span class="loot-reel-tile r-${item.rarity}${i === reel_.winnerIndex ? ' is-winner' : ''}" style="--tile:${swatch(item)}">${chestObjectVisualHTML(item, 'loot-reel-object')}<span class="sr-only">${esc(item.noTranslate ? item.name : t(item.name))}</span></span>`
   ).join('')}<span class="loot-reel-marker" aria-hidden="true"></span></div>`;
   const track = reel.querySelector('.loot-reel-track');
   // Позиция считается уже ПОСЛЕ вставки в DOM — ширина плитки известна только теперь.
   requestAnimationFrame(() => {
     if (!overlay.isConnected) return;
     const tile = track.querySelector('.loot-reel-tile');
-    const tileW = tile ? tile.getBoundingClientRect().width + 8 : 96; // 8 — gap из CSS
-    const offset = reel_.winnerIndex * tileW - (reel.clientWidth / 2) + tileW / 2;
+    const tileWidth = tile ? tile.getBoundingClientRect().width : 88;
+    const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 8;
+    const tileStep = tileWidth + gap;
+    // Сам track уже начинается в left:50%. Поэтому для посадки под маркером
+    // сдвигаем только расстояние от начала track до центра победителя. Старое
+    // дополнительное `- reel.clientWidth/2` уводило результат вправо на пол-
+    // окна: исход был честным, но визуально маркер показывал соседний предмет.
+    const offset = reel_.winnerIndex * tileStep + tileWidth / 2;
     if (reduceMotion) {
       track.style.transition = 'none';
       track.style.transform = `translateX(${-offset}px)`;
       finishChestReel(overlay);
       return;
     }
+    scheduleChestReelSounds(overlay, reel_.durationMs);
     track.style.transition = `transform ${reel_.durationMs}ms ${C.easing()}`;
     // Второй кадр — иначе браузер схлопывает transform:0→transform:final в один
     // шаг без анимации, потому что оба присваивания попали бы в один рендер.
@@ -18654,15 +18674,17 @@ function startChestReel(overlay) {
 function finishChestReel(overlay) {
   if (!overlay || overlay._reelDone) return;
   overlay._reelDone = true;
+  clearChestReelSounds(overlay);
   clearTimeout(overlay._reelTimer); overlay._reelTimer = null;
   const track = overlay.querySelector('.loot-reel-track');
   if (track) {
     track.style.transition = 'none';
     const tile = track.querySelector('.loot-reel-tile');
-    const reel = overlay.querySelector('.loot-reel');
-    if (tile && reel && overlay._reel) {
-      const tileW = tile.getBoundingClientRect().width + 8;
-      const offset = overlay._reel.winnerIndex * tileW - (reel.clientWidth / 2) + tileW / 2;
+    if (tile && overlay._reel) {
+      const tileWidth = tile.getBoundingClientRect().width;
+      const gap = Number.parseFloat(getComputedStyle(track).columnGap) || 8;
+      const tileStep = tileWidth + gap;
+      const offset = overlay._reel.winnerIndex * tileStep + tileWidth / 2;
       track.style.transform = `translateX(${-offset}px)`;
     }
     track.classList.add('is-landed');
@@ -18682,6 +18704,17 @@ function revealCosmeticCapsule(overlay) {
   if (claim) { claim.disabled = false; claim.focus(); }
   if (typeof sfxLoot === 'function') sfxLoot(reward.rarity || 'common');
 }
+function chestObjectKind(item) {
+  const id = String(item && item.id || '');
+  if (id.startsWith('g_')) return 'gold';
+  if (id.startsWith('c_')) return 'cosmetic';
+  if (id.startsWith('v_')) return 'voucher';
+  return 'chest';
+}
+function chestObjectVisualHTML(item, className = '') {
+  const kind = chestObjectKind(item);
+  return `<span class="reward-object-art is-${kind}${className ? ` ${className}` : ''}" aria-hidden="true"></span>`;
+}
 function openChest(returnFocus = document.activeElement) {
   const existing = document.getElementById('loot-modal');
   if (existing) { existing.querySelector('[data-action="claim-daily-reward"], [data-action="retry-daily-reward"]')?.focus(); return existing; }
@@ -18692,6 +18725,7 @@ function openChest(returnFocus = document.activeElement) {
   // исключила бы его — лента осталась бы без своего же победителя.
   const capsulePool = chestReelPool();
   const reward = rollChestPrize();
+  const prizeDisplay = chestPrizeDisplay(reward);
   const ov = document.createElement('div'); ov.id = 'loot-modal'; ov.className = 'modal-overlay loot-reveal-overlay';
   ov._reward = reward;
   ov._capsulePool = capsulePool;
@@ -18700,11 +18734,10 @@ function openChest(returnFocus = document.activeElement) {
   // ровно в тот момент, когда лента остановилась.
   ov.innerHTML = `<section class="loot-box loot-reveal-box is-capsule" role="dialog" aria-modal="true" aria-labelledby="daily-reward-reveal-title" aria-describedby="daily-reward-reveal-desc">
     <button type="button" class="modal-x" data-action="close-daily-reward" aria-label="${esc(t('Закрыть'))}" disabled>✕</button>
-    <p class="loot-earned-label">${t('Заработанная награда')}</p>
-    <h2 id="daily-reward-reveal-title" tabindex="-1">${t('Сундук')}</h2>
-    <p id="daily-reward-reveal-desc">${t('Золото, образ или ваучер награды — шансы открыты заранее и одинаковы для всех. Церемонию можно пропустить сразу.')}</p>
+    <div class="loot-ceremony-head"><span class="reward-object-art is-chest loot-chest-art" aria-hidden="true"></span><div><p class="loot-earned-label">${t('Заработанная награда')}</p><h2 id="daily-reward-reveal-title" tabindex="-1">${t('Открытие')}</h2></div></div>
+    <p id="daily-reward-reveal-desc" class="loot-ceremony-copy">${t('Результат уже сохранён. Можно посмотреть церемонию или сразу пропустить.')}</p>
     <div class="loot-reel" aria-hidden="true" hidden></div>
-    <div class="loot-capsule-result r-${reward.rarity}" role="status" aria-live="polite" hidden><span>${t(RARITY[reward.rarity].label)}</span><strong>${esc(reward.resultLabel || reward.label)}</strong></div>
+    <div class="loot-capsule-result r-${reward.rarity}" role="status" aria-live="polite" hidden>${chestObjectVisualHTML(prizeDisplay, 'loot-result-object')}<div><span>${t(RARITY[reward.rarity].label)}</span><strong>${esc(reward.resultLabel || reward.label)}</strong></div></div>
     <div class="loot-save-status" role="status" aria-live="polite">${t('Сохраняю награду…')}</div>
     <div class="loot-reveal-actions">
       <button type="button" class="btn" data-action="claim-daily-reward" disabled>${t('Забрать')}</button>
@@ -18712,6 +18745,7 @@ function openChest(returnFocus = document.activeElement) {
       <button type="button" class="btn ghost" data-action="retry-daily-reward" hidden>${t('Повторить')}</button>
     </div>
   </section>`;
+  sfx('open');
   mountAccountDialog(ov, { initial: '#daily-reward-reveal-title', dismissible: false, returnFocus });
   commitDailyRewardDialog(ov);
   return ov;
@@ -19875,18 +19909,20 @@ function renderRewards() {
   const chestReady = lootChestsAvailable();
   const ownedCos = COSMETICS.filter((c) => ownsCosmetic(c.id)).length;
   const achGot = ACHIEVEMENTS.filter((a) => State.achievements[a.id]).length;
-  const rewardHero = `<section class="card reward-hero">
-      <div>
+  const rewardHero = `<section class="card reward-hero reward-hero-v189">
+      <div class="reward-hero-copy">
         <span class="th-kicker">${t('Честная экономика')}</span>
         <h2>${t('Награда следует за реальным действием.')}</h2>
         <p class="muted">${t('Сначала выбери личную ценность. Золото известно заранее, а заработанный сундук сохраняет короткий косметический сюрприз — без ставок, силы и платных попыток.')}</p>
         <div class="th-actions">
-          ${chestReady ? `<button class="btn" data-action="open-chest">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Получить награду')} ×${chestReady}</button>` : `<button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} ${t('Каталог наград')}</button>`}
+          ${chestReady ? `<button class="btn reward-primary-cta" data-action="open-chest">${t('Получить награду')} ×${chestReady}</button>` : `<button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} ${t('Каталог наград')}</button>`}
           <button class="btn ghost" data-action="goto-today">${satoruIconHTML('nav.today', 'button-glyph', '🎯')} ${t('К делам')}</button>
         </div>
       </div>
-      <div class="reward-track-preview" aria-hidden="true">
-        <span class="done">✓</span><i></i><span class="${chestReady ? 'ready' : ''}">${satoruIconHTML('reward.season', 'track-glyph', '◇')}</span><i></i><span>${satoruIconHTML('achievement.collector_5', 'track-emblem', '◇')}</span><i></i><span class="cap">★</span>
+      <div class="reward-hero-visual" aria-hidden="true">
+        <span class="reward-object-art is-chest hero-reward-chest"></span>
+        <span class="reward-object-art is-gold hero-reward-gold"></span>
+        <span class="reward-hero-balance">${bal}</span>
       </div>
     </section>`;
   const cards = State.rewards.map((r) => `<div class="reward">
@@ -19908,7 +19944,7 @@ function renderRewards() {
     <p class="muted">${t('Главная ценность выбирается тобой: кино, прогулка, книга или собственная награда за честно заработанное золото.')}</p>
     <div class="rewards-grid">${cards || `<p class="muted">${t('Наград пока нет — выбери готовую из каталога или добавь свою.')}</p>`}</div>
     <div class="settings-actions"><button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} ${t('Каталог наград')}</button>${!isPro() ? `<span class="muted reward-limit">${State.rewards.length}/${FREE_REWARDS_MAX} · Free</span>` : ''}</div>
-    <form id="add-reward" class="reward-form">
+    <details class="reward-create-details"><summary>${t('Добавить свою награду')}</summary><form id="add-reward" class="reward-form">
       <label><span>${t('Название награды')}</span><input name="name" aria-label="${esc(t('Название награды'))}" autocomplete="off" maxlength="120" required /></label>
       <label><span>${t('Образ')}</span><select name="iconId" class="reward-icon-select">
         <option value="reward.wishlist">${t('Сундук мечты')}</option><option value="reward.coffee">${t('Кофе')}</option>
@@ -19918,7 +19954,7 @@ function renderRewards() {
       </select></label>
       <label><span>${t('Цена в золоте')}</span><input name="cost" type="number" min="1" max="100000" value="100" /></label>
       <button type="submit">${t('+ Добавить награду')}</button>
-    </form></section>`;
+    </form></details></section>`;
   const economyRules = `<section class="card economy-rules" aria-labelledby="economy-rules-title"><h3 id="economy-rules-title">${t('Границы экономики')}</h3><ul>
     <li>${t('Самооценка сложности и настроения не меняет выплату.')}</li>
     <li>${t('Бонус XP ограничен +60%, бонус золота +40%, множитель сложности максимум ×1,75.')}</li>
@@ -19927,8 +19963,7 @@ function renderRewards() {
   return `
     <div class="rewards-shell">
     ${rewardHero}
-    <div class="rewards-primary-grid">${personalStore}${lootboxCard()}</div>
-    ${economyRules}
+    <div class="rewards-primary-grid">${lootboxCard()}${personalStore}</div>
     ${collectionCard()}
     ${arsenalCard()}
     <div class="kpis">
@@ -19936,8 +19971,8 @@ function renderRewards() {
       <div class="kpi"><div class="v">${ownedCos}/${COSMETICS.length}</div><div class="l">${t('Косметики')}</div></div>
       <div class="kpi"><div class="v">${achGot}/${ACHIEVEMENTS.length}</div><div class="l">${t('Достижений')}</div></div>
     </div>
-    <div class="card"><h3>${t('История покупок')}</h3>${history ? `<ul class="reflections">${history}</ul>` : '<p class="muted">Пока ничего не куплено.</p>'}</div>
-    <div class="card"><h3>${satoruIconHTML('system.achievement', 'heading-emblem', '🏆')} ${t('Достижения')}</h3><div class="ach-grid">${achs}</div></div></div>`;
+    <details class="card rewards-disclosure"><summary>${t('Правила и история')}</summary><div class="rewards-disclosure-body">${economyRules}<section><h3>${t('История покупок')}</h3>${history ? `<ul class="reflections">${history}</ul>` : '<p class="muted">Пока ничего не куплено.</p>'}</section></div></details>
+    <details class="card rewards-disclosure achievements-disclosure"><summary>${satoruIconHTML('system.achievement', 'heading-emblem', '🏆')} ${t('Достижения')} · ${achGot}/${ACHIEVEMENTS.length}</summary><div class="ach-grid">${achs}</div></details></div>`;
 }
 
 // ============================================================
@@ -20852,7 +20887,10 @@ function renderSettings() {
     ${groupStart('experience', 'Опыт', 'Язык, тема, звук и присутствие Тени')}
     <div class="card"><h3>${t('Название')}</h3><label class="settings-inline-field"><span>${t('Имя приложения')}</span><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></label></div>
     <div class="card"><h3>${t('🔊 Звук')}</h3>
-      <label class="sound-toggle"><input type="checkbox" data-action="toggle-sound" ${sfxOn() ? 'checked' : ''}/> ${t('Звуки интерфейса (выполнение квеста, левелап, награда, покупка)')}</label>
+      <div class="sound-mode-row"><span>${t('Режим звука')}</span><div class="theme-toggle sound-mode-toggle" role="group" aria-label="${esc(t('Режим звука'))}">
+        ${[['off', 'Выкл'], ['essential', 'Только важное'], ['full', 'Полный']].map(([id, label]) => `<button type="button" class="theme-opt ${sfxMode() === id ? 'active' : ''}" data-action="set-sound-mode" data-sound-mode="${id}" aria-pressed="${sfxMode() === id}">${t(label)}</button>`).join('')}
+      </div></div>
+      <p class="muted sound-mode-help">${t('Навигация и выбор звучат только в полном режиме. Веб-приложение не видит беззвучный переключатель iPhone.')}</p>
       ${ttsOK() ? `<label class="sound-toggle"><input type="checkbox" data-action="toggle-tts" ${ttsOn() ? 'checked' : ''}/> ${t('Кнопка 🔊 — озвучить голосом Тени (реплики, подсказки, ответы Помощника)')}</label>` : ''}
       ${ttsOK() && ttsOn() ? `<div class="tts-settings">
         ${shadowVoiceSettingsHTML()}
@@ -23285,7 +23323,7 @@ async function onClick(e) {
     if (field !== targetSphereField) field.removeAttribute('open');
   });
   const navBtn = e.target.closest('#nav button[data-view]');
-  if (navBtn) { flushSettingsForm(); State.view = navBtn.dataset.view; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); State._goalDeepLinkId = ''; syncGoalDeepLink('', State.view); } markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
+  if (navBtn) { flushSettingsForm(); const nextView = navBtn.dataset.view; if (nextView !== State.view) sfx('navigate'); State.view = nextView; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); State._goalDeepLinkId = ''; syncGoalDeepLink('', State.view); } markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
   const secBtn = e.target.closest('[data-action="go-section"]');
   if (secBtn) {
     const s = SECTIONS.find((x) => x.id === secBtn.dataset.sec); if (!s) return;
@@ -23293,7 +23331,7 @@ async function onClick(e) {
     const fromMobileSheet = !!secBtn.closest('#mobile-nav-sheet');
     if (fromMobileSheet) closeMobileNavSheet({ restoreFocus: false });
     else closeMobileNavSheet();
-    if (sectionOf(State.view) !== s.id) { flushSettingsForm(); State.view = s.views[0].view; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); syncGoalDeepLink('', State.view); } if (fromMobileSheet) State._mobileNavFocusAfterCommit = '#main h2'; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
+    if (sectionOf(State.view) !== s.id) { flushSettingsForm(); sfx('navigate'); State.view = s.views[0].view; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); syncGoalDeepLink('', State.view); } if (fromMobileSheet) State._mobileNavFocusAfterCommit = '#main h2'; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
     return;
   }
   if (e.target.id === 'mobile-nav-sheet') { closeMobileNavSheet(); return; }
@@ -23345,8 +23383,8 @@ async function onClick(e) {
     // уже неактуальной кнопке More по таймеру закрытия sheet.
     closeMobileNavSheet({ restoreFocus: false });
   }
-  if (action === 'mobile-nav-more') { showMobileNavSheet(); return; }
-  if (action === 'mobile-nav-close') { closeMobileNavSheet(); return; }
+  if (action === 'mobile-nav-more') { sfx('open'); showMobileNavSheet(); return; }
+  if (action === 'mobile-nav-close') { sfx('close'); closeMobileNavSheet(); return; }
   if (action === 'mobile-go-settings') {
     flushSettingsForm(); State.view = 'settings'; State._mobileNavFocusAfterCommit = '#settings-title, #main h2'; State.adminUsers = null; State.analytics = undefined; track('view:settings'); render(); return;
   }
@@ -23458,6 +23496,12 @@ async function onClick(e) {
   }
   if (action === 'buy-cosmetic') { showEconomyConfirm('cosmetic', el.dataset.id, el); return; }
   if (action === 'toggle-sound') { State.settings.sound = !!el.checked; autosaveSettings(); if (el.checked) sfx('complete'); return; }
+  if (action === 'set-sound-mode') {
+    const mode = ['off', 'essential', 'full'].includes(el.dataset.soundMode) ? el.dataset.soundMode : 'full';
+    State.settings.soundMode = mode; State.settings.sound = mode !== 'off'; autosaveSettings();
+    if (mode !== 'off') sfx(mode === 'full' ? 'navigate' : 'complete');
+    render(); return;
+  }
   if (action === 'tts') { ttsSpeak(ttsTextNear(el), el, ttsContextNear(el)); return; }
   if (action === 'tts-preview') {
     ttsSpeak(TTS_PREVIEW[lang()] || TTS_PREVIEW.ru, el, 'calm');
@@ -23967,7 +24011,7 @@ async function onClick(e) {
   if (action === 'sphere-picker-done') {
     e.preventDefault(); el.closest('.sphere-field')?.removeAttribute('open'); return;
   }
-  if (action === 'claim-daily-reward' || action === 'close-daily-reward') { closeAccountDialog('loot-modal', { restoreFocus: false }); State._rewardsFocusAfterCommit = '.daily-reward-card .lb-chest, #daily-reward-title'; render(); return; }
+  if (action === 'claim-daily-reward' || action === 'close-daily-reward') { clearChestReelSounds(el.closest('#loot-modal')); sfx('close'); closeAccountDialog('loot-modal', { restoreFocus: false }); State._rewardsFocusAfterCommit = '.daily-reward-card .lb-chest, #daily-reward-title'; render(); return; }
   if (action === 'close-economy-confirm') { closeAccountDialog('economy-confirm-modal'); return; }
   if (action === 'confirm-economy-action') { commitEconomyConfirmation(el.closest('#economy-confirm-modal')); return; }
   if (action === 'use-voucher') { showVoucherReward(); return; }
@@ -24038,11 +24082,11 @@ async function onClick(e) {
     })();
     return;
   }
-  if (action === 'goto-rewards') { State.view = 'rewards'; render(); return; }
-  if (action === 'goto-stats') { State.view = 'stats'; render(); return; }
-  if (action === 'goto-today') { State.view = 'today'; render(); return; }
+  if (action === 'goto-rewards') { sfx('navigate'); State.view = 'rewards'; render(); return; }
+  if (action === 'goto-stats') { sfx('navigate'); State.view = 'stats'; render(); return; }
+  if (action === 'goto-today') { sfx('navigate'); State.view = 'today'; render(); return; }
   if (action === 'reload-app') { location.reload(); return; }
-  if (action === 'goto-pets') { State.view = 'pets'; markDiscovered('pets'); render(); return; }
+  if (action === 'goto-pets') { sfx('navigate'); State.view = 'pets'; markDiscovered('pets'); render(); return; }
   if (action === 'go-wardrobe') { State.view = 'character'; State._characterFocusAfterCommit = '#character-wardrobe'; render(); return; }
   if (action === 'open-avatar-forge') { openAvatarForgeEditor(); return; }
   if (action === 'goto-import') {
@@ -24800,7 +24844,7 @@ async function onClick(e) {
   } else if (action === 'cal-date') { State.calDate = el.dataset.date; if (State.calMode === 'week') State.weekStart = weekStart(State.calDate); State._calendarFocusAfterCommit = `.calv-day[data-date="${CSS.escape(State.calDate)}"]`; render();
   } else if (action === 'cal-shift') { State.calDate = addDays(State.calDate || todayStr(), Number(el.dataset.days)); State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
   } else if (action === 'cal-today') { State.calDate = todayStr(); State._calendarFocusAfterCommit = `.calv-day[data-date="${CSS.escape(State.calDate)}"]`; render();
-  } else if (action === 'goto-calendar') { State.calDate = el.dataset.date || todayStr(); State.view = 'calendar'; render();
+  } else if (action === 'goto-calendar') { sfx('navigate'); State.calDate = el.dataset.date || todayStr(); State.view = 'calendar'; render();
 
   // --- Инбокс / быстрый захват (Блок 2) ---
   } else if (action === 'cap-voice') { startCapture('voice');
@@ -25075,7 +25119,7 @@ async function onClick(e) {
     const ics = buildICS();
     if (!/BEGIN:VEVENT/.test(ics)) { toast(t('Нет квестов со временем — поставь их в Календаре')); return; }
     try { const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'gojo-calendar.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); toast(t('📆 .ics скачан — открой его в Календаре для импорта')); } catch { toast(t('Не удалось создать файл')); }
-  } else if (action === 'cal-mode') { cleanupWkDrag(); State.calMode = el.dataset.mode; State.view = 'calendar'; if (State.calMode === 'week') State.weekStart = weekStart(State.calDate || todayStr()); State._calendarFocusAfterCommit = `.cal-mode[data-mode="${CSS.escape(State.calMode)}"]`; render();
+  } else if (action === 'cal-mode') { cleanupWkDrag(); sfx('select'); State.calMode = el.dataset.mode; State.view = 'calendar'; if (State.calMode === 'week') State.weekStart = weekStart(State.calDate || todayStr()); State._calendarFocusAfterCommit = `.cal-mode[data-mode="${CSS.escape(State.calMode)}"]`; render();
   } else if (action === 'cal-month-date') { State.calDate = el.dataset.date; State.wkAddDate = null; State._calendarFocusAfterCommit = '#month-detail-title'; render();
   } else if (action === 'month-open-day') { State.calMode = 'day'; State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
   } else if (action === 'cal-pick-day') { State.calDate = el.dataset.date; State.calMode = 'day'; State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
@@ -26185,7 +26229,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v188';
+const PWA_CACHE_VERSION = 'satoru-v189';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
