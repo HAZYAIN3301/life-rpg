@@ -76,7 +76,7 @@ test('интеграция держит Полку в More и подключае
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
   const appAt = index.indexOf('app.js?v=20260827-assistant-deliberation-v187');
   assert.ok(domainAt >= 0 && uiAt > domainAt && appAt > uiAt);
-  assert.match(sw, /satoru-v187/);
+  assert.match(sw, /satoru-v188/);
   assert.match(sw, /return-shelf-v1\.js/);
   assert.match(sw, /return-shelf-ui-v1\.js/);
 });

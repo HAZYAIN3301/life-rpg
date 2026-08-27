@@ -8,7 +8,8 @@
         "/Users/al.prokopets/Documents/Obsidian Vault/life-rpg/server.js"
       ],
       "cwd": "/Users/al.prokopets/Documents/Obsidian Vault/life-rpg",
-      "port": 4317
+      "port": 4317,
+      "autoPort": true
     }
   ]
 }

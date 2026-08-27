@@ -21,7 +21,7 @@ test('Board v2 standard and Wildcard issuers load in dependency order', () => {
     assert.equal((sw.match(new RegExp(`'${file.replaceAll('.', '\\.')}'`, 'g')) || []).length, 1);
   }
   assert.match(index, /app\.js\?v=20260827-assistant-deliberation-v187-1/);
-  assert.match(sw, /const CACHE = 'satoru-v187';/);
+  assert.match(sw, /const CACHE = 'satoru-v188';/);
 });
 
 test('account defaults and hydration normalize offers, completion and titles', () => {

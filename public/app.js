@@ -17421,6 +17421,7 @@ async function stuckAiStep(id) {
 }
 function renderToday() {
   const today = todayStr();
+  ensureFounderPass();
   const todays = State.tasks.filter((t) => t.date === today);
   const overdue = State.tasks.filter((t) => taskOverdue(t, today));
   const habits = todaysHabits();
@@ -17702,7 +17703,7 @@ function renderToday() {
   if (tab === 'board') return `<div class="today-shell board-shell">${tabs}${boardScreenHTML()}</div>`;
   return `<div class="today-shell">${tabs}
     <div class="today-work">${dayNavStripHTML(today)}${firstLineCardHTML()}${todayHero}${overdueCard}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
-    <aside class="today-support" aria-label="Поддержка дня">${companionCard()}${deeperPath}${fightsCardHTML()}${activeNudge}${nudgeCard}${captureBar()}${notesPeekToday()}${progressTrioCard()}${pathTeaserCard()}${tm ? timerCard : ''}${energyCard}${installBanner()}</aside>
+    <aside class="today-support" aria-label="Поддержка дня">${companionCard()}${deeperPath}${fightsCardHTML()}${activeNudge}${nudgeCard}${captureBar()}${notesPeekToday()}${progressTrioCard()}${founderPassCard()}${pathTeaserCard()}${tm ? timerCard : ''}${energyCard}${installBanner()}</aside>
     <div class="today-footer">${antiHabitsCard()}${shutdownCard}</div>
   </div>`;
 }
@@ -25030,6 +25031,8 @@ async function onClick(e) {
     }).catch(() => toast(t('Сетевая ошибка')));
   } else if (action === 'raidwin-close') { const m = document.getElementById('raidwin'); if (m) m.remove();
   } else if (action === 'install-app') { requestInstall();
+  } else if (action === 'fp-answer') { founderAnswer(id);
+  } else if (action === 'fp-reset') { State.founderPass = Object.assign({}, State.founderPass, { mine: null }); render();
   } else if (action === 'install-dismiss') { try { localStorage.setItem('gojo_install_dismiss', '1'); } catch {} render();
   } else if (action === 'push-enable') { pushEnable();
   } else if (action === 'push-disable') { pushDisable();
@@ -25994,6 +25997,101 @@ function toggleReminders() {
 function isStandalone() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
 function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream; }
 // Заметный гид-баннер установки (на «Сегодня»), закрываемый
+// ---- Founder Pass: Фаза 0 (MONETIZATION-VALIDATION-BRIEF) ----
+//
+// Замер готовности платить БЕЗ приёма денег. Записка разрешает это ровно при
+// одном условии, и оно про текст на экране: «платная кнопка должна либо принимать
+// реальную оплату, либо прямо говорить, что это опрос интереса к цене и деньги не
+// будут списаны». Поэтому строка про отсутствие списания стоит выше кнопок, а не
+// сноской под ними, и ни одна кнопка не выглядит как checkout.
+//
+// Карточку видят не все: `eligibility()` требует реальных дней и дел. Человек,
+// который завёл аккаунт и ушёл, о готовности платить не сообщает ничего.
+// Активные дни считаем по РАЗНЫМ датам выполненных дел — это «возвращался и
+// делал», а не «заходил посмотреть».
+function founderSignals() {
+  const done = (State.tasks || []).filter((x) => x && x.done && x.date);
+  return { activeDays: new Set(done.map((x) => x.date)).size, doneTasks: done.length };
+}
+function founderEligible() {
+  const api = globalThis.FounderPassV1;
+  return !!api && api.eligibility(founderSignals()).eligible;
+}
+// Запрос уходит только у подходящих: остальным он ничего не сообщил бы, а нагрузку
+// и лишнюю строчку в логах создал бы каждому.
+function ensureFounderPass() {
+  if (!founderEligible() || State.founderPass !== undefined || State._founderBusy) return;
+  State._founderBusy = true;
+  fetch('/api/founder-pass').then((r) => (r.ok ? r.json() : null)).then((d) => {
+    State._founderBusy = false;
+    State.founderPass = d || null;
+    if (d) render();
+  }).catch(() => { State._founderBusy = false; State.founderPass = null; });
+}
+function founderPriceLabel(offer) {
+  const amount = (offer.priceCents / 100).toFixed(2).replace('.', ',');
+  return offer.currency === 'EUR' ? `${amount} €` : `${amount} ${offer.currency}`;
+}
+function founderPassCard() {
+  const api = globalThis.FounderPassV1, data = State.founderPass;
+  if (!api || !founderEligible() || !data) return '';
+  const mine = data.mine;
+  // Ответивший «пока не готов» не должен видеть предложение каждый день: это и
+  // есть его «скрыть». Остальные ответы карточку оставляют — чтобы можно было
+  // передумать в обе стороны.
+  if (mine && mine.answer === 'not_now') return '';
+  if (data.full && !mine) return '';
+  const price = founderPriceLabel(data.offer);
+
+  if (mine) {
+    const said = mine.answer === 'interested'
+      ? `Место за тобой. Оплаты не было — если Founder Pass откроется, я напишу.`
+      : `Записал: ${price} — дорого. Это тоже ответ, и он полезнее молчания.`;
+    return `<div class="card fp-card"><h3 class="fp-title">${t('Founder Pass')}</h3>
+      <p class="fp-said">${t(said)}</p>
+      <button class="btn ghost fp-change" data-action="fp-reset">${t('Изменить ответ')}</button></div>`;
+  }
+
+  return `<div class="card fp-card">
+    <h3 class="fp-title">${t('Founder Pass')} · ${esc(price)}</h3>
+    <p class="fp-honest">${t('Оплаты сейчас нет — деньги не спишутся. Я проверяю, интересна ли цена.')}</p>
+    <p class="fp-what">${t('Разово: закрытая бета, значок основателя, набор косметики, голос за roadmap и 12 месяцев Pro, когда Pro появится.')}</p>
+    <p class="fp-left">${t('Свободных мест')}: <b>${data.left}</b> / ${data.capacity}</p>
+    <label class="fp-note-label">${t('Что важно сказать? (необязательно)')}
+      <input type="text" id="fp-note" maxlength="${api.MAX_NOTE}" placeholder="${t('цена, сомнение, чего не хватает')}" /></label>
+    <div class="fp-acts">
+      <button class="btn" data-action="fp-answer" data-id="interested">${t('Беру место')}</button>
+      <button class="btn ghost" data-action="fp-answer" data-id="too_expensive">${t('Дорого')}</button>
+      <button class="btn ghost" data-action="fp-answer" data-id="not_now">${t('Пока не готов')}</button>
+    </div>
+    <p class="fp-status" id="fp-status" role="status"></p></div>`;
+}
+async function founderAnswer(answer) {
+  const api = globalThis.FounderPassV1;
+  if (!api || api.ANSWERS.indexOf(answer) < 0 || State._founderBusy) return;
+  const noteEl = document.getElementById('fp-note'), status = document.getElementById('fp-status');
+  const note = noteEl ? String(noteEl.value || '').trim() : '';
+  State._founderBusy = true;
+  if (status) status.textContent = t('Записываю…');
+  try {
+    const r = await fetch('/api/founder-pass', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answer, note }),
+    });
+    const d = await r.json().catch(() => null);
+    State._founderBusy = false;
+    if (r.status === 409) { State.founderPass = Object.assign({}, State.founderPass, { full: true, left: 0 }); render(); toast(t('Места закончились — но твой ответ всё равно важен')); return; }
+    // false-success запрещён: не закрываем карточку и не благодарим, если не записалось.
+    if (!r.ok || !d) { if (status) { status.textContent = t('Не удалось записать. Ничего не изменено — повтори попытку.'); status.setAttribute('role', 'alert'); } return; }
+    State.founderPass = d;
+    track('fp:' + answer);
+    render();
+    toast(answer === 'interested' ? t('✓ Место за тобой') : t('✓ Записал'));
+  } catch {
+    State._founderBusy = false;
+    if (status) { status.textContent = t('Не удалось записать. Ничего не изменено — повтори попытку.'); status.setAttribute('role', 'alert'); }
+  }
+}
 function installBanner() {
   if (isStandalone() || localStorage.getItem('gojo_install_dismiss')) return '';
   if (_deferredInstall) return `<div class="card install-banner"><span class="ib-text">${t('📲 Установи Satoru как приложение — иконка на телефоне, офлайн, уведомления.')}</span><span class="ib-acts"><button class="btn" data-action="install-app">${t('Установить')}</button><button class="del" data-action="install-dismiss" aria-label="${t('Скрыть')}" title="${t('Скрыть')}">✕</button></span></div>`;
@@ -26087,7 +26185,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v187';
+const PWA_CACHE_VERSION = 'satoru-v188';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

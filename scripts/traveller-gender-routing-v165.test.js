@@ -182,6 +182,6 @@ test('v183 app shell loads the resolver before consumers and pins changed runtim
   for (const file of ['shadow-den-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js', 'resources-penguin-v1.js']) {
     assert.ok(html.indexOf(file) < appIndex, `${file} must load before app.js`);
   }
-  assert.match(sw, /const CACHE = 'satoru-v187';/);
+  assert.match(sw, /const CACHE = 'satoru-v188';/);
   assert.match(sw, /'traveller-appearance-v1\.js', 'traveller-motion-v3\.js', 'traveller-room-v4\.js'/);
 });

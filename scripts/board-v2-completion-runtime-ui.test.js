@@ -18,7 +18,7 @@ test('v176 loads completion presentation before runtime and caches it exactly on
   const runtime = index.indexOf('board-v2-runtime.js'), appPos = index.indexOf('app.js?v=');
   assert.ok(completion >= 0 && completion < ui && ui < runtime && runtime < appPos);
   assert.equal((sw.match(/'board-v2-completion-ui\.js'/g) || []).length, 1);
-  assert.match(sw, /const CACHE = 'satoru-v187';/);
+  assert.match(sw, /const CACHE = 'satoru-v188';/);
   assert.match(index, /app\.js\?v=20260827-assistant-deliberation-v187-1/);
 });
 

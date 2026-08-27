@@ -17713,3 +17713,20 @@ html.attention-dialog-open body { overscroll-behavior: none; }
 #helper-modal .chat-msg.typing { letter-spacing: var(--tracking-natural); }
 #helper-modal .chat-actions { display: grid; gap: var(--sp-2); margin-top: var(--sp-3); padding-top: var(--sp-3); border-top: 1px solid var(--line); }
 #helper-modal .chat-actions.applied { padding-top: var(--sp-3); font-size: inherit; opacity: 1; }
+
+/* ── Founder Pass, Фаза 0 ──
+   Карточка намеренно не выглядит как checkout: ни рамки-акцента, ни таймера, ни
+   «осталось мало». Строка про отсутствие списания стоит выше кнопок, потому что
+   записка требует, чтобы это было сказано до нажатия, а не после. */
+.fp-card { display: flex; flex-direction: column; gap: 10px; }
+.fp-title { margin: 0; font-size: 16px; }
+.fp-honest { margin: 0; font-size: 13px; font-weight: 600; color: var(--fg); }
+.fp-what, .fp-left, .fp-said { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.45; }
+.fp-left b { color: var(--fg); font-variant-numeric: tabular-nums; }
+.fp-note-label { display: block; font-size: 12.5px; color: var(--muted); }
+.fp-note-label input { display: block; width: 100%; margin-top: 5px; min-height: 42px; }
+.fp-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.fp-acts .btn { min-height: 42px; }
+.fp-change { align-self: flex-start; min-height: 42px; }
+.fp-status:empty { display: none; }
+.fp-status { margin: 0; font-size: 12.5px; color: var(--muted); }

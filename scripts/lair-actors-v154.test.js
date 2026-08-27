@@ -254,7 +254,7 @@ test('room depth owns travel scale while in-place acting stays on a fixed host',
 test('v183 shell revision and cache-busting are coherent', () => {
   const index = read('public/index.html');
   const sw = read('public/sw.js');
-  assert.match(sw, /const CACHE = 'satoru-v187'/);
+  assert.match(sw, /const CACHE = 'satoru-v188'/);
   for (const script of ['resources-penguin-v1', 'traveller-room-v4']) {
     assert.match(index, new RegExp(`${script}\\.js\\?v=20260819-traveller-f2-runtime-v167-1`));
   }
