@@ -1100,13 +1100,18 @@ const AI_GOALS_SYS = `Ты — помощник по структурирова�
 
 Верни СТРОГО JSON вида {"proposals":[ ... ]}, без markdown и без текста вне JSON. Каждый элемент — один из типов:
 - {"type":"sphere","name":"...","parent":"<имя родительской сферы или null>"} — новая сфера жизни. Создавай ТОЛЬКО если её ещё нет среди текущих сфер юзера. Допустима иерархия (Учёба→Школа→Биология).
-- {"type":"goal","title":"...","sphere":"<имя сферы>","horizon":"mission|vision|path|long|mid|short|recurring","metric":null,"status":"active|waiting|paused","window":"","parent":"<заголовок большей цели или null>"}. Поле metric для ЧИСЛОВЫХ целей = {"current":N,"target":N,"unit":"кг/км/балл","lowerBetter":false,"maintain":false}.
+- {"type":"goal","title":"...","description":"1–3 предложения","spheres":["<точные имена основных сфер>"],"backgroundSpheres":["<точные имена фоновых сфер>"],"project":"<понятное имя реального проекта или пустая строка>","horizon":"mission|vision|path|long|mid|short|recurring","metric":null,"steps":["первый проверяемый этап","следующий этап"],"nextAction":{"title":"конкретный квест","date":"today|tomorrow|YYYY-MM-DD","estimateMin":N,"difficulty":"easy|normal|hard"},"status":"active|waiting|paused","window":"","deadline":"YYYY-MM-DD или null","parent":"<заголовок большей цели или null>"}. Поле metric для ЧИСЛОВЫХ целей = {"current":N,"target":N,"unit":"кг/км/балл","lowerBetter":false,"maintain":false}.
 
 Правила:
 - Горизонты: mission = дело жизни (≤1 на всё), vision = 10–20 лет, path = 3–5 лет (универ/карьера), long = цель года, mid = 1–6 мес, short = до месяца, recurring = регулярная практика без конца.
 - metric только для измеримого (жим 130→150 кг; оценка 1.5→1.1). Для оценок и времени (где меньше = лучше) ставь "lowerBetter":true. "maintain":true если цель — достичь и удерживать планку.
 - "status":"waiting" + "window" (напр. "лето", "после 23.06") для событийных целей вне прямого контроля (медаль зависит от соревнований, поездка от расписания).
 - "parent" связывает цель с большей по смыслу (Abi → "Поступить в LMU" → миссия), используя ТОЧНЫЙ заголовок другой цели (существующей или из этого же списка).
+- "project" — человеческое имя одного реального проекта, которое объединяет связанные цели без изменения parent-иерархии. Одинаковый проект пиши совершенно одинаково. Не создавай проект для одиночной несвязанной цели.
+- "spheres" содержит одну или несколько существующих сфер, которых цель касается напрямую. "backgroundSpheres" — максимум три сферы, которые она поддерживает попутно; не дублируй основные.
+- Для каждой checklist-цели дай 2–7 последовательных, проверяемых steps. Не копируй title как единственный step. Для числовой metric-цели steps оставь пустым.
+- Дай nextAction только ближайшим активным leaf-целям, максимум трём во всём ответе. Это конкретный квест на 5–60 минут, который можно реально начать; он будет связан с целью в Satoru. Абстрактные фразы «заняться проектом» запрещены.
+- Для deadline используй точную дату, когда она следует из текста. Не подменяй срок window.
 - Переиспользуй СУЩЕСТВУЮЩИЕ сферы по точному имени — не дублируй. Будь реалистичен и конкретен, не выдумывай лишнего.
 - Текст мог прийти голосом: без знаков препинания, одним потоком. Это норма для этого экрана — дели на смысловые куски по маркерам («ещё», «потом», «а ещё хочу»), а не по пунктуации, которой может не быть вовсе.
 - Язык — русский.`;
@@ -1678,6 +1683,8 @@ function goalRecordValid(goal, ids) {
   if (typeof goal.title !== 'string' || !goal.title.trim()) return false;
   if (goal.parentId != null && (typeof goal.parentId !== 'string' || goal.parentId === goal.id)) return false;
   if (goal.groupId != null && (typeof goal.groupId !== 'string' || !goal.groupId.trim())) return false;
+  if (goal.skillIds != null && (!Array.isArray(goal.skillIds) || !goal.skillIds.every((id) => typeof id === 'string' && id))) return false;
+  if (goal.backgroundSkillIds != null && (!Array.isArray(goal.backgroundSkillIds) || !goal.backgroundSkillIds.every((id) => typeof id === 'string' && id))) return false;
   if (!Array.isArray(goal.steps)) return false;
   const stepIds = new Set();
   if (!goal.steps.every((step) => step && typeof step === 'object' && !Array.isArray(step)
@@ -3439,7 +3446,7 @@ const server = http.createServer(async (req, res) => {
     const context = String(b.context || '').slice(0, 6000);
     if (!text) return sendJson(res, 400, { error: 'empty' });
     const sys = kind === 'calibrate' ? AI_CALIB_SYS : kind === 'daylog' ? AI_DAYLOG_SYS : kind === 'treemap' ? AI_TREEMAP_SYS : kind === 'onboard' ? AI_ONBOARD_SYS : kind === 'episode' ? AI_EPISODE_SYS : AI_GOALS_SYS;
-    const prompt = `СФЕРЫ И ЦЕЛИ ЮЗЕРА СЕЙЧАС:\n${context || '(пусто)'}\n\nЧТО НАПИСАЛ ЮЗЕР:\n${text}\n\nВерни ТОЛЬКО JSON по схеме из системного промпта. Без markdown, без пояснений вне JSON.`;
+    const prompt = `СЕГОДНЯ: ${new Date().toISOString().slice(0, 10)}.\n\nСФЕРЫ И ЦЕЛИ ЮЗЕРА СЕЙЧАС:\n${context || '(пусто)'}\n\nЧТО НАПИСАЛ ЮЗЕР:\n${text}\n\nВерни ТОЛЬКО JSON по схеме из системного промпта. Без markdown, без пояснений вне JSON.`;
     try {
       const r = await aiCallForUser(user, provider, sys, [{ role: 'user', content: prompt }], 3500);
       if (aiErr(res, r)) return;

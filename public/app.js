@@ -1630,10 +1630,44 @@ const I18N_EXTRA = {
   'Активна': { en: 'Active', de: 'Aktiv', uk: 'Активна', es: 'Activa' },
   'Жду': { en: 'Waiting', de: 'Warten', uk: 'Чекаю', es: 'En espera' },
   'Пауза': { en: 'Paused', de: 'Pausiert', uk: 'Пауза', es: 'En pausa' },
+  'Сферы': { en: 'Areas', de: 'Bereiche', uk: 'Сфери', es: 'Áreas' },
+  'Сферы цели': { en: 'Goal areas', de: 'Zielbereiche', uk: 'Сфери цілі', es: 'Áreas de la meta' },
+  'Основные отражают прямой результат. Фон — что цель поддерживает попутно.': { en: 'Primary areas reflect the direct result. Background areas are supported along the way.', de: 'Hauptbereiche zeigen das direkte Ergebnis. Hintergrundbereiche werden nebenbei unterstützt.', uk: 'Основні сфери відображають прямий результат. Фонові підтримуються попутно.', es: 'Las áreas principales reflejan el resultado directo; las de fondo se apoyan de forma indirecta.' },
+  'Выбрать сферу': { en: 'Choose an area', de: 'Bereich wählen', uk: 'Вибрати сферу', es: 'Elegir un área' },
+  'Основная': { en: 'Primary', de: 'Hauptbereich', uk: 'Основна', es: 'Principal' },
+  'Фон': { en: 'Background', de: 'Hintergrund', uk: 'Фон', es: 'Fondo' },
+  '+ Фон': { en: '+ Background', de: '+ Hintergrund', uk: '+ Фон', es: '+ Fondo' },
+  'Сначала убери сферу из основных': { en: 'Remove the area from primary first', de: 'Entferne den Bereich zuerst aus den Hauptbereichen', uk: 'Спочатку прибери сферу з основних', es: 'Quita primero el área de las principales' },
+  'Нужна хотя бы одна основная сфера': { en: 'At least one primary area is required', de: 'Mindestens ein Hauptbereich ist erforderlich', uk: 'Потрібна щонайменше одна основна сфера', es: 'Se necesita al menos un área principal' },
   // Goals IA v168 — exact horizons, compact rows and a focused detail surface
   // Goals v169 — initiatives and a calm "what matters now" contour
   'Сейчас': { en: 'Now', de: 'Jetzt', uk: 'Зараз', es: 'Ahora' },
   'Все цели': { en: 'All goals', de: 'Alle Ziele', uk: 'Усі цілі', es: 'Todas las metas' },
+  '+ Проект': { en: '+ Project', de: '+ Projekt', uk: '+ Проєкт', es: '+ Proyecto' },
+  'Проект': { en: 'Project', de: 'Projekt', uk: 'Проєкт', es: 'Proyecto' },
+  'Новый проект': { en: 'New project', de: 'Neues Projekt', uk: 'Новий проєкт', es: 'Nuevo proyecto' },
+  'Название проекта': { en: 'Project name', de: 'Projektname', uk: 'Назва проєкту', es: 'Nombre del proyecto' },
+  'Создать проект': { en: 'Create project', de: 'Projekt erstellen', uk: 'Створити проєкт', es: 'Crear proyecto' },
+  'Без проекта': { en: 'No project', de: 'Ohne Projekt', uk: 'Без проєкту', es: 'Sin proyecto' },
+  'Все проекты': { en: 'All projects', de: 'Alle Projekte', uk: 'Усі проєкти', es: 'Todos los proyectos' },
+  'Открыть проект': { en: 'Open project', de: 'Projekt öffnen', uk: 'Відкрити проєкт', es: 'Abrir proyecto' },
+  'Управлять проектом': { en: 'Manage project', de: 'Projekt verwalten', uk: 'Керувати проєктом', es: 'Gestionar proyecto' },
+  'В этом проекте пока нет активных целей.': { en: 'This project has no active goals yet.', de: 'Dieses Projekt hat noch keine aktiven Ziele.', uk: 'У цьому проєкті поки немає активних цілей.', es: 'Este proyecto aún no tiene metas activas.' },
+  'В этом проекте нет архивированных целей.': { en: 'This project has no archived goals.', de: 'Dieses Projekt hat keine archivierten Ziele.', uk: 'У цьому проєкті немає архівованих цілей.', es: 'Este proyecto no tiene metas archivadas.' },
+  'Проект группирует связанные цели, не меняя их уровни и родительские связи.': { en: 'A project groups related goals without changing their levels or parent links.', de: 'Ein Projekt bündelt zusammengehörige Ziele, ohne Ebenen oder Elternbezüge zu ändern.', uk: 'Проєкт групує пов’язані цілі, не змінюючи їхні рівні та батьківські зв’язки.', es: 'Un proyecto agrupa metas relacionadas sin cambiar sus niveles ni vínculos superiores.' },
+  'Убрать проект из активных?': { en: 'Remove this project from active work?', de: 'Dieses Projekt aus der aktiven Arbeit entfernen?', uk: 'Прибрати проєкт з активної роботи?', es: '¿Quitar este proyecto del trabajo activo?' },
+  'Проект и связанные с ним активные цели перейдут в архив. Это можно вернуть.': { en: 'The project and its linked active goals will move to the archive. You can restore them.', de: 'Das Projekt und seine aktiven Ziele werden archiviert. Du kannst sie wiederherstellen.', uk: 'Проєкт і пов’язані активні цілі перейдуть до архіву. Їх можна повернути.', es: 'El proyecto y sus metas activas vinculadas pasarán al archivo. Puedes restaurarlos.' },
+  'Вернуть проект и цели': { en: 'Restore project and goals', de: 'Projekt und Ziele wiederherstellen', uk: 'Повернути проєкт і цілі', es: 'Restaurar proyecto y metas' },
+  'Проект и его цели в архиве': { en: 'Project and goals archived', de: 'Projekt und Ziele archiviert', uk: 'Проєкт і цілі архівовано', es: 'Proyecto y metas archivados' },
+  'Проект возвращён': { en: 'Project restored', de: 'Projekt wiederhergestellt', uk: 'Проєкт повернено', es: 'Proyecto restaurado' },
+  'До трёх активных проектов. В каждом — одно ближайшее действие.': { en: 'Up to three active projects. One next action in each.', de: 'Bis zu drei aktive Projekte. Jeweils eine nächste Handlung.', uk: 'До трьох активних проєктів. У кожному — одна найближча дія.', es: 'Hasta tres proyectos activos. Una siguiente acción en cada uno.' },
+  'Первый шаг': { en: 'First step', de: 'Erster Schritt', uk: 'Перший крок', es: 'Primer paso' },
+  'Конкретное действие, с которого начнёшь': { en: 'A concrete action to start with', de: 'Eine konkrete Handlung zum Start', uk: 'Конкретна дія, з якої почнеш', es: 'Una acción concreta para empezar' },
+  'Отметить цель достигнутой': { en: 'Mark goal achieved', de: 'Ziel als erreicht markieren', uk: 'Позначити ціль досягнутою', es: 'Marcar la meta como lograda' },
+  'Вернуть цель в работу': { en: 'Return goal to active work', de: 'Ziel wieder aktivieren', uk: 'Повернути ціль у роботу', es: 'Devolver la meta al trabajo activo' },
+  '✓ Цель достигнута': { en: '✓ Goal achieved', de: '✓ Ziel erreicht', uk: '✓ Ціль досягнута', es: '✓ Meta lograda' },
+  'Цель снова в работе': { en: 'Goal is active again', de: 'Ziel ist wieder aktiv', uk: 'Ціль знову в роботі', es: 'La meta vuelve a estar activa' },
+  'Другие': { en: 'Other', de: 'Weitere', uk: 'Інші', es: 'Otras' },
   '+ Инициатива': { en: '+ Initiative', de: '+ Initiative', uk: '+ Ініціатива', es: '+ Iniciativa' },
   '+ Первая цель': { en: '+ First goal', de: '+ Erstes Ziel', uk: '+ Перша ціль', es: '+ Primera meta' },
   'Инициатива': { en: 'Initiative', de: 'Initiative', uk: 'Ініціатива', es: 'Iniciativa' },
@@ -4022,6 +4056,8 @@ function validateGoalsPayload(value) {
       && typeof step.title === 'string' && typeof step.done === 'boolean')) return false;
     if (goal.parentId != null && typeof goal.parentId !== 'string') return false;
     if (goal.groupId != null && (typeof goal.groupId !== 'string' || !goal.groupId.trim())) return false;
+    if (goal.skillIds != null && (!Array.isArray(goal.skillIds) || !goal.skillIds.every((id) => typeof id === 'string' && id))) return false;
+    if (goal.backgroundSkillIds != null && (!Array.isArray(goal.backgroundSkillIds) || !goal.backgroundSkillIds.every((id) => typeof id === 'string' && id))) return false;
     if (goal.metric != null && (!goal.metric || typeof goal.metric !== 'object' || Array.isArray(goal.metric)
       || !Number.isFinite(Number(goal.metric.start)) || !Number.isFinite(Number(goal.metric.current)) || !Number.isFinite(Number(goal.metric.target)))) return false;
     ids.add(goal.id); return true;
@@ -4043,6 +4079,10 @@ function normalizeLoadedGoals(value) {
     goal.status = goal.status || 'active';
     goal.metric = goal.metric && goal.metric.target != null ? goal.metric : null;
     goal.steps = Array.isArray(goal.steps) ? goal.steps : [];
+    goal.skillIds = uniqueSkillIds(Array.isArray(goal.skillIds) && goal.skillIds.length ? goal.skillIds : [goal.skillId], { visibleOnly: false });
+    if (!goal.skillIds.length && goal.skillId) goal.skillIds = [goal.skillId];
+    goal.skillId = goal.skillIds[0] || goal.skillId || null;
+    goal.backgroundSkillIds = uniqueSkillIds(goal.backgroundSkillIds || [], { visibleOnly: false }).filter((id) => !goal.skillIds.includes(id)).slice(0, LAYER_MAX);
     goal.progressKind = goal.metric ? 'metric' : 'checklist';
   });
   // Legacy cycles are detached in memory. The next explicit mutation commits
@@ -5466,8 +5506,11 @@ function setSphereFieldValue(form, skillId) {
   const input = sphereFieldInput(form); if (!input || !skillId) return;
   input.value = skillId;
   const field = input.closest('.sphere-field');
-  const label = field && field.querySelector('.sphere-trigger-value');
-  if (label) label.textContent = skillLabel(skillId);
+  const main = field && field.querySelector('[name="skillIds"]'); if (main) main.value = skillId;
+  const backgroundName = field?.dataset.backgroundName || 'layers'; const background = field && field.querySelector(`[name="${backgroundName}"]`);
+  if (background) background.value = splitSkillFieldValue(background.value).filter((id) => id !== skillId).join(',');
+  const label = field && field.querySelector('.sphere-trigger-value'); if (label) label.textContent = skillLabel(skillId);
+  refreshSphereField(field);
 }
 function updateCatSuggest(inputEl) {
   const form = inputEl.closest('form'); if (!form) return;
@@ -5678,6 +5721,55 @@ function skillLabel(id) {
   while (cur && g++ < 8) { parts.unshift(cur.name); cur = cur.parentId ? State.settings.skills.find((x) => x.id === cur.parentId) : null; }
   return parts.length ? parts.join(' › ') : id;
 }
+function uniqueSkillIds(ids, { visibleOnly = true } = {}) {
+  const allowed = new Set((visibleOnly ? pickerVisibleSkills() : (State.settings.skills || [])).map((skill) => String(skill.id)));
+  return [...new Set((Array.isArray(ids) ? ids : []).map(String).filter((id) => allowed.has(id)))];
+}
+function splitSkillFieldValue(value) {
+  return uniqueSkillIds(String(value || '').split(',').map((id) => id.trim()).filter(Boolean));
+}
+function sphereFieldState(field) {
+  const main = splitSkillFieldValue(field?.querySelector('[name="skillIds"]')?.value || field?.querySelector('[name="skillId"]')?.value);
+  const backgroundName = field?.dataset.backgroundName || 'layers';
+  const background = splitSkillFieldValue(field?.querySelector(`[name="${backgroundName}"]`)?.value).filter((id) => !main.includes(id));
+  return { main, background, backgroundName };
+}
+function sphereFieldSummaryHTML(main, background) {
+  const chips = main.slice(0, 3).map((id, index) => {
+    const skill = skillById(id);
+    return `<span class="sphere-summary-chip${index ? '' : ' is-primary'}" style="--sphere-color:${esc(skill.color)}"><i aria-hidden="true"></i><span data-noi18n>${esc(skill.name)}</span></span>`;
+  });
+  if (main.length > 3) chips.push(`<span class="sphere-summary-more">+${main.length - 3}</span>`);
+  if (background.length) chips.push(`<span class="sphere-summary-background">${esc(t('Фон'))} · ${background.length}</span>`);
+  return chips.join('') || `<span class="sphere-trigger-placeholder">${esc(t('Выбрать сферу'))}</span>`;
+}
+function sphereChoiceRowHTML(skill, main, background, query = '') {
+  const isMain = main.includes(skill.id), isBackground = background.includes(skill.id), depth = skillDepth(skill.id);
+  const path = skillLabel(skill.id), label = query ? path : skill.name;
+  return `<div class="sphere-choice-row${isMain ? ' is-main' : ''}${isBackground ? ' is-background' : ''}" style="--sphere-depth:${Math.min(depth, 6)};--sphere-color:${esc(skill.color)}" data-sphere-choice="${esc(skill.id)}">
+    <span class="sphere-choice-rail" aria-hidden="true"></span><span class="sphere-choice-name" data-noi18n>${esc(label)}</span>
+    <div class="sphere-choice-actions" role="group" aria-label="${esc(path)}"><button type="button" class="sphere-role-button sphere-role-main" data-action="sphere-pick" data-id="${esc(skill.id)}" data-label="${esc(path)}" aria-pressed="${isMain ? 'true' : 'false'}">${esc(t(isMain ? 'Основная' : 'Выбрать'))}</button><button type="button" class="sphere-role-button sphere-role-background" data-action="sphere-background-pick" data-id="${esc(skill.id)}" aria-pressed="${isBackground ? 'true' : 'false'}">${esc(t(isBackground ? 'Фон' : '+ Фон'))}</button></div>
+  </div>`;
+}
+function sphereMultiResultsHTML(query, main, background) {
+  const q = String(query || '').trim(), visible = pickerVisibleSkills();
+  const rows = q && window.SphereSearchV1
+    ? window.SphereSearchV1.search(visible, q, { limit: 40 }).map((result) => visible.find((skill) => skill.id === result.id)).filter(Boolean)
+    : visible.slice().sort((a, b) => skillLabel(a.id).localeCompare(skillLabel(b.id), lang()));
+  if (!rows.length) return `<p class="sphere-empty muted">${esc(t('Ничего не нашлось'))}</p>`;
+  return rows.map((skill) => sphereChoiceRowHTML(skill, main, background, q)).join('');
+}
+function refreshSphereField(field, { close = false } = {}) {
+  if (!field) return;
+  const state = sphereFieldState(field), primary = field.querySelector('[name="skillId"]'), mainInput = field.querySelector('[name="skillIds"]'), backgroundInput = field.querySelector(`[name="${state.backgroundName}"]`);
+  if (primary) primary.value = state.main[0] || '';
+  if (mainInput) mainInput.value = state.main.join(',');
+  if (backgroundInput) backgroundInput.value = state.background.join(',');
+  const summary = field.querySelector('.sphere-trigger-value'); if (summary) summary.innerHTML = sphereFieldSummaryHTML(state.main, state.background);
+  const results = field.querySelector('.sphere-panel-results'), search = field.querySelector('.sphere-search-input');
+  if (results) results.innerHTML = sphereMultiResultsHTML(search?.value || '', state.main, state.background);
+  if (close) field.removeAttribute('open');
+}
 // ── Пикер сферы v1: дерево с раскрытием + поиск (fb_msi16wnqpyrs, fb_mqdgi36249e4) ──
 // Заменяет плоский <select> в форме создания квеста. Причина жалобы была буквальной:
 // нативный <select> с сотней вложенных строк — это просто длинный список без поиска
@@ -5727,16 +5819,21 @@ function sphereResultsHTML(query, selectedId) {
   if (!rows.length) return `<p class="sphere-empty muted">${esc(t('Ничего не нашлось'))}</p>`;
   return rows.map((r) => `<button type="button" class="sphere-row sphere-leaf${r.id === selectedId ? ' is-selected' : ''}" data-action="sphere-pick" data-id="${esc(r.id)}" data-label="${esc(r.label)}">${esc(r.label)}</button>`).join('');
 }
-function sphereFieldHTML(selectedId) {
-  const sel = selectedId || (State.settings.skills[0] && State.settings.skills[0].id) || '';
-  return `<details class="add-field add-field-skill sphere-field">
-    <summary class="sphere-trigger"><span class="add-field-label">${esc(t('Сфера'))}</span><span class="sphere-trigger-value" data-noi18n>${esc(skillLabel(sel))}</span></summary>
+function sphereFieldHTML(selectedId, options = {}) {
+  const fallback = selectedId || (State.settings.skills[0] && State.settings.skills[0].id) || '';
+  const main = uniqueSkillIds(options.main || [fallback]); if (!main.length && fallback) main.push(fallback);
+  const background = uniqueSkillIds(options.background || []).filter((id) => !main.includes(id)).slice(0, LAYER_MAX);
+  const backgroundName = options.backgroundName || 'layers';
+  const fieldClass = options.className ? ` ${options.className}` : '';
+  return `<details class="add-field add-field-skill sphere-field sphere-field-multi${fieldClass}" data-background-name="${esc(backgroundName)}">
+    <summary class="sphere-trigger"><span class="add-field-label">${esc(t(options.label || 'Сферы'))}</span><span class="sphere-trigger-value">${sphereFieldSummaryHTML(main, background)}</span></summary>
     <div class="sphere-panel">
-      <label class="sr-only" for="sphere-search-${sel}">${esc(t('Искать сферу'))}</label>
-      <input type="text" id="sphere-search-${sel}" class="sphere-search-input" placeholder="${esc(t('Искать сферу…'))}" autocomplete="off" />
-      <div class="sphere-panel-results">${sphereResultsHTML('', sel)}</div>
+      <div class="sphere-panel-head"><div><strong>${esc(t('Сферы цели'))}</strong><small>${esc(t('Основные отражают прямой результат. Фон — что цель поддерживает попутно.'))}</small></div><button type="button" class="sphere-panel-done" data-action="sphere-picker-done">${esc(t('Готово'))}</button></div>
+      <label class="sr-only" for="sphere-search-${esc(fallback)}">${esc(t('Искать сферу'))}</label>
+      <input type="text" id="sphere-search-${esc(fallback)}" class="sphere-search-input" placeholder="${esc(t('Искать сферу…'))}" autocomplete="off" />
+      <div class="sphere-panel-results">${sphereMultiResultsHTML('', main, background)}</div>
     </div>
-    <input type="hidden" name="skillId" value="${esc(sel)}" /></details>`;
+    <input type="hidden" name="skillId" value="${esc(main[0] || '')}" /><input type="hidden" name="skillIds" value="${esc(main.join(','))}" /><input type="hidden" name="${esc(backgroundName)}" value="${esc(background.join(','))}" /></details>`;
 }
 // Опции <select> в иерархическом порядке: столб, затем его под-навыки («Столб › Под»)
 function skillOptionsHTML(sel) {
@@ -6126,7 +6223,10 @@ function xpEvents() {
   }
   const log = State.habitlog || {};
   for (const date in log) for (const hid in log[date]) { const rec = log[date][hid], h = habitById(hid); ev.push({ date, skillId: h ? h.skillId : null, xp: rec.xp || 0, gold: rec.gold || 0, min: rec.min || 0 }); }
-  for (const g of State.goals || []) if (g.completedAt) { const xp = g.xpReward != null ? g.xpReward : GOAL_BONUS.xp; ev.push({ date: fmtDate(new Date(g.completedAt)), skillId: g.skillId, xp, gold: Math.round(xp * 0.35), min: 0 }); }
+  for (const g of State.goals || []) if (g.completedAt) {
+    const xp = g.xpReward != null ? g.xpReward : GOAL_BONUS.xp, ids = goalSkillIds(g), n = ids.length || 1, gold = Math.round(xp * 0.35);
+    (ids.length ? ids : [g.skillId]).forEach((skillId, index) => ev.push({ date: fmtDate(new Date(g.completedAt)), skillId, xp: shareInt(xp, n, index), gold: shareInt(gold, n, index), min: 0 }));
+  }
   // Эпизоды: период раскладывается в события ПО ДНЯМ (а не одним куском на дату окончания) —
   // именно поэтому стрик остаётся целым и Форма держится по всем дням периода, без отдельного кода.
   // min:0 намеренно: часы эпизода НЕ идут в бюджет суток. Попытка уложить погружённый день в
@@ -8038,6 +8138,13 @@ function habitStreak(h) {
 }
 
 // ---- Цели ----
+function goalSkillIds(goal) {
+  return uniqueSkillIds(Array.isArray(goal?.skillIds) && goal.skillIds.length ? goal.skillIds : [goal?.skillId], { visibleOnly: false });
+}
+function goalBackgroundSkillIds(goal) {
+  const main = goalSkillIds(goal);
+  return uniqueSkillIds(goal?.backgroundSkillIds || [], { visibleOnly: false }).filter((id) => !main.includes(id)).slice(0, LAYER_MAX);
+}
 // Числовая цель достигнута? (lowerBetter — для оценок/времени, где меньше = лучше)
 function goalMetricReached(g) { const m = g.metric; if (!m || m.target == null) return false; return m.lowerBetter ? m.current <= m.target : m.current >= m.target; }
 function goalProgressKind(g) { return g.metric && g.metric.target != null ? 'metric' : 'checklist'; }
@@ -8100,6 +8207,7 @@ function announceGoalCompletion(g) {
   goalMilestoneHint(g); bossHitFeedback(bossHitCheck('goal', g));
 }
 function refreshGoalCompletion(g, { announce = true } = {}) {
+  if (g.manualComplete && g.completedAt) return;
   if (goalProgressKind(g) === 'metric') {
     const reached = goalMetricReached(g);
     if (reached) g.metric.everReached = true;
@@ -13138,11 +13246,12 @@ function epSave() {
 }
 function proposeContext() {
   const spheres = State.settings.skills.map((s) => skillLabel(s.id)).join(', ');
-  const goals = (State.goals || []).filter((g) => !g.archived).map((g) => g.title).slice(0, 40).join('; ');
+  const goals = (State.goals || []).filter((g) => !g.archived).map((g) => `${g.title}${g.type ? ` [${g.type}]` : ''}`).slice(0, 40).join('; ');
+  const projects = (State.goalGroups || []).filter((group) => group.status !== 'archived').map((group) => group.title).slice(0, 30).join('; ');
   // Фон состояния (Джарвис-слой): помогает ИИ соизмерять масштаб предложений с реальной нагрузкой.
   // Явно помечен «НЕ превращать в предложения» — иначе движок начнёт сочинять цели из самого фона.
   const load = dayLoadNow();
-  return `Сферы: ${spheres || '(нет)'}\nЦели: ${goals || '(нет)'}\nФОН (учитывай масштаб и нагрузку, но НЕ превращай сам фон в предложения): сегодня закрыто ${load.done}${load.known ? ` при обычных ${load.typical}` : ''}; ${restStateLine()}`;
+  return `Сферы: ${spheres || '(нет)'}\nПроекты: ${projects || '(нет)'}\nЦели: ${goals || '(нет)'}\nФОН (учитывай масштаб и нагрузку, но НЕ превращай сам фон в предложения): сегодня закрыто ${load.done}${load.known ? ` при обычных ${load.typical}` : ''}; ${restStateLine()}`;
 }
 function openProposeModal(kind, prefill) {
   _proposals = [];
@@ -13217,10 +13326,12 @@ function extractJsonClient(text) {
 }
 const BRIDGE_GOALS = `Ты помогаешь оформить цели для приложения-планировщика Satoru (философия «жизнь как десятиборье»). На основе описания ниже верни СТРОГО JSON {"proposals":[ ... ]} — без markdown и без текста вне JSON. Элементы — одного из типов:
 {"type":"sphere","name":"...","parent":"<имя родительской сферы или null>"}
-{"type":"goal","title":"...","sphere":"<имя сферы>","horizon":"mission|vision|path|long|mid|short|recurring","metric":null,"status":"active|waiting|paused","window":"","deadline":"YYYY-MM-DD или null","parent":"<точный заголовок большей цели или null>","description":"<опц. 1–3 предложения: что конкретно делается и зачем. Если есть конкретные шаги — перечисли: 1) ... 2) ... 3) ...>"}
+{"type":"goal","title":"...","description":"<1–3 предложения: результат и зачем>","spheres":["<точные имена основных сфер>"],"backgroundSpheres":["<точные имена фоновых сфер, максимум 3>"],"project":"<имя реального проекта или пустая строка>","horizon":"mission|vision|path|long|mid|short|recurring","metric":null,"steps":["первый проверяемый этап","следующий этап"],"nextAction":{"title":"конкретный квест","date":"today|tomorrow|YYYY-MM-DD","estimateMin":N,"difficulty":"easy|normal|hard"},"status":"active|waiting|paused","window":"","deadline":"YYYY-MM-DD или null","parent":"<точный заголовок большей цели или null>"}
 metric для числовых целей = {"current":N,"target":N,"unit":"кг/км/балл","lowerBetter":false,"maintain":false}.
 Горизонты: mission=дело жизни, vision=10–20 лет, path=3–5 лет, long=цель года, mid=1–6 мес, short=до месяца, recurring=регулярная практика. lowerBetter:true для оценок/времени.
 ПОРЯДОК И «ЗАЧЕМ» (важно — иначе план превращается в свалку): построй иерархию через parent. Сверху крупные цели (миссия/путь/год), под ними — этапы, в самом низу — конкретные ближайшие шаги. У КАЖДОЙ мелкой цели parent = точный заголовок той большей цели, ради которой она делается. Так юзер видит «зачем это» (цепочкой вверх) и с чего начинать (нижние короткие шаги с ближайшими дедлайнами).
+ПЛАН И ДЕЙСТВИЯ: каждой checklist-цели дай 2–7 последовательных проверяемых steps. Числовой metric-цели steps не нужны. Только для максимум трёх ближайших активных leaf-целей добавь nextAction — конкретный квест на 5–60 минут, а не «заняться проектом». Satoru создаст его на Сегодня и свяжет с целью.
+ПРОЕКТЫ И СФЕРЫ: project группирует цели одного реального проекта, не меняя parent. Основных spheres может быть несколько; backgroundSpheres — то, что цель поддерживает попутно. Используй только точные существующие имена сфер и не дублируй основную в фоне.
 ДЕДЛАЙНЫ: для всего, у чего есть срок, ставь deadline КОНКРЕТНОЙ датой YYYY-MM-DD (год бери из «Сегодня» ниже). «до 7 июля», «к 1 сентября», «4–16 августа» → это deadline (конец периода), НЕ window. window оставляй только для событийных без точной даты (status:"waiting"). Этапы выстраивай по возрастанию дедлайна.
 parent — точный заголовок другой цели из этого же ответа. Переиспользуй существующие сферы по точному имени (включая путь «Учёба › Наука › …»). Русский.`;
 const BRIDGE_CALIB = `Ты калибруешь уровни в приложении Satoru. На основе описания верни СТРОГО JSON {"proposals":[{"type":"level","sphere":"<имя сферы>","level":N,"note":"<кратко>"}]} — без markdown и текста вне JSON. Шкала уровня 1–20: 1=только начал, 5=регулярная практика, 10=уверенный/могу учить, 15=глубокая экспертиза, 18–20=топ. Школа/универ оценивай честно. Только по сферам из описания.`;
@@ -13260,7 +13371,9 @@ function proposalLabel(p) {
   if (p.type === 'goal') {
     const m = (p.metric && p.metric.target != null) ? ` · ${p.metric.current}→${p.metric.target}${p.metric.unit ? ' ' + p.metric.unit : ''}` : '';
     const w = p.status === 'waiting' ? ` · ⏳ждёт${p.window ? ' ' + p.window : ''}` : (p.status === 'paused' ? ' · ⏸' : '');
-    return `🎯 Цель: ${p.title} · ${p.sphere} · ${goalTypeLabel(p.horizon)}${m}${w}`;
+    const spheres = (Array.isArray(p.spheres) ? p.spheres : [p.sphere]).filter(Boolean).join(' + '), steps = Array.isArray(p.steps) && p.steps.length ? ` · ${p.steps.length} шаг.` : '';
+    const action = p.nextAction && p.nextAction.title ? ` · → ${p.nextAction.title}` : '', project = p.project ? ` · ${p.project}` : '';
+    return `🎯 Цель: ${p.title}${project}${spheres ? ` · ${spheres}` : ''} · ${goalTypeLabel(p.horizon)}${steps}${action}${m}${w}`;
   }
   return JSON.stringify(p).slice(0, 80);
 }
@@ -13270,11 +13383,11 @@ async function applyAcceptedProposals() {
   document.querySelectorAll('#propose-result [data-prop-parent]').forEach((sel) => {
     const i = Number(sel.dataset.propParent); if (_proposals[i]) _proposals[i]._parentId = sel.value || null;
   });
-  const beforeGoals = structuredClone(State.goals), beforeTasks = structuredClone(State.tasks);
+  const beforeGoals = structuredClone(State.goals), beforeTasks = structuredClone(State.tasks), beforeGroups = structuredClone(State.goalGroups || []);
   const n = applyProposals(_proposals, set);
-  const goalChanged = JSON.stringify(beforeGoals) !== JSON.stringify(State.goals) || JSON.stringify(beforeTasks) !== JSON.stringify(State.tasks);
-  if (goalChanged && !await goalDataCommit(State.goals, State.tasks)) {
-    State.goals = beforeGoals; State.tasks = beforeTasks;
+  const goalChanged = JSON.stringify(beforeGoals) !== JSON.stringify(State.goals) || JSON.stringify(beforeTasks) !== JSON.stringify(State.tasks) || JSON.stringify(beforeGroups) !== JSON.stringify(State.goalGroups);
+  if (goalChanged && !await goalDataCommit(State.goals, State.tasks, State.goalGroups)) {
+    State.goals = beforeGoals; State.tasks = beforeTasks; State.goalGroups = beforeGroups;
     State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); render(); return;
   }
   const m = document.getElementById('propose-modal'); if (m) m.remove();
@@ -13283,6 +13396,7 @@ async function applyAcceptedProposals() {
 // Применяет принятые предложения. Порядок: сферы → уровни → цели (с резолвом родителей по имени).
 function applyProposals(proposals, acceptedIdx) {
   const accepted = proposals.filter((_, i) => acceptedIdx.has(i));
+  State.goalGroups = State.goalGroups || [];
   const c = State.settings.curve;
   const palette = ['#4f86f7', '#5fbf5f', '#e0526a', '#b06ff0', '#e0a23e', '#22c1a4', '#e87d3e', '#8899bb'];
   // ИИ возвращает sphere как ПУТЬ «Учёба › Наука › Jugend Forscht» — резолвим по цепочке, не только по листу
@@ -13328,20 +13442,38 @@ function applyProposals(proposals, acceptedIdx) {
   // 3) Цели — два прохода (создать, затем привязать родителей по точному заголовку)
   const made = [];
   accepted.filter((p) => p.type === 'goal' && p.title).forEach((p) => {
-    const sk = findSphere(p.sphere) || State.settings.skills[0]; if (!sk) return;
+    const requestedMain = (Array.isArray(p.spheres) ? p.spheres : [p.sphere]).map(findSphere).filter(Boolean);
+    const mainSkills = [...new Map(requestedMain.map((skill) => [skill.id, skill])).values()];
+    const sk = mainSkills[0] || State.settings.skills[0]; if (!sk) return;
+    if (!mainSkills.length) mainSkills.push(sk);
+    const backgroundSkills = [...new Map((Array.isArray(p.backgroundSpheres) ? p.backgroundSpheres : []).map(findSphere).filter((skill) => skill && !mainSkills.some((main) => main.id === skill.id)).map((skill) => [skill.id, skill])).values()].slice(0, LAYER_MAX);
     const type = ['mission', 'vision', 'path', 'long', 'mid', 'short', 'recurring'].includes(p.horizon) ? p.horizon : 'mid';
     let metric = null;
     if (p.metric && p.metric.target != null) {
       const cur = Number(p.metric.current) || 0;
       metric = { start: cur, current: cur, target: Number(p.metric.target), unit: String(p.metric.unit || '').slice(0, 12), lowerBetter: !!p.metric.lowerBetter, maintain: !!p.metric.maintain, everReached: false, log: [] };
     }
-    const g = { id: 'g_' + uid(), title: String(p.title).slice(0, 120), description: p.description ? String(p.description).slice(0, 500) : '', skillId: sk.id, type, xpReward: GOAL_XP[type], parentId: null, _parentTitle: p.parent || null, targetDate: (() => { const d = p.deadline || p.targetDate; return (d && /^\d{4}-\d{2}-\d{2}$/.test(String(d))) ? String(d) : null; })(), steps: [], metric, status: ['waiting', 'paused'].includes(p.status) ? p.status : 'active', window: String(p.window || '').slice(0, 40), createdAt: new Date().toISOString(), completedAt: null, archived: false };
-    State.goals.push(g); made.push(g); applied++;
+    const steps = metric ? [] : (Array.isArray(p.steps) ? p.steps : []).map((step) => typeof step === 'string' ? step : step && step.title).filter(Boolean).slice(0, 12).map((title) => ({ id: 's_' + uid(), title: String(title).slice(0, 160), done: false }));
+    const projectTitle = String(p.project || '').trim().slice(0, 80); let groupId = null;
+    if (projectTitle) {
+      let group = (State.goalGroups || []).find((item) => normRu(item.title) === normRu(projectTitle) && item.status !== 'archived');
+      if (!group) { group = { id: 'grp_' + uid(), title: projectTitle, status: 'active', createdAt: new Date().toISOString() }; State.goalGroups.push(group); applied++; }
+      groupId = group.id;
+    }
+    const g = { id: 'g_' + uid(), title: String(p.title).slice(0, 120), description: p.description ? String(p.description).slice(0, 800) : '', skillId: sk.id, skillIds: mainSkills.map((skill) => skill.id), backgroundSkillIds: backgroundSkills.map((skill) => skill.id), type, xpReward: GOAL_XP[type], parentId: null, groupId, _parentTitle: p.parent || null, targetDate: (() => { const d = p.deadline || p.targetDate; return (d && /^\d{4}-\d{2}-\d{2}$/.test(String(d))) ? String(d) : null; })(), steps, metric, progressKind: metric ? 'metric' : 'checklist', status: ['waiting', 'paused'].includes(p.status) ? p.status : 'active', window: String(p.window || '').slice(0, 40), createdAt: new Date().toISOString(), completedAt: null, archived: false };
+    State.goals.push(g); made.push({ goal: g, proposal: p }); applied++;
   });
-  made.forEach((g) => {
+  made.forEach(({ goal: g, proposal: p }) => {
     if (g._parentTitle) { const par = State.goals.find((x) => x.id !== g.id && normRu(x.title) === normRu(g._parentTitle)); if (par) g.parentId = par.id; }
     delete g._parentTitle;
     if (g.metric) refreshGoalCompletion(g, { announce: false });
+    const action = p.nextAction && typeof p.nextAction === 'object' ? p.nextAction : null;
+    if (action && action.title && g.status === 'active') {
+      const requestedDate = String(action.date || action.day || 'today');
+      const date = /^\d{4}-\d{2}-\d{2}$/.test(requestedDate) ? requestedDate : requestedDate === 'tomorrow' ? addDays(todayStr(), 1) : todayStr();
+      State.tasks.push({ id: uid(), title: String(action.title).slice(0, 160), skillId: g.skillId, skillIds: goalSkillIds(g), layers: goalBackgroundSkillIds(g), estimateMin: Math.min(600, Math.max(5, Math.round(Number(action.estimateMin) || 30))), difficulty: ['easy', 'normal', 'hard'].includes(action.difficulty) ? action.difficulty : 'normal', date, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, goalId: g.id, createdAt: new Date().toISOString() });
+      applied++;
+    }
   });
   // 4) Квесты — нужны онбордингу v2: первый экран не должен встречать новичка пустотой.
   //    day: today|tomorrow (ИИ не знает сегодняшней даты — считаем на клиенте).
@@ -17603,10 +17735,17 @@ function goalFocusList(goals) {
 function goalGroupById(id) { return (State.goalGroups || []).find((group) => group.id === id) || null; }
 function goalGroupOptionsHTML(selectedId = '') {
   const groups = (State.goalGroups || []).filter((group) => group.status !== 'archived');
-  return `<option value="">${t('Без инициативы')}</option>` + groups.map((group) => `<option value="${esc(group.id)}" ${group.id === selectedId ? 'selected' : ''}>${esc(group.title)}${group.status === 'paused' ? ` · ${t('Пауза')}` : ''}</option>`).join('');
+  return `<option value="">${t('Без проекта')}</option>` + groups.map((group) => `<option value="${esc(group.id)}" ${group.id === selectedId ? 'selected' : ''}>${esc(group.title)}${group.status === 'paused' ? ` · ${t('Пауза')}` : ''}</option>`).join('');
 }
 function goalMeaningfulProgress(g) {
   return goalProgressKind(g) === 'metric' || (Array.isArray(g.steps) && g.steps.length > 0);
+}
+function goalSpheresHTML(goal, { compact = false } = {}) {
+  const main = goalSkillIds(goal), background = goalBackgroundSkillIds(goal), visible = compact ? main.slice(0, 2) : main;
+  const chips = visible.map((id) => { const skill = skillById(id); return `<span class="goal-sphere-chip" style="--sphere-color:${esc(skill.color)}"><i aria-hidden="true"></i><span data-noi18n>${esc(skill.name)}</span></span>`; });
+  if (compact && main.length > 2) chips.push(`<span class="goal-sphere-more">+${main.length - 2}</span>`);
+  if (background.length) chips.push(`<span class="goal-sphere-background">${esc(t('Фон'))} · ${background.length}</span>`);
+  return chips.join('');
 }
 function goalsBulkSet() {
   if (!(State._goalsBulkIds instanceof Set)) State._goalsBulkIds = new Set(Array.isArray(State._goalsBulkIds) ? State._goalsBulkIds : []);
@@ -17622,16 +17761,20 @@ function goalItem(g, depth = 0, variant = 'standard', { selectable = false } = {
   return `<article class="goal-item goal-item-${variant} ${selectable ? 'is-selectable' : ''} ${picked ? 'is-selected' : ''} ${done ? 'is-done' : ''} ${g.archived ? 'is-archived' : ''}" id="goal-${esc(g.id)}" data-goal-id="${esc(g.id)}" style="--goal-depth:${depth};--goal-color:${esc(sk.color)}">
     ${selectable ? `<button type="button" class="goal-bulk-pick" data-action="goal-bulk-toggle" data-id="${esc(g.id)}" aria-pressed="${picked ? 'true' : 'false'}" aria-label="${esc(t(picked ? 'Убрать цель из выбора' : 'Выбрать цель'))}: ${esc(g.title)}"><span aria-hidden="true">${picked ? '✓' : ''}</span></button>` : ''}
     <button type="button" class="goal-summary" data-action="open-goal-detail" data-id="${esc(g.id)}" aria-label="${esc(t('Открыть цель'))}: ${esc(g.title)}">
-      <span class="goal-summary-main"><span class="goal-title" data-noi18n>${done ? '✓ ' : ''}${esc(g.title)}</span>${meta ? `<span class="goal-summary-meta">${meta}</span>` : ''}${next ? `<span class="goal-next"><span class="goal-next-mark" aria-hidden="true">→</span><span data-noi18n>${esc(next.title)}</span></span>` : ''}</span>
+      <span class="goal-summary-main"><span class="goal-title" data-noi18n>${esc(g.title)}</span>${g.description && variant !== 'tree' ? `<span class="goal-row-description" data-noi18n>${esc(g.description)}</span>` : ''}${meta ? `<span class="goal-summary-meta">${meta}</span>` : ''}<span class="goal-row-spheres">${goalSpheresHTML(g, { compact: true })}</span>${next ? `<span class="goal-next"><span class="goal-next-mark" aria-hidden="true">→</span><span data-noi18n>${esc(next.title)}</span></span>` : ''}</span>
       <span class="goal-open-mark" aria-hidden="true">›</span>
     </button>
+    ${g.archived ? '' : `<button type="button" class="goal-quick-complete" data-action="goal-toggle-complete" data-id="${esc(g.id)}" aria-pressed="${done ? 'true' : 'false'}" aria-label="${esc(t(done ? 'Вернуть цель в работу' : 'Отметить цель достигнутой'))}: ${esc(g.title)}"><span aria-hidden="true">${done ? '✓' : ''}</span></button>`}
   </article>`;
 }
 function goalTreeHTML(source) {
   const ids = new Set(source.map((goal) => goal.id));
   const roots = source.filter((goal) => !goal.parentId || !ids.has(goal.parentId));
   const walk = (goal, depth) => `<div class="goal-branch">${goalItem(goal, depth, 'tree')}${source.filter((candidate) => candidate.parentId === goal.id).map((child) => walk(child, depth + 1)).join('')}</div>`;
-  return roots.map((goal) => walk(goal, 0)).join('');
+  const horizons = GOAL_TYPES.map((type) => ({ type, roots: roots.filter((goal) => goal.type === type.id) })).filter((entry) => entry.roots.length);
+  const known = new Set(horizons.flatMap((entry) => entry.roots.map((goal) => goal.id))), loose = roots.filter((goal) => !known.has(goal.id));
+  if (loose.length) horizons.push({ type: { id: 'other', label: 'Другие' }, roots: loose });
+  return `<div class="goal-map-sections">${horizons.map((entry, index) => `<details class="goal-map-section" ${index === 0 ? 'open' : ''}><summary><span>${esc(t(entry.type.label))}</span><small>${entry.roots.length}</small></summary><div class="goal-map-section-body">${entry.roots.map((goal) => walk(goal, 0)).join('')}</div></details>`).join('')}</div>`;
 }
 function goalsLoadRecoveryHTML() {
   const invalid = State._goalsLoadError === 'invalid' || State._goalGroupsLoadError === 'invalid' || State._tasksLoadError === 'invalid';
@@ -17650,26 +17793,29 @@ function goalLinkedBodyHTML(g) {
 }
 function goalDetailContentHTML(g) {
   const sk = skillById(g.skillId) || { name: t('Без сферы'), color: 'var(--muted)' }, chain = goalChain(g).slice().reverse(), next = goalNextAction(g), st = goalStatusInfo(g), group = goalGroupById(g.groupId);
-  const nextHTML = next ? (next.kind === 'task' ? `<a href="?view=today" data-action="goto-task" data-id="${esc(next.id)}" data-noi18n>${esc(next.title)}</a>` : `<span data-noi18n>${esc(next.title)}</span>`) : `<span>${t('У этой цели пока нет следующего шага.')}</span>`;
+  const nextHTML = next
+    ? (next.kind === 'task' ? `<a href="?view=today" data-action="goto-task" data-id="${esc(next.id)}" data-noi18n>${esc(next.title)}</a>` : `<span data-noi18n>${esc(next.title)}</span>`)
+    : `<p>${t('У этой цели пока нет следующего шага.')}</p>${g.archived ? '' : `<form class="goal-task-form goal-next-inline" data-goal="${esc(g.id)}"><label><span>${t('Квест на сегодня')}</span><input name="title" maxlength="160" required placeholder="${esc(t('Конкретное действие, с которого начнёшь'))}" /></label><button type="submit" class="btn">${t('Создать квест')}</button></form>`}`;
   return `<button type="button" class="modal-x" data-action="goal-detail-close" aria-label="${t('Закрыть цель')}">✕</button>${State._goalsError ? `<div class="goals-error" role="alert">${esc(State._goalsError)}</div>` : ''}
-    <header class="goal-detail-head"><p class="goals-kicker">${group ? `<span data-noi18n>${esc(group.title)}</span> · ` : ''}${goalTypeLabel(g.type)}</p><h2 id="goal-detail-title" tabindex="-1" data-noi18n>${esc(g.title)}</h2><p id="goal-detail-summary"><span class="goal-status ${st.cls}">${esc(goalStatusText(g))}</span>${goalMeaningfulProgress(g) ? ` · ${esc(goalProgressText(g))}` : ''}</p></header>
+    <header class="goal-detail-head"><p class="goals-kicker">${group ? `<span data-noi18n>${esc(group.title)}</span> · ` : ''}${goalTypeLabel(g.type)}</p><h2 id="goal-detail-title" tabindex="-1" data-noi18n>${esc(g.title)}</h2>${g.description ? `<p class="goal-detail-description" data-noi18n>${esc(g.description)}</p>` : ''}<div id="goal-detail-summary" class="goal-detail-summary"><span class="goal-status ${st.cls}">${esc(goalStatusText(g))}</span>${goalMeaningfulProgress(g) ? `<span>${esc(goalProgressText(g))}</span>` : ''}<span class="goal-detail-spheres">${goalSpheresHTML(g)}</span></div><button type="button" class="btn goal-detail-complete" data-action="goal-toggle-complete" data-id="${esc(g.id)}" aria-pressed="${g.completedAt ? 'true' : 'false'}">${esc(t(g.completedAt ? 'Вернуть цель в работу' : '✓ Цель достигнута'))}</button></header>
     <section class="goal-next-card" aria-labelledby="goal-next-title"><h3 id="goal-next-title">${t('Следующий шаг')}</h3>${nextHTML}</section>
     <details class="goal-detail-section"><summary>${t('План цели')}</summary><div class="goal-detail-section-body">${goalProgressBodyHTML(g)}${goalLinkedBodyHTML(g)}</div></details>
-    <details class="goal-detail-section"><summary>${t('Контекст цели')}</summary><div class="goal-detail-section-body">${chain.length ? `<nav class="goal-breadcrumb" aria-label="${t('Цепочка цели')}">${chain.map((parent) => `<a href="${esc(goalDeepLinkHref(parent.id))}" data-action="goto-goal" data-id="${parent.id}" data-noi18n>${esc(parent.title)}</a>`).join('<span aria-hidden="true">›</span>')}</nav>` : ''}${g.description ? `<p class="goal-desc" data-noi18n>${esc(g.description)}</p>` : ''}<div class="goal-meta">${group ? `<span class="goal-group-chip" data-noi18n>${esc(group.title)}</span>` : ''}<span class="t-skill" style="--c:${esc(sk.color)}">${esc(i18nWord(sk.name, lang()))}</span><span class="goal-type type-${g.type || 'short'}">${goalTypeLabel(g.type)}</span>${goalDeadlineHTML(g)}</div><p class="goal-source-note">${t('Вся цепочка видна в Карте; здесь остаётся только контекст выбранной цели.')}</p></div></details>
-    <details class="goal-detail-section goal-detail-more"><summary>${t('Управление')}</summary><div class="goal-detail-section-body"><form class="goal-edit-form" data-goal="${g.id}"><label><span>${t('Название')}</span><input name="title" value="${esc(g.title)}" maxlength="160" required data-noi18n /></label><label><span>${t('Описание')}</span><textarea name="description" maxlength="800" data-noi18n>${esc(g.description || '')}</textarea></label><label><span>${t('Инициатива')}</span><select name="groupId">${goalGroupOptionsHTML(g.groupId || '')}</select></label><label><span>${t('Родительская цель')}</span><select name="parentId">${goalParentOptionsHTML(g)}</select></label><label><span>${t('Сфера')}</span><select name="skillId">${skillOptionsHTML(g.skillId)}</select></label><label><span>${t('Горизонт')}</span><select name="type">${GOAL_TYPES.map((type) => `<option value="${type.id}" ${type.id === g.type ? 'selected' : ''}>${esc(t(type.label))}</option>`).join('')}</select></label><label><span>${t('Дедлайн')}</span><input name="targetDate" type="date" value="${esc(g.targetDate || '')}" /></label><label><span>${t('Состояние')}</span><select name="status"><option value="active" ${g.status === 'active' ? 'selected' : ''}>${t('Активна')}</option><option value="waiting" ${g.status === 'waiting' ? 'selected' : ''}>${t('Жду')}</option><option value="paused" ${g.status === 'paused' ? 'selected' : ''}>${t('Пауза')}</option></select></label><button type="submit" class="btn">${t('Сохранить изменения')}</button></form><div class="goal-actions"><button type="button" class="btn ghost" data-action="copy-goal-link" data-id="${g.id}">${t('Скопировать ссылку')}</button><button type="button" class="btn ghost" data-action="${g.archived ? 'restore-goal' : 'archive-goal'}" data-id="${g.id}">${g.archived ? t('Вернуть из архива') : t('В архив')}</button><button type="button" class="btn ghost danger" data-action="delete-goal" data-id="${g.id}">${t('Удалить цель')}</button></div></div></details>`;
+    <details class="goal-detail-section"><summary>${t('Контекст цели')}</summary><div class="goal-detail-section-body">${chain.length ? `<nav class="goal-breadcrumb" aria-label="${t('Цепочка цели')}">${chain.map((parent) => `<a href="${esc(goalDeepLinkHref(parent.id))}" data-action="goto-goal" data-id="${parent.id}" data-noi18n>${esc(parent.title)}</a>`).join('<span aria-hidden="true">›</span>')}</nav>` : ''}<div class="goal-meta">${group ? `<span class="goal-group-chip" data-noi18n>${esc(group.title)}</span>` : ''}<span class="goal-type type-${g.type || 'short'}">${goalTypeLabel(g.type)}</span>${goalDeadlineHTML(g)}</div><p class="goal-source-note">${t('Вся цепочка видна в Карте; здесь остаётся только контекст выбранной цели.')}</p></div></details>
+    <details class="goal-detail-section goal-detail-more"><summary>${t('Управление')}</summary><div class="goal-detail-section-body"><form class="goal-edit-form" data-goal="${g.id}"><label><span>${t('Название')}</span><input name="title" value="${esc(g.title)}" maxlength="160" required data-noi18n /></label><label><span>${t('Описание')}</span><textarea name="description" maxlength="800" data-noi18n>${esc(g.description || '')}</textarea></label><label><span>${t('Проект')}</span><select name="groupId">${goalGroupOptionsHTML(g.groupId || '')}</select></label><label><span>${t('Родительская цель')}</span><select name="parentId">${goalParentOptionsHTML(g)}</select></label>${sphereFieldHTML(g.skillId, { main: goalSkillIds(g), background: goalBackgroundSkillIds(g), backgroundName: 'backgroundSkillIds', label: 'Сферы', className: 'goal-sphere-field' })}<label><span>${t('Горизонт')}</span><select name="type">${GOAL_TYPES.map((type) => `<option value="${type.id}" ${type.id === g.type ? 'selected' : ''}>${esc(t(type.label))}</option>`).join('')}</select></label><label><span>${t('Дедлайн')}</span><input name="targetDate" type="date" value="${esc(g.targetDate || '')}" /></label><label><span>${t('Состояние')}</span><select name="status"><option value="active" ${g.status === 'active' ? 'selected' : ''}>${t('Активна')}</option><option value="waiting" ${g.status === 'waiting' ? 'selected' : ''}>${t('Жду')}</option><option value="paused" ${g.status === 'paused' ? 'selected' : ''}>${t('Пауза')}</option></select></label><button type="submit" class="btn">${t('Сохранить изменения')}</button></form><div class="goal-actions"><button type="button" class="btn ghost" data-action="copy-goal-link" data-id="${g.id}">${t('Скопировать ссылку')}</button><button type="button" class="btn ghost" data-action="${g.archived ? 'restore-goal' : 'archive-goal'}" data-id="${g.id}">${g.archived ? t('Вернуть из архива') : t('В архив')}</button><button type="button" class="btn ghost danger" data-action="delete-goal" data-id="${g.id}">${t('Удалить цель')}</button></div></div></details>`;
 }
 function goalCreateFormHTML(defaultType = 'short', defaultGroupId = '') {
   const selectedType = GOAL_TYPES.some((type) => type.id === defaultType) ? defaultType : 'short';
   const typeOpts = GOAL_TYPES.map((type) => `<option value="${type.id}" ${type.id === selectedType ? 'selected' : ''}>${t(type.label)} · ${t(type.timeframe)}</option>`).join('');
-  return `<form id="add-goal" class="goal-form"><div class="goal-form-main"><label class="goal-field-wide"><span>${t('Название')}</span><input name="title" maxlength="160" autocomplete="off" required /></label><label><span>${t('Инициатива')}</span><select name="groupId">${goalGroupOptionsHTML(defaultGroupId)}</select></label></div><details class="goal-extra"><summary>${t('Дополнительные настройки')}</summary><div class="gx-grid"><label><span>${t('Сфера')}</span><select name="skillId">${skillOptionsHTML()}</select></label><label><span>${t('Горизонт')}</span><select name="type">${typeOpts}</select></label><label><span>${t('Родительская цель')}</span><select name="parentId">${goalParentOptionsHTML(null)}</select></label><label><span>${t('Дедлайн')}</span><input name="targetDate" type="date" /></label><label><span>${t('Как измерять')}</span><select name="metricMode" aria-describedby="goal-metric-help"><option value="checklist">${t('Этапы — отмечать выполненное')}</option><option value="increase">${t('Достичь числа')}</option><option value="decrease">${t('Снизить число')}</option><option value="maintain">${t('Держать значение')}</option></select><small id="goal-metric-help">${t('Выбери число только если прогресс действительно измеряется числом.')}</small></label><label><span>${t('Текущее значение')}</span><input name="mStart" type="number" step="any" /></label><label><span>${t('Целевое значение')}</span><input name="mTarget" type="number" step="any" /></label><label><span>${t('Единица')}</span><input name="mUnit" maxlength="12" /></label></div></details><button type="submit" class="btn">${t('Создать цель')}</button><p class="goal-form-status" role="status"></p></form>`;
+  return `<form id="add-goal" class="goal-form"><div class="goal-form-main"><label class="goal-field-wide"><span>${t('Название')}</span><input name="title" maxlength="160" autocomplete="off" required /></label><label><span>${t('Проект')}</span><select name="groupId">${goalGroupOptionsHTML(defaultGroupId)}</select></label><label class="goal-field-wide"><span>${t('Первый шаг')}</span><input name="firstStep" maxlength="160" placeholder="${esc(t('Конкретное действие, с которого начнёшь'))}" /></label></div><details class="goal-extra"><summary>${t('Дополнительные настройки')}</summary><div class="gx-grid"><label class="goal-field-wide"><span>${t('Описание')}</span><textarea name="description" maxlength="800"></textarea></label>${sphereFieldHTML(null, { backgroundName: 'backgroundSkillIds', label: 'Сферы', className: 'goal-sphere-field' })}<label><span>${t('Горизонт')}</span><select name="type">${typeOpts}</select></label><label><span>${t('Родительская цель')}</span><select name="parentId">${goalParentOptionsHTML(null)}</select></label><label><span>${t('Дедлайн')}</span><input name="targetDate" type="date" /></label><label><span>${t('Как измерять')}</span><select name="metricMode" aria-describedby="goal-metric-help"><option value="checklist">${t('Этапы — отмечать выполненное')}</option><option value="increase">${t('Достичь числа')}</option><option value="decrease">${t('Снизить число')}</option><option value="maintain">${t('Держать значение')}</option></select><small id="goal-metric-help">${t('Выбери число только если прогресс действительно измеряется числом.')}</small></label><label><span>${t('Текущее значение')}</span><input name="mStart" type="number" step="any" /></label><label><span>${t('Целевое значение')}</span><input name="mTarget" type="number" step="any" /></label><label><span>${t('Единица')}</span><input name="mUnit" maxlength="12" /></label></div></details><button type="submit" class="btn">${t('Создать цель')}</button><p class="goal-form-status" role="status"></p></form>`;
 }
 function goalInitiativeCardHTML(entry) {
   const { group, goal, total } = entry;
-  return `<article class="goals-initiative" data-group-id="${esc(group.id)}"><header class="goals-initiative-head"><button type="button" data-action="show-goal-group" data-id="${esc(group.id)}" aria-label="${esc(t('Открыть инициативу'))}: ${esc(group.title)}"><span data-noi18n>${esc(group.title)}</span><small>${total} ${t('активных целей')}</small></button></header>${goalItem(goal, 0, 'focus')}</article>`;
+  return `<article class="goals-initiative" data-group-id="${esc(group.id)}"><header class="goals-initiative-head"><button type="button" data-action="show-goal-group" data-id="${esc(group.id)}" aria-label="${esc(t('Открыть проект'))}: ${esc(group.title)}"><span data-noi18n>${esc(group.title)}</span><small>${total} ${t('активных целей')}</small></button></header>${goalItem(goal, 0, 'focus')}</article>`;
 }
 function goalGroupSectionHTML(group, goals, { archived = false, selectable = false } = {}) {
-  const emptyCopy = archived ? t('В этой инициативе нет архивированных целей.') : t('В этой инициативе пока нет активных целей.');
-  return `<section class="goals-group-section${group.status === 'paused' ? ' is-paused' : ''}" aria-labelledby="goal-group-${esc(group.id)}"><header class="goals-group-head"><div><h3 id="goal-group-${esc(group.id)}" tabindex="-1" data-noi18n>${esc(group.title)}</h3><p>${group.status === 'paused' ? t('На паузе') : archived ? t('В архиве') : `${goals.length} ${t('активных целей')}`}</p></div><button type="button" class="btn ghost sm" data-action="edit-goal-group" data-id="${esc(group.id)}" aria-label="${esc(t('Управлять инициативой'))}: ${esc(group.title)}">${t('Управление')}</button></header><div class="goals-group-list">${goals.length ? goals.map((goal) => goalItem(goal, 0, 'compact', { selectable })).join('') : `<p class="goals-empty-copy">${emptyCopy}</p>`}</div></section>`;
+  const emptyCopy = archived ? t('В этом проекте нет архивированных целей.') : t('В этом проекте пока нет активных целей.');
+  const open = State._goalGroupFilter === group.id || goals.length <= 3;
+  return `<details class="goals-group-section${group.status === 'paused' ? ' is-paused' : ''}" ${open ? 'open' : ''}><summary class="goals-group-head"><div><h3 id="goal-group-${esc(group.id)}" tabindex="-1" data-noi18n>${esc(group.title)}</h3><p>${group.status === 'paused' ? t('На паузе') : archived ? t('В архиве') : `${goals.length} ${t('активных целей')}`}</p></div><span class="goals-group-disclosure" aria-hidden="true"></span></summary><div class="goals-group-tools"><button type="button" class="btn ghost sm" data-action="edit-goal-group" data-id="${esc(group.id)}" aria-label="${esc(t('Управлять проектом'))}: ${esc(group.title)}">${t('Управление')}</button></div><div class="goals-group-list">${goals.length ? goals.map((goal) => goalItem(goal, 0, 'compact', { selectable })).join('') : `<p class="goals-empty-copy">${emptyCopy}</p>`}</div></details>`;
 }
 function goalsExactFilterHTML() {
   return `<label class="goals-exact-filter"><span>${t('Показать')}</span><select data-action="goal-filter-select" aria-label="${t('Фильтр целей')}"><option value="all" ${State.goalFilter === 'all' ? 'selected' : ''}>${t('Все активные цели')}</option>${GOAL_TYPES.map((type) => `<option value="${type.id}" ${State.goalFilter === type.id ? 'selected' : ''}>${t(type.label)}</option>`).join('')}</select></label>`;
@@ -17686,7 +17832,7 @@ function renderGoals() {
   const empty = !all.length;
   const focusSelected = State.goalView === 'focus', allSelected = State.goalView === 'all', secondarySelected = State.goalView === 'map' || State.goalView === 'archive';
   const tabs = `<nav class="goals-view-tabs" aria-label="${t('Цели')}"><button type="button" ${focusSelected ? 'aria-current="page"' : ''} class="goals-view-tab${focusSelected ? ' active' : ''}" data-action="set-goal-view" data-view="focus">${t('Сейчас')}</button><button type="button" ${allSelected ? 'aria-current="page"' : ''} class="goals-view-tab${allSelected ? ' active' : ''}" data-action="set-goal-view" data-view="all">${t('Все цели')}</button></nav>`;
-  const more = `<details class="goals-more-nav${secondarySelected ? ' is-current' : ''}"><summary ${secondarySelected ? 'aria-current="page"' : ''}>${t('Ещё')}</summary><div class="goals-more-menu"><button type="button" ${State.goalView === 'map' ? 'aria-current="page"' : ''} data-action="set-goal-view" data-view="map">${t('Карта целей')}</button><button type="button" ${State.goalView === 'archive' ? 'aria-current="page"' : ''} data-action="set-goal-view" data-view="archive">${t('Архив')} ${completed.length + archived.length ? `<span>${completed.length + archived.length}</span>` : ''}</button><button type="button" data-action="goals-toggle-bulk">${t('Выбрать несколько')}</button><button type="button" data-action="new-goal-group">${t('+ Инициатива')}</button><button type="button" data-action="ai-import-goals">${t('Разобрать с Тенью')}</button></div></details>`;
+  const more = `<details class="goals-more-nav${secondarySelected ? ' is-current' : ''}"><summary ${secondarySelected ? 'aria-current="page"' : ''}>${t('Ещё')}</summary><div class="goals-more-menu"><button type="button" ${State.goalView === 'map' ? 'aria-current="page"' : ''} data-action="set-goal-view" data-view="map">${t('Карта целей')}</button><button type="button" ${State.goalView === 'archive' ? 'aria-current="page"' : ''} data-action="set-goal-view" data-view="archive">${t('Архив')} ${completed.length + archived.length ? `<span>${completed.length + archived.length}</span>` : ''}</button><button type="button" data-action="goals-toggle-bulk">${t('Выбрать несколько')}</button><button type="button" data-action="new-goal-group">${t('+ Проект')}</button><button type="button" data-action="ai-import-goals">${t('Разобрать с Тенью')}</button></div></details>`;
   const defaultType = State.goalFilter !== 'all' ? State.goalFilter : 'short';
   const composer = State._goalsComposerOpen ? `<section class="card goals-composer" aria-labelledby="goals-composer-title"><div class="goals-composer-head"><h3 id="goals-composer-title">${t('Новая цель')}</h3><button type="button" class="btn ghost sm" data-action="goals-toggle-create" aria-label="${t('Закрыть создание')}">✕</button></div>${goalCreateFormHTML(defaultType, State._goalGroupFilter || '')}</section>` : '';
   let body = '';
@@ -17702,14 +17848,14 @@ function renderGoals() {
     const visibleGroups = groups.filter((group) => group.status !== 'archived' && (!selectedGroup || group.id === selectedGroup.id));
     const groupSections = visibleGroups.map((group) => goalGroupSectionHTML(group, wanted.filter((goal) => goal.groupId === group.id), { selectable: State._goalsBulkMode })).join('');
     const ungrouped = selectedGroup ? [] : wanted.filter((goal) => !goal.groupId);
-    body = `<section class="goals-all" aria-labelledby="goals-all-title"><header class="goals-all-head"><div><h3 id="goals-all-title">${selectedGroup ? `<span data-noi18n>${esc(selectedGroup.title)}</span>` : t('Все активные цели')}</h3><p>${t('Здесь можно разбирать структуру; на первом экране остаются только ближайшие действия.')}</p></div><div class="goals-all-tools">${goalsExactFilterHTML()}<button type="button" class="btn ghost" data-action="goals-toggle-bulk" aria-pressed="${State._goalsBulkMode ? 'true' : 'false'}">${t(State._goalsBulkMode ? 'Готово' : 'Выбрать несколько')}</button></div></header>${State._goalsBulkMode ? goalsBulkToolbarHTML() : ''}${selectedGroup ? `<button type="button" class="goals-clear-group" data-action="clear-goal-group">← ${t('Все инициативы')}</button>` : ''}${groupSections}${ungrouped.length ? `<section class="goals-group-section" aria-labelledby="goals-ungrouped-title"><header class="goals-group-head"><div><h3 id="goals-ungrouped-title">${t('Без инициативы')}</h3><p>${ungrouped.length} ${t('активных целей')}</p></div></header><div class="goals-group-list">${ungrouped.map((goal) => goalItem(goal, 0, 'compact', { selectable: State._goalsBulkMode })).join('')}</div></section>` : ''}${!groupSections && !ungrouped.length ? `<p class="goals-empty-copy">${t('По этому фильтру целей нет.')}</p>` : ''}</section>`;
+    body = `<section class="goals-all" aria-labelledby="goals-all-title"><header class="goals-all-head"><div><h3 id="goals-all-title">${selectedGroup ? `<span data-noi18n>${esc(selectedGroup.title)}</span>` : t('Все активные цели')}</h3><p>${t('Здесь можно разбирать структуру; на первом экране остаются только ближайшие действия.')}</p></div><div class="goals-all-tools">${goalsExactFilterHTML()}<button type="button" class="btn ghost" data-action="goals-toggle-bulk" aria-pressed="${State._goalsBulkMode ? 'true' : 'false'}">${t(State._goalsBulkMode ? 'Готово' : 'Выбрать несколько')}</button></div></header>${State._goalsBulkMode ? goalsBulkToolbarHTML() : ''}${selectedGroup ? `<button type="button" class="goals-clear-group" data-action="clear-goal-group">← ${t('Все проекты')}</button>` : ''}${groupSections}${ungrouped.length ? `<section class="goals-group-section goals-group-section-plain" aria-labelledby="goals-ungrouped-title"><header class="goals-group-head"><div><h3 id="goals-ungrouped-title">${t('Без проекта')}</h3><p>${ungrouped.length} ${t('активных целей')}</p></div></header><div class="goals-group-list">${ungrouped.map((goal) => goalItem(goal, 0, 'compact', { selectable: State._goalsBulkMode })).join('')}</div></section>` : ''}${!groupSections && !ungrouped.length ? `<p class="goals-empty-copy">${t('По этому фильтру целей нет.')}</p>` : ''}</section>`;
   } else {
     const model = window.GoalsInitiativesV1.focusModel({ goals: active, groups, today: todayStr(), nextAction: goalNextAction, maxInitiatives: 3, maxUngrouped: 3 });
     const useInitiatives = model.initiatives.length > 0;
     const focusRows = useInitiatives ? model.initiatives.map(goalInitiativeCardHTML).join('') : model.ungrouped.map((goal) => goalItem(goal, 0, 'focus')).join('');
     const shownIds = new Set(useInitiatives ? model.initiatives.map((entry) => entry.goal.id) : model.ungrouped.map((goal) => goal.id));
     const hidden = active.filter((goal) => window.GoalsInitiativesV1.focusEligible(goal) && !shownIds.has(goal.id)).length;
-    body = `<section class="goals-focus-board" aria-labelledby="goals-focus-title"><header class="goals-focus-head"><h3 id="goals-focus-title">${t('Что важно сейчас')}</h3><p>${useInitiatives ? t('До трёх активных инициатив. В каждой — одно ближайшее действие.') : t('До трёх ближайших целей. Миссия и видение остаются в Карте.')}</p></header><div class="goals-focus-list">${focusRows || `<div class="goals-focus-empty"><p>${t('Здесь появятся цели, которые можно двигать сейчас.')}</p><button type="button" class="btn ghost" data-action="ai-import-goals">${t('Найти следующий шаг с Тенью')}</button></div>`}</div>${hidden ? `<button type="button" class="goals-show-all" data-action="set-goal-view" data-view="all">${t('Показать остальные')} · ${hidden}</button>` : ''}</section>`;
+    body = `<section class="goals-focus-board" aria-labelledby="goals-focus-title"><header class="goals-focus-head"><h3 id="goals-focus-title">${t('Что важно сейчас')}</h3><p>${useInitiatives ? t('До трёх активных проектов. В каждом — одно ближайшее действие.') : t('До трёх ближайших целей. Миссия и видение остаются в Карте.')}</p></header><div class="goals-focus-list">${focusRows || `<div class="goals-focus-empty"><p>${t('Здесь появятся цели, которые можно двигать сейчас.')}</p><button type="button" class="btn ghost" data-action="ai-import-goals">${t('Найти следующий шаг с Тенью')}</button></div>`}</div>${hidden ? `<button type="button" class="goals-show-all" data-action="set-goal-view" data-view="all">${t('Показать остальные')} · ${hidden}</button>` : ''}</section>`;
   }
   const emptyState = `<section class="card goals-empty"><h3>${t('С чего начнём?')}</h3><p>${t('Создай одну конкретную цель или попроси Тень разложить замысел на ближайший шаг.')}</p><div><button type="button" class="btn" data-action="goals-toggle-create">${t('+ Первая цель')}</button><button type="button" class="btn ghost" data-action="ai-import-goals">${t('Разобрать с Тенью')}</button></div></section>`;
   return `<div class="goals-shell"><header class="goals-route-head"><div><p class="goals-kicker">${t('План')}</p><h2 id="goals-title" tabindex="-1">${t('Цели')}</h2></div>${empty ? '' : `<button type="button" class="btn" data-action="goals-toggle-create" aria-expanded="${State._goalsComposerOpen}" aria-controls="goals-composer-title">${State._goalsComposerOpen ? t('Закрыть создание') : t('+ Цель')}</button>`}</header><div class="goals-route-nav">${tabs}${more}</div>
@@ -22426,13 +22572,15 @@ async function onSubmit(e) {
     // Липкие слои: если такое дело раньше уже размечали фоном — подставляем молча, без вопроса.
     // Только когда основная сфера совпала с угаданной: иначе юзер сменил смысл дела руками, и
     // тащить к нему старый фон неправильно.
+    const chosenSkills = splitSkillFieldValue(f.skillIds?.value || f.skillId.value); if (!chosenSkills.length) chosenSkills.push(f.skillId.value);
+    const chosenLayers = splitSkillFieldValue(f.layers?.value).filter((id) => !chosenSkills.includes(id));
     const g = guessCategoryFromHistory(title);
-    let layers = (g && g.skillId === f.skillId.value) ? (g.layers || []) : [];
+    let layers = chosenLayers.length ? chosenLayers : (g && g.skillId === chosenSkills[0] ? (g.layers || []) : []);
     // История молчит (новый юзер или новое дело) → словарь частых активностей. Тоже только если
     // основная сфера сошлась — иначе юзер задал делу свой смысл, и наш фон к нему не относится.
-    if (!layers.length) { const d = guessFromDictionary(title); if (d && d.skillId === f.skillId.value) layers = d.layers; }
+    if (!layers.length) { const d = guessFromDictionary(title); if (d && d.skillId === chosenSkills[0]) layers = d.layers; }
     const startTime = f.startTime ? calendarTimeValue(f.startTime.value) : null;
-    const task = { id: uid(), title, skillId: f.skillId.value, skillIds: [f.skillId.value], layers, estimateMin: readDurInput(f, 'estimateMin'), difficulty: f.difficulty.value, date: tDate, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime, createdAt: new Date().toISOString() };
+    const task = { id: uid(), title, skillId: chosenSkills[0], skillIds: chosenSkills, layers: layers.slice(0, LAYER_MAX), estimateMin: readDurInput(f, 'estimateMin'), difficulty: f.difficulty.value, date: tDate, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime, createdAt: new Date().toISOString() };
     State.tasks.push(task);
     if (f.classList.contains('calendar-add-form')) {
       const status = f.querySelector('.calendar-add-status');
@@ -22491,7 +22639,10 @@ async function onSubmit(e) {
       const cur = (f.mStart && f.mStart.value !== '') ? Number(f.mStart.value) : 0;
       metric = { start: cur, current: cur, target: tgt, unit: (f.mUnit.value || '').trim().slice(0, 12), lowerBetter: metricMode === 'decrease', maintain: metricMode === 'maintain', everReached: false, log: [] };
     }
-    const goal = { id: 'g_' + uid(), title, description: '', skillId: f.skillId.value, type, xpReward: GOAL_XP[type], parentId: f.parentId.value || null, groupId: f.groupId.value || null, targetDate: f.targetDate.value || null, steps: [], metric, progressKind: metric ? 'metric' : 'checklist', status: 'active', window: '', createdAt: new Date().toISOString(), completedAt: null, archived: false };
+    const skillIds = splitSkillFieldValue(f.skillIds?.value || f.skillId.value); if (!skillIds.length && f.skillId.value) skillIds.push(f.skillId.value);
+    const backgroundSkillIds = splitSkillFieldValue(f.backgroundSkillIds?.value).filter((id) => !skillIds.includes(id)).slice(0, LAYER_MAX);
+    const firstStep = f.firstStep?.value.trim();
+    const goal = { id: 'g_' + uid(), title, description: (f.description?.value || '').trim().slice(0, 800), skillId: skillIds[0], skillIds, backgroundSkillIds, type, xpReward: GOAL_XP[type], parentId: f.parentId.value || null, groupId: f.groupId.value || null, targetDate: f.targetDate.value || null, steps: !metric && firstStep ? [{ id: 's_' + uid(), title: firstStep, done: false }] : [], metric, progressKind: metric ? 'metric' : 'checklist', status: 'active', window: '', createdAt: new Date().toISOString(), completedAt: null, archived: false };
     const nextGoals = [...structuredClone(State.goals), goal];
     if (goal.metric) refreshGoalCompletion(goal, { announce: false }); // success UI only after the server commit
     const status = f.querySelector('.goal-form-status'), controls = f.querySelectorAll('button,input,select');
@@ -22522,7 +22673,7 @@ async function onSubmit(e) {
   } else if (f.classList.contains('goal-task-form')) {
     e.preventDefault(); const goal = goalById(f.dataset.goal), title = f.title.value.trim(); if (!goal || !title || State._goalTxnBusy) return;
     State._goalsError = '';
-    const task = { id: uid(), title, skillId: goal.skillId, skillIds: [goal.skillId], layers: [], estimateMin: 30, difficulty: 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, goalId: goal.id, createdAt: new Date().toISOString() };
+    const task = { id: uid(), title, skillId: goal.skillId, skillIds: goalSkillIds(goal), layers: goalBackgroundSkillIds(goal), estimateMin: 30, difficulty: 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, goalId: goal.id, createdAt: new Date().toISOString() };
     const nextTasks = [...structuredClone(State.tasks), task]; State._goalTxnBusy = `task:${task.id}`;
     const saved = await goalDataCommit(State.goals, nextTasks); State._goalTxnBusy = '';
     if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = '#goal-detail-title'; render(); return; }
@@ -22533,7 +22684,9 @@ async function onSubmit(e) {
     const nextGoals = structuredClone(State.goals), goal = nextGoals.find((item) => item.id === original.id);
     goal.title = f.title.value.trim(); if (!goal.title) return;
     goal.description = f.description.value.trim().slice(0, 800); goal.parentId = f.parentId.value || null; goal.groupId = f.groupId.value || null;
-    goal.skillId = f.skillId.value; goal.type = f.type.value; goal.xpReward = GOAL_XP[goal.type]; goal.targetDate = f.targetDate.value || null; goal.status = f.status.value;
+    goal.skillIds = splitSkillFieldValue(f.skillIds?.value || f.skillId.value); if (!goal.skillIds.length && f.skillId.value) goal.skillIds = [f.skillId.value];
+    goal.skillId = goal.skillIds[0]; goal.backgroundSkillIds = splitSkillFieldValue(f.backgroundSkillIds?.value).filter((id) => !goal.skillIds.includes(id)).slice(0, LAYER_MAX);
+    goal.type = f.type.value; goal.xpReward = GOAL_XP[goal.type]; goal.targetDate = f.targetDate.value || null; goal.status = f.status.value;
     State._goalTxnBusy = `edit:${goal.id}`; const saved = await goalDataCommit(nextGoals, State.tasks); State._goalTxnBusy = '';
     if (!saved) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._goalsFocusAfterCommit = '#goal-detail-title'; render(); return; }
     State.goals = nextGoals; State._goalOpenId = goal.id; State._goalsFocusAfterCommit = '#goal-detail-title'; syncGoalDeepLink(goal.id); render();
@@ -23059,13 +23212,13 @@ function openGoalGroupDialog(id = '', opener = document.activeElement, mode = 'e
   const linked = group ? (State.goals || []).filter((goal) => goal.groupId === group.id && !goal.archived && !goal.completedAt).length : 0;
   const overlay = document.createElement('div'); overlay.id = 'goal-group-dialog'; overlay.className = 'modal-overlay goal-group-overlay'; overlay.dataset.action = 'goal-group-cancel'; overlay.dataset.groupId = group ? group.id : ''; overlay.dataset.mode = mode; overlay._returnFocus = opener;
   if (mode === 'archive' && group) {
-    overlay.innerHTML = `<section class="goal-group-box" role="dialog" aria-modal="true" aria-labelledby="goal-group-title" aria-describedby="goal-group-desc"><button type="button" class="modal-x" data-action="goal-group-cancel" aria-label="${t('Закрыть')}">✕</button><h2 id="goal-group-title" tabindex="-1">${t('Убрать инициативу из активных?')}</h2><p id="goal-group-desc">${t('Инициатива и связанные с ней активные цели перейдут в архив. Это можно вернуть.')} ${linked ? `${linked} ${t('активных целей')}.` : ''}</p><div class="goal-group-dialog-actions"><button type="button" class="btn ghost" data-action="goal-group-cancel">${t('Отмена')}</button><button type="button" class="btn" data-action="archive-goal-group-confirm" data-id="${esc(group.id)}">${t('В архив вместе с целями')}</button></div></section>`;
+    overlay.innerHTML = `<section class="goal-group-box" role="dialog" aria-modal="true" aria-labelledby="goal-group-title" aria-describedby="goal-group-desc"><button type="button" class="modal-x" data-action="goal-group-cancel" aria-label="${t('Закрыть')}">✕</button><h2 id="goal-group-title" tabindex="-1">${t('Убрать проект из активных?')}</h2><p id="goal-group-desc">${t('Проект и связанные с ним активные цели перейдут в архив. Это можно вернуть.')} ${linked ? `${linked} ${t('активных целей')}.` : ''}</p><div class="goal-group-dialog-actions"><button type="button" class="btn ghost" data-action="goal-group-cancel">${t('Отмена')}</button><button type="button" class="btn" data-action="archive-goal-group-confirm" data-id="${esc(group.id)}">${t('В архив вместе с целями')}</button></div></section>`;
   } else {
-    const title = group ? t('Инициатива') : t('Новая инициатива');
+    const title = group ? t('Проект') : t('Новый проект');
     const stateActions = !group ? '' : group.status === 'archived'
-      ? `<button type="button" class="btn ghost" data-action="restore-goal-group" data-id="${esc(group.id)}">${t('Вернуть инициативу и цели')}</button>`
+      ? `<button type="button" class="btn ghost" data-action="restore-goal-group" data-id="${esc(group.id)}">${t('Вернуть проект и цели')}</button>`
       : `<button type="button" class="btn ghost" data-action="toggle-goal-group" data-id="${esc(group.id)}">${group.status === 'paused' ? t('Возобновить') : t('Приостановить')}</button><button type="button" class="btn ghost danger" data-action="archive-goal-group" data-id="${esc(group.id)}">${t('В архив вместе с целями')}</button>`;
-    overlay.innerHTML = `<section class="goal-group-box" role="dialog" aria-modal="true" aria-labelledby="goal-group-title" aria-describedby="goal-group-desc"><button type="button" class="modal-x" data-action="goal-group-cancel" aria-label="${t('Закрыть')}">✕</button><h2 id="goal-group-title" tabindex="-1">${title}</h2><p id="goal-group-desc">${t('Инициатива объединяет цели одного реального проекта, не меняя их иерархию.')}</p><form class="goal-group-form" data-group="${group ? esc(group.id) : ''}"><label><span>${t('Название инициативы')}</span><input name="title" maxlength="80" value="${group ? esc(group.title) : ''}" required data-noi18n /></label><div class="goal-group-dialog-actions"><button type="button" class="btn ghost" data-action="goal-group-cancel">${t('Отмена')}</button><button type="submit" class="btn">${group ? t('Сохранить изменения') : t('Создать инициативу')}</button></div></form>${stateActions ? `<div class="goal-group-state-actions">${stateActions}</div>` : ''}</section>`;
+    overlay.innerHTML = `<section class="goal-group-box" role="dialog" aria-modal="true" aria-labelledby="goal-group-title" aria-describedby="goal-group-desc"><button type="button" class="modal-x" data-action="goal-group-cancel" aria-label="${t('Закрыть')}">✕</button><h2 id="goal-group-title" tabindex="-1">${title}</h2><p id="goal-group-desc">${t('Проект группирует связанные цели, не меняя их уровни и родительские связи.')}</p><form class="goal-group-form" data-group="${group ? esc(group.id) : ''}"><label><span>${t('Название проекта')}</span><input name="title" maxlength="80" value="${group ? esc(group.title) : ''}" required data-noi18n /></label><div class="goal-group-dialog-actions"><button type="button" class="btn ghost" data-action="goal-group-cancel">${t('Отмена')}</button><button type="submit" class="btn">${group ? t('Сохранить изменения') : t('Создать проект')}</button></div></form>${stateActions ? `<div class="goal-group-state-actions">${stateActions}</div>` : ''}</section>`;
   }
   overlay.addEventListener('keydown', handleGoalGroupDialogKeydown); document.getElementById('app')?.setAttribute('inert', ''); document.body.appendChild(overlay); lockGoalDetailScroll();
   const initialSelector = group || mode === 'archive' ? '#goal-group-title' : 'input[name="title"]';
@@ -23765,14 +23918,43 @@ async function onClick(e) {
     e.preventDefault();
     const field = el.closest('.sphere-field'); if (!field) return;
     const hidden = field.querySelector('input[name="skillId"]');
-    const label = field.querySelector('.sphere-trigger-value');
-    if (hidden) hidden.value = el.dataset.id;
-    if (label) label.textContent = el.dataset.label;
-    field.removeAttribute('open');
+    const mainInput = field.querySelector('input[name="skillIds"]');
+    if (mainInput) {
+      const state = sphereFieldState(field), sid = String(el.dataset.id || '');
+      if (state.main.includes(sid)) {
+        if (state.main.length <= 1) { toast(t('Нужна хотя бы одна основная сфера')); return; }
+        state.main.splice(state.main.indexOf(sid), 1);
+      } else state.main.push(sid);
+      mainInput.value = state.main.join(',');
+      const background = field.querySelector(`[name="${state.backgroundName}"]`); if (background) background.value = state.background.filter((id) => id !== sid).join(',');
+      refreshSphereField(field);
+    } else {
+      const label = field.querySelector('.sphere-trigger-value');
+      if (hidden) hidden.value = el.dataset.id;
+      if (label) label.textContent = el.dataset.label;
+      field.removeAttribute('open');
+    }
     // 'change' — тот же сигнал, что слал <select>: выключает авто-подстановку по
     // истории (catTouched), поведение при ручном выборе не меняется.
     hidden && hidden.dispatchEvent(new Event('change', { bubbles: true }));
     return;
+  }
+  if (action === 'sphere-background-pick') {
+    e.preventDefault(); const field = el.closest('.sphere-field'); if (!field) return;
+    const state = sphereFieldState(field), sid = String(el.dataset.id || '');
+    if (state.main.includes(sid)) { toast(t('Сначала убери сферу из основных')); return; }
+    const input = field.querySelector(`[name="${state.backgroundName}"]`); if (!input) return;
+    if (state.background.includes(sid)) state.background.splice(state.background.indexOf(sid), 1);
+    else {
+      if (state.background.length >= LAYER_MAX) { toast(`${t('Фонов не больше')} ${LAYER_MAX}`); return; }
+      state.background.push(sid);
+    }
+    input.value = state.background.join(','); refreshSphereField(field);
+    const hidden = field.querySelector('input[name="skillId"]'); hidden && hidden.dispatchEvent(new Event('change', { bubbles: true }));
+    return;
+  }
+  if (action === 'sphere-picker-done') {
+    e.preventDefault(); el.closest('.sphere-field')?.removeAttribute('open'); return;
   }
   if (action === 'claim-daily-reward' || action === 'close-daily-reward') { closeAccountDialog('loot-modal', { restoreFocus: false }); State._rewardsFocusAfterCommit = '.daily-reward-card .lb-chest, #daily-reward-title'; render(); return; }
   if (action === 'close-economy-confirm') { closeAccountDialog('economy-confirm-modal'); return; }
@@ -24381,6 +24563,18 @@ async function onClick(e) {
     const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((item) => item.id === goal.id), step = nextGoal.steps.find((item) => item.id === el.dataset.step); if (!step) return;
     const wasCompleted = !!nextGoal.completedAt; step.done = !step.done; refreshGoalCompletion(nextGoal, { announce: false });
     commitGoalMutation(`step:${step.id}`, nextGoals, structuredClone(State.tasks), `[data-action="toggle-step"][data-goal="${CSS.escape(goal.id)}"][data-step="${CSS.escape(step.id)}"]`, () => { State._goalOpenId = goal.id; if (!wasCompleted && nextGoal.completedAt) announceGoalCompletion(nextGoal); checkAchievements(); if (step.done) triggerAvatarReaction('happy', 'Шаг цели ✓'); }); return;
+  } else if (action === 'goal-toggle-complete') {
+    const goal = goalById(id); if (!goal || goal.archived || State._goalTxnBusy) return;
+    const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((item) => item.id === goal.id), wasCompleted = !!nextGoal.completedAt;
+    if (wasCompleted) { nextGoal.completedAt = null; nextGoal.manualComplete = false; if (goalProgressKind(nextGoal) === 'checklist' && nextGoal.steps.length && nextGoal.steps.every((step) => step.done)) nextGoal.steps[nextGoal.steps.length - 1].done = false; }
+    else { nextGoal.manualComplete = true; nextGoal.completedAt = new Date().toISOString(); }
+    const focus = State._goalOpenId === id ? `.goal-detail-complete[data-id="${CSS.escape(id)}"]` : (!wasCompleted ? '#goals-title' : `.goal-quick-complete[data-id="${CSS.escape(id)}"]`);
+    commitGoalMutation(`complete:${id}`, nextGoals, structuredClone(State.tasks), focus, () => {
+      if (State._goalOpenId) State._goalOpenId = id;
+      if (!wasCompleted) { announceGoalCompletion(nextGoal); triggerAvatarReaction('happy', 'Цель достигнута ✓'); }
+      else toast(t('Цель снова в работе'));
+      checkAchievements(); publishLeaderboard();
+    }); return;
   } else if (action === 'delete-step') {
     const goal = goalById(el.dataset.goal); if (!goal || State._goalTxnBusy) return;
     const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((item) => item.id === goal.id); nextGoal.steps = nextGoal.steps.filter((step) => step.id !== el.dataset.step); refreshGoalCompletion(nextGoal, { announce: false });
@@ -24446,13 +24640,13 @@ async function onClick(e) {
     const nextGroups = structuredClone(State.goalGroups), nextGroup = nextGroups.find((item) => item.id === id); nextGroup.status = 'archived';
     const nextGoals = structuredClone(State.goals); for (const goal of nextGoals) if (goal.groupId === id && !goal.archived && !goal.completedAt) { goal.archived = true; goal.archivedByGroup = id; }
     closeGoalGroupDialog({ restoreFocus: false }); State.goalView = 'all'; State._goalGroupFilter = '';
-    commitGoalMutation(`group-archive:${id}`, nextGoals, structuredClone(State.tasks), '#goals-all-title', () => toast(t('Инициатива и её цели в архиве')), nextGroups); return;
+    commitGoalMutation(`group-archive:${id}`, nextGoals, structuredClone(State.tasks), '#goals-all-title', () => toast(t('Проект и его цели в архиве')), nextGroups); return;
   } else if (action === 'restore-goal-group') {
     const group = goalGroupById(id); if (!group || group.status !== 'archived' || State._goalTxnBusy) return;
     const nextGroups = structuredClone(State.goalGroups), nextGroup = nextGroups.find((item) => item.id === id); nextGroup.status = 'active';
     const nextGoals = structuredClone(State.goals); for (const goal of nextGoals) if (goal.archivedByGroup === id) { goal.archived = false; delete goal.archivedByGroup; }
     closeGoalGroupDialog({ restoreFocus: false }); State.goalView = 'all'; State._goalGroupFilter = id;
-    commitGoalMutation(`group-restore:${id}`, nextGoals, structuredClone(State.tasks), `#goal-group-${CSS.escape(id)}`, () => toast(t('Инициатива возвращена')), nextGroups); return;
+    commitGoalMutation(`group-restore:${id}`, nextGoals, structuredClone(State.tasks), `#goal-group-${CSS.escape(id)}`, () => toast(t('Проект возвращён')), nextGroups); return;
   } else if (action === 'open-goal-detail') {
     openGoalDetailDialog(id, el); return;
   } else if (action === 'goal-detail-close') {
@@ -25665,7 +25859,10 @@ function onSettingsInput(e) {
     // ползунков эпизода ниже.
     const field = e.target.closest('.sphere-field'), results = field && field.querySelector('.sphere-panel-results');
     const hidden = field && field.querySelector('input[name="skillId"]');
-    if (results) results.innerHTML = sphereResultsHTML(e.target.value, hidden ? hidden.value : null);
+    if (results) {
+      const state = sphereFieldState(field);
+      results.innerHTML = field.classList.contains('sphere-field-multi') ? sphereMultiResultsHTML(e.target.value, state.main, state.background) : sphereResultsHTML(e.target.value, hidden ? hidden.value : null);
+    }
   }
   if (e.target.matches('.admin-user-search-input')) {
     const field = e.target.closest('.sphere-field'), results = field && field.querySelector('.sphere-panel-results');
@@ -25880,7 +26077,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v184';
+const PWA_CACHE_VERSION = 'satoru-v185';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
