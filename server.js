@@ -1062,23 +1062,45 @@ async function aiCompleteMessages(provider, keys, system, messages, maxTokens) {
     // случае — голосовой ввод («Эпизод») с ASR-мисхиром обсценной лексики.
     const blockReason = (r.json.promptFeedback && r.json.promptFeedback.blockReason) || (candidate && candidate.finishReason !== 'STOP' && candidate.finishReason !== 'MAX_TOKENS' ? candidate.finishReason : '');
     if (!joined && blockReason) return { ok: false, status: 200, detail: `blocked: ${blockReason}` };
-    const um = r.json.usageMetadata || {};
-    return { ok: true, text: joined, tokens: Number(um.totalTokenCount) || 0 };
+    const um = r.json.usageMetadata || {}, finishReason = String((candidate && candidate.finishReason) || '');
+    return { ok: true, text: joined, tokens: Number(um.totalTokenCount) || 0, finishReason, truncated: finishReason === 'MAX_TOKENS' };
   }
   if (P.shape === 'anthropic') {
     const r = await httpsPostJson(P.host, '/v1/messages', { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
       { model: P.model, max_tokens: max, system, messages: norm });
     if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
-    const us = r.json.usage || {};
-    return { ok: true, text: (r.json.content || []).filter((x) => x.type === 'text').map((x) => x.text).join('\n'), tokens: (Number(us.input_tokens) || 0) + (Number(us.output_tokens) || 0) };
+    const us = r.json.usage || {}, finishReason = String(r.json.stop_reason || '');
+    return { ok: true, text: (r.json.content || []).filter((x) => x.type === 'text').map((x) => x.text).join('\n'), tokens: (Number(us.input_tokens) || 0) + (Number(us.output_tokens) || 0), finishReason, truncated: finishReason === 'max_tokens' };
   }
   // openai-совместимый (openai, groq)
   const msgs = []; if (system) msgs.push({ role: 'system', content: system }); for (const m of norm) msgs.push(m);
   const r = await httpsPostJson(P.host, P.path, { 'Authorization': 'Bearer ' + key },
     { model: P.model, max_tokens: max, messages: msgs });
   if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
-  const us = r.json.usage || {};
-  return { ok: true, text: (r.json.choices && r.json.choices[0] && r.json.choices[0].message && r.json.choices[0].message.content) || '', tokens: Number(us.total_tokens) || ((Number(us.prompt_tokens) || 0) + (Number(us.completion_tokens) || 0)) };
+  const us = r.json.usage || {}, choice = r.json.choices && r.json.choices[0], finishReason = String((choice && choice.finish_reason) || '');
+  return { ok: true, text: (choice && choice.message && choice.message.content) || '', tokens: Number(us.total_tokens) || ((Number(us.prompt_tokens) || 0) + (Number(us.completion_tokens) || 0)), finishReason, truncated: finishReason === 'length' };
+}
+// Провайдер иногда помечает ответ STOP, хотя наружу пришёл явно оборванный Markdown.
+// Это не литературный анализ, а узкий fail-closed gate для следов, которые невозможно
+// принять за законченный ответ: незакрытый fence/emphasis или пустой пункт списка.
+function assistantReplyLooksIncomplete(text) {
+  const value = String(text || '').trim();
+  if (!value) return true;
+  if (((value.match(/```/g) || []).length % 2) !== 0) return true;
+  if (((value.match(/\*\*/g) || []).length % 2) !== 0) return true;
+  return /(?:^|\n)\s*(?:[-+*]|\d+[.)])\s*(?:\*\*|__)?\s*$/.test(value);
+}
+async function aiCompleteChatForUser(user, requestedProvider, system, messages) {
+  // 1500 было недостаточно для reasoning-моделей: их внутреннее размышление могло
+  // съесть бюджет, оставив человеку только начало ответа. Первый проход теперь имеет
+  // честный запас; повтор запускается только при явном provider/gate сигнале обрыва.
+  const first = await aiCallForUser(user, requestedProvider, system, messages, 4000);
+  if (!first.ok || (!first.truncated && !assistantReplyLooksIncomplete(first.text))) return first;
+  const recoverySystem = `${system}\n\nКОНТРОЛЬ ЦЕЛОСТНОСТИ ОТВЕТА: предыдущая попытка оборвалась. Напиши ответ ЗАНОВО ЦЕЛИКОМ, не продолжение и не комментарий к прошлой попытке. Сохрани конкретику, но уложись максимум в 700 слов. Заверши каждую мысль, список и Markdown. Если нужен ACTIONS-блок — ровно один блок только в самом конце.`;
+  const retry = await aiCallForUser(user, first.provider || requestedProvider, recoverySystem, messages, 4000);
+  if (!retry.ok) return retry;
+  if (retry.truncated || assistantReplyLooksIncomplete(retry.text)) return { ok: false, status: 502, detail: 'incomplete_response', incomplete: true, source: retry.source, provider: retry.provider };
+  return Object.assign({}, retry, { recoveredFromTruncation: true });
 }
 // Защищённый разбор JSON из ответа модели: срезаем ```fences``` и прозу вокруг { ... }
 function normalizeSmartQuotes(s) {
@@ -3478,7 +3500,8 @@ const server = http.createServer(async (req, res) => {
     while (messages.length && messages[0].role === 'assistant') messages.shift(); // история должна начинаться с user
     if (!messages.length) return sendJson(res, 400, { error: 'empty' });
     try {
-      const r = await aiCallForUser(user, provider, system, messages, 1500);
+      const r = await aiCompleteChatForUser(user, provider, system, messages);
+      if (r.incomplete) return sendJson(res, 502, { error: 'incomplete_response', retryable: true });
       if (aiErr(res, r)) return;
       return sendJson(res, 200, { text: r.text, source: r.source });
     } catch (e) { console.error('[ai]', scrubSecrets(e && e.message)); return sendJson(res, 502, { error: 'provider_unavailable' }); }

@@ -541,6 +541,7 @@ const I18N_EXTRA = {
   'Выбранные цели в архиве': { en: 'Selected goals archived', de: 'Ausgewählte Ziele archiviert', uk: 'Вибрані цілі в архіві', es: 'Metas seleccionadas archivadas' },
   'Выбранные цели на паузе': { en: 'Selected goals paused', de: 'Ausgewählte Ziele pausiert', uk: 'Вибрані цілі призупинено', es: 'Metas seleccionadas pausadas' },
   'Не удалось подготовить понятный ответ. Ничего не изменено — повтори запрос.': { en: 'I could not prepare a clear response. Nothing changed — please try again.', de: 'Ich konnte keine klare Antwort vorbereiten. Nichts wurde geändert — versuche es erneut.', uk: 'Не вдалося підготувати зрозумілу відповідь. Нічого не змінено — повтори запит.', es: 'No pude preparar una respuesta clara. Nada cambió; inténtalo de nuevo.' },
+  'Ответ дважды оборвался у ИИ-провайдера. Я не показываю обрывок как готовый совет — повтори запрос.': { en: 'The AI provider cut the reply off twice. I will not show a fragment as finished advice — please retry.', de: 'Der KI-Anbieter hat die Antwort zweimal abgebrochen. Ich zeige kein Fragment als fertigen Rat — bitte versuche es erneut.', uk: 'ШІ-провайдер двічі обірвав відповідь. Я не показую уривок як готову пораду — повтори запит.', es: 'El proveedor de IA cortó la respuesta dos veces. No mostraré un fragmento como consejo terminado; vuelve a intentarlo.' },
   // ── Attention R1: предрешение, честная граница и дешёвый возврат ──
   'Граница внимания': { en: 'Attention boundary', de: 'Aufmerksamkeitsgrenze', uk: 'Межа уваги', es: 'Límite de atención' },
   'Настроим одно правило': { en: 'Set up one rule', de: 'Richte eine Regel ein', uk: 'Налаштуймо одне правило', es: 'Configuremos una regla' },
@@ -14014,7 +14015,12 @@ async function sendChat(text) {
     const d = await r.json();
     State._chatBusy = false;
     if (d.error && aiHandleErr(d)) { State.chatLog.pop(); renderChatMessages(); return; }
-    if (!r.ok || !d.text) { State.chatLog.push({ role: 'assistant', content: `⚠️ Не удалось: ${d.detail || d.error || 'ошибка'}.` }); }
+    if (!r.ok || !d.text) {
+      const failure = d.error === 'incomplete_response'
+        ? t('Ответ дважды оборвался у ИИ-провайдера. Я не показываю обрывок как готовый совет — повтори запрос.')
+        : `⚠️ Не удалось: ${d.detail || d.error || 'ошибка'}.`;
+      State.chatLog.push({ role: 'assistant', content: failure });
+    }
     else {
       const { clean, actions, refused, extraBlocks, leaked } = parseChatActions(d.text);
       // Never fall back to the raw provider response: it may contain malformed
@@ -26077,7 +26083,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v185';
+const PWA_CACHE_VERSION = 'satoru-v186';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

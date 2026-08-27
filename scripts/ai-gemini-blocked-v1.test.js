@@ -86,7 +86,7 @@ test('обычный успешный ответ Gemini по-прежнему п
   assert.equal(r.tokens, 42);
 });
 
-test('MAX_TOKENS с частичным текстом — не блок, а урезанный успех', async () => {
+test('MAX_TOKENS с частичным текстом сохраняет текст, но явно помечает обрыв', async () => {
   const aiCompleteMessages = buildAiCompleteMessages(async () => ({
     status: 200,
     json: {
@@ -95,8 +95,28 @@ test('MAX_TOKENS с частичным текстом — не блок, а ур
     },
   }));
   const r = await aiCompleteMessages('gemini', KEYS, 'sys', [{ role: 'user', content: 'длинный рассказ' }], 2000);
-  assert.equal(r.ok, true, 'урезанный, но непустой текст не должен считаться блоком');
+  assert.equal(r.ok, true, 'provider adapter возвращает текст вызывающему для контролируемого восстановления');
   assert.equal(r.text, '{"proposals":[');
+  assert.equal(r.truncated, true);
+  assert.equal(r.finishReason, 'MAX_TOKENS');
+});
+
+test('Anthropic и OpenAI-совместимые ответы тоже отдают единый признак truncation', async () => {
+  let mode = 'anthropic';
+  const aiCompleteMessages = buildAiCompleteMessages(async () => mode === 'anthropic' ? ({
+    status: 200,
+    json: { stop_reason: 'max_tokens', content: [{ type: 'text', text: 'Оборвано' }], usage: { input_tokens: 10, output_tokens: 20 } },
+  }) : ({
+    status: 200,
+    json: { choices: [{ finish_reason: 'length', message: { content: 'Cut' } }], usage: { total_tokens: 30 } },
+  }));
+  const anthropic = await aiCompleteMessages('anthropic', { anthropic: 'test-key' }, 'sys', [{ role: 'user', content: 'x' }], 2000);
+  assert.equal(anthropic.truncated, true);
+  assert.equal(anthropic.finishReason, 'max_tokens');
+  mode = 'openai';
+  const openai = await aiCompleteMessages('openai', { openai: 'test-key' }, 'sys', [{ role: 'user', content: 'x' }], 2000);
+  assert.equal(openai.truncated, true);
+  assert.equal(openai.finishReason, 'length');
 });
 
 test('HTTP-ошибка провайдера (не 200) обрабатывается как раньше', async () => {

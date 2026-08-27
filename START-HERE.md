@@ -46,6 +46,7 @@
 | **COMPETITORS-2.md** | разбор Skillion/SelfQuest/Spirit City/Gizmo — «Логово»/комната, аватар/гир |
 | **DESIGN-DIRECTION.md** | визуальный north star, референсы, IA и зафиксированный мобильный контракт |
 | **ASSISTANT-V181.md** | контракт безопасных действий ассистента, голосового вызова и явного файлового контекста |
+| **ASSISTANT-RESPONSE-INTEGRITY-V186.md** | finish-reason, automatic full rewrite и fail-closed защита от оборванных ответов Тени |
 | **GOALS-BULK-V184.md** | массовое управление целями, bulk-команды Тени и защита чата от UTF-8/contract leakage |
 | **GOALS-ACTIONABLE-V185.md** | быстрая галочка достижения, actionable detail, проекты, multi/background spheres и AI-импорт шагов |
 | **APPLE-DEVELOPER-FUTURE-HANDOFF.md** | единая карта ограничений PWA/iOS и точный handoff после оплаты Apple Developer Program |
