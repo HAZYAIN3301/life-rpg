@@ -17,6 +17,7 @@ const BoardV2AccountService = require('./server-board-v2-service-v1.js');
 const BoardV2Community = require('./server-board-v2-community-v1.js');
 const BoardV2Offers = require('./public/board-v2-offers.js');
 const GoalsInitiativesV1 = require('./public/goals-initiatives-v1.js');
+const FounderPassV1 = require('./public/founder-pass-v1.js');
 const ServerUserRegistryV1 = require('./server-user-registry-v1.js');
 
 const ROOT = __dirname;
@@ -3069,6 +3070,99 @@ const server = http.createServer(async (req, res) => {
     try { fs.writeFileSync(file, JSON.stringify(data)); } catch {}
     return sendJson(res, 200, { ok: true });
   }
+  // ---- Founder Pass: замер готовности платить БЕЗ приёма денег ---------------
+  //
+  // Фаза 0 из MONETIZATION-VALIDATION-BRIEF. Здесь нет и не должно появиться
+  // ничего платёжного: ни провайдера, ни карт, ни счетов. Это опрос с настоящей
+  // ценой на экране, и записка разрешает его ровно при одном условии — что он
+  // честно назван опросом. Условие держится на клиенте (текст) и здесь (данные).
+  //
+  // Список общий, а не пользовательский, потому что вопрос «сколько мест занято»
+  // глобальный. Отсюда две вещи, которых нет у per-user сторов: свой ответ
+  // человек видит целиком, чужие — никогда, даже обезличенно.
+  if (u === '/api/founder-pass' && (req.method === 'GET' || req.method === 'POST')) {
+    const uid = sessionUserId(req);
+    if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const file = path.join(DATA_DIR, 'founderpass.json');
+
+    // Повреждённый файл отдаётся ошибкой, а не пустым списком: пустой означал бы
+    // «мест сто, никто не записался» и разрешил бы затереть настоящие ответы.
+    const readNow = () => {
+      if (!fs.existsSync(file)) return { value: FounderPassV1.emptyStore(), error: '' };
+      try {
+        const value = FounderPassV1.sanitizeStore(JSON.parse(fs.readFileSync(file, 'utf8')));
+        return value ? { value, error: '' } : { value: null, error: 'invalid' };
+      } catch { return { value: null, error: 'invalid' }; }
+    };
+    const mine = (store) => {
+      const own = FounderPassV1.entryFor(store, uid);
+      return own ? { answer: own.answer, at: own.at, priceCents: own.priceCents, currency: own.currency, note: own.note } : null;
+    };
+    const publicView = (store) => {
+      const s = FounderPassV1.summarize(store);
+      // Наружу уходит только остаток мест и свой ответ. Сколько людей сказали
+      // «дорого» — это внутренняя цифра замера, а не социальное давление на
+      // следующего человека.
+      return { offer: FounderPassV1.OFFER, capacity: s.capacity, left: s.left, full: s.full, mine: mine(store) };
+    };
+
+    if (req.method === 'GET') {
+      const stored = readNow();
+      if (stored.error) return sendJson(res, 422, { error: 'invalid_founder_pass' });
+      return sendJson(res, 200, publicView(stored.value));
+    }
+
+    let body = {}; try { body = JSON.parse(await readBody(req, 8 * 1024)); } catch {}
+    const stored = readNow();
+    if (stored.error) return sendJson(res, 422, { error: 'invalid_founder_pass' });
+    const store = stored.value;
+    const before = FounderPassV1.entryFor(store, uid);
+    const summary = FounderPassV1.summarize(store);
+    const wantsSlot = String(body.answer || '') === FounderPassV1.HOLDS_SLOT;
+    const heldSlot = !!before && before.answer === FounderPassV1.HOLDS_SLOT;
+    // Мест не больше, чем обещано. Тот, кто уже держит место, не отбирает его у
+    // себя же повторным нажатием.
+    if (wantsSlot && !heldSlot && summary.full) return sendJson(res, 409, { error: 'full' });
+
+    const next = FounderPassV1.upsert(store, {
+      userId: uid,
+      answer: body.answer,
+      note: body.note,
+      // Цену берём серверную, а не присланную: клиент сообщает ответ, а не прайс.
+      priceCents: FounderPassV1.OFFER.priceCents,
+      currency: FounderPassV1.OFFER.currency,
+      at: new Date().toISOString(),
+    });
+    if (!next) return sendJson(res, 400, { error: 'bad_answer' });
+    try {
+      backupFile(DATA_DIR, 'founderpass');
+      writeJsonAtomic(file, next);
+    } catch { return sendJson(res, 500, { error: 'save_failed' }); }
+    return sendJson(res, 200, publicView(next));
+  }
+
+  // Полные ответы — только админу: это операционный список для связи с людьми,
+  // а не публичная витрина. /api/admin/userdata сюда не годится, нужен свой срез.
+  if (u === '/api/admin/founder-pass' && req.method === 'GET') {
+    const me = loadUsers().find((x) => x.id === sessionUserId(req));
+    if (!me || !me.isAdmin) return sendJson(res, 403, { error: 'только админ' });
+    let store = FounderPassV1.emptyStore();
+    const file = path.join(DATA_DIR, 'founderpass.json');
+    if (fs.existsSync(file)) {
+      try {
+        const parsed = FounderPassV1.sanitizeStore(JSON.parse(fs.readFileSync(file, 'utf8')));
+        if (!parsed) return sendJson(res, 422, { error: 'invalid_founder_pass' });
+        store = parsed;
+      } catch { return sendJson(res, 422, { error: 'invalid_founder_pass' }); }
+    }
+    const users = loadUsers();
+    const named = store.entries.map((e) => {
+      const person = users.find((x) => x.id === e.userId);
+      return Object.assign({}, e, { name: person ? person.name : null, email: person ? person.email || null : null });
+    });
+    return sendJson(res, 200, Object.assign(FounderPassV1.summarize(store), { entries: named }));
+  }
+
   // ---- Полка возвращения (DISCIPLINE-ESCAPE-PLAN §13) ------------------------
   //
   // Та же форма, что у /api/attention, и по тем же причинам: ownership, границы,
