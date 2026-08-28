@@ -9,7 +9,8 @@
 - Для предметных транзакций сохранён fail-closed: Calendar ждёт конкретную незапланированную задачу, Rewards — доступную личную награду и organic gold, Tree — точный unlockable node, Jarvis — реальную AI readiness. Goals остаётся `deferred-questionnaire`, Tribe — закрыта до privacy/consent release. Остальные выпущенные главы доступны вручную без искусственных поведенческих порогов.
 - Browser QA на чистом локальном demo: после Skip First Journey доступны Habits, Notes, Shadow Voice, System Theme, Hero, Den, Pets, Skill Tree и Progress; System Theme реально стартует, открывает Settings → System и видит semantic target; Library overflow `0`. Первый тур по-прежнему единственная onboarding-граница.
 - Новый regression `scripts/guide-library-v195.test.js` запрещает возвращать `entryEligible()` в ручной каталог и отдельно закрепляет сохранение contextual pacing. Полный suite: **1125/1125 PASS**; syntax PASS. Offline shell и app lifecycle подняты до **`satoru-v195`**, общий shell pin — `20260829-guide-library-v195-1`. Art-деревья не менялись.
-- Полный отчёт и release checklist: `GUIDE-V3-V195-QA.md`.
+- Release опубликован кодовым коммитом **`ac0f86c`**. Railway deployment `6149872899` завершён `success`; production `index.html`, `app.js` и `sw.js` совпали с release candidate и отдают `20260829-guide-library-v195-1` / `satoru-v195`. Уже открытая production-вкладка показала update prompt, после `Refresh data` вернулась в готовое приложение без повторного prompt и без horizontal overflow.
+- Полный отчёт: `GUIDE-V3-V195-QA.md`.
 
 ## [2026-08-28] ◐ Guide v3 System Theme v194 + seeded E2E всего contextual pack
 

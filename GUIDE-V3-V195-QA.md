@@ -1,7 +1,7 @@
 # Guide Library v195 — QA и release report
 
 Дата: 2026-08-29  
-Статус: локальный release candidate; production v194 подтверждён, v195 ещё не опубликован.
+Статус: **production release**, кодовый commit `ac0f86c66812d5fe035c3be57bcc1d144709d110`.
 
 ## Причина исправления
 
@@ -50,11 +50,12 @@
 - `git diff --check`: обязателен перед commit.
 - `public/art/` и `art-factory/` не изменялись.
 
-## Production checklist
+## Production verification
 
-1. Commit только v195 runtime/tests/docs.
-2. Exact fast-forward push в `master` после проверки remote divergence.
-3. Дождаться Railway production deployment exact commit.
-4. Проверить `index.html`, `app.js`, `sw.js` и Guide scripts/copy; cache должен быть `satoru-v195`.
-5. В уже открытой вкладке принять update prompt и повторно открыть «Как играть».
-6. На реальном аккаунте с resolved First Journey убедиться, что Library больше не является стеной «Появится позже».
+- Exact fast-forward: `04a492a → ac0f86c`; remote `master` и code commit совпали.
+- Railway deployment `6149872899`: `success`.
+- Публичный `index.html`: pin `20260829-guide-library-v195-1`.
+- Публичные `app.js` и `sw.js`: `PWA_CACHE_VERSION/CACHE = satoru-v195`; в app присутствует новая ручная граница `firstJourneyResolved`.
+- Изменённые production-файлы `index.html`, `app.js`, `sw.js` сверены с локальными release assets.
+- Уже открытая production-вкладка получила `Refresh data`; после применения prompt исчез, приложение загрузилось, horizontal overflow `0`.
+- На аккаунте со старым shell пользователю достаточно принять «Обновить данные» либо полностью закрыть и заново открыть установленный PWA. Очистка данных не нужна.

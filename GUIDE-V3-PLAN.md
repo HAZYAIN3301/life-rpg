@@ -482,7 +482,7 @@ settings.guideV3 = {
 - [x] **Voice/Jarvis v193** — подтверждённый provider и реальный playback перед consent; exact current-request response перед completion;
 - [x] **Rewards v193** — organic-gold eligibility, exact personal reward, atomic `purchases + settings`, неизменённая economy confirmation.
 - [x] **System Theme v194** — manual-only Library chapter, реальный Settings target, awaitable account-owned write, `prefers-color-scheme` listener, rollback/no false-success и exact `system-theme-persisted` receipt. Production: `04a492a`, exact assets verified.
-- [x] **Library v195** — ручной каталог отделён от eligibility автоматических подсказок: готовые главы видимы после First Journey, но предметные действия остаются fail-closed без точной task/reward/node/AI readiness. Auto pacing не ослаблен.
+- [x] **Library v195** — ручной каталог отделён от eligibility автоматических подсказок: готовые главы видимы после First Journey, но предметные действия остаются fail-closed без точной task/reward/node/AI readiness. Auto pacing не ослаблен. Production code commit: `ac0f86c`; Railway verified.
 
 ### Commit E — level 3 chapters
 
