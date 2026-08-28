@@ -11,12 +11,14 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuidePresenterV1() {
   'use strict';
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
   const FIRST_CHAPTER = 'first-journey';
+  const HABITS_CHAPTER = 'habits';
   const FIRST_STEPS = Object.freeze([
     'welcome', 'recognize', 'choose', 'start', 'wait',
     'victory', 'mastery', 'bond', 'release',
   ]);
+  const HABITS_STEPS = Object.freeze(['intro', 'compose', 'complete']);
 
   const STEP_TITLES = Object.freeze({
     welcome: 'first.episode.meeting.title',
@@ -299,6 +301,78 @@
     });
   }
 
+  function habitsActions(copy, step, replay) {
+    if (replay) return [
+      action(copy, 'context-replay-finish', 'system.action.okay', 'guide:next', { presentationOnly: true }),
+      action(copy, 'speaker', 'system.action.speak', 'guide:speak', { presentationOnly: true }),
+      action(copy, 'skip-replay', 'system.action.close', 'guide:skip', { presentationOnly: true }),
+    ];
+    if (step === 'intro') return [
+      action(copy, 'context-open', 'system.action.show', 'guide:context-next'),
+      action(copy, 'later', 'system.action.not_now', 'guide:snooze', { adapterSuppliesUntil: true }),
+      action(copy, 'speaker', 'system.action.speak', 'guide:speak', { presentationOnly: true }),
+      action(copy, 'skip', 'system.action.skip_chapter', 'guide:skip'),
+    ];
+    if (step === 'compose') return secondaryActions(copy);
+    if (step === 'complete') return [
+      action(copy, 'context-finish', 'system.action.okay', 'guide:context-finish'),
+      action(copy, 'speaker', 'system.action.speak', 'guide:speak', { presentationOnly: true }),
+    ];
+    return [];
+  }
+
+  function habitsChapter(input) {
+    const src = input && typeof input === 'object' ? input : {};
+    const state = src.state && typeof src.state === 'object' ? src.state : {};
+    const id = chapterId(src.chapter, state);
+    if (id !== HABITS_CHAPTER) return null;
+    const copy = src.copy;
+    const replay = replaying(state, HABITS_CHAPTER);
+    const step = replay ? 'intro' : (HABITS_STEPS.includes(state.currentStep) ? state.currentStep : HABITS_STEPS[0]);
+    const meta = state.chapterMeta && state.chapterMeta[HABITS_CHAPTER] && typeof state.chapterMeta[HABITS_CHAPTER] === 'object'
+      ? state.chapterMeta[HABITS_CHAPTER] : {};
+    const transcriptKeys = replay
+      ? ['context.habits.prompt', 'context.habits.choose', 'context.habits.schedule', 'context.habits.two_minute', 'context.habits.complete']
+      : step === 'intro' ? ['context.habits.prompt']
+        : step === 'compose' ? ['context.habits.choose', 'context.habits.schedule', 'context.habits.two_minute']
+          : ['context.habits.complete'];
+    const index = replay ? 1 : HABITS_STEPS.indexOf(step) + 1;
+    const targetKey = replay || step === 'intro' ? 'habits-nav' : step === 'compose' ? 'habit-create' : 'habit-created';
+    return Object.freeze({
+      chapter: HABITS_CHAPTER,
+      step,
+      replay,
+      presentationOnly: replay,
+      hidden: false,
+      textOnlyArt: true,
+      chapterTitleKey: 'chapter.habits.title',
+      chapterTitle: text(copy, 'chapter.habits.title'),
+      titleKey: null,
+      title: null,
+      progress: text(copy, 'system.progress', { current: index, total: replay ? 1 : HABITS_STEPS.length }),
+      progressIndex: index,
+      progressTotal: replay ? 1 : HABITS_STEPS.length,
+      transcriptKey: transcriptKeys.join('+'),
+      transcript: transcriptKeys.map((key) => text(copy, key)).filter(Boolean).join('\n\n'),
+      teaserKey: null,
+      teaser: '',
+      targetKey,
+      targetSelector: staticSelector(targetKey),
+      fallback: 'safe-bubble',
+      actions: habitsActions(copy, step, replay),
+      choices: [],
+      formHint: null,
+      habitId: stringId(meta.itemId),
+    });
+  }
+
+  function present(input) {
+    const src = input && typeof input === 'object' ? input : {};
+    const id = chapterId(src.chapter, src.state);
+    if (id === HABITS_CHAPTER) return habitsChapter(src);
+    return firstJourney(src);
+  }
+
   function collectionHas(collection, id) {
     if (collection instanceof Set) return collection.has(id);
     if (Array.isArray(collection)) return collection.includes(id);
@@ -376,9 +450,12 @@
   return Object.freeze({
     VERSION,
     FIRST_CHAPTER,
+    HABITS_CHAPTER,
     FIRST_STEPS,
+    HABITS_STEPS,
     firstJourney,
-    present: firstJourney,
+    habitsChapter,
+    present,
     libraryCards,
   });
 });

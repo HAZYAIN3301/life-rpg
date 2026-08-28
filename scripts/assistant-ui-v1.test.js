@@ -18,7 +18,7 @@ test('published safe-action and wake modules load before app and live in the she
     assert.ok(index.indexOf(`src="${file}`) < index.indexOf('src="app.js'), `${file} must load before app`);
     assert.ok(sw.includes(`'${file}'`), `${file} missing from SW shell`);
   }
-  assert.match(sw, /const CACHE = 'satoru-v191'/);
+  assert.match(sw, /const CACHE = 'satoru-v192'/);
 });
 
 test('model output is parsed by the one published whitelist, not the legacy parser', () => {
@@ -33,7 +33,7 @@ test('executor revalidates owned target ids immediately before mutation', () => 
   assert.match(apply, /contract\.validate\(\{ kind: action\.kind, targetId: action\.targetId/);
   assert.match(apply, /assistantActionContext\(\)/);
   assert.match(apply, /goalDataCommit\(nextGoals, nextTasks\)/);
-  assert.match(apply, /habitDataCommit\(\{ habits: nextHabits \}\)/);
+  assert.match(apply, /habitDataCommit\(\{ habits: nextHabits \},\s*\(\) => \{ State\.habits = nextHabits; \}\)/);
   assert.match(apply, /await completeTask\(task, null\)/);
 });
 

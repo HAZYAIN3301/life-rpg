@@ -25,12 +25,12 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuideV3CopyUk() {
   'use strict';
 
-  const VERSION = '0.1.0';
+  const VERSION = '0.2.0';
   const LOCALE = 'uk';
   const STATUS = 'translated';
 
   const CONTEXTUAL_STATUS = Object.freeze({
-    habits: 'draft-ready',
+    habits: 'runtime-approved',
     goals: 'deferred-questionnaire',
     calendar: 'draft-ready',
     notes: 'draft-ready',

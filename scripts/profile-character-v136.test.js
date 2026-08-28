@@ -26,7 +26,8 @@ test('AI profile refresh does not claim success before profile persistence', () 
 });
 
 test('Body edits are transactional, failure-safe and focus-returned', () => {
-  assert.match(app, /if \(f\.id === 'body-form'\) \{[\s\S]{0,1500}const saved = await Store\.saveNow\('settings', next\);/);
+  assert.match(app, /if \(f\.id === 'body-form'\) \{[\s\S]{0,1800}const saved = await Store\.updateNow\('settings', \(current\)/);
+  assert.match(app, /State\.settings\.body = committed\.body/);
   assert.match(app, /if \(!saved\) \{[\s\S]{0,700}Изменения телосложения не сохранены\. Значения остались в форме — повтори попытку\./);
   assert.match(app, /State\._characterFocusAfterCommit = '#body-form button\[type="submit"\]';/);
   assert.match(app, /character-body-save-status" role="status" aria-live="polite"/);
@@ -37,7 +38,7 @@ test('Secondary Character panels keep a single disclosed panel and current offli
   assert.match(app, /State\._characterSecondaryOpen = id;/);
   assert.match(app, /character-secondary-panel > summary/);
   assert.match(css, /character-secondary-panel > summary \{ display: flex; min-height: 54px;/);
-  assert.match(sw, /const CACHE = 'satoru-v191'/);
+  assert.match(sw, /const CACHE = 'satoru-v192'/);
 });
 
 test('Profile and body failure copy has every supported locale', () => {

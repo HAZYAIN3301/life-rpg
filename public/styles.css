@@ -15329,10 +15329,12 @@ html.calendar-task-open body {
 .habit-create-form > label { display: grid; gap: var(--sp-1); min-width: 0; color: var(--muted); font: 700 var(--type-meta)/var(--leading-label) var(--font-ui); }
 .habit-create-form :is(input,select) { width: 100%; min-height: var(--touch-min); color: var(--text); font: 400 var(--type-control)/var(--leading-prose) var(--font-ui); }
 .habit-create-form fieldset { grid-column: 1 / -1; margin: 0; padding: 0; border: 0; }
+.habit-guide-candidate,
+.habit-two-minute { grid-column: 1 / -1; }
 .habit-create-form legend { margin-bottom: var(--sp-1); color: var(--muted); font: 700 var(--type-meta)/var(--leading-label) var(--font-ui); }
 .habit-day-picks { display: grid; grid-template-columns: repeat(7, minmax(var(--touch-min), 1fr)); gap: var(--sp-1); }
 .habit-day-picks label { position: relative; display: grid; min-height: var(--touch-min); place-items: center; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
-.habit-day-picks input { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); opacity: 0; }
+.habit-day-picks input { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); margin: 0; opacity: 0; }
 .habit-day-picks label:has(input:checked) { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
 .habit-day-picks label:has(input:focus-visible) { outline: var(--focus-ring); outline-offset: 2px; }
 .habit-form-status { grid-column: 1 / -1; min-height: 1.2em; margin: 0; color: var(--bad); font-size: var(--type-meta); }
@@ -15355,7 +15357,7 @@ html.calendar-task-open body {
 @media (max-width: 600px), (pointer: coarse) {
   .habits-shell { gap: var(--sp-2); }
   .habit-create-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .habit-create-form > label:first-child, .habit-create-form fieldset, .habit-create-form > button, .habit-form-status { grid-column: 1 / -1; }
+  .habit-create-form > .habit-guide-candidate, .habit-create-form > .habit-title-field, .habit-create-form > .habit-two-minute, .habit-create-form fieldset, .habit-create-form > button, .habit-form-status { grid-column: 1 / -1; }
   .habit-create-form :is(input,select) { font-size: max(16px, var(--type-control)); }
   .habit-day-picks { grid-template-columns: repeat(7, minmax(var(--touch-min), 1fr)); overflow-x: auto; }
   .anti-row2 { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
@@ -15363,6 +15365,13 @@ html.calendar-task-open body {
   .anti-row2 .btn { justify-self: stretch; white-space: normal; }
   #add-antihabit { grid-template-columns: minmax(0, 1fr); }
   #add-antihabit > * { grid-column: 1; }
+}
+
+@media (max-width: 380px) {
+  .habit-day-picks { gap: 2px; overflow-x: visible; }
+  .habit-day-picks label,
+  .habit-day-picks input { box-sizing: border-box; }
+  .habit-day-picks input { min-width: 0; padding: 0; border: 0; }
 }
 
 @media (max-width: 600px) {
@@ -16580,6 +16589,7 @@ html.calendar-task-open body {
   color: var(--text-strong);
   font-size: var(--type-body);
   line-height: var(--leading-prose);
+  white-space: pre-line;
   overflow-wrap: anywhere;
 }
 

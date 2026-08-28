@@ -18,10 +18,10 @@ test('Pets v130 gives the route a heading and semantic interactive companions', 
 });
 
 test('Pets rename is awaited and failure preserves the unsaved form state', () => {
-  assert.match(app, /const next = structuredClone\(State\.settings \|\| \{\}\);/);
-  assert.match(app, /const saved = await Store\.saveNow\('settings', next\);/);
+  assert.match(app, /pet-rename-form[\s\S]{0,700}const saved = await Store\.updateNow\('settings', \(current\)/);
+  assert.match(app, /State\.settings\.petNames = committed\.petNames/);
   assert.match(app, /if \(!saved\) \{[\s\S]{0,420}State\._petRenameError = 'Не удалось сохранить\. Ничего не изменено — повтори попытку\.'/);
-  assert.match(app, /State\.settings = next;/);
+  assert.doesNotMatch(app, /pet-rename-form[\s\S]{0,1200}State\.settings = next;/);
   assert.match(app, /State\._petsFocusAfterCommit/);
 });
 
@@ -36,5 +36,5 @@ test('Pets has localized labels and mobile/coarse operability', () => {
 });
 
 test('Pets ships with the v138 offline shell', () => {
-  assert.match(sw, /const CACHE = 'satoru-v191'/);
+  assert.match(sw, /const CACHE = 'satoru-v192'/);
 });

@@ -14,13 +14,13 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuideV3CopyRu() {
   'use strict';
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
   const LOCALE = 'ru';
   const STATUS = 'runtime-approved';
   const RUNTIME_APPROVED = true;
 
   const CONTEXTUAL_STATUS = Object.freeze({
-    habits: 'draft-ready',
+    habits: 'runtime-approved',
     goals: 'deferred-questionnaire',
     calendar: 'draft-ready',
     notes: 'draft-ready',

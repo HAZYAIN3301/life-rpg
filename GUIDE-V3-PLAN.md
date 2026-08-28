@@ -1,6 +1,6 @@
 # Satoru Guide v3 — «Тень ведёт»
 
-Статус на 2026-08-28: продуктовый и производственный план. First Journey, account-owned state, Guide Library, replay/Piper и пятиъязычный runtime RU/EN/DE/UK/ES реализованы; Commit C2 подключён в change-set v191 через exact-version manifest. Следующий продуктовый срез — contextual-глава Habits; Goals остаётся закрытой до questionnaire. Исторический первый RU-сценарий вынесен в `GUIDE-V3-FIRST-SCRIPT-RU.md`; guide-specific концепт Искры — в `art-factory/shadow-guide-v1-20260811/` и по-прежнему не является утверждённым production-art.
+Статус на 2026-08-28: First Journey, account-owned state, Guide Library, replay/Piper и пятиъязычный runtime RU/EN/DE/UK/ES выпущены до C2 v191. Первый contextual-срез **D1 Habits** собран и локально проверен в v192 как реальный `intro → compose → complete` loop; **1101/1101** тестов и browser-матрица `360/375/1280` проходят, production release/hash verification ещё не выполнялись. Остальные contextual-главы и level-3 pacing строятся по одной; Goals остаётся закрытой до questionnaire. Исторический RU-сценарий лежит в `GUIDE-V3-FIRST-SCRIPT-RU.md`; guide-specific концепт Искры по-прежнему не является утверждённым production-art.
 
 ## 0. Решение
 
@@ -163,8 +163,10 @@ Satoru не нужен один длинный «полный гайд». Ему
 
 ### После 2 completed tasks или на втором активном дне
 
-- **Habits:** повторяемость, маленькая версия, отсутствие долга;
-- если questionnaire содержит ритм — предложить одну подтверждаемую привычку, не создавать молча.
+- **Habits D1 v192:** `intro → compose → complete` учит только повторяемости, реалистичному schedule, 2-minute version и отсутствию долга;
+- до questionnaire interim-adapter предлагает недавнее реально выполненное дело; можно выбрать другой шаг, создать новую привычку или обновить существующую;
+- schedule и `atomic.twoMin` всегда подтверждаются человеком. Новая привычка получает stable ID, а habit + Guide state сохраняются одним atomic commit;
+- ошибка записи не двигает Guide, сохраняет черновик для Retry и не создаёт дубль; replay presentation-only и feature data не меняет.
 
 ### После первого возвращения и при наличии goal seed
 
@@ -470,8 +472,8 @@ settings.guideV3 = {
 
 ### Commit D — contextual chapters
 
-- Habits;
-- Goals/Plan;
+- [x] **D1 Habits — локально собран и проверен в v192:** real Habits Build, interim recent-task adapter / existing-habit update, явные schedule + twoMin, stable ID, atomic `habits + settings`, shared Store mutex/lazy settings snapshot, retry без дубля и presentation-only replay. Automated suite **1101/1101 PASS**; local browser QA PASS на `360×800` / `375×812` / `1280×900`, пяти языках и обеих темах. Production release/hash verification pending.
+- [ ] Goals/Plan — deferred-questionnaire;
 - Calendar;
 - Notes;
 - Voice/Jarvis;
@@ -499,9 +501,10 @@ settings.guideV3 = {
 5. полный export + QA;
 6. только затем guide-art runtime integration.
 
-## 15. Границы после C2 v191
+## 15. Границы после D1 Habits v192
 
-- contextual chapters D/E ещё не являются runtime: первым строится Habits, затем остальные по одному и с pacing; Goals не включать до questionnaire;
+- Habits D1 собран и прошёл local visual QA; перед production release остаются только разрешение на выпуск и production asset-hash verification;
+- остальные contextual chapters D/E ещё не являются runtime: строить по одной и с pacing; Goals не включать до questionnaire;
 - questionnaire UI;
 - 32 production frames;
 - автоматическое создание целей/привычек без подтверждения;

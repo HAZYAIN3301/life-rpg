@@ -9,6 +9,7 @@ const Copy = require('../public/guide-v3-copy-ru.js');
 const Guide = require('../public/guide-v3.js');
 
 const FIRST = Guide.FIRST_CHAPTER;
+const HABITS = Guide.HABITS_CHAPTER;
 
 function active(step, extra) {
   return {
@@ -32,6 +33,27 @@ function present(step, options) {
     chapter: FIRST,
     copy: Copy,
   });
+}
+
+function presentHabits(step, options) {
+  const opts = options || {};
+  const replay = opts.replay === true;
+  const itemId = opts.itemId == null ? null : String(opts.itemId);
+  const state = opts.state || {
+    version: 3,
+    currentChapter: HABITS,
+    currentStep: step,
+    selectedTaskId: null,
+    chapterMeta: {
+      [HABITS]: {
+        ...(itemId ? { itemId } : {}),
+        ...(replay ? { replay: true } : {}),
+      },
+    },
+    completedChapters: replay ? [HABITS] : [FIRST],
+    skippedChapters: [],
+  };
+  return Presenter.present({ state, chapter: HABITS, copy: opts.copy || Copy });
 }
 
 test('task branch recognizes the real candidate and returns only a semantic task target', () => {
@@ -183,6 +205,98 @@ test('replay is a presentation-only sequence with no task choices or persisted a
   assert.equal(wait.actions[0].automatic, true);
 });
 
+test('Habits presenter exposes the three authored live steps and semantic targets', () => {
+  const intro = presentHabits('intro');
+  assert.equal(intro.chapter, HABITS);
+  assert.equal(intro.step, 'intro');
+  assert.equal(intro.replay, false);
+  assert.equal(intro.progressIndex, 1);
+  assert.equal(intro.progressTotal, 3);
+  assert.equal(intro.transcriptKey, 'context.habits.prompt');
+  assert.equal(intro.transcript, Copy.get('context.habits.prompt'));
+  assert.equal(intro.targetKey, 'habits-nav');
+  assert.equal(intro.targetSelector, '[data-guide-target="habits-nav"]');
+  assert.equal(intro.actions[0].id, 'context-open');
+  assert.equal(intro.actions[0].event, 'guide:context-next');
+  assert.equal(intro.actions.some((action) => action.event === 'guide:snooze'), true);
+  assert.equal(intro.actions.some((action) => action.event === 'guide:skip'), true);
+
+  const compose = presentHabits('compose');
+  assert.equal(compose.progressIndex, 2);
+  assert.equal(compose.progressTotal, 3);
+  assert.equal(compose.transcriptKey, [
+    'context.habits.choose', 'context.habits.schedule', 'context.habits.two_minute',
+  ].join('+'));
+  assert.equal(compose.transcript, [
+    Copy.get('context.habits.choose'),
+    Copy.get('context.habits.schedule'),
+    Copy.get('context.habits.two_minute'),
+  ].join('\n\n'));
+  assert.equal(compose.targetKey, 'habit-create');
+  assert.equal(compose.targetSelector, '[data-guide-target="habit-create"]');
+  assert.equal(compose.actions.some((action) => action.persistedRequired), false,
+    'the real habit form, not a synthetic Guide action, owns persistence');
+
+  const complete = presentHabits('complete', { itemId: 'habit/id:exact' });
+  assert.equal(complete.progressIndex, 3);
+  assert.equal(complete.progressTotal, 3);
+  assert.equal(complete.transcriptKey, 'context.habits.complete');
+  assert.equal(complete.transcript, Copy.get('context.habits.complete'));
+  assert.equal(complete.targetKey, 'habit-created');
+  assert.equal(complete.targetSelector, '[data-guide-target="habit-created"]');
+  assert.equal(complete.habitId, 'habit/id:exact', 'the app adapter needs the exact persisted id for CSS.escape');
+  assert.equal(complete.actions[0].id, 'context-finish');
+  assert.equal(complete.actions[0].event, 'guide:context-finish');
+
+  for (const vm of [intro, compose, complete]) {
+    assert.equal(vm.hidden, false);
+    assert.equal(vm.presentationOnly, false);
+    assert.equal(vm.chapterTitle, Copy.get('chapter.habits.title'));
+    assert.equal(vm.fallback, 'safe-bubble');
+    assert.ok(vm.actions.some((action) => action.event === 'guide:speak'));
+  }
+});
+
+test('Habits replay is one presentation-only screen with no feature action or item target', () => {
+  const vm = presentHabits('complete', { replay: true, itemId: 'h-live' });
+  assert.equal(vm.chapter, HABITS);
+  assert.equal(vm.step, 'intro');
+  assert.equal(vm.replay, true);
+  assert.equal(vm.presentationOnly, true);
+  assert.equal(vm.progressIndex, 1);
+  assert.equal(vm.progressTotal, 1);
+  assert.equal(vm.targetKey, 'habits-nav');
+  assert.equal(vm.targetSelector, '[data-guide-target="habits-nav"]');
+  assert.equal(vm.transcript, [
+    'context.habits.prompt', 'context.habits.choose', 'context.habits.schedule',
+    'context.habits.two_minute', 'context.habits.complete',
+  ].map((key) => Copy.get(key)).join('\n\n'));
+  assert.ok(vm.actions.length >= 1);
+  assert.ok(vm.actions.every((action) => action.presentationOnly === true));
+  assert.ok(vm.actions.every((action) => ['guide:next', 'guide:speak', 'guide:skip'].includes(action.event)));
+  assert.equal(vm.actions.some((action) => action.persistedRequired), false);
+  assert.equal(vm.actions.some((action) => /context-(?:next|complete|finish)/.test(String(action.event))), false);
+});
+
+test('a disabled in-progress Habits chapter remains a resumable library chapter after enable', () => {
+  let state = Guide.migrate(null, { done: true });
+  state = Guide.reduce(state, { type: 'guide:start', chapter: HABITS, at: 10 }).state;
+  state = Guide.reduce(state, { type: 'guide:context-next', at: 11 }).state;
+  state = Guide.reduce(state, { type: 'guide:disable', at: 12 }).state;
+
+  let cards = Presenter.libraryCards(state, { availableChapters: [FIRST, HABITS] }, Guide.REGISTRY, Copy);
+  let card = cards.find((item) => item.id === HABITS);
+  assert.equal(card.status, 'current');
+  assert.equal(card.actionKey, 'system.action.resume');
+
+  state = Guide.reduce(state, { type: 'guide:enable', at: 13 }).state;
+  cards = Presenter.libraryCards(state, { availableChapters: [FIRST, HABITS] }, Guide.REGISTRY, Copy);
+  card = cards.find((item) => item.id === HABITS);
+  assert.equal(card.current, true);
+  assert.equal(card.replay, false);
+  assert.equal(card.actionLabel, Copy.get('system.action.resume'));
+});
+
 test('generic selectors are static data-guide-target selectors only', () => {
   for (const step of Presenter.FIRST_STEPS) {
     const vm = present(step, {
@@ -235,7 +349,7 @@ test('presenter tolerates missing input/copy without inventing fallback prose', 
 });
 
 test('UMD module is pure and available through CommonJS and a global', () => {
-  assert.equal(Presenter.VERSION, '1.0.0');
+  assert.equal(Presenter.VERSION, '1.1.0');
   const source = fs.readFileSync(path.join(__dirname, '..', 'public', 'guide-presenter-v1.js'), 'utf8');
   for (const forbidden of ['State.', 'document.', 'window.', 'Store.', 'fetch(', 'CSS.escape']) {
     assert.equal(source.includes(forbidden), false, `presenter leaked dependency: ${forbidden}`);
@@ -244,5 +358,5 @@ test('UMD module is pure and available through CommonJS and a global', () => {
   const sandbox = {};
   vm.createContext(sandbox);
   vm.runInContext(source, sandbox);
-  assert.equal(sandbox.GuidePresenterV1.VERSION, '1.0.0');
+  assert.equal(sandbox.GuidePresenterV1.VERSION, '1.1.0');
 });

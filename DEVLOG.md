@@ -2,6 +2,18 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-28] 🌱 Guide v3 D1 Habits v192 — первая contextual-глава
+
+- После завершённого First Journey и двух выполненных задач либо второго активного дня Guide предлагает не более одной contextual-главы за сессию. Habits проходит ровно `intro → compose → complete`; `Не сейчас`, skip и disable остаются разными состояниями и ничего не создают.
+- `compose` открывает настоящий Habits Build. Последняя выполненная задача служит interim-кандидатом; пользователь может заменить её своим текстом либо обновить существующую привычку и явно задать schedule и `twoMin`. Автосоздания нет.
+- До первой попытки записи закрепляется стабильный ID. Привычка и settings/Guide-state коммитятся атомарно; ошибка сохраняет черновик и ID, Retry не показывает false-success и не создаёт дубль. Глава завершается только после `habit-persisted`.
+- Account writes теперь проходят через общий per-slot mutex: lazy `settings` snapshot строится после предыдущего writer, а live-state применяется до освобождения слота. Это закрывает lost-update между Guide, обычными Settings и Habits; logout/session switch fence инвалидирует ожидающие записи.
+- Settings autosave сохраняет неизвестные поля привычки, включая `atomic.twoMin`, и не возрождает paused/archived записи. Переход в contextual Habits сначала ждёт сохранения видимой Settings-формы; `Не сейчас` и отключённый Guide не перехватывают обычную навигацию.
+- Replay остаётся presentation-only и не повторяет запись. Остальные contextual-главы не включены; Goals остаётся `deferred-questionnaire`.
+- Exact release contract: RU `1.1.0`, EN/DE/UK/ES `0.2.0`; offline shell — `satoru-v192`.
+- Автоматическая QA: **1101/1101 PASS**; focused Guide suite **68/68 PASS**, syntax и diff gates чисты. Local browser QA PASS на `360×800`, `375×812`, `1280×900`, RU/EN/DE/UK/ES, dark/light, semantic keyboard/focus routes, 42px controls, reduced-motion contract и network failure → Retry. Ошибка записи оставила тот же живой черновик/ID; успешный Retry обновил ровно одну привычку и вернул фокус на её точную карточку. На 360px устранено внутреннее переполнение weekly-grid: все семь 42px дней видны одновременно; document/form/grid overflow = `0`. Чистая новая вкладка: console warning/error = `0`.
+- Это локальный change-set; production-выпуск и production asset-hash verification D1 пока не заявляются.
+
 ## [2026-08-28] 🧭 Guide v3 C2 v191 — First Journey на пяти языках
 
 - RU `1.0.0/runtime-approved` остаётся единственным owner-approved источником; EN/DE/UK/ES выпускаются не по доверчивому `STATUS`, а через `GUIDE_V3_COPY_RELEASES`, который фиксирует точные `locale/globalName/version/status`. Отсутствующий, неверно подписанный или устаревший модуль fail-closed уходит в безопасный fallback.

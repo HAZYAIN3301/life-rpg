@@ -73,13 +73,18 @@ test('task writes are blocked at the lowest Store primitive', async () => {
   assert.match(putSource, /name === 'tasks' && !taskWriteAllowed\('_put', true\)/);
 
   let fetches = 0;
-  const makePut = Function('fetch', 'pwaWriteAllowed', 'taskWriteAllowed', 'accountDataWriteAllowed', 'accountDataPayloadAllowed', 'console', 'toast', `return (${putSource})`);
-  const blockedPut = makePut(async () => { fetches += 1; return { ok: true }; }, () => true, () => false, () => true, () => true, { error() {} }, () => {});
+  const makePut = Function('fetch', 'pwaWriteAllowed', 'taskWriteAllowed', 'accountDataWriteAllowed', 'accountDataPayloadAllowed', 'console', 'toast', 'State', `return (${putSource})`);
+  const blockedPut = makePut(async () => { fetches += 1; return { ok: true }; }, () => true, () => false, () => true, () => true, { error() {} }, () => {}, { me: null });
   assert.equal(await blockedPut('tasks', []), false);
   assert.equal(fetches, 0);
 
-  const allowedPut = makePut(async () => { fetches += 1; return { ok: true }; }, () => true, () => true, () => true, () => true, { error() {} }, () => {});
-  assert.equal(await allowedPut('tasks', []), true);
+  const allowedPut = makePut(async () => { fetches += 1; return { ok: true }; }, () => true, () => true, () => true, () => true, { error() {} }, () => {}, { me: null });
+  const storeContext = {
+    _writeEpoch: 0,
+    _liveSlot() { return ''; },
+    runExclusive(_names, operation) { return operation({ writeEpoch: 0, accountId: '' }); },
+  };
+  assert.equal(await allowedPut.call(storeContext, 'tasks', []), true);
   assert.equal(fetches, 1);
 });
 

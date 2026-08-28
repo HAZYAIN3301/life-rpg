@@ -7,10 +7,22 @@
 > и должен быть доступен в обычном приложении. RU остаётся owner-approved источником. C2 v191
 > отдельно выпустил его проверенные EN/DE/UK/ES-зеркала через exact-version manifest; одного
 > самодекларированного `STATUS:'translated'` для включения нового файла недостаточно.
-> Runtime gate: approved RU source + точное совпадение locale/global/version/status с
-> `GUIDE_V3_COPY_RELEASES`. `?guidePreview=1` доступен только на localhost либо администратору.
+> Habits D1 собран локально в v192: approved RU `1.1.0` и exact-manifest EN/DE/UK/ES
+> `0.2.0`; contextual-статус `habits` — `runtime-approved`. Автоматическая и локальная
+> browser-проверка v192 проходят; production release/hash verification ещё pending. Runtime gate: approved RU source + точное совпадение
+> locale/global/version/status с `GUIDE_V3_COPY_RELEASES`. `?guidePreview=1` доступен только
+> на localhost либо администратору.
 
-Источник истины для кода: `public/guide-v3-copy-ru.js`. Ниже находится точное зеркало всех 143 ключей версии `1.0.0`.
+Источник истины для кода: `public/guide-v3-copy-ru.js`. Ниже находится точное зеркало всех 143 ключей версии `1.1.0`.
+
+## Runtime-выпуск Habits D1 (2026-08-28)
+
+- Пять утверждённых RU-строк Habits сохранены без переписывания; три runtime-шага используют тот же locale-resolver и Piper, что First Journey.
+- Контракт эпизода: `intro → compose → complete`; настоящий Habits Build, последняя выполненная задача как interim-кандидат, ручная замена либо обновление существующей привычки, явные schedule и `twoMin`.
+- До первой записи закрепляется стабильный ID; привычка и settings/Guide-state коммитятся атомарно. Ошибка сохраняет черновик и ID, Retry не создаёт дубль, completion наступает только после `habit-persisted`.
+- Replay остаётся presentation-only и не повторяет запись.
+- Версии release manifest: RU `1.1.0`; EN/DE/UK/ES `0.2.0`. Service Worker: `satoru-v192`.
+- Автоматические тесты: **1101/1101 PASS**. Local browser QA: `360×800`, `375×812`, `1280×900`, RU/EN/DE/UK/ES, dark/light, focus, reduced-motion contract, offline/Retry — **PASS**; production-выпуск и asset-hash verification D1 этим документом не заявляются.
 
 ## Журнал правки тона (2026-08-24)
 
@@ -51,7 +63,7 @@
 
 ```json
 {
-  "habits": "draft-ready",
+  "habits": "runtime-approved",
   "goals": "deferred-questionnaire",
   "calendar": "draft-ready",
   "notes": "draft-ready",

@@ -22,6 +22,7 @@ const APP = read('public/app.js');
 const INDEX = read('public/index.html');
 const CSS = read('public/styles.css');
 const SW = read('public/sw.js');
+const SERVER = read('server.js');
 const GUIDE = readOptional('public/guide-v3.js');
 const SURFACE = readOptional('public/guide-surface-v1.js');
 const COPY_REVIEW = readOptional('GUIDE-V3-RU-COPY-REVIEW.md');
@@ -110,8 +111,8 @@ test('the approved RU review is an exact mirror of centralized runtime copy', ()
   assert.match(COPY_REVIEW, /RUNTIME_APPROVED` поднят намеренно/);
 });
 
-test('v191 offline shell pins all Guide runtime scripts and locale copies', () => {
-  sourceMatches(SW, /const CACHE = 'satoru-v191';/);
+test('v192 offline shell pins all Guide runtime scripts and locale copies', () => {
+  sourceMatches(SW, /const CACHE = 'satoru-v192';/);
   for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'guide-surface-v1.js']) {
     assert.ok(file, 'Guide runtime file must be discoverable before checking SHELL');
     assert.ok(SW.includes(`'${file}'`) || SW.includes(`"${file}"`), `${file} must be pinned in SHELL`);
@@ -149,6 +150,186 @@ test('First Journey uses stable semantic targets instead of layout selectors', (
   sourceMatches(APP, /CSS\.escape\([^)]*(?:task|selected)/, 'task-specific Guide selectors must escape their persisted id');
 });
 
+test('Habits chapter is data-triggered and points only at stable real UI targets', () => {
+  for (const target of [
+    'habits-nav', 'habit-create', 'habit-title', 'habit-schedule',
+    'habit-two-minute', 'habit-created',
+  ]) {
+    assert.ok(APP.includes(`data-guide-target="${target}"`), `missing stable Habits Guide target: ${target}`);
+  }
+
+  const context = between(APP, 'function guideV3Context(', '\nfunction guideV3AvailableChapters');
+  sourceMatches(context, /State\.tasks[\s\S]{0,180}filter\(\s*\(?task\)?\s*=>[\s\S]{0,80}task\.done/,
+    'Habits eligibility must use completed account tasks, not the current view');
+  sourceMatches(context, /new Set\([\s\S]{0,180}dayOf\(/,
+    'the second-active-day trigger must use local completion days');
+  sourceMatches(context, /completedTasks:\s*completed\.length[\s\S]{0,100}\bactiveDays\b/,
+    'both approved Habits triggers must reach the pure registry');
+
+  const maybeStart = between(APP, 'function guideV3MaybeStart()', '\nasync function guideV3Snooze');
+  sourceMatches(maybeStart, /nextContextual\(state,\s*guideV3Context\(\)\)/,
+    'automatic contextual selection must stay registry-driven');
+  sourceMatches(maybeStart, /guideV3ContextRuntimeAllowed\(entry\.chapter\)/,
+    'an unreleased contextual chapter must fail closed');
+  sourceMatches(maybeStart, /HABITS_CHAPTER[\s\S]{0,100}_habitsLoadError/,
+    'the Guide must not invite a write while Habits data is in recovery');
+
+  const open = between(APP, 'async function guideV3OpenHabitsChapter()', '\nasync function guideV3HandleAction');
+  sourceMatches(open, /guideV3HabitsStep\(['"]intro['"]\)/,
+    'only an enabled, unsnoozed authored intro may enter the real form');
+  sourceMatches(open, /guideV3Commit\([\s\S]{0,120}type:\s*['"]guide:context-next['"]/, 'the CTA must advance the pure three-step state machine');
+  sourceMatches(open, /discover:\s*['"]habits['"]/, 'route discovery and the context transition must share one queued settings snapshot');
+  sourceOmits(open, /markDiscovered\s*\(/,
+    'the contextual CTA cannot launch a competing fire-and-forget settings write');
+  sourceMatches(open, /State\.view\s*=\s*['"]habits['"][\s\S]{0,80}State\.habitsTab\s*=\s*['"]build['"]/,
+    'entry must reveal the existing Habits build surface');
+  const onClick = between(APP, 'async function onClick(e)', '\nasync function onWkDrop');
+  sourceMatches(onClick, /s\.id\s*===\s*['"]habits['"][\s\S]{0,500}await\s+guideV3OpenHabitsChapter\(\)/,
+    'clicking the spotlighted real navigation target must behave like the bubble CTA');
+  const habitsNavAt = onClick.indexOf("s.id === 'habits'");
+  const flushAt = onClick.indexOf('await flushSettingsForm()', habitsNavAt);
+  const openAt = onClick.indexOf('await guideV3OpenHabitsChapter()', habitsNavAt);
+  assert.ok(habitsNavAt >= 0 && flushAt > habitsNavAt && openAt > flushAt,
+    'pending Settings and Habits edits must flush before Guide navigation replaces the form');
+
+  const selector = between(APP, 'function guideV3TargetSelector', '\nfunction guideV3RevealTarget');
+  sourceMatches(selector, /vm\.step\s*===\s*['"]complete['"][\s\S]{0,100}vm\.habitId[\s\S]{0,180}CSS\.escape\(String\(vm\.habitId\)\)/,
+    'the receipt must target the exact persisted habit id safely');
+});
+
+test('Habits form and Guide completion share one rollback-safe account transaction', () => {
+  const submit = between(APP, "if (f.id === 'add-habit-v126')", "\n  if (f.id === 'ai-keys')");
+  sourceMatches(submit, /selectedId\s*!==\s*['"]new['"][\s\S]{0,160}source\.find\(/,
+    'the contextual form must update a selected real habit instead of always duplicating it');
+  sourceMatches(submit, /selectedId\s*=\s*guideCompose\s*\?[^:]+:\s*['"]new['"]/,
+    'a stale Guide-only selector must never address an existing habit after the chapter closes');
+  sourceMatches(submit, /data(?:set)?\.guideCompose|dataset\.guideCompose/,
+    'the submit path must recognize a stale Guide-rendered draft');
+  sourceMatches(submit, /State\.habits[\s\S]{0,140}\.some\([\s\S]{0,140}String\(item\.id\)\s*===\s*draftId/,
+    'a stale draft id that collides with a real habit must be replaced before create');
+  sourceOmits(submit, /toLocaleLowerCase|normalized\s*=/,
+    'explicit Create new must not silently deduplicate into an older habit by title');
+  sourceMatches(submit, /\.\.\.\(original\?\.atomic\s*\|\|\s*\{\}\)[\s\S]{0,80}\btwoMin\b/,
+    'updating the two-minute version must preserve identity/cue and other atomic fields');
+  const capture = between(APP, 'function captureSettingsForm()', '\n// Один сериализованный autosave');
+  sourceMatches(capture, /const old\s*=[^;]+\|\|\s*\{\}[\s\S]{0,400}\.\.\.old[\s\S]{0,900}archived:\s*!!old\.archived/,
+    'ordinary Settings autosave must preserve Guide atomic metadata and paused/archived state');
+  sourceMatches(submit, /original\?\.id[\s\S]{0,120}\bdraftId\b|\bdraftId\b[\s\S]{0,120}original\?\.id/,
+    'a failed retry must reuse one stable habit id');
+  sourceMatches(submit, /guideV3Exclusive\(persistHabit\)/,
+    'the feature transaction must hold the same queue as prompt, Skip, Later and voice writes');
+  const jobAt = submit.indexOf('const persistHabit');
+  const liveStepAt = submit.indexOf("guideV3HabitsStep('compose')", jobAt);
+  const freshStateAt = submit.indexOf('const guide = guideV3State()', liveStepAt);
+  const completeAt = submit.indexOf("type: 'guide:context-complete'", freshStateAt);
+  assert.ok(jobAt >= 0 && liveStepAt > jobAt && freshStateAt > liveStepAt && completeAt > freshStateAt,
+    'the exclusive job must re-read the live compose state before reducing completion');
+  sourceMatches(submit,
+    /GuideV3\?*\.reduce\([^;]*type:\s*['"]guide:context-complete['"][\s\S]{0,220}completion:\s*['"]habit-persisted['"][\s\S]{0,120}persisted:\s*true[\s\S]{0,120}itemId:\s*habit\.id/,
+    'the candidate Guide state must name the exact habit included in the same write');
+  sourceMatches(submit, /nextSettings\.guideV3\s*=\s*guideResult\.state/,
+    'the accepted reducer state must be placed in the candidate settings snapshot');
+  sourceMatches(submit, /\{\s*habits:\s*source,\s*settings:\s*nextSettings\s*\}/,
+    'Habits and Guide state must be one account-owned payload');
+  sourceMatches(submit, /await\s+habitDataCommit\(payload,\s*\(\)\s*=>/,
+    'the combined payload must use the rollback-safe Habits endpoint');
+  sourceMatches(submit, /habitDataCommit\(payload,[\s\S]{0,500}State\.settings\.guideV3\s*=\s*guideResult\.state[\s\S]{0,220}return\s+true/,
+    'the exact persisted Guide state must become live before the shared slot lock is released');
+  sourceOmits(submit, /guideV3Commit\s*\(/,
+    'a second settings write would allow the habit and Guide receipt to diverge');
+
+  const saveAt = submit.indexOf('await habitDataCommit(payload,');
+  const habitApplyAt = submit.indexOf('State.habits = source');
+  const settingsApplyAt = submit.indexOf('State.settings.guideV3 = guideResult.state');
+  const firstRenderAt = submit.indexOf('render()');
+  assert.ok(saveAt >= 0 && habitApplyAt > saveAt && settingsApplyAt > saveAt,
+    'client state must not claim success before the server confirms both files');
+  assert.ok(firstRenderAt > habitApplyAt && firstRenderAt > settingsApplyAt,
+    'render-before-save or render-on-failure would destroy the live retry draft');
+  sourceMatches(submit, /failLiveForm[\s\S]{0,260}disabled\s*=\s*false[\s\S]{0,260}focusPathChoiceTarget\(f\.title\)/,
+    'failure must keep the form mounted, re-enable it and return focus to the draft');
+  sourceMatches(submit, /if\s*\(\s*!saved\s*\)\s*return\s+failLiveForm\(\)/,
+    'an unconfirmed atomic response must take the live retry path');
+  sourceMatches(submit, /if\s*\(guideResult\.metric\)\s*track\(guideResult\.metric\)/,
+    'success telemetry must follow the combined write');
+
+  const serverCommit = between(SERVER, 'const HABIT_COMMIT_TYPES', '\nfunction goalRecordValid');
+  sourceMatches(serverCommit, /habits:\s*['"]array['"][\s\S]{0,100}settings:\s*['"]object['"]/,
+    'the endpoint must explicitly allow the two files in one transaction');
+  sourceMatches(serverCommit,
+    /snapshots[\s\S]{0,300}for\s*\(const name of names\)[\s\S]{0,360}catch[\s\S]{0,220}restoreSnapshot/,
+    'a partial disk write must restore every previously written file');
+});
+
+test('Guide and account writes are ordered, fenced and leave no stale Habits form', () => {
+  const exclusive = between(APP, 'let _guideV3WriteQueue', '\nlet _guideV3SurfaceKey');
+  sourceMatches(exclusive, /_guideV3WriteQueue\.then\(run,\s*run\)/,
+    'every Guide event must enter one ordered queue');
+  sourceMatches(exclusive, /accountId[\s\S]{0,180}_guideV3WriteEpoch/,
+    'queued Guide work must be fenced to its originating account and epoch');
+
+  const store = between(APP, 'const Store = {', '\n// Attention keeps one checked envelope');
+  sourceMatches(store, /_writes:\s*Object\.create\(null\)/,
+    'Store must retain one in-flight promise per account slot');
+  const mutexAt = store.indexOf('runExclusive(names, operation)');
+  const jobAt = store.indexOf('const job = previous.then', mutexAt);
+  const reserveAt = store.indexOf('this._writes[name] = tracked', jobAt);
+  assert.ok(mutexAt >= 0 && jobAt > mutexAt && reserveAt > jobAt,
+    'the shared mutex must reserve every affected account slot before awaiting');
+  const putAt = store.indexOf('async _put(name, obj');
+  const queuedAt = store.indexOf('return this.runExclusive([name]', putAt);
+  const liveValueAt = store.indexOf('State[liveSlot]', queuedAt);
+  const stringifyAt = store.indexOf('JSON.stringify(value)', liveValueAt);
+  assert.ok(putAt >= 0 && queuedAt > putAt && liveValueAt > queuedAt && stringifyAt > liveValueAt,
+    'a queued live-state PUT must take its snapshot after earlier atomic work finishes');
+  const habitCommit = between(APP, 'async function habitDataCommit(data, applyCommitted = null)', '\nasync function reloadHabitData');
+  sourceMatches(habitCommit, /Store\.runExclusive\(names,[\s\S]{0,420}\/api\/habits\/commit/,
+    'the Habits transaction must reserve habits and settings in the same shared mutex');
+
+  const skip = actionSection(APP, 'guide-skip');
+  sourceMatches(skip, /_guideV3HabitCandidateId\s*=\s*null[\s\S]{0,120}_guideV3HabitDraftId\s*=\s*['"]/,
+    'Skip must clear the Guide-only candidate and draft');
+  sourceMatches(skip, /guideV3Close\(\{\s*restoreFocus:\s*false\s*\}\)[\s\S]{0,160}habit-create\s*>\s*summary[\s\S]{0,80}render\(\)/,
+    'Skip from compose must remount an ordinary form and focus its interactive summary');
+
+  const disable = actionSection(APP, 'guide-disable');
+  sourceMatches(disable, /_guideV3HabitDraftId\s*=\s*['"][\s\S]{0,240}habit-create\s*>\s*summary[\s\S]{0,80}render\(\)/,
+    'global Disable from Habits must also remove stale Guide-only form semantics');
+
+  const snooze = between(APP, 'async function guideV3Snooze()', '\nasync function guideV3AbandonReplay');
+  sourceMatches(snooze, /guideV3HabitsStep\(['"]compose['"]\)[\s\S]{0,500}_guideV3HabitDraftId\s*=\s*['"][\s\S]{0,220}render\(\)/,
+    'Later from compose must remount the ordinary form instead of leaving an unexplained edit surface');
+  const habitsStep = between(APP, 'function guideV3HabitsStep(step)', '\nfunction guideV3HabitCandidates');
+  sourceMatches(habitsStep, /snoozedUntil[\s\S]{0,160}_guideV3ForceOpen[\s\S]{0,220}!snoozed/,
+    'a snoozed contextual chapter cannot own the form until explicit Resume');
+});
+
+test('Habits Guide route, focus and account reset do not leak across modal or profile boundaries', () => {
+  const paint = between(APP, 'function guideV3Paint()', '\nfunction guideV3MaybeStart');
+  sourceMatches(paint, /HABITS_CHAPTER[\s\S]{0,220}currentStep\s*===\s*['"]intro['"][\s\S]{0,220}State\.view\s*===\s*['"]habits['"]/,
+    'intro belongs to Today while compose/complete belong to the Habits route');
+  sourceMatches(paint, /\.modal-overlay, #mobile-nav-sheet/,
+    'the non-modal Guide must yield while a modal or mobile sheet owns interaction');
+  sourceMatches(paint, /focusInitial:[^\n]*HABITS_CHAPTER[^\n]*compose/,
+    'the bubble must not steal focus from the live contextual form');
+  sourceMatches(paint, /returnTarget\?\.matches\(['"]details['"]\)[\s\S]{0,100}querySelector\(['"]summary['"]\)/,
+    'closing a bubble must return keyboard focus to the interactive summary, never the details container');
+  sourceMatches(paint, /stepChanged[\s\S]{0,180}HABITS_CHAPTER[\s\S]{0,100}complete[\s\S]{0,220}guideV3RevealTarget/,
+    'the persisted receipt must be revealed after the asynchronous view commit');
+
+  const clear = between(APP, 'function clearAllData()', '\nfunction handleAccountSessionExpired');
+  for (const field of [
+    '_guideV3SessionPrompted', '_guideV3StartBusy', '_guideV3PromptMarkBusy',
+    '_guideV3ForceOpen', '_guideV3HabitCandidateId', '_guideV3HabitDraftId',
+  ]) {
+    assert.ok(clear.includes(field), `account reset must clear ${field}`);
+  }
+  sourceMatches(clear, /guideV3Close\(\{\s*restoreFocus:\s*false\s*\}\)/,
+    'logout/session expiry must remove the old account Guide surface without restoring stale focus');
+  sourceMatches(clear, /_guideV3WriteEpoch\s*\+=\s*1[\s\S]{0,80}_guideV3WriteQueue\s*=\s*Promise\.resolve\(\)/,
+    'account reset must invalidate queued Guide writes from the old session');
+});
+
 test('welcome stays safe while release spotlights the responsive How to play route', () => {
   const selectors = between(APP, 'function guideV3TargetSelector', '\nfunction guideV3RevealTarget');
   sourceMatches(selectors, /vm\.step\s*===\s*['"]release['"][\s\S]{0,120}guide-library/,
@@ -163,21 +344,42 @@ test('welcome stays safe while release spotlights the responsive How to play rou
     'the localized a11y spotlight label must describe the actual responsive target');
 });
 
-test('persisted completion and bond success effects happen only after saveNow succeeds', () => {
+test('persisted completion and bond success effects happen only after their durable write succeeds', () => {
   sourceMatches(APP,
     /(?:const|let)\s+saved\s*=\s*await\s+Store\.saveNow\(['"]tasks['"][\s\S]{0,900}if\s*\(\s*!saved\s*\)[\s\S]{0,900}type:\s*['"]task:completed['"][\s\S]{0,220}persisted:\s*true/,
     'task:completed(persisted:true) must follow an awaited successful task save');
   const commit = between(APP, 'async function guideV3Commit', '\nlet _guideV3SurfaceKey');
-  sourceMatches(commit, /GuideV3\.reduce\([^)]*event[^)]*\)[\s\S]{0,500}await\s+Store\.saveNow\(['"]settings['"]/,
-    'Guide reducer result and its event must be persisted in one settings transaction');
-  sourceMatches(commit, /if\s*\(\s*!saved\s*\)[\s\S]{0,260}State\.settings\.guideV3\s*=\s*prior/,
-    'failed Guide state writes must roll back');
+  sourceMatches(commit, /Store\.updateNow\(['"]settings['"],\s*\(current\)\s*=>[\s\S]{0,320}GuideV3\.reduce\(current\.guideV3,\s*event\)/,
+    'Guide reducer must derive its persisted result from the latest settings snapshot inside the settings mutex');
+  sourceMatches(commit, /Store\.updateNow\(['"]settings['"][\s\S]{0,700}\(\)\s*=>\s*\{[\s\S]{0,260}State\.settings\.guideV3\s*=\s*result\.state/,
+    'Guide progress must enter live state before the shared settings mutex is released');
+  const store = between(APP, 'const Store = {', '\n// Attention keeps one checked envelope');
+  sourceMatches(store, /async updateNow\(name, buildValue, applyCommitted = null\)[\s\S]{0,220}this\._put\(name, buildValue, false, applyCommitted\)/,
+    'lazy account updates must enter the same tracked Store slot');
+  sourceMatches(store, /const lazy\s*=\s*typeof obj\s*===\s*['"]function['"][\s\S]{0,900}value\s*=\s*lazy\s*\?\s*await obj\(/,
+    'the lazy builder must read live state only after its prior slot writer finishes');
+  const callbackAt = store.indexOf('await applyCommitted(value)');
+  const successAt = store.indexOf('return true;', callbackAt);
+  assert.ok(callbackAt >= 0 && successAt > callbackAt,
+    'Store must run a successful write callback before releasing its tracked slot');
+  const saveAt = commit.indexOf("await Store.updateNow('settings'");
+  const reduceAt = commit.indexOf('GuideV3.reduce(current.guideV3, event)', saveAt);
+  const applyAt = commit.indexOf('State.settings.guideV3 = result.state');
+  assert.ok(saveAt >= 0 && reduceAt > saveAt && applyAt > reduceAt,
+    'Guide state must be built and applied within its queued durable settings update');
+  sourceMatches(commit, /if\s*\(\s*!saved\s*\|\|\s*epoch\s*!==\s*_guideV3WriteEpoch[\s\S]{0,260}return\s+false/,
+    'a queued write from an expired or switched account must fail closed');
   const contact = between(APP, 'async function guideV3CompleteShadowContact()', '\nasync function guideV3StartFocus');
   sourceMatches(contact,
-    /\.reduce\([^;]*type:\s*['"]guide:bond['"][\s\S]{0,180}persisted:\s*true[\s\S]{0,500}State\.settings\.guideV3\s*=\s*[^;]+[\s\S]{0,220}await\s+Store\.saveNow\(['"]settings['"]/,
-    'Shadow contact must reduce bond progress and persist it with the companion settings mutation');
-  sourceMatches(contact,
-    /await\s+Store\.saveNow\(['"]settings['"][\s\S]{0,500}if\s*\([^)]*(?:result\.)?metric[^)]*\)\s*track\(/,
+    /Store\.updateNow\(['"]settings['"][\s\S]{0,700}\.reduce\(current\.guideV3,\s*\{\s*type:\s*['"]guide:bond['"][^}]*persisted:\s*true/,
+    'Shadow contact must reduce bond progress from the live settings snapshot');
+  sourceMatches(contact, /next\.companion\s*=\s*companion;\s*next\.guideV3\s*=\s*result\.state/,
+    'companion and Guide progress must share the same persisted settings value');
+  sourceMatches(contact, /State\.settings\.guideV3\s*=\s*result\.state;[\s\S]{0,100}State\.settings\.companion\s*=\s*committed\.companion/,
+    'both committed records must enter live state in the pre-release callback');
+  const bondSaveAt = contact.indexOf("await Store.updateNow('settings'");
+  const bondMetricAt = contact.indexOf('if (result.metric) track(result.metric)', bondSaveAt);
+  assert.ok(bondSaveAt >= 0 && bondMetricAt > bondSaveAt,
     'bond telemetry and other success effects must follow the successful settings write');
 });
 
@@ -185,24 +387,23 @@ test('live Shadow contact persists one real bond mutation atomically and replay 
   const contact = between(APP, 'async function guideV3CompleteShadowContact()', '\nasync function guideV3StartFocus');
   sourceMatches(contact, /State\.settings\.guideV3[\s\S]{0,240}State\.settings\.companion/,
     'Shadow contact must snapshot only the Guide and companion records it can change');
-  sourceMatches(contact, /ensureCompanion\(\)[\s\S]{0,500}\.bond\s*=\s*[^;]+\+\s*1/,
+  sourceMatches(contact, /companion\.bond\s*=\s*Math\.max\([^;]+\)\s*\+\s*1/,
     'the first live Shadow contact must add exactly one bond point');
   sourceMatches(contact, /\.pet\s*=\s*(?:todayStr\(\)|[^;]*today)/,
     'the live contact must persist the companion pet/contact day');
   sourceMatches(contact, /\.lastSeen\s*=\s*(?:todayStr\(\)|[^;]*today)/,
     'the live contact must persist companion lastSeen');
-  assert.equal((contact.match(/await\s+Store\.saveNow\(['"]settings['"]/g) || []).length, 1,
+  assert.equal((contact.match(/await\s+Store\.updateNow\(['"]settings['"]/g) || []).length, 1,
     'companion contact and Guide progress must share exactly one awaited settings write');
-  sourceMatches(contact,
-    /if\s*\(\s*!saved\s*\)[\s\S]{0,420}State\.settings\.guideV3\s*=[\s\S]{0,260}(?:State\.settings\.companion\s*=|delete\s+State\.settings\.companion)/,
-    'a failed contact write must restore both targeted records, including a previously absent companion');
+  sourceOmits(contact, /priorGuide|priorCompanion|ensureCompanion\(\)/,
+    'a failed contact write must need no rollback because live records stay untouched until commit');
   sourceOmits(contact, /guideV3Commit\s*\(/,
     'the atomic contact helper must not split its state across a second Guide transaction');
 
   const bond = actionSection(APP, 'guide-shadow-contact');
   sourceMatches(bond, /await\s+guideV3CompleteShadowContact\s*\(\s*\)/,
     'the live contact handler must await the atomic helper');
-  sourceOmits(bond, /ensureCompanion|\.bond\s*=|\.pet\s*=|\.lastSeen\s*=|Store\.saveNow/,
+  sourceOmits(bond, /ensureCompanion|\.bond\s*=|\.pet\s*=|\.lastSeen\s*=|Store\.(?:saveNow|updateNow)/,
     'the handler cannot perform a second relationship mutation or persistence write');
 
   const replay = actionSection(APP, 'guide-replay');
@@ -215,9 +416,10 @@ test('finishing the selected task can bypass the optional timer without bypassin
   assert.match(completion, /\['start', 'wait'\]\.includes\(guide\.currentStep\)/);
   assert.match(completion, /if \(guide\.currentStep === 'start'\) await reconcileGuideV3AfterTaskLoad\(\)/);
   const reconcile = between(APP, 'async function reconcileGuideV3AfterTaskLoad()', '\nfunction guideV3Copy');
-  assert.match(reconcile, /const prior = State\.settings\.guideV3/);
-  assert.match(reconcile, /await Store\.saveNow\('settings', State\.settings\)/);
-  assert.match(reconcile, /if \(!saved\) State\.settings\.guideV3 = prior/);
+  assert.match(reconcile, /await Store\.updateNow\('settings', \(current\)/);
+  assert.match(reconcile, /GuideV3\.reconcile\(current\.guideV3/);
+  assert.match(reconcile, /State\.settings\.guideV3 = result\.state/);
+  assert.doesNotMatch(reconcile, /prior\s*=|State\.settings\.guideV3\s*=\s*result\.state[\s\S]*await Store/);
 });
 
 test('every Guide bubble keeps a transcript and explicit Piper controls', () => {
@@ -275,22 +477,37 @@ test('Escape abandons replay but snoozes a live chapter', () => {
     'the replay abandonment helper must never enter the live snooze path');
 });
 
-test('C2 explicitly releases exact Guide copy versions for RU/EN/DE/UK/ES and fails closed', () => {
+test('Habits v192 explicitly releases exact Guide copy and chapter versions for RU/EN/DE/UK/ES', () => {
   assert.equal(COPY_RU.RUNTIME_APPROVED, true,
     'the owner-approved RU Guide must be available in normal runtime');
   assert.equal(COPY_RU.STATUS, 'runtime-approved');
   const runtimeAllowed = between(APP, 'const GUIDE_V3_COPY_RELEASES', '\nfunction feedbackPanelHTML');
   for (const [locale, globalName, version, status] of [
-    ['ru', 'GuideV3CopyRu', '1.0.0', 'runtime-approved'],
-    ['en', 'GuideV3CopyEn', '0.1.0', 'translated'],
-    ['de', 'GuideV3CopyDe', '0.1.0', 'translated'],
-    ['uk', 'GuideV3CopyUk', '0.1.0', 'translated'],
-    ['es', 'GuideV3CopyEs', '0.1.0', 'translated'],
+    ['ru', 'GuideV3CopyRu', '1.1.0', 'runtime-approved'],
+    ['en', 'GuideV3CopyEn', '0.2.0', 'translated'],
+    ['de', 'GuideV3CopyDe', '0.2.0', 'translated'],
+    ['uk', 'GuideV3CopyUk', '0.2.0', 'translated'],
+    ['es', 'GuideV3CopyEs', '0.2.0', 'translated'],
   ]) {
     const exactVersion = version.replace(/\./g, '\\.');
     sourceMatches(runtimeAllowed, new RegExp(`${locale}:[\\s\\S]{0,160}${globalName}[\\s\\S]{0,100}${exactVersion}[\\s\\S]{0,100}${status}[\\s\\S]{0,80}released:\\s*true`),
-      `${locale} needs an explicit exact-version C2 release entry`);
+      `${locale} needs an explicit exact-version Habits release entry`);
+    const mod = require(path.join(ROOT, 'public', `guide-v3-copy-${locale}.js`));
+    assert.equal(mod.VERSION, version, `${locale} module and app manifest must be the same release`);
+    assert.equal(mod.STATUS, status);
+    assert.equal(mod.CONTEXTUAL_STATUS.habits, 'runtime-approved',
+      `${locale} cannot enter Habits until that chapter is explicitly approved`);
   }
+  sourceMatches(runtimeAllowed,
+    /GUIDE_V3_CONTEXT_RELEASES[\s\S]{0,180}habits:[\s\S]{0,180}registryVersion:\s*2[\s\S]{0,120}completion:\s*['"]habit-persisted['"][\s\S]{0,180}released:\s*true/,
+    'the chapter contract must pin registry v2 and its exact real completion event');
+  for (const [locale, version] of [['ru', '1.1.0'], ['en', '0.2.0'], ['de', '0.2.0'], ['uk', '0.2.0'], ['es', '0.2.0']]) {
+    sourceMatches(runtimeAllowed, new RegExp(`locales:[\\s\\S]{0,220}${locale}:\\s*['"]${version.replace(/\./g, '\\.')}['"]`),
+      `Habits context release must pin ${locale} ${version}`);
+  }
+  sourceMatches(runtimeAllowed,
+    /entry\.version\s*===\s*release\.registryVersion[\s\S]{0,120}entry\.completion\s*===\s*release\.completion[\s\S]{0,180}CONTEXTUAL_STATUS\?\.\[chapter\]\s*===\s*['"]runtime-approved['"]/,
+    'runtime must fail closed when model, completion or locale chapter approval drifts');
   sourceMatches(runtimeAllowed, /copy\.LOCALE\s*===\s*code/,
     'a mislabeled locale module must fail closed');
   sourceMatches(runtimeAllowed, /copy\.VERSION\s*===\s*release\.version[\s\S]{0,140}copy\.STATUS\s*===\s*release\.status/,
@@ -315,6 +532,14 @@ test('C2 explicitly releases exact Guide copy versions for RU/EN/DE/UK/ES and fa
   const speak = between(APP, 'async function guideV3Speak', '\nasync function guideV3CompleteShadowContact');
   sourceMatches(speak, /copy:\s*guideV3CopyModule\(\)/,
     'Piper must speak the same locale-specific transcript shown on screen');
+
+  for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'app.js']) {
+    const source = SCRIPT_SOURCES.find((item) => scriptFile(item) === file);
+    assert.ok(source, `${file} must load in index.html`);
+    assert.match(source, /\?v=[^"']*v192(?:-|$)/, `${file} needs a v192 cache-busting pin`);
+  }
+  sourceMatches(INDEX, /styles\.css\?v=[^"']*v192(?:-|["'])/,
+    'Habits layout changes need the same v192 CSS pin');
 });
 
 test('feedback remains reachable even when the localized Guide is unavailable', () => {
@@ -413,6 +638,18 @@ test('360px keeps secondary Guide actions beside each other so the bubble stays 
   sourceOmits(guideCss,
     /@media\s*\(max-width:\s*3\d{2}px\)[\s\S]{0,500}guide-surface-v1__actions\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/,
     'the 360px edge must not stack all three controls beneath the transcript');
+});
+
+test('360px keeps all seven 42px habit days inside the Guide form', () => {
+  sourceMatches(CSS,
+    /\.habit-day-picks\s*\{[^}]*grid-template-columns:\s*repeat\(7,\s*minmax\(var\(--touch-min\),\s*1fr\)\)/,
+    'the real Habits form must keep seven explicit touch-size columns');
+  sourceMatches(CSS,
+    /@media\s*\(max-width:\s*380px\)[\s\S]{0,500}\.habit-day-picks\s*\{[^}]*gap:\s*2px[^}]*overflow-x:\s*visible/,
+    'the 360px edge must fit all seven days rather than hiding Sunday in an inner scroller');
+  sourceMatches(CSS,
+    /\.habit-day-picks input\s*\{[^}]*margin:\s*0/,
+    'native checkbox margins must not add hidden width outside each 42px day target');
 });
 
 test('a missing spotlight target renders the safe bubble instead of blocking the app', () => {

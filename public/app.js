@@ -2093,6 +2093,11 @@ const I18N_EXTRA = {
   'Срыв — не провал, а сигнал. Заметь триггер, убери его из среды — и иди дальше. Завтра новый чистый день 🌱': { en: 'A slip isn\'t failure, it\'s a signal. Notice the trigger, remove it from your environment — and move on. Tomorrow is a fresh clean day 🌱', de: 'Ein Rückfall ist kein Versagen, sondern ein Signal. Erkenne den Auslöser, entferne ihn aus deiner Umgebung — und mach weiter. Morgen ist ein neuer sauberer Tag 🌱', uk: 'Зрив — не провал, а сигнал. Поміть тригер, прибери його з середовища — і йди далі. Завтра новий чистий день 🌱', es: 'Una recaída no es un fracaso, es una señal. Detecta el detonante, quítalo de tu entorno — y sigue. Mañana es un nuevo día limpio 🌱' },
   'Отслеживай «чистые дни». Срыв не наказывается — это данные, без стыда. Подход — твой фреймворк доверия/контекста.': { en: 'Track "clean days". A slip isn\'t punished — it\'s data, no shame. The approach is your trust/context framework.', de: 'Verfolge „saubere Tage". Ein Rückfall wird nicht bestraft — es sind Daten, keine Scham. Der Ansatz ist dein Vertrauens-/Kontext-Rahmen.', uk: 'Відстежуй «чисті дні». Зрив не карається — це дані, без сорому. Підхід — твій фреймворк довіри/контексту.', es: 'Lleva la cuenta de los «días limpios». Una recaída no se castiga — es información, sin vergüenza. El enfoque es tu marco de confianza/contexto.' },
   'Новая привычка': { en: 'New habit', de: 'Neue Gewohnheit', uk: 'Нова звичка', es: 'Nuevo hábito' },
+  'Знакомый шаг': { en: 'Familiar step', de: 'Vertrauter Schritt', uk: 'Знайомий крок', es: 'Paso conocido' },
+  'Создать новую привычку': { en: 'Create a new habit', de: 'Neue Gewohnheit erstellen', uk: 'Створити нову звичку', es: 'Crear un hábito nuevo' },
+  'Добавь честную версию на две минуты': { en: 'Add an honest two-minute version', de: 'Füge eine ehrliche Zwei-Minuten-Version hinzu', uk: 'Додай чесну версію на дві хвилини', es: 'Añade una versión honesta de dos minutos' },
+  'Гайд не смог подтвердить сохранение. Ничего не изменено — повтори попытку.': { en: 'The guide could not confirm the save. Nothing changed — try again.', de: 'Der Guide konnte das Speichern nicht bestätigen. Nichts wurde geändert — versuche es erneut.', uk: 'Гайд не зміг підтвердити збереження. Нічого не змінено — спробуй ще раз.', es: 'La guía no pudo confirmar el guardado. No cambió nada — inténtalo de nuevo.' },
+  'Отменить': { en: 'Undo', de: 'Rückgängig', uk: 'Скасувати', es: 'Deshacer' },
   'На сегодня пусто. Запланируй первый квест выше ↑': { en: 'Nothing for today. Plan your first quest above ↑', de: 'Nichts für heute. Plane oben deinen ersten Quest ↑', uk: 'На сьогодні порожньо. Заплануй перший квест вище ↑', es: 'Nada para hoy. Planifica tu primera misión arriba ↑' },
   'ежедневно': { en: 'daily', de: 'täglich', uk: 'щодня', es: 'a diario' },
   'еженедельно': { en: 'weekly', de: 'wöchentlich', uk: 'щотижня', es: 'semanal' },
@@ -4168,6 +4173,8 @@ function attentionWriteAllowed(name, source, notify = false) {
 }
 const Store = {
   _timers: {},
+  _writes: Object.create(null),
+  _writeEpoch: 0,
   async load(name, fallback) {
     try {
       const r = await fetch(`/api/data/${name}`);
@@ -4215,13 +4222,14 @@ const Store = {
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('save', true)) return false;
     if (attentionDatasetSlot(name) && !attentionWriteAllowed(name, 'save', true)) return false;
     clearTimeout(this._timers[name]);
-    this._timers[name] = setTimeout(() => this._put(name, obj), 250);
+    const liveSlot = this._liveSlot(name), useLiveValue = !!liveSlot && obj === State[liveSlot];
+    this._timers[name] = setTimeout(() => this._put(name, obj, useLiveValue), 250);
     return true;
   },
   // Сохранить НЕМЕДЛЕННО и дождаться. Нужно там, где сразу после записи идёт чтение с сервера:
   // save() дебаунсится на 250 мс, а initApp() читает мгновенно — и получает ещё не сохранённое.
   // Именно так онбординг терял выбранные сферы и подставлял вместо них дефолтные.
-  async saveNow(name, obj) {
+  async saveNow(name, obj, applyCommitted = null) {
     if (!pwaWriteAllowed('saveNow', true)) return false;
     if (!accountDataWriteAllowed(name, 'saveNow', true)) return false;
     if (!accountDataPayloadAllowed(name, obj, 'saveNow', true)) return false;
@@ -4231,28 +4239,97 @@ const Store = {
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('saveNow', true)) return false;
     if (attentionDatasetSlot(name) && !attentionWriteAllowed(name, 'saveNow', true)) return false;
     clearTimeout(this._timers[name]);
-    return this._put(name, obj);
+    const liveSlot = this._liveSlot(name), useLiveValue = !!liveSlot && obj === State[liveSlot];
+    return this._put(name, obj, useLiveValue, applyCommitted);
   },
-  async _put(name, obj) {
+  async updateNow(name, buildValue, applyCommitted = null) {
+    if (typeof buildValue !== 'function') return false;
+    clearTimeout(this._timers[name]);
+    return this._put(name, buildValue, false, applyCommitted);
+  },
+  async waitForWrites(name) {
+    clearTimeout(this._timers[name]);
+    const pending = this._writes[name];
+    if (!pending) return true;
+    try { await pending; return true; } catch { return false; }
+  },
+  cancelPending() {
+    for (const timer of Object.values(this._timers)) clearTimeout(timer);
+    this._timers = {};
+    this._writeEpoch += 1;
+  },
+  _liveSlot(name) {
+    return ({
+      settings: 'settings', tasks: 'tasks', habits: 'habits', habitlog: 'habitlog', antihabits: 'antihabits',
+      goals: 'goals', 'goal-groups': 'goalGroups', skilltree: 'tree', rewards: 'rewards', purchases: 'purchases',
+      achievements: 'achievements', weeks: 'weeks', lootbox: 'lootbox', inbox: 'inbox', episodes: 'episodes', shelf: 'shelf',
+    })[name] || '';
+  },
+  runExclusive(names, operation) {
+    const slots = [...new Set((Array.isArray(names) ? names : [names]).map(String).filter(Boolean))].sort();
+    if (!slots.length || typeof operation !== 'function') return Promise.resolve(false);
+    for (const name of slots) clearTimeout(this._timers[name]);
+    const writeEpoch = this._writeEpoch;
+    const accountId = String(State.me?.id || '');
+    const previous = Promise.all(slots.map((name) => (this._writes[name] || Promise.resolve(true)).catch(() => false)));
+    const job = previous.then(async () => {
+      if (writeEpoch !== this._writeEpoch || accountId !== String(State.me?.id || '')) return false;
+      const result = await operation({ writeEpoch, accountId });
+      if (writeEpoch !== this._writeEpoch || accountId !== String(State.me?.id || '')) return false;
+      return result;
+    });
+    let tracked;
+    tracked = job.finally(() => {
+      for (const name of slots) if (this._writes[name] === tracked) delete this._writes[name];
+    });
+    for (const name of slots) this._writes[name] = tracked;
+    return tracked;
+  },
+  async _put(name, obj, useLiveHint = false, applyCommitted = null) {
     // Последний рубеж: прямые Store._put('tasks', ...) тоже не могут
     // перезаписать повреждённый/недоступный файл fallback-массивом.
     if (!pwaWriteAllowed('_put', true)) return false;
     if (!accountDataWriteAllowed(name, '_put', true)) return false;
-    if (!accountDataPayloadAllowed(name, obj, '_put', true)) return false;
+    const lazy = typeof obj === 'function';
+    if (!lazy && !accountDataPayloadAllowed(name, obj, '_put', true)) return false;
     if (name === 'tasks' && !taskWriteAllowed('_put', true)) return false;
     if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('_put', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('_put', true)) return false;
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('_put', true)) return false;
     if (['attention-policies', 'attention-sessions', 'attention-episodes'].includes(name)
       && !attentionWriteAllowed(name, '_put', true)) return false;
-    try {
-      const r = await fetch(`/api/data/${name}`, {
-        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(obj),
-      });
-      if (r.status === 401) { handleAccountSessionExpired(); return false; }
-      if (!r.ok) throw new Error('save ' + r.status);
-      return true;
-    } catch (e) { console.error('save', name, e); toast(t('⚠️ Не удалось сохранить')); return false; }
+    const liveSlot = this._liveSlot(name);
+    const useLiveValue = !lazy && !!liveSlot && (useLiveHint || obj === State[liveSlot]);
+    return this.runExclusive([name], async ({ writeEpoch, accountId }) => {
+      let value;
+      try {
+        value = lazy ? await obj(liveSlot ? State[liveSlot] : undefined)
+          : (useLiveValue && State[liveSlot] != null ? State[liveSlot] : obj);
+      } catch (e) { console.error('save builder', name, e); toast(t('⚠️ Не удалось сохранить')); return false; }
+      if (value === undefined) return false;
+      if (!pwaWriteAllowed('_put', true)) return false;
+      if (!accountDataWriteAllowed(name, '_put', true)) return false;
+      if (!accountDataPayloadAllowed(name, value, '_put', true)) return false;
+      if (name === 'tasks' && !taskWriteAllowed('_put', true)) return false;
+      if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('_put', true)) return false;
+      if (name === 'settings' && !settingsWriteAllowed('_put', true)) return false;
+      if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('_put', true)) return false;
+      if (['attention-policies', 'attention-sessions', 'attention-episodes'].includes(name)
+        && !attentionWriteAllowed(name, '_put', true)) return false;
+      let body;
+      try { body = JSON.stringify(value); }
+      catch (e) { console.error('save', name, e); toast(t('⚠️ Не удалось сохранить')); return false; }
+      try {
+        const r = await fetch(`/api/data/${name}`, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body,
+        });
+        if (r.status === 401) { handleAccountSessionExpired(); return false; }
+        if (!r.ok) throw new Error('save ' + r.status);
+        if (writeEpoch !== this._writeEpoch || accountId !== String(State.me?.id || '')) return false;
+        if (typeof applyCommitted === 'function' && await applyCommitted(value) === false) return false;
+        return true;
+      } catch (e) { console.error('save', name, e); toast(t('⚠️ Не удалось сохранить')); return false; }
+    });
   },
 };
 
@@ -5660,9 +5737,9 @@ const State = {
   _goalTxnBusy: '', _goalsError: '', _goalsFocusAfterCommit: '', _goalOpenId: '', _goalDeepLinkId: '', _goalsComposerOpen: false, _goalGroupFilter: '', _goalsBulkMode: false, _goalsBulkIds: new Set(),
   _calendarUndo: null, _calendarUndoTimer: null, _calendarFocusAfterCommit: '',
   _inboxLoadError: '', _inboxBusy: false, _inboxFocusAfterCommit: '',
-  _guideV3Error: '', _guideV3SessionPrompted: false, _guideV3StartBusy: false,
+  _guideV3Error: '', _guideV3SessionPrompted: false, _guideV3StartBusy: false, _guideV3PromptMarkBusy: false,
   _guideV3ChooseOther: false, _guideV3FocusPending: '', _guideV3VoiceActive: false,
-  _guideV3ForceOpen: false, _guideV3ShowTeaser: false,
+  _guideV3ForceOpen: false, _guideV3ShowTeaser: false, _guideV3HabitCandidateId: null, _guideV3HabitDraftId: '',
   _mobileNavFocusAfterCommit: '',
   _calendarViewportNode: null, _calendarViewportDate: '', _calendarViewportScroll: null,
   aveCat: 'hair', // активная категория в редакторе аватара
@@ -10489,16 +10566,21 @@ function localDayOrdinal(day) {
   return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
 }
 function localDayDistance(from, to) { return localDayOrdinal(to) - localDayOrdinal(from); }
-async function habitDataCommit(data) {
+async function habitDataCommit(data, applyCommitted = null) {
   if (!habitWriteAllowed('habitDataCommit', true)) return false;
-  for (const name of Object.keys(data)) clearTimeout(Store._timers[name]);
-  try {
-    const response = await fetch('/api/habits/commit', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data }),
-    });
-    if (response.status === 401) { handleAccountSessionExpired(); return false; }
-    return response.ok;
-  } catch (error) { console.error('habit commit', error); return false; }
+  const names = Object.keys(data);
+  return Store.runExclusive(names, async ({ writeEpoch, accountId }) => {
+    if (!habitWriteAllowed('habitDataCommit', true)) return false;
+    try {
+      const response = await fetch('/api/habits/commit', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data }),
+      });
+      if (response.status === 401) { handleAccountSessionExpired(); return false; }
+      if (!response.ok || writeEpoch !== Store._writeEpoch || accountId !== String(State.me?.id || '')) return false;
+      if (typeof applyCommitted === 'function' && await applyCommitted() === false) return false;
+      return true;
+    } catch (error) { console.error('habit commit', error); return false; }
+  });
 }
 async function reloadHabitData(focusSelector = '#habits-title') {
   if (State._habitsLoadBusy) return false;
@@ -11773,9 +11855,8 @@ function habitUndoHTML() {
 async function transactHabitCompletion(h) {
   const key = `habit:${h.id}`; if (State._habitTxnBusy || State._habitsLoadError) return;
   const day = habitDayKey(), wasDone = !!(State.habitlog[day] && State.habitlog[day][h.id]);
-  clearTimeout(Store._timers.settings);
-  const beforeLog = structuredClone(State.habitlog), beforeSettings = structuredClone(State.settings);
-  const nextLog = structuredClone(beforeLog), nextSettings = structuredClone(beforeSettings);
+  const beforeLog = structuredClone(State.habitlog);
+  const nextLog = structuredClone(beforeLog);
   nextLog[day] = nextLog[day] || {};
   if (wasDone) {
     delete nextLog[day][h.id]; if (!Object.keys(nextLog[day]).length) delete nextLog[day];
@@ -11783,14 +11864,13 @@ async function transactHabitCompletion(h) {
     nextLog[day][h.id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() };
   }
   State._habitTxnBusy = key; State._habitError = ''; render();
-  const saved = await habitDataCommit({ habitlog: nextLog, settings: nextSettings });
+  const saved = await habitDataCommit({ habitlog: nextLog }, () => { State.habitlog = nextLog; });
   State._habitTxnBusy = '';
   if (!saved) {
     State._habitError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.');
     State._habitsFocusAfterCommit = `[data-action="toggle-habit"][data-id="${CSS.escape(h.id)}"]`; render(); return;
   }
-  State.habitlog = nextLog; State.settings = nextSettings;
-  setHabitUndo({ beforeLog, beforeSettings, afterLog: structuredClone(nextLog), afterSettings: structuredClone(nextSettings), label: wasDone ? 'Отметка возвращена' : 'Привычка отмечена' });
+  setHabitUndo({ beforeLog, afterLog: structuredClone(nextLog), label: wasDone ? 'Отметка возвращена' : 'Привычка отмечена' });
   State._habitsFocusAfterCommit = '[data-action="habit-undo"]';
   if (!wasDone) {
     track('complete:habit'); const hsk = skillById(h.skillId);
@@ -11804,10 +11884,10 @@ async function transactHabitCompletion(h) {
 async function undoHabitCompletion() {
   const undo = State._habitUndo; if (!undo || State._habitTxnBusy || State._habitsLoadError) return;
   State._habitTxnBusy = 'habit:undo'; State._habitError = ''; render();
-  const saved = await habitDataCommit({ habitlog: undo.beforeLog, settings: undo.beforeSettings });
+  const restoredLog = structuredClone(undo.beforeLog);
+  const saved = await habitDataCommit({ habitlog: restoredLog }, () => { State.habitlog = restoredLog; });
   State._habitTxnBusy = '';
   if (!saved) { State._habitError = t('Не удалось отменить. Запись сохранена, можно повторить.'); State._habitsFocusAfterCommit = '[data-action="habit-undo"]'; render(); return; }
-  State.habitlog = structuredClone(undo.beforeLog); State.settings = structuredClone(undo.beforeSettings);
   clearHabitUndo(); State._habitsFocusAfterCommit = '#habits-title'; render();
 }
 async function deleteHabitData(habit) {
@@ -11815,18 +11895,17 @@ async function deleteHabitData(habit) {
   const nextHabits = State.habits.filter((item) => item.id !== habit.id), nextLog = structuredClone(State.habitlog);
   for (const day of Object.keys(nextLog)) { delete nextLog[day][habit.id]; if (!Object.keys(nextLog[day]).length) delete nextLog[day]; }
   State._habitTxnBusy = `habit:${habit.id}`; State._habitError = ''; render();
-  const saved = await habitDataCommit({ habits: nextHabits, habitlog: nextLog }); State._habitTxnBusy = '';
+  const saved = await habitDataCommit({ habits: nextHabits, habitlog: nextLog }, () => { State.habits = nextHabits; State.habitlog = nextLog; }); State._habitTxnBusy = '';
   if (!saved) { State._habitError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._habitsFocusAfterCommit = '#habits-title'; render(); return; }
-  State.habits = nextHabits; State.habitlog = nextLog; State._habitsFocusAfterCommit = '#habits-title'; render();
+  State._habitsFocusAfterCommit = '#habits-title'; render();
 }
 async function updateHabitAtomic(id, field, value) {
   if (State._habitTxnBusy || State._habitsLoadError) return;
   const next = structuredClone(State.habits), habit = next.find((item) => item.id === id); if (!habit) return;
   habit.atomic = habit.atomic || {}; habit.atomic[field] = value.slice(0, 200);
   State._habitTxnBusy = `habit:${id}`;
-  const saved = await habitDataCommit({ habits: next }); State._habitTxnBusy = '';
+  const saved = await habitDataCommit({ habits: next }, () => { State.habits = next; }); State._habitTxnBusy = '';
   if (!saved) { State._habitError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._habitsFocusAfterCommit = `[data-action="habit-atomic"][data-id="${id}"][data-field="${field}"]`; render(); return; }
-  State.habits = next;
 }
 // ============================================================
 //  Вид «Календарь» — день по часам (Apple-стиль), отдельная вкладка
@@ -12414,13 +12493,13 @@ function antiBestStreak(a) {
 async function transactAntihabits(next, busyKey, focusSelector, successMessage = '') {
   if (State._habitTxnBusy || State._habitsLoadError) return false;
   State._habitTxnBusy = busyKey; State._habitError = ''; render();
-  const saved = await habitDataCommit({ antihabits: next });
+  const saved = await habitDataCommit({ antihabits: next }, () => { State.antihabits = next; });
   State._habitTxnBusy = '';
   if (!saved) {
     State._habitError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.');
     State._habitsFocusAfterCommit = focusSelector; render(); return false;
   }
-  State.antihabits = next; State._habitsFocusAfterCommit = focusSelector;
+  State._habitsFocusAfterCommit = focusSelector;
   if (successMessage) toast(t(successMessage));
   render(); return true;
 }
@@ -12507,17 +12586,56 @@ function habitsRecoveryHTML() {
 function habitsTodayHTML() {
   const due = todaysHabits();
   const rows = due.length ? `<ul class="tasks habits-today-list">${due.map(habitRow).join('')}</ul>` : `<p class="muted">${t('На сегодня привычек нет. Это не долг — следующий запланированный день останется в расписании.')}</p>`;
+  const guideCompose = guideV3HabitsStep('compose');
   return `<div class="card habits-today"><div class="habits-work-head"><div><h3>${t('Сегодня')}</h3><p class="muted">${t('Стрик — наблюдение, не долг. Пропуск не стирает сделанное.')}</p></div><span>${due.length}</span></div>${rows}
-    <details class="habit-create"><summary>${t('+ Создать привычку')}</summary>${habitCreateFormHTML()}</details></div>`;
+    <details class="habit-create" data-guide-target="habit-create"${guideCompose ? ' open' : ''}><summary>${t('+ Создать привычку')}</summary>${habitCreateFormHTML()}</details></div>`;
+}
+function guideV3HabitsStep(step) {
+  const guide = guideV3State();
+  const snoozed = Number(guide?.snoozedUntil || 0) > Date.now() && !State._guideV3ForceOpen;
+  return !!(guideV3RuntimeAllowed() && guide?.enabled && guide.currentChapter === window.GuideV3?.HABITS_CHAPTER
+    && guide.currentStep === step && !snoozed && guide.chapterMeta?.[window.GuideV3.HABITS_CHAPTER]?.replay !== true);
+}
+function guideV3HabitCandidates() {
+  return (State.habits || []).filter((habit) => habit && !habit.archived);
+}
+function guideV3HabitCandidate() {
+  if (!guideV3HabitsStep('compose')) return null;
+  const candidates = guideV3HabitCandidates();
+  if (State._guideV3HabitCandidateId === 'new') return null;
+  return candidates.find((habit) => String(habit.id) === String(State._guideV3HabitCandidateId || '')) || candidates[0] || null;
+}
+function guideV3HabitCandidateTitle() {
+  const existing = guideV3HabitCandidate();
+  if (existing) return String(existing.title || '').trim();
+  const guide = guideV3State(), selected = String(guide?.selectedTaskId || '');
+  const tasks = (State.tasks || []).filter((task) => task && task.done && typeof task.title === 'string' && task.title.trim());
+  const preferred = tasks.find((task) => String(task.id) === selected);
+  if (preferred) return preferred.title.trim();
+  return tasks.slice().sort((a, b) => Date.parse(b.completedAt || '') - Date.parse(a.completedAt || ''))[0]?.title.trim() || '';
+}
+function guideV3HabitDraftId() {
+  if (!State._guideV3HabitDraftId) State._guideV3HabitDraftId = 'h_' + uid();
+  return State._guideV3HabitDraftId;
 }
 function habitCreateFormHTML() {
-  const skills = (State.settings.skills || []).map((skill) => `<option value="${esc(skill.id)}">${esc(skill.name)}</option>`).join('');
-  const days = [1,2,3,4,5,6,0].map((day) => `<label><input type="checkbox" name="days" value="${day}" checked><span>${t(['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][day])}</span></label>`).join('');
-  return `<form id="add-habit-v126" class="habit-create-form"><label><span>${t('Название привычки')}</span><input name="title" maxlength="160" required autocomplete="off"></label>
+  const guideCompose = guideV3HabitsStep('compose');
+  const existing = guideCompose ? guideV3HabitCandidate() : null;
+  const candidateId = existing ? String(existing.id) : 'new';
+  const draftId = existing ? String(existing.id) : (guideCompose ? guideV3HabitDraftId() : 'h_' + uid());
+  const skills = (State.settings.skills || []).map((skill) => `<option value="${esc(skill.id)}"${existing?.skillId === skill.id ? ' selected' : ''} data-noi18n>${esc(skill.name)}</option>`).join('');
+  const selectedDays = existing ? new Set(existing.days || []) : null;
+  const days = [1,2,3,4,5,6,0].map((day) => `<label><input type="checkbox" name="days" value="${day}"${selectedDays ? (selectedDays.has(day) ? ' checked' : '') : (guideCompose ? '' : ' checked')}><span>${t(['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][day])}</span></label>`).join('');
+  const candidate = guideCompose ? guideV3HabitCandidateTitle() : '';
+  const candidatePicker = guideCompose && guideV3HabitCandidates().length
+    ? `<label class="habit-guide-candidate"><span>${t('Знакомый шаг')}</span><select name="existingId" data-action="guide-habit-candidate">${guideV3HabitCandidates().map((habit) => `<option value="${esc(habit.id)}"${String(habit.id) === candidateId ? ' selected' : ''} data-noi18n>${esc(habit.title)}</option>`).join('')}<option value="new"${candidateId === 'new' ? ' selected' : ''}>${t('Создать новую привычку')}</option></select></label>`
+    : '<input type="hidden" name="existingId" value="new">';
+  return `<form id="add-habit-v126" class="habit-create-form" data-habit-draft-id="${esc(draftId)}"${guideCompose ? ' data-guide-compose="true"' : ''}>${candidatePicker}<label class="habit-title-field"><span>${t('Название привычки')}</span><input name="title" maxlength="160" required autocomplete="off" value="${esc(candidate)}" data-guide-target="habit-title" data-noi18n></label>
     <label><span>${t('Сфера')}</span><select name="skillId">${skills}</select></label>
-    <label><span>${t('Минут')}</span><input name="estimateMin" type="number" min="1" max="1440" value="10" inputmode="numeric"></label>
-    <fieldset><legend>${t('Дни недели')}</legend><div class="habit-day-picks">${days}</div></fieldset>
-    <p class="habit-form-status" role="status"></p><button type="submit" class="btn">${t('Создать')}</button></form>`;
+    <label><span>${t('Минут')}</span><input name="estimateMin" type="number" min="1" max="1440" value="${existing ? Math.max(1, Math.min(1440, Math.round(Number(existing.estimateMin) || 10))) : 10}" inputmode="numeric"></label>
+    <fieldset data-guide-target="habit-schedule"><legend>${t('Дни недели')}</legend><div class="habit-day-picks">${days}</div></fieldset>
+    <label class="habit-two-minute"><span>${t('⏱ Версия 2 минут')}</span><input name="twoMin" maxlength="200" autocomplete="off" value="${esc(existing?.atomic?.twoMin || '')}" placeholder="${t('Минимум, чтобы просто начать')}"${guideCompose ? ' required' : ''} data-guide-target="habit-two-minute" data-noi18n></label>
+    <p class="habit-form-status" role="status"></p><button type="submit" class="btn">${t(existing ? 'Сохранить' : 'Создать')}</button></form>`;
 }
 function lawsBlock(title, laws, kind) {
   return `<div class="card hb-laws"><h4>${title}</h4>${laws.map((l) => `<div class="hb-law ${kind}"><span class="hb-lawn">${l.n}</span><div><b>${esc(l.law)}</b>${l.cue ? ` <span class="muted">· ${esc(l.cue)}</span>` : ''}<ul>${l.tactics.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div></div>`).join('')}</div>`;
@@ -12527,16 +12645,17 @@ function habitsBuildHTML() {
   const idg = (State.settings && State.settings.identityGoal) || '';
   const cards = habits.length ? habits.map((h) => {
     const a = h.atomic || {}, sk = skillById(h.skillId), st = habitStreak(h);
-    return `<div class="card hb-card" style="--c:${esc(sk.color)}">
-      <div class="hb-top"><b>${esc(h.title)}</b><span class="muted">${esc(sk.name)} · ${fmtDur(h.estimateMin)}${st ? ` · 🔥${st}` : ''}</span></div>
-      <label class="hb-field">🪪 Идентичность <input data-action="habit-atomic" data-id="${h.id}" data-field="identity" value="${esc(a.identity || '')}" placeholder="Я — человек, который…" /></label>
-      <label class="hb-field">📍 Сигнал / связка <input data-action="habit-atomic" data-id="${h.id}" data-field="cue" value="${esc(a.cue || '')}" placeholder="После [привычки] я…" /></label>
-      <label class="hb-field">⏱ Версия 2 минут <input data-action="habit-atomic" data-id="${h.id}" data-field="twoMin" value="${esc(a.twoMin || '')}" placeholder="Минимум, чтобы просто начать" /></label>
+    const guideCreated = guideV3HabitsStep('complete') && String(guideV3State()?.chapterMeta?.habits?.itemId || '') === String(h.id);
+    return `<div class="card hb-card" style="--c:${esc(sk.color)}"${guideCreated ? ` data-guide-target="habit-created" data-id="${esc(h.id)}" tabindex="-1"` : ''}>
+      <div class="hb-top"><b data-noi18n>${esc(h.title)}</b><span class="muted"><span data-noi18n>${esc(sk.name)}</span> · ${fmtDur(h.estimateMin)}${st ? ` · 🔥${st}` : ''}</span></div>
+      <label class="hb-field">${t('🪪 Идентичность')} <input data-action="habit-atomic" data-id="${h.id}" data-field="identity" value="${esc(a.identity || '')}" placeholder="${t('Я — человек, который…')}" /></label>
+      <label class="hb-field">${t('📍 Сигнал / связка')} <input data-action="habit-atomic" data-id="${h.id}" data-field="cue" value="${esc(a.cue || '')}" placeholder="${t('После [привычки] я…')}" /></label>
+      <label class="hb-field">${t('⏱ Версия 2 минут')} <input data-action="habit-atomic" data-id="${h.id}" data-field="twoMin" value="${esc(a.twoMin || '')}" placeholder="${t('Минимум, чтобы просто начать')}" /></label>
     </div>`;
-  }).join('') : '<p class="muted">Пока нет привычек — добавь и спроектируй по 4 законам.</p>';
+  }).join('') : `<p class="muted">${t('Пока нет привычек — добавь и спроектируй по 4 законам.')}</p>`;
   return `<div class="card hb-intro"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🌱')} ${t('Строим привычки')}</h3>
       <p class="muted">${esc(t('Выбери, кем хочешь стать. Каждое выполнение ниже — маленькое доказательство этой идентичности.'))}</p>
-      <label class="hb-identity">Кем ты хочешь стать? <input id="identity-goal" data-action="save-identity" value="${esc(idg)}" placeholder="Напр.: дисциплинированный учёный в отличной форме" /></label></div>
+      <label class="hb-identity">${t('Кем ты хочешь стать?')} <input id="identity-goal" data-action="save-identity" value="${esc(idg)}" placeholder="${t('Напр.: дисциплинированный учёный в отличной форме')}" /></label></div>
     <div class="hb-list">${cards}</div>
     <p class="muted hb-nmt">${t('Возвращайся с версии на две минуты. Пропущенный день не отменяет ни прогресс, ни твою идентичность.')}</p>`;
 }
@@ -14012,8 +14131,8 @@ async function applyChatActions(msg, checks) {
     else goalTaskIndexes.forEach((index) => settle(index, 'failed'));
   }
   if (habitDirty) {
-    const saved = await habitDataCommit({ habits: nextHabits });
-    if (saved) { State.habits = nextHabits; habitIndexes.forEach((index) => settle(index, 'done')); }
+    const saved = await habitDataCommit({ habits: nextHabits }, () => { State.habits = nextHabits; });
+    if (saved) habitIndexes.forEach((index) => settle(index, 'done'));
     else habitIndexes.forEach((index) => settle(index, 'failed'));
   }
   for (const index of completionIndexes) {
@@ -16430,12 +16549,16 @@ function boardV2ReceiptHTML() {
 async function boardV2EquipTitle(title) {
   const owned = Array.isArray(State.settings && State.settings.boardV2Titles) ? State.settings.boardV2Titles : [];
   if (!owned.includes(title)) return false;
-  const settings = structuredClone(State.settings);
-  settings.equipped = settings.equipped && typeof settings.equipped === 'object'
-    ? { ...settings.equipped, title } : { frame: null, background: null, title };
-  const saved = await Store.saveNow('settings', settings);
-  if (saved) State.settings = settings;
-  return saved;
+  return Store.updateNow('settings', (current) => {
+    const next = structuredClone(current);
+    next.equipped = next.equipped && typeof next.equipped === 'object'
+      ? { ...next.equipped, title } : { frame: null, background: null, title };
+    return next;
+  }, (committed) => {
+    if (!State.settings) return false;
+    State.settings.equipped = committed.equipped;
+    return true;
+  });
 }
 function boardV2UnexpectedDeadline() {
   const deadline = new Date(Date.now() + 48 * 60 * 60 * 1000);
@@ -19693,11 +19816,17 @@ function guideV3ReviewPreviewRequested() {
   catch { return false; }
 }
 const GUIDE_V3_COPY_RELEASES = Object.freeze({
-  ru: Object.freeze({ globalName: 'GuideV3CopyRu', version: '1.0.0', status: 'runtime-approved', released: true }),
-  en: Object.freeze({ globalName: 'GuideV3CopyEn', version: '0.1.0', status: 'translated', released: true }),
-  de: Object.freeze({ globalName: 'GuideV3CopyDe', version: '0.1.0', status: 'translated', released: true }),
-  uk: Object.freeze({ globalName: 'GuideV3CopyUk', version: '0.1.0', status: 'translated', released: true }),
-  es: Object.freeze({ globalName: 'GuideV3CopyEs', version: '0.1.0', status: 'translated', released: true }),
+  ru: Object.freeze({ globalName: 'GuideV3CopyRu', version: '1.1.0', status: 'runtime-approved', released: true }),
+  en: Object.freeze({ globalName: 'GuideV3CopyEn', version: '0.2.0', status: 'translated', released: true }),
+  de: Object.freeze({ globalName: 'GuideV3CopyDe', version: '0.2.0', status: 'translated', released: true }),
+  uk: Object.freeze({ globalName: 'GuideV3CopyUk', version: '0.2.0', status: 'translated', released: true }),
+  es: Object.freeze({ globalName: 'GuideV3CopyEs', version: '0.2.0', status: 'translated', released: true }),
+});
+const GUIDE_V3_CONTEXT_RELEASES = Object.freeze({
+  habits: Object.freeze({
+    registryVersion: 2, completion: 'habit-persisted', released: true,
+    locales: Object.freeze({ ru: '1.1.0', en: '0.2.0', de: '0.2.0', uk: '0.2.0', es: '0.2.0' }),
+  }),
 });
 function guideV3CopyModule(locale = lang()) {
   const code = APP_LANGS.includes(locale) ? locale : null;
@@ -19720,6 +19849,16 @@ function guideV3RuntimeAllowed() {
     && copy.STATUS === release.status
     && (locale !== 'ru' || copy.RUNTIME_APPROVED === true);
   return sourceApproved && localeReleased;
+}
+function guideV3ContextRuntimeAllowed(chapter, locale = lang()) {
+  if (!guideV3RuntimeAllowed()) return false;
+  const model = window.GuideV3, copy = guideV3CopyModule(locale), release = GUIDE_V3_CONTEXT_RELEASES[chapter];
+  const entry = model?.REGISTRY?.find((item) => item.chapter === chapter);
+  return !!(release?.released && copy && entry
+    && entry.version === release.registryVersion
+    && entry.completion === release.completion
+    && copy.VERSION === release.locales?.[locale]
+    && copy.CONTEXTUAL_STATUS?.[chapter] === 'runtime-approved');
 }
 function feedbackPanelHTML() {
   return `<h3 class="guide-v3-library__feedback-title">💬 ${esc(t('Нашёл баг или есть идея?'))}</h3>
@@ -19827,6 +19966,27 @@ async function showReports() {
     <div class="rep-list">${items}</div></div>`;
   document.body.appendChild(ov);
 }
+function guideV3Context({ sessionPrompted = State._guideV3SessionPrompted } = {}) {
+  const completed = (State.tasks || []).filter((task) => task && task.done);
+  const activeDays = new Set(completed.map((task) => dayOf(task)).filter((day) => /^\d{4}-\d{2}-\d{2}$/.test(String(day || '')))).size;
+  return {
+    now: Date.now(), sessionPrompted, completedTasks: completed.length, activeDays,
+    questionnaireReady: false, hasGoalSeed: false, returnedAfterFirst: false,
+  };
+}
+function guideV3AvailableChapters() {
+  const model = window.GuideV3, state = guideV3State();
+  if (!model || !state) return [];
+  const available = [model.FIRST_CHAPTER];
+  const context = guideV3Context({ sessionPrompted: false });
+  for (const entry of model.REGISTRY) {
+    if (entry.id === model.FIRST_CHAPTER || entry.id === 'goals') continue;
+    if (entry.id === model.HABITS_CHAPTER && State._habitsLoadError) continue;
+    if (!guideV3ContextRuntimeAllowed(entry.chapter)) continue;
+    if (model.entryEligible(entry, state, context)) available.push(entry.chapter);
+  }
+  return available;
+}
 function showGuide() {
   if (document.getElementById('guide')) return;
   if (!guideV3RuntimeAllowed()) { showGuideUnavailable(); return; }
@@ -19834,7 +19994,7 @@ function showGuide() {
   const copy = guideV3CopyModule();
   const state = guideV3State() || window.GuideV3.defaultState();
   const cards = window.GuidePresenterV1.libraryCards(state, {
-    availableChapters: [window.GuideV3.FIRST_CHAPTER],
+    availableChapters: guideV3AvailableChapters(),
     deferredChapters: ['goals'],
   }, window.GuideV3.REGISTRY, copy);
   const cardHtml = cards.map((card) => {
@@ -21434,7 +21594,7 @@ function renderNav() {
     const primary = SECTIONS.map((s) => {
       const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
       const mobileClass = MOBILE_PRIMARY_SECTION_IDS.includes(s.id) ? ' mobile-primary' : ' mobile-secondary';
-      return `<button class="navsec${mobileClass}${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}" aria-current="${s.id === cur ? 'page' : 'false'}" title="${locked ? `${t('Откроется на уровне')} ${s.gate}` : (isNew ? `${t(s.label)} — ${t('новое!')}` : t(s.label))}">${navMotionIconHTML(s.iconId)}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">${satoruIconHTML('status.lock', 'navsec-lock-icon', '🔒')}${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
+      return `<button class="navsec${mobileClass}${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}"${s.id === 'habits' ? ' data-guide-target="habits-nav"' : ''} aria-current="${s.id === cur ? 'page' : 'false'}" title="${locked ? `${t('Откроется на уровне')} ${s.gate}` : (isNew ? `${t(s.label)} — ${t('новое!')}` : t(s.label))}">${navMotionIconHTML(s.iconId)}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">${satoruIconHTML('status.lock', 'navsec-lock-icon', '🔒')}${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
     }).join('');
     const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="${t('Настройки')}" aria-label="${t('Настройки')}">${satoruIconHTML('nav.settings', 'navgear-icon', '⚙️')}</button>`;
     const moreActive = MOBILE_MORE_SECTION_IDS.includes(cur) || State.view === 'settings';
@@ -21533,7 +21693,7 @@ function showMobileNavSheet() {
   const sectionEntry = (id) => {
     const s = SECTIONS.find((section) => section.id === id); if (!s) return '';
     const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
-    return `<button class="mobile-sheet-entry${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}" data-action="go-section" data-sec="${s.id}" aria-current="${s.id === cur ? 'page' : 'false'}">
+    return `<button class="mobile-sheet-entry${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}" data-action="go-section" data-sec="${s.id}"${s.id === 'habits' ? ' data-guide-target="habits-nav"' : ''} aria-current="${s.id === cur ? 'page' : 'false'}">
       <span class="mobile-sheet-icon">${satoruIconHTML(s.iconId, 'mobile-sheet-glyph', '')}</span><span><b>${t(s.label)}</b>${locked ? `<small>${satoruIconHTML('status.lock', 'inline-glyph', '🔒')} ${t('Уровень')} ${s.gate}</small>` : ''}</span>${isNew ? '<i class="mobile-sheet-new"></i>' : '<span class="mobile-sheet-chevron">›</span>'}
     </button>`;
   };
@@ -22070,10 +22230,16 @@ async function onSubmit(e) {
   if (f.classList && f.classList.contains('pet-rename-form')) {
     e.preventDefault();
     const id = f.dataset.id, nm = (f.name.value || '').trim().slice(0, 20);
-    const next = structuredClone(State.settings || {});
-    next.petNames = next.petNames || {};
-    if (nm && nm !== skillById(id).name) next.petNames[id] = nm; else delete next.petNames[id];
-    const saved = await Store.saveNow('settings', next);
+    const saved = await Store.updateNow('settings', (current) => {
+      const next = structuredClone(current || {});
+      next.petNames = next.petNames || {};
+      if (nm && nm !== skillById(id).name) next.petNames[id] = nm; else delete next.petNames[id];
+      return next;
+    }, (committed) => {
+      if (!State.settings) return false;
+      State.settings.petNames = committed.petNames;
+      return true;
+    });
     if (!saved) {
       State._petRename = id;
       State._petRenameError = 'Не удалось сохранить. Ничего не изменено — повтори попытку.';
@@ -22081,7 +22247,6 @@ async function onSubmit(e) {
       render();
       return;
     }
-    State.settings = next;
     State._petRename = null;
     State._petRenameError = '';
     State._petsFocusAfterCommit = '#pets-title';
@@ -22530,21 +22695,27 @@ async function onSubmit(e) {
   if (f.id === 'body-form') {
     e.preventDefault();
     const num = (v) => { const x = parseFloat(v); return isNaN(x) ? null : x; };
-    const next = structuredClone(State.settings);
-    next.body = Object.assign({}, next.body, { height: num(f.height.value), weight: num(f.weight.value), sex: f.sex.value || '' });
-    if (f.bodyfat) next.body.bodyfat = num(f.bodyfat.value);
+    const body = { height: num(f.height.value), weight: num(f.weight.value), sex: f.sex.value || '' };
+    if (f.bodyfat) body.bodyfat = num(f.bodyfat.value);
     const controls = f.querySelectorAll('button, input, select');
     const status = f.querySelector('.character-body-save-status');
     controls.forEach((control) => { control.disabled = true; });
     if (status) { status.textContent = t('Сохраняю…'); status.classList.remove('is-error'); }
-    const saved = await Store.saveNow('settings', next);
+    const saved = await Store.updateNow('settings', (current) => {
+      const next = structuredClone(current);
+      next.body = Object.assign({}, next.body, body);
+      return next;
+    }, (committed) => {
+      if (!State.settings) return false;
+      State.settings.body = committed.body;
+      return true;
+    });
     if (!saved) {
       controls.forEach((control) => { control.disabled = false; });
       if (status) { status.textContent = t('Изменения телосложения не сохранены. Значения остались в форме — повтори попытку.'); status.classList.add('is-error'); }
       f.querySelector('input, select, button')?.focus();
       return;
     }
-    State.settings = next;
     State._characterFocusAfterCommit = '#body-form button[type="submit"]';
     toast('🧍 ' + t('Телосложение обновлено')); render();
     return;
@@ -22631,12 +22802,85 @@ async function onSubmit(e) {
     const days = Array.from(f.querySelectorAll('input[name="days"]:checked')).map((input) => Number(input.value));
     const status = f.querySelector('.habit-form-status');
     if (!days.length) { if (status) { status.textContent = t('Выбери хотя бы один день'); status.setAttribute('role', 'alert'); } return; }
-    const habit = { id: 'h_' + uid(), title, skillId: f.skillId.value, estimateMin: Math.max(1, Math.min(1440, Math.round(Number(f.estimateMin.value) || 10))), difficulty: 'easy', days, archived: false, createdAt: new Date().toISOString(), atomic: {} };
-    const next = [...structuredClone(State.habits || []), habit];
-    State._habitTxnBusy = `habit:${habit.id}`; State._habitError = ''; render();
-    const saved = await habitDataCommit({ habits: next }); State._habitTxnBusy = '';
-    if (!saved) { State._habitError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); State._habitsFocusAfterCommit = '#add-habit-v126 input[name="title"]'; render(); return; }
-    State.habits = next; State._habitsFocusAfterCommit = `[data-action="toggle-habit"][data-id="${habit.id}"]`; toast(t('Привычка создана')); render();
+    const guideCompose = guideV3HabitsStep('compose');
+    const twoMin = String(f.twoMin?.value || '').trim();
+    if (guideCompose && !twoMin) { if (status) { status.textContent = t('Добавь честную версию на две минуты'); status.setAttribute('role', 'alert'); } f.twoMin?.focus(); return; }
+    // existingId имеет смысл только пока жив именно compose-шаг Guide. После Skip/Later
+    // оставшийся в DOM select не получает права менять существующую привычку.
+    const selectedId = guideCompose ? String(f.existingId?.value || 'new') : 'new';
+    let draftId = String(f.dataset.habitDraftId || (guideCompose ? guideV3HabitDraftId() : 'h_' + uid()));
+    if (!guideCompose && (f.dataset.guideCompose === 'true'
+      || (State.habits || []).some((item) => String(item.id) === draftId))) {
+      draftId = 'h_' + uid(); f.dataset.habitDraftId = draftId; delete f.dataset.guideCompose;
+    }
+    const skillId = String(f.skillId.value || '');
+    const estimateMin = Math.max(1, Math.min(1440, Math.round(Number(f.estimateMin.value) || 10)));
+    const controls = Array.from(f.elements); controls.forEach((control) => { control.disabled = true; });
+    if (status) { status.textContent = t('Сохраняю…'); status.setAttribute('role', 'status'); }
+    const busyKey = `habit:${selectedId !== 'new' ? selectedId : draftId}`;
+    State._habitTxnBusy = busyKey; State._habitError = '';
+    const failLiveForm = (message = t('Не удалось сохранить. Ничего не изменено — повтори попытку.')) => {
+      if (State._habitTxnBusy === busyKey) State._habitTxnBusy = '';
+      controls.forEach((control) => { control.disabled = false; });
+      if (status) { status.textContent = message; status.setAttribute('role', 'alert'); }
+      State._habitError = ''; if (f.isConnected) focusPathChoiceTarget(f.title);
+      return false;
+    };
+    const persistHabit = async ({ epoch = _guideV3WriteEpoch, accountId = String(State.me?.id || '') } = {}) => {
+      const liveGuideCompose = guideCompose && guideV3HabitsStep('compose');
+      if (guideCompose && !liveGuideCompose) return failLiveForm(t('Гайд не смог подтвердить сохранение. Ничего не изменено — повтори попытку.'));
+      const source = structuredClone(State.habits || []);
+      const original = selectedId !== 'new'
+        ? source.find((item) => String(item.id) === selectedId && !item.archived) || null
+        : null;
+      // Явное «Создать новую» никогда не дедуплицируется по названию: стабильный draftId
+      // уже делает Retry идемпотентным, а совпавший текст не даёт права менять старую запись.
+      if (liveGuideCompose && selectedId !== 'new' && !original) {
+        return failLiveForm(t('Гайд не смог подтвердить сохранение. Ничего не изменено — повтори попытку.'));
+      }
+      const habitId = String(original?.id || draftId);
+      const habit = {
+        ...(original || {}), id: habitId, title, skillId, estimateMin,
+        difficulty: original?.difficulty || 'easy', days, archived: false,
+        createdAt: original?.createdAt || new Date().toISOString(),
+        atomic: { ...(original?.atomic || {}), twoMin },
+      };
+      const at = source.findIndex((item) => String(item.id) === habitId);
+      if (at >= 0) source[at] = habit; else source.push(habit);
+      let guideResult = null, nextSettings = null;
+      if (liveGuideCompose) {
+        const guide = guideV3State();
+        guideResult = window.GuideV3?.reduce(guide, {
+          type: 'guide:context-complete', completion: 'habit-persisted', persisted: true, itemId: habit.id, at: Date.now(),
+        });
+        if (!guideResult?.accepted) return failLiveForm(t('Гайд не смог подтвердить сохранение. Ничего не изменено — повтори попытку.'));
+        nextSettings = structuredClone(State.settings); nextSettings.guideV3 = guideResult.state;
+      }
+      const payload = nextSettings ? { habits: source, settings: nextSettings } : { habits: source };
+      const saved = await habitDataCommit(payload, () => {
+        if (liveGuideCompose && (epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '') || !State.settings)) return false;
+        State.habits = source;
+        if (nextSettings) {
+          State.settings.guideV3 = guideResult.state;
+          State._guideV3HabitCandidateId = habit.id; State._guideV3Error = '';
+        }
+        return true;
+      });
+      if (!saved) return failLiveForm();
+      State._habitTxnBusy = '';
+      if (nextSettings) {
+        if (guideResult.metric) track(guideResult.metric);
+        State._habitsFocusAfterCommit = `[data-guide-target="habit-created"][data-id="${CSS.escape(habit.id)}"]`;
+      } else State._habitsFocusAfterCommit = `[data-action="toggle-habit"][data-id="${CSS.escape(habit.id)}"]`;
+      State._guideV3HabitDraftId = ''; toast(t(original ? 'Сохранено' : 'Привычка создана')); render();
+      return true;
+    };
+    try {
+      if (guideCompose) await guideV3Exclusive(persistHabit);
+      else await persistHabit();
+    } catch (error) {
+      console.error('habit guide save', error); failLiveForm();
+    }
     return;
   }
   if (f.id === 'ai-keys') {
@@ -22809,28 +23053,55 @@ function guideV3State() {
 }
 async function initializeGuideV3State() {
   if (!State.settings || !window.GuideV3) { State._guideV3Error = 'module'; return false; }
-  const before = JSON.stringify({ guideV3: State.settings.guideV3 || null, legacyActive: !!State.settings.tutorial?.active });
-  const next = window.GuideV3.migrate(State.settings.guideV3, State.settings.tutorial);
-  if (demoX7Requested()) next.enabled = false;
-  State.settings.guideV3 = next;
-  // Legacy overlay becomes inert after migration; its fields remain only as an auditable source.
-  if (State.settings.tutorial) State.settings.tutorial.active = false;
-  const after = JSON.stringify({ guideV3: State.settings.guideV3, legacyActive: !!State.settings.tutorial?.active });
-  if (before === after) { State._guideV3Error = ''; return true; }
-  const saved = await Store.saveNow('settings', State.settings);
+  const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
+  let migrated = null, unchanged = false;
+  const saved = await Store.updateNow('settings', (current) => {
+    if (!current) return undefined;
+    const before = JSON.stringify({ guideV3: current.guideV3 || null, legacyActive: !!current.tutorial?.active });
+    migrated = window.GuideV3.migrate(current.guideV3, current.tutorial);
+    if (demoX7Requested()) migrated.enabled = false;
+    const next = structuredClone(current);
+    next.guideV3 = migrated;
+    // Legacy overlay becomes inert after migration; its fields remain only as an auditable source.
+    if (next.tutorial) next.tutorial.active = false;
+    const after = JSON.stringify({ guideV3: next.guideV3, legacyActive: !!next.tutorial?.active });
+    if (before === after) { unchanged = true; return undefined; }
+    return next;
+  }, (committed) => {
+    if (!State.settings) return false;
+    State.settings.guideV3 = committed.guideV3;
+    if (State.settings.tutorial && committed.tutorial) State.settings.tutorial.active = !!committed.tutorial.active;
+    return true;
+  });
+  if (unchanged && writeEpoch === Store._writeEpoch && accountId === String(State.me?.id || '') && State.settings && migrated) {
+    State.settings.guideV3 = migrated;
+    if (State.settings.tutorial) State.settings.tutorial.active = false;
+    State._guideV3Error = '';
+    return true;
+  }
   State._guideV3Error = saved ? '' : 'persist';
   return saved;
 }
 async function reconcileGuideV3AfterTaskLoad() {
-  if (!State.settings?.guideV3 || !window.GuideV3 || !Array.isArray(State.tasks)) return false;
-  const prior = State.settings.guideV3;
-  const result = window.GuideV3.reconcile(prior, { tasks: State.tasks });
-  if (!result.changed) return true;
-  State.settings.guideV3 = result.state;
-  const saved = await Store.saveNow('settings', State.settings);
-  if (!saved) State.settings.guideV3 = prior;
-  State._guideV3Error = saved ? '' : 'persist';
-  return saved;
+  return guideV3Exclusive(async ({ epoch, accountId }) => {
+    if (!State.settings?.guideV3 || !window.GuideV3 || !Array.isArray(State.tasks)) return false;
+    let result = null, unchanged = false;
+    const saved = await Store.updateNow('settings', (current) => {
+      if (!current?.guideV3 || epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')) return undefined;
+      result = window.GuideV3.reconcile(current.guideV3, { tasks: State.tasks });
+      if (!result.changed) { unchanged = true; return undefined; }
+      const next = structuredClone(current); next.guideV3 = result.state; return next;
+    }, () => {
+      if (epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '') || !State.settings) return false;
+      State.settings.guideV3 = result.state;
+      return true;
+    });
+    if (unchanged) return epoch === _guideV3WriteEpoch && accountId === String(State.me?.id || '');
+    const currentAccount = epoch === _guideV3WriteEpoch && accountId === String(State.me?.id || '') && !!State.settings;
+    if (!saved || !currentAccount) { if (currentAccount) State._guideV3Error = 'persist'; return false; }
+    State._guideV3Error = '';
+    return true;
+  });
 }
 function guideV3Copy(key, variables) {
   const copy = guideV3CopyModule();
@@ -22854,22 +23125,55 @@ function guideV3TaskTarget(taskId) {
   if (guide.currentStep === 'victory') return 'first-task-reward';
   return '';
 }
+let _guideV3WriteQueue = Promise.resolve();
+let _guideV3WriteEpoch = 0;
+function guideV3Exclusive(operation) {
+  const epoch = _guideV3WriteEpoch;
+  const accountId = String(State.me?.id || '');
+  const run = async () => {
+    if (epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')) return false;
+    return operation({ epoch, accountId });
+  };
+  const job = _guideV3WriteQueue.then(run, run);
+  _guideV3WriteQueue = job.then(() => undefined, () => undefined);
+  return job;
+}
 async function guideV3Commit(event, options = {}) {
-  if (!State.settings || !window.GuideV3) return false;
-  const prior = State.settings.guideV3;
-  const result = window.GuideV3.reduce(prior, event);
-  if (!result.accepted) return false;
-  State.settings.guideV3 = result.state;
-  const saved = await Store.saveNow('settings', State.settings);
-  if (!saved) {
-    State.settings.guideV3 = prior; State._guideV3Error = 'persist';
+  return guideV3Exclusive(async ({ epoch, accountId }) => {
+    if (!State.settings || !window.GuideV3) return false;
+    const discovered = typeof options.discover === 'string' ? options.discover : '';
+    let result = null, rejected = false;
+    const saved = await Store.updateNow('settings', (current) => {
+      if (!current || epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')) return undefined;
+      result = window.GuideV3.reduce(current.guideV3, event);
+      if (!result.accepted) { rejected = true; return undefined; }
+      const nextSettings = structuredClone(current);
+      nextSettings.guideV3 = result.state;
+      if (discovered) {
+        if (!Array.isArray(nextSettings.discovered)) nextSettings.discovered = [];
+        if (!nextSettings.discovered.includes(discovered)) nextSettings.discovered.push(discovered);
+      }
+      return nextSettings;
+    }, () => {
+      if (epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '') || !State.settings) return false;
+      State.settings.guideV3 = result.state;
+      if (discovered) {
+        if (!Array.isArray(State.settings.discovered)) State.settings.discovered = [];
+        if (!State.settings.discovered.includes(discovered)) State.settings.discovered.push(discovered);
+      }
+      return true;
+    });
+    if (rejected) return false;
+    if (!saved || epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '') || !State.settings) {
+      if (epoch === _guideV3WriteEpoch && accountId === String(State.me?.id || '')) State._guideV3Error = 'persist';
+      if (options.repaint !== false) guideV3Paint();
+      return false;
+    }
+    State._guideV3Error = '';
+    if (result.metric) track(result.metric);
     if (options.repaint !== false) guideV3Paint();
-    return false;
-  }
-  State._guideV3Error = '';
-  if (result.metric) track(result.metric);
-  if (options.repaint !== false) guideV3Paint();
-  return true;
+    return true;
+  });
 }
 
 let _guideV3SurfaceKey = '';
@@ -22882,6 +23186,10 @@ function guideV3Close(options = {}) {
 }
 function guideV3TargetSelector(viewModel) {
   const vm = viewModel || {}, taskId = String(vm.taskId || '');
+  if (vm.chapter === window.GuideV3?.HABITS_CHAPTER) {
+    if (vm.step === 'complete' && vm.habitId) return `[data-guide-target="habit-created"][data-id="${CSS.escape(String(vm.habitId))}"]`;
+    return vm.targetSelector || null;
+  }
   if (vm.step === 'recognize' && vm.candidateTaskId) {
     return `[data-guide-target="first-task-select"][data-id="${CSS.escape(String(vm.candidateTaskId))}"]`;
   }
@@ -22919,6 +23227,8 @@ function guideV3SurfaceAction(item) {
     next: 'guide-next', understood: 'guide-next', finish: 'guide-finish',
     'finish-replay': 'guide-finish', 'replay-next': 'guide-next',
     'skip-replay': 'guide-skip', 'show-teaser': 'guide-show-teaser',
+    'context-open': 'guide-context-open', 'context-finish': 'guide-context-finish',
+    'context-replay-finish': 'guide-next',
   };
   if (source.targetOnly) return null;
   const action = byId[source.id]; if (!action) return null;
@@ -22940,9 +23250,16 @@ function guideV3CurrentForm() {
 function guideV3Paint() {
   const model = window.GuideV3, presenter = window.GuidePresenterV1, surface = window.GuideSurfaceV1;
   const state = guideV3State();
-  const blocked = State.phase !== 'app' || State.view !== 'today'
-    || document.querySelector('.modal-overlay, #mobile-nav-sheet');
-  if (!model || !presenter || !surface || !guideV3RuntimeAllowed() || !state?.currentChapter || blocked
+  const contextualReplay = state?.currentChapter && state?.chapterMeta?.[state.currentChapter]?.replay === true;
+  const routeAllowed = state?.currentChapter === model?.FIRST_CHAPTER
+    ? State.view === 'today'
+    : state?.currentChapter === model?.HABITS_CHAPTER
+      ? (contextualReplay || state.currentStep === 'intro' ? State.view === 'today' : State.view === 'habits' && State.habitsTab === 'build')
+      : false;
+  const chapterAllowed = state?.currentChapter === model?.FIRST_CHAPTER
+    || (state?.currentChapter === model?.HABITS_CHAPTER && guideV3ContextRuntimeAllowed(model.HABITS_CHAPTER));
+  const blocked = State.phase !== 'app' || !routeAllowed || document.querySelector('.modal-overlay, #mobile-nav-sheet');
+  if (!model || !presenter || !surface || !guideV3RuntimeAllowed() || !state?.enabled || !chapterAllowed || !state?.currentChapter || blocked
     || (state.snoozedUntil && Date.now() < state.snoozedUntil && !State._guideV3ForceOpen)) {
     guideV3Close({ restoreFocus: false }); return;
   }
@@ -22958,8 +23275,13 @@ function guideV3Paint() {
     }, 500);
     return;
   }
-  const key = `${lang()}:${vm.chapter}:${vm.step}:${vm.replay ? 'replay' : 'live'}`;
-  if (_guideV3SurfaceKey && _guideV3SurfaceKey !== key) {
+  const targetSelector = guideV3TargetSelector(vm);
+  const returnTarget = targetSelector ? document.querySelector(targetSelector) : null;
+  const returnFocus = returnTarget?.matches('details') ? returnTarget.querySelector('summary') : returnTarget;
+  const targetMounted = !targetSelector || !!returnTarget;
+  const key = `${lang()}:${vm.chapter}:${vm.step}:${vm.replay ? 'replay' : 'live'}:${targetMounted ? 'target' : 'fallback'}`;
+  const stepChanged = _guideV3SurfaceKey !== key;
+  if (_guideV3SurfaceKey && stepChanged) {
     State._guideV3VoiceActive = false;
     try { window.ShadowVoiceV2?.stop({ silent: true, reason: 'guide_step' }); } catch {}
   }
@@ -22975,38 +23297,66 @@ function guideV3Paint() {
   const actions = vm.actions.map(guideV3SurfaceAction).filter(Boolean);
   const choices = vm.step === 'choose' && State._guideV3ChooseOther
     ? vm.choices.map((task) => ({ action: 'guide-task-choice', id: task.id, label: task.title, selected: task.selected, noI18n: true })) : [];
-  surface.paint({
+  const mounted = surface.paint({
     surfaceLabel: guideV3Copy('a11y.guide_dialog'), chapterId: vm.chapter, stepId: vm.step,
     chapterLabel: vm.chapterTitle, title: vm.title, progressLabel: vm.progress,
     transcript, visualLabel: guideV3Copy('a11y.shadow_visual', { form: formLabel }),
     visualAriaLabel: guideV3Copy('a11y.shadow_alt', { form: formLabel, state: stateLabel }),
-    targetSelector: guideV3TargetSelector(vm), spotlightLabel: guideV3Copy('a11y.spotlight_target'), fallback: 'safe-bubble', actions, choices,
-    choiceAction: 'guide-task-choice', returnFocus: document.activeElement,
-    focusInitial: vm.step !== 'bond',
+    targetSelector, spotlightLabel: guideV3Copy('a11y.spotlight_target'), fallback: 'safe-bubble', actions, choices,
+    choiceAction: 'guide-task-choice', returnFocus: returnFocus || document.activeElement,
+    focusInitial: vm.step !== 'bond' && !(vm.chapter === model.HABITS_CHAPTER && vm.step === 'compose'),
     onEscape: () => {
       if (vm.replay) guideV3AbandonReplay(vm.chapter);
       else guideV3Snooze();
       return false;
     },
   });
+  if (mounted) {
+    State._guideV3SessionPrompted = true;
+    if (vm.chapter !== model.FIRST_CHAPTER && !vm.replay && vm.step === 'intro' && !State._guideV3PromptMarkBusy) {
+      const entry = model.REGISTRY.find((item) => item.chapter === vm.chapter), promptId = entry && model.promptKey(entry);
+      if (promptId && !state.seenPrompts.includes(promptId)) {
+        State._guideV3PromptMarkBusy = true;
+        Promise.resolve(guideV3Commit({ type: 'guide:prompt-seen', promptId, at: Date.now() }, { repaint: false }))
+          .finally(() => { State._guideV3PromptMarkBusy = false; });
+      }
+    }
+  }
   if (vm.step === 'mastery') guideV3RevealTarget('[data-guide-target="first-level-form"]');
   if (vm.step === 'bond') guideV3RevealTarget('[data-guide-target="first-shadow-contact"]', { focus: true, forceScroll: true, block: 'end' });
+  if (stepChanged && vm.chapter === model.HABITS_CHAPTER && vm.step === 'compose') guideV3RevealTarget('[data-guide-target="habit-title"]', { focus: true, forceScroll: true, block: 'center' });
+  if (stepChanged && vm.chapter === model.HABITS_CHAPTER && vm.step === 'complete' && vm.habitId) guideV3RevealTarget(guideV3TargetSelector(vm), { focus: true, forceScroll: true, block: 'center' });
 }
 function guideV3MaybeStart() {
   const model = window.GuideV3, state = guideV3State();
   if (!model || !state || State._guideV3StartBusy || State.phase !== 'app' || State.view !== 'today'
-    || !guideV3RuntimeAllowed() || state.currentChapter || model.chapterResolved(state, model.FIRST_CHAPTER)) return;
-  const entry = model.REGISTRY.find((item) => item.id === model.FIRST_CHAPTER);
-  if (!entry || !model.entryEligible(entry, state, { now: Date.now(), seedApplied: !!State.settings?.skills?.length, view: State.view })) return;
+    || !guideV3RuntimeAllowed() || state.currentChapter) return;
+  let entry = null;
+  if (!model.chapterResolved(state, model.FIRST_CHAPTER)) {
+    entry = model.REGISTRY.find((item) => item.id === model.FIRST_CHAPTER);
+    if (!entry || !model.entryEligible(entry, state, { now: Date.now(), seedApplied: !!State.settings?.skills?.length, view: State.view })) return;
+  } else {
+    entry = model.nextContextual(state, guideV3Context());
+    if (!entry || !guideV3ContextRuntimeAllowed(entry.chapter)) return;
+    if (entry.chapter === model.HABITS_CHAPTER && State._habitsLoadError) return;
+  }
   State._guideV3StartBusy = true;
   Promise.resolve().then(async () => {
-    await guideV3Commit({ type: 'guide:start', chapter: model.FIRST_CHAPTER, at: Date.now() });
+    await guideV3Commit({ type: 'guide:start', chapter: entry.chapter, at: Date.now() });
     State._guideV3StartBusy = false;
   }).catch(() => { State._guideV3StartBusy = false; });
 }
 async function guideV3Snooze() {
+  const resetHabitForm = guideV3HabitsStep('compose') && State.view === 'habits';
   const ok = await guideV3Commit({ type: 'guide:snooze', now: Date.now(), until: Date.now() + 24 * 60 * 60 * 1000 }, { repaint: false });
-  if (ok) { State._guideV3ForceOpen = false; guideV3Close(); toast(guideV3Copy('system.chapter_snoozed')); }
+  if (ok) {
+    State._guideV3ForceOpen = false;
+    if (resetHabitForm) {
+      State._guideV3HabitCandidateId = null; State._guideV3HabitDraftId = '';
+      guideV3Close({ restoreFocus: false }); State._habitsFocusAfterCommit = '.habit-create > summary'; render();
+    } else guideV3Close();
+    toast(guideV3Copy('system.chapter_snoozed'));
+  }
   return ok;
 }
 async function guideV3AbandonReplay(chapter) {
@@ -23038,28 +23388,42 @@ async function guideV3Speak(button) {
   return result?.mode !== 'unavailable';
 }
 async function guideV3CompleteShadowContact() {
-  const model = window.GuideV3, state = guideV3State();
-  const replay = state?.chapterMeta?.[model?.FIRST_CHAPTER]?.replay === true;
-  if (!model || !State.settings || replay) return false;
-  const priorGuide = State.settings.guideV3;
-  const hadCompanion = !!State.settings.companion;
-  const priorCompanion = hadCompanion ? JSON.parse(JSON.stringify(State.settings.companion)) : null;
-  const result = model.reduce(priorGuide, { type: 'guide:bond', persisted: true, at: Date.now() });
-  if (!result.accepted) return false;
-  const companion = ensureCompanion(), today = todayStr();
-  companion.bond = Math.max(0, Number(companion.bond) || 0) + 1;
-  companion.pet = today; companion.lastSeen = today;
-  State.settings.guideV3 = result.state;
-  const saved = await Store.saveNow('settings', State.settings);
-  if (!saved) {
-    State.settings.guideV3 = priorGuide;
-    if (hadCompanion) State.settings.companion = priorCompanion;
-    else delete State.settings.companion;
-    State._guideV3Error = 'persist'; guideV3Paint(); return false;
-  }
-  State._compAway = 0; State._guideV3Error = '';
-  if (result.metric) track(result.metric);
-  return true;
+  return guideV3Exclusive(async ({ epoch, accountId }) => {
+    const model = window.GuideV3;
+    if (!model || !State.settings) return false;
+    let result = null, rejected = false;
+    const saved = await Store.updateNow('settings', (current) => {
+      if (!current || epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')) return undefined;
+      const state = model.normalize(current.guideV3);
+      if (state.chapterMeta?.[model.FIRST_CHAPTER]?.replay === true) { rejected = true; return undefined; }
+      result = model.reduce(current.guideV3, { type: 'guide:bond', persisted: true, at: Date.now() });
+      if (!result.accepted) { rejected = true; return undefined; }
+      const next = structuredClone(current), today = todayStr();
+      const companion = next.companion && typeof next.companion === 'object' && !Array.isArray(next.companion)
+        ? next.companion : { name: 'Тень', born: today, bond: 0, lastSeen: today, journal: [], check: {} };
+      companion.name = companion.name || 'Тень'; companion.born = companion.born || today;
+      companion.journal = Array.isArray(companion.journal) ? companion.journal : [];
+      companion.check = companion.check && typeof companion.check === 'object' ? companion.check : {};
+      companion.bond = Math.max(0, Number(companion.bond) || 0) + 1;
+      companion.pet = today; companion.lastSeen = today;
+      next.companion = companion; next.guideV3 = result.state;
+      return next;
+    }, (committed) => {
+      if (epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '') || !State.settings) return false;
+      State.settings.guideV3 = result.state;
+      State.settings.companion = committed.companion;
+      return true;
+    });
+    if (rejected) return false;
+    const currentAccount = epoch === _guideV3WriteEpoch && accountId === String(State.me?.id || '') && !!State.settings;
+    if (!saved || !currentAccount) {
+      if (currentAccount) { State._guideV3Error = 'persist'; guideV3Paint(); }
+      return false;
+    }
+    State._compAway = 0; State._guideV3Error = '';
+    if (result.metric) track(result.metric);
+    return true;
+  });
 }
 async function guideV3StartFocus(taskId) {
   const id = String(taskId || ''), task = questById(id); if (!task || task.done) return false;
@@ -23069,6 +23433,22 @@ async function guideV3StartFocus(taskId) {
     startFocus(id);
     await guideV3Commit({ type: 'guide:started', focus: true, persisted: true, at: Date.now() });
   }
+  return true;
+}
+function guideV3RouteForState(state = guideV3State()) {
+  return state?.currentChapter === window.GuideV3?.HABITS_CHAPTER && ['compose', 'complete'].includes(state.currentStep)
+    ? 'habits' : 'today';
+}
+async function guideV3OpenHabitsChapter() {
+  const model = window.GuideV3;
+  if (!guideV3HabitsStep('intro') || !model || !guideV3ContextRuntimeAllowed(model.HABITS_CHAPTER)) return false;
+  const advanced = await guideV3Commit(
+    { type: 'guide:context-next', at: Date.now() },
+    { repaint: false, discover: 'habits' },
+  );
+  if (!advanced) return false;
+  State._guideV3HabitCandidateId = null; State._guideV3ForceOpen = false;
+  State.view = 'habits'; State.habitsTab = 'build'; track('view:habits'); render();
   return true;
 }
 async function guideV3HandleAction(action, el) {
@@ -23082,7 +23462,26 @@ async function guideV3HandleAction(action, el) {
     return true;
   }
   if (action === 'guide-later') { await guideV3Snooze(); return true; }
-  if (action === 'guide-skip') { if (await guideV3Commit({ type: 'guide:skip', chapter, at: Date.now() }, { repaint: false })) guideV3Close(); else guideV3Paint(); return true; }
+  if (action === 'guide-skip') {
+    const resetHabitForm = chapter === window.GuideV3?.HABITS_CHAPTER && state?.currentStep === 'compose' && State.view === 'habits';
+    if (await guideV3Commit({ type: 'guide:skip', chapter, at: Date.now() }, { repaint: false })) {
+      State._guideV3HabitCandidateId = null; State._guideV3HabitDraftId = '';
+      if (resetHabitForm) {
+        guideV3Close({ restoreFocus: false }); State._habitsFocusAfterCommit = '.habit-create > summary'; render();
+      } else guideV3Close();
+    } else guideV3Paint();
+    return true;
+  }
+  if (action === 'guide-context-open') { await guideV3OpenHabitsChapter(); return true; }
+  if (action === 'guide-context-finish') {
+    if (await guideV3Commit({ type: 'guide:context-finish', at: Date.now() }, { repaint: false })) {
+      State._guideV3HabitCandidateId = null; State._guideV3HabitDraftId = ''; State._guideV3ForceOpen = false;
+      if (State.view === 'habits') {
+        guideV3Close({ restoreFocus: false }); State._habitsFocusAfterCommit = '.habit-create > summary'; render();
+      } else guideV3Close();
+    } else guideV3Paint();
+    return true;
+  }
   if (action === 'guide-focus-create') { const form = document.getElementById('add-task'); form?.querySelector('input[name="title"]')?.focus(); form?.requestSubmit(); return true; }
   if (action === 'guide-recognize-task') { await guideV3Commit({ type: 'guide:recognize-task', taskId: el.dataset.id || guideV3CandidateTaskId(), persisted: true, at: Date.now() }); return true; }
   if (action === 'guide-select-task' || action === 'guide-task-choice') { await guideV3Commit({ type: 'guide:select-task', taskId: el.dataset.id || guideV3CandidateTaskId(), persisted: true, at: Date.now() }); State._guideV3ChooseOther = false; return true; }
@@ -23100,9 +23499,17 @@ async function guideV3HandleAction(action, el) {
   }
   if (action === 'guide-show-teaser') { State._guideV3ShowTeaser = !State._guideV3ShowTeaser; guideV3Paint(); return true; }
   if (action === 'guide-finish') { if (await guideV3Commit({ type: 'guide:finish', at: Date.now() }, { repaint: false })) guideV3Close(); else guideV3Paint(); return true; }
-  if (action === 'guide-resume') { State._guideV3ForceOpen = true; State.view = 'today'; closeAccountDialog('guide', { restoreFocus: false }); render(); return true; }
-  if (action === 'guide-replay') { closeAccountDialog('guide', { restoreFocus: false }); State.view = 'today'; await guideV3Commit({ type: 'guide:replay', chapter: el.dataset.chapter, at: Date.now() }, { repaint: false }); render(); return true; }
-  if (action === 'guide-start') { closeAccountDialog('guide', { restoreFocus: false }); State.view = 'today'; await guideV3Commit({ type: 'guide:start', chapter: el.dataset.chapter || window.GuideV3.FIRST_CHAPTER, at: Date.now() }, { repaint: false }); render(); return true; }
+  if (action === 'guide-resume') { State._guideV3ForceOpen = true; State.view = guideV3RouteForState(state); if (State.view === 'habits') State.habitsTab = 'build'; closeAccountDialog('guide', { restoreFocus: false }); render(); return true; }
+  if (action === 'guide-replay') {
+    const replayChapter = el.dataset.chapter;
+    if (replayChapter !== window.GuideV3.FIRST_CHAPTER && !guideV3ContextRuntimeAllowed(replayChapter)) return true;
+    closeAccountDialog('guide', { restoreFocus: false }); State.view = 'today'; await guideV3Commit({ type: 'guide:replay', chapter: replayChapter, at: Date.now() }, { repaint: false }); render(); return true;
+  }
+  if (action === 'guide-start') {
+    const startChapter = el.dataset.chapter || window.GuideV3.FIRST_CHAPTER;
+    if (startChapter !== window.GuideV3.FIRST_CHAPTER && !guideV3ContextRuntimeAllowed(startChapter)) return true;
+    closeAccountDialog('guide', { restoreFocus: false }); State.view = 'today'; await guideV3Commit({ type: 'guide:start', chapter: startChapter, at: Date.now() }, { repaint: false }); render(); return true;
+  }
   if (action === 'guide-enable') {
     const enabled = await guideV3Commit({ type: 'guide:enable', at: Date.now() }, { repaint: false });
     if (enabled) { closeAccountDialog('guide', { restoreFocus: false }); showGuide(); }
@@ -23111,7 +23518,16 @@ async function guideV3HandleAction(action, el) {
   if (action === 'guide-disable') {
     if (confirm(guideV3Copy('system.global_disable_confirm'))) {
       const disabled = await guideV3Commit({ type: 'guide:disable', at: Date.now() }, { repaint: false });
-      if (disabled) { closeAccountDialog('guide'); guideV3Close({ restoreFocus: false }); }
+      if (disabled) {
+        const resetHabitForm = chapter === window.GuideV3?.HABITS_CHAPTER && State.view === 'habits';
+        State._guideV3HabitCandidateId = null; State._guideV3HabitDraftId = '';
+        if (resetHabitForm) {
+          closeAccountDialog('guide', { restoreFocus: false }); guideV3Close({ restoreFocus: false });
+          State._habitsFocusAfterCommit = '.habit-create > summary'; render();
+        } else {
+          closeAccountDialog('guide'); guideV3Close({ restoreFocus: false });
+        }
+      }
     }
     return true;
   }
@@ -23365,11 +23781,18 @@ async function onClick(e) {
   const secBtn = e.target.closest('[data-action="go-section"]');
   if (secBtn) {
     const s = SECTIONS.find((x) => x.id === secBtn.dataset.sec); if (!s) return;
+    let settingsFlushedForNav = false;
     if (s.gate > navUnlockLevel()) { toast(`🔒 «${t(s.label)}» — ${t('Откроется на уровне')} ${s.gate}`); return; }
+    if (s.id === 'habits') {
+      const settingsFlushed = await flushSettingsForm();
+      if (!settingsFlushed && document.getElementById('skills-list')) return;
+      settingsFlushedForNav = true;
+      if (await guideV3OpenHabitsChapter()) return;
+    }
     const fromMobileSheet = !!secBtn.closest('#mobile-nav-sheet');
     if (fromMobileSheet) closeMobileNavSheet({ restoreFocus: false });
     else closeMobileNavSheet();
-    if (sectionOf(State.view) !== s.id) { flushSettingsForm(); sfx('navigate'); State.view = s.views[0].view; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); syncGoalDeepLink('', State.view); } if (fromMobileSheet) State._mobileNavFocusAfterCommit = '#main h2'; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
+    if (sectionOf(State.view) !== s.id) { if (!settingsFlushedForNav) flushSettingsForm(); sfx('navigate'); State.view = s.views[0].view; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); syncGoalDeepLink('', State.view); } if (fromMobileSheet) State._mobileNavFocusAfterCommit = '#main h2'; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
     return;
   }
   if (e.target.id === 'mobile-nav-sheet') { closeMobileNavSheet(); return; }
@@ -23520,11 +23943,17 @@ async function onClick(e) {
   if (action === 'equip-title') {
     const selected = el.dataset.title || null;
     if (selected && !earnedTitles().includes(selected)) return;
-    const settings = structuredClone(State.settings);
-    settings.equipped = settings.equipped && typeof settings.equipped === 'object'
-      ? { ...settings.equipped } : { frame: null, background: null, title: null };
-    settings.equipped.title = (!selected || settings.equipped.title === selected) ? null : selected;
-    if (await Store.saveNow('settings', settings)) State.settings = settings;
+    await Store.updateNow('settings', (current) => {
+      const next = structuredClone(current);
+      next.equipped = next.equipped && typeof next.equipped === 'object'
+        ? { ...next.equipped } : { frame: null, background: null, title: null };
+      next.equipped.title = (!selected || next.equipped.title === selected) ? null : selected;
+      return next;
+    }, (committed) => {
+      if (!State.settings) return false;
+      State.settings.equipped = committed.equipped;
+      return true;
+    });
     render(); return;
   }
   if (action === 'equip-cosmetic') {
@@ -25329,10 +25758,20 @@ function captureSettingsForm() {
   if (habitsList) {
     const oldHabits = State.habits;
     State.habits = [...habitsList.querySelectorAll('.habit-edit')].map((row) => {
-      const old = oldHabits.find((h) => h.id === row.dataset.id);
+      const old = oldHabits.find((h) => h.id === row.dataset.id) || {};
       const hh = Number((row.querySelector('[data-field="estimateMinH"]') || {}).value) || 0;
       const mm = Number((row.querySelector('[data-field="estimateMinM"]') || {}).value) || 0;
-      return { id: row.dataset.id, title: row.querySelector('[data-field="title"]').value.trim() || 'Привычка', skillId: row.querySelector('[data-field="skillId"]').value, difficulty: row.querySelector('[data-field="difficulty"]').value, estimateMin: Math.max(0, hh * 60 + mm), days: [...row.querySelectorAll('input[data-day]:checked')].map((c) => Number(c.dataset.day)), archived: false, createdAt: old ? old.createdAt : new Date().toISOString() };
+      return {
+        ...old,
+        id: row.dataset.id,
+        title: row.querySelector('[data-field="title"]').value.trim() || 'Привычка',
+        skillId: row.querySelector('[data-field="skillId"]').value,
+        difficulty: row.querySelector('[data-field="difficulty"]').value,
+        estimateMin: Math.max(0, hh * 60 + mm),
+        days: [...row.querySelectorAll('input[data-day]:checked')].map((c) => Number(c.dataset.day)),
+        archived: !!old.archived,
+        createdAt: old.createdAt || new Date().toISOString(),
+      };
     });
   }
   s.xp.perMinute = num('k-perMinute', 1); s.xp.completionBonus = num('k-bonus', 5);
@@ -25404,6 +25843,7 @@ function autosaveSettings() { return SettingsAutosave.queue(); }
 function flushSettingsForm() { return SettingsAutosave.flush(); }
 
 function clearAllData() {
+  Store.cancelPending();
   State.settings = null; State.tasks = null; State.days = null; State.habits = null;
   State.habitlog = null; State.goals = null; State.goalGroups = null; State.tree = null; State.rewards = null;
   State.purchases = null; State.achievements = null; State.weeks = null; State.lootbox = null;
@@ -25422,6 +25862,11 @@ function clearAllData() {
   State._settingsLoadError = ''; State._settingsLoadBusy = false; State._treeLoadError = '';
   State._accountDataLoadErrors = {}; State._accountDataLoadBusy = false; State._accountDataWriteBlockedNoticeAt = 0;
   State._onboardingSaveBusy = false; State._onboardingSaveError = '';
+  State._guideV3Error = ''; State._guideV3SessionPrompted = false; State._guideV3StartBusy = false; State._guideV3PromptMarkBusy = false;
+  State._guideV3ChooseOther = false; State._guideV3FocusPending = ''; State._guideV3VoiceActive = false;
+  State._guideV3ForceOpen = false; State._guideV3ShowTeaser = false; State._guideV3HabitCandidateId = null; State._guideV3HabitDraftId = '';
+  _guideV3WriteEpoch += 1; _guideV3WriteQueue = Promise.resolve();
+  guideV3Close({ restoreFocus: false });
   State._attentionLoadError = ''; State._attentionLoadBusy = false; State._attentionWriteBlockedNoticeAt = 0; State._attentionDeepLink = null; State._attentionReturnIndex = 0;
   clearTimeout(_attentionBoundaryTimer); _attentionBoundaryTimer = null; closeAttentionDialog({ restoreFocus: false, force: true });
   State.timer = null; persistTimer(); stopTick(); closeFocusWidget(); removePill();
@@ -25733,6 +26178,10 @@ function publishLeaderboard() {
 
 // Делегированный обработчик change (для select-ов вне форм — напр. импорт достижений)
 function onChange(e) {
+  if (e.target.dataset?.action === 'guide-habit-candidate') {
+    State._guideV3HabitCandidateId = e.target.value || 'new';
+    State._habitsFocusAfterCommit = '[data-guide-target="habit-title"]'; render(); return;
+  }
   if (e.target.id === 'chat-plan-file') {
     const input = e.target, file = input.files && input.files[0]; input.value = '';
     if (!file) return;
@@ -26267,7 +26716,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v191';
+const PWA_CACHE_VERSION = 'satoru-v192';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

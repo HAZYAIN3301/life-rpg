@@ -45,13 +45,19 @@ test('legacy skipped tutorial resolves only the first chapter, not contextual he
   assert.equal(G.entryEligible(habits, state, { completedTasks: 2 }), true);
 });
 
-test('legacy drips map to stable prompt versions and do not repeat', () => {
+test('legacy drips remain auditable while a newer Habits prompt version can run once', () => {
   const state = G.migrate(null, { done: true, seenDrips: ['d_habits', 'd_den', 'unknown-old'] });
   assert.ok(state.seenPrompts.includes('habits@1'));
   assert.ok(state.seenPrompts.includes('den@1'));
   assert.ok(state.seenPrompts.includes('legacy:unknown-old'));
   const habits = G.REGISTRY.find((entry) => entry.id === 'habits');
-  assert.equal(G.entryEligible(habits, state, { completedTasks: 2, now: 100 }), false);
+  assert.equal(G.promptKey(habits), 'habits@2');
+  assert.equal(G.entryEligible(habits, state, { completedTasks: 2, now: 100 }), true,
+    'the materially revised v2 chapter must not be suppressed by the old one-screen drip');
+  const seenCurrent = G.reduce(state, { type: 'guide:prompt-seen', promptId: 'habits@2', at: 100 });
+  assert.equal(seenCurrent.accepted, true);
+  assert.equal(G.entryEligible(habits, seenCurrent.state, { completedTasks: 2, now: 200 }), false,
+    'the current prompt version still remains once-only');
 });
 
 test('seed adapter chooses a deterministic real task and recognizes its sphere/goal', () => {
@@ -139,6 +145,27 @@ test('skip, snooze and disable are independent choices', () => {
   assert.equal(disabled.state.enabled, false);
 });
 
+test('disable preserves an in-progress Habits chapter so enable can resume it', () => {
+  let state = G.migrate(null, { done: true });
+  state = G.reduce(state, { type: 'guide:start', chapter: G.HABITS_CHAPTER, at: 10 }).state;
+  state = G.reduce(state, { type: 'guide:prompt-seen', promptId: 'habits@2', at: 11 }).state;
+  state = G.reduce(state, { type: 'guide:context-next', at: 12 }).state;
+  assert.equal(state.currentStep, 'compose');
+
+  const disabled = G.reduce(state, { type: 'guide:disable', at: 13 });
+  assert.equal(disabled.accepted, true);
+  assert.equal(disabled.state.enabled, false);
+  assert.equal(disabled.state.currentChapter, G.HABITS_CHAPTER);
+  assert.equal(disabled.state.currentStep, 'compose');
+  assert.equal(disabled.state.waitingFor, 'habit-persisted');
+
+  const enabled = G.reduce(disabled.state, { type: 'guide:enable', at: 14 });
+  assert.equal(enabled.accepted, true);
+  assert.equal(enabled.state.enabled, true);
+  assert.equal(enabled.state.currentChapter, G.HABITS_CHAPTER);
+  assert.equal(enabled.state.currentStep, 'compose');
+});
+
 test('contextual registry is deterministic and offers at most one next chapter', () => {
   const state = G.migrate(null, { done: true });
   const first = G.nextContextual(state, { completedTasks: 2, activeDays: 2, level: 4, ttsReady: true, now: 100 });
@@ -155,14 +182,107 @@ test('prompt versions and session pacing suppress contextual spam', () => {
   assert.equal(G.nextContextual(base, { completedTasks: 2, now: 200, sessionPrompted: true }), null);
 });
 
-test('a contextual chapter has a persisted completion lifecycle', () => {
+test('Habits eligibility is data-driven and paced after First Journey', () => {
+  const habits = G.REGISTRY.find((entry) => entry.id === G.HABITS_CHAPTER);
+  assert.ok(habits);
+  assert.equal(habits.version, 2);
+  assert.equal(habits.completion, 'habit-persisted');
+  assert.equal(G.entryEligible(habits, G.defaultState(), { completedTasks: 2, activeDays: 2 }), false,
+    'First Journey is a real prerequisite');
+
+  const ready = G.migrate(null, { done: true });
+  assert.equal(G.entryEligible(habits, ready, { completedTasks: 1, activeDays: 1 }), false);
+  assert.equal(G.entryEligible(habits, ready, { completedTasks: 2, activeDays: 1 }), true);
+  assert.equal(G.entryEligible(habits, ready, { completedTasks: 1, activeDays: 2 }), true);
+  assert.equal(G.entryEligible(habits, ready, { completedTasks: 2, activeDays: 2, sessionPrompted: true }), false,
+    'only one contextual prompt may enter a session');
+});
+
+test('Habits is a reload-safe three-step lifecycle completed by one exact persisted item', () => {
   let state = G.migrate(null, { done: true });
-  state = G.reduce(state, { type: 'guide:start', chapter: 'habits' }).state;
-  assert.equal(G.reduce(state, { type: 'guide:context-complete', completion: 'habit-persisted', persisted: false }).accepted, false);
-  const done = G.reduce(state, { type: 'guide:context-complete', completion: 'habit-persisted', persisted: true, at: 50 });
-  assert.equal(done.accepted, true);
-  assert.ok(done.state.completedChapters.includes('habits'));
-  assert.equal(done.state.currentChapter, null);
+  let result = G.reduce(state, { type: 'guide:start', chapter: G.HABITS_CHAPTER, at: 10 });
+  assert.equal(result.accepted, true);
+  assert.equal(result.state.currentStep, 'intro');
+  assert.equal(result.state.waitingFor, null);
+  assert.equal(G.normalize(result.state).currentStep, 'intro', 'intro survives account hydration');
+
+  assert.equal(G.reduce(result.state, {
+    type: 'guide:context-complete', completion: 'habit-persisted', persisted: true, itemId: 'h-1',
+  }).accepted, false, 'a feature write cannot bypass the authored intro');
+
+  result = G.reduce(result.state, { type: 'guide:context-next', at: 20 });
+  assert.equal(result.accepted, true);
+  assert.equal(result.metric, 'guide:context_open');
+  assert.equal(result.state.currentStep, 'compose');
+  assert.equal(result.state.waitingFor, 'habit-persisted');
+  state = G.normalize(JSON.parse(JSON.stringify(result.state)));
+  assert.equal(state.currentStep, 'compose', 'compose survives reload and another device');
+  assert.equal(state.waitingFor, 'habit-persisted');
+
+  assert.equal(G.reduce(state, {
+    type: 'guide:context-complete', completion: 'habit-persisted', persisted: false, itemId: 'h-1',
+  }).reason, 'not-persisted');
+  assert.equal(G.reduce(state, {
+    type: 'guide:context-complete', completion: 'wrong-event', persisted: true, itemId: 'h-1',
+  }).reason, 'wrong-completion');
+  assert.equal(G.reduce(state, {
+    type: 'guide:context-complete', completion: 'habit-persisted', persisted: true,
+  }).reason, 'missing-item');
+
+  result = G.reduce(state, {
+    type: 'guide:context-complete', completion: 'habit-persisted', persisted: true,
+    itemId: 'habit/id:exact', at: 50,
+  });
+  assert.equal(result.accepted, true);
+  assert.equal(result.metric, 'guide:habit_persisted');
+  assert.equal(result.state.currentStep, 'complete');
+  assert.equal(result.state.waitingFor, null);
+  assert.equal(result.state.chapterMeta[G.HABITS_CHAPTER].itemId, 'habit/id:exact');
+  assert.equal(G.chapterResolved(result.state, G.HABITS_CHAPTER), false,
+    'the receipt remains visible until the person acknowledges it');
+  state = G.normalize(JSON.parse(JSON.stringify(result.state)));
+  assert.equal(state.currentStep, 'complete', 'the exact receipt survives reload');
+  assert.equal(state.chapterMeta[G.HABITS_CHAPTER].itemId, 'habit/id:exact');
+
+  result = G.reduce(state, { type: 'guide:context-finish', at: 70 });
+  assert.equal(result.accepted, true);
+  assert.equal(result.metric, 'guide:chapter_complete');
+  assert.ok(result.state.completedChapters.includes(G.HABITS_CHAPTER));
+  assert.equal(result.state.currentChapter, null);
+  assert.equal(result.state.chapterMeta[G.HABITS_CHAPTER].itemId, 'habit/id:exact');
+});
+
+test('Habits replay is presentation-only and cannot accept feature completion events', () => {
+  let state = G.migrate(null, { done: true });
+  state = G.reduce(state, { type: 'guide:start', chapter: G.HABITS_CHAPTER }).state;
+  state = G.reduce(state, { type: 'guide:context-next' }).state;
+  state = G.reduce(state, {
+    type: 'guide:context-complete', completion: 'habit-persisted', persisted: true, itemId: 'h-live', at: 40,
+  }).state;
+  state = G.reduce(state, { type: 'guide:context-finish', at: 50 }).state;
+  const history = JSON.parse(JSON.stringify(state.chapterMeta[G.HABITS_CHAPTER]));
+
+  let replay = G.reduce(state, { type: 'guide:replay', chapter: G.HABITS_CHAPTER, at: 60 });
+  assert.equal(replay.accepted, true);
+  assert.equal(replay.replay, true);
+  assert.deepEqual(replay.effects, []);
+  for (const event of [
+    { type: 'guide:context-next' },
+    { type: 'guide:context-complete', completion: 'habit-persisted', persisted: true, itemId: 'h-other' },
+    { type: 'guide:context-finish' },
+  ]) {
+    const blocked = G.reduce(replay.state, event);
+    assert.equal(blocked.accepted, false, `${event.type} must stay inert during replay`);
+    assert.ok(blocked.state.completedChapters.includes(G.HABITS_CHAPTER));
+    assert.equal(blocked.state.chapterMeta[G.HABITS_CHAPTER].itemId, 'h-live');
+  }
+  replay = G.reduce(replay.state, { type: 'guide:next', at: 80 });
+  assert.equal(replay.accepted, true);
+  assert.equal(replay.metric, 'guide:replay_complete');
+  assert.equal(replay.state.currentChapter, null);
+  assert.equal(replay.state.chapterMeta[G.HABITS_CHAPTER].itemId, history.itemId);
+  assert.equal(replay.state.chapterMeta[G.HABITS_CHAPTER].completedAt, history.completedAt);
+  assert.deepEqual(replay.effects, []);
 });
 
 test('replay is known, resolved, presentation-only and cannot corrupt history', () => {
@@ -195,17 +315,17 @@ test('pure module has no application or DOM dependencies', () => {
   }
 });
 
-test('account-owned model is loaded before app and shipped in the v163 offline shell', () => {
+test('account-owned model is loaded before app and shipped in the v192 offline shell', () => {
   const root = path.resolve(__dirname, '..');
   const index = fs.readFileSync(path.join(root, 'public/index.html'), 'utf8');
   const app = fs.readFileSync(path.join(root, 'public/app.js'), 'utf8');
   const sw = fs.readFileSync(path.join(root, 'public/sw.js'), 'utf8');
   assert.ok(index.indexOf('guide-v3.js') < index.indexOf('app.js'));
-  assert.match(sw, /const CACHE = 'satoru-v191'/);
+  assert.match(sw, /const CACHE = 'satoru-v192'/);
   assert.match(sw, /'guide-v3\.js'/);
   assert.doesNotMatch(app, /liferpg_seen_guide/);
-  assert.match(app, /GuideV3\.migrate\(State\.settings\.guideV3, State\.settings\.tutorial\)/);
-  assert.match(app, /await Store\.saveNow\('settings', State\.settings\)/);
-  assert.match(app, /GuideV3\.reconcile\(prior, \{ tasks: State\.tasks \}\)/);
+  assert.match(app, /GuideV3\.migrate\(current\.guideV3, current\.tutorial\)/);
+  assert.match(app, /await Store\.updateNow\('settings', \(current\)/);
+  assert.match(app, /GuideV3\.reconcile\(current\.guideV3, \{ tasks: State\.tasks \}\)/);
   assert.match(app, /guideV3 = Object\.assign\(window\.GuideV3\.defaultState\(\), \{ enabled: false \}\)/);
 });

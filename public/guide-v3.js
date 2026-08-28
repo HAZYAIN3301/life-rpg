@@ -14,10 +14,12 @@
 
   const VERSION = 3;
   const FIRST_CHAPTER = 'first-journey';
+  const HABITS_CHAPTER = 'habits';
   const FIRST_STEPS = Object.freeze([
     'welcome', 'recognize', 'choose', 'start', 'wait',
     'victory', 'mastery', 'bond', 'release',
   ]);
+  const HABITS_STEPS = Object.freeze(['intro', 'compose', 'complete']);
   const FORMS = Object.freeze(['spark', 'spirit', 'guardian', 'keeper']);
   const CHAPTERS = Object.freeze([
     FIRST_CHAPTER, 'habits', 'goals', 'calendar', 'notes', 'voice', 'jarvis',
@@ -115,6 +117,9 @@
         out.currentStep = 'choose'; out.waitingFor = null;
       } else if (!activeReplay && out.currentStep === 'wait') out.waitingFor = 'task:completed';
       else out.waitingFor = null;
+    } else if (out.currentChapter === HABITS_CHAPTER && !activeReplay) {
+      if (!HABITS_STEPS.includes(out.currentStep)) out.currentStep = HABITS_STEPS[0];
+      out.waitingFor = out.currentStep === 'compose' ? 'habit-persisted' : null;
     } else {
       out.currentStep = 'intro'; out.waitingFor = null;
     }
@@ -198,7 +203,7 @@
 
   const REGISTRY = Object.freeze([
     registryEntry({ id: FIRST_CHAPTER, chapter: FIRST_CHAPTER, copyKey: 'guide.first', target: 'today', action: 'real-task-loop', completion: 'real-task-completed', pose: 'guide-arrive' }),
-    registryEntry({ id: 'habits', chapter: 'habits', prerequisites: [FIRST_CHAPTER], copyKey: 'guide.habits', target: 'habits', action: 'confirm-habit', completion: 'habit-persisted', cooldown: 86400000 }),
+    registryEntry({ id: 'habits', version: 2, chapter: 'habits', prerequisites: [FIRST_CHAPTER], copyKey: 'guide.habits', target: 'habits', action: 'confirm-habit', completion: 'habit-persisted', cooldown: 86400000 }),
     registryEntry({ id: 'goals', chapter: 'goals', prerequisites: [FIRST_CHAPTER], copyKey: 'guide.goals', target: 'goals', action: 'open-linked-goal', completion: 'goal-link-seen', cooldown: 86400000 }),
     registryEntry({ id: 'calendar', chapter: 'calendar', prerequisites: [FIRST_CHAPTER], copyKey: 'guide.calendar', target: 'calendar', action: 'schedule-real-task', completion: 'task-date-persisted', cooldown: 86400000 }),
     registryEntry({ id: 'notes', chapter: 'notes', prerequisites: [FIRST_CHAPTER], copyKey: 'guide.notes', target: 'notes', action: 'capture-real-note', completion: 'note-persisted', cooldown: 86400000 }),
@@ -292,7 +297,9 @@
     if (!type) return rejected(state, 'missing-event');
 
     if (type === 'guide:disable') {
-      state.enabled = false; state.currentChapter = null; state.currentStep = null; state.waitingFor = null;
+      // Глобальное отключение скрывает подсказки, но не превращает незавершённую
+      // главу в сироту. После повторного включения человек может осознанно Resume.
+      state.enabled = false;
       return accepted(state, 'guide:disable');
     }
     if (type === 'guide:enable') { state.enabled = true; return accepted(state, 'guide:enable'); }
@@ -361,6 +368,39 @@
         state.currentChapter = null; state.currentStep = null; state.waitingFor = null;
         state.chapterMeta[entry.chapter] = { ...(state.chapterMeta[entry.chapter] || {}), replay: false, lastReplayedAt: Number(ev.at) || null };
         return accepted(state, 'guide:replay_complete');
+      }
+      if (replay) return rejected(state, 'replay-presentation-only');
+      if (entry?.chapter === HABITS_CHAPTER && !replay) {
+        if (type === 'guide:context-next') {
+          if (state.currentStep !== 'intro') return rejected(state, 'wrong-step');
+          state.completedSteps = uniqStrings([...state.completedSteps, stepKey(HABITS_CHAPTER, 'intro')]);
+          state.currentStep = 'compose'; state.waitingFor = 'habit-persisted';
+          return accepted(state, 'guide:context_open');
+        }
+        if (type === 'guide:context-complete') {
+          if (state.currentStep !== 'compose' || state.waitingFor !== 'habit-persisted') return rejected(state, 'wrong-step');
+          if (!ev.persisted) return rejected(state, 'not-persisted');
+          if (String(ev.completion || '') !== entry.completion) return rejected(state, 'wrong-completion');
+          if (!cleanNullableString(ev.itemId)) return rejected(state, 'missing-item');
+          state.completedSteps = uniqStrings([...state.completedSteps, stepKey(HABITS_CHAPTER, 'compose')]);
+          state.currentStep = 'complete'; state.waitingFor = null;
+          state.chapterMeta[HABITS_CHAPTER] = {
+            ...(state.chapterMeta[HABITS_CHAPTER] || {}),
+            itemId: String(ev.itemId), persistedAt: Number(ev.at) || null,
+          };
+          return accepted(state, 'guide:habit_persisted');
+        }
+        if (type === 'guide:context-finish') {
+          if (state.currentStep !== 'complete') return rejected(state, 'wrong-step');
+          state.completedSteps = uniqStrings([...state.completedSteps, stepKey(HABITS_CHAPTER, 'complete')]);
+          state.completedChapters = uniqStrings([...state.completedChapters, HABITS_CHAPTER]);
+          state.currentChapter = null; state.currentStep = null; state.waitingFor = null;
+          state.chapterMeta[HABITS_CHAPTER] = {
+            ...(state.chapterMeta[HABITS_CHAPTER] || {}), completedAt: Number(ev.at) || null,
+          };
+          return accepted(state, 'guide:chapter_complete');
+        }
+        return rejected(state, 'context-completion-required');
       }
       if (type !== 'guide:context-complete') return rejected(state, 'context-completion-required');
       if (!ev.persisted) return rejected(state, 'not-persisted');
@@ -439,7 +479,7 @@
   }
 
   return {
-    VERSION, FIRST_CHAPTER, FIRST_STEPS, FORMS, CHAPTERS, REGISTRY,
+    VERSION, FIRST_CHAPTER, HABITS_CHAPTER, FIRST_STEPS, HABITS_STEPS, FORMS, CHAPTERS, REGISTRY,
     defaultState, normalize, migrate, chapterResolved, guideSeed,
     prerequisitesMet, entryEligible, nextContextual, promptKey, reconcile, reduce,
   };
