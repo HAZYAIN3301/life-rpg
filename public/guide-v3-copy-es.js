@@ -23,24 +23,24 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuideV3CopyEs() {
   'use strict';
 
-  const VERSION = '0.2.0';
+  const VERSION = '0.3.0';
   const LOCALE = 'es';
   const STATUS = 'translated';
 
   const CONTEXTUAL_STATUS = Object.freeze({
     habits: 'runtime-approved',
     goals: 'deferred-questionnaire',
-    calendar: 'draft-ready',
-    notes: 'draft-ready',
-    voice: 'draft-ready',
-    jarvis: 'draft-ready',
+    calendar: 'runtime-approved',
+    notes: 'runtime-approved',
+    voice: 'runtime-approved',
+    jarvis: 'runtime-approved',
     systemTheme: 'draft-ready',
-    rewards: 'draft-ready',
-    hero: 'draft-ready',
-    den: 'draft-ready',
-    pets: 'draft-ready',
-    tree: 'draft-ready',
-    stats: 'draft-ready',
+    rewards: 'runtime-approved',
+    hero: 'runtime-approved',
+    den: 'runtime-approved',
+    pets: 'runtime-approved',
+    tree: 'runtime-approved',
+    stats: 'runtime-approved',
     tribe: 'draft-ready',
   });
 
@@ -58,7 +58,7 @@
     "chapter.den.title": "Guarida",
     "chapter.pets.title": "Mascotas",
     "chapter.tree.title": "Árbol de habilidades",
-    "chapter.stats.title": "Estadísticas",
+    "chapter.stats.title": "Progreso",
     "chapter.tribe.title": "Tribu",
 
     "system.action.start": "Empezar",
@@ -154,20 +154,20 @@
     "context.rewards.choose": "No se consigue nada de valor sin dar algo a cambio — sí, es básicamente la regla de Fullmetal Alchemist, pero no deja de ser verdad.",
     "context.rewards.complete": "Recompensa comprada. Ahora lo importante es usarla de verdad.",
 
-    "context.hero.prompt": "Tu Héroe refleja el progreso demostrado en tus áreas. Aquí no hay un poder aparte que haya que grindear solo por la imagen.",
-    "context.hero.complete": "El aspecto cambia junto con tu camino, pero el progreso ya vivido no desaparece.",
+    "context.hero.prompt": "Tu Héroe muestra progreso demostrado: nivel, rango y forma. No hay un poder aparte que debas grindear solo por la imagen.",
+    "context.hero.complete": "Tu nivel no se pierde. El guardarropa cambia solo lo que tú eliges.",
 
     "context.den.prompt": "La Guarida es donde viven Sombra, tu Héroe y tus mascotas. Se abre poco a poco, junto con tu historia.",
     "context.den.complete": "Échale un vistazo con calma. Puedes volver aquí cuando quieras ver tu mundo, no solo tachar una lista.",
 
-    "context.pets.prompt": "Tus mascotas reflejan tus áreas de vida principales. Su estado muestra el tiempo que de verdad has dedicado a cada una. Si llevas tiempo sin hacer nada en un área, la mascota empieza a pasar hambre; si últimamente no has hecho otra cosa, come de más y puede acabar hinchada de lo gorda que se pone. Así puedes mantener tus áreas en equilibrio y no quemarte con lo que te importa — intenta mantenerlas más o menos en el medio. Esto es una brújula, no un reproche ni un castigo. Con IA y tu feedback, podré ajustar tu propia «rueda de equilibrio».",
-    "context.pets.complete": "Elige una mascota y mira con qué área está conectada. No hace falta arreglarlo todo de golpe.",
+    "context.pets.prompt": "Cada mascota está vinculada a un área principal. Las acciones completadas la alimentan y tu ritmo reciente cambia su estado. Sirve para notar desequilibrios, no es una nota ni una deuda.",
+    "context.pets.complete": "La pista de una mascota muestra qué cuenta para su área. No hace falta arreglarlo todo de golpe.",
 
-    "context.tree.prompt": "Has ganado un punto de habilidad. En el Árbol desbloquea una práctica real en el camino de esa área, no una bonificación al azar.",
-    "context.tree.complete": "Listo. Los siguientes nodos aparecerán cuando tengas el progreso demostrado para ellos.",
+    "context.tree.prompt": "Tienes un punto de habilidad. Puede desbloquear un nodo disponible con una ventaja indicada. Mira primero: seleccionar un nodo no gasta el punto.",
+    "context.tree.complete": "Ahora ves qué aporta el nodo y cuánto cuesta. El punto se gasta solo tras una confirmación aparte para desbloquearlo.",
 
-    "context.stats.prompt": "Ya se han acumulado suficientes días para ver un ritmo real, sin adivinar. ¿Quieres ver un patrón?",
-    "context.stats.complete": "Las estadísticas muestran una observación, no un juicio sobre ti. La decisión sigue siendo tuya.",
+    "context.stats.prompt": "Siete días activos bastan para ver un ritmo sin adivinar. Mira un gráfico.",
+    "context.stats.complete": "El progreso muestra una observación, no un juicio sobre ti. La decisión sigue siendo tuya.",
 
     "context.tribe.prompt": "La Tribu desbloquea el juego en grupo. Nada se publica ni se compara sin tu consentimiento aparte.",
     "context.tribe.complete": "Tú decides si participar en la Tribu y qué funciones sociales activar.",

@@ -10,7 +10,7 @@ const css = fs.readFileSync(path.join(root, 'public/styles.css'), 'utf8');
 const sw = fs.readFileSync(path.join(root, 'public/sw.js'), 'utf8');
 
 test('Pets v130 gives the route a heading and semantic interactive companions', () => {
-  assert.match(app, /<section class="pets-shell" aria-labelledby="pets-title">/);
+  assert.match(app, /<section class="pets-shell"[^>]*aria-labelledby="pets-title">/);
   assert.match(app, /<h2 id="pets-title" tabindex="-1">/);
   assert.match(app, /<button type="button" class="pet-art pet-art-action" data-action="\$\{artAction\}"/);
   assert.match(app, /<button type="button" class="pet-sphere pet-hint muted" data-action="pet-hint"/);
@@ -36,5 +36,5 @@ test('Pets has localized labels and mobile/coarse operability', () => {
 });
 
 test('Pets ships with the v138 offline shell', () => {
-  assert.match(sw, /const CACHE = 'satoru-v192'/);
+  assert.match(sw, /const CACHE = 'satoru-v193'/);
 });

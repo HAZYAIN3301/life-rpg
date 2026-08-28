@@ -19,9 +19,12 @@ test('Notes v129 distinguishes failed loads from a genuine empty inbox', () => {
 });
 
 test('Notes writes are awaited, focus-safe, and retryable without false success', () => {
-  assert.match(app, /async function commitInbox\(next\)/);
+  assert.match(app, /async function commitInbox\(next, \{ lockOwned = false \} = \{\}\)/);
   assert.match(app, /await Store\.saveNow\('inbox', next\)/);
-  assert.match(app, /const saved = await commitInbox\(\[item, \.\.\.\(State\.inbox \|\| \[\]\)\]\)/);
+  assert.match(app, /const nextInbox = \[item, \.\.\.\(State\.inbox \|\| \[\]\)\]/);
+  const captureSubmit = app.slice(app.indexOf("if (f.id === 'capture-form')"), app.indexOf("if (f.id === 'chat-form')"));
+  assert.match(captureSubmit, /guideV3ContextActive\('notes', 'note-persisted'\)[\s\S]*await guideV3FeatureCommit\('notes', 'note-persisted', item\.id, \{ inbox: nextInbox \}/);
+  assert.match(captureSubmit, /: await commitInbox\(nextInbox\)/);
   assert.match(app, /Не удалось сохранить заметку\. Ничего не изменено/);
   assert.match(app, /State\._inboxFocusAfterCommit = `#note-\$\{CSS\.escape\(item\.id\)\}-title`/);
   assert.match(app, /maxlength="1000"/);
@@ -38,7 +41,7 @@ test('Notes deletion and task conversion preserve data boundaries', () => {
 });
 
 test('Notes has a labelled mobile-first surface and v129 offline upgrade', () => {
-  assert.match(app, /<section class="notes-screen" aria-labelledby="notes-title">/);
+  assert.match(app, /<section class="notes-screen"[^>]*aria-labelledby="notes-title">/);
   assert.match(app, /<label class="sr-only" for="capture-text">/);
   assert.match(css, /Notes v129 — quiet capture/);
   assert.match(css, /@media \(max-width: 600px\)[\s\S]{0,1500}\.cap-row/);
@@ -48,5 +51,5 @@ test('Notes has a labelled mobile-first surface and v129 offline upgrade', () =>
   // Каждый новый модуль в SHELL требует бампа, иначе офлайн-клиенты его не получат:
   // v130 — stuck-task-v1.js, v131 — «Первая строка назавтра», v132 — fights-v1.js,
   // v133 — доска контрактов, v134 — Pets, v135 — честный Stats surface.
-  assert.match(sw, /const CACHE = 'satoru-v192'/);
+  assert.match(sw, /const CACHE = 'satoru-v193'/);
 });

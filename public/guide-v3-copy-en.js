@@ -24,24 +24,24 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuideV3CopyEn() {
   'use strict';
 
-  const VERSION = '0.2.0';
+  const VERSION = '0.3.0';
   const LOCALE = 'en';
   const STATUS = 'translated';
 
   const CONTEXTUAL_STATUS = Object.freeze({
     habits: 'runtime-approved',
     goals: 'deferred-questionnaire',
-    calendar: 'draft-ready',
-    notes: 'draft-ready',
-    voice: 'draft-ready',
-    jarvis: 'draft-ready',
+    calendar: 'runtime-approved',
+    notes: 'runtime-approved',
+    voice: 'runtime-approved',
+    jarvis: 'runtime-approved',
     systemTheme: 'draft-ready',
-    rewards: 'draft-ready',
-    hero: 'draft-ready',
-    den: 'draft-ready',
-    pets: 'draft-ready',
-    tree: 'draft-ready',
-    stats: 'draft-ready',
+    rewards: 'runtime-approved',
+    hero: 'runtime-approved',
+    den: 'runtime-approved',
+    pets: 'runtime-approved',
+    tree: 'runtime-approved',
+    stats: 'runtime-approved',
     tribe: 'draft-ready',
   });
 
@@ -59,7 +59,7 @@
     "chapter.den.title": "Den",
     "chapter.pets.title": "Pets",
     "chapter.tree.title": "Skill Tree",
-    "chapter.stats.title": "Stats",
+    "chapter.stats.title": "Progress",
     "chapter.tribe.title": "Tribe",
 
     "system.action.start": "Start",
@@ -155,20 +155,20 @@
     "context.rewards.choose": "Nothing worth having comes without giving something up first — yeah, that's basically the Fullmetal Alchemist rule, but it's true either way.",
     "context.rewards.complete": "Reward bought. Now the real job is actually using it.",
 
-    "context.hero.prompt": "Your Hero reflects proven progress in your spheres. There's no separate power level to grind just for the picture.",
-    "context.hero.complete": "The look changes along with your path, but progress you've already earned never disappears.",
+    "context.hero.prompt": "Your Hero shows proven progress: level, rank, and form. There is no separate power to grind just for the picture.",
+    "context.hero.complete": "Your level does not decay. The wardrobe changes only what you choose yourself.",
 
     "context.den.prompt": "The Den is where Shadow, your Hero, and your pets live. It opens up gradually as your story does.",
     "context.den.complete": "Take your time looking around. Come back here when you want to see your world, not just check off a list.",
 
-    "context.pets.prompt": "Your pets reflect your main life spheres. Their state reflects the time you've actually spent on each one. Neglect a sphere for a while and its pet starts going hungry; do nothing but that one thing and it overeats and can end up bloated. So you can use them to keep your spheres in balance and avoid burning out on what matters to you — try to keep them somewhere in the middle. This is a compass, not a scolding or a punishment. With AI and your feedback, I'll be able to tune your own personal “balance wheel.”",
-    "context.pets.complete": "Pick one pet and see which sphere it's tied to. You don't have to fix everything at once.",
+    "context.pets.prompt": "Each pet is tied to a main sphere. Completed actions feed it, and your recent rhythm changes its state. It is a way to notice imbalance, not a score or a debt.",
+    "context.pets.complete": "A pet's hint shows what counts for its sphere. You do not have to fix everything at once.",
 
-    "context.tree.prompt": "You've earned a skill point. In the Tree it unlocks a real step on that sphere's actual path, not a random bonus.",
-    "context.tree.complete": "Done. The next nodes will show up once you've earned the progress for them.",
+    "context.tree.prompt": "You have a skill point. It can unlock an available node with a stated perk. Look first: selecting a node spends nothing.",
+    "context.tree.complete": "Now you can see what the node gives and what it costs. The point is spent only after a separate unlock confirmation.",
 
-    "context.stats.prompt": "There are enough days now to see a real pattern, not a guess. Want to see one?",
-    "context.stats.complete": "Stats show an observation, not a judgment of you. The decision is still yours.",
+    "context.stats.prompt": "Seven active days are enough to see a rhythm without guessing. Look at one chart.",
+    "context.stats.complete": "Progress shows an observation, not a judgment of you. The decision is still yours.",
 
     "context.tribe.prompt": "Tribe unlocks playing together. Nothing gets published or compared without your separate consent.",
     "context.tribe.complete": "You choose whether to take part in Tribe at all, and which social features to turn on.",

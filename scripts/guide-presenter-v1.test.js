@@ -349,7 +349,7 @@ test('presenter tolerates missing input/copy without inventing fallback prose', 
 });
 
 test('UMD module is pure and available through CommonJS and a global', () => {
-  assert.equal(Presenter.VERSION, '1.1.0');
+  assert.equal(Presenter.VERSION, '1.2.0');
   const source = fs.readFileSync(path.join(__dirname, '..', 'public', 'guide-presenter-v1.js'), 'utf8');
   for (const forbidden of ['State.', 'document.', 'window.', 'Store.', 'fetch(', 'CSS.escape']) {
     assert.equal(source.includes(forbidden), false, `presenter leaked dependency: ${forbidden}`);
@@ -358,5 +358,5 @@ test('UMD module is pure and available through CommonJS and a global', () => {
   const sandbox = {};
   vm.createContext(sandbox);
   vm.runInContext(source, sandbox);
-  assert.equal(sandbox.GuidePresenterV1.VERSION, '1.1.0');
+  assert.equal(sandbox.GuidePresenterV1.VERSION, '1.2.0');
 });

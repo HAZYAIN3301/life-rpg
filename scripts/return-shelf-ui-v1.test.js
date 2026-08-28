@@ -74,9 +74,9 @@ test('интеграция держит Полку в More и подключае
   assert.match(app, /group\('mobile-more-support'[\s\S]{0,500}sectionEntry\('library'\)/);
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20260828-guide-habits-v192');
+  const appAt = index.indexOf('app.js?v=20260828-guide-context-v193');
   assert.ok(domainAt >= 0 && uiAt > domainAt && appAt > uiAt);
-  assert.match(sw, /satoru-v192/);
+  assert.match(sw, /satoru-v193/);
   assert.match(sw, /return-shelf-v1\.js/);
   assert.match(sw, /return-shelf-ui-v1\.js/);
 });

@@ -29,24 +29,24 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuideV3CopyDe() {
   'use strict';
 
-  const VERSION = '0.2.0';
+  const VERSION = '0.3.0';
   const LOCALE = 'de';
   const STATUS = 'translated';
 
   const CONTEXTUAL_STATUS = Object.freeze({
     habits: 'runtime-approved',
     goals: 'deferred-questionnaire',
-    calendar: 'draft-ready',
-    notes: 'draft-ready',
-    voice: 'draft-ready',
-    jarvis: 'draft-ready',
+    calendar: 'runtime-approved',
+    notes: 'runtime-approved',
+    voice: 'runtime-approved',
+    jarvis: 'runtime-approved',
     systemTheme: 'draft-ready',
-    rewards: 'draft-ready',
-    hero: 'draft-ready',
-    den: 'draft-ready',
-    pets: 'draft-ready',
-    tree: 'draft-ready',
-    stats: 'draft-ready',
+    rewards: 'runtime-approved',
+    hero: 'runtime-approved',
+    den: 'runtime-approved',
+    pets: 'runtime-approved',
+    tree: 'runtime-approved',
+    stats: 'runtime-approved',
     tribe: 'draft-ready',
   });
 
@@ -64,7 +64,7 @@
     "chapter.den.title": "Lager",
     "chapter.pets.title": "Haustiere",
     "chapter.tree.title": "Skillbaum",
-    "chapter.stats.title": "Statistik",
+    "chapter.stats.title": "Fortschritt",
     "chapter.tribe.title": "Stamm",
 
     "system.action.start": "Starten",
@@ -160,20 +160,20 @@
     "context.rewards.choose": "Nichts, was sich lohnt, bekommst du, ohne dass du selbst was gibst — ja, das ist im Grunde die Regel aus Fullmetal Alchemist, aber stimmen tut's trotzdem.",
     "context.rewards.complete": "Belohnung gekauft. Jetzt kommt's drauf an, sie wirklich zu nutzen.",
 
-    "context.hero.prompt": "Dein Held zeigt bewiesenen Fortschritt in deinen Bereichen. Es gibt keine extra Stärke, die du nur fürs Bild grinden musst.",
-    "context.hero.complete": "Das Aussehen verändert sich mit deinem Weg, aber schon erreichter Fortschritt verschwindet nicht.",
+    "context.hero.prompt": "Dein Held zeigt bewiesenen Fortschritt: Stufe, Rang und Form. Es gibt keine extra Stärke, die du nur fürs Bild grinden musst.",
+    "context.hero.complete": "Deine Stufe verfällt nicht. Die Garderobe ändert nur, was du selbst auswählst.",
 
     "context.den.prompt": "Im Lager leben Schatten, dein Held und deine Haustiere. Es öffnet sich nach und nach, so wie deine Geschichte.",
     "context.den.complete": "Schau dich in Ruhe um. Komm zurück, wenn du deine Welt sehen willst — nicht um eine Liste abzuhaken.",
 
-    "context.pets.prompt": "Deine Haustiere spiegeln deine wichtigsten Lebensbereiche. Ihr Zustand zeigt, wie viel Zeit du wirklich in jeden davon gesteckt hast. Vernachlässigst du einen Bereich länger, fängt das Haustier an zu hungern; machst du zuletzt nichts anderes mehr, frisst es sich über und kann vor lauter Übergewicht fast platzen. So kannst du deine Bereiche im Gleichgewicht halten und bei dem, was dir wichtig ist, nicht ausbrennen — versuch, sie ungefähr in der Mitte zu halten. Das ist ein Kompass, keine Ermahnung oder Strafe. Mit KI und deinem Feedback kann ich dir dein eigenes „Gleichgewichtsrad“ einrichten.",
-    "context.pets.complete": "Wähl ein Haustier und schau, mit welchem Bereich es verbunden ist. Du musst nicht alles auf einmal in Ordnung bringen.",
+    "context.pets.prompt": "Jedes Haustier gehört zu einem Hauptbereich. Erledigte Handlungen füttern es, und dein jüngster Rhythmus verändert seinen Zustand. Das hilft, ein Ungleichgewicht zu sehen — es ist keine Wertung und keine Schuld.",
+    "context.pets.complete": "Der Hinweis eines Haustiers zeigt, was für seinen Bereich zählt. Du musst nicht alles auf einmal in Ordnung bringen.",
 
-    "context.tree.prompt": "Du hast einen Skillpunkt verdient. Im Baum schaltet er eine echte Übung auf dem tatsächlichen Weg des Bereichs frei, keinen zufälligen Bonus.",
-    "context.tree.complete": "Fertig. Die nächsten Knoten erscheinen, sobald du dafür bewiesenen Fortschritt hast.",
+    "context.tree.prompt": "Du hast einen Skillpunkt. Er kann einen verfügbaren Knoten mit klar benanntem Bonus freischalten. Schau erst hin: Die Auswahl kostet noch nichts.",
+    "context.tree.complete": "Jetzt siehst du Nutzen und Kosten des Knotens. Der Punkt wird erst nach einer eigenen Freischalt-Bestätigung ausgegeben.",
 
-    "context.stats.prompt": "Es sind jetzt genug Tage zusammengekommen, um einen echten Rhythmus zu sehen, statt zu raten. Willst du ein Muster sehen?",
-    "context.stats.complete": "Die Statistik zeigt eine Beobachtung, kein Urteil über dich. Die Entscheidung liegt trotzdem bei dir.",
+    "context.stats.prompt": "Sieben aktive Tage reichen, um einen Rhythmus ohne Raten zu erkennen. Schau dir ein Diagramm an.",
+    "context.stats.complete": "Der Fortschritt zeigt eine Beobachtung, kein Urteil über dich. Die Entscheidung liegt trotzdem bei dir.",
 
     "context.tribe.prompt": "Der Stamm schaltet gemeinsames Spielen frei. Nichts wird veröffentlicht oder verglichen ohne deine extra Zustimmung.",
     "context.tribe.complete": "Du entscheidest selbst, ob du beim Stamm mitmachst und welche sozialen Funktionen du einschaltest.",

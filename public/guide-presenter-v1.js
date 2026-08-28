@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuidePresenterV1() {
   'use strict';
 
-  const VERSION = '1.1.0';
+  const VERSION = '1.2.0';
   const FIRST_CHAPTER = 'first-journey';
   const HABITS_CHAPTER = 'habits';
   const FIRST_STEPS = Object.freeze([
@@ -19,6 +19,7 @@
     'victory', 'mastery', 'bond', 'release',
   ]);
   const HABITS_STEPS = Object.freeze(['intro', 'compose', 'complete']);
+  const CONTEXT_STEPS = Object.freeze(['intro', 'engage', 'complete']);
 
   const STEP_TITLES = Object.freeze({
     welcome: 'first.episode.meeting.title',
@@ -48,6 +49,21 @@
     habits: 'habits', goals: 'goals', calendar: 'calendar', notes: 'notes',
     voice: 'voice', jarvis: 'jarvis', rewards: 'rewards', hero: 'hero', den: 'den',
     pets: 'pets', tree: 'tree', stats: 'stats', tribe: 'tribe',
+  });
+
+  const CONTEXT_SPECS = Object.freeze({
+    habits: Object.freeze({ steps: HABITS_STEPS, active: 'compose', middle: ['context.habits.choose', 'context.habits.schedule', 'context.habits.two_minute'], targets: ['habits-nav', 'habit-create', 'habit-created'] }),
+    calendar: Object.freeze({ middle: ['context.calendar.guide'], targets: ['plan-nav', 'calendar-task', 'calendar-scheduled'] }),
+    notes: Object.freeze({ middle: ['context.notes.capture'], targets: ['notes-nav', 'note-capture', 'note-created'] }),
+    voice: Object.freeze({ middle: ['context.voice.prompt'], targets: ['speaker', 'speaker', 'speaker'] }),
+    jarvis: Object.freeze({ middle: ['context.jarvis.prompt'], targets: ['helper', 'helper-input', 'helper-response'] }),
+    rewards: Object.freeze({ middle: ['context.rewards.choose'], targets: ['rewards-nav', 'reward-buy', 'reward-purchase'] }),
+    hero: Object.freeze({ middle: ['context.hero.prompt'], targets: ['hero-nav', 'hero-overview', 'hero-overview'] }),
+    den: Object.freeze({ middle: ['context.den.prompt'], targets: ['hero-nav', 'den-overview', 'den-overview'] }),
+    pets: Object.freeze({ middle: ['context.pets.prompt'], targets: ['hero-nav', 'pet-sphere', 'pet-sphere'] }),
+    tree: Object.freeze({ middle: ['context.tree.prompt'], targets: ['hero-nav', 'tree-node', 'tree-node'] }),
+    stats: Object.freeze({ middle: ['context.stats.prompt'], targets: ['hero-nav', 'stats-overview', 'stats-overview'] }),
+    tribe: Object.freeze({ middle: ['context.tribe.prompt'], targets: ['tribe-nav', 'tribe-privacy', 'tribe-privacy'] }),
   });
 
   function copySource(copy, key) {
@@ -301,7 +317,7 @@
     });
   }
 
-  function habitsActions(copy, step, replay) {
+  function contextActions(copy, step, replay, chapter) {
     if (replay) return [
       action(copy, 'context-replay-finish', 'system.action.okay', 'guide:next', { presentationOnly: true }),
       action(copy, 'speaker', 'system.action.speak', 'guide:speak', { presentationOnly: true }),
@@ -314,6 +330,17 @@
       action(copy, 'skip', 'system.action.skip_chapter', 'guide:skip'),
     ];
     if (step === 'compose') return secondaryActions(copy);
+    if (step === 'engage') {
+      if (chapter === 'voice') return [
+        action(copy, 'context-voice-preview', 'system.action.speak', 'guide:voice-preview'),
+        ...secondaryActions(copy, { speaker: false }),
+      ];
+      if (['hero', 'den', 'stats'].includes(chapter)) return [
+        action(copy, 'context-viewed', 'system.action.understood', 'guide:context-viewed'),
+        ...secondaryActions(copy),
+      ];
+      return secondaryActions(copy);
+    }
     if (step === 'complete') return [
       action(copy, 'context-finish', 'system.action.okay', 'guide:context-finish'),
       action(copy, 'speaker', 'system.action.speak', 'guide:speak', { presentationOnly: true }),
@@ -321,37 +348,42 @@
     return [];
   }
 
-  function habitsChapter(input) {
+  function contextualChapter(input) {
     const src = input && typeof input === 'object' ? input : {};
     const state = src.state && typeof src.state === 'object' ? src.state : {};
     const id = chapterId(src.chapter, state);
-    if (id !== HABITS_CHAPTER) return null;
+    const spec = CONTEXT_SPECS[id];
+    if (!spec) return null;
     const copy = src.copy;
-    const replay = replaying(state, HABITS_CHAPTER);
-    const step = replay ? 'intro' : (HABITS_STEPS.includes(state.currentStep) ? state.currentStep : HABITS_STEPS[0]);
-    const meta = state.chapterMeta && state.chapterMeta[HABITS_CHAPTER] && typeof state.chapterMeta[HABITS_CHAPTER] === 'object'
-      ? state.chapterMeta[HABITS_CHAPTER] : {};
+    const steps = spec.steps || CONTEXT_STEPS;
+    const activeStep = spec.active || 'engage';
+    const replay = replaying(state, id);
+    const step = replay ? 'intro' : (steps.includes(state.currentStep) ? state.currentStep : steps[0]);
+    const meta = state.chapterMeta && state.chapterMeta[id] && typeof state.chapterMeta[id] === 'object'
+      ? state.chapterMeta[id] : {};
+    const promptKey = `context.${id}.prompt`, completeKey = `context.${id}.complete`;
     const transcriptKeys = replay
-      ? ['context.habits.prompt', 'context.habits.choose', 'context.habits.schedule', 'context.habits.two_minute', 'context.habits.complete']
-      : step === 'intro' ? ['context.habits.prompt']
-        : step === 'compose' ? ['context.habits.choose', 'context.habits.schedule', 'context.habits.two_minute']
-          : ['context.habits.complete'];
-    const index = replay ? 1 : HABITS_STEPS.indexOf(step) + 1;
-    const targetKey = replay || step === 'intro' ? 'habits-nav' : step === 'compose' ? 'habit-create' : 'habit-created';
+      ? [promptKey, ...spec.middle, completeKey]
+      : step === 'intro' ? [promptKey]
+        : step === activeStep ? spec.middle
+          : [completeKey];
+    const index = replay ? 1 : steps.indexOf(step) + 1;
+    const targetIndex = replay ? 0 : Math.max(0, steps.indexOf(step));
+    const targetKey = spec.targets[targetIndex] || spec.targets[0];
     return Object.freeze({
-      chapter: HABITS_CHAPTER,
+      chapter: id,
       step,
       replay,
       presentationOnly: replay,
       hidden: false,
       textOnlyArt: true,
-      chapterTitleKey: 'chapter.habits.title',
-      chapterTitle: text(copy, 'chapter.habits.title'),
+      chapterTitleKey: `chapter.${CHAPTER_COPY_IDS[id]}.title`,
+      chapterTitle: text(copy, `chapter.${CHAPTER_COPY_IDS[id]}.title`),
       titleKey: null,
       title: null,
-      progress: text(copy, 'system.progress', { current: index, total: replay ? 1 : HABITS_STEPS.length }),
+      progress: text(copy, 'system.progress', { current: index, total: replay ? 1 : steps.length }),
       progressIndex: index,
-      progressTotal: replay ? 1 : HABITS_STEPS.length,
+      progressTotal: replay ? 1 : steps.length,
       transcriptKey: transcriptKeys.join('+'),
       transcript: transcriptKeys.map((key) => text(copy, key)).filter(Boolean).join('\n\n'),
       teaserKey: null,
@@ -359,18 +391,25 @@
       targetKey,
       targetSelector: staticSelector(targetKey),
       fallback: 'safe-bubble',
-      actions: habitsActions(copy, step, replay),
+      actions: contextActions(copy, step, replay, id),
       choices: [],
       formHint: null,
-      habitId: stringId(meta.itemId),
+      itemId: stringId(meta.itemId),
+      habitId: id === HABITS_CHAPTER ? stringId(meta.itemId) : null,
     });
+  }
+
+  function habitsChapter(input) {
+    const src = input && typeof input === 'object' ? input : {};
+    const id = chapterId(src.chapter, src.state);
+    return id === HABITS_CHAPTER ? contextualChapter(src) : null;
   }
 
   function present(input) {
     const src = input && typeof input === 'object' ? input : {};
     const id = chapterId(src.chapter, src.state);
-    if (id === HABITS_CHAPTER) return habitsChapter(src);
-    return firstJourney(src);
+    if (id === FIRST_CHAPTER) return firstJourney(src);
+    return contextualChapter(src);
   }
 
   function collectionHas(collection, id) {
@@ -453,8 +492,10 @@
     HABITS_CHAPTER,
     FIRST_STEPS,
     HABITS_STEPS,
+    CONTEXT_STEPS,
     firstJourney,
     habitsChapter,
+    contextualChapter,
     present,
     libraryCards,
   });

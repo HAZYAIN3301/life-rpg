@@ -5731,15 +5731,19 @@ const State = {
   adminUsers: null, _adminUsersLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', goalView: 'focus', wkAddDate: null, calDate: null, calMode: 'day', habitsTab: 'build',
   _tasksLoadError: '', _tasksLoadBusy: false, _tasksWriteBlockedNoticeAt: 0, _tasksFocusAfterCommit: '',
+  _settingsLoadError: '', _settingsLoadBusy: false, _treeLoadError: '', _treeLoadBusy: false,
+  _shadowVoiceStatus: null, _shadowVoiceStatusLoading: false,
   _habitsLoadError: '', _habitsLoadBusy: false, _habitsWriteBlockedNoticeAt: 0,
   _habitTxnBusy: '', _habitError: '', _habitUndo: null, _habitUndoTimer: null, _habitsFocusAfterCommit: '',
   _goalsLoadError: '', _goalGroupsLoadError: '', _goalsLoadBusy: false, _goalsWriteBlockedNoticeAt: 0,
   _goalTxnBusy: '', _goalsError: '', _goalsFocusAfterCommit: '', _goalOpenId: '', _goalDeepLinkId: '', _goalsComposerOpen: false, _goalGroupFilter: '', _goalsBulkMode: false, _goalsBulkIds: new Set(),
   _calendarUndo: null, _calendarUndoTimer: null, _calendarFocusAfterCommit: '',
   _inboxLoadError: '', _inboxBusy: false, _inboxFocusAfterCommit: '',
-  _guideV3Error: '', _guideV3SessionPrompted: false, _guideV3StartBusy: false, _guideV3PromptMarkBusy: false,
+  _guideV3Error: '', _guideV3SessionPrompted: false, _guideV3SessionStartedAt: Date.now(), _guideV3StartBusy: false, _guideV3PromptMarkBusy: false,
   _guideV3ChooseOther: false, _guideV3FocusPending: '', _guideV3VoiceActive: false,
   _guideV3ForceOpen: false, _guideV3ShowTeaser: false, _guideV3HabitCandidateId: null, _guideV3HabitDraftId: '',
+  _guideV3CalendarTaskId: '', _guideV3NoteDraftId: '', _guideV3RewardId: '', _guideV3AssistantRequestId: '', _guideV3AssistantResponseId: '', _guideV3AssistantCompleting: false,
+  _guideV3ReconcileBusy: false,
   _mobileNavFocusAfterCommit: '',
   _calendarViewportNode: null, _calendarViewportDate: '', _calendarViewportScroll: null,
   aveCat: 'hair', // активная категория в редакторе аватара
@@ -10809,7 +10813,7 @@ function ttsContextNear(btn) {
 function ttsBtnHTML() {
   if (!ttsOK() || !ttsOn()) return '';
   const lbl = esc(t('Озвучить'));
-  return `<button class="tts-btn" data-action="tts" title="${lbl}" aria-label="${lbl}">${satoruIconHTML('media.sound', 'tts-glyph', '◇')}</button>`;
+  return `<button class="tts-btn" data-action="tts" data-guide-target="speaker" title="${lbl}" aria-label="${lbl}">${satoruIconHTML('media.sound', 'tts-glyph', '◇')}</button>`;
 }
 const SHADOW_VOICE_COPY = {
   ru: { checking: 'Проверяем голос Тени…', cloud: 'Cloud AI · естественный голос', piper: 'Piper · локальный голос Тени', detail: 'Язык выбирается автоматически, тембр — тобой. Голос синтезирован нейросетью.', piperDetail: 'Без пользовательского ключа и оплаты за фразу. Язык выбирается автоматически, тембр сохраняется.', fallback: 'Голос Тени недоступен', unavailable: 'Текст останется на экране. Проверь соединение и попробуй ещё раз — системный голос не включится без твоего выбора.', timbre: 'Тембр голоса', female: 'Женский', male: 'Мужской', selected: 'Выбранный голос' },
@@ -10845,6 +10849,9 @@ function refreshShadowVoiceStatus() {
     State._shadowVoiceStatusLoading = false;
     const node = document.getElementById('shadow-voice-status');
     if (node) node.innerHTML = shadowVoiceStatusMarkup();
+    if (State.phase === 'app') {
+      try { guideV3MaybeStart(); guideV3Paint(); } catch {}
+    }
   });
 }
 function shadowVoiceSettingsHTML() {
@@ -12078,16 +12085,24 @@ async function moveCalendarTask(command, { makeUndo = true, renderAfter = true }
   const nextTime = command.startTime == null || command.startTime === '' ? null : calendarTimeValue(command.startTime);
   const nextDuration = Math.max(5, Math.min(18 * 60, Math.round(Number(command.estimateMin) || before.estimateMin)));
   if (command.startTime != null && command.startTime !== '' && !nextTime) return false;
+  const guideOwns = guideV3ContextActive('calendar', 'task-date-persisted')
+    && String(guideV3State()?.chapterMeta?.calendar?.candidateId || '') === String(task.id)
+    && !before.startTime && !!nextTime;
+  const nextTasks = guideOwns ? structuredClone(State.tasks) : State.tasks;
+  const workingTask = guideOwns ? nextTasks.find((item) => item.id === task.id) : task;
+  if (!workingTask) return false;
   // Считается ДО присваивания: notePostpone читает текущую task.date, чтобы
   // отличить настоящий перенос от правки расписания будущего дела.
   const postponeNote = window.StuckTaskV1 ? window.StuckTaskV1.notePostpone(task, nextDate, todayStr()) : null;
-  task.date = nextDate;
-  task.startTime = nextTime;
-  task.estimateMin = nextDuration;
-  if (postponeNote) Object.assign(task, postponeNote);
-  const saved = await Store.saveNow('tasks', State.tasks);
+  workingTask.date = nextDate;
+  workingTask.startTime = nextTime;
+  workingTask.estimateMin = nextDuration;
+  if (postponeNote) Object.assign(workingTask, postponeNote);
+  const saved = guideOwns
+    ? await guideV3FeatureCommit('calendar', 'task-date-persisted', task.id, { tasks: nextTasks }, (data) => { State.tasks = data.tasks; })
+    : await Store.saveNow('tasks', State.tasks);
   if (!saved) {
-    Object.assign(task, before);
+    if (!guideOwns) Object.assign(task, before);
     toast(t('Не удалось сохранить перенос'));
     return false;
   }
@@ -12463,7 +12478,8 @@ function renderCalendarView() {
 // ============================================================
 //  Быстрый захват + Инбокс (Блок 2) — текст/голос/видео, замена Telegram «Избранное»
 // ============================================================
-let _rec = null; // { kind, recorder, chunks, stream, startedAt, timer }
+let _rec = null; // active MediaRecorder capture
+let _capturePending = null; // stopped capture being encoded/uploaded
 let _mobilSnoozeDay = null; // «Позже» для нуджа мобилки — на сегодня
 // Профилактика травм: за 7 дней были силовые/единоборства, но НЕ было мобилки/растяжки?
 function trainingWithoutMobility() {
@@ -13969,6 +13985,7 @@ function closeHelperChat({ restoreFocus = true } = {}) {
   const target = restoreFocus ? helperReturnFocusTarget(modal) : null;
   document.getElementById('app')?.removeAttribute('inert'); modal.remove(); unlockHelperDialogScroll(); ttsStop();
   if (target) requestAnimationFrame(() => focusPathChoiceTarget(target));
+  repaintGuideV3AfterBlockingSurface();
   return true;
 }
 function handleHelperKeydown(event) {
@@ -14008,7 +14025,7 @@ function openHelperChat(opener = document.activeElement) {
          <p class="chat-context-note">${t('Вижу цели и задачи Satoru. Файлы компьютера — только после выбора.')}</p>
          ${attached ? `<div class="chat-file-chip"><span>📄 <b>${esc(attached.name)}</b></span><button type="button" class="link-btn" data-action="chat-plan-remove">${t('Убрать файл')}</button></div>` : ''}
          <p id="assistant-wake-status" class="chat-wake-status" role="status" aria-live="polite"></p>
-         <form id="chat-form" class="chat-form"><label class="sr-only" for="chat-input">${t('Сообщение помощнику')}</label><input id="chat-input" placeholder="${t('Спроси про любую функцию…')}" autocomplete="off" /><button type="submit" class="cap-add" aria-label="${t('Отправить')}">↵</button></form>`}</section>`;
+         <form id="chat-form" class="chat-form"><label class="sr-only" for="chat-input">${t('Сообщение помощнику')}</label><input id="chat-input" data-guide-target="helper-input" placeholder="${t('Спроси про любую функцию…')}" autocomplete="off" /><button type="submit" class="cap-add" aria-label="${t('Отправить')}">↵</button></form>`}</section>`;
   if (!noKey) { renderChatMessages(); assistantWakePaint(); setTimeout(() => { const i = document.getElementById('chat-input'); if (i) { if (State._chatVoiceDraft != null) { i.value = State._chatVoiceDraft; delete State._chatVoiceDraft; } i.focus(); } }, 30); }
   else setTimeout(() => focusPathChoiceTarget(document.getElementById('helper-title')), 30);
 }
@@ -14037,9 +14054,21 @@ function renderChatMessages() {
     // задвоил бы разметку в текст. Ответ ИИ — недоверенный ввод (fb_ms4lg28wwpe4:
     // «пытается использовать неподдерживаемое форматирование, звёздочки видны как есть»).
     const body = window.MdLiteV1 ? window.MdLiteV1.render(m.content) : esc(m.content).replace(/\n/g, '<br>');
-    return `<div class="chat-msg ai" data-tts>${body}${ttsBtnHTML()}${refused}${acts}</div>`;
+    return `<div class="chat-msg ai" data-tts${m.guideResponseId ? ` data-guide-target="helper-response" data-response-id="${esc(m.guideResponseId)}" tabindex="-1"` : ''}>${body}${ttsBtnHTML()}${refused}${acts}</div>`;
   }).join('') + (State._chatBusy ? `<div class="chat-msg ai typing" role="status" aria-live="polite"><span>${t('Тень формулирует ответ')}</span><span class="typing-dots" aria-hidden="true"><i></i><i></i><i></i></span></div>` : '');
   box.scrollTop = box.scrollHeight;
+  if (guideV3ContextActive('jarvis', 'helper-response-seen') && !State._guideV3AssistantCompleting) {
+    const requestId = String(State._guideV3AssistantRequestId || '');
+    const responseId = requestId ? `${requestId}-response` : '';
+    const response = responseId && State._guideV3AssistantResponseId === responseId
+      ? box.querySelector(`[data-guide-target="helper-response"][data-response-id="${CSS.escape(responseId)}"]`)
+      : null;
+    if (response?.getClientRects().length) {
+      State._guideV3AssistantCompleting = true;
+      Promise.resolve(guideV3CompleteContext('jarvis', 'helper-response-seen', response.dataset.responseId, { repaint: false, discover: 'jarvis' }))
+        .finally(() => { State._guideV3AssistantCompleting = false; });
+    }
+  }
 }
 // ── Assistant v181: валидирует чистый whitelist-модуль, исполняет только после тапа ──
 function parseChatActions(text) {
@@ -14146,6 +14175,9 @@ async function applyChatActions(msg, checks) {
 async function sendChat(text) {
   text = String(text || '').trim(); if (!text || State._chatBusy) return;
   if (!canUseAi()) { openHelperChat(); return; }
+  const guideRequestId = guideV3ContextActive('jarvis', 'helper-response-seen') ? `guide-ai-${uid()}` : '';
+  State._guideV3AssistantRequestId = guideRequestId;
+  State._guideV3AssistantResponseId = '';
   State.chatLog.push({ role: 'user', content: text });
   State._chatBusy = true; renderChatMessages();
   const inp = document.getElementById('chat-input'); if (inp) inp.value = '';
@@ -14170,6 +14202,10 @@ async function sendChat(text) {
       // ACTIONS syntax or an echoed system contract. A clean fallback is safer and
       // clearer than showing internal kind lists to the person.
       const msg = { role: 'assistant', content: clean || t('Не удалось подготовить понятный ответ. Ничего не изменено — повтори запрос.') };
+      if (guideRequestId && clean) {
+        msg.guideResponseId = `${guideRequestId}-response`;
+        State._guideV3AssistantResponseId = msg.guideResponseId;
+      }
       if (actions.length) { msg.actions = actions; track('ai:chatactions-offer'); }
       if (refused && refused.length) { msg.refused = refused; track('ai:chatactions-refused'); }
       if (extraBlocks) track('ai:chatactions-extra-block');
@@ -14185,15 +14221,16 @@ function captureBar() {
       <div class="cap-rec"><span class="cap-dot"></span><span>${satoruIconHTML(_rec.kind === 'video' ? 'media.video' : 'media.microphone', 'capture-glyph', _rec.kind === 'video' ? '🎥' : '🎤')} Запись <span id="rec-timer">0:00</span></span>
       <button class="btn" data-action="cap-stop">${satoruIconHTML('media.stop', 'button-glyph', '⏹')} Стоп · сохранить</button></div></div>`;
   }
+  const guideTextOnly = guideV3ContextActive('notes', 'note-persisted');
   return `<div class="card capture-card">
-    <form id="capture-form" class="cap-row">
+    <form id="capture-form" class="cap-row" data-guide-target="note-capture">
       <label class="sr-only" for="capture-text">${t('Текст заметки')}</label><input id="capture-text" name="text" maxlength="1000" placeholder="${t('Быстрая мысль, идея, план — в Заметки…')}" autocomplete="off" />
-      <button type="button" class="cap-btn" data-action="cap-voice" aria-label="${t('Голосовая заметка')}">${satoruIconHTML('media.microphone', 'capture-glyph', '🎤')}</button>
-      <button type="button" class="cap-btn" data-action="cap-video" aria-label="${t('Видео-заметка')}">${satoruIconHTML('media.video', 'capture-glyph', '🎥')}</button>
+      ${guideTextOnly ? '' : `<button type="button" class="cap-btn" data-action="cap-voice" aria-label="${t('Голосовая заметка')}">${satoruIconHTML('media.microphone', 'capture-glyph', '🎤')}</button>
+      <button type="button" class="cap-btn" data-action="cap-video" aria-label="${t('Видео-заметка')}">${satoruIconHTML('media.video', 'capture-glyph', '🎥')}</button>`}
       <button type="submit" class="cap-add" aria-label="${t('Сохранить заметку')}">${satoruIconHTML('action.add', 'capture-glyph', '↵')}</button>
       <span class="capture-status" role="status" aria-live="polite"></span>
     </form>
-    <button class="dayrec-btn" data-action="day-recap" title="${t('Наговори день — Тень разложит по делам')}">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня — расскажи, что сделал')}</button></div>`;
+    ${guideTextOnly ? '' : `<button class="dayrec-btn" data-action="day-recap" title="${t('Наговори день — Тень разложит по делам')}">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня — расскажи, что сделал')}</button>`}</div>`;
 }
 function validateInboxPayload(value) {
   if (!Array.isArray(value)) return false;
@@ -14209,13 +14246,16 @@ function inboxWriteAllowed(notify = false) {
   if (notify) toast(t('Заметки не загрузились'));
   return false;
 }
-async function commitInbox(next) {
-  if (!inboxWriteAllowed(true) || State._inboxBusy) return false;
-  State._inboxBusy = true;
-  const saved = await Store.saveNow('inbox', next);
-  State._inboxBusy = false;
-  if (saved) State.inbox = next;
-  return saved;
+async function commitInbox(next, { lockOwned = false } = {}) {
+  if (!inboxWriteAllowed(true) || (!lockOwned && State._inboxBusy)) return false;
+  if (!lockOwned) State._inboxBusy = true;
+  try {
+    const saved = await Store.saveNow('inbox', next);
+    if (saved) State.inbox = next;
+    return saved;
+  } finally {
+    if (!lockOwned) State._inboxBusy = false;
+  }
 }
 function notesRecoveryCard() {
   if (!State._inboxLoadError) return '';
@@ -14232,7 +14272,7 @@ function noteCard(it) {
     : `<audio class="note-media" controls preload="metadata" src="/api/inbox/media/${esc(it.file)}"></audio>`) : '';
   const icon = it.kind === 'voice' ? satoruIconHTML('media.microphone', 'note-kind-icon', '🎤') : it.kind === 'video' ? satoruIconHTML('media.video', 'note-kind-icon', '🎥') : satoruIconHTML('media.notes', 'note-kind-icon', '📝');
   const when = (it.at || '').replace('T', ' ').slice(0, 16);
-  return `<article class="card note-card" aria-labelledby="note-${esc(it.id)}-title">
+  return `<article class="card note-card" data-guide-target="note-created" data-id="${esc(it.id)}" tabindex="-1" aria-labelledby="note-${esc(it.id)}-title">
     <div class="note-top"><div><h3 id="note-${esc(it.id)}-title">${esc(noteTitle(it))}</h3><span class="note-when muted">${icon} ${esc(when)}</span></div>
       <span class="note-acts">${(it.text || '').trim() ? `<button class="btn ghost sm" data-action="note-to-goal" data-id="${it.id}">🤖 ${t('Цель')}</button>` : ''}<button class="btn ghost sm" data-action="note-quest" data-id="${it.id}">${t('→ Квест')}</button><button class="del" data-action="note-del" data-id="${it.id}" aria-label="${t('Удалить заметку?')}">✕</button></span></div>
     ${media}
@@ -14245,7 +14285,7 @@ function notesPeekToday() {
 function renderNotes() {
   const notes = State.inbox || [];
   if (State._inboxLoadError) return notesRecoveryCard();
-  return `<section class="notes-screen" aria-labelledby="notes-title"><header class="notes-header"><p class="eyebrow">${t('Сегодня')}</p><h2 id="notes-title">${t('Заметки')}</h2><p>${t('Лови любые мысли — идеи проектов, личное, планы. Всё хранится в одном месте. Потом примени в Satoru (→ Квест) или разберёшь с ИИ (скоро).')}</p></header>${captureBar()}
+  return `<section class="notes-screen" data-guide-target="notes-overview" aria-labelledby="notes-title"><header class="notes-header"><p class="eyebrow">${t('Сегодня')}</p><h2 id="notes-title">${t('Заметки')}</h2><p>${t('Лови любые мысли — идеи проектов, личное, планы. Всё хранится в одном месте. Потом примени в Satoru (→ Квест) или разберёшь с ИИ (скоро).')}</p></header>${captureBar()}
     <section class="notes-list" aria-label="${t('Заметки')}">${notes.length ? notes.map(noteCard).join('') : `<div class="card notes-empty"><p>${t('Пусто. Запиши первую мысль в строке выше ↑ (текст, 🎤 голос или 🎥 видео).')}</p></div>`}</section></section>`;
 }
 function closeNoteDeleteDialog({ restoreFocus = true } = {}) {
@@ -14297,44 +14337,86 @@ async function noteToQuest(id) {
   State._tasksFocusAfterCommit = '#main h2'; State.view = 'today'; toast(t('→ В квестах на сегодня')); render(); return true;
 }
 function blobToDataUrl(blob) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); }); }
+function captureOwnerCurrent(rec) {
+  return !!rec && !rec.cancelled && rec.writeEpoch === Store._writeEpoch
+    && rec.accountId === String(State.me?.id || '');
+}
+function releaseCaptureResources(rec) {
+  if (!rec) return;
+  clearInterval(rec.timer); rec.timer = null;
+  try { rec.stream?.getTracks?.().forEach((track) => track.stop()); } catch {}
+}
+function cancelCapturePipeline() {
+  const captures = [...new Set([_rec, _capturePending].filter(Boolean))];
+  _rec = null; _capturePending = null;
+  for (const rec of captures) {
+    rec.cancelled = true;
+    clearInterval(rec.timer); rec.timer = null;
+    try { rec.abortController?.abort(); } catch {}
+    try { if (rec.recorder?.state !== 'inactive') rec.recorder.stop(); } catch {}
+    releaseCaptureResources(rec);
+  }
+  State._inboxBusy = false;
+}
 async function startCapture(kind) {
-  if (_rec || !inboxWriteAllowed(true)) return;
+  if (_rec || _capturePending || State._inboxBusy || !inboxWriteAllowed(true)) return;
   if (!navigator.mediaDevices || !window.MediaRecorder) { toast(t('Браузер не поддерживает запись')); return; }
+  const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
   let stream;
   try { stream = await navigator.mediaDevices.getUserMedia(kind === 'video' ? { audio: true, video: { width: 640, height: 480 } } : { audio: true }); }
   catch { toast(kind === 'video' ? t('Нужен доступ к камере') : t('Нужен доступ к микрофону')); return; }
+  if (writeEpoch !== Store._writeEpoch || accountId !== String(State.me?.id || '')) {
+    stream.getTracks().forEach((track) => track.stop()); return;
+  }
   const recorder = new MediaRecorder(stream);
-  _rec = { kind, recorder, chunks: [], stream, startedAt: Date.now(), timer: null };
-  recorder.ondataavailable = (e) => { if (e.data && e.data.size) _rec.chunks.push(e.data); };
-  recorder.onstop = onCaptureStop;
+  const rec = { kind, recorder, chunks: [], stream, startedAt: Date.now(), timer: null, accountId, writeEpoch, cancelled: false, abortController: null };
+  _rec = rec;
+  recorder.ondataavailable = (e) => { if (!rec.cancelled && e.data && e.data.size) rec.chunks.push(e.data); };
+  recorder.onstop = () => onCaptureStop(rec);
   recorder.start();
-  _rec.timer = setInterval(() => {
-    const el = document.getElementById('rec-timer'); const s = Math.floor((Date.now() - _rec.startedAt) / 1000);
+  rec.timer = setInterval(() => {
+    if (_rec !== rec || rec.cancelled || !captureOwnerCurrent(rec)) { clearInterval(rec.timer); rec.timer = null; return; }
+    const el = document.getElementById('rec-timer'); const s = Math.floor((Date.now() - rec.startedAt) / 1000);
     if (el) el.textContent = Math.floor(s / 60) + ':' + pad2(s % 60);
-    const cap = _rec.kind === 'video' ? 180 : 600; // аудио до 10 мин, видео до 3 мин
+    const cap = rec.kind === 'video' ? 180 : 600; // аудио до 10 мин, видео до 3 мин
     if (s >= cap) stopCapture();
   }, 250);
   render();
 }
 function stopCapture() { if (_rec && _rec.recorder && _rec.recorder.state !== 'inactive') _rec.recorder.stop(); }
-async function onCaptureStop() {
-  const rec = _rec; if (!rec) return;
-  clearInterval(rec.timer);
-  rec.stream.getTracks().forEach((t) => t.stop());
+async function onCaptureStop(stoppedCapture = _rec) {
+  const rec = stoppedCapture; if (!rec) return;
+  releaseCaptureResources(rec);
+  if (_rec === rec) _rec = null;
+  if (!captureOwnerCurrent(rec)) return;
   const blob = new Blob(rec.chunks, { type: rec.recorder.mimeType || (rec.kind === 'video' ? 'video/webm' : 'audio/webm') });
-  _rec = null; render();
-  if (!blob.size) { toast(t('Пустая запись')); return; }
-  if (!inboxWriteAllowed(true)) return;
+  _capturePending = rec; render();
+  if (!blob.size) { _capturePending = null; toast(t('Пустая запись')); return; }
+  if (State._inboxBusy || !inboxWriteAllowed(true)) { _capturePending = null; return; }
+  State._inboxBusy = true;
   try {
     const dataUrl = await blobToDataUrl(blob);
-    const r = await fetch('/api/inbox/media', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataUrl, kind: rec.kind }) });
+    if (!captureOwnerCurrent(rec)) return;
+    rec.abortController = typeof AbortController === 'function' ? new AbortController() : null;
+    const request = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataUrl, kind: rec.kind }) };
+    if (rec.abortController) request.signal = rec.abortController.signal;
+    const r = await fetch('/api/inbox/media', request);
+    rec.abortController = null;
+    if (!captureOwnerCurrent(rec)) return;
     if (!r.ok) { toast(t('Не удалось сохранить запись')); return; }
     const d = await r.json();
+    if (!captureOwnerCurrent(rec)) return;
     const item = { id: uid(), kind: rec.kind, text: '', file: d.file, type: d.type, at: new Date().toISOString() };
-    const saved = await commitInbox([item, ...(State.inbox || [])]);
-    if (!saved) { toast(t('Не удалось сохранить заметку. Ничего не изменено — повтори попытку.')); return; }
+    const nextInbox = [item, ...(State.inbox || [])];
+    const saved = await commitInbox(nextInbox, { lockOwned: true });
+    if (!saved || !captureOwnerCurrent(rec)) { if (captureOwnerCurrent(rec)) toast(t('Не удалось сохранить заметку. Ничего не изменено — повтори попытку.')); return; }
     State._inboxFocusAfterCommit = `#note-${CSS.escape(item.id)}-title`; track('capture:' + rec.kind); toast(rec.kind === 'video' ? '🎥 Видео в Заметках' : '🎤 Голос в Заметках'); render();
-  } catch { toast(t('Ошибка сохранения записи')); }
+  } catch (error) {
+    if (captureOwnerCurrent(rec) && error?.name !== 'AbortError') toast(t('Ошибка сохранения записи'));
+  } finally {
+    rec.abortController = null;
+    if (_capturePending === rec) { _capturePending = null; State._inboxBusy = false; }
+  }
 }
 // Nested-прогрессия (Brawl-Stars: «всегда что-то почти готово») — день → неделя → серия
 function nestedProgress() {
@@ -15381,7 +15463,7 @@ function petSVG(color, state, traits, sphereId, idle = '') {
 function petName(id) { const pn = (State.settings && State.settings.petNames) || {}; return pn[id] || skillById(id).name; }
 function renderPets() {
   const spheres = topSkills();
-  if (!spheres.length) return `<section class="pets-shell" aria-labelledby="pets-title"><header class="pets-route-head"><h2 id="pets-title" tabindex="-1">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} ${t('Питомцы')}</h2></header>${companionCard()}<div class="card"><p class="muted">${t('Сначала добавь основные сферы жизни (Настройки → Навыки) — у каждой появится свой питомец рядом с твоим спутником.')}</p></div></section>`;
+  if (!spheres.length) return `<section class="pets-shell" data-guide-target="pets-overview" aria-labelledby="pets-title"><header class="pets-route-head"><h2 id="pets-title" tabindex="-1">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} ${t('Питомцы')}</h2></header>${companionCard()}<div class="card"><p class="muted">${t('Сначала добавь основные сферы жизни (Настройки → Навыки) — у каждой появится свой питомец рядом с твоим спутником.')}</p></div></section>`;
   const pets = spheres.map((s) => ({ s, st: petStats(s.id), traits: petTraits(s.id), nm: petName(s.id) }));
   const hungry = pets.filter((p) => p.st.state === 'hungry'), overfed = pets.filter((p) => p.st.state === 'overfed');
   let balance;
@@ -15405,7 +15487,7 @@ function renderPets() {
       : `<div class="pet-name"><b>${esc(nm)}</b><button class="pet-edit" data-action="pet-rename" data-id="${s.id}" aria-label="${t('Переименовать')}: ${esc(nm)}">✎</button><span class="pet-badge" style="background:${meta.color}22;color:${meta.color}">${t(meta.label)}</span></div>`;
     // Клик по виду — хинт «что засчитывать в эту сферу» (боль Виолы: «как считать уровень творчества»).
     // Кормить питомца = записывать дела; хинт объясняет, какие именно.
-    const sub = `<button type="button" class="pet-sphere pet-hint muted" data-action="pet-hint" data-id="${s.id}" title="${esc(t(tr.hint || ''))}" aria-label="${t('Что засчитывается в сферу')}: ${esc(t(tr.hint || ''))}">${t(tr.kind || 'Зверёк')}${nm !== s.name ? ` · ${t('Сфера')}: ${esc(s.name)}` : ''} ${satoruIconHTML('status.info', 'pet-hint-icon', '◇')}</button>`;
+    const sub = `<button type="button" class="pet-sphere pet-hint muted" data-action="pet-hint" data-guide-target="pet-sphere" data-id="${s.id}" title="${esc(t(tr.hint || ''))}" aria-label="${t('Что засчитывается в сферу')}: ${esc(t(tr.hint || ''))}">${t(tr.kind || 'Зверёк')}${nm !== s.name ? ` · ${t('Сфера')}: ${esc(s.name)}` : ''} ${satoruIconHTML('status.info', 'pet-hint-icon', '◇')}</button>`;
     const guardianActions = activeSpecies === 'bodyToad' ? `<div class="body-toad-card-actions" aria-label="${t('Действия с хранителем тела')}">
       <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="greet">${t('Поприветствовать')}</button>
       <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="train">${t('Размяться')}</button>
@@ -15439,7 +15521,7 @@ function renderPets() {
       <p class="pet-line muted">${t(recoveryMeta.line)}</p>
       <div class="body-toad-card-actions"><button class="btn ghost sm" data-action="recovery-slug-react">${t('Побыть рядом')}</button></div>
     </div>` : '';
-  return `<section class="pets-shell" aria-labelledby="pets-title"><header class="pets-route-head"><h2 id="pets-title" tabindex="-1">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} ${t('Питомцы')}</h2></header>${companionCard()}
+  return `<section class="pets-shell" data-guide-target="pets-overview" aria-labelledby="pets-title"><header class="pets-route-head"><h2 id="pets-title" tabindex="-1">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} ${t('Питомцы')}</h2></header>${companionCard()}
     <div class="card pet-intro">
       <h3 class="icon-heading">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} ${t('Зверинец')}</h3>
       <p class="muted">${t('Твой спутник присматривает за зверинцем. Каждая основная сфера жизни — живой питомец: делаешь что-то в сфере — кормишь его; забыл — голодает; перекосил всё в одну — разжиреет. Здоровый зверинец = ты держишь')} <b>${t('десятиборье')}</b> ${t('в балансе. Облик и повадки питомца зависят от твоих подсфер. Через заботу, не вину.')} <i>${t('Погладь питомца — он будет рад.')}</i></p>
@@ -16139,7 +16221,7 @@ function renderDen() {
   const guardianDisclosure = guardianSections.length
     ? `<details class="den-residents"><summary><h3 class="den-disclosure-title"><span class="den-disclosure-copy"><span>${t('Обитатели')}</span><small>${t('Совместные действия')} · ${guardianSections.length}</small></span><span class="den-residents-chevron" aria-hidden="true">⌄</span></h3></summary><div class="den-residents-body">${guardianSections.join('')}</div></details>`
     : '';
-  return `<div class="den-shell${avatarState === 'tired' ? ' is-energy-tired' : ''}">
+  return `<div class="den-shell${avatarState === 'tired' ? ' is-energy-tired' : ''}" data-guide-target="den-overview">
     <div class="card den-card">
     <div class="den-scene" role="region" aria-labelledby="den-route-title" data-den-theme="${theme.id}" data-den-light="${den.light}" data-den-phase="${denPhaseForLight(den.light)}" data-den-period="${denMasterFor(den).period}" data-den-renderer="${coherentV5 ? 'v5' : 'v3'}" data-den-ambient="${ambientMode}" data-den-focus-canon="${esc(lifeContext.focusCanon)}">
       ${denSceneSVG(theme, den.light, den)}
@@ -18283,7 +18365,7 @@ function treeLoadErrorHTML() {
   const detail = State._treeLoadError === 'invalid'
     ? t('Файл карты повреждён или имеет неизвестный формат.')
     : t('Не удалось загрузить карту. Проверь соединение и попробуй снова.');
-  return `<div class="tree-shell" aria-labelledby="tree-route-title">
+  return `<div class="tree-shell" data-guide-target="tree-overview" aria-labelledby="tree-route-title">
     <section class="card tree-hero"><div><span class="th-kicker">Satoru · ${t('Карта развития')}</span><h2 id="tree-route-title">${t('Карта навыков')}</h2><p>${t('Прогресс сохранён в отдельном файле и не будет молча заменён шаблоном.')}</p></div></section>
     <section class="card tree-load-error" ${busy ? 'aria-live="polite"' : 'role="alert"'}>
       <span class="tree-load-error-icon" aria-hidden="true">${busy ? '◌' : '⚠'}</span>
@@ -18346,7 +18428,7 @@ function renderTree() {
   // Гайд Тени по дереву (fb_mrnjz1qsjmk8 — 3-й репорт «дерево непонятно»): движок v2 готов,
   // но петля «дела → уровень → очко → узел → бонус» нигде не объяснена. Карточка висит,
   // пока игрок сам не скажет «понятно» (persist через discovered) — потом остаётся тултип.
-  const treeGuide = (!edit && !isDiscovered('guide:tree')) ? `
+  const treeGuide = (!edit && !isDiscovered('guide:tree') && !guideV3ContextActive('tree', 'tree-seen')) ? `
     <details class="card tree-guide">
       <summary><span>${t('Как работает карта')}</span><small>${t('Дела → уровень → очко → узел → бонус')}</small></summary>
       <div class="tg-row">${(typeof tutMascotHTML === 'function') ? tutMascotHTML() : ''}
@@ -18365,7 +18447,7 @@ function renderTree() {
     </details>` : '';
   const detail = edit ? treeNodePanel(id, tree) : treeNodeDetailPanel(id, tree);
   return `
-    <div class="tree-shell" aria-labelledby="tree-route-title">
+    <div class="tree-shell" data-guide-target="tree-overview" aria-labelledby="tree-route-title">
     ${treeHero}
     <div class="card tree-tabs-card"><div class="tree-tabs" role="group" aria-label="${t('Сфера карты')}">${tabs}</div></div>
     <div class="card tree-map-card">
@@ -18622,7 +18704,7 @@ function renderCharacter() {
       : `<label class="locked-inline" data-action="show-paywall" data-feature="Состав тела">${t('% жира')} 🔒<input disabled placeholder="Pro" /></label>`}
       <button type="submit" class="btn">${t('Сохранить')}</button><p class="character-body-save-status" role="status" aria-live="polite"></p></form>`;
   const secondaryOpen = (id) => State._characterSecondaryOpen === id ? ' open' : '';
-  return `<div class="character-shell">
+  return `<div class="character-shell" data-guide-target="hero-overview">
     ${characterWardrobeV1HTML(cr, oi, arch)}
     <section class="character-secondary" aria-labelledby="character-secondary-title">
       <h3 id="character-secondary-title">${t('Дополнительно')}</h3>
@@ -18968,11 +19050,12 @@ async function commitEconomyConfirmation(overlay) {
   const status = overlay.querySelector('.economy-confirm-status');
   overlay._saving = true; if (confirm) confirm.disabled = true; if (cancel) cancel.disabled = true;
   if (status) status.textContent = t('Сохраняю…');
-  let payload = null, apply = null, success = '';
+  let payload = null, apply = null, success = '', guideReceiptId = '';
   if (data.kind === 'reward') {
     if (goldBalance() < data.cost) { payload = null; status.textContent = t('Недостаточно золота'); }
     else {
-      const next = [...(State.purchases || []), { id: 'p_' + uid(), rewardId: data.id, name: data.name, cost: data.cost, at: new Date().toISOString() }];
+      guideReceiptId = 'p_' + uid();
+      const next = [...(State.purchases || []), { id: guideReceiptId, rewardId: data.id, name: data.name, cost: data.cost, at: new Date().toISOString() }];
       payload = { purchases: next }; apply = () => { State.purchases = next; }; success = `${t('Куплено')}: ${data.name}`;
     }
   } else if (data.kind === 'gear') {
@@ -19014,7 +19097,11 @@ async function commitEconomyConfirmation(overlay) {
       apply = () => { State.lootbox = nextLootbox; State.rewards = nextRewards; }; success = `${t('Получено')}: ${t(item.name)}`;
     }
   }
-  const ok = payload ? await economyCommit(payload) : false;
+  const guideOwnsReward = data.kind === 'reward' && guideV3ContextActive('rewards', 'purchase-persisted')
+    && String(guideV3State()?.chapterMeta?.rewards?.candidateId || '') === String(data.id);
+  const ok = payload ? (guideOwnsReward
+    ? await guideV3FeatureCommit('rewards', 'purchase-persisted', guideReceiptId, { purchases: payload.purchases }, (committed) => { State.purchases = committed.purchases; }, data.id)
+    : await economyCommit(payload)) : false;
   overlay._saving = false;
   if (!overlay.isConnected) return;
   if (!ok || !apply) {
@@ -19816,17 +19903,28 @@ function guideV3ReviewPreviewRequested() {
   catch { return false; }
 }
 const GUIDE_V3_COPY_RELEASES = Object.freeze({
-  ru: Object.freeze({ globalName: 'GuideV3CopyRu', version: '1.1.0', status: 'runtime-approved', released: true }),
-  en: Object.freeze({ globalName: 'GuideV3CopyEn', version: '0.2.0', status: 'translated', released: true }),
-  de: Object.freeze({ globalName: 'GuideV3CopyDe', version: '0.2.0', status: 'translated', released: true }),
-  uk: Object.freeze({ globalName: 'GuideV3CopyUk', version: '0.2.0', status: 'translated', released: true }),
-  es: Object.freeze({ globalName: 'GuideV3CopyEs', version: '0.2.0', status: 'translated', released: true }),
+  ru: Object.freeze({ globalName: 'GuideV3CopyRu', version: '1.2.0', status: 'runtime-approved', released: true }),
+  en: Object.freeze({ globalName: 'GuideV3CopyEn', version: '0.3.0', status: 'translated', released: true }),
+  de: Object.freeze({ globalName: 'GuideV3CopyDe', version: '0.3.0', status: 'translated', released: true }),
+  uk: Object.freeze({ globalName: 'GuideV3CopyUk', version: '0.3.0', status: 'translated', released: true }),
+  es: Object.freeze({ globalName: 'GuideV3CopyEs', version: '0.3.0', status: 'translated', released: true }),
 });
+const GUIDE_V3_CONTEXT_LOCALES = Object.freeze({ ru: '1.2.0', en: '0.3.0', de: '0.3.0', uk: '0.3.0', es: '0.3.0' });
+function guideV3ReleasedChapter(completion) {
+  return Object.freeze({ registryVersion: 2, completion, released: true, locales: GUIDE_V3_CONTEXT_LOCALES });
+}
 const GUIDE_V3_CONTEXT_RELEASES = Object.freeze({
-  habits: Object.freeze({
-    registryVersion: 2, completion: 'habit-persisted', released: true,
-    locales: Object.freeze({ ru: '1.1.0', en: '0.2.0', de: '0.2.0', uk: '0.2.0', es: '0.2.0' }),
-  }),
+  habits: guideV3ReleasedChapter('habit-persisted'),
+  calendar: guideV3ReleasedChapter('task-date-persisted'),
+  notes: guideV3ReleasedChapter('note-persisted'),
+  voice: guideV3ReleasedChapter('voice-choice-persisted'),
+  jarvis: guideV3ReleasedChapter('helper-response-seen'),
+  rewards: guideV3ReleasedChapter('purchase-persisted'),
+  hero: guideV3ReleasedChapter('hero-seen'),
+  den: guideV3ReleasedChapter('den-seen'),
+  pets: guideV3ReleasedChapter('pets-seen'),
+  tree: guideV3ReleasedChapter('tree-seen'),
+  stats: guideV3ReleasedChapter('stats-seen'),
 });
 function guideV3CopyModule(locale = lang()) {
   const code = APP_LANGS.includes(locale) ? locale : null;
@@ -19969,10 +20067,79 @@ async function showReports() {
 function guideV3Context({ sessionPrompted = State._guideV3SessionPrompted } = {}) {
   const completed = (State.tasks || []).filter((task) => task && task.done);
   const activeDays = new Set(completed.map((task) => dayOf(task)).filter((day) => /^\d{4}-\d{2}-\d{2}$/.test(String(day || '')))).size;
+  const today = todayStr();
+  const openTasks = (State.tasks || []).filter((task) => task && !task.done && typeof task.id === 'string' && task.id);
+  const future = openTasks.filter((task) => !calendarTimeValue(task.startTime) && /^\d{4}-\d{2}-\d{2}$/.test(String(task.date || '')) && task.date > today)
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)) || String(a.id).localeCompare(String(b.id)));
+  const activeGoals = new Map((State.goals || []).filter((goal) => goal && !goal.archived && !goal.completedAt).map((goal) => [String(goal.id), goal]));
+  const deadlineTask = openTasks.find((task) => {
+    if (calendarTimeValue(task.startTime)) return false;
+    const goal = activeGoals.get(String(task.goalId || ''));
+    return goal && /^\d{4}-\d{2}-\d{2}$/.test(String(goal.targetDate || goal.deadline || ''));
+  });
+  const calendarTask = future[0] || deadlineTask || null;
+  const rewards = (State.rewards || []).filter((reward) => reward && typeof reward.id === 'string' && reward.id && Number(reward.cost) > 0)
+    .sort((a, b) => Number(a.cost) - Number(b.cost) || String(a.id).localeCompare(String(b.id)));
+  const organicBalance = Math.max(0, goldBalance() - adminGoldCredit());
+  const reward = rewards.find((item) => Number(item.cost) <= organicBalance) || null;
+  let events = [];
+  try { events = xpEvents().filter((event) => event && /^\d{4}-\d{2}-\d{2}$/.test(String(event.date || ''))); } catch {}
+  const horizonStart = addDays(today, -27);
+  const recentEvents = events.filter((event) => event.date >= horizonStart && event.date <= today);
+  const dataDays = new Set(recentEvents.map((event) => event.date)).size;
+  const activeSphereIds = new Set();
+  for (const skill of topSkills()) {
+    const branchIds = new Set([String(skill.id), ...descendantSkills(skill.id).map((item) => String(item.id))]);
+    if (recentEvents.some((event) => branchIds.has(String(event.skillId || '')))) activeSphereIds.add(String(skill.id));
+  }
+  let treePoints = 0, treeSkillId = '', treeNodeId = '', treeNodeCost = Number.POSITIVE_INFINITY;
+  try {
+    for (const skill of topSkills()) {
+      const available = Math.max(0, treePointsAvailable(skill.id));
+      const candidate = available > 0 ? (State.tree?.[skill.id]?.nodes || [])
+        .filter((node) => !node.milestone && !node.capstone && nodeUnlockable(skill.id, node))
+        .sort((a, b) => (Number(a.cost) || 0) - (Number(b.cost) || 0) || String(a.id).localeCompare(String(b.id)))[0] : null;
+      const cost = candidate ? Number(candidate.cost) || 0 : Number.POSITIVE_INFINITY;
+      if (candidate && (available > treePoints || (available === treePoints && cost < treeNodeCost))) {
+        treePoints = available; treeSkillId = skill.id; treeNodeId = String(candidate.id); treeNodeCost = cost;
+      }
+    }
+  } catch {}
+  const heroMeta = guideV3State()?.chapterMeta?.hero || {};
+  const heroResolvedAt = Number(heroMeta.completedAt || heroMeta.skippedAt || 0);
+  let ttsReady = false, aiReady = false;
+  try { ttsReady = State.settings?.tts !== false && !!ttsCloudOK() && State._shadowVoiceStatus?.configured === true; } catch {}
+  try { aiReady = canUseAi() === true; } catch {}
   return {
     now: Date.now(), sessionPrompted, completedTasks: completed.length, activeDays,
     questionnaireReady: false, hasGoalSeed: false, returnedAfterFirst: false,
+    futureTasks: future.length, hasDeadline: !!deadlineTask, calendarTaskId: calendarTask?.id || '',
+    inboxCount: (State.inbox || []).length, hasLooseNote: false,
+    ttsReady, aiReady, gold: organicBalance, rewardThreshold: reward ? Number(reward.cost) : Number.POSITIVE_INFINITY,
+    rewardId: reward?.id || '', level: charLevel(),
+    newSessionAfterHero: !!heroResolvedAt && Number(State._guideV3SessionStartedAt || 0) > heroResolvedAt,
+    meaningfulSphereData: activeSphereIds.size >= 2, treePoints, treeSkillId, treeNodeId, dataDays,
+    socialIntroAllowed: false,
   };
+}
+function guideV3ChapterDataReady(chapter) {
+  const tasksReady = !State._tasksLoadBusy && !State._tasksLoadError;
+  const habitsReady = !State._habitsLoadBusy && !State._habitsLoadError;
+  const goalsReady = !State._goalsLoadBusy && !State._goalsLoadError && !State._goalGroupsLoadError;
+  const progressReady = !State._settingsLoadBusy && !State._settingsLoadError && !State._accountDataLoadBusy
+    && tasksReady && habitsReady && goalsReady && !State._accountDataLoadErrors?.episodes;
+  if (chapter === 'habits') return tasksReady && habitsReady;
+  if (chapter === 'calendar') return tasksReady;
+  if (chapter === 'notes') return tasksReady && !State._inboxLoadError && !State._inboxBusy;
+  if (chapter === 'voice') return progressReady && !State._shadowVoiceStatusLoading && State._shadowVoiceStatus?.configured === true;
+  if (chapter === 'jarvis') return progressReady;
+  if (chapter === 'rewards') return progressReady
+    && !State._accountDataLoadErrors?.rewards && !State._accountDataLoadErrors?.purchases
+    && !State._accountDataLoadErrors?.lootbox;
+  if (['hero', 'den', 'pets'].includes(chapter)) return progressReady;
+  if (chapter === 'tree') return progressReady && !State._treeLoadError && !State._treeLoadBusy;
+  if (chapter === 'stats') return progressReady && !State._accountDataLoadErrors?.days && !State._accountDataLoadErrors?.weeks;
+  return true;
 }
 function guideV3AvailableChapters() {
   const model = window.GuideV3, state = guideV3State();
@@ -19981,7 +20148,7 @@ function guideV3AvailableChapters() {
   const context = guideV3Context({ sessionPrompted: false });
   for (const entry of model.REGISTRY) {
     if (entry.id === model.FIRST_CHAPTER || entry.id === 'goals') continue;
-    if (entry.id === model.HABITS_CHAPTER && State._habitsLoadError) continue;
+    if (!guideV3ChapterDataReady(entry.chapter)) continue;
     if (!guideV3ContextRuntimeAllowed(entry.chapter)) continue;
     if (model.entryEligible(entry, state, context)) available.push(entry.chapter);
   }
@@ -20124,11 +20291,11 @@ function renderRewards() {
   const cards = State.rewards.map((r) => `<div class="reward">
       <div class="rw-icon">${rewardIconHTML(r, 'reward-content-icon')}</div><div class="rw-name">${esc(r.catalogNameKey ? t(r.catalogNameKey) : r.name)}</div>
       <div class="rw-cost">${satoruIconHTML('status.gold', 'cost-emblem', '🪙')} ${r.cost}</div>
-      <button class="btn ${bal >= r.cost ? '' : 'disabled'}" data-action="buy-reward" data-id="${r.id}" ${bal >= r.cost ? '' : 'disabled'}>${t('Купить')}</button>
+      <button class="btn ${bal >= r.cost ? '' : 'disabled'}" data-action="buy-reward" data-guide-target="reward-buy" data-id="${r.id}" ${bal >= r.cost ? '' : 'disabled'}>${t('Купить')}</button>
       <button class="del" data-action="delete-reward" data-id="${r.id}" aria-label="${esc(t('Удалить'))}: ${esc(r.catalogNameKey ? t(r.catalogNameKey) : r.name)}">✕</button></div>`).join('');
   const history = (State.purchases || []).slice().reverse().slice(0, 8).map((p) => {
     const purchaseName = p.denNameKey ? `${t('Логово')}: ${t(p.denNameKey)}` : p.name;
-    return `<li><span class="muted">${(p.at || '').slice(0, 10)}</span> ${esc(purchaseName)} — ${satoruIconHTML('status.gold', 'inline-emblem', '◇')} ${p.cost}</li>`;
+    return `<li data-guide-target="reward-purchase" data-id="${esc(p.id || '')}" tabindex="-1"><span class="muted">${(p.at || '').slice(0, 10)}</span> ${esc(purchaseName)} — ${satoruIconHTML('status.gold', 'inline-emblem', '◇')} ${p.cost}</li>`;
   }).join('');
   const achs = ACHIEVEMENTS.map((a) => {
     const got = !!State.achievements[a.id];
@@ -20136,7 +20303,7 @@ function renderRewards() {
     if (!got && a.prog) { try { const p = a.prog(); pr = `<div class="ach-prog">${p.cur}/${p.target}</div>`; } catch {} }
     return `<div class="ach ${got ? 'got' : ''}"><div class="ach-icon">${satoruIconHTML(`achievement.${a.id}`, 'achievement-content-icon', a.icon)}</div><div class="ach-title">${esc(t(a.title))}</div><div class="ach-desc">${esc(t(a.desc))}</div>${got ? `<div class="ach-date">${State.achievements[a.id].slice(0, 10)}</div>` : pr}</div>`;
   }).join('');
-  const personalStore = `<section class="card personal-reward-store"><h3>${satoruIconHTML('reward.shop', 'heading-glyph', '◇')} ${t('Личные награды')}</h3>
+  const personalStore = `<section class="card personal-reward-store" data-guide-target="reward-store"><h3>${satoruIconHTML('reward.shop', 'heading-glyph', '◇')} ${t('Личные награды')}</h3>
     <p class="muted">${t('Главная ценность выбирается тобой: кино, прогулка, книга или собственная награда за честно заработанное золото.')}</p>
     <div class="rewards-grid">${cards || `<p class="muted">${t('Наград пока нет — выбери готовую из каталога или добавь свою.')}</p>`}</div>
     <div class="settings-actions"><button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} ${t('Каталог наград')}</button>${!isPro() ? `<span class="muted reward-limit">${State.rewards.length}/${FREE_REWARDS_MAX} · Free</span>` : ''}</div>
@@ -20157,7 +20324,7 @@ function renderRewards() {
     <li>${t('Любая трата или удаление требует подтверждения и сохраняется до изменения экрана.')}</li>
   </ul></section>`;
   return `
-    <div class="rewards-shell">
+    <div class="rewards-shell" data-guide-target="rewards-overview">
     ${rewardHero}
     <div class="rewards-primary-grid">${lootboxCard()}${personalStore}</div>
     ${collectionCard()}
@@ -20368,7 +20535,7 @@ function renderStats() {
       </div>`;
     }).join('')}</div>` : `<p class="muted" style="font-size:12.5px">${t('Пока пусто.')}</p>`}
     <div class="propose-actions"><button class="btn ghost" data-action="episode-open">🎒 ${t('Записать эпизод')}</button></div></div>`;
-  return `<section class="stats-shell" aria-labelledby="stats-title">
+  return `<section class="stats-shell" data-guide-target="stats-overview" aria-labelledby="stats-title">
     <header class="stats-route-head"><h2 id="stats-title" tabindex="-1">${satoruIconHTML('nav.progress', 'heading-glyph', '◇')} ${t('Прогресс')}</h2></header>
     <div class="kpis">
       <div class="kpi"><div class="v">${rankIconHTML(cr, 'kpi-emblem')} ${charLevel()}</div><div class="l">${cr.name}</div></div>
@@ -21184,7 +21351,7 @@ const APP_SHELL = `
   </header>
   <main id="main"></main>
   <div id="toasts"></div>
-  <button id="ai-fab" data-action="open-helper" title="Тень — спроси о себе или о приложении" aria-label="Тень">${window.ShadowRig ? window.ShadowRig.markup({ tier: 1, state: 'listening', context: 'fab', label: 'Тень' }) : '<img class="fab-face" src="/art/companions/shadow-v3-20260730/shadow-spirit-calm.png?v=20260730-1" alt="" />'}<span class="fab-streak" id="fab-streak" hidden></span></button>`;
+  <button id="ai-fab" data-action="open-helper" data-guide-target="helper" title="Тень — спроси о себе или о приложении" aria-label="Тень">${window.ShadowRig ? window.ShadowRig.markup({ tier: 1, state: 'listening', context: 'fab', label: 'Тень' }) : '<img class="fab-face" src="/art/companions/shadow-v3-20260730/shadow-spirit-calm.png?v=20260730-1" alt="" />'}<span class="fab-streak" id="fab-streak" hidden></span></button>`;
 
 // ---- Мультиплеер: пати + кооп-рейд (Племя). null=не загружено, false=не в пати, объект=в пати ----
 const RAID_PER_MEMBER = 600; // XP/чел/неделя — цель кооп-рейда (синхр. с сервером)
@@ -21584,6 +21751,9 @@ function sectionHasNew(s, lvl) {
   if (s.gate > 0 && s.views.every((v) => !isDiscovered(v.view))) return true;    // level-gated раздел, куда не заходили
   return false;
 }
+function guideSectionTarget(sectionId) {
+  return ({ plan: 'plan-nav', habits: 'habits-nav', rewards: 'rewards-nav', hero: 'hero-nav', tribe: 'tribe-nav' })[sectionId] || '';
+}
 function renderNav() {
   const nav = document.getElementById('nav'); if (!nav) return;
   const lvl = navUnlockLevel(), cur = sectionOf(State.view);
@@ -21594,7 +21764,8 @@ function renderNav() {
     const primary = SECTIONS.map((s) => {
       const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
       const mobileClass = MOBILE_PRIMARY_SECTION_IDS.includes(s.id) ? ' mobile-primary' : ' mobile-secondary';
-      return `<button class="navsec${mobileClass}${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}"${s.id === 'habits' ? ' data-guide-target="habits-nav"' : ''} aria-current="${s.id === cur ? 'page' : 'false'}" title="${locked ? `${t('Откроется на уровне')} ${s.gate}` : (isNew ? `${t(s.label)} — ${t('новое!')}` : t(s.label))}">${navMotionIconHTML(s.iconId)}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">${satoruIconHTML('status.lock', 'navsec-lock-icon', '🔒')}${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
+      const guideTarget = guideSectionTarget(s.id);
+      return `<button class="navsec${mobileClass}${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}"${guideTarget ? ` data-guide-target="${guideTarget}"` : ''} aria-current="${s.id === cur ? 'page' : 'false'}" title="${locked ? `${t('Откроется на уровне')} ${s.gate}` : (isNew ? `${t(s.label)} — ${t('новое!')}` : t(s.label))}">${navMotionIconHTML(s.iconId)}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">${satoruIconHTML('status.lock', 'navsec-lock-icon', '🔒')}${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
     }).join('');
     const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="${t('Настройки')}" aria-label="${t('Настройки')}">${satoruIconHTML('nav.settings', 'navgear-icon', '⚙️')}</button>`;
     const moreActive = MOBILE_MORE_SECTION_IDS.includes(cur) || State.view === 'settings';
@@ -21636,7 +21807,7 @@ function renderNav() {
   row && row.querySelector('.navgear')?.classList.toggle('active', State.view === 'settings');
 
   const sec = SECTIONS.find((s) => s.id === cur);
-  const subs = (sec && sec.views.length > 1) ? `<div class="navsub">${sec.views.map((v) => { const nd = NEW_VIEWS.includes(v.view) && !isDiscovered(v.view) && v.view !== State.view ? '<span class="navsub-dot"></span>' : ''; return `<button class="navsubtab${v.view === State.view ? ' active' : ''}" data-view="${v.view}">${v.iconId ? satoruIconHTML(v.iconId, 'navsub-icon', '') : ''}${t(v.label)}${nd}</button>`; }).join('')}</div>` : '';
+  const subs = (sec && sec.views.length > 1) ? `<div class="navsub">${sec.views.map((v) => { const nd = NEW_VIEWS.includes(v.view) && !isDiscovered(v.view) && v.view !== State.view ? '<span class="navsub-dot"></span>' : ''; return `<button class="navsubtab${v.view === State.view ? ' active' : ''}" data-view="${v.view}"${v.view === 'notes' ? ' data-guide-target="notes-nav"' : ''}>${v.iconId ? satoruIconHTML(v.iconId, 'navsub-icon', '') : ''}${t(v.label)}${nd}</button>`; }).join('')}</div>` : '';
   const subKey = `${cur || ''}|${State.view}|${lang()}|${discovered}`;
   if (nav.dataset.subKey !== subKey) {
     nav.querySelector(':scope > .navsub')?.remove();
@@ -21693,7 +21864,8 @@ function showMobileNavSheet() {
   const sectionEntry = (id) => {
     const s = SECTIONS.find((section) => section.id === id); if (!s) return '';
     const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
-    return `<button class="mobile-sheet-entry${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}" data-action="go-section" data-sec="${s.id}"${s.id === 'habits' ? ' data-guide-target="habits-nav"' : ''} aria-current="${s.id === cur ? 'page' : 'false'}">
+    const guideTarget = guideSectionTarget(s.id);
+    return `<button class="mobile-sheet-entry${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}" data-action="go-section" data-sec="${s.id}"${guideTarget ? ` data-guide-target="${guideTarget}"` : ''} aria-current="${s.id === cur ? 'page' : 'false'}">
       <span class="mobile-sheet-icon">${satoruIconHTML(s.iconId, 'mobile-sheet-glyph', '')}</span><span><b>${t(s.label)}</b>${locked ? `<small>${satoruIconHTML('status.lock', 'inline-glyph', '🔒')} ${t('Уровень')} ${s.gate}</small>` : ''}</span>${isNew ? '<i class="mobile-sheet-new"></i>' : '<span class="mobile-sheet-chevron">›</span>'}
     </button>`;
   };
@@ -21713,7 +21885,7 @@ function showMobileNavSheet() {
     <div class="mobile-sheet-groups">
       ${group('mobile-more-growth', 'Развитие', sectionEntry('rewards'))}
       ${group('mobile-more-community', 'Сообщество', sectionEntry('tribe'))}
-      ${group('mobile-more-support', 'Поддержка', `${sectionEntry('library')}<button class="mobile-sheet-entry" data-action="open-helper"><span class="mobile-sheet-icon">${satoruIconHTML('nav.shadow', 'mobile-sheet-glyph', '🤖')}</span><span><b>${t('Помощник')}</b><small>Satoru AI</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
+      ${group('mobile-more-support', 'Поддержка', `${sectionEntry('library')}<button class="mobile-sheet-entry" data-action="open-helper" data-guide-target="helper"><span class="mobile-sheet-icon">${satoruIconHTML('nav.shadow', 'mobile-sheet-glyph', '🤖')}</span><span><b>${t('Помощник')}</b><small>Satoru AI</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
       ${group('mobile-more-account', 'Аккаунт и доступ', `<button class="mobile-sheet-entry${State.view === 'settings' ? ' active' : ''}" data-action="mobile-go-settings" aria-current="${State.view === 'settings' ? 'page' : 'false'}"><span class="mobile-sheet-icon">${satoruIconHTML('nav.settings', 'mobile-sheet-glyph', '⚙️')}</span><span><b>${t('Настройки')}</b></span><span class="mobile-sheet-chevron">›</span></button><button class="mobile-sheet-entry" data-action="show-paywall" data-feature="Pro"><span class="mobile-sheet-icon">${satoruIconHTML('status.xp', 'mobile-sheet-glyph', '◇')}</span><span><b>Pro</b><small>${ent().tier === 'pro' ? 'PRO' : ent().tier === 'trial' ? `${t('Pro-триал')} · ${localizedDayCount(trialDaysLeft(), true)}` : 'FREE'}</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
       ${group('mobile-more-session', 'Справка и сеанс', `<div class="mobile-sheet-utils"><button class="btn ghost" data-action="show-guide">? ${t('Как играть')}</button><button class="btn ghost" data-action="logout">⇦ ${t('Выйти')}</button></div>`) }
     </div>
@@ -22751,13 +22923,23 @@ async function onSubmit(e) {
     if (!inboxWriteAllowed(true) || State._inboxBusy) return;
     const controls = f.querySelectorAll('button, input'); const status = f.querySelector('.capture-status');
     controls.forEach((control) => { control.disabled = true; }); if (status) status.textContent = t('Сохраняю…');
-    const item = { id: uid(), kind: 'text', text, file: null, type: null, at: new Date().toISOString() };
-    const saved = await commitInbox([item, ...(State.inbox || [])]);
+    const guideNotes = guideV3ContextActive('notes', 'note-persisted');
+    if (guideNotes && !State._guideV3NoteDraftId) State._guideV3NoteDraftId = uid();
+    const item = { id: guideNotes ? State._guideV3NoteDraftId : uid(), kind: 'text', text, file: null, type: null, at: new Date().toISOString() };
+    const nextInbox = [item, ...(State.inbox || []).filter((note) => !guideNotes || note.id !== item.id)];
+    let saved;
+    if (guideNotes) State._inboxBusy = true;
+    try {
+      saved = guideNotes
+        ? await guideV3FeatureCommit('notes', 'note-persisted', item.id, { inbox: nextInbox }, (data) => { State.inbox = data.inbox; })
+        : await commitInbox(nextInbox);
+    } finally { if (guideNotes) State._inboxBusy = false; }
     if (!saved) {
       controls.forEach((control) => { control.disabled = false; });
       if (status) { status.textContent = t('Не удалось сохранить заметку. Ничего не изменено — повтори попытку.'); status.setAttribute('role', 'alert'); }
       focusPathChoiceTarget(f.text); return;
     }
+    if (guideNotes) State._guideV3NoteDraftId = '';
     State._inboxFocusAfterCommit = `#note-${CSS.escape(item.id)}-title`; track('capture:text'); toast(t('📝 В Заметках')); render();
     return;
   }
@@ -23176,6 +23358,44 @@ async function guideV3Commit(event, options = {}) {
   });
 }
 
+async function guideV3FeatureCommit(chapter, completion, itemId, featureData, applyFeature, targetId = '') {
+  return guideV3Exclusive(async ({ epoch, accountId }) => {
+    const model = window.GuideV3, names = Object.keys(featureData || {});
+    if (!model || !State.settings || !names.length || !guideV3ContextActive(chapter, completion)) return false;
+    return Store.runExclusive([...names, 'settings'], async ({ writeEpoch, accountId: storeAccountId }) => {
+      if (epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')
+        || writeEpoch !== Store._writeEpoch || storeAccountId !== accountId) return false;
+      const result = model.reduce(State.settings.guideV3, {
+        type: 'guide:context-complete', completion, persisted: true,
+        itemId: itemId || undefined, targetId: targetId || undefined, at: Date.now(),
+      });
+      if (!result.accepted) return false;
+      const nextSettings = structuredClone(State.settings); nextSettings.guideV3 = result.state;
+      const data = { ...featureData, settings: nextSettings };
+      if (!pwaWriteAllowed('guideV3FeatureCommit', true) || !validateSettingsPayload(nextSettings)
+        || !settingsWriteAllowed('guideV3FeatureCommit', true)) return false;
+      for (const [name, value] of Object.entries(featureData)) {
+        if (name === 'tasks' && (!taskWriteAllowed('guideV3FeatureCommit', true) || !validateTasksPayload(value))) return false;
+        if (name === 'inbox' && (!inboxWriteAllowed(true) || !validateInboxPayload(value))) return false;
+        if (name === 'purchases' && (!accountDataWriteAllowed(name, 'guideV3FeatureCommit', true) || !validateAccountDataPayload(name, value))) return false;
+        if (!['tasks', 'inbox', 'purchases'].includes(name)) return false;
+      }
+      try {
+        const response = await fetch('/api/guide/commit', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data }),
+        });
+        if (response.status === 401) { handleAccountSessionExpired(); return false; }
+        if (!response.ok || epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')
+          || writeEpoch !== Store._writeEpoch || storeAccountId !== String(State.me?.id || '')) return false;
+        if (typeof applyFeature === 'function' && await applyFeature(data) === false) return false;
+        State.settings = nextSettings; State._guideV3Error = '';
+        if (result.metric) track(result.metric);
+        return true;
+      } catch (error) { console.error('guide feature commit', error); State._guideV3Error = 'persist'; return false; }
+    });
+  });
+}
+
 let _guideV3SurfaceKey = '';
 let _guideV3ReplayTimer = null;
 function guideV3Close(options = {}) {
@@ -23190,6 +23410,32 @@ function guideV3TargetSelector(viewModel) {
     if (vm.step === 'complete' && vm.habitId) return `[data-guide-target="habit-created"][data-id="${CSS.escape(String(vm.habitId))}"]`;
     return vm.targetSelector || null;
   }
+  const chapterState = guideV3State();
+  const meta = chapterState?.chapterMeta?.[vm.chapter] || {};
+  const exactId = String(vm.itemId || meta.itemId || meta.candidateId || '');
+  if (vm.chapter === 'calendar' && exactId) return `[data-calendar-task="${CSS.escape(exactId)}"]`;
+  if (vm.chapter === 'notes') {
+    if (vm.step === 'complete' && exactId) return `[data-guide-target="note-created"][data-id="${CSS.escape(exactId)}"]`;
+    return vm.step === 'engage' ? '[data-guide-target="note-capture"]' : vm.targetSelector || null;
+  }
+  if (vm.chapter === 'rewards') {
+    if (vm.step === 'complete' && exactId) return `[data-guide-target="reward-purchase"][data-id="${CSS.escape(exactId)}"]`;
+    if (exactId) return `[data-guide-target="reward-buy"][data-id="${CSS.escape(exactId)}"]`;
+    return '[data-guide-target="reward-store"]';
+  }
+  if (vm.chapter === 'jarvis') {
+    if (vm.step === 'complete' && exactId) return `[data-guide-target="helper-response"][data-response-id="${CSS.escape(exactId)}"]`;
+    return vm.step === 'engage' ? '[data-guide-target="helper-input"]' : '[data-guide-target="helper"]';
+  }
+  if (vm.chapter === 'tree' && exactId && vm.step !== 'intro') {
+    return `[data-action="tree-select-node"][data-node="${CSS.escape(exactId)}"]`;
+  }
+  const chapterTargets = {
+    voice: '[data-guide-target="speaker"]', hero: '[data-guide-target="hero-overview"]',
+    den: '[data-guide-target="den-overview"]', pets: '[data-guide-target="pet-sphere"]',
+    stats: '[data-guide-target="stats-overview"]',
+  };
+  if (chapterTargets[vm.chapter] && vm.step !== 'intro') return chapterTargets[vm.chapter];
   if (vm.step === 'recognize' && vm.candidateTaskId) {
     return `[data-guide-target="first-task-select"][data-id="${CSS.escape(String(vm.candidateTaskId))}"]`;
   }
@@ -23228,6 +23474,7 @@ function guideV3SurfaceAction(item) {
     'finish-replay': 'guide-finish', 'replay-next': 'guide-next',
     'skip-replay': 'guide-skip', 'show-teaser': 'guide-show-teaser',
     'context-open': 'guide-context-open', 'context-finish': 'guide-context-finish',
+    'context-viewed': 'guide-context-viewed', 'context-voice-preview': 'guide-context-voice-preview',
     'context-replay-finish': 'guide-next',
   };
   if (source.targetOnly) return null;
@@ -23250,14 +23497,28 @@ function guideV3CurrentForm() {
 function guideV3Paint() {
   const model = window.GuideV3, presenter = window.GuidePresenterV1, surface = window.GuideSurfaceV1;
   const state = guideV3State();
-  const contextualReplay = state?.currentChapter && state?.chapterMeta?.[state.currentChapter]?.replay === true;
-  const routeAllowed = state?.currentChapter === model?.FIRST_CHAPTER
-    ? State.view === 'today'
-    : state?.currentChapter === model?.HABITS_CHAPTER
-      ? (contextualReplay || state.currentStep === 'intro' ? State.view === 'today' : State.view === 'habits' && State.habitsTab === 'build')
-      : false;
+  const contextualReplay = !!state?.currentChapter && state.chapterMeta?.[state.currentChapter]?.replay === true;
+  if (state?.currentChapter === 'calendar' && state.currentStep === 'engage' && !contextualReplay
+    && guideV3ChapterDataReady('calendar') && !State._guideV3ReconcileBusy) {
+    const candidateId = String(state.chapterMeta?.calendar?.candidateId || '');
+    const candidate = candidateId ? questById(candidateId) : null;
+    if (!candidate || candidate.done === true || calendarTimeValue(candidate.startTime)) {
+      State._guideV3ReconcileBusy = true;
+      guideV3Close({ restoreFocus: false });
+      Promise.resolve(reconcileGuideV3AfterTaskLoad()).then((reconciled) => {
+        State._guideV3ReconcileBusy = false;
+        if (!reconciled) return;
+        State._guideV3CalendarTaskId = '';
+        State.view = guideV3RouteForState(guideV3State());
+        render();
+      }, () => { State._guideV3ReconcileBusy = false; });
+      return;
+    }
+  }
+  const routeAllowed = State.view === guideV3RouteForState(state);
   const chapterAllowed = state?.currentChapter === model?.FIRST_CHAPTER
-    || (state?.currentChapter === model?.HABITS_CHAPTER && guideV3ContextRuntimeAllowed(model.HABITS_CHAPTER));
+    || (!!state?.currentChapter && guideV3ContextRuntimeAllowed(state.currentChapter)
+      && (contextualReplay || guideV3ChapterDataReady(state.currentChapter)));
   const blocked = State.phase !== 'app' || !routeAllowed || document.querySelector('.modal-overlay, #mobile-nav-sheet');
   if (!model || !presenter || !surface || !guideV3RuntimeAllowed() || !state?.enabled || !chapterAllowed || !state?.currentChapter || blocked
     || (state.snoozedUntil && Date.now() < state.snoozedUntil && !State._guideV3ForceOpen)) {
@@ -23326,6 +23587,12 @@ function guideV3Paint() {
   if (vm.step === 'bond') guideV3RevealTarget('[data-guide-target="first-shadow-contact"]', { focus: true, forceScroll: true, block: 'end' });
   if (stepChanged && vm.chapter === model.HABITS_CHAPTER && vm.step === 'compose') guideV3RevealTarget('[data-guide-target="habit-title"]', { focus: true, forceScroll: true, block: 'center' });
   if (stepChanged && vm.chapter === model.HABITS_CHAPTER && vm.step === 'complete' && vm.habitId) guideV3RevealTarget(guideV3TargetSelector(vm), { focus: true, forceScroll: true, block: 'center' });
+  if (stepChanged && vm.chapter === 'notes' && vm.step === 'engage') guideV3RevealTarget('[data-guide-target="note-capture"]', { focus: true, forceScroll: true });
+  if (stepChanged && vm.chapter === 'rewards' && vm.step === 'complete') {
+    const target = document.querySelector(guideV3TargetSelector(vm));
+    const details = target?.closest('details'); if (details) details.open = true;
+    guideV3RevealTarget(guideV3TargetSelector(vm), { focus: true, forceScroll: true });
+  }
 }
 function guideV3MaybeStart() {
   const model = window.GuideV3, state = guideV3State();
@@ -23336,9 +23603,10 @@ function guideV3MaybeStart() {
     entry = model.REGISTRY.find((item) => item.id === model.FIRST_CHAPTER);
     if (!entry || !model.entryEligible(entry, state, { now: Date.now(), seedApplied: !!State.settings?.skills?.length, view: State.view })) return;
   } else {
-    entry = model.nextContextual(state, guideV3Context());
-    if (!entry || !guideV3ContextRuntimeAllowed(entry.chapter)) return;
-    if (entry.chapter === model.HABITS_CHAPTER && State._habitsLoadError) return;
+    const releasedRegistry = model.REGISTRY.filter((item) => item.id !== model.FIRST_CHAPTER
+      && guideV3ContextRuntimeAllowed(item.chapter) && guideV3ChapterDataReady(item.chapter));
+    entry = model.nextContextual(state, guideV3Context(), releasedRegistry);
+    if (!entry) return;
   }
   State._guideV3StartBusy = true;
   Promise.resolve().then(async () => {
@@ -23372,7 +23640,8 @@ async function guideV3Speak(button) {
   }
   const state = guideV3State(), vm = window.GuidePresenterV1?.present({ state, seed: guideV3Seed(), tasks: State.tasks, chapter: state?.currentChapter, copy: guideV3CopyModule() });
   if (!vm?.transcript || !window.ShadowVoiceV2?.speak) { State._guideV3Error = 'voice'; guideV3Paint(); return false; }
-  if (state.voiceConsent !== true) {
+  const liveVoicePreview = guideV3ContextActive('voice', 'voice-choice-persisted');
+  if (state.voiceConsent !== true && !liveVoicePreview) {
     const consentSaved = await guideV3Commit({ type: 'guide:voice-consent', value: true }, { repaint: false });
     if (!consentSaved) return false;
   }
@@ -23383,9 +23652,10 @@ async function guideV3Speak(button) {
     button: mountedButton, language: lang(), gender: shadowVoiceGender(), context: 'guide', browserFallback: false,
   });
   State._guideV3VoiceActive = false;
-  if (result?.mode === 'unavailable') State._guideV3Error = 'voice';
+  const succeeded = typeof result?.mode === 'string' && !['unavailable', 'stopped'].includes(result.mode);
+  if (!succeeded) State._guideV3Error = 'voice';
   guideV3Paint();
-  return result?.mode !== 'unavailable';
+  return succeeded;
 }
 async function guideV3CompleteShadowContact() {
   return guideV3Exclusive(async ({ epoch, accountId }) => {
@@ -23436,20 +23706,60 @@ async function guideV3StartFocus(taskId) {
   return true;
 }
 function guideV3RouteForState(state = guideV3State()) {
-  return state?.currentChapter === window.GuideV3?.HABITS_CHAPTER && ['compose', 'complete'].includes(state.currentStep)
-    ? 'habits' : 'today';
+  if (!state?.currentChapter || state.currentChapter === window.GuideV3?.FIRST_CHAPTER) return 'today';
+  const replay = state.chapterMeta?.[state.currentChapter]?.replay === true;
+  if (!replay && state.currentStep === 'intro') return 'today';
+  return ({ habits: 'habits', calendar: 'calendar', notes: 'notes', voice: 'today', jarvis: 'today', rewards: 'rewards', hero: 'character', den: 'den', pets: 'pets', tree: 'tree', stats: 'stats' })[state.currentChapter] || 'today';
 }
-async function guideV3OpenHabitsChapter() {
-  const model = window.GuideV3;
-  if (!guideV3HabitsStep('intro') || !model || !guideV3ContextRuntimeAllowed(model.HABITS_CHAPTER)) return false;
+async function guideV3OpenContextChapter() {
+  const model = window.GuideV3, state = guideV3State(), chapter = state?.currentChapter;
+  if (!model || !chapter || chapter === model.FIRST_CHAPTER || state.currentStep !== 'intro'
+    || !guideV3ContextRuntimeAllowed(chapter) || !guideV3ChapterDataReady(chapter)) return false;
+  const context = guideV3Context({ sessionPrompted: false });
+  const candidateId = chapter === 'calendar' ? context.calendarTaskId
+    : chapter === 'rewards' ? context.rewardId
+      : chapter === 'tree' ? context.treeNodeId : '';
+  if (['calendar', 'rewards', 'tree'].includes(chapter) && !candidateId) return false;
+  const discovery = ({ habits: 'habits', calendar: 'calendar', notes: 'notes', rewards: 'rewards', hero: 'character', den: 'den', pets: 'pets', tree: 'tree', stats: 'stats' })[chapter] || '';
   const advanced = await guideV3Commit(
-    { type: 'guide:context-next', at: Date.now() },
-    { repaint: false, discover: 'habits' },
+    { type: 'guide:context-next', itemId: candidateId || undefined, at: Date.now() },
+    { repaint: false, discover: discovery },
   );
   if (!advanced) return false;
-  State._guideV3HabitCandidateId = null; State._guideV3ForceOpen = false;
-  State.view = 'habits'; State.habitsTab = 'build'; track('view:habits'); render();
+  State._guideV3ForceOpen = false;
+  if (chapter === model.HABITS_CHAPTER) { State._guideV3HabitCandidateId = null; State.habitsTab = 'build'; }
+  if (chapter === 'notes') State._guideV3NoteDraftId = '';
+  if (chapter === 'calendar') {
+    State._guideV3CalendarTaskId = candidateId;
+    const task = questById(candidateId); if (task?.date) State.calDate = task.date;
+    State.calMode = 'day';
+  }
+  if (chapter === 'rewards') State._guideV3RewardId = candidateId;
+  if (chapter === 'tree') {
+    const skill = topSkills().find((item) => item.id === context.treeSkillId);
+    if (skill) State.treeSkill = skill.id;
+  }
+  State.view = guideV3RouteForState(guideV3State());
+  track(`view:${State.view}`);
+  render();
+  if (chapter === 'jarvis') {
+    openHelperChat(document.querySelector('[data-guide-target="helper"]'));
+    const input = document.getElementById('chat-input');
+    if (input) { input.value = t('Посмотри на мой сегодняшний план и назови один конкретный следующий шаг.'); input.focus(); }
+  }
   return true;
+}
+async function guideV3OpenHabitsChapter() { return guideV3OpenContextChapter(); }
+function guideV3ContextActive(chapter, completion) {
+  const state = guideV3State();
+  return !!(state && state.currentChapter === chapter && !state.chapterMeta?.[chapter]?.replay
+    && ['compose', 'engage'].includes(state.currentStep) && state.waitingFor === completion);
+}
+async function guideV3CompleteContext(chapter, completion, itemId = '', options = {}) {
+  if (!guideV3ContextActive(chapter, completion)) return false;
+  const extra = options.event && typeof options.event === 'object' ? options.event : {};
+  const commitOptions = { ...options }; delete commitOptions.event;
+  return guideV3Commit({ type: 'guide:context-complete', completion, persisted: true, itemId: itemId || undefined, ...extra, at: Date.now() }, commitOptions);
 }
 async function guideV3HandleAction(action, el) {
   const state = guideV3State(), chapter = state?.currentChapter || window.GuideV3?.FIRST_CHAPTER;
@@ -23466,16 +23776,32 @@ async function guideV3HandleAction(action, el) {
     const resetHabitForm = chapter === window.GuideV3?.HABITS_CHAPTER && state?.currentStep === 'compose' && State.view === 'habits';
     if (await guideV3Commit({ type: 'guide:skip', chapter, at: Date.now() }, { repaint: false })) {
       State._guideV3HabitCandidateId = null; State._guideV3HabitDraftId = '';
+      if (chapter === 'notes') State._guideV3NoteDraftId = '';
       if (resetHabitForm) {
         guideV3Close({ restoreFocus: false }); State._habitsFocusAfterCommit = '.habit-create > summary'; render();
       } else guideV3Close();
     } else guideV3Paint();
     return true;
   }
-  if (action === 'guide-context-open') { await guideV3OpenHabitsChapter(); return true; }
+  if (action === 'guide-context-open') { await guideV3OpenContextChapter(); return true; }
+  if (action === 'guide-context-viewed') {
+    const completion = window.GuideV3?.REGISTRY?.find((entry) => entry.chapter === chapter)?.completion;
+    const selector = guideV3TargetSelector(window.GuidePresenterV1?.present({ state, chapter, copy: guideV3CopyModule() }));
+    const target = selector ? document.querySelector(selector) : null;
+    if (!completion || State.view !== guideV3RouteForState(state) || !target?.getClientRects().length) return true;
+    await guideV3CompleteContext(chapter, completion, '', { discover: State.view });
+    return true;
+  }
+  if (action === 'guide-context-voice-preview') {
+    if (!guideV3ContextActive('voice', 'voice-choice-persisted')) return true;
+    const spoken = await guideV3Speak(el);
+    if (spoken) await guideV3CompleteContext('voice', 'voice-choice-persisted', '', { event: { voiceConsent: true } });
+    return true;
+  }
   if (action === 'guide-context-finish') {
     if (await guideV3Commit({ type: 'guide:context-finish', at: Date.now() }, { repaint: false })) {
       State._guideV3HabitCandidateId = null; State._guideV3HabitDraftId = ''; State._guideV3ForceOpen = false;
+      if (chapter === 'notes') State._guideV3NoteDraftId = '';
       if (State.view === 'habits') {
         guideV3Close({ restoreFocus: false }); State._habitsFocusAfterCommit = '.habit-create > summary'; render();
       } else guideV3Close();
@@ -23503,7 +23829,9 @@ async function guideV3HandleAction(action, el) {
   if (action === 'guide-replay') {
     const replayChapter = el.dataset.chapter;
     if (replayChapter !== window.GuideV3.FIRST_CHAPTER && !guideV3ContextRuntimeAllowed(replayChapter)) return true;
-    closeAccountDialog('guide', { restoreFocus: false }); State.view = 'today'; await guideV3Commit({ type: 'guide:replay', chapter: replayChapter, at: Date.now() }, { repaint: false }); render(); return true;
+    closeAccountDialog('guide', { restoreFocus: false }); State.view = 'today';
+    if (await guideV3Commit({ type: 'guide:replay', chapter: replayChapter, at: Date.now() }, { repaint: false })) State.view = guideV3RouteForState(guideV3State());
+    render(); return true;
   }
   if (action === 'guide-start') {
     const startChapter = el.dataset.chapter || window.GuideV3.FIRST_CHAPTER;
@@ -23525,6 +23853,7 @@ async function guideV3HandleAction(action, el) {
           closeAccountDialog('guide', { restoreFocus: false }); guideV3Close({ restoreFocus: false });
           State._habitsFocusAfterCommit = '.habit-create > summary'; render();
         } else {
+          if (chapter === 'notes') State._guideV3NoteDraftId = '';
           closeAccountDialog('guide'); guideV3Close({ restoreFocus: false });
         }
       }
@@ -23571,11 +23900,16 @@ const DRIPS = [
   // Выбор пути дисциплины — только когда игрок уже понял базовую игру (урок Pokémon GO: не спрашивать сторону вслепую).
   { id: 'd_path', say: 'Ты освоился 💪 Пора выбрать путь дисциплины: мягкий (Доверие, через доброту) или жёсткий (Контроль, через строгость). Загляни — покажу оба.', modal: 'path', when: () => tutDoneOrSkipped() && charLevel() >= 3 && !pathChosen() },
 ];
+const GUIDE_V3_LEGACY_DRIPS = Object.freeze({
+  d_habits: 'habits', d_den: 'den', d_tree: 'tree', d_capture: 'notes', d_voice: 'voice', d_jarvis: 'jarvis',
+});
 let _dripShownThisLoad = false;
 function dripCheck() {
   const t = ensureTutorial();
   if (t.active || _dripShownThisLoad || State.view !== 'today' || window.matchMedia('(max-width: 760px)').matches) return;
   for (const d of DRIPS) {
+    const guideChapter = GUIDE_V3_LEGACY_DRIPS[d.id];
+    if (guideChapter && guideV3ContextRuntimeAllowed(guideChapter)) continue;
     if (t.seenDrips.includes(d.id)) continue;
     let ok = false; try { ok = !!d.when(); } catch {}
     if (ok) { dripStart(d); return; }
@@ -23776,6 +24110,13 @@ async function onClick(e) {
   document.querySelectorAll('.sphere-field[open]').forEach((field) => {
     if (field !== targetSphereField) field.removeAttribute('open');
   });
+  const guideTarget = e.target.closest('[data-guide-target]');
+  const guideState = guideV3State();
+  if (guideTarget && guideState?.currentChapter && guideState.currentChapter !== window.GuideV3?.FIRST_CHAPTER
+    && guideState.currentStep === 'intro') {
+    const vm = window.GuidePresenterV1?.present({ state: guideState, chapter: guideState.currentChapter, copy: guideV3CopyModule() });
+    if (vm?.targetKey === guideTarget.dataset.guideTarget && await guideV3OpenContextChapter()) return;
+  }
   const navBtn = e.target.closest('#nav button[data-view]');
   if (navBtn) { flushSettingsForm(); const nextView = navBtn.dataset.view; if (nextView !== State.view) sfx('navigate'); State.view = nextView; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); State._goalDeepLinkId = ''; syncGoalDeepLink('', State.view); } markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
   const secBtn = e.target.closest('[data-action="go-section"]');
@@ -24302,7 +24643,11 @@ async function onClick(e) {
     toast('💛 ' + esc(petName(id)) + ' доволен');
     return;
   }
-  if (action === 'pet-hint') { const tr = petTraits(id)[0]; if (tr && tr.hint) toast(t(tr.hint)); return; }
+  if (action === 'pet-hint') {
+    const tr = petTraits(id)[0]; if (tr && tr.hint) toast(t(tr.hint));
+    if (topSkills().some((skill) => String(skill.id) === String(id))) await guideV3CompleteContext('pets', 'pets-seen', id, { discover: 'pets' });
+    return;
+  }
   if (action === 'pet-rename') { State._petRename = id; State._petRenameError = ''; State._petsFocusAfterCommit = `.pet-rename-form[data-id="${CSS.escape(id)}"] input[name="name"]`; render(); return; }
   if (action === 'pet-rename-cancel') { State._petRename = null; State._petRenameError = ''; State._petsFocusAfterCommit = `[data-action="pet-rename"][data-id="${CSS.escape(id)}"]`; render(); return; }
   if (action === 'open-fortune-editor') { showFortuneEditor(id); return; }
@@ -25205,8 +25550,14 @@ async function onClick(e) {
     State._treeFocusAfterCommit = `[data-action="select-tree"][data-skill="${CSS.escape(sid)}"]`; render();
   } else if (action === 'tree-select-node') {
     const nodeId = el.dataset.node;
-    if (!State.tree[State.treeSkill]?.nodes.some((node) => node.id === nodeId)) return;
+    const node = State.tree[State.treeSkill]?.nodes.find((item) => item.id === nodeId);
+    if (!node) return;
     State.treeSelNode = nodeId;
+    const treeGuide = guideV3ContextActive('tree', 'tree-seen');
+    const candidateId = String(guideV3State()?.chapterMeta?.tree?.candidateId || '');
+    if (treeGuide && candidateId === String(nodeId) && !node.milestone && !node.capstone && nodeUnlockable(State.treeSkill, node)) {
+      await guideV3CompleteContext('tree', 'tree-seen', nodeId, { repaint: false, discover: 'guide:tree' });
+    }
     treeFocusAfterCommit('#tree-node-detail'); render();
   } else if (action === 'unlock-node') {
     const sid = State.treeSkill, node = State.tree[sid] && State.tree[sid].nodes.find((n) => n.id === el.dataset.node); if (!node) return;
@@ -25844,6 +26195,7 @@ function flushSettingsForm() { return SettingsAutosave.flush(); }
 
 function clearAllData() {
   Store.cancelPending();
+  cancelCapturePipeline();
   State.settings = null; State.tasks = null; State.days = null; State.habits = null;
   State.habitlog = null; State.goals = null; State.goalGroups = null; State.tree = null; State.rewards = null;
   State.purchases = null; State.achievements = null; State.weeks = null; State.lootbox = null;
@@ -25859,12 +26211,16 @@ function clearAllData() {
   State._tasksLoadError = ''; State._tasksLoadBusy = false; State._tasksFocusAfterCommit = '';
   State._habitsLoadError = ''; State._habitsLoadBusy = false; State._habitTxnBusy = ''; State._habitError = ''; clearHabitUndo(); State._habitsFocusAfterCommit = '';
   State._goalsLoadError = ''; State._goalGroupsLoadError = ''; State._goalsLoadBusy = false; State._goalTxnBusy = ''; State._goalsError = ''; State._goalsFocusAfterCommit = ''; State._goalOpenId = ''; State._goalDeepLinkId = ''; State.goalView = 'focus'; State.goalFilter = 'all'; State._goalsComposerOpen = false; State._goalGroupFilter = ''; State._goalsBulkMode = false; State._goalsBulkIds = new Set();
-  State._settingsLoadError = ''; State._settingsLoadBusy = false; State._treeLoadError = '';
+  State._settingsLoadError = ''; State._settingsLoadBusy = false; State._treeLoadError = ''; State._treeLoadBusy = false;
+  State._shadowVoiceStatus = null; State._shadowVoiceStatusLoading = false;
   State._accountDataLoadErrors = {}; State._accountDataLoadBusy = false; State._accountDataWriteBlockedNoticeAt = 0;
   State._onboardingSaveBusy = false; State._onboardingSaveError = '';
   State._guideV3Error = ''; State._guideV3SessionPrompted = false; State._guideV3StartBusy = false; State._guideV3PromptMarkBusy = false;
   State._guideV3ChooseOther = false; State._guideV3FocusPending = ''; State._guideV3VoiceActive = false;
   State._guideV3ForceOpen = false; State._guideV3ShowTeaser = false; State._guideV3HabitCandidateId = null; State._guideV3HabitDraftId = '';
+  State._guideV3SessionStartedAt = Date.now(); State._guideV3CalendarTaskId = ''; State._guideV3NoteDraftId = ''; State._guideV3RewardId = '';
+  State._guideV3AssistantRequestId = ''; State._guideV3AssistantResponseId = ''; State._guideV3AssistantCompleting = false;
+  State._guideV3ReconcileBusy = false;
   _guideV3WriteEpoch += 1; _guideV3WriteQueue = Promise.resolve();
   guideV3Close({ restoreFocus: false });
   State._attentionLoadError = ''; State._attentionLoadBusy = false; State._attentionWriteBlockedNoticeAt = 0; State._attentionDeepLink = null; State._attentionReturnIndex = 0;
@@ -26153,6 +26509,7 @@ async function initApp() {
   // Запрос стартовал в начале initApp, так что ждать здесь почти нечего.
   await aiKeysReady;
   State.phase = 'app';
+  refreshShadowVoiceStatus();
   render();
   scheduleAttentionBoundary();
   if (State._attentionDeepLink) setTimeout(() => runAttentionDeepLink(), 80);
@@ -26716,7 +27073,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v192';
+const PWA_CACHE_VERSION = 'satoru-v193';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

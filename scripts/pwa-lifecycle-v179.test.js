@@ -19,7 +19,7 @@ test('lifecycle reducer prioritizes offline, update and explicit reconnect recov
   state = PWA.reduce(state, { type: 'network:offline' });
   assert.equal(PWA.canWrite(state), false);
   assert.equal(PWA.surface(state).kind, 'offline');
-  state = PWA.reduce(state, { type: 'worker:version', version: 'satoru-v192' });
+  state = PWA.reduce(state, { type: 'worker:version', version: 'satoru-v193' });
   assert.equal(PWA.surface(state).kind, 'offline', 'offline warning stays the highest priority');
   state = PWA.reduce(state, { type: 'network:online' });
   assert.equal(PWA.surface(state).kind, 'update');
@@ -30,32 +30,32 @@ test('lifecycle reducer prioritizes offline, update and explicit reconnect recov
 });
 
 test('invalid messages and forged cache versions fail closed without throwing', () => {
-  const state = PWA.create({ currentVersion: 'satoru-v192' });
+  const state = PWA.create({ currentVersion: 'satoru-v193' });
   for (const value of [null, [], 'satoru-v999', { type: 'worker:version', version: '../v180' }, { type: 'worker:version', version: 'https://x' }]) {
     assert.doesNotThrow(() => PWA.reduce(state, value));
     assert.equal(PWA.reduce(state, value).updateReady, false);
   }
-  assert.equal(PWA.cacheVersion('satoru-v192'), 'satoru-v192');
-  assert.equal(PWA.cacheVersion(' satoru-v192 '), 'satoru-v192');
+  assert.equal(PWA.cacheVersion('satoru-v193'), 'satoru-v193');
+  assert.equal(PWA.cacheVersion(' satoru-v193 '), 'satoru-v193');
 });
 
 test('same worker version is quiet and refresh cannot start offline', () => {
-  let state = PWA.create({ currentVersion: 'satoru-v192', online: false });
-  state = PWA.reduce(state, { type: 'worker:version', version: 'satoru-v192' });
+  let state = PWA.create({ currentVersion: 'satoru-v193', online: false });
+  state = PWA.reduce(state, { type: 'worker:version', version: 'satoru-v193' });
   assert.equal(state.updateReady, false);
   assert.equal(PWA.reduce(state, { type: 'refresh:start' }).refreshing, false);
 });
 
 test('failed explicit refresh stays visible above a deferred update or reconnect notice', () => {
   let state = PWA.create({ currentVersion: 'satoru-v190', online: true });
-  state = PWA.reduce(state, { type: 'worker:version', version: 'satoru-v192' });
+  state = PWA.reduce(state, { type: 'worker:version', version: 'satoru-v193' });
   state = PWA.reduce(state, { type: 'refresh:start' });
   state = PWA.reduce(state, { type: 'refresh:failed', error: 'save' });
   assert.equal(PWA.surface(state).kind, 'refresh-error');
 });
 
 test('service worker install is fail-closed and activated version reaches every open client', () => {
-  assert.match(SW, /const CACHE = 'satoru-v192'/);
+  assert.match(SW, /const CACHE = 'satoru-v193'/);
   const install = SW.slice(SW.indexOf("self.addEventListener('install'"), SW.indexOf("self.addEventListener('activate'"));
   assert.match(install, /c\.addAll\(SHELL\)/);
   assert.doesNotMatch(install, /catch\s*\(/, 'failed addAll must reject installation instead of activating a partial shell');
@@ -76,7 +76,7 @@ test('every service-worker shell entry resolves to a real production file', () =
 });
 
 test('runtime exposes an accessible update/offline surface and fences writes while offline', () => {
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v192'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v193'/);
   assert.match(APP, /window\.addEventListener\('offline'/);
   assert.match(APP, /window\.addEventListener\('online'/);
   assert.match(APP, /navigator\.serviceWorker\.addEventListener\('message'/);
@@ -123,8 +123,8 @@ test('five-language lifecycle copy and current shell order are complete', () => 
     for (const locale of ['en:', 'de:', 'uk:', 'es:']) assert.match(row, new RegExp(locale));
   }
   const moduleAt = INDEX.indexOf('pwa-lifecycle-v1.js?v=20260826-launch-hardening-v180-1');
-  const appAt = INDEX.indexOf('app.js?v=20260828-guide-habits-v192-4');
+  const appAt = INDEX.indexOf('app.js?v=20260828-guide-context-v193-1');
   assert.ok(moduleAt >= 0 && appAt > moduleAt);
-  assert.match(INDEX, /styles\.css\?v=20260828-guide-habits-v192-4/);
+  assert.match(INDEX, /styles\.css\?v=20260828-guide-context-v193-1/);
   assert.match(SW, /'pwa-lifecycle-v1\.js'/);
 });

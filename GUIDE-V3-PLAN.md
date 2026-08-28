@@ -1,6 +1,6 @@
 # Satoru Guide v3 — «Тень ведёт»
 
-Статус на 2026-08-28: First Journey, account-owned state, Guide Library, replay/Piper и пятиъязычный runtime RU/EN/DE/UK/ES выпущены до C2 v191. Первый contextual-срез **D1 Habits** собран и локально проверен в v192 как реальный `intro → compose → complete` loop; **1101/1101** тестов и browser-матрица `360/375/1280` проходят, production release/hash verification ещё не выполнялись. Остальные contextual-главы и level-3 pacing строятся по одной; Goals остаётся закрытой до questionnaire. Исторический RU-сценарий лежит в `GUIDE-V3-FIRST-SCRIPT-RU.md`; guide-specific концепт Искры по-прежнему не является утверждённым production-art.
+Статус на 2026-08-28: First Journey, account-owned state, Guide Library, replay/Piper и пятиъязычный runtime RU/EN/DE/UK/ES выпущены до C2 v191. После Habits v192 в локальный **v193 contextual pack** собраны ещё десять глав: Calendar, Notes, Voice, Jarvis, Rewards, Hero, Den, Pets, Tree и Progress. Все они используют общий `intro → engage → complete` контракт, но pacing по-прежнему показывает не более одной новой главы за сессию. Полный автоматический gate — **1112/1112 PASS**; browser smoke библиотеки на `360×800`, `375×812`, `1280×900` проходит без overflow, малых кнопок и console errors. Production release/hash verification v192–v193 и seeded end-to-end browser-проход каждой главы ещё не выполнялись. Goals остаётся закрытой до questionnaire/data logic, Tribe — до отдельного privacy/consent релиза. Исторический RU-сценарий лежит в `GUIDE-V3-FIRST-SCRIPT-RU.md`; guide-specific концепт Искры по-прежнему не является утверждённым production-art.
 
 ## 0. Решение
 
@@ -176,32 +176,35 @@ Satoru не нужен один длинный «полный гайд». Ему
 
 ### Когда появляется дата/дедлайн или 3+ future tasks
 
-- **Calendar:** куда уходит дело не на сегодня;
-- показать move/schedule на одном реальном объекте.
+- **Calendar v193:** куда уходит ещё не запланированное дело не на сегодня;
+- Guide закрепляет точный кандидат по stable ID и завершается только после реального назначения валидного времени (`task-date-persisted`); снятие с расписания и no-op не считаются обучением;
+- новая дата/время, список задач и Guide receipt сохраняются одним commit; ошибка оставляет задачу и главу на прежнем шаге, а исчезнувший либо уже запланированный кандидат переизбирается.
 
 ### Когда появляется мысль вне расписания
 
-- **Notes / Capture:** сохранить без решения, затем превратить в task;
-- trigger — первая непристроенная заметка либо 4 completed tasks и пустой inbox.
+- **Notes / Capture v193:** сохранить мысль без решения;
+- trigger — 4 completed tasks и пустой inbox: глава не притворяется полезной, когда заметки уже освоены;
+- только текстовая заметка завершает короткую главу после общей записи inbox + Guide state: голос/видео на этом шаге скрыты, потому что их upload не входит в ту же транзакцию. Обычный Notes по-прежнему поддерживает media, а превращение заметки в task не требуется Guide.
 
 ### Уровень 2 / после освоенного core loop
 
-- **Voice:** speaker button и согласие на автоголос;
-- **Jarvis:** один вопрос о текущем состоянии;
+- **Voice v193:** speaker button и отдельное согласие; глава fail-closed ждёт подтверждённый voice provider, а недоступный/остановленный playback не закрывает её и не записывает consent заранее;
+- **Jarvis v193:** один новый вопрос о текущем состоянии; завершение требует нового успешного, непустого и уже показанного ответа именно текущего request ID, а не открытия окна, старого ответа или сетевой ошибки;
 - **System theme:** только teaser из Settings, не onboarding requirement.
 
 ### Когда накоплено достаточно золота
 
-- **Rewards:** earned gold → одна осознанная покупка;
+- **Rewards v193:** earned gold → одна осознанная покупка конкретной доступной личной награды;
+- admin-gold не делает главу eligible, а exact reward ID, покупка и Guide receipt проходят одной account-owned транзакцией без списания при ошибке;
 - chest/cosmetics объясняются после прямой покупки, не раньше.
 
 ### Уровень 3 — не одной пачкой
 
-1. **Hero overview** — персонаж отражает доказанный прогресс.
-2. В следующую сессию **Den** — обживаемое место.
-3. Затем **Pets** — баланс сфер, только если уже есть meaningful sphere data.
-4. **Tree** — только когда есть доступное очко.
-5. **Stats** — после 7 дней или достаточного массива данных.
+1. **Hero overview v193** — персонаж отражает доказанный прогресс; глава закрывается явной CTA на смонтированном экране, а не самим render.
+2. В следующую сессию **Den v193** — обживаемое место; отдельный session boundary после completion либо Skip Hero не даёт Hero и Den слиться в один dump.
+3. Затем **Pets v193** — связь питомцев со сферами, только если минимум две ведущие сферы имеют свежие реальные события в своей ветке, включая подсферы; требуется настоящий клик по подсказке питомца.
+4. **Tree v193** — только когда есть реальное очко и конкретный доступный unlockable node; просмотр именно закреплённого узла не тратит очко и только он завершает главу.
+5. **Progress v193** — после 7 разных дней данных; явная CTA появляется только на смонтированном meaningful surface.
 6. **Tribe / Party** — отдельный social-consent chapter после Hero, не в тот же заход и не автоматически при достижении уровня.
 
 ### Поздние/редкие главы
@@ -474,16 +477,16 @@ settings.guideV3 = {
 
 - [x] **D1 Habits — локально собран и проверен в v192:** real Habits Build, interim recent-task adapter / existing-habit update, явные schedule + twoMin, stable ID, atomic `habits + settings`, shared Store mutex/lazy settings snapshot, retry без дубля и presentation-only replay. Automated suite **1101/1101 PASS**; local browser QA PASS на `360×800` / `375×812` / `1280×900`, пяти языках и обеих темах. Production release/hash verification pending.
 - [ ] Goals/Plan — deferred-questionnaire;
-- Calendar;
-- Notes;
-- Voice/Jarvis;
-- Rewards.
+- [x] **Calendar v193** — exact unscheduled task ID, реальное назначение времени, atomic `tasks + settings`, stale-candidate reconcile и rollback/no false-success;
+- [x] **Notes v193** — реальная text capture, stable note ID, atomic `inbox + settings`, Retry без ложного receipt; media остаётся обычной функцией вне Guide-транзакции и жёстко fenced к исходным account ID/write epoch;
+- [x] **Voice/Jarvis v193** — подтверждённый provider и реальный playback перед consent; exact current-request response перед completion;
+- [x] **Rewards v193** — organic-gold eligibility, exact personal reward, atomic `purchases + settings`, неизменённая economy confirmation.
 
 ### Commit E — level 3 chapters
 
-- Hero → Den → Pets → Tree → Stats;
-- Tribe отдельно;
-- pacing/cooldowns.
+- [x] **Hero → Den → Pets → Tree → Progress v193** — пять runtime-глав одним кодовым пакетом, но последовательными сессиями и честными data gates;
+- [ ] Tribe отдельно — privacy/consent release;
+- [x] pacing/cooldowns — не более одной auto-главы за сессию, replay не меняет данные и не открывает следующую главу.
 
 ### Commit F — questionnaire bridge
 
@@ -501,10 +504,11 @@ settings.guideV3 = {
 5. полный export + QA;
 6. только затем guide-art runtime integration.
 
-## 15. Границы после D1 Habits v192
+## 15. Границы после contextual pack v193
 
-- Habits D1 собран и прошёл local visual QA; перед production release остаются только разрешение на выпуск и production asset-hash verification;
-- остальные contextual chapters D/E ещё не являются runtime: строить по одной и с pacing; Goals не включать до questionnaire;
+- Habits и десять глав v193 собраны локально; browser-матрица общей Library оболочки уже проходит, но перед production release остаются seeded end-to-end browser-сценарии действий каждой главы, разрешение на push/deploy и production asset-hash verification;
+- Goals не включать до questionnaire/data logic; Tree/Goals import и другие транзакционно сложные функции не расширять скрыто внутри Guide;
+- Tribe не включать до отдельного consent/privacy QA, включая отказ «Оставить приватным», ownership и offline/error состояния;
 - questionnaire UI;
 - 32 production frames;
 - автоматическое создание целей/привычек без подтверждения;

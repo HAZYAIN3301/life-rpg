@@ -111,8 +111,8 @@ test('the approved RU review is an exact mirror of centralized runtime copy', ()
   assert.match(COPY_REVIEW, /RUNTIME_APPROVED` поднят намеренно/);
 });
 
-test('v192 offline shell pins all Guide runtime scripts and locale copies', () => {
-  sourceMatches(SW, /const CACHE = 'satoru-v192';/);
+test('v193 offline shell pins all Guide runtime scripts and locale copies', () => {
+  sourceMatches(SW, /const CACHE = 'satoru-v193';/);
   for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'guide-surface-v1.js']) {
     assert.ok(file, 'Guide runtime file must be discoverable before checking SHELL');
     assert.ok(SW.includes(`'${file}'`) || SW.includes(`"${file}"`), `${file} must be pinned in SHELL`);
@@ -151,10 +151,8 @@ test('First Journey uses stable semantic targets instead of layout selectors', (
 });
 
 test('Habits chapter is data-triggered and points only at stable real UI targets', () => {
-  for (const target of [
-    'habits-nav', 'habit-create', 'habit-title', 'habit-schedule',
-    'habit-two-minute', 'habit-created',
-  ]) {
+  assert.ok(APP.includes("habits: 'habits-nav'"), 'responsive navigation must expose the stable Habits Guide target');
+  for (const target of ['habit-create', 'habit-title', 'habit-schedule', 'habit-two-minute', 'habit-created']) {
     assert.ok(APP.includes(`data-guide-target="${target}"`), `missing stable Habits Guide target: ${target}`);
   }
 
@@ -167,21 +165,21 @@ test('Habits chapter is data-triggered and points only at stable real UI targets
     'both approved Habits triggers must reach the pure registry');
 
   const maybeStart = between(APP, 'function guideV3MaybeStart()', '\nasync function guideV3Snooze');
-  sourceMatches(maybeStart, /nextContextual\(state,\s*guideV3Context\(\)\)/,
+  sourceMatches(maybeStart, /nextContextual\(state,\s*guideV3Context\(\),\s*releasedRegistry\)/,
     'automatic contextual selection must stay registry-driven');
-  sourceMatches(maybeStart, /guideV3ContextRuntimeAllowed\(entry\.chapter\)/,
+  sourceMatches(maybeStart, /guideV3ContextRuntimeAllowed\(item\.chapter\)/,
     'an unreleased contextual chapter must fail closed');
-  sourceMatches(maybeStart, /HABITS_CHAPTER[\s\S]{0,100}_habitsLoadError/,
-    'the Guide must not invite a write while Habits data is in recovery');
+  sourceMatches(maybeStart, /guideV3ChapterDataReady\(item\.chapter\)/,
+    'the Guide must not invite a write while its feature data is in recovery');
 
-  const open = between(APP, 'async function guideV3OpenHabitsChapter()', '\nasync function guideV3HandleAction');
-  sourceMatches(open, /guideV3HabitsStep\(['"]intro['"]\)/,
-    'only an enabled, unsnoozed authored intro may enter the real form');
+  const open = between(APP, 'async function guideV3OpenContextChapter()', '\nasync function guideV3OpenHabitsChapter');
+  sourceMatches(open, /state\.currentStep\s*!==\s*['"]intro['"]/,
+    'only the authored intro may enter the real form');
   sourceMatches(open, /guideV3Commit\([\s\S]{0,120}type:\s*['"]guide:context-next['"]/, 'the CTA must advance the pure three-step state machine');
-  sourceMatches(open, /discover:\s*['"]habits['"]/, 'route discovery and the context transition must share one queued settings snapshot');
+  sourceMatches(open, /habits:\s*['"]habits['"][\s\S]{0,500}discover:\s*discovery/, 'route discovery and the context transition must share one queued settings snapshot');
   sourceOmits(open, /markDiscovered\s*\(/,
     'the contextual CTA cannot launch a competing fire-and-forget settings write');
-  sourceMatches(open, /State\.view\s*=\s*['"]habits['"][\s\S]{0,80}State\.habitsTab\s*=\s*['"]build['"]/,
+  sourceMatches(open, /chapter\s*===\s*model\.HABITS_CHAPTER[\s\S]{0,160}State\.habitsTab\s*=\s*['"]build['"][\s\S]{0,500}State\.view\s*=\s*guideV3RouteForState/,
     'entry must reveal the existing Habits build surface');
   const onClick = between(APP, 'async function onClick(e)', '\nasync function onWkDrop');
   sourceMatches(onClick, /s\.id\s*===\s*['"]habits['"][\s\S]{0,500}await\s+guideV3OpenHabitsChapter\(\)/,
@@ -306,7 +304,8 @@ test('Guide and account writes are ordered, fenced and leave no stale Habits for
 
 test('Habits Guide route, focus and account reset do not leak across modal or profile boundaries', () => {
   const paint = between(APP, 'function guideV3Paint()', '\nfunction guideV3MaybeStart');
-  sourceMatches(paint, /HABITS_CHAPTER[\s\S]{0,220}currentStep\s*===\s*['"]intro['"][\s\S]{0,220}State\.view\s*===\s*['"]habits['"]/,
+  const route = between(APP, 'function guideV3RouteForState', '\nasync function guideV3OpenContextChapter');
+  sourceMatches(route, /currentStep\s*===\s*['"]intro['"][\s\S]{0,240}habits:\s*['"]habits['"]/,
     'intro belongs to Today while compose/complete belong to the Habits route');
   sourceMatches(paint, /\.modal-overlay, #mobile-nav-sheet/,
     'the non-modal Guide must yield while a modal or mobile sheet owns interaction');
@@ -477,17 +476,17 @@ test('Escape abandons replay but snoozes a live chapter', () => {
     'the replay abandonment helper must never enter the live snooze path');
 });
 
-test('Habits v192 explicitly releases exact Guide copy and chapter versions for RU/EN/DE/UK/ES', () => {
+test('Context pack v193 explicitly releases exact Guide copy and chapter versions for RU/EN/DE/UK/ES', () => {
   assert.equal(COPY_RU.RUNTIME_APPROVED, true,
     'the owner-approved RU Guide must be available in normal runtime');
   assert.equal(COPY_RU.STATUS, 'runtime-approved');
   const runtimeAllowed = between(APP, 'const GUIDE_V3_COPY_RELEASES', '\nfunction feedbackPanelHTML');
   for (const [locale, globalName, version, status] of [
-    ['ru', 'GuideV3CopyRu', '1.1.0', 'runtime-approved'],
-    ['en', 'GuideV3CopyEn', '0.2.0', 'translated'],
-    ['de', 'GuideV3CopyDe', '0.2.0', 'translated'],
-    ['uk', 'GuideV3CopyUk', '0.2.0', 'translated'],
-    ['es', 'GuideV3CopyEs', '0.2.0', 'translated'],
+    ['ru', 'GuideV3CopyRu', '1.2.0', 'runtime-approved'],
+    ['en', 'GuideV3CopyEn', '0.3.0', 'translated'],
+    ['de', 'GuideV3CopyDe', '0.3.0', 'translated'],
+    ['uk', 'GuideV3CopyUk', '0.3.0', 'translated'],
+    ['es', 'GuideV3CopyEs', '0.3.0', 'translated'],
   ]) {
     const exactVersion = version.replace(/\./g, '\\.');
     sourceMatches(runtimeAllowed, new RegExp(`${locale}:[\\s\\S]{0,160}${globalName}[\\s\\S]{0,100}${exactVersion}[\\s\\S]{0,100}${status}[\\s\\S]{0,80}released:\\s*true`),
@@ -499,10 +498,10 @@ test('Habits v192 explicitly releases exact Guide copy and chapter versions for 
       `${locale} cannot enter Habits until that chapter is explicitly approved`);
   }
   sourceMatches(runtimeAllowed,
-    /GUIDE_V3_CONTEXT_RELEASES[\s\S]{0,180}habits:[\s\S]{0,180}registryVersion:\s*2[\s\S]{0,120}completion:\s*['"]habit-persisted['"][\s\S]{0,180}released:\s*true/,
+    /function guideV3ReleasedChapter[\s\S]{0,180}registryVersion:\s*2[\s\S]{0,120}completion[\s\S]{0,120}released:\s*true[\s\S]{0,300}habits:\s*guideV3ReleasedChapter\(['"]habit-persisted['"]\)/,
     'the chapter contract must pin registry v2 and its exact real completion event');
-  for (const [locale, version] of [['ru', '1.1.0'], ['en', '0.2.0'], ['de', '0.2.0'], ['uk', '0.2.0'], ['es', '0.2.0']]) {
-    sourceMatches(runtimeAllowed, new RegExp(`locales:[\\s\\S]{0,220}${locale}:\\s*['"]${version.replace(/\./g, '\\.')}['"]`),
+  for (const [locale, version] of [['ru', '1.2.0'], ['en', '0.3.0'], ['de', '0.3.0'], ['uk', '0.3.0'], ['es', '0.3.0']]) {
+    sourceMatches(runtimeAllowed, new RegExp(`GUIDE_V3_CONTEXT_LOCALES[\\s\\S]{0,220}${locale}:\\s*['"]${version.replace(/\./g, '\\.')}['"]`),
       `Habits context release must pin ${locale} ${version}`);
   }
   sourceMatches(runtimeAllowed,
@@ -536,10 +535,10 @@ test('Habits v192 explicitly releases exact Guide copy and chapter versions for 
   for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'app.js']) {
     const source = SCRIPT_SOURCES.find((item) => scriptFile(item) === file);
     assert.ok(source, `${file} must load in index.html`);
-    assert.match(source, /\?v=[^"']*v192(?:-|$)/, `${file} needs a v192 cache-busting pin`);
+    assert.match(source, /\?v=[^"']*v193(?:-|$)/, `${file} needs a v193 cache-busting pin`);
   }
-  sourceMatches(INDEX, /styles\.css\?v=[^"']*v192(?:-|["'])/,
-    'Habits layout changes need the same v192 CSS pin');
+  sourceMatches(INDEX, /styles\.css\?v=[^"']*v193(?:-|["'])/,
+    'the contextual pack needs the same v193 CSS pin');
 });
 
 test('feedback remains reachable even when the localized Guide is unavailable', () => {

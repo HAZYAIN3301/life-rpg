@@ -44,9 +44,10 @@ test('ответ есть до первой отрисовки — гейты н
   assert.match(app, /const aiKeysReady = ensureAiKeys\(\);/);
   const init = app.slice(app.indexOf('async function initApp()'));
   const wait = init.indexOf('await aiKeysReady;');
-  const firstRender = init.indexOf("State.phase = 'app';\n  render();");
+  const appPhase = init.indexOf("State.phase = 'app';", wait);
+  const firstRender = init.indexOf('render();', appPhase);
   assert.ok(wait > 0, 'ответ не ожидается перед отрисовкой');
-  assert.ok(wait < firstRender, 'ожидание должно стоять ДО первого render()');
+  assert.ok(wait < appPhase && appPhase < firstRender, 'ожидание должно стоять ДО первого app render()');
 });
 
 test('во время initApp загрузка не дёргает render() сама', () => {
@@ -68,5 +69,5 @@ test('новая строка переведена на все пять язык
 });
 
 test('обновлённый offline shell', () => {
-  assert.match(sw, /const CACHE = 'satoru-v192'/);
+  assert.match(sw, /const CACHE = 'satoru-v193'/);
 });

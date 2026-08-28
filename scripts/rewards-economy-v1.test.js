@@ -150,7 +150,9 @@ test('spend and deletion use atomic confirmation without optimistic mutation', (
   assert.match(SERVER, /economy_commit_failed_no_changes_lost/);
   assert.match(APP, /\/api\/economy\/commit/);
   assert.match(functionBody('showEconomyConfirm'), /role="dialog" aria-modal="true"/);
-  assert.match(functionBody('commitEconomyConfirmation'), /const ok = payload \? await economyCommit\(payload\) : false/);
+  assert.match(functionBody('commitEconomyConfirmation'), /const guideOwnsReward = data\.kind === 'reward'/);
+  assert.match(functionBody('commitEconomyConfirmation'), /await guideV3FeatureCommit\('rewards', 'purchase-persisted'/);
+  assert.match(functionBody('commitEconomyConfirmation'), /: await economyCommit\(payload\)\) : false/);
   assert.match(functionBody('commitEconomyConfirmation'), /if \(!ok \|\| !apply\)/);
   assert.match(functionBody('commitEconomyConfirmation'), /apply\(\); closeAccountDialog/);
   assert.match(APP, /showEconomyConfirm\('reward'/);

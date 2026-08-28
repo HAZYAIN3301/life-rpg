@@ -1697,6 +1697,55 @@ function commitEconomyData(uid, payload) {
   return names;
 }
 
+const GUIDE_COMMIT_TYPES = Object.freeze({ settings: 'object', tasks: 'array', inbox: 'array', purchases: 'array' });
+function guideCommitRecordArrayValid(name, value) {
+  if (!Array.isArray(value)) return false;
+  const ids = new Set();
+  return value.every((row) => {
+    if (!row || typeof row !== 'object' || Array.isArray(row) || typeof row.id !== 'string' || !row.id || ids.has(row.id)) return false;
+    ids.add(row.id);
+    if (name === 'tasks') return typeof row.title === 'string' && !!row.title.trim();
+    if (name === 'inbox') return ['text', 'voice', 'video'].includes(row.kind) && typeof (row.text || '') === 'string';
+    return name === 'purchases';
+  });
+}
+function guideCommitPayloadValid(data) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
+  const names = Object.keys(data).sort().join(',');
+  if (!['settings', 'settings,tasks', 'inbox,settings', 'purchases,settings'].includes(names)) return false;
+  if (!data.settings || typeof data.settings !== 'object' || Array.isArray(data.settings)) return false;
+  const guide = data.settings.guideV3;
+  if (!guide || typeof guide !== 'object' || Array.isArray(guide) || Number(guide.version) !== 3) return false;
+  for (const name of Object.keys(data)) {
+    const type = GUIDE_COMMIT_TYPES[name];
+    if (!type) return false;
+    if (name !== 'settings' && !guideCommitRecordArrayValid(name, data[name])) return false;
+  }
+  return true;
+}
+// A Guide action and the feature receipt it describes are one account-owned unit.
+// This prevents a saved task/note/purchase from being followed by a failed Guide
+// write (or the inverse), which would otherwise force a duplicate real action.
+function commitGuideData(uid, payload) {
+  if (!payload || !guideCommitPayloadValid(payload.data)) throw new Error('invalid_guide_commit');
+  if (Buffer.byteLength(JSON.stringify(payload.data)) > 4 * 1024 * 1024) throw new Error('guide_commit_too_large');
+  const names = Object.keys(payload.data);
+  const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
+  const snapshots = new Map(); const written = [];
+  for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
+  try {
+    for (const name of names) {
+      backupFile(dir, name);
+      writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
+      written.push(name);
+    }
+  } catch (error) {
+    for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
+    throw error;
+  }
+  return names;
+}
+
 const HABIT_COMMIT_TYPES = Object.freeze({
   habits: 'array', habitlog: 'object', antihabits: 'array', settings: 'object',
 });
@@ -3960,6 +4009,19 @@ const server = http.createServer(async (req, res) => {
     } catch (error) {
       const clientError = error && (error.message === 'invalid_economy_commit' || error.message === 'economy_commit_too_large');
       return sendJson(res, clientError ? 400 : 500, { error: clientError ? error.message : 'economy_commit_failed_no_changes_lost' });
+    }
+  }
+
+  if (u === '/api/guide/commit' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload; try { payload = JSON.parse(await readBody(req, 5 * 1024 * 1024)); }
+    catch (error) { return sendJson(res, 400, { error: error && error.message === 'payload too large' ? 'guide_commit_too_large' : 'invalid_guide_commit' }); }
+    try {
+      const files = commitGuideData(uid, payload);
+      return sendJson(res, 200, { ok: true, files });
+    } catch (error) {
+      const clientError = error && (error.message === 'invalid_guide_commit' || error.message === 'guide_commit_too_large');
+      return sendJson(res, clientError ? 400 : 500, { error: clientError ? error.message : 'guide_commit_failed_no_changes_lost' });
     }
   }
 
