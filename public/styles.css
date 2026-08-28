@@ -16609,6 +16609,7 @@ html.calendar-task-open body {
 .guide-surface-v1__action {
   display: inline-flex;
   min-inline-size: var(--touch-min);
+  max-inline-size: 100%;
   min-block-size: var(--touch-min);
   align-items: center;
   justify-content: center;
@@ -16620,6 +16621,8 @@ html.calendar-task-open body {
   color: var(--text-strong);
   font: 750 var(--type-control)/var(--leading-ui) var(--font-ui);
   text-align: start;
+  white-space: normal;
+  overflow-wrap: anywhere;
   cursor: pointer;
   transition:
     background-color var(--dur-fast) var(--ease-out),

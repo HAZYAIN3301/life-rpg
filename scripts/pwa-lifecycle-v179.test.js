@@ -30,18 +30,18 @@ test('lifecycle reducer prioritizes offline, update and explicit reconnect recov
 });
 
 test('invalid messages and forged cache versions fail closed without throwing', () => {
-  const state = PWA.create({ currentVersion: 'satoru-v190' });
+  const state = PWA.create({ currentVersion: 'satoru-v191' });
   for (const value of [null, [], 'satoru-v999', { type: 'worker:version', version: '../v180' }, { type: 'worker:version', version: 'https://x' }]) {
     assert.doesNotThrow(() => PWA.reduce(state, value));
     assert.equal(PWA.reduce(state, value).updateReady, false);
   }
-  assert.equal(PWA.cacheVersion('satoru-v190'), 'satoru-v190');
-  assert.equal(PWA.cacheVersion(' satoru-v190 '), 'satoru-v190');
+  assert.equal(PWA.cacheVersion('satoru-v191'), 'satoru-v191');
+  assert.equal(PWA.cacheVersion(' satoru-v191 '), 'satoru-v191');
 });
 
 test('same worker version is quiet and refresh cannot start offline', () => {
-  let state = PWA.create({ currentVersion: 'satoru-v190', online: false });
-  state = PWA.reduce(state, { type: 'worker:version', version: 'satoru-v190' });
+  let state = PWA.create({ currentVersion: 'satoru-v191', online: false });
+  state = PWA.reduce(state, { type: 'worker:version', version: 'satoru-v191' });
   assert.equal(state.updateReady, false);
   assert.equal(PWA.reduce(state, { type: 'refresh:start' }).refreshing, false);
 });
@@ -55,7 +55,7 @@ test('failed explicit refresh stays visible above a deferred update or reconnect
 });
 
 test('service worker install is fail-closed and activated version reaches every open client', () => {
-  assert.match(SW, /const CACHE = 'satoru-v190'/);
+  assert.match(SW, /const CACHE = 'satoru-v191'/);
   const install = SW.slice(SW.indexOf("self.addEventListener('install'"), SW.indexOf("self.addEventListener('activate'"));
   assert.match(install, /c\.addAll\(SHELL\)/);
   assert.doesNotMatch(install, /catch\s*\(/, 'failed addAll must reject installation instead of activating a partial shell');
@@ -76,7 +76,7 @@ test('every service-worker shell entry resolves to a real production file', () =
 });
 
 test('runtime exposes an accessible update/offline surface and fences writes while offline', () => {
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v190'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v191'/);
   assert.match(APP, /window\.addEventListener\('offline'/);
   assert.match(APP, /window\.addEventListener\('online'/);
   assert.match(APP, /navigator\.serviceWorker\.addEventListener\('message'/);
@@ -115,7 +115,7 @@ test('registration language survives a settings write failure and missing settin
   assert.match(SERVER, /function publicUser\(user\)[\s\S]{0,500}lang/);
 });
 
-test('five-language lifecycle copy and v181 shell order are complete', () => {
+test('five-language lifecycle copy and current shell order are complete', () => {
   for (const key of ['Нет соединения', 'Связь восстановлена', 'Доступно обновление Satoru', 'Обновить данные', 'Позже', 'Не удалось сохранить старт. Ничего не потеряно — повтори попытку.']) {
     const at = APP.indexOf(`'${key}'`);
     assert.notEqual(at, -1, key);
@@ -123,8 +123,8 @@ test('five-language lifecycle copy and v181 shell order are complete', () => {
     for (const locale of ['en:', 'de:', 'uk:', 'es:']) assert.match(row, new RegExp(locale));
   }
   const moduleAt = INDEX.indexOf('pwa-lifecycle-v1.js?v=20260826-launch-hardening-v180-1');
-  const appAt = INDEX.indexOf('app.js?v=20260828-ouroboros-loader-v190-1');
+  const appAt = INDEX.indexOf('app.js?v=20260828-guide-c2-v191-1');
   assert.ok(moduleAt >= 0 && appAt > moduleAt);
-  assert.match(INDEX, /styles\.css\?v=20260828-ouroboros-loader-v190-1/);
+  assert.match(INDEX, /styles\.css\?v=20260828-guide-c2-v191-1/);
   assert.match(SW, /'pwa-lifecycle-v1\.js'/);
 });

@@ -1,7 +1,7 @@
 /* Satoru Guide v3 — Ukrainian (Українська) runtime copy.
  *
  * Translated from the Albert-approved Russian source (guide-v3-copy-ru.js,
- * VERSION 0.2.0-draft) after the RU tone gate closed on 2026-08-24. Mirrors its
+ * VERSION 1.0.0/runtime-approved) after the RU tone gate closed. Mirrors its
  * exact key set and every {placeholder} — see scripts/guide-v3-copy-locales-v1.test.js,
  * which enforces both. Terminology (Лігво, Плем'я, Улюбленці, Герой, Прогрес,
  * Помічник, Іскра/Дух/Вартовий/Хранитель, etc.) matches the existing I18N_UK /

@@ -9,19 +9,18 @@
  * elsewhere (seed-demo habits, board taste) — checking for it here rather than
  * finding it after a real German or Spanish user hits a broken line.
  *
- * RUNTIME_APPROVED is deliberately RU-only: it gates whether Guide v3 may
- * auto-start at all (scripts/guide-v3-runtime.test.js), a decision tied to a
- * specific runtime wiring these translations don't build. Each locale file
- * instead carries STATUS:'translated' — a faithful translation of the
- * Albert-approved RU source, not itself independently tone-reviewed by Albert
- * per language. Wiring them into app.js and any approval gate is Commit C2,
- * left to whoever builds that runtime.
+ * RUNTIME_APPROVED stays RU-only: it identifies the approved source text.
+ * Commit C2 releases exact translated module versions through the explicit
+ * app-side manifest, so a future translation cannot start running merely by
+ * changing its own STATUS field.
  */
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
 
 const RU = require('../public/guide-v3-copy-ru.js');
+const Presenter = require('../public/guide-presenter-v1.js');
+const Guide = require('../public/guide-v3.js');
 const LOCALES = {
   en: require('../public/guide-v3-copy-en.js'),
   de: require('../public/guide-v3-copy-de.js'),
@@ -33,6 +32,12 @@ const RU_KEYS = Object.keys(RU.COPY).sort();
 
 function placeholders(str) {
   return [...String(str).matchAll(/\{([a-zA-Z0-9_]+)\}/g)].map((m) => m[1]).sort();
+}
+
+function assertResolved(label, value) {
+  assert.equal(typeof value, 'string', `${label} must be a string`);
+  assert.ok(value.trim(), `${label} must not be empty`);
+  assert.doesNotMatch(value, /\{[a-zA-Z0-9_]+\}/, `${label} leaked an unresolved placeholder`);
 }
 
 test('RU source has the keys this test file assumes (canary for drift)', () => {
@@ -91,6 +96,40 @@ for (const [locale, mod] of Object.entries(LOCALES)) {
     assert.equal(mod.STATUS, 'translated');
     assert.equal('RUNTIME_APPROVED' in mod, false, `${locale} should not invent its own runtime gate — that belongs to whoever wires locale switching`);
   });
+
+  test(`${locale}: every First Journey step and Library card renders resolved runtime copy`, () => {
+    const seed = {
+      branch: 'task', taskId: 'quest-1', taskTitle: 'Concrete task',
+      skillId: 'media', skillName: 'Media', goalId: 'goal-1', goalTitle: 'Publish',
+    };
+    const tasks = [{ id: 'quest-1', title: 'Concrete task', skillId: 'media', goalId: 'goal-1', done: false }];
+    for (const step of Presenter.FIRST_STEPS) {
+      const vm = Presenter.firstJourney({
+        state: {
+          version: 3, currentChapter: Guide.FIRST_CHAPTER, currentStep: step,
+          selectedTaskId: 'quest-1', chapterMeta: {}, completedChapters: [], skippedChapters: [],
+        },
+        seed, tasks, chapter: Guide.FIRST_CHAPTER, copy: mod,
+      });
+      assertResolved(`${locale}/${step}/chapterTitle`, vm.chapterTitle);
+      assertResolved(`${locale}/${step}/title`, vm.title);
+      assertResolved(`${locale}/${step}/progress`, vm.progress);
+      assertResolved(`${locale}/${step}/transcript`, vm.transcript);
+      for (const action of vm.actions) {
+        if (action.targetOnly) continue;
+        assertResolved(`${locale}/${step}/action/${action.id}`, action.label);
+      }
+    }
+
+    const cards = Presenter.libraryCards({}, {}, Guide.REGISTRY, mod);
+    assert.ok(cards.length > 0, `${locale} Library must contain chapters`);
+    for (const card of cards) {
+      assertResolved(`${locale}/library/${card.id}/title`, card.title);
+      assertResolved(`${locale}/library/${card.id}/status`, card.statusLabel);
+      if (card.actionLabel != null) assertResolved(`${locale}/library/${card.id}/action`, card.actionLabel);
+      if (card.description) assertResolved(`${locale}/library/${card.id}/description`, card.description);
+    }
+  });
 }
 
 test('the FMA nod in context.rewards.choose is attributed in every language, not silently dropped', () => {
@@ -104,14 +143,17 @@ test('the FMA nod in context.rewards.choose is attributed in every language, not
   }
 });
 
-test('SHELL/index.html do not yet reference the new locale files (Commit C2 wiring not done here)', () => {
+test('C2 loads every locale copy exactly once before the presenter and pins it offline', () => {
   const fs = require('node:fs');
   const ROOT = path.resolve(__dirname, '..');
   const sw = fs.readFileSync(path.join(ROOT, 'public/sw.js'), 'utf8');
   const html = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
+  const presenterAt = html.indexOf('guide-presenter-v1.js');
+  assert.ok(presenterAt > 0, 'presenter script must exist');
   for (const locale of Object.keys(LOCALES)) {
     const file = `guide-v3-copy-${locale}.js`;
-    assert.equal(sw.includes(file), false, `${file} got added to SW SHELL — that's runtime wiring (Commit C2), not this translation pass; update this test alongside doing that deliberately`);
-    assert.equal(html.includes(file), false, `${file} got added to index.html — same as above`);
+    assert.equal((sw.match(new RegExp(file.replaceAll('.', '\\.'), 'g')) || []).length, 1, `${file} must be pinned once in SW SHELL`);
+    assert.equal((html.match(new RegExp(file.replaceAll('.', '\\.'), 'g')) || []).length, 1, `${file} must load once in index.html`);
+    assert.ok(html.indexOf(file) < presenterAt, `${file} must load before the presenter`);
   }
 });

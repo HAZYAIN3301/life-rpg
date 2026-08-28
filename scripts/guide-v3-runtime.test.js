@@ -26,6 +26,10 @@ const GUIDE = readOptional('public/guide-v3.js');
 const SURFACE = readOptional('public/guide-surface-v1.js');
 const COPY_REVIEW = readOptional('GUIDE-V3-RU-COPY-REVIEW.md');
 const COPY_RU = require('../public/guide-v3-copy-ru.js');
+const GUIDE_COPY_FILES = Object.freeze([
+  'guide-v3-copy-ru.js', 'guide-v3-copy-en.js', 'guide-v3-copy-de.js',
+  'guide-v3-copy-uk.js', 'guide-v3-copy-es.js',
+]);
 
 function between(source, start, end) {
   const from = source.indexOf(start);
@@ -66,25 +70,32 @@ function actionSection(source, action) {
 }
 
 const SCRIPT_SOURCES = scriptSources(INDEX);
-const COPY_SCRIPT = SCRIPT_SOURCES.find((source) => /(?:guide[^/]*copy|copy[^/]*guide)[^/]*\.js(?:\?|$)/i.test(source)) || '';
-const COPY_FILE = scriptFile(COPY_SCRIPT);
+const COPY_SCRIPTS = GUIDE_COPY_FILES.map((file) => (
+  SCRIPT_SOURCES.find((source) => scriptFile(source) === file) || ''
+));
+const COPY_FILE = GUIDE_COPY_FILES[0];
 const COPY = COPY_FILE ? readOptional(path.join('public', COPY_FILE)) : '';
 
-test('Guide model, copy, presenter and surface load before app.js', () => {
+test('Guide model, all locale copies, presenter and surface load before app.js', () => {
   const model = SCRIPT_SOURCES.findIndex((source) => scriptFile(source) === 'guide-v3.js');
-  const copy = SCRIPT_SOURCES.findIndex((source) => source === COPY_SCRIPT);
   const presenter = SCRIPT_SOURCES.findIndex((source) => scriptFile(source) === 'guide-presenter-v1.js');
   const surface = SCRIPT_SOURCES.findIndex((source) => scriptFile(source) === 'guide-surface-v1.js');
   const app = SCRIPT_SOURCES.findIndex((source) => scriptFile(source) === 'app.js');
 
   assert.ok(model >= 0, 'index.html must load public/guide-v3.js');
-  assert.ok(COPY_SCRIPT, 'index.html must load a separate Guide copy script (guide*copy*.js)');
-  assert.ok(COPY, `Guide copy script is referenced but missing: public/${COPY_FILE}`);
   assert.ok(presenter >= 0, 'index.html must load public/guide-presenter-v1.js');
   assert.ok(surface >= 0, 'index.html must load public/guide-surface-v1.js');
   assert.ok(app >= 0, 'index.html must load app.js');
-  assert.ok(model < copy, 'guide-v3.js must load before the Guide copy table');
-  assert.ok(copy < presenter, 'Guide copy must load before the presenter');
+  let previous = model;
+  COPY_SCRIPTS.forEach((source, index) => {
+    const file = GUIDE_COPY_FILES[index];
+    assert.ok(source, `index.html must load public/${file}`);
+    assert.ok(readOptional(path.join('public', file)), `Guide copy script is referenced but missing: public/${file}`);
+    const position = SCRIPT_SOURCES.indexOf(source);
+    assert.ok(previous < position, `${file} must follow the model and prior locale copy`);
+    assert.ok(position < presenter, `${file} must load before the presenter`);
+    previous = position;
+  });
   assert.ok(presenter < surface, 'Guide presenter must load before the DOM surface');
   assert.ok(surface < app, 'Guide surface must be available before app.js starts');
 });
@@ -99,9 +110,9 @@ test('the approved RU review is an exact mirror of centralized runtime copy', ()
   assert.match(COPY_REVIEW, /RUNTIME_APPROVED` поднят намеренно/);
 });
 
-test('v163 offline shell pins all Guide runtime scripts', () => {
-  sourceMatches(SW, /const CACHE = 'satoru-v190';/);
-  for (const file of ['guide-v3.js', COPY_FILE, 'guide-presenter-v1.js', 'guide-surface-v1.js']) {
+test('v191 offline shell pins all Guide runtime scripts and locale copies', () => {
+  sourceMatches(SW, /const CACHE = 'satoru-v191';/);
+  for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'guide-surface-v1.js']) {
     assert.ok(file, 'Guide runtime file must be discoverable before checking SHELL');
     assert.ok(SW.includes(`'${file}'`) || SW.includes(`"${file}"`), `${file} must be pinned in SHELL`);
   }
@@ -130,6 +141,7 @@ test('First Journey uses stable semantic targets instead of layout selectors', (
     'first-task-complete',
     'first-task-reward',
     'first-shadow-contact',
+    'guide-library',
   ];
   for (const target of targets) {
     assert.ok(APP.includes(`data-guide-target="${target}"`), `missing stable Guide target: ${target}`);
@@ -137,12 +149,18 @@ test('First Journey uses stable semantic targets instead of layout selectors', (
   sourceMatches(APP, /CSS\.escape\([^)]*(?:task|selected)/, 'task-specific Guide selectors must escape their persisted id');
 });
 
-test('welcome and release stay in the safe bubble instead of spotlighting content beneath mobile nav', () => {
+test('welcome stays safe while release spotlights the responsive How to play route', () => {
   const selectors = between(APP, 'function guideV3TargetSelector', '\nfunction guideV3RevealTarget');
-  sourceOmits(selectors, /\[['"]welcome['"],\s*['"]release['"]\][\s\S]{0,180}first-task-create/,
-    'intro/outro have no authored UI target and must not draw an offscreen spotlight');
+  sourceMatches(selectors, /vm\.step\s*===\s*['"]release['"][\s\S]{0,120}guide-library/,
+    'the authored release line must point at the real Guide library route');
   sourceMatches(selectors, /vm\.step\s*===\s*['"]recognize['"][\s\S]{0,180}first-task-create/,
     'the blank-seed recognition step must still point at the real quick-add form');
+  assert.ok((APP.match(/data-guide-target="guide-library"/g) || []).length >= 2,
+    'desktop Help and mobile More must share one responsive semantic target');
+  sourceMatches(SURFACE, /querySelectorAll\(selector\)[\s\S]{0,900}return width\s*>\s*0\s*&&\s*height\s*>\s*0/,
+    'the surface must ignore the hidden responsive duplicate instead of drawing a 0×0 ring');
+  sourceMatches(SURFACE, /spotlightLabel[\s\S]{0,1000}aria-describedby/,
+    'the localized a11y spotlight label must describe the actual responsive target');
 });
 
 test('persisted completion and bond success effects happen only after saveNow succeeds', () => {
@@ -257,28 +275,59 @@ test('Escape abandons replay but snoozes a live chapter', () => {
     'the replay abandonment helper must never enter the live snooze path');
 });
 
-test('approved RU copy can run while another locale still cannot receive the RU library', () => {
+test('C2 explicitly releases exact Guide copy versions for RU/EN/DE/UK/ES and fails closed', () => {
   assert.equal(COPY_RU.RUNTIME_APPROVED, true,
     'the owner-approved RU Guide must be available in normal runtime');
   assert.equal(COPY_RU.STATUS, 'runtime-approved');
-  const runtimeAllowed = between(APP, 'function guideV3RuntimeAllowed()', '\nfunction showGuideUnavailable');
-  sourceMatches(runtimeAllowed, /lang\(\)\s*===\s*['"]ru['"]/,
-    'Guide runtime eligibility must be locale-scoped');
+  const runtimeAllowed = between(APP, 'const GUIDE_V3_COPY_RELEASES', '\nfunction feedbackPanelHTML');
+  for (const [locale, globalName, version, status] of [
+    ['ru', 'GuideV3CopyRu', '1.0.0', 'runtime-approved'],
+    ['en', 'GuideV3CopyEn', '0.1.0', 'translated'],
+    ['de', 'GuideV3CopyDe', '0.1.0', 'translated'],
+    ['uk', 'GuideV3CopyUk', '0.1.0', 'translated'],
+    ['es', 'GuideV3CopyEs', '0.1.0', 'translated'],
+  ]) {
+    const exactVersion = version.replace(/\./g, '\\.');
+    sourceMatches(runtimeAllowed, new RegExp(`${locale}:[\\s\\S]{0,160}${globalName}[\\s\\S]{0,100}${exactVersion}[\\s\\S]{0,100}${status}[\\s\\S]{0,80}released:\\s*true`),
+      `${locale} needs an explicit exact-version C2 release entry`);
+  }
+  sourceMatches(runtimeAllowed, /copy\.LOCALE\s*===\s*code/,
+    'a mislabeled locale module must fail closed');
+  sourceMatches(runtimeAllowed, /copy\.VERSION\s*===\s*release\.version[\s\S]{0,140}copy\.STATUS\s*===\s*release\.status/,
+    'a stale or draft locale module must fail closed');
   sourceMatches(runtimeAllowed, /RUNTIME_APPROVED\s*===\s*true/,
-    'normal Guide runtime eligibility must require the explicit copy approval flag');
+    'normal Guide runtime eligibility must retain the approved source gate');
+  const previewGate = between(APP, 'function guideV3ReviewPreviewRequested()', '\nconst GUIDE_V3_COPY_RELEASES');
+  sourceMatches(previewGate, /localhost[\s\S]{0,220}State\.me\?\.isAdmin\s*===\s*true/,
+    'guidePreview cannot be a public production approval bypass');
   const maybeStart = between(APP, 'function guideV3MaybeStart()', '\nasync function guideV3Snooze');
   sourceMatches(maybeStart, /guideV3RuntimeAllowed\(\)/,
     'automatic First Journey start must pass the centralized runtime/copy gate');
 
   const library = between(APP, 'function showGuide()', '\n// ============================================================\n//  Вид «Награды»');
-  sourceMatches(library, /if\s*\(\s*lang\(\)\s*!==\s*['"]ru['"][^)]*\|\|\s*!guideV3RuntimeAllowed\(\)\s*\)/,
-    'the RU-only draft library must not mount for EN/DE/UK/ES users');
+  sourceOmits(library, /lang\(\)\s*!==\s*['"]ru['"]/,
+    'the localized library must not retain the old RU-only branch');
+  sourceMatches(library, /const copy = guideV3CopyModule\(\)[\s\S]{0,400}libraryCards\([\s\S]{0,300}, copy\)/,
+    'the library presenter must receive the active locale copy');
+  const paint = between(APP, 'function guideV3Paint()', '\nfunction guideV3MaybeStart');
+  sourceMatches(paint, /const copy = guideV3CopyModule\(\)[\s\S]{0,240}presenter\.present\([\s\S]{0,240}\bcopy\b/,
+    'the active First Journey must receive the current locale copy');
+  const speak = between(APP, 'async function guideV3Speak', '\nasync function guideV3CompleteShadowContact');
+  sourceMatches(speak, /copy:\s*guideV3CopyModule\(\)/,
+    'Piper must speak the same locale-specific transcript shown on screen');
 });
 
 test('feedback remains reachable even when the localized Guide is unavailable', () => {
   const panel = between(APP, 'function feedbackPanelHTML()', '\nfunction showGuideUnavailable');
   sourceMatches(panel, /id="feedback-form"/,
     'the durable feedback form must have one shared renderer');
+  for (const key of [
+    'Нашёл баг или есть идея?', 'Баг', 'Идея', 'Другое',
+    'Опиши, что случилось или что предлагаешь…', 'Прикрепить фото/видео',
+    'Отправить', 'Смотреть все репорты (админ)',
+  ]) {
+    assert.ok(panel.includes(`t('${key}')`), `feedback copy must pass through locale routing: ${key}`);
+  }
   const unavailable = between(APP, 'function showGuideUnavailable()', '\n\/\/ ── Вложения');
   sourceMatches(unavailable, /feedbackPanelHTML\(\)/,
     'a missing Guide translation must never hide bug and idea reporting');
@@ -355,6 +404,9 @@ test('Guide controls keep the 42px floor and reduced motion stops decoration', (
 
 test('360px keeps secondary Guide actions beside each other so the bubble stays above mobile nav', () => {
   const guideCss = CSS.slice(CSS.indexOf('Guide v3 — non-modal'));
+  sourceMatches(guideCss,
+    /\.guide-surface-v1__action\s*\{[^}]*max-inline-size:\s*100%[^}]*white-space:\s*normal[^}]*overflow-wrap:\s*anywhere/s,
+    'long localized Guide actions must wrap inside their grid cell');
   sourceMatches(guideCss,
     /@media\s*\(max-width:\s*600px\)[\s\S]{0,1500}guide-surface-v1__actions\s*\{[^}]*grid-template-columns:\s*repeat\(2,/,
     'mobile Guide actions need a two-column secondary row');

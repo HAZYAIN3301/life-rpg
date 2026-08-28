@@ -2,6 +2,14 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-28] 🧭 Guide v3 C2 v191 — First Journey на пяти языках
+
+- RU `1.0.0/runtime-approved` остаётся единственным owner-approved источником; EN/DE/UK/ES выпускаются не по доверчивому `STATUS`, а через `GUIDE_V3_COPY_RELEASES`, который фиксирует точные `locale/globalName/version/status`. Отсутствующий, неверно подписанный или устаревший модуль fail-closed уходит в безопасный fallback.
+- Пять copy-модулей загружаются до presenter, используются одним resolver в Guide Library, First Journey и Piper transcript и входят в offline shell. Feedback-панель также проходит через общий locale routing. PWA cache поднят `satoru-v190 → satoru-v191`.
+- `first.release` теперь выполняет обещание текста: один semantic target ведёт к видимому Help на desktop или постоянному More на mobile. Surface выбирает только элемент с реальной геометрией, поэтому скрытый responsive-дубль не получает кольцо; accessibility-описание spotlight берётся из активной locale-copy.
+- `?guidePreview=1` больше не является публичным production-bypass: он работает только на localhost либо для администратора. Contextual D/E не включались: следующим отдельным срезом остаётся Habits, а Goals — `deferred-questionnaire`.
+- QA: Guide-focused suite **90/90**, first-journey integration **4/4**, полный `scripts/*.test.js` — PASS. Browser QA: `360×800`, `375×812`, `1280×900`; RU/EN/DE/UK/ES; dark/light; desktop Help/mobile More; длинная DE-кнопка переносится без горизонтального overflow; минимум 42px; фокус ставится на primary action и восстанавливается после Library; console errors/warnings **0**. Reduced motion, offline shell и version-update lifecycle закреплены исполняемыми тестами.
+
 ## [2026-08-28] 🐉 Loader v190 — уроборос действительно пожирает собственный хвост
 
 - Старый абстрактный CSS-seal удалён из boot markup и styles. Его заменяет один явно читаемый уроборос: замкнутый дракон-змей, чья пасть физически держит сужающийся кончик собственного хвоста.

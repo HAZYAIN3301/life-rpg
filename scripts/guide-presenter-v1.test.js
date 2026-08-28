@@ -138,7 +138,7 @@ test('victory, mastery, bond and release use only centralized copy and static ta
     ['victory', 'first.victory', 'quest-reward'],
     ['mastery', 'first.level_form', 'level'],
     ['bond', 'first.bond', 'shadow-contact'],
-    ['release', 'first.release', 'today'],
+    ['release', 'first.release', 'guide-library'],
   ];
   for (const [step, key, targetKey] of cases) {
     const vm = present(step, {

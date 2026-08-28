@@ -59,7 +59,14 @@ class FakeDocument {
   addEventListener(type, fn) { if (!this.listeners.has(type)) this.listeners.set(type, new Set()); this.listeners.get(type).add(fn); }
   removeEventListener(type, fn) { if (this.listeners.has(type)) this.listeners.get(type).delete(fn); }
   dispatch(type, event) { for (const fn of this.listeners.get(type) || []) fn(event); }
-  querySelector(selector) { return this.targets.get(selector) || null; }
+  querySelector(selector) {
+    const value = this.targets.get(selector);
+    return Array.isArray(value) ? value[0] || null : value || null;
+  }
+  querySelectorAll(selector) {
+    const value = this.targets.get(selector);
+    return Array.isArray(value) ? value.slice() : value ? [value] : [];
+  }
   getElementById(id) { return find(this.body, (node) => node.id === id); }
 }
 
@@ -124,20 +131,22 @@ test('paint is safe, singular and non-modal; missing target falls back and Esc r
   });
 
   const opener = doc.createElement('button'); doc.body.appendChild(opener); opener.focus();
+  const hiddenTarget = doc.createElement('button'); doc.body.appendChild(hiddenTarget);
   const target = doc.createElement('button'); target._rect = { left: 100, top: 200, width: 50, height: 40 }; doc.body.appendChild(target);
-  doc.targets.set('#real-quest', target);
+  target.setAttribute('aria-describedby', 'existing-description');
+  doc.targets.set('#real-quest', [hiddenTarget, target]);
   let escaped = 0;
   const hostile = '<img src=x onerror=alert(1)>';
   const root = surfaceApi.paint({
     surfaceLabel: 'Guide', chapterId: 'first', stepId: 'choose', chapterLabel: hostile,
     title: hostile, progress: { current: 2, total: 5 }, transcript: hostile, visualLabel: hostile,
-    targetSelector: '#real-quest', returnFocus: opener,
+    targetSelector: '#real-quest', spotlightLabel: 'Current Guide target', returnFocus: opener,
     actions: [{ action: 'guide-next', id: 'q" onclick="bad', label: hostile, ariaLabel: hostile }],
     choices: [{ id: 'one', label: hostile, description: hostile, noI18n: true }],
     onEscape: () => { escaped += 1; },
   });
 
-  assert.equal(surfaceApi.VERSION, '1.0.0');
+  assert.equal(surfaceApi.VERSION, '1.1.0');
   assert.equal(root.style.position, 'fixed');
   assert.equal(root.getAttribute('role'), 'region');
   assert.equal(root.getAttribute('aria-modal'), null);
@@ -151,6 +160,7 @@ test('paint is safe, singular and non-modal; missing target falls back and Esc r
   const action = find(root, (node) => node.dataset.action === 'guide-next');
   const choice = find(root, (node) => node.dataset.action === 'guide-choice');
   const ring = find(root, (node) => node.classList.contains('guide-surface-v1__spotlight'));
+  const spotlightLabel = find(root, (node) => node.id === 'guide-surface-v1-spotlight-label');
   assert.equal(transcript.getAttribute('role'), 'status');
   assert.equal(transcript.getAttribute('data-noi18n'), '');
   assert.equal(transcript.textContent, hostile, 'copy is text, never parsed markup');
@@ -161,6 +171,16 @@ test('paint is safe, singular and non-modal; missing target falls back and Esc r
   assert.equal(choice.dataset.id, 'one');
   assert.equal(choice.getAttribute('data-noi18n'), '', 'user task names stay outside dynamic translation');
   assert.deepEqual([ring.style.left, ring.style.top, ring.style.width, ring.style.height], ['92px', '192px', '66px', '56px']);
+  assert.equal(spotlightLabel.textContent, 'Current Guide target');
+  assert.equal(hiddenTarget.getAttribute('aria-describedby'), null, 'a hidden responsive duplicate is ignored');
+  assert.equal(target.getAttribute('aria-describedby'), 'existing-description guide-surface-v1-spotlight-label');
+
+  hiddenTarget._rect = { left: 20, top: 700, width: 80, height: 44 };
+  target._rect = { left: 0, top: 0, width: 0, height: 0 };
+  events.dispatch('resize'); events.flushFrames();
+  assert.deepEqual([ring.style.left, ring.style.top, ring.style.width, ring.style.height], ['12px', '692px', '96px', '60px']);
+  assert.equal(target.getAttribute('aria-describedby'), 'existing-description', 'retarget restores the prior description');
+  assert.equal(hiddenTarget.getAttribute('aria-describedby'), 'guide-surface-v1-spotlight-label');
 
   surfaceApi.paint({ chapterLabel: 'Again', transcript: 'Again', targetSelector: '#real-quest' });
   assert.equal(count(doc.body, (node) => node.id === surfaceApi.SURFACE_ID), 1, 'paint reuses one fixed surface');
@@ -170,6 +190,7 @@ test('paint is safe, singular and non-modal; missing target falls back and Esc r
   assert.equal(root.classList.contains('guide-safe-bubble'), true);
   assert.equal(root.dataset.guideFallback, 'safe-bubble');
   assert.equal(ring.hidden, true);
+  assert.equal(hiddenTarget.getAttribute('aria-describedby'), null, 'fallback removes its temporary target description');
 
   // Restore a callback-bearing model, then close it through the keyboard path.
   surfaceApi.paint({ transcript: 'Close', onEscape: () => { escaped += 1; }, returnFocus: opener });

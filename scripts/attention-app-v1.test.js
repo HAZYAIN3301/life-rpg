@@ -24,7 +24,7 @@ test('attention engine, controller and renderer load before app and stay in the 
     assert.equal((SW.match(new RegExp(`'${file.replaceAll('.', '\\.')}'`, 'g')) || []).length, 1, `${file} must appear once in SHELL`);
   }
   assert.ok(INDEX.indexOf('src="app.js') > prior, 'app.js must run after every attention dependency');
-  assert.match(SW, /const CACHE = 'satoru-v190'/);
+  assert.match(SW, /const CACHE = 'satoru-v191'/);
 });
 
 test('client uses the dedicated checked envelope and never generic attention data files', () => {

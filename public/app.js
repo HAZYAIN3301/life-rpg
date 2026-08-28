@@ -1163,6 +1163,12 @@ const I18N_EXTRA = {
   'Рекорд:': { en: 'Record:', de: 'Rekord:', uk: 'Рекорд:', es: 'Récord:' },
   'Как играть': { en: 'How to play', de: 'Spielanleitung', uk: 'Як грати', es: 'Cómo jugar' },
   'Обновлённый гайд пока готовится на твоём языке. Основные функции доступны без него.': { en: 'The updated guide is still being prepared in your language. The core features remain available without it.', de: 'Der aktualisierte Guide wird für deine Sprache noch vorbereitet. Die Kernfunktionen bleiben auch ohne ihn verfügbar.', uk: 'Оновлений гайд ще готується твоєю мовою. Основні функції доступні й без нього.', es: 'La guía actualizada todavía se está preparando en tu idioma. Las funciones principales siguen disponibles sin ella.' },
+  'Нашёл баг или есть идея?': { en: 'Found a bug or have an idea?', de: 'Fehler gefunden oder eine Idee?', uk: 'Знайшов помилку або маєш ідею?', es: '¿Encontraste un error o tienes una idea?' },
+  'Баг': { en: 'Bug', de: 'Fehler', uk: 'Помилка', es: 'Error' },
+  'Идея': { en: 'Idea', de: 'Idee', uk: 'Ідея', es: 'Idea' },
+  'Опиши, что случилось или что предлагаешь…': { en: 'Describe what happened or what you suggest…', de: 'Beschreibe, was passiert ist oder was du vorschlägst…', uk: 'Опиши, що сталося або що пропонуєш…', es: 'Describe qué ocurrió o qué propones…' },
+  'Прикрепить фото/видео': { en: 'Attach photo/video', de: 'Foto/Video anhängen', uk: 'Прикріпити фото/відео', es: 'Adjuntar foto/vídeo' },
+  'Смотреть все репорты (админ)': { en: 'View all reports (admin)', de: 'Alle Meldungen ansehen (Admin)', uk: 'Переглянути всі звіти (адмін)', es: 'Ver todos los informes (admin)' },
   'Pro активен': { en: 'Pro active', de: 'Pro aktiv', uk: 'Pro активний', es: 'Pro activo' },
   'Pro-триал': { en: 'Pro trial', de: 'Pro-Testphase', uk: 'Pro-пробний період', es: 'Prueba Pro' },
   'Pro-триал активирован на 7 дней!': { en: 'Your 7-day Pro trial is active!', de: 'Deine 7-tägige Pro-Testphase ist aktiv!', uk: 'Твій 7-денний Pro-пробний період активний!', es: '¡Tu prueba Pro de 7 días está activa!' },
@@ -11648,7 +11654,7 @@ function renderHeader(force = false) {
       <div class="gold-pill" title="Золото">${satoruIconHTML('status.gold', 'header-emblem', '🪙')} ${goldBalance()}</div>
       <div class="streak" title="${t('Рекорд:')} ${localizedDayCount(longestStreak())}">${satoruIconHTML('status.streak', 'header-emblem header-emblem--streak', '🔥')} ${localizedDayCount(streak, true)}</div>
       ${hypePct() > 0 ? `<div class="hype-chip" title="Хайп ×${hypeState().stacks}: бонус XP за добровольный выбор сложных квестов. Осталось ${hypeMinLeft()} мин.">${satoruIconHTML('status.streak', 'header-emblem', '🔥')} Хайп +${hypePct()}%</div>` : ''}
-      <button class="help-btn" data-action="show-guide" title="${t('Как играть')}" aria-label="${t('Как играть')}">${satoruIconHTML('status.info', 'help-glyph', '?')}</button>
+      <button class="help-btn" data-action="show-guide" data-guide-target="guide-library" title="${t('Как играть')}" aria-label="${t('Как играть')}">${satoruIconHTML('status.info', 'help-glyph', '?')}</button>
       ${proBadge}
       <button class="btn ghost logout-btn" data-action="logout" title="${t('Сменить профиль')}">${t('⇦ Выйти')}</button>
     </div>
@@ -19679,25 +19685,54 @@ function showPaywall(feature) {
 // constant so old source-level integrations cannot revive the removed card wall.
 const GUIDE_SECTIONS = Object.freeze([]);
 function guideV3ReviewPreviewRequested() {
-  try { return new URLSearchParams(location.search).get('guidePreview') === '1'; }
+  try {
+    const requested = new URLSearchParams(location.search).get('guidePreview') === '1';
+    const local = ['localhost', '127.0.0.1', '::1'].includes(location.hostname);
+    return requested && (local || State.me?.isAdmin === true);
+  }
   catch { return false; }
 }
+const GUIDE_V3_COPY_RELEASES = Object.freeze({
+  ru: Object.freeze({ globalName: 'GuideV3CopyRu', version: '1.0.0', status: 'runtime-approved', released: true }),
+  en: Object.freeze({ globalName: 'GuideV3CopyEn', version: '0.1.0', status: 'translated', released: true }),
+  de: Object.freeze({ globalName: 'GuideV3CopyDe', version: '0.1.0', status: 'translated', released: true }),
+  uk: Object.freeze({ globalName: 'GuideV3CopyUk', version: '0.1.0', status: 'translated', released: true }),
+  es: Object.freeze({ globalName: 'GuideV3CopyEs', version: '0.1.0', status: 'translated', released: true }),
+});
+function guideV3CopyModule(locale = lang()) {
+  const code = APP_LANGS.includes(locale) ? locale : null;
+  const release = code && GUIDE_V3_COPY_RELEASES[code];
+  const copy = release ? window[release.globalName] : null;
+  const contractReady = copy && ['format', 'get', 'has', 'entries'].every((method) => typeof copy[method] === 'function');
+  return contractReady && copy.LOCALE === code ? copy : null;
+}
 function guideV3RuntimeAllowed() {
-  const copy = window.GuideV3CopyRu;
-  return lang() === 'ru' && (copy?.RUNTIME_APPROVED === true || guideV3ReviewPreviewRequested());
+  const locale = lang(), copy = guideV3CopyModule(locale);
+  if (!copy) return false;
+  if (guideV3ReviewPreviewRequested()) return true;
+  // The owner-approved RU table is the source contract. C2 explicitly releases
+  // exact versions of its shape-identical translations. New draft files never
+  // enter normal runtime merely because they happen to declare `translated`.
+  const sourceApproved = window.GuideV3CopyRu?.RUNTIME_APPROVED === true;
+  const release = GUIDE_V3_COPY_RELEASES[locale];
+  const localeReleased = release?.released === true
+    && copy.VERSION === release.version
+    && copy.STATUS === release.status
+    && (locale !== 'ru' || copy.RUNTIME_APPROVED === true);
+  return sourceApproved && localeReleased;
 }
 function feedbackPanelHTML() {
-  return `<h3 class="guide-v3-library__feedback-title">💬 Нашёл баг или есть идея?</h3>
+  return `<h3 class="guide-v3-library__feedback-title">💬 ${esc(t('Нашёл баг или есть идея?'))}</h3>
     <form id="feedback-form" class="feedback-form">
-      <select name="kind"><option value="bug">🐞 Баг</option><option value="idea">💡 Идея</option><option value="other">💬 Другое</option></select>
-      <textarea name="text" placeholder="Опиши, что случилось или что предлагаешь…"></textarea>
-      <label class="fb-file">📎 Прикрепить фото/видео
+      <select name="kind"><option value="bug">🐞 ${esc(t('Баг'))}</option><option value="idea">💡 ${esc(t('Идея'))}</option><option value="other">💬 ${esc(t('Другое'))}</option></select>
+      <textarea name="text" placeholder="${esc(t('Опиши, что случилось или что предлагаешь…'))}"></textarea>
+      <label class="fb-file">📎 ${esc(t('Прикрепить фото/видео'))}
         <input type="file" name="files" accept="image/*,video/*" multiple />
       </label>
       <div id="fb-previews" class="fb-previews"></div>
-      <div class="fb-actions"><button type="submit" class="btn">Отправить</button><span id="fb-msg" class="muted" role="status"></span></div>
+      <div class="fb-actions"><button type="submit" class="btn">${esc(t('Отправить'))}</button><span id="fb-msg" class="muted" role="status"></span></div>
     </form>
-    ${State.me && State.me.isAdmin ? '<button class="btn ghost" data-action="show-reports" style="margin-top:10px">🐞 Смотреть все репорты (админ)</button>' : ''}`;
+    ${State.me && State.me.isAdmin ? `<button class="btn ghost" data-action="show-reports" style="margin-top:10px">🐞 ${esc(t('Смотреть все репорты (админ)'))}</button>` : ''}`;
 }
 function showGuideUnavailable() {
   const ov = document.createElement('div'); ov.id = 'guide'; ov.className = 'modal-overlay';
@@ -19794,13 +19829,14 @@ async function showReports() {
 }
 function showGuide() {
   if (document.getElementById('guide')) return;
-  if (lang() !== 'ru' || !guideV3RuntimeAllowed()) { showGuideUnavailable(); return; }
+  if (!guideV3RuntimeAllowed()) { showGuideUnavailable(); return; }
   guideV3Close({ restoreFocus: false });
+  const copy = guideV3CopyModule();
   const state = guideV3State() || window.GuideV3.defaultState();
   const cards = window.GuidePresenterV1.libraryCards(state, {
     availableChapters: [window.GuideV3.FIRST_CHAPTER],
     deferredChapters: ['goals'],
-  }, window.GuideV3.REGISTRY, window.GuideV3CopyRu);
+  }, window.GuideV3.REGISTRY, copy);
   const cardHtml = cards.map((card) => {
     const action = !state.enabled ? '' : card.current ? 'guide-resume' : card.replay ? 'guide-replay' : (card.available ? 'guide-start' : '');
     const button = action && card.actionLabel
@@ -21403,7 +21439,7 @@ function renderNav() {
     const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="${t('Настройки')}" aria-label="${t('Настройки')}">${satoruIconHTML('nav.settings', 'navgear-icon', '⚙️')}</button>`;
     const moreActive = MOBILE_MORE_SECTION_IDS.includes(cur) || State.view === 'settings';
     const moreNew = SECTIONS.filter((s) => MOBILE_MORE_SECTION_IDS.includes(s.id)).some((s) => sectionHasNew(s, lvl));
-    const more = `<button class="navsec mobile-nav-more${moreActive ? ' active' : ''}${moreNew && !moreActive ? ' navsec-new' : ''}" data-action="mobile-nav-more" aria-haspopup="dialog" aria-expanded="false" aria-current="${moreActive ? 'page' : 'false'}" aria-label="${t('Ещё')}"><span class="mobile-more-glyph" aria-hidden="true">•••</span><span class="navsec-l">${t('Ещё')}</span>${moreNew && !moreActive ? '<span class="navsec-dot"></span>' : ''}</button>`;
+    const more = `<button class="navsec mobile-nav-more${moreActive ? ' active' : ''}${moreNew && !moreActive ? ' navsec-new' : ''}" data-action="mobile-nav-more" data-guide-target="guide-library" aria-haspopup="dialog" aria-expanded="false" aria-current="${moreActive ? 'page' : 'false'}" aria-label="${t('Ещё')}"><span class="mobile-more-glyph" aria-hidden="true">•••</span><span class="navsec-l">${t('Ещё')}</span>${moreNew && !moreActive ? '<span class="navsec-dot"></span>' : ''}</button>`;
     if (row) row.remove();
     nav.insertAdjacentHTML('afterbegin', `<div class="navrow">${primary}${more}${gear}</div>`);
     row = nav.querySelector(':scope > .navrow');
@@ -22797,7 +22833,7 @@ async function reconcileGuideV3AfterTaskLoad() {
   return saved;
 }
 function guideV3Copy(key, variables) {
-  const copy = window.GuideV3CopyRu;
+  const copy = guideV3CopyModule();
   return copy && typeof copy.format === 'function' ? (copy.format(key, variables) || '') : '';
 }
 function guideV3Seed() {
@@ -22856,6 +22892,7 @@ function guideV3TargetSelector(viewModel) {
   if (vm.step === 'victory' && taskId) return `[data-guide-target="first-task-reward"]`;
   if (vm.step === 'mastery') return '[data-guide-target="first-level-form"]';
   if (vm.step === 'bond') return '[data-guide-target="first-shadow-contact"]';
+  if (vm.step === 'release') return '[data-guide-target="guide-library"]';
   if (vm.step === 'recognize' && vm.branch !== 'task') return '[data-guide-target="first-task-create"]';
   return vm.targetSelector || null;
 }
@@ -22909,7 +22946,8 @@ function guideV3Paint() {
     || (state.snoozedUntil && Date.now() < state.snoozedUntil && !State._guideV3ForceOpen)) {
     guideV3Close({ restoreFocus: false }); return;
   }
-  const vm = presenter.present({ state, seed: guideV3Seed(), tasks: State.tasks, chapter: state.currentChapter, copy: window.GuideV3CopyRu });
+  const copy = guideV3CopyModule();
+  const vm = presenter.present({ state, seed: guideV3Seed(), tasks: State.tasks, chapter: state.currentChapter, copy });
   if (!vm) { guideV3Close({ restoreFocus: false }); return; }
   if (vm.hidden) {
     guideV3Close({ restoreFocus: false });
@@ -22920,7 +22958,7 @@ function guideV3Paint() {
     }, 500);
     return;
   }
-  const key = `${vm.chapter}:${vm.step}:${vm.replay ? 'replay' : 'live'}`;
+  const key = `${lang()}:${vm.chapter}:${vm.step}:${vm.replay ? 'replay' : 'live'}`;
   if (_guideV3SurfaceKey && _guideV3SurfaceKey !== key) {
     State._guideV3VoiceActive = false;
     try { window.ShadowVoiceV2?.stop({ silent: true, reason: 'guide_step' }); } catch {}
@@ -22942,7 +22980,7 @@ function guideV3Paint() {
     chapterLabel: vm.chapterTitle, title: vm.title, progressLabel: vm.progress,
     transcript, visualLabel: guideV3Copy('a11y.shadow_visual', { form: formLabel }),
     visualAriaLabel: guideV3Copy('a11y.shadow_alt', { form: formLabel, state: stateLabel }),
-    targetSelector: guideV3TargetSelector(vm), fallback: 'safe-bubble', actions, choices,
+    targetSelector: guideV3TargetSelector(vm), spotlightLabel: guideV3Copy('a11y.spotlight_target'), fallback: 'safe-bubble', actions, choices,
     choiceAction: 'guide-task-choice', returnFocus: document.activeElement,
     focusInitial: vm.step !== 'bond',
     onEscape: () => {
@@ -22982,7 +23020,7 @@ async function guideV3Speak(button) {
     try { window.ShadowVoiceV2?.stop({ silent: true, reason: 'guide_user_stop' }); } catch {}
     State._guideV3VoiceActive = false; guideV3Paint(); return true;
   }
-  const state = guideV3State(), vm = window.GuidePresenterV1?.present({ state, seed: guideV3Seed(), tasks: State.tasks, chapter: state?.currentChapter, copy: window.GuideV3CopyRu });
+  const state = guideV3State(), vm = window.GuidePresenterV1?.present({ state, seed: guideV3Seed(), tasks: State.tasks, chapter: state?.currentChapter, copy: guideV3CopyModule() });
   if (!vm?.transcript || !window.ShadowVoiceV2?.speak) { State._guideV3Error = 'voice'; guideV3Paint(); return false; }
   if (state.voiceConsent !== true) {
     const consentSaved = await guideV3Commit({ type: 'guide:voice-consent', value: true }, { repaint: false });
@@ -26229,7 +26267,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v190';
+const PWA_CACHE_VERSION = 'satoru-v191';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -212,7 +212,7 @@
     if (step === 'start') return { targetKey: 'task-start', taskId: selectedTaskId, targetSelector: null };
     const keys = {
       welcome: 'today', victory: 'quest-reward', mastery: 'level',
-      bond: 'shadow-contact', release: 'today',
+      bond: 'shadow-contact', release: 'guide-library',
     };
     const targetKey = keys[step] || null;
     return { targetKey, taskId: null, targetSelector: targetKey ? staticSelector(targetKey) : null };

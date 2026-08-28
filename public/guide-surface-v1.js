@@ -11,11 +11,15 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuideSurfaceV1(root) {
   'use strict';
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
   const SURFACE_ID = 'guide-surface-v1';
+  const SPOTLIGHT_LABEL_ID = 'guide-surface-v1-spotlight-label';
   let surface = null;
   let ring = null;
   let bubble = null;
+  let spotlightLabel = null;
+  let describedTarget = null;
+  let describedByBefore = null;
   let activeModel = null;
   let returnFocus = null;
   let listenersBound = false;
@@ -126,12 +130,18 @@
     ring.style.pointerEvents = 'none';
     ring.hidden = true;
 
+    spotlightLabel = element('span', 'sr-only');
+    spotlightLabel.id = SPOTLIGHT_LABEL_ID;
+    spotlightLabel.setAttribute('id', SPOTLIGHT_LABEL_ID);
+    spotlightLabel.setAttribute('data-noi18n', '');
+
     bubble = element('article', 'guide-surface-v1__bubble');
     bubble.style.position = 'fixed';
     bubble.style.left = '50%';
     bubble.style.bottom = 'var(--guide-bubble-bottom, 24px)';
     bubble.style.transform = 'translateX(-50%)';
     bubble.style.pointerEvents = 'auto';
+    surface.appendChild(spotlightLabel);
     surface.appendChild(ring);
     surface.appendChild(bubble);
     doc.body.appendChild(surface);
@@ -237,15 +247,50 @@
     replace(bubble, nodes);
   }
 
+  function targetCandidates(doc, selector) {
+    if (typeof doc.querySelectorAll === 'function') {
+      const all = Array.from(doc.querySelectorAll(selector));
+      if (all.length) return all;
+    }
+    const first = typeof doc.querySelector === 'function' ? doc.querySelector(selector) : null;
+    return first ? [first] : [];
+  }
+
   function resolveTarget() {
     const doc = currentDocument();
     const selector = activeModel && text(activeModel.targetSelector).trim();
     if (!doc || !selector || typeof doc.querySelector !== 'function') return null;
     try {
-      const target = doc.querySelector(selector);
-      if (!target || target.isConnected === false || (surface && surface.contains(target))) return null;
-      return typeof target.getBoundingClientRect === 'function' ? target : null;
+      return targetCandidates(doc, selector).find((target) => {
+        if (!target || target.isConnected === false || (surface && surface.contains(target))
+          || typeof target.getBoundingClientRect !== 'function') return false;
+        const rect = target.getBoundingClientRect();
+        const width = number(rect.width, number(rect.right, 0) - number(rect.left, 0));
+        const height = number(rect.height, number(rect.bottom, 0) - number(rect.top, 0));
+        return width > 0 && height > 0;
+      }) || null;
     } catch { return null; }
+  }
+
+  function restoreTargetDescription() {
+    if (!describedTarget) return;
+    if (describedByBefore) describedTarget.setAttribute('aria-describedby', describedByBefore);
+    else describedTarget.removeAttribute('aria-describedby');
+    describedTarget = null;
+    describedByBefore = null;
+  }
+
+  function describeTarget(target) {
+    const label = text(activeModel && activeModel.spotlightLabel).trim();
+    if (!target || !label || !spotlightLabel) { restoreTargetDescription(); return; }
+    spotlightLabel.textContent = label;
+    if (describedTarget === target) return;
+    restoreTargetDescription();
+    describedTarget = target;
+    describedByBefore = target.getAttribute('aria-describedby');
+    const ids = text(describedByBefore).split(/\s+/).filter(Boolean);
+    if (!ids.includes(SPOTLIGHT_LABEL_ID)) ids.push(SPOTLIGHT_LABEL_ID);
+    target.setAttribute('aria-describedby', ids.join(' '));
   }
 
   function setSafeBubble(safe) {
@@ -288,7 +333,8 @@
   function reposition() {
     if (!surface || !ring) return false;
     const target = resolveTarget();
-    if (!target) { resetBubblePosition(); setSafeBubble(true); return false; }
+    if (!target) { restoreTargetDescription(); resetBubblePosition(); setSafeBubble(true); return false; }
+    describeTarget(target);
     const rect = target.getBoundingClientRect();
     const pad = Math.max(0, Math.min(40, number(activeModel && activeModel.spotlightPadding, 8)));
     const left = number(rect.left, 0) - pad;
@@ -356,8 +402,9 @@
     const focusTarget = returnFocus;
     cancelScheduledFrame();
     unbindListeners();
+    restoreTargetDescription();
     if (surface && typeof surface.remove === 'function') surface.remove();
-    surface = null; ring = null; bubble = null; activeModel = null; returnFocus = null;
+    surface = null; ring = null; bubble = null; spotlightLabel = null; activeModel = null; returnFocus = null;
     if (config.restoreFocus !== false && canFocus(focusTarget)) {
       try { focusTarget.focus({ preventScroll: true }); } catch { try { focusTarget.focus(); } catch {} }
     }

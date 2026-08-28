@@ -1,6 +1,6 @@
 # Satoru Guide v3 — «Тень ведёт»
 
-Статус: продуктовый и производственный план. Runtime v3 ещё не реализован. Первая RU-версия маршрута вынесена в `GUIDE-V3-FIRST-SCRIPT-RU.md`; новый guide-specific концепт Искры — в `art-factory/shadow-guide-v1-20260811/`.
+Статус на 2026-08-28: продуктовый и производственный план. First Journey, account-owned state, Guide Library, replay/Piper и пятиъязычный runtime RU/EN/DE/UK/ES реализованы; Commit C2 подключён в change-set v191 через exact-version manifest. Следующий продуктовый срез — contextual-глава Habits; Goals остаётся закрытой до questionnaire. Исторический первый RU-сценарий вынесен в `GUIDE-V3-FIRST-SCRIPT-RU.md`; guide-specific концепт Искры — в `art-factory/shadow-guide-v1-20260811/` и по-прежнему не является утверждённым production-art.
 
 ## 0. Решение
 
@@ -26,9 +26,9 @@ Satoru не нужен один длинный «полный гайд». Ему
 - Piper voice, transcript и ручные speaker controls.
 - статический справочник `GUIDE_SECTIONS`.
 
-### Главный дефект текущего tutorial
+### Главный дефект прежнего tutorial — закрыт в C1
 
-Он говорит о capture и уровне, но не проводит через создание/выбор и честное завершение реального дела. Единственный обязательный action — `comp-pet`. Поэтому пользователь знакомится с Тенью, но не доказывает себе основной цикл продукта.
+Старый `TUTORIAL_DAY1` говорил о capture и уровне, но не проводил через создание/выбор и честное завершение реального дела. Единственным обязательным action был `comp-pet`: пользователь знакомился с Тенью, но не доказывал себе основной цикл продукта. C1 заменил этот маршрут настоящим select/create → optional focus → persisted completion → reward/mastery → контакт с Тенью; старые поля используются только для account-owned migration без повторной награды.
 
 ### Что не считать «новым опросником»
 
@@ -438,27 +438,35 @@ settings.guideV3 = {
 
 ## 14. Порядок реализации
 
-### Commit A — согласование
+### Commit A — согласование ✅
 
 - этот план;
 - RU first script;
 - один guide-close concept Искры;
 - список правок Альберта.
 
-### Commit B — guide data model без UI
+### Commit B — guide data model без UI ✅
 
 - registry/schema/migration;
 - deterministic eligibility and event contracts;
 - unit tests.
 
-### Commit C — First Journey
+### Commit C0/C1 — First Journey ✅
 
 - новый guide surface;
 - реальный select/start/pause/complete loop;
 - accessibility;
 - Piper integration;
-- five locales;
-- screenshots.
+- RU-runtime и screenshots.
+
+### Commit C2 — пятиъязычный runtime ✅ v191
+
+- RU остаётся единственным owner-approved источником текста;
+- EN/DE/UK/ES выпускаются только через exact manifest `locale + globalName + version + status`, а не по одному самодекларированному `STATUS`;
+- locale-copy загружаются до presenter, используются одинаково библиотекой, First Journey и Piper и входят в offline shell;
+- неизвестный, отсутствующий или не совпавший по версии модуль fail-closed уходит в безопасный fallback;
+- `?guidePreview=1` разрешён только на localhost или администратору;
+- финальный шаг подсвечивает реально видимый путь к «Как играть»: Help на desktop либо More на mobile.
 
 ### Commit D — contextual chapters
 
@@ -489,11 +497,11 @@ settings.guideV3 = {
 3. перенести позы на Spirit/Guardian/Keeper;
 4. motion pilots 4×3;
 5. полный export + QA;
-6. только затем runtime integration.
+6. только затем guide-art runtime integration.
 
-## 15. Что сейчас намеренно не строим
+## 15. Границы после C2 v191
 
-- runtime v3;
+- contextual chapters D/E ещё не являются runtime: первым строится Habits, затем остальные по одному и с pacing; Goals не включать до questionnaire;
 - questionnaire UI;
 - 32 production frames;
 - автоматическое создание целей/привычек без подтверждения;
