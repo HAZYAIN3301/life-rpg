@@ -45,7 +45,7 @@ function completionEvent(chapter) {
   return event;
 }
 
-test('v194 registry releases eleven contextual chapters on one reload-safe three-step contract', () => {
+test('v195 registry releases eleven contextual chapters on one reload-safe three-step contract', () => {
   for (const chapter of CHAPTERS) {
     const entry = Guide.REGISTRY.find((item) => item.chapter === chapter);
     assert.ok(entry, chapter);
@@ -281,10 +281,10 @@ test('Guide feature commit is authenticated, account-owned and rejects malformed
   assert.equal((await api(base, '/api/guide/commit', { method: 'POST', cookie: alpha.cookie, body: { data: { tasks, settings, goals: [] } } })).response.status, 400);
 });
 
-test('v194 cache and source contract ship the whole pack together', () => {
-  assert.match(SW, /const CACHE = 'satoru-v194'/);
-  assert.match(INDEX, /guide-v3\.js\?v=20260828-guide-system-theme-v194-1/);
-  assert.match(INDEX, /app\.js\?v=20260828-guide-system-theme-v194-1/);
+test('v195 cache and source contract ship the whole pack together', () => {
+  assert.match(SW, /const CACHE = 'satoru-v195'/);
+  assert.match(INDEX, /guide-v3\.js\?v=20260829-guide-library-v195-1/);
+  assert.match(INDEX, /app\.js\?v=20260829-guide-library-v195-1/);
   assert.match(SERVER, /if \(u === '\/api\/guide\/commit' && req\.method === 'POST'\)/);
   assert.match(SERVER, /commitGuideData[\s\S]*restoreSnapshot/);
 });

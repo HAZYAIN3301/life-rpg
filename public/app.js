@@ -20165,11 +20165,21 @@ function guideV3AvailableChapters() {
   if (!model || !state) return [];
   const available = [model.FIRST_CHAPTER];
   const context = guideV3Context({ sessionPrompted: false });
+  const firstJourneyResolved = model.chapterResolved(state, model.FIRST_CHAPTER);
   for (const entry of model.REGISTRY) {
     if (entry.id === model.FIRST_CHAPTER || entry.id === 'goals') continue;
     if (!guideV3ChapterDataReady(entry.chapter)) continue;
     if (!guideV3ContextRuntimeAllowed(entry.chapter)) continue;
-    if (model.entryEligible(entry, state, context)) available.push(entry.chapter);
+    if (model.chapterResolved(state, entry.chapter)) continue;
+    // Contextual eligibility controls unsolicited prompts, not the manual
+    // library. Once First Journey is resolved, a released chapter may be
+    // opened on demand as long as its real action has a viable target.
+    if (!firstJourneyResolved) continue;
+    if (entry.chapter === 'calendar' && !context.calendarTaskId) continue;
+    if (entry.chapter === 'rewards' && !context.rewardId) continue;
+    if (entry.chapter === 'tree' && !context.treeNodeId) continue;
+    if (entry.chapter === 'jarvis' && !context.aiReady) continue;
+    available.push(entry.chapter);
   }
   return available;
 }
@@ -27142,7 +27152,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v194';
+const PWA_CACHE_VERSION = 'satoru-v195';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

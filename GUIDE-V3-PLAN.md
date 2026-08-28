@@ -481,7 +481,8 @@ settings.guideV3 = {
 - [x] **Notes v193** — реальная text capture, stable note ID, atomic `inbox + settings`, Retry без ложного receipt; media остаётся обычной функцией вне Guide-транзакции и жёстко fenced к исходным account ID/write epoch;
 - [x] **Voice/Jarvis v193** — подтверждённый provider и реальный playback перед consent; exact current-request response перед completion;
 - [x] **Rewards v193** — organic-gold eligibility, exact personal reward, atomic `purchases + settings`, неизменённая economy confirmation.
-- [x] **System Theme v194** — manual-only Library chapter, реальный Settings target, awaitable account-owned write, `prefers-color-scheme` listener, rollback/no false-success и exact `system-theme-persisted` receipt.
+- [x] **System Theme v194** — manual-only Library chapter, реальный Settings target, awaitable account-owned write, `prefers-color-scheme` listener, rollback/no false-success и exact `system-theme-persisted` receipt. Production: `04a492a`, exact assets verified.
+- [x] **Library v195** — ручной каталог отделён от eligibility автоматических подсказок: готовые главы видимы после First Journey, но предметные действия остаются fail-closed без точной task/reward/node/AI readiness. Auto pacing не ослаблен.
 
 ### Commit E — level 3 chapters
 

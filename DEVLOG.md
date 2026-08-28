@@ -2,6 +2,15 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-29] 📚 Guide Library v195 — готовые главы больше не спрятаны за автотриггерами
+
+- Production v194 был опубликован exact fast-forward коммитом `04a492a`; 13 shell/Guide assets на production совпали с локальными byte-for-byte, `sw.js` отдал `satoru-v194`, а уже открытая вкладка успешно прошла update prompt. После этого live-проверка выявила продуктовую ошибку: файлы десяти глав находились в production, но Library использовала ту же eligibility, что и ненавязчивые автоматические подсказки. Поэтому готовая глава выглядела как «Появится позже», пока пользователь случайно не создавал её триггер.
+- В v195 разделены два решения. `guideV3MaybeStart()` по-прежнему использует `entryEligible/nextContextual`, cooldown и не предлагает больше одной главы за сессию. Ручная Library после завершённого/пропущенного First Journey показывает все выпущенные главы, чьи feature data загружены и реальное действие сейчас выполнимо.
+- Для предметных транзакций сохранён fail-closed: Calendar ждёт конкретную незапланированную задачу, Rewards — доступную личную награду и organic gold, Tree — точный unlockable node, Jarvis — реальную AI readiness. Goals остаётся `deferred-questionnaire`, Tribe — закрыта до privacy/consent release. Остальные выпущенные главы доступны вручную без искусственных поведенческих порогов.
+- Browser QA на чистом локальном demo: после Skip First Journey доступны Habits, Notes, Shadow Voice, System Theme, Hero, Den, Pets, Skill Tree и Progress; System Theme реально стартует, открывает Settings → System и видит semantic target; Library overflow `0`. Первый тур по-прежнему единственная onboarding-граница.
+- Новый regression `scripts/guide-library-v195.test.js` запрещает возвращать `entryEligible()` в ручной каталог и отдельно закрепляет сохранение contextual pacing. Полный suite: **1125/1125 PASS**; syntax PASS. Offline shell и app lifecycle подняты до **`satoru-v195`**, общий shell pin — `20260829-guide-library-v195-1`. Art-деревья не менялись.
+- Полный отчёт и release checklist: `GUIDE-V3-V195-QA.md`.
+
 ## [2026-08-28] ◐ Guide v3 System Theme v194 + seeded E2E всего contextual pack
 
 - Все десять глав v193 пройдены в локальном браузере на seeded account через реальные feature actions: Calendar назначил точное время, Notes сохранил текст, Rewards купил конкретную личную награду, Hero/Den/Stats подтвердили смонтированные экраны, Pets открыл подсказку сферы, Tree показал закреплённый unlockable node без траты очка. Voice fail-closed без доступного provider; Jarvis fail-closed без AI key. Replay остаётся inert.

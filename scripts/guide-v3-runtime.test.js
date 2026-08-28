@@ -111,8 +111,8 @@ test('the approved RU review is an exact mirror of centralized runtime copy', ()
   assert.match(COPY_REVIEW, /RUNTIME_APPROVED` поднят намеренно/);
 });
 
-test('v194 offline shell pins all Guide runtime scripts and locale copies', () => {
-  sourceMatches(SW, /const CACHE = 'satoru-v194';/);
+test('v195 offline shell pins all Guide runtime scripts and locale copies', () => {
+  sourceMatches(SW, /const CACHE = 'satoru-v195';/);
   for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'guide-surface-v1.js']) {
     assert.ok(file, 'Guide runtime file must be discoverable before checking SHELL');
     assert.ok(SW.includes(`'${file}'`) || SW.includes(`"${file}"`), `${file} must be pinned in SHELL`);
@@ -486,7 +486,7 @@ test('Escape abandons replay but snoozes a live chapter', () => {
     'the replay abandonment helper must never enter the live snooze path');
 });
 
-test('Context pack v194 explicitly releases exact Guide copy and chapter versions for RU/EN/DE/UK/ES', () => {
+test('Context pack v195 explicitly releases exact Guide copy and chapter versions for RU/EN/DE/UK/ES', () => {
   assert.equal(COPY_RU.RUNTIME_APPROVED, true,
     'the owner-approved RU Guide must be available in normal runtime');
   assert.equal(COPY_RU.STATUS, 'runtime-approved');
@@ -547,10 +547,10 @@ test('Context pack v194 explicitly releases exact Guide copy and chapter version
   for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'app.js']) {
     const source = SCRIPT_SOURCES.find((item) => scriptFile(item) === file);
     assert.ok(source, `${file} must load in index.html`);
-    assert.match(source, /\?v=[^"']*v194(?:-|$)/, `${file} needs a v194 cache-busting pin`);
+    assert.match(source, /\?v=[^"']*v195(?:-|$)/, `${file} needs a v195 cache-busting pin`);
   }
-  sourceMatches(INDEX, /styles\.css\?v=[^"']*v194(?:-|["'])/,
-    'the contextual pack needs the same v194 CSS pin');
+  sourceMatches(INDEX, /styles\.css\?v=[^"']*v195(?:-|["'])/,
+    'the contextual pack needs the same v195 CSS pin');
 });
 
 test('feedback remains reachable even when the localized Guide is unavailable', () => {
