@@ -35,7 +35,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildVoiceInput() {
   'use strict';
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
 
   // Поля, куда голос не идёт никогда. Проверяется по типу, по имени/id и по
   // autocomplete — совпадения любого из признаков достаточно.
@@ -147,6 +147,21 @@
     return !!(w && (w.SpeechRecognition || w.webkitSpeechRecognition));
   }
 
+  function buttonPlacement(rect, viewportWidth, blocksPoint) {
+    const r = rect && typeof rect === 'object' ? rect : {};
+    const width = Math.max(0, Number(viewportWidth) || 0);
+    const left = Number(r.left) || 0, right = Number(r.right) || left;
+    const top = Number(r.top) || 0, bottom = Number(r.bottom) || top;
+    const height = Math.max(0, Number(r.height) || (bottom - top));
+    const y = height > 60 ? bottom - 46 : top + (height - 42) / 2;
+    const blocked = typeof blocksPoint === 'function' ? blocksPoint : () => false;
+    for (const candidate of [{ x: right + 4, y }, { x: left - 46, y }]) {
+      if (candidate.x < 4 || candidate.x + 42 > width - 4) continue;
+      if (!blocked(candidate.x + 21, candidate.y + 21)) return candidate;
+    }
+    return { x: Math.max(left + 4, right - 46), y };
+  }
+
   // ── Всё ниже требует DOM и в тестах не исполняется ───────────────────────────
   const LABELS = { start: 'Записать голосом', stop: 'Остановить запись', denied: 'Нет доступа к микрофону' };
   // Подписи можно прислать и ПОСЛЕ создания кнопки: модуль подключается сам при
@@ -195,14 +210,21 @@
       const r = field.getBoundingClientRect();
       if (!r.width && !r.height) { btn.style.display = 'none'; return; }
       btn.style.display = 'flex';
-      // Снаружи правого края, если есть место, иначе внутри — поле не перекрываем.
-      const outside = r.right + 46 < (w.innerWidth || 0);
-      const x = outside ? r.right + 4 : r.right - 46;
-      // У однострочного поля кнопка по центру высоты, у textarea — у нижнего
-      // края: там она не закрывает набираемый текст, который растёт сверху вниз.
-      const y = r.height > 60 ? r.bottom - 46 : r.top + (r.height - 42) / 2;
-      btn.style.left = Math.round(x + (w.scrollX || 0)) + 'px';
-      btn.style.top = Math.round(Math.max(r.top, y) + (w.scrollY || 0)) + 'px';
+      const blocksPoint = (x, y) => {
+        const stack = typeof doc.elementsFromPoint === 'function'
+          ? doc.elementsFromPoint(x, y)
+          : [typeof doc.elementFromPoint === 'function' ? doc.elementFromPoint(x, y) : null];
+        return stack.some((node) => {
+          if (!node || node === field || node === btn || (typeof field.contains === 'function' && field.contains(node))) return false;
+          return typeof node.closest === 'function' && !!node.closest('button,a,input,textarea,select,[role="button"]');
+        });
+      };
+      // Сначала пробуем снаружи справа, затем слева. Так плавающий микрофон не
+      // накрывает соседнюю кнопку отправки/сохранения. Внутрь поля идём только
+      // когда обе внешние позиции заняты или не помещаются.
+      const placement = buttonPlacement(r, w.innerWidth || 0, blocksPoint);
+      btn.style.left = Math.round(placement.x + (w.scrollX || 0)) + 'px';
+      btn.style.top = Math.round(Math.max(r.top, placement.y) + (w.scrollY || 0)) + 'px';
     };
 
     const stop = () => { if (rec) { try { rec.stop(); } catch {} } };
@@ -286,6 +308,6 @@
 
   return {
     VERSION, SECRET_HINTS, SECRET_AUTOCOMPLETE, NON_TEXT_TYPES, LANGS,
-    isEligible, looksSecret, langTag, insertText, supported, setLabels, attach,
+    isEligible, looksSecret, langTag, insertText, supported, buttonPlacement, setLabels, attach,
   };
 });

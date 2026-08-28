@@ -28,7 +28,7 @@
   const FORMS = Object.freeze(['spark', 'spirit', 'guardian', 'keeper']);
   const CHAPTERS = Object.freeze([
     FIRST_CHAPTER, 'habits', 'goals', 'calendar', 'notes', 'voice', 'jarvis',
-    'rewards', 'hero', 'den', 'pets', 'tree', 'stats', 'tribe',
+    'systemTheme', 'rewards', 'hero', 'den', 'pets', 'tree', 'stats', 'tribe',
   ]);
   const LEGACY_PROMPT_MAP = Object.freeze({
     d_habits: 'habits@1', d_den: 'den@1', d_tree: 'tree@1',
@@ -217,6 +217,7 @@
     registryEntry({ id: 'notes', version: 2, chapter: 'notes', prerequisites: [FIRST_CHAPTER], copyKey: 'guide.notes', target: 'notes', action: 'capture-real-note', completion: 'note-persisted', cooldown: 86400000 }),
     registryEntry({ id: 'voice', version: 2, chapter: 'voice', prerequisites: [FIRST_CHAPTER], copyKey: 'guide.voice', target: 'speaker', action: 'voice-consent', completion: 'voice-choice-persisted', cooldown: 86400000 }),
     registryEntry({ id: 'jarvis', version: 2, chapter: 'jarvis', prerequisites: [FIRST_CHAPTER], copyKey: 'guide.jarvis', target: 'helper', action: 'ask-one-question', completion: 'helper-response-seen', cooldown: 86400000 }),
+    registryEntry({ id: 'systemTheme', version: 2, chapter: 'systemTheme', prerequisites: [FIRST_CHAPTER], copyKey: 'guide.system_theme', target: 'settings', action: 'choose-system-theme', completion: 'system-theme-persisted', cooldown: 0, manualOnly: true }),
     registryEntry({ id: 'rewards', version: 2, chapter: 'rewards', prerequisites: [FIRST_CHAPTER], copyKey: 'guide.rewards', target: 'rewards', action: 'buy-real-reward', completion: 'purchase-persisted', cooldown: 86400000 }),
     registryEntry({ id: 'hero', version: 2, chapter: 'hero', prerequisites: [FIRST_CHAPTER], copyKey: 'guide.hero', target: 'character', action: 'open-hero', completion: 'hero-seen', cooldown: 86400000 }),
     registryEntry({ id: 'den', version: 2, chapter: 'den', prerequisites: ['hero'], copyKey: 'guide.den', target: 'den', action: 'open-den', completion: 'den-seen', cooldown: 86400000 }),
@@ -250,6 +251,7 @@
       case 'notes': return Number(c.completedTasks) >= 4 && Number(c.inboxCount) === 0;
       case 'voice': return Number(c.level) >= 2 && !!c.ttsReady;
       case 'jarvis': return Number(c.level) >= 2 && !!c.aiReady;
+      case 'systemTheme': return Number(c.level) >= 2;
       case 'rewards': return Number(c.gold) >= Number(c.rewardThreshold || 1);
       case 'hero': return Number(c.level) >= 3;
       case 'den': return Number(c.level) >= 3 && !!c.newSessionAfterHero;
@@ -265,7 +267,7 @@
     const list = Array.isArray(registry) ? registry : REGISTRY;
     const current = normalize(state);
     if (current.currentChapter) return null;
-    return list.find((entry) => entry.id !== FIRST_CHAPTER && entryEligible(entry, current, context)) || null;
+    return list.find((entry) => entry.id !== FIRST_CHAPTER && entry.manualOnly !== true && entryEligible(entry, current, context)) || null;
   }
 
   function reconcile(rawState, context) {

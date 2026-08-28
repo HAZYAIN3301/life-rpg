@@ -106,7 +106,7 @@ const I18N_EN = {
   '▶ Проверить звук': '▶ Test sound',
   '🎨 Оформление': '🎨 Appearance',
   'Тема': 'Theme',
-  '🌙 Тёмная': '🌙 Dark', '☀️ Светлая': '☀️ Light',
+  '🌙 Тёмная': '🌙 Dark', '☀️ Светлая': '☀️ Light', '◐ Системная': '◐ System',
   'Акцент': 'Accent color',
   '⚡ Режим «Система»': '⚡ System Mode',
   'Навыки / сферы жизни': 'Skills / life areas',
@@ -265,7 +265,7 @@ const I18N_DE = {
   '▶ Проверить звук': '▶ Sound testen',
   '🎨 Оформление': '🎨 Erscheinungsbild',
   'Тема': 'Thema',
-  '🌙 Тёмная': '🌙 Dunkel', '☀️ Светлая': '☀️ Hell',
+  '🌙 Тёмная': '🌙 Dunkel', '☀️ Светлая': '☀️ Hell', '◐ Системная': '◐ System',
   'Акцент': 'Akzentfarbe',
   '⚡ Режим «Система»': '⚡ System-Modus',
   'Навыки / сферы жизни': 'Fähigkeiten / Lebensbereiche',
@@ -409,7 +409,7 @@ const I18N_UK = {
   '🔊 Звук': '🔊 Звук',
   'Звуки интерфейса (выполнение квеста, левелап, награда, покупка)': 'Звуки інтерфейсу (виконання квесту, левелап, нагорода, покупка)',
   '▶ Проверить звук': '▶ Перевірити звук', '🎨 Оформление': '🎨 Оформлення', 'Тема': 'Тема',
-  '🌙 Тёмная': '🌙 Темна', '☀️ Светлая': '☀️ Світла', 'Акцент': 'Акцент',
+  '🌙 Тёмная': '🌙 Темна', '☀️ Светлая': '☀️ Світла', '◐ Системная': '◐ Системна', 'Акцент': 'Акцент',
   '⚡ Режим «Система»': '⚡ Режим «Система»', 'Навыки / сферы жизни': 'Навички / сфери життя',
   '+ Добавить сферу': '+ Додати сферу', '🔁 Привычки (повторяющиеся)': '🔁 Звички (повторювані)',
   'Пока нет привычек.': 'Поки немає звичок.', '+ Добавить привычку': '+ Додати звичку',
@@ -482,7 +482,7 @@ const I18N_ES = {
   '🔊 Звук': '🔊 Sonido',
   'Звуки интерфейса (выполнение квеста, левелап, награда, покупка)': 'Sonidos de interfaz (completar misión, subir nivel, recompensa, compra)',
   '▶ Проверить звук': '▶ Probar sonido', '🎨 Оформление': '🎨 Apariencia', 'Тема': 'Tema',
-  '🌙 Тёмная': '🌙 Oscuro', '☀️ Светлая': '☀️ Claro', 'Акцент': 'Color de acento',
+  '🌙 Тёмная': '🌙 Oscuro', '☀️ Светлая': '☀️ Claro', '◐ Системная': '◐ Sistema', 'Акцент': 'Color de acento',
   '⚡ Режим «Система»': '⚡ Modo «Sistema»', 'Навыки / сферы жизни': 'Habilidades / áreas de vida',
   '+ Добавить сферу': '+ Añadir área', '🔁 Привычки (повторяющиеся)': '🔁 Hábitos (recurrentes)',
   'Пока нет привычек.': 'Aún no hay hábitos.', '+ Добавить привычку': '+ Añadir hábito',
@@ -12155,6 +12155,7 @@ function closeCalendarTaskEditor({ restoreFocus = true } = {}) {
   overlay.remove();
   unlockCalendarDialogScroll();
   if (target) requestAnimationFrame(() => focusPathChoiceTarget(target));
+  repaintGuideV3AfterBlockingSurface();
   return true;
 }
 function handleCalendarTaskKeydown(event) {
@@ -12208,6 +12209,7 @@ function openCalendarTaskEditor(id, returnFocus = document.activeElement) {
   overlay.addEventListener('keydown', handleCalendarTaskKeydown);
   overlay.addEventListener('click', (event) => { if (event.target === overlay) closeCalendarTaskEditor(); });
   document.body.appendChild(overlay);
+  guideV3Close({ restoreFocus: false });
   requestAnimationFrame(() => focusPathChoiceTarget(document.getElementById('cal-task-title')));
   return overlay;
 }
@@ -19233,11 +19235,26 @@ function subscriptionCard() {
     <div class="settings-actions">${cta || `<span class="muted">${t('Спасибо за поддержку 💛')}</span>`}</div></div>`;
 }
 let _accountDialogReturnFocus = null;
+let _guideV3BlockingSurfaceObserver = null;
+let _guideV3BlockingSurfaceVisible = false;
 function repaintGuideV3AfterBlockingSurface() {
   requestAnimationFrame(() => {
     if (document.querySelector('.modal-overlay, #mobile-nav-sheet')) return;
     try { guideV3Paint(); } catch {}
   });
+}
+function observeGuideV3BlockingSurfaces() {
+  if (_guideV3BlockingSurfaceObserver || typeof MutationObserver !== 'function' || !document.body) return;
+  const sync = () => {
+    const blocked = !!document.querySelector('.modal-overlay, #mobile-nav-sheet');
+    if (blocked === _guideV3BlockingSurfaceVisible) return;
+    _guideV3BlockingSurfaceVisible = blocked;
+    if (blocked) guideV3Close({ restoreFocus: false });
+    else repaintGuideV3AfterBlockingSurface();
+  };
+  _guideV3BlockingSurfaceVisible = !!document.querySelector('.modal-overlay, #mobile-nav-sheet');
+  _guideV3BlockingSurfaceObserver = new MutationObserver(sync);
+  _guideV3BlockingSurfaceObserver.observe(document.body, { childList: true });
 }
 function closeAccountDialog(id, { restoreFocus = true } = {}) {
   const overlay = document.getElementById(id); if (!overlay) return false;
@@ -19903,13 +19920,13 @@ function guideV3ReviewPreviewRequested() {
   catch { return false; }
 }
 const GUIDE_V3_COPY_RELEASES = Object.freeze({
-  ru: Object.freeze({ globalName: 'GuideV3CopyRu', version: '1.2.0', status: 'runtime-approved', released: true }),
-  en: Object.freeze({ globalName: 'GuideV3CopyEn', version: '0.3.0', status: 'translated', released: true }),
-  de: Object.freeze({ globalName: 'GuideV3CopyDe', version: '0.3.0', status: 'translated', released: true }),
-  uk: Object.freeze({ globalName: 'GuideV3CopyUk', version: '0.3.0', status: 'translated', released: true }),
-  es: Object.freeze({ globalName: 'GuideV3CopyEs', version: '0.3.0', status: 'translated', released: true }),
+  ru: Object.freeze({ globalName: 'GuideV3CopyRu', version: '1.3.0', status: 'runtime-approved', released: true }),
+  en: Object.freeze({ globalName: 'GuideV3CopyEn', version: '0.4.0', status: 'translated', released: true }),
+  de: Object.freeze({ globalName: 'GuideV3CopyDe', version: '0.4.0', status: 'translated', released: true }),
+  uk: Object.freeze({ globalName: 'GuideV3CopyUk', version: '0.4.0', status: 'translated', released: true }),
+  es: Object.freeze({ globalName: 'GuideV3CopyEs', version: '0.4.0', status: 'translated', released: true }),
 });
-const GUIDE_V3_CONTEXT_LOCALES = Object.freeze({ ru: '1.2.0', en: '0.3.0', de: '0.3.0', uk: '0.3.0', es: '0.3.0' });
+const GUIDE_V3_CONTEXT_LOCALES = Object.freeze({ ru: '1.3.0', en: '0.4.0', de: '0.4.0', uk: '0.4.0', es: '0.4.0' });
 function guideV3ReleasedChapter(completion) {
   return Object.freeze({ registryVersion: 2, completion, released: true, locales: GUIDE_V3_CONTEXT_LOCALES });
 }
@@ -19919,6 +19936,7 @@ const GUIDE_V3_CONTEXT_RELEASES = Object.freeze({
   notes: guideV3ReleasedChapter('note-persisted'),
   voice: guideV3ReleasedChapter('voice-choice-persisted'),
   jarvis: guideV3ReleasedChapter('helper-response-seen'),
+  systemTheme: guideV3ReleasedChapter('system-theme-persisted'),
   rewards: guideV3ReleasedChapter('purchase-persisted'),
   hero: guideV3ReleasedChapter('hero-seen'),
   den: guideV3ReleasedChapter('den-seen'),
@@ -20133,6 +20151,7 @@ function guideV3ChapterDataReady(chapter) {
   if (chapter === 'notes') return tasksReady && !State._inboxLoadError && !State._inboxBusy;
   if (chapter === 'voice') return progressReady && !State._shadowVoiceStatusLoading && State._shadowVoiceStatus?.configured === true;
   if (chapter === 'jarvis') return progressReady;
+  if (chapter === 'systemTheme') return !State._settingsLoadBusy && !State._settingsLoadError;
   if (chapter === 'rewards') return progressReady
     && !State._accountDataLoadErrors?.rewards && !State._accountDataLoadErrors?.purchases
     && !State._accountDataLoadErrors?.lootbox;
@@ -21276,9 +21295,10 @@ function renderSettings() {
       </div></div>
     <div class="card"><h3>${t('🎨 Оформление')}</h3>
       <div class="theme-row"><span class="theme-lbl">${t('Тема')}</span>
-        <div class="theme-toggle">
-          <button class="theme-opt ${s.theme !== 'light' ? 'active' : ''}" data-action="set-theme" data-theme="dark">${t('🌙 Тёмная')}</button>
-          <button class="theme-opt ${s.theme === 'light' ? 'active' : ''}" data-action="set-theme" data-theme="light">${t('☀️ Светлая')}</button>
+        <div class="theme-toggle" role="group" aria-label="${t('Тема')}">
+          <button type="button" class="theme-opt ${s.theme === 'dark' || !['light', 'system'].includes(s.theme) ? 'active' : ''}" data-action="set-theme" data-theme="dark" aria-pressed="${s.theme === 'dark' || !['light', 'system'].includes(s.theme)}" ${_themeChoiceBusy ? 'disabled' : ''}>${t('🌙 Тёмная')}</button>
+          <button type="button" class="theme-opt ${s.theme === 'light' ? 'active' : ''}" data-action="set-theme" data-theme="light" aria-pressed="${s.theme === 'light'}" ${_themeChoiceBusy ? 'disabled' : ''}>${t('☀️ Светлая')}</button>
+          <button type="button" class="theme-opt ${s.theme === 'system' ? 'active' : ''}" data-action="set-theme" data-theme="system" data-guide-target="system-theme-choice" aria-pressed="${s.theme === 'system'}" ${_themeChoiceBusy ? 'disabled' : ''}>${t('◐ Системная')}</button>
         </div></div>
       <div class="theme-row"><span class="theme-lbl">${t('Акцент')}</span>
         <div class="accent-swatches">${ACCENTS.map((c) => `<button class="accent-sw ${(s.accent || '#6c8cff') === c ? 'active' : ''}" data-action="set-accent" data-accent="${c}" style="background:${c}" title="${c}" aria-label="${t('Акцент')} ${c}"></button>`).join('')}</div></div>
@@ -21767,7 +21787,7 @@ function renderNav() {
       const guideTarget = guideSectionTarget(s.id);
       return `<button class="navsec${mobileClass}${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}${isNew ? ' navsec-new' : ''}" data-action="go-section" data-sec="${s.id}"${guideTarget ? ` data-guide-target="${guideTarget}"` : ''} aria-current="${s.id === cur ? 'page' : 'false'}" title="${locked ? `${t('Откроется на уровне')} ${s.gate}` : (isNew ? `${t(s.label)} — ${t('новое!')}` : t(s.label))}">${navMotionIconHTML(s.iconId)}<span class="navsec-l">${t(s.label)}</span>${locked ? `<span class="navsec-lock">${satoruIconHTML('status.lock', 'navsec-lock-icon', '🔒')}${s.gate}</span>` : isNew ? '<span class="navsec-dot"></span>' : ''}</button>`;
     }).join('');
-    const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" title="${t('Настройки')}" aria-label="${t('Настройки')}">${satoruIconHTML('nav.settings', 'navgear-icon', '⚙️')}</button>`;
+    const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" data-guide-target="settings-nav" title="${t('Настройки')}" aria-label="${t('Настройки')}">${satoruIconHTML('nav.settings', 'navgear-icon', '⚙️')}</button>`;
     const moreActive = MOBILE_MORE_SECTION_IDS.includes(cur) || State.view === 'settings';
     const moreNew = SECTIONS.filter((s) => MOBILE_MORE_SECTION_IDS.includes(s.id)).some((s) => sectionHasNew(s, lvl));
     const more = `<button class="navsec mobile-nav-more${moreActive ? ' active' : ''}${moreNew && !moreActive ? ' navsec-new' : ''}" data-action="mobile-nav-more" data-guide-target="guide-library" aria-haspopup="dialog" aria-expanded="false" aria-current="${moreActive ? 'page' : 'false'}" aria-label="${t('Ещё')}"><span class="mobile-more-glyph" aria-hidden="true">•••</span><span class="navsec-l">${t('Ещё')}</span>${moreNew && !moreActive ? '<span class="navsec-dot"></span>' : ''}</button>`;
@@ -21886,7 +21906,7 @@ function showMobileNavSheet() {
       ${group('mobile-more-growth', 'Развитие', sectionEntry('rewards'))}
       ${group('mobile-more-community', 'Сообщество', sectionEntry('tribe'))}
       ${group('mobile-more-support', 'Поддержка', `${sectionEntry('library')}<button class="mobile-sheet-entry" data-action="open-helper" data-guide-target="helper"><span class="mobile-sheet-icon">${satoruIconHTML('nav.shadow', 'mobile-sheet-glyph', '🤖')}</span><span><b>${t('Помощник')}</b><small>Satoru AI</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
-      ${group('mobile-more-account', 'Аккаунт и доступ', `<button class="mobile-sheet-entry${State.view === 'settings' ? ' active' : ''}" data-action="mobile-go-settings" aria-current="${State.view === 'settings' ? 'page' : 'false'}"><span class="mobile-sheet-icon">${satoruIconHTML('nav.settings', 'mobile-sheet-glyph', '⚙️')}</span><span><b>${t('Настройки')}</b></span><span class="mobile-sheet-chevron">›</span></button><button class="mobile-sheet-entry" data-action="show-paywall" data-feature="Pro"><span class="mobile-sheet-icon">${satoruIconHTML('status.xp', 'mobile-sheet-glyph', '◇')}</span><span><b>Pro</b><small>${ent().tier === 'pro' ? 'PRO' : ent().tier === 'trial' ? `${t('Pro-триал')} · ${localizedDayCount(trialDaysLeft(), true)}` : 'FREE'}</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
+      ${group('mobile-more-account', 'Аккаунт и доступ', `<button class="mobile-sheet-entry${State.view === 'settings' ? ' active' : ''}" data-action="mobile-go-settings" data-guide-target="settings-nav" aria-current="${State.view === 'settings' ? 'page' : 'false'}"><span class="mobile-sheet-icon">${satoruIconHTML('nav.settings', 'mobile-sheet-glyph', '⚙️')}</span><span><b>${t('Настройки')}</b></span><span class="mobile-sheet-chevron">›</span></button><button class="mobile-sheet-entry" data-action="show-paywall" data-feature="Pro"><span class="mobile-sheet-icon">${satoruIconHTML('status.xp', 'mobile-sheet-glyph', '◇')}</span><span><b>Pro</b><small>${ent().tier === 'pro' ? 'PRO' : ent().tier === 'trial' ? `${t('Pro-триал')} · ${localizedDayCount(trialDaysLeft(), true)}` : 'FREE'}</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
       ${group('mobile-more-session', 'Справка и сеанс', `<div class="mobile-sheet-utils"><button class="btn ghost" data-action="show-guide">? ${t('Как играть')}</button><button class="btn ghost" data-action="logout">⇦ ${t('Выйти')}</button></div>`) }
     </div>
   </section>`;
@@ -21915,10 +21935,58 @@ function applyTheme() {
   // Путь «Контроль» авто-надевает скин «Система» (Solo-Leveling-эстетика строгости), если юзер явно не отключил его оверрайдом.
   const controlSkin = s.path === 'control' && !s.systemSkinOff;
   const sys = !!s.systemMode || controlSkin;
-  document.documentElement.dataset.theme = sys ? 'dark' : (s.theme === 'light' ? 'light' : 'dark');
+  const deviceTheme = (() => { try { return window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark'; } catch { return 'dark'; } })();
+  document.documentElement.dataset.theme = sys ? 'dark' : (s.theme === 'system' ? deviceTheme : (s.theme === 'light' ? 'light' : 'dark'));
   document.documentElement.dataset.system = sys ? 'on' : 'off';
   document.documentElement.dataset.path = s.path === 'control' ? 'control' : 'trust';
   document.documentElement.style.setProperty('--accent', sys ? '#4fd6ff' : (s.accent || '#6c8cff'));
+}
+let _systemThemeMedia = null;
+function initSystemThemeListener() {
+  try {
+    _systemThemeMedia = window.matchMedia('(prefers-color-scheme: light)');
+    const repaint = () => { if (State.settings?.theme === 'system') applyTheme(); };
+    if (typeof _systemThemeMedia.addEventListener === 'function') _systemThemeMedia.addEventListener('change', repaint);
+    else if (typeof _systemThemeMedia.addListener === 'function') _systemThemeMedia.addListener(repaint);
+  } catch { _systemThemeMedia = null; }
+}
+let _themeChoiceBusy = false;
+async function persistThemeChoice(rawChoice) {
+  if (_themeChoiceBusy) return false;
+  if (!['dark', 'light', 'system'].includes(rawChoice)) return false;
+  const choice = rawChoice;
+  _themeChoiceBusy = true;
+  let guideResult = null;
+  const completeGuide = choice === 'system' && guideV3ContextActive('systemTheme', 'system-theme-persisted');
+  const saved = await guideV3Exclusive(async ({ epoch, accountId }) => Store.updateNow('settings', (current) => {
+    if (!current || epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')) return undefined;
+    const next = structuredClone(current);
+    next.theme = choice;
+    next.systemMode = false;
+    if (next.path === 'control') next.systemSkinOff = true;
+    if (completeGuide) {
+      guideResult = window.GuideV3?.reduce(current.guideV3, {
+        type: 'guide:context-complete', completion: 'system-theme-persisted', persisted: true, at: Date.now(),
+      }) || null;
+      if (!guideResult?.accepted) return undefined;
+      next.guideV3 = guideResult.state;
+    }
+    return next;
+  }, (committed) => {
+    if (epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')) return false;
+    State.settings = committed;
+    return true;
+  }));
+  _themeChoiceBusy = false;
+  if (!saved) {
+    if (completeGuide) State._guideV3Error = 'persist';
+    applyTheme(); render();
+    return false;
+  }
+  State._guideV3Error = '';
+  if (guideResult?.metric) track(guideResult.metric);
+  applyTheme(); render();
+  return true;
 }
 // Авто-репорт креша на сервер (раз на ключ за сессию) — чтобы видеть прод-падения в фидбеке.
 function reportCrash(view, e) {
@@ -23433,7 +23501,7 @@ function guideV3TargetSelector(viewModel) {
   const chapterTargets = {
     voice: '[data-guide-target="speaker"]', hero: '[data-guide-target="hero-overview"]',
     den: '[data-guide-target="den-overview"]', pets: '[data-guide-target="pet-sphere"]',
-    stats: '[data-guide-target="stats-overview"]',
+    stats: '[data-guide-target="stats-overview"]', systemTheme: '[data-guide-target="system-theme-choice"]',
   };
   if (chapterTargets[vm.chapter] && vm.step !== 'intro') return chapterTargets[vm.chapter];
   if (vm.step === 'recognize' && vm.candidateTaskId) {
@@ -23709,7 +23777,7 @@ function guideV3RouteForState(state = guideV3State()) {
   if (!state?.currentChapter || state.currentChapter === window.GuideV3?.FIRST_CHAPTER) return 'today';
   const replay = state.chapterMeta?.[state.currentChapter]?.replay === true;
   if (!replay && state.currentStep === 'intro') return 'today';
-  return ({ habits: 'habits', calendar: 'calendar', notes: 'notes', voice: 'today', jarvis: 'today', rewards: 'rewards', hero: 'character', den: 'den', pets: 'pets', tree: 'tree', stats: 'stats' })[state.currentChapter] || 'today';
+  return ({ habits: 'habits', calendar: 'calendar', notes: 'notes', voice: 'today', jarvis: 'today', systemTheme: 'settings', rewards: 'rewards', hero: 'character', den: 'den', pets: 'pets', tree: 'tree', stats: 'stats' })[state.currentChapter] || 'today';
 }
 async function guideV3OpenContextChapter() {
   const model = window.GuideV3, state = guideV3State(), chapter = state?.currentChapter;
@@ -23720,7 +23788,7 @@ async function guideV3OpenContextChapter() {
     : chapter === 'rewards' ? context.rewardId
       : chapter === 'tree' ? context.treeNodeId : '';
   if (['calendar', 'rewards', 'tree'].includes(chapter) && !candidateId) return false;
-  const discovery = ({ habits: 'habits', calendar: 'calendar', notes: 'notes', rewards: 'rewards', hero: 'character', den: 'den', pets: 'pets', tree: 'tree', stats: 'stats' })[chapter] || '';
+  const discovery = ({ habits: 'habits', calendar: 'calendar', notes: 'notes', systemTheme: 'settings', rewards: 'rewards', hero: 'character', den: 'den', pets: 'pets', tree: 'tree', stats: 'stats' })[chapter] || '';
   const advanced = await guideV3Commit(
     { type: 'guide:context-next', itemId: candidateId || undefined, at: Date.now() },
     { repaint: false, discover: discovery },
@@ -23739,6 +23807,7 @@ async function guideV3OpenContextChapter() {
     const skill = topSkills().find((item) => item.id === context.treeSkillId);
     if (skill) State.treeSkill = skill.id;
   }
+  if (chapter === 'systemTheme') State.settingsSection = 'experience';
   State.view = guideV3RouteForState(guideV3State());
   track(`view:${State.view}`);
   render();
@@ -24705,7 +24774,7 @@ async function onClick(e) {
   if (action === 'open-path-choice') { showPathChoiceModal({ pendingPath: el.dataset.path || null, source: 'settings', returnFocus: el }); return; }
   if (action === 'toggle-system-skin-off') { State.settings.systemSkinOff = !!el.checked; autosaveSettings(); applyTheme(); render(); return; }
   if (action === 'toggle-antagonist-mute') { State.settings.pathAntagonistMuted = !!el.checked; autosaveSettings(); render(); return; }
-  if (action === 'set-theme') { State.settings.theme = el.dataset.theme === 'light' ? 'light' : 'dark'; State.settings.systemMode = false; autosaveSettings(); applyTheme(); render(); return; }
+  if (action === 'set-theme') { await persistThemeChoice(el.dataset.theme); return; }
   if (action === 'set-accent') { State.settings.accent = el.dataset.accent; State.settings.systemMode = false; autosaveSettings(); applyTheme(); render(); return; }
   if (action === 'toggle-system') {
     State.settings.systemMode = !!el.checked; autosaveSettings(); applyTheme();
@@ -27073,7 +27142,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v193';
+const PWA_CACHE_VERSION = 'satoru-v194';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -27147,7 +27216,9 @@ function initPWA() {
 }
 async function init() {
   initPWA();
+  initSystemThemeListener();
   startI18nObserver();
+  observeGuideV3BlockingSurfaces();
   document.addEventListener('submit', onSubmit);
   document.addEventListener('click', onClick);
   document.addEventListener('toggle', (e) => {

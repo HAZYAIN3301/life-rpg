@@ -7,21 +7,22 @@
 > и должен быть доступен в обычном приложении. RU остаётся owner-approved источником. C2 v191
 > отдельно выпустил его проверенные EN/DE/UK/ES-зеркала через exact-version manifest; одного
 > самодекларированного `STATUS:'translated'` для включения нового файла недостаточно.
-> Contextual pack собран локально в v193: approved RU `1.2.0` и exact-manifest EN/DE/UK/ES
-> `0.3.0`; Habits и ещё десять глав имеют `runtime-approved`. Автоматическая и локальная
-> проверка v193 проходят; production release/hash verification ещё pending. Runtime gate: approved RU source + точное совпадение
+> Contextual pack и System Theme собраны локально в v194: approved RU `1.3.0` и exact-manifest EN/DE/UK/ES
+> `0.4.0`; Habits и ещё одиннадцать глав имеют `runtime-approved`. Автоматическая и локальная
+> проверка v194 проходят; production release/hash verification ещё pending. Runtime gate: approved RU source + точное совпадение
 > locale/global/version/status с `GUIDE_V3_COPY_RELEASES`. `?guidePreview=1` доступен только
 > на localhost либо администратору.
 
-Источник истины для кода: `public/guide-v3-copy-ru.js`. Ниже находится точное зеркало всех 143 ключей версии `1.2.0`.
+Источник истины для кода: `public/guide-v3-copy-ru.js`. Ниже находится точное зеркало всех 143 ключей версии `1.3.0`.
 
-## Локальный runtime contextual pack v193 (2026-08-28)
+## Локальный runtime Guide v194 (2026-08-28)
 
-- Одним контрактом `intro → engage/compose → complete` подготовлены Calendar, Notes, Voice, Jarvis, Rewards, Hero, Den, Pets, Tree и Progress вместе с ранее подготовленной Habits. В release manifest они включены локально; production release/hash verification ещё не выполнялись.
+- Одним контрактом `intro → engage/compose → complete` подготовлены Calendar, Notes, Voice, Jarvis, System Theme, Rewards, Hero, Den, Pets, Tree и Progress вместе с ранее подготовленной Habits. В release manifest они включены локально; production release/hash verification ещё не выполнялись.
 - Calendar (точное незапланированное дело + назначенное время), Notes (текстовая заметка) и Rewards завершают действие только общей атомарной записью feature receipt + Guide state; ошибочная запись не создаёт false-success.
 - Voice требует подтверждённого provider и фактически завершившегося preview, Jarvis — нового успешного очищенного ответа точного текущего request ID, Pets — настоящей подсказки сферы с учётом активности подсфер, Tree — просмотра закреплённого доступного узла без траты очка.
 - Goals остаётся отложенной до утверждения questionnaire/data logic; Tribe — до отдельного privacy/consent релиза.
-- Версии release manifest: RU `1.2.0`; EN/DE/UK/ES `0.3.0`. Service Worker: `satoru-v193`.
+- System Theme доступна вручную из Library, не запускается auto-drip, ведёт в настоящий Settings → Experience и завершается только после сохранённого `theme: "system"`.
+- Версии release manifest: RU `1.3.0`; EN/DE/UK/ES `0.4.0`. Service Worker: `satoru-v194`.
 
 ## Runtime-выпуск Habits D1 (2026-08-28)
 
@@ -77,7 +78,7 @@
   "notes": "runtime-approved",
   "voice": "runtime-approved",
   "jarvis": "runtime-approved",
-  "systemTheme": "draft-ready",
+  "systemTheme": "runtime-approved",
   "rewards": "runtime-approved",
   "hero": "runtime-approved",
   "den": "runtime-approved",

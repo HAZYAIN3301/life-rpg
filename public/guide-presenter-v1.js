@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuidePresenterV1() {
   'use strict';
 
-  const VERSION = '1.2.0';
+  const VERSION = '1.3.0';
   const FIRST_CHAPTER = 'first-journey';
   const HABITS_CHAPTER = 'habits';
   const FIRST_STEPS = Object.freeze([
@@ -47,7 +47,7 @@
   const CHAPTER_COPY_IDS = Object.freeze({
     [FIRST_CHAPTER]: 'first',
     habits: 'habits', goals: 'goals', calendar: 'calendar', notes: 'notes',
-    voice: 'voice', jarvis: 'jarvis', rewards: 'rewards', hero: 'hero', den: 'den',
+    voice: 'voice', jarvis: 'jarvis', systemTheme: 'system_theme', rewards: 'rewards', hero: 'hero', den: 'den',
     pets: 'pets', tree: 'tree', stats: 'stats', tribe: 'tribe',
   });
 
@@ -57,6 +57,7 @@
     notes: Object.freeze({ middle: ['context.notes.capture'], targets: ['notes-nav', 'note-capture', 'note-created'] }),
     voice: Object.freeze({ middle: ['context.voice.prompt'], targets: ['speaker', 'speaker', 'speaker'] }),
     jarvis: Object.freeze({ middle: ['context.jarvis.prompt'], targets: ['helper', 'helper-input', 'helper-response'] }),
+    systemTheme: Object.freeze({ middle: ['context.system_theme.prompt'], targets: ['settings-nav', 'system-theme-choice', 'system-theme-choice'] }),
     rewards: Object.freeze({ middle: ['context.rewards.choose'], targets: ['rewards-nav', 'reward-buy', 'reward-purchase'] }),
     hero: Object.freeze({ middle: ['context.hero.prompt'], targets: ['hero-nav', 'hero-overview', 'hero-overview'] }),
     den: Object.freeze({ middle: ['context.den.prompt'], targets: ['hero-nav', 'den-overview', 'den-overview'] }),
@@ -361,12 +362,14 @@
     const step = replay ? 'intro' : (steps.includes(state.currentStep) ? state.currentStep : steps[0]);
     const meta = state.chapterMeta && state.chapterMeta[id] && typeof state.chapterMeta[id] === 'object'
       ? state.chapterMeta[id] : {};
-    const promptKey = `context.${id}.prompt`, completeKey = `context.${id}.complete`;
-    const transcriptKeys = replay
+    const copyId = CHAPTER_COPY_IDS[id];
+    const promptKey = `context.${copyId}.prompt`, completeKey = `context.${copyId}.complete`;
+    const transcriptKeysRaw = replay
       ? [promptKey, ...spec.middle, completeKey]
       : step === 'intro' ? [promptKey]
         : step === activeStep ? spec.middle
           : [completeKey];
+    const transcriptKeys = transcriptKeysRaw.filter((key, index) => key && transcriptKeysRaw.indexOf(key) === index);
     const index = replay ? 1 : steps.indexOf(step) + 1;
     const targetIndex = replay ? 0 : Math.max(0, steps.indexOf(step));
     const targetKey = spec.targets[targetIndex] || spec.targets[0];

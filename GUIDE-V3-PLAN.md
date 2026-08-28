@@ -1,6 +1,6 @@
 # Satoru Guide v3 — «Тень ведёт»
 
-Статус на 2026-08-28: First Journey, account-owned state, Guide Library, replay/Piper и пятиъязычный runtime RU/EN/DE/UK/ES выпущены до C2 v191. После Habits v192 в локальный **v193 contextual pack** собраны ещё десять глав: Calendar, Notes, Voice, Jarvis, Rewards, Hero, Den, Pets, Tree и Progress. Все они используют общий `intro → engage → complete` контракт, но pacing по-прежнему показывает не более одной новой главы за сессию. Полный автоматический gate — **1112/1112 PASS**; browser smoke библиотеки на `360×800`, `375×812`, `1280×900` проходит без overflow, малых кнопок и console errors. Production release/hash verification v192–v193 и seeded end-to-end browser-проход каждой главы ещё не выполнялись. Goals остаётся закрытой до questionnaire/data logic, Tribe — до отдельного privacy/consent релиза. Исторический RU-сценарий лежит в `GUIDE-V3-FIRST-SCRIPT-RU.md`; guide-specific концепт Искры по-прежнему не является утверждённым production-art.
+Статус на 2026-08-28: First Journey, account-owned state, Guide Library, replay/Piper и пятиъязычный runtime RU/EN/DE/UK/ES выпущены до C2 v191. Habits v192 и десять глав v193 (Calendar, Notes, Voice, Jarvis, Rewards, Hero, Den, Pets, Tree, Progress) прошли seeded browser E2E; найденные там modal/voice/replay блокеры закрыты. Локальный **v194** добавляет ручную главу System Theme и настоящее значение темы `system`, которое сохраняется атомарно и следует `prefers-color-scheme`; автоматический drip её не навязывает. Общий контракт остаётся `intro → engage → complete`, pacing — не более одной новой auto-главы за сессию. Полный автоматический gate — **1122/1122 PASS**; локальная матрица `360×800`, `375×812`, `1280×900`, RU/EN/DE/UK/ES проходит без горизонтального overflow, а кнопки Guide и System Theme держат минимум 42 px. Production push/deploy и asset-hash verification v192–v194 ещё не выполнялись. Goals остаётся закрытой до questionnaire/data logic, Tribe — до отдельного privacy/consent релиза. Подробный фактический прогон: `GUIDE-V3-V194-QA.md`. Исторический RU-сценарий лежит в `GUIDE-V3-FIRST-SCRIPT-RU.md`; guide-specific концепт Искры по-прежнему не является утверждённым production-art.
 
 ## 0. Решение
 
@@ -190,7 +190,7 @@ Satoru не нужен один длинный «полный гайд». Ему
 
 - **Voice v193:** speaker button и отдельное согласие; глава fail-closed ждёт подтверждённый voice provider, а недоступный/остановленный playback не закрывает её и не записывает consent заранее;
 - **Jarvis v193:** один новый вопрос о текущем состоянии; завершение требует нового успешного, непустого и уже показанного ответа именно текущего request ID, а не открытия окна, старого ответа или сетевой ошибки;
-- **System theme:** только teaser из Settings, не onboarding requirement.
+- **System Theme v194:** ручная глава Library, не onboarding requirement и не auto-drip. Она открывает реальный Settings → Experience, ждёт именно сохранения `theme: "system"`, следует светлой/тёмной теме устройства и только затем показывает receipt.
 
 ### Когда накоплено достаточно золота
 
@@ -481,6 +481,7 @@ settings.guideV3 = {
 - [x] **Notes v193** — реальная text capture, stable note ID, atomic `inbox + settings`, Retry без ложного receipt; media остаётся обычной функцией вне Guide-транзакции и жёстко fenced к исходным account ID/write epoch;
 - [x] **Voice/Jarvis v193** — подтверждённый provider и реальный playback перед consent; exact current-request response перед completion;
 - [x] **Rewards v193** — organic-gold eligibility, exact personal reward, atomic `purchases + settings`, неизменённая economy confirmation.
+- [x] **System Theme v194** — manual-only Library chapter, реальный Settings target, awaitable account-owned write, `prefers-color-scheme` listener, rollback/no false-success и exact `system-theme-persisted` receipt.
 
 ### Commit E — level 3 chapters
 
@@ -504,9 +505,9 @@ settings.guideV3 = {
 5. полный export + QA;
 6. только затем guide-art runtime integration.
 
-## 15. Границы после contextual pack v193
+## 15. Границы после Guide v194
 
-- Habits и десять глав v193 собраны локально; browser-матрица общей Library оболочки уже проходит, но перед production release остаются seeded end-to-end browser-сценарии действий каждой главы, разрешение на push/deploy и production asset-hash verification;
+- Habits и десять глав v193 прошли seeded end-to-end browser-сценарии; System Theme v194 прошла happy path, reload/durable receipt и responsive/locale matrix. Перед production release остаются только разрешение на push/deploy и production asset-hash verification;
 - Goals не включать до questionnaire/data logic; Tree/Goals import и другие транзакционно сложные функции не расширять скрыто внутри Guide;
 - Tribe не включать до отдельного consent/privacy QA, включая отказ «Оставить приватным», ownership и offline/error состояния;
 - questionnaire UI;

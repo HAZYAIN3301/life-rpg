@@ -146,7 +146,7 @@ test('paint is safe, singular and non-modal; missing target falls back and Esc r
     onEscape: () => { escaped += 1; },
   });
 
-  assert.equal(surfaceApi.VERSION, '1.1.0');
+  assert.equal(surfaceApi.VERSION, '1.2.0');
   assert.equal(root.style.position, 'fixed');
   assert.equal(root.getAttribute('role'), 'region');
   assert.equal(root.getAttribute('aria-modal'), null);
@@ -174,6 +174,20 @@ test('paint is safe, singular and non-modal; missing target falls back and Esc r
   assert.equal(spotlightLabel.textContent, 'Current Guide target');
   assert.equal(hiddenTarget.getAttribute('aria-describedby'), null, 'a hidden responsive duplicate is ignored');
   assert.equal(target.getAttribute('aria-describedby'), 'existing-description guide-surface-v1-spotlight-label');
+
+  const modal = doc.createElement('section');
+  modal.setAttribute('role', 'dialog');
+  const modalTarget = doc.createElement('button');
+  modalTarget._rect = { left: 700, top: 600, width: 120, height: 44 };
+  modal.appendChild(modalTarget); doc.body.appendChild(modal);
+  doc.targets.set('#modal-target', modalTarget);
+  surfaceApi.paint({ chapterLabel: 'Modal target', transcript: 'Save it', targetSelector: '#modal-target', spotlightLabel: 'Current Guide target' });
+  assert.equal(root.classList.contains('guide-target-in-modal'), true, 'Guide bubble yields to a real modal');
+  assert.equal(find(root, (node) => node.classList.contains('guide-surface-v1__bubble')).getAttribute('aria-hidden'), 'true');
+
+  surfaceApi.paint({ chapterLabel: 'Page target', transcript: 'Continue', targetSelector: '#real-quest', spotlightLabel: 'Current Guide target' });
+  assert.equal(root.classList.contains('guide-target-in-modal'), false);
+  assert.equal(find(root, (node) => node.classList.contains('guide-surface-v1__bubble')).getAttribute('aria-hidden'), null);
 
   hiddenTarget._rect = { left: 20, top: 700, width: 80, height: 44 };
   target._rect = { left: 0, top: 0, width: 0, height: 0 };

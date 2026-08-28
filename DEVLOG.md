@@ -2,6 +2,16 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-28] ◐ Guide v3 System Theme v194 + seeded E2E всего contextual pack
+
+- Все десять глав v193 пройдены в локальном браузере на seeded account через реальные feature actions: Calendar назначил точное время, Notes сохранил текст, Rewards купил конкретную личную награду, Hero/Den/Stats подтвердили смонтированные экраны, Pets открыл подсказку сферы, Tree показал закреплённый unlockable node без траты очка. Voice fail-closed без доступного provider; Jarvis fail-closed без AI key. Replay остаётся inert.
+- E2E выявил три launch-блокера, которых source-level suite не видел: Guide лежал поверх Calendar modal; плавающий voice input перекрывал кнопку Notes Save; replay повторял одну и ту же реплику, когда prompt и middle указывали на один ключ. Modal observer теперь уступает любой blocking surface и восстанавливает Guide после закрытия, voice-кнопка выбирает свободную сторону поля, presenter дедуплицирует transcript keys.
+- Добавлена ручная глава **System Theme v194**. Она появляется в Library с уровня 2, но `manualOnly` исключает её из автоматического contextual drip. CTA открывает реальный Settings → Experience; выбор `◐ System` проходит через awaitable `Store.updateNow('settings')`, сохраняет `theme: "system"`, сбрасывает конфликтующий systemMode/control skin override и выдаёт exact `system-theme-persisted` только после durable commit. Ошибка записи не меняет живое состояние и не показывает success.
+- `applyTheme()` теперь разрешает `system` через `prefers-color-scheme`, а listener обновляет оформление при смене темы устройства. RU copy поднята до `1.3.0`, EN/DE/UK/ES — до `0.4.0`; все пять exact manifests помечают System Theme `runtime-approved`. Presenter — `1.3.0`, surface — `1.2.0`, voice input — `1.1.0`, offline shell — **`satoru-v194`**.
+- Browser QA System Theme: durable completion переживает reload; сохранённый System pressed-state возвращается; фактическая тёмная тема соответствует текущему `prefers-color-scheme`; overflow `0` на `360×800`, `375×812`, `1280×900`; RU/EN/DE/UK/ES copy видима; Guide CTA и System Theme button ≥42 px. При первом проходе System Theme была 34 px — исправлено общим `.theme-opt` touch floor.
+- Автоматическая QA: focused Guide/voice suite **142/142 PASS**; полный проектный suite после исправления двух устаревших source assertions — **1122/1122 PASS**. `git diff --check` чист, art-деревья не менялись. Полный отчёт: `GUIDE-V3-V194-QA.md`.
+- Это локальный release candidate. Push, deploy и production asset-hash verification не выполнялись без отдельного разрешения.
+
 ## [2026-08-28] 🧭 Guide v3 contextual pack v193 — десять глав без десяти стен текста
 
 - В один локальный release pack добавлены **Calendar, Notes, Voice, Jarvis, Rewards, Hero, Den, Pets, Tree и Progress**. Это десять кодовых глав, но не десять одновременных подсказок: runtime сохраняет правило «не более одной новой главы за сессию», data eligibility и session boundary Hero → Den.

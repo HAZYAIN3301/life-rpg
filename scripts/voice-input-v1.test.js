@@ -153,6 +153,13 @@ test('тач-цель кнопки не меньше 42px', () => {
   assert.match(src, /width:42px;height:42px/);
 });
 
+test('плавающий микрофон не накрывает соседнюю кнопку сохранения', () => {
+  const rect = { left: 100, right: 500, top: 40, bottom: 82, height: 42 };
+  assert.deepEqual(V.buttonPlacement(rect, 900, (x) => x > 500), { x: 54, y: 40 });
+  assert.deepEqual(V.buttonPlacement(rect, 900, () => false), { x: 504, y: 40 });
+  assert.deepEqual(V.buttonPlacement({ ...rect, left: 0, right: 300 }, 320, () => true), { x: 254, y: 40 });
+});
+
 test('модуль подключается сам — «везде» не зависит от чужой памяти', () => {
   // Иначе фича снова превращается в список мест, который надо не забыть
   // пополнять. Подключение сводится к одному тегу <script>.

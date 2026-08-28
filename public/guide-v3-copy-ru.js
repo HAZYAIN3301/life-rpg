@@ -14,7 +14,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuideV3CopyRu() {
   'use strict';
 
-  const VERSION = '1.2.0';
+  const VERSION = '1.3.0';
   const LOCALE = 'ru';
   const STATUS = 'runtime-approved';
   const RUNTIME_APPROVED = true;
@@ -26,7 +26,7 @@
     notes: 'runtime-approved',
     voice: 'runtime-approved',
     jarvis: 'runtime-approved',
-    systemTheme: 'draft-ready',
+    systemTheme: 'runtime-approved',
     rewards: 'runtime-approved',
     hero: 'runtime-approved',
     den: 'runtime-approved',

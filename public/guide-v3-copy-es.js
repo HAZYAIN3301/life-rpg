@@ -23,7 +23,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuideV3CopyEs() {
   'use strict';
 
-  const VERSION = '0.3.0';
+  const VERSION = '0.4.0';
   const LOCALE = 'es';
   const STATUS = 'translated';
 
@@ -34,7 +34,7 @@
     notes: 'runtime-approved',
     voice: 'runtime-approved',
     jarvis: 'runtime-approved',
-    systemTheme: 'draft-ready',
+    systemTheme: 'runtime-approved',
     rewards: 'runtime-approved',
     hero: 'runtime-approved',
     den: 'runtime-approved',

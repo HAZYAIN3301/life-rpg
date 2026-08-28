@@ -6362,7 +6362,7 @@ html.avatar-forge-open body { overflow: hidden !important; }
 }
 
 .theme-opt {
-  min-height: 34px;
+  min-height: var(--touch-min);
 }
 
 .theme-opt.active {
@@ -16510,6 +16510,14 @@ html.calendar-task-open body {
 }
 
 .guide-safe-bubble .guide-surface-v1__spotlight { display: none; }
+
+/* A real application dialog owns focus and pointer input. The Guide instruction has
+   already been spoken before that dialog opens, so keep only its target ring visible
+   instead of covering the form controls that produce the durable receipt. */
+.guide-target-in-modal .guide-surface-v1__bubble {
+  visibility: hidden;
+  pointer-events: none;
+}
 
 .guide-surface-v1__bubble {
   z-index: 2;

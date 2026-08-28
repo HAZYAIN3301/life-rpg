@@ -15,10 +15,10 @@ const APP = fs.readFileSync(path.join(ROOT, 'public', 'app.js'), 'utf8');
 const SERVER = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
 const INDEX = fs.readFileSync(path.join(ROOT, 'public', 'index.html'), 'utf8');
 const SW = fs.readFileSync(path.join(ROOT, 'public', 'sw.js'), 'utf8');
-const CHAPTERS = ['calendar', 'notes', 'voice', 'jarvis', 'rewards', 'hero', 'den', 'pets', 'tree', 'stats'];
+const CHAPTERS = ['calendar', 'notes', 'voice', 'jarvis', 'systemTheme', 'rewards', 'hero', 'den', 'pets', 'tree', 'stats'];
 const COMPLETIONS = Object.freeze({
   calendar: 'task-date-persisted', notes: 'note-persisted', voice: 'voice-choice-persisted',
-  jarvis: 'helper-response-seen', rewards: 'purchase-persisted', hero: 'hero-seen',
+  jarvis: 'helper-response-seen', systemTheme: 'system-theme-persisted', rewards: 'purchase-persisted', hero: 'hero-seen',
   den: 'den-seen', pets: 'pets-seen', tree: 'tree-seen', stats: 'stats-seen',
 });
 
@@ -45,7 +45,7 @@ function completionEvent(chapter) {
   return event;
 }
 
-test('v193 registry releases ten contextual chapters on one reload-safe three-step contract', () => {
+test('v194 registry releases eleven contextual chapters on one reload-safe three-step contract', () => {
   for (const chapter of CHAPTERS) {
     const entry = Guide.REGISTRY.find((item) => item.chapter === chapter);
     assert.ok(entry, chapter);
@@ -281,10 +281,10 @@ test('Guide feature commit is authenticated, account-owned and rejects malformed
   assert.equal((await api(base, '/api/guide/commit', { method: 'POST', cookie: alpha.cookie, body: { data: { tasks, settings, goals: [] } } })).response.status, 400);
 });
 
-test('v193 cache and source contract ship the whole pack together', () => {
-  assert.match(SW, /const CACHE = 'satoru-v193'/);
-  assert.match(INDEX, /guide-v3\.js\?v=20260828-guide-context-v193-1/);
-  assert.match(INDEX, /app\.js\?v=20260828-guide-context-v193-1/);
+test('v194 cache and source contract ship the whole pack together', () => {
+  assert.match(SW, /const CACHE = 'satoru-v194'/);
+  assert.match(INDEX, /guide-v3\.js\?v=20260828-guide-system-theme-v194-1/);
+  assert.match(INDEX, /app\.js\?v=20260828-guide-system-theme-v194-1/);
   assert.match(SERVER, /if \(u === '\/api\/guide\/commit' && req\.method === 'POST'\)/);
   assert.match(SERVER, /commitGuideData[\s\S]*restoreSnapshot/);
 });

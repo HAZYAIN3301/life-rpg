@@ -278,6 +278,24 @@ test('Habits replay is one presentation-only screen with no feature action or it
   assert.equal(vm.actions.some((action) => /context-(?:next|complete|finish)/.test(String(action.event))), false);
 });
 
+test('context replay never repeats copy when its live middle intentionally reuses the prompt', () => {
+  const chapter = 'voice';
+  const vm = Presenter.present({
+    chapter,
+    copy: Copy,
+    state: {
+      version: 3,
+      currentChapter: chapter,
+      currentStep: 'intro',
+      completedChapters: [FIRST, chapter],
+      skippedChapters: [],
+      chapterMeta: { [chapter]: { replay: true } },
+    },
+  });
+  assert.equal(vm.transcript, [Copy.get('context.voice.prompt'), Copy.get('context.voice.complete')].join('\n\n'));
+  assert.equal(vm.transcript.split(Copy.get('context.voice.prompt')).length - 1, 1);
+});
+
 test('a disabled in-progress Habits chapter remains a resumable library chapter after enable', () => {
   let state = Guide.migrate(null, { done: true });
   state = Guide.reduce(state, { type: 'guide:start', chapter: HABITS, at: 10 }).state;
@@ -349,7 +367,7 @@ test('presenter tolerates missing input/copy without inventing fallback prose', 
 });
 
 test('UMD module is pure and available through CommonJS and a global', () => {
-  assert.equal(Presenter.VERSION, '1.2.0');
+  assert.equal(Presenter.VERSION, '1.3.0');
   const source = fs.readFileSync(path.join(__dirname, '..', 'public', 'guide-presenter-v1.js'), 'utf8');
   for (const forbidden of ['State.', 'document.', 'window.', 'Store.', 'fetch(', 'CSS.escape']) {
     assert.equal(source.includes(forbidden), false, `presenter leaked dependency: ${forbidden}`);
@@ -358,5 +376,5 @@ test('UMD module is pure and available through CommonJS and a global', () => {
   const sandbox = {};
   vm.createContext(sandbox);
   vm.runInContext(source, sandbox);
-  assert.equal(sandbox.GuidePresenterV1.VERSION, '1.2.0');
+  assert.equal(sandbox.GuidePresenterV1.VERSION, '1.3.0');
 });

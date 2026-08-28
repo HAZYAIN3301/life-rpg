@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuideSurfaceV1(root) {
   'use strict';
 
-  const VERSION = '1.1.0';
+  const VERSION = '1.2.0';
   const SURFACE_ID = 'guide-surface-v1';
   const SPOTLIGHT_LABEL_ID = 'guide-surface-v1-spotlight-label';
   let surface = null;
@@ -300,6 +300,24 @@
     ring.hidden = safe;
   }
 
+  function targetInsideModal(target) {
+    let node = target;
+    while (node) {
+      if (typeof node.getAttribute === 'function') {
+        if (node.getAttribute('role') === 'dialog') return true;
+      }
+      node = node.parentNode;
+    }
+    return false;
+  }
+
+  function setTargetInsideModal(inside) {
+    if (!surface || !bubble) return;
+    surface.classList.toggle('guide-target-in-modal', inside);
+    if (inside) bubble.setAttribute('aria-hidden', 'true');
+    else bubble.removeAttribute('aria-hidden');
+  }
+
   function resetBubblePosition() {
     if (!bubble) return;
     bubble.style.top = '';
@@ -333,7 +351,13 @@
   function reposition() {
     if (!surface || !ring) return false;
     const target = resolveTarget();
-    if (!target) { restoreTargetDescription(); resetBubblePosition(); setSafeBubble(true); return false; }
+    if (!target) {
+      restoreTargetDescription();
+      resetBubblePosition();
+      setTargetInsideModal(false);
+      setSafeBubble(true);
+      return false;
+    }
     describeTarget(target);
     const rect = target.getBoundingClientRect();
     const pad = Math.max(0, Math.min(40, number(activeModel && activeModel.spotlightPadding, 8)));
@@ -346,6 +370,7 @@
     ring.style.width = `${Math.round(width)}px`;
     ring.style.height = `${Math.round(height)}px`;
     setSafeBubble(false);
+    setTargetInsideModal(targetInsideModal(target));
     placeBubbleAround({ left, top, right: left + width, bottom: top + height });
     return true;
   }

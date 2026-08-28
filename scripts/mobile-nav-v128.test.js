@@ -34,7 +34,7 @@ test('More is purpose-grouped and exposes current states instead of one meaningl
   assert.match(sheet, /sectionEntry\('rewards'\)/);
   assert.match(sheet, /sectionEntry\('tribe'\)/);
   assert.match(sheet, /data-action="open-helper"/);
-  assert.match(sheet, /data-action="mobile-go-settings" aria-current=/);
+  assert.match(sheet, /data-action="mobile-go-settings"[^>]*aria-current=/);
   assert.match(sheet, /data-action="show-paywall" data-feature="Pro"/);
   assert.doesNotMatch(sheet, /mobile-sheet-grid/);
   assert.match(sheet, /aria-labelledby="mobile-nav-title"/);
