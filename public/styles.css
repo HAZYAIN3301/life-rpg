@@ -19888,3 +19888,464 @@ details.shutdown > summary:focus-visible {
     scroll-behavior: auto !important;
   }
 }
+
+/* ==========================================================
+   Interface hierarchy v203 — reveal complexity after intent.
+   Shared geometry for Today, Calendar, Inspiration and Board.
+   ========================================================== */
+
+/* Removing the persistent sphere dashboard must reclaim real space, not leave
+   a shell-sized gap behind it. */
+.char-summary { margin-block-start: var(--sp-2); }
+#nav { margin-block-start: var(--sp-2); }
+
+/* Shared containment: a long translated sphere name may wrap inside its field,
+   but may never make the form or the document wider. */
+.sphere-field,
+.sphere-trigger,
+.sphere-trigger-value,
+.sphere-summary-chip,
+.sphere-summary-chip > span {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  box-sizing: border-box;
+}
+.sphere-trigger { inline-size: 100%; }
+.sphere-trigger-value { overflow: hidden; }
+.sphere-summary-chip > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sphere-panel {
+  max-inline-size: min(560px, calc(100vw - (2 * var(--sp-3))));
+  overscroll-behavior: contain;
+}
+.calendar-day-support .sphere-panel { inset-inline: auto 0; }
+.cat-chip-confirm {
+  border-color: color-mix(in srgb, var(--good) 58%, var(--line-soft));
+  color: var(--text-strong);
+  background: color-mix(in srgb, var(--good) 10%, var(--surface-2));
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Today: support stays readable, but never competes with the actual work. */
+.today-support .secretary-summary.comp-row {
+  grid-template-columns: 58px minmax(0, 1fr) var(--touch-min);
+}
+.today-support .secretary-toggle {
+  inline-size: var(--touch-min);
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+.today-support .secretary-toggle-copy { display: none; }
+.today-support .secretary-summary .comp-line {
+  display: -webkit-box;
+  overflow: hidden;
+  overflow-wrap: normal;
+  word-break: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+.today-support .secretary-control :is(b, small) {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+/* Core is a stable hierarchy state, not an ornamental stripe crossing the
+   completion control. Every row reserves the same border geometry. */
+.card-quests .task {
+  grid-template-columns: var(--touch-min) minmax(0, 1fr) auto auto auto auto var(--touch-min);
+  gap: var(--sp-2);
+  margin-block: 2px;
+  padding: var(--sp-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  box-shadow: inset 0 -1px 0 var(--line-soft);
+}
+.card-quests .task:last-child { box-shadow: none; }
+.card-quests .task.is-core {
+  border-color: color-mix(in srgb, var(--accent) 58%, var(--line-soft));
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 13%, var(--surface-2)), color-mix(in srgb, var(--accent) 4%, var(--surface-1)));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 11%, transparent);
+}
+.card-quests .task.is-core.done {
+  border-color: color-mix(in srgb, var(--good) 56%, var(--line-soft));
+  background: color-mix(in srgb, var(--good) 8%, var(--surface-1));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--good) 10%, transparent);
+}
+.card-quests .task .check {
+  inline-size: var(--touch-min);
+  block-size: var(--touch-min);
+  min-inline-size: var(--touch-min);
+  min-block-size: var(--touch-min);
+}
+.card-quests .task > .t-title {
+  min-inline-size: 0;
+  display: grid;
+  gap: 4px;
+}
+.task-core-badge {
+  inline-size: max-content;
+  max-inline-size: 100%;
+  min-block-size: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding-inline: var(--sp-2);
+  border: 1px solid color-mix(in srgb, var(--accent) 48%, var(--line-soft));
+  border-radius: var(--radius-pill);
+  color: var(--today-kicker-fg);
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  font: 850 var(--type-floor)/var(--leading-label) var(--font-ui);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.task.is-core .t-title-edit { color: var(--text-strong); font-weight: 750; }
+.t-cat-more {
+  min-block-size: 22px;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: 6px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-pill);
+  color: var(--text-soft);
+  font: 750 var(--type-floor)/1 var(--font-ui);
+}
+.t-diff {
+  inline-size: 34px;
+  block-size: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface-3) 72%, transparent);
+}
+.t-diff .task-difficulty-icon { inline-size: 24px; block-size: 24px; }
+
+/* Quick capture shows the decision first; estimates and explanation are a
+   second step. The same disclosure treatment is used in Calendar. */
+.card-addquest .add-row {
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 300px) auto;
+  align-items: end;
+  gap: var(--sp-2);
+}
+.card-addquest .add-field-title { grid-column: 1; grid-row: 1; }
+.card-addquest .add-field-skill { grid-column: 2; grid-row: 1; }
+.card-addquest .add-submit { grid-column: 3; grid-row: 1; min-block-size: var(--touch-min); }
+.quest-add-options,
+.calendar-add-options {
+  min-inline-size: 0;
+  border-block-start: 1px solid var(--line-soft);
+}
+.quest-add-options { grid-column: 1 / -1; grid-row: 2; }
+.quest-add-options > summary,
+.calendar-add-options > summary,
+.difficulty-help > summary {
+  min-block-size: var(--touch-min);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  list-style: none;
+  color: var(--text-soft);
+  font: 800 var(--type-meta)/var(--leading-label) var(--font-ui);
+  cursor: pointer;
+}
+.quest-add-options > summary::-webkit-details-marker,
+.calendar-add-options > summary::-webkit-details-marker,
+.difficulty-help > summary::-webkit-details-marker { display: none; }
+.quest-add-options > summary::after,
+.calendar-add-options > summary::after,
+.difficulty-help > summary::after { content: '⌄'; color: var(--accent); }
+.quest-add-options[open] > summary::after,
+.calendar-add-options[open] > summary::after,
+.difficulty-help[open] > summary::after { content: '⌃'; }
+.quest-add-options-body {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(160px, .72fr);
+  gap: var(--sp-2);
+  padding-block-start: var(--sp-2);
+}
+.quest-add-options-body .difficulty-help { grid-column: 1 / -1; }
+.difficulty-help { min-inline-size: 0; }
+.difficulty-help .diff-hint {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-2);
+  margin-block-start: var(--sp-1);
+}
+.difficulty-help .diff-hint > span {
+  min-inline-size: 0;
+  min-block-size: var(--touch-min);
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--sp-1);
+  padding: var(--sp-2);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+  overflow-wrap: break-word;
+}
+.difficulty-help .task-difficulty-icon { inline-size: 25px; block-size: 25px; }
+
+/* Calendar header: date is two semantic lines, controls have their own space,
+   and the three modes remain one segmented control with visible separators. */
+.calendar-shell .calv-title {
+  grid-template-columns: minmax(280px, 1fr) minmax(220px, 250px) minmax(300px, auto);
+  gap: var(--sp-2);
+}
+.calendar-shell .calv-title-main {
+  grid-template-columns: var(--touch-min) minmax(180px, 1fr) var(--touch-min) auto;
+  gap: var(--sp-1);
+}
+.calendar-shell .calv-title h2 {
+  display: grid;
+  gap: 2px;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+.cal-date-primary { white-space: nowrap; }
+.cal-date-meta {
+  min-inline-size: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  color: var(--text-soft);
+  font: 700 var(--type-meta)/var(--leading-label) var(--font-ui);
+  letter-spacing: var(--tracking-natural);
+}
+.calendar-shell .cal-date-meta .wk-load {
+  padding: 0;
+  font-size: inherit;
+}
+.calendar-shell .cal-modes { gap: 0; overflow: clip; }
+.calendar-shell .cal-mode {
+  position: relative;
+  border: 1px solid transparent;
+  border-radius: 0;
+}
+.calendar-shell .cal-mode:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  inset-block: 9px;
+  inset-inline-start: -1px;
+  inline-size: 1px;
+  background: var(--line-soft);
+}
+.calendar-shell .cal-mode:first-child { border-start-start-radius: calc(var(--radius-md) - 1px); border-end-start-radius: calc(var(--radius-md) - 1px); }
+.calendar-shell .cal-mode:last-child { border-start-end-radius: calc(var(--radius-md) - 1px); border-end-end-radius: calc(var(--radius-md) - 1px); }
+.calendar-shell .cal-mode.active { z-index: 1; border-radius: calc(var(--radius-md) - 1px); }
+.calendar-shell .cal-mode.active::before,
+.calendar-shell .cal-mode.active + .cal-mode::before { opacity: 0; }
+.calendar-shell .cal-tools {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  justify-content: end;
+  gap: var(--sp-1);
+}
+.calendar-shell .cal-tools > button { padding: var(--sp-1) var(--sp-2); }
+.calendar-shell .cal-tool-copy { display: inline; }
+
+.calendar-add-card .calendar-add-form { grid-template-columns: minmax(0, 1fr); }
+.calendar-add-form :is(.add-field-title, .add-field-time, .calendar-add-options) { grid-column: 1; }
+.calendar-add-form > button { grid-column: 1; }
+.calendar-add-options-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-2);
+  padding-block-start: var(--sp-2);
+}
+.calendar-add-options-body .add-field { grid-column: 1; }
+
+/* Inspiration: one aligned URL field first; optional meaning and storage
+   details remain available without repeating themselves in the main contour. */
+.inspiration-reference-head { align-items: center; }
+.inspiration-reference-storage { min-inline-size: 0; }
+.inspiration-reference-storage > summary,
+.inspiration-reference-why > summary {
+  min-block-size: var(--touch-min);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  list-style: none;
+  color: var(--text-soft);
+  font: 800 var(--type-meta)/var(--leading-label) var(--font-ui);
+  cursor: pointer;
+}
+.inspiration-reference-storage > summary::-webkit-details-marker,
+.inspiration-reference-why > summary::-webkit-details-marker { display: none; }
+.inspiration-reference-storage > summary::after,
+.inspiration-reference-why > summary::after { content: '⌄'; color: var(--inspiration-mint); }
+.inspiration-reference-storage[open] > summary::after,
+.inspiration-reference-why[open] > summary::after { content: '⌃'; }
+.inspiration-reference-storage > p {
+  max-inline-size: var(--measure-prose);
+  margin: 0 0 var(--sp-2);
+  color: var(--text-soft);
+  font: var(--type-meta)/var(--leading-prose) var(--font-ui);
+}
+.inspiration-reference-row {
+  grid-template-columns: minmax(260px, 1fr) minmax(220px, .8fr) var(--touch-min);
+  align-items: start;
+}
+.inspiration-reference-url,
+.inspiration-reference-why { min-inline-size: 0; }
+.inspiration-reference-why > summary span { color: var(--muted); font-weight: 650; }
+.inspiration-reference-why label { margin-block-start: var(--sp-1); }
+
+/* Wildcard is a two-step chooser. The initial view contains ideas only; the
+   selected idea owns one detail form and one primary action. */
+.board-wildcard-ideas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2);
+}
+.board-wildcard-idea {
+  min-inline-size: 0;
+  min-block-size: 88px;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  background: var(--surface-1);
+  font-family: var(--font-ui);
+  text-align: start;
+  cursor: pointer;
+}
+.board-wildcard-idea > span:nth-child(2) { min-inline-size: 0; display: grid; gap: 3px; }
+.board-wildcard-idea b { color: var(--text-strong); font: 800 var(--type-control)/var(--leading-ui) var(--font-ui); overflow-wrap: break-word; }
+.board-wildcard-idea small { margin: 0; font: var(--type-meta)/var(--leading-ui) var(--font-ui); overflow-wrap: break-word; }
+.board-wildcard-idea em { color: var(--good); font: 750 var(--type-meta)/var(--leading-label) var(--font-ui); }
+.board-wildcard-idea-index {
+  inline-size: 30px;
+  block-size: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--board-gold) 46%, var(--line-soft));
+  border-radius: 50%;
+  color: var(--board-gold);
+  font: 850 var(--type-meta)/1 var(--font-data);
+}
+.board-wildcard-idea:is(:hover, :focus-visible, .is-selected) {
+  border-color: color-mix(in srgb, var(--board-gold) 62%, var(--line-strong));
+  background: color-mix(in srgb, var(--board-gold) 7%, var(--surface-1));
+}
+.board-wildcard form {
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-2);
+}
+.board-wildcard-detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+.board-wildcard-detail-head > span { color: var(--muted); font: 750 var(--type-meta)/var(--leading-label) var(--font-ui); }
+.board-wildcard-detail { min-inline-size: 0; }
+.board-wildcard-detail,
+.quest-add-options[open] .quest-add-options-body,
+.calendar-add-options[open] .calendar-add-options-body,
+.inspiration-reference-why[open] label,
+.inspiration-reference-storage[open] > p {
+  animation: hierarchy-reveal 180ms var(--ease-out, ease-out) both;
+}
+.cat-chip-confirm { animation: hierarchy-receipt 240ms var(--ease-out, ease-out) both; }
+@keyframes hierarchy-reveal {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes hierarchy-receipt {
+  0% { opacity: .64; transform: scale(.985); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.board-wildcard-detail fieldset { display: grid; gap: var(--sp-2); }
+.board-wildcard-detail fieldset > label { margin: 0; }
+.board-wildcard-actions { grid-column: 1; }
+
+@media (max-width: 900px) {
+  .calendar-shell .calv-title { grid-template-columns: minmax(0, 1fr); }
+  .calendar-shell .cal-tools { grid-template-columns: repeat(3, minmax(0, 1fr)); justify-content: stretch; }
+  .calendar-shell .cal-tool-copy { display: inline; }
+}
+
+@media (max-width: 720px) {
+  .card-addquest .add-row { grid-template-columns: minmax(0, 1fr); }
+  .card-addquest :is(.add-field-title, .add-field-skill, .quest-add-options, .add-submit) { grid-column: 1; grid-row: auto; }
+  .card-addquest .add-submit { inline-size: 100%; }
+  .quest-add-options-body,
+  .difficulty-help .diff-hint { grid-template-columns: minmax(0, 1fr); }
+
+  .card-quests .task {
+    grid-template-columns: var(--touch-min) minmax(0, 1fr) auto var(--touch-min) var(--touch-min);
+    grid-template-rows: auto auto;
+    gap: 6px var(--sp-1);
+  }
+  .card-quests .task .check { grid-column: 1; grid-row: 1 / 3; }
+  .card-quests .task > .t-title { grid-column: 2 / 5; grid-row: 1; }
+  .card-quests .task .task-more { grid-column: 5; grid-row: 1; }
+  .card-quests .task .t-cats { grid-column: 2; grid-row: 2; }
+  .card-quests .task .t-time { grid-column: 3; grid-row: 2; }
+  .card-quests .task .t-diff { grid-column: 4; grid-row: 2; }
+  .card-quests .task :is(.t-xp, .t-oath, .t-oath-btn) { grid-column: 5; grid-row: 2; }
+  .task-core-badge { margin-block-end: 2px; }
+
+  .board-wildcard-ideas { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .calendar-shell .calv-title-main { grid-template-columns: var(--touch-min) minmax(0, 1fr) var(--touch-min); }
+  .calendar-shell .calv-title h2 { text-align: center; }
+  .cal-date-primary { white-space: normal; }
+  .cal-date-meta { justify-content: center; }
+  .calendar-shell .cal-date-meta .wk-load { display: none; }
+  .calendar-shell .cal-tool-copy { display: inline; }
+
+  .inspiration-reference-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+  .inspiration-reference-storage { grid-column: 1; }
+  .inspiration-reference-row { grid-template-columns: minmax(0, 1fr) var(--touch-min); }
+  .inspiration-reference-url,
+  .inspiration-reference-why { grid-column: 1 / -1; }
+  .inspiration-reference-remove { grid-column: 2; grid-row: 1; justify-self: end; }
+
+  .board-wildcard { padding: var(--sp-3); }
+  .board-wildcard > header,
+  .board-wildcard-detail-head,
+  .board-wildcard-actions { align-items: stretch; flex-direction: column; }
+  .board-wildcard-idea { min-block-size: var(--touch-min); grid-template-columns: 30px minmax(0, 1fr) auto; }
+  .board-wildcard-detail fieldset { padding: var(--sp-2); }
+  .board-wildcard-actions .btn { inline-size: 100%; }
+}
+
+@media (pointer: coarse) {
+  .board-wildcard-idea,
+  .quest-add-options > summary,
+  .calendar-add-options > summary,
+  .difficulty-help > summary,
+  .inspiration-reference-storage > summary,
+  .inspiration-reference-why > summary { min-block-size: var(--touch-min); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .task-core-badge,
+  .card-quests .task,
+  .board-wildcard-idea,
+  .board-wildcard-detail,
+  .cat-chip-confirm,
+  .quest-add-options *,
+  .calendar-add-options *,
+  .inspiration-reference-row * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

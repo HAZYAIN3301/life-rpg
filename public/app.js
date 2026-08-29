@@ -910,6 +910,10 @@ const I18N_EXTRA = {
   'Ссылка на видео': { en: 'Video link', de: 'Videolink', uk: 'Посилання на відео', es: 'Enlace al vídeo' },
   'TikTok, YouTube, Reels или другая видеоссылка': { en: 'TikTok, YouTube, Reels or another video link', de: 'TikTok, YouTube, Reels oder ein anderer Videolink', uk: 'TikTok, YouTube, Reels або інше відеопосилання', es: 'TikTok, YouTube, Reels u otro enlace de vídeo' },
   'Почему это мотивирует?': { en: 'Why does this motivate you?', de: 'Warum motiviert dich das?', uk: 'Чому це мотивує?', es: '¿Por qué te motiva?' },
+  'Почему цепляет?': { en: 'Why does it resonate?', de: 'Warum spricht es dich an?', uk: 'Чому це чіпляє?', es: '¿Por qué te llega?' },
+  'Что именно здесь тебя цепляет?': { en: 'What exactly resonates with you here?', de: 'Was spricht dich hier genau an?', uk: 'Що саме тут тебе чіпляє?', es: '¿Qué te llega exactamente de esto?' },
+  'Необязательно · до 10 ссылок.': { en: 'Optional · up to 10 links.', de: 'Optional · bis zu 10 Links.', uk: 'Необов’язково · до 10 посилань.', es: 'Opcional · hasta 10 enlaces.' },
+  'Как хранятся ссылки': { en: 'How links are stored', de: 'Wie Links gespeichert werden', uk: 'Як зберігаються посилання', es: 'Cómo se guardan los enlaces' },
   'Необязательно. Что именно здесь тебя цепляет?': { en: 'Optional. What exactly resonates with you here?', de: 'Optional. Was spricht dich hier genau an?', uk: 'Необов’язково. Що саме тут тебе чіпляє?', es: 'Opcional. ¿Qué te llega exactamente de esto?' },
   'Удалить видео': { en: 'Remove video', de: 'Video entfernen', uk: 'Видалити відео', es: 'Eliminar vídeo' },
   'Добавить видео': { en: 'Add video', de: 'Video hinzufügen', uk: 'Додати відео', es: 'Añadir vídeo' },
@@ -977,6 +981,7 @@ const I18N_EXTRA = {
   'Граница достигнута — выбери честный исход': { en: 'Boundary reached — choose an honest outcome', de: 'Grenze erreicht — wähle einen ehrlichen Ausgang', uk: 'Межі досягнуто — обери чесний результат', es: 'Límite alcanzado: elige un resultado honesto' },
   'Открыть границу': { en: 'Open boundary', de: 'Grenze öffnen', uk: 'Відкрити межу', es: 'Abrir límite' },
   'Satoru рядом': { en: 'Satoru is here', de: 'Satoru ist da', uk: 'Satoru поруч', es: 'Satoru está aquí' },
+  'Тень рядом': { en: 'Shadow is here', de: 'Schatten ist da', uk: 'Тінь поруч', es: 'Sombra está aquí' },
   'Пора завершить рабочий день': { en: 'Time to end the workday', de: 'Zeit, den Arbeitstag zu beenden', uk: 'Час завершити робочий день', es: 'Es hora de terminar la jornada' },
   'Не нужно держать всю систему в голове': { en: 'You do not need to keep the whole system in your head', de: 'Du musst nicht das ganze System im Kopf behalten', uk: 'Не потрібно тримати всю систему в голові', es: 'No necesitas tener todo el sistema en la cabeza' },
   'Выбери нужную поддержку': { en: 'Choose the support you need', de: 'Wähle die Unterstützung, die du brauchst', uk: 'Обери потрібну підтримку', es: 'Elige el apoyo que necesitas' },
@@ -1501,7 +1506,6 @@ const I18N_EXTRA = {
   '📋 Скопировать': { en: '📋 Copy', de: '📋 Kopieren', uk: '📋 Скопіювати', es: '📋 Copiar' },
   'Я сохранил → продолжить': { en: 'I saved it → continue', de: 'Gespeichert → weiter', uk: 'Я зберіг → продовжити', es: 'Lo guardé → continuar' },
   'Скопируй вручную': { en: 'Copy it manually', de: 'Bitte manuell kopieren', uk: 'Скопіюй вручну', es: 'Cópialo manualmente' },
-  'Профиль': { en: 'Profile', de: 'Profil', uk: 'Профіль', es: 'Perfil' },
   'Рекорд:': { en: 'Record:', de: 'Rekord:', uk: 'Рекорд:', es: 'Récord:' },
   'Как играть': { en: 'How to play', de: 'Spielanleitung', uk: 'Як грати', es: 'Cómo jugar' },
   'Обновлённый гайд пока готовится на твоём языке. Основные функции доступны без него.': { en: 'The updated guide is still being prepared in your language. The core features remain available without it.', de: 'Der aktualisierte Guide wird für deine Sprache noch vorbereitet. Die Kernfunktionen bleiben auch ohne ihn verfügbar.', uk: 'Оновлений гайд ще готується твоєю мовою. Основні функції доступні й без нього.', es: 'La guía actualizada todavía se está preparando en tu idioma. Las funciones principales siguen disponibles sin ella.' },
@@ -3817,7 +3821,6 @@ const I18N_EXTRA = {
   // ── Settings v120 ──
   'Твоя система': { en: 'Your system', de: 'Dein System', uk: 'Твоя система', es: 'Tu sistema' },
   'Разделы настроек': { en: 'Settings sections', de: 'Einstellungsbereiche', uk: 'Розділи налаштувань', es: 'Secciones de ajustes' },
-  'Аккаунт': { en: 'Account', de: 'Konto', uk: 'Акаунт', es: 'Cuenta' },
   'Опыт': { en: 'Experience', de: 'Erlebnis', uk: 'Досвід', es: 'Experiencia' },
   'Жизнь': { en: 'Life', de: 'Leben', uk: 'Життя', es: 'Vida' },
   'Прогресс': { en: 'Progress', de: 'Fortschritt', uk: 'Прогрес', es: 'Progreso' },
@@ -3845,7 +3848,6 @@ const I18N_EXTRA = {
   'Достижения': { en: 'Achievements', de: 'Erfolge', uk: 'Досягнення', es: 'Logros' },
   'Сундуки': { en: 'Chests', de: 'Truhen', uk: 'Скрині', es: 'Cofres' },
   'Эпизоды': { en: 'Episodes', de: 'Episoden', uk: 'Епізоди', es: 'Episodios' },
-  'Профиль': { en: 'Profile', de: 'Profil', uk: 'Профіль', es: 'Perfil' },
   'Повторить чтение': { en: 'Retry reading', de: 'Lesen erneut versuchen', uk: 'Повторити читання', es: 'Reintentar lectura' },
   'Проверяю…': { en: 'Checking…', de: 'Prüfe…', uk: 'Перевіряю…', es: 'Comprobando…' },
   'Изменения настроек заблокированы до восстановления данных': { en: 'Settings changes are blocked until data recovers', de: 'Einstellungsänderungen sind bis zur Datenwiederherstellung gesperrt', uk: 'Зміни налаштувань заблоковано до відновлення даних', es: 'Los cambios de ajustes están bloqueados hasta recuperar los datos' },
@@ -4043,6 +4045,9 @@ const I18N_EXTRA = {
   'Лёгкая — рутина, механика': { en: 'Easy — routine, mechanical', de: 'Leicht — Routine, mechanisch', uk: 'Легка — рутина, механіка', es: 'Fácil — rutina, mecánica' },
   'Обычная — требует фокуса': { en: 'Normal — requires focus', de: 'Normal — erfordert Fokus', uk: 'Звичайна — потребує фокусу', es: 'Normal — requiere concentración' },
   'Сложная — вызов, выход из зоны комфорта → активирует Хайп': { en: 'Hard — a challenge beyond your comfort zone → activates Hype', de: 'Schwer — eine Herausforderung außerhalb der Komfortzone → aktiviert Hype', uk: 'Складна — виклик поза зоною комфорту → активує Хайп', es: 'Difícil — un reto fuera de tu zona de confort → activa Hype' },
+  'Длительность и сложность': { en: 'Duration and difficulty', de: 'Dauer und Schwierigkeit', uk: 'Тривалість і складність', es: 'Duración y dificultad' },
+  'Как выбрать сложность?': { en: 'How do I choose difficulty?', de: 'Wie wähle ich die Schwierigkeit?', uk: 'Як обрати складність?', es: '¿Cómo elijo la dificultad?' },
+  'Сфера выбрана': { en: 'Area selected', de: 'Bereich ausgewählt', uk: 'Сферу обрано', es: 'Área seleccionada' },
   'Квесты на сегодня': { en: 'Today’s quests', de: 'Heutige Quests', uk: 'Квести на сьогодні', es: 'Misiones de hoy' },
   'План:': { en: 'Plan:', de: 'Plan:', uk: 'План:', es: 'Plan:' },
   'На сегодня привычек нет.': { en: 'No habits for today.', de: 'Für heute gibt es keine Gewohnheiten.', uk: 'На сьогодні звичок немає.', es: 'No hay hábitos para hoy.' },
@@ -5967,6 +5972,19 @@ function setSphereFieldValue(form, skillId) {
   const label = field && field.querySelector('.sphere-trigger-value'); if (label) label.textContent = skillLabel(skillId);
   refreshSphereField(field);
 }
+function acknowledgeSphereChoice(field, skillId) {
+  const form = field && field.closest('form'); if (!form) return;
+  form.dataset.catTouched = '1';
+  const host = form.parentElement;
+  const box = host && host.querySelector('#cat-suggest');
+  if (!box) return;
+  if (box._ackTimer) clearTimeout(box._ackTimer);
+  box.innerHTML = `<span class="cat-chip cat-chip-confirm">✓ ${esc(t('Сфера выбрана'))}: <b>${esc(skillLabel(skillId))}</b></span>`;
+  box._ackTimer = setTimeout(() => {
+    if (box.isConnected) box.innerHTML = '';
+    box._ackTimer = null;
+  }, 1600);
+}
 function updateCatSuggest(inputEl) {
   const form = inputEl.closest('form'); if (!form) return;
   const box = form.parentElement.querySelector('#cat-suggest'); if (!box) return;
@@ -6086,7 +6104,7 @@ const State = {
   _inspirationSection: 'today', _inspirationSetupOpen: false, _inspirationDraft: null, _inspirationRenderedOnce: false,
   _shelfPendingSource: null, _shelfNoteDraft: '',
   boardMedia: null, _boardMediaLoadError: '', _boardMediaBusy: false, _boardBusy: false, _boardError: '', _boardFocusAfterCommit: '',
-  _boardComplete: null, _boardV2Receipt: null,
+  _boardComplete: null, _boardV2Receipt: null, _boardWildcardChoice: '',
   strava: null, _stravaSyncing: false,
   chatLog: [], _chatBusy: false,
   leaderboard: null, _lbLoading: false, _lbError: '', party: null, _partyLoading: false, _partyError: '',
@@ -12062,7 +12080,6 @@ function renderHeader(force = false) {
   const c = State.settings.curve, oi = levelInfo(overallXp(), c.base, c.growth), streak = currentStreak();
   const cr = charRank(), eqTitle = equippedTitle(), e = ent();
   const hype = hypeState();
-  const top = topSkills();
   const header = document.getElementById('charSummary');
   const nextKey = JSON.stringify({
     appName: State.settings.appName || 'Satoru',
@@ -12076,21 +12093,9 @@ function renderHeader(force = false) {
     hype: [hypePct(), hype ? hype.stacks : 0, hypeMinLeft()],
     tier: [e.tier, trialDaysLeft()],
     avatar: State.settings.avatarForge || State.settings.avatarAppearance || null,
-    skills: top.map((s) => [s.id, s.name, s.color, skillXp(s.id)]),
   });
   if (!force && header && header.childElementCount && nextKey === _headerRenderKey) return;
   _headerRenderKey = nextKey;
-  const skills = top.map((s) => {
-    const si = levelInfo(skillXp(s.id), c.skillBase, c.growth), sr = rankFor(si.level), pillar = isPillar(s.id);
-    const l = lang(), lvl = I18N_LVL[l] || 'ур.';
-    const titleName = l === 'ru' ? s.name : i18nWord(s.name, l);
-    const titleRank = l === 'ru' ? sr.name : i18nWord(sr.name, l);
-    const subInfo = pillar ? ` · ${descendantSkills(s.id).length} ${l === 'ru' ? 'под-навыков' : i18nWord('под-навыков', l)}` : '';
-    return `<div class="skill-chip" title="${esc(titleName)} — ${esc(titleRank)} (${lvl}${si.level}, ${skillXp(s.id)} XP)${subInfo}">
-      <span class="dot" style="background:${esc(s.color)}"></span>
-      <span class="sk-name">${esc(s.name)}${pillar ? ' ▾' : ''}</span><span class="sk-lvl">ур.${si.level}</span>
-      <span class="sk-bar"><span style="width:${si.pct}%;background:${esc(s.color)}"></span></span></div>`;
-  }).join('');
   const proBadge = e.tier === 'pro' ? `<span class="plan-badge pro" title="${t('Pro активен')}">PRO</span>`
     : e.tier === 'trial' ? `<span class="plan-badge trial" title="${t('Pro-триал')}">PRO ${localizedDayCount(trialDaysLeft(), true)}</span>`
     : `<button class="plan-badge free" data-action="show-paywall" data-feature="Pro" title="Открыть Pro — сейчас у тебя Free">${satoruIconHTML('status.unlock', 'inline-glyph', '◇')} Pro?</button>`;
@@ -12108,8 +12113,7 @@ function renderHeader(force = false) {
       <button class="help-btn" data-action="show-guide" data-guide-target="guide-library" title="${t('Как играть')}" aria-label="${t('Как играть')}">${satoruIconHTML('status.info', 'help-glyph', '?')}</button>
       ${proBadge}
       <button class="btn ghost logout-btn" data-action="logout" title="${t('Сменить профиль')}">${t('⇦ Выйти')}</button>
-    </div>
-    <div class="skills-row">${skills}</div>`;
+    </div>`;
 }
 
 // ============================================================
@@ -12118,10 +12122,12 @@ function renderHeader(force = false) {
 function catChips(t) {
   const ids = taskSkills(t);
   if (!ids.length) return `<span class="t-cat missing">— сфера —</span>`;
-  const main = ids.map((sid) => { const s = skillById(sid); return `<span class="t-cat ${s.missing ? 'missing' : ''}" style="--c:${esc(s.color)}">${esc(s.name)}</span>`; }).join('');
-  // Фоновые слои — приглушённо: они есть, но не спорят за внимание с основной сферой.
-  const lay = taskLayers(t).map((sid) => { const s = skillById(sid); return `<span class="t-cat is-layer" style="--c:${esc(s.color)}">${esc(s.name)}</span>`; }).join('');
-  return main + lay;
+  const primary = skillById(ids[0]);
+  const hiddenCount = Math.max(0, ids.length - 1) + taskLayers(t).length;
+  // В рабочем контуре показываем только ведущую сферу. Полная разметка остаётся
+  // в picker/accessible label: дополнительные чипы не должны превращать одну
+  // строку квеста в многоэтажную карточку.
+  return `<span class="t-cat ${primary.missing ? 'missing' : ''}" style="--c:${esc(primary.color)}">${esc(primary.name)}</span>${hiddenCount ? `<span class="t-cat-more" aria-hidden="true">+${hiddenCount}</span>` : ''}`;
 }
 // ⚠️ Параметр НЕ называть `t` — затенил бы глобальную функцию перевода t() (см. баг fb_mrkzunjjmn61).
 // ── Ядро дня (DISCIPLINE-BOUNDARIES-PLAN §2.8) ────────────────────────────────
@@ -12149,10 +12155,13 @@ function questRow(q) {
   const guideRowTarget = ['first-task-select', 'first-task-focus'].includes(guideTarget) ? ` data-guide-target="${guideTarget}"` : '';
   const guideCompleteTarget = guideTarget === 'first-task-complete' ? ' data-guide-target="first-task-complete"' : '';
   const guideRewardTarget = guideTarget === 'first-task-reward' ? ' data-guide-target="first-task-reward"' : '';
-  const skSel = `<button class="t-cats" data-action="edit-cats" data-id="${q.id}" aria-label="${t('Изменить сферы квеста')}: ${esc(fullTitle)}" title="${t('Категории квеста — клик чтобы изменить (можно несколько)')}">${catChips(q)}</button>`;
-  const titleCell = State._editTask === q.id
+  const sphereNames = [...taskSkills(q), ...taskLayers(q)].map((sid) => skillById(sid)).filter((s) => !s.missing).map((s) => s.name).join(', ');
+  const skSel = `<button class="t-cats" data-action="edit-cats" data-id="${q.id}" aria-label="${t('Изменить сферы квеста')}: ${esc(fullTitle)}${sphereNames ? ` · ${esc(sphereNames)}` : ''}" title="${sphereNames ? esc(sphereNames) : t('Категории квеста — клик чтобы изменить (можно несколько)')}">${catChips(q)}</button>`;
+  const coreBadge = q.core ? `<span class="task-core-badge"><span aria-hidden="true">◆</span>${esc(t('Ядро дня'))}</span>` : '';
+  const titleControl = State._editTask === q.id
     ? `<form class="t-edit-form" data-id="${q.id}"><input name="title" value="${esc(q.title)}" maxlength="160" autocomplete="off" aria-label="${t('Квест')}" /></form>`
-    : `<span class="t-title"><button class="t-title-edit" data-action="edit-task-title" data-id="${q.id}" aria-label="${t('Изменить название квеста')}: ${esc(fullTitle)}" title="${t('Клик — изменить текст квеста')}"><span class="t-title-copy" data-noi18n>${taskContentIconHTML(q, 'task-content-icon')}${esc(fullTitle)}</span></button></span>`;
+    : `<button class="t-title-edit" data-action="edit-task-title" data-id="${q.id}" aria-label="${t('Изменить название квеста')}: ${esc(fullTitle)}" title="${t('Клик — изменить текст квеста')}"><span class="t-title-copy" data-noi18n>${taskContentIconHTML(q, 'task-content-icon')}${esc(fullTitle)}</span></button>`;
+  const titleCell = `<div class="t-title">${coreBadge}${titleControl}</div>`;
   // Квест из прошлого: «✓ в свой день» — засчитать в дату плана, а не в сегодня (fb_mr4qhq6gy30w)
   // Намеренно НЕ taskOverdue(): здесь «past» — просто факт, что дата в прошлом, а не суждение
   // о долге. Амнистия снимает долг, но не право сказать «я это всё-таки сделал в тот день».
@@ -12809,7 +12818,7 @@ function renderCalendarView() {
   return `<section class="calendar-shell calendar-day-shell" data-calendar-date="${date}" aria-labelledby="calendar-screen-title">
     <header class="card calv-head">
       <div class="calv-title">
-        <div class="calv-title-main"><button type="button" class="btn ghost sm cal-nav-prev" data-action="cal-shift" data-days="-1" aria-label="${esc(t('Предыдущий день'))}">${satoruIconHTML('action.back', 'cal-action-icon', '‹')}</button><h2 id="calendar-screen-title" tabindex="-1">${d.getDate()} ${esc(t(MON[d.getMonth()]))} <span class="muted">· ${esc(t(WD[d.getDay()]))}${date === todayStr() ? ` · ${esc(t('сегодня'))}` : ''}</span></h2><button type="button" class="btn ghost sm cal-nav-next" data-action="cal-shift" data-days="1" aria-label="${esc(t('Следующий день'))}">${satoruIconHTML('action.forward', 'cal-action-icon', '›')}</button>${date !== todayStr() ? `<button type="button" class="btn ghost sm cal-nav-today" data-action="cal-today">${esc(t('Сегодня'))}</button>` : ''}<span class="wk-load muted">${esc(t('план:'))} ${fmtDur(planned)}</span></div>
+        <div class="calv-title-main"><button type="button" class="btn ghost sm cal-nav-prev" data-action="cal-shift" data-days="-1" aria-label="${esc(t('Предыдущий день'))}">${satoruIconHTML('action.back', 'cal-action-icon', '‹')}</button><h2 id="calendar-screen-title" tabindex="-1"><span class="cal-date-primary">${d.getDate()} ${esc(t(MON[d.getMonth()]))}</span><span class="cal-date-meta">${esc(t(WD[d.getDay()]))}${date === todayStr() ? ` · ${esc(t('сегодня'))}` : ''}<span class="wk-load">${esc(t('план:'))} ${fmtDur(planned)}</span></span></h2><button type="button" class="btn ghost sm cal-nav-next" data-action="cal-shift" data-days="1" aria-label="${esc(t('Следующий день'))}">${satoruIconHTML('action.forward', 'cal-action-icon', '›')}</button>${date !== todayStr() ? `<button type="button" class="btn ghost sm cal-nav-today" data-action="cal-today">${esc(t('Сегодня'))}</button>` : ''}</div>
         ${calModeToggle('day')}${calendarToolsHTML()}
       </div>
       <div class="calv-strip" role="group" aria-label="${esc(t('Дни выбранной недели'))}">${strip}</div>
@@ -12828,12 +12837,14 @@ function renderCalendarView() {
           <input type="hidden" name="date" value="${date}" />
           <label class="add-field add-field-title"><span class="add-field-label">${esc(t('Название квеста'))}</span><input name="title" placeholder="${esc(t('Новый квест на этот день…'))}" autocomplete="off" maxlength="160" required /></label>
           <label class="add-field add-field-time"><span class="add-field-label">${esc(t('Начало'))}</span><input name="startTime" type="time" min="00:00" max="23:45" step="900" /></label>
-          ${sphereFieldHTML()}
-          <div class="add-field add-field-duration" role="group" aria-label="${esc(t('Длительность'))}">${durInputHTML('estimateMin', 30, true)}</div>
-          <label class="add-field add-field-difficulty"><span class="add-field-label">${esc(t('Сложность'))}</span><select name="difficulty"><option value="easy">${esc(t('Лёгкая'))}</option><option value="normal" selected>${esc(t('Обычная'))}</option><option value="hard">${esc(t('Сложная'))}</option></select></label>
+          <details class="calendar-add-options"><summary>${esc(t('Дополнительные настройки'))}</summary><div class="calendar-add-options-body">
+            ${sphereFieldHTML()}
+            <div class="add-field add-field-duration" role="group" aria-label="${esc(t('Длительность'))}">${durInputHTML('estimateMin', 30, true)}</div>
+            <label class="add-field add-field-difficulty"><span class="add-field-label">${esc(t('Сложность'))}</span><select name="difficulty"><option value="easy">${esc(t('Лёгкая'))}</option><option value="normal" selected>${esc(t('Обычная'))}</option><option value="hard">${esc(t('Сложная'))}</option></select></label>
+          </div></details>
           <p class="calendar-add-status muted" aria-live="polite"></p>
           <button type="submit">${satoruIconHTML('action.add', 'button-glyph', '+')} ${esc(t('Добавить квест'))}</button></form>
-          <div id="cat-suggest" class="cat-suggest"></div></section>
+          <div id="cat-suggest" class="cat-suggest" role="status" aria-live="polite"></div></section>
         ${unscheduled.length ? `<details class="card calv-tray"><summary><span class="calv-tray-title">${satoruIconHTML('system.calendar', 'heading-glyph', '📥')} ${esc(t('Квесты без времени'))}</span><span class="calv-tray-count">${unscheduled.length}</span></summary><div class="calv-chips">${trayTasks}</div></details>` : ''}
       </aside>
     </div>
@@ -15264,7 +15275,7 @@ function companionCard(controlHTML = '') {
         <div class="comp-name"><b>${esc(c.name)}</b><span class="secretary-streak" title="${t('Рекорд:')} ${localizedDayCount(longestStreak())}">${satoruIconHTML('status.streak', 'inline-emblem', '🔥')} ${localizedDayCount(currentStreak(), true)}</span>${reward}</div>
         <div class="comp-line-row" data-tts><p class="comp-line">${mood.line}</p>${ttsBtnHTML()}</div>
       </div>
-      ${form ? '' : `<button type="button" class="secretary-toggle" data-action="toggle-today-companion" aria-expanded="${expanded}" aria-controls="secretary-details">${t(expanded ? 'Свернуть' : 'Подробнее')} <span aria-hidden="true">${expanded ? '⌃' : '⌄'}</span></button>`}
+      ${form ? '' : `<button type="button" class="secretary-toggle" data-action="toggle-today-companion" aria-expanded="${expanded}" aria-controls="secretary-details" aria-label="${esc(t(expanded ? 'Свернуть' : 'Подробнее'))}" title="${esc(t(expanded ? 'Свернуть' : 'Подробнее'))}"><span class="secretary-toggle-copy">${t(expanded ? 'Свернуть' : 'Подробнее')}</span><span aria-hidden="true">${expanded ? '⌃' : '⌄'}</span></button>`}
     </div>
     ${controlHTML}
     <div id="secretary-details" class="secretary-details${expanded ? '' : ' is-collapsed'}">
@@ -17139,46 +17150,62 @@ function boardV2CommunityHTML() {
     </div>` : ''}
   </section>`;
 }
-function boardV2WildcardPanelHTML() {
-  if (lang() !== 'ru' || !State._boardWildcardOpen) return '';
-  const draft = State._boardWildcardDraft || {};
+const BOARD_WILDCARD_IDEAS = [
+  { id: 'film', title: 'Короткий фильм за 48 часов', summary: 'Один законченный эксперимент, публикация необязательна.' },
+  { id: 'offline', title: '30 дней без выбранных соцсетей', summary: 'Убрать один источник шума, сохранив нужные контакты.' },
+  { id: 'room', title: 'Перестроить пространство', summary: 'Одна безопасная перестановка с понятной целью.' },
+  { id: 'minecraft', title: 'Запустить Minecraft-сервер', summary: 'Общий мир, компания и цель на 30 дней.' },
+  { id: 'cosplay', title: 'Собрать косплей', summary: 'Персонаж, дата и первый реальный элемент образа.' },
+  { id: 'dm', title: 'Провести мини-кампанию', summary: 'Один модуль, конкретные игроки и приглашение.' },
+];
+function boardWildcardDraftFromForm(form, seed = State._boardWildcardDraft || {}) {
+  if (!form) return { ...seed };
+  const data = new FormData(form), choice = String(data.get('wildcardType') || State._boardWildcardChoice || '');
+  const next = { ...seed };
+  const enabled = { film: 'filmEnabled', offline: 'offlineEnabled', room: 'roomEnabled', minecraft: 'minecraftEnabled', cosplay: 'cosplayEnabled', dm: 'dmEnabled' };
+  Object.values(enabled).forEach((key) => { next[key] = false; });
+  if (enabled[choice]) next[enabled[choice]] = true;
+  const text = (name) => String(data.get(name) || '').trim();
+  if (choice === 'film') next.filmTheme = text('filmTheme');
+  if (choice === 'offline') next.offlineApps = text('offlineApps');
+  if (choice === 'room') Object.assign(next, { roomName: text('roomName'), roomGoal: text('roomGoal'), roomLayout: text('roomLayout'), roomReady: data.has('roomReady') });
+  if (choice === 'minecraft') Object.assign(next, { minecraftName: text('minecraftName'), minecraftPlayers: text('minecraftPlayers'), minecraftGoal: text('minecraftGoal'), minecraftReady: data.has('minecraftReady') });
+  if (choice === 'cosplay') Object.assign(next, { cosplayCharacter: text('cosplayCharacter'), cosplayDate: text('cosplayDate'), cosplayPiece: text('cosplayPiece'), cosplayBudget: data.has('cosplayBudget') });
+  if (choice === 'dm') Object.assign(next, { dmGame: text('dmGame'), dmPlayers: text('dmPlayers'), dmModule: text('dmModule'), dmReady: data.has('dmReady') });
+  return next;
+}
+function boardWildcardIdeaReady(id, draft) {
+  if (id === 'film') return !!draft.filmTheme;
+  if (id === 'offline') return !!draft.offlineApps;
+  if (id === 'room') return !!(draft.roomName && draft.roomGoal && draft.roomLayout && draft.roomReady);
+  if (id === 'minecraft') return !!(draft.minecraftName && draft.minecraftPlayers && draft.minecraftGoal && draft.minecraftReady);
+  if (id === 'cosplay') return !!(draft.cosplayCharacter && draft.cosplayDate && draft.cosplayPiece && draft.cosplayBudget);
+  if (id === 'dm') return !!(draft.dmGame && draft.dmPlayers && draft.dmModule && draft.dmReady);
+  return false;
+}
+function boardWildcardFieldsHTML(choice, draft) {
   const checked = (key) => draft[key] ? ' checked' : '';
   const value = (key) => esc(draft[key] || '');
+  if (choice === 'film') return `<fieldset><legend>Короткий фильм за 48 часов</legend><label>Тема фильма<input name="filmTheme" maxlength="100" autocomplete="off" value="${value('filmTheme')}" placeholder="например: один звонок меняет маршрут" data-noi18n required></label><small>Дедлайн будет зафиксирован ровно через 48 часов. Публиковать фильм не обязательно.</small></fieldset>`;
+  if (choice === 'offline') return `<fieldset><legend>30 дней без выбранных соцсетей</legend><label>Какие именно<input name="offlineApps" maxlength="120" autocomplete="off" value="${value('offlineApps')}" placeholder="например: TikTok и Instagram" data-noi18n required></label><small>Перед удалением сохрани нужные контакты и способ связи.</small></fieldset>`;
+  if (choice === 'room') return `<fieldset><legend>Перестроить пространство</legend><label>Где<input name="roomName" maxlength="80" autocomplete="off" value="${value('roomName')}" placeholder="например: рабочую комнату" data-noi18n required></label><label>Зачем<input name="roomGoal" maxlength="120" autocomplete="off" value="${value('roomGoal')}" placeholder="например: освободить место для тренировок" data-noi18n required></label><label>Готовый план<input name="roomLayout" maxlength="160" autocomplete="off" value="${value('roomLayout')}" placeholder="например: стол к окну, диван к дальней стене" data-noi18n required></label><label class="board-wildcard-check"><input type="checkbox" name="roomReady"${checked('roomReady')} required> Я проверил размеры и могу безопасно передвинуть мебель</label></fieldset>`;
+  if (choice === 'minecraft') return `<fieldset><legend>Запустить Minecraft-сервер</legend><label>Название сервера<input name="minecraftName" maxlength="80" autocomplete="off" value="${value('minecraftName')}" placeholder="например: Новый континент" data-noi18n required></label><label>Кого позовёшь<input name="minecraftPlayers" maxlength="120" autocomplete="off" value="${value('minecraftPlayers')}" placeholder="например: Макса, Диму и Леру" data-noi18n required></label><label>Общая цель<input name="minecraftGoal" maxlength="160" autocomplete="off" value="${value('minecraftGoal')}" placeholder="например: построить город и победить дракона" data-noi18n required></label><label class="board-wildcard-check"><input type="checkbox" name="minecraftReady"${checked('minecraftReady')} required> Я действительно могу связаться с этой компанией</label></fieldset>`;
+  if (choice === 'cosplay') return `<fieldset><legend>Собрать косплей</legend><label>Персонаж<input name="cosplayCharacter" maxlength="100" autocomplete="off" value="${value('cosplayCharacter')}" placeholder="например: Макима" data-noi18n required></label><label>К какой дате<input type="date" name="cosplayDate" min="${todayStr()}" value="${value('cosplayDate')}" data-noi18n required></label><label>Первый элемент образа<input name="cosplayPiece" maxlength="120" autocomplete="off" value="${value('cosplayPiece')}" placeholder="например: парик и укладка" data-noi18n required></label><label class="board-wildcard-check"><input type="checkbox" name="cosplayBudget"${checked('cosplayBudget')} required> Я определил допустимый бюджет, включая вариант 0 €</label></fieldset>`;
+  if (choice === 'dm') return `<fieldset><legend>Провести мини-кампанию</legend><label>Игра или система<input name="dmGame" maxlength="100" autocomplete="off" value="${value('dmGame')}" placeholder="например: D&amp;D 5e" data-noi18n required></label><label>Для кого<input name="dmPlayers" maxlength="120" autocomplete="off" value="${value('dmPlayers')}" placeholder="например: четыре друга из нашей компании" data-noi18n required></label><label>Стартовый модуль<input name="dmModule" maxlength="160" autocomplete="off" value="${value('dmModule')}" placeholder="например: Lost Mine of Phandelver" data-noi18n required></label><label class="board-wildcard-check"><input type="checkbox" name="dmReady"${checked('dmReady')} required> Я могу отправить игрокам конкретное приглашение</label></fieldset>`;
+  return '';
+}
+function boardV2WildcardPanelHTML() {
+  if (lang() !== 'ru' || !State._boardWildcardOpen) return '';
+  const draft = State._boardWildcardDraft || {}, choice = State._boardWildcardChoice || '';
+  const ideas = BOARD_WILDCARD_IDEAS.map((idea, index) => `<button type="button" class="board-wildcard-idea${choice === idea.id ? ' is-selected' : ''}" data-action="board-wildcard-select" data-choice="${idea.id}" aria-expanded="${choice === idea.id}" aria-controls="board-wildcard-detail-${idea.id}"><span class="board-wildcard-idea-index">${index + 1}</span><span><b>${esc(idea.title)}</b><small>${esc(idea.summary)}</small></span>${boardWildcardIdeaReady(idea.id, draft) ? '<em>настроено ✓</em>' : '<span aria-hidden="true">→</span>'}</button>`).join('');
+  const body = choice
+    ? `<form id="board-wildcard-form" data-choice="${choice}"><input type="hidden" name="wildcardType" value="${choice}"><div class="board-wildcard-detail-head"><button type="button" class="btn ghost sm" data-action="board-wildcard-back" data-choice="${choice}">← К идеям</button><span>Шаг 2 из 2</span></div><div id="board-wildcard-detail-${choice}" class="board-wildcard-detail">${boardWildcardFieldsHTML(choice, draft)}</div><div class="board-wildcard-actions"><button type="submit" class="btn">Выдать этот заказ</button><span>отклонённый тип не вернётся 30 дней.</span></div></form>`
+    : `<div class="board-wildcard-ideas" role="group" aria-label="Идеи неожиданных заказов">${ideas}</div>`;
   return `<section class="board-wildcard" aria-labelledby="board-wildcard-title">
-    <header><div><p class="board-kicker">РУЧНОЙ WILDCARD</p><h3 id="board-wildcard-title">Что реально доступно?</h3></div>
-      <button type="button" class="btn ghost sm" data-action="board-unexpected-close" aria-label="Закрыть неожиданный заказ">Закрыть</button></header>
-    <p>Подготовь хотя бы один вариант. Доска случайно выберет только из заполненных — ничего абстрактного и небезопасного.</p>
-    ${State._boardWildcardError ? `<p class="board-wildcard-error" role="alert">${esc(State._boardWildcardError)}</p>` : ''}
-    <form id="board-wildcard-form">
-      <fieldset><legend><label><input type="checkbox" name="filmEnabled"${checked('filmEnabled')}> Я готов снять короткий фильм за 48 часов</label></legend>
-        <label>Тема фильма<input name="filmTheme" maxlength="100" autocomplete="off" value="${value('filmTheme')}" placeholder="например: один звонок меняет маршрут" data-noi18n></label>
-        <small>Дедлайн будет зафиксирован ровно через 48 часов. Публиковать фильм не обязательно.</small></fieldset>
-      <fieldset><legend><label><input type="checkbox" name="offlineEnabled"${checked('offlineEnabled')}> Я готов удалить выбранные соцсети на 30 дней</label></legend>
-        <label>Какие именно<input name="offlineApps" maxlength="120" autocomplete="off" value="${value('offlineApps')}" placeholder="например: TikTok и Instagram" data-noi18n></label>
-        <small>Перед удалением сохрани нужные контакты и способ связи.</small></fieldset>
-      <fieldset><legend><label><input type="checkbox" name="roomEnabled"${checked('roomEnabled')}> Я готов сделать перестановку</label></legend>
-        <label>Где<input name="roomName" maxlength="80" autocomplete="off" value="${value('roomName')}" placeholder="например: рабочую комнату" data-noi18n></label>
-        <label>Зачем<input name="roomGoal" maxlength="120" autocomplete="off" value="${value('roomGoal')}" placeholder="например: освободить место для тренировок" data-noi18n></label>
-        <label>Готовый план<input name="roomLayout" maxlength="160" autocomplete="off" value="${value('roomLayout')}" placeholder="например: стол к окну, диван к дальней стене" data-noi18n></label>
-        <label class="board-wildcard-check"><input type="checkbox" name="roomReady"${checked('roomReady')}> Я проверил размеры и могу безопасно передвинуть мебель</label></fieldset>
-      <fieldset><legend><label><input type="checkbox" name="minecraftEnabled"${checked('minecraftEnabled')}> Я готов запустить Minecraft-сервер на 30 дней</label></legend>
-        <label>Название сервера<input name="minecraftName" maxlength="80" autocomplete="off" value="${value('minecraftName')}" placeholder="например: Новый континент" data-noi18n></label>
-        <label>Кого позовёшь<input name="minecraftPlayers" maxlength="120" autocomplete="off" value="${value('minecraftPlayers')}" placeholder="например: Макса, Диму и Леру" data-noi18n></label>
-        <label>Общая цель<input name="minecraftGoal" maxlength="160" autocomplete="off" value="${value('minecraftGoal')}" placeholder="например: построить город и победить дракона" data-noi18n></label>
-        <label class="board-wildcard-check"><input type="checkbox" name="minecraftReady"${checked('minecraftReady')}> Я действительно могу связаться с этой компанией</label></fieldset>
-      <fieldset><legend><label><input type="checkbox" name="cosplayEnabled"${checked('cosplayEnabled')}> Я готов сделать косплей</label></legend>
-        <label>Персонаж<input name="cosplayCharacter" maxlength="100" autocomplete="off" value="${value('cosplayCharacter')}" placeholder="например: Макима" data-noi18n></label>
-        <label>К какой дате<input type="date" name="cosplayDate" min="${todayStr()}" value="${value('cosplayDate')}" data-noi18n></label>
-        <label>Первый элемент образа<input name="cosplayPiece" maxlength="120" autocomplete="off" value="${value('cosplayPiece')}" placeholder="например: парик и укладка" data-noi18n></label>
-        <label class="board-wildcard-check"><input type="checkbox" name="cosplayBudget"${checked('cosplayBudget')}> Я определил допустимый бюджет, включая вариант 0 €</label></fieldset>
-      <fieldset><legend><label><input type="checkbox" name="dmEnabled"${checked('dmEnabled')}> Я готов провести мини-кампанию как Dungeon Master</label></legend>
-        <label>Игра или система<input name="dmGame" maxlength="100" autocomplete="off" value="${value('dmGame')}" placeholder="например: D&amp;D 5e" data-noi18n></label>
-        <label>Для кого<input name="dmPlayers" maxlength="120" autocomplete="off" value="${value('dmPlayers')}" placeholder="например: четыре друга из нашей компании" data-noi18n></label>
-        <label>Стартовый модуль<input name="dmModule" maxlength="160" autocomplete="off" value="${value('dmModule')}" placeholder="например: Lost Mine of Phandelver" data-noi18n></label>
-        <label class="board-wildcard-check"><input type="checkbox" name="dmReady"${checked('dmReady')}> Я могу отправить игрокам конкретное приглашение</label></fieldset>
-      <div class="board-wildcard-actions"><button type="submit" class="btn">Дай что-нибудь неожиданное</button>
-        <span>Без недельного лимита, но отклонённый тип не вернётся 30 дней.</span></div>
-    </form>
+    <header><div><p class="board-kicker">НЕОЖИДАННЫЙ ЗАКАЗ</p><h3 id="board-wildcard-title">Сначала выбери идею</h3></div><button type="button" class="btn ghost sm" data-action="board-unexpected-close" aria-label="Закрыть неожиданный заказ">Закрыть</button></header>
+    <p>${choice ? 'Теперь только нужные детали — без шести анкет одновременно.' : 'Посмотри варианты. Настройки появятся только после выбора.'}</p>
+    ${State._boardWildcardError ? `<p class="board-wildcard-error" role="alert" tabindex="-1">${esc(State._boardWildcardError)}</p>` : ''}
+    ${body}
   </section>`;
 }
 function prepareBoardV2Action(action, snapshotId, options = {}) {
@@ -18315,11 +18342,13 @@ function renderToday() {
   const addQuestCard = `<div class="card card-addquest"><form id="add-task" class="add-row" data-guide-target="first-task-create">
         <label class="add-field add-field-title"><span class="add-field-label">${t('Квест')}</span><input name="title" placeholder="${t('Новый квест на сегодня…')}" maxlength="160" autocomplete="off" required /></label>
         ${sphereFieldHTML()}
-        <span class="add-field add-field-duration" role="group" aria-label="${t('Длительность')}">${durInputHTML('estimateMin', 30, true)}</span>
-        <label class="add-field add-field-difficulty"><span class="add-field-label">${t('Сложность')}</span><select name="difficulty"><option value="easy">${t('Лёгкая')}</option><option value="normal" selected>${t('Обычная')}</option><option value="hard">${t('Сложная')}</option></select></label>
+        <details class="quest-add-options"><summary>${t('Длительность и сложность')}</summary><div class="quest-add-options-body">
+          <span class="add-field add-field-duration" role="group" aria-label="${t('Длительность')}">${durInputHTML('estimateMin', 30, true)}</span>
+          <label class="add-field add-field-difficulty"><span class="add-field-label">${t('Сложность')}</span><select name="difficulty"><option value="easy">${t('Лёгкая')}</option><option value="normal" selected>${t('Обычная')}</option><option value="hard">${t('Сложная')}</option></select></label>
+          <details class="difficulty-help"><summary>${t('Как выбрать сложность?')}</summary><div class="diff-hint muted"><span>${difficultyIconHTML('easy')} ${t('Лёгкая — рутина, механика')}</span><span>${difficultyIconHTML('normal')} ${t('Обычная — требует фокуса')}</span><span>${difficultyIconHTML('hard')} ${t('Сложная — вызов, выход из зоны комфорта → активирует Хайп')} <b>+15% XP</b></span></div></details>
+        </div></details>
         <button class="add-submit" type="submit">${t('+ Квест')}</button></form>
-      <div id="cat-suggest" class="cat-suggest"></div>
-      <p class="diff-hint muted"><span>${difficultyIconHTML('easy')} ${t('Лёгкая — рутина, механика')}</span><span>${difficultyIconHTML('normal')} ${t('Обычная — требует фокуса')}</span><span>${difficultyIconHTML('hard')} ${t('Сложная — вызов, выход из зоны комфорта → активирует Хайп')} <b>+15% XP</b></span></p>
+      <div id="cat-suggest" class="cat-suggest" role="status" aria-live="polite"></div>
     </div>`;
   const questBoard = `<section class="card card-quests" aria-label="${t('Квесты на сегодня')}"><div class="daystat">
         <span>${t('Квестов:')} <b>${doneCount}/${todays.length}</b></span>
@@ -21437,7 +21466,7 @@ function attentionTodayControlHTML() {
   const pendingReturn = attentionPendingReturn();
   const cfg = secretarySettings();
   return `<section class="secretary-control${State._eveningDue ? ' is-due' : ''}" data-secretary-control tabindex="-1" aria-labelledby="secretary-control-title">
-    <div class="secretary-control-head"><div><span class="secretary-control-kicker">${t('Satoru рядом')}</span><b id="secretary-control-title">${t(State._eveningDue ? 'Пора завершить рабочий день' : pendingReturn ? 'Не нужно держать всю систему в голове' : 'Выбери нужную поддержку')}</b></div>${policies.length ? `<button class="secretary-settings-link" data-action="attention-open-setup">${t('Правила')}</button>` : ''}</div>
+    <div class="secretary-control-head"><div><span class="secretary-control-kicker">${t('Тень рядом')}</span><b id="secretary-control-title">${t(State._eveningDue ? 'Пора завершить рабочий день' : pendingReturn ? 'Не нужно держать всю систему в голове' : 'Выбери нужную поддержку')}</b></div>${policies.length ? `<button class="secretary-settings-link" data-action="attention-open-setup">${t('Правила')}</button>` : ''}</div>
     <div class="secretary-actions">
       ${pendingReturn ? `<button class="secretary-action is-primary" data-action="attention-open-return"><span aria-hidden="true">↩</span><b>${t('Вернуться одним шагом')}</b></button>` : ''}
       <button class="secretary-action" data-action="recovery-open"><span aria-hidden="true">🌿</span><b>${t('Отдохнуть с границей')}</b></button>
@@ -22170,6 +22199,13 @@ function shelfFormStatus(message, isError = false) {
 function updateInspirationReferenceUI(form = document.getElementById('inspiration-setup-form')) {
   if (!form) return;
   const rows = Array.from(form.querySelectorAll('[data-inspiration-reference-row]'));
+  rows.forEach((row) => {
+    const url = String(row.querySelector('[name="referenceUrl"]')?.value || '').trim();
+    const why = row.querySelector('.inspiration-reference-why');
+    if (/^https?:\/\/[^\s]+$/i.test(url) && why && !why.dataset.autoOpened) {
+      why.open = true; why.dataset.autoOpened = 'true';
+    }
+  });
   const filled = rows.filter((row) => String(row.querySelector('[name="referenceUrl"]')?.value || '').trim()).length;
   const count = form.querySelector('[data-inspiration-reference-count]');
   const add = form.querySelector('[data-action="inspiration-reference-add"]');
@@ -23985,23 +24021,7 @@ async function onSubmit(e) {
 
   if (f.id === 'board-wildcard-form') {
     e.preventDefault();
-    const data = new FormData(f);
-    const draft = {
-      filmEnabled: data.has('filmEnabled'), filmTheme: String(data.get('filmTheme') || '').trim(),
-      offlineEnabled: data.has('offlineEnabled'), offlineApps: String(data.get('offlineApps') || '').trim(),
-      roomEnabled: data.has('roomEnabled'), roomName: String(data.get('roomName') || '').trim(),
-      roomGoal: String(data.get('roomGoal') || '').trim(), roomLayout: String(data.get('roomLayout') || '').trim(),
-      roomReady: data.has('roomReady'),
-      minecraftEnabled: data.has('minecraftEnabled'), minecraftName: String(data.get('minecraftName') || '').trim(),
-      minecraftPlayers: String(data.get('minecraftPlayers') || '').trim(), minecraftGoal: String(data.get('minecraftGoal') || '').trim(),
-      minecraftReady: data.has('minecraftReady'),
-      cosplayEnabled: data.has('cosplayEnabled'), cosplayCharacter: String(data.get('cosplayCharacter') || '').trim(),
-      cosplayDate: String(data.get('cosplayDate') || '').trim(), cosplayPiece: String(data.get('cosplayPiece') || '').trim(),
-      cosplayBudget: data.has('cosplayBudget'),
-      dmEnabled: data.has('dmEnabled'), dmGame: String(data.get('dmGame') || '').trim(),
-      dmPlayers: String(data.get('dmPlayers') || '').trim(), dmModule: String(data.get('dmModule') || '').trim(),
-      dmReady: data.has('dmReady'),
-    };
+    const draft = boardWildcardDraftFromForm(f);
     State._boardWildcardDraft = draft; State._boardWildcardError = '';
     const setup = {
       film: { enabled: draft.filmEnabled, filmingOptIn: draft.filmEnabled, theme: draft.filmTheme, deadline: boardV2UnexpectedDeadline() },
@@ -24024,7 +24044,7 @@ async function onSubmit(e) {
         : 'Заполни хотя бы один вариант полностью и подтверди его условия: безопасность, бюджет или возможность связаться с участниками.';
       State._boardFocusAfterCommit = '.board-wildcard-error'; render(); return;
     }
-    State._boardWildcardOpen = false; State._boardWildcardDraft = null; State._boardWildcardError = '';
+    State._boardWildcardOpen = false; State._boardWildcardChoice = ''; State._boardWildcardDraft = null; State._boardWildcardError = '';
     State._boardFocusAfterCommit = '#board-detail-title'; render(); return;
   }
 
@@ -26291,11 +26311,14 @@ async function onClick(e) {
     const field = el.closest('.sphere-field'); if (!field) return;
     const hidden = field.querySelector('input[name="skillId"]');
     const mainInput = field.querySelector('input[name="skillIds"]');
+    const sid = String(el.dataset.id || '');
+    let selectedNow = true;
     if (mainInput) {
-      const state = sphereFieldState(field), sid = String(el.dataset.id || '');
+      const state = sphereFieldState(field);
       if (state.main.includes(sid)) {
         if (state.main.length <= 1) { toast(t('Нужна хотя бы одна основная сфера')); return; }
         state.main.splice(state.main.indexOf(sid), 1);
+        selectedNow = false;
       } else state.main.push(sid);
       mainInput.value = state.main.join(',');
       const background = field.querySelector(`[name="${state.backgroundName}"]`); if (background) background.value = state.background.filter((id) => id !== sid).join(',');
@@ -26309,6 +26332,7 @@ async function onClick(e) {
     // 'change' — тот же сигнал, что слал <select>: выключает авто-подстановку по
     // истории (catTouched), поведение при ручном выборе не меняется.
     hidden && hidden.dispatchEvent(new Event('change', { bubbles: true }));
+    if (selectedNow && sid) { acknowledgeSphereChoice(field, sid); sfx('select'); }
     return;
   }
   if (action === 'sphere-background-pick') {
@@ -26694,11 +26718,23 @@ async function onClick(e) {
     if (!saved) { toast('Не удалось надеть звание.'); return; }
     State._boardFocusAfterCommit = '#board-receipt-title'; toast(`Звание «${title}» надето.`); render();
   } else if (action === 'board-unexpected-open') {
-    State._boardWildcardOpen = true; State._boardWildcardError = '';
+    sfx('open');
+    State._boardWildcardOpen = true; State._boardWildcardChoice = ''; State._boardWildcardError = '';
     boardV2LocalSession().open = false;
     State._boardFocusAfterCommit = '#board-wildcard-title'; render();
+  } else if (action === 'board-wildcard-select') {
+    const choice = String(el.dataset.choice || ''); if (!BOARD_WILDCARD_IDEAS.some((idea) => idea.id === choice)) return;
+    sfx('select');
+    State._boardWildcardChoice = choice; State._boardWildcardError = '';
+    State._boardFocusAfterCommit = '#board-wildcard-form input:not([type="hidden"]), #board-wildcard-form button[type="submit"]'; render();
+  } else if (action === 'board-wildcard-back') {
+    sfx('close');
+    const form = el.closest('#board-wildcard-form'); if (form) State._boardWildcardDraft = boardWildcardDraftFromForm(form);
+    const choice = State._boardWildcardChoice; State._boardWildcardChoice = ''; State._boardWildcardError = '';
+    State._boardFocusAfterCommit = `[data-action="board-wildcard-select"][data-choice="${CSS.escape(choice)}"]`; render();
   } else if (action === 'board-unexpected-close') {
-    State._boardWildcardOpen = false; State._boardWildcardError = ''; State._boardWildcardDraft = null;
+    sfx('close');
+    State._boardWildcardOpen = false; State._boardWildcardChoice = ''; State._boardWildcardError = ''; State._boardWildcardDraft = null;
     State._boardFocusAfterCommit = '[data-action="board-unexpected-open"]'; render();
   } else if (action === 'board-unexpected-reject') {
     const prepared = prepareBoardV2Action('reject', id);
@@ -26898,14 +26934,26 @@ async function onClick(e) {
     return;
   } else if (action === 'toggle-core') {
     const q = questById(id); if (!q) return;
-    if (!q.core && coreState().total >= CORE_MAX) {
+    const willCore = !q.core;
+    if (willCore && coreState().total >= CORE_MAX) {
       // Потолок не ради запрета: ядро из пяти дел перестаёт быть ядром.
       toast(`◆ ${t('В ядре максимум')} ${CORE_MAX} — ${t('иначе это уже просто список')}`);
       return;
     }
-    if (q.core) delete q.core; else q.core = true;
-    Store.save('tasks', State.tasks);
-    if (q.core && coreState().total === 1) toast(`◆ ${t('Ядро дня — то, ради чего день считается состоявшимся')}`);
+    const nextTasks = structuredClone(State.tasks);
+    const nextTask = nextTasks.find((item) => item.id === id);
+    if (!nextTask) return;
+    if (willCore) nextTask.core = true; else delete nextTask.core;
+    el.disabled = true;
+    const saved = await Store.saveNow('tasks', nextTasks, () => { State.tasks = nextTasks; return true; });
+    State._tasksFocusAfterCommit = `.task[data-id="${CSS.escape(String(id))}"] .task-more > summary`;
+    if (!saved) {
+      toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.'));
+      render();
+      return;
+    }
+    sfx(willCore ? 'confirm' : 'select');
+    if (willCore && coreState().total === 1) toast(`◆ ${t('Ядро дня — то, ради чего день считается состоявшимся')}`);
     track('core:toggle'); render();
 
   } else if (action === 'edit-difficulty') {
@@ -27407,8 +27455,7 @@ async function onClick(e) {
   } else if (action === 'push-test') { pushTest();
   } else if (action === 'apply-cat') {
     const form = el.closest('.card').querySelector('#add-task'); const sel = sphereFieldInput(form);
-    if (sel) { setSphereFieldValue(form, el.dataset.skill); const ti = form.querySelector('input[name="title"]'); if (ti) ti.focus(); }
-    el.parentElement.innerHTML = '';
+    if (sel) { setSphereFieldValue(form, el.dataset.skill); acknowledgeSphereChoice(sel.closest('.sphere-field'), el.dataset.skill); sfx('confirm'); const ti = form.querySelector('input[name="title"]'); if (ti) ti.focus(); }
   } else if (action === 'ai-cat-suggest') {
     const card = el.closest('.card'); const form = card && card.querySelector('#add-task');
     const sel = sphereFieldInput(form); const box = card && card.querySelector('#cat-suggest');
@@ -28271,6 +28318,8 @@ function onChange(e) {
 // Живой автосейв формы настроек при вводе (текст печатается без blur — 'change' не сработал бы)
 function onSettingsInput(e) {
   if (e.target.matches?.('#inspiration-setup-form [name="referenceUrl"]')) updateInspirationReferenceUI(e.target.form);
+  const wildcardForm = e.target.closest?.('#board-wildcard-form');
+  if (wildcardForm) State._boardWildcardDraft = boardWildcardDraftFromForm(wildcardForm);
   if (e.target.closest('#skills-list, #habits-list, .knob') || e.target.id === 'set-appName') autosaveSettings();
   if (e.target.matches('#add-task input[name="title"]')) updateCatSuggest(e.target);
   if (e.target.matches('.sphere-search-input')) {
@@ -28657,7 +28706,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v202';
+const PWA_CACHE_VERSION = 'satoru-v203';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -28739,6 +28788,11 @@ async function init() {
   document.addEventListener('click', onClick);
   document.addEventListener('toggle', (e) => {
     const panel = e.target;
+    if (panel instanceof HTMLDetailsElement && panel.matches('.quest-add-options, .calendar-add-options, .difficulty-help, .inspiration-reference-why, .inspiration-reference-storage')) {
+      if (e.isTrusted && !panel._satoruKeyToggle) sfx(panel.open ? 'open' : 'close');
+      panel._satoruKeyToggle = false;
+      return;
+    }
     if (panel instanceof HTMLDetailsElement && panel.matches('.browser-companion')) {
       State._browserCompanionOpen = panel.open;
       if (e.isTrusted) sfx(panel.open ? 'open' : 'close');
@@ -28766,6 +28820,14 @@ async function init() {
   // Инлайн-правка текста квеста: клик мимо → сохранить; Esc → отмена
   document.addEventListener('focusout', (e) => { const f = e.target.closest && e.target.closest('.t-edit-form'); if (f && f.requestSubmit) setTimeout(() => { if (State._editTask) f.requestSubmit(); }, 100); });
   document.addEventListener('keydown', (e) => {
+    if (e.target.matches?.('.quest-add-options > summary, .calendar-add-options > summary, .difficulty-help > summary, .inspiration-reference-why > summary, .inspiration-reference-storage > summary') && ['Enter', ' '].includes(e.key)) {
+      e.preventDefault();
+      const panel = e.target.parentElement;
+      panel._satoruKeyToggle = true;
+      panel.open = !panel.open;
+      if (e.isTrusted) sfx(panel.open ? 'open' : 'close');
+      return;
+    }
     if (handleTreeDialogKeydown(e)) return;
     if (e.target.matches?.(':is(.hsub,.goals-view-tabs)[role="tablist"] [role="tab"]') && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
       const tabs = Array.from(e.target.closest('[role="tablist"]').querySelectorAll('[role="tab"]'));

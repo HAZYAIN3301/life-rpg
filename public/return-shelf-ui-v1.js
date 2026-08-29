@@ -156,8 +156,8 @@
     const formatChoices = FORMATS.map((format) => `<label class="inspiration-format-choice${formats.includes(format) ? ' is-selected' : ''}"><input type="checkbox" name="format" value="${format}" ${formats.includes(format) ? 'checked' : ''}><span aria-hidden="true" data-format="${format}"></span><b>${tr(t, formatLabel(format))}</b></label>`).join('');
     const references = rows(profile.videoReferences, 10);
     const referenceRow = (reference = {}) => `<div class="inspiration-reference-row" data-inspiration-reference-row>
-      <label><span>${tr(t, 'Ссылка на видео')}</span><input type="url" name="referenceUrl" value="${esc(reference.url)}" maxlength="1000" placeholder="${tr(t, 'TikTok, YouTube, Reels или другая видеоссылка')}" inputmode="url" autocomplete="url"></label>
-      <label><span>${tr(t, 'Почему это мотивирует?')}</span><textarea name="referenceWhy" rows="2" maxlength="320" placeholder="${tr(t, 'Необязательно. Что именно здесь тебя цепляет?')}">${esc(reference.why)}</textarea></label>
+      <label class="inspiration-reference-url"><span>${tr(t, 'Ссылка на видео')}</span><input type="url" name="referenceUrl" value="${esc(reference.url)}" maxlength="1000" placeholder="${tr(t, 'TikTok, YouTube, Reels или другая видеоссылка')}" inputmode="url" autocomplete="url"></label>
+      <details class="inspiration-reference-why"${reference.why ? ' open' : ''}><summary>${tr(t, 'Почему цепляет?')} <span>${tr(t, 'необязательно')}</span></summary><label><span class="sr-only">${tr(t, 'Почему это мотивирует?')}</span><textarea name="referenceWhy" rows="2" maxlength="320" placeholder="${tr(t, 'Что именно здесь тебя цепляет?')}">${esc(reference.why)}</textarea></label></details>
       <button type="button" class="inspiration-reference-remove" data-action="inspiration-reference-remove" aria-label="${tr(t, 'Удалить видео')}">✕</button>
     </div>`;
     const referenceRows = (references.length ? references : [{}]).map(referenceRow).join('');
@@ -169,8 +169,8 @@
       <label class="inspiration-free"><span>${tr(t, 'Добавить свои темы')}</span><input name="customInterests" value="${esc(manual)}" maxlength="300" placeholder="${tr(t, 'Spider-Verse, Re:Zero, путешествия…')}" autocomplete="off"></label></fieldset>
       <fieldset><legend><b>2</b><span>${tr(t, 'Что показывать')}</span><small>${tr(t, 'Можно выбрать несколько форматов.')}</small></legend><div class="inspiration-format-choices">${formatChoices}</div>
       <details class="inspiration-setup-more"><summary>${tr(t, 'Что не показывать')}</summary><label class="inspiration-free"><span>${tr(t, 'Исключить темы')}</span><input name="blocked" value="${esc((profile.blocked || []).join(', '))}" maxlength="300" placeholder="${tr(t, 'Необязательно. Например: hustle, сравнение тел, политика.')}" autocomplete="off"></label></details></fieldset>
-      <fieldset class="inspiration-reference-fieldset"><legend><b>3</b><span>${tr(t, 'Видео, которые тебя мотивируют')}</span><small>${tr(t, 'Добавь до 10 ссылок. Объяснение необязательно, но помогает понять, что именно тебя цепляет.')}</small></legend>
-      <div class="inspiration-reference-head"><p>${tr(t, 'Видео не загружаются в Satoru. Сохраняются только ссылки и твои объяснения.')}</p><output data-inspiration-reference-count>${references.length} / 10</output></div>
+      <fieldset class="inspiration-reference-fieldset"><legend><b>3</b><span>${tr(t, 'Видео, которые тебя мотивируют')}</span><small>${tr(t, 'Необязательно · до 10 ссылок.')}</small></legend>
+      <div class="inspiration-reference-head"><details class="inspiration-reference-storage"><summary>${tr(t, 'Как хранятся ссылки')}</summary><p>${tr(t, 'Видео не загружаются в Satoru. Сохраняются только ссылки и твои объяснения.')}</p></details><output data-inspiration-reference-count>${references.length} / 10</output></div>
       <div class="inspiration-reference-list" data-inspiration-reference-list>${referenceRows}</div>
       <button type="button" class="btn ghost sm inspiration-reference-add" data-action="inspiration-reference-add" ${references.length >= 10 ? 'disabled' : ''}>+ ${tr(t, 'Добавить видео')}</button>
       <template id="inspiration-reference-template">${referenceRow({})}</template></fieldset>
