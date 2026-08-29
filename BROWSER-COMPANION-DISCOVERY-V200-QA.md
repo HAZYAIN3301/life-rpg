@@ -75,15 +75,19 @@ In-app Browser against the local Node server:
 
 One visual QA defect was found and fixed during this pass: the previous extension icon was the project's placeholder question mark. A second QA defect was also fixed: async replacement of the Today notice could leave modal focus on `body` after Escape; close now resolves the fresh trigger and restores focus.
 
-## Release artifacts before production verification
+## Release artifacts
 
 - `public/downloads/satoru-attention-v200.zip`
 - `public/downloads/satoru-attention-store-v200.zip`
 - Both runtime ZIPs contain the same 19 files, with `manifest.json` at archive root and no tests/docs/package metadata.
 - ZIP SHA-256 before commit: `6b8d4cb820c4135e22490436ac5cf2e665de33f4f0a822681b440ec0ab411b7d`.
 - Icon SHA-256: `b652539f04dce6b98bf8ef3d47609fedf2e4c63b19b9f042339ee0b8e76825d8`.
-- Integrated PWA cache after rebasing over Inspiration Learning v201: `satoru-v202`; release pin: `20260829-browser-companion-discovery-v202-1`.
+- Integrated PWA cache after rebasing over Inspiration Learning v201 was `satoru-v202`; the later Interface Hierarchy v203 release correctly advances the shared shell to `satoru-v203` without changing the extension package bytes.
 
 ## Production verification
 
-Pending the runtime commit/push. Record the exact production commit, deployment state and byte/hash checks here after Railway serves v200.
+- Discovery v200 (`586bba8`) reached `origin/master` inside exact fast-forward release `82fcd74` together with the later v203 shell.
+- Railway services `life-rpg` and `piper-tts` both completed with `success`.
+- Production Today shows the bounded announcement with install / remind in 3 days / do not remind outcomes; the open-tab PWA update path was exercised before the production DOM smoke.
+- `public/downloads/satoru-attention-v200.zip` is byte-identical in production. SHA-256: `6b8d4cb820c4135e22490436ac5cf2e665de33f4f0a822681b440ec0ab411b7d`.
+- The shared production shell is now intentionally `satoru-v203`; v200 discovery code and package remain unchanged beneath the newer cache pin.

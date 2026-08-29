@@ -1,7 +1,7 @@
 # Interface Hierarchy v203 — QA и handoff
 
 Дата: 2026-08-29
-Статус: локальный release candidate; push/deploy не выполнялись
+Статус: опубликовано в production коммитом `82fcd74`
 
 ## Результат
 
@@ -66,9 +66,22 @@ v203 исправляет не отдельные пиксели, а повто�
 - Изменённые shell assets имеют pin `20260829-interface-hierarchy-v203-1`: `styles.css`, `return-shelf-ui-v1.js`, `app.js`.
 - Неизменённые sound/assistant/attention/inspiration modules сохраняют исторические pins; лишнего cache churn нет.
 
+## Production verification
+
+- `82fcd74` опубликован в `origin/master` точным fast-forward поверх `9842a3d`; параллельные коммиты не перезаписывались.
+- Railway завершил оба сервиса `life-rpg` и `piper-tts` со статусом `success`.
+- Уже открытая production-вкладка показала доступное обновление Satoru; после применения вернулась в готовый Today без horizontal overflow.
+- Production DOM подтверждает: постоянной `.skills-row` нет, `Тень рядом` является владельцем поддержки, quick-add содержит disclosure длительности/сложности.
+- Production pins: `styles.css`, `return-shelf-ui-v1.js`, `app.js` → `20260829-interface-hierarchy-v203-1`; `sw.js` и app runtime → `satoru-v203`.
+- Production-файлы совпадают с release commit byte-for-byte:
+  - `index.html`: `f6dd337b0113d1e203bea3a76bc6ada0ce92a48140501ea462cc9549a64e3b01`
+  - `app.js`: `1d30efbb3b8f71c13bbaf1271e844411d91a09618e813459af535a8d57b86de8`
+  - `styles.css`: `f22e9bafe5e11f8c5b21bc953d5d2d399c7d595bc06b8fb82bb914de8d3bf718`
+  - `return-shelf-ui-v1.js`: `5eea6328b94288f812fc615aafc903f2831f4618eb11bb028c09065273968ced`
+  - `sw.js`: `bd5f2ce617c3b93852b61d4737bc104f4f5b912e00bc4f8d4b7d328282b2868e`
+
 ## Не входит в v203
 
 - Новые продуктовые функции или новая IA.
 - Перерисовка immutable art assets.
 - Расширение RU-only Wildcard на остальные локали.
-- Production push/deploy/hash verification — требуется отдельное явное разрешение владельца.
