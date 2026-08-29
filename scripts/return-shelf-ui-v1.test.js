@@ -54,8 +54,11 @@ test('первый вход начинается с импорта интере�
 
   assert.match(html, /class="inspiration-mark"/);
   assert.match(html, /Что тебя зажигает\?/);
-  assert.match(html, /data-action="inspiration-setup-import"/);
-  assert.match(html, /Импортировать из Satoru/);
+  assert.match(html, /data-inspiration-import-file/);
+  assert.match(html, /Импортировать TikTok/);
+  assert.match(html, /data-action="inspiration-import-links-toggle"/);
+  assert.match(html, /data-action="inspiration-setup-import-satoru"/);
+  assert.match(html, /Собрать из Satoru/);
   assert.match(html, /data-action="inspiration-setup-manual"/);
   assert.match(html, /Анимация/);
   assert.match(html, /Спорт/);
@@ -123,7 +126,27 @@ test('настройка делает интересы и форматы явн�
   assert.match(html, /name="interest" value="animation"[^>]*checked/);
   assert.match(html, /Профиль Тени/);
   assert.match(html, /не публикует/);
+  assert.match(html, /Выбрать архив TikTok/);
+  assert.match(html, /Архив остаётся на устройстве/);
+  assert.match(html, /Сообщения, контакты, входы, адреса и платежи игнорируются/);
   assert.doesNotMatch(html, /name="url"|name="kind"|name="why"|Тип материала|Экспорт/);
+});
+
+test('готовый TikTok-импорт показывает только сводку и безопасные сигналы', () => {
+  const html = UI.render(ready({
+    setupOpen: true,
+    importSession: {
+      status: 'ready',
+      stats: { searches: 14, hashtags: 5, videos: 22, signals: 9 },
+      signals: [{ label: 'Blender animation' }, { label: '#surfing' }],
+    },
+  }), t);
+  assert.match(html, /Профиль интересов собран/);
+  assert.match(html, />14<.*Поиски/s);
+  assert.match(html, /Blender animation/);
+  assert.match(html, /#surfing/);
+  assert.match(html, /не история просмотров/);
+  assert.doesNotMatch(html, /Direct Messages|Login History|email@example\.com/);
 });
 
 test('Сохранённое — вторичный раздел, а ручное добавление просит только материал и необязательное имя', () => {
@@ -229,26 +252,29 @@ test('интеграция подключает профиль и каталог
   assert.match(app, /(?:id\s*===|case)\s*'nav\.inspiration'/);
   assert.match(app, /MOBILE_MORE_SECTION_IDS[^\n]*'library'/);
 
+  const importAt = index.indexOf('inspiration-import-v1.js');
   const profileAt = index.indexOf('inspiration-profile-v1.js');
   const catalogAt = index.indexOf('inspiration-catalog-v1.js');
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20260829-secretary-recovery-v197-1');
-  assert.ok(profileAt >= 0 && catalogAt > profileAt && domainAt > catalogAt && uiAt > domainAt && appAt > uiAt,
-    'profile → catalog → saved domain → UI → app');
-  for (const asset of ['inspiration-profile-v1.js', 'inspiration-catalog-v1.js', 'return-shelf-v1.js', 'return-shelf-ui-v1.js']) {
-    assert.match(index, new RegExp(`${asset.replaceAll('.', '\\.')}\\?v=20260829-inspiration-v196-1`));
+  const appAt = index.indexOf('app.js?v=20260829-inspiration-import-v198-1');
+  assert.ok(importAt >= 0 && profileAt > importAt && catalogAt > profileAt && domainAt > catalogAt && uiAt > domainAt && appAt > uiAt,
+    'import → profile → catalog → saved domain → UI → app');
+  for (const asset of ['inspiration-import-v1.js', 'inspiration-profile-v1.js', 'inspiration-catalog-v1.js', 'return-shelf-v1.js', 'return-shelf-ui-v1.js']) {
+    assert.match(index, new RegExp(`${asset.replaceAll('.', '\\.')}\\?v=20260829-inspiration-import-v198-1`));
     assert.match(sw, new RegExp(asset.replaceAll('.', '\\.')));
   }
-  assert.match(index, /styles\.css\?v=20260829-secretary-recovery-v197-1/);
-  assert.match(sw, /satoru-v197/);
+  assert.match(index, /styles\.css\?v=20260829-inspiration-import-v198-1/);
+  assert.match(sw, /satoru-v198-inspiration-import-v1/);
+  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v198-inspiration-import-v1'/);
 });
 
 test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gate', () => {
   const src = fs.readFileSync(path.join(__dirname, '..', 'public/app.js'), 'utf8');
   const keys = [
     'Вдохновение', 'Подборка', 'Сохранённое', 'Что тебя зажигает?',
-    'Импортировать из Satoru', 'Настроить вручную', 'Темы, вселенные и образы',
+    'Импортировать TikTok', 'Вставить TikTok-ссылки', 'Собрать из Satoru',
+    'Архив остаётся на устройстве', 'Настроить вручную', 'Темы, вселенные и образы',
     'Что показывать', 'Что не показывать', 'Почему здесь', 'Больше такого',
     'Не моё', 'На сегодня всё', 'Добавить своё',
     'Открыть выпуск', 'Источник и права', 'Ещё действия', 'Настроить подборку',

@@ -755,6 +755,42 @@ const I18N_EXTRA = {
   'Сохранённое': { en: 'Saved', de: 'Gespeichert', uk: 'Збережене', es: 'Guardado' },
   'ПОДБОРКА ДЛЯ ТЕБЯ': { en: 'PICKED FOR YOU', de: 'FÜR DICH AUSGEWÄHLT', uk: 'ДОБІРКА ДЛЯ ТЕБЕ', es: 'SELECCIÓN PARA TI' },
   'Что тебя зажигает?': { en: 'What sparks you?', de: 'Was begeistert dich?', uk: 'Що тебе запалює?', es: '¿Qué te inspira?' },
+  'Перенеси реальные интересы из TikTok или собери их из того, что уже знаешь о себе в Satoru. Перед сохранением всё можно проверить.': { en: 'Bring over your actual interests from TikTok or build them from what Satoru already knows about you. You can review everything before saving.', de: 'Übernimm deine tatsächlichen Interessen aus TikTok oder erstelle sie aus dem, was Satoru bereits über dich weiß. Vor dem Speichern kannst du alles prüfen.', uk: 'Перенеси свої реальні інтереси з TikTok або збери їх із того, що Satoru вже знає про тебе. Перед збереженням усе можна перевірити.', es: 'Importa tus intereses reales de TikTok o créalos con lo que Satoru ya sabe de ti. Podrás revisarlo todo antes de guardar.' },
+  'Импортировать TikTok': { en: 'Import TikTok', de: 'TikTok importieren', uk: 'Імпортувати TikTok', es: 'Importar TikTok' },
+  'Вставить TikTok-ссылки': { en: 'Paste TikTok links', de: 'TikTok-Links einfügen', uk: 'Вставити TikTok-посилання', es: 'Pegar enlaces de TikTok' },
+  'Собрать из Satoru': { en: 'Build from Satoru', de: 'Aus Satoru erstellen', uk: 'Зібрати із Satoru', es: 'Crear desde Satoru' },
+  'БЫСТРЫЙ ИМПОРТ': { en: 'QUICK IMPORT', de: 'SCHNELLIMPORT', uk: 'ШВИДКИЙ ІМПОРТ', es: 'IMPORTACIÓN RÁPIDA' },
+  'Не заполняй профиль с нуля': { en: 'Do not build your profile from scratch', de: 'Erstelle dein Profil nicht von Grund auf', uk: 'Не заповнюй профіль із нуля', es: 'No crees tu perfil desde cero' },
+  'Архив остаётся на устройстве': { en: 'The archive stays on your device', de: 'Das Archiv bleibt auf deinem Gerät', uk: 'Архів залишається на пристрої', es: 'El archivo permanece en tu dispositivo' },
+  'Выбрать архив TikTok': { en: 'Choose TikTok archive', de: 'TikTok-Archiv auswählen', uk: 'Вибрати архів TikTok', es: 'Elegir archivo de TikTok' },
+  'Выбрать другой архив': { en: 'Choose another archive', de: 'Anderes Archiv auswählen', uk: 'Вибрати інший архів', es: 'Elegir otro archivo' },
+  'Вставить ссылки': { en: 'Paste links', de: 'Links einfügen', uk: 'Вставити посилання', es: 'Pegar enlaces' },
+  'Скрыть ссылки': { en: 'Hide links', de: 'Links ausblenden', uk: 'Сховати посилання', es: 'Ocultar enlaces' },
+  'Как получить архив': { en: 'How to get the archive', de: 'So erhältst du das Archiv', uk: 'Як отримати архів', es: 'Cómo obtener el archivo' },
+  'Вставь до 32 ссылок из TikTok': { en: 'Paste up to 32 TikTok links', de: 'Füge bis zu 32 TikTok-Links ein', uk: 'Встав до 32 посилань із TikTok', es: 'Pega hasta 32 enlaces de TikTok' },
+  'Определить интересы': { en: 'Find interests', de: 'Interessen erkennen', uk: 'Визначити інтереси', es: 'Detectar intereses' },
+  'Satoru читает только интересы, поиски, хэштеги, лайки, избранное и историю просмотра. Сообщения, контакты, входы, адреса и платежи игнорируются.': { en: 'Satoru only reads interests, searches, hashtags, likes, favourites and watch history. Messages, contacts, logins, addresses and payments are ignored.', de: 'Satoru liest nur Interessen, Suchanfragen, Hashtags, Likes, Favoriten und den Wiedergabeverlauf. Nachrichten, Kontakte, Anmeldungen, Adressen und Zahlungen werden ignoriert.', uk: 'Satoru читає лише інтереси, пошуки, хештеги, вподобання, обране та історію переглядів. Повідомлення, контакти, входи, адреси й платежі ігноруються.', es: 'Satoru solo lee intereses, búsquedas, hashtags, me gusta, favoritos e historial de visualización. Ignora mensajes, contactos, inicios de sesión, direcciones y pagos.' },
+  'Читаю архив на устройстве…': { en: 'Reading the archive on your device…', de: 'Archiv wird auf deinem Gerät gelesen…', uk: 'Читаю архів на пристрої…', es: 'Leyendo el archivo en tu dispositivo…' },
+  'Файл никуда не загружается.': { en: 'The file is not uploaded anywhere.', de: 'Die Datei wird nirgendwo hochgeladen.', uk: 'Файл нікуди не завантажується.', es: 'El archivo no se sube a ningún sitio.' },
+  'Определяю темы сохранённых роликов…': { en: 'Identifying topics in saved videos…', de: 'Themen gespeicherter Videos werden erkannt…', uk: 'Визначаю теми збережених роликів…', es: 'Detectando temas en los vídeos guardados…' },
+  'Запрашиваются только публичные подписи роликов у TikTok.': { en: 'Only public video captions are requested from TikTok.', de: 'Von TikTok werden nur öffentliche Videobeschreibungen abgerufen.', uk: 'У TikTok запитуються лише публічні підписи роликів.', es: 'Solo se solicitan a TikTok los textos públicos de los vídeos.' },
+  'Профиль интересов собран': { en: 'Interest profile is ready', de: 'Interessenprofil ist fertig', uk: 'Профіль інтересів зібрано', es: 'Perfil de intereses listo' },
+  'Проверь отмеченные темы ниже. Сохранятся только темы и сводка — не история просмотров.': { en: 'Review the selected topics below. Only topics and a summary will be saved — not your watch history.', de: 'Prüfe die ausgewählten Themen unten. Gespeichert werden nur Themen und eine Zusammenfassung — nicht dein Wiedergabeverlauf.', uk: 'Перевір позначені теми нижче. Збережуться лише теми й зведення — не історія переглядів.', es: 'Revisa los temas seleccionados. Solo se guardarán los temas y un resumen, no tu historial de visualización.' },
+  'Импортировать заново': { en: 'Import again', de: 'Erneut importieren', uk: 'Імпортувати знову', es: 'Importar de nuevo' },
+  'Тем недостаточно': { en: 'Not enough topics found', de: 'Nicht genügend Themen gefunden', uk: 'Знайдено недостатньо тем', es: 'No se encontraron suficientes temas' },
+  'Архив прочитан, но знакомых тем мало. Добавь несколько ссылок или выбери темы вручную.': { en: 'The archive was read, but few recognisable topics were found. Add a few links or select topics manually.', de: 'Das Archiv wurde gelesen, aber es wurden nur wenige erkennbare Themen gefunden. Füge einige Links hinzu oder wähle Themen manuell aus.', uk: 'Архів прочитано, але знайдено мало знайомих тем. Додай кілька посилань або вибери теми вручну.', es: 'Se ha leído el archivo, pero se encontraron pocos temas reconocibles. Añade algunos enlaces o elige temas manualmente.' },
+  'Импорт не завершён': { en: 'Import was not completed', de: 'Import nicht abgeschlossen', uk: 'Імпорт не завершено', es: 'La importación no se completó' },
+  'Поиски': { en: 'Searches', de: 'Suchen', uk: 'Пошуки', es: 'Búsquedas' },
+  'Хэштеги': { en: 'Hashtags', de: 'Hashtags', uk: 'Хештеги', es: 'Hashtags' },
+  'Сигналы': { en: 'Signals', de: 'Signale', uk: 'Сигнали', es: 'Señales' },
+  'Найденные сигналы': { en: 'Detected signals', de: 'Erkannte Signale', uk: 'Знайдені сигнали', es: 'Señales detectadas' },
+  'Архив слишком большой. Выбери только данные активности или файл до 96 МБ.': { en: 'The archive is too large. Choose activity data only or a file under 96 MB.', de: 'Das Archiv ist zu groß. Wähle nur Aktivitätsdaten oder eine Datei unter 96 MB.', uk: 'Архів завеликий. Вибери лише дані активності або файл до 96 МБ.', es: 'El archivo es demasiado grande. Elige solo datos de actividad o un archivo de menos de 96 MB.' },
+  'Подойдёт ZIP, JSON, TXT или CSV из экспорта TikTok.': { en: 'Use a ZIP, JSON, TXT or CSV file from your TikTok export.', de: 'Verwende eine ZIP-, JSON-, TXT- oder CSV-Datei aus deinem TikTok-Export.', uk: 'Підійде ZIP, JSON, TXT або CSV з експорту TikTok.', es: 'Usa un archivo ZIP, JSON, TXT o CSV de tu exportación de TikTok.' },
+  'Этот браузер не умеет распаковать ZIP локально. Выбери JSON или TXT из архива.': { en: 'This browser cannot unpack ZIP files locally. Choose a JSON or TXT file from the archive.', de: 'Dieser Browser kann ZIP-Dateien nicht lokal entpacken. Wähle eine JSON- oder TXT-Datei aus dem Archiv.', uk: 'Цей браузер не вміє локально розпаковувати ZIP. Вибери JSON або TXT з архіву.', es: 'Este navegador no puede descomprimir ZIP localmente. Elige un JSON o TXT del archivo.' },
+  'В архиве не нашлись читаемые данные TikTok. Попробуй экспорт в JSON.': { en: 'No readable TikTok data was found in the archive. Try a JSON export.', de: 'Im Archiv wurden keine lesbaren TikTok-Daten gefunden. Versuche einen JSON-Export.', uk: 'В архіві не знайдено читабельних даних TikTok. Спробуй експорт у JSON.', es: 'No se encontraron datos legibles de TikTok en el archivo. Prueba una exportación en JSON.' },
+  'Вставь хотя бы одну ссылку на ролик TikTok.': { en: 'Paste at least one TikTok video link.', de: 'Füge mindestens einen TikTok-Video-Link ein.', uk: 'Встав хоча б одне посилання на ролик TikTok.', es: 'Pega al menos un enlace a un vídeo de TikTok.' },
+  'Не удалось прочитать импорт. Исходные интересы не изменены.': { en: 'The import could not be read. Your existing interests were not changed.', de: 'Der Import konnte nicht gelesen werden. Deine bestehenden Interessen wurden nicht geändert.', uk: 'Не вдалося прочитати імпорт. Початкові інтереси не змінено.', es: 'No se pudo leer la importación. Tus intereses actuales no se modificaron.' },
+  'Интересы TikTok готовы к проверке': { en: 'TikTok interests are ready to review', de: 'TikTok-Interessen können geprüft werden', uk: 'Інтереси TikTok готові до перевірки', es: 'Los intereses de TikTok están listos para revisar' },
   'Импортируем темы из твоих сфер и активных целей, затем ты сам подтверждаешь их и выбираешь форматы. Ничего не назначается молча.': { en: 'We will import topics from your areas and active goals. You then confirm them and choose the formats. Nothing is assigned silently.', de: 'Wir importieren Themen aus deinen Bereichen und aktiven Zielen. Danach bestätigst du sie selbst und wählst die Formate. Nichts wird stillschweigend festgelegt.', uk: 'Імпортуємо теми з твоїх сфер і активних цілей, а потім ти сам їх підтверджуєш і обираєш формати. Нічого не призначається мовчки.', es: 'Importaremos temas de tus ámbitos y objetivos activos. Después tú los confirmas y eliges los formatos. Nada se asigna a escondidas.' },
   'Импортировать из Satoru': { en: 'Import from Satoru', de: 'Aus Satoru importieren', uk: 'Імпортувати із Satoru', es: 'Importar desde Satoru' },
   'Настроить вручную': { en: 'Set up manually', de: 'Manuell einrichten', uk: 'Налаштувати вручну', es: 'Configurar manualmente' },
@@ -21452,6 +21488,7 @@ function shelfLinkLabel(item) {
 }
 function inspirationProfileEngine() { return window.InspirationProfileV1 || null; }
 function inspirationCatalogEngine() { return window.InspirationCatalogV1 || null; }
+function inspirationImportEngine() { return window.InspirationImportV1 || null; }
 function inspirationCatalog() {
   const C = inspirationCatalogEngine(); return C ? C.items(lang()) : [];
 }
@@ -21511,6 +21548,9 @@ function inspirationImportSuggestions() {
     const name = String(value || '').trim(); if (!name) return;
     inspirationSemanticIds(name).forEach((id) => push(inspirationInterestLabel(id), source, id));
   };
+  for (const interest of (State._inspirationImport && State._inspirationImport.interests) || []) {
+    push(inspirationInterestLabel(interest.id), 'TikTok', interest.id);
+  }
   for (const skill of (State.settings && State.settings.skills) || []) {
     // Opaque skill ids (sk-*) are not catalog topics. Import only semantic
     // matches so a successful setup can never create an empty digest by itself.
@@ -21521,7 +21561,89 @@ function inspirationImportSuggestions() {
   const board = typeof boardV2IssuerProfile === 'function' ? boardV2IssuerProfile() : null;
   for (const id of (board && board.interests) || []) push(inspirationInterestLabel(id), 'Satoru', id);
   const profileText = String(State.profile && State.profile.text || ''); scan(profileText, t('Профиль Тени'));
-  return out.slice(0, 6);
+  return out.slice(0, 16);
+}
+function inspirationImportErrorMessage(error) {
+  const code = String(error && error.message || error || '');
+  if (/file_large|zip_large/.test(code)) return 'Архив слишком большой. Выбери только данные активности или файл до 96 МБ.';
+  if (/file_type/.test(code)) return 'Подойдёт ZIP, JSON, TXT или CSV из экспорта TikTok.';
+  if (/zip_unsupported/.test(code)) return 'Этот браузер не умеет распаковать ZIP локально. Выбери JSON или TXT из архива.';
+  if (/zip_invalid|zip_empty/.test(code)) return 'В архиве не нашлись читаемые данные TikTok. Попробуй экспорт в JSON.';
+  if (/links_empty/.test(code)) return 'Вставь хотя бы одну ссылку на ролик TikTok.';
+  return 'Не удалось прочитать импорт. Исходные интересы не изменены.';
+}
+function inspirationImportInterestRows(result) {
+  const P = inspirationProfileEngine(); if (!P) return [];
+  return P.uniqueInterests(((result && result.interests) || []).map((item) => ({
+    id: item.id, label: inspirationInterestLabel(item.id), source: 'TikTok',
+  })), P.MAX_INTERESTS);
+}
+async function enrichInspirationImport(result) {
+  const I = inspirationImportEngine(); if (!I || !result) return result;
+  const links = (result.links || []).slice(0, I.MAX_OEMBED_LINKS);
+  if (!links.length) return result;
+  State._inspirationImport = { ...State._inspirationImport, status: 'enriching', stats: result.stats };
+  render();
+  const metadata = await I.resolveTikTokLinks(links);
+  return metadata.length ? I.mergeResults(result, I.analyzeLinkMetadata(metadata)) : result;
+}
+function applyInspirationImportResult(result, source = 'tiktok') {
+  const P = inspirationProfileEngine(); if (!P || !result) return;
+  const current = P.normalize(State._inspirationDraft || State.settings?.inspiration || P.emptyProfile());
+  const interests = inspirationImportInterestRows(result);
+  const stats = result.stats || {};
+  const importRecord = {
+    id: `${source}-${todayStr()}-${Date.now().toString(36)}`.slice(0, 64), source, importedOn: todayStr(),
+    signals: stats.signals, searches: stats.searches, hashtags: stats.hashtags,
+    videos: stats.videos, explicitInterests: stats.explicitInterests,
+  };
+  const draft = P.normalize({
+    ...current,
+    interests: P.uniqueInterests([...interests, ...(current.interests || [])]),
+    signals: result.signals || [],
+    imports: [...(current.imports || []), importRecord],
+  });
+  State._inspirationDraft = draft;
+  State._inspirationImport = {
+    status: interests.length ? 'ready' : 'empty', source, interests,
+    signals: (result.signals || []).slice(0, 12), stats,
+  };
+  State._inspirationSetupOpen = true; State._inspirationImportLinksOpen = false;
+  State._shelfFocusAfterCommit = interests.length ? '#inspiration-setup-form input[name="interest"]' : '[data-action="inspiration-import-links-toggle"]';
+  render();
+  if (interests.length) { sfx('confirm'); toast(t('Интересы TikTok готовы к проверке')); track(`inspiration:import:${source}:ready`); }
+}
+async function startInspirationArchiveImport(file) {
+  const I = inspirationImportEngine(); if (!I || !file) return;
+  State._inspirationSetupOpen = true; State._inspirationImportLinksOpen = false;
+  State._inspirationImport = { status: 'reading', source: 'tiktok', fileName: String(file.name || '').slice(0, 120) };
+  State._shelfFocusAfterCommit = '.inspiration-import-status'; render();
+  try {
+    const parsed = await I.parseFile(file);
+    applyInspirationImportResult(await enrichInspirationImport(parsed), 'tiktok');
+  } catch (error) {
+    State._inspirationImport = { status: 'error', source: 'tiktok', error: inspirationImportErrorMessage(error) };
+    State._shelfFocusAfterCommit = '.inspiration-import-error'; render(); track('inspiration:import:tiktok:error');
+  }
+}
+async function startInspirationLinkImport(value) {
+  const I = inspirationImportEngine(); if (!I) return;
+  const links = I.linksFromText(value);
+  if (!links.length) {
+    State._inspirationImport = { status: 'error', source: 'tiktok-links', error: inspirationImportErrorMessage('links_empty') };
+    State._shelfFocusAfterCommit = '#inspiration-import-links'; render(); return;
+  }
+  State._inspirationImport = { status: 'enriching', source: 'tiktok-links', stats: { videos: links.length } };
+  State._shelfFocusAfterCommit = '.inspiration-import-status'; render();
+  try {
+    const metadata = await I.resolveTikTokLinks(links);
+    const result = I.analyzeLinkMetadata(metadata);
+    result.stats.videos = links.length; result.stats.enrichedVideos = metadata.length;
+    applyInspirationImportResult(result, 'tiktok-links');
+  } catch (error) {
+    State._inspirationImport = { status: 'error', source: 'tiktok-links', error: inspirationImportErrorMessage(error) };
+    State._shelfFocusAfterCommit = '.inspiration-import-error'; render();
+  }
 }
 function inspirationFormatFromContent(value) {
   const raw = String(value || '').trim(), lower = raw.toLowerCase();
@@ -21575,6 +21697,7 @@ function shelfViewModel() {
   return {
     state: 'ready', section: State._inspirationSection === 'saved' ? 'saved' : 'today',
     profile: visibleProfile, suggestions: inspirationImportSuggestions(), setupOpen: !!State._inspirationSetupOpen,
+    importSession: State._inspirationImport || null, importLinksOpen: !!State._inspirationImportLinksOpen,
     items, digestTotal: items.length, digestDone: P.isDigestDone(activeProfile),
     saved, savedCount: saved.length, archived, composerOpen: State._shelfComposerOpen,
     errorMessage: State._shelfError,
@@ -21666,7 +21789,7 @@ function openInspirationSetup(mode = 'edit', form = null) {
   sfx('open'); render();
 }
 function closeInspirationSetup() {
-  State._inspirationDraft = null; State._inspirationSetupOpen = false; State._shelfError = '';
+  State._inspirationDraft = null; State._inspirationSetupOpen = false; State._inspirationImport = null; State._inspirationImportLinksOpen = false; State._shelfError = '';
   State._shelfFocusAfterCommit = '[data-action="inspiration-setup-edit"], #return-shelf-title';
   sfx('close'); render();
 }
@@ -21685,7 +21808,7 @@ async function persistInspirationProfile(rawProfile, { closeSetup = false, focus
     State._shelfFocusAfterCommit = focus; render(); toast(t(State._shelfError)); return false;
   }
   State._inspirationDraft = null;
-  if (closeSetup) State._inspirationSetupOpen = false;
+  if (closeSetup) { State._inspirationSetupOpen = false; State._inspirationImport = null; State._inspirationImportLinksOpen = false; }
   State._shelfError = ''; State._shelfFocusAfterCommit = focus; render();
   if (toastKey) toast(t(toastKey));
   return true;
@@ -24979,10 +25102,24 @@ async function onClick(e) {
     State._inspirationSection = section; State._shelfComposerOpen = false; State._shelfError = '';
     State._shelfFocusAfterCommit = `[data-action="inspiration-section"][data-section="${section}"]`; render(); return;
   }
-  if (action === 'inspiration-setup-import') { openInspirationSetup('import', el.closest('form')); return; }
+  if (action === 'inspiration-setup-import' || action === 'inspiration-setup-import-satoru') { openInspirationSetup('import', el.closest('form')); return; }
   if (action === 'inspiration-setup-manual') { openInspirationSetup('manual'); return; }
   if (action === 'inspiration-setup-edit') { openInspirationSetup('edit'); return; }
   if (action === 'inspiration-setup-close') { closeInspirationSetup(); return; }
+  if (action === 'inspiration-import-links-toggle') {
+    if (!State._inspirationSetupOpen) openInspirationSetup('edit');
+    State._inspirationImportLinksOpen = !State._inspirationImportLinksOpen;
+    State._shelfFocusAfterCommit = State._inspirationImportLinksOpen ? '#inspiration-import-links' : '[data-action="inspiration-import-links-toggle"]';
+    sfx(State._inspirationImportLinksOpen ? 'open' : 'close'); render(); return;
+  }
+  if (action === 'inspiration-import-links-run') {
+    const input = document.getElementById('inspiration-import-links');
+    await startInspirationLinkImport(input && input.value); return;
+  }
+  if (action === 'inspiration-import-clear') {
+    State._inspirationImport = null; State._inspirationImportLinksOpen = false;
+    State._shelfFocusAfterCommit = '.inspiration-import-file-button'; render(); return;
+  }
   if (action === 'inspiration-done') { await markInspirationDone(id); return; }
   if (action === 'inspiration-feedback') { await recordInspirationFeedback(id, el.dataset.verdict); return; }
   if (action === 'inspiration-save') { await saveInspirationCatalogItem(id); return; }
@@ -27385,6 +27522,10 @@ function onChange(e) {
     }).catch(() => toast(t('Этот формат пока не читаю. Выбери TXT, MD, JSON или CSV.')));
     return;
   }
+  if (e.target.matches?.('input[data-inspiration-import-file]')) {
+    const input = e.target, file = input.files && input.files[0]; input.value = '';
+    if (file) startInspirationArchiveImport(file); return;
+  }
   if (e.target.matches?.('#inspiration-setup-form input[type="checkbox"]')) {
     e.target.closest('label')?.classList.toggle('is-selected', e.target.checked); sfx('select'); return;
   }
@@ -27968,7 +28109,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v197';
+const PWA_CACHE_VERSION = 'satoru-v198-inspiration-import-v1';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -68,8 +68,33 @@
     return `<section class="card inspiration-first-use" aria-labelledby="inspiration-first-title">
       <div class="inspiration-first-visual" aria-hidden="true"><i></i><i></i><i></i><b>✦</b></div>
       <div><p class="inspiration-kicker">${tr(t, 'ПОДБОРКА ДЛЯ ТЕБЯ')}</p><h3 id="inspiration-first-title">${tr(t, 'Что тебя зажигает?')}</h3>
-      <p>${tr(t, 'Импортируем темы из твоих сфер и активных целей, затем ты сам подтверждаешь их и выбираешь форматы. Ничего не назначается молча.')}</p>${preview}
-      <div class="inspiration-first-actions"><button type="button" class="btn" data-action="inspiration-setup-import">${tr(t, 'Импортировать из Satoru')}</button><button type="button" class="btn ghost" data-action="inspiration-setup-manual">${tr(t, 'Настроить вручную')}</button></div></div>
+      <p>${tr(t, 'Перенеси реальные интересы из TikTok или собери их из того, что уже знаешь о себе в Satoru. Перед сохранением всё можно проверить.')}</p>${preview}
+      <div class="inspiration-first-actions"><label class="btn inspiration-import-file-button">${tr(t, 'Импортировать TikTok')}<input type="file" data-inspiration-import-file accept=".zip,.json,.txt,.csv,application/zip,application/json,text/plain" hidden></label><button type="button" class="btn ghost" data-action="inspiration-import-links-toggle">${tr(t, 'Вставить TikTok-ссылки')}</button><button type="button" class="btn ghost" data-action="inspiration-setup-import-satoru">${tr(t, 'Собрать из Satoru')}</button><button type="button" class="btn ghost" data-action="inspiration-setup-manual">${tr(t, 'Настроить вручную')}</button></div></div>
+    </section>`;
+  }
+
+  function renderImportStats(session, t) {
+    const stats = row(session && session.stats), values = [
+      ['Поиски', stats.searches], ['Хэштеги', stats.hashtags], ['Видео', stats.videos], ['Сигналы', stats.signals],
+    ].filter((entry) => Number(entry[1]) > 0);
+    return values.length ? `<div class="inspiration-import-stats">${values.map(([label, value]) => `<span><b>${Number(value)}</b>${tr(t, label)}</span>`).join('')}</div>` : '';
+  }
+
+  function renderImporter(vm, t) {
+    const session = row(vm.importSession), status = String(session.status || 'idle');
+    const busy = status === 'reading' || status === 'enriching';
+    const signals = rows(session.signals, 12);
+    const signalPreview = signals.length ? `<div class="inspiration-import-signals" aria-label="${tr(t, 'Найденные сигналы')}">${signals.map((item) => `<span data-noi18n>${esc(item.label)}</span>`).join('')}</div>` : '';
+    const result = status === 'ready' ? `<div class="inspiration-import-result" role="status"><div><span aria-hidden="true">✓</span><div><b>${tr(t, 'Профиль интересов собран')}</b><p>${tr(t, 'Проверь отмеченные темы ниже. Сохранятся только темы и сводка — не история просмотров.')}</p></div></div>${renderImportStats(session, t)}${signalPreview}<button type="button" class="btn ghost sm" data-action="inspiration-import-clear">${tr(t, 'Импортировать заново')}</button></div>`
+      : status === 'empty' ? `<div class="inspiration-import-result is-warning" role="status"><div><span aria-hidden="true">!</span><div><b>${tr(t, 'Тем недостаточно')}</b><p>${tr(t, 'Архив прочитан, но знакомых тем мало. Добавь несколько ссылок или выбери темы вручную.')}</p></div></div>${renderImportStats(session, t)}${signalPreview}</div>`
+      : status === 'error' ? `<div class="inspiration-import-error" role="alert"><b>${tr(t, 'Импорт не завершён')}</b><p>${tr(t, session.error || 'Не удалось прочитать импорт. Исходные интересы не изменены.')}</p></div>`
+      : busy ? `<div class="inspiration-import-status" role="status" aria-live="polite"><span aria-hidden="true"></span><div><b>${tr(t, status === 'reading' ? 'Читаю архив на устройстве…' : 'Определяю темы сохранённых роликов…')}</b><p>${tr(t, status === 'reading' ? 'Файл никуда не загружается.' : 'Запрашиваются только публичные подписи роликов у TikTok.')}</p></div></div>` : '';
+    const links = vm.importLinksOpen ? `<div class="inspiration-import-links"><label for="inspiration-import-links">${tr(t, 'Вставь до 32 ссылок из TikTok')}</label><textarea id="inspiration-import-links" rows="4" maxlength="12000" placeholder="https://www.tiktok.com/@…/video/…"></textarea><div><button type="button" class="btn ghost" data-action="inspiration-import-links-toggle">${tr(t, 'Отмена')}</button><button type="button" class="btn" data-action="inspiration-import-links-run">${tr(t, 'Определить интересы')}</button></div></div>` : '';
+    return `<section class="inspiration-importer" aria-labelledby="inspiration-import-title">
+      <header><div><p class="inspiration-kicker">${tr(t, 'БЫСТРЫЙ ИМПОРТ')}</p><h4 id="inspiration-import-title">${tr(t, 'Не заполняй профиль с нуля')}</h4></div><span class="inspiration-import-local">${tr(t, 'Архив остаётся на устройстве')}</span></header>
+      <div class="inspiration-import-actions"><label class="btn inspiration-import-file-button">${tr(t, status === 'error' ? 'Выбрать другой архив' : 'Выбрать архив TikTok')}<input type="file" data-inspiration-import-file accept=".zip,.json,.txt,.csv,application/zip,application/json,text/plain" hidden></label><button type="button" class="btn ghost" data-action="inspiration-import-links-toggle" aria-expanded="${!!vm.importLinksOpen}">${tr(t, vm.importLinksOpen ? 'Скрыть ссылки' : 'Вставить ссылки')}</button><a class="btn ghost" href="https://support.tiktok.com/en/account-and-privacy/personalized-ads-and-data/requesting-your-data" target="_blank" rel="noopener noreferrer">${tr(t, 'Как получить архив')} ↗</a></div>
+      ${links}${result}
+      <p class="inspiration-import-disclosure">${tr(t, 'Satoru читает только интересы, поиски, хэштеги, лайки, избранное и историю просмотра. Сообщения, контакты, входы, адреса и платежи игнорируются.')}</p>
     </section>`;
   }
 
@@ -94,13 +119,14 @@
     const manual = '';
     return `<form id="inspiration-setup-form" class="card inspiration-setup">
       <header><div><p class="inspiration-kicker">${tr(t, 'НАСТРОЙКА · ДО 2 МИНУТ')}</p><h3>${tr(t, 'Собери свою подборку')}</h3></div><button type="button" class="inspiration-close" data-action="inspiration-setup-close" aria-label="${tr(t, 'Закрыть')}">✕</button></header>
+      ${renderImporter(vm, t)}
       <fieldset><legend><b>1</b><span>${tr(t, 'Темы, вселенные и образы')}</span><small>${tr(t, 'Выбери то, что действительно может тебя зацепить.')}</small></legend><div class="inspiration-choices">${chips || `<p>${tr(t, 'Добавь первую тему своими словами.')}</p>`}</div>${moreChips}
       <label class="inspiration-free"><span>${tr(t, 'Добавить свои темы')}</span><input name="customInterests" value="${esc(manual)}" maxlength="300" placeholder="${tr(t, 'Spider-Verse, Re:Zero, путешествия…')}" autocomplete="off"></label></fieldset>
       <fieldset><legend><b>2</b><span>${tr(t, 'Что показывать')}</span><small>${tr(t, 'Можно выбрать несколько форматов.')}</small></legend><div class="inspiration-format-choices">${formatChoices}</div>
       <details class="inspiration-setup-more"><summary>${tr(t, 'Что не показывать')}</summary><label class="inspiration-free"><span>${tr(t, 'Исключить темы')}</span><input name="blocked" value="${esc((profile.blocked || []).join(', '))}" maxlength="300" placeholder="${tr(t, 'Необязательно. Например: hustle, сравнение тел, политика.')}" autocomplete="off"></label></details></fieldset>
       <p class="inspiration-privacy">${tr(t, 'Интересы принадлежат твоему аккаунту. Satoru использует их только для конечной подборки и не публикует.')}</p>
       <p class="return-shelf-form-status" data-shelf-form-status role="status" aria-live="polite"></p>
-      <div class="inspiration-setup-actions"><button type="button" class="btn ghost" data-action="inspiration-setup-import">${tr(t, 'Добавить из Satoru')}</button><button type="submit" class="btn">${tr(t, 'Показать мою подборку')}</button></div>
+      <div class="inspiration-setup-actions"><button type="button" class="btn ghost" data-action="inspiration-setup-import-satoru">${tr(t, 'Добавить из Satoru')}</button><button type="submit" class="btn">${tr(t, 'Показать мою подборку')}</button></div>
     </form>`;
   }
 

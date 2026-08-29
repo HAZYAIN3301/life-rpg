@@ -20,6 +20,8 @@
   const MAX_INTERESTS = 16;
   const MAX_BLOCKED = 12;
   const MAX_FEEDBACK = 120;
+  const MAX_SIGNALS = 64;
+  const MAX_IMPORTS = 8;
   const DIGEST_SIZE = 3;
   const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -131,6 +133,30 @@
     };
   }
 
+  function cleanSignal(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+    const label = text(raw.label, 180), id = slug(raw.id || label);
+    if (!id || !label) return null;
+    return {
+      id, label,
+      score: Math.max(0, Math.min(100000, Math.round(Number(raw.score) || 0))),
+      count: Math.max(1, Math.min(100000, Math.round(Number(raw.count) || 1))),
+      sources: cleanWords(raw.sources, 8).map(slug).filter(Boolean),
+    };
+  }
+
+  function cleanImport(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+    const id = text(raw.id, 64), source = text(raw.source, 40), importedOn = text(raw.importedOn, 10);
+    if (!id || !source || !ISO_DAY.test(importedOn)) return null;
+    const integer = (value) => Math.max(0, Math.min(1000000, Math.round(Number(value) || 0)));
+    return {
+      id, source, importedOn,
+      signals: integer(raw.signals), searches: integer(raw.searches), hashtags: integer(raw.hashtags),
+      videos: integer(raw.videos), explicitInterests: integer(raw.explicitInterests),
+    };
+  }
+
   function emptyProfile() {
     return {
       version: 1,
@@ -139,6 +165,8 @@
       formats: FORMATS.slice(),
       blocked: [],
       feedback: [],
+      signals: [],
+      imports: [],
       digest: null,
     };
   }
@@ -153,6 +181,8 @@
     if (Object.prototype.hasOwnProperty.call(raw, 'formats')) out.formats = formats;
     out.blocked = cleanWords(raw.blocked, MAX_BLOCKED);
     out.feedback = (Array.isArray(raw.feedback) ? raw.feedback : []).map(cleanFeedback).filter(Boolean).slice(-MAX_FEEDBACK);
+    out.signals = (Array.isArray(raw.signals) ? raw.signals : []).map(cleanSignal).filter(Boolean).slice(0, MAX_SIGNALS);
+    out.imports = (Array.isArray(raw.imports) ? raw.imports : []).map(cleanImport).filter(Boolean).slice(-MAX_IMPORTS);
     out.configured = raw.configured === true && out.interests.length > 0 && out.formats.length > 0;
     const digest = raw.digest;
     if (digest && typeof digest === 'object' && !Array.isArray(digest) && ISO_DAY.test(String(digest.day || ''))) {
@@ -280,8 +310,8 @@
   }
 
   return Object.freeze({
-    VERSION, FORMATS, VERDICTS, MAX_INTERESTS, MAX_BLOCKED, MAX_FEEDBACK, DIGEST_SIZE,
-    emptyProfile, normalize, configure, cleanInterest, uniqueInterests, semanticInterestId,
+    VERSION, FORMATS, VERDICTS, MAX_INTERESTS, MAX_BLOCKED, MAX_FEEDBACK, MAX_SIGNALS, MAX_IMPORTS, DIGEST_SIZE,
+    emptyProfile, normalize, configure, cleanInterest, uniqueInterests, semanticInterestId, cleanSignal, cleanImport,
     choose, ensureDigest, markDone, recordFeedback, isDigestDone, reason, stableHash,
   });
 });
