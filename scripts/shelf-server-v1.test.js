@@ -141,6 +141,65 @@ test('🔴 переполнение — честный отказ, а не ти�
   assert.equal((await c('/api/shelf')).data.items.length, 40, 'ничего не должно было вытесниться');
 });
 
+test('🔴 архивировать один из 40 → добавить новый → GET остаётся валидным', { timeout: 40000 }, async (t) => {
+  // Регрессия старого общего лимита: сервер сохранял 41 строку, а sanitizer читал
+  // только 40 и объявлял собственный файл повреждённым. Активный лимит и история
+  // обязаны быть независимы.
+  const rt = await startServer();
+  t.after(() => { rt.child.kill('SIGTERM'); fs.rmSync(rt.dataDir, { recursive: true, force: true }); });
+  const c = await signedIn(rt.base, 'archive-add-get@example.test');
+  const initial = Array.from({ length: 40 }, (_, i) => ENERGY({ id: `slot-${i}`, format: 'edit' }));
+  assert.equal((await c('/api/shelf', { method: 'PUT', body: { data: { version: 1, items: initial } } })).status, 200);
+
+  const archived = initial.map((item, index) => (index === 0 ? { ...item, archivedOn: '2026-08-29' } : item));
+  assert.equal((await c('/api/shelf', { method: 'PUT', body: { data: { version: 1, items: archived } } })).status, 200);
+
+  const add = await c('/api/shelf/item', { method: 'POST', body: { item: ENERGY({
+    id: 'replacement', format: 'video', catalogId: 'blender-spring',
+    attribution: 'Blender Foundation', rightsKind: 'cc-by-4.0', interestIds: ['animation', 'creative'],
+  }) } });
+  assert.equal(add.status, 200);
+  assert.equal(add.data.count, 41);
+
+  const loaded = await c('/api/shelf');
+  assert.equal(loaded.status, 200, 'сервер обязан прочитать только что записанный им файл');
+  assert.equal(loaded.data.items.length, 41);
+  assert.equal(loaded.data.items.filter((item) => !item.archivedOn).length, 40);
+  assert.equal(loaded.data.items.filter((item) => item.archivedOn).length, 1);
+  assert.deepEqual(loaded.data.items.find((item) => item.id === 'replacement').interestIds, ['animation', 'creative']);
+
+  const boundedHistory = Array.from({ length: 160 }, (_, i) => ENERGY({ id: `history-${i}`, archivedOn: '2026-08-29' }));
+  assert.equal((await c('/api/shelf', { method: 'PUT', body: { data: { version: 1, items: boundedHistory } } })).status, 200);
+  const beyondHistory = await c('/api/shelf/item', { method: 'POST', body: { item: ENERGY({ id: 'history-160' }) } });
+  assert.equal(beyondHistory.status, 409);
+  assert.equal(beyondHistory.data.error, 'shelf_history_full');
+  assert.equal((await c('/api/shelf')).data.items.length, 160);
+});
+
+test('🔴 восстановление архивного материала не может создать 41 active', { timeout: 40000 }, async (t) => {
+  const rt = await startServer();
+  t.after(() => { rt.child.kill('SIGTERM'); fs.rmSync(rt.dataDir, { recursive: true, force: true }); });
+  const c = await signedIn(rt.base, 'restore-cap@example.test');
+  const active = Array.from({ length: 40 }, (_, i) => ENERGY({ id: `active-${i}` }));
+  const archived = ENERGY({ id: 'archived-catalog', catalogId: 'blender-spring', archivedOn: '2026-08-28' });
+  assert.equal((await c('/api/shelf', {
+    method: 'PUT', body: { data: { version: 1, items: active.concat(archived) } },
+  })).status, 200);
+
+  const restored = active.concat([{ ...archived, archivedOn: undefined }]);
+  const rejected = await c('/api/shelf', {
+    method: 'PUT', body: { data: { version: 1, items: restored } },
+  });
+  assert.equal(rejected.status, 409, 'full PUT обязан держать тот же active limit, что POST');
+  assert.equal(rejected.data.error, 'shelf_full');
+
+  const unchanged = await c('/api/shelf');
+  assert.equal(unchanged.status, 200);
+  assert.equal(unchanged.data.items.filter((item) => !item.archivedOn).length, 40);
+  assert.equal(unchanged.data.items.filter((item) => item.archivedOn).length, 1,
+    'отклонённое восстановление не должно перезаписать архив');
+});
+
 test('🚪 чужая Полка недосягаема, аноним не пускается', { timeout: 40000 }, async (t) => {
   const rt = await startServer();
   t.after(() => { rt.child.kill('SIGTERM'); fs.rmSync(rt.dataDir, { recursive: true, force: true }); });

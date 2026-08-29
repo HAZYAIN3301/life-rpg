@@ -351,8 +351,10 @@ function attentionCleanSession(raw) {
 // не как «неподдерживаемый формат», а как попытка положить на наш сервер чужой файл
 // без правового основания; и поэтому же есть жёсткий потолок на длину полей.
 const SHELF_MAX_BYTES = 512 * 1024;
-const SHELF_MAX_ITEMS = 40;
+const SHELF_MAX_ITEMS = 40; // active saved items
+const SHELF_MAX_STORED = 160; // active + archived history
 const SHELF_KINDS = ['energy', 'practical'];
+const SHELF_FORMATS = ['edit', 'video', 'image', 'quote', 'podcast', 'link'];
 const SHELF_ACTIONS = ['quest', 'focus', 'note', 'project', 'postpone'];
 
 function shelfEmpty() { return { version: 1, items: [] }; }
@@ -375,9 +377,18 @@ function shelfCleanItem(raw) {
   const out = { id, kind: raw.kind, title, why, seenCount: attnInt(raw.seenCount, 0, 99) ?? 0 };
   const url = shelfCleanUrl(raw.url); if (url) out.url = url;
   for (const [k, max] of [['note', 500], ['source', 40], ['stopAt', 60],
-    ['goalId', 40], ['taskId', 40], ['projectId', 40]]) {
+    ['goalId', 40], ['taskId', 40], ['projectId', 40], ['catalogId', 64],
+    ['attribution', 180], ['rightsKind', 40]]) {
     const v = attnStr(raw[k], max); if (v) out[k] = v;
   }
+  if (SHELF_FORMATS.includes(raw.format)) out.format = raw.format;
+  const interestIds = [];
+  for (const value of Array.isArray(raw.interestIds) ? raw.interestIds : []) {
+    const interest = attnStr(value, 48);
+    if (interest && !interestIds.includes(interest)) interestIds.push(interest);
+    if (interestIds.length >= 16) break;
+  }
+  if (interestIds.length) out.interestIds = interestIds;
   // Практический обязан нести ожидаемый вывод — без него это потребление под
   // уважительным предлогом, и сервер такой материал не принимает (§13).
   if (raw.kind === 'practical') {
@@ -404,7 +415,7 @@ function shelfSanitize(raw) {
     if (!c || seen.has(c.id)) continue;
     seen.add(c.id);
     out.items.push(c);
-    if (out.items.length >= SHELF_MAX_ITEMS) break;
+    if (out.items.length >= SHELF_MAX_STORED) break;
   }
   return out;
 }
@@ -3261,6 +3272,9 @@ const server = http.createServer(async (req, res) => {
       if (!body.allowEmpty && cur.items.length > 0 && next.items.length === 0) {
         return sendJson(res, 409, { error: 'refuses_to_empty', have: cur.items.length });
       }
+      if (next.items.filter((item) => !item.archivedOn).length > SHELF_MAX_ITEMS) {
+        return sendJson(res, 409, { error: 'shelf_full', max: SHELF_MAX_ITEMS });
+      }
       try { persist(next); }
       catch (e) { console.error('[shelf]', e && e.message); return sendJson(res, 500, { error: 'save_failed' }); }
       return sendJson(res, 200, { ok: true, count: next.items.length });
@@ -3280,6 +3294,9 @@ const server = http.createServer(async (req, res) => {
         // Тихо выбросить чужой сохранённый материал хуже, чем сказать «убери лишнее».
         if (cur.items.filter((i) => !i.archivedOn).length >= SHELF_MAX_ITEMS) {
           return sendJson(res, 409, { error: 'shelf_full', max: SHELF_MAX_ITEMS });
+        }
+        if (cur.items.length >= SHELF_MAX_STORED) {
+          return sendJson(res, 409, { error: 'shelf_history_full', max: SHELF_MAX_STORED });
         }
         cur.items.push(item);
       } else cur.items[at] = item;

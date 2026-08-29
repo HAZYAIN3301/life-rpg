@@ -40,6 +40,16 @@ function navMotionIconHTML(id) {
       </svg>
     </span>`;
   }
+  if (id === 'nav.inspiration') {
+    return `<span class="navsec-icon nav-motion-icon nav-motion-inspiration" data-motion="gather" aria-hidden="true">
+      <svg viewBox="0 0 24 24" focusable="false" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round">
+        <path class="nav-inspiration-sheet sheet-a" d="M4.2 6.4 11 4.2v12.9l-6.8 2.2z"/>
+        <path class="nav-inspiration-sheet sheet-b" d="m11 4.2 8.8 2.2v12.9L11 17.1z"/>
+        <path class="nav-inspiration-spark" d="m16.5 2 .55 1.45L18.5 4l-1.45.55L16.5 6l-.55-1.45L14.5 4l1.45-.55z"/>
+        <path class="nav-inspiration-line" d="m6.5 9 2.2-.7M6.5 12l2.2-.7M13.4 9.3l3.8 1M13.4 12.2l2.7.7" opacity=".62"/>
+      </svg>
+    </span>`;
+  }
   return satoruIconHTML(id, 'navsec-icon', '');
 }
 
@@ -731,6 +741,123 @@ const I18N_EXTRA = {
   'Ссылка и личная заметка исчезнут без возможности восстановления.': { en: 'The link and personal note will be permanently removed.', de: 'Link und persönliche Notiz werden unwiderruflich entfernt.', uk: 'Посилання й особиста нотатка зникнуть без можливості відновлення.', es: 'El enlace y la nota personal desaparecerán sin posibilidad de recuperación.' },
   'Материал удалён': { en: 'Material deleted', de: 'Material gelöscht', uk: 'Матеріал видалено', es: 'Material eliminado' },
   'Источник откроется после короткого решения о цели и времени.': { en: 'The source will open after a brief decision about purpose and time.', de: 'Die Quelle öffnet sich nach einer kurzen Entscheidung über Zweck und Zeit.', uk: 'Джерело відкриється після короткого рішення про мету й час.', es: 'La fuente se abrirá tras una breve decisión sobre propósito y tiempo.' },
+  // ── Inspiration v196: персональная конечная подборка ──
+  'Вдохновение': { en: 'Inspiration', de: 'Inspiration', uk: 'Натхнення', es: 'Inspiración' },
+  'ВДОХНОВЕНИЕ': { en: 'INSPIRATION', de: 'INSPIRATION', uk: 'НАТХНЕННЯ', es: 'INSPIRACIÓN' },
+  'Короткая подборка по твоим интересам. Она закончится — и не станет новой лентой.': { en: 'A short selection based on your interests. It ends — it will not become another feed.', de: 'Eine kurze Auswahl nach deinen Interessen. Sie endet — und wird nicht zum nächsten Feed.', uk: 'Коротка добірка за твоїми інтересами. Вона закінчиться — і не стане новою стрічкою.', es: 'Una selección breve según tus intereses. Se termina: no se convertirá en otro feed.' },
+  'Собираем сохранённое и твою подборку…': { en: 'Gathering your saved items and daily selection…', de: 'Deine gespeicherten Inhalte und deine Auswahl werden zusammengestellt…', uk: 'Збираємо збережене й твою добірку…', es: 'Preparando tus elementos guardados y tu selección…' },
+  'Данные сохранённых материалов повреждены': { en: 'Saved material data is corrupted', de: 'Die Daten der gespeicherten Inhalte sind beschädigt', uk: 'Дані збережених матеріалів пошкоджено', es: 'Los datos del material guardado están dañados' },
+  'Не удалось загрузить Вдохновение': { en: 'Could not load Inspiration', de: 'Inspiration konnte nicht geladen werden', uk: 'Не вдалося завантажити Натхнення', es: 'No se pudo cargar Inspiración' },
+  'Это не пустой экран. Ничего не перезаписываем, пока данные не восстановлены.': { en: 'This is not an empty screen. Nothing will be overwritten until the data is restored.', de: 'Das ist kein leerer Bildschirm. Bis zur Wiederherstellung der Daten wird nichts überschrieben.', uk: 'Це не порожній екран. Нічого не перезаписуємо, доки дані не відновлено.', es: 'Esta pantalla no está vacía. No se sobrescribirá nada hasta restaurar los datos.' },
+  'Повторяем…': { en: 'Retrying…', de: 'Erneuter Versuch…', uk: 'Повторюємо…', es: 'Reintentando…' },
+  'Разделы Вдохновения': { en: 'Inspiration sections', de: 'Bereiche von Inspiration', uk: 'Розділи Натхнення', es: 'Secciones de Inspiración' },
+  'Подборка': { en: 'For you', de: 'Für dich', uk: 'Добірка', es: 'Para ti' },
+  'Сохранённое': { en: 'Saved', de: 'Gespeichert', uk: 'Збережене', es: 'Guardado' },
+  'ПОДБОРКА ДЛЯ ТЕБЯ': { en: 'PICKED FOR YOU', de: 'FÜR DICH AUSGEWÄHLT', uk: 'ДОБІРКА ДЛЯ ТЕБЕ', es: 'SELECCIÓN PARA TI' },
+  'Что тебя зажигает?': { en: 'What sparks you?', de: 'Was begeistert dich?', uk: 'Що тебе запалює?', es: '¿Qué te inspira?' },
+  'Импортируем темы из твоих сфер и активных целей, затем ты сам подтверждаешь их и выбираешь форматы. Ничего не назначается молча.': { en: 'We will import topics from your areas and active goals. You then confirm them and choose the formats. Nothing is assigned silently.', de: 'Wir importieren Themen aus deinen Bereichen und aktiven Zielen. Danach bestätigst du sie selbst und wählst die Formate. Nichts wird stillschweigend festgelegt.', uk: 'Імпортуємо теми з твоїх сфер і активних цілей, а потім ти сам їх підтверджуєш і обираєш формати. Нічого не призначається мовчки.', es: 'Importaremos temas de tus ámbitos y objetivos activos. Después tú los confirmas y eliges los formatos. Nada se asigna a escondidas.' },
+  'Импортировать из Satoru': { en: 'Import from Satoru', de: 'Aus Satoru importieren', uk: 'Імпортувати із Satoru', es: 'Importar desde Satoru' },
+  'Настроить вручную': { en: 'Set up manually', de: 'Manuell einrichten', uk: 'Налаштувати вручну', es: 'Configurar manualmente' },
+  'НАСТРОЙКА · ДО 2 МИНУТ': { en: 'SETUP · UNDER 2 MINUTES', de: 'EINRICHTUNG · UNTER 2 MINUTEN', uk: 'НАЛАШТУВАННЯ · ДО 2 ХВИЛИН', es: 'CONFIGURACIÓN · MENOS DE 2 MINUTOS' },
+  'Собери свою подборку': { en: 'Build your selection', de: 'Stell deine Auswahl zusammen', uk: 'Збери свою добірку', es: 'Crea tu selección' },
+  'Темы, вселенные и образы': { en: 'Topics, worlds and imagery', de: 'Themen, Welten und Bilder', uk: 'Теми, всесвіти й образи', es: 'Temas, universos e imágenes' },
+  'Выбери то, что действительно может тебя зацепить.': { en: 'Choose what can genuinely catch your interest.', de: 'Wähle, was dich wirklich packen kann.', uk: 'Обери те, що справді може тебе зачепити.', es: 'Elige lo que de verdad pueda atraparte.' },
+  'Добавь первую тему своими словами.': { en: 'Add your first topic in your own words.', de: 'Füge dein erstes Thema mit eigenen Worten hinzu.', uk: 'Додай першу тему своїми словами.', es: 'Añade tu primer tema con tus propias palabras.' },
+  'Добавить свои темы': { en: 'Add your own topics', de: 'Eigene Themen hinzufügen', uk: 'Додати власні теми', es: 'Añadir tus propios temas' },
+  'Ещё темы': { en: 'More topics', de: 'Weitere Themen', uk: 'Інші теми', es: 'Más temas' },
+  'Что показывать': { en: 'What to show', de: 'Was angezeigt werden soll', uk: 'Що показувати', es: 'Qué mostrar' },
+  'Можно выбрать несколько форматов.': { en: 'You can choose several formats.', de: 'Du kannst mehrere Formate auswählen.', uk: 'Можна обрати кілька форматів.', es: 'Puedes elegir varios formatos.' },
+  'Что не показывать': { en: 'What not to show', de: 'Was nicht angezeigt werden soll', uk: 'Що не показувати', es: 'Qué no mostrar' },
+  'Необязательно. Например: hustle, сравнение тел, политика.': { en: 'Optional. For example: hustle culture, body comparisons, politics.', de: 'Optional. Zum Beispiel: Hustle-Kultur, Körpervergleiche, Politik.', uk: 'Необов’язково. Наприклад: культ продуктивності, порівняння тіл, політика.', es: 'Opcional. Por ejemplo: cultura del esfuerzo, comparación de cuerpos, política.' },
+  'Исключить темы': { en: 'Exclude topics', de: 'Themen ausschließen', uk: 'Виключити теми', es: 'Excluir temas' },
+  'Интересы принадлежат твоему аккаунту. Satoru использует их только для конечной подборки и не публикует.': { en: 'Your interests belong to your account. Satoru only uses them for this finite selection and does not publish them.', de: 'Deine Interessen gehören zu deinem Konto. Satoru verwendet sie nur für diese endliche Auswahl und veröffentlicht sie nicht.', uk: 'Інтереси належать твоєму акаунту. Satoru використовує їх лише для скінченної добірки й не публікує.', es: 'Tus intereses pertenecen a tu cuenta. Satoru solo los usa para esta selección finita y no los publica.' },
+  'Добавить из Satoru': { en: 'Add from Satoru', de: 'Aus Satoru hinzufügen', uk: 'Додати із Satoru', es: 'Añadir desde Satoru' },
+  'Показать мою подборку': { en: 'Show my selection', de: 'Meine Auswahl zeigen', uk: 'Показати мою добірку', es: 'Mostrar mi selección' },
+  'Эдит': { en: 'Edit', de: 'Edit', uk: 'Едіт', es: 'Edit' },
+  'Изображение': { en: 'Image', de: 'Bild', uk: 'Зображення', es: 'Imagen' },
+  'Цитата': { en: 'Quote', de: 'Zitat', uk: 'Цитата', es: 'Cita' },
+  'Подкаст': { en: 'Podcast', de: 'Podcast', uk: 'Подкаст', es: 'Pódcast' },
+  'Материал': { en: 'Material', de: 'Inhalt', uk: 'Матеріал', es: 'Material' },
+  'Смотреть': { en: 'Watch', de: 'Ansehen', uk: 'Дивитися', es: 'Ver' },
+  'Рассмотреть': { en: 'Explore', de: 'Ansehen', uk: 'Роздивитися', es: 'Explorar' },
+  'Прочитать': { en: 'Read', de: 'Lesen', uk: 'Прочитати', es: 'Leer' },
+  'Слушать': { en: 'Listen', de: 'Anhören', uk: 'Слухати', es: 'Escuchar' },
+  'Запустить': { en: 'Play', de: 'Abspielen', uk: 'Запустити', es: 'Reproducir' },
+  'Открыть источник': { en: 'Open source', de: 'Quelle öffnen', uk: 'Відкрити джерело', es: 'Abrir fuente' },
+  'Открыть выпуск': { en: 'Open episode', de: 'Folge öffnen', uk: 'Відкрити випуск', es: 'Abrir episodio' },
+  'Источник и права': { en: 'Source and rights', de: 'Quelle und Rechte', uk: 'Джерело та права', es: 'Fuente y derechos' },
+  'Ещё действия': { en: 'More actions', de: 'Weitere Aktionen', uk: 'Інші дії', es: 'Más acciones' },
+  'Настроить подборку': { en: 'Tune selection', de: 'Auswahl anpassen', uk: 'Налаштувати добірку', es: 'Ajustar selección' },
+  'Дальше': { en: 'Next', de: 'Weiter', uk: 'Далі', es: 'Siguiente' },
+  'Просмотрено ✓': { en: 'Seen ✓', de: 'Gesehen ✓', uk: 'Переглянуто ✓', es: 'Visto ✓' },
+  'твои интересы': { en: 'your interests', de: 'deine Interessen', uk: 'твої інтереси', es: 'tus intereses' },
+  'Почему здесь': { en: 'Why it is here', de: 'Warum das hier ist', uk: 'Чому це тут', es: 'Por qué está aquí' },
+  'Готово ✓': { en: 'Done ✓', de: 'Fertig ✓', uk: 'Готово ✓', es: 'Listo ✓' },
+  'Больше такого': { en: 'More like this', de: 'Mehr davon', uk: 'Більше такого', es: 'Más como esto' },
+  'Не моё': { en: 'Not for me', de: 'Nicht meins', uk: 'Не моє', es: 'No es para mí' },
+  'Настроить': { en: 'Adjust', de: 'Anpassen', uk: 'Налаштувати', es: 'Ajustar' },
+  'Для этих интересов пока нет безопасных материалов': { en: 'No safe materials for these interests yet', de: 'Für diese Interessen gibt es noch keine sicheren Inhalte', uk: 'Для цих інтересів поки немає безпечних матеріалів', es: 'Todavía no hay materiales seguros para estos intereses' },
+  'Измени форматы или добавь своё. Мы не подставляем случайные ссылки только ради заполнения экрана.': { en: 'Change the formats or add your own. We do not insert random links just to fill the screen.', de: 'Ändere die Formate oder füge eigene Inhalte hinzu. Wir setzen keine zufälligen Links ein, nur um den Bildschirm zu füllen.', uk: 'Зміни формати або додай своє. Ми не підставляємо випадкові посилання лише для заповнення екрана.', es: 'Cambia los formatos o añade algo tuyo. No ponemos enlaces al azar solo para llenar la pantalla.' },
+  'Изменить интересы': { en: 'Change interests', de: 'Interessen ändern', uk: 'Змінити інтереси', es: 'Cambiar intereses' },
+  'На сегодня всё': { en: 'That is all for today', de: 'Das war alles für heute', uk: 'На сьогодні все', es: 'Eso es todo por hoy' },
+  'Подборка закончилась. Никакого «ещё одного». Можно вернуться к своему дню.': { en: 'The selection is over. No “just one more”. You can return to your day.', de: 'Die Auswahl ist zu Ende. Kein „nur noch eins“. Du kannst in deinen Tag zurückkehren.', uk: 'Добірка закінчилася. Жодного «ще одного». Можна повернутися до свого дня.', es: 'La selección terminó. Nada de «solo uno más». Puedes volver a tu día.' },
+  'Подборка на сегодня': { en: 'Today\'s selection', de: 'Heutige Auswahl', uk: 'Добірка на сьогодні', es: 'Selección de hoy' },
+  'СОХРАНИТЬ СВОЁ': { en: 'SAVE YOUR OWN', de: 'EIGENEN INHALT SPEICHERN', uk: 'ЗБЕРЕГТИ СВОЄ', es: 'GUARDAR ALGO TUYO' },
+  'Вставь материал — остальное определим сами': { en: 'Paste the material — we will work out the rest', de: 'Füge den Inhalt ein — den Rest erkennen wir', uk: 'Встав матеріал — решту визначимо самі', es: 'Pega el material; nosotros determinaremos el resto' },
+  'Ссылка, цитата или мысль': { en: 'Link, quote or thought', de: 'Link, Zitat oder Gedanke', uk: 'Посилання, цитата або думка', es: 'Enlace, cita o idea' },
+  'Название, если хочется уточнить': { en: 'Title, if you want to clarify', de: 'Titel, wenn du ihn genauer benennen möchtest', uk: 'Назва, якщо хочеться уточнити', es: 'Título, si quieres precisarlo' },
+  'Формат определяется автоматически. Чужие видео и аудио не копируются на сервер.': { en: 'The format is detected automatically. Other people\'s videos and audio are not copied to the server.', de: 'Das Format wird automatisch erkannt. Fremde Videos und Audios werden nicht auf den Server kopiert.', uk: 'Формат визначається автоматично. Чужі відео й аудіо не копіюються на сервер.', es: 'El formato se detecta automáticamente. Los vídeos y audios de otras personas no se copian al servidor.' },
+  'Мои материалы': { en: 'My materials', de: 'Meine Inhalte', uk: 'Мої матеріали', es: 'Mis materiales' },
+  'Личная конечная коллекция — не ещё один список «когда-нибудь».': { en: 'A finite personal collection — not another “someday” list.', de: 'Eine endliche persönliche Sammlung — keine weitere „Irgendwann“-Liste.', uk: 'Особиста скінченна колекція — не ще один список «колись».', es: 'Una colección personal finita, no otra lista de «algún día».' },
+  'Пока ничего не сохранено': { en: 'Nothing saved yet', de: 'Noch nichts gespeichert', uk: 'Поки нічого не збережено', es: 'Todavía no hay nada guardado' },
+  'Сохраняй сильные материалы из подборки одним нажатием или добавь своё.': { en: 'Save strong materials from your selection in one tap, or add your own.', de: 'Speichere starke Inhalte aus deiner Auswahl mit einem Tippen oder füge eigene hinzu.', uk: 'Зберігай сильні матеріали з добірки одним натисканням або додай своє.', es: 'Guarda materiales potentes de tu selección con un toque o añade algo tuyo.' },
+  'Добавить своё': { en: 'Add your own', de: 'Eigenen Inhalt hinzufügen', uk: 'Додати своє', es: 'Añadir algo tuyo' },
+  'Интересы': { en: 'Interests', de: 'Interessen', uk: 'Інтереси', es: 'Intereses' },
+  'Настроить интересы': { en: 'Adjust interests', de: 'Interessen anpassen', uk: 'Налаштувати інтереси', es: 'Ajustar intereses' },
+  'Профиль Тени': { en: 'Shadow profile', de: 'Schattenprofil', uk: 'Профіль Тіні', es: 'Perfil de la Sombra' },
+  'Добавлено тобой': { en: 'Added by you', de: 'Von dir hinzugefügt', uk: 'Додано тобою', es: 'Añadido por ti' },
+  'Выбери хотя бы один интерес или добавь свой.': { en: 'Choose at least one interest or add your own.', de: 'Wähle mindestens ein Interesse oder füge ein eigenes hinzu.', uk: 'Обери хоча б один інтерес або додай свій.', es: 'Elige al menos un interés o añade uno propio.' },
+  'Выбери хотя бы один формат.': { en: 'Choose at least one format.', de: 'Wähle mindestens ein Format.', uk: 'Обери хоча б один формат.', es: 'Elige al menos un formato.' },
+  'Не удалось сохранить интересы. Ничего не изменено.': { en: 'Could not save your interests. Nothing changed.', de: 'Deine Interessen konnten nicht gespeichert werden. Nichts wurde geändert.', uk: 'Не вдалося зберегти інтереси. Нічого не змінено.', es: 'No se pudieron guardar tus intereses. Nada cambió.' },
+  'Подборка настроена': { en: 'Selection set up', de: 'Auswahl eingerichtet', uk: 'Добірку налаштовано', es: 'Selección configurada' },
+  'Учту для следующих подборок': { en: 'I will use that for future selections', de: 'Das berücksichtige ich bei künftigen Auswahlen', uk: 'Врахую це для наступних добірок', es: 'Lo tendré en cuenta para futuras selecciones' },
+  'Больше не буду показывать этот материал': { en: 'I will not show this material again', de: 'Diesen Inhalt zeige ich nicht noch einmal', uk: 'Більше не показуватиму цей матеріал', es: 'No volveré a mostrar este material' },
+  'Материал уже сохранён': { en: 'Material already saved', de: 'Inhalt bereits gespeichert', uk: 'Матеріал уже збережено', es: 'Material ya guardado' },
+  'Материал сохранён': { en: 'Material saved', de: 'Inhalt gespeichert', uk: 'Матеріал збережено', es: 'Material guardado' },
+  'Сохранённое заполнено. Сначала перенеси что-то в архив.': { en: 'Saved items are full. Move something to the archive first.', de: 'Der Bereich „Gespeichert“ ist voll. Verschiebe zuerst etwas ins Archiv.', uk: 'Збережене заповнено. Спочатку перенеси щось до архіву.', es: 'La sección Guardado está llena. Mueve algo al archivo primero.' },
+  'Архив заполнен. Удали несколько старых материалов.': { en: 'The archive is full. Delete a few old materials.', de: 'Das Archiv ist voll. Lösche einige alte Inhalte.', uk: 'Архів заповнено. Видали кілька старих матеріалів.', es: 'El archivo está lleno. Elimina algunos materiales antiguos.' },
+  'Проверь материал и попробуй ещё раз.': { en: 'Check the material and try again.', de: 'Prüfe den Inhalt und versuche es erneut.', uk: 'Перевір матеріал і спробуй ще раз.', es: 'Revisa el material e inténtalo de nuevo.' },
+  'Фитнес': { en: 'Fitness', de: 'Fitness', uk: 'Фітнес', es: 'Fitness' },
+  'Движение': { en: 'Movement', de: 'Bewegung', uk: 'Рух', es: 'Movimiento' },
+  ['Бег']: { en: 'Running', de: 'Laufen', uk: 'Біг', es: 'Correr' },
+  'Йога': { en: 'Yoga', de: 'Yoga', uk: 'Йога', es: 'Yoga' },
+  'Отдых': { en: 'Rest', de: 'Erholung', uk: 'Відпочинок', es: 'Descanso' },
+  'Контент': { en: 'Content', de: 'Content', uk: 'Контент', es: 'Contenido' },
+  'Искусство': { en: 'Art', de: 'Kunst', uk: 'Мистецтво', es: 'Arte' },
+  'Дизайн': { en: 'Design', de: 'Design', uk: 'Дизайн', es: 'Diseño' },
+  'Анимация': { en: 'Animation', de: 'Animation', uk: 'Анімація', es: 'Animación' },
+  'Наука': { en: 'Science', de: 'Wissenschaft', uk: 'Наука', es: 'Ciencia' },
+  'Технологии': { en: 'Technology', de: 'Technologie', uk: 'Технології', es: 'Tecnología' },
+  'Обучение': { en: 'Learning', de: 'Lernen', uk: 'Навчання', es: 'Aprendizaje' },
+  'Книги': { en: 'Books', de: 'Bücher', uk: 'Книги', es: 'Libros' },
+  'Философия': { en: 'Philosophy', de: 'Philosophie', uk: 'Філософія', es: 'Filosofía' },
+  'Космос': { en: 'Space', de: 'Weltraum', uk: 'Космос', es: 'Espacio' },
+  'Путешествия': { en: 'Travel', de: 'Reisen', uk: 'Подорожі', es: 'Viajes' },
+  'Природа': { en: 'Nature', de: 'Natur', uk: 'Природа', es: 'Naturaleza' },
+  'Горы': { en: 'Mountains', de: 'Berge', uk: 'Гори', es: 'Montañas' },
+  'Походы': { en: 'Hiking', de: 'Wandern', uk: 'Походи', es: 'Senderismo' },
+  'Аниме': { en: 'Anime', de: 'Anime', uk: 'Аніме', es: 'Anime' },
+  'Супергерои': { en: 'Superheroes', de: 'Superhelden', uk: 'Супергерої', es: 'Superhéroes' },
+  ['Бизнес']: { en: 'Business', de: 'Business', uk: 'Бізнес', es: 'Negocios' },
+  'Продукты': { en: 'Products', de: 'Produkte', uk: 'Продукти', es: 'Productos' },
+  'Сделать своими руками': { en: 'Do it yourself', de: 'Selbermachen', uk: 'Зробити своїми руками', es: 'Hazlo tú mismo' },
+  'Люди': { en: 'People', de: 'Menschen', uk: 'Люди', es: 'Personas' },
+  'Концентрация': { en: 'Focus', de: 'Fokus', uk: 'Зосередження', es: 'Concentración' },
+  'Пространство': { en: 'Space around you', de: 'Umgebung', uk: 'Простір', es: 'Entorno' },
+  'Сохранено тобой': { en: 'Saved by you', de: 'Von dir gespeichert', uk: 'Збережено тобою', es: 'Guardado por ti' },
+  'Сохранено из персональной подборки': { en: 'Saved from your personal selection', de: 'Aus deiner persönlichen Auswahl gespeichert', uk: 'Збережено з персональної добірки', es: 'Guardado de tu selección personal' },
+  'Spider-Verse, Re:Zero, путешествия…': { en: 'Spider-Verse, Re:Zero, travel…', de: 'Spider-Verse, Re:Zero, Reisen…', uk: 'Spider-Verse, Re:Zero, подорожі…', es: 'Spider-Verse, Re:Zero, viajes…' },
+  'Закрыть видео': { en: 'Close video', de: 'Video schließen', uk: 'Закрити відео', es: 'Cerrar vídeo' },
   // ── v164 18.08: язык — первый шаг регистрации, English по умолчанию ──
   'Выбери язык': { en: 'Choose your language', de: 'Wähle deine Sprache', uk: 'Обери мову', es: 'Elige tu idioma' },
   'На нём пройдёт регистрация и откроется приложение. Позже язык можно поменять в Настройках.': { en: 'Registration and the app will use it. You can change the language later in Settings.', de: 'Registrierung und App verwenden diese Sprache. Du kannst sie später in den Einstellungen ändern.', uk: 'Цією мовою пройде реєстрація й відкриється застосунок. Пізніше мову можна змінити в Налаштуваннях.', es: 'El registro y la aplicación usarán este idioma. Puedes cambiarlo más tarde en Ajustes.' },
@@ -2789,7 +2916,6 @@ const I18N_EXTRA = {
   'Почему? Одной строкой, необязательно': { en: 'Why? One line, optional', de: 'Warum? Eine Zeile, optional', uk: '\u0427\u043e\u043c\u0443? \u041e\u0434\u043d\u0438\u043c \u0440\u044f\u0434\u043a\u043e\u043c, \u043d\u0435\u043e\u0431\u043e\u0432\u2019\u044f\u0437\u043a\u043e\u0432\u043e', es: '\u00bfPor qu\u00e9? Una l\u00ednea, opcional' },
   'например: не люблю холод': { en: 'e.g. I do not like the cold', de: 'z.\u202fB. ich mag K\u00e4lte nicht', uk: '\u043d\u0430\u043f\u0440\u0438\u043a\u043b\u0430\u0434: \u043d\u0435 \u043b\u044e\u0431\u043b\u044e \u0445\u043e\u043b\u043e\u0434', es: 'p.\u202fej. no me gusta el fr\u00edo' },
   'Моё': { en: 'Mine', de: 'Meins', uk: '\u041c\u043e\u0454', es: 'M\u00edo' },
-  'Не моё': { en: 'Not mine', de: 'Nicht meins', uk: '\u041d\u0435 \u043c\u043e\u0454', es: 'No es m\u00edo' },
   'Хватит пока': { en: 'Enough for now', de: 'Genug f\u00fcr jetzt', uk: '\u0414\u043e\u0441\u0438\u0442\u044c \u043f\u043e\u043a\u0438', es: 'Suficiente por ahora' },
   // ── Сделанное на доске: значки и медиа ──
   'Первый заказ': { en: 'First contract', de: 'Erster Auftrag', uk: '\u041f\u0435\u0440\u0448\u0435 \u0437\u0430\u043c\u043e\u0432\u043b\u0435\u043d\u043d\u044f', es: 'Primer encargo' },
@@ -4419,7 +4545,7 @@ const AttentionStore = {
 // load is a write fence, never an empty library that the next click may persist.
 function validateShelfEnvelope(value) {
   const S = window.ReturnShelfV1;
-  if (!S || !value || typeof value !== 'object' || Array.isArray(value) || Number(value.version) !== 1 || !Array.isArray(value.items) || value.items.length > S.MAX_ITEMS) return false;
+  if (!S || !value || typeof value !== 'object' || Array.isArray(value) || Number(value.version) !== 1 || !Array.isArray(value.items) || value.items.length > S.MAX_STORED) return false;
   const normalized = S.normalize(value);
   if (normalized.items.length !== value.items.length) return false;
   return normalized.items.every((item, index) => item.id === value.items[index].id);
@@ -5721,6 +5847,7 @@ const State = {
   _attentionDeepLink: null, _attentionReturnIndex: 0,
   shelf: null, _shelfLoadError: '', _shelfLoadBusy: false, _shelfBusy: '', _shelfError: '',
   _shelfComposerOpen: false, _shelfFilter: 'all', _shelfFocusAfterCommit: '',
+  _inspirationSection: 'today', _inspirationSetupOpen: false, _inspirationDraft: null, _inspirationRenderedOnce: false,
   _shelfPendingSource: null, _shelfNoteDraft: '',
   boardMedia: null, _boardMediaLoadError: '', _boardMediaBusy: false, _boardBusy: false, _boardError: '', _boardFocusAfterCommit: '',
   _boardComplete: null, _boardV2Receipt: null,
@@ -21039,29 +21166,143 @@ function shelfLinkLabel(item) {
   if (item.goalId) { const goal = (State.goals || []).find((row) => row.id === item.goalId); if (goal) return goal.title; }
   return '';
 }
+function inspirationProfileEngine() { return window.InspirationProfileV1 || null; }
+function inspirationCatalogEngine() { return window.InspirationCatalogV1 || null; }
+function inspirationCatalog() {
+  const C = inspirationCatalogEngine(); return C ? C.items(lang()) : [];
+}
+function inspirationProfileState() {
+  const P = inspirationProfileEngine();
+  return P ? P.normalize((State._inspirationDraft || (State.settings && State.settings.inspiration)) || P.emptyProfile()) : null;
+}
+const INSPIRATION_INTEREST_LABELS = Object.freeze({
+  sport: 'Спорт', fitness: 'Фитнес', movement: 'Движение', running: 'Бег', yoga: 'Йога', recovery: 'Восстановление', rest: 'Отдых', health: 'Здоровье',
+  video: 'Видео', content: 'Контент', creative: 'Творчество', art: 'Искусство', design: 'Дизайн', music: 'Музыка', animation: 'Анимация',
+  science: 'Наука', technology: 'Технологии', learning: 'Обучение', study: 'Учёба', reading: 'Книги', philosophy: 'Философия', space: 'Космос',
+  travel: 'Путешествия', nature: 'Природа', mountains: 'Горы', hiking: 'Походы', games: 'Игры', minecraft: 'Minecraft', anime: 'Аниме', superhero: 'Супергерои',
+  business: 'Бизнес', product: 'Продукты', finance: 'Финансы', diy: 'Сделать своими руками', social: 'Люди', focus: 'Концентрация', home: 'Пространство',
+});
+function inspirationInterestLabel(id) {
+  const value = String(id || '');
+  const authored = INSPIRATION_INTEREST_LABELS[value];
+  return authored ? t(authored) : value.replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase());
+}
+const INSPIRATION_INTEREST_MAPPINGS = Object.freeze([
+  [/спорт|трен|фитнес|gym|fitness|sport|deporte|\bbody\b|тело|тіло|körper/i, ['sport', 'movement']],
+  [/бег|біг|run|laufen|correr/i, ['running']],
+  [/йог|растяж|mobility/i, ['yoga', 'recovery']],
+  [/видео|youtube|tiktok|медиа|контент|монтаж|video|media|content/i, ['video', 'content', 'creative']],
+  [/рис|арт|дизайн|мистец|kunst|arte|design|diseñ|твор|созидан|kreativ|creativ/i, ['art', 'design', 'creative']],
+  [/музык|музик|music|musik|música/i, ['music']],
+  [/наук|исслед|физик|хими|біо|био|science|wissenschaft|ciencia|research/i, ['science', 'learning']],
+  [/техн|код|программ|robot|tech|technologie|tecnolog|code/i, ['technology']],
+  [/уч[её]б|навч|школ|универ|study|studium|estudio|lernen|aprendiz|learn/i, ['study', 'learning']],
+  [/книг|чтен|чит|read|lesen|lectura/i, ['reading']],
+  [/путеш|подорож|travel|reisen|viaj/i, ['travel']],
+  [/гор|поход|похід|hiking|wandern|senderismo|mountain|berg|montañ/i, ['mountains', 'nature']],
+  [/игр|ігр|minecraft|game|spiel|juego/i, ['games']],
+  [/аниме|manga|re.?zero/i, ['anime']],
+  [/spider|человек.?паук|супергер|marvel/i, ['superhero']],
+  [/бизнес|бізнес|заработ|продукт|стартап|карьер|кар.?єр|работ|робот|\bдело\b|business|negocio|product|produkt|startup/i, ['business', 'product']],
+  [/здоров|health|gesund|salud/i, ['health']],
+  [/отдых|відпоч|восстанов|віднов|rest|ruhe|descanso|recover|erholung|recuperaci/i, ['rest', 'recovery']],
+]);
+function inspirationSemanticIds(value) {
+  const name = String(value || '').trim(); if (!name) return [];
+  const out = [];
+  for (const [pattern, ids] of INSPIRATION_INTEREST_MAPPINGS) {
+    if (!pattern.test(name)) continue;
+    for (const id of ids) if (!out.includes(id)) out.push(id);
+  }
+  return out;
+}
+function inspirationImportSuggestions() {
+  const P = inspirationProfileEngine(); if (!P) return [];
+  const out = [], seen = new Set();
+  const push = (label, source, id = '') => {
+    const item = P.cleanInterest({ id: id || label, label, source });
+    if (!item || seen.has(item.id)) return; seen.add(item.id); out.push(item);
+  };
+  const scan = (value, source) => {
+    const name = String(value || '').trim(); if (!name) return;
+    inspirationSemanticIds(name).forEach((id) => push(inspirationInterestLabel(id), source, id));
+  };
+  for (const skill of (State.settings && State.settings.skills) || []) {
+    // Opaque skill ids (sk-*) are not catalog topics. Import only semantic
+    // matches so a successful setup can never create an empty digest by itself.
+    scan(skill.name, skill.name);
+  }
+  for (const goal of (State.goals || []).filter((item) => !item.completedAt && item.status !== 'archived').slice(0, 20)) scan(`${goal.title || ''} ${goal.description || ''}`, goal.title || t('Цель'));
+  for (const group of (State.goalGroups || []).filter((item) => item.status !== 'archived').slice(0, 20)) scan(group.title, group.title || t('Проект'));
+  const board = typeof boardV2IssuerProfile === 'function' ? boardV2IssuerProfile() : null;
+  for (const id of (board && board.interests) || []) push(inspirationInterestLabel(id), 'Satoru', id);
+  const profileText = String(State.profile && State.profile.text || ''); scan(profileText, t('Профиль Тени'));
+  return out.slice(0, 6);
+}
+function inspirationFormatFromContent(value) {
+  const raw = String(value || '').trim(), lower = raw.toLowerCase();
+  if (!/^https?:\/\//i.test(raw)) return 'quote';
+  if (/\.(?:png|jpe?g|webp|gif)(?:\?|#|$)/i.test(lower)) return 'image';
+  if (/\.(?:mp3|m4a|ogg|wav)(?:\?|#|$)|podcast|spotify\.com|podcasts?\./i.test(lower)) return 'podcast';
+  if (/tiktok\.com|shorts\/|reels?\//i.test(lower)) return 'edit';
+  if (/youtube\.com|youtu\.be|vimeo\.com|\.mp4(?:\?|#|$)/i.test(lower)) return 'video';
+  return 'link';
+}
+function inspirationYoutubeEmbed(url) {
+  try {
+    const parsed = new URL(String(url || '')); let id = '';
+    if (/^(?:www\.)?youtu\.be$/i.test(parsed.hostname)) id = parsed.pathname.split('/').filter(Boolean)[0] || '';
+    else if (/^(?:www\.)?(?:youtube\.com|m\.youtube\.com)$/i.test(parsed.hostname)) {
+      id = parsed.searchParams.get('v') || (/^\/shorts\//.test(parsed.pathname) ? parsed.pathname.split('/')[2] : '');
+    }
+    return /^[A-Za-z0-9_-]{6,20}$/.test(id) ? `https://www.youtube-nocookie.com/embed/${id}` : '';
+  } catch { return ''; }
+}
 function shelfViewModel() {
-  const S = shelfEngine(), UI = window.ReturnShelfUIV1;
-  if (!S || !UI) return { state: 'error', error: 'load' };
+  const S = shelfEngine(), UI = window.ReturnShelfUIV1, P = inspirationProfileEngine();
+  if (!S || !UI || !P || !inspirationCatalogEngine()) return { state: 'error', error: 'load' };
   if (State._shelfLoadBusy && !State.shelf) return { state: 'loading' };
   if (State._shelfLoadError) return { state: 'error', error: State._shelfLoadError, busy: State._shelfLoadBusy };
-  const state = shelfState(), filter = UI.FILTERS.includes(State._shelfFilter) ? State._shelfFilter : 'all';
-  const live = S.liveItems(state, todayStr());
-  const items = S.batch(state, todayStr(), { size: S.BATCH_DEFAULT, kind: filter === 'all' ? null : filter })
-    .map((item) => ({ ...item, linkLabel: shelfLinkLabel(item), busy: State._shelfBusy === item.id }));
-  const archived = state.items.filter((item) => item.archivedOn || !S.isLive(item, todayStr()));
+  const state = shelfState(), profile = inspirationProfileState() || P.emptyProfile(), catalog = inspirationCatalog();
+  const ensured = P.ensureDigest(profile, catalog, todayStr()), activeProfile = ensured.profile;
+  // Stable imported ids survive a language change; their visible labels should
+  // follow the current locale instead of freezing the language used at setup.
+  const visibleProfile = { ...activeProfile, interests: activeProfile.interests.map((interest) => (
+    INSPIRATION_INTEREST_LABELS[interest.id]
+      ? { ...interest, label: inspirationInterestLabel(interest.id) }
+      : interest
+  )) };
+  const savedCatalogIds = new Set(state.items.filter((item) => !item.archivedOn).map((item) => item.catalogId).filter(Boolean));
+  const feedbackById = new Map((activeProfile.feedback || []).map((entry) => [entry.itemId, entry.verdict]));
+  const items = ensured.items.map((item) => ({ ...item, reason: P.reason(item, visibleProfile),
+    done: !!(activeProfile.digest && activeProfile.digest.doneIds.includes(item.id)), saved: savedCatalogIds.has(item.id),
+    feedbackVerdict: feedbackById.get(item.id) || '' }));
+  const enrich = (item) => {
+    const catalogItem = item.catalogId ? catalog.find((row) => row.id === item.catalogId) : null;
+    const format = item.format || (catalogItem && catalogItem.format) || inspirationFormatFromContent(item.url || item.note || '');
+    const embedUrl = catalogItem ? catalogItem.embedUrl : inspirationYoutubeEmbed(item.url);
+    return { ...item, title: catalogItem ? catalogItem.title : item.title,
+      why: catalogItem ? t(item.why) : item.why, format, catalogItem,
+      embedUrl, mediaPolicy: catalogItem ? catalogItem.mediaPolicy : (embedUrl ? 'iframe' : item.url ? 'link' : 'text'),
+      linkLabel: shelfLinkLabel(item) };
+  };
+  const saved = S.liveItems(state, todayStr()).map(enrich);
+  const archived = state.items.filter((item) => item.archivedOn || !S.isLive(item, todayStr())).map(enrich);
   return {
-    state: 'ready', items, archived, filter, liveCount: live.length,
-    freeCount: Math.max(0, S.MAX_ITEMS - state.items.filter((item) => !item.archivedOn).length),
-    expiredCount: S.expired(state, todayStr()).length, rate: S.actionRate(state),
-    composerOpen: State._shelfComposerOpen,
-    errorMessage: State._shelfError, tasks: (State.tasks || []).filter((task) => !task.done && !task.archived).slice(0, 30),
-    goals: (State.goals || []).filter((goal) => !goal.completedAt && goal.status !== 'archived').slice(0, 30),
+    state: 'ready', section: State._inspirationSection === 'saved' ? 'saved' : 'today',
+    profile: visibleProfile, suggestions: inspirationImportSuggestions(), setupOpen: !!State._inspirationSetupOpen,
+    items, digestTotal: items.length, digestDone: P.isDigestDone(activeProfile),
+    saved, savedCount: saved.length, archived, composerOpen: State._shelfComposerOpen,
+    errorMessage: State._shelfError,
   };
 }
 function renderShelf() {
   const UI = window.ReturnShelfUIV1;
-  if (!UI) return `<section class="card" role="alert"><h2 id="return-shelf-title">${t('Полка возвращения')}</h2><p>${t('Модуль внимания не загрузился. Обнови страницу.')}</p></section>`;
-  return UI.render(shelfViewModel(), t);
+  if (!UI) return `<section class="card" role="alert"><h2 id="return-shelf-title">${t('Вдохновение')}</h2><p>${t('Модуль внимания не загрузился. Обнови страницу.')}</p></section>`;
+  const vm = shelfViewModel();
+  vm.animateEntry = !State._inspirationRenderedOnce;
+  State._inspirationRenderedOnce = true;
+  return UI.render(vm, t);
 }
 async function retryShelfLoad() {
   if (State._shelfLoadBusy) return;
@@ -21071,16 +21312,21 @@ async function retryShelfLoad() {
   State._shelfFocusAfterCommit = loaded.error ? '[data-action="shelf-retry"]' : '#return-shelf-title'; render();
 }
 function shelfDraftFromForm(form) {
-  const link = String(form.link && form.link.value || '');
-  const draft = {
-    id: `shelf-${uid()}`, kind: form.kind.value, title: form.title.value,
-    why: form.why.value, url: form.url.value, addedOn: todayStr(), expiresOn: form.expiresOn.value,
-  };
-  if (draft.kind === 'practical') {
-    draft.expect = form.expect.value; draft.stopAt = form.stopAt.value; draft.minutes = form.minutes.value;
+  const content = String(form.content && form.content.value || '').trim();
+  const isUrl = /^https?:\/\/[^\s]+$/i.test(content);
+  const format = inspirationFormatFromContent(content);
+  let title = String(form.title && form.title.value || '').trim();
+  if (!title) {
+    if (isUrl) { try { title = new URL(content).hostname.replace(/^www\./, ''); } catch {} }
+    else title = content.replace(/\s+/g, ' ').slice(0, 96);
   }
-  if (link.startsWith('task:')) draft.taskId = link.slice(5);
-  if (link.startsWith('goal:')) draft.goalId = link.slice(5);
+  const draft = {
+    id: `shelf-${uid()}`, kind: 'energy', format, title,
+    why: 'Сохранено тобой', addedOn: todayStr(),
+    interestIds: (inspirationProfileState()?.interests || []).map((item) => item.id),
+  };
+  if (isUrl) { draft.url = content; try { draft.source = new URL(content).hostname.replace(/^www\./, '').slice(0, 40); } catch {} }
+  else draft.note = content.slice(0, 500);
   return draft;
 }
 function shelfFormStatus(message, isError = false) {
@@ -21093,7 +21339,7 @@ async function addShelfItem(form) {
   const local = S.add(shelfState(), draft);
   if (!local.ok) {
     const message = local.error === 'full' ? 'Полка заполнена. Сначала архивируй или удали материал.'
-      : draft.kind === 'practical' && !String(draft.expect || '').trim() ? 'Для практического материала нужен ожидаемый вывод.' : 'Проверь ссылку и обязательные поля.';
+      : local.error === 'history_full' ? 'Архив заполнен. Удали несколько старых материалов.' : 'Проверь материал и попробуй ещё раз.';
     shelfFormStatus(message, true); return;
   }
   State._shelfBusy = 'add'; form.querySelectorAll(':is(button,input,select,textarea)').forEach((node) => { node.disabled = true; }); shelfFormStatus('Сохраняю…');
@@ -21101,10 +21347,171 @@ async function addShelfItem(form) {
   State._shelfBusy = '';
   if (!stored.ok) {
     form.querySelectorAll(':is(button,input,select,textarea)').forEach((node) => { node.disabled = false; });
-    shelfFormStatus(stored.error === 'shelf_full' ? 'Полка заполнена. Сначала архивируй или удали материал.' : 'Не удалось сохранить материал. Ничего не изменено.', true); return;
+    shelfFormStatus(stored.error === 'shelf_full' ? 'Полка заполнена. Сначала архивируй или удали материал.' : stored.error === 'shelf_history_full' ? 'Архив заполнен. Удали несколько старых материалов.' : 'Не удалось сохранить материал. Ничего не изменено.', true); return;
   }
   State.shelf = local.state; State._shelfComposerOpen = false; State._shelfError = '';
-  State._shelfFocusAfterCommit = `[data-shelf-id="${CSS.escape(draft.id)}"] h3`; render(); toast(t('Материал сохранён на Полке')); track('shelf:add');
+  State._shelfFocusAfterCommit = `[data-shelf-id="${CSS.escape(draft.id)}"] h3`; render(); sfx('confirm'); toast(t('Материал сохранён')); track('shelf:add');
+}
+function inspirationDraftFromSetupForm(form) {
+  const P = inspirationProfileEngine(); if (!P || !form) return null;
+  const base = P.normalize(State._inspirationDraft || State.settings?.inspiration || P.emptyProfile());
+  const interests = Array.from(form.querySelectorAll('input[name="interest"]:checked')).map((input) => ({
+    id: input.value, label: input.dataset.label || inspirationInterestLabel(input.value), source: input.dataset.source || '',
+  }));
+  String(form.elements.customInterests?.value || '').split(/[,;\n]/).forEach((label) => {
+    const value = label.trim(); if (!value) return;
+    const semantic = inspirationSemanticIds(value);
+    if (semantic.length) semantic.forEach((id) => interests.push({ id, label: value, source: t('Добавлено тобой') }));
+    else interests.push({ id: value, label: value, source: t('Добавлено тобой') });
+  });
+  const formats = Array.from(form.querySelectorAll('input[name="format"]:checked')).map((input) => input.value);
+  const blocked = String(form.elements.blocked?.value || '').split(/[,;\n]/).map((value) => value.trim()).filter(Boolean);
+  return P.normalize({ ...base, interests: P.uniqueInterests(interests), formats, blocked });
+}
+function openInspirationSetup(mode = 'edit', form = null) {
+  const P = inspirationProfileEngine(); if (!P) return;
+  let draft = form ? inspirationDraftFromSetupForm(form)
+    : P.normalize(State.settings?.inspiration || P.emptyProfile());
+  if (!draft) draft = P.emptyProfile();
+  if (mode === 'manual' && !draft.configured) draft = P.normalize({ ...draft, interests: [] });
+  if (mode === 'import') {
+    draft = P.normalize({ ...draft, interests: P.uniqueInterests([...(draft.interests || []), ...inspirationImportSuggestions().slice(0, 6)]) });
+  }
+  State._inspirationDraft = draft; State._inspirationSetupOpen = true; State._shelfError = '';
+  State._shelfFocusAfterCommit = '#inspiration-setup-form input[name="interest"], #inspiration-setup-form input[name="customInterests"]';
+  sfx('open'); render();
+}
+function closeInspirationSetup() {
+  State._inspirationDraft = null; State._inspirationSetupOpen = false; State._shelfError = '';
+  State._shelfFocusAfterCommit = '[data-action="inspiration-setup-edit"], #return-shelf-title';
+  sfx('close'); render();
+}
+async function persistInspirationProfile(rawProfile, { closeSetup = false, focus = '#return-shelf-title', toastKey = '' } = {}) {
+  const P = inspirationProfileEngine(); if (!P || !State.settings || State._shelfBusy) return false;
+  const profile = P.normalize(rawProfile);
+  State._shelfBusy = 'profile'; State._shelfError = ''; render();
+  const saved = await Store.updateNow('settings', (current) => {
+    const base = current && typeof current === 'object' && !Array.isArray(current)
+      ? structuredClone(current) : structuredClone(State.settings);
+    base.inspiration = profile; return base;
+  }, (committed) => { State.settings = committed; return true; });
+  State._shelfBusy = '';
+  if (!saved) {
+    State._shelfError = 'Не удалось сохранить интересы. Ничего не изменено.';
+    State._shelfFocusAfterCommit = focus; render(); toast(t(State._shelfError)); return false;
+  }
+  State._inspirationDraft = null;
+  if (closeSetup) State._inspirationSetupOpen = false;
+  State._shelfError = ''; State._shelfFocusAfterCommit = focus; render();
+  if (toastKey) toast(t(toastKey));
+  return true;
+}
+async function saveInspirationSetup(form) {
+  const P = inspirationProfileEngine(); if (!P || State._shelfBusy) return;
+  const draft = inspirationDraftFromSetupForm(form);
+  if (!draft || !draft.interests.length) { shelfFormStatus('Выбери хотя бы один интерес или добавь свой.', true); return; }
+  if (!draft.formats.length) { shelfFormStatus('Выбери хотя бы один формат.', true); return; }
+  const configured = P.configure(draft);
+  const ensured = P.ensureDigest(configured, inspirationCatalog(), todayStr());
+  shelfFormStatus('Сохраняю…');
+  if (await persistInspirationProfile(ensured.profile, { closeSetup: true, focus: '.inspiration-profile-summary', toastKey: 'Подборка настроена' })) {
+    sfx('confirm'); track('inspiration:configured');
+  }
+}
+function inspirationActionItem(id) {
+  const catalog = inspirationCatalog(), direct = catalog.find((item) => item.id === String(id));
+  if (direct) return direct;
+  const saved = shelfState().items.find((item) => item.id === String(id));
+  if (!saved) return null;
+  const catalogItem = saved.catalogId ? catalog.find((item) => item.id === saved.catalogId) : null;
+  return catalogItem ? { ...saved, title: catalogItem.title, embedUrl: catalogItem.embedUrl,
+    sourceUrl: catalogItem.sourceUrl, rightsUrl: catalogItem.rightsUrl, body: catalogItem.body,
+    why: t(saved.why), visual: catalogItem.visual, mediaPolicy: catalogItem.mediaPolicy }
+    : { ...saved, embedUrl: inspirationYoutubeEmbed(saved.url),
+      mediaPolicy: inspirationYoutubeEmbed(saved.url) ? 'iframe' : saved.url ? 'link' : 'text' };
+}
+async function markInspirationDone(id) {
+  const P = inspirationProfileEngine(), item = inspirationActionItem(id); if (!P || !item) return;
+  const ensured = P.ensureDigest(inspirationProfileState(), inspirationCatalog(), todayStr());
+  const next = P.markDone(ensured.profile, item.id);
+  if (await persistInspirationProfile(next, { focus: `[data-inspiration-id="${CSS.escape(item.id)}"] [data-action="inspiration-done"]` })) {
+    sfx('select'); track('inspiration:done');
+  }
+}
+async function recordInspirationFeedback(id, verdict) {
+  const P = inspirationProfileEngine(), item = inspirationActionItem(id);
+  if (!P || !item || !P.VERDICTS.includes(verdict)) return;
+  const ensured = P.ensureDigest(inspirationProfileState(), inspirationCatalog(), todayStr());
+  const next = P.recordFeedback(ensured.profile, item, verdict, todayStr());
+  if (await persistInspirationProfile(next, { focus: `[data-inspiration-id="${CSS.escape(item.id)}"]` })) {
+    sfx('select'); toast(t(verdict === 'more' ? 'Учту для следующих подборок' : 'Больше не буду показывать этот материал'));
+    track(`inspiration:feedback:${verdict}`);
+  }
+}
+async function saveInspirationCatalogItem(id) {
+  const S = shelfEngine(), item = inspirationCatalog().find((row) => row.id === String(id));
+  if (!S || !item || State._shelfBusy || State._shelfLoadError) return;
+  const existing = shelfState().items.find((row) => row.catalogId === item.id);
+  if (existing && !existing.archivedOn) { toast(t('Материал уже сохранён')); return; }
+  if (existing && existing.archivedOn) {
+    if (S.liveItems(shelfState(), todayStr()).length >= S.MAX_ITEMS) {
+      toast(t('Сохранённое заполнено. Сначала перенеси что-то в архив.')); return;
+    }
+    const next = { ...shelfState(), items: shelfState().items.map((row) => {
+      if (row.id !== existing.id) return row;
+      const restored = { ...row }; delete restored.archivedOn; return restored;
+    }) };
+    if (await commitShelf(next, { focus: `[data-inspiration-id="${CSS.escape(item.id)}"] [data-action="inspiration-save"]`, toastKey: 'Материал сохранён' })) sfx('confirm');
+    return;
+  }
+  const draft = {
+    id: `ins-${item.id}`.slice(0, 40), kind: 'energy', format: item.format, title: item.title,
+    why: 'Сохранено из персональной подборки', addedOn: todayStr(), catalogId: item.id,
+    interestIds: item.interestIds, attribution: item.attribution, rightsKind: item.rightsKind,
+  };
+  if (item.sourceUrl) { draft.url = item.sourceUrl; draft.source = String(item.provider || '').slice(0, 40); }
+  const local = S.add(shelfState(), draft);
+  if (!local.ok) {
+    toast(t(local.error === 'full' ? 'Сохранённое заполнено. Сначала перенеси что-то в архив.'
+      : local.error === 'history_full' ? 'Архив заполнен. Удали несколько старых материалов.' : 'Не удалось сохранить материал. Ничего не изменено.'));
+    return;
+  }
+  State._shelfBusy = 'add'; render();
+  const stored = await ShelfStore.add(local.state.items[local.state.items.length - 1]);
+  State._shelfBusy = '';
+  if (!stored.ok) { State._shelfError = 'Не удалось сохранить материал. Ничего не изменено.'; render(); toast(t(State._shelfError)); return; }
+  State.shelf = local.state; State._shelfFocusAfterCommit = `[data-inspiration-id="${CSS.escape(item.id)}"] [data-action="inspiration-save"]`;
+  render(); sfx('confirm'); toast(t('Материал сохранён')); track('inspiration:save');
+}
+function inspirationEmbedAllowed(value) {
+  try {
+    const url = new URL(String(value || ''));
+    return url.protocol === 'https:' && ['www.youtube-nocookie.com', 'www.nps.gov', 'www.dvidshub.net'].includes(url.hostname)
+      && !url.searchParams.has('autoplay');
+  } catch { return false; }
+}
+function playInspirationEmbed(id, opener) {
+  const item = inspirationActionItem(id), url = item && item.embedUrl;
+  const host = document.querySelector(`[data-inspiration-media="${CSS.escape(String(id))}"]`);
+  if (!item || !host || !inspirationEmbedAllowed(url) || host.querySelector('.inspiration-embed')) return;
+  const layer = document.createElement('div'); layer.className = 'inspiration-embed';
+  layer.innerHTML = `<iframe src="${esc(url)}" title="${esc(item.title)}" loading="eager" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-presentation" allow="fullscreen; picture-in-picture" allowfullscreen></iframe><button type="button" data-action="inspiration-media-close" aria-label="${t('Закрыть видео')}">✕</button>`;
+  layer._returnFocus = opener; host.appendChild(layer); sfx('open'); layer.querySelector('button')?.focus();
+}
+function closeInspirationEmbed(button) {
+  const layer = button && button.closest('.inspiration-embed'); if (!layer) return;
+  const returnFocus = layer._returnFocus; layer.remove(); sfx('close');
+  if (returnFocus && returnFocus.isConnected) returnFocus.focus();
+}
+function playInspirationMotion(id, button) {
+  const host = document.querySelector(`[data-inspiration-media="${CSS.escape(String(id))}"]`); if (!host) return;
+  host.classList.remove('is-playing'); void host.offsetWidth; host.classList.add('is-playing'); sfx('select');
+  setTimeout(() => host.classList.remove('is-playing'), 900);
+  if (button) button.setAttribute('aria-pressed', 'true');
+  setTimeout(() => button?.setAttribute('aria-pressed', 'false'), 900);
+}
+function listenInspiration(id, button) {
+  const item = inspirationActionItem(id); if (item) ttsSpeak(item.body || item.title, button, 'calm');
 }
 async function commitShelf(next, { focus = '#return-shelf-title', allowEmpty = false, toastKey = '' } = {}) {
   if (State._shelfBusy || State._shelfLoadError) return false;
@@ -21126,7 +21533,9 @@ async function archiveExpiredShelfItems() {
   await commitShelf(next, { toastKey: 'Материал перенесён в архив' });
 }
 function openShelfDeleteDialog(id, opener) {
-  const item = shelfState().items.find((row) => row.id === id); if (!item) return;
+  const raw = shelfState().items.find((row) => row.id === id); if (!raw) return;
+  const catalogItem = raw.catalogId ? inspirationCatalog().find((row) => row.id === raw.catalogId) : null;
+  const item = catalogItem ? { ...raw, title: catalogItem.title } : raw;
   closeAccountDialog('return-shelf-delete-dialog', { restoreFocus: false });
   const overlay = document.createElement('div'); overlay.id = 'return-shelf-delete-dialog'; overlay.className = 'modal-overlay return-shelf-delete-overlay'; overlay.dataset.id = id;
   overlay.innerHTML = `<section class="return-shelf-delete-dialog" role="dialog" aria-modal="true" aria-labelledby="return-shelf-delete-title" aria-describedby="return-shelf-delete-description"><button type="button" class="modal-x" data-action="shelf-delete-cancel" aria-label="${t('Закрыть')}">✕</button><h2 id="return-shelf-delete-title" tabindex="-1">${t('Удалить материал с Полки?')}</h2><p id="return-shelf-delete-description">${t('Ссылка и личная заметка исчезнут без возможности восстановления.')}</p><p class="return-shelf-delete-name" data-noi18n>${esc(item.title)}</p><div><button type="button" class="btn ghost" data-action="shelf-delete-cancel">${t('Отмена')}</button><button type="button" class="btn danger" data-action="shelf-delete-confirm">${t('Удалить')}</button></div></section>`;
@@ -21143,16 +21552,30 @@ async function confirmShelfDelete() {
 function shelfSourceTarget(item) {
   try { return new URL(item.url).hostname.replace(/^www\./, '').slice(0, 80); } catch { return ''; }
 }
-function openShelfSource(id, opener) {
-  const item = shelfState().items.find((row) => row.id === id); if (!item || !item.url) return;
+function openProtectedInspirationSource(item, opener) {
+  if (!item || !item.url) return;
   const active = window.AttentionSessionV1 && window.AttentionSessionV1.active(State.attentionSessions);
   if (active) { if (window.AttentionSessionV1.isOver(active, attentionNow())) openAttentionBoundary(active.id); else toast(t('Одно окно внимания уже идёт')); return; }
   const target = shelfSourceTarget(item); if (!target) return;
   State._shelfPendingSource = { id: item.id, url: item.url, opener };
   const policy = attentionPolicyForTarget(target);
   if (policy) openAttentionEntry(policy.id, 'shelf', opener);
-  else openAttentionSetup(opener, { targetLabel: target, purpose: 'watch', minutes: item.kind === 'energy' ? 3 : Math.min(180, item.minutes || 20), outcomeHint: item.expect || item.why, source: 'shelf' });
+  else openAttentionSetup(opener, { targetLabel: target, purpose: 'watch', minutes: item.kind === 'practical' ? Math.min(180, item.minutes || 20) : 3, outcomeHint: item.expect || item.why || item.title, source: 'shelf' });
   toast(t('Источник откроется после короткого решения о цели и времени.'));
+}
+function openShelfSource(id, opener) {
+  const item = shelfState().items.find((row) => row.id === id); if (!item) return;
+  openProtectedInspirationSource(item, opener);
+}
+function openInspirationSource(id, opener) {
+  const item = inspirationActionItem(id), url = item && (item.sourceUrl || item.url);
+  if (!item || !url) return;
+  openProtectedInspirationSource({ ...item, url }, opener);
+}
+function openInspirationRights(id, opener) {
+  const item = inspirationActionItem(id), url = item && (item.rightsUrl || item.sourceUrl || item.url);
+  if (!item || !url) return;
+  openProtectedInspirationSource({ ...item, url, why: item.title }, opener);
 }
 async function completeShelfItem(form) {
   const S = shelfEngine(), id = form.dataset.id, action = form.action.value; if (!S || State._shelfBusy) return;
@@ -21755,7 +22178,7 @@ const SECTIONS = [
   { id: 'today', iconId: 'nav.today', label: 'Сегодня', gate: 0, views: [{ view: 'today', label: 'День' }, { view: 'notes', label: 'Заметки' }] },
   { id: 'plan', iconId: 'nav.plan', label: 'План', gate: 0, views: [{ view: 'calendar', label: 'Календарь' }, { view: 'goals', label: 'Цели' }] },
   { id: 'habits', iconId: 'nav.habits', label: 'Привычки', gate: 0, views: [{ view: 'habits', label: 'Привычки' }] },
-  { id: 'library', iconId: 'nav.notes', label: 'Возвращение', gate: 0, views: [{ view: 'shelf', label: 'Полка возвращения' }] },
+  { id: 'library', iconId: 'nav.inspiration', label: 'Вдохновение', gate: 0, views: [{ view: 'shelf', label: 'Подборка' }] },
   { id: 'rewards', iconId: 'nav.rewards', label: 'Награды', gate: 0, views: [{ view: 'rewards', label: 'Награды' }] },
   { id: 'hero', iconId: 'nav.hero', label: 'Герой', gate: 3, views: [
     { view: 'den', label: 'Логово', iconId: 'nav.lair' },
@@ -21896,7 +22319,7 @@ function showMobileNavSheet() {
     const locked = s.gate > lvl, isNew = !locked && s.id !== cur && sectionHasNew(s, lvl);
     const guideTarget = guideSectionTarget(s.id);
     return `<button class="mobile-sheet-entry${s.id === cur ? ' active' : ''}${locked ? ' locked' : ''}" data-action="go-section" data-sec="${s.id}"${guideTarget ? ` data-guide-target="${guideTarget}"` : ''} aria-current="${s.id === cur ? 'page' : 'false'}">
-      <span class="mobile-sheet-icon">${satoruIconHTML(s.iconId, 'mobile-sheet-glyph', '')}</span><span><b>${t(s.label)}</b>${locked ? `<small>${satoruIconHTML('status.lock', 'inline-glyph', '🔒')} ${t('Уровень')} ${s.gate}</small>` : ''}</span>${isNew ? '<i class="mobile-sheet-new"></i>' : '<span class="mobile-sheet-chevron">›</span>'}
+      <span class="mobile-sheet-icon">${s.iconId === 'nav.inspiration' ? navMotionIconHTML(s.iconId) : satoruIconHTML(s.iconId, 'mobile-sheet-glyph', '')}</span><span><b>${t(s.label)}</b>${locked ? `<small>${satoruIconHTML('status.lock', 'inline-glyph', '🔒')} ${t('Уровень')} ${s.gate}</small>` : ''}</span>${isNew ? '<i class="mobile-sheet-new"></i>' : '<span class="mobile-sheet-chevron">›</span>'}
     </button>`;
   };
   const group = (id, label, entries) => `<section class="mobile-sheet-group" aria-labelledby="${id}"><h3 id="${id}">${t(label)}</h3><div class="mobile-sheet-group-entries">${entries}</div></section>`;
@@ -22435,6 +22858,9 @@ async function onSubmit(e) {
   }
   if (f.id === 'attention-entry-form') {
     e.preventDefault(); await startAttentionEntry(f); return;
+  }
+  if (f.id === 'inspiration-setup-form') {
+    e.preventDefault(); await saveInspirationSetup(f); return;
   }
   if (f.id === 'return-shelf-add-form') {
     e.preventDefault(); await addShelfItem(f); return;
@@ -24197,7 +24623,7 @@ async function onClick(e) {
     if (vm?.targetKey === guideTarget.dataset.guideTarget && await guideV3OpenContextChapter()) return;
   }
   const navBtn = e.target.closest('#nav button[data-view]');
-  if (navBtn) { flushSettingsForm(); const nextView = navBtn.dataset.view; if (nextView !== State.view) sfx('navigate'); State.view = nextView; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); State._goalDeepLinkId = ''; syncGoalDeepLink('', State.view); } markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
+  if (navBtn) { flushSettingsForm(); const nextView = navBtn.dataset.view; if (nextView !== State.view) sfx('navigate'); State.view = nextView; if (State.view === 'shelf') State._inspirationRenderedOnce = false; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); State._goalDeepLinkId = ''; syncGoalDeepLink('', State.view); } markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
   const secBtn = e.target.closest('[data-action="go-section"]');
   if (secBtn) {
     const s = SECTIONS.find((x) => x.id === secBtn.dataset.sec); if (!s) return;
@@ -24212,7 +24638,7 @@ async function onClick(e) {
     const fromMobileSheet = !!secBtn.closest('#mobile-nav-sheet');
     if (fromMobileSheet) closeMobileNavSheet({ restoreFocus: false });
     else closeMobileNavSheet();
-    if (sectionOf(State.view) !== s.id) { if (!settingsFlushedForNav) flushSettingsForm(); sfx('navigate'); State.view = s.views[0].view; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); syncGoalDeepLink('', State.view); } if (fromMobileSheet) State._mobileNavFocusAfterCommit = '#main h2'; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
+    if (sectionOf(State.view) !== s.id) { if (!settingsFlushedForNav) flushSettingsForm(); sfx('navigate'); State.view = s.views[0].view; if (State.view === 'shelf') State._inspirationRenderedOnce = false; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); syncGoalDeepLink('', State.view); } if (fromMobileSheet) State._mobileNavFocusAfterCommit = '#main h2'; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
     return;
   }
   if (e.target.id === 'mobile-nav-sheet') { closeMobileNavSheet(); return; }
@@ -24248,8 +24674,30 @@ async function onClick(e) {
   }
   if (action === 'attention-rest-today') { closeAttentionDialog({ force: true }); toast(t('Отдых тоже может быть выбранным действием')); return; }
 
-  if (action === 'shelf-toggle-composer') { State._shelfComposerOpen = !State._shelfComposerOpen; State._shelfError = ''; State._shelfFocusAfterCommit = State._shelfComposerOpen ? '#return-shelf-add-form input[name="title"]' : '#return-shelf-title'; render(); return; }
-  if (action === 'shelf-filter') { State._shelfFilter = el.dataset.filter || 'all'; State._shelfFocusAfterCommit = `[data-action="shelf-filter"][data-filter="${CSS.escape(State._shelfFilter)}"]`; render(); return; }
+  if (action === 'inspiration-section') {
+    const section = el.dataset.section === 'saved' ? 'saved' : 'today';
+    if (section !== State._inspirationSection) sfx('navigate');
+    State._inspirationSection = section; State._shelfComposerOpen = false; State._shelfError = '';
+    State._shelfFocusAfterCommit = `[data-action="inspiration-section"][data-section="${section}"]`; render(); return;
+  }
+  if (action === 'inspiration-setup-import') { openInspirationSetup('import', el.closest('form')); return; }
+  if (action === 'inspiration-setup-manual') { openInspirationSetup('manual'); return; }
+  if (action === 'inspiration-setup-edit') { openInspirationSetup('edit'); return; }
+  if (action === 'inspiration-setup-close') { closeInspirationSetup(); return; }
+  if (action === 'inspiration-done') { await markInspirationDone(id); return; }
+  if (action === 'inspiration-feedback') { await recordInspirationFeedback(id, el.dataset.verdict); return; }
+  if (action === 'inspiration-save') { await saveInspirationCatalogItem(id); return; }
+  if (action === 'inspiration-play' || action === 'inspiration-play-saved') { playInspirationEmbed(id, el); return; }
+  if (action === 'inspiration-media-close') { closeInspirationEmbed(el); return; }
+  if (action === 'inspiration-listen') { listenInspiration(id, el); return; }
+  if (action === 'inspiration-play-motion') { playInspirationMotion(id, el); return; }
+  if (action === 'inspiration-open-source') { openInspirationSource(id, el); return; }
+  if (action === 'inspiration-open-rights') { openInspirationRights(id, el); return; }
+  if (action === 'shelf-toggle-composer') {
+    State._inspirationSection = 'saved'; State._shelfComposerOpen = !State._shelfComposerOpen; State._shelfError = '';
+    State._shelfFocusAfterCommit = State._shelfComposerOpen ? '#return-shelf-add-form textarea[name="content"]' : '[data-action="shelf-toggle-composer"]';
+    sfx(State._shelfComposerOpen ? 'open' : 'close'); render(); return;
+  }
   if (action === 'shelf-retry') { await retryShelfLoad(); return; }
   if (action === 'shelf-open-source') { openShelfSource(id, el); return; }
   if (action === 'shelf-archive') { await archiveShelfItem(id); return; }
@@ -24257,7 +24705,6 @@ async function onClick(e) {
   if (action === 'shelf-delete') { openShelfDeleteDialog(id, el); return; }
   if (action === 'shelf-delete-cancel') { closeAccountDialog('return-shelf-delete-dialog'); return; }
   if (action === 'shelf-delete-confirm') { await confirmShelfDelete(); return; }
-  if (action === 'shelf-open-export') { State.view = 'settings'; State.settingsSection = 'data'; State._settingsFocusAfterCommit = '.account-data-card, #settings-title'; render(); return; }
 
   if (el.closest('#mobile-nav-sheet') && action !== 'mobile-nav-close') {
     // Новый экран или диалог становится владельцем фокуса. Не возвращаемся к
@@ -26282,6 +26729,7 @@ function clearAllData() {
   State.attentionMode = 'local'; State.attentionPolicies = null; State.attentionSessions = null; State.attentionEpisodes = null;
   State.shelf = null; State._shelfLoadError = ''; State._shelfLoadBusy = false; State._shelfBusy = ''; State._shelfError = '';
   State._shelfComposerOpen = false; State._shelfFilter = 'all'; State._shelfFocusAfterCommit = ''; State._shelfPendingSource = null; State._shelfNoteDraft = '';
+  State._inspirationSection = 'today'; State._inspirationSetupOpen = false; State._inspirationDraft = null;
   State.profile = null; State.aiKeys = null; State.strava = null; State.chatLog = [];
   State.leaderboard = null; State.party = null; State.adminUsers = null; State.socialPrivacy = null; State.myFeedbackCount = 0;
   State._lbError = ''; State._partyError = ''; State._socialError = ''; State._socialBusy = '';
@@ -26630,12 +27078,8 @@ function onChange(e) {
     }).catch(() => toast(t('Этот формат пока не читаю. Выбери TXT, MD, JSON или CSV.')));
     return;
   }
-  if (e.target.matches?.('#return-shelf-add-form [data-action="shelf-kind"]')) {
-    const form = e.target.form, practical = e.target.value === 'practical';
-    if (form) form.dataset.shelfKind = practical ? 'practical' : 'energy';
-    form?.querySelectorAll('[data-shelf-practical]').forEach((field) => { field.hidden = !practical; });
-    const expect = form?.elements.expect; if (expect) expect.required = practical;
-    return;
+  if (e.target.matches?.('#inspiration-setup-form input[type="checkbox"]')) {
+    e.target.closest('label')?.classList.toggle('is-selected', e.target.checked); sfx('select'); return;
   }
   if (e.target.matches?.('#attention-entry-form input[name="purposeId"]')) {
     const form = e.target.form, field = form && form.querySelector('[data-attention-topic]'), topic = form && form.elements.topic;
@@ -27152,7 +27596,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v195';
+const PWA_CACHE_VERSION = 'satoru-v196';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

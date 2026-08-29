@@ -112,7 +112,7 @@ test('the approved RU review is an exact mirror of centralized runtime copy', ()
 });
 
 test('v195 offline shell pins all Guide runtime scripts and locale copies', () => {
-  sourceMatches(SW, /const CACHE = 'satoru-v195';/);
+  sourceMatches(SW, /const CACHE = 'satoru-v196';/);
   for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'guide-surface-v1.js']) {
     assert.ok(file, 'Guide runtime file must be discoverable before checking SHELL');
     assert.ok(SW.includes(`'${file}'`) || SW.includes(`"${file}"`), `${file} must be pinned in SHELL`);
@@ -544,13 +544,16 @@ test('Context pack v195 explicitly releases exact Guide copy and chapter version
   sourceMatches(speak, /copy:\s*guideV3CopyModule\(\)/,
     'Piper must speak the same locale-specific transcript shown on screen');
 
-  for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'app.js']) {
+  for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js']) {
     const source = SCRIPT_SOURCES.find((item) => scriptFile(item) === file);
     assert.ok(source, `${file} must load in index.html`);
     assert.match(source, /\?v=[^"']*v195(?:-|$)/, `${file} needs a v195 cache-busting pin`);
   }
-  sourceMatches(INDEX, /styles\.css\?v=[^"']*v195(?:-|["'])/,
-    'the contextual pack needs the same v195 CSS pin');
+  const appSource = SCRIPT_SOURCES.find((item) => scriptFile(item) === 'app.js');
+  assert.ok(appSource, 'app.js must load in index.html');
+  assert.match(appSource, /\?v=[^"']*v196(?:-|$)/, 'the current app shell needs the v196 cache-busting pin');
+  sourceMatches(INDEX, /styles\.css\?v=[^"']*v196(?:-|["'])/,
+    'the current application CSS needs the v196 cache-busting pin');
 });
 
 test('feedback remains reachable even when the localized Guide is unavailable', () => {

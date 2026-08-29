@@ -1,4 +1,4 @@
-/* Satoru Return Shelf v1 — Полка возвращения (DISCIPLINE-ESCAPE-PLAN §13).
+/* Satoru Saved Inspiration v1 — personal saved material behind Inspiration.
  *
  * Задача, названная Альбертом: «была идея сделать небольшую ленту, куда можно скидывать
  * цитаты, картинки, подкасты и эдиты — тогда не надо будет заходить в тикток ради
@@ -11,8 +11,9 @@
  *
  *  — пачка КОНЕЧНА: default 3, максимум 5. Не «первые 3 из бесконечности», а всё,
  *    что выдаётся за вход. Дальше выдавать нечего, и это не баг;
- *  — порядок ДЕТЕРМИНИРОВАННЫЙ, без случайности и без «рекомендаций». Случайная
- *    выдача «ещё одного» — механика игрового автомата, здесь её нет и не будет;
+ *  — дневная персональная подборка строится отдельным `inspiration-profile-v1`
+ *    только по подтверждённым интересам. Порядок детерминированный, без
+ *    случайности и без кнопки «ещё одно»;
  *  — просмотр НЕ даёт ни XP, ни золота. Иначе смотреть вдохновение станет выгоднее,
  *    чем делать дело, и Полка превратится в способ фармить прогресс;
  *  — никаких лайков, просмотров и любых публичных счётчиков популярности;
@@ -23,8 +24,8 @@
  * прямо сюда и закрывается по достижении N. Отдельного входа «зайду в TikTok ради
  * Полки» не существует — иначе Полка стала бы оправданием для ленты.
  *
- * ⚠️ Что модуль НЕ делает и не должен:
- *  — НЕ рекомендует. Здесь нет ранжирования, «похожего» и персонализации;
+ * Персонализация и конечная дневная подборка живут отдельно в
+ * inspiration-profile-v1. Этот модуль отвечает только за личное Сохранённое:
  *  — НЕ хранит чужое медиа: только ссылка, разрешённое preview и своя заметка (§13);
  *  — НЕ начисляет ничего — подключить награду физически некуда;
  *  — НЕ открывает внешний источник сам: это отдельное решение и своя attention policy.
@@ -48,11 +49,17 @@
   // Полка не склад. Больше сорока — это уже «когда-нибудь посмотрю», то есть та же
   // прокрастинация, только аккуратно сложенная.
   const MAX_ITEMS = 40;
+  // Active and historical ceilings must be separate. The original server cut
+  // every file at 40 total rows: archive one, add one, and the next GET treated
+  // the resulting 41-row file as corrupted. Keep bounded history without making
+  // the active collection a warehouse.
+  const MAX_STORED = 160;
 
   const MAX_TITLE = 120;
   const MAX_WHY = 200;      // «что именно я отсюда беру» — обязательное поле
   const MAX_NOTE = 500;
   const MAX_URL = 500;
+  const FORMATS = Object.freeze(['edit', 'video', 'image', 'quote', 'podcast', 'link']);
 
   // Энергетический меняет состояние за 30–90 секунд и отправляет дальше.
   // Практический требует времени и обязан иметь ожидаемый вывод (§13).
@@ -98,6 +105,17 @@
     const url = cleanUrl(raw.url); if (url) out.url = url;
     const note = str(raw.note, MAX_NOTE); if (note) out.note = note;
     const source = str(raw.source, 40); if (source) out.source = source;
+    if (FORMATS.includes(raw.format)) out.format = raw.format;
+    const catalogId = str(raw.catalogId, 64); if (catalogId) out.catalogId = catalogId;
+    const attribution = str(raw.attribution, 180); if (attribution) out.attribution = attribution;
+    const rightsKind = str(raw.rightsKind, 40); if (rightsKind) out.rightsKind = rightsKind;
+    const interestIds = [];
+    for (const value of Array.isArray(raw.interestIds) ? raw.interestIds : []) {
+      const interest = str(value, 48);
+      if (interest && !interestIds.includes(interest)) interestIds.push(interest);
+      if (interestIds.length >= 16) break;
+    }
+    if (interestIds.length) out.interestIds = interestIds;
     if (isDay(raw.addedOn)) out.addedOn = raw.addedOn;
 
     // Практический обязан нести ожидаемый вывод и точку остановки — иначе «саморазвитие»
@@ -135,7 +153,7 @@
       seen.add(c.id);
       items.push(c);
     }
-    return { version: 1, items };
+    return { version: 1, items: items.slice(0, MAX_STORED) };
   }
 
   function isLive(item, today) {
@@ -155,6 +173,7 @@
     if (!item) return { ok: false, error: 'invalid' };
     if (s.items.some((i) => i.id === item.id)) return { ok: false, error: 'duplicate' };
     if (s.items.filter((i) => !i.archivedOn).length >= MAX_ITEMS) return { ok: false, error: 'full' };
+    if (s.items.length >= MAX_STORED) return { ok: false, error: 'history_full' };
     return { ok: true, state: { ...s, items: s.items.concat([item]) } };
   }
 
@@ -255,7 +274,7 @@
   }
 
   return Object.freeze({
-    VERSION, KINDS, NEXT_ACTIONS, BATCH_DEFAULT, BATCH_MAX, MAX_ITEMS,
+    VERSION, KINDS, FORMATS, NEXT_ACTIONS, BATCH_DEFAULT, BATCH_MAX, MAX_ITEMS, MAX_STORED,
     emptyState, normalize, liveItems, isLive,
     add, archive, remove, complete,
     batch, actionRate, expired, captureRoom,

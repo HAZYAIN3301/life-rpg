@@ -184,7 +184,27 @@ test('Полка не склад: есть потолок', () => {
   assert.equal(S.add(full, energy({ id: 'ещё' })).error, 'full');
   // Архивация освобождает место — это и есть уборка.
   const freed = S.archive(full, 'x0', TODAY);
-  assert.equal(S.add(freed, energy({ id: 'ещё' })).ok, true);
+  const added = S.add(freed, energy({ id: 'ещё' }));
+  assert.equal(added.ok, true);
+  assert.equal(added.state.items.length, S.MAX_ITEMS + 1,
+    'архивная история не должна исчезать ради активного лимита');
+  assert.equal(S.liveItems(added.state, TODAY).length, S.MAX_ITEMS);
+});
+
+test('🔴 активный потолок и MAX_STORED разделены: архив не повреждает следующий GET', () => {
+  const history = {
+    version: 1,
+    items: Array.from({ length: S.MAX_STORED }, (_, i) => energy({ id: `history-${i}`, archivedOn: TODAY })),
+  };
+  assert.equal(S.normalize(history).items.length, S.MAX_STORED);
+  assert.equal(S.add(history, energy({ id: 'beyond-history' })).error, 'history_full');
+
+  const oversized = {
+    version: 1,
+    items: Array.from({ length: S.MAX_STORED + 25 }, (_, i) => energy({ id: `oversized-${i}`, archivedOn: TODAY })),
+  };
+  assert.equal(S.normalize(oversized).items.length, S.MAX_STORED,
+    'нормализация ограничивает историю отдельным, а не активным потолком');
 });
 
 test('замкнутый контур: остаток мест под сессию поиска референсов', () => {
