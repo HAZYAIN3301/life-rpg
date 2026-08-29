@@ -183,7 +183,7 @@ test('Calendar and Notes Guide actions fail closed around real writes and recove
   const captureBar = APP.slice(APP.indexOf('function captureBar()'), APP.indexOf('\nfunction validateInboxPayload'));
   assert.match(captureBar, /const guideTextOnly = guideV3ContextActive\('notes', 'note-persisted'\)/);
   assert.match(captureBar, /guideTextOnly \? '' : `[\s\S]*data-action="cap-voice"[\s\S]*data-action="cap-video"/);
-  assert.match(captureBar, /guideTextOnly \? '' : `<button class="dayrec-btn"/);
+  assert.match(captureBar, /guideTextOnly \? '' : `<div class="capture-secondary"><button class="dayrec-btn"/);
 
   const textSubmit = APP.slice(APP.indexOf("if (f.id === 'capture-form')"), APP.indexOf("if (f.id === 'chat-form')"));
   assert.match(textSubmit, /State\._guideV3NoteDraftId = uid\(\)/);
@@ -282,9 +282,9 @@ test('Guide feature commit is authenticated, account-owned and rejects malformed
 });
 
 test('v195 cache and source contract ship the whole pack together', () => {
-  assert.match(SW, /const CACHE = 'satoru-v196'/);
+  assert.match(SW, /const CACHE = 'satoru-v197'/);
   assert.match(INDEX, /guide-v3\.js\?v=20260829-guide-library-v195-1/);
-  assert.match(INDEX, /app\.js\?v=20260829-inspiration-v196-1/);
+  assert.match(INDEX, /app\.js\?v=20260829-secretary-recovery-v197-1/);
   assert.match(SERVER, /if \(u === '\/api\/guide\/commit' && req\.method === 'POST'\)/);
   assert.match(SERVER, /commitGuideData[\s\S]*restoreSnapshot/);
 });

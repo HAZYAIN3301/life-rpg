@@ -17,6 +17,7 @@
   const MODES = Object.freeze(['trust', 'adaptive', 'control']);
   const PURPOSES = Object.freeze(['publish', 'create', 'reply', 'research', 'watch', 'rest', 'unsure']);
   const DEFAULT_DURATIONS = Object.freeze([3, 10, 20]);
+  const RECOVERY_DURATIONS = Object.freeze([10, 20, 40]);
 
   function esc(value) {
     return String(value == null ? '' : value)
@@ -35,6 +36,10 @@
   function boundedMinutes(value, fallback = 10) {
     const n = Math.round(Number(value));
     return Number.isFinite(n) ? Math.max(1, Math.min(180, n)) : fallback;
+  }
+  function boundedRecoveryMinutes(value, fallback = 20) {
+    const n = Math.round(Number(value));
+    return Number.isFinite(n) ? Math.max(5, Math.min(180, n)) : fallback;
   }
   function cleanDurations(raw) {
     const list = Array.isArray(raw) ? raw : DEFAULT_DURATIONS;
@@ -177,20 +182,28 @@
 
   function renderBoundary(vm = {}, t) {
     const mode = cleanMode(vm.mode);
+    const isRest = vm.purpose === 'rest';
     const targetLabel = boundedText(vm.targetLabel, 'Приложение или сайт', 80);
     const expectedOutcome = boundedText(vm.expectedOutcome, '', 120);
     const extensionMinutes = boundedMinutes(vm.extensionMinutes, 5);
     const emergencyDelay = Math.max(0, Math.min(600, Math.round(Number(vm.emergencyDelaySeconds) || 90)));
     return `<section class="attention-flow attention-boundary" data-attention-screen="boundary" data-session-id="${esc(vm.sessionId || '')}" data-attention-mode="${mode}">
       <header class="attention-flow-head">
-        <p class="attention-kicker">${tr(t, 'Граница достигнута')}</p>
-        <h2 id="attention-dialog-title" tabindex="-1">${tr(t, 'Окно для')} ${esc(targetLabel)} ${tr(t, 'закончилось')}</h2>
-        <p id="attention-dialog-description">${expectedOutcome ? `${tr(t, 'План был такой')}: ${esc(expectedOutcome)}.` : tr(t, 'Не нужно доказывать идеальный результат. Просто выбери честный следующий шаг.')}</p>
+        <p class="attention-kicker">${tr(t, isRest ? 'Граница отдыха' : 'Граница достигнута')}</p>
+        <h2 id="attention-dialog-title" tabindex="-1">${isRest
+          ? tr(t, 'Запланированный отдых закончился')
+          : `${tr(t, 'Окно для')} ${esc(targetLabel)} ${tr(t, 'закончилось')}`}</h2>
+        <p id="attention-dialog-description">${expectedOutcome
+          ? `${tr(t, isRest ? 'План отдыха' : 'План был такой')}: ${esc(expectedOutcome)}.`
+          : tr(t, isRest
+            ? 'Без оценки себя: просто отметь, как закончился этот отрезок.'
+            : 'Не нужно доказывать идеальный результат. Просто выбери честный следующий шаг.')}</p>
       </header>
       <div class="attention-boundary-actions">
-        <button type="button" class="btn" data-action="finish-attention-session" data-outcome="done">${tr(t, 'Готово — выйти')}</button>
+        <button type="button" class="btn" data-action="finish-attention-session" data-outcome="${isRest ? 'rested' : 'done'}">${tr(t, isRest ? 'Отдых закончен' : 'Готово — выйти')}</button>
         ${vm.canExtend ? `<button type="button" class="btn ghost" data-action="extend-attention-session" data-minutes="${extensionMinutes}">${tr(t, 'Продлить один раз')} · ${extensionMinutes} ${tr(t, 'мин')}</button>` : ''}
         <button type="button" class="btn ghost" data-action="finish-attention-session" data-outcome="escaped">${tr(t, 'Меня унесло')}</button>
+        ${isRest ? `<button type="button" class="btn ghost" data-action="finish-attention-session" data-outcome="unknown">${tr(t, 'Не уверен')}</button>` : ''}
       </div>
       ${mode === 'control' ? `<details class="attention-emergency">
         <summary>${tr(t, 'Нужен аварийный выход')}</summary>
@@ -202,6 +215,95 @@
       </details>` : ''}
       <p class="attention-form-status" data-attention-status role="status" aria-live="polite"></p>
     </section>`;
+  }
+
+  function renderRecovery(vm = {}, t) {
+    const requestedMinutes = boundedRecoveryMinutes(vm.minutes, 20);
+    const selectedMinutes = RECOVERY_DURATIONS.includes(requestedMinutes) ? requestedMinutes : 20;
+    const recoveryLabel = boundedText(vm.recoveryLabel, '', 80);
+    const deviceMode = ['none', 'bounded', 'open'].includes(vm.deviceMode) ? vm.deviceMode : 'none';
+    const deviceOptions = [
+      ['none', 'Без экрана', 'Телефон и ноутбук остаются в стороне.'],
+      ['bounded', 'Экран с отдельной границей', 'Поставь системный таймер, если уходишь из Satoru.'],
+      ['open', 'Экран без ограничения', 'Можно выбрать осознанно, но Satoru не сможет остановить ленту.'],
+    ];
+    return `<form id="attention-recovery-form" class="attention-flow attention-recovery attention-recovery-compact" data-attention-screen="recovery" data-minutes-min="5" data-minutes-max="180">
+      <header class="attention-flow-head">
+        <p class="attention-kicker">${tr(t, 'Восстановление')}</p>
+        <h2 id="attention-dialog-title" tabindex="-1">${tr(t, 'Отдых с границей')}</h2>
+        <p id="attention-dialog-description">${tr(t, 'Выбери короткий отрезок отдыха и заранее реши, где он закончится.')}</p>
+      </header>
+      <label class="attention-field">
+        <span>${tr(t, 'Что поможет отдохнуть')} <small>(${tr(t, 'необязательно')})</small></span>
+        <input name="recoveryLabel" maxlength="80" value="${esc(recoveryLabel)}" placeholder="${tr(t, 'Например: еда, душ или прогулка')}" autocomplete="off" />
+      </label>
+      <fieldset class="attention-fieldset">
+        <legend>${tr(t, 'Сколько времени')}</legend>
+        <div class="attention-choice-row">${RECOVERY_DURATIONS.map((minutes) => `<label class="attention-choice attention-duration-choice">
+          <input type="radio" name="minutes" value="${minutes}" ${minutes === selectedMinutes ? 'checked' : ''} />
+          <span>${minutes} ${tr(t, 'мин')}</span>
+        </label>`).join('')}</div>
+      </fieldset>
+      <fieldset class="attention-fieldset">
+        <legend>${tr(t, 'Что делать с устройствами')}</legend>
+        <div class="attention-mode-grid">${deviceOptions.map(([value, label, hint]) => `<label class="attention-choice">
+          <input type="radio" name="deviceMode" value="${value}" ${value === deviceMode ? 'checked' : ''} />
+          <span><b>${tr(t, label)}</b><small>${tr(t, hint)}</small></span>
+        </label>`).join('')}</div>
+      </fieldset>
+      <p class="attention-privacy-note">${tr(t, 'Это не ежедневный трекер и не долг. Записывается только граница этого отдыха.')}</p>
+      <p class="attention-privacy-note" role="note">${tr(t, 'PWA покажет границу, пока Satoru открыт. Если уходишь из приложения, поставь системный таймер.')}</p>
+      <p class="attention-form-status" data-attention-status role="status" aria-live="polite"></p>
+      <div class="attention-actions">
+        <button type="button" class="btn ghost" data-action="close-attention-dialog">${tr(t, 'Отмена')}</button>
+        <button type="submit" class="btn" data-action="start-recovery-session">${tr(t, 'Начать отдых')}</button>
+      </div>
+    </form>`;
+  }
+
+  function renderEvening(vm = {}, t) {
+    const targetTime = /^([01]\d|2[0-3]):[0-5]\d$/.test(String(vm.targetTime || '')) ? String(vm.targetTime) : '';
+    const dailyReminder = vm.dailyReminder === true;
+    const steps = [
+      ['Закрыть работу', 'Сохранить незавершённое и назвать первый шаг на завтра.'],
+      ['Вернуть базовый порядок', 'Вода, еда, гигиена и короткая забота о комнате — без генеральной уборки.'],
+      ['Поставить будильник и убрать устройства', 'Подготовить сон, не отмечая его заранее как выполненный.'],
+    ];
+    if (vm.active) return `<section class="attention-flow attention-evening attention-evening-active" data-attention-screen="evening-active">
+      <header class="attention-flow-head">
+        <p class="attention-kicker">${tr(t, 'Конец дня')}</p>
+        <h2 id="attention-dialog-title" tabindex="-1">${tr(t, 'Завершить вечер')}</h2>
+        <p id="attention-dialog-description">${tr(t, 'Три границы вместо нового списка дел. Достаточно базового результата.')}</p>
+      </header>
+      <ol class="attention-evening-plan" aria-label="${tr(t, 'План завершения вечера')}">${steps.map(([label, hint]) => `<li>
+        <span aria-hidden="true">✓</span><div><b>${tr(t, label)}</b><small>${tr(t, hint)}</small></div>
+      </li>`).join('')}</ol>
+      <p class="attention-privacy-note">${tr(t, 'Завершение этого плана не означает, что ты уже лёг спать или восстановился.')}</p>
+      <div class="attention-actions">
+        <button type="button" class="btn ghost" data-action="close-attention-dialog">${tr(t, 'Закрыть')}</button>
+        <button type="button" class="btn" data-action="finish-evening-landing">${tr(t, 'Вечер завершён')}</button>
+      </div>
+    </section>`;
+    return `<form id="attention-evening-form" class="attention-flow attention-evening" data-attention-screen="evening">
+      <header class="attention-flow-head">
+        <p class="attention-kicker">${tr(t, 'Конец дня')}</p>
+        <h2 id="attention-dialog-title" tabindex="-1">${tr(t, 'Настроить завершение вечера')}</h2>
+        <p id="attention-dialog-description">${tr(t, 'Выбери время. Это одна подсказка, а не новый ежедневный трекер.')}</p>
+      </header>
+      <label class="attention-field">
+        <span>${tr(t, 'Во сколько убрать устройства')} <small>(${tr(t, 'необязательно')})</small></span>
+        <input type="time" name="targetTime" value="${esc(targetTime)}" />
+      </label>
+      <label class="attention-choice">
+        <input type="checkbox" name="dailyReminder" ${dailyReminder ? 'checked' : ''} />
+        <span><b>${tr(t, 'Напоминать каждый вечер')}</b><small>${tr(t, 'Голос и диалог работают, только пока Satoru открыт. Уведомление браузера появится, только если разрешение уже выдано.')}</small></span>
+      </label>
+      <p class="attention-form-status" data-attention-status role="status" aria-live="polite"></p>
+      <div class="attention-actions">
+        <button type="button" class="btn ghost" data-action="close-attention-dialog">${tr(t, 'Отмена')}</button>
+        <button type="submit" class="btn" data-action="start-evening-session">${tr(t, 'Начать завершение вечера')}</button>
+      </div>
+    </form>`;
   }
 
   function renderReturn(vm = {}, t) {
@@ -240,7 +342,7 @@
   }
 
   return Object.freeze({
-    VERSION, MODES, PURPOSES, DEFAULT_DURATIONS, purposeLabel,
-    renderSetup, renderEntry, renderBoundary, renderReturn, renderLoadError,
+    VERSION, MODES, PURPOSES, DEFAULT_DURATIONS, RECOVERY_DURATIONS, purposeLabel,
+    renderSetup, renderEntry, renderBoundary, renderRecovery, renderEvening, renderReturn, renderLoadError,
   });
 });

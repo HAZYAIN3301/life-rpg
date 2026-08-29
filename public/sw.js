@@ -1,7 +1,7 @@
 /* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    App shell: network-first. Art/media: cache-first. /api/: always live network.
    Bump CACHE whenever the shell or a stable asset URL changes. */
-const CACHE = 'satoru-v196-ouroboros-bite-v2';
+const CACHE = 'satoru-v197';
 const SHELL = [
   'pwa-lifecycle-v1.js',
   './', 'index.html', 'app.js', 'sound-engine-v1.js', 'account-data-v1.js', 'attention-policy-v1.js', 'attention-session-v1.js', 'attention-episode-v1.js', 'attention-controller-v1.js', 'attention-ui-v1.js', 'inspiration-profile-v1.js', 'inspiration-catalog-v1.js', 'return-shelf-v1.js', 'return-shelf-ui-v1.js', 'assistant-actions-v1.js', 'assistant-wake-v1.js', 'goals-initiatives-v1.js', 'guide-v3.js', 'guide-v3-copy-ru.js', 'guide-v3-copy-en.js', 'guide-v3-copy-de.js', 'guide-v3-copy-uk.js', 'guide-v3-copy-es.js', 'guide-presenter-v1.js', 'guide-surface-v1.js', 'canon-domains.js', 'den-stage-v1.js', 'den-life-v1.js', 'den-resident-life-v1.js', 'den-pet-pair-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js', 'resources-penguin-v1.js', 'profile-memory-v1.js', 'day-observation-v1.js', 'stuck-task-v1.js', 'fights-v1.js', 'board-v1.js', 'board-v2.js', 'board-v2-catalog.js', 'board-v2-pacing.js', 'board-v2-offers.js', 'board-v2-completion.js', 'board-v2-completion-ui.js', 'board-v2-issuer.js', 'board-v2-discovery.js', 'board-v2-local-issuer.js', 'board-v2-local-ui.js', 'board-v2-wildcard-catalog.js', 'board-v2-wildcard-issuer.js', 'board-v2-runtime.js', 'board-pool-v1.js', 'board-taste-v1.js', 'failure-context-v1.js', 'after-lapse-v1.js', 'chest-reveal-v1.js', 'sphere-search-v1.js', 'chart-labels-v1.js', 'md-lite-v1.js', 'voice-input-v1.js', 'sky-events-v1.js', 'day-load-v1.js', 'founder-pass-v1.js', 'traveller-appearance-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js', 'styles.css', 'fonts/podkova/Podkova-wght.woff2', 'shadow-rig-v2.js', 'shadow-den-v1.js', 'shadow-voice-v2.js', 'shadow-rig-v2-demo.html', 'den-scene-v4.js',
@@ -284,20 +284,28 @@ self.addEventListener('fetch', (e) => {
   e.waitUntil(operation.then((result) => result.cacheTask).catch(() => {}));
 });
 // ---- Push (Web Push) ----
+const PUSH_LANGS = new Set(['ru', 'en', 'de', 'uk', 'es']);
 self.addEventListener('push', (e) => {
   let data = {};
   try { data = e.data ? e.data.json() : {}; } catch { data = { body: (e.data && e.data.text()) || '' }; }
   const title = data.title || 'Satoru';
+  const notificationLang = PUSH_LANGS.has(data.lang) ? data.lang : 'ru';
   e.waitUntil(self.registration.showNotification(title, {
-    body: data.body || '', icon: 'icon.svg', badge: 'icon.svg', lang: 'ru',
+    body: data.body || '', icon: 'icon.svg', badge: 'icon.svg', lang: notificationLang,
     tag: data.tag || 'gojo', renotify: false, data: { url: data.url || './' },
   }));
 });
 self.addEventListener('notificationclick', (e) => {
   e.notification.close();
-  const target = (e.notification.data && e.notification.data.url) || './';
+  const rawTarget = (e.notification.data && e.notification.data.url) || './';
+  let target = new URL('./', self.location.origin).href;
+  try { const parsed = new URL(rawTarget, self.location.origin); if (parsed.origin === self.location.origin) target = parsed.href; } catch {}
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((cs) => {
-    for (const c of cs) { if ('focus' in c) return c.focus(); }
+    for (const c of cs) {
+      if (!('focus' in c)) continue;
+      if ('navigate' in c) return c.navigate(target).then((next) => (next || c).focus());
+      return c.focus();
+    }
     if (self.clients.openWindow) return self.clients.openWindow(target);
   }));
 });

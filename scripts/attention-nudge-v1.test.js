@@ -207,7 +207,9 @@ test('🔴 «чем дольше не было — тем теплее» сох�
 test('планировщик берёт язык из настроек человека, а не из локали сервера', () => {
   const src = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
   const tick = src.slice(src.indexOf('async function pushTick()'), src.indexOf('// ИИ BYOK'));
-  assert.match(tick, /NudgeCopy\.normalizeLocale\(\(readUserJson\(user\.id, 'settings'\)/,
+  assert.match(tick, /const settings = readUserJson\(user\.id, 'settings'\) \|\| \{\}/,
+    'настройки пользователя должны читаться один раз для локали и секретарского напоминания');
+  assert.match(tick, /NudgeCopy\.normalizeLocale\(settings\.lang\)/,
     'язык обязан читаться из настроек пользователя');
   for (const kind of ["'p'", "'q'"]) {
     assert.ok(tick.includes(`NudgeCopy.pool(lang, ${kind})`), `канал ${kind} обязан идти через локализованный пул`);

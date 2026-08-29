@@ -233,15 +233,15 @@ test('интеграция подключает профиль и каталог
   const catalogAt = index.indexOf('inspiration-catalog-v1.js');
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20260829-inspiration-v196-1');
+  const appAt = index.indexOf('app.js?v=20260829-secretary-recovery-v197-1');
   assert.ok(profileAt >= 0 && catalogAt > profileAt && domainAt > catalogAt && uiAt > domainAt && appAt > uiAt,
     'profile → catalog → saved domain → UI → app');
   for (const asset of ['inspiration-profile-v1.js', 'inspiration-catalog-v1.js', 'return-shelf-v1.js', 'return-shelf-ui-v1.js']) {
     assert.match(index, new RegExp(`${asset.replaceAll('.', '\\.')}\\?v=20260829-inspiration-v196-1`));
     assert.match(sw, new RegExp(asset.replaceAll('.', '\\.')));
   }
-  assert.match(index, /styles\.css\?v=20260829-inspiration-v196-1/);
-  assert.match(sw, /satoru-v196/);
+  assert.match(index, /styles\.css\?v=20260829-secretary-recovery-v197-1/);
+  assert.match(sw, /satoru-v197/);
 });
 
 test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gate', () => {

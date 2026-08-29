@@ -21,6 +21,7 @@
     open:         Object.freeze({ family: 'ui',          essential: false, cooldownMs: 100 }),
     close:        Object.freeze({ family: 'ui',          essential: false, cooldownMs: 100 }),
     confirm:      Object.freeze({ family: 'ui',          essential: false, cooldownMs: 80 }),
+    reminder:     Object.freeze({ family: 'boundary',    essential: true,  cooldownMs: 2000 }),
     complete:     Object.freeze({ family: 'earned',      essential: true,  cooldownMs: 180 }),
     coin:         Object.freeze({ family: 'economy',     essential: true,  cooldownMs: 120 }),
     reward_tick:  Object.freeze({ family: 'ceremony',    essential: false, cooldownMs: 38 }),
@@ -186,6 +187,11 @@
       } else if (name === 'close') {
         noise({ start: now, from: 2600, to: 420, duration: .13, gain: .035, pan: .12 });
         tone({ start: now, from: 520, to: 240, duration: .11, type: 'sine', gain: .035, pan: -.1 });
+      } else if (name === 'reminder') {
+        // Two restrained low chimes: present enough to mark a boundary, never a
+        // casino hit or alarm siren. Essential mode keeps this one audible.
+        [392, 523].forEach((frequency, i) => tone({ start: now + i * .22, from: frequency, to: frequency * .985, duration: .42, type: 'sine', gain: .052 / (1 + i * .08), pan: i ? .12 : -.12, wet: true }));
+        noise({ start: now, from: 900, to: 2400, duration: .15, attack: .07, gain: .018, wet: true });
       } else if (name === 'complete') {
         noise({ start: now, from: 1800, to: 5600, duration: .11, gain: .047, wet: true });
         [520, 780, 1040].forEach((frequency, i) => tone({ start: now + .035 + i * .065, from: frequency, to: frequency * 1.045, duration: .25, type: i === 2 ? 'sine' : 'triangle', gain: .066 / (1 + i * .1), pan: (i - 1) * .22, wet: true }));

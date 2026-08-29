@@ -253,6 +253,8 @@ Satoru не нужен один длинный «полный гайд». Ему
 
 ## 7. Связь с будущим questionnaire
 
+Канонический продуктовый, data-integrity и QA-контракт теперь собран в [`QUESTIONNAIRE-V1-PLAN.md`](./QUESTIONNAIRE-V1-PLAN.md). Ключевое решение: до первого Today не показывать полную анкету. Registration bridge состоит из одного свободного ответа и одного preview/confirm; он материализует максимум одну цель, один конкретный first step и 1–3 подтверждённые сферы. Остальные поля ниже заполняются progressive-вопросами внутри функций, у которых уже есть готовый consumer.
+
 ### Что questionnaire должен вернуть
 
 Не «психологический профиль», а подтверждённый seed:
@@ -492,10 +494,12 @@ settings.guideV3 = {
 
 ### Commit F — questionnaire bridge
 
-- structured seed schema;
-- preview/consent;
-- goal/habit materialization;
-- guide recognition copy.
+- выполнить foundation и runtime из [`QUESTIONNAIRE-V1-PLAN.md`](./QUESTIONNAIRE-V1-PLAN.md), Q1–Q3;
+- structured seed schema, provenance и атомарный idempotent commit;
+- один answer screen + один preview/consent screen, Skip/Back/Retry/manual fallback;
+- materialization одной goal + одной task + подтверждённых spheres; habits только позже через contextual preview;
+- guide recognition copy и exact persisted task completion;
+- включить Goals только после `questionnaireReady && hasGoalSeed && returnedAfterFirst`.
 
 ### Art track
 

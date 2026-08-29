@@ -63,8 +63,85 @@ test('boundary provides done, bounded extension, escape and delayed emergency wi
   assert.match(html, /data-outcome="done"/);
   assert.match(html, /data-action="extend-attention-session" data-minutes="5"/);
   assert.match(html, /data-outcome="escaped"/);
+  assert.doesNotMatch(html, /data-outcome="rested"|data-outcome="unknown"/);
   assert.match(html, /data-action="start-attention-emergency" data-delay="90"/);
   assert.doesNotMatch(html, /XP|золот|стрик|награ/iu);
+});
+
+test('rest boundary records rested, one extension, escaped or unknown without changing control safeguards', () => {
+  const translated = [];
+  const translate = (value) => {
+    translated.push(value);
+    return value;
+  };
+  const html = UI.renderBoundary({
+    purpose: 'rest', mode: 'control', targetLabel: 'Отдых', sessionId: 'rest-1',
+    expectedOutcome: 'Вернуться спокойнее', canExtend: true, extensionMinutes: 7,
+    emergencyAvailable: true, emergencyDelaySeconds: 90,
+  }, translate);
+  assert.match(html, /Граница отдыха/);
+  assert.match(html, /Запланированный отдых закончился/);
+  assert.match(html, /План отдыха: Вернуться спокойнее/);
+  assert.match(html, /data-outcome="rested">Отдых закончен/);
+  assert.match(html, /data-action="extend-attention-session" data-minutes="7"/);
+  assert.match(html, /data-outcome="escaped">Меня унесло/);
+  assert.match(html, /data-outcome="unknown">Не уверен/);
+  assert.doesNotMatch(html, /data-outcome="done"/);
+  assert.match(html, /data-action="start-attention-emergency" data-delay="90"/);
+  for (const key of ['Граница отдыха', 'Запланированный отдых закончился', 'План отдыха', 'Отдых закончен', 'Меня унесло', 'Не уверен']) {
+    assert.equal(translated.includes(key), true, `${key} must run through t`);
+  }
+});
+
+test('recovery is a compact bounded rest launcher, not another daily tracker', () => {
+  const html = UI.renderRecovery({ minutes: 40, recoveryLabel: '<Душ>', deviceMode: 'bounded' }, t);
+  assert.match(html, /id="attention-recovery-form"/);
+  assert.match(html, /class="attention-flow attention-recovery attention-recovery-compact"/);
+  assert.match(html, /data-minutes-min="5" data-minutes-max="180"/);
+  assert.match(html, /Отдых с границей/);
+  assert.match(html, /name="recoveryLabel"[^>]*value="&lt;Душ&gt;"/);
+  for (const minutes of [10, 20, 40]) assert.match(html, new RegExp(`name="minutes" value="${minutes}"`));
+  assert.match(html, /name="minutes" value="40" checked/);
+  for (const mode of ['none', 'bounded', 'open']) assert.match(html, new RegExp(`name="deviceMode" value="${mode}"`));
+  assert.match(html, /name="deviceMode" value="bounded" checked/);
+  assert.match(html, /не ежедневный трекер/);
+  assert.match(html, /PWA покажет границу, пока Satoru открыт/);
+  assert.match(html, /поставь системный таймер/);
+  assert.match(html, /type="submit"[^>]*data-action="start-recovery-session"/);
+  assert.match(html, /data-action="close-attention-dialog">Отмена/);
+});
+
+test('recovery rejects unbounded presentation values and keeps a safe default', () => {
+  const html = UI.renderRecovery({ minutes: 999, deviceMode: 'anything' }, t);
+  assert.match(html, /name="minutes" value="20" checked/);
+  assert.match(html, /name="deviceMode" value="none" checked/);
+  assert.doesNotMatch(html, /value="999"/);
+});
+
+test('evening setup configures time and reminder without asking for permission', () => {
+  const html = UI.renderEvening({ targetTime: '22:30', dailyReminder: true }, t);
+  assert.match(html, /id="attention-evening-form"/);
+  assert.match(html, /Настроить завершение вечера/);
+  assert.match(html, /name="targetTime" value="22:30"/);
+  assert.match(html, /type="checkbox" name="dailyReminder" checked/);
+  assert.match(html, /Голос и диалог работают, только пока Satoru открыт/);
+  assert.match(html, /только если разрешение уже выдано/);
+  assert.doesNotMatch(html, /requestPermission/);
+  assert.match(html, /type="submit"[^>]*data-action="start-evening-session"/);
+  assert.match(html, /data-action="close-attention-dialog">Отмена/);
+});
+
+test('active evening landing has exactly three steps and no progress tracker', () => {
+  const html = UI.renderEvening({ active: true }, t);
+  assert.doesNotMatch(html, /id="attention-evening-form"|name="dailyReminder"|name="targetTime"/);
+  assert.match(html, /Закрыть работу/);
+  assert.match(html, /Вернуть базовый порядок/);
+  assert.match(html, /Поставить будильник и убрать устройства/);
+  assert.equal((html.match(/<li>/g) || []).length, 3);
+  assert.match(html, /не означает, что ты уже лёг спать или восстановился/);
+  assert.match(html, /data-action="finish-evening-landing">Вечер завершён/);
+  assert.match(html, /data-action="close-attention-dialog">Закрыть/);
+  assert.doesNotMatch(html, /type="checkbox"|data-step-complete|progress/);
 });
 
 test('return is one next action plus care and rest, never a debt wall', () => {

@@ -19,6 +19,10 @@ const CTX = {
   goals: [{ id: 'g1', title: 'Подготовить инженерную часть Jugend Forscht' }, { id: 'g2', title: 'Запустить Satoru' }],
   quests: [{ id: 'q1', title: 'Смонтировать ролик' }],
   habits: [{ id: 'h1', title: 'Зарядка' }],
+  attentionPolicies: { policies: [
+    { id: 'attention-tiktok', name: 'TikTok для работы' },
+    { id: 'attention-youtube', name: 'YouTube по плану' },
+  ] },
 };
 
 // ── Главное: разрушительного словаря не существует ──────────────────────────
@@ -33,7 +37,72 @@ test('🔴 у ассистента нет ни одного вида дейст�
   }
   // И ни один вид не помечен как необратимый — такого уровня в модуле нет вовсе.
   for (const spec of Object.values(A.KINDS)) {
-    assert.ok(['create', 'modify'].includes(spec.tier), `неожиданный tier: ${spec.tier}`);
+    assert.ok(['create', 'modify', 'open'].includes(spec.tier), `неожиданный tier: ${spec.tier}`);
+  }
+});
+
+// ── Attention / recovery: только bounded preview и open-only ────────────────
+
+test('черновик политики внимания принимает только ограниченный явный контракт', () => {
+  const r = A.validate({
+    kind: 'attention_policy_draft',
+    targetLabel: 'TikTok для публикации',
+    purpose: 'publish',
+    minutes: 20,
+    mode: 'control',
+    outcomeHint: 'Опубликован один готовый ролик',
+    storageMode: 'sync',
+    requestPermission: true,
+    outcome: 'done',
+  }, CTX);
+  assert.equal(r.ok, true);
+  assert.deepEqual(r.action, {
+    kind: 'attention_policy_draft', tier: 'open',
+    targetLabel: 'TikTok для публикации', purpose: 'publish', minutes: 20,
+    mode: 'control', outcomeHint: 'Опубликован один готовый ролик',
+  });
+});
+
+test('черновик политики отвергает выход за границы, неизвестные purpose и mode', () => {
+  const base = { kind: 'attention_policy_draft', targetLabel: 'YouTube', purpose: 'watch', minutes: 30, mode: 'adaptive' };
+  for (const bad of [
+    { ...base, targetLabel: '' },
+    { ...base, targetLabel: 'x'.repeat(81) },
+    { ...base, purpose: 'doomscroll' },
+    { ...base, mode: 'unbreakable' },
+    { ...base, minutes: 4 },
+    { ...base, minutes: 241 },
+    { ...base, minutes: 12.5 },
+    { ...base, outcomeHint: 'x'.repeat(161) },
+  ]) {
+    const r = A.validate(bad, CTX);
+    assert.equal(r.ok, false, `прошло недопустимое: ${JSON.stringify(bad)}`);
+    assert.equal(r.reason, A.REASONS.INVALID_VALUE);
+  }
+});
+
+test('открытие политики требует точный id собственной политики из контекста', () => {
+  const ok = A.validate({ kind: 'attention_open_policy', policyId: 'attention-tiktok' }, CTX);
+  assert.deepEqual(ok.action, {
+    kind: 'attention_open_policy', tier: 'open',
+    policyId: 'attention-tiktok', policyLabel: 'TikTok для работы',
+  });
+  assert.equal(A.validate({ kind: 'attention_open_policy', policyId: 'TikTok для работы' }, CTX).reason, A.REASONS.TARGET_NOT_FOUND);
+  assert.equal(A.validate({ kind: 'attention_open_policy', policyId: 'foreign-policy' }, CTX).reason, A.REASONS.TARGET_NOT_FOUND);
+  assert.equal(A.validate({ kind: 'attention_open_policy' }, CTX).reason, A.REASONS.NO_TARGET);
+  assert.equal(A.validate({ kind: 'attention_open_policy', policyId: 'attention-tiktok' }, { attentionPolicies: [] }).ok, false);
+});
+
+test('open-only карточки не проносят управление разрешениями, сессией и хранилищем', () => {
+  for (const kind of ['attention_open_return', 'recovery_open', 'evening_open', 'push_settings_open']) {
+    const r = A.validate({
+      kind, storageMode: 'sync', permission: 'granted', requestPermission: true,
+      closeSession: true, outcome: 'done', targetId: 'g1',
+    }, CTX);
+    assert.deepEqual(r.action, { kind, tier: 'open' });
+  }
+  for (const kind of ['push_permission', 'notification_permission', 'attention_session_close', 'attention_outcome']) {
+    assert.equal(A.validate({ kind }, CTX).reason, A.REASONS.REFUSED_KIND);
   }
 });
 

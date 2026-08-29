@@ -46,7 +46,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildAssistantActions() {
   'use strict';
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
 
   // Столько же, сколько принимал старый парсер: больше пяти карточек за ответ —
   // это уже не помощь, а список дел, который человек не прочитает.
@@ -59,7 +59,8 @@
    *
    * `tier`:
    *   create — создаёт новое, ничего существующего не трогает;
-   *   modify — обратимо меняет статус существующего объекта по id.
+   *   modify — обратимо меняет статус существующего объекта по id;
+   *   open — только открывает уже существующий экран или показывает черновик.
    *
    * Уровня «destructive» НЕ СУЩЕСТВУЕТ, и это не упущение — см. шапку.
    */
@@ -76,10 +77,18 @@
     quest_done:       { tier: 'modify', target: 'quest' },
     habit_pause:      { tier: 'modify', target: 'habit' },
     habit_resume:     { tier: 'modify', target: 'habit' },
+    attention_policy_draft: { tier: 'open', draft: 'attention_policy' },
+    attention_open_policy:  { tier: 'open', target: 'attention_policy' },
+    attention_open_return:  { tier: 'open' },
+    recovery_open:          { tier: 'open' },
+    evening_open:           { tier: 'open' },
+    push_settings_open:     { tier: 'open' },
   });
 
   const KIND_LIST = Object.freeze(Object.keys(KINDS));
   const DIFFICULTY = Object.freeze(['easy', 'normal', 'hard']);
+  const ATTENTION_PURPOSES = Object.freeze(['publish', 'create', 'reply', 'research', 'watch', 'rest', 'unsure']);
+  const ATTENTION_MODES = Object.freeze(['trust', 'adaptive', 'control']);
   const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 
   const isDay = (s) => typeof s === 'string' && ISO_DAY.test(s);
@@ -103,6 +112,7 @@
     NO_TARGET: 'no_target',
     TARGET_NOT_FOUND: 'target_not_found',
     TARGET_WRONG_TYPE: 'target_wrong_type',
+    INVALID_VALUE: 'invalid_value',
   });
 
   /**
@@ -117,7 +127,15 @@
     'logout', 'export', 'share', 'publish',
     'set_password', 'change_password', 'set_key', 'api_key', 'grant_pro', 'admin',
     'set_privacy', 'leaderboard_publish', 'invite',
+    'notification_permission', 'push_permission', 'permission_request',
+    'attention_session_close', 'attention_session_finish', 'attention_outcome',
   ]);
+
+  function attentionPolicyPool(c) {
+    if (Array.isArray(c.attentionPolicies)) return c.attentionPolicies;
+    if (c.attentionPolicies && Array.isArray(c.attentionPolicies.policies)) return c.attentionPolicies.policies;
+    return [];
+  }
 
   function looksRefused(kind) {
     const k = String(kind || '').toLowerCase();
@@ -142,6 +160,45 @@
       return { ok: false, reason: looksRefused(kind) ? REASONS.REFUSED_KIND : REASONS.UNKNOWN_KIND, kind };
     }
     const spec = KINDS[kind];
+
+    if (spec.tier === 'open') {
+      // Open-only means exactly that: the validated card never carries permission,
+      // storage, active-session or outcome controls supplied by the model.
+      if (kind === 'attention_policy_draft') {
+        const targetLabel = typeof raw.targetLabel === 'string' ? raw.targetLabel.trim() : '';
+        const purpose = String(raw.purpose || '');
+        const mode = String(raw.mode || '');
+        const minutes = Number(raw.minutes);
+        if (!targetLabel || targetLabel.length > 80
+          || !ATTENTION_PURPOSES.includes(purpose)
+          || !ATTENTION_MODES.includes(mode)
+          || !Number.isInteger(minutes) || minutes < 5 || minutes > 240) {
+          return { ok: false, reason: REASONS.INVALID_VALUE, kind };
+        }
+        let outcomeHint = null;
+        if (raw.outcomeHint !== undefined && raw.outcomeHint !== null && raw.outcomeHint !== '') {
+          if (typeof raw.outcomeHint !== 'string') return { ok: false, reason: REASONS.INVALID_VALUE, kind };
+          outcomeHint = raw.outcomeHint.trim();
+          if (!outcomeHint || outcomeHint.length > 160) return { ok: false, reason: REASONS.INVALID_VALUE, kind };
+        }
+        const action = { kind, tier: spec.tier, targetLabel, purpose, minutes, mode };
+        if (outcomeHint) action.outcomeHint = outcomeHint;
+        return { ok: true, action };
+      }
+
+      if (kind === 'attention_open_policy') {
+        const policyId = typeof raw.policyId === 'string' ? raw.policyId.trim() : '';
+        if (!policyId) return { ok: false, reason: REASONS.NO_TARGET, kind };
+        const found = attentionPolicyPool(c).find((policy) => policy && String(policy.id) === policyId);
+        if (!found) return { ok: false, reason: REASONS.TARGET_NOT_FOUND, kind, targetId: policyId };
+        return { ok: true, action: {
+          kind, tier: spec.tier, policyId,
+          policyLabel: str(found.name || found.title, MAX_TITLE) || '',
+        } };
+      }
+
+      return { ok: true, action: { kind, tier: spec.tier } };
+    }
 
     if (spec.tier === 'modify') {
       if (spec.many) {
@@ -274,11 +331,14 @@
     return 'kind ∈ ' + KIND_LIST.join(' | ')
       + '. Изменяющие виды требуют targetId — точный id объекта из контекста; по описанию адресовать нельзя.'
       + ' Для массовой паузы/архива используй один goal_pause_many/goal_archive_many с targetIds — массивом точных id (до 100); перечисли все выбранные цели, не заменяй массив свободным фильтром.'
+      + ' attention_open_policy требует точный policyId из контекста. attention_policy_draft — только черновик: targetLabel до 80 символов, purpose publish/create/reply/research/watch/rest/unsure, minutes 5–240, mode trust/adaptive/control и необязательный outcomeHint до 160 символов.'
+      + ' Виды *_open только открывают экран: они не запрашивают разрешения, не завершают сессии и не меняют режим хранения.'
       + ' Удаление любого рода недоступно: предложи паузу или архив, а необратимое человек делает сам в интерфейсе.';
   }
 
   return Object.freeze({
     VERSION, KINDS, KIND_LIST, REASONS, MAX_ACTIONS, MAX_BULK_TARGETS, KNOWN_REFUSALS,
+    ATTENTION_PURPOSES, ATTENTION_MODES,
     validate, validateAll, extract, visibleText, fromReply, looksRefused, promptContract,
   });
 });

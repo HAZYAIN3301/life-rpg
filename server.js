@@ -799,6 +799,14 @@ function sendWebPush(sub, payloadObj) {
     } catch (e) { resolve({ status: 0, error: String(e.message || e) }); }
   });
 }
+// Delivery is acknowledged only by the push service. Transient transport/provider
+// failures must remain retryable; an absent subscription is the only terminal error.
+function pushDeliveryOutcome(result) {
+  const status = Number(result && result.status) || 0;
+  if (status >= 200 && status < 300) return 'delivered';
+  if (status === 404 || status === 410) return 'gone';
+  return 'retry';
+}
 // ---- Планировщик пушей: компаньон зовёт назад утром/вечером (Finch-присутствие вне приложения) ----
 // Каждые 15 мин: для подписанных юзеров — утро (8–11) и вечер (19–22) по ИХ таймзоне,
 // без дублей за день и только если чек-ин ещё не сделан. Через тепло, без вины.
@@ -807,8 +815,9 @@ function userLocalParts(tz) {
   try {
     const date = now.toLocaleDateString('en-CA', { timeZone: tz });                 // YYYY-MM-DD
     const hour = Number(now.toLocaleString('en-US', { timeZone: tz, hour12: false, hour: '2-digit' }));
-    return { date, hour: Number.isNaN(hour) ? now.getHours() : (hour % 24) };
-  } catch { return { date: now.toISOString().slice(0, 10), hour: now.getHours() }; }
+    const minute = Number(now.toLocaleString('en-US', { timeZone: tz, minute: '2-digit' }));
+    return { date, hour: Number.isNaN(hour) ? now.getHours() : (hour % 24), minute: Number.isNaN(minute) ? now.getMinutes() : minute };
+  } catch { return { date: now.toISOString().slice(0, 10), hour: now.getHours(), minute: now.getMinutes() }; }
 }
 function readUserJson(uid, name) { try { return JSON.parse(fs.readFileSync(path.join(userDataDir(uid), name + '.json'), 'utf8')); } catch { return null; } }
 function readUserCompanion(uid) { const s = readUserJson(uid, 'settings'); return (s && s.companion) || null; }
@@ -842,6 +851,29 @@ function pushDecision(hour, log, checked) {
   if (hour >= 19 && hour < 22 && !log.e && !checked.e) return 'e';
   return null;
 }
+function secretaryEveningDue(settings, days, date, hour, minute, log) {
+  const cfg = settings && settings.secretary;
+  if (!cfg || cfg.configured !== true) return { configured: false, due: false };
+  if (days && days[date] && days[date].closed) return { configured: true, due: false };
+  if (!cfg.dailyReminder || !/^([01]\d|2[0-3]):[0-5]\d$/.test(String(cfg.eveningTime || '')) || (log && log.e)) return { configured: true, due: false };
+  const [targetHour, targetMinute] = cfg.eveningTime.split(':').map(Number);
+  const delta = hour * 60 + minute - (targetHour * 60 + targetMinute);
+  return { configured: true, due: delta >= 0 && delta < 60 };
+}
+const SECRETARY_EVENING_COPY = Object.freeze({
+  ru: 'Рабочий день закончен. Открой три границы вечера — без нового списка дел.',
+  en: 'The workday is over. Open the three evening boundaries — without another to-do list.',
+  de: 'Der Arbeitstag ist vorbei. Öffne die drei Abendgrenzen – ohne eine neue Aufgabenliste.',
+  uk: 'Робочий день завершено. Відкрий три межі вечора — без нового списку справ.',
+  es: 'La jornada terminó. Abre los tres límites de la noche, sin otra lista de tareas.',
+});
+const PUSH_CHROME_COPY = Object.freeze({
+  ru: { waiting: 'ждёт тебя', pet: 'заскучал', test: 'Уведомления работают! Я позову тебя, когда придёт время.' },
+  en: { waiting: 'is waiting for you', pet: 'misses you', test: 'Notifications work. I will call you when it is time.' },
+  de: { waiting: 'wartet auf dich', pet: 'vermisst dich', test: 'Benachrichtigungen funktionieren. Ich melde mich, wenn es Zeit ist.' },
+  uk: { waiting: 'чекає на тебе', pet: 'сумує за тобою', test: 'Сповіщення працюють. Я покличу тебе, коли настане час.' },
+  es: { waiting: 'te espera', pet: 'te echa de menos', test: 'Las notificaciones funcionan. Te avisaré cuando llegue el momento.' },
+});
 function daysBetween(a, b) { const x = Date.parse(a), y = Date.parse(b); if (Number.isNaN(x) || Number.isNaN(y)) return 0; return Math.max(0, Math.round((y - x) / 86400000)); }
 // Текст нуджей: варианты по «сколько дней юзера не было» (near ≤1, mid 2-3, far ≥4) — тон теплее,
 // но НИКОГДА не виноватит (принцип «через любовь, не вину»). Гендерно-нейтрально: избегаем
@@ -863,33 +895,48 @@ async function pushTick() {
     if (!user.push || !user.push.endpoint) continue;
     if (user.push.nudges === false) continue; // юзер отключил напоминания компаньона
     const tz = user.push.tz || 'Europe/Berlin';
-    const { date, hour } = userLocalParts(tz);
+    const { date, hour, minute } = userLocalParts(tz);
     const log = (user.push.log && user.push.log.date === date) ? user.push.log : { date, m: false, e: false, p: false };
     // Язык пуша — из настроек человека, а не из локали сервера. До этого весь
     // NUDGE_TEXT был русским, и немец получал пуши на незнакомом языке.
-    const lang = NudgeCopy.normalizeLocale((readUserJson(user.id, 'settings') || {}).lang);
+    const settings = readUserJson(user.id, 'settings') || {};
+    const days = readUserJson(user.id, 'days') || {};
+    const lang = NudgeCopy.normalizeLocale(settings.lang);
     const comp = readUserCompanion(user.id);
     const name = (comp && comp.name) || 'Тень';
     const checked = (comp && comp.check && comp.check[date]) || {};
-    const kind = pushDecision(hour, log, checked);
+    const legacyKind = pushDecision(hour, log, checked);
+    const evening = secretaryEveningDue(settings, days, date, hour, minute, log);
+    let kind = legacyKind;
+    let secretaryEvening = false;
+    if (evening.configured) {
+      // Утро остаётся встречей Тени, а старый вечерний check-in уступает одному
+      // настроенному контуру завершения дня.
+      kind = legacyKind === 'm' ? 'm' : null;
+      if (evening.due) { kind = 'e'; secretaryEvening = true; }
+    } else if (days[date] && days[date].closed && kind === 'e') kind = null;
     const vIdx = user.push.variantIdx || {};
     let payload = null;
+    let delivery = null;
     if (kind === 'm' || kind === 'e') {
       const away = daysBetween((comp && comp.lastSeen) || date, date);
       const bucket = away <= 1 ? 'near' : (away <= 3 ? 'mid' : 'far');
       const { text, idx } = pickVariant(NudgeCopy.pool(lang, kind, bucket), vIdx[kind]);
-      vIdx[kind] = idx; user.push.variantIdx = vIdx;
-      const title = kind === 'm' ? `🌅 ${name} ждёт тебя` : `🌙 ${name}`;
-      payload = { title, body: text, url: './?view=today', tag: 'satoru-checkin' };
+      const chromeCopy = PUSH_CHROME_COPY[lang] || PUSH_CHROME_COPY.en;
+      const title = kind === 'm' ? `🌅 ${name} ${chromeCopy.waiting}` : `🌙 ${name}`;
+      payload = secretaryEvening
+        ? { title, body: SECRETARY_EVENING_COPY[lang] || SECRETARY_EVENING_COPY.en, url: './?view=today&do=finish', tag: 'satoru-evening', lang }
+        : { title, body: text, url: './?view=today', tag: 'satoru-checkin', lang };
+      delivery = { logKey: kind, variantKind: kind, variantIdx: idx };
     }
     // Днём (13–17): «питомец заскучал» — максимум раз в 2 дня, только если есть заброшенная сфера
     else if (hour >= 13 && hour < 17 && !log.p && (!user.push.petAt || (Date.parse(date) - Date.parse(user.push.petAt)) / 86400000 >= 2)) {
       const pet = lonelyPet(user.id);
       if (pet) {
         const { text, idx } = pickVariant(NudgeCopy.pool(lang, 'p'), vIdx.p);
-        vIdx.p = idx; user.push.variantIdx = vIdx;
-        payload = { title: `🐾 ${pet} заскучал`, body: text.replace(/\{pet\}/g, pet), url: './?view=pets', tag: 'satoru-pet' };
-        log.p = true; user.push.petAt = date;
+        const chromeCopy = PUSH_CHROME_COPY[lang] || PUSH_CHROME_COPY.en;
+        payload = { title: `🐾 ${pet} ${chromeCopy.pet}`, body: text.replace(/\{pet\}/g, pet), url: './?view=pets', tag: 'satoru-pet', lang };
+        delivery = { logKey: 'p', variantKind: 'p', variantIdx: idx, petAt: date };
       }
     }
     // Тихий вопрос — последним по приоритету: он уместен только когда сказать больше
@@ -903,16 +950,23 @@ async function pushTick() {
       });
       if (verdict.ask) {
         const { text, idx } = pickVariant(NudgeCopy.pool(lang, 'q'), vIdx.q);
-        vIdx.q = idx; user.push.variantIdx = vIdx;
-        payload = { title: `${name}`, body: text, url: './?view=today', tag: 'satoru-quiet' };
-        log.q = true; user.push.quietAskAt = date;
+        payload = { title: `${name}`, body: text, url: './?view=today', tag: 'satoru-quiet', lang };
+        delivery = { logKey: 'q', variantKind: 'q', variantIdx: idx, quietAskAt: date };
       }
     }
     if (!payload) { if (user.push.log !== log) { user.push.log = log; changed = true; } continue; }
-    const r = await sendWebPush(user.push, payload);
-    if (kind === 'm' || kind === 'e') log[kind] = true;
+    let result = { status: 0 };
+    try { result = await sendWebPush(user.push, payload); } catch {}
+    const outcome = pushDeliveryOutcome(result);
+    if (outcome === 'gone') { delete user.push; changed = true; continue; }
+    if (outcome !== 'delivered') continue;
+    if (delivery) {
+      log[delivery.logKey] = true;
+      user.push.variantIdx = { ...(user.push.variantIdx || {}), [delivery.variantKind]: delivery.variantIdx };
+      if (delivery.petAt) user.push.petAt = delivery.petAt;
+      if (delivery.quietAskAt) user.push.quietAskAt = delivery.quietAskAt;
+    }
     user.push.log = log; changed = true;
-    if (r && (r.status === 404 || r.status === 410)) delete user.push; // мёртвая подписка → выписать
   }
   if (changed) { try { saveUsers(users); } catch {} }
 }
@@ -3985,7 +4039,9 @@ const server = http.createServer(async (req, res) => {
   if (u === '/api/push/test' && req.method === 'POST') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
     const user = loadUsers().find((x) => x.id === me); if (!user || !user.push) return sendJson(res, 400, { error: 'no_subscription' });
-    const r = await sendWebPush(user.push, { title: 'Satoru 🔔', body: 'Уведомления работают! Я позову тебя, когда придёт время.', url: './' });
+    const lang = NudgeCopy.normalizeLocale((readUserJson(me, 'settings') || {}).lang);
+    const chromeCopy = PUSH_CHROME_COPY[lang] || PUSH_CHROME_COPY.en;
+    const r = await sendWebPush(user.push, { title: 'Satoru 🔔', body: chromeCopy.test, url: './', tag: 'satoru-test', lang });
     return sendJson(res, 200, r);
   }
 
