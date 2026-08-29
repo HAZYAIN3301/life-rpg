@@ -1,7 +1,7 @@
 # Inspiration v196 — QA и release verification
 
 Дата: 2026-08-29
-Статус: local release candidate; production-проверка будет дописана после push.
+Статус: source release опубликован; production rollout ожидает Railway backlog.
 
 ## Что проверялось
 
@@ -44,4 +44,8 @@
 
 ## Production
 
-Будет заполнено после fast-forward push, Railway success и byte/hash verification `index.html`, `app.js`, `styles.css`, `sw.js`, `inspiration-profile-v1.js`, `inspiration-catalog-v1.js`, `return-shelf-ui-v1.js`.
+- Кодовый release commit: `f7d789826d7f92887559bd772f0e0e8b989d8432` (`feat: ship personalized Inspiration v196`). Он опубликован fast-forward в `origin/master`.
+- Первый Railway deployment `6150687469` остался `in_progress` без обновления timestamp. Через 30 минут создан кодово-пустой retrigger commit `6f037128092c7fc8a01a13c61ca78632b59e3383`; второй deployment `6150928445` также ожидает инициализации.
+- На момент проверки `2026-08-29 01:23 UTC` production продолжает безопасно отдавать `satoru-v195`; новые Inspiration-модули отвечают `404`. Поэтому production success и byte/hash equality намеренно **не заявляются**.
+- Причина подтверждена публичным Railway incident `Deployments slow to start`: networking issue одного host создал backlog, а deployment workers нестабильны при его разборе — <https://status.railway.com/incident/8GL2R2U5>.
+- После выхода из очереди обязательна byte/hash verification `index.html`, `app.js`, `styles.css`, `sw.js`, `inspiration-profile-v1.js`, `inspiration-catalog-v1.js`, `return-shelf-ui-v1.js`, `return-shelf-v1.js` и production smoke вкладки `Вдохновение`.
