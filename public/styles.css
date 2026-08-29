@@ -7853,12 +7853,9 @@ html.avatar-forge-open body { overflow: hidden !important; }
   display: grid;
   place-content: center;
   justify-items: center;
-  gap: 14px;
+  gap: 9px;
   color: var(--text-strong);
-  background:
-    radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--accent-warm) 9%, transparent), transparent 24%),
-    radial-gradient(circle at 50% 44%, color-mix(in srgb, var(--accent-2) 14%, transparent), transparent 46%),
-    var(--surface-0);
+  background: var(--surface-0);
   opacity: 1;
   visibility: visible;
   transition: opacity 360ms ease, visibility 360ms ease;
@@ -7879,22 +7876,18 @@ html.avatar-forge-open body { overflow: hidden !important; }
 
 .boot-wordmark > strong {
   font-family: var(--font-display);
-  font-size: 20px;
-  letter-spacing: .02em;
+  font-size: 18px;
+  letter-spacing: .035em;
 }
 
 .boot-ouroboros {
   position: relative;
-  isolation: isolate;
-  width: clamp(154px, 34vw, 208px);
+  width: clamp(118px, 25vw, 148px);
   aspect-ratio: 1;
-  display: grid;
-  place-items: center;
 }
 
-.boot-ouroboros-aura,
-.boot-ouroboros-sheen,
-.boot-ouroboros-art {
+.boot-ouroboros-orbit,
+.boot-ouroboros-layer {
   position: absolute;
   display: block;
   inset: 0;
@@ -7902,42 +7895,25 @@ html.avatar-forge-open body { overflow: hidden !important; }
   height: 100%;
 }
 
-.boot-ouroboros-aura {
-  inset: 9%;
-  width: 82%;
-  height: 82%;
-  border-radius: 50%;
-  background: conic-gradient(from 12deg,
-    transparent 0 62%,
-    color-mix(in srgb, var(--accent-2) 46%, transparent) 76%,
-    color-mix(in srgb, var(--accent-warm) 58%, transparent) 86%,
-    transparent 100%);
-  filter: blur(14px);
-  opacity: .78;
-  animation: boot-cycle-light 2.4s linear infinite;
+.boot-ouroboros-orbit {
+  transform-origin: 50% 50%;
+  animation: boot-ouroboros-chase 3.2s linear infinite;
 }
 
-.boot-ouroboros-art {
-  z-index: 2;
+.boot-ouroboros-layer {
   object-fit: contain;
-  filter:
-    drop-shadow(0 14px 20px rgba(0, 0, 0, .24))
-    drop-shadow(0 0 16px color-mix(in srgb, var(--accent-2) 18%, transparent));
-  animation: boot-ouroboros-breathe 2.4s ease-in-out infinite;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-.boot-ouroboros-sheen {
-  z-index: 3;
-  background: conic-gradient(from 0deg,
-    transparent 0 72%,
-    rgba(255, 248, 218, 0) 78%,
-    rgba(255, 248, 218, .58) 86%,
-    rgba(255, 248, 218, 0) 93%);
-  -webkit-mask: url("art/ui/ouroboros-loader-v1.png") center / contain no-repeat;
-  mask: url("art/ui/ouroboros-loader-v1.png") center / contain no-repeat;
-  mix-blend-mode: screen;
-  animation: boot-cycle-light 2.4s linear infinite;
-  pointer-events: none;
+.boot-ouroboros-body {
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .24));
+}
+
+.boot-ouroboros-jaw {
+  transform-origin: 52% 27.5%;
+  animation: boot-ouroboros-bite .8s linear infinite;
 }
 
 .boot-progress {
@@ -7950,7 +7926,7 @@ html.avatar-forge-open body { overflow: hidden !important; }
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--accent-warm);
+  background: currentColor;
   opacity: .28;
   animation: boot-progress-pulse 1.2s ease-in-out infinite;
 }
@@ -7958,13 +7934,16 @@ html.avatar-forge-open body { overflow: hidden !important; }
 .boot-progress i:nth-child(2) { animation-delay: 160ms; }
 .boot-progress i:nth-child(3) { animation-delay: 320ms; }
 
-@keyframes boot-cycle-light {
+@keyframes boot-ouroboros-chase {
   to { transform: rotate(360deg); }
 }
 
-@keyframes boot-ouroboros-breathe {
-  0%, 100% { transform: scale(.985); }
-  50% { transform: scale(1.015); }
+@keyframes boot-ouroboros-bite {
+  0%, 35%, 100% { transform: rotate(0deg); }
+  54% { transform: rotate(22deg); }
+  64% { transform: rotate(22deg); }
+  77% { transform: rotate(-2deg); }
+  87% { transform: rotate(0deg); }
 }
 
 @keyframes boot-progress-pulse {
@@ -8881,9 +8860,8 @@ html.mobile-nav-open body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .boot-ouroboros-aura,
-  .boot-ouroboros-art,
-  .boot-ouroboros-sheen,
+  .boot-ouroboros-orbit,
+  .boot-ouroboros-jaw,
   .boot-progress i,
   #main.is-view-entering > :first-child,
   #main.is-view-pending::before {
