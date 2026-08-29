@@ -2,6 +2,17 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-29] ◉ Browser Companion Discovery v200 — расширение больше не нужно искать
+
+- На `Сегодня` добавлено одно временное full-width объявление релиза, а не ещё одна постоянная панель. Существующий аккаунт видит его после status probe; новый — только на следующем активном входе минимум через 24 часа после первого полного использования. Доступны три честных исхода: установить, напомнить через 3 дня, больше не напоминать.
+- Choice/timing вынесены в чистый `public/browser-companion-discovery-v1.js`. Записи awaited и fail-closed: ошибка settings write оставляет объявление на месте, установка не считается законченной, пока расширение само не вернуло bounded status.
+- Старый ZIP-first путь заменён guided modal и открытой `/browser-companion.html`: download находится сверху, дальше ровно три шага, адреса Brave/Chrome копируются кнопкой, ограничения и privacy объяснены до установки. Settings открывает тот же flow. Реальная one-click установка не имитируется: она станет доступна после owner upload/review в Chrome Web Store.
+- Подготовлены оба точных runtime ZIP v200, store listing и owner checklist. Внутри архива manifest лежит в корне, только 19 runtime-файлов, без тестов/доков/package metadata.
+- Визуальный QA нашёл старую заглушку `?` в качестве extension icon. Добавлен отдельный знак Satoru Attention (`public/browser-companion-icon-v1.svg/.png`), тот же PNG встроен в расширение. Toolbar badge: `NEW` до настройки, число сайтов в idle, `ON` в активном окне, `!` на boundary. Badge остаётся косметическим и не участвует в enforcement transaction.
+- Modal проверен на клавиатуре: inert backdrop, trap, Escape и возврат фокуса. Во время QA обнаружено, что async replace карточки мог оставить фокус на `body`; close теперь всегда находит свежую install-кнопку и возвращает фокус после удаления overlay.
+- RU/EN/DE/UK/ES, dark/light, reduced motion, 360×800, 375×812 и 1280×900 покрыты. Focused gates: **16/16**, extension: **31/31**, current-shell regressions: **62/62**. Полный sparse suite: **1151/1168**; все 17 failures — отсутствующие в sparse worktree immutable art/font/audio/art-factory assets, ни один не относится к v200.
+- После безопасного объединения с Inspiration Learning v201 общий PWA cache поднят до `satoru-v202`; manifest/package version расширения остаётся `0.2.0`. Полный QA/handoff: [`BROWSER-COMPANION-DISCOVERY-V200-QA.md`](./BROWSER-COMPANION-DISCOVERY-V200-QA.md).
+
 ## [2026-08-29] ✦ Browser Companion v199 — Attention впервые исполняет границу в Brave/Chromium
 
 - Собрано локальное Manifest V3-расширение `extensions/satoru-attention/` и готовый пользовательский ZIP `public/downloads/satoru-attention-v199.zip`. Человек заранее выбирает точный hostname, цель входа, длительность, ожидаемый результат и режим; расширение ставит gate до входа, разрешает сайт только внутри bounded session и показывает boundary после срока.

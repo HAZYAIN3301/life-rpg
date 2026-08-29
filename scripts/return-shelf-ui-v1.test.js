@@ -333,16 +333,16 @@ test('интеграция подключает профиль и каталог
   const catalogAt = index.indexOf('inspiration-catalog-v1.js');
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20260829-inspiration-learning-v201-1');
+  const appAt = index.indexOf('app.js?v=20260829-browser-companion-discovery-v202-1');
   assert.ok(importAt >= 0 && profileAt > importAt && catalogAt > profileAt && domainAt > catalogAt && uiAt > domainAt && appAt > uiAt,
     'import → profile → catalog → saved domain → UI → app');
   for (const asset of ['inspiration-import-v1.js', 'inspiration-profile-v1.js', 'inspiration-catalog-v1.js', 'return-shelf-v1.js', 'return-shelf-ui-v1.js']) {
     assert.match(index, new RegExp(`${asset.replaceAll('.', '\\.')}\\?v=20260829-inspiration-learning-v201-1`));
     assert.match(sw, new RegExp(asset.replaceAll('.', '\\.')));
   }
-  assert.match(index, /styles\.css\?v=20260829-inspiration-learning-v201-1/);
-  assert.match(sw, /satoru-v201/);
-  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v201'/);
+  assert.match(index, /styles\.css\?v=20260829-browser-companion-discovery-v202-1/);
+  assert.match(sw, /satoru-v202/);
+  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v202'/);
 });
 
 test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gate', () => {

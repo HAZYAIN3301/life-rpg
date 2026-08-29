@@ -6,7 +6,7 @@
   'use strict';
 
   const en = {
-    appName: 'Satoru Attention', companionName: 'Browser companion', privacyLocal: 'Rules and session details stay in this browser. Satoru receives only installed/version and a minimal read-only status.',
+    appName: 'Satoru Attention', companionName: 'Browser companion', pinTitle: 'Keep Satoru visible', pinLead: 'Open the Extensions menu in the toolbar and pin Satoru Attention. The badge then shows whether a boundary is ready or active.', privacyLocal: 'Rules and session details stay in this browser. Satoru receives only installed/version and a minimal read-only status.',
     optionsTitle: 'Attention boundaries', optionsLead: 'Choose one site, one purpose and one limit. You can add more later.', configuredTitle: 'Configured sites', noSites: 'No sites are controlled yet.', setupTitle: 'Add one boundary', setupLead: 'The browser will ask permission only for the exact hostname you enter.',
     site: 'Site', customSite: 'Custom site', domain: 'Domain', purpose: 'Purpose', mode: 'Mode', minutes: 'Minutes', outcome: 'What should remain when you leave?', saveRule: 'Save boundary', enabled: 'On', paused: 'Paused', turnOn: 'Turn on', pause: 'Pause', settings: 'Settings',
     permissionMissing: 'Browser permission is missing for this domain.', permissionDenied: 'Permission was not granted. Nothing was changed.', saveSuccess: 'Boundary saved.', saveFailed: 'Could not save the boundary.', controlLocked: 'This Control session is active. Its rule cannot be changed until the session ends.', browserLimit: 'You can always disable or uninstall a browser extension. Control creates a real in-browser boundary, not an impossible-to-bypass OS lock.',
@@ -22,7 +22,7 @@
   };
 
   const ru = {
-    appName: 'Satoru Attention', companionName: 'Расширение для браузера', privacyLocal: 'Правила и детали сессий остаются в этом браузере. Satoru получает только версию расширения и минимальный статус для чтения.',
+    appName: 'Satoru Attention', companionName: 'Расширение для браузера', pinTitle: 'Оставь Satoru на виду', pinLead: 'Открой меню расширений на панели браузера и закрепи Satoru Attention. Значок покажет, готова ли граница и действует ли она сейчас.', privacyLocal: 'Правила и детали сессий остаются в этом браузере. Satoru получает только версию расширения и минимальный статус для чтения.',
     optionsTitle: 'Границы внимания', optionsLead: 'Выберите один сайт, одну цель и один лимит. Остальное можно добавить позже.', configuredTitle: 'Настроенные сайты', noSites: 'Пока ни один сайт не контролируется.', setupTitle: 'Добавить одну границу', setupLead: 'Браузер запросит доступ только к точно указанному имени хоста.',
     site: 'Сайт', customSite: 'Другой сайт', domain: 'Домен', purpose: 'Цель входа', mode: 'Режим', minutes: 'Минуты', outcome: 'Что должно остаться после выхода?', saveRule: 'Сохранить границу', enabled: 'Включено', paused: 'На паузе', turnOn: 'Включить', pause: 'Поставить на паузу', settings: 'Настройки',
     permissionMissing: 'Для этого домена нет разрешения браузера.', permissionDenied: 'Разрешение не выдано. Ничего не изменено.', saveSuccess: 'Граница сохранена.', saveFailed: 'Не удалось сохранить границу.', controlLocked: 'Сессия Control активна. Её правило нельзя менять до завершения.', browserLimit: 'Расширение всегда можно отключить или удалить в браузере. Control создаёт настоящую границу внутри браузера, но не неотключаемый системный замок.',
@@ -38,7 +38,7 @@
   };
 
   const de = {
-    appName: 'Satoru Attention', companionName: 'Browser-Begleiter', privacyLocal: 'Regeln und Sitzungsdetails bleiben in diesem Browser. Satoru erhält nur Version und einen minimalen Nur-Lese-Status.',
+    appName: 'Satoru Attention', companionName: 'Browser-Begleiter', pinTitle: 'Satoru sichtbar halten', pinLead: 'Öffne das Erweiterungsmenü in der Symbolleiste und pinne Satoru Attention. Das Badge zeigt dann, ob eine Grenze bereit oder aktiv ist.', privacyLocal: 'Regeln und Sitzungsdetails bleiben in diesem Browser. Satoru erhält nur Version und einen minimalen Nur-Lese-Status.',
     optionsTitle: 'Aufmerksamkeitsgrenzen', optionsLead: 'Wähle eine Website, einen Zweck und ein Limit. Mehr kannst du später hinzufügen.', configuredTitle: 'Eingerichtete Websites', noSites: 'Noch wird keine Website kontrolliert.', setupTitle: 'Eine Grenze hinzufügen', setupLead: 'Der Browser fragt nur nach Zugriff auf den exakt eingegebenen Hostnamen.',
     site: 'Website', customSite: 'Andere Website', domain: 'Domain', purpose: 'Zweck', mode: 'Modus', minutes: 'Minuten', outcome: 'Was soll beim Verlassen übrig sein?', saveRule: 'Grenze speichern', enabled: 'Aktiv', paused: 'Pausiert', turnOn: 'Aktivieren', pause: 'Pausieren', settings: 'Einstellungen',
     permissionMissing: 'Die Browser-Berechtigung für diese Domain fehlt.', permissionDenied: 'Keine Berechtigung erteilt. Nichts wurde geändert.', saveSuccess: 'Grenze gespeichert.', saveFailed: 'Die Grenze konnte nicht gespeichert werden.', controlLocked: 'Diese Control-Sitzung ist aktiv. Die Regel kann bis zum Ende nicht geändert werden.', browserLimit: 'Eine Browser-Erweiterung kann immer deaktiviert oder entfernt werden. Control setzt eine echte Browser-Grenze, aber keine unabschaltbare Betriebssystemsperre.',
@@ -54,7 +54,7 @@
   };
 
   const uk = {
-    appName: 'Satoru Attention', companionName: 'Розширення для браузера', privacyLocal: 'Правила й деталі сесій залишаються в цьому браузері. Satoru отримує лише версію та мінімальний статус для читання.',
+    appName: 'Satoru Attention', companionName: 'Розширення для браузера', pinTitle: 'Залиш Satoru на видноті', pinLead: 'Відкрий меню розширень на панелі браузера й закріпи Satoru Attention. Значок покаже, чи готова межа та чи діє вона зараз.', privacyLocal: 'Правила й деталі сесій залишаються в цьому браузері. Satoru отримує лише версію та мінімальний статус для читання.',
     optionsTitle: 'Межі уваги', optionsLead: 'Оберіть один сайт, одну мету й один ліміт. Решту можна додати пізніше.', configuredTitle: 'Налаштовані сайти', noSites: 'Поки жоден сайт не контролюється.', setupTitle: 'Додати одну межу', setupLead: 'Браузер попросить доступ лише до точно вказаного імені хоста.',
     site: 'Сайт', customSite: 'Інший сайт', domain: 'Домен', purpose: 'Мета входу', mode: 'Режим', minutes: 'Хвилини', outcome: 'Що має залишитися після виходу?', saveRule: 'Зберегти межу', enabled: 'Увімкнено', paused: 'На паузі', turnOn: 'Увімкнути', pause: 'Поставити на паузу', settings: 'Налаштування',
     permissionMissing: 'Немає дозволу браузера для цього домену.', permissionDenied: 'Дозвіл не надано. Нічого не змінено.', saveSuccess: 'Межу збережено.', saveFailed: 'Не вдалося зберегти межу.', controlLocked: 'Сесія Control активна. Її правило не можна змінювати до завершення.', browserLimit: 'Розширення завжди можна вимкнути або видалити в браузері. Control створює справжню межу в браузері, але не невідключний системний замок.',
@@ -70,7 +70,7 @@
   };
 
   const es = {
-    appName: 'Satoru Attention', companionName: 'Extensión del navegador', privacyLocal: 'Las reglas y los detalles de sesión permanecen en este navegador. Satoru solo recibe la versión y un estado mínimo de solo lectura.',
+    appName: 'Satoru Attention', companionName: 'Extensión del navegador', pinTitle: 'Mantén Satoru visible', pinLead: 'Abre el menú de extensiones de la barra y fija Satoru Attention. La insignia mostrará si hay un límite preparado o activo.', privacyLocal: 'Las reglas y los detalles de sesión permanecen en este navegador. Satoru solo recibe la versión y un estado mínimo de solo lectura.',
     optionsTitle: 'Límites de atención', optionsLead: 'Elige un sitio, un propósito y un límite. Puedes añadir más después.', configuredTitle: 'Sitios configurados', noSites: 'Todavía no se controla ningún sitio.', setupTitle: 'Añadir un límite', setupLead: 'El navegador pedirá acceso solo al nombre de host exacto que escribas.',
     site: 'Sitio', customSite: 'Otro sitio', domain: 'Dominio', purpose: 'Propósito', mode: 'Modo', minutes: 'Minutos', outcome: '¿Qué debe quedar al salir?', saveRule: 'Guardar límite', enabled: 'Activo', paused: 'En pausa', turnOn: 'Activar', pause: 'Pausar', settings: 'Ajustes',
     permissionMissing: 'Falta el permiso del navegador para este dominio.', permissionDenied: 'No se concedió permiso. No se cambió nada.', saveSuccess: 'Límite guardado.', saveFailed: 'No se pudo guardar el límite.', controlLocked: 'Esta sesión Control está activa. La regla no puede cambiarse hasta que termine.', browserLimit: 'Una extensión siempre puede desactivarse o eliminarse. Control crea un límite real dentro del navegador, no un bloqueo del sistema imposible de omitir.',

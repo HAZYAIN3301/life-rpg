@@ -20,7 +20,7 @@ test('installable MV3 package has only the permanent Satoru origin', () => {
   assert.equal(manifest.content_scripts[0].all_frames, false);
 });
 
-test('every manifest file exists and the public ZIP is a real artifact', () => {
+test('every manifest file exists and both v200 ZIPs are real artifacts', () => {
   const refs = [manifest.background.service_worker, manifest.action.default_popup, manifest.options_page]
     .concat(manifest.content_scripts.flatMap((entry) => entry.js || []))
     .concat(Object.values(manifest.icons || {}));
@@ -30,10 +30,21 @@ test('every manifest file exists and the public ZIP is a real artifact', () => {
     assert.ok(messages.extensionName?.message);
     assert.ok(messages.extensionDescription?.message);
   }
-  const zip = path.join(ROOT, 'public', 'downloads', 'satoru-attention-v199.zip');
-  assert.ok(fs.existsSync(zip), 'install CTA must not ship as a 404');
-  assert.ok(fs.statSync(zip).size > 10_000, 'ZIP is unexpectedly empty');
+  assert.equal(manifest.version, '0.2.0');
+  for (const name of ['satoru-attention-v200.zip', 'satoru-attention-store-v200.zip']) {
+    const zip = path.join(ROOT, 'public', 'downloads', name);
+    assert.ok(fs.existsSync(zip), `${name}: install artifact must not ship as a 404`);
+    assert.ok(fs.statSync(zip).size > 10_000, `${name}: ZIP is unexpectedly empty`);
+  }
   assert.match(fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8'), /'\.zip':\s*'application\/zip'/);
+});
+
+test('toolbar badge keeps the installed extension discoverable without changing enforcement', () => {
+  const worker = read('service-worker.js');
+  const options = read('options.html');
+  assert.match(worker, /chrome\.action\.setBadgeText/);
+  assert.match(worker, /Badge visibility is helpful, never part of the enforcement transaction/);
+  assert.match(options, /data-i18n="pinTitle"/);
 });
 
 test('companion is local-only, exact-host and has no remote telemetry path', () => {

@@ -135,10 +135,10 @@ test('extension pages obey external-script CSP and contain no inline event handl
   assert.match(manifest.content_security_policy.extension_pages, /object-src 'none'/);
 });
 
-test('bundled extension icon is the unchanged project asset', () => {
+test('bundled extension icon is the dedicated Satoru Attention asset', () => {
   const bytes = fs.readFileSync(path.join(root, 'icon-192.png'));
   assert.equal(bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
-  assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), '53dcc0c8f5c6e21d4db5b0dffe51f8224282562ec131af23786b14e873ca3438');
+  assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), 'b652539f04dce6b98bf8ef3d47609fedf2e4c63b19b9f042339ee0b8e76825d8');
   assert.equal(manifest.icons['128'], 'icon-192.png');
 });
 

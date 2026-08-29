@@ -130,12 +130,34 @@ async function redirectDeniedTabs(state, at) {
   }));
 }
 
+async function updateActionState(state, at) {
+  try {
+    const enabled = state.policies.filter((policy) => policy.enabled).length;
+    const session = state.activeSession;
+    let text = enabled ? String(Math.min(99, enabled)) : 'NEW';
+    let color = enabled ? '#087c9d' : '#8a5a14';
+    let title = enabled ? `Satoru Attention · ${enabled} site${enabled === 1 ? '' : 's'}` : 'Satoru Attention · setup needed';
+    if (session) {
+      const remaining = Date.parse(session.deadlineAt) - Date.parse(at);
+      text = remaining > 0 ? 'ON' : '!';
+      color = remaining > 0 ? '#13744d' : '#a32f2a';
+      title = remaining > 0 ? `Satoru Attention · ${Math.max(1, Math.ceil(remaining / 60000))} min` : 'Satoru Attention · boundary reached';
+    }
+    await Promise.all([
+      chrome.action.setBadgeBackgroundColor({ color }),
+      chrome.action.setBadgeText({ text }),
+      chrome.action.setTitle({ title }),
+    ]);
+  } catch { /* Badge visibility is helpful, never part of the enforcement transaction. */ }
+}
+
 async function reconcileEnforcement(state, options = {}) {
   const at = currentIso();
   await reconcileRules(state, at);
   await reconcileContentScripts(state);
   await scheduleBoundary(state, at);
   if (options.redirectTabs !== false) await redirectDeniedTabs(state, at);
+  await updateActionState(state, at);
 }
 
 async function commitWithEnforcement(previousState, nextState, options = {}) {

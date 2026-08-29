@@ -17751,6 +17751,107 @@ html.attention-dialog-open body { overscroll-behavior: none; }
 .browser-companion > summary:focus-visible,
 .browser-companion-actions :is(a, button):focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
+.browser-companion-launch-slot {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin-block: calc(var(--sp-2) * -1) var(--sp-1);
+}
+.browser-companion-launch {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr) minmax(180px, auto);
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+  border: 1px solid color-mix(in srgb, var(--accent) 58%, var(--line-soft));
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(240px 130px at 0% 50%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 74%),
+    linear-gradient(115deg, color-mix(in srgb, var(--surface-2) 92%, var(--accent) 8%), var(--surface-2));
+  box-shadow: 0 18px 50px color-mix(in srgb, var(--accent) 10%, transparent);
+  animation: browser-companion-arrive var(--dur-slow) var(--ease-out) both;
+}
+.browser-companion-launch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 35%, color-mix(in srgb, white 7%, transparent) 50%, transparent 65%);
+  transform: translateX(-100%);
+  animation: browser-companion-sheen 900ms var(--ease-out) 240ms both;
+}
+.browser-companion-launch-mark {
+  inline-size: 70px;
+  block-size: 70px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--line-soft));
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface-3));
+  box-shadow: inset 0 0 24px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.browser-companion-launch-mark img { inline-size: 52px; block-size: 52px; object-fit: contain; }
+.browser-companion-launch-copy { min-width: 0; }
+.browser-companion-launch-copy > span,
+.browser-companion-installer-kicker {
+  display: block;
+  margin-block-end: var(--sp-1);
+  color: var(--accent);
+  font: 850 var(--type-meta)/var(--leading-label) var(--font-ui);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+.browser-companion-launch-copy h2 { margin: 0; color: var(--text-strong); font-size: var(--type-title); line-height: var(--leading-display); }
+.browser-companion-launch-copy p { max-width: 760px; margin: var(--sp-1) 0 0; color: var(--text-soft); line-height: var(--leading-prose); }
+.browser-companion-launch-actions { min-width: 0; display: grid; gap: var(--sp-1); justify-items: stretch; }
+.browser-companion-launch-actions :is(button, .btn) { min-height: var(--touch-min); white-space: normal; }
+.browser-companion-never { min-height: var(--touch-min); border: 0; background: transparent; color: var(--text-soft); font: 750 var(--type-meta)/var(--leading-ui) var(--font-ui); cursor: pointer; }
+.browser-companion-never:hover { color: var(--text-strong); }
+.browser-companion-launch-error { grid-column: 2 / -1; margin: 0; color: var(--danger); font-size: var(--type-meta); }
+.browser-companion-launch :is(button, a):focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+@keyframes browser-companion-arrive { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes browser-companion-sheen { to { transform: translateX(100%); } }
+
+.browser-companion-installer-overlay { z-index: 10080; }
+.browser-companion-installer {
+  position: relative;
+  width: min(760px, calc(100vw - 24px));
+  max-height: min(860px, calc(100dvh - 24px));
+  overflow: auto;
+  padding: clamp(var(--sp-4), 4vw, var(--sp-6));
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line-soft));
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-raised);
+}
+.browser-companion-installer > h2 { margin: 0; color: var(--text-strong); font: 900 var(--type-title)/var(--leading-display) var(--font-display); }
+.browser-companion-installer > p { color: var(--text-soft); line-height: var(--leading-prose); }
+.browser-companion-install-steps { display: grid; gap: var(--sp-2); margin: var(--sp-4) 0; padding: 0; list-style: none; }
+.browser-companion-install-steps li {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+}
+.browser-companion-install-steps li > span { inline-size: 32px; block-size: 32px; display: grid; place-items: center; border-radius: 50%; color: var(--accent); background: color-mix(in srgb, var(--accent) 11%, var(--surface-3)); font-weight: 900; }
+.browser-companion-install-steps li > div { min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
+.browser-companion-install-steps li b { flex: 1 1 100%; color: var(--text-strong); }
+.browser-companion-install-steps li p { flex: 1 1 100%; margin: 0; color: var(--text-soft); line-height: var(--leading-prose); }
+.browser-companion-install-steps code { min-height: var(--touch-min); display: inline-flex; align-items: center; padding: 0 var(--sp-2); border: 1px solid var(--line-soft); border-radius: var(--radius-sm); color: var(--text-strong); background: var(--surface-3); overflow-wrap: anywhere; }
+.browser-companion-install-steps :is(a, button) { min-height: var(--touch-min); }
+.browser-companion-installer-note { padding: var(--sp-2) var(--sp-3); border-inline-start: 3px solid var(--accent); background: color-mix(in srgb, var(--accent) 7%, var(--surface-2)); }
+.browser-companion-installer-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: var(--sp-2); }
+.browser-companion-installer-actions > * { min-height: var(--touch-min); }
+.browser-companion-installer :is(button, a):focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
 .attention-actions,
 .attention-boundary-actions {
   min-width: 0;
@@ -18196,6 +18297,16 @@ details.shutdown > summary:focus-visible {
   .attention-settings-shortcuts > :is(button, .btn) { width: 100%; }
   .browser-companion-actions { display: grid; grid-template-columns: minmax(0, 1fr); }
   .browser-companion-actions > :is(a, button) { width: 100%; }
+  .browser-companion-launch-slot { margin-block-start: 0; }
+  .browser-companion-launch { grid-template-columns: 52px minmax(0, 1fr); gap: var(--sp-3); padding: var(--sp-3); }
+  .browser-companion-launch-mark { inline-size: 52px; block-size: 52px; border-radius: var(--radius-md); }
+  .browser-companion-launch-mark img { inline-size: 40px; block-size: 40px; }
+  .browser-companion-launch-actions,
+  .browser-companion-launch-error { grid-column: 1 / -1; }
+  .browser-companion-installer-overlay { align-items: flex-end; padding: var(--sp-2) var(--sp-2) 0; }
+  .browser-companion-installer { width: 100%; max-height: calc(100dvh - var(--sp-2)); padding: var(--sp-4) var(--sp-3) calc(var(--sp-4) + env(safe-area-inset-bottom)); border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+  .browser-companion-installer-actions { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .browser-companion-installer-actions > * { width: 100%; }
 }
 
 @media (max-width: 374px) {
@@ -18213,7 +18324,9 @@ details.shutdown > summary:focus-visible {
   .capture-secondary button,
   details.shutdown > summary,
   .attention-settings-shortcuts :is(button, .btn),
-  .browser-companion :is(summary, a, button) { min-block-size: var(--touch-min); }
+  .browser-companion :is(summary, a, button),
+  .browser-companion-launch :is(a, button),
+  .browser-companion-installer :is(a, button) { min-block-size: var(--touch-min); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -18222,6 +18335,8 @@ details.shutdown > summary:focus-visible {
   .evening-reminder-due #ai-fab { animation: none !important; transform: none !important; }
   .secretary-action { transition: none !important; }
   .browser-companion > summary > span:last-child { transition: none !important; }
+  .browser-companion-launch,
+  .browser-companion-launch::after { animation: none !important; transform: none !important; }
   .secretary-reward.is-waiting,
   .secretary-action.is-pulsing { box-shadow: inset 0 0 0 1px var(--accent-warm); }
   .evening-reminder-due #ai-fab { box-shadow: 0 6px 22px rgba(0,0,0,.4), 0 0 0 4px var(--accent-warm); }

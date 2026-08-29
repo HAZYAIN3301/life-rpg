@@ -1015,6 +1015,24 @@ const I18N_EXTRA = {
   'После скачивания распакуй архив, открой brave://extensions, включи режим разработчика и выбери «Загрузить распакованное».': { en: 'After downloading, unzip the archive, open brave://extensions, enable Developer mode and choose “Load unpacked”.', de: 'Entpacke nach dem Download das Archiv, öffne brave://extensions, aktiviere den Entwicklermodus und wähle „Entpackte Erweiterung laden“.', uk: 'Після завантаження розпакуй архів, відкрий brave://extensions, увімкни режим розробника й вибери «Завантажити розпаковане».', es: 'Después de descargar, descomprime el archivo, abre brave://extensions, activa el modo desarrollador y elige «Cargar descomprimida».' },
   'Запрос отправлен расширению': { en: 'Request sent to the extension', de: 'Anfrage an die Erweiterung gesendet', uk: 'Запит надіслано розширенню', es: 'Solicitud enviada a la extensión' },
   'Расширение не ответило. Обнови страницу или проверь, что оно включено.': { en: 'The extension did not respond. Reload the page or check that it is enabled.', de: 'Die Erweiterung hat nicht geantwortet. Lade die Seite neu oder prüfe, ob sie aktiviert ist.', uk: 'Розширення не відповіло. Онови сторінку або перевір, що воно ввімкнене.', es: 'La extensión no respondió. Recarga la página o comprueba que esté activada.' },
+  'Новое · контроль сайтов': { en: 'New · website control', de: 'Neu · Websitekontrolle', uk: 'Нове · контроль сайтів', es: 'Nuevo · control de sitios' },
+  'Поставь границу до того, как лента утянет': { en: 'Set a boundary before the feed pulls you in', de: 'Setze eine Grenze, bevor der Feed dich hineinzieht', uk: 'Постав межу до того, як стрічка затягне', es: 'Pon un límite antes de que el feed te atrape' },
+  'Новое расширение Satoru спрашивает цель входа и закрывает выбранный сайт, когда время закончилось. Правила остаются в браузере.': { en: 'The new Satoru extension asks for your purpose and closes the selected site when time is up. Rules stay in the browser.', de: 'Die neue Satoru-Erweiterung fragt nach deinem Zweck und schließt die gewählte Website nach Ablauf der Zeit. Regeln bleiben im Browser.', uk: 'Нове розширення Satoru запитує мету входу й закриває вибраний сайт, коли час минув. Правила залишаються в браузері.', es: 'La nueva extensión de Satoru pregunta el propósito y cierra el sitio elegido cuando se acaba el tiempo. Las reglas quedan en el navegador.' },
+  'Установить за 2 минуты': { en: 'Install in 2 minutes', de: 'In 2 Minuten installieren', uk: 'Установити за 2 хвилини', es: 'Instalar en 2 minutos' },
+  'Напомнить через 3 дня': { en: 'Remind me in 3 days', de: 'In 3 Tagen erinnern', uk: 'Нагадати через 3 дні', es: 'Recordar en 3 días' },
+  'Не напоминать': { en: 'Do not remind me', de: 'Nicht mehr erinnern', uk: 'Не нагадувати', es: 'No volver a recordar' },
+  'Завершить установку': { en: 'Finish installation', de: 'Installation abschließen', uk: 'Завершити встановлення', es: 'Terminar instalación' },
+  'Не удалось сохранить выбор. Ничего не скрыто — повтори попытку.': { en: 'Could not save your choice. Nothing was hidden — try again.', de: 'Deine Auswahl konnte nicht gespeichert werden. Nichts wurde ausgeblendet — versuche es erneut.', uk: 'Не вдалося зберегти вибір. Нічого не приховано — повтори спробу.', es: 'No se pudo guardar tu elección. No se ocultó nada; inténtalo de nuevo.' },
+  'Установка Satoru Attention': { en: 'Install Satoru Attention', de: 'Satoru Attention installieren', uk: 'Встановлення Satoru Attention', es: 'Instalar Satoru Attention' },
+  'Пока расширение проходит публикацию в магазине, тестовая установка занимает три понятных шага.': { en: 'While the extension is being published in the store, the test installation takes three clear steps.', de: 'Während die Erweiterung im Store veröffentlicht wird, braucht die Testinstallation drei klare Schritte.', uk: 'Поки розширення публікується в магазині, тестове встановлення займає три зрозумілі кроки.', es: 'Mientras se publica la extensión en la tienda, la instalación de prueba requiere tres pasos claros.' },
+  'Скачать пакет': { en: 'Download package', de: 'Paket herunterladen', uk: 'Завантажити пакет', es: 'Descargar paquete' },
+  'Открой страницу расширений': { en: 'Open the extensions page', de: 'Öffne die Erweiterungsseite', uk: 'Відкрий сторінку розширень', es: 'Abre la página de extensiones' },
+  'Скопировать адрес': { en: 'Copy address', de: 'Adresse kopieren', uk: 'Скопіювати адресу', es: 'Copiar dirección' },
+  'Включи «Режим разработчика» и нажми «Загрузить распакованное». Выбери распакованную папку Satoru Attention.': { en: 'Enable “Developer mode” and press “Load unpacked”. Select the unzipped Satoru Attention folder.', de: 'Aktiviere den „Entwicklermodus“ und klicke auf „Entpackte Erweiterung laden“. Wähle den entpackten Satoru-Attention-Ordner.', uk: 'Увімкни «Режим розробника» й натисни «Завантажити розпаковане». Обери розпаковану папку Satoru Attention.', es: 'Activa «Modo desarrollador» y pulsa «Cargar descomprimida». Elige la carpeta descomprimida de Satoru Attention.' },
+  'После установки вернись сюда — Satoru сам проверит связь.': { en: 'Return here after installing — Satoru will check the connection automatically.', de: 'Kehre nach der Installation hierher zurück — Satoru prüft die Verbindung automatisch.', uk: 'Після встановлення повернися сюди — Satoru сам перевірить зв’язок.', es: 'Vuelve aquí después de instalarla: Satoru comprobará la conexión automáticamente.' },
+  'Подробная инструкция': { en: 'Full instructions', de: 'Ausführliche Anleitung', uk: 'Докладна інструкція', es: 'Instrucciones completas' },
+  'Адрес скопирован': { en: 'Address copied', de: 'Adresse kopiert', uk: 'Адресу скопійовано', es: 'Dirección copiada' },
+  'Скопируй вручную: brave://extensions': { en: 'Copy manually: brave://extensions', de: 'Manuell kopieren: brave://extensions', uk: 'Скопіюй вручну: brave://extensions', es: 'Copia manualmente: brave://extensions' },
   'Отдых завершён без долга': { en: 'Rest ended with no debt', de: 'Erholung ohne Schuld abgeschlossen', uk: 'Відпочинок завершено без боргу', es: 'Descanso terminado sin deuda' },
   'Исход оставлен неизвестным — это не считается срывом': { en: 'Outcome left unknown — this is not counted as a lapse', de: 'Ergebnis bleibt unbekannt — das zählt nicht als Rückfall', uk: 'Результат залишено невідомим — це не вважається зривом', es: 'El resultado queda como desconocido: no cuenta como recaída' },
   'Рабочая цель': { en: 'Work purpose', de: 'Arbeitsziel', uk: 'Робоча мета', es: 'Objetivo de trabajo' },
@@ -4360,6 +4378,15 @@ function validateSettingsPayload(value) {
     if (secretary.configured != null && typeof secretary.configured !== 'boolean') return false;
     if (secretary.lastEveningPromptDate != null && secretary.lastEveningPromptDate !== '' && !/^\d{4}-\d{2}-\d{2}$/.test(secretary.lastEveningPromptDate)) return false;
   }
+  if (value.browserCompanionDiscovery !== undefined && value.browserCompanionDiscovery !== null) {
+    const discovery = value.browserCompanionDiscovery;
+    if (!discovery || typeof discovery !== 'object' || Array.isArray(discovery)) return false;
+    if (discovery.schema !== 1 || discovery.release !== 'browser-companion-v200') return false;
+    if (!['pending', 'later', 'never', 'installing'].includes(discovery.choice)) return false;
+    for (const key of ['firstActiveAt', 'remindAfter', 'promptedAt']) {
+      if (discovery[key] != null && discovery[key] !== '' && (typeof discovery[key] !== 'string' || !Number.isFinite(Date.parse(discovery[key])))) return false;
+    }
+  }
   return true;
 }
 function settingsWriteAllowed(source, notify = false) {
@@ -4830,6 +4857,7 @@ const DEFAULT_SETTINGS = {
   theme: 'dark', accent: '#6c8cff', // оформление (тема + акцент)
   companion: { name: 'Тень', born: null, bond: 0, lastSeen: null, journal: [], check: {} }, // живой компаньон (Finch-модель)
   secretary: { eveningTime: '', dailyReminder: false, configured: false, lastEveningPromptDate: '' },
+  browserCompanionDiscovery: null,
   path: null, pathChosenAt: null, pathAntagonistMuted: false, control: {}, // «Доверие vs Контроль» (см. DISCIPLINE-PATHS-PLAN.md) — null = ещё не выбран
   social: { leaderboard: false, party: false }, // два независимых explicit-consent; отсутствие поля всегда означает «не публиковать»
 };
@@ -6052,6 +6080,7 @@ const State = {
   _attentionLoadError: '', _attentionLoadBusy: false, _attentionWriteBlockedNoticeAt: 0,
   _attentionDeepLink: null, _attentionReturnIndex: 0,
   _browserCompanionStatus: null, _browserCompanionRequestId: '', _browserCompanionOptionsRequestId: '', _browserCompanionOpen: false,
+  _browserCompanionProbeComplete: false, _browserCompanionDiscoveryBusy: '', _browserCompanionDiscoveryError: '',
   shelf: null, _shelfLoadError: '', _shelfLoadBusy: false, _shelfBusy: '', _shelfError: '',
   _shelfComposerOpen: false, _shelfFilter: 'all', _shelfFocusAfterCommit: '',
   _inspirationSection: 'today', _inspirationSetupOpen: false, _inspirationDraft: null, _inspirationRenderedOnce: false,
@@ -18333,7 +18362,7 @@ function renderToday() {
     <button type="button" role="tab" aria-selected="${tab === 'board'}" class="today-tab${tab === 'board' ? ' on' : ''}" data-action="today-tab" data-id="board">${t('Доска')}</button>
   </div>`;
   if (tab === 'board') return `<div class="today-shell board-shell">${tabs}${boardScreenHTML()}</div>`;
-  return `<div class="today-shell">${tabs}
+  return `<div class="today-shell">${tabs}${browserCompanionLaunchHTML()}
     <div class="today-work">${dayNavStripHTML(today)}${todayHero}${captureBar()}${overdueCard}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
     <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML())}${activeNudge}${pathTeaserCard()}${tm ? timerCard : ''}${installBanner()}</aside>
     <div class="today-footer">${shutdownCard}</div>
@@ -21072,7 +21101,13 @@ let _attentionEmergencyTimer = null;
 // policies, spend an emergency exit or mark an outcome through postMessage.
 const BROWSER_COMPANION_ORIGIN = 'https://life-rpg-production-416a.up.railway.app';
 const BROWSER_COMPANION_STATUS_TTL_MS = 25000;
+const BROWSER_COMPANION_DOWNLOAD = 'downloads/satoru-attention-v200.zip';
+// One-click installation on desktop Chromium is only legal through a signed
+// Chrome Web Store listing. Until its real ID exists, the guided test build is
+// shown instead of rendering a fake or broken store button.
+const BROWSER_COMPANION_STORE_URL = '';
 let _browserCompanionHeartbeatTimer = null;
+let _browserCompanionInstallerReturnFocus = null;
 const BROWSER_COMPANION_TARGETS = Object.freeze({
   tiktok: 'TikTok', youtube: 'YouTube', instagram: 'Instagram',
   x: 'X', reddit: 'Reddit', web: 'Brave',
@@ -21129,10 +21164,11 @@ function requestBrowserCompanionStatus() {
   setTimeout(() => {
     if (State._browserCompanionRequestId !== requestId) return;
     State._browserCompanionRequestId = '';
+    State._browserCompanionProbeComplete = true;
     if (State._browserCompanionStatus && !browserCompanionCurrentStatus()) {
       State._browserCompanionStatus = null;
-      patchBrowserCompanionSurfaces();
     }
+    patchBrowserCompanionSurfaces();
   }, 2500);
   return true;
 }
@@ -21147,7 +21183,7 @@ function browserCompanionFocusKey(container, active) {
   if (!container || !active || !container.contains(active)) return '';
   if (active.matches?.('summary')) return 'summary';
   const action = active.getAttribute?.('data-action');
-  if (action && ['browser-companion-refresh', 'browser-companion-options'].includes(action)) return `[data-action="${action}"]`;
+  if (action && ['browser-companion-refresh', 'browser-companion-options', 'browser-companion-install', 'browser-companion-later', 'browser-companion-never'].includes(action)) return `[data-action="${action}"]`;
   if (active.matches?.('a[download]')) return 'a[download]';
   if (active.matches?.('[data-secretary-control]')) return '[data-secretary-control]';
   return '';
@@ -21175,6 +21211,8 @@ function patchBrowserCompanionSurfaces() {
   if (State.view === 'today') {
     const control = document.querySelector('[data-secretary-control]');
     if (control) replaceBrowserCompanionSurface(control, attentionTodayControlHTML());
+    const launch = document.querySelector('[data-browser-companion-launch]');
+    if (launch) replaceBrowserCompanionSurface(launch, browserCompanionLaunchHTML());
   }
 }
 function handleBrowserCompanionMessage(event) {
@@ -21185,7 +21223,7 @@ function handleBrowserCompanionMessage(event) {
   if (message.type === 'SATORU_ATTENTION_STATUS_RESPONSE') {
     if (!message.requestId || message.requestId !== State._browserCompanionRequestId) return;
     const status = browserCompanionStatusFromMessage(message); if (!status) return;
-    State._browserCompanionRequestId = ''; State._browserCompanionStatus = status;
+    State._browserCompanionRequestId = ''; State._browserCompanionStatus = status; State._browserCompanionProbeComplete = true;
     patchBrowserCompanionSurfaces();
     return;
   }
@@ -21197,7 +21235,12 @@ function handleBrowserCompanionMessage(event) {
 }
 function initBrowserCompanionBridge() {
   window.addEventListener('message', handleBrowserCompanionMessage);
-  setTimeout(() => requestBrowserCompanionStatus(), 80);
+  setTimeout(() => {
+    if (!requestBrowserCompanionStatus()) {
+      State._browserCompanionProbeComplete = true;
+      patchBrowserCompanionSurfaces();
+    }
+  }, 80);
   clearInterval(_browserCompanionHeartbeatTimer);
   _browserCompanionHeartbeatTimer = setInterval(() => {
     if (document.visibilityState !== 'visible' || State.phase !== 'app') return;
@@ -21207,6 +21250,116 @@ function initBrowserCompanionBridge() {
     }
     if (State.view === 'settings' || State.view === 'today') requestBrowserCompanionStatus();
   }, 10000);
+}
+
+function browserCompanionDiscoveryOptions(now = new Date().toISOString()) {
+  return { now, accountCreatedAt: State.me?.createdAt || '', active: State.phase === 'app' };
+}
+function browserCompanionDiscoveryState(now = new Date().toISOString()) {
+  const D = window.BrowserCompanionDiscoveryV1;
+  return D ? D.normalize(State.settings?.browserCompanionDiscovery, browserCompanionDiscoveryOptions(now)) : null;
+}
+async function initializeBrowserCompanionDiscovery() {
+  const D = window.BrowserCompanionDiscoveryV1;
+  if (!D || !State.settings) return;
+  const options = { now: new Date().toISOString(), accountCreatedAt: State.me?.createdAt || '', active: true };
+  const normalized = D.normalize(State.settings.browserCompanionDiscovery, options);
+  const existing = D.isExistingAccount(options.accountCreatedAt);
+  // Existing accounts need no background write merely to see a release notice.
+  // New accounts persist the start of real post-onboarding use, so the 24-hour
+  // delay is based on using Satoru, not merely creating an account.
+  if (existing && !State.settings.browserCompanionDiscovery) return;
+  if (JSON.stringify(State.settings.browserCompanionDiscovery || null) === JSON.stringify(normalized)) return;
+  const nextSettings = structuredClone(State.settings); nextSettings.browserCompanionDiscovery = normalized;
+  await Store.saveNow('settings', nextSettings, () => { State.settings = nextSettings; return true; });
+}
+function browserCompanionLaunchHTML() {
+  const D = window.BrowserCompanionDiscoveryV1;
+  const now = new Date().toISOString();
+  const state = browserCompanionDiscoveryState(now);
+  const show = !!(D && state && D.shouldShow(state, {
+    ...browserCompanionDiscoveryOptions(now),
+    probeComplete: State._browserCompanionProbeComplete,
+    installed: !!browserCompanionCurrentStatus(),
+  }));
+  if (!show) return '<div class="browser-companion-launch-slot" data-browser-companion-launch hidden></div>';
+  const busy = !!State._browserCompanionDiscoveryBusy;
+  const primary = state.choice === 'installing' ? t('Завершить установку') : t('Установить за 2 минуты');
+  return `<div class="browser-companion-launch-slot" data-browser-companion-launch>
+    <section class="browser-companion-launch" aria-labelledby="browser-companion-launch-title">
+      <div class="browser-companion-launch-mark"><img src="/browser-companion-icon-v1.png" alt="" aria-hidden="true" /></div>
+      <div class="browser-companion-launch-copy"><span>${t('Новое · контроль сайтов')}</span><h2 id="browser-companion-launch-title">${t('Поставь границу до того, как лента утянет')}</h2><p>${t('Новое расширение Satoru спрашивает цель входа и закрывает выбранный сайт, когда время закончилось. Правила остаются в браузере.')}</p></div>
+      <div class="browser-companion-launch-actions">
+        <button type="button" class="btn" data-action="browser-companion-install" ${busy ? 'disabled' : ''}>${primary}</button>
+        <button type="button" class="btn ghost" data-action="browser-companion-later" ${busy ? 'disabled' : ''}>${t('Напомнить через 3 дня')}</button>
+        <button type="button" class="browser-companion-never" data-action="browser-companion-never" ${busy ? 'disabled' : ''}>${t('Не напоминать')}</button>
+      </div>
+      ${State._browserCompanionDiscoveryError ? `<p class="browser-companion-launch-error" role="alert">${t('Не удалось сохранить выбор. Ничего не скрыто — повтори попытку.')}</p>` : ''}
+    </section>
+  </div>`;
+}
+async function updateBrowserCompanionDiscovery(type, opener) {
+  const D = window.BrowserCompanionDiscoveryV1;
+  if (!D || !State.settings || State._browserCompanionDiscoveryBusy) return false;
+  const options = browserCompanionDiscoveryOptions();
+  const nextDiscovery = D.reduce(State.settings.browserCompanionDiscovery, { type, now: options.now }, options);
+  const nextSettings = structuredClone(State.settings); nextSettings.browserCompanionDiscovery = nextDiscovery;
+  State._browserCompanionDiscoveryBusy = type; State._browserCompanionDiscoveryError = ''; patchBrowserCompanionSurfaces();
+  const saved = await Store.saveNow('settings', nextSettings, () => { State.settings = nextSettings; return true; });
+  State._browserCompanionDiscoveryBusy = '';
+  if (!saved) { State._browserCompanionDiscoveryError = 'save'; patchBrowserCompanionSurfaces(); return false; }
+  State._browserCompanionDiscoveryError = ''; patchBrowserCompanionSurfaces();
+  if (type === 'install') openBrowserCompanionInstaller(opener);
+  return true;
+}
+function browserCompanionInstallerKeydown(event) {
+  const overlay = event.currentTarget;
+  if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeBrowserCompanionInstaller(); return; }
+  if (event.key !== 'Tab') return;
+  const focusable = attentionFocusable(overlay);
+  if (!focusable.length) return;
+  const first = focusable[0], last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+  else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+}
+function closeBrowserCompanionInstaller({ restoreFocus = true } = {}) {
+  const overlay = document.getElementById('browser-companion-installer'); if (!overlay) return;
+  overlay.remove(); const app = document.getElementById('app'); if (app && !overlay._appWasInert) app.inert = false;
+  unlockAttentionScroll();
+  const target = _browserCompanionInstallerReturnFocus; _browserCompanionInstallerReturnFocus = null;
+  if (restoreFocus) {
+    const restore = () => {
+      const freshTarget = document.querySelector('[data-action="browser-companion-install"]')
+        || (target?.isConnected ? target : document.querySelector('#main h2'));
+      freshTarget?.focus({ preventScroll: true });
+    };
+    restore(); setTimeout(restore, 0);
+  }
+}
+function openBrowserCompanionInstaller(opener) {
+  if (BROWSER_COMPANION_STORE_URL) { window.open(BROWSER_COMPANION_STORE_URL, '_blank', 'noopener'); return; }
+  closeBrowserCompanionInstaller({ restoreFocus: false });
+  const overlay = document.createElement('div'); overlay.id = 'browser-companion-installer'; overlay.className = 'attention-overlay browser-companion-installer-overlay';
+  overlay.innerHTML = `<section class="browser-companion-installer" role="dialog" aria-modal="true" aria-labelledby="browser-companion-installer-title" aria-describedby="browser-companion-installer-description">
+    <button type="button" class="modal-x" data-action="browser-companion-close-installer" aria-label="${t('Закрыть')}">✕</button>
+    <span class="browser-companion-installer-kicker">Satoru Attention</span><h2 id="browser-companion-installer-title" tabindex="-1">${t('Установка Satoru Attention')}</h2>
+    <p id="browser-companion-installer-description">${t('Пока расширение проходит публикацию в магазине, тестовая установка занимает три понятных шага.')}</p>
+    <ol class="browser-companion-install-steps">
+      <li><span>1</span><div><b>${t('Скачать пакет')}</b><a class="btn" href="${BROWSER_COMPANION_DOWNLOAD}" download>${t('Скачать пакет')}</a></div></li>
+      <li><span>2</span><div><b>${t('Открой страницу расширений')}</b><code>brave://extensions</code><button type="button" class="btn ghost" data-action="browser-companion-copy-address" data-address="brave://extensions">${t('Скопировать адрес')}</button></div></li>
+      <li><span>3</span><div><b>${t('Завершить установку')}</b><p>${t('Включи «Режим разработчика» и нажми «Загрузить распакованное». Выбери распакованную папку Satoru Attention.')}</p></div></li>
+    </ol>
+    <p class="browser-companion-installer-note">${t('После установки вернись сюда — Satoru сам проверит связь.')}</p>
+    <div class="browser-companion-installer-actions"><a class="btn ghost" href="browser-companion.html" target="_blank" rel="noopener">${t('Подробная инструкция')}</a><button type="button" class="btn" data-action="browser-companion-close-installer">${t('Готово')}</button></div>
+  </section>`;
+  overlay.addEventListener('keydown', browserCompanionInstallerKeydown);
+  overlay.addEventListener('pointerdown', (event) => { if (event.target === overlay) closeBrowserCompanionInstaller(); });
+  const app = document.getElementById('app'); overlay._appWasInert = !!(app && app.inert); if (app) app.inert = true;
+  _browserCompanionInstallerReturnFocus = opener?.isConnected
+    ? opener
+    : document.querySelector('[data-action="browser-companion-install"], #main h2') || document.activeElement;
+  document.body.appendChild(overlay); lockAttentionScroll();
+  requestAnimationFrame(() => overlay.querySelector('#browser-companion-installer-title')?.focus());
 }
 function browserCompanionSettingsHTML() {
   const status = browserCompanionCurrentStatus();
@@ -21222,8 +21375,8 @@ function browserCompanionSettingsHTML() {
       ${activeCopy}
       <div class="browser-companion-actions">${connected
         ? `<button type="button" class="btn ghost" data-action="browser-companion-options">${t('Открыть настройки расширения')}</button>`
-        : `<a class="btn" href="downloads/satoru-attention-v199.zip" download>${t('Установить расширение')}</a><button type="button" class="btn ghost" data-action="browser-companion-refresh">${t('Проверить связь')}</button>`}</div>
-      ${connected ? '' : `<p class="browser-companion-install">${t('После скачивания распакуй архив, открой brave://extensions, включи режим разработчика и выбери «Загрузить распакованное».')}</p>`}
+        : `<button type="button" class="btn" data-action="browser-companion-install">${t('Установить расширение')}</button><button type="button" class="btn ghost" data-action="browser-companion-refresh">${t('Проверить связь')}</button>`}</div>
+      ${connected ? '' : `<p class="browser-companion-install">${t('Пока расширение проходит публикацию в магазине, тестовая установка занимает три понятных шага.')}</p>`}
       <p class="attention-privacy-note">${t('Подробности остаются внутри расширения. Satoru видит только число настроенных сайтов и состояние текущей границы.')}</p>
     </div>
   </details>`;
@@ -25400,6 +25553,17 @@ async function onClick(e) {
     if (!requestBrowserCompanionOptions()) toast(t('Расширение не ответило. Обнови страницу или проверь, что оно включено.'));
     return;
   }
+  if (action === 'browser-companion-install') { sfx('open'); await updateBrowserCompanionDiscovery('install', el); return; }
+  if (action === 'browser-companion-later') { await updateBrowserCompanionDiscovery('later', el); return; }
+  if (action === 'browser-companion-never') { await updateBrowserCompanionDiscovery('never', el); return; }
+  if (action === 'browser-companion-close-installer') { closeBrowserCompanionInstaller(); return; }
+  if (action === 'browser-companion-copy-address') {
+    const address = el.dataset.address === 'brave://extensions' ? el.dataset.address : '';
+    if (!address) return;
+    try { await navigator.clipboard.writeText(address); toast(t('Адрес скопирован')); }
+    catch { toast(t('Скопируй вручную: brave://extensions')); }
+    return;
+  }
   if (action === 'recovery-open') { openRecoveryLauncher(el); return; }
   if (action === 'evening-open') { openEveningLanding(el); return; }
   if (action === 'evening-configure') { openEveningLanding(el, { active: false, speak: false }); return; }
@@ -27861,6 +28025,7 @@ async function initApp() {
   // успевают сказать «добавь ключ» тому, у кого он есть (fb_msi18cbi65qh).
   // Запрос стартовал в начале initApp, так что ждать здесь почти нечего.
   await aiKeysReady;
+  await initializeBrowserCompanionDiscovery();
   State.phase = 'app';
   refreshShadowVoiceStatus();
   render();
@@ -28492,7 +28657,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v201';
+const PWA_CACHE_VERSION = 'satoru-v202';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -1569,6 +1569,7 @@ function resolveTargetUser(users, raw) {
 function publicUser(user) {
   return {
     id: user.id, name: user.name, avatar: user.avatar, isAdmin: !!user.isAdmin,
+    createdAt: user.createdAt || null,
     // Только администратор видит свой серверный рекламный кредит. Обычным
     // пользователям это поле вообще не выдаётся.
     ...(user.isAdmin ? { adminGold: adminGoldBalance(user.id) } : {}),

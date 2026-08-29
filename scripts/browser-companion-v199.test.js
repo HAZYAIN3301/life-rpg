@@ -43,7 +43,7 @@ test('browser companion status parser accepts only the bounded read-only schema'
 });
 
 test('page bridge is exact-origin, request-correlated and cannot mutate attention data', () => {
-  const bridge = between(APP, 'const BROWSER_COMPANION_ORIGIN', 'function browserCompanionSettingsHTML');
+  const bridge = between(APP, 'const BROWSER_COMPANION_ORIGIN', 'function browserCompanionDiscoveryOptions');
   assert.match(bridge, /https:\/\/life-rpg-production-416a\.up\.railway\.app/);
   assert.match(bridge, /event\.origin !== BROWSER_COMPANION_ORIGIN \|\| event\.source !== window/);
   assert.match(bridge, /message\.requestId !== State\._browserCompanionRequestId/);

@@ -1,7 +1,7 @@
 # Secretary OS — карта болей, решений и честных границ
 
 Дата: 2026-08-29
-Статус: v197 и локальный Browser Companion v199 реализованы; контракт задаёт следующие S2–S4/R3b–R5 релизы
+Статус: v197, Browser Companion v199 и его discovery/install release v200 реализованы; контракт задаёт следующие S2–S4/R3b–R5 релизы
 Назначение: не добавлять ещё один набор экранов, а превратить существующие механики Satoru в один проактивный контур Тени.
 
 ## 0. Решение в одном абзаце
@@ -94,7 +94,7 @@
 
 | ID и боль | Что можно сделать | Чего нельзя обещать | Где/когда | Acceptance |
 |---|---|---|---|---|
-| CT-01. TikTok/YouTube в Brave/Chrome уводят от рабочей цели | Chromium extension перехватывает выбранные domains, читает заранее сохранённую локальную purpose policy, открывает ограниченное окно и после boundary показывает shield. В открытой вкладке Satoru доступна только read-only сводка: extension online, число сайтов, текущая граница. | Не видит native app, другой browser profile, Incognito без отдельного разрешения, историю до установки или экранное содержимое. В v199 нет серверной/cross-device синхронизации: она требует отдельного scoped pairing-token протокола. | **S1 — текущий browser-control release.** | Configured domain действительно закрывается после boundary; безопасное восстановление при повреждении state; no permanent lock; cross-tab race/idempotency tests; raw URL/server writes `0`. |
+| CT-01. TikTok/YouTube в Brave/Chrome уводят от рабочей цели | Chromium extension перехватывает выбранные domains, читает заранее сохранённую локальную purpose policy, открывает ограниченное окно и после boundary показывает shield. v200 делает установку заметной на Today и даёт отдельный guided install; в Satoru доступна только read-only сводка: extension online, число сайтов, текущая граница. | Не видит native app, другой browser profile, Incognito без отдельного разрешения, историю до установки или экранное содержимое. В v200 нет серверной/cross-device синхронизации: она требует отдельного scoped pairing-token протокола. Store one-click требует публикации владельцем и review. | **S1 — browser-control v199 + discovery/install v200.** | Configured domain действительно закрывается после boundary; notice имеет install/later/never; безопасное восстановление при повреждении state; no permanent lock; cross-tab race/idempotency tests; raw URL/server writes `0`. |
 | CT-02. Игры и standalone desktop apps продолжаются до ночи | Сейчас: вечерний push/TTS и внешний OS focus tool. Потом: отдельный signed desktop companion с process/app allowlist и тем же policy/session contract. | Browser extension не управляет Steam/game executable и не должна притворяться, что управляет. | R3 desktop companion, отдельно от extension. | Перезапуск/краш не оставляет вечный block; emergency path; app names local by default; exact OS matrix. |
 | CT-03. Android phone | Native companion с Usage Access читает разрешённые агрегаты; реальный app shield требует честно выбранного механизма и отдельного permission UX. | PWA/TWA сама не получает UsageStats. Accessibility scraping нельзя включать скрыто или маскировать как обычное разрешение. | R4 Android. | Permission denied/revoked оставляет manual mode; reboot recovery; no чужие данные; data deletion cascade. |
 | CT-04. iPhone/iPad | После Apple Developer enrollment запросить Family Controls distribution entitlement; использовать FamilyActivityPicker opaque tokens, Device Activity и Managed Settings shield. Shortcuts остаётся R0 fallback. | Оплата membership не гарантирует entitlement. Apple Account региона Украина не получает detailed `approvedWithDataAccess`; нельзя обещать названия apps/полную Screen Time аналитику. | R5 iOS после entitlement. | Ukraine path работает с opaque tokens без fake analytics; deny/revoke fail-open; shield снимается после expiry/emergency; TestFlight/device matrix. |
@@ -153,7 +153,7 @@ domain events + server time + extension/native aggregates
 - безопасные open-only Assistant actions;
 - честный push delivery и durable writes.
 
-### S1 — реализовано в Browser Companion v199: Browser Control
+### S1 — реализовано в Browser Companion v199/v200: Browser Control + discovery/install
 
 - Chromium extension для Brave/Chrome/Edge;
 - локальные policies и read-only status handshake с Satoru;

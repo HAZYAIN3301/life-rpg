@@ -5,7 +5,17 @@ the person explicitly adds. The first setup remains deliberately small: one site
 purpose, one limit. A second save for the same site adds or updates that purpose without
 erasing the other purposes.
 
-## Install in Brave (unpacked development build)
+## Install
+
+The public entry point is:
+
+`https://life-rpg-production-416a.up.railway.app/browser-companion.html`
+
+It provides the current download and a guided three-step test installation. The production
+one-click route is Chrome Web Store distribution; the upload-ready ZIP and listing copy are
+described in `PUBLISH-CHECKLIST.md` and `STORE-LISTING.md`.
+
+### Brave test build (unpacked)
 
 1. Open `brave://extensions`.
 2. Enable **Developer mode**.
@@ -13,6 +23,10 @@ erasing the other purposes.
 4. Select this exact `extensions/satoru-attention/` directory.
 5. The options page opens. Add one site and approve the browser permission prompt for
    that exact hostname.
+
+Pin Satoru Attention from Brave's Extensions toolbar menu. Its badge shows `NEW` before
+setup, the configured-site count while idle, `ON` while a boundary is active,
+and `!` when the boundary has been reached. Badge failure never changes enforcement.
 
 The broad `http://*/*` / `https://*/*` entries are only **optional capability declarations**
 required for user-selected custom domains. Before a site is selected, the extension cannot
@@ -151,5 +165,6 @@ permissions, bridge schema, locale parity, light/dark/reduced-motion and accessi
 
 ## Asset ledger
 
-`icon-192.png` is an unchanged local copy of the project's existing `public/icon-192.png`.
-SHA-256: `53dcc0c8f5c6e21d4db5b0dffe51f8224282562ec131af23786b14e873ca3438`.
+`icon-192.png` is the dedicated Satoru Attention mark. Its checked-in source is
+`public/browser-companion-icon-v1.svg`; the matching web asset is
+`public/browser-companion-icon-v1.png`.
