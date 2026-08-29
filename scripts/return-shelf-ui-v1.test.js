@@ -54,8 +54,10 @@ test('первый вход начинается с импорта интере�
 
   assert.match(html, /class="inspiration-mark"/);
   assert.match(html, /Что тебя зажигает\?/);
+  assert.match(html, /data-action="inspiration-import-guide-open"/);
+  assert.match(html, /Как импортировать из TikTok/);
   assert.match(html, /data-inspiration-import-file/);
-  assert.match(html, /Импортировать TikTok/);
+  assert.match(html, /У меня уже есть архив/);
   assert.match(html, /data-action="inspiration-import-links-toggle"/);
   assert.match(html, /data-action="inspiration-setup-import-satoru"/);
   assert.match(html, /Собрать из Satoru/);
@@ -147,6 +149,51 @@ test('готовый TikTok-импорт показывает только св�
   assert.match(html, /#surfing/);
   assert.match(html, /не история просмотров/);
   assert.doesNotMatch(html, /Direct Messages|Login History|email@example\.com/);
+});
+
+test('компьютерный TikTok-мастер ведёт прямо в выгрузку и показывает весь путь до ZIP', () => {
+  const html = UI.render(ready({
+    setupOpen: true,
+    importGuideOpen: true,
+    importDevice: { kind: 'desktop', platform: 'desktop' },
+  }), t);
+  assert.match(html, /class="inspiration-import-guide"/);
+  assert.match(html, /data-device="desktop" class="is-active" aria-pressed="true"/);
+  assert.match(html, /href="https:\/\/www\.tiktok\.com\/setting\/download-your-data"/);
+  assert.match(html, /Открыть нужное окно TikTok/);
+  assert.match(html, /Выбери «Все данные»/);
+  assert.match(html, /формат JSON/);
+  assert.match(html, /Запросить данные/);
+  assert.match(html, /Скачать данные/);
+  assert.match(html, /папке «Загрузки»/);
+  assert.match(html, /Выбрать архив TikTok/);
+  assert.doesNotMatch(html, /Куда нажимать в TikTok|внизу экрана|справа сверху/);
+});
+
+test('телефонный TikTok-мастер подсказывает каждое нажатие и место скачанного файла', () => {
+  const html = UI.render(ready({
+    setupOpen: true,
+    importGuideOpen: true,
+    importDevice: { kind: 'phone', platform: 'ios' },
+  }), t);
+  for (const copy of ['Профиль', 'внизу экрана', 'Меню ☰', 'справа сверху',
+    'Настройки и конфиденциальность', 'Аккаунт', 'Скачать ваши данные']) {
+    assert.match(html, new RegExp(copy.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), copy);
+  }
+  assert.match(html, /На iPhone и iPad архив обычно лежит в «Файлы» → «Загрузки»/);
+  assert.match(html, /data-device="phone" class="is-active" aria-pressed="true"/);
+  assert.equal((html.match(/class="inspiration-import-tap"/g) || []).length, 4);
+});
+
+test('Android-подсказка и ручной выбор устройства не зависят от размера окна', () => {
+  const html = UI.render(ready({
+    setupOpen: true,
+    importGuideOpen: true,
+    importDevice: { kind: 'tablet', platform: 'android' },
+  }), t);
+  assert.match(html, /data-device="tablet" class="is-active" aria-pressed="true"/);
+  assert.match(html, /На Android архив обычно лежит в «Файлы» → «Загрузки»/);
+  assert.equal((html.match(/data-action="inspiration-import-device"/g) || []).length, 3);
 });
 
 test('Сохранённое — вторичный раздел, а ручное добавление просит только материал и необязательное имя', () => {
@@ -257,24 +304,26 @@ test('интеграция подключает профиль и каталог
   const catalogAt = index.indexOf('inspiration-catalog-v1.js');
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20260829-browser-companion-v199-1');
+  const appAt = index.indexOf('app.js?v=20260829-inspiration-guide-v200-1');
   assert.ok(importAt >= 0 && profileAt > importAt && catalogAt > profileAt && domainAt > catalogAt && uiAt > domainAt && appAt > uiAt,
     'import → profile → catalog → saved domain → UI → app');
   for (const asset of ['inspiration-import-v1.js', 'inspiration-profile-v1.js', 'inspiration-catalog-v1.js', 'return-shelf-v1.js', 'return-shelf-ui-v1.js']) {
-    assert.match(index, new RegExp(`${asset.replaceAll('.', '\\.')}\\?v=20260829-inspiration-import-v198-1`));
+    assert.match(index, new RegExp(`${asset.replaceAll('.', '\\.')}\\?v=20260829-inspiration-guide-v200-1`));
     assert.match(sw, new RegExp(asset.replaceAll('.', '\\.')));
   }
-  assert.match(index, /styles\.css\?v=20260829-browser-companion-v199-1/);
-  assert.match(sw, /satoru-v199/);
-  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v199'/);
+  assert.match(index, /styles\.css\?v=20260829-inspiration-guide-v200-1/);
+  assert.match(sw, /satoru-v200/);
+  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v200'/);
 });
 
 test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gate', () => {
   const src = fs.readFileSync(path.join(__dirname, '..', 'public/app.js'), 'utf8');
   const keys = [
     'Вдохновение', 'Подборка', 'Сохранённое', 'Что тебя зажигает?',
-    'Импортировать TikTok', 'Вставить TikTok-ссылки', 'Собрать из Satoru',
+    'Как импортировать из TikTok', 'У меня уже есть архив', 'Вставить TikTok-ссылки', 'Собрать из Satoru',
     'Архив остаётся на устройстве', 'Настроить вручную', 'Темы, вселенные и образы',
+    'Инструкция для твоего устройства', 'Открыть нужное окно TikTok', 'Настройки и конфиденциальность',
+    'Скачать ваши данные', 'Выбери «Все данные»', 'Нажми «Запросить данные»', 'Вернись в Satoru',
     'Что показывать', 'Что не показывать', 'Почему здесь', 'Больше такого',
     'Не моё', 'На сегодня всё', 'Добавить своё',
     'Открыть выпуск', 'Источник и права', 'Ещё действия', 'Настроить подборку',

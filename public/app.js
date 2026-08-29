@@ -767,6 +767,51 @@ const I18N_EXTRA = {
   'Вставить ссылки': { en: 'Paste links', de: 'Links einfügen', uk: 'Вставити посилання', es: 'Pegar enlaces' },
   'Скрыть ссылки': { en: 'Hide links', de: 'Links ausblenden', uk: 'Сховати посилання', es: 'Ocultar enlaces' },
   'Как получить архив': { en: 'How to get the archive', de: 'So erhältst du das Archiv', uk: 'Як отримати архів', es: 'Cómo obtener el archivo' },
+  'Как импортировать из TikTok': { en: 'How to import from TikTok', de: 'Aus TikTok importieren', uk: 'Як імпортувати з TikTok', es: 'Cómo importar desde TikTok' },
+  'У меня уже есть архив': { en: 'I already have an archive', de: 'Ich habe bereits ein Archiv', uk: 'У мене вже є архів', es: 'Ya tengo un archivo' },
+  'ПОШАГОВО': { en: 'STEP BY STEP', de: 'SCHRITT FÜR SCHRITT', uk: 'КРОК ЗА КРОКОМ', es: 'PASO A PASO' },
+  'Инструкция для твоего устройства': { en: 'Instructions for your device', de: 'Anleitung für dein Gerät', uk: 'Інструкція для твого пристрою', es: 'Instrucciones para tu dispositivo' },
+  'Компьютер': { en: 'Computer', de: 'Computer', uk: 'Комп’ютер', es: 'Ordenador' },
+  'Планшет': { en: 'Tablet', de: 'Tablet', uk: 'Планшет', es: 'Tableta' },
+  'Телефон': { en: 'Phone', de: 'Telefon', uk: 'Телефон', es: 'Teléfono' },
+  'Изменить устройство': { en: 'Change device', de: 'Gerät ändern', uk: 'Змінити пристрій', es: 'Cambiar dispositivo' },
+  'Куда нажимать в TikTok': { en: 'Where to tap in TikTok', de: 'Wo du in TikTok tippen musst', uk: 'Куди натискати в TikTok', es: 'Dónde tocar en TikTok' },
+  'Профиль': { en: 'Profile', de: 'Profil', uk: 'Профіль', es: 'Perfil' },
+  'внизу экрана': { en: 'at the bottom', de: 'unten auf dem Bildschirm', uk: 'внизу екрана', es: 'abajo en la pantalla' },
+  'Меню ☰': { en: 'Menu ☰', de: 'Menü ☰', uk: 'Меню ☰', es: 'Menú ☰' },
+  'справа сверху': { en: 'at the top right', de: 'oben rechts', uk: 'праворуч угорі', es: 'arriba a la derecha' },
+  'Настройки и конфиденциальность': { en: 'Settings and privacy', de: 'Einstellungen und Datenschutz', uk: 'Налаштування і конфіденційність', es: 'Ajustes y privacidad' },
+  'Аккаунт': { en: 'Account', de: 'Konto', uk: 'Акаунт', es: 'Cuenta' },
+  'Скачать ваши данные': { en: 'Download your data', de: 'Deine Daten herunterladen', uk: 'Завантажити ваші дані', es: 'Descargar tus datos' },
+  'Ссылка сразу откроет страницу выгрузки данных.': { en: 'The link opens the data export page directly.', de: 'Der Link öffnet direkt die Seite für den Datenexport.', uk: 'Посилання одразу відкриє сторінку вивантаження даних.', es: 'El enlace abre directamente la página de exportación de datos.' },
+  'Если ссылка не открыла нужный экран в приложении, используй путь ниже.': { en: 'If the link did not open the right screen in the app, use the path below.', de: 'Falls der Link nicht den richtigen Bildschirm in der App öffnet, nutze den Pfad unten.', uk: 'Якщо посилання не відкрило потрібний екран у застосунку, скористайся шляхом нижче.', es: 'Si el enlace no abre la pantalla correcta en la app, sigue la ruta de abajo.' },
+  'Самый короткий путь': { en: 'The shortest path', de: 'Der kürzeste Weg', uk: 'Найкоротший шлях', es: 'La ruta más corta' },
+  'Открыть нужное окно TikTok': { en: 'Open the right TikTok screen', de: 'TikTok-Datenexport öffnen', uk: 'Відкрити потрібне вікно TikTok', es: 'Abrir la pantalla correcta de TikTok' },
+  'Открой страницу выгрузки': { en: 'Open the export page', de: 'Exportseite öffnen', uk: 'Відкрий сторінку вивантаження', es: 'Abre la página de exportación' },
+  'Открой выгрузку данных': { en: 'Open data export', de: 'Datenexport öffnen', uk: 'Відкрий вивантаження даних', es: 'Abre la exportación de datos' },
+  'Нажми кнопку выше и при необходимости войди в TikTok.': { en: 'Use the button above and sign in to TikTok if needed.', de: 'Nutze die Schaltfläche oben und melde dich bei Bedarf bei TikTok an.', uk: 'Натисни кнопку вище й за потреби увійди в TikTok.', es: 'Pulsa el botón de arriba e inicia sesión en TikTok si hace falta.' },
+  'Нажми кнопку выше или пройди по указанному пути в приложении.': { en: 'Use the button above or follow the path shown in the app.', de: 'Nutze die Schaltfläche oben oder folge dem gezeigten Pfad in der App.', uk: 'Натисни кнопку вище або пройди вказаним шляхом у застосунку.', es: 'Pulsa el botón de arriba o sigue la ruta indicada en la app.' },
+  'Выбери «Все данные»': { en: 'Choose “All data”', de: 'Wähle „Alle Daten“', uk: 'Вибери «Усі дані»', es: 'Elige «Todos los datos»' },
+  'Так профиль интересов получится подробным.': { en: 'This makes the interest profile more detailed.', de: 'So wird dein Interessenprofil ausführlicher.', uk: 'Так профіль інтересів буде докладним.', es: 'Así el perfil de intereses será más detallado.' },
+  'Все данные': { en: 'All data', de: 'Alle Daten', uk: 'Усі дані', es: 'Todos los datos' },
+  'Выбери формат JSON': { en: 'Choose JSON format', de: 'JSON-Format wählen', uk: 'Вибери формат JSON', es: 'Elige el formato JSON' },
+  'Satoru разбирает его точнее всего.': { en: 'Satoru reads it most accurately.', de: 'Satoru kann dieses Format am genauesten lesen.', uk: 'Satoru розбирає його найточніше.', es: 'Satoru lo interpreta con mayor precisión.' },
+  'Нажми «Запросить данные»': { en: 'Tap “Request data”', de: 'Tippe auf „Daten anfordern“', uk: 'Натисни «Запросити дані»', es: 'Pulsa «Solicitar datos»' },
+  'TikTok подготовит архив не сразу и пришлёт уведомление.': { en: 'TikTok needs time to prepare the archive and will send a notification.', de: 'TikTok braucht Zeit für das Archiv und sendet dir eine Benachrichtigung.', uk: 'TikTok підготує архів не одразу й надішле сповіщення.', es: 'TikTok tardará en preparar el archivo y enviará una notificación.' },
+  'Запросить данные': { en: 'Request data', de: 'Daten anfordern', uk: 'Запросити дані', es: 'Solicitar datos' },
+  'Скачай готовый архив': { en: 'Download the prepared archive', de: 'Fertiges Archiv herunterladen', uk: 'Завантаж готовий архів', es: 'Descarga el archivo preparado' },
+  'Открой вкладку «Скачать данные» и нажми «Скачать». Архив доступен четыре дня.': { en: 'Open the “Download data” tab and tap “Download”. The archive is available for four days.', de: 'Öffne den Tab „Daten herunterladen“ und tippe auf „Herunterladen“. Das Archiv ist vier Tage verfügbar.', uk: 'Відкрий вкладку «Завантажити дані» й натисни «Завантажити». Архів доступний чотири дні.', es: 'Abre la pestaña «Descargar datos» y pulsa «Descargar». El archivo está disponible durante cuatro días.' },
+  'Скачать данные': { en: 'Download data', de: 'Daten herunterladen', uk: 'Завантажити дані', es: 'Descargar datos' },
+  'Скачать': { en: 'Download', de: 'Herunterladen', uk: 'Завантажити', es: 'Descargar' },
+  'Вернись в Satoru': { en: 'Return to Satoru', de: 'Zu Satoru zurückkehren', uk: 'Повернися в Satoru', es: 'Vuelve a Satoru' },
+  'На iPhone и iPad архив обычно лежит в «Файлы» → «Загрузки».': { en: 'On iPhone and iPad, the archive is usually in Files → Downloads.', de: 'Auf iPhone und iPad liegt das Archiv meist unter Dateien → Downloads.', uk: 'На iPhone та iPad архів зазвичай лежить у «Файли» → «Завантаження».', es: 'En iPhone y iPad, el archivo suele estar en Archivos → Descargas.' },
+  'На Android архив обычно лежит в «Файлы» → «Загрузки».': { en: 'On Android, the archive is usually in Files → Downloads.', de: 'Unter Android liegt das Archiv meist unter Dateien → Downloads.', uk: 'На Android архів зазвичай лежить у «Файли» → «Завантаження».', es: 'En Android, el archivo suele estar en Archivos → Descargas.' },
+  'Архив обычно лежит в папке «Загрузки».': { en: 'The archive is usually in the Downloads folder.', de: 'Das Archiv liegt meist im Downloads-Ordner.', uk: 'Архів зазвичай лежить у папці «Завантаження».', es: 'El archivo suele estar en la carpeta Descargas.' },
+  'Выбери скачанный ZIP — остальное Satoru сделает сам.': { en: 'Choose the downloaded ZIP — Satoru handles the rest.', de: 'Wähle die heruntergeladene ZIP-Datei — den Rest erledigt Satoru.', uk: 'Вибери завантажений ZIP — решту Satoru зробить сам.', es: 'Elige el ZIP descargado: Satoru hará el resto.' },
+  'Файл обрабатывается только на твоём устройстве.': { en: 'The file is processed only on your device.', de: 'Die Datei wird nur auf deinem Gerät verarbeitet.', uk: 'Файл обробляється лише на твоєму пристрої.', es: 'El archivo se procesa solo en tu dispositivo.' },
+  'Официальная инструкция TikTok': { en: 'Official TikTok instructions', de: 'Offizielle TikTok-Anleitung', uk: 'Офіційна інструкція TikTok', es: 'Instrucciones oficiales de TikTok' },
+  'Показать инструкцию': { en: 'Show instructions', de: 'Anleitung anzeigen', uk: 'Показати інструкцію', es: 'Mostrar instrucciones' },
+  'Скрыть инструкцию': { en: 'Hide instructions', de: 'Anleitung ausblenden', uk: 'Сховати інструкцію', es: 'Ocultar instrucciones' },
   'Вставь до 32 ссылок из TikTok': { en: 'Paste up to 32 TikTok links', de: 'Füge bis zu 32 TikTok-Links ein', uk: 'Встав до 32 посилань із TikTok', es: 'Pega hasta 32 enlaces de TikTok' },
   'Определить интересы': { en: 'Find interests', de: 'Interessen erkennen', uk: 'Визначити інтереси', es: 'Detectar intereses' },
   'Satoru читает только интересы, поиски, хэштеги, лайки, избранное и историю просмотра. Сообщения, контакты, входы, адреса и платежи игнорируются.': { en: 'Satoru only reads interests, searches, hashtags, likes, favourites and watch history. Messages, contacts, logins, addresses and payments are ignored.', de: 'Satoru liest nur Interessen, Suchanfragen, Hashtags, Likes, Favoriten und den Wiedergabeverlauf. Nachrichten, Kontakte, Anmeldungen, Adressen und Zahlungen werden ignoriert.', uk: 'Satoru читає лише інтереси, пошуки, хештеги, вподобання, обране та історію переглядів. Повідомлення, контакти, входи, адреси й платежі ігноруються.', es: 'Satoru solo lee intereses, búsquedas, hashtags, me gusta, favoritos e historial de visualización. Ignora mensajes, contactos, inicios de sesión, direcciones y pagos.' },
@@ -21684,6 +21729,19 @@ function shelfLinkLabel(item) {
 function inspirationProfileEngine() { return window.InspirationProfileV1 || null; }
 function inspirationCatalogEngine() { return window.InspirationCatalogV1 || null; }
 function inspirationImportEngine() { return window.InspirationImportV1 || null; }
+function inspirationImportDevice() {
+  const nav = typeof navigator === 'object' && navigator ? navigator : {};
+  const ua = String(nav.userAgent || '');
+  const iPad = /iPad/i.test(ua) || (/Macintosh/i.test(ua) && Number(nav.maxTouchPoints) > 1);
+  const detectedPhone = !!(nav.userAgentData && nav.userAgentData.mobile)
+    || /iPhone|iPod|Android[^;]*Mobile|Windows Phone|Mobile/i.test(ua);
+  const detectedTablet = !detectedPhone && (iPad || /Tablet|PlayBook|Silk|Kindle|Android/i.test(ua));
+  const detectedKind = detectedPhone ? 'phone' : detectedTablet ? 'tablet' : 'desktop';
+  const override = ['desktop', 'tablet', 'phone'].includes(State._inspirationImportDeviceKind)
+    ? State._inspirationImportDeviceKind : detectedKind;
+  const platform = /iPhone|iPad|iPod/i.test(ua) || iPad ? 'ios' : /Android/i.test(ua) ? 'android' : 'desktop';
+  return { kind: override, detectedKind, platform };
+}
 function inspirationCatalog() {
   const C = inspirationCatalogEngine(); return C ? C.items(lang()) : [];
 }
@@ -21803,14 +21861,14 @@ function applyInspirationImportResult(result, source = 'tiktok') {
     status: interests.length ? 'ready' : 'empty', source, interests,
     signals: (result.signals || []).slice(0, 12), stats,
   };
-  State._inspirationSetupOpen = true; State._inspirationImportLinksOpen = false;
+  State._inspirationSetupOpen = true; State._inspirationImportLinksOpen = false; State._inspirationImportGuideOpen = false;
   State._shelfFocusAfterCommit = interests.length ? '#inspiration-setup-form input[name="interest"]' : '[data-action="inspiration-import-links-toggle"]';
   render();
   if (interests.length) { sfx('confirm'); toast(t('Интересы TikTok готовы к проверке')); track(`inspiration:import:${source}:ready`); }
 }
 async function startInspirationArchiveImport(file) {
   const I = inspirationImportEngine(); if (!I || !file) return;
-  State._inspirationSetupOpen = true; State._inspirationImportLinksOpen = false;
+  State._inspirationSetupOpen = true; State._inspirationImportLinksOpen = false; State._inspirationImportGuideOpen = false;
   State._inspirationImport = { status: 'reading', source: 'tiktok', fileName: String(file.name || '').slice(0, 120) };
   State._shelfFocusAfterCommit = '.inspiration-import-status'; render();
   try {
@@ -21828,6 +21886,7 @@ async function startInspirationLinkImport(value) {
     State._inspirationImport = { status: 'error', source: 'tiktok-links', error: inspirationImportErrorMessage('links_empty') };
     State._shelfFocusAfterCommit = '#inspiration-import-links'; render(); return;
   }
+  State._inspirationImportGuideOpen = false;
   State._inspirationImport = { status: 'enriching', source: 'tiktok-links', stats: { videos: links.length } };
   State._shelfFocusAfterCommit = '.inspiration-import-status'; render();
   try {
@@ -21893,6 +21952,7 @@ function shelfViewModel() {
     state: 'ready', section: State._inspirationSection === 'saved' ? 'saved' : 'today',
     profile: visibleProfile, suggestions: inspirationImportSuggestions(), setupOpen: !!State._inspirationSetupOpen,
     importSession: State._inspirationImport || null, importLinksOpen: !!State._inspirationImportLinksOpen,
+    importGuideOpen: !!State._inspirationImportGuideOpen, importDevice: inspirationImportDevice(),
     items, digestTotal: items.length, digestDone: P.isDigestDone(activeProfile),
     saved, savedCount: saved.length, archived, composerOpen: State._shelfComposerOpen,
     errorMessage: State._shelfError,
@@ -21984,7 +22044,7 @@ function openInspirationSetup(mode = 'edit', form = null) {
   sfx('open'); render();
 }
 function closeInspirationSetup() {
-  State._inspirationDraft = null; State._inspirationSetupOpen = false; State._inspirationImport = null; State._inspirationImportLinksOpen = false; State._shelfError = '';
+  State._inspirationDraft = null; State._inspirationSetupOpen = false; State._inspirationImport = null; State._inspirationImportLinksOpen = false; State._inspirationImportGuideOpen = false; State._shelfError = '';
   State._shelfFocusAfterCommit = '[data-action="inspiration-setup-edit"], #return-shelf-title';
   sfx('close'); render();
 }
@@ -22003,7 +22063,7 @@ async function persistInspirationProfile(rawProfile, { closeSetup = false, focus
     State._shelfFocusAfterCommit = focus; render(); toast(t(State._shelfError)); return false;
   }
   State._inspirationDraft = null;
-  if (closeSetup) { State._inspirationSetupOpen = false; State._inspirationImport = null; State._inspirationImportLinksOpen = false; }
+  if (closeSetup) { State._inspirationSetupOpen = false; State._inspirationImport = null; State._inspirationImportLinksOpen = false; State._inspirationImportGuideOpen = false; }
   State._shelfError = ''; State._shelfFocusAfterCommit = focus; render();
   if (toastKey) toast(t(toastKey));
   return true;
@@ -25310,9 +25370,27 @@ async function onClick(e) {
   if (action === 'inspiration-setup-manual') { openInspirationSetup('manual'); return; }
   if (action === 'inspiration-setup-edit') { openInspirationSetup('edit'); return; }
   if (action === 'inspiration-setup-close') { closeInspirationSetup(); return; }
+  if (action === 'inspiration-import-guide-open') {
+    if (!State._inspirationSetupOpen) openInspirationSetup('edit');
+    State._inspirationImportGuideOpen = true; State._inspirationImportLinksOpen = false;
+    State._shelfFocusAfterCommit = '.inspiration-import-guide'; sfx('open'); render(); return;
+  }
+  if (action === 'inspiration-import-guide-toggle') {
+    State._inspirationImportGuideOpen = !State._inspirationImportGuideOpen;
+    if (State._inspirationImportGuideOpen) State._inspirationImportLinksOpen = false;
+    State._shelfFocusAfterCommit = State._inspirationImportGuideOpen ? '.inspiration-import-guide' : '[data-action="inspiration-import-guide-toggle"]';
+    sfx(State._inspirationImportGuideOpen ? 'open' : 'close'); render(); return;
+  }
+  if (action === 'inspiration-import-device') {
+    if (!['desktop', 'tablet', 'phone'].includes(el.dataset.device)) return;
+    State._inspirationImportDeviceKind = el.dataset.device; State._inspirationImportGuideOpen = true;
+    State._shelfFocusAfterCommit = `[data-action="inspiration-import-device"][data-device="${el.dataset.device}"]`;
+    sfx('select'); render(); return;
+  }
   if (action === 'inspiration-import-links-toggle') {
     if (!State._inspirationSetupOpen) openInspirationSetup('edit');
     State._inspirationImportLinksOpen = !State._inspirationImportLinksOpen;
+    if (State._inspirationImportLinksOpen) State._inspirationImportGuideOpen = false;
     State._shelfFocusAfterCommit = State._inspirationImportLinksOpen ? '#inspiration-import-links' : '[data-action="inspiration-import-links-toggle"]';
     sfx(State._inspirationImportLinksOpen ? 'open' : 'close'); render(); return;
   }
@@ -28322,7 +28400,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v199';
+const PWA_CACHE_VERSION = 'satoru-v200';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

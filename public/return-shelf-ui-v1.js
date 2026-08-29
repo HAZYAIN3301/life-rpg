@@ -10,7 +10,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildReturnShelfUI() {
   'use strict';
 
-  const VERSION = '2.0.0';
+  const VERSION = '2.1.0';
   const SECTIONS = Object.freeze(['today', 'saved']);
   const FORMATS = Object.freeze(['edit', 'video', 'image', 'quote', 'podcast']);
   const FORMAT_COPY = Object.freeze({
@@ -69,7 +69,7 @@
       <div class="inspiration-first-visual" aria-hidden="true"><i></i><i></i><i></i><b>✦</b></div>
       <div><p class="inspiration-kicker">${tr(t, 'ПОДБОРКА ДЛЯ ТЕБЯ')}</p><h3 id="inspiration-first-title">${tr(t, 'Что тебя зажигает?')}</h3>
       <p>${tr(t, 'Перенеси реальные интересы из TikTok или собери их из того, что уже знаешь о себе в Satoru. Перед сохранением всё можно проверить.')}</p>${preview}
-      <div class="inspiration-first-actions"><label class="btn inspiration-import-file-button">${tr(t, 'Импортировать TikTok')}<input type="file" data-inspiration-import-file accept=".zip,.json,.txt,.csv,application/zip,application/json,text/plain" hidden></label><button type="button" class="btn ghost" data-action="inspiration-import-links-toggle">${tr(t, 'Вставить TikTok-ссылки')}</button><button type="button" class="btn ghost" data-action="inspiration-setup-import-satoru">${tr(t, 'Собрать из Satoru')}</button><button type="button" class="btn ghost" data-action="inspiration-setup-manual">${tr(t, 'Настроить вручную')}</button></div></div>
+      <div class="inspiration-first-actions"><button type="button" class="btn" data-action="inspiration-import-guide-open">${tr(t, 'Как импортировать из TikTok')}</button><label class="btn ghost inspiration-import-file-button">${tr(t, 'У меня уже есть архив')}<input type="file" data-inspiration-import-file accept=".zip,.json,.txt,.csv,application/zip,application/json,text/plain" hidden></label><button type="button" class="btn ghost" data-action="inspiration-import-links-toggle">${tr(t, 'Вставить TikTok-ссылки')}</button><button type="button" class="btn ghost" data-action="inspiration-setup-import-satoru">${tr(t, 'Собрать из Satoru')}</button><button type="button" class="btn ghost" data-action="inspiration-setup-manual">${tr(t, 'Настроить вручную')}</button></div></div>
     </section>`;
   }
 
@@ -78,6 +78,44 @@
       ['Поиски', stats.searches], ['Хэштеги', stats.hashtags], ['Видео', stats.videos], ['Сигналы', stats.signals],
     ].filter((entry) => Number(entry[1]) > 0);
     return values.length ? `<div class="inspiration-import-stats">${values.map(([label, value]) => `<span><b>${Number(value)}</b>${tr(t, label)}</span>`).join('')}</div>` : '';
+  }
+
+  function renderImportGuide(vm, t) {
+    if (!vm.importGuideOpen) return '';
+    const detected = row(vm.importDevice);
+    const device = ['desktop', 'tablet', 'phone'].includes(detected.kind) ? detected.kind : 'desktop';
+    const platform = ['ios', 'android'].includes(detected.platform) ? detected.platform : 'desktop';
+    const deviceLabel = { desktop: 'Компьютер', tablet: 'Планшет', phone: 'Телефон' };
+    const switcher = ['desktop', 'tablet', 'phone'].map((kind) => `<button type="button" data-action="inspiration-import-device" data-device="${kind}" class="${device === kind ? 'is-active' : ''}" aria-pressed="${device === kind}">${tr(t, deviceLabel[kind])}</button>`).join('');
+    const appRoute = device === 'desktop' ? '' : `<div class="inspiration-import-route" aria-label="${tr(t, 'Куда нажимать в TikTok')}">
+      <div><b>1</b><span><strong>${tr(t, 'Профиль')}</strong><small>${tr(t, 'внизу экрана')}</small></span></div><i aria-hidden="true">›</i>
+      <div><b>2</b><span><strong>${tr(t, 'Меню ☰')}</strong><small>${tr(t, 'справа сверху')}</small></span></div><i aria-hidden="true">›</i>
+      <div><b>3</b><span><strong>${tr(t, 'Настройки и конфиденциальность')}</strong></span></div><i aria-hidden="true">›</i>
+      <div><b>4</b><span><strong>${tr(t, 'Аккаунт')}</strong></span></div><i aria-hidden="true">›</i>
+      <div><b>5</b><span><strong>${tr(t, 'Скачать ваши данные')}</strong></span></div>
+    </div>`;
+    const openCopy = device === 'desktop'
+      ? 'Ссылка сразу откроет страницу выгрузки данных.'
+      : 'Если ссылка не открыла нужный экран в приложении, используй путь ниже.';
+    const downloadHint = platform === 'ios'
+      ? 'На iPhone и iPad архив обычно лежит в «Файлы» → «Загрузки».'
+      : platform === 'android'
+        ? 'На Android архив обычно лежит в «Файлы» → «Загрузки».'
+        : 'Архив обычно лежит в папке «Загрузки».';
+    return `<section class="inspiration-import-guide" tabindex="-1" aria-labelledby="inspiration-import-guide-title">
+      <header class="inspiration-import-guide-head"><div><p class="inspiration-kicker">TIKTOK · ${tr(t, 'ПОШАГОВО')}</p><h5 id="inspiration-import-guide-title">${tr(t, 'Инструкция для твоего устройства')}</h5></div><div class="inspiration-device-switch" role="group" aria-label="${tr(t, 'Изменить устройство')}">${switcher}</div></header>
+      <div class="inspiration-import-direct"><div><span aria-hidden="true">↗</span><p><b>${tr(t, 'Самый короткий путь')}</b><small>${tr(t, openCopy)}</small></p></div><a class="btn" href="https://www.tiktok.com/setting/download-your-data" target="_blank" rel="noopener noreferrer">${tr(t, 'Открыть нужное окно TikTok')}</a></div>
+      ${appRoute}
+      <div class="inspiration-import-guide-steps">
+        <article><b>1</b><div><h6>${tr(t, device === 'desktop' ? 'Открой страницу выгрузки' : 'Открой выгрузку данных')}</h6><p>${tr(t, device === 'desktop' ? 'Нажми кнопку выше и при необходимости войди в TikTok.' : 'Нажми кнопку выше или пройди по указанному пути в приложении.')}</p></div></article>
+        <article><b>2</b><div><h6>${tr(t, 'Выбери «Все данные»')}</h6><p>${tr(t, 'Так профиль интересов получится подробным.')}</p><span class="inspiration-import-tap">${tr(t, 'Все данные')}</span></div></article>
+        <article><b>3</b><div><h6>${tr(t, 'Выбери формат JSON')}</h6><p>${tr(t, 'Satoru разбирает его точнее всего.')}</p><span class="inspiration-import-tap">JSON</span></div></article>
+        <article><b>4</b><div><h6>${tr(t, 'Нажми «Запросить данные»')}</h6><p>${tr(t, 'TikTok подготовит архив не сразу и пришлёт уведомление.')}</p><span class="inspiration-import-tap">${tr(t, 'Запросить данные')}</span></div></article>
+        <article><b>5</b><div><h6>${tr(t, 'Скачай готовый архив')}</h6><p>${tr(t, 'Открой вкладку «Скачать данные» и нажми «Скачать». Архив доступен четыре дня.')}</p><span class="inspiration-import-tap">${tr(t, 'Скачать данные')} → ${tr(t, 'Скачать')}</span></div></article>
+        <article><b>6</b><div><h6>${tr(t, 'Вернись в Satoru')}</h6><p>${tr(t, downloadHint)} ${tr(t, 'Выбери скачанный ZIP — остальное Satoru сделает сам.')}</p><label class="btn ghost inspiration-import-file-button">${tr(t, 'Выбрать архив TikTok')}<input type="file" data-inspiration-import-file accept=".zip,.json,.txt,.csv,application/zip,application/json,text/plain" hidden></label></div></article>
+      </div>
+      <footer><span>${tr(t, 'Файл обрабатывается только на твоём устройстве.')}</span><a href="https://support.tiktok.com/en/account-and-privacy/personalized-ads-and-data/requesting-your-data" target="_blank" rel="noopener noreferrer">${tr(t, 'Официальная инструкция TikTok')} ↗</a></footer>
+    </section>`;
   }
 
   function renderImporter(vm, t) {
@@ -92,8 +130,8 @@
     const links = vm.importLinksOpen ? `<div class="inspiration-import-links"><label for="inspiration-import-links">${tr(t, 'Вставь до 32 ссылок из TikTok')}</label><textarea id="inspiration-import-links" rows="4" maxlength="12000" placeholder="https://www.tiktok.com/@…/video/…"></textarea><div><button type="button" class="btn ghost" data-action="inspiration-import-links-toggle">${tr(t, 'Отмена')}</button><button type="button" class="btn" data-action="inspiration-import-links-run">${tr(t, 'Определить интересы')}</button></div></div>` : '';
     return `<section class="inspiration-importer" aria-labelledby="inspiration-import-title">
       <header><div><p class="inspiration-kicker">${tr(t, 'БЫСТРЫЙ ИМПОРТ')}</p><h4 id="inspiration-import-title">${tr(t, 'Не заполняй профиль с нуля')}</h4></div><span class="inspiration-import-local">${tr(t, 'Архив остаётся на устройстве')}</span></header>
-      <div class="inspiration-import-actions"><label class="btn inspiration-import-file-button">${tr(t, status === 'error' ? 'Выбрать другой архив' : 'Выбрать архив TikTok')}<input type="file" data-inspiration-import-file accept=".zip,.json,.txt,.csv,application/zip,application/json,text/plain" hidden></label><button type="button" class="btn ghost" data-action="inspiration-import-links-toggle" aria-expanded="${!!vm.importLinksOpen}">${tr(t, vm.importLinksOpen ? 'Скрыть ссылки' : 'Вставить ссылки')}</button><a class="btn ghost" href="https://support.tiktok.com/en/account-and-privacy/personalized-ads-and-data/requesting-your-data" target="_blank" rel="noopener noreferrer">${tr(t, 'Как получить архив')} ↗</a></div>
-      ${links}${result}
+      <div class="inspiration-import-actions"><button type="button" class="btn${vm.importGuideOpen ? '' : ' ghost'}" data-action="inspiration-import-guide-toggle" aria-expanded="${!!vm.importGuideOpen}">${tr(t, vm.importGuideOpen ? 'Скрыть инструкцию' : 'Показать инструкцию')}</button><label class="btn ghost inspiration-import-file-button">${tr(t, status === 'error' ? 'Выбрать другой архив' : 'Выбрать архив TikTok')}<input type="file" data-inspiration-import-file accept=".zip,.json,.txt,.csv,application/zip,application/json,text/plain" hidden></label><button type="button" class="btn ghost" data-action="inspiration-import-links-toggle" aria-expanded="${!!vm.importLinksOpen}">${tr(t, vm.importLinksOpen ? 'Скрыть ссылки' : 'Вставить ссылки')}</button></div>
+      ${renderImportGuide(vm, t)}${links}${result}
       <p class="inspiration-import-disclosure">${tr(t, 'Satoru читает только интересы, поиски, хэштеги, лайки, избранное и историю просмотра. Сообщения, контакты, входы, адреса и платежи игнорируются.')}</p>
     </section>`;
   }

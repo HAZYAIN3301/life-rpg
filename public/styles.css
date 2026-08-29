@@ -18619,6 +18619,169 @@ details.shutdown > summary:focus-visible {
   gap: var(--sp-2);
 }
 .inspiration-import-actions :is(.btn, a) { min-block-size: var(--touch-min); }
+.inspiration-import-guide {
+  display: grid;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  border: 1px solid color-mix(in srgb, var(--inspiration-cyan) 42%, var(--line-soft));
+  border-radius: var(--radius-xl);
+  outline: none;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--inspiration-cyan) 8%, transparent), transparent 48%),
+    var(--surface-1);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--text-strong) 5%, transparent);
+}
+.inspiration-import-guide:focus-visible { box-shadow: 0 0 0 3px color-mix(in srgb, var(--inspiration-cyan) 24%, transparent); }
+.inspiration-import-guide-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+.inspiration-import-guide h5 {
+  margin: 2px 0 0;
+  color: var(--text-strong);
+  font: 850 var(--type-heading)/var(--leading-ui) var(--font-display);
+}
+.inspiration-device-switch {
+  flex: none;
+  display: inline-grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface-0) 74%, transparent);
+}
+.inspiration-device-switch button {
+  min-block-size: 38px;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: calc(var(--radius-md) - 3px);
+  color: var(--text-soft);
+  background: transparent;
+  font: 800 var(--type-meta)/var(--leading-label) var(--font-ui);
+}
+.inspiration-device-switch button.is-active {
+  color: var(--text-strong);
+  background: color-mix(in srgb, var(--inspiration-cyan) 18%, var(--surface-3));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--inspiration-cyan) 42%, transparent);
+}
+.inspiration-import-direct {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  border: 1px solid color-mix(in srgb, var(--inspiration-mint) 34%, var(--line-soft));
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--inspiration-mint) 7%, var(--surface-2));
+}
+.inspiration-import-direct > div {
+  min-inline-size: 0;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: center;
+  gap: var(--sp-2);
+}
+.inspiration-import-direct > div > span {
+  inline-size: 32px;
+  block-size: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--surface-0);
+  background: var(--inspiration-mint);
+  font: 950 18px/1 var(--font-ui);
+}
+.inspiration-import-direct p { min-inline-size: 0; display: grid; gap: 2px; margin: 0; }
+.inspiration-import-direct b { color: var(--text-strong); font: 850 var(--type-control)/var(--leading-ui) var(--font-ui); }
+.inspiration-import-direct small { color: var(--text-soft); font: var(--type-meta)/var(--leading-prose) var(--font-ui); }
+.inspiration-import-direct > .btn { flex: none; }
+.inspiration-import-route {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  padding: var(--sp-2);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface-0) 58%, transparent);
+}
+.inspiration-import-route > div {
+  min-inline-size: 0;
+  flex: 1 1 0;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-content: center;
+  gap: 7px;
+  padding: 8px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--surface-3) 70%, transparent);
+}
+.inspiration-import-route > div > b,
+.inspiration-import-guide-steps > article > b {
+  inline-size: 24px;
+  block-size: 24px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--inspiration-cyan) 45%, var(--line-soft));
+  border-radius: 50%;
+  color: var(--inspiration-cyan);
+  background: color-mix(in srgb, var(--inspiration-cyan) 8%, transparent);
+  font: 900 var(--type-floor)/1 var(--font-data);
+}
+.inspiration-import-route span { min-inline-size: 0; display: grid; align-content: center; gap: 1px; }
+.inspiration-import-route strong { color: var(--text-strong); font: 800 var(--type-floor)/var(--leading-label) var(--font-ui); overflow-wrap: anywhere; }
+.inspiration-import-route small { color: var(--text-dim); font: 700 10px/var(--leading-label) var(--font-ui); }
+.inspiration-import-route > i { align-self: center; color: var(--text-dim); font: 800 17px/1 var(--font-ui); }
+.inspiration-import-guide-steps {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-2);
+}
+.inspiration-import-guide-steps > article {
+  min-inline-size: 0;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface-3) 64%, transparent);
+}
+.inspiration-import-guide-steps h6 {
+  margin: 0;
+  color: var(--text-strong);
+  font: 850 var(--type-control)/var(--leading-ui) var(--font-ui);
+}
+.inspiration-import-guide-steps p {
+  margin: 4px 0 0;
+  color: var(--text-soft);
+  font: var(--type-meta)/var(--leading-prose) var(--font-ui);
+}
+.inspiration-import-guide-steps .inspiration-import-tap {
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  display: inline-flex;
+  margin-block-start: 8px;
+  padding: 5px 9px;
+  border: 1px solid color-mix(in srgb, var(--inspiration-cyan) 38%, var(--line-soft));
+  border-radius: var(--radius-pill);
+  color: var(--inspiration-cyan);
+  background: color-mix(in srgb, var(--inspiration-cyan) 7%, transparent);
+  font: 800 var(--type-floor)/var(--leading-label) var(--font-ui);
+}
+.inspiration-import-guide-steps .inspiration-import-file-button { margin-block-start: 10px; }
+.inspiration-import-guide footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  color: var(--text-dim);
+  font: var(--type-floor)/var(--leading-prose) var(--font-ui);
+}
+.inspiration-import-guide footer a { color: var(--inspiration-cyan); text-underline-offset: 3px; }
 .inspiration-import-links {
   display: grid;
   gap: var(--sp-2);
@@ -19430,6 +19593,19 @@ details.shutdown > summary:focus-visible {
   .inspiration-import-local { max-inline-size: none; justify-self: start; }
   .inspiration-import-actions { display: grid; grid-template-columns: minmax(0, 1fr); }
   .inspiration-import-actions :is(.btn, a) { inline-size: 100%; }
+  .inspiration-import-guide { padding: var(--sp-3); }
+  .inspiration-import-guide-head { display: grid; align-items: start; }
+  .inspiration-device-switch { inline-size: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .inspiration-device-switch button { min-inline-size: 0; padding-inline: 4px; }
+  .inspiration-import-direct { display: grid; }
+  .inspiration-import-direct > .btn { inline-size: 100%; }
+  .inspiration-import-route { display: grid; gap: 5px; }
+  .inspiration-import-route > div { min-block-size: 46px; }
+  .inspiration-import-route > i { display: none; }
+  .inspiration-import-guide-steps { grid-template-columns: minmax(0, 1fr); }
+  .inspiration-import-guide-steps > article { padding: var(--sp-2); }
+  .inspiration-import-guide-steps .inspiration-import-file-button { inline-size: 100%; }
+  .inspiration-import-guide footer { display: grid; }
   .inspiration-import-links > div { display: grid; grid-template-columns: minmax(0, 1fr); }
   .inspiration-import-links .btn { inline-size: 100%; }
   .inspiration-import-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
