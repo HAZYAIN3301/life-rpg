@@ -1,7 +1,7 @@
 # Browser Companion v199 — release и QA
 
 Дата: 2026-08-29
-Статус: локальный release gate закрыт; production commit/hash заполняются после push и Railway verification.
+Статус: опубликовано и byte-for-byte проверено на production.
 
 ## Что выпущено
 
@@ -70,12 +70,14 @@ Browser Companion — локальное Manifest V3-расширение для
 
 ## Production verification
 
-- Commit: `PENDING`
+- Release commit: `b4456ed03b689c6892ba2d4ae044d08c7f41efad`
 - SW cache: `satoru-v199`
 - Asset pin: `20260829-browser-companion-v199-1`
 - Local/expected ZIP SHA-256: `23bf540369da28b329ed31bd6ae3c8c3e9d84e8bc5aeceab84d680ceb769f33f`
-- Production ZIP SHA-256: `PENDING`
-- Railway status: `PENDING`
+- Production ZIP SHA-256: `23bf540369da28b329ed31bd6ae3c8c3e9d84e8bc5aeceab84d680ceb769f33f`
+- Railway status: `success` для `life-rpg` и `piper-tts`.
+- Production byte equality: `index.html`, `app.js`, `styles.css`, `sw.js`, `satoru-attention-v199.zip` — **PASS**.
+- ZIP response: HTTP `200`, `Content-Type: application/zip`, `Cache-Control: no-cache`.
 
 ## Что дальше
 
