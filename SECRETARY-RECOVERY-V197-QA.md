@@ -6,6 +6,10 @@ Shell: `satoru-v197`
 
 Asset pin: `20260829-secretary-recovery-v197-1`
 
+Application release commit: `61da7e554ea7aa336c9ad843b9cb29d421bf4596`
+
+Production: `https://life-rpg-production-416a.up.railway.app/`
+
 ## Результат
 
 «Сегодня» больше не требует помнить набор разрозненных калькуляторов. Основная колонка содержит день, быстрый захват мысли, квесты и привычки. В поддерживающей колонке остаётся один компактный центр Тени, который показывает только актуальное состояние: Attention, возврат, восстановление, вечер либо первый setup.
@@ -46,6 +50,8 @@ Asset pin: `20260829-secretary-recovery-v197-1`
 - syntax: `app.js`, `server.js`, `sw.js`, `sound-engine-v1.js`, `assistant-actions-v1.js`;
 - assistant/attention/recovery/push/PWA/sound/Today focused gate: **106/106**;
 - full project suite с localhost integration tests: **1175/1175**;
+- после объединения с опубликованным loader commit: **27/27** focused tests, включая две PNG-части, offline-cache, bite/chase animation и reduced motion;
+- старые server integration failures из перегруженного параллельного прогона повторены последовательно и прошли; Account отдельно: **3/3**;
 - `git diff --check`;
 - release pins: `PWA_CACHE_VERSION === sw CACHE === satoru-v197`.
 
@@ -75,7 +81,14 @@ Browser:
 - `scripts/secretary-push-v197.test.js`
 - связанные version/locale regressions
 
-Art-деревья не менялись.
+Secretary/Recovery не переписывал существующие art-деревья. Итоговая история сохраняет опубликованный родительский commit `b5578ec` и его две части загрузчика без изменений: Git blob `87254d8` (`ouroboros-body.png`) и `772aee6` (`ouroboros-jaw.png`).
+
+## Production verification
+
+- Railway `life-rpg` и `piper-tts`: `success` для application commit `61da7e5`;
+- production `index.html`, `sw.js`, `app.js`, `styles.css`, assistant actions, Attention UI, sound engine и обе PNG побайтово совпали с локальным релизом;
+- production contract: asset pins `20260829-secretary-recovery-v197-1`, `CACHE = satoru-v197`, `PWA_CACHE_VERSION = satoru-v197`;
+- горизонтальный контур и browser QA выполнены до публикации на `360×800`, `375×812` и `1280×900`.
 
 ## Честная граница PWA
 
