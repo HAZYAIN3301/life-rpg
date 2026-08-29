@@ -51,5 +51,5 @@ test('Notes has a labelled mobile-first surface and v129 offline upgrade', () =>
   // Каждый новый модуль в SHELL требует бампа, иначе офлайн-клиенты его не получат:
   // v130 — stuck-task-v1.js, v131 — «Первая строка назавтра», v132 — fights-v1.js,
   // v133 — доска контрактов, v134 — Pets, v135 — честный Stats surface.
-  assert.match(sw, /const CACHE = 'satoru-v203'/);
+  assert.match(sw, /const CACHE = 'satoru-v204'/);
 });

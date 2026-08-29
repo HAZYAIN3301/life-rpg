@@ -151,10 +151,9 @@ test('new disclosures and hierarchy changes use semantic sound and finite motion
   assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.board-wildcard-detail,[\s\S]*?\.cat-chip-confirm/);
 });
 
-test('v203 ships changed shell assets behind one coherent offline cache', () => {
-  assert.match(SW, /const CACHE = 'satoru-v203'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v203'/);
-  for (const file of ['styles.css', 'return-shelf-ui-v1.js', 'app.js']) {
-    assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=20260829-interface-hierarchy-v203-1`));
-  }
+test('v203 assets remain pinned while the current shell advances coherently', () => {
+  assert.match(SW, /const CACHE = 'satoru-v204'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v204'/);
+  assert.match(INDEX, /return-shelf-ui-v1\.js\?v=20260829-interface-hierarchy-v203-1/);
+  for (const file of ['styles.css', 'app.js']) assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=20260830-tree-v4-v204-1`));
 });

@@ -4311,3 +4311,32 @@ Solo-Leveling-вайб под бренд Satoru/«?». Опционально (�
 - Явно разделено: что открывает paid membership, что требует отдельного entitlement/согласия, и что останется невозможным или негарантированным после оплаты.
 - Зафиксированы рекомендуемая архитектура, порядок подачи Family Controls request, real-device QA matrix и privacy/data contract. `START-HERE.md` теперь ссылается на handoff и существующий `APPLE-ENTITLEMENT-REQUEST.md`.
 - Код продукта, SW и art-деревья не менялись; это документационный handoff без деплоя.
+
+## 2026-08-30 — Tree v4 / v204: real capability path, game bonuses, evidence and Masternak research
+
+### Почему
+
+Tree v3 хранил реальные milestones и игровые perks в одном графе и на одном экране. Пользователь видел магазин процентов раньше собственного реального пути, а `unlocked/total` смешивал подтверждённый результат с купленным бонусом. Разбор Masternak (2022) подтвердил полезность progressive paths, visible earned history, prerequisites и assessment criteria, но также показал, что это position paper, а не доказательство гарантированного motivational effect.
+
+### Что построено
+
+- `Path` — default: одна ближайшая capability-веха, criterion, nextAction, CTA в Today и self-attestation.
+- Permanent trace: `claimedAt`, `claimSource:self|import`, optional escaped `proofNote`; future находится в disclosure.
+- `Game bonuses` — отдельный слой старого coordinate map с points/perks/capstone/editor и прямой надписью «не подтверждает мастерство».
+- Hero больше не показывает общий completion denominator: отдельно practice level, confirmed milestones и bonus points.
+- Editor получил explicit `capability/practice`, criterion/nextAction, cycle guard и append-only protection подтверждённых capabilities.
+- AI personal map: строгие 4–6 `{title,criterion,nextAction}`, observable criterion, concrete action примерно в пределах недели; неполный provider response fail-closed.
+- Durable writes: claim и применение personal map ждут `Store.saveNow`; ошибки откатывают live state и оставляют retry UI.
+- `skilltree` migration additive/idempotent: `schemaVersion:4`, semantic kind, numeric normalization, сохранение IDs/positions/unlocks/perks/custom copy.
+- Corrupt-tree write fence закрывает silent overwrite.
+- Crash reproduction экспортирует структуру Tree, но рекурсивно удаляет личные `criterion/nextAction/proofNote`; owner/admin full export остаётся полным.
+- RU/EN/DE/UK/ES; responsive 360/375/1280; touch ≥42px; dark/light; reduced motion; PWA cache v204.
+
+### Документация и тесты
+
+- `SKILLTREE-MASTERNAK-RESEARCH.md` — долговечный evidence note с градацией E/P/S и ограничениями источника.
+- `TREE-V4-SPEC.md` — IA/data/transaction/design contract.
+- `TREE-V4-QA.md` — automated/browser/privacy/release gate.
+- `READING-LIST.md`, `START-HERE.md`, `DESIGN-BOOK-NOTES.md` обновлены.
+- Automated: full repository `1232/1232 PASS`; `skill-tree-v4`, `tree-v4-server-contract` и legacy `skill-tree-craft` входят в общий gate.
+- Browser acceptance: `1280×900`, `375×812`, `360×800`, dark/light, keyboard claim/focus return, escaped proof, confirmed-capability editor guard; `0` console warnings/errors.

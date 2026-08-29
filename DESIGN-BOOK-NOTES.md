@@ -2081,3 +2081,16 @@ Lupton даёт здесь не конкурирующий арт-дирекше
 - **Exact product action:** пропускать каждый proposed mechanic через один gate: помогает ли он начать, понять, завершить, восстановиться или честно увидеть реальный рост. Если эффект только увеличивает opens, currency optimization, spectacle или monetization, он не входит в primary product; cut-paper runtime и IA constraints сохраняются.
 - **Visual QA — 375px:** для каждого элемента первого viewport назвать конкретный real-life outcome; элементы с ответом только «удерживает/развлекает/продаёт» удаляются из primary contour.
 - **Visual QA — 1280px:** дополнительное пространство раскрывает контекст и authored world, но не добавляет новые равноправные dashboards; тот же purpose очевиден без чтения design docs.
+
+## Tree v4 implementation note — 2026-08-30
+
+Закрыт прежний конфликт SG-F07: реальные способности больше не смешиваются с покупаемыми perk-узлами в одном смысловом контуре.
+
+- Default surface — `Path`: один следующий реальный результат, criterion, next action и permanent earned trace.
+- Secondary surface — `Game bonuses`: points/perks/capstone/editor и прямой non-mastery label.
+- Locked future свёрнут, без completion denominator, красных долгов и леса равноправных замков.
+- Claim sheet показывает criterion до решения, хранит provenance/date/optional proof и не закрывается до durable save.
+- Тип/состояние читаются label + icon + structure, не только цветом; touch ≥42px, dark/light и reduced-motion входят в release gate.
+- Новая composition использует один raised next-action contour и плоские trace/future rows; infinite Tree-motion запрещён.
+
+Полный decision trail: `SKILLTREE-MASTERNAK-RESEARCH.md` → `TREE-V4-SPEC.md` → `TREE-V4-QA.md`.

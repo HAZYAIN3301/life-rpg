@@ -52,7 +52,7 @@ test('v138 renders authored Today, Notes, Pets, Rewards, Stats and Settings copy
   for (const source of [
     "t('Соберём первый квест на сегодня.')",
     "t('Итог дня')",
-    "t('Веха доступна')",
+    "t('Что считается результатом')",
     "t('Эмбиент-звук')",
     "t('Прослушать Тень')",
     "t('Красивая карточка итогов недели — поделись или сохрани PNG.')",
@@ -70,5 +70,5 @@ test('v138 does not add duplicate locale rows and ships a fresh shell', () => {
   const block = app.slice(marker, end);
   const keys = [...block.matchAll(/^  '((?:\\'|[^'])+)':/gm)].map((match) => match[1]);
   assert.equal(keys.length, new Set(keys).size);
-  assert.match(sw, /const CACHE = 'satoru-v203'/);
+  assert.match(sw, /const CACHE = 'satoru-v204'/);
 });

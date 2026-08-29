@@ -1091,6 +1091,25 @@ function scrubSecrets(text) {
   for (const re of SECRET_SHAPES) out = out.replace(re, '[скрыто]');
   return out;
 }
+
+// Tree v4 keeps a user's real-world criterion, next action and optional proof
+// beside the mechanical node shape. Those strings are useful to the owner and
+// therefore stay intact in account exports and the full admin userdata view,
+// but they are not required to reproduce a renderer crash. Crash diagnostics
+// retain every tree, node and field key while replacing only the private node
+// copy with a fixed marker. The source value is never mutated.
+const TREE_CRASH_PRIVATE_FIELDS = Object.freeze(['criterion', 'nextAction', 'proofNote']);
+function redactSkillTreeForCrash(value, isNode = false) {
+  if (Array.isArray(value)) return value.map((item) => redactSkillTreeForCrash(item, isNode));
+  if (!value || typeof value !== 'object') return value;
+  const out = {};
+  for (const [field, nested] of Object.entries(value)) {
+    if (isNode && TREE_CRASH_PRIVATE_FIELDS.includes(field)) out[field] = '[скрыто]';
+    else if (field === 'nodes' && Array.isArray(nested)) out[field] = nested.map((node) => redactSkillTreeForCrash(node, true));
+    else out[field] = redactSkillTreeForCrash(nested, false);
+  }
+  return out;
+}
 // Маппинг ошибок aiCallForUser → HTTP-ответ. true = ошибка обработана (вызывающий должен return), false = всё ок.
 function aiErr(res, r) {
   if (r.error === 'no_key') { sendJson(res, 400, { error: 'no_key' }); return true; }
@@ -1312,7 +1331,7 @@ const AI_EPISODE_SYS = `Ты — помощник «Эпизод» в Satoru. Ю
 // Дерево v3 Фаза 3: картограф персональных вех (TREE-V3-PLAN.md)
 const AI_TREEMAP_SYS = `Ты — картограф мастерства в Satoru. Юзер хочет ПЕРСОНАЛЬНУЮ лестницу вех для одной сферы своей жизни — не общий шаблон, а его реальный путь.
 
-Верни СТРОГО JSON {"proposals":[{"title":"веха","desc":"как понять, что взята — одна короткая проверяемая фраза"}]} — от 4 до 6 вех, упорядоченных СТРОГО от ближайшей к вершине.
+Верни СТРОГО JSON {"proposals":[{"title":"веха","criterion":"как понять, что взята — одна короткая проверяемая фраза","nextAction":"одно конкретное действие на ближайшие 7 дней"}]} — от 4 до 6 вех, упорядоченных СТРОГО от ближайшей к вершине.
 
 Правила:
 - Веха — ПРОВЕРЯЕМОЕ состояние реальности («Сдал Klausur на 13+», «Пробежал 10 км без остановки», «Первый платящий клиент»), НЕ процесс («заниматься чаще»), НЕ игровая сущность (никаких XP и уровней).
@@ -1320,9 +1339,26 @@ const AI_TREEMAP_SYS = `Ты — картограф мастерства в Sato
 - ПИК юзера — ЖЁСТКИЙ ПОТОЛОК. Вершина лестницы = ровно его пик, сформулированный проверяемо. НИКОГДА не строй вехи выше пика «для амбициозности»: если пик — «просто пробежать 10 км», карта заканчивается на 10 км и НЕ тянет в полумарафон. У людей разные вершины — «осилить 10 км за жизнь» так же достойно, как ультрамарафон. Если пик уже достигнут — предложи глубину ВНУТРИ пика (темп, стабильность, качество), не новый потолок.
 - «СКУЧНО / НЕ ХОЧУ» — жёсткое исключение: ни одной вехи из этих тем и форматов. «НРАВИТСЯ» — предпочтительный материал: где возможно, формулируй вехи через то, что юзеру реально заходит (учить язык через любимые темы, а не через «профессии», если они ему скучны).
 - Первая веха достижима из текущего положения за 2–6 недель — она даёт разгон. Вершина — амбиция из его слов (см. правило про пик).
+- criterion описывает наблюдаемый результат, а не впечатление и не время в приложении. nextAction — конкретное действие в реальном мире на ближайшие 7 дней, которое приближает к этой вехе; не повторяй саму веху и не пиши «заниматься» без предмета/объёма.
 - Названия ≤ 60 знаков, без нумерации. Язык — язык юзера.
 - Ноль воды и лозунгов: только формулировки, которые можно проверить фактом.
 - Юзер мог наговорить контекст голосом, без пунктуации, сплошным потоком — это норма, разбирай по смыслу, а не по знакам препинания.`;
+
+function normalizeTreeMapProposals(value) {
+  if (!Array.isArray(value)) return [];
+  const out = [];
+  for (const proposal of value) {
+    if (!proposal || typeof proposal !== 'object' || Array.isArray(proposal)) continue;
+    if (typeof proposal.title !== 'string' || typeof proposal.criterion !== 'string' || typeof proposal.nextAction !== 'string') continue;
+    const title = proposal.title.trim().slice(0, 60);
+    const criterion = proposal.criterion.trim().slice(0, 240);
+    const nextAction = proposal.nextAction.trim().slice(0, 200);
+    if (!title || !criterion || !nextAction) continue;
+    out.push({ title, criterion, nextAction });
+    if (out.length === 6) break;
+  }
+  return out;
+}
 // Каталог бэкапов одного файла данных пользователя
 function backupDir(dir, name) { return path.join(dir, '.backups', name); }
 // Снимок текущего содержимого файла ПЕРЕД перезаписью.
@@ -3738,7 +3774,14 @@ const server = http.createServer(async (req, res) => {
       if (aiErr(res, r)) return;
       const parsed = extractJson(r.text);
       if (!parsed || !Array.isArray(parsed.proposals)) return sendJson(res, 200, { error: 'parse', raw: (r.text || '').slice(0, 800) });
-      const out = { proposals: parsed.proposals.slice(0, 40) };
+      const treeMapProposals = kind === 'treemap' ? normalizeTreeMapProposals(parsed.proposals) : null;
+      // The Tree v4 client renders criterion and nextAction as separate semantic
+      // fields. Never silently accept a partial/legacy AI answer: fewer than four
+      // valid steps is not the requested path and must be retried as a parse error.
+      if (kind === 'treemap' && treeMapProposals.length < 4) {
+        return sendJson(res, 200, { error: 'parse', raw: (r.text || '').slice(0, 800) });
+      }
+      const out = { proposals: kind === 'treemap' ? treeMapProposals : parsed.proposals.slice(0, 40) };
       // Эпизод отдаёт не только сферы: заметные события периода и нагрузку людьми (её нельзя
       // мерить часами — именно за этим Альберт и хотел её видеть: «неделя перегруза → нужен день соло»).
       if (kind === 'episode') {
@@ -4263,13 +4306,17 @@ const server = http.createServer(async (req, res) => {
       const dir = userDataDir(am[1]);
       const files = {};
       for (const n of MECHANICS) {
-        try { files[n] = JSON.parse(fs.readFileSync(path.join(dir, n + '.json'), 'utf8')); } catch { files[n] = null; }
+        try {
+          const value = JSON.parse(fs.readFileSync(path.join(dir, n + '.json'), 'utf8'));
+          files[n] = n === 'skilltree' ? redactSkillTreeForCrash(value) : value;
+        } catch { files[n] = null; }
       }
       const archive = {
         format: 'satoru-crash-repro', version: 1, exportedAt: new Date().toISOString(),
         userId: am[1], files,
         excluded: EXCLUDED,
-        note: 'Только механика для воспроизведения сбоя. Дневник, заметки, рефлексии и эпизоды намеренно НЕ включены.',
+        redacted: { 'skilltree.nodes': TREE_CRASH_PRIVATE_FIELDS },
+        note: 'Только механика для воспроизведения сбоя. Дневник, заметки, рефлексии, эпизоды и личный текст узлов дерева намеренно НЕ включены.',
       };
       const filename = `satoru-crash-${am[1]}-${new Date().toISOString().slice(0, 10)}.json`;
       res.writeHead(200, { 'Content-Type': MIME['.json'], 'Content-Disposition': `attachment; filename="${filename}"`, 'Cache-Control': 'no-store' });

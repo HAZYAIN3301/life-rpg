@@ -167,7 +167,7 @@ test('runtime binds each chapter to a real semantic surface and suppresses repla
   assert.match(dataReady, /chapter === 'rewards'[\s\S]*progressReady[\s\S]*_accountDataLoadErrors\?\.lootbox/);
   assert.match(APP, /guide-context-viewed[\s\S]*target\?\.getClientRects\(\)\.length/);
   assert.match(APP, /GUIDE_V3_LEGACY_DRIPS[\s\S]*guideV3ContextRuntimeAllowed\(guideChapter\)/);
-  assert.match(APP, /treeGuide = \(!edit[\s\S]*!guideV3ContextActive\('tree', 'tree-seen'\)/);
+  assert.match(APP, /const guide = \(!edit[\s\S]*!guideV3ContextActive\('tree', 'tree-seen'\)/);
 });
 
 test('Calendar and Notes Guide actions fail closed around real writes and recovery', () => {
@@ -222,7 +222,7 @@ test('Hero, Pets and Tree gates use resolved-session, descendant activity and ex
   const openContext = APP.slice(APP.indexOf('async function guideV3OpenContextChapter()'), APP.indexOf('\nasync function guideV3OpenHabitsChapter'));
   assert.match(openContext, /chapter === 'tree' \? context\.treeNodeId/);
   const treeHandler = APP.slice(APP.indexOf("action === 'tree-select-node'"), APP.indexOf("action === 'unlock-node'"));
-  assert.match(treeHandler, /candidateId === String\(nodeId\)[\s\S]*!node\.milestone[\s\S]*!node\.capstone[\s\S]*nodeUnlockable/);
+  assert.match(treeHandler, /candidateId === String\(nodeId\)[\s\S]*treeNodeKind\(node\) === 'practice'[\s\S]*!node\.capstone[\s\S]*nodeUnlockable/);
 });
 
 function cookieOf(response) { return (response.headers.get('set-cookie') || '').split(';')[0]; }
@@ -282,9 +282,9 @@ test('Guide feature commit is authenticated, account-owned and rejects malformed
 });
 
 test('v195 cache and source contract ship the whole pack together', () => {
-  assert.match(SW, /const CACHE = 'satoru-v203'/);
+  assert.match(SW, /const CACHE = 'satoru-v204'/);
   assert.match(INDEX, /guide-v3\.js\?v=20260829-guide-library-v195-1/);
-  assert.match(INDEX, /app\.js\?v=20260829-interface-hierarchy-v203-1/);
+  assert.match(INDEX, /app\.js\?v=20260830-tree-v4-v204-1/);
   assert.match(SERVER, /if \(u === '\/api\/guide\/commit' && req\.method === 'POST'\)/);
   assert.match(SERVER, /commitGuideData[\s\S]*restoreSnapshot/);
 });

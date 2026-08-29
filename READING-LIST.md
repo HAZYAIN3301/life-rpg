@@ -80,6 +80,9 @@
 - **Level Up! The Guide to Great Video Game Design — Scott Rogers.**
   Практичнее и легче Schell, много про progression и «feel». Хорошая первая, если Schell кажется тяжёлым.
 
+- **Applying the Gaming Concept of Skill Trees to Taxonomize Real-World Skills and Arrange Them in Incentivized Paths of Learning — Marcus R. Masternak (2022).**
+  Не книга, а 21-страничная магистерская position paper сугубо о переносе skill trees на реальные навыки: проверяемые узлы, scaffolding, progressive disclosure, badges, масштабы дерева и междисциплинарные связи. Ограничение: это проектная рамка, а не эксперимент готового продукта. Полный Satoru-разбор и принятые правила: `SKILLTREE-MASTERNAK-RESEARCH.md`; runtime-контракт: `TREE-V4-SPEC.md`.
+
 ---
 
 ## 📈 Продукт, рост, маркетинг

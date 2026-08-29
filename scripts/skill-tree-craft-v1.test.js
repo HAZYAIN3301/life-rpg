@@ -79,7 +79,8 @@ test('Tree dialogs and milestone commit revalidate semantics and focus', () => {
   assert.match(app, /function mountTreeDialog\(/);
   assert.match(app, /aria-modal/);
   assert.match(app, /handleTreeDialogKeydown\(e\)/);
-  assert.match(app, /!node\.milestone \|\| !nodeUnlockable\(sid, node\)/);
+  assert.match(app, /treeNodeKind\(node\) !== 'capability' \|\| !nodeUnlockable\(sid, node\)/);
+  assert.ok(app.indexOf("await Store.saveNow('skilltree', State.tree)") < app.indexOf("closeTreeDialog('ms-claim')", app.indexOf("action === 'ms-claim-yes'")), 'claim must be durable before its dialog closes');
   assert.match(app, /closeTreeDialog\('ms-claim'\)/);
   assert.match(app, /_treeFocusAfterCommit/);
   assert.match(app, /querySelector\('\.tree-node\.recommend'\) \|\|[\s\S]{0,120}querySelector\('\.tree-node\.available'\) \|\|[\s\S]{0,120}querySelector\('\.tree-node\.unlocked'\)/);

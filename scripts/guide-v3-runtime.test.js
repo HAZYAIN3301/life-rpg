@@ -112,7 +112,7 @@ test('the approved RU review is an exact mirror of centralized runtime copy', ()
 });
 
 test('v195 offline shell pins all Guide runtime scripts and locale copies', () => {
-  sourceMatches(SW, /const CACHE = 'satoru-v203';/);
+  sourceMatches(SW, /const CACHE = 'satoru-v204';/);
   for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'guide-surface-v1.js']) {
     assert.ok(file, 'Guide runtime file must be discoverable before checking SHELL');
     assert.ok(SW.includes(`'${file}'`) || SW.includes(`"${file}"`), `${file} must be pinned in SHELL`);
@@ -355,7 +355,7 @@ test('persisted completion and bond success effects happen only after their dura
   const store = between(APP, 'const Store = {', '\n// Attention keeps one checked envelope');
   sourceMatches(store, /async updateNow\(name, buildValue, applyCommitted = null\)[\s\S]{0,220}this\._put\(name, buildValue, false, applyCommitted\)/,
     'lazy account updates must enter the same tracked Store slot');
-  sourceMatches(store, /const lazy\s*=\s*typeof obj\s*===\s*['"]function['"][\s\S]{0,900}value\s*=\s*lazy\s*\?\s*await obj\(/,
+  sourceMatches(store, /const lazy\s*=\s*typeof obj\s*===\s*['"]function['"][\s\S]{0,1600}value\s*=\s*lazy\s*\?\s*await obj\(/,
     'the lazy builder must read live state only after its prior slot writer finishes');
   const callbackAt = store.indexOf('await applyCommitted(value)');
   const successAt = store.indexOf('return true;', callbackAt);
@@ -551,9 +551,9 @@ test('Context pack v195 explicitly releases exact Guide copy and chapter version
   }
   const appSource = SCRIPT_SOURCES.find((item) => scriptFile(item) === 'app.js');
   assert.ok(appSource, 'app.js must load in index.html');
-  assert.match(appSource, /\?v=[^"']*v203(?:-|$)/, 'the current app shell needs the v203 cache-busting pin');
-  sourceMatches(INDEX, /styles\.css\?v=[^"']*v203(?:-|["'])/,
-    'the current application CSS needs the v203 cache-busting pin');
+  assert.match(appSource, /\?v=[^"']*v204(?:-|$)/, 'the current app shell needs the v204 cache-busting pin');
+  sourceMatches(INDEX, /styles\.css\?v=[^"']*v204(?:-|["'])/,
+    'the current application CSS needs the v204 cache-busting pin');
 });
 
 test('feedback remains reachable even when the localized Guide is unavailable', () => {

@@ -539,6 +539,95 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // ── Tree v4: real capability path and explicitly separate game practices ──
+  'Путь': { en: 'Path', de: 'Weg', uk: 'Шлях', es: 'Ruta' },
+  'Игровые бонусы': { en: 'Game bonuses', de: 'Spielboni', uk: 'Ігрові бонуси', es: 'Bonos de juego' },
+  'Реальный путь': { en: 'Real path', de: 'Realer Weg', uk: 'Реальний шлях', es: 'Ruta real' },
+  'Игровая практика': { en: 'Game practice', de: 'Spielpraxis', uk: 'Ігрова практика', es: 'Práctica de juego' },
+  'Вехи фиксируют то, что ты реально умеешь. Бонусы меняют только Satoru.': { en: 'Milestones record what you can actually do. Bonuses only change Satoru.', de: 'Meilensteine halten fest, was du wirklich kannst. Boni verändern nur Satoru.', uk: 'Віхи фіксують те, що ти реально вмієш. Бонуси змінюють лише Satoru.', es: 'Los hitos registran lo que realmente sabes hacer. Los bonos solo cambian Satoru.' },
+  'Следующая реальная веха': { en: 'Next real milestone', de: 'Nächster realer Meilenstein', uk: 'Наступна реальна віха', es: 'Siguiente hito real' },
+  'Что считается результатом': { en: 'What counts as the result', de: 'Was als Ergebnis zählt', uk: 'Що вважається результатом', es: 'Qué cuenta como resultado' },
+  'Следующий шаг': { en: 'Next step', de: 'Nächster Schritt', uk: 'Наступний крок', es: 'Siguiente paso' },
+  'Добавить шаг в план': { en: 'Add step to plan', de: 'Schritt zum Plan hinzufügen', uk: 'Додати крок до плану', es: 'Añadir paso al plan' },
+  'Уже сделано — зафиксировать': { en: 'Already done — record it', de: 'Schon geschafft — festhalten', uk: 'Уже зроблено — зафіксувати', es: 'Ya está hecho — registrarlo' },
+  'Настроить путь с Тенью': { en: 'Shape the path with Shadow', de: 'Weg mit Shadow gestalten', uk: 'Налаштувати шлях із Тінню', es: 'Ajustar la ruta con Shadow' },
+  'Уточни следующий шаг в Личной карте — я не стану выдумывать его за тебя.': { en: 'Clarify the next step in your Personal Map — I will not invent it for you.', de: 'Kläre den nächsten Schritt in deiner persönlichen Karte — ich erfinde ihn nicht für dich.', uk: 'Уточни наступний крок в Особистій карті — я не вигадуватиму його за тебе.', es: 'Aclara el siguiente paso en tu mapa personal; no lo inventaré por ti.' },
+  'Пройденный путь': { en: 'Path already travelled', de: 'Zurückgelegter Weg', uk: 'Пройдений шлях', es: 'Camino recorrido' },
+  'Пока нет подтверждённых вех. Первая запись появится здесь и не сгорит.': { en: 'No confirmed milestones yet. The first record will appear here and will not expire.', de: 'Noch keine bestätigten Meilensteine. Der erste Eintrag erscheint hier und verfällt nicht.', uk: 'Підтверджених віх поки немає. Перший запис з’явиться тут і не згорить.', es: 'Aún no hay hitos confirmados. El primer registro aparecerá aquí y no caducará.' },
+  'Дальше по маршруту': { en: 'Further along the route', de: 'Weiter auf der Route', uk: 'Далі за маршрутом', es: 'Más adelante en la ruta' },
+  'ступеней впереди': { en: 'steps ahead', de: 'Stufen voraus', uk: 'сходинок попереду', es: 'pasos por delante' },
+  'Впереди': { en: 'Ahead', de: 'Voraus', uk: 'Попереду', es: 'Por delante' },
+  'Подтверждено': { en: 'Confirmed', de: 'Bestätigt', uk: 'Підтверджено', es: 'Confirmado' },
+  'Самоподтверждение': { en: 'Self-confirmed', de: 'Selbst bestätigt', uk: 'Самопідтвердження', es: 'Autoconfirmado' },
+  'Импорт': { en: 'Import', de: 'Import', uk: 'Імпорт', es: 'Importación' },
+  'Без заметки': { en: 'No note', de: 'Ohne Notiz', uk: 'Без нотатки', es: 'Sin nota' },
+  'Эти узлы меняют Satoru, а не подтверждают реальное мастерство.': { en: 'These nodes change Satoru; they do not confirm real-world mastery.', de: 'Diese Knoten verändern Satoru; sie bestätigen keine reale Beherrschung.', uk: 'Ці вузли змінюють Satoru, а не підтверджують реальну майстерність.', es: 'Estos nodos cambian Satoru; no confirman dominio en el mundo real.' },
+  'В игре': { en: 'In the game', de: 'Im Spiel', uk: 'У грі', es: 'En el juego' },
+  'Игровой бонус уже действует': { en: 'The game bonus is active', de: 'Der Spielbonus ist aktiv', uk: 'Ігровий бонус уже діє', es: 'El bono de juego está activo' },
+  'очки бонусов': { en: 'bonus points', de: 'Bonuspunkte', uk: 'очки бонусів', es: 'puntos de bonificación' },
+  'практика': { en: 'practice', de: 'Praxis', uk: 'практика', es: 'práctica' },
+  'вех подтверждено': { en: 'milestones confirmed', de: 'Meilensteine bestätigt', uk: 'віх підтверджено', es: 'hitos confirmados' },
+  'Зафиксировать реальную веху': { en: 'Record a real milestone', de: 'Realen Meilenstein festhalten', uk: 'Зафіксувати реальну віху', es: 'Registrar un hito real' },
+  'Отметь её, если результат уже есть. Satoru хранит запись, но не оценивает тебя.': { en: 'Record it if the result already exists. Satoru keeps the record but does not judge you.', de: 'Halte ihn fest, wenn das Ergebnis schon da ist. Satoru speichert den Eintrag, bewertet dich aber nicht.', uk: 'Познач її, якщо результат уже є. Satoru зберігає запис, але не оцінює тебе.', es: 'Regístralo si el resultado ya existe. Satoru guarda el registro, pero no te evalúa.' },
+  'Что подтверждает результат?': { en: 'What supports the result?', de: 'Was belegt das Ergebnis?', uk: 'Що підтверджує результат?', es: '¿Qué respalda el resultado?' },
+  'Заметка, ссылка или короткое описание результата': { en: 'Note, link, or a short description of the result', de: 'Notiz, Link oder kurze Beschreibung des Ergebnisses', uk: 'Нотатка, посилання або короткий опис результату', es: 'Nota, enlace o breve descripción del resultado' },
+  'Можно оставить пустым — источник всё равно будет отмечен как самоподтверждение.': { en: 'You can leave this empty — the source will still be marked as self-confirmed.', de: 'Du kannst das Feld leer lassen — die Quelle wird trotzdem als selbst bestätigt markiert.', uk: 'Можна залишити порожнім — джерело все одно буде позначено як самопідтвердження.', es: 'Puedes dejarlo vacío; la fuente seguirá marcada como autoconfirmada.' },
+  'Зафиксировать': { en: 'Record', de: 'Festhalten', uk: 'Зафіксувати', es: 'Registrar' },
+  'Пока нет': { en: 'Not yet', de: 'Noch nicht', uk: 'Ще ні', es: 'Aún no' },
+  'Сохраняю веху…': { en: 'Saving milestone…', de: 'Meilenstein wird gespeichert…', uk: 'Зберігаю віху…', es: 'Guardando hito…' },
+  'Не удалось сохранить веху. Ничего не изменено — попробуй снова.': { en: 'Could not save the milestone. Nothing changed — try again.', de: 'Der Meilenstein konnte nicht gespeichert werden. Nichts wurde geändert — versuche es erneut.', uk: 'Не вдалося зберегти віху. Нічого не змінено — спробуй ще раз.', es: 'No se pudo guardar el hito. Nada cambió; inténtalo de nuevo.' },
+  'Шаг добавлен в Сегодня': { en: 'Step added to Today', de: 'Schritt zu Heute hinzugefügt', uk: 'Крок додано до Сьогодні', es: 'Paso añadido a Hoy' },
+  'Не удалось добавить шаг. Ничего не изменено — попробуй снова.': { en: 'Could not add the step. Nothing changed — try again.', de: 'Der Schritt konnte nicht hinzugefügt werden. Nichts wurde geändert — versuche es erneut.', uk: 'Не вдалося додати крок. Нічого не змінено — спробуй ще раз.', es: 'No se pudo añadir el paso. Nada cambió; inténtalo de nuevo.' },
+  'На пути пока нет вех': { en: 'This path has no milestones yet', de: 'Dieser Weg hat noch keine Meilensteine', uk: 'На шляху поки немає віх', es: 'Esta ruta aún no tiene hitos' },
+  'Собери личный путь: реальный результат, понятная проверка и ближайшее действие.': { en: 'Build a personal path: a real result, a clear check, and the nearest action.', de: 'Baue einen persönlichen Weg: reales Ergebnis, klare Prüfung und nächste Handlung.', uk: 'Склади особистий шлях: реальний результат, зрозуміла перевірка й найближча дія.', es: 'Crea una ruta personal: un resultado real, una comprobación clara y la acción más cercana.' },
+  'Реальная веха': { en: 'Real milestone', de: 'Realer Meilenstein', uk: 'Реальна віха', es: 'Hito real' },
+  'Критерий': { en: 'Criterion', de: 'Kriterium', uk: 'Критерій', es: 'Criterio' },
+  'Подтверждение': { en: 'Evidence', de: 'Nachweis', uk: 'Підтвердження', es: 'Evidencia' },
+  'Игровой слой': { en: 'Game layer', de: 'Spielebene', uk: 'Ігровий шар', es: 'Capa de juego' },
+  'Импортировано': { en: 'Imported', de: 'Importiert', uk: 'Імпортовано', es: 'Importado' },
+  'Показать весь путь': { en: 'Show the whole path', de: 'Gesamten Weg zeigen', uk: 'Показати весь шлях', es: 'Mostrar toda la ruta' },
+  'Критерий ещё не настроен': { en: 'The criterion is not set yet', de: 'Das Kriterium ist noch nicht festgelegt', uk: 'Критерій ще не налаштовано', es: 'El criterio aún no está definido' },
+  'Настрой путь с Тенью — она предложит конкретное действие для этой вехи.': { en: 'Shape the path with Shadow — it will suggest a concrete action for this milestone.', de: 'Gestalte den Weg mit Shadow — es schlägt eine konkrete Handlung für diesen Meilenstein vor.', uk: 'Налаштуй шлях із Тінню — вона запропонує конкретну дію для цієї віхи.', es: 'Ajusta la ruta con Shadow: te propondrá una acción concreta para este hito.' },
+  'Текущий путь пройден': { en: 'Current path complete', de: 'Aktueller Weg abgeschlossen', uk: 'Поточний шлях пройдено', es: 'Ruta actual completada' },
+  'Все настроенные вехи уже в твоей истории.': { en: 'Every configured milestone is already in your history.', de: 'Alle eingerichteten Meilensteine stehen bereits in deinem Verlauf.', uk: 'Усі налаштовані віхи вже у твоїй історії.', es: 'Todos los hitos configurados ya están en tu historial.' },
+  'Можно остановиться здесь или настроить новый участок пути — без обнуления пройденного.': { en: 'You can stop here or shape the next stretch without resetting what you completed.', de: 'Du kannst hier aufhören oder den nächsten Abschnitt gestalten, ohne Erreichtes zurückzusetzen.', uk: 'Можна зупинитися тут або налаштувати нову ділянку шляху — без обнулення пройденого.', es: 'Puedes parar aquí o definir el siguiente tramo sin borrar lo recorrido.' },
+  'Настроить продолжение': { en: 'Shape what comes next', de: 'Fortsetzung gestalten', uk: 'Налаштувати продовження', es: 'Configurar la continuación' },
+  'Здесь появятся результаты, которые важны именно тебе.': { en: 'Results that matter to you will appear here.', de: 'Hier erscheinen Ergebnisse, die dir wichtig sind.', uk: 'Тут з’являться результати, важливі саме для тебе.', es: 'Aquí aparecerán los resultados que te importan.' },
+  'Тень соберёт короткую цепочку: результат, критерий и ближайшее действие. Игровые бонусы останутся отдельно.': { en: 'Shadow will build a short chain: result, criterion, and nearest action. Game bonuses stay separate.', de: 'Shadow baut eine kurze Kette: Ergebnis, Kriterium und nächste Handlung. Spielboni bleiben getrennt.', uk: 'Тінь складе короткий ланцюжок: результат, критерій і найближча дія. Ігрові бонуси залишаться окремо.', es: 'Shadow creará una cadena corta: resultado, criterio y próxima acción. Los bonos de juego seguirán aparte.' },
+  'Постоянный след': { en: 'Permanent record', de: 'Dauerhafter Verlauf', uk: 'Постійний слід', es: 'Registro permanente' },
+  'Твой путь': { en: 'Your path', de: 'Dein Weg', uk: 'Твій шлях', es: 'Tu ruta' },
+  'Игровой бонус': { en: 'Game bonus', de: 'Spielbonus', uk: 'Ігровий бонус', es: 'Bono de juego' },
+  'очк. бонусов': { en: 'bonus pts.', de: 'Bonuspkt.', uk: 'очк. бонусів', es: 'pts. de bono' },
+  'Как работают игровые бонусы': { en: 'How game bonuses work', de: 'So funktionieren Spielboni', uk: 'Як працюють ігрові бонуси', es: 'Cómo funcionan los bonos de juego' },
+  'Дела → уровень сферы → очко бонусов → игровой эффект': { en: 'Actions → practice level → bonus point → game effect', de: 'Handlungen → Praxislevel → Bonuspunkt → Spieleffekt', uk: 'Справи → рівень практики → очко бонусів → ігровий ефект', es: 'Acciones → nivel de práctica → punto de bono → efecto de juego' },
+  'Это игровой слой Satoru.': { en: 'This is Satoru’s game layer.', de: 'Das ist Satorus Spielebene.', uk: 'Це ігровий шар Satoru.', es: 'Esta es la capa de juego de Satoru.' },
+  'Дела поднимают уровень практики в сфере и дают очки бонусов.': { en: 'Actions raise the area’s practice level and grant bonus points.', de: 'Handlungen erhöhen das Praxislevel des Bereichs und geben Bonuspunkte.', uk: 'Справи підвищують рівень практики у сфері й дають очки бонусів.', es: 'Las acciones suben el nivel de práctica del área y dan puntos de bono.' },
+  'Очки открывают только эффекты внутри Satoru: XP, награды, щит серии или связь с питомцем.': { en: 'Points unlock effects only inside Satoru: XP, rewards, a streak shield, or a pet bond.', de: 'Punkte schalten nur Effekte in Satoru frei: XP, Belohnungen, Serienschutz oder Tierbindung.', uk: 'Очки відкривають лише ефекти всередині Satoru: XP, нагороди, щит серії або зв’язок із вихованцем.', es: 'Los puntos solo desbloquean efectos dentro de Satoru: XP, recompensas, escudo de racha o vínculo con la mascota.' },
+  'Реальные способности подтверждаются отдельно во вкладке «Путь».': { en: 'Real capabilities are confirmed separately in the Path tab.', de: 'Reale Fähigkeiten werden getrennt im Tab „Weg“ bestätigt.', uk: 'Реальні здібності підтверджуються окремо у вкладці «Шлях».', es: 'Las capacidades reales se confirman aparte en la pestaña Ruta.' },
+  'Эти узлы меняют Satoru, но не подтверждают мастерство в реальной жизни.': { en: 'These nodes change Satoru, but they do not confirm real-world mastery.', de: 'Diese Knoten verändern Satoru, bestätigen aber keine reale Beherrschung.', uk: 'Ці вузли змінюють Satoru, але не підтверджують майстерність у реальному житті.', es: 'Estos nodos cambian Satoru, pero no confirman dominio en la vida real.' },
+  'Этот узел меняет Satoru, но не подтверждает мастерство в реальной жизни.': { en: 'This node changes Satoru, but it does not confirm real-world mastery.', de: 'Dieser Knoten verändert Satoru, bestätigt aber keine reale Beherrschung.', uk: 'Цей вузол змінює Satoru, але не підтверджує майстерність у реальному житті.', es: 'Este nodo cambia Satoru, pero no confirma dominio en la vida real.' },
+  'Выбери игровой бонус, чтобы увидеть эффект и требования.': { en: 'Choose a game bonus to see its effect and requirements.', de: 'Wähle einen Spielbonus, um Effekt und Anforderungen zu sehen.', uk: 'Вибери ігровий бонус, щоб побачити ефект і вимоги.', es: 'Elige un bono de juego para ver su efecto y requisitos.' },
+  'Карта игровых бонусов': { en: 'Game bonus map', de: 'Spielbonus-Karte', uk: 'Карта ігрових бонусів', es: 'Mapa de bonos de juego' },
+  'Тип узла': { en: 'Node type', de: 'Knotentyp', uk: 'Тип вузла', es: 'Tipo de nodo' },
+  'Тип подтверждённой вехи нельзя изменить — так сохраняется история.': { en: 'A confirmed milestone’s type cannot change; this preserves its history.', de: 'Der Typ eines bestätigten Meilensteins kann nicht geändert werden; so bleibt der Verlauf erhalten.', uk: 'Тип підтвердженої віхи не можна змінити — так зберігається історія.', es: 'No se puede cambiar el tipo de un hito confirmado; así se conserva su historial.' },
+  'Описание игрового бонуса': { en: 'Game bonus description', de: 'Beschreibung des Spielbonus', uk: 'Опис ігрового бонусу', es: 'Descripción del bono de juego' },
+  'Цена (очки бонусов)': { en: 'Cost (bonus points)', de: 'Preis (Bonuspunkte)', uk: 'Ціна (очки бонусів)', es: 'Precio (puntos de bono)' },
+  'Веха сохранена': { en: 'Milestone preserved', de: 'Meilenstein bleibt erhalten', uk: 'Віху збережено', es: 'Hito conservado' },
+  'Веха зафиксирована': { en: 'Milestone recorded', de: 'Meilenstein festgehalten', uk: 'Віху зафіксовано', es: 'Hito registrado' },
+  'Игровой бонус действует': { en: 'Game bonus active', de: 'Spielbonus aktiv', uk: 'Ігровий бонус діє', es: 'Bono de juego activo' },
+  'Источник': { en: 'Source', de: 'Quelle', uk: 'Джерело', es: 'Fuente' },
+  'Вехи фиксируют то, что ты реально можешь. Игровые бонусы меняют только Satoru.': { en: 'Milestones record what you can actually do. Game bonuses only change Satoru.', de: 'Meilensteine halten fest, was du wirklich kannst. Spielboni verändern nur Satoru.', uk: 'Віхи фіксують те, що ти реально можеш. Ігрові бонуси змінюють лише Satoru.', es: 'Los hitos registran lo que realmente puedes hacer. Los bonos solo cambian Satoru.' },
+  'Слой карты': { en: 'Map layer', de: 'Kartenebene', uk: 'Шар карти', es: 'Capa del mapa' },
+  'Веха больше не доступна — проверь предыдущий шаг': { en: 'This milestone is no longer available — check the previous step', de: 'Dieser Meilenstein ist nicht mehr verfügbar — prüfe den vorherigen Schritt', uk: 'Ця віха більше недоступна — перевір попередній крок', es: 'Este hito ya no está disponible; revisa el paso anterior' },
+  'Не удалось сохранить. Проверь соединение — запись не была изменена.': { en: 'Could not save. Check your connection — the record was not changed.', de: 'Speichern fehlgeschlagen. Prüfe die Verbindung — der Eintrag wurde nicht geändert.', uk: 'Не вдалося зберегти. Перевір з’єднання — запис не змінено.', es: 'No se pudo guardar. Revisa la conexión; el registro no cambió.' },
+  'ВЕХА ВЗЯТА': { en: 'MILESTONE RECORDED', de: 'MEILENSTEIN FESTGEHALTEN', uk: 'ВІХУ ЗАФІКСОВАНО', es: 'HITO REGISTRADO' },
+  'Ответь на несколько вопросов. Тень предложит для каждой ступени реальный результат, понятный критерий и ближайшее действие. Уже подтверждённые вехи останутся.': { en: 'Answer a few questions. Shadow will suggest a real result, clear criterion, and nearest action for each step. Confirmed milestones stay.', de: 'Beantworte ein paar Fragen. Shadow schlägt für jede Stufe ein reales Ergebnis, ein klares Kriterium und die nächste Handlung vor. Bestätigte Meilensteine bleiben.', uk: 'Відповідай на кілька запитань. Тінь запропонує для кожної сходинки реальний результат, зрозумілий критерій і найближчу дію. Підтверджені віхи залишаться.', es: 'Responde unas preguntas. Shadow propondrá para cada paso un resultado real, un criterio claro y la acción más cercana. Los hitos confirmados se conservarán.' },
+  'Шаг добавлен в план на сегодня': { en: 'Step added to today’s plan', de: 'Schritt zum heutigen Plan hinzugefügt', uk: 'Крок додано до плану на сьогодні', es: 'Paso añadido al plan de hoy' },
+  'Не удалось сохранить шаг. Проверь соединение и повтори.': { en: 'Could not save the step. Check your connection and try again.', de: 'Der Schritt konnte nicht gespeichert werden. Prüfe die Verbindung und versuche es erneut.', uk: 'Не вдалося зберегти крок. Перевір з’єднання та повтори.', es: 'No se pudo guardar el paso. Revisa la conexión e inténtalo de nuevo.' },
+  'Сохраняю путь…': { en: 'Saving path…', de: 'Weg wird gespeichert…', uk: 'Зберігаю шлях…', es: 'Guardando ruta…' },
+  'Не удалось сохранить путь. Ничего не изменено — попробуй снова.': { en: 'Could not save the path. Nothing changed — try again.', de: 'Der Weg konnte nicht gespeichert werden. Nichts wurde geändert — versuche es erneut.', uk: 'Не вдалося зберегти шлях. Нічого не змінено — спробуй ще раз.', es: 'No se pudo guardar la ruta. Nada cambió; inténtalo de nuevo.' },
+  'Подтверждённая веха остаётся в истории и не удаляется.': { en: 'A confirmed milestone stays in your history and cannot be deleted.', de: 'Ein bestätigter Meilenstein bleibt im Verlauf und kann nicht gelöscht werden.', uk: 'Підтверджена віха залишається в історії й не видаляється.', es: 'Un hito confirmado permanece en tu historial y no se elimina.' },
+  'Эта связь создаст цикл. Выбери другой предыдущий узел.': { en: 'This link would create a cycle. Choose a different previous node.', de: 'Diese Verbindung würde einen Zyklus erzeugen. Wähle einen anderen vorherigen Knoten.', uk: 'Цей зв’язок створить цикл. Вибери інший попередній вузол.', es: 'Este enlace crearía un ciclo. Elige otro nodo anterior.' },
   // ── Motion & Sound v189: explicit PWA audio contract ──
   'Режим звука': { en: 'Sound mode', de: 'Klangmodus', uk: 'Режим звуку', es: 'Modo de sonido' },
   'Выкл': { en: 'Off', de: 'Aus', uk: 'Вимкнено', es: 'Desactivado' },
@@ -4357,6 +4446,26 @@ function taskWriteAllowed(source, notify = false) {
   console.error(`${source} blocked`, 'tasks', State._tasksLoadError);
   return false;
 }
+function skillTreeWriteAllowed(source, notify = false) {
+  if (!State._treeLoadError) return true;
+  clearTimeout(Store._timers.skilltree);
+  if (notify) {
+    const now = Date.now();
+    if (now - (State._treeWriteBlockedNoticeAt || 0) > 2000) {
+      State._treeWriteBlockedNoticeAt = now;
+      toast(t('Изменения дерева заблокированы до восстановления данных'));
+    }
+  }
+  console.error(`${source} blocked`, 'skilltree', State._treeLoadError);
+  return false;
+}
+function skillTreePayloadAllowed(value, source, notify = false) {
+  if (!skillTreeWriteAllowed(source, notify)) return false;
+  if (validateSkillTreePayload(value)) return true;
+  if (notify) toast(t('⚠️ Не удалось сохранить'));
+  console.error(`${source} blocked`, 'skilltree', 'invalid outgoing data');
+  return false;
+}
 function validateSettingsPayload(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   if (value.skills !== undefined) {
@@ -4580,6 +4689,7 @@ const Store = {
     if (!accountDataWriteAllowed(name, 'save', true)) return false;
     if (!accountDataPayloadAllowed(name, obj, 'save', true)) return false;
     if (name === 'tasks' && !taskWriteAllowed('save', true)) return false;
+    if (name === 'skilltree' && !skillTreePayloadAllowed(obj, 'save', true)) return false;
     if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('save', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('save', true)) return false;
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('save', true)) return false;
@@ -4597,6 +4707,7 @@ const Store = {
     if (!accountDataWriteAllowed(name, 'saveNow', true)) return false;
     if (!accountDataPayloadAllowed(name, obj, 'saveNow', true)) return false;
     if (name === 'tasks' && !taskWriteAllowed('saveNow', true)) return false;
+    if (name === 'skilltree' && !skillTreePayloadAllowed(obj, 'saveNow', true)) return false;
     if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('saveNow', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('saveNow', true)) return false;
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('saveNow', true)) return false;
@@ -4656,6 +4767,7 @@ const Store = {
     const lazy = typeof obj === 'function';
     if (!lazy && !accountDataPayloadAllowed(name, obj, '_put', true)) return false;
     if (name === 'tasks' && !taskWriteAllowed('_put', true)) return false;
+    if (name === 'skilltree' && !skillTreeWriteAllowed('_put', true)) return false;
     if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('_put', true)) return false;
     if (name === 'settings' && !settingsWriteAllowed('_put', true)) return false;
     if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('_put', true)) return false;
@@ -4674,6 +4786,7 @@ const Store = {
       if (!accountDataWriteAllowed(name, '_put', true)) return false;
       if (!accountDataPayloadAllowed(name, value, '_put', true)) return false;
       if (name === 'tasks' && !taskWriteAllowed('_put', true)) return false;
+      if (name === 'skilltree' && !skillTreePayloadAllowed(value, '_put', true)) return false;
       if ((name === 'goals' || name === 'goal-groups') && !goalWriteAllowed('_put', true)) return false;
       if (name === 'settings' && !settingsWriteAllowed('_put', true)) return false;
       if (['habits', 'habitlog', 'antihabits'].includes(name) && !habitWriteAllowed('_put', true)) return false;
@@ -6129,7 +6242,8 @@ const State = {
   _calendarViewportNode: null, _calendarViewportDate: '', _calendarViewportScroll: null,
   aveCat: 'hair', // активная категория в редакторе аватара
   _denEdit: false, // открыт ли редактор комнаты (эфемерно, сама обстановка хранится в settings.den)
-  treeEdit: false, treeSelNode: null, // редактор дерева навыков
+  treeEdit: false, treeSelNode: null, treeLayer: 'path', // Tree v4: реальный путь по умолчанию, игровые практики отдельно
+  _treeClaimBusy: false, _treePlanBusy: '', _treeMapBusy: false,
   _pathFocusAfterCommit: '', // path-dialog возвращает фокус после render() на стабильный якорь маршрута
   settingsCollapsed: {}, // свёрнутые столбы в редакторе сфер
   balanceDrill: new Set(), // раскрытые сферы на колесе баланса (дрилл-даун под-сфер) — эфемерно
@@ -6403,7 +6517,10 @@ function nodePerks(n) {
 function skillPerks(id) {
   const t = State.tree && State.tree[id], out = {};
   if (!t) return out;
-  for (const n of t.nodes) if (n.unlocked) for (const p of nodePerks(n)) out[p.kind] = (out[p.kind] || 0) + (p.val || 0);
+  for (const n of t.nodes) if (n.unlocked && treeNodeKind(n) === 'practice') for (const p of nodePerks(n)) {
+    if (!PERK_KINDS[p.kind]) continue;
+    out[p.kind] = (out[p.kind] || 0) + (p.val || 0);
+  }
   for (const k in out) { const cap = PERK_KINDS[k] && PERK_KINDS[k].cap; if (cap != null) out[k] = Math.min(out[k], cap); }
   return out;
 }
@@ -10110,18 +10227,67 @@ function treeNodeCopy(node, field) {
   if (!copy || raw !== copy.ru) return raw;
   return copy[lang()] || copy.ru;
 }
+const TREE_SCHEMA_VERSION = 4;
+const TREE_NODE_KINDS = new Set(['capability', 'practice']);
+function treeNodeKind(node) {
+  if (node && TREE_NODE_KINDS.has(node.kind)) return node.kind;
+  return node && node.milestone === true ? 'capability' : 'practice';
+}
+function treeNodeCriterion(node) {
+  const criterion = String((node && node.criterion) || '').trim();
+  return criterion || treeNodeCopy(node, 'desc');
+}
+function treeNodeNextAction(node) { return String((node && node.nextAction) || '').trim(); }
+function treeNodeClaimSource(node) {
+  if (!node || !node.unlocked || treeNodeKind(node) !== 'capability') return '';
+  if (node.claimSource === 'import' || node.claimedAt === 'import') return 'import';
+  return 'self';
+}
+function treeClaimDateLabel(node) {
+  const raw = String((node && node.claimedAt) || '');
+  if (!raw || raw === 'import') return '';
+  const date = new Date(raw);
+  if (Number.isNaN(date.getTime())) return '';
+  try { return new Intl.DateTimeFormat(lang(), { day: 'numeric', month: 'short', year: 'numeric' }).format(date); }
+  catch { return date.toLocaleDateString(); }
+}
+function backfillTreeV4Semantics(tree) {
+  if (!tree || !Array.isArray(tree.nodes)) return false;
+  let changed = false;
+  if (tree.schemaVersion !== TREE_SCHEMA_VERSION) { tree.schemaVersion = TREE_SCHEMA_VERSION; changed = true; }
+  for (const node of tree.nodes) {
+    const expectedKind = node.milestone === true ? 'capability' : 'practice';
+    if (!TREE_NODE_KINDS.has(node.kind)) { node.kind = expectedKind; changed = true; }
+    if (node.kind === 'capability' && node.milestone !== true) { node.milestone = true; changed = true; }
+    if (node.kind === 'practice' && node.milestone === true) { node.kind = 'capability'; changed = true; }
+    if (node.unlocked && node.kind === 'capability' && !node.claimSource) {
+      node.claimSource = node.claimedAt === 'import' ? 'import' : 'self'; changed = true;
+    }
+    for (const field of ['cost', 'x', 'y', 'col', 'row', 'perkXpPct']) {
+      if (node[field] == null || typeof node[field] === 'number') continue;
+      const numeric = Number(node[field]);
+      if (Number.isFinite(numeric)) { node[field] = numeric; changed = true; }
+    }
+    for (const perk of Array.isArray(node.perks) ? node.perks : []) {
+      if (typeof perk.val === 'number') continue;
+      const numeric = Number(perk.val);
+      if (Number.isFinite(numeric)) { perk.val = numeric; changed = true; }
+    }
+  }
+  return changed;
+}
 function archetypeOf(skillId) { try { const t = petTraits(skillId); return (t[0] && t[0].icon) || '⭐'; } catch { return '⭐'; } }
 function defaultTreeForSkill(skillId) {
   const arc = archetypeOf(skillId), tpl = TREE_TEMPLATES[arc] || TREE_TEMPLATES['⭐'], p = 'nd_' + skillId + '_';
   return {
-    archetype: arc,
+    archetype: arc, schemaVersion: TREE_SCHEMA_VERSION,
     nodes: TREE_SHAPE.map((sh, i) => {
       const titleKey = treeTemplateCopyKey(arc, sh.key, 'title');
       const descKey = treeTemplateCopyKey(arc, sh.key, 'desc');
       return {
         id: p + sh.key, title: tpl[i][0], desc: tpl[i][1],
         ...(titleKey ? { titleKey, descKey } : {}),
-        cost: sh.cost, requires: sh.req.map((k) => p + k), perks: tpl[i][2], capstone: !!sh.capstone,
+        kind: 'practice', cost: sh.cost, requires: sh.req.map((k) => p + k), perks: tpl[i][2], capstone: !!sh.capstone,
         unlocked: false, col: sh.col, row: sh.row,
       };
     }),
@@ -10245,6 +10411,7 @@ function validateSkillTreePayload(value) {
   if (!isPlainRecord(value)) return false;
   for (const tree of Object.values(value)) {
     if (!isPlainRecord(tree) || !Array.isArray(tree.nodes)) return false;
+    if (tree.schemaVersion != null && (!Number.isSafeInteger(Number(tree.schemaVersion)) || Number(tree.schemaVersion) < 1)) return false;
     const ids = new Set();
     for (const node of tree.nodes) {
       if (!isPlainRecord(node) || typeof node.id !== 'string' || !node.id || ids.has(node.id)) return false;
@@ -10252,6 +10419,9 @@ function validateSkillTreePayload(value) {
       if (typeof node.title !== 'string') return false;
       if (node.desc != null && typeof node.desc !== 'string') return false;
       if (node.descKey != null && typeof node.descKey !== 'string') return false;
+      if (node.kind != null && !TREE_NODE_KINDS.has(node.kind)) return false;
+      for (const field of ['criterion', 'nextAction', 'proofNote', 'claimedAt']) if (node[field] != null && typeof node[field] !== 'string') return false;
+      if (node.claimSource != null && !['self', 'import'].includes(node.claimSource)) return false;
       if (node.requires != null && (!Array.isArray(node.requires) || node.requires.some((id) => typeof id !== 'string'))) return false;
       if (node.perks != null && (!Array.isArray(node.perks) || node.perks.some((perk) => !isPlainRecord(perk) || typeof perk.kind !== 'string' || !Number.isFinite(Number(perk.val))))) return false;
       if (node.cost != null && (!Number.isFinite(Number(node.cost)) || Number(node.cost) < 0)) return false;
@@ -10300,7 +10470,7 @@ function milestonesForSkill(skillId) {
       titleKey: treeLadderCopyKey(match.id, 'tier', tierIndex),
       descKey: treeLadderCopyKey(match.id, 'hint'),
       ladderId: match.id, tierIndex,
-      milestone: true, cost: 0,
+      kind: 'capability', milestone: true, cost: 0,
       requires: i ? [p + (i - 1)] : [], perks: [], unlocked: false,
       col: 3.4, row: Math.max(0, tiers.length - 1 - i), // первая веха внизу, вершина сверху
     };
@@ -10308,25 +10478,26 @@ function milestonesForSkill(skillId) {
 }
 function ensureTrees() {
   if (State._treeLoadError) return;
-  let copyKeysChanged = false;
+  let treeDataChanged = false;
   for (const s of State.settings.skills) {
-    if (!State.tree[s.id]) { State.tree[s.id] = defaultTreeForSkill(s.id); continue; }
+    if (!State.tree[s.id]) { State.tree[s.id] = defaultTreeForSkill(s.id); treeDataChanged = true; continue; }
     // апгрейд: нетронутое старое generic-дерево → тематический шаблон по архетипу (кастом/использованные не трогаем)
-    if (isPristineOldTree(State.tree[s.id])) State.tree[s.id] = defaultTreeForSkill(s.id);
+    if (isPristineOldTree(State.tree[s.id])) { State.tree[s.id] = defaultTreeForSkill(s.id); treeDataChanged = true; }
   }
   // v3: недеструктивный append вех в деревья, где их ещё нет (кастомные узлы/позиции не трогаем)
   for (const s of State.settings.skills) {
     const tr = State.tree[s.id];
-    if (tr && Array.isArray(tr.nodes) && !tr.nodes.some((n) => n.milestone)) tr.nodes.push(...milestonesForSkill(s.id));
-    if (tr && backfillCanonicalTemplateKeys(s.id, tr)) copyKeysChanged = true;
-    if (tr && backfillDefaultMilestoneKeys(s.id, tr)) copyKeysChanged = true;
+    if (tr && Array.isArray(tr.nodes) && !tr.nodes.some((n) => n.milestone)) { tr.nodes.push(...milestonesForSkill(s.id)); treeDataChanged = true; }
+    if (tr && backfillCanonicalTemplateKeys(s.id, tr)) treeDataChanged = true;
+    if (tr && backfillDefaultMilestoneKeys(s.id, tr)) treeDataChanged = true;
+    if (tr && backfillTreeV4Semantics(tr)) treeDataChanged = true;
   }
   // позиции col/row → свободные x/y (для перетаскивания)
   for (const id in State.tree) for (const n of State.tree[id].nodes || []) {
-    if (n.x == null) n.x = (n.col || 0) * TREE_SX;
-    if (n.y == null) n.y = (n.row || 0) * TREE_SY;
+    if (n.x == null) { n.x = (n.col || 0) * TREE_SX; treeDataChanged = true; }
+    if (n.y == null) { n.y = (n.row || 0) * TREE_SY; treeDataChanged = true; }
   }
-  if (copyKeysChanged) Store.save('skilltree', State.tree);
+  if (treeDataChanged) Store.save('skilltree', State.tree);
   syncMilestonesFromImport();
 }
 // Фаза 2: синк вех с импортом достижений. Юзер при импорте честно указал тир N — значит вехи
@@ -10340,7 +10511,7 @@ function syncMilestonesFromImport() {
     for (const n of tr.nodes || []) {
       if (!n.milestone || n.unlocked) continue;
       const mi = Number((String(n.id).match(/_ms(\d+)$/) || [])[1]);
-      if (!Number.isNaN(mi) && mi < tier) { n.unlocked = true; n.claimedAt = 'import'; changed = true; }
+      if (!Number.isNaN(mi) && mi < tier) { n.unlocked = true; n.kind = 'capability'; n.claimedAt = 'import'; n.claimSource = 'import'; changed = true; }
     }
   }
   if (changed) Store.save('skilltree', State.tree);
@@ -10349,13 +10520,13 @@ function syncMilestonesFromImport() {
 // Очки практик = уровень сферы + взятые вехи (жизнь финансирует бонусы)
 function treeMilestonesTaken(id) { const t = State.tree[id]; return t ? t.nodes.filter((n) => n.milestone && n.unlocked).length : 0; }
 function treePointsEarned(id) { return skillLevelOf(id) + treeMilestonesTaken(id); }
-function treePointsSpent(id) { const t = State.tree[id]; return t ? t.nodes.filter((n) => n.unlocked && !n.milestone).reduce((s, n) => s + (n.cost || 0), 0) : 0; }
+function treePointsSpent(id) { const t = State.tree[id]; return t ? t.nodes.filter((n) => n.unlocked && treeNodeKind(n) === 'practice').reduce((s, n) => s + (Number(n.cost) || 0), 0) : 0; }
 function treePointsAvailable(id) { return treePointsEarned(id) - treePointsSpent(id); }
 function nodeUnlockable(id, node) {
   if (node.unlocked) return false;
   const t = State.tree[id];
   if ((node.requires || []).some((rid) => { const r = t.nodes.find((x) => x.id === rid); return !r || !r.unlocked; })) return false;
-  if (node.milestone) return true; // веха не стоит очков — она стоит жизни (подтверждение в клике)
+  if (treeNodeKind(node) === 'capability') return true; // веха не стоит очков — она стоит жизни (подтверждение в клике)
   return treePointsAvailable(id) >= (node.cost || 0);
 }
 function treeNodeState(id, node) {
@@ -10367,6 +10538,18 @@ function treeNodeRequirements(id, node) {
   if (!tree) return [];
   return (node.requires || []).map((rid) => tree.nodes.find((item) => item.id === rid)).filter(Boolean);
 }
+function treeDependencyWouldCycle(tree, nodeId, requirementId) {
+  if (!tree || nodeId === requirementId) return true;
+  const seen = new Set();
+  const visit = (id) => {
+    if (id === nodeId) return true;
+    if (seen.has(id)) return false;
+    seen.add(id);
+    const node = tree.nodes.find((item) => item.id === id);
+    return !!node && (node.requires || []).some(visit);
+  };
+  return visit(requirementId);
+}
 function treeNodeLockReason(id, node) {
   if (!node || node.unlocked) return '';
   const tree = State.tree[id];
@@ -10375,15 +10558,15 @@ function treeNodeLockReason(id, node) {
     return !required || !required.unlocked;
   });
   if (missing.length) return t('Сначала открой предыдущие узлы');
-  if (!node.milestone && treePointsAvailable(id) < (node.cost || 0)) return t('Не хватает очков практик');
+  if (treeNodeKind(node) === 'practice' && treePointsAvailable(id) < (node.cost || 0)) return t('Не хватает очков практик');
   return '';
 }
 function treeNodeStateLabel(state, node) {
-  if (node && node.milestone) return state === 'unlocked' ? t('Веха взята') : state === 'available' ? t('Веха доступна') : t('Веха закрыта');
+  if (node && treeNodeKind(node) === 'capability') return state === 'unlocked' ? t('Подтверждено') : state === 'available' ? t('Следующая реальная веха') : t('Впереди');
   return state === 'unlocked' ? t('Открыто') : state === 'available' ? t('Доступно') : t('Заблокировано');
 }
 function treeNodeStateIcon(state, node) {
-  if (node && node.milestone) return state === 'unlocked' ? '✓' : state === 'available' ? '🚩' : '🔒';
+  if (node && treeNodeKind(node) === 'capability') return state === 'unlocked' ? '✓' : state === 'available' ? '⚑' : '○';
   return state === 'unlocked' ? '✓' : state === 'available' ? '◇' : '🔒';
 }
 function treeNodeRectOverlap(a, b) {
@@ -18653,26 +18836,31 @@ function handleTreeDialogKeydown(e) {
   if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); return true; }
   return false;
 }
-// 🚩 Модалка честности вехи: веха берётся жизнью, а не кликом. Мы не полиция — обмануть
-// можно только собственную карту, и это прямо проговаривается.
+// Tree v4: реальная веха остаётся добровольным self-attestation, но теперь хранит
+// provenance и необязательную заметку. Критерий виден ДО подтверждения, а write
+// завершается до ceremony: постоянный след не зависит от удачи debounce.
 function openMilestoneClaim(skillId, nodeId) {
   if (document.getElementById('ms-claim')) closeTreeDialog('ms-claim');
   const tr = State.tree[skillId], node = tr && tr.nodes.find((n) => n.id === nodeId);
   if (!node) return;
-  const displayTitle = treeNodeCopy(node, 'title'), displayDesc = treeNodeCopy(node, 'desc');
+  const displayTitle = treeNodeCopy(node, 'title'), criterion = treeNodeCriterion(node);
   const ov = document.createElement('div'); ov.id = 'ms-claim'; ov.className = 'modal-overlay';
   ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'ms-claim-title'); ov.tabIndex = -1;
-  ov.innerHTML = `<div class="ai-box ms-box">
+  ov.innerHTML = `<div class="ai-box ms-box tree-claim-box">
     <button class="modal-x" data-action="ms-claim-no" aria-label="${t('Закрыть')}">✕</button>
-    <h2 id="ms-claim-title" data-noi18n>🚩 ${esc(displayTitle)}</h2>
-    ${displayDesc ? `<p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Ориентир')}: <span data-noi18n>${esc(displayDesc)}</span></p>` : ''}
-    <p class="sg-what">${t('Веха берётся жизнью, а не кликом. Сравни честно с тем, где ты сейчас: это уже правда взято?')}</p>
-    <p class="muted" style="font-size:12px">${t('Обмануть тут можно только собственную карту. Взятая веха даёт +1 очко практик — жизнь финансирует бонусы.')}</p>
+    <span class="tree-claim-kicker">⚑ ${t('Зафиксировать реальную веху')}</span>
+    <h2 id="ms-claim-title" data-noi18n>${esc(displayTitle)}</h2>
+    <p class="sg-what">${t('Отметь её, если результат уже есть. Satoru хранит запись, но не оценивает тебя.')}</p>
+    ${criterion ? `<div class="tree-claim-criterion"><b>${t('Что считается результатом')}</b><p data-noi18n>${esc(criterion)}</p></div>` : ''}
+    <label class="tree-claim-proof" for="ms-claim-proof"><span>${t('Что подтверждает результат?')}</span>
+      <textarea id="ms-claim-proof" rows="3" maxlength="500" placeholder="${t('Заметка, ссылка или короткое описание результата')}"></textarea>
+      <small>${t('Можно оставить пустым — источник всё равно будет отмечен как самоподтверждение.')}</small></label>
+    <p class="tree-claim-status" id="ms-claim-status" aria-live="polite"></p>
     <div class="propose-actions">
-      <button class="btn" data-action="ms-claim-yes" data-skill="${esc(skillId)}" data-node="${esc(nodeId)}">🚩 ${t('Да, взято')}</button>
-      <button class="btn ghost" data-action="ms-claim-no">${t('Ещё нет — иду к ней')}</button>
+      <button class="btn" data-action="ms-claim-yes" data-skill="${esc(skillId)}" data-node="${esc(nodeId)}">${t('Зафиксировать')}</button>
+      <button class="btn ghost" data-action="ms-claim-no">${t('Пока нет')}</button>
     </div></div>`;
-  mountTreeDialog(ov, '[data-action="ms-claim-yes"]');
+  mountTreeDialog(ov, '#ms-claim-proof');
 }
 // ── Фаза 3: 🤖 персональная карта вех (AI_TREEMAP_SYS на сервере) ─────────────────────
 // Не «лестница бега вообще», а ТВОИ вехи: из твоих слов, целей и уже взятого. ИИ предлагает —
@@ -18695,8 +18883,8 @@ function openTreeMapAI() {
   const ov = document.createElement('div'); ov.id = 'treemap-modal'; ov.className = 'modal-overlay';
   ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'treemap-title'); ov.tabIndex = -1;
   ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="treemap-close" aria-label="${t('Закрыть')}">✕</button>
-    <h2 id="treemap-title">🤖 ${t('Личная карта')}: <span data-noi18n>${esc(sk.name)}</span></h2>
-    <p class="muted" style="font-size:13px;margin:0 0 10px">${t('Шаблонная лестница — старт. Ответь на пару вопросов — и Тень соберёт вехи под тебя. Взятые вехи останутся: новая тропа строится поверх них.')}</p>
+    <h2 id="treemap-title">${t('Настроить путь с Тенью')}: <span data-noi18n>${esc(sk.name)}</span></h2>
+    <p class="muted tree-map-intro">${t('Ответь на несколько вопросов. Тень предложит для каждой ступени реальный результат, понятный критерий и ближайшее действие. Уже подтверждённые вехи останутся.')}</p>
     <label class="tm-q">${t('Где ты сейчас в этой сфере?')}
       <textarea id="treemap-now" rows="2" placeholder="${t('бегаю 3–5 км пару раз в неделю / Abitur-курс по био + JuFo-проект')}"></textarea></label>
     <label class="tm-q">${t('Твой пик — куда хочешь прийти в итоге?')}
@@ -18732,7 +18920,11 @@ async function treeMapRun() {
     if (d.error && aiHandleErr(d)) { closeTreeDialog('treemap-modal'); return; }
     if (d.error || !Array.isArray(d.proposals)) { if (res) res.innerHTML = `<p class="muted">${t('Не разобрал ответ — попробуй ещё раз')}</p>`; return; }
     _treeMapItems = d.proposals.filter((p) => p && p.title).slice(0, 6)
-      .map((p) => ({ title: String(p.title).slice(0, 80), desc: String(p.desc || '').slice(0, 120) }));
+      .map((p) => ({
+        title: String(p.title).slice(0, 80),
+        criterion: String(p.criterion || p.desc || '').slice(0, 240),
+        nextAction: String(p.nextAction || '').slice(0, 200),
+      }));
     renderTreeMapCards(); track('tree:aimap-run');
   } catch { if (res) res.innerHTML = `<p class="muted">${t('Ошибка сети — попробуй ещё раз')}</p>`; }
 }
@@ -18741,7 +18933,7 @@ function renderTreeMapCards() {
   if (!_treeMapItems.length) { res.innerHTML = `<p class="muted">${t('Пусто — попробуй описать подробнее')}</p>`; return; }
   res.innerHTML = `<div class="dayrec-list">${_treeMapItems.map((it, i) => `
     <label class="drc-row"><input type="checkbox" data-treemap="${i}" checked />
-      <span><b>🚩 ${esc(it.title)}</b>${it.desc ? `<br><span class="muted" style="font-size:12px">${esc(it.desc)}</span>` : ''}</span></label>`).join('')}</div>
+      <span><b>⚑ ${esc(it.title)}</b>${it.criterion ? `<br><span class="muted tree-map-proposal"><strong>${esc(t('Критерий'))}:</strong> ${esc(it.criterion)}</span>` : ''}${it.nextAction ? `<br><span class="muted tree-map-proposal"><strong>${esc(t('Следующий шаг'))}:</strong> ${esc(it.nextAction)}</span>` : ''}</span></label>`).join('')}</div>
   <div class="propose-actions"><button class="btn" data-action="treemap-apply">🚩 ${t('Принять карту')}</button>
     <span class="muted" style="font-size:12px">${t('сними галочки с лишнего — порядок снизу вверх сохранится')}</span></div>`;
 }
@@ -18754,24 +18946,29 @@ function applyPersonalMap(skillId, items) {
   let prev = claimed.length ? claimed[claimed.length - 1].id : null;
   items.forEach((it, i) => {
     const row = total - 1 - (claimed.length + i);
-    const node = { id: 'nd_' + uid(), title: it.title, desc: it.desc, titleCustom: true, descCustom: true, milestone: true, personal: true, cost: 0,
+    const criterion = String(it.criterion || it.desc || '').trim();
+    const node = { id: 'nd_' + uid(), title: it.title, desc: criterion, criterion, nextAction: String(it.nextAction || '').trim(), titleCustom: true, descCustom: true, kind: 'capability', milestone: true, personal: true, cost: 0,
       requires: prev ? [prev] : [], perks: [], unlocked: false, col: 3.4, row, x: 3.4 * TREE_SX, y: row * TREE_SY };
     tr.nodes.push(node); prev = node.id;
   });
-  Store.save('skilltree', State.tree);
   return items.length;
 }
 function treeNodePanel(id, t) {
   const n = t.nodes.find((x) => x.id === State.treeSelNode); if (!n) return '';
   const displayTitle = treeNodeCopy(n, 'title'), displayDesc = treeNodeCopy(n, 'desc');
+  const kind = treeNodeKind(n), confirmedCapability = kind === 'capability' && n.unlocked;
   const reqs = t.nodes.filter((x) => x.id !== n.id).map((o) => `<label class="tp-req"><input type="checkbox" data-action="tree-toggle-req" data-node="${n.id}" data-req="${o.id}" ${(n.requires || []).includes(o.id) ? 'checked' : ''}/> <span data-noi18n>${esc(treeNodeCopy(o, 'title'))}</span></label>`).join('') || `<span class="muted">${t18('Других узлов нет')}</span>`;
   return `<section class="tree-panel" id="tree-node-panel" tabindex="-1" aria-labelledby="tree-node-panel-title">
     <div class="tree-detail-head"><div><span class="tree-detail-kicker">${t18('Режим архитектора')}</span><h4 id="tree-node-panel-title" data-noi18n>${esc(displayTitle)}</h4></div><button class="tree-detail-close" data-action="tree-sel-node" data-node="" aria-label="${t18('Закрыть')}">✕</button></div>
     <div class="tp-grid">
       <label>${t18('Название')}<input data-action="tree-field" data-node="${n.id}" data-field="title" value="${esc(displayTitle)}" /></label>
-      <label>${t18('Описание')}<input data-action="tree-field" data-node="${n.id}" data-field="desc" value="${esc(displayDesc)}" /></label>
-      <label>${t18('Цена (очки)')}<input type="number" min="0" step="1" data-action="tree-field" data-node="${n.id}" data-field="cost" value="${n.cost || 0}" /></label>
-      <label>${t18('Бонус XP, %')}<input type="number" min="0" step="1" data-action="tree-field" data-node="${n.id}" data-field="perkXpPct" value="${n.perkXpPct || 0}" /></label>
+      <label>${t18('Тип узла')}<select data-action="tree-field" data-node="${n.id}" data-field="kind" ${confirmedCapability ? 'disabled' : ''}><option value="capability" ${kind === 'capability' ? 'selected' : ''}>${t18('Реальная веха')}</option><option value="practice" ${kind === 'practice' ? 'selected' : ''}>${t18('Игровая практика')}</option></select>${confirmedCapability ? `<small>${t18('Тип подтверждённой вехи нельзя изменить — так сохраняется история.')}</small>` : ''}</label>
+      ${kind === 'capability' ? `
+        <label>${t18('Что считается результатом')}<textarea rows="3" data-action="tree-field" data-node="${n.id}" data-field="criterion">${esc(treeNodeCriterion(n))}</textarea></label>
+        <label>${t18('Следующий шаг')}<textarea rows="3" data-action="tree-field" data-node="${n.id}" data-field="nextAction">${esc(treeNodeNextAction(n))}</textarea></label>` : `
+        <label>${t18('Описание игрового бонуса')}<input data-action="tree-field" data-node="${n.id}" data-field="desc" value="${esc(displayDesc)}" /></label>
+        <label>${t18('Цена (очки бонусов)')}<input type="number" min="0" step="1" data-action="tree-field" data-node="${n.id}" data-field="cost" value="${n.cost || 0}" /></label>
+        <label>${t18('Бонус XP, %')}<input type="number" min="0" step="1" data-action="tree-field" data-node="${n.id}" data-field="perkXpPct" value="${n.perkXpPct || 0}" /></label>`}
     </div>
     <div class="tp-reqs"><span class="muted">${t18('Требует узлы')}:</span> ${reqs}</div>
     <div class="tree-nudge" role="group" aria-label="${t18('Переместить выбранный узел')}">
@@ -18782,7 +18979,7 @@ function treeNodePanel(id, t) {
       <button class="btn ghost sm" data-action="tree-nudge-node" data-node="${n.id}" data-dx="${TREE_SX}" data-dy="0" aria-label="${t18('Переместить вправо')}">→</button>
     </div>
     <div class="tp-actions">
-      <button class="btn danger sm" data-action="tree-del-node" data-node="${n.id}">🗑 ${t18('Удалить')}</button>
+      <button class="btn danger sm" data-action="tree-del-node" data-node="${n.id}" ${confirmedCapability ? 'disabled aria-disabled="true"' : ''}>🗑 ${confirmedCapability ? t18('Веха сохранена') : t18('Удалить')}</button>
       <button class="btn ghost sm" data-action="tree-sel-node" data-node="">${t18('Закрыть')}</button>
     </div>
   </section>`;
@@ -18795,20 +18992,29 @@ function treeNodeDetailPanel(id, tree) {
   const requirementText = requirements.length
     ? requirements.map((item) => `<span class="tree-detail-req ${item.unlocked ? 'is-met' : ''}"><span aria-hidden="true">${item.unlocked ? '✓' : '○'}</span><span data-noi18n>${esc(treeNodeCopy(item, 'title'))}</span></span>`).join('')
     : `<span class="tree-detail-req is-met"><span aria-hidden="true">✓</span>${t18('Без требований')}</span>`;
+  const kind = treeNodeKind(node);
   const perks = nodePerks(node).map((perk) => {
     const kind = PERK_KINDS[perk.kind]; if (!kind) return '';
     return `<span class="tree-detail-perk">${kind.icon} ${esc(t(kind.fmt(perk.val)))}</span>`;
   }).join('') || `<span class="muted">${t18('Пассивный бонус не задан')}</span>`;
   const reason = treeNodeLockReason(id, node);
   const action = state === 'available'
-    ? `<button class="btn tree-detail-primary" data-action="unlock-node" data-node="${node.id}">${node.milestone ? '🚩 ' + t18('Подтвердить веху') : `◇ ${t18('Открыть за')} ${node.cost || 0}`}</button>`
+    ? `<button class="btn tree-detail-primary" data-action="unlock-node" data-node="${node.id}">${kind === 'capability' ? '⚑ ' + t18('Уже сделано — зафиксировать') : `◇ ${t18('Открыть за')} ${node.cost || 0} ${t18('очк. бонусов')}`}</button>`
     : state === 'locked'
       ? `<p class="tree-detail-reason"><span aria-hidden="true">🔒</span>${esc(reason || t18('Пока недоступно'))}</p>`
-      : `<p class="tree-detail-reason is-unlocked"><span aria-hidden="true">✓</span>${t18('Бонус уже действует')}</p>`;
+      : `<p class="tree-detail-reason is-unlocked"><span aria-hidden="true">✓</span>${kind === 'capability' ? t18('Веха зафиксирована') : t18('Игровой бонус действует')}</p>`;
+  const source = treeNodeClaimSource(node), date = treeClaimDateLabel(node);
+  const capabilityBody = `<div class="tree-detail-grid tree-detail-capability">
+      <div><b>${t18('Что считается результатом')}</b><p data-noi18n>${esc(treeNodeCriterion(node) || t18('Критерий ещё не настроен'))}</p></div>
+      ${treeNodeNextAction(node) ? `<div><b>${t18('Следующий шаг')}</b><p data-noi18n>${esc(treeNodeNextAction(node))}</p></div>` : ''}
+      ${node.unlocked ? `<div><b>${t18('Источник')}</b><p>${source === 'import' ? t18('Импортировано') : t18('Самоподтверждение')}${date ? ` · ${esc(date)}` : ''}</p>${node.proofNote ? `<p class="tree-v4-proof" data-noi18n>${esc(node.proofNote)}</p>` : ''}</div>` : ''}
+      <div><b>${t18('Требования')}</b><div class="tree-detail-reqs">${requirementText}</div></div></div>`;
+  const practiceBody = `<p class="tree-v4-note"><strong>${t18('Игровая практика')}.</strong> ${t18('Этот узел меняет Satoru, но не подтверждает мастерство в реальной жизни.')}</p>
+    <div class="tree-detail-grid"><div><b>${t18('В игре')}</b><div class="tree-detail-perks">${perks}</div></div><div><b>${t18('Требования')}</b><div class="tree-detail-reqs">${requirementText}</div></div></div>`;
   return `<section class="tree-detail" id="tree-node-detail" tabindex="-1" aria-labelledby="tree-node-detail-title">
-    <div class="tree-detail-head"><div><span class="tree-detail-kicker ${state}">${stateIcon} ${stateLabel}</span><h4 id="tree-node-detail-title" data-noi18n>${esc(displayTitle)}</h4></div><button class="tree-detail-close" data-action="tree-detail-close" data-node="${node.id}" aria-label="${t18('Закрыть')}">✕</button></div>
+    <div class="tree-detail-head"><div><span class="tree-detail-kicker ${state}">${kind === 'capability' ? t18('Реальный путь') : t18('Игровой бонус')} · ${stateIcon} ${stateLabel}</span><h4 id="tree-node-detail-title" data-noi18n>${esc(displayTitle)}</h4></div><button class="tree-detail-close" data-action="tree-detail-close" data-node="${node.id}" aria-label="${t18('Закрыть')}">✕</button></div>
     ${displayDesc ? `<p class="tree-detail-copy" data-noi18n>${esc(displayDesc)}</p>` : ''}
-    <div class="tree-detail-grid"><div><b>${t18('Бонус')}</b><div class="tree-detail-perks">${perks}</div></div><div><b>${t18('Требования')}</b><div class="tree-detail-reqs">${requirementText}</div></div></div>
+    ${kind === 'capability' ? capabilityBody : practiceBody}
     <div class="tree-detail-actions">${action}</div>
   </section>`;
 }
@@ -18821,7 +19027,7 @@ function perkChip(p) {
 }
 // Панель активных пассивок сферы (суммарно по взятым узлам).
 function skillActivePerks(id) {
-  const sp = skillPerks(id), keys = Object.keys(sp);
+  const sp = skillPerks(id), keys = Object.keys(sp).filter((key) => PERK_KINDS[key]);
   if (!keys.length) return `<span class="muted">${t('Пока ничего не открыто — бери узлы ниже')}</span>`;
   return keys.map((k) => `<span class="perk-active">${PERK_KINDS[k].icon} ${esc(t(PERK_KINDS[k].fmt(sp[k])))}</span>`).join('');
 }
@@ -18840,91 +19046,85 @@ function treeLoadErrorHTML() {
     </section>
   </div>`;
 }
+function treeCapabilityPath(tree) {
+  const source = (tree && tree.nodes || []).filter((node) => treeNodeKind(node) === 'capability');
+  const byId = new Map(source.map((node) => [node.id, node])), pending = source.slice(), ordered = [], resolved = new Set();
+  while (pending.length) {
+    let index = pending.findIndex((node) => (node.requires || []).filter((id) => byId.has(id)).every((id) => resolved.has(id)));
+    if (index < 0) index = 0; // повреждённый/ветвящийся legacy-граф остаётся видимым и доступным для ремонта
+    const [node] = pending.splice(index, 1); ordered.push(node); resolved.add(node.id);
+  }
+  return ordered;
+}
+function treeClaimTrace(node) {
+  const source = treeNodeClaimSource(node), date = treeClaimDateLabel(node);
+  return [source === 'import' ? t('Импортировано') : t('Самоподтверждение'), date].filter(Boolean).join(' · ');
+}
+function treePathHTML(id, tree) {
+  const path = treeCapabilityPath(tree), claimed = path.filter((node) => node.unlocked);
+  const next = path.find((node) => !node.unlocked && nodeUnlockable(id, node)) || null;
+  const future = path.filter((node) => !node.unlocked && node !== next);
+  const traceRows = claimed.slice(-3).reverse().map((node) => `<article class="tree-v4-trace-item">
+    <span class="tree-v4-trace-state" aria-hidden="true">✓</span><div><h4 data-noi18n>${esc(treeNodeCopy(node, 'title'))}</h4>
+    <p class="tree-v4-trace-meta">${esc(treeClaimTrace(node))}</p>${node.proofNote ? `<p class="tree-v4-proof" data-noi18n>${esc(node.proofNote)}</p>` : ''}</div></article>`).join('');
+  const olderTrace = claimed.length > 3 ? `<details class="tree-v4-future"><summary>${t('Показать весь путь')} · ${claimed.length}</summary><div class="tree-v4-trace-list">${claimed.slice(0, -3).reverse().map((node) => `<article class="tree-v4-trace-item"><span class="tree-v4-trace-state" aria-hidden="true">✓</span><div><h4 data-noi18n>${esc(treeNodeCopy(node, 'title'))}</h4><p class="tree-v4-trace-meta">${esc(treeClaimTrace(node))}</p>${node.proofNote ? `<p class="tree-v4-proof" data-noi18n>${esc(node.proofNote)}</p>` : ''}</div></article>`).join('')}</div></details>` : '';
+  const nextCard = next ? `<article class="tree-v4-next" aria-labelledby="tree-v4-next-title">
+      <div class="tree-v4-next-head"><span class="tree-v4-kicker">⚑ ${t('Следующая реальная веха')}</span><h3 id="tree-v4-next-title" data-noi18n>${esc(treeNodeCopy(next, 'title'))}</h3></div>
+      <div class="tree-v4-next-grid"><div><b>${t('Что считается результатом')}</b><p data-noi18n>${esc(treeNodeCriterion(next) || t('Критерий ещё не настроен'))}</p></div>
+      ${treeNodeNextAction(next) ? `<div><b>${t('Следующий шаг')}</b><p data-noi18n>${esc(treeNodeNextAction(next))}</p></div>` : `<div><b>${t('Следующий шаг')}</b><p>${t('Настрой путь с Тенью — она предложит конкретное действие для этой вехи.')}</p></div>`}</div>
+      <div class="tree-v4-actions">${treeNodeNextAction(next) ? `<button class="btn" data-action="tree-plan-step" data-node="${esc(next.id)}" ${State._treePlanBusy === next.id ? 'disabled' : ''}>${State._treePlanBusy === next.id ? t('Сохраняю…') : t('Добавить шаг в план')}</button>` : `<button class="btn" data-action="treemap-open">${t('Настроить путь с Тенью')}</button>`}
+      <button class="btn ghost" data-action="unlock-node" data-node="${esc(next.id)}">${t('Уже сделано — зафиксировать')}</button></div>
+    </article>` : path.length ? `<article class="tree-v4-next is-complete"><span class="tree-v4-kicker">✓ ${t('Текущий путь пройден')}</span><h3>${t('Все настроенные вехи уже в твоей истории.')}</h3><p>${t('Можно остановиться здесь или настроить новый участок пути — без обнуления пройденного.')}</p><div class="tree-v4-actions"><button class="btn" data-action="treemap-open">${t('Настроить продолжение')}</button></div></article>` : `<article class="tree-v4-next is-empty"><span class="tree-v4-kicker">${t('Реальный путь')}</span><h3>${t('Здесь появятся результаты, которые важны именно тебе.')}</h3><p>${t('Тень соберёт короткую цепочку: результат, критерий и ближайшее действие. Игровые бонусы останутся отдельно.')}</p><div class="tree-v4-actions"><button class="btn" data-action="treemap-open">${t('Настроить путь с Тенью')}</button></div></article>`;
+  const futureBlock = future.length ? `<details class="tree-v4-future"><summary>${t('Впереди')} · ${future.length}</summary><div class="tree-v4-future-list">${future.map((node) => `<article class="tree-v4-future-item"><span aria-hidden="true">○</span><div><h4 data-noi18n>${esc(treeNodeCopy(node, 'title'))}</h4><p data-noi18n>${esc(treeNodeCriterion(node))}</p></div></article>`).join('')}</div></details>` : '';
+  return `<section class="card tree-v4-path" id="tree-path-region" aria-label="${t('Реальный путь')}">
+    ${nextCard}
+    ${claimed.length ? `<section class="tree-v4-trace" aria-labelledby="tree-v4-trace-title"><div class="tree-v4-section-head"><span class="tree-v4-kicker">${t('Постоянный след')}</span><h3 id="tree-v4-trace-title">${t('Твой путь')}</h3></div><div class="tree-v4-trace-list">${traceRows}</div>${olderTrace}</section>` : ''}
+    ${futureBlock}
+  </section>`;
+}
+function treePracticeNodesHTML(id, tree, sk, edit, recId) {
+  return tree.nodes.map((n) => {
+    const displayTitle = treeNodeCopy(n, 'title'), displayDesc = treeNodeCopy(n, 'desc');
+    const kind = treeNodeKind(n), st = treeNodeState(id, n), stateLabel = treeNodeStateLabel(st, n), stateIcon = treeNodeStateIcon(st, n);
+    const sel = State.treeSelNode === n.id, rec = n.id === recId, cap = n.capstone ? ' capstone' : '', semantic = kind === 'capability' ? ' milestone' : ' practice';
+    const chips = kind === 'practice' ? nodePerks(n).map(perkChip).join('') : '';
+    const costLine = kind === 'capability' ? (n.unlocked ? t('Подтверждено') : t('Реальная веха')) : `◈ ${n.cost || 0}`;
+    const reqNames = treeNodeRequirements(id, n).map((item) => treeNodeCopy(item, 'title')).join(', ');
+    const accessibleName = `${kind === 'capability' ? t('Реальная веха') : t('Игровой бонус')}. ${displayTitle}. ${stateLabel}. ${displayDesc}${reqNames ? `. ${t('Требования')}: ${reqNames}` : ''}`;
+    return `<button type="button" class="tree-node ${edit ? 'editing' : st}${cap}${semantic}${rec ? ' recommend' : ''} ${sel ? 'sel' : ''}" style="left:${n.x}px;top:${n.y}px;--c:${esc(sk.color)}" data-node="${n.id}" data-action="${edit ? 'tree-sel-node' : 'tree-select-node'}" aria-pressed="${sel}" aria-label="${esc(accessibleName)}">
+      ${n.capstone ? '<span class="tn-crown" aria-hidden="true">♛</span>' : ''}<span class="tn-kind">${kind === 'capability' ? t('Реальная веха') : t('Игровой бонус')}</span>
+      <span class="tn-state ${st}"><span aria-hidden="true">${stateIcon}</span>${stateLabel}</span><span class="tn-title" data-noi18n>${esc(displayTitle)}</span><span class="tn-perks">${chips}</span><span class="tn-cost">${costLine}</span></button>`;
+  }).join('');
+}
+function treePracticesHTML(id, tree, sk, edit, avail, earned, spent) {
+  const shownTree = edit ? tree : { ...tree, nodes: tree.nodes.filter((node) => treeNodeKind(node) === 'practice') };
+  const { width, height } = treeBounds(shownTree), lines = treeLinesHTML(shownTree, sk.color);
+  const available = shownTree.nodes.filter((node) => !node.capstone && nodeUnlockable(id, node)).sort((a, b) => (Number(a.cost) || 0) - (Number(b.cost) || 0));
+  const recId = !edit && available[0] ? available[0].id : null;
+  const nodes = treePracticeNodesHTML(id, shownTree, sk, edit, recId), overlapCount = treeOverlapCount(tree);
+  const controls = `<div class="tree-ctrls"><div class="tree-points" title="${t('Заработано')}: ${earned} · ${t('Вложено')}: ${spent}">◈ <b>${avail}</b> ${t('очк. бонусов')}</div>
+    ${edit ? `<button class="btn ghost sm" data-action="tree-add-node">+ ${t('Узел')}</button>${overlapCount ? `<button class="btn ghost sm" data-action="tree-arrange-overlaps">↔ ${t('Развести наложения')} · ${overlapCount}</button>` : ''}` : ''}
+    <button class="btn ${edit ? '' : 'ghost'} sm" data-action="toggle-tree-edit">${edit ? `✓ ${t('Готово')}` : `✎ ${t('Редактор')}`}</button></div>`;
+  const guide = (!edit && !isDiscovered('guide:tree') && !guideV3ContextActive('tree', 'tree-seen')) ? `<details class="card tree-guide"><summary><span>${t('Как работают игровые бонусы')}</span><small>${t('Дела → уровень сферы → очко бонусов → игровой эффект')}</small></summary><div class="tg-row">${typeof tutMascotHTML === 'function' ? tutMascotHTML() : ''}<div class="tg-say"><b>${t('Это игровой слой Satoru.')}</b><ol><li>${t('Дела поднимают уровень практики в сфере и дают очки бонусов.')}</li><li>${t('Очки открывают только эффекты внутри Satoru: XP, награды, щит серии или связь с питомцем.')}</li><li>${t('Реальные способности подтверждаются отдельно во вкладке «Путь».')}</li></ol></div></div><div class="tg-acts"><button class="btn sm" data-action="tree-guide-ok">${t('Понятно ✓')}</button></div></details>` : '';
+  const detail = edit ? treeNodePanel(id, tree) : treeNodeDetailPanel(id, shownTree);
+  return `<section class="card tree-map-card tree-v4-practices" aria-labelledby="tree-practices-title"><div class="tree-head"><h3 id="tree-practices-title">${t('Игровые бонусы')}</h3>${controls}</div>
+    <p class="tree-v4-note"><strong>${t('Игровой слой')}.</strong> ${t('Эти узлы меняют Satoru, но не подтверждают мастерство в реальной жизни.')}</p>
+    ${edit ? '' : `<div class="tree-active"><span class="ta-label">${t('Активные бонусы')}:</span> ${skillActivePerks(id)}</div>`}
+    <p class="tree-map-lede">${edit ? t('Выбери узел для настройки. Перетаскивай мышью или используй кнопки перемещения в панели.') : t('Выбери игровой бонус, чтобы увидеть эффект и требования.')}</p>
+    <div class="tree-scroll tree-v4-practice-map" id="tree-map-region" role="region" aria-label="${t('Карта игровых бонусов')}" tabindex="0" data-node-count="${shownTree.nodes.length}"><div class="tree ${edit ? 'edit' : ''}" style="width:${width}px;height:${height}px"><svg class="tree-lines" width="${width}" height="${height}" aria-hidden="true">${lines}</svg>${nodes}</div></div>${detail}</section>${guide}`;
+}
 function renderTree() {
   if (State._treeLoadError || State._treeLoadBusy) return treeLoadErrorHTML();
   if (!State.treeSkill || !State.tree[State.treeSkill]) State.treeSkill = State.settings.skills[0] && State.settings.skills[0].id;
-  // ⚠️ дерево НЕ называть `t` — затенит глобальную функцию перевода t() (третье попадание этой мины: fb_mrkzunjjmn61, questRow, здесь)
   const id = State.treeSkill, sk = skillById(id), tree = State.tree[id];
-  const tabs = State.settings.skills.map((s) => `<button type="button" class="tree-tab ${s.id === id ? 'active' : ''}" data-action="select-tree" data-skill="${s.id}" style="--c:${esc(s.color)}" aria-pressed="${s.id === id}" aria-controls="tree-map-region">${esc(skillLabel(s.id))} <span class="muted">${t('ур.')} ${skillLevelOf(s.id)}</span></button>`).join('');
+  const tabs = State.settings.skills.map((s) => `<button type="button" class="tree-tab ${s.id === id ? 'active' : ''}" data-action="select-tree" data-skill="${s.id}" style="--c:${esc(s.color)}" aria-pressed="${s.id === id}" aria-controls="tree-route-content">${esc(skillLabel(s.id))} <span class="muted">${t('ур.')} ${skillLevelOf(s.id)}</span></button>`).join('');
   if (!tree) return `<div class="card">${tabs}</div>`;
-  const edit = State.treeEdit, avail = treePointsAvailable(id), earned = treePointsEarned(id), spent = treePointsSpent(id), { width, height } = treeBounds(tree);
-  const lines = treeLinesHTML(tree, sk.color);
-  // рекомендованный следующий узел = самый дешёвый доступный
-  let recId = null;
-  if (!edit) { const ups = tree.nodes.filter((n) => !n.milestone && !n.capstone && nodeUnlockable(id, n)).sort((a, b) => (a.cost || 0) - (b.cost || 0)); recId = ups[0] && ups[0].id; }
-  const nodes = tree.nodes.map((n) => {
-    const displayTitle = treeNodeCopy(n, 'title'), displayDesc = treeNodeCopy(n, 'desc');
-    const st = treeNodeState(id, n), stateLabel = treeNodeStateLabel(st, n), stateIcon = treeNodeStateIcon(st, n);
-    const sel = State.treeSelNode === n.id, rec = n.id === recId, cap = n.capstone ? ' capstone' : '';
-    const ms = n.milestone ? ' milestone' : '';
-    const chips = nodePerks(n).map(perkChip).join('');
-    const costLine = n.milestone
-      ? (n.unlocked ? '🚩 ' + t('взята') : t('Веха жизни'))
-      : `◈ ${n.cost || 0}`;
-    const reqNames = treeNodeRequirements(id, n).map((item) => treeNodeCopy(item, 'title')).join(', ');
-    const accessibleName = `${displayTitle}. ${stateLabel}. ${displayDesc}${reqNames ? `. ${t('Требования')}: ${reqNames}` : ''}`;
-    return `<button type="button" class="tree-node ${edit ? 'editing' : st}${cap}${ms}${rec ? ' recommend' : ''} ${sel ? 'sel' : ''}" style="left:${n.x}px;top:${n.y}px;--c:${esc(sk.color)}" data-node="${n.id}" data-action="${edit ? 'tree-sel-node' : 'tree-select-node'}" aria-pressed="${sel}" aria-label="${esc(accessibleName)}">
-      ${n.capstone ? '<span class="tn-crown" aria-hidden="true">👑</span>' : ''}
-      <span class="tn-state ${st}"><span aria-hidden="true">${stateIcon}</span>${stateLabel}</span>
-      <span class="tn-title" data-noi18n>${esc(displayTitle)}</span>
-      <span class="tn-perks">${chips}</span>
-      <span class="tn-cost">${costLine}</span></button>`;
-  }).join('');
-  const overlapCount = treeOverlapCount(tree);
-  const controls = `<div class="tree-ctrls">
-      <div class="tree-points" title="${t('Заработано')}: ${earned} · ${t('Вложено')}: ${spent}">◈ <b>${avail}</b> ${t('очк.')}</div>
-      ${edit ? `<button class="btn ghost sm" data-action="tree-add-node">+ ${t('Узел')}</button>${overlapCount ? `<button class="btn ghost sm" data-action="tree-arrange-overlaps">↔ ${t('Развести наложения')} · ${overlapCount}</button>` : ''}` : `<button class="btn ghost sm" data-action="treemap-open">🤖 ${t('Личная карта')}</button>`}
-      <button class="btn ${edit ? '' : 'ghost'} sm" data-action="toggle-tree-edit">${edit ? `✓ ${t('Готово')}` : `✏️ ${t('Редактор')}`}</button>
-    </div>`;
-  const recNode = recId && tree.nodes.find((n) => n.id === recId);
-  const unlocked = tree.nodes.filter((n) => n.unlocked).length;
-  const treeHero = `<section class="card tree-hero" style="--c:${esc(sk.color)}">
-      <div>
-        <span class="th-kicker">Satoru · ${t('Карта развития')}</span>
-        <h2 id="tree-route-title">${esc(skillLabel(id))}</h2>
-        <p>${edit ? t('Режим архитектора: двигай узлы и собирай карту развития под себя.') : recNode ? `${t('Следующий лучший узел')}: «<span data-noi18n>${esc(treeNodeCopy(recNode, 'title'))}</span>».` : avail > 0 ? t('Очки готовы — выбери новый бонус на карте.') : t('Карта ждёт новый опыт. Делай дела в сфере, чтобы открыть следующий узел.')}</p>
-      </div>
-      <div class="tree-hero-stats">
-        <span><b>${avail}</b><small>${t('очк.')}</small></span>
-        <span><b>${unlocked}/${tree.nodes.length}</b><small>${t('узлов')}</small></span>
-        <span><b>${spent}</b><small>${t('вложено')}</small></span>
-      </div>
-    </section>`;
-  // Гайд Тени по дереву (fb_mrnjz1qsjmk8 — 3-й репорт «дерево непонятно»): движок v2 готов,
-  // но петля «дела → уровень → очко → узел → бонус» нигде не объяснена. Карточка висит,
-  // пока игрок сам не скажет «понятно» (persist через discovered) — потом остаётся тултип.
-  const treeGuide = (!edit && !isDiscovered('guide:tree') && !guideV3ContextActive('tree', 'tree-seen')) ? `
-    <details class="card tree-guide">
-      <summary><span>${t('Как работает карта')}</span><small>${t('Дела → уровень → очко → узел → бонус')}</small></summary>
-      <div class="tg-row">${(typeof tutMascotHTML === 'function') ? tutMascotHTML() : ''}
-        <div class="tg-say">
-          <b>${t('Смотри, тут всё честно:')}</b>
-          <ol>
-            <li>${t('Дела в сфере поднимают её уровень. Каждый уровень даёт ◈ очко — оно уже твоё, заработано.')}</li>
-            <li>${t('Очко вкладываешь в узел — получаешь пассивный бонус: +XP, бонус дневных наград, щит серии, связь со мной…')}</li>
-            <li>${t('Дорожки ведут к 👑 капстоуну — за него дают звание. Подсвеченный узел — мой совет: самый дешёвый из доступных.')}</li>
-            <li>${t('🚩 Вехи справа — реальные достижения сферы. Они берутся жизнью, не очками — и каждая взятая даёт +1 ◈.')}</li>
-          </ol>
-          <span class="muted">${t('А в ✏️ Редакторе можно перестроить всю карту под себя — это твоё дерево, не моё.')}</span>
-        </div></div>
-      <div class="tg-acts"><button class="btn sm" data-action="tree-guide-ok">${t('Понятно ✓')}</button>
-        ${avail > 0 ? `<span class="tg-hint">◈ ${avail} ${t('уже ждут — попробуй прямо сейчас')}</span>` : `<span class="tg-hint muted">${t('Очков пока нет — они придут с уровнями сферы')}</span>`}</div>
-    </details>` : '';
-  const detail = edit ? treeNodePanel(id, tree) : treeNodeDetailPanel(id, tree);
-  return `
-    <div class="tree-shell" data-guide-target="tree-overview" aria-labelledby="tree-route-title">
-    ${treeHero}
-    <div class="card tree-tabs-card"><div class="tree-tabs" role="group" aria-label="${t('Сфера карты')}">${tabs}</div></div>
-    <div class="card tree-map-card">
-      <div class="tree-head"><h3>🌳 ${esc(skillLabel(id))}</h3>${controls}</div>
-      ${edit ? '' : `<div class="tree-active"><span class="ta-label">${t('Активные бонусы')}:</span> ${skillActivePerks(id)}</div>`}
-      <p class="tree-map-lede">${edit ? t('Выбери узел для настройки. Перетаскивай мышью или используй кнопки перемещения в панели.') : t('Выбери узел, чтобы увидеть полное описание и действие. Карта прокручивается в обе стороны.')}</p>
-      <div class="tree-scroll" id="tree-map-region" role="region" aria-label="${t('Карта узлов')}" tabindex="0" data-node-count="${tree.nodes.length}"><div class="tree ${edit ? 'edit' : ''}" style="width:${width}px;height:${height}px">
-        <svg class="tree-lines" width="${width}" height="${height}" aria-hidden="true">${lines}</svg>${nodes}</div></div>
-      ${detail}
-    </div>
-    ${treeGuide}
-    </div>`;
+  const edit = State.treeEdit, layer = edit ? 'practices' : (State.treeLayer === 'practices' ? 'practices' : 'path');
+  const avail = treePointsAvailable(id), earned = treePointsEarned(id), spent = treePointsSpent(id), claimed = treeMilestonesTaken(id);
+  const treeHero = `<section class="card tree-hero" style="--c:${esc(sk.color)}"><div><span class="th-kicker">Satoru · ${t('Карта развития')}</span><h2 id="tree-route-title">${esc(skillLabel(id))}</h2><p>${t('Вехи фиксируют то, что ты реально можешь. Игровые бонусы меняют только Satoru.')}</p></div><div class="tree-hero-stats"><span><b>${skillLevelOf(id)}</b><small>${t('Практика')}</small></span><span><b>${claimed}</b><small>${t('вех подтверждено')}</small></span><span><b>${avail}</b><small>${t('очк. бонусов')}</small></span></div></section>`;
+  const layerSwitch = `<div class="tree-v4-switch" role="group" aria-label="${t('Слой карты')}"><button type="button" class="tree-v4-tab ${layer === 'path' ? 'is-active' : ''}" data-action="tree-layer" data-layer="path" aria-pressed="${layer === 'path'}" ${edit ? 'disabled' : ''}>⚑ ${t('Путь')}</button><button type="button" class="tree-v4-tab ${layer === 'practices' ? 'is-active' : ''}" data-action="tree-layer" data-layer="practices" aria-pressed="${layer === 'practices'}">◇ ${t('Игровые бонусы')}</button></div>`;
+  const content = layer === 'path' ? treePathHTML(id, tree) : treePracticesHTML(id, tree, sk, edit, avail, earned, spent);
+  return `<div class="tree-shell" data-guide-target="tree-overview" aria-labelledby="tree-route-title">${treeHero}<div class="card tree-tabs-card"><div class="tree-tabs" role="group" aria-label="${t('Сфера карты')}">${tabs}</div></div>${layerSwitch}<div id="tree-route-content">${content}</div></div>`;
 }
 // Живая перерисовка линий при перетаскивании (без полного render)
 function updateTreeLines() {
@@ -25142,6 +25342,7 @@ async function guideV3OpenContextChapter() {
   if (chapter === 'tree') {
     const skill = topSkills().find((item) => item.id === context.treeSkillId);
     if (skill) State.treeSkill = skill.id;
+    State.treeLayer = 'practices'; State.treeEdit = false; State.treeSelNode = null;
   }
   if (chapter === 'systemTheme') State.settingsSection = 'experience';
   State.view = guideV3RouteForState(guideV3State());
@@ -25330,7 +25531,10 @@ function dripSeen(open, returnFocus = null) {
   t.active = false; t.mode = 'day1'; const view = open && d && d.view, modal = open && d && d.modal; t.dripId = null;
   Store.save('settings', State.settings);
   if (modal === 'path') { tutorialPaint(); try { showPathChoiceModal({ source: 'drip', returnFocus }); } catch {} return; }
-  if (view) { State.view = view; try { markDiscovered(view); } catch {} render(); } else tutorialPaint();
+  if (view) {
+    if (view === 'tree') { State.treeLayer = d && d.id === 'd_treemap' ? 'path' : 'practices'; State.treeEdit = false; State.treeSelNode = null; }
+    State.view = view; try { markDiscovered(view); } catch {} render();
+  } else tutorialPaint();
 }
 let _tutBound = false;
 function tutorialBindGlobals() {
@@ -27102,6 +27306,20 @@ async function onClick(e) {
     if (!State.settings.skills.some((skill) => skill.id === sid)) return;
     State.treeSkill = sid; State.treeSelNode = null; State._treeViewport = null;
     State._treeFocusAfterCommit = `[data-action="select-tree"][data-skill="${CSS.escape(sid)}"]`; render();
+  } else if (action === 'tree-layer') {
+    const layer = el.dataset.layer;
+    if (!['path', 'practices'].includes(layer) || (State.treeEdit && layer === 'path')) return;
+    State.treeLayer = layer; State.treeSelNode = null; State._treeViewport = null;
+    State._treeFocusAfterCommit = `[data-action="tree-layer"][data-layer="${layer}"]`; render();
+  } else if (action === 'tree-plan-step') {
+    const sid = State.treeSkill, node = State.tree[sid]?.nodes.find((item) => item.id === el.dataset.node);
+    const title = node && treeNodeNextAction(node); if (!node || treeNodeKind(node) !== 'capability' || !title || State._treePlanBusy) return;
+    const task = { id: uid(), title: title.slice(0, 160), skillId: sid, skillIds: [sid], estimateMin: 30, difficulty: 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, treeNodeId: node.id, createdAt: new Date().toISOString() };
+    const nextTasks = [...State.tasks, task]; State._treePlanBusy = node.id; State._treeFocusAfterCommit = `[data-action="tree-plan-step"][data-node="${CSS.escape(node.id)}"]`; render();
+    const saved = await Store.saveNow('tasks', nextTasks, () => { State.tasks = nextTasks; return true; });
+    State._treePlanBusy = '';
+    if (!saved) { toast(t('Не удалось сохранить шаг. Проверь соединение и повтори.')); render(); return; }
+    track('tree:path-step-added'); toast(t('Шаг добавлен в план на сегодня')); render();
   } else if (action === 'tree-select-node') {
     const nodeId = el.dataset.node;
     const node = State.tree[State.treeSkill]?.nodes.find((item) => item.id === nodeId);
@@ -27109,14 +27327,14 @@ async function onClick(e) {
     State.treeSelNode = nodeId;
     const treeGuide = guideV3ContextActive('tree', 'tree-seen');
     const candidateId = String(guideV3State()?.chapterMeta?.tree?.candidateId || '');
-    if (treeGuide && candidateId === String(nodeId) && !node.milestone && !node.capstone && nodeUnlockable(State.treeSkill, node)) {
+    if (treeGuide && candidateId === String(nodeId) && treeNodeKind(node) === 'practice' && !node.capstone && nodeUnlockable(State.treeSkill, node)) {
       await guideV3CompleteContext('tree', 'tree-seen', nodeId, { repaint: false, discover: 'guide:tree' });
     }
     treeFocusAfterCommit('#tree-node-detail'); render();
   } else if (action === 'unlock-node') {
     const sid = State.treeSkill, node = State.tree[sid] && State.tree[sid].nodes.find((n) => n.id === el.dataset.node); if (!node) return;
     if (!nodeUnlockable(sid, node)) { toast(treeNodeLockReason(sid, node) || t('Этот узел уже открыт')); return; }
-    if (node.milestone) { openMilestoneClaim(sid, node.id); return; } // веха берётся жизнью — модалка честности
+    if (treeNodeKind(node) === 'capability') { openMilestoneClaim(sid, node.id); return; }
     node.unlocked = true; Store.save('skilltree', State.tree);
     // фикс: тост показывал legacy-поле perkXpPct (undefined для v2-узлов) — собираем лейбл из perks
     const pl = nodePerks(node).map((p) => PERK_KINDS[p.kind] ? PERK_KINDS[p.kind].fmt(p.val) : '').filter(Boolean).join(' · ');
@@ -27125,7 +27343,7 @@ async function onClick(e) {
 
   // --- Редактор дерева навыков ---
   } else if (action === 'toggle-tree-edit') {
-    State.treeEdit = !State.treeEdit; State.treeSelNode = null;
+    State.treeEdit = !State.treeEdit; State.treeLayer = 'practices'; State.treeSelNode = null;
     treeFocusAfterCommit('[data-action="toggle-tree-edit"]'); render();
   } else if (action === 'tree-sel-node') {
     const nodeId = el.dataset.node || null;
@@ -27135,7 +27353,7 @@ async function onClick(e) {
     treeFocusAfterCommit(nodeId ? '#tree-node-panel' : previousNodeId ? `[data-action="tree-sel-node"][data-node="${CSS.escape(previousNodeId)}"]` : '[data-action="toggle-tree-edit"]'); render();
   } else if (action === 'tree-add-node') {
     const t = State.tree[State.treeSkill]; if (!t) return;
-    const pos = nextTreeNodePosition(t), nn = { id: 'nd_' + uid(), title: t18('Новый узел'), desc: '', titleCustom: true, descCustom: true, cost: 1, requires: [], perkXpPct: 5, unlocked: false, x: pos.x, y: pos.y };
+    const pos = nextTreeNodePosition(t), nn = { id: 'nd_' + uid(), title: t18('Новый узел'), desc: '', titleCustom: true, descCustom: true, kind: 'practice', milestone: false, cost: 1, requires: [], perkXpPct: 5, unlocked: false, x: pos.x, y: pos.y };
     t.nodes.push(nn); State.treeSelNode = nn.id; Store.save('skilltree', State.tree);
     treeFocusAfterCommit('#tree-node-panel'); render();
   } else if (action === 'tree-arrange-overlaps') {
@@ -27155,6 +27373,7 @@ async function onClick(e) {
     const t = State.tree[State.treeSkill]; if (!t) return;
     const nid = el.dataset.node;
     const node = t.nodes.find((item) => item.id === nid); if (!node) return;
+    if (treeNodeKind(node) === 'capability' && node.unlocked) { toast(t('Подтверждённая веха остаётся в истории и не удаляется.')); return; }
     if (!confirm(`${t('Удалить узел')} «${treeNodeCopy(node, 'title')}»? ${t('Связи с ним будут сняты.')}`)) return;
     t.nodes = t.nodes.filter((n) => n.id !== nid);
     for (const n of t.nodes) n.requires = (n.requires || []).filter((r) => r !== nid); // снять висящие связи
@@ -27238,10 +27457,22 @@ async function onClick(e) {
   } else if (action === 'treemap-run') {
     treeMapRun(); return;
   } else if (action === 'treemap-apply') {
+    if (State._treeMapBusy) return;
     const picked = [...document.querySelectorAll('#treemap-result [data-treemap]:checked')]
       .map((c) => _treeMapItems[Number(c.dataset.treemap)]).filter(Boolean);
     if (!picked.length) { toast(t('Ничего не выбрано')); return; }
-    const n = applyPersonalMap(State.treeSkill, picked);
+    const sid = State.treeSkill, snapshot = structuredClone(State.tree[sid]);
+    const n = applyPersonalMap(sid, picked); if (!n) return;
+    State._treeMapBusy = true;
+    document.querySelectorAll('#treemap-modal button, #treemap-modal input').forEach((control) => { control.disabled = true; });
+    const result = document.getElementById('treemap-result'); if (result) result.insertAdjacentHTML('beforeend', `<p class="tree-claim-status" id="treemap-save-status" aria-live="polite">${t('Сохраняю путь…')}</p>`);
+    const saved = await Store.saveNow('skilltree', State.tree); State._treeMapBusy = false;
+    if (!saved) {
+      State.tree[sid] = snapshot;
+      document.querySelectorAll('#treemap-modal button, #treemap-modal input').forEach((control) => { control.disabled = false; });
+      const status = document.getElementById('treemap-save-status'); if (status) status.textContent = t('Не удалось сохранить путь. Ничего не изменено — попробуй снова.');
+      return;
+    }
     closeTreeDialog('treemap-modal');
     track('tree:aimap-apply');
     toast(`🚩 ${t('Личная карта принята')}: ${n} ${t('вех')} — ${t('первая уже ждёт внизу тропы')}`);
@@ -27249,14 +27480,32 @@ async function onClick(e) {
   } else if (action === 'ms-claim-yes') {
     const sid = el.dataset.skill, tr = State.tree[sid];
     const node = tr && tr.nodes.find((n) => n.id === el.dataset.node);
-    if (!node || node.unlocked || !node.milestone || !nodeUnlockable(sid, node)) {
-      closeTreeDialog('ms-claim');
-      toast(t('Веха больше не доступна — проверь предыдущий шаг'));
+    const status = document.getElementById('ms-claim-status');
+    if (!node || node.unlocked || treeNodeKind(node) !== 'capability' || !nodeUnlockable(sid, node)) {
+      if (status) status.textContent = t('Веха больше не доступна — проверь предыдущий шаг');
+      return;
+    }
+    if (State._treeClaimBusy) return;
+    const proof = String(document.getElementById('ms-claim-proof')?.value || '').trim().slice(0, 500);
+    const snapshot = { unlocked: node.unlocked, claimedAt: node.claimedAt, claimSource: node.claimSource, proofNote: node.proofNote };
+    State._treeClaimBusy = true;
+    document.querySelectorAll('#ms-claim button, #ms-claim textarea').forEach((control) => { control.disabled = true; });
+    if (status) status.textContent = t('Сохраняю веху…');
+    node.unlocked = true; node.claimedAt = new Date().toISOString(); node.claimSource = 'self';
+    if (proof) node.proofNote = proof; else delete node.proofNote;
+    const saved = await Store.saveNow('skilltree', State.tree);
+    State._treeClaimBusy = false;
+    if (!saved) {
+      node.unlocked = snapshot.unlocked;
+      if (snapshot.claimedAt == null) delete node.claimedAt; else node.claimedAt = snapshot.claimedAt;
+      if (snapshot.claimSource == null) delete node.claimSource; else node.claimSource = snapshot.claimSource;
+      if (snapshot.proofNote == null) delete node.proofNote; else node.proofNote = snapshot.proofNote;
+      document.querySelectorAll('#ms-claim button, #ms-claim textarea').forEach((control) => { control.disabled = false; });
+      if (status) status.textContent = t('Не удалось сохранить. Проверь соединение — запись не была изменена.');
+      document.getElementById('ms-claim-proof')?.focus();
       return;
     }
     closeTreeDialog('ms-claim');
-    node.unlocked = true; node.claimedAt = new Date().toISOString();
-    Store.save('skilltree', State.tree);
     // Фаза 2: «Тень записала в летопись» — теперь буквально (журнал компаньона, как чек-ины)
     try {
       const c = ensureCompanion();
@@ -28298,6 +28547,13 @@ function onChange(e) {
     const t = State.tree[State.treeSkill], n = t && t.nodes.find((x) => x.id === el.dataset.node); if (!n) return;
     const f = el.dataset.field;
     if (f === 'cost' || f === 'perkXpPct') n[f] = Math.max(0, Math.round(Number(el.value) || 0));
+    else if (f === 'kind') {
+      if (!TREE_NODE_KINDS.has(el.value)) return;
+      if (treeNodeKind(n) === 'capability' && n.unlocked && el.value !== 'capability') { toast(t('Тип подтверждённой вехи нельзя изменить — так сохраняется история.')); render(); return; }
+      n.kind = el.value; n.milestone = el.value === 'capability';
+      if (n.milestone) { n.cost = 0; n.perks = []; delete n.perkXpPct; }
+    }
+    else if (f === 'criterion' || f === 'nextAction') n[f] = el.value.trim().slice(0, f === 'criterion' ? 500 : 300);
     else if (f === 'title' || f === 'desc') {
       n[f] = el.value.trim() || (f === 'title' ? t18('Узел') : '');
       n[f + 'Custom'] = true;
@@ -28309,7 +28565,10 @@ function onChange(e) {
   if (a === 'tree-toggle-req') {
     const t = State.tree[State.treeSkill], n = t && t.nodes.find((x) => x.id === el.dataset.node); if (!n) return;
     const req = el.dataset.req; n.requires = n.requires || [];
-    if (el.checked) { if (!n.requires.includes(req)) n.requires.push(req); }
+    if (el.checked) {
+      if (treeDependencyWouldCycle(t, n.id, req)) { el.checked = false; toast(t('Эта связь создаст цикл. Выбери другой предыдущий узел.')); return; }
+      if (!n.requires.includes(req)) n.requires.push(req);
+    }
     else n.requires = n.requires.filter((r) => r !== req);
     Store.save('skilltree', State.tree);
     treeFocusAfterCommit(`[data-action="tree-toggle-req"][data-node="${CSS.escape(n.id)}"][data-req="${CSS.escape(req)}"]`); render(); return;
@@ -28706,7 +28965,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v203';
+const PWA_CACHE_VERSION = 'satoru-v204';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

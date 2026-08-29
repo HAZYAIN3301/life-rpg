@@ -1,7 +1,7 @@
 /* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    App shell: network-first. Art/media: cache-first. /api/: always live network.
    Bump CACHE whenever the shell or a stable asset URL changes. */
-const CACHE = 'satoru-v203';
+const CACHE = 'satoru-v204';
 const SHELL = [
   'inspiration-import-v1.js', 'browser-companion-discovery-v1.js', 'browser-companion.html', 'browser-companion.css', 'browser-companion-landing-v1.js', 'browser-companion-icon-v1.png',
   'pwa-lifecycle-v1.js',
