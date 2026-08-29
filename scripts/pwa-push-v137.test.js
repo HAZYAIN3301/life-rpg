@@ -59,5 +59,5 @@ test('PWA v137 is localized, accessible while busy, and ships a fresh offline sh
   }
   assert.match(app, /class="card pwa-card" aria-busy="\$\{_pwaInstallBusy \|\| _pushBusy\}"/);
   assert.match(css, /\.pwa-card\[aria-busy="true"\] \.pwa-row/);
-  assert.match(sw, /const CACHE = 'satoru-v197'/);
+  assert.match(sw, /const CACHE = 'satoru-v199'/);
 });

@@ -305,7 +305,7 @@ Apple capabilities не должны превращать ассистента �
 - iOS Screen Time/API управляет iPhone/iPad-контуром; он не закроет Chrome на Mac, Android, Windows или приставку.
 - У каждого устройства должен быть свой enforcement adapter и heartbeat/status.
 - Сервер может синхронизировать policy и безопасные агрегаты, но не должен считать отсутствие телеметрии доказательством соблюдения/срыва.
-- Desktop companion/browser extension — отдельный R3; Android companion — R4; iOS — R5.
+- Browser Companion v199 уже закрывает R3a для явно выбранных сайтов в одном Chromium/Brave-профиле: policy/session/episode и детальная история локальны, Satoru получает только bounded status. Signed desktop companion, native desktop apps и opt-in cross-device protocol остаются R3b; Android companion — R4; iOS — R5.
 - Нельзя запускать только iOS-блокировку и тем самым просто перенести побег на ноутбук.
 
 ## 4. Что не ждать от оплаты Apple Developer

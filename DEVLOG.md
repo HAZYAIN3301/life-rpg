@@ -2,6 +2,15 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-08-29] ✦ Browser Companion v199 — Attention впервые исполняет границу в Brave/Chromium
+
+- Собрано локальное Manifest V3-расширение `extensions/satoru-attention/` и готовый пользовательский ZIP `public/downloads/satoru-attention-v199.zip`. Человек заранее выбирает точный hostname, цель входа, длительность, ожидаемый результат и режим; расширение ставит gate до входа, разрешает сайт только внутри bounded session и показывает boundary после срока.
+- `Trust/Adaptive` допускают не больше одного ограниченного продления. `Control` не имеет обычного продления; отдельный 5-минутный emergency требует причины, 90 секунд ожидания и имеет бюджет один раз за 7 дней. Restart/service-worker sleep, clock rollback, cross-tab race и orphan session не продлевают доступ и не создают false success.
+- Безопасность держится кодом, не обещанием UI: exact-host permission запрашивается явно; permanent host permission есть только для production Satoru; нет `<all_urls>`, telemetry, remote code, account/reward/social API, чтения страницы или серверной отправки browsing history. Policy, purpose, hostname, reason и outcome остаются в `chrome.storage.local`.
+- В Satoru нет новой вкладки или карточки Today. Settings получил одну сворачиваемую строку установки/статуса, а активное окно появляется внутри существующего центра Тени. Read-only bridge раскрывает только версию, число настроенных сайтов и bounded active status; ответ патчит только companion surface и сохраняет Settings draft/focus.
+- Полный mapping остальных названных болей, без обещаний невозможного для PWA, зафиксирован в [`SECRETARY-OS-PAIN-MAP.md`](./SECRETARY-OS-PAIN-MAP.md): S2 Secretary Event Router, S3 единый `Ритм`, S4 Planning Copilot, затем signed desktop/Android/iOS adapters. QA и установка: [`BROWSER-COMPANION-V199-QA.md`](./BROWSER-COMPANION-V199-QA.md).
+- Release gate: browser companion **41/41 PASS**, объединённый Companion + Inspiration Import **64/64 PASS**, Attention/Assistant/Secretary **93/93 PASS**, Guide/version integration **85/85 PASS**, syntax/JSON/diff/ZIP/browser gates PASS. Полный sparse suite **1145/1162 PASS**; 17 известных падений вызваны только отсутствующими в worktree art/font/audio/Piper assets. Art-деревья не менялись.
+
 ## [2026-08-29] ✦ Secretary & Recovery v197 — один центр поддержки вместо панели калькуляторов
 
 - Экран «Сегодня» снова держит один рабочий контур. Из его render tree убраны Founder Pass, «Схватки», «Нагрузка дня», progress trio, отдельный peek заметок, anti-habits и deeper path. Данные и самостоятельные разделы не удалены: Founder Pass перенесён в Settings → Account, заметки открываются из компактного capture bar, завершение дня спрятано в disclosure.

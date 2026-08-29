@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Satoru Attention</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="options">
+  <main class="shell">
+    <div class="brand" aria-label="Satoru Attention">
+      <div class="brand-mark" aria-hidden="true">?</div>
+      <div><strong>Satoru</strong><span data-i18n="companionName">Browser companion</span></div>
+    </div>
+
+    <header>
+      <h1 data-i18n="optionsTitle">Attention boundaries</h1>
+      <p class="lead" data-i18n="optionsLead">Choose one site, one purpose and one limit. You can add more later.</p>
+    </header>
+
+    <section class="card" aria-labelledby="configured-heading">
+      <h2 id="configured-heading" data-i18n="configuredTitle">Configured sites</h2>
+      <div id="site-list" class="site-list"></div>
+      <p id="no-sites" class="muted" data-i18n="noSites">No sites are controlled yet.</p>
+    </section>
+
+    <section class="card section" aria-labelledby="setup-heading">
+      <h2 id="setup-heading" data-i18n="setupTitle">Add one boundary</h2>
+      <p class="muted" data-i18n="setupLead">The browser will ask permission only for the exact hostname you enter.</p>
+      <form id="policy-form" class="stack" novalidate>
+        <div class="row">
+          <label class="field">
+            <span data-i18n="site">Site</span>
+            <select id="site-select" name="site">
+              <option value="tiktok">TikTok</option>
+              <option value="youtube">YouTube</option>
+              <option value="instagram">Instagram</option>
+              <option value="reddit">Reddit</option>
+              <option value="custom" data-i18n="customSite">Custom site</option>
+            </select>
+          </label>
+          <label id="domain-field" class="field" hidden>
+            <span data-i18n="domain">Domain</span>
+            <input id="domain" name="domain" inputmode="url" maxlength="253" data-i18n-placeholder="domainPlaceholder">
+          </label>
+        </div>
+        <div class="row">
+          <label class="field">
+            <span data-i18n="purpose">Purpose</span>
+            <select id="purpose" name="purpose">
+              <option value="publish" data-i18n="purpose_publish">Publish</option>
+              <option value="create" data-i18n="purpose_create">Create or edit</option>
+              <option value="reply" data-i18n="purpose_reply">Reply to people</option>
+              <option value="research" data-i18n="purpose_research">Find specific references</option>
+              <option value="watch" data-i18n="purpose_watch">Watch one saved item</option>
+              <option value="rest" data-i18n="purpose_rest">Rest intentionally</option>
+              <option value="unsure" data-i18n="purpose_unsure">Not sure yet</option>
+            </select>
+          </label>
+          <label class="field">
+            <span data-i18n="mode">Mode</span>
+            <select id="mode" name="mode">
+              <option value="trust" data-i18n="mode_trust">Trust</option>
+              <option value="adaptive" selected data-i18n="mode_adaptive">Adaptive</option>
+              <option value="control" data-i18n="mode_control">Control</option>
+            </select>
+          </label>
+          <label class="field">
+            <span data-i18n="minutes">Minutes</span>
+            <input id="policy-minutes" name="minutes" type="number" inputmode="numeric" min="1" max="240" value="10" required>
+          </label>
+        </div>
+        <label id="policy-outcome-field" class="field">
+          <span data-i18n="outcome">What should remain when you leave?</span>
+          <textarea id="policy-outcome" maxlength="120" data-i18n-placeholder="outcomePlaceholder"></textarea>
+        </label>
+        <p id="options-status" class="status" role="status" aria-live="polite"></p>
+        <button type="submit" class="primary" data-i18n="saveRule">Save boundary</button>
+      </form>
+    </section>
+
+    <aside class="notice section" data-i18n="browserLimit">You can always disable or uninstall a browser extension.</aside>
+    <p class="fine section" data-i18n="privacyLocal">Rules and session details stay in this browser.</p>
+  </main>
+  <script src="core.js"></script>
+  <script src="i18n.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

@@ -282,9 +282,9 @@ test('Guide feature commit is authenticated, account-owned and rejects malformed
 });
 
 test('v195 cache and source contract ship the whole pack together', () => {
-  assert.match(SW, /const CACHE = 'satoru-v197'/);
+  assert.match(SW, /const CACHE = 'satoru-v199'/);
   assert.match(INDEX, /guide-v3\.js\?v=20260829-guide-library-v195-1/);
-  assert.match(INDEX, /app\.js\?v=20260829-secretary-recovery-v197-1/);
+  assert.match(INDEX, /app\.js\?v=20260829-browser-companion-v199-1/);
   assert.match(SERVER, /if \(u === '\/api\/guide\/commit' && req\.method === 'POST'\)/);
   assert.match(SERVER, /commitGuideData[\s\S]*restoreSnapshot/);
 });

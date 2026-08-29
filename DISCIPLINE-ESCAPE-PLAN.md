@@ -2,7 +2,7 @@
 
 > 2026-08-25. Отправная точка — разбор Альберта после реального срыва: почти сутки залипания при полном понимании, что нужно делать.
 > Смежное: `DISCIPLINE-BOUNDARIES-PLAN.md` (развилка вечера, паттерны), `DISCIPLINE-PATHS-PLAN.md` (Доверие/Контроль), `ALTERNEYT.md` (гейты против вины), `NATIVE.md` (стена нативки), `LIFE-CAPTURE-PLAN.md` (эпизоды).
-> **Статус реализации:** R1 опубликован в v176 и собран в один видимый secretary/recovery contour в v197: Attention, возврат, ограниченный отдых и вечер выбираются Тенью по ситуации, а не лежат отдельными панелями. Исторический R2 v179 выпустил первую конечную ручную «Полку возвращения»; этот экран больше не является актуальным продуктовым контрактом. Его преемник **«Вдохновение» v196** остаётся отдельным release candidate до production-проверки. OS-level блокировка остаётся отдельным R0/R3–R5 контуром и не симулируется возможностями PWA.
+> **Статус реализации:** R1 опубликован в v176 и собран в один видимый secretary/recovery contour в v197: Attention, возврат, ограниченный отдых и вечер выбираются Тенью по ситуации, а не лежат отдельными панелями. Исторический R2 v179 выпустил первую конечную ручную «Полку возвращения»; этот экран больше не является актуальным продуктовым контрактом. Его преемник **«Вдохновение» v196** остаётся отдельным release candidate до production-проверки. R3 разделён: локальная граница выбранных Chromium/Brave-сайтов выпущена как Browser Companion v199 (R3a), а native desktop apps и opt-in cross-device protocol остаются R3b. Android/iOS — R4/R5; PWA по-прежнему не симулирует их полномочия.
 
 ---
 
@@ -174,7 +174,8 @@ TikTok открыт → Shortcuts → открыть satoru?do=gate&app=tiktok
 | R0 | догфудинг: системный/сторонний лимит на телефоне **и ноутбуке** + iOS Shortcut на вход/выход; подать Apple entitlement request | без product promise; не править `hosts` и не строить свой extension до проверки поведения |
 | R1 | web: Commitment v2, attention policy/session/episode, ручной/deep-link gate, дешёвый возврат, один neutral quiet push, recovery/write guard, простая калибровка по записанным исходам | отдельный release |
 | R2 | web: «Вдохновение» — одна автоматически собранная конечная подборка до 3 материалов в день по подтверждённым интересам; «Сохранённое» вторично | v179 остаётся исторической первой итерацией; переработка выходит отдельным v196 release |
-| R3 | desktop companion/browser extension: выбранные сайты, real Control, cross-device session state, crash/restart recovery | отдельный release; не блокирует R1 |
+| R3a | Browser Companion v199: выбранные Chromium/Brave-сайты, local Control, crash/restart/clock recovery, bounded status в Satoru | опубликованный отдельный release; local-only, расширение можно отключить |
+| R3b | Signed desktop companion + отдельный opt-in protocol для native apps и cross-device state | отдельный security/platform release; не скрывать внутри browser bridge |
 | R4 | Android companion: Usage Access, агрегаты, real Control, reboot/recovery, permission UX | отдельный native release |
 | R5 | iOS companion: Family Controls, picker opaque tokens, Device Activity, Managed Settings shield, Share Extension, Ukraine degraded path | отдельный native release |
 | R6 | адаптация пресетов и optional trusted unlock без доступа друга к задачам/истории | только после догфудинга |

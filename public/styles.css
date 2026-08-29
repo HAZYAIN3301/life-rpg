@@ -17690,6 +17690,67 @@ html.attention-dialog-open body { overscroll-behavior: none; }
   font: 800 var(--type-meta)/var(--leading-label) var(--font-ui);
 }
 
+.browser-companion {
+  min-width: 0;
+  overflow: clip;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--surface-2) 92%, var(--accent) 8%);
+}
+.browser-companion > summary {
+  min-height: var(--touch-min);
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  cursor: pointer;
+  list-style: none;
+}
+.browser-companion > summary::-webkit-details-marker { display: none; }
+.browser-companion > summary > span:nth-child(2),
+.browser-companion > summary :is(b, small) { min-width: 0; display: block; overflow-wrap: anywhere; }
+.browser-companion > summary b { color: var(--text-strong); font: 850 var(--type-control)/var(--leading-ui) var(--font-ui); }
+.browser-companion > summary small { margin-block-start: 2px; color: var(--text-soft); font: var(--type-meta)/var(--leading-label) var(--font-ui); }
+.browser-companion > summary > span:last-child { color: var(--text-soft); transition: transform var(--dur-fast) var(--ease-out); }
+.browser-companion[open] > summary > span:last-child { transform: rotate(180deg); }
+.browser-companion-mark {
+  inline-size: 28px;
+  block-size: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, var(--line-soft));
+  border-radius: 50%;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface-3));
+  font-weight: 900;
+}
+.browser-companion-body {
+  min-width: 0;
+  display: grid;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  border-top: 1px solid var(--line-soft);
+}
+.browser-companion-body > p { margin: 0; color: var(--text-soft); line-height: var(--leading-prose); }
+.browser-companion-active {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--sp-1) var(--sp-3);
+  padding: var(--sp-2);
+  border-inline-start: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface-3));
+}
+.browser-companion-active :is(b, span) { min-width: 0; overflow-wrap: anywhere; }
+.browser-companion-active b { color: var(--text-strong); }
+.browser-companion-actions { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.browser-companion-actions > :is(a, button) { min-height: var(--touch-min); }
+.browser-companion-install { font-size: var(--type-meta); }
+.browser-companion > summary:focus-visible,
+.browser-companion-actions :is(a, button):focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
 .attention-actions,
 .attention-boundary-actions {
   min-width: 0;
@@ -18133,6 +18194,8 @@ details.shutdown > summary:focus-visible {
   .attention-recovery-compact .attention-mode-grid { grid-template-columns: minmax(0, 1fr); }
   .attention-settings-shortcuts { display: grid; grid-template-columns: minmax(0, 1fr); }
   .attention-settings-shortcuts > :is(button, .btn) { width: 100%; }
+  .browser-companion-actions { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .browser-companion-actions > :is(a, button) { width: 100%; }
 }
 
 @media (max-width: 374px) {
@@ -18149,7 +18212,8 @@ details.shutdown > summary:focus-visible {
   .secretary-card :is(button, input, textarea),
   .capture-secondary button,
   details.shutdown > summary,
-  .attention-settings-shortcuts :is(button, .btn) { min-block-size: var(--touch-min); }
+  .attention-settings-shortcuts :is(button, .btn),
+  .browser-companion :is(summary, a, button) { min-block-size: var(--touch-min); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -18157,6 +18221,7 @@ details.shutdown > summary:focus-visible {
   .secretary-action.is-pulsing,
   .evening-reminder-due #ai-fab { animation: none !important; transform: none !important; }
   .secretary-action { transition: none !important; }
+  .browser-companion > summary > span:last-child { transition: none !important; }
   .secretary-reward.is-waiting,
   .secretary-action.is-pulsing { box-shadow: inset 0 0 0 1px var(--accent-warm); }
   .evening-reminder-due #ai-fab { box-shadow: 0 6px 22px rgba(0,0,0,.4), 0 0 0 4px var(--accent-warm); }

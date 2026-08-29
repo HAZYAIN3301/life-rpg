@@ -937,6 +937,21 @@ const I18N_EXTRA = {
   'Напоминание': { en: 'Reminder', de: 'Erinnerung', uk: 'Нагадування', es: 'Recordatorio' },
   'По отдельному согласию синхронизируются правила, сессии и записанные исходы. История устройства и просмотренные материалы не собираются.': { en: 'With separate consent, rules, sessions and recorded outcomes are synced. Device history and viewed materials are not collected.', de: 'Mit separater Zustimmung werden Regeln, Sitzungen und erfasste Ergebnisse synchronisiert. Geräteverlauf und angesehene Inhalte werden nicht gesammelt.', uk: 'За окремою згодою синхронізуються правила, сесії та записані результати. Історія пристрою й переглянуті матеріали не збираються.', es: 'Con consentimiento separado, se sincronizan reglas, sesiones y resultados registrados. No se recopilan el historial del dispositivo ni los materiales vistos.' },
   'Правила и исходы остаются на этом устройстве. История устройства и просмотренные материалы не собираются.': { en: 'Rules and outcomes stay on this device. Device history and viewed materials are not collected.', de: 'Regeln und Ergebnisse bleiben auf diesem Gerät. Geräteverlauf und angesehene Inhalte werden nicht gesammelt.', uk: 'Правила й результати залишаються на цьому пристрої. Історія пристрою й переглянуті матеріали не збираються.', es: 'Las reglas y los resultados permanecen en este dispositivo. No se recopilan el historial del dispositivo ni los materiales vistos.' },
+  'Контроль сайтов в Brave': { en: 'Website control in Brave', de: 'Webseitenkontrolle in Brave', uk: 'Контроль сайтів у Brave', es: 'Control de sitios en Brave' },
+  'Расширение не обнаружено': { en: 'Extension not detected', de: 'Erweiterung nicht erkannt', uk: 'Розширення не виявлено', es: 'Extensión no detectada' },
+  'Расширение подключено': { en: 'Extension connected', de: 'Erweiterung verbunden', uk: 'Розширення підключено', es: 'Extensión conectada' },
+  'Подключено сайтов: {count}': { en: 'Configured sites: {count}', de: 'Eingerichtete Websites: {count}', uk: 'Підключено сайтів: {count}', es: 'Sitios configurados: {count}' },
+  'Установить расширение': { en: 'Install extension', de: 'Erweiterung installieren', uk: 'Установити розширення', es: 'Instalar extensión' },
+  'Проверить связь': { en: 'Check connection', de: 'Verbindung prüfen', uk: 'Перевірити зв’язок', es: 'Comprobar conexión' },
+  'Открыть настройки расширения': { en: 'Open extension settings', de: 'Erweiterungseinstellungen öffnen', uk: 'Відкрити налаштування розширення', es: 'Abrir ajustes de la extensión' },
+  'Реальная граница для TikTok, YouTube и других выбранных сайтов — без новой панели на «Сегодня».': { en: 'A real boundary for TikTok, YouTube and other selected sites — without another panel on Today.', de: 'Eine echte Grenze für TikTok, YouTube und andere ausgewählte Websites — ohne weiteres Feld auf „Heute“.', uk: 'Реальна межа для TikTok, YouTube та інших вибраних сайтів — без нової панелі на «Сьогодні».', es: 'Un límite real para TikTok, YouTube y otros sitios elegidos, sin otro panel en Hoy.' },
+  'Сейчас ограничено: {app}': { en: 'Currently limited: {app}', de: 'Derzeit begrenzt: {app}', uk: 'Зараз обмежено: {app}', es: 'Limitado ahora: {app}' },
+  'До границы: {minutes} мин': { en: 'Until boundary: {minutes} min', de: 'Bis zur Grenze: {minutes} Min.', uk: 'До межі: {minutes} хв', es: 'Hasta el límite: {minutes} min' },
+  'Граница уже достигнута': { en: 'The boundary has been reached', de: 'Die Grenze ist erreicht', uk: 'Межі вже досягнуто', es: 'El límite ya se alcanzó' },
+  'Подробности остаются внутри расширения. Satoru видит только число настроенных сайтов и состояние текущей границы.': { en: 'Details stay inside the extension. Satoru only sees the number of configured sites and the current boundary state.', de: 'Details bleiben in der Erweiterung. Satoru sieht nur die Anzahl eingerichteter Websites und den Zustand der aktuellen Grenze.', uk: 'Подробиці залишаються всередині розширення. Satoru бачить лише кількість налаштованих сайтів і стан поточної межі.', es: 'Los detalles permanecen en la extensión. Satoru solo ve el número de sitios configurados y el estado del límite actual.' },
+  'После скачивания распакуй архив, открой brave://extensions, включи режим разработчика и выбери «Загрузить распакованное».': { en: 'After downloading, unzip the archive, open brave://extensions, enable Developer mode and choose “Load unpacked”.', de: 'Entpacke nach dem Download das Archiv, öffne brave://extensions, aktiviere den Entwicklermodus und wähle „Entpackte Erweiterung laden“.', uk: 'Після завантаження розпакуй архів, відкрий brave://extensions, увімкни режим розробника й вибери «Завантажити розпаковане».', es: 'Después de descargar, descomprime el archivo, abre brave://extensions, activa el modo desarrollador y elige «Cargar descomprimida».' },
+  'Запрос отправлен расширению': { en: 'Request sent to the extension', de: 'Anfrage an die Erweiterung gesendet', uk: 'Запит надіслано розширенню', es: 'Solicitud enviada a la extensión' },
+  'Расширение не ответило. Обнови страницу или проверь, что оно включено.': { en: 'The extension did not respond. Reload the page or check that it is enabled.', de: 'Die Erweiterung hat nicht geantwortet. Lade die Seite neu oder prüfe, ob sie aktiviert ist.', uk: 'Розширення не відповіло. Онови сторінку або перевір, що воно ввімкнене.', es: 'La extensión no respondió. Recarga la página o comprueba que esté activada.' },
   'Отдых завершён без долга': { en: 'Rest ended with no debt', de: 'Erholung ohne Schuld abgeschlossen', uk: 'Відпочинок завершено без боргу', es: 'Descanso terminado sin deuda' },
   'Исход оставлен неизвестным — это не считается срывом': { en: 'Outcome left unknown — this is not counted as a lapse', de: 'Ergebnis bleibt unbekannt — das zählt nicht als Rückfall', uk: 'Результат залишено невідомим — це не вважається зривом', es: 'El resultado queda como desconocido: no cuenta como recaída' },
   'Рабочая цель': { en: 'Work purpose', de: 'Arbeitsziel', uk: 'Робоча мета', es: 'Objetivo de trabajo' },
@@ -5973,6 +5988,7 @@ const State = {
   attentionMode: 'local', attentionPolicies: null, attentionSessions: null, attentionEpisodes: null,
   _attentionLoadError: '', _attentionLoadBusy: false, _attentionWriteBlockedNoticeAt: 0,
   _attentionDeepLink: null, _attentionReturnIndex: 0,
+  _browserCompanionStatus: null, _browserCompanionRequestId: '', _browserCompanionOptionsRequestId: '', _browserCompanionOpen: false,
   shelf: null, _shelfLoadError: '', _shelfLoadBusy: false, _shelfBusy: '', _shelfError: '',
   _shelfComposerOpen: false, _shelfFilter: 'all', _shelfFocusAfterCommit: '',
   _inspirationSection: 'today', _inspirationSetupOpen: false, _inspirationDraft: null, _inspirationRenderedOnce: false,
@@ -13929,6 +13945,7 @@ const GOJO_MANUAL = `Ты — встроенный помощник прилож
 • Тень (спутник на «Сегодня») — живой компаньон: реагирует настроением, скучает при долгом отсутствии, связь Искра→Дух→Страж→Хранитель растёт от утренних/вечерних чек-инов и «погладить», ведёт летопись побед. Никогда не ругает. Кнопка 🔊 рядом с её репликой (и рядом с подсказкой, ответом чата, разбором недели) ОЗВУЧИВАЕТ текст голосом — бесплатно, встроено в браузер, ИИ-ключ не нужен; выключается в Настройках рядом со звуками интерфейса.
 • Подсказки на «Сегодня» — приложение показывает ОДНУ самую важную подсказку, а не все сразу; остальные ждут очереди. Если есть ИИ-ключ, Тень формулирует её своими словами под реальное состояние юзера.
 • Центр Тени на «Сегодня» — одно место для границ внимания, отдыха, завершения вечера и мягкого возвращения после выпадения. «Отдых с границей» запускает короткий отрезок 10/20/40 минут; «Завершить вечер» даёт три границы и может напомнить голосом, пока Satoru открыт. PWA не видит экранное время других приложений, не может гарантированно разбудить закрытую вкладку и не блокирует TikTok/YouTube на уровне ОС — не притворяйся, что это уже нативный блокировщик.
+• Browser Companion — отдельное расширение Brave/Chromium, которое действительно ставит выбранным сайтам границу входа и восстанавливает Control после перезапуска браузера. В «СОСТОЯНИИ СЕЙЧАС» есть только безопасная сводка: ответило ли расширение этой вкладке, сколько сайтов настроено и активна ли граница. Не выдумывай подробную историю, просмотренные страницы или состояние телефона: Satoru их не получает. Если расширение не ответило, предложи открыть Настройки → Внимание и границы, а не заводить ручную анти-привычку.
 • 🌿 Честное состояние отдыха — баланс и уровни считаются по СФЕРЕ, поэтому тренировка и отдых в одной сфере «Здоровье» неразличимы, и приложение может показывать «всё отлично», когда человек выжат. Satoru отдельно смотрит на ТЕКСТ дел/привычек и считает, сколько дней подряд не было явного отдыха. Это приглашение, не упрёк.
 • 🕯 «Заход» — когда вечер уплывает или сил нет совсем (устал так, что даже приставка не радует, остаётся скролл): предлагается крошечный вход на 10 минут в любимое дело. Без опыта, без обязательств, отказ ничего не стоит. Смысл — не заставить работать, а не дать вечеру утечь.
 • 🎤 «Итог дня» — наговорил своими словами, что делал за день → ИИ разложил по делам/сферам/времени → подтвердил галочками. Можно закрыть и ПРОШЛЫЙ день (был в поездке — расскажешь потом). Кнопка на «Сегодня».
@@ -13962,6 +13979,15 @@ function assistantAttentionSummary() {
   const policyCount = (State.attentionPolicies && State.attentionPolicies.policies || []).length;
   return `граница внимания: ${active ? (remaining !== null && remaining <= 0 ? 'достигнута' : `активна${remaining === null ? '' : `, осталось ${Math.max(0, Math.ceil(remaining / 60000))} мин.`}`) : 'не активна'} · правил ${policyCount} · возвращение ${pendingReturn ? 'нужно' : 'не ожидается'}`;
 }
+function assistantBrowserCompanionSummary() {
+  const status = browserCompanionCurrentStatus();
+  if (!status || !status.installed) return 'браузерный контроль: расширение не ответило этой вкладке';
+  const active = status.active, target = active && browserCompanionTarget(active.app);
+  const activeText = target
+    ? `${target.label}: ${active.phase === 'boundary' ? 'граница достигнута' : `активно, осталось ${Math.max(1, Math.ceil(active.remainingSeconds / 60))} мин.`}`
+    : 'нет активной границы';
+  return `браузерный контроль: подключён · сайтов ${status.configuredSites} · ${activeText}`;
+}
 // «Состояние сейчас» — сегодняшний срез для секретаря: что горит и что осталось ИМЕННО сегодня.
 // Недельную глубину (время по сферам, баланс, рефлексия) даёт buildWeekContext() — здесь только «в моменте».
 function stateNowContext() {
@@ -13978,7 +14004,7 @@ function stateNowContext() {
   return `СОСТОЯНИЕ СЕЙЧАС (живые данные юзера, не выдумка):
   Сегодня: квестов ${doneN}/${todays.length}${left ? ` · осталось: ${left}` : ''} · привычек ${hbDone}/${hb.length}${overdue.length ? ` · ПРОСРОЧЕНО с прошлых дней: ${overdue.length}` : ''}
   Сегодня закрыто: ${load.done}${load.known ? ` при обычных ${load.typical}` : ''} · отдых: ${restStateLine()}${dls.length ? `\n  Ближайшие дедлайны целей: ${dls.join('; ')}` : ''}
-  Серия: ${currentStreak()} дн. · ${assistantAttentionSummary()} · открытая вкладка: ${State.view}`;
+  Серия: ${currentStreak()} дн. · ${assistantAttentionSummary()} · ${assistantBrowserCompanionSummary()} · открытая вкладка: ${State.view}`;
 }
 // ── Профиль-память (JARVIS-3-PLAN §2) ─────────────────────────────────────────
 // Сжатая выжимка о человеке: ИИ её пишет, человек читает и правит. Нужна потому,
@@ -20978,6 +21004,168 @@ let _attentionScrollLock = null;
 let _attentionBoundaryTimer = null;
 let _attentionEmergencyTimer = null;
 
+// Browser Companion v199. The extension is deliberately a separate enforcement
+// boundary: the page can read a tiny, non-sensitive status, but cannot change
+// policies, spend an emergency exit or mark an outcome through postMessage.
+const BROWSER_COMPANION_ORIGIN = 'https://life-rpg-production-416a.up.railway.app';
+const BROWSER_COMPANION_STATUS_TTL_MS = 25000;
+let _browserCompanionHeartbeatTimer = null;
+const BROWSER_COMPANION_TARGETS = Object.freeze({
+  tiktok: 'TikTok', youtube: 'YouTube', instagram: 'Instagram',
+  x: 'X', reddit: 'Reddit', web: 'Brave',
+});
+const BROWSER_COMPANION_PHASES = new Set(['active', 'boundary']);
+const BROWSER_COMPANION_MODES = new Set(['trust', 'adaptive', 'control']);
+
+function browserCompanionTarget(id) {
+  const key = String(id || '').trim().toLowerCase();
+  return Object.prototype.hasOwnProperty.call(BROWSER_COMPANION_TARGETS, key)
+    ? { id: key, label: BROWSER_COMPANION_TARGETS[key] } : null;
+}
+function browserCompanionStatusFromMessage(message) {
+  if (!message || message.source !== 'satoru-attention-extension'
+    || message.type !== 'SATORU_ATTENTION_STATUS_RESPONSE') return null;
+  const status = message.status;
+  if (!status || status.installed !== true || typeof status.version !== 'string'
+    || !/^[0-9A-Za-z][0-9A-Za-z._-]{0,31}$/.test(status.version)
+    || !Number.isInteger(status.configuredSites) || status.configuredSites < 0 || status.configuredSites > 64) return null;
+  let active = null;
+  if (status.active != null) {
+    const target = browserCompanionTarget(status.active.app);
+    const remainingSeconds = status.active.remainingSeconds;
+    if (!target || !BROWSER_COMPANION_PHASES.has(status.active.phase)
+      || !BROWSER_COMPANION_MODES.has(status.active.mode)
+      || !Number.isInteger(remainingSeconds) || remainingSeconds < 0 || remainingSeconds > 604800) return null;
+    active = { app: target.id, phase: status.active.phase, remainingSeconds, mode: status.active.mode };
+  }
+  return { installed: true, version: status.version, configuredSites: status.configuredSites, active, seenAt: Date.now() };
+}
+function browserCompanionCurrentStatus() {
+  const status = State._browserCompanionStatus;
+  if (!status || status.installed !== true || !Number.isFinite(status.seenAt)) return null;
+  const elapsedMs = Math.max(0, Date.now() - status.seenAt);
+  if (elapsedMs > BROWSER_COMPANION_STATUS_TTL_MS) return null;
+  if (!status.active || status.active.phase === 'boundary') return status;
+  const remainingSeconds = Math.max(0, status.active.remainingSeconds - Math.floor(elapsedMs / 1000));
+  return Object.assign({}, status, { active: Object.assign({}, status.active, {
+    phase: remainingSeconds > 0 ? 'active' : 'boundary', remainingSeconds,
+  }) });
+}
+function browserCompanionRequestId(prefix = 'status') {
+  let random = '';
+  try { random = crypto.getRandomValues(new Uint32Array(2)).join('-'); }
+  catch { random = `${Date.now()}-${Math.random().toString(16).slice(2)}`; }
+  return `${prefix}-${random}`.slice(0, 64);
+}
+function requestBrowserCompanionStatus() {
+  if (location.origin !== BROWSER_COMPANION_ORIGIN) return false;
+  if (State._browserCompanionRequestId) return false;
+  const requestId = browserCompanionRequestId();
+  State._browserCompanionRequestId = requestId;
+  window.postMessage({ source: 'satoru-app', type: 'SATORU_ATTENTION_STATUS_REQUEST', requestId }, BROWSER_COMPANION_ORIGIN);
+  setTimeout(() => {
+    if (State._browserCompanionRequestId !== requestId) return;
+    State._browserCompanionRequestId = '';
+    if (State._browserCompanionStatus && !browserCompanionCurrentStatus()) {
+      State._browserCompanionStatus = null;
+      patchBrowserCompanionSurfaces();
+    }
+  }, 2500);
+  return true;
+}
+function requestBrowserCompanionOptions() {
+  if (location.origin !== BROWSER_COMPANION_ORIGIN) return false;
+  const requestId = browserCompanionRequestId('options');
+  State._browserCompanionOptionsRequestId = requestId;
+  window.postMessage({ source: 'satoru-app', type: 'SATORU_ATTENTION_OPEN_OPTIONS', requestId }, BROWSER_COMPANION_ORIGIN);
+  return true;
+}
+function browserCompanionFocusKey(container, active) {
+  if (!container || !active || !container.contains(active)) return '';
+  if (active.matches?.('summary')) return 'summary';
+  const action = active.getAttribute?.('data-action');
+  if (action && ['browser-companion-refresh', 'browser-companion-options'].includes(action)) return `[data-action="${action}"]`;
+  if (active.matches?.('a[download]')) return 'a[download]';
+  if (active.matches?.('[data-secretary-control]')) return '[data-secretary-control]';
+  return '';
+}
+function replaceBrowserCompanionSurface(current, html) {
+  if (!current || typeof html !== 'string') return null;
+  const focusKey = browserCompanionFocusKey(current, document.activeElement);
+  const template = document.createElement('template');
+  template.innerHTML = html.trim();
+  const replacement = template.content.firstElementChild;
+  if (!replacement) return null;
+  current.replaceWith(replacement);
+  if (focusKey) requestAnimationFrame(() => replacement.matches(focusKey)
+    ? replacement.focus({ preventScroll: true })
+    : replacement.querySelector(focusKey)?.focus({ preventScroll: true }));
+  return replacement;
+}
+function patchBrowserCompanionSurfaces() {
+  if (State.phase !== 'app') return;
+  if (State.view === 'settings') {
+    const panel = document.querySelector('[data-browser-companion]');
+    if (panel) replaceBrowserCompanionSurface(panel, browserCompanionSettingsHTML());
+    return;
+  }
+  if (State.view === 'today') {
+    const control = document.querySelector('[data-secretary-control]');
+    if (control) replaceBrowserCompanionSurface(control, attentionTodayControlHTML());
+  }
+}
+function handleBrowserCompanionMessage(event) {
+  if (location.origin !== BROWSER_COMPANION_ORIGIN || event.origin !== BROWSER_COMPANION_ORIGIN || event.source !== window) return;
+  const message = event.data;
+  if (!message || message.source !== 'satoru-attention-extension') return;
+  if (message.type === 'SATORU_ATTENTION_EXTENSION_READY') { requestBrowserCompanionStatus(); return; }
+  if (message.type === 'SATORU_ATTENTION_STATUS_RESPONSE') {
+    if (!message.requestId || message.requestId !== State._browserCompanionRequestId) return;
+    const status = browserCompanionStatusFromMessage(message); if (!status) return;
+    State._browserCompanionRequestId = ''; State._browserCompanionStatus = status;
+    patchBrowserCompanionSurfaces();
+    return;
+  }
+  if (message.type === 'SATORU_ATTENTION_OPEN_OPTIONS_RESULT') {
+    if (!message.requestId || message.requestId !== State._browserCompanionOptionsRequestId || typeof message.ok !== 'boolean') return;
+    State._browserCompanionOptionsRequestId = '';
+    toast(t(message.ok ? 'Запрос отправлен расширению' : 'Расширение не ответило. Обнови страницу или проверь, что оно включено.'));
+  }
+}
+function initBrowserCompanionBridge() {
+  window.addEventListener('message', handleBrowserCompanionMessage);
+  setTimeout(() => requestBrowserCompanionStatus(), 80);
+  clearInterval(_browserCompanionHeartbeatTimer);
+  _browserCompanionHeartbeatTimer = setInterval(() => {
+    if (document.visibilityState !== 'visible' || State.phase !== 'app') return;
+    if (State._browserCompanionStatus && !browserCompanionCurrentStatus()) {
+      State._browserCompanionStatus = null;
+      patchBrowserCompanionSurfaces();
+    }
+    if (State.view === 'settings' || State.view === 'today') requestBrowserCompanionStatus();
+  }, 10000);
+}
+function browserCompanionSettingsHTML() {
+  const status = browserCompanionCurrentStatus();
+  const connected = !!(status && status.installed);
+  const active = connected && status.active;
+  const activeTarget = active && browserCompanionTarget(active.app);
+  const activeCopy = activeTarget
+    ? `<p class="browser-companion-active" role="status"><b>${esc(t('Сейчас ограничено: {app}').replace('{app}', activeTarget.label))}</b><span>${esc(active.phase === 'boundary' ? t('Граница уже достигнута') : t('До границы: {minutes} мин').replace('{minutes}', Math.max(1, Math.ceil(active.remainingSeconds / 60))))}</span></p>` : '';
+  return `<details class="browser-companion" data-browser-companion ${State._browserCompanionOpen ? 'open' : ''}>
+    <summary><span class="browser-companion-mark" aria-hidden="true">${connected ? '✓' : '◌'}</span><span><b>${t('Контроль сайтов в Brave')}</b><small>${connected ? `${t('Расширение подключено')} · ${t('Подключено сайтов: {count}').replace('{count}', status.configuredSites)}` : t('Расширение не обнаружено')}</small></span><span aria-hidden="true">⌄</span></summary>
+    <div class="browser-companion-body">
+      <p>${t('Реальная граница для TikTok, YouTube и других выбранных сайтов — без новой панели на «Сегодня».')}</p>
+      ${activeCopy}
+      <div class="browser-companion-actions">${connected
+        ? `<button type="button" class="btn ghost" data-action="browser-companion-options">${t('Открыть настройки расширения')}</button>`
+        : `<a class="btn" href="downloads/satoru-attention-v199.zip" download>${t('Установить расширение')}</a><button type="button" class="btn ghost" data-action="browser-companion-refresh">${t('Проверить связь')}</button>`}</div>
+      ${connected ? '' : `<p class="browser-companion-install">${t('После скачивания распакуй архив, открой brave://extensions, включи режим разработчика и выбери «Загрузить распакованное».')}</p>`}
+      <p class="attention-privacy-note">${t('Подробности остаются внутри расширения. Satoru видит только число настроенных сайтов и состояние текущей границы.')}</p>
+    </div>
+  </details>`;
+}
+
 function attentionController() {
   const C = window.AttentionControllerV1;
   return C && C.ready && C.ready() ? C : null;
@@ -21022,6 +21210,12 @@ function attentionTodayControlHTML() {
     const policy = attentionPolicyForTarget(active.policyId);
     const name = policy?.name || (active.purpose === 'rest' ? t('Отдых с границей') : active.policyId);
     return `<section class="secretary-control is-active${over ? ' is-due' : ''}" data-secretary-control tabindex="-1" aria-live="polite"><div class="secretary-control-copy"><span class="secretary-control-kicker">${t(active.purpose === 'rest' ? 'Сейчас отдых' : 'Сейчас граница внимания')}</span><b>${esc(name)}</b><small>${over ? t('Граница достигнута — выбери честный исход') : `${attentionPurposeName(active.purpose)} · ${Math.max(1, Math.ceil(remaining / 60000))} ${t('мин')}`}</small></div>${over ? `<button class="btn secretary-primary" data-action="attention-open-boundary" data-session-id="${esc(active.id)}">${t('Открыть границу')}</button>` : ''}</section>`;
+  }
+  const browserActive = browserCompanionCurrentStatus()?.active;
+  const browserTarget = browserActive && browserCompanionTarget(browserActive.app);
+  if (browserActive && browserTarget) {
+    const boundary = browserActive.phase === 'boundary';
+    return `<section class="secretary-control is-active${boundary ? ' is-due' : ''}" data-secretary-control tabindex="-1" aria-live="polite"><div class="secretary-control-copy"><span class="secretary-control-kicker">${t('Сейчас граница внимания')}</span><b>${esc(browserTarget.label)}</b><small>${boundary ? t('Граница уже достигнута') : t('До границы: {minutes} мин').replace('{minutes}', Math.max(1, Math.ceil(browserActive.remainingSeconds / 60)))}</small></div><button class="btn ghost" data-action="browser-companion-options">${t('Открыть настройки расширения')}</button></section>`;
   }
   const policies = State.attentionPolicies?.policies || [];
   const pendingReturn = attentionPendingReturn();
@@ -21310,9 +21504,9 @@ function runAttentionDeepLink() {
     else toast(t('Одно окно внимания уже идёт'));
     return;
   }
-  const policy = attentionPolicyForTarget(link.target);
-  if (policy) openAttentionEntry(policy.id, 'shortcut');
-  else openAttentionSetup(null, { targetLabel: link.target || '' });
+  const policy = attentionPolicyForTarget(link.targetId || link.target);
+  if (policy) openAttentionEntry(policy.id, link.source || 'shortcut');
+  else openAttentionSetup(null, { targetLabel: link.target || '', source: link.source || 'shortcut' });
 }
 function attentionSettingsCard() {
   const C = attentionController();
@@ -21325,6 +21519,7 @@ function attentionSettingsCard() {
     <p class="attention-storage-state">${State.attentionMode === 'contracts' ? t('Синхронизация контрактов включена') : t('Данные внимания остаются на этом устройстве')}</p>
     ${active ? `<p class="attention-active-note" role="status">${t('Сейчас идёт ограниченное окно')}: <b>${esc((attentionPolicyForTarget(active.policyId) || {}).name || active.policyId)}</b> · ${fmtDur(window.AttentionSessionV1.grantedMinutes(active))}</p>` : ''}
     ${policies.length ? `<div class="attention-policy-list">${policies.map((policy) => `<div class="attention-policy-row"><div><b>${esc(policy.name)}</b><small>${policy.purposes.filter((rule) => rule.enabled !== false).map((rule) => `${esc(attentionPurposeName(rule.purpose))} · ${fmtDur(rule.defaultMinutes)}`).join(' · ')}</small></div><button class="btn ghost" data-action="attention-open-entry" data-policy-id="${esc(policy.id)}">${t('Проверить вход')}</button></div>`).join('')}</div>` : `<p class="muted">${t('Правил пока нет. Начни с одного приложения и одной цели — это займёт до двух минут.')}</p>`}
+    ${browserCompanionSettingsHTML()}
     <div class="attention-settings-shortcuts"><button class="btn ghost" data-action="recovery-open">🌿 ${t('Отдых с границей')}</button><button class="btn ghost" data-action="evening-configure">🌙 ${t(secretary.configured ? 'Изменить завершение вечера' : 'Настроить завершение вечера')}</button>${secretary.dailyReminder && secretary.eveningTime ? `<span class="muted">${t('Напоминание')}: ${esc(secretary.eveningTime)}</span>` : ''}</div>
     <p class="attention-privacy-note">${State.attentionMode === 'contracts' ? t('По отдельному согласию синхронизируются правила, сессии и записанные исходы. История устройства и просмотренные материалы не собираются.') : t('Правила и исходы остаются на этом устройстве. История устройства и просмотренные материалы не собираются.')}</p></div>`;
 }
@@ -25080,6 +25275,15 @@ async function onClick(e) {
   if (action === 'attention-open-entry') { openAttentionEntry(el.dataset.policyId, 'manual', el); return; }
   if (action === 'attention-open-boundary') { openAttentionBoundary(el.dataset.sessionId); return; }
   if (action === 'attention-open-return') { openAttentionReturn(el); return; }
+  if (action === 'browser-companion-refresh') {
+    if (!requestBrowserCompanionStatus()) toast(t('Расширение не ответило. Обнови страницу или проверь, что оно включено.'));
+    else toast(t('Запрос отправлен расширению'));
+    return;
+  }
+  if (action === 'browser-companion-options') {
+    if (!requestBrowserCompanionOptions()) toast(t('Расширение не ответило. Обнови страницу или проверь, что оно включено.'));
+    return;
+  }
   if (action === 'recovery-open') { openRecoveryLauncher(el); return; }
   if (action === 'evening-open') { openEveningLanding(el); return; }
   if (action === 'evening-configure') { openEveningLanding(el, { active: false, speak: false }); return; }
@@ -27461,8 +27665,17 @@ async function initApp() {
       }, 350);
       sp.delete('do'); history.replaceState(null, '', location.pathname + (sp.toString() ? '?' + sp : '') + location.hash);
     } else if (act === 'gate' || act === 'return' || act === 'finish') {
-      State._attentionDeepLink = { action: act, target: String(sp.get('app') || '').slice(0, 80) };
-      sp.delete('do'); sp.delete('app');
+      const source = String(sp.get('source') || '').trim().toLowerCase();
+      const rawTarget = String(sp.get('app') || '').slice(0, 80);
+      const extensionTarget = source === 'extension' ? browserCompanionTarget(rawTarget) : null;
+      // Extension links are a closed, open-only vocabulary. A suffix such as
+      // `tiktok.com.evil`, an unknown source, or an extension `finish` request
+      // is consumed but never reaches a dialog or a write path.
+      if (!source) State._attentionDeepLink = { action: act, target: rawTarget, source: 'shortcut' };
+      else if (source === 'extension' && (act === 'gate' || act === 'return') && extensionTarget) {
+        State._attentionDeepLink = { action: act, target: extensionTarget.label, targetId: extensionTarget.id, source: 'extension' };
+      }
+      ['do', 'app', 'source', 'userId', 'outcome', 'session', 'permission', 'redirect'].forEach((key) => sp.delete(key));
       history.replaceState(null, '', location.pathname + (sp.toString() ? '?' + sp : '') + location.hash);
     }
   } catch {}
@@ -28109,7 +28322,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v198-inspiration-import-v1';
+const PWA_CACHE_VERSION = 'satoru-v199';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -28183,6 +28396,7 @@ function initPWA() {
 }
 async function init() {
   initPWA();
+  initBrowserCompanionBridge();
   initSystemThemeListener();
   startI18nObserver();
   observeGuideV3BlockingSurfaces();
@@ -28190,6 +28404,12 @@ async function init() {
   document.addEventListener('click', onClick);
   document.addEventListener('toggle', (e) => {
     const panel = e.target;
+    if (panel instanceof HTMLDetailsElement && panel.matches('.browser-companion')) {
+      State._browserCompanionOpen = panel.open;
+      if (e.isTrusted) sfx(panel.open ? 'open' : 'close');
+      if (panel.open) requestBrowserCompanionStatus();
+      return;
+    }
     if (!(panel instanceof HTMLDetailsElement) || !panel.matches('.character-secondary-panel[data-character-panel]')) return;
     const id = panel.dataset.characterPanel;
     if (panel.open) {
@@ -28202,11 +28422,11 @@ async function init() {
   document.addEventListener('change', onChange);
   document.addEventListener('input', onSettingsInput);
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && State.phase === 'app') { scheduleAttentionBoundary(); scheduleEveningReminder(); }
+    if (document.visibilityState === 'visible' && State.phase === 'app') { requestBrowserCompanionStatus(); scheduleAttentionBoundary(); scheduleEveningReminder(); }
     if (document.hidden) stopAssistantWake();
     else if (_assistantWakeArmed) startAssistantWake();
   });
-  window.addEventListener('pageshow', () => { if (State.phase === 'app') { scheduleAttentionBoundary(); scheduleEveningReminder(); } });
+  window.addEventListener('pageshow', () => { requestBrowserCompanionStatus(); if (State.phase === 'app') { scheduleAttentionBoundary(); scheduleEveningReminder(); } });
   document.addEventListener('pointerdown', onTreePointerDown);
   // Инлайн-правка текста квеста: клик мимо → сохранить; Esc → отмена
   document.addEventListener('focusout', (e) => { const f = e.target.closest && e.target.closest('.t-edit-form'); if (f && f.requestSubmit) setTimeout(() => { if (State._editTask) f.requestSubmit(); }, 100); });

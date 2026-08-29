@@ -65,6 +65,7 @@ const MIME = {
   '.mp3':  'audio/mpeg', '.m4a': 'audio/mp4', '.ogg': 'audio/ogg', '.opus': 'audio/ogg; codecs=opus', '.wav': 'audio/wav',
   '.mp4':  'video/mp4', '.webm': 'video/webm', '.mov': 'video/quicktime',
   '.apk':  'application/vnd.android.package-archive',
+  '.zip':  'application/zip',
 };
 
 const USER_DATA_FILES = [

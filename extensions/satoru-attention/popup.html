@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Satoru Attention</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="popup">
+  <main class="shell">
+    <section class="card" aria-labelledby="popup-title">
+      <h1 id="popup-title" data-i18n="popupTitle">Attention status</h1>
+      <p id="popup-active" class="lead" aria-live="polite"></p>
+      <p id="popup-count" class="fine"></p>
+      <div class="actions">
+        <button id="popup-gate" class="primary" data-i18n="openGate">Open gate</button>
+        <button id="popup-settings" data-i18n="settings">Settings</button>
+      </div>
+    </section>
+  </main>
+  <script src="i18n.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
