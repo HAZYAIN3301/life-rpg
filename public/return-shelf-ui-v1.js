@@ -10,7 +10,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildReturnShelfUI() {
   'use strict';
 
-  const VERSION = '2.1.0';
+  const VERSION = '2.2.0';
   const SECTIONS = Object.freeze(['today', 'saved']);
   const FORMATS = Object.freeze(['edit', 'video', 'image', 'quote', 'podcast']);
   const FORMAT_COPY = Object.freeze({
@@ -154,6 +154,13 @@
     const chips = suggestions.slice(0, 6).map(chip).join('');
     const moreChips = suggestions.length > 6 ? `<details class="inspiration-more-topics"><summary>${tr(t, 'Ещё темы')} · ${suggestions.length - 6}</summary><div class="inspiration-choices">${suggestions.slice(6).map(chip).join('')}</div></details>` : '';
     const formatChoices = FORMATS.map((format) => `<label class="inspiration-format-choice${formats.includes(format) ? ' is-selected' : ''}"><input type="checkbox" name="format" value="${format}" ${formats.includes(format) ? 'checked' : ''}><span aria-hidden="true" data-format="${format}"></span><b>${tr(t, formatLabel(format))}</b></label>`).join('');
+    const references = rows(profile.videoReferences, 10);
+    const referenceRow = (reference = {}) => `<div class="inspiration-reference-row" data-inspiration-reference-row>
+      <label><span>${tr(t, 'Ссылка на видео')}</span><input type="url" name="referenceUrl" value="${esc(reference.url)}" maxlength="1000" placeholder="${tr(t, 'TikTok, YouTube, Reels или другая видеоссылка')}" inputmode="url" autocomplete="url"></label>
+      <label><span>${tr(t, 'Почему это мотивирует?')}</span><textarea name="referenceWhy" rows="2" maxlength="320" placeholder="${tr(t, 'Необязательно. Что именно здесь тебя цепляет?')}">${esc(reference.why)}</textarea></label>
+      <button type="button" class="inspiration-reference-remove" data-action="inspiration-reference-remove" aria-label="${tr(t, 'Удалить видео')}">✕</button>
+    </div>`;
+    const referenceRows = (references.length ? references : [{}]).map(referenceRow).join('');
     const manual = '';
     return `<form id="inspiration-setup-form" class="card inspiration-setup">
       <header><div><p class="inspiration-kicker">${tr(t, 'НАСТРОЙКА · ДО 2 МИНУТ')}</p><h3>${tr(t, 'Собери свою подборку')}</h3></div><button type="button" class="inspiration-close" data-action="inspiration-setup-close" aria-label="${tr(t, 'Закрыть')}">✕</button></header>
@@ -162,6 +169,11 @@
       <label class="inspiration-free"><span>${tr(t, 'Добавить свои темы')}</span><input name="customInterests" value="${esc(manual)}" maxlength="300" placeholder="${tr(t, 'Spider-Verse, Re:Zero, путешествия…')}" autocomplete="off"></label></fieldset>
       <fieldset><legend><b>2</b><span>${tr(t, 'Что показывать')}</span><small>${tr(t, 'Можно выбрать несколько форматов.')}</small></legend><div class="inspiration-format-choices">${formatChoices}</div>
       <details class="inspiration-setup-more"><summary>${tr(t, 'Что не показывать')}</summary><label class="inspiration-free"><span>${tr(t, 'Исключить темы')}</span><input name="blocked" value="${esc((profile.blocked || []).join(', '))}" maxlength="300" placeholder="${tr(t, 'Необязательно. Например: hustle, сравнение тел, политика.')}" autocomplete="off"></label></details></fieldset>
+      <fieldset class="inspiration-reference-fieldset"><legend><b>3</b><span>${tr(t, 'Видео, которые тебя мотивируют')}</span><small>${tr(t, 'Добавь до 10 ссылок. Объяснение необязательно, но помогает понять, что именно тебя цепляет.')}</small></legend>
+      <div class="inspiration-reference-head"><p>${tr(t, 'Видео не загружаются в Satoru. Сохраняются только ссылки и твои объяснения.')}</p><output data-inspiration-reference-count>${references.length} / 10</output></div>
+      <div class="inspiration-reference-list" data-inspiration-reference-list>${referenceRows}</div>
+      <button type="button" class="btn ghost sm inspiration-reference-add" data-action="inspiration-reference-add" ${references.length >= 10 ? 'disabled' : ''}>+ ${tr(t, 'Добавить видео')}</button>
+      <template id="inspiration-reference-template">${referenceRow({})}</template></fieldset>
       <p class="inspiration-privacy">${tr(t, 'Интересы принадлежат твоему аккаунту. Satoru использует их только для конечной подборки и не публикует.')}</p>
       <p class="return-shelf-form-status" data-shelf-form-status role="status" aria-live="polite"></p>
       <div class="inspiration-setup-actions"><button type="button" class="btn ghost" data-action="inspiration-setup-import-satoru">${tr(t, 'Добавить из Satoru')}</button><button type="submit" class="btn">${tr(t, 'Показать мою подборку')}</button></div>
@@ -185,6 +197,7 @@
   function renderDigestItem(item, index, vm, t) {
     const reason = Array.isArray(item.reason) && item.reason.length ? item.reason.join(' + ') : tr(t, 'твои интересы');
     const done = !!item.done, saved = !!item.saved, verdict = item.feedbackVerdict || '';
+    const draft = row(vm.feedbackDraft), editingFeedback = draft.itemId === item.id;
     const rights = item.attribution ? `<span class="inspiration-source" data-noi18n>${esc(item.attribution)}</span>` : '';
     const sourceAction = item.rightsUrl || item.sourceUrl ? `<button type="button" class="inspiration-menu-action" data-action="inspiration-open-rights" data-id="${esc(item.id)}">${tr(t, 'Источник и права')}</button>` : '';
     return `<article class="inspiration-item${index === 0 ? ' is-featured' : ''}${done ? ' is-done' : ''}" style="--item-index:${index}" data-inspiration-id="${esc(item.id)}" aria-labelledby="inspiration-item-${esc(item.id)}">
@@ -195,10 +208,16 @@
         <button type="button" class="btn${done ? ' ghost' : ''}" data-action="inspiration-done" data-id="${esc(item.id)}" ${done ? 'disabled' : ''}>${done ? tr(t, 'Просмотрено ✓') : tr(t, 'Дальше')}</button>
         <button type="button" class="inspiration-save" data-action="inspiration-save" data-id="${esc(item.id)}" ${saved ? 'disabled' : ''}>${saved ? tr(t, 'Сохранено') : tr(t, 'Сохранить')}</button>
         <details class="inspiration-item-more"><summary aria-label="${tr(t, 'Ещё действия')}">•••</summary><div role="group" aria-label="${tr(t, 'Настроить подборку')}">
-          <button type="button" class="inspiration-menu-action${verdict === 'more' ? ' is-active' : ''}" data-action="inspiration-feedback" data-verdict="more" data-id="${esc(item.id)}" aria-pressed="${verdict === 'more'}">${tr(t, 'Больше такого')}</button>
-          <button type="button" class="inspiration-menu-action${verdict === 'not_for_me' ? ' is-active' : ''}" data-action="inspiration-feedback" data-verdict="not_for_me" data-id="${esc(item.id)}" aria-pressed="${verdict === 'not_for_me'}">${tr(t, 'Не моё')}</button>${sourceAction}
+          <button type="button" class="inspiration-menu-action${verdict === 'more' ? ' is-active' : ''}" data-action="inspiration-feedback-open" data-verdict="more" data-id="${esc(item.id)}" aria-pressed="${verdict === 'more'}">${tr(t, 'Понравилось')}</button>
+          <button type="button" class="inspiration-menu-action${verdict === 'not_for_me' ? ' is-active' : ''}" data-action="inspiration-feedback-open" data-verdict="not_for_me" data-id="${esc(item.id)}" aria-pressed="${verdict === 'not_for_me'}">${tr(t, 'Не понравилось')}</button>${sourceAction}
         </div></details>
       </div>
+      ${editingFeedback ? `<section class="inspiration-feedback-reason" aria-label="${tr(t, 'Почему? Необязательно')}">
+        <header><span class="is-${esc(draft.verdict)}">${tr(t, draft.verdict === 'more' ? 'Понравилось' : 'Не понравилось')}</span><button type="button" data-action="inspiration-feedback-cancel" aria-label="${tr(t, 'Отмена')}">✕</button></header>
+        <label><b>${tr(t, 'Почему? Необязательно')}</b><small>${tr(t, 'Объясни, что именно сработало или не сработало — так следующие подборки станут точнее.')}</small>
+        <textarea rows="3" maxlength="320" data-inspiration-feedback-reason placeholder="${tr(t, 'Например: нравится темп, музыка и ощущение большого пути')}">${esc(draft.reason)}</textarea></label>
+        <div><button type="button" class="btn ghost sm" data-action="inspiration-feedback-skip" data-id="${esc(item.id)}" data-verdict="${esc(draft.verdict)}">${tr(t, 'Без объяснения')}</button><button type="button" class="btn sm" data-action="inspiration-feedback-save" data-id="${esc(item.id)}" data-verdict="${esc(draft.verdict)}">${tr(t, 'Сохранить ответ')}</button></div>
+      </section>` : ''}
     </article>`;
   }
 

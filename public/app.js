@@ -876,6 +876,13 @@ const I18N_EXTRA = {
   'Готово ✓': { en: 'Done ✓', de: 'Fertig ✓', uk: 'Готово ✓', es: 'Listo ✓' },
   'Больше такого': { en: 'More like this', de: 'Mehr davon', uk: 'Більше такого', es: 'Más como esto' },
   'Не моё': { en: 'Not for me', de: 'Nicht meins', uk: 'Не моє', es: 'No es para mí' },
+  'Понравилось': { en: 'Liked it', de: 'Hat mir gefallen', uk: 'Сподобалося', es: 'Me gustó' },
+  'Не понравилось': { en: 'Did not like it', de: 'Hat mir nicht gefallen', uk: 'Не сподобалося', es: 'No me gustó' },
+  'Почему? Необязательно': { en: 'Why? Optional', de: 'Warum? Optional', uk: 'Чому? Необов’язково', es: '¿Por qué? Opcional' },
+  'Объясни, что именно сработало или не сработало — так следующие подборки станут точнее.': { en: 'Explain what worked or did not work so the next selections become more accurate.', de: 'Erkläre, was funktioniert hat oder nicht – so werden die nächsten Auswahlen genauer.', uk: 'Поясни, що саме спрацювало або не спрацювало — так наступні добірки стануть точнішими.', es: 'Explica qué funcionó o no funcionó para que las próximas selecciones sean más precisas.' },
+  'Например: нравится темп, музыка и ощущение большого пути': { en: 'For example: I like the pace, music and sense of a big journey', de: 'Zum Beispiel: Ich mag das Tempo, die Musik und das Gefühl einer großen Reise', uk: 'Наприклад: подобається темп, музика й відчуття великої подорожі', es: 'Por ejemplo: me gustan el ritmo, la música y la sensación de un gran viaje' },
+  'Без объяснения': { en: 'Without explanation', de: 'Ohne Erklärung', uk: 'Без пояснення', es: 'Sin explicación' },
+  'Сохранить ответ': { en: 'Save response', de: 'Antwort speichern', uk: 'Зберегти відповідь', es: 'Guardar respuesta' },
   'Настроить': { en: 'Adjust', de: 'Anpassen', uk: 'Налаштувати', es: 'Ajustar' },
   'Для этих интересов пока нет безопасных материалов': { en: 'No safe materials for these interests yet', de: 'Für diese Interessen gibt es noch keine sicheren Inhalte', uk: 'Для цих інтересів поки немає безпечних матеріалів', es: 'Todavía no hay materiales seguros para estos intereses' },
   'Измени форматы или добавь своё. Мы не подставляем случайные ссылки только ради заполнения экрана.': { en: 'Change the formats or add your own. We do not insert random links just to fill the screen.', de: 'Ändere die Formate oder füge eigene Inhalte hinzu. Wir setzen keine zufälligen Links ein, nur um den Bildschirm zu füllen.', uk: 'Зміни формати або додай своє. Ми не підставляємо випадкові посилання лише для заповнення екрана.', es: 'Cambia los formatos o añade algo tuyo. No ponemos enlaces al azar solo para llenar la pantalla.' },
@@ -897,6 +904,17 @@ const I18N_EXTRA = {
   'Настроить интересы': { en: 'Adjust interests', de: 'Interessen anpassen', uk: 'Налаштувати інтереси', es: 'Ajustar intereses' },
   'Профиль Тени': { en: 'Shadow profile', de: 'Schattenprofil', uk: 'Профіль Тіні', es: 'Perfil de la Sombra' },
   'Добавлено тобой': { en: 'Added by you', de: 'Von dir hinzugefügt', uk: 'Додано тобою', es: 'Añadido por ti' },
+  'Видео, которые тебя мотивируют': { en: 'Videos that motivate you', de: 'Videos, die dich motivieren', uk: 'Відео, які тебе мотивують', es: 'Vídeos que te motivan' },
+  'Добавь до 10 ссылок. Объяснение необязательно, но помогает понять, что именно тебя цепляет.': { en: 'Add up to 10 links. An explanation is optional, but helps identify what specifically moves you.', de: 'Füge bis zu 10 Links hinzu. Eine Erklärung ist optional, hilft aber zu verstehen, was dich genau anspricht.', uk: 'Додай до 10 посилань. Пояснення необов’язкове, але допомагає зрозуміти, що саме тебе чіпляє.', es: 'Añade hasta 10 enlaces. La explicación es opcional, pero ayuda a entender qué te llega exactamente.' },
+  'Видео не загружаются в Satoru. Сохраняются только ссылки и твои объяснения.': { en: 'Videos are not uploaded to Satoru. Only the links and your explanations are saved.', de: 'Videos werden nicht zu Satoru hochgeladen. Gespeichert werden nur die Links und deine Erklärungen.', uk: 'Відео не завантажуються в Satoru. Зберігаються лише посилання й твої пояснення.', es: 'Los vídeos no se suben a Satoru. Solo se guardan los enlaces y tus explicaciones.' },
+  'Ссылка на видео': { en: 'Video link', de: 'Videolink', uk: 'Посилання на відео', es: 'Enlace al vídeo' },
+  'TikTok, YouTube, Reels или другая видеоссылка': { en: 'TikTok, YouTube, Reels or another video link', de: 'TikTok, YouTube, Reels oder ein anderer Videolink', uk: 'TikTok, YouTube, Reels або інше відеопосилання', es: 'TikTok, YouTube, Reels u otro enlace de vídeo' },
+  'Почему это мотивирует?': { en: 'Why does this motivate you?', de: 'Warum motiviert dich das?', uk: 'Чому це мотивує?', es: '¿Por qué te motiva?' },
+  'Необязательно. Что именно здесь тебя цепляет?': { en: 'Optional. What exactly resonates with you here?', de: 'Optional. Was spricht dich hier genau an?', uk: 'Необов’язково. Що саме тут тебе чіпляє?', es: 'Opcional. ¿Qué te llega exactamente de esto?' },
+  'Удалить видео': { en: 'Remove video', de: 'Video entfernen', uk: 'Видалити відео', es: 'Eliminar vídeo' },
+  'Добавить видео': { en: 'Add video', de: 'Video hinzufügen', uk: 'Додати відео', es: 'Añadir vídeo' },
+  'Анализирую видео-референсы…': { en: 'Analyzing video references…', de: 'Videoreferenzen werden analysiert…', uk: 'Аналізую відеореференси…', es: 'Analizando referencias de vídeo…' },
+  'Ответ сохранён — следующие подборки станут точнее': { en: 'Response saved — future selections will become more accurate', de: 'Antwort gespeichert – künftige Auswahlen werden genauer', uk: 'Відповідь збережено — наступні добірки стануть точнішими', es: 'Respuesta guardada; las próximas selecciones serán más precisas' },
   'Выбери хотя бы один интерес или добавь свой.': { en: 'Choose at least one interest or add your own.', de: 'Wähle mindestens ein Interesse oder füge ein eigenes hinzu.', uk: 'Обери хоча б один інтерес або додай свій.', es: 'Elige al menos un interés o añade uno propio.' },
   'Выбери хотя бы один формат.': { en: 'Choose at least one format.', de: 'Wähle mindestens ein Format.', uk: 'Обери хоча б один формат.', es: 'Elige al menos un formato.' },
   'Не удалось сохранить интересы. Ничего не изменено.': { en: 'Could not save your interests. Nothing changed.', de: 'Deine Interessen konnten nicht gespeichert werden. Nichts wurde geändert.', uk: 'Не вдалося зберегти інтереси. Нічого не змінено.', es: 'No se pudieron guardar tus intereses. Nada cambió.' },
@@ -21933,10 +21951,10 @@ function shelfViewModel() {
       : interest
   )) };
   const savedCatalogIds = new Set(state.items.filter((item) => !item.archivedOn).map((item) => item.catalogId).filter(Boolean));
-  const feedbackById = new Map((activeProfile.feedback || []).map((entry) => [entry.itemId, entry.verdict]));
+  const feedbackById = new Map((activeProfile.feedback || []).map((entry) => [entry.itemId, entry]));
   const items = ensured.items.map((item) => ({ ...item, reason: P.reason(item, visibleProfile),
     done: !!(activeProfile.digest && activeProfile.digest.doneIds.includes(item.id)), saved: savedCatalogIds.has(item.id),
-    feedbackVerdict: feedbackById.get(item.id) || '' }));
+    feedbackVerdict: feedbackById.get(item.id)?.verdict || '', feedbackReason: feedbackById.get(item.id)?.reason || '' }));
   const enrich = (item) => {
     const catalogItem = item.catalogId ? catalog.find((row) => row.id === item.catalogId) : null;
     const format = item.format || (catalogItem && catalogItem.format) || inspirationFormatFromContent(item.url || item.note || '');
@@ -21953,6 +21971,7 @@ function shelfViewModel() {
     profile: visibleProfile, suggestions: inspirationImportSuggestions(), setupOpen: !!State._inspirationSetupOpen,
     importSession: State._inspirationImport || null, importLinksOpen: !!State._inspirationImportLinksOpen,
     importGuideOpen: !!State._inspirationImportGuideOpen, importDevice: inspirationImportDevice(),
+    feedbackDraft: State._inspirationFeedbackDraft || null,
     items, digestTotal: items.length, digestDone: P.isDigestDone(activeProfile),
     saved, savedCount: saved.length, archived, composerOpen: State._shelfComposerOpen,
     errorMessage: State._shelfError,
@@ -21995,6 +22014,15 @@ function shelfFormStatus(message, isError = false) {
   const status = document.querySelector('[data-shelf-form-status]'); if (!status) return;
   status.textContent = t(message); status.dataset.error = isError ? 'true' : 'false';
 }
+function updateInspirationReferenceUI(form = document.getElementById('inspiration-setup-form')) {
+  if (!form) return;
+  const rows = Array.from(form.querySelectorAll('[data-inspiration-reference-row]'));
+  const filled = rows.filter((row) => String(row.querySelector('[name="referenceUrl"]')?.value || '').trim()).length;
+  const count = form.querySelector('[data-inspiration-reference-count]');
+  const add = form.querySelector('[data-action="inspiration-reference-add"]');
+  if (count) count.textContent = `${filled} / 10`;
+  if (add) add.disabled = rows.length >= 10;
+}
 async function addShelfItem(form) {
   const S = shelfEngine(); if (!S || State._shelfBusy || State._shelfLoadError) return;
   const draft = shelfDraftFromForm(form);
@@ -22028,7 +22056,30 @@ function inspirationDraftFromSetupForm(form) {
   });
   const formats = Array.from(form.querySelectorAll('input[name="format"]:checked')).map((input) => input.value);
   const blocked = String(form.elements.blocked?.value || '').split(/[,;\n]/).map((value) => value.trim()).filter(Boolean);
-  return P.normalize({ ...base, interests: P.uniqueInterests(interests), formats, blocked });
+  const videoReferences = Array.from(form.querySelectorAll('[data-inspiration-reference-row]')).map((row) => {
+    const url = String(row.querySelector('[name="referenceUrl"]')?.value || '').trim();
+    const why = String(row.querySelector('[name="referenceWhy"]')?.value || '').trim();
+    return { url, why, interestIds: inspirationSemanticIds(why) };
+  }).filter((reference) => reference.url).slice(0, P.MAX_VIDEO_REFERENCES || 10);
+  return P.normalize({ ...base, interests: P.uniqueInterests(interests), formats, blocked, videoReferences });
+}
+
+async function enrichInspirationVideoReferences(profile) {
+  const P = inspirationProfileEngine(), I = inspirationImportEngine();
+  if (!P || !I || !profile?.videoReferences?.length) return profile;
+  const tiktokLinks = profile.videoReferences.map((reference) => I.cleanTikTokLink(reference.url)).filter(Boolean);
+  if (!tiktokLinks.length) return profile;
+  try {
+    const metadata = await I.resolveTikTokLinks(tiktokLinks);
+    const byUrl = new Map(metadata.map((entry) => [I.cleanTikTokLink(entry.url), entry]));
+    return P.normalize({ ...profile, videoReferences: profile.videoReferences.map((reference) => {
+      const key = I.cleanTikTokLink(reference.url), entry = byUrl.get(key);
+      if (!entry) return reference;
+      const title = String(entry.title || '').trim();
+      return { ...reference, url: key || reference.url, title,
+        interestIds: inspirationSemanticIds(`${title} ${entry.author_name || ''} ${reference.why || ''}`) };
+    }) });
+  } catch { return profile; }
 }
 function openInspirationSetup(mode = 'edit', form = null) {
   const P = inspirationProfileEngine(); if (!P) return;
@@ -22070,9 +22121,13 @@ async function persistInspirationProfile(rawProfile, { closeSetup = false, focus
 }
 async function saveInspirationSetup(form) {
   const P = inspirationProfileEngine(); if (!P || State._shelfBusy) return;
-  const draft = inspirationDraftFromSetupForm(form);
+  let draft = inspirationDraftFromSetupForm(form);
   if (!draft || !draft.interests.length) { shelfFormStatus('Выбери хотя бы один интерес или добавь свой.', true); return; }
   if (!draft.formats.length) { shelfFormStatus('Выбери хотя бы один формат.', true); return; }
+  if (draft.videoReferences.length) {
+    shelfFormStatus('Анализирую видео-референсы…');
+    draft = await enrichInspirationVideoReferences(draft);
+  }
   const configured = P.configure(draft);
   const ensured = P.ensureDigest(configured, inspirationCatalog(), todayStr());
   shelfFormStatus('Сохраняю…');
@@ -22100,13 +22155,14 @@ async function markInspirationDone(id) {
     sfx('select'); track('inspiration:done');
   }
 }
-async function recordInspirationFeedback(id, verdict) {
+async function recordInspirationFeedback(id, verdict, reason = '') {
   const P = inspirationProfileEngine(), item = inspirationActionItem(id);
   if (!P || !item || !P.VERDICTS.includes(verdict)) return;
   const ensured = P.ensureDigest(inspirationProfileState(), inspirationCatalog(), todayStr());
-  const next = P.recordFeedback(ensured.profile, item, verdict, todayStr());
+  const next = P.recordFeedback(ensured.profile, item, verdict, todayStr(), reason);
+  State._inspirationFeedbackDraft = null;
   if (await persistInspirationProfile(next, { focus: `[data-inspiration-id="${CSS.escape(item.id)}"]` })) {
-    sfx('select'); toast(t(verdict === 'more' ? 'Учту для следующих подборок' : 'Больше не буду показывать этот материал'));
+    sfx('select'); toast(t(reason ? 'Ответ сохранён — следующие подборки станут точнее' : verdict === 'more' ? 'Учту для следующих подборок' : 'Больше не буду показывать этот материал'));
     track(`inspiration:feedback:${verdict}`);
   }
 }
@@ -25370,6 +25426,24 @@ async function onClick(e) {
   if (action === 'inspiration-setup-manual') { openInspirationSetup('manual'); return; }
   if (action === 'inspiration-setup-edit') { openInspirationSetup('edit'); return; }
   if (action === 'inspiration-setup-close') { closeInspirationSetup(); return; }
+  if (action === 'inspiration-reference-add') {
+    const form = el.closest('#inspiration-setup-form'), list = form?.querySelector('[data-inspiration-reference-list]');
+    const template = form?.querySelector('#inspiration-reference-template');
+    if (!form || !list || !template || list.querySelectorAll('[data-inspiration-reference-row]').length >= 10) return;
+    const row = template.content.firstElementChild?.cloneNode(true); if (!row) return;
+    list.append(row); updateInspirationReferenceUI(form); row.querySelector('[name="referenceUrl"]')?.focus(); sfx('open'); return;
+  }
+  if (action === 'inspiration-reference-remove') {
+    const form = el.closest('#inspiration-setup-form'), row = el.closest('[data-inspiration-reference-row]');
+    if (!form || !row) return;
+    row.remove();
+    if (!form.querySelector('[data-inspiration-reference-row]')) {
+      const template = form.querySelector('#inspiration-reference-template');
+      const fresh = template?.content.firstElementChild?.cloneNode(true);
+      if (fresh) form.querySelector('[data-inspiration-reference-list]')?.append(fresh);
+    }
+    updateInspirationReferenceUI(form); sfx('close'); return;
+  }
   if (action === 'inspiration-import-guide-open') {
     if (!State._inspirationSetupOpen) openInspirationSetup('edit');
     State._inspirationImportGuideOpen = true; State._inspirationImportLinksOpen = false;
@@ -25403,7 +25477,24 @@ async function onClick(e) {
     State._shelfFocusAfterCommit = '.inspiration-import-file-button'; render(); return;
   }
   if (action === 'inspiration-done') { await markInspirationDone(id); return; }
-  if (action === 'inspiration-feedback') { await recordInspirationFeedback(id, el.dataset.verdict); return; }
+  if (action === 'inspiration-feedback-open') {
+    const verdict = el.dataset.verdict, P = inspirationProfileEngine();
+    if (!P?.VERDICTS.includes(verdict)) return;
+    const saved = (inspirationProfileState()?.feedback || []).find((entry) => entry.itemId === String(id) && entry.verdict === verdict);
+    State._inspirationFeedbackDraft = { itemId: String(id), verdict, reason: saved?.reason || '' };
+    State._shelfFocusAfterCommit = `[data-inspiration-id="${CSS.escape(String(id))}"] [data-inspiration-feedback-reason]`;
+    sfx('open'); render(); return;
+  }
+  if (action === 'inspiration-feedback-cancel') {
+    const itemId = String(State._inspirationFeedbackDraft?.itemId || id || '');
+    State._inspirationFeedbackDraft = null; State._shelfFocusAfterCommit = `[data-inspiration-id="${CSS.escape(itemId)}"]`;
+    sfx('close'); render(); return;
+  }
+  if (action === 'inspiration-feedback-skip') { await recordInspirationFeedback(id, el.dataset.verdict, ''); return; }
+  if (action === 'inspiration-feedback-save') {
+    const reason = String(el.closest('.inspiration-feedback-reason')?.querySelector('[data-inspiration-feedback-reason]')?.value || '').trim();
+    await recordInspirationFeedback(id, el.dataset.verdict, reason); return;
+  }
   if (action === 'inspiration-save') { await saveInspirationCatalogItem(id); return; }
   if (action === 'inspiration-play' || action === 'inspiration-play-saved') { playInspirationEmbed(id, el); return; }
   if (action === 'inspiration-media-close') { closeInspirationEmbed(el); return; }
@@ -28014,6 +28105,7 @@ function onChange(e) {
 }
 // Живой автосейв формы настроек при вводе (текст печатается без blur — 'change' не сработал бы)
 function onSettingsInput(e) {
+  if (e.target.matches?.('#inspiration-setup-form [name="referenceUrl"]')) updateInspirationReferenceUI(e.target.form);
   if (e.target.closest('#skills-list, #habits-list, .knob') || e.target.id === 'set-appName') autosaveSettings();
   if (e.target.matches('#add-task input[name="title"]')) updateCatSuggest(e.target);
   if (e.target.matches('.sphere-search-input')) {
@@ -28400,7 +28492,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v200';
+const PWA_CACHE_VERSION = 'satoru-v201';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

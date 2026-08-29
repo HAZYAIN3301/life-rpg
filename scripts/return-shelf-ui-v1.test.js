@@ -134,6 +134,35 @@ test('настройка делает интересы и форматы явн�
   assert.doesNotMatch(html, /name="url"|name="kind"|name="why"|Тип материала|Экспорт/);
 });
 
+test('настройка принимает до 10 мотивирующих видео и необязательное объяснение', () => {
+  const profile = Profile.normalize({ ...configuredProfile(), videoReferences: [
+    { url: 'https://www.tiktok.com/@maker/video/1234567890', why: 'Нравится упорство и темп монтажа' },
+  ] });
+  const html = UI.render(ready({ setupOpen: true, profile }), t);
+  assert.match(html, /Видео, которые тебя мотивируют/);
+  assert.match(html, /data-inspiration-reference-count>1 \/ 10/);
+  assert.match(html, /name="referenceUrl"[^>]+value="https:\/\/www\.tiktok\.com\/@maker\/video\/1234567890"/);
+  assert.match(html, /name="referenceWhy"[\s\S]*Нравится упорство и темп монтажа/);
+  assert.match(html, /maxlength="320"/);
+  assert.match(html, /data-action="inspiration-reference-add"/);
+  assert.match(html, /data-action="inspiration-reference-remove"/);
+  assert.match(html, /Видео не загружаются в Satoru/);
+});
+
+test('пояснение к понравилось и не понравилось открывается отдельно и остаётся необязательным', () => {
+  const html = UI.render(ready({
+    feedbackDraft: { itemId: 'a', verdict: 'not_for_me', reason: 'Слишком громко <script>' },
+  }), t);
+  assert.match(html, /data-action="inspiration-feedback-open"[^>]+data-verdict="more"/);
+  assert.match(html, /data-action="inspiration-feedback-open"[^>]+data-verdict="not_for_me"/);
+  assert.match(html, /class="inspiration-feedback-reason"/);
+  assert.match(html, /Почему\? Необязательно/);
+  assert.match(html, /data-action="inspiration-feedback-skip"/);
+  assert.match(html, /data-action="inspiration-feedback-save"/);
+  assert.match(html, /Слишком громко &lt;script&gt;/);
+  assert.doesNotMatch(html, /Слишком громко <script>/);
+});
+
 test('готовый TikTok-импорт показывает только сводку и безопасные сигналы', () => {
   const html = UI.render(ready({
     setupOpen: true,
@@ -304,16 +333,16 @@ test('интеграция подключает профиль и каталог
   const catalogAt = index.indexOf('inspiration-catalog-v1.js');
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20260829-inspiration-guide-v200-1');
+  const appAt = index.indexOf('app.js?v=20260829-inspiration-learning-v201-1');
   assert.ok(importAt >= 0 && profileAt > importAt && catalogAt > profileAt && domainAt > catalogAt && uiAt > domainAt && appAt > uiAt,
     'import → profile → catalog → saved domain → UI → app');
   for (const asset of ['inspiration-import-v1.js', 'inspiration-profile-v1.js', 'inspiration-catalog-v1.js', 'return-shelf-v1.js', 'return-shelf-ui-v1.js']) {
-    assert.match(index, new RegExp(`${asset.replaceAll('.', '\\.')}\\?v=20260829-inspiration-guide-v200-1`));
+    assert.match(index, new RegExp(`${asset.replaceAll('.', '\\.')}\\?v=20260829-inspiration-learning-v201-1`));
     assert.match(sw, new RegExp(asset.replaceAll('.', '\\.')));
   }
-  assert.match(index, /styles\.css\?v=20260829-inspiration-guide-v200-1/);
-  assert.match(sw, /satoru-v200/);
-  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v200'/);
+  assert.match(index, /styles\.css\?v=20260829-inspiration-learning-v201-1/);
+  assert.match(sw, /satoru-v201/);
+  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v201'/);
 });
 
 test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gate', () => {
@@ -324,8 +353,9 @@ test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gat
     'Архив остаётся на устройстве', 'Настроить вручную', 'Темы, вселенные и образы',
     'Инструкция для твоего устройства', 'Открыть нужное окно TikTok', 'Настройки и конфиденциальность',
     'Скачать ваши данные', 'Выбери «Все данные»', 'Нажми «Запросить данные»', 'Вернись в Satoru',
-    'Что показывать', 'Что не показывать', 'Почему здесь', 'Больше такого',
-    'Не моё', 'На сегодня всё', 'Добавить своё',
+    'Что показывать', 'Что не показывать', 'Почему здесь', 'Понравилось',
+    'Не понравилось', 'Почему? Необязательно', 'Видео, которые тебя мотивируют',
+    'Почему это мотивирует?', 'Без объяснения', 'Сохранить ответ', 'На сегодня всё', 'Добавить своё',
     'Открыть выпуск', 'Источник и права', 'Ещё действия', 'Настроить подборку',
     'Дальше', 'Просмотрено ✓', 'Ещё темы',
   ];
@@ -333,6 +363,17 @@ test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gat
     const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replaceAll("'", "\\'");
     assert.match(src, new RegExp(`'${escaped}': \\{ en: [^\\n]+ de: [^\\n]+ uk: [^\\n]+ es: [^\\n]+ \\}`), key);
   }
+});
+
+test('runtime сохраняет референсы и причины feedback как обучающие сигналы, не меняя текущую тройку', () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'public/app.js'), 'utf8');
+  assert.match(src, /querySelectorAll\('\[data-inspiration-reference-row\]'\)[\s\S]{0,700}videoReferences/);
+  assert.match(src, /enrichInspirationVideoReferences[\s\S]{0,1600}resolveTikTokLinks/);
+  assert.match(src, /P\.recordFeedback\(ensured\.profile, item, verdict, todayStr\(\), reason\)/);
+  assert.match(src, /action === 'inspiration-feedback-open'/);
+  assert.match(src, /action === 'inspiration-feedback-skip'/);
+  assert.match(src, /action === 'inspiration-feedback-save'/);
+  assert.doesNotMatch(src, /recordInspirationFeedback[\s\S]{0,900}ensureDigest\([^)]*tomorrow/i);
 });
 
 test('motion остаётся конечным, touch-safe и выключается в reduced motion', () => {

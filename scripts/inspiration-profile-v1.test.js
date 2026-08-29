@@ -69,6 +69,46 @@ test('feedback влияет только на будущую подборку, �
   assert.equal(learned.feedback.at(-1).verdict, 'not_for_me');
 });
 
+test('до 10 видео-референсов сохраняются безопасно и уточняют будущий порядок', () => {
+  const references = Array.from({ length: 12 }, (_, index) => ({
+    url: `https://www.tiktok.com/@creator/video/${1000 + index}`,
+    why: index === 0 ? 'Меня мотивируют космос и научные исследования' : `Причина ${index}`,
+  }));
+  references.push({ url: 'javascript:alert(1)', why: 'bad' }, references[0]);
+  const p = profile({
+    interests: [{ id: 'science', label: 'Наука' }], formats: ['quote'], videoReferences: references,
+  });
+  assert.equal(p.videoReferences.length, Profile.MAX_VIDEO_REFERENCES);
+  assert.ok(p.videoReferences.every((item) => item.url.startsWith('https://')));
+  assert.equal(new Set(p.videoReferences.map((item) => item.url)).size, p.videoReferences.length);
+  assert.deepEqual(p.videoReferences[0].interestIds.sort(), ['science', 'space']);
+
+  const catalog = [
+    row('generic-science', 'quote', ['science'], 'Научный метод'),
+    row('space-science', 'quote', ['science', 'space'], 'Космос и телескопы'),
+  ];
+  assert.equal(Profile.choose(catalog, p, DAY)[0].id, 'space-science',
+    'положительный видео-референс должен усиливать совпадающие темы');
+});
+
+test('объяснение к понравилось/не понравилось хранится и усиливает понятные алгоритму причины', () => {
+  const p = profile({ interests: [{ id: 'science', label: 'Наука' }], formats: ['quote'] });
+  const seed = row('seed', 'quote', ['science'], 'Исследование привычек');
+  const learned = Profile.recordFeedback(p, seed, 'more', DAY, 'Мне особенно понравились космос и телескопы');
+  const feedback = learned.feedback.at(-1);
+  assert.equal(feedback.reason, 'Мне особенно понравились космос и телескопы');
+  assert.ok(feedback.reasonInterestIds.includes('space'));
+
+  const candidates = [
+    row('generic', 'quote', ['science'], 'Общий научный материал'),
+    row('space', 'quote', ['science', 'space'], 'Космос и телескопы'),
+  ];
+  assert.equal(Profile.choose(candidates, learned, NEXT_DAY)[0].id, 'space');
+  const withoutReason = Profile.recordFeedback(p, seed, 'more', DAY);
+  assert.equal(Object.hasOwn(withoutReason.feedback.at(-1), 'reason'), false,
+    'объяснение остаётся необязательным');
+});
+
 test('форматы и исключённые темы — жёсткие фильтры, а не пожелания ранжированию', () => {
   const p = profile({
     interests: [{ id: 'science', label: 'Наука' }, { id: 'sport', label: 'Спорт' }],

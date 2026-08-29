@@ -14,7 +14,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildInspirationProfile() {
   'use strict';
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
   const FORMATS = Object.freeze(['edit', 'video', 'image', 'quote', 'podcast']);
   const VERDICTS = Object.freeze(['more', 'not_for_me']);
   const MAX_INTERESTS = 16;
@@ -22,6 +22,8 @@
   const MAX_FEEDBACK = 120;
   const MAX_SIGNALS = 64;
   const MAX_IMPORTS = 8;
+  const MAX_VIDEO_REFERENCES = 10;
+  const MAX_REASON = 320;
   const DIGEST_SIZE = 3;
   const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -56,7 +58,7 @@
     [/искусств|мистец|kunst|arte|\bart\b/i, 'art'],
     [/музык|музик|music|musik|música/i, 'music'],
     [/космос|space|weltraum|espacio/i, 'space'],
-    [/наук|science|wissenschaft|ciencia|research/i, 'science'],
+    [/наук|науч|science|wissenschaft|ciencia|research/i, 'science'],
     [/технолог|technology|technologie|tecnolog|\btech\b|программ|\bcode\b|robot/i, 'technology'],
     [/обуч|навчан|learning|lernen|aprendiz|learn/i, 'learning'],
     [/уч[её]б|навч|study|studium|estudio/i, 'study'],
@@ -83,6 +85,15 @@
     if (known.has(stable)) return stable;
     const found = INTEREST_ALIASES.find(([pattern]) => pattern.test(raw));
     return found ? found[1] : '';
+  }
+
+  function semanticInterestIds(value) {
+    const raw = text(value, 1200), out = [];
+    if (!raw) return out;
+    for (const [pattern, id] of INTEREST_ALIASES) {
+      if (pattern.test(raw) && !out.includes(id)) out.push(id);
+    }
+    return out.slice(0, 12);
   }
 
   function cleanInterest(raw) {
@@ -124,13 +135,19 @@
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
     const itemId = text(raw.itemId, 64);
     if (!itemId || !VERDICTS.includes(raw.verdict) || !ISO_DAY.test(String(raw.day || ''))) return null;
-    return {
+    const reason = text(raw.reason, MAX_REASON);
+    const reasonInterestIds = cleanWords(raw.reasonInterestIds, 12).map(slug).filter(Boolean);
+    for (const id of semanticInterestIds(reason)) if (!reasonInterestIds.includes(id)) reasonInterestIds.push(id);
+    const out = {
       itemId,
       verdict: raw.verdict,
       day: raw.day,
       interestIds: cleanWords(raw.interestIds, 12).map(slug).filter(Boolean),
       format: FORMATS.includes(raw.format) ? raw.format : null,
     };
+    if (reason) out.reason = reason;
+    if (reasonInterestIds.length) out.reasonInterestIds = reasonInterestIds.slice(0, 12);
+    return out;
   }
 
   function cleanSignal(raw) {
@@ -157,6 +174,24 @@
     };
   }
 
+  function cleanVideoReference(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+    let url;
+    try {
+      const parsed = new URL(text(raw.url, 1000));
+      if (parsed.protocol !== 'https:' || parsed.username || parsed.password) return null;
+      url = parsed.href.slice(0, 1000);
+    } catch { return null; }
+    const why = text(raw.why, MAX_REASON), title = text(raw.title, 180);
+    const interestIds = cleanWords(raw.interestIds, 12).map(slug).filter(Boolean);
+    for (const id of semanticInterestIds(`${title} ${why}`)) if (!interestIds.includes(id)) interestIds.push(id);
+    const out = { id: text(raw.id, 64) || `video-${stableHash(url).toString(36)}`, url };
+    if (why) out.why = why;
+    if (title) out.title = title;
+    if (interestIds.length) out.interestIds = interestIds.slice(0, 12);
+    return out;
+  }
+
   function emptyProfile() {
     return {
       version: 1,
@@ -167,6 +202,7 @@
       feedback: [],
       signals: [],
       imports: [],
+      videoReferences: [],
       digest: null,
     };
   }
@@ -183,6 +219,11 @@
     out.feedback = (Array.isArray(raw.feedback) ? raw.feedback : []).map(cleanFeedback).filter(Boolean).slice(-MAX_FEEDBACK);
     out.signals = (Array.isArray(raw.signals) ? raw.signals : []).map(cleanSignal).filter(Boolean).slice(0, MAX_SIGNALS);
     out.imports = (Array.isArray(raw.imports) ? raw.imports : []).map(cleanImport).filter(Boolean).slice(-MAX_IMPORTS);
+    const referenceUrls = new Set();
+    out.videoReferences = (Array.isArray(raw.videoReferences) ? raw.videoReferences : []).map(cleanVideoReference).filter((item) => {
+      if (!item || referenceUrls.has(item.url)) return false;
+      referenceUrls.add(item.url); return true;
+    }).slice(0, MAX_VIDEO_REFERENCES);
     out.configured = raw.configured === true && out.interests.length > 0 && out.formats.length > 0;
     const digest = raw.digest;
     if (digest && typeof digest === 'object' && !Array.isArray(digest) && ISO_DAY.test(String(digest.day || ''))) {
@@ -220,11 +261,39 @@
 
   function feedbackWeights(profile) {
     const weights = new Map();
-    for (const row of normalize(profile).feedback) {
+    const p = normalize(profile);
+    for (const row of p.feedback) {
       const delta = row.verdict === 'more' ? 2 : -3;
       for (const id of row.interestIds) weights.set(id, (weights.get(id) || 0) + delta);
+      for (const id of row.reasonInterestIds || []) weights.set(id, (weights.get(id) || 0) + delta * 2);
     }
+    for (const row of p.videoReferences) for (const id of row.interestIds || []) weights.set(id, (weights.get(id) || 0) + 4);
     return weights;
+  }
+
+  const TERM_STOP = new Set('that this with from your have just very more less because what when where then about into only also like does did the and для как что это этот эта просто очень потому если когда где тогда чтобы или либо мне меня тебе тебя такое такой такая есть был была были und der die das ein eine mit für von ist ich du weil aber oder dass sehr auch nur wenn dann warum und para que por una uno con del los las muy porque pero como donde cuando solo auch це цей ця просто дуже тому якщо коли де тоді щоб або мені тебе con porque pero como muy solo'.split(/\s+/));
+  function meaningfulTerms(value) {
+    const out = [], seen = new Set();
+    for (const word of String(value || '').toLocaleLowerCase().match(/[\p{L}\p{N}]{4,}/gu) || []) {
+      if (TERM_STOP.has(word) || seen.has(word)) continue;
+      seen.add(word); out.push(word);
+      if (out.length >= 12) break;
+    }
+    return out;
+  }
+
+  function explanationScore(item, profile) {
+    const p = normalize(profile), haystack = `${item.title} ${item.body} ${(item.interestIds || []).join(' ')}`.toLocaleLowerCase();
+    let value = 0;
+    for (const row of p.feedback) {
+      const hits = meaningfulTerms(row.reason).filter((term) => haystack.includes(term)).length;
+      value += hits * (row.verdict === 'more' ? 1.5 : -2);
+    }
+    for (const row of p.videoReferences) {
+      const hits = meaningfulTerms(`${row.title || ''} ${row.why || ''}`).filter((term) => haystack.includes(term)).length;
+      value += hits * 2;
+    }
+    return value;
   }
 
   function blocked(item, profile) {
@@ -238,7 +307,7 @@
     const weights = feedbackWeights(p);
     const matches = item.interestIds.filter((id) => wanted.has(id));
     const learned = item.interestIds.reduce((sum, id) => sum + (weights.get(id) || 0), 0);
-    return matches.length * 20 + learned + (p.formats.includes(item.format) ? 4 : 0)
+    return matches.length * 20 + learned + explanationScore(item, p) + (p.formats.includes(item.format) ? 4 : 0)
       + (stableHash(`${day}:${item.id}`) % 1000) / 1000;
   }
 
@@ -288,12 +357,12 @@
     return profile;
   }
 
-  function recordFeedback(rawProfile, rawItem, verdict, day) {
+  function recordFeedback(rawProfile, rawItem, verdict, day, reason = '') {
     const item = catalogRow(rawItem);
     let profile = markDone(rawProfile, item && item.id);
     if (!item || !VERDICTS.includes(verdict) || !ISO_DAY.test(String(day || ''))) return profile;
     profile.feedback = profile.feedback.filter((row) => row.itemId !== item.id);
-    profile.feedback.push({ itemId: item.id, verdict, day, interestIds: item.interestIds.slice(0, 12), format: item.format });
+    profile.feedback.push(cleanFeedback({ itemId: item.id, verdict, day, interestIds: item.interestIds.slice(0, 12), format: item.format, reason }));
     profile.feedback = profile.feedback.slice(-MAX_FEEDBACK);
     return profile;
   }
@@ -310,8 +379,8 @@
   }
 
   return Object.freeze({
-    VERSION, FORMATS, VERDICTS, MAX_INTERESTS, MAX_BLOCKED, MAX_FEEDBACK, MAX_SIGNALS, MAX_IMPORTS, DIGEST_SIZE,
-    emptyProfile, normalize, configure, cleanInterest, uniqueInterests, semanticInterestId, cleanSignal, cleanImport,
+    VERSION, FORMATS, VERDICTS, MAX_INTERESTS, MAX_BLOCKED, MAX_FEEDBACK, MAX_SIGNALS, MAX_IMPORTS, MAX_VIDEO_REFERENCES, MAX_REASON, DIGEST_SIZE,
+    emptyProfile, normalize, configure, cleanInterest, uniqueInterests, semanticInterestId, semanticInterestIds, cleanSignal, cleanImport, cleanVideoReference,
     choose, ensureDigest, markDone, recordFeedback, isDigestDone, reason, stableHash,
   });
 });
