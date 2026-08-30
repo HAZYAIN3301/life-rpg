@@ -37,13 +37,13 @@ test('automatic Guide prompts keep the contextual pacing contract', () => {
   assert.match(automatic, /nextContextual\(state,\s*guideV3Context\(\),\s*releasedRegistry\)/);
 });
 
-test('v205 ships the manual-library fix through a fresh offline cache', () => {
-  assert.match(SW, /const CACHE = 'satoru-v205'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v205'/);
+test('v205 library assets remain pinned while v206 advances the application shell', () => {
+  assert.match(SW, /const CACHE = 'satoru-v206'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v206'/);
   for (const file of ['guide-v3.js', 'guide-presenter-v1.js', 'guide-v3-copy-ru.js', 'guide-v3-copy-en.js', 'guide-v3-copy-de.js', 'guide-v3-copy-uk.js', 'guide-v3-copy-es.js']) {
     assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=[^"']*v205`));
   }
   for (const file of ['app.js', 'styles.css']) {
-    assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=[^"']*v205`));
+    assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=[^"']*v206`));
   }
 });

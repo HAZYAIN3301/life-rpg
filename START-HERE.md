@@ -59,6 +59,7 @@
 | **INTERFACE-HIERARCHY-V203-QA.md** | редизайн редизайна: иерархия Today/Calendar/Inspiration/Board, progressive disclosure, motion/sound и локальный release gate |
 | **SKILLTREE-MASTERNAK-RESEARCH.md** | долговечный разбор Masternak (2022): что источник действительно подтверждает, ограничения и правила Tree v4 |
 | **TREE-V4-SPEC.md / TREE-V4-QA.md** | честное разделение реального Path и игровых бонусов, Guide v3 adapter, evidence/data contract, design и release gates |
+| **ECONOMY-ICONS-V206-QA.md** | канон 96 SVG для достижений, личных наград и арсенала; генератор, offline manifest и QA gates |
 | **APPLE-ENTITLEMENT-REQUEST.md** | готовый черновик заявки на Family Controls distribution entitlement |
 | **STYLE-DECISION.md** | финал арт-стиля + выбор рантайма (SVG vs Rive) |
 | **ART-PIPELINE.md** | производственный путь графики от и до: AI-спрайты (боссы/питомцы) → Rive (компаньон/аватар) |
@@ -77,6 +78,8 @@
 **Interface Hierarchy v203:** опубликован в production коммитом `82fcd74`; оба Railway-сервиса `success`, пять изменённых shell-файлов совпадают с production byte-for-byte. Header больше не занят постоянной полосой сфер; ядро дня, Shadow rail, Today/Calendar forms, Inspiration references и Board Wildcard используют одну понятную иерархию «выбор → параметры». Переключение ядра fail-closed и не показывает успех до durable task write. Движение конечное и optional, звук семантический, touch/keyboard/reduced-motion контракты сохранены. QA/handoff: [`INTERFACE-HIERARCHY-V203-QA.md`](./INTERFACE-HIERARCHY-V203-QA.md).
 
 **Tree v4 / Guide v205:** реальный capability path стал стартовой поверхностью Tree: одна следующая веха с criterion/nextAction, durable self/import evidence и постоянный earned trace. Покупаемые perks вынесены в явно игровой слой и не изображают мастерство. Contextual Guide больше не ждёт очко бонусов: он открывает Path, подсвечивает сферу с ближайшей capability и не просит ложно подтверждать навык. Legacy-деревья получают additive schema migration; confirmed milestones append-only; AI-карта возвращает проверяемые 4–6 ступеней; crash diagnostics не включают личные proof/plan-поля. Research/spec/QA: [`SKILLTREE-MASTERNAK-RESEARCH.md`](./SKILLTREE-MASTERNAK-RESEARCH.md), [`TREE-V4-SPEC.md`](./TREE-V4-SPEC.md), [`TREE-V4-QA.md`](./TREE-V4-QA.md).
+
+**Economy Icons v206:** 48 достижений, 33 личные награды и 15 предметов арсенала используют один воспроизводимый SVG-язык без emoji и одинаковых декоративных заглушек. Награды читаются по предмету, gear — по силуэту и restrained rarity accent; все 96 assets входят в offline shell. Generator/QA: [`ECONOMY-ICONS-V206-QA.md`](./ECONOMY-ICONS-V206-QA.md).
 
 **Guide v3:** First Journey и contextual pack доступны на RU/EN/DE/UK/ES. Tree-глава обновлена до registry v3: `intro → выбор точной сферы → receipt на ближайшей реальной вехе`; слой Path обязателен, Game Bonuses не закрывают главу, claim не выполняется ради туториала. Exact copy releases: RU `1.4.0`, EN/DE/UK/ES `0.5.0`. Goals остаётся `deferred-questionnaire`.
 

@@ -55,7 +55,7 @@ test('failed explicit refresh stays visible above a deferred update or reconnect
 });
 
 test('service worker install is fail-closed and activated version reaches every open client', () => {
-  assert.match(SW, /const CACHE = 'satoru-v205'/);
+  assert.match(SW, /const CACHE = 'satoru-v206'/);
   const install = SW.slice(SW.indexOf("self.addEventListener('install'"), SW.indexOf("self.addEventListener('activate'"));
   assert.match(install, /c\.addAll\(SHELL\)/);
   assert.doesNotMatch(install, /catch\s*\(/, 'failed addAll must reject installation instead of activating a partial shell');
@@ -92,7 +92,7 @@ test('offline shell serves the exact version-pinned URLs requested by index', ()
 });
 
 test('runtime exposes an accessible update/offline surface and fences writes while offline', () => {
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v205'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v206'/);
   assert.match(APP, /window\.addEventListener\('offline'/);
   assert.match(APP, /window\.addEventListener\('online'/);
   assert.match(APP, /navigator\.serviceWorker\.addEventListener\('message'/);
@@ -139,8 +139,8 @@ test('five-language lifecycle copy and current shell order are complete', () => 
     for (const locale of ['en:', 'de:', 'uk:', 'es:']) assert.match(row, new RegExp(locale));
   }
   const moduleAt = INDEX.indexOf('pwa-lifecycle-v1.js?v=20260826-launch-hardening-v180-1');
-  const appAt = INDEX.indexOf('app.js?v=20260830-guide-tree-v205-1');
+  const appAt = INDEX.indexOf('app.js?v=20260830-economy-icons-v206-1');
   assert.ok(moduleAt >= 0 && appAt > moduleAt);
-  assert.match(INDEX, /styles\.css\?v=20260830-guide-tree-v205-1/);
+  assert.match(INDEX, /styles\.css\?v=20260830-economy-icons-v206-1/);
   assert.match(SW, /'pwa-lifecycle-v1\.js'/);
 });

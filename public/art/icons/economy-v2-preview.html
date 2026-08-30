@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Satoru · Economy icons v2</title>
+  <style>
+    :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background:#080e19; color:#e8edf7; }
+    * { box-sizing:border-box; }
+    body { margin:0; padding:32px; background:radial-gradient(circle at 50% 0,#13243b 0,#080e19 42rem); }
+    main { max-width:1440px; margin:auto; }
+    h1 { margin:0 0 8px; font-size:28px; }
+    h2 { margin:34px 0 14px; font-size:18px; color:#83d8e8; }
+    p { margin:0; color:#95a1b5; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(138px,1fr)); gap:12px; }
+    figure { margin:0; min-height:146px; display:grid; place-items:center; align-content:center; gap:8px; padding:12px; border:1px solid #25324a; border-radius:14px; background:linear-gradient(180deg,rgba(255,255,255,.035),transparent),#101827; }
+    img { width:88px; height:88px; object-fit:contain; }
+    figcaption { max-width:100%; overflow:hidden; text-overflow:ellipsis; color:#bdc6d7; font-size:12px; text-align:center; }
+    @media(max-width:600px){ body{padding:16px}.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}figure{min-height:126px;padding:8px}img{width:72px;height:72px}figcaption{font-size:10px} }
+  </style>
+</head>
+<body><main>
+  <h1>Economy icons v2</h1><p>Production scale · 66–82 px · transparent SVG</p>
+  <div id="sheets"></div>
+</main><script>
+const groups = {
+  'Достижения': ['allspheres_5','avatar_custom','balanced','balanced_90','capstone_first','clean_30','clean_7','cofounder_10','collector_5','early_bird','first_goal','first_habit','first_note','first_quest','first_reward','focus_10h','full_spectrum','gear_full','goals_10','gold_500','habit_100','legendary_drop','level_10','level_20','level_30','level_5','marathon_day','mission_set','new_year','night_owl','path_chosen','quests_100','quests_250','quests_50','reporter_3','skill_master','skills_all3','skills_all5','sphere_lvl10','streak_100','streak_30','streak_7','tree_full','wear_first','weekend_warrior','xp_1000','xp_25000','xp_5000'],
+  'Награды': ['banya','bath','boardgames','boba','book','breakfast','cake','chocolate','clothes','coffee','concert','course','decor','delivery','drawing','episode','event','gadget','game','hobby','icecream','meditation','movie','music','pizza','restaurant','sleep','small-purchase','spa','vacation','walk','weekend-trip','wishlist'],
+  'Арсенал': ['a1','a2','a2b','a3','a4','m1','m2','m2b','m3','m4','w1','w2','w2b','w3','w4'],
+};
+const folder = {'Достижения':'achievements','Награды':'rewards','Арсенал':'gear'};
+document.querySelector('#sheets').innerHTML = Object.entries(groups).map(([title, ids]) => `<section><h2>${title} · ${ids.length}</h2><div class="grid">${ids.map(id => `<figure><img src="content/${folder[title]}/${id}.svg" alt=""><figcaption>${id}</figcaption></figure>`).join('')}</div></section>`).join('');
+</script></body></html>

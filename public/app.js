@@ -20887,7 +20887,7 @@ function showGuide() {
 //  Покупка за золото, открытие по уровню, по 1 предмету на слот. JJK-референсы.
 // ============================================================
 const GEAR = [
-  { id: 'w1', slot: 'weapon', name: 'Тренировочный клинок', icon: '🗡', inventoryArt: '/art/gear/inventory/w1-training-blade.png', rarity: 'common', xpPct: 3, cost: 120, lvl: 1 },
+  { id: 'w1', slot: 'weapon', name: 'Тренировочный клинок', icon: '🗡', rarity: 'common', xpPct: 3, cost: 120, lvl: 1 },
   { id: 'w2', slot: 'weapon', name: 'Клинок Фокуса', icon: '⚔️', rarity: 'rare', xpPct: 6, cost: 450, lvl: 5 },
   { id: 'w3', slot: 'weapon', name: 'Катана Бесконечности', icon: '🗡️', rarity: 'epic', xpPct: 11, cost: 1400, lvl: 12 },
   { id: 'a1', slot: 'armor', name: 'Лёгкая броня', icon: '🦺', rarity: 'common', hardXpPct: 5, cost: 120, lvl: 2 },
@@ -20905,8 +20905,8 @@ const GEAR = [
   { id: 'm4', slot: 'amulet', name: 'Сердце Десятиборца', icon: '💠', rarity: 'legendary', goldPct: 24, xpPct: 6, cost: 3000, lvl: 20 },
 ];
 const GEAR_SLOTS = [
-  { k: 'weapon', label: 'Оружие', iconId: 'difficulty.normal' },
-  { k: 'armor', label: 'Броня', iconId: 'difficulty.protected' },
+  { k: 'weapon', label: 'Оружие', iconId: 'gear.w1' },
+  { k: 'armor', label: 'Броня', iconId: 'gear.a2' },
   { k: 'amulet', label: 'Амулет', iconId: 'gear.m1' },
 ];
 function ensureGear() { const s = State.settings; if (!s.gear) s.gear = { owned: [], equipped: {}, relics: [] }; if (!Array.isArray(s.gear.owned)) s.gear.owned = []; if (!s.gear.equipped) s.gear.equipped = {}; if (!Array.isArray(s.gear.relics)) s.gear.relics = []; return s.gear; }
@@ -20940,7 +20940,7 @@ function arsenalCard() {
         <div class="gear-nm">${esc(t(it.name))}</div>
         <div class="gear-bonus" style="color:${rar.color}">${gearBonusLabel(it)}</div>${btn}</div>`;
     }).join('');
-    return `<div class="gear-slot"><div class="gear-slot-h">${satoruIconHTML(s.iconId, s.iconId === 'gear.m1' ? 'slot-emblem' : 'slot-glyph', '◇')} ${t(s.label)}</div><div class="gear-row">${items}</div></div>`;
+    return `<div class="gear-slot"><div class="gear-slot-h">${satoruIconHTML(s.iconId, 'slot-emblem', '◇')} ${t(s.label)}</div><div class="gear-row">${items}</div></div>`;
   }).join('');
   // v2: слот реликвий — динамические инстансы с сфера-привязкой (падают из сундуков)
   const eqR = g.equipped.relic;
@@ -20955,7 +20955,7 @@ function arsenalCard() {
   const sum = (gb.xpPct || gb.hardXpPct || gb.goldPct)
     ? `<p class="gear-sum">Надето: ${[gb.xpPct ? `+${gb.xpPct}% XP` : '', gb.hardXpPct ? `+${gb.hardXpPct}% XP к сложным` : '', gb.goldPct ? `+${gb.goldPct}% золота` : ''].filter(Boolean).join(' · ')}</p>`
     : `<p class="gear-sum muted">Ничего не надето — снаряжение усилит рост.</p>`;
-  return `<div class="card"><h3>${satoruIconHTML('difficulty.normal', 'heading-emblem', '◇')} ${t('Арсенал — снаряжение')}</h3>
+  return `<div class="card arsenal-card"><h3>${satoruIconHTML('gear.w4', 'heading-emblem', '◇')} ${t('Арсенал — снаряжение')}</h3>
     <p class="muted" style="font-size:12px;margin:0 0 6px">${t('Снаряжение покупается за заранее указанную цену. Дневные награды не выдают случайную силу; Free и Pro используют одни правила.')}</p>
     ${sum}${slotHtml}${relicSlot}</div>`;
 }
@@ -28968,7 +28968,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v205';
+const PWA_CACHE_VERSION = 'satoru-v206';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

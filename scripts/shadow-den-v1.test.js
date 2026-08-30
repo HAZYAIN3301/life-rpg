@@ -59,7 +59,7 @@ assert.match(css, /is-shadow-pair-active/);
 assert.match(css, /body:has\(\.focus-pill\.show\) \.den-shell/);
 assert.match(css, /prefers-reduced-motion: reduce[\s\S]*shadow-den-pair-v1/);
 assert.match(index, /shadow-den-v1\.js\?v=20260819-traveller-f2-runtime-v167-1/);
-assert.match(sw, /const CACHE = 'satoru-v205'/);
+assert.match(sw, /const CACHE = 'satoru-v206'/);
 for (const form of shadow.FORMS) assert.match(sw, new RegExp(`shadow-den-v1/pair-v1/attune-${form}\\.png`));
 assert.match(css, /\.shadow-den-pair-v1\.is-active \{ display: block; \}/);
 assert.match(shadow.playPair.toString(), /installPairImage/);

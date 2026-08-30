@@ -1,13 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
-  <title id="title">achievement · tree_full</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title" data-icon-family="achievement" data-icon-version="2">
+  <title id="title">Achievement: Древо в цвету</title>
   <defs>
-    <filter id="paper-shadow" x="-25%" y="-25%" width="150%" height="160%">
-      <feDropShadow dx="0" dy="3" stdDeviation="2.2" flood-color="#080c18" flood-opacity=".28"/>
+    <filter id="lift" x="-25%" y="-25%" width="150%" height="165%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#050814" flood-opacity=".34"/>
     </filter>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#f8f4e8"/><stop offset="1" stop-color="#d9c39d"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#e8edf5"/><stop offset=".5" stop-color="#aebbd0"/><stop offset="1" stop-color="#6f819d"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#ffd77d"/><stop offset=".5" stop-color="#dfa84b"/><stop offset="1" stop-color="#9b642c"/>
+    </linearGradient>
   </defs>
-  <g filter="url(#paper-shadow)">
-    <g transform="rotate(0 64 64)"><path d="M64 10l12 8 15-1 6 14 13 7-3 15 8 12-9 12 2 15-14 6-7 14-15-2-12 8-12-9-15 1-6-14-13-7 3-15-8-12 9-12-2-15 14-6 7-14 15 2z" fill="#cfb88c" stroke="#242a3c" stroke-width="4"/><circle cx="64" cy="64" r="44" fill="#f0dfbf" stroke="#e7b04c" stroke-width="4" stroke-dasharray="5 4"/></g>
-    <g class="motif"><path d="M58 96V62l-17-15M63 69l21-20M60 78l-22-2" stroke="#242a3c" stroke-width="7" stroke-linecap="round"/><circle cx="40" cy="44" r="16" fill="#5b9d74" stroke="#242a3c" stroke-width="4"/><circle cx="85" cy="45" r="16" fill="#6aabd1" stroke="#242a3c" stroke-width="4"/><circle cx="37" cy="77" r="14" fill="#e7b04c" stroke="#242a3c" stroke-width="4"/><circle cx="63" cy="36" r="17" fill="#cb655c" stroke="#242a3c" stroke-width="4"/></g>
-  </g>
-  <path d="M104 105c4-4 7-4 10 0-3 3-6 5-10 0z" fill="#e7b04c" opacity=".9"/>
+  <g filter="url(#lift)" stroke="#20273a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M37 79l-7 35 21-11 13 14V82zM91 79l7 35-21-11-13 14V82z" fill="#6ead78"/><circle cx="64" cy="57" r="47" fill="#111827"/><circle cx="64" cy="57" r="40" fill="url(#paper)" stroke="url(#gold)" stroke-width="5"/><g transform="translate(17 12) scale(.73)"><path d="M56 104h17l-4-26H59z" fill="#8b5b3d"/><circle cx="64" cy="43" r="26" fill="#6ead78"/><circle cx="43" cy="62" r="23" fill="#6ead78"/><circle cx="84" cy="64" r="24" fill="#6ead78"/><path d="M64 91V53m0 20L45 59m19 6l18-17" fill="none" stroke="#d9c39d" stroke-width="5"/></g></g>
 </svg>

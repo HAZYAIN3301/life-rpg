@@ -20,8 +20,8 @@ test('Board v2 standard and Wildcard issuers load in dependency order', () => {
     assert.match(index, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=20260825-board-v2-complete-v175-1`));
     assert.equal((sw.match(new RegExp(`'${file.replaceAll('.', '\\.')}'`, 'g')) || []).length, 1);
   }
-  assert.match(index, /app\.js\?v=20260830-guide-tree-v205-1/);
-  assert.match(sw, /const CACHE = 'satoru-v205';/);
+  assert.match(index, /app\.js\?v=20260830-economy-icons-v206-1/);
+  assert.match(sw, /const CACHE = 'satoru-v206';/);
 });
 
 test('account defaults and hydration normalize offers, completion and titles', () => {

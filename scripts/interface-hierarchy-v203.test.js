@@ -152,8 +152,8 @@ test('new disclosures and hierarchy changes use semantic sound and finite motion
 });
 
 test('v203 assets remain pinned while the current shell advances coherently', () => {
-  assert.match(SW, /const CACHE = 'satoru-v205'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v205'/);
+  assert.match(SW, /const CACHE = 'satoru-v206'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v206'/);
   assert.match(INDEX, /return-shelf-ui-v1\.js\?v=20260829-interface-hierarchy-v203-1/);
-  for (const file of ['styles.css', 'app.js']) assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=20260830-guide-tree-v205-1`));
+  for (const file of ['styles.css', 'app.js']) assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=20260830-economy-icons-v206-1`));
 });
