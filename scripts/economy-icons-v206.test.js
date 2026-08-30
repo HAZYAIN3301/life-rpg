@@ -54,7 +54,7 @@ test('rewards and arsenal use the semantic SVG family instead of generic difficu
   assert.match(APP, /\{ k: 'weapon', label: 'Оружие', iconId: 'gear\.w1' \}/);
   assert.match(APP, /\{ k: 'armor', label: 'Броня', iconId: 'gear\.a2' \}/);
   assert.match(APP, /\{ k: 'amulet', label: 'Амулет', iconId: 'gear\.m1' \}/);
-  assert.match(APP, /class="card arsenal-card"><h3>\$\{satoruIconHTML\('gear\.w4'/);
+  assert.match(APP, /class="card rewards-disclosure arsenal-disclosure"><summary>\$\{satoruIconHTML\('gear\.w4'/);
   assert.match(APP, /satoruIconHTML\(`achievement\.\$\{a\.id\}`/);
   assert.match(APP, /rewardIconHTML\(r, 'reward-content-icon'\)/);
   assert.match(CSS, /\.achievement-content-icon \{ width: 72px; height: 72px;/);
@@ -63,10 +63,10 @@ test('rewards and arsenal use the semantic SVG family instead of generic difficu
   assert.match(CSS, /\.gear-ic \{ min-height: 84px;/);
 });
 
-test('economy icon release pins the full PWA shell', () => {
-  assert.match(SW, /const CACHE = 'satoru-v206'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v206'/);
-  assert.match(INDEX, /styles\.css\?v=20260830-economy-icons-v206-1/);
+test('economy icons remain pinned inside the v207 PWA shell', () => {
+  assert.match(SW, /const CACHE = 'satoru-v207'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v207'/);
+  assert.match(INDEX, /styles\.css\?v=20260830-inspiration-persistence-v207-1/);
   assert.match(INDEX, /art\/icons\/icon-registry\.js\?v=20260830-economy-icons-v206-1/);
-  assert.match(INDEX, /app\.js\?v=20260830-economy-icons-v206-1/);
+  assert.match(INDEX, /app\.js\?v=20260830-inspiration-persistence-v207-1/);
 });

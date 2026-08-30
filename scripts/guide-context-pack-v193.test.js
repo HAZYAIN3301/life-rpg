@@ -283,9 +283,9 @@ test('Guide feature commit is authenticated, account-owned and rejects malformed
   assert.equal((await api(base, '/api/guide/commit', { method: 'POST', cookie: alpha.cookie, body: { data: { tasks, settings, goals: [] } } })).response.status, 400);
 });
 
-test('v195 cache and source contract ship the whole pack together', () => {
+test('v205 Guide assets and v207 shell ship the whole pack together', () => {
   assert.match(SW, /const CACHE = 'satoru-v207'/);
-  assert.match(INDEX, /guide-v3\.js\?v=20260829-guide-library-v195-1/);
+  assert.match(INDEX, /guide-v3\.js\?v=20260830-guide-tree-v205-1/);
   assert.match(INDEX, /app\.js\?v=20260830-inspiration-persistence-v207-1/);
   assert.match(SERVER, /if \(u === '\/api\/guide\/commit' && req\.method === 'POST'\)/);
   assert.match(SERVER, /commitGuideData[\s\S]*restoreSnapshot/);
