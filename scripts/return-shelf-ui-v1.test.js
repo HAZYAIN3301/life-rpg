@@ -149,6 +149,29 @@ test('настройка принимает до 10 мотивирующих в�
   assert.match(html, /Видео не загружаются в Satoru/);
 });
 
+test('редактор возвращает сохранённые ответы и честно сообщает об автосохранении', () => {
+  const profile = Profile.configure({
+    interests: [{ id: 'superhero', label: 'Spider-Verse', source: 'Добавлено тобой' }],
+    customInterests: 'Spider-Verse, Re:Zero',
+    formats: ['edit', 'video'],
+  });
+  const html = UI.render(ready({ setupOpen: true, profile }), t);
+  assert.match(html, /name="customInterests" value="Spider-Verse, Re:Zero"/);
+  assert.match(html, /Черновик сохраняется автоматически/);
+  assert.match(html, />Сохранить интересы<\/button>/);
+});
+
+test('runtime хранит незавершённый профиль отдельно и очищает черновик только атомарным финальным сохранением', () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'public/app.js'), 'utf8');
+  assert.match(src, /function inspirationStoredDraft\([\s\S]{0,650}State\.settings\?\.inspirationDraft/);
+  assert.match(src, /function queueInspirationSetupDraft\([\s\S]{0,650}persistInspirationSetupDraft/);
+  assert.match(src, /base\.inspirationDraft = envelope/);
+  assert.match(src, /base\.inspiration = profile; delete base\.inspirationDraft/);
+  assert.match(src, /const saved = await flushInspirationSetupDraft\(form\);\s*if \(!saved\) return;/);
+  assert.match(src, /#inspiration-setup-form[\s\S]{0,250}queueInspirationSetupDraft/);
+  assert.match(src, /beforeunload[\s\S]{0,950}inspirationDraft/);
+});
+
 test('пояснение к понравилось и не понравилось открывается отдельно и остаётся необязательным', () => {
   const html = UI.render(ready({
     feedbackDraft: { itemId: 'a', verdict: 'not_for_me', reason: 'Слишком громко <script>' },
@@ -333,18 +356,19 @@ test('интеграция подключает профиль и каталог
   const catalogAt = index.indexOf('inspiration-catalog-v1.js');
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20260830-economy-icons-v206-1');
+  const appAt = index.indexOf('app.js?v=20260830-inspiration-persistence-v207-1');
   assert.ok(importAt >= 0 && profileAt > importAt && catalogAt > profileAt && domainAt > catalogAt && uiAt > domainAt && appAt > uiAt,
     'import → profile → catalog → saved domain → UI → app');
-  for (const asset of ['inspiration-import-v1.js', 'inspiration-profile-v1.js', 'inspiration-catalog-v1.js', 'return-shelf-v1.js']) {
+  for (const asset of ['inspiration-import-v1.js', 'inspiration-catalog-v1.js', 'return-shelf-v1.js']) {
     assert.match(index, new RegExp(`${asset.replaceAll('.', '\\.')}\\?v=20260829-inspiration-learning-v201-1`));
     assert.match(sw, new RegExp(asset.replaceAll('.', '\\.')));
   }
-  assert.match(index, /return-shelf-ui-v1\.js\?v=20260829-interface-hierarchy-v203-1/);
+  assert.match(index, /inspiration-profile-v1\.js\?v=20260830-inspiration-persistence-v207-1/);
+  assert.match(index, /return-shelf-ui-v1\.js\?v=20260830-inspiration-persistence-v207-1/);
   assert.match(sw, /return-shelf-ui-v1\.js/);
-  assert.match(index, /styles\.css\?v=20260830-economy-icons-v206-1/);
-  assert.match(sw, /satoru-v206/);
-  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v206'/);
+  assert.match(index, /styles\.css\?v=20260830-inspiration-persistence-v207-1/);
+  assert.match(sw, /satoru-v207/);
+  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v207'/);
 });
 
 test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gate', () => {

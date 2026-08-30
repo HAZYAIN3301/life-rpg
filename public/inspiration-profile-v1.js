@@ -14,7 +14,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildInspirationProfile() {
   'use strict';
 
-  const VERSION = '1.1.0';
+  const VERSION = '1.2.0';
   const FORMATS = Object.freeze(['edit', 'video', 'image', 'quote', 'podcast']);
   const VERDICTS = Object.freeze(['more', 'not_for_me']);
   const MAX_INTERESTS = 16;
@@ -24,6 +24,7 @@
   const MAX_IMPORTS = 8;
   const MAX_VIDEO_REFERENCES = 10;
   const MAX_REASON = 320;
+  const MAX_CUSTOM_INTEREST_TEXT = 300;
   const DIGEST_SIZE = 3;
   const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -197,6 +198,7 @@
       version: 1,
       configured: false,
       interests: [],
+      customInterests: '',
       formats: FORMATS.slice(),
       blocked: [],
       feedback: [],
@@ -211,6 +213,7 @@
     const out = emptyProfile();
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
     out.interests = uniqueInterests(raw.interests);
+    out.customInterests = text(raw.customInterests, MAX_CUSTOM_INTEREST_TEXT);
     const formats = cleanWords(raw.formats, FORMATS.length).filter((value) => FORMATS.includes(value));
     // Missing means the first-use default (all formats); an explicit empty
     // array means the person unchecked everything and must not be overwritten.
@@ -379,7 +382,7 @@
   }
 
   return Object.freeze({
-    VERSION, FORMATS, VERDICTS, MAX_INTERESTS, MAX_BLOCKED, MAX_FEEDBACK, MAX_SIGNALS, MAX_IMPORTS, MAX_VIDEO_REFERENCES, MAX_REASON, DIGEST_SIZE,
+    VERSION, FORMATS, VERDICTS, MAX_INTERESTS, MAX_BLOCKED, MAX_FEEDBACK, MAX_SIGNALS, MAX_IMPORTS, MAX_VIDEO_REFERENCES, MAX_REASON, MAX_CUSTOM_INTEREST_TEXT, DIGEST_SIZE,
     emptyProfile, normalize, configure, cleanInterest, uniqueInterests, semanticInterestId, semanticInterestIds, cleanSignal, cleanImport, cleanVideoReference,
     choose, ensureDigest, markDone, recordFeedback, isDigestDone, reason, stableHash,
   });

@@ -151,9 +151,11 @@ test('new disclosures and hierarchy changes use semantic sound and finite motion
   assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.board-wildcard-detail,[\s\S]*?\.cat-chip-confirm/);
 });
 
-test('v203 assets remain pinned while the current shell advances coherently', () => {
-  assert.match(SW, /const CACHE = 'satoru-v206'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v206'/);
-  assert.match(INDEX, /return-shelf-ui-v1\.js\?v=20260829-interface-hierarchy-v203-1/);
-  for (const file of ['styles.css', 'app.js']) assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=20260830-economy-icons-v206-1`));
+test('v207 Inspiration shell advances coherently without repinning unchanged questionnaire code', () => {
+  assert.match(SW, /const CACHE = 'satoru-v207'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v207'/);
+  assert.match(INDEX, /return-shelf-ui-v1\.js\?v=20260830-inspiration-persistence-v207-1/);
+  assert.match(INDEX, /styles\.css\?v=20260830-inspiration-persistence-v207-1/);
+  assert.match(INDEX, /questionnaire-v1\.js\?v=20260830-browser-companion-v206-1/);
+  assert.match(INDEX, /app\.js\?v=20260830-inspiration-persistence-v207-1/);
 });

@@ -147,6 +147,18 @@ test('профиль требует явного подтверждения ин
   assert.deepEqual(p.blocked, ['Politics', 'hustle']);
 });
 
+test('собственные формулировки интересов переживают нормализацию и повторное редактирование', () => {
+  const raw = 'Spider-Verse, Re:Zero, путешествия и монтаж';
+  const configured = Profile.configure({
+    interests: [{ id: 'superhero', label: 'Spider-Verse', source: 'Добавлено тобой' }],
+    customInterests: raw,
+    formats: ['edit', 'video'],
+  });
+  assert.equal(configured.customInterests, raw);
+  assert.equal(Profile.normalize(JSON.parse(JSON.stringify(configured))).customInterests, raw);
+  assert.equal(Profile.normalize({ customInterests: 'x'.repeat(1000) }).customInterests.length, Profile.MAX_CUSTOM_INTEREST_TEXT);
+});
+
 test('ноль выбранных форматов остаётся нулём и не может стать настроенным профилем', () => {
   const normalized = Profile.normalize({
     configured: false,

@@ -161,7 +161,10 @@
       <button type="button" class="inspiration-reference-remove" data-action="inspiration-reference-remove" aria-label="${tr(t, 'Удалить видео')}">✕</button>
     </div>`;
     const referenceRows = (references.length ? references : [{}]).map(referenceRow).join('');
-    const manual = '';
+    // Custom wording is an answer in its own right, not a disposable tag-entry
+    // buffer. Restoring it makes the editor truthful on the second visit.
+    const manual = String(profile.customInterests || '');
+    const submitLabel = profile.configured ? 'Сохранить интересы' : 'Показать мою подборку';
     return `<form id="inspiration-setup-form" class="card inspiration-setup">
       <header><div><p class="inspiration-kicker">${tr(t, 'НАСТРОЙКА · ДО 2 МИНУТ')}</p><h3>${tr(t, 'Собери свою подборку')}</h3></div><button type="button" class="inspiration-close" data-action="inspiration-setup-close" aria-label="${tr(t, 'Закрыть')}">✕</button></header>
       ${renderImporter(vm, t)}
@@ -175,8 +178,8 @@
       <button type="button" class="btn ghost sm inspiration-reference-add" data-action="inspiration-reference-add" ${references.length >= 10 ? 'disabled' : ''}>+ ${tr(t, 'Добавить видео')}</button>
       <template id="inspiration-reference-template">${referenceRow({})}</template></fieldset>
       <p class="inspiration-privacy">${tr(t, 'Интересы принадлежат твоему аккаунту. Satoru использует их только для конечной подборки и не публикует.')}</p>
-      <p class="return-shelf-form-status" data-shelf-form-status role="status" aria-live="polite"></p>
-      <div class="inspiration-setup-actions"><button type="button" class="btn ghost" data-action="inspiration-setup-import-satoru">${tr(t, 'Добавить из Satoru')}</button><button type="submit" class="btn">${tr(t, 'Показать мою подборку')}</button></div>
+      <p class="return-shelf-form-status" data-shelf-form-status role="status" aria-live="polite">${tr(t, 'Черновик сохраняется автоматически')}</p>
+      <div class="inspiration-setup-actions"><button type="button" class="btn ghost" data-action="inspiration-setup-import-satoru">${tr(t, 'Добавить из Satoru')}</button><button type="submit" class="btn">${tr(t, submitLabel)}</button></div>
     </form>`;
   }
 

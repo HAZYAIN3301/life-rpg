@@ -943,6 +943,8 @@ const I18N_EXTRA = {
   'Интересы принадлежат твоему аккаунту. Satoru использует их только для конечной подборки и не публикует.': { en: 'Your interests belong to your account. Satoru only uses them for this finite selection and does not publish them.', de: 'Deine Interessen gehören zu deinem Konto. Satoru verwendet sie nur für diese endliche Auswahl und veröffentlicht sie nicht.', uk: 'Інтереси належать твоєму акаунту. Satoru використовує їх лише для скінченної добірки й не публікує.', es: 'Tus intereses pertenecen a tu cuenta. Satoru solo los usa para esta selección finita y no los publica.' },
   'Добавить из Satoru': { en: 'Add from Satoru', de: 'Aus Satoru hinzufügen', uk: 'Додати із Satoru', es: 'Añadir desde Satoru' },
   'Показать мою подборку': { en: 'Show my selection', de: 'Meine Auswahl zeigen', uk: 'Показати мою добірку', es: 'Mostrar mi selección' },
+  'Сохранить интересы': { en: 'Save interests', de: 'Interessen speichern', uk: 'Зберегти інтереси', es: 'Guardar intereses' },
+  'Черновик сохраняется автоматически': { en: 'Draft saves automatically', de: 'Entwurf wird automatisch gespeichert', uk: 'Чернетка зберігається автоматично', es: 'El borrador se guarda automáticamente' },
   'Эдит': { en: 'Edit', de: 'Edit', uk: 'Едіт', es: 'Edit' },
   'Изображение': { en: 'Image', de: 'Bild', uk: 'Зображення', es: 'Imagen' },
   'Цитата': { en: 'Quote', de: 'Zitat', uk: 'Цитата', es: 'Cita' },
@@ -1011,6 +1013,7 @@ const I18N_EXTRA = {
   'Выбери хотя бы один интерес или добавь свой.': { en: 'Choose at least one interest or add your own.', de: 'Wähle mindestens ein Interesse oder füge ein eigenes hinzu.', uk: 'Обери хоча б один інтерес або додай свій.', es: 'Elige al menos un interés o añade uno propio.' },
   'Выбери хотя бы один формат.': { en: 'Choose at least one format.', de: 'Wähle mindestens ein Format.', uk: 'Обери хоча б один формат.', es: 'Elige al menos un formato.' },
   'Не удалось сохранить интересы. Ничего не изменено.': { en: 'Could not save your interests. Nothing changed.', de: 'Deine Interessen konnten nicht gespeichert werden. Nichts wurde geändert.', uk: 'Не вдалося зберегти інтереси. Нічого не змінено.', es: 'No se pudieron guardar tus intereses. Nada cambió.' },
+  'Не удалось сохранить черновик. Ответы остаются на этом экране.': { en: 'Could not save the draft. Your answers remain on this screen.', de: 'Der Entwurf konnte nicht gespeichert werden. Deine Antworten bleiben auf diesem Bildschirm.', uk: 'Не вдалося зберегти чернетку. Відповіді залишаються на цьому екрані.', es: 'No se pudo guardar el borrador. Tus respuestas permanecen en esta pantalla.' },
   'Подборка настроена': { en: 'Selection set up', de: 'Auswahl eingerichtet', uk: 'Добірку налаштовано', es: 'Selección configurada' },
   'Учту для следующих подборок': { en: 'I will use that for future selections', de: 'Das berücksichtige ich bei künftigen Auswahlen', uk: 'Врахую це для наступних добірок', es: 'Lo tendré en cuenta para futuras selecciones' },
   'Больше не буду показывать этот материал': { en: 'I will not show this material again', de: 'Diesen Inhalt zeige ich nicht noch einmal', uk: 'Більше не показуватиму цей матеріал', es: 'No volveré a mostrar este material' },
@@ -22790,7 +22793,8 @@ function inspirationDraftFromSetupForm(form) {
   const interests = Array.from(form.querySelectorAll('input[name="interest"]:checked')).map((input) => ({
     id: input.value, label: input.dataset.label || inspirationInterestLabel(input.value), source: input.dataset.source || '',
   }));
-  String(form.elements.customInterests?.value || '').split(/[,;\n]/).forEach((label) => {
+  const customInterests = String(form.elements.customInterests?.value || '').slice(0, P.MAX_CUSTOM_INTEREST_TEXT || 300);
+  customInterests.split(/[,;\n]/).forEach((label) => {
     const value = label.trim(); if (!value) return;
     const semantic = inspirationSemanticIds(value);
     if (semantic.length) semantic.forEach((id) => interests.push({ id, label: value, source: t('Добавлено тобой') }));
@@ -22803,7 +22807,43 @@ function inspirationDraftFromSetupForm(form) {
     const why = String(row.querySelector('[name="referenceWhy"]')?.value || '').trim();
     return { url, why, interestIds: inspirationSemanticIds(why) };
   }).filter((reference) => reference.url).slice(0, P.MAX_VIDEO_REFERENCES || 10);
-  return P.normalize({ ...base, interests: P.uniqueInterests(interests), formats, blocked, videoReferences });
+  return P.normalize({ ...base, interests: P.uniqueInterests(interests), customInterests, formats, blocked, videoReferences });
+}
+
+let _inspirationDraftSaveTimer = null;
+function inspirationStoredDraft() {
+  const P = inspirationProfileEngine(), envelope = State.settings?.inspirationDraft;
+  if (!P || !envelope || envelope.version !== 1 || !envelope.profile || typeof envelope.profile !== 'object') return null;
+  return P.normalize(envelope.profile);
+}
+function captureInspirationSetupDraft(form = document.getElementById('inspiration-setup-form')) {
+  const draft = inspirationDraftFromSetupForm(form);
+  if (draft) State._inspirationDraft = draft;
+  return draft;
+}
+async function persistInspirationSetupDraft(draft = State._inspirationDraft) {
+  if (!draft || !State.settings || State._settingsLoadError) return false;
+  const envelope = { version: 1, savedAt: new Date().toISOString(), profile: draft };
+  const saved = await Store.updateNow('settings', (current) => {
+    const base = current && typeof current === 'object' && !Array.isArray(current)
+      ? structuredClone(current) : structuredClone(State.settings);
+    base.inspirationDraft = envelope; return base;
+  }, (committed) => { State.settings = committed; return true; });
+  if (!saved) shelfFormStatus('Не удалось сохранить черновик. Ответы остаются на этом экране.', true);
+  return saved;
+}
+function queueInspirationSetupDraft(form = document.getElementById('inspiration-setup-form')) {
+  const draft = captureInspirationSetupDraft(form); if (!draft) return;
+  clearTimeout(_inspirationDraftSaveTimer);
+  _inspirationDraftSaveTimer = setTimeout(() => {
+    _inspirationDraftSaveTimer = null;
+    persistInspirationSetupDraft(draft);
+  }, 450);
+}
+async function flushInspirationSetupDraft(form = document.getElementById('inspiration-setup-form')) {
+  const draft = captureInspirationSetupDraft(form) || State._inspirationDraft;
+  clearTimeout(_inspirationDraftSaveTimer); _inspirationDraftSaveTimer = null;
+  return draft ? persistInspirationSetupDraft(draft) : true;
 }
 
 async function enrichInspirationVideoReferences(profile) {
@@ -22826,7 +22866,7 @@ async function enrichInspirationVideoReferences(profile) {
 function openInspirationSetup(mode = 'edit', form = null) {
   const P = inspirationProfileEngine(); if (!P) return;
   let draft = form ? inspirationDraftFromSetupForm(form)
-    : P.normalize(State.settings?.inspiration || P.emptyProfile());
+    : (inspirationStoredDraft() || P.normalize(State.settings?.inspiration || P.emptyProfile()));
   if (!draft) draft = P.emptyProfile();
   if (mode === 'manual' && !draft.configured) draft = P.normalize({ ...draft, interests: [] });
   if (mode === 'import') {
@@ -22836,7 +22876,9 @@ function openInspirationSetup(mode = 'edit', form = null) {
   State._shelfFocusAfterCommit = '#inspiration-setup-form input[name="interest"], #inspiration-setup-form input[name="customInterests"]';
   sfx('open'); render();
 }
-function closeInspirationSetup() {
+async function closeInspirationSetup(form = document.getElementById('inspiration-setup-form')) {
+  const saved = await flushInspirationSetupDraft(form);
+  if (!saved) return;
   State._inspirationDraft = null; State._inspirationSetupOpen = false; State._inspirationImport = null; State._inspirationImportLinksOpen = false; State._inspirationImportGuideOpen = false; State._shelfError = '';
   State._shelfFocusAfterCommit = '[data-action="inspiration-setup-edit"], #return-shelf-title';
   sfx('close'); render();
@@ -22848,7 +22890,7 @@ async function persistInspirationProfile(rawProfile, { closeSetup = false, focus
   const saved = await Store.updateNow('settings', (current) => {
     const base = current && typeof current === 'object' && !Array.isArray(current)
       ? structuredClone(current) : structuredClone(State.settings);
-    base.inspiration = profile; return base;
+    base.inspiration = profile; delete base.inspirationDraft; return base;
   }, (committed) => { State.settings = committed; return true; });
   State._shelfBusy = '';
   if (!saved) {
@@ -22863,6 +22905,7 @@ async function persistInspirationProfile(rawProfile, { closeSetup = false, focus
 }
 async function saveInspirationSetup(form) {
   const P = inspirationProfileEngine(); if (!P || State._shelfBusy) return;
+  clearTimeout(_inspirationDraftSaveTimer); _inspirationDraftSaveTimer = null;
   let draft = inspirationDraftFromSetupForm(form);
   if (!draft || !draft.interests.length) { shelfFormStatus('Выбери хотя бы один интерес или добавь свой.', true); return; }
   if (!draft.formats.length) { shelfFormStatus('Выбери хотя бы один формат.', true); return; }
@@ -26252,13 +26295,13 @@ async function onClick(e) {
   if (action === 'inspiration-setup-import' || action === 'inspiration-setup-import-satoru') { openInspirationSetup('import', el.closest('form')); return; }
   if (action === 'inspiration-setup-manual') { openInspirationSetup('manual'); return; }
   if (action === 'inspiration-setup-edit') { openInspirationSetup('edit'); return; }
-  if (action === 'inspiration-setup-close') { closeInspirationSetup(); return; }
+  if (action === 'inspiration-setup-close') { await closeInspirationSetup(el.closest('form')); return; }
   if (action === 'inspiration-reference-add') {
     const form = el.closest('#inspiration-setup-form'), list = form?.querySelector('[data-inspiration-reference-list]');
     const template = form?.querySelector('#inspiration-reference-template');
     if (!form || !list || !template || list.querySelectorAll('[data-inspiration-reference-row]').length >= 10) return;
     const row = template.content.firstElementChild?.cloneNode(true); if (!row) return;
-    list.append(row); updateInspirationReferenceUI(form); row.querySelector('[name="referenceUrl"]')?.focus(); sfx('open'); return;
+    list.append(row); updateInspirationReferenceUI(form); queueInspirationSetupDraft(form); row.querySelector('[name="referenceUrl"]')?.focus(); sfx('open'); return;
   }
   if (action === 'inspiration-reference-remove') {
     const form = el.closest('#inspiration-setup-form'), row = el.closest('[data-inspiration-reference-row]');
@@ -26269,7 +26312,7 @@ async function onClick(e) {
       const fresh = template?.content.firstElementChild?.cloneNode(true);
       if (fresh) form.querySelector('[data-inspiration-reference-list]')?.append(fresh);
     }
-    updateInspirationReferenceUI(form); sfx('close'); return;
+    updateInspirationReferenceUI(form); queueInspirationSetupDraft(form); sfx('close'); return;
   }
   if (action === 'inspiration-import-guide-open') {
     if (!State._inspirationSetupOpen) openInspirationSetup('edit');
@@ -28477,6 +28520,7 @@ function flushSettingsForm() { return SettingsAutosave.flush(); }
 function clearAllData() {
   Store.cancelPending();
   cancelCapturePipeline();
+  clearTimeout(_inspirationDraftSaveTimer); _inspirationDraftSaveTimer = null;
   State.settings = null; State.tasks = null; State.days = null; State.habits = null;
   State.habitlog = null; State.goals = null; State.goalGroups = null; State.tree = null; State.rewards = null;
   State.purchases = null; State.achievements = null; State.weeks = null; State.lootbox = null;
@@ -28867,7 +28911,7 @@ function onChange(e) {
     if (file) startInspirationArchiveImport(file); return;
   }
   if (e.target.matches?.('#inspiration-setup-form input[type="checkbox"]')) {
-    e.target.closest('label')?.classList.toggle('is-selected', e.target.checked); sfx('select'); return;
+    e.target.closest('label')?.classList.toggle('is-selected', e.target.checked); queueInspirationSetupDraft(e.target.form); sfx('select'); return;
   }
   if (e.target.matches?.('#attention-entry-form input[name="purposeId"]')) {
     const form = e.target.form, field = form && form.querySelector('[data-attention-topic]'), topic = form && form.elements.topic;
@@ -29076,6 +29120,7 @@ function onSettingsInput(e) {
   if (e.target.id === 'questionnaire-answer') { questionnaireSourceFromDOM(); return; }
   if (e.target.matches?.('[data-questionnaire-manual]')) { questionnaireManualFromDOM(); return; }
   if (e.target.matches?.('#inspiration-setup-form [name="referenceUrl"]')) updateInspirationReferenceUI(e.target.form);
+  if (e.target.closest?.('#inspiration-setup-form')) queueInspirationSetupDraft(e.target.form);
   const wildcardForm = e.target.closest?.('#board-wildcard-form');
   if (wildcardForm) State._boardWildcardDraft = boardWildcardDraftFromForm(wildcardForm);
   if (e.target.closest('#skills-list, #habits-list, .knob') || e.target.id === 'set-appName') autosaveSettings();
@@ -29464,7 +29509,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v206';
+const PWA_CACHE_VERSION = 'satoru-v207';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -29627,10 +29672,13 @@ async function init() {
   document.addEventListener('dragend', cleanupCalDrag);
   // Страховка от потери правок: при закрытии/перезагрузке дочитываем форму настроек из DOM и сохраняем (keepalive переживает unload)
   window.addEventListener('beforeunload', () => {
-    if (!document.getElementById('skills-list')) return;
-    captureSettingsForm();
+    const inspirationForm = document.getElementById('inspiration-setup-form');
+    const inspirationDraft = captureInspirationSetupDraft(inspirationForm);
+    if (inspirationDraft && State.settings) State.settings.inspirationDraft = { version: 1, savedAt: new Date().toISOString(), profile: inspirationDraft };
+    if (!document.getElementById('skills-list') && !inspirationDraft) return;
+    if (document.getElementById('skills-list')) captureSettingsForm();
     const opt = (o) => ({ method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(o), keepalive: true });
-    try { fetch('/api/data/settings', opt(State.settings)); fetch('/api/data/habits', opt(State.habits)); } catch {}
+    try { fetch('/api/data/settings', opt(State.settings)); if (document.getElementById('skills-list')) fetch('/api/data/habits', opt(State.habits)); } catch {}
   });
 
   // Ссылка из письма о сбросе пароля перебивает всё, включая живую сессию: человек мог

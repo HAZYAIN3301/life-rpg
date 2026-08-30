@@ -100,12 +100,11 @@ test('theme choice is awaited, follows the device, and advances Guide only insid
     'the real System Theme control keeps the product touch-target floor');
 });
 
-test('v205 Guide assets remain pinned while v206 advances the application shell', () => {
-  assert.match(SW, /const CACHE = 'satoru-v206'/);
+test('v195 cache pins the updated Guide and application assets together', () => {
+  assert.match(SW, /const CACHE = 'satoru-v207'/);
   for (const file of ['guide-v3.js', 'guide-presenter-v1.js', 'guide-v3-copy-ru.js', 'guide-v3-copy-en.js', 'guide-v3-copy-de.js', 'guide-v3-copy-uk.js', 'guide-v3-copy-es.js']) {
     assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=[^"']*v205`));
   }
-  for (const file of ['app.js', 'styles.css']) {
-    assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=[^"']*v206`));
-  }
+  assert.match(INDEX, /app\.js\?v=[^"']*v207/);
+  assert.match(INDEX, /styles\.css\?v=[^"']*v207/);
 });
