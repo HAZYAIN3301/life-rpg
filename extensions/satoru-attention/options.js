@@ -2,6 +2,8 @@
   'use strict';
 
   const Core = globalThis.SatoruAttentionCore;
+  const Protection = globalThis.SatoruProtection;
+  const ProtectionCatalog = globalThis.SatoruProtectionCatalog;
   const I18n = globalThis.SatoruAttentionI18n;
   const language = I18n.detect();
   const t = (key, values) => I18n.translate(language, key, values);
@@ -34,9 +36,29 @@
   const runtimeHelp = document.querySelector('#runtime-help');
   const siteList = document.querySelector('#site-list');
   const noSites = document.querySelector('#no-sites');
+  const protectionForm = document.querySelector('#protection-form');
+  const protectionEnabled = document.querySelector('#protection-enabled');
+  const protectionBadge = document.querySelector('#protection-badge');
+  const protectionStatus = document.querySelector('#protection-status');
+  const denyInput = document.querySelector('#deny-domain');
+  const allowInput = document.querySelector('#allow-domain');
+  const denyList = document.querySelector('#deny-list');
+  const allowList = document.querySelector('#allow-list');
+  const recreationEnabled = document.querySelector('#recreation-enabled');
+  const recreationStart = document.querySelector('#recreation-start');
+  const recreationEnd = document.querySelector('#recreation-end');
+  const safeSearch = document.querySelector('#safe-search');
+  const youtubeRestricted = document.querySelector('#youtube-restricted');
+  const blockBypass = document.querySelector('#block-bypass');
+  const runtimeReload = document.querySelector('#runtime-reload');
   let actionBusy = false;
   let currentState = Core.emptyState();
+  let currentProtection = Protection.emptySettings();
+  let protectionDirty = false;
   let editingPolicyId = '';
+  let runtimePort = null;
+  let heartbeatTimer = 0;
+  let booting = true;
 
   I18n.localizeDocument(language);
 
@@ -44,6 +66,10 @@
     status.textContent = message || '';
     status.className = `status${kind ? ` ${kind}` : ''}`;
     runtimeHelp.hidden = !runtime;
+  }
+  function setProtectionStatus(message, kind = '') {
+    protectionStatus.textContent = message || '';
+    protectionStatus.className = `status${kind ? ` ${kind}` : ''}`;
   }
   function errorText(code) {
     const key = `error_${code}`;
@@ -54,6 +80,49 @@
   function purposeName(purpose) { return t(`purpose_${purpose}`); }
   function wait(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
 
+  function runtimeInvalidated(detail) {
+    return /extension context invalidated|receiving end does not exist|message port closed|could not establish connection/i.test(String(detail || ''));
+  }
+
+  function recoverStaleOptions(detail, afterBoot = false) {
+    if ((!booting && !afterBoot) || !runtimeInvalidated(detail)) return false;
+    const url = new URL(location.href);
+    if (url.searchParams.has('runtime-reconnect')) return false;
+    url.searchParams.set('runtime-reconnect', String(Date.now()));
+    location.replace(url.toString());
+    return true;
+  }
+
+  function connectRuntime() {
+    if (runtimePort) return;
+    try {
+      runtimePort = chrome.runtime.connect({ name: 'satoru-options-heartbeat' });
+      runtimePort.onMessage.addListener((message) => {
+        if (message?.type === 'PONG') {
+          const url = new URL(location.href);
+          if (url.searchParams.has('runtime-reconnect')) {
+            url.searchParams.delete('runtime-reconnect');
+            history.replaceState(null, '', url.toString());
+          }
+        }
+      });
+      runtimePort.onDisconnect.addListener(() => {
+        runtimePort = null;
+        if (heartbeatTimer) clearInterval(heartbeatTimer);
+        heartbeatTimer = 0;
+        if (recoverStaleOptions('extension context invalidated', true)) return;
+        setStatus(errorText('runtime_unavailable'), 'error', true);
+      });
+      runtimePort.postMessage({ type: 'PING' });
+      heartbeatTimer = setInterval(() => {
+        try { runtimePort?.postMessage({ type: 'PING' }); }
+        catch { /* onDisconnect exposes the recovery action. */ }
+      }, 20_000);
+    } catch (error) {
+      if (!recoverStaleOptions(error && error.message)) setStatus(errorText('runtime_unavailable'), 'error', true);
+    }
+  }
+
   async function send(message) {
     let detail = '';
     for (let attempt = 0; attempt < 2; attempt += 1) {
@@ -63,6 +132,7 @@
       } catch (error) { detail = String(error && error.message || ''); }
       if (attempt === 0) await wait(180);
     }
+    if (recoverStaleOptions(detail)) return { ok: false, error: 'runtime_reloading', retryable: true, detail };
     return { ok: false, error: 'runtime_unavailable', retryable: true, detail };
   }
 
@@ -140,6 +210,97 @@
 
   function pendingFor(policyId) { return currentState.pendingPolicies.find((item) => item.policyId === policyId) || null; }
 
+  function renderDomainList(container, domains, kind) {
+    container.replaceChildren();
+    for (const domain of domains) {
+      const chip = document.createElement('span');
+      chip.className = 'domain-chip';
+      const text = document.createElement('span');
+      text.textContent = domain;
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.dataset.removeDomain = domain;
+      remove.dataset.listKind = kind;
+      remove.setAttribute('aria-label', t('removeDomain', { domain }));
+      remove.textContent = '×';
+      chip.append(text, remove);
+      container.append(chip);
+    }
+  }
+
+  function renderProtection(settings, summary = null) {
+    currentProtection = Protection.normalizeSettings(settings);
+    protectionEnabled.checked = currentProtection.enabled;
+    for (const input of protectionForm.querySelectorAll('[data-category]')) {
+      input.checked = currentProtection.categories[input.dataset.category] === true;
+    }
+    renderDomainList(denyList, currentProtection.denylist, 'deny');
+    renderDomainList(allowList, currentProtection.allowlist, 'allow');
+    recreationEnabled.checked = currentProtection.recreation.enabled;
+    recreationStart.value = currentProtection.recreation.start;
+    recreationEnd.value = currentProtection.recreation.end;
+    for (const input of protectionForm.querySelectorAll('[data-recreation-day]')) {
+      input.checked = currentProtection.recreation.days.includes(Number(input.dataset.recreationDay));
+    }
+    safeSearch.checked = currentProtection.safeSearch;
+    youtubeRestricted.checked = currentProtection.youtubeRestricted;
+    blockBypass.checked = currentProtection.blockBypass;
+    const state = summary || Protection.summary(currentProtection, ProtectionCatalog, new Date());
+    protectionBadge.textContent = currentProtection.enabled
+      ? t(state.recreationActive ? 'protectionPaused' : 'protectionOn')
+      : t('protectionOff');
+    protectionBadge.className = `state-pill${currentProtection.enabled ? ' on' : ''}`;
+    protectionBadge.title = currentProtection.enabled ? t('protectionCount', { count: state.blockedDomains }) : '';
+    protectionDirty = false;
+  }
+
+  function readProtectionForm() {
+    const days = [...protectionForm.querySelectorAll('[data-recreation-day]:checked')]
+      .map((input) => Number(input.dataset.recreationDay));
+    const categories = {};
+    for (const input of protectionForm.querySelectorAll('[data-category]')) categories[input.dataset.category] = input.checked;
+    return Protection.normalizeSettings({
+      ...currentProtection,
+      enabled: protectionEnabled.checked,
+      categories,
+      recreation: {
+        enabled: recreationEnabled.checked,
+        days,
+        start: recreationStart.value,
+        end: recreationEnd.value,
+      },
+      safeSearch: safeSearch.checked,
+      youtubeRestricted: youtubeRestricted.checked,
+      blockBypass: blockBypass.checked,
+    });
+  }
+
+  function addDomain(kind) {
+    const input = kind === 'deny' ? denyInput : allowInput;
+    const domain = Protection.normalizeDomain(input.value);
+    if (!domain) { setProtectionStatus(t('invalidDomain'), 'error'); input.focus(); return; }
+    const next = readProtectionForm();
+    const ownList = kind === 'deny' ? next.denylist : next.allowlist;
+    const otherList = kind === 'deny' ? next.allowlist : next.denylist;
+    if (!ownList.includes(domain)) ownList.push(domain);
+    const filteredOther = otherList.filter((item) => item !== domain);
+    currentProtection = Protection.normalizeSettings({
+      ...next,
+      denylist: kind === 'deny' ? ownList : filteredOther,
+      allowlist: kind === 'allow' ? ownList : filteredOther,
+    });
+    renderDomainList(denyList, currentProtection.denylist, 'deny');
+    renderDomainList(allowList, currentProtection.allowlist, 'allow');
+    input.value = '';
+    protectionDirty = true;
+    setProtectionStatus('');
+  }
+
+  for (const key of Protection.CATEGORY_KEYS) {
+    const count = document.querySelector(`#category-count-${key}`);
+    if (count) count.textContent = t('domainCount', { count: ProtectionCatalog[key].length });
+  }
+
   async function render(focusPolicyId = '') {
     const result = await send({ type: 'GET_OPTIONS' });
     if (!result || result.ok !== true) {
@@ -147,6 +308,7 @@
       return;
     }
     currentState = result.state;
+    if (!protectionDirty) renderProtection(result.protection, result.protectionSummary);
     siteList.replaceChildren();
     noSites.hidden = currentState.policies.length > 0;
     for (const policy of currentState.policies) {
@@ -210,6 +372,63 @@
       if (target) target.focus({ preventScroll: true });
     }
   }
+
+  protectionForm.addEventListener('change', () => { protectionDirty = true; setProtectionStatus(''); });
+  document.querySelector('#add-deny').addEventListener('click', () => addDomain('deny'));
+  document.querySelector('#add-allow').addEventListener('click', () => addDomain('allow'));
+  denyInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); addDomain('deny'); } });
+  allowInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); addDomain('allow'); } });
+  for (const container of [denyList, allowList]) {
+    container.addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-remove-domain]');
+      if (!button) return;
+      const next = readProtectionForm();
+      const key = button.dataset.listKind === 'allow' ? 'allowlist' : 'denylist';
+      currentProtection = Protection.normalizeSettings({
+        ...next,
+        [key]: next[key].filter((domain) => domain !== button.dataset.removeDomain),
+      });
+      renderDomainList(denyList, currentProtection.denylist, 'deny');
+      renderDomainList(allowList, currentProtection.allowlist, 'allow');
+      protectionDirty = true;
+    });
+  }
+
+  protectionForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (actionBusy) return;
+    actionBusy = true;
+    const submit = event.submitter;
+    if (submit) submit.disabled = true;
+    setProtectionStatus('');
+    try {
+      const selectedRecreationDays = protectionForm.querySelectorAll('[data-recreation-day]:checked').length;
+      if (protectionEnabled.checked && recreationEnabled.checked && !selectedRecreationDays) {
+        setProtectionStatus(t('chooseRecreationDay'), 'error'); return;
+      }
+      const settings = readProtectionForm();
+      if (settings.enabled) {
+        let granted = false;
+        try { granted = await chrome.permissions.request({ origins: ['http://*/*', 'https://*/*'] }); }
+        catch (error) {
+          if (!recoverStaleOptions(error && error.message)) setStatus(errorText('runtime_unavailable'), 'error', true);
+          return;
+        }
+        if (!granted) { setProtectionStatus(t('protectionPermissionDenied'), 'error'); return; }
+      }
+      const result = await send({ type: 'SAVE_PROTECTION', settings });
+      if (!result?.ok) {
+        setProtectionStatus(errorText(result && result.error), 'error'); return;
+      }
+      renderProtection(result.settings, result.summary);
+      setProtectionStatus(t('protectionSaved', { count: result.summary.blockedDomains }), 'success');
+    } finally {
+      actionBusy = false;
+      if (submit) submit.disabled = false;
+    }
+  });
+
+  runtimeReload.addEventListener('click', () => location.reload());
 
   siteSelect.addEventListener('change', () => { editingPolicyId = ''; loadDraft(); });
 
@@ -304,5 +523,6 @@
   });
 
   loadDraft();
-  render().catch(() => setStatus(errorText('runtime_unavailable'), 'error', true));
+  connectRuntime();
+  render().catch(() => setStatus(errorText('runtime_unavailable'), 'error', true)).finally(() => { booting = false; });
 })();

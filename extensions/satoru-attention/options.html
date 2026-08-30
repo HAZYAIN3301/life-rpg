@@ -24,7 +24,85 @@
       <span data-i18n="pinLead">Open the Extensions menu in the toolbar and pin Satoru Attention. The badge then shows whether a boundary is ready or active.</span>
     </aside>
 
-    <section class="card" aria-labelledby="configured-heading">
+    <section class="card" aria-labelledby="protection-heading">
+      <div class="protection-heading">
+        <div>
+          <p class="eyebrow" data-i18n="protectionEyebrow">Local filter</p>
+          <h2 id="protection-heading" data-i18n="protectionTitle">Browser protection</h2>
+        </div>
+        <span id="protection-badge" class="state-pill" data-i18n="protectionOff">Off</span>
+      </div>
+      <p class="muted" data-i18n="protectionLead">Block entire services, categories and custom domains before a page loads. Allowlist always wins.</p>
+      <form id="protection-form" class="stack" novalidate>
+        <label class="switch-row master-switch">
+          <input id="protection-enabled" type="checkbox">
+          <span><b data-i18n="enableProtection">Enable protection</b><small data-i18n="enableProtectionLead">The browser will request access to all sites once so redirects and strict filters can work.</small></span>
+        </label>
+
+        <fieldset class="field">
+          <legend data-i18n="protectionCategories">Categories</legend>
+          <p class="fine" data-i18n="categoriesLead">The local catalog is bundled with the extension and does not send browsing data anywhere.</p>
+          <div class="category-grid">
+            <label class="category-toggle"><input type="checkbox" data-category="social"><span data-i18n="categorySocial">Social networks</span><small id="category-count-social"></small></label>
+            <label class="category-toggle"><input type="checkbox" data-category="video"><span data-i18n="categoryVideo">Video streaming</span><small id="category-count-video"></small></label>
+            <label class="category-toggle"><input type="checkbox" data-category="gaming"><span data-i18n="categoryGaming">Online gaming</span><small id="category-count-gaming"></small></label>
+            <label class="category-toggle"><input type="checkbox" data-category="dating"><span data-i18n="categoryDating">Dating</span><small id="category-count-dating"></small></label>
+            <label class="category-toggle"><input type="checkbox" data-category="gambling"><span data-i18n="categoryGambling">Gambling</span><small id="category-count-gambling"></small></label>
+            <label class="category-toggle"><input type="checkbox" data-category="adult"><span data-i18n="categoryAdult">Adult content</span><small id="category-count-adult"></small></label>
+            <label class="category-toggle"><input type="checkbox" data-category="piracy"><span data-i18n="categoryPiracy">Piracy</span><small id="category-count-piracy"></small></label>
+          </div>
+        </fieldset>
+
+        <div class="domain-columns">
+          <section class="list-editor" aria-labelledby="deny-heading">
+            <h3 id="deny-heading" data-i18n="denylistTitle">Denylist</h3>
+            <p class="fine" data-i18n="denylistLead">A domain entry also blocks its subdomains.</p>
+            <div class="inline-add"><input id="deny-domain" inputmode="url" data-i18n-placeholder="domainPlaceholder"><button id="add-deny" type="button" data-i18n="addDomain">Add</button></div>
+            <div id="deny-list" class="domain-list"></div>
+          </section>
+          <section class="list-editor" aria-labelledby="allow-heading">
+            <h3 id="allow-heading" data-i18n="allowlistTitle">Allowlist</h3>
+            <p class="fine" data-i18n="allowlistLead">Allowed domains override categories and the denylist.</p>
+            <div class="inline-add"><input id="allow-domain" inputmode="url" data-i18n-placeholder="domainPlaceholder"><button id="add-allow" type="button" data-i18n="addDomain">Add</button></div>
+            <div id="allow-list" class="domain-list"></div>
+          </section>
+        </div>
+
+        <details class="advanced-card">
+          <summary data-i18n="recreationTitle">Recreation time</summary>
+          <div class="stack compact-section">
+            <label class="switch-row"><input id="recreation-enabled" type="checkbox"><span><b data-i18n="recreationEnable">Pause categories and denylist on a schedule</b><small data-i18n="recreationBypassNote">Bypass protection remains active.</small></span></label>
+            <div class="day-grid" aria-label="Days">
+              <label><input type="checkbox" data-recreation-day="1"><span data-i18n="dayMon">Mon</span></label>
+              <label><input type="checkbox" data-recreation-day="2"><span data-i18n="dayTue">Tue</span></label>
+              <label><input type="checkbox" data-recreation-day="3"><span data-i18n="dayWed">Wed</span></label>
+              <label><input type="checkbox" data-recreation-day="4"><span data-i18n="dayThu">Thu</span></label>
+              <label><input type="checkbox" data-recreation-day="5"><span data-i18n="dayFri">Fri</span></label>
+              <label><input type="checkbox" data-recreation-day="6"><span data-i18n="daySat">Sat</span></label>
+              <label><input type="checkbox" data-recreation-day="0"><span data-i18n="daySun">Sun</span></label>
+            </div>
+            <div class="row">
+              <label class="field"><span data-i18n="recreationStart">Starts</span><input id="recreation-start" type="time" value="18:00"></label>
+              <label class="field"><span data-i18n="recreationEnd">Ends</span><input id="recreation-end" type="time" value="20:00"></label>
+            </div>
+          </div>
+        </details>
+
+        <fieldset class="field">
+          <legend data-i18n="strictFilters">Strict filters</legend>
+          <div class="protection-tools">
+            <label class="switch-row"><input id="safe-search" type="checkbox"><span><b data-i18n="safeSearch">Force SafeSearch</b><small data-i18n="safeSearchLead">Google, Bing and DuckDuckGo search requests receive strict parameters.</small></span></label>
+            <label class="switch-row"><input id="youtube-restricted" type="checkbox"><span><b data-i18n="youtubeRestricted">YouTube Restricted Mode</b><small data-i18n="youtubeRestrictedLead">Adds the official strict restriction header to YouTube requests.</small></span></label>
+            <label class="switch-row"><input id="block-bypass" type="checkbox"><span><b data-i18n="blockBypass">Block bypass methods</b><small data-i18n="blockBypassLead">Blocks known browser VPN, proxy, Tor and encrypted-DNS endpoints.</small></span></label>
+          </div>
+        </fieldset>
+        <aside class="notice" data-i18n="protectionLimit">This protects this browser. It cannot block another browser, an OS-level VPN, extension removal or incognito unless the extension is allowed there.</aside>
+        <p id="protection-status" class="status" role="status" aria-live="polite"></p>
+        <button type="submit" class="primary" data-i18n="saveProtection">Apply protection</button>
+      </form>
+    </section>
+
+    <section class="card section" aria-labelledby="configured-heading">
       <h2 id="configured-heading" data-i18n="configuredTitle">Configured sites</h2>
       <div id="site-list" class="site-list"></div>
       <p id="no-sites" class="muted" data-i18n="noSites">No sites are controlled yet.</p>
@@ -77,6 +155,7 @@
         <div id="runtime-help" class="notice runtime-help" hidden>
           <b data-i18n="runtimeHelpTitle">Reconnect the extension</b>
           <span data-i18n="runtimeHelpLead">Close this tab, reload Satoru Attention on the browser extensions page, then open Settings again. Existing rules were not changed.</span>
+          <button id="runtime-reload" type="button" class="quiet" data-i18n="reconnectNow">Reconnect now</button>
         </div>
         <button type="submit" class="primary" data-i18n="saveRule">Save site guard</button>
       </form>
@@ -86,6 +165,8 @@
     <p class="fine section" data-i18n="privacyLocal">Rules and session details stay in this browser.</p>
   </main>
   <script src="core.js"></script>
+  <script src="protection.js"></script>
+  <script src="protection-catalog.js"></script>
   <script src="i18n.js"></script>
   <script src="options.js"></script>
 </body>

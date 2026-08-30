@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>Satoru Protection</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="block">
+  <main class="shell block-shell">
+    <div class="brand" aria-label="Satoru Protection">
+      <img class="brand-mark" src="icon-192.png" alt="">
+      <div><strong>Satoru</strong><span data-i18n="protectionName">Browser protection</span></div>
+    </div>
+    <section class="card block-card" aria-labelledby="block-title">
+      <div class="block-shield" aria-hidden="true">◆</div>
+      <p class="eyebrow" data-i18n="blockedEyebrow">Protection is active</p>
+      <h1 id="block-title" tabindex="-1" data-i18n="blockedTitle">This address is blocked.</h1>
+      <p class="lead" data-i18n="blockedLead">It matched a category, denylist entry or bypass-protection rule. The original address was not saved.</p>
+      <p id="block-schedule" class="status" role="status" aria-live="polite"></p>
+      <div class="actions">
+        <button id="open-options" type="button" class="quiet" data-i18n="openProtectionSettings">Protection settings</button>
+        <a class="button primary" href="https://life-rpg-production-416a.up.railway.app/" data-i18n="returnToSatoru">Return to Satoru</a>
+      </div>
+      <p class="fine" data-i18n="blockedNoOverride">There is no instant override on this page.</p>
+    </section>
+  </main>
+  <script src="i18n.js"></script>
+  <script src="block.js"></script>
+</body>
+</html>

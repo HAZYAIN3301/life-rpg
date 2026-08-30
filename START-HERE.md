@@ -56,6 +56,7 @@
 | **SECRETARY-OS-PAIN-MAP.md** | полная карта пользовательских болей: что уже закрыто, Secretary/Ритм/Planning и честные платформенные границы |
 | **BROWSER-COMPANION-V199-QA.md** | установка, privacy/security contract, QA и production verification браузерной границы |
 | **BROWSER-COMPANION-DISCOVERY-V200-QA.md** | заметное объявление на Today, простой guided install, store-ready пакет и QA нового release path |
+| **BROWSER-PROTECTION-V210-QA.md** | защита браузера v209: причина stale-runtime сбоя, категории/списки/расписание, SafeSearch/YouTube/bypass, permissions и QA |
 | **INTERFACE-HIERARCHY-V203-QA.md** | редизайн редизайна: иерархия Today/Calendar/Inspiration/Board, progressive disclosure, motion/sound и локальный release gate |
 | **SKILLTREE-MASTERNAK-RESEARCH.md** | долговечный разбор Masternak (2022): что источник действительно подтверждает, ограничения и правила Tree v4 |
 | **TREE-V4-SPEC.md / TREE-V4-QA.md** | честное разделение реального Path и игровых бонусов, Guide v3 adapter, evidence/data contract, design и release gates |
@@ -74,6 +75,8 @@
 **Browser Companion v199:** первый локальный R3a-контур для Brave/Chromium: точный сайт → цель → ограниченное окно → boundary; adaptive даёт одно продление, Control — только ограниченный emergency flow. История/цели остаются локально; Satoru видит только bounded status. Это не контролирует нативные приложения, другие браузеры или приставку и может быть отключено пользователем. QA/handoff: [`BROWSER-COMPANION-V199-QA.md`](./BROWSER-COMPANION-V199-QA.md); полная последовательность следующих решений: [`SECRETARY-OS-PAIN-MAP.md`](./SECRETARY-OS-PAIN-MAP.md).
 
 **Browser Companion Discovery v200:** опубликован в production внутри `82fcd74`. Существующий пользователь видит временное объявление на Today с `установить / через 3 дня / больше не напоминать`; новый — только после 24 часов и следующего активного входа. Есть отдельная открытая install-page, трёхшаговый modal, dedicated icon/badge и готовый Chrome Web Store upload package. Реальная установка в один клик появится только после публикации владельцем в store. QA/handoff: [`BROWSER-COMPANION-DISCOVERY-V200-QA.md`](./BROWSER-COMPANION-DISCOVERY-V200-QA.md).
+
+**Browser Protection v210:** Satoru Attention v0.4.0 сам восстанавливает stale options tab после reload unpacked MV3 runtime и держит heartbeat. Отдельный opt-in слой даёт категории, deny/allow, Recreation Time, SafeSearch, strict YouTube и локальную защиту от известных browser-visible обходов. Exact-site Attention остаётся exact-host; all-site permission запрашивается только при явном включении защиты. Это browser-level, не системный DNS/VPN. QA/handoff: [`BROWSER-PROTECTION-V210-QA.md`](./BROWSER-PROTECTION-V210-QA.md).
 
 **Interface Hierarchy v203:** опубликован в production коммитом `82fcd74`; оба Railway-сервиса `success`, пять изменённых shell-файлов совпадают с production byte-for-byte. Header больше не занят постоянной полосой сфер; ядро дня, Shadow rail, Today/Calendar forms, Inspiration references и Board Wildcard используют одну понятную иерархию «выбор → параметры». Переключение ядра fail-closed и не показывает успех до durable task write. Движение конечное и optional, звук семантический, touch/keyboard/reduced-motion контракты сохранены. QA/handoff: [`INTERFACE-HIERARCHY-V203-QA.md`](./INTERFACE-HIERARCHY-V203-QA.md).
 

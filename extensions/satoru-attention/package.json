@@ -1,8 +1,8 @@
 {
   "name": "satoru-attention-extension",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "scripts": {
-    "test": "node --test core.test.js integration.test.js"
+    "test": "node --test core.test.js protection.test.js integration.test.js"
   }
 }

@@ -1,4 +1,4 @@
-# Satoru Attention — Brave/Chromium companion v2
+# Satoru Attention — Brave/Chromium companion v3
 
 Manifest V3 extension for the desktop R3 attention boundary. It controls only sites that
 the person explicitly adds. The first setup remains deliberately small: one site and a
@@ -21,19 +21,48 @@ described in `PUBLISH-CHECKLIST.md` and `STORE-LISTING.md`.
 2. Enable **Developer mode**.
 3. Choose **Load unpacked**.
 4. Select this exact `extensions/satoru-attention/` directory.
-5. The options page opens. Add one site and approve the browser permission prompt for
-   that exact hostname.
+5. The options page opens. Add one attention site and approve the prompt for that exact
+   hostname. Browser Protection is a separate optional switch and requests all-site access
+   because category blocking cannot work with an exact-host grant.
 
 Pin Satoru Attention from Brave's Extensions toolbar menu. Its badge shows `NEW` before
 setup, the configured-site count while idle, `ON` while a boundary is active,
 and `!` when the boundary has been reached. Badge failure never changes enforcement.
 
-The broad `http://*/*` / `https://*/*` entries are only **optional capability declarations**
-required for user-selected custom domains. Before a site is selected, the extension cannot
-read or change it. The options UI calls `chrome.permissions.request` only with
-`Core.hostPatterns(hostname)`: only the chosen hostname, for HTTP/HTTPS. Permanent
-host access in the manifest is limited to the exact Satoru production origin for the
-read-only bridge.
+The broad `http://*/*` / `https://*/*` entries are **optional capability declarations**.
+Ordinary Attention policies request only `Core.hostPatterns(hostname)`: the chosen exact
+hostname over HTTP/HTTPS. Enabling Browser Protection is the only flow that requests the
+broad optional grant; it is necessary to redirect blocked pages, block subresources and
+apply strict request filters. Permanent host access remains limited to the exact Satoru
+production origin for the read-only bridge.
+
+## Browser Protection v1
+
+- Seven opt-in categories: social networks, video streaming, online gaming, dating,
+  gambling, adult content and piracy.
+- Local denylist and allowlist with subdomain coverage. Allowlist rules have the highest
+  DNR priority.
+- Recreation Time pauses selected categories and the denylist on chosen days and hours.
+  Bypass protection stays active during that window.
+- SafeSearch adds strict parameters to Google, Bing and DuckDuckGo searches.
+- YouTube Restricted Mode applies the official `YouTube-Restrict: Strict` request header.
+- Bypass protection blocks bundled browser-visible VPN, proxy, Tor and encrypted-DNS
+  endpoints. It does not disable a native VPN or change system DNS.
+- Main-frame blocks land on a local page without an instant override. The original address
+  is not persisted.
+
+The catalog is generated from the public MIT-licensed NextDNS `services`,
+`dns-bypass-methods` and `piracy-blocklists` repositories plus a small reviewed local set.
+Exact revisions and attribution are in `THIRD-PARTY-NOTICES.md`. This adopts the useful
+NextDNS policy model inside one browser; it is not NextDNS and does not claim DNS-level
+coverage.
+
+### Updating an unpacked build
+
+Reloading an unpacked extension invalidates options tabs created by the old Manifest V3
+runtime. v0.4.0 detects that stale context during startup, reloads once, keeps a heartbeat
+port afterward and offers **Reconnect now** if the browser disconnects later. Stored rules
+and dynamic blocking rules survive the UI reconnect.
 
 ## Behavior
 
@@ -106,7 +135,7 @@ Announcement:
 {
   source: 'satoru-attention-extension',
   type: 'SATORU_ATTENTION_EXTENSION_READY',
-  version: '0.3.0'
+  version: '0.4.0'
 }
 ```
 
@@ -129,7 +158,7 @@ Read-only response:
   requestId: '...',
   status: {
     installed: true,
-    version: '0.3.0',
+    version: '0.4.0',
     configuredSites: 1,
     active: null // or { app, phase: 'active'|'boundary', remainingSeconds, mode }
   }
@@ -154,12 +183,12 @@ Gate links to Satoru are generated from a closed allowlist only:
 
 ## Security and honest limits
 
-- No `tabs`, history, cookies, identity, native messaging, downloads, clipboard or account
+- No permanent `tabs`, history, cookies, identity, native messaging, downloads, clipboard or account
   permission.
 - No network request, remote sync, destructive action, profile/admin operation, reward,
   punishment, XP, gold or streak mutation.
 - Policies never tighten themselves. Statistics never change a rule.
-- This is a real boundary for selected websites inside Brave/Chromium, not an OS-level app
+- This is a real boundary and content filter inside Brave/Chromium, not an OS-level app
   blocker. A person can always disable or uninstall the extension. It cannot control native
   TikTok/YouTube apps, another browser, a phone, or a game console.
 - Incognito and custom host permissions remain explicit browser choices.
@@ -170,9 +199,10 @@ Gate links to Satoru are generated from a closed allowlist only:
 npm test
 ```
 
-The package has no dependencies. Tests cover the pure engine, restart recovery, malformed
-state, clock rollback, emergency delay/budget, purpose merging, permission scope, manifest
-permissions, bridge schema, locale parity, light/dark/reduced-motion and accessibility hooks.
+The package has no runtime dependencies. Tests cover both pure engines, catalog breadth,
+allowlist priority, cross-midnight Recreation Time, DNR compilation, restart recovery,
+stale-page reconnection, permission scope, locale parity, accessibility, visual themes,
+package integrity and the read-only Satoru bridge.
 
 ## Asset ledger
 

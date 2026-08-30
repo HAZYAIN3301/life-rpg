@@ -16,9 +16,13 @@ const gate = read('gate.js');
 const gateHtml = read('gate.html');
 const optionsHtml = read('options.html');
 const popupHtml = read('popup.html');
+const blockHtml = read('block.html');
+const block = read('block.js');
 const bridge = read('bridge.js');
 const guard = read('site-guard.js');
 const styles = read('styles.css');
+const protection = read('protection.js');
+const catalog = read('protection-catalog.js');
 
 test('Manifest V3 uses minimal permanent permissions and an exact production bridge host', () => {
   assert.equal(manifest.manifest_version, 3);
@@ -33,11 +37,14 @@ test('Manifest V3 uses minimal permanent permissions and an exact production bri
   assert.equal(manifest.permissions.includes('webNavigation'), false);
 });
 
-test('optional site permission request is narrowed to Core.hostPatterns of the chosen host', () => {
+test('attention sites stay exact-host while protection asks broadly only from its explicit submit', () => {
   assert.match(options, /const origins = Core\.hostPatterns\(hostname\);[\s\S]*chrome\.permissions\.request\(\{ origins \}\);/);
   assert.doesNotMatch(options, /permissions\.request\([^)]*<all_urls>/s);
-  assert.doesNotMatch(options, /permissions\.request\([^)]*https:\/\/\*\/\*/s);
   assert.doesNotMatch(options, /\*:\/\/\*\./);
+  const protectionSubmit = options.slice(options.indexOf("protectionForm.addEventListener('submit'"), options.indexOf("runtimeReload.addEventListener"));
+  assert.match(protectionSubmit, /chrome\.permissions\.request\(\{ origins: \['http:\/\/\*\/\*', 'https:\/\/\*\/\*'\] \}\)/);
+  const policySubmit = options.slice(options.indexOf("form.addEventListener('submit'"));
+  assert.match(policySubmit, /Core\.hostPatterns\(hostname\)/);
 });
 
 test('state mutations roll back or report an explicit committed recovery state', () => {
@@ -97,7 +104,7 @@ test('all five runtime locale tables are complete and every visible i18n key exi
     assert.equal(typeof native.extensionName.message, 'string');
     assert.equal(typeof native.extensionDescription.message, 'string');
   }
-  for (const html of [gateHtml, optionsHtml, popupHtml]) {
+  for (const html of [gateHtml, optionsHtml, popupHtml, blockHtml]) {
     for (const match of html.matchAll(/data-i18n(?:-placeholder|-aria-label)?="([^"]+)"/g)) {
       assert.ok(Object.prototype.hasOwnProperty.call(I18n.TABLES.en, match[1]), match[1]);
     }
@@ -127,7 +134,7 @@ test('light, dark and reduced-motion paths are explicit', () => {
 });
 
 test('extension pages obey external-script CSP and contain no inline event handlers', () => {
-  for (const html of [gateHtml, optionsHtml, popupHtml]) {
+  for (const html of [gateHtml, optionsHtml, popupHtml, blockHtml]) {
     assert.doesNotMatch(html, /<script(?![^>]*\bsrc=)[^>]*>/i);
     assert.doesNotMatch(html, /\son(?:click|submit|change|input)=/i);
   }
@@ -181,6 +188,35 @@ test('Control weakening is delayed and the runtime error names a lost background
   assert.match(I18n.TABLES.ru.error_runtime_unavailable, /фоновым модулем/i);
   assert.doesNotMatch(I18n.TABLES.ru.error_runtime_unavailable, /очищен/i);
   assert.match(optionsHtml, /id="runtime-help"/);
+});
+
+test('stale options pages reconnect once and keep a live heartbeat after extension reload', () => {
+  assert.match(options, /chrome\.runtime\.connect\(\{ name: 'satoru-options-heartbeat' \}\)/);
+  assert.match(options, /extension context invalidated\|receiving end does not exist/i);
+  assert.match(options, /url\.searchParams\.has\('runtime-reconnect'\)/);
+  assert.match(options, /location\.replace\(url\.toString\(\)\)/);
+  assert.match(options, /recoverStaleOptions\('extension context invalidated', true\)/);
+  assert.match(optionsHtml, /id="runtime-reload"/);
+  assert.match(worker, /chrome\.runtime\.onConnect\.addListener/);
+  assert.match(worker, /type: 'PONG'/);
+});
+
+test('browser protection is local, category-backed and fail-closed at navigation', () => {
+  assert.match(worker, /Protection\.buildRules/);
+  assert.match(worker, /Protection\.decision/);
+  assert.match(worker, /SAVE_PROTECTION/);
+  assert.match(worker, /PROTECTION_ALARM/);
+  assert.match(protection, /priority: 10_000/);
+  assert.match(protection, /priority: 9_000/);
+  assert.match(protection, /YouTube-Restrict/);
+  assert.match(protection, /queryTransform/);
+  assert.match(catalog, /"piracy"/);
+  assert.match(catalog, /"bypass"/);
+  assert.doesNotMatch(catalog, /https?:\/\//);
+  assert.match(blockHtml, /id="block-title"/);
+  assert.doesNotMatch(blockHtml, /<(?:button|a)[^>]*(?:override|continue-anyway)/i);
+  assert.match(block, /chrome\.runtime\.openOptionsPage/);
+  assert.match(styles, /button, \.button \{[\s\S]*min-height: 44px/);
 });
 
 test('expiry keeps distinct work outcomes and mission-specific launch routes', () => {

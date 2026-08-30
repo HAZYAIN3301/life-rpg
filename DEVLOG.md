@@ -10,6 +10,15 @@
 - Offline shell поднят до `satoru-v209`; добавлены пятиъязычные подписи, keyboard dialog/focus return, touch targets и reduced-motion guard. Ручной browser QA прошёл desktop и `390×844`, live preview и повторное открытие после durable save.
 - Dedicated gate **5/5 PASS**; полный serial suite **1236/1254 functional PASS**, 18 остатков — только отсутствующие sparse art/font/audio/Piper assets. Полный контракт и ограничения: [`ACCOUNT-PROFILE-V209.md`](./ACCOUNT-PROFILE-V209.md).
 
+## [2026-08-30] ◉ Browser Protection v210 — самовосстановление расширения и локальная защита по модели NextDNS
+
+- Устранена причина повторного сообщения «связь с фоновым модулем потеряна»: после reload/update распакованного Manifest V3 расширения старая вкладка настроек теперь распознаёт отозванный runtime, один раз безопасно открывает актуальную extension-страницу и подтверждает новое соединение heartbeat-ом. Сохранённые Attention-правила и защита при этом не сбрасываются.
+- В Satoru Attention добавлен отдельный Browser Protection: 7 категорий, собственные denylist/allowlist, расписание Recreation Time, SafeSearch для Google/Bing/DuckDuckGo, YouTube Strict и постоянно активная блокировка DNS/VPN/proxy/Tor bypass-доменов. Allowlist имеет явный приоритет; текущие вкладки закрываются локальной block-page без мгновенного override.
+- Каталог собран воспроизводимо из публичных MIT-источников NextDNS и заморожен внутри пакета: 237 social, 42 video, 24 gaming, 9 dating, 10 gambling, 11 adult, 3018 piracy и 778 bypass-доменов. Runtime не загружает списки из сети и не передаёт историю браузера Satoru.
+- Граница заявлена честно: это защита внутри Chrome/Brave, а не системный DNS/VPN и не неотключаемый родительский контроль. Расширение не может помешать пользователю удалить его, перейти в другой браузер или использовать incognito без отдельного разрешения.
+- Manifest/package подняты до `0.4.0`, shell — до `satoru-v210`. Install/store ZIP идентичны, SHA-256: `21e03bc664c0e589e9878874ce7ed680399123dae55871bef3c5a48fed52251b`. Полный контракт и ручные сценарии: [`BROWSER-PROTECTION-V210-QA.md`](./BROWSER-PROTECTION-V210-QA.md).
+- Release gate: focused extension/package/discovery **58/58**, объединённый repository suite поверх Account Profile v209 **1288/1288**, syntax/ZIP/whitespace — PASS. Browser QA `1280×900` и `375×812`: горизонтального переполнения нет, основные действия и block-page сохраняют touch target не меньше `44px`.
+
 ## [2026-08-30] ◈ Economy Art v208 — SVG-пиктограммы заменены отрисованными игровыми предметами
 
 - После визуального фидбэка SVG-пак v206 перестал быть runtime-каноном. Все 48 достижений, 33 личные награды и 15 предметов арсенала заменены на самостоятельные прозрачные PNG `384×384`: объёмная предметная иллюстрация, бумажная/каменная фактура, navy/parchment/brass/teal палитра и силуэт, читаемый на реальном размере карточки.

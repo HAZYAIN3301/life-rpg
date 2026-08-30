@@ -1,11 +1,15 @@
 'use strict';
 
-importScripts('core.js');
+importScripts('core.js', 'protection.js', 'protection-catalog.js');
 
 const Core = self.SatoruAttentionCore;
+const Protection = self.SatoruProtection;
+const ProtectionCatalog = self.SatoruProtectionCatalog;
 const STATE_KEY = 'satoruAttentionStateV1';
+const PROTECTION_KEY = 'satoruProtectionStateV1';
 const BOUNDARY_ALARM = 'satoru-attention-boundary';
 const RECOVERY_ALARM = 'satoru-attention-recovery';
+const PROTECTION_ALARM = 'satoru-protection-schedule';
 const SITE_SCRIPT_PREFIX = 'satoru-site-';
 const RULE_BASE = 20_000;
 const CLOCK_OBSERVE_INTERVAL_MS = 30_000;
@@ -34,6 +38,17 @@ async function loadState() {
 async function saveState(state) {
   const normalized = Core.normalizeState(state);
   await chrome.storage.local.set({ [STATE_KEY]: normalized });
+  return normalized;
+}
+
+async function loadProtection() {
+  const stored = await chrome.storage.local.get(PROTECTION_KEY);
+  return Protection.normalizeSettings(stored[PROTECTION_KEY]);
+}
+
+async function saveProtection(settings) {
+  const normalized = Protection.normalizeSettings(settings);
+  await chrome.storage.local.set({ [PROTECTION_KEY]: normalized });
   return normalized;
 }
 
@@ -67,6 +82,16 @@ function gateUrl(policyId) {
   return chrome.runtime.getURL(`gate.html${id ? `?site=${encodeURIComponent(id)}` : ''}`);
 }
 
+function protectionUrl() {
+  return chrome.runtime.getURL('block.html');
+}
+
+async function broadProtectionPermission() {
+  try {
+    return await chrome.permissions.contains({ origins: ['http://*/*', 'https://*/*'] });
+  } catch { return false; }
+}
+
 function localDayKey() {
   const now = new Date();
   const year = now.getFullYear();
@@ -86,7 +111,7 @@ function exactHostRegex(hostname) {
   return `^https?://${escaped}(?::[0-9]+)?(?:/|$)`;
 }
 
-async function reconcileRules(state, at) {
+async function reconcileRules(state, protectionSettings, at) {
   const policies = state.policies.filter((policy) => policy.enabled).sort((a, b) => a.id.localeCompare(b.id));
   const existing = await chrome.declarativeNetRequest.getDynamicRules();
   const removeRuleIds = existing.map((rule) => rule.id);
@@ -108,6 +133,11 @@ async function reconcileRules(state, at) {
       },
     });
   }
+  const canRedirect = await broadProtectionPermission();
+  addRules.push(...Protection.buildRules(protectionSettings, ProtectionCatalog, new Date(at), {
+    baseId: 30_000,
+    blockUrl: canRedirect ? protectionUrl() : '',
+  }));
   await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds, addRules });
 }
 
@@ -138,10 +168,23 @@ async function scheduleBoundary(state, at) {
   if (Number.isFinite(when) && when > Date.parse(at)) await chrome.alarms.create(BOUNDARY_ALARM, { when });
 }
 
-async function redirectDeniedTabs(state, at) {
+async function scheduleProtectionBoundary(settings) {
+  await chrome.alarms.clear(PROTECTION_ALARM);
+  const next = Protection.nextScheduleBoundary(settings, new Date());
+  const when = next ? Date.parse(next) : NaN;
+  if (Number.isFinite(when) && when > Date.now()) await chrome.alarms.create(PROTECTION_ALARM, { when });
+}
+
+async function redirectDeniedTabs(state, protectionSettings, at) {
   const tabs = await chrome.tabs.query({});
   await Promise.all(tabs.map(async (tab) => {
     if (!tab.id || typeof tab.url !== 'string' || !/^https?:/.test(tab.url)) return;
+    const protectionDecision = Protection.decision(protectionSettings, ProtectionCatalog, tab.url, new Date(at));
+    if (protectionDecision.blocked) {
+      try { await chrome.tabs.update(tab.id, { url: protectionUrl() }); }
+      catch { /* A tab may disappear between query and update. */ }
+      return;
+    }
     const decision = Core.accessDecision(state, tab.url, at);
     if (decision.allowed || !decision.policy) return;
     attemptsByTab.set(tab.id, tab.url);
@@ -150,13 +193,15 @@ async function redirectDeniedTabs(state, at) {
   }));
 }
 
-async function updateActionState(state, at) {
+async function updateActionState(state, protectionSettings, at) {
   try {
     const enabled = state.policies.filter((policy) => policy.enabled).length;
     const session = state.activeSession;
     let text = enabled ? String(Math.min(99, enabled)) : 'NEW';
     let color = enabled ? '#087c9d' : '#8a5a14';
+    const protection = Protection.summary(protectionSettings, ProtectionCatalog, new Date(at));
     let title = enabled ? `Satoru Attention · ${enabled} site${enabled === 1 ? '' : 's'}` : 'Satoru Attention · setup needed';
+    if (protection.enabled) title += ` · protection ${protection.recreationActive ? 'paused' : 'on'}`;
     if (session) {
       const remaining = Date.parse(session.deadlineAt) - Date.parse(at);
       text = remaining > 0 ? 'ON' : '!';
@@ -173,11 +218,13 @@ async function updateActionState(state, at) {
 
 async function reconcileEnforcement(state, options = {}) {
   const at = currentIso();
-  await reconcileRules(state, at);
+  const protectionSettings = options.protectionSettings || await loadProtection();
+  await reconcileRules(state, protectionSettings, at);
   await reconcileContentScripts(state);
   await scheduleBoundary(state, at);
-  if (options.redirectTabs !== false) await redirectDeniedTabs(state, at);
-  await updateActionState(state, at);
+  await scheduleProtectionBoundary(protectionSettings);
+  if (options.redirectTabs !== false) await redirectDeniedTabs(state, protectionSettings, at);
+  await updateActionState(state, protectionSettings, at);
 }
 
 async function commitWithEnforcement(previousState, nextState, options = {}) {
@@ -204,6 +251,30 @@ async function commitWithEnforcement(previousState, nextState, options = {}) {
     } catch {
       // The new snapshot may be committed if storage rollback itself failed. Say
       // that explicitly so the UI refreshes instead of blindly repeating a write.
+      await scheduleRecovery();
+      return { ok: false, error: 'enforcement_recovery', committed: true, retryable: true };
+    }
+  }
+}
+
+async function commitProtectionWithEnforcement(previousSettings, nextSettings) {
+  let saved;
+  try { saved = await saveProtection(nextSettings); }
+  catch { return { ok: false, error: 'storage_unavailable', committed: false, retryable: true }; }
+  try {
+    await reconcileEnforcement(await loadState(), { protectionSettings: saved });
+    return { ok: true, settings: saved, summary: Protection.summary(saved, ProtectionCatalog, new Date()) };
+  } catch {
+    try {
+      const restored = await saveProtection(previousSettings);
+      try {
+        await reconcileEnforcement(await loadState(), { protectionSettings: restored });
+        return { ok: false, error: 'enforcement_failed', committed: false, retryable: true };
+      } catch {
+        await scheduleRecovery();
+        return { ok: false, error: 'enforcement_recovery', committed: false, retryable: true };
+      }
+    } catch {
       await scheduleRecovery();
       return { ok: false, error: 'enforcement_recovery', committed: true, retryable: true };
     }
@@ -269,15 +340,30 @@ function missionTarget(tabId, state, policy, session) {
 
 async function handleExtensionMessage(message, sender) {
   const type = message && message.type;
+  if (type === 'PING') return { ok: true, version: Core.VERSION };
   if (type === 'GET_CONTEXT') {
     const state = await loadState();
     return contextFor(state, message.siteId, currentIso());
   }
   if (type === 'GET_OPTIONS') {
     const state = await loadState();
+    const protection = await loadProtection();
     const permissions = {};
     for (const policy of state.policies) permissions[policy.id] = await permissionFor(policy);
-    return { ok: true, state, permissions, version: Core.VERSION };
+    return { ok: true, state, permissions, protection,
+      protectionPermission: await broadProtectionPermission(),
+      protectionSummary: Protection.summary(protection, ProtectionCatalog, new Date()),
+      version: Core.VERSION };
+  }
+  if (type === 'SAVE_PROTECTION') {
+    return serialized(async () => {
+      const previous = await loadProtection();
+      const candidate = Protection.normalizeSettings(message.settings);
+      if (candidate.enabled && !(await broadProtectionPermission())) {
+        return { ok: false, error: 'protection_permission_required' };
+      }
+      return commitProtectionWithEnforcement(previous, candidate);
+    });
   }
   if (type === 'START_SESSION') {
     return serialized(async () => {
@@ -446,8 +532,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true;
 });
 
+chrome.runtime.onConnect.addListener((port) => {
+  if (port.name !== 'satoru-options-heartbeat' || !extensionSender(port.sender)) {
+    try { port.disconnect(); } catch { /* Ignore an already closed port. */ }
+    return;
+  }
+  port.onMessage.addListener((message) => {
+    if (message && message.type === 'PING') {
+      try { port.postMessage({ type: 'PONG', version: Core.VERSION, at: currentIso() }); }
+      catch { /* The options tab may have closed. */ }
+    }
+  });
+});
+
 chrome.alarms.onAlarm.addListener((alarm) => {
-  if (![BOUNDARY_ALARM, RECOVERY_ALARM].includes(alarm.name)) return;
+  if (![BOUNDARY_ALARM, RECOVERY_ALARM, PROTECTION_ALARM].includes(alarm.name)) return;
   serialized(async () => {
     const state = await loadState();
     await reconcileEnforcement(state);
@@ -469,6 +568,7 @@ chrome.runtime.onStartup.addListener(() => {
 chrome.runtime.onInstalled.addListener((details) => {
   serialized(async () => {
     const state = await saveState(await loadState());
+    await saveProtection(await loadProtection());
     await reconcileEnforcement(state);
     if (details.reason === 'install') await chrome.runtime.openOptionsPage();
   }).catch(() => undefined);
