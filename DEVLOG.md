@@ -7,7 +7,7 @@
 - Исправлена причина потери данных в редакторе «Вдохновения»: форма раньше существовала только в DOM до финальной кнопки, а собственная формулировка при повторном открытии принудительно заменялась пустой строкой.
 - Незавершённые ответы теперь автоматически пишутся в отдельный account-owned `settings.inspirationDraft`, восстанавливаются раньше подтверждённого профиля и принудительно flush-ятся перед закрытием окна. Ошибка записи оставляет форму открытой и не показывает false success.
 - Финальное подтверждение одной записью сохраняет нормализованный профиль и очищает черновик. `customInterests` стал частью схемы v1.2.0 с лимитом 300 символов; незавершённый черновик не влияет на подборку.
-- Shell поднят до `satoru-v207`; изменённые профиль/UI/app/style получили v207 pins. Focused Inspiration/interface/Guide gate: **59/59 PASS**. Полный serial gate после исправления media-fence: **1227/1243 functional PASS**; 16 остатков — только отсутствующие sparse art/font/audio/Piper assets.
+- Shell поднят до `satoru-v207`; изменённые профиль/UI/app/style получили v207 pins. Focused Inspiration/interface/Guide gate: **59/59 PASS**, объединённый Browser/economy/Guide/Tree/Interface/Inspiration gate: **94/94 PASS**. Полный serial gate на точном release tree: **1235/1251 functional PASS**; 16 остатков — только отсутствующие sparse art/font/audio/Piper assets.
 - Полный контракт, root cause и production checklist: [`INSPIRATION-PERSISTENCE-V207-QA.md`](./INSPIRATION-PERSISTENCE-V207-QA.md).
 
 ## [2026-08-30] ◈ Economy Icons v206 — 96 предметных иконок вместо трёх одинаковых заглушек
@@ -15,7 +15,7 @@
 - Полностью пересобраны 48 достижений, 33 личные награды и 15 предметов арсенала. Достижения получили общий язык медалей с крупным смысловым знаком; награды — самостоятельные предметы без одинаковой рамки; оружие, броня и амулеты — собственные силуэты с restrained rarity accent.
 - У первого тренировочного клинка удалён отдельный PNG override: весь арсенал теперь использует один прозрачный SVG runtime. Заголовок Арсенала и три слота больше не притворяются уровнями сложности, а показывают реальные `gear.*` assets.
 - Добавлен воспроизводимый zero-dependency генератор `scripts/build-economy-icons-v206.mjs`, полный contact sheet и регрессия `scripts/economy-icons-v206.test.js`. Гейт запрещает возврат старых generic plaques, проверяет уникальность, registry, offline manifest и PWA pins.
-- Все 96 assets добавлены в offline app shell. App/SW lifecycle поднят до `satoru-v206`, shell pin — `20260830-economy-icons-v206-1`.
+- Все 96 assets добавлены в offline app shell. Реестр иконок сохраняет pin `20260830-economy-icons-v206-1`, а объединённый App/SW lifecycle публикуется как `satoru-v207`.
 - Визуальный и технический контракт: [`ECONOMY-ICONS-V206-QA.md`](./ECONOMY-ICONS-V206-QA.md).
 
 ## [2026-08-30] ◉ Browser Companion v206 — разные миссии, одна дневная граница

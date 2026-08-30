@@ -36,10 +36,12 @@
 ## Проверки
 
 - Syntax и whitespace gates — PASS.
-- Inspiration/profile/UI/interface + Guide media-fence: **59/59 PASS**.
+- Inspiration/profile/UI/interface + Guide media-fence: **59/59 PASS**; combined Browser Companion,
+  economy, Guide, Tree, Interface and Inspiration gate: **94/94 PASS**.
 - Отдельные тесты доказывают восстановление собственных формулировок, autosave незавершённой формы,
   атомарное удаление черновика после финального сохранения и сохранение старой account-clear fence.
-- Полный serial suite: **1227/1243 functional PASS**. Оставшиеся 16 failures — известные ENOENT/
+- Полный serial suite на точном fast-forward release tree: **1235/1251 functional PASS**. Оставшиеся
+  16 failures — известные ENOENT/
   asset-existence проверки sparse-worktree: отсутствующие tracked art/font/audio/Piper-файлы;
   они не относятся к Inspiration v207.
 
