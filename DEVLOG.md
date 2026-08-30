@@ -8,7 +8,8 @@
 - Незавершённые ответы теперь автоматически пишутся в отдельный account-owned `settings.inspirationDraft`, восстанавливаются раньше подтверждённого профиля и принудительно flush-ятся перед закрытием окна. Ошибка записи оставляет форму открытой и не показывает false success.
 - Финальное подтверждение одной записью сохраняет нормализованный профиль и очищает черновик. `customInterests` стал частью схемы v1.2.0 с лимитом 300 символов; незавершённый черновик не влияет на подборку.
 - Shell поднят до `satoru-v207`; изменённые профиль/UI/app/style получили v207 pins. Focused Inspiration/interface/Guide gate: **59/59 PASS**, объединённый Browser/economy/Guide/Tree/Interface/Inspiration gate: **94/94 PASS**. Полный serial gate на точном release tree: **1235/1251 functional PASS**; 16 остатков — только отсутствующие sparse art/font/audio/Piper assets.
-- Полный контракт, root cause и production checklist: [`INSPIRATION-PERSISTENCE-V207-QA.md`](./INSPIRATION-PERSISTENCE-V207-QA.md).
+- Production release `e40a7c9` опубликован fast-forward; deployment `6166988125` завершён `success`, root отвечает HTTP 200. Шесть проверенных production-артефактов, включая app/profile/UI/SW и ZIP расширения, совпали с release tree byte-for-byte; hashes записаны в QA-документе.
+- Полный контракт, root cause и production verification: [`INSPIRATION-PERSISTENCE-V207-QA.md`](./INSPIRATION-PERSISTENCE-V207-QA.md).
 
 ## [2026-08-30] ◈ Economy Icons v206 — 96 предметных иконок вместо трёх одинаковых заглушек
 

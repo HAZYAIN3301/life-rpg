@@ -1,7 +1,7 @@
 # Inspiration Persistence v207 — сохранение ответов настройки
 
 Дата: 2026-08-30
-Статус: release candidate; production-проверка фиксируется после публикации.
+Статус: опубликовано и проверено на production.
 
 ## Ошибка
 
@@ -45,13 +45,22 @@
   asset-existence проверки sparse-worktree: отсутствующие tracked art/font/audio/Piper-файлы;
   они не относятся к Inspiration v207.
 
-## Production gate
+## Production verification
 
-После push должны быть проверены с cache-buster:
-
-1. `index.html` закрепляет `inspiration-profile-v1.js`, `return-shelf-ui-v1.js`, `styles.css` и
-   `app.js` на v207.
-2. `sw.js` и `app.js` сообщают `satoru-v207`.
-3. production `inspiration-profile-v1.js` содержит профиль v1.2.0 и `customInterests`.
-4. В реальном аккаунте: заполнить часть формы → закрыть → открыть → ответы на месте; затем сохранить
-   финально → открыть ещё раз → подтверждённые ответы на месте, черновик очищен.
+- Кодовый release `e40a7c9` опубликован fast-forward в `master`; GitHub/Railway deployment
+  `6166988125` завершён состоянием `success`.
+- Production root отвечает HTTP 200. С cache-buster проверены `index.html`, `app.js`, `sw.js`,
+  `inspiration-profile-v1.js`, `return-shelf-ui-v1.js` и install ZIP расширения.
+- Локальные и production-байты совпали для всех шести артефактов. Контрольные SHA-256:
+  `index.html` — `dcc6068811df689456a533973f7bf77e2bae25e4a8d82f61bee02a0de46a21db`;
+  `app.js` — `47b68b61430b22c8fd5be20ec6b903ad202e59afe2f8064c223b1d56a6da0918`;
+  `sw.js` — `20d5ecbe21cc16e592984b8445f59a3b15a0a91b4df74b0ec49ecb48e399e80c`;
+  профиль — `cc576545ea08a3ebe6f3c5731cee962b3236b58d2faee9a587114f1f213ad59d`;
+  UI — `1055cec73cdab1d4359ad0e23b2df8a071d0bf2c1d6f25150a3cc435ea8a874e`;
+  ZIP — `5843b296aef79668e079c4e16402479f16fb39034769c87538bd18e5272d6813`.
+- Production закрепляет runtime `satoru-v207`, профиль v1.2.0 и поле `customInterests`; в
+  опубликованном `app.js` присутствуют autosave, draft restore, close flush и атомарная очистка
+  `inspirationDraft` после финального сохранения.
+- Последний ручной acceptance остаётся пользовательским: в уже авторизованном аккаунте изменить
+  несколько ответов, закрыть и снова открыть редактор. Данные должны восстановиться без нажатия
+  нижней кнопки; автоматические и production-byte гейты этот контракт уже покрывают.
