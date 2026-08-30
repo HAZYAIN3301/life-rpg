@@ -25,8 +25,10 @@
   const minutesInput = document.querySelector('#minutes');
   const topicField = document.querySelector('#topic-field');
   const topicInput = document.querySelector('#topic');
+  const detailField = document.querySelector('#detail-field');
+  const detailInput = document.querySelector('#detail');
   const outcomeField = document.querySelector('#outcome-field');
-  const outcomeInput = document.querySelector('#outcome');
+  const outcomeOutput = document.querySelector('#outcome');
   const startStatus = document.querySelector('#start-status');
   const activeStatus = document.querySelector('#active-status');
   const boundaryStatus = document.querySelector('#boundary-status');
@@ -54,8 +56,14 @@
   }
 
   async function send(message) {
-    try { return await chrome.runtime.sendMessage(message); }
-    catch { return { ok: false, error: 'runtime_unavailable', retryable: true }; }
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const response = await chrome.runtime.sendMessage(message);
+        if (response) return response;
+      } catch { /* A stale unpacked-extension tab gets one quiet retry. */ }
+      if (attempt === 0) await new Promise((resolve) => setTimeout(resolve, 180));
+    }
+    return { ok: false, error: 'runtime_unavailable', retryable: true };
   }
 
   async function guarded(button, work) {
@@ -103,18 +111,38 @@
   function chooseRule(rule) {
     selectedRule = rule;
     setMode(document.querySelector('#site-mode'), rule.mode);
-    minutesInput.min = '1';
-    minutesInput.max = String(rule.maxMinutes);
-    minutesInput.value = String(rule.defaultMinutes);
-    outcomeInput.value = rule.expectedOutcome || '';
+    minutesInput.replaceChildren();
+    const available = context?.quota ? Math.min(rule.defaultMinutes, context.quota.remainingMinutes) : rule.defaultMinutes;
+    const selectedMinutes = Math.min(rule.defaultMinutes, available);
+    const values = [...new Set([5, 8, 10, rule.defaultMinutes, available].filter((value) => value > 0 && value <= available))].sort((a, b) => a - b);
+    for (const value of values) {
+      const option = document.createElement('option');
+      option.value = String(value);
+      option.textContent = String(value);
+      option.selected = value === selectedMinutes;
+      minutesInput.append(option);
+    }
+    outcomeOutput.textContent = rule.expectedOutcome || t('outcomeUnsure');
     topicField.hidden = !rule.requiresTopic;
-    outcomeField.hidden = ['rest', 'unsure'].includes(rule.purpose);
+    detailField.hidden = !rule.requiresDetail;
+    topicInput.value = '';
+    detailInput.value = '';
+    outcomeField.hidden = false;
   }
 
   function renderStart() {
     emergencySection.hidden = true;
     show('start');
     document.querySelector('#site-name').textContent = context.policy.label;
+    const quota = context.quota;
+    const quotaStatus = document.querySelector('#quota-status');
+    quotaStatus.textContent = quota ? t('quotaSummary', {
+      used: quota.sessionsUsed,
+      max: quota.maxSessionsPerDay,
+      minutes: quota.remainingMinutes,
+    }) : '';
+    if (quota?.cooldownRemainingMs > 0) quotaStatus.textContent = t('cooldownSummary', { time: formatTime(quota.cooldownRemainingMs) });
+    if (quota && (quota.sessionsRemaining <= 0 || quota.remainingMinutes <= 0)) quotaStatus.textContent = t('dailyClosed');
     purposeList.replaceChildren();
     context.policy.purposes.forEach((rule, index) => {
       const label = document.createElement('label');
@@ -124,6 +152,7 @@
       input.name = 'purpose';
       input.value = rule.purpose;
       input.checked = index === 0;
+      input.disabled = !!(quota && !quota.canStart);
       const copy = document.createElement('span');
       copy.textContent = t(`purpose_${rule.purpose}`);
       input.addEventListener('change', () => chooseRule(rule));
@@ -131,6 +160,7 @@
       purposeList.append(label);
     });
     chooseRule(context.policy.purposes[0]);
+    document.querySelector('#start-form button[type="submit"]').disabled = !!(quota && !quota.canStart);
   }
 
   function startActiveTimer() {
@@ -151,7 +181,11 @@
     show('active');
     setMode(document.querySelector('#active-mode'), context.activeSession.mode);
     document.querySelector('#active-site').textContent = context.policy.label;
-    document.querySelector('#finish-early').hidden = context.activeSession.mode === 'control';
+    document.querySelector('#active-context').textContent = t('boundaryContext', {
+      purpose: t(`purpose_${context.activeSession.purpose}`),
+      minutes: context.activeSession.plannedMinutes,
+    });
+    document.querySelector('#finish-early').hidden = context.activeSession.emergencyAccess === true;
     emergencySection.hidden = context.activeSession.mode !== 'control' || context.activeSession.emergencyAccess === true;
     emergencyStart.hidden = false;
     emergencyConfirm.hidden = true;
@@ -183,6 +217,14 @@
   function renderBoundary() {
     show('boundary');
     setMode(document.querySelector('#boundary-mode'), context.activeSession.mode);
+    document.querySelector('#boundary-context').textContent = t('boundaryContext', {
+      purpose: t(`purpose_${context.activeSession.purpose}`),
+      minutes: context.activeSession.plannedMinutes,
+    });
+    const rest = context.activeSession.purpose === 'rest';
+    document.querySelector('[data-outcome="done"]').hidden = rest;
+    document.querySelector('[data-outcome="unfinished"]').hidden = rest;
+    document.querySelector('[data-outcome="rested"]').hidden = !rest;
     document.querySelector('#extend-session').hidden = !context.boundary.canExtend;
     boundaryStatus.textContent = context.clockRollback ? t('error_clock_rollback') : '';
     boundaryStatus.className = `status${context.clockRollback ? ' error' : ''}`;
@@ -230,8 +272,9 @@
           policyId: context.policy.id,
           purpose: selectedRule.purpose,
           minutes: Number(minutesInput.value),
-          expectedOutcome: outcomeInput.value,
+          expectedOutcome: selectedRule.expectedOutcome,
           topic: topicInput.value,
+          detail: detailInput.value,
         },
       });
       if (!result || result.ok !== true) {
@@ -262,7 +305,7 @@
     const button = event.target.closest('button[data-outcome]');
     if (button) finish(button.dataset.outcome, button);
   });
-  document.querySelector('#finish-early').addEventListener('click', (event) => finish('unknown', event.currentTarget));
+  document.querySelector('#finish-early').addEventListener('click', (event) => finish('done', event.currentTarget));
   document.querySelector('#continue-site').addEventListener('click', () => location.assign(context.resumeUrl));
   document.querySelector('#extend-session').addEventListener('click', async (event) => {
     await guarded(event.currentTarget, async () => {

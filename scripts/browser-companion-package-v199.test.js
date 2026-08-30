@@ -20,7 +20,7 @@ test('installable MV3 package has only the permanent Satoru origin', () => {
   assert.equal(manifest.content_scripts[0].all_frames, false);
 });
 
-test('every manifest file exists and both v200 ZIPs are real artifacts', () => {
+test('every manifest file exists and both v206 ZIPs are real artifacts', () => {
   const refs = [manifest.background.service_worker, manifest.action.default_popup, manifest.options_page]
     .concat(manifest.content_scripts.flatMap((entry) => entry.js || []))
     .concat(Object.values(manifest.icons || {}));
@@ -30,8 +30,8 @@ test('every manifest file exists and both v200 ZIPs are real artifacts', () => {
     assert.ok(messages.extensionName?.message);
     assert.ok(messages.extensionDescription?.message);
   }
-  assert.equal(manifest.version, '0.2.0');
-  for (const name of ['satoru-attention-v200.zip', 'satoru-attention-store-v200.zip']) {
+  assert.equal(manifest.version, '0.3.0');
+  for (const name of ['satoru-attention-v206.zip', 'satoru-attention-store-v206.zip']) {
     const zip = path.join(ROOT, 'public', 'downloads', name);
     assert.ok(fs.existsSync(zip), `${name}: install artifact must not ship as a 404`);
     assert.ok(fs.statSync(zip).size > 10_000, `${name}: ZIP is unexpectedly empty`);

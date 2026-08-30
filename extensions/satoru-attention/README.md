@@ -1,9 +1,9 @@
-# Satoru Attention — Brave/Chromium companion v1
+# Satoru Attention — Brave/Chromium companion v2
 
 Manifest V3 extension for the desktop R3 attention boundary. It controls only sites that
-the person explicitly adds. The first setup remains deliberately small: one site, one
-purpose, one limit. A second save for the same site adds or updates that purpose without
-erasing the other purposes.
+the person explicitly adds. The first setup remains deliberately small: one site and a
+prebuilt pack of allowed entry scenarios. A concrete task is named at the gate, while the
+time cap, mode, daily budget, entry count and cooldown are decided beforehand.
 
 ## Install
 
@@ -39,6 +39,14 @@ read-only bridge.
 
 - A configured site is redirected to `gate.html` until a purpose and bounded duration are
   explicitly chosen.
+- One site can expose several pre-approved scenarios. The TikTok starter pack enables
+  publish (12 min), create/edit (25 min), references (10 min) and one saved item (8 min),
+  all in Control; rest and “not sure” are disabled. The site also has a 50-minute daily
+  budget, three entries and a ten-minute cooldown.
+- The gate may shorten a scenario but cannot increase its pre-approved window or invent a
+  disabled reason. Work scenarios require a concrete task; research requires a topic.
+- Looser Control changes (more time/entries, less cooldown, weaker mode, extra scenario or
+  pausing the guard) are queued until the next local day. Tighter changes apply immediately.
 - Only one attention session can be open at a time.
 - Adaptive/Trust may have at most one bounded extension. Control has no ordinary extension.
 - Control offers an emergency exit both during the active contract and at the boundary.
@@ -52,6 +60,9 @@ read-only bridge.
   `chrome.storage.local`. No visited URL, query, watched item or emergency reason is stored.
 - Browser/service-worker restart reloads the session snapshot, reconstructs redirect rules
   and registered guards, and redirects open tabs when the deadline has passed.
+- At expiry the site stays shielded until the person records `done`, `unfinished but stayed
+  on task`, `escaped` or `unknown`. Finishing early is always allowed because it closes
+  access rather than weakening the boundary.
 
 ### Malformed storage and clock rollback
 
@@ -95,7 +106,7 @@ Announcement:
 {
   source: 'satoru-attention-extension',
   type: 'SATORU_ATTENTION_EXTENSION_READY',
-  version: '0.1.0'
+  version: '0.3.0'
 }
 ```
 
@@ -118,7 +129,7 @@ Read-only response:
   requestId: '...',
   status: {
     installed: true,
-    version: '0.1.0',
+    version: '0.3.0',
     configuredSites: 1,
     active: null // or { app, phase: 'active'|'boundary', remainingSeconds, mode }
   }

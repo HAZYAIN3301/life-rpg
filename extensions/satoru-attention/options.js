@@ -5,68 +5,151 @@
   const I18n = globalThis.SatoruAttentionI18n;
   const language = I18n.detect();
   const t = (key, values) => I18n.translate(language, key, values);
-  const presets = {
-    tiktok: { label: 'TikTok', hostname: 'www.tiktok.com', appKey: 'tiktok', purpose: 'publish', mode: 'control', minutes: 12 },
-    youtube: { label: 'YouTube', hostname: 'www.youtube.com', appKey: 'youtube', purpose: 'watch', mode: 'adaptive', minutes: 45 },
-    instagram: { label: 'Instagram', hostname: 'www.instagram.com', appKey: 'instagram', purpose: 'publish', mode: 'adaptive', minutes: 15 },
-    reddit: { label: 'Reddit', hostname: 'www.reddit.com', appKey: 'reddit', purpose: 'research', mode: 'control', minutes: 10 },
-  };
+  const scenarioDefaults = Object.freeze({
+    publish: { minutes: 12, mode: 'control', outcomeKey: 'outcomePublish', detail: true },
+    create: { minutes: 25, mode: 'control', outcomeKey: 'outcomeCreate', detail: true },
+    reply: { minutes: 10, mode: 'control', outcomeKey: 'outcomeReply', detail: true },
+    research: { minutes: 10, mode: 'control', outcomeKey: 'outcomeResearch', topic: true },
+    watch: { minutes: 8, mode: 'control', outcomeKey: 'outcomeWatch', detail: true },
+    rest: { minutes: 10, mode: 'adaptive', outcomeKey: 'outcomeRest' },
+    unsure: { minutes: 5, mode: 'trust', outcomeKey: 'outcomeUnsure' },
+  });
+  const presets = Object.freeze({
+    tiktok: { label: 'TikTok', hostname: 'www.tiktok.com', appKey: 'tiktok', purposes: ['publish', 'create', 'research', 'watch'], dailyBudgetMinutes: 50, maxSessionsPerDay: 3, cooldownMinutes: 10 },
+    youtube: { label: 'YouTube', hostname: 'www.youtube.com', appKey: 'youtube', purposes: ['publish', 'research', 'watch'], dailyBudgetMinutes: 60, maxSessionsPerDay: 3, cooldownMinutes: 10 },
+    instagram: { label: 'Instagram', hostname: 'www.instagram.com', appKey: 'instagram', purposes: ['publish', 'create', 'reply'], dailyBudgetMinutes: 35, maxSessionsPerDay: 3, cooldownMinutes: 10 },
+    reddit: { label: 'Reddit', hostname: 'www.reddit.com', appKey: 'reddit', purposes: ['research', 'reply'], dailyBudgetMinutes: 30, maxSessionsPerDay: 3, cooldownMinutes: 10 },
+    custom: { label: '', hostname: '', appKey: 'web', purposes: ['research', 'watch'], dailyBudgetMinutes: 30, maxSessionsPerDay: 3, cooldownMinutes: 10 },
+  });
 
   const form = document.querySelector('#policy-form');
   const siteSelect = document.querySelector('#site-select');
   const domainField = document.querySelector('#domain-field');
   const domainInput = document.querySelector('#domain');
-  const purposeInput = document.querySelector('#purpose');
-  const modeInput = document.querySelector('#mode');
-  const minutesInput = document.querySelector('#policy-minutes');
-  const outcomeField = document.querySelector('#policy-outcome-field');
-  const outcomeInput = document.querySelector('#policy-outcome');
+  const scenarioList = document.querySelector('#scenario-list');
+  const dailyBudgetInput = document.querySelector('#daily-budget');
+  const dailySessionsInput = document.querySelector('#daily-sessions');
+  const cooldownInput = document.querySelector('#cooldown-minutes');
   const status = document.querySelector('#options-status');
+  const runtimeHelp = document.querySelector('#runtime-help');
   const siteList = document.querySelector('#site-list');
   const noSites = document.querySelector('#no-sites');
   let actionBusy = false;
+  let currentState = Core.emptyState();
+  let editingPolicyId = '';
 
   I18n.localizeDocument(language);
 
-  function setStatus(message, kind = '') {
+  function setStatus(message, kind = '', runtime = false) {
     status.textContent = message || '';
     status.className = `status${kind ? ` ${kind}` : ''}`;
+    runtimeHelp.hidden = !runtime;
   }
-
-  function errorText(code) { return t(`error_${code}`) === `error_${code}` ? t('saveFailed') : t(`error_${code}`); }
+  function errorText(code) {
+    const key = `error_${code}`;
+    const translated = t(key);
+    return translated === key ? t('saveFailed') : translated;
+  }
   function modeName(mode) { return t(`mode_${mode}`); }
   function purposeName(purpose) { return t(`purpose_${purpose}`); }
+  function wait(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
 
   async function send(message) {
-    try { return await chrome.runtime.sendMessage(message); }
-    catch { return { ok: false, error: 'runtime_unavailable', retryable: true }; }
+    let detail = '';
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const response = await chrome.runtime.sendMessage(message);
+        if (response) return response;
+      } catch (error) { detail = String(error && error.message || ''); }
+      if (attempt === 0) await wait(180);
+    }
+    return { ok: false, error: 'runtime_unavailable', retryable: true, detail };
   }
 
-  function applyPreset() {
-    const preset = presets[siteSelect.value];
-    domainField.hidden = !!preset;
-    if (!preset) return;
-    purposeInput.value = preset.purpose;
-    modeInput.value = preset.mode;
-    minutesInput.value = String(preset.minutes);
-    outcomeInput.value = '';
-    updateOutcomeVisibility();
+  function scenarioRow(purpose, rule, enabled) {
+    const defaults = scenarioDefaults[purpose];
+    const item = document.createElement('article');
+    item.className = 'scenario-item';
+    item.dataset.purpose = purpose;
+    const toggle = document.createElement('label');
+    toggle.className = 'scenario-toggle';
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = enabled;
+    checkbox.dataset.role = 'enabled';
+    const copy = document.createElement('span');
+    const title = document.createElement('b');
+    title.textContent = purposeName(purpose);
+    const result = document.createElement('small');
+    result.textContent = t(defaults.outcomeKey);
+    copy.append(title, result);
+    toggle.append(checkbox, copy);
+    const controls = document.createElement('div');
+    controls.className = 'scenario-controls';
+    const mode = document.createElement('select');
+    mode.dataset.role = 'mode';
+    mode.setAttribute('aria-label', t('mode'));
+    for (const value of ['trust', 'adaptive', 'control']) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = modeName(value);
+      option.selected = value === (rule?.mode || defaults.mode);
+      mode.append(option);
+    }
+    const minutes = document.createElement('input');
+    minutes.type = 'number';
+    minutes.inputMode = 'numeric';
+    minutes.min = '1';
+    minutes.max = String(Core.MAX_MINUTES);
+    minutes.value = String(rule?.defaultMinutes || defaults.minutes);
+    minutes.dataset.role = 'minutes';
+    minutes.setAttribute('aria-label', t('minutes'));
+    controls.append(mode, minutes);
+    item.append(toggle, controls);
+    const update = () => {
+      item.classList.toggle('is-disabled', !checkbox.checked);
+      mode.disabled = !checkbox.checked;
+      minutes.disabled = !checkbox.checked;
+    };
+    checkbox.addEventListener('change', update);
+    update();
+    return item;
   }
 
-  function updateOutcomeVisibility() {
-    outcomeField.hidden = !Core.isWorkPurpose(purposeInput.value);
+  function buildScenarios(policy, preset) {
+    scenarioList.replaceChildren();
+    const byPurpose = new Map((policy?.purposes || []).map((rule) => [rule.purpose, rule]));
+    const enabled = new Set(policy ? policy.purposes.map((rule) => rule.purpose) : preset.purposes);
+    for (const purpose of Object.keys(scenarioDefaults)) scenarioList.append(scenarioRow(purpose, byPurpose.get(purpose), enabled.has(purpose)));
   }
+
+  function loadDraft(policy = null) {
+    const preset = policy ? Object.values(presets).find((item) => item.hostname === policy.hostname) || presets.custom : presets[siteSelect.value];
+    editingPolicyId = policy?.id || '';
+    if (policy) {
+      const key = Object.keys(presets).find((name) => presets[name].hostname === policy.hostname) || 'custom';
+      siteSelect.value = key;
+      domainInput.value = key === 'custom' ? policy.hostname : '';
+    }
+    domainField.hidden = siteSelect.value !== 'custom';
+    dailyBudgetInput.value = String(policy?.dailyBudgetMinutes || preset.dailyBudgetMinutes);
+    dailySessionsInput.value = String(policy?.maxSessionsPerDay || preset.maxSessionsPerDay);
+    cooldownInput.value = String(policy?.cooldownMinutes ?? preset.cooldownMinutes);
+    buildScenarios(policy, preset);
+  }
+
+  function pendingFor(policyId) { return currentState.pendingPolicies.find((item) => item.policyId === policyId) || null; }
 
   async function render(focusPolicyId = '') {
     const result = await send({ type: 'GET_OPTIONS' });
     if (!result || result.ok !== true) {
-      setStatus(t('genericError'), 'error');
+      setStatus(errorText(result && result.error), 'error', result && result.error === 'runtime_unavailable');
       return;
     }
-    const state = result.state;
+    currentState = result.state;
     siteList.replaceChildren();
-    noSites.hidden = state.policies.length > 0;
-    for (const policy of state.policies) {
+    noSites.hidden = currentState.policies.length > 0;
+    for (const policy of currentState.policies) {
       const item = document.createElement('article');
       item.className = 'site-item';
       const copy = document.createElement('div');
@@ -74,58 +157,87 @@
       title.textContent = policy.label;
       const meta = document.createElement('div');
       meta.className = 'site-meta';
-      const rules = policy.purposes
-        .map((rule) => `${purposeName(rule.purpose)} · ${modeName(rule.mode)} · ${rule.defaultMinutes} min`)
-        .join(' / ');
-      meta.textContent = `${policy.hostname} · ${rules}`;
+      meta.textContent = t('policySummary', { count: policy.purposes.length, minutes: policy.dailyBudgetMinutes, sessions: policy.maxSessionsPerDay });
+      const purposes = document.createElement('div');
+      purposes.className = 'scenario-pills';
+      for (const rule of policy.purposes) {
+        const pill = document.createElement('span');
+        pill.textContent = `${purposeName(rule.purpose)} · ${rule.defaultMinutes}`;
+        purposes.append(pill);
+      }
+      copy.append(title, meta, purposes);
       if (result.permissions[policy.id] !== true) {
         const missing = document.createElement('div');
         missing.className = 'status error';
         missing.textContent = t('permissionMissing');
-        copy.append(title, meta, missing);
-      } else copy.append(title, meta);
-
+        copy.append(missing);
+      }
+      const pending = pendingFor(policy.id);
+      if (pending) {
+        const pendingRow = document.createElement('div');
+        pendingRow.className = 'pending-row';
+        const text = document.createElement('span');
+        text.textContent = t('pendingTomorrow');
+        const cancel = document.createElement('button');
+        cancel.type = 'button';
+        cancel.className = 'quiet';
+        cancel.dataset.cancelPolicyId = policy.id;
+        cancel.textContent = t('cancelPending');
+        pendingRow.append(text, cancel);
+        copy.append(pendingRow);
+      }
       const controls = document.createElement('div');
-      controls.className = 'stack';
-      const pill = document.createElement('span');
-      pill.className = `state-pill${policy.enabled ? ' on' : ''}`;
-      pill.textContent = policy.enabled ? t('enabled') : t('paused');
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.textContent = policy.enabled ? t('pause') : t('turnOn');
-      button.dataset.policyId = policy.id;
-      button.dataset.enabled = String(!policy.enabled);
-      const locked = state.activeSession && state.activeSession.policyId === policy.id && state.activeSession.mode === 'control';
-      button.disabled = !!locked;
-      if (locked) button.title = t('controlLocked');
-      controls.append(pill, button);
+      controls.className = 'site-controls';
+      const edit = document.createElement('button');
+      edit.type = 'button';
+      edit.dataset.editPolicyId = policy.id;
+      edit.textContent = t('editScenarios');
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.textContent = policy.enabled ? t('pause') : t('turnOn');
+      toggle.dataset.policyId = policy.id;
+      toggle.dataset.enabled = String(!policy.enabled);
+      const locked = currentState.activeSession && currentState.activeSession.policyId === policy.id && currentState.activeSession.mode === 'control';
+      edit.disabled = !!locked;
+      toggle.disabled = !!locked;
+      if (locked) edit.title = toggle.title = t('controlLocked');
+      controls.append(edit, toggle);
       item.append(copy, controls);
       siteList.append(item);
     }
     if (focusPolicyId) {
-      const focusTarget = siteList.querySelector(`button[data-policy-id="${focusPolicyId}"]`);
-      if (focusTarget) focusTarget.focus({ preventScroll: true });
+      const target = siteList.querySelector(`[data-edit-policy-id="${focusPolicyId}"], [data-policy-id="${focusPolicyId}"]`);
+      if (target) target.focus({ preventScroll: true });
     }
   }
 
-  siteSelect.addEventListener('change', applyPreset);
-  purposeInput.addEventListener('change', updateOutcomeVisibility);
+  siteSelect.addEventListener('change', () => { editingPolicyId = ''; loadDraft(); });
 
   siteList.addEventListener('click', async (event) => {
+    const edit = event.target.closest('button[data-edit-policy-id]');
+    if (edit) {
+      const policy = Core.policyById(currentState, edit.dataset.editPolicyId);
+      if (policy) { loadDraft(policy); form.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      return;
+    }
+    const cancel = event.target.closest('button[data-cancel-policy-id]');
+    if (cancel && !actionBusy) {
+      actionBusy = true;
+      const result = await send({ type: 'CANCEL_PENDING_POLICY', policyId: cancel.dataset.cancelPolicyId });
+      setStatus(result?.ok ? t('pendingCancelled') : errorText(result && result.error), result?.ok ? 'success' : 'error');
+      await render(cancel.dataset.cancelPolicyId);
+      actionBusy = false;
+      return;
+    }
     const button = event.target.closest('button[data-policy-id]');
     if (!button || actionBusy) return;
     actionBusy = true;
     button.disabled = true;
-    try {
-      const result = await send({
-        type: 'TOGGLE_POLICY',
-        policyId: button.dataset.policyId,
-        enabled: button.dataset.enabled === 'true',
-      });
-      if (!result || result.ok !== true) setStatus(errorText(result && result.error), 'error');
-      else setStatus(t('saveSuccess'), 'success');
-      await render(button.dataset.policyId);
-    } finally { actionBusy = false; }
+    const result = await send({ type: 'TOGGLE_POLICY', policyId: button.dataset.policyId, enabled: button.dataset.enabled === 'true' });
+    if (!result || result.ok !== true) setStatus(errorText(result && result.error), 'error', result && result.error === 'runtime_unavailable');
+    else setStatus(result.pending ? t('changeTomorrow') : t('saveSuccess'), 'success');
+    await render(button.dataset.policyId);
+    actionBusy = false;
   });
 
   form.addEventListener('submit', async (event) => {
@@ -137,83 +249,60 @@
     setStatus('');
     try {
       const preset = presets[siteSelect.value];
-      const hostname = Core.normalizeHostname(preset ? preset.hostname : domainInput.value);
-      if (!hostname) {
-        setStatus(t('saveFailed'), 'error');
-        domainInput.focus();
-        return;
+      const hostname = Core.normalizeHostname(preset.hostname || domainInput.value);
+      if (!hostname) { setStatus(t('saveFailed'), 'error'); domainInput.focus(); return; }
+      const purposes = [];
+      for (const item of scenarioList.querySelectorAll('.scenario-item')) {
+        if (!item.querySelector('[data-role="enabled"]').checked) continue;
+        const purpose = item.dataset.purpose;
+        const defaults = scenarioDefaults[purpose];
+        const mode = item.querySelector('[data-role="mode"]').value;
+        const minutes = Number(item.querySelector('[data-role="minutes"]').value);
+        if (!Number.isInteger(minutes) || minutes < 1 || minutes > Core.MAX_MINUTES) {
+          setStatus(t('error_duration_invalid'), 'error'); item.querySelector('[data-role="minutes"]').focus(); return;
+        }
+        const extensionsAllowed = mode === 'control' ? 0 : 1;
+        const extensionMinutes = Math.min(5, minutes);
+        purposes.push({ purpose, mode, defaultMinutes: minutes,
+          maxMinutes: Math.min(Core.MAX_MINUTES, minutes + extensionsAllowed * extensionMinutes),
+          extensionsAllowed, extensionMinutes, expectedOutcome: t(defaults.outcomeKey),
+          requiresTopic: defaults.topic === true, requiresDetail: defaults.detail === true });
       }
-      const purpose = purposeInput.value;
-      const mode = modeInput.value;
-      const minutes = Number(minutesInput.value);
-      const expectedOutcome = outcomeInput.value.trim();
-      if (mode === 'control' && purpose === 'unsure') {
-        setStatus(t('error_unsure_in_control'), 'error');
-        purposeInput.focus();
-        return;
+      if (!purposes.length) { setStatus(t('error_scenario_required'), 'error'); return; }
+      const dailyBudgetMinutes = Number(dailyBudgetInput.value);
+      const maxSessionsPerDay = Number(dailySessionsInput.value);
+      const cooldownMinutes = Number(cooldownInput.value);
+      if (!Number.isInteger(dailyBudgetMinutes) || dailyBudgetMinutes < 1 || dailyBudgetMinutes > Core.MAX_DAILY_BUDGET_MINUTES
+        || !Number.isInteger(maxSessionsPerDay) || maxSessionsPerDay < 1 || maxSessionsPerDay > Core.MAX_SESSIONS_PER_DAY
+        || !Number.isInteger(cooldownMinutes) || cooldownMinutes < 0 || cooldownMinutes > Core.MAX_COOLDOWN_MINUTES) {
+        setStatus(t('error_daily_limits_invalid'), 'error'); return;
       }
-      if (Core.isWorkPurpose(purpose) && !expectedOutcome) {
-        setStatus(t('error_outcome_required'), 'error');
-        outcomeInput.focus();
-        return;
-      }
-      if (!Number.isInteger(minutes) || minutes < 1 || minutes > Core.MAX_MINUTES) {
-        setStatus(t('error_duration_invalid'), 'error');
-        minutesInput.focus();
-        return;
-      }
-
-      // The optional manifest grant is broad only as a capability declaration. The
-      // actual user prompt is always restricted to this exact hostname pattern.
       const origins = Core.hostPatterns(hostname);
       let granted = false;
       try { granted = await chrome.permissions.request({ origins }); }
-      catch {
-        setStatus(errorText('runtime_unavailable'), 'error');
-        return;
-      }
-      if (!granted) {
-        setStatus(t('permissionDenied'), 'error');
-        return;
-      }
-      const label = preset ? preset.label : hostname;
-      const extensionsAllowed = mode === 'control' ? 0 : 1;
-      const extensionMinutes = Math.min(5, minutes);
+      catch { setStatus(errorText('runtime_unavailable'), 'error', true); return; }
+      if (!granted) { setStatus(t('permissionDenied'), 'error'); return; }
+      const existing = editingPolicyId ? Core.policyById(currentState, editingPolicyId) : null;
       const policy = {
-        id: Core.policyIdForHost(hostname),
-        label,
-        hostname,
-        appKey: preset ? preset.appKey : 'web',
-        enabled: true,
-        purposes: [{
-          purpose,
-          mode,
-          defaultMinutes: minutes,
-          maxMinutes: Math.min(Core.MAX_MINUTES, minutes + extensionsAllowed * extensionMinutes),
-          extensionsAllowed,
-          extensionMinutes,
-          expectedOutcome,
-        }],
-        emergency: {
-          passes: Core.EMERGENCY_PASSES,
-          perDays: Core.EMERGENCY_WINDOW_DAYS,
-          delaySeconds: Core.EMERGENCY_DELAY_SECONDS,
-          accessMinutes: Core.EMERGENCY_MINUTES,
-        },
+        id: existing?.id || Core.policyIdForHost(hostname), label: existing?.label || preset.label || hostname,
+        hostname, appKey: existing?.appKey || preset.appKey, enabled: existing?.enabled !== false,
+        dailyBudgetMinutes, maxSessionsPerDay, cooldownMinutes, purposes,
+        emergency: existing?.emergency || { passes: Core.EMERGENCY_PASSES, perDays: Core.EMERGENCY_WINDOW_DAYS,
+          delaySeconds: Core.EMERGENCY_DELAY_SECONDS, accessMinutes: Core.EMERGENCY_MINUTES },
       };
-      const result = await send({ type: 'SAVE_POLICY', policy });
+      const result = await send({ type: 'SAVE_POLICY', policy, replacePurposes: true });
       if (!result || result.ok !== true) {
-        setStatus(errorText(result && result.error), 'error');
-        return;
+        setStatus(errorText(result && result.error), 'error', result && result.error === 'runtime_unavailable'); return;
       }
-      setStatus(t('saveSuccess'), 'success');
-      await render();
+      setStatus(result.pending ? t('changeTomorrow') : t('saveSuccess'), 'success');
+      editingPolicyId = policy.id;
+      await render(policy.id);
     } finally {
       actionBusy = false;
       if (submit) submit.disabled = false;
     }
   });
 
-  applyPreset();
-  render().catch(() => setStatus(t('genericError'), 'error'));
+  loadDraft();
+  render().catch(() => setStatus(errorText('runtime_unavailable'), 'error', true));
 })();

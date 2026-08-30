@@ -10,7 +10,7 @@
 <body data-page="gate">
   <main class="shell">
     <div class="brand" aria-label="Satoru Attention">
-      <div class="brand-mark" aria-hidden="true">?</div>
+      <img class="brand-mark" src="icon-192.png" alt="">
       <div><strong>Satoru</strong><span data-i18n="companionName">Browser companion</span></div>
     </div>
 
@@ -36,6 +36,7 @@
         <span id="site-mode" class="mode-pill"></span>
         <h1 id="start-title" tabindex="-1" data-i18n="gateTitle">Name the reason before entering</h1>
         <p class="lead"><span id="site-name"></span> · <span data-i18n="gateLead">A short, explicit window replaces an open-ended feed.</span></p>
+        <p id="quota-status" class="quota-status"></p>
         <form id="start-form" class="stack" novalidate>
           <fieldset class="field">
             <legend data-i18n="choosePurpose">Why are you opening it?</legend>
@@ -44,17 +45,21 @@
           <div class="row">
             <label class="field">
               <span data-i18n="duration">Time window</span>
-              <input id="minutes" name="minutes" type="number" inputmode="numeric" min="1" max="240" required>
+              <select id="minutes" name="minutes" required></select>
             </label>
             <label id="topic-field" class="field" hidden>
               <span data-i18n="topic">Topic</span>
               <input id="topic" name="topic" maxlength="80" data-i18n-placeholder="topicPlaceholder">
             </label>
           </div>
-          <label id="outcome-field" class="field">
-            <span data-i18n="outcome">Result at the exit</span>
-            <textarea id="outcome" name="outcome" maxlength="120" data-i18n-placeholder="outcomePlaceholder"></textarea>
+          <label id="detail-field" class="field" hidden>
+            <span data-i18n="entryDetail">Concrete task</span>
+            <input id="detail" name="detail" maxlength="120" data-i18n-placeholder="detailPlaceholder">
           </label>
+          <div id="outcome-field" class="result-preview">
+            <span data-i18n="expectedResult">Result at the exit</span>
+            <b id="outcome"></b>
+          </div>
           <p id="start-status" class="status" role="status" aria-live="polite"></p>
           <button class="primary" type="submit" data-i18n="startWindow">Open the bounded window</button>
         </form>
@@ -68,12 +73,13 @@
         <span id="active-mode" class="mode-pill"></span>
         <h1 id="active-title" tabindex="-1" data-i18n="activeTitle">Your window is active</h1>
         <p class="lead"><span class="pulse" aria-hidden="true"></span><span id="active-site"></span></p>
+        <p id="active-context" class="muted"></p>
         <div id="active-timer" class="timer" aria-live="off">00:00</div>
         <p id="active-remaining" class="muted"></p>
         <p id="active-status" class="status" role="status" aria-live="polite"></p>
         <div class="actions">
           <button id="continue-site" class="primary" data-i18n="continueSite">Continue to the site</button>
-          <button id="finish-early" class="quiet" data-i18n="finishUnknown">Close without assessment</button>
+          <button id="finish-early" class="quiet" data-i18n="finishEarly">Finished early</button>
         </div>
       </section>
 
@@ -81,9 +87,11 @@
         <span id="boundary-mode" class="mode-pill"></span>
         <h1 id="boundary-title" tabindex="-1" data-i18n="boundaryTitle">The chosen window ended</h1>
         <p class="lead" data-i18n="boundaryLead">Nothing was lost. Choose what is true now.</p>
+        <p id="boundary-context" class="muted"></p>
         <p id="boundary-status" class="status" role="status" aria-live="polite"></p>
         <div class="actions" data-i18n-aria-label="outcomeGroup" aria-label="Session result">
           <button data-outcome="done" class="primary" data-i18n="finishDone">Finished</button>
+          <button data-outcome="unfinished" data-work-outcome data-i18n="finishUnfinished">Not finished, but stayed on task</button>
           <button data-outcome="rested" data-i18n="finishRested">Rested as planned</button>
           <button data-outcome="escaped" data-i18n="finishEscaped">It pulled me in</button>
           <button data-outcome="unknown" class="quiet" data-i18n="finishUnknown">Close without assessment</button>

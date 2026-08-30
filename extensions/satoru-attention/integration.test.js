@@ -140,6 +140,8 @@ test('bundled extension icon is the dedicated Satoru Attention asset', () => {
   assert.equal(bytes.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
   assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'), 'b652539f04dce6b98bf8ef3d47609fedf2e4c63b19b9f042339ee0b8e76825d8');
   assert.equal(manifest.icons['128'], 'icon-192.png');
+  assert.match(optionsHtml, /<img class="brand-mark" src="icon-192\.png" alt="">/);
+  assert.match(gateHtml, /<img class="brand-mark" src="icon-192\.png" alt="">/);
 });
 
 test('README documents Brave install, exact grants, incognito and honest limits', () => {
@@ -148,4 +150,49 @@ test('README documents Brave install, exact grants, incognito and honest limits'
     assert.match(readme, new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), phrase);
   }
   assert.match(readme, /not an OS-level app\s+blocker/i);
+});
+
+test('one site is configured as several pre-approved scenarios with a shared daily guard', () => {
+  assert.match(options, /purposes: \['publish', 'create', 'research', 'watch'\]/);
+  assert.match(options, /dailyBudgetMinutes: 50, maxSessionsPerDay: 3, cooldownMinutes: 10/);
+  assert.match(options, /replacePurposes: true/);
+  assert.match(optionsHtml, /id="scenario-list"/);
+  assert.match(optionsHtml, /id="daily-budget"/);
+  assert.match(optionsHtml, /id="daily-sessions"/);
+  assert.match(optionsHtml, /id="cooldown-minutes"/);
+  assert.doesNotMatch(optionsHtml, /id="policy-outcome"/,
+    'a generic permanent outcome field must not masquerade as the concrete entry contract');
+});
+
+test('the gate can only shorten a scenario and requires the concrete entry instance', () => {
+  assert.match(gateHtml, /<select id="minutes"/);
+  assert.match(gateHtml, /id="detail-field"/);
+  assert.match(gate, /value <= available/);
+  assert.match(gate, /detail: detailInput\.value/);
+  assert.match(gate, /expectedOutcome: selectedRule\.expectedOutcome/);
+  assert.doesNotMatch(gate, /minutesInput\.max\s*=/,
+    'the gate no longer exposes a free numeric maximum that can be expanded in the impulse');
+});
+
+test('Control weakening is delayed and the runtime error names a lost background connection', () => {
+  assert.match(worker, /nextLocalMidnightIso/);
+  assert.match(worker, /deferLoosening: true/);
+  assert.match(worker, /CANCEL_PENDING_POLICY/);
+  assert.match(I18n.TABLES.ru.error_runtime_unavailable, /фоновым модулем/i);
+  assert.doesNotMatch(I18n.TABLES.ru.error_runtime_unavailable, /очищен/i);
+  assert.match(optionsHtml, /id="runtime-help"/);
+});
+
+test('expiry keeps distinct work outcomes and mission-specific launch routes', () => {
+  assert.match(gateHtml, /data-outcome="unfinished"/);
+  assert.match(gate, /finish\('done', event\.currentTarget\)/,
+    'finishing early closes the access window instead of cancelling Control');
+  assert.match(worker, /tiktokstudio\/upload/);
+  assert.match(worker, /\/search\?q=/);
+  assert.match(worker, /\/favorites/);
+});
+
+test('a stale gate cannot silently adopt a paused or unrelated site policy', () => {
+  assert.match(worker, /requestedPolicy && requestedPolicy\.enabled \? requestedPolicy : null/);
+  assert.match(worker, /!siteId \? state\.policies\.find\(\(item\) => item\.enabled\) : null/);
 });

@@ -22,7 +22,13 @@ function bridgeSender(sender) {
 
 async function loadState() {
   const stored = await chrome.storage.local.get(STATE_KEY);
-  return Core.normalizeState(stored[STATE_KEY]);
+  const normalized = Core.normalizeState(stored[STATE_KEY]);
+  const activated = Core.activatePendingPolicies(normalized, currentIso());
+  if (activated.changed) {
+    await chrome.storage.local.set({ [STATE_KEY]: activated.state });
+    await reconcileEnforcement(activated.state);
+  }
+  return activated.state;
 }
 
 async function saveState(state) {
@@ -59,6 +65,20 @@ async function permissionFor(policy) {
 function gateUrl(policyId) {
   const id = typeof policyId === 'string' && /^[a-z0-9_-]{1,48}$/i.test(policyId) ? policyId : '';
   return chrome.runtime.getURL(`gate.html${id ? `?site=${encodeURIComponent(id)}` : ''}`);
+}
+
+function localDayKey() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function nextLocalMidnightIso() {
+  const next = new Date();
+  next.setHours(24, 0, 0, 0);
+  return next.toISOString();
 }
 
 function exactHostRegex(hostname) {
@@ -191,9 +211,11 @@ async function commitWithEnforcement(previousState, nextState, options = {}) {
 }
 
 function contextFor(state, siteId, at) {
-  const policy = Core.policyById(state, siteId)
-    || (state.activeSession ? Core.policyById(state, state.activeSession.policyId) : null)
-    || state.policies.find((item) => item.enabled)
+  const requestedPolicy = siteId ? Core.policyById(state, siteId) : null;
+  const activePolicy = state.activeSession ? Core.policyById(state, state.activeSession.policyId) : null;
+  const policy = (activePolicy && (!siteId || activePolicy.id === siteId) ? activePolicy : null)
+    || (requestedPolicy && requestedPolicy.enabled ? requestedPolicy : null)
+    || (!siteId ? state.policies.find((item) => item.enabled) : null)
     || null;
   const session = state.activeSession && policy && state.activeSession.policyId === policy.id ? state.activeSession : null;
   const clockRollback = !!(session && Core.clockRolledBack(state, at));
@@ -207,7 +229,9 @@ function contextFor(state, siteId, at) {
       : Core.boundaryOptions(state, at)) : null,
     emergency: session && !clockRollback ? Core.emergencyStatus(state, at) : null,
     clockRollback,
-    resumeUrl: policy ? policy.homeUrl : null,
+    resumeUrl: policy ? (session ? missionTarget(null, state, policy, session) : policy.homeUrl) : null,
+    quota: policy ? Core.quotaStatus(state, policy.id, at, localDayKey()) : null,
+    pendingPolicy: policy ? state.pendingPolicies.find((item) => item.policyId === policy.id) || null : null,
   };
 }
 
@@ -217,6 +241,30 @@ function safeAttempt(tabId, state, policy) {
   if (!attempted || !policy) return policy ? policy.homeUrl : null;
   const matched = Core.policyForUrl(state, attempted);
   return matched && matched.id === policy.id ? attempted : policy.homeUrl;
+}
+
+function missionTarget(tabId, state, policy, session) {
+  const attempted = safeAttempt(tabId, state, policy);
+  if (!policy || !session) return attempted;
+  const origin = `https://${policy.hostname}`;
+  if (policy.appKey === 'tiktok') {
+    if (session.purpose === 'publish' || session.purpose === 'create') return `${origin}/tiktokstudio/upload?from=webapp`;
+    if (session.purpose === 'research' && session.topic) return `${origin}/search?q=${encodeURIComponent(session.topic)}`;
+    if (session.purpose === 'watch') return `${origin}/favorites`;
+    if (session.purpose === 'reply') return `${origin}/messages`;
+  }
+  if (policy.appKey === 'youtube') {
+    if (session.purpose === 'publish' || session.purpose === 'create') return `${origin}/upload`;
+    if (session.purpose === 'research' && session.topic) return `${origin}/results?search_query=${encodeURIComponent(session.topic)}`;
+    if (session.purpose === 'watch') {
+      try {
+        const url = new URL(attempted);
+        if (url.hostname === policy.hostname && ['/watch', '/playlist'].includes(url.pathname)) return url.toString();
+      } catch { /* Use the finite saved-items fallback below. */ }
+      return `${origin}/feed/watch_later`;
+    }
+  }
+  return attempted || policy.homeUrl;
 }
 
 async function handleExtensionMessage(message, sender) {
@@ -235,13 +283,13 @@ async function handleExtensionMessage(message, sender) {
     return serialized(async () => {
       const state = await loadState();
       const id = `session_${crypto.randomUUID().replace(/-/g, '').slice(0, 24)}`;
-      const result = Core.startSession(state, { ...message.input, id }, currentIso());
+      const result = Core.startSession(state, { ...message.input, id, dayKey: localDayKey() }, currentIso());
       if (!result.ok) return result;
       const commit = await commitWithEnforcement(state, result.state, { redirectTabs: false });
       if (!commit.ok) return commit;
       const saved = commit.state;
       const policy = Core.policyById(saved, result.session.policyId);
-      return { ok: true, session: result.session, targetUrl: safeAttempt(sender.tab && sender.tab.id, saved, policy) };
+      return { ok: true, session: result.session, targetUrl: missionTarget(sender.tab && sender.tab.id, saved, policy, result.session) };
     });
   }
   if (type === 'EXTEND_SESSION') {
@@ -296,11 +344,15 @@ async function handleExtensionMessage(message, sender) {
       if (!candidate) return { ok: false, error: 'policy_invalid' };
       if (!(await permissionFor(candidate))) return { ok: false, error: 'permission_required' };
       const state = await loadState();
-      const result = Core.upsertPolicy(state, candidate);
+      const result = Core.upsertPolicy(state, candidate, {
+        replacePurposes: message.replacePurposes === true,
+        deferLoosening: true,
+        activatesAt: nextLocalMidnightIso(),
+      });
       if (!result.ok) return result;
       const commit = await commitWithEnforcement(state, result.state);
       if (!commit.ok) return commit;
-      return { ok: true, policy: result.policy };
+      return { ok: true, policy: result.policy, pending: result.pending === true, activatesAt: result.activatesAt || null };
     });
   }
   if (type === 'TOGGLE_POLICY') {
@@ -308,11 +360,23 @@ async function handleExtensionMessage(message, sender) {
       const state = await loadState();
       const policy = Core.policyById(state, message.policyId);
       if (message.enabled === true && !(await permissionFor(policy))) return { ok: false, error: 'permission_required' };
-      const result = Core.setPolicyEnabled(state, message.policyId, message.enabled === true);
+      const result = Core.setPolicyEnabled(state, message.policyId, message.enabled === true, {
+        deferLoosening: true,
+        activatesAt: nextLocalMidnightIso(),
+      });
       if (!result.ok) return result;
       const commit = await commitWithEnforcement(state, result.state);
       if (!commit.ok) return commit;
-      return { ok: true, policy: result.policy };
+      return { ok: true, policy: result.policy, pending: result.pending === true, activatesAt: result.activatesAt || null };
+    });
+  }
+  if (type === 'CANCEL_PENDING_POLICY') {
+    return serialized(async () => {
+      const state = await loadState();
+      const result = Core.cancelPendingPolicy(state, message.policyId);
+      if (!result.ok) return result;
+      const commit = await commitWithEnforcement(state, result.state);
+      return commit.ok ? { ok: true } : commit;
     });
   }
   if (type === 'GET_SATORU_LINK') {

@@ -1,4 +1,4 @@
-/* Satoru Attention Browser Companion v1 — pure policy/session engine.
+/* Satoru Attention Browser Companion v2 — pure policy/session engine.
  *
  * This module deliberately has no DOM, chrome.*, network, account, reward or remote
  * storage access. The service worker owns browser enforcement; this file owns only
@@ -11,13 +11,16 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildCore() {
   'use strict';
 
-  const VERSION = '0.1.0';
-  const STATE_VERSION = 1;
+  const VERSION = '0.3.0';
+  const STATE_VERSION = 2;
   const MINUTE = 60_000;
   const DAY = 86_400_000;
   const MAX_POLICIES = 30;
   const MAX_EPISODES = 100;
   const MAX_MINUTES = 240;
+  const MAX_DAILY_BUDGET_MINUTES = 1440;
+  const MAX_SESSIONS_PER_DAY = 20;
+  const MAX_COOLDOWN_MINUTES = 240;
   const MAX_EXTENSIONS = 1;
   const EMERGENCY_DELAY_SECONDS = 90;
   const EMERGENCY_MINUTES = 5;
@@ -37,7 +40,7 @@
     unsure: 'unsure',
   });
   const WORK_PURPOSES = Object.freeze(['publish', 'create', 'reply', 'research', 'watch']);
-  const OUTCOMES = Object.freeze(['done', 'rested', 'escaped', 'unknown']);
+  const OUTCOMES = Object.freeze(['done', 'unfinished', 'rested', 'escaped', 'unknown']);
   const APP_KEYS = Object.freeze(['tiktok', 'youtube', 'instagram', 'x', 'reddit', 'web']);
   const RESERVED_HOSTS = Object.freeze(['life-rpg-production-416a.up.railway.app']);
 
@@ -54,6 +57,11 @@
     const number = Number(value);
     return Number.isInteger(number) && number >= lo && number <= hi ? number : null;
   };
+  const DAY_KEY_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+  function dayKey(value) {
+    return isIso(value) ? String(value).slice(0, 10) : null;
+  }
 
   function safeId(value, max = 48) {
     const id = trim(value, max);
@@ -110,6 +118,7 @@
       extensionsAllowed,
       extensionMinutes,
       requiresTopic: raw.purpose === PURPOSES.research || raw.requiresTopic === true,
+      requiresDetail: raw.requiresDetail === true,
     };
     const expectedOutcome = trim(raw.expectedOutcome, 120);
     if (expectedOutcome) purpose.expectedOutcome = expectedOutcome;
@@ -139,6 +148,9 @@
       homeUrl: `https://${hostname}/`,
       appKey,
       enabled: raw.enabled !== false,
+      dailyBudgetMinutes: clampInt(raw.dailyBudgetMinutes, 1, MAX_DAILY_BUDGET_MINUTES, MAX_MINUTES),
+      maxSessionsPerDay: clampInt(raw.maxSessionsPerDay, 1, MAX_SESSIONS_PER_DAY, 10),
+      cooldownMinutes: clampInt(raw.cooldownMinutes, 0, MAX_COOLDOWN_MINUTES, 0),
       purposes,
       emergency: cleanEmergency(raw.emergency),
     };
@@ -172,9 +184,12 @@
       extensionCount: clampInt(raw.extensionCount, 0, MAX_EXTENSIONS, 0),
       emergencyUsed: raw.emergencyUsed === true,
       emergencyAccess: raw.emergencyAccess === true,
+      dayKey: DAY_KEY_RE.test(raw.dayKey) ? raw.dayKey : dayKey(raw.startedAt),
     };
     const topic = trim(raw.topic, 80);
     if (topic) session.topic = topic;
+    const detail = trim(raw.detail, 120);
+    if (detail) session.detail = detail;
     if (isIso(raw.emergencyRequestedAt)) session.emergencyRequestedAt = raw.emergencyRequestedAt;
     if (isIso(raw.emergencyUntil)) session.emergencyUntil = raw.emergencyUntil;
     return session;
@@ -201,11 +216,27 @@
       outcome: OUTCOMES.includes(raw.outcome) ? raw.outcome : 'unknown',
       extensionCount: clampInt(raw.extensionCount, 0, MAX_EXTENSIONS, 0),
       emergencyUsed: raw.emergencyUsed === true,
+      dayKey: DAY_KEY_RE.test(raw.dayKey) ? raw.dayKey : dayKey(raw.startedAt),
     };
   }
 
+  function cleanPendingPolicy(raw) {
+    if (!raw || typeof raw !== 'object' || !isIso(raw.activatesAt)) return null;
+    const policy = cleanPolicy(raw.policy);
+    return policy ? { policyId: policy.id, activatesAt: raw.activatesAt, policy } : null;
+  }
+
   function emptyState() {
-    return { version: STATE_VERSION, locale: 'auto', policies: [], activeSession: null, emergencyEvents: [], episodes: [], lastSeenAt: null };
+    return {
+      version: STATE_VERSION,
+      locale: 'auto',
+      policies: [],
+      pendingPolicies: [],
+      activeSession: null,
+      emergencyEvents: [],
+      episodes: [],
+      lastSeenAt: null,
+    };
   }
 
   function normalizeState(raw) {
@@ -233,10 +264,21 @@
       .map(cleanEmergencyEvent).filter(Boolean).slice(-100);
     const episodes = (Array.isArray(raw.episodes) ? raw.episodes : [])
       .map(cleanEpisode).filter(Boolean).slice(-MAX_EPISODES);
+    const pendingIds = new Set();
+    const pendingPolicies = [];
+    for (const item of Array.isArray(raw.pendingPolicies) ? raw.pendingPolicies : []) {
+      const pending = cleanPendingPolicy(item);
+      if (!pending || pendingIds.has(pending.policyId)) continue;
+      const currentPolicy = policies.find((policy) => policy.id === pending.policyId);
+      if (!currentPolicy || currentPolicy.hostname !== pending.policy.hostname) continue;
+      pendingIds.add(pending.policyId);
+      pendingPolicies.push(pending);
+    }
     return {
       version: STATE_VERSION,
       locale: ['auto', 'ru', 'en', 'de', 'uk', 'es'].includes(raw.locale) ? raw.locale : 'auto',
       policies,
+      pendingPolicies,
       activeSession,
       emergencyEvents,
       episodes,
@@ -271,7 +313,46 @@
 
   function isWorkPurpose(purpose) { return WORK_PURPOSES.includes(purpose); }
 
-  function canStart(state, input) {
+  function dailyUsage(state, policyId, at, explicitDayKey) {
+    const current = normalizeState(state);
+    const key = DAY_KEY_RE.test(explicitDayKey) ? explicitDayKey : dayKey(at);
+    const episodes = current.episodes.filter((episode) => episode.policyId === String(policyId)
+      && episode.dayKey === key);
+    return {
+      dayKey: key,
+      sessions: episodes.length,
+      plannedMinutes: episodes.reduce((sum, episode) => sum + episode.plannedMinutes, 0),
+      lastEndedAt: episodes.reduce((latest, episode) => (!latest || atMs(episode.endedAt) > atMs(latest) ? episode.endedAt : latest), null),
+    };
+  }
+
+  function quotaStatus(state, policyId, at, explicitDayKey) {
+    const current = normalizeState(state);
+    const policy = current.policies.find((item) => item.id === String(policyId) && item.enabled);
+    if (!policy || !isIso(at)) return null;
+    const usage = dailyUsage(current, policy.id, at, explicitDayKey);
+    const cooldownUntil = usage.lastEndedAt
+      ? nowIso(atMs(usage.lastEndedAt) + policy.cooldownMinutes * MINUTE)
+      : null;
+    const cooldownRemainingMs = cooldownUntil ? Math.max(0, atMs(cooldownUntil) - atMs(at)) : 0;
+    return {
+      dayKey: usage.dayKey,
+      usedMinutes: usage.plannedMinutes,
+      remainingMinutes: Math.max(0, policy.dailyBudgetMinutes - usage.plannedMinutes),
+      sessionsUsed: usage.sessions,
+      sessionsRemaining: Math.max(0, policy.maxSessionsPerDay - usage.sessions),
+      dailyBudgetMinutes: policy.dailyBudgetMinutes,
+      maxSessionsPerDay: policy.maxSessionsPerDay,
+      cooldownMinutes: policy.cooldownMinutes,
+      cooldownUntil,
+      cooldownRemainingMs,
+      canStart: usage.sessions < policy.maxSessionsPerDay
+        && usage.plannedMinutes < policy.dailyBudgetMinutes
+        && cooldownRemainingMs <= 0,
+    };
+  }
+
+  function canStart(state, input, at) {
     const current = normalizeState(state);
     if (current.activeSession) return { ok: false, error: 'session_open' };
     const policy = current.policies.find((item) => item.id === String(input && input.policyId) && item.enabled);
@@ -285,14 +366,22 @@
     if (isWorkPurpose(rule.purpose) && !expectedOutcome) return { ok: false, error: 'outcome_required' };
     const topic = trim(input && input.topic, 80);
     if (rule.requiresTopic && !topic) return { ok: false, error: 'topic_required' };
-    return { ok: true, policy, rule, minutes, expectedOutcome, topic };
+    const detail = trim(input && input.detail, 120);
+    if (rule.requiresDetail && !detail) return { ok: false, error: 'detail_required' };
+    const quota = isIso(at) ? quotaStatus(current, policy.id, at, input && input.dayKey) : null;
+    if (quota) {
+      if (quota.sessionsRemaining <= 0) return { ok: false, error: 'daily_sessions_spent', quota };
+      if (minutes > quota.remainingMinutes) return { ok: false, error: 'daily_budget_spent', quota };
+      if (quota.cooldownRemainingMs > 0) return { ok: false, error: 'cooldown_active', quota };
+    }
+    return { ok: true, policy, rule, minutes, expectedOutcome, topic, detail, quota };
   }
 
   function startSession(state, input, at) {
     const current = normalizeState(state);
     if (!isIso(at)) return { ok: false, error: 'time_invalid' };
     if (clockRolledBack(current, at)) return { ok: false, error: 'clock_rollback' };
-    const allowed = canStart(current, input);
+    const allowed = canStart(current, input, at);
     if (!allowed.ok) return allowed;
     const id = safeId(input && input.id, 64);
     if (!id) return { ok: false, error: 'id_invalid' };
@@ -312,8 +401,10 @@
       extensionMinutes: allowed.rule.extensionMinutes,
       extensionCount: 0,
       emergencyUsed: false,
+      dayKey: allowed.quota ? allowed.quota.dayKey : (DAY_KEY_RE.test(input && input.dayKey) ? input.dayKey : dayKey(at)),
     };
     if (allowed.topic) session.topic = allowed.topic;
+    if (allowed.detail) session.detail = allowed.detail;
     return { ok: true, state: touchClock({ ...current, activeSession: session }, at), session };
   }
 
@@ -342,14 +433,22 @@
     if (!session || !isIso(at)) return null;
     const remainingMs = atMs(session.deadlineAt) - atMs(at);
     const absoluteMax = atMs(session.startedAt) + session.maxMinutes * MINUTE;
+    const policy = policyById(current, session.policyId);
+    const usage = policy ? dailyUsage(current, policy.id, at, session.dayKey) : null;
+    const reservedMinutes = usage ? usage.plannedMinutes + session.plannedMinutes : session.plannedMinutes;
+    const budgetLeft = policy ? Math.max(0, policy.dailyBudgetMinutes - reservedMinutes) : 0;
+    const requestedExtension = Math.min(session.extensionMinutes, budgetLeft);
     return {
       over: remainingMs <= 0,
       remainingMs: Math.max(0, remainingMs),
       mode: session.mode,
       canExtend: remainingMs <= 0 && session.mode !== MODES.control
         && session.extensionCount < session.extensionsAllowed
-        && atMs(at) < absoluteMax,
+        && atMs(at) < absoluteMax
+        && requestedExtension > 0,
       extensionsLeft: Math.max(0, session.extensionsAllowed - session.extensionCount),
+      extensionMinutesAvailable: requestedExtension,
+      dailyBudgetRemainingMinutes: budgetLeft,
       emergencyAvailable: session.mode === MODES.control && !session.emergencyUsed,
     };
   }
@@ -363,10 +462,17 @@
     if (!options.over) return { ok: false, error: 'boundary_not_reached' };
     if (!options.canExtend) return { ok: false, error: 'extension_unavailable' };
     const absoluteMax = atMs(session.startedAt) + session.maxMinutes * MINUTE;
-    const proposed = atMs(at) + session.extensionMinutes * MINUTE;
+    const extensionMinutes = Math.min(session.extensionMinutes, options.extensionMinutesAvailable);
+    const proposed = atMs(at) + extensionMinutes * MINUTE;
     const deadline = Math.min(absoluteMax, proposed);
     if (deadline <= atMs(at)) return { ok: false, error: 'maximum_reached' };
-    const next = { ...session, deadlineAt: nowIso(deadline), extensionCount: session.extensionCount + 1 };
+    const grantedMinutes = Math.max(1, Math.ceil((deadline - atMs(at)) / MINUTE));
+    const next = {
+      ...session,
+      deadlineAt: nowIso(deadline),
+      plannedMinutes: Math.min(MAX_MINUTES, session.plannedMinutes + grantedMinutes),
+      extensionCount: session.extensionCount + 1,
+    };
     return { ok: true, state: touchClock({ ...current, activeSession: next }, at), session: next };
   }
 
@@ -431,6 +537,7 @@
       outcome: 'unknown',
       extensionCount: session.extensionCount,
       emergencyUsed: true,
+      dayKey: session.dayKey,
     };
     const next = {
       id: `${session.id.slice(0, 44)}_emergency_${Math.max(0, atMs(at)).toString(36)}`.slice(0, 64),
@@ -450,6 +557,7 @@
       emergencyUsed: true,
       emergencyAccess: true,
       emergencyUntil: until,
+      dayKey: session.dayKey,
     };
     const event = { policyId: session.policyId, at };
     return {
@@ -471,9 +579,6 @@
     if (!session) return { ok: false, error: 'session_missing' };
     if (!isIso(at)) return { ok: false, error: 'time_invalid' };
     if (clockRolledBack(current, at)) return { ok: false, error: 'clock_rollback' };
-    if (session.mode === MODES.control && atMs(at) < atMs(session.deadlineAt)) {
-      return { ok: false, error: 'control_locked' };
-    }
     const result = OUTCOMES.includes(outcome) ? outcome : 'unknown';
     const episode = {
       id: session.id,
@@ -487,6 +592,7 @@
       outcome: result,
       extensionCount: session.extensionCount,
       emergencyUsed: session.emergencyUsed,
+      dayKey: session.dayKey,
     };
     return {
       ok: true,
@@ -500,7 +606,69 @@
     return !(session && session.policyId === String(policyId) && session.mode === MODES.control);
   }
 
-  function upsertPolicy(state, draft) {
+  function policyLoosens(previous, next) {
+    if (!previous || !next) return false;
+    if (previous.enabled && !next.enabled) return true;
+    if (next.dailyBudgetMinutes > previous.dailyBudgetMinutes
+      || next.maxSessionsPerDay > previous.maxSessionsPerDay
+      || next.cooldownMinutes < previous.cooldownMinutes
+      || next.emergency.passes > previous.emergency.passes
+      || next.emergency.accessMinutes > previous.emergency.accessMinutes
+      || next.emergency.delaySeconds < previous.emergency.delaySeconds) return true;
+    const strength = { trust: 0, adaptive: 1, control: 2 };
+    const nextRules = new Map(next.purposes.map((rule) => [rule.purpose, rule]));
+    for (const rule of previous.purposes) {
+      const candidate = nextRules.get(rule.purpose);
+      if (!candidate) continue;
+      if (strength[candidate.mode] < strength[rule.mode]
+        || candidate.maxMinutes > rule.maxMinutes
+        || candidate.defaultMinutes > rule.defaultMinutes
+        || candidate.extensionsAllowed > rule.extensionsAllowed
+        || candidate.extensionMinutes > rule.extensionMinutes) return true;
+    }
+    return next.purposes.some((rule) => !previous.purposes.some((item) => item.purpose === rule.purpose));
+  }
+
+  function queuePolicy(current, policy, activatesAt) {
+    if (!isIso(activatesAt)) return { ok: false, error: 'activation_time_invalid' };
+    const pending = { policyId: policy.id, activatesAt, policy };
+    const pendingPolicies = current.pendingPolicies.filter((item) => item.policyId !== policy.id).concat([pending]);
+    return { ok: true, pending: true, activatesAt, state: { ...current, pendingPolicies }, policy };
+  }
+
+  function activatePendingPolicies(state, at) {
+    const current = normalizeState(state);
+    if (!isIso(at)) return { changed: false, state: current, activated: [] };
+    const active = current.activeSession;
+    const activated = [];
+    let policies = current.policies;
+    const pendingPolicies = [];
+    for (const pending of current.pendingPolicies) {
+      if (atMs(pending.activatesAt) > atMs(at)
+        || (active && active.policyId === pending.policyId && active.mode === MODES.control)) {
+        pendingPolicies.push(pending);
+        continue;
+      }
+      const index = policies.findIndex((policy) => policy.id === pending.policyId);
+      if (index < 0) continue;
+      policies = policies.map((policy, offset) => (offset === index ? pending.policy : policy));
+      activated.push(pending.policyId);
+    }
+    return {
+      changed: activated.length > 0 || pendingPolicies.length !== current.pendingPolicies.length,
+      state: { ...current, policies, pendingPolicies },
+      activated,
+    };
+  }
+
+  function cancelPendingPolicy(state, policyId) {
+    const current = normalizeState(state);
+    const pendingPolicies = current.pendingPolicies.filter((item) => item.policyId !== String(policyId));
+    if (pendingPolicies.length === current.pendingPolicies.length) return { ok: false, error: 'pending_policy_missing' };
+    return { ok: true, state: { ...current, pendingPolicies } };
+  }
+
+  function upsertPolicy(state, draft, options = {}) {
     const current = normalizeState(state);
     let policy = cleanPolicy(draft);
     if (!policy) return { ok: false, error: 'policy_invalid' };
@@ -509,7 +677,7 @@
     if (hostOwner) return { ok: false, error: 'host_already_configured' };
     const index = current.policies.findIndex((item) => item.id === policy.id);
     if (index < 0 && current.policies.length >= MAX_POLICIES) return { ok: false, error: 'policy_limit' };
-    if (index >= 0) {
+    if (index >= 0 && options.replacePurposes !== true) {
       const incoming = new Set(policy.purposes.map((item) => item.purpose));
       policy = cleanPolicy({
         ...current.policies[index],
@@ -517,19 +685,28 @@
         purposes: current.policies[index].purposes.filter((item) => !incoming.has(item.purpose)).concat(policy.purposes),
       });
     }
+    if (index >= 0 && options.deferLoosening === true && policyLoosens(current.policies[index], policy)) {
+      return queuePolicy(current, policy, options.activatesAt);
+    }
     const policies = index < 0
       ? current.policies.concat([policy])
       : current.policies.map((item, at) => (at === index ? policy : item));
-    return { ok: true, state: { ...current, policies }, policy };
+    const pendingPolicies = current.pendingPolicies.filter((item) => item.policyId !== policy.id);
+    return { ok: true, state: { ...current, policies, pendingPolicies }, policy, pending: false };
   }
 
-  function setPolicyEnabled(state, policyId, enabled) {
+  function setPolicyEnabled(state, policyId, enabled, options = {}) {
     const current = normalizeState(state);
     if (!canEditPolicy(current, policyId)) return { ok: false, error: 'control_locked' };
     const index = current.policies.findIndex((item) => item.id === String(policyId));
     if (index < 0) return { ok: false, error: 'policy_unavailable' };
-    const policies = current.policies.map((item, at) => (at === index ? { ...item, enabled: enabled === true } : item));
-    return { ok: true, state: { ...current, policies }, policy: policies[index] };
+    const policy = cleanPolicy({ ...current.policies[index], enabled: enabled === true });
+    if (options.deferLoosening === true && policyLoosens(current.policies[index], policy)) {
+      return queuePolicy(current, policy, options.activatesAt);
+    }
+    const policies = current.policies.map((item, at) => (at === index ? policy : item));
+    const pendingPolicies = current.pendingPolicies.filter((item) => item.policyId !== policy.id);
+    return { ok: true, state: { ...current, policies, pendingPolicies }, policy, pending: false };
   }
 
   function publicStatus(state, at) {
@@ -581,6 +758,9 @@
     MAX_POLICIES,
     MAX_EPISODES,
     MAX_MINUTES,
+    MAX_DAILY_BUDGET_MINUTES,
+    MAX_SESSIONS_PER_DAY,
+    MAX_COOLDOWN_MINUTES,
     MAX_EXTENSIONS,
     EMERGENCY_DELAY_SECONDS,
     EMERGENCY_MINUTES,
@@ -605,6 +785,8 @@
     policyForUrl,
     policyIdForHost,
     isWorkPurpose,
+    dailyUsage,
+    quotaStatus,
     canStart,
     startSession,
     accessDecision,
@@ -616,6 +798,9 @@
     grantEmergency,
     closeSession,
     canEditPolicy,
+    policyLoosens,
+    activatePendingPolicies,
+    cancelPendingPolicy,
     upsertPolicy,
     setPolicyEnabled,
     publicStatus,

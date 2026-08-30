@@ -1,13 +1,13 @@
 # Chrome Web Store publication checklist
 
-The runtime package is generated as `public/downloads/satoru-attention-store-v200.zip`.
+The runtime package is generated as `public/downloads/satoru-attention-store-v206.zip`.
 Do not upload the user-facing ZIP with its enclosing folder; the store ZIP must have
 `manifest.json` at its root.
 
 1. Sign into the Chrome Web Store Developer Dashboard with the owner’s Google account.
 2. Complete two-step verification and pay the one-time developer registration fee if the
    dashboard requests it.
-3. Create a new item and upload `satoru-attention-store-v200.zip`.
+3. Create a new item and upload `satoru-attention-store-v206.zip`.
 4. Use `STORE-LISTING.md` for the description, single-purpose statement and permission
    rationales.
 5. Add real screenshots from the packaged extension, the support email and the public

@@ -14,6 +14,9 @@ function policy(overrides = {}) {
     hostname: 'tiktok.com',
     appKey: 'tiktok',
     enabled: true,
+    dailyBudgetMinutes: 50,
+    maxSessionsPerDay: 3,
+    cooldownMinutes: 10,
     purposes: [{
       purpose: 'publish',
       mode: 'adaptive',
@@ -140,7 +143,8 @@ test('control emergency is available during the contract and requires the full d
   const opened = start(controlState);
   const requested = Core.requestEmergency(opened.state, iso(1));
   assert.equal(requested.ok, true);
-  assert.equal(Core.closeSession(opened.state, 'unknown', iso(1)).error, 'control_locked');
+  const early = Core.closeSession(opened.state, 'done', iso(1));
+  assert.equal(early.ok, true, 'finishing early tightens the boundary and must remain possible in Control');
   assert.equal(Core.emergencyStatus(requested.state, iso(2)).remainingMs, 30_000);
   assert.equal(Core.grantEmergency(requested.state, 'call', iso(2)).error, 'emergency_delay');
   assert.equal(Core.grantEmergency(requested.state, '', iso(2, 30)).error, 'reason_required');
@@ -222,6 +226,79 @@ test('closing is neutral, local and never infers escaped from silence', () => {
   assert.equal('expectedOutcome' in closed.episode, false);
   assert.equal('url' in closed.episode, false);
   assert.equal(closed.state.activeSession, null);
+});
+
+test('daily site budget, entry count and cooldown apply across different purposes', () => {
+  const multi = stateWithPolicy({
+    dailyBudgetMinutes: 20,
+    maxSessionsPerDay: 2,
+    cooldownMinutes: 10,
+    purposes: [
+      { purpose: 'publish', mode: 'control', defaultMinutes: 12, maxMinutes: 12, expectedOutcome: 'published' },
+      { purpose: 'research', mode: 'control', defaultMinutes: 8, maxMinutes: 8, expectedOutcome: 'references', requiresTopic: true },
+    ],
+  });
+  const first = start(multi);
+  const closed = Core.closeSession(first.state, 'done', iso(4));
+  assert.equal(Core.canStart(closed.state, {
+    policyId: 'site_tiktok', purpose: 'research', minutes: 8, expectedOutcome: 'references', topic: 'lighting',
+  }, iso(5)).error, 'cooldown_active');
+  const second = Core.startSession(closed.state, {
+    id: 'session_2', policyId: 'site_tiktok', purpose: 'research', minutes: 8,
+    expectedOutcome: 'references', topic: 'lighting',
+  }, iso(14));
+  assert.equal(second.ok, true);
+  const secondClosed = Core.closeSession(second.state, 'unfinished', iso(18));
+  const quota = Core.quotaStatus(secondClosed.state, 'site_tiktok', iso(19));
+  assert.equal(quota.sessionsUsed, 2);
+  assert.equal(quota.remainingMinutes, 0);
+  assert.equal(Core.canStart(secondClosed.state, {
+    policyId: 'site_tiktok', purpose: 'publish', minutes: 1, expectedOutcome: 'x',
+  }, iso(30)).error, 'daily_sessions_spent');
+});
+
+test('a concrete entry can be required without leaking it into the episode', () => {
+  const guarded = stateWithPolicy({ purposes: [{
+    purpose: 'publish', mode: 'control', defaultMinutes: 12, maxMinutes: 12,
+    expectedOutcome: 'published', requiresDetail: true,
+  }] });
+  assert.equal(Core.canStart(guarded, {
+    policyId: 'site_tiktok', purpose: 'publish', minutes: 12, expectedOutcome: 'published',
+  }, iso()).error, 'detail_required');
+  const opened = Core.startSession(guarded, {
+    id: 'detail_session', policyId: 'site_tiktok', purpose: 'publish', minutes: 12,
+    expectedOutcome: 'published', detail: 'Attention demo',
+  }, iso());
+  assert.equal(opened.session.detail, 'Attention demo');
+  const closed = Core.closeSession(opened.state, 'done', iso(4));
+  assert.equal('detail' in closed.episode, false);
+});
+
+test('Control loosening waits until the scheduled next day while tightening is immediate', () => {
+  const original = stateWithPolicy();
+  const looserDraft = policy({
+    dailyBudgetMinutes: 80,
+    purposes: [{ purpose: 'publish', mode: 'trust', defaultMinutes: 20, maxMinutes: 25, extensionsAllowed: 1, extensionMinutes: 5, expectedOutcome: 'published' }],
+  });
+  const queued = Core.upsertPolicy(original, looserDraft, {
+    replacePurposes: true,
+    deferLoosening: true,
+    activatesAt: iso(24 * 60),
+  });
+  assert.equal(queued.pending, true);
+  assert.equal(Core.policyById(queued.state, 'site_tiktok').dailyBudgetMinutes, 50);
+  assert.equal(Core.activatePendingPolicies(queued.state, iso(23 * 60)).changed, false);
+  const activated = Core.activatePendingPolicies(queued.state, iso(24 * 60));
+  assert.equal(activated.changed, true);
+  assert.equal(Core.policyById(activated.state, 'site_tiktok').dailyBudgetMinutes, 80);
+
+  const tighter = Core.upsertPolicy(activated.state, policy({ dailyBudgetMinutes: 30 }), {
+    replacePurposes: true,
+    deferLoosening: true,
+    activatesAt: iso(48 * 60),
+  });
+  assert.equal(tighter.pending, false);
+  assert.equal(Core.policyById(tighter.state, 'site_tiktok').dailyBudgetMinutes, 30);
 });
 
 test('strict Satoru links only accept known actions and app identifiers', () => {

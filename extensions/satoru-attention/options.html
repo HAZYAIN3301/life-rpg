@@ -10,13 +10,13 @@
 <body data-page="options">
   <main class="shell">
     <div class="brand" aria-label="Satoru Attention">
-      <div class="brand-mark" aria-hidden="true">?</div>
+      <img class="brand-mark" src="icon-192.png" alt="">
       <div><strong>Satoru</strong><span data-i18n="companionName">Browser companion</span></div>
     </div>
 
     <header>
-      <h1 data-i18n="optionsTitle">Attention boundaries</h1>
-      <p class="lead" data-i18n="optionsLead">Choose one site, one purpose and one limit. You can add more later.</p>
+      <h1 data-i18n="optionsTitle">Controlled sites</h1>
+      <p class="lead" data-i18n="optionsLead">Choose the allowed reasons before the impulse. At entry, you only name the concrete task.</p>
     </header>
 
     <aside class="notice pin-notice" aria-labelledby="pin-title">
@@ -31,7 +31,7 @@
     </section>
 
     <section class="card section" aria-labelledby="setup-heading">
-      <h2 id="setup-heading" data-i18n="setupTitle">Add one boundary</h2>
+      <h2 id="setup-heading" data-i18n="setupTitle">Set up one site</h2>
       <p class="muted" data-i18n="setupLead">The browser will ask permission only for the exact hostname you enter.</p>
       <form id="policy-form" class="stack" novalidate>
         <div class="row">
@@ -50,38 +50,35 @@
             <input id="domain" name="domain" inputmode="url" maxlength="253" data-i18n-placeholder="domainPlaceholder">
           </label>
         </div>
-        <div class="row">
-          <label class="field">
-            <span data-i18n="purpose">Purpose</span>
-            <select id="purpose" name="purpose">
-              <option value="publish" data-i18n="purpose_publish">Publish</option>
-              <option value="create" data-i18n="purpose_create">Create or edit</option>
-              <option value="reply" data-i18n="purpose_reply">Reply to people</option>
-              <option value="research" data-i18n="purpose_research">Find specific references</option>
-              <option value="watch" data-i18n="purpose_watch">Watch one saved item</option>
-              <option value="rest" data-i18n="purpose_rest">Rest intentionally</option>
-              <option value="unsure" data-i18n="purpose_unsure">Not sure yet</option>
-            </select>
-          </label>
-          <label class="field">
-            <span data-i18n="mode">Mode</span>
-            <select id="mode" name="mode">
-              <option value="trust" data-i18n="mode_trust">Trust</option>
-              <option value="adaptive" selected data-i18n="mode_adaptive">Adaptive</option>
-              <option value="control" data-i18n="mode_control">Control</option>
-            </select>
-          </label>
-          <label class="field">
-            <span data-i18n="minutes">Minutes</span>
-            <input id="policy-minutes" name="minutes" type="number" inputmode="numeric" min="1" max="240" value="10" required>
-          </label>
-        </div>
-        <label id="policy-outcome-field" class="field">
-          <span data-i18n="outcome">What should remain when you leave?</span>
-          <textarea id="policy-outcome" maxlength="120" data-i18n-placeholder="outcomePlaceholder"></textarea>
-        </label>
+        <fieldset class="field scenario-fieldset">
+          <legend data-i18n="allowedScenarios">Allowed entry scenarios</legend>
+          <p class="fine" data-i18n="scenarioLead">These choices appear at the gate. A disabled scenario cannot be invented during an impulse.</p>
+          <div id="scenario-list" class="scenario-list"></div>
+        </fieldset>
+        <details id="policy-advanced" class="advanced-card">
+          <summary data-i18n="dailyProtection">Daily protection</summary>
+          <div class="row section compact-section">
+            <label class="field">
+              <span data-i18n="dailyBudget">Minutes per day</span>
+              <input id="daily-budget" type="number" inputmode="numeric" min="1" max="1440" value="50" required>
+            </label>
+            <label class="field">
+              <span data-i18n="dailyEntries">Entries per day</span>
+              <input id="daily-sessions" type="number" inputmode="numeric" min="1" max="20" value="3" required>
+            </label>
+            <label class="field">
+              <span data-i18n="cooldown">Pause between entries</span>
+              <input id="cooldown-minutes" type="number" inputmode="numeric" min="0" max="240" value="10" required>
+            </label>
+          </div>
+          <p class="fine" data-i18n="delayedLoosening">Tighter changes apply now. Looser Control rules begin tomorrow.</p>
+        </details>
         <p id="options-status" class="status" role="status" aria-live="polite"></p>
-        <button type="submit" class="primary" data-i18n="saveRule">Save boundary</button>
+        <div id="runtime-help" class="notice runtime-help" hidden>
+          <b data-i18n="runtimeHelpTitle">Reconnect the extension</b>
+          <span data-i18n="runtimeHelpLead">Close this tab, reload Satoru Attention on the browser extensions page, then open Settings again. Existing rules were not changed.</span>
+        </div>
+        <button type="submit" class="primary" data-i18n="saveRule">Save site guard</button>
       </form>
     </section>
 
