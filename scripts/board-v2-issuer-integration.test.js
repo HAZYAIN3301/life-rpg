@@ -18,7 +18,7 @@ test('production shell loads standard, local and Wildcard issuers before runtime
   for (const file of files.slice(0, -1)) {
     assert.equal((sw.match(new RegExp(`'${file.replaceAll('.', '\\.')} '`.replace(' ', ''), 'g')) || []).length, 1);
   }
-  assert.match(sw, /const CACHE = 'satoru-v208';/);
+  assert.match(sw, /const CACHE = 'satoru-v209';/);
 });
 
 test('issuer profile consumes structured taste, spheres and recent sport completion only', () => {

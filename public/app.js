@@ -4305,6 +4305,59 @@ const I18N_EXTRA = {
   'Создать пати': { en: 'Create party', de: 'Party erstellen', uk: 'Створити паті', es: 'Crear grupo' },
   'Войти по коду': { en: 'Join with a code', de: 'Mit Code beitreten', uk: 'Увійти за кодом', es: 'Unirse con un código' },
   'Что увидят участники': { en: 'What members will see', de: 'Was Mitglieder sehen', uk: 'Що побачать учасники', es: 'Qué verán los miembros' },
+  // ── Account profile v209: chosen identity, explicit visibility ──
+  'Открыть профиль': { en: 'Open profile', de: 'Profil öffnen', uk: 'Відкрити профіль', es: 'Abrir perfil' },
+  'Как тебя видят в Satoru': { en: 'How others see you in Satoru', de: 'So sehen dich andere in Satoru', uk: 'Як тебе бачать у Satoru', es: 'Cómo te ven en Satoru' },
+  'Только выбранные здесь данные. Цели, привычки, заметки и профиль Тени всегда остаются закрытыми.': { en: 'Only the details you choose here. Goals, habits, notes and Shadow memory always stay private.', de: 'Nur die Angaben, die du hier auswählst. Ziele, Gewohnheiten, Notizen und Schattens Gedächtnis bleiben immer privat.', uk: 'Лише вибрані тут дані. Цілі, звички, нотатки й пам’ять Тіні завжди залишаються приватними.', es: 'Solo los datos que elijas aquí. Las metas, hábitos, notas y la memoria de Sombra siempre serán privados.' },
+  'Имя пользователя': { en: 'Username', de: 'Benutzername', uk: 'Ім’я користувача', es: 'Nombre de usuario' },
+  'О себе': { en: 'About you', de: 'Über dich', uk: 'Про себе', es: 'Sobre ti' },
+  'Кто ты, что создаёшь, чем сейчас живёшь': { en: 'Who you are, what you make and what matters now', de: 'Wer du bist, was du erschaffst und was gerade zählt', uk: 'Хто ти, що створюєш і чим зараз живеш', es: 'Quién eres, qué creas y qué te importa ahora' },
+  'Экран профиля': { en: 'Profile layout', de: 'Profilansicht', uk: 'Вигляд профілю', es: 'Diseño del perfil' },
+  'Уровень, ранг и выбранный стиль': { en: 'Level, rank and chosen style', de: 'Level, Rang und gewählter Stil', uk: 'Рівень, ранг і вибраний стиль', es: 'Nivel, rango y estilo elegido' },
+  'Персонаж — главный акцент': { en: 'Your character takes center stage', de: 'Dein Charakter steht im Mittelpunkt', uk: 'Персонаж — головний акцент', es: 'Tu personaje es el protagonista' },
+  'Создатель': { en: 'Creator', de: 'Creator', uk: 'Творець', es: 'Creador' },
+  'О себе и ссылки — выше': { en: 'About and links come first', de: 'Info und Links stehen zuerst', uk: 'Опис і посилання — спочатку', es: 'La información y los enlaces van primero' },
+  'Обложка': { en: 'Cover', de: 'Titelbild', uk: 'Обкладинка', es: 'Portada' },
+  'Ночь': { en: 'Night', de: 'Nacht', uk: 'Ніч', es: 'Noche' },
+  'Северное сияние': { en: 'Aurora', de: 'Nordlicht', uk: 'Північне сяйво', es: 'Aurora' },
+  'Уголь': { en: 'Ember', de: 'Glut', uk: 'Жар', es: 'Brasa' },
+  'Бумага': { en: 'Paper', de: 'Papier', uk: 'Папір', es: 'Papel' },
+  'Ссылки': { en: 'Links', de: 'Links', uk: 'Посилання', es: 'Enlaces' },
+  'До шести. Для знакомых сервисов можно вставить @имя, для остальных — полный HTTPS-адрес.': { en: 'Up to six. Use @name for supported services or a full HTTPS address for anything else.', de: 'Bis zu sechs. Für unterstützte Dienste genügt @Name, sonst eine vollständige HTTPS-Adresse.', uk: 'До шести. Для відомих сервісів можна вказати @ім’я, для решти — повну HTTPS-адресу.', es: 'Hasta seis. Usa @nombre en los servicios compatibles o una dirección HTTPS completa para los demás.' },
+  'Тип ссылки': { en: 'Link type', de: 'Linktyp', uk: 'Тип посилання', es: 'Tipo de enlace' },
+  'Ссылка или @имя': { en: 'Link or @name', de: 'Link oder @Name', uk: 'Посилання або @ім’я', es: 'Enlace o @nombre' },
+  'Удалить ссылку': { en: 'Remove link', de: 'Link entfernen', uk: 'Видалити посилання', es: 'Eliminar enlace' },
+  'Добавить ссылку': { en: 'Add link', de: 'Link hinzufügen', uk: 'Додати посилання', es: 'Añadir enlace' },
+  'Кто увидит профиль': { en: 'Who can see the profile', de: 'Wer das Profil sehen kann', uk: 'Хто побачить профіль', es: 'Quién puede ver el perfil' },
+  'Только я': { en: 'Only me', de: 'Nur ich', uk: 'Лише я', es: 'Solo yo' },
+  'Никто другой не откроет профиль': { en: 'No one else can open the profile', de: 'Niemand sonst kann das Profil öffnen', uk: 'Ніхто інший не відкриє профіль', es: 'Nadie más podrá abrir el perfil' },
+  'Моё племя': { en: 'My tribe', de: 'Mein Stamm', uk: 'Моє плем’я', es: 'Mi tribu' },
+  'Только участники одной пати': { en: 'Only members of the same party', de: 'Nur Mitglieder derselben Party', uk: 'Лише учасники однієї паті', es: 'Solo miembros del mismo grupo' },
+  'Пользователи Satoru': { en: 'Satoru members', de: 'Satoru-Mitglieder', uk: 'Користувачі Satoru', es: 'Miembros de Satoru' },
+  'Профиль открывается по @имени и ссылке': { en: 'The profile opens by @username and link', de: 'Das Profil ist über @Name und Link erreichbar', uk: 'Профіль відкривається за @ім’ям і посиланням', es: 'El perfil se abre con el @usuario y el enlace' },
+  'Сохранить профиль': { en: 'Save profile', de: 'Profil speichern', uk: 'Зберегти профіль', es: 'Guardar perfil' },
+  'Настроить персонажа': { en: 'Customize character', de: 'Charakter anpassen', uk: 'Налаштувати персонажа', es: 'Personalizar personaje' },
+  'Коротко расскажи, кто ты и что создаёшь.': { en: 'Say briefly who you are and what you make.', de: 'Erzähle kurz, wer du bist und was du erschaffst.', uk: 'Коротко розкажи, хто ти й що створюєш.', es: 'Cuenta brevemente quién eres y qué creas.' },
+  'уровень': { en: 'level', de: 'Level', uk: 'рівень', es: 'nivel' },
+  'ранг': { en: 'rank', de: 'Rang', uk: 'ранг', es: 'rango' },
+  'стиль пути': { en: 'path style', de: 'Pfadstil', uk: 'стиль шляху', es: 'estilo de camino' },
+  'Путь ещё выбирается': { en: 'Path not chosen yet', de: 'Pfad noch nicht gewählt', uk: 'Шлях ще не вибрано', es: 'Camino aún sin elegir' },
+  'Здесь появятся выбранные тобой ссылки.': { en: 'The links you choose will appear here.', de: 'Deine ausgewählten Links erscheinen hier.', uk: 'Тут з’являться вибрані тобою посилання.', es: 'Aquí aparecerán los enlaces que elijas.' },
+  'Путешественник': { en: 'Traveller', de: 'Reisender', uk: 'Мандрівник', es: 'Viajero' },
+  'Укажи имя.': { en: 'Enter a name.', de: 'Gib einen Namen ein.', uk: 'Укажи ім’я.', es: 'Introduce un nombre.' },
+  'Имя пользователя: 3–30 символов, латиница, цифры, точка, дефис или подчёркивание.': { en: 'Username: 3–30 characters using letters, numbers, dots, hyphens or underscores.', de: 'Benutzername: 3–30 Zeichen aus Buchstaben, Zahlen, Punkt, Bindestrich oder Unterstrich.', uk: 'Ім’я користувача: 3–30 символів, латиниця, цифри, крапка, дефіс або підкреслення.', es: 'Nombre de usuario: 3–30 caracteres con letras, números, puntos, guiones o guiones bajos.' },
+  'Проверь ссылки: нужен HTTPS-адрес или корректное @имя выбранной сети.': { en: 'Check the links: use an HTTPS address or a valid @name for the selected service.', de: 'Prüfe die Links: Verwende eine HTTPS-Adresse oder einen gültigen @Namen für den gewählten Dienst.', uk: 'Перевір посилання: потрібна HTTPS-адреса або коректне @ім’я вибраної мережі.', es: 'Revisa los enlaces: usa una dirección HTTPS o un @nombre válido para el servicio elegido.' },
+  'Проверь заполнение профиля.': { en: 'Check the profile fields.', de: 'Prüfe die Profilfelder.', uk: 'Перевір заповнення профілю.', es: 'Revisa los campos del perfil.' },
+  'Профиль сохранён': { en: 'Profile saved', de: 'Profil gespeichert', uk: 'Профіль збережено', es: 'Perfil guardado' },
+  'Это @имя уже занято.': { en: 'That @username is already taken.', de: 'Dieser @Name ist bereits vergeben.', uk: 'Це @ім’я вже зайняте.', es: 'Ese @usuario ya está ocupado.' },
+  'Профиль не сохранился. Данные остались в форме — повтори попытку.': { en: 'The profile was not saved. Your entries are still in the form — try again.', de: 'Das Profil wurde nicht gespeichert. Deine Eingaben sind noch im Formular — versuche es erneut.', uk: 'Профіль не збережено. Дані залишилися у формі — спробуй ще раз.', es: 'El perfil no se guardó. Tus datos siguen en el formulario: inténtalo de nuevo.' },
+  'Редактировать профиль': { en: 'Edit profile', de: 'Profil bearbeiten', uk: 'Редагувати профіль', es: 'Editar perfil' },
+  'Скопировать ссылку': { en: 'Copy link', de: 'Link kopieren', uk: 'Скопіювати посилання', es: 'Copiar enlace' },
+  'Ссылка на профиль скопирована': { en: 'Profile link copied', de: 'Profillink kopiert', uk: 'Посилання на профіль скопійовано', es: 'Enlace del perfil copiado' },
+  'Не удалось скопировать ссылку.': { en: 'Could not copy the link.', de: 'Der Link konnte nicht kopiert werden.', uk: 'Не вдалося скопіювати посилання.', es: 'No se pudo copiar el enlace.' },
+  'Профиль закрыт или недоступен.': { en: 'This profile is private or unavailable.', de: 'Dieses Profil ist privat oder nicht verfügbar.', uk: 'Профіль закритий або недоступний.', es: 'Este perfil es privado o no está disponible.' },
+  'Что Тень помнит обо мне': { en: 'What Shadow remembers about me', de: 'Was Schatten über mich weiß', uk: 'Що Тінь пам’ятає про мене', es: 'Lo que Sombra recuerda de mí' },
+  'Помощник, профиль, Strava и импорт': { en: 'Assistant, profile, Strava and import', de: 'Assistent, Profil, Strava und Import', uk: 'Помічник, профіль, Strava та імпорт', es: 'Asistente, perfil, Strava e importación' },
   'Идеи и вдохновение': { en: 'Ideas and inspiration', de: 'Ideen und Inspiration', uk: 'Ідеї та натхнення', es: 'Ideas e inspiración' },
   'Помощь': { en: 'Help', de: 'Hilfe', uk: 'Допомога', es: 'Ayuda' },
 };
@@ -6337,6 +6390,7 @@ const State = {
   chatLog: [], _chatBusy: false,
   leaderboard: null, _lbLoading: false, _lbError: '', party: null, _partyLoading: false, _partyError: '', _partyEntryMode: '',
   socialPrivacy: null, _socialBusy: '', _socialError: '', _socialFocusAfterCommit: '',
+  _accountProfileDraft: null, _accountProfileBusy: false, _accountProfileError: '', _accountProfileRemote: null, _accountProfileDeepLinkHandled: false,
   adminUsers: null, _adminUsersLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', goalView: 'focus', wkAddDate: null, calDate: null, calMode: 'day', habitsTab: 'build',
   _tasksLoadError: '', _tasksLoadBusy: false, _tasksWriteBlockedNoticeAt: 0, _tasksFocusAfterCommit: '',
@@ -12559,8 +12613,8 @@ function renderHeader(force = false) {
     <div class="char-main">
       ${State.me ? `<div class="user-pill" title="${t('Профиль')}">
         <button class="up-av up-av-raster" data-action="go-wardrobe" title="${t('Открыть персонажа')}" aria-label="${t('Открыть персонажа')}">${avatarPortraitHTML({ motion: 'portrait' })}</button>
-        <span class="up-meta"><span class="up-name">${esc(State.me.name)}${eqTitle ? ` <span class="eq-title">${satoruIconHTML('achievement.avatar_custom', 'inline-emblem', '◇')} ${esc(eqTitle)}</span>` : ''}</span>
-        <span class="up-rank" style="--rc:${cr.color}">${rankIconHTML(cr, 'rank-inline-icon')} ${cr.name}</span></span></div>` : ''}
+        <button type="button" class="up-meta" data-action="open-account-profile" title="${t('Открыть профиль')}"><span class="up-name">${esc(State.me.name)}${eqTitle ? ` <span class="eq-title">${satoruIconHTML('achievement.avatar_custom', 'inline-emblem', '◇')} ${esc(eqTitle)}</span>` : ''}</span>
+        <span class="up-rank" style="--rc:${cr.color}">${rankIconHTML(cr, 'rank-inline-icon')} ${cr.name}</span></button></div>` : ''}
       <div class="char-level">Уровень <b>${oi.level}</b></div>
       <div class="xp-bar" data-guide-target="first-level-form"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
       <div class="gold-pill" title="Золото">${satoruIconHTML('status.gold', 'header-emblem', '🪙')} ${goldBalance()}</div>
@@ -13608,6 +13662,162 @@ function aiHandleErr(d) {
   return false;
 }
 // Карточка ИИ-ключей: мультипровайдер + гид «получить бесплатный ключ» + выбор провайдера по умолчанию
+function accountProfileEngine() { return typeof AccountProfileV1 !== 'undefined' ? AccountProfileV1 : null; }
+function currentAccountProfile() {
+  const engine = accountProfileEngine();
+  return engine ? engine.normalize(State.me && State.me.profile) : { handle: '', bio: '', audience: 'private', layout: 'journey', cover: 'void', links: [] };
+}
+function accountProfileDraft() {
+  if (State._accountProfileDraft) return State._accountProfileDraft;
+  const profile = currentAccountProfile();
+  State._accountProfileDraft = { name: String(State.me?.name || ''), handle: profile.handle, bio: profile.bio, audience: profile.audience,
+    layout: profile.layout, cover: profile.cover, links: (profile.links || []).map((link) => ({ ...link })) };
+  return State._accountProfileDraft;
+}
+function accountProfileFromDraft(draft) {
+  const engine = accountProfileEngine();
+  return engine ? engine.normalize({ ...draft, links: draft.links || [] }) : draft;
+}
+function captureAccountProfileDraft(form = document.getElementById('account-profile-form')) {
+  if (!form) return accountProfileDraft();
+  const links = [...form.querySelectorAll('[data-profile-link-row]')].map((row) => ({
+    platform: row.querySelector('[name="linkPlatform"]')?.value || 'website',
+    url: row.querySelector('[name="linkUrl"]')?.value || '',
+  }));
+  State._accountProfileDraft = {
+    name: String(form.elements.name?.value || '').slice(0, 32),
+    handle: String(form.elements.handle?.value || '').slice(0, 32),
+    bio: String(form.elements.bio?.value || '').slice(0, 180),
+    audience: form.elements.audience?.value || 'private',
+    layout: form.elements.layout?.value || 'journey',
+    cover: form.elements.cover?.value || 'void', links,
+  };
+  return State._accountProfileDraft;
+}
+function accountProfileSummarySelf() {
+  const rank = charRank();
+  return { level: charLevel(), rank: rank.name, path: pathChosen() ? State.settings.path : null };
+}
+function accountProfilePlatformLabel(id) {
+  const engine = accountProfileEngine(), platform = engine && engine.platform(id);
+  return platform ? t(platform.label) : t('Сайт');
+}
+function accountProfileLinkHTML(link, interactive) {
+  const label = accountProfilePlatformLabel(link.platform);
+  const mark = ({ instagram: 'IG', tiktok: 'TT', youtube: 'YT', github: 'GH', telegram: 'TG', x: 'X', linkedin: 'in', website: '↗' })[link.platform] || '↗';
+  return interactive
+    ? `<a class="account-profile-link" href="${esc(link.url)}" target="_blank" rel="noopener noreferrer nofollow"><span aria-hidden="true">${mark}</span>${esc(label)}</a>`
+    : `<span class="account-profile-link"><span aria-hidden="true">${mark}</span>${esc(label)}</span>`;
+}
+function accountProfileScreenHTML(payload, options = {}) {
+  const profile = accountProfileEngine()?.normalize(payload && payload.profile) || currentAccountProfile();
+  const summary = payload && payload.summary || accountProfileSummarySelf();
+  const name = String(payload && payload.name || State.me?.name || t('Путешественник'));
+  const avatar = payload && payload.avatar || State.me?.avatar || AVATARS[0];
+  const links = (profile.links || []).map((link) => accountProfileLinkHTML(link, options.interactive === true)).join('');
+  const path = summary.path === 'control' ? t('Контроль') : summary.path === 'trust' ? t('Доверие') : t('Путь ещё выбирается');
+  const layoutLabel = profile.layout === 'character' ? t('Герой') : profile.layout === 'creator' ? t('Создатель') : t('Путь');
+  return `<article class="account-profile-screen layout-${esc(profile.layout)} cover-${esc(profile.cover)}" data-profile-layout="${esc(profile.layout)}">
+    <div class="account-profile-cover" aria-hidden="true"><span></span><i></i></div>
+    <div class="account-profile-identity">
+      <div class="account-profile-avatar">${avatarOriginIconHTML(avatar, 'account-profile-origin-icon')}</div>
+      <div><h3 data-noi18n>${esc(name)}</h3>${profile.handle ? `<p class="account-profile-handle" data-noi18n>@${esc(profile.handle)}</p>` : ''}</div>
+      <span class="account-profile-layout-label">${esc(layoutLabel)}</span>
+    </div>
+    ${profile.bio ? `<p class="account-profile-bio" data-noi18n>${esc(profile.bio)}</p>` : `<p class="account-profile-bio is-empty">${t('Коротко расскажи, кто ты и что создаёшь.')}</p>`}
+    <div class="account-profile-stats"><span><b>${Number(summary.level) || 1}</b><small>${t('уровень')}</small></span><span><b>${esc(t(summary.rank || 'Новичок'))}</b><small>${t('ранг')}</small></span><span><b>${esc(path)}</b><small>${t('стиль пути')}</small></span></div>
+    ${links ? `<div class="account-profile-links">${links}</div>` : `<p class="account-profile-links-empty">${t('Здесь появятся выбранные тобой ссылки.')}</p>`}
+  </article>`;
+}
+function accountProfileLinkRowsHTML(draft) {
+  const engine = accountProfileEngine(); if (!engine) return '';
+  return (draft.links || []).map((link, index) => `<div class="account-profile-link-row" data-profile-link-row data-index="${index}">
+    <label><span class="sr-only">${t('Тип ссылки')}</span><select name="linkPlatform" aria-label="${t('Тип ссылки')}">${engine.PLATFORMS.map((platform) => `<option value="${platform.id}" ${platform.id === link.platform ? 'selected' : ''}>${esc(t(platform.label))}</option>`).join('')}</select></label>
+    <label><span class="sr-only">${t('Ссылка или @имя')}</span><input name="linkUrl" type="text" inputmode="url" value="${esc(link.url || '')}" maxlength="300" placeholder="@name или https://…" autocomplete="url" data-noi18n /></label>
+    <button type="button" class="account-profile-link-remove" data-action="account-profile-link-remove" data-index="${index}" aria-label="${t('Удалить ссылку')}">✕</button>
+  </div>`).join('');
+}
+function identityProfileCard() {
+  const engine = accountProfileEngine(); if (!engine) return '';
+  const draft = accountProfileDraft(), preview = accountProfileFromDraft(draft);
+  const payload = { name: draft.name || State.me?.name, avatar: State.me?.avatar, profile: preview, summary: accountProfileSummarySelf() };
+  const layoutOptions = [['journey', 'Путь', 'Уровень, ранг и выбранный стиль'], ['character', 'Герой', 'Персонаж — главный акцент'], ['creator', 'Создатель', 'О себе и ссылки — выше']];
+  const audienceOptions = [['private', 'Только я', 'Никто другой не откроет профиль'], ['tribe', 'Моё племя', 'Только участники одной пати'], ['satoru', 'Пользователи Satoru', 'Профиль открывается по @имени и ссылке']];
+  const covers = [['void', 'Ночь'], ['aurora', 'Северное сияние'], ['ember', 'Уголь'], ['paper', 'Бумага']];
+  return `<section class="card account-profile-settings" aria-labelledby="account-profile-settings-title">
+    <div class="account-profile-settings-head"><div><p class="settings-eyebrow">${t('Профиль')}</p><h3 id="account-profile-settings-title">${t('Как тебя видят в Satoru')}</h3><p>${t('Только выбранные здесь данные. Цели, привычки, заметки и профиль Тени всегда остаются закрытыми.')}</p></div><button type="button" class="btn ghost sm" data-action="open-account-profile">${t('Открыть профиль')}</button></div>
+    <form id="account-profile-form" class="account-profile-editor">
+      <div class="account-profile-preview" data-profile-preview>${accountProfileScreenHTML(payload)}</div>
+      <div class="account-profile-fields">
+        <div class="account-profile-essential-grid"><label><span>${t('Имя')}</span><input name="name" maxlength="32" required value="${esc(draft.name)}" autocomplete="name" data-noi18n /></label><label><span>${t('Имя пользователя')}</span><span class="account-profile-handle-field"><i>@</i><input name="handle" maxlength="30" value="${esc(draft.handle)}" pattern="[a-z0-9][a-z0-9._-]{1,28}[a-z0-9]" placeholder="albert" autocapitalize="none" autocomplete="username" spellcheck="false" data-noi18n /></span></label></div>
+        <label class="account-profile-bio-field"><span>${t('О себе')}</span><textarea name="bio" maxlength="${engine.MAX_BIO}" rows="3" placeholder="${esc(t('Кто ты, что создаёшь, чем сейчас живёшь'))}" data-noi18n>${esc(draft.bio)}</textarea><small><span data-profile-bio-count>${draft.bio.length}</span> / ${engine.MAX_BIO}</small></label>
+        <fieldset class="account-profile-choice"><legend>${t('Экран профиля')}</legend><div class="account-profile-choice-grid">${layoutOptions.map(([id, title, desc]) => `<label><input type="radio" name="layout" value="${id}" ${draft.layout === id ? 'checked' : ''}/><span><b>${t(title)}</b><small>${t(desc)}</small></span></label>`).join('')}</div></fieldset>
+        <fieldset class="account-profile-choice account-profile-cover-choice"><legend>${t('Обложка')}</legend><div>${covers.map(([id, label]) => `<label class="cover-${id}" title="${t(label)}"><input type="radio" name="cover" value="${id}" ${draft.cover === id ? 'checked' : ''}/><span aria-hidden="true"></span><b>${t(label)}</b></label>`).join('')}</div></fieldset>
+        <fieldset class="account-profile-links-editor"><legend>${t('Ссылки')}</legend><p>${t('До шести. Для знакомых сервисов можно вставить @имя, для остальных — полный HTTPS-адрес.')}</p><div data-profile-links>${accountProfileLinkRowsHTML(draft)}</div>${draft.links.length < engine.MAX_LINKS ? `<button type="button" class="btn ghost sm" data-action="account-profile-link-add">+ ${t('Добавить ссылку')}</button>` : ''}</fieldset>
+        <fieldset class="account-profile-choice account-profile-audience"><legend>${t('Кто увидит профиль')}</legend><div class="account-profile-choice-grid">${audienceOptions.map(([id, title, desc]) => `<label><input type="radio" name="audience" value="${id}" ${draft.audience === id ? 'checked' : ''}/><span><b>${t(title)}</b><small>${t(desc)}</small></span></label>`).join('')}</div></fieldset>
+        <p class="account-profile-save-status${State._accountProfileError ? ' is-error' : ''}" role="status" aria-live="polite">${esc(t(State._accountProfileError || ''))}</p>
+        <div class="settings-actions"><button type="submit" class="btn" ${State._accountProfileBusy ? 'disabled' : ''}>${State._accountProfileBusy ? t('Сохраняю…') : t('Сохранить профиль')}</button><button type="button" class="btn ghost" data-action="go-wardrobe">${t('Настроить персонажа')}</button></div>
+      </div>
+    </form>
+  </section>`;
+}
+function refreshAccountProfilePreview(form) {
+  const draft = captureAccountProfileDraft(form), profile = accountProfileFromDraft(draft);
+  const preview = form && form.querySelector('[data-profile-preview]');
+  if (preview) preview.innerHTML = accountProfileScreenHTML({ name: draft.name, avatar: State.me?.avatar, profile, summary: accountProfileSummarySelf() });
+  const counter = form && form.querySelector('[data-profile-bio-count]'); if (counter) counter.textContent = String(draft.bio.length);
+}
+async function saveAccountProfile(form) {
+  const engine = accountProfileEngine(); if (!engine || State._accountProfileBusy) return false;
+  const draft = captureAccountProfileDraft(form), checked = engine.validate({ handle: draft.handle, bio: draft.bio, audience: draft.audience,
+    layout: draft.layout, cover: draft.cover, links: draft.links, updatedAt: null });
+  State._accountProfileError = '';
+  if (!draft.name.trim()) State._accountProfileError = t('Укажи имя.');
+  else if (!engine.validHandle(draft.handle)) State._accountProfileError = t('Имя пользователя: 3–30 символов, латиница, цифры, точка, дефис или подчёркивание.');
+  else if (!checked.ok) State._accountProfileError = checked.error === 'bad_link' ? t('Проверь ссылки: нужен HTTPS-адрес или корректное @имя выбранной сети.') : t('Проверь заполнение профиля.');
+  if (State._accountProfileError) { render(); requestAnimationFrame(() => document.getElementById('account-profile-form')?.querySelector('[aria-invalid], input, textarea')?.focus()); return false; }
+  State._accountProfileBusy = true; render();
+  try {
+    const response = await fetch('/api/auth/update-profile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: draft.name.trim(), profile: checked.profile }) });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
+    State.me = data; State._accountProfileDraft = null; State._accountProfileError = ''; track('profile:identity:save'); sfx('save'); toast(t('Профиль сохранён')); return true;
+  } catch (error) {
+    State._accountProfileError = error.message === 'handle_taken' ? t('Это @имя уже занято.') : t('Профиль не сохранился. Данные остались в форме — повтори попытку.');
+    return false;
+  } finally { State._accountProfileBusy = false; render(); }
+}
+function accountProfileModalPayloadSelf() {
+  return { id: State.me?.id, name: State.me?.name, avatar: State.me?.avatar, profile: currentAccountProfile(), summary: accountProfileSummarySelf() };
+}
+function showAccountProfileModal(payload, opener = document.activeElement) {
+  closeAccountDialog('account-profile-modal', { restoreFocus: false });
+  const self = payload && payload.id === State.me?.id;
+  const profile = accountProfileEngine()?.normalize(payload && payload.profile) || currentAccountProfile();
+  const overlay = document.createElement('div'); overlay.id = 'account-profile-modal'; overlay.className = 'modal-overlay account-profile-modal';
+  const shareable = !!profile.handle && profile.audience !== 'private';
+  overlay.innerHTML = `<section class="account-profile-dialog" role="dialog" aria-modal="true" aria-labelledby="account-profile-dialog-title"><button type="button" class="modal-x" data-action="account-profile-close" aria-label="${t('Закрыть')}">✕</button><h2 id="account-profile-dialog-title" class="sr-only" tabindex="-1">${t('Профиль')} ${esc(payload && payload.name || '')}</h2>${accountProfileScreenHTML(payload, { interactive: true })}<div class="account-profile-dialog-actions">${self ? `<button type="button" class="btn" data-action="account-profile-edit">${t('Редактировать профиль')}</button>` : ''}${shareable ? `<button type="button" class="btn ghost" data-action="account-profile-copy" data-handle="${esc(profile.handle)}">${t('Скопировать ссылку')}</button>` : ''}</div></section>`;
+  mountAccountDialog(overlay, { initial: '#account-profile-dialog-title', returnFocus: opener });
+}
+async function openAccountProfile(key, opener = document.activeElement) {
+  const requested = String(key || State.me?.id || '');
+  if (!requested || requested === State.me?.id || requested.replace(/^@/, '') === currentAccountProfile().handle) {
+    showAccountProfileModal(accountProfileModalPayloadSelf(), opener); return true;
+  }
+  if (State._accountProfileRemote === requested) return false;
+  State._accountProfileRemote = requested;
+  try {
+    const response = await fetch(`/api/profile/${encodeURIComponent(requested.replace(/^@/, ''))}`);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
+    showAccountProfileModal(data, opener); return true;
+  } catch {
+    toast(t('Профиль закрыт или недоступен.')); return false;
+  } finally { State._accountProfileRemote = null; }
+}
+function accountProfileShareUrl(handle) {
+  const url = new URL(location.pathname || '/', location.origin); url.searchParams.set('profile', handle); return url.toString();
+}
 // Карточка профиля-памяти. Открыта на чтение и правку сознательно (JARVIS-3-PLAN §2):
 // это и доверие — видно, что приложение о тебе думает, — и защита от накопления
 // ошибочных выводов ИИ, которые иначе тихо жили бы в каждом разговоре.
@@ -23262,7 +23472,8 @@ function renderSettings() {
     <details class="card settings-disclosure"><summary>${t('📦 Программы-данжи')}</summary><div class="settings-disclosure-body"><p class="muted">${t('Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.')}</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div></details>
     ${groupEnd()}
     ${groupStart('connections', 'Связи', 'Помощник, профиль, Strava и импорт')}
-    ${profileCard()}
+    ${identityProfileCard()}
+    <details class="card settings-disclosure connections-memory"><summary>${t('Что Тень помнит обо мне')}</summary><div class="settings-disclosure-body">${profileCard()}</div></details>
     <details class="card settings-disclosure connections-ai"><summary>${t('Подключение ИИ')}</summary><div class="settings-disclosure-body">${aiKeysCard()}</div></details>
     ${stravaCard()}
     ${fileImportCard()}
@@ -23605,9 +23816,11 @@ function partyHTML(p) {
     ? (r.iClaimed ? `<span class="raid-claimed muted">✓ ${t('Награда забрана')}</span>` : `<button class="btn raid-claim" data-action="party-claim">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Забрать награду пати')}</button>`)
     : '';
   const members = p.members.slice().sort((a, b) => (Number(b.weekXp) || 0) - (Number(a.weekXp) || 0)).map((m) => `<div class="pm-row ${m.me ? 'me' : ''} ${m.shared ? '' : 'is-private'}" role="listitem">
+      <button type="button" class="pm-profile" data-action="open-member-profile" data-user="${esc(m.id)}" aria-label="${esc(`${t('Открыть профиль')}: ${m.name}`)}">
       <span class="pm-av">${avatarOriginIconHTML(m.avatar || AVATARS[0], 'party-origin-icon')}</span>
       <span class="pm-meta"><span class="pm-name">${esc(m.name)}${m.owner ? ` <span class="party-role">${t('создатель')}</span>` : ''}${m.me ? ` <span class="lb-you">${t('ты')}</span>` : ''}</span>
         <span class="pm-sub muted">${m.shared ? `${m.weekQuests || 0} ${t('квестов за неделю')} · ${t('видно только участникам пати')}` : t('Недельный вклад скрыт участником')}</span></span>
+      </button>
       <span class="pm-xp" title="${esc(t('XP за неделю'))}">${m.shared ? `${Number(m.weekXp || 0).toLocaleString(lang())}<small>XP</small>` : `<small>${t('приватно')}</small>`}</span>
       ${m.me ? '' : `<button class="btn ghost sm pm-cheer" data-action="party-cheer" data-to="${esc(m.id)}" aria-label="${esc(`${t('Подбодрить')}: ${m.name}`)}">${satoruIconHTML('nav.tribe', 'button-glyph', '◇')}${m.cheers ? ' ' + m.cheers : ''}</button>`}</div>`).join('');
   const partyConsent = socialConsentValue('party');
@@ -23700,8 +23913,8 @@ function renderLeaderboard() {
   const list = rows.length ? rows.map((r, i) => `
     <div class="lb-row ${r.me ? 'me' : ''}" role="listitem">
       <div class="lb-pos ${i < 3 ? `podium podium-${i + 1}` : ''}">${i < 3 ? i + 1 : '#' + (i + 1)}</div>
-      <div class="lb-av">${avatarOriginIconHTML(r.avatar || AVATARS[0], 'leaderboard-origin-icon')}</div>
-      <div class="lb-name">${pathGlyph(r.path) ? `<span class="lb-path" title="${esc(t(PATHS[r.path].name))}">${pathGlyph(r.path)}</span> ` : ''}${esc(r.name)}${r.me ? ` <span class="lb-you">${t('ты')}</span>` : ''}<span class="lb-rank">${esc(t(r.rank || ''))}</span></div>
+      <button type="button" class="lb-profile" data-action="open-member-profile" data-user="${esc(r.id)}" aria-label="${esc(`${t('Открыть профиль')}: ${r.name}`)}"><span class="lb-av">${avatarOriginIconHTML(r.avatar || AVATARS[0], 'leaderboard-origin-icon')}</span>
+      <span class="lb-name">${pathGlyph(r.path) ? `<span class="lb-path" title="${esc(t(PATHS[r.path].name))}">${pathGlyph(r.path)}</span> ` : ''}${esc(r.name)}${r.me ? ` <span class="lb-you">${t('ты')}</span>` : ''}<span class="lb-rank">${esc(t(r.rank || ''))}</span></span></button>
       <div class="lb-lvl">${t('ур.')} ${r.level}</div>
       <div class="lb-xp">${Number(r.totalXp || 0).toLocaleString(lang())} XP</div>
     </div>`).join('') : `<p class="muted social-empty-copy">${t('Публичных участников пока нет. Это настоящее пустое состояние, а не ошибка загрузки.')}</p>`;
@@ -24406,6 +24619,10 @@ function kickCompVideo() {
 // ============================================================
 async function onSubmit(e) {
   const f = e.target;
+
+  if (f.id === 'account-profile-form') {
+    e.preventDefault(); await saveAccountProfile(f); return;
+  }
 
   if (f.id === 'attention-setup-form') {
     e.preventDefault(); await saveAttentionSetup(f); return;
@@ -26242,6 +26459,27 @@ async function onClick(e) {
   }
   const action = el.dataset.action, id = el.dataset.id, today = todayStr();
 
+  if (action === 'open-account-profile') { await openAccountProfile(State.me?.id, el); return; }
+  if (action === 'open-member-profile') { await openAccountProfile(el.dataset.user, el); return; }
+  if (action === 'account-profile-close') { closeAccountDialog('account-profile-modal'); return; }
+  if (action === 'account-profile-edit') {
+    closeAccountDialog('account-profile-modal', { restoreFocus: false }); State.view = 'settings'; State.settingsSection = 'connections';
+    State._settingsFocusAfterCommit = '#account-profile-settings-title'; render(); return;
+  }
+  if (action === 'account-profile-copy') {
+    const handle = accountProfileEngine()?.handle(el.dataset.handle); if (!handle) return;
+    try { await navigator.clipboard.writeText(accountProfileShareUrl(handle)); toast(t('Ссылка на профиль скопирована')); }
+    catch { toast(t('Не удалось скопировать ссылку.')); }
+    return;
+  }
+  if (action === 'account-profile-link-add') {
+    const draft = captureAccountProfileDraft(); if (draft.links.length >= (accountProfileEngine()?.MAX_LINKS || 6)) return;
+    draft.links.push({ platform: 'instagram', url: '' }); State._settingsFocusAfterCommit = `[data-profile-link-row][data-index="${draft.links.length - 1}"] input[name="linkUrl"]`; render(); return;
+  }
+  if (action === 'account-profile-link-remove') {
+    const draft = captureAccountProfileDraft(), index = Number(el.dataset.index); if (!Number.isSafeInteger(index) || index < 0 || index >= draft.links.length) return;
+    draft.links.splice(index, 1); State._settingsFocusAfterCommit = '[data-action="account-profile-link-add"], .account-profile-links-editor legend'; render(); return;
+  }
   if (action === 'pwa-lifecycle-refresh') { await refreshPwaData(); return; }
   if (action === 'pwa-lifecycle-later') { pwaLifecycleDispatch({ type: 'update:defer' }); return; }
   if (action === 'pwa-lifecycle-dismiss') { pwaLifecycleDispatch({ type: 'reconnect:dismiss' }); return; }
@@ -27125,7 +27363,7 @@ async function onClick(e) {
   if (action === 'goto-today') { sfx('navigate'); State.view = 'today'; render(); return; }
   if (action === 'reload-app') { location.reload(); return; }
   if (action === 'goto-pets') { sfx('navigate'); State.view = 'pets'; markDiscovered('pets'); render(); return; }
-  if (action === 'go-wardrobe') { State.view = 'character'; State._characterFocusAfterCommit = '#character-wardrobe'; render(); return; }
+  if (action === 'go-wardrobe') { closeAccountDialog('account-profile-modal', { restoreFocus: false }); State.view = 'character'; State._characterFocusAfterCommit = '#character-wardrobe'; render(); return; }
   if (action === 'open-avatar-forge') { openAvatarForgeEditor(); return; }
   if (action === 'goto-import') {
     State.view = 'settings'; State.settingsSection = 'life'; State._settingsFocusAfterCommit = '#import-card h4, #import-card h3'; render();
@@ -28531,6 +28769,7 @@ function clearAllData() {
   State._inspirationSection = 'today'; State._inspirationSetupOpen = false; State._inspirationDraft = null;
   State.profile = null; State.aiKeys = null; State.strava = null; State.chatLog = [];
   State.leaderboard = null; State.party = null; State.adminUsers = null; State.socialPrivacy = null; State.myFeedbackCount = 0;
+  State._accountProfileDraft = null; State._accountProfileBusy = false; State._accountProfileError = ''; State._accountProfileRemote = null; State._accountProfileDeepLinkHandled = false;
   State._lbError = ''; State._partyError = ''; State._socialError = ''; State._socialBusy = '';
   State._stravaSyncing = false; State._chatBusy = false; State._lbLoading = false;
   State._partyLoading = false; State._adminUsersLoading = false;
@@ -28855,6 +29094,16 @@ async function initApp() {
   State.phase = 'app';
   refreshShadowVoiceStatus();
   render();
+  // A shared profile URL opens only after authentication and after the app has
+  // loaded its own server-owned identity. The parameter is consumed once per
+  // session so later renders cannot reopen a dismissed dialog.
+  try {
+    const profileKey = new URLSearchParams(location.search).get('profile');
+    if (profileKey && !State._accountProfileDeepLinkHandled) {
+      State._accountProfileDeepLinkHandled = true;
+      setTimeout(() => openAccountProfile(profileKey), 80);
+    }
+  } catch {}
   scheduleAttentionBoundary();
   if (State._attentionDeepLink) setTimeout(() => runAttentionDeepLink(), 80);
   scheduleArtWarmup();
@@ -28879,6 +29128,11 @@ function publishLeaderboard() {
 
 // Делегированный обработчик change (для select-ов вне форм — напр. импорт достижений)
 function onChange(e) {
+  if (e.target.closest?.('#account-profile-form')) {
+    refreshAccountProfilePreview(e.target.form || e.target.closest('form'));
+    if (e.target.matches('[name="layout"], [name="cover"], [name="audience"], [name="linkPlatform"]')) sfx('select');
+    return;
+  }
   if (e.target.id === 'questionnaire-plan-file') {
     const input = e.target, file = input.files && input.files[0]; input.value = '';
     if (!file) return;
@@ -29117,6 +29371,14 @@ function onChange(e) {
 }
 // Живой автосейв формы настроек при вводе (текст печатается без blur — 'change' не сработал бы)
 function onSettingsInput(e) {
+  if (e.target.closest?.('#account-profile-form')) {
+    const form = e.target.form || e.target.closest('form'); refreshAccountProfilePreview(form);
+    if (e.target.name === 'handle') {
+      const valid = accountProfileEngine()?.validHandle(e.target.value) !== false;
+      e.target.setAttribute('aria-invalid', String(!valid));
+    }
+    return;
+  }
   if (e.target.id === 'questionnaire-answer') { questionnaireSourceFromDOM(); return; }
   if (e.target.matches?.('[data-questionnaire-manual]')) { questionnaireManualFromDOM(); return; }
   if (e.target.matches?.('#inspiration-setup-form [name="referenceUrl"]')) updateInspirationReferenceUI(e.target.form);
@@ -29509,7 +29771,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v208';
+const PWA_CACHE_VERSION = 'satoru-v209';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

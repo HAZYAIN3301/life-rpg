@@ -49,6 +49,8 @@
       if (row.socialConsent != null && (!row.socialConsent || typeof row.socialConsent !== 'object' || Array.isArray(row.socialConsent))) {
         fail(`row-${index}-bad-consent`);
       }
+      if (row.profile != null && (!row.profile || typeof row.profile !== 'object' || Array.isArray(row.profile)
+        || Buffer.byteLength(JSON.stringify(row.profile), 'utf8') > 8192)) fail(`row-${index}-bad-profile`);
       ids.add(row.id);
     }
     return value;

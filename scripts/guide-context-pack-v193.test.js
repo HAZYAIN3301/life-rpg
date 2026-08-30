@@ -283,10 +283,10 @@ test('Guide feature commit is authenticated, account-owned and rejects malformed
   assert.equal((await api(base, '/api/guide/commit', { method: 'POST', cookie: alpha.cookie, body: { data: { tasks, settings, goals: [] } } })).response.status, 400);
 });
 
-test('v205 Guide assets and v208 shell ship the whole pack together', () => {
-  assert.match(SW, /const CACHE = 'satoru-v208'/);
+test('v205 Guide assets and v209 shell ship the whole pack together', () => {
+  assert.match(SW, /const CACHE = 'satoru-v209'/);
   assert.match(INDEX, /guide-v3\.js\?v=20260830-guide-tree-v205-1/);
-  assert.match(INDEX, /app\.js\?v=20260830-economy-art-v208-1/);
+  assert.match(INDEX, /app\.js\?v=20260830-account-profile-v209-1/);
   assert.match(SERVER, /if \(u === '\/api\/guide\/commit' && req\.method === 'POST'\)/);
   assert.match(SERVER, /commitGuideData[\s\S]*restoreSnapshot/);
 });

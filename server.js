@@ -19,6 +19,7 @@ const BoardV2Offers = require('./public/board-v2-offers.js');
 const GoalsInitiativesV1 = require('./public/goals-initiatives-v1.js');
 const FounderPassV1 = require('./public/founder-pass-v1.js');
 const ServerUserRegistryV1 = require('./server-user-registry-v1.js');
+const AccountProfileV1 = require('./public/account-profile-v1.js');
 
 const ROOT = __dirname;
 // Local development secrets live outside Git. Production providers inject the
@@ -1664,7 +1665,26 @@ function publicUser(user) {
     // пользователям это поле вообще не выдаётся.
     ...(user.isAdmin ? { adminGold: adminGoldBalance(user.id) } : {}),
     email: user.email || null, hasPin: !!user.pinHash, lang: ['en', 'ru', 'de', 'uk', 'es'].includes(user.lang) ? user.lang : null,
-    entitlement: entitlement(user),
+    entitlement: entitlement(user), profile: AccountProfileV1.normalize(user.profile),
+  };
+}
+function accountProfileRelation(viewerId, targetId, parties = loadParties()) {
+  if (viewerId === targetId) return 'self';
+  const viewerParty = partyOf(viewerId, parties);
+  if (viewerParty && (viewerParty.members || []).includes(targetId)) return 'tribe';
+  return 'member';
+}
+function accountProfilePublicView(user) {
+  const profile = AccountProfileV1.normalize(user && user.profile);
+  const xp = computeUserXp(user.id);
+  let settings = {};
+  try { settings = JSON.parse(fs.readFileSync(path.join(userDataDir(user.id), 'settings.json'), 'utf8')); } catch {}
+  return {
+    id: user.id, name: user.name, avatar: user.avatar || '👤', profile,
+    summary: {
+      level: xp.level, rank: xp.rank,
+      path: settings.path === 'trust' || settings.path === 'control' ? settings.path : null,
+    },
   };
 }
 
@@ -3445,8 +3465,25 @@ const server = http.createServer(async (req, res) => {
       const users = loadUsers();
       const user = users.find(x => x.id === uid);
       if (!user) return sendJson(res, 401, { error: 'user not found' });
-      if (body.name) user.name = String(body.name).slice(0, 32);
-      if (body.avatar) user.avatar = String(body.avatar).slice(0, 4);
+      const allowed = new Set(['name', 'avatar', 'profile']);
+      if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).some((key) => !allowed.has(key))) {
+        return sendJson(res, 400, { error: 'bad_profile_payload' });
+      }
+      if (Object.prototype.hasOwnProperty.call(body, 'name')) {
+        const name = String(body.name || '').trim();
+        if (!name || name.length > 32) return sendJson(res, 400, { error: 'bad_name' });
+        user.name = name;
+      }
+      if (body.avatar) user.avatar = String(body.avatar).slice(0, 32);
+      if (Object.prototype.hasOwnProperty.call(body, 'profile')) {
+        const checked = AccountProfileV1.validate(body.profile);
+        if (!checked.ok) return sendJson(res, 400, { error: checked.error });
+        const handle = checked.profile.handle;
+        if (handle && users.some((entry) => entry.id !== uid && AccountProfileV1.normalize(entry.profile).handle === handle)) {
+          return sendJson(res, 409, { error: 'handle_taken' });
+        }
+        user.profile = { ...checked.profile, updatedAt: new Date().toISOString() };
+      }
       saveUsers(users);
       return sendJson(res, 200, publicUser(user));
     }
@@ -4379,6 +4416,21 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { ok: true });
     }
     return sendJson(res, 404, { error: 'not found' });
+  }
+
+  // ---- Account profile: small shareable identity, never private planning data ----
+  const accountProfileMatch = u.match(/^\/api\/profile\/([^/?]+)(?:\?.*)?$/);
+  if (accountProfileMatch && req.method === 'GET') {
+    const viewerId = sessionUserId(req); if (!viewerId) return sendJson(res, 401, { error: 'not logged in' });
+    let key = ''; try { key = decodeURIComponent(accountProfileMatch[1]); } catch { return sendJson(res, 400, { error: 'bad_profile_key' }); }
+    const users = loadUsers();
+    const normalizedHandle = AccountProfileV1.handle(key);
+    const target = users.find((entry) => entry.id === key)
+      || (normalizedHandle ? users.find((entry) => AccountProfileV1.normalize(entry.profile).handle === normalizedHandle) : null);
+    if (!target) return sendJson(res, 404, { error: 'profile_not_found' });
+    const relation = accountProfileRelation(viewerId, target.id);
+    if (!AccountProfileV1.visibleTo(target.profile, relation)) return sendJson(res, 404, { error: 'profile_not_found' });
+    return sendJson(res, 200, accountProfilePublicView(target));
   }
 
   // ---- Social privacy, leaderboard and party ----

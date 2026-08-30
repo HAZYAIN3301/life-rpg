@@ -124,6 +124,253 @@ html.helper-open { overflow: hidden; }
   #helper-modal *, #ai-fab { transition-duration: 0ms !important; }
 }
 
+/* ---------- Account identity profile v209 ----------
+   A profile is a small, chosen identity surface. It deliberately does not
+   borrow the density of Settings or the progress dashboards. */
+.up-meta {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.up-meta:hover .up-name { color: var(--accent); }
+.up-meta:focus-visible,
+.pm-profile:focus-visible,
+.lb-profile:focus-visible,
+.account-profile-screen :is(a, button):focus-visible,
+.account-profile-editor :is(input, select, textarea, button):focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.account-profile-settings {
+  display: grid;
+  gap: var(--sp-4);
+  overflow: clip;
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--line-soft));
+  background:
+    radial-gradient(720px 300px at 8% -20%, color-mix(in srgb, var(--accent) 11%, transparent), transparent 64%),
+    var(--surface-1, var(--panel));
+}
+.account-profile-settings-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+.account-profile-settings-head h3 { margin: 2px 0 var(--sp-1); font-size: var(--type-title); line-height: var(--leading-display); }
+.account-profile-settings-head p:not(.settings-eyebrow) { max-inline-size: 68ch; margin: 0; color: var(--text-soft); line-height: var(--leading-prose); }
+.account-profile-settings .settings-eyebrow {
+  margin: 0;
+  color: var(--accent);
+  font-size: var(--type-meta);
+  font-weight: 900;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.account-profile-editor {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: clamp(18px, 3vw, 34px);
+  align-items: start;
+}
+.account-profile-preview { position: sticky; top: var(--sp-3); min-inline-size: 0; }
+.account-profile-fields { min-inline-size: 0; display: grid; gap: var(--sp-4); }
+.account-profile-essential-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
+.account-profile-fields > label,
+.account-profile-essential-grid > label {
+  min-inline-size: 0;
+  display: grid;
+  gap: var(--sp-1);
+  color: var(--text-soft);
+  font-size: var(--type-meta);
+  font-weight: 800;
+}
+.account-profile-fields :is(input, select, textarea) { inline-size: 100%; min-inline-size: 0; }
+.account-profile-fields textarea { resize: vertical; line-height: var(--leading-prose); }
+.account-profile-handle-field { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface-2, var(--panel2)); }
+.account-profile-handle-field:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent); }
+.account-profile-handle-field i { padding-inline-start: 14px; color: var(--text-soft); font-style: normal; font-weight: 900; }
+.account-profile-handle-field input { border: 0; background: transparent; box-shadow: none !important; }
+.account-profile-handle-field input[aria-invalid="true"] { color: var(--bad); }
+.account-profile-bio-field { position: relative; }
+.account-profile-bio-field small { justify-self: end; color: var(--muted); font-weight: 700; }
+
+.account-profile-choice,
+.account-profile-links-editor {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.account-profile-choice > legend,
+.account-profile-links-editor > legend { margin-block-end: var(--sp-2); color: var(--text-strong); font-size: var(--type-control); font-weight: 900; }
+.account-profile-choice-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-2); }
+.account-profile-choice-grid > label { position: relative; min-inline-size: 0; cursor: pointer; }
+.account-profile-choice-grid input,
+.account-profile-cover-choice input { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; pointer-events: none; }
+.account-profile-choice-grid > label > span {
+  min-block-size: 86px;
+  display: grid;
+  align-content: start;
+  gap: var(--sp-1);
+  padding: var(--sp-3);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-md);
+  background: var(--surface-2, var(--panel2));
+  transition: border-color 140ms var(--ease-out, ease-out), background-color 140ms var(--ease-out, ease-out), transform 140ms var(--ease-out, ease-out);
+}
+.account-profile-choice-grid > label > span b { color: var(--text-strong); }
+.account-profile-choice-grid > label > span small { color: var(--text-soft); line-height: var(--leading-prose); font-weight: 600; }
+.account-profile-choice-grid input:checked + span {
+  border-color: color-mix(in srgb, var(--accent) 72%, var(--line-soft));
+  background: color-mix(in srgb, var(--accent) 11%, var(--surface-2, var(--panel2)));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.account-profile-choice-grid input:focus-visible + span { outline: var(--focus-ring); outline-offset: 3px; }
+.account-profile-cover-choice > div { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sp-2); }
+.account-profile-cover-choice label { position: relative; min-inline-size: 0; display: grid; gap: var(--sp-1); cursor: pointer; }
+.account-profile-cover-choice label > span { block-size: 54px; border: 1px solid var(--line-soft); border-radius: var(--radius-md); transition: border-color 140ms var(--ease-out, ease-out), transform 140ms var(--ease-out, ease-out); }
+.account-profile-cover-choice label > b { color: var(--text-soft); font-size: var(--type-meta); }
+.account-profile-cover-choice label.cover-void > span,
+.account-profile-cover.cover-void { background: radial-gradient(circle at 72% 22%, rgba(121,101,224,.34), transparent 30%), linear-gradient(145deg, #0b1020, #15112b 62%, #090c14); }
+.account-profile-cover-choice label.cover-aurora > span,
+.account-profile-cover.cover-aurora { background: radial-gradient(circle at 20% 110%, rgba(82,240,210,.65), transparent 44%), radial-gradient(circle at 82% -10%, rgba(112,91,225,.72), transparent 50%), #0b1b26; }
+.account-profile-cover-choice label.cover-ember > span,
+.account-profile-cover.cover-ember { background: radial-gradient(circle at 82% 84%, rgba(255,137,62,.70), transparent 36%), linear-gradient(150deg, #161116, #3a1d1e 70%, #161116); }
+.account-profile-cover-choice label.cover-paper > span,
+.account-profile-cover.cover-paper { background: linear-gradient(135deg, rgba(120,78,42,.16) 1px, transparent 1px), linear-gradient(35deg, #d6c19a, #8d765f); background-size: 18px 18px, auto; }
+.account-profile-cover-choice input:checked + span { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 17%, transparent); transform: translateY(-1px); }
+.account-profile-cover-choice input:focus-visible + span { outline: var(--focus-ring); outline-offset: 3px; }
+
+.account-profile-links-editor > p { margin: calc(-1 * var(--sp-1)) 0 var(--sp-2); color: var(--text-soft); font-size: var(--type-meta); line-height: var(--leading-prose); }
+.account-profile-links-editor [data-profile-links] { display: grid; gap: var(--sp-2); margin-block-end: var(--sp-2); }
+.account-profile-link-row { min-inline-size: 0; display: grid; grid-template-columns: minmax(126px, 160px) minmax(0, 1fr) var(--touch-min); gap: var(--sp-2); align-items: center; }
+.account-profile-link-row label { min-inline-size: 0; }
+.account-profile-link-remove {
+  inline-size: var(--touch-min);
+  block-size: var(--touch-min);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-md);
+  color: var(--text-soft);
+  background: var(--surface-2, var(--panel2));
+}
+.account-profile-link-remove:hover { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 58%, var(--line-soft)); }
+.account-profile-save-status { min-block-size: 1.4em; margin: 0; color: var(--good); font-size: var(--type-meta); }
+.account-profile-save-status.is-error { color: var(--bad); }
+
+.account-profile-screen {
+  --profile-accent: var(--accent);
+  position: relative;
+  min-inline-size: 0;
+  overflow: clip;
+  border: 1px solid color-mix(in srgb, var(--profile-accent) 34%, var(--line-soft));
+  border-radius: clamp(18px, 3vw, 26px);
+  color: var(--text);
+  background: var(--surface-1, var(--panel));
+  box-shadow: 0 20px 50px rgba(0,0,0,.24);
+}
+.account-profile-cover { position: relative; block-size: 118px; overflow: hidden; }
+.account-profile-cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, color-mix(in srgb, var(--surface-1, var(--panel)) 58%, transparent)); }
+.account-profile-cover span { position: absolute; inline-size: 124px; block-size: 124px; inset: -50px auto auto -32px; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; }
+.account-profile-cover i { position: absolute; inline-size: 90px; block-size: 90px; inset: auto -28px -45px auto; border: 1px solid rgba(255,255,255,.13); border-radius: 50%; }
+.account-profile-identity { position: relative; z-index: 1; min-inline-size: 0; display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; align-items: end; gap: var(--sp-2); margin: -40px var(--sp-3) 0; }
+.account-profile-avatar { inline-size: 76px; block-size: 76px; display: grid; place-items: center; overflow: hidden; border: 3px solid var(--surface-1, var(--panel)); border-radius: 24px; background: var(--surface-3, var(--panel2)); box-shadow: 0 10px 30px rgba(0,0,0,.28); }
+.account-profile-origin-icon { inline-size: 100%; block-size: 100%; object-fit: contain; }
+.account-profile-identity h3 { min-inline-size: 0; margin: 0; overflow-wrap: anywhere; color: var(--text-strong); font-size: clamp(20px, 4vw, 28px); line-height: var(--leading-tight); }
+.account-profile-handle { margin: 2px 0 0; color: var(--text-soft); font-size: var(--type-meta); }
+.account-profile-layout-label { align-self: center; padding: 5px 9px; border: 1px solid var(--line-soft); border-radius: var(--radius-pill); color: var(--text-soft); background: color-mix(in srgb, var(--surface-2) 84%, transparent); font-size: var(--type-floor); font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
+.account-profile-bio { margin: var(--sp-3); color: var(--text); line-height: var(--leading-prose); overflow-wrap: anywhere; white-space: pre-line; }
+.account-profile-bio.is-empty { color: var(--muted); font-style: italic; }
+.account-profile-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0 var(--sp-3) var(--sp-3); border-block: 1px solid var(--line-soft); }
+.account-profile-stats > span { min-inline-size: 0; display: grid; align-content: center; gap: 2px; padding: var(--sp-3) var(--sp-1); text-align: center; }
+.account-profile-stats > span + span { border-inline-start: 1px solid var(--line-soft); }
+.account-profile-stats b { overflow-wrap: anywhere; color: var(--text-strong); font-size: var(--type-control); line-height: var(--leading-tight); }
+.account-profile-stats small { color: var(--muted); font-size: var(--type-floor); text-transform: uppercase; }
+.account-profile-links { display: flex; flex-wrap: wrap; gap: var(--sp-2); padding: 0 var(--sp-3) var(--sp-3); }
+.account-profile-link { min-block-size: var(--touch-min); display: inline-flex; align-items: center; gap: 7px; padding: 8px 11px; border: 1px solid var(--line-soft); border-radius: var(--radius-pill); color: var(--text); background: var(--surface-2, var(--panel2)); font-size: var(--type-meta); font-weight: 800; text-decoration: none; }
+a.account-profile-link:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+.account-profile-link > span { min-inline-size: 20px; color: var(--accent); text-align: center; font-weight: 950; }
+.account-profile-links-empty { margin: 0 var(--sp-3) var(--sp-3); color: var(--muted); font-size: var(--type-meta); }
+.account-profile-screen.layout-character .account-profile-identity { grid-template-columns: 94px minmax(0, 1fr); align-items: center; margin-top: -52px; text-align: start; }
+.account-profile-screen.layout-character .account-profile-avatar { inline-size: 94px; block-size: 94px; border-radius: 30px; }
+.account-profile-screen.layout-character .account-profile-layout-label { display: none; }
+.account-profile-screen.layout-creator { display: flex; flex-direction: column; }
+.account-profile-screen.layout-creator .account-profile-links { order: 4; }
+.account-profile-screen.layout-creator .account-profile-stats { order: 5; margin-block-end: 0; border-block-end: 0; }
+.account-profile-screen.layout-creator .account-profile-links-empty { order: 4; }
+
+.account-profile-modal { padding: var(--sp-3); }
+.account-profile-dialog { position: relative; inline-size: min(560px, 100%); max-block-size: calc(100dvh - 24px); overflow: auto; padding: var(--sp-3); border: 1px solid var(--line-soft); border-radius: var(--radius-lg); background: var(--surface-0, #090d17); box-shadow: var(--shadow-modal); }
+.account-profile-dialog > .modal-x { z-index: 4; inset: calc(var(--sp-3) + 4px) calc(var(--sp-3) + 4px) auto auto; color: #fff; background: rgba(5,8,16,.62); backdrop-filter: blur(8px); }
+.account-profile-dialog-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--sp-2); margin-block-start: var(--sp-3); }
+
+/* The social list itself remains terse; a person's identity opens in one
+   focused profile instead of pushing extra labels into every row. */
+.pm-profile,
+.lb-profile { min-inline-size: 0; margin: 0; padding: 0; border: 0; color: inherit; background: transparent; text-align: start; cursor: pointer; }
+.pm-profile { grid-column: 1 / 3; display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; gap: 10px; }
+.pm-profile:hover .pm-name,
+.lb-profile:hover .lb-name { color: var(--accent); }
+.lb-profile { grid-column: 2 / 4; display: grid; grid-template-columns: 34px minmax(0, 1fr); align-items: center; gap: 12px; }
+.lb-profile + .lb-lvl { grid-column: 4; }
+.lb-profile ~ .lb-xp { grid-column: 5; }
+
+@media (max-width: 900px) {
+  .account-profile-editor { grid-template-columns: minmax(0, 1fr); }
+  .account-profile-preview { position: static; inline-size: min(520px, 100%); }
+}
+@media (max-width: 700px) {
+  .account-profile-settings-head { display: grid; }
+  .account-profile-settings-head > .btn { inline-size: 100%; }
+  .account-profile-essential-grid,
+  .account-profile-choice-grid { grid-template-columns: minmax(0, 1fr); }
+  .account-profile-choice-grid > label > span { min-block-size: 68px; }
+  .account-profile-cover-choice > div { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .account-profile-link-row { grid-template-columns: minmax(0, 1fr) var(--touch-min); }
+  .account-profile-link-row > label:first-child { grid-column: 1 / -1; }
+  .account-profile-link-row > label:nth-child(2) { grid-column: 1; }
+  .account-profile-link-row > button { grid-column: 2; }
+  .account-profile-dialog { padding: var(--sp-2); }
+  .account-profile-dialog > .modal-x { inset: calc(var(--sp-2) + 4px) calc(var(--sp-2) + 4px) auto auto; }
+  .account-profile-identity { grid-template-columns: 68px minmax(0, 1fr); margin-inline: var(--sp-2); }
+  .account-profile-avatar { inline-size: 68px; block-size: 68px; border-radius: 21px; }
+  .account-profile-layout-label { display: none; }
+  .account-profile-stats { margin-inline: var(--sp-2); }
+  .account-profile-links { padding-inline: var(--sp-2); }
+  .account-profile-bio { margin-inline: var(--sp-2); }
+}
+@media (max-width: 600px) {
+  .leaderboard-card .lb-row { grid-template-columns: 28px minmax(0, 1fr) auto; }
+  .leaderboard-card .lb-profile { grid-column: 2; grid-template-columns: 34px minmax(0, 1fr); gap: var(--sp-1); }
+  .leaderboard-card .lb-profile + .lb-lvl { display: none; }
+  .leaderboard-card .lb-profile ~ .lb-xp { grid-column: 3; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .account-profile-choice-grid > label:hover > span,
+  .account-profile-cover-choice label:hover > span { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 50%, var(--line-soft)); }
+}
+@media (pointer: coarse) {
+  .account-profile-settings :is(button, input, select, textarea, label),
+  .account-profile-dialog :is(button, a) { min-block-size: var(--touch-min); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .account-profile-settings *,
+  .account-profile-settings *::before,
+  .account-profile-settings *::after,
+  .account-profile-modal *,
+  .account-profile-modal *::before,
+  .account-profile-modal *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
 /* ============================================================
    Goals hierarchy v127 — one outline, one progress source
    ============================================================ */
@@ -21657,4 +21904,37 @@ details.pet-summary > :not(summary) {
     transform: none !important;
     filter: none !important;
   }
+}
+
+/* v208 final cascade: legacy social-row breakpoints appear later than the
+   profile component. Keep the new profile trigger as one semantic cell. */
+.party-members-card .pm-profile {
+  grid-column: 1 / 3;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+.leaderboard-card .lb-profile {
+  grid-column: 2 / 4;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+.leaderboard-card .lb-profile + .lb-lvl { grid-column: 4; }
+.leaderboard-card .lb-profile ~ .lb-xp { grid-column: 5; }
+@media (max-width: 820px) {
+  .party-members-card .pm-row { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .party-members-card .pm-profile { grid-column: 1; }
+  .leaderboard-card .lb-row { grid-template-columns: 30px minmax(0, 1fr) auto auto; }
+  .leaderboard-card .lb-profile { grid-column: 2; }
+  .leaderboard-card .lb-profile + .lb-lvl { grid-column: 3; }
+  .leaderboard-card .lb-profile ~ .lb-xp { grid-column: 4; }
+}
+@media (max-width: 600px) {
+  .leaderboard-card .lb-row { grid-template-columns: 28px minmax(0, 1fr) auto; }
+  .leaderboard-card .lb-profile { grid-column: 2; gap: var(--sp-1); }
+  .leaderboard-card .lb-profile + .lb-lvl { display: none; }
+  .leaderboard-card .lb-profile ~ .lb-xp { grid-column: 3; }
 }
