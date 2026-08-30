@@ -151,11 +151,11 @@ test('new disclosures and hierarchy changes use semantic sound and finite motion
   assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.board-wildcard-detail,[\s\S]*?\.cat-chip-confirm/);
 });
 
-test('v207 Inspiration shell advances coherently without repinning unchanged questionnaire code', () => {
-  assert.match(SW, /const CACHE = 'satoru-v207'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v207'/);
-  assert.match(INDEX, /return-shelf-ui-v1\.js\?v=20260830-inspiration-persistence-v207-1/);
-  assert.match(INDEX, /styles\.css\?v=20260830-inspiration-persistence-v207-1/);
+test('v208 Economy Art shell advances coherently without repinning unchanged questionnaire code', () => {
+  assert.match(SW, /const CACHE = 'satoru-v208'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v208'/);
+  assert.match(INDEX, /return-shelf-ui-v1\.js\?v=20260830-economy-art-v208-1/);
+  assert.match(INDEX, /styles\.css\?v=20260830-economy-art-v208-1/);
   assert.match(INDEX, /questionnaire-v1\.js\?v=20260830-browser-companion-v206-1/);
-  assert.match(INDEX, /app\.js\?v=20260830-inspiration-persistence-v207-1/);
+  assert.match(INDEX, /app\.js\?v=20260830-economy-art-v208-1/);
 });

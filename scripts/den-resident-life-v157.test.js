@@ -64,6 +64,6 @@ test('runtime pins the new director and micro-life bytes', () => {
     assert.match(index, new RegExp(`${script}\\.js\\?v=20260815-den-life-v158-1`));
   }
   assert.match(index, /traveller-motion-v3\.js\?v=20260819-traveller-f2-runtime-v167-1/);
-  assert.match(index, /app\.js\?v=20260830-inspiration-persistence-v207-1/);
-  assert.match(index, /styles\.css\?v=20260830-inspiration-persistence-v207-1/);
+  assert.match(index, /app\.js\?v=20260830-economy-art-v208-1/);
+  assert.match(index, /styles\.css\?v=20260830-economy-art-v208-1/);
 });

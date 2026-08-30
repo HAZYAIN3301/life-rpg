@@ -609,7 +609,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.first_quest": {
     "id": "achievement.first_quest",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/first_quest.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/first_quest.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -619,7 +619,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.quests_50": {
     "id": "achievement.quests_50",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/quests_50.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/quests_50.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -629,7 +629,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.first_habit": {
     "id": "achievement.first_habit",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/first_habit.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/first_habit.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -639,7 +639,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.streak_7": {
     "id": "achievement.streak_7",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/streak_7.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/streak_7.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -649,7 +649,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.streak_30": {
     "id": "achievement.streak_30",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/streak_30.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/streak_30.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -659,7 +659,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.level_5": {
     "id": "achievement.level_5",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/level_5.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/level_5.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -669,7 +669,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.level_10": {
     "id": "achievement.level_10",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/level_10.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/level_10.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -679,7 +679,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.xp_1000": {
     "id": "achievement.xp_1000",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/xp_1000.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/xp_1000.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -689,7 +689,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.first_goal": {
     "id": "achievement.first_goal",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/first_goal.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/first_goal.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -699,7 +699,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.first_reward": {
     "id": "achievement.first_reward",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/first_reward.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/first_reward.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -709,7 +709,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.gold_500": {
     "id": "achievement.gold_500",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/gold_500.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/gold_500.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -719,7 +719,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.skills_all3": {
     "id": "achievement.skills_all3",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/skills_all3.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/skills_all3.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -729,7 +729,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.reporter_3": {
     "id": "achievement.reporter_3",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/reporter_3.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/reporter_3.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -739,7 +739,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.cofounder_10": {
     "id": "achievement.cofounder_10",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/cofounder_10.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/cofounder_10.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -749,7 +749,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.early_bird": {
     "id": "achievement.early_bird",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/early_bird.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/early_bird.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -759,7 +759,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.night_owl": {
     "id": "achievement.night_owl",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/night_owl.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/night_owl.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -769,7 +769,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.weekend_warrior": {
     "id": "achievement.weekend_warrior",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/weekend_warrior.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/weekend_warrior.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -779,7 +779,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.new_year": {
     "id": "achievement.new_year",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/new_year.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/new_year.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -789,7 +789,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.full_spectrum": {
     "id": "achievement.full_spectrum",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/full_spectrum.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/full_spectrum.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -799,7 +799,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.marathon_day": {
     "id": "achievement.marathon_day",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/marathon_day.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/marathon_day.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -809,7 +809,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.balanced": {
     "id": "achievement.balanced",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/balanced.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/balanced.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -819,7 +819,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.focus_10h": {
     "id": "achievement.focus_10h",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/focus_10h.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/focus_10h.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -829,7 +829,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.capstone_first": {
     "id": "achievement.capstone_first",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/capstone_first.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/capstone_first.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -839,7 +839,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.tree_full": {
     "id": "achievement.tree_full",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/tree_full.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/tree_full.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -849,7 +849,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.path_chosen": {
     "id": "achievement.path_chosen",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/path_chosen.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/path_chosen.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -859,7 +859,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.wear_first": {
     "id": "achievement.wear_first",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/wear_first.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/wear_first.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -869,7 +869,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.gear_full": {
     "id": "achievement.gear_full",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/gear_full.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/gear_full.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -879,7 +879,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.goals_10": {
     "id": "achievement.goals_10",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/goals_10.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/goals_10.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -889,7 +889,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.habit_100": {
     "id": "achievement.habit_100",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/habit_100.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/habit_100.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -899,7 +899,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.sphere_lvl10": {
     "id": "achievement.sphere_lvl10",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/sphere_lvl10.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/sphere_lvl10.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -909,7 +909,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.allspheres_5": {
     "id": "achievement.allspheres_5",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/allspheres_5.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/allspheres_5.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -919,7 +919,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.quests_100": {
     "id": "achievement.quests_100",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/quests_100.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/quests_100.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -929,7 +929,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.quests_250": {
     "id": "achievement.quests_250",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/quests_250.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/quests_250.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -939,7 +939,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.xp_5000": {
     "id": "achievement.xp_5000",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/xp_5000.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/xp_5000.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -949,7 +949,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.xp_25000": {
     "id": "achievement.xp_25000",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/xp_25000.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/xp_25000.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -959,7 +959,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.streak_100": {
     "id": "achievement.streak_100",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/streak_100.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/streak_100.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -969,7 +969,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.level_20": {
     "id": "achievement.level_20",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/level_20.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/level_20.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -979,7 +979,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.level_30": {
     "id": "achievement.level_30",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/level_30.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/level_30.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -989,7 +989,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.skill_master": {
     "id": "achievement.skill_master",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/skill_master.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/skill_master.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -999,7 +999,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.skills_all5": {
     "id": "achievement.skills_all5",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/skills_all5.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/skills_all5.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -1009,7 +1009,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.mission_set": {
     "id": "achievement.mission_set",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/mission_set.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/mission_set.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -1019,7 +1019,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.balanced_90": {
     "id": "achievement.balanced_90",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/balanced_90.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/balanced_90.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -1029,7 +1029,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.clean_7": {
     "id": "achievement.clean_7",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/clean_7.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/clean_7.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -1039,7 +1039,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.clean_30": {
     "id": "achievement.clean_30",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/clean_30.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/clean_30.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -1049,7 +1049,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.first_note": {
     "id": "achievement.first_note",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/first_note.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/first_note.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -1059,7 +1059,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.collector_5": {
     "id": "achievement.collector_5",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/collector_5.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/collector_5.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -1069,7 +1069,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.legendary_drop": {
     "id": "achievement.legendary_drop",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/legendary_drop.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/legendary_drop.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -1079,7 +1079,7 @@ window.SatoruIconRegistry = Object.freeze({
   "achievement.avatar_custom": {
     "id": "achievement.avatar_custom",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/achievements/avatar_custom.svg",
+    "publicPath": "/art/icons/content-raster-v208/achievements/avatar_custom.png",
     "fallback": null,
     "motion": [
       "glint",
@@ -1089,7 +1089,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.coffee": {
     "id": "reward.coffee",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/coffee.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/coffee.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1099,7 +1099,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.chocolate": {
     "id": "reward.chocolate",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/chocolate.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/chocolate.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1109,7 +1109,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.icecream": {
     "id": "reward.icecream",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/icecream.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/icecream.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1119,7 +1119,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.pizza": {
     "id": "reward.pizza",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/pizza.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/pizza.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1129,7 +1129,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.delivery": {
     "id": "reward.delivery",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/delivery.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/delivery.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1139,7 +1139,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.boba": {
     "id": "reward.boba",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/boba.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/boba.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1149,7 +1149,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.cake": {
     "id": "reward.cake",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/cake.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/cake.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1159,7 +1159,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.breakfast": {
     "id": "reward.breakfast",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/breakfast.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/breakfast.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1169,7 +1169,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.game": {
     "id": "reward.game",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/game.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/game.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1179,7 +1179,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.episode": {
     "id": "reward.episode",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/episode.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/episode.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1189,7 +1189,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.movie": {
     "id": "reward.movie",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/movie.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/movie.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1199,7 +1199,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.boardgames": {
     "id": "reward.boardgames",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/boardgames.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/boardgames.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1209,7 +1209,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.hobby": {
     "id": "reward.hobby",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/hobby.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/hobby.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1219,7 +1219,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.drawing": {
     "id": "reward.drawing",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/drawing.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/drawing.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1229,7 +1229,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.bath": {
     "id": "reward.bath",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/bath.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/bath.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1239,7 +1239,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.sleep": {
     "id": "reward.sleep",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/sleep.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/sleep.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1249,7 +1249,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.music": {
     "id": "reward.music",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/music.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/music.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1259,7 +1259,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.spa": {
     "id": "reward.spa",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/spa.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/spa.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1269,7 +1269,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.walk": {
     "id": "reward.walk",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/walk.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/walk.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1279,7 +1279,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.meditation": {
     "id": "reward.meditation",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/meditation.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/meditation.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1289,7 +1289,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.banya": {
     "id": "reward.banya",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/banya.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/banya.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1299,7 +1299,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.book": {
     "id": "reward.book",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/book.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/book.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1309,7 +1309,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.small-purchase": {
     "id": "reward.small-purchase",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/small-purchase.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/small-purchase.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1319,7 +1319,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.clothes": {
     "id": "reward.clothes",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/clothes.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/clothes.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1329,7 +1329,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.gadget": {
     "id": "reward.gadget",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/gadget.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/gadget.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1339,7 +1339,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.decor": {
     "id": "reward.decor",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/decor.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/decor.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1349,7 +1349,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.weekend-trip": {
     "id": "reward.weekend-trip",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/weekend-trip.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/weekend-trip.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1359,7 +1359,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.event": {
     "id": "reward.event",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/event.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/event.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1369,7 +1369,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.concert": {
     "id": "reward.concert",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/concert.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/concert.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1379,7 +1379,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.restaurant": {
     "id": "reward.restaurant",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/restaurant.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/restaurant.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1389,7 +1389,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.course": {
     "id": "reward.course",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/course.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/course.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1399,7 +1399,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.wishlist": {
     "id": "reward.wishlist",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/wishlist.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/wishlist.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1409,7 +1409,7 @@ window.SatoruIconRegistry = Object.freeze({
   "reward.vacation": {
     "id": "reward.vacation",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/rewards/vacation.svg",
+    "publicPath": "/art/icons/content-raster-v208/rewards/vacation.png",
     "fallback": null,
     "motion": [
       "float",
@@ -1419,7 +1419,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.w1": {
     "id": "gear.w1",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/w1.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/w1.png",
     "fallback": null,
     "motion": [
       "equip-pop",
@@ -1429,7 +1429,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.w2": {
     "id": "gear.w2",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/w2.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/w2.png",
     "fallback": null,
     "motion": [
       "equip-pop",
@@ -1439,7 +1439,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.w3": {
     "id": "gear.w3",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/w3.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/w3.png",
     "fallback": null,
     "motion": [
       "equip-pop",
@@ -1449,7 +1449,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.a1": {
     "id": "gear.a1",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/a1.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/a1.png",
     "fallback": null,
     "motion": [
       "equip-pop",
@@ -1459,7 +1459,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.a2": {
     "id": "gear.a2",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/a2.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/a2.png",
     "fallback": null,
     "motion": [
       "equip-pop",
@@ -1469,7 +1469,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.a3": {
     "id": "gear.a3",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/a3.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/a3.png",
     "fallback": null,
     "motion": [
       "equip-pop",
@@ -1479,7 +1479,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.m1": {
     "id": "gear.m1",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/m1.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/m1.png",
     "fallback": null,
     "motion": [
       "equip-pop",
@@ -1489,7 +1489,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.m2": {
     "id": "gear.m2",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/m2.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/m2.png",
     "fallback": null,
     "motion": [
       "equip-pop",
@@ -1499,7 +1499,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.m3": {
     "id": "gear.m3",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/m3.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/m3.png",
     "fallback": null,
     "motion": [
       "equip-pop",
@@ -1509,7 +1509,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.w2b": {
     "id": "gear.w2b",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/w2b.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/w2b.png",
     "fallback": null,
     "motion": [
       "equip-pop",
@@ -1519,7 +1519,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.a2b": {
     "id": "gear.a2b",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/a2b.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/a2b.png",
     "fallback": null,
     "motion": [
       "equip-pop",
@@ -1529,7 +1529,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.m2b": {
     "id": "gear.m2b",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/m2b.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/m2b.png",
     "fallback": null,
     "motion": [
       "equip-pop",
@@ -1539,7 +1539,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.w4": {
     "id": "gear.w4",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/w4.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/w4.png",
     "fallback": null,
     "motion": [
       "equip-pop",
@@ -1549,7 +1549,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.a4": {
     "id": "gear.a4",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/a4.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/a4.png",
     "fallback": null,
     "motion": [
       "equip-pop",
@@ -1559,7 +1559,7 @@ window.SatoruIconRegistry = Object.freeze({
   "gear.m4": {
     "id": "gear.m4",
     "kind": "game-emblem",
-    "publicPath": "/art/icons/content/gear/m4.svg",
+    "publicPath": "/art/icons/content-raster-v208/gear/m4.png",
     "fallback": null,
     "motion": [
       "equip-pop",
