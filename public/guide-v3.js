@@ -222,7 +222,7 @@
     registryEntry({ id: 'hero', version: 2, chapter: 'hero', prerequisites: [FIRST_CHAPTER], copyKey: 'guide.hero', target: 'character', action: 'open-hero', completion: 'hero-seen', cooldown: 86400000 }),
     registryEntry({ id: 'den', version: 2, chapter: 'den', prerequisites: ['hero'], copyKey: 'guide.den', target: 'den', action: 'open-den', completion: 'den-seen', cooldown: 86400000 }),
     registryEntry({ id: 'pets', version: 2, chapter: 'pets', prerequisites: ['den'], copyKey: 'guide.pets', target: 'pets', action: 'open-pets', completion: 'pets-seen', cooldown: 86400000 }),
-    registryEntry({ id: 'tree', version: 2, chapter: 'tree', prerequisites: ['hero'], copyKey: 'guide.tree', target: 'tree', action: 'open-tree-with-point', completion: 'tree-seen', cooldown: 86400000 }),
+    registryEntry({ id: 'tree', version: 3, chapter: 'tree', prerequisites: ['hero'], copyKey: 'guide.tree', target: 'tree', action: 'inspect-real-path', completion: 'tree-seen', cooldown: 86400000 }),
     registryEntry({ id: 'stats', version: 2, chapter: 'stats', prerequisites: ['hero'], copyKey: 'guide.stats', target: 'stats', action: 'open-stats', completion: 'stats-seen', cooldown: 86400000 }),
     registryEntry({ id: 'tribe', chapter: 'tribe', prerequisites: ['hero'], copyKey: 'guide.tribe', target: 'party', action: 'review-social-consent', completion: 'social-choice-made', cooldown: 86400000 }),
   ]);
@@ -256,7 +256,7 @@
       case 'hero': return Number(c.level) >= 3;
       case 'den': return Number(c.level) >= 3 && !!c.newSessionAfterHero;
       case 'pets': return Number(c.level) >= 3 && !!c.meaningfulSphereData;
-      case 'tree': return Number(c.level) >= 3 && Number(c.treePoints) > 0;
+      case 'tree': return Number(c.level) >= 3 && !!c.treeNodeId;
       case 'stats': return Number(c.level) >= 3 && Number(c.dataDays) >= 7;
       case 'tribe': return Number(c.level) >= 3 && !!c.socialIntroAllowed;
       default: return false;

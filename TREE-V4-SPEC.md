@@ -1,4 +1,4 @@
-# Satoru Tree v4 — Real Path / Practices
+# Satoru Tree v4 — Real Path / Game Bonuses
 
 Дата: 2026-08-30
 
@@ -7,7 +7,7 @@
 
 ## Outcome
 
-Tree v4 отвечает на один вопрос без подмены терминов: **что человек уже умеет в реальности и какой проверяемый шаг идёт следующим?** Внутренние бонусы Satoru остаются полезной игрой, но отделяются в слой «Практики».
+Tree v4 отвечает на один вопрос без подмены терминов: **что человек уже умеет в реальности и какой проверяемый шаг идёт следующим?** Внутренние бонусы Satoru остаются полезной игрой, но отделяются в слой «Игровые бонусы».
 
 ## Information architecture
 
@@ -20,7 +20,7 @@ Tree v4 отвечает на один вопрос без подмены тер
 - `Дальше по маршруту`: закрытый disclosure с оставшимися вехами; без красного, дедлайнов и CTA на каждой строке.
 - `Личная карта`: AI помогает уточнить именно capability path.
 
-### Tab 2 — Практики
+### Tab 2 — Игровые бонусы
 
 - Существующий coordinate map игровых perk-узлов.
 - Вверху прямое пояснение: «Бонусы работают внутри Satoru и не подтверждают реальное мастерство».
@@ -94,6 +94,7 @@ Provider compatibility: client принимает legacy `desc` как fallback 
 - Practice layer explicit non-mastery language.
 - Claim is durable before celebration and rolls back on save failure.
 - AI schema + legacy fallback.
-- Guide v3 switches to Practices when it teaches perk spend; Personal Map switches to Path.
+- Guide v3 открывает Path, находит ближайшую доступную capability и объясняет семантическую границу до знакомства с perk economy. Ради прохождения гайда capability подтверждать нельзя.
+- Реальное безопасное действие Guide — открыть точную подсвеченную сферу; receipt переносит spotlight на её ближайшую веху. Game Bonuses остаются отдельным самостоятельным слоем.
 - Full focused tests + syntax + local DOM/browser matrix.
 - Cache/index pins and service worker bumped together.

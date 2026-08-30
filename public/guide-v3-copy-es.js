@@ -23,7 +23,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuideV3CopyEs() {
   'use strict';
 
-  const VERSION = '0.4.0';
+  const VERSION = '0.5.0';
   const LOCALE = 'es';
   const STATUS = 'translated';
 
@@ -57,7 +57,7 @@
     "chapter.hero.title": "Héroe",
     "chapter.den.title": "Guarida",
     "chapter.pets.title": "Mascotas",
-    "chapter.tree.title": "Árbol de habilidades",
+    "chapter.tree.title": "Mapa de progreso",
     "chapter.stats.title": "Progreso",
     "chapter.tribe.title": "Tribu",
 
@@ -163,8 +163,8 @@
     "context.pets.prompt": "Cada mascota está vinculada a un área principal. Las acciones completadas la alimentan y tu ritmo reciente cambia su estado. Sirve para notar desequilibrios, no es una nota ni una deuda.",
     "context.pets.complete": "La pista de una mascota muestra qué cuenta para su área. No hace falta arreglarlo todo de golpe.",
 
-    "context.tree.prompt": "Tienes un punto de habilidad. Puede desbloquear un nodo disponible con una ventaja indicada. Mira primero: seleccionar un nodo no gasta el punto.",
-    "context.tree.complete": "Ahora ves qué aporta el nodo y cuánto cuesta. El punto se gasta solo tras una confirmación aparte para desbloquearlo.",
+    "context.tree.prompt": "Este mapa tiene dos capas separadas. «Camino» registra resultados reales: el hito más cercano, su criterio y el siguiente paso. La capa «Bonificaciones de juego» solo cambia aspectos de Satoru; no demuestra una habilidad. Abre el área destacada y mira primero su Camino.",
+    "context.tree.complete": "Este es tu hito real más cercano. El criterio indica qué cuenta como resultado. Si el siguiente paso ya está definido, puedes añadirlo al plan; si no, acláralo primero con Sombra. Registra el hito solo cuando el resultado ya exista. Las bonificaciones de juego están aparte y nunca sustituyen la confirmación.",
 
     "context.stats.prompt": "Siete días activos bastan para ver un ritmo sin adivinar. Mira un gráfico.",
     "context.stats.complete": "El progreso muestra una observación, no un juicio sobre ti. La decisión sigue siendo tuya.",

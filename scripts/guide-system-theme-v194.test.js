@@ -25,7 +25,7 @@ function completedFirst() {
   return state;
 }
 
-test('v195 System Theme is manual-only but available from the Guide library', () => {
+test('v205 System Theme is manual-only but available from the Guide library', () => {
   const entry = Guide.REGISTRY.find((item) => item.chapter === CHAPTER);
   assert.ok(entry);
   assert.equal(entry.version, 2);
@@ -74,8 +74,8 @@ test('presenter sends System Theme to real Settings controls in all three steps'
   assert.equal(make('complete').transcript, Ru.get('context.system_theme.complete'));
 });
 
-test('all five released locale manifests approve System Theme at the v195 versions', () => {
-  const expected = { ru: '1.3.0', en: '0.4.0', de: '0.4.0', uk: '0.4.0', es: '0.4.0' };
+test('all five released locale manifests approve System Theme at the v205 versions', () => {
+  const expected = { ru: '1.4.0', en: '0.5.0', de: '0.5.0', uk: '0.5.0', es: '0.5.0' };
   for (const [locale, version] of Object.entries(expected)) {
     const copy = require(`../public/guide-v3-copy-${locale}.js`);
     assert.equal(copy.VERSION, version);
@@ -100,12 +100,12 @@ test('theme choice is awaited, follows the device, and advances Guide only insid
     'the real System Theme control keeps the product touch-target floor');
 });
 
-test('v195 cache pins the updated Guide and application assets together', () => {
-  assert.match(SW, /const CACHE = 'satoru-v204'/);
+test('v205 cache pins the updated Guide and application assets together', () => {
+  assert.match(SW, /const CACHE = 'satoru-v205'/);
   for (const file of ['guide-v3.js', 'guide-presenter-v1.js', 'guide-v3-copy-ru.js', 'guide-v3-copy-en.js', 'guide-v3-copy-de.js', 'guide-v3-copy-uk.js', 'guide-v3-copy-es.js']) {
-    assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=[^"']*v195`));
+    assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=[^"']*v205`));
   }
   for (const file of ['app.js', 'styles.css']) {
-    assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=[^"']*v204`));
+    assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=[^"']*v205`));
   }
 });

@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuidePresenterV1() {
   'use strict';
 
-  const VERSION = '1.3.0';
+  const VERSION = '1.4.0';
   const FIRST_CHAPTER = 'first-journey';
   const HABITS_CHAPTER = 'habits';
   const FIRST_STEPS = Object.freeze([
@@ -62,7 +62,7 @@
     hero: Object.freeze({ middle: ['context.hero.prompt'], targets: ['hero-nav', 'hero-overview', 'hero-overview'] }),
     den: Object.freeze({ middle: ['context.den.prompt'], targets: ['hero-nav', 'den-overview', 'den-overview'] }),
     pets: Object.freeze({ middle: ['context.pets.prompt'], targets: ['hero-nav', 'pet-sphere', 'pet-sphere'] }),
-    tree: Object.freeze({ middle: ['context.tree.prompt'], targets: ['hero-nav', 'tree-node', 'tree-node'] }),
+    tree: Object.freeze({ middle: ['context.tree.prompt'], targets: ['hero-nav', 'tree-skill', 'tree-v4-next'] }),
     stats: Object.freeze({ middle: ['context.stats.prompt'], targets: ['hero-nav', 'stats-overview', 'stats-overview'] }),
     tribe: Object.freeze({ middle: ['context.tribe.prompt'], targets: ['tribe-nav', 'tribe-privacy', 'tribe-privacy'] }),
   });

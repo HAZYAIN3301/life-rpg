@@ -24,7 +24,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuideV3CopyEn() {
   'use strict';
 
-  const VERSION = '0.4.0';
+  const VERSION = '0.5.0';
   const LOCALE = 'en';
   const STATUS = 'translated';
 
@@ -58,7 +58,7 @@
     "chapter.hero.title": "Hero",
     "chapter.den.title": "Den",
     "chapter.pets.title": "Pets",
-    "chapter.tree.title": "Skill Tree",
+    "chapter.tree.title": "Progress Map",
     "chapter.stats.title": "Progress",
     "chapter.tribe.title": "Tribe",
 
@@ -164,8 +164,8 @@
     "context.pets.prompt": "Each pet is tied to a main sphere. Completed actions feed it, and your recent rhythm changes its state. It is a way to notice imbalance, not a score or a debt.",
     "context.pets.complete": "A pet's hint shows what counts for its sphere. You do not have to fix everything at once.",
 
-    "context.tree.prompt": "You have a skill point. It can unlock an available node with a stated perk. Look first: selecting a node spends nothing.",
-    "context.tree.complete": "Now you can see what the node gives and what it costs. The point is spent only after a separate unlock confirmation.",
+    "context.tree.prompt": "This map has two separate layers. Path records real results: the nearest milestone, its criterion, and the next action. Game Bonuses only change Satoru; they do not prove a skill. Open the highlighted sphere and look at its Path first.",
+    "context.tree.complete": "This is your nearest real milestone. The criterion says what counts as the result. If a next action is already set, you can add it to your plan; otherwise, define it with Shadow first. Record the milestone only when the result already exists. Game Bonuses stay separate and never replace confirmation.",
 
     "context.stats.prompt": "Seven active days are enough to see a rhythm without guessing. Look at one chart.",
     "context.stats.complete": "Progress shows an observation, not a judgment of you. The decision is still yours.",

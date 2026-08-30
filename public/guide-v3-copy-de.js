@@ -29,7 +29,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildGuideV3CopyDe() {
   'use strict';
 
-  const VERSION = '0.4.0';
+  const VERSION = '0.5.0';
   const LOCALE = 'de';
   const STATUS = 'translated';
 
@@ -63,7 +63,7 @@
     "chapter.hero.title": "Held",
     "chapter.den.title": "Lager",
     "chapter.pets.title": "Haustiere",
-    "chapter.tree.title": "Skillbaum",
+    "chapter.tree.title": "Entwicklungskarte",
     "chapter.stats.title": "Fortschritt",
     "chapter.tribe.title": "Stamm",
 
@@ -169,8 +169,8 @@
     "context.pets.prompt": "Jedes Haustier gehört zu einem Hauptbereich. Erledigte Handlungen füttern es, und dein jüngster Rhythmus verändert seinen Zustand. Das hilft, ein Ungleichgewicht zu sehen — es ist keine Wertung und keine Schuld.",
     "context.pets.complete": "Der Hinweis eines Haustiers zeigt, was für seinen Bereich zählt. Du musst nicht alles auf einmal in Ordnung bringen.",
 
-    "context.tree.prompt": "Du hast einen Skillpunkt. Er kann einen verfügbaren Knoten mit klar benanntem Bonus freischalten. Schau erst hin: Die Auswahl kostet noch nichts.",
-    "context.tree.complete": "Jetzt siehst du Nutzen und Kosten des Knotens. Der Punkt wird erst nach einer eigenen Freischalt-Bestätigung ausgegeben.",
+    "context.tree.prompt": "Diese Karte hat zwei getrennte Ebenen. Der „Weg“ hält echte Ergebnisse fest: den nächsten Meilenstein, sein Kriterium und den nächsten Schritt. „Spielboni“ verändern nur Satoru; sie beweisen keine Fähigkeit. Öffne den markierten Bereich und schau zuerst auf seinen Weg.",
+    "context.tree.complete": "Vor dir liegt der nächste echte Meilenstein. Das Kriterium sagt, was als Ergebnis zählt. Ist der nächste Schritt schon festgelegt, kannst du ihn in deinen Plan übernehmen; sonst klärst du ihn zuerst mit Schatten. Bestätige den Meilenstein erst, wenn das Ergebnis wirklich da ist. Spielboni bleiben getrennt und ersetzen keine Bestätigung.",
 
     "context.stats.prompt": "Sieben aktive Tage reichen, um einen Rhythmus ohne Raten zu erkennen. Schau dir ein Diagramm an.",
     "context.stats.complete": "Der Fortschritt zeigt eine Beobachtung, kein Urteil über dich. Die Entscheidung liegt trotzdem bei dir.",

@@ -111,8 +111,8 @@ test('the approved RU review is an exact mirror of centralized runtime copy', ()
   assert.match(COPY_REVIEW, /RUNTIME_APPROVED` поднят намеренно/);
 });
 
-test('v195 offline shell pins all Guide runtime scripts and locale copies', () => {
-  sourceMatches(SW, /const CACHE = 'satoru-v204';/);
+test('v205 offline shell pins all Guide runtime scripts and locale copies', () => {
+  sourceMatches(SW, /const CACHE = 'satoru-v205';/);
   for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'guide-surface-v1.js']) {
     assert.ok(file, 'Guide runtime file must be discoverable before checking SHELL');
     assert.ok(SW.includes(`'${file}'`) || SW.includes(`"${file}"`), `${file} must be pinned in SHELL`);
@@ -486,17 +486,17 @@ test('Escape abandons replay but snoozes a live chapter', () => {
     'the replay abandonment helper must never enter the live snooze path');
 });
 
-test('Context pack v195 explicitly releases exact Guide copy and chapter versions for RU/EN/DE/UK/ES', () => {
+test('Context pack v205 explicitly releases exact Guide copy and chapter versions for RU/EN/DE/UK/ES', () => {
   assert.equal(COPY_RU.RUNTIME_APPROVED, true,
     'the owner-approved RU Guide must be available in normal runtime');
   assert.equal(COPY_RU.STATUS, 'runtime-approved');
   const runtimeAllowed = between(APP, 'const GUIDE_V3_COPY_RELEASES', '\nfunction feedbackPanelHTML');
   for (const [locale, globalName, version, status] of [
-    ['ru', 'GuideV3CopyRu', '1.3.0', 'runtime-approved'],
-    ['en', 'GuideV3CopyEn', '0.4.0', 'translated'],
-    ['de', 'GuideV3CopyDe', '0.4.0', 'translated'],
-    ['uk', 'GuideV3CopyUk', '0.4.0', 'translated'],
-    ['es', 'GuideV3CopyEs', '0.4.0', 'translated'],
+    ['ru', 'GuideV3CopyRu', '1.4.0', 'runtime-approved'],
+    ['en', 'GuideV3CopyEn', '0.5.0', 'translated'],
+    ['de', 'GuideV3CopyDe', '0.5.0', 'translated'],
+    ['uk', 'GuideV3CopyUk', '0.5.0', 'translated'],
+    ['es', 'GuideV3CopyEs', '0.5.0', 'translated'],
   ]) {
     const exactVersion = version.replace(/\./g, '\\.');
     sourceMatches(runtimeAllowed, new RegExp(`${locale}:[\\s\\S]{0,160}${globalName}[\\s\\S]{0,100}${exactVersion}[\\s\\S]{0,100}${status}[\\s\\S]{0,80}released:\\s*true`),
@@ -510,9 +510,11 @@ test('Context pack v195 explicitly releases exact Guide copy and chapter version
       `${locale} cannot enter System Theme until that chapter is explicitly approved`);
   }
   sourceMatches(runtimeAllowed,
-    /function guideV3ReleasedChapter[\s\S]{0,180}registryVersion:\s*2[\s\S]{0,120}completion[\s\S]{0,120}released:\s*true[\s\S]{0,300}habits:\s*guideV3ReleasedChapter\(['"]habit-persisted['"]\)/,
-    'the chapter contract must pin registry v2 and its exact real completion event');
-  for (const [locale, version] of [['ru', '1.3.0'], ['en', '0.4.0'], ['de', '0.4.0'], ['uk', '0.4.0'], ['es', '0.4.0']]) {
+    /function guideV3ReleasedChapter\(completion, registryVersion = 2\)[\s\S]{0,180}registryVersion[\s\S]{0,120}completion[\s\S]{0,120}released:\s*true[\s\S]{0,300}habits:\s*guideV3ReleasedChapter\(['"]habit-persisted['"]\)/,
+    'the chapter contract must default to registry v2 while allowing a versioned chapter adapter');
+  sourceMatches(runtimeAllowed, /tree:\s*guideV3ReleasedChapter\(['"]tree-seen['"],\s*3\)/,
+    'the Tree v4 guide adapter must pin registry v3 explicitly');
+  for (const [locale, version] of [['ru', '1.4.0'], ['en', '0.5.0'], ['de', '0.5.0'], ['uk', '0.5.0'], ['es', '0.5.0']]) {
     sourceMatches(runtimeAllowed, new RegExp(`GUIDE_V3_CONTEXT_LOCALES[\\s\\S]{0,220}${locale}:\\s*['"]${version.replace(/\./g, '\\.')}['"]`),
       `Habits context release must pin ${locale} ${version}`);
   }
@@ -547,13 +549,13 @@ test('Context pack v195 explicitly releases exact Guide copy and chapter version
   for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js']) {
     const source = SCRIPT_SOURCES.find((item) => scriptFile(item) === file);
     assert.ok(source, `${file} must load in index.html`);
-    assert.match(source, /\?v=[^"']*v195(?:-|$)/, `${file} needs a v195 cache-busting pin`);
+    assert.match(source, /\?v=[^"']*v205(?:-|$)/, `${file} needs a v205 cache-busting pin`);
   }
   const appSource = SCRIPT_SOURCES.find((item) => scriptFile(item) === 'app.js');
   assert.ok(appSource, 'app.js must load in index.html');
-  assert.match(appSource, /\?v=[^"']*v204(?:-|$)/, 'the current app shell needs the v204 cache-busting pin');
-  sourceMatches(INDEX, /styles\.css\?v=[^"']*v204(?:-|["'])/,
-    'the current application CSS needs the v204 cache-busting pin');
+  assert.match(appSource, /\?v=[^"']*v205(?:-|$)/, 'the current app shell needs the v205 cache-busting pin');
+  sourceMatches(INDEX, /styles\.css\?v=[^"']*v205(?:-|["'])/,
+    'the current application CSS needs the v205 cache-busting pin');
 });
 
 test('feedback remains reachable even when the localized Guide is unavailable', () => {

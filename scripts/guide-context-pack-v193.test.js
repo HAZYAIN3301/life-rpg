@@ -45,11 +45,11 @@ function completionEvent(chapter) {
   return event;
 }
 
-test('v195 registry releases eleven contextual chapters on one reload-safe three-step contract', () => {
+test('v205 registry releases eleven contextual chapters on one reload-safe three-step contract', () => {
   for (const chapter of CHAPTERS) {
     const entry = Guide.REGISTRY.find((item) => item.chapter === chapter);
     assert.ok(entry, chapter);
-    assert.equal(entry.version, 2, `${chapter}: registry version`);
+    assert.equal(entry.version, chapter === 'tree' ? 3 : 2, `${chapter}: registry version`);
     assert.equal(entry.completion, COMPLETIONS[chapter], `${chapter}: exact completion`);
     let state = openChapter(chapter);
     assert.equal(state.currentStep, 'engage', `${chapter}: real feature step`);
@@ -147,9 +147,9 @@ test('runtime binds each chapter to a real semantic surface and suppresses repla
   for (const target of [
     'plan-nav', 'calendar-task', 'notes-nav', 'note-capture', 'speaker', 'helper', 'helper-input',
     'rewards-nav', 'reward-buy', 'hero-nav', 'hero-overview', 'den-overview', 'pet-sphere',
-    'tree-overview', 'stats-overview',
+    'tree-overview', 'tree-v4-next', 'stats-overview',
   ]) assert.ok(APP.includes(target), `missing semantic target: ${target}`);
-  for (const chapter of CHAPTERS) assert.match(APP, new RegExp(`\\b${chapter}: guideV3ReleasedChapter\\('${COMPLETIONS[chapter]}'\\)`));
+  for (const chapter of CHAPTERS) assert.match(APP, new RegExp(`\\b${chapter}: guideV3ReleasedChapter\\('${COMPLETIONS[chapter]}'${chapter === 'tree' ? ', 3' : ''}\\)`));
   assert.match(APP, /guideV3FeatureCommit\('calendar',[\s\S]*task-date-persisted/);
   assert.match(APP, /guideV3FeatureCommit\('notes',[\s\S]*note-persisted/);
   assert.match(APP, /guideV3FeatureCommit\('rewards',[\s\S]*purchase-persisted/);
@@ -211,18 +211,18 @@ test('Notes media capture is fenced to the account and write epoch that started 
   assert.match(clear, /Store\.cancelPending\(\);\s*cancelCapturePipeline\(\);/);
 });
 
-test('Hero, Pets and Tree gates use resolved-session, descendant activity and exact node identity', () => {
+test('Hero, Pets and Tree gates use resolved-session, descendant activity and exact capability identity', () => {
   const context = APP.slice(APP.indexOf('function guideV3Context('), APP.indexOf('\nfunction guideV3ChapterDataReady'));
   assert.match(context, /heroMeta\.completedAt \|\| heroMeta\.skippedAt/);
   assert.match(context, /descendantSkills\(skill\.id\)[\s\S]*recentEvents\.some/);
-  assert.match(context, /treeNodeId = ''[\s\S]*nodeUnlockable\(skill\.id, node\)[\s\S]*treeNodeId = String\(candidate\.id\)/);
+  assert.match(context, /treeNodeId = ''[\s\S]*treeCapabilityPath\(State\.tree\?\.\[skill\.id\]\)[\s\S]*!node\.unlocked && nodeUnlockable\(skill\.id, node\)[\s\S]*treeNodeId = String\(selected\.candidate\.id\)/);
   assert.match(context, /meaningfulSphereData: activeSphereIds\.size >= 2[\s\S]*treeNodeId/);
   const selector = APP.slice(APP.indexOf('function guideV3TargetSelector'), APP.indexOf('\nfunction guideV3RevealTarget'));
-  assert.match(selector, /vm\.chapter === 'tree'[\s\S]*data-action="tree-select-node"[\s\S]*CSS\.escape\(exactId\)/);
+  assert.match(selector, /vm\.chapter === 'tree'[\s\S]*tree-v4-next[\s\S]*treeCapabilityPath[\s\S]*data-action="select-tree"/);
   const openContext = APP.slice(APP.indexOf('async function guideV3OpenContextChapter()'), APP.indexOf('\nasync function guideV3OpenHabitsChapter'));
-  assert.match(openContext, /chapter === 'tree' \? context\.treeNodeId/);
-  const treeHandler = APP.slice(APP.indexOf("action === 'tree-select-node'"), APP.indexOf("action === 'unlock-node'"));
-  assert.match(treeHandler, /candidateId === String\(nodeId\)[\s\S]*treeNodeKind\(node\) === 'practice'[\s\S]*!node\.capstone[\s\S]*nodeUnlockable/);
+  assert.match(openContext, /chapter === 'tree' \? context\.treeNodeId[\s\S]*State\.treeLayer = 'path'/);
+  const treeHandler = APP.slice(APP.indexOf("action === 'select-tree'"), APP.indexOf("action === 'tree-layer'"));
+  assert.match(treeHandler, /candidateId[\s\S]*treeNodeKind\(candidate\) === 'capability'[\s\S]*!candidate\.unlocked[\s\S]*nodeUnlockable/);
 });
 
 function cookieOf(response) { return (response.headers.get('set-cookie') || '').split(';')[0]; }
@@ -281,10 +281,10 @@ test('Guide feature commit is authenticated, account-owned and rejects malformed
   assert.equal((await api(base, '/api/guide/commit', { method: 'POST', cookie: alpha.cookie, body: { data: { tasks, settings, goals: [] } } })).response.status, 400);
 });
 
-test('v195 cache and source contract ship the whole pack together', () => {
-  assert.match(SW, /const CACHE = 'satoru-v204'/);
-  assert.match(INDEX, /guide-v3\.js\?v=20260829-guide-library-v195-1/);
-  assert.match(INDEX, /app\.js\?v=20260830-tree-v4-v204-1/);
+test('v205 cache and source contract ship the whole pack together', () => {
+  assert.match(SW, /const CACHE = 'satoru-v205'/);
+  assert.match(INDEX, /guide-v3\.js\?v=20260830-guide-tree-v205-1/);
+  assert.match(INDEX, /app\.js\?v=20260830-guide-tree-v205-1/);
   assert.match(SERVER, /if \(u === '\/api\/guide\/commit' && req\.method === 'POST'\)/);
   assert.match(SERVER, /commitGuideData[\s\S]*restoreSnapshot/);
 });

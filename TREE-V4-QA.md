@@ -2,9 +2,9 @@
 
 Дата: 2026-08-30
 
-Версия shell: `satoru-v204`
+Версия shell: `satoru-v205`
 
-Статус: implementation и local acceptance complete; production verification выполняется после push
+Статус: Tree v4 implementation complete; Guide v3 adapter v205 проходит release verification
 
 ## Что проверяем
 
@@ -27,13 +27,14 @@ npm test
 
 ```bash
 node --test scripts/skill-tree-v4.test.js
+node --test scripts/guide-tree-v4-v205.test.js
 node --test scripts/tree-v4-server-contract.test.js
 node --test scripts/skill-tree-craft-v1.test.js
 node --check public/app.js
 node --check server.js
 ```
 
-Результат перед релизом: `1232/1232 PASS`, `node --check` для клиента и сервера — PASS, `git diff --check` — PASS.
+Результат перед релизом: `1237/1237 PASS`, `node --check` для клиента и сервера — PASS, `git diff --check` — PASS.
 
 Покрытие Tree v4:
 
@@ -47,7 +48,10 @@ node --check server.js
 - crash-export redaction для `criterion`, `nextAction`, `proofNote` при полном owner export;
 - RU/EN/DE/UK/ES literal-copy gate;
 - 360/375/1280, touch, light/dark и reduced-motion CSS contracts;
-- синхронный PWA bump `app.js / sw.js / index.html` до v204.
+- Guide v3 registry v3 для Tree: capability-кандидат без зависимости от bonus points;
+- contextual action открывает exact sphere на `Path`, а receipt указывает на ближайшую реальную веху;
+- старый `tree-select-node` больше не может завершить новую главу игровым бонусом;
+- синхронный PWA bump `app.js / sw.js / index.html` до v205.
 
 ## Browser matrix
 
@@ -59,10 +63,10 @@ node --check server.js
 4. Game bonuses: очки, perks, capstone и editor находятся только во вторичном слое.
 5. Editor: capability/practice выбираются явно; confirmed capability нельзя удалить или превратить в practice; cycle rejected.
 6. Personal path: preview показывает criterion и nextAction; выбранная карта сохраняется durable; прошлые claims остаются.
-7. Guide v3: contextual tree chapter открывает Game bonuses; personal-map drip открывает Path.
+7. Guide v3: contextual Tree chapter открывает `Path`, подсвечивает сферу с ближайшей capability и после выбора переводит spotlight на саму веху. Подтверждать веху ради гайда не требуется.
 8. Width/theme matrix: `360×800`, `375×812`, `1280×900`; dark/light; `prefers-reduced-motion`.
 9. Keyboard: tabs, next CTA, future disclosure, claim trap/escape, editor controls.
-10. PWA: v203 client видит v204 update; app shell и stable URLs доступны после reload.
+10. PWA: v204 client видит v205 update; app shell и stable URLs доступны после reload.
 
 Локальный acceptance перед релизом:
 
@@ -74,6 +78,14 @@ node --check server.js
 - подтверждённую capability нельзя сменить на practice или удалить;
 - dark/light проверены визуально; reduced-motion и пять локалей закрыты автоматическими контрактами;
 - browser console: `0` warnings/errors после полного сценария.
+
+Guide v3 adapter acceptance (`1280×900`, `375×812`):
+
+- intro открывает Tree на `Path`, а не на `Game bonuses`;
+- spotlight сначала указывает на точную сферу с доступной capability, затем на её ближайшую реальную веху;
+- criterion и безопасный fallback для отсутствующего legacy `nextAction` видны до любого подтверждения;
+- финальная кнопка закрывает главу только после durable write: `tree:intro`, `tree:engage`, `tree:complete` и глава `tree` переживают полный reload;
+- горизонтального overflow нет, FAB Тени остаётся видимым, browser console: `0` warnings/errors.
 
 ## Privacy boundary
 

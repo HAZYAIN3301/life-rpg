@@ -19068,7 +19068,7 @@ function treePathHTML(id, tree) {
     <span class="tree-v4-trace-state" aria-hidden="true">✓</span><div><h4 data-noi18n>${esc(treeNodeCopy(node, 'title'))}</h4>
     <p class="tree-v4-trace-meta">${esc(treeClaimTrace(node))}</p>${node.proofNote ? `<p class="tree-v4-proof" data-noi18n>${esc(node.proofNote)}</p>` : ''}</div></article>`).join('');
   const olderTrace = claimed.length > 3 ? `<details class="tree-v4-future"><summary>${t('Показать весь путь')} · ${claimed.length}</summary><div class="tree-v4-trace-list">${claimed.slice(0, -3).reverse().map((node) => `<article class="tree-v4-trace-item"><span class="tree-v4-trace-state" aria-hidden="true">✓</span><div><h4 data-noi18n>${esc(treeNodeCopy(node, 'title'))}</h4><p class="tree-v4-trace-meta">${esc(treeClaimTrace(node))}</p>${node.proofNote ? `<p class="tree-v4-proof" data-noi18n>${esc(node.proofNote)}</p>` : ''}</div></article>`).join('')}</div></details>` : '';
-  const nextCard = next ? `<article class="tree-v4-next" aria-labelledby="tree-v4-next-title">
+  const nextCard = next ? `<article class="tree-v4-next" data-guide-target="tree-v4-next" data-node="${esc(next.id)}" aria-labelledby="tree-v4-next-title">
       <div class="tree-v4-next-head"><span class="tree-v4-kicker">⚑ ${t('Следующая реальная веха')}</span><h3 id="tree-v4-next-title" data-noi18n>${esc(treeNodeCopy(next, 'title'))}</h3></div>
       <div class="tree-v4-next-grid"><div><b>${t('Что считается результатом')}</b><p data-noi18n>${esc(treeNodeCriterion(next) || t('Критерий ещё не настроен'))}</p></div>
       ${treeNodeNextAction(next) ? `<div><b>${t('Следующий шаг')}</b><p data-noi18n>${esc(treeNodeNextAction(next))}</p></div>` : `<div><b>${t('Следующий шаг')}</b><p>${t('Настрой путь с Тенью — она предложит конкретное действие для этой вехи.')}</p></div>`}</div>
@@ -20583,15 +20583,15 @@ function guideV3ReviewPreviewRequested() {
   catch { return false; }
 }
 const GUIDE_V3_COPY_RELEASES = Object.freeze({
-  ru: Object.freeze({ globalName: 'GuideV3CopyRu', version: '1.3.0', status: 'runtime-approved', released: true }),
-  en: Object.freeze({ globalName: 'GuideV3CopyEn', version: '0.4.0', status: 'translated', released: true }),
-  de: Object.freeze({ globalName: 'GuideV3CopyDe', version: '0.4.0', status: 'translated', released: true }),
-  uk: Object.freeze({ globalName: 'GuideV3CopyUk', version: '0.4.0', status: 'translated', released: true }),
-  es: Object.freeze({ globalName: 'GuideV3CopyEs', version: '0.4.0', status: 'translated', released: true }),
+  ru: Object.freeze({ globalName: 'GuideV3CopyRu', version: '1.4.0', status: 'runtime-approved', released: true }),
+  en: Object.freeze({ globalName: 'GuideV3CopyEn', version: '0.5.0', status: 'translated', released: true }),
+  de: Object.freeze({ globalName: 'GuideV3CopyDe', version: '0.5.0', status: 'translated', released: true }),
+  uk: Object.freeze({ globalName: 'GuideV3CopyUk', version: '0.5.0', status: 'translated', released: true }),
+  es: Object.freeze({ globalName: 'GuideV3CopyEs', version: '0.5.0', status: 'translated', released: true }),
 });
-const GUIDE_V3_CONTEXT_LOCALES = Object.freeze({ ru: '1.3.0', en: '0.4.0', de: '0.4.0', uk: '0.4.0', es: '0.4.0' });
-function guideV3ReleasedChapter(completion) {
-  return Object.freeze({ registryVersion: 2, completion, released: true, locales: GUIDE_V3_CONTEXT_LOCALES });
+const GUIDE_V3_CONTEXT_LOCALES = Object.freeze({ ru: '1.4.0', en: '0.5.0', de: '0.5.0', uk: '0.5.0', es: '0.5.0' });
+function guideV3ReleasedChapter(completion, registryVersion = 2) {
+  return Object.freeze({ registryVersion, completion, released: true, locales: GUIDE_V3_CONTEXT_LOCALES });
 }
 const GUIDE_V3_CONTEXT_RELEASES = Object.freeze({
   habits: guideV3ReleasedChapter('habit-persisted'),
@@ -20604,7 +20604,7 @@ const GUIDE_V3_CONTEXT_RELEASES = Object.freeze({
   hero: guideV3ReleasedChapter('hero-seen'),
   den: guideV3ReleasedChapter('den-seen'),
   pets: guideV3ReleasedChapter('pets-seen'),
-  tree: guideV3ReleasedChapter('tree-seen'),
+  tree: guideV3ReleasedChapter('tree-seen', 3),
   stats: guideV3ReleasedChapter('stats-seen'),
 });
 function guideV3CopyModule(locale = lang()) {
@@ -20773,17 +20773,18 @@ function guideV3Context({ sessionPrompted = State._guideV3SessionPrompted } = {}
     const branchIds = new Set([String(skill.id), ...descendantSkills(skill.id).map((item) => String(item.id))]);
     if (recentEvents.some((event) => branchIds.has(String(event.skillId || '')))) activeSphereIds.add(String(skill.id));
   }
-  let treePoints = 0, treeSkillId = '', treeNodeId = '', treeNodeCost = Number.POSITIVE_INFINITY;
+  let treePoints = 0, treeSkillId = '', treeNodeId = '';
   try {
-    for (const skill of topSkills()) {
-      const available = Math.max(0, treePointsAvailable(skill.id));
-      const candidate = available > 0 ? (State.tree?.[skill.id]?.nodes || [])
-        .filter((node) => !node.milestone && !node.capstone && nodeUnlockable(skill.id, node))
-        .sort((a, b) => (Number(a.cost) || 0) - (Number(b.cost) || 0) || String(a.id).localeCompare(String(b.id)))[0] : null;
-      const cost = candidate ? Number(candidate.cost) || 0 : Number.POSITIVE_INFINITY;
-      if (candidate && (available > treePoints || (available === treePoints && cost < treeNodeCost))) {
-        treePoints = available; treeSkillId = skill.id; treeNodeId = String(candidate.id); treeNodeCost = cost;
-      }
+    const candidates = topSkills().map((skill, index) => {
+      const candidate = treeCapabilityPath(State.tree?.[skill.id])
+        .find((node) => !node.unlocked && nodeUnlockable(skill.id, node));
+      return candidate ? { skill, candidate, index, active: activeSphereIds.has(String(skill.id)) } : null;
+    }).filter(Boolean).sort((a, b) => Number(b.active) - Number(a.active)
+      || skillLevelOf(b.skill.id) - skillLevelOf(a.skill.id) || a.index - b.index);
+    const selected = candidates[0];
+    if (selected) {
+      treeSkillId = String(selected.skill.id); treeNodeId = String(selected.candidate.id);
+      treePoints = Math.max(0, treePointsAvailable(selected.skill.id));
     }
   } catch {}
   const heroMeta = guideV3State()?.chapterMeta?.hero || {};
@@ -25032,7 +25033,9 @@ function guideV3TargetSelector(viewModel) {
     return vm.step === 'engage' ? '[data-guide-target="helper-input"]' : '[data-guide-target="helper"]';
   }
   if (vm.chapter === 'tree' && exactId && vm.step !== 'intro') {
-    return `[data-action="tree-select-node"][data-node="${CSS.escape(exactId)}"]`;
+    if (vm.step === 'complete') return `[data-guide-target="tree-v4-next"][data-node="${CSS.escape(exactId)}"]`;
+    const skill = topSkills().find((item) => treeCapabilityPath(State.tree?.[item.id]).some((node) => String(node.id) === exactId));
+    return skill ? `[data-action="select-tree"][data-skill="${CSS.escape(String(skill.id))}"]` : '[data-guide-target="tree-overview"]';
   }
   const chapterTargets = {
     voice: '[data-guide-target="speaker"]', hero: '[data-guide-target="hero-overview"]',
@@ -25340,9 +25343,7 @@ async function guideV3OpenContextChapter() {
   }
   if (chapter === 'rewards') State._guideV3RewardId = candidateId;
   if (chapter === 'tree') {
-    const skill = topSkills().find((item) => item.id === context.treeSkillId);
-    if (skill) State.treeSkill = skill.id;
-    State.treeLayer = 'practices'; State.treeEdit = false; State.treeSelNode = null;
+    State.treeLayer = 'path'; State.treeEdit = false; State.treeSelNode = null;
   }
   if (chapter === 'systemTheme') State.settingsSection = 'experience';
   State.view = guideV3RouteForState(guideV3State());
@@ -27305,6 +27306,13 @@ async function onClick(e) {
     const sid = el.dataset.skill;
     if (!State.settings.skills.some((skill) => skill.id === sid)) return;
     State.treeSkill = sid; State.treeSelNode = null; State._treeViewport = null;
+    const treeGuide = guideV3ContextActive('tree', 'tree-seen');
+    const candidateId = String(guideV3State()?.chapterMeta?.tree?.candidateId || '');
+    const candidate = State.tree?.[sid]?.nodes?.find((node) => String(node.id) === candidateId);
+    if (treeGuide && candidate && treeNodeKind(candidate) === 'capability' && !candidate.unlocked && nodeUnlockable(sid, candidate)) {
+      State.treeLayer = 'path'; State.treeEdit = false;
+      await guideV3CompleteContext('tree', 'tree-seen', candidateId, { repaint: false, discover: 'guide:tree' });
+    }
     State._treeFocusAfterCommit = `[data-action="select-tree"][data-skill="${CSS.escape(sid)}"]`; render();
   } else if (action === 'tree-layer') {
     const layer = el.dataset.layer;
@@ -27325,11 +27333,6 @@ async function onClick(e) {
     const node = State.tree[State.treeSkill]?.nodes.find((item) => item.id === nodeId);
     if (!node) return;
     State.treeSelNode = nodeId;
-    const treeGuide = guideV3ContextActive('tree', 'tree-seen');
-    const candidateId = String(guideV3State()?.chapterMeta?.tree?.candidateId || '');
-    if (treeGuide && candidateId === String(nodeId) && treeNodeKind(node) === 'practice' && !node.capstone && nodeUnlockable(State.treeSkill, node)) {
-      await guideV3CompleteContext('tree', 'tree-seen', nodeId, { repaint: false, discover: 'guide:tree' });
-    }
     treeFocusAfterCommit('#tree-node-detail'); render();
   } else if (action === 'unlock-node') {
     const sid = State.treeSkill, node = State.tree[sid] && State.tree[sid].nodes.find((n) => n.id === el.dataset.node); if (!node) return;
@@ -28965,7 +28968,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v204';
+const PWA_CACHE_VERSION = 'satoru-v205';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

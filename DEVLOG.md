@@ -4340,3 +4340,15 @@ Tree v3 хранил реальные milestones и игровые perks в од
 - `READING-LIST.md`, `START-HERE.md`, `DESIGN-BOOK-NOTES.md` обновлены.
 - Automated: full repository `1232/1232 PASS`; `skill-tree-v4`, `tree-v4-server-contract` и legacy `skill-tree-craft` входят в общий gate.
 - Browser acceptance: `1280×900`, `375×812`, `360×800`, dark/light, keyboard claim/focus return, escaped proof, confirmed-capability editor guard; `0` console warnings/errors.
+
+## 2026-08-30 — Guide v3 Tree adapter / v205
+
+- Contextual-глава переименована в «Карта развития» и переведена с бонусного графа на семантику Tree v4: сначала `Path`, затем отдельно `Game bonuses`.
+- Registry Tree поднят до v3 (`inspect-real-path`). Trigger больше не зависит от bonus points: нужен уровень 3 и ближайшая доступная capability.
+- Кандидат выбирается среди `treeCapabilityPath`: приоритет у недавно активной сферы, затем у более высокого уровня и стабильного порядка сфер.
+- По `Показать` открывается настоящий Path. Spotlight ведёт на точную сферу; после выбора — на карточку ближайшей реальной вехи с criterion и nextAction.
+- Guide никогда не подтверждает capability и не списывает очки ради прохождения. Клик по старому practice-узлу больше не может закрыть эту главу.
+- Copy обновлена во всех пяти runtime-языках: RU `1.4.0`, EN/DE/UK/ES `0.5.0`; RU review mirror и release manifest синхронизированы.
+- Добавлен отдельный contract suite `scripts/guide-tree-v4-v205.test.js`; shell/cache поднят до `satoru-v205`.
+- Финальный gate: full repository `1237/1237 PASS`; browser acceptance `1280×900` и `375×812` прошёл полный `intro → exact sphere → capability receipt → durable finish`, без horizontal overflow и console warnings/errors.
+- Release handoff записан в `GUIDE-V3-TREE-V4-V205-QA.md`.
