@@ -76,13 +76,13 @@ const USER_DATA_FILES = [
 // tokens, push endpoint, recovery/password hashes). Эти данные либо нужно
 // привязать заново, либо они остаются частью серверной учётной записи.
 const ACCOUNT_PORTABLE_FILES = [
-  ...USER_DATA_FILES, 'lootbox', 'inbox', 'antihabits', 'episodes', 'profile', 'boardmedia', 'attention', 'shelf',
+  ...USER_DATA_FILES, 'lootbox', 'inbox', 'antihabits', 'episodes', 'profile', 'boardmedia', 'attention', 'shelf', 'questionnaire',
 ];
 const ACCOUNT_PORTABLE_TYPES = {
   settings: 'object', tasks: 'array', habits: 'array', habitlog: 'object', goals: 'array', 'goal-groups': 'array',
   skilltree: 'object', rewards: 'array', purchases: 'array', achievements: 'object',
   days: 'object', weeks: 'object', lootbox: 'object', inbox: 'array', antihabits: 'array',
-  episodes: 'array', profile: 'object', boardmedia: 'object', attention: 'object', shelf: 'object',
+  episodes: 'array', profile: 'object', boardmedia: 'object', attention: 'object', shelf: 'object', questionnaire: 'object',
 };
 const PASSWORD_MIN = 8;
 
@@ -1271,26 +1271,80 @@ const AI_GOALS_SYS = `Ты — помощник по структурирова�
 - Переиспользуй СУЩЕСТВУЮЩИЕ сферы по точному имени — не дублируй. Будь реалистичен и конкретен, не выдумывай лишнего.
 - Текст мог прийти голосом: без знаков препинания, одним потоком. Это норма для этого экрана — дели на смысловые куски по маркерам («ещё», «потом», «а ещё хочу»), а не по пунктуации, которой может не быть вовсе.
 - Язык — русский.`;
-// Системный промпт: сборка старта для НОВИЧКА (онбординг v2). Человек только зарегистрировался,
-// у него ноль сфер и пустой экран. Он пишет пару предложений о себе — мы собираем ему рабочий
-// старт: сферы + первые квесты на сегодня/завтра. Цели тут НЕ создаём: на первой минуте человек
-// ещё не готов формулировать горизонты, а пустой список дел — главный источник «а что тут делать».
-const AI_ONBOARD_SYS = `Ты — Тень, спутник новичка в приложении Satoru (философия «жизнь как десятиборье»: ценится баланс многих сфер, а не одна вертикаль). Человек ТОЛЬКО ЧТО зарегистрировался и в двух-трёх предложениях рассказал о себе. Собери ему рабочий старт.
+// Questionnaire v1 deliberately extracts one result and one action. The model
+// may suggest structure, but the client must still show a bounded review and the
+// server materializes only what the person explicitly confirms.
+const AI_ONBOARD_SYS = `Ты — Тень, спутник новичка в Satoru. Человек ответил на один вопрос: какой ближайший реальный результат он хочет сдвинуть, почему это важно и какой небольшой шаг готов сделать сегодня. Извлеки только то, что нужно для понятного preview перед подтверждением.
 
-Верни СТРОГО JSON {"proposals":[ ... ]}, без markdown и текста вне JSON. Типы элементов:
-- {"type":"sphere","name":"...","parent":null} — сфера жизни человека.
-- {"type":"quest","title":"...","sphere":"<имя сферы из этого же списка>","estimateMin":N,"difficulty":"easy|normal|hard","day":"today|tomorrow"} — конкретное дело.
+Верни СТРОГО JSON {"proposals":[ ... ]}, без markdown и текста вне JSON. В массиве должно быть:
+- от 1 до 3 элементов {"type":"sphere","name":"...","parent":null};
+- ровно один {"type":"goal","title":"...","why":"...","outcome":"...","deadline":"YYYY-MM-DD или null","sphereNames":["точное имя сферы"]};
+- ровно один {"type":"task","title":"...","estimateMin":N,"sphereNames":["точное имя сферы"]}.
 
 Правила:
-- 4–6 сфер. Бери ТОЛЬКО то, что реально следует из его слов (учёба, работа, спорт, творчество, отношения, здоровье…). Не выдумывай сферу, о которой он не упомянул.
-- Если из текста не видно ни одной сферы про отдых/восстановление или про отношения — добавь ОДНУ такую: десятиборье без них разваливается, а сам человек про них вспоминает последними.
-- 3–5 квестов, из них минимум два с "day":"today" — первый экран не должен быть пустым.
-- Первые квесты МАЛЕНЬКИЕ и однозначные: 10–30 минут, "difficulty":"easy" или "normal". Никаких «начать новую жизнь» и «разобраться с учёбой». Человек должен закрыть первый квест сегодня же — это весь смысл.
-- Хотя бы один квест — приятный или лёгкий, а не только долг.
-- "sphere" у квеста должно ТОЧНО совпадать с "name" одной из предложенных сфер.
-- Никаких XP, уровней и игровых терминов в заголовках — это дела из реальной жизни.
-- Рассказ мог прийти голосом, без знаков препинания — это нормально для первого экрана, не признак путаного рассказа.
-- Язык — язык, на котором писал человек.`;
+- Цель — один ближайший наблюдаемый результат, а не миссия на всю жизнь и не перечень направлений.
+- why кратко сохраняет смысл из слов человека. outcome описывает, как будет видно, что результат получен; если это не следует из текста, оставь пустую строку, а не выдумывай метрику.
+- Первый шаг конкретный, начинается с глагола, занимает 5–60 минут и его можно выполнить сегодня. Если человек уже назвал шаг — сохрани его смысл, не заменяй универсальным советом.
+- Сферы бери ТОЛЬКО из слов человека. Никогда автоматически не добавляй Отдых, Отношения, Здоровье или «баланс» ради полноты.
+- sphereNames содержит 1–3 имени только из предложенных sphere-элементов и не смешивает главную тему с неподтверждёнными фоновыми выводами.
+- deadline ставь только когда человек сам назвал точную дату; иначе null.
+- Не создавай привычки, вторую цель, второе дело, напоминания, диагнозы, XP, награды или игровые формулировки.
+- Рассказ мог прийти голосом, без пунктуации — это нормально. Язык полей — язык человека.`;
+
+function onboardingProposalText(value, max, optional = false) {
+  if (typeof value !== 'string') return optional ? '' : null;
+  const text = value.trim();
+  if (!text) return optional ? '' : null;
+  return text.length <= max ? text : null;
+}
+function sanitizeOnboardingProposals(parsed) {
+  if (!parsed || !Array.isArray(parsed.proposals) || parsed.proposals.length > 8) return null;
+  const rawSpheres = parsed.proposals.filter((item) => item && item.type === 'sphere');
+  const rawGoals = parsed.proposals.filter((item) => item && item.type === 'goal');
+  const rawTasks = parsed.proposals.filter((item) => item && item.type === 'task');
+  if (rawSpheres.length < 1 || rawSpheres.length > 3 || rawGoals.length !== 1 || rawTasks.length !== 1) return null;
+  if (parsed.proposals.some((item) => !item || !['sphere', 'goal', 'task'].includes(item.type))) return null;
+
+  const names = new Set(); const spheres = [];
+  for (const raw of rawSpheres) {
+    const name = onboardingProposalText(raw.name, 40);
+    if (!name || names.has(name.toLocaleLowerCase())) return null;
+    names.add(name.toLocaleLowerCase());
+    spheres.push({ type: 'sphere', name, parent: null });
+  }
+  const exactName = new Map(spheres.map((item) => [item.name.toLocaleLowerCase(), item.name]));
+  const cleanSphereNames = (raw) => {
+    if (!Array.isArray(raw) || raw.length < 1 || raw.length > 3) return null;
+    const out = [];
+    for (const value of raw) {
+      const text = onboardingProposalText(value, 40);
+      const exact = text && exactName.get(text.toLocaleLowerCase());
+      if (!exact || out.includes(exact)) return null;
+      out.push(exact);
+    }
+    return out;
+  };
+  const rawGoal = rawGoals[0], rawTask = rawTasks[0];
+  const goal = {
+    type: 'goal',
+    title: onboardingProposalText(rawGoal.title, 120),
+    why: onboardingProposalText(rawGoal.why, 500, true),
+    outcome: onboardingProposalText(rawGoal.outcome, 300, true),
+    deadline: rawGoal.deadline == null || rawGoal.deadline === '' ? null
+      : (/^\d{4}-\d{2}-\d{2}$/.test(String(rawGoal.deadline)) ? String(rawGoal.deadline) : undefined),
+    sphereNames: cleanSphereNames(rawGoal.sphereNames),
+  };
+  const task = {
+    type: 'task',
+    title: onboardingProposalText(rawTask.title, 160),
+    estimateMin: Number(rawTask.estimateMin),
+    sphereNames: cleanSphereNames(rawTask.sphereNames),
+  };
+  if (!goal.title || goal.deadline === undefined || !goal.sphereNames
+    || !task.title || !Number.isInteger(task.estimateMin) || task.estimateMin < 5 || task.estimateMin > 60
+    || !task.sphereNames) return null;
+  return [...spheres, goal, task];
+}
 // Системный промпт: калибровка уровня сферы по описанию
 const AI_CALIB_SYS = `Ты — калибратор уровней в приложении Satoru. Юзер описывает, чем и насколько уверенно занимается в разных сферах. Оцени уровень по шкале 1–20 (личная RPG-абстракция, НЕ глобальный рейтинг): 1 = только начал; ~5 = регулярная практика, база есть; ~10 = уверенный, могу научить других; ~15 = глубокая экспертиза; 18–20 = топовый/мировой уровень. Для школы/универа опирайся на ступень и оценки честно (отличник старшей школы ≈ 8–11, не 20).
 
@@ -1726,9 +1780,437 @@ function deleteAccountLifecycle(uid, users) {
   try { SHADOW_TTS_RATE.delete(uid); SHADOW_TTS_ACTIVE_BY_USER.delete(uid); } catch {}
 }
 
+// ============================================================
+//  Questionnaire v1 — one confirmed goal + one exact first task
+// ============================================================
+// questionnaire.json is a receipt/provenance record, not a second mutable copy
+// of Goals or Today. Domain records remain owned by settings/goals/tasks. The
+// receipt only proves what was confirmed and which stable IDs were materialized.
+const QUESTIONNAIRE_FILE = 'questionnaire';
+const QUESTIONNAIRE_MAX_BYTES = 96 * 1024;
+const QUESTIONNAIRE_LOCALES = new Set(['ru', 'en', 'de', 'uk', 'es']);
+const QUESTIONNAIRE_SOURCES = new Set(['user_explicit', 'user_confirmed_suggestion', 'import_confirmed']);
+const QUESTIONNAIRE_ROLES = new Set(['primary', 'background']);
+const QUESTIONNAIRE_LOCKS = new Set();
+
+function questionnaireError(code, status = 400, extra = null) {
+  const error = new Error(code); error.code = code; error.status = status;
+  if (extra) error.extra = extra;
+  return error;
+}
+function questionnairePlain(value) { return !!value && typeof value === 'object' && !Array.isArray(value); }
+function questionnaireExactKeys(value, allowed) {
+  return questionnairePlain(value) && Object.keys(value).every((key) => allowed.includes(key));
+}
+function questionnaireId(value, max = 64) {
+  const text = typeof value === 'string' ? value.trim() : '';
+  return text && text.length <= max && /^[A-Za-z0-9][A-Za-z0-9._:-]*$/.test(text) ? text : null;
+}
+function questionnaireText(value, max, required = true) {
+  if (value == null && !required) return '';
+  const text = typeof value === 'string' ? value.trim() : '';
+  if ((!text && required) || text.length > max || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(text)) return null;
+  return text;
+}
+function questionnaireIso(value) {
+  if (value == null || value === '') return null;
+  return typeof value === 'string' && value.length <= 40 && !Number.isNaN(Date.parse(value)) ? value : undefined;
+}
+function questionnaireDate(value) {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value ? value : null;
+}
+function questionnaireHash(value) {
+  const canonical = (input) => {
+    if (Array.isArray(input)) return input.map(canonical);
+    if (!questionnairePlain(input)) return input;
+    const out = {};
+    for (const key of Object.keys(input).sort()) out[key] = canonical(input[key]);
+    return out;
+  };
+  return crypto.createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');
+}
+function questionnaireReadFile(uid, name, fallback, expected) {
+  const file = path.join(userDataDir(uid), `${name}.json`);
+  if (!fs.existsSync(file)) return fallback;
+  let value;
+  try { value = JSON.parse(fs.readFileSync(file, 'utf8')); }
+  catch { throw questionnaireError(`${name}_data_corrupt`, 409, { recoverable: true }); }
+  if ((expected === 'array' && !Array.isArray(value))
+    || (expected === 'object' && !questionnairePlain(value))) {
+    throw questionnaireError(`${name}_data_corrupt`, 409, { recoverable: true });
+  }
+  return value;
+}
+function questionnaireStoredValid(value) {
+  if (!questionnairePlain(value) || Number(value.version) !== 1
+    || !['materialized', 'deferred'].includes(value.status)
+    || !Number.isInteger(value.revision) || value.revision < 1
+    || !questionnaireId(value.idempotencyKey, 128) || !/^[a-f0-9]{64}$/.test(String(value.requestHash || ''))
+    || !questionnaireId(value.draftId) || !questionnaireId(value.originAnswerId)
+    || !QUESTIONNAIRE_LOCALES.has(value.sourceLocale)
+    || !questionnairePlain(value.consents) || !questionnairePlain(value.materialized)) return false;
+  for (const key of ['goalIds', 'taskIds', 'sphereIds']) {
+    if (!Array.isArray(value.materialized[key]) || !value.materialized[key].every((id) => questionnaireId(id))) return false;
+  }
+  if (value.status === 'materialized'
+    && (value.materialized.goalIds.length !== 1 || value.materialized.taskIds.length !== 1
+      || value.materialized.sphereIds.length < 1 || value.materialized.sphereIds.length > 3)) return false;
+  if (value.status === 'deferred'
+    && (value.materialized.goalIds.length || value.materialized.taskIds.length || value.materialized.sphereIds.length)) return false;
+  return true;
+}
+function questionnaireReadStored(uid) {
+  const file = path.join(userDataDir(uid), `${QUESTIONNAIRE_FILE}.json`);
+  if (!fs.existsSync(file)) return null;
+  let value;
+  try { value = JSON.parse(fs.readFileSync(file, 'utf8')); }
+  catch { throw questionnaireError('questionnaire_data_corrupt', 409, { recoverable: true }); }
+  if (!questionnaireStoredValid(value)) throw questionnaireError('questionnaire_data_corrupt', 409, { recoverable: true });
+  return value;
+}
+function questionnaireEmpty(status = 'draft', legacy = false, sphereIds = []) {
+  return {
+    version: 1, status, revision: 0, legacy,
+    draftId: null, originAnswerId: null, sourceLocale: null, recognitionPhrase: '',
+    consents: { sendRawTextToAiProvider: false, retainRawAnswer: false, useConfirmedFactsForAssistant: false, useRecognitionInGuide: false },
+    materialized: { goalIds: [], taskIds: [], sphereIds },
+    confirmedAt: null, materializedAt: null,
+  };
+}
+function questionnaireCurrent(uid) {
+  const stored = questionnaireReadStored(uid);
+  if (stored) return stored;
+  const settings = questionnaireReadFile(uid, 'settings', {}, 'object');
+  if (settings.skills != null && !Array.isArray(settings.skills)) throw questionnaireError('settings_data_corrupt', 409, { recoverable: true });
+  const skills = Array.isArray(settings.skills) ? settings.skills : [];
+  const ids = skills.map((skill) => skill && questionnaireId(skill.id)).filter(Boolean).slice(0, 100);
+  return ids.length ? questionnaireEmpty('materialized', true, ids) : questionnaireEmpty('draft');
+}
+function questionnaireConsent(receipt, profileConsent) {
+  const source = questionnairePlain(receipt.consents) ? receipt.consents : {};
+  if (!Object.keys(source).every((key) => ['sendRawTextToAiProvider', 'retainRawAnswer', 'useConfirmedFactsForAssistant', 'useRecognitionInGuide'].includes(key))) {
+    throw questionnaireError('invalid_questionnaire_receipt');
+  }
+  let profile = null;
+  if (typeof profileConsent === 'boolean') profile = {
+    useConfirmedFactsForAssistant: profileConsent, useRecognitionInGuide: profileConsent,
+  };
+  else if (profileConsent != null) {
+    if (!questionnaireExactKeys(profileConsent, ['useConfirmedFactsForAssistant', 'useRecognitionInGuide'])
+      || Object.values(profileConsent).some((value) => typeof value !== 'boolean')) throw questionnaireError('invalid_profile_consent');
+    profile = profileConsent;
+  }
+  return {
+    sendRawTextToAiProvider: source.sendRawTextToAiProvider === true,
+    retainRawAnswer: false, // raw text is intentionally not accepted by this endpoint
+    useConfirmedFactsForAssistant: profile ? profile.useConfirmedFactsForAssistant === true : source.useConfirmedFactsForAssistant === true,
+    useRecognitionInGuide: profile ? profile.useRecognitionInGuide === true : source.useRecognitionInGuide === true,
+  };
+}
+function questionnaireNormalizeReceipt(raw, profileConsent, options = {}) {
+  if (!questionnaireExactKeys(raw, ['draftId', 'originAnswerId', 'sourceLocale', 'recognitionPhrase', 'source', 'confirmedAt', 'consents'])) {
+    throw questionnaireError('invalid_questionnaire_receipt');
+  }
+  const draftId = questionnaireId(raw.draftId), originAnswerId = questionnaireId(raw.originAnswerId);
+  const recognitionPhrase = questionnaireText(raw.recognitionPhrase, 160, options.allowEmptyRecognition !== true);
+  const source = QUESTIONNAIRE_SOURCES.has(raw.source) ? raw.source : null;
+  const confirmedAt = questionnaireIso(raw.confirmedAt);
+  if (!draftId || !originAnswerId || !QUESTIONNAIRE_LOCALES.has(raw.sourceLocale)
+    || recognitionPhrase == null || (options.allowEmptyRecognition !== true && !recognitionPhrase)
+    || !source || confirmedAt === undefined) throw questionnaireError('invalid_questionnaire_receipt');
+  return {
+    draftId, originAnswerId, sourceLocale: raw.sourceLocale, recognitionPhrase, source,
+    confirmedAt, consents: questionnaireConsent(raw, profileConsent),
+  };
+}
+function questionnaireNormalizeSkills(raw) {
+  if (!questionnaireExactKeys(raw, ['skills']) || !Array.isArray(raw.skills)
+    || raw.skills.length < 1 || raw.skills.length > 3) throw questionnaireError('invalid_questionnaire_spheres');
+  const ids = new Set(), names = new Set();
+  return raw.skills.map((skill) => {
+    if (!questionnaireExactKeys(skill, ['id', 'name', 'color', 'parentId', 'role', 'source'])) throw questionnaireError('invalid_questionnaire_spheres');
+    const id = questionnaireId(skill.id), name = questionnaireText(skill.name, 40);
+    const color = typeof skill.color === 'string' && /^#[0-9a-fA-F]{6}$/.test(skill.color) ? skill.color.toLowerCase() : null;
+    const parentId = skill.parentId == null || skill.parentId === '' ? null : questionnaireId(skill.parentId);
+    const role = QUESTIONNAIRE_ROLES.has(skill.role) ? skill.role : null;
+    const source = QUESTIONNAIRE_SOURCES.has(skill.source) ? skill.source : null;
+    if (!id || ids.has(id) || !name || names.has(name.toLocaleLowerCase()) || !color || !role || !source
+      || parentId === undefined || parentId === id) throw questionnaireError('invalid_questionnaire_spheres');
+    ids.add(id); names.add(name.toLocaleLowerCase());
+    return { id, name, color, parentId, role, source };
+  });
+}
+function questionnaireRefIds(value, fallback, known, max = 3, allowEmpty = false) {
+  const raw = value == null ? fallback : value;
+  if (!Array.isArray(raw) || (!allowEmpty && raw.length < 1) || raw.length > max) return null;
+  const out = [];
+  for (const valueId of raw) {
+    const id = questionnaireId(valueId);
+    if (!id || !known.has(id) || out.includes(id)) return null;
+    out.push(id);
+  }
+  return out;
+}
+function questionnaireNormalizeGoal(raw, knownSkills, defaultSkills) {
+  const allowed = ['id', 'title', 'why', 'outcome', 'deadline', 'targetDate', 'sphereIds', 'skillIds', 'backgroundSphereIds', 'backgroundSkillIds', 'source'];
+  if (!questionnaireExactKeys(raw, allowed)) throw questionnaireError('invalid_questionnaire_goal');
+  const id = questionnaireId(raw.id), title = questionnaireText(raw.title, 120);
+  const why = questionnaireText(raw.why, 800, false), outcome = questionnaireText(raw.outcome, 400, false);
+  const deadlineRaw = raw.deadline != null ? raw.deadline : raw.targetDate;
+  const deadline = deadlineRaw == null || deadlineRaw === '' ? null : questionnaireDate(deadlineRaw);
+  const source = QUESTIONNAIRE_SOURCES.has(raw.source) ? raw.source : null;
+  const skillIds = questionnaireRefIds(raw.skillIds != null ? raw.skillIds : raw.sphereIds, defaultSkills, knownSkills);
+  const bgRaw = raw.backgroundSkillIds != null ? raw.backgroundSkillIds : raw.backgroundSphereIds;
+  const backgroundSkillIds = bgRaw == null ? [] : questionnaireRefIds(bgRaw, [], knownSkills, 3, true);
+  if (!id || !title || why == null || outcome == null || (deadlineRaw != null && deadlineRaw !== '' && !deadline)
+    || !source || !skillIds || backgroundSkillIds == null
+    || backgroundSkillIds.some((skillId) => skillIds.includes(skillId))) throw questionnaireError('invalid_questionnaire_goal');
+  return { id, title, why, outcome, deadline, source, skillIds, backgroundSkillIds };
+}
+function questionnaireNormalizeTask(raw, knownSkills, defaultSkills, goalId) {
+  const allowed = ['id', 'title', 'estimateMin', 'date', 'sphereIds', 'skillIds', 'backgroundSphereIds', 'backgroundSkillIds', 'layers', 'goalId', 'source', 'difficulty'];
+  if (!questionnaireExactKeys(raw, allowed)) throw questionnaireError('invalid_questionnaire_task');
+  const id = questionnaireId(raw.id), title = questionnaireText(raw.title, 160), date = questionnaireDate(raw.date);
+  const estimateMin = Number(raw.estimateMin), source = QUESTIONNAIRE_SOURCES.has(raw.source) ? raw.source : null;
+  const difficulty = raw.difficulty == null ? 'easy' : raw.difficulty;
+  const skillIds = questionnaireRefIds(raw.skillIds != null ? raw.skillIds : raw.sphereIds, defaultSkills, knownSkills);
+  const bgRaw = raw.layers != null ? raw.layers : (raw.backgroundSkillIds != null ? raw.backgroundSkillIds : raw.backgroundSphereIds);
+  const layers = bgRaw == null ? [] : questionnaireRefIds(bgRaw, [], knownSkills, 3, true);
+  if (!id || !title || !date || !Number.isInteger(estimateMin) || estimateMin < 5 || estimateMin > 60
+    || raw.goalId !== goalId || !source || !['easy', 'normal', 'hard'].includes(difficulty)
+    || !skillIds || layers == null || layers.some((skillId) => skillIds.includes(skillId))) {
+    throw questionnaireError('invalid_questionnaire_task');
+  }
+  return { id, title, estimateMin, date, goalId, source, difficulty, skillIds, layers };
+}
+function questionnaireNormalizeCommit(payload) {
+  if (!questionnaireExactKeys(payload, ['idempotencyKey', 'revision', 'receipt', 'settings', 'goal', 'task', 'profileConsent'])) {
+    throw questionnaireError('invalid_questionnaire_commit');
+  }
+  const idempotencyKey = questionnaireId(payload.idempotencyKey, 128);
+  const revision = Number(payload.revision);
+  if (!idempotencyKey || idempotencyKey.length < 8 || !Number.isInteger(revision) || revision < 1 || revision > 1000000) {
+    throw questionnaireError('invalid_questionnaire_commit');
+  }
+  const receipt = questionnaireNormalizeReceipt(payload.receipt, payload.profileConsent);
+  const skills = questionnaireNormalizeSkills(payload.settings);
+  return { idempotencyKey, revision, receipt, skills, rawGoal: payload.goal, rawTask: payload.task };
+}
+function questionnaireLoadDomain(uid) {
+  const settings = questionnaireReadFile(uid, 'settings', {}, 'object');
+  const goals = questionnaireReadFile(uid, 'goals', [], 'array');
+  const tasks = questionnaireReadFile(uid, 'tasks', [], 'array');
+  const goalGroups = questionnaireReadFile(uid, 'goal-groups', [], 'array');
+  if (settings.skills != null && !Array.isArray(settings.skills)) throw questionnaireError('settings_data_corrupt', 409, { recoverable: true });
+  return { settings, goals, tasks, goalGroups };
+}
+function questionnaireMergeSkills(existing, incoming, originAnswerId) {
+  const next = structuredClone(Array.isArray(existing) ? existing : []);
+  const byId = new Map(), byName = new Map();
+  for (const skill of next) {
+    const id = skill && questionnaireId(skill.id), name = skill && questionnaireText(skill.name, 40);
+    if (!id || !name || byId.has(id) || byName.has(name.toLocaleLowerCase())) throw questionnaireError('settings_data_corrupt', 409, { recoverable: true });
+    byId.set(id, skill); byName.set(name.toLocaleLowerCase(), skill);
+  }
+  for (const skill of incoming) {
+    const sameId = byId.get(skill.id), sameName = byName.get(skill.name.toLocaleLowerCase());
+    if (sameId) {
+      if (sameId.name !== skill.name || String(sameId.color || '').toLowerCase() !== skill.color
+        || (sameId.parentId || null) !== skill.parentId) throw questionnaireError('questionnaire_id_conflict', 409);
+      continue;
+    }
+    if (sameName) throw questionnaireError('questionnaire_sphere_name_conflict', 409);
+    const created = {
+      id: skill.id, name: skill.name, color: skill.color,
+      ...(skill.parentId ? { parentId: skill.parentId } : {}),
+      questionnaireOrigin: { version: 1, originAnswerId, source: skill.source },
+    };
+    next.push(created); byId.set(created.id, created); byName.set(created.name.toLocaleLowerCase(), created);
+  }
+  const allIds = new Set(next.map((skill) => skill.id));
+  for (const skill of incoming) if (skill.parentId && !allIds.has(skill.parentId)) throw questionnaireError('questionnaire_unknown_parent_sphere');
+  return next;
+}
+function questionnaireDomainResponse(uid, questionnaire, replayed = false) {
+  const domain = questionnaireLoadDomain(uid);
+  return {
+    ok: true, replayed, questionnaire,
+    settings: domain.settings, goals: domain.goals, tasks: domain.tasks, goalGroups: domain.goalGroups,
+  };
+}
+function questionnaireAssertMaterialized(uid, receipt) {
+  const domain = questionnaireLoadDomain(uid);
+  if (!questionnaireReceiptRefsValid(receipt, domain.settings, domain.goals, domain.tasks)) {
+    throw questionnaireError('questionnaire_materialized_entities_missing', 409, { recoverable: true });
+  }
+}
+function questionnaireReceiptRefsValid(receipt, settings, goals, tasks) {
+  if (!questionnaireStoredValid(receipt)) return false;
+  if (receipt.status === 'deferred') return true;
+  const skills = settings && Array.isArray(settings.skills) ? settings.skills : [];
+  return receipt.materialized.goalIds.every((id) => Array.isArray(goals) && goals.some((goal) => goal && goal.id === id))
+    && receipt.materialized.taskIds.every((id) => Array.isArray(tasks) && tasks.some((task) => task && task.id === id))
+    && receipt.materialized.sphereIds.every((id) => skills.some((skill) => skill && skill.id === id));
+}
+function questionnaireCheckRevision(current, normalized, requestHash) {
+  if (current && current.idempotencyKey === normalized.idempotencyKey) {
+    if (current.requestHash !== requestHash) throw questionnaireError('questionnaire_idempotency_conflict', 409);
+    return 'replay';
+  }
+  if (current && current.status === 'materialized') throw questionnaireError('questionnaire_already_materialized', 409, { currentRevision: current.revision });
+  const expected = current ? current.revision + 1 : 1;
+  if (normalized.revision !== expected) throw questionnaireError('questionnaire_revision_conflict', 409, { currentRevision: current ? current.revision : 0 });
+  return 'write';
+}
+function questionnaireWriteUnit(uid, entries, verify) {
+  const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
+  const snapshots = new Map(); const written = [];
+  for (const [name] of entries) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
+  const failAfter = Math.max(0, Number(process.env.QUESTIONNAIRE_FAIL_AFTER_FILE) || 0);
+  try {
+    for (const [name, value] of entries) {
+      backupFile(dir, name);
+      writeJsonAtomic(path.join(dir, `${name}.json`), value);
+      written.push(name);
+      if (failAfter && written.length === failAfter) throw new Error('questionnaire_fault_injected');
+    }
+    if (verify) return verify();
+  } catch (error) {
+    for (const name of written.reverse()) {
+      try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {}
+    }
+    throw error;
+  }
+}
+function questionnaireWithLock(uid, operation) {
+  if (QUESTIONNAIRE_LOCKS.has(uid)) throw questionnaireError('questionnaire_busy', 409);
+  QUESTIONNAIRE_LOCKS.add(uid);
+  try { return operation(); } finally { QUESTIONNAIRE_LOCKS.delete(uid); }
+}
+function questionnaireCommit(uid, payload) {
+  return questionnaireWithLock(uid, () => {
+    const normalized = questionnaireNormalizeCommit(payload);
+    const requestHash = questionnaireHash(normalized);
+    const current = questionnaireReadStored(uid);
+    const revisionAction = questionnaireCheckRevision(current, normalized, requestHash);
+    if (revisionAction === 'replay') {
+      questionnaireAssertMaterialized(uid, current);
+      return questionnaireDomainResponse(uid, current, true);
+    }
+
+    const domain = questionnaireLoadDomain(uid);
+    const nextSettings = structuredClone(domain.settings);
+    nextSettings.skills = questionnaireMergeSkills(nextSettings.skills, normalized.skills, normalized.receipt.originAnswerId);
+    const knownSkills = new Set(nextSettings.skills.map((skill) => skill.id));
+    const primaryIds = normalized.skills.filter((skill) => skill.role === 'primary').map((skill) => skill.id);
+    const fallbackIds = primaryIds.length ? primaryIds : normalized.skills.map((skill) => skill.id);
+    const goalSeed = questionnaireNormalizeGoal(normalized.rawGoal, knownSkills, fallbackIds);
+    const taskSeed = questionnaireNormalizeTask(normalized.rawTask, knownSkills, goalSeed.skillIds, goalSeed.id);
+    if (goalSeed.id === taskSeed.id) throw questionnaireError('questionnaire_id_conflict', 409);
+    if (domain.goals.some((goal) => goal && goal.id === goalSeed.id)
+      || domain.tasks.some((task) => task && task.id === taskSeed.id)) throw questionnaireError('questionnaire_id_conflict', 409);
+
+    const now = new Date().toISOString();
+    const provenance = { version: 1, originAnswerId: normalized.receipt.originAnswerId, source: goalSeed.source };
+    const goal = {
+      id: goalSeed.id, title: goalSeed.title, description: goalSeed.why,
+      why: goalSeed.why, outcome: goalSeed.outcome,
+      skillId: goalSeed.skillIds[0], skillIds: goalSeed.skillIds,
+      backgroundSkillIds: goalSeed.backgroundSkillIds,
+      type: 'short', xpReward: 75, parentId: null, groupId: null,
+      targetDate: goalSeed.deadline, steps: [], metric: null, progressKind: 'checklist',
+      status: 'active', window: '', createdAt: now, completedAt: null, archived: false,
+      questionnaireOrigin: provenance,
+    };
+    const task = {
+      id: taskSeed.id, title: taskSeed.title,
+      skillId: taskSeed.skillIds[0], skillIds: taskSeed.skillIds, layers: taskSeed.layers,
+      estimateMin: taskSeed.estimateMin, difficulty: taskSeed.difficulty, date: taskSeed.date,
+      done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null,
+      startTime: null, goalId: goal.id, createdAt: now,
+      questionnaireOrigin: { version: 1, originAnswerId: normalized.receipt.originAnswerId, source: taskSeed.source },
+    };
+    const nextGoals = [...structuredClone(domain.goals), goal];
+    const nextTasks = [...structuredClone(domain.tasks), task];
+    if (!goalCommitPayloadValid({ goals: nextGoals, tasks: nextTasks, groups: domain.goalGroups })) {
+      throw questionnaireError('questionnaire_domain_validation_failed', 409, { recoverable: true });
+    }
+    const questionnaire = {
+      version: 1, status: 'materialized', revision: normalized.revision,
+      idempotencyKey: normalized.idempotencyKey, requestHash,
+      draftId: normalized.receipt.draftId, originAnswerId: normalized.receipt.originAnswerId,
+      sourceLocale: normalized.receipt.sourceLocale, recognitionPhrase: normalized.receipt.recognitionPhrase,
+      seeds: {
+        goals: [{ localId: goal.id, source: goalSeed.source }],
+        firstSteps: [{ localId: task.id, goalRef: goal.id, source: taskSeed.source }],
+        spheres: normalized.skills.map((skill) => ({ localId: skill.id, role: skill.role, source: skill.source })),
+      },
+      preferences: { supportStyle: null, constraints: [] },
+      consents: normalized.receipt.consents,
+      materialized: { goalIds: [goal.id], taskIds: [task.id], sphereIds: normalized.skills.map((skill) => skill.id) },
+      confirmedAt: normalized.receipt.confirmedAt || now, materializedAt: now,
+    };
+    const persisted = questionnaireWriteUnit(uid, [
+      ['settings', nextSettings], ['goals', nextGoals], ['tasks', nextTasks], [QUESTIONNAIRE_FILE, questionnaire],
+    ], () => {
+      const saved = questionnaireReadStored(uid);
+      if (!saved || saved.requestHash !== requestHash || saved.idempotencyKey !== normalized.idempotencyKey) {
+        throw questionnaireError('questionnaire_read_after_write_failed', 500);
+      }
+      questionnaireAssertMaterialized(uid, saved);
+      return saved;
+    });
+    return questionnaireDomainResponse(uid, persisted, false);
+  });
+}
+function questionnaireNormalizeDefer(payload) {
+  if (!questionnaireExactKeys(payload, ['idempotencyKey', 'revision', 'receipt'])) throw questionnaireError('invalid_questionnaire_defer');
+  const idempotencyKey = questionnaireId(payload.idempotencyKey, 128), revision = Number(payload.revision);
+  if (!idempotencyKey || idempotencyKey.length < 8 || !Number.isInteger(revision) || revision < 1 || revision > 1000000) {
+    throw questionnaireError('invalid_questionnaire_defer');
+  }
+  const receipt = questionnaireNormalizeReceipt(payload.receipt, false, { allowEmptyRecognition: true });
+  return { idempotencyKey, revision, receipt };
+}
+function questionnaireDefer(uid, payload) {
+  return questionnaireWithLock(uid, () => {
+    const normalized = questionnaireNormalizeDefer(payload), requestHash = questionnaireHash(normalized);
+    const current = questionnaireReadStored(uid);
+    const action = questionnaireCheckRevision(current, normalized, requestHash);
+    if (action === 'replay') return questionnaireDomainResponse(uid, current, true);
+    const now = new Date().toISOString();
+    const questionnaire = {
+      version: 1, status: 'deferred', revision: normalized.revision,
+      idempotencyKey: normalized.idempotencyKey, requestHash,
+      draftId: normalized.receipt.draftId, originAnswerId: normalized.receipt.originAnswerId,
+      sourceLocale: normalized.receipt.sourceLocale, recognitionPhrase: normalized.receipt.recognitionPhrase,
+      seeds: { goals: [], firstSteps: [], spheres: [] },
+      preferences: { supportStyle: null, constraints: [] },
+      consents: normalized.receipt.consents,
+      materialized: { goalIds: [], taskIds: [], sphereIds: [] },
+      confirmedAt: normalized.receipt.confirmedAt || now, materializedAt: null, deferredAt: now,
+    };
+    const persisted = questionnaireWriteUnit(uid, [[QUESTIONNAIRE_FILE, questionnaire]], () => {
+      const saved = questionnaireReadStored(uid);
+      if (!saved || saved.requestHash !== requestHash) throw questionnaireError('questionnaire_read_after_write_failed', 500);
+      return saved;
+    });
+    return questionnaireDomainResponse(uid, persisted, false);
+  });
+}
+function questionnaireHttpError(res, error) {
+  const status = Number(error && error.status) || 500;
+  const body = { error: status >= 500 ? 'questionnaire_commit_failed_no_changes_lost' : String(error && error.code || 'invalid_questionnaire_commit') };
+  if (error && error.extra) Object.assign(body, error.extra);
+  return sendJson(res, status, body);
+}
+
 function portableValueValid(name, value) {
   const type = ACCOUNT_PORTABLE_TYPES[name];
   if (!type || value == null) return false;
+  if (name === QUESTIONNAIRE_FILE) return questionnaireStoredValid(value);
   if (type === 'array') return Array.isArray(value);
   return typeof value === 'object' && !Array.isArray(value);
 }
@@ -1750,6 +2232,21 @@ function importPortableAccountData(uid, payload) {
   if (!names.length || names.some((name) => !ACCOUNT_PORTABLE_FILES.includes(name) || !portableValueValid(name, payload.data[name]))) throw new Error('invalid_archive');
   const encoded = JSON.stringify(payload.data);
   if (Buffer.byteLength(encoded) > 8 * 1024 * 1024) throw new Error('archive_too_large');
+
+  // A receipt without its referenced domain objects is a false-success trap.
+  // Validate the final merged archive view, not only the files present in this
+  // particular import, because portable imports historically allowed subsets.
+  const existingQuestionnaire = payload.data.questionnaire ? null : questionnaireReadStored(uid);
+  const finalQuestionnaire = payload.data.questionnaire || existingQuestionnaire;
+  if (finalQuestionnaire) {
+    const finalSettings = Object.prototype.hasOwnProperty.call(payload.data, 'settings')
+      ? payload.data.settings : questionnaireReadFile(uid, 'settings', {}, 'object');
+    const finalGoals = Object.prototype.hasOwnProperty.call(payload.data, 'goals')
+      ? payload.data.goals : questionnaireReadFile(uid, 'goals', [], 'array');
+    const finalTasks = Object.prototype.hasOwnProperty.call(payload.data, 'tasks')
+      ? payload.data.tasks : questionnaireReadFile(uid, 'tasks', [], 'array');
+    if (!questionnaireReceiptRefsValid(finalQuestionnaire, finalSettings, finalGoals, finalTasks)) throw new Error('invalid_archive');
+  }
 
   const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
   const snapshots = new Map(); const written = [];
@@ -3774,6 +4271,11 @@ const server = http.createServer(async (req, res) => {
       if (aiErr(res, r)) return;
       const parsed = extractJson(r.text);
       if (!parsed || !Array.isArray(parsed.proposals)) return sendJson(res, 200, { error: 'parse', raw: (r.text || '').slice(0, 800) });
+      if (kind === 'onboard') {
+        const proposals = sanitizeOnboardingProposals(parsed);
+        if (!proposals) return sendJson(res, 200, { error: 'parse' });
+        return sendJson(res, 200, { proposals });
+      }
       const treeMapProposals = kind === 'treemap' ? normalizeTreeMapProposals(parsed.proposals) : null;
       // The Tree v4 client renders criterion and nextAction as separate semantic
       // fields. Never silently accept a partial/legacy AI answer: fewer than four
@@ -4090,6 +4592,40 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, r);
   }
 
+  // ---- Questionnaire v1: server-owned receipt + atomic domain seed ----
+  // Query parameters are intentionally ignored: identity always comes from the
+  // signed session, never from a userId supplied by a caller.
+  const questionnairePath = u.split('?')[0];
+  if (questionnairePath === '/api/questionnaire' && req.method === 'GET') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    try { return sendJson(res, 200, { ok: true, questionnaire: questionnaireCurrent(uid) }); }
+    catch (error) { return questionnaireHttpError(res, error); }
+  }
+  if (questionnairePath === '/api/questionnaire/commit' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload;
+    try { payload = JSON.parse(await readBody(req, QUESTIONNAIRE_MAX_BYTES)); }
+    catch (error) {
+      return sendJson(res, error && error.code === 'PAYLOAD_TOO_LARGE' ? 413 : 400, {
+        error: error && error.code === 'PAYLOAD_TOO_LARGE' ? 'questionnaire_commit_too_large' : 'invalid_questionnaire_commit',
+      });
+    }
+    try { return sendJson(res, 200, questionnaireCommit(uid, payload)); }
+    catch (error) { return questionnaireHttpError(res, error); }
+  }
+  if (questionnairePath === '/api/questionnaire/defer' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload;
+    try { payload = JSON.parse(await readBody(req, 32 * 1024)); }
+    catch (error) {
+      return sendJson(res, error && error.code === 'PAYLOAD_TOO_LARGE' ? 413 : 400, {
+        error: error && error.code === 'PAYLOAD_TOO_LARGE' ? 'questionnaire_defer_too_large' : 'invalid_questionnaire_defer',
+      });
+    }
+    try { return sendJson(res, 200, questionnaireDefer(uid, payload)); }
+    catch (error) { return questionnaireHttpError(res, error); }
+  }
+
   // ---- Account data lifecycle: portable JSON archive, always current user ----
   if (u === '/api/account/export' && req.method === 'GET') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
@@ -4244,7 +4780,7 @@ const server = http.createServer(async (req, res) => {
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const name = safeName(m[1].replace(/\.json$/, ''));
     if (!name) return sendJson(res, 400, { error: 'bad name' });
-    if (name === 'board-discovery' || name === 'board-community') return sendJson(res, 403, { error: 'server_owned_data' });
+    if (name === 'board-discovery' || name === 'board-community' || name === QUESTIONNAIRE_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
     const dir = userDataDir(uid);
     const file = path.join(dir, name + '.json');
 
@@ -4272,7 +4808,7 @@ const server = http.createServer(async (req, res) => {
   {
     const me = loadUsers().find(x => x.id === sessionUserId(req));
     const isAdmin = me && me.isAdmin;
-    const DATA_NAMES = ['settings', 'tasks', 'habits', 'goals', 'goal-groups', 'days', 'habitlog', 'weeks', 'lootbox', 'skilltree', 'purchases', 'achievements', 'boardmedia'];
+    const DATA_NAMES = ['settings', 'tasks', 'habits', 'goals', 'goal-groups', 'days', 'habitlog', 'weeks', 'lootbox', 'skilltree', 'purchases', 'achievements', 'boardmedia', 'questionnaire'];
 
     // GET /api/admin/userdata/<userId> — текущее содержимое всех файлов + список бэкапов
     let am = u.match(/^\/api\/admin\/userdata\/([a-z0-9_-]{1,32})$/);

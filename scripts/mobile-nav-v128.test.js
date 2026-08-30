@@ -30,7 +30,7 @@ test('Mobile navigation v128 preserves exactly four primary destinations plus la
 
 test('More is purpose-grouped and exposes current states instead of one meaningless grid', () => {
   const sheet = between(APP, 'function showMobileNavSheet()', '\nconst ACCENTS');
-  for (const group of ['Развитие', 'Сообщество', 'Поддержка', 'Аккаунт и доступ', 'Справка и сеанс']) assert.match(sheet, new RegExp(`group\\('[^']+', '${escaped(group)}'`));
+  for (const group of ['Развитие', 'Сообщество', 'Идеи и вдохновение', 'Помощь', 'Аккаунт и доступ']) assert.match(sheet, new RegExp(`group\\('[^']+', '${escaped(group)}'`));
   assert.match(sheet, /sectionEntry\('rewards'\)/);
   assert.match(sheet, /sectionEntry\('tribe'\)/);
   assert.match(sheet, /data-action="open-helper"/);
@@ -64,7 +64,7 @@ test('More sheet owns keyboard focus and never steals it after a navigation tran
 });
 
 test('More copy has complete locale rows and nav CSS stays DOM-ordered', () => {
-  for (const key of ['Развитие', 'Сообщество', 'Поддержка', 'Аккаунт и доступ', 'Справка и сеанс']) {
+  for (const key of ['Развитие', 'Сообщество', 'Идеи и вдохновение', 'Помощь', 'Аккаунт и доступ']) {
     const row = APP.match(new RegExp(`'${escaped(key)}': \\{([^}]+)\\}`));
     assert.ok(row, `missing locale row: ${key}`);
     for (const locale of ['en', 'de', 'uk', 'es']) assert.match(row[1], new RegExp(`\\b${locale}:`));

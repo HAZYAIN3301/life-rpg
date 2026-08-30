@@ -7,6 +7,7 @@ const path = require('node:path');
 
 const ROOT = path.join(__dirname, '..');
 const APP = fs.readFileSync(path.join(ROOT, 'public/app.js'), 'utf8');
+const SERVER = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
 const CSS = fs.readFileSync(path.join(ROOT, 'public/styles.css'), 'utf8');
 const INDEX = fs.readFileSync(path.join(ROOT, 'public/index.html'), 'utf8');
 const SW = fs.readFileSync(path.join(ROOT, 'public/sw.js'), 'utf8');
@@ -51,7 +52,11 @@ test('chosen language is persisted before onboarding and retained by every onboa
   const onboardingAt = registration.indexOf("State.phase = 'onboarding'");
   assert.ok(saveAt >= 0 && onboardingAt > saveAt, 'language settings must persist before onboarding is shown');
   assert.match(between('async function applyProgramFresh', '\nasync function loginAsTestUser'), /freshOnboardingSettings\(skills\)/);
-  assert.match(between('async function obAiApply', '\nfunction renderOnboardingScreen'), /freshOnboardingSettings\(\[\]\)/);
+  const questionnaire = between('async function questionnaireCommit()', '\nasync function questionnaireDefer()');
+  assert.match(questionnaire, /fetch\('\/api\/questionnaire\/commit'/);
+  assert.match(questionnaire, /sourceLocale: q\.sourceLocale/);
+  assert.match(SERVER, /const nextSettings = structuredClone\(domain\.settings\);\s*nextSettings\.skills = questionnaireMergeSkills/,
+    'questionnaire may replace skills but must retain the already-persisted account language');
   assert.match(between("if (action === 'ob-finish')", '// --- Лутбоксы'), /freshOnboardingSettings\(skills\)/);
 });
 

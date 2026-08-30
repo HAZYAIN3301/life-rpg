@@ -4194,6 +4194,116 @@ const I18N_EXTRA = {
   'Кирпич за кирпичом': { en: 'Brick by Brick', de: 'Stein für Stein', uk: 'Цеглина за цеглиною', es: 'Ladrillo a ladrillo' },
   'Глубина сферы': { en: 'Depth of an Area', de: 'Tiefe eines Bereichs', uk: 'Глибина сфери', es: 'Profundidad de un área' },
   'Широта жизни': { en: 'Breadth of Life', de: 'Breite des Lebens', uk: 'Широта життя', es: 'Amplitud de vida' },
+  // ── Questionnaire v1 / interface hierarchy v204: one complete five-locale gate ──
+  'Не удалось проверить стартовую настройку. Проверь соединение и повтори — пустой экран не считается готовым стартом.': { en: 'Could not verify the starting setup. Check the connection and try again — an empty screen does not count as a completed start.', de: 'Die Starteinrichtung konnte nicht geprüft werden. Prüfe die Verbindung und versuche es erneut — ein leerer Bildschirm gilt nicht als abgeschlossener Start.', uk: 'Не вдалося перевірити стартове налаштування. Перевір з’єднання й повтори — порожній екран не вважається готовим стартом.', es: 'No se pudo comprobar la configuración inicial. Revisa la conexión e inténtalo de nuevo: una pantalla vacía no cuenta como inicio completado.' },
+  'Напиши, что тебе сейчас важнее всего сдвинуть с места.': { en: 'Write what matters most for you to move forward right now.', de: 'Schreibe, was du gerade am dringendsten voranbringen möchtest.', uk: 'Напиши, що тобі зараз найважливіше зрушити з місця.', es: 'Escribe qué es lo que más te importa poner en marcha ahora.' },
+  'Подтверди отправку этого ответа выбранному ИИ — или продолжи вручную.': { en: 'Confirm sending this answer to the selected AI, or continue manually.', de: 'Bestätige, dass diese Antwort an die ausgewählte KI gesendet werden darf, oder fahre manuell fort.', uk: 'Підтвердь надсилання цієї відповіді вибраному ШІ — або продовж вручну.', es: 'Confirma el envío de esta respuesta a la IA elegida o continúa manualmente.' },
+  'Не получилось разобрать ответ. Текст сохранён — можно повторить или продолжить вручную.': { en: 'The answer could not be interpreted. Your text is still here — retry or continue manually.', de: 'Die Antwort konnte nicht ausgewertet werden. Dein Text ist noch da — versuche es erneut oder fahre manuell fort.', uk: 'Не вдалося розібрати відповідь. Текст збережено — можна повторити або продовжити вручну.', es: 'No se pudo interpretar la respuesta. El texto sigue aquí: inténtalo de nuevo o continúa manualmente.' },
+  'Сеть недоступна. Текст сохранён — продолжи вручную или повтори позже.': { en: 'The network is unavailable. Your text is still here — continue manually or retry later.', de: 'Das Netzwerk ist nicht erreichbar. Dein Text ist noch da — fahre manuell fort oder versuche es später erneut.', uk: 'Мережа недоступна. Текст збережено — продовж вручну або повтори пізніше.', es: 'La red no está disponible. El texto sigue aquí: continúa manualmente o inténtalo más tarde.' },
+  'Заполни результат и один первый шаг.': { en: 'Add the result and one first step.', de: 'Trage das Ergebnis und einen ersten Schritt ein.', uk: 'Заповни результат і один перший крок.', es: 'Completa el resultado y un primer paso.' },
+  'Проверь цель и первый шаг — оба поля обязательны.': { en: 'Check the goal and first step — both fields are required.', de: 'Prüfe Ziel und ersten Schritt — beide Felder sind erforderlich.', uk: 'Перевір ціль і перший крок — обидва поля обов’язкові.', es: 'Revisa la meta y el primer paso: ambos campos son obligatorios.' },
+  'Старт не завершён. Все правки остались на экране; повтор безопасно продолжит ту же запись.': { en: 'The start was not completed. All edits remain on screen; retrying will safely continue the same record.', de: 'Der Start wurde nicht abgeschlossen. Alle Änderungen bleiben auf dem Bildschirm; ein erneuter Versuch setzt denselben Eintrag sicher fort.', uk: 'Старт не завершено. Усі правки лишилися на екрані; повтор безпечно продовжить той самий запис.', es: 'El inicio no se completó. Todos los cambios siguen en pantalla; reintentar continuará de forma segura el mismo registro.' },
+  'Не удалось сохранить выбор. Повтори — приложение не будет притворяться, что настройка завершена.': { en: 'Could not save your choice. Try again — the app will not pretend the setup is complete.', de: 'Deine Auswahl konnte nicht gespeichert werden. Versuche es erneut — die App wird nicht so tun, als sei die Einrichtung abgeschlossen.', uk: 'Не вдалося зберегти вибір. Повтори — застосунок не вдаватиме, що налаштування завершено.', es: 'No se pudo guardar tu elección. Inténtalo de nuevo: la aplicación no fingirá que la configuración ha terminado.' },
+  'Не удалось включить микрофон. Ответ можно вписать вручную.': { en: 'Could not enable the microphone. You can type the answer instead.', de: 'Das Mikrofon konnte nicht aktiviert werden. Du kannst die Antwort stattdessen eingeben.', uk: 'Не вдалося ввімкнути мікрофон. Відповідь можна вписати вручну.', es: 'No se pudo activar el micrófono. Puedes escribir la respuesta.' },
+  'Старт не завершён. Часть старого способа настройки могла сохраниться; обнови данные перед повтором.': { en: 'The start was not completed. Part of the legacy setup may have been saved; refresh the data before retrying.', de: 'Der Start wurde nicht abgeschlossen. Ein Teil der alten Einrichtung könnte gespeichert worden sein; aktualisiere die Daten vor dem nächsten Versuch.', uk: 'Старт не завершено. Частина старого способу налаштування могла зберегтися; онови дані перед повтором.', es: 'El inicio no se completó. Es posible que se haya guardado parte de la configuración anterior; actualiza los datos antes de reintentar.' },
+  'Шаг 1 из 2': { en: 'Step 1 of 2', de: 'Schritt 1 von 2', uk: 'Крок 1 із 2', es: 'Paso 1 de 2' },
+  'Шаг 2 из 2': { en: 'Step 2 of 2', de: 'Schritt 2 von 2', uk: 'Крок 2 із 2', es: 'Paso 2 de 2' },
+  'Я понял тебя так': { en: 'Here is what I understood', de: 'So habe ich dich verstanden', uk: 'Я зрозумів тебе так', es: 'Esto es lo que he entendido' },
+  'Проверь три блока. Предложение Тени станет фактом только после твоего подтверждения.': { en: 'Check these three blocks. Shadow’s suggestion becomes a fact only after you confirm it.', de: 'Prüfe diese drei Blöcke. Der Vorschlag des Schattens wird erst nach deiner Bestätigung übernommen.', uk: 'Перевір три блоки. Пропозиція Тіні стане фактом лише після твого підтвердження.', es: 'Revisa estos tres bloques. La propuesta de Sombra solo será un hecho cuando la confirmes.' },
+  'Твои слова': { en: 'Your words', de: 'Deine Worte', uk: 'Твої слова', es: 'Tus palabras' },
+  'Предложено Тенью': { en: 'Suggested by Shadow', de: 'Vom Schatten vorgeschlagen', uk: 'Запропоновано Тінню', es: 'Sugerido por Sombra' },
+  'Направление': { en: 'Direction', de: 'Richtung', uk: 'Напрям', es: 'Dirección' },
+  'Почему это важно': { en: 'Why this matters', de: 'Warum das wichtig ist', uk: 'Чому це важливо', es: 'Por qué importa' },
+  'Первый шаг на сегодня': { en: 'First step for today', de: 'Erster Schritt für heute', uk: 'Перший крок на сьогодні', es: 'Primer paso para hoy' },
+  'Где это в жизни': { en: 'Where this fits in life', de: 'Wo das im Leben hingehört', uk: 'Де це в житті', es: 'Dónde encaja en tu vida' },
+  'Сферы нужны для связи цели, первого шага, прогресса и питомцев. Их можно изменить позже.': { en: 'Areas connect the goal, first step, progress and pets. You can change them later.', de: 'Bereiche verbinden Ziel, ersten Schritt, Fortschritt und Haustiere. Du kannst sie später ändern.', uk: 'Сфери пов’язують ціль, перший крок, прогрес і питомців. Їх можна змінити пізніше.', es: 'Las áreas conectan la meta, el primer paso, el progreso y las mascotas. Puedes cambiarlas más adelante.' },
+  'Предложенные сферы': { en: 'Suggested areas', de: 'Vorgeschlagene Bereiche', uk: 'Запропоновані сфери', es: 'Áreas sugeridas' },
+  'Сферу можно добавить позже — это не мешает создать цель и первый шаг.': { en: 'You can add an area later — it does not prevent creating the goal and first step.', de: 'Du kannst später einen Bereich hinzufügen — Ziel und erster Schritt lassen sich trotzdem erstellen.', uk: 'Сферу можна додати пізніше — це не заважає створити ціль і перший крок.', es: 'Puedes añadir un área más adelante; no impide crear la meta y el primer paso.' },
+  'Помочь Тени помнить подтверждённое': { en: 'Let Shadow remember what I confirmed', de: 'Schatten darf sich Bestätigtes merken', uk: 'Допомогти Тіні пам’ятати підтверджене', es: 'Permitir que Sombra recuerde lo confirmado' },
+  'Только цель и первый шаг попадут в личный контекст Assistant и Guide. Исходный текст не сохраняется.': { en: 'Only the goal and first step enter the personal context for Assistant and Guide. The original text is not saved.', de: 'Nur Ziel und erster Schritt gelangen in den persönlichen Kontext von Assistent und Guide. Der ursprüngliche Text wird nicht gespeichert.', uk: 'Лише ціль і перший крок потраплять до особистого контексту Assistant і Guide. Початковий текст не зберігається.', es: 'Solo la meta y el primer paso entrarán en el contexto personal de Assistant y Guide. El texto original no se guarda.' },
+  '← Назад': { en: '← Back', de: '← Zurück', uk: '← Назад', es: '← Atrás' },
+  'Создать и перейти к первому шагу': { en: 'Create and open the first step', de: 'Erstellen und zum ersten Schritt gehen', uk: 'Створити й перейти до першого кроку', es: 'Crear e ir al primer paso' },
+  'Соберём один понятный старт': { en: 'Let’s build one clear start', de: 'Bauen wir einen klaren Start', uk: 'Зберімо один зрозумілий старт', es: 'Preparemos un inicio claro' },
+  'Без ИИ: один результат, его смысл и один физический шаг на сегодня.': { en: 'Without AI: one result, why it matters, and one physical step for today.', de: 'Ohne KI: ein Ergebnis, seine Bedeutung und ein konkreter Schritt für heute.', uk: 'Без ШІ: один результат, його сенс і один фізичний крок на сьогодні.', es: 'Sin IA: un resultado, su sentido y un paso físico para hoy.' },
+  'Какой результат ты хочешь увидеть?': { en: 'What result do you want to see?', de: 'Welches Ergebnis möchtest du sehen?', uk: 'Який результат ти хочеш побачити?', es: '¿Qué resultado quieres ver?' },
+  'Почему это важно?': { en: 'Why does it matter?', de: 'Warum ist das wichtig?', uk: 'Чому це важливо?', es: '¿Por qué importa?' },
+  'Какой небольшой шаг сделаешь сегодня?': { en: 'What small step will you take today?', de: 'Welchen kleinen Schritt machst du heute?', uk: 'Який невеликий крок зробиш сьогодні?', es: '¿Qué pequeño paso darás hoy?' },
+  'Сколько времени можно дать первому шагу?': { en: 'How much time can you give the first step?', de: 'Wie viel Zeit kannst du dem ersten Schritt geben?', uk: 'Скільки часу можна дати першому кроку?', es: '¿Cuánto tiempo puedes dedicar al primer paso?' },
+  'Проверить перед созданием': { en: 'Review before creating', de: 'Vor dem Erstellen prüfen', uk: 'Перевірити перед створенням', es: 'Revisar antes de crear' },
+  'ИИ Satoru': { en: 'Satoru AI', de: 'Satoru-KI', uk: 'ШІ Satoru', es: 'IA de Satoru' },
+  'Что тебе сейчас важнее всего сдвинуть с места?': { en: 'What matters most for you to move forward right now?', de: 'Was möchtest du gerade am dringendsten voranbringen?', uk: 'Що тобі зараз найважливіше зрушити з місця?', es: '¿Qué es lo que más te importa poner en marcha ahora?' },
+  'Какой результат ты хочешь увидеть, почему он важен — и какой небольшой шаг готов сделать уже сегодня?': { en: 'What result do you want to see, why does it matter, and what small step are you ready to take today?', de: 'Welches Ergebnis möchtest du sehen, warum ist es wichtig und welchen kleinen Schritt kannst du schon heute machen?', uk: 'Який результат ти хочеш побачити, чому він важливий — і який невеликий крок готовий зробити вже сьогодні?', es: '¿Qué resultado quieres ver, por qué importa y qué pequeño paso estás dispuesto a dar hoy?' },
+  'Твой ответ': { en: 'Your answer', de: 'Deine Antwort', uk: 'Твоя відповідь', es: 'Tu respuesta' },
+  'Например: хочу выпустить первое видео о Satoru, чтобы начать продвижение. Сегодня открою сценарий, выберу одну сцену и запишу черновой дубль.': { en: 'For example: I want to publish the first Satoru video to start promoting it. Today I will open the script, choose one scene and record a rough take.', de: 'Zum Beispiel: Ich möchte das erste Video über Satoru veröffentlichen, um mit der Vermarktung zu beginnen. Heute öffne ich das Skript, wähle eine Szene und nehme einen Rohentwurf auf.', uk: 'Наприклад: хочу випустити перше відео про Satoru, щоб почати просування. Сьогодні відкрию сценарій, виберу одну сцену й запишу чорновий дубль.', es: 'Por ejemplo: quiero publicar el primer vídeo sobre Satoru para empezar a promocionarlo. Hoy abriré el guion, elegiré una escena y grabaré una toma de prueba.' },
+  'Ответить голосом': { en: 'Answer by voice', de: 'Per Sprache antworten', uk: 'Відповісти голосом', es: 'Responder por voz' },
+  'Один ответ — не анкета на час.': { en: 'One answer, not an hour-long questionnaire.', de: 'Eine Antwort, kein einstündiger Fragebogen.', uk: 'Одна відповідь — не анкета на годину.', es: 'Una respuesta, no un cuestionario de una hora.' },
+  'Разрешить разобрать этот ответ с помощью ИИ': { en: 'Allow AI to interpret this answer', de: 'KI darf diese Antwort auswerten', uk: 'Дозволити розібрати цю відповідь за допомогою ШІ', es: 'Permitir que la IA interprete esta respuesta' },
+  'Текст будет отправлен выбранному провайдеру': { en: 'The text will be sent to the selected provider', de: 'Der Text wird an den ausgewählten Anbieter gesendet', uk: 'Текст буде надіслано вибраному провайдеру', es: 'El texto se enviará al proveedor elegido' },
+  'Перед записью ты увидишь и исправишь результат.': { en: 'You will see and edit the result before it is saved.', de: 'Vor dem Speichern kannst du das Ergebnis sehen und bearbeiten.', uk: 'Перед записом ти побачиш і виправиш результат.', es: 'Verás y podrás corregir el resultado antes de guardarlo.' },
+  'У меня уже есть план': { en: 'I already have a plan', de: 'Ich habe bereits einen Plan', uk: 'У мене вже є план', es: 'Ya tengo un plan' },
+  'Вставь его в поле выше или выбери текстовый файл. Satoru видит только явно выбранный файл.': { en: 'Paste it above or choose a text file. Satoru sees only the file you explicitly select.', de: 'Füge ihn oben ein oder wähle eine Textdatei. Satoru sieht nur die Datei, die du ausdrücklich auswählst.', uk: 'Встав його в поле вище або вибери текстовий файл. Satoru бачить лише явно вибраний файл.', es: 'Pégalo arriba o elige un archivo de texto. Satoru solo ve el archivo que selecciones expresamente.' },
+  'Выбрать файл': { en: 'Choose file', de: 'Datei auswählen', uk: 'Вибрати файл', es: 'Elegir archivo' },
+  'Показать, что понял Satoru': { en: 'Show what Satoru understood', de: 'Zeigen, was Satoru verstanden hat', uk: 'Показати, що зрозумів Satoru', es: 'Mostrar lo que entendió Satoru' },
+  'Продолжить вручную': { en: 'Continue manually', de: 'Manuell fortfahren', uk: 'Продовжити вручну', es: 'Continuar manualmente' },
+  'Настроить позже': { en: 'Set up later', de: 'Später einrichten', uk: 'Налаштувати пізніше', es: 'Configurar más tarde' },
+  'Что будет дальше': { en: 'What happens next', de: 'Wie es weitergeht', uk: 'Що буде далі', es: 'Qué ocurrirá después' },
+  'После подтверждения появится одна цель в «Целях» и один первый шаг на «Сегодня». Программы, привычки и полную карту сфер можно настроить позже — они не мешают начать.': { en: 'After you confirm, one goal appears in Goals and one first step on Today. Programs, habits and the full area map can be set up later — they do not block your start.', de: 'Nach der Bestätigung erscheinen ein Ziel unter „Ziele“ und ein erster Schritt unter „Heute“. Programme, Gewohnheiten und die vollständige Bereichskarte kannst du später einrichten — sie halten dich nicht vom Start ab.', uk: 'Після підтвердження з’явиться одна ціль у «Цілях» і один перший крок у «Сьогодні». Програми, звички та повну карту сфер можна налаштувати пізніше — вони не заважають почати.', es: 'Tras confirmar, aparecerá una meta en «Metas» y un primer paso en «Hoy». Los programas, hábitos y el mapa completo de áreas pueden configurarse más adelante: no impiden empezar.' },
+  'Назови одну основную сферу': { en: 'Name one main area', de: 'Nenne einen Hauptbereich', uk: 'Назви одну основну сферу', es: 'Nombra un área principal' },
+  'К какой сфере жизни это относится?': { en: 'Which area of life does this belong to?', de: 'Zu welchem Lebensbereich gehört das?', uk: 'До якої сфери життя це належить?', es: '¿A qué área de la vida pertenece?' },
+  'Например: Медиа': { en: 'For example: Media', de: 'Zum Beispiel: Medien', uk: 'Наприклад: Медіа', es: 'Por ejemplo: Medios' },
+  'Ещё способы сохранить мысль': { en: 'More ways to save this thought', de: 'Weitere Möglichkeiten, diesen Gedanken zu speichern', uk: 'Ще способи зберегти думку', es: 'Más formas de guardar esta idea' },
+  'Внешний вид': { en: 'Appearance', de: 'Erscheinungsbild', uk: 'Зовнішній вигляд', es: 'Apariencia' },
+  'Звук и присутствие Тени': { en: 'Sound and Shadow presence', de: 'Klang und Präsenz des Schattens', uk: 'Звук і присутність Тіні', es: 'Sonido y presencia de Sombra' },
+  'Приложение и границы внимания': { en: 'App and attention boundaries', de: 'App und Aufmerksamkeitsgrenzen', uk: 'Застосунок і межі уваги', es: 'Aplicación y límites de atención' },
+  'Рейд и сезон': { en: 'Raid and season', de: 'Raid und Saison', uk: 'Рейд і сезон', es: 'Incursión y temporada' },
+  // ── v204 authored UI copy outside the questionnaire ──
+  'Слушаю… Нажми, чтобы остановить': { en: 'Listening… Press to stop', de: 'Ich höre zu… Zum Stoppen drücken', uk: 'Слухаю… Натисни, щоб зупинити', es: 'Escuchando… Pulsa para detener' },
+  'Тень — спроси о себе или о приложении': { en: 'Shadow — ask about yourself or the app', de: 'Schatten — frage nach dir oder der App', uk: 'Тінь — запитай про себе або застосунок', es: 'Sombra: pregunta sobre ti o la aplicación' },
+  'Голос распознаёт браузер только после твоего разрешения; остановить прослушивание можно этой же кнопкой.': { en: 'The browser recognizes speech only after your permission; use the same button to stop listening.', de: 'Der Browser erkennt Sprache erst nach deiner Erlaubnis; mit derselben Taste stoppst du das Zuhören.', uk: 'Браузер розпізнає голос лише після твого дозволу; зупинити прослуховування можна тією самою кнопкою.', es: 'El navegador solo reconoce la voz tras tu permiso; puedes detener la escucha con el mismo botón.' },
+  'Текст заметки': { en: 'Note text', de: 'Notiztext', uk: 'Текст нотатки', es: 'Texto de la nota' },
+  'сегодня получил больше внимания': { en: 'received more attention today', de: 'hat heute mehr Aufmerksamkeit bekommen', uk: 'сьогодні отримав більше уваги', es: 'recibió más atención hoy' },
+  'можно ненадолго вернуть в ритм': { en: 'can be gently brought back into rhythm', de: 'kann sanft wieder in den Rhythmus kommen', uk: 'можна ненадовго повернути в ритм', es: 'puede volver suavemente al ritmo' },
+  'сегодня получил больше внимания. Остальные сферы можно вернуть позже': { en: 'received more attention today. The other areas can return later', de: 'hat heute mehr Aufmerksamkeit bekommen. Die anderen Bereiche können später zurückkehren', uk: 'сьогодні отримав більше уваги. До решти сфер можна повернутися пізніше', es: 'recibió más atención hoy. Las demás áreas pueden volver más tarde' },
+  'нуждается во внимании, когда будет ресурс': { en: 'needs attention when you have the capacity', de: 'braucht Aufmerksamkeit, wenn du Kapazität hast', uk: 'потребує уваги, коли буде ресурс', es: 'necesita atención cuando tengas capacidad' },
+  'Зверинец в своём ритме': { en: 'The menagerie is in its own rhythm', de: 'Die Tiergefährten sind in ihrem eigenen Rhythmus', uk: 'Звіринець у своєму ритмі', es: 'La colección de mascotas sigue su propio ritmo' },
+  'Нуждается во внимании': { en: 'Needs attention', de: 'Braucht Aufmerksamkeit', uk: 'Потребує уваги', es: 'Necesita atención' },
+  'Больше внимания сегодня': { en: 'More attention today', de: 'Heute mehr Aufmerksamkeit', uk: 'Більше уваги сьогодні', es: 'Más atención hoy' },
+  'В своём ритме': { en: 'In its own rhythm', de: 'Im eigenen Rhythmus', uk: 'У своєму ритмі', es: 'A su propio ritmo' },
+  'Нуждается во внимании, когда будет ресурс': { en: 'Needs attention when you have the capacity', de: 'Braucht Aufmerksamkeit, wenn du Kapazität hast', uk: 'Потребує уваги, коли буде ресурс', es: 'Necesita atención cuando tengas capacidad' },
+  'Сегодня получил больше внимания; остальным сферам можно вернуться позже': { en: 'Received more attention today; the other areas can return later', de: 'Hat heute mehr Aufmerksamkeit bekommen; die anderen Bereiche können später zurückkehren', uk: 'Сьогодні отримав більше уваги; до решти сфер можна повернутися пізніше', es: 'Recibió más atención hoy; las demás áreas pueden volver más tarde' },
+  'Хранительница отдыха': { en: 'Guardian of rest', de: 'Wächterin der Erholung', uk: 'Охоронниця відпочинку', es: 'Guardiana del descanso' },
+  'Питомцы показывают ритм основных сфер жизни. Это подсказка, не оценка и не долг.': { en: 'Pets reflect the rhythm of your main life areas. This is a cue, not a score or a debt.', de: 'Haustiere spiegeln den Rhythmus deiner wichtigsten Lebensbereiche. Das ist ein Hinweis, keine Wertung und keine Schuld.', uk: 'Питомці показують ритм основних сфер життя. Це підказка, а не оцінка чи борг.', es: 'Las mascotas reflejan el ritmo de las áreas principales de tu vida. Es una pista, no una nota ni una deuda.' },
+  'Как это работает': { en: 'How it works', de: 'So funktioniert es', uk: 'Як це працює', es: 'Cómo funciona' },
+  'Дела в сфере меняют состояние её питомца. Облик и повадки зависят от подсфер; пропуск ничего не отнимает.': { en: 'Actions in an area change its pet’s state. Appearance and behavior follow subareas; skipping takes nothing away.', de: 'Aktivitäten in einem Bereich verändern den Zustand seines Haustiers. Aussehen und Verhalten folgen den Unterbereichen; Auslassen nimmt nichts weg.', uk: 'Справи у сфері змінюють стан її питомця. Вигляд і поведінка залежать від підсфер; пропуск нічого не забирає.', es: 'Las acciones de un área cambian el estado de su mascota. El aspecto y el comportamiento dependen de las subáreas; omitir algo no resta nada.' },
+  'Сейчас важнее всего': { en: 'Most important now', de: 'Jetzt am wichtigsten', uk: 'Зараз найважливіше', es: 'Lo más importante ahora' },
+  'Добавить причину (необязательно)': { en: 'Add a reason (optional)', de: 'Grund hinzufügen (optional)', uk: 'Додати причину (необов’язково)', es: 'Añadir un motivo (opcional)' },
+  'Сначала сохраняем награду; церемонию можно пропустить.': { en: 'The reward is saved first; you can skip the ceremony.', de: 'Die Belohnung wird zuerst gespeichert; die Zeremonie kannst du überspringen.', uk: 'Спочатку зберігаємо нагороду; церемонію можна пропустити.', es: 'Primero se guarda la recompensa; puedes omitir la ceremonia.' },
+  'Сначала сохраняем награду. После сохранения её можно сразу забрать или посмотреть короткую церемонию.': { en: 'The reward is saved first. Then you can claim it immediately or watch a short ceremony.', de: 'Die Belohnung wird zuerst gespeichert. Danach kannst du sie sofort abholen oder eine kurze Zeremonie ansehen.', uk: 'Спочатку зберігаємо нагороду. Після збереження її можна одразу забрати або переглянути коротку церемонію.', es: 'Primero se guarda la recompensa. Después puedes recogerla de inmediato o ver una ceremonia breve.' },
+  'Тип сообщения': { en: 'Message type', de: 'Nachrichtentyp', uk: 'Тип повідомлення', es: 'Tipo de mensaje' },
+  'Сообщение': { en: 'Message', de: 'Nachricht', uk: 'Повідомлення', es: 'Mensaje' },
+  'Все доступные главы пройдены. Их можно повторить позже.': { en: 'All available chapters are complete. You can replay them later.', de: 'Alle verfügbaren Kapitel sind abgeschlossen. Du kannst sie später wiederholen.', uk: 'Усі доступні розділи пройдено. Їх можна повторити пізніше.', es: 'Todos los capítulos disponibles están completados. Puedes repetirlos más adelante.' },
+  'Ещё главы': { en: 'More chapters', de: 'Weitere Kapitel', uk: 'Ще розділи', es: 'Más capítulos' },
+  'Последние 14 дней': { en: 'Last 14 days', de: 'Letzte 14 Tage', uk: 'Останні 14 днів', es: 'Últimos 14 días' },
+  'Ритм сфер устойчив': { en: 'Area rhythm is steady', de: 'Der Rhythmus der Bereiche ist stabil', uk: 'Ритм сфер стійкий', es: 'El ritmo de las áreas es estable' },
+  'Баланс сфер': { en: 'Area balance', de: 'Balance der Bereiche', uk: 'Баланс сфер', es: 'Equilibrio de áreas' },
+  'Ритм и баланс': { en: 'Rhythm and balance', de: 'Rhythmus und Balance', uk: 'Ритм і баланс', es: 'Ritmo y equilibrio' },
+  'Добавь навыки в Настройках.': { en: 'Add areas in Settings.', de: 'Füge Bereiche in den Einstellungen hinzu.', uk: 'Додай сфери в Налаштуваннях.', es: 'Añade áreas en Ajustes.' },
+  'История и контекст': { en: 'History and context', de: 'Verlauf und Kontext', uk: 'Історія та контекст', es: 'Historial y contexto' },
+  'Все показатели': { en: 'All metrics', de: 'Alle Kennzahlen', uk: 'Усі показники', es: 'Todas las métricas' },
+  'рекорд': { en: 'record', de: 'Rekord', uk: 'рекорд', es: 'récord' },
+  'Расширенная аналитика': { en: 'Advanced analytics', de: 'Erweiterte Analyse', uk: 'Розширена аналітика', es: 'Análisis avanzado' },
+  'Стартовый уровень': { en: 'Starting level', de: 'Startniveau', uk: 'Стартовий рівень', es: 'Nivel inicial' },
+  'Подключение ИИ': { en: 'AI connection', de: 'KI-Verbindung', uk: 'Підключення ШІ', es: 'Conexión de IA' },
+  'Локальная разработка хранит данные в': { en: 'Local development stores data in', de: 'Die lokale Entwicklung speichert Daten in', uk: 'Локальна розробка зберігає дані в', es: 'El desarrollo local guarda los datos en' },
+  'Данные аккаунта хранятся на сервере Satoru и доступны только после авторизации. Экспорт и удаление находятся выше.': { en: 'Account data is stored on the Satoru server and is available only after sign-in. Export and deletion are above.', de: 'Kontodaten werden auf dem Satoru-Server gespeichert und sind nur nach der Anmeldung verfügbar. Export und Löschung befinden sich oben.', uk: 'Дані акаунта зберігаються на сервері Satoru й доступні лише після авторизації. Експорт і видалення розташовані вище.', es: 'Los datos de la cuenta se guardan en el servidor de Satoru y solo están disponibles tras iniciar sesión. La exportación y la eliminación están arriba.' },
+  'Разрешаю участникам видеть мой недельный вклад': { en: 'Allow members to see my weekly contribution', de: 'Mitglieder dürfen meinen Wochenbeitrag sehen', uk: 'Дозволяю учасникам бачити мій тижневий внесок', es: 'Permitir que los miembros vean mi contribución semanal' },
+  'Войти в пати': { en: 'Join party', de: 'Party beitreten', uk: 'Увійти в паті', es: 'Unirse al grupo' },
+  'Как войти в пати': { en: 'How to join a party', de: 'So trittst du einer Party bei', uk: 'Як увійти в паті', es: 'Cómo unirse a un grupo' },
+  'Создать пати': { en: 'Create party', de: 'Party erstellen', uk: 'Створити паті', es: 'Crear grupo' },
+  'Войти по коду': { en: 'Join with a code', de: 'Mit Code beitreten', uk: 'Увійти за кодом', es: 'Unirse con un código' },
+  'Что увидят участники': { en: 'What members will see', de: 'Was Mitglieder sehen', uk: 'Що побачать учасники', es: 'Qué verán los miembros' },
+  'Идеи и вдохновение': { en: 'Ideas and inspiration', de: 'Ideen und Inspiration', uk: 'Ідеї та натхнення', es: 'Ideas e inspiración' },
+  'Помощь': { en: 'Help', de: 'Hilfe', uk: 'Допомога', es: 'Ayuda' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -6202,6 +6312,8 @@ const State = {
   _accountSessionExpired: false,
   obSkills: new Set(), // выбранные шаблоны на онбординге
   _onboardingSaveBusy: false, _onboardingSaveError: '',
+  questionnaire: null, _questionnaireStage: 'source', _questionnaireBusy: false, _questionnaireError: '',
+  _questionnaireManual: { result: '', why: '', step: '', sphere: '', estimateMin: 15 }, _questionnaireLoadError: '',
   // app data
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
   goals: null, goalGroups: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
@@ -6220,7 +6332,7 @@ const State = {
   _boardComplete: null, _boardV2Receipt: null, _boardWildcardChoice: '',
   strava: null, _stravaSyncing: false,
   chatLog: [], _chatBusy: false,
-  leaderboard: null, _lbLoading: false, _lbError: '', party: null, _partyLoading: false, _partyError: '',
+  leaderboard: null, _lbLoading: false, _lbError: '', party: null, _partyLoading: false, _partyError: '', _partyEntryMode: '',
   socialPrivacy: null, _socialBusy: '', _socialError: '', _socialFocusAfterCommit: '',
   adminUsers: null, _adminUsersLoading: false,
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', goalView: 'focus', wkAddDate: null, calDate: null, calMode: 'day', habitsTab: 'build',
@@ -6231,7 +6343,7 @@ const State = {
   _habitTxnBusy: '', _habitError: '', _habitUndo: null, _habitUndoTimer: null, _habitsFocusAfterCommit: '',
   _goalsLoadError: '', _goalGroupsLoadError: '', _goalsLoadBusy: false, _goalsWriteBlockedNoticeAt: 0,
   _goalTxnBusy: '', _goalsError: '', _goalsFocusAfterCommit: '', _goalOpenId: '', _goalDeepLinkId: '', _goalsComposerOpen: false, _goalGroupFilter: '', _goalsBulkMode: false, _goalsBulkIds: new Set(),
-  _calendarUndo: null, _calendarUndoTimer: null, _calendarFocusAfterCommit: '',
+  _calendarUndo: null, _calendarUndoTimer: null, _calendarFocusAfterCommit: '', _calendarAddOpen: false,
   _inboxLoadError: '', _inboxBusy: false, _inboxFocusAfterCommit: '',
   _guideV3Error: '', _guideV3SessionPrompted: false, _guideV3SessionStartedAt: Date.now(), _guideV3StartBusy: false, _guideV3PromptMarkBusy: false,
   _guideV3ChooseOther: false, _guideV3FocusPending: '', _guideV3VoiceActive: false,
@@ -7061,7 +7173,11 @@ function balanceIndex() {
 }
 
 // ---- Подписка / Pro ----
-function ent() { return (State.me && State.me.entitlement) || { tier: 'free' }; }
+function ent() {
+  const raw = State.me && State.me.entitlement;
+  const tier = raw && ['free', 'trial', 'pro'].includes(raw.tier) ? raw.tier : 'free';
+  return { ...(raw && typeof raw === 'object' ? raw : {}), tier };
+}
 function isPro() { const t = ent().tier; return t === 'pro' || t === 'trial'; }
 function trialDaysLeft() { const e = ent(); if (e.tier !== 'trial' || !e.trialEndsAt) return 0; return Math.max(0, Math.ceil((new Date(e.trialEndsAt).getTime() - Date.now()) / 86400000)); }
 
@@ -11477,7 +11593,7 @@ function scheduleChestReelSounds(overlay, durationMs) {
   if (!overlay || sfxMode() !== 'full') return;
   // Dense at launch, then increasingly spaced: the ear hears deceleration even
   // with its eyes closed. Times are bounded by the same honest reel duration.
-  const curve = [.06, .12, .18, .25, .33, .42, .52, .63, .74, .84, .92, .975];
+  const curve = [.16, .38, .65, .9];
   overlay._reelSoundTimers = curve.map((point, index) => setTimeout(() => {
     if (!overlay.isConnected || overlay._reelDone) return;
     sfx('reward_tick', 'common', { progress: point, pan: index % 2 ? .12 : -.12 });
@@ -11873,15 +11989,15 @@ function closeFocusWidget() { if (pipWindow && !pipWindow.closed) { try { pipWin
 // «последнее использованное» получается само, без нового поля в хранилище.
 const FOCUS_DURATION_PRESETS = [15, 25, 45];
 function openFocusDurationPicker(taskId) {
-  document.getElementById('focus-dur-modal')?.remove();
+  closeAccountDialog('focus-dur-modal', { restoreFocus: false });
   const cur = focusCfg().workMin;
-  const chips = FOCUS_DURATION_PRESETS.map((m) => `<button class="ob-chip ${m === cur ? 'sel' : ''}" data-action="focus-pick-duration" data-task="${esc(taskId)}" data-min="${m}" style="--c:var(--accent)">${m} ${t('мин')}</button>`).join('');
+  const chips = FOCUS_DURATION_PRESETS.map((m) => `<button type="button" class="ob-chip ${m === cur ? 'sel' : ''}" data-action="focus-pick-duration" data-task="${esc(taskId)}" data-min="${m}" aria-pressed="${m === cur}" style="--c:var(--accent)">${m} ${t('мин')}</button>`).join('');
   const ov = document.createElement('div'); ov.id = 'focus-dur-modal'; ov.className = 'modal-overlay';
-  ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="focus-duration-close">✕</button>
-    <h2>🎯 ${t('Сколько минут?')}</h2>
+  ov.innerHTML = `<section class="ai-box v204-dialog" role="dialog" aria-modal="true" aria-labelledby="focus-duration-title" aria-describedby="focus-duration-desc"><button type="button" class="modal-x" data-action="focus-duration-close" aria-label="${esc(t('Закрыть'))}">✕</button>
+    <h2 id="focus-duration-title" tabindex="-1">🎯 ${t('Сколько минут?')}</h2>
     <div class="ob-group-chips" style="margin:10px 0">${chips}</div>
-    <p class="muted" style="font-size:12.5px;margin:0">${t('Тап — и пошёл отсчёт. Поменять можно и позже, в Настройках.')}</p></div>`;
-  document.body.appendChild(ov);
+    <p id="focus-duration-desc" class="muted" style="font-size:12.5px;margin:0">${t('Тап — и пошёл отсчёт. Поменять можно и позже, в Настройках.')}</p></section>`;
+  mountAccountDialog(ov, { initial: `[data-min="${cur}"]`, returnFocus: document.activeElement });
 }
 function startFocus(taskId) {
   if (State.timer) { if (State.timer.taskId === taskId) { if (!State.timer.running) resumeFocus(); return; } stopFocus(true, true); }
@@ -12104,143 +12220,296 @@ function openSphereGuide(name) {
   document.body.appendChild(ov);
 }
 
-// ── Онбординг v2: Тень собирает старт из пары предложений о себе ─────────────────────────
-// Задача Альберта (27.07, перед раздачей приложения друзьям): «убрать порог дурака — сразу ИИ,
-// сразу сферы, сразу всё нужное». Главный источник дискомфорта у новичка — не сложность, а
-// паралич выбора: список из 30 чипов-сфер и пустой экран после. Здесь человек пишет о себе
-// как другу — и получает готовые сферы и первые маленькие дела на сегодня.
-// Ручной путь (чипы/программы) остаётся ниже: без ИИ-ключа и для тех, кто хочет сам.
-let _obBusy = false, _obItems = null, _obErr = '';
-function obAiBlock() {
-  if (!State.aiKeys || !canUseAi()) return ''; // без ИИ — молча показываем обычный путь ниже
-  if (_obItems) {
-    const spheres = _obItems.filter((p) => p.type === 'sphere');
-    const quests = _obItems.filter((p) => p.type === 'quest');
-    const row = (p, i) => `<label class="drc-row"><input type="checkbox" data-ob-item="${i}" checked />
-      <span><b>${p.type === 'sphere' ? '🧭' : '⚔️'} ${esc(p.title || p.name)}</b>${p.type === 'quest'
-        ? `<br><span class="muted" style="font-size:12px">${p.day === 'tomorrow' ? t('завтра') : t('сегодня')} · ${fmtDur(Number(p.estimateMin) || 20)} · ${esc(p.sphere || '')}</span>` : ''}</span></label>`;
-    return `<div class="ob-ai ob-ai-result">
-      <div class="ob-section">${t('🤖 Вот что я собрал')}</div>
-      <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Сними галочки с лишнего — потом всё можно поменять.')}</p>
-      <div class="dayrec-list">${_obItems.map((p, i) => row(p, i)).join('')}</div>
-      <div class="ob-ai-acts">
-        <button class="btn" data-action="ob-ai-apply">${t('Поехали')} (${spheres.length} ${t('сфер')} · ${quests.length} ${t('дел')})</button>
-        <button class="btn ghost" data-action="ob-ai-reset">${t('Заново')}</button>
-      </div></div>`;
+// ── Questionnaire v1: один ответ → одна цель → один первый шаг ──────────────
+// Полный продуктовый/data-integrity контракт: QUESTIONNAIRE-V1-PLAN.md.
+// Runtime не хранит второй «профиль истины»: после подтверждения владельцами
+// становятся Goals, Tasks и Settings; receipt хранит только provenance и IDs.
+let _obVoice = null;
+function questionnaireEngine() { return window.QuestionnaireV1 || null; }
+function questionnaireSessionKey() { return `satoru.questionnaire.v1.${State.me && State.me.id || 'pending'}`; }
+function questionnaireRemember(value) {
+  const Q = questionnaireEngine();
+  State.questionnaire = Q ? Q.normalize(value, lang()) : value;
+  try { sessionStorage.setItem(questionnaireSessionKey(), JSON.stringify(State.questionnaire)); } catch {}
+  return State.questionnaire;
+}
+function questionnaireCurrent() {
+  const Q = questionnaireEngine();
+  if (!Q) return State.questionnaire || { version: 1, status: 'draft', rawAnswer: '', seeds: { goals: [], firstSteps: [], spheres: [] }, consents: {} };
+  if (!State.questionnaire) {
+    let saved = null;
+    try { saved = JSON.parse(sessionStorage.getItem(questionnaireSessionKey()) || 'null'); } catch {}
+    State.questionnaire = Q.normalize(saved || Q.empty(lang()), lang());
   }
-  return `<div class="ob-ai">
-    <div class="ob-section">${t('🤖 Расскажи о себе — соберу всё сам')}</div>
-    <p class="muted" style="font-size:12.5px;margin:0 0 8px">${t('Пара предложений своими словами: чем занимаешься, что важно, к чему идёшь. Я разложу это на сферы и первые дела.')}</p>
-    <textarea id="ob-ai-text" rows="3" placeholder="${t('Например: учусь в школе, весной экзамены по био, хожу в зал 3 раза в неделю, делаю научный проект и хочу больше времени с друзьями…')}"></textarea>
-    ${_obErr ? `<p class="muted" style="font-size:12px;color:var(--danger,#e0526a);margin:6px 0 0">${esc(_obErr)}</p>` : ''}
-    <button class="btn" data-action="ob-ai-run" style="margin-top:10px;width:100%" ${_obBusy ? 'disabled' : ''}>${_obBusy ? t('Собираю…') : '🤖 ' + t('Собрать мой старт')}</button>
-    <div class="ob-or">${t('— или выбери сам —')}</div></div>`;
+  return State.questionnaire;
 }
-async function obAiRun() {
-  const ta = document.getElementById('ob-ai-text'), text = (ta && ta.value || '').trim();
-  if (!text) { toast(t('Напиши пару слов о себе')); return; }
-  if (_obBusy) return;
-  _obBusy = true; _obErr = ''; renderOnboardingScreen();
+function questionnaireForgetDraft() { try { sessionStorage.removeItem(questionnaireSessionKey()); } catch {} }
+async function loadQuestionnaireState() {
+  const Q = questionnaireEngine(); State._questionnaireLoadError = '';
   try {
-    const r = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ kind: 'onboard', provider: aiProvider(), text, context: '(новый юзер, сфер пока нет)' }) });
-    const d = await r.json();
-    _obBusy = false;
-    if (!r.ok || d.error || !Array.isArray(d.proposals)) {
-      _obErr = t('Не получилось собрать — попробуй ещё раз или выбери сферы сам ниже.');
-      _obItems = null; renderOnboardingScreen(); return;
+    const response = await fetch('/api/questionnaire');
+    const data = await response.json().catch(() => null);
+    if (response.status === 401) { handleAccountSessionExpired(); return false; }
+    if (!response.ok || !data || typeof data !== 'object') throw new Error('load');
+    const serverValue = Q ? Q.normalize(data.questionnaire || data, lang()) : (data.questionnaire || data);
+    if (serverValue.status === 'materialized' || serverValue.status === 'deferred') {
+      State.questionnaire = serverValue; questionnaireForgetDraft();
+    } else {
+      const local = questionnaireCurrent();
+      State.questionnaire = local && ['review', 'analyzing', 'committing'].includes(local.status) || local && local.rawAnswer ? local : serverValue;
+      if (State.questionnaire.status === 'analyzing' || State.questionnaire.status === 'committing') State.questionnaire.status = State.questionnaire.seeds?.goals?.length ? 'review' : 'draft';
+      questionnaireRemember(State.questionnaire);
     }
-    const items = d.proposals.filter((p) => p && (p.name || p.title) && (p.type === 'sphere' || p.type === 'quest')).slice(0, 12);
-    if (!items.filter((p) => p.type === 'sphere').length) {
-      _obErr = t('Не получилось собрать — попробуй ещё раз или выбери сферы сам ниже.');
-      _obItems = null; renderOnboardingScreen(); return;
-    }
-    _obItems = items; track('ai:onboard');
-    renderOnboardingScreen();
-  } catch { _obBusy = false; _obErr = t('Сетевая ошибка — попробуй ещё раз.'); _obItems = null; renderOnboardingScreen(); }
+    return true;
+  } catch { State._questionnaireLoadError = t('Не удалось проверить стартовую настройку. Проверь соединение и повтори — пустой экран не считается готовым стартом.'); return false; }
 }
-async function obAiApply() {
-  if (!_obItems || State._onboardingSaveBusy) return;
-  const checks = [...document.querySelectorAll('[data-ob-item]')].map((c) => c.checked);
-  const accepted = new Set(); _obItems.forEach((_, i) => { if (checks[i]) accepted.add(i); });
-  if (!_obItems.some((p, i) => accepted.has(i) && p.type === 'sphere')) { toast(t('Оставь хотя бы одну сферу')); return; }
-  // Стартуем с ЧИСТЫХ настроек: applyProposals пишет в State.settings.skills / State.tasks,
-  // а до онбординга State ещё не инициализирован приложением. Дефолтные 6 сфер обязательно
-  // затираем — иначе человек получит вперемешку свои и те, которых не выбирал.
-  State.settings = freshOnboardingSettings([]);
-  State.tasks = []; State.goals = []; State.goalGroups = []; State.tree = {};
-  applyProposals(_obItems, accepted);
-  // saveNow, а не save: следом initApp() читает данные с сервера, и дебаунс их не догонит.
-  const result = await onboardingSave([['settings', State.settings], ['tasks', State.tasks]]);
-  if (!result.ok) return;
-  _obItems = null; _obErr = '';
-  State.phase = 'app'; initApp();
+function questionnaireSourceFromDOM() {
+  const q = questionnaireCurrent(), ta = document.getElementById('questionnaire-answer');
+  const consent = document.getElementById('questionnaire-ai-consent');
+  q.rawAnswer = String(ta ? ta.value : q.rawAnswer || '').slice(0, 4000);
+  q.consents = { ...(q.consents || {}), sendRawTextToAiProvider: !!(consent && consent.checked) };
+  return questionnaireRemember(q);
+}
+function questionnaireManualFromDOM() {
+  const pick = (name) => document.querySelector(`[data-questionnaire-manual="${name}"]${name === 'estimateMin' ? ':checked' : ''}`);
+  State._questionnaireManual = {
+    result: String(pick('result')?.value || State._questionnaireManual.result || '').slice(0, 160),
+    why: String(pick('why')?.value || State._questionnaireManual.why || '').slice(0, 800),
+    step: String(pick('step')?.value || State._questionnaireManual.step || '').slice(0, 160),
+    sphere: String(pick('sphere')?.value || State._questionnaireManual.sphere || '').slice(0, 40),
+    estimateMin: Math.max(5, Math.min(60, Math.round(Number(pick('estimateMin')?.value || State._questionnaireManual.estimateMin || 15)))),
+  };
+  return State._questionnaireManual;
+}
+function questionnaireProposal(data, raw) {
+  const Q = questionnaireEngine(), current = questionnaireCurrent();
+  const rows = Array.isArray(data && data.proposals) ? data.proposals : [];
+  const payload = data && data.questionnaire && typeof data.questionnaire === 'object' ? data.questionnaire : {};
+  const goalRaw = payload.goal || rows.find((row) => row && row.type === 'goal') || {};
+  const taskRaw = payload.task || payload.firstStep || rows.find((row) => row && (row.type === 'task' || row.type === 'quest')) || {};
+  const sphereRows = Array.isArray(payload.spheres) ? payload.spheres : rows.filter((row) => row && row.type === 'sphere');
+  const goalTitle = String(goalRaw.title || goalRaw.name || '').trim().slice(0, 160);
+  const taskTitle = String(taskRaw.title || '').trim().slice(0, 160);
+  if (!goalTitle || !taskTitle) return null;
+  const goalId = current.seeds.goals[0]?.localId || `qg_${uid()}`;
+  const taskId = current.seeds.firstSteps[0]?.localId || `qt_${uid()}`;
+  const spheres = sphereRows.slice(0, 3).map((row, index) => ({
+    localId: current.seeds.spheres[index]?.localId || `qs_${uid()}`,
+    title: String(row.title || row.name || '').trim().slice(0, 80), color: /^#[0-9a-f]{6}$/i.test(String(row.color || '')) ? row.color : ['#6c8cff', '#22c1a4', '#e87d3e'][index],
+    role: index ? 'background' : 'primary', source: 'ai_suggested',
+  })).filter((row) => row.title);
+  const next = {
+    ...current, status: 'review', rawAnswer: raw,
+    recognitionPhrase: String(payload.recognitionPhrase || goalTitle).slice(0, 160),
+    seeds: {
+      goals: [{ localId: goalId, title: goalTitle, why: String(goalRaw.why || '').slice(0, 800), outcome: String(goalRaw.outcome || goalTitle).slice(0, 160), deadline: goalRaw.deadline || null, sphereRefs: spheres.map((row) => row.localId), source: 'ai_suggested' }],
+      firstSteps: [{ localId: taskId, title: taskTitle, estimateMin: Math.max(5, Math.min(60, Math.round(Number(taskRaw.estimateMin || taskRaw.minutes) || 15))), goalRef: goalId, sphereRefs: spheres.map((row) => row.localId), source: 'ai_suggested' }],
+      spheres,
+    },
+  };
+  return Q ? Q.normalize(next, lang()) : next;
+}
+async function questionnaireAnalyze() {
+  const q = questionnaireSourceFromDOM(), raw = String(q.rawAnswer || '').trim();
+  if (!raw) { State._questionnaireError = t('Напиши, что тебе сейчас важнее всего сдвинуть с места.'); renderOnboardingScreen(); return; }
+  if (!q.consents.sendRawTextToAiProvider) { State._questionnaireError = t('Подтверди отправку этого ответа выбранному ИИ — или продолжи вручную.'); renderOnboardingScreen(); return; }
+  if (State._questionnaireBusy) return;
+  State._questionnaireBusy = true; State._questionnaireError = ''; q.status = 'analyzing'; questionnaireRemember(q); renderOnboardingScreen();
+  try {
+    const response = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'onboard', provider: aiProvider(), text: raw, context: '(новый аккаунт; нужна одна цель, один шаг и до трёх сфер)' }) });
+    const data = await response.json().catch(() => ({}));
+    const next = response.ok && !data.error ? questionnaireProposal(data, raw) : null;
+    if (!next) {
+      q.status = 'draft'; questionnaireRemember(q); State._questionnaireStage = 'manual';
+      State._questionnaireManual = { ...State._questionnaireManual, result: State._questionnaireManual.result || raw.slice(0, 160) };
+      State._questionnaireError = t('Не получилось разобрать ответ. Текст сохранён — можно повторить или продолжить вручную.');
+    } else { questionnaireRemember(next); State._questionnaireStage = 'review'; track('questionnaire:review'); }
+  } catch {
+    q.status = 'draft'; questionnaireRemember(q); State._questionnaireStage = 'manual';
+    State._questionnaireError = t('Сеть недоступна. Текст сохранён — продолжи вручную или повтори позже.');
+  } finally { State._questionnaireBusy = false; renderOnboardingScreen(); }
+}
+function questionnaireBuildManualReview() {
+  const Q = questionnaireEngine(), q = questionnaireCurrent(), fields = questionnaireManualFromDOM();
+  const result = Q && Q.manualReview(q, { ...fields, rawAnswer: q.rawAnswer });
+  if (!result || !result.ok) { State._questionnaireError = t('Заполни результат и один первый шаг.'); renderOnboardingScreen(); return; }
+  questionnaireRemember(result.value); State._questionnaireStage = 'review'; State._questionnaireError = ''; renderOnboardingScreen();
+}
+function questionnaireReviewFromDOM() {
+  const Q = questionnaireEngine(), q = questionnaireCurrent(), goal = q.seeds.goals[0], step = q.seeds.firstSteps[0];
+  if (!goal || !step) return null;
+  goal.title = String(document.getElementById('questionnaire-goal')?.value || goal.title).trim().slice(0, 160);
+  goal.why = String(document.getElementById('questionnaire-why')?.value || goal.why || '').trim().slice(0, 800);
+  step.title = String(document.getElementById('questionnaire-step')?.value || step.title).trim().slice(0, 160);
+  step.estimateMin = Math.max(5, Math.min(60, Math.round(Number(document.getElementById('questionnaire-minutes')?.value || step.estimateMin || 15))));
+  const newSphereField = document.getElementById('questionnaire-sphere-new');
+  const newSphereTitle = String(newSphereField?.value || '').trim().slice(0, 40);
+  if (!q.seeds.spheres.length && newSphereTitle) q.seeds.spheres = [{ localId: `qs_${uid()}`, title: newSphereTitle, color: '#6c8cff', role: 'primary', source: 'user_explicit' }];
+  const sphereInputs = [...document.querySelectorAll('[data-questionnaire-sphere]:checked')];
+  const kept = new Set(sphereInputs.length ? sphereInputs.map((input) => input.value) : q.seeds.spheres.map((sphere) => sphere.localId));
+  q.seeds.spheres = q.seeds.spheres.filter((sphere) => kept.has(sphere.localId));
+  const refs = q.seeds.spheres.map((sphere) => sphere.localId); goal.sphereRefs = refs; step.sphereRefs = refs;
+  q.consents = { ...(q.consents || {}), useConfirmedFactsForAssistant: !!document.getElementById('questionnaire-memory')?.checked, useRecognitionInGuide: !!document.getElementById('questionnaire-memory')?.checked };
+  goal.source = goal.source === 'ai_suggested' ? 'user_confirmed_suggestion' : goal.source;
+  step.source = step.source === 'ai_suggested' ? 'user_confirmed_suggestion' : step.source;
+  q.seeds.spheres.forEach((sphere) => { if (sphere.source === 'ai_suggested') sphere.source = 'user_confirmed_suggestion'; });
+  return questionnaireRemember(Q ? Q.normalize(q, lang()) : q);
+}
+async function questionnaireCommit() {
+  const Q = questionnaireEngine(), q = questionnaireReviewFromDOM();
+  if (!q || (Q && !Q.validReview(q))) { State._questionnaireError = t('Проверь цель и первый шаг — оба поля обязательны.'); renderOnboardingScreen(); return; }
+  if (State._questionnaireBusy) return;
+  State._questionnaireBusy = true; State._questionnaireError = ''; q.status = 'committing'; questionnaireRemember(q); renderOnboardingScreen();
+  try {
+    q.confirmedAt = q.confirmedAt || new Date().toISOString(); questionnaireRemember(q);
+    const goalSeed = q.seeds.goals[0], taskSeed = q.seeds.firstSteps[0];
+    const receiptSource = goalSeed.source === 'ai_suggested' ? 'user_confirmed_suggestion' : goalSeed.source;
+    const response = await fetch('/api/questionnaire/commit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+      idempotencyKey: q.idempotencyKey, revision: q.revision,
+      receipt: {
+        draftId: q.draftId, originAnswerId: q.originAnswerId, sourceLocale: q.sourceLocale,
+        recognitionPhrase: q.recognitionPhrase || goalSeed.title, source: receiptSource,
+        confirmedAt: q.confirmedAt,
+        consents: {
+          sendRawTextToAiProvider: q.consents.sendRawTextToAiProvider === true,
+          retainRawAnswer: false,
+          useConfirmedFactsForAssistant: q.consents.useConfirmedFactsForAssistant === true,
+          useRecognitionInGuide: q.consents.useRecognitionInGuide === true,
+        },
+      },
+      settings: { skills: q.seeds.spheres.map((sphere) => ({
+        id: sphere.localId, name: sphere.title, color: sphere.color, parentId: null,
+        role: sphere.role, source: sphere.source === 'ai_suggested' ? 'user_confirmed_suggestion' : sphere.source,
+      })) },
+      goal: {
+        id: goalSeed.localId, title: goalSeed.title, why: goalSeed.why || '', outcome: goalSeed.outcome || goalSeed.title,
+        deadline: goalSeed.deadline || null, skillIds: goalSeed.sphereRefs, backgroundSkillIds: [], source: receiptSource,
+      },
+      task: {
+        id: taskSeed.localId, title: taskSeed.title, estimateMin: taskSeed.estimateMin, date: todayStr(),
+        skillIds: taskSeed.sphereRefs, layers: [], goalId: goalSeed.localId, difficulty: 'easy',
+        source: taskSeed.source === 'ai_suggested' ? 'user_confirmed_suggestion' : taskSeed.source,
+      },
+      profileConsent: {
+        useConfirmedFactsForAssistant: q.consents.useConfirmedFactsForAssistant === true,
+        useRecognitionInGuide: q.consents.useRecognitionInGuide === true,
+      },
+    }) });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.questionnaire || data.questionnaire.status !== 'materialized') throw new Error(data.error || 'commit_failed');
+    State.questionnaire = data.questionnaire; questionnaireForgetDraft(); State._questionnaireBusy = false; State._questionnaireError = '';
+    track('questionnaire:materialized'); State.phase = 'app'; await initApp();
+  } catch {
+    q.status = 'review'; questionnaireRemember(q); State._questionnaireBusy = false;
+    State._questionnaireError = t('Старт не завершён. Все правки остались на экране; повтор безопасно продолжит ту же запись.');
+    renderOnboardingScreen();
+  }
+}
+async function questionnaireDefer() {
+  const q = questionnaireSourceFromDOM(); if (State._questionnaireBusy) return;
+  State._questionnaireBusy = true; State._questionnaireError = ''; renderOnboardingScreen();
+  try {
+    q.confirmedAt = q.confirmedAt || new Date().toISOString(); questionnaireRemember(q);
+    const response = await fetch('/api/questionnaire/defer', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+      idempotencyKey: q.idempotencyKey, revision: q.revision,
+      receipt: {
+        draftId: q.draftId, originAnswerId: q.originAnswerId, sourceLocale: q.sourceLocale,
+        recognitionPhrase: '', source: 'user_explicit', confirmedAt: q.confirmedAt,
+        consents: {
+          sendRawTextToAiProvider: q.consents.sendRawTextToAiProvider === true,
+          retainRawAnswer: false,
+          useConfirmedFactsForAssistant: false,
+          useRecognitionInGuide: false,
+        },
+      },
+    }) });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok || !data.questionnaire || data.questionnaire.status !== 'deferred') throw new Error('defer_failed');
+    State.questionnaire = data.questionnaire; questionnaireForgetDraft(); State._questionnaireBusy = false; State.phase = 'app'; await initApp();
+  } catch { State._questionnaireBusy = false; State._questionnaireError = t('Не удалось сохранить выбор. Повтори — приложение не будет притворяться, что настройка завершена.'); renderOnboardingScreen(); }
+}
+function questionnaireVoiceToggle() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition, button = document.querySelector('[data-action="questionnaire-voice"]'), field = document.getElementById('questionnaire-answer');
+  if (!SR || !field) return;
+  if (_obVoice) { try { _obVoice.stop(); } catch {} _obVoice = null; if (button) { button.classList.remove('rec'); button.textContent = `🎤 ${t('Ответить голосом')}`; } return; }
+  const rec = new SR(); _obVoice = rec; rec.lang = window.VoiceInputV1 ? window.VoiceInputV1.langTag(lang()) : lang(); rec.continuous = true; rec.interimResults = true;
+  let base = field.value;
+  rec.onresult = (event) => { let finalText = '', interim = ''; for (let i = event.resultIndex; i < event.results.length; i += 1) { const row = event.results[i]; if (row.isFinal) finalText += row[0].transcript; else interim += row[0].transcript; } if (finalText) base = `${base}${base ? ' ' : ''}${finalText.trim()}`; field.value = `${base}${interim ? ` ${interim}` : ''}`.trim(); questionnaireSourceFromDOM(); };
+  rec.onend = () => { if (_obVoice === rec) _obVoice = null; if (button) { button.classList.remove('rec'); button.textContent = `🎤 ${t('Ответить голосом')}`; } };
+  rec.onerror = () => { State._questionnaireError = t('Не удалось включить микрофон. Ответ можно вписать вручную.'); };
+  try { rec.start(); button?.classList.add('rec'); if (button) button.textContent = `■ ${t('Остановить запись')}`; } catch { _obVoice = null; }
 }
 
 async function onboardingSave(entries) {
   if (State._onboardingSaveBusy) return { ok: false, reason: 'busy' };
   if (!pwaWriteAllowed('onboardingSave', true)) {
-    State._onboardingSaveError = t('Не удалось сохранить старт. Ничего не потеряно — повтори попытку.');
+    State._onboardingSaveError = t('Старт не завершён. Часть старого способа настройки могла сохраниться; обнови данные перед повтором.');
     render(); return { ok: false, reason: 'offline' };
   }
   State._onboardingSaveBusy = true; State._onboardingSaveError = ''; render();
   let ok = false;
   try {
-    const results = await Promise.all(entries.map(([name, value]) => Store.saveNow(name, value)));
-    ok = results.length > 0 && results.every((saved) => saved === true);
+    ok = entries.length > 0;
+    for (const [name, value] of entries) {
+      if (!await Store.saveNow(name, value)) { ok = false; break; }
+    }
   } catch { ok = false; }
   State._onboardingSaveBusy = false;
-  if (!ok) State._onboardingSaveError = t('Не удалось сохранить старт. Ничего не потеряно — повтори попытку.');
+  if (!ok) State._onboardingSaveError = t('Старт не завершён. Часть старого способа настройки могла сохраниться; обнови данные перед повтором.');
   if (State.phase === 'onboarding') render();
   return { ok, reason: ok ? '' : 'save' };
 }
 function renderOnboardingScreen() {
-  // Ключи нужны ЗДЕСЬ, а не в initApp: до онбординга приложение не инициализировано, а без них
-  // canUseAi() ложно и ИИ-блок не покажется даже тому, у кого ИИ доступен (триал/свой ключ).
-  // ensureAiKeys сам дёрнет render() по приходу ответа — экран перерисуется уже с блоком.
   ensureAiKeys();
-  const chips = SKILL_GROUPS.map((g) => {
-    // ⚠️ не называть параметр `t` — затенит функцию перевода t() (см. баг fb_mrkzunjjmn61)
-    const items = g.items.map((sk) => {
-      const sel = State.obSkills.has(sk.name);
-      return `<span class="ob-chip-wrap">
-        <button type="button" class="ob-chip ${sel ? 'sel' : ''}" data-action="ob-toggle" data-skill="${esc(sk.name)}" data-color="${esc(sk.color)}" style="--c:${esc(sk.color)}">${sk.name}</button>
-        <button type="button" class="ob-chip-q" data-action="sphere-guide" data-skill="${esc(sk.name)}" title="${t('Что это за сфера?')}" aria-label="${t('Что это за сфера?')}">?</button>
-      </span>`;
-    }).join('');
-    return `<div class="ob-group"><div class="ob-group-h">${g.group}</div><div class="ob-group-chips">${items}</div></div>`;
-  }).join('');
+  const Q = questionnaireEngine(), q = questionnaireCurrent();
+  const review = q.status === 'review' || q.status === 'committing' || State._questionnaireStage === 'review';
+  const manual = !review && State._questionnaireStage === 'manual';
+  const busy = !!State._questionnaireBusy;
+  const aiReady = canUseAi();
+  const stepLabel = review ? t('Шаг 2 из 2') : t('Шаг 1 из 2');
+  const error = State._questionnaireError || State._onboardingSaveError || State._questionnaireLoadError;
+  let body = '';
+  if (review) {
+    const goal = q.seeds.goals[0] || {}, first = q.seeds.firstSteps[0] || {};
+    const sphereChoices = (q.seeds.spheres || []).map((sphere, index) => `<label class="questionnaire-sphere-choice" style="--sphere:${esc(sphere.color || '#6c8cff')}"><input type="checkbox" data-questionnaire-sphere value="${esc(sphere.localId)}" checked /><span><i aria-hidden="true"></i><b>${esc(sphere.title)}</b><small>${t(index ? 'Предложено как фон' : 'Предложено как основная сфера')}</small></span></label>`).join('');
+    body = `<header class="questionnaire-head"><span class="questionnaire-step">${stepLabel}</span><h1 id="questionnaire-title" tabindex="-1">${t('Я понял тебя так')}</h1><p>${t('Проверь три блока. Предложение Тени станет фактом только после твоего подтверждения.')}</p></header>
+      <div class="questionnaire-review">
+        <section class="questionnaire-review-block"><span class="questionnaire-source-badge">${goal.source === 'user_explicit' ? t('Твои слова') : t('Предложено Тенью')}</span><label for="questionnaire-goal">${t('Направление')}</label><input id="questionnaire-goal" maxlength="160" value="${esc(goal.title || '')}" data-noi18n /><label for="questionnaire-why" class="questionnaire-optional">${t('Почему это важно')} <small>${t('необязательно')}</small></label><textarea id="questionnaire-why" rows="2" maxlength="800" data-noi18n>${esc(goal.why || '')}</textarea></section>
+        <section class="questionnaire-review-block"><span class="questionnaire-source-badge">${first.source === 'user_explicit' ? t('Твои слова') : t('Предложено Тенью')}</span><label for="questionnaire-step">${t('Первый шаг на сегодня')}</label><input id="questionnaire-step" maxlength="160" value="${esc(first.title || '')}" data-noi18n /><label for="questionnaire-minutes">${t('Сколько времени')}</label><select id="questionnaire-minutes">${[5, 15, 30, 60].map((minutes) => `<option value="${minutes}" ${Number(first.estimateMin) === minutes ? 'selected' : ''}>${minutes} ${t('мин')}</option>`).join('')}</select></section>
+        <details class="questionnaire-review-block questionnaire-spheres" ${sphereChoices ? '' : 'open'}><summary>${t('Где это в жизни')} <span>${(q.seeds.spheres || []).length}</span></summary><p>${t('Сферы нужны для связи цели, первого шага, прогресса и питомцев. Их можно изменить позже.')}</p><fieldset><legend class="sr-only">${t('Предложенные сферы')}</legend>${sphereChoices || `<label for="questionnaire-sphere-new">${t('Назови одну основную сферу')}</label><input id="questionnaire-sphere-new" maxlength="40" value="${esc(State._questionnaireManual?.sphere || '')}" data-noi18n required />`}</fieldset></details>
+      </div>
+      <label class="questionnaire-memory-choice"><input id="questionnaire-memory" type="checkbox" ${q.consents && q.consents.useConfirmedFactsForAssistant ? 'checked' : ''}/><span><b>${t('Помочь Тени помнить подтверждённое')}</b><small>${t('Только цель и первый шаг попадут в личный контекст Assistant и Guide. Исходный текст не сохраняется.')}</small></span></label>
+      <div class="questionnaire-actions"><button type="button" class="btn ghost" data-action="questionnaire-back" ${busy ? 'disabled' : ''}>${t('← Назад')}</button><button type="button" class="btn questionnaire-primary" data-action="questionnaire-commit" ${busy ? 'disabled' : ''}>${busy ? t('Сохраняю…') : t('Создать и перейти к первому шагу')}</button></div>`;
+  } else if (manual) {
+    const draft = State._questionnaireManual || {};
+    body = `<header class="questionnaire-head"><span class="questionnaire-step">${stepLabel}</span><h1 id="questionnaire-title" tabindex="-1">${t('Соберём один понятный старт')}</h1><p>${t('Без ИИ: один результат, его смысл и один физический шаг на сегодня.')}</p></header>
+      <div class="questionnaire-manual"><label><span>${t('Какой результат ты хочешь увидеть?')}</span><input data-questionnaire-manual="result" maxlength="160" value="${esc(draft.result || '')}" data-noi18n required /></label><label><span>${t('Почему это важно?')} <small>${t('необязательно')}</small></span><textarea data-questionnaire-manual="why" rows="2" maxlength="800" data-noi18n>${esc(draft.why || '')}</textarea></label><label><span>${t('Какой небольшой шаг сделаешь сегодня?')}</span><input data-questionnaire-manual="step" maxlength="160" value="${esc(draft.step || '')}" data-noi18n required /></label><label><span>${t('К какой сфере жизни это относится?')}</span><input data-questionnaire-manual="sphere" maxlength="40" value="${esc(draft.sphere || '')}" placeholder="${esc(t('Например: Медиа'))}" data-noi18n required /></label><fieldset><legend>${t('Сколько времени можно дать первому шагу?')}</legend><div class="questionnaire-time-choices">${[5, 15, 30, 60].map((minutes) => `<label><input type="radio" name="questionnaire-manual-minutes" data-questionnaire-manual="estimateMin" value="${minutes}" ${Number(draft.estimateMin || 15) === minutes ? 'checked' : ''}/><span>${minutes} ${t('мин')}</span></label>`).join('')}</div></fieldset></div>
+      <div class="questionnaire-actions"><button type="button" class="btn ghost" data-action="questionnaire-back" ${busy ? 'disabled' : ''}>${t('← Назад')}</button><button type="button" class="btn questionnaire-primary" data-action="questionnaire-manual-review" ${busy ? 'disabled' : ''}>${t('Проверить перед созданием')}</button></div>`;
+  } else {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const provider = aiProvider() ? aiProviderLabel(aiProvider()) : aiHouseOK() ? t('ИИ Satoru') : '';
+    body = `<header class="questionnaire-head"><span class="questionnaire-step">${stepLabel}</span><h1 id="questionnaire-title" tabindex="-1">${t('Что тебе сейчас важнее всего сдвинуть с места?')}</h1><p>${t('Какой результат ты хочешь увидеть, почему он важен — и какой небольшой шаг готов сделать уже сегодня?')}</p></header>
+      <label class="sr-only" for="questionnaire-answer">${t('Твой ответ')}</label><textarea id="questionnaire-answer" rows="7" maxlength="4000" data-noi18n placeholder="${esc(t('Например: хочу выпустить первое видео о Satoru, чтобы начать продвижение. Сегодня открою сценарий, выберу одну сцену и запишу черновой дубль.'))}">${esc(q.rawAnswer || '')}</textarea>
+      <div class="questionnaire-input-tools">${SR ? `<button type="button" class="btn ghost" data-action="questionnaire-voice">🎤 ${t('Ответить голосом')}</button>` : ''}<span class="muted">${t('Один ответ — не анкета на час.')}</span></div>
+      ${aiReady ? `<label class="questionnaire-ai-consent"><input id="questionnaire-ai-consent" type="checkbox" ${q.consents && q.consents.sendRawTextToAiProvider ? 'checked' : ''}/><span><b>${t('Разрешить разобрать этот ответ с помощью ИИ')}</b><small>${t('Текст будет отправлен выбранному провайдеру')}: ${esc(provider)}. ${t('Перед записью ты увидишь и исправишь результат.')}</small></span></label>` : `<p class="questionnaire-ai-unavailable">${esc(t(aiKeysKnown() ? 'ИИ сейчас не подключён — ручной путь работает полностью.' : 'Проверяю подключение ИИ…'))}</p>`}
+      <details class="questionnaire-plan-import"><summary>${t('У меня уже есть план')}</summary><p>${t('Вставь его в поле выше или выбери текстовый файл. Satoru видит только явно выбранный файл.')}</p><label class="btn ghost questionnaire-file"><span>${t('Выбрать файл')}</span><input id="questionnaire-plan-file" type="file" accept=".txt,.md,text/plain,text/markdown" /></label></details>
+      <div class="questionnaire-actions questionnaire-source-actions">${aiReady ? `<button type="button" class="btn questionnaire-primary" data-action="questionnaire-analyze" ${busy ? 'disabled' : ''}>${busy ? t('Разбираю…') : t('Показать, что понял Satoru')}</button>` : ''}<button type="button" class="btn ${aiReady ? 'ghost' : 'questionnaire-primary'}" data-action="questionnaire-manual" ${busy ? 'disabled' : ''}>${t('Продолжить вручную')}</button></div>
+      <button type="button" class="questionnaire-defer" data-action="questionnaire-defer" ${busy ? 'disabled' : ''}>${t('Настроить позже')}</button>
+      <details class="questionnaire-later"><summary>${t('Что будет дальше')}</summary><p>${t('После подтверждения появится одна цель в «Целях» и один первый шаг на «Сегодня». Программы, привычки и полную карту сфер можно настроить позже — они не мешают начать.')}</p></details>`;
+  }
   document.getElementById('app').innerHTML = `
-    <div class="auth-screen">
-      <div class="auth-logo"><span>${avatarOriginIconHTML((State.me && State.me.avatar) || AVATARS[0], 'auth-origin-icon')}</span>
-        <h1>Привет, ${esc(State.me && State.me.name || '')}!</h1>
-        <p>${t('Выбери свои сферы развития — их всегда можно изменить')}</p>
-      </div>
-      <div class="auth-box" aria-busy="${State._onboardingSaveBusy}">
-        ${State._onboardingSaveError ? `<p class="account-notice" role="alert" data-onboarding-save-error>${esc(State._onboardingSaveError)}</p>` : ''}
-        ${obAiBlock()}
-        <div class="ob-section">${t('📦 Быстрый старт — готовая программа')}</div>
-        <div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'ob-program')).join('')}</div>
-        <div class="ob-or">${t('— или собери вручную —')}</div>
-        <div class="ob-groups">${chips}</div>
-        <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
-          <input id="ob-custom" placeholder="${t('Своя сфера…')}" style="flex:1" />
-          <input id="ob-color" type="color" value="#6c8cff" style="width:44px;height:38px;padding:2px;cursor:pointer" />
-          <button class="btn ghost" data-action="ob-add-custom">+</button>
-        </div>
-        ${(() => {
-          // Мягкая подсказка про пустой домен «Отношения» (§5.3) — без принуждения.
-          const cov = new Set(); for (const nm of State.obSkills) { const cc = autoCanon(nm); if (cc) cov.add(cc); }
-          return (State.obSkills.size > 0 && !cov.has('relations'))
-            ? '<p class="ob-canon-hint">🧭 Пока нет сферы про <b>❤️ Отношения</b> — а это одна из самых весомых частей сбалансированной жизни. Можно добавить «Отношения», «Семью» или «Друзей».</p>'
-            : '';
-        })()}
-        <button class="btn" data-action="ob-finish" style="margin-top:18px;width:100%" ${State.obSkills.size === 0 || State._onboardingSaveBusy ? 'disabled' : ''}>
-          Поехали! (${State.obSkills.size} сфер${State.obSkills.size === 1 ? 'а' : State.obSkills.size < 5 ? 'ы' : ''})
-        </button>
-      </div>
+    <div class="auth-screen questionnaire-screen">
+      <div class="questionnaire-brand" aria-hidden="true">${avatarOriginIconHTML((State.me && State.me.avatar) || AVATARS[0], 'auth-origin-icon')}<span>Satoru</span></div>
+      <main class="auth-box questionnaire-box" aria-busy="${busy}">
+        ${error ? `<p id="questionnaire-error" class="account-notice" role="alert" tabindex="-1">${esc(error)}</p>` : ''}
+        ${body}
+      </main>
     </div>
     <div id="toasts"></div>`;
+  requestAnimationFrame(() => {
+    const focus = error ? document.getElementById('questionnaire-error') : review ? document.getElementById('questionnaire-title') : null;
+    focus?.focus({ preventScroll: true });
+  });
 }
 
 function showAuthScreen() {
@@ -12997,8 +13266,10 @@ function renderCalendarView() {
   }).join('');
   const trayTasks = unscheduled.map((task) => `<button type="button" class="calv-chip" draggable="true" data-id="${task.id}" data-calendar-task="${task.id}" data-action="cal-edit-task" aria-label="${esc(t('Открыть расписание квеста'))}: ${esc(task.title)}"><span aria-hidden="true">${satoruIconHTML('action.drag', 'cal-action-icon', '⠿')}</span><span class="calv-chip-title" data-noi18n>${esc(task.title)}</span><span class="calv-chip-meta"><span class="calv-chip-duration">${fmtDur(Number(task.estimateMin) || 30)}</span><span class="calv-chip-disclosure">${esc(t('Расписание'))}</span></span></button>`).join('');
   const planned = dayTasks.reduce((s, t) => s + (Number(t.estimateMin) || 0), 0);
-  const emptyAgenda = `<div class="cal-agenda-empty"><p><strong>${esc(t('Нет квестов со временем'))}</strong><span>${esc(t('Добавь новый квест или назначь время квесту из списка без времени.'))}</span></p><button type="button" class="btn" data-action="cal-focus-add">${satoruIconHTML('action.add', 'button-glyph', '+')} ${esc(t('Добавить квест'))}</button></div>`;
-  return `<section class="calendar-shell calendar-day-shell" data-calendar-date="${date}" aria-labelledby="calendar-screen-title">
+  const addOpen = !!State._calendarAddOpen;
+  const addButton = `<button type="button" class="btn${scheduled.length ? ' ghost' : ''}" data-action="cal-focus-add">${satoruIconHTML('action.add', 'button-glyph', '+')} ${esc(t('Добавить квест'))}</button>`;
+  const emptyAgenda = `<div class="cal-agenda-empty"><p><strong>${esc(t('Нет квестов со временем'))}</strong><span>${esc(t('Добавь новый квест или назначь время квесту из списка без времени.'))}</span></p>${addOpen ? '' : addButton}</div>`;
+  return `<section class="calendar-shell calendar-day-shell${addOpen ? ' calendar-add-open' : ''}" data-calendar-date="${date}" aria-labelledby="calendar-screen-title">
     <header class="card calv-head">
       <div class="calv-title">
         <div class="calv-title-main"><button type="button" class="btn ghost sm cal-nav-prev" data-action="cal-shift" data-days="-1" aria-label="${esc(t('Предыдущий день'))}">${satoruIconHTML('action.back', 'cal-action-icon', '‹')}</button><h2 id="calendar-screen-title" tabindex="-1"><span class="cal-date-primary">${d.getDate()} ${esc(t(MON[d.getMonth()]))}</span><span class="cal-date-meta">${esc(t(WD[d.getDay()]))}${date === todayStr() ? ` · ${esc(t('сегодня'))}` : ''}<span class="wk-load">${esc(t('план:'))} ${fmtDur(planned)}</span></span></h2><button type="button" class="btn ghost sm cal-nav-next" data-action="cal-shift" data-days="1" aria-label="${esc(t('Следующий день'))}">${satoruIconHTML('action.forward', 'cal-action-icon', '›')}</button>${date !== todayStr() ? `<button type="button" class="btn ghost sm cal-nav-today" data-action="cal-today">${esc(t('Сегодня'))}</button>` : ''}</div>
@@ -13009,14 +13280,14 @@ function renderCalendarView() {
     ${calendarMoveReceiptHTML()}
     <div class="calendar-day-layout">
       <main class="calendar-day-work">
-        <section class="card calendar-work-card" aria-labelledby="calendar-schedule-title"><div class="cal-work-head"><div><h3 id="calendar-schedule-title">${esc(t('Расписание дня'))}</h3><span class="muted">${scheduled.length} · ${fmtDur(planned)}</span></div><button type="button" class="btn ghost" data-action="cal-focus-add">${satoruIconHTML('action.add', 'button-glyph', '+')} ${esc(t('Добавить квест'))}</button></div>
+        <section class="card calendar-work-card" aria-labelledby="calendar-schedule-title"><div class="cal-work-head"><div><h3 id="calendar-schedule-title">${esc(t('Расписание дня'))}</h3><span class="muted">${scheduled.length} · ${fmtDur(planned)}</span></div>${scheduled.length && !addOpen ? addButton : ''}</div>
           <div class="calv-agenda" role="list">${agendaRows || emptyAgenda}</div>
           <div class="calv-grid-viewport" role="region" aria-label="${esc(t('Расписание дня'))}" tabindex="0"><div class="cal calv-grid" style="height:${hours.length * CAL_ROWH}px">${grid}${nowLine}<div class="cal-events-layer">${blocks}</div></div></div>
           <p class="cal-hint muted">${esc(t('На desktop можно перетащить квест; тап, клик или Enter открывает точное расписание.'))}</p>
         </section>
       </main>
-      <aside class="calendar-day-support" aria-label="${esc(t('Новый квест'))}">
-        <section class="card card-addquest calendar-add-card"><h3>${esc(t('Новый квест'))}</h3><form id="add-task" class="add-row calendar-add-form">
+      <aside class="calendar-day-support" aria-label="${esc(t(addOpen ? 'Новый квест' : 'Квесты без времени'))}">
+        ${addOpen ? `<section class="card card-addquest calendar-add-card"><div class="calendar-add-head"><h3>${esc(t('Новый квест'))}</h3><button type="button" class="btn ghost sm calendar-add-close" data-action="cal-close-add" aria-label="${esc(t('Закрыть'))}">✕</button></div><form id="add-task" class="add-row calendar-add-form">
           <input type="hidden" name="date" value="${date}" />
           <label class="add-field add-field-title"><span class="add-field-label">${esc(t('Название квеста'))}</span><input name="title" placeholder="${esc(t('Новый квест на этот день…'))}" autocomplete="off" maxlength="160" required /></label>
           <label class="add-field add-field-time"><span class="add-field-label">${esc(t('Начало'))}</span><input name="startTime" type="time" min="00:00" max="23:45" step="900" /></label>
@@ -13027,7 +13298,7 @@ function renderCalendarView() {
           </div></details>
           <p class="calendar-add-status muted" aria-live="polite"></p>
           <button type="submit">${satoruIconHTML('action.add', 'button-glyph', '+')} ${esc(t('Добавить квест'))}</button></form>
-          <div id="cat-suggest" class="cat-suggest" role="status" aria-live="polite"></div></section>
+          <div id="cat-suggest" class="cat-suggest" role="status" aria-live="polite"></div></section>` : ''}
         ${unscheduled.length ? `<details class="card calv-tray"><summary><span class="calv-tray-title">${satoruIconHTML('system.calendar', 'heading-glyph', '📥')} ${esc(t('Квесты без времени'))}</span><span class="calv-tray-count">${unscheduled.length}</span></summary><div class="calv-chips">${trayTasks}</div></details>` : ''}
       </aside>
     </div>
@@ -13212,7 +13483,7 @@ function habitCreateFormHTML() {
     <p class="habit-form-status" role="status"></p><button type="submit" class="btn">${t(existing ? 'Сохранить' : 'Создать')}</button></form>`;
 }
 function lawsBlock(title, laws, kind) {
-  return `<div class="card hb-laws"><h4>${title}</h4>${laws.map((l) => `<div class="hb-law ${kind}"><span class="hb-lawn">${l.n}</span><div><b>${esc(l.law)}</b>${l.cue ? ` <span class="muted">· ${esc(l.cue)}</span>` : ''}<ul>${l.tactics.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div></div>`).join('')}</div>`;
+  return `<details class="card hb-laws habit-method-section"><summary>${title}</summary><div class="habit-method-body">${laws.map((l) => `<div class="hb-law ${kind}"><span class="hb-lawn">${l.n}</span><div><b>${esc(l.law)}</b>${l.cue ? ` <span class="muted">· ${esc(l.cue)}</span>` : ''}<ul>${l.tactics.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div></div>`).join('')}</div></details>`;
 }
 function habitsBuildHTML() {
   const habits = State.habits.filter((h) => !h.archived);
@@ -13220,12 +13491,12 @@ function habitsBuildHTML() {
   const cards = habits.length ? habits.map((h) => {
     const a = h.atomic || {}, sk = skillById(h.skillId), st = habitStreak(h);
     const guideCreated = guideV3HabitsStep('complete') && String(guideV3State()?.chapterMeta?.habits?.itemId || '') === String(h.id);
-    return `<div class="card hb-card" style="--c:${esc(sk.color)}"${guideCreated ? ` data-guide-target="habit-created" data-id="${esc(h.id)}" tabindex="-1"` : ''}>
-      <div class="hb-top"><b data-noi18n>${esc(h.title)}</b><span class="muted"><span data-noi18n>${esc(sk.name)}</span> · ${fmtDur(h.estimateMin)}${st ? ` · 🔥${st}` : ''}</span></div>
-      <label class="hb-field">${t('🪪 Идентичность')} <input data-action="habit-atomic" data-id="${h.id}" data-field="identity" value="${esc(a.identity || '')}" placeholder="${t('Я — человек, который…')}" /></label>
+    return `<details class="card hb-card habit-compact-card" style="--c:${esc(sk.color)}"${guideCreated ? ` data-guide-target="habit-created" data-id="${esc(h.id)}" tabindex="-1" open` : ''}>
+      <summary class="hb-top"><b data-noi18n>${esc(h.title)}</b><span class="muted"><span data-noi18n>${esc(sk.name)}</span> · ${fmtDur(h.estimateMin)}${st ? ` · 🔥${st}` : ''}</span></summary>
+      <div class="habit-editor-body"><label class="hb-field">${t('🪪 Идентичность')} <input data-action="habit-atomic" data-id="${h.id}" data-field="identity" value="${esc(a.identity || '')}" placeholder="${t('Я — человек, который…')}" /></label>
       <label class="hb-field">${t('📍 Сигнал / связка')} <input data-action="habit-atomic" data-id="${h.id}" data-field="cue" value="${esc(a.cue || '')}" placeholder="${t('После [привычки] я…')}" /></label>
-      <label class="hb-field">${t('⏱ Версия 2 минут')} <input data-action="habit-atomic" data-id="${h.id}" data-field="twoMin" value="${esc(a.twoMin || '')}" placeholder="${t('Минимум, чтобы просто начать')}" /></label>
-    </div>`;
+      <label class="hb-field">${t('⏱ Версия 2 минут')} <input data-action="habit-atomic" data-id="${h.id}" data-field="twoMin" value="${esc(a.twoMin || '')}" placeholder="${t('Минимум, чтобы просто начать')}" /></label></div>
+    </details>`;
   }).join('') : `<p class="muted">${t('Пока нет привычек — добавь и спроектируй по 4 законам.')}</p>`;
   return `<div class="card hb-intro"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🌱')} ${t('Строим привычки')}</h3>
       <p class="muted">${esc(t('Выбери, кем хочешь стать. Каждое выполнение ниже — маленькое доказательство этой идентичности.'))}</p>
@@ -13245,21 +13516,21 @@ function habitsBreakHTML() {
   }).join('') : '<p class="muted">Пока пусто — добавь, с чем хочешь справиться.</p>';
   return `<div class="card hb-intro"><h3>${satoruIconHTML('difficulty.protected', 'heading-emblem', '🛡')} ${t('Свобода от привычек')}</h3>
       <p class="muted">${t('Событие — это данные о контексте, не оценка личности. Здесь нет наказаний и долгов.')}</p>
-      <p class="muted anti-privacy">${t('Эти записи приватны: они не публикуются в Party, leaderboard и не отправляются в AI-разбор недели.')}</p>
-      <form id="add-antihabit" class="add-row">
+      <p class="muted anti-privacy">${t('Эти записи приватны: они не публикуются в Party, leaderboard и не отправляются в AI-разбор недели.')}</p></div>
+    <div class="hb-list">${rows}</div>
+    <details class="card habit-create anti-create"><summary>${t('+ Добавить')}</summary><form id="add-antihabit" class="add-row">
         <label><span>${t('Что наблюдаем')}</span><input name="title" autocomplete="off" required /></label>
         <label><span>${t('Подход')}</span><select name="approach"><option value="">${t('Без ярлыка')}</option><option value="доверие">${t('Доверие к себе')}</option><option value="недоверие">${t('Блоки и лимиты')}</option><option value="контекст">${t('Смена среды')}</option></select></label>
-        <button type="submit">+ Добавить</button></form></div>
-    <div class="hb-list">${rows}</div>
+        <button type="submit">+ ${t('Добавить')}</button></form></details>
     ${lawsBlock('4 закона разрушения привычки (инверсия)', ATOMIC.inversions, 'break')}`;
 }
 function atomicMethodHTML() {
   return `<div class="card"><h3>📖 Атомные привычки — метод</h3><p class="muted">${esc(ATOMIC.intro)}</p></div>
-    <div class="card"><h4>${esc(ATOMIC.identity.title)}</h4><ul class="hb-ul">${ATOMIC.identity.points.map((p) => `<li>${esc(p)}</li>`).join('')}</ul></div>
-    <div class="card"><h4>🔄 Петля привычки</h4><div class="hb-loop">${ATOMIC.loop.map((s, i) => `${i ? '<span class="hb-loop-arr">→</span>' : ''}<span class="hb-loop-step">${esc(s)}</span>`).join('')}</div></div>
+    <details class="card habit-method-section"><summary>${esc(ATOMIC.identity.title)}</summary><ul class="hb-ul">${ATOMIC.identity.points.map((p) => `<li>${esc(p)}</li>`).join('')}</ul></details>
+    <details class="card habit-method-section"><summary>🔄 Петля привычки</summary><div class="hb-loop">${ATOMIC.loop.map((s, i) => `${i ? '<span class="hb-loop-arr">→</span>' : ''}<span class="hb-loop-step">${esc(s)}</span>`).join('')}</div></details>
     ${lawsBlock('🌱 Создать привычку — 4 закона', ATOMIC.laws, 'build')}
     ${lawsBlock('🛡 Сломать привычку — инверсия 4 законов', ATOMIC.inversions, 'break')}
-    <div class="card"><h4>Ещё принципы</h4>${ATOMIC.extra.map((e) => `<div class="hb-extra"><b>${esc(e.t)}</b><p class="muted">${esc(e.d)}</p></div>`).join('')}</div>
+    <details class="card habit-method-section"><summary>Ещё принципы</summary>${ATOMIC.extra.map((e) => `<div class="hb-extra"><b>${esc(e.t)}</b><p class="muted">${esc(e.d)}</p></div>`).join('')}</details>
     <p class="muted" style="font-size:11.5px">Источник: James Clear, «Atomic Habits» (2018). Концепции адаптированы для Satoru.</p>`;
 }
 
@@ -13305,7 +13576,7 @@ function ensureAiKeys() {
     .then((d) => {
       State.aiKeys = d || {};
       // Во время initApp перерисовывать нечего — он сам вызовет render() ниже.
-      if (State.phase === 'app') render();
+      if (State.phase === 'app' || State.phase === 'onboarding') render();
     })
     .catch(() => {})
     .finally(() => { _aiKeysBusy = false; });
@@ -13349,8 +13620,8 @@ function profileCard() {
     <div id="profile-meta" class="profile-meta muted">${u.chars} / ${u.max}${when ? ` · ${t('обновлено')} ${when}` : ''}</div>
     <p id="profile-status" class="profile-save-status${saveError ? ' is-error' : ''}" role="status" aria-live="polite">${busy ? t('Сохраняю…') : esc(t(saveError))}</p>
     <div class="settings-actions" style="margin-top:8px">
-      <button class="btn ghost" data-action="profile-save" ${busy ? 'disabled' : ''}>${t('Сохранить правки')}</button>
-      <button class="btn ${busy ? 'disabled' : ''}" data-action="profile-refresh" ${busy ? 'disabled' : ''}>${busy ? '⏳ ' + t('Обновляю…') : '🤖 ' + t('Обновить через ИИ')}</button>
+      <button class="btn" data-action="profile-save" ${busy ? 'disabled' : ''}>${t('Сохранить правки')}</button>
+      <button class="btn ghost ${busy ? 'disabled' : ''}" data-action="profile-refresh" ${busy ? 'disabled' : ''}>${busy ? '⏳ ' + t('Обновляю…') : '🤖 ' + t('Обновить через ИИ')}</button>
     </div></section>`;
 }
 function aiKeysCard() {
@@ -14081,7 +14352,7 @@ function parseBridgeResponse() {
 }
 function proposalLabel(p) {
   if (p.type === 'sphere') return `➕ Сфера: ${p.name}${p.parent ? ` (внутри «${p.parent}»)` : ''}`;
-  if (p.type === 'level') return `📊 Уровень: ${p.sphere} → ур.${p.level}${p.note ? ` — ${p.note}` : ''}`;
+  if (p.type === 'level') return `📊 Уровень: ${p.sphere} → ур.${Math.max(1, Math.round(Number(p.level) || 1))}${p.note ? ` — ${p.note}` : ''}`;
   if (p.type === 'goal') {
     const m = (p.metric && p.metric.target != null) ? ` · ${p.metric.current}→${p.metric.target}${p.metric.unit ? ' ' + p.metric.unit : ''}` : '';
     const w = p.status === 'waiting' ? ` · ⏳ждёт${p.window ? ' ' + p.window : ''}` : (p.status === 'paused' ? ' · ⏸' : '');
@@ -14501,7 +14772,13 @@ function unlockHelperDialogScroll() {
 }
 function assistantWakeSupported() { return !!(window.AssistantWakeV1 && window.AssistantWakeV1.supported(window)); }
 function assistantWakePaint() {
-  document.querySelectorAll('#ai-fab').forEach((fab) => fab.classList.toggle('is-wake-listening', _assistantWakeArmed && !!_assistantWakeRec));
+  document.querySelectorAll('#ai-fab').forEach((fab) => {
+    const listening = _assistantWakeArmed && !!_assistantWakeRec;
+    fab.classList.toggle('is-wake-listening', listening);
+    fab.setAttribute('aria-pressed', listening ? 'true' : 'false');
+    fab.setAttribute('aria-label', listening ? t('Слушаю… Нажми, чтобы остановить') : t('Тень'));
+    fab.title = listening ? t('Слушаю… Нажми, чтобы остановить') : t('Тень — спроси о себе или о приложении');
+  });
   const btn = document.querySelector('#helper-modal [data-action="assistant-wake-toggle"]');
   if (btn) {
     btn.setAttribute('aria-pressed', _assistantWakeArmed ? 'true' : 'false');
@@ -14604,13 +14881,13 @@ function openHelperChat(opener = document.activeElement) {
       <div><h2 id="helper-title" tabindex="-1">${esc(companion.name)}</h2><p id="helper-capabilities" class="muted">${t('Секретарь Satoru · видит состояние, объясняет и помогает действовать')}</p></div>
     </div>
     ${noKey ? `<p class="muted">${esc(t(proHint ? 'Помощник включён в Pro — или подключи бесплатный ключ Google Gemini или Groq; в Настройках есть пошаговый гид.' : 'Помощник работает на твоём ИИ-ключе. Не хочешь платить? Возьми бесплатный ключ Google Gemini или Groq за 2 минуты (без карты) — в Настройках есть пошаговый гид.'))}<br>${proHint ? `<button class="btn pro-cta" data-action="show-paywall" data-feature="ИИ-ассистент" style="margin-top:10px">💎 ${t('Оформить Pro')}</button> ` : ''}<button class="btn ${proHint ? 'ghost' : ''}" data-action="helper-to-settings" style="margin-top:10px">⚙️ ${t('Подключить ИИ')}</button></p>`
-      : `<div id="chat-msgs" class="chat-msgs"></div>
+      : `<div id="chat-msgs" class="chat-msgs" role="log" aria-live="polite" aria-relevant="additions text" aria-busy="${State._chatBusy ? 'true' : 'false'}"></div>
          <div class="chat-context-tools" role="group" aria-label="${t('Контекст помощника')}">
            <button type="button" class="btn ghost sm" data-action="chat-plan-file">📎 ${t('План из файла')}</button>
            <input id="chat-plan-file" type="file" accept=".txt,.md,.markdown,.json,.csv,text/plain,text/markdown,application/json,text/csv" hidden />
            ${assistantWakeSupported() ? `<button type="button" class="btn ghost sm assistant-wake-toggle" data-action="assistant-wake-toggle" aria-pressed="${_assistantWakeArmed ? 'true' : 'false'}"></button>` : `<span class="chat-wake-unsupported">${t('Голосовой вызов недоступен в этом браузере')}</span>`}
          </div>
-         <p class="chat-context-note">${t('Вижу цели и задачи Satoru. Файлы компьютера — только после выбора.')}</p>
+         <p class="chat-context-note">${t('Вижу цели и задачи Satoru. Файлы компьютера — только после выбора.')} ${assistantWakeSupported() ? t('Голос распознаёт браузер только после твоего разрешения; остановить прослушивание можно этой же кнопкой.') : ''}</p>
          ${attached ? `<div class="chat-file-chip"><span>📄 <b>${esc(attached.name)}</b></span><button type="button" class="link-btn" data-action="chat-plan-remove">${t('Убрать файл')}</button></div>` : ''}
          <p id="assistant-wake-status" class="chat-wake-status" role="status" aria-live="polite"></p>
          <form id="chat-form" class="chat-form"><label class="sr-only" for="chat-input">${t('Сообщение помощнику')}</label><input id="chat-input" data-guide-target="helper-input" placeholder="${t('Спроси про любую функцию…')}" autocomplete="off" /><button type="submit" class="cap-add" aria-label="${t('Отправить')}">↵</button></form>`}</section>`;
@@ -14619,6 +14896,7 @@ function openHelperChat(opener = document.activeElement) {
 }
 function renderChatMessages() {
   const box = document.getElementById('chat-msgs'); if (!box) return;
+  box.setAttribute('aria-busy', State._chatBusy ? 'true' : 'false');
   if (window.ShadowRig) {
     const rig = document.querySelector('#helper-modal .shadow-chat-head [data-shadow-rig]');
     window.ShadowRig.setState(rig, State._chatBusy ? 'thinking' : 'listening');
@@ -14643,7 +14921,7 @@ function renderChatMessages() {
     // «пытается использовать неподдерживаемое форматирование, звёздочки видны как есть»).
     const body = window.MdLiteV1 ? window.MdLiteV1.render(m.content) : esc(m.content).replace(/\n/g, '<br>');
     return `<div class="chat-msg ai" data-tts${m.guideResponseId ? ` data-guide-target="helper-response" data-response-id="${esc(m.guideResponseId)}" tabindex="-1"` : ''}>${body}${ttsBtnHTML()}${refused}${acts}</div>`;
-  }).join('') + (State._chatBusy ? `<div class="chat-msg ai typing" role="status" aria-live="polite"><span>${t('Тень формулирует ответ')}</span><span class="typing-dots" aria-hidden="true"><i></i><i></i><i></i></span></div>` : '');
+  }).join('') + (State._chatBusy ? `<div class="chat-msg ai typing"><span>${t('Тень формулирует ответ')}</span><span class="typing-dots" aria-hidden="true"><i></i><i></i><i></i></span></div>` : '');
   box.scrollTop = box.scrollHeight;
   if (guideV3ContextActive('jarvis', 'helper-response-seen') && !State._guideV3AssistantCompleting) {
     const requestId = String(State._guideV3AssistantRequestId || '');
@@ -14835,23 +15113,26 @@ async function sendChat(text) {
     renderChatMessages();
   } catch { State._chatBusy = false; State.chatLog.push({ role: 'assistant', content: '⚠️ Сетевая ошибка.' }); renderChatMessages(); }
 }
-function captureBar() {
+function captureBar(options = {}) {
+  const expanded = options.expanded === true;
   if (_rec) {
     return `<div class="card capture-card recording">
-      <div class="cap-rec"><span class="cap-dot"></span><span>${satoruIconHTML(_rec.kind === 'video' ? 'media.video' : 'media.microphone', 'capture-glyph', _rec.kind === 'video' ? '🎥' : '🎤')} Запись <span id="rec-timer">0:00</span></span>
-      <button class="btn" data-action="cap-stop">${satoruIconHTML('media.stop', 'button-glyph', '⏹')} Стоп · сохранить</button></div></div>`;
+      <div class="cap-rec"><span class="cap-dot"></span><span>${satoruIconHTML(_rec.kind === 'video' ? 'media.video' : 'media.microphone', 'capture-glyph', _rec.kind === 'video' ? '🎥' : '🎤')} ${t('Запись')} <span id="rec-timer">0:00</span></span>
+      <button class="btn" data-action="cap-stop">${satoruIconHTML('media.stop', 'button-glyph', '⏹')} ${t('Стоп · сохранить')}</button></div></div>`;
   }
   const guideTextOnly = guideV3ContextActive('notes', 'note-persisted');
   const noteCount = (State.inbox || []).length;
-  return `<div class="card capture-card">
+  const mediaTools = guideTextOnly ? '' : `<button type="button" class="cap-btn" data-action="cap-voice" aria-label="${t('Голосовая заметка')}">${satoruIconHTML('media.microphone', 'capture-glyph', '🎤')}</button>
+      <button type="button" class="cap-btn" data-action="cap-video" aria-label="${t('Видео-заметка')}">${satoruIconHTML('media.video', 'capture-glyph', '🎥')}</button>`;
+  const secondaryTools = guideTextOnly ? '' : `<button class="dayrec-btn" data-action="day-recap" title="${t('Наговори день — Тень разложит по делам')}">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button><button class="capture-notes-link" data-action="goto-notes" title="${t('Открыть заметки')}" aria-label="${t('Открыть заметки')}: ${noteCount}"><span aria-hidden="true">📝</span> ${noteCount}</button>`;
+  return `<div class="card capture-card ${expanded ? 'is-expanded' : 'is-compact'}">
     <form id="capture-form" class="cap-row" data-guide-target="note-capture">
       <label class="sr-only" for="capture-text">${t('Текст заметки')}</label><input id="capture-text" name="text" maxlength="1000" placeholder="${t('Быстрая мысль, идея, план — в Заметки…')}" autocomplete="off" />
-      ${guideTextOnly ? '' : `<button type="button" class="cap-btn" data-action="cap-voice" aria-label="${t('Голосовая заметка')}">${satoruIconHTML('media.microphone', 'capture-glyph', '🎤')}</button>
-      <button type="button" class="cap-btn" data-action="cap-video" aria-label="${t('Видео-заметка')}">${satoruIconHTML('media.video', 'capture-glyph', '🎥')}</button>`}
+      ${expanded ? mediaTools : ''}
       <button type="submit" class="cap-add" aria-label="${t('Сохранить заметку')}">${satoruIconHTML('action.add', 'capture-glyph', '↵')}</button>
       <span class="capture-status" role="status" aria-live="polite"></span>
     </form>
-    ${guideTextOnly ? '' : `<div class="capture-secondary"><button class="dayrec-btn" data-action="day-recap" title="${t('Наговори день — Тень разложит по делам')}">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button><button class="capture-notes-link" data-action="goto-notes" title="${t('Открыть заметки')}" aria-label="${t('Открыть заметки')}: ${noteCount}"><span aria-hidden="true">📝</span> ${noteCount}</button></div>`}</div>`;
+    ${expanded && secondaryTools ? `<div class="capture-secondary">${secondaryTools}</div>` : !expanded && secondaryTools ? `<details class="capture-tools"><summary aria-label="${t('Ещё способы сохранить мысль')}"><span aria-hidden="true">•••</span></summary><div class="capture-tools-menu">${mediaTools}${secondaryTools}</div></details>` : ''}</div>`;
 }
 function validateInboxPayload(value) {
   if (!Array.isArray(value)) return false;
@@ -14906,7 +15187,7 @@ function notesPeekToday() {
 function renderNotes() {
   const notes = State.inbox || [];
   if (State._inboxLoadError) return notesRecoveryCard();
-  return `<section class="notes-screen" data-guide-target="notes-overview" aria-labelledby="notes-title"><header class="notes-header"><p class="eyebrow">${t('Сегодня')}</p><h2 id="notes-title">${t('Заметки')}</h2><p>${t('Лови любые мысли — идеи проектов, личное, планы. Всё хранится в одном месте. Потом примени в Satoru (→ Квест) или разберёшь с ИИ (скоро).')}</p></header>${captureBar()}
+  return `<section class="notes-screen" data-guide-target="notes-overview" aria-labelledby="notes-title"><header class="notes-header"><p class="eyebrow">${t('Сегодня')}</p><h2 id="notes-title">${t('Заметки')}</h2><p>${t('Лови любые мысли — идеи проектов, личное, планы. Всё хранится в одном месте. Потом примени в Satoru (→ Квест) или разберёшь с ИИ (скоро).')}</p></header>${captureBar({ expanded: true })}
     <section class="notes-list" aria-label="${t('Заметки')}">${notes.length ? notes.map(noteCard).join('') : `<div class="card notes-empty"><p>${t('Пусто. Запиши первую мысль в строке выше ↑ (текст, 🎤 голос или 🎥 видео).')}</p></div>`}</section></section>`;
 }
 function closeNoteDeleteDialog({ restoreFocus = true } = {}) {
@@ -14954,7 +15235,12 @@ async function noteToQuest(id) {
     State.tasks = [...State.tasks, task];
   }
   const savedInbox = await commitInbox((State.inbox || []).filter((item) => item.id !== id));
-  if (!savedInbox) { toast(t('Не удалось сохранить заметку. Ничего не изменено — повтори попытку.')); return false; }
+  if (!savedInbox) {
+    const message = t('Квест сохранён, но заметка осталась. Повтори «→ Квест»: второй квест не создастся.');
+    const status = document.querySelector(`[data-note-status="${CSS.escape(id)}"]`);
+    if (status) { status.textContent = message; status.setAttribute('role', 'alert'); }
+    toast(message); return false;
+  }
   State._tasksFocusAfterCommit = '#main h2'; State.view = 'today'; toast(t('→ В квестах на сегодня')); render(); return true;
 }
 function blobToDataUrl(blob) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); }); }
@@ -15356,21 +15642,23 @@ async function momentLine(kind) {
   } catch { return t(dayPick('moment' + kind, MOMENT_LINES[kind])); }
 }
 async function showMoment(kind) {
-  if (document.getElementById('moment') || _momentBusy) return;
+  if (document.getElementById('moment') || document.querySelector('.modal-overlay') || _momentBusy) return;
   _momentBusy = true;
   try {
   const c = ensureCompanion(), ti = compTierIdx(c.bond), streak = currentStreak();
+  const returnFocus = document.activeElement;
   const ov = document.createElement('div');
   ov.id = 'moment'; ov.className = 'modal-overlay moment-ov';
-  ov.innerHTML = `<div class="moment-box">
+  ov.innerHTML = `<section class="moment-box" role="dialog" aria-modal="true" aria-labelledby="moment-title" aria-describedby="moment-line">
+    <h2 class="sr-only" id="moment-title">${t('Тень')}</h2>
     <div class="moment-art">${shadowVideo(ti, kind === 'm' ? 'happy' : 'caring', 'moment')}</div>
-    <div class="moment-line-row" data-tts><p class="moment-line" id="moment-line">…</p>${ttsBtnHTML()}</div>
+    <div class="moment-line-row" data-tts><p class="moment-line" id="moment-line" role="status" aria-live="polite">…</p>${ttsBtnHTML()}</div>
     ${streak > 0 ? `<div class="moment-streak">${momentStreakLine(streak)}</div>` : ''}
     <div class="moment-acts">
       <button class="btn" data-action="moment-pet">🫶 ${t('Погладить')}</button>
       <button class="btn ghost" data-action="moment-close">${kind === 'm' ? t('К делам') : t('Спасибо')}</button>
-    </div></div>`;
-  document.body.appendChild(ov);
+    </div></section>`;
+  mountAccountDialog(ov, { initial: '[data-action="moment-close"]', returnFocus });
   ov.dataset.kind = kind;
   momentSeen(kind);
   const line = await momentLine(kind);
@@ -15383,7 +15671,7 @@ async function showMoment(kind) {
   track('moment:' + kind);
   } finally { _momentBusy = false; } // иначе один сбой заблокировал бы моменты до перезагрузки
 }
-function closeMoment() { document.getElementById('moment')?.remove(); }
+function closeMoment() { closeAccountDialog('moment'); }
 // Проверка на рендере «Сегодня»: момент не спорит с туториалом и дрипами за внимание.
 let _momentTimer = null;
 // Диалог внимания уже на экране или вот-вот откроется по deep-link из шортката.
@@ -15424,11 +15712,11 @@ function companionCard(controlHTML = '') {
   if (form === 'm' || form === 'e') {
     const q = form === 'm' ? `${satoruIconHTML('nav.today', 'inline-glyph', '◇')} Одна вещь, ради которой стоит проснуться сегодня?` : `${satoruIconHTML('system.day-end', 'inline-glyph', '◇')} Чем ты сегодня гордишься? (даже мелочь считается)`;
     actions = `<form id="comp-checkin" data-kind="${form}" class="comp-form">
-      <label>${q}</label>
-      <input name="text" maxlength="200" autocomplete="off" placeholder="${form === 'm' ? 'сегодня хочу…' : 'я горжусь тем, что…'}" />
+      <label for="comp-checkin-text">${q}</label>
+      <input id="comp-checkin-text" name="text" maxlength="200" autocomplete="off" placeholder="${form === 'm' ? 'сегодня хочу…' : 'я горжусь тем, что…'}" />
       <div class="comp-form-btns"><button type="submit" class="btn">Сохранить</button><button type="button" class="btn ghost" data-action="comp-cancel">Позже</button></div></form>`;
   } else if (form === 'name') {
-    actions = `<form id="comp-rename" class="comp-form"><label>Как зовут твоего спутника?</label><input name="name" maxlength="24" value="${esc(c.name)}" /><div class="comp-form-btns"><button type="submit" class="btn">Назвать</button><button type="button" class="btn ghost" data-action="comp-cancel">Отмена</button></div></form>`;
+    actions = `<form id="comp-rename" class="comp-form"><label for="comp-rename-name">Как зовут твоего спутника?</label><input id="comp-rename-name" name="name" maxlength="24" value="${esc(c.name)}" /><div class="comp-form-btns"><button type="submit" class="btn">Назвать</button><button type="button" class="btn ghost" data-action="comp-cancel">Отмена</button></div></form>`;
   } else {
     const due = compCheckinDue(), b = [];
     if (due.includes('m')) b.push(`<button class="btn comp-cta" data-action="comp-check" data-kind="m">${satoruIconHTML('nav.today', 'button-glyph', '◇')} ${t18('Утренний чек-ин')}</button>`);
@@ -15463,7 +15751,7 @@ function companionCard(controlHTML = '') {
     ${controlHTML}
     <div id="secretary-details" class="secretary-details${expanded ? '' : ' is-collapsed'}">
       ${nextBar}
-      <div class="secretary-details-head"><span>${t('Связь с Тенью')}</span><button class="comp-rename" data-action="comp-rename" title="${t('Переименовать')}">✎</button></div>
+      <div class="secretary-details-head"><span>${t('Связь с Тенью')}</span><button type="button" class="comp-rename" data-action="comp-rename" title="${t('Переименовать')}" aria-label="${t('Переименовать')}">✎</button></div>
       ${actions}${peek}
     </div>
   </div>`;
@@ -16097,25 +16385,27 @@ function renderPets() {
   if (!spheres.length) return `<section class="pets-shell" data-guide-target="pets-overview" aria-labelledby="pets-title"><header class="pets-route-head"><h2 id="pets-title" tabindex="-1">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} ${t('Питомцы')}</h2></header>${companionCard()}<div class="card"><p class="muted">${t('Сначала добавь основные сферы жизни (Настройки → Навыки) — у каждой появится свой питомец рядом с твоим спутником.')}</p></div></section>`;
   const pets = spheres.map((s) => ({ s, st: petStats(s.id), traits: petTraits(s.id), nm: petName(s.id) }));
   const hungry = pets.filter((p) => p.st.state === 'hungry'), overfed = pets.filter((p) => p.st.state === 'overfed');
+  const priorityPet = hungry[0] || overfed[0] || pets[0];
   let balance;
-  if (overfed.length && hungry.length) balance = `🍖 <b>${esc(overfed[0].nm)}</b> перекормлен, а <b>${esc(hungry.map((p) => p.nm).slice(0, 2).join(', '))}</b> ${hungry.length > 1 ? 'голодают' : 'голодает'} — выровняй, и зверинец оживёт.`;
-  else if (overfed.length) balance = `🍖 <b>${esc(overfed[0].nm)}</b> наелся до отвала. Удели денёк другим сферам.`;
-  else if (hungry.length) balance = `🥺 ${hungry.length > 1 ? 'Скучают' : 'Скучает'}: <b>${esc(hungry.map((p) => p.nm).slice(0, 3).join(', '))}</b> — заверни в ${hungry.length > 1 ? 'эти сферы' : 'эту сферу'} хоть ненадолго.`;
-  else balance = `✨ Зверинец в гармонии — ты держишь десятиборье ровно. Так держать.`;
+  if (overfed.length && hungry.length) balance = `<b>${esc(overfed[0].nm)}</b> ${t('сегодня получил больше внимания')}; <b>${esc(hungry.map((p) => p.nm).slice(0, 2).join(', '))}</b> ${t('можно ненадолго вернуть в ритм')}.`;
+  else if (overfed.length) balance = `<b>${esc(overfed[0].nm)}</b> ${t('сегодня получил больше внимания. Остальные сферы можно вернуть позже')}.`;
+  else if (hungry.length) balance = `<b>${esc(hungry.map((p) => p.nm).slice(0, 3).join(', '))}</b> — ${t('нуждается во внимании, когда будет ресурс')}.`;
+  else balance = `✨ ${t('Зверинец в своём ритме')}.`;
   const cards = pets.map(({ s, st, traits, nm }) => {
     const meta = PET_STATE[st.state], tr = traits[0];
+    const displayState = st.state === 'hungry' ? t('Нуждается во внимании') : st.state === 'overfed' ? t('Больше внимания сегодня') : t('В своём ритме');
     const selectedSpecies = ensurePetSpecies()[s.id] || '';
     const activeSpecies = petSpeciesForSphere(s.id, traits);
     // «живёт своей жизнью»: фраза дня из пула вида — стабильна в течение дня, своя у каждого питомца
     const idle = dayPick('petidle' + s.id, tr.idles || [tr.idle]);
-    const line = st.state === 'hungry' ? (!st.lastFed ? `ждёт первой встречи — покорми делами` : st.daysSince >= 8 ? `не виделись ${st.daysSince} ${plural(st.daysSince, 'день', 'дня', 'дней')} — скучает` : `проголодался — покорми делами`)
-      : st.state === 'overfed' ? t('объелся! пора и в другие сферы')
-        : st.state === 'full' ? t('сыт и доволен') : `${t('растёт и')} ${t(idle)}`;
+    const line = st.state === 'hungry' ? t('Нуждается во внимании, когда будет ресурс')
+      : st.state === 'overfed' ? t('Сегодня получил больше внимания; остальным сферам можно вернуться позже')
+        : st.state === 'full' ? t('В своём ритме') : `${t('растёт и')} ${t(idle)}`;
     const renaming = State._petRename === s.id;
     const renameError = renaming && State._petRenameError ? `<p class="pet-rename-error" role="alert">${t(State._petRenameError)}</p>` : '';
     const nameRow = renaming
       ? `<form class="pet-rename-form" data-id="${s.id}" aria-label="${t('Переименовать')}: ${esc(nm)}"><label><span class="sr-only">${t('Имя питомца')}</span><input name="name" maxlength="20" value="${esc(nm)}" placeholder="${esc(s.name)}" aria-label="${t('Имя питомца')}"${renameError ? ' aria-describedby="pet-rename-error" aria-invalid="true"' : ''} /></label><div class="pet-rename-btns"><button type="submit" class="btn sm" aria-label="${t('Сохранить')}">✓</button><button type="button" class="btn ghost sm" data-action="pet-rename-cancel" aria-label="${t('Отмена')}">✕</button></div>${renameError ? renameError.replace('class="pet-rename-error"', 'class="pet-rename-error" id="pet-rename-error"') : ''}</form>`
-      : `<div class="pet-name"><b>${esc(nm)}</b><button class="pet-edit" data-action="pet-rename" data-id="${s.id}" aria-label="${t('Переименовать')}: ${esc(nm)}">✎</button><span class="pet-badge" style="background:${meta.color}22;color:${meta.color}">${t(meta.label)}</span></div>`;
+      : `<div class="pet-detail-actions"><button type="button" class="btn ghost sm" data-action="pet-rename" data-id="${s.id}">${t('Переименовать')}</button></div>`;
     // Клик по виду — хинт «что засчитывать в эту сферу» (боль Виолы: «как считать уровень творчества»).
     // Кормить питомца = записывать дела; хинт объясняет, какие именно.
     const sub = `<button type="button" class="pet-sphere pet-hint muted" data-action="pet-hint" data-guide-target="pet-sphere" data-id="${s.id}" title="${esc(t(tr.hint || ''))}" aria-label="${t('Что засчитывается в сферу')}: ${esc(t(tr.hint || ''))}">${t(tr.kind || 'Зверёк')}${nm !== s.name ? ` · ${t('Сфера')}: ${esc(s.name)}` : ''} ${satoruIconHTML('status.info', 'pet-hint-icon', '◇')}</button>`;
@@ -16131,7 +16421,7 @@ function renderPets() {
     </div>` : '';
     const canonicalGuardian = activeSpecies === 'bodyToad' || activeSpecies === 'resourcesPenguin';
     const artAction = activeSpecies === 'resourcesPenguin' ? 'resources-penguin-card-interact' : 'pet-feed';
-    return `<div class="card pet-card pet-card-${activeSpecies}${canonicalGuardian ? ' pet-card-canonical-guardian' : ''}${activeSpecies === 'bodyToad' ? ' pet-card-body-toad' : ''}">
+    return `<details id="pet-summary-${esc(s.id)}" class="card pet-card pet-summary pet-card-${activeSpecies}${canonicalGuardian ? ' pet-card-canonical-guardian' : ''}${activeSpecies === 'bodyToad' ? ' pet-card-body-toad' : ''}"${priorityPet && priorityPet.s.id === s.id ? ' open' : ''}><summary><span class="pet-summary-name"><b>${esc(nm)}</b><small>${esc(s.name)}</small></span><span class="pet-badge" style="background:${meta.color}22;color:${meta.color}">${displayState}</span><span class="pet-summary-state">${line}</span></summary><div class="pet-summary-body">
       <button type="button" class="pet-art pet-art-action" data-action="${artAction}" data-id="${s.id}"${activeSpecies === 'resourcesPenguin' ? ' data-mode="greet"' : ''} aria-label="${t('Погладить питомца')}: ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits, s.id, idle)}</button>
       ${nameRow}${sub}
       ${activeSpecies === 'bodyToad' ? `<div class="body-toad-domain-badge">${t('BODY · канонический хранитель')}</div>` : activeSpecies === 'resourcesPenguin' ? `<div class="body-toad-domain-badge resources-penguin-domain-badge">${t('MONEY / RESOURCES · канонический хранитель')}</div>` : `<label class="pet-species-picker"><span>${t('Облик')}</span><select data-action="set-pet-species" data-id="${s.id}" aria-label="${t('Облик')}: ${esc(nm)}">${petSpeciesOptions(selectedSpecies)}</select></label>`}
@@ -16140,24 +16430,25 @@ function renderPets() {
       <p class="pet-line muted">${line}</p>
       <div class="pet-traits" aria-label="${t('Черты питомца')}">${traits.map((trait) => `<span class="pet-trait-chip" title="${esc(t(trait.hint || trait.kind || ''))}">${petTraitIconHTML(trait, 'pet-trait-icon')}<small>${t(trait.kind || 'Черта')}</small></span>`).join('')}</div>
       ${guardianActions}
-    </div>`;
+    </div></details>`;
   }).join('');
   const recoveryState = recoverySlugState();
   const recoveryMeta = window.RecoverySlugV1 && window.RecoverySlugV1.STATE_META[recoveryState];
-  const recoveryCard = window.RecoverySlugV1 ? `<div class="card pet-card pet-card-recovery-slug">
+  const recoveryCard = window.RecoverySlugV1 ? `<details class="card pet-card pet-summary pet-card-recovery-slug"><summary><span class="pet-summary-name"><b>${t('Кацую')}</b><small>${t('Хранительница отдыха')}</small></span><span class="pet-badge" style="background:#79b8aa22;color:#79b8aa">${t(recoveryMeta.label)}</span><span class="pet-summary-state">${t(recoveryMeta.line)}</span></summary><div class="pet-summary-body">
       <button type="button" class="pet-art pet-art-action" data-action="recovery-slug-react" aria-label="${t('Побыть рядом с Кацую')}">${recoverySlugHTML({ className: 'recovery-slug-v1--card' })}</button>
-      <div class="pet-name"><b>${t('Кацую')}</b><span class="pet-badge" style="background:#79b8aa22;color:#79b8aa">${t(recoveryMeta.label)}</span></div>
       <p class="pet-sphere muted">${t('Хранительница отдыха · состояние считается по энергии и честным паузам')}</p>
       <div class="body-toad-domain-badge recovery-slug-domain-badge">${t('RECOVERY · скрытый канонический сигнал')}</div>
       <p class="pet-line muted">${t(recoveryMeta.line)}</p>
       <div class="body-toad-card-actions"><button class="btn ghost sm" data-action="recovery-slug-react">${t('Побыть рядом')}</button></div>
-    </div>` : '';
+    </div></details>` : '';
   return `<section class="pets-shell" data-guide-target="pets-overview" aria-labelledby="pets-title"><header class="pets-route-head"><h2 id="pets-title" tabindex="-1">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} ${t('Питомцы')}</h2></header>${companionCard()}
     <div class="card pet-intro">
       <h3 class="icon-heading">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} ${t('Зверинец')}</h3>
-      <p class="muted">${t('Твой спутник присматривает за зверинцем. Каждая основная сфера жизни — живой питомец: делаешь что-то в сфере — кормишь его; забыл — голодает; перекосил всё в одну — разжиреет. Здоровый зверинец = ты держишь')} <b>${t('десятиборье')}</b> ${t('в балансе. Облик и повадки питомца зависят от твоих подсфер. Через заботу, не вину.')} <i>${t('Погладь питомца — он будет рад.')}</i></p>
+      <p class="muted">${t('Питомцы показывают ритм основных сфер жизни. Это подсказка, не оценка и не долг.')}</p>
       <p class="pet-balance">${balance}</p>
+      <details class="pet-intro-details"><summary>${t('Как это работает')}</summary><p>${t('Дела в сфере меняют состояние её питомца. Облик и повадки зависят от подсфер; пропуск ничего не отнимает.')}</p></details>
     </div>
+    ${priorityPet ? `<section class="card pet-priority"><div><span class="th-kicker">${t('Сейчас важнее всего')}</span><h3>${esc(priorityPet.nm)}</h3><p class="muted">${priorityPet.st.state === 'hungry' ? t('Нуждается во внимании, когда будет ресурс') : priorityPet.st.state === 'overfed' ? t('Сегодня получил больше внимания; остальным сферам можно вернуться позже') : t('В своём ритме')}</p></div><button type="button" class="btn" data-action="pet-open" data-id="${esc(priorityPet.s.id)}">${t('Открыть')}</button></section>` : ''}
     <div class="pet-grid">${recoveryCard}${cards}</div></section>`;
 }
 
@@ -17689,13 +17980,12 @@ function boardCalibrationHTML() {
     <div class="board-calib-frame"><div class="calib-paper">
       <p class="calib-count">${done + 1} ${t('из')} ${total}</p>
       <blockquote class="calib-order">${esc(boardOrderTitle(order))}</blockquote>
-      <label class="calib-label" for="calib-note">${t('Почему? Одной строкой, необязательно')}</label>
-      <input id="calib-note" class="calib-note" maxlength="280" autocomplete="off" placeholder="${t('например: не люблю холод')}" />
       <div class="calib-acts">
         <button class="btn" data-action="calib-like" data-id="${esc(order.id)}">${t('Моё')}</button>
         <button class="btn ghost" data-action="calib-skip" data-id="${esc(order.id)}">${t('Не моё')}</button>
         <button class="btn ghost sm" data-action="calib-stop">${t('Хватит пока')}</button>
       </div>
+      <details class="calib-reason"><summary>${t('Добавить причину (необязательно)')}</summary><label class="calib-label" for="calib-note">${t('Почему? Одной строкой, необязательно')}</label><input id="calib-note" class="calib-note" maxlength="280" autocomplete="off" placeholder="${t('например: не люблю холод')}" /></details>
     </div></div>
   </section>`;
 }
@@ -18554,6 +18844,7 @@ function renderToday() {
       <p class="muted">${t('Квестов:')} ${doneCount}/${todays.length} · ${t('привычек')} ${habits.filter((h) => habitDone(h, today)).length}/${habits.length} · ${fmtDur(minToday)} · +${xpToday} XP · +${goldToday} ${satoruIconHTML('status.gold', 'inline-emblem', '◇')}</p>
       ${failureContextHTML(arenaHist, today)}
       ${obsBlock}
+      <label class="sr-only" for="reflection">${t('Итог дня')}</label>
       <textarea id="reflection" placeholder="Рефлексия: что получилось, что перенести, как себя чувствую…">${esc(day.reflection || '')}</textarea>
       <div class="fl-ask">
         <label class="fl-label" for="first-line">${t('Первое действие завтра — одной строкой')}</label>
@@ -18570,12 +18861,12 @@ function renderToday() {
   // ровно 4 primary destinations + More, и доска живёт ВНУТРИ «Сегодня».
   const tab = State._todayTab === 'board' ? 'board' : 'day';
   const tabs = `<div class="today-tabs" role="tablist" aria-label="${t('Разделы дня')}">
-    <button type="button" role="tab" aria-selected="${tab === 'day'}" class="today-tab${tab === 'day' ? ' on' : ''}" data-action="today-tab" data-id="day">${t('День')}</button>
-    <button type="button" role="tab" aria-selected="${tab === 'board'}" class="today-tab${tab === 'board' ? ' on' : ''}" data-action="today-tab" data-id="board">${t('Доска')}</button>
+    <button id="today-tab-day" type="button" role="tab" aria-selected="${tab === 'day'}" aria-controls="today-panel-day" tabindex="${tab === 'day' ? '0' : '-1'}" class="today-tab${tab === 'day' ? ' on' : ''}" data-action="today-tab" data-id="day">${t('День')}</button>
+    <button id="today-tab-board" type="button" role="tab" aria-selected="${tab === 'board'}" aria-controls="today-panel-board" tabindex="${tab === 'board' ? '0' : '-1'}" class="today-tab${tab === 'board' ? ' on' : ''}" data-action="today-tab" data-id="board">${t('Доска')}</button>
   </div>`;
-  if (tab === 'board') return `<div class="today-shell board-shell">${tabs}${boardScreenHTML()}</div>`;
-  return `<div class="today-shell">${tabs}${browserCompanionLaunchHTML()}
-    <div class="today-work">${dayNavStripHTML(today)}${todayHero}${captureBar()}${overdueCard}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
+  if (tab === 'board') return `<div class="today-shell board-shell">${tabs}<section id="today-panel-day" role="tabpanel" aria-labelledby="today-tab-day" hidden></section><section id="today-panel-board" class="today-board-panel" role="tabpanel" aria-labelledby="today-tab-board">${boardScreenHTML()}</section></div>`;
+  return `<div class="today-shell">${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>${browserCompanionLaunchHTML()}
+    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dayNavStripHTML(today)}${todayHero}${captureBar()}${overdueCard}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
     <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML())}${activeNudge}${pathTeaserCard()}${tm ? timerCard : ''}${installBanner()}</aside>
     <div class="today-footer">${shutdownCard}</div>
   </div>`;
@@ -19366,7 +19657,7 @@ function renderCharacter() {
       <label>${t('Рост, см')}<input name="height" type="number" min="100" max="250" value="${b.height || ''}" placeholder="—" /></label>
       <label>${t('Вес, кг')}<input name="weight" type="number" min="30" max="300" step="0.1" value="${b.weight || ''}" placeholder="—" /></label>
       ${isPro() ? `<label>${t('% жира')}<input name="bodyfat" type="number" min="3" max="60" step="0.1" value="${b.bodyfat || ''}" placeholder="—" /></label>`
-      : `<label class="locked-inline" data-action="show-paywall" data-feature="Состав тела">${t('% жира')} 🔒<input disabled placeholder="Pro" /></label>`}
+      : `<button type="button" class="locked-inline bodyfat-pro-gate" data-action="show-paywall" data-feature="Состав тела" aria-label="${esc(`${t('% жира')} · Pro`)}"><span>${t('% жира')} 🔒</span><b>Pro</b></button>`}
       <button type="submit" class="btn">${t('Сохранить')}</button><p class="character-body-save-status" role="status" aria-live="polite"></p></form>`;
   const secondaryOpen = (id) => State._characterSecondaryOpen === id ? ' open' : '';
   return `<div class="character-shell" data-guide-target="hero-overview">
@@ -19407,7 +19698,7 @@ function lootboxCard() {
     <div class="lb-body">
       <button type="button" class="lb-chest ${avail > 0 ? 'ready' : 'empty'}" ${avail > 0 ? 'data-action="open-chest"' : 'disabled'} aria-label="${esc(statusTxt)}">
         <span class="reward-object-art is-chest daily-chest-art" aria-hidden="true"></span><span class="lb-status">${statusTxt}</span>
-        ${avail > 0 ? `<small>${t('Результат уже сохранён до начала анимации.')}</small>` : ''}
+        ${avail > 0 ? `<small>${t('Сначала сохраняем награду; церемонию можно пропустить.')}</small>` : ''}
       </button>
       <div class="lb-info">
         <p>${t('Сундук зарабатывается за 1, 3 и 5 реальных действий. Заход не считается.')}</p>
@@ -19438,8 +19729,7 @@ function collectionCard() {
   const titleChips = titles.length
     ? `<button class="title-chip ${!eq.title ? 'eq' : ''}" data-action="equip-title" data-title="">${t('— без звания —')}</button>` + titles.map((title) => `<button class="title-chip ${eq.title === title ? 'eq' : ''}" data-action="equip-title" data-title="${esc(title)}">${eq.title === title ? '★ ' : ''}${esc(t(title))}</button>`).join('')
     : `<span class="muted">${t('званий пока нет — открывай достижения ниже ↓')}</span>`;
-  return `<div class="card collection-card">
-    <div class="coll-head"><h3>${satoruIconHTML('achievement.collector_5', 'heading-emblem', '◇')} ${t('Коллекция')}</h3><span class="coll-prog">${ownedCount}/${COSMETICS.length} ${t('собрано')}</span></div>
+  return `<details class="card collection-card rewards-disclosure"><summary>${satoruIconHTML('achievement.collector_5', 'inline-emblem', '◇')} ${t('Коллекция')} · ${ownedCount}/${COSMETICS.length}</summary><div class="rewards-disclosure-body">
     <div class="coll-body">
       <div class="coll-preview" title="${esc(t('Так выглядит твой аватар'))}">${avatarPortraitHTML(equippedCosmeticsOpts())}</div>
       <div class="coll-cats">
@@ -19449,7 +19739,7 @@ function collectionCard() {
     </div>
     <h4 class="coll-sub">${satoruIconHTML('achievement.avatar_custom', 'slot-emblem', '◇')} ${t('Звания')} <span class="muted" style="font-size:12px;font-weight:400">${t('— за достижения')}</span></h4>
     <div class="title-chips">${titleChips}</div>
-  </div>`;
+  </div></details>`;
 }
 async function commitDailyRewardDialog(overlay) {
   if (!overlay || overlay._saving) return;
@@ -19486,8 +19776,11 @@ async function commitDailyRewardDialog(overlay) {
   // v159: прокрутка у КАЖДОГО открытия, а не только у косметики. Раньше золото было
   // известно заранее, и барабан ради известного числа был бы театром; теперь исход
   // случайный у всех трёх типов, поэтому церемония честна везде.
-  if (status) status.textContent = t('Награда сохранена. Открываем сундук…');
-  if (skip) { skip.hidden = false; skip.disabled = false; skip.focus(); }
+  const result = overlay.querySelector('.loot-capsule-result');
+  if (status) status.textContent = t('Награда сохранена');
+  if (result) { result.hidden = false; result.classList.add('is-confirmed'); }
+  if (claim) { claim.disabled = false; claim.focus(); }
+  if (skip) { skip.hidden = false; skip.disabled = false; }
   startChestReel(overlay);
   if (close) close.disabled = false;
 }
@@ -19509,7 +19802,7 @@ function startChestReel(overlay) {
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const reel_ = C.buildReel({
     pool: overlay._capsulePool, result, seed: result.id,
-    durationMs: reduceMotion ? C.MIN_DURATION_MS : C.DEFAULT_DURATION_MS,
+    durationMs: reduceMotion ? C.MIN_DURATION_MS : Math.min(700, C.DEFAULT_DURATION_MS),
   });
   overlay._reel = reel_;
   const swatch = (item) => item.fill || (RARITY[item.rarity] && RARITY[item.rarity].color) || 'var(--muted)';
@@ -19571,13 +19864,12 @@ function revealCosmeticCapsule(overlay) {
   if (!overlay || !overlay.isConnected || overlay._revealed) return;
   overlay._revealed = true; clearTimeout(overlay._revealTimer); overlay._revealTimer = null;
   const reward = overlay._reward, result = overlay.querySelector('.loot-capsule-result');
-  const status = overlay.querySelector('.loot-save-status'), claim = overlay.querySelector('[data-action="claim-daily-reward"]');
+  const status = overlay.querySelector('.loot-save-status');
   const skip = overlay.querySelector('[data-action="skip-capsule-reveal"]');
   overlay.querySelector('.loot-reveal-box')?.classList.add('is-revealed');
   if (result) { result.hidden = false; result.classList.add('is-revealed'); }
   if (status) status.textContent = t('Награда сохранена');
   if (skip) skip.hidden = true;
-  if (claim) { claim.disabled = false; claim.focus(); }
   if (typeof sfxLoot === 'function') sfxLoot(reward.rarity || 'common');
 }
 function chestObjectKind(item) {
@@ -19611,7 +19903,7 @@ function openChest(returnFocus = document.activeElement) {
   ov.innerHTML = `<section class="loot-box loot-reveal-box is-capsule" role="dialog" aria-modal="true" aria-labelledby="daily-reward-reveal-title" aria-describedby="daily-reward-reveal-desc">
     <button type="button" class="modal-x" data-action="close-daily-reward" aria-label="${esc(t('Закрыть'))}" disabled>✕</button>
     <div class="loot-ceremony-head"><span class="reward-object-art is-chest loot-chest-art" aria-hidden="true"></span><div><p class="loot-earned-label">${t('Заработанная награда')}</p><h2 id="daily-reward-reveal-title" tabindex="-1">${t('Открытие')}</h2></div></div>
-    <p id="daily-reward-reveal-desc" class="loot-ceremony-copy">${t('Результат уже сохранён. Можно посмотреть церемонию или сразу пропустить.')}</p>
+    <p id="daily-reward-reveal-desc" class="loot-ceremony-copy">${t('Сначала сохраняем награду. После сохранения её можно сразу забрать или посмотреть короткую церемонию.')}</p>
     <div class="loot-reel" aria-hidden="true" hidden></div>
     <div class="loot-capsule-result r-${reward.rarity}" role="status" aria-live="polite" hidden>${chestObjectVisualHTML(prizeDisplay, 'loot-result-object')}<div><span>${t(RARITY[reward.rarity].label)}</span><strong>${esc(reward.resultLabel || reward.label)}</strong></div></div>
     <div class="loot-save-status" role="status" aria-live="polite">${t('Сохраняю награду…')}</div>
@@ -19921,10 +20213,11 @@ function observeGuideV3BlockingSurfaces() {
 }
 function closeAccountDialog(id, { restoreFocus = true } = {}) {
   const overlay = document.getElementById(id); if (!overlay) return false;
-  const target = restoreFocus && _accountDialogReturnFocus && _accountDialogReturnFocus.isConnected ? _accountDialogReturnFocus : null;
+  const preferred = restoreFocus && _accountDialogReturnFocus && _accountDialogReturnFocus.isConnected ? _accountDialogReturnFocus : null;
+  const target = preferred || (restoreFocus ? document.querySelector('[data-action="mobile-nav-more"], [data-action="show-guide"], [data-action="open-helper"]') : null);
   const app = document.getElementById('app'); if (app) app.inert = false;
   overlay.remove(); _accountDialogReturnFocus = null; unlockCalendarDialogScroll();
-  if (target) requestAnimationFrame(() => target.focus());
+  if (target) requestAnimationFrame(() => focusPathChoiceTarget(target));
   repaintGuideV3AfterBlockingSurface();
   return true;
 }
@@ -19992,7 +20285,28 @@ async function commitPartyExit(overlay) {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(deleting ? { confirmName } : {}),
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok || !data.ok) throw new Error(data.error || `HTTP ${response.status}`);
+    if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
+    if (data.ok !== true) {
+      try {
+        const authoritativeParty = await refreshPartyAuthority();
+        if (!authoritativeParty) {
+          closeAccountDialog('social-party-dialog', { restoreFocus: false });
+          State._socialFocusAfterCommit = '#party-title';
+          toast(t('Изменение сохранено. Состояние пати перепроверено на сервере.')); render();
+          return;
+        }
+        overlay._saving = false;
+        status.textContent = t('Сервер вернул неполный ответ. Состояние перепроверено: пати всё ещё активна — повтори попытку.');
+        status.classList.add('is-error');
+        if (confirm) { confirm.disabled = false; confirm.focus(); } if (cancel) cancel.disabled = false;
+      } catch {
+        overlay._saving = false;
+        status.textContent = t('Сервер вернул неполный ответ, и итог не удалось проверить. Обнови раздел перед повтором.');
+        status.classList.add('is-error');
+        if (confirm) confirm.disabled = true; if (cancel) { cancel.disabled = false; cancel.focus(); }
+      }
+      return;
+    }
     closeAccountDialog('social-party-dialog', { restoreFocus: false }); State.party = false;
     State._socialFocusAfterCommit = '#party-title'; toast(deleting ? t('Пати удалена для всех') : t('Ты вышел из пати')); render();
   } catch {
@@ -20033,6 +20347,38 @@ function securityCard() {
       <button class="btn ghost danger-btn" data-action="show-delete-account">${t('Удалить аккаунт и все данные')}</button>
     </div>
   </div>`;
+}
+function showLogoutAllDialog(returnFocus = document.activeElement) {
+  document.getElementById('logout-all-modal')?.remove();
+  const overlay = document.createElement('div'); overlay.id = 'logout-all-modal'; overlay.className = 'modal-overlay';
+  overlay.innerHTML = `<section class="paywall-box account-dialog-box" role="dialog" aria-modal="true" aria-labelledby="logout-all-title" aria-describedby="logout-all-copy">
+    <button type="button" class="modal-x" data-action="close-logout-all" aria-label="${esc(t('Закрыть'))}">✕</button>
+    <h2 id="logout-all-title" tabindex="-1">${t('Выйти на всех устройствах?')}</h2>
+    <p id="logout-all-copy" class="muted">${t('Все активные сессии будут завершены. Чтобы вернуться, понадобится войти снова.')}</p>
+    <div class="account-dialog-actions"><button type="button" class="btn ghost" data-action="close-logout-all">${t('Отмена')}</button><button type="button" class="btn danger" data-action="confirm-logout-all">${t('Выйти на всех устройствах')}</button></div>
+    <p class="logout-all-result muted" role="alert" aria-live="assertive"></p>
+  </section>`;
+  mountAccountDialog(overlay, { initial: '#logout-all-title', returnFocus });
+  return overlay;
+}
+async function commitLogoutAll(overlay) {
+  if (!overlay || overlay._saving) return;
+  const controls = Array.from(overlay.querySelectorAll('button'));
+  const status = overlay.querySelector('.logout-all-result');
+  overlay._saving = true; controls.forEach((control) => { control.disabled = true; });
+  if (status) status.textContent = t('Завершаю сессии…');
+  try {
+    const { response, data } = await accountJson('/api/auth/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ all: true }) });
+    if (!response.ok) throw new Error(accountError(data, 'Сетевая ошибка'));
+    closeAccountDialog('logout-all-modal', { restoreFocus: false });
+    State.me = null; State.phase = 'login'; stopFocus(false); clearAllData(); State._accountSessionExpired = false;
+    try { const profiles = await fetch('/api/auth/profiles'); State.profiles = profiles.ok ? await profiles.json() : []; } catch { State.profiles = []; }
+    render();
+  } catch (error) {
+    overlay._saving = false; controls.forEach((control) => { control.disabled = false; });
+    if (status) status.textContent = t(error.message || 'Сетевая ошибка');
+    overlay.querySelector('[data-action="confirm-logout-all"]')?.focus();
+  }
 }
 function showDeleteAccountModal() {
   if (document.getElementById('del-account-modal')) return;
@@ -20550,11 +20896,11 @@ function showPaywall(feature) {
   const e = ent();
   const trialBtn = (e.tier === 'free' && !e.trialUsed) ? `<button class="btn" data-action="start-trial">${t('✨ 7 дней Pro бесплатно')}</button>` : '';
   const ov = document.createElement('div'); ov.id = 'paywall'; ov.className = 'modal-overlay';
-  ov.innerHTML = `<div class="paywall-box">
-    <button class="modal-x" data-action="close-paywall">✕</button>
+  ov.innerHTML = `<section class="paywall-box v204-dialog" role="dialog" aria-modal="true" aria-labelledby="paywall-title" aria-describedby="paywall-desc">
+    <button type="button" class="modal-x" data-action="close-paywall" aria-label="${esc(t('Закрыть'))}">✕</button>
     <div class="pw-crown">💎</div>
-    <h2>${feature && feature !== 'Pro' ? esc(t(feature)) + ' — Pro' : 'Satoru Pro'}</h2>
-    <p class="muted">${t('Открой глубину игры. Ядро всегда бесплатно — Pro добавляет силу.')}</p>
+    <h2 id="paywall-title" tabindex="-1">${feature && feature !== 'Pro' ? esc(t(feature)) + ' — Pro' : 'Satoru Pro'}</h2>
+    <p id="paywall-desc" class="muted">${t('Открой глубину игры. Ядро всегда бесплатно — Pro добавляет силу.')}</p>
     <ul class="pro-feats">
       <li>${t('📊 Расширенная аналитика и Индекс баланса')}</li>
       <li>${t('💛 Pro не меняет награды, вероятность, XP или золото')}</li>
@@ -20562,8 +20908,8 @@ function showPaywall(feature) {
       <li>${t('🤖 ИИ-ассистент (на своём ключе — есть бесплатные)')}</li>
       <li>${t('🎨 Темы оформления (скоро)')}</li></ul>
     <div class="pw-actions">${trialBtn}<button class="btn pro-cta" data-action="do-upgrade">${t('Оформить Pro')}</button></div>
-    <p class="muted pw-fine">${t('Без карты для триала. Даунгрейд никогда не удаляет данные.')}</p></div>`;
-  document.body.appendChild(ov);
+    <p class="muted pw-fine">${t('Без карты для триала. Даунгрейд никогда не удаляет данные.')}</p></section>`;
+  mountAccountDialog(ov, { initial: '#paywall-title', returnFocus: document.activeElement });
 }
 
 // ============================================================
@@ -20640,17 +20986,17 @@ function guideV3ContextRuntimeAllowed(chapter, locale = lang()) {
     && copy.CONTEXTUAL_STATUS?.[chapter] === 'runtime-approved');
 }
 function feedbackPanelHTML() {
-  return `<h3 class="guide-v3-library__feedback-title">💬 ${esc(t('Нашёл баг или есть идея?'))}</h3>
+  return `<details class="guide-v3-feedback"><summary>💬 ${esc(t('Нашёл баг или есть идея?'))}</summary>
     <form id="feedback-form" class="feedback-form">
-      <select name="kind"><option value="bug">🐞 ${esc(t('Баг'))}</option><option value="idea">💡 ${esc(t('Идея'))}</option><option value="other">💬 ${esc(t('Другое'))}</option></select>
-      <textarea name="text" placeholder="${esc(t('Опиши, что случилось или что предлагаешь…'))}"></textarea>
+      <label><span>${esc(t('Тип сообщения'))}</span><select name="kind"><option value="bug">🐞 ${esc(t('Баг'))}</option><option value="idea">💡 ${esc(t('Идея'))}</option><option value="other">💬 ${esc(t('Другое'))}</option></select></label>
+      <label><span>${esc(t('Сообщение'))}</span><textarea name="text" placeholder="${esc(t('Опиши, что случилось или что предлагаешь…'))}"></textarea></label>
       <label class="fb-file">📎 ${esc(t('Прикрепить фото/видео'))}
         <input type="file" name="files" accept="image/*,video/*" multiple />
       </label>
       <div id="fb-previews" class="fb-previews"></div>
       <div class="fb-actions"><button type="submit" class="btn">${esc(t('Отправить'))}</button><span id="fb-msg" class="muted" role="status"></span></div>
     </form>
-    ${State.me && State.me.isAdmin ? `<button class="btn ghost" data-action="show-reports" style="margin-top:10px">🐞 ${esc(t('Смотреть все репорты (админ)'))}</button>` : ''}`;
+    ${State.me && State.me.isAdmin ? `<button class="btn ghost" data-action="show-reports" style="margin-top:10px">🐞 ${esc(t('Смотреть все репорты (админ)'))}</button>` : ''}</details>`;
 }
 function showGuideUnavailable() {
   const ov = document.createElement('div'); ov.id = 'guide'; ov.className = 'modal-overlay';
@@ -20789,12 +21135,19 @@ function guideV3Context({ sessionPrompted = State._guideV3SessionPrompted } = {}
   } catch {}
   const heroMeta = guideV3State()?.chapterMeta?.hero || {};
   const heroResolvedAt = Number(heroMeta.completedAt || heroMeta.skippedAt || 0);
+  const questionnaire = State.questionnaire && State.questionnaire.status === 'materialized' ? State.questionnaire : null;
+  const questionnaireGoalIds = Array.isArray(questionnaire?.materialized?.goalIds) ? questionnaire.materialized.goalIds : [];
+  const questionnaireTaskIds = Array.isArray(questionnaire?.materialized?.taskIds) ? questionnaire.materialized.taskIds : [];
+  const questionnaireTask = (State.tasks || []).find((task) => questionnaireTaskIds.includes(task.id)) || null;
+  const questionnaireTaskDoneAt = questionnaireTask?.completedAt ? new Date(questionnaireTask.completedAt).getTime() : 0;
+  const returnedAfterFirst = !!questionnaireTaskDoneAt && Number(State._guideV3SessionStartedAt || 0) > questionnaireTaskDoneAt;
   let ttsReady = false, aiReady = false;
   try { ttsReady = State.settings?.tts !== false && !!ttsCloudOK() && State._shadowVoiceStatus?.configured === true; } catch {}
   try { aiReady = canUseAi() === true; } catch {}
   return {
     now: Date.now(), sessionPrompted, completedTasks: completed.length, activeDays,
-    questionnaireReady: false, hasGoalSeed: false, returnedAfterFirst: false,
+    questionnaireReady: !!questionnaire, hasGoalSeed: questionnaireGoalIds.length === 1, returnedAfterFirst,
+    questionnaireTaskId: questionnaireTask?.id || questionnaireTaskIds[0] || '',
     futureTasks: future.length, hasDeadline: !!deadlineTask, calendarTaskId: calendarTask?.id || '',
     inboxCount: (State.inbox || []).length, hasLooseNote: false,
     ttsReady, aiReady, gold: organicBalance, rewardThreshold: reward ? Number(reward.cost) : Number.POSITIVE_INFINITY,
@@ -20857,19 +21210,28 @@ function showGuide() {
     availableChapters: guideV3AvailableChapters(),
     deferredChapters: ['goals'],
   }, window.GuideV3.REGISTRY, copy);
-  const cardHtml = cards.map((card) => {
+  const usefulCards = cards.filter((card) => card.current || card.available || card.replay);
+  const recommended = [
+    ...usefulCards.filter((card) => card.current),
+    ...usefulCards.filter((card) => !card.current && card.available),
+    ...usefulCards.filter((card) => !card.current && !card.available && card.replay),
+  ].filter((card, index, all) => all.findIndex((item) => item.id === card.id) === index).slice(0, 3);
+  const later = usefulCards.filter((card) => !recommended.some((item) => item.id === card.id));
+  const renderGuideCard = (card) => {
     const action = !state.enabled ? '' : card.current ? 'guide-resume' : card.replay ? 'guide-replay' : (card.available ? 'guide-start' : '');
     const button = action && card.actionLabel
       ? `<button type="button" class="btn ghost guide-v3-card__action guide-v3-card-action" data-action="${action}" data-chapter="${esc(card.id)}">${esc(card.actionLabel)}</button>` : '';
     return `<article class="guide-v3-card is-${esc(card.status)}" data-guide-chapter="${esc(card.id)}">
       <div class="guide-v3-card__copy"><h3>${esc(card.title)}</h3><p class="guide-v3-card__status guide-v3-card-status">${esc(card.statusLabel)}</p>${card.description ? `<p class="guide-v3-card-description">${esc(card.description)}</p>` : ''}</div>${button}
     </article>`;
-  }).join('');
+  };
+  const cardHtml = recommended.map(renderGuideCard).join('');
   const ov = document.createElement('div'); ov.id = 'guide'; ov.className = 'modal-overlay';
   ov.innerHTML = `<section class="guide-box guide-v3-library" role="dialog" aria-modal="true" aria-labelledby="guide-title" aria-describedby="guide-subtitle">
     <button type="button" class="modal-x" data-action="close-guide" aria-label="${esc(guideV3Copy('system.action.close'))}">✕</button>
     <header class="guide-v3-library__header guide-v3-library-header"><p class="guide-v3-library__eyebrow guide-v3-library-eyebrow">SATORU GUIDE</p><h2 id="guide-title" tabindex="-1">${esc(guideV3Copy('library.title'))}</h2><p id="guide-subtitle" class="guide-v3-library-copy">${esc(guideV3Copy('library.subtitle'))}</p></header>
-    <div class="guide-v3-library__cards guide-v3-library-grid">${cardHtml}</div>
+    <div class="guide-v3-library__cards guide-v3-library-grid">${cardHtml || `<p class="muted">${esc(t('Все доступные главы пройдены. Их можно повторить позже.'))}</p>`}</div>
+    ${later.length ? `<details class="guide-v3-later"><summary>${esc(t('Ещё главы'))} · ${later.length}</summary><div class="guide-v3-library__cards guide-v3-library-grid">${later.map(renderGuideCard).join('')}</div></details>` : ''}
     <p class="guide-v3-library__note guide-v3-library-copy">${esc(guideV3Copy('library.replay_note'))}</p>
     ${state.enabled
       ? `<button type="button" class="btn ghost guide-v3-library__disable guide-v3-library-action" data-action="guide-disable">${esc(guideV3Copy('system.action.disable_prompts'))}</button>`
@@ -20933,7 +21295,7 @@ function arsenalCard() {
       let btn;
       if (equipped) btn = `<button class="btn sm" data-action="equip-gear" data-id="${it.id}">✓ Надето</button>`;
       else if (owned) btn = `<button class="btn ghost sm" data-action="equip-gear" data-id="${it.id}">Надеть</button>`;
-      else if (locked) btn = `<button class="btn ghost sm" disabled>${satoruIconHTML('status.lock', 'button-glyph', '◇')} ур.${it.lvl}</button>`;
+      else if (locked) btn = `<button class="btn ghost sm" disabled>${satoruIconHTML('status.lock', 'button-glyph', '◇')} ур.${Math.max(1, Math.round(Number(it.lvl) || 1))}</button>`;
       else btn = `<button class="btn sm ${bal >= it.cost ? '' : 'disabled'}" data-action="buy-gear" data-id="${it.id}" ${bal >= it.cost ? '' : 'disabled'}>${satoruIconHTML('status.gold', 'button-emblem', '◇')} ${it.cost}</button>`;
       return `<div class="gear-item${equipped ? ' equipped' : ''}" style="${equipped ? `border-color:${rar.color}` : ''}">
         <div class="gear-ic" style="color:${rar.color}">${gearInventoryArtHTML(it)}</div>
@@ -20955,9 +21317,9 @@ function arsenalCard() {
   const sum = (gb.xpPct || gb.hardXpPct || gb.goldPct)
     ? `<p class="gear-sum">Надето: ${[gb.xpPct ? `+${gb.xpPct}% XP` : '', gb.hardXpPct ? `+${gb.hardXpPct}% XP к сложным` : '', gb.goldPct ? `+${gb.goldPct}% золота` : ''].filter(Boolean).join(' · ')}</p>`
     : `<p class="gear-sum muted">Ничего не надето — снаряжение усилит рост.</p>`;
-  return `<div class="card arsenal-card"><h3>${satoruIconHTML('gear.w4', 'heading-emblem', '◇')} ${t('Арсенал — снаряжение')}</h3>
+  return `<details class="card rewards-disclosure arsenal-disclosure"><summary>${satoruIconHTML('gear.w4', 'inline-emblem', '◇')} ${t('Арсенал — снаряжение')}</summary><div class="rewards-disclosure-body">
     <p class="muted" style="font-size:12px;margin:0 0 6px">${t('Снаряжение покупается за заранее указанную цену. Дневные награды не выдают случайную силу; Free и Pro используют одни правила.')}</p>
-    ${sum}${slotHtml}${relicSlot}</div>`;
+    ${sum}${slotHtml}${relicSlot}</div></details>`;
 }
 
 function renderRewards() {
@@ -21022,11 +21384,6 @@ function renderRewards() {
     <div class="rewards-primary-grid">${lootboxCard()}${personalStore}</div>
     ${collectionCard()}
     ${arsenalCard()}
-    <div class="kpis">
-      <div class="kpi"><div class="v">${satoruIconHTML('status.gold', 'kpi-emblem', '🪙')} ${bal}</div><div class="l">${t('Баланс золота')}</div></div>
-      <div class="kpi"><div class="v">${ownedCos}/${COSMETICS.length}</div><div class="l">${t('Косметики')}</div></div>
-      <div class="kpi"><div class="v">${achGot}/${ACHIEVEMENTS.length}</div><div class="l">${t('Достижений')}</div></div>
-    </div>
     <details class="card rewards-disclosure"><summary>${t('Правила и история')}</summary><div class="rewards-disclosure-body">${economyRules}<section><h3>${t('История покупок')}</h3>${history ? `<ul class="reflections">${history}</ul>` : '<p class="muted">Пока ничего не куплено.</p>'}</section></div></details>
     <details class="card rewards-disclosure achievements-disclosure"><summary>${satoruIconHTML('system.achievement', 'heading-emblem', '🏆')} ${t('Достижения')} · ${achGot}/${ACHIEVEMENTS.length}</summary><div class="ach-grid">${achs}</div></details></div>`;
 }
@@ -21187,9 +21544,8 @@ function renderStats() {
   const skillRanksRows = topSkills().map((s) => rankRow(s, false) + childSkills(s.id).map((c) => rankRow(c, true)).join('')).join('');
   const advanced = isPro()
     ? `<div class="card"><h3>${t('Время по сферам')}</h3>${barChartSVG(timeByAreaThisWeek())}</div>`
-    : `<div class="card locked-card" data-action="show-paywall" data-feature="Расширенная аналитика">
-        <div class="lock-veil"><span>${satoruIconHTML('status.lock', 'inline-glyph', '◇')} Расширенная аналитика — в Pro</span></div>
-        <h3>${t('Время по сферам')}</h3>${barChartSVG(timeByAreaThisWeek())}</div>`;
+    : `<section class="card locked-card"><button type="button" class="lock-veil" data-action="show-paywall" data-feature="Расширенная аналитика"><span>${satoruIconHTML('status.lock', 'inline-glyph', '◇')} ${t('Расширенная аналитика')} — Pro</span></button>
+        <h3>${t('Время по сферам')}</h3>${barChartSVG(timeByAreaThisWeek())}</section>`;
   // Эпизоды: без списка сохранённый период исчезал из виду, а ошибка ИИ в разборе оставалась
   // навсегда неверным опытом — откатить было нечем. Здесь же вход «записать эпизод» вручную,
   // не дожидаясь нуджа (поездку можно отметить сразу, а не после недели тишины).
@@ -21207,7 +21563,7 @@ function renderStats() {
         <span class="load-name">${esc(r.name)}</span>
         <span class="load-bar">${pct == null ? `<i class="load-none"></i>` : `<i style="width:${pct}%;background:${r.hot ? '#e0526a' : esc(r.color)}"></i>`}</span>
         <span class="load-val ${r.hot ? 'is-hot' : ''}">${r.ratio == null ? t('мало данных') : '×' + r.ratio.toFixed(1)}</span>
-        <button type="button" class="load-restore${r.restores ? ' on' : ''}" data-action="toggle-restores" data-id="${r.id}" title="${t('Эта сфера меня восстанавливает — не предупреждать о перегрузе')}">${r.restores ? '🌿' : '·'}</button>
+        <button type="button" class="load-restore${r.restores ? ' on' : ''}" data-action="toggle-restores" data-id="${r.id}" aria-pressed="${r.restores ? 'true' : 'false'}" aria-label="${esc(t('Эта сфера меня восстанавливает — не предупреждать о перегрузе'))}: ${esc(r.name)}">${r.restores ? '🌿' : '·'}</button>
       </div>`;
     }).join('')}</div>
     <p class="muted" style="font-size:11.5px;margin:8px 0 0">🌿 — ${t('сфера восстанавливает: перегрев по ней не считается')}</p></div>` : '';
@@ -21221,39 +21577,33 @@ function renderStats() {
       return `<div class="ep-card">
         <div class="ep-card-head">
           <span class="ep-card-title">${episodeType(ep.type).icon} ${esc(ep.title)}</span>
-          <button class="del" data-action="ep-del" data-id="${ep.id}" title="${t('Удалить эпизод')}">✕</button>
+          <button type="button" class="del" data-action="ep-del" data-id="${ep.id}" aria-label="${esc(t('Удалить эпизод'))}: ${esc(ep.title)}">✕</button>
         </div>
         <div class="ep-card-meta">${dmShort(ep.from)} — ${dmShort(ep.to)} · ${d} ${plural(d, 'день', 'дня', 'дней')} · +${xp} XP</div>
         <div class="ep-card-top">${top}</div>
       </div>`;
     }).join('')}</div>` : `<p class="muted" style="font-size:12.5px">${t('Пока пусто.')}</p>`}
     <div class="propose-actions"><button class="btn ghost" data-action="episode-open">🎒 ${t('Записать эпизод')}</button></div></div>`;
+  const balanceSummary = hasBalanceSignal
+    ? (bal.weakest && bal.index < 80 ? `${t('Без внимания')}: ${esc(bal.weakest.name)}` : t('Ритм сфер устойчив'))
+    : t('Баланс появится, когда хотя бы две сферы получат внимание. Это не оценка тебя.');
   return `<section class="stats-shell" data-guide-target="stats-overview" aria-labelledby="stats-title">
     <header class="stats-route-head"><h2 id="stats-title" tabindex="-1">${satoruIconHTML('nav.progress', 'heading-glyph', '◇')} ${t('Прогресс')}</h2></header>
-    <div class="kpis">
+    <section class="card stats-lead weekly-insight" aria-labelledby="stats-week-title"><div><span class="th-kicker">${t('Последние 14 дней')}</span><h3 id="stats-week-title">${rate == null ? t('Пока нет планов') : `${rate}% · ${t('Выполнение (14 дн.)')}`}</h3><p class="muted">${balanceSummary}</p></div><div class="stats-lead-actions"><button class="btn" data-action="ai-review">${t('Разобрать неделю')}</button><button class="btn ghost" data-action="share-week">${satoruIconHTML('action.export', 'button-glyph', '◇')} ${t('Твоя неделя')}</button></div></section>
+    <div class="kpis stats-kpis-compact">
       <div class="kpi"><div class="v">${rankIconHTML(cr, 'kpi-emblem')} ${charLevel()}</div><div class="l">${cr.name}</div></div>
       <div class="kpi"><div class="v" style="color:${balColor}">${hasBalanceSignal ? bal.index : '—'}</div><div class="l">${hasBalanceSignal ? t('Индекс баланса') : t('Наблюдаем баланс')}</div></div>
+      <div class="kpi"><div class="v">${satoruIconHTML('status.streak', 'kpi-emblem', '◇')} ${currentStreak()}</div><div class="l">${t('Серия')} · ${longestStreak()}</div></div>
       <div class="kpi"><div class="v">${overallXp()}</div><div class="l">${t('Всего опыта')}</div></div>
-      <div class="kpi"><div class="v">${satoruIconHTML('status.gold', 'kpi-emblem', '◇')} ${goldBalance()}</div><div class="l">${t('Золото')}</div></div>
-      <div class="kpi"><div class="v">${satoruIconHTML('status.streak', 'kpi-emblem', '◇')} ${currentStreak()}</div><div class="l">Серия · рекорд ${longestStreak()}</div></div>
-      <div class="kpi"><div class="v">${rate == null ? '—' : rate + '%'}</div><div class="l">${rate == null ? t('Пока нет планов') : t('Выполнение (14 дн.)')}</div></div>
     </div>
-    <div class="card wrapped-card"><div><h3 style="margin:0">${satoruIconHTML('action.export', 'heading-glyph', '◇')} ${t('Твоя неделя')}</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">${t('Красивая карточка итогов недели — поделись или сохрани PNG.')}</p></div>
-      <button class="btn" data-action="share-week">${satoruIconHTML('action.export', 'button-glyph', '◇')} ${t('Открыть')}</button></div>
-    <div class="card ai-review-card">
-      <div><h3 style="margin:0">🤖 ИИ-разбор недели</h3><p class="muted" style="margin:4px 0 0;font-size:12.5px">${t('Как ты на самом деле, а не только цифры. + мягкие шаги.')} ${aiSourceHint()}</p></div>
-      <button class="btn" data-action="ai-review">Разобрать неделю</button></div>
-    <div class="card balance-card${hasBalanceSignal ? '' : ' is-observing'}">
-      <div class="bal-head"><h3>⚖️ Баланс сфер — твоё десятиборье</h3><div class="bal-score" style="color:${balColor}">${hasBalanceSignal ? `${bal.index}<small>/100</small>` : '—'}</div></div>
-      ${hasBalanceSignal ? `<div class="bal-meter" aria-hidden="true"><span style="width:${bal.index}%;background:${balColor}"></span></div>` : ''}
-      <p class="muted" style="font-size:13px;margin-bottom:0">${hasBalanceSignal ? `Активных сфер: <b>${bal.active}/${bal.total}</b>. Индекс растёт, когда развиваешь жизнь как композицию, а не одну вертикаль. ${bal.weakest && bal.index < 80 ? `Сейчас проседает <b>${esc(bal.weakest.name)}</b> — дай ей внимание.` : (bal.index >= 80 ? 'Отличный баланс — так держать. ⚖️' : 'Добавь активность в несколько сфер, чтобы поднять индекс.')}` : t('Баланс появится, когда хотя бы две сферы получат внимание. Это не оценка тебя.')}</p>
-    </div>
-    <div class="card"><h3>🎖 Ранги по сферам</h3>${skillRanksRows || '<p class="muted">Добавь навыки в Настройках.</p>'}</div>
-    <div class="card"><h3>${t('XP по дням')}</h3>${barChartSVG(xpByDay(14), { thinnable: true })}</div>
-    ${advanced}
-    ${loadCard}
-    ${episodesCard}
-    <div class="card"><h3>${t('Рефлексии этой недели')}</h3>${reflections ? `<ul class="reflections">${reflections}</ul>` : '<p class="muted">Пока нет записей.</p>'}</div>
+    <details class="card stats-progressive"><summary>${t('Ритм и баланс')}</summary><div class="stats-progressive-body">
+      <div class="balance-card${hasBalanceSignal ? '' : ' is-observing'}"><div class="bal-head"><h3>⚖️ ${t('Баланс сфер')}</h3><div class="bal-score" style="color:${balColor}">${hasBalanceSignal ? `${bal.index}<small>/100</small>` : '—'}</div></div>${hasBalanceSignal ? `<div class="bal-meter" aria-hidden="true"><span style="width:${bal.index}%;background:${balColor}"></span></div>` : ''}<p class="muted">${balanceSummary}</p></div>
+      <section><h3>${t('Ранги по сферам')}</h3>${skillRanksRows || `<p class="muted">${t('Добавь навыки в Настройках.')}</p>`}</section>
+      <section><h3>${t('XP по дням')}</h3>${barChartSVG(xpByDay(14), { thinnable: true })}</section>
+      ${advanced}${loadCard}
+    </div></details>
+    <details class="card stats-progressive"><summary>${t('История и контекст')}</summary><div class="stats-progressive-body">${episodesCard}<section><h3>${t('Рефлексии этой недели')}</h3>${reflections ? `<ul class="reflections">${reflections}</ul>` : `<p class="muted">${t('Пока нет записей.')}</p>`}</section></div></details>
+    <details class="card stats-progressive"><summary>${t('Все показатели')}</summary><div class="stats-inline-metrics"><span>${satoruIconHTML('status.gold', 'inline-emblem', '◇')} ${goldBalance()} · ${t('Золото')}</span><span>${overallXp()} · ${t('Всего опыта')}</span><span>${t('Серия')} ${currentStreak()} · ${t('рекорд')} ${longestStreak()}</span></div></details>
   </section>`;
 }
 
@@ -21264,6 +21614,7 @@ function renderStats() {
 function applyImport(skillId, tierIdx) {
   const sk = skillById(skillId); if (!sk) return;
   const ladder = ladderFor(sk.name), levels = tierLevels(ladder), c = State.settings.curve;
+  tierIdx = Math.max(0, Math.min(levels.length - 1, Math.round(Number(tierIdx) || 0)));
   State.settings.imported = State.settings.imported || {};
   if (tierIdx <= 0) { delete State.settings.imported[skillId]; toast(`${sk.name}: импорт снят`); }
   else {
@@ -21280,7 +21631,8 @@ function importCard() {
   const s = State.settings, im = s.imported || {};
   const row = (sk, sub) => {
     const ladder = ladderFor(sk.name), levels = tierLevels(ladder);
-    const curTier = (im[sk.id] && im[sk.id].tier) || 0;
+    const storedTier = Number(im[sk.id] && im[sk.id].tier);
+    const curTier = Math.max(0, Math.min(levels.length - 1, Number.isFinite(storedTier) ? Math.round(storedTier) : 0));
     const opts = ladder.tiers.map((t, i) => `<option value="${i}" ${i === curTier ? 'selected' : ''}>${i === 0 ? '— с нуля' : esc(t) + ' · ур.' + levels[i]}</option>`).join('');
     const startRank = curTier > 0 ? rankFor(levels[curTier]) : null;
     const rankBadge = startRank ? `<span class="imp-rank" style="color:${esc(startRank.color)}">${esc(startRank.icon)} ${esc(startRank.name)}</span>` : '';
@@ -22793,7 +23145,7 @@ function renderSettings() {
   const mobileStep = `<div class="settings-mobile-step" aria-label="${t('Навигация по настройкам')}">
     <button type="button" class="btn ghost" data-action="settings-section-step" data-dir="-1" ${activeGroupIndex === 0 ? 'disabled' : ''}>${t('Назад')}</button>
     <span>${t(SETTINGS_GROUPS[activeGroupIndex][1])}</span>
-    <button type="button" class="btn ghost" data-action="settings-section-step" data-dir="1" ${activeGroupIndex === SETTINGS_GROUPS.length - 1 ? 'disabled' : ''}>${t('Готово')}</button>
+    <button type="button" class="btn ghost" data-action="${activeGroupIndex === SETTINGS_GROUPS.length - 1 ? 'settings-section-close' : 'settings-section-step'}"${activeGroupIndex === SETTINGS_GROUPS.length - 1 ? '' : ' data-dir="1"'}>${t(activeGroupIndex === SETTINGS_GROUPS.length - 1 ? 'Закрыть' : 'Далее')}</button>
   </div>`;
   return `
     <div class="settings-shell" aria-labelledby="settings-title">
@@ -22810,8 +23162,27 @@ function renderSettings() {
     ${adminCard()}
     ${groupEnd()}
     ${groupStart('experience', 'Опыт', 'Язык, тема, звук и присутствие Тени')}
-    <div class="card"><h3>${t('Название')}</h3><label class="settings-inline-field"><span>${t('Имя приложения')}</span><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></label></div>
-    <div class="card"><h3>${t('🔊 Звук')}</h3>
+    <div class="card settings-appearance-card"><h3>${t('Внешний вид')}</h3>
+      <label class="settings-inline-field"><span>${t('Имя приложения')}</span><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></label>
+      <div class="theme-row"><span class="theme-lbl">${t('Язык')}</span><div class="theme-toggle" role="group" aria-label="${t('Язык')}" data-noi18n>
+        <button type="button" class="theme-opt ${lang() === 'ru' ? 'active' : ''}" data-action="set-lang" data-lang="ru" aria-pressed="${lang() === 'ru'}">🇷🇺 Русский</button>
+        <button type="button" class="theme-opt ${lang() === 'en' ? 'active' : ''}" data-action="set-lang" data-lang="en" aria-pressed="${lang() === 'en'}">🇬🇧 English</button>
+        <button type="button" class="theme-opt ${lang() === 'de' ? 'active' : ''}" data-action="set-lang" data-lang="de" aria-pressed="${lang() === 'de'}">🇩🇪 Deutsch</button>
+        <button type="button" class="theme-opt ${lang() === 'uk' ? 'active' : ''}" data-action="set-lang" data-lang="uk" aria-pressed="${lang() === 'uk'}">🇺🇦 Українська</button>
+        <button type="button" class="theme-opt ${lang() === 'es' ? 'active' : ''}" data-action="set-lang" data-lang="es" aria-pressed="${lang() === 'es'}">🇪🇸 Español</button>
+      </div></div>
+      <div class="theme-row"><span class="theme-lbl">${t('Тема')}</span>
+        <div class="theme-toggle" role="group" aria-label="${t('Тема')}">
+          <button type="button" class="theme-opt ${s.theme === 'dark' || !['light', 'system'].includes(s.theme) ? 'active' : ''}" data-action="set-theme" data-theme="dark" aria-pressed="${s.theme === 'dark' || !['light', 'system'].includes(s.theme)}" ${_themeChoiceBusy ? 'disabled' : ''}>${t('🌙 Тёмная')}</button>
+          <button type="button" class="theme-opt ${s.theme === 'light' ? 'active' : ''}" data-action="set-theme" data-theme="light" aria-pressed="${s.theme === 'light'}" ${_themeChoiceBusy ? 'disabled' : ''}>${t('☀️ Светлая')}</button>
+          <button type="button" class="theme-opt ${s.theme === 'system' ? 'active' : ''}" data-action="set-theme" data-theme="system" data-guide-target="system-theme-choice" aria-pressed="${s.theme === 'system'}" ${_themeChoiceBusy ? 'disabled' : ''}>${t('◐ Системная')}</button>
+      </div></div>
+      <div class="theme-row"><span class="theme-lbl">${t('Акцент')}</span>
+        <div class="accent-swatches" role="group" aria-label="${t('Акцент')}">${ACCENTS.map((c) => `<button type="button" class="accent-sw ${(s.accent || '#6c8cff') === c ? 'active' : ''}" data-action="set-accent" data-accent="${c}" style="background:${c}" title="${c}" aria-label="${t('Акцент')} ${c}" aria-pressed="${(s.accent || '#6c8cff') === c}"></button>`).join('')}</div></div>
+      <div class="theme-row"><span class="theme-lbl">${t('⚡ Режим «Система»')}</span>
+        <label class="sound-toggle"><input type="checkbox" data-action="toggle-system" ${systemMode() ? 'checked' : ''}/> ${t('Нарратор-Система комментирует твои действия (Solo Leveling-вайб): драматичные объявления при выполнении квестов, левелапах, рангах, ачивках.')}</label></div></div>
+    <details class="card settings-disclosure"><summary>${t('Звук и присутствие Тени')}</summary><div class="settings-disclosure-body settings-experience-stack">
+    <section class="settings-subsection"><h3>${t('🔊 Звук')}</h3>
       <div class="sound-mode-row"><span>${t('Режим звука')}</span><div class="theme-toggle sound-mode-toggle" role="group" aria-label="${esc(t('Режим звука'))}">
         ${[['off', 'Выкл'], ['essential', 'Только важное'], ['full', 'Полный']].map(([id, label]) => `<button type="button" class="theme-opt ${sfxMode() === id ? 'active' : ''}" data-action="set-sound-mode" data-sound-mode="${id}" aria-pressed="${sfxMode() === id}">${t(label)}</button>`).join('')}
       </div></div>
@@ -22821,39 +23192,20 @@ function renderSettings() {
         ${shadowVoiceSettingsHTML()}
         <button class="btn ghost sm" data-action="tts-preview">${satoruIconHTML('media.sound', 'button-glyph', '◇')} ${t('Прослушать Тень')}</button>
       </div>` : ''}
-      <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">${t('▶ Проверить звук')}</button></div>
-    <div class="card"><h3>🕯 ${t('Тень')}</h3>
+      <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">${t('▶ Проверить звук')}</button></section>
+    <section class="settings-subsection"><h3>🕯 ${t('Тень')}</h3>
       <p class="muted" style="font-size:13px;margin:0 0 10px">${t('Утром и вечером Тень встречает тебя один раз — говорит по твоему состоянию и зовёт к одному шагу. Здесь можно вызвать эту встречу заново, чтобы посмотреть.')}</p>
-      <button class="btn ghost sm" data-action="moment-replay">${t('Показать встречу сейчас')}</button></div>
+      <button class="btn ghost sm" data-action="moment-replay">${t('Показать встречу сейчас')}</button></section>
     ${ambientCard()}
-    ${pwaCard()}
-    ${attentionSettingsCard()}
-    <div class="card"><h3>🌐 ${t('Язык')}</h3>
-      <div class="theme-toggle" data-noi18n>
-        <button class="theme-opt ${lang() === 'ru' ? 'active' : ''}" data-action="set-lang" data-lang="ru">🇷🇺 Русский</button>
-        <button class="theme-opt ${lang() === 'en' ? 'active' : ''}" data-action="set-lang" data-lang="en">🇬🇧 English</button>
-        <button class="theme-opt ${lang() === 'de' ? 'active' : ''}" data-action="set-lang" data-lang="de">🇩🇪 Deutsch</button>
-        <button class="theme-opt ${lang() === 'uk' ? 'active' : ''}" data-action="set-lang" data-lang="uk">🇺🇦 Українська</button>
-        <button class="theme-opt ${lang() === 'es' ? 'active' : ''}" data-action="set-lang" data-lang="es">🇪🇸 Español</button>
-      </div></div>
-    <div class="card"><h3>${t('🎨 Оформление')}</h3>
-      <div class="theme-row"><span class="theme-lbl">${t('Тема')}</span>
-        <div class="theme-toggle" role="group" aria-label="${t('Тема')}">
-          <button type="button" class="theme-opt ${s.theme === 'dark' || !['light', 'system'].includes(s.theme) ? 'active' : ''}" data-action="set-theme" data-theme="dark" aria-pressed="${s.theme === 'dark' || !['light', 'system'].includes(s.theme)}" ${_themeChoiceBusy ? 'disabled' : ''}>${t('🌙 Тёмная')}</button>
-          <button type="button" class="theme-opt ${s.theme === 'light' ? 'active' : ''}" data-action="set-theme" data-theme="light" aria-pressed="${s.theme === 'light'}" ${_themeChoiceBusy ? 'disabled' : ''}>${t('☀️ Светлая')}</button>
-          <button type="button" class="theme-opt ${s.theme === 'system' ? 'active' : ''}" data-action="set-theme" data-theme="system" data-guide-target="system-theme-choice" aria-pressed="${s.theme === 'system'}" ${_themeChoiceBusy ? 'disabled' : ''}>${t('◐ Системная')}</button>
-        </div></div>
-      <div class="theme-row"><span class="theme-lbl">${t('Акцент')}</span>
-        <div class="accent-swatches">${ACCENTS.map((c) => `<button class="accent-sw ${(s.accent || '#6c8cff') === c ? 'active' : ''}" data-action="set-accent" data-accent="${c}" style="background:${c}" title="${c}" aria-label="${t('Акцент')} ${c}"></button>`).join('')}</div></div>
-      <div class="theme-row"><span class="theme-lbl">${t('⚡ Режим «Система»')}</span>
-        <label class="sound-toggle"><input type="checkbox" data-action="toggle-system" ${systemMode() ? 'checked' : ''}/> ${t('Нарратор-Система комментирует твои действия (Solo Leveling-вайб): драматичные объявления при выполнении квестов, левелапах, рангах, ачивках.')}</label></div></div>
+    </div></details>
+    <details class="card settings-disclosure"><summary>${t('Приложение и границы внимания')}</summary><div class="settings-disclosure-body settings-experience-stack">${pwaCard()}${attentionSettingsCard()}</div></details>
     ${groupEnd()}
     ${groupStart('life', 'Жизнь', 'Сферы, привычки, путь и стартовый опыт')}
     ${pathCard()}
     <div class="card"><h3>${t('Навыки / сферы жизни')}</h3><p class="muted" style="font-size:12px;margin:0 0 10px">${t('Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.')}</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">${t('+ Добавить сферу')}</button></div>
-    ${importCard()}
-    <div class="card"><h3>${t('🔁 Привычки (повторяющиеся)')}</h3><div id="habits-list">${habits || `<p class="muted">${t('Пока нет привычек.')}</p>`}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">${t('+ Добавить привычку')}</button></div>
-    <div class="card"><h3>${t('🛡 Анти-привычки — с чем борешься')}</h3>
+    <details class="card settings-disclosure"><summary>${t('Стартовый уровень')}</summary><div class="settings-disclosure-body">${importCard()}</div></details>
+    <details class="card settings-disclosure"><summary>${t('🔁 Привычки (повторяющиеся)')}</summary><div class="settings-disclosure-body"><div id="habits-list">${habits || `<p class="muted">${t('Пока нет привычек.')}</p>`}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">${t('+ Добавить привычку')}</button></div></details>
+    <details class="card settings-disclosure"><summary>${t('🛡 Анти-привычки — с чем борешься')}</summary><div class="settings-disclosure-body">
       <p class="muted" style="font-size:12px;margin:0 0 10px">${t('Отслеживай периоды без события. Запись ничего не наказывает — это приватные данные о контексте.')}</p>
       <form id="add-antihabit" class="add-row">
         <input name="title" placeholder="${t('Напр. без бессмысленного скролла')}" autocomplete="off" required />
@@ -22863,12 +23215,12 @@ function renderSettings() {
           <option value="недоверие">${t('Недоверие (блоки/лимиты)')}</option>
           <option value="контекст">${t('Смена контекста/среды')}</option></select>
         <button type="submit">${t('+ Добавить')}</button></form>
-      ${(State.antihabits || []).map((a) => `<div class="ah-edit"><span class="ah-name">${esc(a.title)}${a.approach ? ` · <span class="muted">${esc(antiApproachLabel(a.approach))}</span>` : ''}</span><button class="del" data-action="delete-antihabit" data-id="${a.id}">✕</button></div>`).join('')}</div>
-    <div class="card"><h3>${t('📦 Программы-данжи')}</h3><p class="muted" style="margin:0 0 12px">${t('Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.')}</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div>
+      ${(State.antihabits || []).map((a) => `<div class="ah-edit"><span class="ah-name">${esc(a.title)}${a.approach ? ` · <span class="muted">${esc(antiApproachLabel(a.approach))}</span>` : ''}</span><button class="del" data-action="delete-antihabit" data-id="${a.id}" aria-label="${esc(t('Удалить'))}: ${esc(a.title)}">✕</button></div>`).join('')}</div></details>
+    <details class="card settings-disclosure"><summary>${t('📦 Программы-данжи')}</summary><div class="settings-disclosure-body"><p class="muted">${t('Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.')}</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div></details>
     ${groupEnd()}
     ${groupStart('connections', 'Связи', 'Помощник, профиль, Strava и импорт')}
-    ${aiKeysCard()}
     ${profileCard()}
+    <details class="card settings-disclosure connections-ai"><summary>${t('Подключение ИИ')}</summary><div class="settings-disclosure-body">${aiKeysCard()}</div></details>
     ${stravaCard()}
     ${fileImportCard()}
     ${groupEnd()}
@@ -22898,7 +23250,7 @@ function renderSettings() {
     ${settingsRecoveryCard()}
     ${accountDataRecoveryCard()}
     ${accountDataCard()}
-    <div class="card settings-data-card"><h4>${t('Данные')}</h4><p class="muted">${t('Данные лежат в')} <code>life-rpg/data/</code> ${t('внутри твоего vault — это обычные JSON-файлы.')}</p><div class="settings-actions"><button class="btn danger" data-action="reset-data">${t('Сбросить квесты и дни')}</button></div></div>
+    <div class="card settings-data-card"><h4>${t('Данные')}</h4><p class="muted">${localPreviewHost() ? `${t('Локальная разработка хранит данные в')} <code>life-rpg/data/</code>.` : t('Данные аккаунта хранятся на сервере Satoru и доступны только после авторизации. Экспорт и удаление находятся выше.')}</p><div class="settings-actions"><button class="btn danger" data-action="reset-data">${t('Сбросить квесты и дни')}</button></div></div>
     ${groupEnd()}
     </div>`;
 }
@@ -22914,7 +23266,7 @@ const APP_SHELL = `
   </header>
   <main id="main"></main>
   <div id="toasts"></div>
-  <button id="ai-fab" data-action="open-helper" data-guide-target="helper" title="Тень — спроси о себе или о приложении" aria-label="Тень">${window.ShadowRig ? window.ShadowRig.markup({ tier: 1, state: 'listening', context: 'fab', label: 'Тень' }) : '<img class="fab-face" src="/art/companions/shadow-v3-20260730/shadow-spirit-calm.png?v=20260730-1" alt="" />'}<span class="fab-streak" id="fab-streak" hidden></span></button>`;
+  <button id="ai-fab" data-action="open-helper" data-guide-target="helper" title="Тень — спроси о себе или о приложении" aria-label="Тень" aria-pressed="false">${window.ShadowRig ? window.ShadowRig.markup({ tier: 1, state: 'listening', context: 'fab', label: 'Тень' }) : '<img class="fab-face" src="/art/companions/shadow-v3-20260730/shadow-spirit-calm.png?v=20260730-1" alt="" />'}<span class="fab-streak" id="fab-streak" hidden></span></button>`;
 
 // ---- Мультиплеер: пати + кооп-рейд (Племя). null=не загружено, false=не в пати, объект=в пати ----
 const RAID_PER_MEMBER = 600; // XP/чел/неделя — цель кооп-рейда (синхр. с сервером)
@@ -23052,10 +23404,36 @@ function socialConsentValue(channel) {
   if (typeof authoritative === 'boolean') return authoritative;
   return !!(State.settings && State.settings.social && State.settings.social[channel] === true);
 }
+function validSocialConsentRecord(consent) {
+  return !!consent && typeof consent === 'object'
+    && typeof consent.leaderboard === 'boolean' && typeof consent.party === 'boolean';
+}
+function validPartyAuthorityView(party) {
+  return party === null || (!!party && typeof party === 'object' && typeof party.id === 'string'
+    && typeof party.name === 'string' && Array.isArray(party.members));
+}
 function rememberSocialConsent(consent) {
-  if (!consent || typeof consent !== 'object') return;
+  if (!validSocialConsentRecord(consent)) return false;
   State.socialPrivacy = { leaderboard: consent.leaderboard === true, party: consent.party === true };
   if (State.settings) State.settings.social = { ...State.socialPrivacy };
+  return true;
+}
+async function refreshSocialPrivacyAuthority() {
+  const response = await fetch('/api/social/privacy');
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !validSocialConsentRecord(data.consent)) throw new Error(data.error || 'invalid_social_privacy');
+  rememberSocialConsent(data.consent);
+  return data.consent;
+}
+async function refreshPartyAuthority() {
+  const response = await fetch('/api/party');
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !Object.prototype.hasOwnProperty.call(data, 'party')
+    || !validPartyAuthorityView(data.party) || !validSocialConsentRecord(data.consent)) {
+    throw new Error(data.error || 'invalid_party_authority');
+  }
+  rememberSocialConsent(data.consent); State.party = data.party || false;
+  return State.party;
 }
 function socialErrorCard(kind, message) {
   const action = kind === 'party' ? 'retry-party-load' : 'retry-leaderboard-load';
@@ -23069,9 +23447,7 @@ async function loadPartySocial() {
   if (State._partyLoading) return;
   State._partyLoading = true; State._partyError = '';
   try {
-    const response = await fetch('/api/party'); const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
-    rememberSocialConsent(data.consent); State.party = data.party || false;
+    await refreshPartyAuthority();
   } catch {
     State.party = null; State._partyError = t('Не удалось загрузить пати. Проверь соединение и повтори.');
   } finally {
@@ -23098,7 +23474,24 @@ async function setSocialConsent(channel, value, returnSelector) {
   try {
     const response = await fetch('/api/social/consent', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ [channel]: value === true }) });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok || !data.consent) throw new Error(data.error || `HTTP ${response.status}`);
+    if (!response.ok) throw new Error(data.error || `HTTP ${response.status}`);
+    if (!validSocialConsentRecord(data.consent)) {
+      try {
+        const authoritative = await refreshSocialPrivacyAuthority();
+        State._socialFocusAfterCommit = returnSelector || `[data-action="set-${channel}-consent"]`;
+        if (channel === 'leaderboard') State.leaderboard = null;
+        if (channel === 'party') State.party = null;
+        if (authoritative[channel] === (value === true)) {
+          toast(t('Согласие сохранено. Состояние перепроверено на сервере.'));
+          return true;
+        }
+        State._socialError = t('Сервер вернул неполный ответ. Состояние перепроверено: согласие не изменилось — повтори попытку.');
+      } catch {
+        State._socialError = t('Сервер вернул неполный ответ, и итог не удалось проверить. Обнови раздел перед повтором.');
+        State._socialFocusAfterCommit = returnSelector || `[data-action="set-${channel}-consent"]`;
+      }
+      return false;
+    }
     rememberSocialConsent(data.consent);
     const saved = State.settings ? await Store.saveNow('settings', State.settings) : true;
     if (!saved) State._socialError = t('Согласие сохранено на сервере, но локальные настройки пока не записались. При следующей загрузке сервер восстановит выбор.');
@@ -23125,15 +23518,19 @@ function renderParty() {
 function partyEmptyHTML() {
   const busy = State._socialBusy === 'party';
   const consentCopy = t('Я понимаю, что после вступления участники увидят моё имя и аватар, и отдельно разрешаю им видеть недельный XP и число завершённых квестов. Названия задач, привычки, cleanDays и личные данные не публикуются.');
+  const mode = State._partyEntryMode || '';
+  const form = State._partyEntryMode === 'create'
+    ? `<form id="party-create" class="social-party-form"><label><span>${t('Название пати')}</span><input name="name" autocomplete="off" required maxlength="40" /></label><label class="social-consent-check"><input type="checkbox" name="shareProgress" required /> <span>${t('Разрешаю участникам видеть мой недельный вклад')}</span></label><button type="submit" ${busy ? 'disabled' : ''}>${t('+ Создать')}</button><p class="social-form-status" role="status" aria-live="polite"></p></form>`
+    : State._partyEntryMode === 'join'
+      ? `<form id="party-join" class="social-party-form"><label><span>${t('Код пати')}</span><input name="code" autocomplete="off" maxlength="5" style="text-transform:uppercase" required /></label><label class="social-consent-check"><input type="checkbox" name="shareProgress" required /> <span>${t('Разрешаю участникам видеть мой недельный вклад')}</span></label><button type="submit" ${busy ? 'disabled' : ''}>${t('Войти в пати')}</button><p class="social-form-status" role="status" aria-live="polite"></p></form>`
+      : '';
   return `<section class="card party-empty-hero">
     <div class="party-empty-copy"><span class="event-kicker">${t('КОМАНДНАЯ ГЛАВА')}</span><h2 id="party-title" tabindex="-1">${t('Собери пати для следующего рейда.')}</h2>
       <p class="muted">${t('Дуо или группа до 6 человек. Недельный вклад складывается в общего босса, а поддержка команды не превращает пропуск в вину.')}</p></div>
     <div class="party-empty-mark" aria-hidden="true"><span>${satoruIconHTML('nav.tribe', 'party-empty-emblem', '◇')}</span><i></i><b>✦</b></div>
-    <div class="party-empty-actions"><form id="party-create" class="social-party-form"><label><span>${t('Название пати')}</span><input name="name" autocomplete="off" required maxlength="40" /></label>
-      <label class="social-consent-check"><input type="checkbox" name="shareProgress" required /> <span>${consentCopy}</span></label><button type="submit" ${busy ? 'disabled' : ''}>${t('+ Создать')}</button><p class="social-form-status" role="status" aria-live="polite"></p></form>
-      <div class="party-or muted">${t('или войти по коду друга')}</div>
-      <form id="party-join" class="social-party-form"><label><span>${t('Код пати')}</span><input name="code" autocomplete="off" maxlength="5" style="text-transform:uppercase" required /></label>
-      <label class="social-consent-check"><input type="checkbox" name="shareProgress" required /> <span>${consentCopy}</span></label><button type="submit" ${busy ? 'disabled' : ''}>${t('Войти')}</button><p class="social-form-status" role="status" aria-live="polite"></p></form></div>
+    <div class="party-entry-choice" role="group" aria-label="${esc(t('Как войти в пати'))}"><button type="button" class="btn ${mode === 'create' ? '' : 'ghost'}" data-action="party-entry-create" aria-pressed="${mode === 'create'}" aria-expanded="${mode === 'create'}">${t('Создать пати')}</button><button type="button" class="btn ${mode === 'join' ? '' : 'ghost'}" data-action="party-entry-join" aria-pressed="${mode === 'join'}" aria-expanded="${mode === 'join'}">${t('Войти по коду')}</button></div>
+    ${form ? `<div class="party-empty-actions">${form}</div>` : ''}
+    <details class="party-consent-details"><summary>${t('Что увидят участники')}</summary><p>${consentCopy}</p></details>
     ${State._socialError ? `<p class="social-inline-error" role="alert">${esc(State._socialError)}</p>` : ''}
   </section>`;
 }
@@ -23157,14 +23554,14 @@ function partyHTML(p) {
     ? t('Награда открыта. Забери её и подготовь команду к следующей главе сезона.')
     : t('До общей победы осталось {xp} XP. Каждый закрытый квест приближает пати к награде.').replace('{xp}', String(hp));
   const eventSteps = [
-    { icon: won ? '✓' : '1', label: t('Собирайте XP') },
-    { icon: won ? '✓' : '2', label: t('Победите босса') },
-    { icon: won && r.iClaimed ? '✓' : '3', label: t('Заберите награду') },
-  ].map((step, index) => `<span class="event-step${(won || index === 0) ? ' complete' : ''}"><b>${step.icon}</b>${step.label}</span>`).join('');
+    { icon: '✓', label: t('Собирайте XP'), complete: true },
+    { icon: won ? '✓' : '2', label: t('Победите босса'), complete: won },
+    { icon: won && r.iClaimed ? '✓' : '3', label: t('Заберите награду'), complete: won && r.iClaimed },
+  ].map((step) => `<span class="event-step${step.complete ? ' complete' : ''}"><b>${step.icon}</b>${step.label}</span>`).join('');
   const claim = won
     ? (r.iClaimed ? `<span class="raid-claimed muted">✓ ${t('Награда забрана')}</span>` : `<button class="btn raid-claim" data-action="party-claim">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Забрать награду пати')}</button>`)
     : '';
-  const members = p.members.slice().sort((a, b) => (Number(b.weekXp) || 0) - (Number(a.weekXp) || 0)).map((m) => `<div class="pm-row ${m.me ? 'me' : ''} ${m.shared ? '' : 'is-private'}">
+  const members = p.members.slice().sort((a, b) => (Number(b.weekXp) || 0) - (Number(a.weekXp) || 0)).map((m) => `<div class="pm-row ${m.me ? 'me' : ''} ${m.shared ? '' : 'is-private'}" role="listitem">
       <span class="pm-av">${avatarOriginIconHTML(m.avatar || AVATARS[0], 'party-origin-icon')}</span>
       <span class="pm-meta"><span class="pm-name">${esc(m.name)}${m.owner ? ` <span class="party-role">${t('создатель')}</span>` : ''}${m.me ? ` <span class="lb-you">${t('ты')}</span>` : ''}</span>
         <span class="pm-sub muted">${m.shared ? `${m.weekQuests || 0} ${t('квестов за неделю')} · ${t('видно только участникам пати')}` : t('Недельный вклад скрыт участником')}</span></span>
@@ -23172,40 +23569,39 @@ function partyHTML(p) {
       ${m.me ? '' : `<button class="btn ghost sm pm-cheer" data-action="party-cheer" data-to="${esc(m.id)}" aria-label="${esc(`${t('Подбодрить')}: ${m.name}`)}">${satoruIconHTML('nav.tribe', 'button-glyph', '◇')}${m.cheers ? ' ' + m.cheers : ''}</button>`}</div>`).join('');
   const partyConsent = socialConsentValue('party');
   const owner = p.permissions && p.permissions.role === 'owner';
-  const privacyCard = `<section class="card social-privacy-card ${partyConsent ? 'is-consented' : ''}" aria-labelledby="party-privacy-title">
-    <div><h3 id="party-privacy-title">${t('Видимость внутри пати')}</h3>
+  const privacyCard = `<details class="card social-privacy-card ${partyConsent ? 'is-consented' : ''}"><summary id="party-privacy-title">${t('Видимость внутри пати')}</summary><div class="social-privacy-body">
+    <div>
       <p>${t('После вступления участники видят имя и аватар как идентичность члена пати. Недельный XP и число завершённых квестов видны только при отдельном согласии на вклад. Названия задач, привычки, cleanDays, заметки и другие личные данные не публикуются.')}</p></div>
     <button type="button" class="btn ${partyConsent ? 'ghost' : ''}" data-action="set-party-consent" data-value="${partyConsent ? 'false' : 'true'}" ${State._socialBusy ? 'disabled' : ''}>${partyConsent ? t('Скрыть мой недельный вклад') : t('Разрешить недельный вклад')}</button>
     <p class="social-consent-state" role="status" aria-live="polite">${partyConsent ? t('Разрешено только для участников этой пати') : t('Вклад скрыт; рейд не учитывает мои XP')}</p>
     ${State._socialError ? `<p class="social-inline-error" role="alert">${esc(State._socialError)}</p>` : ''}
-  </section>`;
+  </div></details>`;
+  const raidDetails = `<details class="card party-progress-details"><summary><span>${t('Рейд и сезон')}</span><b>${pct}% · ${si.prog}/${si.goal}</b></summary><div class="party-progress-body">
+      <section class="party-progress-section" aria-labelledby="party-raid-details"><h3 id="party-raid-details">${won ? t('Босс повержен!') : esc(t(boss.name))}</h3>
+        <p class="muted">${won ? `${t('Пати справилась')} — ${r.claimedCount}/${p.members.length} ${t('забрали награду')}` : `${t('Осталось')} ${hp} XP · ${t('цель')} ${r.target}`}</p>
+        ${!won && boss.lore ? `<p class="muted raid-lore">${t(boss.lore)}</p>` : ''}
+        ${!won && boss.weak ? `<p class="raid-weak">${satoruIconHTML('status.streak', 'inline-emblem', '◇')} ${t('Слабость')}: ${t(boss.weak)} — ${t('урон ×2')}</p>` : ''}
+        <div class="raid-bar"><span style="width:${pct}%"></span></div>
+        <p class="muted raid-note">${t('Вклад каждого складывается; ничей пропуск не штрафует команду — просто чуть медленнее. Через поддержку, не через вину.')}</p></section>
+      <section class="party-progress-section" aria-labelledby="party-season-details"><h3 id="party-season-details">${t('Сезон')} ${si.cycle}</h3>
+        <p class="muted">${si.prog}/${si.goal} ${t('побед недели')}${si.done ? ` · ${t('пройдено')} ×${si.done}` : ''}</p>
+        <div class="season-bar"><span style="width:${seasonPct}%"></span></div>
+        <p class="muted">${si.prog === si.goal - 1 ? t('Ещё одна победа — и глава сезона взята.') : t('Побеждайте недельного босса, чтобы открывать следующую главу сезона.')}</p></section>
+    </div></details>`;
   return `<div class="party-shell">
     <section class="card event-hero${won ? ' is-won' : ''}">
       <div class="event-hero-copy"><span class="event-kicker">${t('НЕДЕЛЬНЫЙ РЕЙД')} · ${t('СЕЗОН')} ${si.cycle}</span>
         <h2 id="party-title" tabindex="-1">${eventTitle}</h2><p class="muted">${eventText}</p>
-        <div class="event-metrics"><span>${satoruIconHTML('nav.tribe', 'inline-glyph', '◇')} <b>${p.members.length}/${p.max}</b> ${t('в пати')}</span><span>${satoruIconHTML('difficulty.normal', 'inline-emblem', '◇')} <b>${pct}%</b> ${t('рейда')}</span><span>${satoruIconHTML('system.achievement', 'inline-emblem', '◇')} <b>${si.prog}/${si.goal}</b> ${t('главы')}</span></div>
+        <div class="event-party-identity"><b>${esc(p.name)}</b><span class="party-code" title="${esc(t('Код видят только участники пати; поделись им с теми, кого приглашаешь.'))}">${t('код')} <strong>${esc(p.code)}</strong></span></div>
+        <div class="event-metrics"><span>${satoruIconHTML('nav.tribe', 'inline-glyph', '◇')} <b>${p.members.length}/${p.max}</b> ${t('в пати')}</span><span>${satoruIconHTML('difficulty.normal', 'inline-emblem', '◇')} <b>${pct}%</b> ${t('рейда')}</span></div>
+        <div class="raid-bar event-raid-bar"><span style="width:${pct}%"></span></div>${claim}
       </div>
       <div class="event-stage" aria-hidden="true"><i class="event-stage-ring"></i><span class="event-stage-boss">${won ? satoruIconHTML('system.achievement', 'boss-victory-emblem', '◇') : bossEmblemHTML(boss, 'boss-stage-emblem')}</span><b class="event-stage-mark">${won ? t('ПОБЕДА') : t('РЕЙД')}</b></div>
       <div class="event-step-rail">${eventSteps}</div>
     </section>
-    ${privacyCard}
-    <div class="party-top-grid"><div class="card party-head">
-      <div class="ph-top"><h3>${satoruIconHTML('nav.tribe', 'heading-glyph', '◇')} ${esc(p.name)}</h3><span class="party-code" title="${esc(t('Код видят только участники пати; поделись им с теми, кого приглашаешь.'))}">${t('код')} <b>${esc(p.code)}</b></span></div>
-      <p class="muted" style="font-size:12px;margin:6px 0 0">${p.members.length}/${p.max} ${t('участников')} · ${t('недельный вклад складывается в общий рейд')}</p></div>
-    <div class="card season-card season-card-event">
-      <div class="season-head"><b>${satoruIconHTML('system.achievement', 'inline-emblem', '◇')} ${t('Сезон')} ${si.cycle}</b><span class="muted">${si.prog}/${si.goal} ${t('побед недели')}${si.done ? ` · ${t('пройдено')} ×${si.done}` : ''}</span></div>
-      <div class="season-bar"><span style="width:${seasonPct}%"></span></div>
-      <p class="muted">${si.prog === si.goal - 1 ? t('Ещё одна победа — и глава сезона взята.') : t('Побеждайте недельного босса, чтобы открывать следующую главу сезона.')}</p></div></div>
-    <div class="party-event-grid"><div class="card raid-card ${won ? 'won' : ''}">
-      <div class="raid-head"><span class="raid-boss">${won ? satoruIconHTML('system.achievement', 'boss-victory-emblem', '◇') : bossEmblemHTML(boss, 'boss-card-emblem')}</span><div><b>${won ? t('Босс повержен!') : esc(t(boss.name))}</b>
-        <div class="muted" style="font-size:12px">${won ? `${t('Пати справилась')} — ${r.claimedCount}/${p.members.length} ${t('забрали награду')}` : `${t('Осталось')} ${hp} XP · ${t('цель')} ${r.target} (${RAID_PER_MEMBER}/${t('участник')})`}</div></div></div>
-      ${!won && boss.lore ? `<p class="muted raid-lore" style="font-size:12px;font-style:italic;margin:8px 0 0">${t(boss.lore)}</p>` : ''}
-      ${!won && boss.weak ? `<p class="raid-weak" style="font-size:12.5px;font-weight:700;margin:6px 0 0">${satoruIconHTML('status.streak', 'inline-emblem', '◇')} ${t('Слабость')}: ${t(boss.weak)} — ${t('урон ×2')}</p>` : ''}
-      <div class="raid-bar"><span style="width:${pct}%"></span></div>
-      ${claim}
-      <p class="muted raid-note">${t('Вклад каждого складывается; ничей пропуск не штрафует команду — просто чуть медленнее. Через поддержку, не через вину.')}</p></div>
-    <div class="card party-members-card"><h3>${t('Состав и права')}</h3><p class="muted">${owner ? t('Ты создатель: можешь удалить пати для всех или передать роль, выйдя из неё.') : t('Ты участник: можешь выйти в любой момент. Только создатель может удалить пати для всех.')}</p><div class="pm-list">${members}</div>
-      <div class="party-exit-actions"><button class="btn ghost" data-action="open-party-leave">${owner ? t('Передать роль и выйти') : t('Покинуть пати')}</button>${owner ? `<button class="btn danger" data-action="open-party-delete">${t('Удалить пати для всех')}</button>` : ''}</div></div></div></div>`;
+    <section class="card party-members-card"><h3>${t('Состав и права')}</h3><p class="muted">${owner ? t('Ты создатель: можешь удалить пати для всех или передать роль, выйдя из неё.') : t('Ты участник: можешь выйти в любой момент. Только создатель может удалить пати для всех.')}</p><div class="pm-list" role="list" aria-label="${esc(t('Состав и права'))}">${members}</div>
+      <div class="party-exit-actions"><button class="btn ghost" data-action="open-party-leave">${owner ? t('Передать роль и выйти') : t('Покинуть пати')}</button>${owner ? `<button class="btn danger" data-action="open-party-delete">${t('Удалить пати для всех')}</button>` : ''}</div></section>
+    ${raidDetails}${privacyCard}</div>`;
 }
 // Кинематографичная победа над боссом (#22): полноэкранный оверлей + фанфары + конфетти
 function showRaidWin(p, boss) {
@@ -23214,16 +23610,16 @@ function showRaidWin(p, boss) {
   const colors = ['#e0a23e', '#e0526a', '#7c6cff', '#5fbf7a', '#4f9ff7'];
   const conf = Array.from({ length: 28 }, (_, i) => `<span class="rw-conf" style="left:${Math.round(Math.random() * 100)}%;animation-delay:${(Math.random() * 0.7).toFixed(2)}s;background:${colors[i % colors.length]}"></span>`).join('');
   const ov = document.createElement('div'); ov.id = 'raidwin'; ov.className = 'modal-overlay raidwin-ov';
-  ov.innerHTML = `<div class="raidwin-box">
+  ov.innerHTML = `<section class="raidwin-box v204-dialog" role="dialog" aria-modal="true" aria-labelledby="raidwin-title" aria-describedby="raidwin-desc"><button type="button" class="modal-x" data-action="raidwin-close" aria-label="${esc(t('Закрыть'))}">✕</button>
     <div class="rw-rays"></div>
     <div class="rw-boss">${bossEmblemHTML(boss, 'boss-win-emblem')}<span class="rw-x">×2</span></div>
-    <div class="rw-title">${t('БОСС ПОВЕРЖЕН')}</div>
-    <div class="rw-sub">${esc(t(boss.name))}</div>
+    <h2 id="raidwin-title" class="rw-title" tabindex="-1">${t('БОСС ПОВЕРЖЕН')}</h2>
+    <div id="raidwin-desc" class="rw-sub">${esc(t(boss.name))}</div>
     ${boss.defeat ? `<div class="rw-lore" style="font-size:13px;font-style:italic;opacity:.85;margin:6px 14px 0">${t(boss.defeat)}</div>` : ''}
     <div class="rw-party">${satoruIconHTML('nav.tribe', 'inline-glyph', '◇')} ${esc(p.name)} — ${t('вместе')}</div>
     <button class="btn rw-btn" data-action="raidwin-close">${t('Слава пати!')}</button>
-    <div class="rw-confetti">${conf}</div></div>`;
-  document.body.appendChild(ov);
+    <div class="rw-confetti" aria-hidden="true">${conf}</div></section>`;
+  mountAccountDialog(ov, { initial: '.rw-btn', returnFocus: document.querySelector('[data-action="party-claim"]') || document.activeElement });
 }
 // Табло «Доверие vs Контроль» (Splatfest-стиль) поверх рейтинга. Честность на малом масштабе:
 // агрегированное командное табло — только когда с КАЖДОЙ стороны ≥3 активных за неделю; иначе показываем личный вклад.
@@ -23259,7 +23655,7 @@ function renderLeaderboard() {
   const consent = socialConsentValue('leaderboard');
   const pathGlyph = (p) => p === 'control' ? PATHS.control.glyph : p === 'trust' ? PATHS.trust.glyph : '';
   const list = rows.length ? rows.map((r, i) => `
-    <div class="lb-row ${r.me ? 'me' : ''}">
+    <div class="lb-row ${r.me ? 'me' : ''}" role="listitem">
       <div class="lb-pos ${i < 3 ? `podium podium-${i + 1}` : ''}">${i < 3 ? i + 1 : '#' + (i + 1)}</div>
       <div class="lb-av">${avatarOriginIconHTML(r.avatar || AVATARS[0], 'leaderboard-origin-icon')}</div>
       <div class="lb-name">${pathGlyph(r.path) ? `<span class="lb-path" title="${esc(t(PATHS[r.path].name))}">${pathGlyph(r.path)}</span> ` : ''}${esc(r.name)}${r.me ? ` <span class="lb-you">${t('ты')}</span>` : ''}<span class="lb-rank">${esc(t(r.rank || ''))}</span></div>
@@ -23271,7 +23667,7 @@ function renderLeaderboard() {
       <h2 id="leaderboard-title" tabindex="-1">${satoruIconHTML('system.achievement', 'heading-emblem', '◇')} ${t('Рейтинг участия')}</h2>
       <p class="leaderboard-explainer">${t('Суммарный lifetime XP отражает длительность и объём участия под серверными лимитами. Это не рейтинг навыка, таланта, продуктивности или ценности человека; новички не обязаны догонять старые аккаунты.')}</p>
       <p class="muted">${t('Сервер заново считает XP из сохранённых задач, привычек и целей и игнорирует числа из запроса. Публично видны только имя, аватар, уровень, ранг пути и итоговый XP.')}</p>
-      <div class="lb-table">${list}</div>
+      <div class="lb-table" role="list" aria-label="${esc(t('Рейтинг участия'))}">${list}</div>
     </section>
     <section class="card social-privacy-card ${consent ? 'is-consented' : ''}" aria-labelledby="leaderboard-privacy-title">
       <div><h3 id="leaderboard-privacy-title">${t('Отдельное согласие на публикацию')}</h3>
@@ -23376,6 +23772,10 @@ function renderNav() {
     nav.querySelector(':scope > .navsub')?.remove();
     if (subs) nav.insertAdjacentHTML('beforeend', subs);
     nav.dataset.subKey = subKey;
+    requestAnimationFrame(() => {
+      const activeSub = nav.querySelector(':scope > .navsub .navsubtab.active');
+      if (activeSub && activeSub.closest('.navsub')?.scrollWidth > activeSub.closest('.navsub')?.clientWidth) activeSub.scrollIntoView({ block: 'nearest', inline: 'center' });
+    });
   }
 }
 
@@ -23448,9 +23848,9 @@ function showMobileNavSheet() {
     <div class="mobile-sheet-groups">
       ${group('mobile-more-growth', 'Развитие', sectionEntry('rewards'))}
       ${group('mobile-more-community', 'Сообщество', sectionEntry('tribe'))}
-      ${group('mobile-more-support', 'Поддержка', `${sectionEntry('library')}<button class="mobile-sheet-entry" data-action="open-helper" data-guide-target="helper"><span class="mobile-sheet-icon">${satoruIconHTML('nav.shadow', 'mobile-sheet-glyph', '🤖')}</span><span><b>${t('Помощник')}</b><small>Satoru AI</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
-      ${group('mobile-more-account', 'Аккаунт и доступ', `<button class="mobile-sheet-entry${State.view === 'settings' ? ' active' : ''}" data-action="mobile-go-settings" data-guide-target="settings-nav" aria-current="${State.view === 'settings' ? 'page' : 'false'}"><span class="mobile-sheet-icon">${satoruIconHTML('nav.settings', 'mobile-sheet-glyph', '⚙️')}</span><span><b>${t('Настройки')}</b></span><span class="mobile-sheet-chevron">›</span></button><button class="mobile-sheet-entry" data-action="show-paywall" data-feature="Pro"><span class="mobile-sheet-icon">${satoruIconHTML('status.xp', 'mobile-sheet-glyph', '◇')}</span><span><b>Pro</b><small>${ent().tier === 'pro' ? 'PRO' : ent().tier === 'trial' ? `${t('Pro-триал')} · ${localizedDayCount(trialDaysLeft(), true)}` : 'FREE'}</small></span><span class="mobile-sheet-chevron">›</span></button>`) }
-      ${group('mobile-more-session', 'Справка и сеанс', `<div class="mobile-sheet-utils"><button class="btn ghost" data-action="show-guide">? ${t('Как играть')}</button><button class="btn ghost" data-action="logout">⇦ ${t('Выйти')}</button></div>`) }
+      ${group('mobile-more-ideas', 'Идеи и вдохновение', sectionEntry('library'))}
+      ${group('mobile-more-support', 'Помощь', `<button class="mobile-sheet-entry" data-action="open-helper" data-guide-target="helper"><span class="mobile-sheet-icon">${satoruIconHTML('nav.shadow', 'mobile-sheet-glyph', '🤖')}</span><span><b>${t('Помощник')}</b><small>Satoru AI</small></span><span class="mobile-sheet-chevron">›</span></button><button class="mobile-sheet-entry" data-action="show-guide"><span class="mobile-sheet-icon" aria-hidden="true">?</span><span><b>${t('Как играть')}</b></span><span class="mobile-sheet-chevron">›</span></button>`) }
+      ${group('mobile-more-account', 'Аккаунт и доступ', `<button class="mobile-sheet-entry${State.view === 'settings' ? ' active' : ''}" data-action="mobile-go-settings" data-guide-target="settings-nav" aria-current="${State.view === 'settings' ? 'page' : 'false'}"><span class="mobile-sheet-icon">${satoruIconHTML('nav.settings', 'mobile-sheet-glyph', '⚙️')}</span><span><b>${t('Настройки')}</b></span><span class="mobile-sheet-chevron">›</span></button><button class="mobile-sheet-entry" data-action="show-paywall" data-feature="Pro"><span class="mobile-sheet-icon">${satoruIconHTML('status.xp', 'mobile-sheet-glyph', '◇')}</span><span><b>Pro</b><small>${ent().tier === 'pro' ? 'PRO' : ent().tier === 'trial' ? `${t('Pro-триал')} · ${localizedDayCount(trialDaysLeft(), true)}` : 'FREE'}</small></span><span class="mobile-sheet-chevron">›</span></button><button class="mobile-sheet-entry" data-action="logout"><span class="mobile-sheet-icon" aria-hidden="true">⇦</span><span><b>${t('Выйти')}</b></span><span class="mobile-sheet-chevron">›</span></button>`) }
     </div>
   </section>`;
   document.documentElement.classList.add('mobile-nav-open');
@@ -24092,7 +24492,8 @@ async function onSubmit(e) {
         State._accountSessionExpired = false; State.me = data;
         State.settings = freshOnboardingSettings([], data.lang);
         const languageSaved = await Store.saveNow('settings', State.settings);
-        State._onboardingSaveError = languageSaved ? '' : t('Не удалось сохранить старт. Ничего не потеряно — повтори попытку.');
+        State.questionnaire = null; State._questionnaireStage = 'source'; State._questionnaireError = '';
+        State._onboardingSaveError = languageSaved ? '' : t('Язык аккаунта не удалось подтвердить. Повтори сохранение перед продолжением.');
         State.phase = 'onboarding'; render();
         if (data.recoveryCode) showRecoveryModal(data.recoveryCode);
       }
@@ -24557,7 +24958,25 @@ async function onSubmit(e) {
     const controls = Array.from(f.elements); controls.forEach((control) => { control.disabled = true; }); if (status) status.textContent = t('Создаю пати…');
     try {
       const response = await fetch('/api/party/create', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, shareProgress: true, acknowledgedVisibility: true }) });
-      const data = await response.json().catch(() => ({})); if (!response.ok || !data.party) throw new Error(data.error || 'failed');
+      const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.error || 'failed');
+      if (!validPartyAuthorityView(data.party) || data.party === null || !validSocialConsentRecord(data.consent)) {
+        try {
+          const authoritativeParty = await refreshPartyAuthority();
+          if (authoritativeParty) {
+            State._socialFocusAfterCommit = '#party-title';
+            toast(authoritativeParty.name === name
+              ? t('Пати создана. Состояние перепроверено на сервере.')
+              : t('Ответ сервера был неполным. Показываем перепроверенное состояние пати.'));
+            render(); return;
+          }
+          controls.forEach((control) => { control.disabled = false; });
+          if (status) { status.textContent = t('Сервер вернул неполный ответ. Состояние перепроверено: пати не создана — повтори попытку.'); status.setAttribute('role', 'alert'); }
+        } catch {
+          controls.forEach((control) => { control.disabled = false; });
+          if (status) { status.textContent = t('Сервер вернул неполный ответ, и итог не удалось проверить. Обнови раздел перед повтором.'); status.setAttribute('role', 'alert'); }
+        }
+        return;
+      }
       rememberSocialConsent(data.consent); State.party = data.party; State._socialFocusAfterCommit = '#party-title'; toast(t('Пати создана — поделись кодом')); render();
     } catch { controls.forEach((control) => { control.disabled = false; }); if (status) { status.textContent = t('Не удалось создать пати. Ничего не изменено — повтори попытку.'); status.setAttribute('role', 'alert'); } }
     return;
@@ -24568,7 +24987,25 @@ async function onSubmit(e) {
     try {
       const response = await fetch('/api/party/join', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, shareProgress: true, acknowledgedVisibility: true }) });
       const data = await response.json().catch(() => ({}));
-      if (!response.ok || !data.party) throw new Error(data.error || 'failed');
+      if (!response.ok) throw new Error(data.error || 'failed');
+      if (!validPartyAuthorityView(data.party) || data.party === null || !validSocialConsentRecord(data.consent)) {
+        try {
+          const authoritativeParty = await refreshPartyAuthority();
+          if (authoritativeParty) {
+            State._socialFocusAfterCommit = '#party-title';
+            toast(authoritativeParty.code === code
+              ? t('Ты в пати. Состояние перепроверено на сервере.')
+              : t('Ответ сервера был неполным. Показываем перепроверенное состояние пати.'));
+            render(); return;
+          }
+          controls.forEach((control) => { control.disabled = false; });
+          if (status) { status.textContent = t('Сервер вернул неполный ответ. Состояние перепроверено: вступление не произошло — повтори попытку.'); status.setAttribute('role', 'alert'); }
+        } catch {
+          controls.forEach((control) => { control.disabled = false; });
+          if (status) { status.textContent = t('Сервер вернул неполный ответ, и итог не удалось проверить. Обнови раздел перед повтором.'); status.setAttribute('role', 'alert'); }
+        }
+        return;
+      }
       rememberSocialConsent(data.consent); State.party = data.party; State._socialFocusAfterCommit = '#party-title'; toast(t('Ты в пати!')); render();
     } catch (error) {
       controls.forEach((control) => { control.disabled = false; });
@@ -24714,6 +25151,7 @@ async function onSubmit(e) {
       State._calendarFocusAfterCommit = startTime
         ? `.cal-block-main[data-id="${CSS.escape(task.id)}"], .cal-agenda-main[data-id="${CSS.escape(task.id)}"]`
         : '.calv-tray > summary';
+      State._calendarAddOpen = false;
       render();
       return;
     }
@@ -25957,16 +26395,25 @@ async function onClick(e) {
     }).catch(() => toast(t('Сетевая ошибка'))).finally(() => { if (el.isConnected) el.disabled = false; }); return;
   }
   if (action === 'logout-all') {
-    el.disabled = true;
-    accountJson('/api/auth/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ all: true }) }).then(async ({ response, data }) => {
-      if (!response.ok) { toast(accountError(data, 'Сетевая ошибка')); return; }
-      State.me = null; State.phase = 'login'; stopFocus(false); clearAllData(); State._accountSessionExpired = false;
-      try { const profiles = await fetch('/api/auth/profiles'); State.profiles = profiles.ok ? await profiles.json() : []; } catch { State.profiles = []; }
-      render();
-    }).catch(() => toast(t('Сетевая ошибка'))).finally(() => { if (el.isConnected) el.disabled = false; }); return;
+    showLogoutAllDialog(el); return;
   }
+  if (action === 'close-logout-all') { closeAccountDialog('logout-all-modal'); return; }
+  if (action === 'confirm-logout-all') { commitLogoutAll(el.closest('#logout-all-modal')); return; }
 
   // --- Onboarding actions ---
+  if (action === 'questionnaire-analyze') { questionnaireAnalyze(); return; }
+  if (action === 'questionnaire-manual') { questionnaireSourceFromDOM(); State._questionnaireStage = 'manual'; State._questionnaireError = ''; renderOnboardingScreen(); return; }
+  if (action === 'questionnaire-manual-review') { questionnaireBuildManualReview(); return; }
+  if (action === 'questionnaire-back') {
+    if (State._questionnaireStage === 'review' || questionnaireCurrent().status === 'review') {
+      questionnaireReviewFromDOM(); const q = questionnaireCurrent(); q.status = 'draft'; questionnaireRemember(q);
+      State._questionnaireStage = q.rawAnswer ? 'source' : 'manual';
+    } else { questionnaireManualFromDOM(); State._questionnaireStage = 'source'; }
+    State._questionnaireError = ''; renderOnboardingScreen(); return;
+  }
+  if (action === 'questionnaire-commit') { questionnaireCommit(); return; }
+  if (action === 'questionnaire-defer') { questionnaireDefer(); return; }
+  if (action === 'questionnaire-voice') { questionnaireVoiceToggle(); return; }
   if (action === 'ob-toggle') {
     const name = el.dataset.skill;
     if (State.obSkills.has(name)) State.obSkills.delete(name); else State.obSkills.add(name);
@@ -25984,9 +26431,6 @@ async function onClick(e) {
   if (action === 'retry-leaderboard-load') { State._lbError = ''; State.leaderboard = null; State._socialFocusAfterCommit = '#leaderboard-title, [role="alert"]'; render(); return; }
   if (action === 'set-leaderboard-consent') { setSocialConsent('leaderboard', el.dataset.value === 'true', '[data-action="set-leaderboard-consent"]'); return; }
   if (action === 'set-party-consent') { setSocialConsent('party', el.dataset.value === 'true', '[data-action="set-party-consent"]'); return; }
-  if (action === 'ob-ai-run') { obAiRun(); return; }
-  if (action === 'ob-ai-apply') { obAiApply(); return; }
-  if (action === 'ob-ai-reset') { _obItems = null; _obErr = ''; renderOnboardingScreen(); return; }
   if (action === 'ob-finish') {
     if (State.obSkills.size === 0 || State._onboardingSaveBusy) return;
     const skills = [...State.obSkills].map((entry) => {
@@ -26359,6 +26803,11 @@ async function onClick(e) {
   }
 
   // --- Питомцы по сферам ---
+  if (action === 'pet-open') {
+    const panel = document.getElementById(`pet-summary-${id}`);
+    if (panel) { panel.open = true; panel.scrollIntoView({ block: 'center', behavior: avatarMotionReduced() ? 'auto' : 'smooth' }); panel.querySelector('summary')?.focus({ preventScroll: true }); }
+    return;
+  }
   if (action === 'pet-feed') { track('pet:feed');
     const art = el.closest('.pet-art'), svg = art && art.querySelector('.pet-svg');
     const toad = art && art.querySelector('[data-body-toad]');
@@ -26449,7 +26898,7 @@ async function onClick(e) {
   if (action === 'dismiss-system-teaser') { markDiscovered('teaser:system'); render(); return; }
   if (action === 'sound-test') { ['complete', 'coin', 'achievement'].forEach((n, i) => setTimeout(() => sfx(n), i * 420)); setTimeout(() => sfx('loot', 'legendary'), 1300); return; }
   if (action === 'show-paywall') { showPaywall(el.dataset.feature); return; }
-  if (action === 'close-paywall') { const p = document.getElementById('paywall'); if (p) p.remove(); return; }
+  if (action === 'close-paywall') { closeAccountDialog('paywall'); return; }
   if (action === 'show-delete-account') { showDeleteAccountModal(); return; }
   if (action === 'close-del-account') { closeAccountDialog('del-account-modal'); return; }
   if (action === 'close-account-import') { closeAccountDialog('account-import-modal'); return; }
@@ -26659,6 +27108,13 @@ async function onClick(e) {
     render();
     return;
   }
+  if (action === 'settings-section-close') {
+    captureSettingsForm();
+    State.view = 'today';
+    State._mobileNavFocusAfterCommit = '[data-sec="today"], #today-title';
+    render();
+    return;
+  }
   if (action === 'retry-settings-load') {
     if (State._settingsLoadBusy) return;
     State._settingsLoadBusy = true;
@@ -26782,7 +27238,7 @@ async function onClick(e) {
     const min = Math.max(1, Math.round(Number(el.dataset.min) || 25));
     State.settings.focus = Object.assign({}, focusCfg(), { workMin: min });
     Store.save('settings', State.settings);
-    document.getElementById('focus-dur-modal')?.remove();
+    closeAccountDialog('focus-dur-modal', { restoreFocus: false });
     startFocus(el.dataset.task);
     if (State._guideV3FocusPending === String(el.dataset.task || '')) {
       State._guideV3FocusPending = '';
@@ -26791,7 +27247,7 @@ async function onClick(e) {
   } else if (action === 'focus-duration-close') {
     const restoreGuide = !!State._guideV3FocusPending;
     State._guideV3FocusPending = '';
-    document.getElementById('focus-dur-modal')?.remove();
+    closeAccountDialog('focus-dur-modal');
     if (restoreGuide) guideV3Paint();
   } else if (action === 'timer-pause') { pauseFocus();
   } else if (action === 'timer-resume') { resumeFocus();
@@ -26877,19 +27333,29 @@ async function onClick(e) {
     if (!T || !id) return;
     const field = document.getElementById('calib-note');
     tasteWrite(T.recordVerdict(tasteRead(), id, action === 'calib-like' ? T.LIKE : T.SKIP, field ? field.value : '', today));
+    State._boardFocusAfterCommit = '.board-calib [data-action="calib-like"]';
     render();
   } else if (action === 'calib-stop') {
     // «Хватит пока» не стирает уже сказанное и не считается отказом: вкус
     // достраивается по ходу, а не за один присест.
     State._calibStopped = true; render();
   } else if (action === 'today-tab') {
+    const keyboardTarget = State._todayTabKeyboardTarget === (id === 'board' ? 'board' : 'day');
+    State._todayTabKeyboardTarget = '';
+    const refocusTab = () => {
+      if (!keyboardTarget) return;
+      requestAnimationFrame(() => document.getElementById(`today-tab-${id === 'board' ? 'board' : 'day'}`)?.focus({ preventScroll: true }));
+    };
     State._todayTab = id === 'board' ? 'board' : 'day';
-    if (State._todayTab === 'board') State._boardFocusAfterCommit = '#board-title, #calib-title';
+    if (State._todayTab === 'board' && !keyboardTarget) State._boardFocusAfterCommit = '#board-title, #calib-title';
     render();
+    refocusTab();
     if (State._todayTab === 'board' && await boardV2IssueStandardOffers()) {
       State._boardFocusAfterCommit = '#board-detail-title, #board-title'; render();
+      refocusTab();
     }
     if (State._todayTab === 'board') await boardV2LoadLocalStatus();
+    refocusTab();
   } else if (action === 'board-pick') {
     State._boardSel = id; State._boardFocusAfterCommit = '#board-detail-title'; render();
   } else if (action === 'board-local-open') {
@@ -27134,8 +27600,14 @@ async function onClick(e) {
   } else if (action === 'cal-move-undo') {
     undoCalendarMove(); return;
   } else if (action === 'cal-focus-add') {
-    const input = document.querySelector('.calendar-add-card input[name="title"]');
-    if (input) { input.scrollIntoView({ block: 'center' }); input.focus({ preventScroll: true }); }
+    State._calendarAddOpen = true;
+    State._calendarFocusAfterCommit = '.calendar-add-card input[name="title"]';
+    render();
+    return;
+  } else if (action === 'cal-close-add') {
+    State._calendarAddOpen = false;
+    State._calendarFocusAfterCommit = '[data-action="cal-focus-add"]';
+    render();
     return;
   } else if (action === 'toggle-core') {
     const q = questById(id); if (!q) return;
@@ -27435,9 +27907,9 @@ async function onClick(e) {
     render();
 
   // --- Календарь (вкладка) ---
-  } else if (action === 'cal-date') { State.calDate = el.dataset.date; if (State.calMode === 'week') State.weekStart = weekStart(State.calDate); State._calendarFocusAfterCommit = `.calv-day[data-date="${CSS.escape(State.calDate)}"]`; render();
-  } else if (action === 'cal-shift') { State.calDate = addDays(State.calDate || todayStr(), Number(el.dataset.days)); State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
-  } else if (action === 'cal-today') { State.calDate = todayStr(); State._calendarFocusAfterCommit = `.calv-day[data-date="${CSS.escape(State.calDate)}"]`; render();
+  } else if (action === 'cal-date') { State._calendarAddOpen = false; State.calDate = el.dataset.date; if (State.calMode === 'week') State.weekStart = weekStart(State.calDate); State._calendarFocusAfterCommit = `.calv-day[data-date="${CSS.escape(State.calDate)}"]`; render();
+  } else if (action === 'cal-shift') { State._calendarAddOpen = false; State.calDate = addDays(State.calDate || todayStr(), Number(el.dataset.days)); State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
+  } else if (action === 'cal-today') { State._calendarAddOpen = false; State.calDate = todayStr(); State._calendarFocusAfterCommit = `.calv-day[data-date="${CSS.escape(State.calDate)}"]`; render();
   } else if (action === 'goto-calendar') { sfx('navigate'); State.calDate = el.dataset.date || todayStr(); State.view = 'calendar'; render();
 
   // --- Инбокс / быстрый захват (Блок 2) ---
@@ -27679,6 +28151,10 @@ async function onClick(e) {
   } else if (action === 'chat-plan-remove') { delete State._chatPlanAttachment; openHelperChat();
   } else if (action === 'chat-suggest') { sendChat(el.dataset.q);
   } else if (action === 'habits-tab') { State.habitsTab = el.dataset.tab; State._habitsFocusAfterCommit = `[data-action="habits-tab"][data-tab="${el.dataset.tab}"]`; render();
+  } else if (action === 'party-entry-create' || action === 'party-entry-join') {
+    State._partyEntryMode = action === 'party-entry-create' ? 'create' : 'join';
+    State._socialFocusAfterCommit = State._partyEntryMode === 'create' ? '#party-create input[name="name"]' : '#party-join input[name="code"]';
+    render();
   } else if (action === 'open-party-leave') { showPartyExitDialog('leave', el);
   } else if (action === 'open-party-delete') { showPartyExitDialog('delete', el);
   } else if (action === 'close-party-dialog') { closeAccountDialog('social-party-dialog');
@@ -27697,7 +28173,7 @@ async function onClick(e) {
         if (d.party) State.party = d.party; render();
       } else toast(d.error === 'already_claimed' ? 'Уже забрано' : d.error === 'not_won' ? 'Босс ещё не повержен' : 'Не удалось');
     }).catch(() => toast(t('Сетевая ошибка')));
-  } else if (action === 'raidwin-close') { const m = document.getElementById('raidwin'); if (m) m.remove();
+  } else if (action === 'raidwin-close') { closeAccountDialog('raidwin');
   } else if (action === 'install-app') { requestInstall();
   } else if (action === 'fp-answer') { founderAnswer(id);
   } else if (action === 'fp-reset') { State.founderPass = Object.assign({}, State.founderPass, { mine: null }); render();
@@ -27742,11 +28218,11 @@ async function onClick(e) {
     const ics = buildICS();
     if (!/BEGIN:VEVENT/.test(ics)) { toast(t('Нет квестов со временем — поставь их в Календаре')); return; }
     try { const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'gojo-calendar.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); toast(t('📆 .ics скачан — открой его в Календаре для импорта')); } catch { toast(t('Не удалось создать файл')); }
-  } else if (action === 'cal-mode') { cleanupWkDrag(); sfx('select'); State.calMode = el.dataset.mode; State.view = 'calendar'; if (State.calMode === 'week') State.weekStart = weekStart(State.calDate || todayStr()); State._calendarFocusAfterCommit = `.cal-mode[data-mode="${CSS.escape(State.calMode)}"]`; render();
+  } else if (action === 'cal-mode') { cleanupWkDrag(); sfx('select'); State._calendarAddOpen = false; State.calMode = el.dataset.mode; State.view = 'calendar'; if (State.calMode === 'week') State.weekStart = weekStart(State.calDate || todayStr()); State._calendarFocusAfterCommit = `.cal-mode[data-mode="${CSS.escape(State.calMode)}"]`; render();
   } else if (action === 'cal-month-date') { State.calDate = el.dataset.date; State.wkAddDate = null; State._calendarFocusAfterCommit = '#month-detail-title'; render();
   } else if (action === 'month-open-day') { State.calMode = 'day'; State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
   } else if (action === 'cal-pick-day') { State.calDate = el.dataset.date; State.calMode = 'day'; State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
-  } else if (action === 'cal-shift-month') { State.calDate = shiftedMonthDate(State.calDate || todayStr(), Number(el.dataset.delta)); State.wkAddDate = null; State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
+  } else if (action === 'cal-shift-month') { State._calendarAddOpen = false; State.calDate = shiftedMonthDate(State.calDate || todayStr(), Number(el.dataset.delta)); State.wkAddDate = null; State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
   } else if (action === 'cal-remind-toggle') { toggleReminders();
   } else if (action === 'cal-tasks-retry') { retryTasksLoad();
   } else if (action === 'save-week') {
@@ -28021,6 +28497,8 @@ function clearAllData() {
   State._shadowVoiceStatus = null; State._shadowVoiceStatusLoading = false;
   State._accountDataLoadErrors = {}; State._accountDataLoadBusy = false; State._accountDataWriteBlockedNoticeAt = 0;
   State._onboardingSaveBusy = false; State._onboardingSaveError = '';
+  State.questionnaire = null; State._questionnaireStage = 'source'; State._questionnaireBusy = false; State._questionnaireError = ''; State._questionnaireLoadError = '';
+    State._questionnaireManual = { result: '', why: '', step: '', sphere: '', estimateMin: 15 };
   State._guideV3Error = ''; State._guideV3SessionPrompted = false; State._guideV3StartBusy = false; State._guideV3PromptMarkBusy = false;
   State._guideV3ChooseOther = false; State._guideV3FocusPending = ''; State._guideV3VoiceActive = false;
   State._guideV3ForceOpen = false; State._guideV3ShowTeaser = false; State._guideV3HabitCandidateId = null; State._guideV3HabitDraftId = '';
@@ -28162,6 +28640,7 @@ async function initApp() {
   // перекрывается остальными загрузками и не добавляет отдельного круга, но к
   // моменту первого render() ответ уже есть — и ни один гейт не успевает соврать.
   const aiKeysReady = ensureAiKeys();
+  const questionnaireReady = loadQuestionnaireState();
   State.settings.appName = State.settings.appName || DEFAULT_SETTINGS.appName;
   if (State.settings.appName === 'Gojo') { State.settings.appName = 'Satoru'; Store.save('settings', State.settings); } // ребренд Gojo->Satoru для старых юзеров
   State.settings.skills = State.settings.skills || [];
@@ -28190,8 +28669,12 @@ async function initApp() {
   // Компаньон: запоминаем сколько дней не виделись (для «я скучал»), затем отмечаем визит
   { const c = ensureCompanion(); State._compAway = daysBetween(c.lastSeen || todayStr(), todayStr()); c.lastSeen = todayStr(); Store.save('settings', State.settings); }
 
-  // Если нет навыков → онбординг
-  if (State.settings.skills.length === 0) {
+  await questionnaireReady;
+  if (State._accountSessionExpired) return;
+  // Новый аккаунт открывает Today только после атомарно materialized seed или
+  // честного deferred. Старые аккаунты со сферами остаются совместимыми.
+  const questionnaireDone = ['materialized', 'deferred'].includes(State.questionnaire && State.questionnaire.status);
+  if (State.settings.skills.length === 0 && !questionnaireDone) {
     State.phase = 'onboarding'; render(); return;
   }
 
@@ -28352,6 +28835,17 @@ function publishLeaderboard() {
 
 // Делегированный обработчик change (для select-ов вне форм — напр. импорт достижений)
 function onChange(e) {
+  if (e.target.id === 'questionnaire-plan-file') {
+    const input = e.target, file = input.files && input.files[0]; input.value = '';
+    if (!file) return;
+    if (!/\.(txt|md|markdown)$/i.test(String(file.name || '')) || file.size > 32 * 1024) { State._questionnaireError = t('Выбери TXT или MD до 32 КБ. Файл остаётся на устройстве до явного анализа.'); renderOnboardingScreen(); return; }
+    file.text().then((text) => {
+      const q = questionnaireCurrent(); q.rawAnswer = String(text || '').slice(0, 4000); questionnaireRemember(q);
+      State._questionnaireError = ''; renderOnboardingScreen(); requestAnimationFrame(() => document.getElementById('questionnaire-answer')?.focus());
+    }).catch(() => { State._questionnaireError = t('Не удалось прочитать файл. Вставь нужный фрагмент вручную.'); renderOnboardingScreen(); });
+    return;
+  }
+  if (e.target.id === 'questionnaire-ai-consent') { questionnaireSourceFromDOM(); return; }
   if (e.target.dataset?.action === 'guide-habit-candidate') {
     State._guideV3HabitCandidateId = e.target.value || 'new';
     State._habitsFocusAfterCommit = '[data-guide-target="habit-title"]'; render(); return;
@@ -28579,6 +29073,8 @@ function onChange(e) {
 }
 // Живой автосейв формы настроек при вводе (текст печатается без blur — 'change' не сработал бы)
 function onSettingsInput(e) {
+  if (e.target.id === 'questionnaire-answer') { questionnaireSourceFromDOM(); return; }
+  if (e.target.matches?.('[data-questionnaire-manual]')) { questionnaireManualFromDOM(); return; }
   if (e.target.matches?.('#inspiration-setup-form [name="referenceUrl"]')) updateInspirationReferenceUI(e.target.form);
   const wildcardForm = e.target.closest?.('#board-wildcard-form');
   if (wildcardForm) State._boardWildcardDraft = boardWildcardDraftFromForm(wildcardForm);
@@ -29091,11 +29587,12 @@ async function init() {
       return;
     }
     if (handleTreeDialogKeydown(e)) return;
-    if (e.target.matches?.(':is(.hsub,.goals-view-tabs)[role="tablist"] [role="tab"]') && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+    if (e.target.matches?.(':is(.hsub,.goals-view-tabs,.today-tabs)[role="tablist"] [role="tab"]') && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
       const tabs = Array.from(e.target.closest('[role="tablist"]').querySelectorAll('[role="tab"]'));
       const at = tabs.indexOf(e.target); let next = at;
       if (e.key === 'Home') next = 0; else if (e.key === 'End') next = tabs.length - 1;
       else next = (at + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+      if (e.target.closest('.today-tabs')) State._todayTabKeyboardTarget = tabs[next].dataset.id || '';
       e.preventDefault(); tabs[next].click(); return;
     }
     if ((e.key === 'Enter' || e.key === ' ') && e.target.matches?.('.character-secondary-panel > summary')) {

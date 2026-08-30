@@ -51,8 +51,9 @@ test('ответ есть до первой отрисовки — гейты н
 });
 
 test('во время initApp загрузка не дёргает render() сама', () => {
-  // Иначе отрисовка пошла бы посреди недособранного состояния.
-  assert.match(ensure, /if \(State\.phase === 'app'\) render\(\);/);
+  // Repaint допустим только после собранного app-shell либо внутри отдельного onboarding-shell.
+  assert.match(ensure, /if \(State\.phase === 'app' \|\| State\.phase === 'onboarding'\) render\(\);/);
+  assert.doesNotMatch(ensure, /^\s*render\(\);/m, 'ensureAiKeys must not repaint without a phase guard');
 });
 
 test('подсказка не говорит «добавь ключ», пока ответ не пришёл', () => {

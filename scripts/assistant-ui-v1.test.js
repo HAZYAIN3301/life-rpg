@@ -59,7 +59,9 @@ test('write failure stays retryable and does not report success', () => {
 });
 
 test('thinking state has meaningful live text, motion and a static reduced-motion state', () => {
-  assert.match(app, /role="status" aria-live="polite"[^>]*><span>\$\{t\('Тень формулирует ответ'\)\}/);
+  assert.match(app, /id="chat-msgs" class="chat-msgs" role="log" aria-live="polite"/);
+  assert.match(app, /class="chat-msg ai typing"[^>]*><span>\$\{t\('Тень формулирует ответ'\)\}/);
+  assert.doesNotMatch(app, /class="chat-msg ai typing"[^>]*role="status"/, 'the live log must not contain a competing nested live region');
   assert.equal((app.match(/<i><\/i>/g) || []).length >= 3, true);
   assert.match(css, /@keyframes assistantThinkingDot/);
   assert.match(css, /prefers-reduced-motion: reduce[\s\S]*\.typing-dots i \{ animation: none/);

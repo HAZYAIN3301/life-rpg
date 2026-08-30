@@ -292,6 +292,182 @@ html.helper-open { overflow: hidden; }
   }
 }
 
+/* Questionnaire v1 — one answer, one reviewed seed, one first action. */
+.questionnaire-screen {
+  align-items: flex-start;
+  padding-block: clamp(24px, 6vh, 72px);
+}
+.questionnaire-brand {
+  width: min(720px, calc(100% - 32px));
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2, 8px);
+  margin: 0 auto var(--sp-3, 12px);
+  color: var(--text-soft, var(--muted));
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+.questionnaire-brand .auth-origin-icon { inline-size: 32px; block-size: 32px; }
+.questionnaire-box {
+  width: min(720px, calc(100% - 32px));
+  max-width: 720px;
+  padding: clamp(20px, 4vw, 36px);
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--line));
+  box-shadow: 0 22px 70px rgb(0 0 0 / .18);
+}
+.questionnaire-head { max-width: 62ch; margin-block-end: var(--sp-4, 16px); }
+.questionnaire-head h1 { margin: 4px 0 8px; font-size: clamp(27px, 4.8vw, 42px); line-height: 1.05; }
+.questionnaire-head p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.55; }
+.questionnaire-step,
+.questionnaire-source-badge {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 24px;
+  color: var(--accent-2, var(--accent));
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+#questionnaire-answer,
+.questionnaire-review :is(input, textarea, select),
+.questionnaire-manual :is(input, textarea) {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 100%;
+}
+#questionnaire-answer { min-block-size: 176px; resize: vertical; font-size: 16px; line-height: 1.5; }
+.questionnaire-input-tools,
+.questionnaire-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2, 8px);
+  flex-wrap: wrap;
+  margin-block-start: var(--sp-3, 12px);
+}
+.questionnaire-input-tools > .muted { margin-inline-start: auto; font-size: 12px; }
+.questionnaire-ai-consent,
+.questionnaire-memory-choice {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: var(--sp-2, 8px);
+  align-items: start;
+  margin-block-start: var(--sp-4, 16px);
+  padding: var(--sp-3, 12px);
+  border: 1px solid var(--line-soft, var(--line));
+  border-radius: var(--radius-md, 12px);
+  background: var(--surface-2, var(--panel2));
+  cursor: pointer;
+}
+.questionnaire-ai-consent input,
+.questionnaire-memory-choice input { inline-size: 20px; block-size: 20px; margin: 2px 0 0; }
+.questionnaire-ai-consent span,
+.questionnaire-memory-choice span { min-inline-size: 0; display: grid; gap: 3px; }
+.questionnaire-ai-consent small,
+.questionnaire-memory-choice small { color: var(--muted); line-height: 1.45; }
+.questionnaire-ai-unavailable { margin: 12px 0 0; color: var(--muted); }
+.questionnaire-plan-import,
+.questionnaire-later,
+.questionnaire-spheres {
+  margin-block-start: var(--sp-3, 12px);
+  border: 1px solid var(--line-soft, var(--line));
+  border-radius: var(--radius-md, 12px);
+  background: transparent;
+}
+:is(.questionnaire-plan-import, .questionnaire-later, .questionnaire-spheres) > summary {
+  min-block-size: var(--touch-min, 42px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 800;
+}
+:is(.questionnaire-plan-import, .questionnaire-later, .questionnaire-spheres) > :not(summary) { margin: 0; padding: 0 12px 12px; }
+.questionnaire-file { position: relative; overflow: hidden; }
+.questionnaire-file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.questionnaire-actions .questionnaire-primary { margin-inline-start: auto; }
+.questionnaire-source-actions .questionnaire-primary { flex: 1 1 260px; }
+.questionnaire-source-actions .ghost { flex: 0 1 auto; }
+.questionnaire-defer {
+  min-block-size: var(--touch-min, 42px);
+  display: block;
+  margin: 10px auto 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.questionnaire-manual { display: grid; gap: var(--sp-3, 12px); }
+.questionnaire-manual > label { display: grid; gap: 6px; font-weight: 800; }
+.questionnaire-manual small,
+.questionnaire-optional small { color: var(--muted); font-weight: 500; }
+.questionnaire-manual fieldset,
+.questionnaire-spheres fieldset { min-inline-size: 0; margin: 0; padding: 0; border: 0; }
+.questionnaire-manual legend { margin-block-end: 8px; font-weight: 800; }
+.questionnaire-time-choices { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.questionnaire-time-choices label { position: relative; }
+.questionnaire-time-choices input { position: absolute; opacity: 0; }
+.questionnaire-time-choices span {
+  min-block-size: var(--touch-min, 42px);
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-2, var(--panel2));
+  cursor: pointer;
+}
+.questionnaire-time-choices input:checked + span { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--surface-2, var(--panel2))); }
+.questionnaire-time-choices input:focus-visible + span { outline: var(--focus-ring, 2px solid var(--accent)); outline-offset: 2px; }
+.questionnaire-review { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3, 12px); }
+.questionnaire-review-block {
+  min-inline-size: 0;
+  display: grid;
+  gap: 6px;
+  padding: var(--sp-3, 12px);
+  border: 1px solid var(--line-soft, var(--line));
+  border-radius: var(--radius-md, 12px);
+  background: var(--surface-2, var(--panel2));
+}
+.questionnaire-review-block > label { font-weight: 800; }
+.questionnaire-spheres { grid-column: 1 / -1; padding: 0; }
+.questionnaire-spheres > summary > span { margin-inline-start: auto; color: var(--muted); }
+.questionnaire-sphere-choice {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-block-size: var(--touch-min, 42px);
+  padding-block: 4px;
+}
+.questionnaire-sphere-choice input { inline-size: 20px; block-size: 20px; }
+.questionnaire-sphere-choice > span { display: grid; grid-template-columns: 10px minmax(0, 1fr); column-gap: 7px; align-items: center; }
+.questionnaire-sphere-choice i { inline-size: 9px; block-size: 9px; border-radius: 999px; background: var(--sphere); }
+.questionnaire-sphere-choice small { grid-column: 2; color: var(--muted); }
+
+@media (max-width: 600px) {
+  .questionnaire-screen { padding-block: 14px 28px; }
+  .questionnaire-brand,
+  .questionnaire-box { width: min(100% - 20px, 720px); }
+  .questionnaire-box { padding: 18px 14px; }
+  .questionnaire-review { grid-template-columns: minmax(0, 1fr); }
+  .questionnaire-spheres { grid-column: 1; }
+  .questionnaire-time-choices { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .questionnaire-actions { align-items: stretch; flex-direction: column-reverse; }
+  .questionnaire-actions .btn { inline-size: 100%; margin-inline-start: 0; }
+  .questionnaire-input-tools > .muted { inline-size: 100%; margin-inline-start: 0; }
+}
+
+@media (pointer: coarse) {
+  .questionnaire-box :is(button, input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, summary) { min-block-size: var(--touch-min, 42px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .questionnaire-box *, .questionnaire-box *::before, .questionnaire-box *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
 /* ============================================================
    Return Shelf R2 — finite material → chosen action
    ============================================================ */
@@ -1168,7 +1344,7 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .toast {
   background: var(--panel2); border: 1px solid var(--line); color: var(--text);
   padding: 10px 16px; border-radius: 10px; box-shadow: var(--shadow);
-  opacity: 0; transform: translateY(8px); transition: all 0.25s; font-weight: 600;
+  opacity: 0; transform: translateY(8px); transition: opacity .25s, transform .25s; font-weight: 600;
 }
 .toast.show { opacity: 1; transform: translateY(0); }
 
@@ -2256,7 +2432,7 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .loot-item.win { background: linear-gradient(180deg, rgba(224,162,62,.18), var(--panel)); border-color: #e0a23e; }
 .loot-item.flash { animation: winFlash .5s ease 3; }
 @keyframes winFlash { 50% { background: rgba(224,162,62,.5); } }
-.loot-result { font-size: 22px; font-weight: 800; min-height: 30px; margin: 16px 0; opacity: 0; transform: scale(.7); transition: all .35s cubic-bezier(.2,1.4,.4,1); }
+.loot-result { font-size: 22px; font-weight: 800; min-height: 30px; margin: 16px 0; opacity: 0; transform: scale(.7); transition: opacity .35s cubic-bezier(.2,1.4,.4,1), transform .35s cubic-bezier(.2,1.4,.4,1); }
 .loot-result.show { opacity: 1; transform: scale(1); }
 /* #20 рарность в дроп-ленте + reveal-юс */
 .loot-item.win { border-color: var(--rc, #e0a23e); background: linear-gradient(180deg, color-mix(in srgb, var(--rc, #e0a23e) 20%, transparent), var(--panel)); }
@@ -2971,6 +3147,24 @@ html[data-system="on"] .task, html[data-system="on"] .gear-item, html[data-syste
 .body-form input { width: 90px; padding: 7px 9px; }
 .locked-inline { cursor: pointer; color: #e0a23e; }
 .locked-inline input { opacity: .5; }
+.bodyfat-pro-gate {
+  align-self: stretch;
+  min-height: 42px;
+  min-width: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel2);
+  font: inherit;
+  text-align: left;
+}
+.bodyfat-pro-gate b { color: var(--muted); font-size: 12px; }
+.bodyfat-pro-gate:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
 /* ============================================================
    Гайд «Как играть» + кнопка помощи + обратная связь
@@ -4289,7 +4483,8 @@ button.sphere-row:hover, button.sphere-row:focus-visible { background: var(--sur
 .today-shell {
   display: grid;
   grid-template-columns: minmax(0, var(--work-max)) minmax(260px, 1fr);
-  gap: var(--sp-5);
+  column-gap: var(--sp-5);
+  row-gap: var(--sp-4);
   align-items: start;
 }
 
@@ -8423,6 +8618,10 @@ html.mobile-nav-open body {
     display: flex;
     flex-direction: column;
     gap: 0;
+  }
+
+  .today-tabs {
+    margin-bottom: var(--sp-3);
   }
 
   /* Источник уже идёт в том же порядке, что экран и клавиатура: work → support
@@ -15239,6 +15438,46 @@ html.calendar-task-open body {
 .social-privacy-card p { margin: 0; max-width: var(--measure-prose); color: var(--text-soft); font-size: var(--type-body); line-height: var(--leading-prose); }
 .social-privacy-card .social-consent-state,
 .social-privacy-card .social-inline-error { grid-column: 1 / -1; }
+.event-party-identity {
+  min-inline-size: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-block-start: var(--sp-3);
+}
+.event-party-identity > b { min-inline-size: 0; overflow-wrap: anywhere; color: var(--text-strong); }
+.event-raid-bar { max-inline-size: 560px; margin-block: var(--sp-3) var(--sp-2); }
+.event-hero-copy > .raid-claim { margin-block-start: 0; }
+.party-progress-details { padding: 0; overflow: clip; }
+.party-progress-details > summary {
+  min-block-size: var(--touch-min);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  color: var(--text-strong);
+  font-weight: 900;
+  list-style: none;
+  cursor: pointer;
+}
+.party-progress-details > summary::-webkit-details-marker { display: none; }
+.party-progress-details > summary::after { content: "⌄"; color: var(--muted); }
+.party-progress-details[open] > summary::after { content: "⌃"; }
+.party-progress-details > summary > b { margin-inline-start: auto; color: var(--text-soft); font-size: var(--type-meta); }
+.party-progress-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-4);
+  padding: 0 var(--sp-4) var(--sp-4);
+  border-block-start: 1px solid var(--line-soft);
+}
+.party-progress-section { min-inline-size: 0; padding-block-start: var(--sp-3); }
+.party-progress-section h3 { margin: 0 0 var(--sp-1); overflow-wrap: anywhere; }
+.party-progress-section p { font-size: var(--type-meta); line-height: var(--leading-prose); }
+.party-progress-section .raid-lore { font-style: italic; }
+.party-progress-section .raid-weak { font-weight: 800; }
 .leaderboard-explainer { margin: 0 0 var(--sp-2); padding: var(--sp-3); border-left: 4px solid var(--accent); color: var(--text); background: color-mix(in srgb, var(--accent) 9%, var(--surface-2)); font-size: var(--type-body); line-height: var(--leading-prose); }
 .social-empty-copy { padding: var(--sp-3); border: 1px dashed var(--line-soft); border-radius: var(--radius-sm); }
 .pm-row.is-private { border-style: dashed; }
@@ -15267,6 +15506,7 @@ html.calendar-task-open body {
   .party-empty-actions { min-width: 0; }
   .pm-row { grid-template-columns: 42px minmax(0, 1fr) auto 42px; }
   .pm-xp { font-size: var(--type-control); }
+  .party-progress-body { grid-template-columns: minmax(0, 1fr); gap: 0; }
 }
 
 @media (max-width: 600px) {
@@ -15689,7 +15929,7 @@ html.calendar-task-open body {
   grid-column: 1 / -1;
   display: flex;
   gap: var(--sp-2);
-  margin-bottom: var(--sp-4);
+  margin-bottom: 0;
 }
 .today-tab {
   font-size: var(--type-control); padding: var(--sp-2) var(--sp-4); min-height: 42px;
@@ -21064,5 +21304,357 @@ details.shutdown > summary:focus-visible {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================
+   Interface hierarchy v204 — shared interaction and disclosure contracts
+   ============================================================ */
+
+/* A running focus session is a real control surface. Its actions must remain
+   operable by touch and switch input even on the compact desktop pill. */
+.focus-pill .fp-ctrl > :is(button, [role="button"]) {
+  min-inline-size: var(--touch-min, 42px);
+  min-block-size: var(--touch-min, 42px);
+  display: inline-grid;
+  place-items: center;
+  padding: var(--sp-1, 4px) var(--sp-2, 8px);
+}
+
+.focus-pill :is(button, [role="button"]):focus-visible,
+#nav :is(.navsec, .navgear, .navsubtab):focus-visible,
+.mobile-nav-sheet :is(button, .mobile-sheet-entry):focus-visible,
+:is(.help-btn, .logout-btn):focus-visible {
+  outline: var(--focus-ring, 2px solid var(--accent-2, var(--accent)));
+  outline-offset: 2px;
+}
+
+/* Today exposes one quiet capture line. Voice, video, recap and the Notes
+   destination remain available behind one disclosure; the full tool row is
+   shown only inside Notes, where capture is the primary job. */
+.capture-card.is-compact {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--touch-min, 42px);
+  align-items: start;
+  gap: var(--sp-2, 8px);
+  padding: var(--sp-2, 8px) !important;
+}
+
+.capture-card.is-compact .cap-row {
+  min-inline-size: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--touch-min, 42px);
+  gap: var(--sp-2, 8px);
+}
+
+.capture-card.is-compact .capture-status {
+  grid-column: 1 / -1;
+}
+
+.capture-tools {
+  position: relative;
+  min-inline-size: var(--touch-min, 42px);
+}
+
+.capture-tools > summary {
+  inline-size: var(--touch-min, 42px);
+  block-size: var(--touch-min, 42px);
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-soft, var(--line));
+  border-radius: var(--radius-sm, 8px);
+  color: var(--text-soft, var(--muted));
+  background: var(--surface-2, var(--panel2));
+  font-weight: 900;
+  list-style: none;
+  cursor: pointer;
+}
+
+.capture-tools > summary::-webkit-details-marker { display: none; }
+.capture-tools > summary:focus-visible {
+  outline: var(--focus-ring, 2px solid var(--accent));
+  outline-offset: 2px;
+}
+
+.capture-tools-menu {
+  position: absolute;
+  inset-block-start: calc(100% + var(--sp-1, 4px));
+  inset-inline-end: 0;
+  z-index: 30;
+  min-inline-size: min(280px, calc(100vw - 40px));
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-1, 4px);
+  padding: var(--sp-2, 8px);
+  border: 1px solid var(--line-strong, var(--line));
+  border-radius: var(--radius-md, 12px);
+  background: var(--surface-1, var(--panel));
+  box-shadow: var(--shadow-pop, 0 14px 36px rgba(0, 0, 0, .34));
+}
+
+.capture-tools-menu :is(.cap-btn, .dayrec-btn, .capture-notes-link) {
+  min-inline-size: var(--touch-min, 42px);
+  min-block-size: var(--touch-min, 42px);
+}
+
+.capture-tools-menu :is(.dayrec-btn, .capture-notes-link) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-1, 4px);
+  padding: var(--sp-2, 8px);
+  border: 0;
+  border-radius: var(--radius-sm, 8px);
+  color: var(--text-soft, var(--muted));
+  background: transparent;
+  font: 800 var(--type-meta, 12px)/var(--leading-label, 1.25) var(--font-ui, inherit);
+  cursor: pointer;
+}
+
+@media (max-width: 420px) {
+  .capture-tools-menu { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Dialog actions use the same minimum target as the rest of the product. The
+   selector is intentionally limited to known dialog surfaces, so ordinary
+   dense desktop tables and day cells are not inflated. */
+:is(
+  .v204-dialog,
+  .paywall-box,
+  .guide-box,
+  .loot-box,
+  .raidwin-box,
+  .account-dialog-box,
+  .attention-dialog,
+  .cal-task-dialog,
+  .cal-sub-dialog
+) :is(button, [role="button"], input:not([type="checkbox"]):not([type="radio"]), select, textarea, summary) {
+  min-block-size: var(--touch-min, 42px);
+}
+
+:is(
+  .v204-dialog,
+  .paywall-box,
+  .guide-box,
+  .loot-box,
+  .raidwin-box,
+  .account-dialog-box,
+  .attention-dialog,
+  .cal-task-dialog,
+  .cal-sub-dialog
+) > .modal-x {
+  min-inline-size: var(--touch-min, 42px);
+  min-block-size: var(--touch-min, 42px);
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+:is(
+  .v204-dialog,
+  .paywall-box,
+  .guide-box,
+  .loot-box,
+  .raidwin-box,
+  .account-dialog-box,
+  .attention-dialog,
+  .cal-task-dialog,
+  .cal-sub-dialog
+) :is(button, [role="button"], input, select, textarea, summary):focus-visible {
+  outline: var(--focus-ring, 2px solid var(--accent-2, var(--accent)));
+  outline-offset: 2px;
+}
+
+/* Month boundaries remain compact, but dates are still actions. Forty-two
+   pixels belong to the day target here; they are not imposed on decorative
+   weekday labels or count dots. */
+@media (max-width: 600px), (pointer: coarse) {
+  .calendar-month-shell .cm-cell {
+    min-block-size: var(--touch-min, 42px);
+    min-height: var(--touch-min, 42px);
+  }
+}
+
+/* Settings and the Today support rail contain user-authored long names. Keep
+   controls inside their column and wrap at word boundaries instead of making
+   one-letter/one-word vertical stacks. */
+.settings-shell,
+.settings-group,
+.settings-group > .card,
+.today-support,
+.secretary-card,
+.secretary-summary .comp-body,
+.secretary-summary .comp-line-row {
+  min-inline-size: 0;
+}
+
+.settings-shell :is(input, select, textarea) {
+  box-sizing: border-box;
+  max-inline-size: 100%;
+}
+
+.settings-shell :is(label, .settings-hub-item, .settings-group-head, .settings-group > .card),
+.secretary-summary :is(.comp-name > b, .comp-line) {
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.settings-hub-item {
+  min-inline-size: 0;
+  padding: var(--sp-2, 8px);
+  white-space: normal;
+  text-wrap: balance;
+}
+
+.settings-appearance-card { display: grid; gap: var(--sp-3, 12px); }
+.settings-appearance-card > h3 { margin-block-end: 0 !important; }
+.settings-appearance-card .theme-lbl {
+  inline-size: auto;
+  width: auto;
+  min-inline-size: 0;
+}
+.settings-experience-stack { display: grid; gap: 0; }
+.settings-experience-stack > :is(.card, .settings-subsection) {
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--sp-3, 12px) 0;
+  border: 0;
+  border-block-end: 1px solid var(--line-soft, var(--line));
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.settings-experience-stack > :last-child { border-block-end: 0; }
+.settings-experience-stack > :is(.card, .settings-subsection) > :first-child { margin-block-start: 0; }
+
+/* Progressive sections introduced in v204 share one quiet disclosure language:
+   one summary action, one nested surface, no competing card glow. */
+.stats-progressive,
+.rewards-disclosure,
+.pet-summary {
+  min-inline-size: 0;
+  border: 1px solid var(--line-soft, var(--line));
+  border-radius: var(--radius-md, 12px);
+  background: var(--surface-2, var(--panel2));
+  box-shadow: none;
+}
+
+:is(.stats-progressive, .rewards-disclosure, details.pet-summary) > summary {
+  min-block-size: var(--touch-min, 42px);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2, 8px);
+  padding: var(--sp-2, 8px) var(--sp-3, 12px);
+  color: var(--text-strong, var(--text));
+  font: 800 var(--type-control, 14px)/var(--leading-ui, 1.35) var(--font-ui, inherit);
+  list-style: none;
+  cursor: pointer;
+}
+
+:is(.stats-progressive, .rewards-disclosure, details.pet-summary) > summary::-webkit-details-marker {
+  display: none;
+}
+
+:is(.stats-progressive, .rewards-disclosure, details.pet-summary) > summary::after {
+  content: "⌄";
+  margin-inline-start: auto;
+  color: var(--text-soft, var(--muted));
+}
+
+:is(.stats-progressive, .rewards-disclosure, details.pet-summary)[open] > summary::after {
+  content: "⌃";
+}
+
+:is(.stats-progressive, .rewards-disclosure, details.pet-summary) > summary:focus-visible,
+.party-entry-choice:focus-visible {
+  outline: var(--focus-ring, 2px solid var(--accent-2, var(--accent)));
+  outline-offset: 2px;
+}
+
+.stats-progressive > :not(summary),
+details.pet-summary > :not(summary) {
+  margin: 0;
+  padding: 0 var(--sp-3, 12px) var(--sp-3, 12px);
+}
+
+.pet-summary:not(details) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-2, 8px);
+  padding: var(--sp-2, 8px) var(--sp-3, 12px);
+}
+
+.party-entry-choice {
+  min-inline-size: 0;
+  min-block-size: var(--touch-min, 42px);
+  display: grid;
+  align-content: center;
+  gap: var(--sp-1, 4px);
+  padding: var(--sp-3, 12px);
+  border: 1px solid var(--line-soft, var(--line));
+  border-radius: var(--radius-md, 12px);
+  color: var(--text-strong, var(--text));
+  background: var(--surface-2, var(--panel2));
+  text-align: start;
+}
+
+.party-entry-choice[aria-pressed="true"],
+.party-entry-choice.is-active {
+  border-color: color-mix(in srgb, var(--accent) 58%, var(--line-soft, var(--line)));
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface-2, var(--panel2)));
+}
+
+@media (max-width: 600px) {
+  .party-entry-choice { inline-size: 100%; }
+}
+
+/* v204 transitions name only the property that changes. This prevents later
+   layout or theme changes from being animated accidentally. */
+.stats-progressive,
+.pet-summary,
+.rewards-disclosure,
+.party-entry-choice,
+.v204-dialog {
+  transition-property: border-color, background-color, color, opacity, transform;
+  transition-duration: 140ms;
+  transition-timing-function: var(--ease-out, ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .raidwin-box *,
+  .raidwin-box *::before,
+  .raidwin-box *::after,
+  .rewards-shell *,
+  .rewards-shell *::before,
+  .rewards-shell *::after,
+  :is(.loot-box, .loot-reveal-box) *,
+  :is(.loot-box, .loot-reveal-box) *::before,
+  :is(.loot-box, .loot-reveal-box) *::after,
+  .card-quests .task.is-core,
+  .task-core-badge,
+  .stats-progressive,
+  .pet-summary,
+  .rewards-disclosure,
+  .party-entry-choice,
+  .v204-dialog {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .rw-rays,
+  .rw-confetti,
+  .rw-conf { display: none !important; }
+
+  .rw-boss,
+  .rw-title,
+  .rw-x,
+  .loot-result.show,
+  .loot-capsule-result.is-revealed .loot-result-object {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
   }
 }

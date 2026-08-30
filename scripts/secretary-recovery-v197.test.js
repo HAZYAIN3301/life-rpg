@@ -230,7 +230,7 @@ test('server evening decision skips a closed day and only configured flow owns t
 });
 
 test('companion and quick capture keep explicit accessible names', () => {
-  const capture = section(APP, 'function captureBar() {', '\nfunction validateInboxPayload(');
+  const capture = section(APP, 'function captureBar(options = {}) {', '\nfunction validateInboxPayload(');
   assert.match(capture, /<label class="sr-only" for="capture-text">\$\{t\('Текст заметки'\)\}<\/label>/);
   assert.match(capture, /data-action="cap-voice" aria-label="\$\{t\('Голосовая заметка'\)\}"/);
   assert.match(capture, /data-action="cap-video" aria-label="\$\{t\('Видео-заметка'\)\}"/);
@@ -256,7 +256,7 @@ test('new secretary and capture emoji remain decorative for assistive technology
       `${glyph} must not be announced before the adjacent text label`);
   }
 
-  const capture = section(APP, 'function captureBar() {', '\nfunction validateInboxPayload(');
+  const capture = section(APP, 'function captureBar(options = {}) {', '\nfunction validateInboxPayload(');
   assert.match(capture, /<span aria-hidden="true">📝<\/span> \$\{noteCount\}/);
 
   const companion = section(APP, 'function companionCard(controlHTML = \'\') {', '\n// ============================================================\n//  Питомцы по сферам');

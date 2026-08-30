@@ -35,7 +35,7 @@ test('Today support has one unambiguous Shadow owner in all locales', () => {
   assert.match(CSS, /\.secretary-toggle-copy/);
 });
 
-test('all v203 authored copy has a RU/EN/DE/UK/ES contract', () => {
+test('all v204 authored copy has a RU/EN/DE/UK/ES contract', () => {
   for (const key of [
     'Тень рядом', 'Длительность и сложность', 'Как выбрать сложность?', 'Сфера выбрана',
     'Почему цепляет?', 'Что именно здесь тебя цепляет?', 'Необязательно · до 10 ссылок.', 'Как хранятся ссылки',
@@ -123,7 +123,7 @@ test('sphere selection closes the suggestion loop with persisted visible feedbac
   assert.match(CSS, /\.cat-chip-confirm\s*\{/);
 });
 
-test('v203 hierarchy selectors stay responsive, touch-safe and motion-optional', () => {
+test('v204 hierarchy selectors stay responsive, touch-safe and motion-optional', () => {
   const selectors = [
     '.today-support', '.secretary-toggle-copy', '.task-core-badge', '.quest-add-options',
     '.calendar-add-options', '.cal-date-primary', '.inspiration-reference-storage',

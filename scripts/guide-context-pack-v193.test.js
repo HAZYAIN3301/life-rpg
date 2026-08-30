@@ -180,10 +180,12 @@ test('Calendar and Notes Guide actions fail closed around real writes and recove
   const openContext = APP.slice(APP.indexOf('async function guideV3OpenContextChapter()'), APP.indexOf('\nasync function guideV3OpenHabitsChapter'));
   assert.match(openContext, /!guideV3ChapterDataReady\(chapter\)/);
 
-  const captureBar = APP.slice(APP.indexOf('function captureBar()'), APP.indexOf('\nfunction validateInboxPayload'));
+  const captureBar = APP.slice(APP.indexOf('function captureBar(options = {})'), APP.indexOf('\nfunction validateInboxPayload'));
   assert.match(captureBar, /const guideTextOnly = guideV3ContextActive\('notes', 'note-persisted'\)/);
-  assert.match(captureBar, /guideTextOnly \? '' : `[\s\S]*data-action="cap-voice"[\s\S]*data-action="cap-video"/);
-  assert.match(captureBar, /guideTextOnly \? '' : `<div class="capture-secondary"><button class="dayrec-btn"/);
+  assert.match(captureBar, /const mediaTools = guideTextOnly \? '' : `[\s\S]*data-action="cap-voice"[\s\S]*data-action="cap-video"/);
+  assert.match(captureBar, /const secondaryTools = guideTextOnly \? '' : `<button class="dayrec-btn"[\s\S]*data-action="goto-notes"/);
+  assert.match(captureBar, /\$\{expanded \? mediaTools : ''\}/);
+  assert.match(captureBar, /expanded && secondaryTools[\s\S]*!expanded && secondaryTools/);
 
   const textSubmit = APP.slice(APP.indexOf("if (f.id === 'capture-form')"), APP.indexOf("if (f.id === 'chat-form')"));
   assert.match(textSubmit, /State\._guideV3NoteDraftId = uid\(\)/);

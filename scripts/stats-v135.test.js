@@ -19,7 +19,7 @@ test('Stats v135 does not render missing rhythm or plans as a negative score', (
   assert.match(app, /const rate = planned14\.length \? Math\.round\([\s\S]+?\) : null;/);
   assert.match(app, /const hasBalanceSignal = bal\.active >= 2 && bal\.windowMin > 0;/);
   assert.match(app, /hasBalanceSignal \? bal\.index : '—'/);
-  assert.match(app, /rate == null \? '—' : rate \+ '%'/);
+  assert.match(app, /rate == null \? t\('Пока нет планов'\) : `\$\{rate\}%/);
   assert.match(app, /Баланс появится, когда хотя бы две сферы получат внимание\. Это не оценка тебя\./);
 });
 

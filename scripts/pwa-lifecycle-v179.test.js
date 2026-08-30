@@ -111,16 +111,31 @@ test('runtime exposes an accessible update/offline surface and fences writes whi
 });
 
 test('all onboarding exits await successful durable writes and retain a retry surface on failure', () => {
-  for (const marker of ['async function applyProgramFresh', 'async function obAiApply', "if (action === 'ob-finish')"]) {
+  for (const marker of ['async function applyProgramFresh', "if (action === 'ob-finish')"]) {
     const start = APP.indexOf(marker);
     assert.notEqual(start, -1, marker);
     const slice = APP.slice(start, start + 2600);
     assert.match(slice, /onboardingSave/);
     assert.match(slice, /if \(!(?:saved|result)\.ok\)/);
   }
-  assert.match(APP, /role="alert"[^>]*data-onboarding-save-error/);
+  for (const [startMarker, endMarker, endpoint, status] of [
+    ['async function questionnaireCommit()', '\nasync function questionnaireDefer()', 'commit', 'materialized'],
+    ['async function questionnaireDefer()', '\nfunction questionnaireVoiceToggle()', 'defer', 'deferred'],
+  ]) {
+    const start = APP.indexOf(startMarker), end = APP.indexOf(endMarker, start + startMarker.length);
+    assert.ok(start >= 0 && end > start, `${startMarker} must remain auditable`);
+    const flow = APP.slice(start, end);
+    assert.match(flow, new RegExp(`await fetch\\('/api/questionnaire/${endpoint}'`));
+    assert.match(flow, new RegExp(`data\\.questionnaire\\.status !== '${status}'`));
+    assert.ok(flow.indexOf('await fetch(') < flow.indexOf("State.phase = 'app'"),
+      `${endpoint} must persist before leaving onboarding`);
+    assert.match(flow, /catch[\s\S]*State\._questionnaireError[\s\S]*renderOnboardingScreen\(\)/);
+  }
+  assert.match(APP, /id="questionnaire-error"[^>]*role="alert"/);
   assert.match(APP, /State\._onboardingSaveBusy/);
   assert.match(APP, /State\._onboardingSaveError/);
+  assert.match(APP, /State\._questionnaireBusy/);
+  assert.match(APP, /State\._questionnaireError/);
 });
 
 test('registration language survives a settings write failure and missing settings resumes onboarding', () => {
