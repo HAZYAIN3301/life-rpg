@@ -539,6 +539,10 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // Строка итога дня собирается из двух t(): «Квестов:» в словаре был, а «привычек»
+  // в нижнем регистре — нет (есть только «Привычек»), и на экране выходило
+  // «Quests: 0/2 · привычек 0/2» — половина по-английски, половина по-русски.
+  'привычек': { en: 'habits', de: 'Gewohnheiten', uk: 'звичок', es: 'hábitos' },
   // ── Founder Pass (Фаза 0) ──
   'Изменить ответ': { en: 'Change answer', de: 'Antwort ändern', uk: 'Змінити відповідь', es: 'Cambiar respuesta' },
   'Оплаты сейчас нет — деньги не спишутся. Я проверяю, интересна ли цена.': { en: 'No payment yet — nothing will be charged. I am checking whether the price makes sense.', de: 'Es wird jetzt nichts abgebucht. Ich prüfe nur, ob der Preis passt.', uk: 'Оплати зараз немає — гроші не спишуться. Я перевіряю, чи цікава ціна.', es: 'Ahora no hay pago — no se cobrará nada. Estoy comprobando si el precio interesa.' },
