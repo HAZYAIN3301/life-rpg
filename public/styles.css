@@ -4664,6 +4664,10 @@ textarea:focus {
 .sphere-choice-name { min-width: 0; color: var(--text-strong); font-size: var(--type-control); line-height: var(--leading-ui); overflow-wrap: anywhere; }
 .sphere-choice-actions { display: flex; align-items: center; gap: var(--sp-1); }
 .sphere-role-button { min-height: var(--touch-min); min-width: 76px; padding: var(--sp-1) var(--sp-2); border: 1px solid var(--line-soft); border-radius: var(--radius-sm); color: var(--text-soft); background: transparent; font: 750 var(--type-meta)/var(--leading-label) var(--font-ui); }
+/* Ширина задавалась под русские «Готово» и «Основная». Немецкое «Hauptbereich»,
+   украинское «Готово» и испанское «Principal» шире, и как flex-элементы кнопки
+   сжимались ниже собственного текста — надпись обрезалась. */
+.sphere-panel-done, .sphere-role-button { white-space: nowrap; flex-shrink: 0; }
 .sphere-role-button[aria-pressed="true"] { border-color: color-mix(in srgb, var(--sphere-color) 65%, var(--line)); color: var(--text-strong); background: color-mix(in srgb, var(--sphere-color) 13%, transparent); }
 .sphere-role-background { min-width: 64px; }
 .sphere-row { border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text); font-family: var(--font-ui); text-align: left; cursor: pointer; }
@@ -8753,6 +8757,14 @@ html.mobile-nav-open body {
     border-radius: 13px;
     font-size: 19px;
     line-height: 1;
+  }
+
+  /* Подпись в нижней навигации: слот фиксированный, длина слова зависит от языка.
+     Немецкое «Gewohnheiten» шире английского «Habits» на 25px и наезжало на соседний
+     пункт. Многоточие вместо наезда — защищает любой будущий язык, не только DE. */
+  .navrow > .navsec.mobile-primary .navsec-l,
+  .navrow > .mobile-nav-more .navsec-l {
+    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
 
   .navrow > .navsec.mobile-primary.active,

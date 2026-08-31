@@ -539,6 +539,23 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // ── Founder Pass (Фаза 0) ──
+  'Изменить ответ': { en: 'Change answer', de: 'Antwort ändern', uk: 'Змінити відповідь', es: 'Cambiar respuesta' },
+  'Оплаты сейчас нет — деньги не спишутся. Я проверяю, интересна ли цена.': { en: 'No payment yet — nothing will be charged. I am checking whether the price makes sense.', de: 'Es wird jetzt nichts abgebucht. Ich prüfe nur, ob der Preis passt.', uk: 'Оплати зараз немає — гроші не спишуться. Я перевіряю, чи цікава ціна.', es: 'Ahora no hay pago — no se cobrará nada. Estoy comprobando si el precio interesa.' },
+  'Разово: закрытая бета, значок основателя, набор косметики, голос за roadmap и 12 месяцев Pro, когда Pro появится.': { en: 'One-off: closed beta, founder badge, a cosmetic set, a vote on the roadmap and 12 months of Pro once Pro exists.', de: 'Einmalig: geschlossene Beta, Gründer-Abzeichen, ein Kosmetik-Set, eine Stimme für die Roadmap und 12 Monate Pro, sobald es Pro gibt.', uk: 'Разово: закрита бета, значок засновника, набір косметики, голос за roadmap і 12 місяців Pro, коли Pro з’явиться.', es: 'Pago único: beta cerrada, insignia de fundador, un set de cosméticos, voto en la hoja de ruta y 12 meses de Pro cuando Pro exista.' },
+  'Свободных мест': { en: 'Slots left', de: 'Freie Plätze', uk: 'Вільних місць', es: 'Plazas libres' },
+  'Что важно сказать? (необязательно)': { en: 'Anything worth saying? (optional)', de: 'Etwas, das wichtig ist? (optional)', uk: 'Що важливо сказати? (необов’язково)', es: '¿Algo importante que decir? (opcional)' },
+  'цена, сомнение, чего не хватает': { en: 'price, doubt, what is missing', de: 'Preis, Zweifel, was fehlt', uk: 'ціна, сумнів, чого бракує', es: 'precio, duda, qué falta' },
+  'Беру место': { en: 'Take a slot', de: 'Platz nehmen', uk: 'Беру місце', es: 'Reservo plaza' },
+  'Дорого': { en: 'Too expensive', de: 'Zu teuer', uk: 'Дорого', es: 'Muy caro' },
+  'Пока не готов': { en: 'Not yet', de: 'Noch nicht', uk: 'Поки не готовий', es: 'Todavía no' },
+  'Записываю…': { en: 'Saving…', de: 'Speichere…', uk: 'Записую…', es: 'Guardando…' },
+  'Места закончились — но твой ответ всё равно важен': { en: 'Slots are gone — your answer still counts', de: 'Die Plätze sind weg — deine Antwort zählt trotzdem', uk: 'Місця закінчилися — але твоя відповідь усе одно важлива', es: 'No quedan plazas — tu respuesta cuenta igual' },
+  'Не удалось записать. Ничего не изменено — повтори попытку.': { en: 'Could not save. Nothing changed — try again.', de: 'Konnte nicht speichern. Nichts geändert — bitte erneut versuchen.', uk: 'Не вдалося записати. Нічого не змінено — спробуй ще раз.', es: 'No se pudo guardar. Nada ha cambiado — inténtalo de nuevo.' },
+  '✓ Место за тобой': { en: '✓ Slot reserved', de: '✓ Platz reserviert', uk: '✓ Місце за тобою', es: '✓ Plaza reservada' },
+  '✓ Записал': { en: '✓ Saved', de: '✓ Gespeichert', uk: '✓ Записав', es: '✓ Guardado' },
+  'Место за тобой. Оплаты не было — если Founder Pass откроется, я напишу.': { en: 'Your slot is reserved. Nothing was charged — if the Founder Pass opens, I will write to you.', de: 'Dein Platz ist reserviert. Es wurde nichts abgebucht — wenn der Founder Pass öffnet, melde ich mich.', uk: 'Місце за тобою. Оплати не було — якщо Founder Pass відкриється, я напишу.', es: 'Tu plaza está reservada. No se cobró nada — si el Founder Pass abre, te escribo.' },
+  'Записал: дорого. Это тоже ответ, и он полезнее молчания.': { en: 'Noted: too expensive. That is an answer too, and it helps more than silence.', de: 'Notiert: zu teuer. Auch das ist eine Antwort, und sie hilft mehr als Schweigen.', uk: 'Записав: дорого. Це теж відповідь, і вона корисніша за мовчання.', es: 'Anotado: muy caro. También es una respuesta, y ayuda más que el silencio.' },
   // ── Tree v4: real capability path and explicitly separate game practices ──
   'Путь': { en: 'Path', de: 'Weg', uk: 'Шлях', es: 'Ruta' },
   'Игровые бонусы': { en: 'Game bonuses', de: 'Spielboni', uk: 'Ігрові бонуси', es: 'Bonos de juego' },
@@ -29631,10 +29648,10 @@ function founderPassCard() {
 
   if (mine) {
     const said = mine.answer === 'interested'
-      ? `Место за тобой. Оплаты не было — если Founder Pass откроется, я напишу.`
-      : `Записал: ${price} — дорого. Это тоже ответ, и он полезнее молчания.`;
-    return `<div class="card fp-card"><h3 class="fp-title">${t('Founder Pass')}</h3>
-      <p class="fp-said">${t(said)}</p>
+      ? t('Место за тобой. Оплаты не было — если Founder Pass откроется, я напишу.')
+      : t('Записал: дорого. Это тоже ответ, и он полезнее молчания.');
+    return `<div class="card fp-card"><h3 class="fp-title">${t('Founder Pass')} · ${esc(price)}</h3>
+      <p class="fp-said">${said}</p>
       <button class="btn ghost fp-change" data-action="fp-reset">${t('Изменить ответ')}</button></div>`;
   }
 
