@@ -20,6 +20,8 @@ const GoalsInitiativesV1 = require('./public/goals-initiatives-v1.js');
 const FounderPassV1 = require('./public/founder-pass-v1.js');
 const SecretaryEventsV1 = require('./public/secretary-events-v1.js');
 const SecretaryRouterV1 = require('./public/secretary-router-v1.js');
+const BulkUndoV1 = require('./public/bulk-undo-v1.js');
+const GoalResolveV1 = require('./public/goal-resolve-v1.js');
 const ServerUserRegistryV1 = require('./server-user-registry-v1.js');
 const AccountProfileV1 = require('./public/account-profile-v1.js');
 
@@ -3768,6 +3770,118 @@ const server = http.createServer(async (req, res) => {
   // Список общий, а не пользовательский, потому что вопрос «сколько мест занято»
   // глобальный. Отсюда две вещи, которых нет у per-user сторов: свой ответ
   // человек видит целиком, чужие — никогда, даже обезличенно.
+  // ---- Массовые операции над целями: разбор → предпросмотр → откат ----------
+  //
+  // Договорённость 01.09: ассистент получает массовые операции, но каждая обязана
+  // иметь предпросмотр и Undo. Необратимого уничтожения нет ни в одном виде —
+  // словарь операций закрыт в `bulk-undo-v1` и содержит только смену статуса.
+  //
+  // Разделение на три шага не косметическое. Разбор фразы, показ списка и
+  // применение — три разных момента, и между ними человек может передумать.
+  // Сервер не склеивает их в один вызов даже ради удобства.
+  if (u === '/api/bulk/resolve' || u === '/api/bulk/apply' || u === '/api/bulk/undo') {
+    const uid = sessionUserId(req);
+    if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const dir = userDataDir(uid);
+    const goalsFile = path.join(dir, 'goals.json');
+    const ledgerFile = path.join(dir, 'bulk-ledger.json');
+
+    const readGoals = () => {
+      if (!fs.existsSync(goalsFile)) return { value: [], error: '' };
+      try {
+        const raw = JSON.parse(fs.readFileSync(goalsFile, 'utf8'));
+        // Пустой массив вместо повреждённого файла означал бы «целей нет» и
+        // разрешил бы записать поверх настоящих. Массив обязан быть массивом.
+        return Array.isArray(raw) ? { value: raw, error: '' } : { value: null, error: 'invalid' };
+      } catch { return { value: null, error: 'invalid' }; }
+    };
+    const emptyLedger = () => ({ version: 1, applied: [], undo: null, audit: [] });
+    const readLedger = () => {
+      if (!fs.existsSync(ledgerFile)) return { value: emptyLedger(), error: '' };
+      try {
+        const raw = JSON.parse(fs.readFileSync(ledgerFile, 'utf8'));
+        if (!raw || Number(raw.version) !== 1 || !Array.isArray(raw.applied) || !Array.isArray(raw.audit)) {
+          return { value: null, error: 'invalid' };
+        }
+        return { value: raw, error: '' };
+      } catch { return { value: null, error: 'invalid' }; }
+    };
+
+    if (u === '/api/bulk/resolve' && req.method === 'POST') {
+      let body = {}; try { body = JSON.parse(await readBody(req, 4 * 1024)); } catch {}
+      const goals = readGoals();
+      if (goals.error) return sendJson(res, 422, { error: 'invalid_goals' });
+      const resolved = GoalResolveV1.resolve(String(body.query || ''), goals.value);
+      // Отдаём кандидатов, но НЕ план: план строится после того, как человек
+      // поправил галочки. Иначе предпросмотр показывал бы чужой выбор.
+      return sendJson(res, 200, {
+        tokens: resolved.tokens, strong: resolved.strong, weak: resolved.weak, ambiguous: resolved.ambiguous,
+      });
+    }
+
+    if (u === '/api/bulk/apply' && req.method === 'POST') {
+      let body = {}; try { body = JSON.parse(await readBody(req, 16 * 1024)); } catch {}
+      const goals = readGoals(); const led = readLedger();
+      if (goals.error || led.error) return sendJson(res, 422, { error: 'invalid_bulk_state' });
+      const planned = BulkUndoV1.plan({ op: String(body.op || ''), ids: body.ids, items: goals.value });
+      if (!planned) return sendJson(res, 400, { error: 'bad_plan' });
+      // Только предпросмотр: ничего не меняем и ничего не пишем.
+      if (body.preview) return sendJson(res, 200, { preview: planned });
+
+      const now = new Date().toISOString();
+      const result = BulkUndoV1.apply(goals.value, planned, now, led.value.applied);
+      const audit = led.value.audit.concat([BulkUndoV1.auditEntry(planned, result, now)]).slice(-100);
+      if (!result.applied) {
+        // Повтор и «нечего менять» — не ошибки. Клиент обязан ответить спокойно,
+        // а не показать «не удалось»: состояние уже такое, как человек просил.
+        try {
+          backupFile(dir, 'bulk-ledger');
+          writeJsonAtomic(ledgerFile, Object.assign({}, led.value, { audit }));
+        } catch {}
+        return sendJson(res, 200, { applied: false, reason: result.reason, preview: planned });
+      }
+      try {
+        fs.mkdirSync(dir, { recursive: true });
+        backupFile(dir, 'goals');
+        writeJsonAtomic(goalsFile, result.items);
+        backupFile(dir, 'bulk-ledger');
+        writeJsonAtomic(ledgerFile, {
+          version: 1,
+          applied: led.value.applied.concat([planned.planId]).slice(-200),
+          undo: result.undo,
+          audit,
+        });
+      } catch { return sendJson(res, 500, { error: 'save_failed' }); }
+      return sendJson(res, 200, {
+        applied: true, preview: planned,
+        undo: { token: result.undo.token, at: result.undo.at, expiresInMs: BulkUndoV1.UNDO_TTL_MS },
+      });
+    }
+
+    if (u === '/api/bulk/undo' && req.method === 'POST') {
+      let body = {}; try { body = JSON.parse(await readBody(req, 4 * 1024)); } catch {}
+      const goals = readGoals(); const led = readLedger();
+      if (goals.error || led.error) return sendJson(res, 422, { error: 'invalid_bulk_state' });
+      const now = new Date().toISOString();
+      const back = BulkUndoV1.undo(goals.value, led.value.undo, String(body.token || ''), now);
+      // Отказ говорится вслух: молчаливое «ничего не произошло» оставило бы
+      // человека уверенным, что он откатил.
+      if (!back.undone) return sendJson(res, 409, { undone: false, reason: back.reason });
+      try {
+        backupFile(dir, 'goals');
+        writeJsonAtomic(goalsFile, back.items);
+        backupFile(dir, 'bulk-ledger');
+        writeJsonAtomic(ledgerFile, Object.assign({}, led.value, {
+          undo: null,
+          audit: led.value.audit.concat([{ at: now, op: 'undo', planId: led.value.undo.planId, applied: true, reason: '', affected: led.value.undo.restore.length, skipped: 0, missing: 0 }]).slice(-100),
+        }));
+      } catch { return sendJson(res, 500, { error: 'save_failed' }); }
+      return sendJson(res, 200, { undone: true });
+    }
+
+    return sendJson(res, 404, { error: 'not found' });
+  }
+
   // ---- Секретарь: журнал событий и выбор одного хода -------------------------
   //
   // SECRETARY-OS-PAIN-MAP §7. Router детерминирован и живёт в чистом модуле; сервер
