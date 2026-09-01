@@ -70,6 +70,25 @@ const post = (base, cookie, route, body) => fetch(base + route, {
 });
 const get = (base, cookie, route, headers) => fetch(base + route, { headers: Object.assign({ Cookie: cookie }, headers || {}) });
 
+// Router проверяет настоящее локальное утро. Тест не должен становиться красным
+// после 13:00 или протухать из-за зашитой календарной даты, поэтому выбираем
+// валидный UTC-offset, при котором текущий момент попадает примерно в 08:00,
+// и строим today/yesterday из того же локального времени.
+function morningContext(now = new Date()) {
+  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+  let tzOffsetMinutes = 8 * 60 - utcMinutes;
+  while (tzOffsetMinutes < -12 * 60) tzOffsetMinutes += 24 * 60;
+  while (tzOffsetMinutes > 14 * 60) tzOffsetMinutes -= 24 * 60;
+  const localMs = now.getTime() + tzOffsetMinutes * 60000;
+  const day = new Date(localMs).toISOString().slice(0, 10);
+  const yesterday = new Date(Date.parse(`${day}T00:00:00Z`) - 86400000).toISOString().slice(0, 10);
+  return {
+    day,
+    yesterday,
+    headers: { 'x-local-day': day, 'x-tz-offset': String(tzOffsetMinutes) },
+  };
+}
+
 test('Секретарь: доступ, идемпотентность и честность записи', { timeout: 120000 }, async (t) => {
   const rt = await startServer();
   t.after(() => { try { rt.child.kill('SIGKILL'); } catch {} fs.rmSync(rt.dataDir, { recursive: true, force: true }); });
@@ -77,16 +96,9 @@ test('Секретарь: доступ, идемпотентность и чес
 
   const alice = await register(base, 'Алиса', 'a@sec.test');
   const bob = await register(base, 'Боб', 'b@sec.test');
-
-  // Сервер берёт настоящее «сейчас», а утренний перехват живёт в окне 05:00–13:00
-  // локального времени. Поэтому день и часовой сдвиг считаются от реальных часов:
-  // иначе набор проходил бы утром и падал вечером, что уже случилось.
-  const nowUtc = new Date();
-  const TZ = (9 - nowUtc.getUTCHours()) * 60;            // локально это 09:00
-  const localMs = nowUtc.getTime() + TZ * 60000;
-  const DAY = new Date(localMs).toISOString().slice(0, 10);
-  const YDAY = new Date(localMs - 86400000).toISOString().slice(0, 10);
-  const HDR = { 'x-local-day': DAY, 'x-tz-offset': String(TZ) };
+  const morning = morningContext();
+  const YDAY = morning.yesterday, DAY = morning.day;
+  const HDR = morning.headers;
 
   await t.test('без сессии не отдаётся ничего', async () => {
     assert.strictEqual((await fetch(base + '/api/secretary')).status, 401);

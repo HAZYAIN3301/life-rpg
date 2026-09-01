@@ -75,6 +75,9 @@ by default.
 - JavaScript syntax: PASS.
 - Focused Secretary contracts: **28/28 PASS**. The suite includes executed numeric fixtures for
   denominators/sample sizes, an exact cross-midnight episode, and two concurrent sibling decisions.
+- Events/Router/server contracts: **33/33 PASS**. The live-server morning case derives its local
+  day and timezone from the actual test clock, so the gate remains deterministic after 13:00 and
+  does not expire when the calendar advances.
 - Broader functional regression, excluding 15 known sparse-asset suites and two unrelated legacy
   suites that hang locally: **147/147 test files PASS**. The full runner's failures were confined to
   missing tracked art/font/audio files in this incomplete worktree; no Secretary failure appeared.
