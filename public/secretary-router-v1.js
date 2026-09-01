@@ -66,7 +66,15 @@
   const MORNING_FROM = 5;
   const MORNING_TO = 13;
 
-  function isDay(v) { return typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v); }
+  // Дефект №2: одной регулярки мало. «2026-02-31» её проходит, а потом арифметика
+  // дат тихо уезжает на день вперёд. Проверяется обратная сборка: календарь либо
+  // подтверждает дату, либо её не существует.
+  function isDay(v) {
+    if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+    const t = Date.parse(v + 'T00:00:00Z');
+    if (isNaN(t)) return false;
+    return new Date(t).toISOString().slice(0, 10) === v;
+  }
   function prevDay(day) {
     const ms = Date.parse(`${day}T00:00:00Z`);
     return new Date(ms - 86400000).toISOString().slice(0, 10);
@@ -226,6 +234,10 @@
 
       if (cap.id === 'morning-after-overrun') {
         if (!inMorning(inp.now, inp.tzOffsetMinutes)) continue;
+        // Дефект №9: вход объявлен и не использовался. Человек, уже закрывший день
+        // сам, принял решение о нём — предлагать ему после этого День восстановления
+        // значит спорить с его собственным выводом.
+        if (inp.dayClosed === true) continue;
         // Поверхность, которая спрашивает. Неизвестную не обслуживаем: канал, о
         // котором никто не знает, — это канал, способный показать второй ход.
         // Поле отсутствует — это старый вызывающий, ему карточка. Поле прислано,
@@ -271,7 +283,11 @@
     const base = sanitizeLedger(ledger) || emptyLedger();
     if (!offer || !offer.cooldownKey) return base;
     if (OFFER_STATES.indexOf(String(state)) < 0) return base;
-    const at = typeof nowIso === 'string' && !isNaN(Date.parse(nowIso)) ? nowIso : new Date().toISOString();
+    // Дефект №8: раньше неверное время подменялось показанием часов. Модуль обязан
+    // быть детерминированным — иначе кулдаун ставится не тем днём, и ход возвращается
+    // человеку повторно. Неверное время означает «отметки нет», а не «возьмём своё».
+    if (typeof nowIso !== 'string' || isNaN(Date.parse(nowIso))) return base;
+    const at = nowIso;
     const delivered = Object.assign({}, base.delivered);
     delivered[offer.cooldownKey] = { at, state: String(state) };
     return { version: 1, delivered };

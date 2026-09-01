@@ -310,3 +310,39 @@ test('🔴 утренний ход не цитирует уговор чужог
   assert.ok(offer, 'повод есть');
   assert.strictEqual(offer.quote, null, 'лучше без цитаты, чем с неподходящей');
 });
+
+/* ---- Дефекты контракта §12 --------------------------------------------- */
+
+test('🔴 невозможная дата не считается днём (дефект №2)', () => {
+  // Регулярку «2026-02-31» проходит, а арифметика дат потом тихо уезжает.
+  for (const bad of ['2026-02-31', '2026-13-01', '2026-00-10', '2026-04-31']) {
+    assert.strictEqual(R.next(base({ today: bad })), null, `принята несуществующая дата: ${bad}`);
+  }
+  assert.ok(R.next(base({ today: DAY })), 'настоящая дата работает');
+});
+
+test('🔴 неверное время не подменяется показанием часов (дефект №8)', () => {
+  const offer = R.next(base());
+  for (const bad of [null, undefined, '', 'вчера', 42]) {
+    const led = R.mark(R.emptyLedger(), offer, 'offered', bad);
+    assert.deepStrictEqual(led, R.emptyLedger(), `часы подставлены вместо ${bad}`);
+  }
+  // Верное время отмечается как обычно.
+  assert.notDeepStrictEqual(R.mark(R.emptyLedger(), offer, 'offered', morning), R.emptyLedger());
+});
+
+test('🔴 закрытый день гасит ход (дефект №9)', () => {
+  // Человек уже закрыл день сам — предлагать ему День восстановления значит
+  // спорить с его собственным выводом.
+  assert.ok(R.next(base({ dayClosed: false })), 'незакрытый день — ход есть');
+  assert.strictEqual(R.next(base({ dayClosed: true })), null);
+});
+
+test('🔴 Router не читает часы, State, DOM и сеть (дефект №17)', () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'public/secretary-router-v1.js'), 'utf8');
+  const code = src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/[^\n]*/g, '$1');
+  for (const bad of ['State.', 'document.', 'fetch(', 'window.', '/api/', 'Date.now', 'localStorage']) {
+    assert.strictEqual(code.includes(bad), false, `Router вышел за свою роль: «${bad}»`);
+  }
+  assert.strictEqual(/new Date\(\s*\)/.test(code), false, 'голый new Date() — это чтение часов');
+});

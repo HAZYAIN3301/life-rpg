@@ -837,7 +837,7 @@ function tzOffsetMinutesFor(tz, nowMs) {
     return Math.round((asLocal.getTime() - asUtc.getTime()) / 60000);
   } catch { return 0; }
 }
-function secretaryPushOffer(uid, tz, today, nowIso) {
+function secretaryPushOffer(uid, tz, today, nowIso, days) {
   const events = readSecretaryPart(uid, 'secretary-events.json', SecretaryEventsV1.sanitizeLog, SecretaryEventsV1.emptyLog);
   const ledger = readSecretaryPart(uid, 'secretary-ledger.json', SecretaryRouterV1.sanitizeLedger, SecretaryRouterV1.emptyLedger);
   if (!events || !ledger) return null;
@@ -846,6 +846,7 @@ function secretaryPushOffer(uid, tz, today, nowIso) {
     now: nowIso, today, tzOffsetMinutes: tzOffsetMinutesFor(tz, Date.parse(nowIso)),
     events, ledger, commitments, mode: commitments.mode,
     channel: 'push',
+    dayClosed: !!(days && days[today] && days[today].closed),
   });
 }
 function secretaryClaimForPush(uid, offerId, nowIso) {
@@ -996,7 +997,7 @@ async function pushTick() {
     // превращают заботу в преследование.
     let move = null, moveToken = '';
     const nowIso = new Date().toISOString();
-    const candidate = secretaryPushOffer(user.id, tz, date, nowIso);
+    const candidate = secretaryPushOffer(user.id, tz, date, nowIso, days);
     if (candidate) {
       const token = secretaryClaimForPush(user.id, candidate.offerId, nowIso);
       if (token) {
@@ -4013,6 +4014,8 @@ const server = http.createServer(async (req, res) => {
       // полный `req.url`, и параметр просто увёл бы запрос мимо обработчика.
       // Ход авторизуется ровно для неё; право показать берётся отдельно, заявкой.
       const askedChannel = req.headers['x-channel'] ? String(req.headers['x-channel']).slice(0, 16) : undefined;
+      const todayKey = /^\d{4}-\d{2}-\d{2}$/.test(today) ? today : new Date().toISOString().slice(0, 10);
+      const daysForOffer = readUserJson(uid, 'days') || {};
       const offer = SecretaryRouterV1.next({
         channel: askedChannel,
         now: new Date().toISOString(),
@@ -4027,6 +4030,8 @@ const server = http.createServer(async (req, res) => {
         // Режим дня решает, какие уговоры вообще действуют сегодня: «в каникулы»
         // не является решением человека про учебное утро.
         mode: commitmentState.mode,
+        // Человек, уже закрывший день сам, уже принял решение о нём.
+        dayClosed: !!(daysForOffer[todayKey] && daysForOffer[todayKey].closed),
       });
       return sendJson(res, 200, { offer: offer || null });
     }
