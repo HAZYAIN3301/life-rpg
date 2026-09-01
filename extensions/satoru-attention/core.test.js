@@ -57,7 +57,7 @@ test('host validation is narrow and keeps Satoru itself un-blockable', () => {
     '', 'localhost', '127.0.0.1', 'com', 'https://user:pass@example.com',
     'chrome://extensions', 'life-rpg-production-416a.up.railway.app', '*.example.com',
   ]) assert.equal(Core.normalizeHostname(bad), null, bad);
-  assert.deepEqual(Core.hostPatterns('example.com'), ['*://example.com/*']);
+  assert.deepEqual(Core.hostPatterns('example.com'), ['https://example.com/*', 'http://example.com/*']);
 });
 
 test('normalization drops unknown browsing detail and duplicate hosts', () => {

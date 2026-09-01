@@ -20,7 +20,7 @@ test('installable MV3 package has only the permanent Satoru origin', () => {
   assert.equal(manifest.content_scripts[0].all_frames, false);
 });
 
-test('every manifest file exists and both v213 compatibility ZIPs are real artifacts', () => {
+test('every manifest file exists and both v214 compatibility ZIPs are real artifacts', () => {
   const refs = [manifest.background.service_worker, manifest.action.default_popup, manifest.options_page]
     .concat(manifest.content_scripts.flatMap((entry) => entry.js || []))
     .concat(manifest.web_accessible_resources.flatMap((entry) => entry.resources || []))
@@ -31,8 +31,8 @@ test('every manifest file exists and both v213 compatibility ZIPs are real artif
     assert.ok(messages.extensionName?.message);
     assert.ok(messages.extensionDescription?.message);
   }
-  assert.equal(manifest.version, '0.5.2');
-  for (const name of ['satoru-attention-v213.zip', 'satoru-attention-store-v213.zip']) {
+  assert.equal(manifest.version, '0.5.3');
+  for (const name of ['satoru-attention-v214.zip', 'satoru-attention-store-v214.zip']) {
     const zip = path.join(ROOT, 'public', 'downloads', name);
     assert.ok(fs.existsSync(zip), `${name}: install artifact must not ship as a 404`);
     assert.ok(fs.statSync(zip).size > 10_000, `${name}: ZIP is unexpectedly empty`);
@@ -66,7 +66,7 @@ test('companion stays local-only; attention is exact-host and protection is expl
   const worker = read('service-worker.js');
   const bridge = read('bridge.js');
   const allJs = fs.readdirSync(EXT).filter((name) => name.endsWith('.js') && !name.endsWith('.test.js')).map(read).join('\n');
-  assert.match(core, /return host \? \[`\*:\/\/\$\{host\}\/\*`\] : \[\]/);
+  assert.match(core, /return host \? \[`https:\/\/\$\{host\}\/\*`, `http:\/\/\$\{host\}\/\*`\] : \[\]/);
   assert.match(options, /const origins = Core\.hostPatterns\(hostname\)[\s\S]*chrome\.permissions\.request\(\{ origins \}\)/);
   assert.match(options, /Core\.hostPatterns\(hostname\)/);
   assert.match(options, /protectionForm\.addEventListener\('submit'[\s\S]*chrome\.permissions\.request\(\{ origins: \['http:\/\/\*\/\*', 'https:\/\/\*\/\*'\] \}\)/);

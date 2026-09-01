@@ -39,6 +39,8 @@ test('Manifest V3 uses minimal permanent permissions and an exact production bri
 
 test('attention sites stay exact-host while protection asks broadly only from its explicit submit', () => {
   assert.match(options, /const origins = Core\.hostPatterns\(hostname\);[\s\S]*chrome\.permissions\.request\(\{ origins \}\);/);
+  assert.match(options, /catch \(error\) \{[\s\S]*setStatus\(t\('permissionDenied'\), 'error'\)/);
+  assert.doesNotMatch(options, /catch \{ setStatus\(errorText\('runtime_unavailable'\), 'error', true\); return; \}/);
   assert.doesNotMatch(options, /permissions\.request\([^)]*<all_urls>/s);
   assert.doesNotMatch(options, /\*:\/\/\*\./);
   const protectionSubmit = options.slice(options.indexOf("protectionForm.addEventListener('submit'"), options.indexOf("runtimeReload.addEventListener"));

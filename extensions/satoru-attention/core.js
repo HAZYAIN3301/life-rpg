@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildCore() {
   'use strict';
 
-  const VERSION = '0.5.2';
+  const VERSION = '0.5.3';
   const STATE_VERSION = 2;
   const MINUTE = 60_000;
   const DAY = 86_400_000;
@@ -85,7 +85,9 @@
 
   function hostPatterns(hostname) {
     const host = normalizeHostname(hostname);
-    return host ? [`*://${host}/*`] : [];
+    // Brave requires requested optional origins to be literal subsets of the
+    // separately declared HTTP and HTTPS manifest entries.
+    return host ? [`https://${host}/*`, `http://${host}/*`] : [];
   }
 
   function cleanEmergency(raw) {

@@ -12,8 +12,8 @@ const options = readFileSync(join(EXTENSION, 'options.js'), 'utf8');
 const worker = readFileSync(join(EXTENSION, 'service-worker.js'), 'utf8');
 const manifest = JSON.parse(readFileSync(join(EXTENSION, 'manifest.json'), 'utf8'));
 
-test('v0.5.2 treats normal Manifest V3 worker sleep as an idle lifecycle, not a failure', () => {
-  assert.equal(manifest.version, '0.5.2');
+test('v0.5.2 sleep-safe lifecycle remains in later runtimes', () => {
+  assert.ok(['0.5.2', '0.5.3'].includes(manifest.version));
   assert.doesNotMatch(options, /chrome\.runtime\.connect/);
   assert.doesNotMatch(options, /onDisconnect/);
   assert.doesNotMatch(options, /setInterval/);

@@ -72,6 +72,12 @@ workers are allowed to sleep; every real options action wakes the worker with a 
 `sendMessage` request and retries once. **Reconnect now** is a native link to a fresh options
 document for a genuinely invalidated tab. Stored rules and dynamic blocking rules survive.
 
+v0.5.3 requests each configured hostname as literal `https://hostname/*` and
+`http://hostname/*` origins. This is intentionally aligned with the two separate optional
+origin declarations in the manifest: Brave rejects a combined `*://hostname/*` request even
+though it looks equivalent. Permission rejection is reported as permission rejection and is
+never mislabeled as a dead background worker.
+
 ## Behavior
 
 - A configured site is redirected to `gate.html` until a purpose and bounded duration are
@@ -143,7 +149,7 @@ Announcement:
 {
   source: 'satoru-attention-extension',
   type: 'SATORU_ATTENTION_EXTENSION_READY',
-  version: '0.5.2'
+  version: '0.5.3'
 }
 ```
 
@@ -166,7 +172,7 @@ Read-only response:
   requestId: '...',
   status: {
     installed: true,
-    version: '0.5.2',
+    version: '0.5.3',
     configuredSites: 1,
     active: null // or { app, phase: 'active'|'boundary', remainingSeconds, mode }
   }

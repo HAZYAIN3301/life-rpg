@@ -2,6 +2,12 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-09-01] ◉ Browser Companion v214 — exact Brave site permission
+
+- Живой Brave QA отделил две причины: прямой `GET_OPTIONS` вернул `{ ok: true }`, значит worker и канал сообщений исправны; реальное сохранение затем дало точную ошибку `Only permissions specified in the manifest may be requested`.
+- Manifest объявляет HTTP и HTTPS как два optional host permission, а runtime просил объединённый `*://hostname/*`. Brave не считает этот pattern буквальным подмножеством двух деклараций. В `0.5.3` exact-host запрос состоит из `https://hostname/*` и `http://hostname/*`, полностью покрытых manifest.
+- Catch permission API больше не превращает любой отказ в `runtime_unavailable`: reconnect остаётся только для действительно invalidated extension document, а запрет доступа показывается как отказ разрешения. Контракт и обязательный live-save gate: [`BROWSER-COMPANION-V214-QA.md`](./BROWSER-COMPANION-V214-QA.md).
+
 ## [2026-09-01] ◉ Browser Companion v213 — Manifest V3 worker sleep is not failure
 
 - Повторный live QA опроверг прежний вывод: `0.5.1` действительно чинил sender Brave, но options UI всё ещё держал heartbeat `Port`. Brave штатно усыплял Manifest V3 worker, `onDisconnect` срабатывал без аварии, а интерфейс ошибочно показывал «связь потеряна» поверх уже загруженных правил.

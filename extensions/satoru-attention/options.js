@@ -512,7 +512,10 @@
       const origins = Core.hostPatterns(hostname);
       let granted = false;
       try { granted = await chrome.permissions.request({ origins }); }
-      catch { setStatus(errorText('runtime_unavailable'), 'error', true); return; }
+      catch (error) {
+        if (!recoverStaleOptions(error && error.message)) setStatus(t('permissionDenied'), 'error');
+        return;
+      }
       if (!granted) { setStatus(t('permissionDenied'), 'error'); return; }
       const existing = editingPolicyId ? Core.policyById(currentState, editingPolicyId) : null;
       const policy = {
