@@ -58,8 +58,6 @@
   let currentProtection = Protection.emptySettings();
   let protectionDirty = false;
   let editingPolicyId = '';
-  let runtimePort = null;
-  let heartbeatTimer = 0;
   let booting = true;
 
   I18n.localizeDocument(language);
@@ -138,36 +136,6 @@
     if (currentUrl.searchParams.has('runtime-reconnect')) return false;
     location.replace(freshOptionsUrl('automatic'));
     return true;
-  }
-
-  function connectRuntime() {
-    if (runtimePort) return;
-    try {
-      runtimePort = chrome.runtime.connect({ name: 'satoru-options-heartbeat' });
-      runtimePort.onMessage.addListener((message) => {
-        if (message?.type === 'PONG') {
-          const url = new URL(location.href);
-          if (url.searchParams.has('runtime-reconnect')) {
-            url.searchParams.delete('runtime-reconnect');
-            history.replaceState(null, '', url.toString());
-          }
-        }
-      });
-      runtimePort.onDisconnect.addListener(() => {
-        runtimePort = null;
-        if (heartbeatTimer) clearInterval(heartbeatTimer);
-        heartbeatTimer = 0;
-        if (recoverStaleOptions('extension context invalidated', true)) return;
-        setStatus(errorText('runtime_unavailable'), 'error', true);
-      });
-      runtimePort.postMessage({ type: 'PING' });
-      heartbeatTimer = setInterval(() => {
-        try { runtimePort?.postMessage({ type: 'PING' }); }
-        catch { /* onDisconnect exposes the recovery action. */ }
-      }, 20_000);
-    } catch (error) {
-      if (!recoverStaleOptions(error && error.message)) setStatus(errorText('runtime_unavailable'), 'error', true);
-    }
   }
 
   async function send(message) {
@@ -568,6 +536,5 @@
   });
 
   loadDraft();
-  connectRuntime();
   render().catch(() => setStatus(errorText('runtime_unavailable'), 'error', true)).finally(() => { booting = false; });
 })();

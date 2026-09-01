@@ -540,19 +540,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true;
 });
 
-chrome.runtime.onConnect.addListener((port) => {
-  if (port.name !== 'satoru-options-heartbeat' || !extensionSender(port.sender)) {
-    try { port.disconnect(); } catch { /* Ignore an already closed port. */ }
-    return;
-  }
-  port.onMessage.addListener((message) => {
-    if (message && message.type === 'PING') {
-      try { port.postMessage({ type: 'PONG', version: Core.VERSION, at: currentIso() }); }
-      catch { /* The options tab may have closed. */ }
-    }
-  });
-});
-
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (![BOUNDARY_ALARM, RECOVERY_ALARM, PROTECTION_ALARM].includes(alarm.name)) return;
   serialized(async () => {

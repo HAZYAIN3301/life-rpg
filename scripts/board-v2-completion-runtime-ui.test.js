@@ -18,8 +18,8 @@ test('v176 loads completion presentation before runtime and caches it exactly on
   const runtime = index.indexOf('board-v2-runtime.js'), appPos = index.indexOf('app.js?v=');
   assert.ok(completion >= 0 && completion < ui && ui < runtime && runtime < appPos);
   assert.equal((sw.match(/'board-v2-completion-ui\.js'/g) || []).length, 1);
-  assert.match(sw, /const CACHE = 'satoru-v213';/);
-  assert.match(index, /app\.js\?v=20260901-browser-companion-v212-2/);
+  assert.match(sw, /const CACHE = 'satoru-v214';/);
+  assert.match(index, /app\.js\?v=20260901-browser-companion-v213-1/);
 });
 
 test('Board completion opens a real form instead of attempting a null proof', () => {

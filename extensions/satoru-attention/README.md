@@ -66,10 +66,11 @@ coverage.
 ### Updating an unpacked build
 
 Reloading an unpacked extension invalidates options tabs created by the old Manifest V3
-runtime. v0.5.1 accepts Brave's extension-page sender when its URL is exposed only through
-`sender.tab.url`, reconnects once during startup and keeps a heartbeat afterward. **Reconnect now** is a native
-link to a fresh options document, so it still works after the old `chrome.runtime` object was
-invalidated. Stored rules and dynamic blocking rules survive the UI reconnect.
+runtime. v0.5.2 accepts Brave's extension-page sender when its URL is exposed only through
+`sender.tab.url` and deliberately does not keep a long-lived heartbeat port. Manifest V3
+workers are allowed to sleep; every real options action wakes the worker with a bounded
+`sendMessage` request and retries once. **Reconnect now** is a native link to a fresh options
+document for a genuinely invalidated tab. Stored rules and dynamic blocking rules survive.
 
 ## Behavior
 
@@ -142,7 +143,7 @@ Announcement:
 {
   source: 'satoru-attention-extension',
   type: 'SATORU_ATTENTION_EXTENSION_READY',
-  version: '0.5.1'
+  version: '0.5.2'
 }
 ```
 
@@ -165,7 +166,7 @@ Read-only response:
   requestId: '...',
   status: {
     installed: true,
-    version: '0.5.1',
+    version: '0.5.2',
     configuredSites: 1,
     active: null // or { app, phase: 'active'|'boundary', remainingSeconds, mode }
   }

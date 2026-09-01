@@ -13,8 +13,8 @@ const optionsHtml = readFileSync(join(EXTENSION, 'options.html'), 'utf8');
 const worker = readFileSync(join(EXTENSION, 'service-worker.js'), 'utf8');
 const manifest = JSON.parse(readFileSync(join(EXTENSION, 'manifest.json'), 'utf8'));
 
-test('v0.5.1 accepts Brave extension-page ports without granting content scripts privileged messages', () => {
-  assert.equal(manifest.version, '0.5.1');
+test('the v0.5.1 Brave sender boundary remains in later runtimes', () => {
+  assert.ok(manifest.version === '0.5.1' || manifest.version === '0.5.2');
   assert.match(worker, /sender\.tab && sender\.tab\.url/);
   assert.match(worker, /sender\.id === chrome\.runtime\.id && \(extensionUrl \|\| extensionOrigin\)/);
   assert.match(worker, /if \(message && message\.type === 'CHECK_ACCESS'\) work = handleSiteMessage/);

@@ -101,10 +101,10 @@ test('theme choice is awaited, follows the device, and advances Guide only insid
 });
 
 test('v195 cache pins the updated Guide and application assets together', () => {
-  assert.match(SW, /const CACHE = 'satoru-v213'/);
+  assert.match(SW, /const CACHE = 'satoru-v214'/);
   for (const file of ['guide-v3.js', 'guide-presenter-v1.js', 'guide-v3-copy-ru.js', 'guide-v3-copy-en.js', 'guide-v3-copy-de.js', 'guide-v3-copy-uk.js', 'guide-v3-copy-es.js']) {
     assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=[^"']*v205`));
   }
-  assert.match(INDEX, /app\.js\?v=[^"']*v212/);
-  assert.match(INDEX, /styles\.css\?v=[^"']*v212/);
+  assert.match(INDEX, /app\.js\?v=[^"']*v213/);
+  assert.match(INDEX, /styles\.css\?v=[^"']*v213/);
 });
