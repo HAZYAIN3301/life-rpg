@@ -78,7 +78,8 @@ by default.
 - Events/Router/server contracts: **33/33 PASS**. The live-server morning case derives its local
   day and timezone from the actual test clock, so the gate remains deterministic after 13:00 and
   does not expire when the calendar advances.
-- All `secretary-*` suites: **83/83 PASS**. Full `npm test`: **1305/1323 PASS**; all 18 remaining
+- All `secretary-*` suites: **83/83 PASS**. Full `npm test` after rebasing over the parallel
+  Rest/Goal Resolve/Bulk Undo work: **1352/1370 PASS**; all 18 remaining
   failures are absent sparse art/font/audio files tracked in `origin/master` but not materialized in
   this isolated checkout. No functional or Secretary failure remains.
 - Live desktop browser QA: one primary Shadow region, no legacy sibling cards, **Other support**
