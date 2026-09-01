@@ -37,8 +37,11 @@ button:hover { border-color: var(--accent); }
 button:disabled { cursor: not-allowed; opacity: .55; }
 button.primary { background: var(--accent); border-color: transparent; color: var(--accent-ink); }
 button.quiet { background: transparent; }
+.button { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 10px; color: var(--text); font: inherit; font-weight: 760; text-decoration: none; }
+.button:hover { border-color: var(--accent); }
+.button.quiet { background: transparent; }
 button.warn { border-color: color-mix(in srgb, var(--warm) 55%, var(--line)); color: #ffe0ad; }
-button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+button:focus-visible, .button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--accent) 72%, white);
   outline-offset: 3px;
 }
@@ -112,7 +115,7 @@ h2 { font-size: 1.25rem; }
 .result-preview b { line-height: 1.45; }
 .quota-status { min-height: 24px; margin: 0 0 18px; color: var(--ok); font-weight: 720; }
 .runtime-help { display: grid; gap: 4px; margin-top: 0; }
-.runtime-help button { justify-self: start; margin-top: 8px; }
+.runtime-help :is(button, .button) { justify-self: start; margin-top: 8px; }
 .notice { padding: 14px 16px; border-left: 3px solid var(--warm); border-radius: 8px; background: rgb(240 189 115 / 8%); color: #e9d8bb; line-height: 1.5; }
 .pin-notice { display: grid; gap: 5px; margin: 18px 0 24px; border-left-color: var(--accent); background: rgb(88 209 239 / 8%); }
 .pin-notice b { color: var(--text); }

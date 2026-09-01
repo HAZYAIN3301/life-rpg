@@ -190,14 +190,18 @@ test('Control weakening is delayed and the runtime error names a lost background
   assert.match(optionsHtml, /id="runtime-help"/);
 });
 
-test('stale options pages reconnect once and keep a live heartbeat after extension reload', () => {
+test('stale options pages reconnect without depending on their invalidated runtime context', () => {
   assert.match(options, /chrome\.runtime\.connect\(\{ name: 'satoru-options-heartbeat' \}\)/);
   assert.match(options, /extension context invalidated\|receiving end does not exist/i);
-  assert.match(options, /url\.searchParams\.has\('runtime-reconnect'\)/);
-  assert.match(options, /location\.replace\(url\.toString\(\)\)/);
+  assert.match(options, /currentUrl\.searchParams\.has\('runtime-reconnect'\)/);
+  assert.match(options, /location\.replace\(freshOptionsUrl\('automatic'\)\)/);
   assert.match(options, /recoverStaleOptions\('extension context invalidated', true\)/);
-  assert.match(optionsHtml, /id="runtime-reload"/);
+  assert.match(optionsHtml, /<a id="runtime-reload"[^>]+href="options\.html\?runtime-reconnect=manual"/);
+  assert.doesNotMatch(options, /runtimeReload\.addEventListener\([^]*location\.reload/);
   assert.match(worker, /chrome\.runtime\.onConnect\.addListener/);
+  assert.match(worker, /sender\.id === chrome\.runtime\.id/);
+  assert.match(worker, /sender\.tab && sender\.tab\.url/);
+  assert.match(worker, /sender\.id === chrome\.runtime\.id && \(extensionUrl \|\| extensionOrigin\)/);
   assert.match(worker, /type: 'PONG'/);
 });
 

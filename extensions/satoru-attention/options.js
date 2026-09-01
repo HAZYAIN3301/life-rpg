@@ -50,7 +50,6 @@
   const safeSearch = document.querySelector('#safe-search');
   const youtubeRestricted = document.querySelector('#youtube-restricted');
   const blockBypass = document.querySelector('#block-bypass');
-  const runtimeReload = document.querySelector('#runtime-reload');
   const installedVersion = document.querySelector('#installed-version');
   const checkUpdate = document.querySelector('#check-update');
   const updateStatus = document.querySelector('#update-status');
@@ -127,12 +126,17 @@
     return /extension context invalidated|receiving end does not exist|message port closed|could not establish connection/i.test(String(detail || ''));
   }
 
+  function freshOptionsUrl(reason = 'manual') {
+    const url = new URL('options.html', location.href);
+    url.searchParams.set('runtime-reconnect', `${reason}-${Date.now()}`);
+    return url.toString();
+  }
+
   function recoverStaleOptions(detail, afterBoot = false) {
     if ((!booting && !afterBoot) || !runtimeInvalidated(detail)) return false;
-    const url = new URL(location.href);
-    if (url.searchParams.has('runtime-reconnect')) return false;
-    url.searchParams.set('runtime-reconnect', String(Date.now()));
-    location.replace(url.toString());
+    const currentUrl = new URL(location.href);
+    if (currentUrl.searchParams.has('runtime-reconnect')) return false;
+    location.replace(freshOptionsUrl('automatic'));
     return true;
   }
 
@@ -470,8 +474,6 @@
       if (submit) submit.disabled = false;
     }
   });
-
-  runtimeReload.addEventListener('click', () => location.reload());
 
   siteSelect.addEventListener('change', () => { editingPolicyId = ''; loadDraft(); });
 

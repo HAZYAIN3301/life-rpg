@@ -1,4 +1,4 @@
-# Satoru Attention v211 — signed store publication checklist
+# Satoru Attention v212 — signed store publication checklist
 
 `npm run build:browser-extension` creates three engine packages from one source tree and
 the upload aliases below. Every store update must increment `manifest.version`, rebuild,
@@ -6,11 +6,11 @@ run the full extension/repository gate and be submitted under the same store ite
 
 ## Chromium stores
 
-- Chrome Web Store: `public/downloads/satoru-attention-chrome-store-v211.zip`
-- Microsoft Edge Add-ons: `public/downloads/satoru-attention-edge-store-v211.zip`
-- Opera Add-ons: `public/downloads/satoru-attention-opera-store-v211.zip`
+- Chrome Web Store: `public/downloads/satoru-attention-chrome-store-v212.zip`
+- Microsoft Edge Add-ons: `public/downloads/satoru-attention-edge-store-v212.zip`
+- Opera Add-ons: `public/downloads/satoru-attention-opera-store-v212.zip`
 - Brave and Vivaldi use the Chrome Web Store listing; the manual Chromium test package is
-  `public/downloads/satoru-attention-chromium-v211.zip`.
+  `public/downloads/satoru-attention-chromium-v212.zip`.
 
 For every listing, sign in with the owner account, create the item once, upload the matching
 ZIP, complete privacy/permission declarations from `STORE-LISTING.md`, add screenshots,
@@ -20,7 +20,7 @@ release map and verify installation plus an incremented-version update.
 
 ## Firefox AMO
 
-Upload `public/downloads/satoru-attention-firefox-amo-v211.zip`. The generated manifest uses
+Upload `public/downloads/satoru-attention-firefox-amo-v212.zip`. The generated manifest uses
 the stable ID `satoru-attention@satoru.app`, Firefox MV3 event-page background, minimum
 Firefox 128 and the required `data_collection_permissions.required = ["none"]` disclosure.
 Release Firefox requires Mozilla signing; a temporary `about:debugging` install is QA only
@@ -28,7 +28,7 @@ and disappears after restart. AMO-listed updates are delivered automatically.
 
 ## Safari / Apple App Store
 
-Upload `public/downloads/satoru-attention-safari-app-store-v211.zip` to Safari Web Extension
+Upload `public/downloads/satoru-attention-safari-app-store-v212.zip` to Safari Web Extension
 Packager in App Store Connect, or convert it with Xcode. Test via TestFlight, then submit the
 containing app/extension for review. Public Safari distribution requires an Apple Developer
 membership and signing. The temporary macOS extension route is QA only.

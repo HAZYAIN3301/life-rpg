@@ -57,7 +57,7 @@ test('Today discovery is a temporary full-width release notice, not another perm
 test('the installer has an independent landing page and a store-ready route', () => {
   const page = fs.readFileSync(path.join(ROOT, 'public', 'browser-companion.html'), 'utf8');
   assert.match(page, /Satoru Attention/);
-  assert.match(page, /satoru-attention-chromium-v211\.zip/);
+  assert.match(page, /satoru-attention-chromium-v212\.zip/);
   assert.match(fs.readFileSync(path.join(ROOT, 'public', 'browser-companion-landing-v1.js'), 'utf8'), /brave:\/\/extensions/);
   assert.match(page, /data-browser="firefox"/);
   assert.match(page, /data-browser="safari"/);

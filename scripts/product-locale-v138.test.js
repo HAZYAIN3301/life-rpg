@@ -70,5 +70,5 @@ test('v138 does not add duplicate locale rows and ships a fresh shell', () => {
   const block = app.slice(marker, end);
   const keys = [...block.matchAll(/^  '((?:\\'|[^'])+)':/gm)].map((match) => match[1]);
   assert.equal(keys.length, new Set(keys).size);
-  assert.match(sw, /const CACHE = 'satoru-v212'/);
+  assert.match(sw, /const CACHE = 'satoru-v213'/);
 });

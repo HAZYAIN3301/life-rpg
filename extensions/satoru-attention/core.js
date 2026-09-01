@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildCore() {
   'use strict';
 
-  const VERSION = '0.5.0';
+  const VERSION = '0.5.1';
   const STATE_VERSION = 2;
   const MINUTE = 60_000;
   const DAY = 86_400_000;

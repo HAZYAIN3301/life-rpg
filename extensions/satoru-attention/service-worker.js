@@ -18,7 +18,15 @@ const attemptsByTab = new Map(); // Ephemeral only: never persisted or synced.
 let mutationQueue = Promise.resolve();
 
 function currentIso() { return new Date().toISOString(); }
-function extensionSender(sender) { return !!(sender && typeof sender.url === 'string' && sender.url.startsWith(EXTENSION_ROOT)); }
+function extensionSender(sender) {
+  if (!sender) return false;
+  const candidateUrls = [sender.url, sender.documentUrl, sender.tab && sender.tab.url];
+  const extensionUrl = candidateUrls.some((url) => typeof url === 'string' && url.startsWith(EXTENSION_ROOT));
+  const extensionOrigin = typeof sender.origin === 'string' && `${sender.origin}/` === EXTENSION_ROOT;
+  // Brave can move an extension-page URL from `sender.url` to `sender.tab.url`.
+  // Requiring both our extension ID and our extension URL keeps site content scripts out.
+  return sender.id === chrome.runtime.id && (extensionUrl || extensionOrigin);
+}
 function bridgeSender(sender) {
   return !!(sender && typeof sender.url === 'string'
     && (sender.url === Core.SATORU_ORIGIN || sender.url.startsWith(`${Core.SATORU_ORIGIN}/`)));

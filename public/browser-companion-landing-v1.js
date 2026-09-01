@@ -4,13 +4,13 @@
   const LANGUAGE_KEY = 'satoru-browser-companion-language';
   const SUPPORTED_LANGUAGES = new Set(['ru', 'en', 'de', 'uk', 'es']);
   const BROWSERS = Object.freeze({
-    chrome: { name: 'Chrome', address: 'chrome://extensions', package: 'downloads/satoru-attention-chromium-v211.zip', step: 'step3Chromium' },
-    edge: { name: 'Microsoft Edge', address: 'edge://extensions', package: 'downloads/satoru-attention-chromium-v211.zip', step: 'step3Chromium' },
-    brave: { name: 'Brave', address: 'brave://extensions', package: 'downloads/satoru-attention-chromium-v211.zip', step: 'step3Chromium' },
-    firefox: { name: 'Firefox', address: 'about:debugging#/runtime/this-firefox', package: 'downloads/satoru-attention-firefox-v211.zip', step: 'step3Firefox' },
-    opera: { name: 'Opera', address: 'opera://extensions', package: 'downloads/satoru-attention-chromium-v211.zip', step: 'step3Chromium' },
-    vivaldi: { name: 'Vivaldi', address: 'vivaldi://extensions', package: 'downloads/satoru-attention-chromium-v211.zip', step: 'step3Chromium' },
-    safari: { name: 'Safari', address: 'Safari → Settings → Developer', package: 'downloads/satoru-attention-safari-v211.zip', step: 'step3Safari' },
+    chrome: { name: 'Chrome', address: 'chrome://extensions', package: 'downloads/satoru-attention-chromium-v212.zip', step: 'step3Chromium' },
+    edge: { name: 'Microsoft Edge', address: 'edge://extensions', package: 'downloads/satoru-attention-chromium-v212.zip', step: 'step3Chromium' },
+    brave: { name: 'Brave', address: 'brave://extensions', package: 'downloads/satoru-attention-chromium-v212.zip', step: 'step3Chromium' },
+    firefox: { name: 'Firefox', address: 'about:debugging#/runtime/this-firefox', package: 'downloads/satoru-attention-firefox-v212.zip', step: 'step3Firefox' },
+    opera: { name: 'Opera', address: 'opera://extensions', package: 'downloads/satoru-attention-chromium-v212.zip', step: 'step3Chromium' },
+    vivaldi: { name: 'Vivaldi', address: 'vivaldi://extensions', package: 'downloads/satoru-attention-chromium-v212.zip', step: 'step3Chromium' },
+    safari: { name: 'Safari', address: 'Safari → Settings → Developer', package: 'downloads/satoru-attention-safari-v212.zip', step: 'step3Safari' },
   });
 
   const en = {
