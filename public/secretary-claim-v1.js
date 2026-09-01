@@ -192,12 +192,23 @@
    * ни заметки — всё это остаётся в приложении, за аутентификацией (§10). Ход теряет
    * в убедительности; приватность здесь дороже.
    */
-  function pushCopy() {
-    return { title: 'Тень', body: 'Тень подготовила лёгкий вход' };
+  const PUSH_COPY = Object.freeze({
+    ru: Object.freeze({ title: 'Тень', body: 'Тень подготовила лёгкий вход' }),
+    en: Object.freeze({ title: 'Shadow', body: 'Shadow prepared an easy way in' }),
+    de: Object.freeze({ title: 'Schatten', body: 'Schatten hat einen leichten Einstieg vorbereitet' }),
+    uk: Object.freeze({ title: 'Тінь', body: 'Тінь підготувала легкий вхід' }),
+    es: Object.freeze({ title: 'Sombra', body: 'Sombra preparó una entrada fácil' }),
+  });
+
+  function pushCopy(lang) {
+    const key = typeof lang === 'string' ? lang.slice(0, 2).toLowerCase() : '';
+    // Выбор языка — не подстановка: строки заранее написаны целиком, поэтому
+    // утечь через них нечему.
+    return PUSH_COPY[key] || PUSH_COPY.ru;
   }
 
   return Object.freeze({
-    VERSION, CHANNELS, OUTCOMES, CLAIM_TTL_MS, MAX_CLAIMS,
+    VERSION, CHANNELS, OUTCOMES, CLAIM_TTL_MS, MAX_CLAIMS, PUSH_COPY,
     emptyClaims, sanitizeClaims, activeClaim, claim, settle, pushCopy,
   });
 });

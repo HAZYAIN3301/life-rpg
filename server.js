@@ -816,6 +816,69 @@ function pushDeliveryOutcome(result) {
   if (status === 404 || status === 410) return 'gone';
   return 'retry';
 }
+// ---- Утренний ход секретаря в пуше ----------------------------------------
+//
+// Планировщик — единственное место, где ход может прозвучать при закрытом
+// приложении. Правила те же, что у карточки: повод должен быть вчерашним и
+// настоящим, право показать берётся заявкой ДО отправки, а текст не несёт наружу
+// ни цитаты, ни названия занятия, ни причины.
+function readSecretaryPart(uid, name, sanitize, empty) {
+  const f = path.join(userDataDir(uid), name);
+  if (!fs.existsSync(f)) return empty();
+  // Повреждённый файл возвращает null и заставляет промолчать. Пустой означал бы
+  // «ничего не случилось» — и пуш ушёл бы наугад либо повторно.
+  try { return sanitize(JSON.parse(fs.readFileSync(f, 'utf8'))) || null; } catch { return null; }
+}
+function tzOffsetMinutesFor(tz, nowMs) {
+  try {
+    const now = new Date(nowMs);
+    const asLocal = new Date(now.toLocaleString('en-US', { timeZone: tz }));
+    const asUtc = new Date(now.toLocaleString('en-US', { timeZone: 'UTC' }));
+    return Math.round((asLocal.getTime() - asUtc.getTime()) / 60000);
+  } catch { return 0; }
+}
+function secretaryPushOffer(uid, tz, today, nowIso) {
+  const events = readSecretaryPart(uid, 'secretary-events.json', SecretaryEventsV1.sanitizeLog, SecretaryEventsV1.emptyLog);
+  const ledger = readSecretaryPart(uid, 'secretary-ledger.json', SecretaryRouterV1.sanitizeLedger, SecretaryRouterV1.emptyLedger);
+  if (!events || !ledger) return null;
+  const commitments = CommitmentV2.migrate(readUserJson(uid, 'commitments')).state;
+  return SecretaryRouterV1.next({
+    now: nowIso, today, tzOffsetMinutes: tzOffsetMinutesFor(tz, Date.parse(nowIso)),
+    events, ledger, commitments, mode: commitments.mode,
+    channel: 'push',
+  });
+}
+function secretaryClaimForPush(uid, offerId, nowIso) {
+  const claims = readSecretaryPart(uid, 'secretary-claims.json', SecretaryClaimV1.sanitizeClaims, SecretaryClaimV1.emptyClaims);
+  if (!claims) return null;
+  const got = SecretaryClaimV1.claim(claims, offerId, 'push', nowIso, crypto.randomUUID());
+  // Отказ означает, что ход уже держит или показала карточка. Молчим.
+  if (!got.ok || got.repeat) return null;
+  try {
+    const dir = userDataDir(uid);
+    fs.mkdirSync(dir, { recursive: true });
+    backupFile(dir, 'secretary-claims');
+    writeJsonAtomic(path.join(dir, 'secretary-claims.json'), got.claims);
+  } catch { return null; }
+  return got.token;
+}
+function secretarySettlePush(uid, offer, token, outcome, nowIso) {
+  const claims = readSecretaryPart(uid, 'secretary-claims.json', SecretaryClaimV1.sanitizeClaims, SecretaryClaimV1.emptyClaims);
+  if (!claims) return;
+  const done = SecretaryClaimV1.settle(claims, offer.offerId, token, outcome, nowIso);
+  const dir = userDataDir(uid);
+  if (done.ok) {
+    try { writeJsonAtomic(path.join(dir, 'secretary-claims.json'), done.claims); } catch {}
+  }
+  // Доставленный ход закрывает день: иначе человек получит пуш, откроет приложение
+  // и встретит ту же карточку. Кулдаун живёт в ledger роутера, а не в заявке —
+  // заявка разводит поверхности внутри одного повода, а не считает дни.
+  if (outcome !== 'delivered') return;
+  const ledger = readSecretaryPart(uid, 'secretary-ledger.json', SecretaryRouterV1.sanitizeLedger, SecretaryRouterV1.emptyLedger);
+  if (!ledger) return;
+  const next = SecretaryRouterV1.mark(ledger, offer, 'offered', nowIso);
+  try { writeJsonAtomic(path.join(dir, 'secretary-ledger.json'), next); } catch {}
+}
 // ---- Планировщик пушей: компаньон зовёт назад утром/вечером (Finch-присутствие вне приложения) ----
 // Каждые 15 мин: для подписанных юзеров — утро (8–11) и вечер (19–22) по ИХ таймзоне,
 // без дублей за день и только если чек-ин ещё не сделан. Через тепло, без вины.
@@ -927,7 +990,23 @@ async function pushTick() {
     const vIdx = user.push.variantIdx || {};
     let payload = null;
     let delivery = null;
-    if (kind === 'm' || kind === 'e') {
+
+    // Утренний ход — раньше тёплого чек-ина. Он единственный привязан к конкретному
+    // вчерашнему поводу; общий чек-ин может подождать день, а два пуша за одно утро
+    // превращают заботу в преследование.
+    let move = null, moveToken = '';
+    const nowIso = new Date().toISOString();
+    const candidate = secretaryPushOffer(user.id, tz, date, nowIso);
+    if (candidate) {
+      const token = secretaryClaimForPush(user.id, candidate.offerId, nowIso);
+      if (token) {
+        move = candidate; moveToken = token;
+        const copy = SecretaryClaimV1.pushCopy(lang);
+        payload = { title: copy.title, body: copy.body, url: './?view=today', tag: 'satoru-move', lang };
+      }
+    }
+
+    if (!payload && (kind === 'm' || kind === 'e')) {
       const away = daysBetween((comp && comp.lastSeen) || date, date);
       const bucket = away <= 1 ? 'near' : (away <= 3 ? 'mid' : 'far');
       const { text, idx } = pickVariant(NudgeCopy.pool(lang, kind, bucket), vIdx[kind]);
@@ -967,8 +1046,12 @@ async function pushTick() {
     let result = { status: 0 };
     try { result = await sendWebPush(user.push, payload); } catch {}
     const outcome = pushDeliveryOutcome(result);
+    // Исход сообщается заявке ПЕРВЫМ делом: ветки ниже выходят из цикла, и после них
+    // ход остался бы держать сам себя до истечения срока.
+    if (move) secretarySettlePush(user.id, move, moveToken, outcome, nowIso);
     if (outcome === 'gone') { delete user.push; changed = true; continue; }
     if (outcome !== 'delivered') continue;
+    if (move) { user.push.log = log; changed = true; continue; }
     if (delivery) {
       log[delivery.logKey] = true;
       user.push.variantIdx = { ...(user.push.variantIdx || {}), [delivery.variantKind]: delivery.variantIdx };

@@ -127,6 +127,13 @@ test('🔴 текст пуша не выносит наружу ничего л�
   assert.ok(copy.body.length > 0 && copy.body.length < 80);
   // Один и тот же текст на любой повод: иначе сам текст выдаёт причину.
   assert.deepStrictEqual(C.pushCopy(), copy);
+  // Язык человека — выбор из заранее написанных строк, а не подстановка.
+  for (const lang of ['ru', 'en', 'de', 'uk', 'es']) {
+    const l = C.pushCopy(lang);
+    assert.ok(l.body && l.body.length < 80, lang);
+    assert.strictEqual(l.body.includes('{'), false, lang);
+  }
+  assert.deepStrictEqual(C.pushCopy('нет такого'), C.pushCopy('ru'), 'неизвестный язык — не пустой пуш');
 });
 
 test('🔴 заявка не начисляет и не наказывает', () => {

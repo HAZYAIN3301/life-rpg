@@ -6,12 +6,13 @@
 >
 > Реализовано: `public/secretary-events-v1.js`, `public/secretary-router-v1.js`,
 > `public/commitment-v2.js`, `public/secretary-experiment-v1.js`,
-> `public/secretary-claim-v1.js`, блок `/api/secretary*` в `server.js`.
+> `public/secretary-claim-v1.js`, блок `/api/secretary*` и планировщик `pushTick`
+> в `server.js`.
 > Покрытие: `scripts/secretary-router-v1.test.js` (31),
 > `scripts/secretary-server-v1.test.js` (25), `scripts/commitment-v2.test.js` (19),
 > `scripts/secretary-experiment-v1.test.js` (19),
 > `scripts/secretary-experiment-server-v1.test.js` (15),
-> `scripts/secretary-claim-v1.test.js` (14).
+> `scripts/secretary-claim-v1.test.js` (15), `scripts/secretary-push-move-v1.test.js` (7).
 
 ## 0. Что это и чего тут нет
 
@@ -401,7 +402,11 @@ CommitmentV2.bestFor(state, 'tiktok', day, mode); // с учётом режим�
 - ~~Серверные эндпоинты для bulk~~ — готовы.
 - ~~Commitment v2~~ — готов, см. §6c.
 - ~~Агрегаты 30-дневного эксперимента~~ — готовы, см. §6d. Вехи обзора 7/14/21/30 отдаёт `reviewDue`.
-- ~~Каналы доставки~~ — арбитраж поверхностей готов, см. `SecretaryClaimV1` и §2. Остаётся подключить сам планировщик пуша к заявке: `pushDeliveryOutcome` уже различает `delivered/retry/gone`, их надо передавать в `settle`.
+- ~~Каналы доставки~~ — готовы целиком. Планировщик (`pushTick`) спрашивает ход с `channel: 'push'`, берёт заявку до отправки и сообщает исход `pushDeliveryOutcome` в `settle`.
+  - Ход идёт **раньше** тёплого чек-ина и глушит его: два пуша за одно утро превращают заботу в преследование.
+  - Доставленный пуш ставит кулдаун в ledger (`mark(..., 'offered')`) — иначе человек получит пуш, откроет приложение и встретит ту же карточку.
+  - Недоставленный день **не** закрывает: иначе неудачная отправка молча съедала бы единственное вмешательство за день.
+  - Текст пуша выбирается по языку из готовых строк `PUSH_COPY` (`ru|en|de|uk|es`). Подстановок нет вовсе, поэтому утечь нечему.
 
 ## 8. Чего движок не сделает
 
