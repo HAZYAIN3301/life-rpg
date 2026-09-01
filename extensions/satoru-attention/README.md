@@ -1,6 +1,7 @@
-# Satoru Attention — Brave/Chromium companion v3
+# Satoru Attention — cross-browser companion v4
 
-Manifest V3 extension for the desktop R3 attention boundary. It controls only sites that
+Manifest V3 extension for the desktop R3 attention boundary across Chromium, Firefox and
+Safari. It controls only sites that
 the person explicitly adds. The first setup remains deliberately small: one site and a
 prebuilt pack of allowed entry scenarios. A concrete task is named at the gate, while the
 time cap, mode, daily budget, entry count and cooldown are decided beforehand.
@@ -12,12 +13,17 @@ The public entry point is:
 `https://life-rpg-production-416a.up.railway.app/browser-companion.html`
 
 It provides the current download and a guided three-step test installation. The production
-one-click route is Chrome Web Store distribution; the upload-ready ZIP and listing copy are
-described in `PUBLISH-CHECKLIST.md` and `STORE-LISTING.md`.
+one-click route is signed store distribution. The build creates Chromium, Firefox and Safari
+packages plus upload aliases for Chrome Web Store, Edge Add-ons, Opera Add-ons, Firefox AMO
+and Apple App Store; the remaining owner-account steps are in `PUBLISH-CHECKLIST.md`.
 
-### Brave test build (unpacked)
+### Test build (unpacked or temporary)
 
-1. Open `brave://extensions`.
+1. Open the browser-specific extension page shown on the public installation page:
+   `chrome://extensions` (Chrome), `edge://extensions` (Edge),
+   `brave://extensions` (Brave), `opera://extensions` (Opera),
+   `vivaldi://extensions` (Vivaldi), `about:debugging#/runtime/this-firefox`
+   (Firefox), or Safari's **Develop > Allow Unsigned Extensions** flow.
 2. Enable **Developer mode**.
 3. Choose **Load unpacked**.
 4. Select this exact `extensions/satoru-attention/` directory.
@@ -60,7 +66,7 @@ coverage.
 ### Updating an unpacked build
 
 Reloading an unpacked extension invalidates options tabs created by the old Manifest V3
-runtime. v0.4.0 detects that stale context during startup, reloads once, keeps a heartbeat
+runtime. v0.5.0 detects that stale context during startup, reloads once, keeps a heartbeat
 port afterward and offers **Reconnect now** if the browser disconnects later. Stored rules
 and dynamic blocking rules survive the UI reconnect.
 
@@ -135,7 +141,7 @@ Announcement:
 {
   source: 'satoru-attention-extension',
   type: 'SATORU_ATTENTION_EXTENSION_READY',
-  version: '0.4.0'
+  version: '0.5.0'
 }
 ```
 
@@ -158,7 +164,7 @@ Read-only response:
   requestId: '...',
   status: {
     installed: true,
-    version: '0.4.0',
+    version: '0.5.0',
     configuredSites: 1,
     active: null // or { app, phase: 'active'|'boundary', remainingSeconds, mode }
   }
@@ -188,7 +194,7 @@ Gate links to Satoru are generated from a closed allowlist only:
 - No network request, remote sync, destructive action, profile/admin operation, reward,
   punishment, XP, gold or streak mutation.
 - Policies never tighten themselves. Statistics never change a rule.
-- This is a real boundary and content filter inside Brave/Chromium, not an OS-level app
+- This is a real boundary and content filter inside the installed browser, not an OS-level app
   blocker. A person can always disable or uninstall the extension. It cannot control native
   TikTok/YouTube apps, another browser, a phone, or a game console.
 - Incognito and custom host permissions remain explicit browser choices.

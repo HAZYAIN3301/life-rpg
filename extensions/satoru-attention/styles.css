@@ -116,6 +116,12 @@ h2 { font-size: 1.25rem; }
 .notice { padding: 14px 16px; border-left: 3px solid var(--warm); border-radius: 8px; background: rgb(240 189 115 / 8%); color: #e9d8bb; line-height: 1.5; }
 .pin-notice { display: grid; gap: 5px; margin: 18px 0 24px; border-left-color: var(--accent); background: rgb(88 209 239 / 8%); }
 .pin-notice b { color: var(--text); }
+.update-card { margin-bottom: 20px; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 24px; }
+.update-card h2 { margin: 0; }
+.update-card .muted { margin-bottom: 6px; }
+.update-card .fine { max-width: 680px; margin-bottom: 0; }
+.update-actions { min-width: min(100%, 230px); display: grid; gap: 8px; }
+.update-actions .status { margin: 0; text-align: center; }
 .pulse { display: inline-block; width: 10px; height: 10px; margin-right: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 rgb(121 218 176 / 35%); animation: pulse 2s ease-out infinite; }
 @keyframes pulse { 50% { box-shadow: 0 0 0 8px rgb(121 218 176 / 0%); } }
 
@@ -159,6 +165,8 @@ body[data-page="popup"] .card { padding: 18px; border-radius: 16px; box-shadow: 
 body[data-page="popup"] h1 { font: 800 1.15rem/1.2 Inter, sans-serif; }
 
 @media (max-width: 560px) {
+  .update-card { grid-template-columns: 1fr; }
+  .update-actions { width: 100%; }
   .shell { width: min(100% - 20px, 820px); padding-top: 14px; }
   .card { padding: 20px 16px; border-radius: 18px; }
   .site-item { grid-template-columns: 1fr; }

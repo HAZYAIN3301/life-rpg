@@ -20,7 +20,7 @@ test('installable MV3 package has only the permanent Satoru origin', () => {
   assert.equal(manifest.content_scripts[0].all_frames, false);
 });
 
-test('every manifest file exists and both v210 ZIPs are real artifacts', () => {
+test('every manifest file exists and both v211 compatibility ZIPs are real artifacts', () => {
   const refs = [manifest.background.service_worker, manifest.action.default_popup, manifest.options_page]
     .concat(manifest.content_scripts.flatMap((entry) => entry.js || []))
     .concat(manifest.web_accessible_resources.flatMap((entry) => entry.resources || []))
@@ -31,8 +31,8 @@ test('every manifest file exists and both v210 ZIPs are real artifacts', () => {
     assert.ok(messages.extensionName?.message);
     assert.ok(messages.extensionDescription?.message);
   }
-  assert.equal(manifest.version, '0.4.0');
-  for (const name of ['satoru-attention-v210.zip', 'satoru-attention-store-v210.zip']) {
+  assert.equal(manifest.version, '0.5.0');
+  for (const name of ['satoru-attention-v211.zip', 'satoru-attention-store-v211.zip']) {
     const zip = path.join(ROOT, 'public', 'downloads', name);
     assert.ok(fs.existsSync(zip), `${name}: install artifact must not ship as a 404`);
     assert.ok(fs.statSync(zip).size > 10_000, `${name}: ZIP is unexpectedly empty`);
@@ -46,6 +46,18 @@ test('toolbar badge keeps the installed extension discoverable without changing 
   assert.match(worker, /chrome\.action\.setBadgeText/);
   assert.match(worker, /Badge visibility is helpful, never part of the enforcement transaction/);
   assert.match(options, /data-i18n="pinTitle"/);
+});
+
+test('options expose a localized signed-store update check without weakening enforcement', () => {
+  const optionsHtml = read('options.html');
+  const optionsJs = read('options.js');
+  const i18n = read('i18n.js');
+  assert.match(optionsHtml, /id="check-update"/);
+  assert.match(optionsJs, /chrome\.runtime\.requestUpdateCheck/);
+  assert.match(optionsJs, /chrome\.runtime\.getManifest\(\)\.version/);
+  for (const key of ['updateTitle', 'checkUpdate', 'updateAvailable', 'updateUnavailable']) {
+    assert.equal((i18n.match(new RegExp(`${key}:`, 'g')) || []).length, 5, `${key} must exist in all five locales`);
+  }
 });
 
 test('companion stays local-only; attention is exact-host and protection is explicit', () => {

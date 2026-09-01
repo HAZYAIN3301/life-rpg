@@ -25,7 +25,7 @@ test('Stats v135 does not render missing rhythm or plans as a negative score', (
 
 test('Stats v135 keeps the global assistant reachable and ships the current offline shell', () => {
   assert.doesNotMatch(css, /body:has\(\.stats-shell\) #ai-fab[^}]*display:\s*none/);
-  assert.match(sw, /const CACHE = 'satoru-v210'/);
+  assert.match(sw, /const CACHE = 'satoru-v211'/);
 });
 
 test('Stats v135 additions are localized for every shipped locale', () => {

@@ -1,25 +1,43 @@
-# Chrome Web Store publication checklist
+# Satoru Attention v211 — signed store publication checklist
 
-The runtime package is generated as `public/downloads/satoru-attention-store-v210.zip`.
-Do not upload the user-facing ZIP with its enclosing folder; the store ZIP must have
-`manifest.json` at its root.
+`npm run build:browser-extension` creates three engine packages from one source tree and
+the upload aliases below. Every store update must increment `manifest.version`, rebuild,
+run the full extension/repository gate and be submitted under the same store item ID.
 
-1. Sign into the Chrome Web Store Developer Dashboard with the owner’s Google account.
-2. Complete two-step verification and pay the one-time developer registration fee if the
-   dashboard requests it.
-3. Create a new item and upload `satoru-attention-store-v210.zip`.
-4. Use `STORE-LISTING.md` for the description, single-purpose statement and permission
-   rationales.
-5. Add real screenshots from the packaged extension, the support email and the public
-   privacy-policy URL.
-6. In Privacy practices, declare local-only user activity exactly as documented; do not
-   claim that no data exists when local policies and sessions do exist.
-7. Explain the optional all-site grant: exact-site Attention remains narrow; the grant is
-   requested only when the person explicitly enables category/domain Browser Protection.
-8. Submit for review. Do not add remote code or analytics while the listing is under review.
-9. After approval, put the real store URL in `BROWSER_COMPANION_STORE_URL` in `public/app.js`,
-   verify “Add to Brave” and “Add to Chrome”, and release with a new SW/cache pin.
+## Chromium stores
 
-The website must never invent a store URL or present the development ZIP as one-click
-installation. On macOS and Windows, ordinary users install signed extensions through the
-Chrome Web Store; unpacked loading remains the explicit test path.
+- Chrome Web Store: `public/downloads/satoru-attention-chrome-store-v211.zip`
+- Microsoft Edge Add-ons: `public/downloads/satoru-attention-edge-store-v211.zip`
+- Opera Add-ons: `public/downloads/satoru-attention-opera-store-v211.zip`
+- Brave and Vivaldi use the Chrome Web Store listing; the manual Chromium test package is
+  `public/downloads/satoru-attention-chromium-v211.zip`.
+
+For every listing, sign in with the owner account, create the item once, upload the matching
+ZIP, complete privacy/permission declarations from `STORE-LISTING.md`, add screenshots,
+support email and the public privacy-policy URL, then submit for review. Never invent a store
+URL before the listing exists. After approval, add the exact URLs to the public landing-page
+release map and verify installation plus an incremented-version update.
+
+## Firefox AMO
+
+Upload `public/downloads/satoru-attention-firefox-amo-v211.zip`. The generated manifest uses
+the stable ID `satoru-attention@satoru.app`, Firefox MV3 event-page background, minimum
+Firefox 128 and the required `data_collection_permissions.required = ["none"]` disclosure.
+Release Firefox requires Mozilla signing; a temporary `about:debugging` install is QA only
+and disappears after restart. AMO-listed updates are delivered automatically.
+
+## Safari / Apple App Store
+
+Upload `public/downloads/satoru-attention-safari-app-store-v211.zip` to Safari Web Extension
+Packager in App Store Connect, or convert it with Xcode. Test via TestFlight, then submit the
+containing app/extension for review. Public Safari distribution requires an Apple Developer
+membership and signing. The temporary macOS extension route is QA only.
+
+## Release invariants
+
+1. Permanent host access stays limited to the exact Satoru production origin.
+2. Browser Protection requests broad optional access only after explicit opt-in.
+3. No remote code, analytics, browsing-history transfer or store-specific feature fork.
+4. Store URLs replace only test-download calls to action; test packages remain clearly named.
+5. Verify automatic update with two signed versions: install N, publish N+1, request a check,
+   close extension pages, and confirm the browser reports/applies N+1 without data loss.

@@ -1,4 +1,9 @@
-# Satoru Attention — Chrome Web Store listing draft
+# Satoru Attention — cross-store listing draft
+
+The product copy and permission rationale are shared by Chrome Web Store, Microsoft Edge
+Add-ons, Opera Add-ons, Firefox AMO and Apple App Store. Store-specific package names and
+signing steps live in `PUBLISH-CHECKLIST.md`; do not claim that a listing is live before its
+real URL and signed update path have been verified.
 
 ## Name
 

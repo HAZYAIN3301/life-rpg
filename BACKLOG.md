@@ -4,6 +4,9 @@
 
 _Создан 2026-06-14. Актуализирован 24.07 — секции ниже не обновлялись с ~01.07, часть уже закрыта в DEVLOG._
 
+- [x] **Browser Companion v211 — кросс-браузерный код и release-пакеты** ✅ 2026-09-01: единый source собирает Chromium/Firefox/Safari; Chrome, Edge, Brave, Opera, Vivaldi, Firefox и Safari присутствуют на пятиъязычной install-странице; внутри расширения есть нативная проверка обновлений.
+- [ ] ⛔ **Нужны аккаунты владельца магазинов для настоящего автообновления:** загрузить готовые v211 ZIP в Chrome Web Store, Edge Add-ons, Opera Add-ons, Firefox AMO и Safari App Store Connect, пройти подпись/модерацию, затем подставить только реальные listing URL и проверить signed N→N+1. Unpacked/temporary установка по правилам браузеров не может получать публичные автообновления с сайта.
+
 - [x] **Account Profile v209** ✅ 2026-08-30: компактная identity-card с уникальным `@имя`, био, шестью соцссылками, тремя экранами, четырьмя обложками и аудиториями `private/tribe/satoru`. Профили открываются из шапки, Племени и лидерборда; цели, привычки, заметки и память Тени не входят в публичную схему. Следующие отдельные продукты, а не расширение этой формы: безопасная загрузка медиа, публичный web-profile и social discovery.
 
 - [~] **Motion & Sound OS** — фундамент и Rewards vertical slice готовы в v189: оригинальный Web Audio voice, `off / essential / full`, предметная рулетка, Skip, reduced motion, visual atlas и offline shell. Это не считается product-wide завершением. Дальше отдельными проверяемыми срезами: completion/streak/milestone → Focus → общий UI/ошибки/сохранение → пространственный звук и authored motion логова → нативные haptics/silent-mode/icon states. Контракт: `MOTION-SOUND-V189.md`.

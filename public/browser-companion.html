@@ -1,52 +1,73 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark light">
-  <meta name="description" content="Satoru Attention — локальная граница внимания и защита браузера для Brave и Chromium.">
-  <title>Satoru Attention — расширение для браузера</title>
+  <meta name="description" content="Satoru Attention — a local attention boundary for the most popular desktop browsers.">
+  <title>Satoru Attention — browser extension</title>
   <link rel="icon" href="browser-companion-icon-v1.png">
-  <link rel="stylesheet" href="browser-companion.css?v=20260829-browser-companion-discovery-v200-1">
+  <link rel="stylesheet" href="browser-companion.css?v=20260901-browser-companion-v211-1">
 </head>
 <body>
-  <header class="bc-top"><a href="/" class="bc-brand"><img src="browser-companion-icon-v1.png" alt=""><span><b>Satoru</b><small>Attention</small></span></a><a href="/" data-copy="back">Вернуться в приложение</a></header>
+  <header class="bc-top">
+    <a href="/" class="bc-brand"><img src="browser-companion-icon-v1.png" alt=""><span><b>Satoru</b><small>Attention</small></span></a>
+    <div class="bc-top-actions">
+      <label class="bc-language"><span data-copy="language">Language</span><select id="bc-language" aria-label="Language"><option value="en">English</option><option value="de">Deutsch</option><option value="ru">Русский</option><option value="uk">Українська</option><option value="es">Español</option></select></label>
+      <a href="/" data-copy="back">Back to the app</a>
+    </div>
+  </header>
   <main>
     <section class="bc-hero">
-      <span class="bc-kicker" data-copy="kicker">Расширение для Brave и Chromium</span>
-      <h1 data-copy="title">Лента начинается только после твоего решения</h1>
-      <p data-copy="lead">Назови цель и короткое окно или включи локальную блокировку сервисов и категорий. История просмотров никуда не отправляется.</p>
+      <span class="bc-kicker" data-copy="kicker">Extension for major desktop browsers</span>
+      <h1 data-copy="title">The feed starts only after your decision</h1>
+      <p data-copy="lead">Name a purpose and short window or locally block distracting services and categories. Browsing history is never sent anywhere.</p>
       <div class="bc-actions">
-        <a class="bc-primary" href="downloads/satoru-attention-v210.zip" download data-copy="download">Скачать Satoru Attention</a>
-        <a class="bc-secondary" href="#install" data-copy="how">Как установить</a>
+        <a id="bc-primary-download" class="bc-primary" href="downloads/satoru-attention-chromium-v211.zip" download data-copy="download">Download the test build</a>
+        <a class="bc-secondary" href="#browsers" data-copy="chooseBrowser">Choose a browser</a>
       </div>
-      <p class="bc-store-note"><b>Chrome Web Store:</b> <span data-copy="storePending">пакет готов к публикации. После модерации эта кнопка станет установкой в один клик.</span></p>
+      <p class="bc-store-note"><b data-copy="updatesTitle">Updates without downloading again</b> <span data-copy="updatesLead">After the signed store release, install once: Chrome, Edge, Firefox and Safari apply future versions automatically. Until review is complete, test ZIPs still use Reload.</span></p>
     </section>
 
-    <section class="bc-benefits" aria-label="Преимущества">
-      <article><span>01</span><h2 data-copy="benefit1Title">До входа, не после срыва</h2><p data-copy="benefit1Text">TikTok, YouTube и выбранные сайты сначала показывают экран цели и лимита.</p></article>
-      <article><span>02</span><h2 data-copy="benefit2Title">Локально</h2><p data-copy="benefit2Text">Правила, сессии и исходы остаются в расширении. Satoru видит только безопасный статус.</p></article>
-      <article><span>03</span><h2 data-copy="benefit3Title">Защита как в DNS-сервисах</h2><p data-copy="benefit3Text">Категории, списки, расписание, SafeSearch, строгий YouTube и блокировка известных обходов — локально в этом браузере.</p></article>
+    <section class="bc-benefits" aria-label="Benefits">
+      <article><span>01</span><h2 data-copy="benefit1Title">Before entry, not after a lapse</h2><p data-copy="benefit1Text">TikTok, YouTube and selected sites first show a purpose and time-limit screen.</p></article>
+      <article><span>02</span><h2 data-copy="benefit2Title">Local</h2><p data-copy="benefit2Text">Rules, sessions and outcomes stay in the extension. Satoru sees only a safe status.</p></article>
+      <article><span>03</span><h2 data-copy="benefit3Title">One source, three engines</h2><p data-copy="benefit3Text">Separate Chromium, Firefox and Safari manifests are built from one audited codebase.</p></article>
+    </section>
+
+    <section id="browsers" class="bc-browser-section" aria-labelledby="browsers-title">
+      <span class="bc-kicker" data-copy="browserKicker">Desktop browser support</span>
+      <h2 id="browsers-title" data-copy="browserTitle">Choose where Satoru should work</h2>
+      <p class="bc-section-lead" data-copy="browserLead">The page detects your browser, but you can choose another one. Chromium browsers share one build; Firefox and Safari receive their own manifests.</p>
+      <div class="bc-browser-grid">
+        <article data-browser="chrome"><h3>Chrome</h3><p data-copy="chromiumBuild">Chromium build</p><button type="button" data-select-browser="chrome" data-copy="showSteps">Show steps</button></article>
+        <article data-browser="edge"><h3>Microsoft Edge</h3><p data-copy="chromiumBuild">Chromium build</p><button type="button" data-select-browser="edge" data-copy="showSteps">Show steps</button></article>
+        <article data-browser="brave"><h3>Brave</h3><p data-copy="chromiumBuild">Chromium build</p><button type="button" data-select-browser="brave" data-copy="showSteps">Show steps</button></article>
+        <article data-browser="firefox"><h3>Firefox</h3><p data-copy="firefoxBuild">Firefox MV3 build</p><button type="button" data-select-browser="firefox" data-copy="showSteps">Show steps</button></article>
+        <article data-browser="opera"><h3>Opera</h3><p data-copy="chromiumBuild">Chromium build</p><button type="button" data-select-browser="opera" data-copy="showSteps">Show steps</button></article>
+        <article data-browser="vivaldi"><h3>Vivaldi</h3><p data-copy="chromiumBuild">Chromium build</p><button type="button" data-select-browser="vivaldi" data-copy="showSteps">Show steps</button></article>
+        <article data-browser="safari"><h3>Safari</h3><p data-copy="safariBuild">Safari Web Extension build</p><button type="button" data-select-browser="safari" data-copy="showSteps">Show steps</button></article>
+      </div>
     </section>
 
     <section id="install" class="bc-install" aria-labelledby="install-title">
-      <span class="bc-kicker" data-copy="testKicker">Тестовая установка до публикации в магазине</span>
-      <h2 id="install-title" data-copy="installTitle">Три шага — без поиска непонятных файлов</h2>
+      <span class="bc-kicker" data-copy="testKicker">Test installation before store publication</span>
+      <h2 id="install-title"><span data-copy="installTitle">Install in</span> <span id="bc-browser-name">Chrome</span></h2>
       <ol>
-        <li><span>1</span><div><h3 data-copy="step1Title">Скачай и распакуй</h3><p data-copy="step1Text">Архив содержит одну готовую папку Satoru Attention. На macOS он обычно распаковывается автоматически.</p><a href="downloads/satoru-attention-v210.zip" download data-copy="downloadPackage">Скачать пакет</a></div></li>
-        <li><span>2</span><div><h3 data-copy="step2Title">Открой страницу расширений</h3><p data-copy="step2Text">Вставь нужный адрес в строку браузера.</p><div class="bc-addresses"><code>brave://extensions</code><button type="button" data-copy-address="brave://extensions" data-copy="copy">Скопировать</button><code>chrome://extensions</code><button type="button" data-copy-address="chrome://extensions" data-copy="copy">Скопировать</button></div></div></li>
-        <li><span>3</span><div><h3 data-copy="step3Title">Загрузи папку</h3><p data-copy="step3Text">Включи «Режим разработчика», нажми «Загрузить распакованное» и выбери распакованную папку Satoru Attention.</p></div></li>
+        <li><span>1</span><div><h3 data-copy="step1Title">Download and unzip</h3><p id="bc-package-copy" data-copy="step1Text">The archive contains a ready extension folder.</p><a id="bc-package-download" href="downloads/satoru-attention-chromium-v211.zip" download data-copy="downloadPackage">Download package</a></div></li>
+        <li><span>2</span><div><h3 data-copy="step2Title">Open the extensions page</h3><p id="bc-open-copy" data-copy="step2Text">Paste this address into the browser bar.</p><div class="bc-addresses"><code id="bc-extension-address">chrome://extensions</code><button id="bc-copy-address" type="button" data-copy="copy">Copy</button></div></div></li>
+        <li><span>3</span><div><h3 data-copy="step3Title">Load the folder</h3><p id="bc-load-copy" data-copy="step3Chromium">Enable Developer mode, choose Load unpacked and select the unzipped Satoru Attention folder.</p></div></li>
       </ol>
-      <aside><b data-copy="pinTitle">Закрепи значок</b><span data-copy="pinText">Открой меню расширений в панели Brave и закрепи Satoru Attention. Значок и badge будут показывать состояние границы.</span></aside>
+      <aside><b data-copy="signedTitle">Why the test build still needs Reload</b><span data-copy="signedText">Consumer browsers only auto-update signed store installations. The packages above are ready for review; store accounts and signatures are the remaining publication step.</span></aside>
     </section>
 
     <section class="bc-limit">
-      <h2 data-copy="limitTitle">Честная граница</h2>
-      <p data-copy="limitText">Защита действует в этом браузере. Расширение можно выключить или удалить; оно не заменяет системный DNS/VPN и не контролирует нативные приложения телефона.</p>
-      <a href="/" data-copy="openApp">Открыть Satoru</a>
+      <h2 data-copy="limitTitle">An honest boundary</h2>
+      <p data-copy="limitText">Protection applies to this browser. It can be disabled or removed; it does not replace system DNS/VPN or control native phone apps.</p>
+      <a href="/" data-copy="openApp">Open Satoru</a>
     </section>
   </main>
   <div id="bc-toast" role="status" aria-live="polite"></div>
-  <script src="browser-companion-landing-v1.js?v=20260829-browser-companion-discovery-v200-1"></script>
+  <script src="browser-companion-landing-v1.js?v=20260901-browser-companion-v211-1"></script>
 </body>
 </html>

@@ -51,6 +51,9 @@
   const youtubeRestricted = document.querySelector('#youtube-restricted');
   const blockBypass = document.querySelector('#block-bypass');
   const runtimeReload = document.querySelector('#runtime-reload');
+  const installedVersion = document.querySelector('#installed-version');
+  const checkUpdate = document.querySelector('#check-update');
+  const updateStatus = document.querySelector('#update-status');
   let actionBusy = false;
   let currentState = Core.emptyState();
   let currentProtection = Protection.emptySettings();
@@ -61,6 +64,46 @@
   let booting = true;
 
   I18n.localizeDocument(language);
+  installedVersion.textContent = chrome.runtime.getManifest().version;
+
+  function requestUpdateCheck() {
+    return new Promise((resolve, reject) => {
+      if (typeof chrome.runtime.requestUpdateCheck !== 'function') { reject(new Error('unsupported')); return; }
+      let settled = false;
+      const finish = (status, details = {}) => {
+        if (settled) return;
+        settled = true;
+        resolve(typeof status === 'object' ? status : { status, version: details?.version });
+      };
+      try {
+        const pending = chrome.runtime.requestUpdateCheck((status, details) => {
+          const error = chrome.runtime.lastError;
+          if (error) { if (!settled) { settled = true; reject(new Error(error.message)); } return; }
+          finish(status, details);
+        });
+        if (pending && typeof pending.then === 'function') pending.then((result) => finish(result)).catch((error) => {
+          if (!settled) { settled = true; reject(error); }
+        });
+      } catch (error) { if (!settled) { settled = true; reject(error); } }
+    });
+  }
+
+  checkUpdate.addEventListener('click', async () => {
+    checkUpdate.disabled = true;
+    updateStatus.className = 'status';
+    updateStatus.textContent = t('updateChecking');
+    try {
+      const result = await requestUpdateCheck();
+      const statusCode = result?.status || 'no_update';
+      if (statusCode === 'update_available') updateStatus.textContent = t('updateAvailable', { version: result.version || '—' });
+      else if (statusCode === 'throttled') updateStatus.textContent = t('updateThrottled');
+      else updateStatus.textContent = t('updateCurrent');
+      updateStatus.classList.add('success');
+    } catch {
+      updateStatus.textContent = t('updateUnavailable');
+      updateStatus.classList.add('error');
+    } finally { checkUpdate.disabled = false; }
+  });
 
   function setStatus(message, kind = '', runtime = false) {
     status.textContent = message || '';

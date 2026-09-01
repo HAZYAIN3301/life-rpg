@@ -2,6 +2,14 @@
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
 
+## [2026-09-01] ◉ Browser Companion v211 — один исходник, популярные браузеры и честные автообновления
+
+- Satoru Attention поднят до `0.5.0` и теперь воспроизводимо собирается в три engine-пакета: Chromium для Chrome/Edge/Brave/Opera/Vivaldi, отдельный Firefox MV3 с event-page и стабильным AMO ID, отдельный Safari Web Extension для App Store Packager/Xcode. Store aliases создаются тем же zero-dependency builder, поэтому браузерные версии не расходятся вручную.
+- На `/browser-companion.html` добавлены определение/ручной выбор браузера, точные пакеты и инструкции для семи популярных браузеров, а также видимый выбор RU/EN/DE/UK/ES до любого шага. Выбор языка сохраняется локально и в `?lang=`, браузера — в `?browser=`; менять их можно без перезагрузки страницы.
+- В настройках расширения появился блок «Версия и обновления» с нативным `runtime.requestUpdateCheck()`. Граница сформулирована честно: подписанные store-версии обновляются браузером автоматически, unpacked/temporary ZIP не может тихо заменяться сайтом и остаётся QA-путём с Reload.
+- Публичные и store ZIP v211, release/security contract и пошаговые owner-account инструкции зафиксированы в [`BROWSER-COMPANION-V211-QA.md`](./BROWSER-COMPANION-V211-QA.md) и `extensions/satoru-attention/PUBLISH-CHECKLIST.md`. Реальные store URL появятся только после модерации, без выдуманных ссылок и ложного one-click CTA.
+- Release-candidate QA: полный repository suite **1295/1295**, extension runtime/security **47/47**, focused multibrowser/discovery/package/bridge **24/24**. Browser QA прошёл desktop RU, смену Firefox-пакета/адреса, сохранение EN и `375×812`: overflow отсутствует, selector языка `44px`, console warnings/errors отсутствуют.
+
 ## [2026-08-30] ◇ Account Profile v209 — три экрана, соцссылки и server-side приватность
 
 - Настройки → Связи получили компактный профиль с живым предпросмотром: имя, уникальное `@имя`, био, три варианта экрана (`Путь / Герой / Автор`), четыре обложки, до шести внешних ссылок и явная аудитория (`только я / племя / Satoru`). Свой профиль открывается из шапки; профили участников — из Племени и лидерборда; `?profile=handle` открывает точный deep link после входа.
