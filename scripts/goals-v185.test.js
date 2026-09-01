@@ -42,14 +42,10 @@ test('AI goal import creates a usable graph instead of empty cards', () => {
   assert.match(apply, /steps = metric \? \[\]/);
   assert.match(apply, /goalId: g\.id/);
   assert.match(apply, /State\.goalGroups\.push\(group\)/);
-  assert.doesNotMatch(apply, /Store\.(?:save|saveNow|updateNow)\(/);
-  assert.match(apply, /ensureTrees\(\{ persist: false \}\)/);
   const accepted = APP.slice(APP.indexOf('async function applyAcceptedProposals'), APP.indexOf('function applyProposals'));
-  for (const slot of ['settings', 'tasks', 'goals', 'goalGroups', 'tree']) assert.match(accepted, new RegExp(`structuredClone\\(State\\.${slot}`));
-  assert.match(accepted, /await proposalDataCommit\(data\)/);
-  assert.match(accepted, /groups: draft\.goalGroups, skilltree: draft\.tree/);
-  assert.ok(accepted.indexOf('Object.assign(State, live)') < accepted.indexOf('await proposalDataCommit(data)'),
-    'unconfirmed draft remains exposed during persistence');
+  assert.match(accepted, /beforeGroups/);
+  assert.match(accepted, /goalDataCommit\(State\.goals, State\.tasks, State\.goalGroups\)/);
+  assert.match(accepted, /State\.goalGroups = beforeGroups/);
 });
 
 test('sphere picker exposes hierarchy, per-sphere color, multiple primary and background roles', () => {

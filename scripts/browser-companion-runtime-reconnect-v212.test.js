@@ -14,7 +14,7 @@ const worker = readFileSync(join(EXTENSION, 'service-worker.js'), 'utf8');
 const manifest = JSON.parse(readFileSync(join(EXTENSION, 'manifest.json'), 'utf8'));
 
 test('the v0.5.1 Brave sender boundary remains in later runtimes', () => {
-  assert.ok(['0.5.1', '0.5.2', '0.5.3'].includes(manifest.version));
+  assert.ok(['0.5.1', '0.5.2', '0.5.3', '0.5.4'].includes(manifest.version));
   assert.match(worker, /sender\.tab && sender\.tab\.url/);
   assert.match(worker, /sender\.id === chrome\.runtime\.id && \(extensionUrl \|\| extensionOrigin\)/);
   assert.match(worker, /if \(message && message\.type === 'CHECK_ACCESS'\) work = handleSiteMessage/);

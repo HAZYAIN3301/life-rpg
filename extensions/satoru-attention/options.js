@@ -40,6 +40,9 @@
   const protectionEnabled = document.querySelector('#protection-enabled');
   const protectionBadge = document.querySelector('#protection-badge');
   const protectionStatus = document.querySelector('#protection-status');
+  const protectionInactiveWarning = document.querySelector('#protection-inactive-warning');
+  const activateProtection = document.querySelector('#activate-protection');
+  const applyProtection = document.querySelector('#apply-protection');
   const denyInput = document.querySelector('#deny-domain');
   const allowInput = document.querySelector('#allow-domain');
   const denyList = document.querySelector('#deny-list');
@@ -57,6 +60,7 @@
   let currentState = Core.emptyState();
   let currentProtection = Protection.emptySettings();
   let protectionDirty = false;
+  let protectionSaveQueued = false;
   let editingPolicyId = '';
   let booting = true;
 
@@ -243,6 +247,24 @@
     }
   }
 
+  function configuredProtectionCount(settings) {
+    const current = Protection.normalizeSettings(settings);
+    return Protection.CATEGORY_KEYS.filter((key) => current.categories[key]).length
+      + current.denylist.length
+      + Number(current.safeSearch)
+      + Number(current.youtubeRestricted)
+      + Number(current.blockBypass);
+  }
+
+  function renderProtectionActivationState(settings) {
+    const current = Protection.normalizeSettings(settings);
+    const configured = configuredProtectionCount(current);
+    protectionInactiveWarning.hidden = current.enabled || configured === 0;
+    const paused = current.enabled && current.recreation.enabled && Protection.recreationActive(current, new Date());
+    protectionBadge.textContent = t(paused ? 'protectionPaused' : current.enabled ? 'protectionOn' : configured ? 'protectionDraft' : 'protectionOff');
+    protectionBadge.className = `state-pill${current.enabled ? ' on' : configured ? ' attention' : ''}`;
+  }
+
   function renderProtection(settings, summary = null) {
     currentProtection = Protection.normalizeSettings(settings);
     protectionEnabled.checked = currentProtection.enabled;
@@ -261,10 +283,7 @@
     youtubeRestricted.checked = currentProtection.youtubeRestricted;
     blockBypass.checked = currentProtection.blockBypass;
     const state = summary || Protection.summary(currentProtection, ProtectionCatalog, new Date());
-    protectionBadge.textContent = currentProtection.enabled
-      ? t(state.recreationActive ? 'protectionPaused' : 'protectionOn')
-      : t('protectionOff');
-    protectionBadge.className = `state-pill${currentProtection.enabled ? ' on' : ''}`;
+    renderProtectionActivationState(currentProtection);
     protectionBadge.title = currentProtection.enabled ? t('protectionCount', { count: state.blockedDomains }) : '';
     protectionDirty = false;
   }
@@ -290,6 +309,11 @@
     });
   }
 
+  function queueProtectionSave() {
+    if (actionBusy) { protectionSaveQueued = true; return; }
+    protectionForm.requestSubmit(applyProtection);
+  }
+
   function addDomain(kind) {
     const input = kind === 'deny' ? denyInput : allowInput;
     const domain = Protection.normalizeDomain(input.value);
@@ -308,7 +332,9 @@
     renderDomainList(allowList, currentProtection.allowlist, 'allow');
     input.value = '';
     protectionDirty = true;
-    setProtectionStatus('');
+    if (!protectionEnabled.checked) protectionEnabled.checked = true;
+    renderProtectionActivationState(readProtectionForm());
+    queueProtectionSave();
   }
 
   for (const key of Protection.CATEGORY_KEYS) {
@@ -388,7 +414,23 @@
     }
   }
 
-  protectionForm.addEventListener('change', () => { protectionDirty = true; setProtectionStatus(''); });
+  protectionForm.addEventListener('change', (event) => {
+    protectionDirty = true;
+    setProtectionStatus(t('protectionApplying'));
+    const target = event.target;
+    const turnsProtectionOn = target !== protectionEnabled && target instanceof HTMLInputElement
+      && target.checked && (target.matches('[data-category]') || target === recreationEnabled
+        || target === safeSearch || target === youtubeRestricted || target === blockBypass);
+    if (turnsProtectionOn && !protectionEnabled.checked) protectionEnabled.checked = true;
+    renderProtectionActivationState(readProtectionForm());
+    queueProtectionSave();
+  });
+  activateProtection.addEventListener('click', () => {
+    protectionEnabled.checked = true;
+    protectionDirty = true;
+    renderProtectionActivationState(readProtectionForm());
+    queueProtectionSave();
+  });
   document.querySelector('#add-deny').addEventListener('click', () => addDomain('deny'));
   document.querySelector('#add-allow').addEventListener('click', () => addDomain('allow'));
   denyInput.addEventListener('keydown', (event) => { if (event.key === 'Enter') { event.preventDefault(); addDomain('deny'); } });
@@ -406,6 +448,8 @@
       renderDomainList(denyList, currentProtection.denylist, 'deny');
       renderDomainList(allowList, currentProtection.allowlist, 'allow');
       protectionDirty = true;
+      renderProtectionActivationState(readProtectionForm());
+      if (protectionEnabled.checked) queueProtectionSave();
     });
   }
 
@@ -429,7 +473,12 @@
           if (!recoverStaleOptions(error && error.message)) setStatus(errorText('runtime_unavailable'), 'error', true);
           return;
         }
-        if (!granted) { setProtectionStatus(t('protectionPermissionDenied'), 'error'); return; }
+        if (!granted) {
+          protectionEnabled.checked = currentProtection.enabled;
+          renderProtectionActivationState(readProtectionForm());
+          setProtectionStatus(t('protectionPermissionDenied'), 'error');
+          return;
+        }
       }
       const result = await send({ type: 'SAVE_PROTECTION', settings });
       if (!result?.ok) {
@@ -440,6 +489,10 @@
     } finally {
       actionBusy = false;
       if (submit) submit.disabled = false;
+      if (protectionSaveQueued) {
+        protectionSaveQueued = false;
+        queueMicrotask(queueProtectionSave);
+      }
     }
   });
 

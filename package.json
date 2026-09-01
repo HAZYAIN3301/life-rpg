@@ -7,7 +7,7 @@
     "start": "node server.js",
     "dev": "node server.js",
     "lan": "HOST=0.0.0.0 node server.js",
-    "build:browser-extension": "node scripts/build-browser-companion-v214.mjs",
+    "build:browser-extension": "node scripts/build-browser-companion-v215.mjs",
     "test": "node --test scripts/*.test.js"
   },
   "engines": {

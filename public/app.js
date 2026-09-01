@@ -22641,7 +22641,7 @@ let _attentionEmergencyTimer = null;
 // policies, spend an emergency exit or mark an outcome through postMessage.
 const BROWSER_COMPANION_ORIGIN = 'https://life-rpg-production-416a.up.railway.app';
 const BROWSER_COMPANION_STATUS_TTL_MS = 25000;
-const BROWSER_COMPANION_DOWNLOAD = 'downloads/satoru-attention-chromium-v214.zip';
+const BROWSER_COMPANION_DOWNLOAD = 'downloads/satoru-attention-chromium-v215.zip';
 // One-click installation on desktop Chromium is only legal through a signed
 // Chrome Web Store listing. Until its real ID exists, the guided test build is
 // shown instead of rendering a fake or broken store button.
@@ -31229,7 +31229,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v215';
+const PWA_CACHE_VERSION = 'satoru-v216';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

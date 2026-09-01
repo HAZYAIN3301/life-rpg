@@ -45,7 +45,7 @@ test('Goals v169 has one checked goals/initiatives/tasks graph and no direct cli
   assert.match(INDEX, /<script src="goals-initiatives-v1\.js\?v=20260825-goals-v169-1"><\/script>[\s\S]*<script src="app\.js/);
   assert.match(SW, /'goals-initiatives-v1\.js'/);
   assert.match(INITIATIVES, /function focusModel/);
-  assert.match(SW, /const CACHE = 'satoru-v215'/);
+  assert.match(SW, /const CACHE = 'satoru-v216'/);
 });
 
 test('Progress source is exclusive and linked tasks are explicitly not counted', () => {

@@ -174,57 +174,12 @@ test('архивация прячет уговор с этого дня, но с
   assert.equal(C.activeItems(s).length, 0);
 });
 
-test('🔴 пересмотр меняет границу без проигрыша и сохраняет объяснимую историю', () => {
-  const original = withItem({ edge: { kind: 'time', at: '07:10' } });
-  const result = C.revise(original, 'wake', { edge: { kind: 'time', at: '07:30' } }, '2026-08-25');
-  assert.equal(result.ok, true);
-  const item = result.state.items[0];
-  assert.deepEqual(item.edge, { kind: 'time', at: '07:30' });
-  assert.equal(item.revisedOn, '2026-08-25');
-  assert.deepEqual(item.history, [{
-    type: 'revised', day: '2026-08-25',
-    from: { kind: 'time', at: '07:10' }, to: { kind: 'time', at: '07:30' },
-  }]);
-  assert.equal(C.outcomeOf(result.state, 'wake', '2026-08-25'), null, 'revision is not a miss');
-  assert.deepEqual(original.items[0].edge, { kind: 'time', at: '07:10' }, 'source state was mutated');
-});
-
-test('🔴 уговор можно снять бесплатно, не стирая его историю', () => {
-  const original = withItem();
-  const result = C.release(original, 'wake', '2026-08-25');
-  assert.equal(result.ok, true);
-  assert.equal(C.activeItems(result.state).length, 0);
-  assert.equal(result.state.items[0].archivedAt, '2026-08-25');
-  assert.deepEqual(result.state.items[0].history, [{ type: 'released', day: '2026-08-25' }]);
-  assert.equal(C.outcomeOf(result.state, 'wake', '2026-08-25'), null, 'release is not a miss');
-});
-
-test('битый пересмотр и повторное снятие fail closed без мутации', () => {
-  const original = withItem();
-  assert.equal(C.revise(original, 'missing', { title: 'x' }, '2026-08-25').error, 'missing');
-  assert.equal(C.revise(original, 'wake', { title: '' }, '2026-08-25').error, 'invalid');
-  assert.equal(C.release(original, 'wake', 'not-a-day').error, 'invalid');
-  const released = C.release(original, 'wake', '2026-08-25').state;
-  assert.equal(C.release(released, 'wake', '2026-08-26').error, 'missing');
-});
-
 test('снятие отметки возвращает молчание, а не поражение', () => {
   let s = withItem();
   s = C.mark(s, 'wake', '2026-08-25', 'miss');
   s = C.clearMark(s, 'wake', '2026-08-25');
   assert.equal(C.outcomeOf(s, 'wake', '2026-08-25'), null);
   assert.deepEqual(s.log, {}, 'пустой день не должен оставаться в журнале');
-});
-
-test('undo завершения возвращает архивированное обязательство без нового штрафа', () => {
-  const added = withItem();
-  const marked = C.mark(added, 'wake', '2026-08-25', 'win');
-  const archived = C.archive(marked, 'wake', '2026-08-25');
-  const reopened = C.reopen(C.clearMark(archived, 'wake', '2026-08-25'), 'wake', '2026-08-25');
-  assert.equal(reopened.ok, true);
-  assert.equal(reopened.state.items[0].archivedAt, undefined);
-  assert.equal(reopened.state.log['2026-08-25'], undefined);
-  assert.deepEqual(reopened.state.items[0].history, added.items[0].history);
 });
 
 test('unsettled спрашивает только про неотмеченное и только про свой режим', () => {

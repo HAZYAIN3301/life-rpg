@@ -51,6 +51,13 @@
           <input id="protection-enabled" type="checkbox">
           <span><b data-i18n="enableProtection">Enable protection</b><small data-i18n="enableProtectionLead">The browser will request access to all sites once so redirects and strict filters can work.</small></span>
         </label>
+        <aside id="protection-inactive-warning" class="notice protection-inactive-warning" hidden>
+          <div>
+            <b data-i18n="protectionDraftTitle">Rules selected, but protection is off</b>
+            <span data-i18n="protectionDraftLead">They will not block anything until protection is enabled.</span>
+          </div>
+          <button id="activate-protection" type="button" class="warn" data-i18n="activateProtection">Enable and apply</button>
+        </aside>
 
         <fieldset class="field">
           <legend data-i18n="protectionCategories">Categories</legend>
@@ -111,7 +118,7 @@
         </fieldset>
         <aside class="notice" data-i18n="protectionLimit">This protects this browser. It cannot block another browser, an OS-level VPN, extension removal or incognito unless the extension is allowed there.</aside>
         <p id="protection-status" class="status" role="status" aria-live="polite"></p>
-        <button type="submit" class="primary" data-i18n="saveProtection">Apply protection</button>
+        <button id="apply-protection" type="submit" class="primary" data-i18n="saveProtection">Apply protection</button>
       </form>
     </section>
 

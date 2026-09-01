@@ -78,6 +78,11 @@ origin declarations in the manifest: Brave rejects a combined `*://hostname/*` r
 though it looks equivalent. Permission rejection is reported as permission rejection and is
 never mislabeled as a dead background worker.
 
+v0.5.4 removes the protection draft trap. Selecting a category or strict filter turns
+Browser Protection on and applies the change from the same user action. Existing
+selected-but-disabled rules are labeled **Not applied** and get a one-click **Enable and
+apply** action instead of looking active while producing no blocking rules.
+
 ## Behavior
 
 - A configured site is redirected to `gate.html` until a purpose and bounded duration are
@@ -149,7 +154,7 @@ Announcement:
 {
   source: 'satoru-attention-extension',
   type: 'SATORU_ATTENTION_EXTENSION_READY',
-  version: '0.5.3'
+  version: '0.5.4'
 }
 ```
 
@@ -172,7 +177,7 @@ Read-only response:
   requestId: '...',
   status: {
     installed: true,
-    version: '0.5.3',
+    version: '0.5.4',
     configuredSites: 1,
     active: null // or { app, phase: 'active'|'boundary', remainingSeconds, mode }
   }
