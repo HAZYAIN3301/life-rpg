@@ -843,6 +843,7 @@ function secretaryPushOffer(uid, tz, today, nowIso, days) {
   if (!events || !ledger) return null;
   const commitments = CommitmentV2.migrate(readUserJson(uid, 'commitments')).state;
   return SecretaryRouterV1.next({
+    invocation: 'scheduler',
     now: nowIso, today, tzOffsetMinutes: tzOffsetMinutesFor(tz, Date.parse(nowIso)),
     events, ledger, commitments, mode: commitments.mode,
     channel: 'push',
@@ -4017,6 +4018,8 @@ const server = http.createServer(async (req, res) => {
       const todayKey = /^\d{4}-\d{2}-\d{2}$/.test(today) ? today : new Date().toISOString().slice(0, 10);
       const daysForOffer = readUserJson(uid, 'days') || {};
       const offer = SecretaryRouterV1.next({
+        // Спрашивает открытое приложение, а не таймер перерисовки.
+        invocation: 'app_open',
         channel: askedChannel,
         now: new Date().toISOString(),
         today: /^\d{4}-\d{2}-\d{2}$/.test(today) ? today : new Date().toISOString().slice(0, 10),

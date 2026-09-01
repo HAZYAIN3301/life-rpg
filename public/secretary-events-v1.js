@@ -52,18 +52,41 @@
     EVENING_LATE: 'evening.late',
     // Подтверждённо пустой день. НЕ выводится из одной лишь тишины.
     DAY_SILENT: 'day.silent',
-    // Первое открытие приложения в новый день — момент, когда утро достижимо.
-    MORNING_OPEN: 'morning.open',
-    // Человек закрыл день сам. Нужен, чтобы вечерние ходы замолчали.
+    // Человек закрыл день сам. Router читает это, чтобы не спорить с его выводом.
     DAY_CLOSED: 'day.closed',
-    // Предложение было отклонено. Это данные о неуместности, а не провал.
-    OFFER_DISMISSED: 'offer.dismissed',
-    // Предложение принято и действие выполнено.
-    OFFER_ACCEPTED: 'offer.accepted',
   });
   const TYPE_LIST = Object.freeze(Object.keys(TYPES).map((k) => TYPES[k]));
 
+  /* Выведенные из обращения типы (дефект №12).
+   *
+   * Объявленный, но никем не читаемый тип хуже отсутствующего: клиент шлёт его,
+   * видит `added: true` и считает, что сообщил о чём-то важном, а не читает это
+   * никто. Три типа выведены по разным причинам:
+   *
+   *  — `morning.open` — утро и так определяется временнЫм окном Router-а;
+   *  — `offer.dismissed` / `offer.accepted` — исход предложения уже записывается
+   *    в ledger отдельным вызовом. Два способа хранить один факт — ровно та
+   *    болезнь, ради лечения которой этот словарь и заводился.
+   *
+   * Читаются с диска (старые файлы не должны становиться повреждёнными), но новыми
+   * не принимаются, и приём отвечает `error: 'retired_type'`, а не молчаливым
+   * `added: false` — иначе клиент не узнает, что его больше не слышат. */
+  const RETIRED_TYPES = Object.freeze(['morning.open', 'offer.dismissed', 'offer.accepted']);
+  function isRetired(t) { return RETIRED_TYPES.indexOf(t) >= 0; }
+  // Выведенные типы не бывают точечными: время им уже не нужно.
+
   const SOURCES = Object.freeze(['client', 'server', 'extension', 'native']);
+
+  /* События-моменты: у них есть точное время, и выдумывать его нельзя (дефект №4).
+   * Раньше отсутствующее `at` превращалось в полдень UTC — то есть в факт, которого
+   * никто не наблюдал. «Меня унесло в 23:50» и «меня унесло в полдень» — разные
+   * утверждения о человеке, и второе система придумывала сама.
+   *
+   * Остальные типы описывают день целиком; у них `at` — отметка дня, а не момент. */
+  const POINT_TYPES = Object.freeze([
+    'attention.overran', 'attention.escaped', 'evening.late',
+  ]);
+  function isPoint(type) { return POINT_TYPES.indexOf(type) >= 0; }
 
   const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -93,17 +116,27 @@
   }
 
   /**
-   * Сырое → событие или null. Отвергает, а не чинит: событие с неизвестным типом
-   * или без дня не должно попасть в Router «на всякий случай».
+   * ВХОД С ПРОВОДА → событие или null. Ожидает поля на верхнем уровне
+   * (`plannedMinutes`, `capability`, …) — так их присылает клиент.
+   *
+   * ⚠️ Не путать с `sanitizeEvent`, который читает уже сохранённое событие, где те же
+   * поля лежат в `data`. Раньше обе задачи выполняла одна функция, и `sanitizeLog`
+   * прогонял через неё записи с диска: `plannedMinutes: 60` превращалось в `0`, а
+   * `capability` — в пустую строку. При каждом чтении файла (дефект №1).
+   *
+   * Отвергает, а не чинит: событие с неизвестным типом или без дня не должно попасть
+   * в Router «на всякий случай».
    *
    * @returns {{key,type,at,day,source,ref,data}|null}
    */
-  function normalize(raw) {
+  function normalizeIngress(raw) {
     if (!raw || typeof raw !== 'object') return null;
     const type = TYPE_LIST.indexOf(String(raw.type)) >= 0 ? String(raw.type) : '';
     if (!type) return null;
     const day = isDay(raw.day) ? raw.day : '';
     if (!day) return null;
+    // Момент без времени — не момент. Событие дня получает отметку дня.
+    if (isPoint(type) && !isIso(raw.at)) return null;
     const at = isIso(raw.at) ? raw.at : `${day}T12:00:00.000Z`;
     const source = SOURCES.indexOf(String(raw.source)) >= 0 ? String(raw.source) : 'client';
     const ref = label(raw.ref);
@@ -120,10 +153,37 @@
     if (type === TYPES.DAY_SILENT) {
       data.silentDays = Math.max(1, intOf(raw.silentDays, 60));
     }
-    if (type === TYPES.OFFER_DISMISSED || type === TYPES.OFFER_ACCEPTED) {
-      data.capability = label(raw.capability);
-    }
     return { key: keyOf(type, day, ref), type, at, day, source, ref, data };
+  }
+
+  /**
+   * СОХРАНЁННОЕ событие → событие или null. Читает ограниченные поля из `data`,
+   * а не с верхнего уровня, и пересобирает ключ, чтобы он не расходился с полями.
+   *
+   * Симметрична `normalizeIngress`, и разделены они именно потому, что источник
+   * разный: провод кладёт поля наверх, диск — в `data`.
+   */
+  function sanitizeEvent(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+    const asked = String(raw && raw.type);
+    // Старый файл с выведенным типом остаётся исправным файлом: превратить его в
+    // «повреждённый» значило бы отобрать у человека настоящие события заодно.
+    const type = (TYPE_LIST.indexOf(asked) >= 0 || isRetired(asked)) ? asked : '';
+    if (!type) return null;
+    const day = isDay(raw.day) ? raw.day : '';
+    if (!day) return null;
+    if (!isIso(raw.at)) return null;          // сохранённое событие обязано нести время
+    const source = SOURCES.indexOf(String(raw.source)) >= 0 ? String(raw.source) : 'client';
+    const ref = label(raw.ref);
+    const src = raw.data && typeof raw.data === 'object' && !Array.isArray(raw.data) ? raw.data : {};
+    const data = {};
+    if (type === TYPES.ATTENTION_OVERRAN) {
+      data.plannedMinutes = intOf(src.plannedMinutes, 24 * 60);
+      data.actualMinutes = intOf(src.actualMinutes, 24 * 60);
+    }
+    if (type === TYPES.EVENING_LATE) data.minutesPast = intOf(src.minutesPast, 12 * 60);
+    if (type === TYPES.DAY_SILENT) data.silentDays = Math.max(1, intOf(src.silentDays, 60));
+    return { key: keyOf(type, day, ref), type, at: raw.at, day, source, ref, data };
   }
 
   function emptyLog() { return { version: 1, events: [] }; }
@@ -136,8 +196,19 @@
    * @returns {{log, added: boolean}} added=false означает «уже знали»
    */
   function append(log, raw) {
-    const base = log && Array.isArray(log.events) ? log : emptyLog();
-    const ev = normalize(raw);
+    // Выведенный тип отклоняется вслух: молчаливое «уже знали» скрыло бы от клиента,
+    // что его сообщение больше никто не читает.
+    if (raw && isRetired(String(raw.type))) {
+      const kept = (log === null || log === undefined) ? emptyLog() : sanitizeLog(log);
+      return { log: kept, added: false, error: 'retired_type' };
+    }
+    // Дефект №3: раньше сюда принимался любой объект с массивом `events`, и запись
+    // ложилась поверх непроверенного журнала. Отсутствующий журнал — это первая
+    // запись и норма; присутствующий, но битый — отказ, иначе повреждение
+    // закрепляется следующим же сохранением.
+    const base = (log === null || log === undefined) ? emptyLog() : sanitizeLog(log);
+    if (!base) return { log: null, added: false, error: 'invalid_log' };
+    const ev = normalizeIngress(raw);
     if (!ev) return { log: base, added: false };
     if (base.events.some((x) => x.key === ev.key)) return { log: base, added: false };
     const events = base.events.concat([ev]);
@@ -147,7 +218,7 @@
 
   /** Обрезка по возрасту. Router смотрит на вчера; хранить больше двух недель незачем. */
   function prune(log, today) {
-    const base = log && Array.isArray(log.events) ? log : emptyLog();
+    const base = sanitizeLog(log) || emptyLog();
     if (!isDay(today)) return base;
     const edge = Date.parse(`${today}T00:00:00Z`) - RETAIN_DAYS * 86400000;
     return { version: 1, events: base.events.filter((e) => Date.parse(`${e.day}T00:00:00Z`) >= edge) };
@@ -164,7 +235,7 @@
     const events = [];
     const seen = new Set();
     for (let i = 0; i < raw.events.length; i += 1) {
-      const ev = normalize(raw.events[i]);
+      const ev = sanitizeEvent(raw.events[i]);
       if (!ev) return null;
       if (seen.has(ev.key)) return null;
       seen.add(ev.key);
@@ -183,6 +254,10 @@
 
   return Object.freeze({
     VERSION, TYPES, TYPE_LIST, SOURCES, MAX_EVENTS, RETAIN_DAYS, MAX_LABEL,
-    keyOf, normalize, emptyLog, append, prune, sanitizeLog, onDay, hasOnDay,
+    POINT_TYPES, RETIRED_TYPES,
+    keyOf, normalizeIngress, sanitizeEvent, emptyLog, append, prune, sanitizeLog, onDay, hasOnDay,
+    // `normalize` — прежнее имя входа с провода. Оставлено, чтобы не ломать
+    // вызывающих; новый код должен называть источник явно.
+    normalize: normalizeIngress,
   });
 });

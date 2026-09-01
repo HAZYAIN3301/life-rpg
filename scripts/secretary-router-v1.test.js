@@ -26,7 +26,7 @@ const escapedYday = { type: E.TYPES.ATTENTION_ESCAPED, day: YDAY, at: `${YDAY}T2
 const overranYday = { type: E.TYPES.ATTENTION_OVERRAN, day: YDAY, at: `${YDAY}T22:00:00.000Z`, ref: 'game', plannedMinutes: 60, actualMinutes: 300 };
 const silentYday = { type: E.TYPES.DAY_SILENT, day: YDAY, at: `${YDAY}T20:00:00.000Z`, silentDays: 2 };
 
-const base = (over) => Object.assign({ now: morning, today: DAY, tzOffsetMinutes: 0, events: logWith(escapedYday), ledger: R.emptyLedger() }, over || {});
+const base = (over) => Object.assign({ invocation: 'app_open', now: morning, today: DAY, tzOffsetMinutes: 0, events: logWith(escapedYday), ledger: R.emptyLedger() }, over || {});
 
 // ── события ────────────────────────────────────────────────────────────────────
 
@@ -48,7 +48,7 @@ test('🔴 один факт с двух устройств — одно соб�
 });
 
 test('событие не переносит содержимое экрана', () => {
-  const ev = E.normalize({ type: E.TYPES.ATTENTION_OVERRAN, day: DAY, ref: 'tiktok', url: 'https://x/secret', query: 'что-то личное', plannedMinutes: 10, actualMinutes: 90 });
+  const ev = E.normalize({ type: E.TYPES.ATTENTION_OVERRAN, day: DAY, at: `${DAY}T21:00:00.000Z`, ref: 'tiktok', url: 'https://x/secret', query: 'что-то личное', plannedMinutes: 10, actualMinutes: 90 });
   assert.deepStrictEqual(Object.keys(ev.data).sort(), ['actualMinutes', 'plannedMinutes']);
   assert.strictEqual(JSON.stringify(ev).includes('secret'), false);
   assert.strictEqual(JSON.stringify(ev).includes('личное'), false);
@@ -73,7 +73,7 @@ test('старые события выпадают из окна', () => {
 test('утром после «меня унесло» появляется ровно один ход', () => {
   const offer = R.next(base());
   assert.ok(offer, 'ход должен быть');
-  assert.strictEqual(offer.capability, 'morning-after-overrun');
+  assert.strictEqual(offer.capability, 'morning-recovery', 'имя не лжёт: ход бывает не только после overrun');
   assert.strictEqual(offer.action, R.ACTIONS.RECOVERY_DAY);
   assert.strictEqual(offer.reason, 'escaped');
   assert.strictEqual(offer.askOnly, false);
@@ -177,7 +177,7 @@ test('на следующий день с новым поводом ход во�
   const ledger = R.mark(R.emptyLedger(), first, 'dismissed', morning);
   const nextDay = '2026-09-03';
   const events = logWith(Object.assign({}, escapedYday, { day: DAY, at: `${DAY}T23:00:00.000Z` }));
-  const offer = R.next({ now: `${nextDay}T09:00:00.000Z`, today: nextDay, tzOffsetMinutes: 0, events, ledger });
+  const offer = R.next({ invocation: 'app_open', now: `${nextDay}T09:00:00.000Z`, today: nextDay, tzOffsetMinutes: 0, events, ledger });
   assert.ok(offer, 'cooldown привязан к дню, а не навсегда');
 });
 
@@ -345,4 +345,100 @@ test('🔴 Router не читает часы, State, DOM и сеть (дефек
     assert.strictEqual(code.includes(bad), false, `Router вышел за свою роль: «${bad}»`);
   }
   assert.strictEqual(/new Date\(\s*\)/.test(code), false, 'голый new Date() — это чтение часов');
+});
+
+test('🔴 чтение файла не обнуляет поля события (дефект №1)', () => {
+  // Самая дорогая из найденных ошибок: `sanitizeLog` прогонял записи с диска через
+  // разбор входа с провода. Там поля лежат на верхнем уровне, а в сохранённом
+  // событии — в `data`, поэтому 60 и 300 минут превращались в 0, а `capability` — в
+  // пустую строку. При КАЖДОМ чтении файла сервером.
+  const written = E.append(E.emptyLog(), {
+    type: E.TYPES.ATTENTION_OVERRAN, day: YDAY, at: `${YDAY}T22:00:00.000Z`,
+    ref: 'tiktok', plannedMinutes: 60, actualMinutes: 300,
+  }).log;
+  const fromDisk = E.sanitizeLog(JSON.parse(JSON.stringify(written)));
+  assert.deepStrictEqual(fromDisk.events[0].data, { plannedMinutes: 60, actualMinutes: 300 });
+
+  const late = E.append(E.emptyLog(), {
+    type: E.TYPES.EVENING_LATE, day: YDAY, at: `${YDAY}T23:30:00.000Z`, minutesPast: 90,
+  }).log;
+  assert.strictEqual(E.sanitizeLog(JSON.parse(JSON.stringify(late))).events[0].data.minutesPast, 90);
+
+  // Многократный круг ничего не размывает — файл читается при каждом запросе.
+  let log = written;
+  for (let i = 0; i < 5; i += 1) log = E.sanitizeLog(JSON.parse(JSON.stringify(log)));
+  assert.deepStrictEqual(log.events[0].data, { plannedMinutes: 60, actualMinutes: 300 });
+});
+
+test('🔴 разбор входа и разбор диска — разные функции', () => {
+  // Они читают поля из разных мест, и слияние их в одну было причиной дефекта №1.
+  const wire = { type: E.TYPES.EVENING_LATE, day: YDAY, at: `${YDAY}T23:30:00.000Z`, minutesPast: 90 };
+  const ingress = E.normalizeIngress(wire);
+  assert.strictEqual(ingress.data.minutesPast, 90);
+  // Вход с провода не понимает вложенный `data` — и не должен.
+  assert.strictEqual(E.normalizeIngress({ type: wire.type, day: YDAY, at: wire.at, data: { minutesPast: 90 } }).data.minutesPast, 0);
+  // Разбор диска не понимает верхний уровень — и тоже не должен.
+  assert.strictEqual(E.sanitizeEvent(ingress).data.minutesPast, 90);
+  assert.strictEqual(E.sanitizeEvent({ type: wire.type, day: YDAY, at: wire.at, minutesPast: 90 }).data.minutesPast, 0);
+});
+
+test('🔴 момент без времени отвергается, а не назначается на полдень (дефект №4)', () => {
+  // «Меня унесло в 23:50» и «меня унесло в полдень» — разные утверждения о человеке,
+  // и второе система придумывала сама.
+  for (const type of E.POINT_TYPES) {
+    assert.strictEqual(E.normalizeIngress({ type, day: YDAY }), null, `выдумано время для ${type}`);
+    assert.strictEqual(E.normalizeIngress({ type, day: YDAY, at: 'вчера' }), null, type);
+    assert.ok(E.normalizeIngress({ type, day: YDAY, at: `${YDAY}T23:50:00.000Z` }), type);
+  }
+  // События про день целиком времени не имеют — у них отметка дня, и это не выдумка.
+  const silent = E.normalizeIngress({ type: E.TYPES.DAY_SILENT, day: YDAY, silentDays: 2 });
+  assert.ok(silent);
+  assert.strictEqual(silent.at, `${YDAY}T12:00:00.000Z`);
+});
+
+test('🔴 запись поверх повреждённого журнала не проходит (дефект №3)', () => {
+  // Иначе повреждение закрепляется следующим же сохранением.
+  const broken = { version: 1, events: [{ type: 'выдуманный', day: YDAY }] };
+  const r = E.append(broken, { type: E.TYPES.DAY_CLOSED, day: YDAY });
+  assert.strictEqual(r.added, false);
+  assert.strictEqual(r.log, null, 'вызывающему нечего сохранять');
+  assert.strictEqual(r.error, 'invalid_log');
+
+  // Отсутствующий журнал — это первая запись, а не повреждение.
+  for (const empty of [null, undefined]) {
+    const first = E.append(empty, { type: E.TYPES.DAY_CLOSED, day: YDAY });
+    assert.strictEqual(first.added, true, `${empty} должен быть первой записью`);
+  }
+});
+
+test('🔴 Router не срабатывает без явного повода вызова (дефект №14)', () => {
+  // Иначе число показов зависит от того, сколько раз перерисовался экран, а не от
+  // того, что случилось с человеком.
+  assert.ok(R.next(base({ invocation: 'app_open' })));
+  assert.ok(R.next(base({ invocation: 'scheduler' })));
+  for (const bad of [undefined, null, '', 'render', 'tick', 42]) {
+    assert.strictEqual(R.next(base({ invocation: bad })), null, `сработал на «${bad}»`);
+  }
+});
+
+test('🔴 закрытый день из журнала событий тоже гасит ход (дефект №12)', () => {
+  // `day.closed` был объявлен и никем не читался. Теперь он потребляется — и это
+  // единственный честный способ не хранить мёртвую схему.
+  const events = logWith(escapedYday, { type: E.TYPES.DAY_CLOSED, day: DAY });
+  assert.strictEqual(R.next(base({ events })), null);
+  assert.ok(R.next(base({ events: logWith(escapedYday) })), 'без закрытия ход есть');
+});
+
+test('🔴 выведенные типы не принимаются молча (дефект №12)', () => {
+  for (const type of E.RETIRED_TYPES) {
+    const r = E.append(E.emptyLog(), { type, day: YDAY, at: `${YDAY}T09:00:00.000Z` });
+    assert.strictEqual(r.added, false, type);
+    assert.strictEqual(r.error, 'retired_type', `клиент должен узнать, что его не слышат: ${type}`);
+  }
+  // Старый файл с выведенным типом остаётся исправным: превратить его в
+  // «повреждённый» значило бы отобрать у человека и настоящие события заодно.
+  const old = { version: 1, events: [
+    { type: 'morning.open', day: YDAY, at: `${YDAY}T07:00:00.000Z`, source: 'client', ref: '', data: {} },
+  ] };
+  assert.ok(E.sanitizeLog(old), 'старый файл читается');
 });

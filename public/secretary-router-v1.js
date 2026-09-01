@@ -63,6 +63,15 @@
   // Ниже этого порога ход обязан быть вопросом, а не утверждением.
   const ASK_BELOW = 0.6;
   // Утро: окно, в котором перехват вообще уместен. Позже человек уже внутри дня.
+  /* Дефект №14: Router обязан знать, ПОЧЕМУ его спросили.
+   *
+   * Без этого он срабатывал на любой перерисовке и на любом тике часов — то есть
+   * количество показов зависело от того, сколько раз перерисовался экран, а не от
+   * того, что случилось с человеком. Список закрытый: неизвестный повод вызова
+   * означает молчание, а не «наверное, можно».
+   */
+  const INVOCATIONS = Object.freeze(['app_open', 'scheduler', 'manual']);
+
   const MORNING_FROM = 5;
   const MORNING_TO = 13;
 
@@ -91,7 +100,7 @@
    * что ей нужно, что предлагает, как часто может повторяться. */
   const CAPABILITIES = Object.freeze([
     Object.freeze({
-      id: 'morning-after-overrun',
+      id: 'morning-recovery',
       priority: 100,
       cooldown: 'once_per_local_day',
       action: ACTIONS.RECOVERY_DAY,
@@ -213,7 +222,8 @@
    * Выбор одного хода. Возвращает карточку или null.
    *
    * @param {object} input
-   *  - now: ISO, обязателен (модуль не читает часы сам)
+   *  - invocation: почему спросили — `app_open` | `scheduler` | `manual`. Обязателен
+ *  - now: ISO, обязателен (модуль не читает часы сам)
    *  - today: YYYY-MM-DD в локальном дне пользователя
    *  - tzOffsetMinutes: сдвиг локального времени от UTC
    *  - events: журнал событий
@@ -225,6 +235,7 @@
    */
   function next(input) {
     const inp = input || {};
+    if (INVOCATIONS.indexOf(inp.invocation) < 0) return null;
     if (!isDay(inp.today) || typeof inp.now !== 'string') return null;
     const ledger = sanitizeLedger(inp.ledger) || emptyLedger();
 
@@ -232,12 +243,17 @@
       const cap = CAPABILITIES[i];
       if (isCoolingDown(ledger, cap.id, inp.today)) continue;
 
-      if (cap.id === 'morning-after-overrun') {
+      if (cap.id === 'morning-recovery') {
         if (!inMorning(inp.now, inp.tzOffsetMinutes)) continue;
         // Дефект №9: вход объявлен и не использовался. Человек, уже закрывший день
         // сам, принял решение о нём — предлагать ему после этого День восстановления
         // значит спорить с его собственным выводом.
+        //
+        // Источников два, и оба законны: явный вход от вызывающего и собственное
+        // событие словаря. Второе делает `day.closed` наконец потребляемым —
+        // объявленный, но никем не читаемый тип хуже отсутствующего.
         if (inp.dayClosed === true) continue;
+        if (Events && Events.hasOnDay(inp.events, inp.today, Events.TYPES.DAY_CLOSED)) continue;
         // Поверхность, которая спрашивает. Неизвестную не обслуживаем: канал, о
         // котором никто не знает, — это канал, способный показать второй ход.
         // Поле отсутствует — это старый вызывающий, ему карточка. Поле прислано,
@@ -294,7 +310,7 @@
   }
 
   return Object.freeze({
-    VERSION, ACTIONS, ACTION_LIST, CHANNELS, OFFER_STATES, CAPABILITIES,
+    VERSION, ACTIONS, ACTION_LIST, CHANNELS, OFFER_STATES, INVOCATIONS, CAPABILITIES,
     ASK_BELOW, MORNING_FROM, MORNING_TO,
     emptyLedger, sanitizeLedger, yesterdayTrouble, ownWords,
     isCoolingDown, next, mark,

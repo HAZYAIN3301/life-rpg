@@ -17,7 +17,7 @@ const C = require('../public/secretary-claim-v1.js');
 const SRC = path.join(__dirname, '..', 'public/secretary-claim-v1.js');
 const T0 = '2026-09-02T06:00:00.000Z';
 const plus = (min) => new Date(Date.parse(T0) + min * 60000).toISOString();
-const OFFER = 'morning-after-overrun|2026-09-02|attention.escaped|2026-09-01|tiktok';
+const OFFER = 'morning-recovery|2026-09-02|attention.escaped|2026-09-01|tiktok';
 
 test('🔴 две поверхности не могут показать один ход', () => {
   const first = C.claim(C.emptyClaims(), OFFER, 'push', T0);
@@ -80,7 +80,7 @@ test('🔴 зависшая заявка отпускает ход по исте
 
 test('разные ходы друг другу не мешают', () => {
   const a = C.claim(C.emptyClaims(), OFFER, 'push', T0);
-  const b = C.claim(a.claims, 'morning-after-overrun|2026-09-03|x', 'card', T0);
+  const b = C.claim(a.claims, 'morning-recovery|2026-09-03|x', 'card', T0);
   assert.strictEqual(b.ok, true);
 });
 

@@ -35,6 +35,7 @@ const log = E.append(E.emptyLog(),
   { type: E.TYPES.ATTENTION_ESCAPED, day: YDAY, at: `${YDAY}T23:50:00.000Z`, ref: 'tiktok' }).log;
 
 const ask = (channel, ledger) => R.next({
+  invocation: channel === 'push' ? 'scheduler' : 'app_open',
   now: NOW, today: DAY, tzOffsetMinutes: 0, events: log,
   ledger: ledger || R.emptyLedger(), channel,
 });

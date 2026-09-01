@@ -135,7 +135,7 @@ test('Секретарь: доступ, идемпотентность и чес
   await t.test('утром после повода приходит ровно один ход', async () => {
     const d = await (await get(base, alice.cookie, '/api/secretary', HDR)).json();
     assert.ok(d.offer, 'ход должен быть');
-    assert.strictEqual(d.offer.capability, 'morning-after-overrun');
+    assert.strictEqual(d.offer.capability, 'morning-recovery', 'имя не лжёт: ход бывает не только после overrun');
     assert.ok(d.offer.cooldownKey);
     assert.strictEqual(Array.isArray(d.offer.channels), true);
   });
