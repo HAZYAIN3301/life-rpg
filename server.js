@@ -18,6 +18,8 @@ const BoardV2Community = require('./server-board-v2-community-v1.js');
 const BoardV2Offers = require('./public/board-v2-offers.js');
 const GoalsInitiativesV1 = require('./public/goals-initiatives-v1.js');
 const FounderPassV1 = require('./public/founder-pass-v1.js');
+const SecretaryEventsV1 = require('./public/secretary-events-v1.js');
+const SecretaryRouterV1 = require('./public/secretary-router-v1.js');
 const ServerUserRegistryV1 = require('./server-user-registry-v1.js');
 const AccountProfileV1 = require('./public/account-profile-v1.js');
 
@@ -3766,6 +3768,89 @@ const server = http.createServer(async (req, res) => {
   // Список общий, а не пользовательский, потому что вопрос «сколько мест занято»
   // глобальный. Отсюда две вещи, которых нет у per-user сторов: свой ответ
   // человек видит целиком, чужие — никогда, даже обезличенно.
+  // ---- Секретарь: журнал событий и выбор одного хода -------------------------
+  //
+  // SECRETARY-OS-PAIN-MAP §7. Router детерминирован и живёт в чистом модуле; сервер
+  // отвечает только за владение, границы и запись. Здесь намеренно НЕТ ИИ: выбор
+  // хода не должен зависеть от доступности ключа или настроения модели.
+  //
+  // Приватность: событие несёт факт, время и ограниченные поля. Ни URL, ни запросов,
+  // ни текста страниц — модуль их и не примет, но гейт повторён здесь, потому что
+  // это единственное место, где данные попадают на диск.
+  if (u === '/api/secretary' || u === '/api/secretary/event' || u === '/api/secretary/offer') {
+    const uid = sessionUserId(req);
+    if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const dir = userDataDir(uid);
+    const logFile = path.join(dir, 'secretary-events.json');
+    const ledgerFile = path.join(dir, 'secretary-ledger.json');
+
+    // Повреждённый файл отдаётся ошибкой, а не пустым журналом: пустой означал бы
+    // «ничего не случилось» и разрешил бы затереть настоящие события.
+    const readChecked = (file, sanitize, empty) => {
+      if (!fs.existsSync(file)) return { value: empty(), error: '' };
+      try {
+        const value = sanitize(JSON.parse(fs.readFileSync(file, 'utf8')));
+        return value ? { value, error: '' } : { value: null, error: 'invalid' };
+      } catch { return { value: null, error: 'invalid' }; }
+    };
+    const readLog = () => readChecked(logFile, SecretaryEventsV1.sanitizeLog, SecretaryEventsV1.emptyLog);
+    const readLedger = () => readChecked(ledgerFile, SecretaryRouterV1.sanitizeLedger, SecretaryRouterV1.emptyLedger);
+    const persist = (file, name, value) => {
+      fs.mkdirSync(dir, { recursive: true });
+      backupFile(dir, name);
+      writeJsonAtomic(file, value);
+    };
+
+    if (u === '/api/secretary' && req.method === 'GET') {
+      const log = readLog(), led = readLedger();
+      if (log.error || led.error) return sendJson(res, 422, { error: 'invalid_secretary_state' });
+      const today = String(req.headers['x-local-day'] || '').slice(0, 10);
+      const tz = Number(req.headers['x-tz-offset']) || 0;
+      const offer = SecretaryRouterV1.next({
+        now: new Date().toISOString(),
+        today: /^\d{4}-\d{2}-\d{2}$/.test(today) ? today : new Date().toISOString().slice(0, 10),
+        tzOffsetMinutes: tz,
+        events: log.value,
+        ledger: led.value,
+        commitments: readUserJson(uid, 'commitments'),
+      });
+      return sendJson(res, 200, { offer: offer || null });
+    }
+
+    if (u === '/api/secretary/event' && req.method === 'POST') {
+      let body = {}; try { body = JSON.parse(await readBody(req, 8 * 1024)); } catch {}
+      const stored = readLog();
+      if (stored.error) return sendJson(res, 422, { error: 'invalid_secretary_state' });
+      const step = SecretaryEventsV1.append(stored.value, body);
+      // added=false — это не ошибка, а нормальный повтор при retry или со второго
+      // устройства. Клиент обязан увидеть 200 и не пытаться снова.
+      if (step.added) {
+        const pruned = SecretaryEventsV1.prune(step.log, new Date().toISOString().slice(0, 10));
+        try { persist(logFile, 'secretary-events', pruned); }
+        catch { return sendJson(res, 500, { error: 'save_failed' }); }
+      }
+      return sendJson(res, 200, { ok: true, added: step.added });
+    }
+
+    if (u === '/api/secretary/offer' && req.method === 'POST') {
+      let body = {}; try { body = JSON.parse(await readBody(req, 4 * 1024)); } catch {}
+      const led = readLedger();
+      if (led.error) return sendJson(res, 422, { error: 'invalid_secretary_state' });
+      const state = String(body.state || '');
+      const offer = { cooldownKey: String(body.cooldownKey || '').slice(0, 160) };
+      if (!offer.cooldownKey) return sendJson(res, 400, { error: 'no_offer' });
+      // Статус проверяем ДО вызова: `mark` всегда возвращает новый объект, поэтому
+      // сравнение результата по идентичности молча пропускало любой мусор.
+      if (SecretaryRouterV1.OFFER_STATES.indexOf(state) < 0) return sendJson(res, 400, { error: 'bad_state' });
+      const next = SecretaryRouterV1.mark(led.value, offer, state, new Date().toISOString());
+      try { persist(ledgerFile, 'secretary-ledger', next); }
+      catch { return sendJson(res, 500, { error: 'save_failed' }); }
+      return sendJson(res, 200, { ok: true });
+    }
+
+    return sendJson(res, 404, { error: 'not found' });
+  }
+
   if (u === '/api/founder-pass' && (req.method === 'GET' || req.method === 'POST')) {
     const uid = sessionUserId(req);
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
