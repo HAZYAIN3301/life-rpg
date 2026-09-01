@@ -43,8 +43,8 @@ test('Today composes one work contour and moves secondary systems out of its ren
 
   assert.match(composition, /\$\{todayHero\}\$\{captureBar\(\)\}/,
     'capture must remain immediately after the day hero');
-  assert.match(composition, /\$\{companionCard\(attentionTodayControlHTML\(\)\)\}/,
-    'recovery/attention must stay inside the companion support card');
+  assert.match(composition, /\$\{companionCard\(attentionTodayControlHTML\(selectedNudge\)\)\}/,
+    'recovery/attention and the selected offer must stay inside the companion support card');
 });
 
 test('Founder Pass belongs to the Settings account group, not Today', () => {
@@ -250,7 +250,7 @@ test('companion and quick capture keep explicit accessible names', () => {
 });
 
 test('new secretary and capture emoji remain decorative for assistive technology', () => {
-  const control = section(APP, 'function attentionTodayControlHTML() {', '\nfunction attentionPolicyId(');
+  const control = section(APP, 'function attentionTodayControlHTML(', '\nfunction attentionPolicyId(');
   for (const glyph of ['↩', '🌿', '🌙', '🛡']) {
     assert.match(control, new RegExp(`<span aria-hidden="true">${glyph}<\\/span>`),
       `${glyph} must not be announced before the adjacent text label`);

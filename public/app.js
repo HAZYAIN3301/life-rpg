@@ -1095,6 +1095,54 @@ const I18N_EXTRA = {
   'Открыть границу': { en: 'Open boundary', de: 'Grenze öffnen', uk: 'Відкрити межу', es: 'Abrir límite' },
   'Satoru рядом': { en: 'Satoru is here', de: 'Satoru ist da', uk: 'Satoru поруч', es: 'Satoru está aquí' },
   'Тень рядом': { en: 'Shadow is here', de: 'Schatten ist da', uk: 'Тінь поруч', es: 'Sombra está aquí' },
+  'Другая поддержка': { en: 'Other support', de: 'Andere Unterstützung', uk: 'Інша підтримка', es: 'Otro apoyo' },
+  'Сейчас всё ясно': { en: 'Everything is clear for now', de: 'Für jetzt ist alles klar', uk: 'Зараз усе зрозуміло', es: 'Por ahora todo está claro' },
+  'Следующий шаг уже выбран — Тень не будет отвлекать.': { en: 'Your next step is already chosen — Shadow will not distract you.', de: 'Dein nächster Schritt steht bereits fest — der Schatten lenkt dich nicht ab.', uk: 'Наступний крок уже обрано — Тінь не відволікатиме.', es: 'Tu siguiente paso ya está elegido; la Sombra no te distraerá.' },
+  'Личный эксперимент': { en: 'Personal experiment', de: 'Persönliches Experiment', uk: 'Особистий експеримент', es: 'Experimento personal' },
+  '30 дней с Тенью': { en: '30 days with Shadow', de: '30 Tage mit dem Schatten', uk: '30 днів із Тінню', es: '30 días con la Sombra' },
+  'Проверим, помогает ли один своевременный возврат. Без нового списка дел.': { en: 'Let us see whether one timely return helps. No new task list.', de: 'Wir prüfen, ob eine rechtzeitige Rückkehr hilft. Keine neue Aufgabenliste.', uk: 'Перевіримо, чи допомагає одне вчасне повернення. Без нового списку справ.', es: 'Veamos si un regreso a tiempo ayuda. Sin una lista nueva.' },
+  'Данные: время возврата, ответы и снимок личных рамок — сон и лимиты дня. Без ссылок, страниц и просмотренного контента.': { en: 'Data: return time, your answers, and a snapshot of personal boundaries — sleep and day limits. No links, pages, or viewed content.', de: 'Daten: Rückkehrzeit, deine Antworten und ein Schnappschuss persönlicher Grenzen — Schlaf und Tageslimits. Keine Links, Seiten oder angesehenen Inhalte.', uk: 'Дані: час повернення, відповіді та знімок особистих меж — сон і ліміти дня. Без посилань, сторінок і переглянутого контенту.', es: 'Datos: hora de regreso, tus respuestas y una instantánea de límites personales — sueño y límites del día. Sin enlaces, páginas ni contenido visto.' },
+  'Начать 30 дней': { en: 'Start 30 days', de: '30 Tage starten', uk: 'Почати 30 днів', es: 'Empezar 30 días' },
+  'День {day} из 30': { en: 'Day {day} of 30', de: 'Tag {day} von 30', uk: 'День {day} із 30', es: 'Día {day} de 30' },
+  'Сегодня один возврат': { en: 'One return today', de: 'Heute eine Rückkehr', uk: 'Сьогодні одне повернення', es: 'Un regreso hoy' },
+  'Снять накопившееся и выбрать один шаг на 10 минут.': { en: 'Clear the buildup and choose one ten-minute step.', de: 'Löse den Rückstau und wähle einen Zehn-Minuten-Schritt.', uk: 'Зняти накопичене й обрати один крок на десять хвилин.', es: 'Quita lo acumulado y elige un paso de diez minutos.' },
+  'Открыть возврат': { en: 'Open return', de: 'Rückkehr öffnen', uk: 'Відкрити повернення', es: 'Abrir regreso' },
+  'Как это подействовало?': { en: 'How did that affect you?', de: 'Wie hat das auf dich gewirkt?', uk: 'Як це на тебе подіяло?', es: '¿Cómo te afectó?' },
+  'После возврата стало': { en: 'After returning, I felt', de: 'Nach der Rückkehr ging es mir', uk: 'Після повернення стало', es: 'Después de volver me sentí' },
+  'Выбери один ответ': { en: 'Choose one answer', de: 'Wähle eine Antwort', uk: 'Обери одну відповідь', es: 'Elige una respuesta' },
+  'Лучше': { en: 'Better', de: 'Besser', uk: 'Краще', es: 'Mejor' },
+  'Так же': { en: 'The same', de: 'Gleich', uk: 'Так само', es: 'Igual' },
+  'Хуже': { en: 'Worse', de: 'Schlechter', uk: 'Гірше', es: 'Peor' },
+  'Добавить подробности': { en: 'Add details', de: 'Details hinzufügen', uk: 'Додати подробиці', es: 'Añadir detalles' },
+  'Было приятно?': { en: 'Was it enjoyable?', de: 'War es angenehm?', uk: 'Було приємно?', es: '¿Fue agradable?' },
+  'Осталось сожаление?': { en: 'Any regret left?', de: 'Blieb Bedauern?', uk: 'Залишився жаль?', es: '¿Quedó arrepentimiento?' },
+  'Удалось удержать выбранную границу?': { en: 'Did the chosen boundary hold?', de: 'Hat die gewählte Grenze gehalten?', uk: 'Чи вдалося втримати обрану межу?', es: '¿Se mantuvo el límite elegido?' },
+  'Да': { en: 'Yes', de: 'Ja', uk: 'Так', es: 'Sí' },
+  'Нет': { en: 'No', de: 'Nein', uk: 'Ні', es: 'No' },
+  'Восстановило?': { en: 'Did it restore you?', de: 'Hat es dich erholt?', uk: 'Це відновило?', es: '¿Te ayudó a recuperarte?' },
+  'Не знаю пока': { en: 'Not sure yet', de: 'Noch nicht sicher', uk: 'Поки не знаю', es: 'Aún no lo sé' },
+  'Скорее да': { en: 'Mostly yes', de: 'Eher ja', uk: 'Скоріше так', es: 'Más bien sí' },
+  'Скорее нет': { en: 'Mostly no', de: 'Eher nein', uk: 'Скоріше ні', es: 'Más bien no' },
+  'Сохранить наблюдение': { en: 'Save observation', de: 'Beobachtung speichern', uk: 'Зберегти спостереження', es: 'Guardar observación' },
+  'Не удалось начать 30 дней. Ничего не изменено.': { en: 'Could not start the 30 days. Nothing changed.', de: 'Die 30 Tage konnten nicht gestartet werden. Nichts wurde geändert.', uk: 'Не вдалося почати 30 днів. Нічого не змінено.', es: 'No se pudieron iniciar los 30 días. Nada cambió.' },
+  '30 дней начались — просто наблюдаем, что помогает.': { en: 'The 30 days have started — we are simply observing what helps.', de: 'Die 30 Tage haben begonnen — wir beobachten nur, was hilft.', uk: '30 днів почалися — просто спостерігаємо, що допомагає.', es: 'Los 30 días han empezado; solo observamos qué ayuda.' },
+  'Не удалось сохранить наблюдение.': { en: 'Could not save the observation.', de: 'Die Beobachtung konnte nicht gespeichert werden.', uk: 'Не вдалося зберегти спостереження.', es: 'No se pudo guardar la observación.' },
+  'Наблюдение сохранено.': { en: 'Observation saved.', de: 'Beobachtung gespeichert.', uk: 'Спостереження збережено.', es: 'Observación guardada.' },
+  'Остановить эксперимент': { en: 'Stop experiment', de: 'Experiment stoppen', uk: 'Зупинити експеримент', es: 'Detener experimento' },
+  'Эксперимент завершён.': { en: 'Experiment completed.', de: 'Experiment abgeschlossen.', uk: 'Експеримент завершено.', es: 'Experimento completado.' },
+  'Эксперимент остановлен. Наблюдения сохранены.': { en: 'Experiment stopped. Observations were kept.', de: 'Experiment beendet. Beobachtungen wurden gespeichert.', uk: 'Експеримент зупинено. Спостереження збережено.', es: 'Experimento detenido. Se conservaron las observaciones.' },
+  'Пока калибруемся': { en: 'Still calibrating', de: 'Noch in der Kalibrierung', uk: 'Поки калібруємося', es: 'Aún calibrando' },
+  'Эксперимент готов к разбору': { en: 'Experiment ready to review', de: 'Experiment bereit zur Auswertung', uk: 'Експеримент готовий до розбору', es: 'Experimento listo para revisar' },
+  'Известных ответов: {known} · неизвестных: {unknown}': { en: 'Known answers: {known} · unknown: {unknown}', de: 'Bekannte Antworten: {known} · unbekannt: {unknown}', uk: 'Відомих відповідей: {known} · невідомих: {unknown}', es: 'Respuestas conocidas: {known} · desconocidas: {unknown}' },
+  'Скорость возврата пока не измерена (сейчас n={currentN}, раньше n={baselineN}).': { en: 'Return speed is not measured yet (now n={currentN}, before n={baselineN}).', de: 'Die Rückkehrgeschwindigkeit ist noch nicht gemessen (jetzt n={currentN}, vorher n={baselineN}).', uk: 'Швидкість повернення ще не виміряна (зараз n={currentN}, раніше n={baselineN}).', es: 'La velocidad de regreso aún no está medida (ahora n={currentN}, antes n={baselineN}).' },
+  'Медиана возврата: {current} мин (n={currentN}) · раньше: {baseline} мин (n={baselineN})': { en: 'Median return: {current} min (n={currentN}) · before: {baseline} min (n={baselineN})', de: 'Median der Rückkehr: {current} Min. (n={currentN}) · vorher: {baseline} Min. (n={baselineN})', uk: 'Медіана повернення: {current} хв (n={currentN}) · раніше: {baseline} хв (n={baselineN})', es: 'Mediana de regreso: {current} min (n={currentN}) · antes: {baseline} min (n={baselineN})' },
+  'Посмотреть подробнее': { en: 'See details', de: 'Details ansehen', uk: 'Переглянути докладніше', es: 'Ver detalles' },
+  'Ответы на предложение: {decided} · принято: {accepted} · пропущено: {dismissed}': { en: 'Offer decisions: {decided} · accepted: {accepted} · skipped: {dismissed}', de: 'Entscheidungen zum Angebot: {decided} · angenommen: {accepted} · übersprungen: {dismissed}', uk: 'Рішень щодо пропозиції: {decided} · прийнято: {accepted} · пропущено: {dismissed}', es: 'Decisiones sobre la oferta: {decided} · aceptadas: {accepted} · omitidas: {dismissed}' },
+  'После возврата: лучше {better} · так же {same} · хуже {worse} (n={known})': { en: 'After returning: better {better} · same {same} · worse {worse} (n={known})', de: 'Nach der Rückkehr: besser {better} · gleich {same} · schlechter {worse} (n={known})', uk: 'Після повернення: краще {better} · так само {same} · гірше {worse} (n={known})', es: 'Después de volver: mejor {better} · igual {same} · peor {worse} (n={known})' },
+  'Сожаление: нет {none} · есть {some} (n={known})': { en: 'Regret: none {none} · some {some} (n={known})', de: 'Bedauern: keines {none} · vorhanden {some} (n={known})', uk: 'Жаль: немає {none} · є {some} (n={known})', es: 'Arrepentimiento: ninguno {none} · algo {some} (n={known})' },
+  'Граница: да {yes} · нет {no} (n={known})': { en: 'Boundary held: yes {yes} · no {no} (n={known})', de: 'Grenze gehalten: ja {yes} · nein {no} (n={known})', uk: 'Межу втримано: так {yes} · ні {no} (n={known})', es: 'Límite mantenido: sí {yes} · no {no} (n={known})' },
+  'Экспортировать': { en: 'Export', de: 'Exportieren', uk: 'Експортувати', es: 'Exportar' },
+  'Завершить эксперимент': { en: 'Complete experiment', de: 'Experiment abschließen', uk: 'Завершити експеримент', es: 'Completar experimento' },
   'Пора завершить рабочий день': { en: 'Time to end the workday', de: 'Zeit, den Arbeitstag zu beenden', uk: 'Час завершити робочий день', es: 'Es hora de terminar la jornada' },
   'Не нужно держать всю систему в голове': { en: 'You do not need to keep the whole system in your head', de: 'Du musst nicht das ganze System im Kopf behalten', uk: 'Не потрібно тримати всю систему в голові', es: 'No necesitas tener todo el sistema en la cabeza' },
   'Выбери нужную поддержку': { en: 'Choose the support you need', de: 'Wähle die Unterstützung, die du brauchst', uk: 'Обери потрібну підтримку', es: 'Elige el apoyo que necesitas' },
@@ -4678,6 +4726,60 @@ function validateSettingsPayload(value) {
     if (secretary.dailyReminder != null && typeof secretary.dailyReminder !== 'boolean') return false;
     if (secretary.configured != null && typeof secretary.configured !== 'boolean') return false;
     if (secretary.lastEveningPromptDate != null && secretary.lastEveningPromptDate !== '' && !/^\d{4}-\d{2}-\d{2}$/.test(secretary.lastEveningPromptDate)) return false;
+    if (secretary.experimentV1 != null) {
+      const experiment = secretary.experimentV1;
+      if (!experiment || typeof experiment !== 'object' || Array.isArray(experiment)) return false;
+      const exactKeys = (object, required, optional = []) => {
+        const keys = Object.keys(object || {}), allowed = new Set([...required, ...optional]);
+        return required.every((key) => Object.prototype.hasOwnProperty.call(object, key))
+          && keys.every((key) => allowed.has(key));
+      };
+      if (!exactKeys(experiment, [
+        'version', 'id', 'status', 'protocolVersion', 'startedOn', 'endsOn',
+        'baselineWindowDays', 'profileSnapshot', 'refs', 'checkIns',
+      ], ['completedAt', 'stoppedAt'])) return false;
+      if (experiment.version !== 1 || !['active', 'completed', 'stopped'].includes(experiment.status)
+        || experiment.protocolVersion !== 'morning-recovery-v1'
+        || typeof experiment.id !== 'string' || !experiment.id || experiment.id.length > 60
+        || experiment.baselineWindowDays !== 14) return false;
+      if (!secretaryExperimentDateValid(experiment.startedOn) || !secretaryExperimentDateValid(experiment.endsOn)
+        || experiment.endsOn !== addDays(experiment.startedOn, 29)) return false;
+      if (!experiment.profileSnapshot || typeof experiment.profileSnapshot !== 'object' || Array.isArray(experiment.profileSnapshot)
+        || !experiment.refs || typeof experiment.refs !== 'object' || Array.isArray(experiment.refs)) return false;
+      if (!exactKeys(experiment.profileSnapshot, [
+        'sleepTarget', 'wakeTarget', 'lateReturnSleepTarget', 'coreMax', 'supportMax', 'restMenuRevision',
+      ]) || !/^([01]\d|2[0-3]):[0-5]\d$/.test(experiment.profileSnapshot.sleepTarget)
+        || !/^([01]\d|2[0-3]):[0-5]\d$/.test(experiment.profileSnapshot.wakeTarget)
+        || !/^([01]\d|2[0-3]):[0-5]\d$/.test(experiment.profileSnapshot.lateReturnSleepTarget)
+        || experiment.profileSnapshot.coreMax !== 1 || experiment.profileSnapshot.supportMax !== 2
+        || experiment.profileSnapshot.restMenuRevision !== 'recovery-menu-v1') return false;
+      if (!exactKeys(experiment.refs, ['goalId', 'rhythmId', 'notesCollectionId'])) return false;
+      for (const key of ['goalId', 'rhythmId', 'notesCollectionId']) {
+        if (experiment.refs[key] != null && (typeof experiment.refs[key] !== 'string' || experiment.refs[key].length > 120)) return false;
+      }
+      if (!experiment.checkIns || typeof experiment.checkIns !== 'object' || Array.isArray(experiment.checkIns)
+        || Object.keys(experiment.checkIns).length > 30) return false;
+      for (const [date, answer] of Object.entries(experiment.checkIns)) {
+        if (!secretaryExperimentDateValid(date) || date < experiment.startedOn || date > experiment.endsOn
+          || !answer || typeof answer !== 'object' || Array.isArray(answer)) return false;
+        if (!exactKeys(answer, [
+          'seq', 'sourceOfferId', 'recoveryPlanId', 'offerOutcome', 'boundaryHeld',
+          'enjoyment', 'afterEffect', 'regret', 'note',
+        ])) return false;
+        if (!Number.isSafeInteger(answer.seq) || answer.seq < 1 || answer.seq > 100
+          || !['accepted', 'dismissed', 'unknown'].includes(answer.offerOutcome)
+          || !['yes', 'no', 'unknown'].includes(answer.boundaryHeld)
+          || !['yes', 'no', 'unknown'].includes(answer.enjoyment)
+          || !['better', 'same', 'worse', 'unknown'].includes(answer.afterEffect)
+          || !['none', 'some', 'unknown'].includes(answer.regret)) return false;
+        for (const key of ['sourceOfferId', 'recoveryPlanId']) {
+          if (answer[key] != null && (typeof answer[key] !== 'string' || answer[key].length > 120)) return false;
+        }
+        if (typeof answer.note !== 'string' || answer.note.length > 280 || /(?:https?:\/\/|www\.)/i.test(answer.note)) return false;
+      }
+      if (experiment.status === 'completed' && (typeof experiment.completedAt !== 'string' || !Number.isFinite(Date.parse(experiment.completedAt)))) return false;
+      if (experiment.status === 'stopped' && (typeof experiment.stoppedAt !== 'string' || !Number.isFinite(Date.parse(experiment.stoppedAt)))) return false;
+    }
   }
   if (value.browserCompanionDiscovery !== undefined && value.browserCompanionDiscovery !== null) {
     const discovery = value.browserCompanionDiscovery;
@@ -5161,7 +5263,7 @@ const DEFAULT_SETTINGS = {
   boardV2Titles: [],
   theme: 'dark', accent: '#6c8cff', // оформление (тема + акцент)
   companion: { name: 'Тень', born: null, bond: 0, lastSeen: null, journal: [], check: {} }, // живой компаньон (Finch-модель)
-  secretary: { eveningTime: '', dailyReminder: false, configured: false, lastEveningPromptDate: '' },
+  secretary: { eveningTime: '', dailyReminder: false, configured: false, lastEveningPromptDate: '', experimentV1: null },
   browserCompanionDiscovery: null,
   path: null, pathChosenAt: null, pathAntagonistMuted: false, control: {}, // «Доверие vs Контроль» (см. DISCIPLINE-PATHS-PLAN.md) — null = ещё не выбран
   social: { leaderboard: false, party: false }, // два независимых explicit-consent; отсутствие поля всегда означает «не публиковать»
@@ -6399,6 +6501,7 @@ const State = {
   attentionMode: 'local', attentionPolicies: null, attentionSessions: null, attentionEpisodes: null,
   _attentionLoadError: '', _attentionLoadBusy: false, _attentionWriteBlockedNoticeAt: 0,
   _attentionDeepLink: null, _attentionReturnIndex: 0,
+  _secretaryExperimentBusy: false, _secretaryExperimentSetupOpen: false, _secretaryExperimentFeedbackDraft: null,
   _browserCompanionStatus: null, _browserCompanionRequestId: '', _browserCompanionOptionsRequestId: '', _browserCompanionOpen: false,
   _browserCompanionProbeComplete: false, _browserCompanionDiscoveryBusy: '', _browserCompanionDiscoveryError: '',
   shelf: null, _shelfLoadError: '', _shelfLoadBusy: false, _shelfBusy: '', _shelfError: '',
@@ -18829,11 +18932,6 @@ function renderToday() {
   const nextQuest = todays.find((t) => !t.done);
   const tm = State.timer, tmTask = tm ? questById(tm.taskId) : null;
 
-  const timerCard = `<div class="card timer-card">
-      <div class="timer-left"><div class="timer-clock" id="timer-clock">${fmtClock(timerElapsedMs())}</div>
-        <div class="timer-task">${tm ? (tmTask ? satoruIconHTML('nav.today', 'timer-task-icon', '🎯') + ' ' + esc(tmTask.title) : '(задача удалена)') : t('Таймер фокуса — нажми ▶ у квеста')}</div></div>
-      <div class="timer-controls">${tm ? `${tm.running ? `<button class="btn ghost" data-action="timer-pause">${t('⏸ Пауза')}</button>` : `<button class="btn" data-action="timer-resume">${t('▶ Продолжить')}</button>`}<button class="btn" data-action="timer-stop">${t('⏹ Стоп · записать')}</button><button class="btn ghost" data-action="open-pip" title="Плавающее окно поверх всех приложений">${t('↗ Окно')}</button>` : ''}</div></div>`;
-
   // Нагрузка дня вместо шкалы энергии. Карточка больше ничего не обещает про «ёмкость»
   // и «суперкомпенсацию» — она сравнивает сегодня с обычным днём самого человека, и это
   // единственное, что мы про его состояние действительно знаем.
@@ -18959,7 +19057,7 @@ function renderToday() {
   // у уставшего юзера вечером могли гореть 5 советов подряд (fb #9 «панель нечитаема»). Секретарь
   // говорит одну фразу о главном, не зачитывает памятку целиком. `nudgeCard` (сундуки/буст/Хайп) —
   // это награда, а не совет, остаётся отдельно (сознательная петля возврата, не конкурирует за тон).
-  const nudgeWin = pickNudge([
+  const nudgeWin = attentionTodayPrimaryReserved() ? null : pickNudge([
     // Возврат — выше «Захода»: пока над человеком висит стена просроченного, предложение
     // «войди на десять минут» разбивается об неё. Сначала убрать стену, потом звать внутрь.
     { id: 'return', tier: 0, html: returnNudge },
@@ -18990,24 +19088,29 @@ function renderToday() {
     { id: 'mobility', tier: 5, html: mobilityNudge },
     { id: 'import', tier: 6, html: importNudge },
     { id: 'sysTeaser', tier: 7, html: sysTeaser },
-  ]);
+  ].filter((candidate) => secretaryNudgeEligible(candidate.html)));
   // Фаза B2: если Тень уже подобрала слова под этот сигнал — подставляем их; иначе показываем
   // статичный текст и в фоне просим фразу (без ключа запрос не уходит вовсе — остаётся статика).
-  let activeNudge = '';
+  let selectedNudge = null;
   if (nudgeWin && nudgeWin.id === 'afterLapse') afterLapseNoteSpoken(today);
   if (nudgeWin) {
-    activeNudge = withTts(applyNudgeVoice(nudgeWin.html, nudgeVoiceGet(nudgeWin.id)));
+    const voiced = withTts(applyNudgeVoice(nudgeWin.html, nudgeVoiceGet(nudgeWin.id)));
+    // Support has one visual owner on Today. The winning suggestion is content
+    // inside Shadow, not a second card competing with Shadow for attention.
+    const inline = secretaryNudgeInlineHTML(voiced);
+    selectedNudge = { id: nudgeWin.id, html: inline };
     if (canUseAi() && nudgeVoiceStale(nudgeWin.id)) {
       const plain = nudgeWin.html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
       setTimeout(() => nudgeVoiceFetch(nudgeWin.id, plain), 0);
     }
   }
+  State._todaySelectedNudge = selectedNudge;
 
   const overdueCard = overdue.length ? `<div class="card overdue"><h3>${satoruIconHTML('status.warning', 'heading-glyph', '⏳')} ${t('⏳ Просрочено').replace(/^⏳\s*/, '')} (${overdue.length})</h3>
       <ul class="tasks">${overdue.map(questRow).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">${t('↪ Перенести всё на сегодня')}</button></div>` : '';
 
-  const nextAction = tm ? `<button class="btn" data-action="${tm.running ? 'timer-pause' : 'timer-resume'}">${satoruIconHTML(tm.running ? 'media.pause' : 'media.play', 'button-glyph', tm.running ? '⏸' : '▶')} ${tm.running ? t('⏸ Пауза').replace(/^⏸\s*/, '') : t('▶ Продолжить').replace(/^▶\s*/, '') + ' фокус'}</button>`
+  const nextAction = tm ? `<button class="btn" data-action="${tm.running ? 'timer-pause' : 'timer-resume'}">${satoruIconHTML(tm.running ? 'media.pause' : 'media.play', 'button-glyph', tm.running ? '⏸' : '▶')} ${tm.running ? t('⏸ Пауза').replace(/^⏸\s*/, '') : t('▶ Продолжить').replace(/^▶\s*/, '') + ' фокус'}</button><button class="btn ghost" data-action="timer-stop">${t('⏹ Стоп · записать')}</button><button class="btn ghost" data-action="open-pip" title="Плавающее окно поверх всех приложений">${t('↗ Окно')}</button>`
     // Следующий ход обязан называть настоящий объект действия. Кнопка переносится, но не
     // обрезает пользовательский квест до другого смысла ради высоты карточки.
     : nextQuest ? `<button class="btn btn-nextquest" data-action="focus-task" data-id="${nextQuest.id}" aria-label="${t('Начать')}: ${esc(nextQuest.title)}">${satoruIconHTML('media.play', 'button-glyph', '▶')} ${t('Начать')}: ${esc(nextQuest.title)}</button>`
@@ -19032,6 +19135,7 @@ function renderToday() {
         : nextQuest ? t('Сейчас лучше не смотреть на всю систему — закрой следующий квест.') : todays.length ? t('Основной список уже на месте. Добей хвосты, забери награды и закрой день спокойно.') : t('Начни с одного понятного действия. Остальные системы подождут за кулисами.');
   const thLoad = dayLoadNow();
   const heroStats = [
+    tm ? `<div class="th-stat"><b id="timer-clock">${fmtClock(timerElapsedMs())}</b><span>${tmTask ? esc(tmTask.title) : t('Фокус')}</span></div>` : '',
     `<div class="th-stat"><b>${donePct}%</b><span>${t('готово')}</span></div>`,
     `<div class="th-stat"><b>${thLoad.done}</b><span>${t('сделано сегодня')}</span></div>`,
     minToday > 0 ? `<div class="th-stat"><b>${fmtDur(minToday)}</b><span>${t('фокус')}</span></div>` : '',
@@ -19101,7 +19205,7 @@ function renderToday() {
   if (tab === 'board') return `<div class="today-shell board-shell">${tabs}<section id="today-panel-day" role="tabpanel" aria-labelledby="today-tab-day" hidden></section><section id="today-panel-board" class="today-board-panel" role="tabpanel" aria-labelledby="today-tab-board">${boardScreenHTML()}</section></div>`;
   return `<div class="today-shell">${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>${browserCompanionLaunchHTML()}
     <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dayNavStripHTML(today)}${todayHero}${captureBar()}${overdueCard}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
-    <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML())}${activeNudge}${pathTeaserCard()}${tm ? timerCard : ''}${installBanner()}</aside>
+    <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}</aside>
     <div class="today-footer">${shutdownCard}</div>
   </div>`;
 }
@@ -21998,11 +22102,20 @@ function requestBrowserCompanionOptions() {
 function browserCompanionFocusKey(container, active) {
   if (!container || !active || !container.contains(active)) return '';
   if (active.matches?.('summary')) return 'summary';
+  const feedback = active.getAttribute?.('data-experiment-feedback');
+  if (feedback) return `[data-experiment-feedback="${CSS.escape(feedback)}"]`;
   const action = active.getAttribute?.('data-action');
-  if (action && ['browser-companion-refresh', 'browser-companion-options', 'browser-companion-install', 'browser-companion-later', 'browser-companion-never'].includes(action)) return `[data-action="${action}"]`;
+  if (action) return `[data-action="${CSS.escape(action)}"]`;
   if (active.matches?.('a[download]')) return 'a[download]';
   if (active.matches?.('[data-secretary-control]')) return '[data-secretary-control]';
   return '';
+}
+function secretarySurfaceInteractionActive(container) {
+  if (!container?.matches?.('[data-secretary-control]')) return false;
+  if (State._secretaryExperimentBusy || container.querySelector('[aria-busy="true"], button:disabled')) return true;
+  if (container.querySelector('details[open]')) return true;
+  const active = document.activeElement;
+  return !!(active && container.contains(active) && active.matches?.('select,input,textarea'));
 }
 function replaceBrowserCompanionSurface(current, html) {
   if (!current || typeof html !== 'string') return null;
@@ -22011,6 +22124,7 @@ function replaceBrowserCompanionSurface(current, html) {
   template.innerHTML = html.trim();
   const replacement = template.content.firstElementChild;
   if (!replacement) return null;
+  if (current.outerHTML === replacement.outerHTML) return current;
   current.replaceWith(replacement);
   if (focusKey) requestAnimationFrame(() => replacement.matches(focusKey)
     ? replacement.focus({ preventScroll: true })
@@ -22026,7 +22140,9 @@ function patchBrowserCompanionSurfaces() {
   }
   if (State.view === 'today') {
     const control = document.querySelector('[data-secretary-control]');
-    if (control) replaceBrowserCompanionSurface(control, attentionTodayControlHTML());
+    if (control && !secretarySurfaceInteractionActive(control)) {
+      replaceBrowserCompanionSurface(control, attentionTodayControlHTML(State._todaySelectedNudge || null));
+    }
     const launch = document.querySelector('[data-browser-companion-launch]');
     if (launch) replaceBrowserCompanionSurface(launch, browserCompanionLaunchHTML());
   }
@@ -22227,39 +22343,481 @@ function attentionPendingReturn() {
   const E = window.AttentionEpisodeV1;
   return !!(E && State.attentionEpisodes && E.normalize(State.attentionEpisodes).episodes.some((episode) => episode.outcome === 'escaped' && !episode.returnedAt));
 }
-function secretarySettings() {
-  return Object.assign({}, DEFAULT_SETTINGS.secretary, State.settings?.secretary || {});
+function secretarySettings(settings = State.settings) {
+  return Object.assign({}, DEFAULT_SETTINGS.secretary, settings?.secretary || {});
 }
-function attentionTodayControlHTML() {
+
+const SECRETARY_EXPERIMENT_DAYS = 30;
+const SECRETARY_EXPERIMENT_PROTOCOL = 'morning-recovery-v1';
+function secretaryExperimentAvailable() {
+  // v212 is an owner dogfood experiment, not a public challenge silently
+  // imposed on every account. The saved record remains untouched if an admin
+  // later loses that role; only proactive UI and new starts are gated.
+  return State.me?.isAdmin === true;
+}
+function secretaryExperimentDateValid(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))) return false;
+  const [year, month, day] = String(value).split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+}
+function secretaryExperimentDraft() {
+  return { version: 1, status: 'draft', protocolVersion: SECRETARY_EXPERIMENT_PROTOCOL, startedOn: '', endsOn: '', checkIns: {} };
+}
+function secretaryExperimentFromSettings(settings) {
+  const raw = settings?.secretary?.experimentV1;
+  const draft = secretaryExperimentDraft();
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return draft;
+  const startedOn = secretaryExperimentDateValid(raw.startedOn) ? raw.startedOn : '';
+  const endsOn = secretaryExperimentDateValid(raw.endsOn) ? raw.endsOn : '';
+  if (!startedOn || !endsOn || endsOn !== addDays(startedOn, SECRETARY_EXPERIMENT_DAYS - 1)) return draft;
+  return {
+    version: 1,
+    id: String(raw.id || 'secretary-personal-v1').slice(0, 60),
+    status: ['active', 'completed', 'stopped'].includes(raw.status) ? raw.status : 'active',
+    protocolVersion: SECRETARY_EXPERIMENT_PROTOCOL,
+    startedOn,
+    endsOn,
+    baselineWindowDays: 14,
+    profileSnapshot: raw.profileSnapshot && typeof raw.profileSnapshot === 'object' ? raw.profileSnapshot : {},
+    refs: raw.refs && typeof raw.refs === 'object' ? raw.refs : { goalId: null, rhythmId: null, notesCollectionId: null },
+    checkIns: raw.checkIns && typeof raw.checkIns === 'object' && !Array.isArray(raw.checkIns) ? raw.checkIns : {},
+    completedAt: typeof raw.completedAt === 'string' ? raw.completedAt : '',
+    stoppedAt: typeof raw.stoppedAt === 'string' ? raw.stoppedAt : '',
+  };
+}
+function secretaryExperimentState() {
+  return secretaryExperimentFromSettings(State.settings);
+}
+function secretaryExperimentInWindow(experiment, date = todayStr()) {
+  return !!(experiment && experiment.startedOn && experiment.endsOn && secretaryExperimentDateValid(date)
+    && date >= experiment.startedOn && date <= experiment.endsOn);
+}
+function secretaryExperimentDay(experiment = secretaryExperimentState(), date = todayStr()) {
+  if (!experiment.startedOn || !experiment.endsOn || !secretaryExperimentDateValid(date)) return 0;
+  if (date < experiment.startedOn) return 0;
+  if (date > experiment.endsOn) return SECRETARY_EXPERIMENT_DAYS;
+  const elapsed = Math.floor((Date.parse(`${date}T00:00:00Z`) - Date.parse(`${experiment.startedOn}T00:00:00Z`)) / 86400000) + 1;
+  return Math.min(SECRETARY_EXPERIMENT_DAYS, Math.max(1, elapsed));
+}
+function secretaryExperimentProfileSnapshot() {
+  return {
+    sleepTarget: '22:00',
+    wakeTarget: '07:10',
+    lateReturnSleepTarget: '23:00',
+    coreMax: 1,
+    supportMax: 2,
+    restMenuRevision: 'recovery-menu-v1',
+  };
+}
+async function persistSecretaryExperiment(experimentOrUpdater, failureKey) {
+  const saved = await Store.updateNow('settings', (currentSettings) => {
+    const nextSettings = structuredClone(currentSettings || State.settings);
+    const currentExperiment = secretaryExperimentFromSettings(nextSettings);
+    const experiment = typeof experimentOrUpdater === 'function'
+      ? experimentOrUpdater(currentExperiment) : experimentOrUpdater;
+    if (!experiment) return undefined;
+    nextSettings.secretary = Object.assign({}, secretarySettings(nextSettings), { experimentV1: experiment });
+    return nextSettings;
+  }, (committed) => { State.settings = committed; return true; });
+  if (!saved && failureKey) toast(t(failureKey));
+  return saved;
+}
+async function startSecretaryExperiment() {
+  if (!secretaryExperimentAvailable()) return false;
+  const startedOn = todayStr();
+  const experiment = {
+    version: 1,
+    id: `secretary-${uid()}`,
+    status: 'active',
+    protocolVersion: SECRETARY_EXPERIMENT_PROTOCOL,
+    startedOn,
+    endsOn: addDays(startedOn, SECRETARY_EXPERIMENT_DAYS - 1),
+    baselineWindowDays: 14,
+    profileSnapshot: secretaryExperimentProfileSnapshot(),
+    refs: { goalId: null, rhythmId: null, notesCollectionId: null },
+    checkIns: {},
+  };
+  const saved = await persistSecretaryExperiment(experiment, 'Не удалось начать 30 дней. Ничего не изменено.');
+  if (!saved) return false;
+  State._secretaryExperimentSetupOpen = false;
+  toast(t('30 дней начались — просто наблюдаем, что помогает.'));
+  render();
+  return true;
+}
+async function endSecretaryExperiment(status) {
+  if (!['completed', 'stopped'].includes(status)) return false;
+  const timestamp = new Date().toISOString();
+  const saved = await persistSecretaryExperiment((experiment) => {
+    if (experiment.status !== 'active') return null;
+    return Object.assign({}, experiment, { status }, status === 'completed'
+      ? { completedAt: timestamp } : { stoppedAt: timestamp });
+  }, 'Не удалось сохранить наблюдение.');
+  if (!saved) return false;
+  State._secretaryExperimentFeedbackDraft = null;
+  toast(t(status === 'completed' ? 'Эксперимент завершён.' : 'Эксперимент остановлен. Наблюдения сохранены.'));
+  render();
+  return true;
+}
+function secretaryExperimentEpisodes() {
+  const E = window.AttentionEpisodeV1;
+  return E && State.attentionEpisodes ? E.normalize(State.attentionEpisodes).episodes : [];
+}
+function secretaryExperimentLatestSignal(experiment = secretaryExperimentState(), date = todayStr()) {
+  const rows = secretaryExperimentEpisodes();
+  const yesterday = addDays(date, -1);
+  const pending = rows.filter((episode) => episode.outcome === 'escaped' && !episode.returnedAt && episode.endedAt
+    && fmtDate(new Date(episode.endedAt)) === yesterday)
+    .sort((a, b) => String(b.endedAt).localeCompare(String(a.endedAt)))[0] || null;
+  // A return may be completed after midnight. Find the exact unanswered
+  // accepted check-in across the inclusive experiment window instead of
+  // assuming that acceptance and returnedAt share a calendar date.
+  const completedEntry = Object.entries(experiment?.checkIns || {})
+    .filter(([checkDate, checkIn]) => checkDate >= experiment.startedOn && checkDate <= experiment.endsOn
+      && checkIn?.offerOutcome === 'accepted' && checkIn.recoveryPlanId && checkIn.afterEffect === 'unknown')
+    .sort(([a], [b]) => b.localeCompare(a))
+    .map(([checkDate, checkIn]) => ({
+      checkDate,
+      episode: rows.find((episode) => episode.id === checkIn.recoveryPlanId && episode.returnedAt) || null,
+    }))
+    .find((entry) => entry.episode) || null;
+  return {
+    known: !!pending,
+    pendingReturn: !!pending,
+    sourceEpisodeId: pending ? pending.id : null,
+    boundaryAt: pending ? pending.endedAt : null,
+    reasonCode: pending ? 'return-pending-yesterday' : 'none',
+    completedRecovery: completedEntry?.episode || null,
+    feedbackDate: completedEntry?.checkDate || '',
+  };
+}
+function secretaryMorningRecoveryOffer(experiment, signal, now = new Date()) {
+  if (!experiment || experiment.status !== 'active' || !secretaryExperimentInWindow(experiment)) return null;
+  if (!signal || !signal.known || !signal.pendingReturn || !signal.sourceEpisodeId) return null;
+  const hour = now instanceof Date ? now.getHours() : new Date(now).getHours();
+  const morning = Number.isFinite(hour) && hour >= 5 && hour < 13;
+  const date = todayStr();
+  if (!morning || experiment.checkIns?.[date]) return null;
+  return {
+    kind: 'morning-recovery',
+    offerId: `${experiment.id}|${date}|${signal.sourceEpisodeId}`,
+    sourceEpisodeId: signal.sourceEpisodeId,
+    plan: t('Снять накопившееся и выбрать один шаг на 10 минут.'),
+    action: { id: 'secretary-experiment-accept', label: t('Открыть возврат') },
+  };
+}
+function secretaryExperimentFeedbackDue(experiment, signal, date = todayStr()) {
+  if (!experiment || experiment.status !== 'active') return false;
+  const feedbackDate = signal?.feedbackDate || '';
+  if (!secretaryExperimentInWindow(experiment, feedbackDate) || date < feedbackDate) return false;
+  const row = feedbackDate ? experiment.checkIns?.[feedbackDate] : null;
+  return !!(row && row.offerOutcome === 'accepted' && row.recoveryPlanId
+    && row.afterEffect === 'unknown' && signal?.completedRecovery?.id === row.recoveryPlanId);
+}
+function secretaryExperimentCheckIn(date, patch = {}) {
+  const experiment = secretaryExperimentState();
+  const current = experiment.checkIns?.[date] || null;
+  return Object.assign({
+    seq: current ? current.seq + 1 : 1,
+    sourceOfferId: null,
+    recoveryPlanId: null,
+    offerOutcome: 'unknown',
+    boundaryHeld: 'unknown',
+    enjoyment: 'unknown',
+    afterEffect: 'unknown',
+    regret: 'unknown',
+    note: '',
+  }, current || {}, patch);
+}
+async function recordSecretaryExperimentOffer(outcome, offer, date = todayStr()) {
+  if (!offer || !['accepted', 'dismissed'].includes(outcome)) return false;
+  const sourceOfferId = String(offer.offerId || '').slice(0, 120) || null;
+  const recoveryPlanId = outcome === 'accepted' ? String(offer.sourceEpisodeId || '').slice(0, 40) || null : null;
+  return persistSecretaryExperiment((experiment) => {
+    if (experiment.status !== 'active' || !secretaryExperimentInWindow(experiment, date)
+      || experiment.checkIns?.[date]) return null;
+    const checkIn = Object.assign({
+      seq: 1,
+      sourceOfferId,
+      recoveryPlanId,
+      offerOutcome: outcome,
+      // Accepting a return is only an intention. Until the exact Attention
+      // episode receives returnedAt, success and failure both remain unknown.
+      boundaryHeld: 'unknown',
+      enjoyment: 'unknown',
+      afterEffect: 'unknown',
+      regret: 'unknown',
+      note: '',
+    });
+    return Object.assign({}, experiment, { checkIns: Object.assign({}, experiment.checkIns, { [date]: checkIn }) });
+  }, 'Не удалось сохранить наблюдение.');
+}
+async function saveSecretaryExperimentFeedback(afterEffect, enjoyment = 'unknown', regret = 'unknown', boundaryHeld = 'unknown', date = todayStr()) {
+  if (!['better', 'same', 'worse'].includes(afterEffect)) return false;
+  const episodes = secretaryExperimentEpisodes();
+  const saved = await persistSecretaryExperiment((experiment) => {
+    const current = experiment.checkIns?.[date];
+    const returned = current?.recoveryPlanId
+      ? episodes.find((episode) => episode.id === current.recoveryPlanId && episode.returnedAt) : null;
+    if (experiment.status !== 'active' || !secretaryExperimentInWindow(experiment, date)
+      || !current || current.offerOutcome !== 'accepted' || current.afterEffect !== 'unknown' || !returned) return null;
+    const checkIn = Object.assign({}, current, {
+      seq: current.seq + 1,
+      // returnedAt proves that the person returned, not that the chosen
+      // boundary held exactly as intended. That distinction stays manual.
+      boundaryHeld: ['yes', 'no', 'unknown'].includes(boundaryHeld) ? boundaryHeld : 'unknown',
+      afterEffect,
+      enjoyment: ['yes', 'no', 'unknown'].includes(enjoyment) ? enjoyment : 'unknown',
+      regret: ['none', 'some', 'unknown'].includes(regret) ? regret : 'unknown',
+    });
+    return Object.assign({}, experiment, { checkIns: Object.assign({}, experiment.checkIns, { [date]: checkIn }) });
+  }, 'Не удалось сохранить наблюдение.');
+  if (!saved) return false;
+  State._secretaryExperimentFeedbackDraft = null;
+  toast(t('Наблюдение сохранено.'));
+  render();
+  return true;
+}
+function secretaryMedianMinutes(values) {
+  const rows = values.filter(Number.isFinite).sort((a, b) => a - b);
+  if (!rows.length) return null;
+  const middle = Math.floor(rows.length / 2);
+  return rows.length % 2 ? Math.round(rows[middle]) : Math.round((rows[middle - 1] + rows[middle]) / 2);
+}
+function secretaryExperimentMetrics(experiment, episodes = secretaryExperimentEpisodes()) {
+  const rows = Object.values(experiment?.checkIns || {});
+  const effects = { better: 0, same: 0, worse: 0, known: 0 };
+  // This local dogfood record is written only after an explicit decision. It
+  // has no delivery ledger, so exposure count must remain unknown instead of
+  // pretending that every ignored render was observed.
+  const offers = { offered: null, decided: 0, accepted: 0, dismissed: 0 };
+  const boundaryHeld = { yes: 0, no: 0, known: 0 };
+  const regret = { none: 0, some: 0, known: 0 };
+  rows.forEach((row) => {
+    if (['accepted', 'dismissed'].includes(row.offerOutcome)) { offers.decided += 1; offers[row.offerOutcome] += 1; }
+    if (['yes', 'no'].includes(row.boundaryHeld)) { boundaryHeld[row.boundaryHeld] += 1; boundaryHeld.known += 1; }
+    if (['better', 'same', 'worse'].includes(row.afterEffect)) { effects[row.afterEffect] += 1; effects.known += 1; }
+    if (['none', 'some'].includes(row.regret)) { regret[row.regret] += 1; regret.known += 1; }
+  });
+  const eligibleDays = Math.min(SECRETARY_EXPERIMENT_DAYS, secretaryExperimentDay(experiment));
+  const currentIds = new Set(rows.filter((row) => row.offerOutcome === 'accepted' && row.recoveryPlanId).map((row) => row.recoveryPlanId));
+  const currentLatency = episodes.filter((episode) => currentIds.has(episode.id) && episode.endedAt && episode.returnedAt)
+    .map((episode) => (Date.parse(episode.returnedAt) - Date.parse(episode.endedAt)) / 60000)
+    .filter((minutes) => Number.isFinite(minutes) && minutes >= 0);
+  const baselineStart = addDays(experiment.startedOn, -Math.max(1, Number(experiment.baselineWindowDays) || 14));
+  const baselineLatency = episodes.filter((episode) => episode.outcome === 'escaped' && episode.endedAt && episode.returnedAt)
+    .filter((episode) => { const endedOn = fmtDate(new Date(episode.endedAt)); return endedOn >= baselineStart && endedOn < experiment.startedOn; })
+    .map((episode) => (Date.parse(episode.returnedAt) - Date.parse(episode.endedAt)) / 60000)
+    .filter((minutes) => Number.isFinite(minutes) && minutes >= 0);
+  const medianMin = secretaryMedianMinutes(currentLatency);
+  const baselineMedianMin = secretaryMedianMinutes(baselineLatency);
+  const latencyStatus = medianMin == null || baselineMedianMin == null ? 'not_measured'
+    : medianMin < baselineMedianMin ? 'faster' : medianMin > baselineMedianMin ? 'slower' : 'same';
+  return {
+    elapsedDays: eligibleDays,
+    eligibleDays,
+    knownDays: effects.known,
+    unknownDays: Math.max(0, eligibleDays - effects.known),
+    offers,
+    returnLatency: { n: currentLatency.length, medianMin, baselineN: baselineLatency.length, baselineMedianMin, status: latencyStatus },
+    boundaryHeld,
+    afterEffect: effects,
+    regret,
+  };
+}
+function secretaryExperimentReviewDue(experiment, date = todayStr()) {
+  if (!experiment || experiment.status !== 'active' || !experiment.startedOn || !experiment.endsOn) return 0;
+  if (date > experiment.endsOn) return SECRETARY_EXPERIMENT_DAYS;
+  if (!secretaryExperimentInWindow(experiment, date)) return 0;
+  const day = secretaryExperimentDay(experiment, date);
+  return [7, 14, 21].includes(day) ? day : 0;
+}
+function setSecretaryExperimentBusy(busy, source = null) {
+  State._secretaryExperimentBusy = !!busy;
+  const control = source?.closest?.('[data-secretary-control]') || document.querySelector('[data-secretary-control]');
+  if (!control) return;
+  if (busy) control.setAttribute('aria-busy', 'true'); else control.removeAttribute('aria-busy');
+  control.querySelectorAll('.secretary-experiment-offer :is(button, select, input, textarea), [data-action^="secretary-experiment-"]')
+    .forEach((field) => { field.disabled = !!busy; });
+}
+function secretaryExperimentReviewHTML(experiment, reviewDay) {
+  const metrics = secretaryExperimentMetrics(experiment);
+  const latency = metrics.returnLatency;
+  const latencyLine = latency.status === 'not_measured'
+    ? t('Скорость возврата пока не измерена (сейчас n={currentN}, раньше n={baselineN}).')
+      .replace('{currentN}', latency.n).replace('{baselineN}', latency.baselineN)
+    : t('Медиана возврата: {current} мин (n={currentN}) · раньше: {baseline} мин (n={baselineN})')
+      .replace('{current}', latency.medianMin).replace('{currentN}', latency.n)
+      .replace('{baseline}', latency.baselineMedianMin).replace('{baselineN}', latency.baselineN);
+  const decisionLine = t('Ответы на предложение: {decided} · принято: {accepted} · пропущено: {dismissed}')
+    .replace('{decided}', metrics.offers.decided).replace('{accepted}', metrics.offers.accepted).replace('{dismissed}', metrics.offers.dismissed);
+  const effectLine = t('После возврата: лучше {better} · так же {same} · хуже {worse} (n={known})')
+    .replace('{better}', metrics.afterEffect.better).replace('{same}', metrics.afterEffect.same)
+    .replace('{worse}', metrics.afterEffect.worse).replace('{known}', metrics.afterEffect.known);
+  const regretLine = t('Сожаление: нет {none} · есть {some} (n={known})')
+    .replace('{none}', metrics.regret.none).replace('{some}', metrics.regret.some).replace('{known}', metrics.regret.known);
+  const boundaryLine = t('Граница: да {yes} · нет {no} (n={known})')
+    .replace('{yes}', metrics.boundaryHeld.yes).replace('{no}', metrics.boundaryHeld.no).replace('{known}', metrics.boundaryHeld.known);
+  return `<div class="secretary-experiment-offer" data-experiment-stage="${reviewDay === 30 ? 'complete' : 'review'}">
+    <span class="secretary-control-kicker">${reviewDay === 30 ? t('30 дней с Тенью') : t('День {day} из 30').replace('{day}', reviewDay)}</span>
+    <b>${metrics.knownDays < 5 ? t('Пока калибруемся') : t('Эксперимент готов к разбору')}</b>
+    <small>${t('Известных ответов: {known} · неизвестных: {unknown}').replace('{known}', metrics.knownDays).replace('{unknown}', metrics.unknownDays)}</small>
+    <small>${latencyLine}</small>
+    <details class="secretary-experiment-review"><summary>${t('Посмотреть подробнее')}</summary><div><p>${decisionLine}</p><p>${effectLine}</p><p>${regretLine}</p><p>${boundaryLine}</p></div></details>
+    ${reviewDay === 30 ? `<div class="secretary-experiment-buttons"><button type="button" class="secretary-experiment-action" data-action="secretary-experiment-complete">${t('Завершить эксперимент')}</button><button type="button" class="btn ghost" data-action="secretary-experiment-export">${t('Экспортировать')}</button></div>` : ''}
+  </div>`;
+}
+function exportSecretaryExperiment() {
+  const experiment = secretaryExperimentState();
+  if (!experiment || experiment.status === 'draft') return false;
+  const payload = { exportedAt: new Date().toISOString(), experiment, metrics: secretaryExperimentMetrics(experiment) };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const href = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = href; link.download = `satoru-secretary-experiment-${experiment.startedOn || todayStr()}.json`;
+  document.body.appendChild(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(href), 0);
+  return true;
+}
+function secretaryExperimentOfferHTML(experiment, recoveryOffer, signal = null) {
+  if (!secretaryExperimentAvailable()) return '';
+  if ((!experiment || experiment.status === 'draft') && !State._secretaryExperimentSetupOpen) return '';
+  if (!experiment || experiment.status === 'draft') return `<div class="secretary-experiment-offer" data-experiment-stage="draft">
+    <span class="secretary-control-kicker">${t('Личный эксперимент')}</span><b>${t('30 дней с Тенью')}</b>
+    <small>${t('Проверим, помогает ли один своевременный возврат. Без нового списка дел.')}</small>
+    <small>${t('Данные: время возврата, ответы и снимок личных рамок — сон и лимиты дня. Без ссылок, страниц и просмотренного контента.')}</small>
+    <div class="secretary-experiment-buttons"><button type="button" class="secretary-experiment-action" data-action="secretary-experiment-start">${t('Начать 30 дней')}</button><button type="button" class="btn ghost" data-action="secretary-experiment-later">${t('Не сейчас')}</button></div>
+  </div>`;
+  if (experiment.status !== 'active') return '';
+  const day = secretaryExperimentDay(experiment);
+  const feedbackDate = signal?.feedbackDate || '';
+  const feedbackKey = feedbackDate && signal?.completedRecovery?.id ? `${feedbackDate}|${signal.completedRecovery.id}` : '';
+  const storedDraft = State._secretaryExperimentFeedbackDraft || {};
+  const draft = storedDraft.key === feedbackKey ? storedDraft : {};
+  const selected = (value, current) => value === current ? ' selected' : '';
+  if (secretaryExperimentFeedbackDue(experiment, signal)) return `<div class="secretary-experiment-offer" data-experiment-stage="feedback" data-feedback-date="${esc(feedbackDate)}" data-experiment-feedback-key="${esc(feedbackKey)}">
+    <span class="secretary-control-kicker">${t('День {day} из 30').replace('{day}', day)}</span><b>${t('Как это подействовало?')}</b>
+    <div class="secretary-experiment-feedback">
+      <label><span>${t('После возврата стало')}</span><select data-experiment-feedback="afterEffect"><option value="">${t('Выбери один ответ')}</option><option value="better"${selected('better', draft.afterEffect)}>${t('Лучше')}</option><option value="same"${selected('same', draft.afterEffect)}>${t('Так же')}</option><option value="worse"${selected('worse', draft.afterEffect)}>${t('Хуже')}</option></select></label>
+      <details><summary>${t('Добавить подробности')}</summary><div class="secretary-experiment-optional"><label><span>${t('Было приятно?')}</span><select data-experiment-feedback="enjoyment"><option value="unknown">${t('Не знаю пока')}</option><option value="yes"${selected('yes', draft.enjoyment)}>${t('Скорее да')}</option><option value="no"${selected('no', draft.enjoyment)}>${t('Скорее нет')}</option></select></label><label><span>${t('Осталось сожаление?')}</span><select data-experiment-feedback="regret"><option value="unknown">${t('Не знаю пока')}</option><option value="none"${selected('none', draft.regret)}>${t('Нет')}</option><option value="some"${selected('some', draft.regret)}>${t('Да')}</option></select></label><label><span>${t('Удалось удержать выбранную границу?')}</span><select data-experiment-feedback="boundaryHeld"><option value="unknown">${t('Не знаю пока')}</option><option value="yes"${selected('yes', draft.boundaryHeld)}>${t('Да')}</option><option value="no"${selected('no', draft.boundaryHeld)}>${t('Нет')}</option></select></label></div></details>
+      <button type="button" class="secretary-experiment-action" data-action="secretary-experiment-feedback">${t('Сохранить наблюдение')}</button>
+    </div>
+  </div>`;
+  if (recoveryOffer) return `<div class="secretary-experiment-offer" data-experiment-stage="recovery">
+    <span class="secretary-control-kicker">${t('День {day} из 30').replace('{day}', day)}</span><b>${t('Сегодня один возврат')}</b>
+    <small>${esc(recoveryOffer.plan)}</small><div class="secretary-experiment-buttons"><button type="button" class="secretary-experiment-action" data-action="${esc(recoveryOffer.action.id)}" data-offer-id="${esc(recoveryOffer.offerId)}" data-source-episode-id="${esc(recoveryOffer.sourceEpisodeId)}">${esc(recoveryOffer.action.label)}</button><button type="button" class="btn ghost" data-action="secretary-experiment-dismiss" data-offer-id="${esc(recoveryOffer.offerId)}" data-source-episode-id="${esc(recoveryOffer.sourceEpisodeId)}">${t('Не сейчас')}</button></div>
+  </div>`;
+  const reviewDay = secretaryExperimentReviewDue(experiment);
+  return reviewDay ? secretaryExperimentReviewHTML(experiment, reviewDay) : '';
+}
+function secretaryExperimentHasPrimary() {
+  if (!secretaryExperimentAvailable()) return false;
+  const experiment = secretaryExperimentState();
+  if (State._secretaryExperimentSetupOpen && experiment.status === 'draft') return true;
+  if (experiment.status !== 'active' || dayClosed()) return false;
+  const signal = secretaryExperimentLatestSignal(experiment);
+  return secretaryExperimentFeedbackDue(experiment, signal)
+    || !!secretaryMorningRecoveryOffer(experiment, signal)
+    || !!secretaryExperimentReviewDue(experiment);
+}
+function attentionTodayPrimaryReserved() {
   const C = attentionController();
-  if (!C) return `<section class="secretary-control is-error" data-secretary-control tabindex="-1" role="status"><div><b>${t('Следующий ход')}</b><small>${t('Модуль внимания не загрузился. Обнови страницу.')}</small></div></section>`;
-  if (State._attentionLoadError) return `<section class="secretary-control is-error" data-secretary-control tabindex="-1" role="alert"><div><b>${t('Границы временно недоступны')}</b><small>${t('Ничего не перезаписываем.')}</small></div><button class="btn ghost sm" data-action="retry-attention-load">${t('Повторить')}</button></section>`;
+  const activeAttention = C && window.AttentionSessionV1 && window.AttentionSessionV1.active(State.attentionSessions);
+  const activeBrowser = !!(C && browserCompanionCurrentStatus()?.active);
+  return !C || attentionHasLoadError() || !!activeAttention || activeBrowser || dayClosed()
+    || attentionPendingReturn() || !!State._eveningDue || secretaryExperimentHasPrimary();
+}
+function secretaryNudgeEligible(html) {
+  if (!html) return false;
+  return (String(html).match(/\sdata-action=/g) || []).length === 1;
+}
+function secretaryNudgeInlineHTML(html) {
+  return String(html || '').replace(/<div( data-tts)? class="card nudge-card/, '<div$1 class="secretary-inline-nudge');
+}
+function attentionTodayControlHTML(selectedOffer = null) {
+  const C = attentionController();
   const S = window.AttentionSessionV1;
-  const active = S && S.active(State.attentionSessions);
-  if (active) {
-    const remaining = S.remainingMs(active, attentionNow());
-    const over = remaining !== null && remaining <= 0;
-    const policy = attentionPolicyForTarget(active.policyId);
-    const name = policy?.name || (active.purpose === 'rest' ? t('Отдых с границей') : active.policyId);
-    return `<section class="secretary-control is-active${over ? ' is-due' : ''}" data-secretary-control tabindex="-1" aria-live="polite"><div class="secretary-control-copy"><span class="secretary-control-kicker">${t(active.purpose === 'rest' ? 'Сейчас отдых' : 'Сейчас граница внимания')}</span><b>${esc(name)}</b><small>${over ? t('Граница достигнута — выбери честный исход') : `${attentionPurposeName(active.purpose)} · ${Math.max(1, Math.ceil(remaining / 60000))} ${t('мин')}`}</small></div>${over ? `<button class="btn secretary-primary" data-action="attention-open-boundary" data-session-id="${esc(active.id)}">${t('Открыть границу')}</button>` : ''}</section>`;
-  }
-  const browserActive = browserCompanionCurrentStatus()?.active;
-  const browserTarget = browserActive && browserCompanionTarget(browserActive.app);
-  if (browserActive && browserTarget) {
-    const boundary = browserActive.phase === 'boundary';
-    return `<section class="secretary-control is-active${boundary ? ' is-due' : ''}" data-secretary-control tabindex="-1" aria-live="polite"><div class="secretary-control-copy"><span class="secretary-control-kicker">${t('Сейчас граница внимания')}</span><b>${esc(browserTarget.label)}</b><small>${boundary ? t('Граница уже достигнута') : t('До границы: {minutes} мин').replace('{minutes}', Math.max(1, Math.ceil(browserActive.remainingSeconds / 60)))}</small></div><button class="btn ghost" data-action="browser-companion-options">${t('Открыть настройки расширения')}</button></section>`;
-  }
+  const session = C && S && S.active(State.attentionSessions);
+  const browserSession = C && browserCompanionCurrentStatus()?.active;
+  const browserTarget = browserSession && browserCompanionTarget(browserSession.app);
+  const active = session
+    ? { kind: 'attention', session }
+    : browserSession && browserTarget ? { kind: 'browser', session: browserSession, target: browserTarget } : null;
   const policies = State.attentionPolicies?.policies || [];
   const pendingReturn = attentionPendingReturn();
+  const eveningDue = !!State._eveningDue;
+  const closed = dayClosed();
   const cfg = secretarySettings();
-  return `<section class="secretary-control${State._eveningDue ? ' is-due' : ''}" data-secretary-control tabindex="-1" aria-labelledby="secretary-control-title">
-    <div class="secretary-control-head"><div><span class="secretary-control-kicker">${t('Тень рядом')}</span><b id="secretary-control-title">${t(State._eveningDue ? 'Пора завершить рабочий день' : pendingReturn ? 'Не нужно держать всю систему в голове' : 'Выбери нужную поддержку')}</b></div>${policies.length ? `<button class="secretary-settings-link" data-action="attention-open-setup">${t('Правила')}</button>` : ''}</div>
-    <div class="secretary-actions">
-      ${pendingReturn ? `<button class="secretary-action is-primary" data-action="attention-open-return"><span aria-hidden="true">↩</span><b>${t('Вернуться одним шагом')}</b></button>` : ''}
-      <button class="secretary-action" data-action="recovery-open"><span aria-hidden="true">🌿</span><b>${t('Отдохнуть с границей')}</b></button>
-      <button class="secretary-action${State._eveningDue ? ' is-primary is-pulsing' : ''}" data-action="evening-open"><span aria-hidden="true">🌙</span><b>${t('Завершить вечер')}</b>${cfg.dailyReminder && cfg.eveningTime ? `<small>${esc(cfg.eveningTime)}</small>` : ''}</button>
-      ${policies[0] ? `<button class="secretary-action" data-action="attention-open-entry" data-policy-id="${esc(policies[0].id)}"><span aria-hidden="true">🛡</span><b>${esc(policies[0].name)}</b></button>` : `<button class="secretary-action" data-action="attention-open-setup"><span aria-hidden="true">🛡</span><b>${t('Настроить границу входа')}</b></button>`}
-    </div>
+  const experiment = secretaryExperimentState();
+  const experimentSignal = secretaryExperimentLatestSignal(experiment);
+  const experimentRecovery = secretaryMorningRecoveryOffer(experiment, experimentSignal);
+  const experimentOffer = secretaryExperimentOfferHTML(experiment, experimentRecovery, experimentSignal);
+  const fallbackPrimary = {
+    kind: 'fallback',
+    title: t('Сейчас всё ясно'),
+    html: `<p class="secretary-primary-note">${t(closed ? 'На сегодня всё.' : 'Следующий шаг уже выбран — Тень не будет отвлекать.')}</p>`,
+  };
+  let primary = fallbackPrimary;
+  let controlState = '';
+
+  if (!C) {
+    controlState = ' is-error';
+    primary = { kind: 'error', title: t('Следующий ход'), html: `<small>${t('Модуль внимания не загрузился. Обнови страницу.')}</small>` };
+  } else if (State._attentionLoadError) {
+    controlState = ' is-error';
+    primary = { kind: 'error', title: t('Границы временно недоступны'), html: `<small>${t('Ничего не перезаписываем.')}</small><button class="btn ghost sm" data-action="retry-attention-load">${t('Повторить')}</button>` };
+  } else if (active) {
+    controlState = ' is-active';
+    if (active.kind === 'attention') {
+      const current = active.session;
+      const remaining = S.remainingMs(current, attentionNow());
+      const over = remaining !== null && remaining <= 0;
+      const policy = attentionPolicyForTarget(current.policyId);
+      const name = policy?.name || (current.purpose === 'rest' ? t('Отдых с границей') : current.policyId);
+      if (over) controlState += ' is-due';
+      primary = {
+        kind: 'active',
+        title: t(current.purpose === 'rest' ? 'Сейчас отдых' : 'Сейчас граница внимания'),
+        html: `<div class="secretary-control-copy"><b>${esc(name)}</b><small>${over ? t('Граница достигнута — выбери честный исход') : `${attentionPurposeName(current.purpose)} · ${Math.max(1, Math.ceil(remaining / 60000))} ${t('мин')}`}</small></div>${over ? `<button class="btn secretary-primary" data-action="attention-open-boundary" data-session-id="${esc(current.id)}">${t('Открыть границу')}</button>` : ''}`,
+      };
+    } else {
+      const boundary = active.session.phase === 'boundary';
+      if (boundary) controlState += ' is-due';
+      primary = {
+        kind: 'active',
+        title: t('Сейчас граница внимания'),
+        html: `<div class="secretary-control-copy"><b>${esc(active.target.label)}</b><small>${boundary ? t('Граница уже достигнута') : t('До границы: {minutes} мин').replace('{minutes}', Math.max(1, Math.ceil(active.session.remainingSeconds / 60)))}</small></div><button class="btn ghost" data-action="browser-companion-options">${t('Открыть настройки расширения')}</button>`,
+      };
+    }
+  } else if (State._secretaryExperimentSetupOpen && experiment.status === 'draft') {
+    primary = { kind: 'experiment', title: t('Личный эксперимент'), html: experimentOffer };
+  } else if (closed) {
+    primary = fallbackPrimary;
+  } else if (pendingReturn) {
+    primary = { kind: 'return', title: t('Не нужно держать всю систему в голове'), html: experiment.status === 'active' && experimentRecovery && experimentOffer ? experimentOffer : `<button class="secretary-action is-primary" data-action="attention-open-return"><span aria-hidden="true">↩</span><b>${t('Вернуться одним шагом')}</b></button>` };
+  } else if (eveningDue) {
+    controlState = ' is-due';
+    primary = { kind: 'evening', title: t('Пора завершить рабочий день'), html: `<button class="secretary-action is-primary" data-action="evening-open"><span aria-hidden="true">🌙</span><b>${t('Завершить вечер')}</b>${cfg.dailyReminder && cfg.eveningTime ? `<small>${esc(cfg.eveningTime)}</small>` : ''}</button>` };
+  } else if (!closed && experimentOffer) {
+    primary = { kind: 'experiment', title: t('Личный эксперимент'), html: experimentOffer };
+  } else if (!closed && selectedOffer && selectedOffer.html) {
+    primary = { kind: 'nudge', title: t('Сейчас важнее всего'), html: selectedOffer.html };
+  } else {
+    primary = fallbackPrimary;
+  }
+
+  return `<section class="secretary-control${controlState}" data-secretary-control tabindex="-1" aria-labelledby="secretary-control-title">
+    <div class="secretary-control-head"><div><span class="secretary-control-kicker">${t('Тень рядом')}</span><b id="secretary-control-title">${primary.title}</b></div></div>
+    <div class="secretary-primary-offer" role="status" aria-live="polite">${primary.html}</div>
+    <details class="secretary-other-support">
+      <summary><span>${t('Другая поддержка')}</span><span aria-hidden="true">⌄</span></summary>
+      <div class="secretary-other-support-body">
+        ${!closed && pendingReturn && primary.kind !== 'return' ? `<button class="secretary-action" data-action="attention-open-return"><span aria-hidden="true">↩</span><b>${t('Вернуться одним шагом')}</b></button>` : ''}
+        <button class="secretary-action" data-action="recovery-open"><span aria-hidden="true">🌿</span><b>${t('Отдохнуть с границей')}</b></button>
+        ${!closed && primary.kind !== 'evening' ? `<button class="secretary-action" data-action="evening-open"><span aria-hidden="true">🌙</span><b>${t('Завершить вечер')}</b>${cfg.dailyReminder && cfg.eveningTime ? `<small>${esc(cfg.eveningTime)}</small>` : ''}</button>` : ''}
+        ${policies[0] ? `<button class="secretary-action" data-action="attention-open-entry" data-policy-id="${esc(policies[0].id)}"><span aria-hidden="true">🛡</span><b>${esc(policies[0].name)}</b></button>` : `<button class="secretary-action" data-action="attention-open-setup"><span aria-hidden="true">🛡</span><b>${t('Настроить границу входа')}</b></button>`}
+        ${secretaryExperimentAvailable() && experiment.status === 'draft' ? `<button class="secretary-action" data-action="secretary-experiment-open"><span aria-hidden="true">◌</span><b>${t('30 дней с Тенью')}</b></button>` : secretaryExperimentAvailable() && experiment.status === 'active' ? `<button class="secretary-action" data-action="secretary-experiment-stop"><span aria-hidden="true">■</span><b>${t('Остановить эксперимент')}</b></button>` : ''}
+      </div>
+    </details>
   </section>`;
 }
 function attentionPolicyId(name) {
@@ -22410,13 +22968,14 @@ function attentionReturnCandidates() {
     return ad - bd;
   }).slice(0, 8);
 }
-function openAttentionReturn(opener = null) {
+function openAttentionReturn(opener = null, experimentEpisodeId = '') {
   const rows = attentionReturnCandidates();
   const at = rows.length ? State._attentionReturnIndex % rows.length : 0;
   const task = rows[at] || null;
   return showAttentionDialog('return', {
     actionId: task ? task.id : '', actionLabel: task ? task.title : t('Открыть план на сегодня'),
     actionMinutes: task ? (Number(task.estimateMin) || 10) : 10,
+    experimentEpisodeId: String(experimentEpisodeId || '').slice(0, 40),
   }, { opener });
 }
 function openRecoveryLauncher(opener = null, defaults = {}) {
@@ -22684,9 +23243,12 @@ async function startAttentionEmergency(button) {
   closeAttentionDialog({ force: true }); toast(t('Аварийный выход записан без наказания'));
 }
 
-async function markAttentionReturned(taskId) {
+async function markAttentionReturned(taskId, episodeId = '') {
   const E = window.AttentionEpisodeV1; if (!E || attentionHasLoadError()) return true;
-  const candidate = [...E.normalize(State.attentionEpisodes).episodes].reverse().find((episode) => episode.outcome === 'escaped' && !episode.returnedAt);
+  const candidates = [...E.normalize(State.attentionEpisodes).episodes].reverse();
+  const candidate = episodeId
+    ? candidates.find((episode) => episode.id === episodeId && episode.outcome === 'escaped' && !episode.returnedAt)
+    : candidates.find((episode) => episode.outcome === 'escaped' && !episode.returnedAt);
   if (!candidate) return true;
   const amended = E.amend(State.attentionEpisodes, candidate.id, { returnedAt: attentionNow(), returnActionId: taskId || undefined });
   if (!amended.ok) return false;
@@ -22695,8 +23257,10 @@ async function markAttentionReturned(taskId) {
   applyAttentionBundle(bundle); return true;
 }
 async function startAttentionReturn(button) {
+  const overlay = button.closest('#attention-dialog-overlay');
+  const experimentEpisodeId = String(overlay?._attentionVM?.experimentEpisodeId || '');
   attentionBusy(true);
-  if (!await markAttentionReturned(button.dataset.actionId || '')) { attentionBusy(false); attentionStatus('Не удалось сохранить возвращение. Попробуй ещё раз.', true); return; }
+  if (!await markAttentionReturned(button.dataset.actionId || '', experimentEpisodeId)) { attentionBusy(false); attentionStatus('Не удалось сохранить возвращение. Попробуй ещё раз.', true); return; }
   const id = button.dataset.actionId || '';
   closeAttentionDialog({ restoreFocus: false, force: true });
   State.view = 'today'; if (id) State._tasksFocusAfterCommit = `.task[data-id="${CSS.escape(id)}"] .t-title-edit, .task[data-id="${CSS.escape(id)}"]`;
@@ -26509,6 +27073,51 @@ async function onClick(e) {
   if (action === 'attention-open-entry') { openAttentionEntry(el.dataset.policyId, 'manual', el); return; }
   if (action === 'attention-open-boundary') { openAttentionBoundary(el.dataset.sessionId); return; }
   if (action === 'attention-open-return') { openAttentionReturn(el); return; }
+  if (action === 'secretary-experiment-open') { State._secretaryExperimentSetupOpen = true; render(); return; }
+  if (action === 'secretary-experiment-later') { State._secretaryExperimentSetupOpen = false; render(); return; }
+  if (action === 'secretary-experiment-start') {
+    if (State._secretaryExperimentBusy) return;
+    setSecretaryExperimentBusy(true, el);
+    try { await startSecretaryExperiment(); } finally { setSecretaryExperimentBusy(false); }
+    return;
+  }
+  if (action === 'secretary-experiment-accept' || action === 'secretary-experiment-dismiss') {
+    if (State._secretaryExperimentBusy) return;
+    const offer = {
+      offerId: String(el.dataset.offerId || '').slice(0, 120),
+      sourceEpisodeId: String(el.dataset.sourceEpisodeId || '').slice(0, 40),
+    };
+    const outcome = action === 'secretary-experiment-accept' ? 'accepted' : 'dismissed';
+    setSecretaryExperimentBusy(true, el);
+    try {
+      if (!await recordSecretaryExperimentOffer(outcome, offer)) return;
+      render();
+      if (outcome === 'accepted') requestAnimationFrame(() => openAttentionReturn(document.querySelector('[data-secretary-control]'), offer.sourceEpisodeId));
+    } finally { setSecretaryExperimentBusy(false); }
+    return;
+  }
+  if (action === 'secretary-experiment-feedback') {
+    if (State._secretaryExperimentBusy) return;
+    const feedback = el.closest('.secretary-experiment-feedback');
+    const offer = el.closest('[data-experiment-stage="feedback"]');
+    const afterEffect = feedback?.querySelector('[data-experiment-feedback="afterEffect"]')?.value || '';
+    const enjoyment = feedback?.querySelector('[data-experiment-feedback="enjoyment"]')?.value || 'unknown';
+    const regret = feedback?.querySelector('[data-experiment-feedback="regret"]')?.value || 'unknown';
+    const boundaryHeld = feedback?.querySelector('[data-experiment-feedback="boundaryHeld"]')?.value || 'unknown';
+    if (!afterEffect) { toast(t('Выбери один ответ')); feedback?.querySelector('[data-experiment-feedback="afterEffect"]')?.focus(); return; }
+    setSecretaryExperimentBusy(true, el);
+    try { await saveSecretaryExperimentFeedback(afterEffect, enjoyment, regret, boundaryHeld, offer?.dataset.feedbackDate || ''); }
+    finally { setSecretaryExperimentBusy(false); }
+    return;
+  }
+  if (action === 'secretary-experiment-stop' || action === 'secretary-experiment-complete') {
+    if (State._secretaryExperimentBusy) return;
+    setSecretaryExperimentBusy(true, el);
+    try { await endSecretaryExperiment(action === 'secretary-experiment-stop' ? 'stopped' : 'completed'); }
+    finally { setSecretaryExperimentBusy(false); }
+    return;
+  }
+  if (action === 'secretary-experiment-export') { exportSecretaryExperiment(); return; }
   if (action === 'browser-companion-refresh') {
     if (!requestBrowserCompanionStatus()) toast(t('Расширение не ответило. Обнови страницу или проверь, что оно включено.'));
     else toast(t('Запрос отправлен расширению'));
@@ -29149,6 +29758,15 @@ function publishLeaderboard() {
 
 // Делегированный обработчик change (для select-ов вне форм — напр. импорт достижений)
 function onChange(e) {
+  if (e.target.matches?.('[data-experiment-feedback]')) {
+    const field = e.target.dataset.experimentFeedback;
+    const surface = e.target.closest('[data-experiment-feedback-key]');
+    const key = String(surface?.dataset.experimentFeedbackKey || '');
+    if (!key) return;
+    const current = State._secretaryExperimentFeedbackDraft?.key === key ? State._secretaryExperimentFeedbackDraft : { key };
+    State._secretaryExperimentFeedbackDraft = Object.assign({}, current, { [field]: e.target.value });
+    return;
+  }
   if (e.target.closest?.('#account-profile-form')) {
     refreshAccountProfilePreview(e.target.form || e.target.closest('form'));
     if (e.target.matches('[name="layout"], [name="cover"], [name="audience"], [name="linkPlatform"]')) sfx('select');
@@ -29792,7 +30410,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v211';
+const PWA_CACHE_VERSION = 'satoru-v212';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

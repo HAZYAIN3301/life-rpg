@@ -29,7 +29,7 @@ test('persistent header no longer renders the skills strip', () => {
 
 test('Today support has one unambiguous Shadow owner in all locales', () => {
   assert.match(APP, /'Тень рядом': \{ en: 'Shadow is here', de: 'Schatten ist da', uk: 'Тінь поруч', es: 'Sombra está aquí' \}/);
-  const support = between(APP, 'function attentionTodayControlHTML()', 'function attentionPolicyId');
+  const support = between(APP, 'function attentionTodayControlHTML(', 'function attentionPolicyId');
   assert.match(support, /secretary-control-kicker[^\n]+t\('Тень рядом'\)/);
   assert.doesNotMatch(support, /t\('Satoru рядом'\)/);
   assert.match(CSS, /\.secretary-toggle-copy/);
@@ -152,10 +152,10 @@ test('new disclosures and hierarchy changes use semantic sound and finite motion
 });
 
 test('v210 Browser Protection shell advances coherently without repinning unchanged questionnaire code', () => {
-  assert.match(SW, /const CACHE = 'satoru-v211'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v211'/);
+  assert.match(SW, /const CACHE = 'satoru-v212'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v212'/);
   assert.match(INDEX, /return-shelf-ui-v1\.js\?v=20260830-economy-art-v208-1/);
-  assert.match(INDEX, /styles\.css\?v=20260901-browser-companion-v211-1/);
+  assert.match(INDEX, /styles\.css\?v=20260901-secretary-recovery-v212-1/);
   assert.match(INDEX, /questionnaire-v1\.js\?v=20260830-browser-companion-v206-1/);
-  assert.match(INDEX, /app\.js\?v=20260901-browser-companion-v211-1/);
+  assert.match(INDEX, /app\.js\?v=20260901-secretary-recovery-v212-1/);
 });

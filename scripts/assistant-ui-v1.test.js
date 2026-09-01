@@ -18,7 +18,7 @@ test('published safe-action and wake modules load before app and live in the she
     assert.ok(index.indexOf(`src="${file}`) < index.indexOf('src="app.js'), `${file} must load before app`);
     assert.ok(sw.includes(`'${file}'`), `${file} missing from SW shell`);
   }
-  assert.match(sw, /const CACHE = 'satoru-v211'/);
+  assert.match(sw, /const CACHE = 'satoru-v212'/);
 });
 
 test('model output is parsed by the one published whitelist, not the legacy parser', () => {
