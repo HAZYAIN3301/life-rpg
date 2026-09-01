@@ -77,7 +77,20 @@ test('утром после «меня унесло» появляется ро�
   assert.strictEqual(offer.action, R.ACTIONS.RECOVERY_DAY);
   assert.strictEqual(offer.reason, 'escaped');
   assert.strictEqual(offer.askOnly, false);
-  assert.deepStrictEqual([...offer.channels], ['card', 'push']);
+  // Ровно одна поверхность (дефект №10). Раньше ход уходил как ['card','push'],
+  // и обе считали себя вправе показать его — человек получал одно и то же дважды.
+  assert.strictEqual(offer.channel, 'card');
+  assert.deepStrictEqual([...offer.channels], ['card'], 'старое поле держит один элемент');
+});
+
+test('🔴 ход авторизован для одной спросившей поверхности', () => {
+  assert.strictEqual(R.next(base({ channel: 'push' })).channel, 'push');
+  assert.strictEqual(R.next(base({ channel: 'card' })).channel, 'card');
+  assert.strictEqual(R.next(base()).channel, 'card', 'по умолчанию — карточка');
+  // Канал, о котором арбитр не знает, — это канал, способный показать второй ход.
+  for (const bad of ['смс', 'email', '', null, 42]) {
+    assert.strictEqual(R.next(base({ channel: bad })), null, `обслужен неизвестный канал: ${bad}`);
+  }
 });
 
 test('🔴 без вчерашнего повода Router молчит', () => {

@@ -23,6 +23,7 @@ const SecretaryRouterV1 = require('./public/secretary-router-v1.js');
 const BulkUndoV1 = require('./public/bulk-undo-v1.js');
 const CommitmentV2 = require('./public/commitment-v2.js');
 const SecretaryExperimentV1 = require('./public/secretary-experiment-v1.js');
+const SecretaryClaimV1 = require('./public/secretary-claim-v1.js');
 const GoalResolveV1 = require('./public/goal-resolve-v1.js');
 const ServerUserRegistryV1 = require('./server-user-registry-v1.js');
 const AccountProfileV1 = require('./public/account-profile-v1.js');
@@ -3894,7 +3895,8 @@ const server = http.createServer(async (req, res) => {
   // ни текста страниц — модуль их и не примет, но гейт повторён здесь, потому что
   // это единственное место, где данные попадают на диск.
   if (u === '/api/secretary' || u === '/api/secretary/event' || u === '/api/secretary/offer'
-    || u === '/api/secretary/experiment') {
+    || u === '/api/secretary/experiment'
+    || u === '/api/secretary/claim' || u === '/api/secretary/claim/settle') {
     const uid = sessionUserId(req);
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const dir = userDataDir(uid);
@@ -3924,7 +3926,12 @@ const server = http.createServer(async (req, res) => {
       const today = String(req.headers['x-local-day'] || '').slice(0, 10);
       const tz = Number(req.headers['x-tz-offset']) || 0;
       const commitmentState = CommitmentV2.migrate(readUserJson(uid, 'commitments')).state;
+      // Какая поверхность спрашивает. Заголовком, а не query: маршруты сравнивают
+      // полный `req.url`, и параметр просто увёл бы запрос мимо обработчика.
+      // Ход авторизуется ровно для неё; право показать берётся отдельно, заявкой.
+      const askedChannel = req.headers['x-channel'] ? String(req.headers['x-channel']).slice(0, 16) : undefined;
       const offer = SecretaryRouterV1.next({
+        channel: askedChannel,
         now: new Date().toISOString(),
         today: /^\d{4}-\d{2}-\d{2}$/.test(today) ? today : new Date().toISOString().slice(0, 10),
         tzOffsetMinutes: tz,
@@ -3970,6 +3977,48 @@ const server = http.createServer(async (req, res) => {
       try { persist(ledgerFile, 'secretary-ledger', next); }
       catch { return sendJson(res, 500, { error: 'save_failed' }); }
       return sendJson(res, 200, { ok: true });
+    }
+
+    // ---- Секретарь: кто показывает ход -------------------------------------
+    //
+    // Ход один, поверхностей две, и живут они в разных процессах: карточка в открытом
+    // приложении и пуш, когда приложение закрыто. Без арбитра человек получает пуш, а
+    // потом открывает приложение и видит ту же карточку — мягкое вмешательство
+    // превращается в преследование. Право показать берётся ДО показа.
+    if (u === '/api/secretary/claim' || u === '/api/secretary/claim/settle') {
+      if (req.method !== 'POST') return sendJson(res, 405, { error: 'method' });
+      const claimsFile = path.join(dir, 'secretary-claims.json');
+      const stored = readChecked(claimsFile, SecretaryClaimV1.sanitizeClaims, SecretaryClaimV1.emptyClaims);
+      // Повреждённый файл заявок — отказ. Пустой означал бы «ход свободен» и вернул
+      // бы ровно тот дубль, ради которого арбитр и существует.
+      if (stored.error) return sendJson(res, 422, { error: 'invalid_secretary_state' });
+
+      let body = {}; try { body = JSON.parse(await readBody(req, 4 * 1024)); } catch {}
+      const offerId = String(body.offerId || '').slice(0, 160);
+      if (!offerId) return sendJson(res, 400, { error: 'no_offer' });
+      const now = new Date().toISOString();
+
+      if (u === '/api/secretary/claim') {
+        const out = SecretaryClaimV1.claim(stored.value, offerId, body.channel, now, crypto.randomUUID());
+        if (!out.ok) {
+          const code = out.reason === 'held' || out.reason === 'settled' ? 409 : 400;
+          return sendJson(res, code, { error: out.reason, channel: out.channel || null });
+        }
+        // Повтор той же поверхности ничего не пишет: это тот же самый показ.
+        if (!out.repeat) {
+          try { persist(claimsFile, 'secretary-claims', out.claims); }
+          catch { return sendJson(res, 500, { error: 'save_failed' }); }
+        }
+        return sendJson(res, 200, { ok: true, token: out.token, repeat: !!out.repeat });
+      }
+
+      const out = SecretaryClaimV1.settle(stored.value, offerId, body.token, body.outcome, now);
+      if (!out.ok) {
+        return sendJson(res, out.reason === 'not_found' ? 404 : 400, { error: out.reason });
+      }
+      try { persist(claimsFile, 'secretary-claims', out.claims); }
+      catch { return sendJson(res, 500, { error: 'save_failed' }); }
+      return sendJson(res, 200, { ok: true, released: out.released, outcome: out.outcome });
     }
 
     // ---- Секретарь: тридцатидневный эксперимент ----------------------------

@@ -211,7 +211,8 @@
    *  - events: журнал событий
    *  - ledger: что уже доставлено
    *  - commitments: состояние уговоров, v1 или v2 (может отсутствовать)
-   *  - dayClosed: закрыт ли сегодняшний день
+   *  - channel: поверхность, которая спрашивает ('card' по умолчанию)
+ *  - dayClosed: закрыт ли сегодняшний день
    * @returns {object|null}
    */
   function next(input) {
@@ -225,6 +226,14 @@
 
       if (cap.id === 'morning-after-overrun') {
         if (!inMorning(inp.now, inp.tzOffsetMinutes)) continue;
+        // Поверхность, которая спрашивает. Неизвестную не обслуживаем: канал, о
+        // котором никто не знает, — это канал, способный показать второй ход.
+        // Поле отсутствует — это старый вызывающий, ему карточка. Поле прислано,
+        // но канал неизвестен — отказ: канал, о котором не знает арбитр, это канал,
+        // способный показать второй ход.
+        const asked = inp.channel === undefined ? 'card' : inp.channel;
+        if (typeof asked !== 'string' || cap.channels.indexOf(asked) < 0) continue;
+        const channel = asked;
         const trouble = yesterdayTrouble(inp.events, inp.today);
         if (!trouble) continue;
         const quote = ownWords(inp.commitments, trouble.event.ref, inp.today, inp.mode);
@@ -234,7 +243,16 @@
           capability: cap.id,
           // Ниже порога уверенности предлагаем не план, а один вопрос.
           action: askOnly ? ACTIONS.ASK_ONE : cap.action,
-          channels: cap.channels,
+          // ⚠️ Ровно ОДИН канал (дефект №10). Раньше ход уходил сразу как
+          // `['card','push']`, то есть две поверхности считали себя вправе его
+          // показать, и человек получал одно и то же обращение дважды. Теперь ход
+          // авторизован для той поверхности, которая спросила; какая именно получит
+          // право показать — решает заявка в `secretary-claim-v1`.
+          channel,
+          // Прежнее поле сохранено, но всегда содержит ровно один элемент: старый
+          // потребитель продолжает работать и при этом физически не может показать
+          // две поверхности.
+          channels: Object.freeze([channel]),
           confidence: trouble.confidence,
           askOnly,
           reason: trouble.reason,

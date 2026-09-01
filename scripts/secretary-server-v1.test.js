@@ -251,3 +251,113 @@ test('🔴 уговоры с диска доезжают до цитаты, а �
     assert.strictEqual(offer.quote, null, 'ничего не выдумано');
   });
 });
+
+test('🔴 карточка и пуш не показывают один ход дважды', { timeout: 120000 }, async (t) => {
+  const rt = await startServer();
+  t.after(() => { try { rt.child.kill('SIGKILL'); } catch {} fs.rmSync(rt.dataDir, { recursive: true, force: true }); });
+  const { base } = rt;
+
+  const alice = await register(base, 'Алиса', 'a@claim.test');
+  const bob = await register(base, 'Боб', 'b@claim.test');
+  const morning = morningContext();
+  const HDR = morning.headers;
+
+  await post(base, alice.cookie, '/api/secretary/event',
+    { type: E.TYPES.ATTENTION_ESCAPED, day: morning.yesterday, at: `${morning.yesterday}T23:50:00.000Z`, ref: 'tiktok' });
+
+  const claim = (cookie, body) => post(base, cookie, '/api/secretary/claim', body);
+  const settle = (cookie, body) => post(base, cookie, '/api/secretary/claim/settle', body);
+
+  let offerId = '';
+  await t.test('ход авторизован для одной спросившей поверхности', async () => {
+    const asCard = await (await get(base, alice.cookie, '/api/secretary', HDR)).json();
+    assert.ok(asCard.offer, 'повод есть');
+    assert.strictEqual(asCard.offer.channel, 'card');
+    assert.deepStrictEqual([...asCard.offer.channels], ['card'], 'ровно один канал');
+    offerId = asCard.offer.offerId;
+
+    const asPush = await (await get(base, alice.cookie, '/api/secretary',
+      Object.assign({ 'X-Channel': 'push' }, HDR))).json();
+    assert.strictEqual(asPush.offer.channel, 'push');
+    assert.strictEqual(asPush.offer.offerId, offerId, 'ход тот же самый');
+  });
+
+  let token = '';
+  await t.test('🔴 второй канал получает отказ, а не второй показ', async () => {
+    const first = await claim(alice.cookie, { offerId, channel: 'push' });
+    assert.strictEqual(first.status, 200);
+    token = (await first.json()).token;
+    assert.ok(token);
+
+    const second = await claim(alice.cookie, { offerId, channel: 'card' });
+    assert.strictEqual(second.status, 409);
+    const d = await second.json();
+    assert.strictEqual(d.error, 'held');
+    assert.strictEqual(d.channel, 'push', 'карточке сказано, кто держит');
+  });
+
+  await t.test('повтор той же поверхности проходит и не создаёт вторую заявку', async () => {
+    const again = await claim(alice.cookie, { offerId, channel: 'push' });
+    assert.strictEqual(again.status, 200);
+    const d = await again.json();
+    assert.strictEqual(d.repeat, true);
+    assert.strictEqual(d.token, token, 'тот же токен');
+  });
+
+  await t.test('🔴 чужой ход не заявляется и не закрывается', async () => {
+    // Заявки живут в файле пользователя, поэтому Боб не может закрыть ход Алисы.
+    assert.strictEqual((await settle(bob.cookie, { offerId, token, outcome: 'gone' })).status, 404);
+    const bad = await settle(alice.cookie, { offerId, token: 'подделка', outcome: 'gone' });
+    assert.strictEqual(bad.status, 400);
+    assert.strictEqual((await bad.json()).error, 'bad_token');
+  });
+
+  await t.test('🔴 неопределённый провал доставки не открывает второй показ', async () => {
+    // 429/500/обрыв не означают «не доставлено»: пуш мог уйти. Молчание стоит
+    // одного пропущенного утра, дубль стоит доверия к механизму.
+    const r = await (await settle(alice.cookie, { offerId, token, outcome: 'retry' })).json();
+    assert.strictEqual(r.released, false);
+    const card = await claim(alice.cookie, { offerId, channel: 'card' });
+    assert.strictEqual(card.status, 409, 'карточка молчит');
+  });
+
+  await t.test('🔴 мёртвая подписка возвращает ход карточке', async () => {
+    const r = await (await settle(alice.cookie, { offerId, token, outcome: 'gone' })).json();
+    assert.strictEqual(r.released, true);
+    const card = await claim(alice.cookie, { offerId, channel: 'card' });
+    assert.strictEqual(card.status, 200, 'ход не потерян из-за мёртвой подписки');
+    const shown = await (await settle(alice.cookie, { offerId, token: (await card.json()).token, outcome: 'delivered' })).json();
+    assert.strictEqual(shown.ok, true);
+    assert.strictEqual((await claim(alice.cookie, { offerId, channel: 'push' })).status, 409, 'показанное не повторяется');
+  });
+
+  await t.test('неизвестный канал и исход отклоняются', async () => {
+    assert.strictEqual((await claim(alice.cookie, { offerId: 'x', channel: 'смс' })).status, 400);
+    assert.strictEqual((await claim(alice.cookie, { channel: 'card' })).status, 400, 'без хода нечего заявлять');
+    assert.strictEqual((await settle(alice.cookie, { offerId, token, outcome: 'ok' })).status, 400);
+  });
+
+  await t.test('🔴 повреждённый файл заявок — отказ, а не «ход свободен»', async () => {
+    const file = path.join(rt.dataDir, 'users', alice.body.id, 'secretary-claims.json');
+    const good = fs.readFileSync(file, 'utf8');
+    fs.writeFileSync(file, '{"version":1,"claims":"нет"}');
+    assert.strictEqual((await claim(alice.cookie, { offerId, channel: 'card' })).status, 422);
+    assert.strictEqual(fs.readFileSync(file, 'utf8'), '{"version":1,"claims":"нет"}', 'файл не перезаписан');
+    fs.writeFileSync(file, good);
+  });
+});
+
+test('🔴 текст пуша не выносит наружу ничего личного', () => {
+  // Пуш идёт через чужие серверы и лежит на экране блокировки: ни цитаты уговора,
+  // ни названия занятия, ни причины (§10 интеграционного контракта).
+  const C = require('../public/secretary-claim-v1.js');
+  const copy = C.pushCopy();
+  const src = fs.readFileSync(path.join(ROOT, 'public/secretary-claim-v1.js'), 'utf8');
+  const fn = src.slice(src.indexOf('function pushCopy'), src.indexOf('return Object.freeze'));
+  for (const leak of ['quote', 'target', 'reason', 'ref', 'note', 'title:', 'about']) {
+    if (leak === 'title:') continue;
+    assert.strictEqual(fn.includes(leak), false, `в текст пуша просочилось: «${leak}»`);
+  }
+  assert.strictEqual(/\$\{/.test(fn), false, 'в тексте пуша нет подстановок — значит, нечему утечь');
+  assert.ok(copy.body && copy.body.length < 80);
+});

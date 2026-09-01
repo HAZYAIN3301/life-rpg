@@ -6,11 +6,12 @@
 >
 > Реализовано: `public/secretary-events-v1.js`, `public/secretary-router-v1.js`,
 > `public/commitment-v2.js`, `public/secretary-experiment-v1.js`,
-> блок `/api/secretary*` в `server.js`.
-> Покрытие: `scripts/secretary-router-v1.test.js` (30),
-> `scripts/secretary-server-v1.test.js` (15), `scripts/commitment-v2.test.js` (19),
+> `public/secretary-claim-v1.js`, блок `/api/secretary*` в `server.js`.
+> Покрытие: `scripts/secretary-router-v1.test.js` (31),
+> `scripts/secretary-server-v1.test.js` (25), `scripts/commitment-v2.test.js` (19),
 > `scripts/secretary-experiment-v1.test.js` (19),
-> `scripts/secretary-experiment-server-v1.test.js` (15).
+> `scripts/secretary-experiment-server-v1.test.js` (15),
+> `scripts/secretary-claim-v1.test.js` (14).
 
 ## 0. Что это и чего тут нет
 
@@ -27,10 +28,11 @@
 <script src="secretary-router-v1.js?v=..."></script>
 <script src="commitment-v2.js?v=..."></script>
 <script src="secretary-experiment-v1.js?v=..."></script>
+<script src="secretary-claim-v1.js?v=..."></script>
 ```
 
 В `sw.js` — `'secretary-events-v1.js', 'secretary-router-v1.js', 'commitment-v2.js',
-'secretary-experiment-v1.js'` в `SHELL` + бамп `CACHE`.
+'secretary-experiment-v1.js', 'secretary-claim-v1.js'` в `SHELL` + бамп `CACHE`.
 
 `commitment-v1.js` остаётся подключённым: он не удалён и не изменён.
 
@@ -48,6 +50,11 @@
 |---|---|---|
 | `X-Local-Day` | локальный день пользователя | `2026-09-02` |
 | `X-Tz-Offset` | сдвиг от UTC в минутах | `120` |
+| `X-Channel` | какая поверхность спрашивает: `card` \| `push` | `card` |
+
+`X-Channel` необязателен — без него ход авторизуется для `card`. Но **присланный
+неизвестный канал приводит к молчанию**, а не к подстановке умолчания: канал, о
+котором не знает арбитр, — это канал, способный показать второй ход.
 
 ```json
 { "offer": null }
@@ -59,7 +66,8 @@
     "offerId": "morning-after-overrun|2026-09-02|attention.escaped|2026-09-01|tiktok",
     "capability": "morning-after-overrun",
     "action": "recovery_day_open",
-    "channels": ["card", "push"],
+    "channel": "card",
+    "channels": ["card"],
     "confidence": 0.9,
     "askOnly": false,
     "reason": "escaped",
@@ -92,6 +100,45 @@
 
 `state` ∈ `offered | accepted | dismissed`. Другое → `400 bad_state`.
 
+### `POST /api/secretary/claim`
+
+**Обязательно перед показом.** Ход один, поверхностей две, и живут они в разных
+процессах: без заявки человек получает пуш, открывает приложение и видит ту же
+карточку.
+
+```json
+{ "offerId": "...", "channel": "card" }
+```
+
+| Ответ | Что значит |
+|---|---|
+| `200 { token, repeat }` | можно показывать; `repeat: true` — та же поверхность повторила попытку |
+| `409 { error: "held", channel }` | держит другая поверхность — **молчать** |
+| `409 { error: "settled" }` | ход уже показан или отклонён — молчать |
+| `422` | файл заявок повреждён |
+
+### `POST /api/secretary/claim/settle`
+
+```json
+{ "offerId": "...", "token": "...", "outcome": "delivered" }
+```
+
+`outcome` ∈ `delivered | dismissed | gone | retry`.
+
+| Исход | Когда | Освобождает ход |
+|---|---|---|
+| `delivered` | показано | нет |
+| `dismissed` | человек отказался | нет |
+| `gone` | пуш вернул 404/410 — подписки нет | **да** |
+| `retry` | 429/5xx/обрыв | **нет** |
+
+⚠️ `retry` намеренно не освобождает ход. 429, 500 и оборванное соединение не
+означают «не доставлено» — пуш мог уйти, и показать после них карточку значит
+рискнуть вторым одинаковым обращением. Выбран противоположный риск: промолчать.
+Молчание стоит одного пропущенного утра, дубль стоит доверия к самому механизму,
+а его чинить нечем. По истечении заявки (15 минут) ход снова свободен; от
+повторного обращения за день по-прежнему защищает кулдаун.
+
 ## 3. Словарь событий
 
 `SecretaryEventsV1.TYPES`:
@@ -117,6 +164,8 @@
 ### Обязательные правила
 
 - **Один ход на экране.** Второй по приоритету не показывается «заодно». Метрика: поверхностей ≤1, параллельных предложений ≤1.
+- **⚠️ Ломающее изменение: `channels` больше не `["card","push"]`.** Ход авторизуется ровно для одной поверхности — поля `channel` (строка) и `channels` (массив ровно из одного элемента, для совместимости со старым потребителем). Это дефект №10 интеграционного контракта: раньше обе поверхности считали себя вправе показать ход.
+- **Перед показом обязательна заявка** (`POST /api/secretary/claim`). Ответ 409 означает «молчать», а не «показать всё равно».
 - **`askOnly: true` → это вопрос, не план.** Формулировка обязана спрашивать об одном факте, а не утверждать что-то о человеке. Приходит при `confidence < 0.6` — сейчас это `reason: "silent"`.
 - **`quote` может быть `null`.** Тогда показывается вариант без цитаты. Выдумывать «твоё решение» запрещено: смысл цитаты в том, что это его собственные слова из ресурсного состояния.
 - **`quote` теперь выбирается под занятие.** Если у человека есть уговор вида `attention` с ярлыком, совпавшим с `ref` события, цитируется он, а не якорь подъёма. Порядок: совпавший `attention` → любой `attention` → `anchor` → `edge` → первый живой.
@@ -352,7 +401,7 @@ CommitmentV2.bestFor(state, 'tiktok', day, mode); // с учётом режим�
 - ~~Серверные эндпоинты для bulk~~ — готовы.
 - ~~Commitment v2~~ — готов, см. §6c.
 - ~~Агрегаты 30-дневного эксперимента~~ — готовы, см. §6d. Вехи обзора 7/14/21/30 отдаёт `reviewDue`.
-- **Каналы доставки**: push для `channels: ["push"]`, когда приложение закрыто.
+- ~~Каналы доставки~~ — арбитраж поверхностей готов, см. `SecretaryClaimV1` и §2. Остаётся подключить сам планировщик пуша к заявке: `pushDeliveryOutcome` уже различает `delivered/retry/gone`, их надо передавать в `settle`.
 
 ## 8. Чего движок не сделает
 
