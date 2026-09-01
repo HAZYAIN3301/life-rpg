@@ -77,7 +77,16 @@ test('Секретарь: доступ, идемпотентность и чес
 
   const alice = await register(base, 'Алиса', 'a@sec.test');
   const bob = await register(base, 'Боб', 'b@sec.test');
-  const YDAY = '2026-09-01', DAY = '2026-09-02';
+
+  // Сервер берёт настоящее «сейчас», а утренний перехват живёт в окне 05:00–13:00
+  // локального времени. Поэтому день и часовой сдвиг считаются от реальных часов:
+  // иначе набор проходил бы утром и падал вечером, что уже случилось.
+  const nowUtc = new Date();
+  const TZ = (9 - nowUtc.getUTCHours()) * 60;            // локально это 09:00
+  const localMs = nowUtc.getTime() + TZ * 60000;
+  const DAY = new Date(localMs).toISOString().slice(0, 10);
+  const YDAY = new Date(localMs - 86400000).toISOString().slice(0, 10);
+  const HDR = { 'x-local-day': DAY, 'x-tz-offset': String(TZ) };
 
   await t.test('без сессии не отдаётся ничего', async () => {
     assert.strictEqual((await fetch(base + '/api/secretary')).status, 401);
@@ -85,7 +94,7 @@ test('Секретарь: доступ, идемпотентность и чес
   });
 
   await t.test('пустое состояние — молчание, а не выдуманный ход', async () => {
-    const d = await (await get(base, alice.cookie, '/api/secretary', { 'x-local-day': DAY })).json();
+    const d = await (await get(base, alice.cookie, '/api/secretary', HDR)).json();
     assert.strictEqual(d.offer, null);
   });
 
@@ -112,7 +121,7 @@ test('Секретарь: доступ, идемпотентность и чес
   });
 
   await t.test('утром после повода приходит ровно один ход', async () => {
-    const d = await (await get(base, alice.cookie, '/api/secretary', { 'x-local-day': DAY, 'x-tz-offset': '0' })).json();
+    const d = await (await get(base, alice.cookie, '/api/secretary', HDR)).json();
     assert.ok(d.offer, 'ход должен быть');
     assert.strictEqual(d.offer.capability, 'morning-after-overrun');
     assert.ok(d.offer.cooldownKey);
@@ -120,17 +129,17 @@ test('Секретарь: доступ, идемпотентность и чес
   });
 
   await t.test('🔴 события одного человека не видны другому', async () => {
-    const d = await (await get(base, bob.cookie, '/api/secretary', { 'x-local-day': DAY })).json();
+    const d = await (await get(base, bob.cookie, '/api/secretary', HDR)).json();
     assert.strictEqual(d.offer, null, 'у Боба своих поводов нет');
-    const raw = await (await get(base, bob.cookie, '/api/secretary', { 'x-local-day': DAY })).text();
+    const raw = await (await get(base, bob.cookie, '/api/secretary', HDR)).text();
     assert.strictEqual(raw.includes('tiktok'), false);
   });
 
   await t.test('🔴 отклонённое не возвращается в тот же день', async () => {
-    const before = await (await get(base, alice.cookie, '/api/secretary', { 'x-local-day': DAY })).json();
+    const before = await (await get(base, alice.cookie, '/api/secretary', HDR)).json();
     const marked = await post(base, alice.cookie, '/api/secretary/offer', { cooldownKey: before.offer.cooldownKey, state: 'dismissed' });
     assert.strictEqual(marked.status, 200);
-    const after = await (await get(base, alice.cookie, '/api/secretary', { 'x-local-day': DAY })).json();
+    const after = await (await get(base, alice.cookie, '/api/secretary', HDR)).json();
     assert.strictEqual(after.offer, null);
   });
 
@@ -143,11 +152,11 @@ test('Секретарь: доступ, идемпотентность и чес
     const file = path.join(rt.dataDir, 'users', alice.body.id, 'secretary-events.json');
     const good = fs.readFileSync(file, 'utf8');
     fs.writeFileSync(file, '{"version":1,"events":[{"type":"мусор"}]}');
-    assert.strictEqual((await get(base, alice.cookie, '/api/secretary', { 'x-local-day': DAY })).status, 422);
+    assert.strictEqual((await get(base, alice.cookie, '/api/secretary', HDR)).status, 422);
     const write = await post(base, alice.cookie, '/api/secretary/event', { type: E.TYPES.DAY_SILENT, day: DAY });
     assert.strictEqual(write.status, 422, 'запись поверх битого журнала запрещена');
     fs.writeFileSync(file, good);
-    assert.strictEqual((await get(base, alice.cookie, '/api/secretary', { 'x-local-day': DAY })).status, 200);
+    assert.strictEqual((await get(base, alice.cookie, '/api/secretary', HDR)).status, 200);
   });
 });
 
