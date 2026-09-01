@@ -275,3 +275,25 @@ test('состояние уговоров v1 читается роутером �
   const v1 = V1.add(V1.emptyState(), ANCHOR).state;
   assert.strictEqual(R.ownWords(v1, 'tiktok').id, 'c1');
 });
+
+test('🔴 не действующий сегодня уговор не цитируется', () => {
+  // Дефект №7 контракта целиком: не только архивные, но и «ещё не начал» и «чужой
+  // режим дня». «В каникулы» не является решением человека про учебное утро.
+  const future = { id: 'f1', kind: 'anchor', title: 'Подъём в 6:00', win: 'успеваю', decidedOn: '2026-12-01' };
+  const holidays = { id: 'h1', kind: 'attention', title: 'Игры до полуночи', win: 'отдыхаю', target: 'tiktok', modes: ['каникулы'] };
+
+  const s = commitments(future, holidays, ANCHOR);
+  assert.strictEqual(R.ownWords(s, 'tiktok', DAY, 'школа').id, 'c1', 'взят действующий, а не будущий и не каникулярный');
+  assert.strictEqual(R.ownWords(s, 'tiktok', DAY, 'каникулы').id, 'h1', 'в своём режиме — цитируется');
+
+  // Без дня фильтр по режиму не применяется: вызывающий не сообщил контекст, и
+  // додумывать его за него нельзя.
+  assert.ok(R.ownWords(s, 'tiktok'), 'без дня цитата всё равно находится');
+});
+
+test('🔴 утренний ход не цитирует уговор чужого режима', () => {
+  const holidays = { id: 'h1', kind: 'attention', title: 'Игры до полуночи', win: 'отдыхаю', target: 'tiktok', modes: ['каникулы'] };
+  const offer = R.next(base({ commitments: commitments(holidays), mode: 'школа' }));
+  assert.ok(offer, 'повод есть');
+  assert.strictEqual(offer.quote, null, 'лучше без цитаты, чем с неподходящей');
+});

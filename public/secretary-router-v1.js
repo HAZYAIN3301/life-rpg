@@ -154,14 +154,27 @@
    * Смысл в том, что власть над человеком имеет его собственное решение, принятое
    * в ресурсном состоянии, а не совет приложения.
    */
-  function ownWords(commitments, target) {
+  function ownWords(commitments, target, day, mode) {
     if (!commitments || !Array.isArray(commitments.items)) return null;
-    // ⚠️ Архивные не цитируются. Уговор хранит дату отказа в `archivedAt`, и раньше
-    // здесь проверялось несуществующее поле `archived` — то есть не отсеивалось
-    // ничего. Человеку предъявляли как действующее решение то, от которого он уже
-    // отказался; для механизма, весь смысл которого «это твои собственные слова»,
-    // это не косметика, а способ его обесценить.
-    const live = commitments.items.filter((i) => i && i.title && !i.archivedAt && !i.archived);
+    // ⚠️ Цитируется только то, что действует СЕГОДНЯ. Раньше здесь проверялось
+    // несуществующее поле `archived` (уговор хранит дату отказа в `archivedAt`), то
+    // есть не отсеивалось ничего. Человеку предъявляли как действующее решение то,
+    // от которого он уже отказался; для механизма, весь смысл которого «это твои
+    // собственные слова», это не косметика, а способ его обесценить.
+    //
+    // Те же две причины не цитировать: уговор ещё не начал действовать (`decidedOn`
+    // позже этого дня) и уговор другого режима дня — «в каникулы» не является твоим
+    // решением про учебное утро.
+    const m = typeof mode === 'string' && mode.trim() ? mode.trim().slice(0, 24) : '';
+    const live = commitments.items.filter((i) => {
+      if (!i || !i.title || i.archivedAt || i.archived) return false;
+      if (isDay(day)) {
+        if (isDay(i.decidedOn) && i.decidedOn > day) return false;
+        const modes = Array.isArray(i.modes) ? i.modes : [];
+        if (m && modes.length && modes.indexOf(m) < 0) return false;
+      }
+      return true;
+    });
     if (!live.length) return null;
     const say = (i) => ({ id: i.id, title: String(i.title), win: i.win ? String(i.win) : '' });
 
@@ -214,7 +227,7 @@
         if (!inMorning(inp.now, inp.tzOffsetMinutes)) continue;
         const trouble = yesterdayTrouble(inp.events, inp.today);
         if (!trouble) continue;
-        const quote = ownWords(inp.commitments, trouble.event.ref);
+        const quote = ownWords(inp.commitments, trouble.event.ref, inp.today, inp.mode);
         const askOnly = trouble.confidence < ASK_BELOW;
         return Object.freeze({
           offerId: `${cap.id}|${inp.today}|${trouble.event.key}`,

@@ -22,6 +22,7 @@ const SecretaryEventsV1 = require('./public/secretary-events-v1.js');
 const SecretaryRouterV1 = require('./public/secretary-router-v1.js');
 const BulkUndoV1 = require('./public/bulk-undo-v1.js');
 const CommitmentV2 = require('./public/commitment-v2.js');
+const SecretaryExperimentV1 = require('./public/secretary-experiment-v1.js');
 const GoalResolveV1 = require('./public/goal-resolve-v1.js');
 const ServerUserRegistryV1 = require('./server-user-registry-v1.js');
 const AccountProfileV1 = require('./public/account-profile-v1.js');
@@ -3892,7 +3893,8 @@ const server = http.createServer(async (req, res) => {
   // Приватность: событие несёт факт, время и ограниченные поля. Ни URL, ни запросов,
   // ни текста страниц — модуль их и не примет, но гейт повторён здесь, потому что
   // это единственное место, где данные попадают на диск.
-  if (u === '/api/secretary' || u === '/api/secretary/event' || u === '/api/secretary/offer') {
+  if (u === '/api/secretary' || u === '/api/secretary/event' || u === '/api/secretary/offer'
+    || u === '/api/secretary/experiment') {
     const uid = sessionUserId(req);
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const dir = userDataDir(uid);
@@ -3921,6 +3923,7 @@ const server = http.createServer(async (req, res) => {
       if (log.error || led.error) return sendJson(res, 422, { error: 'invalid_secretary_state' });
       const today = String(req.headers['x-local-day'] || '').slice(0, 10);
       const tz = Number(req.headers['x-tz-offset']) || 0;
+      const commitmentState = CommitmentV2.migrate(readUserJson(uid, 'commitments')).state;
       const offer = SecretaryRouterV1.next({
         now: new Date().toISOString(),
         today: /^\d{4}-\d{2}-\d{2}$/.test(today) ? today : new Date().toISOString().slice(0, 10),
@@ -3930,7 +3933,10 @@ const server = http.createServer(async (req, res) => {
         // Уговоры читаются через миграцию, но НЕ переписываются на диске: запрос на
         // чтение не имеет права менять данные, а нетронутый v1-файл — самая надёжная
         // страховка на случай ошибки в самой миграции. Роутер переживает обе формы.
-        commitments: CommitmentV2.migrate(readUserJson(uid, 'commitments')).state,
+        commitments: commitmentState,
+        // Режим дня решает, какие уговоры вообще действуют сегодня: «в каникулы»
+        // не является решением человека про учебное утро.
+        mode: commitmentState.mode,
       });
       return sendJson(res, 200, { offer: offer || null });
     }
@@ -3964,6 +3970,136 @@ const server = http.createServer(async (req, res) => {
       try { persist(ledgerFile, 'secretary-ledger', next); }
       catch { return sendJson(res, 500, { error: 'save_failed' }); }
       return sendJson(res, 200, { ok: true });
+    }
+
+    // ---- Секретарь: тридцатидневный эксперимент ----------------------------
+    //
+    // Владелец проверяет на себе, помогает ли утренний разговор возвращаться быстрее.
+    // Сервер здесь делает ровно три вещи: сторожит владение, повторно проверяет
+    // закрытые словари (клиентская нормализация защитой не считается) и не даёт двум
+    // устройствам затереть ответы друг друга — ревизией файла и порядковым номером
+    // записи.
+    if (u === '/api/secretary/experiment') {
+      const expFile = path.join(dir, 'secretary-experiment.json');
+      const readExp = () => readChecked(expFile, SecretaryExperimentV1.sanitizeState, SecretaryExperimentV1.emptyState);
+      const tz = Number(req.headers['x-tz-offset']) || 0;
+      const localDay = (iso) => {
+        const t = Date.parse(iso);
+        return isNaN(t) ? null : new Date(t + tz * 60000).toISOString().slice(0, 10);
+      };
+
+      /**
+       * Проекция эпизодов внимания. Читается на время расчёта и НЕ копируется в
+       * состояние эксперимента: канонической историей остаётся Attention, а здесь
+       * лежали бы её протухающие дубликаты.
+       *
+       * Локальный день считается по смещению из заголовка. Для ночных эпизодов это
+       * не педантизм: именно они и есть предмет замера, а по UTC половина из них
+       * уехала бы в соседние сутки — и в базовое окно вместо экспериментального.
+       */
+      const projectionFor = (exp) => {
+        if (!exp) return { episodes: [], baselineEpisodes: [] };
+        let attn = null;
+        try {
+          const f = path.join(dir, 'attention.json');
+          attn = fs.existsSync(f) ? attentionSanitize(JSON.parse(fs.readFileSync(f, 'utf8'))) : null;
+        } catch { attn = null; }
+        const all = attn && Array.isArray(attn.episodes) ? attn.episodes : [];
+        const baseFrom = new Date(Date.parse(exp.startedOn + 'T00:00:00Z') - exp.baselineWindowDays * 86400000)
+          .toISOString().slice(0, 10);
+        const episodes = [], baselineEpisodes = [];
+        for (const e of all) {
+          const day = localDay(e.startedAt);
+          if (!day) continue;
+          // Наружу отдаём только два времени — больше расчёту не нужно, а лишнее
+          // поле здесь стало бы копией домена.
+          const row = { endedAt: e.endedAt || null, returnedAt: e.returnedAt || null };
+          if (day >= exp.startedOn && day <= exp.endsOn) episodes.push(row);
+          else if (day >= baseFrom && day < exp.startedOn) baselineEpisodes.push(row);
+        }
+        return { episodes, baselineEpisodes };
+      };
+
+      const stored = readExp();
+      if (stored.error) return sendJson(res, 422, { error: 'invalid_secretary_state' });
+
+      if (req.method === 'GET') {
+        const today = String(req.headers['x-local-day'] || '').slice(0, 10);
+        const exp = SecretaryExperimentV1.activeOf(stored.value)
+          || SecretaryExperimentV1.normalize(stored.value).experiments.slice(-1)[0] || null;
+        const proj = Object.assign(
+          { today: /^\d{4}-\d{2}-\d{2}$/.test(today) ? today : null },
+          projectionFor(exp));
+        return sendJson(res, 200, {
+          revision: stored.value.revision,
+          experiment: exp,
+          metrics: exp ? SecretaryExperimentV1.metrics(stored.value, exp.id, proj) : null,
+          reviewDue: exp ? SecretaryExperimentV1.reviewDue(stored.value, exp.id, proj.today) : null,
+        });
+      }
+
+      if (req.method !== 'POST') return sendJson(res, 405, { error: 'method' });
+
+      let body = {}; try { body = JSON.parse(await readBody(req, 8 * 1024)); } catch {}
+      const op = String(body.op || '');
+
+      // Ревизия сторожит файл целиком: два устройства, начавшие с одного состояния,
+      // не запишут друг поверх друга молча.
+      if (Object.prototype.hasOwnProperty.call(body, 'revision')
+        && Number(body.revision) !== stored.value.revision) {
+        return sendJson(res, 409, { error: 'stale_revision', revision: stored.value.revision });
+      }
+
+      let out = null;
+      if (op === 'open') {
+        out = SecretaryExperimentV1.open(stored.value, {
+          id: body.id, startedOn: body.startedOn, status: body.status,
+          refs: body.refs, profileSnapshot: body.profileSnapshot,
+          baselineWindowDays: body.baselineWindowDays,
+        });
+      } else if (op === 'activate') {
+        out = SecretaryExperimentV1.activate(stored.value, body.id, body.seq);
+      } else if (op === 'checkin') {
+        // Повторная проверка закрытых словарей. Модуль привёл бы неизвестное
+        // значение к `unknown`, но тихая замена скрыла бы ошибку клиента, а «не
+        // ответил» и «прислал мусор» — разные вещи.
+        const c = body.checkIn && typeof body.checkIn === 'object' ? body.checkIn : {};
+        const enums = [
+          ['offerOutcome', SecretaryExperimentV1.OFFER_OUTCOME],
+          ['boundaryHeld', SecretaryExperimentV1.BOUNDARY],
+          ['enjoyment', SecretaryExperimentV1.ENJOYMENT],
+          ['afterEffect', SecretaryExperimentV1.AFTER_EFFECT],
+          ['regret', SecretaryExperimentV1.REGRET],
+        ];
+        for (const [field, list] of enums) {
+          if (c[field] !== undefined && list.indexOf(c[field]) < 0) {
+            return sendJson(res, 400, { error: 'bad_enum', field });
+          }
+        }
+        out = SecretaryExperimentV1.recordCheckIn(stored.value, body.id, body.day, c, body.seq);
+      } else if (op === 'complete' || op === 'stop') {
+        const now = new Date().toISOString();
+        out = op === 'complete'
+          ? SecretaryExperimentV1.complete(stored.value, body.id, now, body.seq)
+          : SecretaryExperimentV1.stop(stored.value, body.id, now, body.seq);
+      } else {
+        return sendJson(res, 400, { error: 'bad_op' });
+      }
+
+      if (!out.ok) {
+        const code = out.error === 'not_found' ? 404
+          : out.error === 'stale_seq' ? 409
+            : out.error === 'duplicate' ? 409 : 400;
+        return sendJson(res, code, { error: out.error, revision: stored.value.revision });
+      }
+      // Повтор ничего не пишет и не считается новой ревизией: это то же намерение.
+      if (out.applied === false) {
+        return sendJson(res, 200, { ok: true, applied: false, reason: out.reason || 'repeat', revision: stored.value.revision });
+      }
+      const next = SecretaryExperimentV1.bumpRevision(out.state);
+      try { persist(expFile, 'secretary-experiment', next); }
+      catch { return sendJson(res, 500, { error: 'save_failed' }); }
+      return sendJson(res, 200, { ok: true, applied: true, revision: next.revision });
     }
 
     return sendJson(res, 404, { error: 'not found' });
