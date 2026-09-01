@@ -78,9 +78,9 @@ by default.
 - Events/Router/server contracts: **33/33 PASS**. The live-server morning case derives its local
   day and timezone from the actual test clock, so the gate remains deterministic after 13:00 and
   does not expire when the calendar advances.
-- Broader functional regression, excluding 15 known sparse-asset suites and two unrelated legacy
-  suites that hang locally: **147/147 test files PASS**. The full runner's failures were confined to
-  missing tracked art/font/audio files in this incomplete worktree; no Secretary failure appeared.
+- All `secretary-*` suites: **83/83 PASS**. Full `npm test`: **1305/1323 PASS**; all 18 remaining
+  failures are absent sparse art/font/audio files tracked in `origin/master` but not materialized in
+  this isolated checkout. No functional or Secretary failure remains.
 - Live desktop browser QA: one primary Shadow region, no legacy sibling cards, **Other support**
   remains open across the 10-second extension heartbeat, and the active experiment persists.
 - Responsive/touch/reduced-motion contracts: PASS. The current embedded browser surface does not
