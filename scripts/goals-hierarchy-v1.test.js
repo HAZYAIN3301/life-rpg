@@ -33,7 +33,11 @@ test('Goals v169 has one checked goals/initiatives/tasks graph and no direct cli
   assert.match(APP, /Store\.loadChecked\('goals', \[\], validateGoalsPayload\)/);
   assert.match(APP, /Store\.loadChecked\('goal-groups', \[\], validateGoalGroupsPayload\)/);
   assert.match(APP, /fetch\('\/api\/goals\/commit'/);
-  assert.match(APP, /data: \{ goals: nextGoals, tasks: nextTasks, groups: nextGroups \|\| \[\] \}/);
+  assert.match(APP, /const data = \{ goals: nextGoals, tasks: nextTasks, groups: nextGroups \|\| \[\] \}/);
+  assert.match(APP, /Store\.runExclusive\(\['goals', 'goal-groups', 'settings', 'tasks'\][\s\S]{0,260}dedicatedCommitPayload\(data\)/,
+    'goal graph must share the settings/tasks mutex and receive the exact CAS envelope');
+  assert.match(APP, /\/api\/goals\/commit[\s\S]{0,300}commitmentBoundaryRejected\(response\)[\s\S]{0,180}rememberDedicatedCommitSlots\(data/,
+    'goal commit must reject stale bases and advance snapshots only after success');
   assert.doesNotMatch(APP, /Store\.(?:save|saveNow|_put)\('(goals|goal-groups)'/);
   assert.match(APP, /normalizeGoalTaskLinks/);
   assert.match(APP, /normalizeGoalGroupLinks/);

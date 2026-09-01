@@ -155,7 +155,7 @@ test('v210 Browser Protection shell advances coherently without repinning unchan
   assert.match(SW, /const CACHE = 'satoru-v215'/);
   assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v215'/);
   assert.match(INDEX, /return-shelf-ui-v1\.js\?v=20260830-economy-art-v208-1/);
-  assert.match(INDEX, /styles\.css\?v=20260901-browser-companion-v214-1/);
+  assert.match(INDEX, /styles\.css\?v=20260901-actionable-gamification-v215-1/);
   assert.match(INDEX, /questionnaire-v1\.js\?v=20260830-browser-companion-v206-1/);
-  assert.match(INDEX, /app\.js\?v=20260901-browser-companion-v214-1/);
+  assert.match(INDEX, /app\.js\?v=20260901-actionable-gamification-v215-1/);
 });

@@ -110,6 +110,22 @@
     return { misses, perDays };
   }
 
+  // v1 already records reversible boundary changes here. v2 is a schema
+  // superset, so even an empty history is a real canonical field and must not
+  // disappear during migration. Keeping the same bounded normalizer also
+  // prevents malformed history from becoming an unbounded side channel.
+  function cleanHistory(raw) {
+    if (!Array.isArray(raw)) return [];
+    return raw.slice(-30).map((entry) => {
+      if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return null;
+      if (!['revised', 'released'].includes(entry.type) || !isDay(entry.day)) return null;
+      const out = { type: entry.type, day: entry.day };
+      if (entry.from && typeof entry.from === 'object') out.from = cleanEdge(entry.from);
+      if (entry.to && typeof entry.to === 'object') out.to = cleanEdge(entry.to);
+      return out;
+    }).filter(Boolean);
+  }
+
   function cleanItem(raw) {
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
     const id = typeof raw.id === 'string' && raw.id ? raw.id : null;
@@ -127,8 +143,10 @@
       modes: Array.isArray(raw.modes)
         ? [...new Set(raw.modes.filter((m) => typeof m === 'string' && m.trim()).map((m) => m.trim().slice(0, 24)))]
         : [],
+      history: cleanHistory(raw.history),
     };
     if (isDay(raw.decidedOn)) out.decidedOn = raw.decidedOn;
+    if (isDay(raw.revisedOn)) out.revisedOn = raw.revisedOn;
     const budget = cleanBudget(raw.budget);
     if (budget) out.budget = budget;
     if (isDay(raw.archivedAt)) out.archivedAt = raw.archivedAt;

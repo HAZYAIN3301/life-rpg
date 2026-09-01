@@ -173,7 +173,7 @@ test('v183 app shell loads the resolver before consumers and pins changed runtim
   for (const file of ['shadow-den-v1.js', 'resources-penguin-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js']) {
     assert.match(html, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=${originalRevision}`), `${file} must retain the v167 pin`);
   }
-  assert.match(html, /app\.js\?v=20260901-browser-companion-v214-1/);
+  assert.match(html, /app\.js\?v=20260901-actionable-gamification-v215-1/);
   const appearanceIndex = html.indexOf('traveller-appearance-v1.js');
   const motionIndex = html.indexOf('traveller-motion-v3.js');
   const roomIndex = html.indexOf('traveller-room-v4.js');

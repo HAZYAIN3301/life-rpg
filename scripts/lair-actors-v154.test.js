@@ -264,8 +264,8 @@ test('v183 shell revision and cache-busting are coherent', () => {
   assert.match(index, /recovery-slug-v1\.js\?v=20260826-appearance-feedback-v183-1/);
   assert.match(index, /shadow-den-v1\.js\?v=20260819-traveller-f2-runtime-v167-1/);
   assert.match(index, /den-pet-pair-v1\.js\?v=20260815-shadow-pet-v160-1/);
-  assert.match(index, /styles\.css\?v=20260901-browser-companion-v214-1/);
-  assert.match(index, /app\.js\?v=20260901-browser-companion-v214-1/);
+  assert.match(index, /styles\.css\?v=20260901-actionable-gamification-v215-1/);
+  assert.match(index, /app\.js\?v=20260901-actionable-gamification-v215-1/);
   assert.doesNotMatch(sw, /recovery-slug-v1\/pair-v2\/stretch-b\.png/);
   assert.match(sw, /recovery-slug-v1\/pair-v3\/stretch-soft-b-v155\.png/);
   assert.match(sw, /recovery-slug-v1\/pair-v3\/female\/f2-v1\/stretch-soft-b-v183\.png/);

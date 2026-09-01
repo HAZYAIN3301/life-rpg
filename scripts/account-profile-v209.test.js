@@ -106,8 +106,8 @@ test('Account profile v209 server: save, uniqueness, privacy and tribe scope are
 });
 
 test('Account profile v209 client: preview, layouts, privacy and social entry points are wired', () => {
-  assert.match(HTML, /account-profile-v1\.js\?v=20260830-account-profile-v209-1[^]*app\.js\?v=20260901-browser-companion-v214-1/);
-  assert.match(HTML, /styles\.css\?v=20260901-browser-companion-v214-1/);
+  assert.match(HTML, /account-profile-v1\.js\?v=20260830-account-profile-v209-1[^]*app\.js\?v=20260901-actionable-gamification-v215-1/);
+  assert.match(HTML, /styles\.css\?v=20260901-actionable-gamification-v215-1/);
   assert.match(SW, /const CACHE = 'satoru-v215'/); assert.match(SW, /account-profile-v1\.js/);
   assert.match(APP, /id="account-profile-form"/); assert.match(APP, /data-profile-preview/);
   for (const layout of ['journey', 'character', 'creator']) assert.match(APP, new RegExp(`['"]${layout}['"]`));

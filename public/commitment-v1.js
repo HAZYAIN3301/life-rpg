@@ -115,6 +115,18 @@
     return { misses, perDays };
   }
 
+  function cleanHistory(raw) {
+    if (!Array.isArray(raw)) return [];
+    return raw.slice(-30).map((entry) => {
+      if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return null;
+      if (!['revised', 'released'].includes(entry.type) || !isDay(entry.day)) return null;
+      const out = { type: entry.type, day: entry.day };
+      if (entry.from && typeof entry.from === 'object') out.from = cleanEdge(entry.from);
+      if (entry.to && typeof entry.to === 'object') out.to = cleanEdge(entry.to);
+      return out;
+    }).filter(Boolean);
+  }
+
   function cleanItem(raw) {
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
     const id = typeof raw.id === 'string' && raw.id ? raw.id : null;
@@ -134,8 +146,10 @@
       modes: Array.isArray(raw.modes)
         ? [...new Set(raw.modes.filter((m) => typeof m === 'string' && m.trim()).map((m) => m.trim().slice(0, 24)))]
         : [],
+      history: cleanHistory(raw.history),
     };
     if (isDay(raw.decidedOn)) out.decidedOn = raw.decidedOn;
+    if (isDay(raw.revisedOn)) out.revisedOn = raw.revisedOn;
     const budget = cleanBudget(raw.budget);
     if (budget) out.budget = budget;
     if (isDay(raw.archivedAt)) out.archivedAt = raw.archivedAt;
@@ -183,6 +197,35 @@
     return { ok: true, state: { ...s, items: s.items.concat([item]) } };
   }
 
+  // Пересмотр — нормальное действие над планом, а не нарушение обещания.
+  function revise(state, id, patch, day) {
+    const s = normalize(state);
+    const key = String(id);
+    if (!isDay(day) || !patch || typeof patch !== 'object' || Array.isArray(patch)) return { ok: false, error: 'invalid', state: s };
+    const current = s.items.find((item) => item.id === key && !item.archivedAt);
+    if (!current) return { ok: false, error: 'missing', state: s };
+    const candidate = cleanItem({ ...current, ...patch, id: current.id, history: current.history });
+    if (!candidate) return { ok: false, error: 'invalid', state: s };
+    candidate.history = current.history.concat([{ type: 'revised', day, from: current.edge, to: candidate.edge }]).slice(-30);
+    candidate.revisedOn = day;
+    return { ok: true, state: { ...s, items: s.items.map((item) => item.id === key ? candidate : item) } };
+  }
+
+  // Снять уговор можно всегда и бесплатно; история остаётся для честной калибровки.
+  function release(state, id, day) {
+    const s = normalize(state);
+    const key = String(id);
+    if (!isDay(day)) return { ok: false, error: 'invalid', state: s };
+    const current = s.items.find((item) => item.id === key && !item.archivedAt);
+    if (!current) return { ok: false, error: 'missing', state: s };
+    const released = {
+      ...current,
+      archivedAt: day,
+      history: current.history.concat([{ type: 'released', day }]).slice(-30),
+    };
+    return { ok: true, state: { ...s, items: s.items.map((item) => item.id === key ? released : item) } };
+  }
+
   // Архивация, а не удаление: история уговора — единственное, из чего потом видно,
   // подходил ли он этому человеку. Стирать её значит стирать основание для §7 плана
   // границ («сигнал ушёл — граница остаётся, не ушёл — предлагаем другую»).
@@ -190,6 +233,21 @@
     const s = normalize(state);
     if (!isDay(day)) return s;
     return { ...s, items: s.items.map((i) => (i.id === String(id) && !i.archivedAt ? { ...i, archivedAt: day } : i)) };
+  }
+
+  // Undo завершения квеста должен вернуть и связанное обязательство. Иначе
+  // архивная запись блокирует повторный take тем же deterministic id, а UI
+  // показывает незавершённый квест без возможности снова выбрать границу.
+  function reopen(state, id, day) {
+    const s = normalize(state);
+    const key = String(id);
+    if (!isDay(day)) return { ok: false, error: 'invalid', state: s };
+    const current = s.items.find((item) => item.id === key && item.archivedAt);
+    if (!current) return { ok: false, error: 'missing', state: s };
+    if (s.items.filter((item) => !item.archivedAt).length >= MAX_ITEMS) return { ok: false, error: 'limit', state: s };
+    const reopened = { ...current, revisedOn: day };
+    delete reopened.archivedAt;
+    return { ok: true, state: { ...s, items: s.items.map((item) => item.id === key ? reopened : item) } };
   }
 
   function setMode(state, mode) {
@@ -305,7 +363,7 @@
   return Object.freeze({
     VERSION, MAX_ITEMS, MAX_TITLE, MAX_WIN, KINDS, DEFAULT_MODE,
     emptyState, normalize, activeItems,
-    add, archive, setMode,
+    add, revise, release, archive, reopen, setMode,
     dueOn, coreOf, extrasOf,
     mark, clearMark, outcomeOf,
     streakOf, unsettled, dayScore,

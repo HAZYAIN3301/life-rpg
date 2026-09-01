@@ -169,7 +169,14 @@ test('runtime хранит незавершённый профиль отдел�
   assert.match(src, /base\.inspiration = profile; delete base\.inspirationDraft/);
   assert.match(src, /const saved = await flushInspirationSetupDraft\(form\);\s*if \(!saved\) return;/);
   assert.match(src, /#inspiration-setup-form[\s\S]{0,250}queueInspirationSetupDraft/);
-  assert.match(src, /beforeunload[\s\S]{0,950}inspirationDraft/);
+  assert.match(src, /function rememberInspirationLocalDraft\([\s\S]{0,260}sessionStorage\.setItem\(inspirationLocalDraftKey\(\), JSON\.stringify\(draft\)\)/,
+    'the last unsaved edit must have a local, account-scoped fallback');
+  const unloadAt = src.indexOf("window.addEventListener('beforeunload'");
+  assert.ok(unloadAt >= 0, 'the final local draft capture must be registered');
+  const unload = src.slice(unloadAt, unloadAt + 420);
+  assert.match(unload, /captureInspirationSetupDraft\(inspirationForm\)/);
+  assert.doesNotMatch(unload, /Store\.(?:save|saveNow|_put)|fetch\(/,
+    'unload must never bypass the paired CAS boundary with a server write');
 });
 
 test('пояснение к понравилось и не понравилось открывается отдельно и остаётся необязательным', () => {
@@ -356,7 +363,7 @@ test('интеграция подключает профиль и каталог
   const catalogAt = index.indexOf('inspiration-catalog-v1.js');
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20260901-browser-companion-v214-1');
+  const appAt = index.indexOf('app.js?v=20260901-actionable-gamification-v215-1');
   assert.ok(importAt >= 0 && profileAt > importAt && catalogAt > profileAt && domainAt > catalogAt && uiAt > domainAt && appAt > uiAt,
     'import → profile → catalog → saved domain → UI → app');
   for (const asset of ['inspiration-import-v1.js', 'inspiration-catalog-v1.js', 'return-shelf-v1.js']) {
@@ -366,7 +373,7 @@ test('интеграция подключает профиль и каталог
   assert.match(index, /inspiration-profile-v1\.js\?v=20260830-economy-art-v208-1/);
   assert.match(index, /return-shelf-ui-v1\.js\?v=20260830-economy-art-v208-1/);
   assert.match(sw, /return-shelf-ui-v1\.js/);
-  assert.match(index, /styles\.css\?v=20260901-browser-companion-v214-1/);
+  assert.match(index, /styles\.css\?v=20260901-actionable-gamification-v215-1/);
   assert.match(sw, /satoru-v215/);
   assert.match(app, /PWA_CACHE_VERSION = 'satoru-v215'/);
 });

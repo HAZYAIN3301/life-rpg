@@ -105,6 +105,6 @@ test('v195 cache pins the updated Guide and application assets together', () => 
   for (const file of ['guide-v3.js', 'guide-presenter-v1.js', 'guide-v3-copy-ru.js', 'guide-v3-copy-en.js', 'guide-v3-copy-de.js', 'guide-v3-copy-uk.js', 'guide-v3-copy-es.js']) {
     assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=[^"']*v205`));
   }
-  assert.match(INDEX, /app\.js\?v=[^"']*v214/);
-  assert.match(INDEX, /styles\.css\?v=[^"']*v214/);
+  assert.match(INDEX, /app\.js\?v=[^"']*v215/);
+  assert.match(INDEX, /styles\.css\?v=[^"']*v215/);
 });

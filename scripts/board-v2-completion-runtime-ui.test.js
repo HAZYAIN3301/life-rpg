@@ -19,7 +19,7 @@ test('v176 loads completion presentation before runtime and caches it exactly on
   assert.ok(completion >= 0 && completion < ui && ui < runtime && runtime < appPos);
   assert.equal((sw.match(/'board-v2-completion-ui\.js'/g) || []).length, 1);
   assert.match(sw, /const CACHE = 'satoru-v215';/);
-  assert.match(index, /app\.js\?v=20260901-browser-companion-v214-1/);
+  assert.match(index, /app\.js\?v=20260901-actionable-gamification-v215-1/);
 });
 
 test('Board completion opens a real form instead of attempting a null proof', () => {

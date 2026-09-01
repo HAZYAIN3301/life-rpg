@@ -27,6 +27,8 @@ const SecretaryClaimV1 = require('./public/secretary-claim-v1.js');
 const GoalResolveV1 = require('./public/goal-resolve-v1.js');
 const ServerUserRegistryV1 = require('./server-user-registry-v1.js');
 const AccountProfileV1 = require('./public/account-profile-v1.js');
+const CommitmentStoreV1 = require('./public/commitment-store-v1.js');
+const CommitmentJournalV1 = require('./public/commitment-journal-v1.js');
 
 const ROOT = __dirname;
 // Local development secrets live outside Git. Production providers inject the
@@ -48,6 +50,31 @@ function loadLocalEnv(file) {
     }
     process.env[match[1]] = value;
   }
+}
+function fsyncDirectory(dir) {
+  let fd;
+  try { fd = fs.openSync(dir, 'r'); fs.fsyncSync(fd); }
+  finally { if (fd !== undefined) fs.closeSync(fd); }
+}
+function writeJsonDurable(file, value) {
+  const dir = path.dirname(file); fs.mkdirSync(dir, { recursive: true });
+  const tmp = `${file}.${process.pid}.${crypto.randomBytes(4).toString('hex')}.durable.tmp`;
+  let fd;
+  try {
+    fd = fs.openSync(tmp, 'wx', 0o600);
+    fs.writeFileSync(fd, JSON.stringify(value, null, 2));
+    fs.fsyncSync(fd); fs.closeSync(fd); fd = undefined;
+    fs.renameSync(tmp, file); fsyncDirectory(dir);
+  } catch (error) {
+    if (fd !== undefined) { try { fs.closeSync(fd); } catch {} }
+    try { fs.unlinkSync(tmp); } catch {}
+    throw error;
+  }
+}
+function removeDurable(file) {
+  try { fs.unlinkSync(file); }
+  catch (error) { if (!error || error.code !== 'ENOENT') throw error; }
+  fsyncDirectory(path.dirname(file));
 }
 loadLocalEnv(path.join(ROOT, '.env.local'));
 
@@ -559,7 +586,10 @@ function removeUserFromParties(uid, parties) {
 }
 function fileSnapshot(file) {
   try { return { exists: true, data: fs.readFileSync(file) }; }
-  catch { return { exists: false, data: null }; }
+  catch (error) {
+    if (error && error.code === 'ENOENT') return { exists: false, data: null };
+    throw error;
+  }
 }
 function restoreSnapshot(file, snapshot) {
   if (snapshot.exists) {
@@ -567,7 +597,8 @@ function restoreSnapshot(file, snapshot) {
     const tmp = `${file}.${process.pid}.restore.tmp`;
     fs.writeFileSync(tmp, snapshot.data); fs.renameSync(tmp, file);
   } else {
-    try { fs.unlinkSync(file); } catch {}
+    try { fs.unlinkSync(file); }
+    catch (error) { if (!error || error.code !== 'ENOENT') throw error; }
   }
 }
 function genPartyCode(parties) { // 5-символьный код без похожих символов, уникальный
@@ -654,7 +685,7 @@ function rankNameFor(level) { let n = RANK_TABLE[0][0]; for (const [nm, min] of 
 //  + потолки/валидация против фабрикации. Личный (клиентский) XP не трогаем — это про тёплый UX.
 //  Формула-константы фиксированы здесь, т.к. settings.xp/curve у юзера редактируемы = вектор накрутки.
 // ============================================================
-const XP_PER_MIN = 1, XP_BONUS = 5, XP_DIFF = { easy: 1, normal: 1.5, hard: 2.2 };
+const XP_PER_MIN = 1, XP_BONUS = 5, XP_DIFF = { easy: 1, normal: 1.5, hard: 1.75 };
 const LVL_BASE = 100, LVL_GROWTH = 1.3, SKILL_BASE = 60;            // серверная кривая уровней
 const GOAL_XP_SRV = { mission: 8000, vision: 3000, path: 1200, long: 750, mid: 200, short: 50, recurring: 15 };
 const GOAL_XP_DEFAULT = 60;
@@ -2098,7 +2129,7 @@ function questionnaireNormalizeTask(raw, knownSkills, defaultSkills, goalId) {
   return { id, title, estimateMin, date, goalId, source, difficulty, skillIds, layers };
 }
 function questionnaireNormalizeCommit(payload) {
-  if (!questionnaireExactKeys(payload, ['idempotencyKey', 'revision', 'receipt', 'settings', 'goal', 'task', 'profileConsent'])) {
+  if (!questionnaireExactKeys(payload, ['idempotencyKey', 'revision', 'receipt', 'settings', 'goal', 'task', 'profileConsent', 'base'])) {
     throw questionnaireError('invalid_questionnaire_commit');
   }
   const idempotencyKey = questionnaireId(payload.idempotencyKey, 128);
@@ -2108,7 +2139,7 @@ function questionnaireNormalizeCommit(payload) {
   }
   const receipt = questionnaireNormalizeReceipt(payload.receipt, payload.profileConsent);
   const skills = questionnaireNormalizeSkills(payload.settings);
-  return { idempotencyKey, revision, receipt, skills, rawGoal: payload.goal, rawTask: payload.task };
+  return { idempotencyKey, revision, receipt, skills, rawGoal: payload.goal, rawTask: payload.task, base: payload.base };
 }
 function questionnaireLoadDomain(uid) {
   const settings = questionnaireReadFile(uid, 'settings', {}, 'object');
@@ -2176,23 +2207,28 @@ function questionnaireCheckRevision(current, normalized, requestHash) {
   if (normalized.revision !== expected) throw questionnaireError('questionnaire_revision_conflict', 409, { currentRevision: current ? current.revision : 0 });
   return 'write';
 }
-function questionnaireWriteUnit(uid, entries, verify) {
+function questionnaireWriteUnit(uid, entries, verify, graphTransition = null) {
   const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
   const snapshots = new Map(); const written = [];
   for (const [name] of entries) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
   const failAfter = Math.max(0, Number(process.env.QUESTIONNAIRE_FAIL_AFTER_FILE) || 0);
   try {
     for (const [name, value] of entries) {
+      if (graphTransition && graphTransition.protected && COMMITMENT_PAIR_NAMES.includes(name)) continue;
       backupFile(dir, name);
       writeJsonAtomic(path.join(dir, `${name}.json`), value);
       written.push(name);
       if (failAfter && written.length === failAfter) throw new Error('questionnaire_fault_injected');
     }
+    if (graphTransition && graphTransition.protected) commitCommitmentPairDurable(uid, graphTransition);
     if (verify) return verify();
   } catch (error) {
+    let rollbackFailed = false;
     for (const name of written.reverse()) {
-      try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {}
+      try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); }
+      catch { rollbackFailed = true; }
     }
+    if (rollbackFailed) throw new Error('commitment_commit_rollback_failed');
     throw error;
   }
 }
@@ -2203,8 +2239,16 @@ function questionnaireWithLock(uid, operation) {
 }
 function questionnaireCommit(uid, payload) {
   return questionnaireWithLock(uid, () => {
+    recoverCommitmentJournal(uid);
     const normalized = questionnaireNormalizeCommit(payload);
-    const requestHash = questionnaireHash(normalized);
+    const requestHash = questionnaireHash({
+      idempotencyKey: normalized.idempotencyKey,
+      revision: normalized.revision,
+      receipt: normalized.receipt,
+      skills: normalized.skills,
+      rawGoal: normalized.rawGoal,
+      rawTask: normalized.rawTask,
+    });
     const current = questionnaireReadStored(uid);
     const revisionAction = questionnaireCheckRevision(current, normalized, requestHash);
     if (revisionAction === 'replay') {
@@ -2249,6 +2293,15 @@ function questionnaireCommit(uid, payload) {
     if (!goalCommitPayloadValid({ goals: nextGoals, tasks: nextTasks, groups: domain.goalGroups })) {
       throw questionnaireError('questionnaire_domain_validation_failed', 409, { recoverable: true });
     }
+    let graphTransition;
+    try {
+      graphTransition = assertAccountGraphTransition(uid, {
+        base: normalized.base,
+        data: { settings: nextSettings, tasks: nextTasks },
+      });
+    } catch (error) {
+      throw questionnaireError(error.message, Number(error && error.status) || 409, { recoverable: true });
+    }
     const questionnaire = {
       version: 1, status: 'materialized', revision: normalized.revision,
       idempotencyKey: normalized.idempotencyKey, requestHash,
@@ -2273,7 +2326,7 @@ function questionnaireCommit(uid, payload) {
       }
       questionnaireAssertMaterialized(uid, saved);
       return saved;
-    });
+    }, graphTransition);
     return questionnaireDomainResponse(uid, persisted, false);
   });
 }
@@ -2313,6 +2366,7 @@ function questionnaireDefer(uid, payload) {
   });
 }
 function questionnaireHttpError(res, error) {
+  if (sendCommitmentBoundaryError(res, error)) return;
   const status = Number(error && error.status) || 500;
   const body = { error: status >= 500 ? 'questionnaire_commit_failed_no_changes_lost' : String(error && error.code || 'invalid_questionnaire_commit') };
   if (error && error.extra) Object.assign(body, error.extra);
@@ -2344,6 +2398,7 @@ function importPortableAccountData(uid, payload) {
   if (!names.length || names.some((name) => !ACCOUNT_PORTABLE_FILES.includes(name) || !portableValueValid(name, payload.data[name]))) throw new Error('invalid_archive');
   const encoded = JSON.stringify(payload.data);
   if (Buffer.byteLength(encoded) > 8 * 1024 * 1024) throw new Error('archive_too_large');
+  const graphTransition = assertAccountGraphTransition(uid, { base: payload.base, data: payload.data });
 
   // A receipt without its referenced domain objects is a false-success trap.
   // Validate the final merged archive view, not only the files present in this
@@ -2365,10 +2420,12 @@ function importPortableAccountData(uid, payload) {
   for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
   try {
     for (const name of names) {
+      if (graphTransition.protected && COMMITMENT_PAIR_NAMES.includes(name)) continue;
       backupFile(dir, name);
       writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
       written.push(name);
     }
+    if (graphTransition.protected) commitCommitmentPairDurable(uid, graphTransition);
   } catch (error) {
     for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
     throw error;
@@ -2393,15 +2450,18 @@ function commitEconomyData(uid, payload) {
   const names = Object.keys(payload.data);
   if (!names.length || names.some((name) => !economyValueValid(name, payload.data[name]))) throw new Error('invalid_economy_commit');
   if (Buffer.byteLength(JSON.stringify(payload.data)) > 2 * 1024 * 1024) throw new Error('economy_commit_too_large');
+  const graphTransition = assertAccountGraphTransition(uid, payload);
   const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
   const snapshots = new Map(); const written = [];
   for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
   try {
     for (const name of names) {
+      if (graphTransition.protected && COMMITMENT_PAIR_NAMES.includes(name)) continue;
       backupFile(dir, name);
       writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
       written.push(name);
     }
+    if (graphTransition.protected) commitCommitmentPairDurable(uid, graphTransition);
   } catch (error) {
     for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
     throw error;
@@ -2441,16 +2501,19 @@ function guideCommitPayloadValid(data) {
 function commitGuideData(uid, payload) {
   if (!payload || !guideCommitPayloadValid(payload.data)) throw new Error('invalid_guide_commit');
   if (Buffer.byteLength(JSON.stringify(payload.data)) > 4 * 1024 * 1024) throw new Error('guide_commit_too_large');
+  const graphTransition = assertAccountGraphTransition(uid, payload);
   const names = Object.keys(payload.data);
   const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
   const snapshots = new Map(); const written = [];
   for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
   try {
     for (const name of names) {
+      if (graphTransition.protected && COMMITMENT_PAIR_NAMES.includes(name)) continue;
       backupFile(dir, name);
       writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
       written.push(name);
     }
+    if (graphTransition.protected) commitCommitmentPairDurable(uid, graphTransition);
   } catch (error) {
     for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
     throw error;
@@ -2492,15 +2555,18 @@ function commitHabitData(uid, payload) {
   const names = Object.keys(payload.data);
   if (!names.length || names.some((name) => !habitCommitValueValid(name, payload.data[name]))) throw new Error('invalid_habit_commit');
   if (Buffer.byteLength(JSON.stringify(payload.data)) > 3 * 1024 * 1024) throw new Error('habit_commit_too_large');
+  const graphTransition = assertAccountGraphTransition(uid, payload);
   const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
   const snapshots = new Map(); const written = [];
   for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
   try {
     for (const name of names) {
+      if (graphTransition.protected && COMMITMENT_PAIR_NAMES.includes(name)) continue;
       backupFile(dir, name);
       writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
       written.push(name);
     }
+    if (graphTransition.protected) commitCommitmentPairDurable(uid, graphTransition);
   } catch (error) {
     for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
     throw error;
@@ -2515,6 +2581,7 @@ function goalRecordValid(goal, ids) {
   if (typeof goal.title !== 'string' || !goal.title.trim()) return false;
   if (goal.parentId != null && (typeof goal.parentId !== 'string' || goal.parentId === goal.id)) return false;
   if (goal.groupId != null && (typeof goal.groupId !== 'string' || !goal.groupId.trim())) return false;
+  if (goal.skillId != null && (typeof goal.skillId !== 'string' || !goal.skillId.trim())) return false;
   if (goal.skillIds != null && (!Array.isArray(goal.skillIds) || !goal.skillIds.every((id) => typeof id === 'string' && id))) return false;
   if (goal.backgroundSkillIds != null && (!Array.isArray(goal.backgroundSkillIds) || !goal.backgroundSkillIds.every((id) => typeof id === 'string' && id))) return false;
   if (!Array.isArray(goal.steps)) return false;
@@ -2529,14 +2596,85 @@ function goalRecordValid(goal, ids) {
   }
   return true;
 }
+const GOAL_GRAPH_PUBLIC_NAMES = Object.freeze(['settings', 'tasks', 'goals', 'groups', 'skilltree']);
+const GOAL_GRAPH_FILE_NAMES = Object.freeze(['settings', 'tasks', 'goals', 'goal-groups', 'skilltree']);
+const GOAL_GRAPH_FILE_OF = Object.freeze({
+  settings: 'settings', tasks: 'tasks', goals: 'goals', groups: 'goal-groups', skilltree: 'skilltree',
+});
+function exactObjectKeys(value, names) {
+  return !!value && typeof value === 'object' && !Array.isArray(value)
+    && Object.keys(value).sort().join(',') === [...names].sort().join(',');
+}
+function goalGraphExtendedPayload(data) {
+  return exactObjectKeys(data, GOAL_GRAPH_PUBLIC_NAMES);
+}
+function goalGraphSkillIds(settings) {
+  if (!settings || typeof settings !== 'object' || Array.isArray(settings)
+    || !Array.isArray(settings.skills) || settings.skills.length > 500) return null;
+  const ids = new Set();
+  for (const skill of settings.skills) {
+    if (!skill || typeof skill !== 'object' || Array.isArray(skill)) return null;
+    const id = typeof skill.id === 'string' ? skill.id.trim() : '';
+    const name = typeof skill.name === 'string' ? skill.name.trim() : '';
+    if (!id || id.length > 120 || ids.has(id) || !name || name.length > 160) return null;
+    if (skill.parentId != null && (typeof skill.parentId !== 'string' || !skill.parentId.trim()
+      || skill.parentId.length > 120 || skill.parentId === id)) return null;
+    ids.add(id);
+  }
+  for (const skill of settings.skills) if (skill.parentId != null && !ids.has(skill.parentId)) return null;
+  for (const skill of settings.skills) {
+    const seen = new Set([skill.id]); let parentId = skill.parentId; let depth = 0;
+    while (parentId != null) {
+      if (seen.has(parentId) || ++depth > 24) return null;
+      seen.add(parentId);
+      const parent = settings.skills.find((candidate) => candidate && candidate.id === parentId);
+      parentId = parent && parent.parentId != null ? parent.parentId : null;
+    }
+  }
+  return ids;
+}
+function skillReferencesKnown(record, knownSkills) {
+  const scalar = ['skillId'];
+  const arrays = ['skillIds', 'backgroundSkillIds', 'layers', 'sphereIds', 'backgroundSphereIds'];
+  for (const key of scalar) {
+    if (record[key] != null && (typeof record[key] !== 'string' || !knownSkills.has(record[key]))) return false;
+  }
+  for (const key of arrays) {
+    if (record[key] == null) continue;
+    if (!Array.isArray(record[key]) || record[key].some((id) => typeof id !== 'string' || !knownSkills.has(id))) return false;
+  }
+  return true;
+}
+function skillTreeShapeValid(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value) || Object.keys(value).length > 500) return false;
+  for (const tree of Object.values(value)) {
+    if (!tree || typeof tree !== 'object' || Array.isArray(tree) || !Array.isArray(tree.nodes) || tree.nodes.length > 5000) return false;
+    const ids = new Set();
+    for (const node of tree.nodes) {
+      if (!node || typeof node !== 'object' || Array.isArray(node)
+        || typeof node.id !== 'string' || !node.id || ids.has(node.id)
+        || typeof node.title !== 'string') return false;
+      ids.add(node.id);
+      if (node.requires != null && (!Array.isArray(node.requires)
+        || node.requires.some((id) => typeof id !== 'string'))) return false;
+      if (node.perks != null && (!Array.isArray(node.perks)
+        || node.perks.some((perk) => !perk || typeof perk !== 'object' || Array.isArray(perk)))) return false;
+    }
+  }
+  return true;
+}
 function goalCommitPayloadValid(data) {
   if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
   const names = Object.keys(data).sort().join(',');
   // Two-file commits remain valid for an already-open v168 tab during the
   // v169 rollout. New clients always include groups and get full referential
   // validation across all three files.
-  if (!['goals,tasks', 'goals,groups,tasks'].includes(names) || !Array.isArray(data.goals) || !Array.isArray(data.tasks)) return false;
+  const extended = goalGraphExtendedPayload(data);
+  if (!extended && !['goals,tasks', 'goals,groups,tasks'].includes(names)) return false;
+  if (!Array.isArray(data.goals) || !Array.isArray(data.tasks)) return false;
   if (data.groups !== undefined && !GoalsInitiativesV1.validateGroups(data.groups)) return false;
+  const knownSkills = extended ? goalGraphSkillIds(data.settings) : null;
+  if (extended && (!knownSkills || !skillTreeShapeValid(data.skilltree))) return false;
   const goalIds = new Set();
   if (!data.goals.every((goal) => goalRecordValid(goal, goalIds))) return false;
   const groupIds = data.groups === undefined ? null : new Set(data.groups.map((group) => group.id));
@@ -2551,12 +2689,14 @@ function goalCommitPayloadValid(data) {
       if (!parent) return false;
       parentId = parent.parentId == null ? null : parent.parentId;
     }
+    if (knownSkills && !skillReferencesKnown(goal, knownSkills)) return false;
   }
   const taskIds = new Set();
   return data.tasks.every((task) => task && typeof task === 'object' && !Array.isArray(task)
     && typeof task.id === 'string' && task.id && !taskIds.has(task.id) && (taskIds.add(task.id), true)
     && typeof task.title === 'string' && task.title.trim()
-    && (task.goalId == null || (typeof task.goalId === 'string' && goalIds.has(task.goalId))));
+    && (task.goalId == null || (typeof task.goalId === 'string' && goalIds.has(task.goalId)))
+    && (!knownSkills || skillReferencesKnown(task, knownSkills)));
 }
 // Goals and their linked daily tasks are one graph. Every goal mutation sends
 // both files so deleting/reparenting cannot leave a task pointing at a missing
@@ -2564,6 +2704,11 @@ function goalCommitPayloadValid(data) {
 function commitGoalData(uid, payload) {
   if (!payload || !goalCommitPayloadValid(payload.data)) throw new Error('invalid_goal_commit');
   if (Buffer.byteLength(JSON.stringify(payload.data)) > 4 * 1024 * 1024) throw new Error('goal_commit_too_large');
+  if (goalGraphExtendedPayload(payload.data)) {
+    const transition = assertGoalGraphTransition(uid, payload);
+    return commitCommitmentGraphDurable(uid, transition);
+  }
+  const graphTransition = assertAccountGraphTransition(uid, payload);
   const entries = [['goals', 'goals'], ['tasks', 'tasks']];
   if (payload.data.groups !== undefined) entries.push(['groups', 'goal-groups']);
   const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
@@ -2571,10 +2716,12 @@ function commitGoalData(uid, payload) {
   for (const [, fileName] of entries) snapshots.set(fileName, fileSnapshot(path.join(dir, `${fileName}.json`)));
   try {
     for (const [payloadName, fileName] of entries) {
+      if (graphTransition.protected && COMMITMENT_PAIR_NAMES.includes(fileName)) continue;
       backupFile(dir, fileName);
       writeJsonAtomic(path.join(dir, `${fileName}.json`), payload.data[payloadName]);
       written.push(fileName);
     }
+    if (graphTransition.protected) commitCommitmentPairDurable(uid, graphTransition);
   } catch (error) {
     for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
     throw error;
@@ -2613,21 +2760,245 @@ function boardMediaCommitPayloadValid(value) {
 function commitBoardData(uid, payload) {
   if (!payload || !boardCommitPayloadValid(payload.data)) throw new Error('invalid_board_commit');
   if (Buffer.byteLength(JSON.stringify(payload.data)) > 8 * 1024 * 1024) throw new Error('board_commit_too_large');
+  const graphTransition = assertAccountGraphTransition(uid, payload);
   const names = Object.keys(payload.data);
   const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
   const snapshots = new Map(); const written = [];
   for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
   try {
     for (const name of names) {
+      if (graphTransition.protected && COMMITMENT_PAIR_NAMES.includes(name)) continue;
       backupFile(dir, name);
       writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
       written.push(name);
     }
+    if (graphTransition.protected) commitCommitmentPairDurable(uid, graphTransition);
   } catch (error) {
     for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
     throw error;
   }
   return names;
+}
+
+// A commitment gesture changes both its canonical state in settings and the
+// linked quest record. Persisting either file alone could resurrect a legacy
+// oath, lose an outcome, or leave a dangling quest:<id> reference. The strict
+// pure contract validates the complete graph before this rollback-capable unit.
+function commitmentCurrentBase(file) {
+  try { return { exists: true, value: JSON.parse(fs.readFileSync(file, 'utf8')) }; }
+  catch (error) {
+    if (error && error.code === 'ENOENT') return { exists: false, value: null };
+    const wrapped = new Error('commitment_data_corrupt'); wrapped.cause = error; throw wrapped;
+  }
+}
+const COMMITMENT_JOURNAL_FILE = '.commitment-journal-v1.json';
+const COMMITMENT_PAIR_NAMES = Object.freeze(['settings', 'tasks']);
+const COMMITMENT_JOURNAL_ALLOWED_NAMES = Object.freeze(['settings', 'tasks', 'goals', 'goal-groups', 'skilltree']);
+function commitmentBoundaryError(message, status) {
+  const error = new Error(message);
+  error.status = status;
+  error.commitmentBoundary = true;
+  return error;
+}
+function sendCommitmentBoundaryError(res, error) {
+  if (!error || !error.commitmentBoundary) return false;
+  sendJson(res, Number(error.status) || 500, { error: error.message });
+  return true;
+}
+function commitmentJournalFile(uid) {
+  return path.join(userDataDir(uid), COMMITMENT_JOURNAL_FILE);
+}
+function commitmentCrashAt(point) {
+  if (String(process.env.COMMITMENT_CRASH_AT || '') !== point) return;
+  process.kill(process.pid, 'SIGKILL');
+}
+function recoverCommitmentJournal(uid) {
+  const journalFile = commitmentJournalFile(uid);
+  let raw;
+  try { raw = fs.readFileSync(journalFile, 'utf8'); }
+  catch (error) {
+    if (error && error.code === 'ENOENT') return { ok: true, recovered: false };
+    throw commitmentBoundaryError('commitment_recovery_failed', 503);
+  }
+  let journal;
+  try { journal = JSON.parse(raw); }
+  catch { throw commitmentBoundaryError('commitment_recovery_required', 409); }
+  const plan = CommitmentJournalV1.recoveryPlan(journal);
+  if (!plan.ok) throw commitmentBoundaryError('commitment_recovery_required', 409);
+  const dir = userDataDir(uid);
+  try {
+    for (const action of plan.actions) {
+      const file = path.join(dir, `${action.name}.json`);
+      if (action.op === 'write') writeJsonDurable(file, action.value);
+      else if (action.op === 'remove') removeDurable(file);
+      else throw new Error('invalid_commitment_recovery_action');
+    }
+    if (plan.removeJournalAfterSuccess) removeDurable(journalFile);
+  } catch (error) {
+    if (error && error.commitmentBoundary) throw error;
+    throw commitmentBoundaryError('commitment_recovery_failed', 503);
+  }
+  return { ok: true, recovered: true, mode: plan.mode, txId: plan.txId };
+}
+function commitmentActualFiles(uid, names) {
+  recoverCommitmentJournal(uid);
+  const dir = userDataDir(uid);
+  try {
+    return Object.fromEntries(names.map((name) => [name, commitmentCurrentBase(path.join(dir, `${name}.json`))]));
+  } catch (error) {
+    if (error && error.message === 'commitment_data_corrupt') {
+      throw commitmentBoundaryError('commitment_data_corrupt', 409);
+    }
+    throw error;
+  }
+}
+function commitmentActualPair(uid) {
+  return commitmentActualFiles(uid, COMMITMENT_PAIR_NAMES);
+}
+function commitmentSnapshotShapeValid(snapshot, type) {
+  if (!snapshot || typeof snapshot !== 'object' || Array.isArray(snapshot)
+    || Object.keys(snapshot).sort().join(',') !== 'exists,value'
+    || typeof snapshot.exists !== 'boolean') return false;
+  if (!snapshot.exists) return snapshot.value === null;
+  return type === 'array' ? Array.isArray(snapshot.value)
+    : !!snapshot.value && typeof snapshot.value === 'object' && !Array.isArray(snapshot.value);
+}
+function commitmentGraphPresent(settings, tasks) {
+  const hasOwn = (value, key) => !!value && typeof value === 'object'
+    && Object.prototype.hasOwnProperty.call(value, key);
+  return hasOwn(settings, 'commitmentsV1') || (Array.isArray(tasks) && tasks.some((task) => (
+    hasOwn(task, 'commitmentId') || hasOwn(task, 'oath')
+  )));
+}
+function assertAccountGraphTransition(uid, payload) {
+  const data = payload && payload.data;
+  if (!data || typeof data !== 'object' || Array.isArray(data)) {
+    throw commitmentBoundaryError('invalid_commitment_graph', 400);
+  }
+  const touchesSettings = Object.prototype.hasOwnProperty.call(data, 'settings');
+  const touchesTasks = Object.prototype.hasOwnProperty.call(data, 'tasks');
+  if (!touchesSettings && !touchesTasks) return { protected: false, touched: false };
+  const actual = commitmentActualPair(uid);
+  const currentSettings = actual.settings.exists ? actual.settings.value : {};
+  const currentTasks = actual.tasks.exists ? actual.tasks.value : [];
+  const pair = {
+    settings: touchesSettings ? data.settings : currentSettings,
+    tasks: touchesTasks ? data.tasks : currentTasks,
+  };
+  const protectedGraph = commitmentGraphPresent(currentSettings, currentTasks)
+    || commitmentGraphPresent(pair.settings, pair.tasks);
+  if (!protectedGraph) return { protected: false, touched: true, actual, pair };
+  const base = payload.base;
+  if (!base || typeof base !== 'object' || Array.isArray(base)
+    || Object.keys(base).sort().join(',') !== 'settings,tasks'
+    || !commitmentSnapshotShapeValid(base.settings, 'object')
+    || !commitmentSnapshotShapeValid(base.tasks, 'array')) {
+    throw commitmentBoundaryError('commitment_atomic_write_required', 428);
+  }
+  for (const name of COMMITMENT_PAIR_NAMES) {
+    if (questionnaireHash(actual[name]) !== questionnaireHash(base[name])) {
+      throw commitmentBoundaryError('commitment_revision_conflict', 409);
+    }
+  }
+  if (!CommitmentStoreV1.validateCommitPayload({ base, data: pair })) {
+    throw commitmentBoundaryError('invalid_commitment_graph', 400);
+  }
+  return { protected: true, touched: true, actual, pair };
+}
+function goalGraphBaseValid(base) {
+  if (!exactObjectKeys(base, GOAL_GRAPH_PUBLIC_NAMES)) return false;
+  return GOAL_GRAPH_PUBLIC_NAMES.every((name) => commitmentSnapshotShapeValid(
+    base[name], ['settings', 'skilltree'].includes(name) ? 'object' : 'array',
+  ));
+}
+function assertGoalGraphTransition(uid, payload) {
+  const data = payload && payload.data;
+  if (!goalGraphExtendedPayload(data)) throw commitmentBoundaryError('invalid_commitment_graph', 400);
+  if (!goalGraphBaseValid(payload.base)) throw commitmentBoundaryError('commitment_atomic_write_required', 428);
+  const actualFiles = commitmentActualFiles(uid, GOAL_GRAPH_FILE_NAMES);
+  const actualPublic = Object.fromEntries(GOAL_GRAPH_PUBLIC_NAMES.map((name) => [name, actualFiles[GOAL_GRAPH_FILE_OF[name]]]));
+  for (const name of GOAL_GRAPH_PUBLIC_NAMES) {
+    if (questionnaireHash(actualPublic[name]) !== questionnaireHash(payload.base[name])) {
+      throw commitmentBoundaryError('commitment_revision_conflict', 409);
+    }
+  }
+  const protectedGraph = commitmentGraphPresent(
+    actualFiles.settings.exists ? actualFiles.settings.value : {},
+    actualFiles.tasks.exists ? actualFiles.tasks.value : [],
+  ) || commitmentGraphPresent(data.settings, data.tasks);
+  if (protectedGraph && !CommitmentStoreV1.validateCommitPayload({
+    base: { settings: payload.base.settings, tasks: payload.base.tasks },
+    data: { settings: data.settings, tasks: data.tasks },
+  })) throw commitmentBoundaryError('invalid_commitment_graph', 400);
+  return {
+    protected: protectedGraph,
+    names: GOAL_GRAPH_FILE_NAMES.slice(),
+    actual: actualFiles,
+    data: Object.fromEntries(GOAL_GRAPH_PUBLIC_NAMES.map((name) => [GOAL_GRAPH_FILE_OF[name], data[name]])),
+  };
+}
+function commitCommitmentGraphDurable(uid, transition) {
+  if (!transition || !Array.isArray(transition.names) || !transition.actual || !transition.data
+    || transition.names.join(',') !== COMMITMENT_JOURNAL_ALLOWED_NAMES
+      .filter((name) => transition.names.includes(name)).join(',')
+    || !COMMITMENT_PAIR_NAMES.every((name) => transition.names.includes(name))) {
+    throw commitmentBoundaryError('invalid_commitment_graph', 400);
+  }
+  const names = transition.names.slice();
+  const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
+  const createdAt = new Date().toISOString();
+  const prepared = CommitmentJournalV1.prepare({
+    txId: `commitment:${crypto.randomUUID()}`,
+    createdAt,
+    base: transition.actual,
+    data: transition.data,
+  });
+  if (!prepared.ok) throw commitmentBoundaryError('invalid_commitment_graph', 400);
+  const journalFile = commitmentJournalFile(uid);
+  const failAfter = Math.max(0, Number(process.env.COMMITMENT_FAIL_AFTER_FILE) || 0);
+  try {
+    for (const name of names) backupFile(dir, name);
+    writeJsonDurable(journalFile, prepared.journal);
+    for (let index = 0; index < names.length; index += 1) {
+      const name = names[index];
+      writeJsonDurable(path.join(dir, `${name}.json`), transition.data[name]);
+      commitmentCrashAt(`after_${name.replace(/-/g, '_')}_write`);
+      if (failAfter === index + 1) throw new Error('commitment_fault_injected');
+    }
+    const committed = CommitmentJournalV1.markCommitted(prepared.journal, new Date().toISOString());
+    if (!committed.ok) throw new Error('commitment_journal_transition_failed');
+    writeJsonDurable(journalFile, committed.journal);
+    commitmentCrashAt('after_committed_journal');
+    removeDurable(journalFile);
+  } catch (error) {
+    let recovery;
+    try { recovery = recoverCommitmentJournal(uid); }
+    catch (recoveryError) { throw recoveryError; }
+    if (recovery && recovery.recovered && recovery.mode === 'rollforward') {
+      return names;
+    }
+    throw error;
+  }
+  return names;
+}
+function commitCommitmentPairDurable(uid, transition) {
+  if (!transition || !transition.protected || !transition.actual || !transition.pair) {
+    throw commitmentBoundaryError('invalid_commitment_graph', 400);
+  }
+  return commitCommitmentGraphDurable(uid, {
+    protected: true,
+    names: COMMITMENT_PAIR_NAMES.slice(),
+    actual: transition.actual,
+    data: transition.pair,
+  });
+}
+function commitCommitmentData(uid, payload) {
+  if (!CommitmentStoreV1.validateCommitPayload(payload)) throw new Error('invalid_commitment_commit');
+  if (Buffer.byteLength(JSON.stringify(payload.data)) > CommitmentStoreV1.MAX_COMMIT_BYTES) {
+    throw new Error('commitment_commit_too_large');
+  }
+  const transition = assertAccountGraphTransition(uid, payload);
+  return commitCommitmentPairDurable(uid, transition);
 }
 
 // ============================================================
@@ -2665,6 +3036,11 @@ function migrateIfNeeded() {
 fs.mkdirSync(DATA_DIR, { recursive: true });
 SECRET = loadSecret();
 migrateIfNeeded();
+for (const user of loadUsers()) {
+  if (!user || !safeId(String(user.id || ''))) continue;
+  try { recoverCommitmentJournal(user.id); }
+  catch (error) { console.error('[commitment recovery]', user.id, error.message); }
+}
 
 // ============================================================
 //  GitHub Issues integration — forward feedback to issues tracker
@@ -3685,6 +4061,8 @@ const server = http.createServer(async (req, res) => {
     if (!user || user.calSecret !== secret) {
       res.writeHead(403, { 'Content-Type': 'text/plain' }); return res.end('Forbidden');
     }
+    try { recoverCommitmentJournal(userId); }
+    catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
     // Load tasks for this user
     let tasks = [];
     try { tasks = JSON.parse(fs.readFileSync(path.join(userDataDir(userId), 'tasks.json'), 'utf8')); } catch {}
@@ -4907,6 +5285,8 @@ const server = http.createServer(async (req, res) => {
     const target = users.find((entry) => entry.id === key)
       || (normalizedHandle ? users.find((entry) => AccountProfileV1.normalize(entry.profile).handle === normalizedHandle) : null);
     if (!target) return sendJson(res, 404, { error: 'profile_not_found' });
+    try { recoverCommitmentJournal(target.id); }
+    catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
     const relation = accountProfileRelation(viewerId, target.id);
     if (!AccountProfileV1.visibleTo(target.profile, relation)) return sendJson(res, 404, { error: 'profile_not_found' });
     return sendJson(res, 200, accountProfilePublicView(target));
@@ -4962,8 +5342,10 @@ const server = http.createServer(async (req, res) => {
     if (!me) return sendJson(res, 401, { error: 'not logged in' });
     const users = loadUsers(); const current = users.find((entry) => entry.id === me);
     if (!current) return sendJson(res, 401, { error: 'user not found' });
-    const rows = users
-      .filter((entry) => socialConsentOf(entry).leaderboard)
+    const visibleUsers = users.filter((entry) => socialConsentOf(entry).leaderboard);
+    try { for (const entry of visibleUsers) recoverCommitmentJournal(entry.id); }
+    catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
+    const rows = visibleUsers
       .map((entry) => {
         const xp = computeUserXp(entry.id);
         let settings = {}; try { settings = JSON.parse(fs.readFileSync(path.join(userDataDir(entry.id), 'settings.json'), 'utf8')); } catch {}
@@ -5129,7 +5511,7 @@ const server = http.createServer(async (req, res) => {
   const questionnairePath = u.split('?')[0];
   if (questionnairePath === '/api/questionnaire' && req.method === 'GET') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
-    try { return sendJson(res, 200, { ok: true, questionnaire: questionnaireCurrent(uid) }); }
+    try { recoverCommitmentJournal(uid); return sendJson(res, 200, { ok: true, questionnaire: questionnaireCurrent(uid) }); }
     catch (error) { return questionnaireHttpError(res, error); }
   }
   if (questionnairePath === '/api/questionnaire/commit' && req.method === 'POST') {
@@ -5161,6 +5543,8 @@ const server = http.createServer(async (req, res) => {
   if (u === '/api/account/export' && req.method === 'GET') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const user = loadUsers().find((item) => item.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
+    try { recoverCommitmentJournal(uid); }
+    catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
     const archive = {
       format: 'satoru-account', version: 1, exportedAt: new Date().toISOString(),
       account: { id: user.id, name: user.name, email: user.email || null },
@@ -5179,6 +5563,7 @@ const server = http.createServer(async (req, res) => {
       const files = importPortableAccountData(uid, payload);
       return sendJson(res, 200, { ok: true, files, importedAt: new Date().toISOString() });
     } catch (error) {
+      if (sendCommitmentBoundaryError(res, error)) return;
       const code = error && (error.message === 'invalid_archive' || error.message === 'archive_too_large') ? 400 : 500;
       return sendJson(res, code, { error: code === 500 ? 'import_failed_no_changes_lost' : error.message });
     }
@@ -5192,6 +5577,7 @@ const server = http.createServer(async (req, res) => {
       const files = commitEconomyData(uid, payload);
       return sendJson(res, 200, { ok: true, files });
     } catch (error) {
+      if (sendCommitmentBoundaryError(res, error)) return;
       const clientError = error && (error.message === 'invalid_economy_commit' || error.message === 'economy_commit_too_large');
       return sendJson(res, clientError ? 400 : 500, { error: clientError ? error.message : 'economy_commit_failed_no_changes_lost' });
     }
@@ -5205,6 +5591,7 @@ const server = http.createServer(async (req, res) => {
       const files = commitGuideData(uid, payload);
       return sendJson(res, 200, { ok: true, files });
     } catch (error) {
+      if (sendCommitmentBoundaryError(res, error)) return;
       const clientError = error && (error.message === 'invalid_guide_commit' || error.message === 'guide_commit_too_large');
       return sendJson(res, clientError ? 400 : 500, { error: clientError ? error.message : 'guide_commit_failed_no_changes_lost' });
     }
@@ -5218,6 +5605,7 @@ const server = http.createServer(async (req, res) => {
       const files = commitHabitData(uid, payload);
       return sendJson(res, 200, { ok: true, files });
     } catch (error) {
+      if (sendCommitmentBoundaryError(res, error)) return;
       const clientError = error && (error.message === 'invalid_habit_commit' || error.message === 'habit_commit_too_large');
       return sendJson(res, clientError ? 400 : 500, { error: clientError ? error.message : 'habit_commit_failed_no_changes_lost' });
     }
@@ -5231,6 +5619,7 @@ const server = http.createServer(async (req, res) => {
       const files = commitGoalData(uid, payload);
       return sendJson(res, 200, { ok: true, files });
     } catch (error) {
+      if (sendCommitmentBoundaryError(res, error)) return;
       const clientError = error && (error.message === 'invalid_goal_commit' || error.message === 'goal_commit_too_large');
       return sendJson(res, clientError ? 400 : 500, { error: clientError ? error.message : 'goal_commit_failed_no_changes_lost' });
     }
@@ -5244,8 +5633,32 @@ const server = http.createServer(async (req, res) => {
       const files = commitBoardData(uid, payload);
       return sendJson(res, 200, { ok: true, files });
     } catch (error) {
+      if (sendCommitmentBoundaryError(res, error)) return;
       const clientError = error && (error.message === 'invalid_board_commit' || error.message === 'board_commit_too_large');
       return sendJson(res, clientError ? 400 : 500, { error: clientError ? error.message : 'board_commit_failed_no_changes_lost' });
+    }
+  }
+
+  if (u === '/api/commitments/commit' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload;
+    try { payload = JSON.parse(await readBody(req, CommitmentStoreV1.MAX_COMMIT_BYTES * 2 + 4096)); }
+    catch (error) {
+      const tooLarge = error && error.code === 'PAYLOAD_TOO_LARGE';
+      return sendJson(res, tooLarge ? 413 : 400, { error: tooLarge ? 'commitment_commit_too_large' : 'invalid_commitment_commit' });
+    }
+    try {
+      const files = commitCommitmentData(uid, payload);
+      return sendJson(res, 200, { ok: true, files });
+    } catch (error) {
+      if (sendCommitmentBoundaryError(res, error)) return;
+      const clientError = error && (error.message === 'invalid_commitment_commit' || error.message === 'commitment_commit_too_large');
+      const conflict = error && (error.message === 'commitment_revision_conflict' || error.message === 'commitment_data_corrupt');
+      const rollbackFailed = error && error.message === 'commitment_commit_rollback_failed';
+      return sendJson(res, conflict ? 409 : (clientError ? (error.message === 'commitment_commit_too_large' ? 413 : 400) : 500), {
+        error: conflict ? error.message : (clientError ? error.message
+          : (rollbackFailed ? 'commitment_commit_rollback_failed' : 'commitment_commit_failed_no_changes_lost')),
+      });
     }
   }
 
@@ -5316,6 +5729,10 @@ const server = http.createServer(async (req, res) => {
     const file = path.join(dir, name + '.json');
 
     if (req.method === 'GET') {
+      if (COMMITMENT_JOURNAL_ALLOWED_NAMES.includes(name)) {
+        try { recoverCommitmentJournal(uid); }
+        catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
+      }
       fs.readFile(file, 'utf8', (err, txt) => {
         if (err) return sendJson(res, 404, { error: 'not found' });
         send(res, 200, txt, { 'Content-Type': MIME['.json'] });
@@ -5326,6 +5743,13 @@ const server = http.createServer(async (req, res) => {
       try {
         const body = await readBody(req);
         const parsed = JSON.parse(body);
+        if (COMMITMENT_PAIR_NAMES.includes(name)) {
+          try { assertAccountGraphTransition(uid, { data: { [name]: parsed } }); }
+          catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
+        } else if (COMMITMENT_JOURNAL_ALLOWED_NAMES.includes(name)) {
+          try { recoverCommitmentJournal(uid); }
+          catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
+        }
         fs.mkdirSync(dir, { recursive: true });
         backupFile(dir, name); // снимок прежнего содержимого ПЕРЕД перезаписью — защита от потери
         writeJsonAtomic(file, parsed);
@@ -5345,6 +5769,8 @@ const server = http.createServer(async (req, res) => {
     let am = u.match(/^\/api\/admin\/userdata\/([a-z0-9_-]{1,32})$/);
     if (am && req.method === 'GET') {
       if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
+      try { recoverCommitmentJournal(am[1]); }
+      catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
       const dir = userDataDir(am[1]);
       const files = {}, backups = {};
       for (const n of DATA_NAMES) {
@@ -5367,6 +5793,8 @@ const server = http.createServer(async (req, res) => {
     am = u.match(/^\/api\/admin\/crash-export\/([a-z0-9_-]{1,32})$/);
     if (am && req.method === 'GET') {
       if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
+      try { recoverCommitmentJournal(am[1]); }
+      catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
       // Белый список, а не чёрный: новый файл с личным содержимым не утечёт по забывчивости.
       const MECHANICS = ['settings', 'tasks', 'habits', 'habitlog', 'goals', 'skilltree', 'achievements', 'lootbox'];
       const EXCLUDED = ['days', 'weeks', 'inbox', 'episodes', 'profile', 'boardmedia', 'antihabits'];
@@ -5410,10 +5838,18 @@ const server = http.createServer(async (req, res) => {
       const bfile = path.join(backupDir(dir, name), String(b.stamp || '') + '.json');
       if (!bfile.startsWith(DATA_DIR) || !fs.existsSync(bfile)) return sendJson(res, 404, { error: 'backup not found' });
       try {
+        if (COMMITMENT_JOURNAL_ALLOWED_NAMES.includes(name)) recoverCommitmentJournal(am[1]);
+        if (COMMITMENT_PAIR_NAMES.includes(name)) {
+          const candidate = JSON.parse(fs.readFileSync(bfile, 'utf8'));
+          assertAccountGraphTransition(am[1], { data: { [name]: candidate } });
+        }
         backupFile(dir, name); // снимок текущего перед откатом
         fs.copyFileSync(bfile, path.join(dir, name + '.json'));
         return sendJson(res, 200, { ok: true, restored: name, from: b.stamp });
-      } catch (e) { console.error('[restore]', e); return sendJson(res, 500, { error: scrubSecrets(e && e.message) || 'restore_failed' }); }
+      } catch (e) {
+        if (sendCommitmentBoundaryError(res, e)) return;
+        console.error('[restore]', e); return sendJson(res, 500, { error: scrubSecrets(e && e.message) || 'restore_failed' });
+      }
     }
   }
 

@@ -275,14 +275,20 @@ test('Guide and account writes are ordered, fenced and leave no stale Habits for
   assert.ok(mutexAt >= 0 && jobAt > mutexAt && reserveAt > jobAt,
     'the shared mutex must reserve every affected account slot before awaiting');
   const putAt = store.indexOf('async _put(name, obj');
-  const queuedAt = store.indexOf('return this.runExclusive([name]', putAt);
+  const pairedAt = store.indexOf("const pairedSlot = name === 'settings' || name === 'tasks'", putAt);
+  const queuedAt = store.indexOf("return this.runExclusive(pairedSlot ? ['settings', 'tasks'] : [name]", pairedAt);
   const liveValueAt = store.indexOf('State[liveSlot]', queuedAt);
   const stringifyAt = store.indexOf('JSON.stringify(value)', liveValueAt);
-  assert.ok(putAt >= 0 && queuedAt > putAt && liveValueAt > queuedAt && stringifyAt > liveValueAt,
-    'a queued live-state PUT must take its snapshot after earlier atomic work finishes');
+  assert.ok(putAt >= 0 && pairedAt > putAt && queuedAt > pairedAt && liveValueAt > queuedAt && stringifyAt > liveValueAt,
+    'a queued live-state PUT must reserve the paired graph and take its snapshot after earlier atomic work finishes');
+  sourceMatches(store, /const base = pairedSlot \? commitmentWriteBase\(\) : null[\s\S]{0,1600}\/api\/commitments\/commit/,
+    'protected queued writes must carry their persisted CAS base to the commitment endpoint');
   const habitCommit = between(APP, 'async function habitDataCommit(data, applyCommitted = null)', '\nasync function reloadHabitData');
-  sourceMatches(habitCommit, /Store\.runExclusive\(names,[\s\S]{0,420}\/api\/habits\/commit/,
-    'the Habits transaction must reserve habits and settings in the same shared mutex');
+  sourceMatches(habitCommit,
+    /const touchesGraph = names\.some\(\(name\) => name === 'settings' \|\| name === 'tasks'\)[\s\S]{0,220}Store\.runExclusive\(touchesGraph \? \[\.\.\.names, 'settings', 'tasks'\] : names/,
+    'a Habits transaction that touches the commitment graph must reserve settings and tasks in the same shared mutex');
+  sourceMatches(habitCommit, /const payload = dedicatedCommitPayload\(data\)[\s\S]{0,260}\/api\/habits\/commit/,
+    'the Habits endpoint must receive the based graph envelope');
 
   const skip = actionSection(APP, 'guide-skip');
   sourceMatches(skip, /_guideV3HabitCandidateId\s*=\s*null[\s\S]{0,120}_guideV3HabitDraftId\s*=\s*['"]/,
@@ -345,7 +351,7 @@ test('welcome stays safe while release spotlights the responsive How to play rou
 
 test('persisted completion and bond success effects happen only after their durable write succeeds', () => {
   sourceMatches(APP,
-    /(?:const|let)\s+saved\s*=\s*await\s+Store\.saveNow\(['"]tasks['"][\s\S]{0,900}if\s*\(\s*!saved\s*\)[\s\S]{0,900}type:\s*['"]task:completed['"][\s\S]{0,220}persisted:\s*true/,
+    /(?:const|let)\s+saved\s*=\s*activeCommitmentId[\s\S]{0,1200}await\s+commitmentDataCommit[\s\S]{0,1200}:\s*await\s+Store\.saveNow\(['"]tasks['"][\s\S]{0,500}if\s*\(\s*!saved\s*\)[\s\S]{0,1200}type:\s*['"]task:completed['"][\s\S]{0,220}persisted:\s*true/,
     'task:completed(persisted:true) must follow an awaited successful task save');
   const commit = between(APP, 'async function guideV3Commit', '\nlet _guideV3SurfaceKey');
   sourceMatches(commit, /Store\.updateNow\(['"]settings['"],\s*\(current\)\s*=>[\s\S]{0,320}GuideV3\.reduce\(current\.guideV3,\s*event\)/,
@@ -553,9 +559,9 @@ test('Context pack v205 explicitly releases exact Guide copy and chapter version
   }
   const appSource = SCRIPT_SOURCES.find((item) => scriptFile(item) === 'app.js');
   assert.ok(appSource, 'app.js must load in index.html');
-  assert.match(appSource, /\?v=[^"']*v214(?:-|$)/, 'the current app shell needs the v214 cache-busting pin');
-  sourceMatches(INDEX, /styles\.css\?v=[^"']*v214(?:-|["'])/,
-    'the current application CSS needs the v214 cache-busting pin');
+  assert.match(appSource, /\?v=[^"']*v215(?:-|$)/, 'the current app shell needs the v215 cache-busting pin');
+  sourceMatches(INDEX, /styles\.css\?v=[^"']*v215(?:-|["'])/,
+    'the current application CSS needs the v215 cache-busting pin');
 });
 
 test('feedback remains reachable even when the localized Guide is unavailable', () => {

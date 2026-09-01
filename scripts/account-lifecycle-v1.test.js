@@ -163,7 +163,12 @@ test('Account v123 client contract has honest async states and accessible dialog
   assert.match(APP, /\/api\/account\/export/);
   assert.match(APP, /\/api\/account\/import/);
   assert.match(APP, /body\.confirm\s*=\s*f\.confirm\.value\.trim\(\)/);
-  assert.match(APP, /format: 'satoru-account', version: 1, data: \{ tasks: \[\], days: \{\} \}/);
+  assert.match(APP, /function accountResetDataCandidate\(\)[\s\S]{0,1400}CommitmentV1\.release[\s\S]{0,900}validateCommitPayload\(\{ base, data: \{ settings, tasks \} \}\)[\s\S]{0,180}return \{ settings, tasks, days: \{\} \}/,
+    'reset must release live quest commitments and validate the resulting settings/tasks graph');
+  assert.match(APP, /const archive = \{ format: 'satoru-account', version: 1, base, data: resetData \}/,
+    'reset import must carry the exact persisted CAS base');
+  assert.match(APP, /Store\.runExclusive\(\['days', 'settings', 'tasks'\][\s\S]{0,650}commitmentBoundaryRejected\(response\)[\s\S]{0,220}rememberDedicatedCommitSlots\(resetData/,
+    'reset must serialize the whole graph and advance snapshots only after server success');
   assert.doesNotMatch(APP, /State\.tasks = \[\]; State\.days = \{\}; Store\.save\('tasks'/);
   assert.match(APP, /role', 'dialog'/);
   assert.match(APP, /aria-modal', 'true'/);
