@@ -213,3 +213,65 @@ test('модули не читают State, DOM и часы сами', () => {
   const code = router.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/[^\n]*/g, '$1');
   assert.strictEqual(/Date\.now\(\)/.test(code), false, 'router обязан получать «сейчас» параметром');
 });
+
+/* ---- Цитата человека: уговоры v2 ------------------------------------------ */
+
+const V2 = require('../public/commitment-v2.js');
+
+function commitments(...drafts) {
+  return drafts.reduce((s, d) => {
+    const r = V2.add(s, d);
+    assert.ok(r.ok, `фикстура невалидна: ${JSON.stringify(d)}`);
+    return r.state;
+  }, V2.emptyState());
+}
+
+const ANCHOR = { id: 'c1', kind: 'anchor', title: 'Подъём в 7:00', win: 'успеваю до школы' };
+const A_TIKTOK = { id: 'a1', kind: 'attention', title: 'TikTok — только выложить, двенадцать минут', win: 'вечер остаётся мой', target: 'tiktok', edge: { kind: 'duration', minutes: 12 } };
+const A_GAME = { id: 'a2', kind: 'attention', title: 'Игры не после 22:00', win: 'высыпаюсь', target: 'game' };
+
+test('🔴 архивный уговор не цитируется как действующее решение', () => {
+  // Регрессия: фильтр проверял несуществующее поле `archived` вместо `archivedAt`
+  // и не отсеивал ничего. Предъявлять человеку то, от чего он отказался, — прямой
+  // способ обесценить весь механизм «это твои собственные слова».
+  let s = commitments(ANCHOR);
+  assert.ok(R.ownWords(s), 'живой уговор цитируется');
+  s = V2.archive(s, 'c1', YDAY);
+  assert.strictEqual(R.ownWords(s), null, 'от этого уговора человек отказался');
+});
+
+test('🔴 цитируется уговор про то самое занятие, а не любой', () => {
+  const s = commitments(ANCHOR, A_GAME, A_TIKTOK);
+  assert.strictEqual(R.ownWords(s, 'tiktok').id, 'a1');
+  assert.strictEqual(R.ownWords(s, 'TikTok').id, 'a1', 'регистр ярлыка не важен');
+  assert.strictEqual(R.ownWords(s, 'game').id, 'a2');
+});
+
+test('нет уговора про это занятие — берётся ближайший по смыслу, а не молчание', () => {
+  const s = commitments(ANCHOR, A_TIKTOK);
+  assert.strictEqual(R.ownWords(s, 'ютуб').id, 'a1', 'любой уговор про внимание ближе якоря');
+  assert.strictEqual(R.ownWords(commitments(ANCHOR), 'ютуб').id, 'c1');
+  assert.strictEqual(R.ownWords(commitments(ANCHOR)).id, 'c1', 'без ярлыка тоже работает');
+});
+
+test('🔴 ход про TikTok цитирует решение человека про TikTok', () => {
+  // Сквозная проверка: ref события доходит до цитаты, а не теряется по дороге.
+  const offer = R.next(base({ commitments: commitments(ANCHOR, A_TIKTOK) }));
+  assert.ok(offer, 'утро после срыва — повод есть');
+  assert.strictEqual(offer.quote.id, 'a1');
+  assert.strictEqual(offer.quote.win, 'вечер остаётся мой');
+});
+
+test('🔴 уговоров нет — ход остаётся, цитата отсутствует, ничего не выдумано', () => {
+  const offer = R.next(base({ commitments: V2.emptyState() }));
+  assert.ok(offer, 'отсутствие цитаты — не повод молчать');
+  assert.strictEqual(offer.quote, null, 'выдумывать «твоё решение» запрещено');
+});
+
+test('состояние уговоров v1 читается роутером без миграции', () => {
+  // Сервер мигрирует при чтении, но роутер обязан пережить и старую форму:
+  // порядок выката не гарантирован, а падать на утреннем ходе он не имеет права.
+  const V1 = require('../public/commitment-v1.js');
+  const v1 = V1.add(V1.emptyState(), ANCHOR).state;
+  assert.strictEqual(R.ownWords(v1, 'tiktok').id, 'c1');
+});

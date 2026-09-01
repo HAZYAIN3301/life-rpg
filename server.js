@@ -21,6 +21,7 @@ const FounderPassV1 = require('./public/founder-pass-v1.js');
 const SecretaryEventsV1 = require('./public/secretary-events-v1.js');
 const SecretaryRouterV1 = require('./public/secretary-router-v1.js');
 const BulkUndoV1 = require('./public/bulk-undo-v1.js');
+const CommitmentV2 = require('./public/commitment-v2.js');
 const GoalResolveV1 = require('./public/goal-resolve-v1.js');
 const ServerUserRegistryV1 = require('./server-user-registry-v1.js');
 const AccountProfileV1 = require('./public/account-profile-v1.js');
@@ -3926,7 +3927,10 @@ const server = http.createServer(async (req, res) => {
         tzOffsetMinutes: tz,
         events: log.value,
         ledger: led.value,
-        commitments: readUserJson(uid, 'commitments'),
+        // Уговоры читаются через миграцию, но НЕ переписываются на диске: запрос на
+        // чтение не имеет права менять данные, а нетронутый v1-файл — самая надёжная
+        // страховка на случай ошибки в самой миграции. Роутер переживает обе формы.
+        commitments: CommitmentV2.migrate(readUserJson(uid, 'commitments')).state,
       });
       return sendJson(res, 200, { offer: offer || null });
     }

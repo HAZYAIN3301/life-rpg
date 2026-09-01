@@ -154,13 +154,31 @@
    * Смысл в том, что власть над человеком имеет его собственное решение, принятое
    * в ресурсном состоянии, а не совет приложения.
    */
-  function ownWords(commitments) {
+  function ownWords(commitments, target) {
     if (!commitments || !Array.isArray(commitments.items)) return null;
-    const live = commitments.items.filter((i) => i && !i.archived && i.title);
+    // ⚠️ Архивные не цитируются. Уговор хранит дату отказа в `archivedAt`, и раньше
+    // здесь проверялось несуществующее поле `archived` — то есть не отсеивалось
+    // ничего. Человеку предъявляли как действующее решение то, от которого он уже
+    // отказался; для механизма, весь смысл которого «это твои собственные слова»,
+    // это не косметика, а способ его обесценить.
+    const live = commitments.items.filter((i) => i && i.title && !i.archivedAt && !i.archived);
     if (!live.length) return null;
-    // Уговор про подъём/вечер ближе всего к утреннему разговору; иначе любой живой.
-    const anchor = live.find((i) => i.kind === 'anchor') || live.find((i) => i.kind === 'edge') || live[0];
-    return { id: anchor.id, title: String(anchor.title), win: anchor.win ? String(anchor.win) : '' };
+    const say = (i) => ({ id: i.id, title: String(i.title), win: i.win ? String(i.win) : '' });
+
+    // Уговор именно про это занятие весомее общего: когда разговор про TikTok,
+    // его собственное решение про TikTok звучит точнее, чем якорь подъёма.
+    // Сравнение точное — угадывать «похожие» занятия нельзя, иначе человеку
+    // предъявят его решение про одно как решение про другое.
+    const key = typeof target === 'string' ? target.trim().toLowerCase() : '';
+    if (key) {
+      const exact = live.find((i) => i.kind === 'attention'
+        && typeof i.target === 'string' && i.target.trim().toLowerCase() === key);
+      if (exact) return say(exact);
+    }
+    return say(live.find((i) => i.kind === 'attention')
+      || live.find((i) => i.kind === 'anchor')
+      || live.find((i) => i.kind === 'edge')
+      || live[0]);
   }
 
   function cooldownKey(capabilityId, today) { return `${capabilityId}|${today}`; }
@@ -179,7 +197,7 @@
    *  - tzOffsetMinutes: сдвиг локального времени от UTC
    *  - events: журнал событий
    *  - ledger: что уже доставлено
-   *  - commitments: состояние `commitment-v1` (может отсутствовать)
+   *  - commitments: состояние уговоров, v1 или v2 (может отсутствовать)
    *  - dayClosed: закрыт ли сегодняшний день
    * @returns {object|null}
    */
@@ -196,7 +214,7 @@
         if (!inMorning(inp.now, inp.tzOffsetMinutes)) continue;
         const trouble = yesterdayTrouble(inp.events, inp.today);
         if (!trouble) continue;
-        const quote = ownWords(inp.commitments);
+        const quote = ownWords(inp.commitments, trouble.event.ref);
         const askOnly = trouble.confidence < ASK_BELOW;
         return Object.freeze({
           offerId: `${cap.id}|${inp.today}|${trouble.event.key}`,

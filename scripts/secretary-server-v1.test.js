@@ -182,3 +182,72 @@ test('🔴 выбор хода не зависит от ИИ', () => {
     assert.strictEqual(block.toLowerCase().includes(bad), false, `ИИ в детекторе: «${bad}»`);
   }
 });
+
+test('🔴 уговоры с диска доезжают до цитаты, а файл не переписывается', { timeout: 120000 }, async (t) => {
+  // Сервер мигрирует уговоры при чтении и НЕ пишет их обратно: запрос на чтение не
+  // имеет права менять данные, а нетронутый файл — страховка на случай ошибки в
+  // самой миграции. Проверяются обе формы, потому что во время выката на дисках
+  // будут лежать одновременно и старая, и новая.
+  const rt = await startServer();
+  t.after(() => { try { rt.child.kill('SIGKILL'); } catch {} fs.rmSync(rt.dataDir, { recursive: true, force: true }); });
+  const { base } = rt;
+
+  const alice = await register(base, 'Алиса', 'a@mig.test');
+  const morning = morningContext();
+  const YDAY = morning.yesterday, HDR = morning.headers;
+  const file = path.join(rt.dataDir, 'users', alice.body.id, 'commitments.json');
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+
+  await post(base, alice.cookie, '/api/secretary/event',
+    { type: E.TYPES.ATTENTION_ESCAPED, day: YDAY, at: `${YDAY}T23:50:00.000Z`, ref: 'tiktok' });
+
+  const offerNow = async () => (await (await get(base, alice.cookie, '/api/secretary', HDR)).json()).offer;
+
+  await t.test('старый файл v1 читается, архивный уговор не цитируется', async () => {
+    // Ровно та форма, что лежит у человека сейчас: version 1, журнал win/miss,
+    // только виды v1.
+    const v1file = {
+      version: 1,
+      mode: 'default',
+      items: [
+        { id: 'c9', kind: 'care', title: 'Брошенный уговор', win: 'неважно', core: true, modes: [], archivedAt: '2026-08-01' },
+        { id: 'c1', kind: 'anchor', title: 'Подъём в 7:00', win: 'успеваю до школы', core: true, modes: [] },
+      ],
+      log: { '2026-08-30': { c1: 'win' } },
+    };
+    fs.writeFileSync(file, JSON.stringify(v1file));
+    const before = fs.readFileSync(file, 'utf8');
+
+    const offer = await offerNow();
+    assert.ok(offer, 'утро после срыва — повод есть');
+    assert.strictEqual(offer.quote.id, 'c1', 'процитирован живой уговор, а не брошенный');
+
+    assert.strictEqual(fs.readFileSync(file, 'utf8'), before, 'чтение не переписало файл');
+    assert.strictEqual(JSON.parse(before).version, 1, 'на диске по-прежнему v1');
+  });
+
+  await t.test('новый файл v2 даёт цитату про то самое занятие', async () => {
+    const v2file = {
+      version: 2,
+      mode: 'default',
+      items: [
+        { id: 'c1', kind: 'anchor', title: 'Подъём в 7:00', win: 'успеваю до школы', core: true, modes: [] },
+        { id: 'a1', kind: 'attention', title: 'TikTok — только выложить', win: 'вечер остаётся мой',
+          target: 'tiktok', edge: { kind: 'duration', minutes: 12 }, core: true, modes: [] },
+      ],
+      log: { '2026-08-30': { c1: 'win' } },
+    };
+    fs.writeFileSync(file, JSON.stringify(v2file));
+
+    const offer = await offerNow();
+    assert.strictEqual(offer.quote.id, 'a1', 'решение про TikTok весомее якоря, когда разговор про TikTok');
+    assert.strictEqual(offer.quote.win, 'вечер остаётся мой');
+  });
+
+  await t.test('уговоров нет — ход остаётся, цитата пустая', async () => {
+    fs.rmSync(file, { force: true });
+    const offer = await offerNow();
+    assert.ok(offer, 'отсутствие цитаты — не повод молчать');
+    assert.strictEqual(offer.quote, null, 'ничего не выдумано');
+  });
+});
