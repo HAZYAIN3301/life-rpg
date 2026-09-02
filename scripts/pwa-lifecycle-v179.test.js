@@ -156,6 +156,6 @@ test('five-language lifecycle copy and current shell order are complete', () => 
   const moduleAt = INDEX.indexOf('pwa-lifecycle-v1.js?v=20260826-launch-hardening-v180-1');
   const appAt = INDEX.indexOf('app.js?v=20260902-browser-protection-v215-1');
   assert.ok(moduleAt >= 0 && appAt > moduleAt);
-  assert.match(INDEX, /styles\.css\?v=20260901-actionable-gamification-v215-1/);
+  assert.match(INDEX, /styles\.css\?v=20260902-browser-protection-v215-1/);
   assert.match(SW, /'pwa-lifecycle-v1\.js'/);
 });

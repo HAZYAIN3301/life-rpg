@@ -65,5 +65,5 @@ test('runtime pins the new director and micro-life bytes', () => {
   }
   assert.match(index, /traveller-motion-v3\.js\?v=20260819-traveller-f2-runtime-v167-1/);
   assert.match(index, /app\.js\?v=20260902-browser-protection-v215-1/);
-  assert.match(index, /styles\.css\?v=20260901-actionable-gamification-v215-1/);
+  assert.match(index, /styles\.css\?v=20260902-browser-protection-v215-1/);
 });

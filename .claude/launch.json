@@ -5,9 +5,9 @@
       "name": "life-rpg",
       "runtimeExecutable": "node",
       "runtimeArgs": [
-        "/Users/al.prokopets/Documents/Obsidian Vault/life-rpg/server.js"
+        "/Users/al.prokopets/Projects/life-rpg/server.js"
       ],
-      "cwd": "/Users/al.prokopets/Documents/Obsidian Vault/life-rpg",
+      "cwd": "/Users/al.prokopets/Projects/life-rpg",
       "port": 4317,
       "autoPort": true
     }

@@ -101,7 +101,9 @@ test('corrupt Tree data is surfaced and never silently overwritten', () => {
   assert.equal(validateSkillTreePayload({ s1: { nodes: [{ id: 'n1', title: 'One', x: 0, y: 0, perks: [null] }] } }), false);
   assert.match(app, /Store\.loadChecked\('skilltree', \{\}, validateSkillTreePayload\)/);
   assert.match(app, /error\.message === 'invalid data' \|\| error\.name === 'SyntaxError'/);
-  assert.match(app, /function ensureTrees\(\) \{\s*if \(State\._treeLoadError\) return;/);
+  assert.match(app, /function ensureTrees\(\{ persist = true \} = \{\}\) \{\s*if \(State\._treeLoadError\) return;/);
+  assert.match(app, /if \(persist && treeDataChanged\) Store\.save\('skilltree', State\.tree\)/,
+    'ordinary Tree maintenance no longer persists by default');
   assert.match(app, /function treeLoadErrorHTML\([\s\S]*?data-action="tree-retry-load"[\s\S]*?data-action="tree-reset-load"/);
   assert.match(app, /Создать новую карту\? Повреждённый файл будет заменён стартовыми деревьями/);
 });

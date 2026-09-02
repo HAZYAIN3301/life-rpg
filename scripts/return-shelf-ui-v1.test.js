@@ -373,7 +373,7 @@ test('интеграция подключает профиль и каталог
   assert.match(index, /inspiration-profile-v1\.js\?v=20260830-economy-art-v208-1/);
   assert.match(index, /return-shelf-ui-v1\.js\?v=20260830-economy-art-v208-1/);
   assert.match(sw, /return-shelf-ui-v1\.js/);
-  assert.match(index, /styles\.css\?v=20260901-actionable-gamification-v215-1/);
+  assert.match(index, /styles\.css\?v=20260902-browser-protection-v215-1/);
   assert.match(sw, /satoru-v216/);
   assert.match(app, /PWA_CACHE_VERSION = 'satoru-v216'/);
 });

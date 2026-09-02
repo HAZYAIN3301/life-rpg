@@ -22,7 +22,7 @@ test('v179 shell retains local Board contracts before runtime and caches each on
     assert.equal((sw.match(new RegExp(`'${file.replaceAll('.', '\\.')}''?`.replace("''", "'"), 'g')) || []).length, 1);
   }
   assert.match(sw, /const CACHE = 'satoru-v216';/);
-  assert.match(index, /styles\.css\?v=20260901-actionable-gamification-v215-1/);
+  assert.match(index, /styles\.css\?v=20260902-browser-protection-v215-1/);
   assert.match(index, /app\.js\?v=20260902-browser-protection-v215-1/);
 });
 

@@ -91,5 +91,5 @@ test('v205 Guide assets remain pinned while v216 advances the app shell', () => 
     assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=20260830-guide-tree-v205-1`));
   }
   assert.match(INDEX, /app\.js\?v=20260902-browser-protection-v215-1/);
-  assert.match(INDEX, /styles\.css\?v=20260901-actionable-gamification-v215-1/);
+  assert.match(INDEX, /styles\.css\?v=20260902-browser-protection-v215-1/);
 });

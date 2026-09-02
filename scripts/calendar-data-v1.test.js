@@ -71,14 +71,29 @@ test('task writes are blocked at the lowest Store primitive', async () => {
   assert.match(app, /name === 'tasks' && !taskWriteAllowed\('saveNow', true\)/);
   const putSource = asyncObjectMethod('_put');
   assert.match(putSource, /name === 'tasks' && !taskWriteAllowed\('_put', true\)/);
+  assert.match(putSource, /this\.runExclusive\(pairedSlot \? \['settings', 'tasks'\] : \[name\]/,
+    'settings/tasks must reserve the same paired mutex before the candidate is built');
+  assert.match(putSource, /const base = pairedSlot \? commitmentWriteBase\(\) : null[\s\S]{0,1600}\/api\/commitments\/commit/,
+    'a protected task graph must use the based commitment endpoint, never a generic PUT');
 
   let fetches = 0;
-  const makePut = Function('fetch', 'pwaWriteAllowed', 'taskWriteAllowed', 'accountDataWriteAllowed', 'accountDataPayloadAllowed', 'console', 'toast', 'State', `return (${putSource})`);
-  const blockedPut = makePut(async () => { fetches += 1; return { ok: true }; }, () => true, () => false, () => true, () => true, { error() {} }, () => {}, { me: null });
+  const makePut = Function('fetch', 'pwaWriteAllowed', 'taskWriteAllowed', 'accountDataWriteAllowed', 'accountDataPayloadAllowed',
+    'commitmentWriteBase', 'commitmentWriteData', 'commitmentGraphProtected', 'commitmentBoundaryRejected',
+    'rememberDedicatedCommitSlots', 'console', 'toast', 'State', `return (${putSource})`);
+  const graphStubs = [
+    () => ({ settings: { exists: false, value: null }, tasks: { exists: false, value: null } }),
+    (_name, value) => ({ settings: {}, tasks: value }),
+    () => false,
+    () => false,
+    () => true,
+  ];
+  const blockedPut = makePut(async () => { fetches += 1; return { ok: true }; }, () => true, () => false, () => true, () => true,
+    ...graphStubs, { error() {} }, () => {}, { me: null });
   assert.equal(await blockedPut('tasks', []), false);
   assert.equal(fetches, 0);
 
-  const allowedPut = makePut(async () => { fetches += 1; return { ok: true }; }, () => true, () => true, () => true, () => true, { error() {} }, () => {}, { me: null });
+  const allowedPut = makePut(async () => { fetches += 1; return { ok: true }; }, () => true, () => true, () => true, () => true,
+    ...graphStubs, { error() {} }, () => {}, { me: null });
   const storeContext = {
     _writeEpoch: 0,
     _liveSlot() { return ''; },
