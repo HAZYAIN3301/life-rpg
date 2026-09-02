@@ -22185,3 +22185,11 @@ details.pet-summary > :not(summary) {
 .wk-col .cal-goal-deadlines { margin: var(--sp-1) 0 0; }
 .wk-col .cal-goal-deadline-kicker { display: none; }
 @media (pointer: coarse) { .cal-goal-deadline { min-block-size: var(--touch-min); } }
+
+/* Ход секретаря на карточке Тени. Один ход, две равноправные кнопки: отказ —
+   это данные о неуместности, а не крестик в углу. */
+.secretary-offer { display: grid; gap: var(--sp-2); }
+.secretary-offer-reason { margin: 0; color: var(--text-strong); font-size: var(--type-body); line-height: var(--leading-prose); }
+.secretary-offer-quote { color: var(--muted); line-height: var(--leading-prose); }
+.secretary-offer-buttons { display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center; }
+.secretary-offer-buttons > * { min-block-size: var(--touch-min); }

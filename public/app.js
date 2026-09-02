@@ -2178,6 +2178,11 @@ const I18N_EXTRA = {
   'В день': { en: 'Into the day', de: 'In den Tag', uk: 'У день', es: 'Al día' },
   'Ради цели': { en: 'Serves the goal', de: 'Für das Ziel', uk: 'Заради цілі', es: 'Para la meta' },
   'Дедлайн цели': { en: 'Goal deadline', de: 'Ziel-Deadline', uk: 'Дедлайн цілі', es: 'Fecha límite de la meta' },
+  'Вчера ты отметил, что тебя унесло.': { en: 'Yesterday you marked that it carried you away.', de: 'Gestern hast du notiert, dass es dich mitgerissen hat.', uk: 'Учора ти зазначив, що тебе понесло.', es: 'Ayer anotaste que te arrastró.' },
+  'Вчера окно вышло за свою границу.': { en: 'Yesterday the window ran past its own boundary.', de: 'Gestern lief das Fenster über seine eigene Grenze.', uk: 'Учора вікно вийшло за свою межу.', es: 'Ayer la ventana pasó de su propio límite.' },
+  'Вчера день закончился позже вечерней границы.': { en: 'Yesterday the day ended past the evening boundary.', de: 'Gestern endete der Tag nach der Abendgrenze.', uk: 'Учора день скінчився пізніше вечірньої межі.', es: 'Ayer el día terminó pasada la frontera de la tarde.' },
+  'Вчера в Satoru было тихо. Что это было?': { en: 'Yesterday was quiet in Satoru. What was it?', de: 'Gestern war es still in Satoru. Was war es?', uk: 'Учора в Satoru було тихо. Що це було?', es: 'Ayer hubo silencio en Satoru. ¿Qué fue?' },
+  'Ответить': { en: 'Answer', de: 'Antworten', uk: 'Відповісти', es: 'Responder' },
   'Открыть цель с дедлайном на этот день': { en: 'Open the goal due on this day', de: 'Ziel mit Frist an diesem Tag öffnen', uk: 'Відкрити ціль з дедлайном на цей день', es: 'Abrir la meta que vence este día' },
   'цель на паузе': { en: 'goal paused', de: 'Ziel pausiert', uk: 'ціль на паузі', es: 'meta en pausa' },
   'цель ждёт': { en: 'goal waiting', de: 'Ziel wartet', uk: 'ціль чекає', es: 'meta en espera' },
@@ -6880,6 +6885,8 @@ const State = {
   _attentionLoadError: '', _attentionLoadBusy: false, _attentionWriteBlockedNoticeAt: 0,
   _attentionDeepLink: null, _attentionReturnIndex: 0,
   _secretaryExperimentBusy: false, _secretaryExperimentSetupOpen: false, _secretaryExperimentFeedbackDraft: null,
+  // undefined — ход ещё не спрашивали; null — движок промолчал; объект — ход заявлен и показан.
+  secretaryOffer: undefined, _secretaryOfferBusy: false,
   _browserCompanionStatus: null, _browserCompanionRequestId: '', _browserCompanionOptionsRequestId: '', _browserCompanionOpen: false,
   _browserCompanionProbeComplete: false, _browserCompanionDiscoveryBusy: '', _browserCompanionDiscoveryError: '',
   shelf: null, _shelfLoadError: '', _shelfLoadBusy: false, _shelfBusy: '', _shelfError: '',
@@ -23065,6 +23072,87 @@ function attentionPendingReturn() {
   const E = window.AttentionEpisodeV1;
   return !!(E && State.attentionEpisodes && E.normalize(State.attentionEpisodes).episodes.some((episode) => episode.outcome === 'escaped' && !episode.returnedAt));
 }
+// ── Ход секретаря с сервера ───────────────────────────────────────────────────
+//
+// Ход один, поверхностей две (карточка и пуш), и живут они в разных процессах.
+// Поэтому порядок обязателен: сначала заявка, и только на 200 — показ. 409 значит
+// «молчать», а не «показать всё равно».
+//
+// Заявка подаётся не при загрузке, а только когда место на экране действительно
+// свободно: если ход перебила живая граница внимания или вечер, заявлять его
+// нельзя — он был бы занят и потерян, не показавшись никому. Слот считает сам
+// рендер, тем же порядком приоритетов, а не второй его копией.
+let _secretaryOfferSlotFree = false;
+function secretaryOfferView() {
+  const pending = State.secretaryOffer;
+  return pending && pending.view ? pending.view : null;
+}
+async function loadSecretaryOffer() {
+  const V = window.SecretaryOfferViewV1;
+  if (!V || State._secretaryOfferBusy || State.secretaryOffer !== undefined) return;
+  State._secretaryOfferBusy = true;
+  try {
+    const response = await fetch('/api/secretary', {
+      headers: { 'X-Local-Day': todayStr(), 'X-Tz-Offset': String(-new Date().getTimezoneOffset()), 'X-Channel': 'card' },
+    });
+    if (response.status === 401) { handleAccountSessionExpired(); return; }
+    // 422 — файл движка повреждён. Пустое состояние здесь было бы ложью: оно
+    // означало бы «ничего не случилось». Молчим и не трогаем ничего.
+    if (!response.ok) { State.secretaryOffer = null; return; }
+    const data = await response.json().catch(() => ({}));
+    const view = V.presentOffer(data && data.offer);
+    if (!view) { State.secretaryOffer = null; return; }
+    const claim = await fetch('/api/secretary/claim', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ offerId: view.offerId, channel: 'card' }),
+    });
+    if (claim.status !== 200) { State.secretaryOffer = null; return; }
+    const claimed = await claim.json().catch(() => ({}));
+    if (!claimed || typeof claimed.token !== 'string' || !claimed.token) { State.secretaryOffer = null; return; }
+    State.secretaryOffer = { view, token: claimed.token };
+    render();
+    // Показ состоялся. Заявка закрывается сразу, чтобы пуш знал: это утро занято
+    // карточкой, и второго одинакового обращения не будет.
+    settleSecretaryClaim(view.offerId, claimed.token, 'delivered');
+  } catch (error) {
+    console.error('secretary offer', error);
+    State.secretaryOffer = null;
+  } finally { State._secretaryOfferBusy = false; }
+}
+async function settleSecretaryClaim(offerId, token, outcome) {
+  try {
+    await fetch('/api/secretary/claim/settle', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ offerId, token, outcome }),
+    });
+  } catch (error) { console.error('secretary settle', error); }
+}
+// Исход хода пишется всегда — и на принятие, и на отказ. Без него кулдаун не
+// сработает и то же предложение вернётся завтра как новое.
+async function reportSecretaryOutcome(state) {
+  const pending = State.secretaryOffer;
+  if (!pending || !pending.view) return;
+  const { cooldownKey } = pending.view;
+  State.secretaryOffer = null;
+  try {
+    await fetch('/api/secretary/offer', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cooldownKey, state }),
+    });
+  } catch (error) { console.error('secretary outcome', error); }
+}
+function secretaryOfferHTML(view) {
+  const quote = view.quote
+    ? `<small class="secretary-offer-quote">${esc(t('Твои слова'))}: <span data-noi18n>«${esc(view.quote.title)}${view.quote.win ? ` — ${esc(view.quote.win)}` : ''}»</span></small>`
+    : '';
+  const primary = view.domAction
+    ? `<button class="secretary-action is-primary" data-action="${esc(view.domAction)}" data-secretary-accept="1"><b>${esc(t(view.actionLabel))}</b></button>`
+    : `<button class="secretary-action is-primary" data-action="secretary-offer-accept"><b>${esc(t(view.actionLabel))}</b></button>`;
+  return `<div class="secretary-offer" data-secretary-offer="${esc(view.offerId)}">
+    <p class="secretary-offer-reason">${esc(t(view.reasonCopy))}</p>${quote}
+    <div class="secretary-offer-buttons">${primary}<button type="button" class="btn ghost" data-action="secretary-offer-dismiss">${esc(t('Не сейчас'))}</button></div>
+  </div>`;
+}
 function secretarySettings(settings = State.settings) {
   return Object.assign({}, DEFAULT_SETTINGS.secretary, settings?.secretary || {});
 }
@@ -23480,6 +23568,11 @@ function attentionTodayControlHTML(selectedOffer = null) {
   };
   let primary = fallbackPrimary;
   let controlState = '';
+  // Слот считает сам рендер: если ход перебила живая граница, вечер или эксперимент,
+  // заявлять его нельзя — он был бы занят и потерян, не показавшись никому.
+  _secretaryOfferSlotFree = !!C && !State._attentionLoadError && !active && !closed
+    && !(State._secretaryExperimentSetupOpen && experiment.status === 'draft')
+    && !pendingReturn && !eveningDue && !experimentOffer;
 
   if (!C) {
     controlState = ' is-error';
@@ -23521,6 +23614,9 @@ function attentionTodayControlHTML(selectedOffer = null) {
     primary = { kind: 'evening', title: t('Пора завершить рабочий день'), html: `<button class="secretary-action is-primary" data-action="evening-open"><span aria-hidden="true">🌙</span><b>${t('Завершить вечер')}</b>${cfg.dailyReminder && cfg.eveningTime ? `<small>${esc(cfg.eveningTime)}</small>` : ''}</button>` };
   } else if (!closed && experimentOffer) {
     primary = { kind: 'experiment', title: t('Личный эксперимент'), html: experimentOffer };
+  } else if (!closed && secretaryOfferView()) {
+    // Ход уже заявлен: до этой ветки он не рисуется никогда (см. loadSecretaryOffer).
+    primary = { kind: 'offer', title: t('Сейчас важнее всего'), html: secretaryOfferHTML(secretaryOfferView()) };
   } else if (!closed && selectedOffer && selectedOffer.html) {
     primary = { kind: 'nudge', title: t('Сейчас важнее всего'), html: selectedOffer.html };
   } else {
@@ -25935,6 +26031,7 @@ function render() {
     try { main.innerHTML = viewErrorCard(State.view, e); } catch { main.innerHTML = '<div class="card"><p>Ошибка. Обнови страницу.</p></div>'; }
   }
   try { if (lang() !== 'ru') translateDOM(document.body); } catch (e) { console.error('translateDOM', e); }
+  try { if (_secretaryOfferSlotFree && State.secretaryOffer === undefined) loadSecretaryOffer(); } catch (e) { console.error('loadSecretaryOffer', e); }
   try { scheduleReminders(); } catch (e) { console.error('scheduleReminders', e); }
   try { scheduleEveningReminder(); } catch (e) { console.error('scheduleEveningReminder', e); }
   try { kickCompVideo(); } catch (e) { /* видео-автоплей — не критично */ }
@@ -27826,6 +27923,12 @@ async function onClick(e) {
     return;
   }
   const action = el.dataset.action, id = el.dataset.id, today = todayStr();
+
+  // Ход открывает существующую поверхность своим обычным действием; здесь только
+  // записывается исход, иначе кулдаун не сработает и предложение вернётся завтра.
+  if (el.dataset.secretaryAccept === '1') reportSecretaryOutcome('accepted');
+  if (action === 'secretary-offer-accept') { await reportSecretaryOutcome('accepted'); render(); return; }
+  if (action === 'secretary-offer-dismiss') { await reportSecretaryOutcome('dismissed'); render(); return; }
 
   if (action === 'open-account-profile') { await openAccountProfile(State.me?.id, el); return; }
   if (action === 'open-member-profile') { await openAccountProfile(el.dataset.user, el); return; }
@@ -30341,6 +30444,7 @@ function clearAllData() {
   State.habitlog = null; State.goals = null; State.goalGroups = null; State.tree = null; State.rewards = null;
   State.purchases = null; State.achievements = null; State.weeks = null; State.lootbox = null;
   State.inbox = null; State.inboxOpen = false; State.antihabits = null; State.episodes = null;
+  State.secretaryOffer = undefined; State._secretaryOfferBusy = false;
   State.attentionMode = 'local'; State.attentionPolicies = null; State.attentionSessions = null; State.attentionEpisodes = null;
   State.shelf = null; State._shelfLoadError = ''; State._shelfLoadBusy = false; State._shelfBusy = ''; State._shelfError = '';
   State._shelfComposerOpen = false; State._shelfFilter = 'all'; State._shelfFocusAfterCommit = ''; State._shelfPendingSource = null; State._shelfNoteDraft = '';
@@ -31380,7 +31484,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v220';
+const PWA_CACHE_VERSION = 'satoru-v221';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
