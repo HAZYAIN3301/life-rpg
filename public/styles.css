@@ -22142,3 +22142,46 @@ details.pet-summary > :not(summary) {
 .task-goal-chip:is(.is-completed, .is-archived) { opacity: .68; }
 .task-goal-chip.is-archived { border-style: dashed; }
 @media (pointer: coarse) { .task-goal-chip { min-block-size: 26px; } }
+
+/* Дедлайны целей в календаре. Кнопка выбора дня несёт только пометку — ссылку внутрь
+   кнопки вкладывать нельзя, — а сама цель открывается из шапки выбранного дня. */
+.cal-goal-mark {
+  position: absolute;
+  inset-block-start: 2px;
+  inset-inline-end: 3px;
+  font-size: var(--type-floor);
+  line-height: 1;
+  pointer-events: none;
+}
+.calv-day, .cm-cell { position: relative; }
+.calv-day.has-goal-deadline, .cm-cell.has-goal-deadline { border-color: color-mix(in srgb, var(--accent) 46%, var(--line-soft)); }
+.cal-goal-deadlines {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  margin: var(--sp-2) 0 0;
+}
+.cal-goal-deadline {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  min-block-size: 26px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding-inline: var(--sp-2);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line-soft));
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--text-strong);
+  font: 600 var(--type-floor)/var(--leading-label) var(--font-ui);
+  text-decoration: none;
+  overflow: hidden;
+}
+.cal-goal-deadline:hover,
+.cal-goal-deadline:focus-visible { border-color: color-mix(in srgb, var(--accent) 62%, var(--line-soft)); }
+.cal-goal-deadline-mark { flex: 0 0 auto; }
+.cal-goal-deadline-kicker { flex: 0 0 auto; color: var(--muted); font-weight: 500; letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.cal-goal-deadline-title { flex: 0 1 auto; min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wk-col .cal-goal-deadlines { margin: var(--sp-1) 0 0; }
+.wk-col .cal-goal-deadline-kicker { display: none; }
+@media (pointer: coarse) { .cal-goal-deadline { min-block-size: var(--touch-min); } }

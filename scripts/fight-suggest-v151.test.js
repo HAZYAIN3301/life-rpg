@@ -140,5 +140,5 @@ test('предложение называет фичу её же словом в
 });
 
 test('обновлённый offline shell', () => {
-  assert.match(sw, /const CACHE = 'satoru-v218'/);
+  assert.match(sw, /const CACHE = 'satoru-v219'/);
 });

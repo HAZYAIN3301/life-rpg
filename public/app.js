@@ -2177,6 +2177,8 @@ const I18N_EXTRA = {
   'Создать квест': { en: 'Create quest', de: 'Quest erstellen', uk: 'Створити квест', es: 'Crear misión' },
   'В день': { en: 'Into the day', de: 'In den Tag', uk: 'У день', es: 'Al día' },
   'Ради цели': { en: 'Serves the goal', de: 'Für das Ziel', uk: 'Заради цілі', es: 'Para la meta' },
+  'Дедлайн цели': { en: 'Goal deadline', de: 'Ziel-Deadline', uk: 'Дедлайн цілі', es: 'Fecha límite de la meta' },
+  'Открыть цель с дедлайном на этот день': { en: 'Open the goal due on this day', de: 'Ziel mit Frist an diesem Tag öffnen', uk: 'Відкрити ціль з дедлайном на цей день', es: 'Abrir la meta que vence este día' },
   'цель на паузе': { en: 'goal paused', de: 'Ziel pausiert', uk: 'ціль на паузі', es: 'meta en pausa' },
   'цель ждёт': { en: 'goal waiting', de: 'Ziel wartet', uk: 'ціль чекає', es: 'meta en espera' },
   'цель завершена': { en: 'goal completed', de: 'Ziel abgeschlossen', uk: 'ціль завершена', es: 'meta completada' },
@@ -14010,6 +14012,29 @@ function shiftedMonthDate(date, delta) {
   return fmtDate(new Date(first.getFullYear(), first.getMonth(), Math.min(current.getDate(), lastDay)));
 }
 // Месячная сетка (6×7, с понедельника) + доступный detail выбранного дня.
+// Дедлайн цели — дата, назначенная человеком, а календарь был единственным местом
+// в приложении, которое про неё не знало. Индекс строится один раз на отрисовку.
+function goalDeadlineIndex() {
+  const api = window.GoalDeadlineCalendarV1;
+  return api ? api.deadlinesByDate(State.goals || []) : null;
+}
+function goalDeadlinesOn(index, date) {
+  const api = window.GoalDeadlineCalendarV1;
+  return api && index ? api.forDate(index, date) : [];
+}
+// Кнопку выбора дня нельзя превратить в ссылку на цель — вложенная интерактивность
+// ломает и клавиатуру, и разметку. Поэтому день только помечается, а сама цель
+// открывается из шапки выбранного дня: пометка → день → цель.
+function goalDeadlineMarkHTML(rows) {
+  return rows.length ? `<span class="cal-goal-mark" aria-hidden="true">\u{1F3AF}${rows.length > 1 ? rows.length : ''}</span>` : '';
+}
+function goalDeadlineLabelPart(rows) {
+  return rows.length ? ` \u00b7 ${t('Дедлайн цели')}: ${rows.map((row) => row.title).join(', ')}` : '';
+}
+function goalDeadlineRowHTML(rows) {
+  if (!rows.length) return '';
+  return `<p class="cal-goal-deadlines">${rows.map((row) => `<a class="cal-goal-deadline" href="${esc(goalDeepLinkHref(row.goalId))}" data-action="goto-goal" data-id="${esc(row.goalId)}" aria-label="${esc(`${t('Открыть цель с дедлайном на этот день')}: ${row.title}`)}"><span class="cal-goal-deadline-mark" aria-hidden="true">\u{1F3AF}</span><span class="cal-goal-deadline-kicker">${esc(t('Дедлайн цели'))}</span><span class="cal-goal-deadline-title" data-noi18n>${esc(row.title)}</span></a>`).join('')}</p>`;
+}
 function renderCalMonth(date) {
   const WD = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
   const d = parseDate(date), y = d.getFullYear(), mo = d.getMonth();
@@ -14023,21 +14048,24 @@ function renderCalMonth(date) {
   const selectedTasks = calendarTasksForDate(date);
   const selectedPlanned = selectedTasks.reduce((sum, task) => sum + (Number(task.estimateMin) || 0), 0);
   const selectedWeekStart = weekStart(date);
+  const deadlines = goalDeadlineIndex();
   const weekStrip = Array.from({ length: 7 }, (_, i) => {
     const ds = addDays(selectedWeekStart, i), day = parseDate(ds);
     const tasks = tasksByDate.get(ds) || [];
     const open = tasks.filter((task) => !task.done).length;
     const active = ds === date, isToday = ds === todayStr();
-    const label = `${t(WD[i])} ${day.getDate()} · ${t('Квестов на день')}: ${tasks.length}`;
-    return `<button type="button" class="calv-day month-overview-day${active ? ' active' : ''}${isToday ? ' is-today' : ''}" data-action="cal-date" data-date="${ds}" aria-label="${esc(label)}" aria-pressed="${active ? 'true' : 'false'}" ${isToday ? 'aria-current="date"' : ''}><span class="cd-wd">${esc(t(WD[i]))}</span><span class="cd-n">${day.getDate()}</span><span class="cd-dot${open ? '' : '-empty'}" ${open ? `aria-label="${open}"` : 'aria-hidden="true"'}>${open || ''}</span></button>`;
+    const due = goalDeadlinesOn(deadlines, ds);
+    const label = `${t(WD[i])} ${day.getDate()} · ${t('Квестов на день')}: ${tasks.length}${goalDeadlineLabelPart(due)}`;
+    return `<button type="button" class="calv-day month-overview-day${active ? ' active' : ''}${isToday ? ' is-today' : ''}${due.length ? ' has-goal-deadline' : ''}" data-action="cal-date" data-date="${ds}" aria-label="${esc(label)}" aria-pressed="${active ? 'true' : 'false'}" ${isToday ? 'aria-current="date"' : ''}><span class="cd-wd">${esc(t(WD[i]))}</span><span class="cd-n">${day.getDate()}</span><span class="cd-dot${open ? '' : '-empty'}" ${open ? `aria-label="${open}"` : 'aria-hidden="true"'}>${open || ''}</span>${goalDeadlineMarkHTML(due)}</button>`;
   }).join('');
   let cells = '';
   for (let i = 0; i < 42; i++) {
     const ds = addDays(gridStart, i), cd = parseDate(ds), inMonth = cd.getMonth() === mo;
     const tasks = tasksByDate.get(ds) || [], open = tasks.filter((task) => !task.done).length;
     const isToday = ds === todayStr(), isSel = ds === date;
-    const label = `${t(WD[i % 7])} ${cd.getDate()} ${t(MONTHS_NOM[cd.getMonth()])} · ${t('Квестов на день')}: ${tasks.length}`;
-    cells += `<button type="button" class="cm-cell${inMonth ? '' : ' cm-out'}${isToday ? ' cm-today' : ''}${isSel ? ' cm-sel' : ''}" data-action="cal-month-date" data-date="${ds}" aria-label="${esc(label)}" aria-pressed="${isSel ? 'true' : 'false'}" ${isToday ? 'aria-current="date"' : ''}><span class="cm-n">${cd.getDate()}</span>${tasks.length ? `<span class="cm-dot" aria-label="${open}/${tasks.length}">${open > 9 ? '9+' : open}</span>` : ''}</button>`;
+    const due = goalDeadlinesOn(deadlines, ds);
+    const label = `${t(WD[i % 7])} ${cd.getDate()} ${t(MONTHS_NOM[cd.getMonth()])} · ${t('Квестов на день')}: ${tasks.length}${goalDeadlineLabelPart(due)}`;
+    cells += `<button type="button" class="cm-cell${inMonth ? '' : ' cm-out'}${isToday ? ' cm-today' : ''}${isSel ? ' cm-sel' : ''}${due.length ? ' has-goal-deadline' : ''}" data-action="cal-month-date" data-date="${ds}" aria-label="${esc(label)}" aria-pressed="${isSel ? 'true' : 'false'}" ${isToday ? 'aria-current="date"' : ''}><span class="cm-n">${cd.getDate()}</span>${tasks.length ? `<span class="cm-dot" aria-label="${open}/${tasks.length}">${open > 9 ? '9+' : open}</span>` : ''}${goalDeadlineMarkHTML(due)}</button>`;
   }
   const selectedRows = selectedTasks.map((task) => weekTaskRowHTML(task, 'detail')).join('');
   const selectedWeekday = t(WD[(d.getDay() + 6) % 7]);
@@ -14047,7 +14075,7 @@ function renderCalMonth(date) {
       ${calendarMoveReceiptHTML()}
       <main class="month-work">
         <section class="card month-grid-card" aria-labelledby="month-grid-title"><h3 id="month-grid-title">${esc(t('Выбери день месяца'))}</h3><div class="cm-wd" aria-hidden="true">${WD.map((w) => `<span>${esc(t(w))}</span>`).join('')}</div><div class="cm-grid" role="group" aria-label="${esc(t('Дни месяца'))}">${cells}</div></section>
-        <section class="card month-detail-card" aria-labelledby="month-detail-title"><div class="month-detail-head"><div><h3 id="month-detail-title" tabindex="-1">${esc(t('Квесты этого дня'))}</h3><p class="month-detail-summary">${esc(selectedWeekday)} ${dmShort(date)} · ${selectedTasks.length} · ${fmtDur(selectedPlanned)}</p></div><button type="button" class="btn ghost month-open-day" data-action="month-open-day">${esc(t('Открыть выбранный день'))}</button></div><div class="month-detail-tasks">${selectedRows || `<div class="month-detail-empty"><p>${esc(t('Нет квестов на этот день'))}</p></div>`}</div>${weekAddAreaHTML(date, 'detail')}</section>
+        <section class="card month-detail-card" aria-labelledby="month-detail-title"><div class="month-detail-head"><div><h3 id="month-detail-title" tabindex="-1">${esc(t('Квесты этого дня'))}</h3><p class="month-detail-summary">${esc(selectedWeekday)} ${dmShort(date)} · ${selectedTasks.length} · ${fmtDur(selectedPlanned)}</p></div><button type="button" class="btn ghost month-open-day" data-action="month-open-day">${esc(t('Открыть выбранный день'))}</button></div>${goalDeadlineRowHTML(goalDeadlinesOn(deadlines, date))}<div class="month-detail-tasks">${selectedRows || `<div class="month-detail-empty"><p>${esc(t('Нет квестов на этот день'))}</p></div>`}</div>${weekAddAreaHTML(date, 'detail')}</section>
       </main>
     </section>`;
 }
@@ -14064,12 +14092,14 @@ function renderCalendarView() {
   const unscheduled = dayTasks.filter((t) => !t.startTime && !t.done);
   // полоса недели вокруг выбранной даты (с понедельника)
   const js = d.getDay(), mon = addDays(date, -(js === 0 ? 6 : js - 1));
+  const deadlines = goalDeadlineIndex();
   let strip = '';
   for (let i = 0; i < 7; i++) {
     const ds = addDays(mon, i), open = State.tasks.filter((t) => t.date === ds && !t.done).length;
     const selected = ds === date, isToday = ds === todayStr(), weekday = t(WD[parseDate(ds).getDay()]);
-    strip += `<button type="button" class="calv-day ${selected ? 'active' : ''} ${isToday ? 'is-today' : ''}" data-action="cal-date" data-date="${ds}" aria-pressed="${selected}" ${isToday ? 'aria-current="date"' : ''} aria-label="${esc(`${weekday} ${Number(ds.slice(8))}${isToday ? ` · ${t('сегодня')}` : ''}`)}">
-      <span class="cd-wd">${esc(weekday)}</span><span class="cd-n">${Number(ds.slice(8))}</span>${open ? `<span class="cd-dot" aria-label="${open}">${open}</span>` : '<span class="cd-dot-empty" aria-hidden="true"></span>'}</button>`;
+    const due = goalDeadlinesOn(deadlines, ds);
+    strip += `<button type="button" class="calv-day ${selected ? 'active' : ''} ${isToday ? 'is-today' : ''}${due.length ? ' has-goal-deadline' : ''}" data-action="cal-date" data-date="${ds}" aria-pressed="${selected}" ${isToday ? 'aria-current="date"' : ''} aria-label="${esc(`${weekday} ${Number(ds.slice(8))}${isToday ? ` · ${t('сегодня')}` : ''}${goalDeadlineLabelPart(due)}`)}">
+      <span class="cd-wd">${esc(weekday)}</span><span class="cd-n">${Number(ds.slice(8))}</span>${open ? `<span class="cd-dot" aria-label="${open}">${open}</span>` : '<span class="cd-dot-empty" aria-hidden="true"></span>'}${goalDeadlineMarkHTML(due)}</button>`;
   }
   const hours = [];
   for (let h = CAL_H0; h <= CAL_H1; h++) hours.push(h);
@@ -14104,6 +14134,7 @@ function renderCalendarView() {
         ${calModeToggle('day')}${calendarToolsHTML()}
       </div>
       <div class="calv-strip" role="group" aria-label="${esc(t('Дни выбранной недели'))}">${strip}</div>
+      ${goalDeadlineRowHTML(goalDeadlinesOn(deadlines, date))}
     </header>
     ${calendarMoveReceiptHTML()}
     <div class="calendar-day-layout">
@@ -22466,6 +22497,7 @@ function renderWeekly() {
   const WD_BY_JS = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
   const selected = selectedWeekDate(ws);
   State.calDate = selected;
+  const weekDeadlines = goalDeadlineIndex();
   const dayData = Array.from({ length: 7 }, (_, i) => {
     const d = addDays(ws, i);
     const tasks = State.tasks.filter((task) => task.date === d).sort((a, b) => {
@@ -22487,7 +22519,8 @@ function renderWeekly() {
     const isToday = day.date === today;
     const taskRows = day.tasks.map((task) => weekTaskRowHTML(task, 'board')).join('');
     const habitDots = day.habits.length ? `<div class="wk-habits-dots" aria-label="${esc(t('Привычек'))}: ${day.habits.length}">${day.habits.map((habit) => `<span class="wk-h-dot${habitDone(habit, day.date) ? ' done' : ''}" style="--c:${esc(skillById(habit.skillId).color)}" title="${esc(habit.title)}" aria-hidden="true"></span>`).join('')}</div>` : '';
-    return `<section class="wk-col${isToday ? ' is-today' : ''}" data-date="${day.date}" aria-label="${esc(t(WD_BY_JS[parseDate(day.date).getDay()]))} ${Number(day.date.slice(8))}"><header class="wk-col-head"><span class="wk-wd">${esc(t(WD_BY_JS[parseDate(day.date).getDay()]))}</span><span class="wk-date">${dmShort(day.date)}</span><span class="wk-prog">${day.done}/${day.tasks.length}</span></header><div class="wk-load" title="${esc(t('Запланировано времени на день'))}">${fmtDur(day.planned)}</div><div class="wk-tasks">${taskRows || `<p class="wk-empty muted">${esc(t('Пусто'))}</p>`}</div>${habitDots}${weekAddAreaHTML(day.date, 'board')}</section>`;
+    const due = goalDeadlinesOn(weekDeadlines, day.date);
+    return `<section class="wk-col${isToday ? ' is-today' : ''}${due.length ? ' has-goal-deadline' : ''}" data-date="${day.date}" aria-label="${esc(`${t(WD_BY_JS[parseDate(day.date).getDay()])} ${Number(day.date.slice(8))}${goalDeadlineLabelPart(due)}`)}"><header class="wk-col-head"><span class="wk-wd">${esc(t(WD_BY_JS[parseDate(day.date).getDay()]))}</span><span class="wk-date">${dmShort(day.date)}</span><span class="wk-prog">${day.done}/${day.tasks.length}</span></header>${goalDeadlineRowHTML(due)}<div class="wk-load" title="${esc(t('Запланировано времени на день'))}">${fmtDur(day.planned)}</div><div class="wk-tasks">${taskRows || `<p class="wk-empty muted">${esc(t('Пусто'))}</p>`}</div>${habitDots}${weekAddAreaHTML(day.date, 'board')}</section>`;
   }).join('');
   const selectedDay = dayData.find((day) => day.date === selected) || dayData[0];
   const selectedWeekday = t(WD_BY_JS[parseDate(selectedDay.date).getDay()]);
@@ -31318,7 +31351,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v218';
+const PWA_CACHE_VERSION = 'satoru-v219';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
