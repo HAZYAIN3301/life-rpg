@@ -23913,6 +23913,34 @@ async function extendAttentionSession(button) {
   toast(t('Окно продлено один раз'));
 }
 
+function attentionPolicyLabel(policyId) {
+  const P = window.AttentionPolicyV1;
+  const policy = P && P.policyById ? P.policyById(attentionBundle().policies, policyId) : null;
+  return policy && typeof policy.name === 'string' ? policy.name : '';
+}
+// Секретарь узнаёт про закрытое окно внимания только отсюда. Правила и эпизоды по
+// умолчанию не покидают устройство (`mode: 'local'`), поэтому серверного шва, на
+// котором это можно было бы заметить, не существует: клиент здесь не второй
+// источник факта, а единственный.
+//
+// Отправка не ждёт человека и не показывает ошибок: эпизод уже сохранён, а событие
+// — производный сигнал к завтрашнему утру. Цена потери — одно пропущенное утро;
+// durable-очередь неотправленного — следующий шаг, он записан в BACKLOG.
+async function reportAttentionEpisode(episode) {
+  const producer = window.SecretaryAttentionProducerV1;
+  if (!producer || !episode || !episode.endedAt) return;
+  const { events } = producer.eventsForEpisode({
+    episode, day: fmtDate(new Date(episode.endedAt)), label: attentionPolicyLabel(episode.sourcePolicyId),
+  });
+  for (const event of events) {
+    try {
+      const response = await fetch('/api/secretary/event', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(event),
+      });
+      if (!response.ok) console.error('secretary event', event.type, response.status);
+    } catch (error) { console.error('secretary event', event.type, error); }
+  }
+}
 async function persistAttentionClose(next) {
   if (!next || !next.ok) return false;
   // The dedicated endpoint receives one checked envelope, so session close and
@@ -23920,6 +23948,7 @@ async function persistAttentionClose(next) {
   const bundle = { ...attentionBundle(), sessions: next.sessions, episodes: next.episodes };
   if (!await AttentionStore.save(bundle)) return false;
   applyAttentionBundle(bundle);
+  reportAttentionEpisode(next.episode);
   return true;
 }
 async function finishAttentionSession(button) {
@@ -31351,7 +31380,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v219';
+const PWA_CACHE_VERSION = 'satoru-v220';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
