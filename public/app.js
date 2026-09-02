@@ -2183,6 +2183,12 @@ const I18N_EXTRA = {
   'Вчера день закончился позже вечерней границы.': { en: 'Yesterday the day ended past the evening boundary.', de: 'Gestern endete der Tag nach der Abendgrenze.', uk: 'Учора день скінчився пізніше вечірньої межі.', es: 'Ayer el día terminó pasada la frontera de la tarde.' },
   'Вчера в Satoru было тихо. Что это было?': { en: 'Yesterday was quiet in Satoru. What was it?', de: 'Gestern war es still in Satoru. Was war es?', uk: 'Учора в Satoru було тихо. Що це було?', es: 'Ayer hubo silencio en Satoru. ¿Qué fue?' },
   'Ответить': { en: 'Answer', de: 'Antworten', uk: 'Відповісти', es: 'Responder' },
+  'раз в неделю': { en: 'per week', de: 'pro Woche', uk: 'разів на тиждень', es: 'por semana' },
+  'Как часто ты хочешь заниматься этой сферой. Пусто — частота не объявлена, и сфера не судится.': { en: 'How often you want to work on this area. Empty means no declared rhythm, and the area is not judged.', de: 'Wie oft du dich diesem Bereich widmen willst. Leer heißt kein erklärter Rhythmus — der Bereich wird nicht bewertet.', uk: 'Як часто ти хочеш займатися цією сферою. Порожньо — ритм не оголошено, і сферу не судять.', es: 'Con qué frecuencia quieres dedicarte a esta área. Vacío significa que no hay ritmo declarado y el área no se juzga.' },
+  'В своём ритме': { en: 'In its own rhythm', de: 'Im eigenen Rhythmus', uk: 'У своєму ритмі', es: 'A su propio ritmo' },
+  'Реже, чем ты решил': { en: 'Less often than you decided', de: 'Seltener als du entschieden hast', uk: 'Рідше, ніж ти вирішив', es: 'Menos de lo que decidiste' },
+  'из': { en: 'of', de: 'von', uk: 'з', es: 'de' },
+  'сфер с объявленной частотой': { en: 'areas with a declared rhythm', de: 'Bereiche mit erklärtem Rhythmus', uk: 'сфер з оголошеною частотою', es: 'áreas con ritmo declarado' },
   'Открыть цель с дедлайном на этот день': { en: 'Open the goal due on this day', de: 'Ziel mit Frist an diesem Tag öffnen', uk: 'Відкрити ціль з дедлайном на цей день', es: 'Abrir la meta que vence este día' },
   'цель на паузе': { en: 'goal paused', de: 'Ziel pausiert', uk: 'ціль на паузі', es: 'meta en pausa' },
   'цель ждёт': { en: 'goal waiting', de: 'Ziel wartet', uk: 'ціль чекає', es: 'meta en espera' },
@@ -22589,6 +22595,31 @@ function barChartSVG(data, opts) {
   }).join('');
   return `<svg viewBox="0 0 ${w} ${h}" class="chart" preserveAspectRatio="xMidYMid meet">${bars}</svg>`;
 }
+// Ритм сфер: доля тех, кто попал в собственную объявленную частоту. Это ответ
+// `ALTERNEYT.md` §6.1 на «каждый день поровну на все сферы»: сфера с частотой
+// «раз в неделю» больше не тянет баланс вниз просто потому, что её трогали реже.
+//
+// Строка появляется, только когда есть что сказать: сферы без объявленной частоты
+// в знаменатель не входят, и при нуле объявленных не рисуется ничего — пустой
+// показатель хуже отсутствующего, он выглядит как ноль.
+function sphereRhythmSummary() {
+  const F = window.SphereFrequencyV1, T = window.SphereTouchV1;
+  if (!F || !T) return '';
+  const spheres = (State.settings && State.settings.skills) || [];
+  const wheel = topSkills().filter((sphere) => !isProjectSkill(sphere) && !sphere.archived);
+  if (!wheel.length) return '';
+  let events = [];
+  try { events = xpEvents(); } catch { return ''; }
+  const index = T.touchDaysBySphere(events, spheres);
+  const today = todayStr();
+  const rhythms = wheel.map((sphere) => F.sphereRhythm(sphere, T.daysFor(index, sphere.id), today));
+  const balance = F.balanceIndex(rhythms);
+  if (!balance.counted) return '';
+  const neglected = F.mostNeglected(rhythms);
+  const sphere = neglected ? wheel.find((item) => item.id === neglected.sphereId) : null;
+  const headline = sphere ? `${t('Реже, чем ты решил')}: ${esc(sphere.name)}` : t('В своём ритме');
+  return `${headline} · ${balance.ok} ${t('из')} ${balance.counted} ${t('сфер с объявленной частотой')}`;
+}
 function renderStats() {
   ensureAiKeys();
   const since = addDays(todayStr(), -13);
@@ -22654,9 +22685,10 @@ function renderStats() {
   const balanceSummary = hasBalanceSignal
     ? (bal.weakest && bal.index < 80 ? `${t('Без внимания')}: ${esc(bal.weakest.name)}` : t('Ритм сфер устойчив'))
     : t('Баланс появится, когда хотя бы две сферы получат внимание. Это не оценка тебя.');
+  const rhythmSummary = sphereRhythmSummary();
   return `<section class="stats-shell" data-guide-target="stats-overview" aria-labelledby="stats-title">
     <header class="stats-route-head"><h2 id="stats-title" tabindex="-1">${satoruIconHTML('nav.progress', 'heading-glyph', '◇')} ${t('Прогресс')}</h2></header>
-    <section class="card stats-lead weekly-insight" aria-labelledby="stats-week-title"><div><span class="th-kicker">${t('Последние 14 дней')}</span><h3 id="stats-week-title">${rate == null ? t('Пока нет планов') : `${rate}% · ${t('Выполнение (14 дн.)')}`}</h3><p class="muted">${balanceSummary}</p></div><div class="stats-lead-actions"><button class="btn" data-action="ai-review">${t('Разобрать неделю')}</button><button class="btn ghost" data-action="share-week">${satoruIconHTML('action.export', 'button-glyph', '◇')} ${t('Твоя неделя')}</button></div></section>
+    <section class="card stats-lead weekly-insight" aria-labelledby="stats-week-title"><div><span class="th-kicker">${t('Последние 14 дней')}</span><h3 id="stats-week-title">${rate == null ? t('Пока нет планов') : `${rate}% · ${t('Выполнение (14 дн.)')}`}</h3><p class="muted">${balanceSummary}</p>${rhythmSummary ? `<p class="muted stats-rhythm-line">${rhythmSummary}</p>` : ''}</div><div class="stats-lead-actions"><button class="btn" data-action="ai-review">${t('Разобрать неделю')}</button><button class="btn ghost" data-action="share-week">${satoruIconHTML('action.export', 'button-glyph', '◇')} ${t('Твоя неделя')}</button></div></section>
     <div class="kpis stats-kpis-compact">
       <div class="kpi"><div class="v">${rankIconHTML(cr, 'kpi-emblem')} ${charLevel()}</div><div class="l">${cr.name}</div></div>
       <div class="kpi"><div class="v" style="color:${balColor}">${hasBalanceSignal ? bal.index : '—'}</div><div class="l">${hasBalanceSignal ? t('Индекс баланса') : t('Наблюдаем баланс')}</div></div>
@@ -24783,6 +24815,7 @@ function renderSettings() {
           ${CANON_DOMAINS.map((d) => `<option value="${d.id}" ${sk.canon === d.id ? 'selected' : ''}>${d.icon} ${esc(t(d.name))}</option>`).join('')}
         </select>
         <label class="se-proj" title="${t('Проект — не ось колеса баланса (живёт в Целях)')}"><input type="checkbox" data-field="noBalance" ${sk.noBalance ? 'checked' : ''}/> ${t('🏁 проект')}</label>
+        <label class="se-rhythm" title="${t('Как часто ты хочешь заниматься этой сферой. Пусто — частота не объявлена, и сфера не судится.')}"><input type="number" min="1" max="7" step="1" inputmode="numeric" data-field="targetPerWeek" value="${sk.targetPerWeek == null ? '' : esc(String(sk.targetPerWeek))}" placeholder="—" /> ${t('раз в неделю')}</label>
       </div>` : '';
     return `<div class="skill-edit ${depth > 0 ? 'is-sub' : ''} ${hidden ? 'se-hidden' : ''} ${sk.archived ? 'is-archived' : ''}" data-id="${sk.id}" style="--d:${depth}">
       <span class="se-move"><button data-action="skill-move" data-id="${sk.id}" data-dir="-1" title="${t('Выше')}">▲</button><button data-action="skill-move" data-id="${sk.id}" data-dir="1" title="${t('Ниже')}">▼</button></span>
@@ -30309,12 +30342,20 @@ function captureSettingsForm() {
       const old = oldSkills.find((x) => x.id === row.dataset.id) || {};
       const psel = row.querySelector('[data-field="parentId"]');
       const canonSel = row.querySelector('[data-field="canon"]'), projChk = row.querySelector('[data-field="noBalance"]');
+      const rhythmInput = row.querySelector('[data-field="targetPerWeek"]');
       // ВАЖНО: строим объект от старого (...old), чтобы НЕ потерять поля канон-маппинга/проекта,
       // которых нет среди простых инпутов (иначе автосейв формы их стирал бы).
       const o = { ...old, id: row.dataset.id, name: row.querySelector('[data-field="name"]').value.trim() || 'Без названия', color: row.querySelector('[data-field="color"]').value, parentId: psel && psel.value ? psel.value : null };
       // canon/noBalance живут только у верхних сфер (есть контролы). У под-сфер — чистим (не оси колеса).
       if (canonSel) o.canon = canonSel.value || null; else delete o.canon;
       if (projChk) o.noBalance = projChk.checked; else delete o.noBalance;
+      // Пустое поле — это «частота не объявлена», а не ноль: сферу, про которую человек
+      // ничего не решил, судить не за что. Нечисло и выход за 1–7 тоже стирают объявление.
+      if (rhythmInput) {
+        const declared = Math.round(Number(rhythmInput.value));
+        if (rhythmInput.value.trim() && Number.isFinite(declared) && declared >= 1 && declared <= 7) o.targetPerWeek = declared;
+        else delete o.targetPerWeek;
+      } else delete o.targetPerWeek;
       return o;
     });
     // нормализация parentId: глубина любая, но родитель должен существовать и цепочка не должна зацикливаться
@@ -30951,7 +30992,7 @@ function onChange(e) {
   // при смене квеста в пикере календаря — подставить его длительность
   if (e.target.id === 'cal-quest') { const q = questById(e.target.value), d = document.getElementById('cal-dur'); if (q && d) d.value = Number(q.estimateMin) || 30; return; }
   // смена вложенности сферы → сохранить и сразу перерисовать дерево (отступы, защита от циклов)
-  if (['parentId', 'canon', 'noBalance'].includes(e.target.dataset.field) && e.target.closest('#skills-list')) { flushSettingsForm(); render(); return; }
+  if (['parentId', 'canon', 'noBalance', 'targetPerWeek'].includes(e.target.dataset.field) && e.target.closest('#skills-list')) { flushSettingsForm(); render(); return; }
   // автосохранение формы настроек (сферы/привычки/формулы/название) — чтобы правки не терялись при F5
   if (e.target.closest('#skills-list, #habits-list, .knob') || e.target.id === 'set-appName') autosaveSettings();
   const el = e.target.closest('[data-action]');
@@ -31466,7 +31507,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v221';
+const PWA_CACHE_VERSION = 'satoru-v222';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

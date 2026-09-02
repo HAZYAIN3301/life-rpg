@@ -22193,3 +22193,9 @@ details.pet-summary > :not(summary) {
 .secretary-offer-quote { color: var(--muted); line-height: var(--leading-prose); }
 .secretary-offer-buttons { display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center; }
 .secretary-offer-buttons > * { min-block-size: var(--touch-min); }
+
+/* Ритм сфер и объявленная частота. Частота — расширенный параметр сферы, поэтому
+   живёт в той же строке настройки, что домен и «проект», и не занимает своей карточки. */
+.se-rhythm { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: var(--type-meta); }
+.se-rhythm input { inline-size: 3.5rem; min-block-size: 32px; text-align: center; }
+.stats-rhythm-line { margin-block-start: var(--sp-1); }

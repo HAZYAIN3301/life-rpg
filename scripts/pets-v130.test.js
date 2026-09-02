@@ -36,5 +36,5 @@ test('Pets has localized labels and mobile/coarse operability', () => {
 });
 
 test('Pets ships with the v138 offline shell', () => {
-  assert.match(sw, /const CACHE = 'satoru-v221'/);
+  assert.match(sw, /const CACHE = 'satoru-v222'/);
 });
