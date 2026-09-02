@@ -2184,6 +2184,9 @@ const I18N_EXTRA = {
   'Вчера в Satoru было тихо. Что это было?': { en: 'Yesterday was quiet in Satoru. What was it?', de: 'Gestern war es still in Satoru. Was war es?', uk: 'Учора в Satoru було тихо. Що це було?', es: 'Ayer hubo silencio en Satoru. ¿Qué fue?' },
   'Ответить': { en: 'Answer', de: 'Antworten', uk: 'Відповісти', es: 'Responder' },
   'раз в неделю': { en: 'per week', de: 'pro Woche', uk: 'разів на тиждень', es: 'por semana' },
+  '2 минуты': { en: '2 minutes', de: '2 Minuten', uk: '2 хвилини', es: '2 minutos' },
+  'Сделать версию на две минуты': { en: 'Do the two-minute version', de: 'Die Zwei-Minuten-Version machen', uk: 'Зробити версію на дві хвилини', es: 'Hacer la versión de dos minutos' },
+  'Кем ты становишься': { en: 'Who you are becoming', de: 'Wer du wirst', uk: 'Ким ти стаєш', es: 'En quién te conviertes' },
   'Как часто ты хочешь заниматься этой сферой. Пусто — частота не объявлена, и сфера не судится.': { en: 'How often you want to work on this area. Empty means no declared rhythm, and the area is not judged.', de: 'Wie oft du dich diesem Bereich widmen willst. Leer heißt kein erklärter Rhythmus — der Bereich wird nicht bewertet.', uk: 'Як часто ти хочеш займатися цією сферою. Порожньо — ритм не оголошено, і сферу не судять.', es: 'Con qué frecuencia quieres dedicarte a esta área. Vacío significa que no hay ritmo declarado y el área no se juzga.' },
   'В своём ритме': { en: 'In its own rhythm', de: 'Im eigenen Rhythmus', uk: 'У своєму ритмі', es: 'A su propio ritmo' },
   'Реже, чем ты решил': { en: 'Less often than you decided', de: 'Seltener als du entschieden hast', uk: 'Рідше, ніж ти вирішив', es: 'Menos de lo que decidiste' },
@@ -13473,6 +13476,16 @@ function scheduleQuestTitleDisclosures() {
   });
 }
 window.addEventListener('resize', scheduleQuestTitleDisclosures, { passive: true });
+// Версия на две минуты — второй вход в ту же привычку, а не поблажка. Появляется
+// только когда серии нет: привычка либо новая, либо прервалась, и в обоих случаях
+// трудно именно начать. На идущей серии он был бы лишней кнопкой каждый день.
+function habitTwoMinuteButtonHTML(h, done, streak, busy) {
+  const T = window.HabitTwoMinuteV1;
+  const offer = T ? T.offerFor(h, { done, streak }) : null;
+  if (!offer) return '';
+  const label = `${t('Сделать версию на две минуты')}: ${offer.text}`;
+  return `<button type="button" class="habit-two-min" data-action="habit-two-minute" data-id="${esc(h.id)}" title="${esc(label)}" aria-label="${esc(label)}" ${busy ? 'disabled' : ''}><span class="habit-two-min-lead" aria-hidden="true">${esc(t('2 минуты'))}</span><span class="habit-two-min-text" data-noi18n>${esc(offer.text)}</span></button>`;
+}
 function habitRow(h) {
   const sk = skillById(h.skillId), done = habitDone(h, habitDayKey()), hs = habitStreak(h), busy = State._habitTxnBusy === `habit:${h.id}`;
   return `<li class="task habit ${done ? 'done' : ''}">
@@ -13482,7 +13495,8 @@ function habitRow(h) {
     <span class="t-time">${fmtDur(h.estimateMin)}</span>
     <span class="t-diff" title="${DIFF[h.difficulty] || ''}">${difficultyIconHTML(h.difficulty)}</span>
     <span class="t-xp">${done ? '+' + itemXp(h) : ''}</span>
-    <span class="habit-streak" title="Серия">${hs ? satoruIconHTML('status.streak', 'habit-streak-icon', '🔥') + hs : ''}</span><span></span></li>`;
+    <span class="habit-streak" title="Серия">${hs ? satoruIconHTML('status.streak', 'habit-streak-icon', '🔥') + hs : ''}</span><span></span>
+    ${habitTwoMinuteButtonHTML(h, done, hs, busy)}</li>`;
 }
 function clearHabitUndo() {
   clearTimeout(State._habitUndoTimer); State._habitUndoTimer = null; State._habitUndo = null;
@@ -13495,7 +13509,7 @@ function habitUndoHTML() {
   const undo = State._habitUndo; if (!undo) return '';
   return `<div class="habit-receipt" role="status"><span>${t(undo.label)}</span><button class="btn ghost sm" data-action="habit-undo" ${State._habitTxnBusy ? 'disabled' : ''}>${t('Отменить')}</button></div>`;
 }
-async function transactHabitCompletion(h) {
+async function transactHabitCompletion(h, { twoMinute = false } = {}) {
   const key = `habit:${h.id}`; if (State._habitTxnBusy || State._habitsLoadError) return;
   const day = habitDayKey(), wasDone = !!(State.habitlog[day] && State.habitlog[day][h.id]);
   const beforeLog = structuredClone(State.habitlog);
@@ -13504,7 +13518,10 @@ async function transactHabitCompletion(h) {
   if (wasDone) {
     delete nextLog[day][h.id]; if (!Object.keys(nextLog[day]).length) delete nextLog[day];
   } else {
-    nextLog[day][h.id] = { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() };
+    const T = window.HabitTwoMinuteV1;
+    nextLog[day][h.id] = twoMinute && T
+      ? T.recordFor({ xp: itemXp(h), gold: itemGold(h), at: new Date().toISOString() })
+      : { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() };
   }
   State._habitTxnBusy = key; State._habitError = ''; render();
   const saved = await habitDataCommit({ habitlog: nextLog }, () => { State.habitlog = nextLog; });
@@ -14370,7 +14387,12 @@ function habitsBuildHTML() {
       <label class="hb-field">${t('⏱ Версия 2 минут')} <input data-action="habit-atomic" data-id="${h.id}" data-field="twoMin" value="${esc(a.twoMin || '')}" placeholder="${t('Минимум, чтобы просто начать')}" /></label></div>
     </details>`;
   }).join('') : `<p class="muted">${t('Пока нет привычек — добавь и спроектируй по 4 законам.')}</p>`;
-  return `<div class="card hb-intro"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🌱')} ${t('Строим привычки')}</h3>
+  // Ориентир экрана — собственные слова человека, если он их написал. Родовое
+  // «Строим привычки» остаётся только пока не написал: подставлять за него нечего.
+  const heading = idg
+    ? `<span class="hb-intro-kicker">${esc(t('Кем ты становишься'))}</span><span class="hb-intro-identity" data-noi18n>${esc(idg)}</span>`
+    : esc(t('Строим привычки'));
+  return `<div class="card hb-intro"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🌱')} ${heading}</h3>
       <p class="muted">${esc(t('Выбери, кем хочешь стать. Каждое выполнение ниже — маленькое доказательство этой идентичности.'))}</p>
       <label class="hb-identity">${t('Кем ты хочешь стать?')} <input id="identity-goal" data-action="save-identity" value="${esc(idg)}" placeholder="${t('Напр.: дисциплинированный учёный в отличной форме')}" /></label></div>
     <div class="hb-list">${cards}</div>
@@ -29050,6 +29072,8 @@ async function onClick(e) {
     if (await completeTask(q, null, q.date)) toast(`✓ ${t('Засчитано в')} ${dmShort(q.date)}`);
   } else if (action === 'toggle-habit') {
     const h = habitById(id); if (h) transactHabitCompletion(h);
+  } else if (action === 'habit-two-minute') {
+    const h = habitById(id); if (h && !habitDone(h, habitDayKey())) transactHabitCompletion(h, { twoMinute: true });
   } else if (action === 'habit-undo') {
     undoHabitCompletion();
   } else if (action === 'habits-retry') {
@@ -31507,7 +31531,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v222';
+const PWA_CACHE_VERSION = 'satoru-v223';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -39,7 +39,11 @@ test('Habits v126 uses checked load, global write fences and one atomic client t
   // правила settings.energy и требовала защиты от NaN→null. Теперь настройки в этой
   // транзакции не меняются вовсе: неизменённый settings больше не пишется и
   // потому не может откатить параллельную настройку или Guide state.
-  assert.match(APP, /nextLog\[day\]\[h\.id\] = \{ xp: itemXp\(h\), gold: itemGold\(h\), min: [^}]*at: new Date\(\)\.toISOString\(\) \}/);
+  // Обычная отметка: числа берутся из самой привычки, время — настоящее.
+  assert.match(APP, /: \{ xp: itemXp\(h\), gold: itemGold\(h\), min: [^}]*at: new Date\(\)\.toISOString\(\) \}/);
+  // Версия на две минуты (2026-09-02) идёт той же транзакцией и теми же числами:
+  // меньшая версия не платит меньше, честнее становится только записанное время.
+  assert.match(APP, /nextLog\[day\]\[h\.id\] = twoMinute && T\s*\n?\s*\? T\.recordFor\(\{ xp: itemXp\(h\), gold: itemGold\(h\), at: new Date\(\)\.toISOString\(\) \}\)/);
   assert.doesNotMatch(APP, /habitDataCommit\(\{ habitlog: nextLog, settings:/, 'обычная отметка снова пишет неизменённые настройки');
   assert.match(APP, /State\._habitTxnBusy = key;[\s\S]*await habitDataCommit/);
   assert.match(APP, /async function undoHabitCompletion/);

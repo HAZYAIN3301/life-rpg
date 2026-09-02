@@ -22199,3 +22199,35 @@ details.pet-summary > :not(summary) {
 .se-rhythm { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: var(--type-meta); }
 .se-rhythm input { inline-size: 3.5rem; min-block-size: 32px; text-align: center; }
 .stats-rhythm-line { margin-block-start: var(--sp-1); }
+
+/* Версия на две минуты — второй вход в ту же привычку. Занимает отдельную строку
+   под привычкой, чтобы не ломать сетку строки и не спорить с обычной отметкой. */
+.habit-two-min {
+  grid-column: 1 / -1;
+  justify-self: start;
+  max-inline-size: 100%;
+  min-block-size: var(--touch-min);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-block-start: var(--sp-1);
+  padding-inline: var(--sp-2);
+  border: 1px dashed color-mix(in srgb, var(--accent) 44%, var(--line-soft));
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-strong);
+  font: 600 var(--type-meta)/var(--leading-label) var(--font-ui);
+  text-align: start;
+  cursor: pointer;
+  overflow: hidden;
+}
+.habit-two-min:hover,
+.habit-two-min:focus-visible { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.habit-two-min[disabled] { opacity: .5; cursor: default; }
+.habit-two-min-lead { flex: 0 0 auto; color: var(--muted); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.habit-two-min-text { flex: 0 1 auto; min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Экран привычек озаглавлен собственными словами человека, если он их написал. */
+.hb-intro h3 { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-2); }
+.hb-intro-kicker { color: var(--muted); font: 700 var(--type-floor)/var(--leading-label) var(--font-ui); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.hb-intro-identity { min-inline-size: 0; overflow-wrap: anywhere; }
