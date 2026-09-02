@@ -158,3 +158,18 @@ test('the offer copy reaches every language', () => {
     for (const locale of ['en:', 'de:', 'uk:', 'es:']) assert.match(line, new RegExp(locale), `${key} · ${locale}`);
   }
 });
+
+test('only one block on the day may call itself the priority', () => {
+  // Герой дня уже называет следующий квест. Второй заголовок «Сейчас важнее всего»
+  // над альтернативным советом противоречил ему на одном экране: две вещи объявляли
+  // себя главным и указывали на разное.
+  const offer = APP.indexOf("primary = { kind: 'offer'");
+  const nudge = APP.indexOf("primary = { kind: 'nudge'");
+  assert.ok(offer > 0 && nudge > 0);
+  assert.match(APP.slice(offer, offer + 120), /title: t\('Сейчас важнее всего'\)/,
+    'заявленный ход движка — про то, что случилось с человеком, и остаётся главным');
+  assert.match(APP.slice(nudge, nudge + 120), /title: t\('Поддержка'\)/,
+    'совет называется тем, что он есть, словом самой карточки');
+  assert.equal((APP.match(/title: t\('Сейчас важнее всего'\)/g) || []).length, 1,
+    'на экране ровно один претендент на «важнее всего»');
+});

@@ -23676,7 +23676,13 @@ function attentionTodayControlHTML(selectedOffer = null) {
   } else if (!closed && experimentOffer) {
     primary = { kind: 'experiment', title: t('Личный эксперимент'), html: experimentOffer };
   } else if (!closed && selectedOffer && selectedOffer.html) {
-    primary = { kind: 'nudge', title: t('Сейчас важнее всего'), html: selectedOffer.html };
+    // На экране только один блок имеет право объявить себя главным. Ход, который
+    // движок выбрал и заявил, — имеет: он про то, что случилось с человеком. Совет
+    // — нет: герой дня уже назвал следующий квест, и второй заголовок «важнее
+    // всего» над альтернативным предложением противоречил ему на одном экране.
+    // Совет остаётся ровно тем, чем он является, и словом, которым это уже
+    // называет соседняя строка карточки, — поддержкой.
+    primary = { kind: 'nudge', title: t('Поддержка'), html: selectedOffer.html };
   } else {
     primary = fallbackPrimary;
   }
