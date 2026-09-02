@@ -22231,3 +22231,41 @@ details.pet-summary > :not(summary) {
 .hb-intro h3 { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-2); }
 .hb-intro-kicker { color: var(--muted); font: 700 var(--type-floor)/var(--leading-label) var(--font-ui); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
 .hb-intro-identity { min-inline-size: 0; overflow-wrap: anywhere; }
+
+/* Что взято с доски — внутри той же карточки, где живут квесты дня: это один
+   вопрос «на что я сегодня подписался», а не вторая карточка рядом. */
+.day-board-taken {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  margin-block-start: var(--sp-3);
+  padding-block-start: var(--sp-2);
+  border-block-start: 1px solid var(--line-soft);
+}
+.day-board-kicker {
+  color: var(--muted);
+  font: 700 var(--type-floor)/var(--leading-label) var(--font-ui);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.day-board-list { display: flex; flex-direction: column; gap: var(--sp-1); margin: 0; padding: 0; list-style: none; }
+.day-board-order {
+  inline-size: 100%;
+  min-block-size: var(--touch-min);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-strong);
+  font: 500 var(--type-meta)/var(--leading-label) var(--font-ui);
+  text-align: start;
+  cursor: pointer;
+  overflow: hidden;
+}
+.day-board-order:hover,
+.day-board-order:focus-visible { border-color: color-mix(in srgb, var(--accent) 46%, var(--line-soft)); }
+.day-board-title { flex: 0 1 auto; min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.day-board-date { flex: 0 0 auto; margin-inline-start: auto; color: var(--muted); font-weight: 400; white-space: nowrap; }

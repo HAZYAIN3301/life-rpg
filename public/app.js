@@ -2185,6 +2185,9 @@ const I18N_EXTRA = {
   'Ответить': { en: 'Answer', de: 'Antworten', uk: 'Відповісти', es: 'Responder' },
   'раз в неделю': { en: 'per week', de: 'pro Woche', uk: 'разів на тиждень', es: 'por semana' },
   '2 минуты': { en: '2 minutes', de: '2 Minuten', uk: '2 хвилини', es: '2 minutos' },
+  'С доски': { en: 'From the board', de: 'Vom Brett', uk: 'З дошки', es: 'Del tablón' },
+  'Открыть заказ на доске': { en: 'Open this order on the board', de: 'Diesen Auftrag am Brett öffnen', uk: 'Відкрити замовлення на дошці', es: 'Abrir este encargo en el tablón' },
+  'взят': { en: 'taken', de: 'genommen', uk: 'взято', es: 'tomado' },
   'Сделать версию на две минуты': { en: 'Do the two-minute version', de: 'Die Zwei-Minuten-Version machen', uk: 'Зробити версію на дві хвилини', es: 'Hacer la versión de dos minutos' },
   'Кем ты становишься': { en: 'Who you are becoming', de: 'Wer du wirst', uk: 'Ким ти стаєш', es: 'En quién te conviertes' },
   'Как часто ты хочешь заниматься этой сферой. Пусто — частота не объявлена, и сфера не судится.': { en: 'How often you want to work on this area. Empty means no declared rhythm, and the area is not judged.', de: 'Wie oft du dich diesem Bereich widmen willst. Leer heißt kein erklärter Rhythmus — der Bereich wird nicht bewertet.', uk: 'Як часто ти хочеш займатися цією сферою. Порожньо — ритм не оголошено, і сферу не судять.', es: 'Con qué frecuencia quieres dedicarte a esta área. Vacío significa que no hay ritmo declarado y el área no se juzga.' },
@@ -19920,10 +19923,29 @@ function renderToday() {
         <button class="add-submit" type="submit">${t('+ Квест')}</button></form>
       <div id="cat-suggest" class="cat-suggest" role="status" aria-live="polite"></div>
     </div>`;
+// Взятый заказ — обязательство, о котором день до сих пор не знал: доска живёт
+// третьим уровнем внутри «Сегодня», и пока открыт «День», её панель скрыта целиком.
+// День теперь про это говорит и уводит к самому заказу. Второго квеста не заводит:
+// у заказа уже есть своя запись и свой жизненный цикл, а вторая запись того же
+// факта — ровно та болезнь, от которой всё это лечится.
+function boardTakenLineHTML() {
+  const L = window.BoardDayLineV1, B = window.BoardV1;
+  if (!L || !B) return '';
+  let rows = [];
+  try {
+    rows = L.takenFor({ active: B.activeOrders(boardRead()), titleOf: (id) => {
+      const order = boardOrderById(id);
+      return order ? boardOrderTitle(order) : '';
+    } });
+  } catch (error) { console.error('board day line', error); return ''; }
+  if (!rows.length) return '';
+  const items = rows.map((row) => `<li><button type="button" class="day-board-order" data-action="goto-board-order" data-id="${esc(row.orderId)}" aria-label="${esc(`${t('Открыть заказ на доске')}: ${row.title}`)}"><span class="day-board-title" data-noi18n>${esc(row.title)}</span>${row.takenAt ? `<span class="day-board-date">${t('взят')} ${esc(dmShort(row.takenAt))}</span>` : ''}</button></li>`).join('');
+  return `<div class="day-board-taken"><span class="day-board-kicker">${esc(t('С доски'))}</span><ul class="day-board-list">${items}</ul></div>`;
+}
   const questBoard = `<section class="card card-quests" aria-label="${t('Квесты на сегодня')}"><div class="daystat">
         <span>${t('Квестов:')} <b>${doneCount}/${todays.length}</b></span>
         <span>${t('План:')} <b>${fmtDur(planned)}</b></span></div>
-      ${todays.length ? `<ul class="tasks">${todays.map((task) => questRow(task, questGoalLinks)).join('')}</ul>` : emptyDayHTML()}</section>`;
+      ${todays.length ? `<ul class="tasks">${todays.map((task) => questRow(task, questGoalLinks)).join('')}</ul>` : emptyDayHTML()}${boardTakenLineHTML()}</section>`;
   const scheduleCard = todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : '';
   const habitsCard = State._habitsLoadError
     ? habitsRecoveryHTML()
@@ -29072,6 +29094,8 @@ async function onClick(e) {
     if (await completeTask(q, null, q.date)) toast(`✓ ${t('Засчитано в')} ${dmShort(q.date)}`);
   } else if (action === 'toggle-habit') {
     const h = habitById(id); if (h) transactHabitCompletion(h);
+  } else if (action === 'goto-board-order') {
+    State._todayTab = 'board'; State._boardSel = id; State.view = 'today'; render(); return;
   } else if (action === 'habit-two-minute') {
     const h = habitById(id); if (h && !habitDone(h, habitDayKey())) transactHabitCompletion(h, { twoMinute: true });
   } else if (action === 'habit-undo') {
@@ -31531,7 +31555,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v223';
+const PWA_CACHE_VERSION = 'satoru-v224';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
