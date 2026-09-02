@@ -22081,3 +22081,30 @@ details.pet-summary > :not(summary) {
   .leaderboard-card .lb-profile + .lb-lvl { display: none; }
   .leaderboard-card .lb-profile ~ .lb-xp { grid-column: 3; }
 }
+
+/* Шаг цели → день. Один ход из чек-листа цели в сегодняшний квест и обратная
+   ссылка на уже стоящий в дне квест: одна и та же фраза больше не пишется дважды.
+   Живёт в строке шага и в карточке «Следующий шаг». */
+.gstep-day {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 3px 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, var(--line-soft));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: var(--type-meta);
+  line-height: var(--leading-label);
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+}
+.gstep-day:hover,
+.gstep-day:focus-visible { background: color-mix(in srgb, var(--accent) 24%, transparent); }
+.gstep-day[disabled] { opacity: .5; cursor: default; }
+.gstep-day.is-linked { border-style: dashed; background: transparent; color: var(--muted); }
+.goal-next-card .gstep-day { margin-inline-start: var(--sp-2); font-size: var(--type-meta); }
+@media (pointer: coarse) { .gstep-day { min-height: var(--touch-min); } }

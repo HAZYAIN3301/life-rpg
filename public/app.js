@@ -2175,6 +2175,12 @@ const I18N_EXTRA = {
   'Связанных квестов пока нет.': { en: 'No linked quests yet.', de: 'Noch keine verknüpften Quests.', uk: 'Пов’язаних квестів поки немає.', es: 'Aún no hay misiones vinculadas.' },
   'Квест на сегодня': { en: 'Quest for today', de: 'Quest für heute', uk: 'Квест на сьогодні', es: 'Misión para hoy' },
   'Создать квест': { en: 'Create quest', de: 'Quest erstellen', uk: 'Створити квест', es: 'Crear misión' },
+  'В день': { en: 'Into the day', de: 'In den Tag', uk: 'У день', es: 'Al día' },
+  'Взять этот шаг в сегодняшний день': { en: 'Take this step into today', de: 'Diesen Schritt in den heutigen Tag holen', uk: 'Взяти цей крок у сьогоднішній день', es: 'Llevar este paso al día de hoy' },
+  'Открыть квест этого шага': { en: 'Open this step’s quest', de: 'Quest dieses Schritts öffnen', uk: 'Відкрити квест цього кроку', es: 'Abrir la misión de este paso' },
+  'Уже в дне': { en: 'Already in the day', de: 'Schon im Tag', uk: 'Уже в дні', es: 'Ya en el día' },
+  'Шаг стал квестом на сегодня': { en: 'The step is today’s quest now', de: 'Der Schritt ist jetzt die Quest für heute', uk: 'Крок став квестом на сьогодні', es: 'El paso es ahora la misión de hoy' },
+  'Квест сохранён, но шаг цели остался неотмеченным — отметь его в цели.': { en: 'The quest is saved, but the goal step stayed unchecked — tick it in the goal.', de: 'Die Quest ist gespeichert, der Zielschritt blieb aber offen — hake ihn im Ziel ab.', uk: 'Квест збережено, але крок цілі лишився невідміченим — познач його в цілі.', es: 'La misión está guardada, pero el paso de la meta quedó sin marcar: márcalo en la meta.' },
   'Изменить цель': { en: 'Edit goal', de: 'Ziel bearbeiten', uk: 'Змінити ціль', es: 'Editar meta' },
   'Родительская цель': { en: 'Parent goal', de: 'Übergeordnetes Ziel', uk: 'Батьківська ціль', es: 'Meta superior' },
   'Горизонт': { en: 'Horizon', de: 'Horizont', uk: 'Горизонт', es: 'Horizonte' },
@@ -7191,6 +7197,30 @@ function skillPerkBonus(id) { return skillPerks(id).xpPct || 0; } // legacy-об
 // onDate (YYYY-MM-DD) — задним числом засчитать квест в ЕГО день, а не в сегодня (fb_mr4qhq6gy30w):
 // «сделал вчера, записать забыл». dayOf() смотрит на completedAt — значит его и нужно поставить
 // на нужный день (полдень, чтобы не поймать TZ-край суток).
+// Квест, рождённый из шага цели, закрывает этот шаг сам: иначе один и тот же факт
+// остаётся записанным дважды, и свести его человек должен руками — ровно тот тупик,
+// ради которого мост и строился. Снимается только отметка, поставленная квестом.
+async function syncGoalStepFromQuest(task, done) {
+  const api = window.GoalStepQuestV1;
+  const link = api && api.stepLinkOf(task);
+  if (!link) return true;
+  const outcome = api.applyStepOutcome(State.goals || [], task, done);
+  if (!outcome.changed) return true;
+  const nextGoals = outcome.goals, nextGoal = nextGoals.find((goal) => goal.id === link.goalId);
+  const wasCompleted = !!nextGoal.completedAt;
+  refreshGoalCompletion(nextGoal, { announce: false });
+  const hadFlag = Object.prototype.hasOwnProperty.call(task, 'stepTicked'), beforeFlag = task.stepTicked;
+  Object.assign(task, outcome.taskPatch);
+  const saved = await goalDataCommit(nextGoals, State.tasks);
+  if (!saved) {
+    if (hadFlag) task.stepTicked = beforeFlag; else delete task.stepTicked;
+    toast(t('Квест сохранён, но шаг цели остался неотмеченным — отметь его в цели.'));
+    return false;
+  }
+  State.goals = nextGoals;
+  if (done && !wasCompleted && nextGoal.completedAt) announceGoalCompletion(nextGoal);
+  return true;
+}
 async function completeTask(task, desire, onDate) {
   const taskIndex = State.tasks.findIndex((item) => item.id === task.id);
   if (taskIndex < 0) return false;
@@ -7232,6 +7262,7 @@ async function completeTask(task, desire, onDate) {
     render();
     return false;
   }
+  await syncGoalStepFromQuest(task, true);
   const guide = guideV3State();
   if (guideV3RuntimeAllowed() && guide?.currentChapter === window.GuideV3?.FIRST_CHAPTER
     && ['start', 'wait'].includes(guide.currentStep) && guide.selectedTaskId === String(task.id)) {
@@ -19880,6 +19911,18 @@ function goalNextAction(g) {
   const step = goalProgressKind(g) === 'checklist' && (g.steps || []).find((item) => !item.done);
   return step ? { kind: 'step', id: step.id, title: step.title } : null;
 }
+// Шаг цели и квест дня — одна и та же фраза, записанная дважды. Раньше её надо
+// было перепечатать руками в поле «Квест на сегодня»; теперь у шага есть один ход
+// в день, а `GoalStepQuestV1` следит, чтобы второй квест не появился.
+function goalStepDayControlHTML(g, step) {
+  const api = window.GoalStepQuestV1;
+  if (!api || !g || !step || step.done || g.archived) return '';
+  const linked = api.questForStep(State.tasks || [], g.id, step.id);
+  if (linked) {
+    return `<a class="gstep-day is-linked" href="?view=today" data-action="goto-task" data-id="${esc(linked.id)}" title="${esc(`${t('Открыть квест этого шага')}: ${step.title}`)}">${t('Уже в дне')}</a>`;
+  }
+  return `<button type="button" class="gstep-day" data-action="goal-step-to-day" data-goal="${esc(g.id)}" data-step="${esc(step.id)}" title="${esc(`${t('Взять этот шаг в сегодняшний день')}: ${step.title}`)}" ${State._goalTxnBusy ? 'disabled' : ''}>${t('В день')}</button>`;
+}
 function goalFocusList(goals) {
   return window.GoalsInitiativesV1.rankGoals(goals, { today: todayStr(), nextAction: goalNextAction }).slice(0, 3);
 }
@@ -19934,7 +19977,7 @@ function goalsLoadRecoveryHTML() {
 function goalProgressBodyHTML(g) {
   const metric = goalProgressKind(g) === 'metric' ? g.metric : null;
   if (metric) return `<div class="gm-block"><p class="goal-source-note">${t('Источник прогресса')}: ${t('числовая метрика')}. ${t('Связанные квесты не прибавляются повторно.')}</p><div class="gm-head"><b>${metric.current}</b> / ${metric.target}${metric.unit ? ` ${esc(metric.unit)}` : ''}</div>${g.archived ? '' : `<form class="metric-form" data-goal="${g.id}"><label><span>${t('Новое значение')}</span><input name="val" type="number" step="any" required /></label><button type="submit" class="btn ghost sm">${t('Записать')}</button></form>`}</div>`;
-  const steps = (g.steps || []).map((step) => `<li class="gstep ${step.done ? 'done' : ''}"><button type="button" class="check sm" data-action="toggle-step" data-goal="${g.id}" data-step="${step.id}" aria-label="${esc(t(step.done ? 'Снять выполнение' : 'Выполнить'))}: ${esc(step.title)}" aria-pressed="${step.done ? 'true' : 'false'}">${step.done ? '✓' : ''}</button><span data-noi18n>${esc(step.title)}</span><button type="button" class="del" data-action="delete-step" data-goal="${g.id}" data-step="${step.id}" aria-label="${esc(t('Удалить'))}: ${esc(step.title)}">✕</button></li>`).join('');
+  const steps = (g.steps || []).map((step) => `<li class="gstep ${step.done ? 'done' : ''}"><button type="button" class="check sm" data-action="toggle-step" data-goal="${g.id}" data-step="${step.id}" aria-label="${esc(t(step.done ? 'Снять выполнение' : 'Выполнить'))}: ${esc(step.title)}" aria-pressed="${step.done ? 'true' : 'false'}">${step.done ? '✓' : ''}</button><span data-noi18n>${esc(step.title)}</span>${goalStepDayControlHTML(g, step)}<button type="button" class="del" data-action="delete-step" data-goal="${g.id}" data-step="${step.id}" aria-label="${esc(t('Удалить'))}: ${esc(step.title)}">✕</button></li>`).join('');
   return `<div class="goal-checklist"><p class="goal-source-note">${t('Источник прогресса')}: ${t('чек-лист цели')}. ${t('Связанные квесты — действия, а не второй счётчик.')}</p><ul class="gsteps">${steps}</ul>${g.archived ? '' : `<form class="add-step-form" data-goal="${g.id}"><label><span>${t('Новый пункт')}</span><input name="step" autocomplete="off" required /></label><button type="submit" class="btn ghost">${t('Добавить')}</button></form>`}</div>`;
 }
 function goalLinkedBodyHTML(g) {
@@ -19945,7 +19988,9 @@ function goalLinkedBodyHTML(g) {
 function goalDetailContentHTML(g) {
   const sk = skillById(g.skillId) || { name: t('Без сферы'), color: 'var(--muted)' }, chain = goalChain(g).slice().reverse(), next = goalNextAction(g), st = goalStatusInfo(g), group = goalGroupById(g.groupId);
   const nextHTML = next
-    ? (next.kind === 'task' ? `<a href="?view=today" data-action="goto-task" data-id="${esc(next.id)}" data-noi18n>${esc(next.title)}</a>` : `<span data-noi18n>${esc(next.title)}</span>`)
+    ? (next.kind === 'task'
+      ? `<a href="?view=today" data-action="goto-task" data-id="${esc(next.id)}" data-noi18n>${esc(next.title)}</a>`
+      : `<span data-noi18n>${esc(next.title)}</span>${goalStepDayControlHTML(g, (g.steps || []).find((item) => item.id === next.id))}`)
     : `<p>${t('У этой цели пока нет следующего шага.')}</p>${g.archived ? '' : `<form class="goal-task-form goal-next-inline" data-goal="${esc(g.id)}"><label><span>${t('Квест на сегодня')}</span><input name="title" maxlength="160" required placeholder="${esc(t('Конкретное действие, с которого начнёшь'))}" /></label><button type="submit" class="btn">${t('Создать квест')}</button></form>`}`;
   return `<button type="button" class="modal-x" data-action="goal-detail-close" aria-label="${t('Закрыть цель')}">✕</button>${State._goalsError ? `<div class="goals-error" role="alert">${esc(State._goalsError)}</div>` : ''}
     <header class="goal-detail-head"><p class="goals-kicker">${group ? `<span data-noi18n>${esc(group.title)}</span> · ` : ''}${goalTypeLabel(g.type)}</p><h2 id="goal-detail-title" tabindex="-1" data-noi18n>${esc(g.title)}</h2>${g.description ? `<p class="goal-detail-description" data-noi18n>${esc(g.description)}</p>` : ''}<div id="goal-detail-summary" class="goal-detail-summary"><span class="goal-status ${st.cls}">${esc(goalStatusText(g))}</span>${goalMeaningfulProgress(g) ? `<span>${esc(goalProgressText(g))}</span>` : ''}<span class="goal-detail-spheres">${goalSpheresHTML(g)}</span></div><button type="button" class="btn goal-detail-complete" data-action="goal-toggle-complete" data-id="${esc(g.id)}" aria-pressed="${g.completedAt ? 'true' : 'false'}">${esc(t(g.completedAt ? 'Вернуть цель в работу' : '✓ Цель достигнута'))}</button></header>
@@ -28791,6 +28836,7 @@ async function onClick(e) {
         }, `[data-action="toggle-task"][data-id="${CSS.escape(String(id))}"]`)
         : await Store.saveNow('tasks', State.tasks);
       if (!saved) { Object.assign(q, beforeTask); toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.')); }
+      else await syncGoalStepFromQuest(q, false);
       checkAchievements(); render(); publishLeaderboard();
     }
   } else if (action === 'toggle-task-backdated') {
@@ -29385,6 +29431,25 @@ async function onClick(e) {
     const goal = goalById(el.dataset.goal); if (!goal || State._goalTxnBusy) return;
     const nextGoals = structuredClone(State.goals), nextGoal = nextGoals.find((item) => item.id === goal.id); nextGoal.steps = nextGoal.steps.filter((step) => step.id !== el.dataset.step); refreshGoalCompletion(nextGoal, { announce: false });
     commitGoalMutation(`delete-step:${el.dataset.step}`, nextGoals, structuredClone(State.tasks), '#goal-detail-title', () => { State._goalOpenId = goal.id; }); return;
+  } else if (action === 'goal-step-to-day') {
+    // Один ход шага в день. Всё, что могло бы стать вторым квестом или выдуманной
+    // датой, решает `GoalStepQuestV1`; здесь остаётся только записать результат.
+    const api = window.GoalStepQuestV1; if (!api) return;
+    const goal = goalById(el.dataset.goal); if (!goal || State._goalTxnBusy) return;
+    const plan = api.planStepQuest({
+      goal, stepId: el.dataset.step, tasks: State.tasks || [], today: todayStr(), id: uid(),
+      createdAt: new Date().toISOString(),
+      skillId: goal.skillId, skillIds: goalSkillIds(goal), layers: goalBackgroundSkillIds(goal),
+    });
+    if (plan.status === 'exists') {
+      closeGoalDetailDialog({ restoreFocus: false }); State.view = 'today'; State._goalDeepLinkId = ''; syncGoalDeepLink('', 'today');
+      State._tasksFocusAfterCommit = `[data-action="toggle-task"][data-id="${CSS.escape(String(plan.taskId))}"]`; render(); return;
+    }
+    if (plan.status !== 'create') return;
+    const nextTasks = [...structuredClone(State.tasks), plan.task];
+    commitGoalMutation(`step-to-day:${plan.task.id}`, structuredClone(State.goals), nextTasks, '#goal-detail-title', () => {
+      State._goalOpenId = goal.id; toast(`→ ${t('Шаг стал квестом на сегодня')}`); sfx('navigate');
+    }); return;
   } else if (action === 'delete-goal') {
     { const row = document.querySelector(`#goal-${CSS.escape(id)} .goal-summary`); closeGoalDetailDialog({ restoreFocus: false, clearState: false }); openGoalDeleteDialog([id], row || el); } return;
   } else if (action === 'goal-delete-cancel') {
@@ -31229,7 +31294,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v216';
+const PWA_CACHE_VERSION = 'satoru-v217';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

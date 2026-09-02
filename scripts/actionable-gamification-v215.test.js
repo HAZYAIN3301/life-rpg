@@ -114,10 +114,10 @@ test('v215 integrity modules remain ordered while v216 advances the app shell', 
   assert.ok(integrity >= 0, 'index.html does not load gamification-integrity-v1.js');
   assert.ok(commitment < app, 'commitment-v1.js must load before app.js');
   assert.ok(integrity < app, 'gamification-integrity-v1.js must load before app.js');
-  assert.match(SW, /const CACHE = ['"]satoru-v216['"]/, 'service-worker cache must be bumped to satoru-v216');
+  assert.match(SW, /const CACHE = ['"]satoru-v217['"]/, 'service-worker cache must be bumped to satoru-v217');
   assert.match(SW, /['"]commitment-v1\.js['"]/, 'commitment-v1.js is missing from the offline shell');
   assert.match(SW, /['"]gamification-integrity-v1\.js['"]/, 'gamification-integrity-v1.js is missing from the offline shell');
-  assert.match(APP, /const PWA_CACHE_VERSION = ['"]satoru-v216['"]/, 'app and service worker disagree on the v216 cache');
+  assert.match(APP, /const PWA_CACHE_VERSION = ['"]satoru-v217['"]/, 'app and service worker disagree on the v216 cache');
   for (const file of ['commitment-v1.js', 'gamification-integrity-v1.js', 'app.js']) {
     assert.match(
       scriptTag(file),
