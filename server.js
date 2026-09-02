@@ -872,7 +872,7 @@ function secretaryPushOffer(uid, tz, today, nowIso, days) {
   const events = readSecretaryPart(uid, 'secretary-events.json', SecretaryEventsV1.sanitizeLog, SecretaryEventsV1.emptyLog);
   const ledger = readSecretaryPart(uid, 'secretary-ledger.json', SecretaryRouterV1.sanitizeLedger, SecretaryRouterV1.emptyLedger);
   if (!events || !ledger) return null;
-  const commitments = CommitmentV2.migrate(readUserJson(uid, 'commitments')).state;
+  const commitments = readUserCommitments(uid);
   return SecretaryRouterV1.next({
     invocation: 'scheduler',
     now: nowIso, today, tzOffsetMinutes: tzOffsetMinutesFor(tz, Date.parse(nowIso)),
@@ -926,6 +926,16 @@ function userLocalParts(tz) {
 }
 function readUserJson(uid, name) { try { return JSON.parse(fs.readFileSync(path.join(userDataDir(uid), name + '.json'), 'utf8')); } catch { return null; } }
 function readUserCompanion(uid) { const s = readUserJson(uid, 'settings'); return (s && s.companion) || null; }
+// Уговоры живут внутри `settings.commitmentsV1` — туда их пишет клиент, и ровно
+// эта пара `settings + tasks` защищена CAS-границей. Отдельного `commitments.json`
+// не существует и никогда не писалось: Router читал файл, которого нет, получал
+// пустое состояние и поэтому не мог процитировать человека его же словами ни разу.
+// Цитата — весь смысл утреннего хода, и молчание здесь выглядело как «у него нет
+// уговоров», а не как «мы смотрим не туда».
+function readUserCommitments(uid) {
+  const settings = readUserJson(uid, 'settings');
+  return CommitmentV2.migrate(settings && settings.commitmentsV1).state;
+}
 // «Одинокий питомец»: активный юзер, но какая-то основная сфера давно заброшена → имя того питомца.
 // Лёгкая эвристика из tasks.json + settings.json (без полной репликации xpEvents). Не нашли — null.
 function lonelyPet(uid) {
@@ -4388,7 +4398,7 @@ const server = http.createServer(async (req, res) => {
       if (log.error || led.error) return sendJson(res, 422, { error: 'invalid_secretary_state' });
       const today = String(req.headers['x-local-day'] || '').slice(0, 10);
       const tz = Number(req.headers['x-tz-offset']) || 0;
-      const commitmentState = CommitmentV2.migrate(readUserJson(uid, 'commitments')).state;
+      const commitmentState = readUserCommitments(uid);
       // Какая поверхность спрашивает. Заголовком, а не query: маршруты сравнивают
       // полный `req.url`, и параметр просто увёл бы запрос мимо обработчика.
       // Ход авторизуется ровно для неё; право показать берётся отдельно, заявкой.

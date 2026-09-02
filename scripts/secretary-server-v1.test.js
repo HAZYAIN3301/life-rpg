@@ -195,8 +195,18 @@ test('🔴 уговоры с диска доезжают до цитаты, а �
   const alice = await register(base, 'Алиса', 'a@mig.test');
   const morning = morningContext();
   const YDAY = morning.yesterday, HDR = morning.headers;
-  const file = path.join(rt.dataDir, 'users', alice.body.id, 'commitments.json');
+  // Уговоры лежат внутри `settings.commitmentsV1` — туда их пишет клиент, и ровно
+  // эта пара `settings + tasks` защищена CAS-границей. Отдельного `commitments.json`
+  // нет ни у одного аккаунта: до 2026-09-02 Router читал его, получал пустоту и
+  // поэтому не цитировал человека ни разу, при любых данных.
+  const file = path.join(rt.dataDir, 'users', alice.body.id, 'settings.json');
   fs.mkdirSync(path.dirname(file), { recursive: true });
+  const putCommitments = (state) => {
+    let settings = {};
+    try { settings = JSON.parse(fs.readFileSync(file, 'utf8')); } catch {}
+    if (state === null) delete settings.commitmentsV1; else settings.commitmentsV1 = state;
+    fs.writeFileSync(file, JSON.stringify(settings));
+  };
 
   await post(base, alice.cookie, '/api/secretary/event',
     { type: E.TYPES.ATTENTION_ESCAPED, day: YDAY, at: `${YDAY}T23:50:00.000Z`, ref: 'tiktok' });
@@ -215,7 +225,7 @@ test('🔴 уговоры с диска доезжают до цитаты, а �
       ],
       log: { '2026-08-30': { c1: 'win' } },
     };
-    fs.writeFileSync(file, JSON.stringify(v1file));
+    putCommitments(v1file);
     const before = fs.readFileSync(file, 'utf8');
 
     const offer = await offerNow();
@@ -223,7 +233,7 @@ test('🔴 уговоры с диска доезжают до цитаты, а �
     assert.strictEqual(offer.quote.id, 'c1', 'процитирован живой уговор, а не брошенный');
 
     assert.strictEqual(fs.readFileSync(file, 'utf8'), before, 'чтение не переписало файл');
-    assert.strictEqual(JSON.parse(before).version, 1, 'на диске по-прежнему v1');
+    assert.strictEqual(JSON.parse(before).commitmentsV1.version, 1, 'на диске по-прежнему v1');
   });
 
   await t.test('новый файл v2 даёт цитату про то самое занятие', async () => {
@@ -237,7 +247,7 @@ test('🔴 уговоры с диска доезжают до цитаты, а �
       ],
       log: { '2026-08-30': { c1: 'win' } },
     };
-    fs.writeFileSync(file, JSON.stringify(v2file));
+    putCommitments(v2file);
 
     const offer = await offerNow();
     assert.strictEqual(offer.quote.id, 'a1', 'решение про TikTok весомее якоря, когда разговор про TikTok');
@@ -245,7 +255,7 @@ test('🔴 уговоры с диска доезжают до цитаты, а �
   });
 
   await t.test('уговоров нет — ход остаётся, цитата пустая', async () => {
-    fs.rmSync(file, { force: true });
+    putCommitments(null);
     const offer = await offerNow();
     assert.ok(offer, 'отсутствие цитаты — не повод молчать');
     assert.strictEqual(offer.quote, null, 'ничего не выдумано');
