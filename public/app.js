@@ -2176,6 +2176,11 @@ const I18N_EXTRA = {
   'Квест на сегодня': { en: 'Quest for today', de: 'Quest für heute', uk: 'Квест на сьогодні', es: 'Misión para hoy' },
   'Создать квест': { en: 'Create quest', de: 'Quest erstellen', uk: 'Створити квест', es: 'Crear misión' },
   'В день': { en: 'Into the day', de: 'In den Tag', uk: 'У день', es: 'Al día' },
+  'Ради цели': { en: 'Serves the goal', de: 'Für das Ziel', uk: 'Заради цілі', es: 'Para la meta' },
+  'цель на паузе': { en: 'goal paused', de: 'Ziel pausiert', uk: 'ціль на паузі', es: 'meta en pausa' },
+  'цель ждёт': { en: 'goal waiting', de: 'Ziel wartet', uk: 'ціль чекає', es: 'meta en espera' },
+  'цель завершена': { en: 'goal completed', de: 'Ziel abgeschlossen', uk: 'ціль завершена', es: 'meta completada' },
+  'цель в архиве': { en: 'goal archived', de: 'Ziel archiviert', uk: 'ціль в архіві', es: 'meta archivada' },
   'Взять этот шаг в сегодняшний день': { en: 'Take this step into today', de: 'Diesen Schritt in den heutigen Tag holen', uk: 'Взяти цей крок у сьогоднішній день', es: 'Llevar este paso al día de hoy' },
   'Открыть квест этого шага': { en: 'Open this step’s quest', de: 'Quest dieses Schritts öffnen', uk: 'Відкрити квест цього кроку', es: 'Abrir la misión de este paso' },
   'Уже в дне': { en: 'Already in the day', de: 'Schon im Tag', uk: 'Уже в дні', es: 'Ya en el día' },
@@ -13369,7 +13374,22 @@ function openQuestCommitmentDialog(task, mode = 'take') {
   </section>`;
   mountAccountDialog(overlay, { initial: '#quest-commitment-win', returnFocus });
 }
-function questRow(q) {
+// Какой цели служит этот квест. Связь `task.goalId` была всегда, но на «Сегодня»
+// жила только внутри меню «•••»: слово «цель» на экране дня не появлялось ни разу.
+// Состояние цели проговаривается словом, а не одним цветом: «завершена» и «в архиве»
+// — разные факты, и человек, который не различает оттенки, имеет право их прочесть.
+const QUEST_GOAL_STATE_COPY = Object.freeze({
+  paused: 'цель на паузе', waiting: 'цель ждёт', completed: 'цель завершена', archived: 'цель в архиве',
+});
+function questGoalChipHTML(q, links) {
+  const api = window.QuestGoalLinkV1; if (!api) return '';
+  const link = links instanceof Map ? links.get(String(q.id)) : api.linkFor(q, State.goals || []);
+  if (!link) return '';
+  const stateCopy = QUEST_GOAL_STATE_COPY[link.state] ? t(QUEST_GOAL_STATE_COPY[link.state]) : '';
+  const label = `${t('Ради цели')}: ${link.title}${stateCopy ? ` · ${stateCopy}` : ''}`;
+  return `<a class="task-goal-chip is-${esc(link.state)}" href="${esc(goalDeepLinkHref(link.goalId))}" data-action="goto-goal" data-id="${esc(link.goalId)}" aria-label="${esc(label)}" title="${esc(label)}"><span class="task-goal-chip-mark" aria-hidden="true">🎯</span><span class="task-goal-chip-title" data-noi18n>${esc(link.title)}</span>${stateCopy ? `<span class="task-goal-chip-state">${esc(stateCopy)}</span>` : ''}</a>`;
+}
+function questRow(q, links) {
   const estMin = Number(q.estimateMin) || 0;
   const time = q.actualMin ? `${fmtDur(q.actualMin)} / ${fmtDur(estMin)}` : fmtDur(estMin);
   const active = State.timer && State.timer.taskId === q.id;
@@ -13384,7 +13404,7 @@ function questRow(q) {
   const titleControl = State._editTask === q.id
     ? `<form class="t-edit-form" data-id="${q.id}"><input name="title" value="${esc(q.title)}" maxlength="160" autocomplete="off" aria-label="${t('Квест')}" /></form>`
     : `<button class="t-title-edit" data-action="edit-task-title" data-id="${q.id}" aria-label="${t('Изменить название квеста')}: ${esc(fullTitle)}" title="${t('Клик — изменить текст квеста')}"><span class="t-title-copy" data-noi18n>${taskContentIconHTML(q, 'task-content-icon')}${esc(fullTitle)}</span></button>`;
-  const titleCell = `<div class="t-title">${coreBadge}${titleControl}</div>`;
+  const titleCell = `<div class="t-title">${coreBadge}${titleControl}${questGoalChipHTML(q, links)}</div>`;
   // Квест из прошлого: «✓ в свой день» — засчитать в дату плана, а не в сегодня (fb_mr4qhq6gy30w)
   // Намеренно НЕ taskOverdue(): здесь «past» — просто факт, что дата в прошлом, а не суждение
   // о долге. Амнистия снимает долг, но не право сказать «я это всё-таки сделал в тот день».
@@ -19590,6 +19610,10 @@ function renderToday() {
   const today = todayStr();
   const todays = State.tasks.filter((t) => t.date === today);
   const overdue = State.tasks.filter((t) => taskOverdue(t, today));
+  // Цели резолвятся один раз на отрисовку дня, а не поиском по массиву на каждую строку.
+  const questGoalLinks = window.QuestGoalLinkV1
+    ? window.QuestGoalLinkV1.linksFor([...todays, ...overdue], State.goals || [])
+    : null;
   const habits = todaysHabits();
   const day = State.days[today] || { reflection: '', closed: false };
   const planned = todays.reduce((s, t) => s + (Number(t.estimateMin) || 0), 0);
@@ -19775,7 +19799,7 @@ function renderToday() {
   State._todaySelectedNudge = selectedNudge;
 
   const overdueCard = overdue.length ? `<div class="card overdue"><h3>${satoruIconHTML('status.warning', 'heading-glyph', '⏳')} ${t('⏳ Просрочено').replace(/^⏳\s*/, '')} (${overdue.length})</h3>
-      <ul class="tasks">${overdue.map(questRow).join('')}</ul>
+      <ul class="tasks">${overdue.map((task) => questRow(task, questGoalLinks)).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">${t('↪ Перенести всё на сегодня')}</button></div>` : '';
   const overdueSurface = currentPath() === 'control' ? controlReviewCardHTML() : overdueCard;
 
@@ -19833,7 +19857,7 @@ function renderToday() {
   const questBoard = `<section class="card card-quests" aria-label="${t('Квесты на сегодня')}"><div class="daystat">
         <span>${t('Квестов:')} <b>${doneCount}/${todays.length}</b></span>
         <span>${t('План:')} <b>${fmtDur(planned)}</b></span></div>
-      ${todays.length ? `<ul class="tasks">${todays.map(questRow).join('')}</ul>` : emptyDayHTML()}</section>`;
+      ${todays.length ? `<ul class="tasks">${todays.map((task) => questRow(task, questGoalLinks)).join('')}</ul>` : emptyDayHTML()}</section>`;
   const scheduleCard = todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : '';
   const habitsCard = State._habitsLoadError
     ? habitsRecoveryHTML()
@@ -31294,7 +31318,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v217';
+const PWA_CACHE_VERSION = 'satoru-v218';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

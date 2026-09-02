@@ -48,11 +48,13 @@ test('all v204 authored copy has a RU/EN/DE/UK/ES contract', () => {
 });
 
 test('core quest is labelled and raised without reintroducing a checkbox stripe', () => {
-  const row = between(APP, 'function questRow(q)', 'function scheduleQuestTitleDisclosures');
+  const row = between(APP, 'function questRow(q, links)', 'function scheduleQuestTitleDisclosures');
   assert.match(row, /const coreBadge = q\.core \? `<span class="task-core-badge"/);
   assert.match(row, /<span aria-hidden="true">◆<\/span>\$\{esc\(t\('Ядро дня'\)\)\}/);
-  assert.match(row, /const titleCell = `<div class="t-title">\$\{coreBadge\}\$\{titleControl\}<\/div>`/);
-  assert.doesNotMatch(row, /<span class="t-title">\$\{coreBadge\}\$\{titleControl\}<\/span>/);
+  // Ячейка названия несёт бейдж ядра дня и чип цели; строка остаётся <div>, а не <span>,
+  // иначе сетка квеста возвращает полосу чекбоксов.
+  assert.match(row, /const titleCell = `<div class="t-title">\$\{coreBadge\}\$\{titleControl\}\$\{questGoalChipHTML\(q, links\)\}<\/div>`/);
+  assert.doesNotMatch(row, /<span class="t-title">\$\{coreBadge\}/);
   const actions = between(APP, "} else if (action === 'toggle-core')", "} else if (action === 'edit-difficulty')");
   assert.match(actions, /const nextTasks = structuredClone\(State\.tasks\)/);
   assert.match(actions, /await Store\.saveNow\('tasks', nextTasks/);
@@ -152,10 +154,10 @@ test('new disclosures and hierarchy changes use semantic sound and finite motion
 });
 
 test('v210 Browser Protection shell advances coherently without repinning unchanged questionnaire code', () => {
-  assert.match(SW, /const CACHE = 'satoru-v217'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v217'/);
+  assert.match(SW, /const CACHE = 'satoru-v218'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v218'/);
   assert.match(INDEX, /return-shelf-ui-v1\.js\?v=20260830-economy-art-v208-1/);
-  assert.match(INDEX, /styles\.css\?v=20260902-goal-step-day-v215-1/);
+  assert.match(INDEX, /styles\.css\?v=20260902-quest-goal-link-v215-1/);
   assert.match(INDEX, /questionnaire-v1\.js\?v=20260830-browser-companion-v206-1/);
-  assert.match(INDEX, /app\.js\?v=20260902-goal-step-day-v215-1/);
+  assert.match(INDEX, /app\.js\?v=20260902-quest-goal-link-v215-1/);
 });

@@ -22108,3 +22108,37 @@ details.pet-summary > :not(summary) {
 .gstep-day.is-linked { border-style: dashed; background: transparent; color: var(--muted); }
 .goal-next-card .gstep-day { margin-inline-start: var(--sp-2); font-size: var(--type-meta); }
 @media (pointer: coarse) { .gstep-day { min-height: var(--touch-min); } }
+
+/* Какой цели служит квест. Чип стоит под названием в той же ячейке, что и «Ядро дня»,
+   поэтому сетка строки не меняется. Состояние цели проговаривается словом рядом с
+   приглушённым цветом — цвет один читать нельзя. */
+/* Ячейка названия — вложенная сетка с колонкой auto: она растягивалась по самому
+   широкому элементу и вылезала за правый край строки квеста, обрезая слово о
+   состоянии цели. Явная колонка заставляет длинное название сжаться многоточием. */
+.card-quests .task > .t-title { grid-template-columns: minmax(0, 1fr); }
+.task-goal-chip {
+  inline-size: max-content;
+  max-inline-size: 100%;
+  min-block-size: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding-inline: var(--sp-2);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-pill);
+  color: var(--muted);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+  font: 600 var(--type-floor)/var(--leading-label) var(--font-ui);
+  text-decoration: none;
+  overflow: hidden;
+}
+.task-goal-chip:hover,
+.task-goal-chip:focus-visible { color: var(--text-strong); border-color: color-mix(in srgb, var(--accent) 48%, var(--line-soft)); }
+/* Название цели сжимается многоточием; слово о состоянии — нет. Иначе на узком
+   экране обрезается именно оно, и «цель завершена» читается как живая работа. */
+.task-goal-chip-title { flex: 0 1 auto; min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.task-goal-chip-mark { flex: 0 0 auto; }
+.task-goal-chip-state { flex: 0 0 auto; opacity: .82; font-weight: 500; white-space: nowrap; }
+.task-goal-chip:is(.is-completed, .is-archived) { opacity: .68; }
+.task-goal-chip.is-archived { border-style: dashed; }
+@media (pointer: coarse) { .task-goal-chip { min-block-size: 26px; } }
