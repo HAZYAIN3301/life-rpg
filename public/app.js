@@ -22726,13 +22726,18 @@ function renderStats() {
       </div>`;
     }).join('')}</div>` : `<p class="muted" style="font-size:12.5px">${t('Пока пусто.')}</p>`}
     <div class="propose-actions"><button class="btn ghost" data-action="episode-open">🎒 ${t('Записать эпизод')}</button></div></div>`;
-  const balanceSummary = hasBalanceSignal
-    ? (bal.weakest && bal.index < 80 ? `${t('Без внимания')}: ${esc(bal.weakest.name)}` : t('Ритм сфер устойчив'))
-    : t('Баланс появится, когда хотя бы две сферы получат внимание. Это не оценка тебя.');
+  // Один вопрос — один ответ. Раньше здесь было две строки, и они называли разные
+  // сферы: «Без внимания: Наука» и «Реже, чем ты решил: Тело» на одном экране, потому
+  // что считались разной арифметикой в разных окнах. Побеждает объявленная частота:
+  // она судит по тому, что человек сам решил, а не по выведенной ровности. Нет
+  // объявленных частот — остаётся прежняя строка, ровно как была.
   const rhythmSummary = sphereRhythmSummary();
+  const balanceSummary = rhythmSummary || (hasBalanceSignal
+    ? (bal.weakest && bal.index < 80 ? `${t('Без внимания')}: ${esc(bal.weakest.name)}` : t('Ритм сфер устойчив'))
+    : t('Баланс появится, когда хотя бы две сферы получат внимание. Это не оценка тебя.'));
   return `<section class="stats-shell" data-guide-target="stats-overview" aria-labelledby="stats-title">
     <header class="stats-route-head"><h2 id="stats-title" tabindex="-1">${satoruIconHTML('nav.progress', 'heading-glyph', '◇')} ${t('Прогресс')}</h2></header>
-    <section class="card stats-lead weekly-insight" aria-labelledby="stats-week-title"><div><span class="th-kicker">${t('Последние 14 дней')}</span><h3 id="stats-week-title">${rate == null ? t('Пока нет планов') : `${rate}% · ${t('Выполнение (14 дн.)')}`}</h3><p class="muted">${balanceSummary}</p>${rhythmSummary ? `<p class="muted stats-rhythm-line">${rhythmSummary}</p>` : ''}</div><div class="stats-lead-actions"><button class="btn" data-action="ai-review">${t('Разобрать неделю')}</button><button class="btn ghost" data-action="share-week">${satoruIconHTML('action.export', 'button-glyph', '◇')} ${t('Твоя неделя')}</button></div></section>
+    <section class="card stats-lead weekly-insight" aria-labelledby="stats-week-title"><div><span class="th-kicker">${t('Последние 14 дней')}</span><h3 id="stats-week-title">${rate == null ? t('Пока нет планов') : `${rate}% · ${t('Выполнение (14 дн.)')}`}</h3><p class="muted">${balanceSummary}</p></div><div class="stats-lead-actions"><button class="btn" data-action="ai-review">${t('Разобрать неделю')}</button><button class="btn ghost" data-action="share-week">${satoruIconHTML('action.export', 'button-glyph', '◇')} ${t('Твоя неделя')}</button></div></section>
     <div class="kpis stats-kpis-compact">
       <div class="kpi"><div class="v">${rankIconHTML(cr, 'kpi-emblem')} ${charLevel()}</div><div class="l">${cr.name}</div></div>
       <div class="kpi"><div class="v" style="color:${balColor}">${hasBalanceSignal ? bal.index : '—'}</div><div class="l">${hasBalanceSignal ? t('Индекс баланса') : t('Наблюдаем баланс')}</div></div>

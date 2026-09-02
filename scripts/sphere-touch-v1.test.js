@@ -124,8 +124,14 @@ test('the progress screen says nothing when nothing was declared', () => {
   assert.match(body, /!isProjectSkill\(sphere\) && !sphere\.archived/, 'проекты и архив не оси колеса');
   assert.match(body, /F\.mostNeglected\(rhythms\)/, 'один сигнал за раз, а не список запущенных сфер');
   assert.doesNotMatch(body, /Math\.round\(.*100\)|%/, 'ведущий вывод словами, а не процентом');
-  // строка живёт внутри существующей карточки-вывода, новой карточки не появилось
-  assert.match(APP, /rhythmSummary \? `<p class="muted stats-rhythm-line">/);
+  // Один вопрос — один ответ: строка про ритм заменяет прежнюю строку баланса,
+  // а не встаёт рядом с ней. Две строки называли разные сферы на одном экране.
+  assert.match(APP, /const balanceSummary = rhythmSummary \|\| \(hasBalanceSignal/);
+  assert.equal(APP.includes('stats-rhythm-line'), false, 'второй строки на экране нет');
+  const summaryAt = APP.indexOf('const balanceSummary = rhythmSummary');
+  const summary = APP.slice(summaryAt, APP.indexOf(';', APP.indexOf('Это не оценка тебя', summaryAt)));
+  assert.match(summary, /Баланс появится, когда хотя бы две сферы получат внимание/,
+    'без объявленных частот прежняя строка остаётся ровно как была');
 });
 
 test('the new copy reaches every language', () => {
