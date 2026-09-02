@@ -115,8 +115,20 @@ test('the move is claimed before it is ever drawn', () => {
 test('a stolen slot is never claimed, so the move is not lost unseen', () => {
   // Заявка подаётся только когда ни одна ветка выше не выиграла место на экране.
   assert.match(APP, /_secretaryOfferSlotFree = !!C && !State\._attentionLoadError && !active && !closed/);
-  assert.match(APP, /!pendingReturn && !eveningDue && !experimentOffer;/);
   assert.match(APP, /if \(_secretaryOfferSlotFree && State\.secretaryOffer === undefined\) loadSecretaryOffer\(\);/);
+});
+
+test('one decision-maker for the morning: the local detector is gone', () => {
+  // Утренний ход и незавершённый возврат — про один вчерашний факт. Двое, решающих
+  // одно и то же, — это дефект, а не запас прочности.
+  for (const dead of ['secretaryMorningRecoveryOffer', 'experimentRecovery', 'morning-after-overrun']) {
+    assert.equal(APP.includes(dead), false, dead);
+  }
+  const offerAt = APP.indexOf("} else if (secretaryOfferView()) {");
+  const returnAt = APP.indexOf('} else if (pendingReturn) {');
+  assert.ok(offerAt > 0 && returnAt > offerAt, 'ход сервера стоит выше локального возврата');
+  const activeAt = APP.indexOf('} else if (active) {');
+  assert.ok(activeAt > 0 && activeAt < offerAt, 'живая граница внимания остаётся выше хода');
 });
 
 test('both answers are recorded, and dismiss is an equal button', () => {

@@ -23301,21 +23301,6 @@ function secretaryExperimentLatestSignal(experiment = secretaryExperimentState()
     feedbackDate: completedEntry?.checkDate || '',
   };
 }
-function secretaryMorningRecoveryOffer(experiment, signal, now = new Date()) {
-  if (!experiment || experiment.status !== 'active' || !secretaryExperimentInWindow(experiment)) return null;
-  if (!signal || !signal.known || !signal.pendingReturn || !signal.sourceEpisodeId) return null;
-  const hour = now instanceof Date ? now.getHours() : new Date(now).getHours();
-  const morning = Number.isFinite(hour) && hour >= 5 && hour < 13;
-  const date = todayStr();
-  if (!morning || experiment.checkIns?.[date]) return null;
-  return {
-    kind: 'morning-recovery',
-    offerId: `${experiment.id}|${date}|${signal.sourceEpisodeId}`,
-    sourceEpisodeId: signal.sourceEpisodeId,
-    plan: t('Снять накопившееся и выбрать один шаг на 10 минут.'),
-    action: { id: 'secretary-experiment-accept', label: t('Открыть возврат') },
-  };
-}
 function secretaryExperimentFeedbackDue(experiment, signal, date = todayStr()) {
   if (!experiment || experiment.status !== 'active') return false;
   const feedbackDate = signal?.feedbackDate || '';
@@ -23488,7 +23473,7 @@ function exportSecretaryExperiment() {
   document.body.appendChild(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(href), 0);
   return true;
 }
-function secretaryExperimentOfferHTML(experiment, recoveryOffer, signal = null) {
+function secretaryExperimentOfferHTML(experiment, signal = null) {
   if (!secretaryExperimentAvailable()) return '';
   if ((!experiment || experiment.status === 'draft') && !State._secretaryExperimentSetupOpen) return '';
   if (!experiment || experiment.status === 'draft') return `<div class="secretary-experiment-offer" data-experiment-stage="draft">
@@ -23512,10 +23497,6 @@ function secretaryExperimentOfferHTML(experiment, recoveryOffer, signal = null) 
       <button type="button" class="secretary-experiment-action" data-action="secretary-experiment-feedback">${t('Сохранить наблюдение')}</button>
     </div>
   </div>`;
-  if (recoveryOffer) return `<div class="secretary-experiment-offer" data-experiment-stage="recovery">
-    <span class="secretary-control-kicker">${t('День {day} из 30').replace('{day}', day)}</span><b>${t('Сегодня один возврат')}</b>
-    <small>${esc(recoveryOffer.plan)}</small><div class="secretary-experiment-buttons"><button type="button" class="secretary-experiment-action" data-action="${esc(recoveryOffer.action.id)}" data-offer-id="${esc(recoveryOffer.offerId)}" data-source-episode-id="${esc(recoveryOffer.sourceEpisodeId)}">${esc(recoveryOffer.action.label)}</button><button type="button" class="btn ghost" data-action="secretary-experiment-dismiss" data-offer-id="${esc(recoveryOffer.offerId)}" data-source-episode-id="${esc(recoveryOffer.sourceEpisodeId)}">${t('Не сейчас')}</button></div>
-  </div>`;
   const reviewDay = secretaryExperimentReviewDue(experiment);
   return reviewDay ? secretaryExperimentReviewHTML(experiment, reviewDay) : '';
 }
@@ -23526,7 +23507,6 @@ function secretaryExperimentHasPrimary() {
   if (experiment.status !== 'active' || dayClosed()) return false;
   const signal = secretaryExperimentLatestSignal(experiment);
   return secretaryExperimentFeedbackDue(experiment, signal)
-    || !!secretaryMorningRecoveryOffer(experiment, signal)
     || !!secretaryExperimentReviewDue(experiment);
 }
 function attentionTodayPrimaryReserved() {
@@ -23559,8 +23539,7 @@ function attentionTodayControlHTML(selectedOffer = null) {
   const cfg = secretarySettings();
   const experiment = secretaryExperimentState();
   const experimentSignal = secretaryExperimentLatestSignal(experiment);
-  const experimentRecovery = secretaryMorningRecoveryOffer(experiment, experimentSignal);
-  const experimentOffer = secretaryExperimentOfferHTML(experiment, experimentRecovery, experimentSignal);
+  const experimentOffer = secretaryExperimentOfferHTML(experiment, experimentSignal);
   const fallbackPrimary = {
     kind: 'fallback',
     title: t('Сейчас всё ясно'),
@@ -23570,9 +23549,12 @@ function attentionTodayControlHTML(selectedOffer = null) {
   let controlState = '';
   // Слот считает сам рендер: если ход перебила живая граница, вечер или эксперимент,
   // заявлять его нельзя — он был бы занят и потерян, не показавшись никому.
+  // Утренний ход и незавершённый возврат — про один и тот же вчерашний факт, и до
+  // сегодняшнего дня их выбирали двое: сервер и локальный детектор. Детектор снят,
+  // решение осталось одно, поэтому ход стоит выше возврата. Вне утреннего окна
+  // движок молчит, и возврат ведёт себя как раньше.
   _secretaryOfferSlotFree = !!C && !State._attentionLoadError && !active && !closed
-    && !(State._secretaryExperimentSetupOpen && experiment.status === 'draft')
-    && !pendingReturn && !eveningDue && !experimentOffer;
+    && !(State._secretaryExperimentSetupOpen && experiment.status === 'draft');
 
   if (!C) {
     controlState = ' is-error';
@@ -23607,16 +23589,16 @@ function attentionTodayControlHTML(selectedOffer = null) {
     primary = { kind: 'experiment', title: t('Личный эксперимент'), html: experimentOffer };
   } else if (closed) {
     primary = fallbackPrimary;
+  } else if (secretaryOfferView()) {
+    // Ход уже заявлен: до этой ветки он не рисуется никогда (см. loadSecretaryOffer).
+    primary = { kind: 'offer', title: t('Сейчас важнее всего'), html: secretaryOfferHTML(secretaryOfferView()) };
   } else if (pendingReturn) {
-    primary = { kind: 'return', title: t('Не нужно держать всю систему в голове'), html: experiment.status === 'active' && experimentRecovery && experimentOffer ? experimentOffer : `<button class="secretary-action is-primary" data-action="attention-open-return"><span aria-hidden="true">↩</span><b>${t('Вернуться одним шагом')}</b></button>` };
+    primary = { kind: 'return', title: t('Не нужно держать всю систему в голове'), html: `<button class="secretary-action is-primary" data-action="attention-open-return"><span aria-hidden="true">↩</span><b>${t('Вернуться одним шагом')}</b></button>` };
   } else if (eveningDue) {
     controlState = ' is-due';
     primary = { kind: 'evening', title: t('Пора завершить рабочий день'), html: `<button class="secretary-action is-primary" data-action="evening-open"><span aria-hidden="true">🌙</span><b>${t('Завершить вечер')}</b>${cfg.dailyReminder && cfg.eveningTime ? `<small>${esc(cfg.eveningTime)}</small>` : ''}</button>` };
   } else if (!closed && experimentOffer) {
     primary = { kind: 'experiment', title: t('Личный эксперимент'), html: experimentOffer };
-  } else if (!closed && secretaryOfferView()) {
-    // Ход уже заявлен: до этой ветки он не рисуется никогда (см. loadSecretaryOffer).
-    primary = { kind: 'offer', title: t('Сейчас важнее всего'), html: secretaryOfferHTML(secretaryOfferView()) };
   } else if (!closed && selectedOffer && selectedOffer.html) {
     primary = { kind: 'nudge', title: t('Сейчас важнее всего'), html: selectedOffer.html };
   } else {

@@ -16,7 +16,10 @@ const EXPERIMENT_FUNCTIONS = Object.freeze([
   'startSecretaryExperiment',
   'endSecretaryExperiment',
   'recordSecretaryExperimentOffer',
-  'secretaryMorningRecoveryOffer',
+  // `secretaryMorningRecoveryOffer` снят 2026-09-02: утренний ход выбирает движок,
+  // и двое, решающих одно и то же, — дефект, а не запас прочности. Его гарантии
+  // проверяются выше, на роутере и на презентере хода.
+  'secretaryOfferHTML',
   'secretaryExperimentFeedbackDue',
   'saveSecretaryExperimentFeedback',
   'secretaryExperimentMetrics',
@@ -127,38 +130,34 @@ test('draft setup is explicit, dismissible, and never steals Today before launch
 });
 
 test('a quiet morning is never diagnosed and only a known signal can produce one recovery plan', () => {
-  const morning = functionSource('secretaryMorningRecoveryOffer');
-  const signature = morning.match(/^function secretaryMorningRecoveryOffer\(([^)]*)\)/);
-  assert.ok(signature && signature[1].trim(), 'the morning decision must receive an explicit signal/context');
+  // Гарантия не исчезла вместе с локальным детектором — она переехала на движок,
+  // и тест переехал за ней. Решение об утре теперь одно, и принимает его роутер.
+  const ROUTER = fs.readFileSync(path.join(__dirname, '..', 'public', 'secretary-router-v1.js'), 'utf8');
+  assert.match(ROUTER, /const MORNING_FROM = 5;/);
+  assert.match(ROUTER, /const MORNING_TO = 13;/, 'персональное утреннее окно — ровно 05:00–13:00');
+  assert.match(ROUTER, /h >= MORNING_FROM && h < MORNING_TO/);
 
-  assert.match(morning, /(?:pendingReturn|known|sourceEpisodeId)/,
-    'a recovery offer needs an explicit return/boundary signal');
-  assert.match(morning,
-    /!signal\s*\|\|\s*!signal\.known[\s\S]{0,180}return null/,
-    'missing or unknown evidence must remain unknown');
-  assert.match(morning, /(?:morning|hour\s*[<>=])/,
-    'the morning intercept must state its time boundary');
-  assert.match(morning, /hour >= 5 && hour < 13/,
-    'the personal morning window is exactly 05:00–13:00');
-
-  const signal = functionSource('secretaryExperimentLatestSignal');
-  assert.match(signal, /const yesterday = addDays\(date, -1\)/);
-  assert.match(signal, /fmtDate\(new Date\(episode\.endedAt\)\) === yesterday/,
-    'an old escaped episode must not reappear every morning');
+  const VIEW = fs.readFileSync(path.join(__dirname, '..', 'public', 'secretary-offer-view-v1.js'), 'utf8');
+  assert.match(VIEW, /if \(!reasonCopy \|\| !surface\) return null;/,
+    'неизвестный повод остаётся неизвестным, а не превращается в ближайший похожий');
+  assert.match(VIEW, /askOnly \? '' : surface\.domAction/,
+    'при низкой уверенности ход остаётся вопросом и не открывает поверхность');
+  const OfferView = require('../public/secretary-offer-view-v1.js');
+  const copy = Object.values(OfferView.REASON_COPY)
+    .concat(Object.values(OfferView.ACTION_SURFACE).map((surface) => surface.label)).join(' ');
+  assert.doesNotMatch(copy, /срыв|провал|потерянн|лень|ленив|дисциплин/i,
+    'копия называет возможный возврат, а не человека и не день');
 
   for (const inferredFromSilence of ['dayLoadNow', 'arenaDayHistory', 'doneCount', 'plannedCount', 'currentStreak']) {
-    assert.equal(morning.includes(inferredFromSilence), false,
+    assert.equal(VIEW.includes(inferredFromSilence), false,
       `${inferredFromSilence} must not turn a quiet day into a diagnosis`);
   }
-  assert.doesNotMatch(morning, /срыв|провал|потерянн|лень|ленив|дисциплин/i,
-    'morning copy must describe a possible return, not label the person or the day');
 
-  assert.match(morning, /\bplan\s*:/,
-    'the result must contain one concrete recovery plan');
-  assert.match(morning, /\baction\s*:/,
-    'the plan must end in one executable action');
-  assert.doesNotMatch(morning, /\bplans\s*:|\bactions\s*:|\.map\s*\(/,
-    'the low-resource intercept must not return a menu of plans');
+  // Один ход, а не меню: у показанного предложения ровно одно действие.
+  const html = functionSource('secretaryOfferHTML');
+  assert.match(html, /view\.actionLabel/);
+  assert.doesNotMatch(html, /\.map\s*\(/, 'the low-resource intercept must not return a menu of plans');
+  assert.match(html, /data-action="secretary-offer-dismiss"/, 'отказ — равноправная кнопка');
 });
 
 test('experiment feedback is tied to the accepted return and requires one honest after-effect', () => {
