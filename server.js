@@ -2927,6 +2927,24 @@ function assertAccountGraphTransition(uid, payload) {
       const firstDiff = (a, b, path = '') => {
         if (a === b) return null;
         const ta = describe(a), tb = describe(b);
+        // Строки разбираем ДО проверки типов: describe включает длину, иначе две строки
+        // разной длины уходят в «разные типы» и позиция расхождения теряется.
+        if (typeof a === 'string' && typeof b === 'string') {
+          const kind = (ch) => {
+            if (ch === undefined) return 'нет';
+            if (/\s/.test(ch)) return 'пробельный';
+            if (/\p{L}/u.test(ch)) return 'буква';
+            if (/\p{N}/u.test(ch)) return 'цифра';
+            if (/\p{Extended_Pictographic}/u.test(ch)) return 'эмодзи';
+            return 'знак';
+          };
+          let i = 0; while (i < a.length && i < b.length && a[i] === b[i]) i += 1;
+          const shorter = a.length > b.length ? b : a;
+          const extra = (a.length > b.length ? a : b)[i];
+          return { path: path || '.', server: ta, client: tb, why: 'разные строки',
+            позиция: i, изДлины: shorter.length, началоСовпало: i === shorter.length,
+            гдеДлиннее: a.length > b.length ? 'сервер' : 'клиент', лишнийСимвол: kind(extra) };
+        }
         if (ta !== tb) return { path: path || '.', server: ta, client: tb, why: 'разные типы' };
         if (Array.isArray(a)) {
           for (let i = 0; i < Math.max(a.length, b.length); i += 1) {

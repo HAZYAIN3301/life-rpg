@@ -5182,6 +5182,8 @@ async function commitmentBoundaryRejected(response, { retried = false, base = nu
       console.warn(`[конфликт] сервер: ${f(detail.actual)} | клиент: ${f(detail.base)}`);
       const d = detail.diff;
       console.warn(d ? `[конфликт] ПЕРВОЕ РАСХОЖДЕНИЕ ${d.path} — ${d.why}: сервер ${d.server}, клиент ${d.client}`
+        + (d.позиция === undefined ? '' : ` | расходятся с позиции ${d.позиция} из ${d.изДлины}`
+          + `, началоСовпало=${d.началоСовпало}, длиннее у ${d.гдеДлиннее}, лишний символ: ${d.лишнийСимвол}`)
         : '[конфликт] структуры совпали — расхождение не в данных');
     }
     await reportCommitmentConflict(slot, base);
@@ -31711,7 +31713,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v233';
+const PWA_CACHE_VERSION = 'satoru-v234';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
