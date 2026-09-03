@@ -1545,6 +1545,8 @@ const I18N_EXTRA = {
   'Не удалось сохранить. Ничего не изменено — повтори попытку.': { en: 'Could not save. Nothing changed; try again.', de: 'Speichern fehlgeschlagen. Nichts wurde geändert; versuche es erneut.', uk: 'Не вдалося зберегти. Нічого не змінено — спробуй ще раз.', es: 'No se pudo guardar. Nada cambió; inténtalo de nuevo.' },
   'Файл данных на сервере не читается. Перезагрузка не поможет — ничего не изменено, сообщи об этом.': { en: 'A data file on the server cannot be read. Reloading will not help — nothing was changed, please report it.', de: 'Eine Datendatei auf dem Server ist nicht lesbar. Neuladen hilft nicht — es wurde nichts geändert, bitte melde es.', uk: 'Файл даних на сервері не читається. Перезавантаження не допоможе — нічого не змінено, повідом про це.', es: 'Un archivo de datos del servidor no se puede leer. Recargar no ayudará: no se cambió nada, avísanos.' },
   'Другое устройство успело записать раньше. Согласовать сам не смог — ничего не потеряно, повтори.': { en: 'Another device wrote first. I could not reconcile it myself — nothing is lost, try again.', de: 'Ein anderes Gerät hat zuerst geschrieben. Ich konnte es nicht selbst abgleichen — nichts ist verloren, versuche es erneut.', uk: 'Інший пристрій записав раніше. Узгодити сам не зміг — нічого не втрачено, спробуй ще раз.', es: 'Otro dispositivo escribió antes. No pude reconciliarlo yo mismo: no se perdió nada, inténtalo otra vez.' },
+  'Найдены повреждённые символы в данных': { en: 'Damaged characters found in your data', de: 'Beschädigte Zeichen in deinen Daten gefunden', uk: 'Знайдено пошкоджені символи в даних', es: 'Se encontraron caracteres dañados en tus datos' },
+  'Причина устранена, старые места нужно поправить вручную.': { en: 'The cause is fixed; the old spots need manual correction.', de: 'Die Ursache ist behoben; die alten Stellen musst du manuell korrigieren.', uk: 'Причину усунуто, старі місця треба виправити вручну.', es: 'La causa está corregida; los puntos antiguos hay que arreglarlos a mano.' },
   'Данные изменились в другой вкладке. Обнови страницу и повтори.': { en: 'The data changed in another tab. Reload and try again.', de: 'Die Daten wurden in einem anderen Tab geändert. Lade neu und versuche es erneut.', uk: 'Дані змінилися в іншій вкладці. Онови сторінку й спробуй ще раз.', es: 'Los datos cambiaron en otra pestaña. Recarga e inténtalo de nuevo.' },
   'Не удалось отменить. Запись сохранена, можно повторить.': { en: 'Undo failed. The entry is still saved; you can retry.', de: 'Rückgängig fehlgeschlagen. Der Eintrag bleibt gespeichert; du kannst es erneut versuchen.', uk: 'Не вдалося скасувати. Запис збережено, можна повторити.', es: 'No se pudo deshacer. La entrada sigue guardada; puedes reintentarlo.' },
   'Изменения привычек заблокированы до восстановления данных': { en: 'Habit changes are blocked until the data is recovered', de: 'Änderungen an Gewohnheiten sind bis zur Datenwiederherstellung gesperrt', uk: 'Зміни звичок заблоковані до відновлення даних', es: 'Los cambios de hábitos están bloqueados hasta recuperar los datos' },
@@ -11985,7 +11987,11 @@ function yesterdayCloneable() {
 }
 function emptyDayHTML() {
   const src = yesterdayCloneable();
-  if (!src.length) return `<div class="empty-day"><p class="muted">${t('На сегодня пусто.')}</p></div>`;
+  // «Итог дня» жил только внутри карточки заметок, под безымянным «•••»: инструмент про
+  // ДЕНЬ лежал в коробке про ЗАМЕТКИ. Пустой день — ровно тот момент, когда он нужен,
+  // поэтому вход стоит здесь. Действие то же самое, второй реализации не заводим.
+  if (!src.length) return `<div class="empty-day"><p class="muted">${t('На сегодня пусто.')}</p>
+    <button type="button" class="btn ghost sm" data-action="day-recap" title="${t('Наговори день — Тень разложит по делам')}">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></div>`;
   return `<div class="empty-repeat"><p class="muted">${t('На сегодня пусто.')}</p>
     <button class="btn ghost" data-action="repeat-yesterday">↻ ${t('Повторить вчерашний план')} (${src.length})</button></div>`;
 }
@@ -16413,6 +16419,35 @@ function captureBar(options = {}) {
     </form>
     ${expanded && secondaryTools ? `<div class="capture-secondary">${secondaryTools}</div>` : !expanded && secondaryTools ? `<details class="capture-tools"><summary aria-label="${t('Ещё способы сохранить мысль')}"><span aria-hidden="true">•••</span></summary><div class="capture-tools-menu">${mediaTools}${secondaryTools}</div></details>` : ''}</div>`;
 }
+// Осмотр данных на порчу. До 03.09 сервер разрывал многобайтовые символы на границе
+// кусков тела запроса и писал на диск «\uFFFD» вместо буквы (см. DEVLOG). Дефект закрыт,
+// но уже испорченные символы не восстанавливаются: байты потеряны. Молчать об этом нельзя —
+// человек должен знать, где в его данных дырка, чтобы поправить текст руками.
+let _dataDamageReported = false;
+function scanDataDamage() {
+  const areas = {
+    'квесты': State.tasks, 'цели': State.goals, 'привычки': State.habits,
+    'заметки': State.inbox, 'настройки': State.settings, 'дни': State.days,
+  };
+  const out = [];
+  for (const [name, value] of Object.entries(areas)) {
+    if (value == null) continue;
+    let text = '';
+    try { text = JSON.stringify(value); } catch { continue; }
+    const n = (text.match(/\uFFFD/g) || []).length;
+    if (n) out.push({ area: name, count: n });
+  }
+  return out;
+}
+function reportDataDamageOnce() {
+  if (_dataDamageReported) return;
+  _dataDamageReported = true;
+  const damage = scanDataDamage();
+  if (!damage.length) { console.info('[осмотр данных] порчи не найдено'); return; }
+  const total = damage.reduce((sum, d) => sum + d.count, 0);
+  console.warn('[осмотр данных] испорченных символов:', total, damage.map((d) => `${d.area}: ${d.count}`).join(', '));
+  toast(`${t('Найдены повреждённые символы в данных')}: ${total}. ${t('Причина устранена, старые места нужно поправить вручную.')}`);
+}
 function validateInboxPayload(value) {
   if (!Array.isArray(value)) return false;
   const ids = new Set();
@@ -18517,10 +18552,34 @@ function nudgeVoiceStale(sig) {
   if (!v || v.sig !== sig || v.lang !== lang()) return true;         // новый сигнал/язык — сразу
   return (Date.now() - (Date.parse(v.at) || 0)) > 24 * 3600 * 1000;  // тот же — не чаще раза в сутки
 }
+// Дневной бюджет на УКРАШЕНИЕ. Фраза Тени подгружается из рендера, и каждый новый сигнал —
+// это ещё один запрос к модели. У бесплатного тира Gemini лимит 20 запросов в сутки, поэтому
+// декорация спокойно съедала весь дневной запас, а на разбор дня — то, ради чего человек и
+// пришёл, — не оставалось ничего. Кончился бюджет — показываем обычную фразу, она уже есть.
+const NUDGE_VOICE_DAY_BUDGET = 4;
+function nudgeVoiceBudgetLeft() {
+  try {
+    const key = `satoru_nudge_voice_v1:${State.me?.id || ''}`;
+    const raw = JSON.parse(localStorage.getItem(key) || 'null');
+    const day = todayStr();
+    return (raw && raw.day === day) ? Math.max(0, NUDGE_VOICE_DAY_BUDGET - Number(raw.n || 0)) : NUDGE_VOICE_DAY_BUDGET;
+  } catch { return 0; }
+}
+function nudgeVoiceBudgetSpend() {
+  try {
+    const key = `satoru_nudge_voice_v1:${State.me?.id || ''}`;
+    const raw = JSON.parse(localStorage.getItem(key) || 'null');
+    const day = todayStr();
+    const n = (raw && raw.day === day ? Number(raw.n || 0) : 0) + 1;
+    localStorage.setItem(key, JSON.stringify({ day, n }));
+  } catch {}
+}
 async function nudgeVoiceFetch(sig, staticText) {
   if (_nudgeVoiceBusy || !sig || !canUseAi() || !nudgeVoiceStale(sig)) return;
+  if (nudgeVoiceBudgetLeft() <= 0) return;                // украшение не занимает дневной запас
   if (Date.now() - _nudgeVoiceFailAt < 10 * 60000) return; // после сбоя не долбим на каждый рендер
   _nudgeVoiceBusy = true;
+  nudgeVoiceBudgetSpend();
   try {
     const system = `Ты — Тень, тёплый спутник человека в приложении Satoru (философия «жизнь как десятиборье»; поддержка через любовь, не через вину). Тебе дают СИГНАЛ — что сейчас важнее всего — и СРЕЗ СОСТОЯНИЯ человека. Скажи ОДНУ фразу от себя, обращаясь к человеку на «ты»: тепло, конкретно по его данным, без вины, без морали и без лозунгов. Максимум 120 знаков. Не пиши «нажми кнопку» — кнопка уже стоит рядом с твоей фразой. Не выдумывай фактов, которых нет в данных. Верни ТОЛЬКО саму фразу, без кавычек и пояснений.\n${aiAnswerLangLine()}`;
     const prompt = `СИГНАЛ: ${NUDGE_SIG_HINT[sig] || sig}\nСТАНДАРТНАЯ ФОРМУЛИРОВКА (смысл сохрани, слова замени своими): ${staticText || ''}\n\n${stateNowContext()}`;
@@ -26302,6 +26361,7 @@ function render() {
   }
   try { if (lang() !== 'ru') translateDOM(document.body); } catch (e) { console.error('translateDOM', e); }
   try { if (_secretaryOfferSlotFree && State.secretaryOffer === undefined) loadSecretaryOffer(); } catch (e) { console.error('loadSecretaryOffer', e); }
+  try { reportDataDamageOnce(); } catch (e) { console.error('reportDataDamage', e); }
   try { scheduleReminders(); } catch (e) { console.error('scheduleReminders', e); }
   try { scheduleEveningReminder(); } catch (e) { console.error('scheduleEveningReminder', e); }
   try { kickCompVideo(); } catch (e) { /* видео-автоплей — не критично */ }
@@ -31766,7 +31826,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v239';
+const PWA_CACHE_VERSION = 'satoru-v240';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

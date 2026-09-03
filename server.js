@@ -1210,13 +1210,40 @@ function resolveAiCall(user, requestedProvider, userKeys, purpose = '') {
   return { provider: hp, key: houseKeyFor(hp), source: 'house' };
 }
 // Высокоуровневый вызов для эндпоинтов: резолв → вызов → учёт house-токенов. Возврат aiCompleteMessages + {source,provider} | {error}.
+// Провайдер упёрся в лимит — это не отказ системы, а отказ одного поставщика.
+// Бесплатный тир Gemini — 20 запросов в сутки; когда он кончался, ИИ умирал целиком,
+// хотя ключи других провайдеров лежали рядом. Отличаем лимит от прочих ошибок и идём
+// к следующему поставщику ТОГО ЖЕ источника: ключи человека не смешиваем с домашними,
+// иначе платит не тот, кто думал.
+const AI_ORDER = ['gemini', 'groq', 'anthropic', 'openai'];
+function aiRateLimited(r) {
+  if (!r || r.ok !== false) return false;
+  const status = Number(r.status);
+  if (status === 429 || status === 503) return true;
+  return /quota|rate.?limit|too many requests|exceeded|resource_exhausted/i.test(String(r.detail || ''));
+}
 async function aiCallForUser(user, requestedProvider, system, messages, maxTokens, purpose = '') {
   const userKeys = loadAiKeys(user.id);
   const res = resolveAiCall(user, requestedProvider, userKeys, purpose);
   if (res.error) return res;
-  const r = await aiCompleteMessages(res.provider, { [res.provider]: res.key }, system, messages, maxTokens);
-  if (r.ok && res.source === 'house') bumpAiUsage(user.id, r.tokens || estimateTokens(system, messages, r.text));
-  return Object.assign({}, r, { source: res.source, provider: res.provider });
+  const chain = res.source === 'byok'
+    ? [res.provider, ...AI_ORDER.filter((id) => id !== res.provider && userKeys[id])]
+    : [res.provider, ...AI_ORDER.filter((id) => id !== res.provider && houseKeyFor(id))];
+  const tried = [];
+  let last = null;
+  for (const provider of chain) {
+    const key = res.source === 'byok' ? userKeys[provider] : houseKeyFor(provider);
+    if (!key) continue;
+    tried.push(provider);
+    const r = await aiCompleteMessages(provider, { [provider]: key }, system, messages, maxTokens);
+    last = Object.assign({}, r, { source: res.source, provider, tried: tried.slice() });
+    if (r.ok) {
+      if (res.source === 'house') bumpAiUsage(user.id, r.tokens || estimateTokens(system, messages, r.text));
+      return last;
+    }
+    if (!aiRateLimited(r)) return last;   // не лимит — честно отдаём ошибку, не жжём остальных
+  }
+  return last || { error: 'no_key' };
 }
 // Ключи в тексте ошибок. Провайдеры любят возвращать «Incorrect API key provided: sk-...XYZ»,
 // и такой текст нельзя показывать никому: даже частичный ключ не должен покидать сервер.
