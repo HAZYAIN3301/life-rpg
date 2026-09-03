@@ -102,8 +102,8 @@ test('the module is loaded before app.js and cached once for offline', () => {
   assert.ok(moduleAt >= 0, 'index must load goal-deadline-calendar-v1.js');
   assert.ok(INDEX.indexOf('src="app.js') > moduleAt, 'app.js must run after the module it calls');
   assert.equal((SW.match(/'goal-deadline-calendar-v1\.js'/g) || []).length, 1, 'SHELL must pin the module exactly once');
-  assert.match(SW, /const CACHE = 'satoru-v230'/, 'новый файл в SHELL обязан поднять версию кэша');
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v230'/);
+  assert.match(SW, /const CACHE = 'satoru-v231'/, 'новый файл в SHELL обязан поднять версию кэша');
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v231'/);
 });
 
 test('all three calendar modes know about a deadline', () => {

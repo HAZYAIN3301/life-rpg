@@ -5104,10 +5104,13 @@ async function commitmentBoundaryCode(response) {
 }
 // Разбор конфликта, который пережил повтор. Печатает ТОЛЬКО механику: имена полей,
 // количество задач, идентификаторы — ни одного значения. Смотрит человек в своей консоли.
-async function reportCommitmentConflict(slot) {
+async function reportCommitmentConflict(slot, sentBase = null) {
   if (!slot) return;
   try {
-    const mine = Store._persisted && Store._persisted[slot];
+    // Сравнивать надо ту базу, которая УШЛА в отказанном запросе. Снимок в Store к этому
+    // моменту уже перечитан повтором, поэтому он всегда совпадает с сервером и молчит.
+    const mine = (sentBase && sentBase[slot]) || (Store._persisted && Store._persisted[slot]);
+    const источник = sentBase && sentBase[slot] ? 'отправленная база' : 'снимок Store';
     const theirs = await (await fetch(`/api/data/${slot}`)).json();
     if (!mine || !mine.exists) { console.warn('[конфликт]', slot, 'моего снимка нет'); return; }
     if (slot === 'tasks') {
@@ -5133,7 +5136,7 @@ async function reportCommitmentConflict(slot) {
       const brief = differing.slice(0, 2).map((d) => `${d.id}[${
         [...d.толькоУМеня.map((k) => '+' + k), ...d.толькоНаСервере.map((k) => '-' + k),
           ...d.различаются.map((k) => '~' + k)].join(' ') || 'нет полей'}]`).join(' | ');
-      console.warn(`[конфликт] tasks мои=${a.length} сервер=${b.length}`
+      console.warn(`[конфликт] tasks (${источник}) мои=${a.length} сервер=${b.length}`
         + ` порядок=${a.join(',') === b.join(',') ? 'совпал' : 'РАЗНЫЙ'}`
         + ` разошлось=${differing.length}`
         + (brief ? ` :: ${brief}` : ''));
@@ -5144,7 +5147,7 @@ async function reportCommitmentConflict(slot) {
     const mark = [...keys.filter((k) => (k in a) && !(k in b)).map((k) => '+' + k),
       ...keys.filter((k) => !(k in a) && (k in b)).map((k) => '-' + k),
       ...keys.filter((k) => (k in a) && (k in b) && JSON.stringify(a[k]) !== JSON.stringify(b[k])).map((k) => '~' + k)];
-    console.warn(`[конфликт] settings :: ${mark.join(' ') || 'полей не разошлось'}`);
+    console.warn(`[конфликт] settings (${источник}) :: ${mark.join(' ') || 'полей не разошлось'}`);
   } catch (error) { console.warn('[конфликт] разбор не удался', error); }
 }
 // Перечитать пару с сервера, чтобы база перестала быть устаревшей. false — повтор
@@ -5161,7 +5164,7 @@ async function refreshCommitmentWriteBase({ writeEpoch, accountId } = {}) {
   State.tasks = tasksLoad.value;
   return true;
 }
-async function commitmentBoundaryRejected(response, { retried = false } = {}) {
+async function commitmentBoundaryRejected(response, { retried = false, base = null } = {}) {
   if (!response || ![409, 428].includes(response.status)) return false;
   State._commitmentConflict = true;
   const code = await commitmentBoundaryCode(response);
@@ -5174,7 +5177,7 @@ async function commitmentBoundaryRejected(response, { retried = false } = {}) {
   // «обнови страницу»: страницу он уже обновил сам, и совет отправил бы по кругу.
   if (response.status === 409 && retried) {
     const { slot } = await commitmentBoundaryInfo(response);
-    await reportCommitmentConflict(slot);
+    await reportCommitmentConflict(slot, base);
     toast(t('Другое устройство успело записать раньше. Согласовать сам не смог — ничего не потеряно, повтори.')
       + (slot ? ` (${slot})` : ''));
     return true;
@@ -5391,6 +5394,7 @@ const Store = {
           return false;
         }
         try {
+          let sentBase = payload.base;
           let response = await fetch('/api/commitments/commit', {
             method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
           });
@@ -5406,13 +5410,14 @@ const Store = {
             const fresh = freshBase && freshPair ? { base: freshBase, data: freshPair } : null;
             if (fresh && validator.validateCommitPayload(fresh)) {
               pair = freshPair;
+              sentBase = freshBase;
               response = await fetch('/api/commitments/commit', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(fresh),
               });
               if (response.status === 401) { handleAccountSessionExpired(); return false; }
             }
           }
-          if (await commitmentBoundaryRejected(response, { retried: true })) return false;
+          if (await commitmentBoundaryRejected(response, { retried: true, base: sentBase })) return false;
           if (!response.ok || !rememberDedicatedCommitSlots(pair, { writeEpoch, accountId })) return false;
           if (typeof applyCommitted === 'function' && await applyCommitted(value) === false) return false;
           return true;
@@ -5721,7 +5726,7 @@ async function commitmentDataCommit(build, focusSelector = '') {
       if (attempt === 0 && response.status === 409
         && await commitmentBoundaryCode(response) === 'commitment_revision_conflict'
         && await refreshCommitmentWriteBase({ writeEpoch, accountId })) continue;
-      if (await commitmentBoundaryRejected(response, { retried: attempt > 0 })) return false;
+      if (await commitmentBoundaryRejected(response, { retried: attempt > 0, base })) return false;
       if (!response.ok || !rememberDedicatedCommitSlots(candidate, { writeEpoch, accountId })) return false;
       State.settings = candidate.settings;
       State.tasks = candidate.tasks;
@@ -31699,7 +31704,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v230';
+const PWA_CACHE_VERSION = 'satoru-v231';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
