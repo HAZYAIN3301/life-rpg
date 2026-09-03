@@ -119,8 +119,12 @@ test('устаревшая база — повод перечитать и пе�
 
   const commitAt = APP.indexOf('async function commitmentDataCommit');
   const commit = APP.slice(commitAt, APP.indexOf('\nasync function takeQuestCommitment'));
-  assert.match(commit, /for \(let attempt = 0; attempt < 2; attempt \+= 1\)/, 'ровно две попытки');
-  assert.match(commit, /attempt === 0 && response\.status === 409/);
+  assert.match(commit, /for \(let attempt = 0; attempt < 3; attempt \+= 1\)/,
+    'три попытки: обычная, на перечитанной базе и примирение');
+  assert.match(commit, /attempt === 2 \? \{ base: 'server', data: candidate \}/,
+    'третья попытка просит сервер построить базу самому — иначе тупик остаётся');
+  assert.match(commit, /attempt < 2 && response\.status === 409/,
+    'перечитывание пробуется на обеих неудачных попытках, а не только на первой');
   assert.match(commit, /commitment_revision_conflict/,
     'повторяется только настоящий конфликт: повреждённый файл повтором не лечится');
   // Ключевое: на второй попытке изменение собирается заново, а не досылается старое.
@@ -128,4 +132,23 @@ test('устаревшая база — повод перечитать и пе�
   assert.equal(buildCalls.length, 1, 'build внутри цикла — значит пересобирается каждую попытку');
   assert.ok(commit.indexOf('for (let attempt') < commit.indexOf('const candidate = build({'),
     'пересборка обязана быть внутри цикла, иначе повтор затрёт чужую запись');
+});
+
+test('примирение снимает только сверку версий, а не защиту графа', () => {
+  // 🔴 Забор существует, чтобы не потерять чужую запись. Примирение — выход из тупика,
+  // когда клиент уже перечитал состояние и пересобрал изменение на нём, а забор всё равно
+  // запирает. Оно НЕ должно отключать проверку графа и проверку полезной нагрузки:
+  // иначе «выход из тупика» превратился бы в дыру в самом заборе.
+  const at = SERVER.indexOf("const reconcile = payload.base === 'server'");
+  assert.notEqual(at, -1, 'примирение должно быть именованным условием, а не скрытой веткой');
+  const block = SERVER.slice(at - 1200, at + 900);
+  assert.match(block, /const protectedGraph = commitmentGraphPresent/,
+    'защита графа проверяется до примирения');
+  assert.match(block, /for \(const name of \(reconcile \? \[\] : COMMITMENT_PAIR_NAMES\)\)/,
+    'примирение пропускает ровно сверку версий, и ничего кроме');
+  const after = SERVER.slice(at, at + 6000);
+  assert.match(after, /validateCommitPayload\(\{ base, data: pair \}\)/,
+    'полезная нагрузка проверяется и при примирении');
+  assert.match(after, /base = reconcile \? \{ settings: actual\.settings, tasks: actual\.tasks \}/,
+    'базой становится то, что сервер читает сам, а не то, что прислал клиент');
 });

@@ -97,8 +97,8 @@ test('both modules are loaded before app.js and cached once for offline', () => 
   for (const file of ['sphere-frequency-v1', 'sphere-touch-v1']) {
     assert.equal((SW.match(new RegExp(`'${file}\\.js'`, 'g')) || []).length, 1, file);
   }
-  assert.match(SW, /const CACHE = 'satoru-v234'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v234'/);
+  assert.match(SW, /const CACHE = 'satoru-v235'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v235'/);
 });
 
 test('the rhythm is declared where the sphere is edited, not in a screen of its own', () => {

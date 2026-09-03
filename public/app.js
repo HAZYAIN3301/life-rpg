@@ -5715,7 +5715,9 @@ async function commitmentDataCommit(build, focusSelector = '') {
     // нескольких устройствах. На второй попытке изменение ПЕРЕСОБИРАЕТСЯ на свежей
     // серверной правде — так чужая запись не затирается, и если изменение уже неприменимо,
     // build сам вернёт null.
-    for (let attempt = 0; attempt < 2; attempt += 1) {
+    // Третья попытка — примирение: базу строит сам сервер. Дотуда доходит только то,
+    // что уже пересобрано на свежих серверных данных, поэтому чужую запись это не трёт.
+    for (let attempt = 0; attempt < 3; attempt += 1) {
       const base = commitmentWriteBase();
       if (!base) return false;
       const candidate = build({
@@ -5728,13 +5730,14 @@ async function commitmentDataCommit(build, focusSelector = '') {
       try {
         response = await fetch('/api/commitments/commit', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ base, data: candidate }),
+          body: JSON.stringify(attempt === 2 ? { base: 'server', data: candidate } : { base, data: candidate }),
         });
       } catch (error) { console.error('commitment commit', error); return false; }
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
-      if (attempt === 0 && response.status === 409
+      if (attempt < 2 && response.status === 409
         && await commitmentBoundaryCode(response) === 'commitment_revision_conflict'
         && await refreshCommitmentWriteBase({ writeEpoch, accountId })) continue;
+      if (attempt === 2 && response.ok) console.warn('[конфликт] примирение: запись прошла на серверной базе');
       if (await commitmentBoundaryRejected(response, { retried: attempt > 0, base })) return false;
       if (!response.ok || !rememberDedicatedCommitSlots(candidate, { writeEpoch, accountId })) return false;
       State.settings = candidate.settings;
@@ -31713,7 +31716,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v234';
+const PWA_CACHE_VERSION = 'satoru-v235';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

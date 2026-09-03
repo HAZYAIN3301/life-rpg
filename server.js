@@ -2901,14 +2901,20 @@ function assertAccountGraphTransition(uid, payload) {
   const protectedGraph = commitmentGraphPresent(currentSettings, currentTasks)
     || commitmentGraphPresent(pair.settings, pair.tasks);
   if (!protectedGraph) return { protected: false, touched: true, actual, pair };
-  const base = payload.base;
-  if (!base || typeof base !== 'object' || Array.isArray(base)
+  // Примирение. Забор нужен, чтобы не потерять чужую запись, — но когда клиент уже
+  // перечитал состояние с сервера, пересобрал изменение на нём и всё равно получил отказ,
+  // забор перестаёт защищать и начинает запирать (см. DEVLOG 03.09). В этом случае клиент
+  // присылает base: 'server', и базой становится то, что сервер читает сам. Проверки
+  // графа и полезной нагрузки остаются, пропускается только сверка версий.
+  const reconcile = payload.base === 'server';
+  const base = reconcile ? { settings: actual.settings, tasks: actual.tasks } : payload.base;
+  if (!reconcile && (!base || typeof base !== 'object' || Array.isArray(base)
     || Object.keys(base).sort().join(',') !== 'settings,tasks'
     || !commitmentSnapshotShapeValid(base.settings, 'object')
-    || !commitmentSnapshotShapeValid(base.tasks, 'array')) {
+    || !commitmentSnapshotShapeValid(base.tasks, 'array'))) {
     throw commitmentBoundaryError('commitment_atomic_write_required', 428);
   }
-  for (const name of COMMITMENT_PAIR_NAMES) {
+  for (const name of (reconcile ? [] : COMMITMENT_PAIR_NAMES)) {
     if (questionnaireHash(actual[name]) !== questionnaireHash(base[name])) {
       // Имя половины и отпечатки — это механика, а не данные: без них разбор конфликта
       // сводится к гаданию (DEVLOG 03.09). Отдаём длину сериализации и префикс хэша с
@@ -3071,7 +3077,17 @@ function commitCommitmentPairDurable(uid, transition) {
   });
 }
 function commitCommitmentData(uid, payload) {
-  if (!CommitmentStoreV1.validateCommitPayload(payload)) throw new Error('invalid_commitment_commit');
+  // При примирении база приедет не от клиента, а из файлов сервера, поэтому верхняя
+  // проверка целого конверта здесь неприменима. Полная проверка пары никуда не девается:
+  // assertAccountGraphTransition зовёт validateCommitPayload уже с настоящей базой.
+  const reconcile = payload && payload.base === 'server';
+  if (reconcile) {
+    if (!payload.data || typeof payload.data !== 'object' || Array.isArray(payload.data)) {
+      throw new Error('invalid_commitment_commit');
+    }
+  } else if (!CommitmentStoreV1.validateCommitPayload(payload)) {
+    throw new Error('invalid_commitment_commit');
+  }
   if (Buffer.byteLength(JSON.stringify(payload.data)) > CommitmentStoreV1.MAX_COMMIT_BYTES) {
     throw new Error('commitment_commit_too_large');
   }

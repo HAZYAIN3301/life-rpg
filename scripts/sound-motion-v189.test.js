@@ -79,7 +79,7 @@ test('shell loads the engine before app and caches the complete vertical slice',
   const sw = read('public/sw.js');
   assert.ok(index.indexOf('sound-engine-v1.js') < index.indexOf('app.js?v='));
   assert.match(index, /sound-engine-v1\.js\?v=20260829-browser-companion-discovery-v202-1/);
-  assert.match(sw, /const CACHE = 'satoru-v234'/);
+  assert.match(sw, /const CACHE = 'satoru-v235'/);
   assert.match(sw, /'sound-engine-v1\.js'/);
   assert.match(sw, /'art\/rewards\/reward-atlas-v1\.png'/);
 });

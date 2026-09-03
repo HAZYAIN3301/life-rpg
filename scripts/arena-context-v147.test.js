@@ -30,7 +30,7 @@ test('оба модуля доехали в offline shell, а не только 
     assert.match(sw, new RegExp(`'${f}'`), `${f} нет в SHELL sw.js`);
   }
   // Без бампа офлайн-клиенты получили бы старый shell без новых файлов.
-  assert.match(sw, /const CACHE = 'satoru-v234'/);
+  assert.match(sw, /const CACHE = 'satoru-v235'/);
 });
 
 test('§4: контекст провала молчит до вечера, пока день не закрыт', () => {
