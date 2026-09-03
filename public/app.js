@@ -2439,6 +2439,9 @@ const I18N_EXTRA = {
   '✓ Включено в Pro — ключ не нужен.': { en: '✓ Included in Pro — no key needed.', de: '✓ In Pro enthalten — kein Schlüssel nötig.', uk: '✓ Включено в Pro — ключ не потрібен.', es: '✓ Incluido en Pro — sin clave.' },
   'Доступно в Pro — или добавь бесплатный ключ.': { en: 'Available in Pro — or add a free key.', de: 'In Pro verfügbar — oder füge einen kostenlosen Schlüssel hinzu.', uk: 'Доступно в Pro — або додай безкоштовний ключ.', es: 'Disponible en Pro — o añade una clave gratis.' },
   'Добавь ключ в Настройках.': { en: 'Add a key in Settings.', de: 'Füge einen Schlüssel in den Einstellungen hinzu.', uk: 'Додай ключ у Налаштуваннях.', es: 'Añade una clave en Ajustes.' },
+  '🤖 Модель занята лимитом. Повтори через': { en: '🤖 The model is rate-limited. Try again in', de: '🤖 Das Modell ist am Limit. Versuch es erneut in', uk: '🤖 Модель зайнята лімітом. Повтори через', es: '🤖 El modelo está limitado. Inténtalo de nuevo en' },
+  'сек — ничего не потеряно': { en: 's — nothing is lost', de: 's — nichts ist verloren', uk: 'сек — нічого не втрачено', es: 's — no se perdió nada' },
+  '🤖 Модель занята лимитом. Повтори через минуту — ничего не потеряно': { en: '🤖 The model is rate-limited. Try again in a minute — nothing is lost', de: '🤖 Das Modell ist am Limit. Versuch es in einer Minute erneut — nichts ist verloren', uk: '🤖 Модель зайнята лімітом. Повтори через хвилину — нічого не втрачено', es: '🤖 El modelo está limitado. Inténtalo en un minuto — no se perdió nada' },
   'Добавь ИИ-ключ в Настройках': { en: 'Add an AI key in Settings', de: 'Füge einen KI-Schlüssel in den Einstellungen hinzu', uk: 'Додай ШІ-ключ у Налаштуваннях', es: 'Añade una clave de IA en Ajustes' },
   'Начать': { en: 'Start', de: 'Starten', uk: 'Почати', es: 'Empezar' },
   // ── ◆ Ядро дня и закрытие дня (DISCIPLINE-BOUNDARIES-PLAN) ──
@@ -14705,6 +14708,15 @@ function aiHandleErr(d) {
   if (d.error === 'not_pro') { showPaywall('ИИ-ассистент'); return true; }
   if (d.error === 'quota') { toast(t('🤖 Лимит ИИ на месяц исчерпан — добавь свой ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; render(); return true; }
   if (d.error === 'no_key') { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; render(); return true; }
+  // Лимит провайдера — это «подожди», а не «сломалось». Сервер уже подождал и повторил
+  // сам; сюда доходит только то, что не уложилось в его бюджет ожидания.
+  if (d.error === 'rate_limit') {
+    const sec = Number(d.retryAfter) || 0;
+    toast(sec
+      ? `${t('🤖 Модель занята лимитом. Повтори через')} ${sec} ${t('сек — ничего не потеряно')}`
+      : t('🤖 Модель занята лимитом. Повтори через минуту — ничего не потеряно'));
+    return true;
+  }
   return false;
 }
 // Карточка ИИ-ключей: мультипровайдер + гид «получить бесплатный ключ» + выбор провайдера по умолчанию
@@ -15271,9 +15283,19 @@ async function dayRecRun() {
   try {
     const r = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'daylog', provider: aiProvider(), text, context: proposeContext() }) });
     const d = await r.json();
+    // Лимит провайдера — это «подожди», а не «не разобрал». Окно не закрываем и текст не
+    // теряем: человек мог надиктовать весь день, и терять это из-за секундной паузы нельзя.
+    if (d.error === 'rate_limit') {
+      const sec = Number(d.retryAfter) || 0;
+      if (res) res.innerHTML = `<p class="muted">${esc(sec
+        ? `${t('🤖 Модель занята лимитом. Повтори через')} ${sec} ${t('сек — ничего не потеряно')}`
+        : t('🤖 Модель занята лимитом. Повтори через минуту — ничего не потеряно'))}</p>`;
+      return;
+    }
     if (d.error && aiHandleErr(d)) { const p = document.getElementById('dayrec-modal'); if (p) p.remove(); return; }
     if (d.error) { if (res) res.innerHTML = `<p class="muted">Не разобрал (${esc(d.error)}). Попробуй ещё раз или подробнее.</p>`; return; }
-    _dayActs = (d.proposals || []).filter((p) => p && p.title).map((p) => ({ title: String(p.title).slice(0, 120), sphere: String(p.sphere || ''), minutes: Math.max(1, Math.round(Number(p.minutes) || 15)), time: String(p.time || '') }));
+    const DIFFS = ['easy', 'normal', 'hard'];
+    _dayActs = (d.proposals || []).filter((p) => p && p.title).map((p) => ({ title: String(p.title).slice(0, 120), sphere: String(p.sphere || ''), minutes: Math.max(1, Math.round(Number(p.minutes) || 15)), time: String(p.time || ''), difficulty: DIFFS.includes(p.difficulty) ? p.difficulty : 'normal' }));
     renderDayRecCards(); track('ai:daylog');
   } catch (e) { if (res) res.innerHTML = '<p class="muted">Ошибка сети.</p>'; }
 }
@@ -15285,7 +15307,8 @@ function renderDayRecCards() {
     return `<label class="dayrec-card"><input type="checkbox" data-dayrec="${i}" checked />
       <span class="drc-title">${esc(a.title)}</span>
       <select data-dayrec-sph="${i}" class="drc-sph">${(State.settings.skills || []).map((s) => `<option value="${s.id}" ${s.id === sid ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select>
-      <input type="number" min="1" data-dayrec-min="${i}" class="drc-min" value="${a.minutes}" title="минут" />${a.time ? `<span class="drc-time">${esc(a.time)}</span>` : ''}</label>`;
+      <input type="number" min="1" data-dayrec-min="${i}" class="drc-min" value="${a.minutes}" title="минут" />
+      <select data-dayrec-diff="${i}" class="drc-diff" title="${t('Сложность')}">${[['easy', t('Лёгкая')], ['normal', t('Обычная')], ['hard', t('Сложная')]].map(([v, label]) => `<option value="${v}" ${a.difficulty === v ? 'selected' : ''}>${esc(label)}</option>`).join('')}</select>${a.time ? `<span class="drc-time">${esc(a.time)}</span>` : ''}</label>`;
   }).join('')}</div>
   <div class="propose-actions"><button class="btn" data-action="dayrec-apply">✓ Записать день (${_dayActs.length})</button> <span class="muted" style="font-size:12px">сними галочку, чтобы пропустить дело</span></div>`;
 }
@@ -15305,7 +15328,9 @@ function dayRecApply() {
     const sph = document.querySelector(`[data-dayrec-sph="${i}"]`), min = document.querySelector(`[data-dayrec-min="${i}"]`);
     const skillId = (sph && sph.value) || dayRecSphereId(a.sphere);
     const minutes = Math.max(1, Math.round(Number(min && min.value) || a.minutes));
-    const task = { id: uid(), title: a.title, skillId, skillIds: [skillId], estimateMin: minutes, actualMin: minutes, difficulty: 'normal', date: day, done: true, completedAt: stamp, startTime: a.time || null, desire: null, createdAt: now };
+    const diffEl = document.querySelector(`[data-dayrec-diff="${i}"]`);
+    const difficulty = ['easy', 'normal', 'hard'].includes(diffEl && diffEl.value) ? diffEl.value : (a.difficulty || 'normal');
+    const task = { id: uid(), title: a.title, skillId, skillIds: [skillId], estimateMin: minutes, actualMin: minutes, difficulty, date: day, done: true, completedAt: stamp, startTime: a.time || null, desire: null, createdAt: now };
     task.xpAwarded = Math.max(1, itemXp(task)); task.goldAwarded = itemGold(task);
     State.tasks.push(task); n++;
   });
@@ -16372,6 +16397,17 @@ async function sendChat(text) {
     const r = await fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, messages }) });
     const d = await r.json();
     State._chatBusy = false;
+    // Лимит — не повод терять надиктованное. Сообщение человека ОСТАЁТСЯ в переписке,
+    // а текст возвращается в поле ввода: повторить должно стоить одно нажатие.
+    if (d.error === 'rate_limit') {
+      const sec = Number(d.retryAfter) || 0;
+      State.chatLog.push({ role: 'assistant', content: sec
+        ? `${t('🤖 Модель занята лимитом. Повтори через')} ${sec} ${t('сек — ничего не потеряно')}`
+        : t('🤖 Модель занята лимитом. Повтори через минуту — ничего не потеряно') });
+      renderChatMessages();
+      const back = document.getElementById('chat-input'); if (back) { back.value = text; back.focus(); }
+      return;
+    }
     if (d.error && aiHandleErr(d)) { State.chatLog.pop(); renderChatMessages(); return; }
     if (!r.ok || !d.text) {
       const failure = d.error === 'incomplete_response'
@@ -31826,7 +31862,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v240';
+const PWA_CACHE_VERSION = 'satoru-v241';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

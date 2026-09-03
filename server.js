@@ -1216,6 +1216,20 @@ function resolveAiCall(user, requestedProvider, userKeys, purpose = '') {
 // к следующему поставщику ТОГО ЖЕ источника: ключи человека не смешиваем с домашними,
 // иначе платит не тот, кто думал.
 const AI_ORDER = ['gemini', 'groq', 'anthropic', 'openai'];
+// Лимит бывает СУТОЧНЫЙ и ПОМИНУТНЫЙ, и это разные беды. Поминутный проходит сам за
+// секунды — Gemini прямо пишет «Please retry in 1.5s», и правильный ответ на это подождать,
+// а не показывать человеку стену текста про биллинг. Ждём столько, сколько попросили, но не
+// дольше AI_RETRY_MAX_MS суммарно: держать запрос дольше — это уже не помощь.
+const AI_RETRY_MAX_MS = 12000;
+function aiRetryHintMs(r) {
+  const text = String((r && r.detail) || '');
+  const m = text.match(/retry in\s+([0-9]+(?:\.[0-9]+)?)\s*s/i)
+    || text.match(/"?retryDelay"?\s*[:=]\s*"?([0-9]+(?:\.[0-9]+)?)s/i);
+  if (!m) return 0;
+  const ms = Math.ceil(Number(m[1]) * 1000);
+  return Number.isFinite(ms) && ms > 0 ? ms : 0;
+}
+const aiSleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 function aiRateLimited(r) {
   if (!r || r.ok !== false) return false;
   const status = Number(r.status);
@@ -1235,8 +1249,16 @@ async function aiCallForUser(user, requestedProvider, system, messages, maxToken
     const key = res.source === 'byok' ? userKeys[provider] : houseKeyFor(provider);
     if (!key) continue;
     tried.push(provider);
-    const r = await aiCompleteMessages(provider, { [provider]: key }, system, messages, maxTokens);
-    last = Object.assign({}, r, { source: res.source, provider, tried: tried.slice() });
+    let r = await aiCompleteMessages(provider, { [provider]: key }, system, messages, maxTokens);
+    // Поминутный лимит: подождать и повторить у ТОГО ЖЕ поставщика, пока укладываемся в бюджет.
+    let waited = 0;
+    while (aiRateLimited(r)) {
+      const hint = aiRetryHintMs(r) || 1500;
+      if (waited + hint > AI_RETRY_MAX_MS) break;
+      await aiSleep(hint); waited += hint;
+      r = await aiCompleteMessages(provider, { [provider]: key }, system, messages, maxTokens);
+    }
+    last = Object.assign({}, r, { source: res.source, provider, tried: tried.slice(), waitedMs: waited });
     if (r.ok) {
       if (res.source === 'house') bumpAiUsage(user.id, r.tokens || estimateTokens(system, messages, r.text));
       return last;
@@ -1284,6 +1306,14 @@ function aiErr(res, r) {
   if (r.error === 'not_pro') { sendJson(res, 402, { error: 'not_pro' }); return true; }
   if (r.error === 'quota') { sendJson(res, 402, { error: 'quota', quota: r.quota }); return true; }
   if (!r.ok) {
+    // Лимит — отдельный ответ, а не стена текста про биллинг. Человеку нужно знать одно:
+    // это пройдёт, сколько ждать и что ничего не потеряно.
+    if (aiRateLimited(r)) {
+      const wait = Math.ceil((aiRetryHintMs(r) || 0) / 1000);
+      sendJson(res, 429, { error: 'rate_limit', retryAfter: wait || null,
+        provider: r.provider || '', tried: r.tried || [], waitedMs: r.waitedMs || 0 });
+      return true;
+    }
     // Чей ключ сломался, тот и видит подробности. На СВОЁМ ключе текст провайдера — самая
     // полезная подсказка («ключ неверный», «кончился баланс»), и это его собственный ключ.
     // На ДОМАШНЕМ ключе тот же текст — это чужой секрет и внутренности сервера, поэтому
@@ -1519,7 +1549,7 @@ const AI_CALIB_SYS = `Ты — калибратор уровней в прило
 Верни СТРОГО JSON {"proposals":[{"type":"level","sphere":"<имя сферы>","level":N,"note":"<кратко, на чём основана оценка>"}]}, без markdown и текста вне JSON. Только по сферам, о которых юзер дал информацию. Переиспользуй существующие имена сфер. Текст мог прийти голосом без знаков препинания сплошным потоком — это норма, дели по смысловым маркерам, а не по пунктуации. Язык — русский.`;
 const AI_DAYLOG_SYS = `Ты — помощник «Итог дня голосом» в Satoru. Юзер НАГОВОРИЛ или написал разговорным текстом, что делал за день. Преврати это в список ВЫПОЛНЕННЫХ за сегодня дел.
 
-Верни СТРОГО JSON {"proposals":[{"type":"done","title":"краткое название дела","sphere":"<точное имя сферы юзера или пустая строка>","minutes":N,"time":"HH:MM или пустая строка"}]}, без markdown и текста вне JSON.
+Верни СТРОГО JSON {"proposals":[{"type":"done","title":"краткое название дела","sphere":"<точное имя сферы юзера или пустая строка>","minutes":N,"time":"HH:MM или пустая строка","difficulty":"easy|normal|hard"}]}, без markdown и текста вне JSON.
 
 Правила:
 - Только ОСМЫСЛЕННЫЕ дела (учёба, тренировка, работа, готовка, уборка, встреча, чтение…). Мелочи (умывание, туалет, перекус, переписка) — ПРОПУСКАЙ, не превращай в дела.
@@ -1529,6 +1559,17 @@ const AI_DAYLOG_SYS = `Ты — помощник «Итог дня голосо�
 - Текст мог прийти голосовым распознаванием БЕЗ знаков препинания и заглавных букв — это норма,
   не повод сдаваться. Границы дел ищи по смысловым маркерам («потом», «после этого», «ну и»,
   повтор темы), а не по точкам и запятым: их там может не быть вообще ни одной.
+- difficulty — если названа сложность («сложность нормальная», «полегче», «тяжёлая»), поставь
+  easy | normal | hard. Не названа — normal. «лёгкая/простая» → easy, «сложная/тяжёлая/трудная» → hard.
+- ЧЕЛОВЕК ПОПРАВЛЯЕТ СЕБЯ НА ХОДУ, и это норма живой речи: «час, сложность нормальная. Хотя
+  нет, пусть будет сложная» — значит hard. При противоречии всегда бери ПОСЛЕДНЕЕ сказанное
+  об этом деле, а не первое, и НЕ создавай из поправки второе дело.
+- Одно дело может нести несколько сфер («это ОС и Satoru», «ОС и карьера»): в sphere ставь
+  ПЕРВУЮ подходящую, остальные игнорируй — но дело всё равно верни, а не пропускай.
+- Длительность может прийти как «час», «полтора часа», «три часа», «40 минут» — переводи в
+  минуты (60, 90, 180, 40).
+- Список может быть перечислением через «дальше», «следующая задача», «плюс» — это РАЗНЫЕ
+  дела. Не сливай их в одно и не теряй последнее.
 - Не выдумывай дел, которых не было. Язык — русский. Будь краток и точен.`;
 // Эпизоды (LIFE-CAPTURE-PLAN.md): период вместо дней. Юзер НЕ назначает себе XP — он двигает
 // ползунки интенсивности, опыт выводится из них клиентом. Поэтому здесь оценивается ТОЛЬКО

@@ -178,5 +178,5 @@ test('Shadow Voice remains accessible after the v146 shell update', () => {
   assert.match(voiceClient, /dataset\.shadowVoiceIdleHtml = button\.innerHTML/);
   assert.match(voiceClient, /innerHTML = button\.dataset\.shadowVoiceIdleHtml/);
   assert.match(css, /\.shadow-voice-choice[\s\S]*?min-height: 42px/);
-  assert.match(sw, /const CACHE = 'satoru-v240'/);
+  assert.match(sw, /const CACHE = 'satoru-v241'/);
 });
