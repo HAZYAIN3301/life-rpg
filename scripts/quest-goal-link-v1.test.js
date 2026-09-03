@@ -94,8 +94,8 @@ test('the module is loaded before app.js and cached once for offline', () => {
   assert.ok(moduleAt >= 0, 'index must load quest-goal-link-v1.js');
   assert.ok(INDEX.indexOf('src="app.js') > moduleAt, 'app.js must run after the module it calls');
   assert.equal((SW.match(/'quest-goal-link-v1\.js'/g) || []).length, 1, 'SHELL must pin the module exactly once');
-  assert.match(SW, /const CACHE = 'satoru-v241'/, 'новый файл в SHELL обязан поднять версию кэша');
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v241'/);
+  assert.match(SW, /const CACHE = 'satoru-v242'/, 'новый файл в SHELL обязан поднять версию кэша');
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v242'/);
 });
 
 test('the day names the goal on the quest row itself, not only inside «•••»', () => {

@@ -1545,6 +1545,14 @@ const I18N_EXTRA = {
   'Не удалось сохранить. Ничего не изменено — повтори попытку.': { en: 'Could not save. Nothing changed; try again.', de: 'Speichern fehlgeschlagen. Nichts wurde geändert; versuche es erneut.', uk: 'Не вдалося зберегти. Нічого не змінено — спробуй ще раз.', es: 'No se pudo guardar. Nada cambió; inténtalo de nuevo.' },
   'Файл данных на сервере не читается. Перезагрузка не поможет — ничего не изменено, сообщи об этом.': { en: 'A data file on the server cannot be read. Reloading will not help — nothing was changed, please report it.', de: 'Eine Datendatei auf dem Server ist nicht lesbar. Neuladen hilft nicht — es wurde nichts geändert, bitte melde es.', uk: 'Файл даних на сервері не читається. Перезавантаження не допоможе — нічого не змінено, повідом про це.', es: 'Un archivo de datos del servidor no se puede leer. Recargar no ayudará: no se cambió nada, avísanos.' },
   'Другое устройство успело записать раньше. Согласовать сам не смог — ничего не потеряно, повтори.': { en: 'Another device wrote first. I could not reconcile it myself — nothing is lost, try again.', de: 'Ein anderes Gerät hat zuerst geschrieben. Ich konnte es nicht selbst abgleichen — nichts ist verloren, versuche es erneut.', uk: 'Інший пристрій записав раніше. Узгодити сам не зміг — нічого не втрачено, спробуй ще раз.', es: 'Otro dispositivo escribió antes. No pude reconciliarlo yo mismo: no se perdió nada, inténtalo otra vez.' },
+  'В данных есть повреждённые символы': { en: 'Your data contains damaged characters', de: 'Deine Daten enthalten beschädigte Zeichen', uk: 'У даних є пошкоджені символи', es: 'Tus datos contienen caracteres dañados' },
+  'Причина устранена. Могу восстановить из твоих резервных копий — только то, что там есть целым; выдумывать текст не буду.': { en: 'The cause is fixed. I can restore from your own backups — only what is intact there; I will not invent text.', de: 'Die Ursache ist behoben. Ich kann aus deinen Backups wiederherstellen — nur was dort unversehrt ist; erfundenen Text gibt es nicht.', uk: 'Причину усунуто. Можу відновити з твоїх резервних копій — лише те, що там ціле; вигадувати текст не буду.', es: 'La causa está corregida. Puedo restaurar desde tus copias — solo lo que esté intacto; no inventaré texto.' },
+  'Восстановить из копий': { en: 'Restore from backups', de: 'Aus Backups wiederherstellen', uk: 'Відновити з копій', es: 'Restaurar desde copias' },
+  'Восстанавливаю…': { en: 'Restoring…', de: 'Stelle wieder her…', uk: 'Відновлюю…', es: 'Restaurando…' },
+  'Восстановление не удалось. Данные не тронуты.': { en: 'Restore failed. Your data was not touched.', de: 'Wiederherstellung fehlgeschlagen. Deine Daten blieben unberührt.', uk: 'Відновлення не вдалося. Дані не змінено.', es: 'La restauración falló. Tus datos no se tocaron.' },
+  'Восстановлено': { en: 'Restored', de: 'Wiederhergestellt', uk: 'Відновлено', es: 'Restaurado' },
+  'Осталось мест без целой копии': { en: 'Spots with no intact copy left', de: 'Stellen ohne unversehrte Kopie', uk: 'Місць без цілої копії', es: 'Puntos sin copia intacta' },
+  'Повреждений не осталось': { en: 'No damage left', de: 'Keine Schäden mehr', uk: 'Пошкоджень не залишилось', es: 'No queda daño' },
   'Найдены повреждённые символы в данных': { en: 'Damaged characters found in your data', de: 'Beschädigte Zeichen in deinen Daten gefunden', uk: 'Знайдено пошкоджені символи в даних', es: 'Se encontraron caracteres dañados en tus datos' },
   'Причина устранена, старые места нужно поправить вручную.': { en: 'The cause is fixed; the old spots need manual correction.', de: 'Die Ursache ist behoben; die alten Stellen musst du manuell korrigieren.', uk: 'Причину усунуто, старі місця треба виправити вручну.', es: 'La causa está corregida; los puntos antiguos hay que arreglarlos a mano.' },
   'Данные изменились в другой вкладке. Обнови страницу и повтори.': { en: 'The data changed in another tab. Reload and try again.', de: 'Die Daten wurden in einem anderen Tab geändert. Lade neu und versuche es erneut.', uk: 'Дані змінилися в іншій вкладці. Онови сторінку й спробуй ще раз.', es: 'Los datos cambiaron en otra pestaña. Recarga e inténtalo de nuevo.' },
@@ -16479,10 +16487,44 @@ function reportDataDamageOnce() {
   if (_dataDamageReported) return;
   _dataDamageReported = true;
   const damage = scanDataDamage();
+  State._dataDamage = damage.length ? damage : null;
   if (!damage.length) { console.info('[осмотр данных] порчи не найдено'); return; }
   const total = damage.reduce((sum, d) => sum + d.count, 0);
   console.warn('[осмотр данных] испорченных символов:', total, damage.map((d) => `${d.area}: ${d.count}`).join(', '));
-  toast(`${t('Найдены повреждённые символы в данных')}: ${total}. ${t('Причина устранена, старые места нужно поправить вручную.')}`);
+}
+// Заметка о порче — не тост, а карточка с действием: тост исчезает, а дырка в данных нет.
+function dataDamageNoticeHTML() {
+  const damage = State._dataDamage;
+  if (!damage || !damage.length) return '';
+  const total = damage.reduce((sum, d) => sum + d.count, 0);
+  const where = damage.map((d) => `${d.area}: ${d.count}`).join(', ');
+  return `<section class="card data-damage-card" role="status">
+    <h3>${esc(t('В данных есть повреждённые символы'))}: ${total}</h3>
+    <p class="muted">${esc(where)}. ${esc(t('Причина устранена. Могу восстановить из твоих резервных копий — только то, что там есть целым; выдумывать текст не буду.'))}</p>
+    <div class="propose-actions">
+      <button type="button" class="btn" data-action="damage-repair"${State._damageBusy ? ' disabled' : ''}>${esc(State._damageBusy ? t('Восстанавливаю…') : t('Восстановить из копий'))}</button>
+      <button type="button" class="btn ghost" data-action="damage-dismiss">${esc(t('Позже'))}</button>
+    </div></section>`;
+}
+async function repairDataDamage() {
+  if (State._damageBusy) return;
+  State._damageBusy = true; render();
+  try {
+    const r = await fetch('/api/account/repair-damage', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ apply: true }),
+    });
+    const d = await r.json();
+    if (!r.ok || !d.ok) { toast(t('Восстановление не удалось. Данные не тронуты.')); return; }
+    console.warn('[ремонт данных]', JSON.stringify(d.report));
+    const left = Math.max(0, Number(d.total || 0) - Number(d.done || 0));
+    toast(left
+      ? `${t('Восстановлено')}: ${d.done}. ${t('Осталось мест без целой копии')}: ${left}`
+      : `${t('Восстановлено')}: ${d.done}. ${t('Повреждений не осталось')}`);
+    await initApp();
+    _dataDamageReported = false; reportDataDamageOnce();
+  } catch (error) {
+    console.error('repair damage', error); toast(t('Восстановление не удалось. Данные не тронуты.'));
+  } finally { State._damageBusy = false; render(); }
 }
 function validateInboxPayload(value) {
   if (!Array.isArray(value)) return false;
@@ -20280,7 +20322,7 @@ function boardTakenLineHTML() {
   </div>`;
   if (tab === 'board') return `<div class="today-shell board-shell">${tabs}<section id="today-panel-day" role="tabpanel" aria-labelledby="today-tab-day" hidden></section><section id="today-panel-board" class="today-board-panel" role="tabpanel" aria-labelledby="today-tab-board">${boardScreenHTML()}</section></div>`;
   return `<div class="today-shell">${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>${browserCompanionLaunchHTML()}
-    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dayNavStripHTML(today)}${todayHero}${captureBar()}${overdueSurface}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
+    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${dayNavStripHTML(today)}${todayHero}${captureBar()}${overdueSurface}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
     <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}</aside>
     <div class="today-footer">${shutdownCard}</div>
   </div>`;
@@ -30248,6 +30290,8 @@ async function onClick(e) {
   } else if (action === 'cap-voice') { startCapture('voice');
   } else if (action === 'cap-video') { startCapture('video');
   } else if (action === 'cap-stop') { stopCapture();
+  } else if (action === 'damage-repair') { repairDataDamage();
+  } else if (action === 'damage-dismiss') { State._dataDamage = null; render();
   } else if (action === 'goto-notes') { State.view = 'notes'; track('view:notes'); render();
   } else if (action === 'ai-review') { runWeeklyReview();
   } else if (action === 'ai-import-goals') { openProposeModal('goals');
@@ -31862,7 +31906,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v241';
+const PWA_CACHE_VERSION = 'satoru-v242';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -17,6 +17,7 @@ const BoardV2AccountService = require('./server-board-v2-service-v1.js');
 const BoardV2Community = require('./server-board-v2-community-v1.js');
 const BoardV2Offers = require('./public/board-v2-offers.js');
 const GoalsInitiativesV1 = require('./public/goals-initiatives-v1.js');
+const DamageRepairV1 = require('./public/damage-repair-v1.js');
 const FounderPassV1 = require('./public/founder-pass-v1.js');
 const SecretaryEventsV1 = require('./public/secretary-events-v1.js');
 const SecretaryRouterV1 = require('./public/secretary-router-v1.js');
@@ -5311,6 +5312,58 @@ const server = http.createServer(async (req, res) => {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
     return sendJson(res, 200, Object.assign({ houseAvailable: houseAvailable() }, aiQuota(user)));
+  }
+  // Ремонт порчи от разрыва многобайтовых символов (DEVLOG 03.09). Чиним ТОЛЬКО тем, что
+  // лежит в бэкапах этого же аккаунта: потерянные байты не восстановимы, и выдумывать текст
+  // человеку в его же данных нельзя. Без ?apply=1 только отчёт, ничего не пишем.
+  if (u === '/api/account/repair-damage' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let body = {}; try { body = JSON.parse(await readBody(req, 8 * 1024)); } catch { body = {}; }
+    const apply = body.apply === true;
+    const dir = userDataDir(uid);
+    const report = [];
+    try {
+      for (const name of ACCOUNT_PORTABLE_FILES) {
+        const file = path.join(dir, `${name}.json`);
+        if (!fs.existsSync(file)) continue;
+        let current; try { current = JSON.parse(fs.readFileSync(file, 'utf8')); } catch { continue; }
+        if (!JSON.stringify(current).includes(DamageRepairV1.MARK)) continue;
+        const bdir = backupDir(dir, name);
+        const backups = [];
+        try {
+          for (const f of fs.readdirSync(bdir).filter((x) => x.endsWith('.json')).sort().reverse()) {
+            try { backups.push({ label: f.replace('.json', ''), value: JSON.parse(fs.readFileSync(path.join(bdir, f), 'utf8')) }); } catch {}
+          }
+        } catch {}
+        const planned = DamageRepairV1.planRepair(current, backups);
+        const row = { file: name, spots: planned.spots, repairable: planned.repairable, applied: 0, backups: backups.length };
+        if (apply && planned.repairable) {
+          const fixed = DamageRepairV1.applyRepair(current, planned.plan);
+          if (fixed.applied) {
+            // Не .includes(name): этой строкой тест сторожит генерик-писатель ниже, и первое
+            // совпадение должно оставаться за ним.
+            if (COMMITMENT_PAIR_NAMES.indexOf(name) !== -1) {
+              const actual = commitmentActualPair(uid);
+              const pair = { settings: name === 'settings' ? fixed.value : (actual.settings.exists ? actual.settings.value : {}),
+                tasks: name === 'tasks' ? fixed.value : (actual.tasks.exists ? actual.tasks.value : []) };
+              commitCommitmentGraphDurable(uid, { protected: true, names: COMMITMENT_PAIR_NAMES.slice(), actual, data: pair });
+            } else {
+              backupFile(dir, name);
+              writeJsonAtomic(file, fixed.value);
+            }
+            row.applied = fixed.applied;
+          }
+        }
+        report.push(row);
+      }
+    } catch (error) {
+      console.error('[repair]', scrubSecrets(error && error.message));
+      return sendJson(res, 500, { error: 'repair_failed', report });
+    }
+    const total = report.reduce((sum, r) => sum + r.spots, 0);
+    const fixable = report.reduce((sum, r) => sum + r.repairable, 0);
+    const done = report.reduce((sum, r) => sum + r.applied, 0);
+    return sendJson(res, 200, { ok: true, apply, total, fixable, done, report });
   }
   if (u === '/api/ai/analyze' && req.method === 'POST') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
