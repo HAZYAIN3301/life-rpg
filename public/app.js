@@ -1544,6 +1544,7 @@ const I18N_EXTRA = {
   'Отметка возвращена': { en: 'Habit mark restored', de: 'Markierung zurückgesetzt', uk: 'Позначку повернено', es: 'Marca restaurada' },
   'Не удалось сохранить. Ничего не изменено — повтори попытку.': { en: 'Could not save. Nothing changed; try again.', de: 'Speichern fehlgeschlagen. Nichts wurde geändert; versuche es erneut.', uk: 'Не вдалося зберегти. Нічого не змінено — спробуй ще раз.', es: 'No se pudo guardar. Nada cambió; inténtalo de nuevo.' },
   'Файл данных на сервере не читается. Перезагрузка не поможет — ничего не изменено, сообщи об этом.': { en: 'A data file on the server cannot be read. Reloading will not help — nothing was changed, please report it.', de: 'Eine Datendatei auf dem Server ist nicht lesbar. Neuladen hilft nicht — es wurde nichts geändert, bitte melde es.', uk: 'Файл даних на сервері не читається. Перезавантаження не допоможе — нічого не змінено, повідом про це.', es: 'Un archivo de datos del servidor no se puede leer. Recargar no ayudará: no se cambió nada, avísanos.' },
+  'Другое устройство успело записать раньше. Согласовать сам не смог — ничего не потеряно, повтори.': { en: 'Another device wrote first. I could not reconcile it myself — nothing is lost, try again.', de: 'Ein anderes Gerät hat zuerst geschrieben. Ich konnte es nicht selbst abgleichen — nichts ist verloren, versuche es erneut.', uk: 'Інший пристрій записав раніше. Узгодити сам не зміг — нічого не втрачено, спробуй ще раз.', es: 'Otro dispositivo escribió antes. No pude reconciliarlo yo mismo: no se perdió nada, inténtalo otra vez.' },
   'Данные изменились в другой вкладке. Обнови страницу и повтори.': { en: 'The data changed in another tab. Reload and try again.', de: 'Die Daten wurden in einem anderen Tab geändert. Lade neu und versuche es erneut.', uk: 'Дані змінилися в іншій вкладці. Онови сторінку й спробуй ще раз.', es: 'Los datos cambiaron en otra pestaña. Recarga e inténtalo de nuevo.' },
   'Не удалось отменить. Запись сохранена, можно повторить.': { en: 'Undo failed. The entry is still saved; you can retry.', de: 'Rückgängig fehlgeschlagen. Der Eintrag bleibt gespeichert; du kannst es erneut versuchen.', uk: 'Не вдалося скасувати. Запис збережено, можна повторити.', es: 'No se pudo deshacer. La entrada sigue guardada; puedes reintentarlo.' },
   'Изменения привычек заблокированы до восстановления данных': { en: 'Habit changes are blocked until the data is recovered', de: 'Änderungen an Gewohnheiten sind bis zur Datenwiederherstellung gesperrt', uk: 'Зміни звичок заблоковані до відновлення даних', es: 'Los cambios de hábitos están bloqueados hasta recuperar los datos' },
@@ -5108,13 +5109,19 @@ async function refreshCommitmentWriteBase({ writeEpoch, accountId } = {}) {
   State.tasks = tasksLoad.value;
   return true;
 }
-async function commitmentBoundaryRejected(response) {
+async function commitmentBoundaryRejected(response, { retried = false } = {}) {
   if (!response || ![409, 428].includes(response.status)) return false;
   State._commitmentConflict = true;
   const code = await commitmentBoundaryCode(response);
   State._commitmentBoundaryCode = code;
   if (response.status === 409 && code === 'commitment_data_corrupt') {
     toast(t('Файл данных на сервере не читается. Перезагрузка не поможет — ничего не изменено, сообщи об этом.'));
+    return true;
+  }
+  // Путь, который уже перечитал базу и пересобрал изменение, не имеет права советовать
+  // «обнови страницу»: страницу он уже обновил сам, и совет отправил бы по кругу.
+  if (response.status === 409 && retried) {
+    toast(t('Другое устройство успело записать раньше. Согласовать сам не смог — ничего не потеряно, повтори.'));
     return true;
   }
   toast(response.status === 409
@@ -5350,7 +5357,7 @@ const Store = {
               if (response.status === 401) { handleAccountSessionExpired(); return false; }
             }
           }
-          if (await commitmentBoundaryRejected(response)) return false;
+          if (await commitmentBoundaryRejected(response, { retried: true })) return false;
           if (!response.ok || !rememberDedicatedCommitSlots(pair, { writeEpoch, accountId })) return false;
           if (typeof applyCommitted === 'function' && await applyCommitted(value) === false) return false;
           return true;
@@ -5659,7 +5666,7 @@ async function commitmentDataCommit(build, focusSelector = '') {
       if (attempt === 0 && response.status === 409
         && await commitmentBoundaryCode(response) === 'commitment_revision_conflict'
         && await refreshCommitmentWriteBase({ writeEpoch, accountId })) continue;
-      if (await commitmentBoundaryRejected(response)) return false;
+      if (await commitmentBoundaryRejected(response, { retried: attempt > 0 })) return false;
       if (!response.ok || !rememberDedicatedCommitSlots(candidate, { writeEpoch, accountId })) return false;
       State.settings = candidate.settings;
       State.tasks = candidate.tasks;
@@ -31637,7 +31644,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v226';
+const PWA_CACHE_VERSION = 'satoru-v227';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

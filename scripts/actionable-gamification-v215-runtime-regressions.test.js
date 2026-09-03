@@ -245,7 +245,7 @@ test('ordinary protected settings/tasks writes use the paired commitment endpoin
     'protected Store writes still use a single-file endpoint');
   assert.match(source, /validateCommitPayload\(payload\)/, 'paired Store candidate bypasses the strict graph validator');
   assert.match(source, /rememberDedicatedCommitSlots\(pair/, 'successful paired Store writes do not advance both snapshots');
-  assert.match(source, /commitmentBoundaryRejected\(response\)/, 'paired Store writes do not expose revision conflicts');
+  assert.match(source, /commitmentBoundaryRejected\(response[,)]/, 'paired Store writes do not expose revision conflicts');
 });
 
 test('every dedicated graph writer attaches the same base and locks both graph slots', () => {
@@ -256,12 +256,12 @@ test('every dedicated graph writer attaches the same base and locks both graph s
     const source = functionSource(APP, name);
     assert.match(source, /dedicatedCommitPayload\s*\(/, `${name} omits the shared graph envelope`);
     assert.match(source, /['"]settings['"][\s\S]{0,220}['"]tasks['"]|['"]tasks['"][\s\S]{0,220}['"]settings['"]/, `${name} does not lock both graph slots`);
-    assert.match(source, /commitmentBoundaryRejected\(response\)/, `${name} swallows a stale-base response`);
+    assert.match(source, /commitmentBoundaryRejected\(response[,)]/, `${name} swallows a stale-base response`);
   }
   const questionnaire = functionSource(APP, 'questionnaireCommit');
   assert.match(questionnaire, /const\s+base\s*=\s*commitmentWriteBase\(\)/);
   assert.match(questionnaire, /\bbase\s*,/);
-  assert.match(questionnaire, /commitmentBoundaryRejected\(response\)/);
+  assert.match(questionnaire, /commitmentBoundaryRejected\(response[,)]/);
 });
 
 test('account reset archives quest commitments and import/reset carry the exact base', () => {
@@ -338,7 +338,7 @@ test('AI proposal import sends one exact five-domain candidate under one lock', 
   assert.match(commit, /const payload\s*=\s*\{\s*base\s*,\s*data\s*\}/, 'proposal transaction does not send the five-file envelope');
   assert.doesNotMatch(commit, /dedicatedCommitPayload\(data\)/, 'proposal transaction silently falls back to the pair-only base');
   assert.match(commit, /fetch\(['"]\/api\/goals\/commit['"]/, 'proposal import bypasses the dedicated server transaction');
-  assert.match(commit, /commitmentBoundaryRejected\(response\)/, 'proposal import swallows stale-base conflicts');
+  assert.match(commit, /commitmentBoundaryRejected\(response[,)]/, 'proposal import swallows stale-base conflicts');
   assert.match(commit, /rememberDedicatedCommitSlots\(data/, 'proposal import does not advance the confirmed pair base');
 });
 
