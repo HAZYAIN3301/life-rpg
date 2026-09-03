@@ -48,7 +48,7 @@ assert.match(index, /den-stage-v1\.js\?v=20260815-den-life-v158-1/);
 assert.match(index, /body-toad-v1\.js\?v=20260826-appearance-feedback-v183-1/);
 assert.match(index, /recovery-slug-v1\.js\?v=20260826-appearance-feedback-v183-1/);
 assert.match(index, /resources-penguin-v1\.js\?v=20260819-traveller-f2-runtime-v167-1/);
-assert.match(sw, /const CACHE = 'satoru-v228';/);
+assert.match(sw, /const CACHE = 'satoru-v229';/);
 
 function classList() {
   const values = new Set();

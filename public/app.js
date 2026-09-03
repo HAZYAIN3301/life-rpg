@@ -5111,9 +5111,29 @@ async function reportCommitmentConflict(slot) {
     const theirs = await (await fetch(`/api/data/${slot}`)).json();
     if (!mine || !mine.exists) { console.warn('[конфликт]', slot, 'моего снимка нет'); return; }
     if (slot === 'tasks') {
-      const a = (mine.value || []).map((t) => String(t && t.id)), b = (theirs || []).map((t) => String(t && t.id));
-      console.warn('[конфликт] tasks', { уМеня: a.length, наСервере: b.length,
-        толькоУМеня: a.filter((x) => !b.includes(x)), толькоНаСервере: b.filter((x) => !a.includes(x)) });
+      const mineList = mine.value || [], theirsList = theirs || [];
+      const a = mineList.map((t) => String(t && t.id)), b = theirsList.map((t) => String(t && t.id));
+      const byId = new Map(theirsList.map((t) => [String(t && t.id), t]));
+      const differing = [];
+      for (const task of mineList) {
+        const other = byId.get(String(task && task.id));
+        if (!other || JSON.stringify(task) === JSON.stringify(other)) continue;
+        const keys = [...new Set([...Object.keys(task || {}), ...Object.keys(other || {})])];
+        differing.push({
+          id: String(task && task.id),
+          толькоУМеня: keys.filter((k) => (k in task) && !(k in other)),
+          толькоНаСервере: keys.filter((k) => !(k in task) && (k in other)),
+          различаются: keys.filter((k) => (k in task) && (k in other)
+            && JSON.stringify(task[k]) !== JSON.stringify(other[k])),
+        });
+        if (differing.length >= 3) break;
+      }
+      console.warn('[конфликт] tasks', {
+        уМеня: a.length, наСервере: b.length,
+        толькоУМеня: a.filter((x) => !b.includes(x)), толькоНаСервере: b.filter((x) => !a.includes(x)),
+        порядокСовпадает: a.join(',') === b.join(','),
+        различающихсяЗадач: differing.length, первые: differing,
+      });
       return;
     }
     const a = mine.value || {}, b = theirs || {};
@@ -31677,7 +31697,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v228';
+const PWA_CACHE_VERSION = 'satoru-v229';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
