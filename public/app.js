@@ -5096,8 +5096,8 @@ async function commitmentBoundaryInfo(response) {
   try {
     const body = await response.clone().json() || {};
     const slot = ['settings', 'tasks'].includes(body.slot) ? body.slot : '';
-    return { code: String(body.error || ''), slot };
-  } catch { return { code: '', slot: '' }; }
+    return { code: String(body.error || ''), slot, detail: body.detail || null };
+  } catch { return { code: '', slot: '', detail: null }; }
 }
 async function commitmentBoundaryCode(response) {
   return (await commitmentBoundaryInfo(response)).code;
@@ -5176,7 +5176,11 @@ async function commitmentBoundaryRejected(response, { retried = false, base = nu
   // Путь, который уже перечитал базу и пересобрал изменение, не имеет права советовать
   // «обнови страницу»: страницу он уже обновил сам, и совет отправил бы по кругу.
   if (response.status === 409 && retried) {
-    const { slot } = await commitmentBoundaryInfo(response);
+    const { slot, detail } = await commitmentBoundaryInfo(response);
+    if (detail) {
+      const f = (d) => d ? `хэш=${d.hash} байт=${d.len} есть=${d.exists} эл=${d.items}` : 'нет';
+      console.warn(`[конфликт] сервер: ${f(detail.actual)} | клиент: ${f(detail.base)}`);
+    }
     await reportCommitmentConflict(slot, base);
     toast(t('Другое устройство успело записать раньше. Согласовать сам не смог — ничего не потеряно, повтори.')
       + (slot ? ` (${slot})` : ''));
@@ -31704,7 +31708,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v231';
+const PWA_CACHE_VERSION = 'satoru-v232';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

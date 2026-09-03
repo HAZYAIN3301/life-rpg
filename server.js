@@ -2814,6 +2814,7 @@ function sendCommitmentBoundaryError(res, error) {
   if (!error || !error.commitmentBoundary) return false;
   const body = { error: error.message };
   if (error.slot) body.slot = String(error.slot);
+  if (error.detail) body.detail = error.detail;
   sendJson(res, Number(error.status) || 500, body);
   return true;
 }
@@ -2909,10 +2910,20 @@ function assertAccountGraphTransition(uid, payload) {
   }
   for (const name of COMMITMENT_PAIR_NAMES) {
     if (questionnaireHash(actual[name]) !== questionnaireHash(base[name])) {
-      // Имя половины — это механика, а не данные: без него разбор конфликта сводится
-      // к гаданию, какой из двух файлов разошёлся (DEVLOG 03.09).
+      // Имя половины и отпечатки — это механика, а не данные: без них разбор конфликта
+      // сводится к гаданию (DEVLOG 03.09). Отдаём длину сериализации и префикс хэша с
+      // обеих сторон — по ним видно, отличается ли содержимое или только его форма.
       const error = commitmentBoundaryError('commitment_revision_conflict', 409);
       error.slot = name;
+      const fingerprint = (value) => {
+        try {
+          return { hash: questionnaireHash(value).slice(0, 12),
+            len: Buffer.byteLength(JSON.stringify(value === undefined ? null : value)),
+            exists: !!(value && value.exists),
+            items: Array.isArray(value && value.value) ? value.value.length : null };
+        } catch { return { hash: 'ошибка', len: -1, exists: false, items: null }; }
+      };
+      error.detail = { actual: fingerprint(actual[name]), base: fingerprint(base[name]) };
       throw error;
     }
   }
