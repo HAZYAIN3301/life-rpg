@@ -101,8 +101,8 @@ test('the module is loaded before app.js and cached once for offline', () => {
   const at = INDEX.indexOf('src="board-day-line-v1.js');
   assert.ok(at >= 0 && INDEX.indexOf('src="app.js') > at);
   assert.equal((SW.match(/'board-day-line-v1\.js'/g) || []).length, 1);
-  assert.match(SW, /const CACHE = 'satoru-v235'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v235'/);
+  assert.match(SW, /const CACHE = 'satoru-v236'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v236'/);
 });
 
 test('the line lives inside the quests card, not as another card beside it', () => {

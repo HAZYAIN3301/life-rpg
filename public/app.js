@@ -5426,6 +5426,22 @@ const Store = {
               if (response.status === 401) { handleAccountSessionExpired(); return false; }
             }
           }
+          // Примирение, как в commitmentDataCommit: если и пересборка на свежей базе
+          // получила отказ, базу строит сам сервер. Иначе аккаунт заперт навсегда.
+          if (response.status === 409
+            && await commitmentBoundaryCode(response) === 'commitment_revision_conflict'
+            && await refreshCommitmentWriteBase({ writeEpoch, accountId })) {
+            const freshPair = commitmentWriteData(name, value);
+            if (freshPair) {
+              pair = freshPair; sentBase = null;
+              response = await fetch('/api/commitments/commit', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ base: 'server', data: freshPair }),
+              });
+              if (response.status === 401) { handleAccountSessionExpired(); return false; }
+              if (response.ok) console.warn('[конфликт] примирение: запись прошла на серверной базе');
+            }
+          }
           if (await commitmentBoundaryRejected(response, { retried: true, base: sentBase })) return false;
           if (!response.ok || !rememberDedicatedCommitSlots(pair, { writeEpoch, accountId })) return false;
           if (typeof applyCommitted === 'function' && await applyCommitted(value) === false) return false;
@@ -31716,7 +31732,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v235';
+const PWA_CACHE_VERSION = 'satoru-v236';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -1,7 +1,7 @@
 /* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    App shell: network-first. Art/media: cache-first. /api/: always live network.
    Bump CACHE whenever the shell or a stable asset URL changes. */
-const CACHE = 'satoru-v235';
+const CACHE = 'satoru-v236';
 const ECONOMY_ICON_SHELL = [
   ...'allspheres_5 avatar_custom balanced balanced_90 capstone_first clean_30 clean_7 cofounder_10 collector_5 early_bird first_goal first_habit first_note first_quest first_reward focus_10h full_spectrum gear_full goals_10 gold_500 habit_100 legendary_drop level_10 level_20 level_30 level_5 marathon_day mission_set new_year night_owl path_chosen quests_100 quests_250 quests_50 reporter_3 skill_master skills_all3 skills_all5 sphere_lvl10 streak_100 streak_30 streak_7 tree_full wear_first weekend_warrior xp_1000 xp_25000 xp_5000'.split(' ').map((id) => `art/icons/content-raster-v208/achievements/${id}.png`),
   ...'banya bath boardgames boba book breakfast cake chocolate clothes coffee concert course decor delivery drawing episode event gadget game hobby icecream meditation movie music pizza restaurant sleep small-purchase spa vacation walk weekend-trip wishlist'.split(' ').map((id) => `art/icons/content-raster-v208/rewards/${id}.png`),
