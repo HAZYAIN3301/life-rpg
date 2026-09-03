@@ -163,13 +163,20 @@ function staticCacheControl(urlPath, rel, ext) {
   // deploy cannot strand an installed PWA on an old application shell.
   return 'no-cache';
 }
+// 🔴 Куски тела запроса СКЛАДЫВАЮТСЯ КАК БАЙТЫ и декодируются один раз в конце.
+// Было `data += c`, где c — Buffer: каждый кусок превращался в строку отдельно, и
+// многобайтовый символ на границе кусков разрывался пополам — оба огрызка становились
+// U+FFFD. Тело больше ~16 КБ рвётся на куски всегда, поэтому КАЖДАЯ большая запись
+// молча портила по символу на каждой границе, и порча уходила на диск. Отсюда же брался
+// вечный конфликт версий: у клиента «счета», в файле «��чета» (DEVLOG 03.09).
 function readBody(req, maxBytes) {
   const cap = maxBytes || 5 * 1024 * 1024;
   return new Promise((resolve, reject) => {
-    let data = '', bytes = 0, rejected = false;
+    const chunks = []; let bytes = 0, rejected = false;
     req.on('data', c => {
       if (rejected) return;
-      bytes += Buffer.byteLength(c);
+      const chunk = Buffer.isBuffer(c) ? c : Buffer.from(c);
+      bytes += chunk.length;
       if (bytes > cap) {
         rejected = true;
         const error = new Error('payload too large');
@@ -177,9 +184,9 @@ function readBody(req, maxBytes) {
         reject(error);
         return;
       }
-      data += c;
+      chunks.push(chunk);
     });
-    req.on('end', () => { if (!rejected) resolve(data); });
+    req.on('end', () => { if (!rejected) resolve(Buffer.concat(chunks).toString('utf8')); });
     req.on('error', error => { if (!rejected) reject(error); });
   });
 }
@@ -834,7 +841,7 @@ function sendWebPush(sub, payloadObj) {
       const r = https.request({ host: url.host, path: url.pathname + url.search, method: 'POST', headers: {
         'Authorization': `vapid t=${vapidJWT(sub.endpoint)}, k=${loadVapid().pubB64}`,
         'Content-Encoding': 'aes128gcm', 'Content-Type': 'application/octet-stream', 'TTL': '86400', 'Content-Length': body.length,
-      } }, (resp) => { let d = ''; resp.on('data', (c) => d += c); resp.on('end', () => resolve({ status: resp.statusCode, body: d.slice(0, 300) })); });
+      } }, (resp) => { const ch = []; resp.on('data', (c) => ch.push(Buffer.isBuffer(c) ? c : Buffer.from(c))); resp.on('end', () => resolve({ status: resp.statusCode, body: Buffer.concat(ch).toString('utf8').slice(0, 300) })); });
       r.on('error', (e) => resolve({ status: 0, error: String(e.message || e) })); r.write(body); r.end();
     } catch (e) { resolve({ status: 0, error: String(e.message || e) }); }
   });
@@ -3234,7 +3241,7 @@ function stravaTokenRequest(params) {
     const body = Buffer.from(new URLSearchParams(params).toString());
     const r = https.request({ host: 'www.strava.com', path: '/oauth/token', method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': body.length } }, (resp) => {
-      let d = ''; resp.on('data', (c) => d += c); resp.on('end', () => { let j = {}; try { j = JSON.parse(d || '{}'); } catch {} resolve({ status: resp.statusCode, json: j }); });
+      const ch = []; resp.on('data', (c) => ch.push(Buffer.isBuffer(c) ? c : Buffer.from(c))); resp.on('end', () => { const d = Buffer.concat(ch).toString('utf8'); let j = {}; try { j = JSON.parse(d || '{}'); } catch {} resolve({ status: resp.statusCode, json: j }); });
     });
     r.on('error', (e) => resolve({ status: 0, json: { error: String(e.message || e) } }));
     r.write(body); r.end();
@@ -3244,7 +3251,7 @@ function stravaTokenRequest(params) {
 function stravaApiGet(pathName, token) {
   return new Promise((resolve) => {
     const r = https.request({ host: 'www.strava.com', path: pathName, method: 'GET', headers: { 'Authorization': 'Bearer ' + token } }, (resp) => {
-      let d = ''; resp.on('data', (c) => d += c); resp.on('end', () => { let j = null; try { j = JSON.parse(d || 'null'); } catch {} resolve({ status: resp.statusCode, json: j }); });
+      const ch = []; resp.on('data', (c) => ch.push(Buffer.isBuffer(c) ? c : Buffer.from(c))); resp.on('end', () => { const d = Buffer.concat(ch).toString('utf8'); let j = null; try { j = JSON.parse(d || 'null'); } catch {} resolve({ status: resp.statusCode, json: j }); });
     });
     r.on('error', (e) => resolve({ status: 0, json: { error: String(e.message || e) } }));
     r.end();
