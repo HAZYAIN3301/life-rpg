@@ -5851,7 +5851,18 @@ const server = http.createServer(async (req, res) => {
         if (COMMITMENT_JOURNAL_ALLOWED_NAMES.includes(name)) recoverCommitmentJournal(am[1]);
         if (COMMITMENT_PAIR_NAMES.includes(name)) {
           const candidate = JSON.parse(fs.readFileSync(bfile, 'utf8'));
-          assertAccountGraphTransition(am[1], { data: { [name]: candidate } });
+          // База здесь — текущее состояние файлов, а не снимок из браузера, и это
+          // не послабление. Откат не оптимистическая запись: он не «сохраняю поверх
+          // того, что видел», а «заменяю то, что лежит сейчас, вот этим». Клиентской
+          // базы у него быть не может, и требовать её значило заблокировать
+          // единственный путь спасения ровно у тех аккаунтов, которым он нужен:
+          // граф уговоров есть — значит откат всегда отвечал 428. Проверки формы и
+          // содержимого при этом остаются, меняется только источник базы.
+          const actual = commitmentActualPair(am[1]);
+          assertAccountGraphTransition(am[1], {
+            base: { settings: actual.settings, tasks: actual.tasks },
+            data: { [name]: candidate },
+          });
         }
         backupFile(dir, name); // снимок текущего перед откатом
         fs.copyFileSync(bfile, path.join(dir, name + '.json'));

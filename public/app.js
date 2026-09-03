@@ -2186,6 +2186,9 @@ const I18N_EXTRA = {
   'раз в неделю': { en: 'per week', de: 'pro Woche', uk: 'разів на тиждень', es: 'por semana' },
   '2 минуты': { en: '2 minutes', de: '2 Minuten', uk: '2 хвилини', es: '2 minutos' },
   'С доски': { en: 'From the board', de: 'Vom Brett', uk: 'З дошки', es: 'Del tablón' },
+  'Запись остановлена: данные аккаунта не проходят проверку': { en: 'Write stopped: the account data does not pass its check', de: 'Schreiben gestoppt: die Kontodaten bestehen die Prüfung nicht', uk: 'Запис зупинено: дані акаунта не проходять перевірку', es: 'Escritura detenida: los datos de la cuenta no pasan la comprobación' },
+  'Ничего не изменено.': { en: 'Nothing was changed.', de: 'Nichts wurde geändert.', uk: 'Нічого не змінено.', es: 'No se cambió nada.' },
+  'Запись отклонена защитой данных. Ничего не изменено — сообщи об этом.': { en: 'The write was refused by the data guard. Nothing changed — please report it.', de: 'Der Schreibvorgang wurde vom Datenschutzmechanismus abgelehnt. Nichts geändert — bitte melde es.', uk: 'Запис відхилено захистом даних. Нічого не змінено — повідом про це.', es: 'La escritura fue rechazada por la protección de datos. Nada cambió: repórtalo, por favor.' },
   'Открыть заказ на доске': { en: 'Open this order on the board', de: 'Diesen Auftrag am Brett öffnen', uk: 'Відкрити замовлення на дошці', es: 'Abrir este encargo en el tablón' },
   'взят': { en: 'taken', de: 'genommen', uk: 'взято', es: 'tomado' },
   'Сделать версию на две минуты': { en: 'Do the two-minute version', de: 'Die Zwei-Minuten-Version machen', uk: 'Зробити версію на дві хвилини', es: 'Hacer la versión de dos minutos' },
@@ -5078,10 +5081,16 @@ function dedicatedCommitPayload(data, extra = {}) {
     && ['settings', 'tasks'].some((name) => Object.prototype.hasOwnProperty.call(data, name)));
   return touchesGraph ? commitmentEnvelope(data, extra) : { ...extra, data };
 }
+// 409 и 428 — разные факты, и общий текст врал про один из них. 409 значит, что
+// данные действительно изменились где-то ещё, и перезагрузка помогает. 428 значит,
+// что запись ушла без обязательной пары; перезагрузка не поможет никогда, и
+// советовать её — отправлять человека по кругу.
 function commitmentBoundaryRejected(response) {
   if (!response || ![409, 428].includes(response.status)) return false;
   State._commitmentConflict = true;
-  toast(t('Данные изменились в другой вкладке. Обнови страницу и повтори.'));
+  toast(response.status === 409
+    ? t('Данные изменились в другой вкладке. Обнови страницу и повтори.')
+    : t('Запись отклонена защитой данных. Ничего не изменено — сообщи об этом.'));
   return true;
 }
 function accountResetDataCandidate() {
@@ -5275,14 +5284,19 @@ const Store = {
         && !attentionWriteAllowed(name, '_put', true)) return false;
       const base = pairedSlot ? commitmentWriteBase() : null;
       const pair = pairedSlot ? commitmentWriteData(name, value) : null;
+      // Живое состояние — третий свидетель (см. DEVLOG 02.09): без него несобранная
+      // пара выглядела как отсутствие графа, запись уходила обычным PUT и получала 428.
       const protectedGraph = pairedSlot && (commitmentGraphProtected(base?.settings?.value, base?.tasks?.value)
-        || commitmentGraphProtected(pair?.settings, pair?.tasks));
+        || commitmentGraphProtected(pair?.settings, pair?.tasks)
+        || commitmentGraphProtected(State.settings, State.tasks));
       if (protectedGraph) {
         const validator = window.CommitmentStoreV1;
         const payload = base && pair ? { base, data: pair } : null;
         if (!payload || !validator || !validator.validateCommitPayload(payload)) {
-          console.error('save blocked', name, 'commitment graph base/candidate unavailable');
-          toast(t('⚠️ Не удалось сохранить'));
+          // Половина названа: иначе причину не найти ни человеку, ни тому, кто чинит.
+          const half = !base ? 'base' : !pair ? (validateSettingsPayload(State.settings) ? 'tasks' : 'settings') : 'payload';
+          console.error('save blocked', name, 'commitment graph half invalid:', half);
+          toast(`${t('Запись остановлена: данные аккаунта не проходят проверку')} (${half}). ${t('Ничего не изменено.')}`);
           return false;
         }
         try {
@@ -31566,7 +31580,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v224';
+const PWA_CACHE_VERSION = 'satoru-v225';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
