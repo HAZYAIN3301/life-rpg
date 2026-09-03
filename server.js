@@ -2812,7 +2812,9 @@ function commitmentBoundaryError(message, status) {
 }
 function sendCommitmentBoundaryError(res, error) {
   if (!error || !error.commitmentBoundary) return false;
-  sendJson(res, Number(error.status) || 500, { error: error.message });
+  const body = { error: error.message };
+  if (error.slot) body.slot = String(error.slot);
+  sendJson(res, Number(error.status) || 500, body);
   return true;
 }
 function commitmentJournalFile(uid) {
@@ -2907,7 +2909,11 @@ function assertAccountGraphTransition(uid, payload) {
   }
   for (const name of COMMITMENT_PAIR_NAMES) {
     if (questionnaireHash(actual[name]) !== questionnaireHash(base[name])) {
-      throw commitmentBoundaryError('commitment_revision_conflict', 409);
+      // Имя половины — это механика, а не данные: без него разбор конфликта сводится
+      // к гаданию, какой из двух файлов разошёлся (DEVLOG 03.09).
+      const error = commitmentBoundaryError('commitment_revision_conflict', 409);
+      error.slot = name;
+      throw error;
     }
   }
   if (!CommitmentStoreV1.validateCommitPayload({ base, data: pair })) {

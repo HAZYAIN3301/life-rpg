@@ -5091,9 +5091,39 @@ function dedicatedCommitPayload(data, extra = {}) {
 // чужая запись, и перезагрузка помогает. commitment_data_corrupt — файл на сервере не
 // читается, и тогда «обнови страницу» это круг на всех устройствах сразу: перезагрузка
 // не починит файл никогда. Различать по статусу нельзя, только по коду в теле.
+async function commitmentBoundaryInfo(response) {
+  if (!response || ![409, 428].includes(response.status)) return { code: '', slot: '' };
+  try {
+    const body = await response.clone().json() || {};
+    const slot = ['settings', 'tasks'].includes(body.slot) ? body.slot : '';
+    return { code: String(body.error || ''), slot };
+  } catch { return { code: '', slot: '' }; }
+}
 async function commitmentBoundaryCode(response) {
-  if (!response || ![409, 428].includes(response.status)) return '';
-  try { return String((await response.clone().json() || {}).error || ''); } catch { return ''; }
+  return (await commitmentBoundaryInfo(response)).code;
+}
+// Разбор конфликта, который пережил повтор. Печатает ТОЛЬКО механику: имена полей,
+// количество задач, идентификаторы — ни одного значения. Смотрит человек в своей консоли.
+async function reportCommitmentConflict(slot) {
+  if (!slot) return;
+  try {
+    const mine = Store._persisted && Store._persisted[slot];
+    const theirs = await (await fetch(`/api/data/${slot}`)).json();
+    if (!mine || !mine.exists) { console.warn('[конфликт]', slot, 'моего снимка нет'); return; }
+    if (slot === 'tasks') {
+      const a = (mine.value || []).map((t) => String(t && t.id)), b = (theirs || []).map((t) => String(t && t.id));
+      console.warn('[конфликт] tasks', { уМеня: a.length, наСервере: b.length,
+        толькоУМеня: a.filter((x) => !b.includes(x)), толькоНаСервере: b.filter((x) => !a.includes(x)) });
+      return;
+    }
+    const a = mine.value || {}, b = theirs || {};
+    const keys = [...new Set([...Object.keys(a), ...Object.keys(b)])];
+    console.warn('[конфликт] settings', {
+      толькоУМеня: keys.filter((k) => (k in a) && !(k in b)),
+      толькоНаСервере: keys.filter((k) => !(k in a) && (k in b)),
+      различаются: keys.filter((k) => (k in a) && (k in b) && JSON.stringify(a[k]) !== JSON.stringify(b[k])),
+    });
+  } catch (error) { console.warn('[конфликт] разбор не удался', error); }
 }
 // Перечитать пару с сервера, чтобы база перестала быть устаревшей. false — повтор
 // запрещён: сменился аккаунт или эпоха записи, либо данные не проходят проверку.
@@ -5121,7 +5151,10 @@ async function commitmentBoundaryRejected(response, { retried = false } = {}) {
   // Путь, который уже перечитал базу и пересобрал изменение, не имеет права советовать
   // «обнови страницу»: страницу он уже обновил сам, и совет отправил бы по кругу.
   if (response.status === 409 && retried) {
-    toast(t('Другое устройство успело записать раньше. Согласовать сам не смог — ничего не потеряно, повтори.'));
+    const { slot } = await commitmentBoundaryInfo(response);
+    await reportCommitmentConflict(slot);
+    toast(t('Другое устройство успело записать раньше. Согласовать сам не смог — ничего не потеряно, повтори.')
+      + (slot ? ` (${slot})` : ''));
     return true;
   }
   toast(response.status === 409
@@ -31644,7 +31677,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v227';
+const PWA_CACHE_VERSION = 'satoru-v228';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
