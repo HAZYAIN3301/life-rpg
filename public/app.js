@@ -1543,6 +1543,7 @@ const I18N_EXTRA = {
   'Привычка отмечена': { en: 'Habit marked', de: 'Gewohnheit markiert', uk: 'Звичку відмічено', es: 'Hábito marcado' },
   'Отметка возвращена': { en: 'Habit mark restored', de: 'Markierung zurückgesetzt', uk: 'Позначку повернено', es: 'Marca restaurada' },
   'Не удалось сохранить. Ничего не изменено — повтори попытку.': { en: 'Could not save. Nothing changed; try again.', de: 'Speichern fehlgeschlagen. Nichts wurde geändert; versuche es erneut.', uk: 'Не вдалося зберегти. Нічого не змінено — спробуй ще раз.', es: 'No se pudo guardar. Nada cambió; inténtalo de nuevo.' },
+  'Файл данных на сервере не читается. Перезагрузка не поможет — ничего не изменено, сообщи об этом.': { en: 'A data file on the server cannot be read. Reloading will not help — nothing was changed, please report it.', de: 'Eine Datendatei auf dem Server ist nicht lesbar. Neuladen hilft nicht — es wurde nichts geändert, bitte melde es.', uk: 'Файл даних на сервері не читається. Перезавантаження не допоможе — нічого не змінено, повідом про це.', es: 'Un archivo de datos del servidor no se puede leer. Recargar no ayudará: no se cambió nada, avísanos.' },
   'Данные изменились в другой вкладке. Обнови страницу и повтори.': { en: 'The data changed in another tab. Reload and try again.', de: 'Die Daten wurden in einem anderen Tab geändert. Lade neu und versuche es erneut.', uk: 'Дані змінилися в іншій вкладці. Онови сторінку й спробуй ще раз.', es: 'Los datos cambiaron en otra pestaña. Recarga e inténtalo de nuevo.' },
   'Не удалось отменить. Запись сохранена, можно повторить.': { en: 'Undo failed. The entry is still saved; you can retry.', de: 'Rückgängig fehlgeschlagen. Der Eintrag bleibt gespeichert; du kannst es erneut versuchen.', uk: 'Не вдалося скасувати. Запис збережено, можна повторити.', es: 'No se pudo deshacer. La entrada sigue guardada; puedes reintentarlo.' },
   'Изменения привычек заблокированы до восстановления данных': { en: 'Habit changes are blocked until the data is recovered', de: 'Änderungen an Gewohnheiten sind bis zur Datenwiederherstellung gesperrt', uk: 'Зміни звичок заблоковані до відновлення даних', es: 'Los cambios de hábitos están bloqueados hasta recuperar los datos' },
@@ -5085,9 +5086,37 @@ function dedicatedCommitPayload(data, extra = {}) {
 // данные действительно изменились где-то ещё, и перезагрузка помогает. 428 значит,
 // что запись ушла без обязательной пары; перезагрузка не поможет никогда, и
 // советовать её — отправлять человека по кругу.
-function commitmentBoundaryRejected(response) {
+// Внутри 409 фактов тоже два (DEVLOG 03.09). commitment_revision_conflict — правда
+// чужая запись, и перезагрузка помогает. commitment_data_corrupt — файл на сервере не
+// читается, и тогда «обнови страницу» это круг на всех устройствах сразу: перезагрузка
+// не починит файл никогда. Различать по статусу нельзя, только по коду в теле.
+async function commitmentBoundaryCode(response) {
+  if (!response || ![409, 428].includes(response.status)) return '';
+  try { return String((await response.clone().json() || {}).error || ''); } catch { return ''; }
+}
+// Перечитать пару с сервера, чтобы база перестала быть устаревшей. false — повтор
+// запрещён: сменился аккаунт или эпоха записи, либо данные не проходят проверку.
+async function refreshCommitmentWriteBase({ writeEpoch, accountId } = {}) {
+  const [settingsLoad, tasksLoad] = await Promise.all([
+    Store.loadChecked('settings', {}, validateSettingsPayload),
+    Store.loadChecked('tasks', [], validateTasksPayload),
+  ]);
+  if (settingsLoad.error || tasksLoad.error) return false;
+  if (writeEpoch !== Store._writeEpoch || accountId !== String(State.me?.id || '')) return false;
+  if (!commitmentWriteBase()) return false;
+  State.settings = settingsLoad.value;
+  State.tasks = tasksLoad.value;
+  return true;
+}
+async function commitmentBoundaryRejected(response) {
   if (!response || ![409, 428].includes(response.status)) return false;
   State._commitmentConflict = true;
+  const code = await commitmentBoundaryCode(response);
+  State._commitmentBoundaryCode = code;
+  if (response.status === 409 && code === 'commitment_data_corrupt') {
+    toast(t('Файл данных на сервере не читается. Перезагрузка не поможет — ничего не изменено, сообщи об этом.'));
+    return true;
+  }
   toast(response.status === 409
     ? t('Данные изменились в другой вкладке. Обнови страницу и повтори.')
     : t('Запись отклонена защитой данных. Ничего не изменено — сообщи об этом.'));
@@ -5283,7 +5312,7 @@ const Store = {
       if (['attention-policies', 'attention-sessions', 'attention-episodes'].includes(name)
         && !attentionWriteAllowed(name, '_put', true)) return false;
       const base = pairedSlot ? commitmentWriteBase() : null;
-      const pair = pairedSlot ? commitmentWriteData(name, value) : null;
+      let pair = pairedSlot ? commitmentWriteData(name, value) : null;
       // Живое состояние — третий свидетель (см. DEVLOG 02.09): без него несобранная
       // пара выглядела как отсутствие графа, запись уходила обычным PUT и получала 428.
       const protectedGraph = pairedSlot && (commitmentGraphProtected(base?.settings?.value, base?.tasks?.value)
@@ -5300,11 +5329,28 @@ const Store = {
           return false;
         }
         try {
-          const response = await fetch('/api/commitments/commit', {
+          let response = await fetch('/api/commitments/commit', {
             method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
           });
           if (response.status === 401) { handleAccountSessionExpired(); return false; }
-          if (commitmentBoundaryRejected(response)) return false;
+          // Устаревшая база — не отказ. Запись с другого устройства значит только то, что
+          // пару надо пересобрать на свежей серверной правде и попробовать ещё раз. Послать
+          // старый payload повторно значит затереть чужую запись, поэтому пересборка.
+          if (response.status === 409
+            && await commitmentBoundaryCode(response) === 'commitment_revision_conflict'
+            && await refreshCommitmentWriteBase({ writeEpoch, accountId })) {
+            const freshBase = commitmentWriteBase();
+            const freshPair = commitmentWriteData(name, value);
+            const fresh = freshBase && freshPair ? { base: freshBase, data: freshPair } : null;
+            if (fresh && validator.validateCommitPayload(fresh)) {
+              pair = freshPair;
+              response = await fetch('/api/commitments/commit', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(fresh),
+              });
+              if (response.status === 401) { handleAccountSessionExpired(); return false; }
+            }
+          }
+          if (await commitmentBoundaryRejected(response)) return false;
           if (!response.ok || !rememberDedicatedCommitSlots(pair, { writeEpoch, accountId })) return false;
           if (typeof applyCommitted === 'function' && await applyCommitted(value) === false) return false;
           return true;
@@ -5589,27 +5635,38 @@ async function commitmentDataCommit(build, focusSelector = '') {
     return false;
   }
   return Store.runExclusive(['settings', 'tasks'], async ({ writeEpoch, accountId }) => {
-    const base = commitmentWriteBase();
-    if (!base) return false;
-    const candidate = build({
-      settings: structuredClone(State.settings),
-      tasks: structuredClone(State.tasks),
-    });
-    if (!candidate || !validateSettingsPayload(candidate.settings) || !validateTasksPayload(candidate.tasks)
-      || !validator.validateCommitPayload({ base, data: candidate })) return false;
-    try {
-      const response = await fetch('/api/commitments/commit', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ base, data: candidate }),
+    // Две попытки, а не одна: устаревшая база — обычное дело, когда аккаунт открыт на
+    // нескольких устройствах. На второй попытке изменение ПЕРЕСОБИРАЕТСЯ на свежей
+    // серверной правде — так чужая запись не затирается, и если изменение уже неприменимо,
+    // build сам вернёт null.
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      const base = commitmentWriteBase();
+      if (!base) return false;
+      const candidate = build({
+        settings: structuredClone(State.settings),
+        tasks: structuredClone(State.tasks),
       });
+      if (!candidate || !validateSettingsPayload(candidate.settings) || !validateTasksPayload(candidate.tasks)
+        || !validator.validateCommitPayload({ base, data: candidate })) return false;
+      let response;
+      try {
+        response = await fetch('/api/commitments/commit', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ base, data: candidate }),
+        });
+      } catch (error) { console.error('commitment commit', error); return false; }
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
-      if (commitmentBoundaryRejected(response)) return false;
+      if (attempt === 0 && response.status === 409
+        && await commitmentBoundaryCode(response) === 'commitment_revision_conflict'
+        && await refreshCommitmentWriteBase({ writeEpoch, accountId })) continue;
+      if (await commitmentBoundaryRejected(response)) return false;
       if (!response.ok || !rememberDedicatedCommitSlots(candidate, { writeEpoch, accountId })) return false;
       State.settings = candidate.settings;
       State.tasks = candidate.tasks;
       if (focusSelector) State._tasksFocusAfterCommit = focusSelector;
       return true;
-    } catch (error) { console.error('commitment commit', error); return false; }
+    }
+    return false;
   });
 }
 async function takeQuestCommitment(task, at, win) {
@@ -11892,7 +11949,7 @@ async function economyCommit(data) {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
       });
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
-      if (commitmentBoundaryRejected(response)) return false;
+      if (await commitmentBoundaryRejected(response)) return false;
       return response.ok && rememberDedicatedCommitSlots(data, { writeEpoch, accountId });
     } catch (error) { console.error('economy commit', error); return false; }
   });
@@ -11909,7 +11966,7 @@ async function goalDataCommit(nextGoals, nextTasks = State.tasks, nextGroups = S
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
       });
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
-      if (commitmentBoundaryRejected(response)) return false;
+      if (await commitmentBoundaryRejected(response)) return false;
       return response.ok && rememberDedicatedCommitSlots(data, { writeEpoch, accountId });
     } catch (error) { console.error('goal commit', error); return false; }
   });
@@ -11966,7 +12023,7 @@ async function proposalDataCommit(data) {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
       });
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
-      if (commitmentBoundaryRejected(response)) return false;
+      if (await commitmentBoundaryRejected(response)) return false;
       if (!response.ok || !rememberDedicatedCommitSlots(data, { writeEpoch, accountId })) return false;
       // These snapshots are not CAS inputs, but keeping every confirmed slot in
       // sync prevents later recovery UI from comparing against a stale client copy.
@@ -12012,7 +12069,7 @@ async function habitDataCommit(data, applyCommitted = null) {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
       });
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
-      if (commitmentBoundaryRejected(response)) return false;
+      if (await commitmentBoundaryRejected(response)) return false;
       if (!response.ok || writeEpoch !== Store._writeEpoch || accountId !== String(State.me?.id || '')) return false;
       if (!rememberDedicatedCommitSlots(data, { writeEpoch, accountId })) return false;
       if (typeof applyCommitted === 'function' && await applyCommitted() === false) return false;
@@ -13162,7 +13219,7 @@ async function questionnaireCommit() {
     const response = await fetch('/api/questionnaire/commit', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(request),
     });
-    if (commitmentBoundaryRejected(response)) throw new Error('commitment_revision_conflict');
+    if (await commitmentBoundaryRejected(response)) throw new Error('commitment_revision_conflict');
     const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.questionnaire || data.questionnaire.status !== 'materialized') throw new Error(data.error || 'commit_failed');
     State.questionnaire = data.questionnaire; questionnaireForgetDraft(); State._questionnaireBusy = false; State._questionnaireError = '';
@@ -18800,7 +18857,7 @@ async function commitBoardV2Transaction(transaction) {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(request),
       });
       if (response.status === 401) { handleAccountSessionExpired(); throw new Error('session'); }
-      if (commitmentBoundaryRejected(response)) return false;
+      if (await commitmentBoundaryRejected(response)) return false;
       if (!response.ok) throw new Error(`board v2 commit ${response.status}`);
       if (!rememberDedicatedCommitSlots(data, { writeEpoch, accountId })) return false;
       State.settings = next.settings;
@@ -18840,7 +18897,7 @@ async function commitBoardState(nextBoard, nextTasks = null) {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
       });
       if (response.status === 401) { handleAccountSessionExpired(); throw new Error('session'); }
-      if (commitmentBoundaryRejected(response)) return false;
+      if (await commitmentBoundaryRejected(response)) return false;
       if (!response.ok) throw new Error(`board commit ${response.status}`);
       if (!rememberDedicatedCommitSlots(data, { writeEpoch, accountId })) return false;
       State.settings = settings;
@@ -27235,7 +27292,7 @@ async function guideV3FeatureCommit(chapter, completion, itemId, featureData, ap
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
         });
         if (response.status === 401) { handleAccountSessionExpired(); return false; }
-        if (commitmentBoundaryRejected(response)) return false;
+        if (await commitmentBoundaryRejected(response)) return false;
         if (!response.ok || epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')
           || writeEpoch !== Store._writeEpoch || storeAccountId !== String(State.me?.id || '')) return false;
         if (!rememberDedicatedCommitSlots(data, { writeEpoch, accountId: storeAccountId })) return false;
@@ -28799,7 +28856,7 @@ async function onClick(e) {
       const { response } = await accountJson('/api/account/import', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(archive),
       });
-      if (commitmentBoundaryRejected(response) || !response.ok) return false;
+      if (await commitmentBoundaryRejected(response) || !response.ok) return false;
       return rememberDedicatedCommitSlots(resetData, { writeEpoch, accountId });
     }).catch(() => false);
     if (!committed) {
@@ -28818,7 +28875,7 @@ async function onClick(e) {
       const { response } = await accountJson('/api/account/import', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(archive),
       });
-      if (commitmentBoundaryRejected(response)) return false;
+      if (await commitmentBoundaryRejected(response)) return false;
       return response.ok;
     }).catch(() => false);
     if (!imported) { result.textContent = t('Импорт не завершён. Исходные данные сохранены — повтори попытку.'); el.disabled = false; return; }
@@ -31580,7 +31637,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v225';
+const PWA_CACHE_VERSION = 'satoru-v226';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

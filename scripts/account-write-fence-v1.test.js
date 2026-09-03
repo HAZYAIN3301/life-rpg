@@ -83,3 +83,49 @@ test('the generic writer still refuses to bypass the pair on the server', () => 
   assert.match(SERVER.slice(at, at + 220), /assertAccountGraphTransition\(uid, \{ data: \{ \[name\]: parsed \} \}\)/);
   assert.match(SERVER, /commitment_atomic_write_required', 428/);
 });
+
+test('409 несёт два разных факта, и «обнови страницу» врёт про один из них', () => {
+  // 🔴 Этика честности. commitment_revision_conflict — правда чужая запись, перезагрузка
+  // помогает. commitment_data_corrupt — файл на сервере не читается, и тогда совет
+  // перезагрузиться это круг на всех устройствах сразу: файл он не починит никогда.
+  // Различать по статусу нельзя — только по коду в теле ответа.
+  const at = APP.indexOf('async function commitmentBoundaryRejected');
+  assert.notEqual(at, -1, 'проверка границы должна читать тело, а значит быть async');
+  const fn = APP.slice(at, APP.indexOf('\nasync function ', at + 10) + 1 || undefined);
+  const block = APP.slice(at, at + 1200);
+  assert.match(block, /commitmentBoundaryCode\(response\)/, 'код берётся из тела, а не из статуса');
+  assert.match(block, /code === 'commitment_data_corrupt'/);
+  const corruptAt = block.indexOf("commitment_data_corrupt");
+  const corruptToast = block.slice(corruptAt, block.indexOf('return true', corruptAt));
+  assert.ok(!/Обнови страницу/.test(corruptToast),
+    'повреждённому файлу нельзя советовать перезагрузку: она не поможет никогда');
+  assert.match(corruptToast, /ничего не изменено/i, 'человек должен знать, что данные целы');
+  assert.ok(fn.length > 0);
+});
+
+test('устаревшая база — повод перечитать и пересобрать, а не отказать человеку', () => {
+  // Аккаунт открыт на трёх устройствах: чужая запись делает базу устаревшей постоянно.
+  // Отказ с советом перезагрузиться означает потерю набранного и круг: пока человек
+  // перезагружается, другое устройство пишет снова.
+  for (const marker of ['async function refreshCommitmentWriteBase']) {
+    assert.notEqual(APP.indexOf(marker), -1, marker);
+  }
+  const refreshAt = APP.indexOf('async function refreshCommitmentWriteBase');
+  const refresh = APP.slice(refreshAt, refreshAt + 900);
+  assert.match(refresh, /loadChecked\('settings'/, 'свежая правда берётся с сервера');
+  assert.match(refresh, /loadChecked\('tasks'/);
+  assert.match(refresh, /writeEpoch !== Store\._writeEpoch/,
+    'повтор запрещён, если сменился аккаунт или эпоха записи');
+
+  const commitAt = APP.indexOf('async function commitmentDataCommit');
+  const commit = APP.slice(commitAt, APP.indexOf('\nasync function takeQuestCommitment'));
+  assert.match(commit, /for \(let attempt = 0; attempt < 2; attempt \+= 1\)/, 'ровно две попытки');
+  assert.match(commit, /attempt === 0 && response\.status === 409/);
+  assert.match(commit, /commitment_revision_conflict/,
+    'повторяется только настоящий конфликт: повреждённый файл повтором не лечится');
+  // Ключевое: на второй попытке изменение собирается заново, а не досылается старое.
+  const buildCalls = commit.match(/const candidate = build\(\{/g) || [];
+  assert.equal(buildCalls.length, 1, 'build внутри цикла — значит пересобирается каждую попытку');
+  assert.ok(commit.indexOf('for (let attempt') < commit.indexOf('const candidate = build({'),
+    'пересборка обязана быть внутри цикла, иначе повтор затрёт чужую запись');
+});
