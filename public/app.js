@@ -5128,21 +5128,23 @@ async function reportCommitmentConflict(slot) {
         });
         if (differing.length >= 3) break;
       }
-      console.warn('[конфликт] tasks', {
-        уМеня: a.length, наСервере: b.length,
-        толькоУМеня: a.filter((x) => !b.includes(x)), толькоНаСервере: b.filter((x) => !a.includes(x)),
-        порядокСовпадает: a.join(',') === b.join(','),
-        различающихсяЗадач: differing.length, первые: differing,
-      });
+      // Плоской строкой, а не объектом: свёрнутый Object в консоли не виден на скриншоте,
+      // а отчёты приходят скриншотами.
+      const brief = differing.slice(0, 2).map((d) => `${d.id}[${
+        [...d.толькоУМеня.map((k) => '+' + k), ...d.толькоНаСервере.map((k) => '-' + k),
+          ...d.различаются.map((k) => '~' + k)].join(' ') || 'нет полей'}]`).join(' | ');
+      console.warn(`[конфликт] tasks мои=${a.length} сервер=${b.length}`
+        + ` порядок=${a.join(',') === b.join(',') ? 'совпал' : 'РАЗНЫЙ'}`
+        + ` разошлось=${differing.length}`
+        + (brief ? ` :: ${brief}` : ''));
       return;
     }
     const a = mine.value || {}, b = theirs || {};
     const keys = [...new Set([...Object.keys(a), ...Object.keys(b)])];
-    console.warn('[конфликт] settings', {
-      толькоУМеня: keys.filter((k) => (k in a) && !(k in b)),
-      толькоНаСервере: keys.filter((k) => !(k in a) && (k in b)),
-      различаются: keys.filter((k) => (k in a) && (k in b) && JSON.stringify(a[k]) !== JSON.stringify(b[k])),
-    });
+    const mark = [...keys.filter((k) => (k in a) && !(k in b)).map((k) => '+' + k),
+      ...keys.filter((k) => !(k in a) && (k in b)).map((k) => '-' + k),
+      ...keys.filter((k) => (k in a) && (k in b) && JSON.stringify(a[k]) !== JSON.stringify(b[k])).map((k) => '~' + k)];
+    console.warn(`[конфликт] settings :: ${mark.join(' ') || 'полей не разошлось'}`);
   } catch (error) { console.warn('[конфликт] разбор не удался', error); }
 }
 // Перечитать пару с сервера, чтобы база перестала быть устаревшей. false — повтор
@@ -31697,7 +31699,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v229';
+const PWA_CACHE_VERSION = 'satoru-v230';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
