@@ -5193,6 +5193,21 @@ async function commitmentBoundaryRejected(response, { retried = false, base = nu
             + ` | доехало клиенту ${buf.length}б хэш=${mine} | совпало=${mine === detail.raw.hash}`);
         } catch (error) { console.warn('[конфликт] сырые байты не сверились', error); }
       }
+      // Позиционная сверка ровно по индексу, который назвал сервер: сравнение по id
+      // пропускает случай, когда в массиве есть повтор или несопоставимый элемент.
+      const m = d0 => d0 && typeof d0.path === 'string' ? Number((d0.path.match(/\[(\d+)\]/) || [])[1]) : NaN;
+      const idx = m(detail.diff);
+      if (Number.isFinite(idx) && slot === 'tasks') {
+        try {
+          const fresh = await (await fetch('/api/data/tasks', { cache: 'no-store' })).json();
+          const sentTask = (base && base.tasks && base.tasks.value || [])[idx] || null;
+          const freshTask = (fresh || [])[idx] || null;
+          const live = (State.tasks || [])[idx] || null;
+          const info = (t) => t ? `id=${String(t.id).slice(0, 12)} title=${String(t.title || '').length}` : 'нет';
+          console.warn(`[конфликт] по индексу ${idx}: отправлено {${info(sentTask)}}`
+            + ` | сейчас на сервере {${info(freshTask)}} | в живом состоянии {${info(live)}}`);
+        } catch (error) { console.warn('[конфликт] позиционная сверка не удалась', error); }
+      }
       const d = detail.diff;
       console.warn(d ? `[конфликт] ПЕРВОЕ РАСХОЖДЕНИЕ ${d.path} — ${d.why}: сервер ${d.server}, клиент ${d.client}`
         + (d.позиция === undefined ? '' : ` | расходятся с позиции ${d.позиция} из ${d.изДлины}`
@@ -31751,7 +31766,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v237';
+const PWA_CACHE_VERSION = 'satoru-v238';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
