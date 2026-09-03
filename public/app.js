@@ -5178,8 +5178,11 @@ async function commitmentBoundaryRejected(response, { retried = false, base = nu
   if (response.status === 409 && retried) {
     const { slot, detail } = await commitmentBoundaryInfo(response);
     if (detail) {
-      const f = (d) => d ? `хэш=${d.hash} байт=${d.len} есть=${d.exists} эл=${d.items}` : 'нет';
+      const f = (d) => d ? `хэш=${d.hash} байт=${d.len} эл=${d.items}` : 'нет';
       console.warn(`[конфликт] сервер: ${f(detail.actual)} | клиент: ${f(detail.base)}`);
+      const d = detail.diff;
+      console.warn(d ? `[конфликт] ПЕРВОЕ РАСХОЖДЕНИЕ ${d.path} — ${d.why}: сервер ${d.server}, клиент ${d.client}`
+        : '[конфликт] структуры совпали — расхождение не в данных');
     }
     await reportCommitmentConflict(slot, base);
     toast(t('Другое устройство успело записать раньше. Согласовать сам не смог — ничего не потеряно, повтори.')
@@ -31708,7 +31711,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v232';
+const PWA_CACHE_VERSION = 'satoru-v233';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

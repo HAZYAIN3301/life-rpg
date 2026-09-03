@@ -2915,6 +2915,38 @@ function assertAccountGraphTransition(uid, payload) {
       // обеих сторон — по ним видно, отличается ли содержимое или только его форма.
       const error = commitmentBoundaryError('commitment_revision_conflict', 409);
       error.slot = name;
+      // Первое расхождение: путь и ТИПЫ, без значений. Индекс и имя поля — это схема,
+      // по ней чинят; содержимое полей сюда не попадает.
+      const describe = (v) => {
+        if (v === null) return 'null';
+        if (Array.isArray(v)) return `array(${v.length})`;
+        if (typeof v === 'string') return `string(${v.length})`;
+        if (typeof v === 'object') return `object(${Object.keys(v).length})`;
+        return typeof v;
+      };
+      const firstDiff = (a, b, path = '') => {
+        if (a === b) return null;
+        const ta = describe(a), tb = describe(b);
+        if (ta !== tb) return { path: path || '.', server: ta, client: tb, why: 'разные типы' };
+        if (Array.isArray(a)) {
+          for (let i = 0; i < Math.max(a.length, b.length); i += 1) {
+            const d = firstDiff(a[i], b[i], `${path}[${i}]`);
+            if (d) return d;
+          }
+          return null;
+        }
+        if (a && typeof a === 'object') {
+          const keys = [...new Set([...Object.keys(a), ...Object.keys(b)])].sort();
+          for (const k of keys) {
+            if (!(k in a)) return { path: `${path}.${k}`, server: 'нет поля', client: describe(b[k]), why: 'поле только у клиента' };
+            if (!(k in b)) return { path: `${path}.${k}`, server: describe(a[k]), client: 'нет поля', why: 'поле только у сервера' };
+            const d = firstDiff(a[k], b[k], `${path}.${k}`);
+            if (d) return d;
+          }
+          return null;
+        }
+        return { path: path || '.', server: ta, client: tb, why: 'разные значения' };
+      };
       const fingerprint = (value) => {
         try {
           return { hash: questionnaireHash(value).slice(0, 12),
@@ -2924,6 +2956,7 @@ function assertAccountGraphTransition(uid, payload) {
         } catch { return { hash: 'ошибка', len: -1, exists: false, items: null }; }
       };
       error.detail = { actual: fingerprint(actual[name]), base: fingerprint(base[name]) };
+      try { error.detail.diff = firstDiff(actual[name], base[name]); } catch { error.detail.diff = null; }
       throw error;
     }
   }
