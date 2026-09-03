@@ -5157,12 +5157,13 @@ async function refreshCommitmentWriteBase({ writeEpoch, accountId } = {}) {
     Store.loadChecked('settings', {}, validateSettingsPayload),
     Store.loadChecked('tasks', [], validateTasksPayload),
   ]);
-  if (settingsLoad.error || tasksLoad.error) return false;
-  if (writeEpoch !== Store._writeEpoch || accountId !== String(State.me?.id || '')) return false;
-  if (!commitmentWriteBase()) return false;
-  State.settings = settingsLoad.value;
-  State.tasks = tasksLoad.value;
-  return true;
+  if (settingsLoad.error || tasksLoad.error) return null;
+  if (writeEpoch !== Store._writeEpoch || accountId !== String(State.me?.id || '')) return null;
+  if (!commitmentWriteBase()) return null;
+  // Живое состояние НЕ трогаем. В Store._put человек уже добавил свой квест в State, и
+  // подмена серверной копией стирала бы его с экрана до перезагрузки (регрессия 03.09).
+  // Кому нужна свежая правда для пересборки — берёт её из возвращённых значений.
+  return { settings: settingsLoad.value, tasks: tasksLoad.value };
 }
 async function commitmentBoundaryRejected(response, { retried = false, base = null } = {}) {
   if (!response || ![409, 428].includes(response.status)) return false;
@@ -5180,6 +5181,18 @@ async function commitmentBoundaryRejected(response, { retried = false, base = nu
     if (detail) {
       const f = (d) => d ? `хэш=${d.hash} байт=${d.len} эл=${d.items}` : 'нет';
       console.warn(`[конфликт] сервер: ${f(detail.actual)} | клиент: ${f(detail.base)}`);
+      // Тот же файл, но прочитанный клиентом: если сырые хэши совпали, значит байты доехали
+      // целыми и расходится разбор; если нет — теряется по дороге.
+      if (detail.raw && slot) {
+        try {
+          const text = await (await fetch(`/api/data/${slot}`, { cache: 'no-store' })).text();
+          const buf = new TextEncoder().encode(text);
+          const digest = await crypto.subtle.digest('SHA-256', buf);
+          const mine = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('').slice(0, 12);
+          console.warn(`[конфликт] СЫРЫЕ БАЙТЫ файла: сервер ${detail.raw.len}б хэш=${detail.raw.hash}`
+            + ` | доехало клиенту ${buf.length}б хэш=${mine} | совпало=${mine === detail.raw.hash}`);
+        } catch (error) { console.warn('[конфликт] сырые байты не сверились', error); }
+      }
       const d = detail.diff;
       console.warn(d ? `[конфликт] ПЕРВОЕ РАСХОЖДЕНИЕ ${d.path} — ${d.why}: сервер ${d.server}, клиент ${d.client}`
         + (d.позиция === undefined ? '' : ` | расходятся с позиции ${d.позиция} из ${d.изДлины}`
@@ -5428,11 +5441,15 @@ const Store = {
           }
           // Примирение, как в commitmentDataCommit: если и пересборка на свежей базе
           // получила отказ, базу строит сам сервер. Иначе аккаунт заперт навсегда.
-          if (response.status === 409
+          const freshServer = response.status === 409
             && await commitmentBoundaryCode(response) === 'commitment_revision_conflict'
-            && await refreshCommitmentWriteBase({ writeEpoch, accountId })) {
-            const freshPair = commitmentWriteData(name, value);
-            if (freshPair) {
+            ? await refreshCommitmentWriteBase({ writeEpoch, accountId }) : null;
+          if (freshServer) {
+            // Записываемая половина — от человека, попутная — свежая серверная.
+            const freshPair = name === 'settings'
+              ? { settings: structuredClone(value), tasks: structuredClone(freshServer.tasks) }
+              : { settings: structuredClone(freshServer.settings), tasks: structuredClone(value) };
+            if (validateSettingsPayload(freshPair.settings) && validateTasksPayload(freshPair.tasks)) {
               pair = freshPair; sentBase = null;
               response = await fetch('/api/commitments/commit', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -5751,8 +5768,10 @@ async function commitmentDataCommit(build, focusSelector = '') {
       } catch (error) { console.error('commitment commit', error); return false; }
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
       if (attempt < 2 && response.status === 409
-        && await commitmentBoundaryCode(response) === 'commitment_revision_conflict'
-        && await refreshCommitmentWriteBase({ writeEpoch, accountId })) continue;
+        && await commitmentBoundaryCode(response) === 'commitment_revision_conflict') {
+        const fresh = await refreshCommitmentWriteBase({ writeEpoch, accountId });
+        if (fresh) { State.settings = fresh.settings; State.tasks = fresh.tasks; continue; }
+      }
       if (attempt === 2 && response.ok) console.warn('[конфликт] примирение: запись прошла на серверной базе');
       if (await commitmentBoundaryRejected(response, { retried: attempt > 0, base })) return false;
       if (!response.ok || !rememberDedicatedCommitSlots(candidate, { writeEpoch, accountId })) return false;
@@ -31732,7 +31751,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v236';
+const PWA_CACHE_VERSION = 'satoru-v237';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

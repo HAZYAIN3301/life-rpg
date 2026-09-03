@@ -2980,6 +2980,15 @@ function assertAccountGraphTransition(uid, payload) {
         } catch { return { hash: 'ошибка', len: -1, exists: false, items: null }; }
       };
       error.detail = { actual: fingerprint(actual[name]), base: fingerprint(base[name]) };
+      // Сырые байты файла — чтобы отличить «файл и правда другой» от «по дороге к клиенту
+      // что-то поменялось». Отдаём длину и префикс хэша, содержимое не покидает сервер.
+      try {
+        const raw = fs.readFileSync(path.join(userDataDir(uid), `${name}.json`), 'utf8');
+        error.detail.raw = {
+          len: Buffer.byteLength(raw),
+          hash: crypto.createHash('sha256').update(raw).digest('hex').slice(0, 12),
+        };
+      } catch { error.detail.raw = null; }
       try { error.detail.diff = firstDiff(actual[name], base[name]); } catch { error.detail.diff = null; }
       throw error;
     }

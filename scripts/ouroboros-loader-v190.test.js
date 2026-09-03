@@ -61,8 +61,8 @@ test('reduced motion freezes every ornamental loader animation', () => {
 });
 
 test('the latest shell release keeps the v190 loader and advances app/SW together', () => {
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v236'/);
-  assert.match(SW, /const CACHE = 'satoru-v236'/);
-  assert.match(INDEX, /styles\.css\?v=20260903-write-fence-v215-12/);
-  assert.match(INDEX, /app\.js\?v=20260903-write-fence-v215-12/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v237'/);
+  assert.match(SW, /const CACHE = 'satoru-v237'/);
+  assert.match(INDEX, /styles\.css\?v=20260903-write-fence-v215-13/);
+  assert.match(INDEX, /app\.js\?v=20260903-write-fence-v215-13/);
 });
