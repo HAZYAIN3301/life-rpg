@@ -76,8 +76,8 @@ function actionHandler(action, nextAction) {
 
 test('retaking an archived commitment reopens it before revising the boundary', () => {
   const source = functionSource(APP, 'takeQuestCommitment');
-  const reopen = source.indexOf('CommitmentV1.reopen');
-  const revise = source.indexOf('CommitmentV1.revise');
+  const reopen = source.indexOf('commitmentApi.reopen');
+  const revise = source.indexOf('commitmentApi.revise');
   assert.ok(reopen >= 0, 'retake path must reopen the archived deterministic commitment');
   assert.ok(revise > reopen, 'retake must reopen before applying the new boundary');
   assert.match(source, /archivedAt|archived|existing|current/, 'retake path does not distinguish archived history');
@@ -85,7 +85,7 @@ test('retaking an archived commitment reopens it before revising the boundary', 
 
 test('undo only reopens a winning completion and tolerates the active-item limit', () => {
   const source = actionHandler('toggle-task', 'toggle-task-backdated');
-  const reopen = source.indexOf('CommitmentV1.reopen');
+  const reopen = source.indexOf('commitmentApi.reopen');
   assert.ok(reopen >= 0, 'task undo must contain the commitment reopen path');
   const beforeReopen = source.slice(0, reopen);
   assert.match(beforeReopen, /outcomeOf|log\s*\[|record[\s\S]{0,100}win|win[\s\S]{0,100}record|===\s*['"]win['"]|['"]win['"]\s*===/, 'undo must check the recorded win before reopening');
@@ -101,7 +101,7 @@ test('calendar commitment release is gated by a changed date', () => {
   const dateChanged = source.indexOf('dateChanged');
   assert.ok(dateChanged < release, 'dateChanged must be computed before release');
   assert.match(source.slice(dateChanged, release), /activeCommitment|if\s*\(/, 'release is not inside the date-change decision');
-  assert.match(functionSource(APP, 'releaseActiveQuestCommitmentCandidate'), /CommitmentV1\.release/, 'calendar release helper must archive the commitment rather than drop its history');
+  assert.match(functionSource(APP, 'releaseActiveQuestCommitmentCandidate'), /commitmentApi\.release/, 'calendar release helper must archive the commitment rather than drop its history');
 });
 
 test('assistant rescheduling and bulk overdue moves remain commitment-aware', () => {
@@ -267,7 +267,7 @@ test('every dedicated graph writer attaches the same base and locks both graph s
 test('account reset archives quest commitments and import/reset carry the exact base', () => {
   const reset = functionSource(APP, 'accountResetDataCandidate');
   assert.match(reset, /startsWith\(['"]quest:['"]\)/, 'reset does not distinguish quest commitments');
-  assert.match(reset, /CommitmentV1\.release/, 'reset drops commitment history instead of releasing it');
+  assert.match(reset, /commitmentApi\.release/, 'reset drops commitment history instead of releasing it');
   assert.match(reset, /tasks\s*=\s*\[\]/, 'reset does not explicitly produce the empty quest list');
   assert.match(reset, /validateCommitPayload/, 'reset candidate is not graph-validated');
 

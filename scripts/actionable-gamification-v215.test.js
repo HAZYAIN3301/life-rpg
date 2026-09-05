@@ -106,7 +106,7 @@ function withoutComments(source) {
     .replace(/(^|[^:])\/\/.*$/gm, '$1');
 }
 
-test('v215 integrity modules remain ordered while v216 advances the app shell', () => {
+test('v215 integrity modules remain ordered while the app shell advances to v244', () => {
   const commitment = INDEX.indexOf('commitment-v1.js');
   const integrity = INDEX.indexOf('gamification-integrity-v1.js');
   const app = INDEX.indexOf('app.js');
@@ -114,10 +114,10 @@ test('v215 integrity modules remain ordered while v216 advances the app shell', 
   assert.ok(integrity >= 0, 'index.html does not load gamification-integrity-v1.js');
   assert.ok(commitment < app, 'commitment-v1.js must load before app.js');
   assert.ok(integrity < app, 'gamification-integrity-v1.js must load before app.js');
-  assert.match(SW, /const CACHE = ['"]satoru-v243['"]/, 'service-worker cache must be bumped to satoru-v243');
+  assert.match(SW, /const CACHE = ['"]satoru-v244['"]/, 'service-worker cache must be bumped to satoru-v244');
   assert.match(SW, /['"]commitment-v1\.js['"]/, 'commitment-v1.js is missing from the offline shell');
   assert.match(SW, /['"]gamification-integrity-v1\.js['"]/, 'gamification-integrity-v1.js is missing from the offline shell');
-  assert.match(APP, /const PWA_CACHE_VERSION = ['"]satoru-v243['"]/, 'app and service worker disagree on the v216 cache');
+  assert.match(APP, /const PWA_CACHE_VERSION = ['"]satoru-v244['"]/, 'app and service worker disagree on the v244 cache');
   for (const file of ['commitment-v1.js', 'gamification-integrity-v1.js']) {
     assert.match(
       scriptTag(file),
@@ -125,11 +125,8 @@ test('v215 integrity modules remain ordered while v216 advances the app shell', 
       `${file} query does not identify the v215 release`
     );
   }
-  assert.match(
-    scriptTag('app.js'),
-    /[?&](?:v|build)=[^"']*v216(?:[-_.][^"']*)?["']/i,
-    'app.js query does not identify the v216 release'
-  );
+  assert.match(scriptTag('app.js'), /[?&](?:v|build)=[^"']*v244(?:[-_.][^"']*)?["']/i,
+    'app.js query does not identify the v244 release');
 });
 
 test('live product copy no longer promises Hype or resource-loss discipline', () => {
@@ -231,10 +228,10 @@ test('the old Oath wager is replaced by take, revise and release commitment acti
     assert.match(APP, new RegExp(`action\\s*===\\s*["']${escapeRe(action)}["']`), `click controller does not handle ${action}`);
   }
   for (const semantic of [
-    /(?:window\.)?CommitmentV1\.(?:add|create)\s*\(|(?:take|create|add)\w*Commitment\s*\(/i,
-    /(?:window\.)?CommitmentV1\.(?:revise|edit|update)\s*\(|(?:revise|edit|update)\w*Commitment\s*\(/i,
-    /(?:window\.)?CommitmentV1\.(?:release|archive|remove)\s*\(|(?:release|archive|remove)\w*Commitment\s*\(/i,
-    /(?:window\.)?CommitmentV1\.(?:mark|settle)\s*\(|(?:mark|settle)\w*Commitment\s*\(/i,
+    /commitmentApi\.(?:add|create)\s*\(|(?:take|create|add)\w*Commitment\s*\(/i,
+    /commitmentApi\.(?:revise|edit|update)\s*\(|(?:revise|edit|update)\w*Commitment\s*\(/i,
+    /commitmentApi\.(?:release|archive|remove)\s*\(|(?:release|archive|remove)\w*Commitment\s*\(/i,
+    /commitmentApi\.(?:mark|settle)\s*\(|(?:mark|settle)\w*Commitment\s*\(/i,
   ]) assert.match(APP, semantic, `missing commitment behavior: ${semantic}`);
 });
 

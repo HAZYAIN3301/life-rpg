@@ -750,6 +750,32 @@ const I18N_EXTRA = {
   'Синхронизируются правила, окна и записанные исходы — без истории сайтов и содержимого экрана.': { en: 'Rules, windows and recorded outcomes are synced — without website history or screen contents.', de: 'Regeln, Zeitfenster und erfasste Ergebnisse werden synchronisiert — ohne Website-Verlauf oder Bildschirminhalte.', uk: 'Синхронізуються правила, вікна та записані результати — без історії сайтів і вмісту екрана.', es: 'Se sincronizan reglas, ventanas y resultados registrados, sin historial de sitios ni contenido de pantalla.' },
   'Синхронизация контрактов включена': { en: 'Contract sync is on', de: 'Vertragssynchronisierung ist aktiv', uk: 'Синхронізацію контрактів увімкнено', es: 'La sincronización de contratos está activa' },
   'Данные внимания остаются на этом устройстве': { en: 'Attention data stays on this device', de: 'Aufmerksamkeitsdaten bleiben auf diesem Gerät', uk: 'Дані уваги залишаються на цьому пристрої', es: 'Los datos de atención permanecen en este dispositivo' },
+  'Что эта граница сохраняет для тебя': { en: 'What this boundary protects for you', de: 'Was diese Grenze für dich schützt', uk: 'Що ця межа зберігає для тебе', es: 'Qué protege este límite para ti' },
+  'Например: вечер остаётся моим': { en: 'For example: the evening stays mine', de: 'Zum Beispiel: Der Abend bleibt meiner', uk: 'Наприклад: вечір лишається моїм', es: 'Por ejemplo: la tarde sigue siendo mía' },
+  'Сохранить правило и уговор': { en: 'Save rule and agreement', de: 'Regel und Versprechen speichern', uk: 'Зберегти правило й домовленість', es: 'Guardar regla y acuerdo' },
+  'Обязательно: назови, что эта граница сохраняет для тебя. Без выигрыша правило не создаётся.': { en: 'Required: name what this boundary protects for you. The rule cannot be created without a win.', de: 'Pflichtfeld: Benenne, was diese Grenze für dich schützt. Ohne Gewinn wird die Regel nicht erstellt.', uk: 'Обов’язково: назви, що ця межа зберігає для тебе. Без виграшу правило не створюється.', es: 'Obligatorio: indica qué protege este límite para ti. La regla no se crea sin un beneficio.' },
+  'Правила и исходы остаются на устройстве. Ярлык, граница и выигрыш уговора сохраняются в аккаунте для Тени.': { en: 'Rules and outcomes stay on this device. The agreement label, boundary and win are saved to your account for Shadow.', de: 'Regeln und Ergebnisse bleiben auf diesem Gerät. Bezeichnung, Grenze und Gewinn des Versprechens werden für den Schatten im Konto gespeichert.', uk: 'Правила й результати лишаються на пристрої. Ярлик, межа й виграш домовленості зберігаються в акаунті для Тіні.', es: 'Las reglas y los resultados permanecen en este dispositivo. La etiqueta, el límite y el beneficio del acuerdo se guardan en tu cuenta para Sombra.' },
+  'История устройства остаётся локальной. Тень получает только названный тобой уговор, без URL и содержимого экрана.': { en: 'Device history stays local. Shadow receives only the agreement you named, without URLs or screen contents.', de: 'Der Geräteverlauf bleibt lokal. Der Schatten erhält nur das von dir benannte Versprechen, ohne URLs oder Bildschirminhalte.', uk: 'Історія пристрою лишається локальною. Тінь отримує лише названу тобою домовленість, без URL і вмісту екрана.', es: 'El historial del dispositivo permanece local. Sombra solo recibe el acuerdo que has nombrado, sin URL ni contenido de pantalla.' },
+  'Часть уговоров не удалось прочитать': { en: 'Some agreements could not be read', de: 'Einige Versprechen konnten nicht gelesen werden', uk: 'Деякі домовленості не вдалося прочитати', es: 'No se pudieron leer algunos acuerdos' },
+  'Ничего не перезаписываем, пока данные не восстановлены.': { en: 'Nothing will be overwritten until the data is restored.', de: 'Nichts wird überschrieben, bis die Daten wiederhergestellt sind.', uk: 'Нічого не перезаписуємо, доки дані не відновлено.', es: 'No se sobrescribirá nada hasta que se restauren los datos.' },
+  'без идентификатора': { en: 'no identifier', de: 'ohne Kennung', uk: 'без ідентифікатора', es: 'sin identificador' },
+  'Уговор связан с Тенью': { en: 'Agreement linked to Shadow', de: 'Versprechen mit dem Schatten verknüpft', uk: 'Домовленість пов’язана з Тінню', es: 'Acuerdo vinculado con Sombra' },
+  'Уговор ещё не связан': { en: 'Agreement not linked yet', de: 'Versprechen noch nicht verknüpft', uk: 'Домовленість ще не пов’язана', es: 'Acuerdo aún no vinculado' },
+  'Изменить уговор': { en: 'Edit agreement', de: 'Versprechen bearbeiten', uk: 'Змінити домовленість', es: 'Editar acuerdo' },
+  'Связать уговор': { en: 'Link agreement', de: 'Versprechen verknüpfen', uk: 'Пов’язати домовленість', es: 'Vincular acuerdo' },
+  'Полные правила и исходы остаются на этом устройстве. В аккаунте хранится только названный тобой уговор: ярлык, граница и выигрыш — без URL и содержимого экрана.': { en: 'Full rules and outcomes stay on this device. Your account stores only the agreement you named: label, boundary and win — without URLs or screen contents.', de: 'Vollständige Regeln und Ergebnisse bleiben auf diesem Gerät. Im Konto wird nur dein benanntes Versprechen gespeichert: Bezeichnung, Grenze und Gewinn — ohne URLs oder Bildschirminhalte.', uk: 'Повні правила й результати лишаються на цьому пристрої. В акаунті зберігається лише названа тобою домовленість: ярлик, межа й виграш — без URL і вмісту екрана.', es: 'Las reglas y los resultados completos permanecen en este dispositivo. Tu cuenta solo guarda el acuerdo que nombraste: etiqueta, límite y beneficio, sin URL ni contenido de pantalla.' },
+  'Правило внимания не найдено.': { en: 'Attention rule not found.', de: 'Aufmerksamkeitsregel nicht gefunden.', uk: 'Правило уваги не знайдено.', es: 'No se encontró la regla de atención.' },
+  'Модуль уговоров не загрузился. Обнови страницу.': { en: 'The agreements module did not load. Refresh the page.', de: 'Das Versprechen-Modul wurde nicht geladen. Aktualisiere die Seite.', uk: 'Модуль домовленостей не завантажився. Онови сторінку.', es: 'El módulo de acuerdos no se cargó. Actualiza la página.' },
+  'Назови приложение или занятие — не длиннее 40 символов.': { en: 'Name the app or activity — no more than 40 characters.', de: 'Benenne die App oder Tätigkeit — höchstens 40 Zeichen.', uk: 'Назви застосунок або заняття — не довше 40 символів.', es: 'Nombra la aplicación o actividad: 40 caracteres como máximo.' },
+  'Назови, что эта граница сохраняет для тебя.': { en: 'Name what this boundary protects for you.', de: 'Benenne, was diese Grenze für dich schützt.', uk: 'Назви, що ця межа зберігає для тебе.', es: 'Indica qué protege este límite para ti.' },
+  'Часть уговоров не читается. Ничего не перезаписано — открой восстановление данных.': { en: 'Some agreements cannot be read. Nothing was overwritten — open data recovery.', de: 'Einige Versprechen sind nicht lesbar. Nichts wurde überschrieben — öffne die Datenwiederherstellung.', uk: 'Деякі домовленості не читаються. Нічого не перезаписано — відкрий відновлення даних.', es: 'Algunos acuerdos no se pueden leer. No se sobrescribió nada; abre la recuperación de datos.' },
+  'Этот ярлык уже связан с другим уговором. Ничего не изменено.': { en: 'This label is already linked to another agreement. Nothing changed.', de: 'Diese Bezeichnung ist bereits mit einem anderen Versprechen verknüpft. Nichts wurde geändert.', uk: 'Цей ярлик уже пов’язано з іншою домовленістю. Нічого не змінено.', es: 'Esta etiqueta ya está vinculada a otro acuerdo. Nada cambió.' },
+  'Достигнут предел активных уговоров. Сними одну старую границу и повтори.': { en: 'The active agreement limit has been reached. Release an old boundary and try again.', de: 'Das Limit aktiver Versprechen ist erreicht. Löse eine alte Grenze und versuche es erneut.', uk: 'Досягнуто ліміт активних домовленостей. Зніми одну стару межу й повтори.', es: 'Se alcanzó el límite de acuerdos activos. Libera un límite antiguo e inténtalo de nuevo.' },
+  'Проверь ярлык, длительность и выигрыш.': { en: 'Check the label, duration and win.', de: 'Prüfe Bezeichnung, Dauer und Gewinn.', uk: 'Перевір ярлик, тривалість і виграш.', es: 'Comprueba la etiqueta, la duración y el beneficio.' },
+  'Не удалось подготовить уговор. Ничего не изменено.': { en: 'The agreement could not be prepared. Nothing changed.', de: 'Das Versprechen konnte nicht vorbereitet werden. Nichts wurde geändert.', uk: 'Не вдалося підготувати домовленість. Нічого не змінено.', es: 'No se pudo preparar el acuerdo. Nada cambió.' },
+  'Уговор не сохранился, поэтому правило тоже не изменено. Повтори попытку.': { en: 'The agreement was not saved, so the rule was not changed either. Try again.', de: 'Das Versprechen wurde nicht gespeichert, daher blieb auch die Regel unverändert. Versuche es erneut.', uk: 'Домовленість не збереглася, тому правило теж не змінено. Повтори спробу.', es: 'El acuerdo no se guardó, así que la regla tampoco cambió. Inténtalo de nuevo.' },
+  'Правило сохранилось, но уговор не синхронизирован. Не используй его до повторной попытки.': { en: 'The rule was saved, but the agreement did not sync. Do not use it until you retry.', de: 'Die Regel wurde gespeichert, aber das Versprechen nicht synchronisiert. Verwende sie erst nach einem erneuten Versuch.', uk: 'Правило збереглося, але домовленість не синхронізована. Не використовуй її до повторної спроби.', es: 'La regla se guardó, pero el acuerdo no se sincronizó. No la uses hasta volver a intentarlo.' },
+  'Правило и уговор сохранены': { en: 'Rule and agreement saved', de: 'Regel und Versprechen gespeichert', uk: 'Правило й домовленість збережені', es: 'Regla y acuerdo guardados' },
   'Изменения внимания идут только через защищённое хранилище': { en: 'Attention changes only use the protected store', de: 'Änderungen an Aufmerksamkeitsdaten laufen nur über den geschützten Speicher', uk: 'Зміни даних уваги відбуваються лише через захищене сховище', es: 'Los cambios de atención solo usan el almacenamiento protegido' },
   'Модуль внимания не загрузился. Обнови страницу.': { en: 'The attention module did not load. Refresh the page.', de: 'Das Aufmerksamkeitsmodul wurde nicht geladen. Aktualisiere die Seite.', uk: 'Модуль уваги не завантажився. Онови сторінку.', es: 'El módulo de atención no se cargó. Actualiza la página.' },
   'Данные внимания недоступны. Ничего не перезаписываем.': { en: 'Attention data is unavailable. Nothing will be overwritten.', de: 'Aufmerksamkeitsdaten sind nicht verfügbar. Nichts wird überschrieben.', uk: 'Дані уваги недоступні. Нічого не перезаписуємо.', es: 'Los datos de atención no están disponibles. No se sobrescribirá nada.' },
@@ -5240,10 +5266,11 @@ async function commitmentBoundaryRejected(response, { retried = false, base = nu
 function accountResetDataCandidate() {
   if (!State.settings || !Array.isArray(State.tasks)) return null;
   const settings = structuredClone(State.settings);
-  if (window.CommitmentV1 && settings.commitmentsV1 !== undefined) {
-    let commitments = window.CommitmentV1.normalize(settings.commitmentsV1);
+  const commitmentApi = commitmentEngine();
+  if (commitmentApi && settings.commitmentsV1 !== undefined) {
+    let commitments = commitmentApi.normalize(settings.commitmentsV1);
     for (const item of commitments.items.filter((entry) => !entry.archivedAt && String(entry.id).startsWith('quest:'))) {
-      const released = window.CommitmentV1.release(commitments, item.id, todayStr());
+      const released = commitmentApi.release(commitments, item.id, todayStr());
       if (!released.ok) return null;
       commitments = released.state;
     }
@@ -5693,7 +5720,7 @@ const DEFAULT_SETTINGS = {
   theme: 'dark', accent: '#6c8cff', // оформление (тема + акцент)
   companion: { name: 'Тень', born: null, bond: 0, lastSeen: null, journal: [], check: {} }, // живой компаньон (Finch-модель)
   secretary: { eveningTime: '', dailyReminder: false, configured: false, lastEveningPromptDate: '', experimentV1: null },
-  commitmentsV1: { version: 1, mode: 'default', items: [], log: {} },
+  commitmentsV1: { version: 2, mode: 'default', items: [], log: {} },
   browserCompanionDiscovery: null,
   path: null, pathChosenAt: null, pathAntagonistMuted: false, control: {}, // «Доверие vs Контроль» (см. DISCIPLINE-PATHS-PLAN.md) — null = ещё не выбран
   social: { leaderboard: false, party: false }, // два независимых explicit-consent; отсутствие поля всегда означает «не публиковать»
@@ -5739,10 +5766,90 @@ function pathInfo() { return PATHS[currentPath()]; }
 function pathStreakGrace() { return (State.settings && State.settings.path === 'trust') ? 1 : 0; }
 
 function questCommitmentId(task) { return task && (task.commitmentId || `quest:${task.id}`); }
+
+// CommitmentV2 is the only reader of persisted commitment state. Feeding v2 back
+// through CommitmentV1 would silently erase every `attention` item on the next
+// ordinary quest edit. V1 remains loaded and unchanged for its legacy contract;
+// this adapter mirrors its revise/release/reopen semantics on the v2 superset without ever
+// handing the full state to the v1 normalizer.
+let _commitmentCompatEngine = null;
+function commitmentMigration(raw, { record = true } = {}) {
+  const C = window.CommitmentV2;
+  const result = C && typeof C.migrate === 'function'
+    ? C.migrate(raw)
+    : { state: { version: 2, mode: 'default', items: [], log: {} }, migrated: false, dropped: [{ id: null, why: 'engine_unavailable' }] };
+  if (record && typeof State === 'object') State._commitmentMigrationDropped = result.dropped.slice();
+  return result;
+}
+function commitmentNormalize(raw) { return commitmentMigration(raw).state; }
+function commitmentTransition(state, id, day, kind, patch = null) {
+  const C = window.CommitmentV2;
+  const migrated = commitmentMigration(state);
+  const currentState = migrated.state;
+  if (!C || migrated.dropped.length || !/^\d{4}-\d{2}-\d{2}$/.test(String(day || ''))) {
+    return { ok: false, error: 'invalid', state: currentState };
+  }
+  const key = String(id);
+  const current = currentState.items.find((item) => item.id === key
+    && (kind === 'reopen' ? !!item.archivedAt : !item.archivedAt));
+  if (!current) return { ok: false, error: 'missing', state: currentState };
+  if (kind === 'reopen' && currentState.items.filter((item) => !item.archivedAt).length >= C.MAX_ITEMS) {
+    return { ok: false, error: 'limit', state: currentState };
+  }
+  let candidate;
+  if (kind === 'revise') {
+    if (!patch || typeof patch !== 'object' || Array.isArray(patch)) return { ok: false, error: 'invalid', state: currentState };
+    candidate = {
+      ...current, ...patch, id: current.id,
+      history: current.history.concat([{ type: 'revised', day, from: current.edge, to: patch.edge || current.edge }]).slice(-30),
+      revisedOn: day,
+    };
+  } else if (kind === 'release') {
+    candidate = { ...current, archivedAt: day, history: current.history.concat([{ type: 'released', day }]).slice(-30) };
+  } else if (kind === 'reopen') {
+    candidate = { ...current, revisedOn: day }; delete candidate.archivedAt;
+  } else return { ok: false, error: 'invalid', state: currentState };
+  const checked = C.migrate({ ...currentState, items: currentState.items.map((item) => item.id === key ? candidate : item) });
+  if (checked.dropped.length || !checked.state.items.some((item) => item.id === key)) {
+    return { ok: false, error: 'invalid', state: currentState };
+  }
+  return { ok: true, state: checked.state };
+}
+function commitmentEngine() {
+  const C = window.CommitmentV2;
+  if (!C) return null;
+  if (_commitmentCompatEngine && _commitmentCompatEngine.source === C) return _commitmentCompatEngine;
+  _commitmentCompatEngine = Object.freeze({
+    source: C,
+    VERSION: C.VERSION, MAX_ITEMS: C.MAX_ITEMS,
+    emptyState: C.emptyState,
+    normalize: commitmentNormalize,
+    migrate: C.migrate,
+    activeItems: (state) => C.activeItems(commitmentNormalize(state)),
+    add: (state, draft) => C.add(commitmentNormalize(state), draft),
+    archive: (state, id, day) => C.archive(commitmentNormalize(state), id, day),
+    setMode: (state, mode) => C.setMode(commitmentNormalize(state), mode),
+    dueOn: (state, day, mode) => C.dueOn(commitmentNormalize(state), day, mode),
+    coreOf: (state, day, mode) => C.coreOf(commitmentNormalize(state), day, mode),
+    extrasOf: (state, day, mode) => C.extrasOf(commitmentNormalize(state), day, mode),
+    mark: (state, id, day, result) => C.mark(commitmentNormalize(state), id, day, result),
+    clearMark: (state, id, day) => C.clearMark(commitmentNormalize(state), id, day),
+    outcomeOf: (state, id, day) => C.outcomeOf(commitmentNormalize(state), id, day),
+    streakOf: (state, id, day, lookback) => C.streakOf(commitmentNormalize(state), id, day, lookback),
+    unsettled: (state, day, mode) => C.unsettled(commitmentNormalize(state), day, mode),
+    dayScore: (state, day, mode) => C.dayScore(commitmentNormalize(state), day, mode),
+    bestFor: (state, target, day, mode) => C.bestFor(commitmentNormalize(state), target, day, mode),
+    revise: (state, id, patch, day) => commitmentTransition(state, id, day, 'revise', patch),
+    release: (state, id, day) => commitmentTransition(state, id, day, 'release'),
+    reopen: (state, id, day) => commitmentTransition(state, id, day, 'reopen'),
+  });
+  return _commitmentCompatEngine;
+}
 function commitmentState() {
-  return window.CommitmentV1
-    ? window.CommitmentV1.normalize(State.settings && State.settings.commitmentsV1)
-    : { version: 1, mode: 'default', items: [], log: {} };
+  const commitments = commitmentEngine();
+  return commitments
+    ? commitments.normalize(State.settings && State.settings.commitmentsV1)
+    : { version: 2, mode: 'default', items: [], log: {} };
 }
 function questCommitmentRecord(task) {
   const id = questCommitmentId(task);
@@ -5750,25 +5857,33 @@ function questCommitmentRecord(task) {
 }
 function questCommitment(task) { const item = questCommitmentRecord(task); return item && !item.archivedAt ? item : null; }
 function releaseActiveQuestCommitmentCandidate(settings, task, day = todayStr()) {
-  if (!window.CommitmentV1 || !settings || !task) return { ok: false, released: false };
-  const commitments = window.CommitmentV1.normalize(settings.commitmentsV1);
+  const commitmentApi = commitmentEngine();
+  if (!commitmentApi || !settings || !task) return { ok: false, released: false };
+  const commitments = commitmentApi.normalize(settings.commitmentsV1);
   const id = questCommitmentId(task);
   const active = commitments.items.find((item) => item.id === id && !item.archivedAt);
   if (!active) return { ok: true, released: false };
-  const released = window.CommitmentV1.release(commitments, id, day);
+  const released = commitmentApi.release(commitments, id, day);
   if (!released.ok) return { ok: false, released: false };
   settings.commitmentsV1 = released.state;
   return { ok: true, released: true };
 }
 async function commitmentDataCommit(build, focusSelector = '') {
   const validator = window.CommitmentStoreV1;
+  const commitmentApi = commitmentEngine();
   if (typeof build !== 'function' || !validator
+    || !commitmentApi
     || !taskWriteAllowed('commitmentDataCommit', true)
     || !settingsWriteAllowed('commitmentDataCommit', true)) return false;
   const currentCommitments = State.settings && State.settings.commitmentsV1;
   if (currentCommitments !== undefined && !validator.validateCommitmentState(currentCommitments)) {
     State._settingsLoadError = 'invalid';
     toast(t('Изменения настроек заблокированы до восстановления данных'));
+    return false;
+  }
+  const currentMigration = commitmentMigration(currentCommitments);
+  if (currentMigration.dropped.length) {
+    toast(t('Часть уговоров не читается. Ничего не перезаписано — открой восстановление данных.'));
     return false;
   }
   return Store.runExclusive(['settings', 'tasks'], async ({ writeEpoch, accountId }) => {
@@ -5781,8 +5896,12 @@ async function commitmentDataCommit(build, focusSelector = '') {
     for (let attempt = 0; attempt < 3; attempt += 1) {
       const base = commitmentWriteBase();
       if (!base) return false;
+      const candidateSettings = structuredClone(State.settings);
+      const migration = commitmentMigration(candidateSettings.commitmentsV1);
+      if (migration.dropped.length) return false;
+      candidateSettings.commitmentsV1 = migration.state;
       const candidate = build({
-        settings: structuredClone(State.settings),
+        settings: candidateSettings,
         tasks: structuredClone(State.tasks),
       });
       if (!candidate || !validateSettingsPayload(candidate.settings) || !validateTasksPayload(candidate.tasks)
@@ -5812,25 +5931,26 @@ async function commitmentDataCommit(build, focusSelector = '') {
   });
 }
 async function takeQuestCommitment(task, at, win) {
-  if (!window.CommitmentV1 || !task || task.done || task.date !== todayStr()) return false;
+  const commitmentApi = commitmentEngine();
+  if (!commitmentApi || !task || task.done || task.date !== todayStr()) return false;
   const taskId = String(task.id), id = questCommitmentId(task);
   const saved = await commitmentDataCommit(({ settings, tasks }) => {
     const linkedTask = tasks.find((item) => String(item.id) === taskId);
     if (!linkedTask || linkedTask.done || linkedTask.date !== todayStr()) return null;
-    let commitments = window.CommitmentV1.normalize(settings.commitmentsV1);
+    let commitments = commitmentApi.normalize(settings.commitmentsV1);
     const existing = commitments.items.find((item) => item.id === id);
     if (existing && !existing.archivedAt) return null;
     if (existing) {
-      const reopened = window.CommitmentV1.reopen(commitments, id, todayStr());
+      const reopened = commitmentApi.reopen(commitments, id, todayStr());
       if (!reopened.ok) return null;
-      const revised = window.CommitmentV1.revise(reopened.state, id, {
+      const revised = commitmentApi.revise(reopened.state, id, {
         title: linkedTask.title, win: String(win || '').trim(),
         edge: { kind: 'time', at }, core: !!linkedTask.core, decidedOn: todayStr(),
       }, todayStr());
       if (!revised.ok) return null;
       commitments = revised.state;
     } else {
-      const added = window.CommitmentV1.add(commitments, {
+      const added = commitmentApi.add(commitments, {
         id, kind: 'step', title: linkedTask.title,
         win: String(win || '').trim(),
         edge: { kind: 'time', at }, core: !!linkedTask.core, modes: [], decidedOn: todayStr(),
@@ -5846,7 +5966,7 @@ async function takeQuestCommitment(task, at, win) {
   return saved;
 }
 async function rescheduleQuestDatesWithCommitments(taskIds, nextDate, focusSelector = '') {
-  if (!window.CommitmentV1 || !/^\d{4}-\d{2}-\d{2}$/.test(String(nextDate || ''))) return false;
+  if (!commitmentEngine() || !/^\d{4}-\d{2}-\d{2}$/.test(String(nextDate || ''))) return false;
   const ids = [...new Set((taskIds || []).map(String).filter(Boolean))];
   if (!ids.length) return false;
   return commitmentDataCommit(({ settings, tasks }) => {
@@ -5866,12 +5986,13 @@ async function rescheduleQuestDatesWithCommitments(taskIds, nextDate, focusSelec
   }, focusSelector);
 }
 async function reviseQuestCommitment(task, at, win) {
-  if (!window.CommitmentV1 || !task) return false;
+  const commitmentApi = commitmentEngine();
+  if (!commitmentApi || !task) return false;
   const taskId = String(task.id), id = questCommitmentId(task);
   const saved = await commitmentDataCommit(({ settings, tasks }) => {
     const linkedTask = tasks.find((item) => String(item.id) === taskId);
     if (!linkedTask || linkedTask.done || linkedTask.commitmentId !== id) return null;
-    const revised = window.CommitmentV1.revise(window.CommitmentV1.normalize(settings.commitmentsV1), id, {
+    const revised = commitmentApi.revise(commitmentApi.normalize(settings.commitmentsV1), id, {
       edge: { kind: 'time', at }, win: String(win || '').trim(),
     }, todayStr());
     if (!revised.ok) return null;
@@ -5882,10 +6003,11 @@ async function reviseQuestCommitment(task, at, win) {
   return saved;
 }
 async function releaseQuestCommitment(task) {
-  if (!window.CommitmentV1 || !task) return false;
+  const commitmentApi = commitmentEngine();
+  if (!commitmentApi || !task) return false;
   const taskId = String(task.id), id = questCommitmentId(task);
   const saved = await commitmentDataCommit(({ settings, tasks }) => {
-    const released = window.CommitmentV1.release(window.CommitmentV1.normalize(settings.commitmentsV1), id, todayStr());
+    const released = commitmentApi.release(commitmentApi.normalize(settings.commitmentsV1), id, todayStr());
     if (!released.ok) return null;
     settings.commitmentsV1 = released.state;
     return { settings, tasks };
@@ -5894,7 +6016,7 @@ async function releaseQuestCommitment(task) {
   return saved;
 }
 async function migrateLegacyGamification() {
-  const integrity = window.GamificationIntegrityV1, commitments = window.CommitmentV1;
+  const integrity = window.GamificationIntegrityV1, commitments = commitmentEngine();
   if (!integrity || !commitments || !State.settings) return false;
   const legacyRefund = (State.purchases || []).reduce((sum, purchase) => (
     sum + (integrity.legacyPenaltyPurchase(purchase) ? Math.max(0, Number(purchase.cost) || 0) : 0)
@@ -7132,6 +7254,7 @@ const State = {
   timer: null, view: 'today', treeSkill: null, weekStart: null, goalFilter: 'all', goalView: 'focus', wkAddDate: null, calDate: null, calMode: 'day', habitsTab: 'build',
   _tasksLoadError: '', _tasksLoadBusy: false, _tasksWriteBlockedNoticeAt: 0, _tasksFocusAfterCommit: '',
   _settingsLoadError: '', _settingsLoadBusy: false, _treeLoadError: '', _treeLoadBusy: false,
+  _commitmentMigrationDropped: [],
   _shadowVoiceStatus: null, _shadowVoiceStatusLoading: false,
   _habitsLoadError: '', _habitsLoadBusy: false, _habitsWriteBlockedNoticeAt: 0,
   _habitTxnBusy: '', _habitError: '', _habitUndo: null, _habitUndoTimer: null, _habitsFocusAfterCommit: '',
@@ -7490,9 +7613,10 @@ async function completeTask(task, desire, onDate) {
     ? await commitmentDataCommit(({ settings, tasks }) => {
       const linkedTask = tasks.find((item) => String(item.id) === String(task.id));
       if (!linkedTask || !linkedTask.done || linkedTask.commitmentId !== activeCommitmentId) return null;
-      let commitments = window.CommitmentV1.normalize(settings.commitmentsV1);
-      commitments = window.CommitmentV1.mark(commitments, activeCommitmentId, completionDay, 'win');
-      settings.commitmentsV1 = window.CommitmentV1.archive(commitments, activeCommitmentId, completionDay);
+      const commitmentApi = commitmentEngine();
+      let commitments = commitmentApi.normalize(settings.commitmentsV1);
+      commitments = commitmentApi.mark(commitments, activeCommitmentId, completionDay, 'win');
+      settings.commitmentsV1 = commitmentApi.archive(commitments, activeCommitmentId, completionDay);
       return { settings, tasks };
     }, `[data-action="toggle-task"][data-id="${CSS.escape(String(task.id))}"]`)
     : await Store.saveNow('tasks', State.tasks);
@@ -13973,7 +14097,7 @@ async function moveCalendarTask(command, { makeUndo = true, renderAfter = true }
     && !before.startTime && !!nextTime;
   const activeCommitment = questCommitment(task);
   let saved;
-  if (dateChanged && activeCommitment && window.CommitmentV1) {
+  if (dateChanged && activeCommitment && commitmentEngine()) {
     // Перенос меняет смысл старой временной границы. Поэтому квест и бесплатное
     // снятие границы идут одной серверной транзакцией, без частичного состояния.
     saved = await commitmentDataCommit(({ settings, tasks }) => {
@@ -24305,6 +24429,7 @@ function showAttentionDialog(screen, viewModel, options = {}) {
     ${dismissible ? `<button type="button" class="modal-x" data-action="close-attention-dialog" aria-label="${t('Закрыть')}">✕</button>` : ''}
     ${renderScreen(viewModel, t)}
   </section>`;
+  if (screen === 'setup') prepareAttentionCommitmentSetup(overlay, viewModel);
   overlay.addEventListener('keydown', handleAttentionDialogKeydown);
   overlay.addEventListener('pointerdown', (event) => { if (event.target === overlay && dismissible) closeAttentionDialog(); });
   const app = document.getElementById('app');
@@ -24327,13 +24452,56 @@ function attentionOpenError(opener) {
   const error = State._attentionLoadError || 'load';
   showAttentionDialog('error', { error, busy: State._attentionLoadBusy }, { opener });
 }
+function prepareAttentionCommitmentSetup(overlay, viewModel = {}) {
+  const C = window.CommitmentV2;
+  if (!overlay || !C) return;
+  const target = overlay.querySelector('[name="targetLabel"]');
+  const outcome = overlay.querySelector('[name="outcomeHint"]');
+  const form = overlay.querySelector('#attention-setup-form');
+  if (form && viewModel.policyId) form.dataset.policyId = String(viewModel.policyId);
+  if (target) target.maxLength = C.MAX_TARGET;
+  if (outcome) {
+    const field = document.createElement('label');
+    field.className = 'attention-field attention-field-wide attention-commitment-win';
+    const label = document.createElement('span');
+    label.textContent = t('Что эта граница сохраняет для тебя');
+    const win = document.createElement('input');
+    win.name = 'win'; win.maxLength = 120; win.required = true;
+    win.setAttribute('aria-required', 'true'); win.autocomplete = 'off';
+    win.placeholder = t('Например: вечер остаётся моим');
+    win.value = String(viewModel.win || '').trim().slice(0, 120);
+    const hint = document.createElement('small');
+    hint.className = 'attention-commitment-hint';
+    hint.textContent = t('Обязательно: назови, что эта граница сохраняет для тебя. Без выигрыша правило не создаётся.');
+    field.append(label, win, hint);
+    outcome.closest('.attention-field')?.insertAdjacentElement('afterend', field);
+  }
+  const save = overlay.querySelector('[data-action="save-attention-policy"]');
+  if (save) save.textContent = t('Сохранить правило и уговор');
+  const localCopy = overlay.querySelector('[name="storageMode"][value="local"]')?.closest('.attention-choice')?.querySelector('small');
+  if (localCopy) localCopy.textContent = t('Правила и исходы остаются на устройстве. Ярлык, граница и выигрыш уговора сохраняются в аккаунте для Тени.');
+  const privacy = overlay.querySelector('.attention-privacy-note');
+  if (privacy) privacy.textContent = t('История устройства остаётся локальной. Тень получает только названный тобой уговор, без URL и содержимого экрана.');
+}
 function openAttentionSetup(opener, defaults = {}) {
   if (attentionHasLoadError()) { attentionOpenError(opener); return null; }
   return showAttentionDialog('setup', {
     targetLabel: defaults.targetLabel || '', purpose: defaults.purpose || 'publish',
     minutes: defaults.minutes || 10, mode: defaults.mode || 'adaptive', outcomeHint: defaults.outcomeHint || '',
-    storageMode: defaults.storageMode || State.attentionMode || 'local',
+    win: defaults.win || '', storageMode: defaults.storageMode || State.attentionMode || 'local', policyId: defaults.policyId || '',
   }, { opener, source: defaults.source || 'manual' });
+}
+function openAttentionPolicySetup(policyId, opener) {
+  const policy = window.AttentionPolicyV1 && window.AttentionPolicyV1.policyById(State.attentionPolicies, policyId);
+  const rule = policy && policy.purposes.find((item) => item.enabled !== false);
+  if (!policy || !rule) { toast(t('Правило внимания не найдено.')); return null; }
+  const agreement = commitmentState().items.find((item) => item.id === attentionCommitmentId(policy.id)
+    && item.kind === 'attention' && !item.archivedAt);
+  return openAttentionSetup(opener, {
+    policyId: policy.id, targetLabel: policy.name, purpose: rule.purpose,
+    minutes: rule.defaultMinutes, mode: rule.mode, outcomeHint: rule.outcome || '',
+    win: agreement && agreement.win || '', storageMode: State.attentionMode || 'local', source: 'settings',
+  });
 }
 function attentionPolicyForTarget(target) {
   const C = attentionController(); if (!C) return null;
@@ -24508,13 +24676,20 @@ function attentionSettingsCard() {
   const policies = (State.attentionPolicies && State.attentionPolicies.policies) || [];
   const active = window.AttentionSessionV1 && window.AttentionSessionV1.active(State.attentionSessions);
   const secretary = secretarySettings();
+  const commitmentStateNow = commitmentState();
+  const dropped = Array.isArray(State._commitmentMigrationDropped) ? State._commitmentMigrationDropped : [];
+  const droppedRows = dropped.slice(0, 4).map((row) => `${esc(row.id || t('без идентификатора'))} · ${esc(row.why || 'invalid')}`).join(', ');
   return `<div class="card attention-settings-card"><div class="attention-settings-head"><div><h4>${t('Внимание и границы')}</h4><p class="muted">${t('Заранее реши, зачем входишь и где остановишься. Satoru не меняет правило без тебя.')}</p></div><button class="btn" data-action="attention-open-setup">${t('Добавить одно правило')}</button></div>
     <p class="attention-storage-state">${State.attentionMode === 'contracts' ? t('Синхронизация контрактов включена') : t('Данные внимания остаются на этом устройстве')}</p>
+    ${dropped.length ? `<div class="attention-commitment-warning" role="alert"><b>${t('Часть уговоров не удалось прочитать')}</b><p>${t('Ничего не перезаписываем, пока данные не восстановлены.')} ${droppedRows}</p></div>` : ''}
     ${active ? `<p class="attention-active-note" role="status">${t('Сейчас идёт ограниченное окно')}: <b>${esc((attentionPolicyForTarget(active.policyId) || {}).name || active.policyId)}</b> · ${fmtDur(window.AttentionSessionV1.grantedMinutes(active))}</p>` : ''}
-    ${policies.length ? `<div class="attention-policy-list">${policies.map((policy) => `<div class="attention-policy-row"><div><b>${esc(policy.name)}</b><small>${policy.purposes.filter((rule) => rule.enabled !== false).map((rule) => `${esc(attentionPurposeName(rule.purpose))} · ${fmtDur(rule.defaultMinutes)}`).join(' · ')}</small></div><button class="btn ghost" data-action="attention-open-entry" data-policy-id="${esc(policy.id)}">${t('Проверить вход')}</button></div>`).join('')}</div>` : `<p class="muted">${t('Правил пока нет. Начни с одного приложения и одной цели — это займёт до двух минут.')}</p>`}
+    ${policies.length ? `<div class="attention-policy-list">${policies.map((policy) => {
+      const linked = commitmentStateNow.items.some((item) => item.id === attentionCommitmentId(policy.id) && item.kind === 'attention' && !item.archivedAt);
+      return `<div class="attention-policy-row"><div><b>${esc(policy.name)}</b><small>${policy.purposes.filter((rule) => rule.enabled !== false).map((rule) => `${esc(attentionPurposeName(rule.purpose))} · ${fmtDur(rule.defaultMinutes)}`).join(' · ')}</small><small class="attention-policy-link-state">${t(linked ? 'Уговор связан с Тенью' : 'Уговор ещё не связан')}</small></div><div class="attention-policy-actions"><button class="btn ghost" data-action="attention-edit-policy" data-policy-id="${esc(policy.id)}">${t(linked ? 'Изменить уговор' : 'Связать уговор')}</button><button class="btn ghost" data-action="attention-open-entry" data-policy-id="${esc(policy.id)}">${t('Проверить вход')}</button></div></div>`;
+    }).join('')}</div>` : `<p class="muted">${t('Правил пока нет. Начни с одного приложения и одной цели — это займёт до двух минут.')}</p>`}
     ${browserCompanionSettingsHTML()}
     <div class="attention-settings-shortcuts"><button class="btn ghost" data-action="recovery-open">🌿 ${t('Отдых с границей')}</button><button class="btn ghost" data-action="evening-configure">🌙 ${t(secretary.configured ? 'Изменить завершение вечера' : 'Настроить завершение вечера')}</button>${secretary.dailyReminder && secretary.eveningTime ? `<span class="muted">${t('Напоминание')}: ${esc(secretary.eveningTime)}</span>` : ''}</div>
-    <p class="attention-privacy-note">${State.attentionMode === 'contracts' ? t('По отдельному согласию синхронизируются правила, сессии и записанные исходы. История устройства и просмотренные материалы не собираются.') : t('Правила и исходы остаются на этом устройстве. История устройства и просмотренные материалы не собираются.')}</p></div>`;
+    <p class="attention-privacy-note">${State.attentionMode === 'contracts' ? t('По отдельному согласию синхронизируются правила, сессии и записанные исходы. История устройства и просмотренные материалы не собираются.') : t('Полные правила и исходы остаются на этом устройстве. В аккаунте хранится только названный тобой уговор: ярлык, граница и выигрыш — без URL и содержимого экрана.')}</p></div>`;
 }
 
 async function retryAttentionLoad() {
@@ -24530,26 +24705,135 @@ async function retryAttentionLoad() {
   State._settingsFocusAfterCommit = '.attention-settings-card'; render(); scheduleAttentionBoundary();
 }
 
+function attentionCommitmentId(policyId) {
+  const raw = String(policyId || 'attention');
+  let hash = 2166136261;
+  for (let index = 0; index < raw.length; index += 1) {
+    hash ^= raw.charCodeAt(index); hash = Math.imul(hash, 16777619);
+  }
+  const slug = raw.toLowerCase().replace(/[^a-z0-9_.:-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 48) || 'policy';
+  return `attention:${slug}:${(hash >>> 0).toString(36)}`;
+}
+function attentionCommitmentError(error) {
+  return ({
+    corrupt: 'Часть уговоров не читается. Ничего не перезаписано — открой восстановление данных.',
+    collision: 'Этот ярлык уже связан с другим уговором. Ничего не изменено.',
+    limit: 'Достигнут предел активных уговоров. Сними одну старую границу и повтори.',
+    invalid: 'Проверь ярлык, длительность и выигрыш.',
+  })[error] || 'Не удалось подготовить уговор. Ничего не изменено.';
+}
+function attentionMergedPolicyState(currentState, nextState, policyId, purpose) {
+  const policyModule = window.AttentionPolicyV1;
+  if (!policyModule) return { ok: false, error: 'engine_unavailable' };
+  const previousPolicy = policyModule.policyById(currentState, policyId);
+  const replacementPolicy = policyModule.policyById(nextState, policyId);
+  if (!previousPolicy || !replacementPolicy) return { ok: true, state: nextState };
+  let replacedPurpose = false;
+  const purposes = previousPolicy.purposes.map((rule) => {
+    if (rule.purpose !== purpose) return rule;
+    replacedPurpose = true;
+    return replacementPolicy.purposes[0];
+  });
+  if (!replacedPurpose) purposes.push(replacementPolicy.purposes[0]);
+  return policyModule.upsert(currentState, {
+    ...previousPolicy,
+    name: replacementPolicy.name,
+    purposes,
+  });
+}
+function attentionCommitmentState(raw, input, policyId) {
+  const commitmentApi = commitmentEngine();
+  const migrated = commitmentMigration(raw);
+  if (!commitmentApi || migrated.dropped.length) return { ok: false, error: 'corrupt', state: migrated.state };
+  const target = String(input && input.targetLabel || '').trim();
+  const win = String(input && input.win || '').trim();
+  const minutes = Number(input && input.minutes);
+  if (!target || target.length > window.CommitmentV2.MAX_TARGET || !win
+    || !Number.isInteger(minutes) || minutes < 1 || minutes > 600) {
+    return { ok: false, error: 'invalid', state: migrated.state };
+  }
+  const id = attentionCommitmentId(policyId);
+  const draft = {
+    id, kind: 'attention', title: target, target, win,
+    edge: { kind: 'duration', minutes }, core: true, modes: [], decidedOn: todayStr(),
+  };
+  const existing = migrated.state.items.find((item) => item.id === id);
+  if (existing && existing.kind !== 'attention') return { ok: false, error: 'collision', state: migrated.state };
+  let state = migrated.state;
+  if (!existing) {
+    const added = commitmentApi.add(state, draft);
+    return added.ok ? { ok: true, state: added.state } : { ok: false, error: added.error || 'invalid', state };
+  }
+  if (existing.archivedAt) {
+    const reopened = commitmentApi.reopen(state, id, todayStr());
+    if (!reopened.ok) return { ok: false, error: reopened.error || 'invalid', state };
+    state = reopened.state;
+  }
+  const current = state.items.find((item) => item.id === id);
+  const unchanged = current && current.title === draft.title && current.target === draft.target
+    && current.win === draft.win && current.edge.kind === 'duration' && current.edge.minutes === minutes
+    && current.core === true && Array.isArray(current.modes) && current.modes.length === 0;
+  if (unchanged) return { ok: true, state };
+  const revised = commitmentApi.revise(state, id, {
+    title: draft.title, target: draft.target, win: draft.win, edge: draft.edge, core: true, modes: [],
+  }, todayStr());
+  return revised.ok ? { ok: true, state: revised.state } : { ok: false, error: revised.error || 'invalid', state };
+}
+
 async function saveAttentionSetup(form) {
   const C = attentionController(); if (!C || attentionHasLoadError()) return;
   const overlay = form.closest('#attention-dialog-overlay');
   const input = {
     targetLabel: form.targetLabel.value, purpose: form.purpose.value, minutes: form.minutes.value,
     mode: form.mode.value, outcome: form.outcomeHint.value,
+    win: form.elements.namedItem('win')?.value || '',
   };
+  input.targetLabel = String(input.targetLabel || '').trim();
+  input.outcome = String(input.outcome || '').trim();
+  input.win = String(input.win || '').trim();
+  const commitmentModule = window.CommitmentV2;
+  if (!commitmentModule) { attentionStatus('Модуль уговоров не загрузился. Обнови страницу.', true); return; }
+  if (!input.targetLabel || input.targetLabel.length > commitmentModule.MAX_TARGET) {
+    attentionStatus(`Назови приложение или занятие — не длиннее ${commitmentModule.MAX_TARGET} символов.`, true);
+    form.targetLabel?.focus(); return;
+  }
+  if (!input.win) {
+    attentionStatus('Назови, что эта граница сохраняет для тебя.', true);
+    form.elements.namedItem('win')?.focus(); return;
+  }
   const storageMode = C.storageMode(form.storageMode && form.storageMode.value);
   const policyId = form.dataset.policyId || attentionPolicyId(input.targetLabel);
   const next = C.upsertPolicy(State.attentionPolicies, input, policyId);
   if (!next.ok) { attentionStatus(next.error === 'outcome_required' ? 'Для рабочей цели нужен конкретный результат.' : 'Проверь заполненные поля.', true); return; }
+  const policyMerge = attentionMergedPolicyState(State.attentionPolicies, next.state, policyId, input.purpose);
+  if (!policyMerge.ok) { attentionStatus('Проверь заполненные поля.', true); return; }
+  const preflight = attentionCommitmentState(State.settings && State.settings.commitmentsV1, input, policyId);
+  if (!preflight.ok) { attentionStatus(attentionCommitmentError(preflight.error), true); return; }
   attentionBusy(true); attentionStatus('Сохраняю…');
-  const bundle = { ...attentionBundle(), mode: storageMode, policies: next.state };
+  const previousBundle = structuredClone(attentionBundle());
+  const bundle = { ...attentionBundle(), mode: storageMode, policies: policyMerge.state };
   const saved = await AttentionStore.save(bundle);
   if (!saved) { attentionBusy(false); attentionStatus('Не удалось сохранить. Ничего не изменено — повтори попытку.', true); return; }
   applyAttentionBundle(bundle);
+  const commitmentSaved = await commitmentDataCommit(({ settings, tasks }) => {
+    const built = attentionCommitmentState(settings.commitmentsV1, input, policyId);
+    if (!built.ok) return null;
+    settings.commitmentsV1 = built.state;
+    return { settings, tasks };
+  });
+  if (!commitmentSaved) {
+    const rolledBack = await AttentionStore.save(previousBundle);
+    if (rolledBack) applyAttentionBundle(previousBundle);
+    attentionBusy(false);
+    attentionStatus(rolledBack
+      ? 'Уговор не сохранился, поэтому правило тоже не изменено. Повтори попытку.'
+      : 'Правило сохранилось, но уговор не синхронизирован. Не используй его до повторной попытки.', true);
+    return;
+  }
   closeAttentionDialog({ restoreFocus: false, force: true });
   if (overlay?.dataset.attentionSource === 'shelf' && State._shelfPendingSource) openAttentionEntry(policyId, 'shelf', State._shelfPendingSource.opener);
   else { State._settingsFocusAfterCommit = '.attention-settings-card'; render(); }
-  toast(t('Правило внимания сохранено'));
+  toast(t('Правило и уговор сохранены'));
 }
 
 async function startAttentionEntry(form) {
@@ -27306,9 +27590,10 @@ async function onSubmit(e) {
     ? await commitmentDataCommit(({ settings, tasks }) => {
       const linkedTask = tasks.find((item) => String(item.id) === String(task.id));
       if (!linkedTask || !linkedTask.done || linkedTask.commitmentId !== activeCommitmentId) return null;
-      let commitments = window.CommitmentV1.normalize(settings.commitmentsV1);
-      commitments = window.CommitmentV1.mark(commitments, activeCommitmentId, completionDay, 'win');
-      settings.commitmentsV1 = window.CommitmentV1.archive(commitments, activeCommitmentId, completionDay);
+      const commitmentApi = commitmentEngine();
+      let commitments = commitmentApi.normalize(settings.commitmentsV1);
+      commitments = commitmentApi.mark(commitments, activeCommitmentId, completionDay, 'win');
+      settings.commitmentsV1 = commitmentApi.archive(commitments, activeCommitmentId, completionDay);
       return { settings, tasks };
     }, `[data-action="toggle-task"][data-id="${CSS.escape(String(task.id))}"]`)
     : await Store.saveNow('tasks', State.tasks);
@@ -28670,6 +28955,7 @@ async function onClick(e) {
   if (action === 'pwa-lifecycle-dismiss') { pwaLifecycleDispatch({ type: 'reconnect:dismiss' }); return; }
   if (action === 'close-attention-dialog') { closeAttentionDialog(); return; }
   if (action === 'attention-open-setup') { openAttentionSetup(el); return; }
+  if (action === 'attention-edit-policy') { openAttentionPolicySetup(el.dataset.policyId, el); return; }
   if (action === 'attention-open-entry') { openAttentionEntry(el.dataset.policyId, 'manual', el); return; }
   if (action === 'attention-open-boundary') { openAttentionBoundary(el.dataset.sessionId); return; }
   if (action === 'attention-open-return') { openAttentionReturn(el); return; }
@@ -29720,15 +30006,16 @@ async function onClick(e) {
       const completedDay = dayOf(q), beforeTask = structuredClone(q), record = questCommitmentRecord(q);
       queueTaskCompletionFocus(id, el);
       q.done = false; q.completedAt = null; q.xpAwarded = 0; q.goldAwarded = 0; q.desire = null;
-      const saved = record && window.CommitmentV1
+      const saved = record && commitmentEngine()
         ? await commitmentDataCommit(({ settings, tasks }) => {
-          let commitments = window.CommitmentV1.normalize(settings.commitmentsV1);
+          const commitmentApi = commitmentEngine();
+          let commitments = commitmentApi.normalize(settings.commitmentsV1);
           const commitmentId = questCommitmentId(q);
           const candidateRecord = commitments.items.find((item) => item.id === commitmentId);
-          const completionCreatedWin = window.CommitmentV1.outcomeOf(commitments, commitmentId, completedDay) === 'win';
-          commitments = window.CommitmentV1.clearMark(commitments, commitmentId, completedDay);
+          const completionCreatedWin = commitmentApi.outcomeOf(commitments, commitmentId, completedDay) === 'win';
+          commitments = commitmentApi.clearMark(commitments, commitmentId, completedDay);
           if (candidateRecord && candidateRecord.archivedAt && completionCreatedWin) {
-            const reopened = window.CommitmentV1.reopen(commitments, questCommitmentId(q), todayStr());
+            const reopened = commitmentApi.reopen(commitments, questCommitmentId(q), todayStr());
             // Лимит активных границ не имеет права запереть обычное undo квеста:
             // галочка снимается, а завершённая граница остаётся честно архивной.
             if (reopened.ok) commitments = reopened.state;
@@ -29829,10 +30116,11 @@ async function onClick(e) {
         if (!original || !taskOverdue(original, todayStr())) return null;
         original.amnesty = todayStr();
         original.amnestySource = 'control-revise';
-        let commitments = window.CommitmentV1.normalize(settings.commitmentsV1);
+        const commitmentApi = commitmentEngine();
+        let commitments = commitmentApi.normalize(settings.commitmentsV1);
         const active = commitments.items.find((item) => item.id === questCommitmentId(original) && !item.archivedAt);
         if (active) {
-          const released = window.CommitmentV1.release(commitments, active.id, todayStr());
+          const released = commitmentApi.release(commitments, active.id, todayStr());
           if (!released.ok) return null;
           commitments = released.state;
         }
@@ -29863,10 +30151,11 @@ async function onClick(e) {
         if (!target || !taskOverdue(target, todayStr())) return null;
         target.amnesty = todayStr();
         target.amnestySource = 'control-release';
-        let commitments = window.CommitmentV1.normalize(settings.commitmentsV1);
+        const commitmentApi = commitmentEngine();
+        let commitments = commitmentApi.normalize(settings.commitmentsV1);
         const active = commitments.items.find((item) => item.id === questCommitmentId(target) && !item.archivedAt);
         if (active) {
-          const released = window.CommitmentV1.release(commitments, active.id, todayStr());
+          const released = commitmentApi.release(commitments, active.id, todayStr());
           if (!released.ok) return null;
           commitments = released.state;
         }
@@ -29911,11 +30200,12 @@ async function onClick(e) {
     if (timerSnapshot) stopFocus(false, true);
     const record = questCommitmentRecord(taskToDelete);
     let saved;
-    if (record && window.CommitmentV1) {
+    if (record && commitmentEngine()) {
       saved = await commitmentDataCommit(({ settings, tasks }) => {
-        let commitments = window.CommitmentV1.normalize(settings.commitmentsV1);
+        const commitmentApi = commitmentEngine();
+        let commitments = commitmentApi.normalize(settings.commitmentsV1);
         if (!record.archivedAt) {
-          const released = window.CommitmentV1.release(commitments, questCommitmentId(taskToDelete), todayStr());
+          const released = commitmentApi.release(commitments, questCommitmentId(taskToDelete), todayStr());
           if (!released.ok) return null;
           commitments = released.state;
         }
@@ -31323,6 +31613,7 @@ async function initApp() {
     State._settingsLoadError = settingsLoad.error;
     State._settingsLoadBusy = false;
   }
+  if (!State._settingsLoadError) commitmentMigration(State.settings && State.settings.commitmentsV1);
   if (State._settingsLoadError === 'session' || State._accountSessionExpired) return;
   // Нельзя превращать повреждённый settings.json в новый пустой профиль: сразу
   // открываем восстановление и держим write fence до успешной повторной загрузки.
@@ -32218,7 +32509,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v243';
+const PWA_CACHE_VERSION = 'satoru-v244';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
