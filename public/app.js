@@ -7105,6 +7105,9 @@ const State = {
   settings: null, tasks: null, days: null, habits: null, habitlog: null,
   goals: null, goalGroups: null, tree: null, rewards: null, purchases: null, achievements: null, weeks: null,
   lootbox: null, inbox: null, inboxOpen: false, antihabits: null, aiKeys: null, episodes: null,
+  telemetryConsent: null, _telemetryConsentLoaded: false, _telemetryConsentBusy: false, _telemetryConsentError: '',
+  aiMemory: null, _aiMemoryLoaded: false, _aiMemoryBusy: false, _aiMemoryError: '', _aiMemoryEditing: '',
+  firstValue: null, _firstValueLoaded: false, _firstValueBusy: false, _firstValueError: '', _firstValuePending: null, _firstValueContinueOverTarget: false,
   _accountDataLoadErrors: {}, _accountDataLoadBusy: false, _accountDataWriteBlockedNoticeAt: 0,
   attentionMode: 'local', attentionPolicies: null, attentionSessions: null, attentionEpisodes: null,
   _attentionLoadError: '', _attentionLoadBusy: false, _attentionWriteBlockedNoticeAt: 0,
@@ -7502,6 +7505,9 @@ async function completeTask(task, desire, onDate) {
     return false;
   }
   await syncGoalStepFromQuest(task, true);
+  // First Value receives evidence only after the task itself (and its linked
+  // goal step, when present) has crossed the durable write boundary.
+  await firstValueRecordOutcome({ entityType: 'quest', entityId: String(task.id), outcomeType: 'quest_completed', occurredAt: task.completedAt });
   const guide = guideV3State();
   if (guideV3RuntimeAllowed() && guide?.currentChapter === window.GuideV3?.FIRST_CHAPTER
     && ['start', 'wait'].includes(guide.currentStep) && guide.selectedTaskId === String(task.id)) {
@@ -13325,6 +13331,7 @@ async function questionnaireCommit() {
   if (State._questionnaireBusy) return;
   State._questionnaireBusy = true; State._questionnaireError = ''; q.status = 'committing'; questionnaireRemember(q); renderOnboardingScreen();
   try {
+    if (!await ensureOnboardingFirstValueJourney()) throw new Error('first_value_unavailable');
     q.confirmedAt = q.confirmedAt || new Date().toISOString(); questionnaireRemember(q);
     const goalSeed = q.seeds.goals[0], taskSeed = q.seeds.firstSteps[0];
     const receiptSource = goalSeed.source === 'ai_suggested' ? 'user_confirmed_suggestion' : goalSeed.source;
@@ -13369,6 +13376,7 @@ async function questionnaireCommit() {
     const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.questionnaire || data.questionnaire.status !== 'materialized') throw new Error(data.error || 'commit_failed');
     State.questionnaire = data.questionnaire; questionnaireForgetDraft(); State._questionnaireBusy = false; State._questionnaireError = '';
+    await firstValueRecordOutcome({ entityType: 'plan', entityId: String(goalSeed.localId), outcomeType: 'real_plan_created', occurredAt: q.confirmedAt });
     track('questionnaire:materialized'); State.phase = 'app'; await initApp();
   } catch {
     q.status = 'review'; questionnaireRemember(q); State._questionnaireBusy = false;
@@ -13380,6 +13388,7 @@ async function questionnaireDefer() {
   const q = questionnaireSourceFromDOM(); if (State._questionnaireBusy) return;
   State._questionnaireBusy = true; State._questionnaireError = ''; renderOnboardingScreen();
   try {
+    if (!await ensureOnboardingFirstValueJourney()) throw new Error('first_value_unavailable');
     q.confirmedAt = q.confirmedAt || new Date().toISOString(); questionnaireRemember(q);
     const response = await fetch('/api/questionnaire/defer', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
       idempotencyKey: q.idempotencyKey, revision: q.revision,
@@ -20012,6 +20021,174 @@ async function stuckAiStep(id) {
     track('stuck:ai-step');
   } catch { if (note) note.textContent = t('Не получилось — напиши шаг сам'); }
 }
+function firstValueEngine() { return window.FirstValueV1 || null; }
+function firstValuePresentation() { return window.FirstValueUiV1 || null; }
+function firstValueNow() { return new Date().toISOString(); }
+function firstValueEvent(type, entityId, extra = {}) {
+  const at = String(extra.at || firstValueNow());
+  return { ...extra, id: `${type}:${String(entityId || 'journey')}:${at}`, type, at };
+}
+function firstValueValid(raw) {
+  const F = firstValueEngine();
+  if (!F || !raw || typeof raw !== 'object' || Array.isArray(raw) || raw.version !== 1) return false;
+  if (!String(raw.userId || '') || String(raw.userId) !== String(State.me?.id || '')) return false;
+  try { return !!F.deriveJourneyView(raw); } catch { return false; }
+}
+async function loadFirstValueJourney() {
+  const F = firstValueEngine();
+  State._firstValueLoaded = false; State._firstValueError = '';
+  if (!F || !State.me?.id) { State.firstValue = null; State._firstValueError = 'unavailable'; State._firstValueLoaded = true; return null; }
+  try {
+    const response = await fetch('/api/data/first-value', { cache: 'no-store' });
+    if (response.status === 401) { handleAccountSessionExpired(); return null; }
+    if (response.status === 404) { State.firstValue = null; Store._persisted['first-value'] = { exists: false, value: null }; }
+    else if (!response.ok) throw new Error(`load ${response.status}`);
+    else {
+      const value = await response.json();
+      if (!firstValueValid(value)) throw new Error('invalid first-value');
+      State.firstValue = value; Store._persisted['first-value'] = { exists: true, value: structuredClone(value) };
+    }
+  } catch (error) { console.error('first-value load', error); State.firstValue = null; State._firstValueError = 'load'; }
+  State._firstValueLoaded = true;
+  return State.firstValue;
+}
+async function persistFirstValue(next, { quiet = false } = {}) {
+  if (!firstValueValid(next) || State._firstValueBusy) return false;
+  State._firstValueBusy = true; State._firstValueError = ''; render();
+  const saved = await Store.saveNow('first-value', next, (committed) => {
+    if (!firstValueValid(committed)) return false;
+    State.firstValue = structuredClone(committed); return true;
+  });
+  State._firstValueBusy = false;
+  if (!saved) { State._firstValueError = 'save'; if (!quiet) toast(t('Первый шаг не сохранён. Ничего не потеряно — повтори.')); }
+  render(); return saved;
+}
+async function ensureOnboardingFirstValueJourney() {
+  const F = firstValueEngine();
+  if (!F || !State.me?.id) return false;
+  if (firstValueValid(State.firstValue)) return true;
+  if (!State._firstValueLoaded) await loadFirstValueJourney();
+  if (firstValueValid(State.firstValue)) return true;
+  if (State._firstValueError === 'load') return false;
+  const startedAt = firstValueNow();
+  const journey = F.createJourney({ userId: String(State.me.id), startedAt, profile: {
+    locale: lang(), returning: false, hasPlan: false, needsRecovery: false,
+  } });
+  return persistFirstValue(journey, { quiet: true });
+}
+function firstValueCandidate(route) {
+  if (route === 'do_now') {
+    const task = (State.tasks || []).find((item) => !item.done && item.date === todayStr())
+      || (State.tasks || []).find((item) => !item.done && item.date < todayStr());
+    return task ? { entityType: 'quest', entityId: String(task.id) } : null;
+  }
+  if (route === 'clarify') {
+    for (const goal of (State.goals || [])) {
+      if (goal.archived || goal.completedAt || goal.status === 'paused') continue;
+      const next = goalNextAction(goal);
+      if (next?.kind === 'task') return { entityType: 'quest', entityId: String(next.id) };
+      if (next?.kind === 'step') return { entityType: 'goal_step', entityId: String(next.id) };
+    }
+    return null;
+  }
+  if (route === 'recover') return { entityType: 'recovery_boundary', entityId: 'satoru-rest-v1' };
+  return null;
+}
+function firstValueReference(reference) {
+  const type = String(reference?.entityType || ''), id = String(reference?.entityId || '');
+  if (type === 'quest' || type === 'task') {
+    const task = (State.tasks || []).find((item) => String(item.id) === id && !item.done);
+    return task ? { title: task.title, meta: task.date === todayStr() ? t('Сегодня') : task.date, actionLabel: t('Открыть шаг') } : null;
+  }
+  if (type === 'goal_step') {
+    for (const goal of (State.goals || [])) {
+      const step = (goal.steps || []).find((item) => String(item.id) === id && !item.done);
+      if (step && !goal.archived && !goal.completedAt) return { title: step.title, meta: goal.title, actionLabel: t('Открыть в цели') };
+    }
+    return null;
+  }
+  if (type === 'goal') {
+    const goal = goalById(id); return goal && !goal.archived && !goal.completedAt ? { title: goal.title, actionLabel: t('Открыть цель') } : null;
+  }
+  if (type === 'recovery_boundary') return { title: t('Короткое восстановление с границей'), meta: t('10 минут'), actionLabel: t('Начать восстановление') };
+  if (type === 'plan') return { title: t('Твой первый план'), actionLabel: t('Открыть план') };
+  return null;
+}
+async function firstValueApply(type, payload = {}, options = {}) {
+  const F = firstValueEngine(); if (!F || !firstValueValid(State.firstValue)) return false;
+  const entityId = payload.entityId || payload.route || 'journey';
+  const event = firstValueEvent(type, entityId, { ...payload, at: options.at || firstValueNow() });
+  const next = F.transitionJourney(State.firstValue, event);
+  if (!next.lastEvent?.applied && next.lastEvent?.reason !== 'duplicate_event') return false;
+  return persistFirstValue(next, options);
+}
+async function firstValueChooseRoute(route) {
+  const F = firstValueEngine(); if (!F?.ROUTES.includes(route) || !firstValueValid(State.firstValue)) return false;
+  const at = firstValueNow();
+  let next = F.transitionJourney(State.firstValue, firstValueEvent('route_chosen', route, { route, at }));
+  const candidate = firstValueCandidate(route);
+  if (candidate) next = F.transitionJourney(next, firstValueEvent('action_ready', candidate.entityId, { ...candidate, at }));
+  const saved = await persistFirstValue(next);
+  if (saved && !candidate) firstValuePrepareRoute(route);
+  return saved;
+}
+function firstValuePrepareRoute(route) {
+  if (route === 'recover') { State.view = 'today'; render(); setTimeout(() => openRecoveryFromShortcut(document.querySelector('[data-action="first-value-prepare-route"]')), 0); return; }
+  if (route === 'clarify') { State.view = 'goals'; State._goalsComposerOpen = true; State._goalsFocusAfterCommit = '#add-goal input[name="title"]'; render(); return; }
+  State.view = 'today'; State._tasksFocusAfterCommit = '#add-task input[name="title"]'; render();
+}
+async function firstValueOpenReference(entityType, entityId, startPrimary = false) {
+  const reference = firstValueReference({ entityType, entityId });
+  if (!reference) {
+    State._firstValueError = 'stale_reference';
+    firstValuePrepareRoute(State.firstValue?.route || 'do_now');
+    return false;
+  }
+  if (startPrimary && !await firstValueApply('action_started', { entityType, entityId })) return false;
+  if (entityType === 'recovery_boundary') { firstValuePrepareRoute('recover'); return true; }
+  if (entityType === 'goal_step') {
+    const goal = (State.goals || []).find((item) => (item.steps || []).some((step) => String(step.id) === String(entityId)));
+    if (goal) { State.view = 'goals'; State._goalOpenId = goal.id; State._goalsFocusAfterCommit = '#goal-detail-title'; render(); }
+    return true;
+  }
+  if (entityType === 'goal') { State.view = 'goals'; State._goalOpenId = entityId; State._goalsFocusAfterCommit = '#goal-detail-title'; render(); return true; }
+  State.view = 'today'; State._tasksFocusAfterCommit = `[data-action="toggle-task"][data-id="${CSS.escape(String(entityId))}"]`; render(); return true;
+}
+async function firstValueRecordOutcome(evidence) {
+  const F = firstValueEngine();
+  if (!F || !firstValueValid(State.firstValue) || State.firstValue.status === 'completed') return false;
+  const occurredAt = String(evidence?.occurredAt || firstValueNow());
+  let next = State.firstValue;
+  if (next.status === 'new') {
+    const route = evidence.outcomeType === 'recovery_boundary_started' ? 'recover'
+      : ['next_action_committed', 'real_plan_created'].includes(evidence.outcomeType) ? 'clarify' : 'do_now';
+    next = F.transitionJourney(next, firstValueEvent('route_chosen', route, { route, at: occurredAt }));
+  }
+  next = F.transitionJourney(next, firstValueEvent('outcome_recorded', evidence.entityId, { ...evidence, at: occurredAt }));
+  if (!next.lastEvent?.applied && next.lastEvent?.reason !== 'duplicate_event') return false;
+  return persistFirstValue(next, { quiet: true });
+}
+async function firstValuePrepareReferenceForTask(task) {
+  const F = firstValueEngine();
+  if (!F || !task || !firstValueValid(State.firstValue)) return false;
+  const view = F.deriveJourneyView(State.firstValue);
+  if (view.firstValueReached || view.primaryAction || !view.acceptsEvents.includes('action_ready')) return false;
+  if (view.route && view.route !== 'do_now') return false;
+  let next = State.firstValue, at = String(task.createdAt || firstValueNow());
+  if (next.status === 'new') next = F.transitionJourney(next, firstValueEvent('route_chosen', 'do_now', { route: 'do_now', at }));
+  next = F.transitionJourney(next, firstValueEvent('action_ready', task.id, { entityType: 'quest', entityId: String(task.id), at }));
+  return persistFirstValue(next, { quiet: true });
+}
+function firstValueCard() {
+  const F = firstValueEngine(), UI = firstValuePresentation();
+  if (!F || !UI || !firstValueValid(State.firstValue)) return State._firstValueError === 'save'
+    ? `<section class="card first-value-card first-value-card--error" role="alert"><b>${t('Первый шаг не сохранился')}</b><button class="btn ghost sm" data-action="first-value-onboarding-retry">${t('Повторить')}</button></section>` : '';
+  let view = F.deriveJourneyView(State.firstValue, { now: firstValueNow() });
+  if (State._firstValueContinueOverTarget) view = { ...view, overTarget: false };
+  const html = UI.renderCard(view, { title: t('Первый результат'), resolveReference: firstValueReference, t, busy: State._firstValueBusy });
+  return `${State._firstValueError === 'stale_reference' ? `<p class="first-value-inline-error" role="alert">${t('Этот шаг уже изменился. Выбери актуальный — прежние данные не затронуты.')}</p>` : ''}${html}`;
+}
+
 function renderToday() {
   const today = todayStr();
   const todays = State.tasks.filter((t) => t.date === today);
@@ -20322,7 +20499,7 @@ function boardTakenLineHTML() {
   </div>`;
   if (tab === 'board') return `<div class="today-shell board-shell">${tabs}<section id="today-panel-day" role="tabpanel" aria-labelledby="today-tab-day" hidden></section><section id="today-panel-board" class="today-board-panel" role="tabpanel" aria-labelledby="today-tab-board">${boardScreenHTML()}</section></div>`;
   return `<div class="today-shell">${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>${browserCompanionLaunchHTML()}
-    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${dayNavStripHTML(today)}${todayHero}${captureBar()}${overdueSurface}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
+    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${dayNavStripHTML(today)}${firstValueCard()}${todayHero}${captureBar()}${overdueSurface}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
     <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}</aside>
     <div class="today-footer">${shutdownCard}</div>
   </div>`;
@@ -24247,6 +24424,7 @@ async function startRecoverySession(form) {
   const bundle = { ...base, sessions: started.sessions };
   if (!await AttentionStore.save(bundle)) { attentionBusy(false); attentionStatus('Не удалось сохранить. Отдых не начался — повтори попытку.', true); return; }
   applyAttentionBundle(bundle);
+  await firstValueRecordOutcome({ entityType: 'recovery_boundary', entityId: String(started.session?.id || policyId), outcomeType: 'recovery_boundary_started', occurredAt: String(started.session?.startedAt || attentionNow()) });
   State.settings.secretary = Object.assign({}, secretarySettings(), { recovery: { minutes, deviceMode } });
   Store.save('settings', State.settings);
   closeAttentionDialog({ restoreFocus: false, force: true }); scheduleAttentionBoundary(); render();
@@ -25170,10 +25348,94 @@ async function completeShelfItem(form) {
   }
 }
 
+const ACTIONABLE_COPY = {
+  en: { 'Диагностика и телеметрия':'Diagnostics and telemetry','Память помощника':'Assistant memory','Ваш выбор':'Your choice','Под вашим контролем':'Under your control','Всегда включено':'Always on','Выключено вами':'Turned off by you','Включено вами':'Turned on by you','Включено по умолчанию — можно выключить':'On by default — you can turn it off','Хранение':'Retention','дн.':'days','Загружаем ваши настройки…':'Loading your settings…','Загружаем память…':'Loading memory…','Повторить':'Retry','Исправить':'Edit','Не использовать':'Do not use','Удалить':'Delete','Вернуть':'Restore','Скачать память':'Download memory','Что помнить':'What to remember','Сохранить':'Save','Отмена':'Cancel','Отдельных записей пока нет':'No individual memories yet','Часть памяти не читается. Изменения заблокированы, чтобы ничего не потерять.':'Part of memory cannot be read. Changes are locked to prevent data loss.','Не удалось загрузить настройки телеметрии.':'Could not load telemetry settings.','Не удалось сохранить выбор. Ничего не изменено.':'Could not save your choice. Nothing changed.','Не удалось загрузить память помощника.':'Could not load assistant memory.','Не удалось изменить память. Ничего не потеряно.':'Could not change memory. Nothing was lost.','Не удалось скачать память.':'Could not download memory.' },
+  de: { 'Диагностика и телеметрия':'Diagnose und Telemetrie','Память помощника':'Assistenten-Gedächtnis','Ваш выбор':'Deine Auswahl','Под вашим контролем':'Unter deiner Kontrolle','Всегда включено':'Immer aktiv','Выключено вами':'Von dir ausgeschaltet','Включено вами':'Von dir eingeschaltet','Включено по умолчанию — можно выключить':'Standardmäßig aktiv — abschaltbar','Хранение':'Speicherung','дн.':'Tage','Загружаем ваши настройки…':'Einstellungen werden geladen…','Загружаем память…':'Gedächtnis wird geladen…','Повторить':'Erneut versuchen','Исправить':'Bearbeiten','Не использовать':'Nicht verwenden','Удалить':'Löschen','Вернуть':'Wiederherstellen','Скачать память':'Gedächtnis herunterladen','Что помнить':'Was soll gespeichert werden','Сохранить':'Speichern','Отмена':'Abbrechen','Отдельных записей пока нет':'Noch keine einzelnen Einträge','Часть памяти не читается. Изменения заблокированы, чтобы ничего не потерять.':'Ein Teil des Gedächtnisses ist nicht lesbar. Änderungen sind gesperrt, damit nichts verloren geht.','Не удалось загрузить настройки телеметрии.':'Telemetrie-Einstellungen konnten nicht geladen werden.','Не удалось сохранить выбор. Ничего не изменено.':'Die Auswahl konnte nicht gespeichert werden. Nichts wurde geändert.','Не удалось загрузить память помощника.':'Das Assistenten-Gedächtnis konnte nicht geladen werden.','Не удалось изменить память. Ничего не потеряно.':'Das Gedächtnis konnte nicht geändert werden. Nichts ging verloren.','Не удалось скачать память.':'Das Gedächtnis konnte nicht heruntergeladen werden.' },
+  uk: { 'Диагностика и телеметрия':'Діагностика й телеметрія','Память помощника':'Пам’ять помічника','Ваш выбор':'Ваш вибір','Под вашим контролем':'Під вашим контролем','Всегда включено':'Завжди ввімкнено','Выключено вами':'Вимкнено вами','Включено вами':'Увімкнено вами','Включено по умолчанию — можно выключить':'Увімкнено типово — можна вимкнути','Хранение':'Зберігання','дн.':'дн.','Загружаем ваши настройки…':'Завантажуємо налаштування…','Загружаем память…':'Завантажуємо пам’ять…','Повторить':'Повторити','Исправить':'Виправити','Не использовать':'Не використовувати','Удалить':'Видалити','Вернуть':'Повернути','Скачать память':'Завантажити пам’ять','Что помнить':'Що пам’ятати','Сохранить':'Зберегти','Отмена':'Скасувати','Отдельных записей пока нет':'Окремих записів ще немає','Часть памяти не читается. Изменения заблокированы, чтобы ничего не потерять.':'Частина пам’яті не читається. Зміни заблоковано, щоб нічого не втратити.','Не удалось загрузить настройки телеметрии.':'Не вдалося завантажити налаштування телеметрії.','Не удалось сохранить выбор. Ничего не изменено.':'Не вдалося зберегти вибір. Нічого не змінено.','Не удалось загрузить память помощника.':'Не вдалося завантажити пам’ять помічника.','Не удалось изменить память. Ничего не потеряно.':'Не вдалося змінити пам’ять. Нічого не втрачено.','Не удалось скачать память.':'Не вдалося завантажити пам’ять.' },
+  es: { 'Диагностика и телеметрия':'Diagnóstico y telemetría','Память помощника':'Memoria del asistente','Ваш выбор':'Tu elección','Под вашим контролем':'Bajo tu control','Всегда включено':'Siempre activo','Выключено вами':'Desactivado por ti','Включено вами':'Activado por ti','Включено по умолчанию — можно выключить':'Activado por defecto — puedes desactivarlo','Хранение':'Conservación','дн.':'días','Загружаем ваши настройки…':'Cargando tus ajustes…','Загружаем память…':'Cargando la memoria…','Повторить':'Reintentar','Исправить':'Editar','Не использовать':'No usar','Удалить':'Eliminar','Вернуть':'Restaurar','Скачать память':'Descargar memoria','Что помнить':'Qué recordar','Сохранить':'Guardar','Отмена':'Cancelar','Отдельных записей пока нет':'Aún no hay recuerdos individuales','Часть памяти не читается. Изменения заблокированы, чтобы ничего не потерять.':'Parte de la memoria no se puede leer. Los cambios están bloqueados para evitar pérdidas.','Не удалось загрузить настройки телеметрии.':'No se pudieron cargar los ajustes de telemetría.','Не удалось сохранить выбор. Ничего не изменено.':'No se pudo guardar tu elección. No cambió nada.','Не удалось загрузить память помощника.':'No se pudo cargar la memoria del asistente.','Не удалось изменить память. Ничего не потеряно.':'No se pudo cambiar la memoria. No se perdió nada.','Не удалось скачать память.':'No se pudo descargar la memoria.' },
+};
+function actionableTranslate(value) {
+  const source = String(value || ''), l = lang(); if (l === 'ru') return source;
+  const direct = ACTIONABLE_COPY[l]?.[source] || t(source); if (direct !== source) return direct;
+  const origin = source.match(/^(Вы сказали это сами|Пришло из вашего архива при импорте|Посчитано программой по вашим данным)(.*)$/);
+  if (origin) {
+    const roots = {
+      en:['You said this yourself','Imported from your archive','Calculated by the app from your data'],
+      de:['Du hast das selbst gesagt','Aus deinem Archiv importiert','Von der App aus deinen Daten berechnet'],
+      uk:['Ви сказали це самі','Імпортовано з вашого архіву','Обчислено програмою з ваших даних'],
+      es:['Lo dijiste tú','Importado de tu archivo','Calculado por la app a partir de tus datos'],
+    };
+    const index = ['Вы сказали это сами','Пришло из вашего архива при импорте','Посчитано программой по вашим данным'].indexOf(origin[1]);
+    return `${roots[l]?.[index] || origin[1]}${origin[2]}`;
+  }
+  if (source.startsWith('Используется в: ')) return ({ en:'Used in: ', de:'Verwendet in: ', uk:'Використовується в: ', es:'Se usa en: ' }[l] || '') + source.slice('Используется в: '.length);
+  if (source === 'Убрано из памяти: в подсказки ассистента не попадает.') return ({ en:'Removed from active memory: it is not sent to assistant prompts.',de:'Aus dem aktiven Gedächtnis entfernt: nicht in Assistenten-Prompts enthalten.',uk:'Прибрано з активної пам’яті: не потрапляє до підказок помічника.',es:'Eliminado de la memoria activa: no se envía al asistente.' }[l] || source);
+  if (source === 'Хранится, но никуда не передаётся.') return ({ en:'Stored, but not shared anywhere.',de:'Gespeichert, aber nirgendwohin übertragen.',uk:'Зберігається, але нікуди не передається.',es:'Se guarda, pero no se comparte.' }[l] || source);
+  return source;
+}
+function actionableSettingsUI() { return window.ActionableSettingsUiV1 || null; }
+async function ensureTelemetryConsent(force = false) {
+  if (State._telemetryConsentBusy || (!force && State._telemetryConsentLoaded)) return;
+  State._telemetryConsentBusy = true; State._telemetryConsentError = '';
+  try {
+    const response = await fetch('/api/telemetry/consent', { cache: 'no-store' });
+    const data = await response.json().catch(() => ({}));
+    if (response.status === 401) { handleAccountSessionExpired(); return; }
+    if (!response.ok || !data.consent || !Array.isArray(data.purposes)) throw new Error(data.error || 'load');
+    State.telemetryConsent = data; State._telemetryConsentLoaded = true;
+  } catch (error) { console.error('telemetry consent', error); State._telemetryConsentError = 'Не удалось загрузить настройки телеметрии.'; State._telemetryConsentLoaded = true; }
+  finally { State._telemetryConsentBusy = false; if (State.phase === 'app') render(); }
+}
+async function setTelemetryConsent(purpose, granted) {
+  if (State._telemetryConsentBusy || !purpose) return false;
+  State._telemetryConsentBusy = true; State._telemetryConsentError = ''; render();
+  try {
+    const response = await fetch('/api/telemetry/consent', { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ source:'settings', purposes:{ [purpose]:granted === true } }) });
+    const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.error || 'save');
+    State.telemetryConsent = data; State._telemetryConsentLoaded = true; return true;
+  } catch (error) { console.error('telemetry consent save', error); State._telemetryConsentError = 'Не удалось сохранить выбор. Ничего не изменено.'; return false; }
+  finally { State._telemetryConsentBusy = false; render(); }
+}
+function telemetryConsentCard() {
+  const UI = actionableSettingsUI(); if (!UI) return '';
+  return UI.renderTelemetry(State.telemetryConsent, { t:actionableTranslate, loading:!State._telemetryConsentLoaded && State._telemetryConsentBusy, busy:State._telemetryConsentBusy, error:State._telemetryConsentError });
+}
+async function ensureAiMemory(force = false) {
+  if (State._aiMemoryBusy || (!force && State._aiMemoryLoaded)) return;
+  State._aiMemoryBusy = true; State._aiMemoryError = '';
+  try {
+    const response = await fetch('/api/ai/memory', { cache:'no-store' }); const data = await response.json().catch(() => ({}));
+    if (response.status === 401) { handleAccountSessionExpired(); return; }
+    if (!response.ok || !Array.isArray(data.entries)) throw new Error(data.error || 'load');
+    State.aiMemory = data; State._aiMemoryLoaded = true;
+    if (data.legacy && State.profile) State.profile = { ...State.profile, text:data.legacy.text, updatedAt:data.legacy.updatedAt, auto:data.legacy.auto };
+  } catch (error) { console.error('ai memory', error); State._aiMemoryError = 'Не удалось загрузить память помощника.'; State._aiMemoryLoaded = true; }
+  finally { State._aiMemoryBusy = false; if (State.phase === 'app') render(); }
+}
+async function mutateAiMemory(id, op, patch) {
+  if (State._aiMemoryBusy || State.aiMemory?.partial) return false;
+  State._aiMemoryBusy = true; State._aiMemoryError = ''; render();
+  try {
+    const response = await fetch(`/api/ai/memory/${encodeURIComponent(String(id || ''))}`, { method:op === 'delete' ? 'DELETE' : 'PATCH', headers:op === 'delete' ? {} : {'Content-Type':'application/json'}, body:op === 'delete' ? undefined : JSON.stringify({ op, ...(patch ? { patch } : {}) }) });
+    const data = await response.json().catch(() => ({})); if (!response.ok) throw new Error(data.error || 'save');
+    State._aiMemoryEditing = ''; State._aiMemoryLoaded = false; State._aiMemoryBusy = false; await ensureAiMemory(true); return true;
+  } catch (error) { console.error('ai memory save', error); State._aiMemoryError = 'Не удалось изменить память. Ничего не потеряно.'; State._aiMemoryBusy = false; render(); return false; }
+}
+async function downloadAiMemory() {
+  try { const response = await fetch('/api/ai/memory/export'); if (!response.ok) throw new Error('export'); const blob = await response.blob(); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'satoru-ai-memory.json'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1500); }
+  catch { State._aiMemoryError = 'Не удалось скачать память.'; render(); }
+}
+function aiMemoryCard() {
+  const UI = actionableSettingsUI(); if (!UI) return '';
+  return UI.renderMemory(State.aiMemory, { t:actionableTranslate, loading:!State._aiMemoryLoaded && State._aiMemoryBusy, busy:State._aiMemoryBusy, error:State._aiMemoryError, editingId:State._aiMemoryEditing });
+}
+
 function renderSettings() {
   ensureAiKeys();
   ensureStravaStatus();
   ensureFounderPass();
+  ensureTelemetryConsent();
+  ensureAiMemory();
   const s = State.settings;
   const f = s.focus || DEFAULT_SETTINGS.focus;
   const skillOpts = (sel) => skillOptionsHTML(sel);
@@ -25326,6 +25588,7 @@ function renderSettings() {
     ${groupEnd()}
     ${groupStart('connections', 'Связи', 'Помощник, профиль, Strava и импорт')}
     ${identityProfileCard()}
+    ${aiMemoryCard()}
     <details class="card settings-disclosure connections-memory"><summary>${t('Что Тень помнит обо мне')}</summary><div class="settings-disclosure-body">${profileCard()}</div></details>
     <details class="card settings-disclosure connections-ai"><summary>${t('Подключение ИИ')}</summary><div class="settings-disclosure-body">${aiKeysCard()}</div></details>
     ${stravaCard()}
@@ -25356,6 +25619,7 @@ function renderSettings() {
         <div class="knob"><label>${t('Рост ×')}</label><input id="k-growth" type="number" step="0.05" value="${s.curve.growth}" /></div></div></div>
     ${groupEnd()}
     ${groupStart('data', 'Данные', 'Сброс и локальное хранилище')}
+    ${telemetryConsentCard()}
     ${settingsRecoveryCard()}
     ${accountDataRecoveryCard()}
     ${accountDataCard()}
@@ -26476,6 +26740,13 @@ function kickCompVideo() {
 // ============================================================
 async function onSubmit(e) {
   const f = e.target;
+  if (f.classList?.contains('ai-memory-edit-form')) {
+    e.preventDefault();
+    const id = String(f.dataset.memoryId || ''), text = String(f.text?.value || '').trim().slice(0, 400);
+    if (!id || !text) return;
+    await mutateAiMemory(id, 'update', { text });
+    return;
+  }
 
   if (f.id === 'account-profile-form') {
     e.preventDefault(); await saveAccountProfile(f); return;
@@ -26611,8 +26882,10 @@ async function onSubmit(e) {
         const primed = await ensureCommitmentWriteBase();
         State.tasks = primed.ok ? normalizeLoadedTasks(primed.tasks) : [];
         const languageSaved = primed.ok && await Store.saveNow('settings', State.settings);
+        State._firstValueLoaded = false; State.firstValue = null; State._firstValueError = '';
+        const firstValueSaved = languageSaved && await ensureOnboardingFirstValueJourney();
         State.questionnaire = null; State._questionnaireStage = 'source'; State._questionnaireError = '';
-        State._onboardingSaveError = languageSaved ? '' : t('Язык аккаунта не удалось подтвердить. Повтори сохранение перед продолжением.');
+        State._onboardingSaveError = firstValueSaved ? '' : t('Стартовый путь не удалось сохранить. Повтори перед продолжением.');
         State.phase = 'onboarding'; render();
         if (data.recoveryCode) showRecoveryModal(data.recoveryCode);
       }
@@ -27277,6 +27550,7 @@ async function onSubmit(e) {
         focusPathChoiceTarget(f.title);
         return;
       }
+      await firstValuePrepareReferenceForTask(task);
       State._calendarFocusAfterCommit = startTime
         ? `.cal-block-main[data-id="${CSS.escape(task.id)}"], .cal-agenda-main[data-id="${CSS.escape(task.id)}"]`
         : '.calv-tray > summary';
@@ -27294,6 +27568,7 @@ async function onSubmit(e) {
       f.title.focus();
       return;
     }
+    await firstValuePrepareReferenceForTask(task);
     const guide = guideV3State();
     if (guideV3RuntimeAllowed() && guide?.currentChapter === window.GuideV3?.FIRST_CHAPTER && guide.currentStep === 'recognize') {
       await guideV3Commit({ type: 'guide:recognize-task', taskId: String(task.id), persisted: true }, { repaint: false });
@@ -27333,7 +27608,9 @@ async function onSubmit(e) {
     State._goalTxnBusy = `create:${goal.id}`;
     const saved = await goalDataCommit(nextGoals, State.tasks); State._goalTxnBusy = '';
     if (!saved) { controls.forEach((control) => { control.disabled = false; }); if (status) { status.textContent = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); status.setAttribute('role', 'alert'); } return; }
-    State.goals = nextGoals; if (goal.completedAt) announceGoalCompletion(goal); State._goalsComposerOpen = false; State._goalOpenId = goal.id; State._goalsFocusAfterCommit = '#goal-detail-title'; syncGoalDeepLink(goal.id); render();
+    State.goals = nextGoals;
+    if (firstStep) await firstValueRecordOutcome({ entityType: 'goal_step', entityId: String(goal.steps[0].id), outcomeType: 'next_action_committed', occurredAt: goal.createdAt });
+    if (goal.completedAt) announceGoalCompletion(goal); State._goalsComposerOpen = false; State._goalOpenId = goal.id; State._goalsFocusAfterCommit = '#goal-detail-title'; syncGoalDeepLink(goal.id); render();
   } else if (f.classList.contains('add-step-form')) {
     e.preventDefault(); const g = goalById(f.dataset.goal), title = f.step.value.trim(); if (!g || !title || State._goalTxnBusy || goalProgressKind(g) !== 'checklist') return;
     State._goalsError = '';
@@ -28188,7 +28465,7 @@ async function commitGoalMutation(key, nextGoals, nextTasks, focusSelector, succ
     State._goalsFocusAfterCommit = focusSelector || '#goals-title'; render(); return false;
   }
   State.goals = nextGoals; State.tasks = nextTasks; State.goalGroups = nextGroups;
-  if (success) success();
+  if (success) await success();
   State._goalsFocusAfterCommit = focusSelector || '#goals-title'; render(); return true;
 }
 function closeGoalsBulkMode() {
@@ -28337,6 +28614,35 @@ async function onClick(e) {
   if (el.dataset.secretaryAccept === '1') reportSecretaryOutcome('accepted');
   if (action === 'secretary-offer-accept') { await reportSecretaryOutcome('accepted'); render(); return; }
   if (action === 'secretary-offer-dismiss') { await reportSecretaryOutcome('dismissed'); render(); return; }
+
+  if (action === 'first-value-choose-route') { await firstValueChooseRoute(String(el.dataset.route || '')); return; }
+  if (action === 'first-value-prepare-route') { firstValuePrepareRoute(String(el.dataset.route || State.firstValue?.route || 'do_now')); return; }
+  if (action === 'first-value-open-primary') { await firstValueOpenReference(String(el.dataset.entityType || ''), String(el.dataset.entityId || ''), true); return; }
+  if (action === 'first-value-open-support') { await firstValueOpenReference(String(el.dataset.entityType || ''), String(el.dataset.entityId || ''), false); return; }
+  if (action === 'first-value-defer' || action === 'first-value-over-target-stop') {
+    await firstValueApply('deferred', { reason: action === 'first-value-over-target-stop' ? 'time_boundary' : 'user_choice' }); return;
+  }
+  if (action === 'first-value-resume') { State._firstValueContinueOverTarget = false; await firstValueApply('resumed'); return; }
+  if (action === 'first-value-complete-journey') { await firstValueApply('journey_completed'); return; }
+  if (action === 'first-value-over-target-continue') { State._firstValueContinueOverTarget = true; render(); return; }
+  if (action === 'first-value-onboarding-retry') {
+    State._firstValueError = ''; const ok = await ensureOnboardingFirstValueJourney();
+    if (!ok) State._firstValueError = 'save';
+    if (State.phase === 'onboarding') renderOnboardingScreen(); else render();
+    return;
+  }
+  if (action === 'telemetry-consent-retry') { State._telemetryConsentLoaded = false; await ensureTelemetryConsent(true); return; }
+  if (action === 'telemetry-consent-toggle') { await setTelemetryConsent(String(el.dataset.purpose || ''), !!el.checked); return; }
+  if (action === 'ai-memory-retry') { State._aiMemoryLoaded = false; await ensureAiMemory(true); return; }
+  if (action === 'ai-memory-edit') { State._aiMemoryEditing = String(id || ''); State._settingsFocusAfterCommit = `.ai-memory-edit-form[data-memory-id="${CSS.escape(String(id || ''))}"] textarea`; render(); return; }
+  if (action === 'ai-memory-cancel') { State._aiMemoryEditing = ''; render(); return; }
+  if (action === 'ai-memory-dismiss') { await mutateAiMemory(String(id || ''), 'dismiss'); return; }
+  if (action === 'ai-memory-restore') { await mutateAiMemory(String(id || ''), 'restore'); return; }
+  if (action === 'ai-memory-delete') {
+    if (confirm(t('Удалить эту запись из памяти без возможности восстановления?'))) await mutateAiMemory(String(id || ''), 'delete');
+    return;
+  }
+  if (action === 'ai-memory-export') { await downloadAiMemory(); return; }
 
   if (action === 'open-account-profile') { await openAccountProfile(State.me?.id, el); return; }
   if (action === 'open-member-profile') { await openAccountProfile(el.dataset.user, el); return; }
@@ -30048,7 +30354,8 @@ async function onClick(e) {
     }
     if (plan.status !== 'create') return;
     const nextTasks = [...structuredClone(State.tasks), plan.task];
-    commitGoalMutation(`step-to-day:${plan.task.id}`, structuredClone(State.goals), nextTasks, '#goal-detail-title', () => {
+    commitGoalMutation(`step-to-day:${plan.task.id}`, structuredClone(State.goals), nextTasks, '#goal-detail-title', async () => {
+      await firstValueRecordOutcome({ entityType: 'goal_step', entityId: String(plan.task.goalStepId || el.dataset.step), outcomeType: 'next_action_committed', occurredAt: String(plan.task.createdAt || firstValueNow()) });
       State._goalOpenId = goal.id; toast(`→ ${t('Шаг стал квестом на сегодня')}`); sfx('navigate');
     }); return;
   } else if (action === 'delete-goal') {
@@ -30872,6 +31179,9 @@ function clearAllData() {
   State._shelfComposerOpen = false; State._shelfFilter = 'all'; State._shelfFocusAfterCommit = ''; State._shelfPendingSource = null; State._shelfNoteDraft = '';
   State._inspirationSection = 'today'; State._inspirationSetupOpen = false; State._inspirationDraft = null;
   State.profile = null; State.aiKeys = null; State.strava = null; State.chatLog = [];
+  State.telemetryConsent = null; State._telemetryConsentLoaded = false; State._telemetryConsentBusy = false; State._telemetryConsentError = '';
+  State.aiMemory = null; State._aiMemoryLoaded = false; State._aiMemoryBusy = false; State._aiMemoryError = ''; State._aiMemoryEditing = '';
+  State.firstValue = null; State._firstValueLoaded = false; State._firstValueBusy = false; State._firstValueError = ''; State._firstValuePending = null; State._firstValueContinueOverTarget = false;
   State.leaderboard = null; State.party = null; State.adminUsers = null; State.socialPrivacy = null; State.myFeedbackCount = 0;
   State._accountProfileDraft = null; State._accountProfileBusy = false; State._accountProfileError = ''; State._accountProfileRemote = null; State._accountProfileDeepLinkHandled = false;
   State._lbError = ''; State._partyError = ''; State._socialError = ''; State._socialBusy = '';
@@ -31148,6 +31458,8 @@ async function initApp() {
     normalizeGoalGroupLinks(); normalizeGoalTaskLinks();
   }
   if (State._goalsLoadError === 'session' || State._goalGroupsLoadError === 'session' || State._accountSessionExpired) return;
+  await loadFirstValueJourney();
+  if (State._accountSessionExpired) return;
   {
     const treeLoad = await Store.loadChecked('skilltree', {}, validateSkillTreePayload);
     State.tree = treeLoad.value; State._treeLoadError = treeLoad.error; State._treeLoadBusy = false;
@@ -31906,7 +32218,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v242';
+const PWA_CACHE_VERSION = 'satoru-v243';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

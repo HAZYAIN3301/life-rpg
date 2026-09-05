@@ -67,7 +67,7 @@ test('ИИ только заполняет поле — дело создаёт 
   // Границу среза брать по СЛЕДУЮЩЕЙ функции, а не по далёкому обработчику:
   // иначе срез накрывает и `stuck-step-add`, который создаёт дело законно, и
   // проверка ловит собственную неаккуратность вместо дефекта.
-  const ai = app.slice(app.indexOf('async function stuckAiStep('), app.indexOf('function renderToday() {'));
+  const ai = app.slice(app.indexOf('async function stuckAiStep('), app.indexOf('function firstValueEngine()'));
   assert.ok(ai.length > 400 && ai.length < 2500, `срез не похож на одну функцию: ${ai.length} символов`);
   assert.match(ai, /field\.value = ans\.slice\(0, 110\)/);
   assert.ok(!ai.includes('State.tasks.push'), 'ИИ не имеет права создавать дело сам');
@@ -160,5 +160,5 @@ test('новая copy покрыта всеми пятью языками', () =
 });
 
 test('обновлённый offline shell', () => {
-  assert.match(sw, /const CACHE = 'satoru-v242'/);
+  assert.match(sw, /const CACHE = 'satoru-v243'/);
 });

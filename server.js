@@ -30,6 +30,8 @@ const ServerUserRegistryV1 = require('./server-user-registry-v1.js');
 const AccountProfileV1 = require('./public/account-profile-v1.js');
 const CommitmentStoreV1 = require('./public/commitment-store-v1.js');
 const CommitmentJournalV1 = require('./public/commitment-journal-v1.js');
+const AiMemoryPolicyV1 = require('./public/ai-memory-policy-v1.js');
+const TelemetryConsentV1 = require('./public/telemetry-consent-v1.js');
 
 const ROOT = __dirname;
 // Local development secrets live outside Git. Production providers inject the
@@ -262,6 +264,11 @@ function saveUsers(users) {
   writeJsonAtomic(USERS_FILE(), users);
 }
 function userDataDir(id) { return path.join(DATA_DIR, 'users', id); }
+function telemetryConsentFile(id) { return path.join(userDataDir(id), 'telemetry-consent.json'); }
+function loadTelemetryConsent(id) {
+  try { return TelemetryConsentV1.normalizeConsent(JSON.parse(fs.readFileSync(telemetryConsentFile(id), 'utf8'))); }
+  catch { return TelemetryConsentV1.normalizeConsent(null); }
+}
 // ---- Контракты внимания: серверная санитизация (DISCIPLINE-ESCAPE-PLAN §14) ----
 //
 // Whitelist, а не blacklist. Обещание §14 звучит как «сервер НЕ получает содержимое
@@ -4385,25 +4392,137 @@ const server = http.createServer(async (req, res) => {
     let list = []; try { list = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'feedback.json'), 'utf8')); } catch {}
     return sendJson(res, 200, { count: list.filter(x => x.userId === uid).length });
   }
+  // ---- Согласие на телеметрию (AG-51 / AG-53 / AG-54) -----------------------
+  // Согласие не входит в переносимый архив: импорт данных не имеет права заново
+  // включить сбор, который человек уже выключил на этом аккаунте.
+  if (u === '/api/telemetry/consent' && (req.method === 'GET' || req.method === 'PUT')) {
+    const uid = sessionUserId(req);
+    if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let consent = loadTelemetryConsent(uid);
+
+    if (req.method === 'PUT') {
+      let body = {};
+      try { body = JSON.parse(await readBody(req, 16 * 1024)); }
+      catch { return sendJson(res, 400, { error: 'bad json' }); }
+      const source = String(body && body.source || '');
+      // Происхождение решения — часть самого согласия. Неизвестный источник нельзя
+      // молча переименовать в settings: это сделало бы историю недостоверной.
+      if (!['settings', 'onboarding'].includes(source)) {
+        return sendJson(res, 400, { error: 'invalid_consent_source' });
+      }
+      const applied = TelemetryConsentV1.applyConsentDecision(consent, {
+        at: new Date().toISOString(), source, purposes: body && body.purposes,
+      });
+      if (!applied.ok) return sendJson(res, 400, { error: applied.reason });
+      try { writeJsonAtomic(telemetryConsentFile(uid), applied.consent); }
+      catch { return sendJson(res, 500, { error: 'save_failed' }); }
+      consent = applied.consent;
+      return sendJson(res, 200, {
+        ok: true, changed: applied.changed, consent,
+        purposes: TelemetryConsentV1.defineTelemetryPurposes(),
+        human: TelemetryConsentV1.describeConsentForHuman(consent),
+      });
+    }
+
+    return sendJson(res, 200, {
+      consent,
+      purposes: TelemetryConsentV1.defineTelemetryPurposes(),
+      essential: TelemetryConsentV1.ESSENTIAL_PURPOSES,
+      human: TelemetryConsentV1.describeConsentForHuman(consent),
+    });
+  }
+  if (u === '/api/telemetry/consent') return sendJson(res, 405, { error: 'method not allowed' });
+
   // ---- Аналитика активности (#4): приватный агрегат, БЕЗ личного контента ----
-  // Клиент шлёт только имя события (view:today, complete:quest…). Храним счётчики по дням + DAU.
+  // Каждое событие относится ровно к одной цели. Данные хранятся раздельно по
+  // целям, чтобы реальный срок хранения совпадал с показанным человеку.
   if (u === '/api/analytics' && req.method === 'POST') {
     const uid = sessionUserId(req);
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     let body = {}; try { body = JSON.parse(await readBody(req, 8 * 1024)); } catch {}
     const ev = String(body.event || '').slice(0, 40).replace(/[^\w:.-]/g, '');
     if (!ev) return sendJson(res, 400, { error: 'no event' });
+
+    const consent = loadTelemetryConsent(uid);
+    const verdict = TelemetryConsentV1.evaluateEventPermission(consent, {
+      name: ev,
+      // Совместимость со старыми клиентами. Немаркированное событие не получает
+      // служебное исключение и считается улучшением продукта.
+      purpose: String(body.purpose || 'product_improvement'),
+      props: body.props,
+    });
+    if (!verdict.allowed) {
+      return sendJson(res, 200, { ok: true, recorded: false, reason: verdict.reason });
+    }
+
     const file = path.join(DATA_DIR, 'analytics.json');
     let data = {}; try { data = JSON.parse(fs.readFileSync(file, 'utf8')); } catch {}
     const day = new Date().toISOString().slice(0, 10);
-    const d = data[day] || (data[day] = { events: {}, users: {} });
-    d.events[ev] = (d.events[ev] || 0) + 1;
-    d.users[uid] = (d.users[uid] || 0) + 1;
-    // держим только последние ~60 дней
-    const days = Object.keys(data).sort();
-    while (days.length > 60) { delete data[days.shift()]; }
-    try { fs.writeFileSync(file, JSON.stringify(data)); } catch {}
-    return sendJson(res, 200, { ok: true });
+    const d = data[day] && typeof data[day] === 'object' ? data[day] : (data[day] = {});
+
+    // Старый агрегат нельзя честно разнести по целям задним числом. Держим его в
+    // отдельном legacy-кармане не больше минимального срока (30 дней), не выдавая
+    // догадку за согласие или цель.
+    if (!d.byPurpose || typeof d.byPurpose !== 'object') {
+      d.legacy = {
+        events: d.events && typeof d.events === 'object' ? d.events : {},
+        users: d.users && typeof d.users === 'object' ? d.users : {},
+      };
+      d.byPurpose = {};
+    }
+    const bucket = d.byPurpose[verdict.purpose] || (d.byPurpose[verdict.purpose] = { events: {}, users: {} });
+    bucket.events[ev] = (bucket.events[ev] || 0) + 1;
+    bucket.users[uid] = (bucket.users[uid] || 0) + 1;
+
+    const purposeRetention = Object.fromEntries(
+      TelemetryConsentV1.defineTelemetryPurposes().map((item) => [item.id, item.retentionDays])
+    );
+    const nowDay = Date.parse(`${day}T00:00:00.000Z`);
+    const mergeCounts = (target, source) => {
+      for (const [key, value] of Object.entries(source || {})) {
+        if (Number.isFinite(Number(value))) target[key] = (target[key] || 0) + Number(value);
+      }
+    };
+
+    for (const [dateKey, rawRow] of Object.entries(data)) {
+      if (!rawRow || typeof rawRow !== 'object') { delete data[dateKey]; continue; }
+      const stamp = Date.parse(`${dateKey}T00:00:00.000Z`);
+      if (!Number.isFinite(stamp)) { delete data[dateKey]; continue; }
+      const ageDays = Math.floor((nowDay - stamp) / 86400000);
+      if (rawRow.legacy && ageDays >= 30) delete rawRow.legacy;
+      if (!rawRow.byPurpose || typeof rawRow.byPurpose !== 'object') {
+        rawRow.legacy = {
+          events: rawRow.events && typeof rawRow.events === 'object' ? rawRow.events : {},
+          users: rawRow.users && typeof rawRow.users === 'object' ? rawRow.users : {},
+        };
+        rawRow.byPurpose = {};
+        if (ageDays >= 30) delete rawRow.legacy;
+      }
+      for (const purposeId of Object.keys(rawRow.byPurpose)) {
+        const retentionDays = purposeRetention[purposeId];
+        if (!Number.isFinite(retentionDays) || ageDays >= retentionDays) delete rawRow.byPurpose[purposeId];
+      }
+
+      rawRow.events = {};
+      rawRow.users = {};
+      rawRow.purposes = {};
+      if (rawRow.legacy) {
+        mergeCounts(rawRow.events, rawRow.legacy.events);
+        mergeCounts(rawRow.users, rawRow.legacy.users);
+      }
+      for (const [purposeId, purposeBucket] of Object.entries(rawRow.byPurpose)) {
+        mergeCounts(rawRow.events, purposeBucket.events);
+        mergeCounts(rawRow.users, purposeBucket.users);
+        rawRow.purposes[purposeId] = Object.values(purposeBucket.events || {})
+          .reduce((sum, value) => sum + (Number(value) || 0), 0);
+      }
+      if (!rawRow.legacy && Object.keys(rawRow.byPurpose).length === 0) delete data[dateKey];
+    }
+
+    try { writeJsonAtomic(file, data); } catch { return sendJson(res, 500, { error: 'save_failed' }); }
+    return sendJson(res, 200, {
+      ok: true, recorded: true, purpose: verdict.purpose, retentionDays: verdict.retentionDays,
+    });
   }
   // ---- Founder Pass: замер готовности платить БЕЗ приёма денег ---------------
   //
@@ -5313,6 +5432,93 @@ const server = http.createServer(async (req, res) => {
     const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
     return sendJson(res, 200, Object.assign({ houseAvailable: houseAvailable() }, aiQuota(user)));
   }
+  // ---- Память ассистента: объяснимая, редактируемая, переносимая (AG-35) ----
+  // Структурные записи живут в том же profile.json, что и существующий свободный
+  // профиль. Из этого блока меняются только schemaVersion и entries.
+  if (u.split('?')[0] === '/api/ai/memory' || u.split('?')[0].startsWith('/api/ai/memory/')) {
+    const memPath = u.split('?')[0];
+    const uid = sessionUserId(req);
+    if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const dir = userDataDir(uid);
+    const file = path.join(dir, 'profile.json');
+
+    const readStored = () => {
+      if (!fs.existsSync(file)) return { raw: {}, store: AiMemoryPolicyV1.normalizeMemoryStore(null) };
+      let raw;
+      try { raw = JSON.parse(fs.readFileSync(file, 'utf8')); }
+      catch { return { raw: null, store: null }; }
+      const store = AiMemoryPolicyV1.normalizeMemoryStore(raw);
+      return { raw, store: store.damaged ? null : store };
+    };
+    const persist = (raw, entries) => {
+      const base = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+      const next = Object.assign({}, base, {
+        schemaVersion: AiMemoryPolicyV1.STORE_SCHEMA_VERSION,
+        entries,
+      });
+      fs.mkdirSync(dir, { recursive: true });
+      backupFile(dir, 'profile');
+      writeJsonAtomic(file, next);
+    };
+    const view = (store) => ({
+      entries: store.entries.map((entry) => AiMemoryPolicyV1.explainMemoryEntry(entry)),
+      legacy: {
+        text: store.legacy.text, updatedAt: store.legacy.updatedAt,
+        auto: store.legacy.auto, source: 'profile-memory-v1',
+      },
+      schemaVersion: store.schemaVersion,
+      partial: !store.safeToWrite,
+    });
+    const failStatus = (reason) => (reason === 'not_found' ? 404
+      : reason === 'store_not_writable' ? 422
+        : (reason === 'sensitive_inference_rejected' || reason === 'inferred_cannot_overwrite_explicit') ? 409
+          : 400);
+
+    if (memPath === '/api/ai/memory/export' && req.method === 'GET') {
+      const stored = readStored();
+      if (!stored.store) return sendJson(res, 422, { error: 'invalid_memory_state' });
+      return sendJson(res, 200, AiMemoryPolicyV1.exportMemory(stored.store));
+    }
+    if (memPath === '/api/ai/memory' && req.method === 'GET') {
+      const stored = readStored();
+      if (!stored.store) return sendJson(res, 422, { error: 'invalid_memory_state' });
+      return sendJson(res, 200, view(stored.store));
+    }
+    if (memPath.startsWith('/api/ai/memory/') && (req.method === 'PATCH' || req.method === 'DELETE')) {
+      let id = '';
+      try { id = decodeURIComponent(memPath.slice('/api/ai/memory/'.length)); }
+      catch { return sendJson(res, 400, { error: 'bad_memory_id' }); }
+      if (!id || id.includes('/')) return sendJson(res, 400, { error: 'bad_memory_id' });
+      const stored = readStored();
+      if (!stored.store) return sendJson(res, 422, { error: 'invalid_memory_state' });
+
+      let operation;
+      if (req.method === 'DELETE') {
+        operation = { op: 'delete', at: new Date().toISOString(), id };
+      } else {
+        let body = {};
+        try { body = JSON.parse(await readBody(req, 16 * 1024)); }
+        catch { return sendJson(res, 400, { error: 'bad json' }); }
+        const op = String(body && body.op || 'update');
+        if (!['update', 'dismiss', 'restore'].includes(op)) return sendJson(res, 400, { error: 'bad_memory_op' });
+        operation = { op, at: new Date().toISOString(), id, actor: 'user', patch: body && body.patch };
+      }
+
+      const applied = AiMemoryPolicyV1.applyMemoryOperation(stored.store, operation);
+      if (!applied.ok) return sendJson(res, failStatus(applied.reason), { error: applied.reason });
+      try { persist(stored.raw, applied.store.entries); }
+      catch { return sendJson(res, 500, { error: 'save_failed' }); }
+      const saved = readStored();
+      if (!saved.store) return sendJson(res, 500, { error: 'save_failed' });
+      const entry = saved.store.entries.find((item) => item.id === id) || null;
+      return sendJson(res, 200, {
+        ok: true, id,
+        entry: entry ? AiMemoryPolicyV1.explainMemoryEntry(entry) : null,
+      });
+    }
+    return sendJson(res, 405, { error: 'method not allowed' });
+  }
+
   // Ремонт порчи от разрыва многобайтовых символов (DEVLOG 03.09). Чиним ТОЛЬКО тем, что
   // лежит в бэкапах этого же аккаунта: потерянные байты не восстановимы, и выдумывать текст
   // человеку в его же данных нельзя. Без ?apply=1 только отчёт, ничего не пишем.
@@ -5973,13 +6179,44 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'PUT' || req.method === 'POST') {
       try {
         const body = await readBody(req);
-        const parsed = JSON.parse(body);
+        let parsed = JSON.parse(body);
+        if (name === 'profile') {
+          if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+            return sendJson(res, 400, { error: 'invalid_profile' });
+          }
+          if (parsed.entries != null) {
+            const incomingStore = AiMemoryPolicyV1.normalizeMemoryStore(parsed);
+            if (incomingStore.damaged || incomingStore.dropped > 0) {
+              return sendJson(res, 400, { error: 'invalid_memory_entries' });
+            }
+          }
+        }
         if (COMMITMENT_PAIR_NAMES.includes(name)) {
           try { assertAccountGraphTransition(uid, { data: { [name]: parsed } }); }
           catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
         } else if (COMMITMENT_JOURNAL_ALLOWED_NAMES.includes(name)) {
           try { recoverCommitmentJournal(uid); }
           catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
+        }
+        // Между загрузкой карточки профиля и её сохранением человек мог удалить
+        // структурную запись через /api/ai/memory. Перечитываем файл непосредственно
+        // перед синхронной записью и не даём устаревшему PUT воскресить удалённое.
+        if (name === 'profile' && fs.existsSync(file)) {
+          let currentRaw;
+          try { currentRaw = JSON.parse(fs.readFileSync(file, 'utf8')); }
+          catch { return sendJson(res, 422, { error: 'invalid_memory_state' }); }
+          const hasStructuredMemory = currentRaw && typeof currentRaw === 'object' && !Array.isArray(currentRaw)
+            && (currentRaw.entries != null || Number(currentRaw.schemaVersion) >= AiMemoryPolicyV1.STORE_SCHEMA_VERSION);
+          if (hasStructuredMemory) {
+            const currentStore = AiMemoryPolicyV1.normalizeMemoryStore(currentRaw);
+            if (currentStore.damaged || currentStore.dropped > 0) {
+              return sendJson(res, 422, { error: 'invalid_memory_state' });
+            }
+            parsed = Object.assign({}, parsed, {
+              schemaVersion: AiMemoryPolicyV1.STORE_SCHEMA_VERSION,
+              entries: currentStore.entries,
+            });
+          }
         }
         fs.mkdirSync(dir, { recursive: true });
         backupFile(dir, name); // снимок прежнего содержимого ПЕРЕД перезаписью — защита от потери

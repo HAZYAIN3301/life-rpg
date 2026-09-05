@@ -177,7 +177,15 @@ test('the Attention R1 locale block is complete and introduces no duplicate keys
   }
   const adapterStart = app.indexOf('//  Attention R1 —');
   const adapterEnd = app.indexOf('function renderSettings()', adapterStart);
-  const adapter = app.slice(adapterStart, adapterEnd);
+  let adapter = app.slice(adapterStart, adapterEnd);
+  // Actionable v216 keeps its locale catalog beside its own adapter. Translation
+  // values are not new source keys, so exclude the catalog/helper from this R1
+  // check while continuing to inspect every visible Attention adapter literal.
+  const actionableCatalog = adapter.indexOf('const ACTIONABLE_COPY =');
+  const actionableRuntime = adapter.indexOf('function actionableSettingsUI()', actionableCatalog);
+  if (actionableCatalog >= 0 && actionableRuntime > actionableCatalog) {
+    adapter = adapter.slice(0, actionableCatalog) + adapter.slice(actionableRuntime);
+  }
   const visibleKeys = new Set([...adapter.matchAll(/'([^'\n]*[\u0400-\u04ff][^'\n]*)'/g)].map((match) => match[1]));
   const localeKeys = new Set(rows.map(([, rawKey]) => rawKey.replace(/\\'/g, "'")));
   for (const key of visibleKeys) {
