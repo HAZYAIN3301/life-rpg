@@ -4,6 +4,12 @@
  * CommitmentV1 is intentionally forgiving while reading old/local data; this
  * server boundary is intentionally not. A malformed candidate must be rejected
  * before either account file is written.
+ *
+ * Accepts both schema versions. v1 keeps its five kinds; v2 adds `attention` — a
+ * boundary around one named activity — with a required `target` label and a
+ * `duration` edge. The key in the settings payload is still `commitmentsV1`: it
+ * names the field, not the schema, and renaming it would break the atomic
+ * settings + tasks pair for no gain.
  */
 (function exposeCommitmentStore(root, factory) {
   const api = factory();
@@ -22,12 +28,19 @@
   const MAX_MODE = 24;
   const MAX_HISTORY = 30;
   const MAX_LOG_DAYS = 3660;
-  const KINDS = new Set(['step', 'edge', 'moment', 'anchor', 'care']);
+  const MAX_TARGET = 40;
+  const KINDS = new Set(['step', 'edge', 'moment', 'anchor', 'care', 'attention']);
+  // `attention` появился только в схеме v2. Состояние, помеченное как v1, но
+  // содержащее его, отвергается — и это не педантизм: старый читатель
+  // (`CommitmentV1.normalize`) неизвестный вид молча выбрасывает, так что принятый
+  // здесь v1-файл с уговором про внимание потерял бы его при первом же чтении.
+  // Отказ виден, потеря — нет.
+  const V2_ONLY_KINDS = new Set(['attention']);
   const BASE_KEYS = new Set(['exists', 'value']);
   const STATE_KEYS = new Set(['version', 'mode', 'items', 'log']);
   const ITEM_KEYS = new Set([
     'id', 'kind', 'title', 'win', 'edge', 'core', 'modes', 'history',
-    'decidedOn', 'revisedOn', 'budget', 'archivedAt',
+    'decidedOn', 'revisedOn', 'budget', 'archivedAt', 'target',
   ]);
   const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
   const HHMM = /^([01]\d|2[0-3]):([0-5]\d)$/;
@@ -73,6 +86,12 @@
     if (edge.kind === 'trigger') {
       return exactKeys(edge, new Set(['kind', 'on']), ['kind', 'on']) && boundedText(edge.on, 40);
     }
+    // v2: граница длительностью. Верхний предел — защита от опечатки, которая иначе
+    // молча превращается в «десять часов можно».
+    if (edge.kind === 'duration') {
+      return exactKeys(edge, new Set(['kind', 'minutes']), ['kind', 'minutes'])
+        && Number.isInteger(edge.minutes) && edge.minutes >= 1 && edge.minutes <= 600;
+    }
     return false;
   }
 
@@ -110,16 +129,28 @@
       if (item[key] != null && !isDay(item[key])) return false;
     }
     if (item.budget != null && !budgetValid(item.budget)) return false;
+    // Ярлык занятия обязателен ровно у `attention` и запрещён у остальных видов.
+    // Обязателен потому, что совпадение по ярлыку — единственный способ вернуть
+    // человеку его решение про то самое занятие; без него уговор не прозвучит
+    // никогда. То же правило действует в `commitment-v2`: расхождение между ними
+    // означало бы, что клиент показывает сохранённую границу, которой на диске нет.
+    if (item.kind === 'attention') {
+      if (!boundedText(item.target, MAX_TARGET)) return false;
+    } else if (Object.prototype.hasOwnProperty.call(item, 'target')) {
+      return false;
+    }
     return true;
   }
 
   function validateCommitmentState(value) {
     if (!exactKeys(value, STATE_KEYS, ['version', 'mode', 'items', 'log'])) return false;
-    if (value.version !== 1 || !boundedText(value.mode, MAX_MODE)) return false;
+    if (value.version !== 1 && value.version !== 2) return false;
+    if (!boundedText(value.mode, MAX_MODE)) return false;
     if (!Array.isArray(value.items) || value.items.length > MAX_STORED_ITEMS) return false;
     const ids = new Set();
     for (const item of value.items) {
       if (!itemValid(item) || ids.has(item.id)) return false;
+      if (value.version < 2 && V2_ONLY_KINDS.has(item.kind)) return false;
       ids.add(item.id);
     }
     if (value.items.filter((item) => !item.archivedAt).length > MAX_ACTIVE_ITEMS) return false;
@@ -179,6 +210,7 @@
     MAX_COMMIT_BYTES,
     MAX_ACTIVE_ITEMS,
     MAX_STORED_ITEMS,
+    MAX_TARGET,
     validateCommitmentState,
     validateTaskGraph,
     validateCommitPayload,

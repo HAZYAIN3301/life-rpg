@@ -64,7 +64,8 @@ test('graph accepts the canonical imported task bounds', () => {
 test('state schema is strict and resource-like or unknown fields cannot hide inside it', () => {
   const cases = [];
   cases.push({ ...state(), gold: 25 });
-  cases.push(state({ version: 2 }));
+  cases.push(state({ version: 3 }));
+  cases.push(state({ version: '2' }));
   cases.push(state({ mode: ' default ' }));
   cases.push(state({ items: [item({ gold: 25 })] }));
   cases.push(state({ items: [item({ id: 'q1', edge: { kind: 'surprise' } })] }));
@@ -107,4 +108,78 @@ test('module is pure and exposes validation only', () => {
   for (const forbidden of ['write', 'save', 'fetch', 'award', 'charge', 'deduct', 'payout']) {
     assert.equal(surface.includes(forbidden), false, forbidden);
   }
+});
+
+/* ---- Схема v2: уговор про внимание ------------------------------------- */
+
+function attentionItem(over = {}) {
+  return Object.assign({
+    id: 'attn:tiktok', kind: 'attention',
+    title: 'TikTok — только выложить ролик',
+    win: 'вечер остаётся мой',
+    target: 'tiktok',
+    edge: { kind: 'duration', minutes: 12 },
+    core: true, modes: [], history: [],
+  }, over);
+}
+const v2 = (over = {}) => state(Object.assign({ version: 2, items: [attentionItem()] }, over));
+
+test('v2 принимается вместе с уговором про внимание и границей длительностью', () => {
+  assert.equal(S.validateCommitmentState(v2()), true);
+  // И старые данные продолжают проходить: схема расширена, а не заменена.
+  assert.equal(S.validateCommitmentState(state()), true);
+  assert.equal(S.validateCommitmentState(state({ version: 2 })), true, 'пять старых видов живут и в v2');
+});
+
+test('🔴 уговор про внимание не принимается под меткой v1', () => {
+  // Старый читатель молча выбрасывает неизвестный вид, поэтому принятый здесь
+  // v1-файл с таким уговором потерял бы его при первом же чтении. Отказ виден,
+  // потеря — нет.
+  assert.equal(S.validateCommitmentState(state({ version: 1, items: [attentionItem()] })), false);
+});
+
+test('🔴 ярлык занятия обязателен у attention и запрещён у прочих видов', () => {
+  const { target, ...withoutTarget } = attentionItem();
+  assert.equal(S.validateCommitmentState(v2({ items: [withoutTarget] })), false, 'без ярлыка уговор не совпадёт ни с чем');
+  for (const bad of ['', '   ', ' tiktok', 'tiktok ', 'я'.repeat(S.MAX_TARGET + 1), 42, null, {}]) {
+    assert.equal(S.validateCommitmentState(v2({ items: [attentionItem({ target: bad })] })), false, JSON.stringify(bad));
+  }
+  assert.equal(S.validateCommitmentState(v2({ items: [attentionItem({ target: 'я'.repeat(S.MAX_TARGET) })] })), true);
+  // Ярлык у чужого вида — признак неверно собранной записи.
+  assert.equal(S.validateCommitmentState(state({ version: 2, items: [item({ target: 'tiktok' })] })), false);
+});
+
+test('🔴 граница длительностью принимает только целые минуты в пределах', () => {
+  const withEdge = (minutes) => v2({ items: [attentionItem({ edge: { kind: 'duration', minutes } })] });
+  assert.equal(S.validateCommitmentState(withEdge(1)), true);
+  assert.equal(S.validateCommitmentState(withEdge(600)), true);
+  for (const bad of [0, -5, 601, 12.5, '12', null, NaN, Infinity]) {
+    assert.equal(S.validateCommitmentState(withEdge(bad)), false, JSON.stringify(bad));
+  }
+  // Лишние и недостающие поля границы отвергаются целиком.
+  assert.equal(S.validateCommitmentState(v2({ items: [attentionItem({ edge: { kind: 'duration' } })] })), false);
+  assert.equal(S.validateCommitmentState(v2({ items: [attentionItem({ edge: { kind: 'duration', minutes: 12, at: '22:00' } })] })), false);
+});
+
+test('🔴 неизвестные поля не прячутся внутри уговора про внимание', () => {
+  for (const extra of [{ gold: 25 }, { xp: 1 }, { url: 'https://tiktok.com/@x' }, { policyId: 'p1' }]) {
+    assert.equal(S.validateCommitmentState(v2({ items: [attentionItem(extra)] })), false, JSON.stringify(extra));
+  }
+});
+
+test('🔴 то, что принял CommitmentV2, принимает и сервер', () => {
+  // Шов между модулем и стором: если они расходятся, человек видит сохранённую
+  // границу, а на диск она не попадает — и узнаёт об этом, когда её не окажется.
+  const V2 = require('../public/commitment-v2.js');
+  let built = V2.emptyState();
+  for (const draft of [
+    { id: 'attn:tiktok', kind: 'attention', title: 'TikTok — только выложить', win: 'вечер мой', target: 'tiktok', edge: { kind: 'duration', minutes: 12 } },
+    { id: 'attn:games', kind: 'attention', title: 'Игры не после 22:00', win: 'высыпаюсь', target: 'игры' },
+    { id: 'c1', kind: 'anchor', title: 'Подъём в 7:00', win: 'успеваю до школы', edge: { kind: 'time', at: '07:00' } },
+  ]) {
+    const added = V2.add(built, draft);
+    assert.equal(added.ok, true, draft.id);
+    built = added.state;
+  }
+  assert.equal(S.validateCommitmentState(built), true, JSON.stringify(built));
 });

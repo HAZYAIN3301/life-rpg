@@ -150,9 +150,22 @@
     const budget = cleanBudget(raw.budget);
     if (budget) out.budget = budget;
     if (isDay(raw.archivedAt)) out.archivedAt = raw.archivedAt;
-    // Ярлык занятия — только у attention, и только если человек его назвал.
-    if (raw.kind === KINDS.attention && typeof raw.target === 'string' && raw.target.trim()) {
-      out.target = raw.target.trim().slice(0, MAX_TARGET);
+    // Ярлык занятия. У attention он ОБЯЗАТЕЛЕН, у остальных видов его нет вовсе.
+    //
+    // Обязателен, потому что весь смысл вида — вернуть человеку его решение про то
+    // самое занятие: `bestFor` и `ownWords` ищут совпадение именно по ярлыку.
+    // Уговор про внимание без ярлыка не сможет совпасть ни с чем и станет просто
+    // ещё одной строкой, которая никогда не прозвучит.
+    //
+    // Строгость согласована со строгостью серверного стора намеренно. Если модуль
+    // принимает то, что сервер потом отвергает, человек видит сохранённую границу,
+    // а на диск она не попадает — и узнаёт об этом, когда её не окажется.
+    if (raw.kind === KINDS.attention) {
+      const target = typeof raw.target === 'string' ? raw.target.trim().slice(0, MAX_TARGET) : '';
+      if (!target) return null;
+      out.target = target;
+    } else if (raw.target !== undefined) {
+      return null;   // ярлык у чужого вида — признак того, что запись собрана неверно
     }
     return out;
   }

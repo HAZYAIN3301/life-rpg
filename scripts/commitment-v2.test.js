@@ -162,7 +162,7 @@ test('🔴 attention — новый вид, и он живёт только в v
 
 test('граница длительностью принимает минуты и отбивает бессмыслицу', () => {
   const make = (minutes) => V2.add(V2.emptyState(),
-    { id: 'a', kind: 'attention', title: 'T', win: 'W', edge: { kind: 'duration', minutes } }).state.items[0].edge;
+    { id: 'a', kind: 'attention', title: 'T', win: 'W', target: 'tiktok', edge: { kind: 'duration', minutes } }).state.items[0].edge;
   assert.deepStrictEqual(make(12), { kind: 'duration', minutes: 12 });
   assert.deepStrictEqual(make(0), { kind: 'none' }, 'ноль минут — не граница');
   assert.deepStrictEqual(make(-5), { kind: 'none' });
@@ -176,10 +176,21 @@ test('🔴 выигрыш обязателен и у attention — гейт v1 �
   assert.strictEqual(r.error, 'invalid', 'граница без названного выигрыша производит вину, а не движение');
 });
 
-test('🔴 target — ярлык человека, а не адрес: у прочих видов его нет', () => {
-  const s = V2.add(V2.emptyState(),
-    { id: 'c1', kind: 'anchor', title: 'Подъём', win: 'высыпаюсь', target: 'https://tiktok.com/@x' }).state;
-  assert.strictEqual('target' in s.items[0], false, 'target существует только у attention');
+test('🔴 target обязателен у attention и запрещён у прочих видов', () => {
+  // Ярлык — единственное, по чему уговор про внимание совпадает с занятием.
+  // Без него он не прозвучит никогда, поэтому это не «поле по желанию».
+  const noTarget = V2.add(V2.emptyState(), { id: 'a1', kind: 'attention', title: 'TikTok', win: 'вечер мой' });
+  assert.strictEqual(noTarget.ok, false);
+  assert.strictEqual(noTarget.error, 'invalid');
+  assert.strictEqual(V2.add(V2.emptyState(),
+    { id: 'a1', kind: 'attention', title: 'T', win: 'W', target: '   ' }).ok, false, 'пробелы — не ярлык');
+
+  // Ярлык у чужого вида — признак того, что запись собрана неверно, а не мусор,
+  // который можно молча отбросить.
+  const wrongKind = V2.add(V2.emptyState(),
+    { id: 'c1', kind: 'anchor', title: 'Подъём', win: 'высыпаюсь', target: 'https://tiktok.com/@x' });
+  assert.strictEqual(wrongKind.ok, false, 'target существует только у attention');
+
   const long = V2.add(V2.emptyState(),
     { id: 'a1', kind: 'attention', title: 'T', win: 'W', target: 'я'.repeat(200) }).state.items[0];
   assert.strictEqual(long.target.length, V2.MAX_TARGET);
