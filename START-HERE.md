@@ -4,22 +4,40 @@
 
 ## Актуальный handoff — 2026-09-06
 
-- Production HEAD: `301299d` (`Commitment v2 UI`), PWA cache `satoru-v244`, app/style pin
-  `20260906-attention-commitment-v244-1`. Actionable Foundations UI вошёл предыдущим
-  runtime-коммитом `8f2c510`; его модули сохраняют собственный immutable v216 pin.
-- Полная проверка после сведения обоих слоёв: **1920/1920 PASS**. Перед следующей правкой начать с
-  `git fetch`, `git status --short --branch` и `git log -5 --oneline`; точный процесс —
+Это текущий checkpoint. Он важнее старых handoff-промптов и ранних строк ниже по файлу.
+
+- Канонический код — `origin/master`. Перед работой обязательно сверить
+  `git rev-parse HEAD` и `git rev-parse origin/master`; checkout с отставшим SHA не считать
+  источником истины.
+- Последний runtime-релиз — `301299d` (`Commitment v2 UI`), PWA cache `satoru-v244`,
+  app/style pin `20260906-attention-commitment-v244-1`. Последующие docs-коммиты runtime
+  не меняют. Actionable Foundations UI вошёл предыдущим runtime-коммитом `8f2c510`.
+- Полная проверка после сведения runtime и текущего documentation gate: **1924/1924 PASS**.
+  Перед следующей правкой начать с `git fetch`, `git status --short --branch` и
+  `git log -5 --oneline`; обязательный процесс —
   [`AGENTS-PROTOCOL.md`](./AGENTS-PROTOCOL.md).
-- Последние продуктовые швы: Attention теперь сохраняет одно локальное правило и связанную
-  проекцию Commitment v2; перед ним выпущены первая доказанная ценность, видимая память
-  Тени, telemetry consent и внутренний governance. Точный Actionable API, владельцы данных,
-  event-hooks, ограничения и следующие шаги —
+- Дверь `commitment-v2` закрыта коммитом `301299d`: форма Attention атомарно сохраняет
+  локальное правило и уговор Тени, а клиент читает сохранённое состояние только через
+  `CommitmentV2.migrate()`. Автотесты пройдены; **ручной visual QA и production-byte/deploy
+  gate ещё не закрыты**. Точный незакрытый чек-лист находится в верхней записи `DEVLOG.md`.
+- `rest-profile-v1` готов как движок, но его UI **поставлен Альбертом на паузу 03.09**.
+  Не начинать без нового явного решения.
+- 30-дневный эксперимент уже имеет owner/admin-поверхность внутри «Сегодня»/Тени (v212).
+  `secretary-experiment-v1.js` существует как чистый движок/серверный контракт, но не
+  загружается отдельным browser-script. Не строить второй экран: сначала решить, переносить
+  ли текущую inline-поверхность на модуль или оставить её адаптером.
+- Массовые действия уже доступны в Goals v184: ручной multi-select и проверяемые
+  assistant-команды по exact IDs. Старый `/api/bulk/*` handoff перекрывается этим продуктом;
+  не подключать вторую bulk-поверхность без отдельного решения о миграции.
+- `HANDOFF-CODEX-DOORS.md` и `HANDOFF-CODEX-SECRETARY-UI.md` — **superseded history**,
+  не текущие инструкции. Актуальные источники: этот checkpoint, `DEVLOG.md`, `BACKLOG.md`
+  и `SECRETARY-ENGINE-CONTRACT.md`.
+- First Value, объяснимая память Тени, telemetry consent и governance уже выпущены. Точный
+  Actionable API, владельцы данных, event-hooks и ограничения —
   [`ACTIONABLE-FOUNDATIONS-UI-V216.md`](./ACTIONABLE-FOUNDATIONS-UI-V216.md).
 - Источник факта «сделано» — верх `DEVLOG.md`; источник факта «осталось» — верх
-  `BACKLOG.md`. `ROADMAP.md` задаёт принципы и долгий горизонт. `STATUS-AND-PLAN.md` и
-  `WORKFLOW.md` — исторические снимки июля, не текущая очередь.
-- Старый `ACTIONABLE-GAMIFICATION-CLAUDE-HANDOFF.md` закрыт и оставлен только как история
-  распределения. Нельзя строить по его API: четыре модуля уже интегрированы.
+  `BACKLOG.md`. `ROADMAP.md` задаёт принципы и долгий горизонт. `STATUS-AND-PLAN.md`,
+  `WORKFLOW.md` и `ACTIONABLE-GAMIFICATION-CLAUDE-HANDOFF.md` — история, не текущая очередь.
 
 ## Что это
 **Satoru** — персональный геймифицированный планировщик жизни «жизнь как десятиборье». Самохостед, мультиюзер. Владелец: **Альберт Прокопец** (нем. Oberstufe, фанат JJK; бренд-иконка = «**?**»). 

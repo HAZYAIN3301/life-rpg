@@ -13,6 +13,11 @@
 > `scripts/secretary-experiment-v1.test.js` (19),
 > `scripts/secretary-experiment-server-v1.test.js` (15),
 > `scripts/secretary-claim-v1.test.js` (15), `scripts/secretary-push-move-v1.test.js` (7).
+>
+> **Checkpoint 2026-09-06.** Этот файл остаётся контрактом данных и владельцев, но старое
+> указание «подключить все public-модули как browser scripts» отменено. Фактический wiring
+> перечислен в §1. Старые `HANDOFF-CODEX-DOORS.md` и `HANDOFF-CODEX-SECRETARY-UI.md`
+> помечены superseded и не являются очередью работ.
 
 ## 0. Что это и чего тут нет
 
@@ -20,24 +25,25 @@
 
 Здесь намеренно нет ИИ. Выбор хода не должен зависеть от наличия ключа, лимита или настроения модели. ИИ может позже переписать формулировку выбранного хода — но не выбрать его и не отменить.
 
-## 1. Что нужно подключить со стороны UI
+## 1. Фактический wiring на 2026-09-06
 
-Модули лежат в `public/`, но **в `index.html` и в SHELL `sw.js` их добавляет UI-агент** — эти файлы его. Порядок обязателен, роутер зависит от событий:
+Не каждый файл из `public/` должен становиться browser-script. В этом проекте часть чистых
+модулей принадлежит серверу, а часть уже имеет адаптер в `app.js`. Добавление второго
+читателя или второй поверхности создаст расходящиеся источники истины.
 
-```html
-<script src="secretary-events-v1.js?v=..."></script>
-<script src="secretary-router-v1.js?v=..."></script>
-<script src="commitment-v2.js?v=..."></script>
-<script src="secretary-experiment-v1.js?v=..."></script>
-<script src="secretary-claim-v1.js?v=..."></script>
-```
+| Модуль | Текущее подключение | Следующее действие |
+|---|---|---|
+| `secretary-events-v1.js` | загружен в браузере и входит в offline shell | оставить |
+| `secretary-router-v1.js` | сервер выбирает ход; браузер получает его через `GET /api/secretary` | не загружать в браузер без смены архитектуры |
+| `commitment-v2.js` | загружен в браузере и offline shell с v244; UI закрыт в `301299d` | только QA/исправления |
+| `secretary-experiment-v1.js` | чистый движок и серверный API готовы; owner/admin UI v212 уже живёт внутри «Сегодня»/Тени | не строить второй экран; отдельно решить, нужен ли перенос inline-адаптера на модуль |
+| `secretary-claim-v1.js` | сервер арбитрирует claim; `app.js` вызывает claim/settle HTTP и показывает ответ через `secretary-offer-view-v1.js` | не нужен как browser-script |
 
-В `sw.js` — `'secretary-events-v1.js', 'secretary-router-v1.js', 'commitment-v2.js',
-'secretary-experiment-v1.js', 'secretary-claim-v1.js'` в `SHELL` + бамп `CACHE`.
+`commitment-v1.js` остаётся в shell как compatibility API и не удалён. Полный сохранённый
+state ему не передаётся: клиентский reader — только `CommitmentV2.migrate()`.
 
-`commitment-v1.js` остаётся подключённым: он не удалён и не изменён.
-
-Сервер уже подключает оба через `require`, для него ничего делать не нужно.
+Если архитектурное решение когда-нибудь добавит новый browser-модуль, тогда одновременно
+нужны `index.html`, точный URL в `SHELL`, бамп `CACHE` и синхронная правка pin-тестов.
 
 ## 2. Эндпоинты
 
@@ -312,7 +318,10 @@ RestProfileV1.needSetup(profile);  // рецепты с дорогим вход�
 
 ## 6c. `CommitmentV2` — уговор про внимание
 
-Новый файл рядом со старым. **`commitment-v1.js` не изменён**: его двадцать тестов продолжают проверять его же, а старые данные читает старый проверенный код.
+Новый файл лежит рядом со старым. **`commitment-v1.js` не изменён**: его двадцать тестов
+продолжают проверять compatibility API. Но сохранённое клиентское состояние — и v1, и v2 —
+читает `CommitmentV2.migrate(raw)`. Legacy `revise/release/reopen` выполняет адаптер поверх
+v2, поэтому старый нормализатор не может молча удалить запись вида `attention`.
 
 ### Что добавилось
 
