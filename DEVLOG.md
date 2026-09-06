@@ -47,6 +47,38 @@
 
 ---
 
+## [2026-09-06] Zero-memory handoff audit — чат можно удалить без потери маршрута
+
+Проверен критерий «новый агент знает только файлы репозитория». История реализации была
+в журнале, но холодный старт давал противоречивые указатели: старый README обещал
+Obsidian-vault как единственное хранилище; `ROADMAP.md` и `STATUS-AND-PLAN.md` выдавали
+июньский/июльский snapshot за текущий; старый Claude handoff предлагал заново строить уже
+выпущенные Actionable API; в `BACKLOG.md` foundations одновременно были готовы и «ждали
+интеграции».
+
+- `README.md` теперь ведёт в один порядок: `START-HERE → AGENTS-PROTOCOL → верх DEVLOG →
+  верх BACKLOG → профильный spec/QA` и точно описывает account-owned JSON/WAL вместо
+  старой модели vault.
+- `START-HERE.md` получил точный v216 release-handoff, текущие pins, архитектурное
+  сосуществование First Value / questionnaire / GuideV3 и карту всех крупных потоков этой
+  серии работ: Goals, Assistant, Motion/Sound, Ouroboros loader, Guide, Inspiration,
+  Secretary, Browser Companion, profile, design rules и Actionable Foundations.
+- `STATUS-AND-PLAN.md` и `WORKFLOW.md` явно помечены историческими. `ROADMAP.md` сохраняет
+  принципы и долгий план, но больше не предлагает июньский snapshot как текущий runtime.
+- `ACTIONABLE-GAMIFICATION-CLAUDE-HANDOFF.md` закрыт как исторический task brief;
+  канонические API и продолжение находятся в четырёх module docs и
+  `ACTIONABLE-FOUNDATIONS-UI-V216.md`.
+- В v216 handoff добавлены владельцы файлов/API, durable event hooks, enrolment-граница,
+  release discipline и открытые ограничения. Противоречащие записи backlog закрыты.
+- Новый regression в `scripts/actionable-foundations-ui-v216.test.js` не позволяет снова
+  потерять холодный старт, оживить старый task brief или вернуть foundations в статус
+  «ждут интеграции».
+
+Проверка: targeted handoff **11/11 PASS**; полный `npm test` вне sandbox (server suites
+нужен localhost bind) — **1920/1920 PASS**; `git diff --check` — PASS.
+
+---
+
 ## [2026-09-06] Actionable Foundations v216 дошли до интерфейса и durable-границы
 
 Четыре чистых модуля из Actionable Gamification подключены без второй реализации в

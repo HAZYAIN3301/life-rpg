@@ -94,3 +94,21 @@ test('release pins обновлены согласованно', () => {
   assert.match(html, /app\.js\?v=20260906-attention-commitment-v244-1/);
   assert.match(html, /styles\.css\?v=20260906-attention-commitment-v244-1/);
 });
+
+test('zero-memory handoff ведёт к актуальным источникам и гасит старый task brief', () => {
+  const readme = fs.readFileSync(path.join(root, 'README.md'), 'utf8');
+  const start = fs.readFileSync(path.join(root, 'START-HERE.md'), 'utf8');
+  const status = fs.readFileSync(path.join(root, 'STATUS-AND-PLAN.md'), 'utf8');
+  const handoff = fs.readFileSync(path.join(root, 'ACTIONABLE-GAMIFICATION-CLAUDE-HANDOFF.md'), 'utf8');
+  const release = fs.readFileSync(path.join(root, 'ACTIONABLE-FOUNDATIONS-UI-V216.md'), 'utf8');
+  const backlog = fs.readFileSync(path.join(root, 'BACKLOG.md'), 'utf8');
+  for (const name of ['START-HERE.md', 'AGENTS-PROTOCOL.md', 'DEVLOG.md', 'BACKLOG.md']) {
+    assert.ok(readme.includes(name), `README должен вести к ${name}`);
+  }
+  assert.match(start, /Актуальный handoff — 2026-09-06/);
+  assert.match(status, /НЕ текущий master-документ/);
+  assert.match(handoff, /ЗАКРЫТО \/ ИСТОРИЧЕСКИЙ TASK BRIEF/);
+  assert.match(release, /выпущено и проверено в production/);
+  assert.match(release, /8f2c510a53e14d90d1c90bace9728da803ea5ac5/);
+  assert.ok(!backlog.includes('[~] **Parallel foundations:**'));
+});

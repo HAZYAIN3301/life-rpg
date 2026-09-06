@@ -2,6 +2,15 @@
 
 > Живой план развития. Обновляется по ходу. Технический журнал сборки — в [`DEVLOG.md`](./DEVLOG.md). Продуктовый разбор идей — в Obsidian: `wiki/topics/Life-RPG как продукт`. Этот файл — источник контекста: если у LLM кончилась память, отсюда можно продолжить работу.
 
+> **Актуальный handoff 2026-09-06:** подробная фазовая таблица ниже исторически полезна,
+> но раздел «Текущее состояние (на 2026-06-05)» не является текущим snapshot. Новый агент
+> начинает с [`START-HERE.md`](./START-HERE.md) и [`AGENTS-PROTOCOL.md`](./AGENTS-PROTOCOL.md),
+> затем сверяет верх `DEVLOG.md` (сделано) и `BACKLOG.md` (осталось). Текущий выпущенный
+> production HEAD — Commitment v2 UI `301299d`, PWA `satoru-v244`; предыдущий слой
+> Actionable Foundations UI v216 — runtime commit `8f2c510`. После сведения —
+> **1920/1920 PASS**; Actionable-контракт —
+> [`ACTIONABLE-FOUNDATIONS-UI-V216.md`](./ACTIONABLE-FOUNDATIONS-UI-V216.md).
+
 Дата старта этого плана: **2026-06-05**. Автор: Альберт. Со-разработчик: LLM-агент.
 
 ---

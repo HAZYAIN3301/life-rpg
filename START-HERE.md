@@ -2,6 +2,25 @@
 
 > Читай этот файл первым. Он даёт весь контекст, чтобы продолжить работу с нуля (для экономии токенов — начинай новый чат и кидай сюда). Детали — в связанных доках ниже.
 
+## Актуальный handoff — 2026-09-06
+
+- Production HEAD: `301299d` (`Commitment v2 UI`), PWA cache `satoru-v244`, app/style pin
+  `20260906-attention-commitment-v244-1`. Actionable Foundations UI вошёл предыдущим
+  runtime-коммитом `8f2c510`; его модули сохраняют собственный immutable v216 pin.
+- Полная проверка после сведения обоих слоёв: **1920/1920 PASS**. Перед следующей правкой начать с
+  `git fetch`, `git status --short --branch` и `git log -5 --oneline`; точный процесс —
+  [`AGENTS-PROTOCOL.md`](./AGENTS-PROTOCOL.md).
+- Последние продуктовые швы: Attention теперь сохраняет одно локальное правило и связанную
+  проекцию Commitment v2; перед ним выпущены первая доказанная ценность, видимая память
+  Тени, telemetry consent и внутренний governance. Точный Actionable API, владельцы данных,
+  event-hooks, ограничения и следующие шаги —
+  [`ACTIONABLE-FOUNDATIONS-UI-V216.md`](./ACTIONABLE-FOUNDATIONS-UI-V216.md).
+- Источник факта «сделано» — верх `DEVLOG.md`; источник факта «осталось» — верх
+  `BACKLOG.md`. `ROADMAP.md` задаёт принципы и долгий горизонт. `STATUS-AND-PLAN.md` и
+  `WORKFLOW.md` — исторические снимки июля, не текущая очередь.
+- Старый `ACTIONABLE-GAMIFICATION-CLAUDE-HANDOFF.md` закрыт и оставлен только как история
+  распределения. Нельзя строить по его API: четыре модуля уже интегрированы.
+
 ## Что это
 **Satoru** — персональный геймифицированный планировщик жизни «жизнь как десятиборье». Самохостед, мультиюзер. Владелец: **Альберт Прокопец** (нем. Oberstufe, фанат JJK; бренд-иконка = «**?**»). 
 - Прод: **https://life-rpg-production-416a.up.railway.app/** · GitHub `HAZYAIN3301/life-rpg` · Railway **авто-деплоит на каждый push в master**.
@@ -15,11 +34,12 @@
 - Тёплый компаньон + питомцы = удержание через эмоциональную связь.
 
 ## Стек и архитектура
-- **Zero-dep** (нет npm-зависимостей): Node stdlib HTTP-сервер `server.js` + ванильный JS SPA `public/app.js` (~4800 строк) + `public/styles.css` + `public/index.html`. Данные — JSON-файлы `data/users/<id>/*.json`, реестр `data/users.json`.
+- **Zero-dep** (нет runtime npm-зависимостей): Node stdlib HTTP-сервер `server.js` + ванильный JS SPA `public/app.js` + `public/styles.css` + `public/index.html`. Данные — JSON-файлы `data/users/<id>/*.json`, реестр `data/users.json`.
 - **Рендер:** один объект `State`; `render()` → `VIEWS[State.view]()` в `#main`. Делегирование событий на `document`: `onClick`/`onSubmit`/`onChange`/`onSettingsInput`. `Store.save(name,obj)` → PUT `/api/data/<name>` (дебаунс 250мс; `Store._put` — немедленно). В `render()` есть **error-boundary** (сбой раздела не белит экран + авто-репорт).
 - **Навигация:** реестр `SECTIONS` + `renderNav()` + `sectionOf()` + `navUnlockLevel()` (2 уровня: разделы + саб-табы). На телефоне (`<=600px`) — пять первичных пунктов **Сегодня / План / Привычки / Герой / Ещё**; вторичные функции собраны в bottom sheet. Гейт-уровни (Герой/Племя с ур.3). `NEW_VIEWS` + `settings.discovered` = glow-подсветка новых разделов.
 - **Авторизация:** email+пароль (scrypt) ИЛИ legacy профиль+PIN; код восстановления; сессия = HMAC-cookie. `DATA_DIR=/app/data` на **персистентном томе Railway** (подтверждён — данные не теряются).
-- **Деплой:** `git commit` (Co-Authored-By: Claude Opus 4.8) → `git push` → Railway сам деплоит.
+- **Деплой:** по умолчанию законченная задача включает scoped commit → push в
+  `origin/master` → проверку Railway/production. Не добавлять вымышленное co-authoring.
 
 ## ⚠️ Критичные грабли (проверено на практике)
 1. **Nav/FAB дублированы** в `index.html` И в `APP_SHELL`-const внутри app.js — править ОБА.
@@ -35,28 +55,36 @@
 | Док | Назначение |
 |---|---|
 | **START-HERE.md** | этот файл — холодный старт |
-| **WORKFLOW.md** | экономика токенов + какая модель на какую задачу |
+| **AGENTS-PROTOCOL.md** | обязательный процесс для любого агента: sync, ownership, тесты, docs, push/deploy |
+| **WORKFLOW.md** | историческая памятка Claude июля; не задаёт текущую модель или очередь |
 | **ROADMAP.md** | принципы продукта, фазы, монетизация, гейты запуска, дог-фуддинг (модель жизни Альберта) |
 | **ALTERNEYT.md** | 📖 **библия философии** — полный разбор книги «Альтернейт» Хартмана → маппинг на фичи + что строить дальше + guardrails (читать вместе с принципами ROADMAP) |
 | **DEVLOG.md** | технический журнал — что построено, как устроено, как продолжить (главный source-of-truth по «сделано») |
 | **BACKLOG.md** | нереализованные задумки + фидбек-триаж (главный source-of-truth по «осталось») |
+| **ACTIONABLE-FOUNDATIONS-UI-V216.md** | текущий release-handoff: First Value, память Тени, telemetry consent, governance |
 | **LAUNCH.md** | чек-лист запуска (Railway-том ✅, что ещё нужно) |
 | **MONETIZATION-VALIDATION-BRIEF.md** | деньги, ФОП/эквайринг, валюта и честный тест спроса перед платным запуском |
 | **COMPETITORS.md** | разбор Habitica/LifeUp/Solo Leveling/Finch — позиционирование, что стащить |
 | **COMPETITORS-2.md** | разбор Skillion/SelfQuest/Spirit City/Gizmo — «Логово»/комната, аватар/гир |
 | **DESIGN-DIRECTION.md** | визуальный north star, референсы, IA и зафиксированный мобильный контракт |
+| **DESIGN-BOOK-NOTES.md / DESIGN-CRAFT-BRIEF.md / DESIGN-CRAFT-RULES.md** | выводы из дизайн-литературы и проверяемые правила для любого нового redesign |
 | **GUIDE-V3-PLAN.md / GUIDE-V3-FIRST-SCRIPT-RU.md** | progressive Guide v3: продуктовый контракт, утверждённый сценарий First Journey и contextual Habits |
+| **GUIDE-V3-V194-QA.md / GUIDE-V3-V195-QA.md** | выпущенные contextual-главы, библиотека Guide и seeded E2E |
 | **QUESTIONNAIRE-V1-PLAN.md** | новый registration questionnaire: один ответ → подтверждённая цель + первый шаг → Guide/Today/Goals; progressive-вопросы, privacy, atomic data contract и QA |
 | **ASSISTANT-V181.md** | контракт безопасных действий ассистента, голосового вызова и явного файлового контекста |
 | **ASSISTANT-RESPONSE-INTEGRITY-V186.md** | finish-reason, automatic full rewrite и fail-closed защита от оборванных ответов Тени |
 | **ASSISTANT-DECISION-QUALITY-V187.md** | адаптивная глубина, decision brief и отдельный сильный provider для сложных личных разборов |
 | **GOALS-BULK-V184.md** | массовое управление целями, bulk-команды Тени и защита чата от UTF-8/contract leakage |
 | **GOALS-ACTIONABLE-V185.md** | быстрая галочка достижения, actionable detail, проекты, multi/background spheres и AI-импорт шагов |
+| **MOTION-SOUND-V189.md** | оригинальный Sound OS, motion-правила и церемония Rewards; без копирования anime SFX |
+| **INSPIRATION-V196-QA.md / INSPIRATION-PERSISTENCE-V207-QA.md** | персональная конечная подборка и сохранение отредактированных интересов |
 | **APPLE-DEVELOPER-FUTURE-HANDOFF.md** | единая карта ограничений PWA/iOS и точный handoff после оплаты Apple Developer Program |
 | **SECRETARY-OS-PAIN-MAP.md** | полная карта пользовательских болей: что уже закрыто, Secretary/Ритм/Planning и честные платформенные границы |
 | **BROWSER-COMPANION-V199-QA.md** | установка, privacy/security contract, QA и production verification браузерной границы |
 | **BROWSER-COMPANION-DISCOVERY-V200-QA.md** | заметное объявление на Today, простой guided install, store-ready пакет и QA нового release path |
 | **BROWSER-PROTECTION-V210-QA.md** | защита браузера v209: причина stale-runtime сбоя, категории/списки/расписание, SafeSearch/YouTube/bypass, permissions и QA |
+| **BROWSER-COMPANION-V215-QA.md** | актуальный пакет расширения: Chrome/Edge/Opera/Firefox/Safari границы и store artifacts |
+| **ACCOUNT-PROFILE-V209.md** | профиль, публичная карточка, соцссылки и server-owned visibility/privacy |
 | **INTERFACE-HIERARCHY-V203-QA.md** | редизайн редизайна: иерархия Today/Calendar/Inspiration/Board, progressive disclosure, motion/sound и локальный release gate |
 | **SKILLTREE-MASTERNAK-RESEARCH.md** | долговечный разбор Masternak (2022): что источник действительно подтверждает, ограничения и правила Tree v4 |
 | **TREE-V4-SPEC.md / TREE-V4-QA.md** | честное разделение реального Path и игровых бонусов, Guide v3 adapter, evidence/data contract, design и release gates |
@@ -68,7 +96,15 @@
 | `wiki/topics/Life-RPG как продукт.md` (в Obsidian) | большой продуктовый разбор/видение Альберта |
 
 ## Текущее состояние (построено)
-Полная система задач/квестов/привычек/целей/календаря · сферы N-уровней + импорт-калибровка · XP/уровни/ранги/атрибуты/радар · энергия · хайп · награды (рарности/косметика/сундуки/звуки) · ачивки · кастом-аватар · Pro/триал (авто-старт при регистрации) · лидерборд · пати/рейды · PWA+пуши+планировщик · ИИ-слой (BYOK мультипровайдер + предложения + чат + авто-категория) · **Assistant v187 + Goals v185 + Secretary/Recovery v197 + Browser Companion Discovery v200 + Interface Hierarchy v203 + Tree v4/Guide v205** (безопасные обратимые действия и полный ответ без обрыва; на Today — один центр Тени и заметный release path расширения; на ноутбуке — локальная Chromium/Brave-граница без отправки истории; Tree отдельно показывает подтверждённые реальные результаты и игровые бонусы, а Guide ведёт сначала в реальный Path) · «Атомные привычки» · **компаньон v3** · **питомцы v2** · **Логово v1** · **снаряжение v2** · **рескин Системы v2** · **mobile product pass v3** · error-boundary · **аккаунты email+пароль** · фидбек+админка+бэкапы · **онбординг v2** · **боссы с реальной механикой** · **момент дня с Тенью** + **Тень в углу**.
+Полная система задач/квестов/привычек/целей/календаря · сферы N-уровней + импорт-калибровка · XP/уровни/ранги/атрибуты/радар · энергия · награды/сундуки/звуки · PWA+пуши · ИИ-слой · **Assistant v187 + Goals v185 + Secretary/Recovery v197 + Browser Companion v215 + Interface Hierarchy v203 + Tree v4/Guide v205 + Economy Art v208 + Actionable Foundations UI v216** · компаньон/питомцы/Логово · аккаунты, бэкапы и data-integrity fences.
+
+**Actionable Foundations UI v216:** новый аккаунт начинает `FirstValueV1` при регистрации,
+а опросник материализует настоящий план и первый шаг внутри того же пути. Старые аккаунты
+с отсутствующим `first-value.json` автоматически не enroll-ятся. `GuideV3` остаётся
+контекстным обучением функциям и не является источником first-value решения. Память Тени
+управляется в `Настройки → Связи`, telemetry consent — в `Настройки → Данные и
+приватность`; governance не загружается в браузер. Подробнее:
+[`ACTIONABLE-FOUNDATIONS-UI-V216.md`](./ACTIONABLE-FOUNDATIONS-UI-V216.md).
 
 **Secretary/Recovery v197:** «Схватки», «Нагрузка дня», Founder Pass, отдельные anti-habits/progress/notes panels больше не конкурируют на Today. Данные сохранены и доступны в своих владельцах; ассистент выбирает один support flow. PWA всё ещё не является OS blocker: desktop extension/companion — R3, Android/iOS — R4/R5. QA/handoff: [`SECRETARY-RECOVERY-V197-QA.md`](./SECRETARY-RECOVERY-V197-QA.md).
 
@@ -86,7 +122,9 @@
 
 **Guide v3:** First Journey и contextual pack доступны на RU/EN/DE/UK/ES. Tree-глава обновлена до registry v3: `intro → выбор точной сферы → receipt на ближайшей реальной вехе`; слой Path обязателен, Game Bonuses не закрывают главу, claim не выполняется ради туториала. Exact copy releases: RU `1.4.0`, EN/DE/UK/ES `0.5.0`. Goals остаётся `deferred-questionnaire`.
 
-⚠️ **С 29.07 Codex автономно шипнул (см. `git log --oneline`, коммиты `2d78d69` и `33f1867`, НЕ описаны в DEVLOG.md):** модульные аватары Traveller/Scholar, Логово v2 (декор/пол/свет/кипсейки), новая система иконок (`public/art/icons/`), Shadow-риг v2 (`public/shadow-rig-v2.js`). Кто продолжит эту ветку — стоит дочитать диффы этих двух коммитов и добавить им DEVLOG-запись постфактум, иначе следующий чат опять будет гадать «что здесь произошло».
+Исторические релизы до v216 подробно восстановлены в `DEVLOG.md` и профильных QA-файлах.
+Не использовать старые предупреждения о «незадокументированных коммитах» как текущую задачу:
+сначала сверять верх журнала и `git log`.
 
 ## Недоделанные варианты существующих фич (vX готово → vX+1 ждёт)
 - Компаньон v3 ✅ → **режим траура/восстановления** (чувствительно, с Альбертом).
@@ -97,16 +135,18 @@
 - Авто-пуши v1 ✅ → триггеры «пати ждёт вклад» / «тебя обогнали».
 - Виджеты — частично (пуши есть; нативный виджет отложен).
 
-## Что дальше → BACKLOG.md + LAUNCH.md
-🟠 Questionnaire v1: продуктовый/data-integrity контракт готов, runtime ещё не начат; он разблокирует Guide Goals без длинной регистрационной анкеты.
-🟠 онбординг-ясность · креш Виолы (репро) · кросс-девайс энергия · privacy-удаление.
-🟡 эпик-левелап · Wrapped/шеринг · расширение пушей · каталог наград.
-🔵 арт-пайплайн после теста Виолы (cutout-риг → объём).
+## Что дальше → верх BACKLOG.md + LAUNCH.md
 
-## Как работать (детали в WORKFLOW.md)
-- **Дефолт — Sonnet 4.6.** Opus 4.8 — на сервер/авторизацию/архитектуру/дебаг/чувствительное. Haiku — мелочи.
-- **Новый чат на пачку** (контекст отсюда) = главная экономия токенов.
-- **Больше за заход = пачка задач в одном сообщении.** Модель на объём НЕ влияет.
+Не поддерживать здесь вторую копию очереди. На 2026-09-06 ближайшие открытые границы
+v216: юридическое решение по opt-out в ЕС, engine-event для замены stale primary action и
+producer-ы структурной памяти. Остальные приоритеты брать с верха `BACKLOG.md` после
+сверки с последними записями `DEVLOG.md`.
+
+## Как работать
+
+Текущий обязательный контракт — [`AGENTS-PROTOCOL.md`](./AGENTS-PROTOCOL.md). В частности:
+fetch и проверка дерева до правок; scoped ownership; `apply_patch`; тесты; бамп PWA cache
+при shell-изменениях; DEVLOG/BACKLOG; затем commit, push и проверка deploy по умолчанию.
 
 ### Шаблон старта пачки (в новом чате)
 > «Контекст в START-HERE.md (+ BACKLOG/DEVLOG). За этот заход: 1) … 2) … 3) … Тестируй в превью, чисти тест-юзеров, обновляй DEVLOG/BACKLOG, коммить+пуш.»

@@ -1,7 +1,17 @@
 # Actionable Foundations UI v216
 
-Дата: 2026-09-06  
-Статус: реализовано, ожидает release-проверки
+Дата: 2026-09-06
+
+Статус: **выпущено и проверено в production**
+
+Feature runtime commit: `8f2c510a53e14d90d1c90bace9728da803ea5ac5`
+
+Feature release: `satoru-v243` / `20260905-actionable-foundations-v216-1`
+
+Текущий совместимый production HEAD: `301299d`, shell `satoru-v244`; Actionable-модули
+остаются на собственном immutable pin. Проверка после последующего Commitment v2 UI и
+handoff-аудита: **1920/1920 PASS**. Оба Railway deployment status feature-release были
+`success`; защищённые API без сессии отвечают `401`, а не раскрывают данные.
 
 ## Результат
 
@@ -36,6 +46,12 @@
 Создание квеста само по себе не считается победой. Оно лишь подготавливает ссылку на
 действие. Это одинаково работает из «Сегодня» и календаря. Если сохранение пути или
 события не удалось, интерфейс не переходит вперёд и не празднует результат.
+
+Сосуществование с онбордингом намеренное: новый email-аккаунт получает journey сразу
+после durable записи стартовых settings; questionnaire затем записывает цель и первый
+шаг и сообщает `real_plan_created` в тот же journey. `GuideV3` обучает конкретным
+функциям после входа в продукт и не принимает решений First Value. Старый аккаунт, у
+которого `/api/data/first-value` возвращает `404`, автоматически не включается.
 
 ### Память ассистента
 
@@ -77,7 +93,8 @@
 - Повреждённая structured memory даёт `422` и не перезаписывается пустым массивом.
 - Некорректно закодированный id памяти даёт `400`, а не роняет процесс.
 - Экспорт памяти не смешан с переносимым архивом аккаунта и не меняет согласие на сбор.
-- App shell и Service Worker используют один cache release `satoru-v243`.
+- В feature-release app shell и Service Worker использовали `satoru-v243`. Текущий shell
+  поднят следующим совместимым релизом до `satoru-v244`; Actionable script pins не менялись.
 
 ## Архитектурная граница
 
@@ -93,6 +110,52 @@
 `TelemetryConsentV1.evaluateExperimentEligibility` и иметь governance-контракт с
 владельцем, сроком пересмотра и выключателем.
 
+## Карта реализации для следующего агента
+
+| Ответственность | Канонический файл / маршрут |
+|---|---|
+| Domain engine First Value | `public/first-value-v1.js` |
+| Представление First Value | `public/first-value-ui-v1.js` |
+| Состояние journey | `GET/PUT /api/data/first-value`, клиентский `Store.saveNow('first-value', ...)` |
+| Политика памяти | `public/ai-memory-policy-v1.js` |
+| Memory API | `GET /api/ai/memory`, `PATCH/DELETE /api/ai/memory/:id`, `GET /api/ai/memory/export` |
+| Политика согласия | `public/telemetry-consent-v1.js` |
+| Consent API | `GET/PUT /api/telemetry/consent` |
+| Общий settings renderer | `public/actionable-settings-ui-v1.js` |
+| UI orchestration и domain hooks | `public/app.js` |
+| Серверная валидация, хранение и retention | `server.js` |
+| Governance для команды | `public/gamification-governance-v1.js` — не подключать в browser shell |
+
+Script-теги и offline shell находятся в `public/index.html` и `public/sw.js`. Решения
+domain-модулей нельзя копировать в `app.js`: UI получает derived view, передаёт событие и
+сохраняет следующий JSON.
+
+### Durable hooks First Value
+
+| Доказательство | Событие | Где вызывается |
+|---|---|---|
+| Завершён квест | `quest_completed` | только после успешного `Store.saveNow('tasks', ...)` |
+| Зафиксирован следующий шаг | `next_action_committed` | после durable goal/quest graph write |
+| Опросник создал план | `real_plan_created` | после успешного `/api/questionnaire/commit` |
+| Начато восстановление с границей | `recovery_boundary_started` | после `AttentionStore.save(...)` |
+
+Стабильный event id формирует клиент из типа, сущности и времени. Повтор одного жеста
+идемпотентен. Если предметная запись не сохранилась, event не отправляется и праздник не
+рисуется.
+
+## Проверка и release discipline
+
+- Полный suite: `npm test`.
+- Интеграционный контракт UI: `node --test scripts/actionable-foundations-ui-v216.test.js`.
+- Domain suites: `scripts/gamification-governance-v1.test.js`,
+  `scripts/first-value-v1.test.js`, `scripts/ai-memory-policy-v1.test.js`,
+  `scripts/telemetry-consent-v1.test.js`.
+- При изменении `app.js`, `styles.css`, `index.html` или offline shell одновременно
+  обновить query pin и `const CACHE` в `public/sw.js`, затем проверить уже production URL.
+- После законченной задачи обновить `DEVLOG.md` и `BACKLOG.md`, сделать scoped commit,
+  push в `origin/master` и дождаться результата deploy — это закреплено в
+  `AGENTS-PROTOCOL.md`.
+
 ## Отложено осознанно
 
 1. `FirstValueV1` не умеет заменить устаревший `primaryAction`. UI безопасно отправляет
@@ -103,4 +166,3 @@
 3. Для пользователей в Германии/ЕС opt-out необязательной аналитики требует отдельного
    юридического решения. Текущий экран честно показывает контракт движка, но это не
    заменяет проверку правового основания и, вероятно, переход на active opt-in.
-

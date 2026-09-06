@@ -1,5 +1,15 @@
 # Actionable Gamification — handoff для Claude Code
 
+> **ЗАКРЫТО / ИСТОРИЧЕСКИЙ TASK BRIEF. Не реализовывать API и рабочие пути ниже.**
+> Четыре модуля приняты, интегрированы и выпущены в runtime commit `8f2c510`
+> (Actionable Foundations UI v216). Канонические контракты после реализации:
+> [`GAMIFICATION-GOVERNANCE-V1.md`](./GAMIFICATION-GOVERNANCE-V1.md),
+> [`FIRST-VALUE-V1.md`](./FIRST-VALUE-V1.md),
+> [`AI-MEMORY-POLICY-V1.md`](./AI-MEMORY-POLICY-V1.md),
+> [`TELEMETRY-CONSENT-V1.md`](./TELEMETRY-CONSENT-V1.md). Продуктовый шов, API,
+> хранение, тесты и открытые границы: [`ACTIONABLE-FOUNDATIONS-UI-V216.md`](./ACTIONABLE-FOUNDATIONS-UI-V216.md).
+> Старый worktree из раздела ниже может не существовать; он не является источником правды.
+
 ## Цель параллельной ветки
 
 Построить четыре независимых, чистых доменных модуля из аудита Actionable Gamification. Эта ветка создаёт проверяемые правила и вычисления, но **не подключает их к пользовательскому runtime**. Подключение к приложению, транзакции `settings + tasks`, WAL, миграции живых данных и релиз остаются у Codex.
