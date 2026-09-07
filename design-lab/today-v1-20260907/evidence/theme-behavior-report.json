@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "checks": [
+    "completion and undo",
+    "direct time edit",
+    "direct duration edit",
+    "overlap warning",
+    "create and reload persistence",
+    "HTML escaping",
+    "focus pause",
+    "note persistence",
+    "microphone record-stop-download",
+    "recap text persistence",
+    "dense 1440/1280",
+    "empty day",
+    "reduced motion",
+    "date navigation",
+    "close day without deletion",
+    "all images decoded",
+    "composer in first viewport",
+    "failed storage does not show completion",
+    "microphone denied fallback",
+    "close while recording"
+  ],
+  "errors": [],
+  "failures": [],
+  "webMCP": "unsupported in this Chrome run; not claimed verified"
+}

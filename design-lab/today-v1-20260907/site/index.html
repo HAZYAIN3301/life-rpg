@@ -1,24 +1,24 @@
 <!doctype html>
-<html lang="ru" data-variant="impulse">
+<html lang="ru" data-variant="companion" data-theme="light">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#11181d"><meta name="robots" content="noindex">
   <title>Satoru — Сегодня</title>
-  <script>document.documentElement.dataset.variant=new URLSearchParams(location.search).get('variant')==='companion'?'companion':'impulse';</script>
+  <script src="theme.js"></script>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="character.css">
   <script src="assets/sound.js" defer></script><script type="module" src="app.js"></script>
 </head>
 <body>
-  <div class="preview-bar"><span class="preview-label">Превью · тестовые дела</span><div class="variant-picker" role="group" aria-label="Вариант дизайна"><button data-variant="impulse" aria-pressed="true">A · Импульс</button><button data-variant="companion" aria-pressed="false">B · Спутник</button></div><details class="preview-settings"><summary>Примеры</summary><div><label>День <select id="scenario"><option value="regular">Обычный</option><option value="dense">Плотный</option><option value="empty">Пустой</option></select></label><button id="reset" class="preview-reset">Сбросить пример</button></div></details></div>
+  <div class="preview-bar"><span class="preview-label">Превью · тестовые дела</span><div class="theme-picker" role="group" aria-label="Тема оформления"><button data-theme-choice="light" aria-pressed="false">Светлая</button><button data-theme-choice="dark" aria-pressed="false">Тёмная</button><button data-theme-choice="system" aria-pressed="true">Системная</button></div><details class="preview-settings"><summary>Примеры</summary><div><label>День <select id="scenario"><option value="regular">Обычный</option><option value="dense">Плотный</option><option value="empty">Пустой</option></select></label><button id="reset" class="preview-reset">Сбросить пример</button></div></details></div>
   <div class="shell">
     <aside class="rail" aria-label="Разделы Satoru">
-      <a class="wordmark" href="./" aria-label="Satoru — Сегодня"><span class="brand-mark" aria-hidden="true">?</span>Satoru<span class="brand-dot">/</span></a>
+      <a class="wordmark" href="./" aria-label="Satoru — Сегодня"><img class="brand-mark" src="assets/shadow.png" width="40" height="40" alt="">Satoru<span class="brand-dot">/</span></a>
       <div class="rail-caption">ТВОЙ ДЕНЬ</div>
-      <nav id="nav"><span class="nav-item selected" aria-current="page"><span aria-hidden="true">◉</span>Сегодня</span><button class="nav-item" data-section="План"><span aria-hidden="true">▦</span>План</button><button class="nav-item" data-section="Привычки"><span aria-hidden="true">↻</span>Привычки</button><button class="nav-item" data-section="Заметки"><span aria-hidden="true">≡</span>Заметки</button></nav>
+      <nav id="nav"><span class="nav-item selected" aria-current="page"><span class="nav-art nav-art-today" aria-hidden="true"></span>Сегодня</span><button class="nav-item" data-section="План"><span class="nav-art nav-art-plan" aria-hidden="true"></span>План</button><button class="nav-item" data-section="Привычки"><span class="nav-art nav-art-habits" aria-hidden="true"></span>Привычки</button><button class="nav-item" data-section="Заметки"><span class="nav-art nav-art-notes" aria-hidden="true"></span>Заметки</button></nav>
       <div class="rail-caption second-caption">МИР SATORU</div>
-      <nav><button class="nav-item" data-section="Вдохновение"><span aria-hidden="true">✧</span>Вдохновение</button><button class="nav-item" data-section="Награды"><span aria-hidden="true">◇</span>Награды</button><button class="nav-item" data-section="Герой"><span aria-hidden="true">♙</span>Герой</button><button class="nav-item" data-section="Племя"><span aria-hidden="true">♧</span>Племя</button></nav>
-      <div class="rail-bottom"><button id="sound" class="quiet sound-toggle" aria-pressed="false">♪ <span>Звук выключен</span></button><div class="profile"><span class="profile-initial">А</span><div><b>Алекс</b><span>Путешественник · ур. 12</span></div><button data-section="Профиль" class="icon-button" aria-label="Профиль">⌘</button></div></div>
+      <nav><button class="nav-item" data-section="Вдохновение"><span class="nav-art nav-art-inspiration" aria-hidden="true"></span>Вдохновение</button><button class="nav-item" data-section="Награды"><img class="nav-art nav-art-rewards" src="assets/nav-rewards.png" alt="" width="28" height="28">Награды</button><button class="nav-item" data-section="Герой"><span class="nav-art nav-art-hero" aria-hidden="true"></span>Герой</button><button class="nav-item" data-section="Племя"><span class="nav-art nav-art-tribe" aria-hidden="true"></span>Племя</button></nav>
+      <div class="rail-bottom"><button id="sound" class="quiet sound-toggle" aria-pressed="false">♪ <span>Звук выключен</span></button><div class="profile"><span class="profile-initial">А</span><div><b>Алекс</b><span>Путешественник · ур. 12</span></div><button data-section="Профиль" class="icon-button" aria-label="Профиль"><span class="nav-art nav-art-profile" aria-hidden="true"></span></button></div></div>
     </aside>
     <main id="main">
       <header class="page-header"><div class="day-heading"><div class="eyebrow" id="date-label">7 СЕНТЯБРЯ · ПОНЕДЕЛЬНИК</div><h1>Сегодня</h1></div><div class="header-actions"><button class="shadow-trigger" id="shadow-open"><img src="assets/shadow.png" width="48" height="48" alt=""><span>Тень<span class="shadow-caption">Помощник</span></span><span aria-hidden="true">↗</span></button><button class="outline recap-trigger" id="recap-open"><img class="mic-symbol" src="assets/microphone.svg" width="20" height="20" alt="">Итог дня голосом</button></div></header>
@@ -47,7 +47,7 @@
       </div>
     </main>
   </div>
-  <nav class="mobile-nav" aria-label="Разделы Satoru"><button data-home aria-current="page"><span aria-hidden="true">◉</span>Сегодня</button><button data-section="План"><span aria-hidden="true">▦</span>План</button><button data-section="Привычки"><span aria-hidden="true">↻</span>Привычки</button><button data-section="Герой"><span aria-hidden="true">♙</span>Герой</button><button id="mobile-more"><span aria-hidden="true">···</span>Ещё</button></nav>
+  <nav class="mobile-nav" aria-label="Разделы Satoru"><button data-home aria-current="page"><span class="nav-art nav-art-today" aria-hidden="true"></span>Сегодня</button><button data-section="План"><span class="nav-art nav-art-plan" aria-hidden="true"></span>План</button><button data-section="Привычки"><span class="nav-art nav-art-habits" aria-hidden="true"></span>Привычки</button><button data-section="Герой"><span class="nav-art nav-art-hero" aria-hidden="true"></span>Герой</button><button id="mobile-more"><span aria-hidden="true">···</span>Ещё</button></nav>
   <div id="notice" class="notice" role="status" hidden></div>
   <dialog id="dialog"><div class="dialog-top"><h2 id="dialog-title"></h2><button id="dialog-close" class="icon-button" aria-label="Закрыть">×</button></div><div id="dialog-body"></div></dialog>
 </body></html>

@@ -2,7 +2,27 @@
 
 Scope: isolated Today concept, no Satoru account or production API.
 
-## Character + mobile follow-up
+## Current: selected hybrid + light/dark
+
+- `npm test`: 15/15; `node qa.mjs`: PASS (including local write failure and mock voice).
+- `node qa-character.mjs`: 24/24 light/dark × 375/390/1280/1440 × regular/dense/empty.
+  Same responsive/direct-action coverage as the historical A/B run below.
+- 11 text contrast pairs per theme/width ≥4.5:1, including completed title, habit
+  button and theme selection; real Cyrillic Russo One verified with Chrome.
+- Keyboard Escape returns focus to the time control. All visible mobile controls
+  ≥42px; first task/empty CTA above navigation; five destinations; 200% root reflow.
+- Theme query, saved preference, system changes, explicit override, invalid/legacy URL,
+  storage denial, draft preservation, no task/focus mutation; sound starts off.
+  Browser media-query change is awaited by state, not assumed synchronous.
+- Original images decode; day/night artwork switches; screenshot review light/dark
+  mobile and desktop. Profile control overflow found and corrected.
+- Current evidence: `evidence/theme-*.png`, `evidence/theme-report.json`;
+  behavior receipt: `evidence/theme-behavior-report.json`.
+- Not claimed: actual phone/VoiceOver, other screens, five locales, account/AI/backend,
+  acoustic audition, PWA, economy, production integration. This remains a Today lab.
+- No full runtime suite rerun: runtime files/dependencies have not changed.
+
+## Character + mobile follow-up (historical A/B)
 
 - Two variants, shared state/handlers; query-string switch preserves current work.
 - `node qa-character.mjs`: **24/24 viewport/scenario combinations PASS**:
@@ -26,8 +46,8 @@ Scope: isolated Today concept, no Satoru account or production API.
 - Source diff check passes excluding the two verbatim upstream OFL files:
   their existing trailing spaces are retained, not treated as authored code.
 
-Not implemented here: real AI integration, multi-sphere/background/difficulty editor,
-other screens, light theme, five-locale full UI, physical device or actual account sync.
+Not implemented in that historical pass: real AI integration, multi-sphere/background/difficulty editor,
+other screens, light theme (now covered above), five-locale full UI, physical device or actual account sync.
 No new avatar, art generation, custom sound synthesis, XP or reward economy.
 
 ## Initial desktop pass (historical)

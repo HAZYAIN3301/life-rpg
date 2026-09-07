@@ -4,8 +4,8 @@ let state,undo=null,loadFailed=false,opener=null,recorder=null,stream=null,audio
 const announcedTimers=new Set();let micEpoch=0;
 const currentHabits=()=>state.habitDays?.[state.day]||(state.day===DEMO_DAY?state.habits:{stretch:false,read:false});
 const audio=window.SatoruSoundV1?.create({mode:'off'});
-function setVariant(value){const variant=value==='companion'?'companion':'impulse';document.documentElement.dataset.variant=variant;document.querySelectorAll('button[data-variant]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.variant===variant)));const url=new URL(location.href);url.searchParams.set('variant',variant);history.replaceState(null,'',url);audio?.play('select');}
-setVariant(document.documentElement.dataset.variant);
+const sectionIcons={'Заметки':'notes','Вдохновение':'inspiration','Награды':'rewards','Племя':'tribe','Профиль':'profile'};
+function sectionIcon(section){const icon=sectionIcons[section];return icon==='rewards'?'<img class="nav-art nav-art-rewards" src="assets/nav-rewards.png" width="28" height="28" alt="">':'<span class="nav-art nav-art-'+icon+'" aria-hidden="true"></span>';}
 try{state=load(localStorage);}catch(e){state=fixture();loadFailed=true;notice(e.message,true);}
 function notice(message,error=false,canUndo=false){$('#notice').className='notice'+(error?' error':'');$('#notice').innerHTML=`<span>${esc(message)}</span>${canUndo?'<button id="undo">Отменить</button>':'<button id="notice-close" aria-label="Закрыть уведомление">×</button>'}`;$('#notice').hidden=false;}
 function commit(action,message,options={}){
@@ -66,9 +66,9 @@ function timerText(){const t=state.timer;if(!t)return '';const seconds=Math.max(
 setInterval(()=>{const timer=$('[data-timer]');if(timer)timer.textContent=timerText();const t=state.timer;if(t?.running&&t.limit&&((t.elapsed||0)+Date.now()-t.started)>=t.limit*60000&&!announcedTimers.has(t.id)){announcedTimers.add(t.id);notice('Две минуты прошли. Можно продолжить или остановить фокус.');audio?.play('reminder');}},1000);
 document.addEventListener('click',e=>{
   const target=e.target.closest('button');if(!target)return;
-  if(target.dataset.variant)setVariant(target.dataset.variant);
+  if(target.dataset.themeChoice){if(!window.SatoruTheme.set(target.dataset.themeChoice))notice('Тема изменена на этот раз. Браузер не разрешил сохранить выбор.',true);audio?.play('select');}
   else if(target.hasAttribute('data-home')){if($('#dialog').open)closeDialog();window.scrollTo({top:0,behavior:'instant'});}
-  else if(target.id==='mobile-more')openDialog('Ещё',`<div class="more-links">${['Заметки','Вдохновение','Награды','Племя','Профиль'].map(s=>`<button data-section="${s}">${s} ↗</button>`).join('')}<button id="mobile-sound">${audio?.getMode()==='off'?'Включить звук':'Выключить звук'}</button></div>`);
+  else if(target.id==='mobile-more')openDialog('Ещё',`<div class="more-links">${['Заметки','Вдохновение','Награды','Племя','Профиль'].map(s=>`<button data-section="${s}">${sectionIcon(s)}${s} ↗</button>`).join('')}<button id="mobile-sound">${audio?.getMode()==='off'?'Включить звук':'Выключить звук'}</button></div>`);
   else if(target.id==='mobile-sound'){$('#sound').click();target.textContent=audio?.getMode()==='off'?'Включить звук':'Выключить звук';}
   else if(target.id==='shadow-open')openDialog('Тень',`<p>${esc($('#shadow-copy').textContent)}</p><div class="dialog-actions">${nextTask(state)?`<button class="outline" data-small="${esc(nextTask(state).id)}">Нужен шаг поменьше</button>`:''}<button class="text-button" data-support="rest">Хочу отдохнуть</button><button class="text-button" data-support="return">Меня унесло</button></div><p class="scope-note">Здесь пример подсказки, не ответ ИИ. Тень в основном приложении не менялась.</p>`);
   else if(target.dataset.toggle){const id=target.dataset.toggle;const wasDone=state.tasks.find(t=>t.id===id)?.done;if(commit({type:'toggle',id},wasDone?'Выполнение снято':'Готово. Задача выполнена.',{sound:wasDone?'select':'complete'}))document.querySelector(`[data-task="${CSS.escape(id)}"]`)?.classList.add('just-completed');}

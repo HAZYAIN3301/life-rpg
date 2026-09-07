@@ -1,5 +1,28 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-07] Выбор B-форм + Тень; полноценные light/dark в Today lab
+
+Зафиксирован подробный новый отзыв: шрифт Russo One и округлённость B, фиолетовая связь
+с Тенью, легче/светлее, без неона и книжности. Тематические семьи позже; дела первые.
+В одном preview две палитры и system preference, изолированное хранение выбора,
+оригинальные navigation glyphs/сундук и дневное/ночное логово. Не генерировали art.
+Прямые время/длительность/голос, черновик и active focus не теряются. Профиль на узком
+desktop больше не выталкивает кнопку за rail. Runtime/SW/аватар не менялись.
+Проверено: 15/15 unit, desktop behavior (включая write/mic denial), 24 light/dark fixtures,
+11 contrast pairs ≥4.5, actual Russo кириллица, touch, keyboard focus, 200% root reflow,
+reduced motion, system/query/persistence/failure, no task mutation on theme change.
+Точные receipts/screenshots — design-lab/today-v1-20260907/QA.md и evidence/theme-*.
+Полный suite runtime не запускался для изолированного lab. Физический телефон/весь app
+не заявлены проверенными. Следующий gate и фидбэк — DESIGN-REBOOT-V1.md.
+
+При get_site обнаружен public access (ранее был private). Пользователь отдельно явно
+разрешил обновить публичное превью; access policy не менялась. Только synthetic data.
+Site version 3: deployment `appgdep_6a9f26959e1c819189d24913426283bc` — succeeded.
+Источник отдельного Site: `675c44a6ddf16e291a5739119fa880fa2aaeda7c`.
+Адрес: https://satoru-today-design-sept7.albertprokopets3301.chatgpt.site
+Ссылки `?theme=light` / `?theme=dark`; основной Satoru не заменён этим превью.
+
+
 ## [2026-09-07] Today A/B + mobile; 3D-манекен отвергнут
 
 Два направления в прежнем приватном Site: A «Импульс» / B «Спутник», один state,
