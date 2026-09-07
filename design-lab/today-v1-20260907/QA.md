@@ -1,6 +1,36 @@
 # Today design preview — QA, 2026-09-07
 
-Scope: isolated desktop concept, no Satoru account or production API.
+Scope: isolated Today concept, no Satoru account or production API.
+
+## Character + mobile follow-up
+
+- Two variants, shared state/handlers; query-string switch preserves current work.
+- `node qa-character.mjs`: **24/24 viewport/scenario combinations PASS**:
+  A/B × 375/390/1280/1440 × regular/dense/empty.
+  Browser checks first task or empty CTA above mobile nav; all visible touch controls
+  ≥42px; no horizontal overflow; five nav destinations; mobile add/time/duration,
+  completion/undo, assistant/More/Notes and reload; independent reduced-motion check.
+- Actual Cyrillic heading fonts verified with Chrome platform-font reporting,
+  not merely a CSS family string. Eight key foreground/background pairs measured
+  per variant/width; each ≥4.5:1. This is the preview palette, not all runtime themes.
+- 200% root-font reflow fixture at 375/390: no horizontal page overflow.
+  This is not a physical-device OS font-scaling or VoiceOver certification.
+- Existing `npm test`: 15/15; updated desktop `node qa.mjs`: PASS, including
+  write failure, denied microphone and close while recording.
+- Visual review corrected a real first-screen defect that the previous weak check
+  missed: completed row and full composer hid the active task. Completed tasks now
+  follow pending tasks; phone opens the full composer by a named direct button.
+  Start time and duration remain direct in task rows and in that editor.
+- Representative current frames + reports: `evidence/character-*`.
+  Earlier evidence below documents the initial desktop pass, not current acceptance.
+- Source diff check passes excluding the two verbatim upstream OFL files:
+  their existing trailing spaces are retained, not treated as authored code.
+
+Not implemented here: real AI integration, multi-sphere/background/difficulty editor,
+other screens, light theme, five-locale full UI, physical device or actual account sync.
+No new avatar, art generation, custom sound synthesis, XP or reward economy.
+
+## Initial desktop pass (historical)
 
 - `npm run build` — PASS, existing Podkova/den/shadow/audio copied without regeneration.
 - `npm test` — 15/15 PASS (fixture validation, completed-task undo, core selection,

@@ -1,6 +1,8 @@
 # Satoru Avatar Lab 01
 
-**Factory-only engineering pilot. Not approved character art; not a production release.**
+**VISUAL FAIL, 2026-09-07: user rejected this model and its movement.**
+Keep the existing production avatar. This factory is retained as engineering evidence,
+not as a candidate approved for integration. Exact feedback: AVATAR-3D-PILOT-V1.md.
 Решения, история и границы: [AVATAR-3D-PILOT-V1.md](../../AVATAR-3D-PILOT-V1.md).
 ТЗ художнику: [ARTIST-BRIEF.md](./ARTIST-BRIEF.md). Проверки: [QA.md](./QA.md).
 
