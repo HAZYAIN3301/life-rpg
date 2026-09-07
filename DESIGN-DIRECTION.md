@@ -1,5 +1,11 @@
 # Satoru Design Direction
 
+> **Today design trial, 2026-09-07:** see [DESIGN-REBOOT-V1.md](./DESIGN-REBOOT-V1.md).
+> A separate desktop preview tests sidebar + day rows + an illustrated companion,
+> not a production replacement. Important actions (voice recap, start time, duration)
+> must remain directly discoverable; minimalism does not justify hiding them.
+> Its wider outer shell/warm focus are experimental exceptions, pending visual approval.
+
 > **Avatar experiment, 2026-09-07:** stylized 3D is now permitted for the isolated
 > [avatar pilot](./AVATAR-3D-PILOT-V1.md). Preserve the Traveller's illustrated character;
 > a procedural engineering mannequin is not approved art. The cut-paper statements

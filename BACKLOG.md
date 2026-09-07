@@ -1,5 +1,13 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [~] **Дизайн без потери функций — Today trial, 2026-09-07**.
+  Контракт: `DESIGN-REBOOT-V1.md`; интерактивное превью и QA — `design-lab/today-v1-20260907/`.
+  - ✅ Desktop-гипотеза, старый art, прямой голос/время/длительность, synthetic interactions.
+  - ⬜ Просмотр Альбертом; затем реальные State/Store adapters, multi-sphere/background,
+    difficulty, locale/theme/mobile/server gates — не подмена рабочей версии макетом.
+  - ⬜ Plan/Goals → Тень/голос/Notes → Inspiration/Rewards/Hero → остальные разделы.
+    До каждого pass: список сохраняемых действий, а не только «убрать лишнее».
+
 - [~] **Avatar 3D v1 — один образ, сменная одежда и общие движения** — 2026-09-07.
   Решения Альберта и канонический handoff: `AVATAR-3D-PILOT-V1.md`.
   - ✅ Изолированный engineering-стенд: общий скелет, 2 причёски/верха/низа, цвета,

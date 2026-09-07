@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#11181d"><meta name="robots" content="noindex">
+  <title>Satoru — Сегодня</title>
+  <link rel="preload" href="assets/display.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css">
+  <script src="assets/sound.js" defer></script><script type="module" src="app.js"></script>
+</head>
+<body>
+  <div class="preview-bar"><span>Дизайн-превью <span class="preview-detail">· только примеры, не твой аккаунт</span></span><label>День <select id="scenario"><option value="regular">Обычный</option><option value="dense">Плотный</option><option value="empty">Пустой</option></select></label><button id="reset" class="preview-reset">Сбросить пример</button></div>
+  <div class="shell">
+    <aside class="rail" aria-label="Разделы Satoru">
+      <a class="wordmark" href="./" aria-label="Satoru — Сегодня"><span class="brand-mark" aria-hidden="true">S</span>Satoru<span class="brand-dot">·</span></a>
+      <div class="rail-caption">ТВОЙ ДЕНЬ</div>
+      <nav id="nav"><span class="nav-item selected" aria-current="page"><span aria-hidden="true">◉</span>Сегодня</span><button class="nav-item" data-section="План"><span aria-hidden="true">▦</span>План</button><button class="nav-item" data-section="Привычки"><span aria-hidden="true">↻</span>Привычки</button><button class="nav-item" data-section="Заметки"><span aria-hidden="true">≡</span>Заметки</button></nav>
+      <div class="rail-caption second-caption">МИР SATORU</div>
+      <nav><button class="nav-item" data-section="Вдохновение"><span aria-hidden="true">✧</span>Вдохновение</button><button class="nav-item" data-section="Награды"><span aria-hidden="true">◇</span>Награды</button><button class="nav-item" data-section="Герой"><span aria-hidden="true">♙</span>Герой</button><button class="nav-item" data-section="Племя"><span aria-hidden="true">♧</span>Племя</button></nav>
+      <div class="rail-bottom"><button id="sound" class="quiet sound-toggle" aria-pressed="false">♪ <span>Звук выключен</span></button><div class="profile"><span class="profile-initial">А</span><div><b>Алекс</b><span>Путешественник · ур. 12</span></div><button data-section="Профиль" class="icon-button" aria-label="Профиль">⌘</button></div></div>
+    </aside>
+    <main id="main">
+      <header class="page-header"><div><div class="eyebrow" id="date-label">7 СЕНТЯБРЯ · ПОНЕДЕЛЬНИК</div><h1>Сегодня</h1></div><button class="outline recap-trigger" id="recap-open"><img class="mic-symbol" src="assets/microphone.svg" width="20" height="20" alt="">Итог дня голосом</button></header>
+      <div class="workspace">
+        <section class="day-work" aria-label="Задачи дня">
+          <div id="week" class="week" aria-label="Дни недели"></div>
+          <div class="day-caption"><h2 id="day-title">План на день</h2><span id="day-summary"></span></div>
+          <form id="composer" class="composer">
+            <label class="task-name-label" for="task-name">Добавить задачу</label><input id="task-name" name="title" placeholder="Что хочешь сделать?" maxlength="160" required autocomplete="off">
+            <div class="composer-fields"><label>Сфера<select name="sphere" id="new-sphere"><option>Медиа</option><option>Учёба</option><option>Тело</option><option>Быт</option><option>Отдых</option></select></label><label>Начало<input name="time" type="time" aria-label="Начало новой задачи"></label><label>Длительность<select name="minutes" aria-label="Длительность новой задачи"><option value="10">10 мин</option><option value="15">15 мин</option><option value="25" selected>25 мин</option><option value="30">30 мин</option><option value="45">45 мин</option><option value="60">1 час</option><option value="90">1 ч 30 мин</option></select></label><button class="add-button" type="submit" aria-label="Добавить задачу">＋</button></div>
+          </form>
+          <div id="tasks" class="tasks"></div>
+          <section class="habits-strip" aria-labelledby="habits-title"><div class="section-line"><h2 id="habits-title">Привычки на сегодня</h2><button data-section="Привычки" class="text-button">Все привычки ↗</button></div><div id="habits"></div></section>
+          <div class="end-line"><span id="day-end-label"></span><button id="day-close" class="text-button">Завершить день ↗</button></div>
+        </section>
+        <aside class="companion" aria-label="Тень рядом">
+          <div class="companion-title"><h2>Тень рядом</h2><span class="presence" aria-label="Доступна"></span></div>
+          <div class="den-scene"><img src="assets/den.jpg" class="den-art" alt="Тёплый свет фонаря в логове" width="1536" height="864"><img class="shadow-art" src="assets/shadow.png" alt="Тень" width="1024" height="1024"><div class="scene-caption">Твой тихий уголок</div></div>
+          <div class="shadow-message"><span class="message-mark" aria-hidden="true">“</span><p id="shadow-copy"></p><button class="text-button" id="smaller-step">Нужен шаг поменьше <span aria-hidden="true">↗</span></button></div>
+          <details class="support"><summary>Другая поддержка <span aria-hidden="true">＋</span></summary><button data-support="rest">Хочу отдохнуть</button><button data-support="return">Меня унесло</button><button data-support="boundary">Граница входа</button></details>
+          <form class="quick-note" id="quick-note"><label for="note">Мысль на потом</label><div><input id="note" name="note" placeholder="Чтобы не держать в голове" maxlength="1000" required><button class="icon-button" aria-label="Сохранить мысль">＋</button></div></form>
+          <div class="notes-feedback" id="notes-feedback" aria-live="polite"></div>
+        </aside>
+      </div>
+    </main>
+  </div>
+  <div id="notice" class="notice" role="status" hidden></div>
+  <dialog id="dialog"><div class="dialog-top"><h2 id="dialog-title"></h2><button id="dialog-close" class="icon-button" aria-label="Закрыть">×</button></div><div id="dialog-body"></div></dialog>
+</body></html>
