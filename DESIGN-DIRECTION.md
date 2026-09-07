@@ -1,5 +1,12 @@
 # Satoru Design Direction
 
+> **Avatar experiment, 2026-09-07:** stylized 3D is now permitted for the isolated
+> [avatar pilot](./AVATAR-3D-PILOT-V1.md). Preserve the Traveller's illustrated character;
+> a procedural engineering mannequin is not approved art. The cut-paper statements
+> below describe the existing production world, not a ban on this experiment.
+> App-shell rules remain unchanged. Do not replace live characters or regenerate pets
+> before the separate visual approval and integration gates.
+
 > Working design direction for the Satoru redesign. This is the source of truth for visual decisions before touching production UI. The goal is not to copy any one reference, but to compose a durable Satoru language from the best patterns in game dashboards, Discord-like app shells, Duolingo-like daily loops, Fortnite event systems, Runeterra event screens, and the chosen cut-paper vector avatar style.
 
 ## North Star

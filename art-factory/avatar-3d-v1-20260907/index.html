@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Satoru · Студия персонажа — технический прототип</title>
+  <link rel="stylesheet" href="/public/styles.css"><link rel="stylesheet" href="./workbench.css">
+  <script type="importmap">{"imports":{"three":"/vendor/build/three.module.js","three/addons/":"/vendor/examples/jsm/"}}</script>
+</head>
+<body class="avatar-lab">
+  <main class="lab-shell">
+    <header class="lab-header"><a href="#stage" class="lab-brand">Satoru <span>ART LAB · 01</span></a><span class="lab-tag">Технический прототип</span></header>
+    <section class="lab-intro"><p class="lab-kicker">ПЕРСОНАЖ / НОВЫЙ СКЕЛЕТ</p><h1>Один образ.<br>Все движения.</h1><p>Проверяем одежду, суставы и контакт с питомцем.<br>Модель — инженерный образец, не финальный дизайн Traveller.</p></section>
+    <div class="lab-workspace">
+      <section class="lab-view" aria-label="Предпросмотр персонажа">
+        <div id="stage" tabindex="0" role="img" aria-label="3D-персонаж в выбранной одежде. Управление находится под сценой.">
+          <p id="load-status" role="status">Загружаю 3D-сцену…</p>
+          <span class="lab-scene-caption">17 суставов · единый гардероб</span>
+        </div>
+        <div class="lab-scene-tools"><label>Ракурс<select id="camera"><option value="front">Спереди</option><option value="side">Сбоку</option><option value="back">Сзади</option></select></label><button id="pause" type="button" aria-pressed="false">Приостановить</button></div>
+        <div class="lab-poses" role="group" aria-label="Движение"><button data-pose="idle" aria-pressed="true">Стоять</button><button data-pose="walk" aria-pressed="false">Идти</button><button data-pose="sit" aria-pressed="false">Сесть</button><button data-pose="pet" aria-pressed="false">Погладить</button></div>
+      </section>
+      <section class="lab-wardrobe" aria-labelledby="wardrobe-title"><p class="lab-kicker">ГАРДЕРОБ</p><h2 id="wardrobe-title">Собери свой образ</h2>
+        <div class="lab-fields">
+          <label>Причёска<select data-look="hair"><option value="crop">Короткая</option><option value="ponytail">Хвост</option></select></label>
+          <label>Верх<select data-look="top"><option value="traveller">Куртка странника</option><option value="field-vest">Жилет путешественника</option></select></label>
+          <label>Низ<select data-look="bottom"><option value="trousers">Песочные брюки</option><option value="ranger">Тёмные походные</option></select></label>
+          <label>Предмет в руке<select data-look="weapon"><option value="training-blade">Тренировочный меч</option><option value="none">Без предмета</option></select></label>
+        </div>
+        <div class="lab-colors"><label>Кожа<select data-look="skin"><option value="warm">Тёплая</option><option value="light">Светлая</option><option value="brown">Смуглая</option><option value="deep">Тёмная</option></select></label>
+          <label>Волосы<select data-look="hairColor"><option value="chestnut">Каштановые</option><option value="ink">Чёрные</option><option value="copper">Медные</option><option value="silver">Серебристые</option></select></label>
+          <label>Ткань<select data-look="cloth"><option value="teal">Хвоя</option><option value="navy">Ночь</option><option value="ochre">Охра</option><option value="plum">Слива</option></select></label></div>
+        <p id="save-status" class="lab-note" role="status">Образ сохраняется только в этом браузере. Золото не тратится.</p>
+        <button id="stress" class="lab-primary" type="button">Проверить сборку</button>
+        <p id="test-status" class="lab-note" role="status"></p>
+        <details class="lab-diagnostics"><summary>Для производства</summary><p>GLB содержит скелет и все варианты. Импорт не меняет данные Satoru.</p><div class="lab-file-actions"><button id="export" type="button">Скачать GLB</button><label class="lab-upload">Открыть GLB<input id="import" type="file" accept=".glb"></label></div><pre id="metrics" aria-label="Показатели проверки"></pre><p>Этот тест не оценивает художественное качество и все пересечения ткани.</p></details>
+      </section>
+    </div>
+    <footer class="lab-footer">Питомец сохранён из текущего Satoru. Никакой новой генерации питомцев.</footer>
+  </main>
+  <script type="module" src="./workbench.mjs"></script>
+</body></html>

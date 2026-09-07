@@ -1,0 +1,346 @@
+{
+  "initial": {
+    "look": {
+      "schema": "satoru.avatar-3d-pilot/1",
+      "hair": "crop",
+      "top": "traveller",
+      "bottom": "trousers",
+      "weapon": "training-blade",
+      "skin": "warm",
+      "hairColor": "chestnut",
+      "cloth": "teal"
+    },
+    "pose": "idle",
+    "elapsed": 0.1667000000000003,
+    "paused": true,
+    "reduced": false,
+    "intersecting": true,
+    "animating": false,
+    "persisted": false,
+    "metrics": {
+      "errors": [],
+      "boneCount": 17,
+      "skinnedMeshes": 16,
+      "vertices": 1341,
+      "triangles": 2464,
+      "maxWeightError": 2.9802322387695312e-8,
+      "footHeights": [
+        0.0000099999999998851,
+        0.0000099999999998851
+      ],
+      "contactError": null,
+      "gripError": 0
+    },
+    "renderer": {
+      "frame": 10,
+      "calls": 57,
+      "triangles": 12546,
+      "points": 0,
+      "lines": 0
+    }
+  },
+  "stress": {
+    "count": 256,
+    "failures": []
+  },
+  "roundtrip": {
+    "bytes": 898536,
+    "clips": [
+      "idle",
+      "walk",
+      "sit",
+      "pet"
+    ],
+    "samples": [
+      {
+        "pose": "idle",
+        "time": 0,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          0.000010014305883807029,
+          0.000010014305883807029
+        ],
+        "contactError": null,
+        "gripError": 0
+      },
+      {
+        "pose": "idle",
+        "time": 0.27,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          0.000010014305883751518,
+          0.000010014305883751518
+        ],
+        "contactError": null,
+        "gripError": 0
+      },
+      {
+        "pose": "idle",
+        "time": 0.63,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          0.000010014305883807029,
+          0.000010014305883807029
+        ],
+        "contactError": null,
+        "gripError": 0
+      },
+      {
+        "pose": "idle",
+        "time": 1,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          0.000010014305883807029,
+          0.000010014305883807029
+        ],
+        "contactError": null,
+        "gripError": 0
+      },
+      {
+        "pose": "walk",
+        "time": 0,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          -9.68062209560916e-9,
+          -8.095322814871686e-9
+        ],
+        "contactError": null,
+        "gripError": 0
+      },
+      {
+        "pose": "walk",
+        "time": 0.27,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          0.0806303221509062,
+          -0.00004639007645119986
+        ],
+        "contactError": null,
+        "gripError": 0
+      },
+      {
+        "pose": "walk",
+        "time": 0.63,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          0.017452975193355466,
+          -0.000004064944662277026
+        ],
+        "contactError": null,
+        "gripError": 0
+      },
+      {
+        "pose": "walk",
+        "time": 1,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          -0.0000649124671644602,
+          0.08455132786569679
+        ],
+        "contactError": null,
+        "gripError": 0
+      },
+      {
+        "pose": "sit",
+        "time": 0,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          3.5386070781906476e-8,
+          3.5386070781906476e-8
+        ],
+        "contactError": null,
+        "gripError": 0
+      },
+      {
+        "pose": "sit",
+        "time": 0.27,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          3.5386070726395324e-8,
+          3.5386070726395324e-8
+        ],
+        "contactError": null,
+        "gripError": 0
+      },
+      {
+        "pose": "sit",
+        "time": 0.63,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          3.5386070781906476e-8,
+          3.5386070781906476e-8
+        ],
+        "contactError": null,
+        "gripError": 0
+      },
+      {
+        "pose": "sit",
+        "time": 1,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          3.5386070781906476e-8,
+          3.5386070781906476e-8
+        ],
+        "contactError": null,
+        "gripError": 0
+      },
+      {
+        "pose": "pet",
+        "time": 0,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          1.4122525301973887e-8,
+          1.4122525301973887e-8
+        ],
+        "contactError": 2.4551198309182378e-8,
+        "gripError": 0
+      },
+      {
+        "pose": "pet",
+        "time": 0.27,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          1.4122525246462736e-8,
+          1.4122525246462736e-8
+        ],
+        "contactError": 0.000004544199285688676,
+        "gripError": 0
+      },
+      {
+        "pose": "pet",
+        "time": 0.63,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          1.4122525301973887e-8,
+          1.4122525301973887e-8
+        ],
+        "contactError": 0.000007274270440007807,
+        "gripError": 0
+      },
+      {
+        "pose": "pet",
+        "time": 1,
+        "errors": [],
+        "boneCount": 17,
+        "skinnedMeshes": 16,
+        "vertices": 1341,
+        "triangles": 2464,
+        "maxWeightError": 2.9802322387695312e-8,
+        "footHeights": [
+          1.4122525301973887e-8,
+          1.4122525301973887e-8
+        ],
+        "contactError": 3.54370389410416e-8,
+        "gripError": 0
+      }
+    ],
+    "errors": [],
+    "boneCount": 17,
+    "skinnedMeshes": 16,
+    "vertices": 1341,
+    "triangles": 2464,
+    "maxWeightError": 2.9802322387695312e-8,
+    "footHeights": [
+      0.000010014305883807029,
+      0.000010014305883807029
+    ],
+    "contactError": null,
+    "gripError": 0
+  },
+  "motion": {
+    "playbackAdvances": true,
+    "reducedMotionStops": true,
+    "resumesAfterPreferenceChange": true,
+    "pauseStops": true
+  },
+  "invalidImportPreservesRig": true,
+  "mobile375": {
+    "overflow": false,
+    "small": []
+  },
+  "mobile360": {
+    "overflow": false,
+    "small": []
+  },
+  "storage": [
+    "satoru:factory:avatar-3d-pilot:look:v1"
+  ],
+  "errors": [],
+  "external": [],
+  "status": "PASS"
+}

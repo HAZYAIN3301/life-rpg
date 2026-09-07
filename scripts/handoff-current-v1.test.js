@@ -47,6 +47,12 @@ test('devlog describes the selected animated ouroboros and preserves QA debt', (
   assert.match(loader, /3\.2s/);
   assert.match(loader, /\.8s/);
   assert.doesNotMatch(loader, /Само существо больше не крутится/);
-  assert.match(DEVLOG.slice(0, 6500), /OPEN — visual\/production QA/);
-  assert.match(DEVLOG.slice(0, 6500), /не писать «production verified» или «visual approved»/);
+  // Newer entries must not push the historical open gate out of an arbitrary prefix.
+  const commitmentHeading = '## [2026-09-06] Commitment v2 UI';
+  const commitmentStart = DEVLOG.indexOf(commitmentHeading);
+  assert.ok(commitmentStart >= 0, 'Commitment handoff must remain present');
+  const nextEntry = DEVLOG.indexOf('\n## [', commitmentStart + commitmentHeading.length);
+  const commitment = DEVLOG.slice(commitmentStart, nextEntry < 0 ? undefined : nextEntry);
+  assert.match(commitment, /OPEN — visual\/production QA/);
+  assert.match(commitment, /не писать «production verified» или «visual approved»/);
 });
