@@ -12,11 +12,42 @@ START-HERE больше не советует чистить живой реес
 Источники и дата сверки — в протоколе. Runtime, API и модель Satoru не менялись.
 Проверки: diff --check PASS, 31 локальная ссылка без пропусков, остаточные противоречия
 в активных инструкциях проверены, actionable-foundations-ui-v216.test.js — 11/11 PASS.
+При интеграции сохранён параллельный ae10553 (handoff checkpoint); конфликт START-HERE
+разрешён сохранением его свежих статусов и наших правил. Оба связанных набора
+actionable-foundations-ui-v216 + handoff-current-v1 — 15/15 PASS после сведения.
 Полный runtime suite не запускался: runtime не менялся. Результат публикации проверяется после commit/push;
 эта запись сама по себе не подтверждает новый deployment.
 
 
 > Технический журнал. Каждая запись = что построено, где, как устроено, как продолжить. Цель: любой следующий разработчик (или LLM без памяти) может продолжить с нуля. План/гейты — в [`ROADMAP.md`](./ROADMAP.md). Продуктовый разбор — `wiki/topics/Life-RPG как продукт` в Obsidian.
+
+## [2026-09-06] Handoff hardening — текущая очередь отделена от истории
+
+- `START-HERE.md` получил короткий актуальный checkpoint. Два старых самодостаточных
+  промпта (`HANDOFF-CODEX-DOORS.md`, `HANDOFF-CODEX-SECRETARY-UI.md`) теперь явно помечены
+  **SUPERSEDED**: их исторический текст сохранён, но новый агент не должен выполнять его как
+  очередь работ.
+- `SECRETARY-ENGINE-CONTRACT.md` теперь различает чистые серверные модули, реально
+  загруженные browser scripts и существующие адаптеры в `app.js`. В частности, серверный
+  router/claim не нужно дублировать в браузере, а для эксперимента уже существует
+  owner/admin-поверхность v212.
+- `BACKLOG.md` сводит четыре двери без взаимоисключающих статусов: Commitment закрыт;
+  Rest Profile поставлен Альбертом на паузу; эксперимент ждёт решения об адаптере, а не
+  второго экрана; старый bulk-flow пересекается с Goals v184.
+- Исправлена историческая запись Loader v190: production использует выбранный второй вариант
+  анимации — вращающийся минималистичный чёрно-белый уроборос с отдельной кусающей челюстью,
+  а не неподвижный цветной PNG с проходом света.
+- Добавлен исполняемый documentation gate `scripts/handoff-current-v1.test.js`. Он не даёт
+  снять SUPERSEDED-маркеры, вернуть старое browser-wiring, снова объявить неподвижного
+  уробороса или потерять незакрытый QA.
+
+Проверки: documentation + loader gate **9/9 PASS**; полный
+`node --test --test-concurrency=2 scripts/*.test.js` с разрешёнными локальными серверами —
+**1924/1924 PASS**.
+
+Runtime-файлы продукта в этом изменении не менялись.
+
+---
 
 ## [2026-09-06] Commitment v2 UI — правило Attention стало одним уговором с Тенью
 
@@ -58,6 +89,19 @@ START-HERE больше не советует чистить живой реес
 - интеграционный срез Commitment/Attention/Guide/Actionable Foundations — **131/131 PASS**;
 - полный `node --test --test-concurrency=2 scripts/*.test.js` с разрешёнными локальными
   HTTP-серверами — **1919/1919 PASS**.
+
+**OPEN — visual/production QA.** Успешные тесты не закрывают этот gate. На момент записи
+`301299d` запушен в `origin/master`, но Railway deployment и совпадение production bytes не
+были проверены; живой visual pass не состоялся из-за заблокированной macOS-сессии. Поэтому
+не писать «production verified» или «visual approved», пока не выполнены оба блока:
+
+1. Fresh browser: admin → Settings/Attention; создать и отредактировать правило с двумя
+   целями входа; проверить запрет пустых `target`/`win`, reload с сохранённой связью,
+   сохранение второй цели/режима/emergency/sync при редактировании первой и видимый
+   fail-closed `dropped`/recovery.
+2. Visual/a11y: RU и длинная DE-копия; `360×800`, `375×812`, `1280×900`; keyboard/focus,
+   42px touch targets, dark/light и reduced motion. Затем дождаться успешного Railway deploy
+   и сравнить production `index.html`, `app.js`, `sw.js` с байтами соответствующего commit.
 
 Вторая дверь (`rest-profile-v1`) не начиналась: после этой двери решение принимает Альберт.
 
@@ -1406,12 +1450,20 @@ https://claude.ai/code/artifact/03e5986a-2dee-4434-a0f6-e23c1a7e71c7
 - `?guidePreview=1` больше не является публичным production-bypass: он работает только на localhost либо для администратора. Contextual D/E не включались: следующим отдельным срезом остаётся Habits, а Goals — `deferred-questionnaire`.
 - QA: Guide-focused suite **90/90**, first-journey integration **4/4**, полный `scripts/*.test.js` — PASS. Browser QA: `360×800`, `375×812`, `1280×900`; RU/EN/DE/UK/ES; dark/light; desktop Help/mobile More; длинная DE-кнопка переносится без горизонтального overflow; минимум 42px; фокус ставится на primary action и восстанавливается после Library; console errors/warnings **0**. Reduced motion, offline shell и version-update lifecycle закреплены исполняемыми тестами.
 
-## [2026-08-28] 🐉 Loader v190 — уроборос действительно пожирает собственный хвост
+## [2026-08-28] 🐉 Loader v190 — выбранный второй вариант уробороса
 
-- Старый абстрактный CSS-seal удалён из boot markup и styles. Его заменяет один явно читаемый уроборос: замкнутый дракон-змей, чья пасть физически держит сужающийся кончик собственного хвоста.
-- Оригинальный transparent cut-paper asset создан встроенным imagegen по историческому референсу как композиционному объяснению, без копирования рукописи, текста или конкретного изображения. Production-копия уменьшена `1254×1254 / 1.6 MB → 512×512 / <400 KB`, сохранила RGBA и лежит immutable по `public/art/ui/ouroboros-loader-v1.png`.
-- Само существо больше не крутится как generic spinner. Прогресс показывают проход света по маске чешуи, тихое дыхание масштаба и три малых импульса; reduced motion оставляет полностью статичный, но понятный знак.
-- PNG preloaded из HTML и добавлен exact URL в offline shell. App/SW lifecycle поднят синхронно `satoru-v189 → satoru-v190`; отдельный regression проверяет markup, отсутствие старого seal, PNG dimensions/alpha/size, animation ownership, reduced motion и PWA pins.
+- Старый абстрактный CSS-seal удалён. Загрузчик использует утверждённый минималистичный
+  icon-style: детальный, но монохромный чёрно-белый уроборос без прежних синих акцентов и
+  без большого цветного cut-paper дракона.
+- Это два прозрачных артикулированных слоя `1254×1254`:
+  `public/art/ui/boot/ouroboros-body.png` и `public/art/ui/boot/ouroboros-jaw.png`. Они
+  preloaded из HTML, входят exact URLs в offline shell и вместе весят меньше 200 KB.
+- Вся змея действительно преследует хвост: `boot-ouroboros-chase` вращает кольцо на 360° за
+  `3.2s`. Отдельная челюсть одновременно хлопает с циклом `.8s`, будто пытается схватить
+  хвост и промахивается. Это выбранный Альбертом второй вариант анимации, а не статичный знак.
+- `prefers-reduced-motion` останавливает и вращение, и челюсть, оставляя читаемую статичную
+  иконку. `scripts/ouroboros-loader-v190.test.js` проверяет два слоя, RGBA/размер/вес,
+  preload/offline shell, обе анимации и reduced-motion gate.
 
 ## [2026-08-27] 🔊 Motion & Sound OS v189 — оригинальный голос приложения и новая церемония награды
 
