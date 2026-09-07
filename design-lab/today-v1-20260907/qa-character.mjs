@@ -13,7 +13,7 @@ try{
    const context=await browser.newContext({viewport:{width,height},isMobile:width<700,hasTouch:width<700});
    const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
    await page.goto('http://127.0.0.1:4179/?theme='+theme);await page.evaluate(()=>document.fonts.ready);
-   const family=await page.locator('h1').evaluate(el=>getComputedStyle(el).fontFamily);
+   const family=await page.locator('#today-view h1').evaluate(el=>getComputedStyle(el).fontFamily);
    assert.ok(family.includes('Russo'));
    const cdp=await context.newCDPSession(page);await cdp.send('DOM.enable');await cdp.send('CSS.enable');
    const {root}=await cdp.send('DOM.getDocument');const {nodeId}=await cdp.send('DOM.querySelector',{nodeId:root.nodeId,selector:'h1'});

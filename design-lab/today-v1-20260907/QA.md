@@ -1,8 +1,34 @@
-# Today design preview — QA, 2026-09-07
+# Today + Plan design preview — QA, 2026-09-08
 
-Scope: isolated Today concept, no Satoru account or production API.
+## Current: connected Today / calendar / goals
 
-## Current: selected hybrid + light/dark
+- `npm test`: **24/24 PASS** (15 existing + 9 planning contracts).
+- `node qa-plan.mjs`: **32 rendered states PASS**, light/dark ×
+  375/390/1280/1440 × day/week/month/goals; no page overflow or browser errors.
+  Visible mobile Plan buttons/summary targets ≥42px.
+- Cross-screen behavior at each viewport/theme: existing goal step is not duplicated;
+  completion updates goal progress; next step creates one task; shared editor persists
+  date/time/difficulty/two primary spheres/background; reschedule survives reload;
+  ICS download; exact bulk archive preserves tasks; Undo; modal storage failure visible.
+- `node qa-character.mjs`: **24 Today theme/viewport/scenario states PASS** again,
+  including actual Cyrillic font, 11 contrast pairs, long titles, first full mobile card,
+  touch, theme lifecycle, reduced motion and 200% root-font reflow.
+- `node qa.mjs`: PASS again for existing Today/voice/failure behaviors.
+- Build and diff-check pass. Runtime files/dependencies unchanged; full runtime suite
+  not rerun. Fresh production code comparison baseline: 29423b9 (see PLAN-DESIGN-V1.md).
+- Screens visually inspected: light/dark mobile week and goals, desktop week/goals,
+  dense mobile Today. Fixed deadline crowding, repeated empty-state CTA, small touch
+  targets, empty goal caption, hidden desktop day selector, modal error stacking.
+- Current evidence: `evidence/plan-*`, `evidence/connected-today-*`,
+  `evidence/connected-theme-report.json`, `evidence/connected-behavior-report.json`.
+
+Not certified: physical phone/VoiceOver; live account / server CAS / notifications;
+actual calendar client import; drag/drop across all browsers; complete app feature parity;
+AI, projects/import, actualMin/commitment, five locales. Existing runtime is retained.
+
+Scope: isolated connected design concept, no Satoru account or production API.
+
+## Historical: selected hybrid + light/dark, 2026-09-07
 
 - `npm test`: 15/15; `node qa.mjs`: PASS (including local write failure and mock voice).
 - `node qa-character.mjs`: 24/24 light/dark × 375/390/1280/1440 × regular/dense/empty.

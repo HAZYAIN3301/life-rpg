@@ -1,3 +1,4 @@
+import {validDate,goalFixture,validateGoal} from './planning-model.js';
 export const STORAGE_KEY='satoru:today-design:20260907:v1';
 export const DEMO_DAY='2026-09-07';
 export const SPHERES=['Медиа','Учёба','Тело','Быт','Отдых'];
@@ -13,18 +14,23 @@ export function fixture(kind='regular'){
     tasks[1].title='Записать первый черновой дубль для видео о Satoru: показать создание задачи, время начала и голосовой итог дня — без монтажа и подбора идеального света';
     tasks.push(...Array.from({length:9},(_,i)=>({id:'dense-'+i,title:['Заказать материалы для костюма','Дополнить конспект','Позвонить близким'][i%3],date:DEMO_DAY,time:'',minutes:15,sphere:['Медиа','Учёба','Отдых'][i%3],done:false,core:false})));
   }
-  return {schema:1,day:DEMO_DAY,tasks,habits:{stretch:false,read:false},notes:[],recaps:{},closed:[],timer:null};
+  if(kind==='week') for(let i=1;i<7;i++) tasks.push({id:'week-'+i,title:['Разобрать кадры для видео','Скалодром с друзьями','Решить задания по биологии','Выложить первый ролик','Прогуляться без телефона','Почитать новую книгу'][i-1],date:'2026-09-'+String(7+i).padStart(2,'0'),time:i%2?'17:30':'',minutes:30,sphere:i%2?'Медиа':'Отдых',done:false,core:false});
+  tasks.forEach(t=>{if(t.id==='video'){t.goalId='film';t.stepId='take';}if(t.id==='study'){t.goalId='biology';t.stepId='paragraph';}});
+  return {schema:1,day:DEMO_DAY,tasks:tasks.map(validateTask),goals:kind==='empty'?[]:goalFixture(),habits:{stretch:false,read:false},notes:[],recaps:{},closed:[],timer:null};
 }
 export function validateTask(input){
   const title=String(input.title??'').trim();
   if(!title||title.length>160)throw new Error('Напиши название задачи — до 160 символов.');
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(input.date)||Number.isNaN(Date.parse(input.date)))throw new Error('Проверь дату.');
+  if(!validDate(input.date))throw new Error('Проверь дату.');
   const time=String(input.time||'');
   if(time&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(time))throw new Error('Проверь время начала.');
   const minutes=Number(input.minutes);
   if(!Number.isInteger(minutes)||minutes<1||minutes>1440)throw new Error('Длительность — от 1 до 1440 минут.');
   if(!SPHERES.includes(input.sphere))throw new Error('Выбери сферу.');
-  return {id:input.id,title,date:input.date,time,minutes,sphere:input.sphere,done:!!input.done,core:!!input.core,...(input.goal?{goal:String(input.goal)}:{}),...(input.outcome?{outcome:String(input.outcome)}:{})};
+  const spheres=[...new Set(input.spheres||[input.sphere])],background=[...new Set(input.background||[])];
+  if(!spheres.length||spheres.some(s=>!SPHERES.includes(s))||background.some(s=>!SPHERES.includes(s)||spheres.includes(s)))throw Error('Сферы и фон должны быть разными.');
+  const difficulty=input.difficulty||'normal';if(!['easy','normal','hard'].includes(difficulty))throw Error('Выбери сложность.');
+  return {id:input.id,title,date:input.date,time,minutes,sphere:input.sphere,spheres,background,difficulty,done:!!input.done,core:!!input.core,...(input.goal?{goal:String(input.goal)}:{}),...(input.goalId?{goalId:String(input.goalId)}:{}),...(input.stepId?{stepId:String(input.stepId)}:{}),...(input.outcome?{outcome:String(input.outcome)}:{})};
 }
 export function dayTasks(state){return state.tasks.filter(t=>t.date===state.day).sort((a,b)=>(a.time||'99:99').localeCompare(b.time||'99:99'));}
 export function nextTask(state){const tasks=dayTasks(state);return tasks.find(t=>t.core&&!t.done)||tasks.find(t=>!t.done);}
@@ -38,10 +44,19 @@ export function conflicts(task,tasks){
 export function mutate(state,action){
   const next=structuredClone(state),task=next.tasks.find(t=>t.id===action.id);
   if(action.type==='add'){if(next.tasks.some(t=>t.id===action.task.id))return next;next.tasks.push(validateTask(action.task));}
-  else if(action.type==='edit'&&task)Object.assign(task,validateTask({...task,...action.patch,id:task.id}));
+  else if(action.type==='edit'&&task){const oldDate=task.date;Object.assign(task,validateTask({...task,...action.patch,id:task.id}));if(oldDate!==task.date&&next.tasks.some(t=>t.id!==task.id&&t.date===task.date&&t.core))task.core=false;}
+  else if(action.type==='delete'&&task){next.tasks=next.tasks.filter(t=>t.id!==task.id);if(next.timer?.id===task.id)next.timer=null;}
   else if(action.type==='toggle'&&task){task.done=!task.done;if(task.done&&next.timer?.id===task.id)next.timer=null;}
   else if(action.type==='core'&&task){const chosen=!task.core;for(const t of next.tasks)if(t.date===task.date)t.core=t.id===task.id&&chosen;}
-  else if(action.type==='day')next.day=action.day;
+  else if(action.type==='day'){if(!validDate(action.day))throw Error('Проверь дату.');next.day=action.day;}
+  else if(action.type==='goal-save'){
+    next.goals||=[];const g=validateGoal(action.goal,next.goals);const index=next.goals.findIndex(v=>v.id===g.id);
+    if(index<0)next.goals.push(g);else next.goals[index]=g;
+  }
+  else if(action.type==='goal-status'){
+    if(!['active','paused','archived','done'].includes(action.status))throw Error('Проверь состояние.');
+    for(const g of next.goals||[])if(action.ids.includes(g.id))g.status=action.status;
+  }
   else if(action.type==='habit'&&Object.hasOwn(next.habits,action.id)){
     next.habitDays||={};
     next.habitDays[next.day]||=next.day===DEMO_DAY?{...next.habits}:{stretch:false,read:false};
@@ -62,5 +77,8 @@ export function load(storage){
   const raw=storage.getItem(STORAGE_KEY);if(!raw)return fixture();
   const state=JSON.parse(raw);
   if(state.schema!==1||!Array.isArray(state.tasks)||!Array.isArray(state.notes)||!state.habits||!state.recaps||!Array.isArray(state.closed))throw new Error('Пример не читается. Нажми «Сбросить пример», чтобы начать заново.');
-  state.tasks=state.tasks.map(validateTask);return state;
+  if(!validDate(state.day))throw Error('Дата примера не читается.');
+  state.tasks=state.tasks.map(validateTask);
+  if(!state.goals){state.goals=goalFixture();for(const t of state.tasks){if(t.id==='video'&&t.goal==='Видео о Satoru'){t.goalId='film';t.stepId='take';}if(t.id==='study'&&t.title==='Повторить параграф по биологии'){t.goalId='biology';t.stepId='paragraph';}}}
+  state.goals=state.goals.map(g=>validateGoal(g,state.goals));return state;
 }

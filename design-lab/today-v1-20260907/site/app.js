@@ -1,29 +1,33 @@
 import {fixture,load,save,mutate,dayTasks,nextTask,duration,conflicts,SPHERES,DEMO_DAY} from './model.js';
+import {createPlanner} from './planner.js';
+import {sphereFields,difficultyField,readTaskForm,bindSphereFields} from './task-fields.js';
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let state,undo=null,loadFailed=false,opener=null,recorder=null,stream=null,audioUrl=null,audioDownloaded=false;
+let planner,route=new URLSearchParams(location.search).get('view')==='plan'?'plan':'today';
 const announcedTimers=new Set();let micEpoch=0;
 const currentHabits=()=>state.habitDays?.[state.day]||(state.day===DEMO_DAY?state.habits:{stretch:false,read:false});
 const audio=window.SatoruSoundV1?.create({mode:'off'});
 const sectionIcons={'Заметки':'notes','Вдохновение':'inspiration','Награды':'rewards','Племя':'tribe','Профиль':'profile'};
 function sectionIcon(section){const icon=sectionIcons[section];return icon==='rewards'?'<img class="nav-art nav-art-rewards" src="assets/nav-rewards.png" width="28" height="28" alt="">':'<span class="nav-art nav-art-'+icon+'" aria-hidden="true"></span>';}
 try{state=load(localStorage);}catch(e){state=fixture();loadFailed=true;notice(e.message,true);}
-function notice(message,error=false,canUndo=false){$('#notice').className='notice'+(error?' error':'');$('#notice').innerHTML=`<span>${esc(message)}</span>${canUndo?'<button id="undo">Отменить</button>':'<button id="notice-close" aria-label="Закрыть уведомление">×</button>'}`;$('#notice').hidden=false;}
+function notice(message,error=false,canUndo=false){const node=$('#notice');($('#dialog').open?$('#dialog'):document.body).append(node);node.className='notice'+(error?' error':'');node.innerHTML=`<span>${esc(message)}</span>${canUndo?'<button id="undo">Отменить</button>':'<button id="notice-close" aria-label="Закрыть уведомление">×</button>'}`;node.hidden=false;}
 function commit(action,message,options={}){
   if(loadFailed){notice('Сохранённый пример не читается. Сначала нажми «Сбросить пример».',true);return false;}
   const previous=structuredClone(state);
   const focused=document.activeElement;const attr=['data-toggle','data-habit','data-day'].find(key=>focused?.hasAttribute(key));const focusSelector=attr?`[${attr}="${CSS.escape(focused.getAttribute(attr))}"]`:null;
-  try{const next=mutate(state,action);save(localStorage,next);state=next;undo=previous;render();if(focusSelector)document.querySelector(focusSelector)?.focus({preventScroll:true});if(message)notice(message,false,options.undo!==false);if(options.sound)audio?.play(options.sound);return true;}
+  try{const next=mutate(state,action);save(localStorage,next);state=next;undo=previous;render();if(focusSelector)[...document.querySelectorAll(focusSelector)].find(el=>el.getClientRects().length)?.focus({preventScroll:true});if(message)notice(message,false,options.undo!==false);if(options.sound)audio?.play(options.sound);return true;}
   catch(e){notice(e.message||'Не удалось сохранить изменения.',true);return false;}
 }
 const palette={'Медиа':'#c0a7c5','Учёба':'#a6b8de','Тело':'#a0c5a7','Быт':'#b9b4a4','Отдых':'#a7c9c4'};
 function taskHTML(t){
+  const goalTitle=state.goals?.find(g=>g.id===t.goalId)?.title||t.goal||'Цель';
   const active=state.timer?.id===t.id, isNext=nextTask(state)?.id===t.id;
   const conflict=conflicts(t,state.tasks).length;
   return `<article class="task${t.core?' core':''}${t.done?' done':''}" data-task="${esc(t.id)}">
     <button class="task-time${!t.time?' is-empty':''}" data-edit="${esc(t.id)}" data-field="time" aria-label="Время начала: ${esc(t.title)}">${esc(t.time||'＋ Время')}</button>
     <button class="check" data-toggle="${esc(t.id)}" aria-pressed="${t.done}" aria-label="${t.done?'Снять выполнение':'Выполнить'}: ${esc(t.title)}">${t.done?'✓':''}</button>
     <div class="task-main">${t.core?`<div class="core-label"><span aria-hidden="true">◆</span>${t.done?'Ядро дня выполнено':'Ядро дня'}</div>`:''}<button class="task-title" data-edit="${esc(t.id)}" aria-label="Изменить задачу: ${esc(t.title)}">${esc(t.title)}</button>
-    <div class="task-meta"><span class="sphere-dot" style="--sphere:${palette[t.sphere]}" aria-hidden="true"></span><span>${esc(t.sphere)}</span>${t.goal?`<span aria-hidden="true">/</span><span>${esc(t.goal)}</span>`:''}</div>
+    <div class="task-meta"><span class="sphere-dot" style="--sphere:${palette[t.sphere]}" aria-hidden="true"></span><button class="task-spheres" data-edit="${esc(t.id)}" data-field="spheres">${esc(t.spheres.join(' · '))}${t.background.length?' <span class="background-label">/ '+esc(t.background.join(' · '))+' · фон</span>':''}</button>${t.goalId?`<button class="task-goal" data-goal-open="${esc(t.goalId)}">${esc(goalTitle)} ↗</button>`:t.goal?`<span>${esc(t.goal)}</span>`:''}${t.difficulty==='hard'?'<span class="difficulty-tag">◆ Сложная</span>':''}</div>
     ${t.core?`<p class="task-outcome">${esc(t.outcome||'Завершить эту задачу.')}</p>`:''}
     ${!t.done&&(isNext||active)?`<div class="task-actions">${active?`<span class="timer-readout" data-timer>${timerText()}</span><button class="primary" data-timer-toggle>${state.timer.running?'Пауза':'Продолжить'}</button><button class="inline-secondary" data-toggle="${esc(t.id)}">Готово ✓</button><button class="inline-secondary" data-timer-stop>Стоп</button>`:`<button class="primary" data-start="${esc(t.id)}"><span class="play" aria-hidden="true">▶</span>Начать · ${duration(t.minutes)}</button>`}</div>`:''}
     ${conflict?'<p class="notice-conflict">Время пересекается с другой задачей</p>':''}</div>
@@ -46,17 +50,20 @@ function render(){
   $('#smaller-step').hidden=!next;$('#day-close').textContent=closed?'Открыть день снова ↗':'Завершить день ↗';
   $('#day-end-label').textContent=closed?'День завершён':'';
   $('#notes-feedback').innerHTML=state.notes.length?`<button class="text-button" id="view-notes">Сохранено мыслей: ${state.notes.length} ↗</button>`:'';
+  planner?.render();
 }
 function restoreComposer(){const form=$('#dialog #composer');if(form)$('#composer-home').append(form);}
 function openDialog(title,html){restoreComposer();if(!$('#dialog').open)opener=document.activeElement;$('#dialog-title').textContent=title;$('#dialog-body').innerHTML=html;if(!$('#dialog').open)$('#dialog').showModal();audio?.play('open');}
 function cleanupMic(){micEpoch++;if(recorder?.state==='recording')recorder.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;if(audioUrl)URL.revokeObjectURL(audioUrl);audioUrl=null;recorder=null;}
-function closeDialog(){if((recorder?.state==='recording'||(audioUrl&&!audioDownloaded))&&!confirm('Запись ещё не скачана. Закрыть и убрать её?'))return;cleanupMic();restoreComposer();$('#dialog').close();opener?.isConnected&&opener.focus();audio?.play('close');}
-function compose(){if(matchMedia('(max-width:700px)').matches){openDialog('Добавить задачу','');$('#dialog-body').append($('#composer'));}$('#task-name').focus();}
+function closeDialog(){if(!$('#dialog').open)return;if((recorder?.state==='recording'||(audioUrl&&!audioDownloaded))&&!confirm('Запись ещё не скачана. Закрыть и убрать её?'))return;cleanupMic();restoreComposer();document.body.append($('#notice'));$('#dialog').close();opener?.isConnected&&opener.focus();audio?.play('close');}
+function compose(force=false){if(force||route==='plan'||matchMedia('(max-width:700px)').matches){openDialog('Добавить задачу · '+state.day,'');$('#dialog-body').append($('#composer'));}$('#task-name').focus();}
+function navigate(view,date){if(date&&!commit({type:'day',day:date},null))return;route=view;$('#today-view').hidden=view!=='today';$('#plan-view').hidden=view!=='plan';document.title='Satoru — '+(view==='plan'?'План':'Сегодня');document.querySelectorAll('[data-home],[data-section="План"]').forEach(b=>{const active=b.hasAttribute('data-home')?view==='today':view==='plan';b.classList.toggle('selected',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});const u=new URL(location.href);u.searchParams.set('view',view);history.replaceState(null,'',u);render();window.scrollTo({top:0,behavior:'instant'});}
 $('#dialog-close').onclick=closeDialog;$('#dialog').addEventListener('cancel',e=>{e.preventDefault();closeDialog();});
 function editTask(id,field){const t=state.tasks.find(t=>t.id===id);if(!t)return;
-  openDialog('Изменить задачу',`<form id="edit-form"><label>Задача<input name="title" maxlength="160" required value="${esc(t.title)}"></label><div class="form-pair"><label>Начало<input name="time" type="time" value="${esc(t.time)}"></label><label>Минуты<input name="minutes" type="number" min="1" max="1440" value="${t.minutes}" required></label></div><label>Сфера<select name="sphere">${SPHERES.map(s=>`<option${s===t.sphere?' selected':''}>${s}</option>`).join('')}</select></label><div class="dialog-actions"><button class="primary">Сохранить</button><button type="button" class="text-button" id="edit-cancel">Отмена</button></div></form>`);
-  $('#edit-form').onsubmit=e=>{e.preventDefault();const patch=Object.fromEntries(new FormData(e.currentTarget));if(commit({type:'edit',id,patch},'Задача сохранена',{sound:'confirm'}))closeDialog();};$('#edit-cancel').onclick=closeDialog;
-  if(field)$('#edit-form').elements[field].focus();
+  openDialog('Изменить задачу',`<form id="edit-form"><label>Задача<input name="title" maxlength="160" required value="${esc(t.title)}"></label><div class="form-pair"><label>Дата<input name="date" type="date" required value="${t.date}"></label><label>Начало<input name="time" type="time" value="${esc(t.time)}"></label></div><div class="form-pair"><label>Минуты<input name="minutes" type="number" min="1" max="1440" value="${t.minutes}" required></label>${difficultyField(t.difficulty)}</div>${sphereFields(t)}<div class="dialog-actions"><button class="primary">Сохранить</button><button type="button" class="text-button" id="edit-cancel">Отмена</button></div></form>`);
+  bindSphereFields($('#edit-form'));
+  $('#edit-form').onsubmit=e=>{e.preventDefault();try{const patch=readTaskForm(e.currentTarget);if(commit({type:'edit',id,patch},'Задача сохранена',{sound:'confirm'}))closeDialog();}catch(err){notice(err.message,true);}};$('#edit-cancel').onclick=closeDialog;
+  if(field==='spheres'){$('#edit-form details').open=true;$('#edit-form summary').focus();}else if(field)$('#edit-form').elements[field]?.focus();
 }
 function smaller(id){const task=state.tasks.find(t=>t.id===id);if(!task)return;const text=task.id==='video'?'Поставить телефон и записать одну фразу. Этот черновик не нужно публиковать.':`Открыть всё необходимое для задачи «${task.title}». На это — две минуты.`;
   openDialog('Сделаем вход проще',`<p>${esc(text)}</p><p>Основная задача останется в плане.</p><div class="dialog-actions"><button class="primary" id="start-small">Начать 2 минуты</button><button class="text-button" id="small-cancel">Не сейчас</button></div>`);
@@ -66,8 +73,10 @@ function timerText(){const t=state.timer;if(!t)return '';const seconds=Math.max(
 setInterval(()=>{const timer=$('[data-timer]');if(timer)timer.textContent=timerText();const t=state.timer;if(t?.running&&t.limit&&((t.elapsed||0)+Date.now()-t.started)>=t.limit*60000&&!announcedTimers.has(t.id)){announcedTimers.add(t.id);notice('Две минуты прошли. Можно продолжить или остановить фокус.');audio?.play('reminder');}},1000);
 document.addEventListener('click',e=>{
   const target=e.target.closest('button');if(!target)return;
+  if(planner?.handle(target))return;
   if(target.dataset.themeChoice){if(!window.SatoruTheme.set(target.dataset.themeChoice))notice('Тема изменена на этот раз. Браузер не разрешил сохранить выбор.',true);audio?.play('select');}
-  else if(target.hasAttribute('data-home')){if($('#dialog').open)closeDialog();window.scrollTo({top:0,behavior:'instant'});}
+  else if(target.hasAttribute('data-home')){if($('#dialog').open)closeDialog();navigate('today');}
+  else if(target.dataset.section==='План'){if($('#dialog').open)closeDialog();navigate('plan');audio?.play('navigate');}
   else if(target.id==='mobile-more')openDialog('Ещё',`<div class="more-links">${['Заметки','Вдохновение','Награды','Племя','Профиль'].map(s=>`<button data-section="${s}">${sectionIcon(s)}${s} ↗</button>`).join('')}<button id="mobile-sound">${audio?.getMode()==='off'?'Включить звук':'Выключить звук'}</button></div>`);
   else if(target.id==='mobile-sound'){$('#sound').click();target.textContent=audio?.getMode()==='off'?'Включить звук':'Выключить звук';}
   else if(target.id==='shadow-open')openDialog('Тень',`<p>${esc($('#shadow-copy').textContent)}</p><div class="dialog-actions">${nextTask(state)?`<button class="outline" data-small="${esc(nextTask(state).id)}">Нужен шаг поменьше</button>`:''}<button class="text-button" data-support="rest">Хочу отдохнуть</button><button class="text-button" data-support="return">Меня унесло</button></div><p class="scope-note">Здесь пример подсказки, не ответ ИИ. Тень в основном приложении не менялась.</p>`);
@@ -79,16 +88,20 @@ document.addEventListener('click',e=>{
   else if(target.dataset.small)smaller(target.dataset.small);
   else if(target.dataset.day){commit({type:'day',day:target.dataset.day},null);audio?.play('navigate');}
   else if(target.dataset.habit)commit({type:'habit',id:target.dataset.habit},'Привычка обновлена',{sound:currentHabits()[target.dataset.habit]?'select':'complete'});
-  else if(target.dataset.more){const id=target.dataset.more,t=state.tasks.find(t=>t.id===id);openDialog(t.title,`<div class="dialog-actions"><button id="make-core" class="outline">${t.core?'Убрать из ядра дня':'Выбрать ядром дня'}</button><button id="task-focus" class="outline"${t.done?' disabled':''}>Начать фокус</button></div>`);$('#make-core').onclick=()=>{if(commit({type:'core',id},'Ядро дня обновлено',{sound:'select'}))closeDialog();};$('#task-focus').onclick=()=>{if(state.timer&&state.timer.id!==id){notice('Сначала останови текущий фокус.',true);return;}if(commit({type:'timer',value:{id,started:Date.now(),elapsed:0,running:true}},'Фокус начат'))closeDialog();};}
+  else if(target.dataset.more){const id=target.dataset.more,t=state.tasks.find(t=>t.id===id);openDialog(t.title,`<div class="dialog-actions"><button id="make-core" class="outline">${t.core?'Убрать из ядра дня':'Выбрать ядром дня'}</button><button id="task-focus" class="outline"${t.done?' disabled':''}>Начать фокус</button><button class="outline" data-edit="${esc(id)}" data-field="date">Перенести</button><button class="text-button" data-delete-task="${esc(id)}">Удалить задачу</button></div>`);$('#make-core').onclick=()=>{if(commit({type:'core',id},'Ядро дня обновлено',{sound:'select'}))closeDialog();};$('#task-focus').onclick=()=>{if(state.timer&&state.timer.id!==id){notice('Сначала останови текущий фокус.',true);return;}if(commit({type:'timer',value:{id,started:Date.now(),elapsed:0,running:true}},'Фокус начат'))closeDialog();};}
+  else if(target.dataset.deleteTask){const id=target.dataset.deleteTask,t=state.tasks.find(t=>t.id===id);if(t){openDialog('Удалить задачу?',`<p>${esc(t.title)}</p><p>Связанная цель останется. После удаления доступна отмена.</p><button id="confirm-delete-task" class="primary">Удалить</button>`);$('#confirm-delete-task').onclick=()=>{if(commit({type:'delete',id},'Задача удалена. Можно отменить.'))closeDialog();};}}
   else if(target.id==='undo'&&undo){try{save(localStorage,undo);state=undo;undo=null;render();notice('Изменение отменено');}catch(e){notice('Не удалось отменить изменение.',true);}}
   else if(target.id==='notice-close')$('#notice').hidden=true;
   else if(target.id==='empty-add'||target.id==='compose-open')compose();
   else if(target.id==='view-notes'||target.dataset.section==='Заметки')showNotes();
-  else if(target.dataset.section==='Привычки'){if($('#dialog').open)closeDialog();$('.habits-strip').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'center'});}
+  else if(target.dataset.section==='Привычки'){if($('#dialog').open)closeDialog();navigate('today');$('.habits-strip').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'center'});}
   else if(target.dataset.section){openDialog(target.dataset.section,`<p>В этом превью работает экран «Сегодня». Раздел «${esc(target.dataset.section)}» пока не переделывали.</p><p>Твои данные и разделы в основном Satoru остаются на месте.</p>`);}
   else if(target.dataset.support){const content={rest:['Отдых без нового списка','Что сейчас больше подойдёт: выйти на короткую прогулку или спокойно почитать?'],return:['Вернуться к одному делу','Не нужно разбирать весь день. Можно начать с двух минут текущей задачи.'],boundary:['Граница входа','Настройка расширения остаётся в основном приложении. Из этого превью нельзя менять блокировки.']}[target.dataset.support];openDialog(content[0],`<p>${content[1]}</p>${target.dataset.support==='return'&&nextTask(state)?'<button class="primary" id="return-small">Выбрать маленький шаг</button>':''}`);if($('#return-small'))$('#return-small').onclick=()=>smaller(nextTask(state).id);}
 });
-$('#composer').onsubmit=e=>{e.preventDefault();const data=Object.fromEntries(new FormData(e.currentTarget));const id=crypto.randomUUID();if(commit({type:'add',task:{...data,id,date:state.day,done:false,core:!dayTasks(state).length}},'Задача добавлена',{sound:'confirm'})){$('#task-name').value='';if($('#dialog #composer'))closeDialog();else $('#task-name').focus();}};
+const oldSphere=$('#new-sphere').closest('label');oldSphere.outerHTML=sphereFields();
+$('#composer').insertAdjacentHTML('beforeend','<div class="composer-extra">'+difficultyField()+'<details class="difficulty-help"><summary>Как выбрать?</summary><p>Лёгкая — знакомая рутина. Обычная — требует внимания. Сложная — новый вызов. Выбирай по усилиям, а не по длительности.</p></details></div>');
+bindSphereFields($('#composer'));
+$('#composer').onsubmit=e=>{e.preventDefault();try{const data=readTaskForm(e.currentTarget);const id=crypto.randomUUID();if(commit({type:'add',task:{...data,id,date:state.day,done:false,core:!dayTasks(state).length}},'Задача добавлена',{sound:'confirm'})){$('#task-name').value='';$('#composer .sphere-fields').open=false;if($('#dialog #composer'))closeDialog();else $('#task-name').focus();}}catch(err){notice(err.message,true);}};
 $('#quick-note').onsubmit=e=>{e.preventDefault();if(commit({type:'note',id:crypto.randomUUID(),text:$('#note').value},'Мысль сохранена',{sound:'confirm'}))$('#note').value='';};
 function showNotes(){openDialog('Мысли на потом',state.notes.length?state.notes.map(n=>`<p class="saved-note">${esc(n.text)}</p>`).join(''):'<p>Здесь появятся мысли, которые ты сохранишь в этом превью.</p>');}
 $('#smaller-step').onclick=()=>{const t=nextTask(state);if(t)smaller(t.id);};
@@ -115,7 +128,10 @@ function openRecap(){openDialog('Итог дня',`<p>Что удалось сд
 $('#recap-open').onclick=openRecap;
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&recorder?.state==='recording'){recorder.stop();stream?.getTracks().forEach(t=>t.stop());}});
 window.addEventListener('beforeunload',e=>{if(recorder?.state==='recording'||(audioUrl&&!audioDownloaded)){e.preventDefault();e.returnValue='';}});
-render();
+const oldHome=$('#nav .nav-item.selected');const home=document.createElement('button');home.className=oldHome.className;home.dataset.home='';home.innerHTML=oldHome.innerHTML;oldHome.replaceWith(home);
+const weekOption=document.createElement('option');weekOption.value='week';weekOption.textContent='Неделя с планами';$('#scenario').append(weekOption);
+planner=createPlanner($('#plan-view'),{getState:()=>state,commit,openDialog,closeDialog,editTask,compose,notice,sound:key=>audio?.play(key),goToday:day=>navigate('today',day)});
+navigate(route);
 // Optional read-only bridge. It exposes only the same synthetic preview state.
 // No account connection, microphone access, deletion, or hidden mutation.
 if(document.modelContext?.registerTool){

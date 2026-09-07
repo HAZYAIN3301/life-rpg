@@ -1,4 +1,11 @@
-# Satoru — Today: rounded violet, light + dark
+# Satoru — Today + Plan: rounded violet, light + dark
+
+2026-09-08: `?view=plan` opens the shared calendar; `&section=goals` opens goals.
+Day/week/month, local ICS, goal steps → Today, bulk status with exact confirmations,
+shared task dates/time/multiple spheres/background/difficulty. “Examples → Week”
+loads the synthetic populated week only after confirmation.
+Comparison and integration gaps: ../../PLAN-DESIGN-V1.md. Not a runtime replacement.
+Run `node qa-plan.mjs` for cross-screen behavior and four responsive modes.
 
 User-selected direction: B's Russo One and rounded geometry, violet Shadow identity,
 a brighter quiet night palette and a genuine light palette. Not a production rollout.

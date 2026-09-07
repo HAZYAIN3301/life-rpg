@@ -1,5 +1,24 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-08] Связные Today + Plan/Goals; общий редактор и финальный mobile pass
+
+По просьбе Альберта существенно продолжен утверждённый rounded-violet lab.
+Календарь день/неделя/месяц + мобильная agenda, цели/шаги/карта/массовый статус,
+общие задачи с Today, перенос, локальный ICS, multi-sphere/фон/сложность.
+Today: рабочие goal links, полный редактор, перенос/удаление с Undo, ошибки внутри
+диалога, плотная карточка на телефоне без обрезки заголовка. Сроки целей идут после
+дел, пустой список не дублирует CTA. Основное приложение и аватар не менялись.
+Сверка с origin/master 29423b9 выполнена по текущему коду, не выдана за полный live-аудит.
+Матрица сохранённых и ещё НЕ перенесённых функций: PLAN-DESIGN-V1.md.
+Проверки: 24/24 unit; 32 Plan theme/viewport/mode; 24 Today theme/viewport/scenario;
+desktop voice/persistence/failure suite, build, diff-check. Screens/receipts — lab QA.md.
+Физический телефон, все локали/экраны, реальные adapters и уведомления не заявлены.
+Публичный Site обновляется в ранее согласованных границах, только синтетические данные.
+Публикация Site v4 подтверждена: source 4ce515d4a168d774cb041748daf8fa565cf03e66,
+version appgprj_6a9f01be94ac819183986ef04973a7f2~appgver_3dc6b9d972bc8191be7b2b4b3136890b,
+deployment appgdep_6a9f39b468588191859a5d0ded5c3bac — succeeded.
+URL: https://satoru-today-design-sept7.albertprokopets3301.chatgpt.site/?view=plan
+
 ## [2026-09-07] Выбор B-форм + Тень; полноценные light/dark в Today lab
 
 Зафиксирован подробный новый отзыв: шрифт Russo One и округлённость B, фиолетовая связь

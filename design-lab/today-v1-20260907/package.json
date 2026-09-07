@@ -1,1 +1,1 @@
-{"name":"satoru-today-design-preview","private":true,"type":"module","scripts":{"build":"node build.mjs","start":"node serve.mjs","test":"node --test model.test.mjs"}}
+{"name":"satoru-today-design-preview","private":true,"type":"module","scripts":{"build":"node build.mjs","start":"node serve.mjs","test":"node --test model.test.mjs planning-model.test.mjs"}}

@@ -1,0 +1,94 @@
+/* Shared task-first planning surfaces. Same theme tokens, no second design system. */
+[hidden]{display:none!important}
+#plan-view{max-width:1360px;margin:auto;min-width:0}
+.plan-header,.plan-section-head,.calendar-toolbar,.calendar-period,.goals-toolbar,.bulk-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.plan-header{margin-bottom:32px}.plan-header h1{margin:8px 0 0}.plan-header .eyebrow{color:var(--muted)}
+.plan-tabs,.calendar-modes,.goals-filters{display:flex;gap:4px;padding:4px;background:var(--raised);border:1px solid var(--line);border-radius:16px}
+.plan-tabs button,.calendar-modes button,.goals-filters button{min-height:44px;padding:8px 16px;border:0;border-radius:12px;background:transparent;color:var(--muted);font-weight:600}
+.plan-tabs [aria-pressed=true],.calendar-modes [aria-pressed=true],.goals-filters [aria-pressed=true]{background:var(--work);color:var(--focus-ink);box-shadow:0 2px 5px #0000000a}
+.calendar-toolbar{gap:12px;margin-bottom:16px}.calendar-period{flex-wrap:nowrap;justify-content:flex-start;gap:8px}.calendar-period h2{font:600 21px/1.3 system-ui;margin:0;min-width:0;text-transform:capitalize}
+.calendar-period .icon-button{flex-shrink:0;font-size:28px}
+.plan-week-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin:16px 0}
+.plan-date{display:flex;flex-direction:column;align-items:center;gap:5px;border:1px solid var(--line);border-radius:16px;padding:12px 4px;background:var(--work);color:var(--muted);min-width:0;min-height:96px}
+.plan-date b{font:24px/1.1 'Russo One',system-ui;color:var(--ink)}.plan-date small{font-size:11px;white-space:nowrap}.plan-date.selected{background:var(--core);border-color:var(--core-border);color:var(--focus-ink)}
+.calendar-tools{display:flex;gap:8px;justify-content:flex-end;margin-bottom:20px}
+.calendar-tools button{border:1px solid var(--line);background:transparent;color:var(--muted);min-height:44px;padding:8px 14px;border-radius:12px;font-weight:600}
+.deadline-strip{display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);padding:12px 0 20px;color:var(--muted);font-size:13px}
+.deadline-strip button{border:0;background:var(--core);color:var(--focus-ink);border-radius:10px;min-height:44px;padding:8px 12px;text-align:left;max-width:100%;overflow-wrap:anywhere}
+.week-board{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--work)}
+.week-column{min-width:0;min-height:420px;padding:8px;border-right:1px solid var(--line)}.week-column:last-child{border:0}.week-column.is-selected{background:color-mix(in srgb,var(--core) 45%,var(--work))}
+.week-column-head{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;padding:8px;border:0;background:transparent;color:var(--muted);min-height:70px}
+.week-column-head b{font-size:20px;color:var(--ink)}.week-column-head small{font-size:11px}
+.agenda-item{display:flex;align-items:flex-start;gap:12px;padding:16px 0;border-bottom:1px solid var(--line);min-width:0}
+.agenda-item .check{flex-shrink:0;margin:0}.agenda-main{flex:1;min-width:0}
+.agenda-title{display:block;text-align:left;font:600 16px/1.45 system-ui;color:var(--ink);padding:0;border:0;background:transparent;min-height:44px;width:100%;overflow-wrap:anywhere}
+.agenda-meta{display:flex;gap:5px 10px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:13px}
+.agenda-meta button{border:0;background:transparent;color:var(--focus-ink);padding:0;min-height:44px;min-width:42px;text-align:left}
+.agenda-item.done .agenda-title{text-decoration:line-through;color:var(--muted)}
+.agenda-core{border-radius:14px;background:var(--core);padding:16px 12px;border:1px solid var(--core-border);margin:8px 0}
+.schedule-conflict{font-size:12px;color:var(--warning);display:block;margin-top:4px}
+.week-board .agenda-item{flex-wrap:wrap;gap:2px;padding:8px;margin-bottom:8px;border:1px solid var(--line);border-radius:12px;background:var(--raised)}
+.week-board .agenda-core{background:var(--core);border-color:var(--core-border)}
+.week-board .agenda-title{font-size:13px;line-height:1.4}.week-board .agenda-main{flex-basis:100%}.week-board .agenda-meta{font-size:11px;gap:2px 5px}.week-board .check{width:42px;height:42px;min-width:42px}
+.week-board .agenda-item{display:grid;grid-template-columns:minmax(0,1fr) 42px;gap:4px}.week-board .agenda-main{display:contents}.week-board .agenda-title{grid-column:1/-1;grid-row:2}.week-board .agenda-meta{grid-column:1;grid-row:1}.week-board .check{grid-column:2;grid-row:1;align-self:start;border:0;position:relative;background:transparent!important;font-size:16px}.week-board .check::before{content:'';position:absolute;inset:9px;border:1px solid var(--control-line);border-radius:50%;pointer-events:none}.week-board .schedule-conflict{grid-column:1/-1}
+.week-add{min-height:44px;width:100%;border:1px dashed var(--line);border-radius:12px;background:transparent;color:var(--muted);font-size:22px}
+.week-mobile-detail{display:none}.agenda{background:var(--work);border:1px solid var(--line);border-radius:20px;padding:24px;margin-top:20px}
+.completed-agenda{margin-top:20px;color:var(--muted)}.completed-agenda summary{min-height:44px;cursor:pointer;font-size:13px;padding:12px 0}
+.plan-section-head h2{font:600 19px/1.4 system-ui;margin:0;text-transform:none}.agenda .plan-section-head h2:first-letter{text-transform:uppercase}
+.unscheduled{margin-top:24px}.unscheduled h3{font:600 14px system-ui;color:var(--muted)}.unscheduled h3 span{font-weight:400;margin-left:6px}
+.plan-empty{padding:32px 16px;color:var(--muted);text-align:center}.plan-empty h3{color:var(--ink);font:600 20px system-ui}.plan-empty p{margin:0 0 12px}
+.month-board{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--work)}
+.month-weekdays,.month-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.month-weekdays{padding:12px 0;background:var(--raised);text-align:center;color:var(--muted);font-size:12px}
+.month-cell{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:8px;min-height:128px;min-width:0;padding:12px;border:0;border-top:1px solid var(--line);border-right:1px solid var(--line);background:transparent;color:var(--ink)}
+.month-cell:nth-child(7n){border-right:0}.month-cell.is-selected{background:var(--core);box-shadow:inset 0 0 0 2px var(--core-border)}
+.month-cell.outside-month{background:var(--raised);color:var(--muted)}.month-cell small{color:var(--focus-ink);font-size:11px}
+.month-task-names{display:grid;gap:6px;font-size:12px;line-height:1.35;overflow-wrap:anywhere}.month-task-names span{border-left:2px solid var(--core-border);padding-left:6px}
+.goals-toolbar{margin:24px 0}.goal-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.goal-card{display:flex;flex-direction:column;min-width:0;padding:22px;border:1px solid var(--line);border-radius:20px;background:var(--work)}
+.goal-card-top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.goal-card-title{display:flex;align-items:flex-start;gap:8px;margin-top:16px}
+.goal-card-title>button:first-of-type{font:400 20px/1.4 'Russo One',system-ui;text-align:left;border:0;background:transparent;color:var(--ink);padding:0;flex:1;min-width:0;overflow-wrap:anywhere;min-height:44px}
+.goal-check{border:1px solid var(--control-line);color:var(--focus-ink);background:transparent;border-radius:50%;width:44px;height:44px;flex-shrink:0;font-size:26px}
+.goal-card p{color:var(--muted);font-size:14px;line-height:1.6;margin:16px 0 24px}
+.goal-progress{margin-top:auto;display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}
+.goal-progress progress{flex:1;min-width:0;height:5px;accent-color:var(--focus)}.goal-progress span{white-space:nowrap}
+.goal-next{border-top:1px solid var(--line);margin-top:20px;padding-top:16px;display:flex;flex-direction:column;gap:10px}
+.goal-next>span{font-size:12px;color:var(--muted)}.goal-next b{font-size:15px;line-height:1.5;font-weight:600}.goal-next button{align-self:flex-start}
+.goal-branch{border-left:2px solid var(--line);margin:16px 0;padding:0 0 0 18px}.goal-branch summary{padding:12px 0;min-height:44px;cursor:pointer;overflow-wrap:anywhere}
+.bulk-bar{padding:12px 16px;background:var(--core);border-radius:16px;margin-bottom:16px}.bulk-bar button{background:var(--work);border:1px solid var(--line);color:var(--ink);border-radius:10px;min-height:44px;padding:8px 12px}
+.goal-card input[type=checkbox]{appearance:none;width:42px;height:44px;margin:0;flex-shrink:0;border:10px solid transparent;border-radius:14px;background:var(--raised);background-clip:content-box;cursor:pointer;box-shadow:inset 0 0 0 11px var(--control-line)}.goal-card input[type=checkbox]:checked{background-color:var(--focus)}
+.goal-description{font-size:16px;line-height:1.7}.goal-detail-meta{font-size:13px;color:var(--muted)}.detail-section-title{margin-top:28px;font:600 18px system-ui}
+.goal-steps{padding-left:24px}.goal-steps li{padding:10px 0;border-bottom:1px solid var(--line);line-height:1.5}.goal-steps li>span:first-child{display:block}.goal-steps .step-done>span:first-child{text-decoration:line-through}.step-wait{font-size:12px;color:var(--muted)}
+#goal-step-form{display:flex;gap:12px;align-items:end}#goal-step-form label{flex:1;min-width:0}#goal-step-form button{flex-shrink:0}
+.sphere-fields{position:relative;min-width:0}.sphere-fields summary{min-height:44px;cursor:pointer;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;border:1px solid var(--control-line);border-radius:12px;padding:10px 12px;color:var(--muted);font-size:12px}
+.sphere-selection{color:var(--ink);font-size:14px;overflow-wrap:anywhere}.sphere-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;border:1px solid var(--line);background:var(--work);border-radius:14px}
+.sphere-options fieldset{border:0;margin:0;padding:0;min-width:0}.sphere-options legend{color:var(--muted);font-size:12px;padding:0 0 8px}
+.sphere-options label{display:flex!important;align-items:center;gap:8px;min-height:44px;font-size:14px!important;font-weight:400!important;margin:0!important;cursor:pointer}
+.sphere-options input{width:20px!important;height:20px!important;min-height:20px!important;margin:0!important;accent-color:var(--focus)}
+.composer-fields .sphere-options{position:absolute;z-index:5;top:100%;left:0;width:300px;box-shadow:0 12px 32px #0002}
+.composer-extra{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:10px}.composer-extra .difficulty-field{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}.composer-extra select{width:auto;min-height:44px;padding:8px 12px}
+.difficulty-help{font-size:12px;color:var(--muted);max-width:300px}.difficulty-help summary{cursor:pointer;min-height:44px;display:flex;align-items:center}.difficulty-help p{font-size:13px;line-height:1.5}
+.task-meta .task-spheres,.task-meta .task-goal{border:0;background:transparent;text-align:left;color:var(--muted);padding:0;min-height:28px;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.task-meta .task-goal{color:var(--focus-ink)}.background-label{color:var(--muted)}.difficulty-tag{font-size:11px;color:var(--focus-ink)}
+dialog .notice{position:sticky;bottom:0;left:auto;transform:none;max-width:100%;width:auto;margin-top:16px;z-index:1}
+#edit-form>.sphere-fields{margin-top:16px}
+@media(min-width:1101px){.week-board+.week-mobile-detail{display:none}.plan-week-strip:not(.day-strip){display:none}}
+@media(max-width:1100px){.week-board{display:none}.week-mobile-detail{display:block}.goal-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){
+ .plan-header{gap:16px;margin-bottom:24px;align-items:flex-start}.plan-header h1{font-size:36px}.plan-header .eyebrow{font-size:10px}.plan-tabs button{padding:8px 12px;font-size:13px}
+ .calendar-toolbar{display:grid;grid-template-columns:1fr auto;gap:12px}.calendar-period{grid-column:1/-1;justify-content:space-between}.calendar-period h2{font-size:20px;text-align:center}.calendar-modes button{padding:8px 12px;font-size:13px}
+ .plan-week-strip{gap:3px}.plan-date{padding:10px 0;border-radius:12px;min-height:86px}.plan-date b{font-size:20px}.plan-date span{font-size:11px}.plan-date small{font-size:9px}
+ .calendar-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.calendar-tools button{padding:8px 4px;font-size:11px}
+ .deadline-strip{font-size:11px}.deadline-strip button{font-size:12px;width:100%}.agenda{padding:16px;margin-top:16px}.plan-section-head{gap:12px}.plan-section-head h2{font-size:17px;flex:1;min-width:130px}.plan-section-head button{font-size:12px;padding:8px 12px}
+ .agenda-title{font-size:15px}.agenda-meta{font-size:12px}.agenda-item{gap:10px}
+ .month-cell{padding:8px 3px;min-height:68px;gap:6px;align-items:center}.month-cell b{font-size:14px}.month-cell small{font-size:9px}.month-task-names{display:none}
+ .goal-grid{grid-template-columns:1fr}.goal-card{padding:20px}.goal-card-title>button:first-of-type{font-size:20px}
+ .goals-toolbar{gap:8px;margin:16px 0}.goals-filters{width:100%;justify-content:space-between}.goals-filters button{padding:8px 12px;font-size:13px}
+ .bulk-bar{gap:8px;font-size:12px}.bulk-bar button{padding:8px}
+ #goal-step-form{flex-direction:column;align-items:stretch}.composer-fields .sphere-options{position:static;width:auto;box-shadow:none}.composer-fields:has(.sphere-fields[open]){grid-template-columns:1fr 1fr}.composer-fields .sphere-fields[open]{grid-column:1/-1}
+ .task-meta .task-spheres,.task-meta .task-goal{min-height:42px;min-width:42px}
+ .core{padding-block:10px}.task-goal{max-width:100%}
+ .form-pair{min-width:0}.form-pair>label{min-width:0}input[type=date]{min-width:0;max-width:100%}
+}
+@media(prefers-reduced-motion:no-preference){.plan-date,.month-cell,.goal-check{transition:background .16s,border-color .16s,box-shadow .16s}.goal-check:hover{background:var(--core)}}

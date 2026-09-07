@@ -10,9 +10,12 @@
     Следующий gate — просмотр единой основы, не весь runtime. «Сначала дела» не отменяет Тень.
   - ⬜ Позже тематические семьи (фэнтези и т. п.), независимо от светлой/тёмной темы.
     Не засорять Today новыми карточками и не возвращать неоновую тяжесть.
-  - ⬜ После одобрения: реальные State/Store adapters, multi-sphere/background,
-    difficulty, locale/theme/mobile/server gates — не подмена рабочей версии макетом.
-  - ⬜ Plan/Goals → Тень/голос/Notes → Inspiration/Rewards/Hero → остальные разделы.
+  - ✅ 08.09: Plan/Goals в preview + общие multiple spheres/background/difficulty,
+    календарь 3 режима, перенос, шаг цели → Today, завершение/bulk/Undo; PLAN-DESIGN-V1.md.
+  - ⬜ После одобрения: реальные State/Store adapters, полная иерархия сфер,
+    actualMin/commitment/AI import/projects, locale/theme/mobile/server gates.
+    Рабочую версию не подменять fixture-моделью.
+  - ⬜ Тень/голос/Notes → Inspiration/Rewards/Hero → остальные разделы.
     До каждого pass: список сохраняемых действий, а не только «убрать лишнее».
 
 - [~] **Avatar 3D v1 — один образ, сменная одежда и общие движения** — 2026-09-07.

@@ -7,6 +7,7 @@
   <script src="theme.js"></script>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="character.css">
+  <link rel="stylesheet" href="planner.css">
   <script src="assets/sound.js" defer></script><script type="module" src="app.js"></script>
 </head>
 <body>
@@ -21,6 +22,7 @@
       <div class="rail-bottom"><button id="sound" class="quiet sound-toggle" aria-pressed="false">♪ <span>Звук выключен</span></button><div class="profile"><span class="profile-initial">А</span><div><b>Алекс</b><span>Путешественник · ур. 12</span></div><button data-section="Профиль" class="icon-button" aria-label="Профиль"><span class="nav-art nav-art-profile" aria-hidden="true"></span></button></div></div>
     </aside>
     <main id="main">
+      <div id="today-view">
       <header class="page-header"><div class="day-heading"><div class="eyebrow" id="date-label">7 СЕНТЯБРЯ · ПОНЕДЕЛЬНИК</div><h1>Сегодня</h1></div><div class="header-actions"><button class="shadow-trigger" id="shadow-open"><img src="assets/shadow.png" width="48" height="48" alt=""><span>Тень<span class="shadow-caption">Помощник</span></span><span aria-hidden="true">↗</span></button><button class="outline recap-trigger" id="recap-open"><img class="mic-symbol" src="assets/microphone.svg" width="20" height="20" alt="">Итог дня голосом</button></div></header>
       <div class="workspace">
         <section class="day-work" aria-label="Задачи дня">
@@ -45,6 +47,8 @@
           <div class="notes-feedback" id="notes-feedback" aria-live="polite"></div>
         </aside>
       </div>
+      </div>
+      <section id="plan-view" hidden aria-label="План"></section>
     </main>
   </div>
   <nav class="mobile-nav" aria-label="Разделы Satoru"><button data-home aria-current="page"><span class="nav-art nav-art-today" aria-hidden="true"></span>Сегодня</button><button data-section="План"><span class="nav-art nav-art-plan" aria-hidden="true"></span>План</button><button data-section="Привычки"><span class="nav-art nav-art-habits" aria-hidden="true"></span>Привычки</button><button data-section="Герой"><span class="nav-art nav-art-hero" aria-hidden="true"></span>Герой</button><button id="mobile-more"><span aria-hidden="true">···</span>Ещё</button></nav>

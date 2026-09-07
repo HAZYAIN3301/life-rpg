@@ -1,0 +1,197 @@
+{
+  "report": [
+    {
+      "theme": "light",
+      "width": 375,
+      "mode": "week",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 375,
+      "mode": "day",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 375,
+      "mode": "month",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 375,
+      "mode": "goals",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 390,
+      "mode": "week",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 390,
+      "mode": "day",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 390,
+      "mode": "month",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 390,
+      "mode": "goals",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 1280,
+      "mode": "week",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 1280,
+      "mode": "day",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 1280,
+      "mode": "month",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 1280,
+      "mode": "goals",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 1440,
+      "mode": "week",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 1440,
+      "mode": "day",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 1440,
+      "mode": "month",
+      "overflow": false
+    },
+    {
+      "theme": "light",
+      "width": 1440,
+      "mode": "goals",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 375,
+      "mode": "week",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 375,
+      "mode": "day",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 375,
+      "mode": "month",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 375,
+      "mode": "goals",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 390,
+      "mode": "week",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 390,
+      "mode": "day",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 390,
+      "mode": "month",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 390,
+      "mode": "goals",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 1280,
+      "mode": "week",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 1280,
+      "mode": "day",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 1280,
+      "mode": "month",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 1280,
+      "mode": "goals",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 1440,
+      "mode": "week",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 1440,
+      "mode": "day",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 1440,
+      "mode": "month",
+      "overflow": false
+    },
+    {
+      "theme": "dark",
+      "width": 1440,
+      "mode": "goals",
+      "overflow": false
+    }
+  ],
+  "errors": []
+}
