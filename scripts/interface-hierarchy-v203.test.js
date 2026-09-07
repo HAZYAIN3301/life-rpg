@@ -53,7 +53,7 @@ test('core quest is labelled and raised without reintroducing a checkbox stripe'
   assert.match(row, /<span aria-hidden="true">◆<\/span>\$\{esc\(t\('Ядро дня'\)\)\}/);
   // Ячейка названия несёт бейдж ядра дня и чип цели; строка остаётся <div>, а не <span>,
   // иначе сетка квеста возвращает полосу чекбоксов.
-  assert.match(row, /const titleCell = `<div class="t-title">\$\{coreBadge\}\$\{titleControl\}\$\{questGoalChipHTML\(q, links\)\}<\/div>`/);
+  assert.match(row, /const titleCell = `<div class="t-title">\$\{coreBadge\}\$\{titleControl\}\$\{questGoalChipHTML\(q, links\)\}\$\{coreStart\}<\/div>`/);
   assert.doesNotMatch(row, /<span class="t-title">\$\{coreBadge\}/);
   const actions = between(APP, "} else if (action === 'toggle-core')", "} else if (action === 'edit-difficulty')");
   assert.match(actions, /const nextTasks = structuredClone\(State\.tasks\)/);
@@ -65,8 +65,12 @@ test('core quest is labelled and raised without reintroducing a checkbox stripe'
   assert.match(CSS, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.today-shell \*[\s\S]*?animation:\s*none !important/);
 });
 
-test('quest and calendar forms disclose configuration only after the primary fields', () => {
-  assert.match(APP, /<details class="quest-add-options"><summary>\$\{t\('Длительность и сложность'\)\}<\/summary>/);
+test('quest time stays direct; explanations and calendar advanced configuration disclose progressively', () => {
+  const today = between(APP, 'function renderToday()', 'function goalDeadlineHTML');
+  assert.doesNotMatch(today, /<details class="quest-add-options">/);
+  assert.match(today, /class="add-field add-field-start"/);
+  assert.match(today, /name="startTime"/);
+  assert.match(today, /durInputHTML\('estimateMin', 30, true\)/);
   assert.match(APP, /<details class="difficulty-help"><summary>\$\{t\('Как выбрать сложность\?'\)\}<\/summary>/);
   assert.doesNotMatch(APP, /<p class="diff-hint muted">/);
   assert.match(APP, /<details class="calendar-add-options"><summary>\$\{esc\(t\('Дополнительные настройки'\)\)\}<\/summary>/);
@@ -154,10 +158,10 @@ test('new disclosures and hierarchy changes use semantic sound and finite motion
 });
 
 test('v210 Browser Protection shell advances coherently without repinning unchanged questionnaire code', () => {
-  assert.match(SW, /const CACHE = 'satoru-v244'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v244'/);
+  assert.match(SW, /const CACHE = 'satoru-v245'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v245'/);
   assert.match(INDEX, /return-shelf-ui-v1\.js\?v=20260830-economy-art-v208-1/);
-  assert.match(INDEX, /styles\.css\?v=20260906-attention-commitment-v244-1/);
+  assert.match(INDEX, /styles\.css\?v=20260908-design-v245-1/);
   assert.match(INDEX, /questionnaire-v1\.js\?v=20260830-browser-companion-v206-1/);
-  assert.match(INDEX, /app\.js\?v=20260906-attention-commitment-v244-1/);
+  assert.match(INDEX, /app\.js\?v=20260908-design-v245-1/);
 });

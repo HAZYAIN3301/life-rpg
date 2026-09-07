@@ -17,7 +17,7 @@ const SECRETARY_UI = read('HANDOFF-CODEX-SECRETARY-UI.md');
 
 test('cold start points at the current checkpoint and both old handoffs are superseded', () => {
   assert.match(START, /Актуальный handoff — 2026-09-06/);
-  assert.match(START.slice(0, 1000), /текущий checkpoint/i);
+  assert.match(START.slice(0, START.indexOf('- Канонический код')), /текущий.*checkpoint/i);
   assert.match(START, /HANDOFF-CODEX-DOORS\.md.*HANDOFF-CODEX-SECRETARY-UI\.md[\s\S]*superseded history/);
   assert.match(DOORS.slice(0, 700), /SUPERSEDED 2026-09-06/);
   assert.match(SECRETARY_UI.slice(0, 700), /SUPERSEDED 2026-09-06/);

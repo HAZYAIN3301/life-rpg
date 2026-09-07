@@ -15,8 +15,10 @@
 bulk и локальный ICS. Матрица сравнения с runtime и НЕперенесённых функций — там же.
 Изолированное Today-превью desktop/mobile: после A/B выбран Russo One + округлённость,
 фиолетовая связь с Тенью, полноценные светлая/тёмная/системная темы и старые значки.
-Новая оболочка НЕ установлена в runtime. Следующий gate — просмотр связного Today/Plan,
-затем реальные adapters; тематические семьи позже. Site public, обновление явно разрешено.
+08.09 после просмотра пользователь разрешил полный runtime-перенос при сохранении
+прежней версии в облаке. Текущий rollout/checkpoint: [DESIGN-ROLLOUT-V1.md](./DESIGN-ROLLOUT-V1.md).
+Нельзя подменять живые данные fixture-моделью. Тематические семьи позже.
+Site public, обновление явно разрешено.
 Прежнее «минимум кнопок»
 не разрешает прятать голосовой итог, время/длительность и другие частые действия.
 
@@ -25,10 +27,12 @@ bulk и локальный ICS. Матрица сравнения с runtime и 
 - Канонический код — `origin/master`. Перед работой обязательно сверить
   `git rev-parse HEAD` и `git rev-parse origin/master`; checkout с отставшим SHA не считать
   источником истины.
-- Последний runtime-релиз — `301299d` (`Commitment v2 UI`), PWA cache `satoru-v244`,
-  app/style pin `20260906-attention-commitment-v244-1`. Последующие docs-коммиты runtime
-  не меняют. Actionable Foundations UI вошёл предыдущим runtime-коммитом `8f2c510`.
-- Полная проверка после сведения runtime и текущего documentation gate: **1924/1924 PASS**.
+- Новый runtime-кандидат — **design v245**, PWA cache `satoru-v245`,
+  app/style pin `20260908-design-v245-1`, `public/design-next-v1.css`.
+  Deployment receipt — `DESIGN-ROLLOUT-V1.md`; до его проверки не заявлять production.
+  Прежний runtime v244 сохранён из `74a97dd` в `/compare.html` (synthetic, read-only).
+  Actionable Foundations UI и Commitment v2 не заменены новой моделью хранения.
+- Полная проверка design v245: **1929/1929 PASS**; браузерные receipts отдельно в rollout.
   Перед следующей правкой начать с `git fetch`, `git status --short --branch` и
   `git log -5 --oneline`; обязательный процесс —
   [`AGENTS-PROTOCOL.md`](./AGENTS-PROTOCOL.md).

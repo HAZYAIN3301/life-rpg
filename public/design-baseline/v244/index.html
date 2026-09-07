@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<base href="/">
+<script src="/design-comparison-guard.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Satoru</title>
+  <!-- Установка на телефон как приложение (Add to Home Screen) + тёмный фон браузер-хрома -->
+  <meta name="theme-color" content="#0f1320" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Satoru" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="preload" href="/design-baseline/v244/fonts/podkova/Podkova-wght.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="art/ui/boot/ouroboros-body.png" as="image" type="image/png" />
+  <link rel="preload" href="art/ui/boot/ouroboros-jaw.png" as="image" type="image/png" />
+  <link rel="stylesheet" href="/design-baseline/v244/styles.css?v=20260906-attention-commitment-v244-1" />
+</head>
+<body>
+  <div id="app">
+    <div id="satoru-boot" class="satoru-boot" role="status" aria-label="Satoru">
+      <div class="boot-ouroboros" aria-hidden="true">
+        <span class="boot-ouroboros-orbit">
+          <img class="boot-ouroboros-layer boot-ouroboros-body" src="art/ui/boot/ouroboros-body.png" alt="" />
+          <img class="boot-ouroboros-layer boot-ouroboros-jaw" src="art/ui/boot/ouroboros-jaw.png" alt="" />
+        </span>
+      </div>
+      <div class="boot-wordmark"><strong>Satoru</strong><span class="boot-progress" aria-hidden="true"><i></i><i></i><i></i></span></div>
+    </div>
+    <header id="topbar">
+      <div class="brand">
+        <span class="logo"><img class="brand-shadow-mark" src="/art/companions/shadow-v3-20260730/shadow-spirit-calm.png?v=20260730-1" alt="" aria-hidden="true" /></span>
+        <h1 id="appName">Satoru</h1>
+      </div>
+      <div id="charSummary" class="char-summary"></div>
+      <nav id="nav"><!-- 2-уровневая навигация рендерится в renderNav() --></nav>
+    </header>
+    <main id="main"></main>
+    <div id="toasts"></div>
+    <button id="ai-fab" data-action="open-helper" title="Тень — спроси о себе или о приложении" aria-label="Тень"><img class="fab-face" src="/art/companions/shadow-v3-20260730/shadow-spirit-calm.png?v=20260730-1" alt="" /><span class="fab-streak" id="fab-streak" hidden></span></button>
+  </div>
+  <script src="/design-baseline/v244/art/icons/icon-registry.js?v=20260830-economy-art-v208-1"></script>
+  <script src="/design-baseline/v244/shadow-rig-v2.js?v=20260731-canonical-avatar-v1"></script>
+  <script src="/design-baseline/v244/shadow-den-v1.js?v=20260819-traveller-f2-runtime-v167-1"></script>
+  <script src="/design-baseline/v244/den-pet-pair-v1.js?v=20260815-shadow-pet-v160-1"></script>
+  <script src="/design-baseline/v244/den-scene-v4.js?v=20260731-canonical-avatar-v1"></script>
+  <script src="/design-baseline/v244/canon-domains.js?v=20260803-canon-domains-v2"></script>
+  <script src="/design-baseline/v244/den-stage-v1.js?v=20260815-den-life-v158-1"></script>
+  <script src="/design-baseline/v244/den-life-v1.js?v=20260815-den-life-v158-1"></script>
+  <script src="/design-baseline/v244/body-toad-v1.js?v=20260826-appearance-feedback-v183-1"></script>
+  <script src="/design-baseline/v244/recovery-slug-v1.js?v=20260826-appearance-feedback-v183-1"></script>
+  <script src="/design-baseline/v244/resources-penguin-v1.js?v=20260819-traveller-f2-runtime-v167-1"></script>
+  <script src="/design-baseline/v244/den-resident-life-v1.js?v=20260815-den-life-v158-1"></script>
+  <script src="/design-baseline/v244/traveller-appearance-v1.js?v=20260826-appearance-feedback-v183-1"></script>
+  <script src="/design-baseline/v244/traveller-motion-v3.js?v=20260819-traveller-f2-runtime-v167-1"></script>
+  <script src="/design-baseline/v244/traveller-room-v4.js?v=20260819-traveller-f2-runtime-v167-1"></script>
+  <script src="/design-baseline/v244/profile-memory-v1.js?v=20260808-profile-memory-v1-0"></script>
+  <script src="/design-baseline/v244/day-observation-v1.js?v=20260808-day-observation-v1-0"></script>
+  <script src="/design-baseline/v244/stuck-task-v1.js?v=20260810-stuck-task-v1-0"></script>
+  <script src="/design-baseline/v244/fights-v1.js?v=20260810-fights-v1-0"></script>
+  <script src="/design-baseline/v244/board-v1.js?v=20260810-board-v1-0"></script>
+  <script src="/design-baseline/v244/board-v2.js?v=20260825-board-v2-complete-v175-1"></script>
+  <script src="/design-baseline/v244/board-v2-catalog.js?v=20260825-board-v2-complete-v175-1"></script>
+  <script src="/design-baseline/v244/board-v2-pacing.js?v=20260825-board-v2-complete-v175-1"></script>
+  <script src="/design-baseline/v244/board-v2-offers.js?v=20260825-board-v2-complete-v175-1"></script>
+  <script src="/design-baseline/v244/board-v2-completion.js?v=20260825-board-v2-complete-v175-1"></script>
+  <script src="/design-baseline/v244/board-v2-completion-ui.js?v=20260825-board-v2-complete-v175-1"></script>
+  <script src="/design-baseline/v244/board-v2-issuer.js?v=20260825-board-v2-complete-v175-1"></script>
+  <script src="/design-baseline/v244/board-v2-discovery.js?v=20260825-board-v2-complete-v175-1"></script>
+  <script src="/design-baseline/v244/board-v2-local-issuer.js?v=20260825-board-v2-complete-v175-1"></script>
+  <script src="/design-baseline/v244/board-v2-local-ui.js?v=20260825-board-v2-complete-v175-1"></script>
+  <script src="/design-baseline/v244/board-v2-wildcard-catalog.js?v=20260825-board-v2-complete-v175-1"></script>
+  <script src="/design-baseline/v244/board-v2-wildcard-issuer.js?v=20260825-board-v2-complete-v175-1"></script>
+  <script src="/design-baseline/v244/board-v2-runtime.js?v=20260825-board-v2-complete-v175-1"></script>
+  <script src="/design-baseline/v244/board-pool-v1.js?v=20260811-board-pool-v1-1"></script>
+  <script src="/design-baseline/v244/board-taste-v1.js?v=20260811-board-taste-v1-0"></script>
+  <script src="/design-baseline/v244/failure-context-v1.js?v=20260812-failure-context-v1-0"></script>
+  <script src="/design-baseline/v244/after-lapse-v1.js?v=20260812-after-lapse-v1-0"></script>
+  <script src="/design-baseline/v244/commitment-v1.js?v=20260901-actionable-gamification-v215-1"></script>
+  <script src="/design-baseline/v244/commitment-v2.js?v=20260906-attention-commitment-v244-1"></script>
+  <script src="/design-baseline/v244/commitment-store-v1.js?v=20260901-actionable-gamification-v215-1"></script>
+  <script src="/design-baseline/v244/gamification-integrity-v1.js?v=20260901-actionable-gamification-v215-1"></script>
+  <script src="/design-baseline/v244/chest-reveal-v1.js?v=20260814-chest-reveal-v1-0"></script>
+  <script src="/design-baseline/v244/sound-engine-v1.js?v=20260829-browser-companion-discovery-v202-1"></script>
+  <script src="/design-baseline/v244/sphere-search-v1.js?v=20260814-sphere-search-v1-0"></script>
+  <script src="/design-baseline/v244/chart-labels-v1.js?v=20260814-chart-labels-v1-0"></script>
+  <script src="/design-baseline/v244/md-lite-v1.js?v=20260814-md-lite-v1-0"></script>
+  <script src="/design-baseline/v244/voice-input-v1.js?v=20260829-guide-library-v195-1"></script>
+  <script src="/design-baseline/v244/assistant-actions-v1.js?v=20260829-browser-companion-discovery-v202-1"></script>
+  <script src="/design-baseline/v244/assistant-wake-v1.js?v=20260826-assistant-v181-1"></script>
+  <script src="/design-baseline/v244/sky-events-v1.js?v=20260815-sky-events-v1-0"></script>
+  <script src="/design-baseline/v244/day-load-v1.js?v=20260817-day-load-v1-0"></script>
+  <script src="/design-baseline/v244/founder-pass-v1.js?v=20260827-founder-pass-v1-0"></script>
+  <script src="/design-baseline/v244/guide-v3.js?v=20260830-guide-tree-v205-1"></script>
+  <script src="/design-baseline/v244/guide-v3-copy-ru.js?v=20260830-guide-tree-v205-1"></script>
+  <script src="/design-baseline/v244/guide-v3-copy-en.js?v=20260830-guide-tree-v205-1"></script>
+  <script src="/design-baseline/v244/guide-v3-copy-de.js?v=20260830-guide-tree-v205-1"></script>
+  <script src="/design-baseline/v244/guide-v3-copy-uk.js?v=20260830-guide-tree-v205-1"></script>
+  <script src="/design-baseline/v244/guide-v3-copy-es.js?v=20260830-guide-tree-v205-1"></script>
+  <script src="/design-baseline/v244/guide-presenter-v1.js?v=20260830-guide-tree-v205-1"></script>
+  <script src="/design-baseline/v244/guide-surface-v1.js?v=20260829-guide-library-v195-1"></script>
+  <script src="/design-baseline/v244/goals-initiatives-v1.js?v=20260825-goals-v169-1"></script>
+  <script src="/design-baseline/v244/goal-step-quest-v1.js?v=20260903-write-fence-v215-18"></script>
+  <script src="/design-baseline/v244/quest-goal-link-v1.js?v=20260903-write-fence-v215-18"></script>
+  <script src="/design-baseline/v244/goal-deadline-calendar-v1.js?v=20260903-write-fence-v215-18"></script>
+  <script src="/design-baseline/v244/secretary-events-v1.js?v=20260903-write-fence-v215-18"></script>
+  <script src="/design-baseline/v244/secretary-attention-producer-v1.js?v=20260903-write-fence-v215-18"></script>
+  <script src="/design-baseline/v244/secretary-offer-view-v1.js?v=20260903-write-fence-v215-18"></script>
+  <script src="/design-baseline/v244/sphere-frequency-v1.js?v=20260903-write-fence-v215-18"></script>
+  <script src="/design-baseline/v244/sphere-touch-v1.js?v=20260903-write-fence-v215-18"></script>
+  <script src="/design-baseline/v244/habit-two-minute-v1.js?v=20260903-write-fence-v215-18"></script>
+  <script src="/design-baseline/v244/board-day-line-v1.js?v=20260903-write-fence-v215-18"></script>
+  <script src="/design-baseline/v244/attention-policy-v1.js?v=20260825-attention-r1-v176-1"></script>
+  <script src="/design-baseline/v244/attention-session-v1.js?v=20260825-attention-r1-v176-1"></script>
+  <script src="/design-baseline/v244/attention-episode-v1.js?v=20260825-attention-r1-v176-1"></script>
+  <script src="/design-baseline/v244/attention-controller-v1.js?v=20260825-attention-r1-v176-1"></script>
+  <script src="/design-baseline/v244/attention-ui-v1.js?v=20260829-browser-companion-discovery-v202-1"></script>
+  <script src="/design-baseline/v244/browser-companion-discovery-v1.js?v=20260829-browser-companion-discovery-v202-1"></script>
+  <script src="/design-baseline/v244/account-data-v1.js?v=20260826-launch-hardening-v178-1"></script>
+  <script src="/design-baseline/v244/questionnaire-v1.js?v=20260830-browser-companion-v206-1"></script>
+  <script src="/design-baseline/v244/inspiration-import-v1.js?v=20260829-inspiration-learning-v201-1"></script>
+  <script src="/design-baseline/v244/inspiration-profile-v1.js?v=20260830-economy-art-v208-1"></script>
+  <script src="/design-baseline/v244/inspiration-catalog-v1.js?v=20260829-inspiration-learning-v201-1"></script>
+  <script src="/design-baseline/v244/return-shelf-v1.js?v=20260829-inspiration-learning-v201-1"></script>
+  <script src="/design-baseline/v244/return-shelf-ui-v1.js?v=20260830-economy-art-v208-1"></script>
+  <script src="/design-baseline/v244/account-profile-v1.js?v=20260830-account-profile-v209-1"></script>
+  <script src="/design-baseline/v244/pwa-lifecycle-v1.js?v=20260826-launch-hardening-v180-1"></script>
+  <script src="/design-baseline/v244/first-value-v1.js?v=20260905-actionable-foundations-v216-1"></script>
+  <script src="/design-baseline/v244/first-value-ui-v1.js?v=20260905-actionable-foundations-v216-1"></script>
+  <script src="/design-baseline/v244/ai-memory-policy-v1.js?v=20260905-actionable-foundations-v216-1"></script>
+  <script src="/design-baseline/v244/telemetry-consent-v1.js?v=20260905-actionable-foundations-v216-1"></script>
+  <script src="/design-baseline/v244/actionable-settings-ui-v1.js?v=20260905-actionable-foundations-v216-1"></script>
+  <script src="/design-baseline/v244/app.js?v=20260906-attention-commitment-v244-1"></script>
+  <script src="/design-baseline/v244/shadow-voice-v2.js?v=20260811-voice-v241"></script>
+<script src="/design-comparison-boot.js"></script></body>
+</html>

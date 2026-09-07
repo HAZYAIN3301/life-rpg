@@ -230,6 +230,8 @@ function serveStatic(req, res, urlPath, headOnly) {
     send(res, 200, headOnly ? '' : buf, {
       'Content-Type': MIME[ext] || 'application/octet-stream',
       'Cache-Control': staticCacheControl(urlPath, rel, ext),
+      ...(rel === '/design-baseline/v244/index.html' ? { 'Content-Security-Policy': "sandbox allow-scripts allow-downloads; default-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'none'; form-action 'none'; frame-src 'none'; object-src 'none'", 'Permissions-Policy': 'camera=(), microphone=(), geolocation=()' } : {}),
+      ...(/\.(woff2?|ttf|svg|png|webp|jpg)$/.test(rel) ? {'Access-Control-Allow-Origin':'*'} : {}),
     });
   });
 }

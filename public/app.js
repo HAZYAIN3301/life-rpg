@@ -4556,6 +4556,17 @@ const I18N_EXTRA = {
   'Помощник, профиль, Strava и импорт': { en: 'Assistant, profile, Strava and import', de: 'Assistent, Profil, Strava und Import', uk: 'Помічник, профіль, Strava та імпорт', es: 'Asistente, perfil, Strava e importación' },
   'Идеи и вдохновение': { en: 'Ideas and inspiration', de: 'Ideen und Inspiration', uk: 'Ідеї та натхнення', es: 'Ideas e inspiración' },
   'Помощь': { en: 'Help', de: 'Hilfe', uk: 'Допомога', es: 'Ayuda' },
+  'Прежний интерфейс': { en: 'Previous interface', de: 'Bisherige Oberfläche', uk: 'Попередній інтерфейс', es: 'Interfaz anterior' },
+  'На что потратим заработанное?': { en: 'What will you spend it on?', de: 'Wofür möchtest du es ausgeben?', uk: 'На що витратимо зароблене?', es: '¿En qué lo vas a gastar?' },
+  'Главное сделано': { en: 'The main thing is done', de: 'Das Wichtigste ist erledigt', uk: 'Головне зроблено', es: 'Lo principal está hecho' },
+  'Остальное — по желанию.': { en: 'The rest is optional.', de: 'Der Rest ist freiwillig.', uk: 'Решта — за бажанням.', es: 'Lo demás es opcional.' },
+  'Следующий день — в календаре.': { en: 'The next day is in your calendar.', de: 'Den nächsten Tag findest du im Kalender.', uk: 'Наступний день — у календарі.', es: 'El día siguiente está en el calendario.' },
+  'Добавь первое дело ниже.': { en: 'Add your first task below.', de: 'Füge unten deine erste Aufgabe hinzu.', uk: 'Додай першу справу нижче.', es: 'Añade tu primera tarea abajo.' },
+  'Мысли, которые хочется сохранить.': { en: 'Thoughts worth keeping.', de: 'Gedanken zum Festhalten.', uk: 'Думки, які хочеться зберегти.', es: 'Ideas que quieres guardar.' },
+  'Здесь пока нет участников.': { en: 'No participants yet.', de: 'Noch keine Teilnehmenden.', uk: 'Тут поки немає учасників.', es: 'Aún no hay participantes.' },
+  'Общий XP показывает участие, а не способности. Догонять других не обязательно.': { en: 'Total XP reflects participation, not ability. There is no need to catch up.', de: 'Gesamt-XP zeigen Teilnahme, nicht Können. Du musst niemanden einholen.', uk: 'Загальний XP показує участь, а не здібності. Наздоганяти інших не обов’язково.', es: 'La XP total refleja participación, no capacidad. No tienes que alcanzar a nadie.' },
+  'Как устроен рейтинг': { en: 'How the ranking works', de: 'So funktioniert die Rangliste', uk: 'Як працює рейтинг', es: 'Cómo funciona la clasificación' },
+  'Участники Satoru, вошедшие в аккаунт, увидят твоё имя, аватар, уровень, ранг пути и общий XP. Задачи, привычки и личные записи останутся скрыты.': { en: 'Signed-in Satoru members will see your name, avatar, level, path rank and total XP. Tasks, habits and personal notes stay private.', de: 'Angemeldete Satoru-Mitglieder sehen deinen Namen, Avatar, dein Level, deinen Pfadrang und Gesamt-XP. Aufgaben, Gewohnheiten und persönliche Notizen bleiben privat.', uk: 'Учасники Satoru, які увійшли в акаунт, побачать твоє ім’я, аватар, рівень, ранг шляху та загальний XP. Завдання, звички й особисті записи залишаться прихованими.', es: 'Los miembros de Satoru que hayan iniciado sesión verán tu nombre, avatar, nivel, rango de senda y XP total. Tus tareas, hábitos y notas personales seguirán siendo privados.' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
@@ -13665,7 +13676,10 @@ function renderHeader(force = false) {
     : e.tier === 'trial' ? `<span class="plan-badge trial" title="${t('Pro-триал')}">PRO ${localizedDayCount(trialDaysLeft(), true)}</span>`
     : `<button class="plan-badge free" data-action="show-paywall" data-feature="Pro" title="Открыть Pro — сейчас у тебя Free">${satoruIconHTML('status.unlock', 'inline-glyph', '◇')} Pro?</button>`;
   document.getElementById('appName').textContent = State.settings.appName || 'Satoru';
+  const profileOpen = !!header.querySelector('.profile-details[open]');
   header.innerHTML = `
+    <details class="profile-details"${profileOpen ? ' open' : ''}>
+    <summary><span class="profile-monogram" aria-hidden="true">${esc(Array.from(State.me?.name || 'S')[0])}</span><span class="profile-summary-text"><b>${esc(State.me?.name || 'Satoru')}</b><small>${t('Уровень')} ${oi.level} · ${goldBalance()} ${t('золота')}</small></span><span aria-hidden="true">⌄</span></summary>
     <div class="char-main">
       ${State.me ? `<div class="user-pill" title="${t('Профиль')}">
         <button class="up-av up-av-raster" data-action="go-wardrobe" title="${t('Открыть персонажа')}" aria-label="${t('Открыть персонажа')}">${avatarPortraitHTML({ motion: 'portrait' })}</button>
@@ -13677,7 +13691,8 @@ function renderHeader(force = false) {
       <button class="help-btn" data-action="show-guide" data-guide-target="guide-library" title="${t('Как играть')}" aria-label="${t('Как играть')}">${satoruIconHTML('status.info', 'help-glyph', '?')}</button>
       ${proBadge}
       <button class="btn ghost logout-btn" data-action="logout" title="${t('Сменить профиль')}">${t('⇦ Выйти')}</button>
-    </div>`;
+      <a class="design-compare-link" href="/compare.html" target="_blank" rel="noopener">${t('Прежний интерфейс')} ↗</a>
+    </div></details>`;
 }
 
 // ============================================================
@@ -13775,7 +13790,9 @@ function questRow(q, links) {
   const titleControl = State._editTask === q.id
     ? `<form class="t-edit-form" data-id="${q.id}"><input name="title" value="${esc(q.title)}" maxlength="160" autocomplete="off" aria-label="${t('Квест')}" /></form>`
     : `<button class="t-title-edit" data-action="edit-task-title" data-id="${q.id}" aria-label="${t('Изменить название квеста')}: ${esc(fullTitle)}" title="${t('Клик — изменить текст квеста')}"><span class="t-title-copy" data-noi18n>${taskContentIconHTML(q, 'task-content-icon')}${esc(fullTitle)}</span></button>`;
-  const titleCell = `<div class="t-title">${coreBadge}${titleControl}${questGoalChipHTML(q, links)}</div>`;
+  const coreStart = q.core && !q.done && !State.timer && coreQuests(q.date).find((item) => !item.done)?.id === q.id
+    ? `<button type="button" class="btn task-start" data-action="focus-task" data-id="${q.id}" aria-label="${esc(t('Начать фокус'))}: ${esc(fullTitle)}">${satoruIconHTML('media.play', 'button-glyph', '▶')} ${t('Начать фокус')}</button>` : '';
+  const titleCell = `<div class="t-title">${coreBadge}${titleControl}${questGoalChipHTML(q, links)}${coreStart}</div>`;
   // Квест из прошлого: «✓ в свой день» — засчитать в дату плана, а не в сегодня (fb_mr4qhq6gy30w)
   // Намеренно НЕ taskOverdue(): здесь «past» — просто факт, что дата в прошлом, а не суждение
   // о долге. Амнистия снимает долг, но не право сказать «я это всё-таки сделал в тот день».
@@ -13807,7 +13824,7 @@ function questRow(q, links) {
     <button class="check" data-action="toggle-task" data-id="${q.id}"${guideCompleteTarget} aria-label="${t(q.done ? 'Снять выполнение' : 'Выполнить')}: ${esc(fullTitle)}" aria-pressed="${q.done ? 'true' : 'false'}">${q.done ? '✓' : ''}</button>
     ${titleCell}
     ${skSel}
-    <button class="t-time" data-action="edit-actual" data-id="${q.id}" aria-label="${t('Изменить фактическое время квеста')} ${esc(fullTitle)}: ${time}" title="${t('Клик — фактическое время')}">${time}</button>
+    <span class="task-time-controls"><button type="button" class="task-schedule" data-action="cal-edit-task" data-id="${q.id}" aria-label="${esc(t('Открыть расписание квеста'))}: ${esc(fullTitle)}">${q.startTime ? esc(q.startTime) : t('Без времени')}</button><button class="t-time" data-action="edit-actual" data-id="${q.id}" aria-label="${t('Изменить фактическое время квеста')} ${esc(fullTitle)}: ${time}" title="${t('Клик — фактическое время')}">${time}</button></span>
     <span class="t-diff" title="${DIFF[q.difficulty] || ''}">${difficultyIconHTML(q.difficulty)}</span>
     <span class="t-xp"${guideRewardTarget}>${q.done ? (q.entry ? '💛' : '+' + (q.xpAwarded || 0)) : ''}</span>
     ${backdate}
@@ -15394,8 +15411,8 @@ function openDayRecap() {
   // человек делал дела, а записывать было некогда (fb_mragb9rg2tkz). max=сегодня — вперёд нельзя.
   const dsel = `<label class="dayrec-day">${t('За какой день')}
       <input type="date" id="dayrec-date" value="${todayStr()}" max="${todayStr()}" /></label>`;
-  ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="dayrec-close">✕</button>
-    <h2>🎤 ${t('Итог дня')}</h2>
+  ov.innerHTML = `<div class="ai-box" role="dialog" aria-modal="true" aria-labelledby="dayrec-heading"><button class="modal-x" data-action="dayrec-close" aria-label="${t('Закрыть')}">✕</button>
+    <h2 id="dayrec-heading">🎤 ${t('Итог дня')}</h2>
     <p class="muted" style="font-size:13px;margin:0 0 10px">Расскажи своими словами, что делал — как другу. Тень разложит по делам, сферам и времени. Мелочи (умылся, перекусил) не нужны.</p>
     ${dsel}
     ${SR ? `<button class="btn ghost" id="dayrec-mic" data-action="dayrec-mic" style="margin-bottom:8px">🎤 Говорить</button>` : '<p class="muted" style="font-size:12px">Голос не поддерживается в этом браузере — впиши текстом.</p>'}
@@ -16712,7 +16729,7 @@ function notesPeekToday() {
 function renderNotes() {
   const notes = State.inbox || [];
   if (State._inboxLoadError) return notesRecoveryCard();
-  return `<section class="notes-screen" data-guide-target="notes-overview" aria-labelledby="notes-title"><header class="notes-header"><p class="eyebrow">${t('Сегодня')}</p><h2 id="notes-title">${t('Заметки')}</h2><p>${t('Лови любые мысли — идеи проектов, личное, планы. Всё хранится в одном месте. Потом примени в Satoru (→ Квест) или разберёшь с ИИ (скоро).')}</p></header>${captureBar({ expanded: true })}
+  return `<section class="notes-screen" data-guide-target="notes-overview" aria-labelledby="notes-title"><header class="notes-header"><h2 id="notes-title">${t('Заметки')}</h2><p>${t('Мысли, которые хочется сохранить.')}</p></header>${captureBar({ expanded: true })}
     <section class="notes-list" aria-label="${t('Заметки')}">${notes.length ? notes.map(noteCard).join('') : `<div class="card notes-empty"><p>${t('Пусто. Запиши первую мысль в строке выше ↑ (текст, 🎤 голос или 🎥 видео).')}</p></div>`}</section></section>`;
 }
 function closeNoteDeleteDialog({ restoreFocus = true } = {}) {
@@ -20309,13 +20326,24 @@ function firstValueCard() {
     ? `<section class="card first-value-card first-value-card--error" role="alert"><b>${t('Первый шаг не сохранился')}</b><button class="btn ghost sm" data-action="first-value-onboarding-retry">${t('Повторить')}</button></section>` : '';
   let view = F.deriveJourneyView(State.firstValue, { now: firstValueNow() });
   if (State._firstValueContinueOverTarget) view = { ...view, overTarget: false };
-  const html = UI.renderCard(view, { title: t('Первый результат'), resolveReference: firstValueReference, t, busy: State._firstValueBusy });
+  // Evidence labels may refer to a completed task. The action resolver deliberately
+  // excludes done tasks; do not reuse that exclusion to display a raw technical ID.
+  const resolveReference = (reference) => {
+    if (view.firstValueReached && ['quest', 'task'].includes(reference.entityType)) {
+      const recorded = (State.tasks || []).find((task) => String(task.id) === String(reference.entityId));
+      if (recorded) return { title: recorded.title };
+    }
+    return firstValueReference(reference);
+  };
+  const html = UI.renderCard(view, { title: t('Первый результат'), resolveReference, t, busy: State._firstValueBusy });
   return `${State._firstValueError === 'stale_reference' ? `<p class="first-value-inline-error" role="alert">${t('Этот шаг уже изменился. Выбери актуальный — прежние данные не затронуты.')}</p>` : ''}${html}`;
 }
 
 function renderToday() {
   const today = todayStr();
-  const todays = State.tasks.filter((t) => t.date === today);
+  // Display priority only: keep the stored task order/calendar and timestamps intact.
+  const todays = State.tasks.filter((t) => t.date === today)
+    .sort((a, b) => Number(!!a.done) - Number(!!b.done) || Number(!!b.core) - Number(!!a.core));
   const overdue = State.tasks.filter((t) => taskOverdue(t, today));
   // Цели резолвятся один раз на отрисовку дня, а не поиском по массиву на каждую строку.
   const questGoalLinks = window.QuestGoalLinkV1
@@ -20328,7 +20356,7 @@ function renderToday() {
   const todayEv = xpEvents().filter((e) => e.date === today);
   const xpToday = todayEv.reduce((s, e) => s + e.xp, 0), goldToday = todayEv.reduce((s, e) => s + e.gold, 0), minToday = todayEv.reduce((s, e) => s + e.min, 0);
   const donePct = todays.length ? Math.round(doneCount / todays.length * 100) : 0;
-  const nextQuest = todays.find((t) => !t.done);
+  const nextQuest = todays.find((t) => !t.done && t.core) || todays.find((t) => !t.done);
   const tm = State.timer, tmTask = tm ? questById(tm.taskId) : null;
 
   // Нагрузка дня вместо шкалы энергии. Карточка больше ничего не обещает про «ёмкость»
@@ -20523,16 +20551,12 @@ function renderToday() {
   const closed = dayClosed();
   const heroKicker = closed ? t('День закрыт') : cs.closed ? t('Ядро закрыто') : t('Сегодня');
   const heroTitle = closed ? t('На сегодня всё.')
-    : cs.closed ? t('Ядро закрыто — дальше день твой.')
-    : cs.total ? `${t('Ядро дня')}: ${cs.done}/${cs.total}`
-    : nextQuest ? t('Следующий ход уже выбран.') : todays.length ? t('День почти собран.') : t('Соберём первый квест на сегодня.');
-  const heroSub = closed
-    ? t('Что не сделано — осталось в дне, не в тебе. Ночью не отыгрываемся: завтра свежее.')
-    : cs.closed
-      ? t('Главное сделано. Остальное сегодня — уже бонус, а не долг.')
-      : cs.total
-        ? `${t('Закрой ядро — и день засчитан')}${cs.list.find((x) => !x.done) ? `: <b>${esc(cs.list.find((x) => !x.done).title)}</b>` : ''}`
-        : nextQuest ? t('Сейчас лучше не смотреть на всю систему — закрой следующий квест.') : todays.length ? t('Основной список уже на месте. Добей хвосты, забери награды и закрой день спокойно.') : t('Начни с одного понятного действия. Остальные системы подождут за кулисами.');
+    : cs.closed ? t('Главное сделано')
+    : nextQuest ? esc(nextQuest.title) : t('План на сегодня');
+  const heroSub = closed ? t('Следующий день — в календаре.')
+    : cs.closed ? t('Остальное — по желанию.')
+    : nextQuest ? `${nextQuest.startTime ? esc(nextQuest.startTime) + ' · ' : ''}${fmtDur(Number(nextQuest.estimateMin) || 0)}${nextQuest.core ? ' · ' + t('Ядро дня') : ''}`
+    : t('Добавь первое дело ниже.');
   const thLoad = dayLoadNow();
   const heroStats = [
     tm ? `<div class="th-stat"><b id="timer-clock">${fmtClock(timerElapsedMs())}</b><span>${tmTask ? esc(tmTask.title) : t('Фокус')}</span></div>` : '',
@@ -20541,7 +20565,7 @@ function renderToday() {
     minToday > 0 ? `<div class="th-stat"><b>${fmtDur(minToday)}</b><span>${t('фокус')}</span></div>` : '',
     xpToday > 0 ? `<div class="th-stat"><b>+${xpToday}</b><span>XP</span></div>` : '',
   ].filter(Boolean).join('');
-  const todayHero = `<section class="card today-hero${closed ? ' is-daydone' : cs.closed ? ' is-coredone' : ''}" aria-labelledby="today-title">
+  const todayHero = !tm && cs.total && !cs.closed && !closed ? '' : `<section class="card today-hero${closed ? ' is-daydone' : cs.closed ? ' is-coredone' : ''}" aria-labelledby="today-title">
       <div>
         <span class="th-kicker">${heroKicker}</span>
         <h2 id="today-title">${heroTitle}</h2>
@@ -20553,11 +20577,12 @@ function renderToday() {
   const addQuestCard = `<div class="card card-addquest"><form id="add-task" class="add-row" data-guide-target="first-task-create">
         <label class="add-field add-field-title"><span class="add-field-label">${t('Квест')}</span><input name="title" placeholder="${t('Новый квест на сегодня…')}" maxlength="160" autocomplete="off" required /></label>
         ${sphereFieldHTML()}
-        <details class="quest-add-options"><summary>${t('Длительность и сложность')}</summary><div class="quest-add-options-body">
+        <div class="quest-add-options-body">
+          <label class="add-field add-field-start"><span class="add-field-label">${t('Начало')}</span><input type="time" name="startTime" /></label>
           <span class="add-field add-field-duration" role="group" aria-label="${t('Длительность')}">${durInputHTML('estimateMin', 30, true)}</span>
           <label class="add-field add-field-difficulty"><span class="add-field-label">${t('Сложность')}</span><select name="difficulty"><option value="easy">${t('Лёгкая')}</option><option value="normal" selected>${t('Обычная')}</option><option value="hard">${t('Сложная')}</option></select></label>
           <details class="difficulty-help"><summary>${t('Как выбрать сложность?')}</summary><div class="diff-hint muted"><span>${difficultyIconHTML('easy')} ${t('Лёгкая — рутина, механика')}</span><span>${difficultyIconHTML('normal')} ${t('Обычная — требует фокуса')}</span><span>${difficultyIconHTML('hard')} ${t('Сложная — настоящий вызов')}</span></div></details>
-        </div></details>
+        </div>
         <button class="add-submit" type="submit">${t('+ Квест')}</button></form>
       <div id="cat-suggest" class="cat-suggest" role="status" aria-live="polite"></div>
     </div>`;
@@ -20617,13 +20642,15 @@ function boardTakenLineHTML() {
   // Вкладки «Сегодня». Не новая nav-вкладка: неподвижная граница продукта —
   // ровно 4 primary destinations + More, и доска живёт ВНУТРИ «Сегодня».
   const tab = State._todayTab === 'board' ? 'board' : 'day';
-  const tabs = `<div class="today-tabs" role="tablist" aria-label="${t('Разделы дня')}">
+  const tabs = `<div class="today-tabs"><div class="today-mode-tabs" role="tablist" aria-label="${t('Разделы дня')}">
     <button id="today-tab-day" type="button" role="tab" aria-selected="${tab === 'day'}" aria-controls="today-panel-day" tabindex="${tab === 'day' ? '0' : '-1'}" class="today-tab${tab === 'day' ? ' on' : ''}" data-action="today-tab" data-id="day">${t('День')}</button>
     <button id="today-tab-board" type="button" role="tab" aria-selected="${tab === 'board'}" aria-controls="today-panel-board" tabindex="${tab === 'board' ? '0' : '-1'}" class="today-tab${tab === 'board' ? ' on' : ''}" data-action="today-tab" data-id="board">${t('Доска')}</button>
+    </div><button type="button" class="today-notes-link" data-view="notes" data-guide-target="notes-nav">${t('Заметки')} ↗</button>
   </div>`;
   if (tab === 'board') return `<div class="today-shell board-shell">${tabs}<section id="today-panel-day" role="tabpanel" aria-labelledby="today-tab-day" hidden></section><section id="today-panel-board" class="today-board-panel" role="tabpanel" aria-labelledby="today-tab-board">${boardScreenHTML()}</section></div>`;
-  return `<div class="today-shell">${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>${browserCompanionLaunchHTML()}
-    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${dayNavStripHTML(today)}${firstValueCard()}${todayHero}${captureBar()}${overdueSurface}${amnestyUndo}${questBoard}${scheduleCard}${addQuestCard}${habitsCard}</div>
+  const routeHead = `<header class="today-route-head"><div><p class="route-date">${esc(new Intl.DateTimeFormat(lang(), {weekday:'long',day:'numeric',month:'long'}).format(new Date()))}</p><h2>${t('Сегодня')}</h2></div><button type="button" class="btn ghost day-recap-direct" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></header>`;
+  return `<div class="today-shell">${routeHead}${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>
+    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${dayNavStripHTML(today)}${firstValueCard()}${todayHero}${overdueSurface}${amnestyUndo}${questBoard}${addQuestCard}${scheduleCard}${habitsCard}${captureBar()}${browserCompanionLaunchHTML()}</div>
     <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}</aside>
     <div class="today-footer">${shutdownCard}</div>
   </div>`;
@@ -23082,9 +23109,9 @@ function renderRewards() {
   const achGot = ACHIEVEMENTS.filter((a) => State.achievements[a.id]).length;
   const rewardHero = `<section class="card reward-hero reward-hero-v189">
       <div class="reward-hero-copy">
-        <span class="th-kicker">${t('Честная экономика')}</span>
-        <h2>${t('Награда следует за реальным действием.')}</h2>
-        <p class="muted">${t('Сначала выбери личную ценность. Золото известно заранее, а заработанный сундук сохраняет короткий косметический сюрприз — без ставок, силы и платных попыток.')}</p>
+        <span class="th-kicker">Satoru</span>
+        <h2>${t('Награды')}</h2>
+        <p class="muted">${t('На что потратим заработанное?')}</p>
         <div class="th-actions">
           ${chestReady ? `<button class="btn reward-primary-cta" data-action="open-chest">${t('Получить награду')} ×${chestReady}</button>` : `<button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} ${t('Каталог наград')}</button>`}
           <button class="btn ghost" data-action="goto-today">${satoruIconHTML('nav.today', 'button-glyph', '🎯')} ${t('К делам')}</button>
@@ -26320,17 +26347,17 @@ function renderLeaderboard() {
       <span class="lb-name">${pathGlyph(r.path) ? `<span class="lb-path" title="${esc(t(PATHS[r.path].name))}">${pathGlyph(r.path)}</span> ` : ''}${esc(r.name)}${r.me ? ` <span class="lb-you">${t('ты')}</span>` : ''}<span class="lb-rank">${esc(t(r.rank || ''))}</span></span></button>
       <div class="lb-lvl">${t('ур.')} ${r.level}</div>
       <div class="lb-xp">${Number(r.totalXp || 0).toLocaleString(lang())} XP</div>
-    </div>`).join('') : `<p class="muted social-empty-copy">${t('Публичных участников пока нет. Это настоящее пустое состояние, а не ошибка загрузки.')}</p>`;
+    </div>`).join('') : `<p class="muted social-empty-copy">${t('Здесь пока нет участников.')}</p>`;
   return `
     <section class="card leaderboard-card" aria-labelledby="leaderboard-title">
       <h2 id="leaderboard-title" tabindex="-1">${satoruIconHTML('system.achievement', 'heading-emblem', '◇')} ${t('Рейтинг участия')}</h2>
-      <p class="leaderboard-explainer">${t('Суммарный lifetime XP отражает длительность и объём участия под серверными лимитами. Это не рейтинг навыка, таланта, продуктивности или ценности человека; новички не обязаны догонять старые аккаунты.')}</p>
-      <p class="muted">${t('Сервер заново считает XP из сохранённых задач, привычек и целей и игнорирует числа из запроса. Публично видны только имя, аватар, уровень, ранг пути и итоговый XP.')}</p>
+      <p class="leaderboard-explainer">${t('Общий XP показывает участие, а не способности. Догонять других не обязательно.')}</p>
+      <details class="leaderboard-method"><summary>${t('Как устроен рейтинг')}</summary><p class="muted">${t('Сервер заново считает XP из сохранённых задач, привычек и целей и игнорирует числа из запроса. Публично видны только имя, аватар, уровень, ранг пути и итоговый XP.')}</p></details>
       <div class="lb-table" role="list" aria-label="${esc(t('Рейтинг участия'))}">${list}</div>
     </section>
     <section class="card social-privacy-card ${consent ? 'is-consented' : ''}" aria-labelledby="leaderboard-privacy-title">
       <div><h3 id="leaderboard-privacy-title">${t('Отдельное согласие на публикацию')}</h3>
-      <p>${t('Если разрешить, другие авторизованные пользователи увидят имя, аватар, server-computed lifetime XP, уровень и ранг пути. Задачи, названия привычек, cleanDays, заметки и недельные детали не публикуются.')}</p></div>
+      <p>${t('Участники Satoru, вошедшие в аккаунт, увидят твоё имя, аватар, уровень, ранг пути и общий XP. Задачи, привычки и личные записи останутся скрыты.')}</p></div>
       <button type="button" class="btn ${consent ? 'ghost' : ''}" data-action="set-leaderboard-consent" data-value="${consent ? 'false' : 'true'}" ${State._socialBusy ? 'disabled' : ''}>${consent ? t('Отозвать публикацию') : t('Разрешить публикацию')}</button>
       <p class="social-consent-state" role="status" aria-live="polite">${consent ? t('Публикация включена; согласие можно отозвать сразу') : t('Ты не опубликован в рейтинге')}</p>
       ${State._socialError ? `<p class="social-inline-error" role="alert">${esc(State._socialError)}</p>` : ''}
@@ -26429,7 +26456,7 @@ function renderNav() {
   const subKey = `${cur || ''}|${State.view}|${lang()}|${discovered}`;
   if (nav.dataset.subKey !== subKey) {
     nav.querySelector(':scope > .navsub')?.remove();
-    if (subs) nav.insertAdjacentHTML('beforeend', subs);
+    if (subs && State.view !== 'today') nav.insertAdjacentHTML('beforeend', subs);
     nav.dataset.subKey = subKey;
     requestAnimationFrame(() => {
       const activeSub = nav.querySelector(':scope > .navsub .navsubtab.active');
@@ -26534,6 +26561,8 @@ const ACCENTS = ['#6c8cff', '#22c1a4', '#e0526a', '#b06ff0', '#e0a23e', '#4f9ff7
 function applyTheme() {
   const s = State.settings || {};
   document.documentElement.lang = lang();
+  document.documentElement.dataset.design = 'next';
+  document.documentElement.dataset.view = State.view || 'today';
   // Путь «Контроль» авто-надевает скин «Система» (Solo-Leveling-эстетика строгости), если юзер явно не отключил его оверрайдом.
   const controlSkin = s.path === 'control' && !s.systemSkinOff;
   const sys = !!s.systemMode || controlSkin;
@@ -26541,7 +26570,18 @@ function applyTheme() {
   document.documentElement.dataset.theme = sys ? 'dark' : (s.theme === 'system' ? deviceTheme : (s.theme === 'light' ? 'light' : 'dark'));
   document.documentElement.dataset.system = sys ? 'on' : 'off';
   document.documentElement.dataset.path = s.path === 'control' ? 'control' : 'trust';
-  document.documentElement.style.setProperty('--accent', sys ? '#4fd6ff' : (s.accent || '#6c8cff'));
+  const chosenAccent = s.accent && s.accent !== '#6c8cff' ? s.accent
+    : (document.documentElement.dataset.theme === 'light' ? '#6d5198' : '#c6afe9');
+  document.documentElement.style.setProperty('--accent', sys ? '#b0c8f2' : chosenAccent);
+  // Keep the existing selectable accent palette functional in the new controls.
+  const customAccent = !sys && ACCENTS.includes(s.accent) && s.accent !== ACCENTS[0];
+  if (customAccent) {
+    document.documentElement.style.setProperty('--design-accent', s.accent);
+    document.documentElement.style.setProperty('--design-on-accent', '#18202b');
+  } else {
+    document.documentElement.style.removeProperty('--design-accent');
+    document.documentElement.style.removeProperty('--design-on-accent');
+  }
 }
 let _systemThemeMedia = null;
 function initSystemThemeListener() {
@@ -26878,6 +26918,17 @@ function labelSettingsControls() {
   });
 }
 function commitMainView(main, staging, view) {
+  // Background receipts/nudges may repaint Today while a person composes a quest.
+  // Keep the actual form (including multi-sphere state and cursor), never a second
+  // persistence path. A successful submit explicitly releases this draft.
+  const oldComposer = main.querySelector('#add-task');
+  const newComposer = staging.querySelector('#add-task');
+  const keepComposer = _renderedMainView === view && oldComposer && newComposer
+    && oldComposer.elements.namedItem('title')?.value.trim() && oldComposer.dataset.persisted !== 'true';
+  const draftFocus = keepComposer && oldComposer.contains(document.activeElement) ? document.activeElement : null;
+  const draftSelection = draftFocus && typeof draftFocus.selectionStart === 'number'
+    ? [draftFocus.selectionStart, draftFocus.selectionEnd] : null;
+  if (keepComposer) newComposer.replaceWith(oldComposer);
   main.replaceChildren(...Array.from(staging.childNodes));
   _renderedMainView = view;
   main.classList.remove('is-view-pending');
@@ -26887,6 +26938,11 @@ function commitMainView(main, staging, view) {
     setTimeout(() => main.classList.remove('is-view-entering'), 260);
   });
   afterMainCommit();
+  if (draftFocus) requestAnimationFrame(() => {
+    if (!draftFocus.isConnected) return;
+    draftFocus.focus({preventScroll:true});
+    if (draftSelection) draftFocus.setSelectionRange(...draftSelection);
+  });
 }
 function renderMainView(main) {
   const view = State.view;
@@ -27853,6 +27909,7 @@ async function onSubmit(e) {
       f.title.focus();
       return;
     }
+    f.dataset.persisted = 'true';
     await firstValuePrepareReferenceForTask(task);
     const guide = guideV3State();
     if (guideV3RuntimeAllowed() && guide?.currentChapter === window.GuideV3?.FIRST_CHAPTER && guide.currentStep === 'recognize') {
@@ -32509,7 +32566,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v244';
+const PWA_CACHE_VERSION = 'satoru-v245';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

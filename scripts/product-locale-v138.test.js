@@ -50,7 +50,7 @@ test('v138 locale rows cover every confirmed authored leak in four non-Russian l
 
 test('v138 renders authored Today, Notes, Pets, Rewards, Stats and Settings copy through i18n', () => {
   for (const source of [
-    "t('Соберём первый квест на сегодня.')",
+    "t('Добавь первое дело ниже.')",
     "t('Итог дня')",
     "t('Что считается результатом')",
     "t('Эмбиент-звук')",
@@ -70,5 +70,5 @@ test('v138 does not add duplicate locale rows and ships a fresh shell', () => {
   const block = app.slice(marker, end);
   const keys = [...block.matchAll(/^  '((?:\\'|[^'])+)':/gm)].map((match) => match[1]);
   assert.equal(keys.length, new Set(keys).size);
-  assert.match(sw, /const CACHE = 'satoru-v244'/);
+  assert.match(sw, /const CACHE = 'satoru-v245'/);
 });

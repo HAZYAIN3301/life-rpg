@@ -1,0 +1,86 @@
+{
+  "records": [
+    {
+      "view": "today",
+      "chars": 1090,
+      "error": false
+    },
+    {
+      "view": "calendar",
+      "chars": 576,
+      "error": false
+    },
+    {
+      "view": "goals",
+      "chars": 408,
+      "error": false
+    },
+    {
+      "view": "habits",
+      "chars": 394,
+      "error": false
+    },
+    {
+      "view": "notes",
+      "chars": 305,
+      "error": false
+    },
+    {
+      "view": "shelf",
+      "chars": 445,
+      "error": false
+    },
+    {
+      "view": "rewards",
+      "chars": 864,
+      "error": false
+    },
+    {
+      "view": "den",
+      "chars": 186,
+      "error": false
+    },
+    {
+      "view": "character",
+      "chars": 593,
+      "error": false
+    },
+    {
+      "view": "pets",
+      "chars": 1031,
+      "error": false
+    },
+    {
+      "view": "tree",
+      "chars": 585,
+      "error": false
+    },
+    {
+      "view": "stats",
+      "chars": 272,
+      "error": false
+    },
+    {
+      "view": "weekly",
+      "chars": 935,
+      "error": false
+    },
+    {
+      "view": "party",
+      "chars": 225,
+      "error": false
+    },
+    {
+      "view": "leaderboard",
+      "chars": 757,
+      "error": false
+    },
+    {
+      "view": "settings",
+      "chars": 903,
+      "error": false
+    }
+  ],
+  "errors": [],
+  "network": []
+}

@@ -41,8 +41,10 @@ test('Today composes one work contour and moves secondary systems out of its ren
     assert.equal(composition.includes(oldCard), false, `${oldCard} returned to the Today composition`);
   }
 
-  assert.match(composition, /\$\{todayHero\}\$\{captureBar\(\)\}/,
-    'capture must remain immediately after the day hero');
+  assert.match(composition, /\$\{questBoard\}\$\{addQuestCard\}\$\{scheduleCard\}\$\{habitsCard\}\$\{captureBar\(\)\}/,
+    'the requested task-first layout keeps capture after work, without dropping it');
+  assert.match(composition, /day-recap-direct[\s\S]*data-action="day-recap"/,
+    'voice recap remains a direct header action');
   assert.match(composition, /\$\{companionCard\(attentionTodayControlHTML\(selectedNudge\)\)\}/,
     'recovery/attention and the selected offer must stay inside the companion support card');
 });

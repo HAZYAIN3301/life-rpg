@@ -1,5 +1,30 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-08] Design v245 — настоящий runtime + frozen v244 для сравнения
+
+Последний запрос Альберта снял preview-only gate: новый вид в приложении, старый в облаке.
+Применена единая rounded-violet оболочка ко всем 16 прежним маршрутам, desktop rail /
+mobile bottom-nav, Russo One, light/dark/system, существующая палитра акцентов и art.
+Сохранены реальные State/Store/CAS/WAL, прежние персонаж/питомцы/инвентарь/экономика.
+Today: прямой голосовой итог, startTime/estimate/actual, запуск ядра, выполненное ниже;
+одна навигация День/Доска/Заметки. Поддержка после рабочих действий. Другие разделы:
+общие карточки/формы/dialogs, исправления ширины недели и pet/habit layouts, яснее copy.
+Фоновый repaint больше не стирает набранный task form; завершённая first-value evidence
+показывает название задачи, не её ID. Существующие eligibility и XP не переписаны.
+
+Архив: `/compare.html` → `/design-baseline/v244/index.html`, исходники от `74a97dd`,
+95 code/style/font с SHA-256; только synthetic read-only boot. CSP sandbox/opaque origin,
+connect-src none, no forms/camera/mic/location. Данные реального аккаунта не копировались.
+Ссылка также в профиле нового UI. Пользователь уведомлён о synthetic/read-only варианте.
+
+Проверки: 1929/1929 suite concurrency=2; 32 новых/16 прежних основных экранов;
+8 edge cases, primary contrast ≥4.5; реальные create/edit/complete/reload, принудительный
+CAS 503 + draft/rollback/retry, voice dialog. Первая fault-injection НЕ была валидной:
+тест сначала не учитывал защищённый CAS endpoint; исправлено и подтверждено счётчиком/503.
+QA/screens/JSON — `art-factory/design-rollout-20260908/QA.md`. Release receipt после
+публикации — DESIGN-ROLLOUT-V1.md. Физический телефон, Push/микрофон, полная матрица
+вложенных форм/наполненных команд не заявлены проверенными. Остаток — BACKLOG.
+
 ## [2026-09-08] Связные Today + Plan/Goals; общий редактор и финальный mobile pass
 
 По просьбе Альберта существенно продолжен утверждённый rounded-violet lab.

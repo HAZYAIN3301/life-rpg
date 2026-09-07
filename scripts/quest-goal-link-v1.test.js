@@ -94,14 +94,14 @@ test('the module is loaded before app.js and cached once for offline', () => {
   assert.ok(moduleAt >= 0, 'index must load quest-goal-link-v1.js');
   assert.ok(INDEX.indexOf('src="app.js') > moduleAt, 'app.js must run after the module it calls');
   assert.equal((SW.match(/'quest-goal-link-v1\.js'/g) || []).length, 1, 'SHELL must pin the module exactly once');
-  assert.match(SW, /const CACHE = 'satoru-v244'/, 'новый файл в SHELL обязан поднять версию кэша');
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v244'/);
+  assert.match(SW, /const CACHE = 'satoru-v245'/, 'новый файл в SHELL обязан поднять версию кэша');
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v245'/);
 });
 
 test('the day names the goal on the quest row itself, not only inside «•••»', () => {
   assert.match(APP, /function questGoalChipHTML\(q, links\)/);
   // чип живёт в той же ячейке, что и «Ядро дня», поэтому сетка строки не меняется
-  assert.match(APP, /<div class="t-title">\$\{coreBadge\}\$\{titleControl\}\$\{questGoalChipHTML\(q, links\)\}<\/div>/);
+  assert.match(APP, /<div class="t-title">\$\{coreBadge\}\$\{titleControl\}\$\{questGoalChipHTML\(q, links\)\}\$\{coreStart\}<\/div>/);
   // и ведёт в саму цель тем же действием, что и ссылка в меню
   assert.match(APP, /task-goal-chip[^`]*data-action="goto-goal"/);
   assert.match(CSS, /\.task-goal-chip \{/);
