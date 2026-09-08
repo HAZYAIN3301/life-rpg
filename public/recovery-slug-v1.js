@@ -17,7 +17,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildRecoverySlugV1() {
   'use strict';
 
-  const VERSION = '2.6.1';
+  const VERSION = '2.6.2';
   const ART_ROOT = '/art/pets/recovery-slug-v1/';
   const MOTION_ART_ROOT = `${ART_ROOT}motion-v2/`;
   const PAIR_ART_ROOT = `${ART_ROOT}pair-v2/`;
@@ -27,9 +27,9 @@
   const STATES = Object.freeze(['calm', 'thriving', 'strained', 'restoring']);
   const STATE_META = Object.freeze({
     calm: { label: 'Спокойна', line: 'Дышит медленно и хранит запас тишины.' },
-    thriving: { label: 'Наполнена', line: 'Отдых действительно возвращает тебе силы.' },
-    strained: { label: 'Тревожится', line: 'Слишком долго не было настоящей паузы.' },
-    restoring: { label: 'Лечит', line: 'Не торопит: силы уже возвращаются.' },
+    thriving: { label: 'Наполнена', line: 'В записях есть время для отдыха.' },
+    strained: { label: 'Предлагает паузу', line: 'Как ты себя чувствуешь? Можно передохнуть рядом.' },
+    restoring: { label: 'Рядом', line: 'Пауза отмечена. Можно никуда не спешить.' },
   });
   const MOTION_FRAMES = Object.freeze({
     compress: 'glide-compress.png',
@@ -114,11 +114,15 @@
 
   function deriveState(signal) {
     const input = signal || {};
-    const gap = Math.max(0, Number(input.restGapDays) || 0);
-    const energy = Math.max(0, Math.min(100, Number(input.energyPct) || 0));
-    if (gap <= 1 && energy < 68) return 'restoring';
-    if (gap >= 5 || energy <= 25) return 'strained';
-    if (gap === 0 && energy >= 75) return 'thriving';
+    const known = value => typeof value === 'number' && Number.isFinite(value) && value >= 0;
+    const gap = known(input.restGapDays) ? input.restGapDays : null;
+    // Retain explicit legacy measurements, never turn absent energy into zero.
+    const energy = known(input.energyPct) ? Math.min(100,input.energyPct) : null;
+    if (gap !== null && gap <= 1 && energy !== null && energy < 68) return 'restoring';
+    if ((gap !== null && gap >= 5) || (energy !== null && energy <= 25)) return 'strained';
+    if (gap === 0 && energy !== null && energy >= 75) return 'thriving';
+    if (input.dayLoad === 'heavy' || input.dayLoad === 'over') return 'strained';
+    if (gap !== null && gap <= 1) return 'restoring';
     return 'calm';
   }
 

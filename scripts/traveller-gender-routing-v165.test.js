@@ -168,12 +168,13 @@ test('v183 app shell loads the resolver before consumers and pins changed runtim
   const originalRevision = '20260819-traveller-f2-runtime-v167-1';
   const feedbackRevision = '20260826-appearance-feedback-v183-1';
   for (const file of ['body-toad-v1.js', 'recovery-slug-v1.js', 'traveller-appearance-v1.js']) {
-    assert.match(html, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=${feedbackRevision}`), `${file} must use the v183 feedback pin`);
+    const revision = file === 'recovery-slug-v1.js' ? '20260908-product-polish-v248-1' : feedbackRevision;
+    assert.match(html, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=${revision}`), `${file} must use its active pin`);
   }
   for (const file of ['shadow-den-v1.js', 'resources-penguin-v1.js', 'traveller-motion-v3.js', 'traveller-room-v4.js']) {
     assert.match(html, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=${originalRevision}`), `${file} must retain the v167 pin`);
   }
-  assert.match(html, /app\.js\?v=20260908-design-v247-1/);
+  assert.match(html, /app\.js\?v=20260908-design-v248-1/);
   const appearanceIndex = html.indexOf('traveller-appearance-v1.js');
   const motionIndex = html.indexOf('traveller-motion-v3.js');
   const roomIndex = html.indexOf('traveller-room-v4.js');
@@ -182,6 +183,6 @@ test('v183 app shell loads the resolver before consumers and pins changed runtim
   for (const file of ['shadow-den-v1.js', 'body-toad-v1.js', 'recovery-slug-v1.js', 'resources-penguin-v1.js']) {
     assert.ok(html.indexOf(file) < appIndex, `${file} must load before app.js`);
   }
-  assert.match(sw, /const CACHE = 'satoru-v247';/);
+  assert.match(sw, /const CACHE = 'satoru-v248';/);
   assert.match(sw, /'traveller-appearance-v1\.js', 'traveller-motion-v3\.js', 'traveller-room-v4\.js'/);
 });

@@ -4,7 +4,7 @@ import {readFile,writeFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const require=createRequire(new URL('../art-factory/avatar-3d-v1-20260907/package.json',import.meta.url));
 const {chromium}=require('playwright');
-const pub=new URL('../public/',import.meta.url),dir=new URL('../art-factory/design-deep-20260908/',import.meta.url);
+const pub=new URL('../public/',import.meta.url),dir=new URL(process.env.SATORU_QA_OUTPUT || '../art-factory/design-deep-20260908/',import.meta.url);
 const html=(await readFile(new URL('index.html',pub),'utf8')).replace('<head>','<head><script src="/design-comparison-guard.js"></script>').replace('</body>','<script src="/design-comparison-boot.js"></script></body>');
 const app=(await readFile(new URL('app.js',pub),'utf8')).replace(/init\(\);\s*$/,'// Synthetic boot');
 // Extend only the test browser's navigation allowlist. Frozen archive is unchanged;

@@ -1,0 +1,14 @@
+{
+  "checks": [
+    "real init: Day/Board keyboard navigation",
+    "habit creation draft and expanded form survive background repaint",
+    "zero weekdays rejected; 503 preserves draft, client and server habit",
+    "atomic edit + pause persisted; no change to completion history",
+    "paused habit stays discoverable after reload; resume persisted",
+    "stale editor refuses to overwrite a changed habit",
+    "mobile named Shadow entry opens real assistant without overlapping tasks",
+    "assistant setup reveals real form; failed key save cannot claim success or erase input"
+  ],
+  "errors": [],
+  "complete": true
+}

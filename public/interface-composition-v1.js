@@ -101,6 +101,13 @@
         content.append(nav, ...siblings);
         const daily = today || q('.habit-today-card');
         region(shell, 'habits-workspace', [daily, content]);
+        // First choose the habit; identity work is optional, not an entrance exam.
+        const identity = q('.hb-intro:has(#identity-goal)'), list = q('.hb-list');
+        if (identity && list) {
+          const details = el(root.ownerDocument,'details','habit-identity-disclosure');
+          const summary = el(root.ownerDocument,'summary',''); summary.textContent=t('Личный ориентир');
+          details.append(summary,identity); list.after(details);
+        }
       }
     }
     if (view === 'notes') {
@@ -191,10 +198,19 @@
       const shell = q('.settings-shell'), hub = q('.settings-hub'), nav = q('.settings-hub-nav');
       const groups = all('.settings-shell > .settings-group');
       if (shell && hub && nav && groups.length) {
+        // Focus affects planning, not how much XP a minute is worth.
+        const planning = groups.find(group => group.dataset.settingsGroup === 'life');
+        const focus = q('.focus-settings-card'); if (planning && focus) planning.querySelector('.settings-group-head').after(focus);
         hub.querySelector('.settings-eyebrow')?.remove();
+        hub.querySelector(':scope > div > p.muted')?.remove(); // the live save state already explains saving
         const heading = hub.querySelector('h2'); if (heading) heading.textContent = t('Настройки');
         const rail = el(root.ownerDocument, 'aside', 'settings-purpose-rail'); rail.append(nav);
-        const step = q('.settings-mobile-step'); if (step) rail.append(step);
+        const step = q('.settings-mobile-step'); step?.remove(); // settings are destinations, not wizard steps
+        const picker = el(root.ownerDocument,'button','btn ghost settings-purpose-picker');
+        picker.type='button';picker.dataset.settingsPicker='toggle';
+        picker.textContent=(nav.querySelector('[aria-pressed="true"]')?.textContent || t('Настройки'))+' ▾';
+        picker.setAttribute('aria-expanded','false');picker.setAttribute('aria-controls','settings-purpose-options');
+        nav.id='settings-purpose-options';rail.prepend(picker);
         const content = el(root.ownerDocument, 'div', 'settings-purpose-content'); content.append(...groups);
         region(shell, 'settings-workspace', [rail,content]);
       }
@@ -235,6 +251,12 @@
   }
   root.InterfaceCompositionV1 = Object.freeze({apply, select, reveal});
   root.document?.addEventListener('click', event => {
+    const picker = event.target.closest('[data-settings-picker]');
+    if (picker) {
+      const open = picker.getAttribute('aria-expanded') !== 'true';
+      picker.setAttribute('aria-expanded',String(open));picker.parentElement.classList.toggle('is-choosing',open);
+      root.sfx?.(open?'open':'close');return;
+    }
     const button = event.target.closest('[data-layout-tab]');
     if (button) {
       if (button.getAttribute('aria-selected') !== 'true') root.sfx?.('navigate');

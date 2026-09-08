@@ -1,0 +1,11 @@
+{
+  "release": "satoru-v248",
+  "command": "node --test --test-concurrency=2 scripts/*.test.js",
+  "tests": 1935,
+  "pass": 1935,
+  "fail": 0,
+  "skipped": 0,
+  "durationMs": 38616.180875,
+  "newRegressionFile": "scripts/product-polish-v248.test.js",
+  "note": "Test release pins and recovery version assertions updated. Reward probability requirements retained; redundant badge assertion now targets the actual odds disclosure."
+}

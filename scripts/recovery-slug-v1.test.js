@@ -12,7 +12,7 @@ function pngSize(file) {
   return [header.readUInt32BE(16), header.readUInt32BE(20)];
 }
 
-assert.equal(slug.VERSION, '2.6.1');
+assert.equal(slug.VERSION, '2.6.2');
 assert.deepEqual(slug.TRAVELLER_GENDERS, ['male', 'female']);
 assert.deepEqual(slug.AUTHORED_PAIR_GENDERS, ['male', 'female']);
 assert.equal(slug.normalizeTravellerGender(), 'male');
@@ -27,6 +27,12 @@ assert.equal(slug.deriveState({ restGapDays: 7, energyPct: 90 }), 'strained');
 assert.equal(slug.deriveState({ restGapDays: 0, energyPct: 48 }), 'restoring');
 assert.equal(slug.deriveState({ restGapDays: 0, energyPct: 88 }), 'thriving');
 assert.equal(slug.deriveState({ restGapDays: 3, energyPct: 70 }), 'calm');
+assert.equal(slug.deriveState({}), 'calm');
+assert.equal(slug.deriveState({restGapDays:null,dayLoad:'unknown'}), 'calm');
+assert.equal(slug.deriveState({restGapDays:null,energyPct:null}), 'calm');
+assert.equal(slug.deriveState({restGapDays:null,dayLoad:'normal'}), 'calm');
+assert.equal(slug.deriveState({restGapDays:3,dayLoad:'heavy'}), 'strained');
+assert.equal(slug.deriveState({restGapDays:0,dayLoad:'normal'}), 'restoring');
 assert.equal(slug.frameSrc('calm', true), '/art/pets/recovery-slug-v1/states/calm.png');
 assert.equal(slug.pairFrameSrc('greet-contact'), '/art/pets/recovery-slug-v1/pair-v2/greet-contact.png?v=20260806-2');
 assert.equal(slug.pairFrameSrc('greet-contact', 'female'), '/art/pets/recovery-slug-v1/pair-v2/female/f2-v1/greet-contact.png?v=20260806-2');

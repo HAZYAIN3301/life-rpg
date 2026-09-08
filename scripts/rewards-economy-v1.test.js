@@ -81,7 +81,8 @@ test('daily rewards keep an earned, disclosed and power-free surprise', () => {
   assert.match(functionBody('cosmeticCapsulePool'), /!ownsCosmetic\(item\.id\)/);
   assert.match(functionBody('capsuleRandomUnit'), /crypto\.getRandomValues/);
   assert.match(functionBody('rollChestPrize'), /chestOdds/);
-  assert.match(functionBody('lootboxCard'), /Шансы сундука открыты/);
+  assert.match(functionBody('lootboxCard'), /<details class="capsule-odds"><summary>\$\{t\('Вероятности сундука'\)\}/);
+  assert.match(functionBody('lootboxCard'), /capsuleOddsHTML/);
   assert.match(functionBody('lootboxCard'), /Free и Pro получают один и тот же набор и одну попытку/);
   assert.match(functionBody('lootboxCard'), /Ставки нет, силу предметы не дают, дубликатов косметики нет/);
   assert.doesNotMatch(APP, /function (?:rollLoot|lootResolve|applyLoot|showLootEditor)\s*\(/);

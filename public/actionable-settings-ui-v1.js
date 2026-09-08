@@ -12,7 +12,7 @@
   function telemetryState(purpose, consent, context) {
     const on = purpose.essential || consent?.purposes?.[purpose.id] === true;
     if (purpose.essential) return tx(context, 'Всегда включено');
-    if (!on) return tx(context, 'Выключено вами');
+    if (!on) return tx(context, decided(consent, purpose.id) ? 'Выключено вами' : 'Выключено по умолчанию');
     return decided(consent, purpose.id) ? tx(context, 'Включено вами') : tx(context, 'Включено по умолчанию — можно выключить');
   }
   function renderTelemetry(payload, context = {}) {
@@ -26,14 +26,14 @@
   }
   function memoryActions(entry, context) {
     const disabled = context.busy || context.partial;
-    if (entry.status === 'dismissed') return `<button type="button" class="btn ghost sm" data-action="ai-memory-restore" data-id="${esc(entry.id)}" ${disabled ? 'disabled' : ''}>${esc(tx(context, 'Вернуть'))}</button>`;
-    return `<button type="button" class="btn ghost sm" data-action="ai-memory-edit" data-id="${esc(entry.id)}" ${disabled ? 'disabled' : ''}>${esc(tx(context, 'Исправить'))}</button><button type="button" class="btn ghost sm" data-action="ai-memory-dismiss" data-id="${esc(entry.id)}" ${disabled ? 'disabled' : ''}>${esc(tx(context, 'Не использовать'))}</button><button type="button" class="btn danger sm" data-action="ai-memory-delete" data-id="${esc(entry.id)}" ${disabled ? 'disabled' : ''}>${esc(tx(context, 'Удалить'))}</button>`;
+    if (entry.status === 'dismissed') return `<button type="button" class="btn ghost sm" data-action="ai-memory-restore" data-id="${esc(entry.id)}" ${disabled ? 'disabled' : ''}>${esc(tx(context, 'Вернуть'))}</button><button type="button" class="btn danger sm" data-action="ai-memory-delete" data-id="${esc(entry.id)}" ${disabled || entry.deletable === false ? 'disabled' : ''}>${esc(tx(context, 'Удалить'))}</button>`;
+    return `<button type="button" class="btn ghost sm" data-action="ai-memory-edit" data-id="${esc(entry.id)}" ${disabled || entry.editable === false ? 'disabled' : ''}>${esc(tx(context, 'Исправить'))}</button><button type="button" class="btn ghost sm" data-action="ai-memory-dismiss" data-id="${esc(entry.id)}" ${disabled ? 'disabled' : ''}>${esc(tx(context, 'Не использовать'))}</button><button type="button" class="btn danger sm" data-action="ai-memory-delete" data-id="${esc(entry.id)}" ${disabled || entry.deletable === false ? 'disabled' : ''}>${esc(tx(context, 'Удалить'))}</button>`;
   }
   function renderMemory(payload, context = {}) {
     if (context.loading) return `<section class="card actionable-card" aria-busy="true"><h3>${esc(tx(context, 'Память помощника'))}</h3><p class="muted">${esc(tx(context, 'Загружаем память…'))}</p></section>`;
     if (!payload || !Array.isArray(payload.entries)) return `<section class="card actionable-card" role="alert"><h3>${esc(tx(context, 'Память помощника'))}</h3><p>${esc(tx(context, context.error || 'Не удалось загрузить память помощника.'))}</p><button type="button" class="btn ghost" data-action="ai-memory-retry">${esc(tx(context, 'Повторить'))}</button></section>`;
     const rows = payload.entries.map((entry) => {
-      const editing = String(context.editingId || '') === String(entry.id);
+      const editing = !payload.partial && entry.editable !== false && String(context.editingId || '') === String(entry.id);
       const body = editing ? `<form class="ai-memory-edit-form" data-memory-id="${esc(entry.id)}"><label><span>${esc(tx(context, 'Что помнить'))}</span><textarea name="text" maxlength="400" required>${esc(entry.text)}</textarea></label><div class="actionable-row"><button type="submit" class="btn sm" ${context.busy ? 'disabled' : ''}>${esc(tx(context, 'Сохранить'))}</button><button type="button" class="btn ghost sm" data-action="ai-memory-cancel">${esc(tx(context, 'Отмена'))}</button></div></form>` : `<p class="ai-memory-entry__text" data-noi18n>${esc(entry.text)}</p>`;
       return `<article class="ai-memory-entry${entry.status === 'dismissed' ? ' is-dismissed' : ''}" data-memory-id="${esc(entry.id)}">${body}<div class="ai-memory-entry__explain"><span>${esc(tx(context, entry.origin))}</span><span>${esc(tx(context, entry.usage))}</span></div>${editing ? '' : `<div class="actionable-row">${memoryActions(entry, { ...context, partial: payload.partial })}</div>`}</article>`;
     }).join('');

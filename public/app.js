@@ -4566,6 +4566,37 @@ const I18N_EXTRA = {
   'Здесь пока нет участников.': { en: 'No participants yet.', de: 'Noch keine Teilnehmenden.', uk: 'Тут поки немає учасників.', es: 'Aún no hay participantes.' },
   'Общий XP показывает участие, а не способности. Догонять других не обязательно.': { en: 'Total XP reflects participation, not ability. There is no need to catch up.', de: 'Gesamt-XP zeigen Teilnahme, nicht Können. Du musst niemanden einholen.', uk: 'Загальний XP показує участь, а не здібності. Наздоганяти інших не обов’язково.', es: 'La XP total refleja participación, no capacidad. No tienes que alcanzar a nadie.' },
   'Как устроен рейтинг': { en: 'How the ranking works', de: 'So funktioniert die Rangliste', uk: 'Як працює рейтинг', es: 'Cómo funciona la clasificación' },
+  'Профиль и доступ': {en:'Profile & access',de:'Profil & Zugang',uk:'Профіль і доступ',es:'Perfil y acceso'},
+  'Профиль, безопасность и подписка': {en:'Profile, security and subscription',de:'Profil, Sicherheit und Abo',uk:'Профіль, безпека та підписка',es:'Perfil, seguridad y suscripción'},
+  'Интерфейс': {en:'Appearance',de:'Oberfläche',uk:'Інтерфейс',es:'Interfaz'},
+  'Планирование': {en:'Planning',de:'Planung',uk:'Планування',es:'Planificación'},
+  'Сферы, фокус и подход к делам': {en:'Life areas, focus and approach',de:'Lebensbereiche, Fokus und Vorgehen',uk:'Сфери, фокус і підхід до справ',es:'Áreas, enfoque y método'},
+  'Тень и подключения': {en:'Shadow & connections',de:'Schatten & Verbindungen',uk:'Тінь і підключення',es:'Sombra y conexiones'},
+  'Память, ИИ и подключённые сервисы': {en:'Memory, AI and connected services',de:'Gedächtnis, KI und verbundene Dienste',uk:'Пам’ять, ШІ та підключені сервіси',es:'Memoria, IA y servicios conectados'},
+  'Игровые правила': {en:'Game rules',de:'Spielregeln',uk:'Ігрові правила',es:'Reglas del juego'},
+  'XP, золото и уровни': {en:'XP, gold and levels',de:'XP, Gold und Level',uk:'XP, золото й рівні',es:'XP, oro y niveles'},
+  'Диагностика, экспорт и восстановление': {en:'Diagnostics, export and recovery',de:'Diagnose, Export und Wiederherstellung',uk:'Діагностика, експорт і відновлення',es:'Diagnóstico, exportación y recuperación'},
+  'Контекст для разговоров': {en:'Conversation context',de:'Gesprächskontext',uk:'Контекст для розмов',es:'Contexto para conversar'},
+  'Расписание и параметры': {en:'Schedule & settings',de:'Zeitplan & Einstellungen',uk:'Розклад і параметри',es:'Horario y ajustes'},
+  'Пауза скрывает привычку из дня, но сохраняет все отметки.': {en:'Pausing hides the habit from your day and keeps every past check-in.',de:'Eine Pause blendet die Gewohnheit im Tag aus. Alle bisherigen Einträge bleiben.',uk:'Пауза приховує звичку з дня, але зберігає всі відмітки.',es:'La pausa oculta el hábito del día y conserva todos los registros.'},
+  'Данные изменились. Открой привычку заново.': {en:'The data changed. Reopen the habit.',de:'Die Daten haben sich geändert. Öffne die Gewohnheit erneut.',uk:'Дані змінилися. Відкрий звичку знову.',es:'Los datos cambiaron. Vuelve a abrir el hábito.'},
+  'Расписание, пауза и наблюдения — рядом с самими привычками.': {en:'Manage schedules, pauses and observations beside your habits.',de:'Zeitpläne, Pausen und Beobachtungen findest du bei deinen Gewohnheiten.',uk:'Розклад, пауза й спостереження — поруч зі звичками.',es:'Horarios, pausas y observaciones están junto a tus hábitos.'},
+  'Открыть привычки': {en:'Open habits',de:'Gewohnheiten öffnen',uk:'Відкрити звички',es:'Abrir hábitos'},
+  'Граница до события': {en:'Set a boundary first',de:'Vorher eine Grenze setzen',uk:'Межа до події',es:'Pon un límite antes'},
+  'Ограничь отвлекающий сайт. Записи ниже — только наблюдения, не блокировка.': {en:'Set a limit for a distracting site. The entries below are observations, not a blocker.',de:'Begrenze eine ablenkende Website. Die Einträge unten sind Beobachtungen, keine Sperre.',uk:'Обмеж відволікальний сайт. Записи нижче — спостереження, не блокування.',es:'Limita un sitio que te distraiga. Los registros de abajo son observaciones, no un bloqueo.'},
+  'Настроить границы внимания': {en:'Set attention boundaries',de:'Aufmerksamkeitsgrenzen einrichten',uk:'Налаштувати межі уваги',es:'Configurar límites de atención'},
+  'Выключено по умолчанию': {en:'Off by default',de:'Standardmäßig ausgeschaltet',uk:'Вимкнено за замовчуванням',es:'Desactivado por defecto'},
+  'Добавь ключ выбранного сервиса. Пустые поля оставляют сохранённые ключи без изменений.': {en:'Add a key from your chosen service. Empty fields leave saved keys unchanged.',de:'Trage den Schlüssel deines Dienstes ein. Leere Felder ändern gespeicherte Schlüssel nicht.',uk:'Додай ключ обраного сервісу. Порожні поля не змінюють збережені ключі.',es:'Añade una clave del servicio elegido. Los campos vacíos no cambian las claves guardadas.'},
+  '«Получить ключ» открывает сайт сервиса. Его условия и лимиты могут отличаться.': {en:'“Get a key” opens the service website. Its terms and limits may differ.',de:'„Schlüssel erhalten“ öffnet die Website des Dienstes. Bedingungen und Limits können abweichen.',uk:'«Отримати ключ» відкриває сайт сервісу. Його умови й ліміти можуть відрізнятися.',es:'«Obtener clave» abre el sitio del servicio. Sus condiciones y límites pueden variar.'},
+  'Сохранённый ключ не показывается в интерфейсе.': {en:'Saved keys are not displayed in the interface.',de:'Gespeicherte Schlüssel werden nicht angezeigt.',uk:'Збережений ключ не показується в інтерфейсі.',es:'La clave guardada no se muestra en la interfaz.'},
+  'Тень доступна с Pro или с твоим ключом ИИ.': {en:'Use Shadow with Pro or your own AI key.',de:'Nutze den Schatten mit Pro oder deinem eigenen KI-Schlüssel.',uk:'Тінь доступна з Pro або з твоїм ключем ШІ.',es:'Usa Sombra con Pro o con tu propia clave de IA.'},
+  'Подключи ИИ, чтобы обсуждать планы и действовать вместе с Тенью.': {en:'Connect AI to discuss plans and take action with Shadow.',de:'Verbinde KI, um mit dem Schatten zu planen und zu handeln.',uk:'Підключи ШІ, щоб обговорювати плани й діяти разом із Тінню.',es:'Conecta la IA para hablar de tus planes y actuar con Sombra.'},
+  'Предлагает паузу': {en:'A pause, perhaps',de:'Vielleicht eine Pause',uk:'Пропонує паузу',es:'Propone una pausa'},
+  'Как ты себя чувствуешь? Можно передохнуть рядом.': {en:'How do you feel? You can pause here together.',de:'Wie geht es dir? Hier ist Platz für eine Pause.',uk:'Як ти почуваєшся? Можна перепочити поруч.',es:'¿Cómo te sientes? Puedes descansar aquí un momento.'},
+  'Пауза отмечена. Можно никуда не спешить.': {en:'A pause is recorded. No need to rush.',de:'Eine Pause ist eingetragen. Keine Eile.',uk:'Паузу відмічено. Можна нікуди не поспішати.',es:'Has registrado una pausa. No hay prisa.'},
+  'В записях есть время для отдыха.': {en:'Your records include time for rest.',de:'In deinen Einträgen ist Zeit für Erholung.',uk:'У записах є час для відпочинку.',es:'Tus registros incluyen tiempo de descanso.'},
+  'Состояние по записям, не измерение самочувствия.': {en:'Based on your records, not a measurement of how you feel.',de:'Aus deinen Einträgen, keine Messung deines Befindens.',uk:'Стан за записами, не вимірювання самопочуття.',es:'Se basa en tus registros, no mide cómo te sientes.'},
+  'Личный ориентир': {en:'Personal direction',de:'Persönliche Richtung',uk:'Особистий орієнтир',es:'Rumbo personal'},
   'Участники Satoru, вошедшие в аккаунт, увидят твоё имя, аватар, уровень, ранг пути и общий XP. Задачи, привычки и личные записи останутся скрыты.': { en: 'Signed-in Satoru members will see your name, avatar, level, path rank and total XP. Tasks, habits and personal notes stay private.', de: 'Angemeldete Satoru-Mitglieder sehen deinen Namen, Avatar, dein Level, deinen Pfadrang und Gesamt-XP. Aufgaben, Gewohnheiten und persönliche Notizen bleiben privat.', uk: 'Учасники Satoru, які увійшли в акаунт, побачать твоє ім’я, аватар, рівень, ранг шляху та загальний XP. Завдання, звички й особисті записи залишаться прихованими.', es: 'Los miembros de Satoru que hayan iniciado sesión verán tu nombre, avatar, nivel, rango de senda y XP total. Tus tareas, hábitos y notas personales seguirán siendo privados.' },
 };
 // Карта мов + злиття EXTRA у відповідні словники
@@ -12343,6 +12374,50 @@ async function retryGoalsLoad() {
   render(); return !State._goalsLoadError && !State._goalGroupsLoadError && !State._tasksLoadError;
 }
 function habitDayKey(date = new Date()) { return fmtDate(date); }
+// One habit editor, beside the habit itself. The domain's existing atomic commit
+// owns writes; opening this dialog does not alter settings, log, XP or schedule.
+function openHabitEditDialog(id, opener) {
+  const habit = habitById(id); if (!habit || State._habitsLoadError || State._habitTxnBusy) return;
+  closeAccountDialog('habit-edit-modal', {restoreFocus:false});
+  const overlay = document.createElement('div'); overlay.id = 'habit-edit-modal'; overlay.className = 'modal-overlay';
+  overlay._habitOriginal = structuredClone(habit);
+  const days = [1,2,3,4,5,6,0].map(day => `<label><input type="checkbox" name="days" value="${day}"${(habit.days||[]).includes(day)?' checked':''}><span>${t(['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][day])}</span></label>`).join('');
+  overlay.innerHTML = `<section class="desire-box habit-edit-dialog" role="dialog" aria-modal="true" aria-labelledby="habit-edit-heading">
+    <button type="button" class="modal-x" data-action="habit-edit-cancel" aria-label="${t('Закрыть')}">✕</button>
+    <h3 id="habit-edit-heading">${t('Расписание и параметры')}</h3>
+    <form id="edit-habit-form" data-id="${esc(habit.id)}">
+      <label><span>${t('Название привычки')}</span><input name="title" maxlength="160" required value="${esc(habit.title)}" data-noi18n></label>
+      <label><span>${t('Сфера')}</span><select name="skillId">${!pickerVisibleSkills().some(skill=>skill.id===habit.skillId) ? `<option value="${esc(habit.skillId || '')}" selected>${esc(skillById(habit.skillId).name || t('— нет сферы —'))}</option>` : ''}${skillOptionsHTML(habit.skillId)}</select></label>
+      <div class="habit-edit-pair"><label><span>${t('Минут')}</span><input name="estimateMin" type="number" min="1" max="1440" required value="${Math.max(1,Number(habit.estimateMin)||10)}" inputmode="numeric"></label>
+      <label><span>${t('Сложность')}</span><select name="difficulty">${['easy','normal','hard'].map((value,i)=>`<option value="${value}"${habit.difficulty===value?' selected':''}>${t(['Лёгкая','Обычная','Сложная'][i])}</option>`).join('')}</select></label></div>
+      <fieldset><legend>${t('Дни недели')}</legend><div class="habit-day-picks">${days}</div></fieldset>
+      <label><span>${t('Состояние')}</span><select name="status"><option value="active"${!habit.archived?' selected':''}>${t('Активна')}</option><option value="paused"${habit.archived?' selected':''}>${t('Пауза')}</option></select></label>
+      <p class="muted">${t('Пауза скрывает привычку из дня, но сохраняет все отметки.')}</p>
+      <p class="habit-form-status" role="status"></p><div class="settings-actions"><button type="submit" class="btn">${t('Сохранить')}</button><button type="button" class="btn ghost" data-action="habit-edit-cancel">${t('Отмена')}</button><button type="button" class="btn ghost habit-delete-link" data-action="habit-edit-delete" data-id="${esc(habit.id)}">${t('Удалить')}</button></div>
+    </form></section>`;
+  mountAccountDialog(overlay, {initial:'input[name="title"]',returnFocus:opener});
+}
+async function saveHabitEdit(form) {
+  if (State._habitTxnBusy || State._habitsLoadError) return false;
+  const overlay = form.closest('#habit-edit-modal'), id = form.dataset.id, current = habitById(id);
+  const status = form.querySelector('.habit-form-status');
+  const fail = message => {status.textContent = t(message); status.setAttribute('role','alert'); return false;};
+  if (!current || JSON.stringify(current) !== JSON.stringify(overlay?._habitOriginal)) return fail('Данные изменились. Открой привычку заново.');
+  const title = form.elements.title.value.trim(), days = [...form.querySelectorAll('[name="days"]:checked')].map(input=>Number(input.value));
+  if (!days.length) return fail('Выбери хотя бы один день');
+  if (!title || !form.reportValidity()) return false;
+  const next = structuredClone(State.habits), edited = next.find(habit=>habit.id===id);
+  Object.assign(edited,{title, days, skillId:form.elements.skillId.value, difficulty:form.elements.difficulty.value,
+    estimateMin:Number(form.elements.estimateMin.value), archived:form.elements.status.value==='paused'});
+  if (!validateHabitsPayload(next)) return fail('Проверь заполнение формы.');
+  const controls = [...form.elements]; controls.forEach(control=>{control.disabled=true;});
+  State._habitTxnBusy = `habit:${id}`; status.textContent=t('Сохраняю…'); status.setAttribute('role','status');
+  const saved = await habitDataCommit({habits:next},()=>{State.habits=next;}); State._habitTxnBusy='';
+  if (!saved) {controls.forEach(control=>{control.disabled=false;});return fail('Не удалось сохранить. Ничего не изменено — повтори попытку.');}
+  closeAccountDialog('habit-edit-modal',{restoreFocus:false});
+  State._habitsFocusAfterCommit=`[data-action="habit-edit"][data-id="${CSS.escape(id)}"]`;
+  toast(t('Сохранено')); render(); return true;
+}
 function localDayOrdinal(day) {
   const d = typeof day === 'string' ? parseDate(day) : day;
   return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
@@ -14749,14 +14824,14 @@ function lawsBlock(title, laws, kind) {
   return `<details class="card hb-laws habit-method-section"><summary>${title}</summary><div class="habit-method-body">${laws.map((l) => `<div class="hb-law ${kind}"><span class="hb-lawn">${l.n}</span><div><b>${esc(l.law)}</b>${l.cue ? ` <span class="muted">· ${esc(l.cue)}</span>` : ''}<ul>${l.tactics.map((t) => `<li>${esc(t)}</li>`).join('')}</ul></div></div>`).join('')}</div></details>`;
 }
 function habitsBuildHTML() {
-  const habits = State.habits.filter((h) => !h.archived);
+  const habits = [...State.habits].sort((a,b) => Number(!!a.archived) - Number(!!b.archived));
   const idg = (State.settings && State.settings.identityGoal) || '';
   const cards = habits.length ? habits.map((h) => {
     const a = h.atomic || {}, sk = skillById(h.skillId), st = habitStreak(h);
     const guideCreated = guideV3HabitsStep('complete') && String(guideV3State()?.chapterMeta?.habits?.itemId || '') === String(h.id);
     return `<details class="card hb-card habit-compact-card" style="--c:${esc(sk.color)}"${guideCreated ? ` data-guide-target="habit-created" data-id="${esc(h.id)}" tabindex="-1" open` : ''}>
-      <summary class="hb-top"><b data-noi18n>${esc(h.title)}</b><span class="muted"><span data-noi18n>${esc(sk.name)}</span> · ${fmtDur(h.estimateMin)}${st ? ` · 🔥${st}` : ''}</span></summary>
-      <div class="habit-editor-body"><label class="hb-field">${t('🪪 Идентичность')} <input data-action="habit-atomic" data-id="${h.id}" data-field="identity" value="${esc(a.identity || '')}" placeholder="${t('Я — человек, который…')}" /></label>
+      <summary class="hb-top"><b data-noi18n>${esc(h.title)}</b><span class="muted">${h.archived ? t('Пауза') + ' · ' : ''}<span data-noi18n>${esc(sk.name)}</span> · ${fmtDur(h.estimateMin)}${st ? ` · 🔥${st}` : ''}</span></summary>
+      <div class="habit-editor-body"><button type="button" class="btn ghost habit-schedule-edit" data-action="habit-edit" data-id="${esc(h.id)}">${t('Расписание и параметры')}</button><label class="hb-field">${t('🪪 Идентичность')} <input data-action="habit-atomic" data-id="${h.id}" data-field="identity" value="${esc(a.identity || '')}" placeholder="${t('Я — человек, который…')}" /></label>
       <label class="hb-field">${t('📍 Сигнал / связка')} <input data-action="habit-atomic" data-id="${h.id}" data-field="cue" value="${esc(a.cue || '')}" placeholder="${t('После [привычки] я…')}" /></label>
       <label class="hb-field">${t('⏱ Версия 2 минут')} <input data-action="habit-atomic" data-id="${h.id}" data-field="twoMin" value="${esc(a.twoMin || '')}" placeholder="${t('Минимум, чтобы просто начать')}" /></label></div>
     </details>`;
@@ -14782,7 +14857,7 @@ function habitsBreakHTML() {
       ${slippedToday ? `<button class="btn ghost sm" data-action="anti-unslip" data-id="${a.id}" aria-pressed="true" ${busy ? 'disabled aria-busy="true"' : ''}>${t('Убрать сегодняшнюю запись')}</button>` : `<button class="btn ghost sm" data-action="anti-slip" data-id="${a.id}" aria-pressed="false" ${busy ? 'disabled aria-busy="true"' : ''}>${t('Записать событие сегодня')}</button>`}
       <button class="del" data-action="delete-antihabit" data-id="${a.id}" aria-label="${t('Удалить')}: ${esc(a.title)}" ${busy ? 'disabled' : ''}>✕</button></div>`;
   }).join('') : '<p class="muted">Пока пусто — добавь, с чем хочешь справиться.</p>';
-  return `<div class="card hb-intro"><h3>${satoruIconHTML('difficulty.protected', 'heading-emblem', '🛡')} ${t('Свобода от привычек')}</h3>
+  return `<section class="card habit-boundary-entry"><h3>${t('Граница до события')}</h3><p class="muted">${t('Ограничь отвлекающий сайт. Записи ниже — только наблюдения, не блокировка.')}</p><button type="button" class="btn ghost" data-action="open-attention-settings">${t('Настроить границы внимания')}</button></section><div class="card hb-intro"><h3>${satoruIconHTML('difficulty.protected', 'heading-emblem', '🛡')} ${t('Свобода от привычек')}</h3>
       <p class="muted">${t('Событие — это данные о контексте, не оценка личности. Здесь нет наказаний и долгов.')}</p>
       <p class="muted anti-privacy">${t('Эти записи приватны: они не публикуются в Party, leaderboard и не отправляются в AI-разбор недели.')}</p></div>
     <div class="hb-list">${rows}</div>
@@ -14868,8 +14943,8 @@ function aiSourceHint() {
 function aiHandleErr(d) {
   if (!d || !d.error) return false;
   if (d.error === 'not_pro') { showPaywall('ИИ-ассистент'); return true; }
-  if (d.error === 'quota') { toast(t('🤖 Лимит ИИ на месяц исчерпан — добавь свой ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; render(); return true; }
-  if (d.error === 'no_key') { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; render(); return true; }
+  if (d.error === 'quota') { toast(t('🤖 Лимит ИИ на месяц исчерпан — добавь свой ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; State._settingsFocusAfterCommit='.connections-ai'; render(); return true; }
+  if (d.error === 'no_key') { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; State._settingsFocusAfterCommit='.connections-ai'; render(); return true; }
   // Лимит провайдера — это «подожди», а не «сломалось». Сервер уже подождал и повторил
   // сам; сюда доходит только то, что не уложилось в его бюджет ожидания.
   if (d.error === 'rate_limit') {
@@ -15089,14 +15164,14 @@ function aiKeysCard() {
   }
   return `<div class="card"><h3>🤖 ИИ-ассистент (свой ключ)</h3>
     ${houseBlock}
-    <p class="muted" style="font-size:12.5px;margin:0 0 6px">ИИ-функции (помощник 🤖, импорт целей, калибровка, разбор недели) работают на твоём ключе — так инференс бесплатен для нас, а данные идут только к выбранному ИИ.</p>
-    <div class="aikey-tip">💡 Нет ключа и платной подписки? Возьми <b>бесплатный</b> у Google Gemini или Groq — 2 минуты, без карты: жми «Получить ключ», войди аккаунтом, создай ключ, вставь сюда.</div>
+    <p class="muted">${t('Добавь ключ выбранного сервиса. Пустые поля оставляют сохранённые ключи без изменений.')}</p>
+    <div class="aikey-tip">${t('«Получить ключ» открывает сайт сервиса. Его условия и лимиты могут отличаться.')}</div>
     <form id="ai-keys" class="aikey-form">
       ${rows}
       ${prefSel}
       <div class="aikey-actions"><button type="submit" class="btn">Сохранить</button><span id="ai-keys-msg" class="muted"></span></div>
     </form>
-    <p class="muted" style="font-size:11.5px;margin:8px 0 0">Ключ хранится только на сервере (в гит не попадает, наружу отдаётся лишь признак «✓ сохранён»). Стереть — очисти поле и сохрани. Можно держать несколько и переключаться.</p></div>`;
+    <p class="muted">${t('Сохранённый ключ не показывается в интерфейсе.')}</p></div>`;
 }
 // ============================================================
 //  Strava — авто-импорт тренировок (OAuth2). Токены живут на сервере;
@@ -15373,7 +15448,7 @@ function buildWeekContext() {
   return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nСегодня закрыто: ${load.done}${load.known ? ` при обычных ${load.typical} (${dayLoadMeta(load).text})` : ' (обычный день ещё не известен — мало наблюдений)'}\nЧестное состояние отдыха: ${restLine} (ищется по тексту дел, не по сфере — тренировка ≠ отдых, даже если оба в «Здоровье»)\nРадар сфер: ${radar}\nЦели:\n${goals}${reflBlock}${wkBlock}${bpBlock}`;
 }
 async function runWeeklyReview() {
-  if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; render(); return; }
+  if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; State._settingsFocusAfterCommit='.connections-ai'; render(); return; }
   openAiModal('🤖 Разбор недели', '<p class="muted">Анализирую твою неделю…</p>', true);
   const system = 'Ты — заботливый, научно обоснованный наставник в приложении Satoru (философия «жизнь как десятиборье»). Анализируй данные недели честно и по-человечески, без воды и без льстивости. В контексте есть строка «Честное состояние отдыха» — она значит больше, чем индекс баланса: баланс/уровни считаются по сфере квеста и не различают «тренировался» и «отдыхал», если оба лежат в одной сфере (например «Здоровье»), поэтому индекс может показывать зелёное, когда человек вымотан. Если дней без явного отдыха много (≥4) — это ГЛАВНОЕ наблюдение, важнее процента баланса, и один из 1–2 шагов должен быть про отдых, а не про продуктивность. Если в контексте есть «Рефлексия по дням» / «Намерение на неделю» / «Итоги недели» — это САМЫЙ важный сигнал, важнее любых цифр: это собственные слова человека о том, как у него дела на самом деле. Отвечай на конкретную боль или мысль из этих слов напрямую, а не общими фразами — секретарь заметил бы именно это. Не выдумывай ничего, чего нет в тексте юзера. Дай: (1) что реально происходило со временем и балансом — включая честное состояние отдыха; (2) 2–3 конкретных наблюдения, в приоритете — те, что откликаются на рефлексию юзера, если она есть; (3) 1–2 мягких, выполнимых шага на след. неделю. Коротко, тепло, по делу, без вины. ' + aiAnswerLangLine();
   try {
@@ -16344,7 +16419,7 @@ function openHelperChat(opener = document.activeElement) {
       <div class="shadow-chat-head-art">${shadowVideo(shadowTier, State._chatBusy ? 'thinking' : 'listening', 'helper')}</div>
       <div><h2 id="helper-title" tabindex="-1">${esc(companion.name)}</h2><p id="helper-capabilities" class="muted">${t('Секретарь Satoru · видит состояние, объясняет и помогает действовать')}</p></div>
     </div>
-    ${noKey ? `<p class="muted">${esc(t(proHint ? 'Помощник включён в Pro — или подключи бесплатный ключ Google Gemini или Groq; в Настройках есть пошаговый гид.' : 'Помощник работает на твоём ИИ-ключе. Не хочешь платить? Возьми бесплатный ключ Google Gemini или Groq за 2 минуты (без карты) — в Настройках есть пошаговый гид.'))}<br>${proHint ? `<button class="btn pro-cta" data-action="show-paywall" data-feature="ИИ-ассистент" style="margin-top:10px">💎 ${t('Оформить Pro')}</button> ` : ''}<button class="btn ${proHint ? 'ghost' : ''}" data-action="helper-to-settings" style="margin-top:10px">⚙️ ${t('Подключить ИИ')}</button></p>`
+    ${noKey ? `<p class="muted">${esc(t(proHint ? 'Тень доступна с Pro или с твоим ключом ИИ.' : 'Подключи ИИ, чтобы обсуждать планы и действовать вместе с Тенью.'))}<br>${proHint ? `<button class="btn pro-cta" data-action="show-paywall" data-feature="ИИ-ассистент" style="margin-top:10px">💎 ${t('Оформить Pro')}</button> ` : ''}<button class="btn ${proHint ? 'ghost' : ''}" data-action="helper-to-settings" style="margin-top:10px">⚙️ ${t('Подключить ИИ')}</button></p>`
       : `<div id="chat-msgs" class="chat-msgs" role="log" aria-live="polite" aria-relevant="additions text" aria-busy="${State._chatBusy ? 'true' : 'false'}"></div>
          <div class="chat-context-tools" role="group" aria-label="${t('Контекст помощника')}">
            <button type="button" class="btn ghost sm" data-action="chat-plan-file">📎 ${t('План из файла')}</button>
@@ -17578,8 +17653,11 @@ function resourcesPenguinHTML(sphereId, options = {}) {
 }
 function recoverySlugState() {
   if (!window.RecoverySlugV1) return 'calm';
+  const gap = restGapDays();
   return window.RecoverySlugV1.deriveState({
-    restGapDays: restGapDays(),
+    // A full search window without a rest entry is missing evidence, not 14 days
+    // of proven deprivation. Day load is not an energy percentage.
+    restGapDays: gap < 14 ? gap : null,
     dayLoad: dayLoadNow().state,
   });
 }
@@ -17973,7 +18051,6 @@ function renderPets() {
       ${activeSpecies === 'bodyToad' ? `<div class="body-toad-domain-badge">${t('BODY · канонический хранитель')}</div>` : activeSpecies === 'resourcesPenguin' ? `<div class="body-toad-domain-badge resources-penguin-domain-badge">${t('MONEY / RESOURCES · канонический хранитель')}</div>` : `<label class="pet-species-picker"><span>${t('Облик')}</span><select data-action="set-pet-species" data-id="${s.id}" aria-label="${t('Облик')}: ${esc(nm)}">${petSpeciesOptions(selectedSpecies)}</select></label>`}
       ${activeSpecies === 'fortune' ? fortuneControlsHTML(s.id) : ''}
       <div class="pet-bar"><span style="width:${Math.min(100, Math.round(st.pct / 120 * 100))}%;background:${meta.color}"></span></div>
-      <p class="pet-line muted">${line}</p>
       <div class="pet-traits" aria-label="${t('Черты питомца')}">${traits.map((trait) => `<span class="pet-trait-chip" title="${esc(t(trait.hint || trait.kind || ''))}">${petTraitIconHTML(trait, 'pet-trait-icon')}<small>${t(trait.kind || 'Черта')}</small></span>`).join('')}</div>
       ${guardianActions}
     </div></details>`;
@@ -17982,9 +18059,8 @@ function renderPets() {
   const recoveryMeta = window.RecoverySlugV1 && window.RecoverySlugV1.STATE_META[recoveryState];
   const recoveryCard = window.RecoverySlugV1 ? `<details class="card pet-card pet-summary pet-card-recovery-slug"><summary><span class="pet-summary-name"><b>${t('Кацую')}</b><small>${t('Хранительница отдыха')}</small></span><span class="pet-badge" style="background:#79b8aa22;color:#79b8aa">${t(recoveryMeta.label)}</span><span class="pet-summary-state">${t(recoveryMeta.line)}</span></summary><div class="pet-summary-body">
       <button type="button" class="pet-art pet-art-action" data-action="recovery-slug-react" aria-label="${t('Побыть рядом с Кацую')}">${recoverySlugHTML({ className: 'recovery-slug-v1--card' })}</button>
-      <p class="pet-sphere muted">${t('Хранительница отдыха · состояние считается по энергии и честным паузам')}</p>
+      <p class="pet-sphere muted">${t('Состояние по записям, не измерение самочувствия.')}</p>
       <div class="body-toad-domain-badge recovery-slug-domain-badge">${t('RECOVERY · скрытый канонический сигнал')}</div>
-      <p class="pet-line muted">${t(recoveryMeta.line)}</p>
       <div class="body-toad-card-actions"><button class="btn ghost sm" data-action="recovery-slug-react">${t('Побыть рядом')}</button></div>
     </div></details>` : '';
   return `<section class="pets-shell" data-guide-target="pets-overview" aria-labelledby="pets-title"><header class="pets-route-head"><h2 id="pets-title" tabindex="-1">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} ${t('Питомцы')}</h2></header>${companionCard()}
@@ -20540,7 +20616,9 @@ function renderToday() {
   const overdueCard = overdue.length ? `<div class="card overdue"><h3>${satoruIconHTML('status.warning', 'heading-glyph', '⏳')} ${t('⏳ Просрочено').replace(/^⏳\s*/, '')} (${overdue.length})</h3>
       <ul class="tasks">${overdue.map((task) => questRow(task, questGoalLinks)).join('')}</ul>
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">${t('↪ Перенести всё на сегодня')}</button></div>` : '';
-  const overdueSurface = currentPath() === 'control' ? controlReviewCardHTML() : overdueCard;
+  // Control promises a visible decision, not a review hidden among optional history.
+  const overdueSurface = currentPath() === 'control' ? controlReviewCardHTML()
+    : overdueCard ? `<details class="today-earlier"><summary>${t('Незавершённые дела')} · ${overdue.length}</summary>${overdueCard}</details>` : '';
 
   const nextAction = tm ? `<button class="btn" data-action="${tm.running ? 'timer-pause' : 'timer-resume'}">${satoruIconHTML(tm.running ? 'media.pause' : 'media.play', 'button-glyph', tm.running ? '⏸' : '▶')} ${tm.running ? t('⏸ Пауза').replace(/^⏸\s*/, '') : t('▶ Продолжить').replace(/^▶\s*/, '') + ' фокус'}</button><button class="btn ghost" data-action="timer-stop">${t('⏹ Стоп · записать')}</button><button class="btn ghost" data-action="open-pip" title="Плавающее окно поверх всех приложений">${t('↗ Окно')}</button>`
     // Следующий ход обязан называть настоящий объект действия. Кнопка переносится, но не
@@ -20574,7 +20652,9 @@ function renderToday() {
         <span class="th-kicker">${heroKicker}</span>
         <h2 id="today-title">${heroTitle}</h2>
         <p class="th-sub">${heroSub}</p>
-        <div class="th-actions">${nextAction}</div>
+        <div class="th-actions">${tm ? nextAction : closed
+          ? `<button class="btn ghost" data-action="goto-calendar" data-date="${addDays(today, 1)}">${t('План на завтра')}</button>`
+          : ''}</div>
       </div>
       <div class="th-stats" aria-label="${t('Состояние дня')}">${heroStats}</div>
     </section>`;
@@ -20613,7 +20693,6 @@ function boardTakenLineHTML() {
         <span>${t('Квестов:')} <b>${doneCount}/${todays.length}</b></span>
         <span>${t('План:')} <b>${fmtDur(planned)}</b></span><button type="button" class="today-add-link" data-action="focus-add-task">${t('+ Квест')}</button></div>
       ${todays.length ? `<ul class="tasks">${todays.map((task) => questRow(task, questGoalLinks)).join('')}</ul>` : emptyDayHTML()}${boardTakenLineHTML()}</section>`;
-  const scheduleCard = todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : '';
   const habitsCard = State._habitsLoadError
     ? habitsRecoveryHTML()
     : `<div class="card card-habits"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🔁')} ${t('🔁 Привычки на сегодня').replace(/^🔁\s*/, '')}</h3>
@@ -20649,14 +20728,14 @@ function boardTakenLineHTML() {
   const tabs = `<div class="today-tabs"><div class="today-mode-tabs" role="tablist" aria-label="${t('Разделы дня')}">
     <button id="today-tab-day" type="button" role="tab" aria-selected="${tab === 'day'}" aria-controls="today-panel-day" tabindex="${tab === 'day' ? '0' : '-1'}" class="today-tab${tab === 'day' ? ' on' : ''}" data-action="today-tab" data-id="day">${t('День')}</button>
     <button id="today-tab-board" type="button" role="tab" aria-selected="${tab === 'board'}" aria-controls="today-panel-board" tabindex="${tab === 'board' ? '0' : '-1'}" class="today-tab${tab === 'board' ? ' on' : ''}" data-action="today-tab" data-id="board">${t('Доска')}</button>
-    </div><button type="button" class="today-notes-link" data-view="notes" data-guide-target="notes-nav">${t('Заметки')} ↗</button>
+    </div><div class="today-tools-links"><button type="button" class="today-shadow-link" data-action="open-helper">${satoruIconHTML('nav.shadow','button-glyph','◇')} ${t('Тень')}</button><button type="button" class="today-notes-link" data-view="notes" data-guide-target="notes-nav">${t('Заметки')} ↗</button></div>
   </div>`;
   if (tab === 'board') return `<div class="today-shell board-shell">${tabs}<section id="today-panel-day" role="tabpanel" aria-labelledby="today-tab-day" hidden></section><section id="today-panel-board" class="today-board-panel" role="tabpanel" aria-labelledby="today-tab-board">${boardScreenHTML()}</section></div>`;
   const week = weekStart(today);
   const weekStrip = `<nav class="today-week" aria-label="${esc(t('Дни выбранной недели'))}">${Array.from({length:7},(_,i)=>{const date=addDays(week,i);return `<button type="button" data-action="goto-calendar" data-date="${date}" ${date===today?'aria-current="date"':''}><span>${esc(new Intl.DateTimeFormat(lang(),{weekday:'short'}).format(parseDate(date)))}</span><b>${parseDate(date).getDate()}</b></button>`;}).join('')}</nav>`;
   const routeHead = `<header class="today-route-head"><div><p class="route-date">${esc(new Intl.DateTimeFormat(lang(), {weekday:'long',day:'numeric',month:'long'}).format(new Date()))}</p><h2>${t('Сегодня')}</h2></div><button type="button" class="btn ghost day-recap-direct" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></header>`;
   return `<div class="today-shell">${routeHead}${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>
-    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${weekStrip}${firstValueCard()}${todayHero}${amnestyUndo}${questBoard}${overdueSurface ? `<details class="today-earlier"><summary>${t('Незавершённые дела')} · ${overdue.length}</summary>${overdueSurface}</details>` : ''}${addQuestCard}${habitsCard}${browserCompanionLaunchHTML()}</div>
+    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${weekStrip}${firstValueCard()}${todayHero}${amnestyUndo}${questBoard}${overdueSurface}${addQuestCard}${habitsCard}${browserCompanionLaunchHTML()}</div>
     <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}${captureBar()}</aside>
     <div class="today-footer">${shutdownCard}</div>
   </div>`;
@@ -21355,7 +21434,7 @@ function characterWardrobeV1HTML(cr, oi, arch) {
       </div>
       <div class="character-identity-progress"><div class="xp-bar"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div><div class="character-form-line"><span>${t('Форма')}</span><b style="--form-color:${fm.color}">${of == null ? '—' : of + '%'} · ${esc(t(fm.text))}</b></div></div>
     </header>
-    <div class="character-wardrobe-heading"><div><p class="character-kicker">${t('Гардероб')}</p><h3 id="character-wardrobe-title">${t('Три слота. Один ясный образ.')}</h3><p>${t('Выбери слот и предмет — предпросмотр обновится сразу.')}</p></div></div>
+    <div class="character-wardrobe-heading"><div><h3 id="character-wardrobe-title">${t('Гардероб')}</h3></div></div>
     <div class="character-wardrobe-layout">
       <div class="character-wardrobe-preview-panel">
         <figure class="character-wardrobe-preview"><div class="character-wardrobe-stage">${avatarFigureHTML({ appearance })}</div><figcaption>${t('Предпросмотр образа')}</figcaption></figure>
@@ -21498,7 +21577,7 @@ function lootboxCard() {
     return `<li class="daily-reward-step${reached ? ' is-earned' : ''}${opened ? ' is-collected' : ''}"><span class="daily-reward-condition">${reward.threshold} ${locThing(reward.threshold, lang())}</span><b>${t('Сундук')}</b><span>${opened ? t('Получено') : (reached ? t('Готово к получению') : t('Условие не выполнено'))}</span></li>`;
   }).join('');
   return `<section class="card lootbox-card daily-reward-card" aria-labelledby="daily-reward-title">
-    <div class="lb-head"><h3 id="daily-reward-title">${satoruIconHTML('nav.rewards', 'heading-glyph', '◇')} ${t('Награды дня')}</h3><span class="daily-reward-randomness">${t('Шансы сундука открыты')}</span></div>
+    <div class="lb-head"><h3 id="daily-reward-title">${satoruIconHTML('nav.rewards', 'heading-glyph', '◇')} ${t('Награды дня')}</h3></div>
     <div class="lb-body">
       <button type="button" class="lb-chest ${avail > 0 ? 'ready' : 'empty'}" ${avail > 0 ? 'data-action="open-chest"' : 'disabled'} aria-label="${esc(statusTxt)}">
         <span class="reward-object-art is-chest daily-chest-art" aria-hidden="true"></span><span class="lb-status">${statusTxt}</span>
@@ -25801,22 +25880,13 @@ function renderSettings() {
     .map((sk) => skillRow(sk, depth, hidden) + renderSkillRows(sk.id, depth + 1, hidden || !!collapsed[sk.id]))
     .join('');
   const skills = renderSkillRows(null, 0, false);
-  const habits = State.habits.map((h) => `<div class="habit-edit" data-id="${h.id}">
-      <input type="text" value="${esc(h.title)}" data-field="title" />
-      <select data-field="skillId" class="${skillById(h.skillId).missing ? 'missing' : ''}">${skillById(h.skillId).missing ? `<option value="${esc(h.skillId)}" selected>${t('— нет сферы —')}</option>` : ''}${skillOpts(h.skillId)}</select>
-      <select data-field="difficulty"><option value="easy" ${h.difficulty === 'easy' ? 'selected' : ''}>${t('Лёгкая')}</option><option value="normal" ${h.difficulty === 'normal' ? 'selected' : ''}>${t('Обычная')}</option><option value="hard" ${h.difficulty === 'hard' ? 'selected' : ''}>${t('Сложная')}</option></select>
-      <span class="dur-input" title="${t('Длительность: часы и минуты')}">
-        <input type="number" min="0" max="24" step="1" inputmode="numeric" value="${Math.floor((Number(h.estimateMin) || 0) / 60)}" data-field="estimateMinH" aria-label="${t('Часы')}" /><i>${t('ч')}</i>
-        <input type="number" min="0" max="59" step="1" inputmode="numeric" value="${(Number(h.estimateMin) || 0) % 60}" data-field="estimateMinM" aria-label="${t('Минуты')}" /><i>${t('м')}</i></span>
-      <div class="weekdays">${WEEKDAYS.map((w) => `<label><input type="checkbox" data-day="${w.js}" ${(h.days || []).includes(w.js) ? 'checked' : ''}/>${w.label}</label>`).join('')}</div>
-      <button class="del" data-action="delete-habit" data-id="${h.id}">✕</button></div>`).join('');
   const SETTINGS_GROUPS = [
-    ['account', 'Аккаунт', 'Подписка, безопасность и доступ'],
-    ['experience', 'Опыт', 'Язык, тема, звук и присутствие Тени'],
-    ['life', 'Жизнь', 'Сферы, привычки, путь и стартовый опыт'],
-    ['connections', 'Связи', 'Помощник, профиль, Strava и импорт'],
-    ['progression', 'Прогресс', 'XP, золото, фокус и кривая уровней'],
-    ['data', 'Данные', 'Сброс и локальное хранилище'],
+    ['account', 'Профиль и доступ', 'Профиль, безопасность и подписка'],
+    ['experience', 'Интерфейс', 'Язык, тема, звук и присутствие Тени'],
+    ['life', 'Планирование', 'Сферы, фокус и подход к делам'],
+    ['connections', 'Тень и подключения', 'Память, ИИ и подключённые сервисы'],
+    ['progression', 'Игровые правила', 'XP, золото и уровни'],
+    ['data', 'Данные и приватность', 'Диагностика, экспорт и восстановление'],
   ];
   const activeGroup = SETTINGS_GROUPS.some(([id]) => id === State.settingsSection) ? State.settingsSection : 'account';
   const activeGroupIndex = SETTINGS_GROUPS.findIndex(([id]) => id === activeGroup);
@@ -25837,13 +25907,14 @@ function renderSettings() {
         ${mobileStep}
         <div class="settings-save-state muted" aria-live="polite"></div>
       </header>
-    ${groupStart('account', 'Аккаунт', 'Подписка, безопасность и доступ')}
-    ${subscriptionCard()}
+    ${groupStart('account', 'Профиль и доступ', 'Профиль, безопасность и подписка')}
+    ${identityProfileCard()}
     ${securityCard()}
+    ${subscriptionCard()}
     ${founderPassCard()}
     ${adminCard()}
     ${groupEnd()}
-    ${groupStart('experience', 'Опыт', 'Язык, тема, звук и присутствие Тени')}
+    ${groupStart('experience', 'Интерфейс', 'Язык, тема, звук и присутствие Тени')}
     <div class="card settings-appearance-card"><h3>${t('Внешний вид')}</h3>
       <label class="settings-inline-field"><span>${t('Имя приложения')}</span><input id="set-appName" type="text" value="${esc(s.appName)}" style="width:100%;max-width:340px" /></label>
       <div class="theme-row"><span class="theme-lbl">${t('Язык')}</span><div class="theme-toggle" role="group" aria-label="${t('Язык')}" data-noi18n>
@@ -25882,33 +25953,21 @@ function renderSettings() {
     </div></details>
     <details class="card settings-disclosure"><summary>${t('Приложение и границы внимания')}</summary><div class="settings-disclosure-body settings-experience-stack">${pwaCard()}${attentionSettingsCard()}</div></details>
     ${groupEnd()}
-    ${groupStart('life', 'Жизнь', 'Сферы, привычки, путь и стартовый опыт')}
+    ${groupStart('life', 'Планирование', 'Сферы, фокус и подход к делам')}
     ${pathCard()}
     <div class="card"><h3>${t('Навыки / сферы жизни')}</h3><p class="muted" style="font-size:12px;margin:0 0 10px">${t('Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.')}</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">${t('+ Добавить сферу')}</button></div>
     <details class="card settings-disclosure"><summary>${t('Стартовый уровень')}</summary><div class="settings-disclosure-body">${importCard()}</div></details>
-    <details class="card settings-disclosure"><summary>${t('🔁 Привычки (повторяющиеся)')}</summary><div class="settings-disclosure-body"><div id="habits-list">${habits || `<p class="muted">${t('Пока нет привычек.')}</p>`}</div><button class="btn ghost" data-action="add-habit" style="margin-top:6px">${t('+ Добавить привычку')}</button></div></details>
-    <details class="card settings-disclosure"><summary>${t('🛡 Анти-привычки — с чем борешься')}</summary><div class="settings-disclosure-body">
-      <p class="muted" style="font-size:12px;margin:0 0 10px">${t('Отслеживай периоды без события. Запись ничего не наказывает — это приватные данные о контексте.')}</p>
-      <form id="add-antihabit" class="add-row">
-        <input name="title" placeholder="${t('Напр. без бессмысленного скролла')}" autocomplete="off" required />
-        <select name="approach" title="${t('Подход к борьбе')}">
-          <option value="">${t('— подход —')}</option>
-          <option value="доверие">${t('Доверие к себе')}</option>
-          <option value="недоверие">${t('Недоверие (блоки/лимиты)')}</option>
-          <option value="контекст">${t('Смена контекста/среды')}</option></select>
-        <button type="submit">${t('+ Добавить')}</button></form>
-      ${(State.antihabits || []).map((a) => `<div class="ah-edit"><span class="ah-name">${esc(a.title)}${a.approach ? ` · <span class="muted">${esc(antiApproachLabel(a.approach))}</span>` : ''}</span><button class="del" data-action="delete-antihabit" data-id="${a.id}" aria-label="${esc(t('Удалить'))}: ${esc(a.title)}">✕</button></div>`).join('')}</div></details>
+    <div class="card settings-route-link"><h3>${t('Привычки')}</h3><p class="muted">${t('Расписание, пауза и наблюдения — рядом с самими привычками.')}</p><button type="button" class="btn ghost" data-view="habits">${t('Открыть привычки')} →</button></div>
     <details class="card settings-disclosure"><summary>${t('📦 Программы-данжи')}</summary><div class="settings-disclosure-body"><p class="muted">${t('Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.')}</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div></details>
     ${groupEnd()}
-    ${groupStart('connections', 'Связи', 'Помощник, профиль, Strava и импорт')}
-    ${identityProfileCard()}
+    ${groupStart('connections', 'Тень и подключения', 'Память, ИИ и подключённые сервисы')}
     ${aiMemoryCard()}
-    <details class="card settings-disclosure connections-memory"><summary>${t('Что Тень помнит обо мне')}</summary><div class="settings-disclosure-body">${profileCard()}</div></details>
+    <details class="card settings-disclosure connections-memory"><summary>${t('Контекст для разговоров')}</summary><div class="settings-disclosure-body">${profileCard()}</div></details>
     <details class="card settings-disclosure connections-ai"><summary>${t('Подключение ИИ')}</summary><div class="settings-disclosure-body">${aiKeysCard()}</div></details>
     ${stravaCard()}
     ${fileImportCard()}
     ${groupEnd()}
-    ${groupStart('progression', 'Прогресс', 'XP, золото, фокус и кривая уровней')}
+    ${groupStart('progression', 'Игровые правила', 'XP, золото и уровни')}
     <div class="card economy-contract-card"><h3>${t('Формула опыта')}</h3><div class="knobs">
         <div class="knob"><label>${t('XP за минуту')}</label><input id="k-perMinute" type="number" step="0.1" value="${s.xp.perMinute}" /></div>
         <div class="knob"><label>${t('Бонус за выполнение')}</label><input id="k-bonus" type="number" step="1" value="${s.xp.completionBonus}" /></div>
@@ -25920,7 +25979,7 @@ function renderSettings() {
     <div class="card"><h3>${t('Формула золота')}</h3><div class="knobs">
         <div class="knob"><label>${t('Золото за минуту')}</label><input id="g-perMinute" type="number" step="0.1" value="${(s.gold || DEFAULT_SETTINGS.gold).perMinute}" /></div>
         <div class="knob"><label>${t('Бонус за выполнение')}</label><input id="g-bonus" type="number" step="1" value="${(s.gold || DEFAULT_SETTINGS.gold).completionBonus}" /></div></div></div>
-    <div class="card"><h3>${t('🎯 Фокус и Помодоро')}</h3><div class="knobs">
+    <div class="card focus-settings-card"><h3>${t('🎯 Фокус и Помодоро')}</h3><div class="knobs">
         <div class="knob"><label>${t('Помодоро')}</label><select id="f-pomodoro"><option value="1" ${f.pomodoro ? 'selected' : ''}>${t('Вкл')}</option><option value="0" ${!f.pomodoro ? 'selected' : ''}>${t('Выкл')}</option></select></div>
         <div class="knob"><label>${t('Работа, мин')}</label><input id="f-workMin" type="number" min="1" value="${f.workMin}" /></div>
         <div class="knob"><label>${t('Перерыв, мин')}</label><input id="f-breakMin" type="number" min="1" value="${f.breakMin}" /></div>
@@ -25932,7 +25991,7 @@ function renderSettings() {
         <div class="knob"><label>${t('База (навыки)')}</label><input id="k-skillBase" type="number" step="10" value="${s.curve.skillBase}" /></div>
         <div class="knob"><label>${t('Рост ×')}</label><input id="k-growth" type="number" step="0.05" value="${s.curve.growth}" /></div></div></div>
     ${groupEnd()}
-    ${groupStart('data', 'Данные', 'Сброс и локальное хранилище')}
+    ${groupStart('data', 'Данные и приватность', 'Диагностика, экспорт и восстановление')}
     ${telemetryConsentCard()}
     ${settingsRecoveryCard()}
     ${accountDataRecoveryCard()}
@@ -26772,7 +26831,7 @@ function afterMainCommit() {
     const selector = State._habitsFocusAfterCommit; State._habitsFocusAfterCommit = '';
     requestAnimationFrame(() => {
       const target = document.querySelector(selector) || document.querySelector('#habits-title') || document.querySelector('#main h2');
-      if (target) focusPathChoiceTarget(target);
+      if (target) { if (target.tagName !== 'SUMMARY') window.InterfaceCompositionV1?.reveal(target); focusPathChoiceTarget(target); }
     });
   }
   if (State._goalsFocusAfterCommit && State.view === 'goals') {
@@ -26827,7 +26886,7 @@ function afterMainCommit() {
     State._settingsFocusAfterCommit = '';
     requestAnimationFrame(() => {
       const target = document.querySelector(selector) || document.getElementById('settings-title');
-      if (target) focusPathChoiceTarget(target);
+      if (target) { window.InterfaceCompositionV1?.reveal(target); focusPathChoiceTarget(target); target.scrollIntoView({block:'nearest', behavior:'auto'}); }
     });
   }
   if (State._rewardsFocusAfterCommit && State.view === 'rewards') {
@@ -26835,7 +26894,7 @@ function afterMainCommit() {
     State._rewardsFocusAfterCommit = '';
     requestAnimationFrame(() => {
       const target = document.querySelector(selector) || document.getElementById('daily-reward-title') || document.querySelector('.rewards-shell h2');
-      if (target) focusPathChoiceTarget(target);
+      if (target) { window.InterfaceCompositionV1?.reveal(target); focusPathChoiceTarget(target); target.scrollIntoView({block:'nearest', behavior:'auto'}); }
     });
   }
   if (State._socialFocusAfterCommit && (State.view === 'party' || State.view === 'leaderboard')) {
@@ -26922,17 +26981,40 @@ function labelSettingsControls() {
 }
 function commitMainView(main, staging, view) {
   window.InterfaceCompositionV1?.apply(staging, view, {t, roomSrc:view === 'today' ? denMasterFor(ensureDen()).src : ''});
+  // Async settings loads must not close the destination just revealed by a
+  // support action. Keep only presentation state within the same live route.
+  if (_renderedMainView === view && view === 'settings') {
+    const key = node => (node.closest('[data-settings-group]')?.dataset.settingsGroup || '')+'|'+node.querySelector(':scope > summary')?.textContent.trim();
+    const opened = new Set([...main.querySelectorAll('details.settings-disclosure[open]')].map(key));
+    staging.querySelectorAll('details.settings-disclosure').forEach(node=>{if(opened.has(key(node)))node.open=true;});
+  }
+  if (_renderedMainView === view && view === 'habits') {
+    const key = node => node.querySelector('[data-action="habit-edit"]')?.dataset.id;
+    const opened = new Set([...main.querySelectorAll('.habit-compact-card[open]')].map(key).filter(Boolean));
+    staging.querySelectorAll('.habit-compact-card').forEach(node=>{if(opened.has(key(node)))node.open=true;});
+  }
   // Background receipts/nudges may repaint Today while a person composes a quest.
   // Keep the actual form (including multi-sphere state and cursor), never a second
   // persistence path. A successful submit explicitly releases this draft.
-  const oldComposer = main.querySelector('#add-task');
-  const newComposer = staging.querySelector('#add-task');
-  const keepComposer = _renderedMainView === view && oldComposer && newComposer
-    && oldComposer.elements.namedItem('title')?.value.trim() && oldComposer.dataset.persisted !== 'true';
-  const draftFocus = keepComposer && oldComposer.contains(document.activeElement) ? document.activeElement : null;
-  const draftSelection = draftFocus && typeof draftFocus.selectionStart === 'number'
-    ? [draftFocus.selectionStart, draftFocus.selectionEnd] : null;
-  if (keepComposer) newComposer.replaceWith(oldComposer);
+  let draftFocus = null, draftSelection = null;
+  for (const selector of ['#add-task','#add-habit-v126','#ai-keys']) {
+    const oldComposer = main.querySelector(selector);
+    const newComposer = staging.querySelector(selector);
+    const isHabit = selector === '#add-habit-v126';
+    const sameCandidate = !isHabit || (oldComposer?.dataset.guideCompose === newComposer?.dataset.guideCompose
+      && oldComposer?.elements.namedItem('existingId')?.value === newComposer?.elements.namedItem('existingId')?.value);
+    const keepComposer = _renderedMainView === view && oldComposer && newComposer && sameCandidate
+      && (oldComposer.elements.namedItem('title')?.value.trim() || (isHabit && oldComposer.closest('details')?.open)
+        || (selector === '#ai-keys' && [...oldComposer.querySelectorAll('input[type=password]')].some(input=>input.value)))
+      && oldComposer.dataset.persisted !== 'true';
+    if (!keepComposer) continue;
+    if (oldComposer.contains(document.activeElement)) {
+      draftFocus = document.activeElement;
+      draftSelection = typeof draftFocus.selectionStart === 'number' ? [draftFocus.selectionStart,draftFocus.selectionEnd] : null;
+    }
+    if (isHabit) newComposer.closest('details').open = oldComposer.closest('details').open;
+    newComposer.replaceWith(oldComposer);
+  }
   main.replaceChildren(...Array.from(staging.childNodes));
   _renderedMainView = view;
   main.classList.remove('is-view-pending');
@@ -27768,6 +27850,7 @@ async function onSubmit(e) {
     next.push(anti); await transactAntihabits(next, `anti:${anti.id}`, `[data-action="anti-slip"][data-id="${anti.id}"]`);
     return;
   }
+  if (f.id === 'edit-habit-form') { e.preventDefault(); await saveHabitEdit(f); return; }
   if (f.id === 'add-habit-v126') {
     e.preventDefault(); const title = f.title.value.trim(); if (!title || State._habitTxnBusy || State._habitsLoadError) return;
     const days = Array.from(f.querySelectorAll('input[name="days"]:checked')).map((input) => Number(input.value));
@@ -27838,6 +27921,7 @@ async function onSubmit(e) {
         return true;
       });
       if (!saved) return failLiveForm();
+      f.dataset.persisted = 'true';
       State._habitTxnBusy = '';
       if (nextSettings) {
         if (guideResult.metric) track(guideResult.metric);
@@ -27860,9 +27944,18 @@ async function onSubmit(e) {
     AI_PROVIDERS.forEach((p) => { if (f[p.id] && f[p.id].value.trim()) body[p.id] = f[p.id].value.trim(); });
     if (!Object.keys(body).length) { const m0 = document.getElementById('ai-keys-msg'); if (m0) m0.textContent = 'Вставь хотя бы один ключ'; return; }
     const msg = document.getElementById('ai-keys-msg'); if (msg) msg.textContent = 'Сохраняю…';
-    fetch('/api/ai/keys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-      .then((r) => r.json()).then((d) => { const m = {}; AI_PROVIDERS.forEach((p) => m[p.id] = !!d[p.id]); State.aiKeys = m; toast(t('🤖 Ключ сохранён')); render(); })
-      .catch(() => { if (msg) msg.textContent = 'Ошибка'; });
+    const submit = f.querySelector('[type="submit"]'); if (submit) submit.disabled = true;
+    try {
+      const response = await fetch('/api/ai/keys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      if (response.status === 401) { handleAccountSessionExpired(); return; }
+      if (!response.ok) throw new Error('key save rejected');
+      const data = await response.json();
+      if (data.ok !== true || AI_PROVIDERS.some(p=>typeof data[p.id] !== 'boolean')) throw new Error('invalid key receipt');
+      const next = {...(State.aiKeys || {})}; AI_PROVIDERS.forEach(p=>{next[p.id]=data[p.id];});
+      f.dataset.persisted='true'; State.aiKeys = next; toast(t('🤖 Ключ сохранён')); render();
+    } catch {
+      if (msg) {msg.textContent=t('Не удалось сохранить. Ничего не изменено — повтори попытку.');msg.setAttribute('role','alert');}
+    } finally {if (submit) submit.disabled=false;}
     return;
   }
   if (f.id === 'add-task') {
@@ -28981,6 +29074,17 @@ async function onClick(e) {
   }
   if (action === 'telemetry-consent-retry') { State._telemetryConsentLoaded = false; await ensureTelemetryConsent(true); return; }
   if (action === 'telemetry-consent-toggle') { await setTelemetryConsent(String(el.dataset.purpose || ''), !!el.checked); return; }
+  if (action === 'habit-edit') { openHabitEditDialog(id, el); return; }
+  if (action === 'habit-edit-cancel') { if (!State._habitTxnBusy) closeAccountDialog('habit-edit-modal'); return; }
+  if (action === 'habit-edit-delete') {
+    if (State._habitTxnBusy || !confirm(t('Удалить привычку? Её отметки и опыт тоже удалятся.'))) return;
+    await deleteHabitData(habitById(id));
+    if (!habitById(id)) closeAccountDialog('habit-edit-modal');
+    return;
+  }
+  if (action === 'open-attention-settings') {
+    State.view='settings'; State.settingsSection='experience'; State._settingsFocusAfterCommit='.attention-settings-card'; render(); return;
+  }
   if (action === 'ai-memory-retry') { State._aiMemoryLoaded = false; await ensureAiMemory(true); return; }
   if (action === 'ai-memory-edit') { State._aiMemoryEditing = String(id || ''); State._settingsFocusAfterCommit = `.ai-memory-edit-form[data-memory-id="${CSS.escape(String(id || ''))}"] textarea`; render(); return; }
   if (action === 'ai-memory-cancel') { State._aiMemoryEditing = ''; render(); return; }
@@ -28996,7 +29100,7 @@ async function onClick(e) {
   if (action === 'open-member-profile') { await openAccountProfile(el.dataset.user, el); return; }
   if (action === 'account-profile-close') { closeAccountDialog('account-profile-modal'); return; }
   if (action === 'account-profile-edit') {
-    closeAccountDialog('account-profile-modal', { restoreFocus: false }); State.view = 'settings'; State.settingsSection = 'connections';
+    closeAccountDialog('account-profile-modal', { restoreFocus: false }); State.view = 'settings'; State.settingsSection = 'account';
     State._settingsFocusAfterCommit = '#account-profile-settings-title'; render(); return;
   }
   if (action === 'account-profile-copy') {
@@ -31181,7 +31285,7 @@ async function onClick(e) {
   } else if (action === 'ep-close') { if (_epRec) { try { _epRec.stop(); } catch {} _epRec = null; } const m = document.getElementById('ep-modal'); if (m) m.remove();
   } else if (action === 'open-helper') { openHelperChat(el);
   } else if (action === 'helper-close') { closeHelperChat();
-  } else if (action === 'helper-to-settings') { closeHelperChat({ restoreFocus: false }); State.view = 'settings'; State._settingsFocusAfterCommit = '#settings-title'; render();
+  } else if (action === 'helper-to-settings') { closeHelperChat({ restoreFocus: false }); State.view = 'settings'; State.settingsSection = 'connections'; State._settingsFocusAfterCommit = '.connections-ai'; render();
   } else if (action === 'assistant-wake-toggle') { toggleAssistantWake();
   } else if (action === 'chat-plan-file') { document.getElementById('chat-plan-file')?.click();
   } else if (action === 'chat-plan-remove') { delete State._chatPlanAttachment; openHelperChat();
@@ -31360,8 +31464,7 @@ async function onClick(e) {
   } else if (action === 'canon-hint-dismiss') {
     State.settings.canonHintDismissed = true; Store.save('settings', State.settings); render();
   } else if (action === 'go-settings-skills') {
-    flushSettingsForm(); State.view = 'settings'; render();
-    setTimeout(() => { const el2 = document.getElementById('skills-list'); if (el2) el2.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 60);
+    flushSettingsForm(); State.view = 'settings'; State.settingsSection = 'life'; State._settingsFocusAfterCommit = '#skills-list'; render();
   } else if (action === 'mark-project') {
     const sk = State.settings.skills.find((x) => x.id === id);
     if (sk) { sk.noBalance = true; Store.save('settings', State.settings); toast(`🏁 «${sk.name}» — ${t('убрана с колеса: это проект, веди его в Целях')}`); render(); }
@@ -32572,7 +32675,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v247';
+const PWA_CACHE_VERSION = 'satoru-v248';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -32695,7 +32798,7 @@ async function init() {
       return;
     }
     if (handleTreeDialogKeydown(e)) return;
-    if (e.target.matches?.(':is(.hsub,.goals-view-tabs,.today-tabs)[role="tablist"] [role="tab"]') && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+    if (e.target.matches?.(':is(.hsub,.goals-view-tabs,.today-tabs,.today-mode-tabs)[role="tablist"] [role="tab"]') && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
       const tabs = Array.from(e.target.closest('[role="tablist"]').querySelectorAll('[role="tab"]'));
       const at = tabs.indexOf(e.target); let next = at;
       if (e.key === 'Home') next = 0; else if (e.key === 'End') next = tabs.length - 1;

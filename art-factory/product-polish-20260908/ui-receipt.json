@@ -1,0 +1,2770 @@
+{
+  "routes": [
+    {
+      "device": "desktop",
+      "route": "today",
+      "overflow": false,
+      "headings": [
+        "Сегодня",
+        "•••Ещё",
+        "•••Ещё",
+        "•••Ещё",
+        "•••Ещё",
+        "СферыУчёба",
+        "Как выбрать сложность?",
+        "Привычки на сегодня",
+        "Поставь границу до того, как лента утянет",
+        "Другая поддержка⌄",
+        "•••",
+        "Завершить день1/4 · 10м"
+      ],
+      "actions": [
+        {
+          "action": "day-recap",
+          "label": "Итог дня"
+        },
+        {
+          "action": "today-tab",
+          "label": "День"
+        },
+        {
+          "action": "today-tab",
+          "label": "Доска"
+        },
+        {
+          "action": "notes",
+          "label": "Заметки ↗"
+        },
+        {
+          "action": "goto-calendar",
+          "label": "пн\n7"
+        },
+        {
+          "action": "goto-calendar",
+          "label": "вт\n8"
+        },
+        {
+          "action": "goto-calendar",
+          "label": "ср\n9"
+        },
+        {
+          "action": "goto-calendar",
+          "label": "чт\n10"
+        },
+        {
+          "action": "goto-calendar",
+          "label": "пт\n11"
+        },
+        {
+          "action": "goto-calendar",
+          "label": "сб\n12"
+        },
+        {
+          "action": "goto-calendar",
+          "label": "вс\n13"
+        },
+        {
+          "action": "focus-add-task",
+          "label": "+ Квест"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "16:30"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Записать первый дубль для Satoru"
+        },
+        {
+          "action": "edit-task-title",
+          "label": "Записать первый дубль для Satoru"
+        },
+        {
+          "action": "edit-cats",
+          "label": "Работа"
+        },
+        {
+          "action": "focus-task",
+          "label": "Начать фокус"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "25м"
+        },
+        {
+          "action": "edit-actual",
+          "label": "Факт ↗"
+        },
+        {
+          "action": "focus-task",
+          "label": "Начать фокус: Записать первый дубль для Satoru"
+        },
+        {
+          "action": "toggle-core",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "commitment-take",
+          "label": ""
+        },
+        {
+          "action": "delete-task",
+          "label": ""
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "17:15"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Повторить параграф по биологии"
+        },
+        {
+          "action": "edit-task-title",
+          "label": "Повторить параграф по биологии"
+        },
+        {
+          "action": "edit-cats",
+          "label": "Учёба"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "30м"
+        },
+        {
+          "action": "edit-actual",
+          "label": "Факт ↗"
+        },
+        {
+          "action": "focus-task",
+          "label": "Начать фокус: Повторить параграф по биологии"
+        },
+        {
+          "action": "toggle-core",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "commitment-take",
+          "label": ""
+        },
+        {
+          "action": "delete-task",
+          "label": ""
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "18:15"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Прогуляться перед тренировкой"
+        },
+        {
+          "action": "edit-task-title",
+          "label": "Прогуляться перед тренировкой"
+        },
+        {
+          "action": "edit-cats",
+          "label": "Здоровье"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "20м"
+        },
+        {
+          "action": "edit-actual",
+          "label": "Факт ↗"
+        },
+        {
+          "action": "focus-task",
+          "label": "Начать фокус: Прогуляться перед тренировкой"
+        },
+        {
+          "action": "toggle-core",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "commitment-take",
+          "label": ""
+        },
+        {
+          "action": "delete-task",
+          "label": ""
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "16:00"
+        },
+        {
+          "action": "toggle-task",
+          "label": "✓"
+        },
+        {
+          "action": "edit-task-title",
+          "label": "Освободить стол для съёмки"
+        },
+        {
+          "action": "edit-cats",
+          "label": "Быт"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "10м"
+        },
+        {
+          "action": "edit-actual",
+          "label": "10м ↗"
+        },
+        {
+          "action": "toggle-core",
+          "label": ""
+        },
+        {
+          "action": "delete-task",
+          "label": ""
+        },
+        {
+          "action": "sphere-picker-done",
+          "label": ""
+        },
+        {
+          "action": "sphere-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-background-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-background-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-background-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-background-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-background-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-background-pick",
+          "label": ""
+        },
+        {
+          "label": "+ Квест"
+        },
+        {
+          "action": "toggle-habit",
+          "label": "Выполнить привычку: Чтение"
+        },
+        {
+          "action": "browser-companion-install",
+          "label": "Установить за 2 минуты"
+        },
+        {
+          "action": "browser-companion-later",
+          "label": "Напомнить через 3 дня"
+        },
+        {
+          "action": "browser-companion-never",
+          "label": "Не напоминать"
+        },
+        {
+          "action": "goto-rewards",
+          "label": "1"
+        },
+        {
+          "action": "toggle-today-companion",
+          "label": "⌄"
+        },
+        {
+          "action": "tts",
+          "label": "Озвучить"
+        },
+        {
+          "action": "episode-open",
+          "label": "🎒 Тебя не было 30 дней — что это было?"
+        },
+        {
+          "action": "tts",
+          "label": "Озвучить"
+        },
+        {
+          "action": "recovery-open",
+          "label": ""
+        },
+        {
+          "action": "evening-open",
+          "label": ""
+        },
+        {
+          "action": "attention-open-setup",
+          "label": ""
+        },
+        {
+          "label": "Сохранить заметку"
+        },
+        {
+          "action": "cap-voice",
+          "label": "Голосовая заметка"
+        },
+        {
+          "action": "cap-video",
+          "label": "Видео-заметка"
+        },
+        {
+          "action": "day-recap",
+          "label": ""
+        },
+        {
+          "action": "goto-notes",
+          "label": "Открыть заметки: 1"
+        },
+        {
+          "action": "dayobs-yes",
+          "label": ""
+        },
+        {
+          "action": "dayobs-no",
+          "label": ""
+        },
+        {
+          "action": "first-line-save",
+          "label": ""
+        },
+        {
+          "action": "close-day",
+          "label": ""
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "calendar",
+      "overflow": false,
+      "headings": [
+        "8 сентябряВт · сегодняплан: 1ч 25м",
+        "Расписание дня"
+      ],
+      "actions": [
+        {
+          "action": "cal-shift",
+          "label": "Предыдущий день"
+        },
+        {
+          "action": "cal-shift",
+          "label": "Следующий день"
+        },
+        {
+          "action": "cal-mode",
+          "label": "День"
+        },
+        {
+          "action": "cal-mode",
+          "label": "Неделя"
+        },
+        {
+          "action": "cal-mode",
+          "label": "Месяц"
+        },
+        {
+          "action": "cal-date",
+          "label": "ПН\n7"
+        },
+        {
+          "action": "cal-date",
+          "label": "ВТ\n8\n3"
+        },
+        {
+          "action": "cal-date",
+          "label": "СР\n9"
+        },
+        {
+          "action": "cal-date",
+          "label": "ЧТ\n10"
+        },
+        {
+          "action": "cal-date",
+          "label": "ПТ\n11\n🎯"
+        },
+        {
+          "action": "cal-date",
+          "label": "СБ\n12"
+        },
+        {
+          "action": "cal-date",
+          "label": "ВС\n13"
+        },
+        {
+          "action": "export-ics",
+          "label": "📆 Экспорт"
+        },
+        {
+          "action": "show-cal-subscribe",
+          "label": "📅 Подписка"
+        },
+        {
+          "action": "cal-remind-toggle",
+          "label": "🔕 Напоминания"
+        },
+        {
+          "action": "cal-focus-add",
+          "label": "Добавить квест"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Снять выполнение: Освободить стол для съёмки"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "16:00 Освободить стол для съёмки · 10м"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Записать первый дубль для Satoru"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "16:30 Записать первый дубль для Satoru · 25м"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Повторить параграф по биологии"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "17:15 Повторить параграф по биологии · 30м"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Прогуляться перед тренировкой"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "18:15 Прогуляться перед тренировкой · 20м"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "weekly",
+      "overflow": false,
+      "headings": [
+        "Неделя 07.09 – 13.09 · (текущая)",
+        "Квесты неделиКвесты выбранного дня",
+        "Итоги недели",
+        "📊 Время по сферам",
+        "🎯 Намерение на неделю",
+        "🔄 Итоги недели"
+      ],
+      "actions": [
+        {
+          "action": "week-prev",
+          "label": "Предыдущая неделя"
+        },
+        {
+          "action": "week-next",
+          "label": "Следующая неделя"
+        },
+        {
+          "action": "cal-mode",
+          "label": "День"
+        },
+        {
+          "action": "cal-mode",
+          "label": "Неделя"
+        },
+        {
+          "action": "cal-mode",
+          "label": "Месяц"
+        },
+        {
+          "action": "cal-date",
+          "label": "ПН\n7"
+        },
+        {
+          "action": "cal-date",
+          "label": "ВТ\n8\n3"
+        },
+        {
+          "action": "cal-date",
+          "label": "СР\n9"
+        },
+        {
+          "action": "cal-date",
+          "label": "ЧТ\n10"
+        },
+        {
+          "action": "cal-date",
+          "label": "ПТ\n11"
+        },
+        {
+          "action": "cal-date",
+          "label": "СБ\n12"
+        },
+        {
+          "action": "cal-date",
+          "label": "ВС\n13"
+        },
+        {
+          "action": "export-ics",
+          "label": "📆 Экспорт"
+        },
+        {
+          "action": "show-cal-subscribe",
+          "label": "📅 Подписка"
+        },
+        {
+          "action": "cal-remind-toggle",
+          "label": "🔕 Напоминания"
+        },
+        {
+          "action": "wk-add-task",
+          "label": "Добавить квест"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Снять выполнение: Освободить стол для съёмки"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "16:00\n10м\nОсвободить стол для съёмки"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Записать первый дубль для Satoru"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "16:30\n25м\nЗаписать первый дубль для Satoru"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Повторить параграф по биологии"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "17:15\n30м\nПовторить параграф по биологии"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Прогуляться перед тренировкой"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "18:15\n20м\nПрогуляться перед тренировкой"
+        },
+        {
+          "action": "wk-add-task",
+          "label": "Добавить квест"
+        },
+        {
+          "action": "wk-add-task",
+          "label": "Добавить квест"
+        },
+        {
+          "action": "wk-add-task",
+          "label": "Добавить квест"
+        },
+        {
+          "action": "wk-add-task",
+          "label": "Добавить квест"
+        },
+        {
+          "action": "wk-add-task",
+          "label": "Добавить квест"
+        },
+        {
+          "action": "wk-add-task",
+          "label": "Добавить квест"
+        },
+        {
+          "action": "share-week",
+          "label": "📤 Поделиться"
+        },
+        {
+          "action": "save-week",
+          "label": "Сохранить"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "goals",
+      "overflow": false,
+      "headings": [
+        "Цели",
+        "Ещё",
+        "Что важно сейчас"
+      ],
+      "actions": [
+        {
+          "action": "goals-toggle-create",
+          "label": "+ Цель"
+        },
+        {
+          "action": "set-goal-view",
+          "label": "Сейчас"
+        },
+        {
+          "action": "set-goal-view",
+          "label": "Все цели"
+        },
+        {
+          "action": "set-goal-view",
+          "label": ""
+        },
+        {
+          "action": "set-goal-view",
+          "label": ""
+        },
+        {
+          "action": "new-goal-group",
+          "label": ""
+        },
+        {
+          "action": "goals-toggle-bulk",
+          "label": "Выбрать несколько"
+        },
+        {
+          "action": "ai-import-goals",
+          "label": "Разобрать с Тенью"
+        },
+        {
+          "action": "open-goal-detail",
+          "label": "Выпустить первое видео\nКороткое знакомство с Satoru: один день и одно полезное действие.\nКраткосрочные\n0/1 этапов\n📅 2026-09-15 · 7 дней\nРабота\n→\nСнять первый дубль\n›"
+        },
+        {
+          "action": "goal-toggle-complete",
+          "label": "Отметить цель достигнутой: Выпустить первое видео"
+        },
+        {
+          "action": "open-goal-detail",
+          "label": "Разобраться в теме по биологии\nПовторить параграф и объяснить его без конспекта.\nКраткосрочные\n📅 2026-09-11 · 3 дня\nУчёба\n›"
+        },
+        {
+          "action": "goal-toggle-complete",
+          "label": "Отметить цель достигнутой: Разобраться в теме по биологии"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "notes",
+      "overflow": false,
+      "headings": [
+        "Заметки",
+        "Идея для видео: показать, как один маленький шаг превращается в готовое"
+      ],
+      "actions": [
+        {
+          "action": "cap-voice",
+          "label": "Голосовая заметка"
+        },
+        {
+          "action": "cap-video",
+          "label": "Видео-заметка"
+        },
+        {
+          "label": "Сохранить заметку"
+        },
+        {
+          "action": "day-recap",
+          "label": "Итог дня"
+        },
+        {
+          "action": "goto-notes",
+          "label": "📝\n1"
+        },
+        {
+          "action": "note-to-goal",
+          "label": "🤖 Цель"
+        },
+        {
+          "action": "note-quest",
+          "label": "→ Квест"
+        },
+        {
+          "action": "note-del",
+          "label": "✕"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "habits",
+      "overflow": false,
+      "headings": [
+        "Привычки",
+        "Сегодня",
+        "+ Создать привычку",
+        "ЧтениеУчёба · 10м",
+        "Личный ориентир",
+        "Строим привычки"
+      ],
+      "actions": [
+        {
+          "action": "toggle-habit",
+          "label": "Выполнить привычку: Чтение"
+        },
+        {
+          "label": ""
+        },
+        {
+          "action": "habits-tab",
+          "label": "Привычки"
+        },
+        {
+          "action": "habits-tab",
+          "label": "Срывы"
+        },
+        {
+          "action": "habits-tab",
+          "label": "Метод"
+        },
+        {
+          "action": "habit-edit",
+          "label": ""
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "shelf",
+      "overflow": false,
+      "headings": [
+        "Вдохновение",
+        "Что тебя зажигает?",
+        "Импорт из TikTok"
+      ],
+      "actions": [
+        {
+          "action": "inspiration-setup-import-satoru",
+          "label": "Собрать из Satoru"
+        },
+        {
+          "action": "inspiration-import-guide-open",
+          "label": ""
+        },
+        {
+          "action": "inspiration-import-links-toggle",
+          "label": ""
+        },
+        {
+          "action": "inspiration-setup-manual",
+          "label": "Настроить вручную"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "rewards",
+      "overflow": false,
+      "headings": [
+        "Награды",
+        "Награды дня",
+        "Вероятности сундука",
+        "Личные награды",
+        "Добавить свою награду"
+      ],
+      "actions": [
+        {
+          "action": "open-chest",
+          "label": "Открыть награду (1)"
+        },
+        {
+          "action": "shop",
+          "label": "Личные награды"
+        },
+        {
+          "action": "collection",
+          "label": "Коллекция"
+        },
+        {
+          "action": "achievements",
+          "label": "Достижения"
+        },
+        {
+          "action": "history",
+          "label": "Правила и история"
+        },
+        {
+          "action": "open-reward-catalog",
+          "label": "Каталог наград"
+        },
+        {
+          "label": ""
+        },
+        {
+          "action": "buy-reward",
+          "label": "Купить"
+        },
+        {
+          "action": "delete-reward",
+          "label": "✕"
+        },
+        {
+          "action": "buy-reward",
+          "label": "Купить"
+        },
+        {
+          "action": "delete-reward",
+          "label": "✕"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "den",
+      "overflow": false,
+      "headings": [
+        "Логово",
+        "Действия комнатыПрогулка, отдых и коллекции⌄",
+        "Действия комнатыПрогулка, отдых и коллекции⌄",
+        "ОбитателиСовместные действия · 3⌄",
+        "ОбитателиСовместные действия · 3⌄"
+      ],
+      "actions": [
+        {
+          "action": "den-ambient-cycle",
+          "label": "Тишина"
+        },
+        {
+          "action": "den-toggle-edit",
+          "label": "Обставить"
+        },
+        {
+          "action": "shadow-den-pair",
+          "label": "Тень: позвать · Тень"
+        },
+        {
+          "action": "den-avatar-pose",
+          "label": "Стоит. Нажми, чтобы сменить действие"
+        },
+        {
+          "action": "body-toad-interact",
+          "label": "Жабий сэнсэй — голоден. Нажми, чтобы поприветствовать"
+        },
+        {
+          "action": "den-pet-react",
+          "label": "Учёба — голоден"
+        },
+        {
+          "action": "recovery-slug-interact",
+          "label": "Кацую — Спокойна. Нажми, чтобы поздороваться"
+        },
+        {
+          "action": "goto-today",
+          "label": "Начать фокус"
+        },
+        {
+          "action": "den-avatar-walk",
+          "label": ""
+        },
+        {
+          "action": "den-room-action",
+          "label": ""
+        },
+        {
+          "action": "den-room-action",
+          "label": ""
+        },
+        {
+          "action": "go-wardrobe",
+          "label": ""
+        },
+        {
+          "action": "goto-rewards",
+          "label": ""
+        },
+        {
+          "action": "goto-pets",
+          "label": ""
+        },
+        {
+          "action": "open-helper",
+          "label": ""
+        },
+        {
+          "action": "shadow-den-pair",
+          "label": ""
+        },
+        {
+          "action": "shadow-den-solo",
+          "label": ""
+        },
+        {
+          "action": "shadow-den-course",
+          "label": ""
+        },
+        {
+          "action": "body-toad-interact",
+          "label": ""
+        },
+        {
+          "action": "body-toad-interact",
+          "label": ""
+        },
+        {
+          "action": "body-toad-interact",
+          "label": ""
+        },
+        {
+          "action": "body-toad-interact",
+          "label": ""
+        },
+        {
+          "action": "body-toad-interact",
+          "label": ""
+        },
+        {
+          "action": "body-toad-interact",
+          "label": ""
+        },
+        {
+          "action": "recovery-slug-interact",
+          "label": ""
+        },
+        {
+          "action": "recovery-slug-interact",
+          "label": ""
+        },
+        {
+          "action": "recovery-slug-interact",
+          "label": ""
+        },
+        {
+          "action": "recovery-slug-interact",
+          "label": ""
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "character",
+      "overflow": false,
+      "headings": [
+        "Персонаж",
+        "Гардероб",
+        "Дополнительно",
+        "Живые позы＋",
+        "Traveller",
+        "⚖️ Ритм сфер＋",
+        "⚖️ Колесо ритма",
+        "🧍 Телосложение＋",
+        "Телосложение"
+      ],
+      "actions": [
+        {
+          "action": "character-wardrobe-slot",
+          "label": "◇\nГолова\nБез головного убора\n✓ НАДЕТО"
+        },
+        {
+          "action": "character-wardrobe-slot",
+          "label": "◇\nШея\nШарф Traveller\n✓ НАДЕТО"
+        },
+        {
+          "action": "character-wardrobe-slot",
+          "label": "◇\nСпина\nРюкзак Traveller\n✓ НАДЕТО"
+        },
+        {
+          "action": "avatar-core-gender",
+          "label": ""
+        },
+        {
+          "action": "avatar-core-gender",
+          "label": ""
+        },
+        {
+          "action": "avatar-core-pose",
+          "label": ""
+        },
+        {
+          "action": "avatar-core-pose",
+          "label": ""
+        },
+        {
+          "action": "avatar-core-pose",
+          "label": ""
+        },
+        {
+          "action": "canon-hint-dismiss",
+          "label": "Скрыть"
+        },
+        {
+          "action": "go-settings-skills",
+          "label": ""
+        },
+        {
+          "action": "show-paywall",
+          "label": "% жира · Pro"
+        },
+        {
+          "label": ""
+        },
+        {
+          "action": "character-wardrobe-filter",
+          "label": "Все"
+        },
+        {
+          "action": "character-wardrobe-filter",
+          "label": "Новое"
+        },
+        {
+          "action": "character-wardrobe-equip",
+          "label": "◇\nБез головного убора\n—\n✓ Надето"
+        },
+        {
+          "action": "character-wardrobe-equip",
+          "label": "Шляпа Scholar\nРедкое\nВ наличии"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "pets",
+      "overflow": false,
+      "headings": [
+        "Питомцы",
+        "КацуюХранительница отдыхаСпокойнаДышит медленно и хранит запас тишины.",
+        "УчёбаНуждается во вниманииНуждается во внимании, когда будет ресурс",
+        "РаботаНуждается во вниманииНуждается во внимании, когда будет ресурс",
+        "СпортНуждается во вниманииНуждается во внимании, когда будет ресурс",
+        "ЗдоровьеНуждается во вниманииНуждается во внимании, когда будет ресурс",
+        "СаморазвитиеНуждается во вниманииНуждается во внимании, когда будет ресурс",
+        "БытНуждается во вниманииНуждается во внимании, когда будет ресурс",
+        "Учёба",
+        "Зверинец",
+        "Как это работает"
+      ],
+      "actions": [
+        {
+          "action": "recovery-slug-react",
+          "label": "Побыть рядом с Кацую"
+        },
+        {
+          "action": "recovery-slug-react",
+          "label": ""
+        },
+        {
+          "action": "pet-feed",
+          "label": "Погладить питомца: Учёба"
+        },
+        {
+          "action": "pet-rename",
+          "label": "Переименовать"
+        },
+        {
+          "action": "pet-hint",
+          "label": "Книгозверь"
+        },
+        {
+          "action": "pet-feed",
+          "label": "Погладить питомца: Работа"
+        },
+        {
+          "action": "pet-rename",
+          "label": ""
+        },
+        {
+          "action": "pet-hint",
+          "label": "Что засчитывается в сферу: Считай: работу, подработку, резюме, портфолио, учёбу профессии. Деньги растут из действий."
+        },
+        {
+          "action": "open-fortune-editor",
+          "label": ""
+        },
+        {
+          "action": "pet-feed",
+          "label": "Погладить питомца: Спорт"
+        },
+        {
+          "action": "pet-rename",
+          "label": ""
+        },
+        {
+          "action": "pet-hint",
+          "label": "Что засчитывается в сферу: Считай: тренировки, разминки, прогулки, дорогу пешком. Не считай: разговоры о спорте."
+        },
+        {
+          "action": "body-toad-card-interact",
+          "label": ""
+        },
+        {
+          "action": "body-toad-card-interact",
+          "label": ""
+        },
+        {
+          "action": "body-toad-card-interact",
+          "label": ""
+        },
+        {
+          "action": "pet-feed",
+          "label": "Погладить питомца: Здоровье"
+        },
+        {
+          "action": "pet-rename",
+          "label": ""
+        },
+        {
+          "action": "pet-hint",
+          "label": "Что засчитывается в сферу: Считай: сон вовремя, медитации, паузы, готовку здоровой еды. Не считай: залипание в кровати."
+        },
+        {
+          "action": "pet-feed",
+          "label": "Погладить питомца: Саморазвитие"
+        },
+        {
+          "action": "pet-rename",
+          "label": ""
+        },
+        {
+          "action": "pet-hint",
+          "label": "Что засчитывается в сферу: Считай: чтение, дневник, рефлексию, курсы. Не считай: скроллинг «полезных» каналов."
+        },
+        {
+          "action": "pet-feed",
+          "label": "Погладить питомца: Быт"
+        },
+        {
+          "action": "pet-rename",
+          "label": ""
+        },
+        {
+          "action": "pet-hint",
+          "label": "Что засчитывается в сферу: Считай: уборку, готовку, стирку, починку, бумажные дела. Быт — это тоже уровень."
+        },
+        {
+          "action": "pet-open",
+          "label": "Открыть"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "tree",
+      "overflow": false,
+      "headings": [
+        "Учёба",
+        "Все настроенные вехи уже в твоей истории.",
+        "Твой путь",
+        "Показать весь путь · 4"
+      ],
+      "actions": [
+        {
+          "action": "select-tree",
+          "label": "Учёба ур. 19"
+        },
+        {
+          "action": "select-tree",
+          "label": "Работа ур. 1"
+        },
+        {
+          "action": "select-tree",
+          "label": "Спорт ур. 1"
+        },
+        {
+          "action": "select-tree",
+          "label": "Здоровье ур. 1"
+        },
+        {
+          "action": "select-tree",
+          "label": "Саморазвитие ур. 1"
+        },
+        {
+          "action": "select-tree",
+          "label": "Быт ур. 1"
+        },
+        {
+          "action": "tree-layer",
+          "label": "⚑ Путь"
+        },
+        {
+          "action": "tree-layer",
+          "label": "◇ Игровые бонусы"
+        },
+        {
+          "action": "treemap-open",
+          "label": "Настроить продолжение"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "stats",
+      "overflow": false,
+      "headings": [
+        "Прогресс",
+        "25% · Выполнение (14 дн.)",
+        "⚖️ Баланс сфер",
+        "Ранги по сферам",
+        "XP по дням",
+        "Время по сферам",
+        "🌡 Нагрузка сфер"
+      ],
+      "actions": [
+        {
+          "action": "ai-review",
+          "label": "Разобрать неделю"
+        },
+        {
+          "action": "share-week",
+          "label": "Твоя неделя"
+        },
+        {
+          "action": "0",
+          "label": "Ритм и баланс"
+        },
+        {
+          "action": "1",
+          "label": "История и контекст"
+        },
+        {
+          "action": "2",
+          "label": "Все показатели"
+        },
+        {
+          "action": "show-paywall",
+          "label": "Расширенная аналитика — Pro"
+        },
+        {
+          "action": "toggle-restores",
+          "label": "·"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "party",
+      "overflow": false,
+      "headings": [
+        "Собери пати для следующего рейда.",
+        "Что увидят участники"
+      ],
+      "actions": [
+        {
+          "action": "party-entry-create",
+          "label": "Создать пати"
+        },
+        {
+          "action": "party-entry-join",
+          "label": "Войти по коду"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "leaderboard",
+      "overflow": false,
+      "headings": [
+        "Рейтинг участия",
+        "Как устроен рейтинг",
+        "Отдельное согласие на публикацию"
+      ],
+      "actions": [
+        {
+          "action": "set-leaderboard-consent",
+          "label": "Разрешить публикацию"
+        }
+      ]
+    },
+    {
+      "device": "desktop",
+      "route": "settings",
+      "overflow": false,
+      "headings": [
+        "Настройки",
+        "Профиль и доступ"
+      ],
+      "actions": [
+        {
+          "action": "set-settings-group",
+          "label": "Профиль и доступ"
+        },
+        {
+          "action": "set-settings-group",
+          "label": "Интерфейс"
+        },
+        {
+          "action": "set-settings-group",
+          "label": "Планирование"
+        },
+        {
+          "action": "set-settings-group",
+          "label": "Тень и подключения"
+        },
+        {
+          "action": "set-settings-group",
+          "label": "Игровые правила"
+        },
+        {
+          "action": "set-settings-group",
+          "label": "Данные и приватность"
+        },
+        {
+          "action": "open-account-profile",
+          "label": "Открыть профиль"
+        },
+        {
+          "action": "account-profile-link-add",
+          "label": "+ Добавить ссылку"
+        },
+        {
+          "label": "Сохранить профиль"
+        },
+        {
+          "action": "go-wardrobe",
+          "label": "Настроить персонажа"
+        },
+        {
+          "label": "Привязать"
+        },
+        {
+          "action": "logout-all",
+          "label": "Выйти на всех устройствах"
+        },
+        {
+          "action": "show-delete-account",
+          "label": "Удалить аккаунт и все данные"
+        },
+        {
+          "action": "start-trial",
+          "label": "✨ 7 дней Pro бесплатно"
+        },
+        {
+          "action": "show-paywall",
+          "label": "💎 Оформить Pro"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "today",
+      "overflow": false,
+      "headings": [
+        "Сегодня",
+        "•••Ещё",
+        "•••Ещё",
+        "•••Ещё",
+        "•••Ещё",
+        "СферыУчёба",
+        "Как выбрать сложность?",
+        "Привычки на сегодня",
+        "Поставь границу до того, как лента утянет",
+        "Другая поддержка⌄",
+        "•••",
+        "Завершить день1/4 · 10м"
+      ],
+      "actions": [
+        {
+          "action": "day-recap",
+          "label": "Итог дня"
+        },
+        {
+          "action": "today-tab",
+          "label": "День"
+        },
+        {
+          "action": "today-tab",
+          "label": "Доска"
+        },
+        {
+          "action": "open-helper",
+          "label": "Тень"
+        },
+        {
+          "action": "notes",
+          "label": "Заметки ↗"
+        },
+        {
+          "action": "goto-calendar",
+          "label": "пн\n7"
+        },
+        {
+          "action": "goto-calendar",
+          "label": "вт\n8"
+        },
+        {
+          "action": "goto-calendar",
+          "label": "ср\n9"
+        },
+        {
+          "action": "goto-calendar",
+          "label": "чт\n10"
+        },
+        {
+          "action": "goto-calendar",
+          "label": "пт\n11"
+        },
+        {
+          "action": "goto-calendar",
+          "label": "сб\n12"
+        },
+        {
+          "action": "goto-calendar",
+          "label": "вс\n13"
+        },
+        {
+          "action": "focus-add-task",
+          "label": "+ Квест"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "16:30"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Записать первый дубль для Satoru"
+        },
+        {
+          "action": "edit-task-title",
+          "label": "Записать первый дубль для Satoru"
+        },
+        {
+          "action": "edit-cats",
+          "label": "Работа"
+        },
+        {
+          "action": "focus-task",
+          "label": "Начать фокус"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "25м"
+        },
+        {
+          "action": "edit-actual",
+          "label": "Факт ↗"
+        },
+        {
+          "action": "focus-task",
+          "label": "Начать фокус: Записать первый дубль для Satoru"
+        },
+        {
+          "action": "toggle-core",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "commitment-take",
+          "label": ""
+        },
+        {
+          "action": "delete-task",
+          "label": ""
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "17:15"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Повторить параграф по биологии"
+        },
+        {
+          "action": "edit-task-title",
+          "label": "Повторить параграф по биологии"
+        },
+        {
+          "action": "edit-cats",
+          "label": "Учёба"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "30м"
+        },
+        {
+          "action": "edit-actual",
+          "label": "Факт ↗"
+        },
+        {
+          "action": "focus-task",
+          "label": "Начать фокус: Повторить параграф по биологии"
+        },
+        {
+          "action": "toggle-core",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "commitment-take",
+          "label": ""
+        },
+        {
+          "action": "delete-task",
+          "label": ""
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "18:15"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Прогуляться перед тренировкой"
+        },
+        {
+          "action": "edit-task-title",
+          "label": "Прогуляться перед тренировкой"
+        },
+        {
+          "action": "edit-cats",
+          "label": "Здоровье"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "20м"
+        },
+        {
+          "action": "edit-actual",
+          "label": "Факт ↗"
+        },
+        {
+          "action": "focus-task",
+          "label": "Начать фокус: Прогуляться перед тренировкой"
+        },
+        {
+          "action": "toggle-core",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "edit-difficulty",
+          "label": ""
+        },
+        {
+          "action": "commitment-take",
+          "label": ""
+        },
+        {
+          "action": "delete-task",
+          "label": ""
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "16:00"
+        },
+        {
+          "action": "toggle-task",
+          "label": "✓"
+        },
+        {
+          "action": "edit-task-title",
+          "label": "Освободить стол для съёмки"
+        },
+        {
+          "action": "edit-cats",
+          "label": "Быт"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "10м"
+        },
+        {
+          "action": "edit-actual",
+          "label": "10м ↗"
+        },
+        {
+          "action": "toggle-core",
+          "label": ""
+        },
+        {
+          "action": "delete-task",
+          "label": ""
+        },
+        {
+          "action": "sphere-picker-done",
+          "label": ""
+        },
+        {
+          "action": "sphere-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-background-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-background-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-background-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-background-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-background-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-pick",
+          "label": ""
+        },
+        {
+          "action": "sphere-background-pick",
+          "label": ""
+        },
+        {
+          "label": "+ Квест"
+        },
+        {
+          "action": "toggle-habit",
+          "label": "Выполнить привычку: Чтение"
+        },
+        {
+          "action": "browser-companion-install",
+          "label": "Установить за 2 минуты"
+        },
+        {
+          "action": "browser-companion-later",
+          "label": "Напомнить через 3 дня"
+        },
+        {
+          "action": "browser-companion-never",
+          "label": "Не напоминать"
+        },
+        {
+          "action": "goto-rewards",
+          "label": "1"
+        },
+        {
+          "action": "toggle-today-companion",
+          "label": "⌄"
+        },
+        {
+          "action": "tts",
+          "label": "Озвучить"
+        },
+        {
+          "action": "episode-open",
+          "label": "🎒 Тебя не было 30 дней — что это было?"
+        },
+        {
+          "action": "tts",
+          "label": "Озвучить"
+        },
+        {
+          "action": "recovery-open",
+          "label": ""
+        },
+        {
+          "action": "evening-open",
+          "label": ""
+        },
+        {
+          "action": "attention-open-setup",
+          "label": ""
+        },
+        {
+          "label": "Сохранить заметку"
+        },
+        {
+          "action": "cap-voice",
+          "label": "Голосовая заметка"
+        },
+        {
+          "action": "cap-video",
+          "label": "Видео-заметка"
+        },
+        {
+          "action": "day-recap",
+          "label": ""
+        },
+        {
+          "action": "goto-notes",
+          "label": "Открыть заметки: 1"
+        },
+        {
+          "action": "dayobs-yes",
+          "label": ""
+        },
+        {
+          "action": "dayobs-no",
+          "label": ""
+        },
+        {
+          "action": "first-line-save",
+          "label": ""
+        },
+        {
+          "action": "close-day",
+          "label": ""
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "calendar",
+      "overflow": false,
+      "headings": [
+        "8 сентябряВт · сегодняплан: 1ч 25м",
+        "Расписание дня"
+      ],
+      "actions": [
+        {
+          "action": "cal-shift",
+          "label": "Предыдущий день"
+        },
+        {
+          "action": "cal-shift",
+          "label": "Следующий день"
+        },
+        {
+          "action": "cal-mode",
+          "label": "День"
+        },
+        {
+          "action": "cal-mode",
+          "label": "Неделя"
+        },
+        {
+          "action": "cal-mode",
+          "label": "Месяц"
+        },
+        {
+          "action": "cal-date",
+          "label": "ПН\n7"
+        },
+        {
+          "action": "cal-date",
+          "label": "ВТ\n8\n3"
+        },
+        {
+          "action": "cal-date",
+          "label": "СР\n9"
+        },
+        {
+          "action": "cal-date",
+          "label": "ЧТ\n10"
+        },
+        {
+          "action": "cal-date",
+          "label": "ПТ\n11\n🎯"
+        },
+        {
+          "action": "cal-date",
+          "label": "СБ\n12"
+        },
+        {
+          "action": "cal-date",
+          "label": "ВС\n13"
+        },
+        {
+          "action": "export-ics",
+          "label": "Экспорт"
+        },
+        {
+          "action": "show-cal-subscribe",
+          "label": "Подписка"
+        },
+        {
+          "action": "cal-remind-toggle",
+          "label": "Напоминания"
+        },
+        {
+          "action": "cal-focus-add",
+          "label": "Добавить квест"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Снять выполнение: Освободить стол для съёмки"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "16:00\nОсвободить стол для съёмки\n10м\nРасписание"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Записать первый дубль для Satoru"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "16:30\nЗаписать первый дубль для Satoru\n25м\nРасписание"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Повторить параграф по биологии"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "17:15\nПовторить параграф по биологии\n30м\nРасписание"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Прогуляться перед тренировкой"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "18:15\nПрогуляться перед тренировкой\n20м\nРасписание"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "weekly",
+      "overflow": false,
+      "headings": [
+        "Неделя 07.09 – 13.09 · (текущая)",
+        "Квесты неделиКвесты выбранного дня",
+        "Итоги недели",
+        "📊 Время по сферам",
+        "🎯 Намерение на неделю",
+        "🔄 Итоги недели"
+      ],
+      "actions": [
+        {
+          "action": "week-prev",
+          "label": "Предыдущая неделя"
+        },
+        {
+          "action": "week-next",
+          "label": "Следующая неделя"
+        },
+        {
+          "action": "cal-mode",
+          "label": "День"
+        },
+        {
+          "action": "cal-mode",
+          "label": "Неделя"
+        },
+        {
+          "action": "cal-mode",
+          "label": "Месяц"
+        },
+        {
+          "action": "cal-date",
+          "label": "ПН\n7"
+        },
+        {
+          "action": "cal-date",
+          "label": "ВТ\n8\n3"
+        },
+        {
+          "action": "cal-date",
+          "label": "СР\n9"
+        },
+        {
+          "action": "cal-date",
+          "label": "ЧТ\n10"
+        },
+        {
+          "action": "cal-date",
+          "label": "ПТ\n11"
+        },
+        {
+          "action": "cal-date",
+          "label": "СБ\n12"
+        },
+        {
+          "action": "cal-date",
+          "label": "ВС\n13"
+        },
+        {
+          "action": "export-ics",
+          "label": "Экспорт"
+        },
+        {
+          "action": "show-cal-subscribe",
+          "label": "Подписка"
+        },
+        {
+          "action": "cal-remind-toggle",
+          "label": "Напоминания"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Снять выполнение: Освободить стол для съёмки"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "16:00\n10м\nОсвободить стол для съёмки"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Записать первый дубль для Satoru"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "16:30\n25м\nЗаписать первый дубль для Satoru"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Повторить параграф по биологии"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "17:15\n30м\nПовторить параграф по биологии"
+        },
+        {
+          "action": "toggle-task",
+          "label": "Выполнить: Прогуляться перед тренировкой"
+        },
+        {
+          "action": "cal-edit-task",
+          "label": "18:15\n20м\nПрогуляться перед тренировкой"
+        },
+        {
+          "action": "wk-add-task",
+          "label": "Добавить квест"
+        },
+        {
+          "action": "share-week",
+          "label": "📤 Поделиться"
+        },
+        {
+          "action": "save-week",
+          "label": "Сохранить"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "goals",
+      "overflow": false,
+      "headings": [
+        "Цели",
+        "Ещё",
+        "Что важно сейчас"
+      ],
+      "actions": [
+        {
+          "action": "goals-toggle-create",
+          "label": "+ Цель"
+        },
+        {
+          "action": "set-goal-view",
+          "label": "Сейчас"
+        },
+        {
+          "action": "set-goal-view",
+          "label": "Все цели"
+        },
+        {
+          "action": "set-goal-view",
+          "label": ""
+        },
+        {
+          "action": "set-goal-view",
+          "label": ""
+        },
+        {
+          "action": "new-goal-group",
+          "label": ""
+        },
+        {
+          "action": "goals-toggle-bulk",
+          "label": "Выбрать несколько"
+        },
+        {
+          "action": "ai-import-goals",
+          "label": "Разобрать с Тенью"
+        },
+        {
+          "action": "open-goal-detail",
+          "label": "Выпустить первое видео\nКороткое знакомство с Satoru: один день и одно полезное действие.\nКраткосрочные\n0/1 этапов\n📅 2026-09-15 · 7 дней\nРабота\n→\nСнять первый дубль\n›"
+        },
+        {
+          "action": "goal-toggle-complete",
+          "label": "Отметить цель достигнутой: Выпустить первое видео"
+        },
+        {
+          "action": "open-goal-detail",
+          "label": "Разобраться в теме по биологии\nПовторить параграф и объяснить его без конспекта.\nКраткосрочные\n📅 2026-09-11 · 3 дня\nУчёба\n›"
+        },
+        {
+          "action": "goal-toggle-complete",
+          "label": "Отметить цель достигнутой: Разобраться в теме по биологии"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "notes",
+      "overflow": false,
+      "headings": [
+        "Заметки",
+        "Идея для видео: показать, как один маленький шаг превращается в готовое"
+      ],
+      "actions": [
+        {
+          "action": "cap-voice",
+          "label": "Голосовая заметка"
+        },
+        {
+          "action": "cap-video",
+          "label": "Видео-заметка"
+        },
+        {
+          "label": "Сохранить заметку"
+        },
+        {
+          "action": "day-recap",
+          "label": "Итог дня"
+        },
+        {
+          "action": "goto-notes",
+          "label": "📝\n1"
+        },
+        {
+          "action": "note-to-goal",
+          "label": "🤖 Цель"
+        },
+        {
+          "action": "note-quest",
+          "label": "→ Квест"
+        },
+        {
+          "action": "note-del",
+          "label": "✕"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "habits",
+      "overflow": false,
+      "headings": [
+        "Привычки",
+        "Сегодня",
+        "+ Создать привычку",
+        "ЧтениеУчёба · 10м",
+        "Личный ориентир",
+        "Строим привычки"
+      ],
+      "actions": [
+        {
+          "action": "toggle-habit",
+          "label": "Выполнить привычку: Чтение"
+        },
+        {
+          "label": ""
+        },
+        {
+          "action": "habits-tab",
+          "label": "Привычки"
+        },
+        {
+          "action": "habits-tab",
+          "label": "Срывы"
+        },
+        {
+          "action": "habits-tab",
+          "label": "Метод"
+        },
+        {
+          "action": "habit-edit",
+          "label": ""
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "shelf",
+      "overflow": false,
+      "headings": [
+        "Вдохновение",
+        "Что тебя зажигает?",
+        "Импорт из TikTok"
+      ],
+      "actions": [
+        {
+          "action": "inspiration-setup-import-satoru",
+          "label": "Собрать из Satoru"
+        },
+        {
+          "action": "inspiration-import-guide-open",
+          "label": ""
+        },
+        {
+          "action": "inspiration-import-links-toggle",
+          "label": ""
+        },
+        {
+          "action": "inspiration-setup-manual",
+          "label": "Настроить вручную"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "rewards",
+      "overflow": false,
+      "headings": [
+        "Награды",
+        "Награды дня",
+        "Вероятности сундука",
+        "Личные награды",
+        "Добавить свою награду"
+      ],
+      "actions": [
+        {
+          "action": "open-chest",
+          "label": "Открыть награду (1)"
+        },
+        {
+          "action": "shop",
+          "label": "Личные награды"
+        },
+        {
+          "action": "collection",
+          "label": "Коллекция"
+        },
+        {
+          "action": "achievements",
+          "label": "Достижения"
+        },
+        {
+          "action": "history",
+          "label": "Правила и история"
+        },
+        {
+          "action": "open-reward-catalog",
+          "label": "Каталог наград"
+        },
+        {
+          "label": ""
+        },
+        {
+          "action": "buy-reward",
+          "label": "Купить"
+        },
+        {
+          "action": "delete-reward",
+          "label": "✕"
+        },
+        {
+          "action": "buy-reward",
+          "label": "Купить"
+        },
+        {
+          "action": "delete-reward",
+          "label": "✕"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "den",
+      "overflow": false,
+      "headings": [
+        "Логово",
+        "Действия комнатыПрогулка, отдых и коллекции⌄",
+        "Действия комнатыПрогулка, отдых и коллекции⌄",
+        "ОбитателиСовместные действия · 3⌄",
+        "ОбитателиСовместные действия · 3⌄"
+      ],
+      "actions": [
+        {
+          "action": "den-ambient-cycle",
+          "label": "Эмбиент: Тишина"
+        },
+        {
+          "action": "den-toggle-edit",
+          "label": "Обставить комнату"
+        },
+        {
+          "action": "shadow-den-pair",
+          "label": "Тень: позвать · Тень"
+        },
+        {
+          "action": "den-avatar-pose",
+          "label": "Стоит. Нажми, чтобы сменить действие"
+        },
+        {
+          "action": "body-toad-interact",
+          "label": "Жабий сэнсэй — голоден. Нажми, чтобы поприветствовать"
+        },
+        {
+          "action": "den-pet-react",
+          "label": "Учёба — голоден"
+        },
+        {
+          "action": "recovery-slug-interact",
+          "label": "Кацую — Спокойна. Нажми, чтобы поздороваться"
+        },
+        {
+          "action": "goto-today",
+          "label": "Начать фокус"
+        },
+        {
+          "action": "den-avatar-walk",
+          "label": ""
+        },
+        {
+          "action": "den-room-action",
+          "label": ""
+        },
+        {
+          "action": "den-room-action",
+          "label": ""
+        },
+        {
+          "action": "go-wardrobe",
+          "label": ""
+        },
+        {
+          "action": "goto-rewards",
+          "label": ""
+        },
+        {
+          "action": "goto-pets",
+          "label": ""
+        },
+        {
+          "action": "open-helper",
+          "label": ""
+        },
+        {
+          "action": "shadow-den-pair",
+          "label": ""
+        },
+        {
+          "action": "shadow-den-solo",
+          "label": ""
+        },
+        {
+          "action": "shadow-den-course",
+          "label": ""
+        },
+        {
+          "action": "body-toad-interact",
+          "label": ""
+        },
+        {
+          "action": "body-toad-interact",
+          "label": ""
+        },
+        {
+          "action": "body-toad-interact",
+          "label": ""
+        },
+        {
+          "action": "body-toad-interact",
+          "label": ""
+        },
+        {
+          "action": "body-toad-interact",
+          "label": ""
+        },
+        {
+          "action": "body-toad-interact",
+          "label": ""
+        },
+        {
+          "action": "recovery-slug-interact",
+          "label": ""
+        },
+        {
+          "action": "recovery-slug-interact",
+          "label": ""
+        },
+        {
+          "action": "recovery-slug-interact",
+          "label": ""
+        },
+        {
+          "action": "recovery-slug-interact",
+          "label": ""
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "character",
+      "overflow": false,
+      "headings": [
+        "Персонаж",
+        "Гардероб",
+        "Дополнительно",
+        "Живые позы＋",
+        "Traveller",
+        "⚖️ Ритм сфер＋",
+        "⚖️ Колесо ритма",
+        "🧍 Телосложение＋",
+        "Телосложение"
+      ],
+      "actions": [
+        {
+          "action": "character-wardrobe-slot",
+          "label": "Голова\nБез головного убора\n✓ НАДЕТО"
+        },
+        {
+          "action": "character-wardrobe-slot",
+          "label": "Шея\nШарф Traveller\n✓ НАДЕТО"
+        },
+        {
+          "action": "character-wardrobe-slot",
+          "label": "Спина\nРюкзак Traveller\n✓ НАДЕТО"
+        },
+        {
+          "action": "avatar-core-gender",
+          "label": ""
+        },
+        {
+          "action": "avatar-core-gender",
+          "label": ""
+        },
+        {
+          "action": "avatar-core-pose",
+          "label": ""
+        },
+        {
+          "action": "avatar-core-pose",
+          "label": ""
+        },
+        {
+          "action": "avatar-core-pose",
+          "label": ""
+        },
+        {
+          "action": "canon-hint-dismiss",
+          "label": "Скрыть"
+        },
+        {
+          "action": "go-settings-skills",
+          "label": ""
+        },
+        {
+          "action": "show-paywall",
+          "label": "% жира · Pro"
+        },
+        {
+          "label": ""
+        },
+        {
+          "action": "character-wardrobe-filter",
+          "label": "Все"
+        },
+        {
+          "action": "character-wardrobe-filter",
+          "label": "Новое"
+        },
+        {
+          "action": "character-wardrobe-equip",
+          "label": "◇\nБез головного убора\n—\n✓ Надето"
+        },
+        {
+          "action": "character-wardrobe-equip",
+          "label": "Шляпа Scholar\nРедкое\nВ наличии"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "pets",
+      "overflow": false,
+      "headings": [
+        "Питомцы",
+        "КацуюХранительница отдыхаСпокойнаДышит медленно и хранит запас тишины.",
+        "УчёбаНуждается во вниманииНуждается во внимании, когда будет ресурс",
+        "РаботаНуждается во вниманииНуждается во внимании, когда будет ресурс",
+        "СпортНуждается во вниманииНуждается во внимании, когда будет ресурс",
+        "ЗдоровьеНуждается во вниманииНуждается во внимании, когда будет ресурс",
+        "СаморазвитиеНуждается во вниманииНуждается во внимании, когда будет ресурс",
+        "БытНуждается во вниманииНуждается во внимании, когда будет ресурс",
+        "Учёба",
+        "Зверинец",
+        "Как это работает"
+      ],
+      "actions": [
+        {
+          "action": "recovery-slug-react",
+          "label": "Побыть рядом с Кацую"
+        },
+        {
+          "action": "recovery-slug-react",
+          "label": ""
+        },
+        {
+          "action": "pet-feed",
+          "label": "Погладить питомца: Учёба"
+        },
+        {
+          "action": "pet-rename",
+          "label": "Переименовать"
+        },
+        {
+          "action": "pet-hint",
+          "label": "Книгозверь"
+        },
+        {
+          "action": "pet-feed",
+          "label": "Погладить питомца: Работа"
+        },
+        {
+          "action": "pet-rename",
+          "label": ""
+        },
+        {
+          "action": "pet-hint",
+          "label": "Что засчитывается в сферу: Считай: работу, подработку, резюме, портфолио, учёбу профессии. Деньги растут из действий."
+        },
+        {
+          "action": "open-fortune-editor",
+          "label": ""
+        },
+        {
+          "action": "pet-feed",
+          "label": "Погладить питомца: Спорт"
+        },
+        {
+          "action": "pet-rename",
+          "label": ""
+        },
+        {
+          "action": "pet-hint",
+          "label": "Что засчитывается в сферу: Считай: тренировки, разминки, прогулки, дорогу пешком. Не считай: разговоры о спорте."
+        },
+        {
+          "action": "body-toad-card-interact",
+          "label": ""
+        },
+        {
+          "action": "body-toad-card-interact",
+          "label": ""
+        },
+        {
+          "action": "body-toad-card-interact",
+          "label": ""
+        },
+        {
+          "action": "pet-feed",
+          "label": "Погладить питомца: Здоровье"
+        },
+        {
+          "action": "pet-rename",
+          "label": ""
+        },
+        {
+          "action": "pet-hint",
+          "label": "Что засчитывается в сферу: Считай: сон вовремя, медитации, паузы, готовку здоровой еды. Не считай: залипание в кровати."
+        },
+        {
+          "action": "pet-feed",
+          "label": "Погладить питомца: Саморазвитие"
+        },
+        {
+          "action": "pet-rename",
+          "label": ""
+        },
+        {
+          "action": "pet-hint",
+          "label": "Что засчитывается в сферу: Считай: чтение, дневник, рефлексию, курсы. Не считай: скроллинг «полезных» каналов."
+        },
+        {
+          "action": "pet-feed",
+          "label": "Погладить питомца: Быт"
+        },
+        {
+          "action": "pet-rename",
+          "label": ""
+        },
+        {
+          "action": "pet-hint",
+          "label": "Что засчитывается в сферу: Считай: уборку, готовку, стирку, починку, бумажные дела. Быт — это тоже уровень."
+        },
+        {
+          "action": "pet-open",
+          "label": "Открыть"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "tree",
+      "overflow": false,
+      "headings": [
+        "Учёба",
+        "Все настроенные вехи уже в твоей истории.",
+        "Твой путь",
+        "Показать весь путь · 4"
+      ],
+      "actions": [
+        {
+          "action": "select-tree",
+          "label": "Учёба\nур. 19"
+        },
+        {
+          "action": "select-tree",
+          "label": "Работа\nур. 1"
+        },
+        {
+          "action": "select-tree",
+          "label": "Спорт\nур. 1"
+        },
+        {
+          "action": "select-tree",
+          "label": "Здоровье\nур. 1"
+        },
+        {
+          "action": "select-tree",
+          "label": "Саморазвитие\nур. 1"
+        },
+        {
+          "action": "select-tree",
+          "label": "Быт\nур. 1"
+        },
+        {
+          "action": "tree-layer",
+          "label": "⚑ Путь"
+        },
+        {
+          "action": "tree-layer",
+          "label": "◇ Игровые бонусы"
+        },
+        {
+          "action": "treemap-open",
+          "label": "Настроить продолжение"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "stats",
+      "overflow": false,
+      "headings": [
+        "Прогресс",
+        "25% · Выполнение (14 дн.)",
+        "⚖️ Баланс сфер",
+        "Ранги по сферам",
+        "XP по дням",
+        "Время по сферам",
+        "🌡 Нагрузка сфер"
+      ],
+      "actions": [
+        {
+          "action": "ai-review",
+          "label": "Разобрать неделю"
+        },
+        {
+          "action": "share-week",
+          "label": "Твоя неделя"
+        },
+        {
+          "action": "0",
+          "label": "Ритм и баланс"
+        },
+        {
+          "action": "1",
+          "label": "История и контекст"
+        },
+        {
+          "action": "2",
+          "label": "Все показатели"
+        },
+        {
+          "action": "show-paywall",
+          "label": "Расширенная аналитика — Pro"
+        },
+        {
+          "action": "toggle-restores",
+          "label": "·"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "party",
+      "overflow": false,
+      "headings": [
+        "Собери пати для следующего рейда.",
+        "Что увидят участники"
+      ],
+      "actions": [
+        {
+          "action": "party-entry-create",
+          "label": "Создать пати"
+        },
+        {
+          "action": "party-entry-join",
+          "label": "Войти по коду"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "leaderboard",
+      "overflow": false,
+      "headings": [
+        "Рейтинг участия",
+        "Как устроен рейтинг",
+        "Отдельное согласие на публикацию"
+      ],
+      "actions": [
+        {
+          "action": "set-leaderboard-consent",
+          "label": "Разрешить публикацию"
+        }
+      ]
+    },
+    {
+      "device": "mobile",
+      "route": "settings",
+      "overflow": false,
+      "headings": [
+        "Настройки",
+        "Профиль и доступ"
+      ],
+      "actions": [
+        {
+          "label": "Профиль и доступ ▾"
+        },
+        {
+          "action": "open-account-profile",
+          "label": "Открыть профиль"
+        },
+        {
+          "action": "account-profile-link-add",
+          "label": "+ Добавить ссылку"
+        },
+        {
+          "label": "Сохранить профиль"
+        },
+        {
+          "action": "go-wardrobe",
+          "label": "Настроить персонажа"
+        },
+        {
+          "label": "Привязать"
+        },
+        {
+          "action": "logout-all",
+          "label": "Выйти на всех устройствах"
+        },
+        {
+          "action": "show-delete-account",
+          "label": "Удалить аккаунт и все данные"
+        },
+        {
+          "action": "start-trial",
+          "label": "✨ 7 дней Pro бесплатно"
+        },
+        {
+          "action": "show-paywall",
+          "label": "💎 Оформить Pro"
+        }
+      ]
+    }
+  ],
+  "checks": [
+    "desktop: Day/Board navigation, closed day routes to tomorrow, Control is visible",
+    "desktop: habit schedule/edit/pause + observations → actual attention setup",
+    "desktop: six named settings groups; profile first; focus in planning; exact target opens disclosure",
+    "desktop: reward receipt returns to visible item, not a hidden tab",
+    "mobile: Day/Board navigation, closed day routes to tomorrow, Control is visible",
+    "mobile: habit schedule/edit/pause + observations → actual attention setup",
+    "mobile: six named settings groups; profile first; focus in planning; exact target opens disclosure",
+    "mobile: reward receipt returns to visible item, not a hidden tab"
+  ],
+  "errors": []
+}

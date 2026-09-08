@@ -16,7 +16,7 @@ const penguin = require('../public/resources-penguin-v1.js');
 
 assert.equal(stage.VERSION, '1.12.0');
 assert.equal(toad.VERSION, '3.6.1');
-assert.equal(slug.VERSION, '2.6.1');
+assert.equal(slug.VERSION, '2.6.2');
 assert.equal(penguin.VERSION, '1.3.0');
 assert.equal(typeof toad.cancelPair, 'function');
 assert.equal(typeof slug.cancelPair, 'function');
@@ -46,9 +46,9 @@ assert.match(app, /denSceneBusy\(shell\)\) return false/);
 
 assert.match(index, /den-stage-v1\.js\?v=20260815-den-life-v158-1/);
 assert.match(index, /body-toad-v1\.js\?v=20260826-appearance-feedback-v183-1/);
-assert.match(index, /recovery-slug-v1\.js\?v=20260826-appearance-feedback-v183-1/);
+assert.match(index, /recovery-slug-v1\.js\?v=20260908-product-polish-v248-1/);
 assert.match(index, /resources-penguin-v1\.js\?v=20260819-traveller-f2-runtime-v167-1/);
-assert.match(sw, /const CACHE = 'satoru-v247';/);
+assert.match(sw, /const CACHE = 'satoru-v248';/);
 
 function classList() {
   const values = new Set();

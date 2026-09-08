@@ -579,3 +579,43 @@
  :root[data-design=next] .inspiration-first-actions,:root[data-design=next] .inspiration-profile-workspace{grid-template-columns:minmax(0,1fr)}
  :root[data-design=next] .inspiration-first-actions>button,:root[data-design=next] .inspiration-import-choice>summary{min-height:64px}
 }
+
+/* v248 — controls live beside the object; optional reflection follows the work. */
+:root[data-design=next] .settings-purpose-picker{display:none}
+:root[data-design=next] .today-tools-links{display:flex;gap:var(--sp-1);align-items:center}
+:root[data-design=next] .today-shadow-link{display:none}
+:root[data-design=next] .habit-edit-dialog{width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto}
+:root[data-design=next] #edit-habit-form{display:grid;gap:var(--sp-4)}
+:root[data-design=next] #edit-habit-form label{display:grid;gap:var(--sp-2);min-width:0}
+:root[data-design=next] #edit-habit-form :is(input,select){width:100%;min-width:0}
+:root[data-design=next] .habit-edit-pair{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-3)}
+:root[data-design=next] #edit-habit-form fieldset{min-width:0;border:0;padding:0;margin:0}
+:root[data-design=next] #edit-habit-form .settings-actions{display:flex;flex-direction:row;flex-wrap:wrap;gap:var(--sp-2);box-shadow:none;border:0;background:none;padding:0}
+:root[data-design=next] #edit-habit-form .settings-actions button{width:auto;flex:1 1 auto}
+:root[data-design=next] #edit-habit-form .habit-form-status:empty{display:none}
+:root[data-design=next] #edit-habit-form .habit-day-picks{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:var(--sp-1)}
+:root[data-design=next] #edit-habit-form .habit-day-picks label{display:flex;min-height:44px;align-items:center;justify-content:center;flex-direction:column;gap:var(--sp-1)}
+:root[data-design=next] #edit-habit-form .habit-day-picks input{width:18px;min-width:0;height:18px;min-height:0}
+:root[data-design=next] .habit-edit-dialog .habit-delete-link{margin-left:auto;color:var(--bad)}
+:root[data-design=next] .habit-schedule-edit{justify-self:start}
+:root[data-design=next] .habit-identity-disclosure{padding:var(--sp-3) 0;border-top:1px solid var(--line)}
+:root[data-design=next] .habit-identity-disclosure>summary{cursor:pointer;padding:var(--sp-2) 0}
+:root[data-design=next] .habit-identity-disclosure .hb-intro{border:0;background:none;padding:var(--sp-3) 0}
+:root[data-design=next] .habit-boundary-entry{margin-bottom:var(--sp-4)}
+:root[data-design=next] .settings-purpose-rail .settings-hub-item{white-space:normal;line-height:var(--leading-ui)}
+:root[data-design=next] .control-review-card{border-color:var(--warn);border-left-width:3px}
+:root[data-design=next] .control-review-card .control-review-actions{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+:root[data-design=next] .today-hero .th-actions:empty{display:none}
+@media(max-width:600px){
+ :root[data-design=next] #ai-fab{display:none}
+ :root[data-design=next] .today-shadow-link{display:inline-flex;align-items:center;gap:var(--sp-1);background:none;border:0;box-shadow:none;min-height:44px;padding:var(--sp-2);color:var(--text)}
+ :root[data-design=next] .today-shadow-link .button-glyph{width:16px;height:16px}
+ :root[data-design=next] .today-tools-links .today-notes-link{padding:var(--sp-2)}
+ :root[data-design=next] .settings-purpose-picker{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:44px;text-align:left}
+ :root[data-design=next] .settings-purpose-rail:not(.is-choosing) .settings-hub-nav{display:none}
+ :root[data-design=next] .settings-purpose-rail.is-choosing .settings-hub-nav{margin-top:var(--sp-2)}
+ :root[data-design=next] .settings-purpose-rail .settings-hub-nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+ :root[data-design=next] .habit-edit-dialog{padding:var(--sp-4)}
+ :root[data-design=next] #edit-habit-form .habit-day-picks{gap:0}
+ :root[data-design=next] #edit-habit-form .habit-day-picks label{font-size:var(--type-meta)}
+}

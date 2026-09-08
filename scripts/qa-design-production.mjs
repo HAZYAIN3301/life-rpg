@@ -6,11 +6,11 @@ import {execFileSync} from 'node:child_process';
 import assert from 'node:assert/strict';
 const require=createRequire(new URL('../art-factory/avatar-3d-v1-20260907/package.json',import.meta.url));
 const {chromium}=require('playwright');
-const base='https://life-rpg-production-416a.up.railway.app',dir=new URL('../art-factory/design-deep-20260908/',import.meta.url);
+const base='https://life-rpg-production-416a.up.railway.app',dir=new URL(process.env.SATORU_QA_OUTPUT || '../art-factory/design-deep-20260908/',import.meta.url);
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 const receipt={runtimeCommit:process.env.SATORU_RELEASE_SHA||execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),checkedAt:new Date().toISOString(),base,files:[]};
-for(const file of ['index.html','app.js','design-next-v1.css','interface-composition-v1.js','sw.js','compare.html','design-baseline/v244/manifest.json','design-baseline/v244/app.js','fonts/russo-one/RussoOne.ttf']){
- const response=await fetch(base+'/'+file+'?verify=v247');
+for(const file of ['index.html','app.js','design-next-v1.css','interface-composition-v1.js','actionable-settings-ui-v1.js','recovery-slug-v1.js','sw.js','compare.html','design-baseline/v244/manifest.json','design-baseline/v244/app.js','fonts/russo-one/RussoOne.ttf']){
+ const response=await fetch(base+'/'+file+'?verify='+receipt.runtimeCommit);
  assert.equal(response.status,200,file);
  const actual=hash(Buffer.from(await response.arrayBuffer())),expected=hash(await readFile(new URL('../public/'+file,import.meta.url)));
  assert.equal(actual,expected,file+' production bytes');receipt.files.push({file,sha256:actual});

@@ -22,21 +22,25 @@ const telemetry = {
   consent: { purposes:{ service_operation:true, product_improvement:true, experimentation:false }, history:[] },
 };
 
-test('телеметрия показывает четыре состояния и не рисует toggle для essential', () => {
+test('телеметрия отличает оба defaults от выбора человека; essential без toggle', () => {
   const out = UI.renderTelemetry(telemetry, {});
   assert.match(out, /Всегда включено/);
   assert.match(out, /Включено по умолчанию — можно выключить/);
-  assert.match(out, /Выключено вами/);
+  assert.match(out, /Выключено по умолчанию/);
+  assert.doesNotMatch(out, /Выключено вами/);
   assert.equal((out.match(/data-action="telemetry-consent-toggle"/g) || []).length, 2);
   assert.match(out, /30/); assert.match(out, /180/); assert.match(out, /Нужно для ремонта/);
   const chosen = structuredClone(telemetry); chosen.consent.history.push({ purpose:'product_improvement', granted:true });
   assert.match(UI.renderTelemetry(chosen, {}), /Включено вами/);
+  chosen.consent.history.push({purpose:'experimentation',granted:false});
+  assert.match(UI.renderTelemetry(chosen,{}), /Выключено вами/);
 });
 
 test('память показывает origin/usage и оставляет dismissed видимой', () => {
   const out = UI.renderMemory({ partial:false, entries:[{ id:'m1', text:'Утром легче', origin:'Вы сказали это сами (form)', usage:'Используется в: planning.', status:'dismissed' }] }, {});
   assert.match(out, /Утром легче/); assert.match(out, /Вы сказали это сами/); assert.match(out, /Используется в/);
   assert.match(out, /ai-memory-restore/); assert.ok(!out.includes('ai-memory-dismiss'));
+  assert.match(out, /ai-memory-delete/,'dismissed is not an undeletable memory');
 });
 
 test('partial блокирует любые мутации памяти, но показывает записи', () => {
@@ -44,6 +48,11 @@ test('partial блокирует любые мутации памяти, но п
   assert.match(out, /Часть памяти не читается/); assert.match(out, /Живое/);
   assert.match(out, /data-action="ai-memory-edit"[^>]*disabled/);
   assert.match(out, /data-action="ai-memory-delete"[^>]*disabled/);
+  const editing = UI.renderMemory({partial:true,entries:[{id:'m1',text:'Живое',status:'active'}]}, {editingId:'m1'});
+  assert.doesNotMatch(editing, /<form/);
+  const locked = UI.renderMemory({entries:[{id:'m1',text:'Живое',status:'active',editable:false,deletable:false}]});
+  assert.match(locked, /data-action="ai-memory-edit"[^>]*disabled/);
+  assert.match(locked, /data-action="ai-memory-delete"[^>]*disabled/);
 });
 
 test('first-value UI держит ровно одну primary action', () => {
@@ -90,9 +99,9 @@ test('generic profile PUT перечитывает память прямо пе�
 });
 
 test('release pins обновлены согласованно', () => {
-  assert.match(sw, /const CACHE = 'satoru-v247'/);
-  assert.match(html, /app\.js\?v=20260908-design-v247-1/);
-  assert.match(html, /styles\.css\?v=20260908-design-v247-1/);
+  assert.match(sw, /const CACHE = 'satoru-v248'/);
+  assert.match(html, /app\.js\?v=20260908-design-v248-1/);
+  assert.match(html, /styles\.css\?v=20260908-design-v248-1/);
 });
 
 test('zero-memory handoff ведёт к актуальным источникам и гасит старый task brief', () => {

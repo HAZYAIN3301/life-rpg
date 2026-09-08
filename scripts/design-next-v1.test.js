@@ -6,7 +6,7 @@ const read = p => fs.readFileSync(path.join(__dirname, '..', p), 'utf8');
 const app=read('public/app.js'),css=read('public/design-next-v1.css'),index=read('public/index.html'),sw=read('public/sw.js');
 
 test('redesign ships together with its local font and preserves the old UI entry',()=>{
- assert.match(index,/design-next-v1\.css\?v=20260908-design-v247-1/);
+ assert.match(index,/design-next-v1\.css\?v=20260908-design-v248-1/);
  assert.match(sw,/'design-next-v1\.css'/);
  assert.match(sw,/'fonts\/russo-one\/RussoOne\.ttf'/);
  assert.match(css,/\[data-theme=light\]/);

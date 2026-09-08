@@ -10,6 +10,10 @@
 ## Актуальный handoff — 2026-09-06
 
 **Последний запрос 08.09:** владелец отверг поверхностный rollout v245/v246.
+Последующий проход по смыслу функций и полировке v248:
+[PRODUCT-UX-AUDIT-V248.md](./PRODUCT-UX-AUDIT-V248.md). Читать первым для UI:
+назначение всех основных разделов, реальный редактор привычки, честные сигналы,
+точные переходы, сохранения и нерешённые продуктовые вопросы.
 Структурный v247: [DESIGN-DEEP-REDESIGN-V1.md](./DESIGN-DEEP-REDESIGN-V1.md).
 Читать перед следующим UI: новый presentation-only interface-composition-v1,
 а не только перекраска. Старый /compare.html не менять; проверки и границы — там же.
@@ -32,13 +36,14 @@ Site public, обновление явно разрешено.
 - Канонический код — `origin/master`. Перед работой обязательно сверить
   `git rev-parse HEAD` и `git rev-parse origin/master`; checkout с отставшим SHA не считать
   источником истины.
-- Новый runtime — **design v245 + guest shell v246**, PWA cache `satoru-v246`,
-  app/style pin `20260908-design-v246-1`, `public/design-next-v1.css`.
-  Runtime `f51b3ba`: Railway success, production bytes/archive/login проверены.
-  Точный receipt и границы QA — `DESIGN-ROLLOUT-V1.md`.
+- Новый runtime — **структурный v247 + продуктовая полировка v248**, PWA cache `satoru-v248`,
+  app/style pin `20260908-design-v248-1`, `public/design-next-v1.css`.
+  v248 реализован; факт публикации проверяется по production-receipt.json
+  в `art-factory/product-polish-20260908/`.
+  Контракт и границы QA — `PRODUCT-UX-AUDIT-V248.md`.
   Прежний runtime v244 сохранён из `74a97dd` в `/compare.html` (synthetic, read-only).
   Actionable Foundations UI и Commitment v2 не заменены новой моделью хранения.
-- Полная проверка design v245: **1929/1929 PASS**; браузерные receipts отдельно в rollout.
+- Полная проверка v248: **1935/1935 PASS**; UI/edge/composition/save receipts отдельно в аудите.
   Перед следующей правкой начать с `git fetch`, `git status --short --branch` и
   `git log -5 --oneline`; обязательный процесс —
   [`AGENTS-PROTOCOL.md`](./AGENTS-PROTOCOL.md).
