@@ -1,0 +1,11 @@
+{
+  "at": "2026-09-08T22:04:46.376Z",
+  "checks": [
+    "Lost response after durable create: draft retained, retry produces exactly one invitation",
+    "Two independent contexts: explicit acceptance/readiness; shared server timer; private title absent",
+    "Real completeTask/CAS saves A task; partial leaves B task open; session survives full reload",
+    "375px RU/EN/DE, light/dark, reduced motion, dialog keyboard focus/return, no page overflow"
+  ],
+  "errors": [],
+  "complete": true
+}

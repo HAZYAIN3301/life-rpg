@@ -165,8 +165,9 @@ test('Experience and Party disclose secondary systems instead of repeating card 
   assert.match(party, /party-progress-details/);
   assert.doesNotMatch(party, /party-top-grid|party-event-grid|season-card-event|class="card raid-card/,
     'raid and season must not duplicate the event hero as equal cards');
-  assert.equal(count(party, 'class="event-metrics"'), 1,
-    'the leading raid metrics should appear only once');
+  assert.equal(count(party, 'data-duo-host'), 1,
+    'one shared-session surface leads; raid metrics live in the existing disclosure');
+  assert.equal(count(party, '${claim}'), 1, 'the legacy reward claim remains reachable exactly once');
 
   const labelOverride = lastCssBlockWith('.settings-appearance-card .theme-lbl', /width\s*:/);
   assert.match(labelOverride, /(?:inline-size|width)\s*:\s*auto/,

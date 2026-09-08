@@ -1,0 +1,41 @@
+{
+  "release": "satoru-v249",
+  "dateLocal": "2026-09-09",
+  "baseCommit": "34048e073bf34bbfe9b8ea7da39425b225418f2f",
+  "fetchedOriginMaster": "e76339d470c739a5e51c57e86550b825b04984c4",
+  "runtimeSuite": {
+    "command": "node --test --test-concurrency=2 scripts/*.test.js",
+    "tests": 1942,
+    "passed": 1942,
+    "failed": 0,
+    "newComposedTests": 7,
+    "logLocal": "/private/tmp/satoru-v249-verified.log"
+  },
+  "browser": {
+    "command": "node scripts/qa-party-duo.mjs",
+    "receipt": "receipt.json",
+    "screenshots": 9,
+    "accounts": "two independent synthetic localhost accounts",
+    "viewports": ["1440x1000", "375x812"],
+    "themes": ["dark", "light"],
+    "locales": ["ru", "en", "de"],
+    "pageErrors": 0,
+    "realStoreCAS": true,
+    "lostResponseAfterCommit": true,
+    "reloadVerified": true
+  },
+  "publication": {
+    "status": "not_published",
+    "reason": "Awaiting explicit master push and Railway approval after previous permission rejection.",
+    "productionRuntimeUnchanged": "satoru-v248"
+  },
+  "notImplemented": [
+    "raid reward ledger and XP boost repair",
+    "raid target rebalance",
+    "external invitation delivery and reminders",
+    "live audio or video",
+    "AI coordinator",
+    "cooperative story expedition",
+    "new avatar"
+  ]
+}

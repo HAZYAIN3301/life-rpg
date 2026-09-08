@@ -1,5 +1,73 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-09] v249 — локальное дуо + критический путь продукта и Opus handoff
+
+Владелец разрешил начать мультиплеер и попросил приоритеты недореализованного
+потенциала всего приложения. Реализован ограниченный полезный путь: два известных
+участника существующей пати → свой task/выбранная подпись → приглашение/согласие →
+готовность → общий серверный интервал → независимый личный итог. Личный план/чужой
+taskId не раскрываются; третий член пати не видит сессию. `done` требует записанный
+через прежний completeTask/Store/CAS task; partial/stopped ничего не начисляют.
+
+Новые pure module/UI/CSS, server session routes, строгий/долговечный parties store,
+read-only polling без XP/rewrite, согласие/withdraw, rate bounds и 30-day retention.
+UI встроен в Племя и компактную cue на Сегодня; нет новой вкладки/валюты/чатов.
+Порядок участников больше не определяется XP. Старая награда осталась один раз
+в раскрытии рейда. Сетевая неоднозначность сохраняет gesture/payload; поля не меняются
+до retry, поэтому повтор не создаёт другой договор или двойную сессию.
+
+**Проверки:** полный `node --test --test-concurrency=2 scripts/*.test.js` —
+**1942/1942 PASS** на runtime v249, включая 7 новых составных unit/API-тестов.
+Новые проверки: 4 аккаунта, чужой taskId, consent/mute, ready expiry, write failure,
+restart/retry, corrupt registry, leave, privacy after withdraw, read-only poll.
+Browser: настоящий локальный сервер/2 Chrome contexts, 1440/375px, lost response
+после успешной серверной записи → retry без дубля, A.done/B.partial, reload,
+RU/EN/DE, реальные light/dark настройки, reduced motion, keyboard focus/return.
+`art-factory/party-duo-v249/receipt.json`, 9 скриншотов; JS errors 0.
+Скриншоты просмотрены; убраны legacy hero pseudo-art overflow и малоконтрастный code badge.
+53 существующих pin-теста обновлены только по фактически изменившимся app/SW pins;
+неизменённые base CSS/Guide/assets остались на своих версиях. Исторический comparison не изменён.
+
+**Не путать с готовым всем мультиплеером:** пока нет delivery/push для встреч,
+live communication, AI-coordinator, Guide-duo или кооперативной сюжетной экспедиции.
+Проверенный timer не доказывает реальную непрерывную работу. Старые target=members×600
+и отдельный claim/lootbox write **не исправлены**; найдены и вынесены в P0.
+Дополнительно рейдовый +30% XP обещается toast, но itemXp не читает lb.boost.
+Нет оснований заявлять пользовательскую потерю денег; массовые компенсации не делались.
+
+`PRODUCT-CRITICAL-PATH-2026-09.md`: 11 направлений с фактами/разрывами/приёмкой,
+dependency order и решениями владельца. Тень имеет одну routed capability;
+Вдохновение — 11 starter materials; привычки имеют cue/минимум, но не полный execution
+loop; tree-plan-step уже работает. Гайд/звук/лор/канон не названы отсутствующими,
+отделены действующие основания от необходимой общей production-системы.
+`CLAUDE-OPUS5-NEXT-WORK.md`: 4 ready-to-copy независимых задания — reward service,
+secretary policies/eval, inspiration supply, character/production bible. Не запускались.
+Аватар остаётся на паузе, чужие акаунты/данные и новые providers не тронуты.
+
+**Публикация:** пока локально; точное разрешение master push/Railway запрошено,
+ответ в ходе работы не пришёл. Прежний отказ среды не обходился. Commit фиксируется
+в финальном отчёте; опубликованный main runtime остаётся прежним v248.
+
+## [2026-09-08] Исследование мультиплеера; аватар поставлен на паузу
+
+По новому запросу владельца код не менялся: проведено глубокое исследование рынка,
+книги/аудита Actionable Gamification и исходных концепций. Отчёт:
+MULTIPLAYER-RESEARCH-2026-09.md; печатная версия output/pdf/satoru-multiplayer-research.pdf.
+PDF: 15 страниц, все просмотрены после рендера, 29 кликабельных URL, заголовки/ссылки
+проверены; receipt output/pdf/satoru-multiplayer-research.qa.json. Сборщик —
+scripts/reports/build-multiplayer-research-pdf.py; рабочие копии книг вынесены из репозитория.
+13 productivity/gamification-продуктов + Deep Rock Galactic, 26 групп источников,
+научные результаты отделены от маркетинга и гипотез. Важное обновление старого контекста:
+Finch уже имеет два вида goal buddies; gogh — кооперативные комнаты и Focus Mode;
+Habitica закрыла Tavern/Guilds в 2023, поэтому старые конкурентные тезисы не надёжны.
+Статически проверены party/consent/raid/claim на HEAD 34048e0; origin/master e76339d
+сверен свежим fetch. Найдены риски нагрузки target=members×600 и раздельного server-claim /
+client-lootbox-write. Потеря награды в аккаунте не воспроизводилась, runtime suite не запускался.
+Предложены дуо → полезная сессия → сюжетная экспедиция, безопасный общий контекст ИИ,
+поэтапные gates/метрики, пять вопросов для решения. Это не разрешение строить всё сразу.
+Аватар не продолжать без нового запроса. Production, согласия, экономика, аккаунты,
+публичные публикации не менялись. Master push не выполнялся; прежний permission gate сохранён.
+
 ## [2026-09-08] Avatar v6 — цельный Traveller, исходный рисунок на объёмной форме
 
 После «лучше, но далеко по стилю и анатомии» и «давай» сделана отдельная traveller.html:

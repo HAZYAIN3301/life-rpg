@@ -1,0 +1,39 @@
+/* Shared start. Existing Satoru themes and artwork, no extra dashboard. */
+.event-hero.duo-hero{display:block;min-height:0;padding:24px;overflow:hidden}
+.event-hero.duo-hero::before,.event-hero.duo-hero::after{content:none}
+.duo-header,.duo-header>div,.duo-session-heading,.duo-empty{display:flex;align-items:center;justify-content:space-between;gap:16px;min-width:0}
+.duo-header{padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:20px;flex-wrap:wrap}
+.duo-header>div{justify-content:flex-start;flex:1;min-width:180px}
+.duo-header h2{font-size:clamp(22px,3vw,32px);margin:0;overflow-wrap:anywhere}
+.duo-emblem{width:56px;height:56px;object-fit:contain;flex:none}
+.duo-header .party-code{background:var(--panel2);color:var(--text);border:1px solid var(--line);font-size:14px}
+.duo-empty h3,.duo-session h3{margin:0;font-size:20px}
+.duo-empty p,.duo-note,.duo-privacy p,.duo-scheduled{color:var(--muted);font-size:14px;line-height:1.5}
+.duo-empty p{margin:8px 0 0}.duo-empty>.btn{flex:none}
+.duo-participants{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0}
+.duo-person{display:flex;gap:12px;align-items:flex-start;background:var(--panel2);border:1px solid var(--line);padding:16px;border-radius:16px;min-width:0}
+.duo-person>div{min-width:0}.duo-person b,.duo-person p{overflow-wrap:anywhere}
+.duo-person p{font-size:16px;line-height:1.4;margin:6px 0}.duo-person small{color:var(--muted)}
+.duo-person-mark{display:grid;place-items:center;flex:none;width:36px;height:36px;border-radius:50%;background:var(--panel);color:var(--text);font-weight:700}
+.duo-duration{white-space:nowrap;color:var(--muted);font-size:14px}
+.duo-timer{display:block;text-align:center;font-size:clamp(32px,6vw,52px);font-variant-numeric:tabular-nums;letter-spacing:2px;margin:16px 0;color:var(--text)}
+.duo-actions,.duo-outcomes{display:flex;flex-wrap:wrap;gap:10px}.duo-actions:empty{display:none}
+.duo-history,.duo-privacy{margin-top:20px}.duo-history>summary,.duo-privacy>summary{padding:10px 0;min-height:44px;cursor:pointer;color:var(--muted)}
+.duo-history article{border-top:1px solid var(--line);padding:24px 0}
+.duo-preference,.duo-consent{display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.5}
+.duo-preference{margin-top:20px;min-height:44px;color:var(--muted)}
+.duo-preference input,.duo-consent input{width:22px;height:22px;flex:none;accent-color:var(--text)}
+.duo-today{display:flex;align-items:center;width:100%;gap:12px;min-height:64px;padding:12px 16px;border:1px solid var(--line);border-radius:16px;background:var(--panel2);color:var(--text);text-align:left;box-shadow:none}
+.duo-today>span:nth-child(2){flex:1;min-width:0}.duo-today small{display:block;color:var(--muted);font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px}
+[data-duo-today-host]:empty{display:none}
+.duo-dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:24px;padding:24px;width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 32px);overflow:auto;box-shadow:0 20px 60px #0004}
+.duo-dialog>button:first-child{display:block;margin-left:auto}.duo-dialog h2{font-size:24px;margin:12px 0 20px}
+.duo-dialog form{display:grid;gap:18px}.duo-dialog form>label:not(.duo-consent){display:grid;gap:7px;min-width:0}
+.duo-dialog input:not([type=checkbox]),.duo-dialog select{display:block;width:100%;min-width:0;max-width:100%;min-height:44px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;box-sizing:border-box}
+.duo-dialog small{color:var(--muted);line-height:1.5}.duo-dialog details>summary{min-height:44px;cursor:pointer}.duo-dialog [type=submit]{margin-top:6px}
+.duo-error{color:var(--text);border-left:3px solid #d88762;padding-left:12px;line-height:1.5}.duo-error:empty{display:none}
+.duo-dialog :focus-visible,.duo-hero :focus-visible,.duo-today:focus-visible{outline:3px solid var(--text);outline-offset:3px}
+.duo-hero [data-phase=running] .duo-person-mark{animation:duo-arrive .35s ease-out both}
+@keyframes duo-arrive{from{transform:scale(.92);opacity:.5}to{transform:scale(1);opacity:1}}
+@media(max-width:600px){.event-hero.duo-hero{padding:18px}.duo-participants{grid-template-columns:1fr;gap:10px}.duo-empty{align-items:flex-start;flex-direction:column}.duo-header{gap:12px}.duo-emblem{width:44px;height:44px}.duo-actions>.btn,.duo-outcomes>.btn{width:100%}.duo-dialog{padding:18px}}
+@media(prefers-reduced-motion:reduce){.duo-hero *{animation:none!important;transition:none!important}}

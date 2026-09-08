@@ -32,6 +32,7 @@ const CommitmentStoreV1 = require('./public/commitment-store-v1.js');
 const CommitmentJournalV1 = require('./public/commitment-journal-v1.js');
 const AiMemoryPolicyV1 = require('./public/ai-memory-policy-v1.js');
 const TelemetryConsentV1 = require('./public/telemetry-consent-v1.js');
+const PartySessionV1 = require('./public/party-session-v1.js');
 
 const ROOT = __dirname;
 // Local development secrets live outside Git. Production providers inject the
@@ -571,8 +572,50 @@ function adminGoldBalance(userId, ledger = loadAdminGoldLedger()) {
 }
 // ---- Мультиплеер: пати (общее состояние). Реестр в DATA_DIR/parties.json ----
 const PARTIES_FILE = () => path.join(DATA_DIR, 'parties.json');
-function loadParties() { try { return JSON.parse(fs.readFileSync(PARTIES_FILE(), 'utf8')); } catch { return []; } }
-function saveParties(p) { writeJsonAtomic(PARTIES_FILE(), p); }
+function loadParties() {
+  let rows;
+  try { rows = JSON.parse(fs.readFileSync(PARTIES_FILE(), 'utf8')); }
+  catch (error) { if (error.code === 'ENOENT') return []; throw error; }
+  if (!Array.isArray(rows) || rows.some((p) => {
+    if (!p || !Array.isArray(p.members)) return true;
+    return p.sessions !== undefined && (!Array.isArray(p.sessions) || p.sessions.some((s) => !PartySessionV1.validStored(s)));
+  })) {
+    throw new Error('party_data_unreadable');
+  }
+  return rows;
+}
+function saveParties(p) {
+  for (const party of p) if (party.sessions) party.sessions = PartySessionV1.prune(party.sessions, Date.now(), party.members);
+  writeJsonDurable(PARTIES_FILE(), p);
+}
+// Retention is not contingent on someone opening the app. The same pruning is
+// applied on every write; this sweep also covers dormant groups (within one hour).
+function expirePartySessions() {
+  try {
+    const parties = loadParties(); let changed = false;
+    for (const party of parties) if (party.sessions) {
+      const next = PartySessionV1.prune(party.sessions, Date.now(), party.members);
+      if (next.length !== party.sessions.length) { party.sessions = next; changed = true; }
+    }
+    if (changed) saveParties(parties);
+  } catch (error) { console.error('party retention unavailable:', error.message); }
+}
+setInterval(expirePartySessions, 3600000).unref();
+// Defer until module initialization (DATA_DIR, journal helpers) is complete.
+setImmediate(expirePartySessions);
+function partySessionViews(party, me, now = Date.now()) {
+  return PartySessionV1.prune(party.sessions, now, party.members)
+    .map((s) => PartySessionV1.view(s, me, now)).filter(Boolean);
+}
+function partySessionTask(uid, taskId) {
+  recoverCommitmentJournal(uid);
+  const file = path.join(userDataDir(uid), 'tasks.json');
+  let tasks;
+  try { tasks = JSON.parse(fs.readFileSync(file, 'utf8')); }
+  catch (error) { if (error.code === 'ENOENT') return null; throw error; }
+  if (!Array.isArray(tasks)) throw new Error('tasks_unreadable');
+  return tasks.find((task) => task.id === taskId) || null;
+}
 function partyOf(uid, parties) { return (parties || loadParties()).find((p) => (p.members || []).includes(uid)) || null; }
 function socialConsentOf(user) {
   const source = user && user.socialConsent && typeof user.socialConsent === 'object' ? user.socialConsent : {};
@@ -593,6 +636,8 @@ function removeUserFromParties(uid, parties) {
   for (const source of parties || []) {
     const party = structuredClone(source);
     party.members = (party.members || []).filter((id) => id !== uid);
+    party.sessions = PartySessionV1.prune(party.sessions, Date.now(), party.members);
+    party.sessionMuted = (party.sessionMuted || []).filter((id) => id !== uid);
     if (party.cheers) delete party.cheers[uid];
     if (party.raid && Array.isArray(party.raid.claimed)) party.raid.claimed = party.raid.claimed.filter((id) => id !== uid);
     if (!party.members.length) continue;
@@ -5811,6 +5856,8 @@ const server = http.createServer(async (req, res) => {
         cheers: (party.cheers && party.cheers[id]) || 0, me: id === me, owner: id === party.createdBy };
     });
     return { id: party.id, name: party.name, code: party.code, createdBy: party.createdBy, members, max: PARTY_MAX, ws: r.ws,
+      sessions: partySessionViews(party, me), serverNow: new Date().toISOString(),
+      sessionInvitesEnabled: !(party.sessionMuted || []).includes(me),
       raid: { total: r.total, target: r.target, won: r.won, iClaimed: (r.claimed || []).includes(me), claimedCount: (r.claimed || []).length },
       season: { wins: r.seasonWins, goal: SEASON_GOAL },
       permissions: { role: party.createdBy === me ? 'owner' : 'member', canDelete: party.createdBy === me, canLeave: true, canCheer: true },
@@ -5823,6 +5870,59 @@ const server = http.createServer(async (req, res) => {
     const parties = loadParties(); const party = partyOf(me, parties);
     const view = partyView(party, me); if (party) saveParties(parties); // persist раз пересчитали рейд/сезон
     return sendJson(res, 200, { party: view, consent: socialConsentOf(user) });
+  }
+  if (u === '/api/party/sessions' && req.method === 'GET') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not_logged_in' });
+    try {
+      const party = partyOf(me, loadParties());
+      return sendJson(res, 200, { partyId: party ? party.id : null, memberIds: party ? party.members : [],
+        sessions: party ? partySessionViews(party, me) : [], serverNow: new Date().toISOString(),
+        sessionInvitesEnabled: party ? !(party.sessionMuted || []).includes(me) : false });
+    } catch { return sendJson(res, 503, { error: 'party_storage_unavailable' }); }
+  }
+  if ((u === '/api/party/sessions' || /^\/api\/party\/sessions\/[a-zA-Z0-9_-]{1,100}$/.test(u)
+    || u === '/api/party/session-preferences') && req.method === 'POST') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not_logged_in' });
+    let b; try { b = JSON.parse(await readBody(req, 8192)); }
+    catch { return sendJson(res, 400, { error: 'bad_json' }); }
+    const preference = u.endsWith('session-preferences'), creating = u === '/api/party/sessions';
+    const allowed = preference ? ['enabled'] : creating
+      ? ['id', 'to', 'taskId', 'publicLabel', 'minutes', 'scheduledAt', 'share']
+      : ['eventId', 'op', ...(b && b.op === 'accept' ? ['taskId', 'publicLabel', 'share'] : []), ...(b && b.op === 'finish' ? ['outcome'] : [])];
+    if (!b || Array.isArray(b) || typeof b !== 'object' || Object.keys(b).some((k) => !allowed.includes(k)))
+      return sendJson(res, 400, { error: 'invalid_fields' });
+    try {
+      const parties = loadParties(), party = partyOf(me, parties);
+      if (!party) return sendJson(res, 404, { error: 'no_party' });
+      const now = Date.now();
+      party.sessions = PartySessionV1.prune(party.sessions, now, party.members);
+      if (preference) {
+        if (typeof b.enabled !== 'boolean') return sendJson(res, 400, { error: 'invalid_preference' });
+        party.sessionMuted = (party.sessionMuted || []).filter((id) => id !== me);
+        if (!b.enabled) party.sessionMuted.push(me);
+      } else {
+        const source = creating ? null : party.sessions.find((s) => s.id === u.split('/').pop());
+        if (!creating && (!source || !source.members.some((m) => m.id === me)))
+          return sendJson(res, 404, { error: 'no_session' });
+        const own = source && source.members.find((m) => m.id === me);
+        const task = (creating || b.op === 'accept' || b.op === 'finish')
+          ? partySessionTask(me, b.taskId || (own && own.taskId)) : null;
+        const result = creating ? PartySessionV1.create({ ...b, actor: me, now, memberIds: party.members,
+          mutedIds: party.sessionMuted || [], sessions: party.sessions, taskAvailable: !!task && !task.done })
+          : PartySessionV1.transition(source, { ...b, actor: me, now, taskAvailable: !!task && !task.done,
+            taskDone: !!task && task.done === true && Date.parse(task.completedAt) >= Date.parse(source.startedAt)
+              && Date.parse(task.completedAt) <= now });
+        if (!result.ok) return sendJson(res, 409, { error: result.error });
+        if (creating && !result.duplicate) party.sessions.push(result.session);
+        else if (!creating) party.sessions[party.sessions.indexOf(source)] = result.session;
+      }
+      const view = partyView(party, me);
+      saveParties(parties);
+      return sendJson(res, 200, { ok: true, party: view });
+    } catch (error) {
+      console.error('party session persistence:', error.message);
+      return sendJson(res, 503, { error: 'party_storage_unavailable' });
+    }
   }
   if (u === '/api/party/create' && req.method === 'POST') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
@@ -5861,6 +5961,8 @@ const server = http.createServer(async (req, res) => {
     let transferredTo = null, deleted = false;
     if (party) {
       party.members = party.members.filter((x) => x !== me);
+      party.sessions = PartySessionV1.prune(party.sessions, Date.now(), party.members);
+      party.sessionMuted = (party.sessionMuted || []).filter((id) => id !== me);
       if (party.cheers) delete party.cheers[me];
       if (party.raid && party.raid.claimed) party.raid.claimed = party.raid.claimed.filter((x) => x !== me);
       const idx = parties.indexOf(party);

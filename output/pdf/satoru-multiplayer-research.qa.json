@@ -1,0 +1,22 @@
+{
+  "date": "2026-09-08",
+  "scope": "research_only_no_live_account_actions",
+  "source": "MULTIPLAYER-RESEARCH-2026-09.md",
+  "source_sha256": "b057fbdaf7ef578ea595b3bda56bfa671949b29d721ef17711c2c09f6357f913",
+  "pdf": "output/pdf/satoru-multiplayer-research.pdf",
+  "pdf_sha256": "16d1cdb811d332e33f68165fced378b21e7ac9233638b1919a645c0ce87f03ae",
+  "pages": 15,
+  "source_groups": 26,
+  "clickable_urls": 29,
+  "all_markdown_urls_present_as_pdf_links": true,
+  "all_section_headings_present": true,
+  "replacement_characters": 0,
+  "all_pages_rendered": true,
+  "visual_check": "All 15 pages inspected in contact sheets; pages 3 and 8 additionally inspected at 900px. No clipped tables or overlapping text observed.",
+  "code_checks": "git diff --check; Python renderer syntax compilation",
+  "runtime_tests": "not_run_no_runtime_changes",
+  "account_qa": "not_performed",
+  "network_fault_reproduction": "not_performed_static_risks_only",
+  "market_method": "official_documentation_and_primary_research_not_authenticated_competitor_testing",
+  "scratch": "/private/tmp/satoru-multiplayer-research.ZRcUob/multiplayer-research"
+}

@@ -20735,7 +20735,7 @@ function boardTakenLineHTML() {
   const weekStrip = `<nav class="today-week" aria-label="${esc(t('Дни выбранной недели'))}">${Array.from({length:7},(_,i)=>{const date=addDays(week,i);return `<button type="button" data-action="goto-calendar" data-date="${date}" ${date===today?'aria-current="date"':''}><span>${esc(new Intl.DateTimeFormat(lang(),{weekday:'short'}).format(parseDate(date)))}</span><b>${parseDate(date).getDate()}</b></button>`;}).join('')}</nav>`;
   const routeHead = `<header class="today-route-head"><div><p class="route-date">${esc(new Intl.DateTimeFormat(lang(), {weekday:'long',day:'numeric',month:'long'}).format(new Date()))}</p><h2>${t('Сегодня')}</h2></div><button type="button" class="btn ghost day-recap-direct" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></header>`;
   return `<div class="today-shell">${routeHead}${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>
-    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${weekStrip}${firstValueCard()}${todayHero}${amnestyUndo}${questBoard}${overdueSurface}${addQuestCard}${habitsCard}${browserCompanionLaunchHTML()}</div>
+    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${weekStrip}<div data-duo-today-host>${partyDuoUI()?.today() || ''}</div>${firstValueCard()}${todayHero}${amnestyUndo}${questBoard}${overdueSurface}${addQuestCard}${habitsCard}${browserCompanionLaunchHTML()}</div>
     <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}${captureBar()}</aside>
     <div class="today-footer">${shutdownCard}</div>
   </div>`;
@@ -26280,6 +26280,16 @@ function partyEmptyHTML() {
     ${State._socialError ? `<p class="social-inline-error" role="alert">${esc(State._socialError)}</p>` : ''}
   </section>`;
 }
+let _partyDuoUI = null;
+function partyDuoUI() {
+  if (!_partyDuoUI && window.PartySessionUIV1) _partyDuoUI = window.PartySessionUIV1.createUI({
+    state: () => State, lang, escape: esc, sound: sfx, toast, render,
+    mount: mountAccountDialog, close: closeAccountDialog,
+    navigate: (view) => { State.view = view; render(); },
+    complete: (task) => completeTask(task, null, task.date || todayStr()),
+  });
+  return _partyDuoUI;
+}
 function partyHTML(p) {
   const r = p.raid || { total: 0, target: 1, won: false, iClaimed: false, claimedCount: 0 };
   const pct = r.target ? Math.min(100, Math.round(r.total / r.target * 100)) : 0;
@@ -26295,19 +26305,10 @@ function partyHTML(p) {
   if (!won) State._raidShownFor = null;
   const si = seasonInfo(p.season);
   const seasonPct = si.goal ? Math.round(si.prog / si.goal * 100) : 0;
-  const eventTitle = won ? t('Рейд завершён. Команда победила.') : esc(t(boss.name));
-  const eventText = won
-    ? t('Награда открыта. Забери её и подготовь команду к следующей главе сезона.')
-    : t('До общей победы осталось {xp} XP. Каждый закрытый квест приближает пати к награде.').replace('{xp}', String(hp));
-  const eventSteps = [
-    { icon: '✓', label: t('Собирайте XP'), complete: true },
-    { icon: won ? '✓' : '2', label: t('Победите босса'), complete: won },
-    { icon: won && r.iClaimed ? '✓' : '3', label: t('Заберите награду'), complete: won && r.iClaimed },
-  ].map((step) => `<span class="event-step${step.complete ? ' complete' : ''}"><b>${step.icon}</b>${step.label}</span>`).join('');
   const claim = won
     ? (r.iClaimed ? `<span class="raid-claimed muted">✓ ${t('Награда забрана')}</span>` : `<button class="btn raid-claim" data-action="party-claim">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Забрать награду пати')}</button>`)
     : '';
-  const members = p.members.slice().sort((a, b) => (Number(b.weekXp) || 0) - (Number(a.weekXp) || 0)).map((m) => `<div class="pm-row ${m.me ? 'me' : ''} ${m.shared ? '' : 'is-private'}" role="listitem">
+  const members = p.members.map((m) => `<div class="pm-row ${m.me ? 'me' : ''} ${m.shared ? '' : 'is-private'}" role="listitem">
       <button type="button" class="pm-profile" data-action="open-member-profile" data-user="${esc(m.id)}" aria-label="${esc(`${t('Открыть профиль')}: ${m.name}`)}">
       <span class="pm-av">${avatarOriginIconHTML(m.avatar || AVATARS[0], 'party-origin-icon')}</span>
       <span class="pm-meta"><span class="pm-name">${esc(m.name)}${m.owner ? ` <span class="party-role">${t('создатель')}</span>` : ''}${m.me ? ` <span class="lb-you">${t('ты')}</span>` : ''}</span>
@@ -26329,7 +26330,7 @@ function partyHTML(p) {
         <p class="muted">${won ? `${t('Пати справилась')} — ${r.claimedCount}/${p.members.length} ${t('забрали награду')}` : `${t('Осталось')} ${hp} XP · ${t('цель')} ${r.target}`}</p>
         ${!won && boss.lore ? `<p class="muted raid-lore">${t(boss.lore)}</p>` : ''}
         ${!won && boss.weak ? `<p class="raid-weak">${satoruIconHTML('status.streak', 'inline-emblem', '◇')} ${t('Слабость')}: ${t(boss.weak)} — ${t('урон ×2')}</p>` : ''}
-        <div class="raid-bar"><span style="width:${pct}%"></span></div>
+        <div class="raid-bar"><span style="width:${pct}%"></span></div>${claim}
         <p class="muted raid-note">${t('Вклад каждого складывается; ничей пропуск не штрафует команду — просто чуть медленнее. Через поддержку, не через вину.')}</p></section>
       <section class="party-progress-section" aria-labelledby="party-season-details"><h3 id="party-season-details">${t('Сезон')} ${si.cycle}</h3>
         <p class="muted">${si.prog}/${si.goal} ${t('побед недели')}${si.done ? ` · ${t('пройдено')} ×${si.done}` : ''}</p>
@@ -26337,15 +26338,9 @@ function partyHTML(p) {
         <p class="muted">${si.prog === si.goal - 1 ? t('Ещё одна победа — и глава сезона взята.') : t('Побеждайте недельного босса, чтобы открывать следующую главу сезона.')}</p></section>
     </div></details>`;
   return `<div class="party-shell">
-    <section class="card event-hero${won ? ' is-won' : ''}">
-      <div class="event-hero-copy"><span class="event-kicker">${t('НЕДЕЛЬНЫЙ РЕЙД')} · ${t('СЕЗОН')} ${si.cycle}</span>
-        <h2 id="party-title" tabindex="-1">${eventTitle}</h2><p class="muted">${eventText}</p>
-        <div class="event-party-identity"><b>${esc(p.name)}</b><span class="party-code" title="${esc(t('Код видят только участники пати; поделись им с теми, кого приглашаешь.'))}">${t('код')} <strong>${esc(p.code)}</strong></span></div>
-        <div class="event-metrics"><span>${satoruIconHTML('nav.tribe', 'inline-glyph', '◇')} <b>${p.members.length}/${p.max}</b> ${t('в пати')}</span><span>${satoruIconHTML('difficulty.normal', 'inline-emblem', '◇')} <b>${pct}%</b> ${t('рейда')}</span></div>
-        <div class="raid-bar event-raid-bar"><span style="width:${pct}%"></span></div>${claim}
-      </div>
-      <div class="event-stage" aria-hidden="true"><i class="event-stage-ring"></i><span class="event-stage-boss">${won ? satoruIconHTML('system.achievement', 'boss-victory-emblem', '◇') : bossEmblemHTML(boss, 'boss-stage-emblem')}</span><b class="event-stage-mark">${won ? t('ПОБЕДА') : t('РЕЙД')}</b></div>
-      <div class="event-step-rail">${eventSteps}</div>
+    <section class="card event-hero duo-hero">
+      <header class="duo-header"><div>${satoruIconHTML('nav.tribe', 'duo-emblem', '◇')}<h2 id="party-title" tabindex="-1">${esc(p.name)}</h2></div><span class="party-code">${t('код')} <strong>${esc(p.code)}</strong></span></header>
+      <div data-duo-host>${partyDuoUI()?.body() || ''}</div>
     </section>
     <section class="card party-members-card"><h3>${t('Состав и права')}</h3><p class="muted">${owner ? t('Ты создатель: можешь удалить пати для всех или передать роль, выйдя из неё.') : t('Ты участник: можешь выйти в любой момент. Только создатель может удалить пати для всех.')}</p><div class="pm-list" role="list" aria-label="${esc(t('Состав и права'))}">${members}</div>
       <div class="party-exit-actions"><button class="btn ghost" data-action="open-party-leave">${owner ? t('Передать роль и выйти') : t('Покинуть пати')}</button>${owner ? `<button class="btn danger" data-action="open-party-delete">${t('Удалить пати для всех')}</button>` : ''}</div></section>
@@ -29001,6 +28996,7 @@ async function confirmGoalDelete() {
   await commitGoalMutation('delete', nextGoals, nextTasks, '#goals-title', () => { State._goalOpenId = ''; State._goalDeepLinkId = ''; closeGoalsBulkMode(); syncGoalDeepLink(''); });
 }
 async function onClick(e) {
+  if (e.target.closest('[data-duo]') && await partyDuoUI()?.handle(e)) return;
   const targetTaskMenu = e.target.closest('.task-more');
   document.querySelectorAll('.task-more[open]').forEach((menu) => {
     if (menu !== targetTaskMenu) menu.removeAttribute('open');
@@ -32675,7 +32671,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v248';
+const PWA_CACHE_VERSION = 'satoru-v249';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
