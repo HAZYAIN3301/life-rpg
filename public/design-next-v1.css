@@ -1,5 +1,5 @@
-/* Satoru v245 — accepted rounded/violet direction on the existing live UI.
-   No domain state, field migrations, hidden completion/time controls or replacement art. */
+/* Shared foundation + purpose-built workspaces. Composition is owned by the
+   canonical renderers and InterfaceCompositionV1; never by CSS order tricks. */
 @font-face{font-family:"Russo One";src:url("/fonts/russo-one/RussoOne.ttf") format("truetype");font-weight:400;font-display:swap}
 :root[data-design=next]{
   --font-display:"Russo One",var(--font-ui);--font-number:var(--font-ui);
@@ -292,4 +292,290 @@
 }
 @media(prefers-reduced-motion:reduce){
  :root[data-design=next] *,:root[data-design=next] *::before,:root[data-design=next] *::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+
+/* Composition pass — one working surface, not a stack of recoloured cards. */
+:root[data-design=next] .today-shell{grid-template-columns:minmax(0,1fr) 320px;gap:var(--sp-5);max-width:1200px;margin:auto}
+:root[data-design=next] .today-work{gap:var(--sp-4)}
+:root[data-design=next] .today-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:var(--sp-1);padding-bottom:var(--sp-3);border-bottom:1px solid var(--line)}
+:root[data-design=next] .today-week button{display:flex;flex-direction:column;align-items:center;gap:var(--sp-1);background:none;border:0;color:var(--muted);min-height:60px;padding:var(--sp-2)}
+:root[data-design=next] .today-week b{font:400 1.25rem var(--font-display);color:var(--text)}
+:root[data-design=next] .today-week button[aria-current]{background:var(--design-core);color:var(--text);box-shadow:inset 0 -3px var(--design-accent)}
+:root[data-design=next] .today-work .card-quests{background:none;border:0;padding:0;box-shadow:none}
+:root[data-design=next] .daystat{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-2) 0 var(--sp-3);margin:0}
+:root[data-design=next] .today-add-link{margin-left:auto;padding:var(--sp-2) var(--sp-3);min-height:44px;border:1px solid var(--line-strong);background:var(--panel);color:var(--text)}
+:root[data-design=next] .card-quests .tasks{display:block;padding:0;margin:0}
+:root[data-design=next] .task.task-entry-layout{display:grid;grid-template-columns:64px 36px minmax(0,1fr) 68px 44px;grid-template-rows:auto;align-items:start;gap:var(--sp-2);padding:var(--sp-4) var(--sp-2);margin:0;background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none}
+:root[data-design=next] .task.task-entry-layout.is-core:not(.done){background:var(--design-core);border:1px solid var(--design-core-border);border-radius:var(--next-radius);margin:var(--sp-2) 0;padding:var(--sp-4) var(--sp-2)}
+:root[data-design=next] .task.task-entry-layout>.task-schedule{grid-column:1;grid-row:1;min-height:44px;font-variant-numeric:tabular-nums;font-size:.875rem}
+:root[data-design=next] .task.task-entry-layout>.check{grid-column:2;grid-row:1;width:28px;height:28px;min-width:28px;min-height:28px;align-self:start;margin-top:var(--sp-2);border-radius:50%}
+:root[data-design=next] .task.task-entry-layout>.t-title{grid-column:3;grid-row:1;padding:var(--sp-2) 0 0;display:block;min-width:0}
+:root[data-design=next] .task.task-entry-layout .t-title-edit{padding:0;min-height:0;text-align:left;font-weight:550}
+:root[data-design=next] .task.task-entry-layout .task-core-badge{display:flex;align-items:center;gap:var(--sp-1);border:0;background:none;padding:0;margin:0 0 var(--sp-2);color:var(--text);font-size:.75rem}
+:root[data-design=next] .task-context{display:flex;align-items:center;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-2)}
+:root[data-design=next] .task-context .t-cats{display:flex;flex-wrap:wrap;gap:var(--sp-1);padding:0;min-height:32px;border:0;background:none}
+:root[data-design=next] .task-context .t-cat{border:0;border-radius:4px;max-width:100%;white-space:normal;overflow:visible}
+:root[data-design=next] .task-context .task-goal-chip{margin:0;font-size:.75rem;min-width:0}
+:root[data-design=next] .task-context .t-diff{padding:0;min-width:24px;width:24px;height:24px;background:none;border:0}
+:root[data-design=next] .task-context .t-diff img{width:24px;height:24px}
+:root[data-design=next] .task.task-entry-layout>.task-time-controls{grid-column:4;grid-row:1;gap:0;align-items:center}
+:root[data-design=next] .task-duration{background:none;border:0;color:var(--text);min-height:44px;padding:var(--sp-1);font-size:.875rem}
+:root[data-design=next] .task.task-entry-layout>.task-more{grid-column:5;grid-row:1;min-width:0}
+:root[data-design=next] .task.task-entry-layout>.task-more>summary{min-width:44px}
+:root[data-design=next] .task.task-entry-layout>.t-diff{grid-column:4;grid-row:2;justify-self:center}
+:root[data-design=next] .task.task-entry-layout>:is(.t-xp,.t-backdate,.t-commitment){grid-column:3;grid-row:auto}
+:root[data-design=next] .task.task-entry-layout>.t-xp:empty{display:none}
+:root[data-design=next] .today-earlier{border-top:1px solid var(--line);padding-top:var(--sp-3)}
+:root[data-design=next] .today-earlier>summary{color:var(--muted);min-height:44px;cursor:pointer}
+:root[data-design=next] .today-support{position:static;display:grid;gap:var(--sp-4)}
+:root[data-design=next] .today-support .secretary-card{border:0;padding:0;background:none}
+:root[data-design=next] .today-support .secretary-summary{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);margin-bottom:var(--sp-3)}
+:root[data-design=next] .today-support .comp-name{display:flex;flex-wrap:wrap;gap:var(--sp-2);font-size:1.125rem}
+:root[data-design=next] .today-lair{position:relative;aspect-ratio:16/10;overflow:hidden;border-radius:var(--next-radius);background:var(--panel)}
+:root[data-design=next] .today-lair-room{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* Existing art geometry, not a new rig or generated mannequin. */
+:root[data-design=next] .today-support .today-lair .comp-art{position:absolute;inset:auto auto 5% 35%;width:30%;height:65%;border:0;background:none;box-shadow:none;overflow:visible}
+:root[data-design=next] .today-support .comp-line-row{margin:var(--sp-4) 0;display:flex;align-items:start;gap:var(--sp-2)}
+:root[data-design=next] .today-support .comp-line{font-size:1rem;line-height:1.5;display:block;-webkit-line-clamp:unset;overflow:visible}
+:root[data-design=next] .today-support .secretary-today-control{border:0;border-top:1px solid var(--line);background:none;padding:var(--sp-3) 0}
+:root[data-design=next] .today-support .capture-bar{padding:var(--sp-3);margin:0}
+:root[data-design=next] .today-support .capture-bar :is(.capture-main,.capture-input-row){flex-wrap:wrap}
+:root[data-design=next] .today-support .capture-bar input{width:100%;min-width:0}
+:root[data-design=next] .today-work>.card-addquest{background:none;border:1px dashed var(--line-strong);padding:var(--sp-4)}
+:root[data-design=next] .card-habits{background:none;border:0;padding:var(--sp-3) 0}
+:root[data-design=next] .task.habit{background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none;padding:var(--sp-3) 0}
+:root[data-design=next] .task.habit .t-skill{justify-self:start;max-width:100%}
+:root[data-design=next] .today-footer{border-top:1px solid var(--line);padding-top:var(--sp-3)}
+:root[data-design=next] .today-footer .shutdown{background:none;border:0;padding:0}
+
+/* Calendar = toolbar + work canvas. Tools never compete with the date. */
+:root[data-design=next] .calv-head{background:none;border:0;padding:0}
+:root[data-design=next] .calv-title{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-4)}
+:root[data-design=next] .calv-title-main{flex:1;min-width:240px}
+:root[data-design=next] .calendar-tools-footer{display:flex;flex-direction:row;flex-wrap:nowrap;gap:var(--sp-2);justify-content:flex-end;margin:var(--sp-3) 0 0}
+:root[data-design=next] .calendar-tools-footer>button{background:none;width:auto;flex:0 1 auto}
+:root[data-design=next] .calendar-work-card{border:0;background:var(--panel);padding:var(--sp-4)}
+:root[data-design=next] .calendar-day-layout{gap:var(--sp-5);grid-template-columns:minmax(0,1fr) 300px}
+:root[data-design=next] .calendar-day-layout:not(:has(.calendar-day-support > *)){grid-template-columns:minmax(0,1fr)}
+:root[data-design=next] .calendar-day-support:not(:has(*)){display:none}
+:root[data-design=next] .week-workspace{display:grid;gap:var(--sp-5)}
+:root[data-design=next] .week-secondary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-4)}
+:root[data-design=next] .week-secondary>.card{margin:0}
+:root[data-design=next] .calendar-add-options>summary{display:none}
+:root[data-design=next] .calendar-add-options-body{display:grid;gap:var(--sp-3);padding:0}
+
+/* Goals read as routes to action, not records in a settings table. */
+:root[data-design=next] .goals-route-nav{display:flex;flex-wrap:wrap;gap:var(--sp-3);border-bottom:1px solid var(--line);padding-bottom:var(--sp-3)}
+:root[data-design=next] .goals-direct-tools{margin-left:auto;display:flex;gap:var(--sp-2);flex-wrap:wrap}
+:root[data-design=next] .goals-direct-tools button{background:none;border:1px solid var(--line-strong);color:var(--text);min-height:44px;padding:var(--sp-2) var(--sp-3)}
+:root[data-design=next] .goals-focus-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:var(--sp-4);align-items:start}
+:root[data-design=next] .goal-item-focus{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:var(--sp-2);border:1px solid var(--line);border-top:3px solid var(--goal-color);padding:var(--sp-4);border-radius:var(--next-radius);background:var(--panel)}
+:root[data-design=next] .goal-item-focus .goal-summary{padding:0;align-items:start}
+:root[data-design=next] .goal-item-focus .goal-summary-main{display:flex;flex-direction:column;gap:var(--sp-3)}
+:root[data-design=next] .goal-item-focus .goal-title{font-size:1.25rem;line-height:1.35}
+:root[data-design=next] .goal-item-focus .goal-next{background:var(--panel2);padding:var(--sp-3);border-radius:8px;color:var(--text)}
+:root[data-design=next] .goal-item-focus .goal-quick-complete{align-self:start}
+:root[data-design=next] .goals-focus-head>p,:root[data-design=next] .goals-all-head>div>p{display:none}
+
+/* Repeated habits lead; designing the mechanism is a separate adjacent workbench. */
+:root[data-design=next] .habits-workspace{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:var(--sp-5);align-items:start}
+:root[data-design=next] .habits-workspace>.habits-today{position:sticky;top:var(--sp-5);background:none;border:0;padding:0}
+:root[data-design=next] .habits-design-panel{min-width:0;border-left:1px solid var(--line);padding-left:var(--sp-5)}
+:root[data-design=next] .habits-design-panel .hsub{margin:0 0 var(--sp-4);gap:var(--sp-1)}
+:root[data-design=next] .habits-design-panel .hb-intro{background:none;border:0;padding:0 0 var(--sp-4)}
+:root[data-design=next] .habits-design-panel .hb-intro>p{display:none}
+:root[data-design=next] .habit-compact-card{border:0;border-top:1px solid var(--line);border-radius:0;background:none;margin:0;padding:var(--sp-3) 0}
+:root[data-design=next] .hb-nmt{font-size:.875rem}
+:root[data-design=next] .notes-screen{max-width:none}
+:root[data-design=next] .notes-workspace{display:grid;grid-template-columns:300px minmax(0,1fr);gap:var(--sp-5);align-items:start}
+:root[data-design=next] .notes-workspace .cap-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-2)}
+:root[data-design=next] .notes-workspace #capture-text{grid-column:1/-1;min-width:0}
+:root[data-design=next] .notes-workspace .capture-status{grid-column:1/-1}
+:root[data-design=next] .notes-workspace .cap-btn,:root[data-design=next] .notes-workspace .cap-add{width:100%}
+:root[data-design=next] .notes-gallery .note-top h3{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+:root[data-design=next] .notes-gallery .note-text{background:transparent;border-color:transparent;padding:var(--sp-2) 0;line-height:1.6}
+:root[data-design=next] .notes-gallery .note-text:focus{border-color:var(--line-strong);background:var(--panel)}
+:root[data-design=next] .notes-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:var(--sp-4)}
+:root[data-design=next] .notes-gallery .note-card{margin:0;padding:var(--sp-4);border-top:3px solid var(--design-core-border)}
+:root[data-design=next] .note-top{align-items:start;flex-direction:column;gap:var(--sp-2)}
+:root[data-design=next] .note-acts{display:flex;gap:var(--sp-2);align-items:center;width:100%}
+:root[data-design=next] .note-acts .del{margin-left:auto}
+
+/* Rewards: one earned moment, then browse by purpose; no four competing stores. */
+:root[data-design=next] .rewards-stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.8fr);gap:var(--sp-5);align-items:start}
+:root[data-design=next] .rewards-stage .reward-hero{border:0;background:none;margin:0;min-height:280px;padding:var(--sp-4);position:relative}
+:root[data-design=next] .rewards-stage .daily-reward-card{margin:0;padding:var(--sp-4);background:none;border:0;border-left:1px solid var(--line);border-radius:0}
+:root[data-design=next] .rewards-stage .lootbox-chest{min-height:0}
+:root[data-design=next] .workspace-browser{margin-top:var(--sp-5);min-width:0}
+:root[data-design=next] .workspace-tabs{display:flex;flex-wrap:wrap;gap:var(--sp-2);border-bottom:1px solid var(--line);margin-bottom:var(--sp-5)}
+:root[data-design=next] .workspace-tab{color:var(--muted);background:none;border:0;border-radius:0;padding:var(--sp-3) var(--sp-4);min-height:44px;border-bottom:3px solid transparent}
+:root[data-design=next] .workspace-tab[aria-selected=true]{color:var(--text);border-color:var(--design-accent)}
+:root[data-design=next] .workspace-panel[hidden]{display:none!important}
+:root[data-design=next] .workspace-panel>:is(.card,details){background:none;border:0;padding:0;margin:0 0 var(--sp-5)}
+:root[data-design=next] .workspace-panel>details>summary{display:none}
+:root[data-design=next] .personal-reward-store>.rewards-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:var(--sp-4)}
+:root[data-design=next] .personal-reward-store>.rewards-grid>.reward{background:var(--panel);border:1px solid var(--line);border-radius:var(--next-radius);padding:var(--sp-5) var(--sp-4);min-height:220px}
+:root[data-design=next] .rewards-grid .rw-icon{height:88px}
+:root[data-design=next] .rewards-grid .rw-icon img{max-height:88px;width:88px}
+
+/* Existing scenes keep their art geometry. The surrounding tools get a clear home. */
+:root[data-design=next] .den-room-workspace{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:var(--sp-4);padding:0;border:0;background:none;overflow:visible}
+:root[data-design=next] .den-room-workspace .den-scene{border-radius:var(--next-radius);align-self:start}
+:root[data-design=next] .den-control-rail{padding:var(--sp-4);background:var(--panel);border:1px solid var(--line);border-radius:var(--next-radius);min-width:0}
+:root[data-design=next] .den-control-rail .den-stats{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+:root[data-design=next] .character-shell>.character-identity{margin:var(--sp-4) 0 var(--sp-5)}
+:root[data-design=next] .character-wardrobe-v1{padding:0;background:none;border:0}
+:root[data-design=next] .character-wardrobe-preview-panel{background:var(--panel);border-radius:var(--next-radius);padding:var(--sp-4)}
+:root[data-design=next] .character-wardrobe-preview-panel .character-secondary{margin:var(--sp-4) 0 0}
+:root[data-design=next] .character-secondary-grid{display:block}
+:root[data-design=next] .pets-workspace{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:var(--sp-5);align-items:start}
+:root[data-design=next] .pets-context{min-width:0}
+:root[data-design=next] .pet-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))}
+:root[data-design=next] .pet-portrait{width:72px;height:72px;object-fit:contain;grid-column:1/-1;justify-self:center}
+:root[data-design=next] .tree-workspace{display:grid;grid-template-columns:200px minmax(0,1fr);gap:var(--sp-5);align-items:start}
+:root[data-design=next] .tree-tabs-card{padding:var(--sp-3);background:none;border:0;margin:0}
+:root[data-design=next] .tree-tabs{display:flex;flex-direction:column;gap:var(--sp-2)}
+:root[data-design=next] .tree-tabs>button{width:100%;text-align:left;white-space:normal}
+:root[data-design=next] .tree-path-work{min-width:0}
+:root[data-design=next] .stats-overview{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,1fr);gap:var(--sp-5);align-items:start}
+:root[data-design=next] .stats-overview .stats-kpis-compact{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-3)}
+:root[data-design=next] .stats-overview .stats-lead{margin:0;background:none;border:0;padding:0}
+:root[data-design=next] .settings-workspace{display:grid;grid-template-columns:200px minmax(0,1fr);gap:var(--sp-6);align-items:start}
+:root[data-design=next] .settings-purpose-rail{position:sticky;top:var(--sp-5)}
+:root[data-design=next] .settings-purpose-rail .settings-hub-nav{display:flex;flex-direction:column;gap:var(--sp-2)}
+:root[data-design=next] .settings-purpose-rail .settings-hub-item{text-align:left;justify-content:flex-start}
+:root[data-design=next] .settings-purpose-content{min-width:0}
+:root[data-design=next] .settings-purpose-content .settings-group>.card{border:0;border-top:1px solid var(--line);border-radius:0;background:none;padding:var(--sp-5) 0;margin:0}
+:root[data-design=next] .inspiration-studio .inspiration-first-use{display:grid;grid-template-columns:minmax(160px,.6fr) minmax(0,1fr);gap:var(--sp-5);background:none;border:0}
+:root[data-design=next] .inspiration-studio .inspiration-first-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-3)}
+:root[data-design=next] .inspiration-first-actions>.btn:first-child{grid-column:1/-1}
+:root[data-design=next] .inspiration-studio .inspiration-digest{gap:var(--sp-5)}
+:root[data-design=next] .party-empty-hero{background:none;border:0;grid-template-columns:minmax(0,1fr) minmax(260px,.7fr)}
+:root[data-design=next] .party-entry-choice{padding:var(--sp-5);background:var(--panel);border:1px solid var(--line);border-radius:var(--next-radius)}
+
+@media(max-width:1200px){
+ :root[data-design=next] .today-shell{grid-template-columns:minmax(0,1fr) 280px}
+ :root[data-design=next] .task.task-entry-layout{grid-template-columns:52px 32px minmax(0,1fr) 58px 44px;gap:var(--sp-1)}
+ :root[data-design=next] .den-room-workspace{grid-template-columns:minmax(0,1fr)}
+ :root[data-design=next] .pets-workspace{grid-template-columns:minmax(0,1fr)}
+ :root[data-design=next] .pets-context{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-4)}
+}
+@media(max-width:1000px){
+ :root[data-design=next] .today-shell{display:block}
+ :root[data-design=next] .today-support{margin:var(--sp-5) 0;display:grid;grid-template-columns:1fr 1fr;align-items:start}
+ :root[data-design=next] .today-route-head,:root[data-design=next] .today-tabs{margin-bottom:var(--sp-4)}
+ :root[data-design=next] :is(.habits-workspace,.notes-workspace,.stats-overview,.rewards-stage){grid-template-columns:minmax(0,1fr)}
+ :root[data-design=next] .habits-design-panel{border-left:0;border-top:1px solid var(--line);padding:var(--sp-4) 0 0}
+ :root[data-design=next] .habits-workspace>.habits-today{position:static}
+ :root[data-design=next] .calendar-day-layout{grid-template-columns:minmax(0,1fr)}
+ :root[data-design=next] .rewards-stage .daily-reward-card{border:0;border-top:1px solid var(--line)}
+ :root[data-design=next] .settings-workspace{grid-template-columns:150px minmax(0,1fr);gap:var(--sp-4)}
+}
+@media(max-width:760px){
+ :root[data-design=next] .today-week{gap:var(--sp-1)}
+ :root[data-design=next] .today-week button{padding:var(--sp-1);min-height:56px;font-size:.75rem}
+ :root[data-design=next] .daystat{gap:var(--sp-2);font-size:.75rem}
+ :root[data-design=next] .task.task-entry-layout{grid-template-columns:44px minmax(0,1fr) 62px 44px;gap:var(--sp-1);padding:var(--sp-3) 0}
+ :root[data-design=next] .task.task-entry-layout.is-core:not(.done){padding:var(--sp-3) var(--sp-2)}
+ :root[data-design=next] .task.task-entry-layout>.check{grid-column:1;grid-row:1;margin:0;inline-size:44px;block-size:44px;min-inline-size:44px;min-block-size:44px}
+ :root[data-design=next] .task.task-entry-layout>.task-schedule{grid-column:2;grid-row:2;justify-self:start;min-width:44px;min-height:44px}
+ :root[data-design=next] .task.task-entry-layout>.t-title{grid-column:2/4;grid-row:1;padding:var(--sp-2) 0 0}
+ :root[data-design=next] .task.task-entry-layout>.task-time-controls{grid-column:3/-1;grid-row:2;flex-direction:row;justify-content:flex-end;gap:var(--sp-2)}
+ :root[data-design=next] .task.task-entry-layout>.task-time-controls .t-time{font-size:.7rem;min-height:32px}
+ :root[data-design=next] .task.task-entry-layout>.task-more{grid-column:4;grid-row:1}
+ :root[data-design=next] .task.task-entry-layout>.t-diff{grid-column:1;grid-row:3;justify-self:center}
+ :root[data-design=next] .task.task-entry-layout>:is(.t-xp,.t-backdate,.t-commitment){grid-column:2;grid-row:auto}
+ :root[data-design=next] .task-context .t-cats{min-height:44px}
+ :root[data-design=next] .today-support{grid-template-columns:minmax(0,1fr)}
+ :root[data-design=next] .today-support .today-lair{aspect-ratio:2.5}
+ :root[data-design=next] .today-support .today-lair .comp-art{width:20%;height:90%;left:40%}
+ :root[data-design=next] .today-footer{margin-top:var(--sp-4)}
+ :root[data-design=next] .workspace-tabs{gap:0;margin-bottom:var(--sp-4)}
+ :root[data-design=next] .workspace-tab{padding:var(--sp-2);flex:1 1 auto;font-size:.875rem}
+ :root[data-design=next] .goals-direct-tools{margin:0;width:100%}
+ :root[data-design=next] .goals-direct-tools button{flex:1}
+ :root[data-design=next] .calendar-tools-footer{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+ :root[data-design=next] .week-secondary{grid-template-columns:minmax(0,1fr)}
+ :root[data-design=next] :is(.settings-workspace,.tree-workspace){display:block}
+ :root[data-design=next] .settings-purpose-rail{position:static;margin-bottom:var(--sp-4)}
+ :root[data-design=next] .settings-purpose-rail .settings-hub-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+ :root[data-design=next] .tree-tabs{flex-direction:row;overflow:auto}
+ :root[data-design=next] .tree-tabs>button{width:auto;flex:none}
+ :root[data-design=next] .pets-context{grid-template-columns:minmax(0,1fr)}
+ :root[data-design=next] .inspiration-studio .inspiration-first-use{grid-template-columns:minmax(0,1fr);padding:var(--sp-3) 0}
+ :root[data-design=next] .inspiration-studio .inspiration-first-visual{max-height:160px}
+ :root[data-design=next] .party-empty-hero{grid-template-columns:minmax(0,1fr)}
+}
+
+/* The object can be claimed once; the rest of Rewards is a browseable shop. */
+:root[data-design=next] .rewards-stage{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:var(--sp-5)}
+:root[data-design=next] .rewards-stage .reward-hero{min-height:260px;grid-template-columns:minmax(0,1fr) 120px;align-items:center}
+:root[data-design=next] .rewards-stage .reward-hero-visual{height:180px;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--sp-2)}
+:root[data-design=next] .rewards-stage .hero-reward-gold{position:static;width:96px;height:96px;transform:none}
+:root[data-design=next] .rewards-stage .reward-hero-balance{position:static;font:400 2rem var(--font-display);border:0;padding:0;background:none}
+:root[data-design=next] .rewards-stage .lb-body{display:grid;grid-template-columns:120px minmax(0,1fr);gap:var(--sp-3);align-items:center}
+:root[data-design=next] .rewards-stage .lb-chest{min-height:140px;width:100%;padding:var(--sp-2)}
+:root[data-design=next] .rewards-stage .lb-chest{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--sp-2)}
+:root[data-design=next] .rewards-stage .lb-chest .lb-status{width:100%;font-size:.8rem;line-height:1.4;white-space:normal;text-align:center}
+:root[data-design=next] .rewards-stage .daily-chest-art{width:80px;height:80px}
+:root[data-design=next] .rewards-stage .daily-reward-track{gap:var(--sp-2);margin-top:var(--sp-2)}
+:root[data-design=next] .rewards-stage .daily-reward-track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+:root[data-design=next] .rewards-stage .daily-reward-track li{padding:var(--sp-2);font-size:.8rem}
+:root[data-design=next] .rewards-stage .daily-reward-track strong{display:none}
+:root[data-design=next] .inspiration-first-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-3);align-items:start}
+:root[data-design=next] .inspiration-first-actions>button,:root[data-design=next] .inspiration-import-choice>summary{min-height:88px;width:100%;padding:var(--sp-3);border:1px solid var(--line-strong);border-radius:var(--next-radius);background:var(--panel);color:var(--text);text-align:left;cursor:pointer}
+:root[data-design=next] .inspiration-first-actions>button:first-child{background:var(--design-core);border-color:var(--design-core-border)}
+:root[data-design=next] .inspiration-import-methods{display:grid;gap:var(--sp-2);padding-top:var(--sp-3)}
+:root[data-design=next] .inspiration-profile-workspace{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:var(--sp-4);align-items:start}
+:root[data-design=next] .inspiration-profile-workspace>fieldset{margin:0;min-width:0}
+:root[data-design=next] .inspiration-profile-workspace .inspiration-format-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:var(--sp-2)}
+:root[data-design=next] .inspiration-profile-workspace .inspiration-format-choices label{min-width:0;white-space:normal;overflow-wrap:anywhere}
+:root[data-design=next] .inspiration-reference-fieldset{grid-column:1/-1}
+:root[data-design=next] .leaderboard-workspace{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:var(--sp-5);align-items:start}
+:root[data-design=next] .leaderboard-workspace>.social-privacy-card{position:sticky;top:var(--sp-4);display:flex;flex-direction:column;gap:var(--sp-3)}
+:root[data-design=next] .leaderboard-workspace>.leaderboard-card{padding:0;border:0;background:none}
+:root[data-design=next] .party-team-workspace{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:var(--sp-4);align-items:start}
+:root[data-design=next] .party-team-workspace>.card:first-child{grid-row:span 2}
+:root[data-design=next] .party-team-workspace>.card{margin:0}
+:root[data-design=next] .pet-grid{align-items:start}
+:root[data-design=next] .pet-card>summary{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-2)}
+:root[data-design=next] .pet-card>summary>*{grid-column:1;grid-row:auto;min-width:0}
+:root[data-design=next] .pet-card>summary>.pet-summary-name{display:flex;flex-direction:column;gap:var(--sp-1);text-align:center;order:0}
+:root[data-design=next] .pet-card>summary>.pet-badge{justify-self:center}
+:root[data-design=next] .pet-summary-body>.pet-line{display:none}
+:root[data-design=next] .pet-card>summary>.pet-art{width:100%;height:160px;min-height:0;margin:0;display:flex;align-items:center;justify-content:center}
+:root[data-design=next] .pet-card>summary>.pet-art :is(img,svg){max-height:150px}
+:root[data-design=next] .pet-card>summary>.pet-art>.recovery-slug-v1{width:160px;height:150px;flex:none}
+:root[data-design=next] .pet-card .pet-summary-name{min-width:0}
+:root[data-design=next] .pet-card .pet-summary-name::before{display:none}
+:root[data-design=next] .pets-context .pet-priority{margin:0;padding:var(--sp-4)}
+:root[data-design=next] .character-wardrobe-heading>p{display:none}
+:root[data-design=next] .character-wardrobe-heading h3{font-family:var(--font-ui)}
+:root[data-design=next] .reward-shop-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--sp-3)}
+:root[data-design=next] .reward-shop-head .settings-actions{border:0;background:none;padding:0;margin:0}
+:root[data-design=next] .personal-reward-store>p:has(+.reward-create-details){display:none}
+:root[data-design=next] .personal-reward-store .reward-create-details{margin:var(--sp-3) 0}
+:root[data-design=next] .week-work .wk-task{position:relative;display:block;padding:var(--sp-2);border:1px solid var(--line);border-top:3px solid var(--wk-skill);border-radius:10px}
+:root[data-design=next] .week-work .wk-task-check{position:absolute;top:var(--sp-1);right:var(--sp-1);width:28px;height:28px;min-height:28px;min-width:28px;border-radius:50%;z-index:1}
+:root[data-design=next] .week-work .wk-task-check{inline-size:28px;block-size:28px;min-inline-size:28px;max-inline-size:28px;border:1px solid var(--line-strong)}
+:root[data-design=next] .week-work .wk-task-main{display:flex;flex-direction:column;width:100%;min-width:0;gap:var(--sp-2);padding:0}
+:root[data-design=next] .week-work .wk-task-meta{padding-right:24px;min-height:30px;display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-1);font-size:.75rem}
+:root[data-design=next] .week-work .wk-task-title{font-size:.875rem;font-weight:500;line-height:1.4}
+:root[data-design=next] .stats-lead-actions{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+@media(min-width:1280px){
+ :root[data-design=next] .week-work .wk-grid{grid-template-columns:repeat(7,minmax(0,1fr));min-width:0}
+}
+@media(prefers-reduced-motion:no-preference){
+ :root[data-design=next] .workspace-panel:not([hidden]){animation:workspace-enter 140ms ease-out}
+ @keyframes workspace-enter{from{opacity:.6;transform:translateY(3px)}to{opacity:1;transform:none}}
+}
+@media(max-width:1000px){
+ :root[data-design=next] .rewards-stage,:root[data-design=next] .leaderboard-workspace,:root[data-design=next] .party-team-workspace{grid-template-columns:minmax(0,1fr)}
+ :root[data-design=next] .leaderboard-workspace>.social-privacy-card{position:static}
+ :root[data-design=next] .rewards-stage .reward-hero{min-height:160px}
+ :root[data-design=next] .rewards-stage .reward-hero-visual{height:140px}
+}
+@media(max-width:760px){
+ :root[data-design=next] .inspiration-first-actions,:root[data-design=next] .inspiration-profile-workspace{grid-template-columns:minmax(0,1fr)}
+ :root[data-design=next] .inspiration-first-actions>button,:root[data-design=next] .inspiration-import-choice>summary{min-height:64px}
 }

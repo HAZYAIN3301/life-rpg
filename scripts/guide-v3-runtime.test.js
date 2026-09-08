@@ -112,7 +112,7 @@ test('the approved RU review is an exact mirror of centralized runtime copy', ()
 });
 
 test('v195 offline shell pins all Guide runtime scripts and locale copies', () => {
-  sourceMatches(SW, /const CACHE = 'satoru-v246';/);
+  sourceMatches(SW, /const CACHE = 'satoru-v247';/);
   for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'guide-surface-v1.js']) {
     assert.ok(file, 'Guide runtime file must be discoverable before checking SHELL');
     assert.ok(SW.includes(`'${file}'`) || SW.includes(`"${file}"`), `${file} must be pinned in SHELL`);
@@ -559,9 +559,9 @@ test('Context pack v205 explicitly releases exact Guide copy and chapter version
   }
   const appSource = SCRIPT_SOURCES.find((item) => scriptFile(item) === 'app.js');
   assert.ok(appSource, 'app.js must load in index.html');
-  assert.match(appSource, /\?v=[^"']*design-v246(?:-|$)/, 'the current app shell needs the v246 cache-busting pin');
-  sourceMatches(INDEX, /styles\.css\?v=[^"']*design-v246(?:-|["'])/,
-    'the current application CSS needs the v246 cache-busting pin');
+  assert.match(appSource, /\?v=[^"']*design-v247(?:-|$)/, 'the current app shell needs the v247 cache-busting pin');
+  sourceMatches(INDEX, /styles\.css\?v=[^"']*design-v247(?:-|["'])/,
+    'the current application CSS needs the v247 cache-busting pin');
 });
 
 test('feedback remains reachable even when the localized Guide is unavailable', () => {
@@ -619,7 +619,7 @@ test('bond has a keyboard focus route, expanded contact zone and centralized vis
     && /focusTargetSelector[\s\S]{0,700}(?:querySelector|resolveTarget)[\s\S]{0,700}\.focus\s*\(/.test(SURFACE);
   const directFocus = /first-shadow-contact[\s\S]{0,500}\.focus\s*\(/.test(APP);
   const delegatedFocus = /guideV3RevealTarget\([^\n]*first-shadow-contact[^\n]*focus:\s*true/.test(paint)
-    && /function\s+guideV3RevealTarget[\s\S]{0,700}if\s*\(focus\)[\s\S]{0,180}\.focus\s*\(/.test(APP);
+    && /function\s+guideV3RevealTarget[\s\S]{0,1000}if\s*\(focus\)[\s\S]{0,180}\.focus\s*\(/.test(APP);
   assert.ok(surfaceFocus || directFocus || delegatedFocus,
     'entering bond must focus the semantic Shadow contact, not the Later button');
   sourceMatches(paint,

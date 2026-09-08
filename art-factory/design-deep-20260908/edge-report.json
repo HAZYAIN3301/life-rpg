@@ -1,0 +1,70 @@
+{
+  "checks": [
+    "More keyboard close restores app, profile comparison reachable, system light/dark",
+    {
+      "name": "dense",
+      "width": 320,
+      "theme": "light",
+      "lang": "ru",
+      "overflow": false,
+      "primaryContrast": ">=4.5"
+    },
+    {
+      "name": "empty",
+      "width": 720,
+      "theme": "dark",
+      "lang": "en",
+      "overflow": false,
+      "primaryContrast": ">=4.5"
+    },
+    {
+      "name": "week",
+      "width": 1024,
+      "theme": "light",
+      "lang": "de",
+      "overflow": false,
+      "primaryContrast": ">=4.5"
+    },
+    {
+      "name": "goal",
+      "width": 390,
+      "theme": "dark",
+      "lang": "de",
+      "overflow": false,
+      "primaryContrast": ">=4.5"
+    },
+    {
+      "name": "settings",
+      "width": 390,
+      "theme": "light",
+      "lang": "en",
+      "overflow": false,
+      "primaryContrast": ">=4.5"
+    },
+    {
+      "name": "composer",
+      "width": 1440,
+      "theme": "light",
+      "lang": "ru",
+      "overflow": false,
+      "primaryContrast": ">=4.5"
+    },
+    {
+      "name": "composer-mobile",
+      "width": 390,
+      "theme": "light",
+      "lang": "ru",
+      "overflow": false,
+      "primaryContrast": ">=4.5"
+    },
+    {
+      "name": "habit-mobile",
+      "width": 390,
+      "theme": "light",
+      "lang": "ru",
+      "overflow": false,
+      "primaryContrast": ">=4.5"
+    }
+  ],
+  "errors": []
+}

@@ -1,5 +1,17 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-08] v247 — глубокая композиция после критики rollout
+
+Владелец назвал перенос поверхностным. Новый pass — задачи/неделя/сцена Тени,
+рабочие зоны календаря/привычек/заметок/целей, магазин и коллекции, интересы,
+логово/персонаж/питомцы/навыки, прогресс и соц./settings. Оригинальные DOM-контролы
+перемещает interface-composition-v1 до commitMainView, без State/Store/сети.
+Guide умеет раскрыть нужный panel; клавиатура и sfx/mute сохранены.
+Прямые completion/time/duration/actual/voice не спрятаны; один claim, меньше дублей.
+1932/1932; route/edge/interaction/save receipts: art-factory/design-deep-20260908/.
+Контракт, отличия и непроверенное: DESIGN-DEEP-REDESIGN-V1.md. Архив v244 неизменен.
+Deployment считать подтверждённым только после production-receipt.json.
+
 ## [2026-09-08] Design v245 — настоящий runtime + frozen v244 для сравнения
 
 Завершающий guest shell v246: live QA обнаружил старый вид формы входа до загрузки

@@ -4570,6 +4570,11 @@ const I18N_EXTRA = {
 };
 // Карта мов + злиття EXTRA у відповідні словники
 const I18N = { en: I18N_EN, de: I18N_DE, uk: I18N_UK, es: I18N_ES };
+// Visible copy introduced by the structural workspace pass.
+Object.assign(I18N_EN, {'Незавершённые дела':'Unfinished tasks','Факт':'Actual','Импорт из TikTok':'Import from TikTok'});
+Object.assign(I18N_DE, {'Незавершённые дела':'Unerledigte Aufgaben','Факт':'Ist','Импорт из TikTok':'Aus TikTok importieren'});
+Object.assign(I18N_UK, {'Незавершённые дела':'Незавершені справи','Факт':'Факт','Импорт из TikTok':'Імпорт із TikTok'});
+Object.assign(I18N_ES, {'Незавершённые дела':'Tareas pendientes','Факт':'Real','Импорт из TikTok':'Importar de TikTok'});
 for (const ru in I18N_EXTRA) { const row = I18N_EXTRA[ru]; for (const l of ['en', 'de', 'uk', 'es']) { if (row[l]) I18N[l][ru] = row[l]; } }
 
 const APP_LANGS = Object.freeze(['en', 'ru', 'de', 'uk', 'es']);
@@ -13792,7 +13797,7 @@ function questRow(q, links) {
     : `<button class="t-title-edit" data-action="edit-task-title" data-id="${q.id}" aria-label="${t('Изменить название квеста')}: ${esc(fullTitle)}" title="${t('Клик — изменить текст квеста')}"><span class="t-title-copy" data-noi18n>${taskContentIconHTML(q, 'task-content-icon')}${esc(fullTitle)}</span></button>`;
   const coreStart = q.core && !q.done && !State.timer && coreQuests(q.date).find((item) => !item.done)?.id === q.id
     ? `<button type="button" class="btn task-start" data-action="focus-task" data-id="${q.id}" aria-label="${esc(t('Начать фокус'))}: ${esc(fullTitle)}">${satoruIconHTML('media.play', 'button-glyph', '▶')} ${t('Начать фокус')}</button>` : '';
-  const titleCell = `<div class="t-title">${coreBadge}${titleControl}${questGoalChipHTML(q, links)}${coreStart}</div>`;
+  const titleCell = `<div class="t-title">${coreBadge}${titleControl}<div class="task-context">${skSel}${questGoalChipHTML(q, links)}<span class="t-diff" title="${DIFF[q.difficulty] || ''}">${difficultyIconHTML(q.difficulty)}</span></div>${coreStart}</div>`;
   // Квест из прошлого: «✓ в свой день» — засчитать в дату плана, а не в сегодня (fb_mr4qhq6gy30w)
   // Намеренно НЕ taskOverdue(): здесь «past» — просто факт, что дата в прошлом, а не суждение
   // о долге. Амнистия снимает долг, но не право сказать «я это всё-таки сделал в тот день».
@@ -13820,12 +13825,11 @@ function questRow(q, links) {
       ${commitmentMenu}
       <button class="task-menu-delete" data-action="delete-task" data-id="${q.id}">${satoruIconHTML('action.close', 'task-action-icon', '✕')} ${t('Удалить квест')}</button>
     </div></details>`;
-  return `<li class="task ${q.done ? 'done' : ''} ${q.core ? 'is-core' : ''}" data-id="${esc(q.id)}"${guideRowTarget}>
+  return `<li class="task task-entry-layout ${q.done ? 'done' : ''} ${q.core ? 'is-core' : ''}" data-id="${esc(q.id)}"${guideRowTarget}>
+    <button type="button" class="task-schedule" data-action="cal-edit-task" data-id="${q.id}" aria-label="${esc(t('Открыть расписание квеста'))}: ${esc(fullTitle)}">${q.startTime ? esc(q.startTime) : '+ ' + t('Время')}</button>
     <button class="check" data-action="toggle-task" data-id="${q.id}"${guideCompleteTarget} aria-label="${t(q.done ? 'Снять выполнение' : 'Выполнить')}: ${esc(fullTitle)}" aria-pressed="${q.done ? 'true' : 'false'}">${q.done ? '✓' : ''}</button>
     ${titleCell}
-    ${skSel}
-    <span class="task-time-controls"><button type="button" class="task-schedule" data-action="cal-edit-task" data-id="${q.id}" aria-label="${esc(t('Открыть расписание квеста'))}: ${esc(fullTitle)}">${q.startTime ? esc(q.startTime) : t('Без времени')}</button><button class="t-time" data-action="edit-actual" data-id="${q.id}" aria-label="${t('Изменить фактическое время квеста')} ${esc(fullTitle)}: ${time}" title="${t('Клик — фактическое время')}">${time}</button></span>
-    <span class="t-diff" title="${DIFF[q.difficulty] || ''}">${difficultyIconHTML(q.difficulty)}</span>
+    <span class="task-time-controls"><button class="task-duration" data-action="cal-edit-task" data-id="${q.id}" aria-label="${t('Длительность')}: ${esc(fullTitle)}">${fmtDur(estMin)}</button><button class="t-time" data-action="edit-actual" data-id="${q.id}" aria-label="${t('Изменить фактическое время квеста')} ${esc(fullTitle)}: ${time}" title="${t('Клик — фактическое время')}">${q.actualMin ? fmtDur(q.actualMin) : t('Факт')} ↗</button></span>
     <span class="t-xp"${guideRewardTarget}>${q.done ? (q.entry ? '💛' : '+' + (q.xpAwarded || 0)) : ''}</span>
     ${backdate}
     ${commitment ? `<span class="t-commitment" title="${esc(t('Личная граница'))}: ${esc(commitmentTimeOf(commitment))}">⚔️${esc(commitmentTimeOf(commitment))}</span>` : ''}
@@ -20565,7 +20569,7 @@ function renderToday() {
     minToday > 0 ? `<div class="th-stat"><b>${fmtDur(minToday)}</b><span>${t('фокус')}</span></div>` : '',
     xpToday > 0 ? `<div class="th-stat"><b>+${xpToday}</b><span>XP</span></div>` : '',
   ].filter(Boolean).join('');
-  const todayHero = !tm && cs.total && !cs.closed && !closed ? '' : `<section class="card today-hero${closed ? ' is-daydone' : cs.closed ? ' is-coredone' : ''}" aria-labelledby="today-title">
+  const todayHero = !tm && !closed && !cs.closed ? '' : `<section class="card today-hero${closed ? ' is-daydone' : cs.closed ? ' is-coredone' : ''}" aria-labelledby="today-title">
       <div>
         <span class="th-kicker">${heroKicker}</span>
         <h2 id="today-title">${heroTitle}</h2>
@@ -20607,7 +20611,7 @@ function boardTakenLineHTML() {
 }
   const questBoard = `<section class="card card-quests" aria-label="${t('Квесты на сегодня')}"><div class="daystat">
         <span>${t('Квестов:')} <b>${doneCount}/${todays.length}</b></span>
-        <span>${t('План:')} <b>${fmtDur(planned)}</b></span></div>
+        <span>${t('План:')} <b>${fmtDur(planned)}</b></span><button type="button" class="today-add-link" data-action="focus-add-task">${t('+ Квест')}</button></div>
       ${todays.length ? `<ul class="tasks">${todays.map((task) => questRow(task, questGoalLinks)).join('')}</ul>` : emptyDayHTML()}${boardTakenLineHTML()}</section>`;
   const scheduleCard = todays.some((t) => t.startTime) ? `<div class="card"><button class="nudge" data-action="goto-calendar">${satoruIconHTML('nav.plan', 'button-glyph', '🗓')} ${todays.filter((t) => t.startTime).length} ${plural(todays.filter((t) => t.startTime).length, 'квест', 'квеста', 'квестов')} в расписании — открыть календарь</button></div>` : '';
   const habitsCard = State._habitsLoadError
@@ -20648,10 +20652,12 @@ function boardTakenLineHTML() {
     </div><button type="button" class="today-notes-link" data-view="notes" data-guide-target="notes-nav">${t('Заметки')} ↗</button>
   </div>`;
   if (tab === 'board') return `<div class="today-shell board-shell">${tabs}<section id="today-panel-day" role="tabpanel" aria-labelledby="today-tab-day" hidden></section><section id="today-panel-board" class="today-board-panel" role="tabpanel" aria-labelledby="today-tab-board">${boardScreenHTML()}</section></div>`;
+  const week = weekStart(today);
+  const weekStrip = `<nav class="today-week" aria-label="${esc(t('Дни выбранной недели'))}">${Array.from({length:7},(_,i)=>{const date=addDays(week,i);return `<button type="button" data-action="goto-calendar" data-date="${date}" ${date===today?'aria-current="date"':''}><span>${esc(new Intl.DateTimeFormat(lang(),{weekday:'short'}).format(parseDate(date)))}</span><b>${parseDate(date).getDate()}</b></button>`;}).join('')}</nav>`;
   const routeHead = `<header class="today-route-head"><div><p class="route-date">${esc(new Intl.DateTimeFormat(lang(), {weekday:'long',day:'numeric',month:'long'}).format(new Date()))}</p><h2>${t('Сегодня')}</h2></div><button type="button" class="btn ghost day-recap-direct" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></header>`;
   return `<div class="today-shell">${routeHead}${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>
-    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${dayNavStripHTML(today)}${firstValueCard()}${todayHero}${overdueSurface}${amnestyUndo}${questBoard}${addQuestCard}${scheduleCard}${habitsCard}${captureBar()}${browserCompanionLaunchHTML()}</div>
-    <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}</aside>
+    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${weekStrip}${firstValueCard()}${todayHero}${amnestyUndo}${questBoard}${overdueSurface ? `<details class="today-earlier"><summary>${t('Незавершённые дела')} · ${overdue.length}</summary>${overdueSurface}</details>` : ''}${addQuestCard}${habitsCard}${browserCompanionLaunchHTML()}</div>
+    <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}${captureBar()}</aside>
     <div class="today-footer">${shutdownCard}</div>
   </div>`;
 }
@@ -21496,7 +21502,6 @@ function lootboxCard() {
     <div class="lb-body">
       <button type="button" class="lb-chest ${avail > 0 ? 'ready' : 'empty'}" ${avail > 0 ? 'data-action="open-chest"' : 'disabled'} aria-label="${esc(statusTxt)}">
         <span class="reward-object-art is-chest daily-chest-art" aria-hidden="true"></span><span class="lb-status">${statusTxt}</span>
-        ${avail > 0 ? `<small>${t('Сначала сохраняем награду; церемонию можно пропустить.')}</small>` : ''}
       </button>
       <div class="lb-info">
         <p>${t('Сундук зарабатывается за 1, 3 и 5 реальных действий. Заход не считается.')}</p>
@@ -23113,14 +23118,12 @@ function renderRewards() {
         <h2>${t('Награды')}</h2>
         <p class="muted">${t('На что потратим заработанное?')}</p>
         <div class="th-actions">
-          ${chestReady ? `<button class="btn reward-primary-cta" data-action="open-chest">${t('Получить награду')} ×${chestReady}</button>` : `<button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} ${t('Каталог наград')}</button>`}
-          <button class="btn ghost" data-action="goto-today">${satoruIconHTML('nav.today', 'button-glyph', '🎯')} ${t('К делам')}</button>
+          <button class="btn ghost" data-action="open-reward-catalog">${satoruIconHTML('nav.skills', 'button-glyph', '📚')} ${t('Каталог наград')}</button>
         </div>
       </div>
-      <div class="reward-hero-visual" aria-hidden="true">
-        <span class="reward-object-art is-chest hero-reward-chest"></span>
-        <span class="reward-object-art is-gold hero-reward-gold"></span>
-        <span class="reward-hero-balance">${bal}</span>
+      <div class="reward-hero-visual">
+        <span class="reward-object-art is-gold hero-reward-gold" aria-hidden="true"></span>
+        <span class="reward-hero-balance" aria-label="${esc(t('Золото'))}">${bal}</span>
       </div>
     </section>`;
   const cards = State.rewards.map((r) => `<div class="reward">
@@ -26918,6 +26921,7 @@ function labelSettingsControls() {
   });
 }
 function commitMainView(main, staging, view) {
+  window.InterfaceCompositionV1?.apply(staging, view, {t, roomSrc:view === 'today' ? denMasterFor(ensureDen()).src : ''});
   // Background receipts/nudges may repaint Today while a person composes a quest.
   // Keep the actual form (including multi-sphere state and cursor), never a second
   // persistence path. A successful submit explicitly releases this draft.
@@ -28251,6 +28255,7 @@ function guideV3RevealTarget(selector, { focus = false, forceScroll = false, blo
   requestAnimationFrame(() => {
     const target = selector ? document.querySelector(selector) : null;
     if (!target) return;
+    window.InterfaceCompositionV1?.reveal(target);
     const rect = target.getBoundingClientRect();
     const outside = rect.bottom < 0 || rect.top > window.innerHeight || rect.right < 0 || rect.left > window.innerWidth;
     if ((outside || forceScroll) && typeof target.scrollIntoView === 'function') {
@@ -28334,6 +28339,7 @@ function guideV3Paint() {
     return;
   }
   const targetSelector = guideV3TargetSelector(vm);
+  if (targetSelector) window.InterfaceCompositionV1?.reveal(document.querySelector(targetSelector));
   const returnTarget = targetSelector ? document.querySelector(targetSelector) : null;
   const returnFocus = returnTarget?.matches('details') ? returnTarget.querySelector('summary') : returnTarget;
   const targetMounted = !targetSelector || !!returnTarget;
@@ -32566,7 +32572,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v246';
+const PWA_CACHE_VERSION = 'satoru-v247';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

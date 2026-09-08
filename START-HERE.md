@@ -9,6 +9,11 @@
 
 ## Актуальный handoff — 2026-09-06
 
+**Последний запрос 08.09:** владелец отверг поверхностный rollout v245/v246.
+Структурный v247: [DESIGN-DEEP-REDESIGN-V1.md](./DESIGN-DEEP-REDESIGN-V1.md).
+Читать перед следующим UI: новый presentation-only interface-composition-v1,
+а не только перекраска. Старый /compare.html не менять; проверки и границы — там же.
+
 Дизайн-трек 2026-09-07: [DESIGN-REBOOT-V1.md](./DESIGN-REBOOT-V1.md).
 Продолжение 08.09: [PLAN-DESIGN-V1.md](./PLAN-DESIGN-V1.md) — календарь/цели связаны
 с Today в том же preview; общий multi-sphere/background/difficulty editor, перенос,

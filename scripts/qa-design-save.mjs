@@ -87,5 +87,5 @@ try{
  await page.locator('[role=dialog]').last().waitFor({state:'visible'});
  receipts.push('direct voice recap opens');
  console.log(JSON.stringify({receipts}));
- await page.screenshot({path:new URL('../art-factory/design-rollout-20260908/next-save-editor.png',import.meta.url).pathname});
-}finally{console.log('last phase',await page.evaluate(()=>typeof State==='undefined'?'undefined':State.phase));console.log((await page.locator('body').innerText()).slice(0,350));await page.screenshot({path:new URL('../art-factory/design-rollout-20260908/save-last.png',import.meta.url).pathname});await writeFile(new URL('../art-factory/design-rollout-20260908/save-receipts.json',import.meta.url),JSON.stringify(receipts,null,2));await browser.close();}
+ await page.screenshot({path:new URL('../art-factory/design-deep-20260908/next-save-editor.png',import.meta.url).pathname});
+}finally{console.log('last phase',await page.evaluate(()=>typeof State==='undefined'?'undefined':State.phase));console.log((await page.locator('body').innerText()).slice(0,350));await page.screenshot({path:new URL('../art-factory/design-deep-20260908/save-last.png',import.meta.url).pathname});await writeFile(new URL('../art-factory/design-deep-20260908/save-receipts.json',import.meta.url),JSON.stringify(receipts,null,2));await browser.close();}

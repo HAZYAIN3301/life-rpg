@@ -1,0 +1,297 @@
+{
+  "records": [
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "today",
+      "overflow": false,
+      "body": "Вторник, 8 Сентября\n\nСегодня\n Итог дня\nДень\nДоска\nЗаметки ↗\nпн\n7\nвт\n8\nср\n9\nчт\n10\nпт\n11\nсб\n12\nвс\n13\nКвестов:\n1/4\nПлан:\n1ч 25м\n+ Квест\n16:30\n◆\nЯДРО ДНЯ\n",
+      "wide": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "calendar",
+      "overflow": false,
+      "body": "8 сентября\nВт · сегодня\nплан: 1ч 25м\nДень\nНеделя\nМесяц\nПН\n7\nВТ\n8\n3\nСР\n9\nЧТ\n10\nПТ\n11\n🎯\nСБ\n12\nВС\n13\n📆 Экспорт\n📅 Подписка\n🔕 Напоминания\nРасписание дн",
+      "wide": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "goals",
+      "overflow": false,
+      "body": "ПЛАН\n\nЦели\n+ Цель\nСейчас\nВсе цели\nЕщё\nВыбрать несколько\nРазобрать с Тенью\nЧто важно сейчас\nВыпустить первое видео\nКороткое знакомство с Satoru: один д",
+      "wide": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "habits",
+      "overflow": false,
+      "body": " Привычки\nСегодня\n\nСтрик — наблюдение, не долг. Пропуск не стирает сделанное.\n\n1\nЧтение\nУчёба\n10м\n+ Создать привычку\n Привычки\n Срывы\n Метод\nСтроим пр",
+      "wide": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "notes",
+      "overflow": false,
+      "body": "Заметки\n\nМысли, которые хочется сохранить.\n\nТекст заметки\nИтог дня\n📝\n1\nИдея для видео: показать, как один маленький шаг превращается в готовое\n2026-0",
+      "wide": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "shelf",
+      "overflow": false,
+      "body": "SATORU · ВДОХНОВЕНИЕ\n\nВдохновение\n\nКороткая подборка по твоим интересам. Она закончится — и не станет новой лентой.\n\n✦\n\nПОДБОРКА ДЛЯ ТЕБЯ\n\nЧто тебя за",
+      "wide": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "rewards",
+      "overflow": false,
+      "body": "Satoru\nНаграды\n\nНа что потратим заработанное?\n\n7\n Награды дня\nШансы сундука открыты\nОткрыть награду (1)\n\nСундук зарабатывается за 1, 3 и 5 реальных де",
+      "wide": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "den",
+      "overflow": false,
+      "body": "Логово\nАлекс · пример · Уровень 17\nТишина\nОбставить\nещё присматриваюсь\n1/4\n1\nГотов к делу?\nНачать фокус\nДействия комнаты\nПрогулка, отдых и коллекции\n⌄",
+      "wide": [
+        "den-guardian-actions den-shadow-actions",
+        "",
+        "btn ghost sm",
+        "btn ghost sm",
+        "btn ghost sm",
+        "den-guardian-actions",
+        "",
+        "btn ghost sm",
+        "btn ghost sm",
+        "den-guardian-actions den-recovery-actions",
+        "",
+        "btn ghost sm"
+      ]
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "character",
+      "overflow": false,
+      "body": "SATORU\n\nПерсонаж\n\nАлекс · пример\n\nМастер · Уровень 17\nСтратег\n2172 / 6654 XP\nФорма\n100% · в форме\n\nГАРДЕРОБ\n\nТри слота. Один ясный образ.\n\nВыбери слот",
+      "wide": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "pets",
+      "overflow": false,
+      "body": " Питомцы\nКацую\nХранительница отдыха\nТревожится\nСлишком долго не было настоящей паузы.\nУчёба\nНуждается во внимании\nНуждается во внимании, когда будет р",
+      "wide": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "tree",
+      "overflow": false,
+      "body": "SATORU · КАРТА РАЗВИТИЯ\nУчёба\n\nВехи фиксируют то, что ты реально можешь. Игровые бонусы меняют только Satoru.\n\n19\nПРАКТИКА\n4\nВЕХ ПОДТВЕРЖДЕНО\n23\nОЧК. ",
+      "wide": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "stats",
+      "overflow": false,
+      "body": " Прогресс\nПоследние 14 дней\n25% · Выполнение (14 дн.)\nРазобрать неделю\n Твоя неделя\n 17\nМастер\n—\nНаблюдаем баланс\n 1\nСерия · 1\n24020\nВсего опыта\nРитм ",
+      "wide": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "weekly",
+      "overflow": false,
+      "body": "Неделя 07.09 – 13.09\n· (текущая)\nДень\nНеделя\nМесяц\nПН\n7\nВТ\n8\n3\nСР\n9\nЧТ\n10\nПТ\n11\nСБ\n12\nВС\n13\n📆 Экспорт\n📅 Подписка\n🔕 Напоминания\nКвесты недели\nВт 08.",
+      "wide": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "party",
+      "overflow": false,
+      "body": "КОМАНДНАЯ ГЛАВА\nСобери пати для следующего рейда.\n\nДуо или группа до 6 человек. Недельный вклад складывается в общего босса, а поддержка команды не пр",
+      "wide": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "leaderboard",
+      "overflow": false,
+      "body": " Рейтинг участия\n\nОбщий XP показывает участие, а не способности. Догонять других не обязательно.\n\nКак устроен рейтинг\n\nЗдесь пока нет участников.\n\nОтд",
+      "wide": []
+    },
+    {
+      "device": "desktop",
+      "theme": "dark",
+      "view": "settings",
+      "overflow": false,
+      "body": "Настройки\n\nМеняй одну область за раз. Обычные правки сохраняются автоматически; важные личные данные — отдельным действием.\n\nВсе обычные настройки сох",
+      "wide": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "today",
+      "overflow": false,
+      "body": "Вторник, 8 Сентября\n\nСегодня\n Итог дня\nДень\nДоска\nЗаметки ↗\nпн\n7\nвт\n8\nср\n9\nчт\n10\nпт\n11\nсб\n12\nвс\n13\nКвестов:\n1/4\nПлан:\n1ч 25м\n+ Квест\n16:30\n◆\nЯДРО ДНЯ\n",
+      "wide": [
+        "task-menu",
+        "task-menu-title",
+        "",
+        "",
+        "task-menu-diff",
+        "task-menu-diff-label muted",
+        "task-diff-row",
+        "task-diff-btn",
+        "satoru-icon satoru-icon--emblem task-difficulty-icon",
+        "task-diff-btn is-active",
+        "satoru-icon satoru-icon--emblem task-difficulty-icon",
+        "task-diff-btn"
+      ]
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "calendar",
+      "overflow": false,
+      "body": "8 сентября\nВт · сегодня\nДень\nНеделя\nМесяц\nПН\n7\nВТ\n8\n3\nСР\n9\nЧТ\n10\nПТ\n11\n🎯\nСБ\n12\nВС\n13\nЭкспорт\nПодписка\nНапоминания\nРасписание дня\n4 · 1ч 25м\n Добавить",
+      "wide": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "goals",
+      "overflow": false,
+      "body": "ПЛАН\n\nЦели\n+ Цель\nСейчас\nВсе цели\nЕщё\nВыбрать несколько\nРазобрать с Тенью\nЧто важно сейчас\nВыпустить первое видео\nКороткое знакомство с Satoru: один д",
+      "wide": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "habits",
+      "overflow": false,
+      "body": " Привычки\nСегодня\n\nСтрик — наблюдение, не долг. Пропуск не стирает сделанное.\n\n1\nЧтение\n10м\n+ Создать привычку\n Привычки\n Срывы\n Метод\nСтроим привычки",
+      "wide": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "notes",
+      "overflow": false,
+      "body": "Заметки\n\nМысли, которые хочется сохранить.\n\nТекст заметки\nИтог дня\n📝\n1\nИдея для видео: показать, как один маленький шаг превращается в готовое\n2026-0",
+      "wide": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "shelf",
+      "overflow": false,
+      "body": "SATORU · ВДОХНОВЕНИЕ\n\nВдохновение\n\nКороткая подборка по твоим интересам. Она закончится — и не станет новой лентой.\n\n✦\n\nПОДБОРКА ДЛЯ ТЕБЯ\n\nЧто тебя за",
+      "wide": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "rewards",
+      "overflow": false,
+      "body": "Satoru\nНаграды\n7\n Награды дня\nШансы сундука открыты\nОткрыть награду (1)\n\nСундук зарабатывается за 1, 3 и 5 реальных действий. Заход не считается.\n\n1 д",
+      "wide": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "den",
+      "overflow": false,
+      "body": "Логово\nАлекс · пример · Уровень 17\nещё присматриваюсь\n1/4\n1\nГотов к делу?\nНачать фокус\nДействия комнаты\nПрогулка, отдых и коллекции\n⌄\nОбитатели\nСовмес",
+      "wide": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "character",
+      "overflow": false,
+      "body": "SATORU\n\nПерсонаж\n\nАлекс · пример\n\nМастер · Уровень 17\nСтратег\n2172 / 6654 XP\nФорма\n100% · в форме\n\nГАРДЕРОБ\n\nТри слота. Один ясный образ.\n\nВыбери слот",
+      "wide": [
+        "character-wardrobe-item-art-rig",
+        ""
+      ]
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "pets",
+      "overflow": false,
+      "body": " Питомцы\nКацую\nХранительница отдыха\nТревожится\nСлишком долго не было настоящей паузы.\nУчёба\nНуждается во внимании\nНуждается во внимании, когда будет р",
+      "wide": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "tree",
+      "overflow": false,
+      "body": "SATORU · КАРТА РАЗВИТИЯ\nУчёба\n\nВехи фиксируют то, что ты реально можешь. Игровые бонусы меняют только Satoru.\n\n19\nПРАКТИКА\n4\nВЕХ ПОДТВЕРЖДЕНО\n23\nОЧК. ",
+      "wide": [
+        "tree-tab ",
+        "muted",
+        "tree-tab ",
+        "muted",
+        "tree-tab ",
+        "muted"
+      ]
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "stats",
+      "overflow": false,
+      "body": " Прогресс\nПоследние 14 дней\n25% · Выполнение (14 дн.)\nРазобрать неделю\n Твоя неделя\n 17\nМастер\n—\nНаблюдаем баланс\n 1\nСерия · 1\n24020\nВсего опыта\nРитм ",
+      "wide": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "weekly",
+      "overflow": false,
+      "body": "Неделя 07.09 – 13.09\n· (текущая)\nДень\nНеделя\nМесяц\nПН\n7\nВТ\n8\n3\nСР\n9\nЧТ\n10\nПТ\n11\nСБ\n12\nВС\n13\nЭкспорт\nПодписка\nНапоминания\nКвесты выбранного дня\nВт 08.0",
+      "wide": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "party",
+      "overflow": false,
+      "body": "КОМАНДНАЯ ГЛАВА\nСобери пати для следующего рейда.\n\nДуо или группа до 6 человек. Недельный вклад складывается в общего босса, а поддержка команды не пр",
+      "wide": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "leaderboard",
+      "overflow": false,
+      "body": " Рейтинг участия\n\nОбщий XP показывает участие, а не способности. Догонять других не обязательно.\n\nКак устроен рейтинг\n\nЗдесь пока нет участников.\n\nОтд",
+      "wide": []
+    },
+    {
+      "device": "mobile",
+      "theme": "light",
+      "view": "settings",
+      "overflow": false,
+      "body": "Настройки\n\nМеняй одну область за раз. Обычные правки сохраняются автоматически; важные личные данные — отдельным действием.\n\nВсе обычные настройки сох",
+      "wide": []
+    }
+  ],
+  "errors": []
+}

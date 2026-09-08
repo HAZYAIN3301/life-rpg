@@ -1,0 +1,11 @@
+[
+  "draft survives background repaint",
+  "failed save leaves draft intact and no server task",
+  "create + startTime durable",
+  "reload retains schedule",
+  "direct schedule editor opens",
+  "schedule + duration edit durable",
+  "completion retained after reload",
+  "first-value evidence uses completed task name",
+  "direct voice recap opens"
+]

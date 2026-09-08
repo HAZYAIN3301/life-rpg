@@ -41,8 +41,10 @@ test('Today composes one work contour and moves secondary systems out of its ren
     assert.equal(composition.includes(oldCard), false, `${oldCard} returned to the Today composition`);
   }
 
-  assert.match(composition, /\$\{questBoard\}\$\{addQuestCard\}\$\{scheduleCard\}\$\{habitsCard\}\$\{captureBar\(\)\}/,
-    'the requested task-first layout keeps capture after work, without dropping it');
+  assert.match(composition, /\$\{questBoard\}.*\$\{addQuestCard\}\$\{habitsCard\}/,
+    'tasks remain before the composer and recurring work');
+  assert.match(composition, /<aside class="today-support"[^>]*>.*\$\{captureBar\(\)\}/,
+    'capture is kept in the support rail, not dropped');
   assert.match(composition, /day-recap-direct[\s\S]*data-action="day-recap"/,
     'voice recap remains a direct header action');
   assert.match(composition, /\$\{companionCard\(attentionTodayControlHTML\(selectedNudge\)\)\}/,
