@@ -2,23 +2,27 @@ import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-const dir=path.resolve('../qa-drawn');await fs.mkdir(dir,{recursive:true});
+const dir=path.resolve('../qa-forward-v4');await fs.mkdir(dir,{recursive:true});
 const browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});
 const checks=[],errors=[],external=[];
 try{
  const page=await browser.newPage({viewport:{width:1280,height:1060}});page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(!r.url().startsWith('http://127.0.0.1:4179')&&!r.url().startsWith('data:'))external.push(r.url())});
  await page.goto('http://127.0.0.1:4179/drawn.html');await page.waitForSelector('body[data-ready=true]');
  assert.equal((await page.evaluate(()=>drawnLab.inspect())).productionWrites,0);
- for(const [pose,cloth,name]of [[0,'original','idle'],[.5,'original','mid'],[1,'original','elbow'],[1,'plum','plum']]){
+ for(const [pose,cloth,name]of [[0,'original','idle'],[.33,'original','lift'],[.5,'original','mid'],[2/3,'original','foreshortened'],[.8,'original','above-elbow'],[1,'original','elbow'],[1,'plum','plum']]){
   await page.evaluate(v=>drawnLab.configure(v),{pose,cloth,original:true});await page.screenshot({path:path.join(dir,name+'.png'),fullPage:true});
  }
- checks.push('four visual samples: idle / mid / max elbow / alternate cloth');
+ checks.push('seven visual samples include forward-depth midpoint and >90-degree flexion');
+ const forward=await page.evaluate(()=>drawnLab.inspect());assert.equal(forward.action,'chest');
+ await page.locator('#action').selectOption('lateral');assert.equal((await page.evaluate(()=>drawnLab.inspect())).pose,0);await page.evaluate(()=>drawnLab.configure({pose:1}));await page.screenshot({path:path.join(dir,'lateral-reference.png'),fullPage:true});
+ await page.locator('#action').selectOption('chest');checks.push('new forward gesture and rejected lateral reference switch without state ambiguity');
  await page.locator('#pose').focus();await page.keyboard.press('Home');assert.equal((await page.evaluate(()=>drawnLab.inspect())).pose,0);await page.keyboard.press('End');assert.equal((await page.evaluate(()=>drawnLab.inspect())).pose,1);
  checks.push('keyboard slider Home/End shares pose state');
  const before=await page.evaluate(()=>drawnLab.inspect());assert.equal(await page.evaluate(()=>{try{drawnLab.configure({pose:.5,cloth:'missing'});return false}catch{return true}}),true);assert.deepEqual(await page.evaluate(()=>drawnLab.inspect()),before);
  checks.push('invalid batched change is atomic');
  await page.locator('#play').click();await page.waitForTimeout(180);assert.equal((await page.evaluate(()=>drawnLab.inspect())).playing,true);await page.locator('#play').click();const paused=(await page.evaluate(()=>drawnLab.inspect())).pose;await page.waitForTimeout(100);assert.equal((await page.evaluate(()=>drawnLab.inspect())).pose,paused);
  checks.push('animation runs; pause freezes exactly');
+ await page.locator('#reset').click();await page.locator('#play').click();await page.waitForFunction(()=>!drawnLab.inspect().playing);assert.equal((await page.evaluate(()=>drawnLab.inspect())).pose,0);checks.push('one-shot gesture lifts, holds, returns and stops');
  await page.emulateMedia({reducedMotion:'reduce'});await page.locator('#play').click();assert.equal((await page.evaluate(()=>drawnLab.inspect())).playing,false);await page.locator('#reset').click();assert.equal((await page.evaluate(()=>drawnLab.inspect())).pose,0);
  checks.push('reduced motion prevents autoplay; manual slider still available');
  await page.setViewportSize({width:375,height:812});await page.evaluate(()=>drawnLab.configure({pose:1,cloth:'plum'}));await page.screenshot({path:path.join(dir,'mobile.png'),fullPage:true});

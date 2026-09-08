@@ -1,0 +1,24 @@
+{
+  "scope": "Isolated avatar v4 prototype. Production avatar unchanged.",
+  "projectId": "appgprj_6a9fc562f9dc8191bbd26c737c32a99c",
+  "url": "https://satoru-avatar-wardrobe-lab-sept8.albertprokopets3301.chatgpt.site/drawn.html",
+  "access": "owner-only; existing private access preserved",
+  "permission": "User explicitly authorized source/art transfer this turn.",
+  "siteVersion": 3,
+  "versionId": "appgprj_6a9fc562f9dc8191bbd26c737c32a99c~appgver_6edba153e0a8819188c9688c929c6f95",
+  "sourceCommit": "8b7206b1091814c1f8678881776cddf34b2024d5",
+  "deploymentId": "appgdep_6aa04cbdf2908191b143808345f9a8f3",
+  "deploymentStatus": "succeeded",
+  "deployedAt": "2026-09-08T17:58:50.300476+00:00",
+  "archiveSha256": "90264a6f55ecfdab41149a96010a9952568d3a5a5c26793d64cfd622fa763d88",
+  "archiveBytes": 35317760,
+  "archiveFiles": 408,
+  "buildManifestVerifiedFiles": 7,
+  "validation": {
+    "contracts": "15/15",
+    "browserScenarios": "10 passed",
+    "hostedPage": "Actual IAB AX state and screenshot verified; trial 04 visible; controls enabled; deliverable marked."
+  },
+  "limitation": "Hand remains too compressed around the middle of forward flexion; drawn corrective views are needed. Not anatomically accepted.",
+  "publicationIncident": "Site version 2 included stale dist and was never deployed. Fresh mirrored build and manifest validation produced version 3."
+}

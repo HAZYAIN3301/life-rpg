@@ -1,0 +1,18 @@
+{
+  "at": "2026-09-08T17:49:21.383Z",
+  "checks": [
+    "seven visual samples include forward-depth midpoint and >90-degree flexion",
+    "new forward gesture and rejected lateral reference switch without state ambiguity",
+    "keyboard slider Home/End shares pose state",
+    "invalid batched change is atomic",
+    "animation runs; pause freezes exactly",
+    "one-shot gesture lifts, holds, returns and stops",
+    "reduced motion prevents autoplay; manual slider still available",
+    "375px: no horizontal overflow and usable controls",
+    "200% root text enlargement: no page overflow",
+    "missing original: explicit load failure, disabled controls"
+  ],
+  "errors": [],
+  "external": [],
+  "scope": "Isolated synthetic drawing experiment; no production integration; technical checks do not establish visual acceptance"
+}

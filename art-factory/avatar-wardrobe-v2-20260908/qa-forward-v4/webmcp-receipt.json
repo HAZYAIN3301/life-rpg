@@ -1,0 +1,8 @@
+{
+  "date": "2026-09-08",
+  "surface": "Actual Codex IAB document.modelContext, /drawn.html",
+  "valid": {"input":{"action":"chest","pose":1,"original":true},"ok":true,"readbackMatches":true},
+  "invalid": {"input":{"action":"unknown"},"ok":false,"error":"Неизвестное движение","previousStatePreserved":true},
+  "productionWrites": 0,
+  "scope": "Tool contract only; does not establish anatomical or artistic acceptance."
+}

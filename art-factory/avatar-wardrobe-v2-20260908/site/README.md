@@ -1,6 +1,16 @@
 # Satoru avatar wardrobe lab v2
 
-## Latest: drawn rig experiment v3 (08 September 2026)
+## Latest: forward gesture experiment v4 (08 September 2026)
+
+User liked smoothness/shoulder in v3 but rejected the lateral flexion as unnatural
+and not useful. `drawn.html` now defaults to a forward-depth flexion, keeps the old
+lateral motion as an explicit comparison, and plays once: lift/hold/return/rest.
+It is still a visual experiment. The palm is too compressed edge-on; closed shallow
+surface helps but does NOT replace drawn corrective views or an anatomical hand.
+Do not say anatomy is solved. No new raster generation in this pass.
+`node tests/drawn-browser.mjs` now writes to `../qa-forward-v4`; v3 evidence retained.
+
+## Previous: drawn rig experiment v3
 
 Open `/drawn.html`. This route retains the actual production Traveller PNG and
 the den, then uses a dense textured 2D mesh and a bounded two-bone arm blend.
@@ -25,6 +35,11 @@ as a standalone Sites source checkout. Not imported by the production app.
 contract; `npm run qa` tests the running preview with the installed macOS Google
 Chrome and writes evidence to `../qa/`. `npm run build` creates static `dist/`.
 Three.js 0.180.0 is pinned; no CDN, account API, telemetry or production inventory.
+
+Before publishing a mirrored checkout, run `npm run build` **in that checkout**.
+The packager packages existing dist; it does not replace that build step. Verify
+the drawn route and its matching hashes in `dist/build-manifest.json` in the archive
+before saving a Site version. Saving again for the same SHA may reuse a prior archive.
 
 Source GLBs and provenance: `public/models/PROVENANCE.md`. Keep all license files.
 The authored 41-bone skeleton drives independently selected upper/lower meshes.
