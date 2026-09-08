@@ -1,0 +1,16 @@
+{
+  "at": "2026-09-08T19:36:52.963Z",
+  "checks": [
+    "8 visual states saved: front, three-quarter, side, back, mid, reach, jacket, clay",
+    "invalid batch refused without partial mutation",
+    "actual controls: keyboard pose, view button and garment selection",
+    "finite movement, exact pause/resume, terminal rest",
+    "reduced motion retains a static result and manual pose",
+    "375px: no overflow, 42px touch floor",
+    "200% text enlargement at fixed 375px",
+    "WebGL unavailable: visible error and no actionable empty state"
+  ],
+  "errors": [],
+  "external": [],
+  "scope": "Fullbody prototype only; visual/anatomical quality remains unapproved; no production/account writes"
+}

@@ -1,4 +1,57 @@
-# Avatar v5 — volume first, illustrated rendering
+# Avatar v5–v6 — volume first, illustrated rendering
+
+## Current checkpoint: v6 complete-body study, 08.09.2026
+
+Owner's exact response to v5: «лучше, но пока далеко от стиля нашего. как внешне
+чисто по стилю художнему, так и по анатомии. но уже лучше намного». This approves
+neither anatomy nor art. The subsequent «давай» authorises continuing the complete
+Traveller study, not replacing production or the previously blocked master push.
+
+New route: `art-factory/avatar-wardrobe-v2-20260908/site/traveller.html`.
+The unchanged current PNG and a full-body volume reconstruction stand side by side
+in the same unchanged den. Camera fitting uses the real source dimensions 640×900.
+
+Implemented:
+- Custom profiled closed head, neck, ears, nose, thick tapered hair locks, goggles,
+  scarf, shirt, coat, trousers, calves, boots, continuous arms/palms and fingers.
+- One 19-bone skeleton shared by 63 skinned meshes; 18,583 vertices / 36,064 triangles
+  across both garment options (not a mobile performance certification).
+- Forward reaching gesture involving spine/chest, clavicle elevation, shoulder,
+  elbow and wrist; planted feet, finite playback, pause/resume, scrub/reduced motion.
+- Original drawing projected onto front-facing bind-pose surfaces in a shader.
+  Side pigment samples bounded patches from the same source with diffuse shading.
+  This reuses raster art; it is NOT an all-angle hand-painted texture/finished UV set.
+  No new generated raster or separate drawings per pose/appearance.
+- Long coat and shorter cut of the same coat. Same skeleton and gesture, not a full
+  wardrobe collection or two independently authored outfit designs.
+- Front/¾/side shortcuts, −120…180° rotation and honest clay inspection.
+
+Visual QA corrections: comparison scale; bulbous hair changed to tapered locks;
+front projection fixed from incorrectly assumed dimensions to actual PNG metadata;
+denser elbow blend; back-view trouser/coat intersections reduced by fitted hips/coat.
+The PNG-size regression is now tested against its real header.
+
+Checks: 26/26 unit tests; 8 browser scenario groups, nine screenshots including
+375px; actual controls, invalid atomic batch, keyboard, pause/resume, reduced motion,
+200% text, WebGL failure, zero JS errors/external requests. Evidence:
+`art-factory/avatar-wardrobe-v2-20260908/qa-traveller-v6/`.
+
+**Art gate remains OPEN.** Front resemblance is stronger because it literally reuses
+the source painting. Profile face, back hair, costume volume/folds and hand anatomy
+remain provisional. Single front projection is not a universal customisable face.
+No blinking/facial rig, walk/sit, prop contact, Shadow interaction, new hairstyles,
+body morphology, golden-item ownership or production avatar replacement. A fully
+authored model/UV/textures and technical-art work may still be required.
+
+Next: evaluate fullbody front/¾/side and mid-reach against the original. Fix a bounded
+specific discrepancy before adding actions/catalogue. Do not declare v6 approved
+because its tests pass, and do not regenerate pets/world to accommodate it.
+Published to the same owner-private Site (Site version 5), 08.09 19:45 UTC.
+[Open full Traveller study](https://satoru-avatar-wardrobe-lab-sept8.albertprokopets3301.chatgpt.site/traveller).
+Exact provenance: `qa-traveller-v6/deployment-receipt.json`. Live IAB route and controls
+verified. Native WebMCP batch timed out; later AX readback confirmed its valid pose/
+garment change, but do not claim a verified native invalid-command receipt.
+The v5 arm study below remains available for comparison and mechanical evidence.
 
 08.09.2026. Current direction after the owner rejected v4. This supersedes the
 drawn-corrective-view roadmap in AVATAR-DRAWN-RIG-V3.md. Production remains unchanged.

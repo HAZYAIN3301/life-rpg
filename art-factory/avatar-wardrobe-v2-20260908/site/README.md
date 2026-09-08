@@ -1,6 +1,18 @@
-# Satoru avatar wardrobe lab v2
+# Satoru avatar wardrobe lab v2–v6
 
-## Current: actual-volume arm study v5
+## Current v6: whole Traveller study
+
+`traveller.html` compares the untouched 640×900 source illustration against a
+complete volume reconstruction in the same den. One 19-bone skeleton, 63 skinned
+meshes, coordinated finite reach, two cuts of the coat, camera and clay view.
+Front pigment reuses the source painting; side/back anatomy and materials are
+provisional. Not a fully authored all-angle model or production replacement.
+
+Run `npm test` (26 tests) and `node tests/traveller-browser.mjs` against the local
+server (8 scenario groups). Evidence outside Site: `../qa-traveller-v6/`.
+No account/ownership/gold writes. Older routes below remain historical comparisons.
+
+## Previous: actual-volume arm study v5
 
 Owner rejected the v4 sheet-thin hand and corrective-image scaling plan. `/volume.html`
 tests closed 3D skin/palm, a shared shoulder/elbow/wrist skeleton, three sleeve meshes,

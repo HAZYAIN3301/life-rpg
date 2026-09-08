@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "projectId": "appgprj_6a9fc562f9dc8191bbd26c737c32a99c",
+  "siteVersion": 5,
+  "sourceCommit": "ad5ba900cb7ecb8daa94adf585830dab9ef1a6cc",
+  "versionId": "appgprj_6a9fc562f9dc8191bbd26c737c32a99c~appgver_fad3bdbbf5dc8191a82a1c37c7c1eee6",
+  "deploymentId": "appgdep_6aa065ac46e8819188d6e48fdef19108",
+  "status": "succeeded",
+  "updatedAt": "2026-09-08T19:45:12.066418+00:00",
+  "url": "https://satoru-avatar-wardrobe-lab-sept8.albertprokopets3301.chatgpt.site/traveller",
+  "access": "owner-only, unchanged",
+  "archiveSha256": "75af2ffa3616af4b7b6e4114475a72ff367801330eaf21ea590624f4b0535e58",
+  "archiveContentHash": "sha256:f1e4ffb880ed3a8192082bb00b44537058b05de6483baf7c94ab9139f88193f6",
+  "verifiedCriticalFiles": 15,
+  "checks": {
+    "unit": 26,
+    "browserScenarioGroups": 8,
+    "localScreenshots": 9,
+    "liveIab": "Correct /traveller route and enabled controls observed; marked deliverable",
+    "webmcp": "Tool discovery verified. Batch call timed out; later AX readback confirmed pose65/yaw35/jacket. Invalid native call outcome not separately verified."
+  },
+  "mainRepository": "Local checkpoint only. Earlier master push permission gate remains; no master push or Railway deploy in this turn.",
+  "productionChanged": false,
+  "artisticallyApproved": false
+}

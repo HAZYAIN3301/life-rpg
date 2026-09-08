@@ -1,5 +1,24 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-08] Avatar v6 — цельный Traveller, исходный рисунок на объёмной форме
+
+После «лучше, но далеко по стилю и анатомии» и «давай» сделана отдельная traveller.html:
+19-костный общий скелет, 63 meshes, закрытые объёмы тела/рук/головы, толстые пряди,
+очки/шарф/пальто/обувь. Исходная 640×900 фактура проецируется на передние поверхности;
+бока используют ограниченные material patches. Оригинал рядом в том же логове.
+Один finite reach с корпусом, ключицей, плечом/локтем/кистью; два кроя пальто;
+ракурс/clay/keyboard/paused/reduced/error. Убраны ошибочный масштаб/UV, округлые
+пряди и видимое пересечение брюк с пальто на спине. 26 unit / 8 browser groups,
+9 кадров и receipt в qa-traveller-v6. Полный runtime suite не запускался: public/ не менялся.
+Тесты не доказывают художественную приёмку: профиль, затылок, руки, складки всё ещё
+не production quality. Никаких новых raster-generations, покупок, account/gold writes.
+Канонический контракт AVATAR-HYBRID-V5.md обновлён, старые пробы сохранены.
+Main master push остаётся под прежним exact-target permission gate; не выполнялся.
+Закрытый Site опубликован: version 5, source ad5ba900cb7ecb8daa94adf585830dab9ef1a6cc,
+08.09 19:45 UTC, 15 archive hashes проверены. Live IAB /traveller и controls проверены,
+вкладка оставлена пользователю. Native WebMCP batch timeout, valid state потом виден
+в AX; invalid native receipt не подтверждён. Точная provenance — deployment-receipt.
+
 ## [2026-09-08] Avatar v5 — настоящий объём, общий скелет; PNG-roadmap отменён
 
 После отказа от бумажной v4-руки пользователь явно запросил 3D в рисованном стиле,
