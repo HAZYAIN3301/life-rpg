@@ -84,8 +84,8 @@ test('the module is loaded before app.js and cached once for offline', () => {
   const at = INDEX.indexOf('src="habit-two-minute-v1.js');
   assert.ok(at >= 0 && INDEX.indexOf('src="app.js') > at);
   assert.equal((SW.match(/'habit-two-minute-v1\.js'/g) || []).length, 1);
-  assert.match(SW, /const CACHE = 'satoru-v245'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v245'/);
+  assert.match(SW, /const CACHE = 'satoru-v246'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v246'/);
 });
 
 test('the exit sits in the habit row, in the person’s own words', () => {

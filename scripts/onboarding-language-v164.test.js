@@ -28,7 +28,7 @@ test('English is the first-run default without changing legacy account fallback'
   assert.match(language, /State\.phase !== 'app'/);
   assert.match(language, /return registrationLang\(\)/);
   assert.match(language, /return 'ru'/);
-  assert.match(INDEX, /<html lang="en">/);
+  assert.match(INDEX, /<html lang="en"(?:\s[^>]*)?>/);
 });
 
 test('registration opens with a dedicated five-language step before account fields', () => {
@@ -73,7 +73,7 @@ test('language step has complete locale copy and accessible touch targets', () =
 });
 
 test('v164 invalidates the PWA shell and cache-busts app and styles', () => {
-  assert.match(SW, /const CACHE = 'satoru-v245'/);
-  assert.match(INDEX, /styles\.css\?v=20260908-design-v245-1/);
-  assert.match(INDEX, /app\.js\?v=20260908-design-v245-1/);
+  assert.match(SW, /const CACHE = 'satoru-v246'/);
+  assert.match(INDEX, /styles\.css\?v=20260908-design-v246-1/);
+  assert.match(INDEX, /app\.js\?v=20260908-design-v246-1/);
 });

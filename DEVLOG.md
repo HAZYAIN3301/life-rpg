@@ -2,6 +2,11 @@
 
 ## [2026-09-08] Design v245 — настоящий runtime + frozen v244 для сравнения
 
+Завершающий guest shell v246: live QA обнаружил старый вид формы входа до загрузки
+аккаунта. `data-design=next` теперь на исходном html; cache/pins согласованы.
+Локальный мобильный вход подтверждён без авторизации. Production receipt будет
+сохранён в `art-factory/design-rollout-20260908/production-receipt.json`.
+
 Последний запрос Альберта снял preview-only gate: новый вид в приложении, старый в облаке.
 Применена единая rounded-violet оболочка ко всем 16 прежним маршрутам, desktop rail /
 mobile bottom-nav, Russo One, light/dark/system, существующая палитра акцентов и art.

@@ -66,6 +66,19 @@ Russo One для крупных заголовков, спокойные све�
   **1929/1929 tests PASS**, concurrency=2, node --check, diff-check.
 - [ ] Scoped commit → fresh integration → push → Railway exact SHA + production bytes.
 
+### Production follow-up
+
+Runtime v245 `37b731d13ce3af605e9ab1e0c369a2d24b8c42f0` опубликован; оба Railway
+context — success. Старый production app.js перед переключением совпал с baseline:
+`9c5ae08c195b87f347d3ba4898e72097e493f53c99ef466cbf65bfb2f9a12331`.
+При live browser QA найден пропуск guest/login: dataset.design ставился только после
+загрузки State. Завершающий shell **v246**, pin `20260908-design-v246-1`, ставит marker
+уже в index.html. Данные/API и функциональные изменения v245 не меняются.
+v246: 1929/1929 PASS, локальный mobile guest/login PASS, diff-check PASS.
+Проверка production без Playwright serviceWorkers:block: его init-script читает
+navigator.serviceWorker в opaque iframe и сам создаёт SecurityError. Чистый browser
+без этой инъекции сохраняет строгие проверки 0 pageerrors/0 archive API requests.
+
 Подробности и воспроизводимые проверки: `art-factory/design-rollout-20260908/QA.md`.
 Общий runtime/data model сохранён, не построены вторые API/adapters. Удалённых функций нет.
 Completed-task receipt теперь показывает название, не технический ID; action eligibility

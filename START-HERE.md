@@ -27,8 +27,8 @@ Site public, обновление явно разрешено.
 - Канонический код — `origin/master`. Перед работой обязательно сверить
   `git rev-parse HEAD` и `git rev-parse origin/master`; checkout с отставшим SHA не считать
   источником истины.
-- Новый runtime-кандидат — **design v245**, PWA cache `satoru-v245`,
-  app/style pin `20260908-design-v245-1`, `public/design-next-v1.css`.
+- Новый runtime — **design v245 + guest shell v246**, PWA cache `satoru-v246`,
+  app/style pin `20260908-design-v246-1`, `public/design-next-v1.css`.
   Deployment receipt — `DESIGN-ROLLOUT-V1.md`; до его проверки не заявлять production.
   Прежний runtime v244 сохранён из `74a97dd` в `/compare.html` (synthetic, read-only).
   Actionable Foundations UI и Commitment v2 не заменены новой моделью хранения.
