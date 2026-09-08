@@ -12,6 +12,11 @@ Guide умеет раскрыть нужный panel; клавиатура и sf
 Контракт, отличия и непроверенное: DESIGN-DEEP-REDESIGN-V1.md. Архив v244 неизменен.
 Deployment считать подтверждённым только после production-receipt.json.
 
+Подтверждено: runtime b2e873a → origin/master; Railway life-rpg/piper-tts success.
+9 production-файлов совпали по SHA-256, guest/login — новый, архив — 0 API/pageerrors.
+Receipt: art-factory/design-deep-20260908/production-receipt.json.
+Локальный QA-сервер остановлен. Владелец ещё не оценивал именно эту композицию.
+
 ## [2026-09-08] Design v245 — настоящий runtime + frozen v244 для сравнения
 
 Завершающий guest shell v246: live QA обнаружил старый вид формы входа до загрузки

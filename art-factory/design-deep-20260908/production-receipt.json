@@ -1,0 +1,49 @@
+{
+  "runtimeCommit": "b2e873a8d54bba3f1a2eadae59fd5445b83ffce7",
+  "checkedAt": "2026-09-08T06:17:12.669Z",
+  "base": "https://life-rpg-production-416a.up.railway.app",
+  "files": [
+    {
+      "file": "index.html",
+      "sha256": "9cee659881573a45798b9395af8f669e55d91d8ee7ef55582020b51884e7fd3a"
+    },
+    {
+      "file": "app.js",
+      "sha256": "b0647896a273b1a3424e39f41c2f1506e1a3930aca878f3b1ecef3bb4a5a7c6c"
+    },
+    {
+      "file": "design-next-v1.css",
+      "sha256": "20c86fd5fd1737aacaf7de90e98e9badfa107c0f759f40c89c7df4faf1484a41"
+    },
+    {
+      "file": "interface-composition-v1.js",
+      "sha256": "8993d758426ad9ab7523cdb1bcfcbca30210ecb79193544353a0b785b8670218"
+    },
+    {
+      "file": "sw.js",
+      "sha256": "7d071e53303408edf4ec513c2e4e4ace0673a1218a7b97a92a1c1143136f3cda"
+    },
+    {
+      "file": "compare.html",
+      "sha256": "25a8fc674639d6fde71780fc4ee520ab3b26ce6a2c55e0e7bdaa51d4856777fc"
+    },
+    {
+      "file": "design-baseline/v244/manifest.json",
+      "sha256": "baf0aa8709ac2e4d13969cdc3d9265834d7fbbcfebaf965a906fb4ba6762a9ab"
+    },
+    {
+      "file": "design-baseline/v244/app.js",
+      "sha256": "2b05e9f075ca1b85d5b96cf47486d777b56efcc4cacf2faf2dc5ae4abaa8a862"
+    },
+    {
+      "file": "fonts/russo-one/RussoOne.ttf",
+      "sha256": "bc0abcc660bd8b7ad3000ecb2898a27c58a29a50f7ec81652fa12e75148d09df"
+    }
+  ],
+  "archiveCsp": "sandbox allow-scripts allow-downloads; default-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'none'; form-action 'none'; frame-src 'none'; object-src 'none'",
+  "archiveBrowser": {
+    "errors": [],
+    "apiRequests": []
+  },
+  "newAuthBrowser": "visible, next design, no pageerrors, no login"
+}

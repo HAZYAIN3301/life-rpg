@@ -73,6 +73,12 @@ Russo One / округлённость / спокойный фиолетовый
 Fast-forward master → Railway; production-receipt.json должен содержать runtime SHA,
 совпадение 9 файлов и проверку guest/archive. До receipt не утверждать deployment.
 
+Выпуск подтверждён: runtime b2e873a8d54bba3f1a2eadae59fd5445b83ffce7,
+Railway life-rpg и piper-tts success. Production-проверка 08.09: 9 SHA-256 совпали,
+guest/login — next, архив — 0 API requests / 0 pageerrors. Receipt и два снимка
+production сохранены рядом с локальными проверками. Последующий docs-only commit
+фиксирует это свидетельство; runtime SHA в receipt намеренно остаётся b2e873a.
+
 Следующий feedback сравнивает порядок действий и доступность, а не только цвет.
 Не возвращать рефлексию над задачами; не скрывать голос/время/длительность ради
 минимализма. Не объявлять проход окончательной полировкой каждой вложенной формы;
