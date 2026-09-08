@@ -4,8 +4,10 @@
 
 Завершающий guest shell v246: live QA обнаружил старый вид формы входа до загрузки
 аккаунта. `data-design=next` теперь на исходном html; cache/pins согласованы.
-Локальный мобильный вход подтверждён без авторизации. Production receipt будет
-сохранён в `art-factory/design-rollout-20260908/production-receipt.json`.
+Локальный мобильный вход подтверждён без авторизации. Runtime `f51b3ba` опубликован:
+Railway life-rpg/piper-tts success; 8 production файлов совпали по SHA-256; архив
+0 pageerrors/0 API requests, новый guest/login открыт в чистом браузере без аккаунта.
+Receipt: `art-factory/design-rollout-20260908/production-receipt.json`.
 
 Последний запрос Альберта снял preview-only gate: новый вид в приложении, старый в облаке.
 Применена единая rounded-violet оболочка ко всем 16 прежним маршрутам, desktop rail /

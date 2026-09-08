@@ -64,7 +64,7 @@ Russo One для крупных заголовков, спокойные све�
   Открытие voice recap подтверждено; физический микрофон/провайдер не проверялся.
 - [x] Archive CSP подтверждён HTTP-ответом; source hashes, SW v245/pins;
   **1929/1929 tests PASS**, concurrency=2, node --check, diff-check.
-- [ ] Scoped commit → fresh integration → push → Railway exact SHA + production bytes.
+- [x] Scoped commit → fresh integration → push → Railway exact SHA + production bytes.
 
 ### Production follow-up
 
@@ -75,6 +75,13 @@ context — success. Старый production app.js перед переключ�
 загрузки State. Завершающий shell **v246**, pin `20260908-design-v246-1`, ставит marker
 уже в index.html. Данные/API и функциональные изменения v245 не меняются.
 v246: 1929/1929 PASS, локальный mobile guest/login PASS, diff-check PASS.
+Финальный runtime **f51b3ba12af3a3c540f7efa40eab60860e4b974a**: оба Railway context
+success. Read-only production QA PASS: 8 файлов совпадают SHA-256 с checkout,
+HTTP CSP sandbox подтверждён, архив открывается (0 pageerrors, 0 API requests),
+экран входа использует next design без входа в аккаунт. Machine receipt и снимки:
+`art-factory/design-rollout-20260908/production-receipt.json`, `production-*.png`.
+Рабочая версия: https://life-rpg-production-416a.up.railway.app/
+Прежний интерфейс: https://life-rpg-production-416a.up.railway.app/compare.html
 Проверка production без Playwright serviceWorkers:block: его init-script читает
 navigator.serviceWorker в opaque iframe и сам создаёт SecurityError. Чистый browser
 без этой инъекции сохраняет строгие проверки 0 pageerrors/0 archive API requests.

@@ -29,7 +29,8 @@ Site public, обновление явно разрешено.
   источником истины.
 - Новый runtime — **design v245 + guest shell v246**, PWA cache `satoru-v246`,
   app/style pin `20260908-design-v246-1`, `public/design-next-v1.css`.
-  Deployment receipt — `DESIGN-ROLLOUT-V1.md`; до его проверки не заявлять production.
+  Runtime `f51b3ba`: Railway success, production bytes/archive/login проверены.
+  Точный receipt и границы QA — `DESIGN-ROLLOUT-V1.md`.
   Прежний runtime v244 сохранён из `74a97dd` в `/compare.html` (synthetic, read-only).
   Actionable Foundations UI и Commitment v2 не заменены новой моделью хранения.
 - Полная проверка design v245: **1929/1929 PASS**; браузерные receipts отдельно в rollout.

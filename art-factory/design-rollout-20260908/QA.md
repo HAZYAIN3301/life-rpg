@@ -3,6 +3,12 @@
 Guest shell follow-up v246: marker нового дизайна поставлен в исходный HTML, чтобы
 авторизация выглядела так же до загрузки аккаунта. `auth-mobile-v246.png` — локальная
 ширина 390, отсутствие horizontal overflow. Full runtime gates сохраняются.
+Production `f51b3ba`: оба Railway service success, 8 exact byte hashes PASS,
+archive CSP/browser PASS (0 errors/API), unauthenticated login next design PASS.
+`production-receipt.json` + `production-auth.png` + `production-classic-today.png`.
+Playwright serviceWorkers:block нельзя применять к opaque iframe: инъекция самого
+Playwright читает запрещённый Navigator getter. Финальный прогон — чистый браузер
+без этой инъекции, с прежними строгими assertions.
 
 Все данные на снимках вымышленные. Основной аккаунт не использовался.
 Локальный server.js: 127.0.0.1:4183, отдельный DATA_DIR в /private/tmp.

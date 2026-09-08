@@ -31,7 +31,7 @@ try{
  assert.equal(await frame.locator('.today-shell').count(),1);
  await page.screenshot({path:new URL('production-classic-today.png',dir).pathname});
  assert.deepEqual(requests,[],'archive never reads account API');assert.deepEqual(errors,[]);
- receipt.archiveBrowser={errors,apiRequests:requests};
+ receipt.archiveBrowser={errors:[...errors],apiRequests:[...requests]};
  await page.goto(base+'/');await page.locator('input[type=password]').first().waitFor({state:'visible',timeout:15000});
  assert.equal(await page.locator('html').getAttribute('data-design'),'next');
  await page.screenshot({path:new URL('production-auth.png',dir).pathname});
