@@ -1,0 +1,12 @@
+Use case: stylized-concept.
+Asset type: one isolated 2D game sprite, a replacement hand-and-grip for an arm deformation test.
+Input image 1 is STYLE, PALETTE, AND PROPORTIONS REFERENCE ONLY: the drawn paper-textured Traveller avatar. Do not reproduce the full character.
+
+Generate exactly ONE isolated viewer-right hand (the character's anatomical left hand), wearing the same simple dark brown fingerless leather glove as that reference, closed firmly around one short, plain wooden practice baton pointing vertically upward. Show the hand from the front/three-quarter-front as it would read on the viewer-right side of that front-facing avatar. Visible warm tan fingers curl clearly across the FRONT of the wooden baton, occluding the wood in the palm area; the thumb locks across the curled fingers. The baton must pass through the closed palm, NOT through or beside the wrist. Make the gripping anatomy clearly legible, simple, and coherent.
+
+Style/medium: flat DRAWN illustration, warm papercut and faceted paper texture exactly like the reference avatar; angular paper planes, restrained matte shading, subtly crumpled paper grain. Match its tan skin and muted brown glove colors and small stylized hand proportions. NOT a 3D render, NOT photorealistic, NOT glossy, no smooth sculpted plastic appearance.
+
+Composition: square 1024 by 1024 pixels maximum. One centered sprite with vertical long axis. The plain wooden baton reaches the upper third; the closed gloved fist occupies the lower-middle. A very small tan wrist connector enters the glove from below at centered x, oriented straight vertically so it can attach to a 2D arm. Show only that minimal wrist stub, no forearm. Leave generous empty surround and keep every silhouette edge within the canvas. Baton and wrist axes should be vertically aligned through the center of the closed hand.
+
+Background: genuinely transparent PNG with true alpha, not an illustration of transparency; empty pixels must be transparent. No backdrop, no floor, no shadow on background, no checkerboard drawn into the image.
+Constraints: only the one hand, minimal wrist connector, fingerless glove, and wooden baton. No sleeve, no forearm, no other body parts, no extra hand, no separate objects, no text, no border, no outline, no glow, no watermark.

@@ -1,0 +1,9 @@
+{
+  "surface": "Codex IAB, actual document.modelContext, localhost /drawn.html",
+  "date": "2026-09-08",
+  "tools": ["inspect_drawn_avatar", "configure_drawn_avatar"],
+  "valid": {"input":{"pose":0.6,"cloth":"plum","original":true},"ok":true,"readbackMatches":true},
+  "invalid": {"input":{"pose":2},"ok":false,"error":"Положение от 0 до 1","previousStatePreserved":true},
+  "productionWrites": 0,
+  "note": "Earlier unhandled execute exception timed out in the bridge; wrapper now returns explicit failure and retained state. Final valid/readback/invalid calls completed in the real browser."
+}

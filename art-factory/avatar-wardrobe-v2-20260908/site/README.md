@@ -1,5 +1,20 @@
 # Satoru avatar wardrobe lab v2
 
+## Latest: drawn rig experiment v3 (08 September 2026)
+
+Open `/drawn.html`. This route retains the actual production Traveller PNG and
+the den, then uses a dense textured 2D mesh and a bounded two-bone arm blend.
+Original pose / animated elbow / manual scrub / side reference / cloth recolour.
+It is NOT a complete wardrobe rig. No new coats, hairstyles, grip or walk is claimed.
+`drawn-rig.mjs` is deterministic pixel-space deformation; `drawn.mjs` is its Three
+renderer and UI. `node tests/drawn-browser.mjs` writes samples to `../qa-drawn`.
+One generated grip was rejected for baked checkerboard / missing alpha and is
+kept only in the parent repository's `avatar-drawn-rig-v3-20260908/rejected/`.
+No generated bitmap is used in this route. No Spine licence or runtime added.
+
+The previous `/index.html` remains as a mechanical reference. The user rejected
+its KayKit 3D art direction. Do not promote it to production because its tests pass.
+
 Isolated, local-data-only art/rig experiment. Canonical decisions live in
 `AVATAR-WARDROBE-V2.md` in the life-rpg repository; this directory is also mirrored
 as a standalone Sites source checkout. Not imported by the production app.

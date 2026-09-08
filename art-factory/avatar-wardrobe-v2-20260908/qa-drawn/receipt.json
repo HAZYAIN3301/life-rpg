@@ -1,0 +1,16 @@
+{
+  "at": "2026-09-08T17:10:29.452Z",
+  "checks": [
+    "four visual samples: idle / mid / max elbow / alternate cloth",
+    "keyboard slider Home/End shares pose state",
+    "invalid batched change is atomic",
+    "animation runs; pause freezes exactly",
+    "reduced motion prevents autoplay; manual slider still available",
+    "375px: no horizontal overflow and usable controls",
+    "200% root text enlargement: no page overflow",
+    "missing original: explicit load failure, disabled controls"
+  ],
+  "errors": [],
+  "external": [],
+  "scope": "Isolated synthetic drawing experiment; no production integration; technical checks do not establish visual acceptance"
+}

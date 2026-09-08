@@ -13,7 +13,7 @@ export function createPreviewServer(){
    if(name.startsWith('models/')||name.startsWith('images/')||name.startsWith('fonts/'))base=path.join(root,'public');
    else if(name.startsWith('vendor/build/')){base=path.join(root,'node_modules/three/build');rel=name.slice(13);}
    else if(name.startsWith('vendor/addons/')){base=path.join(root,'node_modules/three/examples/jsm');rel=name.slice(14);}
-   else if(!['index.html','workbench.css','workbench.mjs','wardrobe.mjs','contract.mjs'].includes(name))throw Error('Private');
+   else if(!['index.html','workbench.css','workbench.mjs','wardrobe.mjs','contract.mjs','drawn.html','drawn.css','drawn.mjs','drawn-rig.mjs'].includes(name))throw Error('Private');
    const file=await realpath(path.resolve(base,rel)),allowed=await realpath(base);
    if(!file.startsWith(allowed+path.sep)||!(await stat(file)).isFile())throw Error('Private');
    const body=await readFile(file);
