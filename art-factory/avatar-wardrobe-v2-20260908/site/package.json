@@ -1,0 +1,10 @@
+{
+  "name": "satoru-avatar-wardrobe-lab",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Successor to the isolated vanilla Three.js avatar workbench. Not production.",
+  "scripts": { "start": "node serve.mjs", "build": "node build.mjs", "test": "node --test tests/*.test.mjs", "qa": "node tests/browser.mjs" },
+  "dependencies": { "three": "0.180.0" },
+  "devDependencies": { "playwright": "1.55.1" }
+}

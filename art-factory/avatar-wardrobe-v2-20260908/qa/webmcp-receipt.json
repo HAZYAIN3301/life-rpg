@@ -1,0 +1,9 @@
+{
+  "date": "2026-09-08",
+  "context": "Real Codex in-app browser tab 4, localhost:4179; no mocked registry",
+  "registered": ["inspect_avatar_preview", "configure_avatar_preview", "save_avatar_preview_locally"],
+  "valid": {"inspect": true, "configure": {"upper":"knight","lower":"rogue","head":"mage","weapon":"sword","skin":"#c98b63"}, "save": {"ok":true}},
+  "invalidRejected": ["inspect with gold argument", "configure upper=delete", "save with account argument"],
+  "visibleReadback": "UI showed knight upper, mage hat, sword, medium skin and local-save receipt; invalid calls left these unchanged",
+  "accountOrGoldWrites": false
+}

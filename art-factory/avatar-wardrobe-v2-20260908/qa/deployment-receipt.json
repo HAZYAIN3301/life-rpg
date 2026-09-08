@@ -1,0 +1,19 @@
+{
+  "projectId": "appgprj_6a9fc562f9dc8191bbd26c737c32a99c",
+  "versionId": "appgprj_6a9fc562f9dc8191bbd26c737c32a99c~appgver_a7ebac250c448191b03e9aa19e4ba141",
+  "version": 1,
+  "sourceCommit": "710d0fa6c88471996f37a055365d8dbf4b0c6c21",
+  "deploymentId": "appgdep_6aa02a17e9e081918d3ea7ff80886bc7",
+  "status": "succeeded",
+  "url": "https://satoru-avatar-wardrobe-lab-sept8.albertprokopets3301.chatgpt.site",
+  "updatedAt": "2026-09-08T15:31:11.860430+00:00",
+  "access": "Owner-private new Site; access unchanged",
+  "archive": {
+    "archive_format": "tar",
+    "sediment_file_id": "file_000000008998820ea5e0b09b2cfb1317",
+    "content_hash": "sha256:833043316ce3d55e4686ef6e8601319a508d267c331b3d405ad9d066ff053256",
+    "size_bytes": 34447360,
+    "file_count": 400
+  },
+  "productionSatoruRuntimeChanged": false
+}

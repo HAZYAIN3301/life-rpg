@@ -1,0 +1,44 @@
+{
+  "at": "2026-09-08T15:25:15.316Z",
+  "checks": [
+    {
+      "name": "ready",
+      "passed": true
+    },
+    {
+      "name": "27 clothing mixes preserve head and one shared rig",
+      "passed": true
+    },
+    {
+      "name": "six deterministic motion/angle samples, sword on authored socket",
+      "passed": true
+    },
+    {
+      "name": "local save readback + reload",
+      "passed": true
+    },
+    {
+      "name": "authored sit-down and stand-up transitions",
+      "passed": true
+    },
+    {
+      "name": "reduced motion freezes mixer",
+      "passed": true
+    },
+    {
+      "name": "375px no horizontal overflow; all controls >=42px",
+      "passed": true
+    },
+    {
+      "name": "storage denied keeps preview, reports failure",
+      "passed": true
+    },
+    {
+      "name": "asset 503 is explicit error, never fake avatar/save",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "external": [],
+  "scope": "Synthetic isolated preview, no account; visual acceptance is separate"
+}

@@ -1,0 +1,35 @@
+# Satoru avatar wardrobe lab v2
+
+Isolated, local-data-only art/rig experiment. Canonical decisions live in
+`AVATAR-WARDROBE-V2.md` in the life-rpg repository; this directory is also mirrored
+as a standalone Sites source checkout. Not imported by the production app.
+
+## Run
+
+`npm ci`, then `npm start` (127.0.0.1:4179). `npm test` tests the asset/appearance
+contract; `npm run qa` tests the running preview with the installed macOS Google
+Chrome and writes evidence to `../qa/`. `npm run build` creates static `dist/`.
+Three.js 0.180.0 is pinned; no CDN, account API, telemetry or production inventory.
+
+Source GLBs and provenance: `public/models/PROVENANCE.md`. Keep all license files.
+The authored 41-bone skeleton drives independently selected upper/lower meshes.
+The Rogue face stays the same under all outfits; hats and sword use authored bone
+attachments. Colour masks address specific cells in the original palette atlas.
+No hand-authored anatomical primitives or procedural petting IK.
+
+`wardrobe.mjs` is the model adapter; `contract.mjs` owns allowed choices and strict
+local-save readback; `workbench.mjs` is the renderer, UI and WebMCP adapter.
+Preview storage key: `satoru:avatar-wardrobe-lab:v2`; no Satoru data keys are read.
+WebMCP exposes inspect, stage and local save as three separate tools sharing UI
+actions. Inputs are allowlisted and failures do not report success.
+
+## Do not overclaim
+
+This proves a narrow wardrobe assembly route, NOT production visual acceptance,
+a Sims-like creator, free hairstyles/body morphs, performance on physical phones,
+pet contact, the Traveller art direction, or gold's motivational effectiveness.
+Walking is an in-place preview of an authored cycle, not world navigation.
+Skin/hair and scout-cloth colours work; mage/knight cloth colours are not exposed.
+Helmet/hair/cape intersections still need artist-level approval across motions.
+All three GLBs load at startup (~10.4 MiB); trim/LOD assets before app integration.
+Current fixed production characters/pets must remain until the owner accepts art.
