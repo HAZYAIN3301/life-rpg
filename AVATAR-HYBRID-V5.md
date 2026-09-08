@@ -98,3 +98,13 @@ No promise that this generated code study itself is the final model.
 Technical references, checked 08.09 (do not confuse library capability with our art QA):
 [SkinnedMesh](https://threejs.org/docs/#api/en/objects/SkinnedMesh),
 [MeshToonMaterial](https://threejs.org/docs/#api/en/materials/MeshToonMaterial).
+
+## Main repository publication boundary
+
+Site publication above succeeded. Main local implementation commit:
+`1ce7e262293e3e476ddd66f7e1a39ba42832a4b8`, clean checked branch before push.
+`git push origin HEAD:master` was rejected by the environment's safety review because
+the exact shared default-branch target needs explicit user confirmation. No push
+occurred, no alternate route was attempted, and no new Railway deployment is claimed.
+Ask permission specifically for master (which triggers automatic deployment); after
+approval re-fetch and recheck divergence before retrying. Do not bypass the refusal.

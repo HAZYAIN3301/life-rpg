@@ -13,6 +13,9 @@ scenarios, 27 combinations, 10 кадров; IAB WebMCP valid/readback/invalid, 
 персонаж и NPR-art gate, затем полноценный общий гардероб/клипы. Массовой генерации нет.
 Production v248, classic v244, Тень/логово/питомцы/золото не менялись. Публикация остаётся
 в прежнем owner-private Site; факт/точный source — receipt в `qa-volume-v5`.
+Site опубликован успешно, но main push `HEAD:master` отклонён safety review:
+нужно явное подтверждение именно общей default-ветки. Local implementation `1ce7e26`;
+обходов не было, нового Railway deployment не заявлять. Граница — AVATAR-HYBRID-V5.md.
 
 ## [2026-09-08] Avatar v4 — forward-depth проба после замечания об анатомии
 
