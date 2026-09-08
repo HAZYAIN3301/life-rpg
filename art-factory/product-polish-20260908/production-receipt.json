@@ -1,0 +1,57 @@
+{
+  "runtimeCommit": "588fec85a90316b9ae04421aa2a4c1823d95c50d",
+  "checkedAt": "2026-09-08T07:34:54.984Z",
+  "base": "https://life-rpg-production-416a.up.railway.app",
+  "files": [
+    {
+      "file": "index.html",
+      "sha256": "0952ac5cc2ad0de8c3fc5dde18c39e5c573ac6e6889375c150502bff57cabdc1"
+    },
+    {
+      "file": "app.js",
+      "sha256": "7e00f7aefc60edf6faa92534f9c9b65d92b8bc03cecf3c45522295c240dfef69"
+    },
+    {
+      "file": "design-next-v1.css",
+      "sha256": "f7e68a52b3f16336839d0abbfe33370891c238e47e0c972451d87733eea12d61"
+    },
+    {
+      "file": "interface-composition-v1.js",
+      "sha256": "48358e1092c40046d925e85eac1ad658f373d0043c1b205c0c963527dc859cda"
+    },
+    {
+      "file": "actionable-settings-ui-v1.js",
+      "sha256": "3c4273fa69d1f76025b35d70145447ea494f2089e2069c015bdbe475b30ef468"
+    },
+    {
+      "file": "recovery-slug-v1.js",
+      "sha256": "485376b25ce2d911e1d701b4843c4cf8152f7a5e8afe9b42f7875f024ae38c68"
+    },
+    {
+      "file": "sw.js",
+      "sha256": "e6a8c5ea6e4cb15180124f5d64aea1610490def2721c30d0385e525331f546ad"
+    },
+    {
+      "file": "compare.html",
+      "sha256": "25a8fc674639d6fde71780fc4ee520ab3b26ce6a2c55e0e7bdaa51d4856777fc"
+    },
+    {
+      "file": "design-baseline/v244/manifest.json",
+      "sha256": "baf0aa8709ac2e4d13969cdc3d9265834d7fbbcfebaf965a906fb4ba6762a9ab"
+    },
+    {
+      "file": "design-baseline/v244/app.js",
+      "sha256": "2b05e9f075ca1b85d5b96cf47486d777b56efcc4cacf2faf2dc5ae4abaa8a862"
+    },
+    {
+      "file": "fonts/russo-one/RussoOne.ttf",
+      "sha256": "bc0abcc660bd8b7ad3000ecb2898a27c58a29a50f7ec81652fa12e75148d09df"
+    }
+  ],
+  "archiveCsp": "sandbox allow-scripts allow-downloads; default-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'none'; form-action 'none'; frame-src 'none'; object-src 'none'",
+  "archiveBrowser": {
+    "errors": [],
+    "apiRequests": []
+  },
+  "newAuthBrowser": "visible, next design, no pageerrors, no login"
+}

@@ -38,8 +38,9 @@ Site public, обновление явно разрешено.
   источником истины.
 - Новый runtime — **структурный v247 + продуктовая полировка v248**, PWA cache `satoru-v248`,
   app/style pin `20260908-design-v248-1`, `public/design-next-v1.css`.
-  v248 реализован; факт публикации проверяется по production-receipt.json
-  в `art-factory/product-polish-20260908/`.
+  v248 опубликован: runtime `588fec8`, Railway success; 11 production SHA-256,
+  guest/auth и неизменный архив проверены. Свидетельство — production-receipt.json
+  в `art-factory/product-polish-20260908/`; последующий docs-only commit не меняет runtime.
   Контракт и границы QA — `PRODUCT-UX-AUDIT-V248.md`.
   Прежний runtime v244 сохранён из `74a97dd` в `/compare.html` (synthetic, read-only).
   Actionable Foundations UI и Commitment v2 не заменены новой моделью хранения.

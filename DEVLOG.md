@@ -22,6 +22,12 @@ initApp, а не ранний phase=app после deferral; keyboard прове
 Frozen v244 не менялся; сервер/экономика/права/новая генерация art не затрагивались.
 Выпуск v248 подтверждается отдельным production receipt, не этой записью.
 
+Подтверждено: runtime `588fec8` → master; Railway life-rpg/piper-tts success.
+08.09 07:34 UTC: 11 production файлов совпали, новый guest/auth работает,
+старый sandbox делает 0 API-запросов, 0 pageerrors. Receipt и два снимка в
+art-factory/product-polish-20260908/. Локальный тестовый сервер остановлен.
+Последующий docs-only commit не меняет проверенные runtime bytes.
+
 ## [2026-09-08] v247 — глубокая композиция после критики rollout
 
 Владелец назвал перенос поверхностным. Новый pass — задачи/неделя/сцена Тени,
