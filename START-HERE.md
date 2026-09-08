@@ -3,17 +3,23 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
-Аватарный трек продолжен 08.09: [AVATAR-DRAWN-RIG-V3.md](./AVATAR-DRAWN-RIG-V3.md).
+Актуальный аватарный трек: [AVATAR-HYBRID-V5.md](./AVATAR-HYBRID-V5.md).
+Владелец отверг плоский v4 и запросил настоящий объём 3D в рисованном стиле.
+Новая `/volume.html`: объёмная рука, три рукава на одном скелете, 20 unit / 9 browser
+scenarios; это не готовый персонаж. Новый план отменяет массовые корректирующие PNG.
+Опубликован [закрытый объёмный стенд](https://satoru-avatar-wardrobe-lab-sept8.albertprokopets3301.chatgpt.site/volume.html),
+Site version 4, 08.09 18:50 UTC; receipt в `qa-volume-v5`.
+Предыдущий этап (история): [AVATAR-DRAWN-RIG-V3.md](./AVATAR-DRAWN-RIG-V3.md).
 v4: пользователь похвалил плавность/плечо, отверг боковое движение v3. Новый forward
 тест с ракурсом/перекрытием, прежний для сравнения; 15 contracts / 10 browser scenarios.
-Кисть в среднем ракурсе ещё слишком сжата — анатомия не решена, нужны рисованные
-корректирующие позы. Передача source/art в прежний закрытый Site явно разрешена.
+Кисть сжималась в ракурсе; план рисованных корректирующих поз теперь отменён владельцем.
+Передача source/art в прежний закрытый Site явно разрешена.
 v4 опубликован и проверен в IAB: [закрытый стенд](https://satoru-avatar-wardrobe-lab-sept8.albertprokopets3301.chatgpt.site/drawn.html),
 Site version 3; receipt в `qa-forward-v4/deployment-receipt.json` рядом с образцом.
 Предыдущий этап: [AVATAR-WARDROBE-V2.md](./AVATAR-WARDROBE-V2.md).
 Отдельная примерочная: одежда/движения положительно оценены, **стиль KayKit отвергнут**.
-Сохранять рисованного Traveller, Тень и логово. 2D mesh rig проверяется малой пробой;
-это не утверждённый pipeline. Production/золото не менялись.
+Сохранять production Traveller, Тень и логово. 2D mesh rig отвергнут для нужного объёма;
+NPR 3D тоже пока не утверждённый pipeline. Production/золото не менялись.
 История отказа 07.09: [AVATAR-3D-PILOT-V1.md](./AVATAR-3D-PILOT-V1.md).
 Пользователь отверг 3D-манекен и движения (VISUAL FAIL); production-персонажа оставить.
 Фабрика сохранена как свидетельство, не готовый кандидат для внедрения.

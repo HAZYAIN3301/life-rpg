@@ -1,0 +1,23 @@
+{
+  "projectId": "appgprj_6a9fc562f9dc8191bbd26c737c32a99c",
+  "siteVersion": 4,
+  "experiment": "v5 actual-volume arm close-up",
+  "url": "https://satoru-avatar-wardrobe-lab-sept8.albertprokopets3301.chatgpt.site/volume.html",
+  "sourceCommit": "d45e741587ecd15da23cce179214f6750c068a9c",
+  "versionId": "appgprj_6a9fc562f9dc8191bbd26c737c32a99c~appgver_32ab5a8bd7cc8191baa3693df21a977e",
+  "deploymentId": "appgdep_6aa058c0f9788191b17c96c6dc5e6f29",
+  "status": "succeeded",
+  "updatedAt": "2026-09-08T18:50:05.289205+00:00",
+  "access": "owner only; unchanged",
+  "localTarGzSha256": "1259af55ee25f8f16514babd9fe339250bf11d418f5879da0c63b56b6e8ff989",
+  "verifiedManifestFiles": 11,
+  "archiveStorage": {
+    "archive_format": "tar",
+    "sediment_file_id": "file_00000000b9f082109495e9ed70ed7d7f",
+    "content_hash": "sha256:17c390beb248ff699ed2b99f76006ef05ea8bdd3b2a5f2656d4d3661823ed362",
+    "size_bytes": 35338240,
+    "file_count": 412
+  },
+  "verification": "Actual IAB /volume: scene, enabled controls, WebMCP available, deliverable marked; local screenshots and 9 browser groups passed.",
+  "limitation": "Not an accepted character design; only a volumetric arm and common garment rig."
+}

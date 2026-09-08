@@ -1,6 +1,18 @@
 # Satoru avatar wardrobe lab v2
 
-## Latest: forward gesture experiment v4 (08 September 2026)
+## Current: actual-volume arm study v5
+
+Owner rejected the v4 sheet-thin hand and corrective-image scaling plan. `/volume.html`
+tests closed 3D skin/palm, a shared shoulder/elbow/wrist skeleton, three sleeve meshes,
+three gestures, actual palm prop socket, camera yaw and clay view. This is an isolated
+procedural close-up, NOT a finished hero or accepted art style. No new bitmap generation.
+`volume-rig.mjs` owns geometry/rig, `volume.mjs` owns UI; `tests/volume-browser.mjs`
+writes `../qa-volume-v5`. 20 unit tests total, 9 browser scenario groups. Previous
+routes remain unchanged for comparison. Current production roadmap is the parent
+`AVATAR-HYBRID-V5.md`: custom sculpted Traveller, NPR, modular clothes on a common rig.
+The old corrective-picture next step below is historical and no longer the plan.
+
+## Historical: rejected forward gesture experiment v4 (08 September 2026)
 
 User liked smoothness/shoulder in v3 but rejected the lateral flexion as unnatural
 and not useful. `drawn.html` now defaults to a forward-depth flexion, keeps the old
@@ -40,6 +52,8 @@ Before publishing a mirrored checkout, run `npm run build` **in that checkout**.
 The packager packages existing dist; it does not replace that build step. Verify
 the drawn route and its matching hashes in `dist/build-manifest.json` in the archive
 before saving a Site version. Saving again for the same SHA may reuse a prior archive.
+
+## Previous v2 model implementation (does not describe the v5 arm study)
 
 Source GLBs and provenance: `public/models/PROVENANCE.md`. Keep all license files.
 The authored 41-bone skeleton drives independently selected upper/lower meshes.

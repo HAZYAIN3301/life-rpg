@@ -1,5 +1,9 @@
 # Avatar v3–v4 — рисованный Traveller, ограниченные пробы
 
+> **Superseded after owner feedback, 08.09:** v4 rejected for sheet-thin volume.
+> Do not continue the corrective-image roadmap below. Current direction and concrete
+> volume study: [AVATAR-HYBRID-V5.md](./AVATAR-HYBRID-V5.md). Old trial stays as evidence.
+
 ## Продолжение v4 — направление движения, 08.09.2026
 
 Пользователь явно разрешил передачу исходников/копий арта в прежний закрытый Site.

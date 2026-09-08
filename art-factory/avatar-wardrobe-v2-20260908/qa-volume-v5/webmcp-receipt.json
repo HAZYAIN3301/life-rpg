@@ -1,0 +1,10 @@
+{
+  "surface": "actual IAB document.modelContext, local /volume.html",
+  "configured": {"outfit":"long","pose":1,"yaw":90},
+  "readbackMatched": true,
+  "sharedSkeleton": true,
+  "measuredPalmThickness": 0.10111764818429962,
+  "invalidOutfit": "missing",
+  "invalidResult": "explicit refusal; previous state preserved",
+  "productionWrites": 0
+}

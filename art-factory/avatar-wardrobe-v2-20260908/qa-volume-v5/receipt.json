@@ -1,0 +1,17 @@
+{
+  "at": "2026-09-08T18:42:20.053Z",
+  "checks": [
+    "9 visual states: rest, mid, full bend, 3 garments, grip, side, back/clay, reach, palm turn",
+    "27 gesture/garment/pose combinations preserve shared rig and palm thickness",
+    "invalid batch is atomic",
+    "keyboard range Home/End",
+    "one shot; exact pause and resume; stops at rest",
+    "reduced motion stops animation, retains manual pose",
+    "375px: no overflow, touch controls",
+    "200% text enlargement on 375px",
+    "WebGL unavailable: honest error and disabled controls"
+  ],
+  "errors": [],
+  "external": [],
+  "scope": "Arm close-up only; not a finished avatar or approval of style"
+}
