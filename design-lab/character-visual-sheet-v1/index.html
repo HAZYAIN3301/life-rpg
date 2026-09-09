@@ -1,0 +1,218 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Satoru — визуальный лист персонажей v1</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#0f1320; --panel:#171c2e; --panel2:#1f2640; --line:#2a3250;
+    --text:#e7ebf5; --muted:#99a2c0; --accent:#6c8cff; --accent-2:#4fd6ff;
+    --accent-warm:#e0a23e; --good:#46c46b; --warn:#f0b34a; --bad:#e0526a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:32px;background:var(--bg);color:var(--text);
+       font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  h1{font-size:26px;margin:0 0 6px}
+  h2{font-size:19px;margin:40px 0 4px;padding-top:20px;border-top:1px solid var(--line)}
+  p.note{color:var(--muted);margin:4px 0 18px;max-width:70ch}
+  .row{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end}
+  .cell{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+        padding:14px;text-align:center}
+  .cell img{display:block;max-width:100%;height:auto;border-radius:8px}
+  .cap{font-size:12px;color:var(--muted);margin-top:8px}
+  .cap b{display:block;color:var(--text);font-size:13px;margin-bottom:2px}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;
+       border:1px solid var(--line);margin-top:6px}
+  .ok{color:var(--good);border-color:color-mix(in srgb,var(--good) 45%,var(--line))}
+  .legacy{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,var(--line))}
+  .no{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 45%,var(--line))}
+  .scene{position:relative;width:100%;max-width:900px;border-radius:14px;overflow:hidden;
+         border:1px solid var(--line)}
+  .scene img.bgshot{display:block;width:100%}
+  .scene img.actor{position:absolute;bottom:6%;height:52%}
+  .sw{display:flex;flex-wrap:wrap;gap:10px}
+  .sw div{width:120px;border:1px solid var(--line);border-radius:10px;overflow:hidden;
+          background:var(--panel)}
+  .sw i{display:block;height:44px}
+  .sw span{display:block;font-size:11px;padding:6px 8px;color:var(--muted)}
+  .missing{background:var(--panel2);border:1px dashed var(--line);border-radius:14px;
+           padding:16px 18px;max-width:70ch}
+  .missing li{margin:5px 0}
+  table{border-collapse:collapse;margin-top:10px;font-size:13px;width:100%}
+  td,th{border:1px solid var(--line);padding:6px 12px;text-align:left}
+  th{color:var(--muted);font-weight:500}
+
+  /* Узкий экран: лист должен читаться с телефона, а не только с ноутбука. */
+  @media (max-width:560px){
+    body{padding:18px 14px}
+    h1{font-size:22px}
+    h2{font-size:17px;margin-top:32px}
+    p.note{font-size:14px}
+    .row{gap:10px}
+    .cell{flex:1 1 140px;min-width:0;padding:10px}
+    .cell img{width:auto!important;height:auto!important;max-width:100%;max-height:150px;margin:0 auto}
+    .sw div{width:calc(50% - 5px)}
+    .missing{padding:14px}
+    table{font-size:12px}
+    td,th{padding:5px 8px}
+  }
+</style>
+
+<h1>Визуальный лист персонажей — v1</h1>
+<p class="note">Не таблица файлов, а то, что видно. Всё ниже — настоящие ассеты из
+<code>public/art</code>, открытые с диска. Задача листа одна: посмотреть и сказать, «наш» ли
+это образ. Отклонённые пробы намеренно не показаны — они не должны попадать в глаз рядом
+с принятым.</p>
+
+<h2>Тень — четыре формы</h2>
+<p class="note">Это не уровни силы, а глубина знакомства. Пороги связи 0 / 6 / 20 / 50.
+Единственное состояние, которое существует в виде рисунка, — <code>calm</code>.</p>
+<div class="row">
+  <div class="cell"><img src="../../public/art/companions/shadow-v3-20260730/shadow-spark-calm.png" width="150" alt="">
+    <div class="cap"><b>Искра</b>связь 0</div><span class="tag ok">принято</span></div>
+  <div class="cell"><img src="../../public/art/companions/shadow-v3-20260730/shadow-spirit-calm.png" width="150" alt="">
+    <div class="cap"><b>Дух</b>связь 6</div><span class="tag ok">принято</span></div>
+  <div class="cell"><img src="../../public/art/companions/shadow-v3-20260730/shadow-guardian-calm.png" width="150" alt="">
+    <div class="cap"><b>Страж</b>связь 20</div><span class="tag ok">принято</span></div>
+  <div class="cell"><img src="../../public/art/companions/shadow-v3-20260730/shadow-keeper-calm.png" width="150" alt="">
+    <div class="cap"><b>Хранитель</b>связь 50</div><span class="tag ok">принято</span></div>
+</div>
+
+<h2>Единственный контакт, который нарисован</h2>
+<p class="note">«Позвать Тень»: ладонь и взгляд. Четыре формы × два варианта героя.
+Других контактных кадров не существует.</p>
+<div class="row">
+  <div class="cell"><img src="../../public/art/companions/shadow-den-v1/pair-v1/attune-spark.png" width="200" alt="">
+    <div class="cap"><b>attune · Искра</b></div><span class="tag ok">принято</span></div>
+  <div class="cell"><img src="../../public/art/companions/shadow-den-v1/pair-v1/attune-guardian.png" width="200" alt="">
+    <div class="cap"><b>attune · Страж</b></div><span class="tag ok">принято</span></div>
+  <div class="cell"><img src="../../public/art/companions/shadow-den-v1/pair-v1/female/f2-v1/attune-keeper.png" width="200" alt="">
+    <div class="cap"><b>attune · Хранитель</b>женский вариант</div><span class="tag ok">принято</span></div>
+</div>
+
+<h2>Traveller — лицо и тело</h2>
+<div class="row">
+  <div class="cell"><img src="../../public/art/avatars/traveller-v1/base/body-visible-approved.png" height="220" alt="">
+    <div class="cap"><b>тело</b>body-visible-approved</div><span class="tag ok">принято</span></div>
+  <div class="cell"><img src="../../public/art/avatars/traveller-v1/states/traveller-face-neutral.png" width="110" alt="">
+    <div class="cap"><b>нейтральное</b></div></div>
+  <div class="cell"><img src="../../public/art/avatars/traveller-v1/states/traveller-face-happy.png" width="110" alt="">
+    <div class="cap"><b>радость</b></div></div>
+  <div class="cell"><img src="../../public/art/avatars/traveller-v1/states/traveller-face-tired.png" width="110" alt="">
+    <div class="cap"><b>усталость</b></div></div>
+  <div class="cell"><img src="../../public/art/avatars/traveller-v1/states/traveller-face-blink.png" width="110" alt="">
+    <div class="cap"><b>моргание</b></div></div>
+</div>
+
+<h2>Traveller — позы и движение</h2>
+<p class="note">Здесь и проходит главная асимметрия канона: <b>герой анимирован, Тень — нет</b>.
+Холст 640×900, линия пола 860. Шаг — два авторских кадра плюс перенос в мировых координатах.</p>
+<div class="row">
+  <div class="cell"><img src="../../public/art/avatars/traveller-core-v1/male/poses/idle.png" height="180" alt="">
+    <div class="cap"><b>idle</b></div></div>
+  <div class="cell"><img src="../../public/art/avatars/traveller-core-v1/male/poses/seated.png" height="180" alt="">
+    <div class="cap"><b>seated</b></div></div>
+  <div class="cell"><img src="../../public/art/avatars/traveller-core-v1/male/poses/arms-up.png" height="180" alt="">
+    <div class="cap"><b>arms-up</b>рубеж</div></div>
+  <div class="cell"><img src="../../public/art/avatars/traveller-core-v1/male/poses/window-back.png" height="180" alt="">
+    <div class="cap"><b>window-back</b>спиной к окну</div></div>
+  <div class="cell"><img src="../../public/art/avatars/traveller-core-v1/male/motion-v3/walk-a.png" height="180" alt="">
+    <div class="cap"><b>walk-a</b></div></div>
+  <div class="cell"><img src="../../public/art/avatars/traveller-core-v1/male/motion-v3/walk-b.png" height="180" alt="">
+    <div class="cap"><b>walk-b</b></div></div>
+  <div class="cell"><img src="../../public/art/avatars/traveller-core-v1/male/room-actions-v4/bench-read-a.png" height="180" alt="">
+    <div class="cap"><b>bench-read</b>42 с</div></div>
+  <div class="cell"><img src="../../public/art/avatars/traveller-core-v1/male/room-actions-v4/bench-rest.png" height="180" alt="">
+    <div class="cap"><b>bench-rest</b>26 с</div></div>
+</div>
+
+<h2>Логово — где всё это живёт</h2>
+<div class="row">
+  <div class="cell"><img src="../../public/art/den/v5/den-day.jpg" width="380" alt="">
+    <div class="cap"><b>день</b></div><span class="tag ok">принято</span></div>
+  <div class="cell"><img src="../../public/art/den/v5/den-night-lantern.jpg" width="380" alt="">
+    <div class="cap"><b>ночь</b>фон сториборда «Вечер у окна»</div><span class="tag ok">принято</span></div>
+</div>
+<div class="row" style="margin-top:16px">
+  <div class="cell"><img src="../../public/art/den/v4/ambient/fireplace-flame-runtime.png" height="90" alt="">
+    <div class="cap"><b>пламя</b></div></div>
+  <div class="cell"><img src="../../public/art/den/v4/ambient/window-robin-runtime.png" height="90" alt="">
+    <div class="cap"><b>окно с птицей</b></div></div>
+  <div class="cell"><img src="../../public/art/den/v4/ambient/traveller-headphones-runtime.png" height="90" alt="">
+    <div class="cap"><b>наушники</b></div></div>
+  <div class="cell"><img src="../../public/art/den/actors/traveller-portal-reach.png" height="90" alt="">
+    <div class="cap"><b>жест к порталу</b></div></div>
+  <div class="cell"><img src="../../public/art/rewards/reward-atlas-v1.png" height="90" alt="">
+    <div class="cap"><b>атлас наград</b></div></div>
+</div>
+
+<h2>Экономический арт — на что тратится золото</h2>
+<p class="note">96 отрисованных PNG 384×384: 48 достижений, 15 предметов арсенала,
+33 личные награды. Это и есть «свидетельства» из библии — предмет доказывает, что что-то было.</p>
+<div class="row">
+  <div class="cell"><img src="../../public/art/icons/content-raster-v208/achievements/level_20.png" height="96" alt="">
+    <div class="cap"><b>level_20</b></div></div>
+  <div class="cell"><img src="../../public/art/icons/content-raster-v208/achievements/early_bird.png" height="96" alt="">
+    <div class="cap"><b>early_bird</b></div></div>
+  <div class="cell"><img src="../../public/art/icons/content-raster-v208/achievements/goals_10.png" height="96" alt="">
+    <div class="cap"><b>goals_10</b></div></div>
+  <div class="cell"><img src="../../public/art/icons/content-raster-v208/achievements/quests_250.png" height="96" alt="">
+    <div class="cap"><b>quests_250</b></div></div>
+</div>
+
+<h2>Сториборд A «Позвать Тень» — как это будет выглядеть</h2>
+<p class="note">Единственный ролик, который собирается целиком из существующего.
+Ниже — приблизительная композиция кадра 6.0–9.0 с: контактный кадр на фоне комнаты.</p>
+<div class="scene">
+  <img class="bgshot" src="../../public/art/den/v5/den-day.jpg" alt="">
+  <img class="actor" style="left:34%" src="../../public/art/companions/shadow-den-v1/pair-v1/attune-spirit.png" alt="">
+</div>
+
+<h2>Палитра</h2>
+<p class="note">Реальные токены из <code>public/styles.css</code>, не подобранные заново.
+По <code>DESIGN-CRAFT-RULES.md</code> C-01 три верхних значения должны стать алиасами
+<code>--surface-*</code> — здесь показано текущее состояние файла, а не целевое.</p>
+<div class="sw">
+  <div><i style="background:#0f1320"></i><span>--bg #0f1320</span></div>
+  <div><i style="background:#171c2e"></i><span>--panel #171c2e</span></div>
+  <div><i style="background:#1f2640"></i><span>--panel2 #1f2640</span></div>
+  <div><i style="background:#2a3250"></i><span>--line #2a3250</span></div>
+  <div><i style="background:#e7ebf5"></i><span>--text #e7ebf5</span></div>
+  <div><i style="background:#99a2c0"></i><span>--muted #99a2c0</span></div>
+  <div><i style="background:#6c8cff"></i><span>--accent #6c8cff</span></div>
+  <div><i style="background:#4fd6ff"></i><span>--accent-2 #4fd6ff</span></div>
+  <div><i style="background:#e0a23e"></i><span>--accent-warm #e0a23e</span></div>
+  <div><i style="background:#46c46b"></i><span>--good #46c46b</span></div>
+  <div><i style="background:#f0b34a"></i><span>--warn #f0b34a</span></div>
+  <div><i style="background:#e0526a"></i><span>--bad #e0526a</span></div>
+</div>
+
+<h2>Чего в этом листе нет — и это главное</h2>
+<div class="missing">
+  <ul>
+    <li><b>Ни одного кадра Тени под состояние.</b> Существует только <code>calm</code>;
+        <code>listening</code>, <code>thinking</code>, <code>speaking</code>, <code>caring</code>,
+        <code>sleepy</code> и остальные пять — CSS-наложения поверх той же картинки.</li>
+    <li><b>Ни одного анимационного клипа Тени.</b> У героя они есть, у неё нет.</li>
+    <li><b>Совместного жеста победы нет</b> — момент «совместный успех» нечем показать.</li>
+    <li><b>Кадра «Тень опускается к уровню человека» нет</b> — момент отдыха неполный.</li>
+    <li><b>Сцен «Поговорить» и «Проверить курс» нет</b> — нужны <code>thinking</code>,
+        <code>speaking</code> и реквизит карты.</li>
+  </ul>
+  <p style="margin:12px 0 0;color:var(--muted)">Дефицит конечный: <b>3 состояния × 4 формы = 12 кадров</b>
+  закрывают все восемь эмоциональных моментов. Рекомендация — начать с трёх поз
+  <b>одной</b> формы и посмотреть их в приложении.</p>
+</div>
+
+<h2>Отклонённое — показано словами намеренно</h2>
+<table>
+  <tr><th>Проба</th><th>Статус</th></tr>
+  <tr><td>Avatar v1 — процедурный манекен</td><td><span class="tag no">отклонён художественно</span></td></tr>
+  <tr><td>Avatar v2 — KayKit</td><td><span class="tag no">отклонён художественно</span></td></tr>
+  <tr><td>Avatar v4 — деформированный PNG-маршрут</td><td><span class="tag no">отклонён владельцем</span></td></tr>
+  <tr><td>Avatar v5 — этюд руки</td><td><span class="tag no">стиль не принят</span></td></tr>
+  <tr><td>Avatar v6 — полное тело</td><td><span class="tag no">художественный gate открыт</span></td></tr>
+  <tr><td>shadow-rig-v2 — CSS-риг</td><td><span class="tag legacy">legacy, работает, не расширяется</span></td></tr>
+  <tr><td>den v2 — 21 SVG мебели</td><td><span class="tag legacy">legacy</span></td></tr>
+</table>
+<p class="note" style="margin-top:14px">Пауза по аватару в силе. Ни один пункт этого листа
+не требует нового аватара, новых форм Тени или перерисовки питомцев.</p>
