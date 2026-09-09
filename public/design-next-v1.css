@@ -28,6 +28,8 @@
 :root[data-design=next] h3,:root[data-design=next] h4{font-family:var(--font-ui);font-weight:650;letter-spacing:0;text-shadow:none;line-height:1.4}
 :root[data-design=next] p{line-height:1.55}
 :root[data-design=next] .muted{color:var(--muted)}
+/* Purchase/reveal dialogs need their own opaque surface in both themes. */
+:root[data-design=next] :is(.economy-confirm-box,.voucher-box,.reward-catalog-box,.loot-reveal-box){background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:var(--next-radius);box-shadow:var(--design-shadow)}
 :root[data-design=next] :is(button,input,select,textarea){font-family:var(--font-ui)}
 :root[data-design=next] :is(button,.btn){border-radius:12px;text-shadow:none;box-shadow:none;font-size:.875rem;transition:background-color .16s,border-color .16s,transform .16s}
 :root[data-design=next] :is(.btn,button[type=submit],.add-submit){background:var(--design-accent);color:var(--design-on-accent);border:1px solid transparent;min-height:44px}

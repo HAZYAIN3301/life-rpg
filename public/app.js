@@ -12259,26 +12259,69 @@ function nextLootboxState(reward) {
   next.history = next.history.slice(0, 40);
   return next;
 }
+const economyRequests = new WeakMap();
+function economySaveUnconfirmed() {
+  return ({ ru: 'Не удалось подтвердить сохранение. Повтори запрос; если данные изменились в другой вкладке — обнови страницу.',
+    en: 'Could not confirm the save. Retry; if another tab changed the data, reload the page.',
+    de: 'Speicherung nicht bestätigt. Erneut versuchen; bei Änderungen in einem anderen Tab die Seite neu laden.',
+    uk: 'Не вдалося підтвердити збереження. Повтори запит; якщо дані змінились в іншій вкладці — онови сторінку.',
+    es: 'No se pudo confirmar el guardado. Reintenta; si otra pestaña cambió los datos, recarga la página.' })[lang()] || 'Could not confirm the save. Retry or reload.';
+}
 async function economyCommit(data) {
   const contract = window.AccountDataV1;
   if (!contract) { console.error('economyCommit blocked', 'account data contract unavailable'); return false; }
-  const affected = contract.affectedSlots(data);
+  const affected = Object.keys(data);
+  if (affected.includes('skilltree') && !skillTreePayloadAllowed(data.skilltree, 'economyCommit', true)) return false;
   if (affected.some((name) => !accountDataWriteAllowed(name, 'economyCommit', true))) return false;
-  if (affected.some((name) => !validateAccountDataPayload(name, data[name]))) return false;
+  if (affected.some((name) => name === 'settings' ? !validateSettingsPayload(data[name])
+    : name !== 'skilltree' && !validateAccountDataPayload(name, data[name]))) return false;
   const hasSettings = data && Object.prototype.hasOwnProperty.call(data, 'settings');
   if (hasSettings && !settingsWriteAllowed('economyCommit', true)) return false;
-  return Store.runExclusive(hasSettings ? [...affected, 'settings', 'tasks'] : affected, async ({ writeEpoch, accountId }) => {
-    const payload = dedicatedCommitPayload(data);
-    if (!payload) return false;
+  return Store.runExclusive([...affected, 'settings', 'tasks'], async ({ writeEpoch, accountId }) => {
+    let request = economyRequests.get(data);
+    if (request && (request.accountId !== accountId || request.writeEpoch !== writeEpoch)) return false;
+    if (!request) {
+      const economyBase = Object.fromEntries(affected.map((n) => [n, Store._persisted?.[n]]));
+      if (!window.EconomyWriteV1 || affected.some((n) => !window.EconomyWriteV1.snapshotValid(n, economyBase[n]))) return false;
+      const payload = dedicatedCommitPayload(data, { version: 2, economyBase });
+      if (!payload) return false;
+      request = { accountId, writeEpoch, body: JSON.stringify(payload) }; economyRequests.set(data, request);
+    }
     try {
       const response = await fetch('/api/economy/commit', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: request.body, signal: AbortSignal.timeout(15000),
       });
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
       if (await commitmentBoundaryRejected(response)) return false;
-      return response.ok && rememberDedicatedCommitSlots(data, { writeEpoch, accountId });
+      if (!response.ok) return false;
+      const receipt = await response.json();
+      if (!receipt.ok || !receipt.snapshots || writeEpoch !== Store._writeEpoch || accountId !== String(State.me?.id || '')) return false;
+      if (window.EconomyWriteV1.decide(receipt.snapshots, data) !== 'replay') return false;
+      if (!rememberDedicatedCommitSlots(data, { writeEpoch, accountId })) return false;
+      for (const [n, snapshot] of Object.entries(receipt.snapshots)) Store._persisted[n] = structuredClone(snapshot);
+      return true;
     } catch (error) { console.error('economy commit', error); return false; }
   });
+}
+let equipmentSaving = false;
+async function commitEquipment(data, el, after) {
+  if (equipmentSaving) return false;
+  equipmentSaving = true;
+  // Keep one candidate (including equip vs unequip) for an ambiguous retry.
+  const payload = el._economyPayload || (el._economyPayload = data);
+  el.disabled = true; el.setAttribute('aria-busy', 'true');
+  let ok = false;
+  try { ok = await economyCommit(payload); }
+  finally { equipmentSaving = false; el.disabled = false; el.removeAttribute('aria-busy'); }
+  if (!ok) { toast(economySaveUnconfirmed()); el.focus(); return false; }
+  for (const [name, value] of Object.entries(payload)) State[Store._liveSlot(name)] = value;
+  if (after) after();
+  render();
+  if (el.dataset.action !== 'unlock-node') {
+    const key = el.dataset.uid ? 'uid' : 'id', value = el.dataset[key];
+    if (value) document.querySelector(`[data-action="${CSS.escape(el.dataset.action)}"][data-${key}="${CSS.escape(value)}"]`)?.focus();
+  }
+  return true;
 }
 async function goalDataCommit(nextGoals, nextTasks = State.tasks, nextGroups = State.goalGroups) {
   if (!goalWriteAllowed('goalDataCommit', true)) return false;
@@ -18198,7 +18241,7 @@ function denThemeOwned(theme) {
   if (theme.access === 'pro') return isPro();
   return theme.access === 'starter' || ensureDen().owned.includes('theme:' + theme.id);
 }
-function denAcquire(entry, token) {
+function denAcquire(entry, token, el) {
   if (entry.access === 'pro') {
     if (!isPro()) { showPaywall(t('Темы и мебель Логова')); return false; }
     return true;
@@ -18210,14 +18253,8 @@ function denAcquire(entry, token) {
     return false;
   }
   if (goldBalance() < entry.cost) { toast(t('Недостаточно золота')); return false; }
-  den.owned.push(token);
-  State.purchases = State.purchases || [];
-  State.purchases.push({ id: 'den_' + uid(), denId: entry.id, denNameKey: entry.name, name: 'Логово: ' + entry.name, cost: entry.cost, at: new Date().toISOString() });
-  Store.save('settings', State.settings);
-  Store.save('purchases', State.purchases);
-  try { sfx('coin'); } catch {}
-  toast(t('Предмет для Логова получен: {item}').replace('{item}', t(entry.name)));
-  return true;
+  showEconomyConfirm(token.startsWith('theme:') ? 'den-theme' : 'den-item', entry.id, el);
+  return false; // Ownership, placement and spend are committed together in the dialog.
 }
 function denLightHour(light) {
   if (light === 'morning') return 8;
@@ -21640,18 +21677,19 @@ async function commitDailyRewardDialog(overlay) {
   if (claim) claim.disabled = true;
   if (skip) skip.disabled = true;
   if (close) close.disabled = true;
-  const next = nextLootboxState(reward);
-  let nextSettings = null;
-  if (reward.type === 'cosmetic_capsule' && reward.cosmeticId) {
+  const next = overlay._economyPayload?.lootbox || nextLootboxState(reward);
+  let nextSettings = overlay._economyPayload?.settings || null;
+  if (!overlay._economyPayload && reward.type === 'cosmetic_capsule' && reward.cosmeticId) {
     nextSettings = structuredClone(State.settings);
     nextSettings.cosmetics = Array.isArray(nextSettings.cosmetics) ? nextSettings.cosmetics : [];
     if (!nextSettings.cosmetics.includes(reward.cosmeticId)) nextSettings.cosmetics.push(reward.cosmeticId);
   }
-  const ok = await economyCommit(nextSettings ? { lootbox: next, settings: nextSettings } : { lootbox: next });
+  overlay._economyPayload ||= nextSettings ? { lootbox: next, settings: nextSettings } : { lootbox: next };
+  const ok = await economyCommit(overlay._economyPayload);
   overlay._saving = false;
   if (!overlay.isConnected) return;
   if (!ok) {
-    if (status) { status.textContent = t('Награда не сохранена. Ничего не изменилось — повтори попытку.'); status.classList.add('is-error'); }
+    if (status) { status.textContent = economySaveUnconfirmed(); status.classList.add('is-error'); }
     if (retry) { retry.hidden = false; retry.disabled = false; retry.focus(); }
     if (close) close.disabled = false;
     return;
@@ -21838,6 +21876,11 @@ function showVoucherReward() {
 }
 
 function economyConfirmationData(kind, id) {
+  if (kind === 'den-theme' || kind === 'den-item') {
+    const item = kind === 'den-theme' ? DEN_THEMES.find((x) => x.id === id) : denItem(id);
+    if (!item) return null;
+    return { kind, id, title: t('Подтвердить трату'), name: t(item.name), cost: Number(item.cost) || 0, confirm: `${t('Потратить')} ${Number(item.cost) || 0} ${t('золота')}` };
+  }
   if (kind === 'reward') {
     const item = State.rewards.find((reward) => reward.id === id); if (!item) return null;
     return { kind, id, title: t('Подтвердить трату'), name: item.catalogNameKey ? t(item.catalogNameKey) : item.name, cost: Number(item.cost) || 0, confirm: `${t('Потратить')} ${Number(item.cost) || 0} ${t('золота')}` };
@@ -21891,8 +21934,11 @@ async function commitEconomyConfirmation(overlay) {
   const cancel = overlay.querySelector('[data-action="close-economy-confirm"]:not(.modal-x)');
   const status = overlay.querySelector('.economy-confirm-status');
   overlay._saving = true; if (confirm) confirm.disabled = true; if (cancel) cancel.disabled = true;
+  overlay.querySelector('.modal-x').disabled = true;
   if (status) status.textContent = t('Сохраняю…');
   let payload = null, apply = null, success = '', guideReceiptId = '';
+  if (overlay._attempt) ({ payload, apply, success, guideReceiptId } = overlay._attempt);
+  else {
   if (data.kind === 'reward') {
     if (goldBalance() < data.cost) { payload = null; status.textContent = t('Недостаточно золота'); }
     else {
@@ -21921,6 +21967,18 @@ async function commitEconomyConfirmation(overlay) {
       payload = { settings: nextSettings, purchases: nextPurchases };
       apply = () => { State.settings = nextSettings; State.purchases = nextPurchases; }; success = `${t('Получено')}: ${t(item.name)}`;
     }
+  } else if (data.kind === 'den-theme' || data.kind === 'den-item') {
+    const item = data.kind === 'den-theme' ? DEN_THEMES.find((x) => x.id === data.id) : denItem(data.id);
+    const token = data.kind === 'den-theme' ? 'theme:' + data.id : data.id;
+    if (item && charLevel() >= item.level && goldBalance() >= data.cost && !ensureDen().owned.includes(token)) {
+      const nextSettings = structuredClone(State.settings); nextSettings.den.owned.push(token);
+      if (data.kind === 'den-theme') nextSettings.den.theme = item.id;
+      else nextSettings.den.slots[item.slot] = item.id;
+      const nextPurchases = [...(State.purchases || []), { id: 'den_' + uid(), denId: item.id, denNameKey: item.name, name: 'Логово: ' + item.name, cost: data.cost, at: new Date().toISOString() }];
+      payload = { settings: nextSettings, purchases: nextPurchases };
+      apply = () => { State.settings = nextSettings; State.purchases = nextPurchases; };
+      success = t('Предмет для Логова получен: {item}').replace('{item}', t(item.name));
+    }
   } else if (data.kind === 'delete-reward') {
     const next = State.rewards.filter((reward) => reward.id !== data.id);
     payload = { rewards: next }; apply = () => { State.rewards = next; }; success = t('Награда удалена');
@@ -21939,6 +21997,8 @@ async function commitEconomyConfirmation(overlay) {
       apply = () => { State.lootbox = nextLootbox; State.rewards = nextRewards; }; success = `${t('Получено')}: ${t(item.name)}`;
     }
   }
+  if (payload) overlay._attempt = { payload, apply, success, guideReceiptId };
+  }
   const guideOwnsReward = data.kind === 'reward' && guideV3ContextActive('rewards', 'purchase-persisted')
     && String(guideV3State()?.chapterMeta?.rewards?.candidateId || '') === String(data.id);
   const ok = payload ? (guideOwnsReward
@@ -21946,8 +22006,9 @@ async function commitEconomyConfirmation(overlay) {
     : await economyCommit(payload)) : false;
   overlay._saving = false;
   if (!overlay.isConnected) return;
+  overlay.querySelector('.modal-x').disabled = false;
   if (!ok || !apply) {
-    if (status && !status.textContent.includes(t('Недостаточно золота'))) status.textContent = t('Не удалось сохранить. Ничего не списано — повтори попытку.');
+    if (status && !status.textContent.includes(t('Недостаточно золота'))) status.textContent = economySaveUnconfirmed();
     if (confirm) { confirm.disabled = false; confirm.focus(); } if (cancel) cancel.disabled = false; return;
   }
   apply(); closeAccountDialog('economy-confirm-modal', { restoreFocus: false });
@@ -22098,6 +22159,7 @@ function observeGuideV3BlockingSurfaces() {
 }
 function closeAccountDialog(id, { restoreFocus = true } = {}) {
   const overlay = document.getElementById(id); if (!overlay) return false;
+  if (['economy-confirm-modal', 'loot-modal'].includes(id) && overlay._saving) return false;
   const preferred = restoreFocus && _accountDialogReturnFocus && _accountDialogReturnFocus.isConnected ? _accountDialogReturnFocus : null;
   const target = preferred || (restoreFocus ? document.querySelector('[data-action="mobile-nav-more"], [data-action="show-guide"], [data-action="open-helper"]') : null);
   const app = document.getElementById('app'); if (app) app.inert = false;
@@ -28338,6 +28400,7 @@ async function guideV3FeatureCommit(chapter, completion, itemId, featureData, ap
         if (!response.ok || epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')
           || writeEpoch !== Store._writeEpoch || storeAccountId !== String(State.me?.id || '')) return false;
         if (!rememberDedicatedCommitSlots(data, { writeEpoch, accountId: storeAccountId })) return false;
+        if (data.purchases) Store._persisted.purchases = { exists: true, value: structuredClone(data.purchases) };
         if (typeof applyFeature === 'function' && await applyFeature(data) === false) return false;
         State.settings = nextSettings; State._guideV3Error = '';
         if (result.metric) track(result.metric);
@@ -29491,8 +29554,9 @@ async function onClick(e) {
   }
   if (action === 'equip-cosmetic') {
     if (!ownsCosmetic(el.dataset.id)) return;
-    const eq = ensureCosmetics(), ty = cosmeticType(el.dataset.id);
-    eq[ty] = (eq[ty] === el.dataset.id) ? null : el.dataset.id; Store.save('settings', State.settings); render(); return;
+    ensureCosmetics(); const next = structuredClone(State.settings), ty = cosmeticType(el.dataset.id);
+    next.equipped[ty] = next.equipped[ty] === el.dataset.id ? null : el.dataset.id;
+    await commitEquipment({ settings: next }, el); return;
   }
   if (action === 'buy-cosmetic') { showEconomyConfirm('cosmetic', el.dataset.id, el); return; }
   if (action === 'toggle-sound') { State.settings.sound = !!el.checked; autosaveSettings(); if (el.checked) sfx('complete'); return; }
@@ -29580,19 +29644,15 @@ async function onClick(e) {
   }
   if (action === 'den-theme') {
     const theme = DEN_THEMES.find((x) => x.id === id);
-    if (!theme || !denAcquire(theme, 'theme:' + theme.id)) return;
-    const den = ensureDen(); den.theme = theme.id;
-    Store.save('settings', State.settings);
-    track('den:theme');
-    render(); return;
+    if (!theme || !denAcquire(theme, 'theme:' + theme.id, el)) return;
+    const next = structuredClone(State.settings); next.den.theme = theme.id;
+    await commitEquipment({ settings: next }, el, () => track('den:theme')); return;
   }
   if (action === 'den-item') {
     const item = denItem(id);
-    if (!item || !denAcquire(item, item.id)) return;
-    const den = ensureDen(); den.slots[item.slot] = item.id;
-    Store.save('settings', State.settings);
-    track('den:item');
-    render(); return;
+    if (!item || !denAcquire(item, item.id, el)) return;
+    const next = structuredClone(State.settings); next.den.slots[item.slot] = item.id;
+    await commitEquipment({ settings: next }, el, () => track('den:item')); return;
   }
   if (action === 'shadow-den-solo') {
     const scope = el.closest('.den-shell');
@@ -29888,14 +29948,16 @@ async function onClick(e) {
   if (action === 'equip-gear') {
     const it = gearById(id); if (!it) return; const g = ensureGear();
     if (!g.owned.includes(id)) return;
-    g.equipped[it.slot] = (g.equipped[it.slot] === id) ? null : id;
-    Store.save('settings', State.settings); sfx('complete'); render(); return;
+    const next = structuredClone(State.settings);
+    next.gear.equipped[it.slot] = next.gear.equipped[it.slot] === id ? null : id;
+    await commitEquipment({ settings: next }, el, () => sfx('complete')); return;
   }
   if (action === 'equip-relic') {
     const g = ensureGear(), uidv = el.dataset.uid;
     if (!(g.relics || []).some((r) => r.uid === uidv)) return;
-    g.equipped.relic = (g.equipped.relic === uidv) ? null : uidv;
-    Store.save('settings', State.settings); sfx('complete'); render(); return;
+    const next = structuredClone(State.settings);
+    next.gear.equipped.relic = next.gear.equipped.relic === uidv ? null : uidv;
+    await commitEquipment({ settings: next }, el, () => sfx('complete')); return;
   }
   if (action === 'set-lang') { State.settings.lang = el.dataset.lang; autosaveSettings(); render(); return; }
   if (action === 'strava-connect') { window.location.href = '/api/strava/connect'; return; }
@@ -31008,11 +31070,13 @@ async function onClick(e) {
     const sid = State.treeSkill, node = State.tree[sid] && State.tree[sid].nodes.find((n) => n.id === el.dataset.node); if (!node) return;
     if (!nodeUnlockable(sid, node)) { toast(treeNodeLockReason(sid, node) || t('Этот узел уже открыт')); return; }
     if (treeNodeKind(node) === 'capability') { openMilestoneClaim(sid, node.id); return; }
-    node.unlocked = true; Store.save('skilltree', State.tree);
+    const next = structuredClone(State.tree); next[sid].nodes.find((n) => n.id === node.id).unlocked = true;
     // фикс: тост показывал legacy-поле perkXpPct (undefined для v2-узлов) — собираем лейбл из perks
     const pl = nodePerks(node).map((p) => PERK_KINDS[p.kind] ? PERK_KINDS[p.kind].fmt(p.val) : '').filter(Boolean).join(' · ');
-    toast(`◈ ${t('Открыто')}: ${treeNodeCopy(node, 'title')}${pl ? ' — ' + pl : ''}`);
-    treeFocusAfterCommit('#tree-node-detail'); render();
+    await commitEquipment({ skilltree: next }, el, () => {
+      toast(`◈ ${t('Открыто')}: ${treeNodeCopy(node, 'title')}${pl ? ' — ' + pl : ''}`);
+      treeFocusAfterCommit('#tree-node-detail');
+    });
 
   // --- Редактор дерева навыков ---
   } else if (action === 'toggle-tree-edit') {
@@ -32728,7 +32792,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v250';
+const PWA_CACHE_VERSION = 'satoru-v251';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

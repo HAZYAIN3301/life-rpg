@@ -26,10 +26,10 @@
   const PHASE_PREPARED = 'prepared';
   const PHASE_COMMITTED = 'committed';
   // settings + tasks are the indivisible commitment pair. Goals, initiatives
-  // and the skill tree may join the same transaction for proposal import, but
-  // arbitrary account files can never be smuggled into recovery by a journal.
+  // and the skill tree may join for proposal import. Economy commits also add
+  // purchases/rewards/lootbox; arbitrary account files cannot join recovery.
   const REQUIRED_FILES = Object.freeze(['settings', 'tasks']);
-  const OPTIONAL_FILES = Object.freeze(['goals', 'goal-groups', 'skilltree']);
+  const OPTIONAL_FILES = Object.freeze(['goals', 'goal-groups', 'skilltree', 'purchases', 'rewards', 'lootbox']);
   const FILES = Object.freeze([...REQUIRED_FILES, ...OPTIONAL_FILES]);
   const MAX_SERIALIZED_BYTES = 16 * 1024 * 1024;
   const MAX_DEPTH = 80;
@@ -117,7 +117,7 @@
   function clone(value) { return JSON.parse(JSON.stringify(value)); }
 
   function fileType(name) {
-    return ['tasks', 'goals', 'goal-groups'].includes(name) ? 'array' : 'object';
+    return ['tasks', 'goals', 'goal-groups', 'purchases', 'rewards'].includes(name) ? 'array' : 'object';
   }
 
   function snapshotValid(snapshot, name) {

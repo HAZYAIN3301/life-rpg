@@ -2587,40 +2587,35 @@ function importPortableAccountData(uid, payload) {
   return names;
 }
 
-const ECONOMY_COMMIT_TYPES = Object.freeze({
-  settings: 'object', purchases: 'array', rewards: 'array', lootbox: 'object',
-});
+const EconomyWriteV1 = require('./public/economy-write-v1.js');
+const ECONOMY_COMMIT_TYPES = Object.freeze({ ...EconomyWriteV1.TYPES });
 function economyValueValid(name, value) {
   const type = ECONOMY_COMMIT_TYPES[name];
   if (!type || value == null) return false;
   return type === 'array' ? Array.isArray(value) : (typeof value === 'object' && !Array.isArray(value));
 }
-// One user gesture may change two economy files (for example settings gear +
-// purchases, or voucher count + rewards). Commit them as one rollback-capable
-// unit so a network/disk failure never grants an item without its spend or
-// consumes a voucher without the authored reward.
+// Share the existing account WAL, including the protected settings/tasks pair.
+// No second journal may independently roll back an overlapping settings write.
 function commitEconomyData(uid, payload) {
   if (!payload || !payload.data || typeof payload.data !== 'object' || Array.isArray(payload.data)) throw new Error('invalid_economy_commit');
   const names = Object.keys(payload.data);
   if (!names.length || names.some((name) => !economyValueValid(name, payload.data[name]))) throw new Error('invalid_economy_commit');
   if (Buffer.byteLength(JSON.stringify(payload.data)) > 2 * 1024 * 1024) throw new Error('economy_commit_too_large');
-  const graphTransition = assertAccountGraphTransition(uid, payload);
-  const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
-  const snapshots = new Map(); const written = [];
-  for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
-  try {
-    for (const name of names) {
-      if (graphTransition.protected && COMMITMENT_PAIR_NAMES.includes(name)) continue;
-      backupFile(dir, name);
-      writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
-      written.push(name);
-    }
-    if (graphTransition.protected) commitCommitmentPairDurable(uid, graphTransition);
-  } catch (error) {
-    for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
-    throw error;
+  if (payload.version !== undefined && payload.version !== 2) throw new Error('invalid_economy_commit');
+  if (payload.version === 2 && payload.economyBase === undefined) throw new Error('invalid_economy_commit');
+  const allNames = COMMITMENT_JOURNAL_ALLOWED_NAMES.filter((n) => COMMITMENT_PAIR_NAMES.includes(n) || names.includes(n));
+  const actual = commitmentActualFiles(uid, allNames);
+  const decision = EconomyWriteV1.decide(actual, payload.data, payload.economyBase);
+  if (decision === 'invalid') throw new Error('invalid_economy_commit');
+  if (decision === 'conflict') throw commitmentBoundaryError('economy_revision_conflict', 409);
+  if (decision !== 'replay') {
+    const graph = assertAccountGraphTransition(uid, payload);
+    const data = Object.fromEntries(allNames.map((n) => [n, Object.hasOwn(payload.data, n) ? payload.data[n]
+      : actual[n].exists ? actual[n].value : n === 'tasks' ? [] : {}]));
+    if (graph.protected) Object.assign(data, graph.pair);
+    commitCommitmentGraphDurable(uid, { names: allNames, actual, data });
   }
-  return names;
+  return { files: names, replay: decision === 'replay', snapshots: commitmentActualFiles(uid, allNames) };
 }
 
 const GUIDE_COMMIT_TYPES = Object.freeze({ settings: 'object', tasks: 'array', inbox: 'array', purchases: 'array' });
@@ -2655,6 +2650,7 @@ function guideCommitPayloadValid(data) {
 function commitGuideData(uid, payload) {
   if (!payload || !guideCommitPayloadValid(payload.data)) throw new Error('invalid_guide_commit');
   if (Buffer.byteLength(JSON.stringify(payload.data)) > 4 * 1024 * 1024) throw new Error('guide_commit_too_large');
+  if (Object.hasOwn(payload.data, 'purchases')) return commitEconomyData(uid, payload).files;
   const graphTransition = assertAccountGraphTransition(uid, payload);
   const names = Object.keys(payload.data);
   const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
@@ -2947,7 +2943,7 @@ function commitmentCurrentBase(file) {
 }
 const COMMITMENT_JOURNAL_FILE = '.commitment-journal-v1.json';
 const COMMITMENT_PAIR_NAMES = Object.freeze(['settings', 'tasks']);
-const COMMITMENT_JOURNAL_ALLOWED_NAMES = Object.freeze(['settings', 'tasks', 'goals', 'goal-groups', 'skilltree']);
+const COMMITMENT_JOURNAL_ALLOWED_NAMES = CommitmentJournalV1.FILES;
 function commitmentBoundaryError(message, status) {
   const error = new Error(message);
   error.status = status;
@@ -6149,8 +6145,8 @@ const server = http.createServer(async (req, res) => {
     let payload; try { payload = JSON.parse(await readBody(req, 3 * 1024 * 1024)); }
     catch (error) { return sendJson(res, 400, { error: error && error.message === 'payload too large' ? 'economy_commit_too_large' : 'invalid_economy_commit' }); }
     try {
-      const files = commitEconomyData(uid, payload);
-      return sendJson(res, 200, { ok: true, files });
+      const result = commitEconomyData(uid, payload);
+      return sendJson(res, 200, { ok: true, ...result });
     } catch (error) {
       if (sendCommitmentBoundaryError(res, error)) return;
       const clientError = error && (error.message === 'invalid_economy_commit' || error.message === 'economy_commit_too_large');

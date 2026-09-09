@@ -65,7 +65,13 @@ test('runtime uses checked loads and blocks writes only for damaged slots', () =
     assert.doesNotMatch(APP, new RegExp(`Store\\.load\\('${slot}'`), `${slot} must not use silent load`);
   }
   assert.match(APP, /function accountDataWriteAllowed\(name, source, notify = true\)/);
-  assert.match(APP, /contract\.affectedSlots\(data\)/);
+  // Economy also changes settings and skilltree, outside AccountData.SLOTS.
+  // Guard every affected file; filtering through that module loses these bases.
+  const economy = APP.slice(APP.indexOf('async function economyCommit(data)'), APP.indexOf('let equipmentSaving'));
+  assert.match(economy, /const affected = Object\.keys\(data\)/);
+  assert.match(economy, /affected\.some\(\(name\) => !accountDataWriteAllowed\(name, 'economyCommit', true\)\)/);
+  assert.match(economy, /settingsWriteAllowed\('economyCommit', true\)/);
+  assert.match(economy, /skillTreePayloadAllowed\(data\.skilltree, 'economyCommit', true\)/);
   assert.match(APP, /if \(!accountDataWriteAllowed\(name, 'save', true\)\) return false;/);
   assert.match(APP, /if \(!accountDataWriteAllowed\(name, 'saveNow', true\)\) return false;/);
   assert.match(APP, /if \(!accountDataWriteAllowed\(name, '_put', true\)\) return false;/);
@@ -85,8 +91,8 @@ test('recovery UI is accessible, retryable and does not expose personal contents
 
 test('module loads before app and remains pinned in the v181 offline shell', () => {
   const moduleAt = INDEX.indexOf('account-data-v1.js?v=20260826-launch-hardening-v178-1');
-  const appAt = INDEX.indexOf('app.js?v=20260909-design-v250-1');
+  const appAt = INDEX.indexOf('app.js?v=20260909-design-v251-1');
   assert.ok(moduleAt >= 0 && appAt > moduleAt);
-  assert.match(SW, /const CACHE = 'satoru-v250';/);
+  assert.match(SW, /const CACHE = 'satoru-v251';/);
   assert.match(SW, /'account-data-v1\.js'/);
 });

@@ -27,6 +27,11 @@ Tree v4 отвечает на один вопрос без подмены тер
 - Points, active perks, capstone и editor живут только здесь.
 - В edit mode показывается полный исходный граф для сохранения power-user совместимости.
 
+09.09, v251: открытие **игрового** узла сохраняет candidate skilltree через общий
+economy/WAL/exact-base commit до unlocked/расхода очка/toast. При отказе старое дерево
+остаётся видимым; повтор использует тот же candidate. Это не перевод всего tree editor
+или capability claim на новый протокол. См. ECONOMY-WRITES-V251.md.
+
 ## Claim transaction
 
 1. Пользователь открывает ближайшую доступную веху.

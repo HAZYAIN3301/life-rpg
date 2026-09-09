@@ -1,5 +1,39 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-09] v251 — покупки, Логово и игровые perks: запись раньше успеха
+
+Продолжение по просьбе владельца «максимум сделать, минимум токенов». Отдельный
+выданный пакет уже запущен им в другом Codex; №2/№3/№4 не дублировались. Аватар
+не возобновлялся, новые paid API/генерации/настройки баланса не использовались.
+
+Контракт: ECONOMY-WRITES-V251.md. Общий economy commit переведён с rollback-only
+нескольких файлов на существующий account WAL, без второго пересекающегося журнала.
+Pure EconomyWriteV1 решает exact-base/replay/conflict. Modern запрос version:2,
+economyBase на все затронутые файлы, включая settings/skilltree. Старый протокол
+остаётся совместимым, но без нового economy-CAS. Protected settings/tasks не обходятся.
+
+Логово теперь подтверждает цену и пишет ownership/placement/spend вместе. Equip
+gear/relic/cosmetics и unlock игровых perks меняют состояние/эффект после ответа,
+не раньше. Retry замораживает исходные purchase id/time, candidate и draw сундука.
+Guide purchase тоже использует общий WAL, сохраняя прежнего владельца главы.
+15-секундный запрос, busy-кнопки, keyboard focus, честное сообщение при потерянном
+ответе, 5 языков. Окна economy/reveal/catalog/voucher получили непрозрачную поверхность:
+найденный в Chrome дефект делал dark-text light-dialog почти нечитаемым.
+
+Проверено реальное прекращение процесса до/после commit, rollback/roll-forward,
+два конфликтующих POST, retry и более поздняя покупка, invalid/corrupt/auth, guide.
+Полный suite **1951/1951 PASS**, `/private/tmp/satoru-v251-verified.log`.
+Browser receipt 09.09 14:23 UTC: complete=true, 0 JS errors; потеря ответа после
+записи для покупки/сундука, 503 equip/perk/voucher, единое сохранение Логова,
+reload, фокус, RU/EN/DE × 375 light/1280 dark. Все 7 скриншотов просмотрены.
+art-factory/economy-v251; финальный release-результат будет дополнен после публикации.
+Кандидат: app/design CSS v251, SW v251;
+неизменённые styles.css, художественные assets и compare.html сохраняют прежние pins.
+
+Не заявляется server-authoritative весь магазин, вечный operation ledger, исправление
+каждого feature writer или новые полезные ходы секретаря. Остаток — контракт и BACKLOG.
+
+
 ## [2026-09-09] v249 и v250 опубликованы — дуо, серверная награда рейда и настоящий boost
 
 Владелец явно разрешил master push/Railway и продолжение стройки с документацией.
